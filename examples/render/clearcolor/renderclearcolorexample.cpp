@@ -27,19 +27,16 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "Qt3DSRenderExample.h"
-#include "foundation/Qt3DSVec4.h"
-
-using namespace qt3ds;
-using namespace qt3ds::render;
+#include "../shared/renderexample.h"
+#include <QtGui/QVector4D>
 
 namespace {
-class ClearColor : public NVRenderExample
+class ClearColor : public QDemonRenderExample
 {
-    NVRenderContext &m_Context;
+    QDemonRenderContext &m_Context;
 
 public:
-    ClearColor(NVRenderContext &ctx)
+    ClearColor(QDemonRenderContext &ctx)
         : m_Context(ctx)
     {
     }
@@ -48,15 +45,14 @@ public:
         // Apply this value immediately but track it so that a later pop will in fact
         // restore this value.
         if (currentSeconds < 1)
-            m_Context.SetClearColor(QT3DSVec4(.8f, .0f, .0f, 1.f));
+            m_Context.SetClearColor(QVector4D(.8f, .0f, .0f, 1.f));
         else if (currentSeconds < 2)
-            m_Context.SetClearColor(QT3DSVec4(0.f, .0f, 1.f, 1.f));
+            m_Context.SetClearColor(QVector4D(0.f, .0f, 1.f, 1.f));
         else
-            m_Context.SetClearColor(QT3DSVec4(0.f, 1.0f, 1.f, 1.f));
-        m_Context.Clear(NVRenderClearFlags(NVRenderClearValues::Color));
+            m_Context.SetClearColor(QVector4D(0.f, 1.0f, 1.f, 1.f));
+        m_Context.Clear(QDemonRenderClearFlags(QDemonRenderClearValues::Color));
     }
-    virtual QT3DSU32 getRuntimeInSeconds() { return 2; }
-    virtual void release() { NVDelete(m_Context.GetFoundation(), this); }
+    virtual quint32 getRuntimeInSeconds() { return 2; }
 };
 }
 
