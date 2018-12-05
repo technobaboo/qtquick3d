@@ -35,61 +35,37 @@
 #include <QtDemonRender/qdemonrendercontext.h>
 
 #include <QtGui/QWindow>
+#include <QtCore/QElapsedTimer>
+#include <QtGui/QOpenGLContext>
 
 class QDemonRenderContext;
 
-class QDemonRenderExample
+class QDemonRenderExample : public QWindow
 {
-protected:
-    virtual ~QDemonRenderExample() {}
-
+    Q_OBJECT
 public:
-    virtual void drawFrame(double currentSeconds) = 0;
-    virtual quint32 getRuntimeInSeconds() { return 5; }
-    virtual void handleKeypress(int /*keypress*/) {}
-    virtual void release() = 0;
+    explicit QDemonRenderExample(QWindow *parent = nullptr);
+    ~QDemonRenderExample() override;
+    virtual void initialize() = 0;
+    virtual void drawFrame(qint64 delta) = 0;
+
+    void setAutoUpdate(bool autoUpdate) { m_autoUpdate = autoUpdate;}
+
+public slots:
+    void renderLater();
+    void renderNow();
+
+protected:
+    bool event(QEvent *event) override;
+    void exposeEvent(QExposeEvent *event) override;
+
+private:
+    void preInit();
+    QElapsedTimer m_frameTimer;
+    bool m_autoUpdate = true;
+    bool m_isIntialized = false;
+    QOpenGLContext *m_context;
 };
-
-typedef QDemonRenderExample *(*TExampleCreateFunc)(QDemonRenderContext &context);
-
-class QDemonRenderExampleFactory
-{
-    static TExampleCreateFunc *mExampleCreators;
-    static quint32 mMaxCreators;
-    static quint32 mNumCreators;
-
-    static void addCreator(TExampleCreateFunc creator)
-    {
-        if (mNumCreators < mMaxCreators) {
-            mExampleCreators[mNumCreators] = creator;
-            ++mNumCreators;
-        } else
-            Q_ASSERT(false);
-    }
-
-    // Assuming that the render context is egl
-    // Relies on the global structures defined in demo common
-    // to figure out window state.
-    explicit QDemonRenderExampleFactory(QWindow *parent = 0);
-
-    static bool nextExample();
-    static void beginExamples();
-    static bool update();
-    static void endExamples();
-};
-
-template <typename TExample>
-struct QDemonRenderExampleCreator
-{
-
-    static QDemonRenderExample *createExample(QDemonRenderContext &context)
-    {
-        return new TExample(context);
-    }
-    QDemonRenderExampleCreator() { QDemonRenderExampleFactory::addCreator(createExample); }
-};
-
-#define QT3DS_RENDER_REGISTER_EXAMPLE(dtype) static QDemonRenderExampleCreator<dtype> dtype##Creator
 
 #define eps 1e-4
 

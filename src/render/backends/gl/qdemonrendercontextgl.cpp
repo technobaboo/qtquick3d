@@ -38,9 +38,9 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonRenderContext &QDemonRenderContext::CreateGL(const QSurfaceFormat &format)
+QSharedPointer<QDemonRenderContext> QDemonRenderContext::CreateGL(const QSurfaceFormat &format)
 {
-    QDemonRenderContext *retval = nullptr;
+    QSharedPointer<QDemonRenderContext> retval;
 
     Q_ASSERT(format.majorVersion() >= 2);
 
@@ -67,9 +67,9 @@ QDemonRenderContext &QDemonRenderContext::CreateGL(const QSurfaceFormat &format)
     }
 
 
-    retval = new QDemonRenderContextImpl(theBackend);
+    retval.reset(new QDemonRenderContextImpl(theBackend));
 
-    return *retval;
+    return retval;
 }
 
 QT_END_NAMESPACE

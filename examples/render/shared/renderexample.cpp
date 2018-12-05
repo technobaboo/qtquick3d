@@ -30,8 +30,6 @@
 #include "renderexample.h"
 #include <QtDemonRender/qdemonrenderbasetypes.h>
 
-#include <QtCore/QElapsedTimer>
-
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -40,57 +38,72 @@
 
 #include <QtGui/QSurfaceFormat>
 
-static TExampleCreateFunc gCreateFuncs[128];
+//QDemonRenderContext::CreateGL(format());
 
-TExampleCreateFunc *QDemonRenderExampleFactory::mExampleCreators = gCreateFuncs;
-quint32 QDemonRenderExampleFactory::mMaxCreators = 128;
-quint32 QDemonRenderExampleFactory::mNumCreators = 0;
-namespace {
-QDemonRenderContext *g_renderContext(nullptr);
-QDemonRenderExample *g_example(nullptr);
-qint32 g_exampleIdx(0);
-quint64 g_runTime;
-QElapsedTimer g_timer;
+QDemonRenderExample::QDemonRenderExample(QWindow *parent)
+    : QWindow(parent)
+{
+    setSurfaceType(QWindow::OpenGLSurface);
+    setWidth(1280);
+    setHeight(720);
+    m_frameTimer.start();
 }
 
-bool QDemonRenderExampleFactory::nextExample()
+QDemonRenderExample::~QDemonRenderExample()
 {
-    if (g_example)
-        g_example->release();
-    g_example = 0;
-    if (g_exampleIdx < (int)mNumCreators) {
-        g_example = mExampleCreators[g_exampleIdx](*g_renderContext);
-        ++g_exampleIdx;
-        g_runTime = g_example->getRuntimeInSeconds();
-        g_timer.restart();
-        return true;
+    delete m_context;
+}
+
+void QDemonRenderExample::renderLater()
+{
+    requestUpdate();
+}
+
+void QDemonRenderExample::renderNow()
+{
+    if (!m_isIntialized) {
+        preInit();
+        initialize();
+        m_isIntialized = true;
     }
-    return false;
+    m_context->makeCurrent(this);
+    drawFrame(m_frameTimer.elapsed());
+    m_context->swapBuffers(this);
+    m_context->doneCurrent();
+    m_frameTimer.restart();
+    if (m_autoUpdate)
+        renderLater();
 }
 
-void QDemonRenderExampleFactory::beginExamples()
+bool QDemonRenderExample::event(QEvent *event)
 {
-    g_renderContext = &QDemonRenderContext::CreateGL(format());
-    nextExample();
-}
-bool QDemonRenderExampleFactory::update()
-{
-    qint64 currentTime = g_timer.elapsed();
-    if (currentTime > g_runTime)
-        nextExample();
-    if (g_example)
-        g_example->drawFrame(currentTime);
-
-    return g_example != NULL;
+    switch (event->type()) {
+    case QEvent::UpdateRequest:
+        renderNow();
+        return true;
+    default:
+        return QWindow::event(event);
+    }
 }
 
-void QDemonRenderExampleFactory::endExamples()
+void QDemonRenderExample::exposeEvent(QExposeEvent *event)
 {
-    g_exampleIdx = mNumCreators;
-    nextExample();
-    delete g_renderContext;
-    g_renderContext = nullptr;
+    Q_UNUSED(event);
+
+    if (isExposed())
+        renderNow();
 }
+
+void QDemonRenderExample::preInit()
+{
+    m_context = new QOpenGLContext();
+    m_context->setFormat(requestedFormat());
+    m_context->create();
+
+    if (!m_context->makeCurrent(this))
+        qDebug("fail");
+}
+
 
 // Math stuff
 

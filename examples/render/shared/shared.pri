@@ -8,4 +8,4 @@ HEADERS += \
 
 SOURCES += \
     $$PWD/renderexample.cpp \
-    $$PWD/renderexampletools.h
+    $$PWD/renderexampletools.cpp

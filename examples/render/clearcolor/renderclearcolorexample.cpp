@@ -29,31 +29,58 @@
 ****************************************************************************/
 #include "../shared/renderexample.h"
 #include <QtGui/QVector4D>
+#include <QtDemonRender/QDemonRenderContext>
+#include <QtGui/QGuiApplication>
 
 namespace {
 class ClearColor : public QDemonRenderExample
 {
-    QDemonRenderContext &m_Context;
+    QSharedPointer<QDemonRenderContext> m_context;
+    qint64 m_elapsedTime = 0;
 
 public:
-    ClearColor(QDemonRenderContext &ctx)
-        : m_Context(ctx)
+    ClearColor()
     {
     }
-    virtual void drawFrame(double currentSeconds)
+
+    void initialize() override
     {
+        m_context = QDemonRenderContext::CreateGL(format());
+    }
+
+    virtual void drawFrame(qint64 delta) override
+    {
+        m_elapsedTime += delta;
         // Apply this value immediately but track it so that a later pop will in fact
         // restore this value.
-        if (currentSeconds < 1)
-            m_Context.SetClearColor(QVector4D(.8f, .0f, .0f, 1.f));
-        else if (currentSeconds < 2)
-            m_Context.SetClearColor(QVector4D(0.f, .0f, 1.f, 1.f));
-        else
-            m_Context.SetClearColor(QVector4D(0.f, 1.0f, 1.f, 1.f));
-        m_Context.Clear(QDemonRenderClearFlags(QDemonRenderClearValues::Color));
+        if (m_elapsedTime < 1000) {
+            m_context->SetClearColor(QVector4D(.8f, .0f, .0f, 1.f));
+        } else if (m_elapsedTime < 2000) {
+            m_context->SetClearColor(QVector4D(0.f, .0f, 1.f, 1.f));
+        } else {
+            m_context->SetClearColor(QVector4D(0.f, 1.0f, 1.f, 1.f));
+            m_elapsedTime = 0;
+        }
+        m_context->Clear(QDemonRenderClearFlags(QDemonRenderClearValues::Color));
     }
-    virtual quint32 getRuntimeInSeconds() { return 2; }
 };
 }
 
-// QT3DS_RENDER_REGISTER_EXAMPLE( ClearColor );
+
+int main(int argc, char *argv[])
+{
+    QGuiApplication app(argc, argv);
+
+    QSurfaceFormat fmt;
+    fmt.setProfile(QSurfaceFormat::CoreProfile);
+
+    // Advanced: Try 4.3 core (so we get compute shaders for instance)
+    fmt.setVersion(4, 3);
+
+    ClearColor clearColor;
+    clearColor.setFormat(fmt);
+    clearColor.show();
+
+    return app.exec();
+}
+

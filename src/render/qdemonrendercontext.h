@@ -399,9 +399,9 @@ public:
 
     virtual void resetStates() = 0;
 
-    static QDemonRenderContext &CreateGL(const QSurfaceFormat &format);
+    static QSharedPointer<QDemonRenderContext> CreateGL(const QSurfaceFormat &format);
 
-    static QDemonRenderContext &CreateNULL();
+    static QSharedPointer<QDemonRenderContext> CreateNULL();
 };
 
 // Now for scoped property access.

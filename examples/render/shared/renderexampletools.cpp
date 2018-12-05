@@ -31,6 +31,7 @@
 
 #include <QtDemonRender/qdemonrenderindexbuffer.h>
 #include <QtDemonRender/qdemonrendervertexbuffer.h>
+#include <QtDemonRender/qdemonrenderattriblayout.h>
 
 #include <QtGui/QVector3D>
 
@@ -62,31 +63,28 @@ static const QVector3D g_BoxUVs[] = {
     QVector3D(0, 1, 0), QVector3D(0, 0, 0), QVector3D(1, 0, 0), QVector3D(1, 1, 0),
 };
 
-void QDemonRenderExampleTools::createBox(QDemonRenderContext &context,
-                                     QDemonRenderVertexBuffer *&outVertexBuffer,
-                                     QDemonRenderIndexBuffer *&outIndexBuffer, bool releaseMemory)
+QSharedPointer<QDemonRenderInputAssembler> QDemonRenderExampleTools::createBox(QDemonRenderContext *context,
+                                                                               QSharedPointer<QDemonRenderVertexBuffer> &outVertexBuffer,
+                                                                               QSharedPointer<QDemonRenderIndexBuffer> &outIndexBuffer)
 {
     const quint32 numVerts = 24;
     const quint32 numIndices = 36;
     QVector3D extents = QVector3D(1, 1, 1);
 
+    // Attribute Layouts
     QDemonRenderVertexBufferEntry entries[] = {
-        QDemonRenderVertexBufferEntry("attr_pos", QDemonRenderComponentTypes::Float, 3, 0),
-        QDemonRenderVertexBufferEntry("attr_norm", QDemonRenderComponentTypes::Float, 3, 3 * sizeof(float)),
-        QDemonRenderVertexBufferEntry("attr_uv", QDemonRenderComponentTypes::Float, 2, 6 * sizeof(float)),
+        QDemonRenderVertexBufferEntry("attr_pos", QDemonRenderComponentTypes::Float32, 3, 0),
+        QDemonRenderVertexBufferEntry("attr_norm", QDemonRenderComponentTypes::Float32, 3, 3 * sizeof(float)),
+        QDemonRenderVertexBufferEntry("attr_uv", QDemonRenderComponentTypes::Float32, 2, 6 * sizeof(float)),
     };
 
+    QDemonRenderAttribLayout *attribLayout = context->CreateAttributeLayout(toConstDataRef(entries, 3));
+
+    // Vertex Buffer
     quint32 bufStride = 8 * sizeof(float);
     quint32 bufSize = bufStride * numVerts;
-    outVertexBuffer = context.CreateVertexBuffer(
-        QDemonRenderBufferUsageType::Static, QDemonConstDataRef<QDemonRenderVertexBufferEntry>(entries, 3), 0,
-        releaseMemory ? 0 : bufSize);
-    Q_ASSERT(bufStride == outVertexBuffer->GetStride());
     QDemonDataRef<quint8> vertData;
-    if (releaseMemory)
-        vertData = QDemonDataRef<quint8>(static_cast<quint8 *>(::malloc(bufSize)), bufSize);
-    else
-        vertData = outVertexBuffer->LockBuffer(bufSize);
+    vertData = QDemonDataRef<quint8>(static_cast<quint8 *>(::malloc(bufSize)), bufSize);
     quint8 *positions = (quint8 *)vertData.begin();
     quint8 *normals = positions + 3 * sizeof(float);
     quint8 *uvs = normals + 3 * sizeof(float);
@@ -101,29 +99,26 @@ void QDemonRenderExampleTools::createBox(QDemonRenderContext &context,
             float *uv = (float *)uvs;
             uvs = ((quint8 *)uvs) + bufStride;
             n = bf.normal;
-            p = bf.positions[j].multiply(extents);
+            p = bf.positions[j] * extents;
             uv[0] = g_BoxUVs[j].x();
             uv[1] = g_BoxUVs[j].y();
         }
     }
 
-    if (releaseMemory) {
-        outVertexBuffer->SetBuffer(vertData, false);
-        context.GetFoundation().getAllocator().deallocate(vertData.begin());
-    } else
-        outVertexBuffer->UnlockBuffer();
+    outVertexBuffer.reset(context->CreateVertexBuffer(QDemonRenderBufferUsageType::Static,
+                                                      bufSize,
+                                                      bufStride,
+                                                      vertData));
+    Q_ASSERT(bufStride == outVertexBuffer->GetStride());
+    // Clean up data
+    ::free(vertData.begin());
 
+
+    // Index Buffer
     bufSize = numIndices * sizeof(quint16);
-    outIndexBuffer =
-        context.CreateIndexBuffer(QDemonRenderBufferUsageType::Static, QDemonRenderComponentTypes::quint16,
-                                  releaseMemory ? 0 : bufSize);
+
     QDemonDataRef<quint8> indexData;
-    if (releaseMemory)
-        indexData = QDemonDataRef<quint8>(
-            (quint8 *)QT3DS_ALLOC(context.GetFoundation().getAllocator(), bufSize, "IndexData"),
-            bufSize);
-    else
-        indexData = outIndexBuffer->LockBuffer(bufSize);
+    indexData = QDemonDataRef<quint8>( static_cast<quint8 *>(::malloc(bufSize)), bufSize);
     quint16 *indices = reinterpret_cast<quint16 *>(indexData.begin());
     for (quint8 i = 0; i < 6; i++) {
         const quint16 base = i * 4;
@@ -134,12 +129,24 @@ void QDemonRenderExampleTools::createBox(QDemonRenderContext &context,
         *(indices++) = base + 2;
         *(indices++) = base + 3;
     }
-    if (releaseMemory) {
-        outIndexBuffer->SetBuffer(indexData, false);
-        context.GetFoundation().getAllocator().deallocate(indexData.begin());
-    } else
-        outIndexBuffer->UnlockBuffer();
+    outIndexBuffer.reset(context->CreateIndexBuffer(QDemonRenderBufferUsageType::Static,
+                                                    QDemonRenderComponentTypes::UnsignedInteger16,
+                                                    bufSize,
+                                                    indexData));
+    ::free(indexData.begin());
+
+    quint32 strides = outVertexBuffer->GetStride();
+    quint32 offsets = 0;
+
+    QDemonRenderVertexBuffer *vertexBuffer = outVertexBuffer.data();
+    QDemonRenderInputAssembler *inputAssembler = context->CreateInputAssembler(attribLayout,
+                                                                               toConstDataRef(&vertexBuffer, 1),
+                                                                               outIndexBuffer.data(),
+                                                                               toConstDataRef(&strides, 1),
+                                                                               toConstDataRef(&offsets, 1));
+    return QSharedPointer<QDemonRenderInputAssembler>(inputAssembler);
 }
+
 
 namespace {
 
@@ -149,34 +156,34 @@ inline QDemonConstDataRef<qint8> toRef(const char *data)
     return QDemonConstDataRef<qint8>((const qint8 *)data, len);
 }
 
-static void dumpShaderOutput(QDemonRenderContext &ctx, const QDemonRenderVertFragCompilationResult &compResult)
+static void dumpShaderOutput(QDemonRenderContext *ctx, const QDemonRenderVertFragCompilationResult &compResult)
 {
-    if (!isTrivial(compResult.mFragCompilationOutput)) {
-        qWarning("Frag output:\n%s", compResult.mFragCompilationOutput);
-    }
-    if (!isTrivial(compResult.mVertCompilationOutput)) {
-        qWarning("Vert output:\n%s", compResult.mVertCompilationOutput);
-    }
-    if (!isTrivial(compResult.mLinkOutput)) {
-        qWarning("Link output:\n%s", compResult.mLinkOutput);
-    }
+    //    if (!isTrivial(compResult.mFragCompilationOutput)) {
+    //        qWarning("Frag output:\n%s", compResult.mFragCompilationOutput);
+    //    }
+    //    if (!isTrivial(compResult.mVertCompilationOutput)) {
+    //        qWarning("Vert output:\n%s", compResult.mVertCompilationOutput);
+    //    }
+    //    if (!isTrivial(compResult.mLinkOutput)) {
+    //        qWarning("Link output:\n%s", compResult.mLinkOutput);
+    //    }
 }
 
-QDemonRenderVertFragShader *compileAndDump(QDemonRenderContext &ctx, const char *name, const char *vertShader, const char *fragShader)
+QSharedPointer<QDemonRenderShaderProgram> compileAndDump(QDemonRenderContext *ctx, const char *name, const char *vertShader, const char *fragShader)
 {
     QDemonRenderVertFragCompilationResult compResult =
-        ctx.CompileSource(name, toRef(vertShader), toRef(fragShader));
+            ctx->CompileSource(name, toRef(vertShader), toRef(fragShader));
     dumpShaderOutput(ctx, compResult);
     return compResult.mShader;
 }
 }
 
-QDemonRenderVertFragShader *QDemonRenderExampleTools::createSimpleShader(QDemonRenderContext &ctx)
+QSharedPointer<QDemonRenderShaderProgram> QDemonRenderExampleTools::createSimpleShader(QDemonRenderContext *ctx)
 {
     return compileAndDump(ctx, "SimpleShader", getSimpleVertShader(), getSimpleFragShader());
 }
 
-QDemonRenderVertFragShader *QDemonRenderExampleTools::createSimpleShaderTex(QDemonRenderContext &ctx)
+QSharedPointer<QDemonRenderShaderProgram> QDemonRenderExampleTools::createSimpleShaderTex(QDemonRenderContext *ctx)
 {
     return compileAndDump(ctx, "SimpleShader", getSimpleVertShader(), getSimpleFragShaderTex());
 }

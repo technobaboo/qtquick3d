@@ -31,6 +31,7 @@
 #ifndef QDEMON_RENDER_INPUT_ASSEMBLER_H
 #define QDEMON_RENDER_INPUT_ASSEMBLER_H
 
+#include <QtDemonRender/qtdemonrenderglobal.h>
 #include <QtDemonRender/qdemonrenderbasetypes.h>
 #include <QtDemonRender/qdemonrenderbackend.h>
 
@@ -42,7 +43,7 @@ class QDemonRenderBackend;
 class QDemonRenderAttribLayout;
 
 ///< this class handles the vertex attribute layout setup
-class QDemonRenderInputAssembler
+class Q_DEMONRENDER_EXPORT QDemonRenderInputAssembler
 {
 public:
     /**

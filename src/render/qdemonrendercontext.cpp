@@ -1044,12 +1044,12 @@ void QDemonRenderContextImpl::DoSetActiveProgramPipeline(QDemonRenderProgramPipe
     m_HardwarePropertyContext.m_ActiveProgramPipeline = inProgramPipeline;
 }
 
-QDemonRenderContext &QDemonRenderContext::CreateNULL()
+QSharedPointer<QDemonRenderContext> QDemonRenderContext::CreateNULL()
 {
-    QDemonRenderContext *retval = nullptr;
+    QSharedPointer<QDemonRenderContext> retval;
 
     // create backend
-    retval = new QDemonRenderContextImpl(QDemonRenderBackendNULL::CreateBackend());
-    return *retval;
+    retval.reset(new QDemonRenderContextImpl(QDemonRenderBackendNULL::CreateBackend()));
+    return retval;
 }
 QT_END_NAMESPACE

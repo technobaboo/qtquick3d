@@ -75,10 +75,11 @@ public:
                "}\n";
     }
 
-    static void createBox(QDemonRenderContext &context, QDemonRenderVertexBuffer *&outVertexBuffer,
-                          QDemonRenderIndexBuffer *&outIndexBuffer, bool releaseMemory = true);
-    static QDemonRenderVertFragShader *createSimpleShader(QDemonRenderContext &context);
-    static QDemonRenderVertFragShader *createSimpleShaderTex(QDemonRenderContext &context);
+    static QSharedPointer<QDemonRenderInputAssembler> createBox(QDemonRenderContext *context,
+                                                                QSharedPointer<QDemonRenderVertexBuffer> &outVertexBuffer,
+                                                                QSharedPointer<QDemonRenderIndexBuffer> &outIndexBuffer);
+    static QSharedPointer<QDemonRenderShaderProgram> createSimpleShader(QDemonRenderContext *context);
+    static QSharedPointer<QDemonRenderShaderProgram> createSimpleShaderTex(QDemonRenderContext *context);
 };
 
 #endif
