@@ -95,7 +95,7 @@ QDemonRenderContextImpl::~QDemonRenderContextImpl()
     m_Tex2DArrayToImpMap.clear();
     Q_ASSERT(m_Image2DtoImpMap.size() == 0);
     m_Image2DtoImpMap.clear();
-    Q_ASSERT(m_ShaderToImpMap.size() == 0);
+    //Q_ASSERT(m_ShaderToImpMap.size() == 0);
     m_ShaderToImpMap.clear();
     Q_ASSERT(m_RenderBufferToImpMap.size() == 0);
     m_RenderBufferToImpMap.clear();
@@ -547,7 +547,7 @@ QDemonRenderVertFragCompilationResult QDemonRenderContextImpl::CompileSource(
                 tessEvaluationShaderSource, geometryShaderSource, separateProgram, type, binaryProgram);
 
     if (result.mShader != nullptr)
-        m_ShaderToImpMap.insert(result.mShader->GetShaderProgramHandle(), result.mShader);
+        m_ShaderToImpMap.insert(result.mShader->GetShaderProgramHandle(), result.mShader.data());
 
     return result;
 }
@@ -564,7 +564,7 @@ QDemonRenderVertFragCompilationResult QDemonRenderContextImpl::CompileBinary(
                 tessEvaluationShaderSource, geometryShaderSource, false, type, true);
 
     if (result.mShader != nullptr)
-        m_ShaderToImpMap.insert(result.mShader->GetShaderProgramHandle(), result.mShader);
+        m_ShaderToImpMap.insert(result.mShader->GetShaderProgramHandle(), result.mShader.data());
 
     return result;
 #else
@@ -581,23 +581,23 @@ QDemonRenderContextImpl::CompileComputeSource(const char *shaderName,
             QDemonRenderShaderProgram::CreateCompute(*this, shaderName, computeShaderSource);
 
     if (result.mShader != nullptr)
-        m_ShaderToImpMap.insert(result.mShader->GetShaderProgramHandle(), result.mShader);
+        m_ShaderToImpMap.insert(result.mShader->GetShaderProgramHandle(), result.mShader.data());
 
     return result;
 }
 
 QSharedPointer<QDemonRenderShaderProgram> QDemonRenderContextImpl::GetShaderProgram(const void *implementationHandle)
 {
-    const QHash<const void *, QSharedPointer<QDemonRenderShaderProgram>>::iterator entry = m_ShaderToImpMap.find(implementationHandle);
+    const QHash<const void *, QDemonRenderShaderProgram *>::iterator entry = m_ShaderToImpMap.find(implementationHandle);
     if (entry != m_ShaderToImpMap.end())
-        return entry.value();
+        return QSharedPointer<QDemonRenderShaderProgram>(entry.value());
     return nullptr;
 }
 
-void QDemonRenderContextImpl::ShaderDestroyed(QSharedPointer<QDemonRenderShaderProgram> shader)
+void QDemonRenderContextImpl::ShaderDestroyed(QDemonRenderShaderProgram *shader)
 {
     m_ShaderToImpMap.remove(shader->GetShaderProgramHandle());
-    if (m_HardwarePropertyContext.m_ActiveShader == shader)
+    if (m_HardwarePropertyContext.m_ActiveShader.data() == shader)
         SetActiveShader(nullptr);
 }
 
@@ -1024,6 +1024,9 @@ QDemonRenderVertFragCompilationResult QDemonRenderContext::CompileSource(
 void QDemonRenderContextImpl::DoSetActiveShader(QSharedPointer<QDemonRenderShaderProgram> inShader)
 {
     m_HardwarePropertyContext.m_ActiveShader = nullptr;
+    if (!m_backend)
+        return;
+
     if (inShader)
         m_backend->SetActiveProgram(inShader->GetShaderProgramHandle());
     else {

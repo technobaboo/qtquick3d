@@ -68,9 +68,9 @@ void QDemonRenderExample::renderNow()
     }
     m_context->makeCurrent(this);
     drawFrame(m_frameTimer.elapsed());
+    m_frameTimer.restart();
     m_context->swapBuffers(this);
     m_context->doneCurrent();
-    m_frameTimer.restart();
     if (m_autoUpdate)
         renderLater();
 }

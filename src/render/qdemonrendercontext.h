@@ -478,7 +478,7 @@ protected:
     TContextTex2DArrayToImpMap m_Tex2DArrayToImpMap;
     TContextTexCubeToImpMap m_TexCubeToImpMap;
     TContextImage2DToImpMap m_Image2DtoImpMap;
-    QHash<const void *, QSharedPointer<QDemonRenderShaderProgram>> m_ShaderToImpMap;
+    QHash<const void *, QDemonRenderShaderProgram *> m_ShaderToImpMap;
     QHash<const void *, QDemonRenderRenderBuffer *> m_RenderBufferToImpMap;
     QHash<const void *, QDemonRenderFrameBuffer *> m_FrameBufferToImpMap;
     quint32 m_MaxTextureUnits;
@@ -879,7 +879,7 @@ public:
     CompileComputeSource(const char *shaderName, QDemonConstDataRef<qint8> computeShaderSource) override;
 
     QSharedPointer<QDemonRenderShaderProgram> GetShaderProgram(const void *implementationHandle) override;
-    virtual void ShaderDestroyed(QSharedPointer<QDemonRenderShaderProgram> shader);
+    virtual void ShaderDestroyed(QDemonRenderShaderProgram *shader);
 
     QDemonRenderProgramPipeline *CreateProgramPipeline() override;
     QDemonRenderPathSpecification *CreatePathSpecification() override;

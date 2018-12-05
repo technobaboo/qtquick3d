@@ -485,7 +485,7 @@ QDemonRenderShaderProgram::QDemonRenderShaderProgram(QDemonRenderContextImpl &co
 
 QDemonRenderShaderProgram::~QDemonRenderShaderProgram()
 {
-    m_Context.ShaderDestroyed(QSharedPointer<QDemonRenderShaderProgram>(this));
+    m_Context.ShaderDestroyed(this);
 
     if (m_ProgramHandle)
         m_Backend->ReleaseShaderProgram(m_ProgramHandle);

@@ -58,7 +58,6 @@ public:
         m_context = QDemonRenderContext::CreateGL(format());
         m_inputAssembler = QDemonRenderExampleTools::createBox(m_context.data(), m_vertexBuffer, m_indexBuffer);
         m_shader = QDemonRenderExampleTools::createSimpleShader(m_context.data());
-        m_context->SetViewport(QDemonRenderRect(0, 0, 400, 400));
         if (m_shader) {
             m_context->SetActiveShader(m_shader);
         }
@@ -73,12 +72,17 @@ public:
     virtual void drawFrame(qint64 delta) override
     {
         m_elapsedTime += delta;
-        QDemonGl2DemoMatrixRotate_create3x3(rot, (float)m_elapsedTime * 50, .707f, .707f, 0);
+        QDemonGl2DemoMatrixRotate_create3x3(rot, (float)m_elapsedTime * 0.1f, .707f, .707f, 0);
         float mvp[16];
         QDemonGl2DemoMatrixIdentity(mvp);
         QDemonGl2DemoMatrixMultiply(mvp, frus);
         QDemonGl2DemoMatrixMultiply(mvp, model);
         QDemonGl2DemoMatrixMultiply_4x4_3x3(mvp, rot);
+
+        if (m_viewportDirty) {
+            m_context->SetViewport(QDemonRenderRect(0, 0, this->width(), this->height()));
+            m_viewportDirty = false;
+        }
 
         QDemonConstDataRef<quint8> instance((quint8 *)mvp, 16 * sizeof(float));
         m_context->Clear(
@@ -98,7 +102,15 @@ private:
     float model[16];
     float rot[9];
     qint64 m_elapsedTime = 0;
+    bool m_viewportDirty = true;
 
+
+    // QWindow interface
+protected:
+    void resizeEvent(QResizeEvent *)
+    {
+        m_viewportDirty = true;
+    }
 };
 
 int main(int argc, char *argv[])
@@ -110,6 +122,7 @@ int main(int argc, char *argv[])
 
     // Advanced: Try 4.3 core (so we get compute shaders for instance)
     fmt.setVersion(4, 3);
+    fmt.setSwapBehavior(QSurfaceFormat::DoubleBuffer);
 
     SpinningCube spinningCube;
     spinningCube.setFormat(fmt);
