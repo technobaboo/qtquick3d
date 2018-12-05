@@ -27,152 +27,167 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "Qt3DSRenderExample.h"
-#include "Qt3DSRenderExampleTools.h"
-#include "render/Qt3DSRenderFrameBuffer.h"
-#include "render/Qt3DSRenderTexture2D.h"
-#include "render/Qt3DSRenderIndexBuffer.h"
-#include "render/Qt3DSRenderVertexBuffer.h"
-#include "render/Qt3DSRenderFrameBuffer.h"
-#include "render/Qt3DSRenderRenderBuffer.h"
-#include "foundation/Qt3DSVec4.h"
+#include "../shared/renderexample.h"
+#include "../shared/renderexampletools.h"
+#include <QtDemonRender/qdemonrenderframebuffer.h>
+#include <QtDemonRender/qdemonrendertexture2d.h>
+#include <QtDemonRender/qdemonrenderindexbuffer.h>
+#include <QtDemonRender/qdemonrendervertexbuffer.h>
+#include <QtDemonRender/qdemonrenderrenderbuffer.h>
+#include <QtDemonRender/qdemonrendershaderprogram.h>
+#include <QtGui/QVector4D>
+#include <QtGui/QGuiApplication>
 
-using namespace qt3ds;
-using namespace qt3ds::render;
-
-namespace {
 struct ShaderArgs
 {
     float mvp[16];
-    NVRenderTexture2DPtr texture;
-    NVRenderVertFragShaderPtr shader;
+    QSharedPointer<QDemonRenderTexture2D> texture;
+    QSharedPointer<QDemonRenderShaderProgram> shader;
     ShaderArgs() {}
 };
-class RenderToTexture : public NVRenderExample
+class RenderToTexture : public QDemonRenderExample
 {
-    NVRenderContext &m_Context;
-    NVScopedRefCounted<NVRenderVertexBuffer> mVertexBuffer;
-    NVScopedRefCounted<NVRenderIndexBuffer> mIndexBuffer;
+    QSharedPointer<QDemonRenderContext> m_Context;
+    QSharedPointer<QDemonRenderVertexBuffer> mVertexBuffer;
+    QSharedPointer<QDemonRenderIndexBuffer> mIndexBuffer;
+    QSharedPointer<QDemonRenderInputAssembler> mInputAssembler;
     // Simple shader
-    NVScopedRefCounted<NVRenderVertFragShader> mSimpleShader;
+    QSharedPointer<QDemonRenderShaderProgram> mSimpleShader;
     // Simple shader with texture lookup.
-    NVScopedRefCounted<NVRenderVertFragShader> mSimpleShaderTex;
+    QSharedPointer<QDemonRenderShaderProgram> mSimpleShaderTex;
 
-    NVScopedRefCounted<NVRenderFrameBuffer> mFrameBuffer;
-    NVScopedRefCounted<NVRenderTexture2D> mColorBuffer;
-    NVScopedRefCounted<NVRenderTexture2D> mDepthBuffer;
+    QSharedPointer<QDemonRenderFrameBuffer> mFrameBuffer;
+    QSharedPointer<QDemonRenderTexture2D> mColorBuffer;
+    QSharedPointer<QDemonRenderTexture2D> mDepthBuffer;
 
-    NVRenderHandle mGroupId;
-    QT3DSU32 mFBWidth;
-    QT3DSU32 mFBHeight;
+    quint32 mFBWidth;
+    quint32 mFBHeight;
 
     ShaderArgs mShaderArgs;
     float frus[16];
     float model[16];
     float rot[9];
+    qint64 m_elapsedTime = 0;
 
 public:
-    RenderToTexture(NVRenderContext &context)
-        : m_Context(context)
-        , mFBWidth(400)
+    RenderToTexture()
+        : mFBWidth(400)
         , mFBHeight(400)
     {
-        NVRenderExampleTools::createBox(m_Context, mVertexBuffer.mPtr, mIndexBuffer.mPtr);
-        mVertexBuffer->addRef();
-        mIndexBuffer->addRef();
-        mSimpleShader = NVRenderExampleTools::createSimpleShader(m_Context);
-        mSimpleShaderTex = NVRenderExampleTools::createSimpleShaderTex(m_Context);
+
+    }
+    void setupMVP(const QVector3D &translation)
+    {
+        float *mvp(mShaderArgs.mvp);
+        ::memcpy(mvp, frus, 16 * sizeof(float));
+        QDemonGl2DemoMatrixMultiply(mvp, model);
+        QDemonGl2DemoMatrixTranslate(mvp, translation.x(), translation.y(), translation.z());
+        QDemonGl2DemoMatrixMultiply_4x4_3x3(mvp, rot);
+    }
+    void DrawIndexedArrays(const QVector3D &translation)
+    {
+        setupMVP(translation);
+        m_Context->SetActiveShader(mShaderArgs.shader);
+        mShaderArgs.shader->SetPropertyValue("mat_mvp",
+                                             *reinterpret_cast<QMatrix4x4 *>(mShaderArgs.mvp));
+        mShaderArgs.shader->SetPropertyValue("image0", mShaderArgs.texture.data());
+        m_Context->Draw(QDemonRenderDrawMode::Triangles, mIndexBuffer->GetNumIndices(), 0);
+    }
+
+    // QDemonRenderExample interface
+public:
+    void initialize() override
+    {
+        m_Context = QDemonRenderContext::CreateGL(format());
+        mInputAssembler = QDemonRenderExampleTools::createBox(m_Context.data(), mVertexBuffer, mIndexBuffer);
+        mSimpleShader = QDemonRenderExampleTools::createSimpleShader(m_Context.data());
+        mSimpleShaderTex = QDemonRenderExampleTools::createSimpleShaderTex(m_Context.data());
         // If you don't want the depth buffer information back out of the system, then you can
         // do this.
-        // mDepthBuffer = m_Context.CreateRenderBuffer( NVRenderRenderBufferFormats::Depth16,
+        // mDepthBuffer = m_Context.CreateRenderBuffer( QDemonRenderRenderBufferFormats::Depth16,
         // mFBWidth, mFBHeight );
 
-        mDepthBuffer = m_Context.CreateTexture2D();
-        mDepthBuffer->SetTextureData(NVDataRef<QT3DSU8>(), 0, mFBWidth, mFBHeight,
-                                     NVRenderTextureFormats::Depth16);
-        mColorBuffer = m_Context.CreateTexture2D();
-        mColorBuffer->SetTextureData(NVDataRef<QT3DSU8>(), 0, mFBWidth, mFBHeight,
-                                     NVRenderTextureFormats::RGBA8);
-        if (mDepthBuffer.mPtr && mColorBuffer.mPtr) {
+        m_Context->SetInputAssembler(mInputAssembler.data());
+
+        mDepthBuffer.reset(m_Context->CreateTexture2D());
+        mDepthBuffer->SetTextureData(QDemonDataRef<quint8>(), 0, mFBWidth, mFBHeight,
+                                     QDemonRenderTextureFormats::Depth16);
+        mColorBuffer.reset(m_Context->CreateTexture2D());
+        mColorBuffer->SetTextureData(QDemonDataRef<quint8>(), 0, mFBWidth, mFBHeight,
+                                     QDemonRenderTextureFormats::RGBA8);
+        if (mDepthBuffer && mColorBuffer) {
             // Creating objects tends to Bind them to their active state hooks.
             // So to protect the rest of the system against what they are doing (if we care), we
             // need
             // to push the current state
             // Auto-binds the framebuffer.
-            mFrameBuffer = m_Context.CreateFrameBuffer();
-            mFrameBuffer->Attach(NVRenderFrameBufferAttachments::Color0, *mColorBuffer.mPtr);
-            mFrameBuffer->Attach(NVRenderFrameBufferAttachments::Depth, *mDepthBuffer.mPtr);
-            QT3DS_ASSERT(mFrameBuffer->IsComplete());
+            mFrameBuffer.reset(m_Context->CreateFrameBuffer());
+            mFrameBuffer->Attach(QDemonRenderFrameBufferAttachments::Color0, *mColorBuffer);
+            mFrameBuffer->Attach(QDemonRenderFrameBufferAttachments::Depth, *mDepthBuffer);
+            Q_ASSERT(mFrameBuffer->IsComplete());
 
-            m_Context.SetRenderTarget(NULL);
+            m_Context->SetRenderTarget(nullptr);
         }
-        mColorBuffer->SetMinFilter(NVRenderTextureMinifyingOp::Linear);
-        mColorBuffer->SetMagFilter(NVRenderTextureMagnifyingOp::Linear);
-        m_Context.SetVertexBuffer(mVertexBuffer);
-        m_Context.SetIndexBuffer(mIndexBuffer);
-        m_Context.SetDepthTestEnabled(true);
-        m_Context.SetDepthWriteEnabled(true);
-        m_Context.SetClearColor(QT3DSVec4(.3f));
+        mColorBuffer->SetMinFilter(QDemonRenderTextureMinifyingOp::Linear);
+        mColorBuffer->SetMagFilter(QDemonRenderTextureMagnifyingOp::Linear);
+        m_Context->SetDepthTestEnabled(true);
+        m_Context->SetDepthWriteEnabled(true);
+        m_Context->SetClearColor(QVector4D(.3f, .3f, .3f, .3f));
         // Setup various matrici
-        NvGl2DemoMatrixIdentity(model);
-        NvGl2DemoMatrixIdentity(frus);
-        NvGl2DemoMatrixFrustum(frus, -1, 1, -1, 1, 1, 10);
-        NvGl2DemoMatrixTranslate(model, 0, 0, -4);
-        mShaderArgs.texture = mColorBuffer.mPtr;
+        QDemonGl2DemoMatrixIdentity(model);
+        QDemonGl2DemoMatrixIdentity(frus);
+        QDemonGl2DemoMatrixFrustum(frus, -1, 1, -1, 1, 1, 10);
+        QDemonGl2DemoMatrixTranslate(model, 0, 0, -4);
+        mShaderArgs.texture = mColorBuffer;
     }
-    void setupMVP(QT3DSVec3 translation)
-    {
-        float *mvp(mShaderArgs.mvp);
-        memCopy(mvp, frus, 16 * sizeof(float));
-        NvGl2DemoMatrixMultiply(mvp, model);
-        NvGl2DemoMatrixTranslate(mvp, translation.x, translation.y, translation.z);
-        NvGl2DemoMatrixMultiply_4x4_3x3(mvp, rot);
-    }
-    void DrawIndexedArrays(QT3DSVec3 translation)
-    {
-        setupMVP(translation);
-        m_Context.SetActiveShader(mShaderArgs.shader);
-        mShaderArgs.shader->Bind();
-        mShaderArgs.shader->SetPropertyValue("mat_mvp",
-                                             *reinterpret_cast<QT3DSMat44 *>(mShaderArgs.mvp));
-        mShaderArgs.shader->SetPropertyValue("image0", mShaderArgs.texture);
-        m_Context.Draw(NVRenderDrawMode::Triangles, mIndexBuffer->GetNumIndices(), 0);
-    }
-
-    virtual void drawFrame(double currentSeconds)
-    {
-        NvGl2DemoMatrixRotate_create3x3(rot, (float)currentSeconds * 50, .707f, .707f, 0);
-        NVRenderClearFlags clearFlags(NVRenderClearValues::Color | NVRenderClearValues::Depth);
+    void drawFrame(qint64 delta) override {
+        m_elapsedTime += delta;
+        QDemonGl2DemoMatrixRotate_create3x3(rot, (float)m_elapsedTime * 0.1f, .707f, .707f, 0);
+        QDemonRenderClearFlags clearFlags(QDemonRenderClearValues::Color | QDemonRenderClearValues::Depth);
         // render to frame buffer
         {
-            NVRenderContextScopedProperty<NVRenderFrameBufferPtr> __framebuffer(
-                m_Context, &NVRenderContext::GetRenderTarget, &NVRenderContext::SetRenderTarget,
-                mFrameBuffer);
-            NVRenderContextScopedProperty<NVRenderRect> __viewport(
-                m_Context, &NVRenderContext::GetViewport, &NVRenderContext::SetViewport,
-                NVRenderRect(0, 0, mFBWidth, mFBHeight));
-            NVRenderContextScopedProperty<QT3DSVec4> __clearColor(
-                m_Context, &NVRenderContext::GetClearColor, &NVRenderContext::SetClearColor,
-                QT3DSVec4(.6f));
-            m_Context.Clear(clearFlags);
+            QDemonRenderContextScopedProperty<QDemonRenderFrameBufferPtr> __framebuffer(
+                *m_Context.data(),
+                &QDemonRenderContext::GetRenderTarget,
+                &QDemonRenderContext::SetRenderTarget,
+                mFrameBuffer.data());
+            QDemonRenderContextScopedProperty<QDemonRenderRect> __viewport(
+                *m_Context.data(), &QDemonRenderContext::GetViewport, &QDemonRenderContext::SetViewport,
+                QDemonRenderRect(0, 0, mFBWidth, mFBHeight));
+            QDemonRenderContextScopedProperty<QVector4D> __clearColor(
+                *m_Context.data(), &QDemonRenderContext::GetClearColor, &QDemonRenderContext::SetClearColor,
+                QVector4D(.6f, .6f, .6f, .6f));
+            m_Context->Clear(clearFlags);
             mShaderArgs.shader = mSimpleShader;
-            DrawIndexedArrays(QT3DSVec3(0.f));
+            DrawIndexedArrays(QVector3D());
         }
-        m_Context.Clear(clearFlags);
+        m_Context->Clear(clearFlags);
         mShaderArgs.texture = mColorBuffer;
         mShaderArgs.shader = mSimpleShaderTex;
 
-        DrawIndexedArrays(QT3DSVec3(-2.f, 0.f, 0.f));
+        DrawIndexedArrays(QVector3D(-2.f, 0.f, 0.f));
 
         mShaderArgs.texture = mDepthBuffer;
-        DrawIndexedArrays(QT3DSVec3(2.f, 0.f, 0.f));
+        DrawIndexedArrays(QVector3D(2.f, 0.f, 0.f));
     }
-    virtual QT3DSU32 getRuntimeInSeconds()
-    {
-        return mSimpleShader.mPtr && mSimpleShaderTex.mPtr ? 5 : 0;
-    }
-    virtual void release() { NVDelete(m_Context.GetFoundation(), this); }
 };
-}
 
-QT3DS_RENDER_REGISTER_EXAMPLE(RenderToTexture);
+
+
+int main(int argc, char *argv[])
+{
+    QGuiApplication app(argc, argv);
+
+    QSurfaceFormat fmt;
+    fmt.setProfile(QSurfaceFormat::CoreProfile);
+
+    // Advanced: Try 4.3 core (so we get compute shaders for instance)
+    fmt.setVersion(4, 3);
+    fmt.setSwapBehavior(QSurfaceFormat::DoubleBuffer);
+
+    RenderToTexture renderToTexture;
+    renderToTexture.setFormat(fmt);
+    renderToTexture.show();
+
+    return app.exec();
+}
