@@ -64,11 +64,11 @@ bool QDemonOpenGLExtensions::initializeOpenGLFunctions()
 }
 
 #if defined(QT_OPENGL_ES) || defined(QT_OPENGL_ES_2_ANGLE)
-Qt3DSOpenGLES2Extensions::Qt3DSOpenGLES2Extensions()
+QDemonOpenGLES2Extensions::QDemonOpenGLES2Extensions()
 {
 }
 
-bool Qt3DSOpenGLES2Extensions::initializeOpenGLFunctions()
+bool QDemonOpenGLES2Extensions::initializeOpenGLFunctions()
 {
     if (isInitialized())
         return true;
