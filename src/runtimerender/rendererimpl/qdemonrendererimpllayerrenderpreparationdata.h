@@ -193,11 +193,11 @@ struct SRenderableNodeEntry
 
 struct SScopedLightsListScope
 {
-    nvvector<SLight *> &m_LightsList;
-    nvvector<QVector3D> &m_LightDirList;
+    QVector<SLight *> &m_LightsList;
+    QVector<QVector3D> &m_LightDirList;
     quint32 m_ListOriginalSize;
-    SScopedLightsListScope(nvvector<SLight *> &inLights, nvvector<QVector3D> &inDestLightDirList,
-                           nvvector<QVector3D> &inSrcLightDirList,
+    SScopedLightsListScope(QVector<SLight *> &inLights, QVector<QVector3D> &inDestLightDirList,
+                           QVector<QVector3D> &inSrcLightDirList,
                            TNodeLightEntryList &inScopedLights)
         : m_LightsList(inLights)
         , m_LightDirList(inDestLightDirList)
@@ -236,7 +236,7 @@ struct SLayerRenderPreparationData
                                               const QVector2D &inCameraProps,
                                               TShaderFeatureSet inShaderFeatures,
                                               quint32 lightIndex, const SCamera &inCamera);
-    typedef nvhash_map<SLight *, SNode *> TLightToNodeMap;
+    typedef QHash<SLight *, SNode *> TLightToNodeMap;
     typedef Pool<SNodeLightEntry, ForwardingAllocator> TNodeLightEntryPoolType;
 
     enum Enum {
@@ -251,17 +251,17 @@ struct SLayerRenderPreparationData
     // search through m_FirstChild if length is zero.
 
     TNodeLightEntryPoolType m_RenderableNodeLightEntryPool;
-    nvvector<SRenderableNodeEntry> m_RenderableNodes;
+    QVector<SRenderableNodeEntry> m_RenderableNodes;
     TLightToNodeMap m_LightToNodeMap; // map of lights to nodes to cache if we have looked up a
     // given scoped light yet.
     // Built at the same time as the renderable nodes map.
     // these are processed so they are available when the shaders for the models
     // are being generated.
-    nvvector<SNode *> m_CamerasAndLights;
+    QVector<SNode *> m_CamerasAndLights;
 
     // Results of prepare for render.
     SCamera *m_Camera;
-    nvvector<SLight *> m_Lights; // Only contains lights that are global.
+    QVector<SLight *> m_Lights; // Only contains lights that are global.
     TRenderableObjectList m_OpaqueObjects;
     TRenderableObjectList m_TransparentObjects;
     // Sorted lists of the rendered objects.  There may be other transforms applied so
@@ -272,7 +272,7 @@ struct SLayerRenderPreparationData
     SClippingFrustum m_ClippingFrustum;
     Option<SLayerRenderPreparationResult> m_LayerPrepResult;
     // Widgets drawn at particular times during the rendering process
-    nvvector<IRenderWidget *> m_IRenderWidgets;
+    QVector<IRenderWidget *> m_IRenderWidgets;
     Option<QVector3D> m_CameraDirection;
     // Scoped lights need a level of indirection into a light direction list.  The source light
     // directions list is as long as there are lights on the layer.  It holds invalid
@@ -282,8 +282,8 @@ struct SLayerRenderPreparationData
     // in this list is completely constant and immutable; this relative position is saved on a
     // structure
     // and used when looking up the light direction for a given light.
-    nvvector<QVector3D> m_SourceLightDirections;
-    nvvector<QVector3D> m_LightDirections;
+    QVector<QVector3D> m_SourceLightDirections;
+    QVector<QVector3D> m_LightDirections;
     TModelContextPtrList m_ModelContexts;
     QDemonScopedRefCounted<IOffscreenRenderer> m_LastFrameOffscreenRenderer;
 

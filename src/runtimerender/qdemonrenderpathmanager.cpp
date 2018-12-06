@@ -28,14 +28,7 @@
 **
 ****************************************************************************/
 #include <qdemonrenderpathmanager.h>
-#include <Qt3DSFoundation.h>
-#include <Qt3DSBroadcastingAllocator.h>
-#include <Qt3DSAtomic.h>
-#include <Qt3DSIntrinsics.h>
-#include <Qt3DSContainers.h>
 #include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
-#include <Utils.h>
-#include <StringConversionImpl.h>
 #include <QtDemonRender/qdemonrendervertexbuffer.h>
 #include <qdemonrenderinputassembler.h>
 #include <QtDemonRuntimeRender/qdemonrenderpath.h>
@@ -53,15 +46,11 @@
 #include <qdemonrendercustommaterialsystem.h>
 #include <QtDemonRender/qdemonrendershaderprogram.h>
 #include <QtDemonRuntimeRender/qdemonvertexpipelineimpl.h>
-#include <Qt3DSMathUtils.h>
 #include <qdemonrenderpathrender.h>
 #include <qdemonrenderpathspecification.h>
 #include <QtDemonRuntimeRender/qdemonrenderpathsubpath.h>
-#include <Qt3DSImportPath.h>
 #include <qdemonrenderpathmath.h>
 #include <qdemonrenderinputstreamfactory.h>
-#include <Qt3DSMutex.h>
-
 
 QT_BEGIN_NAMESPACE
 
@@ -119,7 +108,7 @@ namespace {
 struct SPathSubPathBuffer
 {
     NVAllocatorCallback &m_Allocator;
-    nvvector<SPathAnchorPoint> m_SourceData;
+    QVector<SPathAnchorPoint> m_SourceData;
     SPathDirtyFlags m_Flags;
     SPathSubPath &m_SubPath;
     bool m_Closed;
@@ -177,7 +166,7 @@ typedef QDemonScopedRefCounted<SImportPathWrapper> TPathBufferPtr;
 struct SPathBuffer
 {
     NVAllocatorCallback &m_Allocator;
-    nvvector<QDemonScopedRefCounted<SPathSubPathBuffer>> m_SubPaths;
+    QVector<QDemonScopedRefCounted<SPathSubPathBuffer>> m_SubPaths;
     TPathBufferPtr m_PathBuffer;
 
     QDemonScopedRefCounted<QDemonRenderVertexBuffer> m_PatchData;
@@ -190,7 +179,7 @@ struct SPathBuffer
     PathTypes::Enum m_PathType;
     float m_Width;
     float m_CPUError;
-    NVBounds3 m_Bounds;
+    QDemonBounds3 m_Bounds;
     Option<STaperInformation> m_BeginTaper;
     Option<STaperInformation> m_EndTaper;
     CRegisteredString m_SourcePath;
@@ -208,7 +197,7 @@ struct SPathBuffer
         , m_PathType(PathTypes::Geometry)
         , m_Width(0.0f)
         , m_CPUError(0.0f)
-        , m_Bounds(NVBounds3::empty())
+        , m_Bounds(QDemonBounds3::empty())
         , m_RefCount(0)
     {
     }
@@ -786,22 +775,22 @@ struct SXYRectVertexPipeline : public SVertexPipelineImpl
 
 struct SPathManager : public IPathManager
 {
-    typedef nvhash_map<SPath *, QDemonScopedRefCounted<SPathBuffer>> TPathBufferHash;
-    typedef nvhash_map<SPathSubPath *, QDemonScopedRefCounted<SPathSubPathBuffer>>
+    typedef QHash<SPath *, QDemonScopedRefCounted<SPathBuffer>> TPathBufferHash;
+    typedef QHash<SPathSubPath *, QDemonScopedRefCounted<SPathSubPathBuffer>>
     TPathSubPathBufferHash;
-    typedef nvhash_map<SPathShaderMapKey, QDemonScopedRefCounted<SPathGeneratedShader>> TShaderMap;
-    typedef nvhash_map<SPathShaderMapKey, QDemonScopedRefCounted<SPathXYGeneratedShader>>
+    typedef QHash<SPathShaderMapKey, QDemonScopedRefCounted<SPathGeneratedShader>> TShaderMap;
+    typedef QHash<SPathShaderMapKey, QDemonScopedRefCounted<SPathXYGeneratedShader>>
     TPaintedShaderMap;
-    typedef nvhash_map<CRegisteredString, TPathBufferPtr> TStringPathBufferMap;
+    typedef QHash<CRegisteredString, TPathBufferPtr> TStringPathBufferMap;
 
     IQt3DSRenderContextCore &m_CoreContext;
     IQt3DSRenderContext *m_RenderContext;
     QString m_IdBuilder;
     TPathSubPathBufferHash m_SubPathBuffers;
     TPathBufferHash m_Buffers;
-    nvvector<SResultCubic> m_SubdivResult;
-    nvvector<float> m_KeyPointVec;
-    nvvector<QVector4D> m_PatchBuffer;
+    QVector<SResultCubic> m_SubdivResult;
+    QVector<float> m_KeyPointVec;
+    QVector<QVector4D> m_PatchBuffer;
     TShaderMap m_PathGeometryShaders;
     TPaintedShaderMap m_PathPaintedShaders;
     TStringPathBufferMap m_SourcePathBufferMap;
@@ -820,7 +809,7 @@ struct SPathManager : public IPathManager
     QDemonScopedRefCounted<QDemonRenderVertexBuffer> m_PaintedRectVertexBuffer;
     QDemonScopedRefCounted<QDemonRenderIndexBuffer> m_PaintedRectIndexBuffer;
 
-    nvvector<QDemonScopedRefCounted<QDemonRenderDepthStencilState>> m_DepthStencilStates;
+    QVector<QDemonScopedRefCounted<QDemonRenderDepthStencilState>> m_DepthStencilStates;
 
     QDemonScopedRefCounted<QDemonRenderPathSpecification> m_PathSpecification;
     QDemonScopedRefCounted<qt3dsimp::IPathBufferBuilder> m_PathBuilder;
@@ -914,9 +903,9 @@ struct SPathManager : public IPathManager
     }
 
     // This needs to be done using roots of the first derivative.
-    NVBounds3 GetBounds(const SPath &inPath) override
+    QDemonBounds3 GetBounds(const SPath &inPath) override
     {
-        NVBounds3 retval(NVBounds3::empty());
+        QDemonBounds3 retval(QDemonBounds3::empty());
 
         SPathBuffer *thePathBuffer = GetPathBufferObject(inPath);
         if (thePathBuffer) {
@@ -993,7 +982,7 @@ struct SPathManager : public IPathManager
         for (quint32 idx = 0, end = m_SubdivResult.size(); idx < end; ++idx) {
             if (lengthTotal + m_SubdivResult[idx].m_Length > inTaperStart) {
                 float breakTValue = (inTaperStart - lengthTotal) / m_SubdivResult[idx].m_Length;
-                nvvector<SResultCubic>::iterator breakIter = m_SubdivResult.begin() + idx;
+                QVector<SResultCubic>::iterator breakIter = m_SubdivResult.begin() + idx;
                 SCubicBezierCurve theCurve(breakIter->m_P1, breakIter->m_C1, breakIter->m_C2,
                                            breakIter->m_P2);
                 eastl::pair<SCubicBezierCurve, SCubicBezierCurve> subdivCurve =
@@ -1243,7 +1232,7 @@ struct SPathManager : public IPathManager
             inPathBuffer.m_EndTaperData = theEndTaperData;
 
             // cache bounds
-            NVBounds3 bounds = GetBounds(inPath);
+            QDemonBounds3 bounds = GetBounds(inPath);
             inPathBuffer.m_Bounds.minimum = bounds.minimum;
             inPathBuffer.m_Bounds.maximum = bounds.maximum;
         }
@@ -1330,7 +1319,7 @@ struct SPathManager : public IPathManager
             inPathBuffer.m_PathRender->SetPathSpecification(*m_PathSpecification);
 
             // cache bounds
-            NVBounds3 bounds = GetBounds(inPath);
+            QDemonBounds3 bounds = GetBounds(inPath);
             inPathBuffer.m_Bounds.minimum = bounds.minimum;
             inPathBuffer.m_Bounds.maximum = bounds.maximum;
 
@@ -1496,7 +1485,7 @@ struct SPathManager : public IPathManager
         return m_DepthStencilStates.back();
     }
 
-    static void DoSetCorrectiveScale(const QMatrix4x4 &mvp, QMatrix4x4 &outScale, NVBounds3 pathBounds)
+    static void DoSetCorrectiveScale(const QMatrix4x4 &mvp, QMatrix4x4 &outScale, QDemonBounds3 pathBounds)
     {
         // Compute the projected locations for the paraboloid and regular projection
         // and thereby set the appropriate scaling factor.
@@ -1517,7 +1506,7 @@ struct SPathManager : public IPathManager
             projParab[i] /= projParab[i].z + 1.0f;
         }
 
-        NVBounds3 boundsA, boundsB;
+        QDemonBounds3 boundsA, boundsB;
         for (int i = 0; i < 4; ++i) {
             boundsA.include(projReg[i]);
             boundsB.include(projParab[i]);
@@ -1628,7 +1617,7 @@ struct SPathManager : public IPathManager
         theRenderContext.SetDepthFunction(QDemonRenderBoolOp::AlwaysTrue);
         // Now render the path; this resets the stencil buffer.
         SetMaterialProperties(inShader.m_Shader, inRenderContext, inRenderProperties);
-        NVBounds3 rectBounds = inPathBuffer.m_PathRender->GetPathObjectStrokeBox();
+        QDemonBounds3 rectBounds = inPathBuffer.m_PathRender->GetPathObjectStrokeBox();
         if (isParaboloidPass) {
             rectBounds.scale(1.570796326795f);
         } // PKC : More of the same ugly hack.

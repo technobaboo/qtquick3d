@@ -31,14 +31,6 @@
 
 #include <stdio.h>
 
-#include <Qt3DSFoundation.h>
-#include <Qt3DSAllocatorCallback.h>
-#include <Qt3DSBroadcastingAllocator.h>
-#include <Qt3DSAtomic.h>
-#include <Qt3DSContainers.h>
-#include <FileTools.h>
-#include <Qt3DSMutex.h>
-
 #include <QDir>
 #include <QDirIterator>
 #include <QFile>

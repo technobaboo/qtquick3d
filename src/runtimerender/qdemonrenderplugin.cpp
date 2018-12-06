@@ -195,7 +195,7 @@ public:
     }
 };
 
-typedef nvvector<SRenderPluginPropertyData> TPropertyValueList;
+typedef QVector<SRenderPluginPropertyData> TPropertyValueList;
 
 struct IInternalPluginClass : public IRenderPluginClass
 {
@@ -258,7 +258,7 @@ struct InstanceImpl : public IRenderPluginInstance
     QDemonScopedRefCounted<IInternalPluginClass> m_Owner;
     CRegisteredString m_RendererType;
     // Backing store of property values
-    nvvector<SRenderPluginPropertyData> m_PropertyValues;
+    QVector<SRenderPluginPropertyData> m_PropertyValues;
     bool m_Dirty;
     QDemonRenderContext *m_RenderContext;
     qint32 mRefCount;
@@ -426,16 +426,16 @@ typedef eastl::pair<CRegisteredString, RenderPluginPropertyValueTypes::Enum> TSt
 
 struct PluginClassImpl : public IInternalPluginClass
 {
-    typedef nvhash_map<CRegisteredString, quint32> TStringIndexMap;
+    typedef QHash<CRegisteredString, quint32> TStringIndexMap;
     NVFoundationBase &m_Foundation;
     IStringTable &m_StringTable;
     TRenderPluginClass m_Class;
     CRegisteredString m_Type;
     CLoadedDynamicLibrary *m_DynamicLibrary;
-    nvvector<SRenderPluginPropertyDeclaration> m_RegisteredProperties;
+    QVector<SRenderPluginPropertyDeclaration> m_RegisteredProperties;
     TStringIndexMap m_ComponentNameToComponentIndexMap;
-    nvvector<TStringTypePair> m_FullPropertyList;
-    nvvector<TRenderPluginPropertyUpdate> m_UpdateBuffer;
+    QVector<TStringTypePair> m_FullPropertyList;
+    QVector<TRenderPluginPropertyUpdate> m_UpdateBuffer;
     CRenderString m_TempString;
     qint32 m_APIVersion;
 
@@ -656,8 +656,8 @@ typedef eastl::vector<SLoadedPluginData> TLoadedPluginDataList;
 
 struct PluginManagerImpl : public IRenderPluginManager, public IRenderPluginManagerCore
 {
-    typedef nvhash_map<CRegisteredString, QDemonScopedRefCounted<IRenderPluginClass>> TLoadedClassMap;
-    typedef nvhash_map<PluginInstanceKey, QDemonScopedRefCounted<IRenderPluginInstance>> TInstanceMap;
+    typedef QHash<CRegisteredString, QDemonScopedRefCounted<IRenderPluginClass>> TLoadedClassMap;
+    typedef QHash<PluginInstanceKey, QDemonScopedRefCounted<IRenderPluginInstance>> TInstanceMap;
     NVFoundationBase &m_Foundation;
     IStringTable &m_StringTable;
     TLoadedClassMap m_LoadedClasses;
@@ -874,7 +874,7 @@ struct PluginManagerImpl : public IRenderPluginManager, public IRenderPluginMana
         quint32 numClasses = theReader.LoadRef<quint32>();
         ForwardingAllocator alloc(m_Foundation.getAllocator(), "tempstrings");
         TStr workStr(alloc);
-        nvvector<SRenderPluginPropertyDeclaration> propertyBuffer(m_Foundation.getAllocator(),
+        QVector<SRenderPluginPropertyDeclaration> propertyBuffer(m_Foundation.getAllocator(),
                                                                   "tempprops");
         for (quint32 classIdx = 0; classIdx < numClasses; ++classIdx) {
             CRegisteredString classPath = theReader.LoadRef<CRegisteredString>();

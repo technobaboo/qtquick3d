@@ -28,10 +28,6 @@
 **
 ****************************************************************************/
 #include <qdemonrenderrenderlist.h>
-#include <Qt3DSFoundation.h>
-#include <Qt3DSBroadcastingAllocator.h>
-#include <Qt3DSAtomic.h>
-#include <Qt3DSContainers.h>
 #include <QtDemonRender/qdemonrenderbasetypes.h>
 
 QT_BEGIN_NAMESPACE
@@ -41,7 +37,7 @@ namespace {
 struct SRenderList : public IRenderList
 {
     typedef eastl::pair<quint32, IRenderTask *> TTaskIdTaskPair;
-    typedef nvvector<TTaskIdTaskPair> TTaskList;
+    typedef QVector<TTaskIdTaskPair> TTaskList;
 
     NVFoundationBase &m_Foundation;
     TTaskList m_Tasks;

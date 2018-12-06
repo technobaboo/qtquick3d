@@ -79,7 +79,7 @@ using Option;
 using Empty;
 using float;
 using QVector3D;
-using nvvector;
+using QVector;
 using quint32;
 using RenderLightTypes;
 using DefaultMaterialLighting;
@@ -122,11 +122,11 @@ namespace qt3dsdm {
 template <>
 struct WStrOps<SFloat2>
 {
-    void StrTo(const char8_t *buffer, SFloat2 &item, nvvector<char8_t> &ioTempBuf)
+    void StrTo(const char8_t *buffer, SFloat2 &item, QVector<char8_t> &ioTempBuf)
     {
         quint32 len = (quint32)strlen(buffer);
         ioTempBuf.resize(len + 1);
-        memCopy(ioTempBuf.data(), buffer, (len + 1) * sizeof(char8_t));
+        ::memcpy(ioTempBuf.data(), buffer, (len + 1) * sizeof(char8_t));
         MemoryBuffer<RawAllocator> unused;
         qt3dsdm::IStringTable *theTable(nullptr);
         WCharTReader reader(ioTempBuf.begin(), unused, *theTable);
@@ -137,11 +137,11 @@ struct WStrOps<SFloat2>
 template <>
 struct WStrOps<SFloat3>
 {
-    void StrTo(const char8_t *buffer, SFloat3 &item, nvvector<char8_t> &ioTempBuf)
+    void StrTo(const char8_t *buffer, SFloat3 &item, QVector<char8_t> &ioTempBuf)
     {
         quint32 len = (quint32)strlen(buffer);
         ioTempBuf.resize(len + 1);
-        memCopy(ioTempBuf.data(), buffer, (len + 1) * sizeof(char8_t));
+        ::memcpy(ioTempBuf.data(), buffer, (len + 1) * sizeof(char8_t));
         MemoryBuffer<RawAllocator> unused;
         qt3dsdm::IStringTable *theTable(nullptr);
         WCharTReader reader(ioTempBuf.begin(), unused, *theTable);
@@ -255,11 +255,11 @@ public:
 struct SDomReaderPropertyParser : public IPropertyParser
 {
     qt3dsdm::IDOMReader &m_Reader;
-    nvvector<char8_t> &m_TempBuf;
+    QVector<char8_t> &m_TempBuf;
     IDOMReferenceResolver &m_Resolver;
     SGraphObject &m_Object;
 
-    SDomReaderPropertyParser(qt3dsdm::IDOMReader &reader, nvvector<char8_t> &inTempBuf,
+    SDomReaderPropertyParser(qt3dsdm::IDOMReader &reader, QVector<char8_t> &inTempBuf,
                              IDOMReferenceResolver &inResolver, SGraphObject &inObject)
         : m_Reader(reader)
         , m_TempBuf(inTempBuf)
@@ -455,7 +455,7 @@ struct SRenderUIPLoader : public IDOMReferenceResolver
     TIdObjectMap &m_ObjectMap;
     IBufferManager &m_BufferManager;
     SPresentation *m_Presentation;
-    nvvector<char8_t> m_TempBuf;
+    QVector<char8_t> m_TempBuf;
     TStrType m_TempParseString;
     IEffectSystem &m_EffectSystem;
     const char8_t *m_PresentationDir;
@@ -937,7 +937,7 @@ struct SRenderUIPLoader : public IDOMReferenceResolver
                                   const dynamic::SPropertyDefinition &inPropDesc,
                                   const TDataType &inProp)
     {
-        memCopy(inEffect.GetDataSectionBegin() + inPropDesc.m_Offset, &inProp, sizeof(TDataType));
+        ::memcpy(inEffect.GetDataSectionBegin() + inPropDesc.m_Offset, &inProp, sizeof(TDataType));
     }
     template <typename TDataType>
     void SetDynamicObjectProperty(SDynamicObject &inEffect,
@@ -1909,9 +1909,9 @@ void IUIPLoader::CreateEffectClassFromMetaEffect(
         Q_ASSERT(false);
         return;
     }
-    nvvector<SPropertyDeclaration> thePropertyDeclarations(
+    QVector<SPropertyDeclaration> thePropertyDeclarations(
         inFoundation.getAllocator(), "IUIPLoader::CreateEffectClassFromMetaEffect");
-    nvvector<CRegisteredString> theEnumNames(
+    QVector<CRegisteredString> theEnumNames(
         inFoundation.getAllocator(), "IUIPLoader::CreateEffectClassFromMetaEffect");
     CRenderString theConvertStr;
     CRenderString theConvertShaderTypeStr;
@@ -1970,10 +1970,10 @@ void IUIPLoader::CreateMaterialClassFromMetaMaterial(
         Q_ASSERT(false);
         return;
     }
-    nvvector<SPropertyDeclaration> thePropertyDeclarations(
+    QVector<SPropertyDeclaration> thePropertyDeclarations(
         inFoundation.getAllocator(),
         "IUIPLoader::CreateMaterialClassFromMetaMaterial");
-    nvvector<CRegisteredString> theEnumNames(
+    QVector<CRegisteredString> theEnumNames(
         inFoundation.getAllocator(),
         "IUIPLoader::CreateMaterialClassFromMetaMaterial");
     CRenderString theConvertStr;

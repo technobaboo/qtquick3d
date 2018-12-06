@@ -29,14 +29,8 @@
 ****************************************************************************/
 #include <qdemonrendertexttexturecache.h>
 #include <qdemontextrenderer.h>
-#include <Qt3DSContainers.h>
-#include <Qt3DSAtomic.h>
-#include <Qt3DSFoundation.h>
-#include <Qt3DSBroadcastingAllocator.h>
 #include <QtDemonRender/qdemonrendertexture2d.h>
 #include <QtDemonRender/qdemonrendercontext.h>
-#include <Qt3DSInvasiveLinkedList.h>
-#include <Qt3DSPool.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -125,7 +119,7 @@ struct STextCacheNode
     }
 };
 
-typedef nvhash_map<STextRenderInfoAndHash, STextCacheNode *> TTextureInfoHash;
+typedef QHash<STextRenderInfoAndHash, STextCacheNode *> TTextureInfoHash;
 
 DEFINE_INVASIVE_LIST(TextCacheNode);
 IMPLEMENT_INVASIVE_LIST(TextCacheNode, m_PreviousSibling, m_NextSibling);

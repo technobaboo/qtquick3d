@@ -31,8 +31,9 @@
 #ifndef QDEMON_RENDER_SCENE_H
 #define QDEMON_RENDER_SCENE_H
 #include <QtDemonRuntimeRender/qdemonrender.h>
-#include <QVector3D.h>
 #include <QtDemonRuntimeRender/qdemonrendergraphobject.h>
+
+#include <QtGui/QVector3D>
 
 QT_BEGIN_NAMESPACE
 struct SLayer;

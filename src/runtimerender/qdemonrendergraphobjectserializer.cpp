@@ -41,13 +41,8 @@
 #include <QtDemonRuntimeRender/qdemonrendercamera.h>
 #include <QtDemonRuntimeRender/qdemonrenderlight.h>
 #include <QtDemonRuntimeRender/qdemonrendercustommaterial.h>
-#include <Qt3DSFoundation.h>
-#include <Qt3DSBroadcastingAllocator.h>
-#include <Qt3DSContainers.h>
 #include <qdemonrendereffectsystem.h>
-#include <SerializationTypes.h>
 #include <QtDemonRuntimeRender/qdemonrenderstring.h>
-#include <FileTools.h>
 #include <qdemonrenderplugingraphobject.h>
 #include <QtDemonRuntimeRender/qdemonrenderreferencedmaterial.h>
 #include <QtDemonRuntimeRender/qdemonrenderpath.h>
@@ -66,7 +61,7 @@ void Align(MemoryBuffer<> &inBuffer)
 {
     inBuffer.align(sizeof(void *));
 }
-typedef nvvector<eastl::pair<GraphObjectTypes::Enum, quint32>> TObjectFileStatList;
+typedef QVector<eastl::pair<GraphObjectTypes::Enum, quint32>> TObjectFileStatList;
 typedef SPtrOffsetMap TPtrOffsetMap;
 
 struct SSerializerWriteContext
@@ -257,8 +252,8 @@ struct SWriteRemapper
     }
 };
 
-void PrepareFirstPass(const SNode &inNode, nvvector<const SNode *> &ioLightCameras,
-                      nvvector<const SNode *> &ioRenderable)
+void PrepareFirstPass(const SNode &inNode, QVector<const SNode *> &ioLightCameras,
+                      QVector<const SNode *> &ioRenderable)
 {
     if (GraphObjectTypes::IsRenderableType(inNode.m_Type))
         ioRenderable.push_back(&inNode);
@@ -521,7 +516,7 @@ void WriteGraphObject(const SGraphObject &inObject, SSerializerWriteContext &out
     }
 }
 
-void WriteNodeList(nvvector<const SNode *> &inList, SSerializerWriteContext &outSavedBuffer)
+void WriteNodeList(QVector<const SNode *> &inList, SSerializerWriteContext &outSavedBuffer)
 {
     for (quint32 idx = 0, end = inList.size(); idx < end; ++idx)
         WriteGraphObject(*inList[idx], outSavedBuffer);
@@ -569,9 +564,9 @@ void SGraphObjectSerializer::Save(NVFoundationBase &inFoundation,
                                   QDemonDataRef<SGraphObject *> inExtraGraphObjects)
 {
     using namespace foundation;
-    nvvector<const SNode *> theLightCameraList(inFoundation.getAllocator(),
+    QVector<const SNode *> theLightCameraList(inFoundation.getAllocator(),
                                                "SGraphObjectSerializer::theLightCameraList");
-    nvvector<const SNode *> theRenderableList(inFoundation.getAllocator(),
+    QVector<const SNode *> theRenderableList(inFoundation.getAllocator(),
                                               "SGraphObjectSerializer::theRenderableList");
     TObjectFileStatList theStatList(inFoundation.getAllocator(),
                                     "SGraphObjectSerializer::FileSizeStats");

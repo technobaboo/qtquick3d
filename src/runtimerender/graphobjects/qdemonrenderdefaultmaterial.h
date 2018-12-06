@@ -32,11 +32,12 @@
 #define QDEMON_RENDER_DEFAULT_MATERIAL_H
 #include <QtDemonRuntimeRender/qdemonrender.h>
 #include <QtDemonRuntimeRender/qdemonrendergraphobject.h>
-#include <Qt3DSFlags.h>
-#include <StringTable.h>
-#include <QVector3D.h>
 #include <QtDemonRuntimeRender/qdemonrendermaterialdirty.h>
 #include <QtDemonRuntimeRender/qdemonrenderlightmaps.h>
+
+#include <QtDemon/qdemonflags.h>
+
+#include <QtGui/QVector3D>
 
 QT_BEGIN_NAMESPACE
 

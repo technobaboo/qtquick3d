@@ -28,15 +28,6 @@
 **
 ****************************************************************************/
 #include <qdemonrenderthreadpool.h>
-#include <Qt3DSThread.h>
-#include <Qt3DSMutex.h>
-#include <Qt3DSContainers.h>
-#include <Qt3DSAtomic.h>
-#include <Qt3DSBroadcastingAllocator.h>
-#include <Qt3DSSync.h>
-#include <Qt3DSMutex.h>
-#include <Qt3DSPool.h>
-#include <Qt3DSInvasiveLinkedList.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -130,13 +121,13 @@ struct SThreadPoolThread : public Thread
 
 struct SThreadPool : public IThreadPool, public IInternalTaskManager
 {
-    typedef nvhash_map<quint64, STask *> TIdTaskMap;
+    typedef QHash<quint64, STask *> TIdTaskMap;
     typedef Mutex::ScopedLock TLockType;
     typedef Pool<STask, ForwardingAllocator> TTaskPool;
 
     NVFoundationBase &m_Foundation;
     volatile qint32 mRefCount;
-    nvvector<SThreadPoolThread *> m_Threads;
+    QVector<SThreadPoolThread *> m_Threads;
     TIdTaskMap m_Tasks;
     Sync m_TaskListEvent;
     volatile bool m_Running;

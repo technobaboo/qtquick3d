@@ -553,7 +553,7 @@ struct SMaterialClass
     }
 };
 
-typedef nvhash_map<CRegisteredString, QDemonScopedRefCounted<SMaterialClass>> TStringMaterialMap;
+typedef QHash<CRegisteredString, QDemonScopedRefCounted<SMaterialClass>> TStringMaterialMap;
 typedef eastl::pair<CRegisteredString, CRegisteredString> TStrStrPair;
 
 namespace eastl {
@@ -794,9 +794,9 @@ struct SCustomMaterialBuffer
 };
 
 struct SMaterialSystem;
-typedef nvhash_map<CRegisteredString, QDemonScopedRefCounted<QDemonRenderVertexBuffer>>
+typedef QHash<CRegisteredString, QDemonScopedRefCounted<QDemonRenderVertexBuffer>>
     TStringVertexBufferMap;
-typedef nvhash_map<CRegisteredString, QDemonScopedRefCounted<QDemonRenderInputAssembler>>
+typedef QHash<CRegisteredString, QDemonScopedRefCounted<QDemonRenderInputAssembler>>
     TStringAssemblerMap;
 
 struct SStringMemoryBarrierFlagMap
@@ -863,7 +863,7 @@ SStringBlendFuncMap g_BlendFuncMap[] = {
 
 struct SMaterialSystem : public ICustomMaterialSystem
 {
-    typedef nvhash_map<SShaderMapKey, QDemonScopedRefCounted<SCustomMaterialShader>> TShaderMap;
+    typedef QHash<SShaderMapKey, QDemonScopedRefCounted<SCustomMaterialShader>> TShaderMap;
     typedef eastl::pair<CRegisteredString, SImage *> TAllocatedImageEntry;
 
     IQt3DSRenderContextCore &m_CoreContext;
@@ -871,9 +871,9 @@ struct SMaterialSystem : public ICustomMaterialSystem
     mutable SPreAllocatedAllocator m_Allocator;
     TStringMaterialMap m_StringMaterialMap;
     TShaderMap m_ShaderMap;
-    nvvector<TCustomMaterialTextureEntry> m_TextureEntries;
-    nvvector<SCustomMaterialBuffer> m_AllocatedBuffers;
-    nvvector<TAllocatedImageEntry> m_AllocatedImages;
+    QVector<TCustomMaterialTextureEntry> m_TextureEntries;
+    QVector<SCustomMaterialBuffer> m_AllocatedBuffers;
+    QVector<TAllocatedImageEntry> m_AllocatedImages;
     bool m_UseFastBlits;
     QString m_ShaderNameBuilder;
     quint64 m_LastFrameTime;

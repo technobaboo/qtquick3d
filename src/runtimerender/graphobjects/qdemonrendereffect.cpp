@@ -28,11 +28,12 @@
 **
 ****************************************************************************/
 #include <QtDemonRuntimeRender/qdemonrendereffect.h>
-#include <qdemonrendereffectsystem.h>
-#include <QVector2D.h>
-#include <QVector3D.h>
+#include <QtDemonRuntimeRender/qdemonrendereffectsystem.h>
 #include <QtDemonRuntimeRender/qdemonrenderstring.h>
-#include <FileTools.h>
+
+#include <QtGui/QVector2D>
+#include <QtGui/QVector3D>
+
 
 QT_BEGIN_NAMESPACE
 

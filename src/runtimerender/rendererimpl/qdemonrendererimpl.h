@@ -35,21 +35,13 @@
 #include <QtDemonRuntimeRender/qdemonrenderableobjects.h>
 #include <QtDemonRuntimeRender/qdemonrendererimplshaders.h>
 #include <QtDemonRuntimeRender/qdemonrendererimpllayerrenderdata.h>
-#include <Qt3DSFlags.h>
 #include <QtDemonRuntimeRender/qdemonrendermesh.h>
 #include <QtDemonRuntimeRender/qdemonrendermodel.h>
-#include <Qt3DSBounds3.h>
-#include <QtDemonRender/qdemonrendercontext.h>
-#include <QtDemonRender/qdemonrendershaderprogram.h>
 #include <QtDemonRuntimeRender/qdemonrenderdefaultmaterial.h>
-#include <StringTable.h>
-#include <Qt3DSInvasiveSet.h>
-#include <Qt3DSDataRef.h>
 #include <QtDemonRuntimeRender/qdemonrenderlayer.h>
 #include <QtDemonRuntimeRender/qdemonrenderray.h>
 #include <QtDemonRuntimeRender/qdemonrendertext.h>
 #include <QtDemonRuntimeRender/qdemonoffscreenrendermanager.h>
-#include <Qt3DSAtomic.h>
 #include <QtDemonRuntimeRender/qdemonrendercamera.h>
 #include <QtDemonRuntimeRender/qdemonrendershadercache.h>
 #include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
@@ -58,13 +50,20 @@
 #include <QtDemonRuntimeRender/qdemonrenderwidgets.h>
 #include <QtDemonRuntimeRender/qdemonrendershadercodegenerator.h>
 #include <QtDemonRuntimeRender/qdemonrenderclippingfrustum.h>
-#include <Qt3DSUnionCast.h>
-#include <FastAllocator.h>
-#include <AutoDeallocatorAllocator.h>
 #include <QtDemonRuntimeRender/qdemonrendershaderkeys.h>
 #include <QtDemonRuntimeRender/qdemonrendershadercache.h>
 #include <QtDemonRuntimeRender/qdemonrenderprofiler.h>
 #include <QtDemonRuntimeRender/qdemonrenderdefaultmaterialshadergenerator.h>
+
+#include <QtDemonRender/qdemonrendercontext.h>
+#include <QtDemonRender/qdemonrendershaderprogram.h>
+
+#include <QtDemon/QDemonFlags>
+#include <QtDemon/QDemonBounds3>
+#include <QtDemon/QDemonDataRef>
+
+//#include <Qt3DSUnionCast.h>
+//#include <Qt3DSInvasiveSet.h>
 
 QT_BEGIN_NAMESPACE
 inline bool FloatLessThan(float lhs, float rhs)
@@ -124,12 +123,10 @@ struct SPickResultProcessResult : public Qt3DSRenderPickResult
 
 struct STextShaderPtr
 {
-    NVAllocatorCallback &m_Allocator;
     bool m_HasGeneratedShader;
     STextShader *m_Shader;
-    STextShaderPtr(NVAllocatorCallback &alloc)
-        : m_Allocator(alloc)
-        , m_HasGeneratedShader(false)
+    STextShaderPtr()
+        : m_HasGeneratedShader(false)
         , m_Shader(nullptr)
     {
     }
@@ -142,31 +139,26 @@ struct STextShaderPtr
     ~STextShaderPtr()
     {
         if (m_Shader)
-            NVDelete(m_Allocator, m_Shader);
+            delete m_Shader;
     }
     operator STextShader *() { return m_Shader; }
 };
 
-class QDEMON_AUTOTEST_EXPORT Qt3DSRendererImpl : public IQt3DSRenderer, public IRenderWidgetContext
+class Q_DEMONRUNTIMERENDER_EXPORT Qt3DSRendererImpl : public IQt3DSRenderer, public IRenderWidgetContext
 {
-    typedef nvhash_map<SShaderDefaultMaterialKey, SShaderGeneratorGeneratedShader *> TShaderMap;
-    typedef nvhash_map<CRegisteredString, QDemonScopedRefCounted<QDemonRenderConstantBuffer>>
-    TStrConstanBufMap;
-    typedef nvhash_map<SRenderInstanceId, QDemonScopedRefCounted<SLayerRenderData>,
-    eastl::hash<SRenderInstanceId>> TInstanceRenderMap;
-    typedef nvvector<SLayerRenderData *> TLayerRenderList;
-    typedef nvvector<Qt3DSRenderPickResult> TPickResultArray;
+    typedef QHash<SShaderDefaultMaterialKey, SShaderGeneratorGeneratedShader *> TShaderMap;
+    typedef QHash<QString, QDemonScopedRefCounted<QDemonRenderConstantBuffer>> TStrConstanBufMap;
+    typedef QHash<SRenderInstanceId, QDemonScopedRefCounted<SLayerRenderData>, eastl::hash<SRenderInstanceId>> TInstanceRenderMap;
+    typedef QVector<SLayerRenderData *> TLayerRenderList;
+    typedef QVector<Qt3DSRenderPickResult> TPickResultArray;
 
     // Items to implement the widget context.
-    typedef nvhash_map<CRegisteredString, QDemonScopedRefCounted<QDemonRenderVertexBuffer>>
-    TStrVertBufMap;
-    typedef nvhash_map<CRegisteredString, QDemonScopedRefCounted<QDemonRenderIndexBuffer>>
-    TStrIndexBufMap;
-    typedef nvhash_map<CRegisteredString, QDemonScopedRefCounted<QDemonRenderShaderProgram>>
-    TStrShaderMap;
-    typedef nvhash_map<CRegisteredString, QDemonScopedRefCounted<QDemonRenderInputAssembler>> TStrIAMap;
+    typedef QHash<QString, QDemonScopedRefCounted<QDemonRenderVertexBuffer>> TStrVertBufMap;
+    typedef QHash<QString, QDemonScopedRefCounted<QDemonRenderIndexBuffer>> TStrIndexBufMap;
+    typedef QHash<QString, QDemonScopedRefCounted<QDemonRenderShaderProgram>> TStrShaderMap;
+    typedef QHash<QString, QDemonScopedRefCounted<QDemonRenderInputAssembler>> TStrIAMap;
 
-    typedef nvhash_map<long, SNode *> TBoneIdNodeMap;
+    typedef QHash<long, SNode *> TBoneIdNodeMap;
 
     IQt3DSRenderContext &m_qt3dsContext;
     QDemonScopedRefCounted<QDemonRenderContext> m_Context;
@@ -341,7 +333,7 @@ public:
                                const SRenderInstanceId id) override;
 
     virtual Option<QVector2D>
-    FacePosition(SNode &inNode, NVBounds3 inBounds, const QMatrix4x4 &inGlobalTransform,
+    FacePosition(SNode &inNode, QDemonBounds3 inBounds, const QMatrix4x4 &inGlobalTransform,
                  const QVector2D &inViewportDimensions, const QVector2D &inMouseCoords,
                  QDemonDataRef<SGraphObject *> inMapperObjects, SBasisPlanes::Enum inPlane) override;
 
@@ -403,7 +395,7 @@ public:
     void EndLayerRender();
     void PrepareImageForIbl(SImage &inImage);
 
-    QDemonRenderShaderProgram *CompileShader(CRegisteredString inName, const char8_t *inVert,
+    QDemonRenderShaderProgram *CompileShader(const QString &inName, const char8_t *inVert,
                                              const char8_t *inFrame);
 
     QDemonRenderShaderProgram *GenerateShader(SSubsetRenderable &inRenderable,
@@ -448,7 +440,7 @@ public:
     void GenerateXYQuad();
     void GenerateXYQuadStrip();
     void GenerateXYZPoint();
-    eastl::pair<QDemonRenderVertexBuffer *, QDemonRenderIndexBuffer *> GetXYQuad();
+    QPair<QDemonRenderVertexBuffer *, QDemonRenderIndexBuffer *> GetXYQuad();
     SLayerProgAABlendShader *GetLayerProgAABlendShader();
     SShadowmapPreblurShader *GetCubeShadowBlurXShader();
     SShadowmapPreblurShader *GetCubeShadowBlurYShader();
@@ -487,26 +479,26 @@ public:
 #endif
     // widget context implementation
     virtual QDemonRenderVertexBuffer &
-    GetOrCreateVertexBuffer(CRegisteredString &inStr, quint32 stride,
+    GetOrCreateVertexBuffer(QString &inStr, quint32 stride,
                             QDemonConstDataRef<quint8> bufferData = QDemonConstDataRef<quint8>()) override;
     virtual QDemonRenderIndexBuffer &
-    GetOrCreateIndexBuffer(CRegisteredString &inStr,
+    GetOrCreateIndexBuffer(QString &inStr,
                            QDemonRenderComponentTypes::Enum componentType, size_t size,
                            QDemonConstDataRef<quint8> bufferData = QDemonConstDataRef<quint8>()) override;
     virtual QDemonRenderAttribLayout &
     CreateAttributeLayout(QDemonConstDataRef<QDemonRenderVertexBufferEntry> attribs) override;
     virtual QDemonRenderInputAssembler &
-    GetOrCreateInputAssembler(CRegisteredString &inStr, QDemonRenderAttribLayout *attribLayout,
+    GetOrCreateInputAssembler(QString &inStr, QDemonRenderAttribLayout *attribLayout,
                               QDemonConstDataRef<QDemonRenderVertexBuffer *> buffers,
                               const QDemonRenderIndexBuffer *indexBuffer,
                               QDemonConstDataRef<quint32> strides, QDemonConstDataRef<quint32> offsets) override;
 
-    QDemonRenderVertexBuffer *GetVertexBuffer(CRegisteredString &inStr) override;
-    QDemonRenderIndexBuffer *GetIndexBuffer(CRegisteredString &inStr) override;
-    QDemonRenderInputAssembler *GetInputAssembler(CRegisteredString &inStr) override;
+    QDemonRenderVertexBuffer *GetVertexBuffer(QString &inStr) override;
+    QDemonRenderIndexBuffer *GetIndexBuffer(QString &inStr) override;
+    QDemonRenderInputAssembler *GetInputAssembler(QString &inStr) override;
 
-    QDemonRenderShaderProgram *GetShader(CRegisteredString inStr) override;
-    QDemonRenderShaderProgram *CompileAndStoreShader(CRegisteredString inStr) override;
+    QDemonRenderShaderProgram *GetShader(const QString &inStr) override;
+    QDemonRenderShaderProgram *CompileAndStoreShader(const QString &inStr) override;
     IShaderProgramGenerator &GetProgramGenerator() override;
 
     STextDimensions MeasureText(const STextRenderInfo &inText) override;

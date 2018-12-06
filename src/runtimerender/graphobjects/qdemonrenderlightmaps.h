@@ -34,7 +34,6 @@
 
 #include <QtDemonRuntimeRender/qdemonrender.h>
 #include <QtDemonRuntimeRender/qdemonrendergraphobject.h>
-#include <StringTable.h>
 #include <QtDemonRuntimeRender/qdemonrenderer.h>
 #include <QtDemonRuntimeRender/qdemonrendermaterialdirty.h>
 
@@ -49,7 +48,7 @@ struct MaterialLightmapsUsage
     };
 };
 
-struct QDEMON_AUTOTEST_EXPORT SLightmaps : public SGraphObject
+struct Q_DEMONRUNTIMERENDER_EXPORT SLightmaps : public SGraphObject
 {
     CMaterialDirty m_Dirty;
 

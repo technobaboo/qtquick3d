@@ -34,6 +34,8 @@
 #include <QtDemonRuntimeRender/qdemonrendergraphobject.h>
 #include <QtDemonRuntimeRender/qdemonrendernode.h>
 
+#include <QtCore/QString>
+
 QT_BEGIN_NAMESPACE
 
 namespace dynamic {
@@ -43,12 +45,12 @@ struct SPropertyDefinition;
 // Dynamic objects are objects that have variable number of properties during runtime.
 struct SDynamicObject : public SGraphObject
 {
-    CRegisteredString m_ClassName;
+    QString m_ClassName;
     NodeFlags m_Flags;
     quint32 m_DataSectionByteSize;
     quint32 m_ThisObjectSize;
 
-    SDynamicObject(GraphObjectTypes::Enum inType, CRegisteredString inClassName,
+    SDynamicObject(GraphObjectTypes::Enum inType, const QString &inClassName,
                    quint32 inDSByteSize, quint32 thisObjSize);
 
     quint8 *GetDataSectionBegin()
@@ -86,7 +88,7 @@ struct SDynamicObject : public SGraphObject
                           const QVector4D &inValue);
     void SetPropertyValue(const dynamic::SPropertyDefinition &inDefinition, qint32 inValue);
     void SetPropertyValue(const dynamic::SPropertyDefinition &inDefinition,
-                          CRegisteredString inValue);
+                          const QString &inValue);
 
     void SetPropertyValue(const dynamic::SPropertyDefinition &inDefinition,
                           const char8_t *inValue, const char8_t *inProjectDir,

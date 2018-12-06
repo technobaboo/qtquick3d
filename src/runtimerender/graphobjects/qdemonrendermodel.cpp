@@ -28,7 +28,7 @@
 **
 ****************************************************************************/
 #include <QtDemonRuntimeRender/qdemonrendermodel.h>
-#include <qdemonrendermaterialhelpers.h>
+#include <QtDemonRuntimeRender/qdemonrendermaterialhelpers.h>
 #include <QtDemonRuntimeRender/qdemonrenderbuffermanager.h>
 #include <QtDemonRuntimeRender/qdemonrendermesh.h>
 
@@ -61,9 +61,9 @@ void SModel::AddMaterial(SGraphObject &inMaterial)
         static_cast<SDefaultMaterial &>(inMaterial).m_Parent = this;
 }
 
-NVBounds3 SModel::GetModelBounds(IBufferManager &inManager) const
+QDemonBounds3 SModel::GetModelBounds(IBufferManager &inManager) const
 {
-    NVBounds3 retval;
+    QDemonBounds3 retval;
     retval.setEmpty();
     SRenderMesh *theMesh = inManager.LoadMesh(m_MeshPath);
     if (theMesh) {

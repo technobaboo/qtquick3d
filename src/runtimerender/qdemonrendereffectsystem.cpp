@@ -28,14 +28,9 @@
 **
 ****************************************************************************/
 #include <qdemonrendereffectsystem.h>
-#include <Qt3DSAllocatorCallback.h>
 #include <QtDemonRender/qdemonrendercontext.h>
 #include <qdemonrenderinputstreamfactory.h>
-#include <Qt3DSAtomic.h>
-#include <Qt3DSContainers.h>
 #include <QtDemonRuntimeRender/qdemonrenderstring.h>
-#include <Qt3DSFoundation.h>
-#include <Qt3DSBroadcastingAllocator.h>
 #include <QtDemonRuntimeRender/qdemonrendereffect.h>
 #include <QtDemonRuntimeRender/qdemonrenderresourcemanager.h>
 #include <qdemonrenderdynamicobjectsystemcommands.h>
@@ -48,10 +43,7 @@
 #include <QtDemonRuntimeRender/qdemonrendercamera.h>
 #include <QtDemonRuntimeRender/qdemonrenderbuffermanager.h>
 #include <QtDemonRuntimeRender/qdemonoffscreenrendermanager.h>
-#include <PreAllocatedAllocator.h>
-#include <SerializationTypes.h>
 #include <QtDemonRuntimeRender/qdemonrendershadercache.h>
-#include <FileTools.h>
 #include <qdemonoffscreenrenderkey.h>
 #include <qdemonrenderdynamicobjectsystemutil.h>
 
@@ -308,12 +300,12 @@ struct SEffectContext
     CRegisteredString m_ClassName;
     IQt3DSRenderContext &m_Context;
     IResourceManager *m_ResourceManager;
-    nvvector<SAllocatedBufferEntry> m_AllocatedBuffers;
-    nvvector<SAllocatedImageEntry> m_AllocatedImages;
-    nvvector<SAllocatedDataBufferEntry> m_AllocatedDataBuffers;
-    nvvector<TNamedTextureEntry> m_TextureEntries;
-    nvvector<TNamedImageEntry> m_ImageEntries;
-    nvvector<TNamedDataBufferEntry> m_DataBufferEntries;
+    QVector<SAllocatedBufferEntry> m_AllocatedBuffers;
+    QVector<SAllocatedImageEntry> m_AllocatedImages;
+    QVector<SAllocatedDataBufferEntry> m_AllocatedDataBuffers;
+    QVector<TNamedTextureEntry> m_TextureEntries;
+    QVector<TNamedImageEntry> m_ImageEntries;
+    QVector<TNamedDataBufferEntry> m_DataBufferEntries;
 
     SEffectContext(CRegisteredString inName, IQt3DSRenderContext &ctx, IResourceManager *inManager)
         : m_ClassName(inName)
@@ -493,11 +485,11 @@ struct SEffectShader
 
 struct SEffectSystem : public IEffectSystem
 {
-    typedef nvhash_map<CRegisteredString, char8_t *> TPathDataMap;
+    typedef QHash<CRegisteredString, char8_t *> TPathDataMap;
     typedef nvhash_set<CRegisteredString> TPathSet;
-    typedef nvhash_map<CRegisteredString, QDemonScopedRefCounted<SEffectClass>> TEffectClassMap;
-    typedef nvhash_map<TStrStrPair, QDemonScopedRefCounted<SEffectShader>> TShaderMap;
-    typedef nvvector<SEffectContext *> TContextList;
+    typedef QHash<CRegisteredString, QDemonScopedRefCounted<SEffectClass>> TEffectClassMap;
+    typedef QHash<TStrStrPair, QDemonScopedRefCounted<SEffectShader>> TShaderMap;
+    typedef QVector<SEffectContext *> TContextList;
 
     IQt3DSRenderContextCore &m_CoreContext;
     IQt3DSRenderContext *m_Context;
@@ -505,13 +497,13 @@ struct SEffectSystem : public IEffectSystem
     mutable SPreAllocatedAllocator m_Allocator;
     // Keep from dual-including headers.
     TEffectClassMap m_EffectClasses;
-    nvvector<CRegisteredString> m_EffectList;
+    QVector<CRegisteredString> m_EffectList;
     TContextList m_Contexts;
     CRenderString m_TextureStringBuilder;
     CRenderString m_TextureStringBuilder2;
     TShaderMap m_ShaderMap;
     QDemonScopedRefCounted<QDemonRenderDepthStencilState> m_DefaultStencilState;
-    nvvector<QDemonScopedRefCounted<QDemonRenderDepthStencilState>> m_DepthStencilStates;
+    QVector<QDemonScopedRefCounted<QDemonRenderDepthStencilState>> m_DepthStencilStates;
     volatile qint32 mRefCount;
 
     SEffectSystem(IQt3DSRenderContextCore &inContext)

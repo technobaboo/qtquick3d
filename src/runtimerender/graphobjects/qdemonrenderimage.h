@@ -32,11 +32,13 @@
 #define QDEMON_RENDER_IMAGE_H
 #include <QtDemonRuntimeRender/qdemonrender.h>
 #include <QtDemonRuntimeRender/qdemonrendergraphobject.h>
-#include <StringTable.h>
-#include <QtDemonRender/qdemonrendertexture2d.h>
 #include <QtDemonRuntimeRender/qdemonrendernode.h>
-#include <QVector2D.h>
 #include <QtDemonRuntimeRender/qdemonrenderimagetexturedata.h>
+#include <QtDemonRuntimeRender/qtdemonruntimerenderglobal.h>
+
+#include <QtDemonRender/qdemonrendertexture2d.h>
+
+#include <QtGui/QVector2D>
 
 QT_BEGIN_NAMESPACE
 class IQt3DSRenderContext;
@@ -51,15 +53,15 @@ struct ImageMappingModes
     };
 };
 
-struct QDEMON_AUTOTEST_EXPORT SImage : public SGraphObject
+struct Q_DEMONRUNTIMERENDER_EXPORT SImage : public SGraphObject
 {
     // Complete path to the file;
     //*not* relative to the presentation directory
-    CRegisteredString m_ImagePath;
-    CRegisteredString m_ImageShaderName; ///< for custom materials we don't generate the name
+    QString m_ImagePath;
+    QString m_ImageShaderName; ///< for custom materials we don't generate the name
 
     // Presentation id.
-    CRegisteredString m_OffscreenRendererId; // overrides source path if available
+    QString m_OffscreenRendererId; // overrides source path if available
     SRenderPlugin *m_RenderPlugin; // Overrides everything if available.
     IOffscreenRenderer *m_LastFrameOffscreenRenderer;
     SGraphObject *m_Parent;

@@ -29,24 +29,20 @@
 ****************************************************************************/
 #include <QtDemonRuntimeRender/qdemonrender.h>
 #include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
-#include <StringTable.h>
 #include <QtDemonRuntimeRender/qdemonrendernode.h>
 #include <QtDemonRuntimeRender/qdemonrenderbuffermanager.h>
 #include <QtDemonRuntimeRender/qdemonrenderer.h>
 #include <QtDemonRuntimeRender/qdemonrenderresourcemanager.h>
 #include <QtDemonRender/qdemonrendercontext.h>
-#include <Qt3DSAtomic.h>
 #include <QtDemonRuntimeRender/qdemonoffscreenrendermanager.h>
 #include <qdemontextrenderer.h>
 #include <qdemonrenderinputstreamfactory.h>
 #include <qdemonrendereffectsystem.h>
 #include <QtDemonRuntimeRender/qdemonrendershadercache.h>
-#include <Qt3DSFoundation.h>
 #include <QtDemonRender/qdemonrenderframebuffer.h>
 #include <QtDemonRender/qdemonrenderrenderbuffer.h>
 #include <QtDemonRender/qdemonrendertexture2d.h>
 #include <QtDemonRuntimeRender/qdemonrendercamera.h>
-#include <Qt3DSContainers.h>
 #include <qdemonrenderthreadpool.h>
 #include <QtDemonRuntimeRender/qdemonrenderimagebatchloader.h>
 #include <qdemonrendertexttexturecache.h>
@@ -55,10 +51,7 @@
 #include <QtDemonRuntimeRender/qdemonrenderdynamicobjectsystem.h>
 #include <qdemonrendercustommaterialsystem.h>
 #include <qdemonrenderpixelgraphicsrenderer.h>
-#include <Qt3DSPerfTimer.h>
 #include <QtDemonRuntimeRender/qdemonrenderbufferloader.h>
-#include <FastAllocator.h>
-#include <AutoDeallocatorAllocator.h>
 #include <qdemonrenderrenderlist.h>
 #include <qdemonrenderpathmanager.h>
 #include <QtDemonRuntimeRender/qdemonrendershadercodegeneratorv2.h>

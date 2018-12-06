@@ -30,14 +30,13 @@
 #include <QtDemonRuntimeRender/qdemonrender.h>
 #include <QtDemonRuntimeRender/qdemonrenderdynamicobject.h>
 #include <QtDemonRuntimeRender/qdemonrenderdynamicobjectsystem.h>
-#include <FileTools.h>
 #include <QtDemonRuntimeRender/qdemonrenderstring.h>
 
 #include <QtCore/qdir.h>
 
 QT_BEGIN_NAMESPACE
 
-SDynamicObject::SDynamicObject(GraphObjectTypes::Enum inType, CRegisteredString inObjName,
+SDynamicObject::SDynamicObject(GraphObjectTypes::Enum inType, const QString &inObjName,
                                quint32 inDSByteSize, quint32 thisObjSize)
     : SGraphObject(inType)
     , m_ClassName(inObjName)
@@ -54,7 +53,7 @@ void SDynamicObject::SetPropertyValueT(const dynamic::SPropertyDefinition &inDef
         Q_ASSERT(false);
         return;
     }
-    memCopy(GetDataSectionBegin() + inDefinition.m_Offset, &inValue, sizeof(inValue));
+    ::memcpy(GetDataSectionBegin() + inDefinition.m_Offset, &inValue, sizeof(inValue));
 }
 
 void SDynamicObject::SetPropertyValue(const dynamic::SPropertyDefinition &inDefinition,
@@ -75,7 +74,7 @@ void SDynamicObject::SetPropertyValue(const dynamic::SPropertyDefinition &inDefi
         Q_ASSERT(false);
         return;
     }
-    memCopy(GetDataSectionBegin() + inDefinition.m_Offset + inOffset, &inValue, sizeof(inValue));
+    ::memcpy(GetDataSectionBegin() + inDefinition.m_Offset + inOffset, &inValue, sizeof(inValue));
 }
 void SDynamicObject::SetPropertyValue(const dynamic::SPropertyDefinition &inDefinition,
                                       const QVector2D &inValue)
@@ -98,9 +97,9 @@ void SDynamicObject::SetPropertyValue(const dynamic::SPropertyDefinition &inDefi
     SetPropertyValueT(inDefinition, inValue);
 }
 void SDynamicObject::SetPropertyValue(const dynamic::SPropertyDefinition &inDefinition,
-                                      CRegisteredString inValue)
+                                      const QString &inValue)
 {
-    Q_ASSERT(inDefinition.m_DataType == QDemonRenderShaderDataTypes::QDemonRenderTexture2DPtr);
+    Q_ASSERT(inDefinition.m_DataType == QDemonRenderShaderDataTypes::Texture2D);
     SetPropertyValueT(inDefinition, inValue);
 }
 template <typename TStrType>
@@ -110,8 +109,8 @@ void SDynamicObject::SetStrPropertyValueT(dynamic::SPropertyDefinition &inDefini
 {
     if (inValue == nullptr)
         inValue = "";
-    if (inDefinition.m_DataType == QDemonRenderShaderDataTypes::qint32) {
-        QDemonConstDataRef<CRegisteredString> theEnumValues = inDefinition.m_EnumValueNames;
+    if (inDefinition.m_DataType == QDemonRenderShaderDataTypes::Integer) {
+        QDemonConstDataRef<QString> theEnumValues = inDefinition.m_EnumValueNames;
         for (qint32 idx = 0, end = (qint32)theEnumValues.size(); idx < end; ++idx) {
             if (strcmp(theEnumValues[idx].c_str(), inValue) == 0) {
                 SetPropertyValueT(inDefinition, idx);

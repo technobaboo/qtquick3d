@@ -16,7 +16,8 @@ HEADERS += \
     qdemonplane.h \
     qdemonutils.h \
     qdemondataref.h \
-    qdemonoption.h
+    qdemonoption.h \
+    qdemoninvasivelinkedlist.h
 
 SOURCES += \
     qdemonflags.cpp \

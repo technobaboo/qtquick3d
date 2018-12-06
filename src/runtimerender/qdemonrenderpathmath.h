@@ -83,7 +83,7 @@ int quadratic(REAL b, REAL c, REAL rts[2])
 
 float interest_range[2] = {0, 1};
 
-void cubicInflectionPoint(const QVector2D cp[4], nvvector<float> &key_point)
+void cubicInflectionPoint(const QVector2D cp[4], QVector<float> &key_point)
 {
     // Convert control points to cubic monomial polynomial coefficients
     const QVector2D A = cp[3] - cp[0] + (cp[1] - cp[2]) * 3.0;
@@ -194,7 +194,7 @@ QVector2D GetXY(const QVector3D &data)
     return QVector2D(data.x, data.y);
 }
 
-CurveType cubicDoublePoint(const QVector2D points[4], nvvector<float> &key_point)
+CurveType cubicDoublePoint(const QVector2D points[4], QVector<float> &key_point)
 {
 #if 0
     const QVector2D AA = points[3] - points[0] + (points[1] - points[2]) * 3.0;
@@ -468,7 +468,7 @@ struct SResultCubic
     }
 };
 
-void PushLine(nvvector<SResultCubic> &ioResultVec, QVector2D inStart, QVector2D inStop,
+void PushLine(QVector<SResultCubic> &ioResultVec, QVector2D inStart, QVector2D inStop,
               quint32 inEquationIndex)
 {
     QVector2D range = inStop - inStart;
@@ -538,19 +538,19 @@ bool OptionEquals(const Option<TOptData> &lhs, const Option<TOptData> &rhs)
         return lhs.getValue() == rhs.getValue();
     return true;
 }
-void OuterAdaptiveSubdivideBezierCurve(nvvector<SResultCubic> &ioResultVec,
-                                       nvvector<float> &keyPointVec,
+void OuterAdaptiveSubdivideBezierCurve(QVector<SResultCubic> &ioResultVec,
+                                       QVector<float> &keyPointVec,
                                        SCubicBezierCurve inCurve, float inLinearError,
                                        quint32 inEquationIndex);
 
-void AdaptiveSubdivideBezierCurve(nvvector<SResultCubic> &ioResultVec,
+void AdaptiveSubdivideBezierCurve(QVector<SResultCubic> &ioResultVec,
                                   SCubicBezierCurve &inCurve, float inLinearError,
                                   quint32 inEquationIndex, float inTStart, float inTStop);
 
 // Adaptively subdivide source data to produce m_PatchData.
 void AdaptiveSubdivideSourceData(QDemonConstDataRef<SPathAnchorPoint> inSourceData,
-                                 nvvector<SResultCubic> &ioResultVec,
-                                 nvvector<float> &keyPointVec, float inLinearError)
+                                 QVector<SResultCubic> &ioResultVec,
+                                 QVector<float> &keyPointVec, float inLinearError)
 {
     ioResultVec.clear();
     if (inSourceData.size() < 2)
@@ -581,8 +581,8 @@ void AdaptiveSubdivideSourceData(QDemonConstDataRef<SPathAnchorPoint> inSourceDa
 // the sign of the second derivative does not change, no inflection points.
 // Once that condition is held, then we proceed with a simple adaptive subdivision algorithm
 // until the curve is accurately approximated by a straight line.
-void OuterAdaptiveSubdivideBezierCurve(nvvector<SResultCubic> &ioResultVec,
-                                       nvvector<float> &keyPointVec,
+void OuterAdaptiveSubdivideBezierCurve(QVector<SResultCubic> &ioResultVec,
+                                       QVector<float> &keyPointVec,
                                        SCubicBezierCurve inCurve, float inLinearError,
                                        quint32 inEquationIndex)
 {
@@ -680,7 +680,7 @@ float LengthOfBezierCurve(SCubicBezierCurve &inCurve)
 // figure out the curvature.  There is a possibility to use some math to figure out the point of
 // maximum curvature, where the second derivative will have a max value. This is probably not
 // necessary.
-void AdaptiveSubdivideBezierCurve(nvvector<SResultCubic> &ioResultVec,
+void AdaptiveSubdivideBezierCurve(QVector<SResultCubic> &ioResultVec,
                                   SCubicBezierCurve &inCurve, float inLinearError,
                                   quint32 inEquationIndex, float inTStart, float inTStop)
 {

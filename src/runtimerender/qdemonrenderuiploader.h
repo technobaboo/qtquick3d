@@ -55,7 +55,7 @@ namespace render {
 
     class IBufferManager;
 
-    typedef nvhash_map<CRegisteredString, SGraphObject *> TIdObjectMap;
+    typedef QHash<CRegisteredString, SGraphObject *> TIdObjectMap;
 
     struct IUIPReferenceResolver
     {

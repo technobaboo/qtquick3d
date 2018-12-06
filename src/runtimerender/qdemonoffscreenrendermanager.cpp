@@ -28,19 +28,14 @@
 **
 ****************************************************************************/
 #include <QtDemonRuntimeRender/qdemonoffscreenrendermanager.h>
-#include <Qt3DSContainers.h>
-#include <Qt3DSAtomic.h>
 #include <QtDemonRender/qdemonrenderbasetypes.h>
-#include <StringTable.h>
 #include <QtDemonRender/qdemonrenderframebuffer.h>
 #include <QtDemonRender/qdemonrendertexture2d.h>
 #include <QtDemonRuntimeRender/qdemonrenderresourcemanager.h>
 #include <QtDemonRender/qdemonrendercontext.h>
-#include <Qt3DSFoundation.h>
 #include <qdemontextrenderer.h>
 #include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
 #include <qdemonoffscreenrenderkey.h>
-#include <FastAllocator.h>
 #include <qdemonrenderrenderlist.h>
 #include <QtDemonRuntimeRender/qdemonrenderresourcetexture2d.h>
 #include <QtDemonRuntimeRender/qdemonrenderresourcebufferobjects.h>
@@ -151,7 +146,7 @@ struct SOffscreenRunnable : public IRenderTask
 
 struct SOffscreenRenderManager : public IOffscreenRenderManager
 {
-    typedef nvhash_map<SOffscreenRendererKey, SRenderDataReleaser> TRendererMap;
+    typedef QHash<SOffscreenRendererKey, SRenderDataReleaser> TRendererMap;
     IQt3DSRenderContext &m_Context;
     NVAllocatorCallback &m_Allocator;
     QDemonScopedRefCounted<IStringTable> m_StringTable;

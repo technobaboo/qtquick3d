@@ -29,21 +29,17 @@
 ****************************************************************************/
 #include <QtDemonRuntimeRender/qdemonrenderableobjects.h>
 #include <QtDemonRuntimeRender/qdemonrendererimpl.h>
-#include <qdemonrendercustommaterialsystem.h>
-#include <qdemonrendercustommaterialrendercontext.h>
+#include <QtDemonRuntimeRender/qdemonrendercustommaterialsystem.h>
+#include <QtDemonRuntimeRender/qdemonrendercustommaterialrendercontext.h>
 #include <QtDemonRuntimeRender/qdemonrenderlight.h>
-#include <qdemonrenderpathmanager.h>
-#include <qdemonrenderpathrendercontext.h>
+#include <QtDemonRuntimeRender/qdemonrenderpathmanager.h>
+#include <QtDemonRuntimeRender/qdemonrenderpathrendercontext.h>
 #include <QtDemonRuntimeRender/qdemonrenderdefaultmaterialshadergenerator.h>
-
-using CRegisteredString;
 
 QT_BEGIN_NAMESPACE
 struct SRenderableImage;
 struct SShaderGeneratorGeneratedShader;
 struct SSubsetRenderable;
-using eastl::make_pair;
-using eastl::reverse;
 
 STextScaleAndOffset::STextScaleAndOffset(QDemonRenderTexture2D &inTexture,
                                          const STextTextureDetails &inTextDetails,
@@ -55,9 +51,9 @@ STextScaleAndOffset::STextScaleAndOffset(QDemonRenderTexture2D &inTexture,
     QDemonRenderTexture2D &theTexture = inTexture;
     STextureDetails theDetails(theTexture.GetTextureDetails());
     QVector2D textDimensions(inTextDetails.m_TextWidth / 2.0f, inTextDetails.m_TextHeight / 2.0f);
-    textDimensions.x /= inTextDetails.m_ScaleFactor.x;
-    textDimensions.y /= inTextDetails.m_ScaleFactor.y;
-    QVector2D theTextScale(textDimensions.x, textDimensions.y);
+    textDimensions.setX(textDimensions.x() / inTextDetails.m_ScaleFactor.x());
+    textDimensions.setY(textDimensions.y() / inTextDetails.m_ScaleFactor.y());
+    QVector2D theTextScale(textDimensions.x(), textDimensions.y());
     QVector2D theTextOffset(0, 0);
 
     // Set the offsets to use after scaling the rect coordinates.
@@ -195,7 +191,7 @@ void SSubsetRenderableBase::RenderDepthPass(const QVector2D &inCameraVec,
     if (displacementImage) {
         // setup image transform
         const QMatrix4x4 &textureTransform = displacementImage->m_Image.m_TextureTransform;
-        const float *dataPtr(textureTransform.front());
+        const float *dataPtr(textureTransform.data());
         QVector3D offsets(dataPtr[12], dataPtr[13],
                 displacementImage->m_Image.m_TextureData.m_TextureFlags.IsPreMultiplied()
                 ? 1.0f
@@ -269,14 +265,15 @@ void SSubsetRenderable::Render(const QVector2D &inCameraVec, TShaderFeatureSet i
         if (m_Subset.m_WireframeMode) {
             // we need the viewport matrix
             QDemonRenderRect theViewport(context.GetViewport());
-            QMatrix4x4 vpMatrix;
-            vpMatrix.column0 = QVector4D((float)theViewport.m_Width / 2.0f, 0.0, 0.0, 0.0);
-            vpMatrix.column1 = QVector4D(0.0, (float)theViewport.m_Height / 2.0f, 0.0, 0.0);
-            vpMatrix.column2 = QVector4D(0.0, 0.0, 1.0, 0.0);
-            vpMatrix.column3 =
-                    QVector4D((float)theViewport.m_Width / 2.0f + (float)theViewport.m_X,
-                              (float)theViewport.m_Height / 2.0f + (float)theViewport.m_Y, 0.0, 1.0);
-
+            float matrixData[16] = {
+                float(theViewport.m_Width) / 2.0f, 0.0f, 0.0f, 0.0f,
+                0.0f, float(theViewport.m_Width) / 2.0f, 0.0f, 0.0f,
+                0.0f, 0.0f, 1.0f, 0.0f,
+                float(theViewport.m_Width) / 2.0f + float(theViewport.m_X),
+                float(theViewport.m_Height) / 2.0f + float(theViewport.m_Y),
+                0.0f, 1.0f
+            };
+            QMatrix4x4 vpMatrix(matrixData);
             shader->m_ViewportMatrix.Set(vpMatrix);
         }
     }
@@ -407,10 +404,9 @@ void STextRenderable::RenderDepthPass(const QVector2D &inCameraVec)
         context.SetDepthStencilState(depthStencilState);
 
         // setup transform
-        QMatrix4x4 offsetMatrix = QMatrix4x4::createIdentity();
-        offsetMatrix.setPosition(QVector3D(
-                                     m_TextOffset.x - (float)m_Text.m_TextTextureDetails.m_TextWidth / 2.0f,
-                                     m_TextOffset.y - (float)m_Text.m_TextTextureDetails.m_TextHeight / 2.0f, 0.0));
+        QMatrix4x4 offsetMatrix;
+        offsetMatrix(3, 0) = m_TextOffset.x() - float(m_Text.m_TextTextureDetails.m_TextWidth) / 2.0f;
+        offsetMatrix(3, 1) = m_TextOffset.y() - float(m_Text.m_TextTextureDetails.m_TextHeight) / 2.0f;
 
         QMatrix4x4 pathMatrix = m_Text.m_PathFontItem->GetTransform();
 

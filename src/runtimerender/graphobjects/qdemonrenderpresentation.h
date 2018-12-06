@@ -31,10 +31,9 @@
 #ifndef QDEMON_RENDER_PRESENTATION_H
 #define QDEMON_RENDER_PRESENTATION_H
 
-#include <StringTable.h>
 #include <QtDemonRuntimeRender/qdemonrendergraphobject.h>
 #include <QtDemonRuntimeRender/qdemonrenderscene.h>
-#include <QVector2D.h>
+#include <QtGui/QVector2D>
 
 QT_BEGIN_NAMESPACE
 
@@ -54,7 +53,7 @@ struct SPresentation : public SGraphObject
     RenderRotationValues::Enum m_PresentationRotation;
     SScene *m_Scene;
 
-    CRegisteredString m_PresentationDirectory;
+    QString m_PresentationDirectory;
 
     SPresentation()
         : SGraphObject(GraphObjectTypes::Presentation)
@@ -64,7 +63,7 @@ struct SPresentation : public SGraphObject
     {
     }
 
-    SPresentation(float w, float h, CRegisteredString presDir)
+    SPresentation(float w, float h, const QString &presDir)
         : SGraphObject(GraphObjectTypes::Presentation)
         , m_PresentationDimensions(w, h)
         , m_PresentationRotation(RenderRotationValues::NoRotation)

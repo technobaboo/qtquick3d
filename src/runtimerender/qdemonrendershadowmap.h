@@ -125,7 +125,7 @@ struct SShadowMapEntry
 
 class Qt3DSShadowMap : public QDemonRefCounted
 {
-    typedef nvvector<SShadowMapEntry> TShadowMapEntryList;
+    typedef QVector<SShadowMapEntry> TShadowMapEntryList;
 
 public:
     IQt3DSRenderContext &m_Context;

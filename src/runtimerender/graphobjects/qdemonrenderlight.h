@@ -46,7 +46,7 @@ struct RenderLightTypes
 
 struct SImage;
 
-struct QDEMON_AUTOTEST_EXPORT SLight : public SNode
+struct Q_DEMONRUNTIMERENDER_EXPORT SLight : public SNode
 {
     RenderLightTypes::Enum m_LightType; // Directional
     SNode *m_Scope;

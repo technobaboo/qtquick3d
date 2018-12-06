@@ -60,9 +60,9 @@ SText::SText()
     m_Bounds.setEmpty();
 }
 
-NVBounds3 SText::GetTextBounds() const
+QDemonBounds3 SText::GetTextBounds() const
 {
-    NVBounds3 retval;
+    QDemonBounds3 retval;
     retval.setEmpty();
     if (m_TextTexture != nullptr) {
         retval.include(m_Bounds);

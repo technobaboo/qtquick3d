@@ -32,19 +32,20 @@
 #define QDEMON_RENDER_MODEL_H
 
 #include <QtDemonRuntimeRender/qdemonrendernode.h>
-#include <StringTable.h>
 #include <QtDemonRuntimeRender/qdemonrendertessmodevalues.h>
+
+#include <QtDemon/QDemonBounds3>
 
 QT_BEGIN_NAMESPACE
 
 struct SDefaultMaterial;
 class IBufferManager;
 
-struct QDEMON_AUTOTEST_EXPORT SModel : public SNode
+struct Q_DEMONRUNTIMERENDER_EXPORT SModel : public SNode
 {
     // Complete path to the file;
     //*not* relative to the presentation directory
-    CRegisteredString m_MeshPath;
+    QString m_MeshPath;
     SGraphObject *m_FirstMaterial;
     qint32 m_SkeletonRoot;
     TessModeValues::Enum m_TessellationMode;
@@ -56,7 +57,7 @@ struct QDEMON_AUTOTEST_EXPORT SModel : public SNode
 
     void AddMaterial(SGraphObject &inMaterial);
 
-    NVBounds3 GetModelBounds(IBufferManager &inManager) const;
+    QDemonBounds3 GetModelBounds(IBufferManager &inManager) const;
 
     // Generic method used during serialization
     // to remap string and object pointers

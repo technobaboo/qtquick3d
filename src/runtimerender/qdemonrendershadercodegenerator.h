@@ -31,8 +31,6 @@
 #ifndef QDEMON_RENDER_SHADER_CODE_GENERATOR_H
 #define QDEMON_RENDER_SHADER_CODE_GENERATOR_H
 #include <QtDemonRuntimeRender/qdemonrender.h>
-#include <Qt3DSContainers.h>
-#include <StringTable.h>
 #include <QtDemonRender/qdemonrenderbasetypes.h>
 #include <QtDemonRuntimeRender/qdemonrenderstring.h>
 
@@ -46,8 +44,8 @@ extern SEndlType Endl;
 typedef std::basic_string<char> TStrType;
 typedef eastl::pair<CRegisteredString, CRegisteredString> TParamPair;
 typedef eastl::pair<CRegisteredString, TParamPair> TConstantBufferParamPair;
-typedef nvvector<TConstantBufferParamPair> TConstantBufferParamArray;
-typedef nvhash_map<CRegisteredString, CRegisteredString> TStrTableStrMap;
+typedef QVector<TConstantBufferParamPair> TConstantBufferParamArray;
+typedef QHash<CRegisteredString, CRegisteredString> TStrTableStrMap;
 
 struct SShaderCodeGeneratorBase
 {

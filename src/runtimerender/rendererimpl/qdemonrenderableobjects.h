@@ -31,17 +31,16 @@
 #ifndef QDEMON_RENDER_IMPL_RENDERABLE_OBJECTS_H
 #define QDEMON_RENDER_IMPL_RENDERABLE_OBJECTS_H
 #include <QtDemonRuntimeRender/qdemonrender.h>
-#include <Qt3DSFlags.h>
 #include <QtDemonRuntimeRender/qdemonrendermodel.h>
-#include <Qt3DSContainers.h>
 #include <QtDemonRuntimeRender/qdemonrenderdefaultmaterial.h>
 #include <QtDemonRuntimeRender/qdemonrendercustommaterial.h>
 #include <QtDemonRuntimeRender/qdemonrendertext.h>
 #include <QtDemonRuntimeRender/qdemonrendermesh.h>
 #include <QtDemonRuntimeRender/qdemonrendershaderkeys.h>
 #include <QtDemonRuntimeRender/qdemonrendershadercache.h>
-#include <Qt3DSInvasiveLinkedList.h>
 #include <QtDemonRuntimeRender/qdemonrenderableimage.h>
+
+#include <QtDemon/qdemoninvasivelinkedlist.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -167,7 +166,7 @@ struct SRenderableObject
 {
     // Variables used for picking
     const QMatrix4x4 &m_GlobalTransform;
-    const NVBounds3 &m_Bounds;
+    const QDemonBounds3 &m_Bounds;
     SRenderableObjectFlags m_RenderableFlags;
     // For rough sorting for transparency and for depth
     QVector3D m_WorldCenterPoint;
@@ -177,7 +176,7 @@ struct SRenderableObject
     TRenderFunction m_RenderFunction;
     TNodeLightEntryList m_ScopedLights;
     SRenderableObject(SRenderableObjectFlags inFlags, QVector3D inWorldCenterPt,
-                      const QMatrix4x4 &inGlobalTransform, const NVBounds3 &inBounds,
+                      const QMatrix4x4 &inGlobalTransform, const QDemonBounds3 &inBounds,
                       TessModeValues::Enum inTessMode = TessModeValues::NoTess,
                       TRenderFunction inFunction = nullptr)
 
@@ -196,7 +195,7 @@ struct SRenderableObject
     }
 };
 
-typedef nvvector<SRenderableObject *> TRenderableObjectList;
+typedef QVector<SRenderableObject *> TRenderableObjectList;
 
 // Different subsets from the same model will get the same
 // model context so we can generate the MVP and normal matrix once
@@ -217,13 +216,13 @@ struct SModelContext
         : m_Model(inOther.m_Model)
     {
         // The default copy constructor for these objects is pretty darn slow.
-        memCopy(&m_ModelViewProjection, &inOther.m_ModelViewProjection,
+        ::memcpy(&m_ModelViewProjection, &inOther.m_ModelViewProjection,
                 sizeof(m_ModelViewProjection));
-        memCopy(&m_NormalMatrix, &inOther.m_NormalMatrix, sizeof(m_NormalMatrix));
+        ::memcpy(&m_NormalMatrix, &inOther.m_NormalMatrix, sizeof(m_NormalMatrix));
     }
 };
 
-typedef nvvector<SModelContext *> TModelContextPtrList;
+typedef QVector<SModelContext *> TModelContextPtrList;
 
 class Qt3DSRendererImpl;
 struct SLayerRenderData;
@@ -346,7 +345,7 @@ struct STextRenderable : public SRenderableObject, public STextScaleAndOffset
     QMatrix4x4 m_ViewProjection;
 
     STextRenderable(SRenderableObjectFlags inFlags, QVector3D inWorldCenterPt,
-                    Qt3DSRendererImpl &gen, const SText &inText, const NVBounds3 &inBounds,
+                    Qt3DSRendererImpl &gen, const SText &inText, const QDemonBounds3 &inBounds,
                     const QMatrix4x4 &inModelViewProjection, const QMatrix4x4 &inViewProjection,
                     QDemonRenderTexture2D &inTextTexture, const QVector2D &inTextOffset,
                     const QVector2D &inTextScale)
@@ -371,7 +370,7 @@ struct SPathRenderable : public SRenderableObject
 {
     Qt3DSRendererImpl &m_Generator;
     SPath &m_Path;
-    NVBounds3 m_Bounds;
+    QDemonBounds3 m_Bounds;
     QMatrix4x4 m_ModelViewProjection;
     QMatrix3x3 m_NormalMatrix;
     const SGraphObject &m_Material;
@@ -382,7 +381,7 @@ struct SPathRenderable : public SRenderableObject
 
     SPathRenderable(SRenderableObjectFlags inFlags, QVector3D inWorldCenterPt,
                     Qt3DSRendererImpl &gen, const QMatrix4x4 &inGlobalTransform,
-                    NVBounds3 &inBounds, SPath &inPath, const QMatrix4x4 &inModelViewProjection,
+                    QDemonBounds3 &inBounds, SPath &inPath, const QMatrix4x4 &inModelViewProjection,
                     const QMatrix3x3 inNormalMat, const SGraphObject &inMaterial, float inOpacity,
                     SShaderDefaultMaterialKey inShaderKey, bool inIsStroke)
 

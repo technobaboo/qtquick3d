@@ -28,16 +28,9 @@
 **
 ****************************************************************************/
 #include <QtDemonRuntimeRender/qdemonrenderdynamicobjectsystem.h>
-#include <Qt3DSFoundation.h>
-#include <Qt3DSBroadcastingAllocator.h>
-#include <Qt3DSAtomic.h>
-#include <Qt3DSContainers.h>
 #include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
 #include <Qt3DSRenderShaderConstant.h>
 #include <QtDemonRuntimeRender/qdemonrenderdynamicobject.h>
-#include <SerializationTypes.h>
-#include <FileTools.h>
-#include <PreAllocatedAllocator.h>
 #include <QtDemonRender/qdemonrendershaderprogram.h>
 #include <QtDemonRuntimeRender/qdemonrenderstring.h>
 #include <QtDemonRuntimeRender/qdemonrendershadercache.h>
@@ -46,7 +39,6 @@
 #include <qdemonrenderdynamicobjectsystemcommands.h>
 #include <qdemonrenderdynamicobjectsystemutil.h>
 #include <QtDemonRuntimeRender/qdemonrendershadercodegenerator.h>
-#include <Qt3DSMutex.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -580,11 +572,11 @@ struct hash<SShaderMapKey>
 
 namespace {
 
-typedef nvhash_map<CRegisteredString, QDemonScopedRefCounted<SDynamicObjClassImpl>> TStringClassMap;
-typedef nvhash_map<CRegisteredString, char8_t *> TPathDataMap;
-typedef nvhash_map<CRegisteredString, SDynamicObjectShaderInfo> TShaderInfoMap;
+typedef QHash<CRegisteredString, QDemonScopedRefCounted<SDynamicObjClassImpl>> TStringClassMap;
+typedef QHash<CRegisteredString, char8_t *> TPathDataMap;
+typedef QHash<CRegisteredString, SDynamicObjectShaderInfo> TShaderInfoMap;
 typedef nvhash_set<CRegisteredString> TPathSet;
-typedef nvhash_map<SShaderMapKey, TShaderAndFlags> TShaderMap;
+typedef QHash<SShaderMapKey, TShaderAndFlags> TShaderMap;
 
 struct SDynamicObjectSystemCoreImpl : public IDynamicObjectSystem
 {
@@ -648,7 +640,7 @@ struct SDynamicObjectSystemImpl : public IDynamicObjectSystem
             Q_ASSERT(false);
             return false;
         }
-        nvvector<SPropertyDefinition> definitions(m_Foundation.getAllocator(),
+        QVector<SPropertyDefinition> definitions(m_Foundation.getAllocator(),
                                                   "PropertyDefinitions");
         quint32 theCurrentOffset = 0;
         for (quint32 idx = 0, end = inProperties.size(); idx < end; ++idx) {
@@ -672,7 +664,7 @@ struct SDynamicObjectSystemImpl : public IDynamicObjectSystem
         quint8 *defaultData = defData + defSize;
         SPropertyDefinition *defPtr = reinterpret_cast<SPropertyDefinition *>(defData);
         if (defSize)
-            memCopy(defPtr, definitions.data(), defSize);
+            ::memcpy(defPtr, definitions.data(), defSize);
         if (defaultSize)
             memZero(defaultData, defaultSize);
         SDynamicObjClassImpl *theClass = new (allocData)
@@ -719,7 +711,7 @@ struct SDynamicObjectSystemImpl : public IDynamicObjectSystem
         eastl::pair<const SPropertyDefinition *, SDynamicObjClassImpl *> def =
                 FindProperty(inName, inPropName);
         if (def.first && inDefaultData.size() >= def.first->m_ByteSize) {
-            memCopy(def.second->m_PropertyDefaultData + def.first->m_Offset, inDefaultData.begin(),
+            ::memcpy(def.second->m_PropertyDefaultData + def.first->m_Offset, inDefaultData.begin(),
                     def.first->m_ByteSize);
         } else {
             Q_ASSERT(false);
@@ -748,7 +740,7 @@ struct SDynamicObjectSystemImpl : public IDynamicObjectSystem
                         inNames.size() * sizeof(CRegisteredString), "PropertyEnumNames", __FILE__,
                         __LINE__);
 
-            memCopy(theNameValues, inNames.begin(), inNames.size() * sizeof(CRegisteredString));
+            ::memcpy(theNameValues, inNames.begin(), inNames.size() * sizeof(CRegisteredString));
             theDefinitionPtr->m_EnumValueNames =
                     QDemonConstDataRef<CRegisteredString>(theNameValues, inNames.size());
         }
@@ -873,7 +865,7 @@ struct SDynamicObjectSystemImpl : public IDynamicObjectSystem
         new (retval)
                 SDynamicObject(theClass->m_GraphObjectType, inClassName,
                                theClass->m_PropertySectionByteSize, theClass->m_BaseObjectSize);
-        memCopy(retval->GetDataSectionBegin(), theClass->m_PropertyDefaultData,
+        ::memcpy(retval->GetDataSectionBegin(), theClass->m_PropertyDefaultData,
                 theClass->m_PropertySectionByteSize);
         return retval;
     }
@@ -892,7 +884,7 @@ struct SDynamicObjectSystemImpl : public IDynamicObjectSystem
         quint32 theLen = (quint32)strlen(inData) + 1;
         char8_t *newData = (char8_t *)m_Allocator.allocate(
                     theLen, "SDynamicObjectSystem::SetShaderData", __FILE__, __LINE__);
-        memCopy(newData, inData, theLen);
+        ::memcpy(newData, inData, theLen);
         theInserter.first->second = newData;
 
         // set shader type and version if available
@@ -1022,7 +1014,7 @@ struct SDynamicObjectSystemImpl : public IDynamicObjectSystem
             }
             theInsert.first->second = (char8_t *)m_Allocator.allocate(
                         theReadBuffer.size() + 1, "SDynamicObjectSystem::DoLoadShader", __FILE__, __LINE__);
-            memCopy(theInsert.first->second, theReadBuffer.c_str(),
+            ::memcpy(theInsert.first->second, theReadBuffer.c_str(),
                     quint32(theReadBuffer.size()) + 1);
         } else
             theReadBuffer.assign(theInsert.first->second);

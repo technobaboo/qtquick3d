@@ -32,13 +32,14 @@
 #define QDEMON_RENDER_NODE_H
 #include <QtDemonRuntimeRender/qdemonrender.h>
 #include <QtDemonRuntimeRender/qdemonrendergraphobject.h>
-#include <QMatrix4x4.h>
-#include <QVector3D.h>
-#include <Qt3DSBounds3.h>
-#include <Qt3DSFlags.h>
-#include <Qt3DSQDemonNoCopy.h>
 #include <QtDemonRuntimeRender/qdemonrendereulerangles.h>
-#include <StringTable.h>
+
+#include <QtDemon/QDemonBounds3>
+#include <QtDemon/QDemonFlags>
+#include <QtDemon/QDemonNoCopy>
+
+#include <QtGui/QMatrix4x4>
+#include <QtGui/QVector3D>
 
 QT_BEGIN_NAMESPACE
 
@@ -211,7 +212,7 @@ struct QDEMON_AUTOTEST_EXPORT SNode : public SGraphObject
     quint32 m_DFSIndex;
 
     SNode(GraphObjectTypes::Enum inType = GraphObjectTypes::Node);
-    SNode(const SNode &inCloningObject, NVAllocatorCallback &inAllocator);
+    SNode(const SNode &inCloningObject);
     ~SNode() {}
 
     // Sets this object dirty and walks down the graph setting all
@@ -265,10 +266,10 @@ struct QDEMON_AUTOTEST_EXPORT SNode : public SGraphObject
     void SetLocalTransformFromMatrix(QMatrix4x4 &inTransform);
 
     // Get the bounds of us and our children in our local space.
-    NVBounds3 GetBounds(IBufferManager &inManager, IPathManager &inPathManager,
+    QDemonBounds3 GetBounds(IBufferManager &inManager, IPathManager &inPathManager,
                         bool inIncludeChildren = true,
                         IQt3DSRenderNodeFilter *inChildFilter = nullptr) const;
-    NVBounds3 GetChildBounds(IBufferManager &inManager, IPathManager &inPathManager,
+    QDemonBounds3 GetChildBounds(IBufferManager &inManager, IPathManager &inPathManager,
                              IQt3DSRenderNodeFilter *inChildFilter = nullptr) const;
     // Assumes CalculateGlobalVariables has already been called.
     QVector3D GetGlobalPos() const;

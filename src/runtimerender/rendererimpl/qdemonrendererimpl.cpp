@@ -169,13 +169,13 @@ static inline SLayer *GetNextLayer(SLayer &inLayer)
     return nullptr;
 }
 
-static inline void MaybePushLayer(SLayer &inLayer, nvvector<SLayer *> &outLayerList)
+static inline void MaybePushLayer(SLayer &inLayer, QVector<SLayer *> &outLayerList)
 {
     inLayer.CalculateGlobalVariables();
     if (inLayer.m_Flags.IsGloballyActive() && inLayer.m_Flags.IsLayerRenderToTarget())
         outLayerList.push_back(&inLayer);
 }
-static void BuildRenderableLayers(SLayer &inLayer, nvvector<SLayer *> &renderableLayers,
+static void BuildRenderableLayers(SLayer &inLayer, QVector<SLayer *> &renderableLayers,
                                   bool inRenderSiblings)
 {
     MaybePushLayer(inLayer, renderableLayers);
@@ -192,7 +192,7 @@ bool Qt3DSRendererImpl::PrepareLayerForRender(SLayer &inLayer,
                                               const SRenderInstanceId id)
 {
     (void)inViewportDimensions;
-    nvvector<SLayer *> renderableLayers(m_qt3dsContext.GetPerFrameAllocator(), "LayerVector");
+    QVector<SLayer *> renderableLayers(m_qt3dsContext.GetPerFrameAllocator(), "LayerVector");
     // Found by fair roll of the dice.
     renderableLayers.reserve(4);
 
@@ -200,7 +200,7 @@ bool Qt3DSRendererImpl::PrepareLayerForRender(SLayer &inLayer,
 
     bool retval = false;
 
-    for (nvvector<SLayer *>::reverse_iterator iter = renderableLayers.rbegin(),
+    for (QVector<SLayer *>::reverse_iterator iter = renderableLayers.rbegin(),
          end = renderableLayers.rend();
          iter != end; ++iter) {
         // Store the previous state of if we were rendering a layer.
@@ -223,7 +223,7 @@ void Qt3DSRendererImpl::RenderLayer(SLayer &inLayer, const QVector2D &inViewport
                                     const SRenderInstanceId id)
 {
     (void)inViewportDimensions;
-    nvvector<SLayer *> renderableLayers(m_qt3dsContext.GetPerFrameAllocator(), "LayerVector");
+    QVector<SLayer *> renderableLayers(m_qt3dsContext.GetPerFrameAllocator(), "LayerVector");
     // Found by fair roll of the dice.
     renderableLayers.reserve(4);
 
@@ -231,7 +231,7 @@ void Qt3DSRendererImpl::RenderLayer(SLayer &inLayer, const QVector2D &inViewport
 
     QDemonRenderContext &theRenderContext(m_qt3dsContext.GetRenderContext());
     QDemonRenderFrameBuffer *theFB = theRenderContext.GetRenderTarget();
-    for (nvvector<SLayer *>::reverse_iterator iter = renderableLayers.rbegin(),
+    for (QVector<SLayer *>::reverse_iterator iter = renderableLayers.rbegin(),
          end = renderableLayers.rend();
          iter != end; ++iter) {
         SLayer *theLayer = *iter;
@@ -272,7 +272,7 @@ void Qt3DSRendererImpl::RenderLayer(SLayer &inLayer, const QVector2D &inViewport
         }
 #endif
     }
-    for (nvvector<SLayer *>::reverse_iterator iter = renderableLayers.rbegin(),
+    for (QVector<SLayer *>::reverse_iterator iter = renderableLayers.rbegin(),
          end = renderableLayers.rend();
          iter != end; ++iter) {
         // Store the previous state of if we were rendering a layer.
@@ -596,7 +596,7 @@ SPickResultProcessResult Qt3DSRendererImpl::ProcessPickResultList(bool inPickEve
     quint32 numCopyBytes = numToCopy * sizeof(Qt3DSRenderPickResult);
     Qt3DSRenderPickResult *thePickResults = reinterpret_cast<Qt3DSRenderPickResult *>(
                 GetPerFrameAllocator().allocate(numCopyBytes, "tempPickData", __FILE__, __LINE__));
-    memCopy(thePickResults, m_LastPickResults.data(), numCopyBytes);
+    ::memcpy(thePickResults, m_LastPickResults.data(), numCopyBytes);
     m_LastPickResults.clear();
     bool foundValidResult = false;
     SPickResultProcessResult thePickResult(thePickResults[0]);
@@ -723,7 +723,7 @@ static inline Qt3DSRenderPickSubResult ConstructSubResult(SImage &inImage)
                                     theDetails.m_Height);
 }
 
-Option<QVector2D> Qt3DSRendererImpl::FacePosition(SNode &inNode, NVBounds3 inBounds,
+Option<QVector2D> Qt3DSRendererImpl::FacePosition(SNode &inNode, QDemonBounds3 inBounds,
                                                   const QMatrix4x4 &inGlobalTransform,
                                                   const QVector2D &inViewportDimensions,
                                                   const QVector2D &inMouseCoords,
@@ -765,7 +765,7 @@ Option<QVector2D> Qt3DSRendererImpl::FacePosition(SNode &inNode, NVBounds3 inBou
                 Q_ASSERT(false);
                 return Empty();
             }
-            NVBounds3 theModelBounds = theParentModel->GetBounds(
+            QDemonBounds3 theModelBounds = theParentModel->GetBounds(
                         GetQt3DSContext().GetBufferManager(), GetQt3DSContext().GetPathManager(), false);
 
             if (theModelBounds.isEmpty()) {
@@ -1118,7 +1118,7 @@ bool NodeContainsBoneRoot(SNode &childNode, qint32 rootID)
     return false;
 }
 
-void FillBoneIdNodeMap(SNode &childNode, nvhash_map<long, SNode *> &ioMap)
+void FillBoneIdNodeMap(SNode &childNode, QHash<long, SNode *> &ioMap)
 {
     if (childNode.m_SkeletonId >= 0)
         ioMap[childNode.m_SkeletonId] = &childNode;

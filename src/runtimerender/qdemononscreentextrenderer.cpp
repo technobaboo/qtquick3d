@@ -32,9 +32,6 @@
 
 #include <qdemontextrenderer.h>
 #include <qdemonrendertextureatlas.h>
-#include <Qt3DSContainers.h>
-#include <Qt3DSFoundation.h>
-#include <StrConvertUTF.h>
 #include <QtDemonRender/qdemonrendercontext.h>
 #include <QtGui/qpainter.h>
 #include <QtGui/qimage.h>
@@ -93,7 +90,7 @@ struct STextureAtlasFontEntry
 };
 
 typedef eastl::basic_string<char8_t, ForwardingAllocator> TStrType;
-typedef nvhash_map<wchar_t, STextureAtlasFontEntry> TTextureAtlasMap;
+typedef QHash<wchar_t, STextureAtlasFontEntry> TTextureAtlasMap;
 
 struct STextAtlasFont
 {

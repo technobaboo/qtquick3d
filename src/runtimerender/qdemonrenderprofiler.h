@@ -31,10 +31,8 @@
 #ifndef QDEMON_RENDER_PROFILER_H
 #define QDEMON_RENDER_PROFILER_H
 #include <QtDemonRuntimeRender/qdemonrender.h>
-#include <StringTable.h>
 #include <QtDemon/qdemonrefcounted.h>
 #include <QtDemonRender/qdemonrenderbasetypes.h>
-#include <Qt3DSContainers.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -44,7 +42,7 @@ QT_BEGIN_NAMESPACE
 class IRenderProfiler : public QDemonRefCounted
 {
 public:
-    typedef nvvector<CRegisteredString> TStrIDVec;
+    typedef QVector<CRegisteredString> TStrIDVec;
 
 protected:
     virtual ~IRenderProfiler() {}

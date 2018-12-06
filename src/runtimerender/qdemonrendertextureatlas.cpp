@@ -28,10 +28,6 @@
 **
 ****************************************************************************/
 #include <qdemonrendertextureatlas.h>
-#include <Qt3DSContainers.h>
-#include <Qt3DSAtomic.h>
-#include <Qt3DSFoundation.h>
-#include <Qt3DSBroadcastingAllocator.h>
 #include <QtDemonRender/qdemonrendertexture2d.h>
 #include <QtDemonRender/qdemonrendercontext.h>
 
@@ -199,7 +195,7 @@ private:
     qint32 m_BinWidth;
     qint32 m_BinHeight;
 
-    nvvector<SSkylineNode> m_SkyLine;
+    QVector<SSkylineNode> m_SkyLine;
 };
 
 struct STextureAtlasEntry
@@ -265,7 +261,7 @@ struct STextureAtlas : public ITextureAtlas
 
     void RelaseEntries() override
     {
-        nvvector<STextureAtlasEntry>::iterator it;
+        QVector<STextureAtlasEntry>::iterator it;
 
         for (it = m_AtlasEntrys.begin(); it != m_AtlasEntrys.end(); it++) {
             QDEMON_FREE(m_Foundation.getAllocator(), it->m_pBuffer.begin());
@@ -350,7 +346,7 @@ private:
     qint32 m_Width; ///< texture atlas width
     qint32 m_Height; ///< texture atlas height
     qint32 m_Spacing; ///< spacing around the entry
-    nvvector<STextureAtlasEntry> m_AtlasEntrys; ///< our entries in the atlas
+    QVector<STextureAtlasEntry> m_AtlasEntrys; ///< our entries in the atlas
     STextureAtlasBinPackSL *m_pBinPack; ///< our bin packer which actually does most of the work
 };
 

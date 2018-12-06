@@ -86,10 +86,10 @@ struct SCuboidRect
     }
     void Translate(QVector2D inTranslation)
     {
-        m_Left += inTranslation.x;
-        m_Right += inTranslation.x;
-        m_Top += inTranslation.y;
-        m_Bottom += inTranslation.y;
+        m_Left += inTranslation.x();
+        m_Right += inTranslation.x();
+        m_Top += inTranslation.y();
+        m_Bottom += inTranslation.y();
     }
 };
 

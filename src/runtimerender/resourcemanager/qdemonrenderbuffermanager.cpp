@@ -98,9 +98,9 @@ struct SBufferManager : public IBufferManager
     typedef eastl::hash_set<CRegisteredString, eastl::hash<CRegisteredString>,
     eastl::equal_to<CRegisteredString>, ForwardingAllocator>
     TStringSet;
-    typedef nvhash_map<CRegisteredString, SImageEntry> TImageMap;
-    typedef nvhash_map<CRegisteredString, SRenderMesh *> TMeshMap;
-    typedef nvhash_map<CRegisteredString, CRegisteredString> TAliasImageMap;
+    typedef QHash<CRegisteredString, SImageEntry> TImageMap;
+    typedef QHash<CRegisteredString, SRenderMesh *> TMeshMap;
+    typedef QHash<CRegisteredString, CRegisteredString> TAliasImageMap;
 
     QDemonScopedRefCounted<QDemonRenderContext> m_Context;
     QDemonScopedRefCounted<IStringTable> m_StrTable;
@@ -114,7 +114,7 @@ struct SBufferManager : public IBufferManager
     TAliasImageMap m_AliasImageMap;
     TMeshMap m_MeshMap;
     SPrimitiveEntry m_PrimitiveNames[5];
-    nvvector<QDemonRenderVertexBufferEntry> m_EntryBuffer;
+    QVector<QDemonRenderVertexBufferEntry> m_EntryBuffer;
     bool m_GPUSupportsDXT;
     static const char8_t *GetPrimitivesDirectory() { return "res//primitives"; }
 
@@ -545,7 +545,7 @@ struct SBufferManager : public IBufferManager
                         Q_ASSERT(false);
                     }
                 }
-                nvvector<QDemonRenderVertexBufferEntry> &theEntryBuffer(m_EntryBuffer);
+                QVector<QDemonRenderVertexBufferEntry> &theEntryBuffer(m_EntryBuffer);
                 theEntryBuffer.resize(theResult.m_Mesh->m_VertexBuffer.m_Entries.size());
                 for (quint32 entryIdx = 0,
                      entryEnd = theResult.m_Mesh->m_VertexBuffer.m_Entries.size();
@@ -601,9 +601,9 @@ struct SBufferManager : public IBufferManager
                     SRenderJoint &theNewJoint(theNewMesh->m_Joints[jointIdx]);
                     theNewJoint.m_JointID = theImportJoint.m_JointID;
                     theNewJoint.m_ParentID = theImportJoint.m_ParentID;
-                    memCopy(theNewJoint.m_invBindPose, theImportJoint.m_invBindPose,
+                    ::memcpy(theNewJoint.m_invBindPose, theImportJoint.m_invBindPose,
                             16 * sizeof(float));
-                    memCopy(theNewJoint.m_localToGlobalBoneSpace,
+                    ::memcpy(theNewJoint.m_localToGlobalBoneSpace,
                             theImportJoint.m_localToGlobalBoneSpace, 16 * sizeof(float));
                 }
 
@@ -717,7 +717,7 @@ struct SBufferManager : public IBufferManager
 
     SRenderMesh *CreateMesh(Qt3DSBCharPtr inSourcePath, quint8 *inVertData, quint32 inNumVerts,
                             quint32 inVertStride, quint32 *inIndexData, quint32 inIndexCount,
-                            NVBounds3 inBounds) override
+                            QDemonBounds3 inBounds) override
     {
         CRegisteredString sourcePath = m_StrTable->RegisterStr(inSourcePath);
 

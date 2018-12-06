@@ -29,8 +29,6 @@
 ****************************************************************************/
 
 #include <QtDemonRuntimeRender/qdemonrenderprofiler.h>
-#include <Qt3DSContainers.h>
-#include <Qt3DSFoundation.h>
 #include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
 #include <QtDemonRender/qdemonrendercontext.h>
 #include <qdemonrendertimerquery.h>
@@ -161,7 +159,7 @@ struct SGpuTimerInfo
 
 class Qt3DSCRenderGpuProfiler : public IRenderProfiler
 {
-    typedef nvhash_map<CRegisteredString, QDemonScopedRefCounted<SGpuTimerInfo>> TStrGpuTimerInfoMap;
+    typedef QHash<CRegisteredString, QDemonScopedRefCounted<SGpuTimerInfo>> TStrGpuTimerInfoMap;
 
 private:
     NVFoundationBase &m_Foundation;

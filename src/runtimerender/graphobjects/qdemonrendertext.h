@@ -50,11 +50,11 @@ struct SText : public SNode, public STextRenderInfo
     QDemonRenderPathFontItem *m_PathFontItem;
     QDemonRenderPathFontSpecification *m_PathFontDetails;
 
-    NVBounds3 m_Bounds;
+    QDemonBounds3 m_Bounds;
 
     SText();
 
-    NVBounds3 GetTextBounds() const;
+    QDemonBounds3 GetTextBounds() const;
 
     // Generic method used during serialization
     // to remap string and object pointers

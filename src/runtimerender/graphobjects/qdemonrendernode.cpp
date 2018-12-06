@@ -32,7 +32,7 @@
 #include <QtDemonRuntimeRender/qdemonrendernode.h>
 #include <QtDemonRuntimeRender/qdemonrendertext.h>
 #include <QtDemonRuntimeRender/qdemonrenderer.h>
-#include <qdemonrenderpathmanager.h>
+#include <QtDemonRuntimeRender/qdemonrenderpathmanager.h>
 #include <QtDemonRuntimeRender/qdemonrenderpath.h>
 
 QT_BEGIN_NAMESPACE
@@ -60,7 +60,7 @@ SNode::SNode(GraphObjectTypes::Enum inGraphObjectType)
     m_Flags.SetLocallyPickable(true);
 }
 
-SNode::SNode(const SNode &inCloningObject, NVAllocatorCallback &inAllocator)
+SNode::SNode(const SNode &inCloningObject)
     : SGraphObject(inCloningObject, inAllocator)
     , m_Rotation(inCloningObject.m_Rotation) // Radians
     , m_Position(inCloningObject.m_Position)
@@ -182,18 +182,18 @@ inline EulerAngles RotationAndOrderToShoemake(QVector3D inRotation, quint32 inOr
     switch (inOrder) {
 #define HANDLE_EULER_ANGLE(order, xIdx, yIdx, zIdx)                                                \
     case order:                                                                                    \
-        retval.x = -inRotation[xIdx];                                                              \
-        retval.y = -inRotation[yIdx];                                                              \
-        retval.z = -inRotation[zIdx];                                                              \
-        break;
-        ITERATE_POSSIBLE_EULER_ANGLES
-#undef HANDLE_EULER_ANGLE
-    default:
+    retval.x = -inRotation[xIdx];                                                              \
+    retval.y = -inRotation[yIdx];                                                              \
+    retval.z = -inRotation[zIdx];                                                              \
+    break;
+    ITERATE_POSSIBLE_EULER_ANGLES
+        #undef HANDLE_EULER_ANGLE
+            default:
         Q_ASSERT(false);
-        retval.x = inRotation[X];
-        retval.y = inRotation[Y];
-        retval.z = inRotation[Z];
-        break;
+    retval.x = inRotation[X];
+    retval.y = inRotation[Y];
+    retval.z = inRotation[Z];
+    break;
     }
     return retval;
 }
@@ -205,7 +205,7 @@ QVector3D SNode::GetRotationVectorFromRotationMatrix(const QMatrix3x3 &inMatrix)
         SNode::FlipCoordinateSystem(theConvertMatrix);
     CEulerAngleConverter theConverter;
     HMatrix *theHMatrix =
-        reinterpret_cast<HMatrix *>(theConvertMatrix.front());
+            reinterpret_cast<HMatrix *>(theConvertMatrix.front());
     EulerAngles theAngles = theConverter.Eul_FromHMatrix(*theHMatrix, m_RotationOrder);
     return GetRotationVectorFromEulerAngles(theAngles);
 }
@@ -219,18 +219,18 @@ QVector3D SNode::GetRotationVectorFromEulerAngles(const EulerAngles &inAngles)
     switch ((int)inAngles.w) {
 #define HANDLE_EULER_ANGLE(order, xIdx, yIdx, zIdx)                                                \
     case order:                                                                                    \
-        retval[xIdx] = -inAngles.x;                                                                \
-        retval[yIdx] = -inAngles.y;                                                                \
-        retval[zIdx] = -inAngles.z;                                                                \
-        break;
-        ITERATE_POSSIBLE_EULER_ANGLES
-#undef HANDLE_EULER_ANGLE
-    default:
+    retval[xIdx] = -inAngles.x;                                                                \
+    retval[yIdx] = -inAngles.y;                                                                \
+    retval[zIdx] = -inAngles.z;                                                                \
+    break;
+    ITERATE_POSSIBLE_EULER_ANGLES
+        #undef HANDLE_EULER_ANGLE
+            default:
         Q_ASSERT(false);
-        retval.x = inAngles.x;
-        retval.y = inAngles.y;
-        retval.z = inAngles.z;
-        break;
+    retval.x = inAngles.x;
+    retval.y = inAngles.y;
+    retval.z = inAngles.z;
+    break;
     }
 
     return retval;
@@ -266,7 +266,7 @@ void SNode::CalculateLocalTransform()
     m_GlobalTransform = m_LocalTransform;
     float *writePtr = m_LocalTransform.front();
     QVector3D theScaledPivot(-m_Pivot[0] * m_Scale[0], -m_Pivot[1] * m_Scale[1],
-                          -m_Pivot[2] * m_Scale[2]);
+            -m_Pivot[2] * m_Scale[2]);
     m_LocalTransform.column0[0] = m_Scale[0];
     m_LocalTransform.column1[1] = m_Scale[1];
     m_LocalTransform.column2[2] = m_Scale[2];
@@ -332,7 +332,7 @@ void SNode::SetLocalTransformFromMatrix(QMatrix4x4 &inTransform)
     inTransform[2][2] *= invScaleZ;
 
     QMatrix3x3 theRotationMatrix(inTransform.column0.getXYZ(), inTransform.column1.getXYZ(),
-                              inTransform.column2.getXYZ());
+                                 inTransform.column2.getXYZ());
     m_Rotation = GetRotationVectorFromRotationMatrix(theRotationMatrix);
 }
 
@@ -407,10 +407,10 @@ void SNode::RemoveFromGraph()
     }
 }
 
-NVBounds3 SNode::GetBounds(IBufferManager &inManager, IPathManager &inPathManager,
-                           bool inIncludeChildren, IQt3DSRenderNodeFilter *inChildFilter) const
+QDemonBounds3 SNode::GetBounds(IBufferManager &inManager, IPathManager &inPathManager,
+                               bool inIncludeChildren, IQt3DSRenderNodeFilter *inChildFilter) const
 {
-    NVBounds3 retval;
+    QDemonBounds3 retval;
     retval.setEmpty();
     if (inIncludeChildren)
         retval = GetChildBounds(inManager, inPathManager, inChildFilter);
@@ -424,14 +424,14 @@ NVBounds3 SNode::GetBounds(IBufferManager &inManager, IPathManager &inPathManage
     return retval;
 }
 
-NVBounds3 SNode::GetChildBounds(IBufferManager &inManager, IPathManager &inPathManager,
-                                IQt3DSRenderNodeFilter *inChildFilter) const
+QDemonBounds3 SNode::GetChildBounds(IBufferManager &inManager, IPathManager &inPathManager,
+                                    IQt3DSRenderNodeFilter *inChildFilter) const
 {
-    NVBounds3 retval;
+    QDemonBounds3 retval;
     retval.setEmpty();
     for (SNode *child = m_FirstChild; child != nullptr; child = child->m_NextSibling) {
         if (inChildFilter == nullptr || inChildFilter->IncludeNode(*child)) {
-            NVBounds3 childBounds;
+            QDemonBounds3 childBounds;
             if (child->m_Flags.IsTransformDirty())
                 child->CalculateLocalTransform();
             childBounds = child->GetBounds(inManager, inPathManager);

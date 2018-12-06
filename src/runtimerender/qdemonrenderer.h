@@ -150,7 +150,7 @@ public:
     // to map the mouse coordinates into the subpresentation.  So for instance if inNode is in
     // a subpres then we need to know which image is displaying the subpres in order to map
     // the mouse coordinates into the subpres's render space.
-    virtual Option<QVector2D> FacePosition(SNode &inNode, NVBounds3 inBounds,
+    virtual Option<QVector2D> FacePosition(SNode &inNode, QDemonBounds3 inBounds,
                                            const QMatrix4x4 &inGlobalTransform,
                                            const QVector2D &inViewportDimensions,
                                            const QVector2D &inMouseCoords,

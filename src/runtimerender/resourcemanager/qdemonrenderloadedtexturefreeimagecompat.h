@@ -399,7 +399,7 @@ inline void FreeImage_SetTransparencyTable(SLoadedTexture *texture, BYTE *table,
     if (table && size) {
         texture->m_TransparencyTable = (uint8_t *)texture->m_Allocator.allocate(
                     size, "texture transparency table", __FILE__, __LINE__);
-        memCopy(texture->m_TransparencyTable, table, size);
+        ::memcpy(texture->m_TransparencyTable, table, size);
     }
 }
 QT_END_NAMESPACE

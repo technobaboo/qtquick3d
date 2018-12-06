@@ -30,16 +30,8 @@
 
 #include <qdemontextrenderer.h>
 #include <QtDemonRuntimeRender/qdemonrendertext.h>
-#include <Qt3DSFoundation.h>
-#include <StringTable.h>
-#include <Qt3DSBroadcastingAllocator.h>
-#include <QVector2D.h>
-#include <FileTools.h>
 #include <QtDemonRender/qdemonrendercontext.h>
-#include <Qt3DSContainers.h>
 #include <qdemonrenderthreadpool.h>
-#include <Qt3DSSync.h>
-#include <Qt3DSPerfTimer.h>
 
 #include <QPainter>
 #include <QImage>
@@ -107,7 +99,7 @@ struct Qt3DSQtTextRenderer : public ITextRenderer
     QDemonScopedRefCounted<QDemonRenderContext> m_renderContext;
     QDemonScopedRefCounted<IPerfTimer> m_perfTimer;
     volatile qint32 mRefCount;
-    nvvector<SRendererFontEntry> m_installedFonts;
+    QVector<SRendererFontEntry> m_installedFonts;
 
     Sync m_PreloadSync;
 

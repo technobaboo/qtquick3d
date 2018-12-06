@@ -31,6 +31,8 @@
 #ifndef QDEMON_RENDER_MATERIAL_DIRTY_H
 #define QDEMON_RENDER_MATERIAL_DIRTY_H
 
+#include <QtDemonRuntimeRender/qtdemonruntimerenderglobal.h>
+
 QT_BEGIN_NAMESPACE
 
 class CMaterialDirty
@@ -55,6 +57,7 @@ public:
         m_Dirty = false;
     }
 };
+
 QT_END_NAMESPACE
 
 #endif // QDEMON_RENDER_MATERIAL_DIRTY_H

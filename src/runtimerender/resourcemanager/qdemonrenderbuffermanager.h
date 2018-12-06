@@ -85,7 +85,7 @@ public:
 
     virtual SRenderMesh *CreateMesh(const char *inSourcePath, quint8 *inVertData,
                                     quint32 inNumVerts, quint32 inVertStride, quint32 *inIndexData,
-                                    quint32 inIndexCount, NVBounds3 inBounds) = 0;
+                                    quint32 inIndexCount, QDemonBounds3 inBounds) = 0;
 
     // Remove *all* buffers from the buffer manager;
     virtual void Clear() = 0;

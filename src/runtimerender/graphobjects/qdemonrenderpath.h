@@ -81,7 +81,7 @@ struct SPath : public SNode
     // Paths can either be immediate - children attached define path
     // or they can link to a path buffer that defines the path.
     SPathSubPath *m_FirstSubPath;
-    CRegisteredString m_PathBuffer;
+    QString m_PathBuffer;
     PathPaintStyles::Enum m_PaintStyle;
 
     bool m_WireframeMode;

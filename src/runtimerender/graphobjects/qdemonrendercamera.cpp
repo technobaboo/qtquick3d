@@ -29,10 +29,12 @@
 ****************************************************************************/
 #include <QtDemonRuntimeRender/qdemonrendercamera.h>
 #include <QtDemonRuntimeRender/qdemonrenderpresentation.h>
-#include <QVector2D.h>
+#include <QtDemonRuntimeRender/qdemontextrenderer.h>
+
 #include <QtDemonRender/qdemonrendertexture2d.h>
 #include <QtDemonRender/qdemonrendercontext.h>
-#include <qdemontextrenderer.h>
+
+#include <QtGui/QVector2D>
 
 #include <qmath.h>
 
@@ -47,7 +49,7 @@ float GetAspectRatio(const QDemonRenderRectF &inViewport)
 
 float GetAspectRatio(const QVector2D &inDimensions)
 {
-    return inDimensions.y != 0 ? inDimensions.x / inDimensions.y : 0.0f;
+    return inDimensions.y() != 0 ? inDimensions.x() / inDimensions.y() : 0.0f;
 }
 
 bool IsCameraVerticalAdjust(CameraScaleModes::Enum inMode, float inDesignAspect,
@@ -115,8 +117,8 @@ SPinCameraResult PinCamera(const QDemonRenderRectF &inViewport, QVector2D inDesi
     if (inScaleMode == CameraScaleModes::SameSize) {
         // In this case the perspective transform does not center the view,
         // it places it in the lower-left of the viewport.
-        float idealWidth = inDesignDims.x;
-        float idealHeight = inDesignDims.y;
+        float idealWidth = inDesignDims.x();
+        float idealHeight = inDesignDims.y();
         if (pinRight)
             idealViewport.m_X -= ((idealWidth - inViewport.m_Width));
         else if (!pinLeft)
@@ -163,7 +165,7 @@ SCamera::SCamera()
     , m_ScaleAnchor(CameraScaleAnchors::Center)
 {
     TORAD(m_FOV);
-    m_Projection = QMatrix4x4::createIdentity();
+    m_Projection = QMatrix4x4();
     m_Position = QVector3D(0, 0, -600);
 }
 
@@ -184,9 +186,9 @@ bool SCamera::CalculateProjection(const QDemonRenderRectF &inViewport, const QVe
     else
         retval = ComputeFrustumPerspective(inViewport, inDesignDimensions);
     if (retval) {
-        float *writePtr(m_Projection.front());
-        m_FrustumScale.x = writePtr[0];
-        m_FrustumScale.y = writePtr[5];
+        float *writePtr(m_Projection.data());
+        m_FrustumScale.setX(writePtr[0]);
+        m_FrustumScale.setY(writePtr[5]);
         PinCamera(inViewport, inDesignDimensions, m_Projection, m_ScaleMode, m_ScaleAnchor);
     }
     return retval;
@@ -200,7 +202,7 @@ bool SCamera::CalculateProjection(const QDemonRenderRectF &inViewport, const QVe
 bool SCamera::ComputeFrustumPerspective(const QDemonRenderRectF &inViewport,
                                         const QVector2D &inDesignDimensions)
 {
-    m_Projection = QMatrix4x4::createIdentity();
+    m_Projection = QMatrix4x4();
     float theAngleInRadians = verticalFov(inViewport) / 2.0f;
     float theDeltaZ = m_ClipFar - m_ClipNear;
     float theSine = sinf(theAngleInRadians);
@@ -210,7 +212,7 @@ bool SCamera::ComputeFrustumPerspective(const QDemonRenderRectF &inViewport,
         theAspectRatio = GetAspectRatio(inViewport);
 
     if ((theDeltaZ != 0) && (theSine != 0) && (theAspectRatio != 0)) {
-        float *writePtr(m_Projection.front());
+        float *writePtr(m_Projection.data());
         writePtr[10] = -(m_ClipFar + m_ClipNear) / theDeltaZ;
         writePtr[11] = -1;
         writePtr[14] = -2 * m_ClipNear * m_ClipFar / theDeltaZ;
@@ -239,17 +241,17 @@ bool SCamera::ComputeFrustumPerspective(const QDemonRenderRectF &inViewport,
  */
 bool SCamera::ComputeFrustumOrtho(const QDemonRenderRectF &inViewport, const QVector2D &inDesignDimensions)
 {
-    m_Projection = QMatrix4x4::createIdentity();
+    m_Projection = QMatrix4x4();
 
     float theDeltaZ = m_ClipFar - m_ClipNear;
-    float halfWidth = inDesignDimensions.x / 2.0f;
-    float halfHeight = inDesignDimensions.y / 2.0f;
+    float halfWidth = inDesignDimensions.x() / 2.0f;
+    float halfHeight = inDesignDimensions.y() / 2.0f;
     float designAspect = GetAspectRatio(inDesignDimensions);
     float theAspectRatio = designAspect;
     if (IsFitTypeScaleMode(m_ScaleMode))
         theAspectRatio = GetAspectRatio(inViewport);
     if (theDeltaZ != 0) {
-        float *writePtr(m_Projection.front());
+        float *writePtr(m_Projection.data());
         writePtr[10] = -2.0f / theDeltaZ;
         writePtr[11] = 0.0f;
         writePtr[14] = -(m_ClipNear + m_ClipFar) / theDeltaZ;
@@ -273,7 +275,7 @@ float SCamera::GetOrthographicScaleFactor(const QDemonRenderRectF &inViewport,
 {
     if (m_ScaleMode == CameraScaleModes::SameSize)
         return 1.0f;
-    QMatrix4x4 temp(QMatrix4x4::createIdentity());
+    QMatrix4x4 temp();
     float designAspect = GetAspectRatio(inDesignDimensions);
     float theAspectRatio = GetAspectRatio(inViewport);
     if (m_ScaleMode == CameraScaleModes::Fit) {
@@ -294,7 +296,7 @@ float SCamera::GetOrthographicScaleFactor(const QDemonRenderRectF &inViewport,
 float SCamera::GetTextScaleFactor(const QDemonRenderRectF &inViewport,
                                   const QVector2D &inDesignDimensions) const
 {
-    return NVMax(1.0f, 1.0f / GetOrthographicScaleFactor(inViewport, inDesignDimensions));
+    return qMax(1.0f, 1.0f / GetOrthographicScaleFactor(inViewport, inDesignDimensions));
 }
 
 QMatrix3x3 SCamera::GetLookAtMatrix(const QVector3D &inUpDir, const QVector3D &inDirection) const
@@ -306,15 +308,20 @@ QMatrix3x3 SCamera::GetLookAtMatrix(const QVector3D &inUpDir, const QVector3D &i
     const QVector3D &theUpDir(inUpDir);
 
     // gram-shmidt orthogonalization
-    QVector3D theCrossDir(theDirection.cross(theUpDir));
+    QVector3D theCrossDir = QVector3D::crossProduct(theDirection, theUpDir);
     theCrossDir.normalize();
-    QVector3D theFinalDir(theCrossDir.cross(theDirection));
+    QVector3D theFinalDir = QVector3D::crossProduct(theCrossDir, theDirection);
     theFinalDir.normalize();
     float multiplier = 1.0f;
     if (m_Flags.IsLeftHanded())
         multiplier = -1.0f;
 
-    QMatrix3x3 theResultMatrix(theCrossDir, theFinalDir, multiplier * theDirection);
+    theDirection *= multiplier;
+    float matrixData[9] = {theCrossDir.x(), theCrossDir.y(), theCrossDir.z(),
+                           theFinalDir.x(), theFinalDir.y(), theFinalDir.z(),
+                           theDirection.x(), theDirection.y(), theDirection.z()};
+
+    QMatrix3x3 theResultMatrix(matrixData);
     return theResultMatrix;
 }
 
@@ -322,7 +329,7 @@ void SCamera::LookAt(const QVector3D &inCameraPos, const QVector3D &inUpDir, con
 {
     QVector3D theDirection = inTargetPos - inCameraPos;
     if (m_Flags.IsLeftHanded())
-        theDirection.z *= -1.0f;
+        theDirection.setZ(theDirection.z() * -1.0f);
     m_Rotation = GetRotationVectorFromRotationMatrix(GetLookAtMatrix(inUpDir, theDirection));
     m_Position = inCameraPos;
     MarkDirty(NodeTransformDirtyFlag::TransformIsDirty);
@@ -337,7 +344,7 @@ void SCamera::CalculateViewProjectionMatrix(QMatrix4x4 &outMatrix) const
 SCuboidRect SCamera::GetCameraBounds(const QDemonRenderRectF &inViewport,
                                      const QVector2D &inDesignDimensions) const
 {
-    QMatrix4x4 unused(QMatrix4x4::createIdentity());
+    QMatrix4x4 unused;
     SPinCameraResult theResult =
         PinCamera(inViewport, inDesignDimensions, unused, m_ScaleMode, m_ScaleAnchor);
     // find the normalized edges of the view frustum given the renormalization that happens when
@@ -382,7 +389,7 @@ SCuboidRect SCamera::GetCameraBounds(const QDemonRenderRectF &inViewport,
             float halfRange = inViewport.m_Height / idealHeight;
             normalizedCuboid.m_Bottom = -halfRange;
             normalizedCuboid.m_Top = halfRange;
-            translation.y = translation.y / (idealHeight / 2.0f);
+            translation.setY(translation.y() / (idealHeight / 2.0f));
         }
         normalizedCuboid.Translate(translation);
     }
@@ -417,7 +424,7 @@ SRay SCamera::Unproject(const QVector2D &inViewportRelativeCoords, const QDemonR
                         const QVector2D &inDesignDimensions) const
 {
     SRay theRay;
-    QMatrix4x4 tempVal(QMatrix4x4::createIdentity());
+    QMatrix4x4 tempVal;
     SPinCameraResult result =
         PinCamera(inViewport, inDesignDimensions, tempVal, m_ScaleMode, m_ScaleAnchor);
     QVector2D globalCoords = inViewport.ToAbsoluteCoords(inViewportRelativeCoords);
@@ -425,26 +432,26 @@ SRay SCamera::Unproject(const QVector2D &inViewportRelativeCoords, const QDemonR
         result.m_VirtualViewport.AbsoluteToNormalizedCoordinates(globalCoords);
     QVector3D &outOrigin(theRay.m_Origin);
     QVector3D &outDir(theRay.m_Direction);
-    QVector2D inverseFrustumScale(1.0f / m_FrustumScale.x, 1.0f / m_FrustumScale.y);
-    QVector2D scaledCoords(inverseFrustumScale.x * normalizedCoords.x,
-                        inverseFrustumScale.y * normalizedCoords.y);
+    QVector2D inverseFrustumScale(1.0f / m_FrustumScale.x(), 1.0f / m_FrustumScale.y());
+    QVector2D scaledCoords(inverseFrustumScale.x() * normalizedCoords.x(),
+                        inverseFrustumScale.y() * normalizedCoords.y());
 
     if (m_Flags.IsOrthographic()) {
-        outOrigin.x = scaledCoords.x;
-        outOrigin.y = scaledCoords.y;
-        outOrigin.z = 0.0f;
+        outOrigin.setX(scaledCoords.x());
+        outOrigin.setY(scaledCoords.y());
+        outOrigin.setZ(0.0f);
 
-        outDir.x = 0.0f;
-        outDir.y = 0.0f;
-        outDir.z = -1.0f;
+        outDir.setX(0.0f);
+        outDir.setY(0.0f);
+        outDir.setZ(-1.0f);
     } else {
-        outOrigin.x = 0.0f;
-        outOrigin.y = 0.0f;
-        outOrigin.z = 0.0f;
+        outOrigin.setX(0.0f);
+        outOrigin.setY(0.0f);
+        outOrigin.setZ(0.0f);
 
-        outDir.x = scaledCoords.x;
-        outDir.y = scaledCoords.y;
-        outDir.z = -1.0f;
+        outDir.setX(scaledCoords.x);
+        outDir.setY(scaledCoords.y);
+        outDir.setZ(-1.0f);
     }
 
     outOrigin = m_GlobalTransform.transform(outOrigin);

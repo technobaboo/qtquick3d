@@ -71,8 +71,8 @@ using QDemonRenderContextScopedProperty;
 using QVector2D;
 
 namespace {
-void MaybeQueueNodeForRender(SNode &inNode, nvvector<SRenderableNodeEntry> &outRenderables,
-                             nvvector<SNode *> &outCamerasAndLights, quint32 &ioDFSIndex)
+void MaybeQueueNodeForRender(SNode &inNode, QVector<SRenderableNodeEntry> &outRenderables,
+                             QVector<SNode *> &outCamerasAndLights, quint32 &ioDFSIndex)
 {
     ++ioDFSIndex;
     inNode.m_DFSIndex = ioDFSIndex;
@@ -392,7 +392,7 @@ bool SLayerRenderPreparationData::PrepareTextForRender(
                 0);
         QVector3D maximum(theTextOffset[0] + theTextScale[0], theTextOffset[1] + theTextScale[1],
                 0);
-        inText.m_Bounds = NVBounds3(minimum, maximum);
+        inText.m_Bounds = QDemonBounds3(minimum, maximum);
         QMatrix4x4 theMVP;
         QMatrix3x3 theNormalMatrix;
         inText.CalculateMVPAndNormalMatrix(inViewProjection, theMVP, theNormalMatrix);
@@ -448,12 +448,12 @@ bool SLayerRenderPreparationData::PreparePathForRender(
     QMatrix3x3 theNormalMatrix;
 
     inPath.CalculateMVPAndNormalMatrix(inViewProjection, theMVP, theNormalMatrix);
-    NVBounds3 theBounds(this->m_Renderer.GetQt3DSContext().GetPathManager().GetBounds(inPath));
+    QDemonBounds3 theBounds(this->m_Renderer.GetQt3DSContext().GetPathManager().GetBounds(inPath));
 
     if (inPath.m_GlobalOpacity >= QDEMON_RENDER_MINIMUM_RENDER_OPACITY
             && inClipFrustum.hasValue()) {
         // Check bounding box against the clipping planes
-        NVBounds3 theGlobalBounds = theBounds;
+        QDemonBounds3 theGlobalBounds = theBounds;
         theGlobalBounds.transform(inPath.m_GlobalTransform);
         if (inClipFrustum->intersectsWith(theGlobalBounds) == false)
             subsetOpacity = 0.0f;
@@ -855,7 +855,7 @@ bool SLayerRenderPreparationData::PrepareModelForRender(
             if (subsetOpacity >= QDEMON_RENDER_MINIMUM_RENDER_OPACITY
                     && inClipFrustum.hasValue()) {
                 // Check bounding box against the clipping planes
-                NVBounds3 theGlobalBounds = theSubset.m_Bounds;
+                QDemonBounds3 theGlobalBounds = theSubset.m_Bounds;
                 theGlobalBounds.transform(theModelContext.m_Model.m_GlobalTransform);
                 if (inClipFrustum->intersectsWith(theGlobalBounds) == false)
                     subsetOpacity = 0.0f;
@@ -1224,7 +1224,7 @@ SLayerRenderPreparationData::PrepareForRender(const QSize &inViewportDimensions)
             m_Lights.clear();
             m_OpaqueObjects.clear();
             m_TransparentObjects.clear();
-            nvvector<SLightNodeMarker> theLightNodeMarkers(m_Renderer.GetPerFrameAllocator(),
+            QVector<SLightNodeMarker> theLightNodeMarkers(m_Renderer.GetPerFrameAllocator(),
                                                            "LightNodeMarkers");
             m_SourceLightDirections.clear();
 

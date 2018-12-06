@@ -30,18 +30,23 @@
 #pragma once
 #ifndef QDEMON_RENDER_GRAPH_OBJECT_H
 #define QDEMON_RENDER_GRAPH_OBJECT_H
+
 #include <QtDemonRuntimeRender/qdemonrender.h>
 #include <QtDemonRuntimeRender/qdemonrendertaggedpointer.h>
 #include <QtDemonRuntimeRender/qdemonrendergraphobjecttypes.h>
+
+#include <QtDemonRuntimeRender/qtdemonruntimerenderglobal.h>
+
+#include <QtCore/QString>
 
 QT_BEGIN_NAMESPACE
 
 // Types should be setup on construction.  Change the type
 // at your own risk as the type is used for RTTI purposes.
-struct QDEMON_AUTOTEST_EXPORT SGraphObject
+struct Q_DEMONRUNTIMERENDER_EXPORT SGraphObject
 {
     // Id's help debugging the object and are optionally set
-    CRegisteredString m_Id;
+    QString m_Id;
     // Type is used for RTTI purposes down the road.
     GraphObjectTypes::Enum m_Type;
     STaggedPointer m_UserData;
@@ -50,7 +55,7 @@ struct QDEMON_AUTOTEST_EXPORT SGraphObject
         : m_Type(inType)
     {
     }
-    SGraphObject(const SGraphObject &inCloningObject, NVAllocatorCallback & /*inAllocator*/)
+    SGraphObject(const SGraphObject &inCloningObject)
         : m_Id(inCloningObject.m_Id)
         , m_Type(inCloningObject.m_Type)
     {

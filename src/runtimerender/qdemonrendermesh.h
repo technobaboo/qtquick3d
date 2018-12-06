@@ -35,8 +35,6 @@
 #include <Qt3DSRenderIndexBuffer.h>
 #include <Qt3DSRenderInputAssembler.h>
 #include <Qt3DSBounds3.h>
-#include <StringTable.h>
-#include <Qt3DSContainers.h>
 #include <QtDemon/qdemonrefcounted.h>
 #include <Qt3DSQDemonNoCopy.h>
 
@@ -46,7 +44,7 @@ struct SRenderSubsetBase
 {
     quint32 m_Count;
     quint32 m_Offset;
-    NVBounds3 m_Bounds; // Vertex buffer bounds
+    QDemonBounds3 m_Bounds; // Vertex buffer bounds
     SRenderSubsetBase() {}
     SRenderSubsetBase(const SRenderSubsetBase &inOther)
         : m_Count(inOther.m_Count)
@@ -89,7 +87,7 @@ struct SRenderSubset : public SRenderSubsetBase
     ///tessellation is enabled )
     QDemonConstDataRef<SRenderJoint> m_Joints;
     CRegisteredString m_Name;
-    nvvector<SRenderSubsetBase> m_SubSubsets;
+    QVector<SRenderSubsetBase> m_SubSubsets;
 
     SRenderSubset(NVAllocatorCallback &alloc)
         : m_InputAssembler(nullptr)
@@ -164,8 +162,8 @@ struct SRenderSubset : public SRenderSubsetBase
 
 struct SRenderMesh : public QDemonNoCopy
 {
-    nvvector<SRenderSubset> m_Subsets;
-    nvvector<SRenderJoint> m_Joints;
+    QVector<SRenderSubset> m_Subsets;
+    QVector<SRenderJoint> m_Joints;
     QDemonRenderDrawMode::Enum m_DrawMode;
     QDemonRenderWinding::Enum m_Winding; // counterclockwise
     quint32 m_MeshId; // Id from the file of this mesh.

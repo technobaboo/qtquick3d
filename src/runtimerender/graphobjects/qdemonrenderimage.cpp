@@ -85,7 +85,7 @@ bool SImage::ClearDirty(IBufferManager &inBufferManager, IOffscreenRenderManager
     }
 
     if (newImage.m_Texture == nullptr) {
-        if (m_OffscreenRendererId.IsValid()) {
+        if (!m_OffscreenRendererId.isEmpty()) {
             SOffscreenRenderResult theResult =
                 inRenderManager.GetRenderedItem(m_OffscreenRendererId);
             HandleOffscreenResult(*this, newImage, theResult, replaceTexture, wasDirty);
@@ -114,21 +114,21 @@ void SImage::CalculateTextureTransform()
 {
     m_Flags.SetTransformDirty(false);
 
-    m_TextureTransform = QMatrix4x4::createIdentity();
+    m_TextureTransform = QMatrix4x4();
 
-    QMatrix4x4 translation(QMatrix4x4::createIdentity());
-    QMatrix4x4 rotation(QMatrix4x4::createIdentity());
-    QMatrix4x4 scale(QMatrix4x4::createIdentity());
+    QMatrix4x4 translation;
+    QMatrix4x4 rotation;
+    QMatrix4x4 scale;
 
-    translation.column3[0] = m_Position.x;
-    translation.column3[1] = m_Position.y;
-    scale.column0[0] = m_Scale.x;
-    scale.column1[1] = m_Scale.y;
+    translation(3, 0) = m_Position.x();
+    translation(3, 1) = m_Position.y();
+    scale(0, 0) = m_Scale.x();
+    scale(1, 1) = m_Scale.y();
     rotation.rotate(m_Rotation, QVector3D(0, 0, 1));
 
     // Setup the pivot.
-    m_TextureTransform.column3[0] = m_Pivot.x;
-    m_TextureTransform.column3[1] = m_Pivot.y;
+    m_TextureTransform(3, 0) = m_Pivot.x();
+    m_TextureTransform(3, 1) = m_Pivot.y();
     m_TextureTransform = m_TextureTransform * rotation;
     m_TextureTransform = m_TextureTransform * scale;
     m_TextureTransform = m_TextureTransform * translation;

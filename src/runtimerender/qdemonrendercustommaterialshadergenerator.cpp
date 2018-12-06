@@ -148,7 +148,7 @@ struct SShaderTextureProperties
 /* We setup some shared state on the custom material shaders */
 struct SShaderGeneratorGeneratedShader
 {
-    typedef nvhash_map<quint32, SShaderTextureProperties> TCustomMaterialImagMap;
+    typedef QHash<quint32, SShaderTextureProperties> TCustomMaterialImagMap;
 
     NVAllocatorCallback &m_Allocator;
     QDemonRenderShaderProgram &m_Shader;
@@ -274,14 +274,14 @@ struct SShaderGeneratorGeneratedShader
 struct SShaderGenerator : public ICustomMaterialShaderGenerator
 {
     typedef CRenderString TStrType;
-    typedef nvhash_map<QDemonRenderShaderProgram *, QDemonScopedRefCounted<SShaderGeneratorGeneratedShader>>
+    typedef QHash<QDemonRenderShaderProgram *, QDemonScopedRefCounted<SShaderGeneratorGeneratedShader>>
     TProgramToShaderMap;
     typedef eastl::pair<size_t, QDemonScopedRefCounted<SShaderLightProperties>>
     TCustomMaterialLightEntry;
     typedef eastl::pair<size_t, NVRenderCachedShaderProperty<QDemonRenderTexture2D *>> TShadowMapEntry;
     typedef eastl::pair<size_t, NVRenderCachedShaderProperty<QDemonRenderTextureCube *>>
     TShadowCubeEntry;
-    typedef nvhash_map<CRegisteredString,
+    typedef QHash<CRegisteredString,
     QDemonScopedRefCounted<QDemonRenderConstantBuffer>>
     TStrConstanBufMap;
 
@@ -307,7 +307,7 @@ struct SShaderGenerator : public ICustomMaterialShaderGenerator
     SShaderDefaultMaterialKeyProperties m_DefaultMaterialShaderKeyProperties;
     TProgramToShaderMap m_ProgramToShaderMap;
 
-    nvvector<TCustomMaterialLightEntry> m_LightEntries;
+    QVector<TCustomMaterialLightEntry> m_LightEntries;
 
     TStrConstanBufMap m_ConstantBuffers; ///< store all constants buffers
 

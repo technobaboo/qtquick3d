@@ -40,14 +40,14 @@ namespace {
 
 struct SWidgetBBox : public IRenderWidget
 {
-    NVBounds3 m_Bounds;
+    QDemonBounds3 m_Bounds;
     QVector3D m_Color;
     QDemonRenderVertexBuffer *m_BoxVertexBuffer;
     QDemonRenderIndexBuffer *m_BoxIndexBuffer;
     QDemonRenderInputAssembler *m_BoxInputAssembler;
     QDemonRenderShaderProgram *m_BoxShader;
     CRegisteredString m_ItemName;
-    SWidgetBBox(SNode &inNode, const NVBounds3 &inBounds, const QVector3D &inColor)
+    SWidgetBBox(SNode &inNode, const QDemonBounds3 &inBounds, const QVector3D &inColor)
         : IRenderWidget(inNode)
         , m_Bounds(inBounds)
         , m_Color(inColor)
@@ -313,7 +313,7 @@ struct SWidgetAxis : public IRenderWidget
 };
 }
 
-IRenderWidget &IRenderWidget::CreateBoundingBoxWidget(SNode &inNode, const NVBounds3 &inBounds,
+IRenderWidget &IRenderWidget::CreateBoundingBoxWidget(SNode &inNode, const QDemonBounds3 &inBounds,
                                                       const QVector3D &inColor,
                                                       NVAllocatorCallback &inAlloc)
 {

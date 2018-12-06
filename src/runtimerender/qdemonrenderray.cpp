@@ -45,7 +45,7 @@ Option<QVector3D> SRay::Intersect(const NVPlane &inPlane) const
 }
 
 Option<SRayIntersectionResult> SRay::IntersectWithAABB(const QMatrix4x4 &inGlobalTransform,
-                                                       const NVBounds3 &inBounds,
+                                                       const QDemonBounds3 &inBounds,
                                                        bool inForceIntersect) const
 {
     // Intersect the origin with the AABB described by bounds.
@@ -119,7 +119,7 @@ Option<SRayIntersectionResult> SRay::IntersectWithAABB(const QMatrix4x4 &inGloba
     return SRayIntersectionResult(rayLengthSquared, relXY);
 }
 
-Option<QVector2D> SRay::GetRelative(const QMatrix4x4 &inGlobalTransform, const NVBounds3 &inBounds,
+Option<QVector2D> SRay::GetRelative(const QMatrix4x4 &inGlobalTransform, const QDemonBounds3 &inBounds,
                                     SBasisPlanes::Enum inPlane) const
 {
     QMatrix4x4 theOriginTransform = inGlobalTransform.getInverse();

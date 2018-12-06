@@ -169,7 +169,7 @@ public:
     SNode &GetNode() { return *m_Node; }
 
     // Pure widgets.
-    static IRenderWidget &CreateBoundingBoxWidget(SNode &inNode, const NVBounds3 &inBounds,
+    static IRenderWidget &CreateBoundingBoxWidget(SNode &inNode, const QDemonBounds3 &inBounds,
                                                   const QVector3D &inColor,
                                                   NVAllocatorCallback &inAlloc);
     static IRenderWidget &CreateAxisWidget(SNode &inNode, NVAllocatorCallback &inAlloc);

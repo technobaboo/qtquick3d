@@ -89,7 +89,7 @@ struct SClipPlane
         return retval;
     }
 
-    static inline QVector3D corner(const NVBounds3 &bounds, TRenderBoxEdge edge)
+    static inline QVector3D corner(const QDemonBounds3 &bounds, TRenderBoxEdge edge)
     {
         return QVector3D((edge & BoxEdgeFlagValues::xMax) ? bounds.maximum[0] : bounds.minimum[0],
                 (edge & BoxEdgeFlagValues::yMax) ? bounds.maximum[1] : bounds.minimum[1],
@@ -104,7 +104,7 @@ struct SClipPlane
         return 1 if the bs is completely above plane,
         return 0 if the bs intersects the plane,
         return -1 if the bs is completely below the plane.*/
-        inline int intersect(const NVBounds3 &bounds) const
+        inline int intersect(const QDemonBounds3 &bounds) const
         {
         // if lowest point above plane than all above.
         if (distance(corner(bounds, mEdges.lowerEdge)) > 0.0f)
@@ -138,7 +138,7 @@ struct SClippingFrustum
 
     SClippingFrustum(const QMatrix4x4 &modelviewprojection, SClipPlane nearPlane);
 
-    bool intersectsWith(const NVBounds3 &bounds) const
+    bool intersectsWith(const QDemonBounds3 &bounds) const
     {
         for (quint32 idx = 0; idx < 6; ++idx)
             if (mPlanes[idx].intersect(bounds) < 0)

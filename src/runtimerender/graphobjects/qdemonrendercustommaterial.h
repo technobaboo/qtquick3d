@@ -34,7 +34,7 @@
 #include <QtDemonRuntimeRender/qdemonrenderdynamicobject.h>
 #include <QtDemonRuntimeRender/qdemonrenderimage.h>
 #include <QtDemonRuntimeRender/qdemonrenderlightmaps.h>
-#include <Qt3DSFlags.h>
+#include <QtDemon/qdemonflags.h>
 
 QT_BEGIN_NAMESPACE
 

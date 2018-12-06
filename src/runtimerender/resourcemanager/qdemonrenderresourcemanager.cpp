@@ -34,8 +34,6 @@
 #include <QtDemonRender/qdemonrendertexture2d.h>
 #include <QtDemonRender/qdemonrendertexture2darray.h>
 #include <qdemonrendertexturecube.h>
-#include <Qt3DSAtomic.h>
-#include <Qt3DSContainers.h>
 
 QT_BEGIN_NAMESPACE
 namespace {
@@ -44,14 +42,14 @@ struct SResourceManager : public IResourceManager
 {
     QDemonScopedRefCounted<QDemonRenderContext> m_RenderContext;
     // Complete list of all allocated objects
-    nvvector<QDemonScopedRefCounted<QDemonRefCounted>> m_AllocatedObjects;
+    QVector<QDemonScopedRefCounted<QDemonRefCounted>> m_AllocatedObjects;
 
-    nvvector<QDemonRenderFrameBuffer *> m_FreeFrameBuffers;
-    nvvector<QDemonRenderRenderBuffer *> m_FreeRenderBuffers;
-    nvvector<QDemonRenderTexture2D *> m_FreeTextures;
-    nvvector<QDemonRenderTexture2DArray *> m_FreeTexArrays;
-    nvvector<QDemonRenderTextureCube *> m_FreeTexCubes;
-    nvvector<QDemonRenderImage2D *> m_FreeImages;
+    QVector<QDemonRenderFrameBuffer *> m_FreeFrameBuffers;
+    QVector<QDemonRenderRenderBuffer *> m_FreeRenderBuffers;
+    QVector<QDemonRenderTexture2D *> m_FreeTextures;
+    QVector<QDemonRenderTexture2DArray *> m_FreeTexArrays;
+    QVector<QDemonRenderTextureCube *> m_FreeTexCubes;
+    QVector<QDemonRenderImage2D *> m_FreeImages;
 
     volatile qint32 mRefCount;
 
@@ -111,7 +109,7 @@ struct SResourceManager : public IResourceManager
                                 QDemonRenderTextureOrRenderBuffer());
         }
 #ifdef _DEBUG
-        nvvector<QDemonRenderFrameBuffer *>::iterator theFind =
+        QVector<QDemonRenderFrameBuffer *>::iterator theFind =
                 eastl::find(m_FreeFrameBuffers.begin(), m_FreeFrameBuffers.end(), &inBuffer);
         Q_ASSERT(theFind == m_FreeFrameBuffers.end());
 #endif
@@ -153,7 +151,7 @@ struct SResourceManager : public IResourceManager
     void Release(QDemonRenderRenderBuffer &inBuffer) override
     {
 #ifdef _DEBUG
-        nvvector<QDemonRenderRenderBuffer *>::iterator theFind =
+        QVector<QDemonRenderRenderBuffer *>::iterator theFind =
                 eastl::find(m_FreeRenderBuffers.begin(), m_FreeRenderBuffers.end(), &inBuffer);
         Q_ASSERT(theFind == m_FreeRenderBuffers.end());
 #endif
@@ -213,7 +211,7 @@ struct SResourceManager : public IResourceManager
     void Release(QDemonRenderTexture2D &inBuffer) override
     {
 #ifdef _DEBUG
-        nvvector<QDemonRenderTexture2D *>::iterator theFind =
+        QVector<QDemonRenderTexture2D *>::iterator theFind =
                 eastl::find(m_FreeTextures.begin(), m_FreeTextures.end(), &inBuffer);
         Q_ASSERT(theFind == m_FreeTextures.end());
 #endif
@@ -275,7 +273,7 @@ struct SResourceManager : public IResourceManager
     void Release(QDemonRenderTexture2DArray &inBuffer) override
     {
 #ifdef _DEBUG
-        nvvector<QDemonRenderTexture2DArray *>::iterator theFind =
+        QVector<QDemonRenderTexture2DArray *>::iterator theFind =
                 eastl::find(m_FreeTexArrays.begin(), m_FreeTexArrays.end(), &inBuffer);
         Q_ASSERT(theFind == m_FreeTexArrays.end());
 #endif
@@ -358,7 +356,7 @@ struct SResourceManager : public IResourceManager
     void Release(QDemonRenderTextureCube &inBuffer) override
     {
 #ifdef _DEBUG
-        nvvector<QDemonRenderTextureCube *>::iterator theFind =
+        QVector<QDemonRenderTextureCube *>::iterator theFind =
                 eastl::find(m_FreeTexCubes.begin(), m_FreeTexCubes.end(), &inBuffer);
         Q_ASSERT(theFind == m_FreeTexCubes.end());
 #endif
@@ -385,7 +383,7 @@ struct SResourceManager : public IResourceManager
     void Release(QDemonRenderImage2D &inBuffer) override
     {
 #ifdef _DEBUG
-        nvvector<QDemonRenderImage2D *>::iterator theFind =
+        QVector<QDemonRenderImage2D *>::iterator theFind =
                 eastl::find(m_FreeImages.begin(), m_FreeImages.end(), &inBuffer);
         Q_ASSERT(theFind == m_FreeImages.end());
 #endif

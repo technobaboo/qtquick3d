@@ -28,21 +28,11 @@
 **
 ****************************************************************************/
 #include <QtDemonRuntimeRender/qdemonrenderimagebatchloader.h>
-#include <Qt3DSMutex.h>
-#include <Qt3DSSync.h>
-#include <Qt3DSContainers.h>
-#include <Qt3DSAtomic.h>
-#include <Qt3DSBroadcastingAllocator.h>
-#include <Qt3DSFoundation.h>
-#include <StringTable.h>
 #include <qdemonrenderinputstreamfactory.h>
 #include <QtDemonRuntimeRender/qdemonrenderbuffermanager.h>
 #include <qdemonrenderthreadpool.h>
 #include <qdemonrenderimagescaler.h>
 #include <QtDemonRuntimeRender/qdemonrenderloadedtexture.h>
-#include <Qt3DSInvasiveLinkedList.h>
-#include <Qt3DSPool.h>
-#include <Qt3DSPerfTimer.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -178,8 +168,8 @@ struct SBatchLoadedImage
 
 struct SBatchLoader : public IImageBatchLoader
 {
-    typedef nvhash_map<TImageBatchId, SImageLoaderBatch *> TImageLoaderBatchMap;
-    typedef nvhash_map<CRegisteredString, TImageBatchId> TSourcePathToBatchMap;
+    typedef QHash<TImageBatchId, SImageLoaderBatch *> TImageLoaderBatchMap;
+    typedef QHash<CRegisteredString, TImageBatchId> TSourcePathToBatchMap;
     typedef Pool<SLoadingImage, ForwardingAllocator> TLoadingImagePool;
     typedef Pool<SImageLoaderBatch, ForwardingAllocator> TBatchPool;
 
@@ -202,13 +192,13 @@ struct SBatchLoader : public IImageBatchLoader
     Mutex m_LoaderMutex;
 
     // Both loader and main threads
-    nvvector<SBatchLoadedImage> m_LoadedImages;
+    QVector<SBatchLoadedImage> m_LoadedImages;
     // main thread
-    nvvector<TImageBatchId> m_FinishedBatches;
+    QVector<TImageBatchId> m_FinishedBatches;
     // main thread
     TSourcePathToBatchMap m_SourcePathToBatches;
     // main thread
-    nvvector<SLoadingImage> m_LoaderBuilderWorkspace;
+    QVector<SLoadingImage> m_LoaderBuilderWorkspace;
     TLoadingImagePool m_LoadingImagePool;
     TBatchPool m_BatchPool;
 
@@ -236,7 +226,7 @@ struct SBatchLoader : public IImageBatchLoader
 
     virtual ~SBatchLoader()
     {
-        nvvector<TImageBatchId> theCancelledBatches(m_Foundation.getAllocator(), "~SBatchLoader");
+        QVector<TImageBatchId> theCancelledBatches(m_Foundation.getAllocator(), "~SBatchLoader");
         for (TImageLoaderBatchMap::iterator theIter = m_Batches.begin(), theEnd = m_Batches.end();
              theIter != theEnd; ++theIter) {
             theIter->second->Cancel();

@@ -88,9 +88,9 @@ void SScene::Render(const QVector2D &inViewportDimensions, IQt3DSRenderContext &
                 = inContext.IsInSubPresentation() && !m_UseClearColor ? 0.0f : 1.0f;
         QVector4D clearColor(0.0f, 0.0f, 0.0f, clearColorAlpha);
         if (m_UseClearColor) {
-            clearColor.x = m_ClearColor.x;
-            clearColor.y = m_ClearColor.y;
-            clearColor.z = m_ClearColor.z;
+            clearColor.setX(m_ClearColor.x());
+            clearColor.setY(m_ClearColor.y());
+            clearColor.setZ(m_ClearColor.z());
         }
         // Maybe clear and reset to previous clear color after we leave.
         QDemonRenderContextScopedProperty<QVector4D> __clearColor(

@@ -82,14 +82,14 @@ struct SRay
     Option<QVector3D> Intersect(const NVPlane &inPlane) const;
 
     Option<SRayIntersectionResult> IntersectWithAABB(const QMatrix4x4 &inGlobalTransform,
-                                                     const NVBounds3 &inBounds,
+                                                     const QDemonBounds3 &inBounds,
                                                      bool inForceIntersect = false) const;
 
-    Option<QVector2D> GetRelative(const QMatrix4x4 &inGlobalTransform, const NVBounds3 &inBounds,
+    Option<QVector2D> GetRelative(const QMatrix4x4 &inGlobalTransform, const QDemonBounds3 &inBounds,
                                   SBasisPlanes::Enum inPlane) const;
 
     Option<QVector2D> GetRelativeXY(const QMatrix4x4 &inGlobalTransform,
-                                    const NVBounds3 &inBounds) const
+                                    const QDemonBounds3 &inBounds) const
     {
         return GetRelative(inGlobalTransform, inBounds, SBasisPlanes::XY);
     }

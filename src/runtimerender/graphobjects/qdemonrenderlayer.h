@@ -104,7 +104,7 @@ struct LayerBlendTypes
 // to children as the identity.  It also can optionally have a width or height
 // different than the overlying context.  You can think of layers as the transformation
 // between a 3d scene graph and a 2D texture.
-struct QDEMON_AUTOTEST_EXPORT SLayer : public SNode
+struct Q_DEMONRUNTIMERENDER_EXPORT SLayer : public SNode
 {
     SScene *m_Scene;
 
@@ -116,7 +116,7 @@ struct QDEMON_AUTOTEST_EXPORT SLayer : public SNode
     // own source path.  Instead, it renders the offscreen renderer.  Used in this manner,
     // offscreen renderer's also have the option (if they support it) to render directly to the
     // render target given a specific viewport (that is also scissored if necessary).
-    CRegisteredString m_TexturePath;
+    QString m_TexturePath;
 
     SRenderPlugin *m_RenderPlugin; // Overrides texture path if available.
 

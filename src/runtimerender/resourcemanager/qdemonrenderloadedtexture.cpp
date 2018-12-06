@@ -339,7 +339,7 @@ struct STextureDataWriter
             for (quint32 idx = 0; idx < m_NumComponents; ++idx)
                 Q_ASSERT(textureData[offset + idx] == 0);
 
-            memCopy(textureData + offset, pixelData, m_NumComponents);
+            ::memcpy(textureData + offset, pixelData, m_NumComponents);
         }
     }
 

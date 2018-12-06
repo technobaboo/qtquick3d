@@ -75,7 +75,7 @@ public:
     // context required to render the PathSubPath.
     virtual QDemonDataRef<SPathAnchorPoint>
     ResizePathSubPathBuffer(const SPathSubPath &inPathSubPath, quint32 inNumAnchors) = 0;
-    virtual NVBounds3 GetBounds(const SPath &inPath) = 0;
+    virtual QDemonBounds3 GetBounds(const SPath &inPath) = 0;
 
     // Helper functions used in various locations
     // Angles here are in degrees because that is how they are represented in the data.

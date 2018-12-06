@@ -179,10 +179,10 @@ struct SShaderGeneratorGeneratedShader
     SLightConstantProperties<SShaderGeneratorGeneratedShader> *m_lightConstantProperties;
 
     // Cache the image property name lookups
-    nvvector<SShaderTextureProperties> m_Images;
-    nvvector<SShaderLightProperties> m_Lights;
+    QVector<SShaderTextureProperties> m_Images;
+    QVector<SShaderLightProperties> m_Lights;
     // Cache shadow map properties
-    nvvector<SShadowMapProperties> m_ShadowMaps;
+    QVector<SShadowMapProperties> m_ShadowMaps;
 
     qint32 m_RefCount;
 
@@ -254,9 +254,9 @@ struct SShaderGeneratorGeneratedShader
 struct SShaderGenerator : public IDefaultMaterialShaderGenerator
 {
     typedef CRenderString TStrType;
-    typedef nvhash_map<QDemonRenderShaderProgram *, QDemonScopedRefCounted<SShaderGeneratorGeneratedShader>>
+    typedef QHash<QDemonRenderShaderProgram *, QDemonScopedRefCounted<SShaderGeneratorGeneratedShader>>
     TProgramToShaderMap;
-    typedef nvhash_map<CRegisteredString,
+    typedef QHash<CRegisteredString,
     QDemonScopedRefCounted<QDemonRenderConstantBuffer>>
     TStrConstanBufMap;
 

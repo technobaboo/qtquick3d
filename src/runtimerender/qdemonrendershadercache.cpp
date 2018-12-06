@@ -29,19 +29,11 @@
 ****************************************************************************/
 #include <QtDemonRuntimeRender/qdemonrendershadercache.h>
 #include <QtDemonRender/qdemonrendercontext.h>
-#include <Qt3DSContainers.h>
-#include <Qt3DSAtomic.h>
 #include <QtDemonRuntimeRender/qdemonrenderstring.h>
-#include <XML.h>
-#include <IOStreams.h>
-#include <StringConversionImpl.h>
 #include <qdemonrenderinputstreamfactory.h>
-#include <FileTools.h>
 #include <QtDemonRender/qdemonrendershaderprogram.h>
 #include <QtDemonRuntimeRender/qdemonrenderer.h>
 #include <memory>
-#include <Qt3DSTime.h>
-#include <Qt3DSPerfTimer.h>
 
 #include <QRegularExpression>
 #include <QString>
@@ -156,7 +148,7 @@ inline QDemonRenderContextType StringToContextType(const CRenderString &inContex
         {
 
             QString::size_type sectionLen = NVMin(pos - lastpos, lastTempBufIdx);
-            intrinsics::memCopy(tempBuffer, inContextType.c_str() + lastpos, sectionLen);
+            intrinsics::::memcpy(tempBuffer, inContextType.c_str() + lastpos, sectionLen);
             tempBuffer[lastTempBufIdx] = 0;
             for (size_t idx = 0, end = g_NumStringToContextValueEntries; idx < end; ++idx) {
                 if (strcmp(g_StringToContextTypeValue[idx].first, tempBuffer) == 0)
@@ -223,7 +215,7 @@ namespace {
 
 struct ShaderCache : public IShaderCache
 {
-    typedef nvhash_map<SShaderCacheKey, QDemonScopedRefCounted<QDemonRenderShaderProgram>> TShaderMap;
+    typedef QHash<SShaderCacheKey, QDemonScopedRefCounted<QDemonRenderShaderProgram>> TShaderMap;
     QDemonRenderContext &m_RenderContext;
     IPerfTimer &m_PerfTimer;
     TShaderMap m_Shaders;
