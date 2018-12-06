@@ -63,6 +63,8 @@ class RenderToTexture : public QDemonRenderExample
     quint32 mFBWidth;
     quint32 mFBHeight;
 
+    bool m_viewportDirty = true;
+
     ShaderArgs mShaderArgs;
     float frus[16];
     float model[16];
@@ -146,21 +148,26 @@ public:
         QDemonRenderClearFlags clearFlags(QDemonRenderClearValues::Color | QDemonRenderClearValues::Depth);
         // render to frame buffer
         {
-            QDemonRenderContextScopedProperty<QDemonRenderFrameBufferPtr> __framebuffer(
+            QDemonRenderContextScopedProperty<QDemonRenderFrameBufferPtr> framebuffer(
                 *m_Context.data(),
                 &QDemonRenderContext::GetRenderTarget,
                 &QDemonRenderContext::SetRenderTarget,
                 mFrameBuffer.data());
-            QDemonRenderContextScopedProperty<QDemonRenderRect> __viewport(
+            QDemonRenderContextScopedProperty<QDemonRenderRect> viewport(
                 *m_Context.data(), &QDemonRenderContext::GetViewport, &QDemonRenderContext::SetViewport,
                 QDemonRenderRect(0, 0, mFBWidth, mFBHeight));
-            QDemonRenderContextScopedProperty<QVector4D> __clearColor(
+            QDemonRenderContextScopedProperty<QVector4D> clearColor(
                 *m_Context.data(), &QDemonRenderContext::GetClearColor, &QDemonRenderContext::SetClearColor,
-                QVector4D(.6f, .6f, .6f, .6f));
+                QVector4D(1.0f, .6f, .6f, 1.6f));
             m_Context->Clear(clearFlags);
             mShaderArgs.shader = mSimpleShader;
             DrawIndexedArrays(QVector3D());
         }
+        if (m_viewportDirty) {
+            m_Context->SetViewport(QDemonRenderRect(0, 0, this->width(), this->height()));
+            m_viewportDirty = false;
+        }
+
         m_Context->Clear(clearFlags);
         mShaderArgs.texture = mColorBuffer;
         mShaderArgs.shader = mSimpleShaderTex;
@@ -170,9 +177,13 @@ public:
         mShaderArgs.texture = mDepthBuffer;
         DrawIndexedArrays(QVector3D(2.f, 0.f, 0.f));
     }
+
+protected:
+    void resizeEvent(QResizeEvent *) override
+    {
+        m_viewportDirty = true;
+    }
 };
-
-
 
 int main(int argc, char *argv[])
 {
