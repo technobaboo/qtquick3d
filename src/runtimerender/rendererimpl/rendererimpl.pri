@@ -1,15 +1,15 @@
 HEADERS += \
-    $$PWD/Qt3DSRenderableObjects.h \
-    $$PWD/Qt3DSRendererImpl.h \
-    $$PWD/Qt3DSRendererImplLayerRenderData.h \
-    $$PWD/Qt3DSRendererImplLayerRenderHelper.h \
-    $$PWD/Qt3DSRendererImplLayerRenderPreparationData.h \
-    $$PWD/Qt3DSRendererImplShaders.h \
-    $$PWD/Qt3DSVertexPipelineImpl.h
+    $$PWD/qdemonrenderableobjects.h \
+    $$PWD/qdemonrendererimpl.h \
+    $$PWD/qdemonrendererimpllayerrenderdata.h \
+    $$PWD/qdemonrendererimpllayerrenderhelper.h \
+    $$PWD/qdemonrendererimpllayerrenderpreparationdata.h \
+    $$PWD/qdemonrendererimplshaders.h \
+    $$PWD/qdemonvertexpipelineimpl.h
 SOURCES += \
-    $$PWD/Qt3DSRenderableObjects.cpp \
-    $$PWD/Qt3DSRendererImpl.cpp \
-    $$PWD/Qt3DSRendererImplLayerRenderData.cpp \
-    $$PWD/Qt3DSRendererImplLayerRenderHelper.cpp \
-    $$PWD/Qt3DSRendererImplLayerRenderPreparationData.cpp \
-    $$PWD/Qt3DSRendererImplShaders.cpp
+    $$PWD/qdemonrenderableobjects.cpp \
+    $$PWD/qdemonrendererimpl.cpp \
+    $$PWD/qdemonrendererimpllayerrenderdata.cpp \
+    $$PWD/qdemonrendererimpllayerrenderhelper.cpp \
+    $$PWD/qdemonrendererimpllayerrenderpreparationdata.cpp \
+    $$PWD/qdemonrendererimplshaders.cpp
