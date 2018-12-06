@@ -31,7 +31,7 @@
 #ifndef QDEMON_RENDER_BUFFER_LOADED_H
 #define QDEMON_RENDER_BUFFER_LOADED_H
 
-#include <qdemonrender.h>
+#include <QtDemonRuntimeRender/qdemonrender.h>
 #include <foundation/Qt3DSRefCounted.h>
 #include <foundation/StringTable.h>
 

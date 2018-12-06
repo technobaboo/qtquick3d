@@ -29,7 +29,7 @@
 ****************************************************************************/
 
 #include <qdemonrenderattriblayout.h>
-#include <qdemonrendercontext.h>
+#include <QtDemonRender/qdemonrendercontext.h>
 
 QT_BEGIN_NAMESPACE
 

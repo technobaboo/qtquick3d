@@ -30,11 +30,11 @@
 #pragma once
 #ifndef QDEMON_RENDER_RESOURCE_BUFFER_OBJECTS_H
 #define QDEMON_RENDER_RESOURCE_BUFFER_OBJECTS_H
-#include <qdemonrender.h>
-#include <qdemonrendercontext.h>
+#include <QtDemonRuntimeRender/qdemonrender.h>
+#include <QtDemonRender/qdemonrendercontext.h>
 #include <QtDemonRuntimeRender/qdemonrenderresourcemanager.h>
-#include <qdemonrenderframebuffer.h>
-#include <qdemonrenderrenderbuffer.h>
+#include <QtDemonRender/qdemonrenderframebuffer.h>
+#include <QtDemonRender/qdemonrenderrenderbuffer.h>
 
 QT_BEGIN_NAMESPACE
 class CResourceFrameBuffer

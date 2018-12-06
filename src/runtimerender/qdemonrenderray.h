@@ -31,7 +31,7 @@
 #ifndef QDEMON_RENDER_RAY_H
 #define QDEMON_RENDER_RAY_H
 
-#include <qdemonrender.h>
+#include <QtDemonRuntimeRender/qdemonrender.h>
 #include <QVector2D.h>
 #include <QVector3D.h>
 #include <Qt3DSOption.h>

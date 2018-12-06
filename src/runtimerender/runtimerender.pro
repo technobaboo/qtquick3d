@@ -1,6 +1,8 @@
 TARGET = QtDemonRuntimeRender
 MODULE = demonruntimerender
 
+QT += demon demonrender
+
 include(graphobjects/graphobjects.pri)
 include(rendererimpl/rendererimpl.pri)
 include(resourcemanager/resourcemanager.pri)

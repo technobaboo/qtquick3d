@@ -31,7 +31,7 @@
 #ifndef QDEMON_RENDER_CAMERA_H
 #define QDEMON_RENDER_CAMERA_H
 #include <QtDemonRuntimeRender/qdemonrendernode.h>
-#include <qdemonrenderray.h>
+#include <QtDemonRuntimeRender/qdemonrenderray.h>
 
 QT_BEGIN_NAMESPACE
 

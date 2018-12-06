@@ -27,15 +27,15 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <qdemonrendershadercodegeneratorv2.h>
+#include <QtDemonRuntimeRender/qdemonrendershadercodegeneratorv2.h>
 #include <Qt3DSFoundation.h>
 #include <Qt3DSBroadcastingAllocator.h>
 #include <StringTable.h>
 #include <Qt3DSIntrinsics.h>
 #include <Qt3DSAtomic.h>
 #include <Utils.h>
-#include <qdemonrendercontextcore.h>
-#include <qdemonrenderdynamicobjectsystem.h>
+#include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
+#include <QtDemonRuntimeRender/qdemonrenderdynamicobjectsystem.h>
 
 #include <QtGui/qopengl.h>
 

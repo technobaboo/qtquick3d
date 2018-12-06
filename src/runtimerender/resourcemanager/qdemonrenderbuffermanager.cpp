@@ -30,15 +30,15 @@
 #ifdef _WIN32
 #pragma warning(disable : 4201) // nonstandard extension used : nameless struct/union
 #endif
-#include <qdemonrender.h>
+#include <QtDemonRuntimeRender/qdemonrender.h>
 #include <QtDemonRuntimeRender/qdemonrenderbuffermanager.h>
 #include <Qt3DSAllocator.h>
-#include <qdemonrendercontext.h>
+#include <QtDemonRender/qdemonrendercontext.h>
 #include <Qt3DSAtomic.h>
 #include <EASTL/hash_map.h>
 #include <FileTools.h>
 #include <Qt3DSImportMesh.h>
-#include <qdemonrendermesh.h>
+#include <QtDemonRuntimeRender/qdemonrendermesh.h>
 #include <Qt3DSAllocatorCallback.h>
 #include <QtDemonRuntimeRender/qdemonrenderloadedtexture.h>
 #include <Qt3DSFoundation.h>

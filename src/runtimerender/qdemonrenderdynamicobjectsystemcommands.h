@@ -30,9 +30,9 @@
 #pragma once
 #ifndef QDEMON_RENDER_EFFECT_SYSTEM_COMMANDS_H
 #define QDEMON_RENDER_EFFECT_SYSTEM_COMMANDS_H
-#include <qdemonrender.h>
+#include <QtDemonRuntimeRender/qdemonrender.h>
 #include <StringTable.h>
-#include <qdemonrenderbasetypes.h>
+#include <QtDemonRender/qdemonrenderbasetypes.h>
 #include <Qt3DSIntrinsics.h>
 #include <Qt3DSFlags.h>
 

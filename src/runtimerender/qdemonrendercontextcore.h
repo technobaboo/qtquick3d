@@ -30,9 +30,9 @@
 #pragma once
 #ifndef QDEMON_RENDER_CONTEXT_CORE_H
 #define QDEMON_RENDER_CONTEXT_CORE_H
-#include <qdemonrender.h>
+#include <QtDemonRuntimeRender/qdemonrender.h>
 #include <Qt3DSAllocatorCallback.h>
-#include <QDemonRefCounted>
+#include <QtDemon/qdemonrefcounted.h>
 #include <StringTable.h>
 #include <QtDemonRuntimeRender/qdemonrenderpresentation.h>
 

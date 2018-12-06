@@ -30,10 +30,10 @@
 #pragma once
 #ifndef QDEMON_RENDER_THREADED_IMAGE_LOADER_H
 #define QDEMON_RENDER_THREADED_IMAGE_LOADER_H
-#include <qdemonrender.h>
-#include <QDemonRefCounted>
+#include <QtDemonRuntimeRender/qdemonrender.h>
+#include <QtDemon/qdemonrefcounted.h>
 #include <Qt3DSDataRef.h>
-#include <qdemonrenderbasetypes.h>
+#include <QtDemonRender/qdemonrenderbasetypes.h>
 
 QT_BEGIN_NAMESPACE
 struct ImageLoadResult

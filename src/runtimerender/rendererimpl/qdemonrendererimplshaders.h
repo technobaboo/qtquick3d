@@ -30,9 +30,9 @@
 #pragma once
 #ifndef QDEMON_RENDERER_IMPL_SHADERS_H
 #define QDEMON_RENDERER_IMPL_SHADERS_H
-#include <qdemonrender.h>
-#include <qdemonrendershaderprogram.h>
-#include <qdemonrenderprogrampipeline.h>
+#include <QtDemonRuntimeRender/qdemonrender.h>
+#include <QtDemonRender/qdemonrendershaderprogram.h>
+#include <QtDemonRuntimeRender/qdemonrenderprogrampipeline.h>
 
 QT_BEGIN_NAMESPACE
 using NVRenderCachedShaderProperty;

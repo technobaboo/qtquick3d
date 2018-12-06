@@ -28,10 +28,10 @@
 **
 ****************************************************************************/
 
-#include <qdemonrender.h>
-#include <qdemonrenderer.h>
+#include <QtDemonRuntimeRender/qdemonrender.h>
+#include <QtDemonRuntimeRender/qdemonrenderer.h>
 #include <QtDemonRuntimeRender/qdemonrendererimpl.h>
-#include <qdemonrendercontextcore.h>
+#include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
 #include <QtDemonRuntimeRender/qdemonrendercamera.h>
 #include <QtDemonRuntimeRender/qdemonrenderlight.h>
 #include <QtDemonRuntimeRender/qdemonrenderimage.h>
@@ -39,23 +39,23 @@
 #include <Qt3DSAtomic.h>
 #include <Qt3DSFoundation.h>
 #include <Qt3DSAllocatorCallback.h>
-#include <qdemonoffscreenrendermanager.h>
-#include <qdemonrendercontextcore.h>
+#include <QtDemonRuntimeRender/qdemonoffscreenrendermanager.h>
+#include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
 #include <qdemontextrenderer.h>
 #include <QtDemonRuntimeRender/qdemonrenderscene.h>
 #include <QtDemonRuntimeRender/qdemonrenderpresentation.h>
 #include <QtDemonRuntimeRender/qdemonrendereffect.h>
 #include <qdemonrendereffectsystem.h>
 #include <QtDemonRuntimeRender/qdemonrenderresourcemanager.h>
-#include <qdemonrenderframebuffer.h>
+#include <QtDemonRender/qdemonrenderframebuffer.h>
 #include <qdemonrendertexttexturecache.h>
 #include <qdemonrendertexttextureatlas.h>
 #include <qdemonrendermaterialhelpers.h>
 #include <qdemonrendercustommaterialsystem.h>
 #include <qdemonrenderrenderlist.h>
 #include <QtDemonRuntimeRender/qdemonrenderpath.h>
-#include <qdemonrendershadercodegeneratorv2.h>
-#include <qdemonrenderdefaultmaterialshadergenerator.h>
+#include <QtDemonRuntimeRender/qdemonrendershadercodegeneratorv2.h>
+#include <QtDemonRuntimeRender/qdemonrenderdefaultmaterialshadergenerator.h>
 #include <stdlib.h>
 
 #ifdef _WIN32

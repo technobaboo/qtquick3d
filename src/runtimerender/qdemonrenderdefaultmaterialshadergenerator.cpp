@@ -27,21 +27,21 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <qdemonrenderdefaultmaterialshadergenerator.h>
+#include <QtDemonRuntimeRender/qdemonrenderdefaultmaterialshadergenerator.h>
 #include <Qt3DSAtomic.h>
-#include <qdemonrendercontextcore.h>
-#include <qdemonrendershadercodegeneratorv2.h>
-#include <qdemonrenderableimage.h>
+#include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
+#include <QtDemonRuntimeRender/qdemonrendershadercodegeneratorv2.h>
+#include <QtDemonRuntimeRender/qdemonrenderableimage.h>
 #include <QtDemonRuntimeRender/qdemonrenderimage.h>
-#include <qdemonrendercontext.h>
+#include <QtDemonRender/qdemonrendercontext.h>
 #include <QtDemonRuntimeRender/qdemonrenderlight.h>
-#include <qdemonrendershaderprogram.h>
+#include <QtDemonRender/qdemonrendershaderprogram.h>
 #include <QtDemonRuntimeRender/qdemonrendercamera.h>
-#include <qdemonrendershadowmap.h>
+#include <QtDemonRuntimeRender/qdemonrendershadowmap.h>
 #include <QtDemonRuntimeRender/qdemonrendercustommaterial.h>
-#include <qdemonrenderdynamicobjectsystem.h>
-#include <qdemonrendershaderprogram.h>
-#include <qdemonrenderlightconstantproperties.h>
+#include <QtDemonRuntimeRender/qdemonrenderdynamicobjectsystem.h>
+#include <QtDemonRender/qdemonrendershaderprogram.h>
+#include <QtDemonRuntimeRender/qdemonrenderlightconstantproperties.h>
 
 
 QT_BEGIN_NAMESPACE

@@ -29,8 +29,8 @@
 ****************************************************************************/
 
 #include <qdemonrenderpathspecification.h>
-#include <qdemonrenderbasetypes.h>
-#include <qdemonrendercontext.h>
+#include <QtDemonRender/qdemonrenderbasetypes.h>
+#include <QtDemonRender/qdemonrendercontext.h>
 
 QT_BEGIN_NAMESPACE
 

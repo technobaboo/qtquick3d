@@ -35,7 +35,7 @@
 #include <Qt3DSBroadcastingAllocator.h>
 #include <QVector2D.h>
 #include <FileTools.h>
-#include <qdemonrendercontext.h>
+#include <QtDemonRender/qdemonrendercontext.h>
 #include <Qt3DSContainers.h>
 #include <qdemonrenderthreadpool.h>
 #include <Qt3DSSync.h>

@@ -28,8 +28,8 @@
 **
 ****************************************************************************/
 
-#include <qdemonrender.h>
-#include <qdemonrenderer.h>
+#include <QtDemonRuntimeRender/qdemonrender.h>
+#include <QtDemonRuntimeRender/qdemonrenderer.h>
 #include <QtDemonRuntimeRender/qdemonrendererimpl.h>
 #include <QtDemonRuntimeRender/qdemonrenderlayer.h>
 #include <QtDemonRuntimeRender/qdemonrendereffect.h>
@@ -38,14 +38,14 @@
 #include <QtDemonRuntimeRender/qdemonrenderscene.h>
 #include <QtDemonRuntimeRender/qdemonrenderpresentation.h>
 #include <Qt3DSFoundation.h>
-#include <qdemonrendercontextcore.h>
+#include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
 #include <QtDemonRuntimeRender/qdemonrenderresourcemanager.h>
 #include <qdemontextrenderer.h>
 #include <qdemonrendereffectsystem.h>
-#include <qdemonrenderframebuffer.h>
-#include <qdemonrenderrenderbuffer.h>
+#include <QtDemonRender/qdemonrenderframebuffer.h>
+#include <QtDemonRender/qdemonrenderrenderbuffer.h>
 #include <qdemonoffscreenrenderkey.h>
-#include <qdemonrenderplugin.h>
+#include <QtDemonRuntimeRender/qdemonrenderplugin.h>
 #include <qdemonrenderplugingraphobject.h>
 #include <QtDemonRuntimeRender/qdemonrenderresourcebufferobjects.h>
 #include <Qt3DSPerfTimer.h>

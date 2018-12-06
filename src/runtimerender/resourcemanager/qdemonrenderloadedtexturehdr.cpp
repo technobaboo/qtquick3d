@@ -48,7 +48,7 @@
 // ==========================================================
 
 #include <QtDemonRuntimeRender/qdemonrenderloadedtexturefreeimagecompat.h>
-#include <qdemonrenderbasetypes.h>
+#include <QtDemonRender/qdemonrenderbasetypes.h>
 
 typedef unsigned char RGBE[4];
 #define R 0

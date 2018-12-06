@@ -31,7 +31,7 @@
 #include <qdemonrendereffectsystem.h>
 #include <QVector2D.h>
 #include <QVector3D.h>
-#include <qdemonrenderstring.h>
+#include <QtDemonRuntimeRender/qdemonrenderstring.h>
 #include <FileTools.h>
 
 QT_BEGIN_NAMESPACE

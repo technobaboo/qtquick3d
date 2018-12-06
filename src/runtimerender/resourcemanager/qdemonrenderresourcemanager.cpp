@@ -28,11 +28,11 @@
 **
 ****************************************************************************/
 #include <QtDemonRuntimeRender/qdemonrenderresourcemanager.h>
-#include <qdemonrendercontext.h>
-#include <qdemonrenderframebuffer.h>
-#include <qdemonrenderrenderbuffer.h>
-#include <qdemonrendertexture2d.h>
-#include <qdemonrendertexture2darray.h>
+#include <QtDemonRender/qdemonrendercontext.h>
+#include <QtDemonRender/qdemonrenderframebuffer.h>
+#include <QtDemonRender/qdemonrenderrenderbuffer.h>
+#include <QtDemonRender/qdemonrendertexture2d.h>
+#include <QtDemonRender/qdemonrendertexture2darray.h>
 #include <qdemonrendertexturecube.h>
 #include <Qt3DSAtomic.h>
 #include <Qt3DSContainers.h>

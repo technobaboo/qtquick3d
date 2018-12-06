@@ -30,16 +30,16 @@
 #pragma once
 #ifndef QDEMON_RENDERER_IMPL_LAYER_RENDER_PREPARATION_DATA_H
 #define QDEMON_RENDERER_IMPL_LAYER_RENDER_PREPARATION_DATA_H
-#include <qdemonrender.h>
+#include <QtDemonRuntimeRender/qdemonrender.h>
 #include <Qt3DSFlags.h>
 #include <QtDemonRuntimeRender/qdemonrendererimpllayerrenderhelper.h>
-#include <qdemonrendershadercache.h>
+#include <QtDemonRuntimeRender/qdemonrendershadercache.h>
 #include <QtDemonRuntimeRender/qdemonrenderableobjects.h>
-#include <qdemonrenderclippingfrustum.h>
+#include <QtDemonRuntimeRender/qdemonrenderclippingfrustum.h>
 #include <QtDemonRuntimeRender/qdemonrenderresourcetexture2d.h>
-#include <qdemonoffscreenrendermanager.h>
-#include <qdemonrenderprofiler.h>
-#include <qdemonrendershadowmap.h>
+#include <QtDemonRuntimeRender/qdemonoffscreenrendermanager.h>
+#include <QtDemonRuntimeRender/qdemonrenderprofiler.h>
+#include <QtDemonRuntimeRender/qdemonrendershadowmap.h>
 #include <Qt3DSPool.h>
 #include <QtDemonRuntimeRender/qdemonrenderableobjects.h>
 

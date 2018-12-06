@@ -30,8 +30,8 @@
 #pragma once
 #ifndef QDEMON_RENDER_DEFAULT_MATERIAL_SHADER_GENERATOR_H
 #define QDEMON_RENDER_DEFAULT_MATERIAL_SHADER_GENERATOR_H
-#include <qdemonrendermaterialshadergenerator.h>
-#include <qdemonrenderlightconstantproperties.h>
+#include <QtDemonRuntimeRender/qdemonrendermaterialshadergenerator.h>
+#include <QtDemonRuntimeRender/qdemonrenderlightconstantproperties.h>
 
 QT_BEGIN_NAMESPACE
 

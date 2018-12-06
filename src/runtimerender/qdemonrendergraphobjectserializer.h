@@ -31,7 +31,7 @@
 #ifndef QDEMON_RENDER_GRAPH_OBJECT_SERIALZER_H
 #define QDEMON_RENDER_GRAPH_OBJECT_SERIALZER_H
 
-#include <qdemonrender.h>
+#include <QtDemonRuntimeRender/qdemonrender.h>
 #include <Qt3DSDataRef.h>
 
 QT_BEGIN_NAMESPACE

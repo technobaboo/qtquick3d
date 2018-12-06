@@ -30,7 +30,7 @@
 #pragma once
 #ifndef QDEMON_RENDER_CUSTOM_MATERIAL_SHADER_GENERATOR_H
 #define QDEMON_RENDER_CUSTOM_MATERIAL_SHADER_GENERATOR_H
-#include <qdemonrendermaterialshadergenerator.h>
+#include <QtDemonRuntimeRender/qdemonrendermaterialshadergenerator.h>
 
 QT_BEGIN_NAMESPACE
 

@@ -30,7 +30,7 @@
 #pragma once
 #ifndef QDEMON_RENDER_GRAPH_OBJECT_TYPES_H
 #define QDEMON_RENDER_GRAPH_OBJECT_TYPES_H
-#include <qdemonrender.h>
+#include <QtDemonRuntimeRender/qdemonrender.h>
 #include <Qt3DSAssert.h>
 
 QT_BEGIN_NAMESPACE

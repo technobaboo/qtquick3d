@@ -28,7 +28,7 @@
 **
 ****************************************************************************/
 
-#include <qdemonrendercontext.h>
+#include <QtDemonRender/qdemonrendercontext.h>
 #include <qdemonrenderdepthstencilstate.h>
 
 QT_BEGIN_NAMESPACE

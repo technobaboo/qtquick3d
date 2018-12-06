@@ -30,16 +30,16 @@
 #pragma once
 #ifndef QDEMON_RENDER_DYNAMIC_OBJECT_SYSTEM_H
 #define QDEMON_RENDER_DYNAMIC_OBJECT_SYSTEM_H
-#include <qdemonrender.h>
+#include <QtDemonRuntimeRender/qdemonrender.h>
 #include <Qt3DSSimpleTypes.h>
-#include <qdemonrenderbasetypes.h>
-#include <QDemonRefCounted>
-#include <qdemonrenderbasetypes.h>
+#include <QtDemonRender/qdemonrenderbasetypes.h>
+#include <QtDemon/qdemonrefcounted.h>
+#include <QtDemonRender/qdemonrenderbasetypes.h>
 #include <StringTable.h>
 #include <QVector2D.h>
-#include <qdemonrendershadercache.h>
-#include <qdemonrendertessmodevalues.h>
-#include <qdemonrendergraphobjecttypes.h>
+#include <QtDemonRuntimeRender/qdemonrendershadercache.h>
+#include <QtDemonRuntimeRender/qdemonrendertessmodevalues.h>
+#include <QtDemonRuntimeRender/qdemonrendergraphobjecttypes.h>
 
 #include <QtCore/qstring.h>
 

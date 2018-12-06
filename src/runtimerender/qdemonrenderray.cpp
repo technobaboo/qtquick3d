@@ -27,7 +27,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <qdemonrenderray.h>
+#include <QtDemonRuntimeRender/qdemonrenderray.h>
 #include <Qt3DSPlane.h>
 
 QT_BEGIN_NAMESPACE

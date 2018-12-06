@@ -31,11 +31,11 @@
 #include <QtDemonRuntimeRender/qdemonrendererimpl.h>
 #include <foundation/Qt3DSFoundation.h>
 #include <QtDemonRuntimeRender/qdemonrenderlight.h>
-#include <qdemonrendercontextcore.h>
-#include <qdemonrendershadercache.h>
-#include <qdemonrenderdynamicobjectsystem.h>
-#include <qdemonrendershadercodegeneratorv2.h>
-#include <qdemonrenderdefaultmaterialshadergenerator.h>
+#include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
+#include <QtDemonRuntimeRender/qdemonrendershadercache.h>
+#include <QtDemonRuntimeRender/qdemonrenderdynamicobjectsystem.h>
+#include <QtDemonRuntimeRender/qdemonrendershadercodegeneratorv2.h>
+#include <QtDemonRuntimeRender/qdemonrenderdefaultmaterialshadergenerator.h>
 #include <QtDemonRuntimeRender/qdemonvertexpipelineimpl.h>
 
 // This adds support for the depth buffers in the shader so we can do depth

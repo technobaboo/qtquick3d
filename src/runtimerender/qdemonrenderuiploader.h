@@ -31,6 +31,8 @@
 #ifndef QDEMON_RENDER_UIP_LOADER_H
 #define QDEMON_RENDER_UIP_LOADER_H
 
+QT_BEGIN_NAMESPACE
+
 #ifdef QDEMON_RENDER_ENABLE_LOAD_UIP
 
 #include <Qt3DSRender.h>
@@ -122,4 +124,6 @@ namespace render {
 }
 
 #endif
+
+QT_END_NAMESPACE
 #endif

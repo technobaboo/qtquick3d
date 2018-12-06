@@ -27,11 +27,11 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <qdemonrender.h>
+#include <QtDemonRuntimeRender/qdemonrender.h>
 #include <QtDemonRuntimeRender/qdemonrenderscene.h>
 #include <QtDemonRuntimeRender/qdemonrenderlayer.h>
-#include <qdemonrendercontextcore.h>
-#include <qdemonrendercontext.h>
+#include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
+#include <QtDemonRender/qdemonrendercontext.h>
 
 QT_BEGIN_NAMESPACE
 

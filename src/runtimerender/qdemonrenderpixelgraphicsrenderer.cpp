@@ -30,12 +30,12 @@
 #include <qdemonrenderpixelgraphicsrenderer.h>
 #include <qdemonrenderpixelgraphicstypes.h>
 #include <Qt3DSAtomic.h>
-#include <qdemonrendercontext.h>
+#include <QtDemonRender/qdemonrendercontext.h>
 #include <QtDemonRuntimeRender/qdemonrendercamera.h>
-#include <qdemonrendercontextcore.h>
-#include <qdemonrendershadercodegenerator.h>
-#include <qdemonrendershaderprogram.h>
-#include <qdemonrendershadercache.h>
+#include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
+#include <QtDemonRuntimeRender/qdemonrendershadercodegenerator.h>
+#include <QtDemonRender/qdemonrendershaderprogram.h>
+#include <QtDemonRuntimeRender/qdemonrendershadercache.h>
 
 QT_BEGIN_NAMESPACE
 

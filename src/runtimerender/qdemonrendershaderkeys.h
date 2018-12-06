@@ -30,13 +30,13 @@
 #pragma once
 #ifndef QDEMON_RENDER_SHADER_KEY_H
 #define QDEMON_RENDER_SHADER_KEY_H
-#include <qdemonrender.h>
+#include <QtDemonRuntimeRender/qdemonrender.h>
 #include <Qt3DSSimpleTypes.h>
 #include <Qt3DSDataRef.h>
 #include <StringConversionImpl.h>
 #include <QtDemonRuntimeRender/qdemonrenderdefaultmaterial.h>
-#include <qdemonrendertessmodevalues.h>
-#include <qdemonrenderbasetypes.h>
+#include <QtDemonRuntimeRender/qdemonrendertessmodevalues.h>
+#include <QtDemonRender/qdemonrenderbasetypes.h>
 
 QT_BEGIN_NAMESPACE
 // We have an ever expanding set of properties we like to hash into one or more 32 bit

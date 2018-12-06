@@ -30,7 +30,7 @@
 #pragma once
 #ifndef QDEMON_RENDER_PIXEL_GRAPHICS_TYPES_H
 #define QDEMON_RENDER_PIXEL_GRAPHICS_TYPES_H
-#include <qdemonrender.h>
+#include <QtDemonRuntimeRender/qdemonrender.h>
 #include <QVector2D.h>
 #include <QVector4D.h>
 #include <QMatrix3x3.h>

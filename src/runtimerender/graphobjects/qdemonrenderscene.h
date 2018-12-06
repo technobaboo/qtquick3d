@@ -30,7 +30,7 @@
 #pragma once
 #ifndef QDEMON_RENDER_SCENE_H
 #define QDEMON_RENDER_SCENE_H
-#include <qdemonrender.h>
+#include <QtDemonRuntimeRender/qdemonrender.h>
 #include <QVector3D.h>
 #include <QtDemonRuntimeRender/qdemonrendergraphobject.h>
 

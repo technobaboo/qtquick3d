@@ -30,18 +30,18 @@
 #pragma once
 #ifndef QDEMON_RENDER_IMPL_RENDERABLE_OBJECTS_H
 #define QDEMON_RENDER_IMPL_RENDERABLE_OBJECTS_H
-#include <qdemonrender.h>
+#include <QtDemonRuntimeRender/qdemonrender.h>
 #include <Qt3DSFlags.h>
 #include <QtDemonRuntimeRender/qdemonrendermodel.h>
 #include <Qt3DSContainers.h>
 #include <QtDemonRuntimeRender/qdemonrenderdefaultmaterial.h>
 #include <QtDemonRuntimeRender/qdemonrendercustommaterial.h>
 #include <QtDemonRuntimeRender/qdemonrendertext.h>
-#include <qdemonrendermesh.h>
-#include <qdemonrendershaderkeys.h>
-#include <qdemonrendershadercache.h>
+#include <QtDemonRuntimeRender/qdemonrendermesh.h>
+#include <QtDemonRuntimeRender/qdemonrendershaderkeys.h>
+#include <QtDemonRuntimeRender/qdemonrendershadercache.h>
 #include <Qt3DSInvasiveLinkedList.h>
-#include <qdemonrenderableimage.h>
+#include <QtDemonRuntimeRender/qdemonrenderableimage.h>
 
 QT_BEGIN_NAMESPACE
 

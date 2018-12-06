@@ -31,14 +31,14 @@
 #ifndef QDEMON_OLD_N_BUSTED_RENDER_PLUGIN_H
 #define QDEMON_OLD_N_BUSTED_RENDER_PLUGIN_H
 
-#include <qdemonoffscreenrendermanager.h>
-#include <qdemonrendercontextcore.h>
+#include <QtDemonRuntimeRender/qdemonoffscreenrendermanager.h>
+#include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
 #include <QVector4D.h>
 #include <Qt3DSSimpleTypes.h>
-#include <QDemonRefCounted>
+#include <QtDemon/qdemonrefcounted.h>
 #include <Qt3DSAtomic.h>
 #include <StringTable.h>
-#include <qdemonrenderbasetypes.h>
+#include <QtDemonRender/qdemonrenderbasetypes.h>
 #include <Qt3DSPluginDLL.h>
 
 QT_BEGIN_NAMESPACE

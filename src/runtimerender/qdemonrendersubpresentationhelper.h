@@ -30,9 +30,9 @@
 #pragma once
 #ifndef QDEMON_RENDER_SUB_PRESENTATION_HELPER_H
 #define QDEMON_RENDER_SUB_PRESENTATION_HELPER_H
-#include <qdemonrendercontextcore.h>
-#include <qdemonrenderer.h>
-#include <qdemonrendercontext.h>
+#include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
+#include <QtDemonRuntimeRender/qdemonrenderer.h>
+#include <QtDemonRender/qdemonrendercontext.h>
 
 QT_BEGIN_NAMESPACE
 

@@ -28,11 +28,11 @@
 **
 ****************************************************************************/
 #pragma once
-#include <qdemonrender.h>
+#include <QtDemonRuntimeRender/qdemonrender.h>
 #include <foundation/QVector2D.h>
-#include <qdemonrenderbasetypes.h>
+#include <QtDemonRender/qdemonrenderbasetypes.h>
 #include <QtDemonRuntimeRender/qdemonrendercamera.h>
-#include <qdemonrendercontextcore.h>
+#include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
 
 QT_BEGIN_NAMESPACE
 

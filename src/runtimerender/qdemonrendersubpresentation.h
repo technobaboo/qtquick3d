@@ -31,14 +31,14 @@
 #ifndef QDEMON_RENDER_SUBPRESENTATION_H
 #define QDEMON_RENDER_SUBPRESENTATION_H
 
-#include <qdemonoffscreenrendermanager.h>
-#include <qdemonrendersubpresentationhelper.h>
+#include <QtDemonRuntimeRender/qdemonoffscreenrendermanager.h>
+#include <QtDemonRuntimeRender/qdemonrendersubpresentationhelper.h>
 #include <QtDemonRuntimeRender/qdemonrenderpresentation.h>
 #include <Qt3DSSimpleTypes.h>
-#include <QDemonRefCounted>
+#include <QtDemon/qdemonrefcounted.h>
 #include <Qt3DSAtomic.h>
 #include <StringTable.h>
-#include <qdemonrenderbasetypes.h>
+#include <QtDemonRender/qdemonrenderbasetypes.h>
 
 QT_BEGIN_NAMESPACE
 

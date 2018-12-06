@@ -27,32 +27,32 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <qdemonrender.h>
-#include <qdemonrendercontextcore.h>
+#include <QtDemonRuntimeRender/qdemonrender.h>
+#include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
 #include <StringTable.h>
 #include <QtDemonRuntimeRender/qdemonrendernode.h>
 #include <QtDemonRuntimeRender/qdemonrenderbuffermanager.h>
-#include <qdemonrenderer.h>
+#include <QtDemonRuntimeRender/qdemonrenderer.h>
 #include <QtDemonRuntimeRender/qdemonrenderresourcemanager.h>
-#include <qdemonrendercontext.h>
+#include <QtDemonRender/qdemonrendercontext.h>
 #include <Qt3DSAtomic.h>
-#include <qdemonoffscreenrendermanager.h>
+#include <QtDemonRuntimeRender/qdemonoffscreenrendermanager.h>
 #include <qdemontextrenderer.h>
 #include <qdemonrenderinputstreamfactory.h>
 #include <qdemonrendereffectsystem.h>
-#include <qdemonrendershadercache.h>
+#include <QtDemonRuntimeRender/qdemonrendershadercache.h>
 #include <Qt3DSFoundation.h>
-#include <qdemonrenderframebuffer.h>
-#include <qdemonrenderrenderbuffer.h>
-#include <qdemonrendertexture2d.h>
+#include <QtDemonRender/qdemonrenderframebuffer.h>
+#include <QtDemonRender/qdemonrenderrenderbuffer.h>
+#include <QtDemonRender/qdemonrendertexture2d.h>
 #include <QtDemonRuntimeRender/qdemonrendercamera.h>
 #include <Qt3DSContainers.h>
 #include <qdemonrenderthreadpool.h>
 #include <QtDemonRuntimeRender/qdemonrenderimagebatchloader.h>
 #include <qdemonrendertexttexturecache.h>
 #include <qdemonrendertexttextureatlas.h>
-#include <qdemonrenderplugin.h>
-#include <qdemonrenderdynamicobjectsystem.h>
+#include <QtDemonRuntimeRender/qdemonrenderplugin.h>
+#include <QtDemonRuntimeRender/qdemonrenderdynamicobjectsystem.h>
 #include <qdemonrendercustommaterialsystem.h>
 #include <qdemonrenderpixelgraphicsrenderer.h>
 #include <Qt3DSPerfTimer.h>
@@ -61,8 +61,8 @@
 #include <AutoDeallocatorAllocator.h>
 #include <qdemonrenderrenderlist.h>
 #include <qdemonrenderpathmanager.h>
-#include <qdemonrendershadercodegeneratorv2.h>
-#include <qdemonrenderdefaultmaterialshadergenerator.h>
+#include <QtDemonRuntimeRender/qdemonrendershadercodegeneratorv2.h>
+#include <QtDemonRuntimeRender/qdemonrenderdefaultmaterialshadergenerator.h>
 #include <qdemonrendercustommaterialshadergenerator.h>
 
 QT_BEGIN_NAMESPACE

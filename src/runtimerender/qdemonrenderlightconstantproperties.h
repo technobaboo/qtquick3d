@@ -30,7 +30,7 @@
 #ifndef QDEMON_RENDER_LIGHT_CONSTANT_PROPERTIES
 #define QDEMON_RENDER_LIGHT_CONSTANT_PROPERTIES
 
-#include <qdemonrendershaderprogram.h>
+#include <QtDemonRender/qdemonrendershaderprogram.h>
 
 QT_BEGIN_NAMESPACE
 

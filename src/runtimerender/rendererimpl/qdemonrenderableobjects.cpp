@@ -34,7 +34,7 @@
 #include <QtDemonRuntimeRender/qdemonrenderlight.h>
 #include <qdemonrenderpathmanager.h>
 #include <qdemonrenderpathrendercontext.h>
-#include <qdemonrenderdefaultmaterialshadergenerator.h>
+#include <QtDemonRuntimeRender/qdemonrenderdefaultmaterialshadergenerator.h>
 
 using CRegisteredString;
 

@@ -29,7 +29,7 @@
 
 #include <QtDemonRuntimeRender/qdemonqmlrender.h>
 #include <q3dsqmlstreamservice.h>
-#include <qdemonrendercontext.h>
+#include <QtDemonRender/qdemonrendercontext.h>
 
 #include <QSize>
 #include <QOpenGLContext>

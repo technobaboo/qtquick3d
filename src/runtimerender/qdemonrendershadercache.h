@@ -30,8 +30,8 @@
 #pragma once
 #ifndef QDEMON_RENDER_SHADER_CACHE_H
 #define QDEMON_RENDER_SHADER_CACHE_H
-#include <qdemonrender.h>
-#include <QDemonRefCounted>
+#include <QtDemonRuntimeRender/qdemonrender.h>
+#include <QtDemon/qdemonrefcounted.h>
 #include <Qt3DSFlags.h>
 #include <StringTable.h>
 

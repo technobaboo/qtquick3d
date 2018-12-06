@@ -30,7 +30,7 @@
 #pragma once
 #ifndef QDEMON_RENDER_REFERENCED_MATERIAL_H
 #define QDEMON_RENDER_REFERENCED_MATERIAL_H
-#include <qdemonrender.h>
+#include <QtDemonRuntimeRender/qdemonrender.h>
 #include <QtDemonRuntimeRender/qdemonrendergraphobject.h>
 #include <QtDemonRuntimeRender/qdemonrendermaterialdirty.h>
 

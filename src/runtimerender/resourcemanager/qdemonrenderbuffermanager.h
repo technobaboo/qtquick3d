@@ -30,10 +30,10 @@
 #pragma once
 #ifndef QDEMON_RENDER_BUFFER_MANAGER_H
 #define QDEMON_RENDER_BUFFER_MANAGER_H
-#include <qdemonrender.h>
-#include <QDemonRefCounted>
+#include <QtDemonRuntimeRender/qdemonrender.h>
+#include <QtDemon/qdemonrefcounted.h>
 #include <StringTable.h>
-#include <qdemonrenderimagetexturedata.h>
+#include <QtDemonRuntimeRender/qdemonrenderimagetexturedata.h>
 #include <Qt3DSBounds3.h>
 
 QT_BEGIN_NAMESPACE

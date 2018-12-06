@@ -30,9 +30,9 @@
 #pragma once
 #ifndef QDEMON_RENDER_GRAPH_OBJECT_H
 #define QDEMON_RENDER_GRAPH_OBJECT_H
-#include <qdemonrender.h>
-#include <qdemonrendertaggedpointer.h>
-#include <qdemonrendergraphobjecttypes.h>
+#include <QtDemonRuntimeRender/qdemonrender.h>
+#include <QtDemonRuntimeRender/qdemonrendertaggedpointer.h>
+#include <QtDemonRuntimeRender/qdemonrendergraphobjecttypes.h>
 
 QT_BEGIN_NAMESPACE
 

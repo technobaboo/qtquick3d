@@ -30,9 +30,9 @@
 #pragma once
 #ifndef QDEMON_RENDER_PLUGIN_H
 #define QDEMON_RENDER_PLUGIN_H
-#include <qdemonrender.h>
-#include <qdemonrenderplugincinterface.h>
-#include <qdemonoffscreenrendermanager.h>
+#include <QtDemonRuntimeRender/qdemonrender.h>
+#include <QtDemonRuntimeRender/qdemonrenderplugincinterface.h>
+#include <QtDemonRuntimeRender/qdemonoffscreenrendermanager.h>
 
 QT_BEGIN_NAMESPACE
 

@@ -30,7 +30,7 @@
 #pragma once
 #ifndef QDEMON_RENDER_IMAGE_TEXTURE_DATA_H
 #define QDEMON_RENDER_IMAGE_TEXTURE_DATA_H
-#include <qdemonrender.h>
+#include <QtDemonRuntimeRender/qdemonrender.h>
 #include <Qt3DSFlags.h>
 
 QT_BEGIN_NAMESPACE

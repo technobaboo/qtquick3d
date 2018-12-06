@@ -35,7 +35,7 @@
 #include <Qt3DSContainers.h>
 #include <Qt3DSFoundation.h>
 #include <StrConvertUTF.h>
-#include <qdemonrendercontext.h>
+#include <QtDemonRender/qdemonrendercontext.h>
 #include <QtGui/qpainter.h>
 #include <QtGui/qimage.h>
 #include <QtGui/qrawfont.h>

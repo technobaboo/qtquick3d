@@ -27,7 +27,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <qdemonrenderclippingfrustum.h>
+#include <QtDemonRuntimeRender/qdemonrenderclippingfrustum.h>
 
 QT_BEGIN_NAMESPACE
 

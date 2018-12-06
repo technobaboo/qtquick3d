@@ -29,7 +29,7 @@
 ****************************************************************************/
 #ifndef QDEMON_RENDER_PATH_MATH_H
 #define QDEMON_RENDER_PATH_MATH_H
-#include <qdemonrender.h>
+#include <QtDemonRuntimeRender/qdemonrender.h>
 #include <QVector2D.h>
 #include <QVector3D.h>
 

@@ -31,7 +31,7 @@
 #ifndef QDEMON_RENDER_GRAPH_OBJECT_PICK_QUERY_H
 #define QDEMON_RENDER_GRAPH_OBJECT_PICK_QUERY_H
 
-#include <qdemonrender.h>
+#include <QtDemonRuntimeRender/qdemonrender.h>
 #include <QVector2D.h>
 #include <Qt3DSDataRef.h>
 #include <QMatrix4x4.h>

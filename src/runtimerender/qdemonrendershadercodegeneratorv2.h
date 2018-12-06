@@ -30,8 +30,8 @@
 #pragma once
 #ifndef QDEMON_RENDER_SHADER_CODE_GENERATOR_V2_H
 #define QDEMON_RENDER_SHADER_CODE_GENERATOR_V2_H
-#include <qdemonrendershadercodegenerator.h>
-#include <qdemonrendershadercache.h>
+#include <QtDemonRuntimeRender/qdemonrendershadercodegenerator.h>
+#include <QtDemonRuntimeRender/qdemonrendershadercache.h>
 #include <Qt3DSFlags.h>
 
 #include <QtCore/qstring.h>

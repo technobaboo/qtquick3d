@@ -27,7 +27,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <qdemonrenderplugin.h>
+#include <QtDemonRuntimeRender/qdemonrenderplugin.h>
 #include <Qt3DSAtomic.h>
 #include <Qt3DSFoundation.h>
 #include <Qt3DSBroadcastingAllocator.h>
@@ -35,8 +35,8 @@
 #include <IOStreams.h>
 #include <Qt3DSSystem.h>
 #include <FileTools.h>
-#include <qdemonrendercontext.h>
-#include <qdemonrenderstring.h>
+#include <QtDemonRender/qdemonrendercontext.h>
+#include <QtDemonRuntimeRender/qdemonrenderstring.h>
 #include <qdemonrenderpluginpropertyvalue.h>
 #include <qdemonrenderinputstreamfactory.h>
 

@@ -30,15 +30,15 @@
 #pragma once
 #ifndef QDEMON_RENDERER_H
 #define QDEMON_RENDERER_H
-#include <qdemonrender.h>
+#include <QtDemonRuntimeRender/qdemonrender.h>
 #include <Qt3DSDataRef.h>
 #include <Qt3DSFlags.h>
-#include <QDemonRefCounted>
+#include <QtDemon/qdemonrefcounted.h>
 #include <QVector2D.h>
-#include <qdemonrendergraphobjectpickquery.h>
+#include <QtDemonRuntimeRender/qdemonrendergraphobjectpickquery.h>
 #include <QtDemonRuntimeRender/qdemonrendercamera.h>
-#include <qdemonrenderbasetypes.h>
-#include <qdemonrenderray.h>
+#include <QtDemonRender/qdemonrenderbasetypes.h>
+#include <QtDemonRuntimeRender/qdemonrenderray.h>
 
 QT_BEGIN_NAMESPACE
 

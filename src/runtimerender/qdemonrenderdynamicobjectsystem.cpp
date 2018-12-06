@@ -27,25 +27,25 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <qdemonrenderdynamicobjectsystem.h>
+#include <QtDemonRuntimeRender/qdemonrenderdynamicobjectsystem.h>
 #include <Qt3DSFoundation.h>
 #include <Qt3DSBroadcastingAllocator.h>
 #include <Qt3DSAtomic.h>
 #include <Qt3DSContainers.h>
-#include <qdemonrendercontextcore.h>
+#include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
 #include <Qt3DSRenderShaderConstant.h>
 #include <QtDemonRuntimeRender/qdemonrenderdynamicobject.h>
 #include <SerializationTypes.h>
 #include <FileTools.h>
 #include <PreAllocatedAllocator.h>
-#include <qdemonrendershaderprogram.h>
-#include <qdemonrenderstring.h>
-#include <qdemonrendershadercache.h>
+#include <QtDemonRender/qdemonrendershaderprogram.h>
+#include <QtDemonRuntimeRender/qdemonrenderstring.h>
+#include <QtDemonRuntimeRender/qdemonrendershadercache.h>
 #include <qdemonrenderinputstreamfactory.h>
-#include <qdemonrenderer.h>
+#include <QtDemonRuntimeRender/qdemonrenderer.h>
 #include <qdemonrenderdynamicobjectsystemcommands.h>
 #include <qdemonrenderdynamicobjectsystemutil.h>
-#include <qdemonrendershadercodegenerator.h>
+#include <QtDemonRuntimeRender/qdemonrendershadercodegenerator.h>
 #include <Qt3DSMutex.h>
 
 QT_BEGIN_NAMESPACE

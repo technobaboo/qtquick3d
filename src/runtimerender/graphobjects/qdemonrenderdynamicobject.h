@@ -30,7 +30,7 @@
 #pragma once
 #ifndef QDEMON_RENDER_DYNAMIC_OBJECT_H
 #define QDEMON_RENDER_DYNAMIC_OBJECT_H
-#include <qdemonrender.h>
+#include <QtDemonRuntimeRender/qdemonrender.h>
 #include <QtDemonRuntimeRender/qdemonrendergraphobject.h>
 #include <QtDemonRuntimeRender/qdemonrendernode.h>
 

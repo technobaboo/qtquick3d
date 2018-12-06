@@ -28,8 +28,8 @@
 **
 ****************************************************************************/
 #include <QtDemonRuntimeRender/qdemonrenderpresentation.h>
-#include <qdemonrendercontext.h>
-#include <qdemonrendercontextcore.h>
+#include <QtDemonRender/qdemonrendercontext.h>
+#include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
 
 QT_BEGIN_NAMESPACE
 

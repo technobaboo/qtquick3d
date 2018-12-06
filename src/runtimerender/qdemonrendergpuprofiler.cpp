@@ -28,11 +28,11 @@
 **
 ****************************************************************************/
 
-#include <qdemonrenderprofiler.h>
+#include <QtDemonRuntimeRender/qdemonrenderprofiler.h>
 #include <Qt3DSContainers.h>
 #include <Qt3DSFoundation.h>
-#include <qdemonrendercontextcore.h>
-#include <qdemonrendercontext.h>
+#include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
+#include <QtDemonRender/qdemonrendercontext.h>
 #include <qdemonrendertimerquery.h>
 #include <qdemonrendersync.h>
 

@@ -30,10 +30,10 @@
 #pragma once
 #ifndef QDEMON_RENDER_PROFILER_H
 #define QDEMON_RENDER_PROFILER_H
-#include <qdemonrender.h>
+#include <QtDemonRuntimeRender/qdemonrender.h>
 #include <StringTable.h>
-#include <QDemonRefCounted>
-#include <qdemonrenderbasetypes.h>
+#include <QtDemon/qdemonrefcounted.h>
+#include <QtDemonRender/qdemonrenderbasetypes.h>
 #include <Qt3DSContainers.h>
 
 QT_BEGIN_NAMESPACE

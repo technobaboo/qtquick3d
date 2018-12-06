@@ -27,11 +27,11 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <qdemonrender.h>
+#include <QtDemonRuntimeRender/qdemonrender.h>
 #include <QtDemonRuntimeRender/qdemonrenderdynamicobject.h>
-#include <qdemonrenderdynamicobjectsystem.h>
+#include <QtDemonRuntimeRender/qdemonrenderdynamicobjectsystem.h>
 #include <FileTools.h>
-#include <qdemonrenderstring.h>
+#include <QtDemonRuntimeRender/qdemonrenderstring.h>
 
 #include <QtCore/qdir.h>
 

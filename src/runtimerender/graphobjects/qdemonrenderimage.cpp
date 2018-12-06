@@ -29,9 +29,9 @@
 ****************************************************************************/
 #include <QtDemonRuntimeRender/qdemonrenderimage.h>
 #include <QtDemonRuntimeRender/qdemonrenderbuffermanager.h>
-#include <qdemonoffscreenrendermanager.h>
+#include <QtDemonRuntimeRender/qdemonoffscreenrendermanager.h>
 #include <qdemonoffscreenrenderkey.h>
-#include <qdemonrenderplugin.h>
+#include <QtDemonRuntimeRender/qdemonrenderplugin.h>
 #include <qdemonrenderplugingraphobject.h>
 
 QT_BEGIN_NAMESPACE

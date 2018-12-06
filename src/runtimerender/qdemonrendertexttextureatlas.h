@@ -30,8 +30,8 @@
 #pragma once
 #ifndef QDEMON_RENDER_TEXT_TEXTURE_ATLAS_H
 #define QDEMON_RENDER_TEXT_TEXTURE_ATLAS_H
-#include <qdemonrender.h>
-#include <QDemonRefCounted>
+#include <QtDemonRuntimeRender/qdemonrender.h>
+#include <QtDemon/qdemonrefcounted.h>
 #include <QtDemonRuntimeRender/qdemonrendertext.h>
 
 QT_BEGIN_NAMESPACE

@@ -31,7 +31,7 @@
 //==============================================================================
 //	Includes
 //==============================================================================
-#include <qdemonrender.h>
+#include <QtDemonRuntimeRender/qdemonrender.h>
 #include <Qt3DSMath.h>
 #include <Qt3DSAllocatorCallback.h>
 #include <qdemonrenderimagescaler.h>

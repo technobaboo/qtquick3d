@@ -30,14 +30,14 @@
 #pragma once
 #ifndef QDEMON_RENDER_MESH_H
 #define QDEMON_RENDER_MESH_H
-#include <qdemonrender.h>
+#include <QtDemonRuntimeRender/qdemonrender.h>
 #include <Qt3DSRenderVertexBuffer.h>
 #include <Qt3DSRenderIndexBuffer.h>
 #include <Qt3DSRenderInputAssembler.h>
 #include <Qt3DSBounds3.h>
 #include <StringTable.h>
 #include <Qt3DSContainers.h>
-#include <QDemonRefCounted>
+#include <QtDemon/qdemonrefcounted.h>
 #include <Qt3DSQDemonNoCopy.h>
 
 QT_BEGIN_NAMESPACE

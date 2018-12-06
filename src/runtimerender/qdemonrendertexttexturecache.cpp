@@ -33,8 +33,8 @@
 #include <Qt3DSAtomic.h>
 #include <Qt3DSFoundation.h>
 #include <Qt3DSBroadcastingAllocator.h>
-#include <qdemonrendertexture2d.h>
-#include <qdemonrendercontext.h>
+#include <QtDemonRender/qdemonrendertexture2d.h>
+#include <QtDemonRender/qdemonrendercontext.h>
 #include <Qt3DSInvasiveLinkedList.h>
 #include <Qt3DSPool.h>
 

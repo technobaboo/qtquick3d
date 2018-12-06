@@ -30,7 +30,7 @@
 #include <qdemonoldnbustedrenderplugin.h>
 #include <SystemPrefix.h>
 #include <Qt3DSDLLManager.h>
-#include <qdemonrendercontext.h>
+#include <QtDemonRender/qdemonrendercontext.h>
 
 #ifdef WIN32
 #pragma warning(disable : 4355) // this used in initializer list.  I have never seen this result in

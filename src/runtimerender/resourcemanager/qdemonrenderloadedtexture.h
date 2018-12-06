@@ -30,11 +30,11 @@
 #pragma once
 #ifndef QDEMON_RENDER_LOADED_TEXTURE_H
 #define QDEMON_RENDER_LOADED_TEXTURE_H
-#include <qdemonrender.h>
+#include <QtDemonRuntimeRender/qdemonrender.h>
 #include <Qt3DSSimpleTypes.h>
-#include <qdemonrenderbasetypes.h>
+#include <QtDemonRender/qdemonrenderbasetypes.h>
 #include <QtDemonRuntimeRender/qdemonrenderloadedtexturedds.h>
-#include <QDemonRefCounted>
+#include <QtDemon/qdemonrefcounted.h>
 #include <QImage>
 
 

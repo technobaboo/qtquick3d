@@ -30,7 +30,7 @@
 #pragma once
 #ifndef QDEMON_RENDER_STRING_H
 #define QDEMON_RENDER_STRING_H
-#include <qdemonrender.h>
+#include <QtDemonRuntimeRender/qdemonrender.h>
 #include <string>
 
 QT_BEGIN_NAMESPACE

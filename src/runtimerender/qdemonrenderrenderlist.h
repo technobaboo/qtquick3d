@@ -30,9 +30,9 @@
 #pragma once
 #ifndef QDEMON_RENDER_RENDER_LIST_H
 #define QDEMON_RENDER_RENDER_LIST_H
-#include <qdemonrender.h>
-#include <QDemonRefCounted>
-#include <qdemonrenderbasetypes.h>
+#include <QtDemonRuntimeRender/qdemonrender.h>
+#include <QtDemon/qdemonrefcounted.h>
+#include <QtDemonRender/qdemonrenderbasetypes.h>
 
 QT_BEGIN_NAMESPACE
 

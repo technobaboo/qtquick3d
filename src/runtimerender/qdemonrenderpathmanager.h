@@ -30,10 +30,10 @@
 #pragma once
 #ifndef QDEMON_RENDER_PATH_MANAGER_H
 #define QDEMON_RENDER_PATH_MANAGER_H
-#include <qdemonrender.h>
-#include <QDemonRefCounted>
+#include <QtDemonRuntimeRender/qdemonrender.h>
+#include <QtDemon/qdemonrefcounted.h>
 #include <StringTable.h>
-#include <qdemonrendershadercache.h>
+#include <QtDemonRuntimeRender/qdemonrendershadercache.h>
 #include <QVector2D.h>
 #include <Qt3DSBounds3.h>
 

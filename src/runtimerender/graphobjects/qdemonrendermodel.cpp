@@ -30,7 +30,7 @@
 #include <QtDemonRuntimeRender/qdemonrendermodel.h>
 #include <qdemonrendermaterialhelpers.h>
 #include <QtDemonRuntimeRender/qdemonrenderbuffermanager.h>
-#include <qdemonrendermesh.h>
+#include <QtDemonRuntimeRender/qdemonrendermesh.h>
 
 QT_BEGIN_NAMESPACE
 

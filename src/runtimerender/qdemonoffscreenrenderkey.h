@@ -30,7 +30,7 @@
 #pragma once
 #ifndef QDEMON_OFFSCREEN_RENDER_KEY_H
 #define QDEMON_OFFSCREEN_RENDER_KEY_H
-#include <qdemonrender.h>
+#include <QtDemonRuntimeRender/qdemonrender.h>
 #include <StringTable.h>
 #include <Qt3DSDiscriminatedUnion.h>
 

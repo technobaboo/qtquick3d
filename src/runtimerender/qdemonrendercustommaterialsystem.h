@@ -30,9 +30,9 @@
 #pragma once
 #ifndef QDEMON_RENDER_CUSTOM_MATERIAL_SYSTEM_H
 #define QDEMON_RENDER_CUSTOM_MATERIAL_SYSTEM_H
-#include <qdemonrender.h>
-#include <QDemonRefCounted>
-#include <qdemonrenderdynamicobjectsystem.h>
+#include <QtDemonRuntimeRender/qdemonrender.h>
+#include <QtDemon/qdemonrefcounted.h>
+#include <QtDemonRuntimeRender/qdemonrenderdynamicobjectsystem.h>
 #include <QtDemonRuntimeRender/qdemonvertexpipelineimpl.h>
 
 QT_BEGIN_NAMESPACE

@@ -28,7 +28,7 @@
 **
 ****************************************************************************/
 #include <qdemontextrenderer.h>
-#include <qdemonrendertexture2d.h>
+#include <QtDemonRender/qdemonrendertexture2d.h>
 
 QT_BEGIN_NAMESPACE
 

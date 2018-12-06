@@ -32,7 +32,7 @@
 #include <Qt3DSBroadcastingAllocator.h>
 #include <Qt3DSAtomic.h>
 #include <Qt3DSContainers.h>
-#include <qdemonrenderbasetypes.h>
+#include <QtDemonRender/qdemonrenderbasetypes.h>
 
 QT_BEGIN_NAMESPACE
 

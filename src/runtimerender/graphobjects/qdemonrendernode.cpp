@@ -31,7 +31,7 @@
 #include <QtDemonRuntimeRender/qdemonrendermodel.h>
 #include <QtDemonRuntimeRender/qdemonrendernode.h>
 #include <QtDemonRuntimeRender/qdemonrendertext.h>
-#include <qdemonrenderer.h>
+#include <QtDemonRuntimeRender/qdemonrenderer.h>
 #include <qdemonrenderpathmanager.h>
 #include <QtDemonRuntimeRender/qdemonrenderpath.h>
 

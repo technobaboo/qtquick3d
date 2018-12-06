@@ -30,14 +30,14 @@
 #pragma once
 #ifndef QDEMON_RENDER_PATH_RENDER_CONTEXT_H
 #define QDEMON_RENDER_PATH_RENDER_CONTEXT_H
-#include <qdemonrender.h>
-#include <QDemonRefCounted>
+#include <QtDemonRuntimeRender/qdemonrender.h>
+#include <QtDemon/qdemonrefcounted.h>
 #include <StringTable.h>
-#include <qdemonrendershadercache.h>
+#include <QtDemonRuntimeRender/qdemonrendershadercache.h>
 #include <QVector2D.h>
 #include <Qt3DSBounds3.h>
-#include <qdemonrendershaderkeys.h>
-#include <qdemonrenderableimage.h>
+#include <QtDemonRuntimeRender/qdemonrendershaderkeys.h>
+#include <QtDemonRuntimeRender/qdemonrenderableimage.h>
 
 QT_BEGIN_NAMESPACE
 

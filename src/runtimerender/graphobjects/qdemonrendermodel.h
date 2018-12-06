@@ -33,7 +33,7 @@
 
 #include <QtDemonRuntimeRender/qdemonrendernode.h>
 #include <StringTable.h>
-#include <qdemonrendertessmodevalues.h>
+#include <QtDemonRuntimeRender/qdemonrendertessmodevalues.h>
 
 QT_BEGIN_NAMESPACE
 

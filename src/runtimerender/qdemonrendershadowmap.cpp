@@ -29,11 +29,11 @@
 ****************************************************************************/
 
 #include <QtDemonRuntimeRender/qdemonrenderlayer.h>
-#include <qdemonrendershadowmap.h>
+#include <QtDemonRuntimeRender/qdemonrendershadowmap.h>
 #include <QtDemonRuntimeRender/qdemonrenderresourcemanager.h>
 #include <QtDemonRuntimeRender/qdemonrendererimpllayerrenderdata.h>
 #include <Qt3DSRenderShaderConstant.h>
-#include <qdemonrendershaderprogram.h>
+#include <QtDemonRender/qdemonrendershaderprogram.h>
 
 QT_BEGIN_NAMESPACE
 

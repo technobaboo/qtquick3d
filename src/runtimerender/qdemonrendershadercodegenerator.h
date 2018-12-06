@@ -30,11 +30,11 @@
 #pragma once
 #ifndef QDEMON_RENDER_SHADER_CODE_GENERATOR_H
 #define QDEMON_RENDER_SHADER_CODE_GENERATOR_H
-#include <qdemonrender.h>
+#include <QtDemonRuntimeRender/qdemonrender.h>
 #include <Qt3DSContainers.h>
 #include <StringTable.h>
-#include <qdemonrenderbasetypes.h>
-#include <qdemonrenderstring.h>
+#include <QtDemonRender/qdemonrenderbasetypes.h>
+#include <QtDemonRuntimeRender/qdemonrenderstring.h>
 
 QT_BEGIN_NAMESPACE
 

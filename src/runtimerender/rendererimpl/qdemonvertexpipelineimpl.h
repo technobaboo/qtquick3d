@@ -30,7 +30,7 @@
 #pragma once
 #ifndef QDEMON_VERTEX_PIPELINE_IMPL_H
 #define QDEMON_VERTEX_PIPELINE_IMPL_H
-#include <qdemonrenderdefaultmaterialshadergenerator.h>
+#include <QtDemonRuntimeRender/qdemonrenderdefaultmaterialshadergenerator.h>
 
 QT_BEGIN_NAMESPACE
 // Baseclass for the vertex pipelines to be sure we have consistent implementations.

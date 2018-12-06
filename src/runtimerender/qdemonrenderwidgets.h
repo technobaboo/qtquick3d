@@ -31,15 +31,15 @@
 #ifndef QDEMON_RENDER_WIDGETS_H
 #define QDEMON_RENDER_WIDGETS_H
 
-#include <qdemonrender.h>
+#include <QtDemonRuntimeRender/qdemonrender.h>
 #include <Qt3DSOption.h>
 #include <QMatrix4x4.h>
 #include <QMatrix3x3.h>
 #include <Qt3DSBounds3.h>
 #include <QVector3D.h>
 #include <Qt3DSDataRef.h>
-#include <qdemonrendervertexbuffer.h>
-#include <qdemonrenderindexbuffer.h>
+#include <QtDemonRender/qdemonrendervertexbuffer.h>
+#include <QtDemonRender/qdemonrenderindexbuffer.h>
 #include <QtDemonRuntimeRender/qdemonrendertext.h>
 
 QT_BEGIN_NAMESPACE

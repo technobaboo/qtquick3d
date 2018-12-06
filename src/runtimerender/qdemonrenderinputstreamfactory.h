@@ -30,9 +30,9 @@
 #pragma once
 #ifndef QDEMON_RENDER_INPUT_STREAM_FACTORY_H
 #define QDEMON_RENDER_INPUT_STREAM_FACTORY_H
-#include <qdemonrender.h>
+#include <QtDemonRuntimeRender/qdemonrender.h>
 #include <IOStreams.h>
-#include <QDemonRefCounted>
+#include <QtDemon/qdemonrefcounted.h>
 
 QT_BEGIN_NAMESPACE
 class IRefCountedInputStream : public ISeekableIOStream, public QDemonRefCounted

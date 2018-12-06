@@ -30,9 +30,9 @@
 #pragma once
 #ifndef QDEMON_RENDER_TEXT_H
 #define QDEMON_RENDER_TEXT_H
-#include <qdemonrender.h>
+#include <QtDemonRuntimeRender/qdemonrender.h>
 #include <QtDemonRuntimeRender/qdemonrendernode.h>
-#include <qdemonrendertexttypes.h>
+#include <QtDemonRuntimeRender/qdemonrendertexttypes.h>
 
 QT_BEGIN_NAMESPACE
 struct SText : public SNode, public STextRenderInfo

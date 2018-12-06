@@ -30,10 +30,10 @@
 #pragma once
 #ifndef QDEMON_RENDER_RESOURCE_TEXTURE_2D_H
 #define QDEMON_RENDER_RESOURCE_TEXTURE_2D_H
-#include <qdemonrender.h>
-#include <qdemonrendercontext.h>
-#include <qdemonrendertexture2d.h>
-#include <qdemonrendertexture2darray.h>
+#include <QtDemonRuntimeRender/qdemonrender.h>
+#include <QtDemonRender/qdemonrendercontext.h>
+#include <QtDemonRender/qdemonrendertexture2d.h>
+#include <QtDemonRender/qdemonrendertexture2darray.h>
 #include <QtDemonRuntimeRender/qdemonrenderresourcemanager.h>
 
 QT_BEGIN_NAMESPACE

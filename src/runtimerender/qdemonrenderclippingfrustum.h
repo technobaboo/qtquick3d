@@ -30,7 +30,7 @@
 #pragma once
 #ifndef QDEMON_RENDER_CLIPPING_PLANE_H
 #define QDEMON_RENDER_CLIPPING_PLANE_H
-#include <qdemonrender.h>
+#include <QtDemonRuntimeRender/qdemonrender.h>
 #include <Qt3DSPlane.h>
 #include <Qt3DSFlags.h>
 #include <Qt3DSBounds3.h>

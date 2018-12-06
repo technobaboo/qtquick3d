@@ -30,7 +30,7 @@
 #pragma once
 #ifndef QDEMON_RENDERER_IMPL_LAYER_RENDER_DATA_H
 #define QDEMON_RENDERER_IMPL_LAYER_RENDER_DATA_H
-#include <qdemonrender.h>
+#include <QtDemonRuntimeRender/qdemonrender.h>
 #include <QtDemonRuntimeRender/qdemonrendererimpllayerrenderpreparationdata.h>
 #include <QtDemonRuntimeRender/qdemonrenderresourcebufferobjects.h>
 

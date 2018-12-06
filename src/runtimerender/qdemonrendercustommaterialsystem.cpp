@@ -29,7 +29,7 @@
 ****************************************************************************/
 #include <qdemonrendercustommaterialsystem.h>
 #include <qdemonrendercustommaterialrendercontext.h>
-#include <qdemonrendercontextcore.h>
+#include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
 #include <Qt3DSFoundation.h>
 #include <Qt3DSBroadcastingAllocator.h>
 #include <Qt3DSAtomic.h>
@@ -37,18 +37,18 @@
 #include <qdemonrenderdynamicobjectsystemcommands.h>
 #include <QtDemonRuntimeRender/qdemonrenderbuffermanager.h>
 #include <QtDemonRuntimeRender/qdemonrenderresourcemanager.h>
-#include <qdemonrendermesh.h>
+#include <QtDemonRuntimeRender/qdemonrendermesh.h>
 #include <QtDemonRuntimeRender/qdemonrendercamera.h>
 #include <QtDemonRuntimeRender/qdemonrenderlight.h>
 #include <QtDemonRuntimeRender/qdemonrenderlayer.h>
-#include <qdemonrendercontext.h>
-#include <qdemonrendershaderprogram.h>
+#include <QtDemonRender/qdemonrendercontext.h>
+#include <QtDemonRender/qdemonrendershaderprogram.h>
 #include <qdemonrendecomputeshader.h>
 #include <PreAllocatedAllocator.h>
 #include <SerializationTypes.h>
 #include <Qt3DSTime.h>
 #include <qdemonrenderdynamicobjectsystemutil.h>
-#include <qdemonrenderableimage.h>
+#include <QtDemonRuntimeRender/qdemonrenderableimage.h>
 #include <QtDemonRuntimeRender/qdemonvertexpipelineimpl.h>
 #include <QtDemonRuntimeRender/qdemonrendererimpllayerrenderdata.h>
 #include <qdemonrendercustommaterialshadergenerator.h>

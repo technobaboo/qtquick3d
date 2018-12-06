@@ -30,8 +30,8 @@
 #pragma once
 #ifndef QDEMON_RENDERER_UTIL_H
 #define QDEMON_RENDERER_UTIL_H
-#include <qdemonrender.h>
-#include <qdemonrenderbasetypes.h>
+#include <QtDemonRuntimeRender/qdemonrender.h>
+#include <QtDemonRender/qdemonrenderbasetypes.h>
 
 QT_BEGIN_NAMESPACE
 class CRendererUtil

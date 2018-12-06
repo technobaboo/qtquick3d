@@ -30,12 +30,12 @@
 #pragma once
 #ifndef QDEMON_RENDER_EFFECT_SYSTEM_H
 #define QDEMON_RENDER_EFFECT_SYSTEM_H
-#include <qdemonrender.h>
-#include <QDemonRefCounted>
-#include <qdemonrenderbasetypes.h>
+#include <QtDemonRuntimeRender/qdemonrender.h>
+#include <QtDemon/qdemonrefcounted.h>
+#include <QtDemonRender/qdemonrenderbasetypes.h>
 #include <StringTable.h>
 #include <QVector2D.h>
-#include <qdemonrenderdynamicobjectsystem.h>
+#include <QtDemonRuntimeRender/qdemonrenderdynamicobjectsystem.h>
 
 QT_BEGIN_NAMESPACE
 struct SEffect;

@@ -29,8 +29,8 @@
 ****************************************************************************/
 
 #include <QtDemonRuntimeRender/qdemonrenderprefiltertexture.h>
-#include <qdemonrendercontext.h>
-#include <qdemonrendershaderprogram.h>
+#include <QtDemonRender/qdemonrendercontext.h>
+#include <QtDemonRender/qdemonrendershaderprogram.h>
 
 #include <string>
 

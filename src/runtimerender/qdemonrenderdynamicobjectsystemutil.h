@@ -30,10 +30,10 @@
 #pragma once
 #ifndef QDEMON_RENDER_DYNAMIC_OBJECT_SYSTEM_UTIL_H
 #define QDEMON_RENDER_DYNAMIC_OBJECT_SYSTEM_UTIL_H
-#include <qdemonrender.h>
+#include <QtDemonRuntimeRender/qdemonrender.h>
 #include <StringTable.h>
 #include <Qt3DSAllocatorCallback.h>
-#include <qdemonrenderstring.h>
+#include <QtDemonRuntimeRender/qdemonrenderstring.h>
 
 QT_BEGIN_NAMESPACE
 namespace dynamic {

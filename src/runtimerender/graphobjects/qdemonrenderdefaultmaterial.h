@@ -30,7 +30,7 @@
 #pragma once
 #ifndef QDEMON_RENDER_DEFAULT_MATERIAL_H
 #define QDEMON_RENDER_DEFAULT_MATERIAL_H
-#include <qdemonrender.h>
+#include <QtDemonRuntimeRender/qdemonrender.h>
 #include <QtDemonRuntimeRender/qdemonrendergraphobject.h>
 #include <Qt3DSFlags.h>
 #include <StringTable.h>

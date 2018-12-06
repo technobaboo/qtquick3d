@@ -27,18 +27,18 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <qdemonoffscreenrendermanager.h>
+#include <QtDemonRuntimeRender/qdemonoffscreenrendermanager.h>
 #include <Qt3DSContainers.h>
 #include <Qt3DSAtomic.h>
-#include <qdemonrenderbasetypes.h>
+#include <QtDemonRender/qdemonrenderbasetypes.h>
 #include <StringTable.h>
-#include <qdemonrenderframebuffer.h>
-#include <qdemonrendertexture2d.h>
+#include <QtDemonRender/qdemonrenderframebuffer.h>
+#include <QtDemonRender/qdemonrendertexture2d.h>
 #include <QtDemonRuntimeRender/qdemonrenderresourcemanager.h>
-#include <qdemonrendercontext.h>
+#include <QtDemonRender/qdemonrendercontext.h>
 #include <Qt3DSFoundation.h>
 #include <qdemontextrenderer.h>
-#include <qdemonrendercontextcore.h>
+#include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
 #include <qdemonoffscreenrenderkey.h>
 #include <FastAllocator.h>
 #include <qdemonrenderrenderlist.h>

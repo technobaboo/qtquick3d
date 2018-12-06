@@ -30,8 +30,8 @@
 #pragma once
 #ifndef QDEMON_RENDER_PIXEL_GRAPHICS_RENDERER_H
 #define QDEMON_RENDER_PIXEL_GRAPHICS_RENDERER_H
-#include <qdemonrender.h>
-#include <QDemonRefCounted>
+#include <QtDemonRuntimeRender/qdemonrender.h>
+#include <QtDemon/qdemonrefcounted.h>
 #include <Qt3DSDataRef.h>
 
 QT_BEGIN_NAMESPACE

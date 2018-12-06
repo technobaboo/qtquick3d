@@ -27,7 +27,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <qdemonrendershadercodegenerator.h>
+#include <QtDemonRuntimeRender/qdemonrendershadercodegenerator.h>
 
 QT_BEGIN_NAMESPACE
 

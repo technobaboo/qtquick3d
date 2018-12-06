@@ -30,11 +30,11 @@
 #pragma once
 #ifndef QDEMON_OFFSCREEN_RENDER_MANAGER_H
 #define QDEMON_OFFSCREEN_RENDER_MANAGER_H
-#include <qdemonrender.h>
+#include <QtDemonRuntimeRender/qdemonrender.h>
 #include <Qt3DSSimpleTypes.h>
-#include <QDemonRefCounted>
+#include <QtDemon/qdemonrefcounted.h>
 #include <StringTable.h>
-#include <qdemonrenderbasetypes.h>
+#include <QtDemonRender/qdemonrenderbasetypes.h>
 #include <Qt3DSOption.h>
 #include <QtDemonRuntimeRender/qdemonrenderscene.h>
 #include <QtDemonRuntimeRender/qdemonrenderlayer.h>

@@ -30,11 +30,11 @@
 #pragma once
 #ifndef QDEMON_RENDER_MATERIAL_SHADER_GENERATOR_H
 #define QDEMON_RENDER_MATERIAL_SHADER_GENERATOR_H
-#include <qdemonrender.h>
-#include <QDemonRefCounted>
-#include <qdemonrendershaderkeys.h>
-#include <qdemonrendershadercache.h>
-#include <qdemonrendershadercodegeneratorv2.h>
+#include <QtDemonRuntimeRender/qdemonrender.h>
+#include <QtDemon/qdemonrefcounted.h>
+#include <QtDemonRuntimeRender/qdemonrendershaderkeys.h>
+#include <QtDemonRuntimeRender/qdemonrendershadercache.h>
+#include <QtDemonRuntimeRender/qdemonrendershadercodegeneratorv2.h>
 
 QT_BEGIN_NAMESPACE
 

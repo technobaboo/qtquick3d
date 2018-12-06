@@ -32,10 +32,10 @@
 #ifndef QDEMON_RENDER_LIGHTMAPS_H
 #define QDEMON_RENDER_LIGHTMAPS_H
 
-#include <qdemonrender.h>
+#include <QtDemonRuntimeRender/qdemonrender.h>
 #include <QtDemonRuntimeRender/qdemonrendergraphobject.h>
 #include <StringTable.h>
-#include <qdemonrenderer.h>
+#include <QtDemonRuntimeRender/qdemonrenderer.h>
 #include <QtDemonRuntimeRender/qdemonrendermaterialdirty.h>
 
 QT_BEGIN_NAMESPACE

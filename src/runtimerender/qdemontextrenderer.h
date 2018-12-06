@@ -30,11 +30,11 @@
 #pragma once
 #ifndef QDEMON_TEXT_RENDERER_H
 #define QDEMON_TEXT_RENDERER_H
-#include <qdemonrender.h>
-#include <QDemonRefCounted>
-#include <qdemonrenderbasetypes.h>
+#include <QtDemonRuntimeRender/qdemonrender.h>
+#include <QtDemon/qdemonrefcounted.h>
+#include <QtDemonRender/qdemonrenderbasetypes.h>
 #include <StringTable.h>
-#include <qdemonrendertexttypes.h>
+#include <QtDemonRuntimeRender/qdemonrendertexttypes.h>
 
 QT_BEGIN_NAMESPACE
 

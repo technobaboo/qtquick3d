@@ -34,7 +34,7 @@
 #include <float.h>
 #include <string.h>
 #include <stdio.h>
-#include <qdemonrendereulerangles.h>
+#include <QtDemonRuntimeRender/qdemonrendereulerangles.h>
 
 #ifdef _MSC_VER
 #pragma warning(disable : 4365) // warnings on conversion from unsigned int to int

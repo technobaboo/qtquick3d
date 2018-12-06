@@ -30,8 +30,8 @@
 #ifndef QDEMON_QML_RENDER_H
 #define QDEMON_QML_RENDER_H
 
-#include <qdemonoffscreenrendermanager.h>
-#include <qdemonrendercontextcore.h>
+#include <QtDemonRuntimeRender/qdemonoffscreenrendermanager.h>
+#include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
 
 QT_BEGIN_NAMESPACE
 

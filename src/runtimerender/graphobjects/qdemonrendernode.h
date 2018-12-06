@@ -30,14 +30,14 @@
 #pragma once
 #ifndef QDEMON_RENDER_NODE_H
 #define QDEMON_RENDER_NODE_H
-#include <qdemonrender.h>
+#include <QtDemonRuntimeRender/qdemonrender.h>
 #include <QtDemonRuntimeRender/qdemonrendergraphobject.h>
 #include <QMatrix4x4.h>
 #include <QVector3D.h>
 #include <Qt3DSBounds3.h>
 #include <Qt3DSFlags.h>
 #include <Qt3DSQDemonNoCopy.h>
-#include <qdemonrendereulerangles.h>
+#include <QtDemonRuntimeRender/qdemonrendereulerangles.h>
 #include <StringTable.h>
 
 QT_BEGIN_NAMESPACE

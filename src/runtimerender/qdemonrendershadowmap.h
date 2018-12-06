@@ -30,13 +30,13 @@
 #pragma once
 #ifndef QDEMON_RENDER_SHADOW_MAP_H
 #define QDEMON_RENDER_SHADOW_MAP_H
-#include <qdemonrendercontextcore.h>
+#include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
 #include <Qt3DSAtomic.h>
 #include <QMatrix4x4.h>
 #include <QVector3D.h>
 #include <Qt3DSFlags.h>
 #include <StringTable.h>
-#include <qdemonrenderbasetypes.h>
+#include <QtDemonRender/qdemonrenderbasetypes.h>
 #include <Qt3DSRenderTexture2D.h>
 #ifdef _INTEGRITYPLATFORM
 #include <Qt3DSRenderTextureCube.h>

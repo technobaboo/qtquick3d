@@ -46,7 +46,7 @@
 #include <Qt3DSContainers.h>
 #include <qdemonrendereffectsystem.h>
 #include <SerializationTypes.h>
-#include <qdemonrenderstring.h>
+#include <QtDemonRuntimeRender/qdemonrenderstring.h>
 #include <FileTools.h>
 #include <qdemonrenderplugingraphobject.h>
 #include <QtDemonRuntimeRender/qdemonrenderreferencedmaterial.h>

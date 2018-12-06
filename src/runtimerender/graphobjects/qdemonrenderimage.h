@@ -30,13 +30,13 @@
 #pragma once
 #ifndef QDEMON_RENDER_IMAGE_H
 #define QDEMON_RENDER_IMAGE_H
-#include <qdemonrender.h>
+#include <QtDemonRuntimeRender/qdemonrender.h>
 #include <QtDemonRuntimeRender/qdemonrendergraphobject.h>
 #include <StringTable.h>
-#include <qdemonrendertexture2d.h>
+#include <QtDemonRender/qdemonrendertexture2d.h>
 #include <QtDemonRuntimeRender/qdemonrendernode.h>
 #include <QVector2D.h>
-#include <qdemonrenderimagetexturedata.h>
+#include <QtDemonRuntimeRender/qdemonrenderimagetexturedata.h>
 
 QT_BEGIN_NAMESPACE
 class IQt3DSRenderContext;

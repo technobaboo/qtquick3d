@@ -27,18 +27,18 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <qdemonrendershadercache.h>
-#include <qdemonrendercontext.h>
+#include <QtDemonRuntimeRender/qdemonrendershadercache.h>
+#include <QtDemonRender/qdemonrendercontext.h>
 #include <Qt3DSContainers.h>
 #include <Qt3DSAtomic.h>
-#include <qdemonrenderstring.h>
+#include <QtDemonRuntimeRender/qdemonrenderstring.h>
 #include <XML.h>
 #include <IOStreams.h>
 #include <StringConversionImpl.h>
 #include <qdemonrenderinputstreamfactory.h>
 #include <FileTools.h>
-#include <qdemonrendershaderprogram.h>
-#include <qdemonrenderer.h>
+#include <QtDemonRender/qdemonrendershaderprogram.h>
+#include <QtDemonRuntimeRender/qdemonrenderer.h>
 #include <memory>
 #include <Qt3DSTime.h>
 #include <Qt3DSPerfTimer.h>

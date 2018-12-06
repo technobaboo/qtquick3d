@@ -30,10 +30,9 @@
 #pragma once
 #ifndef QDEMON_RENDER_LAYER_H
 #define QDEMON_RENDER_LAYER_H
-#include <qdemonrender.h>
+#include <QtDemonRuntimeRender/qdemonrender.h>
 #include <QtDemonRuntimeRender/qdemonrendernode.h>
-#include <Qt3DSContainers.h>
-#include <qdemonrenderer.h>
+#include <QtDemonRuntimeRender/qdemonrenderer.h>
 
 QT_BEGIN_NAMESPACE
 class IQt3DSRenderContext;

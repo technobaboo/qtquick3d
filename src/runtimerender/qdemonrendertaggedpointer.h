@@ -30,7 +30,7 @@
 #pragma once
 #ifndef QDEMON_RENDER_TAGGED_POINTER_H
 #define QDEMON_RENDER_TAGGED_POINTER_H
-#include <qdemonrender.h>
+#include <QtDemonRuntimeRender/qdemonrender.h>
 #include <StringTable.h>
 
 QT_BEGIN_NAMESPACE
