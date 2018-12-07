@@ -51,7 +51,7 @@ QT_BEGIN_NAMESPACE
 //    {
 //        switch (key.getType()) {
 //        case OffscreenRendererKeyTypes::RegisteredString:
-//            return hash<CRegisteredString>()(key.getData<CRegisteredString>());
+//            return hash<QString>()(key.getData<QString>());
 //        case OffscreenRendererKeyTypes::VoidPtr:
 //            return hash<size_t>()(reinterpret_cast<size_t>(key.getData<void *>()));
 //        default:
@@ -68,9 +68,6 @@ QT_BEGIN_NAMESPACE
 //}
 
 namespace {
-
-using eastl::pair;
-using eastl::make_pair;
 
 struct SRendererData : SOffscreenRenderResult
 {
@@ -147,24 +144,16 @@ struct SOffscreenRunnable : public IRenderTask
 struct SOffscreenRenderManager : public IOffscreenRenderManager
 {
     typedef QHash<SOffscreenRendererKey, SRenderDataReleaser> TRendererMap;
-    IQt3DSRenderContext &m_Context;
-    NVAllocatorCallback &m_Allocator;
-    QDemonScopedRefCounted<IStringTable> m_StringTable;
+    IQDemonRenderContext &m_Context;
     QDemonScopedRefCounted<IResourceManager> m_ResourceManager;
     TRendererMap m_Renderers;
-    SFastAllocator<> m_PerFrameAllocator;
     quint32 m_FrameCount; // cheap per-
 
     volatile qint32 mRefCount;
 
-    SOffscreenRenderManager(NVAllocatorCallback &inCallback, IStringTable &inStringTable,
-                            IResourceManager &inManager, IQt3DSRenderContext &inContext)
+    SOffscreenRenderManager(IResourceManager &inManager, IQDemonRenderContext &inContext)
         : m_Context(inContext)
-        , m_Allocator(inCallback)
-        , m_StringTable(inStringTable)
         , m_ResourceManager(inManager)
-        , m_Renderers(inCallback, "SOffscreenRenderManager::m_Renderers")
-        , m_PerFrameAllocator(inCallback, "m_PerFrameAllocator")
         , m_FrameCount(0)
         , mRefCount(0)
     {
@@ -174,7 +163,7 @@ struct SOffscreenRenderManager : public IOffscreenRenderManager
 
     QDEMON_IMPLEMENT_REF_COUNT_ADDREF_RELEASE_OVERRIDE(m_Allocator)
 
-    Option<bool> MaybeRegisterOffscreenRenderer(const SOffscreenRendererKey &inKey,
+    QDemonOption<bool> MaybeRegisterOffscreenRenderer(const SOffscreenRendererKey &inKey,
                                                 IOffscreenRenderer &inRenderer) override
     {
         TRendererMap::iterator theIter = m_Renderers.find(inKey);
@@ -183,7 +172,7 @@ struct SOffscreenRenderManager : public IOffscreenRenderManager
             if (theData.m_Renderer != &inRenderer) {
                 if (inKey.getType() == OffscreenRendererKeyTypes::RegisteredString) {
                     qCCritical(INVALID_OPERATION, "Different renderers registered under same key: %s",
-                               inKey.getData<CRegisteredString>().c_str());
+                               inKey.getData<QString>().c_str());
                 }
                 Q_ASSERT(false);
                 return Empty();
@@ -197,8 +186,7 @@ struct SOffscreenRenderManager : public IOffscreenRenderManager
     void RegisterOffscreenRenderer(const SOffscreenRendererKey &inKey,
                                    IOffscreenRenderer &inRenderer) override
     {
-        pair<TRendererMap::iterator, bool> theInsert = m_Renderers.insert(
-                    make_pair(inKey, QDEMON_NEW(m_Allocator, SRendererData)(m_Allocator, *m_ResourceManager)));
+        QPair<TRendererMap::iterator, bool> theInsert = m_Renderers.insert(inKey, new SRendererData(*m_ResourceManager));
         Q_ASSERT(theInsert.second);
         SRendererData &theData = *(theInsert.first->second.mPtr);
         theData.m_Renderer = &inRenderer;
@@ -220,7 +208,7 @@ struct SOffscreenRenderManager : public IOffscreenRenderManager
     }
     void ReleaseOffscreenRenderer(const SOffscreenRendererKey &inKey) override
     {
-        m_Renderers.erase(inKey);
+        m_Renderers.remove(inKey);
     }
 
     void RenderItem(SRendererData &theData, SOffscreenRendererEnvironment theDesiredEnvironment)
@@ -486,7 +474,7 @@ void SOffscreenRunnable::Run()
 
 IOffscreenRenderManager &IOffscreenRenderManager::CreateOffscreenRenderManager(
         NVAllocatorCallback &inCallback, IStringTable &inStringTable, IResourceManager &inManager,
-        IQt3DSRenderContext &inContext)
+        IQDemonRenderContext &inContext)
 {
     return *QDEMON_NEW(inCallback, SOffscreenRenderManager)(inCallback, inStringTable, inManager,
                                                             inContext);

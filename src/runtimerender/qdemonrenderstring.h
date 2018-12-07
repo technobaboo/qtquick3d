@@ -30,15 +30,15 @@
 #pragma once
 #ifndef QDEMON_RENDER_STRING_H
 #define QDEMON_RENDER_STRING_H
-#include <QtDemonRuntimeRender/qdemonrender.h>
+
 #include <string>
 
 QT_BEGIN_NAMESPACE
 // can't name this CString else we will conflict a
-class CRenderString : public std::basic_string<char8_t>
+class CRenderString : public std::basic_string<char>
 {
 public:
-    typedef std::basic_string<char8_t> TStrType;
+    typedef std::basic_string<char> TStrType;
 
     CRenderString()
         : TStrType()
@@ -57,7 +57,7 @@ public:
         TStrType::operator=(inOther);
         return *this;
     }
-    CRenderString &operator=(const char8_t *inOther)
+    CRenderString &operator=(const char *inOther)
     {
         TStrType::operator=(inOther);
         return *this;

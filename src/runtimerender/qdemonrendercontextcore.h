@@ -30,11 +30,24 @@
 #pragma once
 #ifndef QDEMON_RENDER_CONTEXT_CORE_H
 #define QDEMON_RENDER_CONTEXT_CORE_H
-#include <QtDemonRuntimeRender/qdemonrender.h>
-#include <Qt3DSAllocatorCallback.h>
+
 #include <QtDemon/qdemonrefcounted.h>
-#include <StringTable.h>
 #include <QtDemonRuntimeRender/qdemonrenderpresentation.h>
+#include <QtDemonRuntimeRender/qdemonrenderinputstreamfactory.h>
+#include <QtDemonRuntimeRender/qdemonrenderthreadpool.h>
+#include <QtDemonRuntimeRender/qdemonrenderdynamicobjectsystem.h>
+#include <QtDemonRuntimeRender/qdemonrendercustommaterialsystem.h>
+#include <QtDemonRuntimeRender/qdemonrendereffectsystem.h>
+#include <QtDemonRuntimeRender/qdemonrenderbufferloader.h>
+#include <QtDemonRuntimeRender/qdemontextrenderer.h>
+#include <QtDemonRuntimeRender/qdemonrenderwidgets.h>
+#include <QtDemonRuntimeRender/qdemonrenderimagebatchloader.h>
+#include <QtDemonRuntimeRender/qdemonrenderpixelgraphicsrenderer.h>
+#include <QtDemonRuntimeRender/qdemonrendertexttexturecache.h>
+#include <QtDemonRuntimeRender/qdemonrenderrenderlist.h>
+#include <QtDemonRuntimeRender/qdemonrendercustommaterialshadergenerator.h>
+
+#include <QtDemon/qdemonperftimer.h>
 
 #include <QtCore/qpair.h>
 #include <QtCore/qsize.h>
@@ -51,12 +64,9 @@ struct ScaleModes
 };
 
 // Part of render context that does not require the render system.
-class IQt3DSRenderContextCore : public QDemonRefCounted
+class IQDemonRenderContextCore
 {
 public:
-    virtual IStringTable &GetStringTable() = 0;
-    virtual NVFoundationBase &GetFoundation() = 0;
-    virtual NVAllocatorCallback &GetAllocator() = 0;
     virtual IInputStreamFactory &GetInputStreamFactory() = 0;
     virtual IThreadPool &GetThreadPool() = 0;
     virtual IDynamicObjectSystemCore &GetDynamicObjectSystemCore() = 0;
@@ -73,21 +83,18 @@ public:
     virtual void SetOnscreenTextRendererCore(ITextRendererCore &inRenderer) = 0;
     virtual ITextRendererCore *GetOnscreenTextRendererCore() = 0;
     // The render context maintains a reference to this object.
-    virtual IQt3DSRenderContext &CreateRenderContext(QDemonRenderContext &inContext,
-                                                     const char8_t *inPrimitivesDirectory) = 0;
+    virtual IQDemonRenderContext &CreateRenderContext(QDemonRenderContext &inContext,
+                                                     const char *inPrimitivesDirectory) = 0;
 
-    static IQt3DSRenderContextCore &Create(NVFoundationBase &fnd, IStringTable &strt);
+    static IQDemonRenderContextCore &Create();
 };
 
-class IQt3DSRenderContext : public QDemonRefCounted
+class IQDemonRenderContext : public QDemonRefCounted
 {
 protected:
-    virtual ~IQt3DSRenderContext() {}
+    virtual ~IQDemonRenderContext() {}
 public:
-    virtual IStringTable &GetStringTable() = 0;
-    virtual NVFoundationBase &GetFoundation() = 0;
-    virtual NVAllocatorCallback &GetAllocator() = 0;
-    virtual IQt3DSRenderer &GetRenderer() = 0;
+    virtual IQDemonRenderer &GetRenderer() = 0;
     virtual IRenderWidgetContext &GetRenderWidgetContext() = 0;
     virtual IBufferManager &GetBufferManager() = 0;
     virtual IResourceManager &GetResourceManager() = 0;
@@ -110,9 +117,6 @@ public:
     virtual IShaderProgramGenerator &GetShaderProgramGenerator() = 0;
     virtual IDefaultMaterialShaderGenerator &GetDefaultMaterialShaderGenerator() = 0;
     virtual ICustomMaterialShaderGenerator &GetCustomMaterialShaderGenerator() = 0;
-    // The memory used for the per frame allocator is released as the first step in BeginFrame.
-    // This is useful for short lived objects and datastructures.
-    virtual NVAllocatorCallback &GetPerFrameAllocator() = 0;
     // Get the number of times EndFrame has been called
     virtual quint32 GetFrameCount() = 0;
 
@@ -136,15 +140,15 @@ public:
     // Sub presentations change the rendering somewhat.
     virtual bool IsInSubPresentation() = 0;
     virtual void SetInSubPresentation(bool inValue) = 0;
-    virtual void SetSceneColor(Option<QVector4D> inSceneColor) = 0;
-    virtual void SetMatteColor(Option<QVector4D> inMatteColor) = 0;
+    virtual void SetSceneColor(QDemonOption<QVector4D> inSceneColor) = 0;
+    virtual void SetMatteColor(QDemonOption<QVector4D> inMatteColor) = 0;
 
     // Render screen aligned 2D text at x,y
-    virtual void RenderText2D(float x, float y, Option<QVector3D> inColor,
+    virtual void RenderText2D(float x, float y, QDemonOption<QVector3D> inColor,
                               const char *text) = 0;
     // render Gpu profiler values
     virtual void RenderGpuProfilerStats(float x, float y,
-                                        Option<QVector3D> inColor) = 0;
+                                        QDemonOption<QVector3D> inColor) = 0;
 
     // The reason you can set both window dimensions and an overall viewport is that the mouse
     // needs to be inverted
@@ -156,8 +160,8 @@ public:
     // In addition to the window dimensions which really have to be set, you can optionally
     // set the viewport which will force the entire viewer to render specifically to this
     // viewport.
-    virtual void SetViewport(Option<QDemonRenderRect> inViewport) = 0;
-    virtual Option<QDemonRenderRect> GetViewport() const = 0;
+    virtual void SetViewport(QDemonOption<QDemonRenderRect> inViewport) = 0;
+    virtual QDemonOption<QDemonRenderRect> GetViewport() const = 0;
     virtual QDemonRenderRect GetContextViewport() const = 0;
     // Only valid between calls to Begin,End.
     virtual QDemonRenderRect GetPresentationViewport() const = 0;

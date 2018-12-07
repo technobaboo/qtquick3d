@@ -32,7 +32,7 @@
 #define QDEMON_RENDER_SHADER_CODE_GENERATOR_V2_H
 #include <QtDemonRuntimeRender/qdemonrendershadercodegenerator.h>
 #include <QtDemonRuntimeRender/qdemonrendershadercache.h>
-#include <Qt3DSFlags.h>
+#include <QtDemon/qdemonflags.h>
 
 #include <QtCore/qstring.h>
 
@@ -58,16 +58,16 @@ class IShaderStageGenerator
 protected:
     virtual ~IShaderStageGenerator() {}
 public:
-    virtual void AddIncoming(const char8_t *name, const char8_t *type) = 0;
-    virtual void AddIncoming(const TStrType &name, const char8_t *type) = 0;
+    virtual void AddIncoming(const char *name, const char *type) = 0;
+    virtual void AddIncoming(const TStrType &name, const char *type) = 0;
 
-    virtual void AddOutgoing(const char8_t *name, const char8_t *type) = 0;
-    virtual void AddOutgoing(const TStrType &name, const char8_t *type) = 0;
+    virtual void AddOutgoing(const char *name, const char *type) = 0;
+    virtual void AddOutgoing(const TStrType &name, const char *type) = 0;
 
-    virtual void AddUniform(const char8_t *name, const char8_t *type) = 0;
-    virtual void AddUniform(const TStrType &name, const char8_t *type) = 0;
+    virtual void AddUniform(const char *name, const char *type) = 0;
+    virtual void AddUniform(const TStrType &name, const char *type) = 0;
 
-    virtual void AddInclude(const char8_t *name) = 0;
+    virtual void AddInclude(const char *name) = 0;
     virtual void AddInclude(const TStrType &name) = 0;
     virtual void AddInclude(const QString &name) = 0;
 
@@ -113,7 +113,7 @@ public:
                                       TShaderFeatureSet(), separableProgram);
     }
 
-    static IShaderProgramGenerator &CreateProgramGenerator(IQt3DSRenderContext &inContext);
+    static IShaderProgramGenerator &CreateProgramGenerator(IQDemonRenderContext &inContext);
 
     static void OutputParaboloidDepthVertex(IShaderStageGenerator &inGenerator);
     // By convention, the local space result of the TE is stored in vec4 pos local variable.

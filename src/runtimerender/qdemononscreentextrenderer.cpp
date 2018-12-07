@@ -89,7 +89,7 @@ struct STextureAtlasFontEntry
     float m_t1;
 };
 
-typedef eastl::basic_string<char8_t, ForwardingAllocator> TStrType;
+typedef eastl::basic_string<char, ForwardingAllocator> TStrType;
 typedef QHash<wchar_t, STextureAtlasFontEntry> TTextureAtlasMap;
 
 struct STextAtlasFont
@@ -149,15 +149,15 @@ public:
 
     QDEMON_IMPLEMENT_REF_COUNT_ADDREF_RELEASE_OVERRIDE(m_Foundation.getAllocator())
 
-    void AddSystemFontDirectory(const char8_t *) override {}
+    void AddSystemFontDirectory(const char *) override {}
 
-    virtual void AddProjectFontDirectory(CRegisteredString)
+    virtual void AddProjectFontDirectory(QString)
     {
         // We always render using the default font with on-screen renderer,
         // so no need to care about font directories
     }
 
-    void AddProjectFontDirectory(const char8_t *inProjectDirectory) override
+    void AddProjectFontDirectory(const char *inProjectDirectory) override
     {
         if (m_RenderContext)
             AddProjectFontDirectory(
@@ -214,7 +214,6 @@ public:
 
             if (theAtlasRect.m_Width != 0) {
                 font.m_AtlasEntries.insert(
-                            eastl::make_pair(
                                 cache.at(i).unicode(), STextureAtlasFontEntry(
                                     (float)theAtlasRect.m_X, (float)theAtlasRect.m_Y,
                                     (float)theAtlasRect.m_Width, (float)theAtlasRect.m_Height,
@@ -222,7 +221,7 @@ public:
                                     glyphAdvances[i].x(),
                                     theAtlasRect.m_NormX, theAtlasRect.m_NormY,
                                     theAtlasRect.m_NormX + theAtlasRect.m_NormWidth,
-                                    theAtlasRect.m_NormY + theAtlasRect.m_NormHeight)));
+                                    theAtlasRect.m_NormY + theAtlasRect.m_NormHeight));
             }
         }
     }
@@ -246,21 +245,21 @@ public:
     }
 
     // unused
-    Option<CRegisteredString> GetFontNameForFont(CRegisteredString) override
+    QDemonOption<QString> GetFontNameForFont(QString) override
     {
         Q_ASSERT(false);
         return Empty();
     }
 
     // unused
-    Option<CRegisteredString> GetFontNameForFont(const char8_t *) override
+    QDemonOption<QString> GetFontNameForFont(const char *) override
     {
         Q_ASSERT(false);
         return Empty();
     }
 
     // unused
-    STextDimensions MeasureText(const STextRenderInfo &, float, const char8_t *) override
+    STextDimensions MeasureText(const STextRenderInfo &, float, const char *) override
     {
         Q_ASSERT(false);
         return STextDimensions(0, 0);

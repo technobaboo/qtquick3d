@@ -28,7 +28,7 @@
 **
 ****************************************************************************/
 
-#include <QtDemonRuntimeRender/qdemonrender.h>
+
 #include <QtDemonRuntimeRender/qdemonrenderer.h>
 #include <QtDemonRuntimeRender/qdemonrendererimpl.h>
 #include <QtDemonRuntimeRender/qdemonrenderlayer.h>
@@ -150,7 +150,7 @@ bool SLayerRenderPreparationData::NeedsWidgetTexture() const
     return m_IRenderWidgets.size() > 0;
 }
 
-void SLayerRenderPreparationData::SetShaderFeature(CRegisteredString theStr, bool inValue)
+void SLayerRenderPreparationData::SetShaderFeature(QString theStr, bool inValue)
 {
     SShaderPreprocessorFeature item(theStr, inValue);
     eastl::vector<SShaderPreprocessorFeature>::iterator iter = m_Features.begin(),
@@ -175,7 +175,7 @@ void SLayerRenderPreparationData::SetShaderFeature(CRegisteredString theStr, boo
 
 void SLayerRenderPreparationData::SetShaderFeature(const char *inName, bool inValue)
 {
-    CRegisteredString theStr(m_Renderer.GetQt3DSContext().GetStringTable().RegisterStr(inName));
+    QString theStr(m_Renderer.GetQt3DSContext().GetStringTable().RegisterStr(inName));
     SetShaderFeature(theStr, inValue);
 }
 
@@ -408,7 +408,7 @@ bool SLayerRenderPreparationData::PrepareTextForRender(
     return retval;
 }
 
-eastl::pair<bool, SGraphObject *>
+QPair<bool, SGraphObject *>
 SLayerRenderPreparationData::ResolveReferenceMaterial(SGraphObject *inMaterial)
 {
     bool subsetDirty = false;
@@ -437,7 +437,7 @@ SLayerRenderPreparationData::ResolveReferenceMaterial(SGraphObject *inMaterial)
 
 bool SLayerRenderPreparationData::PreparePathForRender(
         SPath &inPath, const QMatrix4x4 &inViewProjection,
-        const Option<SClippingFrustum> &inClipFrustum, SLayerRenderPreparationResultFlags &ioFlags)
+        const QDemonOption<SClippingFrustum> &inClipFrustum, SLayerRenderPreparationResultFlags &ioFlags)
 {
     SRenderableObjectFlags theSharedFlags;
     theSharedFlags.SetPickable(true);
@@ -477,7 +477,7 @@ bool SLayerRenderPreparationData::PreparePathForRender(
 
         SRenderableObjectFlags theFlags = theSharedFlags;
 
-        eastl::pair<bool, SGraphObject *> theMaterialAndDirty(
+        QPair<bool, SGraphObject *> theMaterialAndDirty(
                     ResolveReferenceMaterial(theMaterials[idx]));
         SGraphObject *theMaterial(theMaterialAndDirty.second);
         retval = retval || theMaterialAndDirty.first;
@@ -513,7 +513,7 @@ bool SLayerRenderPreparationData::PreparePathForRender(
                         prepResult.m_MaterialKey, isStroke);
             theRenderable->m_FirstImage = prepResult.m_FirstImage;
 
-            IQt3DSRenderContext &qt3dsContext(m_Renderer.GetQt3DSContext());
+            IQDemonRenderContext &qt3dsContext(m_Renderer.GetQt3DSContext());
             IPathManager &thePathManager = qt3dsContext.GetPathManager();
             retval = thePathManager.PrepareForRender(inPath) || retval;
             retval |= (inPath.m_WireframeMode != qt3dsContext.GetWireframeMode());
@@ -556,7 +556,7 @@ bool SLayerRenderPreparationData::PreparePathForRender(
                         prepResult.m_MaterialKey, isStroke);
             theRenderable->m_FirstImage = prepResult.m_FirstImage;
 
-            IQt3DSRenderContext &qt3dsContext(m_Renderer.GetQt3DSContext());
+            IQDemonRenderContext &qt3dsContext(m_Renderer.GetQt3DSContext());
             IPathManager &thePathManager = qt3dsContext.GetPathManager();
             retval = thePathManager.PrepareForRender(inPath) || retval;
             retval |= (inPath.m_WireframeMode != qt3dsContext.GetWireframeMode());
@@ -576,7 +576,7 @@ void SLayerRenderPreparationData::PrepareImageForRender(
         SRenderableImage *&ioNextImage, SRenderableObjectFlags &ioFlags,
         SShaderDefaultMaterialKey &inShaderKey, quint32 inImageIndex)
 {
-    IQt3DSRenderContext &qt3dsContext(m_Renderer.GetQt3DSContext());
+    IQDemonRenderContext &qt3dsContext(m_Renderer.GetQt3DSContext());
     IBufferManager &bufferManager = qt3dsContext.GetBufferManager();
     IOffscreenRenderManager &theOffscreenRenderManager(
                 qt3dsContext.GetOffscreenRenderManager());
@@ -823,9 +823,9 @@ SDefaultMaterialPreparationResult SLayerRenderPreparationData::PrepareCustomMate
 
 bool SLayerRenderPreparationData::PrepareModelForRender(
         SModel &inModel, const QMatrix4x4 &inViewProjection,
-        const Option<SClippingFrustum> &inClipFrustum, TNodeLightEntryList &inScopedLights)
+        const QDemonOption<SClippingFrustum> &inClipFrustum, TNodeLightEntryList &inScopedLights)
 {
-    IQt3DSRenderContext &qt3dsContext(m_Renderer.GetQt3DSContext());
+    IQDemonRenderContext &qt3dsContext(m_Renderer.GetQt3DSContext());
     IBufferManager &bufferManager = qt3dsContext.GetBufferManager();
     SRenderMesh *theMesh = bufferManager.LoadMesh(inModel.m_MeshPath);
     if (theMesh == nullptr)
@@ -873,7 +873,7 @@ bool SLayerRenderPreparationData::PrepareModelForRender(
                                         && (theModelContext.m_Model.m_Flags.IsGloballyPickable()
                                             || renderableFlags.GetPickable()));
             SRenderableObject *theRenderableObject(nullptr);
-            eastl::pair<bool, SGraphObject *> theMaterialObjectAndDirty =
+            QPair<bool, SGraphObject *> theMaterialObjectAndDirty =
                     ResolveReferenceMaterial(theSourceMaterialObject);
             SGraphObject *theMaterialObject = theMaterialObjectAndDirty.second;
             subsetDirty = subsetDirty || theMaterialObjectAndDirty.first;
@@ -996,7 +996,7 @@ bool SLayerRenderPreparationData::PrepareModelForRender(
 }
 
 bool SLayerRenderPreparationData::PrepareRenderablesForRender(
-        const QMatrix4x4 &inViewProjection, const Option<SClippingFrustum> &inClipFrustum,
+        const QMatrix4x4 &inViewProjection, const QDemonOption<SClippingFrustum> &inClipFrustum,
         float inTextScaleFactor, SLayerRenderPreparationResultFlags &ioFlags)
 {
     SStackPerfTimer __timer(m_Renderer.GetQt3DSContext().GetPerfTimer(),
@@ -1049,7 +1049,7 @@ bool SLayerRenderPreparationData::PrepareRenderablesForRender(
 
 bool SLayerRenderPreparationData::CheckLightProbeDirty(SImage &inLightProbe)
 {
-    IQt3DSRenderContext &theContext(m_Renderer.GetQt3DSContext());
+    IQDemonRenderContext &theContext(m_Renderer.GetQt3DSContext());
     return inLightProbe.ClearDirty(theContext.GetBufferManager(),
                                    theContext.GetOffscreenRenderManager(),
                                    theContext.GetRenderPluginManager(), true);

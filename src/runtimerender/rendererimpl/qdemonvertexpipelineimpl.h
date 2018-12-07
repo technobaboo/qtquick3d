@@ -122,7 +122,7 @@ struct SVertexPipelineImpl : public IDefaultMaterialVertexPipeline
         m_DisplacementImage = displacementImage;
     }
 
-    CRegisteredString Str(const char8_t *inItem) { return m_StringTable.RegisterStr(inItem); }
+    QString Str(const char *inItem) { return m_StringTable.RegisterStr(inItem); }
 
     bool HasTessellation() const
     {
@@ -179,7 +179,7 @@ struct SVertexPipelineImpl : public IDefaultMaterialVertexPipeline
 
         if (m_Wireframe == true && ProgramGenerator().GetStage(ShaderGeneratorStages::Geometry)
                 && ProgramGenerator().GetStage(ShaderGeneratorStages::TessEval)) {
-            const char8_t *theExtension("TE[");
+            const char *theExtension("TE[");
             // we always assume triangles
             for (int i = 0; i < 3; i++) {
                 char buf[10];
@@ -330,34 +330,34 @@ struct SVertexPipelineImpl : public IDefaultMaterialVertexPipeline
     bool HasActiveWireframe() override { return m_Wireframe; }
 
     // IShaderStageGenerator interface
-    void AddIncoming(const char8_t *name, const char8_t *type) override
+    void AddIncoming(const char *name, const char *type) override
     {
         ActiveStage().AddIncoming(name, type);
     }
-    void AddIncoming(const TStrType &name, const char8_t *type) override
+    void AddIncoming(const TStrType &name, const char *type) override
     {
         AddIncoming(name.c_str(), type);
     }
 
-    void AddOutgoing(const char8_t *name, const char8_t *type) override
+    void AddOutgoing(const char *name, const char *type) override
     {
         AddInterpolationParameter(name, type);
     }
-    void AddOutgoing(const TStrType &name, const char8_t *type) override
+    void AddOutgoing(const TStrType &name, const char *type) override
     {
         AddOutgoing(name.c_str(), type);
     }
 
-    void AddUniform(const char8_t *name, const char8_t *type) override
+    void AddUniform(const char *name, const char *type) override
     {
         ActiveStage().AddUniform(name, type);
     }
-    void AddUniform(const TStrType &name, const char8_t *type) override
+    void AddUniform(const TStrType &name, const char *type) override
     {
         AddUniform(name.c_str(), type);
     }
 
-    void AddInclude(const char8_t *name) override { ActiveStage().AddInclude(name); }
+    void AddInclude(const char *name) override { ActiveStage().AddInclude(name); }
     void AddInclude(const TStrType &name) override { AddInclude(name.c_str()); }
     void AddInclude(const QString &name) override
     {
@@ -411,15 +411,15 @@ struct SVertexPipelineImpl : public IDefaultMaterialVertexPipeline
 
     void BeginVertexGeneration(quint32 displacementImageIdx,
                                SRenderableImage *displacementImage) override = 0;
-    void AssignOutput(const char8_t *inVarName, const char8_t *inVarValueExpr) override = 0;
+    void AssignOutput(const char *inVarName, const char *inVarValueExpr) override = 0;
     void EndVertexGeneration() override = 0;
 
     void BeginFragmentGeneration() override = 0;
     void EndFragmentGeneration() override = 0;
 
     virtual IShaderStageGenerator &ActiveStage() = 0;
-    virtual void AddInterpolationParameter(const char8_t *inParamName,
-                                           const char8_t *inParamType) = 0;
+    virtual void AddInterpolationParameter(const char *inParamName,
+                                           const char *inParamType) = 0;
 
     virtual void DoGenerateUVCoords(quint32 inUVSet) = 0;
     virtual void DoGenerateWorldNormal() = 0;

@@ -14,7 +14,6 @@ HEADERS += \
     qdemonoffscreenrenderkey.h \
     qdemonoffscreenrendermanager.h \
     qdemonoldnbustedrenderplugin.h \
-    qdemonrender.h \
     qdemonrenderableimage.h \
     qdemonrenderclippingfrustum.h \
     qdemonrendercontextcore.h \
@@ -72,43 +71,43 @@ HEADERS += \
     qdemonrenderwidgets.h \
     qdemontextrenderer.h
 
-SOURCES += \
-    qdemonqmlrender.cpp \
-    qdemonoffscreenrendermanager.cpp \
-    qdemonoldnbustedrenderplugin.cpp \
-    qdemononscreentextrenderer.cpp \
-    qdemonqttextrenderer.cpp \
-    qdemonrenderclippingfrustum.cpp \
-    qdemonrendercontextcore.cpp \
-    qdemonrendercustommaterialshadergenerator.cpp \
-    qdemonrendercustommaterialsystem.cpp \
-    qdemonrenderdefaultmaterialshadergenerator.cpp \
-    qdemonrenderdynamicobjectsystem.cpp \
-    qdemonrendereffectsystem.cpp \
-    qdemonrendererutil.cpp \
-    qdemonrendereulerangles.cpp \
-    qdemonrendergpuprofiler.cpp \
-    qdemonrendergraphobjectserializer.cpp \
-    qdemonrenderimagescaler.cpp \
-    qdemonrenderinputstreamfactory.cpp \
-    qdemonrenderpathmanager.cpp \
-    qdemonrenderpixelgraphicsrenderer.cpp \
-    qdemonrenderpixelgraphicstypes.cpp \
-    qdemonrenderplugin.cpp \
-    qdemonrenderray.cpp \
-    qdemonrenderrenderlist.cpp \
-    qdemonrendershadercache.cpp \
-    qdemonrendershadercodegenerator.cpp \
-    qdemonrendershadercodegeneratorv2.cpp \
-    qdemonrendershadowmap.cpp \
-    qdemonrendersubpresentation.cpp \
-    qdemonrendertexttextureatlas.cpp \
-    qdemonrendertexttexturecache.cpp \
-    qdemonrendertextureatlas.cpp \
-    qdemonrenderthreadpool.cpp \
-    qdemonrenderuiploader.cpp \
-    qdemonrenderuipsharedtranslation.cpp \
-    qdemonrenderwidgets.cpp \
-    qdemontextrenderer.cpp
+#SOURCES += \
+#    qdemonqmlrender.cpp \
+#    qdemonoffscreenrendermanager.cpp \
+#    qdemonoldnbustedrenderplugin.cpp \
+#    qdemononscreentextrenderer.cpp \
+#    qdemonqttextrenderer.cpp \
+#    qdemonrenderclippingfrustum.cpp \
+#    qdemonrendercontextcore.cpp \
+#    qdemonrendercustommaterialshadergenerator.cpp \
+#    qdemonrendercustommaterialsystem.cpp \
+#    qdemonrenderdefaultmaterialshadergenerator.cpp \
+#    qdemonrenderdynamicobjectsystem.cpp \
+#    qdemonrendereffectsystem.cpp \
+#    qdemonrendererutil.cpp \
+#    qdemonrendereulerangles.cpp \
+#    qdemonrendergpuprofiler.cpp \
+#    qdemonrendergraphobjectserializer.cpp \
+#    qdemonrenderimagescaler.cpp \
+#    qdemonrenderinputstreamfactory.cpp \
+#    qdemonrenderpathmanager.cpp \
+#    qdemonrenderpixelgraphicsrenderer.cpp \
+#    qdemonrenderpixelgraphicstypes.cpp \
+#    qdemonrenderplugin.cpp \
+#    qdemonrenderray.cpp \
+#    qdemonrenderrenderlist.cpp \
+#    qdemonrendershadercache.cpp \
+#    qdemonrendershadercodegenerator.cpp \
+#    qdemonrendershadercodegeneratorv2.cpp \
+#    qdemonrendershadowmap.cpp \
+#    qdemonrendersubpresentation.cpp \
+#    qdemonrendertexttextureatlas.cpp \
+#    qdemonrendertexttexturecache.cpp \
+#    qdemonrendertextureatlas.cpp \
+#    qdemonrenderthreadpool.cpp \
+#    qdemonrenderuiploader.cpp \
+#    qdemonrenderuipsharedtranslation.cpp \
+#    qdemonrenderwidgets.cpp \
+#    qdemontextrenderer.cpp
 
 load(qt_module)

@@ -30,12 +30,10 @@
 #pragma once
 #ifndef QDEMON_OFFSCREEN_RENDER_MANAGER_H
 #define QDEMON_OFFSCREEN_RENDER_MANAGER_H
-#include <QtDemonRuntimeRender/qdemonrender.h>
-#include <Qt3DSSimpleTypes.h>
+
 #include <QtDemon/qdemonrefcounted.h>
-#include <StringTable.h>
+#include <QtDemon/qdemonoption.h>
 #include <QtDemonRender/qdemonrenderbasetypes.h>
-#include <Qt3DSOption.h>
 #include <QtDemonRuntimeRender/qdemonrenderscene.h>
 #include <QtDemonRuntimeRender/qdemonrenderlayer.h>
 
@@ -146,7 +144,7 @@ public:
     // Arbitrary const char* returned to indicate the type of this renderer
     // Can be overloaded to form the basis of an RTTI type system.
     // Not currently used by the rendering system.
-    virtual CRegisteredString GetOffscreenRendererType() = 0;
+    virtual QString GetOffscreenRendererType() = 0;
     virtual SOffscreenRendererEnvironment
     GetDesiredEnvironment(QVector2D inPresentationScaleFactor) = 0;
     // Returns true of this object needs to be rendered, false if this object is not dirty
@@ -228,7 +226,7 @@ protected:
 public:
     // returns true if the renderer has not been registered.
     // No return value means there was an error registering this id.
-    virtual Option<bool> MaybeRegisterOffscreenRenderer(const SOffscreenRendererKey &inKey,
+    virtual QDemonOption<bool> MaybeRegisterOffscreenRenderer(const SOffscreenRendererKey &inKey,
                                                         IOffscreenRenderer &inRenderer) = 0;
     virtual void RegisterOffscreenRenderer(const SOffscreenRendererKey &inKey,
                                            IOffscreenRenderer &inRenderer) = 0;
@@ -247,7 +245,7 @@ public:
 
     static IOffscreenRenderManager &
     CreateOffscreenRenderManager(NVAllocatorCallback &inCallback, IStringTable &inStringTable,
-                                 IResourceManager &inManager, IQt3DSRenderContext &inContext);
+                                 IResourceManager &inManager, IQDemonRenderContext &inContext);
 };
 QT_END_NAMESPACE
 #endif

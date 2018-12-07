@@ -30,9 +30,9 @@
 #pragma once
 #ifndef QDEMON_RENDER_SHADER_KEY_H
 #define QDEMON_RENDER_SHADER_KEY_H
-#include <QtDemonRuntimeRender/qdemonrender.h>
+
 #include <Qt3DSSimpleTypes.h>
-#include <Qt3DSDataRef.h>
+#include <QtDemon/qdemondataref.h>
 #include <StringConversionImpl.h>
 #include <QtDemonRuntimeRender/qdemonrenderdefaultmaterial.h>
 #include <QtDemonRuntimeRender/qdemonrendertessmodevalues.h>

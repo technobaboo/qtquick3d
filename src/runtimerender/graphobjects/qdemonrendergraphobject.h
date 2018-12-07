@@ -31,10 +31,9 @@
 #ifndef QDEMON_RENDER_GRAPH_OBJECT_H
 #define QDEMON_RENDER_GRAPH_OBJECT_H
 
-#include <QtDemonRuntimeRender/qdemonrender.h>
+
 #include <QtDemonRuntimeRender/qdemonrendertaggedpointer.h>
 #include <QtDemonRuntimeRender/qdemonrendergraphobjecttypes.h>
-
 #include <QtDemonRuntimeRender/qtdemonruntimerenderglobal.h>
 
 #include <QtCore/QString>

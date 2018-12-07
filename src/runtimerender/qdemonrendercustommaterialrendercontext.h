@@ -30,9 +30,9 @@
 #pragma once
 #ifndef QDEMON_RENDER_CUSTOM_MATERIAL_RENDER_CONTEXT_H
 #define QDEMON_RENDER_CUSTOM_MATERIAL_RENDER_CONTEXT_H
-#include <QtDemonRuntimeRender/qdemonrender.h>
+
 #include <QtDemon/qdemonrefcounted.h>
-#include <QMatrix4x4.h>
+#include <QtGui/QMatrix4x4>
 #include <QMatrix3x3.h>
 #include <QtDemonRuntimeRender/qdemonrendershaderkeys.h>
 

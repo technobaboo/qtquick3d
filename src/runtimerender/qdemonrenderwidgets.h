@@ -31,13 +31,13 @@
 #ifndef QDEMON_RENDER_WIDGETS_H
 #define QDEMON_RENDER_WIDGETS_H
 
-#include <QtDemonRuntimeRender/qdemonrender.h>
-#include <Qt3DSOption.h>
-#include <QMatrix4x4.h>
+
+#include <QtDemon/qdemonoption.h>
+#include <QtGui/QMatrix4x4>
 #include <QMatrix3x3.h>
-#include <Qt3DSBounds3.h>
-#include <QVector3D.h>
-#include <Qt3DSDataRef.h>
+#include <QtDemon/qdemonbounds3.h>
+#include <QtGui/QVector3D>
+#include <QtDemon/qdemondataref.h>
 #include <QtDemonRender/qdemonrendervertexbuffer.h>
 #include <QtDemonRender/qdemonrenderindexbuffer.h>
 #include <QtDemonRuntimeRender/qdemonrendertext.h>
@@ -95,7 +95,7 @@ struct SWidgetRenderInformation
     {
     }
 };
-typedef eastl::pair<SShaderVertexCodeGenerator &, SShaderFragmentCodeGenerator &>
+typedef QPair<SShaderVertexCodeGenerator &, SShaderFragmentCodeGenerator &>
 TShaderGeneratorPair;
 
 struct RenderWidgetModes
@@ -112,28 +112,28 @@ protected:
     virtual ~IRenderWidgetContext() {}
 public:
     virtual QDemonRenderVertexBuffer &
-    GetOrCreateVertexBuffer(CRegisteredString &inStr, quint32 stride,
+    GetOrCreateVertexBuffer(QString &inStr, quint32 stride,
                             QDemonConstDataRef<quint8> bufferData = QDemonConstDataRef<quint8>()) = 0;
     virtual QDemonRenderIndexBuffer &
-    GetOrCreateIndexBuffer(CRegisteredString &inStr,
+    GetOrCreateIndexBuffer(QString &inStr,
                            QDemonRenderComponentTypes::Enum componentType, size_t size,
                            QDemonConstDataRef<quint8> bufferData = QDemonConstDataRef<quint8>()) = 0;
     virtual QDemonRenderAttribLayout &
     CreateAttributeLayout(QDemonConstDataRef<QDemonRenderVertexBufferEntry> attribs) = 0;
     virtual QDemonRenderInputAssembler &
-    GetOrCreateInputAssembler(CRegisteredString &inStr, QDemonRenderAttribLayout *attribLayout,
+    GetOrCreateInputAssembler(QString &inStr, QDemonRenderAttribLayout *attribLayout,
                               QDemonConstDataRef<QDemonRenderVertexBuffer *> buffers,
                               const QDemonRenderIndexBuffer *indexBuffer,
                               QDemonConstDataRef<quint32> strides, QDemonConstDataRef<quint32> offsets) = 0;
 
-    virtual QDemonRenderVertexBuffer *GetVertexBuffer(CRegisteredString &inStr) = 0;
-    virtual QDemonRenderIndexBuffer *GetIndexBuffer(CRegisteredString &inStr) = 0;
-    virtual QDemonRenderInputAssembler *GetInputAssembler(CRegisteredString &inStr) = 0;
+    virtual QDemonRenderVertexBuffer *GetVertexBuffer(QString &inStr) = 0;
+    virtual QDemonRenderIndexBuffer *GetIndexBuffer(QString &inStr) = 0;
+    virtual QDemonRenderInputAssembler *GetInputAssembler(QString &inStr) = 0;
 
-    virtual QDemonRenderShaderProgram *GetShader(CRegisteredString inStr) = 0;
+    virtual QDemonRenderShaderProgram *GetShader(QString inStr) = 0;
     virtual IShaderProgramGenerator &GetProgramGenerator() = 0;
     // calls compile on the program generator and stores result under this name.
-    virtual QDemonRenderShaderProgram *CompileAndStoreShader(CRegisteredString inStr) = 0;
+    virtual QDemonRenderShaderProgram *CompileAndStoreShader(QString inStr) = 0;
     virtual STextDimensions MeasureText(const STextRenderInfo &inText) = 0;
     // Render text using a specific MVP
     virtual void RenderText(const STextRenderInfo &inText, const QVector3D &inTextColor,

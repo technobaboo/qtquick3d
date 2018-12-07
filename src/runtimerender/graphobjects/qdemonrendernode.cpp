@@ -61,7 +61,7 @@ SNode::SNode(GraphObjectTypes::Enum inGraphObjectType)
 }
 
 SNode::SNode(const SNode &inCloningObject)
-    : SGraphObject(inCloningObject, inAllocator)
+    : SGraphObject(inCloningObject)
     , m_Rotation(inCloningObject.m_Rotation) // Radians
     , m_Position(inCloningObject.m_Position)
     , m_Scale(inCloningObject.m_Scale)
@@ -227,9 +227,9 @@ QVector3D SNode::GetRotationVectorFromEulerAngles(const EulerAngles &inAngles)
         #undef HANDLE_EULER_ANGLE
             default:
         Q_ASSERT(false);
-    retval.x = inAngles.x;
-    retval.y = inAngles.y;
-    retval.z = inAngles.z;
+    retval.setX(inAngles.x);
+    retval.setY(inAngles.y);
+    retval.setZ(inAngles.z);
     break;
     }
 
@@ -238,7 +238,6 @@ QVector3D SNode::GetRotationVectorFromEulerAngles(const EulerAngles &inAngles)
 
 void SNode::CalculateRotationMatrix(QMatrix4x4 &outMatrix) const
 {
-    StaticAssert<sizeof(QMatrix4x4) == sizeof(HMatrix)>::valid_expression();
     CEulerAngleConverter theConverter;
     EulerAngles theAngles(RotationAndOrderToShoemake(m_Rotation, (int)m_RotationOrder));
     HMatrix *theMatrix = reinterpret_cast<HMatrix *>(&outMatrix);
@@ -247,7 +246,7 @@ void SNode::CalculateRotationMatrix(QMatrix4x4 &outMatrix) const
 
 void SNode::FlipCoordinateSystem(QMatrix4x4 &inMatrix)
 {
-    float *writePtr(inMatrix.front());
+    float *writePtr(inMatrix.data());
     // rotation conversion
     writePtr[0 * 4 + 2] *= -1;
     writePtr[1 * 4 + 2] *= -1;
@@ -262,9 +261,9 @@ void SNode::CalculateLocalTransform()
 {
     m_Flags.SetTransformDirty(false);
     bool leftHanded = m_Flags.IsLeftHanded();
-    m_LocalTransform = QMatrix4x4::createIdentity();
+    m_LocalTransform = QMatrix4x4();
     m_GlobalTransform = m_LocalTransform;
-    float *writePtr = m_LocalTransform.front();
+    float *writePtr = m_LocalTransform.data();5
     QVector3D theScaledPivot(-m_Pivot[0] * m_Scale[0], -m_Pivot[1] * m_Scale[1],
             -m_Pivot[2] * m_Scale[2]);
     m_LocalTransform.column0[0] = m_Scale[0];
@@ -408,7 +407,7 @@ void SNode::RemoveFromGraph()
 }
 
 QDemonBounds3 SNode::GetBounds(IBufferManager &inManager, IPathManager &inPathManager,
-                               bool inIncludeChildren, IQt3DSRenderNodeFilter *inChildFilter) const
+                               bool inIncludeChildren, IQDemonRenderNodeFilter *inChildFilter) const
 {
     QDemonBounds3 retval;
     retval.setEmpty();
@@ -425,7 +424,7 @@ QDemonBounds3 SNode::GetBounds(IBufferManager &inManager, IPathManager &inPathMa
 }
 
 QDemonBounds3 SNode::GetChildBounds(IBufferManager &inManager, IPathManager &inPathManager,
-                                    IQt3DSRenderNodeFilter *inChildFilter) const
+                                    IQDemonRenderNodeFilter *inChildFilter) const
 {
     QDemonBounds3 retval;
     retval.setEmpty();

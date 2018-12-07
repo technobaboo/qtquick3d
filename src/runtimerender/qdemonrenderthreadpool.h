@@ -30,7 +30,7 @@
 #pragma once
 #ifndef QDEMON_RENDER_THREAD_POOL_H
 #define QDEMON_RENDER_THREAD_POOL_H
-#include <QtDemonRuntimeRender/qdemonrender.h>
+
 #include <QtDemon/qdemonrefcounted.h>
 
 QT_BEGIN_NAMESPACE

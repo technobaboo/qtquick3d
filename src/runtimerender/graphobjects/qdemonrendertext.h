@@ -30,7 +30,7 @@
 #pragma once
 #ifndef QDEMON_RENDER_TEXT_H
 #define QDEMON_RENDER_TEXT_H
-#include <QtDemonRuntimeRender/qdemonrender.h>
+
 #include <QtDemonRuntimeRender/qdemonrendernode.h>
 #include <QtDemonRuntimeRender/qdemonrendertexttypes.h>
 

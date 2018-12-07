@@ -216,7 +216,7 @@ SCameraGlobalCalculationResult SLayerRenderHelper::SetupCameraForRender(SCamera 
     return m_Camera->CalculateGlobalVariables(rect, m_PresentationDesignDimensions);
 }
 
-Option<QVector2D> SLayerRenderHelper::GetLayerMouseCoords(const QVector2D &inMouseCoords,
+QDemonOption<QVector2D> SLayerRenderHelper::GetLayerMouseCoords(const QVector2D &inMouseCoords,
                                                           const QVector2D &inWindowDimensions,
                                                           bool inForceIntersect) const
 {
@@ -236,13 +236,13 @@ Option<QVector2D> SLayerRenderHelper::GetLayerMouseCoords(const QVector2D &inMou
     return theLocalMouse;
 }
 
-Option<SRay> SLayerRenderHelper::GetPickRay(const QVector2D &inMouseCoords,
+QDemonOption<SRay> SLayerRenderHelper::GetPickRay(const QVector2D &inMouseCoords,
                                             const QVector2D &inWindowDimensions,
                                             bool inForceIntersect) const
 {
     if (m_Camera == nullptr)
         return Empty();
-    Option<QVector2D> theCoords(
+    QDemonOption<QVector2D> theCoords(
                 GetLayerMouseCoords(inMouseCoords, inWindowDimensions, inForceIntersect));
     if (theCoords.hasValue()) {
         // The cameras projection is different if we are onscreen vs. offscreen.

@@ -30,11 +30,11 @@
 #pragma once
 #ifndef QDEMON_RENDER_TEXT_TYPES_H
 #define QDEMON_RENDER_TEXT_TYPES_H
-#include <QtDemonRuntimeRender/qdemonrender.h>
+
 #include <Qt3DSSimpleTypes.h>
-#include <Qt3DSDataRef.h>
+#include <QtDemon/qdemondataref.h>
 #include <StringTable.h>
-#include <QVector2D.h>
+#include <QtGui/QVector2D>
 
 QT_BEGIN_NAMESPACE
 
@@ -143,8 +143,8 @@ struct STextTextureAtlasDetails : public STextTextureDetails
 
 struct STextRenderInfo
 {
-    CRegisteredString m_Text;
-    CRegisteredString m_Font;
+    QString m_Text;
+    QString m_Font;
     float m_FontSize;
     TextHorizontalAlignment::Enum m_HorizontalAlignment;
     TextVerticalAlignment::Enum m_VerticalAlignment;

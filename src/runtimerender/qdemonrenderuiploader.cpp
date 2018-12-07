@@ -52,7 +52,7 @@
 #include <Qt3DSMetadata.h>
 #include <Qt3DSDMWStrOps.h>
 #include <Qt3DSDMWStrOpsImpl.h>
-#include <Qt3DSOption.h>
+#include <QtDemon/qdemonoption.h>
 #include <Qt3DSContainers.h>
 #include <Qt3DSFoundation.h>
 #include <Qt3DSBroadcastingAllocator.h>
@@ -109,7 +109,7 @@ using SEffect;
 using SCustomMaterial;
 using GraphObjectTypes;
 using NodeFlags;
-using CRegisteredString;
+using QString;
 using CRenderString;
 using CFileTools;
 using SReferencedMaterial;
@@ -122,11 +122,11 @@ namespace qt3dsdm {
 template <>
 struct WStrOps<SFloat2>
 {
-    void StrTo(const char8_t *buffer, SFloat2 &item, QVector<char8_t> &ioTempBuf)
+    void StrTo(const char *buffer, SFloat2 &item, QVector<char> &ioTempBuf)
     {
         quint32 len = (quint32)strlen(buffer);
         ioTempBuf.resize(len + 1);
-        ::memcpy(ioTempBuf.data(), buffer, (len + 1) * sizeof(char8_t));
+        ::memcpy(ioTempBuf.data(), buffer, (len + 1) * sizeof(char));
         MemoryBuffer<RawAllocator> unused;
         qt3dsdm::IStringTable *theTable(nullptr);
         WCharTReader reader(ioTempBuf.begin(), unused, *theTable);
@@ -137,11 +137,11 @@ struct WStrOps<SFloat2>
 template <>
 struct WStrOps<SFloat3>
 {
-    void StrTo(const char8_t *buffer, SFloat3 &item, QVector<char8_t> &ioTempBuf)
+    void StrTo(const char *buffer, SFloat3 &item, QVector<char> &ioTempBuf)
     {
         quint32 len = (quint32)strlen(buffer);
         ioTempBuf.resize(len + 1);
-        ::memcpy(ioTempBuf.data(), buffer, (len + 1) * sizeof(char8_t));
+        ::memcpy(ioTempBuf.data(), buffer, (len + 1) * sizeof(char));
         MemoryBuffer<RawAllocator> unused;
         qt3dsdm::IStringTable *theTable(nullptr);
         WCharTReader reader(ioTempBuf.begin(), unused, *theTable);
@@ -152,28 +152,28 @@ struct WStrOps<SFloat3>
 
 namespace {
 
-typedef eastl::basic_string<char8_t> TStrType;
+typedef eastl::basic_string<char> TStrType;
 struct IPropertyParser
 {
     virtual ~IPropertyParser() {}
-    virtual Option<TStrType> ParseStr(const char8_t *inName) = 0;
-    virtual Option<float> ParseFloat(const char8_t *inName) = 0;
-    virtual Option<QVector2D> ParseVec2(const char8_t *inName) = 0;
-    virtual Option<QVector3D> ParseVec3(const char8_t *inName) = 0;
-    virtual Option<bool> ParseBool(const char8_t *inName) = 0;
-    virtual Option<quint32> ParseU32(const char8_t *inName) = 0;
-    virtual Option<qint32> ParseI32(const char8_t *inName) = 0;
-    virtual Option<SGraphObject *> ParseGraphObject(const char8_t *inName) = 0;
-    virtual Option<SNode *> ParseNode(const char8_t *inName) = 0;
+    virtual QDemonOption<TStrType> ParseStr(const char *inName) = 0;
+    virtual QDemonOption<float> ParseFloat(const char *inName) = 0;
+    virtual QDemonOption<QVector2D> ParseVec2(const char *inName) = 0;
+    virtual QDemonOption<QVector3D> ParseVec3(const char *inName) = 0;
+    virtual QDemonOption<bool> ParseBool(const char *inName) = 0;
+    virtual QDemonOption<quint32> ParseU32(const char *inName) = 0;
+    virtual QDemonOption<qint32> ParseI32(const char *inName) = 0;
+    virtual QDemonOption<SGraphObject *> ParseGraphObject(const char *inName) = 0;
+    virtual QDemonOption<SNode *> ParseNode(const char *inName) = 0;
 };
 struct SMetaPropertyParser : public IPropertyParser
 {
     Q3DStudio::IRuntimeMetaData &m_MetaData;
     TStrType m_TempStr;
-    CRegisteredString m_Type;
-    CRegisteredString m_ClassId;
+    QString m_Type;
+    QString m_ClassId;
 
-    SMetaPropertyParser(const char8_t *inType, const char8_t *inClass,
+    SMetaPropertyParser(const char *inType, const char *inClass,
                         Q3DStudio::IRuntimeMetaData &inMeta)
         : m_MetaData(inMeta)
         , m_Type(inMeta.GetStringTable()->GetRenderStringTable().RegisterStr(inType))
@@ -181,14 +181,14 @@ struct SMetaPropertyParser : public IPropertyParser
     {
     }
 
-    CRegisteredString Register(const char8_t *inName)
+    QString Register(const char *inName)
     {
         return m_MetaData.GetStringTable()->GetRenderStringTable().RegisterStr(inName);
     }
 
-    Option<TStrType> ParseStr(const char8_t *inName) override
+    QDemonOption<TStrType> ParseStr(const char *inName) override
     {
-        CRegisteredString theName(Register(inName));
+        QString theName(Register(inName));
         Q3DStudio::ERuntimeDataModelDataType theType(
             m_MetaData.GetPropertyType(m_Type, theName, m_ClassId));
         if (theType != Q3DStudio::ERuntimeDataModelDataTypeObjectRef
@@ -197,51 +197,51 @@ struct SMetaPropertyParser : public IPropertyParser
         }
         return Empty();
     }
-    Option<float> ParseFloat(const char8_t *inName) override
+    QDemonOption<float> ParseFloat(const char *inName) override
     {
         return m_MetaData.GetPropertyValueFloat(m_Type, Register(inName), m_ClassId);
     }
-    Option<QVector2D> ParseVec2(const char8_t *inName) override
+    QDemonOption<QVector2D> ParseVec2(const char *inName) override
     {
-        Option<QVector3D> theProperty =
+        QDemonOption<QVector3D> theProperty =
             m_MetaData.GetPropertyValueVector2(m_Type, Register(inName), m_ClassId);
         if (theProperty.hasValue()) {
             return QVector2D(theProperty->x, theProperty->y);
         }
         return Empty();
     }
-    Option<QVector3D> ParseVec3(const char8_t *inName) override
+    QDemonOption<QVector3D> ParseVec3(const char *inName) override
     {
-        Option<QVector3D> theProperty =
+        QDemonOption<QVector3D> theProperty =
             m_MetaData.GetPropertyValueVector3(m_Type, Register(inName), m_ClassId);
         if (theProperty.hasValue()) {
             return *theProperty;
         }
         return Empty();
     }
-    Option<bool> ParseBool(const char8_t *inName) override
+    QDemonOption<bool> ParseBool(const char *inName) override
     {
         return m_MetaData.GetPropertyValueBool(m_Type, Register(inName), m_ClassId);
     }
 
-    Option<quint32> ParseU32(const char8_t *inName) override
+    QDemonOption<quint32> ParseU32(const char *inName) override
     {
-        Option<qint32> retval = m_MetaData.GetPropertyValueLong(m_Type, Register(inName), m_ClassId);
+        QDemonOption<qint32> retval = m_MetaData.GetPropertyValueLong(m_Type, Register(inName), m_ClassId);
         if (retval.hasValue())
             return (quint32)retval.getValue();
         return Empty();
     }
 
-    Option<qint32> ParseI32(const char8_t *inName) override
+    QDemonOption<qint32> ParseI32(const char *inName) override
     {
-        Option<qint32> retval = m_MetaData.GetPropertyValueLong(m_Type, Register(inName), m_ClassId);
+        QDemonOption<qint32> retval = m_MetaData.GetPropertyValueLong(m_Type, Register(inName), m_ClassId);
         if (retval.hasValue())
             return (qint32)retval.getValue();
         return Empty();
     }
 
-    Option<SGraphObject *> ParseGraphObject(const char8_t *) override { return Empty(); }
-    Option<SNode *> ParseNode(const char8_t *) override { return Empty(); }
+    QDemonOption<SGraphObject *> ParseGraphObject(const char *) override { return Empty(); }
+    QDemonOption<SNode *> ParseNode(const char *) override { return Empty(); }
 };
 
 class IDOMReferenceResolver
@@ -255,11 +255,11 @@ public:
 struct SDomReaderPropertyParser : public IPropertyParser
 {
     qt3dsdm::IDOMReader &m_Reader;
-    QVector<char8_t> &m_TempBuf;
+    QVector<char> &m_TempBuf;
     IDOMReferenceResolver &m_Resolver;
     SGraphObject &m_Object;
 
-    SDomReaderPropertyParser(qt3dsdm::IDOMReader &reader, QVector<char8_t> &inTempBuf,
+    SDomReaderPropertyParser(qt3dsdm::IDOMReader &reader, QVector<char> &inTempBuf,
                              IDOMReferenceResolver &inResolver, SGraphObject &inObject)
         : m_Reader(reader)
         , m_TempBuf(inTempBuf)
@@ -267,41 +267,41 @@ struct SDomReaderPropertyParser : public IPropertyParser
         , m_Object(inObject)
     {
     }
-    Option<TStrType> ParseStr(const char8_t *inName) override
+    QDemonOption<TStrType> ParseStr(const char *inName) override
     {
-        const char8_t *retval;
+        const char *retval;
         if (m_Reader.Att(inName, retval))
             return TStrType(retval);
         return Empty();
     }
-    Option<float> ParseFloat(const char8_t *inName) override
+    QDemonOption<float> ParseFloat(const char *inName) override
     {
         float retval;
         if (m_Reader.Att(inName, retval))
             return retval;
         return Empty();
     }
-    Option<QVector2D> ParseVec2(const char8_t *inName) override
+    QDemonOption<QVector2D> ParseVec2(const char *inName) override
     {
         qt3dsdm::SFloat2 retval;
-        const char8_t *tempData;
+        const char *tempData;
         if (m_Reader.UnregisteredAtt(inName, tempData)) {
             qt3dsdm::WStrOps<qt3dsdm::SFloat2>().StrTo(tempData, retval, m_TempBuf);
             return QVector2D(retval.m_Floats[0], retval.m_Floats[1]);
         }
         return Empty();
     }
-    Option<QVector3D> ParseVec3(const char8_t *inName) override
+    QDemonOption<QVector3D> ParseVec3(const char *inName) override
     {
         qt3dsdm::SFloat3 retval;
-        const char8_t *tempData;
+        const char *tempData;
         if (m_Reader.UnregisteredAtt(inName, tempData)) {
             qt3dsdm::WStrOps<qt3dsdm::SFloat3>().StrTo(tempData, retval, m_TempBuf);
             return QVector3D(retval.m_Floats[0], retval.m_Floats[1], retval.m_Floats[2]);
         }
         return Empty();
     }
-    Option<bool> ParseBool(const char8_t *inName) override
+    QDemonOption<bool> ParseBool(const char *inName) override
     {
         bool retval;
         if (m_Reader.Att(inName, retval))
@@ -309,7 +309,7 @@ struct SDomReaderPropertyParser : public IPropertyParser
         return Empty();
     }
 
-    Option<quint32> ParseU32(const char8_t *inName) override
+    QDemonOption<quint32> ParseU32(const char *inName) override
     {
         quint32 retval;
         if (m_Reader.Att(inName, retval))
@@ -317,7 +317,7 @@ struct SDomReaderPropertyParser : public IPropertyParser
         return Empty();
     }
 
-    Option<qint32> ParseI32(const char8_t *inName) override
+    QDemonOption<qint32> ParseI32(const char *inName) override
     {
         qint32 retval;
         if (m_Reader.Att(inName, retval))
@@ -325,7 +325,7 @@ struct SDomReaderPropertyParser : public IPropertyParser
         return Empty();
     }
 
-    Option<SGraphObject *> ParseGraphObject(const char8_t *inName) override
+    QDemonOption<SGraphObject *> ParseGraphObject(const char *inName) override
     {
         const char *temp;
         if (m_Reader.UnregisteredAtt(inName, temp)) {
@@ -338,9 +338,9 @@ struct SDomReaderPropertyParser : public IPropertyParser
         return Empty();
     }
 
-    Option<SNode *> ParseNode(const char8_t *inName) override
+    QDemonOption<SNode *> ParseNode(const char *inName) override
     {
-        Option<SGraphObject *> obj = ParseGraphObject(inName);
+        QDemonOption<SGraphObject *> obj = ParseGraphObject(inName);
         if (obj.hasValue()) {
             if (GraphObjectTypes::IsNodeType((*obj)->m_Type))
                 return static_cast<SNode *>((*obj));
@@ -356,7 +356,7 @@ struct SParserHelper
 template <>
 struct SParserHelper<TStrType>
 {
-    static Option<TStrType> Parse(const char8_t *inName, IPropertyParser &inParser)
+    static QDemonOption<TStrType> Parse(const char *inName, IPropertyParser &inParser)
     {
         return inParser.ParseStr(inName);
     }
@@ -364,7 +364,7 @@ struct SParserHelper<TStrType>
 template <>
 struct SParserHelper<float>
 {
-    static Option<float> Parse(const char8_t *inName, IPropertyParser &inParser)
+    static QDemonOption<float> Parse(const char *inName, IPropertyParser &inParser)
     {
         return inParser.ParseFloat(inName);
     }
@@ -372,7 +372,7 @@ struct SParserHelper<float>
 template <>
 struct SParserHelper<QVector2D>
 {
-    static Option<QVector2D> Parse(const char8_t *inName, IPropertyParser &inParser)
+    static QDemonOption<QVector2D> Parse(const char *inName, IPropertyParser &inParser)
     {
         return inParser.ParseVec2(inName);
     }
@@ -380,7 +380,7 @@ struct SParserHelper<QVector2D>
 template <>
 struct SParserHelper<QVector3D>
 {
-    static Option<QVector3D> Parse(const char8_t *inName, IPropertyParser &inParser)
+    static QDemonOption<QVector3D> Parse(const char *inName, IPropertyParser &inParser)
     {
         return inParser.ParseVec3(inName);
     }
@@ -388,7 +388,7 @@ struct SParserHelper<QVector3D>
 template <>
 struct SParserHelper<bool>
 {
-    static Option<bool> Parse(const char8_t *inName, IPropertyParser &inParser)
+    static QDemonOption<bool> Parse(const char *inName, IPropertyParser &inParser)
     {
         return inParser.ParseBool(inName);
     }
@@ -396,7 +396,7 @@ struct SParserHelper<bool>
 template <>
 struct SParserHelper<quint32>
 {
-    static Option<quint32> Parse(const char8_t *inName, IPropertyParser &inParser)
+    static QDemonOption<quint32> Parse(const char *inName, IPropertyParser &inParser)
     {
         return inParser.ParseU32(inName);
     }
@@ -404,7 +404,7 @@ struct SParserHelper<quint32>
 template <>
 struct SParserHelper<qint32>
 {
-    static Option<qint32> Parse(const char8_t *inName, IPropertyParser &inParser)
+    static QDemonOption<qint32> Parse(const char *inName, IPropertyParser &inParser)
     {
         return inParser.ParseI32(inName);
     }
@@ -412,7 +412,7 @@ struct SParserHelper<qint32>
 template <>
 struct SParserHelper<SGraphObject *>
 {
-    static Option<SGraphObject *> Parse(const char8_t *inName, IPropertyParser &inParser)
+    static QDemonOption<SGraphObject *> Parse(const char *inName, IPropertyParser &inParser)
     {
         return inParser.ParseGraphObject(inName);
     }
@@ -420,7 +420,7 @@ struct SParserHelper<SGraphObject *>
 template <>
 struct SParserHelper<SNode *>
 {
-    static Option<SNode *> Parse(const char8_t *inName, IPropertyParser &inParser)
+    static QDemonOption<SNode *> Parse(const char *inName, IPropertyParser &inParser)
     {
         return inParser.ParseNode(inName);
     }
@@ -445,8 +445,8 @@ struct SPathAndAnchorIndex
 struct SRenderUIPLoader : public IDOMReferenceResolver
 {
     typedef qt3dsdm::IDOMReader::Scope TScope;
-    typedef eastl::map<CRegisteredString, QString> TIdStringMap;
-    typedef eastl::hash_map<CRegisteredString, SPathAndAnchorIndex> TIdPathAnchorIndexMap;
+    typedef eastl::map<QString, QString> TIdStringMap;
+    typedef eastl::hash_map<QString, SPathAndAnchorIndex> TIdPathAnchorIndexMap;
     qt3dsdm::IDOMReader &m_Reader;
     Q3DStudio::IRuntimeMetaData &m_MetaData;
     IStringTable &m_StrTable;
@@ -455,10 +455,10 @@ struct SRenderUIPLoader : public IDOMReferenceResolver
     TIdObjectMap &m_ObjectMap;
     IBufferManager &m_BufferManager;
     SPresentation *m_Presentation;
-    QVector<char8_t> m_TempBuf;
+    QVector<char> m_TempBuf;
     TStrType m_TempParseString;
     IEffectSystem &m_EffectSystem;
-    const char8_t *m_PresentationDir;
+    const char *m_PresentationDir;
     CRenderString m_PathString;
     IRenderPluginManager &m_RenderPluginManager;
     ICustomMaterialSystem &m_CustomMaterialSystem;
@@ -470,7 +470,7 @@ struct SRenderUIPLoader : public IDOMReferenceResolver
     MemoryBuffer<RawAllocator> m_ValueBuffer;
     TIdPathAnchorIndexMap m_AnchorIdToPathAndAnchorIndexMap;
 
-    SRenderUIPLoader(qt3dsdm::IDOMReader &inReader, const char8_t *inFullPathToPresentationFile,
+    SRenderUIPLoader(qt3dsdm::IDOMReader &inReader, const char *inFullPathToPresentationFile,
                      Q3DStudio::IRuntimeMetaData &inMetaData, IStringTable &inStrTable
                      // Allocator for datastructures we need to parse the file.
                      ,
@@ -481,7 +481,7 @@ struct SRenderUIPLoader : public IDOMReferenceResolver
                      // Map of string ids to objects
                      ,
                      TIdObjectMap &ioObjectMap, IBufferManager &inBufferManager,
-                     IEffectSystem &inEffectSystem, const char8_t *inPresentationDir,
+                     IEffectSystem &inEffectSystem, const char *inPresentationDir,
                      IRenderPluginManager &inRPM,
                      ICustomMaterialSystem &inCMS,
                      IDynamicObjectSystem &inDynamicSystem,
@@ -514,7 +514,7 @@ struct SRenderUIPLoader : public IDOMReferenceResolver
     SGraphObject *ResolveReference(SGraphObject &inRoot, const char *path) override
     {
         if (m_ReferenceResolver) {
-            CRegisteredString resolvedReference =
+            QString resolvedReference =
                 m_ReferenceResolver->ResolveReference(inRoot.m_Id, path);
             if (resolvedReference.IsValid()) {
                 TIdObjectMap::iterator iter = m_ObjectMap.find(resolvedReference);
@@ -530,16 +530,16 @@ struct SRenderUIPLoader : public IDOMReferenceResolver
         return GraphObjectTypes::IsNodeType(inType);
     }
     template <typename TDataType>
-    bool ParseProperty(IPropertyParser &inParser, const char8_t *inName, TDataType &outData)
+    bool ParseProperty(IPropertyParser &inParser, const char *inName, TDataType &outData)
     {
-        Option<TDataType> theValue(SParserHelper<TDataType>::Parse(inName, inParser));
+        QDemonOption<TDataType> theValue(SParserHelper<TDataType>::Parse(inName, inParser));
         if (theValue.hasValue()) {
             outData = theValue;
             return true;
         }
         return false;
     }
-    bool ParseOpacityProperty(IPropertyParser &inParser, const char8_t *inName, float &outOpacity)
+    bool ParseOpacityProperty(IPropertyParser &inParser, const char *inName, float &outOpacity)
     {
         if (ParseProperty(inParser, inName, outOpacity)) {
             outOpacity /= 100.0f;
@@ -548,7 +548,7 @@ struct SRenderUIPLoader : public IDOMReferenceResolver
         return false;
     }
 
-    bool ParseRadianProperty(IPropertyParser &inParser, const char8_t *inName, QVector3D &ioRotation)
+    bool ParseRadianProperty(IPropertyParser &inParser, const char *inName, QVector3D &ioRotation)
     {
         if (ParseProperty(inParser, inName, ioRotation)) {
             TORAD(ioRotation.x);
@@ -558,7 +558,7 @@ struct SRenderUIPLoader : public IDOMReferenceResolver
         }
         return false;
     }
-    bool ParseRadianProperty(IPropertyParser &inParser, const char8_t *inName, float &ioRotation)
+    bool ParseRadianProperty(IPropertyParser &inParser, const char *inName, float &ioRotation)
     {
         if (ParseProperty(inParser, inName, ioRotation)) {
             TORAD(ioRotation);
@@ -567,13 +567,13 @@ struct SRenderUIPLoader : public IDOMReferenceResolver
         return false;
     }
 
-    void ParseRotationOrder(IPropertyParser &inParser, const char8_t *inName,
+    void ParseRotationOrder(IPropertyParser &inParser, const char *inName,
                             quint32 &ioRotationOrder)
     {
         if (ParseProperty(inParser, inName, m_TempParseString))
             ioRotationOrder = MapRotationOrder(m_TempParseString.c_str());
     }
-    void ParseOrientation(IPropertyParser &inParser, const char8_t *inName, NodeFlags &ioFlags)
+    void ParseOrientation(IPropertyParser &inParser, const char *inName, NodeFlags &ioFlags)
     {
         if (ParseProperty(inParser, inName, m_TempParseString)) {
             if (m_TempParseString == "Left Handed")
@@ -582,7 +582,7 @@ struct SRenderUIPLoader : public IDOMReferenceResolver
                 ioFlags.SetLeftHanded(false);
         }
     }
-    void ParseOrthographicProperty(IPropertyParser &inParser, const char8_t *inName,
+    void ParseOrthographicProperty(IPropertyParser &inParser, const char *inName,
                                    NodeFlags &ioFlags)
     {
         bool isOrthographic;
@@ -590,12 +590,12 @@ struct SRenderUIPLoader : public IDOMReferenceResolver
             ioFlags.SetOrthographic(isOrthographic);
     }
     template <typename TEnumType>
-    static bool ConvertEnumFromStr(const char8_t *inStr, TEnumType &ioEnum)
+    static bool ConvertEnumFromStr(const char *inStr, TEnumType &ioEnum)
     {
         SEnumNameMap *theMap = SEnumParseMap<TEnumType>::GetMap();
         for (SEnumNameMap *item = theMap; item->m_Name; ++item) {
             // hack to match advanced overlay types, whose name start with a '*'
-            const char8_t *p = inStr;
+            const char *p = inStr;
             if (*p == '*')
                 ++p;
             if (qt3dsdm::AreEqual(p, item->m_Name)) {
@@ -607,19 +607,19 @@ struct SRenderUIPLoader : public IDOMReferenceResolver
     }
 
     template <typename TEnumType>
-    void ParseEnumProperty(IPropertyParser &inParser, const char8_t *inName, TEnumType &ioEnum)
+    void ParseEnumProperty(IPropertyParser &inParser, const char *inName, TEnumType &ioEnum)
     {
         if (ParseProperty(inParser, inName, m_TempParseString)) {
             ConvertEnumFromStr(m_TempParseString.c_str(), ioEnum);
         }
     }
-    void ParseAndResolveSourcePath(IPropertyParser &inParser, const char8_t *inName,
-                                   CRegisteredString &ioString)
+    void ParseAndResolveSourcePath(IPropertyParser &inParser, const char *inName,
+                                   QString &ioString)
     {
         if (ParseProperty(inParser, inName, m_TempParseString))
             ioString = m_StrTable.RegisterStr(m_TempParseString.c_str());
     }
-    void ParseProperty(IPropertyParser &inParser, const char8_t *inName, SImage *&ioImage)
+    void ParseProperty(IPropertyParser &inParser, const char *inName, SImage *&ioImage)
     {
         if (ParseProperty(inParser, inName, m_TempParseString)) {
             TIdObjectMap::iterator theIter =
@@ -632,13 +632,13 @@ struct SRenderUIPLoader : public IDOMReferenceResolver
             }
         }
     }
-    void ParseProperty(IPropertyParser &inParser, const char8_t *inName, CRegisteredString &ioStr)
+    void ParseProperty(IPropertyParser &inParser, const char *inName, QString &ioStr)
     {
         if (ParseProperty(inParser, inName, m_TempParseString))
             ioStr = m_StrTable.RegisterStr(m_TempParseString.c_str());
     }
 
-    void ParseNodeFlagsProperty(IPropertyParser &inParser, const char8_t *inName,
+    void ParseNodeFlagsProperty(IPropertyParser &inParser, const char *inName,
                                 NodeFlags &ioFlags,
                                 NodeFlagValues::Enum prop)
     {
@@ -647,7 +647,7 @@ struct SRenderUIPLoader : public IDOMReferenceResolver
             ioFlags.ClearOrSet(temp, prop);
     }
 
-    void ParseNodeFlagsInverseProperty(IPropertyParser &inParser, const char8_t *inName,
+    void ParseNodeFlagsInverseProperty(IPropertyParser &inParser, const char *inName,
                                        NodeFlags &ioFlags,
                                        NodeFlagValues::Enum prop)
     {
@@ -942,7 +942,7 @@ struct SRenderUIPLoader : public IDOMReferenceResolver
     template <typename TDataType>
     void SetDynamicObjectProperty(SDynamicObject &inEffect,
                                   const dynamic::SPropertyDefinition &inPropDesc,
-                                  Option<TDataType> inProp)
+                                  QDemonOption<TDataType> inProp)
     {
         if (inProp.hasValue()) {
             SetDynamicObjectProperty(inEffect, inPropDesc, *inProp);
@@ -975,9 +975,9 @@ struct SRenderUIPLoader : public IDOMReferenceResolver
                     SetDynamicObjectProperty(inDynamicObject, theDefinition,
                                              inParser.ParseU32(theDefinition.m_Name));
                 else {
-                    Option<QString> theEnum = inParser.ParseStr(theDefinition.m_Name);
+                    QDemonOption<QString> theEnum = inParser.ParseStr(theDefinition.m_Name);
                     if (theEnum.hasValue()) {
-                        QDemonConstDataRef<CRegisteredString> theEnumNames =
+                        QDemonConstDataRef<QString> theEnumNames =
                             theDefinition.m_EnumValueNames;
                         for (quint32 idx = 0, end = theEnumNames.size(); idx < end; ++idx) {
                             if (theEnum->compare(theEnumNames[idx].c_str()) == 0) {
@@ -998,9 +998,9 @@ struct SRenderUIPLoader : public IDOMReferenceResolver
                 break;
             case QDemonRenderShaderDataTypes::QDemonRenderTexture2DPtr:
             case QDemonRenderShaderDataTypes::QDemonRenderImage2DPtr: {
-                Option<QString> theTexture = inParser.ParseStr(theDefinition.m_Name);
+                QDemonOption<QString> theTexture = inParser.ParseStr(theDefinition.m_Name);
                 if (theTexture.hasValue()) {
-                    CRegisteredString theStr;
+                    QString theStr;
                     if (theTexture->size())
                         theStr = m_StrTable.RegisterStr(theTexture->c_str());
 
@@ -1028,7 +1028,7 @@ struct SRenderUIPLoader : public IDOMReferenceResolver
     void AddPluginPropertyUpdate(eastl::vector<SRenderPropertyValueUpdate> &ioUpdates,
                                  IRenderPluginClass &,
                                  const SRenderPluginPropertyDeclaration &inDeclaration,
-                                 Option<float> data)
+                                 QDemonOption<float> data)
     {
         if (data.hasValue()) {
             ioUpdates.push_back(
@@ -1038,7 +1038,7 @@ struct SRenderUIPLoader : public IDOMReferenceResolver
     void AddPluginPropertyUpdate(eastl::vector<SRenderPropertyValueUpdate> &ioUpdates,
                                  IRenderPluginClass &inClass,
                                  const SRenderPluginPropertyDeclaration &inDeclaration,
-                                 Option<QVector2D> data)
+                                 QDemonOption<QVector2D> data)
     {
         if (data.hasValue()) {
             ioUpdates.push_back(SRenderPropertyValueUpdate(
@@ -1050,7 +1050,7 @@ struct SRenderUIPLoader : public IDOMReferenceResolver
     void AddPluginPropertyUpdate(eastl::vector<SRenderPropertyValueUpdate> &ioUpdates,
                                  IRenderPluginClass &inClass,
                                  const SRenderPluginPropertyDeclaration &inDeclaration,
-                                 Option<QVector3D> data)
+                                 QDemonOption<QVector3D> data)
     {
         if (data.hasValue()) {
             ioUpdates.push_back(SRenderPropertyValueUpdate(
@@ -1064,7 +1064,7 @@ struct SRenderUIPLoader : public IDOMReferenceResolver
     void AddPluginPropertyUpdate(eastl::vector<SRenderPropertyValueUpdate> &ioUpdates,
                                  IRenderPluginClass &,
                                  const SRenderPluginPropertyDeclaration &inDeclaration,
-                                 Option<qint32> dataOpt)
+                                 QDemonOption<qint32> dataOpt)
     {
         if (dataOpt.hasValue()) {
             long data = static_cast<long>(*dataOpt);
@@ -1075,7 +1075,7 @@ struct SRenderUIPLoader : public IDOMReferenceResolver
     void AddPluginPropertyUpdate(eastl::vector<SRenderPropertyValueUpdate> &ioUpdates,
                                  IRenderPluginClass &,
                                  const SRenderPluginPropertyDeclaration &inDeclaration,
-                                 Option<QString> dataOpt)
+                                 QDemonOption<QString> dataOpt)
     {
         if (dataOpt.hasValue()) {
             QString &data = dataOpt.getValue();
@@ -1086,7 +1086,7 @@ struct SRenderUIPLoader : public IDOMReferenceResolver
     void AddPluginPropertyUpdate(eastl::vector<SRenderPropertyValueUpdate> &ioUpdates,
                                  IRenderPluginClass &,
                                  const SRenderPluginPropertyDeclaration &inDeclaration,
-                                 Option<bool> dataOpt)
+                                 QDemonOption<bool> dataOpt)
     {
         if (dataOpt.hasValue()) {
             bool &data = dataOpt.getValue();
@@ -1166,7 +1166,7 @@ struct SRenderUIPLoader : public IDOMReferenceResolver
         qt3dsdm::ComposerObjectTypes::Enum theObjType =
             qt3dsdm::ComposerObjectTypes::Convert(m_Reader.GetElementName());
         SGraphObject *theNewObject(nullptr);
-        const char8_t *theId;
+        const char *theId;
         m_Reader.Att("id", theId);
 
         switch (theObjType) {
@@ -1216,9 +1216,9 @@ struct SRenderUIPLoader : public IDOMReferenceResolver
             TScope _childScope(m_Reader);
             for (bool success = m_Reader.MoveToFirstChild("PathAnchorPoint"); success;
                  success = m_Reader.MoveToNextSibling("PathAnchorPoint")) {
-                const char8_t *theId;
+                const char *theId;
                 m_Reader.Att("id", theId);
-                CRegisteredString theIdStr = m_StrTable.RegisterStr(theId);
+                QString theIdStr = m_StrTable.RegisterStr(theId);
                 m_AnchorIdToPathAndAnchorIndexMap.insert(
                     eastl::make_pair(theIdStr, SPathAndAnchorIndex(thePath, anchorCount)));
                 ++anchorCount;
@@ -1226,21 +1226,21 @@ struct SRenderUIPLoader : public IDOMReferenceResolver
             m_PathManager.ResizePathSubPathBuffer(*thePath, anchorCount);
         } break;
         case qt3dsdm::ComposerObjectTypes::Effect: {
-            const char8_t *effectClassId;
+            const char *effectClassId;
             m_Reader.Att("class", effectClassId);
-            CRegisteredString theStr = m_StrTable.RegisterStr(effectClassId + 1);
+            QString theStr = m_StrTable.RegisterStr(effectClassId + 1);
             if (m_EffectSystem.IsEffectRegistered(theStr))
                 theNewObject = m_EffectSystem.CreateEffectInstance(theStr, m_PresentationAllocator);
         } break;
         case qt3dsdm::ComposerObjectTypes::RenderPlugin: {
-            const char8_t *classId;
+            const char *classId;
             m_Reader.Att("class", classId);
             if (!isTrivial(classId)) {
                 ++classId;
                 TIdStringMap::iterator iter =
                     m_RenderPluginSourcePaths.find(m_StrTable.RegisterStr(classId));
                 if (iter != m_RenderPluginSourcePaths.end()) {
-                    CRegisteredString thePluginPath = m_StrTable.RegisterStr(iter->second.c_str());
+                    QString thePluginPath = m_StrTable.RegisterStr(iter->second.c_str());
                     IRenderPluginClass *theClass =
                         m_RenderPluginManager.GetRenderPlugin(thePluginPath);
                     if (theClass) {
@@ -1254,9 +1254,9 @@ struct SRenderUIPLoader : public IDOMReferenceResolver
             }
         } break;
         case qt3dsdm::ComposerObjectTypes::CustomMaterial: {
-            const char8_t *materialClassId;
+            const char *materialClassId;
             m_Reader.Att("class", materialClassId);
-            CRegisteredString theStr = m_StrTable.RegisterStr(materialClassId + 1);
+            QString theStr = m_StrTable.RegisterStr(materialClassId + 1);
             if (m_CustomMaterialSystem.IsMaterialRegistered(theStr))
                 theNewObject =
                     m_CustomMaterialSystem.CreateCustomMaterial(theStr, m_PresentationAllocator);
@@ -1266,7 +1266,7 @@ struct SRenderUIPLoader : public IDOMReferenceResolver
             break;
         }
         if (theNewObject) {
-            CRegisteredString theObjectId(m_StrTable.RegisterStr(theId));
+            QString theObjectId(m_StrTable.RegisterStr(theId));
             m_ObjectMap.insert(eastl::make_pair(theObjectId, theNewObject));
             theNewObject->m_Id = theObjectId;
             // setup hierarchy
@@ -1391,9 +1391,9 @@ struct SRenderUIPLoader : public IDOMReferenceResolver
     }
 
     template <typename TObjType>
-    void ParsePass2Properties(TObjType &inObject, const char8_t *inClassId)
+    void ParsePass2Properties(TObjType &inObject, const char *inClassId)
     {
-        const char8_t *theTypeName = m_Reader.GetNarrowElementName();
+        const char *theTypeName = m_Reader.GetNarrowElementName();
         SMetaPropertyParser theMetaParser(theTypeName, inClassId, m_MetaData);
         // Set default values
         ParseProperties(inObject, theMetaParser);
@@ -1407,9 +1407,9 @@ struct SRenderUIPLoader : public IDOMReferenceResolver
     void ParseGraphPass2()
     {
         TScope __instanceScope(m_Reader);
-        const char8_t *theId;
+        const char *theId;
         m_Reader.Att("id", theId);
-        const char8_t *theClass = "";
+        const char *theClass = "";
         m_Reader.Att("class", theClass);
         TIdObjectMap::iterator theObject = m_ObjectMap.find(m_StrTable.RegisterStr(theId));
         if (theObject != m_ObjectMap.end()) {
@@ -1472,7 +1472,7 @@ struct SRenderUIPLoader : public IDOMReferenceResolver
 
     static bool ParseVec2(SDomReaderPropertyParser &inParser, const char *inName, QVector2D &outValue)
     {
-        Option<QVector2D> result = inParser.ParseVec2(inName);
+        QDemonOption<QVector2D> result = inParser.ParseVec2(inName);
 
         if (result.hasValue())
             outValue = *result;
@@ -1482,7 +1482,7 @@ struct SRenderUIPLoader : public IDOMReferenceResolver
 
     static bool ParseFloat(SDomReaderPropertyParser &inParser, const char *inName, float &outValue)
     {
-        Option<float> result = inParser.ParseFloat(inName);
+        QDemonOption<float> result = inParser.ParseFloat(inName);
         if (result.hasValue())
             outValue = *result;
         return result.hasValue();
@@ -1495,9 +1495,9 @@ struct SRenderUIPLoader : public IDOMReferenceResolver
              valid = m_Reader.MoveToNextSibling()) {
             if (strcmp(m_Reader.GetNarrowElementName(), "Add") == 0
                 || (inSetSetValues && strcmp(m_Reader.GetNarrowElementName(), "Set") == 0)) {
-                const char8_t *theId;
+                const char *theId;
                 m_Reader.Att("ref", theId);
-                CRegisteredString theIdStr(m_StrTable.RegisterStr(theId + 1));
+                QString theIdStr(m_StrTable.RegisterStr(theId + 1));
                 TIdObjectMap::iterator theObject = m_ObjectMap.find(theIdStr);
                 if (theObject != m_ObjectMap.end()) {
                     SDomReaderPropertyParser parser(m_Reader, m_TempBuf, *this, *theObject->second);
@@ -1606,7 +1606,7 @@ struct SRenderUIPLoader : public IDOMReferenceResolver
                 m_Presentation->m_PresentationDimensions.y =
                     (float)ITextRenderer::NextMultipleOf4(
                         (quint32)m_Presentation->m_PresentationDimensions.y);
-                const char8_t *thePresentationRotation = "";
+                const char *thePresentationRotation = "";
                 if (m_Reader.Att("presentationRotation", thePresentationRotation)) {
                     bool success = SRenderUIPLoader::ConvertEnumFromStr(
                         thePresentationRotation, m_Presentation->m_PresentationRotation);
@@ -1620,15 +1620,15 @@ struct SRenderUIPLoader : public IDOMReferenceResolver
             if (m_Reader.MoveToFirstChild("Classes")) {
                 for (bool valid = m_Reader.MoveToFirstChild(); valid;
                      valid = m_Reader.MoveToNextSibling()) {
-                    const char8_t *idStr = "", *name = "", *sourcepath = "";
+                    const char *idStr = "", *name = "", *sourcepath = "";
                     m_Reader.Att("id", idStr);
                     m_Reader.Att("name", name);
                     m_Reader.Att("sourcepath", sourcepath);
                     if (AreEqual(m_Reader.GetNarrowElementName(), "Effect")) {
-                        CRegisteredString theId(m_StrTable.RegisterStr(idStr));
+                        QString theId(m_StrTable.RegisterStr(idStr));
                         if (m_EffectSystem.IsEffectRegistered(theId) == false) {
                             // File should already be loaded.
-                            Option<qt3dsdm::SMetaDataEffect> theEffectMetaData =
+                            QDemonOption<qt3dsdm::SMetaDataEffect> theEffectMetaData =
                                 m_MetaData.GetEffectMetaDataBySourcePath(sourcepath);
                             if (theEffectMetaData.hasValue()) {
                                 IUIPLoader::CreateEffectClassFromMetaEffect(
@@ -1639,10 +1639,10 @@ struct SRenderUIPLoader : public IDOMReferenceResolver
                             }
                         }
                     } else if (AreEqual(m_Reader.GetNarrowElementName(), "CustomMaterial")) {
-                        CRegisteredString theId(m_StrTable.RegisterStr(idStr));
+                        QString theId(m_StrTable.RegisterStr(idStr));
                         if (m_CustomMaterialSystem.IsMaterialRegistered(theId) == false) {
                             // File should already be loaded.
-                            Option<qt3dsdm::SMetaDataCustomMaterial> theMetaData =
+                            QDemonOption<qt3dsdm::SMetaDataCustomMaterial> theMetaData =
                                 m_MetaData.GetMaterialMetaDataBySourcePath(sourcepath);
                             if (theMetaData.hasValue()) {
                                 IUIPLoader::CreateMaterialClassFromMetaMaterial(
@@ -1653,7 +1653,7 @@ struct SRenderUIPLoader : public IDOMReferenceResolver
                             }
                         }
                     } else if (AreEqual(m_Reader.GetNarrowElementName(), "RenderPlugin")) {
-                        CRegisteredString theId(m_StrTable.RegisterStr(idStr));
+                        QString theId(m_StrTable.RegisterStr(idStr));
                         m_MetaData.LoadPluginXMLFile(m_Reader.GetNarrowElementName(), idStr, name,
                                                      sourcepath);
                         eastl::vector<Q3DStudio::TRuntimeMetaDataStrType> theProperties;
@@ -1666,15 +1666,15 @@ struct SRenderUIPLoader : public IDOMReferenceResolver
                             m_MetaData.GetInstanceProperties(m_Reader.GetNarrowElementName(), idStr,
                                                              theProperties, false);
                             QString thePropertyStr;
-                            CRegisteredString metaType =
+                            QString metaType =
                                 m_MetaData.GetStringTable()->GetRenderStringTable().RegisterStr(
                                     m_Reader.GetNarrowElementName());
-                            CRegisteredString metaId =
+                            QString metaId =
                                 m_MetaData.GetStringTable()->GetRenderStringTable().RegisterStr(
                                     idStr);
                             for (quint32 idx = 0, end = theProperties.size(); idx < end; ++idx) {
                                 using namespace Q3DStudio;
-                                CRegisteredString metaProp =
+                                QString metaProp =
                                     m_MetaData.GetStringTable()->GetRenderStringTable().RegisterStr(
                                         theProperties[idx].c_str());
                                 Q3DStudio::ERuntimeDataModelDataType thePropType =
@@ -1739,9 +1739,9 @@ struct SRenderUIPLoader : public IDOMReferenceResolver
                     TScope __imageScope(m_Reader);
                     for (bool valid = m_Reader.MoveToFirstChild("ImageBuffer"); valid;
                          valid = m_Reader.MoveToNextSibling()) {
-                        const char8_t *srcPath;
+                        const char *srcPath;
                         m_Reader.UnregisteredAtt("sourcepath", srcPath);
-                        CRegisteredString imgPath = m_StrTable.RegisterStr(srcPath);
+                        QString imgPath = m_StrTable.RegisterStr(srcPath);
                         bool hasTransparency = false;
                         m_Reader.Att("hasTransparency", hasTransparency);
                         m_BufferManager.SetImageHasTransparency(imgPath, hasTransparency);
@@ -1795,7 +1795,7 @@ struct SRenderUIPLoader : public IDOMReferenceResolver
 }
 
 SPresentation *IUIPLoader::LoadUIPFile(
-    qt3dsdm::IDOMReader &inReader, const char8_t *inFullPathToPresentationFile,
+    qt3dsdm::IDOMReader &inReader, const char *inFullPathToPresentationFile,
     Q3DStudio::IRuntimeMetaData &inMetaData, IStringTable &inStrTable,
     NVFoundationBase &inFoundation
     // Allocator used for the presentation objects themselves
@@ -1806,7 +1806,7 @@ SPresentation *IUIPLoader::LoadUIPFile(
     // Map of string ids to objects
     ,
     TIdObjectMap &ioObjectMap, IBufferManager &inBufferManager, IEffectSystem &inEffectSystem,
-    const char8_t *inPresentationDir, IRenderPluginManager &inPluginManager,
+    const char *inPresentationDir, IRenderPluginManager &inPluginManager,
     ICustomMaterialSystem &inCMS, IDynamicObjectSystem &inDynamicSystem,
     IPathManager &inPathManager, IUIPReferenceResolver *inResolver,
     bool inSetValuesFromSlides)
@@ -1820,7 +1820,7 @@ SPresentation *IUIPLoader::LoadUIPFile(
 using namespace qt3dsdm;
 
 inline QDemonRenderTextureFormats::Enum
-ConvertTypeAndFormatToTextureFormat(const char8_t *inType, const char8_t *inFormat,
+ConvertTypeAndFormatToTextureFormat(const char *inType, const char *inFormat,
                                     NVFoundationBase &inFoundation)
 {
     QDemonRenderTextureFormats::Enum retval = QDemonRenderTextureFormats::RGBA8;
@@ -1848,7 +1848,7 @@ ConvertTypeAndFormatToTextureFormat(const char8_t *inType, const char8_t *inForm
 }
 
 inline QDemonRenderTextureMagnifyingOp::Enum
-ConvertFilterToMagOp(const char8_t *inFilter, NVFoundationBase &inFoundation)
+ConvertFilterToMagOp(const char *inFilter, NVFoundationBase &inFoundation)
 {
     if (AreEqual(inFilter, "linear"))
         return QDemonRenderTextureMagnifyingOp::Linear;
@@ -1862,7 +1862,7 @@ ConvertFilterToMagOp(const char8_t *inFilter, NVFoundationBase &inFoundation)
 }
 
 inline QDemonRenderTextureCoordOp::Enum
-ConvertTextureCoordOp(const char8_t *inWrap, NVFoundationBase &inFoundation)
+ConvertTextureCoordOp(const char *inWrap, NVFoundationBase &inFoundation)
 {
     if (AreEqual(inWrap, "clamp"))
         return QDemonRenderTextureCoordOp::ClampToEdge;
@@ -1899,7 +1899,7 @@ QString ConvertUTFtoQString(const wchar_t *string)
 // Re-register all strings because we can't be sure that the meta data system and the effect
 // system are sharing the same string table.
 void IUIPLoader::CreateEffectClassFromMetaEffect(
-    CRegisteredString inEffectName, NVFoundationBase &inFoundation, IEffectSystem &inEffectSystem,
+    QString inEffectName, NVFoundationBase &inFoundation, IEffectSystem &inEffectSystem,
     const qt3dsdm::SMetaDataEffect &inMetaDataEffect, IStringTable &inStrTable)
 {
     using namespace dynamic;
@@ -1911,7 +1911,7 @@ void IUIPLoader::CreateEffectClassFromMetaEffect(
     }
     QVector<SPropertyDeclaration> thePropertyDeclarations(
         inFoundation.getAllocator(), "IUIPLoader::CreateEffectClassFromMetaEffect");
-    QVector<CRegisteredString> theEnumNames(
+    QVector<QString> theEnumNames(
         inFoundation.getAllocator(), "IUIPLoader::CreateEffectClassFromMetaEffect");
     CRenderString theConvertStr;
     CRenderString theConvertShaderTypeStr;
@@ -1959,7 +1959,7 @@ void IUIPLoader::CreateEffectClassFromMetaEffect(
 }
 
 void IUIPLoader::CreateMaterialClassFromMetaMaterial(
-    CRegisteredString inClassName, NVFoundationBase &inFoundation,
+    QString inClassName, NVFoundationBase &inFoundation,
     ICustomMaterialSystem &inMaterialSystem,
     const qt3dsdm::SMetaDataCustomMaterial &inMetaDataMaterial, IStringTable &inStrTable)
 {
@@ -1973,7 +1973,7 @@ void IUIPLoader::CreateMaterialClassFromMetaMaterial(
     QVector<SPropertyDeclaration> thePropertyDeclarations(
         inFoundation.getAllocator(),
         "IUIPLoader::CreateMaterialClassFromMetaMaterial");
-    QVector<CRegisteredString> theEnumNames(
+    QVector<QString> theEnumNames(
         inFoundation.getAllocator(),
         "IUIPLoader::CreateMaterialClassFromMetaMaterial");
     CRenderString theConvertStr;

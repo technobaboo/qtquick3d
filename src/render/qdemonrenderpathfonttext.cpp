@@ -33,6 +33,7 @@
 #include <QtDemonRender/qdemonrenderbasetypes.h>
 #include <QtDemonRender/qdemonrendercontext.h>
 #include <QtDemonRender/qdemonrenderpathrender.h>
+#include <QtDemon/qdemonutils.h>
 
 #include <QtGui/QMatrix3x3>
 
@@ -70,7 +71,7 @@ static QMatrix3x3 mapSquareToQuad(QVector2D inSquare[4])
 
 static QMatrix3x3 mapQuadToSquare(QVector2D inSquare[4])
 {
-    return mapSquareToQuad(inSquare).transposed();
+    return mat33::getInverse(mapSquareToQuad(inSquare));
 }
 
 static QMatrix3x3 mapQuadToQuad(QVector2D fromSquare[4], QVector2D toSquare[4])

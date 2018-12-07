@@ -48,7 +48,7 @@ struct SStageGeneratorBase : public IShaderStageGenerator
     IStringTable &m_StringTable;
     TStrTableStrMap m_Incoming;
     TStrTableStrMap *m_Outgoing;
-    nvhash_set<CRegisteredString> m_Includes;
+    nvhash_set<QString> m_Includes;
     TStrTableStrMap m_Uniforms;
     TStrTableStrMap m_ConstantBuffers;
     TConstantBufferParamArray m_ConstantBufferParams;
@@ -88,22 +88,22 @@ struct SStageGeneratorBase : public IShaderStageGenerator
         // the shared buffers will be cleared elsewhere.
     }
 
-    CRegisteredString Str(const char8_t *var) { return m_StringTable.RegisterStr(var); }
+    QString Str(const char *var) { return m_StringTable.RegisterStr(var); }
 
-    void AddIncoming(const char8_t *name, const char8_t *type) override
+    void AddIncoming(const char *name, const char *type) override
     {
         m_Incoming.insert(eastl::make_pair(Str(name), Str(type)));
     }
-    virtual const char8_t *GetIncomingVariableName()
+    virtual const char *GetIncomingVariableName()
     {
         return "in";
     }
 
-    void AddIncoming(const TStrType &name, const char8_t *type) override
+    void AddIncoming(const TStrType &name, const char *type) override
     {
         AddIncoming(name.c_str(), type);
     }
-    void AddOutgoing(const char8_t *name, const char8_t *type) override
+    void AddOutgoing(const char *name, const char *type) override
     {
         if (m_Outgoing == nullptr) {
             Q_ASSERT(false);
@@ -111,16 +111,16 @@ struct SStageGeneratorBase : public IShaderStageGenerator
         }
         m_Outgoing->insert(eastl::make_pair(Str(name), Str(type)));
     }
-    void AddOutgoing(const TStrType &name, const char8_t *type) override
+    void AddOutgoing(const TStrType &name, const char *type) override
     {
         AddOutgoing(name.c_str(), type);
     }
 
-    void AddUniform(const char8_t *name, const char8_t *type) override
+    void AddUniform(const char *name, const char *type) override
     {
         m_Uniforms.insert(eastl::make_pair(Str(name), Str(type)));
     }
-    void AddUniform(const TStrType &name, const char8_t *type) override
+    void AddUniform(const TStrType &name, const char *type) override
     {
         AddUniform(name.c_str(), type);
     }
@@ -162,7 +162,7 @@ struct SStageGeneratorBase : public IShaderStageGenerator
     ShaderGeneratorStages::Enum Stage() const override { return m_Stage; }
 
     virtual void AddShaderItemMap(const char *itemType, const TStrTableStrMap &itemMap,
-                                  const char8_t *inItemSuffix = "")
+                                  const char *inItemSuffix = "")
     {
         m_FinalBuilder.append("\n");
 
@@ -222,7 +222,7 @@ struct SStageGeneratorBase : public IShaderStageGenerator
 
     virtual void UpdateShaderCacheFlags(SShaderCacheProgramFlags &) {}
 
-    void AddInclude(const char8_t *name) override { m_Includes.insert(Str(name)); }
+    void AddInclude(const char *name) override { m_Includes.insert(Str(name)); }
 
     void AddInclude(const TStrType &name) override { AddInclude(name.c_str()); }
 
@@ -232,9 +232,9 @@ struct SStageGeneratorBase : public IShaderStageGenerator
         AddInclude(arr.data());
     }
 
-    virtual const char8_t *BuildShaderSource()
+    virtual const char *BuildShaderSource()
     {
-        for (nvhash_set<CRegisteredString>::const_iterator iter = m_Includes.begin(),
+        for (nvhash_set<QString>::const_iterator iter = m_Includes.begin(),
              end = m_Includes.end();
              iter != end; ++iter) {
             m_FinalBuilder.append("#include \"");
@@ -269,11 +269,11 @@ struct SVertexShaderGenerator : public SStageGeneratorBase
     {
     }
 
-    const char8_t *GetIncomingVariableName() override { return "attribute"; }
+    const char *GetIncomingVariableName() override { return "attribute"; }
     virtual void AddIncomingInterpolatedMap() {}
 
-    virtual const char8_t *GetInterpolatedIncomingSuffix() const { return "_attr"; }
-    virtual const char8_t *GetInterpolatedOutgoingSuffix() const { return ""; }
+    virtual const char *GetInterpolatedIncomingSuffix() const { return "_attr"; }
+    virtual const char *GetInterpolatedOutgoingSuffix() const { return ""; }
 };
 
 struct STessControlShaderGenerator : public SStageGeneratorBase
@@ -345,11 +345,11 @@ struct SFragmentShaderGenerator : public SStageGeneratorBase
 struct SShaderGeneratedProgramOutput
 {
     // never null; so safe to call strlen on.
-    const char8_t *m_VertexShader;
-    const char8_t *m_TessControlShader;
-    const char8_t *m_TessEvalShader;
-    const char8_t *m_GeometryShader;
-    const char8_t *m_FragmentShader;
+    const char *m_VertexShader;
+    const char *m_TessControlShader;
+    const char *m_TessEvalShader;
+    const char *m_GeometryShader;
+    const char *m_FragmentShader;
 
     SShaderGeneratedProgramOutput()
         : m_VertexShader("")
@@ -360,8 +360,8 @@ struct SShaderGeneratedProgramOutput
     {
     }
 
-    SShaderGeneratedProgramOutput(const char8_t *vs, const char8_t *tc, const char8_t *te,
-                                  const char8_t *gs, const char8_t *fs)
+    SShaderGeneratedProgramOutput(const char *vs, const char *tc, const char *te,
+                                  const char *gs, const char *fs)
         : m_VertexShader(vs)
         , m_TessControlShader(tc)
         , m_TessEvalShader(te)
@@ -373,7 +373,7 @@ struct SShaderGeneratedProgramOutput
 
 struct SProgramGenerator : public IShaderProgramGenerator
 {
-    IQt3DSRenderContext &m_Context;
+    IQDemonRenderContext &m_Context;
     SVertexShaderGenerator m_VS;
     STessControlShaderGenerator m_TC;
     STessEvalShaderGenerator m_TE;
@@ -384,7 +384,7 @@ struct SProgramGenerator : public IShaderProgramGenerator
 
     qint32 m_RefCount;
 
-    SProgramGenerator(IQt3DSRenderContext &inContext)
+    SProgramGenerator(IQDemonRenderContext &inContext)
         : m_Context(inContext)
         , m_VS(inContext.GetFoundation(), inContext.GetStringTable())
         , m_TC(inContext.GetFoundation(), inContext.GetStringTable())
@@ -500,7 +500,7 @@ struct SProgramGenerator : public IShaderProgramGenerator
         const char *fragmentShaderSource = m_FS.m_FinalBuilder.c_str();
 
         IShaderCache &theCache = m_Context.GetShaderCache();
-        CRegisteredString theCacheKey = m_Context.GetStringTable().RegisterStr(inShaderName);
+        QString theCacheKey = m_Context.GetStringTable().RegisterStr(inShaderName);
         return theCache.CompileProgram(theCacheKey, vertexShaderSource, fragmentShaderSource,
                                        tcShaderSource, teShaderSource, geShaderSource,
                                        theCacheFlags, inFeatureSet, separableProgram);
@@ -509,7 +509,7 @@ struct SProgramGenerator : public IShaderProgramGenerator
 };
 
 IShaderProgramGenerator &
-IShaderProgramGenerator::CreateProgramGenerator(IQt3DSRenderContext &inContext)
+IShaderProgramGenerator::CreateProgramGenerator(IQDemonRenderContext &inContext)
 {
     return *QDEMON_NEW(inContext.GetAllocator(), SProgramGenerator)(inContext);
 }

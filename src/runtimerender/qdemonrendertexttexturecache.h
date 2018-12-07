@@ -30,7 +30,7 @@
 #pragma once
 #ifndef QDEMON_RENDER_TEXT_TEXTURE_CACHE_H
 #define QDEMON_RENDER_TEXT_TEXTURE_CACHE_H
-#include <QtDemonRuntimeRender/qdemonrender.h>
+
 #include <QtDemon/qdemonrefcounted.h>
 #include <QtDemonRuntimeRender/qdemonrendertext.h>
 
@@ -38,12 +38,12 @@ QT_BEGIN_NAMESPACE
 
 class ITextRenderer;
 
-typedef eastl::pair<QDemonScopedRefCounted<QDemonRenderPathFontSpecification>,
+typedef QPair<QDemonScopedRefCounted<QDemonRenderPathFontSpecification>,
 QDemonScopedRefCounted<QDemonRenderPathFontItem>>
 TPathFontSpecAndPathObject;
-typedef eastl::pair<STextTextureDetails, QDemonScopedRefCounted<QDemonRenderTexture2D>>
+typedef QPair<STextTextureDetails, QDemonScopedRefCounted<QDemonRenderTexture2D>>
 TTextTextureDetailsAndTexture;
-typedef eastl::pair<TPathFontSpecAndPathObject, TTextTextureDetailsAndTexture>
+typedef QPair<TPathFontSpecAndPathObject, TTextTextureDetailsAndTexture>
 TTPathObjectAndTexture;
 
 class ITextTextureCache : public QDemonRefCounted

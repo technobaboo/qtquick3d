@@ -27,7 +27,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <QtDemonRuntimeRender/qdemonrender.h>
+
 #include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
 #include <QtDemonRuntimeRender/qdemonrendernode.h>
 #include <QtDemonRuntimeRender/qdemonrenderbuffermanager.h>
@@ -62,7 +62,7 @@ QT_BEGIN_NAMESPACE
 
 namespace {
 
-struct SRenderContextCore : public IQt3DSRenderContextCore
+struct SRenderContextCore : public IQDemonRenderContextCore
 {
     NVFoundationBase &m_Foundation;
     QDemonScopedRefCounted<IStringTable> m_StringTable;
@@ -115,8 +115,8 @@ struct SRenderContextCore : public IQt3DSRenderContextCore
     IBufferLoader &GetBufferLoader() override { return *m_BufferLoader; }
     IRenderPluginManagerCore &GetRenderPluginCore() override { return *m_RenderPluginManagerCore; }
     IPathManagerCore &GetPathManagerCore() override { return *m_PathManagerCore; }
-    IQt3DSRenderContext &CreateRenderContext(QDemonRenderContext &inContext,
-                                             const char8_t *inPrimitivesDirectory) override;
+    IQDemonRenderContext &CreateRenderContext(QDemonRenderContext &inContext,
+                                             const char *inPrimitivesDirectory) override;
     void SetTextRendererCore(ITextRendererCore &inRenderer) override { m_TextRenderer = inRenderer; }
     ITextRendererCore *GetTextRendererCore() override { return m_TextRenderer.mPtr; }
     void SetOnscreenTextRendererCore(ITextRendererCore &inRenderer) override
@@ -193,17 +193,17 @@ struct SPerFrameAllocator : public NVAllocatorCallback
     void deallocate(void *) override {}
 };
 
-struct SRenderContext : public IQt3DSRenderContext
+struct SRenderContext : public IQDemonRenderContext
 {
     QDemonScopedRefCounted<QDemonRenderContext> m_RenderContext;
-    QDemonScopedRefCounted<IQt3DSRenderContextCore> m_CoreContext;
+    QDemonScopedRefCounted<IQDemonRenderContextCore> m_CoreContext;
     QDemonScopedRefCounted<IStringTable> m_StringTable;
     QDemonScopedRefCounted<IPerfTimer> m_PerfTimer;
     QDemonScopedRefCounted<IInputStreamFactory> m_InputStreamFactory;
     QDemonScopedRefCounted<IBufferManager> m_BufferManager;
     QDemonScopedRefCounted<IResourceManager> m_ResourceManager;
     QDemonScopedRefCounted<IOffscreenRenderManager> m_OffscreenRenderManager;
-    QDemonScopedRefCounted<IQt3DSRenderer> m_Renderer;
+    QDemonScopedRefCounted<IQDemonRenderer> m_Renderer;
     QDemonScopedRefCounted<ITextRenderer> m_TextRenderer;
     QDemonScopedRefCounted<ITextRenderer> m_OnscreenTextRenderer;
     QDemonScopedRefCounted<ITextTextureCache> m_TextTextureCache;
@@ -225,13 +225,13 @@ struct SRenderContext : public IQt3DSRenderContext
     quint32 m_FrameCount;
     volatile qint32 mRefCount;
     // Viewport that this render context should use
-    Option<QDemonRenderRect> m_Viewport;
+    QDemonOption<QDemonRenderRect> m_Viewport;
     QSize m_WindowDimensions;
     ScaleModes::Enum m_ScaleMode;
     bool m_WireframeMode;
     bool m_IsInSubPresentation;
-    Option<QVector4D> m_SceneColor;
-    Option<QVector4D> m_MatteColor;
+    QDemonOption<QVector4D> m_SceneColor;
+    QDemonOption<QVector4D> m_MatteColor;
     RenderRotationValues::Enum m_Rotation;
     QDemonScopedRefCounted<QDemonRenderFrameBuffer> m_RotationFBO;
     QDemonScopedRefCounted<QDemonRenderTexture2D> m_RotationTexture;
@@ -246,8 +246,8 @@ struct SRenderContext : public IQt3DSRenderContext
     QPair<float, int> m_FPS;
     bool m_AuthoringMode;
 
-    SRenderContext(QDemonRenderContext &ctx, IQt3DSRenderContextCore &inCore,
-                   const char8_t *inApplicationDirectory)
+    SRenderContext(QDemonRenderContext &ctx, IQDemonRenderContextCore &inCore,
+                   const char *inApplicationDirectory)
         : m_RenderContext(ctx)
         , m_CoreContext(inCore)
         , m_StringTable(ctx.GetStringTable())
@@ -274,7 +274,7 @@ struct SRenderContext : public IQt3DSRenderContext
     {
         m_OffscreenRenderManager = IOffscreenRenderManager::CreateOffscreenRenderManager(
                     ctx.GetAllocator(), *m_StringTable, *m_ResourceManager, *this);
-        m_Renderer = IQt3DSRenderer::CreateRenderer(*this);
+        m_Renderer = IQDemonRenderer::CreateRenderer(*this);
         if (inApplicationDirectory && *inApplicationDirectory)
             m_InputStreamFactory->AddSearchDirectory(inApplicationDirectory);
 
@@ -350,7 +350,7 @@ struct SRenderContext : public IQt3DSRenderContext
     IStringTable &GetStringTable() override { return *m_StringTable; }
     NVFoundationBase &GetFoundation() override { return m_RenderContext->GetFoundation(); }
     NVAllocatorCallback &GetAllocator() override { return m_RenderContext->GetAllocator(); }
-    IQt3DSRenderer &GetRenderer() override { return *m_Renderer; }
+    IQDemonRenderer &GetRenderer() override { return *m_Renderer; }
     IBufferManager &GetBufferManager() override { return *m_BufferManager; }
     IResourceManager &GetResourceManager() override { return *m_ResourceManager; }
     QDemonRenderContext &GetRenderContext() override { return *m_RenderContext; }
@@ -400,8 +400,8 @@ struct SRenderContext : public IQt3DSRenderContext
 
     ITextRenderer *GetOnscreenTextRenderer() override { return m_OnscreenTextRenderer; }
 
-    void SetSceneColor(Option<QVector4D> inSceneColor) override { m_SceneColor = inSceneColor; }
-    void SetMatteColor(Option<QVector4D> inMatteColor) override { m_MatteColor = inMatteColor; }
+    void SetSceneColor(QDemonOption<QVector4D> inSceneColor) override { m_SceneColor = inSceneColor; }
+    void SetMatteColor(QDemonOption<QVector4D> inMatteColor) override { m_MatteColor = inMatteColor; }
 
     void SetWindowDimensions(const QSize &inWindowDimensions) override
     {
@@ -418,15 +418,15 @@ struct SRenderContext : public IQt3DSRenderContext
 
     bool GetWireframeMode() override { return m_WireframeMode; }
 
-    void SetViewport(Option<QDemonRenderRect> inViewport) override { m_Viewport = inViewport; }
-    Option<QDemonRenderRect> GetViewport() const override { return m_Viewport; }
+    void SetViewport(QDemonOption<QDemonRenderRect> inViewport) override { m_Viewport = inViewport; }
+    QDemonOption<QDemonRenderRect> GetViewport() const override { return m_Viewport; }
 
     IRenderWidgetContext &GetRenderWidgetContext() override
     {
         return m_Renderer->GetRenderWidgetContext();
     }
 
-    eastl::pair<QDemonRenderRect, QDemonRenderRect> GetPresentationViewportAndOuterViewport() const
+    QPair<QDemonRenderRect, QDemonRenderRect> GetPresentationViewportAndOuterViewport() const
     {
         QSize thePresentationDimensions(m_PresentationDimensions);
         QDemonRenderRect theOuterViewport(GetContextViewport());
@@ -436,7 +436,7 @@ struct SRenderContext : public IQt3DSRenderContext
             eastl::swap(theOuterViewport.m_X, theOuterViewport.m_Y);
         }
         // Calculate the presentation viewport perhaps with the window width and height swapped.
-        return eastl::make_pair(
+        return QPair<QDemonRenderRect, QDemonRenderRect>(
                     GetPresentationViewport(theOuterViewport, m_ScaleMode, thePresentationDimensions),
                     theOuterViewport);
     }
@@ -566,14 +566,14 @@ struct SRenderContext : public IQt3DSRenderContext
         return retval;
     }
 
-    void RenderText2D(float x, float y, Option<QVector3D> inColor,
+    void RenderText2D(float x, float y, QDemonOption<QVector3D> inColor,
                       const char *text) override
     {
         m_Renderer->RenderText2D(x, y, inColor, text);
     }
 
     void RenderGpuProfilerStats(float x, float y,
-                                Option<QVector3D> inColor) override
+                                QDemonOption<QVector3D> inColor) override
     {
         m_Renderer->RenderGpuProfilerStats(x, y, inColor);
     }
@@ -620,7 +620,7 @@ struct SRenderContext : public IQt3DSRenderContext
             theRenderList.SetScissorTestEnabled(false);
         }
         bool renderOffscreen = m_Rotation != RenderRotationValues::NoRotation;
-        eastl::pair<QDemonRenderRect, QDemonRenderRect> thePresViewportAndOuterViewport =
+        QPair<QDemonRenderRect, QDemonRenderRect> thePresViewportAndOuterViewport =
                 GetPresentationViewportAndOuterViewport();
         QDemonRenderRect theOuterViewport = thePresViewportAndOuterViewport.second;
         // Calculate the presentation viewport perhaps with the window width and height swapped.
@@ -822,15 +822,15 @@ struct SRenderContext : public IQt3DSRenderContext
     }
 };
 
-IQt3DSRenderContext &SRenderContextCore::CreateRenderContext(QDemonRenderContext &inContext,
-                                                             const char8_t *inPrimitivesDirectory)
+IQDemonRenderContext &SRenderContextCore::CreateRenderContext(QDemonRenderContext &inContext,
+                                                             const char *inPrimitivesDirectory)
 {
     return *QDEMON_NEW(m_Foundation.getAllocator(), SRenderContext)(inContext, *this,
                                                                     inPrimitivesDirectory);
 }
 }
 
-IQt3DSRenderContextCore &IQt3DSRenderContextCore::Create(NVFoundationBase &fnd, IStringTable &strt)
+IQDemonRenderContextCore &IQDemonRenderContextCore::Create(NVFoundationBase &fnd, IStringTable &strt)
 {
     return *QDEMON_NEW(fnd.getAllocator(), SRenderContextCore)(fnd, strt);
 }

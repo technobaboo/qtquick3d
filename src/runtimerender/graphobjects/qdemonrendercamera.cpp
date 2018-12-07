@@ -34,6 +34,8 @@
 #include <QtDemonRender/qdemonrendertexture2d.h>
 #include <QtDemonRender/qdemonrendercontext.h>
 
+#include <QtDemon/qdemonutils.h>
+
 #include <QtGui/QVector2D>
 
 #include <qmath.h>
@@ -89,7 +91,7 @@ SPinCameraResult PinCamera(const QDemonRenderRectF &inViewport, QVector2D inDesi
                            CameraScaleAnchors::Enum inPinLocation)
 {
     QDemonRenderRectF viewport(inViewport);
-    QDemonRenderRectF idealViewport(inViewport.m_X, inViewport.m_Y, inDesignDims.x, inDesignDims.y);
+    QDemonRenderRectF idealViewport(inViewport.m_X, inViewport.m_Y, inDesignDims.x(), inDesignDims.y());
     float designAspect = GetAspectRatio(inDesignDims);
     float actualAspect = GetAspectRatio(inViewport);
     if (IsFitTypeScaleMode(inScaleMode)) {
@@ -280,16 +282,16 @@ float SCamera::GetOrthographicScaleFactor(const QDemonRenderRectF &inViewport,
     float theAspectRatio = GetAspectRatio(inViewport);
     if (m_ScaleMode == CameraScaleModes::Fit) {
         if (theAspectRatio >= designAspect) {
-            return inViewport.m_Width < inDesignDimensions.x ? theAspectRatio / designAspect : 1.0f;
+            return inViewport.m_Width < inDesignDimensions.x() ? theAspectRatio / designAspect : 1.0f;
 
         } else {
-            return inViewport.m_Height < inDesignDimensions.y ? designAspect / theAspectRatio
+            return inViewport.m_Height < inDesignDimensions.y() ? designAspect / theAspectRatio
                                                               : 1.0f;
         }
     } else if (m_ScaleMode == CameraScaleModes::FitVertical) {
-        return (float)inDesignDimensions.y / (float)inViewport.m_Height;
+        return (float)inDesignDimensions.y() / (float)inViewport.m_Height;
     } else {
-        return (float)inDesignDimensions.x / (float)inViewport.m_Width;
+        return (float)inDesignDimensions.x() / (float)inViewport.m_Width;
     }
 }
 
@@ -337,7 +339,7 @@ void SCamera::LookAt(const QVector3D &inCameraPos, const QVector3D &inUpDir, con
 
 void SCamera::CalculateViewProjectionMatrix(QMatrix4x4 &outMatrix) const
 {
-    QMatrix4x4 globalInverse = m_GlobalTransform.getInverse();
+    QMatrix4x4 globalInverse = mat44::getInverse(m_GlobalTransform);
     outMatrix = m_Projection * globalInverse;
 }
 
@@ -358,8 +360,8 @@ SCuboidRect SCamera::GetCameraBounds(const QDemonRenderRectF &inViewport,
         float yRange =
             2.0f * (theResult.m_Viewport.m_Height / theResult.m_VirtualViewport.m_Height);
         normalizedCuboid = SCuboidRect(-1, -1 + yRange, -1 + xRange, -1);
-        translation.x /= (theResult.m_VirtualViewport.m_Width / 2.0f);
-        translation.y /= (theResult.m_VirtualViewport.m_Height / 2.0f);
+        translation.setX(translation.x() / (theResult.m_VirtualViewport.m_Width / 2.0f));
+        translation.setY(translation.y() / (theResult.m_VirtualViewport.m_Height / 2.0f));
         normalizedCuboid.Translate(translation);
     }
     // fit.  This means that two parameters of the normalized cuboid will be -1, 1.
@@ -382,7 +384,7 @@ SCuboidRect SCamera::GetCameraBounds(const QDemonRenderRectF &inViewport,
             float halfRange = inViewport.m_Width / idealWidth;
             normalizedCuboid.m_Left = -halfRange;
             normalizedCuboid.m_Right = halfRange;
-            translation.x = translation.x / (idealWidth / 2.0f);
+            translation.setX(translation.x() / (idealWidth / 2.0f));
         } else {
             idealHeight = (float)ITextRenderer::NextMultipleOf4(
                 (quint32)(inViewport.m_Width / designAspect + .5f));
@@ -449,8 +451,8 @@ SRay SCamera::Unproject(const QVector2D &inViewportRelativeCoords, const QDemonR
         outOrigin.setY(0.0f);
         outOrigin.setZ(0.0f);
 
-        outDir.setX(scaledCoords.x);
-        outDir.setY(scaledCoords.y);
+        outDir.setX(scaledCoords.x());
+        outDir.setY(scaledCoords.y());
         outDir.setZ(-1.0f);
     }
 
@@ -474,8 +476,8 @@ QVector3D SCamera::UnprojectToPosition(const QVector3D &inGlobalPos, const SRay 
 {
     QVector3D theCameraDir = GetDirection();
     QVector3D theObjGlobalPos = inGlobalPos;
-    float theDistance = -1.0f * theObjGlobalPos.dot(theCameraDir);
-    NVPlane theCameraPlane(theCameraDir, theDistance);
+    float theDistance = -1.0f * QVector3D::dotProduct(theObjGlobalPos, theCameraDir);
+    QDemonPlane theCameraPlane(theCameraDir, theDistance);
     return inRay.Intersect(theCameraPlane);
 }
 

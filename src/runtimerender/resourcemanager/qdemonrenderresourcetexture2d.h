@@ -30,7 +30,7 @@
 #pragma once
 #ifndef QDEMON_RENDER_RESOURCE_TEXTURE_2D_H
 #define QDEMON_RENDER_RESOURCE_TEXTURE_2D_H
-#include <QtDemonRuntimeRender/qdemonrender.h>
+
 #include <QtDemonRender/qdemonrendercontext.h>
 #include <QtDemonRender/qdemonrendertexture2d.h>
 #include <QtDemonRender/qdemonrendertexture2darray.h>

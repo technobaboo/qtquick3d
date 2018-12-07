@@ -30,7 +30,7 @@
 #pragma once
 #ifndef QDEMON_RENDER_CUSTOM_MATERIAL_H
 #define QDEMON_RENDER_CUSTOM_MATERIAL_H
-#include <QtDemonRuntimeRender/qdemonrender.h>
+
 #include <QtDemonRuntimeRender/qdemonrenderdynamicobject.h>
 #include <QtDemonRuntimeRender/qdemonrenderimage.h>
 #include <QtDemonRuntimeRender/qdemonrenderlightmaps.h>

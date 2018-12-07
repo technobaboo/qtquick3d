@@ -64,7 +64,7 @@ using QDemonRenderStencilOp;
 typedef qt3dsimp::SPathBuffer TImportPathBuffer;
 using namespace path;
 
-typedef eastl::pair<CRegisteredString, CRegisteredString> TStrStrPair;
+typedef QPair<QString, QString> TStrStrPair;
 
 namespace eastl {
 template <>
@@ -72,18 +72,18 @@ struct hash<TStrStrPair>
 {
     size_t operator()(const TStrStrPair &item) const
     {
-        return eastl::hash<CRegisteredString>()(item.first)
-                ^ eastl::hash<CRegisteredString>()(item.second);
+        return eastl::hash<QString>()(item.first)
+                ^ eastl::hash<QString>()(item.second);
     }
 };
 }
 
 struct SPathShaderMapKey
 {
-    CRegisteredString m_Name;
+    QString m_Name;
     SShaderDefaultMaterialKey m_MaterialKey;
     size_t m_HashCode;
-    SPathShaderMapKey(CRegisteredString inName, SShaderDefaultMaterialKey inKey)
+    SPathShaderMapKey(QString inName, SShaderDefaultMaterialKey inKey)
         : m_Name(inName)
         , m_MaterialKey(inKey)
     {
@@ -180,9 +180,9 @@ struct SPathBuffer
     float m_Width;
     float m_CPUError;
     QDemonBounds3 m_Bounds;
-    Option<STaperInformation> m_BeginTaper;
-    Option<STaperInformation> m_EndTaper;
-    CRegisteredString m_SourcePath;
+    QDemonOption<STaperInformation> m_BeginTaper;
+    QDemonOption<STaperInformation> m_EndTaper;
+    QString m_SourcePath;
 
     // Cached data for geometry paths
 
@@ -273,7 +273,7 @@ struct SPathBuffer
         m_PathType = inPathType;
     }
 
-    static Option<STaperInformation> ToTaperInfo(PathCapping::Enum capping, float capOffset,
+    static QDemonOption<STaperInformation> ToTaperInfo(PathCapping::Enum capping, float capOffset,
                                                  float capOpacity, float capWidth)
     {
         if (capping == PathCapping::Noner)
@@ -285,7 +285,7 @@ struct SPathBuffer
     void SetBeginTaperInfo(PathCapping::Enum capping, float capOffset, float capOpacity,
                            float capWidth)
     {
-        Option<STaperInformation> newBeginInfo =
+        QDemonOption<STaperInformation> newBeginInfo =
                 ToTaperInfo(capping, capOffset, capOpacity, capWidth);
         if (!OptionEquals(newBeginInfo, m_BeginTaper)) {
             m_BeginTaper = newBeginInfo;
@@ -296,7 +296,7 @@ struct SPathBuffer
     void SetEndTaperInfo(PathCapping::Enum capping, float capOffset, float capOpacity,
                          float capWidth)
     {
-        Option<STaperInformation> newEndInfo =
+        QDemonOption<STaperInformation> newEndInfo =
                 ToTaperInfo(capping, capOffset, capOpacity, capWidth);
         if (!OptionEquals(newEndInfo, m_EndTaper)) {
             m_EndTaper = newEndInfo;
@@ -380,15 +380,15 @@ struct SPathVertexPipeline : public SVertexPipelineImpl
         return false;
     }
 
-    void AssignTessEvalVarying(const char8_t *inVarName, const char8_t *inVarValueExpr)
+    void AssignTessEvalVarying(const char *inVarName, const char *inVarValueExpr)
     {
-        const char8_t *ext = "";
+        const char *ext = "";
         if (ProgramGenerator().GetEnabledStages() & ShaderGeneratorStages::Geometry)
             ext = "TE";
         TessEval() << "\t" << inVarName << ext << " = " << inVarValueExpr << ";" << Endl;
     }
 
-    void AssignOutput(const char8_t *inVarName, const char8_t *inVarValueExpr) override
+    void AssignOutput(const char *inVarName, const char *inVarValueExpr) override
     {
         AssignTessEvalVarying(inVarName, inVarValueExpr);
     }
@@ -561,7 +561,7 @@ struct SPathVertexPipeline : public SVertexPipelineImpl
 
     void EndFragmentGeneration() override { Fragment().Append("}"); }
 
-    void AddInterpolationParameter(const char8_t *inName, const char8_t *inType) override
+    void AddInterpolationParameter(const char *inName, const char *inType) override
     {
         m_InterpolationParameters.insert(eastl::make_pair(Str(inName), Str(inType)));
         Fragment().AddIncoming(inName, inType);
@@ -716,7 +716,7 @@ struct SXYRectVertexPipeline : public SVertexPipelineImpl
         Fragment() << "\tfloat object_opacity = material_diffuse.a;" << Endl;
     }
 
-    void AssignOutput(const char8_t *inVarName, const char8_t *inVarValue) override
+    void AssignOutput(const char *inVarName, const char *inVarValue) override
     {
         Vertex() << "\t" << inVarName << " = " << inVarValue << ";\n";
     }
@@ -763,7 +763,7 @@ struct SXYRectVertexPipeline : public SVertexPipelineImpl
 
     void EndFragmentGeneration() override { Fragment().Append("}"); }
 
-    void AddInterpolationParameter(const char8_t *inName, const char8_t *inType) override
+    void AddInterpolationParameter(const char *inName, const char *inType) override
     {
         m_InterpolationParameters.insert(eastl::make_pair(Str(inName), Str(inType)));
         Vertex().AddOutgoing(inName, inType);
@@ -781,10 +781,10 @@ struct SPathManager : public IPathManager
     typedef QHash<SPathShaderMapKey, QDemonScopedRefCounted<SPathGeneratedShader>> TShaderMap;
     typedef QHash<SPathShaderMapKey, QDemonScopedRefCounted<SPathXYGeneratedShader>>
     TPaintedShaderMap;
-    typedef QHash<CRegisteredString, TPathBufferPtr> TStringPathBufferMap;
+    typedef QHash<QString, TPathBufferPtr> TStringPathBufferMap;
 
-    IQt3DSRenderContextCore &m_CoreContext;
-    IQt3DSRenderContext *m_RenderContext;
+    IQDemonRenderContextCore &m_CoreContext;
+    IQDemonRenderContext *m_RenderContext;
     QString m_IdBuilder;
     TPathSubPathBufferHash m_SubPathBuffers;
     TPathBufferHash m_Buffers;
@@ -816,7 +816,7 @@ struct SPathManager : public IPathManager
 
     qint32 m_RefCount;
 
-    SPathManager(IQt3DSRenderContextCore &inRC)
+    SPathManager(IQDemonRenderContextCore &inRC)
         : m_CoreContext(inRC)
         , m_RenderContext(nullptr)
         , m_SubPathBuffers(inRC.GetAllocator(), "m_SubPathBuffers")
@@ -853,7 +853,7 @@ struct SPathManager : public IPathManager
                             QDemonConstDataRef<SPathAnchorPoint> inPathCubicCurves) override
     {
         Mutex::ScopedLock __locker(m_PathBufferMutex);
-        eastl::pair<TPathSubPathBufferHash::iterator, bool> inserter =
+        QPair<TPathSubPathBufferHash::iterator, bool> inserter =
                 m_SubPathBuffers.insert(eastl::make_pair((SPathSubPath *)&inPath,
                                                          QDemonScopedRefCounted<SPathSubPathBuffer>(nullptr)));
         if (!inserter.first->second)
@@ -866,7 +866,7 @@ struct SPathManager : public IPathManager
 
     SPathBuffer *GetPathBufferObject(const SPath &inPath)
     {
-        eastl::pair<TPathBufferHash::iterator, bool> inserter = m_Buffers.insert(
+        QPair<TPathBufferHash::iterator, bool> inserter = m_Buffers.insert(
                     eastl::make_pair((SPath *)&inPath, QDemonScopedRefCounted<SPathBuffer>(nullptr)));
         if (inserter.second) {
             inserter.first->second = QDEMON_NEW(GetAllocator(), SPathBuffer)(GetAllocator());
@@ -949,14 +949,14 @@ struct SPathManager : public IPathManager
         return retval;
     }
 
-    IPathManager &OnRenderSystemInitialize(IQt3DSRenderContext &context) override
+    IPathManager &OnRenderSystemInitialize(IQDemonRenderContext &context) override
     {
         m_RenderContext = &context;
         return *this;
     }
 
     // find a point that will join these two curves *if* they are not first derivative continuous
-    static Option<QVector2D> GetAdjoiningPoint(QVector2D prevC2, QVector2D point, QVector2D C1, float pathWidth)
+    static QDemonOption<QVector2D> GetAdjoiningPoint(QVector2D prevC2, QVector2D point, QVector2D C1, float pathWidth)
     {
         QVector2D incomingDxDy = (point - prevC2);
         QVector2D outgoingDxDy = (C1 - point);
@@ -976,7 +976,7 @@ struct SPathManager : public IPathManager
         return Empty();
     }
 
-    Option<eastl::pair<quint32, float>> FindBreakEquation(float inTaperStart)
+    QDemonOption<QPair<quint32, float>> FindBreakEquation(float inTaperStart)
     {
         float lengthTotal = 0;
         for (quint32 idx = 0, end = m_SubdivResult.size(); idx < end; ++idx) {
@@ -985,7 +985,7 @@ struct SPathManager : public IPathManager
                 QVector<SResultCubic>::iterator breakIter = m_SubdivResult.begin() + idx;
                 SCubicBezierCurve theCurve(breakIter->m_P1, breakIter->m_C1, breakIter->m_C2,
                                            breakIter->m_P2);
-                eastl::pair<SCubicBezierCurve, SCubicBezierCurve> subdivCurve =
+                QPair<SCubicBezierCurve, SCubicBezierCurve> subdivCurve =
                         theCurve.SplitCubicBezierCurve(breakTValue);
                 float originalBreakT =
                         breakIter->m_TStart + (breakIter->m_TStop - breakIter->m_TStart) * breakTValue;
@@ -1087,7 +1087,7 @@ struct SPathManager : public IPathManager
                     float endTaperOpacity = thePath.m_GlobalOpacity * thePath.m_BeginCapOpacity;
                     theBeginTaperData = QVector2D(endTaperWidth, endTaperOpacity);
                     // Find where we need to break the current equations.
-                    Option<eastl::pair<quint32, float>> breakEquationAndT(
+                    QDemonOption<QPair<quint32, float>> breakEquationAndT(
                                 FindBreakEquation(taperStart));
                     if (breakEquationAndT.hasValue()) {
                         quint32 breakEquation = breakEquationAndT->first;
@@ -1109,7 +1109,7 @@ struct SPathManager : public IPathManager
                     float endTaperOpacity = thePath.m_GlobalOpacity * thePath.m_EndCapOpacity;
                     theEndTaperData = QVector2D(endTaperWidth, endTaperOpacity);
                     // Invert taper start so that the forward search works.
-                    Option<eastl::pair<quint32, float>> breakEquationAndT(
+                    QDemonOption<QPair<quint32, float>> breakEquationAndT(
                                 FindBreakEquation(pathLength - taperStart));
 
                     if (breakEquationAndT.hasValue()) {
@@ -1160,7 +1160,7 @@ struct SPathManager : public IPathManager
                     if (previousCurve.m_EquationIndex != thePoint.m_EquationIndex) {
                         float anchorWidth =
                                 thePoint.GetP1Width(pathWidth, theBeginTaperData.x, theEndTaperData.x);
-                        Option<QVector2D> adjoining = GetAdjoiningPoint(
+                        QDemonOption<QVector2D> adjoining = GetAdjoiningPoint(
                                     previousCurve.m_C2, thePoint.m_P1, thePoint.m_C1, anchorWidth);
                         if (adjoining.hasValue())
                             incomingAdjoining = *adjoining;
@@ -1171,7 +1171,7 @@ struct SPathManager : public IPathManager
                     if (nextCurve.m_EquationIndex != thePoint.m_EquationIndex) {
                         float anchorWidth =
                                 thePoint.GetP2Width(pathWidth, theBeginTaperData.x, theEndTaperData.x);
-                        Option<QVector2D> adjoining = GetAdjoiningPoint(thePoint.m_C2, thePoint.m_P2,
+                        QDemonOption<QVector2D> adjoining = GetAdjoiningPoint(thePoint.m_C2, thePoint.m_P2,
                                                                         nextCurve.m_C1, anchorWidth);
                         if (adjoining.hasValue())
                             outgoingAdjoining = *adjoining;
@@ -1254,7 +1254,7 @@ struct SPathManager : public IPathManager
         return theMaterialGenerator;
     }
 
-    CRegisteredString GetMaterialNameForKey(SPathRenderContext &inRenderContext)
+    QString GetMaterialNameForKey(SPathRenderContext &inRenderContext)
     {
         bool isDefaultMaterial =
                 (inRenderContext.m_Material.m_Type == GraphObjectTypes::DefaultMaterial);
@@ -1381,7 +1381,7 @@ struct SPathManager : public IPathManager
             }
         } else {
             thePathBuffer->m_SubPaths.clear();
-            eastl::pair<TStringPathBufferMap::iterator, bool> inserter =
+            QPair<TStringPathBufferMap::iterator, bool> inserter =
                     m_SourcePathBufferMap.insert(
                         eastl::make_pair(inPath.m_PathBuffer, TPathBufferPtr()));
             if (inserter.second) {
@@ -1668,7 +1668,7 @@ struct SPathManager : public IPathManager
                 thePipeline.Fragment().Append("\tfragOutput = vec4(1.0, 1.0, 1.0, 1.0);");
                 thePipeline.EndVertexGeneration();
                 thePipeline.EndFragmentGeneration();
-                const char8_t *shaderName = "path depth";
+                const char *shaderName = "path depth";
                 if (displacementImage)
                     shaderName = "path depth displacement";
 
@@ -1699,7 +1699,7 @@ struct SPathManager : public IPathManager
                 thePipeline.Fragment().Append("\tfragOutput = vec4(1.0, 1.0, 1.0, 1.0);");
                 thePipeline.EndVertexGeneration();
                 thePipeline.EndFragmentGeneration();
-                const char8_t *shaderName = "path painted depth";
+                const char *shaderName = "path painted depth";
                 SShaderCacheProgramFlags theFlags;
                 QDemonRenderShaderProgram *theProgram =
                         thePipeline.ProgramGenerator().CompileGeneratedShader(shaderName, theFlags,
@@ -1739,7 +1739,7 @@ struct SPathManager : public IPathManager
                             m_RenderContext->GetShaderProgramGenerator(), theMaterialGenerator,
                             m_RenderContext->GetAllocator(), m_RenderContext->GetStringTable());
                 thePipeline.OutputParaboloidDepthShaders();
-                const char8_t *shaderName = "path painted paraboloid depth";
+                const char *shaderName = "path painted paraboloid depth";
                 SShaderCacheProgramFlags theFlags;
                 QDemonRenderShaderProgram *theProgram =
                         thePipeline.ProgramGenerator().CompileGeneratedShader(shaderName, theFlags,
@@ -1786,7 +1786,7 @@ struct SPathManager : public IPathManager
                             m_RenderContext->GetShaderProgramGenerator(), theMaterialGenerator,
                             m_RenderContext->GetAllocator(), m_RenderContext->GetStringTable());
                 thePipeline.OutputCubeFaceDepthShaders();
-                const char8_t *shaderName = "path painted cube face depth";
+                const char *shaderName = "path painted cube face depth";
                 SShaderCacheProgramFlags theFlags;
                 QDemonRenderShaderProgram *theProgram =
                         thePipeline.ProgramGenerator().CompileGeneratedShader(shaderName, theFlags,
@@ -1838,7 +1838,7 @@ struct SPathManager : public IPathManager
             // the same key can still need a different shader
             SPathShaderMapKey sPathkey = SPathShaderMapKey(GetMaterialNameForKey(inRenderContext),
                                                            inRenderContext.m_MaterialKey);
-            eastl::pair<TShaderMap::iterator, bool> inserter = m_PathGeometryShaders.insert(
+            QPair<TShaderMap::iterator, bool> inserter = m_PathGeometryShaders.insert(
                         eastl::make_pair(sPathkey, QDemonScopedRefCounted<SPathGeneratedShader>(nullptr)));
             if (inserter.second) {
                 SPathVertexPipeline thePipeline(
@@ -1884,7 +1884,7 @@ struct SPathManager : public IPathManager
             // the same key can still need a different shader
             SPathShaderMapKey sPathkey = SPathShaderMapKey(GetMaterialNameForKey(inRenderContext),
                                                            inRenderContext.m_MaterialKey);
-            eastl::pair<TPaintedShaderMap::iterator, bool> inserter = m_PathPaintedShaders.insert(
+            QPair<TPaintedShaderMap::iterator, bool> inserter = m_PathPaintedShaders.insert(
                         eastl::make_pair(sPathkey, QDemonScopedRefCounted<SPathXYGeneratedShader>(nullptr)));
 
             if (inserter.second) {
@@ -1947,7 +1947,7 @@ QVector2D IPathManagerCore::GetAngleDistanceFromControlPoint(QVector2D inPositio
     return QVector2D(radToDeg(angleRad), distance);
 }
 
-IPathManagerCore &IPathManagerCore::CreatePathManagerCore(IQt3DSRenderContextCore &ctx)
+IPathManagerCore &IPathManagerCore::CreatePathManagerCore(IQDemonRenderContextCore &ctx)
 {
     return *QDEMON_NEW(ctx.GetAllocator(), SPathManager)(ctx);
 }

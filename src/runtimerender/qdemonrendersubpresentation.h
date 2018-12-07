@@ -60,14 +60,14 @@ struct CSubPresentationPickQuery : public IGraphObjectPickQuery
 class CSubPresentationRenderer : public IOffscreenRenderer
 {
 public:
-    IQt3DSRenderContext &m_RenderContext;
+    IQDemonRenderContext &m_RenderContext;
     SPresentation &m_Presentation;
     volatile qint32 mRefCount;
     SOffscreenRendererEnvironment m_LastRenderedEnvironment;
     CSubPresentationPickQuery m_PickQuery;
-    CRegisteredString m_OffscreenRendererType;
+    QString m_OffscreenRendererType;
 
-    CSubPresentationRenderer(IQt3DSRenderContext &inRenderContext, SPresentation &inPresentation);
+    CSubPresentationRenderer(IQDemonRenderContext &inRenderContext, SPresentation &inPresentation);
 
     QDEMON_IMPLEMENT_REF_COUNT_ADDREF_RELEASE_OVERRIDE(m_RenderContext.GetAllocator())
 
@@ -97,7 +97,7 @@ public:
     // Used for RTTI purposes so we can safely static-cast an offscreen renderer to a
     // CSubPresentationRenderer
     static const char *GetRendererName() { return "SubPresentation"; }
-    CRegisteredString GetOffscreenRendererType() override { return m_OffscreenRendererType; }
+    QString GetOffscreenRendererType() override { return m_OffscreenRendererType; }
 
     Qt3DSRenderPickResult DoGraphQueryPick(const QVector2D &inMouseCoords,
                                            const QVector2D &inViewportDimensions,

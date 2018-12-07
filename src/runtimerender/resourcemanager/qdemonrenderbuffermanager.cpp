@@ -30,7 +30,7 @@
 #ifdef _WIN32
 #pragma warning(disable : 4201) // nonstandard extension used : nameless struct/union
 #endif
-#include <QtDemonRuntimeRender/qdemonrender.h>
+
 #include <QtDemonRuntimeRender/qdemonrenderbuffermanager.h>
 #include <Qt3DSAllocator.h>
 #include <QtDemonRender/qdemonrendercontext.h>
@@ -54,15 +54,12 @@ QT_BEGIN_NAMESPACE
 
 namespace {
 
-using eastl::hash;
-using eastl::pair;
-using eastl::make_pair;
-typedef eastl::basic_string<char8_t, ForwardingAllocator> TStr;
+typedef eastl::basic_string<char, ForwardingAllocator> TStr;
 struct StrHasher
 {
     size_t operator()(const TStr &str) const
     {
-        return hash<const char8_t *>()((const char8_t *)str.c_str());
+        return hash<const char *>()((const char *)str.c_str());
     }
 };
 
@@ -88,19 +85,19 @@ struct SImageEntry : public SImageTextureData
 struct SPrimitiveEntry
 {
     // Name of the primitive as it will be in the UIP file
-    CRegisteredString m_PrimitiveName;
+    QString m_PrimitiveName;
     // Name of the primitive file on the filesystem
-    CRegisteredString m_FileName;
+    QString m_FileName;
 };
 
 struct SBufferManager : public IBufferManager
 {
-    typedef eastl::hash_set<CRegisteredString, eastl::hash<CRegisteredString>,
-    eastl::equal_to<CRegisteredString>, ForwardingAllocator>
+    typedef eastl::hash_set<QString, eastl::hash<QString>,
+    eastl::equal_to<QString>, ForwardingAllocator>
     TStringSet;
-    typedef QHash<CRegisteredString, SImageEntry> TImageMap;
-    typedef QHash<CRegisteredString, SRenderMesh *> TMeshMap;
-    typedef QHash<CRegisteredString, CRegisteredString> TAliasImageMap;
+    typedef QHash<QString, SImageEntry> TImageMap;
+    typedef QHash<QString, SRenderMesh *> TMeshMap;
+    typedef QHash<QString, QString> TAliasImageMap;
 
     QDemonScopedRefCounted<QDemonRenderContext> m_Context;
     QDemonScopedRefCounted<IStringTable> m_StrTable;
@@ -116,7 +113,7 @@ struct SBufferManager : public IBufferManager
     SPrimitiveEntry m_PrimitiveNames[5];
     QVector<QDemonRenderVertexBufferEntry> m_EntryBuffer;
     bool m_GPUSupportsDXT;
-    static const char8_t *GetPrimitivesDirectory() { return "res//primitives"; }
+    static const char *GetPrimitivesDirectory() { return "res//primitives"; }
 
     SBufferManager(QDemonRenderContext &ctx, IStringTable &strTable,
                    IInputStreamFactory &inInputStreamFactory, IPerfTimer &inTimer)
@@ -140,21 +137,21 @@ struct SBufferManager : public IBufferManager
 
     QDEMON_IMPLEMENT_REF_COUNT_ADDREF_RELEASE(m_Context->GetAllocator())
 
-    CRegisteredString CombineBaseAndRelative(const char8_t *inBase,
-                                             const char8_t *inRelative) override
+    QString CombineBaseAndRelative(const char *inBase,
+                                             const char *inRelative) override
     {
         CFileTools::CombineBaseAndRelative(inBase, inRelative, m_PathBuilder);
         return m_StrTable->RegisterStr(m_PathBuilder.c_str());
     }
 
-    void SetImageHasTransparency(CRegisteredString inImagePath, bool inHasTransparency) override
+    void SetImageHasTransparency(QString inImagePath, bool inHasTransparency) override
     {
         pair<TImageMap::iterator, bool> theImage =
                 m_ImageMap.insert(make_pair(inImagePath, SImageEntry()));
         theImage.first->second.m_TextureFlags.SetHasTransparency(inHasTransparency);
     }
 
-    bool GetImageHasTransparency(CRegisteredString inSourcePath) const override
+    bool GetImageHasTransparency(QString inSourcePath) const override
     {
         TImageMap::const_iterator theIter = m_ImageMap.find(inSourcePath);
         if (theIter != m_ImageMap.end())
@@ -162,7 +159,7 @@ struct SBufferManager : public IBufferManager
         return false;
     }
 
-    void SetImageTransparencyToFalseIfNotSet(CRegisteredString inSourcePath) override
+    void SetImageTransparencyToFalseIfNotSet(QString inSourcePath) override
     {
         pair<TImageMap::iterator, bool> theImage =
                 m_ImageMap.insert(make_pair(inSourcePath, SImageEntry()));
@@ -171,20 +168,20 @@ struct SBufferManager : public IBufferManager
             theImage.first->second.m_TextureFlags.SetHasTransparency(false);
     }
 
-    void SetInvertImageUVCoords(CRegisteredString inImagePath, bool inShouldInvertCoords) override
+    void SetInvertImageUVCoords(QString inImagePath, bool inShouldInvertCoords) override
     {
         pair<TImageMap::iterator, bool> theImage =
                 m_ImageMap.insert(make_pair(inImagePath, SImageEntry()));
         theImage.first->second.m_TextureFlags.SetInvertUVCoords(inShouldInvertCoords);
     }
 
-    bool IsImageLoaded(CRegisteredString inSourcePath) override
+    bool IsImageLoaded(QString inSourcePath) override
     {
         Mutex::ScopedLock __locker(m_LoadedImageSetMutex);
         return m_LoadedImageSet.find(inSourcePath) != m_LoadedImageSet.end();
     }
 
-    bool AliasImagePath(CRegisteredString inSourcePath, CRegisteredString inAliasPath,
+    bool AliasImagePath(QString inSourcePath, QString inAliasPath,
                         bool inIgnoreIfLoaded) override
     {
         if (inSourcePath.IsValid() == false || inAliasPath.IsValid() == false)
@@ -196,12 +193,12 @@ struct SBufferManager : public IBufferManager
         return true;
     }
 
-    void UnaliasImagePath(CRegisteredString inSourcePath) override
+    void UnaliasImagePath(QString inSourcePath) override
     {
         m_AliasImageMap.erase(inSourcePath);
     }
 
-    CRegisteredString GetImagePath(CRegisteredString inSourcePath) override
+    QString GetImagePath(QString inSourcePath) override
     {
         TAliasImageMap::iterator theAliasIter = m_AliasImageMap.find(inSourcePath);
         if (theAliasIter != m_AliasImageMap.end())
@@ -231,7 +228,7 @@ struct SBufferManager : public IBufferManager
         sY = wrapMod(sY, height);
     }
 
-    SImageTextureData LoadRenderImage(CRegisteredString inImagePath,
+    SImageTextureData LoadRenderImage(QString inImagePath,
                                       SLoadedTexture &inLoadedImage,
                                       bool inForceScanForTransparency, bool inBsdfMipmaps) override
     {
@@ -324,7 +321,7 @@ struct SBufferManager : public IBufferManager
         return theImage.first->second;
     }
 
-    SImageTextureData LoadRenderImage(CRegisteredString inImagePath,
+    SImageTextureData LoadRenderImage(QString inImagePath,
                                       bool inForceScanForTransparency, bool inBsdfMipmaps) override
     {
         inImagePath = GetImagePath(inImagePath);
@@ -398,9 +395,9 @@ struct SBufferManager : public IBufferManager
         return theIter->second;
     }
 
-    qt3dsimp::SMultiLoadResult LoadPrimitive(const char8_t *inRelativePath)
+    qt3dsimp::SMultiLoadResult LoadPrimitive(const char *inRelativePath)
     {
-        CRegisteredString theName(m_StrTable->RegisterStr(inRelativePath));
+        QString theName(m_StrTable->RegisterStr(inRelativePath));
         if (m_PrimitiveNames[0].m_PrimitiveName.IsValid() == false) {
             IStringTable &strTable(m_Context->GetStringTable());
             m_PrimitiveNames[0].m_PrimitiveName = strTable.RegisterStr("#Rectangle");
@@ -464,7 +461,7 @@ struct SBufferManager : public IBufferManager
         return QDemonConstDataRef<quint8>();
     }
 
-    SRenderMesh *LoadMesh(CRegisteredString inMeshPath) override
+    SRenderMesh *LoadMesh(QString inMeshPath) override
     {
         if (inMeshPath.IsValid() == false)
             return nullptr;
@@ -652,7 +649,7 @@ struct SBufferManager : public IBufferManager
                 // is a working
                 // example of using the technique.
 #ifdef QDEMON_RENDER_GENERATE_SUB_SUBSETS
-                Option<QDemonRenderVertexBufferEntry> thePosAttrOpt =
+                QDemonOption<QDemonRenderVertexBufferEntry> thePosAttrOpt =
                         theVertexBuffer->GetEntryByName("attr_pos");
                 bool hasPosAttr = thePosAttrOpt.hasValue()
                         && thePosAttrOpt->m_ComponentType == QDemonRenderComponentTypes::float
@@ -719,13 +716,13 @@ struct SBufferManager : public IBufferManager
                             quint32 inVertStride, quint32 *inIndexData, quint32 inIndexCount,
                             QDemonBounds3 inBounds) override
     {
-        CRegisteredString sourcePath = m_StrTable->RegisterStr(inSourcePath);
+        QString sourcePath = m_StrTable->RegisterStr(inSourcePath);
 
-        // eastl::pair<CRegisteredString, SRenderMesh*> thePair(sourcePath, (SRenderMesh*)nullptr);
-        pair<TMeshMap::iterator, bool> theMesh;
+        // QPair<QString, SRenderMesh*> thePair(sourcePath, (SRenderMesh*)nullptr);
+        QPair<TMeshMap::iterator, bool> theMesh;
         // Make sure there isn't already a buffer entry for this mesh.
         if (m_MeshMap.contains(sourcePath)) {
-            theMesh = make_pair<TMeshMap::iterator, bool>(m_MeshMap.find(sourcePath), true);
+            theMesh = QPair<TMeshMap::iterator, bool>(m_MeshMap.find(sourcePath), true);
         } else {
             theMesh = m_MeshMap.insert(make_pair(sourcePath, (SRenderMesh *)nullptr));
         }
@@ -883,7 +880,7 @@ struct SBufferManager : public IBufferManager
             m_LoadedImageSet.clear();
         }
     }
-    void InvalidateBuffer(CRegisteredString inSourcePath) override
+    void InvalidateBuffer(QString inSourcePath) override
     {
         {
             TMeshMap::iterator iter = m_MeshMap.find(inSourcePath);

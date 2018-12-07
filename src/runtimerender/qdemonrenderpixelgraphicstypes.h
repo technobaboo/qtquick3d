@@ -30,11 +30,11 @@
 #pragma once
 #ifndef QDEMON_RENDER_PIXEL_GRAPHICS_TYPES_H
 #define QDEMON_RENDER_PIXEL_GRAPHICS_TYPES_H
-#include <QtDemonRuntimeRender/qdemonrender.h>
-#include <QVector2D.h>
+
+#include <QtGui/QVector2D>
 #include <QVector4D.h>
 #include <QMatrix3x3.h>
-#include <Qt3DSOption.h>
+#include <QtDemon/qdemonoption.h>
 
 QT_BEGIN_NAMESPACE
 

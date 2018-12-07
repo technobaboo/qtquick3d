@@ -43,12 +43,12 @@ QT_BEGIN_NAMESPACE
 // set to 1
 struct SSubPresentationHelper
 {
-    IQt3DSRenderContext &m_RenderContext;
+    IQDemonRenderContext &m_RenderContext;
     QSize m_PreviousPresentationDimensions;
 
     bool m_WasInSubPresentation;
 
-    SSubPresentationHelper(IQt3DSRenderContext &inContext,
+    SSubPresentationHelper(IQDemonRenderContext &inContext,
                            const QSize &inPresDimensions)
         : m_RenderContext(inContext)
         , m_PreviousPresentationDimensions(inContext.GetCurrentPresentationDimensions())

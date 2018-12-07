@@ -30,7 +30,7 @@
 #pragma once
 #ifndef QDEMON_RENDER_LOADED_TEXTURE_H
 #define QDEMON_RENDER_LOADED_TEXTURE_H
-#include <QtDemonRuntimeRender/qdemonrender.h>
+
 #include <Qt3DSSimpleTypes.h>
 #include <QtDemonRender/qdemonrenderbasetypes.h>
 #include <QtDemonRuntimeRender/qdemonrenderloadedtexturedds.h>
@@ -83,7 +83,7 @@ public:
     void *m_Palette;
     qint32 m_CustomMasks[3];
     int m_BitCount;
-    char8_t m_BackgroundColor[3];
+    char m_BackgroundColor[3];
     uint8_t *m_TransparencyTable;
     int32_t m_TransparentPaletteIndex;
 

@@ -30,8 +30,8 @@
 #pragma once
 #ifndef QDEMON_RENDER_TAGGED_POINTER_H
 #define QDEMON_RENDER_TAGGED_POINTER_H
-#include <QtDemonRuntimeRender/qdemonrender.h>
-#include <StringTable.h>
+
+#include <QtDemonRuntimeRender/qtdemonruntimerenderglobal.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -41,7 +41,7 @@ template <typename TDataType>
 struct SPointerTag
 {
     /* Expected API for runtime RTTI
-        static CRegisteredString GetTag() { return g_dtype_specific_string; }
+        static QString GetTag() { return g_dtype_specific_string; }
         */
 };
 

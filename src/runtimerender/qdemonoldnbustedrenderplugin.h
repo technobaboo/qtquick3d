@@ -48,16 +48,16 @@ class COldNBustedPluginRenderer;
 class COldNBustedPluginRenderer : public IOffscreenRenderer
 {
 public:
-    IQt3DSRenderContext &m_RenderContext;
+    IQDemonRenderContext &m_RenderContext;
     long m_DLLHandle;
     volatile qint32 mRefCount;
     SOffscreenRendererEnvironment m_LastRenderedEnvironment;
-    CRegisteredString m_OffscreenRendererType;
+    QString m_OffscreenRendererType;
 
     PROC_GetDesiredTextureSize m_GetTextureSizeProc;
     PROC_Render m_RenderProc;
 
-    COldNBustedPluginRenderer(IQt3DSRenderContext &inRenderContext, long inDLLHandle);
+    COldNBustedPluginRenderer(IQDemonRenderContext &inRenderContext, long inDLLHandle);
 
     QDEMON_IMPLEMENT_REF_COUNT_ADDREF_RELEASE_OVERRIDE(m_RenderContext.GetAllocator())
 
@@ -93,7 +93,7 @@ public:
     // Used for RTTI purposes so we can safely static-cast an offscreen renderer to a
     // CPluginRenderer
     static const char *GetRendererName() { return "Plugin"; }
-    CRegisteredString GetOffscreenRendererType() override { return m_OffscreenRendererType; }
+    QString GetOffscreenRendererType() override { return m_OffscreenRendererType; }
 };
 QT_END_NAMESPACE
 

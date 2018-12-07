@@ -444,7 +444,7 @@ struct SSubsetMaterialVertexPipeline : public SVertexPipelineImpl
         Fragment() << "\tfloat object_opacity = material_diffuse.a;" << Endl;
     }
 
-    void AssignOutput(const char8_t *inVarName, const char8_t *inVarValue) override
+    void AssignOutput(const char *inVarName, const char *inVarValue) override
     {
         Vertex() << "\t" << inVarName << " = " << inVarValue << ";\n";
     }
@@ -530,7 +530,7 @@ struct SSubsetMaterialVertexPipeline : public SVertexPipelineImpl
 
     void EndFragmentGeneration() override { Fragment().Append("}"); }
 
-    void AddInterpolationParameter(const char8_t *inName, const char8_t *inType) override
+    void AddInterpolationParameter(const char *inName, const char *inType) override
     {
         m_InterpolationParameters.insert(eastl::make_pair(Str(inName), Str(inType)));
         Vertex().AddOutgoing(inName, inType);
@@ -567,7 +567,7 @@ QDemonRenderShaderProgram *Qt3DSRendererImpl::GenerateShader(SSubsetRenderable &
     SShaderDefaultMaterialKey theKey(inRenderable.m_ShaderDescription);
     theKey.ToString(m_GeneratedShaderString, m_DefaultMaterialShaderKeyProperties);
     IShaderCache &theCache = m_qt3dsContext.GetShaderCache();
-    CRegisteredString theCacheKey =
+    QString theCacheKey =
             m_qt3dsContext.GetStringTable().RegisterStr(m_GeneratedShaderString.c_str());
     QDemonRenderShaderProgram *cachedProgram = theCache.GetProgram(theCacheKey, inFeatureSet);
     if (cachedProgram)
@@ -604,7 +604,7 @@ Qt3DSRendererImpl::GetParaboloidDepthShader(TessModeValues::Enum inTessMode)
 
 SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetParaboloidDepthNoTessShader()
 {
-    Option<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> &theDepthShader =
+    QDemonOption<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> &theDepthShader =
             m_ParaboloidDepthShader;
 
     if (theDepthShader.hasValue() == false) {
@@ -612,7 +612,7 @@ SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetParaboloidDepthNoTessShader
         name.assign("paraboloid depth shader");
 
         IShaderCache &theCache = m_qt3dsContext.GetShaderCache();
-        CRegisteredString theCacheKey = m_qt3dsContext.GetStringTable().RegisterStr(name.c_str());
+        QString theCacheKey = m_qt3dsContext.GetStringTable().RegisterStr(name.c_str());
         QDemonRenderShaderProgram *depthShaderProgram =
                 theCache.GetProgram(theCacheKey, TShaderFeatureSet());
         if (!depthShaderProgram) {
@@ -642,7 +642,7 @@ SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetParaboloidDepthNoTessShader
 
 SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetParaboloidDepthTessLinearShader()
 {
-    Option<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> &theDepthShader =
+    QDemonOption<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> &theDepthShader =
             m_ParaboloidDepthTessLinearShader;
 
     if (theDepthShader.hasValue() == false) {
@@ -650,7 +650,7 @@ SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetParaboloidDepthTessLinearSh
         name.assign("paraboloid depth tess linear shader");
 
         IShaderCache &theCache = m_qt3dsContext.GetShaderCache();
-        CRegisteredString theCacheKey = m_qt3dsContext.GetStringTable().RegisterStr(name.c_str());
+        QString theCacheKey = m_qt3dsContext.GetStringTable().RegisterStr(name.c_str());
         QDemonRenderShaderProgram *depthShaderProgram =
                 theCache.GetProgram(theCacheKey, TShaderFeatureSet());
         if (!depthShaderProgram) {
@@ -716,7 +716,7 @@ SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetParaboloidDepthTessLinearSh
 
 SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetParaboloidDepthTessPhongShader()
 {
-    Option<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> &theDepthShader =
+    QDemonOption<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> &theDepthShader =
             m_ParaboloidDepthTessPhongShader;
 
     if (theDepthShader.hasValue() == false) {
@@ -724,7 +724,7 @@ SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetParaboloidDepthTessPhongSha
         name.assign("paraboloid depth tess phong shader");
 
         IShaderCache &theCache = m_qt3dsContext.GetShaderCache();
-        CRegisteredString theCacheKey = m_qt3dsContext.GetStringTable().RegisterStr(name.c_str());
+        QString theCacheKey = m_qt3dsContext.GetStringTable().RegisterStr(name.c_str());
         QDemonRenderShaderProgram *depthShaderProgram =
                 theCache.GetProgram(theCacheKey, TShaderFeatureSet());
         if (!depthShaderProgram) {
@@ -790,7 +790,7 @@ SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetParaboloidDepthTessPhongSha
 
 SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetParaboloidDepthTessNPatchShader()
 {
-    Option<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> &theDepthShader =
+    QDemonOption<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> &theDepthShader =
             m_ParaboloidDepthTessNPatchShader;
 
     if (theDepthShader.hasValue() == false) {
@@ -798,7 +798,7 @@ SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetParaboloidDepthTessNPatchSh
         name.assign("paraboloid depth tess NPatch shader");
 
         IShaderCache &theCache = m_qt3dsContext.GetShaderCache();
-        CRegisteredString theCacheKey = m_qt3dsContext.GetStringTable().RegisterStr(name.c_str());
+        QString theCacheKey = m_qt3dsContext.GetStringTable().RegisterStr(name.c_str());
         QDemonRenderShaderProgram *depthShaderProgram =
                 theCache.GetProgram(theCacheKey, TShaderFeatureSet());
         if (!depthShaderProgram) {
@@ -881,7 +881,7 @@ Qt3DSRendererImpl::GetCubeShadowDepthShader(TessModeValues::Enum inTessMode)
 
 SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetCubeDepthNoTessShader()
 {
-    Option<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> &theDepthShader =
+    QDemonOption<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> &theDepthShader =
             m_CubemapDepthShader;
 
     if (theDepthShader.hasValue() == false) {
@@ -889,7 +889,7 @@ SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetCubeDepthNoTessShader()
         name.assign("cubemap face depth shader");
 
         IShaderCache &theCache = m_qt3dsContext.GetShaderCache();
-        CRegisteredString theCacheKey = m_qt3dsContext.GetStringTable().RegisterStr(name.c_str());
+        QString theCacheKey = m_qt3dsContext.GetStringTable().RegisterStr(name.c_str());
         QDemonRenderShaderProgram *depthShaderProgram =
                 theCache.GetProgram(theCacheKey, TShaderFeatureSet());
 
@@ -930,7 +930,7 @@ SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetCubeDepthNoTessShader()
 
 SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetCubeDepthTessLinearShader()
 {
-    Option<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> &theDepthShader =
+    QDemonOption<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> &theDepthShader =
             m_CubemapDepthTessLinearShader;
 
     if (theDepthShader.hasValue() == false) {
@@ -938,7 +938,7 @@ SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetCubeDepthTessLinearShader()
         name.assign("cubemap face depth linear tess shader");
 
         IShaderCache &theCache = m_qt3dsContext.GetShaderCache();
-        CRegisteredString theCacheKey = m_qt3dsContext.GetStringTable().RegisterStr(name.c_str());
+        QString theCacheKey = m_qt3dsContext.GetStringTable().RegisterStr(name.c_str());
         QDemonRenderShaderProgram *depthShaderProgram =
                 theCache.GetProgram(theCacheKey, TShaderFeatureSet());
 
@@ -1006,7 +1006,7 @@ SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetCubeDepthTessLinearShader()
 
 SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetCubeDepthTessPhongShader()
 {
-    Option<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> &theDepthShader =
+    QDemonOption<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> &theDepthShader =
             m_CubemapDepthTessPhongShader;
 
     if (theDepthShader.hasValue() == false) {
@@ -1014,7 +1014,7 @@ SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetCubeDepthTessPhongShader()
         name.assign("cubemap face depth phong tess shader");
 
         IShaderCache &theCache = m_qt3dsContext.GetShaderCache();
-        CRegisteredString theCacheKey = m_qt3dsContext.GetStringTable().RegisterStr(name.c_str());
+        QString theCacheKey = m_qt3dsContext.GetStringTable().RegisterStr(name.c_str());
         QDemonRenderShaderProgram *depthShaderProgram =
                 theCache.GetProgram(theCacheKey, TShaderFeatureSet());
 
@@ -1088,7 +1088,7 @@ SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetCubeDepthTessPhongShader()
 
 SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetCubeDepthTessNPatchShader()
 {
-    Option<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> &theDepthShader =
+    QDemonOption<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> &theDepthShader =
             m_CubemapDepthTessNPatchShader;
 
     if (theDepthShader.hasValue() == false) {
@@ -1096,7 +1096,7 @@ SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetCubeDepthTessNPatchShader()
         name.assign("cubemap face depth npatch tess shader");
 
         IShaderCache &theCache = m_qt3dsContext.GetShaderCache();
-        CRegisteredString theCacheKey = m_qt3dsContext.GetStringTable().RegisterStr(name.c_str());
+        QString theCacheKey = m_qt3dsContext.GetStringTable().RegisterStr(name.c_str());
         QDemonRenderShaderProgram *depthShaderProgram =
                 theCache.GetProgram(theCacheKey, TShaderFeatureSet());
 
@@ -1193,7 +1193,7 @@ Qt3DSRendererImpl::GetOrthographicDepthShader(TessModeValues::Enum inTessMode)
 
 SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetOrthographicDepthNoTessShader()
 {
-    Option<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> &theDepthShader =
+    QDemonOption<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> &theDepthShader =
             m_OrthographicDepthShader;
 
     if (theDepthShader.hasValue() == false) {
@@ -1201,7 +1201,7 @@ SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetOrthographicDepthNoTessShad
         name.assign("orthographic depth shader");
 
         IShaderCache &theCache = m_qt3dsContext.GetShaderCache();
-        CRegisteredString theCacheKey = m_qt3dsContext.GetStringTable().RegisterStr(name.c_str());
+        QString theCacheKey = m_qt3dsContext.GetStringTable().RegisterStr(name.c_str());
         QDemonRenderShaderProgram *depthShaderProgram =
                 theCache.GetProgram(theCacheKey, TShaderFeatureSet());
         if (!depthShaderProgram) {
@@ -1241,7 +1241,7 @@ SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetOrthographicDepthNoTessShad
 
 SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetOrthographicDepthTessLinearShader()
 {
-    Option<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> &theDepthShader =
+    QDemonOption<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> &theDepthShader =
             m_OrthographicDepthTessLinearShader;
 
     if (theDepthShader.hasValue() == false) {
@@ -1249,7 +1249,7 @@ SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetOrthographicDepthTessLinear
         name.assign("orthographic depth tess linear shader");
 
         IShaderCache &theCache = m_qt3dsContext.GetShaderCache();
-        CRegisteredString theCacheKey = m_qt3dsContext.GetStringTable().RegisterStr(name.c_str());
+        QString theCacheKey = m_qt3dsContext.GetStringTable().RegisterStr(name.c_str());
         QDemonRenderShaderProgram *depthShaderProgram =
                 theCache.GetProgram(theCacheKey, TShaderFeatureSet());
         if (!depthShaderProgram) {
@@ -1312,7 +1312,7 @@ SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetOrthographicDepthTessLinear
 
 SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetOrthographicDepthTessPhongShader()
 {
-    Option<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> &theDepthShader =
+    QDemonOption<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> &theDepthShader =
             m_OrthographicDepthTessPhongShader;
 
     if (theDepthShader.hasValue() == false) {
@@ -1320,7 +1320,7 @@ SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetOrthographicDepthTessPhongS
         name.assign("orthographic depth tess phong shader");
 
         IShaderCache &theCache = m_qt3dsContext.GetShaderCache();
-        CRegisteredString theCacheKey = m_qt3dsContext.GetStringTable().RegisterStr(name.c_str());
+        QString theCacheKey = m_qt3dsContext.GetStringTable().RegisterStr(name.c_str());
         QDemonRenderShaderProgram *depthShaderProgram =
                 theCache.GetProgram(theCacheKey, TShaderFeatureSet());
         if (!depthShaderProgram) {
@@ -1389,7 +1389,7 @@ SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetOrthographicDepthTessPhongS
 
 SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetOrthographicDepthTessNPatchShader()
 {
-    Option<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> &theDepthShader =
+    QDemonOption<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> &theDepthShader =
             m_OrthographicDepthTessNPatchShader;
 
     if (theDepthShader.hasValue() == false) {
@@ -1397,7 +1397,7 @@ SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetOrthographicDepthTessNPatch
         name.assign("orthographic depth tess npatch shader");
 
         IShaderCache &theCache = m_qt3dsContext.GetShaderCache();
-        CRegisteredString theCacheKey = m_qt3dsContext.GetStringTable().RegisterStr(name.c_str());
+        QString theCacheKey = m_qt3dsContext.GetStringTable().RegisterStr(name.c_str());
         QDemonRenderShaderProgram *depthShaderProgram =
                 theCache.GetProgram(theCacheKey, TShaderFeatureSet());
         if (!depthShaderProgram) {
@@ -1477,7 +1477,7 @@ SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetOrthographicDepthTessNPatch
 
 SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetDepthPrepassShader(bool inDisplaced)
 {
-    Option<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> &theDepthPrePassShader =
+    QDemonOption<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> &theDepthPrePassShader =
             (!inDisplaced) ? m_DepthPrepassShader : m_DepthPrepassShaderDisplaced;
 
     if (theDepthPrePassShader.hasValue() == false) {
@@ -1488,7 +1488,7 @@ SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetDepthPrepassShader(bool inD
             name.append(" displacement");
 
         IShaderCache &theCache = m_qt3dsContext.GetShaderCache();
-        CRegisteredString theCacheKey = m_qt3dsContext.GetStringTable().RegisterStr(name.c_str());
+        QString theCacheKey = m_qt3dsContext.GetStringTable().RegisterStr(name.c_str());
         QDemonRenderShaderProgram *depthShaderProgram =
                 theCache.GetProgram(theCacheKey, TShaderFeatureSet());
         if (!depthShaderProgram) {
@@ -1553,7 +1553,7 @@ Qt3DSRendererImpl::GetDepthTessPrepassShader(TessModeValues::Enum inTessMode, bo
 SRenderableDepthPrepassShader *
 Qt3DSRendererImpl::GetDepthTessLinearPrepassShader(bool inDisplaced)
 {
-    Option<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> &theDepthPrePassShader =
+    QDemonOption<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> &theDepthPrePassShader =
             (!inDisplaced) ? m_DepthTessLinearPrepassShader
                            : m_DepthTessLinearPrepassShaderDisplaced;
 
@@ -1565,7 +1565,7 @@ Qt3DSRendererImpl::GetDepthTessLinearPrepassShader(bool inDisplaced)
             name.append(" displacement");
 
         IShaderCache &theCache = m_qt3dsContext.GetShaderCache();
-        CRegisteredString theCacheKey = m_qt3dsContext.GetStringTable().RegisterStr(name.c_str());
+        QString theCacheKey = m_qt3dsContext.GetStringTable().RegisterStr(name.c_str());
         QDemonRenderShaderProgram *depthShaderProgram =
                 theCache.GetProgram(theCacheKey, TShaderFeatureSet());
         if (!depthShaderProgram) {
@@ -1694,7 +1694,7 @@ SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetDepthTessPhongPrepassShader
 {
     if (m_DepthTessPhongPrepassShader.hasValue() == false) {
         IShaderCache &theCache = m_qt3dsContext.GetShaderCache();
-        CRegisteredString theCacheKey =
+        QString theCacheKey =
                 m_qt3dsContext.GetStringTable().RegisterStr("depth tess phong prepass shader");
         QDemonRenderShaderProgram *depthShaderProgram =
                 theCache.GetProgram(theCacheKey, TShaderFeatureSet());
@@ -1774,7 +1774,7 @@ SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetDepthTessNPatchPrepassShade
 {
     if (m_DepthTessNPatchPrepassShader.hasValue() == false) {
         IShaderCache &theCache = m_qt3dsContext.GetShaderCache();
-        CRegisteredString theCacheKey =
+        QString theCacheKey =
                 m_qt3dsContext.GetStringTable().RegisterStr("depth tess npatch prepass shader");
         QDemonRenderShaderProgram *depthShaderProgram =
                 theCache.GetProgram(theCacheKey, TShaderFeatureSet());
@@ -1869,7 +1869,7 @@ SDefaultAoPassShader *Qt3DSRendererImpl::GetDefaultAoPassShader(TShaderFeatureSe
 {
     if (m_DefaultAoPassShader.hasValue() == false) {
         IShaderCache &theCache = m_qt3dsContext.GetShaderCache();
-        CRegisteredString theCacheKey =
+        QString theCacheKey =
                 m_qt3dsContext.GetStringTable().RegisterStr("fullscreen AO pass shader");
         QDemonRenderShaderProgram *aoPassShaderProgram =
                 theCache.GetProgram(theCacheKey, TShaderFeatureSet());
@@ -1993,7 +1993,7 @@ SDefaultAoPassShader *Qt3DSRendererImpl::GetFakeDepthShader(TShaderFeatureSet in
 {
     if (m_FakeDepthShader.hasValue() == false) {
         IShaderCache &theCache = m_qt3dsContext.GetShaderCache();
-        CRegisteredString theCacheKey =
+        QString theCacheKey =
                 m_qt3dsContext.GetStringTable().RegisterStr("depth display shader");
         QDemonRenderShaderProgram *depthShaderProgram =
                 theCache.GetProgram(theCacheKey, TShaderFeatureSet());
@@ -2040,7 +2040,7 @@ SDefaultAoPassShader *Qt3DSRendererImpl::GetFakeCubeDepthShader(TShaderFeatureSe
 {
     if (!m_FakeCubemapDepthShader.hasValue()) {
         IShaderCache &theCache = m_qt3dsContext.GetShaderCache();
-        CRegisteredString theCacheKey =
+        QString theCacheKey =
                 m_qt3dsContext.GetStringTable().RegisterStr("cube depth display shader");
         QDemonRenderShaderProgram *cubeShaderProgram =
                 theCache.GetProgram(theCacheKey, TShaderFeatureSet());

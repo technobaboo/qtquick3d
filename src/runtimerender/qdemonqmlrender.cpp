@@ -36,7 +36,7 @@
 
 QT_BEGIN_NAMESPACE
 
-Q3DSQmlQ3DSQmlRender(IQt3DSRenderContext &inRenderContext, const char *asset)
+Q3DSQmlQ3DSQmlRender(IQDemonRenderContext &inRenderContext, const char *asset)
     : m_RenderContext(inRenderContext)
     , m_qmlStreamRenderer(nullptr)
     , m_offscreenRenderType(inRenderContext.GetStringTable().RegisterStr(GetRendererName()))
@@ -55,7 +55,7 @@ Q3DSQml~Q3DSQmlRender()
         m_qmlStreamRenderer->uninitialize();
 }
 
-CRegisteredString Q3DSQmlGetOffscreenRendererType()
+QString Q3DSQmlGetOffscreenRendererType()
 {
     return m_offscreenRenderType;
 }

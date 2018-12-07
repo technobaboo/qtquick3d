@@ -27,7 +27,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <QtDemonRuntimeRender/qdemonrender.h>
+
 #include <QtDemonRuntimeRender/qdemonrenderscene.h>
 #include <QtDemonRuntimeRender/qdemonrenderlayer.h>
 #include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
@@ -65,7 +65,7 @@ SLayer *SScene::GetLastChild()
     return child;
 }
 
-bool SScene::PrepareForRender(const QVector2D &inViewportDimensions, IQt3DSRenderContext &inContext,
+bool SScene::PrepareForRender(const QVector2D &inViewportDimensions, IQDemonRenderContext &inContext,
                               const SRenderInstanceId id)
 {
     // We need to iterate through the layers in reverse order and ask them to render.
@@ -79,7 +79,7 @@ bool SScene::PrepareForRender(const QVector2D &inViewportDimensions, IQt3DSRende
     return wasDirty;
 }
 
-void SScene::Render(const QVector2D &inViewportDimensions, IQt3DSRenderContext &inContext,
+void SScene::Render(const QVector2D &inViewportDimensions, IQDemonRenderContext &inContext,
                     RenderClearCommand inClearColorBuffer, const SRenderInstanceId id)
 {
     if ((inClearColorBuffer == SScene::ClearIsOptional && m_UseClearColor)
@@ -104,7 +104,7 @@ void SScene::Render(const QVector2D &inViewportDimensions, IQt3DSRenderContext &
     }
 }
 void SScene::RenderWithClear(const QVector2D &inViewportDimensions,
-                             IQt3DSRenderContext &inContext,
+                             IQDemonRenderContext &inContext,
                              RenderClearCommand inClearColorBuffer,
                              QVector3D inClearColor,
                              const SRenderInstanceId id)

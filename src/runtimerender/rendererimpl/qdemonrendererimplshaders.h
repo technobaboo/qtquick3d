@@ -30,7 +30,7 @@
 #pragma once
 #ifndef QDEMON_RENDERER_IMPL_SHADERS_H
 #define QDEMON_RENDERER_IMPL_SHADERS_H
-#include <QtDemonRuntimeRender/qdemonrender.h>
+
 #include <QtDemonRender/qdemonrendershaderprogram.h>
 #include <QtDemonRuntimeRender/qdemonrenderprogrampipeline.h>
 
@@ -71,12 +71,12 @@ struct SShaderTessellationProperties
 struct SShaderGeneratorGeneratedShader
 {
     quint32 m_LayerSetIndex;
-    CRegisteredString m_QueryString;
+    QString m_QueryString;
     QDemonRenderShaderProgram &m_Shader;
     NVRenderCachedShaderProperty<QMatrix4x4> m_ViewportMatrix;
     SShaderTessellationProperties m_Tessellation;
 
-    SShaderGeneratorGeneratedShader(CRegisteredString inQueryString,
+    SShaderGeneratorGeneratedShader(QString inQueryString,
                                     QDemonRenderShaderProgram &inShader)
         : m_LayerSetIndex(QDEMON_MAX_U32)
         , m_QueryString(inQueryString)

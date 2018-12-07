@@ -30,7 +30,7 @@
 #pragma once
 #ifndef QDEMON_RENDER_PLUGIN_PROPERTY_VALUE_H
 #define QDEMON_RENDER_PLUGIN_PROPERTY_VALUE_H
-#include <QtDemonRuntimeRender/qdemonrender.h>
+
 #include <StringTable.h>
 #include <Qt3DSDiscriminatedUnion.h>
 #include <QtDemonRuntimeRender/qdemonrenderplugin.h>
@@ -38,9 +38,9 @@
 QT_BEGIN_NAMESPACE
 
 template <>
-struct DestructTraits<CRegisteredString>
+struct DestructTraits<QString>
 {
-    void destruct(CRegisteredString &) {}
+    void destruct(QString &) {}
 };
 
 template <typename TDatatype>
@@ -59,7 +59,7 @@ struct SRenderPluginPropertyValueTypeMap<float>
     enum { TypeMap = RenderPluginPropertyValueTypes::Float };
 };
 template <>
-struct SRenderPluginPropertyValueTypeMap<CRegisteredString>
+struct SRenderPluginPropertyValueTypeMap<QString>
 {
     enum { TypeMap = RenderPluginPropertyValueTypes::String };
 };
@@ -73,7 +73,7 @@ struct SRenderPluginPropertyValueUnionTraits
 {
     typedef RenderPluginPropertyValueTypes::Enum TIdType;
     enum {
-        TBufferSize = sizeof(CRegisteredString),
+        TBufferSize = sizeof(QString),
     };
 
     static TIdType getNoDataId()
@@ -92,7 +92,7 @@ struct SRenderPluginPropertyValueUnionTraits
     {
         switch (inType) {
         case RenderPluginPropertyValueTypes::String:
-            return inVisitor(*NVUnionCast<CRegisteredString *>(inData));
+            return inVisitor(*NVUnionCast<QString *>(inData));
         case RenderPluginPropertyValueTypes::Float:
             return inVisitor(*NVUnionCast<float *>(inData));
         case RenderPluginPropertyValueTypes::Long:
@@ -109,7 +109,7 @@ struct SRenderPluginPropertyValueUnionTraits
     {
         switch (inType) {
         case RenderPluginPropertyValueTypes::String:
-            return inVisitor(*NVUnionCast<const CRegisteredString *>(inData));
+            return inVisitor(*NVUnionCast<const QString *>(inData));
         case RenderPluginPropertyValueTypes::Float:
             return inVisitor(*NVUnionCast<const float *>(inData));
         case RenderPluginPropertyValueTypes::Long:
@@ -134,7 +134,7 @@ struct SRenderPluginPropertyValue : public TRenderPluginPropertyValueUnionType
 {
     typedef TRenderPluginPropertyValueUnionType TBase;
     SRenderPluginPropertyValue() {}
-    SRenderPluginPropertyValue(const CRegisteredString &str)
+    SRenderPluginPropertyValue(const QString &str)
         : TBase(str)
     {
     }
@@ -161,10 +161,10 @@ struct SRenderPropertyValueUpdate
 {
     // Should be the componentized name, so colors get .r .g .b appended
     // and vectors get .x .y etc. This interface only updates a component at a time.
-    CRegisteredString m_PropertyName;
+    QString m_PropertyName;
     SRenderPluginPropertyValue m_Value;
     SRenderPropertyValueUpdate() {}
-    SRenderPropertyValueUpdate(CRegisteredString str, const SRenderPluginPropertyValue &v)
+    SRenderPropertyValueUpdate(QString str, const SRenderPluginPropertyValue &v)
         : m_PropertyName(str)
         , m_Value(v)
     {

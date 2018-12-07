@@ -35,19 +35,19 @@
 
 QT_BEGIN_NAMESPACE
 
-class IQt3DS;
+class IQDemon;
 class IQ3DSQmlStreamService;
 class IQ3DSQmlStreamRenderer;
 
 class Q3DSQmlRender : public IOffscreenRenderer
 {
 public:
-    Q3DSQmlRender(IQt3DSRenderContext &inRenderContext, const char *asset);
+    Q3DSQmlRender(IQDemonRenderContext &inRenderContext, const char *asset);
     ~Q3DSQmlRender();
 
     QDEMON_IMPLEMENT_REF_COUNT_ADDREF_RELEASE_OVERRIDE(m_RenderContext.GetAllocator())
 
-    CRegisteredString GetOffscreenRendererType() override;
+    QString GetOffscreenRendererType() override;
 
     SOffscreenRendererEnvironment GetDesiredEnvironment(QVector2D inPresentationScaleFactor) override;
 
@@ -89,10 +89,10 @@ private:
 
     void initializeRenderer();
 
-    IQt3DSRenderContext &m_RenderContext;
+    IQDemonRenderContext &m_RenderContext;
     IQ3DSQmlStreamRenderer *m_qmlStreamRenderer;
-    CRegisteredString m_offscreenRenderType;
-    CRegisteredString m_assetString;
+    QString m_offscreenRenderType;
+    QString m_assetString;
     IOffscreenRendererCallback *m_callback;
     volatile qint32 mRefCount;
 };

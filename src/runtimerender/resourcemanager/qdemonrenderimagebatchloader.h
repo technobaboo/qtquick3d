@@ -30,9 +30,9 @@
 #pragma once
 #ifndef QDEMON_RENDER_THREADED_IMAGE_LOADER_H
 #define QDEMON_RENDER_THREADED_IMAGE_LOADER_H
-#include <QtDemonRuntimeRender/qdemonrender.h>
+
 #include <QtDemon/qdemonrefcounted.h>
-#include <Qt3DSDataRef.h>
+#include <QtDemon/qdemondataref.h>
 #include <QtDemonRender/qdemonrenderbasetypes.h>
 
 QT_BEGIN_NAMESPACE
@@ -50,7 +50,7 @@ protected:
     virtual ~IImageLoadListener() {}
 
 public:
-    virtual void OnImageLoadComplete(CRegisteredString inPath,
+    virtual void OnImageLoadComplete(QString inPath,
                                      ImageLoadResult::Enum inResult) = 0;
     virtual void OnImageBatchComplete(quint64 inBatch) = 0;
 };
@@ -68,14 +68,14 @@ public:
     // source paths
     // until said path is loaded.
     // An optional listener can be passed in to get callbacks about the batch.
-    virtual TImageBatchId LoadImageBatch(QDemonConstDataRef<CRegisteredString> inSourcePaths,
-                                         CRegisteredString inImageTillLoaded,
+    virtual TImageBatchId LoadImageBatch(QDemonConstDataRef<QString> inSourcePaths,
+                                         QString inImageTillLoaded,
                                          IImageLoadListener *inListener,
                                          QDemonRenderContextType type) = 0;
     // Blocks if any of the images in the batch are in flight
     virtual void CancelImageBatchLoading(TImageBatchId inBatchId) = 0;
     // Blocks if the image is currently in-flight
-    virtual void CancelImageLoading(CRegisteredString inSourcePath) = 0;
+    virtual void CancelImageLoading(QString inSourcePath) = 0;
     // Block until every image in the batch is loaded.
     virtual void BlockUntilLoaded(TImageBatchId inId) = 0;
 

@@ -30,7 +30,7 @@
 #pragma once
 #ifndef QDEMON_RENDER_TEXTURE_ATLAS_H
 #define QDEMON_RENDER_TEXTURE_ATLAS_H
-#include <QtDemonRuntimeRender/qdemonrender.h>
+
 #include <QtDemon/qdemonrefcounted.h>
 #include <QtDemonRender/qdemonrenderbasetypes.h>
 
@@ -69,7 +69,7 @@ struct STextureAtlasRect
     float m_NormHeight;
 };
 
-typedef eastl::pair<STextureAtlasRect, QDemonDataRef<quint8>> TTextureAtlasEntryAndBuffer;
+typedef QPair<STextureAtlasRect, QDemonDataRef<quint8>> TTextureAtlasEntryAndBuffer;
 
 /**
      *	Abstract class of a texture atlas representation

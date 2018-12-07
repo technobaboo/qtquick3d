@@ -32,9 +32,9 @@
 #define QDEMON_RENDER_SHADOW_MAP_H
 #include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
 #include <Qt3DSAtomic.h>
-#include <QMatrix4x4.h>
-#include <QVector3D.h>
-#include <Qt3DSFlags.h>
+#include <QtGui/QMatrix4x4>
+#include <QtGui/QVector3D>
+#include <QtDemon/qdemonflags.h>
 #include <StringTable.h>
 #include <QtDemonRender/qdemonrenderbasetypes.h>
 #include <Qt3DSRenderTexture2D.h>
@@ -128,11 +128,11 @@ class Qt3DSShadowMap : public QDemonRefCounted
     typedef QVector<SShadowMapEntry> TShadowMapEntryList;
 
 public:
-    IQt3DSRenderContext &m_Context;
+    IQDemonRenderContext &m_Context;
     volatile qint32 mRefCount;
 
 public:
-    Qt3DSShadowMap(IQt3DSRenderContext &inContext);
+    Qt3DSShadowMap(IQDemonRenderContext &inContext);
     ~Qt3DSShadowMap();
 
     QDEMON_IMPLEMENT_REF_COUNT_ADDREF_RELEASE(m_Context.GetAllocator())
@@ -171,7 +171,7 @@ public:
          */
     quint32 GetShadowMapEntryCount() { return m_ShadowMapList.size(); }
 
-    static Qt3DSShadowMap *Create(IQt3DSRenderContext &inContext);
+    static Qt3DSShadowMap *Create(IQDemonRenderContext &inContext);
 
 private:
     TShadowMapEntryList m_ShadowMapList; ///< List of shadow map entries

@@ -30,7 +30,7 @@
 #pragma once
 #ifndef QDEMON_RENDER_MATERIAL_SHADER_GENERATOR_H
 #define QDEMON_RENDER_MATERIAL_SHADER_GENERATOR_H
-#include <QtDemonRuntimeRender/qdemonrender.h>
+
 #include <QtDemon/qdemonrefcounted.h>
 #include <QtDemonRuntimeRender/qdemonrendershaderkeys.h>
 #include <QtDemonRuntimeRender/qdemonrendershadercache.h>
@@ -121,8 +121,8 @@ class IMaterialShaderGenerator : public QDemonRefCounted
 public:
     struct SImageVariableNames
     {
-        const char8_t *m_ImageSampler;
-        const char8_t *m_ImageFragCoords;
+        const char *m_ImageSampler;
+        const char *m_ImageFragCoords;
     };
 
     virtual SImageVariableNames GetImageVariableNames(quint32 inIdx) = 0;
@@ -135,7 +135,7 @@ public:
             const SGraphObject &inMaterial, SShaderDefaultMaterialKey inShaderDescription,
             IShaderStageGenerator &inVertexPipeline, TShaderFeatureSet inFeatureSet,
             QDemonDataRef<SLight *> inLights, SRenderableImage *inFirstImage, bool inHasTransparency,
-            const char8_t *inVertexPipelineName, const char8_t *inCustomMaterialName = "") = 0;
+            const char *inVertexPipelineName, const char *inCustomMaterialName = "") = 0;
 
     // Also sets the blend function on the render context.
     virtual void

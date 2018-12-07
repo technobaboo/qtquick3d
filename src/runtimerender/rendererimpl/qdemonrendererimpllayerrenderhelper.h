@@ -28,7 +28,7 @@
 **
 ****************************************************************************/
 #pragma once
-#include <QtDemonRuntimeRender/qdemonrender.h>
+
 #include <foundation/QVector2D.h>
 #include <QtDemonRender/qdemonrenderbasetypes.h>
 #include <QtDemonRuntimeRender/qdemonrendercamera.h>
@@ -94,11 +94,11 @@ public:
 
     SCameraGlobalCalculationResult SetupCameraForRender(SCamera &inCamera);
 
-    Option<QVector2D> GetLayerMouseCoords(const QVector2D &inMouseCoords,
+    QDemonOption<QVector2D> GetLayerMouseCoords(const QVector2D &inMouseCoords,
                                           const QVector2D &inWindowDimensions,
                                           bool inForceIntersect) const;
 
-    Option<SRay> GetPickRay(const QVector2D &inMouseCoords, const QVector2D &inWindowDimensions,
+    QDemonOption<SRay> GetPickRay(const QVector2D &inMouseCoords, const QVector2D &inWindowDimensions,
                             bool inForceIntersect) const;
 
     // Checks the various viewports and determines if the layer is visible or not.

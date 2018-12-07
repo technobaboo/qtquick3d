@@ -40,7 +40,7 @@ QT_BEGIN_NAMESPACE
 using QDemonRenderContextScopedProperty;
 using NVRenderCachedShaderProperty;
 
-Qt3DSShadowMap::Qt3DSShadowMap(IQt3DSRenderContext &inContext)
+Qt3DSShadowMap::Qt3DSShadowMap(IQDemonRenderContext &inContext)
     : m_Context(inContext)
     , mRefCount(0)
     , m_ShadowMapList(inContext.GetAllocator(), "Qt3DSShadowMap::m_ShadowMapList")
@@ -214,7 +214,7 @@ SShadowMapEntry *Qt3DSShadowMap::GetShadowMapEntry(quint32 index)
     return nullptr;
 }
 
-Qt3DSShadowMap *Qt3DSShadowMap::Create(IQt3DSRenderContext &inContext)
+Qt3DSShadowMap *Qt3DSShadowMap::Create(IQDemonRenderContext &inContext)
 {
     return QDEMON_NEW(inContext.GetFoundation().getAllocator(), Qt3DSShadowMap)(inContext);
 }

@@ -31,12 +31,12 @@
 #ifndef QDEMON_RENDER_RAY_H
 #define QDEMON_RENDER_RAY_H
 
-#include <QtDemonRuntimeRender/qdemonrender.h>
-#include <QVector2D.h>
-#include <QVector3D.h>
-#include <Qt3DSOption.h>
-#include <QMatrix4x4.h>
-#include <Qt3DSBounds3.h>
+
+#include <QtGui/QVector2D>
+#include <QtGui/QVector3D>
+#include <QtDemon/qdemonoption.h>
+#include <QtGui/QMatrix4x4>
+#include <QtDemon/qdemonbounds3.h>
 
 QT_BEGIN_NAMESPACE
 struct SBasisPlanes
@@ -79,16 +79,16 @@ struct SRay
     {
     }
     // If we are parallel, then no intersection of course.
-    Option<QVector3D> Intersect(const NVPlane &inPlane) const;
+    QDemonOption<QVector3D> Intersect(const QDemonPlane &inPlane) const;
 
-    Option<SRayIntersectionResult> IntersectWithAABB(const QMatrix4x4 &inGlobalTransform,
+    QDemonOption<SRayIntersectionResult> IntersectWithAABB(const QMatrix4x4 &inGlobalTransform,
                                                      const QDemonBounds3 &inBounds,
                                                      bool inForceIntersect = false) const;
 
-    Option<QVector2D> GetRelative(const QMatrix4x4 &inGlobalTransform, const QDemonBounds3 &inBounds,
+    QDemonOption<QVector2D> GetRelative(const QMatrix4x4 &inGlobalTransform, const QDemonBounds3 &inBounds,
                                   SBasisPlanes::Enum inPlane) const;
 
-    Option<QVector2D> GetRelativeXY(const QMatrix4x4 &inGlobalTransform,
+    QDemonOption<QVector2D> GetRelativeXY(const QMatrix4x4 &inGlobalTransform,
                                     const QDemonBounds3 &inBounds) const
     {
         return GetRelative(inGlobalTransform, inBounds, SBasisPlanes::XY);

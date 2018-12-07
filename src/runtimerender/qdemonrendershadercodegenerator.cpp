@@ -195,8 +195,8 @@ void SShaderCodeGeneratorBase::GenerateUVCoords()
 }
 
 void SShaderCodeGeneratorBase::GenerateTextureSwizzle(QDemonRenderTextureSwizzleMode::Enum swizzleMode,
-                                                      eastl::basic_string<char8_t> &texSwizzle,
-                                                      eastl::basic_string<char8_t> &lookupSwizzle)
+                                                      eastl::basic_string<char> &texSwizzle,
+                                                      eastl::basic_string<char> &lookupSwizzle)
 {
     QDemonRenderContextType deprecatedContextFlags(QDemonRenderContextValues::GL2
                                                    | QDemonRenderContextValues::GLES2);
@@ -289,7 +289,7 @@ void SShaderCodeGeneratorBase::AddShaderConstantBufferItemMap(
 
 const char *SShaderCodeGeneratorBase::BuildShaderSource()
 {
-    for (nvhash_set<CRegisteredString>::const_iterator iter = m_Includes.begin(),
+    for (nvhash_set<QString>::const_iterator iter = m_Includes.begin(),
          end = m_Includes.end();
          iter != end; ++iter) {
         m_FinalShaderBuilder.append("#include \"");

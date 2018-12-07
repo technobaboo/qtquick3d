@@ -93,7 +93,7 @@ struct SInputStream : public IRefCountedInputStream
     }
 };
 
-typedef eastl::basic_string<char8_t, ForwardingAllocator> TStrType;
+typedef eastl::basic_string<char, ForwardingAllocator> TStrType;
 struct SFactory : public IInputStreamFactory
 {
     NVFoundationBase &m_Foundation;
@@ -137,7 +137,7 @@ struct SFactory : public IInputStreamFactory
         return QFileInfo();
     }
 
-    void AddSearchDirectory(const char8_t *inDirectory) override
+    void AddSearchDirectory(const char *inDirectory) override
     {
         TScopedLock __factoryLocker(m_Mutex);
         QString localDir = CFileTools::NormalizePathForQtUsage(inDirectory);

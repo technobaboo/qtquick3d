@@ -29,7 +29,7 @@
 ****************************************************************************/
 
 #include <QtDemonRender/qdemonrenderbasetypes.h>
-#include <QtDemonRuntimeRender/qdemonrenderprogrampipeline.h>
+#include <QtDemonRender/qdemonrenderprogrampipeline.h>
 #include <QtDemonRender/qdemonrendershaderprogram.h>
 
 QT_BEGIN_NAMESPACE

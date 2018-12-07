@@ -30,16 +30,20 @@
 #pragma once
 #ifndef QDEMON_RENDER_PATH_MANAGER_H
 #define QDEMON_RENDER_PATH_MANAGER_H
-#include <QtDemonRuntimeRender/qdemonrender.h>
-#include <QtDemon/qdemonrefcounted.h>
-#include <StringTable.h>
+
+#include <QtDemonRender/QDemonRenderContext>
+#include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
+#include <QtDemon/QDemonDataRef>
+#include <QtDemon/QDemonBounds3>
 #include <QtDemonRuntimeRender/qdemonrendershadercache.h>
-#include <QVector2D.h>
-#include <Qt3DSBounds3.h>
+#include <QtDemonRuntimeRender/qdemonrenderpath.h>
+#include <QtDemonRuntimeRender/qdemonrenderpathsubpath.h>
+#include <QtGui/QVector2D>
 
 QT_BEGIN_NAMESPACE
 
 struct SLayerGlobalRenderProperties;
+class IPathManager;
 
 struct SPathAnchorPoint
 {
@@ -85,9 +89,9 @@ public:
     // Returns angle in x, distance in y.
     static QVector2D GetAngleDistanceFromControlPoint(QVector2D inPosition, QVector2D inControlPoint);
 
-    virtual IPathManager &OnRenderSystemInitialize(IQt3DSRenderContext &context) = 0;
+    virtual IPathManager &OnRenderSystemInitialize(IQDemonRenderContext &context) = 0;
 
-    static IPathManagerCore &CreatePathManagerCore(IQt3DSRenderContextCore &inContext);
+    static IPathManagerCore &CreatePathManagerCore(IQDemonRenderContextCore &inContext);
 };
 
 struct SPathRenderContext; // UICRenderPathRenderContext.h

@@ -31,7 +31,7 @@
 #ifndef QDEMON_RENDER_BUFFER_LOADED_H
 #define QDEMON_RENDER_BUFFER_LOADED_H
 
-#include <QtDemonRuntimeRender/qdemonrender.h>
+
 #include <foundation/Qt3DSRefCounted.h>
 #include <foundation/StringTable.h>
 
@@ -42,7 +42,7 @@ class IBufferLoaderCallback;
 class ILoadedBuffer : public QDemonRefCounted
 {
 public:
-    virtual CRegisteredString Path() = 0;
+    virtual QString Path() = 0;
     // Data is released when the buffer itself is released.
     virtual QDemonDataRef<quint8> Data() = 0;
     virtual IBufferLoaderCallback *UserData() = 0;
@@ -52,8 +52,8 @@ class IBufferLoaderCallback : public QDemonRefCounted
 {
 public:
     virtual void OnBufferLoaded(ILoadedBuffer &inBuffer) = 0;
-    virtual void OnBufferLoadFailed(CRegisteredString inPath) = 0;
-    virtual void OnBufferLoadCancelled(CRegisteredString inPath) = 0;
+    virtual void OnBufferLoadFailed(QString inPath) = 0;
+    virtual void OnBufferLoadCancelled(QString inPath) = 0;
 };
 
 // Job of this object is to load buffers all the way to memory as fast as possible.
@@ -62,7 +62,7 @@ class IBufferLoader : public QDemonRefCounted
 public:
     // nonblocking.  Quiet failure is passed to the input stream factory.
     // Returns handle to loading buffer
-    virtual quint64 QueueForLoading(CRegisteredString inPath,
+    virtual quint64 QueueForLoading(QString inPath,
                                     IBufferLoaderCallback *inUserData = nullptr,
                                     bool inQuietFailure = false) = 0;
     // Cancel a buffer that has not made it to the loaded buffers list.

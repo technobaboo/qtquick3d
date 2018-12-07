@@ -30,16 +30,16 @@
 #pragma once
 #ifndef QDEMON_OFFSCREEN_RENDER_KEY_H
 #define QDEMON_OFFSCREEN_RENDER_KEY_H
-#include <QtDemonRuntimeRender/qdemonrender.h>
-#include <StringTable.h>
-#include <Qt3DSDiscriminatedUnion.h>
+
+#include <QtDemon/qdemondiscriminatedunion.h>
+#include <QtCore/QString>
 
 QT_BEGIN_NAMESPACE
 
 template <>
-struct DestructTraits<CRegisteredString>
+struct DestructTraits<QString>
 {
-    void destruct(CRegisteredString &) {}
+    void destruct(QString &) {}
 };
 
 struct OffscreenRendererKeyTypes
@@ -56,7 +56,7 @@ struct SOffscreenRendererKeyTypeMap
 {
 };
 template <>
-struct SOffscreenRendererKeyTypeMap<CRegisteredString>
+struct SOffscreenRendererKeyTypeMap<QString>
 {
     enum { KeyType = OffscreenRendererKeyTypes::RegisteredString };
 };
@@ -70,7 +70,7 @@ struct SOffscreenRendererKeyUnionTraits
 {
     typedef OffscreenRendererKeyTypes::Enum TIdType;
     enum {
-        TBufferSize = sizeof(CRegisteredString),
+        TBufferSize = sizeof(QString),
     };
 
     static TIdType getNoDataId() { return OffscreenRendererKeyTypes::NoOffscreenRendererKey; }
@@ -86,9 +86,9 @@ struct SOffscreenRendererKeyUnionTraits
     {
         switch (inType) {
         case OffscreenRendererKeyTypes::RegisteredString:
-            return inVisitor(*NVUnionCast<CRegisteredString *>(inData));
+            return inVisitor(*QDemonUnionCast<QString *>(inData));
         case OffscreenRendererKeyTypes::VoidPtr:
-            return inVisitor(*NVUnionCast<void **>(inData));
+            return inVisitor(*QDemonUnionCast<void **>(inData));
         default:
             Q_ASSERT(false);
         case OffscreenRendererKeyTypes::NoOffscreenRendererKey:
@@ -101,9 +101,9 @@ struct SOffscreenRendererKeyUnionTraits
     {
         switch (inType) {
         case OffscreenRendererKeyTypes::RegisteredString:
-            return inVisitor(*NVUnionCast<const CRegisteredString *>(inData));
+            return inVisitor(*QDemonUnionCast<const QString *>(inData));
         case OffscreenRendererKeyTypes::VoidPtr:
-            return inVisitor(*NVUnionCast<const void **>(inData));
+            return inVisitor(*QDemonUnionCast<const void **>(inData));
         default:
             Q_ASSERT(false);
         case OffscreenRendererKeyTypes::NoOffscreenRendererKey:
@@ -124,7 +124,7 @@ struct SOffscreenRendererKey : public TOffscreenRendererKeyUnionType
 {
     typedef TOffscreenRendererKeyUnionType TBase;
     SOffscreenRendererKey() {}
-    SOffscreenRendererKey(const CRegisteredString &str)
+    SOffscreenRendererKey(const QString &str)
         : TBase(str)
     {
     }

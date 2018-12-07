@@ -61,7 +61,7 @@ void Align(MemoryBuffer<> &inBuffer)
 {
     inBuffer.align(sizeof(void *));
 }
-typedef QVector<eastl::pair<GraphObjectTypes::Enum, quint32>> TObjectFileStatList;
+typedef QVector<QPair<GraphObjectTypes::Enum, quint32>> TObjectFileStatList;
 typedef SPtrOffsetMap TPtrOffsetMap;
 
 struct SSerializerWriteContext
@@ -81,7 +81,7 @@ struct SSerializerWriteContext
                             const SStrRemapMap &inStrMap, quint32 inDataBlockStart,
                             IDynamicObjectSystem &inDynamicObjectSystem,
                             IPathManager &inPathManager, TObjectFileStatList &inStats,
-                            NVAllocatorCallback &inAllocator, const char8_t *inProjectDirectory,
+                            NVAllocatorCallback &inAllocator, const char *inProjectDirectory,
                             IStringTable &inStringTable)
         : m_OffsetMap(inOffsetMap)
         , m_MemoryBuffer(inWriteBuffer)
@@ -119,7 +119,7 @@ struct SSerializerWriteContext
 #endif
     }
 
-    void Remap(CRegisteredString &inStr) { inStr.Remap(m_StrRemapMap); }
+    void Remap(QString &inStr) { inStr.Remap(m_StrRemapMap); }
 
     template <typename TObjType>
     void Remap(TObjType *&inPtr)
@@ -154,11 +154,11 @@ struct SSerializerReadContext : public SDataReader
     QDemonDataRef<quint8> m_DataBlock;
     QDemonDataRef<quint8> m_StrTableBlock;
     CRenderString m_PathMapper;
-    const char8_t *m_ProjectDirectory;
+    const char *m_ProjectDirectory;
 
     SSerializerReadContext(IPathManagerCore &inPathManager, IDynamicObjectSystemCore &inDynSystem,
                            QDemonDataRef<quint8> inDataBlock, QDemonDataRef<quint8> inStrTable,
-                           NVAllocatorCallback &inAllocator, const char8_t *inProjectDirectory)
+                           NVAllocatorCallback &inAllocator, const char *inProjectDirectory)
         : SDataReader(inDataBlock.begin(), inDataBlock.end())
         , m_PathManager(inPathManager)
         , m_DynamicObjectSystem(inDynSystem)
@@ -168,7 +168,7 @@ struct SSerializerReadContext : public SDataReader
     {
         Q_UNUSED(inAllocator)
     }
-    void Remap(CRegisteredString &inStr) { inStr.Remap(m_StrTableBlock); }
+    void Remap(QString &inStr) { inStr.Remap(m_StrTableBlock); }
     template <typename TObjType>
     void Remap(TObjType *&inPtr)
     {
@@ -207,8 +207,8 @@ struct SWriteRemapper
     {
     }
     // This will happen later
-    void Remap(const CRegisteredString &) {}
-    void RemapPath(const CRegisteredString &) {}
+    void Remap(const QString &) {}
+    void RemapPath(const QString &) {}
 
     // We ignore objects that are saved out explicitly below.
     void Remap(const SScene *) {}
@@ -324,14 +324,14 @@ TObjType *SGraphObjectSerializerImpl<TObjType>::Read(SSerializerReadContext &inR
 }
 
 void RemapProperties(SDynamicObject &ioObject, SSerializerWriteContext &outSavedBuffer,
-                     CRegisteredString inClassName)
+                     QString inClassName)
 {
     QDemonConstDataRef<SPropertyDefinition> theObjectProps =
         outSavedBuffer.m_DynamicObjectSystem.GetProperties(inClassName);
     for (quint32 idx = 0, end = theObjectProps.size(); idx < end; ++idx) {
         const SPropertyDefinition &theDef(theObjectProps[idx]);
         if (theDef.m_DataType == QDemonRenderShaderDataTypes::QDemonRenderTexture2DPtr) {
-            CRegisteredString *theStr = reinterpret_cast<CRegisteredString *>(
+            QString *theStr = reinterpret_cast<QString *>(
                 ioObject.GetDataSectionBegin() + theDef.m_Offset);
             outSavedBuffer.Remap(*theStr);
         }
@@ -349,7 +349,7 @@ void RemapProperties(SDynamicObject &ioObject, SSerializerReadContext &inReadCon
     for (quint32 idx = 0, end = theProperties.size(); idx < end; ++idx) {
         const SPropertyDefinition &theDefinition(theProperties[idx]);
         if (theDefinition.m_DataType == QDemonRenderShaderDataTypes::QDemonRenderTexture2DPtr) {
-            CRegisteredString *theString = reinterpret_cast<CRegisteredString *>(
+            QString *theString = reinterpret_cast<QString *>(
                 ioObject.GetDataSectionBegin() + theDefinition.m_Offset);
             inReadContext.Remap(*theString);
         }
@@ -383,7 +383,7 @@ struct SGraphObjectSerializerImpl<SEffect>
 
     static void Remap(SEffect &ioObject, SSerializerWriteContext &outSavedBuffer)
     {
-        CRegisteredString theClassName = ioObject.m_ClassName;
+        QString theClassName = ioObject.m_ClassName;
         ioObject.Remap(outSavedBuffer);
         RemapProperties(ioObject, outSavedBuffer, theClassName);
     }
@@ -427,7 +427,7 @@ struct SGraphObjectSerializerImpl<SCustomMaterial>
 
     static void Remap(SCustomMaterial &ioObject, SSerializerWriteContext &outSavedBuffer)
     {
-        CRegisteredString theClassName(ioObject.m_ClassName);
+        QString theClassName(ioObject.m_ClassName);
         ioObject.Remap(outSavedBuffer);
         RemapProperties(ioObject, outSavedBuffer, theClassName);
     }
@@ -644,7 +644,7 @@ SPresentation *SGraphObjectSerializer::Load(QDemonDataRef<quint8> inData, QDemon
                                             IDynamicObjectSystemCore &inDynamicObjectSystem,
                                             IPathManagerCore &inPathManager,
                                             NVAllocatorCallback &inAllocator,
-                                            const char8_t *inProjectDirectory)
+                                            const char *inProjectDirectory)
 {
     SSerializerReadContext theReadContext(inPathManager, inDynamicObjectSystem, inData,
                                           inStrDataBlock, inAllocator, inProjectDirectory);

@@ -44,12 +44,12 @@ typedef Mutex::ScopedLock TScopedLock;
 struct SLoadingImage
 {
     SImageLoaderBatch *m_Batch;
-    CRegisteredString m_SourcePath;
+    QString m_SourcePath;
     quint64 m_TaskId;
     SLoadingImage *m_Tail;
 
     // Called from main thread
-    SLoadingImage(CRegisteredString inSourcePath)
+    SLoadingImage(QString inSourcePath)
         : m_Batch(nullptr)
         , m_SourcePath(inSourcePath)
         , m_TaskId(0)
@@ -101,8 +101,8 @@ struct SImageLoaderBatch
 
     // Called from main thread
     static SImageLoaderBatch *CreateLoaderBatch(SBatchLoader &inLoader, TImageBatchId inBatchId,
-                                                QDemonConstDataRef<CRegisteredString> inSourcePaths,
-                                                CRegisteredString inImageTillLoaded,
+                                                QDemonConstDataRef<QString> inSourcePaths,
+                                                QString inImageTillLoaded,
                                                 IImageLoadListener *inListener,
                                                 QDemonRenderContextType contextType);
 
@@ -139,12 +139,12 @@ struct SImageLoaderBatch
     }
     // Called from main thread
     void Cancel();
-    void Cancel(CRegisteredString inSourcePath);
+    void Cancel(QString inSourcePath);
 };
 
 struct SBatchLoadedImage
 {
-    CRegisteredString m_SourcePath;
+    QString m_SourcePath;
     SLoadedTexture *m_Texture;
     SImageLoaderBatch *m_Batch;
     SBatchLoadedImage()
@@ -154,7 +154,7 @@ struct SBatchLoadedImage
     }
 
     // Called from loading thread
-    SBatchLoadedImage(CRegisteredString inSourcePath, SLoadedTexture *inTexture,
+    SBatchLoadedImage(QString inSourcePath, SLoadedTexture *inTexture,
                       SImageLoaderBatch &inBatch)
         : m_SourcePath(inSourcePath)
         , m_Texture(inTexture)
@@ -169,7 +169,7 @@ struct SBatchLoadedImage
 struct SBatchLoader : public IImageBatchLoader
 {
     typedef QHash<TImageBatchId, SImageLoaderBatch *> TImageLoaderBatchMap;
-    typedef QHash<CRegisteredString, TImageBatchId> TSourcePathToBatchMap;
+    typedef QHash<QString, TImageBatchId> TSourcePathToBatchMap;
     typedef Pool<SLoadingImage, ForwardingAllocator> TLoadingImagePool;
     typedef Pool<SImageLoaderBatch, ForwardingAllocator> TBatchPool;
 
@@ -245,8 +245,8 @@ struct SBatchLoader : public IImageBatchLoader
     // paths
     // until said path is loaded.
     // An optional listener can be passed in to get callbacks about the batch.
-    TImageBatchId LoadImageBatch(QDemonConstDataRef<CRegisteredString> inSourcePaths,
-                                 CRegisteredString inImageTillLoaded,
+    TImageBatchId LoadImageBatch(QDemonConstDataRef<QString> inSourcePaths,
+                                 QString inImageTillLoaded,
                                  IImageLoadListener *inListener,
                                  QDemonRenderContextType contextType) override
     {
@@ -279,7 +279,7 @@ struct SBatchLoader : public IImageBatchLoader
     }
 
     // Blocks if the image is currently in-flight
-    void CancelImageLoading(CRegisteredString inSourcePath) override
+    void CancelImageLoading(QString inSourcePath) override
     {
         TScopedLock __loaderLock(m_LoaderMutex);
         TSourcePathToBatchMap::iterator theIter = m_SourcePathToBatches.find(inSourcePath);
@@ -411,15 +411,15 @@ bool SBatchLoadedImage::Finalize(IBufferManager &inMgr)
 
 SImageLoaderBatch *
 SImageLoaderBatch::CreateLoaderBatch(SBatchLoader &inLoader, TImageBatchId inBatchId,
-                                     QDemonConstDataRef<CRegisteredString> inSourcePaths,
-                                     CRegisteredString inImageTillLoaded,
+                                     QDemonConstDataRef<QString> inSourcePaths,
+                                     QString inImageTillLoaded,
                                      IImageLoadListener *inListener,
                                      QDemonRenderContextType contextType)
 {
     TLoadingImageList theImages;
     quint32 theLoadingImageCount = 0;
     for (quint32 idx = 0, end = inSourcePaths.size(); idx < end; ++idx) {
-        CRegisteredString theSourcePath(inSourcePaths[idx]);
+        QString theSourcePath(inSourcePaths[idx]);
 
         if (theSourcePath.IsValid() == false)
             continue;
@@ -427,7 +427,7 @@ SImageLoaderBatch::CreateLoaderBatch(SBatchLoader &inLoader, TImageBatchId inBat
         if (inLoader.m_BufferManager.IsImageLoaded(theSourcePath))
             continue;
 
-        eastl::pair<SBatchLoader::TSourcePathToBatchMap::iterator, bool> theInserter =
+        QPair<SBatchLoader::TSourcePathToBatchMap::iterator, bool> theInserter =
                 inLoader.m_SourcePathToBatches.insert(eastl::make_pair(inSourcePaths[idx], inBatchId));
 
         // If the loader has already seen this image.
@@ -495,7 +495,7 @@ void SImageLoaderBatch::Cancel()
         m_Loader.m_ThreadPool.CancelTask(iter->m_TaskId);
 }
 
-void SImageLoaderBatch::Cancel(CRegisteredString inSourcePath)
+void SImageLoaderBatch::Cancel(QString inSourcePath)
 {
     for (TLoadingImageList::iterator iter = m_Images.begin(), end = m_Images.end(); iter != end;
          ++iter) {

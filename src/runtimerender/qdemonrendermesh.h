@@ -30,11 +30,11 @@
 #pragma once
 #ifndef QDEMON_RENDER_MESH_H
 #define QDEMON_RENDER_MESH_H
-#include <QtDemonRuntimeRender/qdemonrender.h>
+
 #include <Qt3DSRenderVertexBuffer.h>
 #include <Qt3DSRenderIndexBuffer.h>
 #include <Qt3DSRenderInputAssembler.h>
-#include <Qt3DSBounds3.h>
+#include <QtDemon/qdemonbounds3.h>
 #include <QtDemon/qdemonrefcounted.h>
 #include <Qt3DSQDemonNoCopy.h>
 
@@ -86,7 +86,7 @@ struct SRenderSubset : public SRenderSubsetBase
     bool m_WireframeMode; ///< true if we should draw the object as wireframe ( currently ony if
     ///tessellation is enabled )
     QDemonConstDataRef<SRenderJoint> m_Joints;
-    CRegisteredString m_Name;
+    QString m_Name;
     QVector<SRenderSubsetBase> m_SubSubsets;
 
     SRenderSubset(NVAllocatorCallback &alloc)

@@ -30,7 +30,7 @@
 #pragma once
 #ifndef QDEMON_RENDERER_IMPL_LAYER_RENDER_DATA_H
 #define QDEMON_RENDERER_IMPL_LAYER_RENDER_DATA_H
-#include <QtDemonRuntimeRender/qdemonrender.h>
+
 #include <QtDemonRuntimeRender/qdemonrendererimpllayerrenderpreparationdata.h>
 #include <QtDemonRuntimeRender/qdemonrenderresourcebufferobjects.h>
 
@@ -90,7 +90,7 @@ struct QDEMON_AUTOTEST_EXPORT SLayerRenderData : public SLayerRenderPreparationD
     float m_TextScale;
 
     volatile qint32 mRefCount;
-    Option<QVector3D> m_BoundingRectColor;
+    QDemonOption<QVector3D> m_BoundingRectColor;
     QDemonRenderTextureFormats::Enum m_DepthBufferFormat;
 
     QSize m_previousDimensions;
@@ -124,8 +124,8 @@ struct QDEMON_AUTOTEST_EXPORT SLayerRenderData : public SLayerRenderPreparationD
     void ResetForFrame() override;
 
     void CreateGpuProfiler();
-    void StartProfiling(CRegisteredString &nameID, bool sync);
-    void EndProfiling(CRegisteredString &nameID);
+    void StartProfiling(QString &nameID, bool sync);
+    void EndProfiling(QString &nameID);
     void StartProfiling(const char *nameID, bool sync);
     void EndProfiling(const char *nameID);
     void AddVertexCount(quint32 count);

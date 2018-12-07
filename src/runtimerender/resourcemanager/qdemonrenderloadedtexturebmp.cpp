@@ -1121,7 +1121,7 @@ template <>
 struct ColorAccess<16>
 {
     static uint32_t GetPixelWidth() { return 2; }
-    static uint32_t GetColor(const char8_t *src)
+    static uint32_t GetColor(const char *src)
     {
         return (uint32_t) * reinterpret_cast<const quint16 *>(src);
     }
@@ -1131,7 +1131,7 @@ template <>
 struct ColorAccess<24>
 {
     static uint32_t GetPixelWidth() { return 3; }
-    static uint32_t GetColor(const char8_t *src)
+    static uint32_t GetColor(const char *src)
     {
         return (uint32_t)(*reinterpret_cast<const quint32 *>(src) & 0xFFFFFF);
     }
@@ -1141,7 +1141,7 @@ template <>
 struct ColorAccess<32>
 {
     static uint32_t GetPixelWidth() { return 4; }
-    static uint32_t GetColor(const char8_t *src)
+    static uint32_t GetColor(const char *src)
     {
         return *reinterpret_cast<const uint32_t *>(src);
     }
@@ -1151,7 +1151,7 @@ template <quint32 TBitCount>
 inline void LoadMasked(bool inFlipY, qint32 *inMasks, void *data, uint8_t *newData, int width,
                        int height)
 {
-    const char8_t *oldData = (const char8_t *)data;
+    const char *oldData = (const char *)data;
     SMaskData rMask(inMasks[0]);
     SMaskData gMask(inMasks[1]);
     SMaskData bMask(inMasks[2]);
@@ -1161,7 +1161,7 @@ inline void LoadMasked(bool inFlipY, qint32 *inMasks, void *data, uint8_t *newDa
             relHeight = height - h - 1;
         for (int w = 0; w < width; ++w) {
             int pos = width * relHeight + w;
-            const char8_t *readPtr = oldData + (pos * ColorAccess<TBitCount>::GetPixelWidth());
+            const char *readPtr = oldData + (pos * ColorAccess<TBitCount>::GetPixelWidth());
             uint8_t *writePtr = newData + (pos * 3);
             uint32_t colorVal = ColorAccess<TBitCount>::GetColor(readPtr);
             writePtr[0] = rMask.MapColor(colorVal);

@@ -30,9 +30,9 @@
 #pragma once
 #ifndef QDEMON_RENDER_SCENE_H
 #define QDEMON_RENDER_SCENE_H
-#include <QtDemonRuntimeRender/qdemonrender.h>
-#include <QtDemonRuntimeRender/qdemonrendergraphobject.h>
 
+#include <QtDemonRuntimeRender/qdemonrendergraphobject.h>
+#include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
 #include <QtGui/QVector3D>
 
 QT_BEGIN_NAMESPACE
@@ -69,12 +69,12 @@ struct SScene : public SGraphObject
         inRemapper.Remap(m_FirstChild);
     }
     // returns true if any of the layers were dirty or if this object was dirty
-    bool PrepareForRender(const QVector2D &inViewportDimensions, IQt3DSRenderContext &inContext,
+    bool PrepareForRender(const QVector2D &inViewportDimensions, IQDemonRenderContext &inContext,
                           const SRenderInstanceId id = nullptr);
-    void Render(const QVector2D &inViewportDimensions, IQt3DSRenderContext &inContext,
+    void Render(const QVector2D &inViewportDimensions, IQDemonRenderContext &inContext,
                 RenderClearCommand command = ClearIsOptional,
                 const SRenderInstanceId id = nullptr);
-    void RenderWithClear(const QVector2D &inViewportDimensions, IQt3DSRenderContext &inContext,
+    void RenderWithClear(const QVector2D &inViewportDimensions, IQDemonRenderContext &inContext,
                          RenderClearCommand inClearColorBuffer,
                          QVector3D inclearColor, const SRenderInstanceId id = nullptr);
 };

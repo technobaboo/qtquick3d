@@ -256,11 +256,11 @@ struct SShaderGenerator : public IDefaultMaterialShaderGenerator
     typedef CRenderString TStrType;
     typedef QHash<QDemonRenderShaderProgram *, QDemonScopedRefCounted<SShaderGeneratorGeneratedShader>>
     TProgramToShaderMap;
-    typedef QHash<CRegisteredString,
+    typedef QHash<QString,
     QDemonScopedRefCounted<QDemonRenderConstantBuffer>>
     TStrConstanBufMap;
 
-    IQt3DSRenderContext &m_RenderContext;
+    IQDemonRenderContext &m_RenderContext;
     IShaderProgramGenerator &m_ProgramGenerator;
 
     const SDefaultMaterial *m_CurrentMaterial;
@@ -315,7 +315,7 @@ struct SShaderGenerator : public IDefaultMaterialShaderGenerator
 
     qint32 m_RefCount;
 
-    SShaderGenerator(IQt3DSRenderContext &inRc)
+    SShaderGenerator(IQDemonRenderContext &inRc)
         : m_RenderContext(inRc)
         , m_ProgramGenerator(m_RenderContext.GetShaderProgramGenerator())
         , m_CurrentMaterial(nullptr)
@@ -392,14 +392,14 @@ struct SShaderGenerator : public IDefaultMaterialShaderGenerator
         return retval;
     }
 
-    void AddLocalVariable(IShaderStageGenerator &inGenerator, const char8_t *inName,
-                          const char8_t *inType)
+    void AddLocalVariable(IShaderStageGenerator &inGenerator, const char *inName,
+                          const char *inType)
     {
         inGenerator << "\t" << inType << " " << inName << ";" << Endl;
     }
 
     void AddLocalVariable(IShaderStageGenerator &inGenerator, const TStrType &inName,
-                          const char8_t *inType)
+                          const char *inType)
     {
         AddLocalVariable(inGenerator, inName.c_str(), inType);
     }
@@ -757,8 +757,8 @@ struct SShaderGenerator : public IDefaultMaterialShaderGenerator
     }
 
     void GenerateTextureSwizzle(QDemonRenderTextureSwizzleMode::Enum swizzleMode,
-                                eastl::basic_string<char8_t> &texSwizzle,
-                                eastl::basic_string<char8_t> &lookupSwizzle)
+                                eastl::basic_string<char> &texSwizzle,
+                                eastl::basic_string<char> &lookupSwizzle)
     {
         QDemonRenderContextType deprecatedContextFlags(QDemonRenderContextValues::GL2
                                                        | QDemonRenderContextValues::GLES2);
@@ -796,7 +796,7 @@ struct SShaderGenerator : public IDefaultMaterialShaderGenerator
         if (!inLightCount || !theContext.GetConstantBufferSupport())
             return nullptr;
 
-        CRegisteredString theName = theContext.GetStringTable().RegisterStr("cbBufferLights");
+        QString theName = theContext.GetStringTable().RegisterStr("cbBufferLights");
         QDemonRenderConstantBuffer *pCB = theContext.GetConstantBuffer(theName);
 
         if (!pCB) {
@@ -1420,7 +1420,7 @@ struct SShaderGenerator : public IDefaultMaterialShaderGenerator
                     continue;
                 }
 
-                eastl::basic_string<char8_t> texSwizzle, lookupSwizzle, texLodStr;
+                eastl::basic_string<char> texSwizzle, lookupSwizzle, texLodStr;
 
                 GenerateImageUVCoordinates(idx, *image, 0);
 
@@ -1500,7 +1500,7 @@ struct SShaderGenerator : public IDefaultMaterialShaderGenerator
         }
     }
 
-    QDemonRenderShaderProgram *GenerateMaterialShader(const char8_t *inShaderPrefix)
+    QDemonRenderShaderProgram *GenerateMaterialShader(const char *inShaderPrefix)
     {
         // build a string that allows us to print out the shader we are generating to the log.
         // This is time consuming but I feel like it doesn't happen all that often and is very
@@ -1529,7 +1529,7 @@ struct SShaderGenerator : public IDefaultMaterialShaderGenerator
     GenerateShader(const SGraphObject &inMaterial, SShaderDefaultMaterialKey inShaderDescription,
                    IShaderStageGenerator &inVertexPipeline, TShaderFeatureSet inFeatureSet,
                    QDemonDataRef<SLight *> inLights, SRenderableImage *inFirstImage,
-                   bool inHasTransparency, const char8_t *inVertexPipelineName, const char8_t *) override
+                   bool inHasTransparency, const char *inVertexPipelineName, const char *) override
     {
         Q_ASSERT(inMaterial.m_Type == GraphObjectTypes::DefaultMaterial);
         m_CurrentMaterial = static_cast<const SDefaultMaterial *>(&inMaterial);
@@ -1545,7 +1545,7 @@ struct SShaderGenerator : public IDefaultMaterialShaderGenerator
 
     SShaderGeneratorGeneratedShader &GetShaderForProgram(QDemonRenderShaderProgram &inProgram)
     {
-        eastl::pair<TProgramToShaderMap::iterator, bool> inserter =
+        QPair<TProgramToShaderMap::iterator, bool> inserter =
                 m_ProgramToShaderMap.insert(eastl::make_pair(
                                                 &inProgram, QDemonScopedRefCounted<SShaderGeneratorGeneratedShader>(nullptr)));
         if (inserter.second) {
@@ -1926,7 +1926,7 @@ struct SShaderGenerator : public IDefaultMaterialShaderGenerator
 }
 
 IDefaultMaterialShaderGenerator &
-IDefaultMaterialShaderGenerator::CreateDefaultMaterialShaderGenerator(IQt3DSRenderContext &inRc)
+IDefaultMaterialShaderGenerator::CreateDefaultMaterialShaderGenerator(IQDemonRenderContext &inRc)
 {
     return *QDEMON_NEW(inRc.GetAllocator(), SShaderGenerator)(inRc);
 }

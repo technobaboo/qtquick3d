@@ -44,12 +44,12 @@ struct SBufferLoader;
 struct SBufferLoadResult : public ILoadedBuffer
 {
     NVFoundationBase &m_Foundation;
-    CRegisteredString m_Path;
+    QString m_Path;
     IBufferLoaderCallback *m_UserData;
     QDemonDataRef<quint8> m_Data;
     qint32 mRefCount;
 
-    SBufferLoadResult(NVFoundationBase &fnd, CRegisteredString p, IBufferLoaderCallback *ud,
+    SBufferLoadResult(NVFoundationBase &fnd, QString p, IBufferLoaderCallback *ud,
                       QDemonDataRef<quint8> data)
         : m_Foundation(fnd)
         , m_Path(p)
@@ -61,13 +61,13 @@ struct SBufferLoadResult : public ILoadedBuffer
 
     QDEMON_IMPLEMENT_REF_COUNT_ADDREF_RELEASE_OVERRIDE(m_Foundation.getAllocator())
 
-    CRegisteredString Path() override { return m_Path; }
+    QString Path() override { return m_Path; }
     // Data is released when the buffer itself is released.
     QDemonDataRef<quint8> Data() override { return m_Data; }
     IBufferLoaderCallback *UserData() override { return m_UserData; }
 
     static SBufferLoadResult *Allocate(quint32 inBufferSize, NVFoundationBase &fnd,
-                                       CRegisteredString p,
+                                       QString p,
                                        QDemonScopedRefCounted<IBufferLoaderCallback> ud)
     {
         size_t allocSize = sizeof(SBufferLoadResult) + inBufferSize;
@@ -85,7 +85,7 @@ struct SLoadedBufferImpl
     SBufferLoader &m_Loader;
     quint64 m_JobId;
     quint64 m_LoadId;
-    CRegisteredString m_Path;
+    QString m_Path;
     QDemonScopedRefCounted<IBufferLoaderCallback> m_UserData;
     bool m_Quiet;
     volatile bool m_Cancel;
@@ -93,7 +93,7 @@ struct SLoadedBufferImpl
     SLoadedBufferImpl *m_NextBuffer;
     SLoadedBufferImpl *m_PreviousBuffer;
 
-    SLoadedBufferImpl(SBufferLoader &l, CRegisteredString inPath,
+    SLoadedBufferImpl(SBufferLoader &l, QString inPath,
                       QDemonScopedRefCounted<IBufferLoaderCallback> ud, bool inQuiet, quint64 loadId)
         : m_Loader(l)
         , m_JobId(0)
@@ -247,7 +247,7 @@ struct SBufferLoader : public IBufferLoader
     }
 
     // nonblocking.  Quiet failure is passed to the input stream factory.
-    quint64 QueueForLoading(CRegisteredString inPath,
+    quint64 QueueForLoading(QString inPath,
                             IBufferLoaderCallback *inUserData = nullptr,
                             bool inQuietFailure = false) override
     {

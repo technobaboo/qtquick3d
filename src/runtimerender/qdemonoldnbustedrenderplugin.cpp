@@ -39,7 +39,7 @@
 
 QT_BEGIN_NAMESPACE
 
-COldNBustedPluginRenderer::COldNBustedPluginRenderer(IQt3DSRenderContext &inRenderContext,
+COldNBustedPluginRenderer::COldNBustedPluginRenderer(IQDemonRenderContext &inRenderContext,
                                                      long inDLLHandle)
     : m_RenderContext(inRenderContext)
     , m_DLLHandle(inDLLHandle)

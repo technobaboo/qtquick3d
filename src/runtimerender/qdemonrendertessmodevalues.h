@@ -30,7 +30,7 @@
 #pragma once
 #ifndef QDEMON_RENDER_TESS_MODE_VALUES_H
 #define QDEMON_RENDER_TESS_MODE_VALUES_H
-#include <QtDemonRuntimeRender/qdemonrender.h>
+
 
 QT_BEGIN_NAMESPACE
 

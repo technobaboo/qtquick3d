@@ -30,8 +30,9 @@
 #pragma once
 #ifndef QDEMON_RENDER_IMAGE_TEXTURE_DATA_H
 #define QDEMON_RENDER_IMAGE_TEXTURE_DATA_H
-#include <QtDemonRuntimeRender/qdemonrender.h>
-#include <Qt3DSFlags.h>
+
+#include <QtDemon/qdemonflags.h>
+#include <QtDemonRender/qdemonrendertexture2d.h>
 
 QT_BEGIN_NAMESPACE
 // forward declararion

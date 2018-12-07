@@ -33,7 +33,7 @@
 
 QT_BEGIN_NAMESPACE
 
-void SPresentation::Render(IQt3DSRenderContext &inContext)
+void SPresentation::Render(IQDemonRenderContext &inContext)
 {
     if (m_Scene) {
         QDemonRenderRect theViewportSize(inContext.GetRenderContext().GetViewport());

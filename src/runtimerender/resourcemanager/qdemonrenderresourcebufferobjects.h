@@ -30,7 +30,7 @@
 #pragma once
 #ifndef QDEMON_RENDER_RESOURCE_BUFFER_OBJECTS_H
 #define QDEMON_RENDER_RESOURCE_BUFFER_OBJECTS_H
-#include <QtDemonRuntimeRender/qdemonrender.h>
+
 #include <QtDemonRender/qdemonrendercontext.h>
 #include <QtDemonRuntimeRender/qdemonrenderresourcemanager.h>
 #include <QtDemonRender/qdemonrenderframebuffer.h>

@@ -30,7 +30,7 @@
 #pragma once
 #ifndef QDEMON_RENDER_PLUGIN_H
 #define QDEMON_RENDER_PLUGIN_H
-#include <QtDemonRuntimeRender/qdemonrender.h>
+
 #include <QtDemonRuntimeRender/qdemonrenderplugincinterface.h>
 #include <QtDemonRuntimeRender/qdemonoffscreenrendermanager.h>
 
@@ -78,7 +78,7 @@ struct SRenderPluginPropertyTypes
 
 struct SRenderPluginPropertyDeclaration
 {
-    CRegisteredString m_Name;
+    QString m_Name;
     SRenderPluginPropertyTypes::Enum m_Type;
     // Filled in by the class, ignored if set on registered property
     quint32 m_StartOffset;
@@ -86,7 +86,7 @@ struct SRenderPluginPropertyDeclaration
         : m_Type(SRenderPluginPropertyTypes::UnknownRenderPluginPropertyType)
     {
     }
-    SRenderPluginPropertyDeclaration(CRegisteredString n, SRenderPluginPropertyTypes::Enum t)
+    SRenderPluginPropertyDeclaration(QString n, SRenderPluginPropertyTypes::Enum t)
         : m_Name(n)
         , m_Type(t)
         , m_StartOffset(0)
@@ -104,9 +104,9 @@ public:
     virtual QDemonConstDataRef<SRenderPluginPropertyDeclaration> GetRegisteredProperties() = 0;
     // The declaration contains an offset
     virtual SRenderPluginPropertyDeclaration
-    GetPropertyDeclaration(CRegisteredString inPropName) = 0;
+    GetPropertyDeclaration(QString inPropName) = 0;
     // From which you can get the property name breakdown
-    virtual eastl::pair<CRegisteredString, RenderPluginPropertyValueTypes::Enum>
+    virtual QPair<QString, RenderPluginPropertyValueTypes::Enum>
     GetPropertyValueInfo(quint32 inIndex) = 0;
 };
 
@@ -117,7 +117,7 @@ class IRenderPluginManagerCore : public QDemonRefCounted
 public:
     virtual void SetDllDir(const char *inDllDir) = 0;
     virtual void Load(QDemonDataRef<quint8> inData, CStrTableOrDataRef inStrDataBlock,
-                      const char8_t *inProjectDir) = 0;
+                      const char *inProjectDir) = 0;
     virtual IRenderPluginManager &GetRenderPluginManager(QDemonRenderContext &rc) = 0;
 
     static IRenderPluginManagerCore &Create(NVFoundationBase &inFoundation,
@@ -128,17 +128,17 @@ public:
 class IRenderPluginManager : public QDemonRefCounted
 {
 public:
-    virtual IRenderPluginClass *GetRenderPlugin(CRegisteredString inRelativePath) = 0;
-    virtual IRenderPluginClass *GetOrCreateRenderPlugin(CRegisteredString inRelativePath) = 0;
+    virtual IRenderPluginClass *GetRenderPlugin(QString inRelativePath) = 0;
+    virtual IRenderPluginClass *GetOrCreateRenderPlugin(QString inRelativePath) = 0;
     // Map a render plugin instance to this key.  The instance's lifetime is managed by the
     // manager so a client does not
     // need to manage it.
     virtual IRenderPluginInstance *
-    GetOrCreateRenderPluginInstance(CRegisteredString inRelativePath, void *inKey) = 0;
+    GetOrCreateRenderPluginInstance(QString inRelativePath, void *inKey) = 0;
 
     virtual void Save(SWriteBuffer &ioBuffer,
                       const SStrRemapMap &inRemapMap,
-                      const char8_t *inProjectDir) const = 0;
+                      const char *inProjectDir) const = 0;
 };
 QT_END_NAMESPACE
 

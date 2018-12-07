@@ -30,11 +30,11 @@
 #pragma once
 #ifndef QDEMON_RENDER_EFFECT_SYSTEM_H
 #define QDEMON_RENDER_EFFECT_SYSTEM_H
-#include <QtDemonRuntimeRender/qdemonrender.h>
+
 #include <QtDemon/qdemonrefcounted.h>
 #include <QtDemonRender/qdemonrenderbasetypes.h>
 #include <StringTable.h>
-#include <QVector2D.h>
+#include <QtGui/QVector2D>
 #include <QtDemonRuntimeRender/qdemonrenderdynamicobjectsystem.h>
 
 QT_BEGIN_NAMESPACE
@@ -73,42 +73,42 @@ struct SEffectRenderArgument
 class IEffectSystemCore : public QDemonRefCounted
 {
 public:
-    virtual bool IsEffectRegistered(CRegisteredString inStr) = 0;
-    virtual QDemonConstDataRef<CRegisteredString> GetRegisteredEffects() = 0;
+    virtual bool IsEffectRegistered(QString inStr) = 0;
+    virtual QDemonConstDataRef<QString> GetRegisteredEffects() = 0;
     // Register an effect class that uses exactly these commands to render.
     // Effect properties cannot change after the effect is created because that would invalidate
     // existing effect instances.
     // Effect commands, which are stored on the effect class, can change.
-    virtual bool RegisterEffect(CRegisteredString inName,
+    virtual bool RegisterEffect(QString inName,
                                 QDemonConstDataRef<dynamic::SPropertyDeclaration> inProperties) = 0;
 
-    virtual bool UnregisterEffect(CRegisteredString inName) = 0;
+    virtual bool UnregisterEffect(QString inName) = 0;
 
     // Shorthand method that creates an effect and auto-generates the effect commands like such:
     // BindShader(inPathToEffect)
     // foreach( propdec in inProperties ) ApplyValue( propDecType )
     // ApplyShader()
     virtual bool
-    RegisterGLSLEffect(CRegisteredString inName, const char8_t *inPathToEffect,
+    RegisterGLSLEffect(QString inName, const char *inPathToEffect,
                        QDemonConstDataRef<dynamic::SPropertyDeclaration> inProperties) = 0;
     // Set the default value.  THis is unnecessary if the default is zero as that is what it is
     // assumed to be.
-    virtual void SetEffectPropertyDefaultValue(CRegisteredString inName,
-                                               CRegisteredString inPropName,
+    virtual void SetEffectPropertyDefaultValue(QString inName,
+                                               QString inPropName,
                                                QDemonConstDataRef<quint8> inDefaultData) = 0;
-    virtual void SetEffectPropertyEnumNames(CRegisteredString inName,
-                                            CRegisteredString inPropName,
-                                            QDemonConstDataRef<CRegisteredString> inNames) = 0;
-    virtual QDemonConstDataRef<CRegisteredString>
-    GetEffectPropertyEnumNames(CRegisteredString inName,
-                               CRegisteredString inPropName) const = 0;
+    virtual void SetEffectPropertyEnumNames(QString inName,
+                                            QString inPropName,
+                                            QDemonConstDataRef<QString> inNames) = 0;
+    virtual QDemonConstDataRef<QString>
+    GetEffectPropertyEnumNames(QString inName,
+                               QString inPropName) const = 0;
 
     virtual QDemonConstDataRef<dynamic::SPropertyDefinition>
-    GetEffectProperties(CRegisteredString inEffectName) const = 0;
+    GetEffectProperties(QString inEffectName) const = 0;
 
     virtual void SetEffectPropertyTextureSettings(
-            CRegisteredString inEffectName, CRegisteredString inPropName,
-            CRegisteredString inPropPath, QDemonRenderTextureTypeValue::Enum inTexType,
+            QString inEffectName, QString inPropName,
+            QString inPropPath, QDemonRenderTextureTypeValue::Enum inTexType,
             QDemonRenderTextureCoordOp::Enum inCoordOp, QDemonRenderTextureMagnifyingOp::Enum inMagFilterOp,
             QDemonRenderTextureMinifyingOp::Enum inMinFilterOp) = 0;
 
@@ -116,13 +116,13 @@ public:
     // value"
     // command then this effect does not require the depth texture.
     // So the setter here is completely optional.
-    virtual void SetEffectRequiresDepthTexture(CRegisteredString inEffectName,
+    virtual void SetEffectRequiresDepthTexture(QString inEffectName,
                                                bool inValue) = 0;
-    virtual bool DoesEffectRequireDepthTexture(CRegisteredString inEffectName) const = 0;
+    virtual bool DoesEffectRequireDepthTexture(QString inEffectName) const = 0;
 
-    virtual void SetEffectRequiresCompilation(CRegisteredString inEffectName,
+    virtual void SetEffectRequiresCompilation(QString inEffectName,
                                               bool inValue) = 0;
-    virtual bool DoesEffectRequireCompilation(CRegisteredString inEffectName) const = 0;
+    virtual bool DoesEffectRequireCompilation(QString inEffectName) const = 0;
 
     // The effect commands are the actual commands that run for a given effect.  The tell the
     // system exactly
@@ -130,37 +130,37 @@ public:
     // run this shader
     // See UICRenderEffectCommands.h for the list of commands.
     // These commands are copied into the effect.
-    virtual void SetEffectCommands(CRegisteredString inEffectName,
+    virtual void SetEffectCommands(QString inEffectName,
                                    QDemonConstDataRef<dynamic::SCommand *> inCommands) = 0;
     virtual QDemonConstDataRef<dynamic::SCommand *>
-    GetEffectCommands(CRegisteredString inEffectName) const = 0;
+    GetEffectCommands(QString inEffectName) const = 0;
 
     // Set the shader data for a given path.  Used when a path doesn't correspond to a file but
     // the data has been
     // auto-generated.  The system will look for data under this path key during the BindShader
     // effect command.
-    virtual void SetShaderData(CRegisteredString inPath, const char8_t *inData,
-                               const char8_t *inShaderType = nullptr,
-                               const char8_t *inShaderVersion = nullptr,
+    virtual void SetShaderData(QString inPath, const char *inData,
+                               const char *inShaderType = nullptr,
+                               const char *inShaderVersion = nullptr,
                                bool inHasGeomShader = false,
                                bool inIsComputeShader = false) = 0;
 
     // An effect instance is just a property bag along with the name of the effect to run.
     // This instance is what is placed into the object graph.
-    virtual SEffect *CreateEffectInstance(CRegisteredString inEffectName,
+    virtual SEffect *CreateEffectInstance(QString inEffectName,
                                           NVAllocatorCallback &inSceneGraphAllocator) = 0;
 
     virtual void Save(SWriteBuffer &ioBuffer,
                       const SStrRemapMap &inRemapMap,
-                      const char8_t *inProjectDir) const = 0;
+                      const char *inProjectDir) const = 0;
     virtual void Load(QDemonDataRef<quint8> inData, CStrTableOrDataRef inStrDataBlock,
-                      const char8_t *inProjectDir) = 0;
+                      const char *inProjectDir) = 0;
 
-    virtual IEffectSystem &GetEffectSystem(IQt3DSRenderContext &context) = 0;
+    virtual IEffectSystem &GetEffectSystem(IQDemonRenderContext &context) = 0;
 
     virtual IResourceManager &GetResourceManager() = 0;
 
-    static IEffectSystemCore &CreateEffectSystemCore(IQt3DSRenderContextCore &context);
+    static IEffectSystemCore &CreateEffectSystemCore(IQDemonRenderContextCore &context);
 };
 
 /**

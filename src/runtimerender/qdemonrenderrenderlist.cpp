@@ -36,7 +36,7 @@ namespace {
 
 struct SRenderList : public IRenderList
 {
-    typedef eastl::pair<quint32, IRenderTask *> TTaskIdTaskPair;
+    typedef QPair<quint32, IRenderTask *> TTaskIdTaskPair;
     typedef QVector<TTaskIdTaskPair> TTaskList;
 
     NVFoundationBase &m_Foundation;

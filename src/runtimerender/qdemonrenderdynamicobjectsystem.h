@@ -30,13 +30,13 @@
 #pragma once
 #ifndef QDEMON_RENDER_DYNAMIC_OBJECT_SYSTEM_H
 #define QDEMON_RENDER_DYNAMIC_OBJECT_SYSTEM_H
-#include <QtDemonRuntimeRender/qdemonrender.h>
+
 #include <Qt3DSSimpleTypes.h>
 #include <QtDemonRender/qdemonrenderbasetypes.h>
 #include <QtDemon/qdemonrefcounted.h>
 #include <QtDemonRender/qdemonrenderbasetypes.h>
 #include <StringTable.h>
-#include <QVector2D.h>
+#include <QtGui/QVector2D>
 #include <QtDemonRuntimeRender/qdemonrendershadercache.h>
 #include <QtDemonRuntimeRender/qdemonrendertessmodevalues.h>
 #include <QtDemonRuntimeRender/qdemonrendergraphobjecttypes.h>
@@ -52,14 +52,14 @@ struct SCommand;
 
 struct SPropertyDeclaration
 {
-    const char8_t *m_Name;
+    const char *m_Name;
     // The datatypes map directly to the obvious types *except*
     // for QDemonRenderTexture2DPtr.  This type will be interpreted as a
-    // CRegisteredString (they are the same binary size)
+    // QString (they are the same binary size)
     // and will be used to lookup the texture from the buffer manager.
     QDemonRenderShaderDataTypes::Enum m_DataType;
 
-    SPropertyDeclaration(const char8_t *inName, QDemonRenderShaderDataTypes::Enum inDtype)
+    SPropertyDeclaration(const char *inName, QDemonRenderShaderDataTypes::Enum inDtype)
         : m_Name(inName)
         , m_DataType(inDtype)
     {
@@ -73,13 +73,13 @@ struct SPropertyDeclaration
 
 struct SPropertyDefinition
 {
-    CRegisteredString m_Name;
+    QString m_Name;
 
     //*not* relative to the presentation directory
-    CRegisteredString m_ImagePath;
+    QString m_ImagePath;
     // The datatypes map directly to the obvious types *except*
     // for QDemonRenderTexture2DPtr.  This type will be interpreted as a
-    // CRegisteredString and will be used to lookup the texture
+    // QString and will be used to lookup the texture
     // from the buffer manager.
     QDemonRenderShaderDataTypes::Enum m_DataType;
     // All offsets are relative to the beginning of the SEffect
@@ -87,7 +87,7 @@ struct SPropertyDefinition
     quint32 m_Offset;
     // Sizeof this datatype.
     quint32 m_ByteSize;
-    QDemonConstDataRef<CRegisteredString> m_EnumValueNames;
+    QDemonConstDataRef<QString> m_EnumValueNames;
 
     QDemonRenderTextureTypeValue::Enum
     m_TexUsageType; ///< texture usage type like diffuse, specular, ...
@@ -109,7 +109,7 @@ struct SPropertyDefinition
         , m_IsEnumProperty(false)
     {
     }
-    SPropertyDefinition(CRegisteredString inName, QDemonRenderShaderDataTypes::Enum inType,
+    SPropertyDefinition(QString inName, QDemonRenderShaderDataTypes::Enum inType,
                         quint32 inOffset, quint32 inByteSize)
         : m_Name(inName)
         , m_DataType(inType)
@@ -156,14 +156,14 @@ class IDynamicObjectClass
 protected:
     virtual ~IDynamicObjectClass() {}
 public:
-    virtual CRegisteredString GetId() const = 0;
+    virtual QString GetId() const = 0;
     virtual QDemonConstDataRef<dynamic::SPropertyDefinition> GetProperties() const = 0;
     virtual quint32 GetPropertySectionByteSize() const = 0;
     virtual const quint8 *GetDefaultValueBuffer() const = 0;
     virtual quint32 GetBaseObjectSize() const = 0;
     virtual GraphObjectTypes::Enum GraphObjectType() const = 0;
     virtual const dynamic::SPropertyDefinition *
-    FindPropertyByName(CRegisteredString inName) const = 0;
+    FindPropertyByName(QString inName) const = 0;
     virtual QDemonConstDataRef<dynamic::SCommand *> GetRenderCommands() const = 0;
     virtual bool RequiresDepthTexture() const = 0;
     virtual void SetRequiresDepthTexture(bool inRequires) = 0;
@@ -177,37 +177,37 @@ class IDynamicObjectSystemCore : public QDemonRefCounted
 protected:
     virtual ~IDynamicObjectSystemCore() {}
 public:
-    virtual bool IsRegistered(CRegisteredString inStr) = 0;
+    virtual bool IsRegistered(QString inStr) = 0;
 
-    virtual bool Register(CRegisteredString inName,
+    virtual bool Register(QString inName,
                           QDemonConstDataRef<dynamic::SPropertyDeclaration> inProperties,
                           quint32 inBaseObjectSize, GraphObjectTypes::Enum inGraphObjectType) = 0;
 
-    virtual bool Unregister(CRegisteredString inName) = 0;
+    virtual bool Unregister(QString inName) = 0;
 
     // Set the default value.  THis is unnecessary if the default is zero as that is what it is
     // assumed to be.
-    virtual void SetPropertyDefaultValue(CRegisteredString inName, CRegisteredString inPropName,
+    virtual void SetPropertyDefaultValue(QString inName, QString inPropName,
                                          QDemonConstDataRef<quint8> inDefaultData) = 0;
 
-    virtual void SetPropertyEnumNames(CRegisteredString inName, CRegisteredString inPropName,
-                                      QDemonConstDataRef<CRegisteredString> inNames) = 0;
+    virtual void SetPropertyEnumNames(QString inName, QString inPropName,
+                                      QDemonConstDataRef<QString> inNames) = 0;
 
-    virtual QDemonConstDataRef<CRegisteredString>
-    GetPropertyEnumNames(CRegisteredString inName, CRegisteredString inPropName) const = 0;
+    virtual QDemonConstDataRef<QString>
+    GetPropertyEnumNames(QString inName, QString inPropName) const = 0;
 
     virtual QDemonConstDataRef<dynamic::SPropertyDefinition>
-    GetProperties(CRegisteredString inName) const = 0;
+    GetProperties(QString inName) const = 0;
 
-    virtual void SetPropertyTextureSettings(CRegisteredString inName,
-                                            CRegisteredString inPropName,
-                                            CRegisteredString inPropPath,
+    virtual void SetPropertyTextureSettings(QString inName,
+                                            QString inPropName,
+                                            QString inPropPath,
                                             QDemonRenderTextureTypeValue::Enum inTexType,
                                             QDemonRenderTextureCoordOp::Enum inCoordOp,
                                             QDemonRenderTextureMagnifyingOp::Enum inMagFilterOp,
                                             QDemonRenderTextureMinifyingOp::Enum inMinFilterOp) = 0;
 
-    virtual IDynamicObjectClass *GetDynamicObjectClass(CRegisteredString inName) = 0;
+    virtual IDynamicObjectClass *GetDynamicObjectClass(QString inName) = 0;
 
     // The effect commands are the actual commands that run for a given effect.  The tell the
     // system exactly
@@ -215,12 +215,12 @@ public:
     // run this shader
     // See UICRenderEffectCommands.h for the list of commands.
     // These commands are copied into the effect.
-    virtual void SetRenderCommands(CRegisteredString inClassName,
+    virtual void SetRenderCommands(QString inClassName,
                                    QDemonConstDataRef<dynamic::SCommand *> inCommands) = 0;
     virtual QDemonConstDataRef<dynamic::SCommand *>
-    GetRenderCommands(CRegisteredString inClassName) const = 0;
+    GetRenderCommands(QString inClassName) const = 0;
 
-    virtual SDynamicObject *CreateInstance(CRegisteredString inClassName,
+    virtual SDynamicObject *CreateInstance(QString inClassName,
                                            NVAllocatorCallback &inSceneGraphAllocator) = 0;
 
     // scan shader for #includes and insert any found"
@@ -231,25 +231,25 @@ public:
     // the data has been
     // auto-generated.  The system will look for data under this path key during the BindShader
     // effect command.
-    virtual void SetShaderData(CRegisteredString inPath, const char8_t *inData,
-                               const char8_t *inShaderType = nullptr,
-                               const char8_t *inShaderVersion = nullptr,
+    virtual void SetShaderData(QString inPath, const char *inData,
+                               const char *inShaderType = nullptr,
+                               const char *inShaderVersion = nullptr,
                                bool inHasGeomShader = false,
                                bool inIsComputeShader = false) = 0;
 
     // Overall save functions for saving the class information out to the binary file.
     virtual void Save(SWriteBuffer &ioBuffer,
                       const SStrRemapMap &inRemapMap,
-                      const char8_t *inProjectDir) const = 0;
+                      const char *inProjectDir) const = 0;
     virtual void Load(QDemonDataRef<quint8> inData, CStrTableOrDataRef inStrDataBlock,
-                      const char8_t *inProjectDir) = 0;
+                      const char *inProjectDir) = 0;
 
-    virtual IDynamicObjectSystem &CreateDynamicSystem(IQt3DSRenderContext &rc) = 0;
+    virtual IDynamicObjectSystem &CreateDynamicSystem(IQDemonRenderContext &rc) = 0;
 
-    static IDynamicObjectSystemCore &CreateDynamicSystemCore(IQt3DSRenderContextCore &rc);
+    static IDynamicObjectSystemCore &CreateDynamicSystemCore(IQDemonRenderContextCore &rc);
 };
 
-typedef eastl::pair<QDemonScopedRefCounted<QDemonRenderShaderProgram>,
+typedef QPair<QDemonScopedRefCounted<QDemonRenderShaderProgram>,
 dynamic::SDynamicShaderProgramFlags>
 TShaderAndFlags;
 
@@ -260,17 +260,17 @@ protected:
 
 public:
     virtual TShaderAndFlags
-    GetShaderProgram(CRegisteredString inPath, CRegisteredString inProgramMacro,
+    GetShaderProgram(QString inPath, QString inProgramMacro,
                      TShaderFeatureSet inFeatureSet,
                      const dynamic::SDynamicShaderProgramFlags &inFlags,
                      bool inForceCompilation = false) = 0;
 
-    virtual const char8_t *GetShaderSource(CRegisteredString inPath, CRenderString &source) = 0;
+    virtual const char *GetShaderSource(QString inPath, CRenderString &source) = 0;
 
     // Will return null in the case where a custom prepass shader isn't needed for this object
     // If no geom shader, then no depth prepass shader.
-    virtual TShaderAndFlags GetDepthPrepassShader(CRegisteredString inPath,
-                                                  CRegisteredString inProgramMacro,
+    virtual TShaderAndFlags GetDepthPrepassShader(QString inPath,
+                                                  QString inProgramMacro,
                                                   TShaderFeatureSet inFeatureSet) = 0;
 
     virtual void setShaderCodeLibraryVersion(const QString &version) = 0;

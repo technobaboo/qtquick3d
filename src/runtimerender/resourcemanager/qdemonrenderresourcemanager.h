@@ -30,7 +30,7 @@
 #pragma once
 #ifndef QDEMON_RENDER_RESOURCE_MANAGER_H
 #define QDEMON_RENDER_RESOURCE_MANAGER_H
-#include <QtDemonRuntimeRender/qdemonrender.h>
+
 #include <QtDemon/qdemonrefcounted.h>
 #include <QtDemonRender/qdemonrenderbasetypes.h>
 

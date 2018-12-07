@@ -55,14 +55,14 @@ namespace render {
 
     class IBufferManager;
 
-    typedef QHash<CRegisteredString, SGraphObject *> TIdObjectMap;
+    typedef QHash<QString, SGraphObject *> TIdObjectMap;
 
     struct IUIPReferenceResolver
     {
     protected:
         virtual ~IUIPReferenceResolver() {}
     public:
-        virtual CRegisteredString ResolveReference(CRegisteredString inStart,
+        virtual QString ResolveReference(QString inStart,
                                                    const char *inReference) = 0;
     };
 
@@ -79,7 +79,7 @@ namespace render {
                     // the full path, including the filename
                     // to the presentation file
                     ,
-                    const char8_t *inFullPathToPresentationFile,
+                    const char *inFullPathToPresentationFile,
                     Q3DStudio::IRuntimeMetaData &inMetaData, IStringTable &inStrTable,
                     NVFoundationBase &inFoundation
                     // Allocator used for the presentation objects themselves
@@ -96,7 +96,7 @@ namespace render {
                     // To load effects we need the effect system
                     // and the presentation directory
                     ,
-                    IEffectSystem &inEffectSystem, const char8_t *inPresentationDir,
+                    IEffectSystem &inEffectSystem, const char *inPresentationDir,
                     IRenderPluginManager &inPluginManager, ICustomMaterialSystem &inMaterialSystem,
                     IDynamicObjectSystem &inDynamicSystem, IPathManager &inPathManager
                     // Resolve references to objects; this is done by the main uip loader during
@@ -109,14 +109,14 @@ namespace render {
                     ,
                     bool setValuesFromSlides = false);
 
-        static void CreateEffectClassFromMetaEffect(CRegisteredString inEffectName,
+        static void CreateEffectClassFromMetaEffect(QString inEffectName,
                                                     NVFoundationBase &inFoundation,
                                                     IEffectSystem &inEffectSystem,
                                                     const qt3dsdm::SMetaDataEffect &inMetaDataEffect,
                                                     IStringTable &inStrTable);
 
         static void CreateMaterialClassFromMetaMaterial(
-            CRegisteredString inEffectName, NVFoundationBase &inFoundation,
+            QString inEffectName, NVFoundationBase &inFoundation,
             ICustomMaterialSystem &inEffectSystem,
             const qt3dsdm::SMetaDataCustomMaterial &inMetaDataMaterial, IStringTable &inStrTable);
     };

@@ -58,7 +58,7 @@ using NVRenderCachedShaderBuffer;
 // None of this code will work if the size of void* changes because that would mean that
 // the alignment of some of the objects isn't 4 bytes but would be 8 bytes.
 
-typedef eastl::pair<CRegisteredString, CRegisteredString> TStrStrPair;
+typedef QPair<QString, QString> TStrStrPair;
 
 namespace eastl {
 template <>
@@ -66,7 +66,7 @@ struct hash<TStrStrPair>
 {
     size_t operator()(const TStrStrPair &item) const
     {
-        return hash<CRegisteredString>()(item.first) ^ hash<CRegisteredString>()(item.second);
+        return hash<QString>()(item.first) ^ hash<QString>()(item.second);
     }
 };
 }
@@ -105,13 +105,13 @@ struct SEffectClass
 
 struct SAllocatedBufferEntry
 {
-    CRegisteredString m_Name;
+    QString m_Name;
     QDemonScopedRefCounted<QDemonRenderFrameBuffer> m_FrameBuffer;
     QDemonScopedRefCounted<QDemonRenderTexture2D> m_Texture;
     SAllocateBufferFlags m_Flags;
     bool m_NeedsClear;
 
-    SAllocatedBufferEntry(CRegisteredString inName, QDemonRenderFrameBuffer &inFb,
+    SAllocatedBufferEntry(QString inName, QDemonRenderFrameBuffer &inFb,
                           QDemonRenderTexture2D &inTexture, SAllocateBufferFlags inFlags)
         : m_Name(inName)
         , m_FrameBuffer(&inFb)
@@ -125,12 +125,12 @@ struct SAllocatedBufferEntry
 
 struct SAllocatedImageEntry
 {
-    CRegisteredString m_Name;
+    QString m_Name;
     QDemonScopedRefCounted<QDemonRenderImage2D> m_Image;
     QDemonScopedRefCounted<QDemonRenderTexture2D> m_Texture;
     SAllocateBufferFlags m_Flags;
 
-    SAllocatedImageEntry(CRegisteredString inName, QDemonRenderImage2D &inImage,
+    SAllocatedImageEntry(QString inName, QDemonRenderImage2D &inImage,
                          QDemonRenderTexture2D &inTexture, SAllocateBufferFlags inFlags)
         : m_Name(inName)
         , m_Image(&inImage)
@@ -166,14 +166,14 @@ struct SImageEntry
 
 struct SAllocatedDataBufferEntry
 {
-    CRegisteredString m_Name;
+    QString m_Name;
     QDemonScopedRefCounted<QDemonRenderDataBuffer> m_DataBuffer;
     QDemonRenderBufferBindValues::Enum m_BufferType;
     QDemonDataRef<quint8> m_BufferData;
     SAllocateBufferFlags m_Flags;
     bool m_NeedsClear;
 
-    SAllocatedDataBufferEntry(CRegisteredString inName,
+    SAllocatedDataBufferEntry(QString inName,
                               QDemonRenderDataBuffer &inDataBuffer,
                               QDemonRenderBufferBindValues::Enum inType, QDemonDataRef<quint8> data,
                               SAllocateBufferFlags inFlags)
@@ -287,9 +287,9 @@ struct STextureEntry
     }
 };
 
-typedef eastl::pair<CRegisteredString, QDemonScopedRefCounted<STextureEntry>> TNamedTextureEntry;
-typedef eastl::pair<CRegisteredString, QDemonScopedRefCounted<SImageEntry>> TNamedImageEntry;
-typedef eastl::pair<CRegisteredString, QDemonScopedRefCounted<SDataBufferEntry>> TNamedDataBufferEntry;
+typedef QPair<QString, QDemonScopedRefCounted<STextureEntry>> TNamedTextureEntry;
+typedef QPair<QString, QDemonScopedRefCounted<SImageEntry>> TNamedImageEntry;
+typedef QPair<QString, QDemonScopedRefCounted<SDataBufferEntry>> TNamedDataBufferEntry;
 }
 
 namespace qt3ds {
@@ -297,8 +297,8 @@ namespace render {
 
 struct SEffectContext
 {
-    CRegisteredString m_ClassName;
-    IQt3DSRenderContext &m_Context;
+    QString m_ClassName;
+    IQDemonRenderContext &m_Context;
     IResourceManager *m_ResourceManager;
     QVector<SAllocatedBufferEntry> m_AllocatedBuffers;
     QVector<SAllocatedImageEntry> m_AllocatedImages;
@@ -307,7 +307,7 @@ struct SEffectContext
     QVector<TNamedImageEntry> m_ImageEntries;
     QVector<TNamedDataBufferEntry> m_DataBufferEntries;
 
-    SEffectContext(CRegisteredString inName, IQt3DSRenderContext &ctx, IResourceManager *inManager)
+    SEffectContext(QString inName, IQDemonRenderContext &ctx, IResourceManager *inManager)
         : m_ClassName(inName)
         , m_Context(ctx)
         , m_ResourceManager(inManager)
@@ -358,7 +358,7 @@ struct SEffectContext
         m_AllocatedDataBuffers.replace_with_last(inIdx);
     }
 
-    quint32 FindBuffer(CRegisteredString inName)
+    quint32 FindBuffer(QString inName)
     {
         for (quint32 idx = 0, end = m_AllocatedBuffers.size(); idx < end; ++idx)
             if (m_AllocatedBuffers[idx].m_Name == inName)
@@ -366,7 +366,7 @@ struct SEffectContext
         return m_AllocatedBuffers.size();
     }
 
-    quint32 FindImage(CRegisteredString inName)
+    quint32 FindImage(QString inName)
     {
         for (quint32 idx = 0, end = m_AllocatedImages.size(); idx < end; ++idx)
             if (m_AllocatedImages[idx].m_Name == inName)
@@ -375,7 +375,7 @@ struct SEffectContext
         return m_AllocatedImages.size();
     }
 
-    quint32 FindDataBuffer(CRegisteredString inName)
+    quint32 FindDataBuffer(QString inName)
     {
         for (quint32 idx = 0, end = m_AllocatedDataBuffers.size(); idx < end; ++idx) {
             if (m_AllocatedDataBuffers[idx].m_Name == inName)
@@ -385,7 +385,7 @@ struct SEffectContext
         return m_AllocatedDataBuffers.size();
     }
 
-    void SetTexture(QDemonRenderShaderProgram &inShader, CRegisteredString inPropName,
+    void SetTexture(QDemonRenderShaderProgram &inShader, QString inPropName,
                     QDemonRenderTexture2D *inTexture, bool inNeedsMultiply,
                     CRenderString &inStringBuilder, CRenderString &inStringBuilder2,
                     const SPropertyDefinition *inPropDec = nullptr)
@@ -407,7 +407,7 @@ struct SEffectContext
         theTextureEntry->Set(inTexture, inNeedsMultiply, inPropDec);
     }
 
-    void SetImage(QDemonRenderShaderProgram &inShader, CRegisteredString inPropName,
+    void SetImage(QDemonRenderShaderProgram &inShader, QString inPropName,
                   QDemonRenderImage2D *inImage)
     {
         SImageEntry *theImageEntry(nullptr);
@@ -428,7 +428,7 @@ struct SEffectContext
         theImageEntry->Set(inImage);
     }
 
-    void SetDataBuffer(QDemonRenderShaderProgram &inShader, CRegisteredString inPropName,
+    void SetDataBuffer(QDemonRenderShaderProgram &inShader, QString inPropName,
                        QDemonRenderDataBuffer *inBuffer)
     {
         SDataBufferEntry *theDataBufferEntry(nullptr);
@@ -485,19 +485,19 @@ struct SEffectShader
 
 struct SEffectSystem : public IEffectSystem
 {
-    typedef QHash<CRegisteredString, char8_t *> TPathDataMap;
-    typedef nvhash_set<CRegisteredString> TPathSet;
-    typedef QHash<CRegisteredString, QDemonScopedRefCounted<SEffectClass>> TEffectClassMap;
+    typedef QHash<QString, char *> TPathDataMap;
+    typedef nvhash_set<QString> TPathSet;
+    typedef QHash<QString, QDemonScopedRefCounted<SEffectClass>> TEffectClassMap;
     typedef QHash<TStrStrPair, QDemonScopedRefCounted<SEffectShader>> TShaderMap;
     typedef QVector<SEffectContext *> TContextList;
 
-    IQt3DSRenderContextCore &m_CoreContext;
-    IQt3DSRenderContext *m_Context;
+    IQDemonRenderContextCore &m_CoreContext;
+    IQDemonRenderContext *m_Context;
     QDemonScopedRefCounted<IResourceManager> m_ResourceManager;
     mutable SPreAllocatedAllocator m_Allocator;
     // Keep from dual-including headers.
     TEffectClassMap m_EffectClasses;
-    QVector<CRegisteredString> m_EffectList;
+    QVector<QString> m_EffectList;
     TContextList m_Contexts;
     CRenderString m_TextureStringBuilder;
     CRenderString m_TextureStringBuilder2;
@@ -506,7 +506,7 @@ struct SEffectSystem : public IEffectSystem
     QVector<QDemonScopedRefCounted<QDemonRenderDepthStencilState>> m_DepthStencilStates;
     volatile qint32 mRefCount;
 
-    SEffectSystem(IQt3DSRenderContextCore &inContext)
+    SEffectSystem(IQDemonRenderContextCore &inContext)
         : m_CoreContext(inContext)
         , m_Context(nullptr)
         , m_Allocator(inContext.GetAllocator())
@@ -539,23 +539,23 @@ struct SEffectSystem : public IEffectSystem
 
     QDEMON_IMPLEMENT_REF_COUNT_ADDREF_RELEASE_OVERRIDE(m_CoreContext.GetAllocator());
 
-    SEffectClass *GetEffectClass(CRegisteredString inStr)
+    SEffectClass *GetEffectClass(QString inStr)
     {
         TEffectClassMap::iterator theIter = m_EffectClasses.find(inStr);
         if (theIter != m_EffectClasses.end())
             return theIter->second;
         return nullptr;
     }
-    const SEffectClass *GetEffectClass(CRegisteredString inStr) const
+    const SEffectClass *GetEffectClass(QString inStr) const
     {
         return const_cast<SEffectSystem *>(this)->GetEffectClass(inStr);
     }
 
-    bool IsEffectRegistered(CRegisteredString inStr) override
+    bool IsEffectRegistered(QString inStr) override
     {
         return GetEffectClass(inStr) != nullptr;
     }
-    QDemonConstDataRef<CRegisteredString> GetRegisteredEffects() override
+    QDemonConstDataRef<QString> GetRegisteredEffects() override
     {
         m_EffectList.clear();
         for (TEffectClassMap::iterator theIter = m_EffectClasses.begin(),
@@ -566,7 +566,7 @@ struct SEffectSystem : public IEffectSystem
     }
 
     // Registers an effect that runs via a single GLSL file.
-    bool RegisterGLSLEffect(CRegisteredString inName, const char8_t *inPathToEffect,
+    bool RegisterGLSLEffect(QString inName, const char *inPathToEffect,
                             QDemonConstDataRef<SPropertyDeclaration> inProperties) override
     {
         if (IsEffectRegistered(inName))
@@ -640,22 +640,22 @@ struct SEffectSystem : public IEffectSystem
         return true;
     }
 
-    void SetEffectPropertyDefaultValue(CRegisteredString inName,
-                                       CRegisteredString inPropName,
+    void SetEffectPropertyDefaultValue(QString inName,
+                                       QString inPropName,
                                        QDemonConstDataRef<quint8> inDefaultData) override
     {
         m_CoreContext.GetDynamicObjectSystemCore().SetPropertyDefaultValue(inName, inPropName,
                                                                            inDefaultData);
     }
 
-    void SetEffectPropertyEnumNames(CRegisteredString inName, CRegisteredString inPropName,
-                                    QDemonConstDataRef<CRegisteredString> inNames) override
+    void SetEffectPropertyEnumNames(QString inName, QString inPropName,
+                                    QDemonConstDataRef<QString> inNames) override
     {
         m_CoreContext.GetDynamicObjectSystemCore().SetPropertyEnumNames(inName, inPropName,
                                                                         inNames);
     }
 
-    bool RegisterEffect(CRegisteredString inName,
+    bool RegisterEffect(QString inName,
                         QDemonConstDataRef<SPropertyDeclaration> inProperties) override
     {
         if (IsEffectRegistered(inName))
@@ -669,7 +669,7 @@ struct SEffectSystem : public IEffectSystem
         return true;
     }
 
-    bool UnregisterEffect(CRegisteredString inName) override
+    bool UnregisterEffect(QString inName) override
     {
         if (!IsEffectRegistered(inName))
             return false;
@@ -687,23 +687,23 @@ struct SEffectSystem : public IEffectSystem
         return true;
     }
 
-    virtual QDemonConstDataRef<CRegisteredString>
-    GetEffectPropertyEnumNames(CRegisteredString inName, CRegisteredString inPropName) const override
+    virtual QDemonConstDataRef<QString>
+    GetEffectPropertyEnumNames(QString inName, QString inPropName) const override
     {
         const SEffectClass *theClass = GetEffectClass(inName);
         if (theClass == nullptr) {
             Q_ASSERT(false);
-            QDemonConstDataRef<CRegisteredString>();
+            QDemonConstDataRef<QString>();
         }
         const SPropertyDefinition *theDefinitionPtr =
                 theClass->m_DynamicClass->FindPropertyByName(inPropName);
         if (theDefinitionPtr)
             return theDefinitionPtr->m_EnumValueNames;
-        return QDemonConstDataRef<CRegisteredString>();
+        return QDemonConstDataRef<QString>();
     }
 
     virtual QDemonConstDataRef<SPropertyDefinition>
-    GetEffectProperties(CRegisteredString inEffectName) const override
+    GetEffectProperties(QString inEffectName) const override
     {
         const SEffectClass *theClass = GetEffectClass(inEffectName);
         if (theClass)
@@ -711,9 +711,9 @@ struct SEffectSystem : public IEffectSystem
         return QDemonConstDataRef<SPropertyDefinition>();
     }
 
-    void SetEffectPropertyTextureSettings(CRegisteredString inName,
-                                          CRegisteredString inPropName,
-                                          CRegisteredString inPropPath,
+    void SetEffectPropertyTextureSettings(QString inName,
+                                          QString inPropName,
+                                          QString inPropPath,
                                           QDemonRenderTextureTypeValue::Enum inTexType,
                                           QDemonRenderTextureCoordOp::Enum inCoordOp,
                                           QDemonRenderTextureMagnifyingOp::Enum inMagFilterOp,
@@ -723,7 +723,7 @@ struct SEffectSystem : public IEffectSystem
                     inName, inPropName, inPropPath, inTexType, inCoordOp, inMagFilterOp, inMinFilterOp);
     }
 
-    void SetEffectRequiresDepthTexture(CRegisteredString inEffectName, bool inValue) override
+    void SetEffectRequiresDepthTexture(QString inEffectName, bool inValue) override
     {
         SEffectClass *theClass = GetEffectClass(inEffectName);
         if (theClass == nullptr) {
@@ -733,7 +733,7 @@ struct SEffectSystem : public IEffectSystem
         theClass->m_DynamicClass->SetRequiresDepthTexture(inValue);
     }
 
-    bool DoesEffectRequireDepthTexture(CRegisteredString inEffectName) const override
+    bool DoesEffectRequireDepthTexture(QString inEffectName) const override
     {
         const SEffectClass *theClass = GetEffectClass(inEffectName);
         if (theClass == nullptr) {
@@ -743,7 +743,7 @@ struct SEffectSystem : public IEffectSystem
         return theClass->m_DynamicClass->RequiresDepthTexture();
     }
 
-    void SetEffectRequiresCompilation(CRegisteredString inEffectName, bool inValue) override
+    void SetEffectRequiresCompilation(QString inEffectName, bool inValue) override
     {
         SEffectClass *theClass = GetEffectClass(inEffectName);
         if (theClass == nullptr) {
@@ -753,7 +753,7 @@ struct SEffectSystem : public IEffectSystem
         theClass->m_DynamicClass->SetRequiresCompilation(inValue);
     }
 
-    bool DoesEffectRequireCompilation(CRegisteredString inEffectName) const override
+    bool DoesEffectRequireCompilation(QString inEffectName) const override
     {
         const SEffectClass *theClass = GetEffectClass(inEffectName);
         if (theClass == nullptr) {
@@ -763,19 +763,19 @@ struct SEffectSystem : public IEffectSystem
         return theClass->m_DynamicClass->RequiresCompilation();
     }
 
-    void SetEffectCommands(CRegisteredString inEffectName,
+    void SetEffectCommands(QString inEffectName,
                            QDemonConstDataRef<dynamic::SCommand *> inCommands) override
     {
         m_CoreContext.GetDynamicObjectSystemCore().SetRenderCommands(inEffectName, inCommands);
     }
 
     virtual QDemonConstDataRef<dynamic::SCommand *>
-    GetEffectCommands(CRegisteredString inEffectName) const override
+    GetEffectCommands(QString inEffectName) const override
     {
         return m_CoreContext.GetDynamicObjectSystemCore().GetRenderCommands(inEffectName);
     }
 
-    SEffect *CreateEffectInstance(CRegisteredString inEffectName,
+    SEffect *CreateEffectInstance(QString inEffectName,
                                   NVAllocatorCallback &inSceneGraphAllocator) override
     {
         SEffectClass *theClass = GetEffectClass(inEffectName);
@@ -942,7 +942,7 @@ struct SEffectSystem : public IEffectSystem
         }
     }
 
-    QDemonRenderTexture2D *FindTexture(SEffect &inEffect, CRegisteredString inName)
+    QDemonRenderTexture2D *FindTexture(SEffect &inEffect, QString inName)
     {
         if (inEffect.m_Context) {
             SEffectContext &theContext(*inEffect.m_Context);
@@ -991,7 +991,7 @@ struct SEffectSystem : public IEffectSystem
         return theBuffer;
     }
 
-    SEffectShader *BindShader(CRegisteredString &inEffectId, const SBindShader &inCommand)
+    SEffectShader *BindShader(QString &inEffectId, const SBindShader &inCommand)
     {
         SEffectClass *theClass = GetEffectClass(inEffectId);
         if (!theClass) {
@@ -1001,10 +1001,10 @@ struct SEffectSystem : public IEffectSystem
 
         bool forceCompilation = theClass->m_DynamicClass->RequiresCompilation();
 
-        eastl::pair<const TStrStrPair, QDemonScopedRefCounted<SEffectShader>> theInserter(
+        QPair<const TStrStrPair, QDemonScopedRefCounted<SEffectShader>> theInserter(
                     TStrStrPair(inCommand.m_ShaderPath, inCommand.m_ShaderDefine),
                     QDemonScopedRefCounted<SEffectShader>());
-        eastl::pair<TShaderMap::iterator, bool> theInsertResult(m_ShaderMap.insert(theInserter));
+        QPair<TShaderMap::iterator, bool> theInsertResult(m_ShaderMap.insert(theInserter));
 
         if (theInsertResult.second || forceCompilation) {
             QDemonRenderShaderProgram *theProgram =
@@ -1023,7 +1023,7 @@ struct SEffectSystem : public IEffectSystem
         return theInsertResult.first->second;
     }
 
-    void DoApplyInstanceValue(SEffect &inEffect, quint8 *inDataPtr, CRegisteredString inPropertyName,
+    void DoApplyInstanceValue(SEffect &inEffect, quint8 *inDataPtr, QString inPropertyName,
                               QDemonRenderShaderDataTypes::Enum inPropertyType,
                               QDemonRenderShaderProgram &inShader,
                               const SPropertyDefinition &inDefinition)
@@ -1034,9 +1034,9 @@ struct SEffectSystem : public IEffectSystem
         if (theConstant) {
             if (theConstant->GetShaderConstantType() == inPropertyType) {
                 if (inPropertyType == QDemonRenderShaderDataTypes::QDemonRenderTexture2DPtr) {
-                    StaticAssert<sizeof(CRegisteredString)
+                    StaticAssert<sizeof(QString)
                             == sizeof(QDemonRenderTexture2DPtr)>::valid_expression();
-                    CRegisteredString *theStrPtr = reinterpret_cast<CRegisteredString *>(inDataPtr);
+                    QString *theStrPtr = reinterpret_cast<QString *>(inDataPtr);
                     IBufferManager &theBufferManager(m_Context->GetBufferManager());
                     IOffscreenRenderManager &theOffscreenRenderer(
                                 m_Context->GetOffscreenRenderManager());
@@ -1059,7 +1059,7 @@ struct SEffectSystem : public IEffectSystem
                                 inShader, inPropertyName, theTexture, needsAlphaMultiply,
                                 m_TextureStringBuilder, m_TextureStringBuilder2, &inDefinition);
                 } else if (inPropertyType == QDemonRenderShaderDataTypes::QDemonRenderImage2DPtr) {
-                    StaticAssert<sizeof(CRegisteredString)
+                    StaticAssert<sizeof(QString)
                             == sizeof(QDemonRenderTexture2DPtr)>::valid_expression();
                     QDemonRenderImage2D *theImage = nullptr;
                     GetEffectContext(inEffect).SetImage(inShader, inPropertyName, theImage);
@@ -1389,7 +1389,7 @@ struct SEffectSystem : public IEffectSystem
     void RenderPass(SEffectShader &inShader, const QMatrix4x4 &inMVP,
                     SEffectTextureData inSourceTexture, QDemonRenderFrameBuffer *inFrameBuffer,
                     QVector2D &inDestSize, const QVector2D &inCameraClipRange,
-                    QDemonRenderTexture2D *inDepthStencil, Option<SDepthStencil> inDepthStencilCommand,
+                    QDemonRenderTexture2D *inDepthStencil, QDemonOption<SDepthStencil> inDepthStencilCommand,
                     bool drawIndirect)
     {
         QDemonRenderContext &theContext(m_Context->GetRenderContext());
@@ -1503,7 +1503,7 @@ struct SEffectSystem : public IEffectSystem
                         &QDemonRenderContext::SetStencilTestEnabled);
             QDemonRenderContextScopedProperty<QDemonRenderBoolOp::Enum> __depthFunction(
                         theContext, &QDemonRenderContext::GetDepthFunction, &QDemonRenderContext::SetDepthFunction);
-            Option<SDepthStencil> theCurrentDepthStencil;
+            QDemonOption<SDepthStencil> theCurrentDepthStencil;
 
             theContext.SetScissorTestEnabled(false);
             theContext.SetBlendingEnabled(false);
@@ -1623,7 +1623,7 @@ struct SEffectSystem : public IEffectSystem
                     // Reset the source texture regardless
                     theCurrentSourceTexture = SEffectTextureData(&inSourceTexture, false);
                     theCurrentDepthStencilTexture = nullptr;
-                    theCurrentDepthStencil = Option<SDepthStencil>();
+                    theCurrentDepthStencil = QDemonOption<SDepthStencil>();
                     // reset intermediate blending state
                     if (intermediateBlendingEnabled) {
                         theContext.SetBlendingEnabled(false);
@@ -1755,8 +1755,8 @@ struct SEffectSystem : public IEffectSystem
         }
     }
 
-    void SetShaderData(CRegisteredString path, const char8_t *data,
-                       const char8_t *inShaderType, const char8_t *inShaderVersion,
+    void SetShaderData(QString path, const char *data,
+                       const char *inShaderType, const char *inShaderVersion,
                        bool inHasGeomShader, bool inIsComputeShader) override
     {
         m_CoreContext.GetDynamicObjectSystemCore().SetShaderData(
@@ -1764,7 +1764,7 @@ struct SEffectSystem : public IEffectSystem
     }
 
     void Save(SWriteBuffer &ioBuffer,
-              const SStrRemapMap &inRemapMap, const char8_t *inProjectDir) const override
+              const SStrRemapMap &inRemapMap, const char *inProjectDir) const override
     {
         ioBuffer.write((quint32)m_EffectClasses.size());
         SStringSaveRemapper theRemapper(m_Allocator, inRemapMap, inProjectDir,
@@ -1773,7 +1773,7 @@ struct SEffectSystem : public IEffectSystem
              end = m_EffectClasses.end();
              theIter != end; ++theIter) {
             const SEffectClass &theClass = *theIter->second;
-            CRegisteredString theClassName = theClass.m_DynamicClass->GetId();
+            QString theClassName = theClass.m_DynamicClass->GetId();
             theClassName.Remap(inRemapMap);
             ioBuffer.write(theClassName);
             // Effect classes do not store any additional data from the dynamic object class.
@@ -1782,7 +1782,7 @@ struct SEffectSystem : public IEffectSystem
     }
 
     void Load(QDemonDataRef<quint8> inData, CStrTableOrDataRef inStrDataBlock,
-              const char8_t *inProjectDir) override
+              const char *inProjectDir) override
     {
         m_Allocator.m_PreAllocatedBlock = inData;
         m_Allocator.m_OwnsMemory = false;
@@ -1791,7 +1791,7 @@ struct SEffectSystem : public IEffectSystem
         SStringLoadRemapper theRemapper(m_Allocator, inStrDataBlock, inProjectDir,
                                         m_CoreContext.GetStringTable());
         for (quint32 idx = 0, end = numEffectClasses; idx < end; ++idx) {
-            CRegisteredString theClassName = theReader.LoadRef<CRegisteredString>();
+            QString theClassName = theReader.LoadRef<QString>();
             theClassName.Remap(inStrDataBlock);
             IDynamicObjectClass *theBaseClass =
                     m_CoreContext.GetDynamicObjectSystemCore().GetDynamicObjectClass(theClassName);
@@ -1806,7 +1806,7 @@ struct SEffectSystem : public IEffectSystem
         }
     }
 
-    IEffectSystem &GetEffectSystem(IQt3DSRenderContext &context) override
+    IEffectSystem &GetEffectSystem(IQDemonRenderContext &context) override
     {
         m_Context = &context;
 
@@ -1835,7 +1835,7 @@ struct SEffectSystem : public IEffectSystem
 };
 }
 
-IEffectSystemCore &IEffectSystemCore::CreateEffectSystemCore(IQt3DSRenderContextCore &inContext)
+IEffectSystemCore &IEffectSystemCore::CreateEffectSystemCore(IQDemonRenderContextCore &inContext)
 {
     return *QDEMON_NEW(inContext.GetAllocator(), SEffectSystem)(inContext);
 }

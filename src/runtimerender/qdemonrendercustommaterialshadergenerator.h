@@ -49,7 +49,7 @@ public:
             const SGraphObject &inMaterial, SShaderDefaultMaterialKey inShaderDescription,
             IShaderStageGenerator &inVertexPipeline, TShaderFeatureSet inFeatureSet,
             QDemonDataRef<SLight *> inLights, SRenderableImage *inFirstImage, bool inHasTransparency,
-            const char8_t *inVertexPipelineName, const char8_t *inCustomMaterialName = "") override = 0;
+            const char *inVertexPipelineName, const char *inCustomMaterialName = "") override = 0;
 
     // Also sets the blend function on the render context.
     virtual void
@@ -60,7 +60,7 @@ public:
                           SLayerGlobalRenderProperties inRenderProperties) override = 0;
 
     static ICustomMaterialShaderGenerator &
-    CreateCustomMaterialShaderGenerator(IQt3DSRenderContext &inRenderContext);
+    CreateCustomMaterialShaderGenerator(IQDemonRenderContext &inRenderContext);
 };
 QT_END_NAMESPACE
 

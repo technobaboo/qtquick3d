@@ -30,7 +30,7 @@
 #pragma once
 #ifndef QDEMON_RENDER_IMPL_RENDERABLE_OBJECTS_H
 #define QDEMON_RENDER_IMPL_RENDERABLE_OBJECTS_H
-#include <QtDemonRuntimeRender/qdemonrender.h>
+
 #include <QtDemonRuntimeRender/qdemonrendermodel.h>
 #include <QtDemonRuntimeRender/qdemonrenderdefaultmaterial.h>
 #include <QtDemonRuntimeRender/qdemonrendercustommaterial.h>

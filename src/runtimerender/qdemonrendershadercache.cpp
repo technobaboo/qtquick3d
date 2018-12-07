@@ -97,7 +97,7 @@ inline SShaderCacheProgramFlags CacheFlagsToStr(const CRenderString &inString)
     return retval;
 }
 
-typedef eastl::pair<const char *, QDemonRenderContextValues::Enum> TStringToContextValuePair;
+typedef QPair<const char *, QDemonRenderContextValues::Enum> TStringToContextValuePair;
 
 /*GLES2	= 1 << 0,
 GL2		= 1 << 1,
@@ -165,11 +165,11 @@ inline QDemonRenderContextType StringToContextType(const CRenderString &inContex
 
 struct SShaderCacheKey
 {
-    CRegisteredString m_Key;
+    QString m_Key;
     eastl::vector<SShaderPreprocessorFeature> m_Features;
     size_t m_HashCode;
 
-    SShaderCacheKey(CRegisteredString key = CRegisteredString())
+    SShaderCacheKey(QString key = QString())
         : m_Key(key)
         , m_HashCode(0)
     {
@@ -247,7 +247,7 @@ struct ShaderCache : public IShaderCache
     }
     QDEMON_IMPLEMENT_REF_COUNT_ADDREF_RELEASE_OVERRIDE(m_RenderContext.GetAllocator())
 
-    QDemonRenderShaderProgram *GetProgram(CRegisteredString inKey,
+    QDemonRenderShaderProgram *GetProgram(QString inKey,
                                           QDemonConstDataRef<SShaderPreprocessorFeature> inFeatures) override
     {
         m_TempKey.m_Key = inKey;
@@ -285,7 +285,7 @@ struct ShaderCache : public IShaderCache
                 m_InsertStr += "#extension GL_OES_standard_derivatives : disable\n";
         }
 
-        if (IQt3DSRenderer::IsGlEs3Context(m_RenderContext.GetRenderContextType())) {
+        if (IQDemonRenderer::IsGlEs3Context(m_RenderContext.GetRenderContextType())) {
             if (shaderType == ShaderType::TessControl || shaderType == ShaderType::TessEval) {
                 m_InsertStr += "#extension GL_EXT_tessellation_shader : enable\n";
             } else if (shaderType == ShaderType::Geometry) {
@@ -317,14 +317,14 @@ struct ShaderCache : public IShaderCache
         }
     }
 
-    void AddShaderPreprocessor(CRenderString &str, CRegisteredString inKey,
+    void AddShaderPreprocessor(CRenderString &str, QString inKey,
                                ShaderType::Enum shaderType,
                                QDemonConstDataRef<SShaderPreprocessorFeature> inFeatures)
     {
         // Don't use shading language version returned by the driver as it might
         // differ from the context version. Instead use the context type to specify
         // the version string.
-        bool isGlES = IQt3DSRenderer::IsGlEsContext(m_RenderContext.GetRenderContextType());
+        bool isGlES = IQDemonRenderer::IsGlEsContext(m_RenderContext.GetRenderContextType());
         m_InsertStr.clear();
         int minor = m_RenderContext.format().minorVersion();
         QString versionStr;
@@ -359,7 +359,7 @@ struct ShaderCache : public IShaderCache
         m_InsertStr.append(versionStr.toLatin1().data());
 
         if (isGlES) {
-            if (!IQt3DSRenderer::IsGlEs3Context(m_RenderContext.GetRenderContextType())) {
+            if (!IQDemonRenderer::IsGlEs3Context(m_RenderContext.GetRenderContextType())) {
                 if (shaderType == ShaderType::Fragment) {
                     m_InsertStr += "#define fragOutput gl_FragData[0]\n";
                 }
@@ -371,7 +371,7 @@ struct ShaderCache : public IShaderCache
             AddShaderExtensionStrings(shaderType, isGlES);
 
             // add precision qualifier depending on backend
-            if (IQt3DSRenderer::IsGlEs3Context(m_RenderContext.GetRenderContextType())) {
+            if (IQDemonRenderer::IsGlEs3Context(m_RenderContext.GetRenderContextType())) {
                 m_InsertStr.append("precision highp float;\n"
                                    "precision highp int;\n");
                 if( m_RenderContext.GetRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::gpuShader5) ) {
@@ -395,7 +395,7 @@ struct ShaderCache : public IShaderCache
                     m_InsertStr.append("#define textureLod(s, co, lod) texture2D(s, co)\n");
             }
         } else {
-            if (!IQt3DSRenderer::IsGl2Context(m_RenderContext.GetRenderContextType())) {
+            if (!IQDemonRenderer::IsGl2Context(m_RenderContext.GetRenderContextType())) {
                 m_InsertStr += "#define texture2D texture\n";
 
                 AddShaderExtensionStrings(shaderType, isGlES);
@@ -443,8 +443,8 @@ struct ShaderCache : public IShaderCache
     }
     // Compile this program overwriting any existing ones.
     QDemonRenderShaderProgram *
-    ForceCompileProgram(CRegisteredString inKey, const char8_t *inVert, const char8_t *inFrag,
-                        const char8_t *inTessCtrl, const char8_t *inTessEval, const char8_t *inGeom,
+    ForceCompileProgram(QString inKey, const char *inVert, const char *inFrag,
+                        const char *inTessCtrl, const char *inTessEval, const char *inGeom,
                         const SShaderCacheProgramFlags &inFlags,
                         QDemonConstDataRef<SShaderPreprocessorFeature> inFeatures,
                         bool separableProgram, bool fromDisk = false) override
@@ -455,7 +455,7 @@ struct ShaderCache : public IShaderCache
         tempKey.m_Features.assign(inFeatures.begin(), inFeatures.end());
         tempKey.GenerateHashCode();
 
-        eastl::pair<TShaderMap::iterator, bool> theInserter = m_Shaders.insert(tempKey);
+        QPair<TShaderMap::iterator, bool> theInserter = m_Shaders.insert(tempKey);
         if (fromDisk) {
             qCInfo(TRACE_INFO) << "Loading from persistent shader cache: '<"
                                << tempKey.m_Key << ">'";
@@ -551,8 +551,8 @@ struct ShaderCache : public IShaderCache
     }
 
     virtual QDemonRenderShaderProgram *
-    CompileProgram(CRegisteredString inKey, const char8_t *inVert, const char8_t *inFrag,
-                   const char8_t *inTessCtrl, const char8_t *inTessEval, const char8_t *inGeom,
+    CompileProgram(QString inKey, const char *inVert, const char *inFrag,
+                   const char *inTessCtrl, const char *inTessEval, const char *inGeom,
                    const SShaderCacheProgramFlags &inFlags,
                    QDemonConstDataRef<SShaderPreprocessorFeature> inFeatures, bool separableProgram) override
     {
@@ -586,7 +586,7 @@ struct ShaderCache : public IShaderCache
         m_ShaderCache->Att("cache_version", IShaderCache::GetShaderVersion());
     }
 
-    void SetShaderCachePersistenceEnabled(const char8_t *inDirectory) override
+    void SetShaderCachePersistenceEnabled(const char *inDirectory) override
     {
         if (inDirectory == nullptr) {
             m_ShaderCache = nullptr;
@@ -621,13 +621,13 @@ struct ShaderCache : public IShaderCache
                     IStringTable &theStringTable(m_RenderContext.GetStringTable());
                     for (bool success = theReader->MoveToFirstChild(); success;
                          success = theReader->MoveToNextSibling()) {
-                        const char8_t *theKeyStr = nullptr;
+                        const char *theKeyStr = nullptr;
                         theReader->UnregisteredAtt("key", theKeyStr);
 
-                        CRegisteredString theKey = theStringTable.RegisterStr(theKeyStr);
+                        QString theKey = theStringTable.RegisterStr(theKeyStr);
                         if (theKey.IsValid()) {
                             m_FlagString.clear();
-                            const char8_t *theFlagStr = "";
+                            const char *theFlagStr = "";
                             SShaderCacheProgramFlags theFlags;
                             if (theReader->UnregisteredAtt("glflags", theFlagStr)) {
                                 m_FlagString.assign(theFlagStr);
@@ -672,7 +672,7 @@ struct ShaderCache : public IShaderCache
                                 // Vertex *MUST* be the first
                                 // Todo deal with pure compute shader programs
                                 if (theReader->MoveToFirstChild("VertexCode")) {
-                                    const char8_t *theValue = nullptr;
+                                    const char *theValue = nullptr;
                                     theReader->Value(theValue);
                                     loadVertexData.assign(theValue);
                                     while (theReader->MoveToNextSibling()) {

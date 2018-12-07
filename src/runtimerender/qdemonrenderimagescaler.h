@@ -33,7 +33,7 @@
 //==============================================================================
 #ifndef __IMAGESCALER_H_
 #define __IMAGESCALER_H_
-#include <QtDemonRuntimeRender/qdemonrender.h>
+
 
 QT_BEGIN_NAMESPACE
 //==============================================================================

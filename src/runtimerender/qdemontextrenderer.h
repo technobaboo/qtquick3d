@@ -30,7 +30,7 @@
 #pragma once
 #ifndef QDEMON_TEXT_RENDERER_H
 #define QDEMON_TEXT_RENDERER_H
-#include <QtDemonRuntimeRender/qdemonrender.h>
+
 #include <QtDemon/qdemonrefcounted.h>
 #include <QtDemonRender/qdemonrenderbasetypes.h>
 #include <StringTable.h>
@@ -40,10 +40,10 @@ QT_BEGIN_NAMESPACE
 
 struct SRendererFontEntry
 {
-    CRegisteredString m_FontName;
-    CRegisteredString m_FontFile;
+    QString m_FontName;
+    QString m_FontFile;
     SRendererFontEntry() {}
-    SRendererFontEntry(CRegisteredString nm, CRegisteredString file)
+    SRendererFontEntry(QString nm, QString file)
         : m_FontName(nm)
         , m_FontFile(file)
     {
@@ -54,9 +54,9 @@ class ITextRendererCore : public QDemonRefCounted
 {
 public:
     // You can have several standard font directories and these will be persistent
-    virtual void AddSystemFontDirectory(const char8_t *inDirectory) = 0;
+    virtual void AddSystemFontDirectory(const char *inDirectory) = 0;
     // Should be called to clear the current context.
-    virtual void AddProjectFontDirectory(const char8_t *inProjectDirectory) = 0;
+    virtual void AddProjectFontDirectory(const char *inProjectDirectory) = 0;
     virtual void ClearProjectFontDirectories() = 0;
     // Force font loading *right now*
     virtual void PreloadFonts() = 0;
@@ -70,8 +70,8 @@ public:
     // The name stored in the ttf file isn't the actual name we use; we use the file stems.
     // But we used to use the name.  So this provides a sort of first-come-first-serve remapping
     // from ttf-name to file-stem.
-    virtual Option<CRegisteredString> GetFontNameForFont(CRegisteredString inFontname) = 0;
-    virtual Option<CRegisteredString> GetFontNameForFont(const char8_t *inFontname) = 0;
+    virtual QDemonOption<QString> GetFontNameForFont(QString inFontname) = 0;
+    virtual QDemonOption<QString> GetFontNameForFont(const char *inFontname) = 0;
 
     virtual ITextRenderer &GetTextRenderer(QDemonRenderContext &inContext) = 0;
 
@@ -93,7 +93,7 @@ protected:
 public:
     // Measure text will inText if it isn't null or the text on the info if inText is null
     virtual STextDimensions MeasureText(const STextRenderInfo &inText, float inTextScaleFactor,
-                                        const char8_t *inTextOverride = nullptr) = 0;
+                                        const char *inTextOverride = nullptr) = 0;
     // The system will use the 'r' channel as an alpha mask in order to render the
     // text.  You can assume GetTextDimensions was called *just* prior to this.
     // It is a good idea to ensure the texture is a power of two as not all rendering systems

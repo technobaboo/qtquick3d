@@ -52,7 +52,7 @@ public:
     // Output variables may be mangled in some circumstances so the shader generation system
     // needs an abstraction
     // mechanism around this.
-    virtual void AssignOutput(const char8_t *inVarName, const char8_t *inVarValueExpr) = 0;
+    virtual void AssignOutput(const char *inVarName, const char *inVarValueExpr) = 0;
 
     /**
          * @brief Generates UV coordinates in shader code
@@ -100,7 +100,7 @@ public:
             const SGraphObject &inMaterial, SShaderDefaultMaterialKey inShaderDescription,
             IShaderStageGenerator &inVertexPipeline, TShaderFeatureSet inFeatureSet,
             QDemonDataRef<SLight *> inLights, SRenderableImage *inFirstImage, bool inHasTransparency,
-            const char8_t *inVertexPipelineName, const char8_t *inCustomMaterialName = "") override = 0;
+            const char *inVertexPipelineName, const char *inCustomMaterialName = "") override = 0;
 
     // Also sets the blend function on the render context.
     virtual void
@@ -111,7 +111,7 @@ public:
                           SLayerGlobalRenderProperties inRenderProperties) override = 0;
 
     static IDefaultMaterialShaderGenerator &
-    CreateDefaultMaterialShaderGenerator(IQt3DSRenderContext &inRenderContext);
+    CreateDefaultMaterialShaderGenerator(IQDemonRenderContext &inRenderContext);
 
     SLightConstantProperties<SShaderGeneratorGeneratedShader>
     *GetLightConstantProperties(SShaderGeneratorGeneratedShader &shader);

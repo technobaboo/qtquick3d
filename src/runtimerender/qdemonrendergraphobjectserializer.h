@@ -31,8 +31,8 @@
 #ifndef QDEMON_RENDER_GRAPH_OBJECT_SERIALZER_H
 #define QDEMON_RENDER_GRAPH_OBJECT_SERIALZER_H
 
-#include <QtDemonRuntimeRender/qdemonrender.h>
-#include <Qt3DSDataRef.h>
+
+#include <QtDemon/qdemondataref.h>
 
 QT_BEGIN_NAMESPACE
 struct SPresentation;
@@ -56,7 +56,7 @@ struct SGraphObjectSerializer
                                IDynamicObjectSystemCore &inDynamicObjectSystem,
                                IPathManagerCore &inPathManager,
                                NVAllocatorCallback &inAllocator,
-                               const char8_t *inProjectDirectory);
+                               const char *inProjectDirectory);
 };
 QT_END_NAMESPACE
 

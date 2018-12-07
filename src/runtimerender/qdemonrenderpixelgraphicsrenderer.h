@@ -30,9 +30,9 @@
 #pragma once
 #ifndef QDEMON_RENDER_PIXEL_GRAPHICS_RENDERER_H
 #define QDEMON_RENDER_PIXEL_GRAPHICS_RENDERER_H
-#include <QtDemonRuntimeRender/qdemonrender.h>
+
 #include <QtDemon/qdemonrefcounted.h>
-#include <Qt3DSDataRef.h>
+#include <QtDemon/qdemondataref.h>
 
 QT_BEGIN_NAMESPACE
 // Pixel graphics are graphics described in pixels.
@@ -44,7 +44,7 @@ public:
     // Renders the node to the current viewport.
     virtual void Render(QDemonConstDataRef<SPGGraphObject *> inObjects) = 0;
 
-    static IPixelGraphicsRenderer &CreateRenderer(IQt3DSRenderContext &ctx, IStringTable &strt);
+    static IPixelGraphicsRenderer &CreateRenderer(IQDemonRenderContext &ctx, IStringTable &strt);
 };
 QT_END_NAMESPACE
 

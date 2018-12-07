@@ -30,18 +30,19 @@
 #pragma once
 #ifndef QDEMON_RENDER_IMAGE_H
 #define QDEMON_RENDER_IMAGE_H
-#include <QtDemonRuntimeRender/qdemonrender.h>
+
 #include <QtDemonRuntimeRender/qdemonrendergraphobject.h>
 #include <QtDemonRuntimeRender/qdemonrendernode.h>
 #include <QtDemonRuntimeRender/qdemonrenderimagetexturedata.h>
 #include <QtDemonRuntimeRender/qtdemonruntimerenderglobal.h>
-
+#include <QtDemonRuntimeRender/qdemonrenderplugingraphobject.h>
+#include <QtDemonRuntimeRender/qdemonrenderplugin.h>
 #include <QtDemonRender/qdemonrendertexture2d.h>
 
 #include <QtGui/QVector2D>
 
 QT_BEGIN_NAMESPACE
-class IQt3DSRenderContext;
+class IQDemonRenderContext;
 class IOffscreenRenderManager;
 class IOffscreenRenderer;
 struct ImageMappingModes

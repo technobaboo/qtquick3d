@@ -30,7 +30,7 @@
 #pragma once
 #ifndef QDEMON_RENDER_DYNAMIC_OBJECT_SYSTEM_UTIL_H
 #define QDEMON_RENDER_DYNAMIC_OBJECT_SYSTEM_UTIL_H
-#include <QtDemonRuntimeRender/qdemonrender.h>
+
 #include <StringTable.h>
 #include <Qt3DSAllocatorCallback.h>
 #include <QtDemonRuntimeRender/qdemonrenderstring.h>
@@ -43,16 +43,16 @@ struct SStringLoadRemapper
     CStrTableOrDataRef m_StrData;
     IStringTable &m_StringTable;
     CRenderString m_PathMapper;
-    const char8_t *m_ProjectDir;
+    const char *m_ProjectDir;
     SStringLoadRemapper(NVAllocatorCallback &alloc, CStrTableOrDataRef inData,
-                        const char8_t *inProjectDir, IStringTable &inStrTable)
+                        const char *inProjectDir, IStringTable &inStrTable)
         : m_StrData(inData)
         , m_StringTable(inStrTable)
         , m_ProjectDir(inProjectDir)
     {
         Q_UNUSED(alloc)
     }
-    void Remap(CRegisteredString &inStr) { inStr.Remap(m_StrData); }
+    void Remap(QString &inStr) { inStr.Remap(m_StrData); }
 };
 
 struct SStringSaveRemapper
@@ -63,14 +63,14 @@ struct SStringSaveRemapper
     CRenderString m_FinalBuffer;
     IStringTable &m_StringTable;
     SStringSaveRemapper(NVAllocatorCallback &alloc, const SStrRemapMap &map,
-                        const char8_t *inProjectDir, IStringTable &inStrTable)
+                        const char *inProjectDir, IStringTable &inStrTable)
         : m_Map(map)
         , m_StringTable(inStrTable)
     {
         Q_UNUSED(alloc)
         m_ProjectDir.assign(inProjectDir);
     }
-    void Remap(CRegisteredString &inStr) { inStr.Remap(m_Map); }
+    void Remap(QString &inStr) { inStr.Remap(m_Map); }
 };
 
 inline quint32 Align(quint32 inValue)

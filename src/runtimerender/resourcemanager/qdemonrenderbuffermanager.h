@@ -30,11 +30,11 @@
 #pragma once
 #ifndef QDEMON_RENDER_BUFFER_MANAGER_H
 #define QDEMON_RENDER_BUFFER_MANAGER_H
-#include <QtDemonRuntimeRender/qdemonrender.h>
+
 #include <QtDemon/qdemonrefcounted.h>
 #include <StringTable.h>
 #include <QtDemonRuntimeRender/qdemonrenderimagetexturedata.h>
-#include <Qt3DSBounds3.h>
+#include <QtDemon/qdemonbounds3.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -45,18 +45,18 @@ protected:
 
 public:
     // Path manipulation used to get the final path form a base path plus relative extension
-    virtual CRegisteredString CombineBaseAndRelative(const char8_t *inBase,
-                                                     const char8_t *inRelative) = 0;
-    virtual void SetImageHasTransparency(CRegisteredString inSourcePath,
+    virtual QString CombineBaseAndRelative(const char *inBase,
+                                                     const char *inRelative) = 0;
+    virtual void SetImageHasTransparency(QString inSourcePath,
                                          bool inHasTransparency) = 0;
-    virtual bool GetImageHasTransparency(CRegisteredString inSourcePath) const = 0;
-    virtual void SetImageTransparencyToFalseIfNotSet(CRegisteredString inSourcePath) = 0;
-    virtual void SetInvertImageUVCoords(CRegisteredString inSourcePath,
+    virtual bool GetImageHasTransparency(QString inSourcePath) const = 0;
+    virtual void SetImageTransparencyToFalseIfNotSet(QString inSourcePath) = 0;
+    virtual void SetInvertImageUVCoords(QString inSourcePath,
                                         bool inShouldInvertCoords) = 0;
 
     // Returns true if this image has been loaded into memory
     // This call is threadsafe.  Nothing else on this object is guaranteed to be.
-    virtual bool IsImageLoaded(CRegisteredString inSourcePath) = 0;
+    virtual bool IsImageLoaded(QString inSourcePath) = 0;
 
     // Alias one image path with another image path.  Optionally this object will ignore the
     // call if
@@ -64,24 +64,24 @@ public:
     // to be shown
     // in place of an image that is loading offline.
     // Returns true if the image was aliased, false otherwise.
-    virtual bool AliasImagePath(CRegisteredString inSourcePath, CRegisteredString inAliasPath,
+    virtual bool AliasImagePath(QString inSourcePath, QString inAliasPath,
                                 bool inIgnoreIfLoaded) = 0;
-    virtual void UnaliasImagePath(CRegisteredString inSourcePath) = 0;
+    virtual void UnaliasImagePath(QString inSourcePath) = 0;
 
     // Returns the given source path unless the source path is aliased; in which case returns
     // the aliased path.
-    virtual CRegisteredString GetImagePath(CRegisteredString inSourcePath) = 0;
+    virtual QString GetImagePath(QString inSourcePath) = 0;
     // Returns a texture and a boolean indicating if this texture has transparency in it or not.
     // Can't name this LoadImage because that gets mangled by windows to LoadImageA (uggh)
     // In some cases we need to only scan particular images for transparency.
-    virtual SImageTextureData LoadRenderImage(CRegisteredString inImagePath,
+    virtual SImageTextureData LoadRenderImage(QString inImagePath,
                                               SLoadedTexture &inTexture,
                                               bool inForceScanForTransparency = false,
                                               bool inBsdfMipmaps = false) = 0;
-    virtual SImageTextureData LoadRenderImage(CRegisteredString inSourcePath,
+    virtual SImageTextureData LoadRenderImage(QString inSourcePath,
                                               bool inForceScanForTransparency = false,
                                               bool inBsdfMipmaps = false) = 0;
-    virtual SRenderMesh *LoadMesh(CRegisteredString inSourcePath) = 0;
+    virtual SRenderMesh *LoadMesh(QString inSourcePath) = 0;
 
     virtual SRenderMesh *CreateMesh(const char *inSourcePath, quint8 *inVertData,
                                     quint32 inNumVerts, quint32 inVertStride, quint32 *inIndexData,
@@ -89,7 +89,7 @@ public:
 
     // Remove *all* buffers from the buffer manager;
     virtual void Clear() = 0;
-    virtual void InvalidateBuffer(CRegisteredString inSourcePath) = 0;
+    virtual void InvalidateBuffer(QString inSourcePath) = 0;
     virtual IStringTable &GetStringTable() = 0;
 
     static IBufferManager &Create(QDemonRenderContext &inRenderContext, IStringTable &inStrTable,

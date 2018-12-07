@@ -6,6 +6,7 @@
 #include <QVector3D>
 #include <QQuaternion>
 #include <QMatrix3x3>
+#include <QMatrix4x4>
 
 #include <QtCore/qdebug.h>
 #include <QtCore/qloggingcategory.h>
@@ -18,11 +19,17 @@ namespace vec3 {
 QVector3D minimum(const QVector3D &v1, const QVector3D &v2);
 QVector3D maximum(const QVector3D &v1, const QVector3D &v2);
 bool isFinite(const QVector3D &v);
+float magnitude(const QVector3D &v);
 
 }
 
 namespace mat33 {
 QVector3D transform(const QMatrix3x3 &m, const QVector3D &v);
+QMatrix3x3 Q_DEMON_EXPORT getInverse(const QMatrix3x3 &m);
+}
+
+namespace mat44 {
+QMatrix4x4 getInverse(const QMatrix4x4 &m);
 }
 
 namespace quant {

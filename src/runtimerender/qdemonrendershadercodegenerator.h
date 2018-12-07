@@ -30,7 +30,7 @@
 #pragma once
 #ifndef QDEMON_RENDER_SHADER_CODE_GENERATOR_H
 #define QDEMON_RENDER_SHADER_CODE_GENERATOR_H
-#include <QtDemonRuntimeRender/qdemonrender.h>
+
 #include <QtDemonRender/qdemonrenderbasetypes.h>
 #include <QtDemonRuntimeRender/qdemonrenderstring.h>
 
@@ -42,10 +42,10 @@ struct SEndlType
 extern SEndlType Endl;
 
 typedef std::basic_string<char> TStrType;
-typedef eastl::pair<CRegisteredString, CRegisteredString> TParamPair;
-typedef eastl::pair<CRegisteredString, TParamPair> TConstantBufferParamPair;
+typedef QPair<QString, QString> TParamPair;
+typedef QPair<QString, TParamPair> TConstantBufferParamPair;
 typedef QVector<TConstantBufferParamPair> TConstantBufferParamArray;
-typedef QHash<CRegisteredString, CRegisteredString> TStrTableStrMap;
+typedef QHash<QString, QString> TStrTableStrMap;
 
 struct SShaderCodeGeneratorBase
 {
@@ -60,7 +60,7 @@ struct SShaderCodeGeneratorBase
     };
     IStringTable &m_StringTable;
     nvhash_set<quint32> m_Codes; // set of enums we have included.
-    nvhash_set<CRegisteredString> m_Includes;
+    nvhash_set<QString> m_Includes;
     TStrTableStrMap m_Uniforms;
     TStrTableStrMap m_ConstantBuffers;
     TConstantBufferParamArray m_ConstantBufferParams;
@@ -96,8 +96,8 @@ struct SShaderCodeGeneratorBase
     void GenerateEnvMapReflection(SShaderCodeGeneratorBase &inFragmentShader);
     void GenerateUVCoords();
     void GenerateTextureSwizzle(QDemonRenderTextureSwizzleMode::Enum swizzleMode,
-                                eastl::basic_string<char8_t> &texSwizzle,
-                                eastl::basic_string<char8_t> &lookupSwizzle);
+                                eastl::basic_string<char> &texSwizzle,
+                                eastl::basic_string<char> &lookupSwizzle);
     void GenerateShadedWireframeBase();
     void AddLighting();
     const char *BuildShaderSource();

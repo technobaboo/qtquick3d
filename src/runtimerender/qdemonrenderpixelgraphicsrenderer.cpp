@@ -88,7 +88,7 @@ struct SPGRectShader
 
 struct SPGRenderer : public IPixelGraphicsRenderer
 {
-    IQt3DSRenderContext &m_RenderContext;
+    IQDemonRenderContext &m_RenderContext;
     IStringTable &m_StringTable;
     QDemonScopedRefCounted<QDemonRenderVertexBuffer> m_QuadVertexBuffer;
     QDemonScopedRefCounted<QDemonRenderIndexBuffer> m_QuadIndexBuffer;
@@ -99,7 +99,7 @@ struct SPGRenderer : public IPixelGraphicsRenderer
     SPGRectShader m_RectShader;
     qint32 mRefCount;
 
-    SPGRenderer(IQt3DSRenderContext &ctx, IStringTable &strt)
+    SPGRenderer(IQDemonRenderContext &ctx, IStringTable &strt)
         : m_RenderContext(ctx)
         , m_StringTable(strt)
         , m_VertexGenerator(m_StringTable, ctx.GetAllocator(),
@@ -303,7 +303,7 @@ struct SPGRenderer : public IPixelGraphicsRenderer
 };
 }
 
-IPixelGraphicsRenderer &IPixelGraphicsRenderer::CreateRenderer(IQt3DSRenderContext &ctx,
+IPixelGraphicsRenderer &IPixelGraphicsRenderer::CreateRenderer(IQDemonRenderContext &ctx,
                                                                IStringTable &strt)
 {
     return *QDEMON_NEW(ctx.GetAllocator(), SPGRenderer)(ctx, strt);

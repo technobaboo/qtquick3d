@@ -29,9 +29,9 @@
 ****************************************************************************/
 #ifndef QDEMON_RENDER_PATH_MATH_H
 #define QDEMON_RENDER_PATH_MATH_H
-#include <QtDemonRuntimeRender/qdemonrender.h>
-#include <QVector2D.h>
-#include <QVector3D.h>
+
+#include <QtGui/QVector2D>
+#include <QtGui/QVector3D>
 
 QT_BEGIN_NAMESPACE
 
@@ -379,7 +379,7 @@ struct SCubicBezierCurve
         return result;
     }
 
-    eastl::pair<SCubicBezierCurve, SCubicBezierCurve> SplitCubicBezierCurve(float inT)
+    QPair<SCubicBezierCurve, SCubicBezierCurve> SplitCubicBezierCurve(float inT)
     {
         // compute point on curve based on inT
         // using de Casteljau algorithm
@@ -530,7 +530,7 @@ struct STaperInformation
 };
 
 template <typename TOptData>
-bool OptionEquals(const Option<TOptData> &lhs, const Option<TOptData> &rhs)
+bool OptionEquals(const QDemonOption<TOptData> &lhs, const QDemonOption<TOptData> &rhs)
 {
     if (lhs.hasValue() != rhs.hasValue())
         return false;
@@ -621,7 +621,7 @@ void OuterAdaptiveSubdivideBezierCurve(QVector<SResultCubic> &ioResultVec,
                 float splitPoint = keyPointVec[idx] - tStart;
                 float tValue = splitPoint / range;
                 if (tValue > 0.0f) {
-                    eastl::pair<SCubicBezierCurve, SCubicBezierCurve> newCurves
+                    QPair<SCubicBezierCurve, SCubicBezierCurve> newCurves
                             = inCurve.SplitCubicBezierCurve(tValue);
                     AdaptiveSubdivideBezierCurve(ioResultVec, newCurves.first,
                                                  inLinearError, inEquationIndex, tStart,
@@ -666,7 +666,7 @@ float LengthOfBezierCurve(SCubicBezierCurve &inCurve)
                 lineDxDy, inCurve.m_Points[0], inCurve.m_Points[2]);
     const float lineTolerance = 100.0f; // error in world coordinates, squared.
     if (c1Distance > lineTolerance || c2Distance > lineTolerance) {
-        eastl::pair<SCubicBezierCurve, SCubicBezierCurve> subdivCurve
+        QPair<SCubicBezierCurve, SCubicBezierCurve> subdivCurve
                 = inCurve.SplitCubicBezierCurve(.5f);
         return LengthOfBezierCurve(subdivCurve.first)
                 + LengthOfBezierCurve(subdivCurve.second);
@@ -694,7 +694,7 @@ void AdaptiveSubdivideBezierCurve(QVector<SResultCubic> &ioResultVec,
             inCurve.m_Points[2]);
     const float lineTolerance = inLinearError * inLinearError; // error in world coordinates
     if (c1Distance > lineTolerance || c2Distance > lineTolerance) {
-        eastl::pair<SCubicBezierCurve, SCubicBezierCurve> subdivCurve
+        QPair<SCubicBezierCurve, SCubicBezierCurve> subdivCurve
                 = inCurve.SplitCubicBezierCurve(.5f);
         float halfway = lerp(inTStart, inTStop, .5f);
         AdaptiveSubdivideBezierCurve(ioResultVec, subdivCurve.first, inLinearError,

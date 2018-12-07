@@ -161,7 +161,7 @@ public:
         m_Dirty = true;
     }
 
-    TRenderPluginPropertyUpdate ClearDirty(CRegisteredString inPropName)
+    TRenderPluginPropertyUpdate ClearDirty(QString inPropName)
     {
         m_Dirty = false;
         TRenderPluginPropertyUpdate retval;
@@ -185,7 +185,7 @@ public:
         } break;
         case RenderPluginPropertyValueTypes::String: {
             retval.m_PropertyType = QDEMONRenderPluginPropertyTypeCharPtr;
-            const char *temp = m_Value.getData<CRegisteredString>().c_str();
+            const char *temp = m_Value.getData<QString>().c_str();
             retval.m_PropertyValue = reinterpret_cast<void *>(const_cast<char *>(temp));
         } break;
         default:
@@ -256,7 +256,7 @@ struct InstanceImpl : public IRenderPluginInstance
     TRenderPluginInstancePtr m_Instance;
     TRenderPluginClass m_Class;
     QDemonScopedRefCounted<IInternalPluginClass> m_Owner;
-    CRegisteredString m_RendererType;
+    QString m_RendererType;
     // Backing store of property values
     QVector<SRenderPluginPropertyData> m_PropertyValues;
     bool m_Dirty;
@@ -295,7 +295,7 @@ struct InstanceImpl : public IRenderPluginInstance
     // Arbitrary const char* returned to indicate the type of this renderer
     // Can be overloaded to form the basis of an RTTI type system.
     // Not currently used by the rendering system.
-    CRegisteredString GetOffscreenRendererType() override { return m_RendererType; }
+    QString GetOffscreenRendererType() override { return m_RendererType; }
 
     SOffscreenRendererEnvironment GetDesiredEnvironment(QVector2D inPresentationScaleFactor) override
     {
@@ -422,15 +422,15 @@ struct InstanceImpl : public IRenderPluginInstance
     IRenderPluginClass &GetPluginClass() override { return *m_Owner; }
 };
 
-typedef eastl::pair<CRegisteredString, RenderPluginPropertyValueTypes::Enum> TStringTypePair;
+typedef QPair<QString, RenderPluginPropertyValueTypes::Enum> TStringTypePair;
 
 struct PluginClassImpl : public IInternalPluginClass
 {
-    typedef QHash<CRegisteredString, quint32> TStringIndexMap;
+    typedef QHash<QString, quint32> TStringIndexMap;
     NVFoundationBase &m_Foundation;
     IStringTable &m_StringTable;
     TRenderPluginClass m_Class;
-    CRegisteredString m_Type;
+    QString m_Type;
     CLoadedDynamicLibrary *m_DynamicLibrary;
     QVector<SRenderPluginPropertyDeclaration> m_RegisteredProperties;
     TStringIndexMap m_ComponentNameToComponentIndexMap;
@@ -442,7 +442,7 @@ struct PluginClassImpl : public IInternalPluginClass
     qint32 mRefCount;
 
     PluginClassImpl(NVFoundationBase &fnd, IStringTable &strTable, TRenderPluginClass inClass,
-                    CRegisteredString inType, CLoadedDynamicLibrary *inLibrary)
+                    QString inType, CLoadedDynamicLibrary *inLibrary)
         : m_Foundation(fnd)
         , m_StringTable(strTable)
         , m_Class(inClass)
@@ -487,7 +487,7 @@ struct PluginClassImpl : public IInternalPluginClass
     void AddFullPropertyType(const char *name, RenderPluginPropertyValueTypes::Enum inType)
     {
         quint32 itemIndex = (quint32)m_FullPropertyList.size();
-        CRegisteredString regName = m_StringTable.RegisterStr(name);
+        QString regName = m_StringTable.RegisterStr(name);
         bool inserted =
                 m_ComponentNameToComponentIndexMap.insert(eastl::make_pair(regName, itemIndex)).second;
         if (inserted) {
@@ -554,7 +554,7 @@ struct PluginClassImpl : public IInternalPluginClass
         return m_RegisteredProperties;
     }
 
-    SRenderPluginPropertyDeclaration GetPropertyDeclaration(CRegisteredString inPropName) override
+    SRenderPluginPropertyDeclaration GetPropertyDeclaration(QString inPropName) override
     {
         for (quint32 idx = 0, end = m_RegisteredProperties.size(); idx < end; ++idx) {
             if (m_RegisteredProperties[idx].m_Name == inPropName)
@@ -565,14 +565,14 @@ struct PluginClassImpl : public IInternalPluginClass
     }
 
     // From which you can get the property name breakdown
-    virtual eastl::pair<CRegisteredString, RenderPluginPropertyValueTypes::Enum>
+    virtual QPair<QString, RenderPluginPropertyValueTypes::Enum>
     GetPropertyValueInfo(quint32 inIndex) override
     {
         if (inIndex < m_FullPropertyList.size())
             return m_FullPropertyList[inIndex];
         Q_ASSERT(false);
-        return eastl::pair<CRegisteredString, RenderPluginPropertyValueTypes::Enum>(
-                    CRegisteredString(), RenderPluginPropertyValueTypes::NoRenderPluginPropertyValue);
+        return QPair<QString, RenderPluginPropertyValueTypes::Enum>(
+                    QString(), RenderPluginPropertyValueTypes::NoRenderPluginPropertyValue);
     }
 
     void PushUpdates(TRenderPluginInstancePtr instance, TPropertyValueList &propertyValues) override
@@ -614,9 +614,9 @@ struct PluginClassImpl : public IInternalPluginClass
 
 struct PluginInstanceKey
 {
-    CRegisteredString m_Path;
+    QString m_Path;
     void *m_InstanceKey;
-    PluginInstanceKey(CRegisteredString p, void *ik)
+    PluginInstanceKey(QString p, void *ik)
         : m_Path(p)
         , m_InstanceKey(ik)
     {
@@ -634,7 +634,7 @@ struct hash<PluginInstanceKey>
 {
     size_t operator()(const PluginInstanceKey &k) const
     {
-        return hash<CRegisteredString>()(k.m_Path)
+        return hash<QString>()(k.m_Path)
                 ^ hash<size_t>()(reinterpret_cast<size_t>(k.m_InstanceKey));
     }
     bool operator()(const PluginInstanceKey &lhs, const PluginInstanceKey &rhs) const
@@ -648,7 +648,7 @@ namespace {
 
 struct SLoadedPluginData
 {
-    CRegisteredString m_PluginPath;
+    QString m_PluginPath;
     eastl::vector<SRenderPluginPropertyDeclaration> m_Properties;
 };
 
@@ -656,7 +656,7 @@ typedef eastl::vector<SLoadedPluginData> TLoadedPluginDataList;
 
 struct PluginManagerImpl : public IRenderPluginManager, public IRenderPluginManagerCore
 {
-    typedef QHash<CRegisteredString, QDemonScopedRefCounted<IRenderPluginClass>> TLoadedClassMap;
+    typedef QHash<QString, QDemonScopedRefCounted<IRenderPluginClass>> TLoadedClassMap;
     typedef QHash<PluginInstanceKey, QDemonScopedRefCounted<IRenderPluginInstance>> TInstanceMap;
     NVFoundationBase &m_Foundation;
     IStringTable &m_StringTable;
@@ -681,7 +681,7 @@ struct PluginManagerImpl : public IRenderPluginManager, public IRenderPluginMana
 
     QDEMON_IMPLEMENT_REF_COUNT_ADDREF_RELEASE(m_Foundation.getAllocator())
 
-    IRenderPluginClass *GetRenderPlugin(CRegisteredString inRelativePath) override
+    IRenderPluginClass *GetRenderPlugin(QString inRelativePath) override
     {
         TLoadedClassMap::iterator iter = m_LoadedClasses.find(inRelativePath);
         if (iter != m_LoadedClasses.end())
@@ -690,7 +690,7 @@ struct PluginManagerImpl : public IRenderPluginManager, public IRenderPluginMana
         return QDemonScopedRefCounted<IRenderPluginClass>();
     }
 
-    IRenderPluginClass *GetOrCreateRenderPlugin(CRegisteredString inRelativePath) override
+    IRenderPluginClass *GetOrCreateRenderPlugin(QString inRelativePath) override
     {
         TLoadedClassMap::iterator iter = m_LoadedClasses.find(inRelativePath);
         if (iter != m_LoadedClasses.end()) {
@@ -825,7 +825,7 @@ struct PluginManagerImpl : public IRenderPluginManager, public IRenderPluginMana
 
     void SetDllDir(const char *inDllDir) override { m_DllDir.assign(nonNull(inDllDir)); }
 
-    IRenderPluginInstance *GetOrCreateRenderPluginInstance(CRegisteredString inRelativePath,
+    IRenderPluginInstance *GetOrCreateRenderPluginInstance(QString inRelativePath,
                                                            void *inKey) override
     {
         PluginInstanceKey theKey(inRelativePath, inKey);
@@ -843,14 +843,14 @@ struct PluginManagerImpl : public IRenderPluginManager, public IRenderPluginMana
 
     void Save(SWriteBuffer &ioBuffer,
               const SStrRemapMap &inRemapMap,
-              const char8_t * /*inProjectDir*/) const override
+              const char * /*inProjectDir*/) const override
     {
         quint32 numClasses = m_LoadedClasses.size();
         ioBuffer.write(numClasses);
         for (TLoadedClassMap::const_iterator iter = m_LoadedClasses.begin(),
              end = m_LoadedClasses.end();
              iter != end; ++iter) {
-            CRegisteredString saveStr = iter->first;
+            QString saveStr = iter->first;
             saveStr.Remap(inRemapMap);
             ioBuffer.write(saveStr);
             if (iter->second) {
@@ -868,7 +868,7 @@ struct PluginManagerImpl : public IRenderPluginManager, public IRenderPluginMana
     }
 
     void Load(QDemonDataRef<quint8> inData, CStrTableOrDataRef inStrDataBlock,
-              const char8_t * /*inProjectDir*/) override
+              const char * /*inProjectDir*/) override
     {
         SDataReader theReader(inData.begin(), inData.end());
         quint32 numClasses = theReader.LoadRef<quint32>();
@@ -877,7 +877,7 @@ struct PluginManagerImpl : public IRenderPluginManager, public IRenderPluginMana
         QVector<SRenderPluginPropertyDeclaration> propertyBuffer(m_Foundation.getAllocator(),
                                                                   "tempprops");
         for (quint32 classIdx = 0; classIdx < numClasses; ++classIdx) {
-            CRegisteredString classPath = theReader.LoadRef<CRegisteredString>();
+            QString classPath = theReader.LoadRef<QString>();
             classPath.Remap(inStrDataBlock);
             quint32 numProperties = theReader.LoadRef<quint32>();
             propertyBuffer.clear();

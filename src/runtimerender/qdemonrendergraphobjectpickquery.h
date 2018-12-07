@@ -31,11 +31,14 @@
 #ifndef QDEMON_RENDER_GRAPH_OBJECT_PICK_QUERY_H
 #define QDEMON_RENDER_GRAPH_OBJECT_PICK_QUERY_H
 
-#include <QtDemonRuntimeRender/qdemonrender.h>
-#include <QVector2D.h>
-#include <Qt3DSDataRef.h>
-#include <QMatrix4x4.h>
+
+#include <QtGui/QVector2D>
+#include <QtDemon/qdemondataref.h>
+#include <QtGui/QMatrix4x4>
 #include <QtDemonRuntimeRender/qdemonrenderimage.h>
+#include <QtDemonRender/qdemonrenderbasetypes.h>
+
+#include <limits>
 
 QT_BEGIN_NAMESPACE
 
@@ -94,7 +97,7 @@ struct Qt3DSRenderPickResult
     }
     Qt3DSRenderPickResult()
         : m_HitObject(nullptr)
-        , m_CameraDistanceSq(QDEMON_MAX_F32)
+        , m_CameraDistanceSq(std::numeric_limits<float>::max())
         , m_LocalUVCoords(0, 0)
         , m_FirstSubObject(nullptr)
         , m_OffscreenRenderer(nullptr)

@@ -159,12 +159,12 @@ struct SGpuTimerInfo
 
 class Qt3DSCRenderGpuProfiler : public IRenderProfiler
 {
-    typedef QHash<CRegisteredString, QDemonScopedRefCounted<SGpuTimerInfo>> TStrGpuTimerInfoMap;
+    typedef QHash<QString, QDemonScopedRefCounted<SGpuTimerInfo>> TStrGpuTimerInfoMap;
 
 private:
     NVFoundationBase &m_Foundation;
     QDemonScopedRefCounted<QDemonRenderContext> m_RenderContext;
-    IQt3DSRenderContext &m_Context;
+    IQDemonRenderContext &m_Context;
     volatile qint32 mRefCount;
 
     TStrGpuTimerInfoMap m_StrToGpuTimerMap;
@@ -172,7 +172,7 @@ private:
     mutable quint32 m_VertexCount;
 
 public:
-    Qt3DSCRenderGpuProfiler(NVFoundationBase &inFoundation, IQt3DSRenderContext &inContext,
+    Qt3DSCRenderGpuProfiler(NVFoundationBase &inFoundation, IQDemonRenderContext &inContext,
                             QDemonRenderContext &inRenderContext)
         : m_Foundation(inFoundation)
         , m_RenderContext(inRenderContext)
@@ -188,7 +188,7 @@ public:
 
     QDEMON_IMPLEMENT_REF_COUNT_ADDREF_RELEASE(m_Foundation.getAllocator())
 
-    void StartTimer(CRegisteredString &nameID, bool absoluteTime, bool sync) override
+    void StartTimer(QString &nameID, bool absoluteTime, bool sync) override
     {
         SGpuTimerInfo *theGpuTimerData = GetOrCreateGpuTimerInfo(nameID);
 
@@ -201,7 +201,7 @@ public:
         }
     }
 
-    void EndTimer(CRegisteredString &nameID) override
+    void EndTimer(QString &nameID) override
     {
         SGpuTimerInfo *theGpuTimerData = GetOrCreateGpuTimerInfo(nameID);
 
@@ -210,7 +210,7 @@ public:
         }
     }
 
-    double GetElapsedTime(const CRegisteredString &nameID) const override
+    double GetElapsedTime(const QString &nameID) const override
     {
         double time = 0;
         SGpuTimerInfo *theGpuTimerData = GetGpuTimerInfo(nameID);
@@ -234,7 +234,7 @@ public:
     }
 
 private:
-    SGpuTimerInfo *GetOrCreateGpuTimerInfo(CRegisteredString &nameID)
+    SGpuTimerInfo *GetOrCreateGpuTimerInfo(QString &nameID)
     {
         TStrGpuTimerInfoMap::const_iterator theIter = m_StrToGpuTimerMap.find(nameID);
         if (theIter != m_StrToGpuTimerMap.end())
@@ -258,7 +258,7 @@ private:
         return theGpuTimerData;
     }
 
-    SGpuTimerInfo *GetGpuTimerInfo(const CRegisteredString &nameID) const
+    SGpuTimerInfo *GetGpuTimerInfo(const QString &nameID) const
     {
         TStrGpuTimerInfoMap::const_iterator theIter = m_StrToGpuTimerMap.find(nameID);
         if (theIter != m_StrToGpuTimerMap.end())
@@ -270,7 +270,7 @@ private:
 }
 
 IRenderProfiler &IRenderProfiler::CreateGpuProfiler(NVFoundationBase &inFnd,
-                                                    IQt3DSRenderContext &inContext,
+                                                    IQDemonRenderContext &inContext,
                                                     QDemonRenderContext &inRenderContext)
 {
     return *QDEMON_NEW(inFnd.getAllocator(), Qt3DSCRenderGpuProfiler)(inFnd, inContext, inRenderContext);

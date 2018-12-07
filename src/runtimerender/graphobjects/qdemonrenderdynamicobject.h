@@ -30,7 +30,7 @@
 #pragma once
 #ifndef QDEMON_RENDER_DYNAMIC_OBJECT_H
 #define QDEMON_RENDER_DYNAMIC_OBJECT_H
-#include <QtDemonRuntimeRender/qdemonrender.h>
+
 #include <QtDemonRuntimeRender/qdemonrendergraphobject.h>
 #include <QtDemonRuntimeRender/qdemonrendernode.h>
 
@@ -73,7 +73,7 @@ struct SDynamicObject : public SGraphObject
                            const TDataType &inType);
     template <typename TStrType>
     void SetStrPropertyValueT(dynamic::SPropertyDefinition &inDefinition,
-                              const char8_t *inValue, const char8_t *inProjectDir,
+                              const char *inValue, const char *inProjectDir,
                               TStrType &ioWorkspace, IStringTable &inStrTable);
 
     void SetPropertyValue(const dynamic::SPropertyDefinition &inDefinition, bool inValue);
@@ -91,11 +91,11 @@ struct SDynamicObject : public SGraphObject
                           const QString &inValue);
 
     void SetPropertyValue(const dynamic::SPropertyDefinition &inDefinition,
-                          const char8_t *inValue, const char8_t *inProjectDir,
+                          const char *inValue, const char *inProjectDir,
                           CRenderString &ioWorkspace, IStringTable &inStrTable);
 
     void SetPropertyValue(const dynamic::SPropertyDefinition &inDefinition,
-                          const char8_t *inValue, const char8_t *inProjectDir,
+                          const char *inValue, const char *inProjectDir,
                           QString &ioWorkspace, IStringTable &inStrTable);
 
     // Generic method used during serialization

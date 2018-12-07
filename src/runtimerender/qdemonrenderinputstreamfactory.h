@@ -30,7 +30,7 @@
 #pragma once
 #ifndef QDEMON_RENDER_INPUT_STREAM_FACTORY_H
 #define QDEMON_RENDER_INPUT_STREAM_FACTORY_H
-#include <QtDemonRuntimeRender/qdemonrender.h>
+
 #include <IOStreams.h>
 #include <QtDemon/qdemonrefcounted.h>
 
@@ -47,7 +47,7 @@ protected:
     virtual ~IInputStreamFactory() {}
 public:
     // These directories must have a '/' on them
-    virtual void AddSearchDirectory(const char8_t *inDirectory) = 0;
+    virtual void AddSearchDirectory(const char *inDirectory) = 0;
     virtual IRefCountedInputStream *GetStreamForFile(const QString &inFilename,
                                                      bool inQuiet = false) = 0;
     // Return a path for this file.  Returns true if GetStreamForFile would return a valid

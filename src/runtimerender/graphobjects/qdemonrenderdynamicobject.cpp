@@ -27,7 +27,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <QtDemonRuntimeRender/qdemonrender.h>
+
 #include <QtDemonRuntimeRender/qdemonrenderdynamicobject.h>
 #include <QtDemonRuntimeRender/qdemonrenderdynamicobjectsystem.h>
 #include <QtDemonRuntimeRender/qdemonrenderstring.h>
@@ -104,7 +104,7 @@ void SDynamicObject::SetPropertyValue(const dynamic::SPropertyDefinition &inDefi
 }
 template <typename TStrType>
 void SDynamicObject::SetStrPropertyValueT(dynamic::SPropertyDefinition &inDefinition,
-                                          const char8_t *inValue, const char8_t *inProjectDir,
+                                          const char *inValue, const char *inProjectDir,
                                           TStrType &ioWorkspace, IStringTable &inStrTable)
 {
     if (inValue == nullptr)
@@ -140,7 +140,7 @@ void SDynamicObject::SetStrPropertyValueT(dynamic::SPropertyDefinition &inDefini
 }
 
 void SDynamicObject::SetPropertyValue(const dynamic::SPropertyDefinition &inDefinition,
-                                      const char8_t *inValue, const char8_t *inProjectDir,
+                                      const char *inValue, const char *inProjectDir,
                                       CRenderString &ioWorkspace, IStringTable &inStrTable)
 {
     SetStrPropertyValueT(const_cast<dynamic::SPropertyDefinition &>(inDefinition), inValue,
@@ -148,7 +148,7 @@ void SDynamicObject::SetPropertyValue(const dynamic::SPropertyDefinition &inDefi
 }
 
 void SDynamicObject::SetPropertyValue(const dynamic::SPropertyDefinition &inDefinition,
-                                      const char8_t *inValue, const char8_t *inProjectDir,
+                                      const char *inValue, const char *inProjectDir,
                                       QString &ioWorkspace, IStringTable &inStrTable)
 {
     SetStrPropertyValueT(const_cast<dynamic::SPropertyDefinition &>(inDefinition), inValue,

@@ -30,10 +30,10 @@
 #pragma once
 #ifndef QDEMON_RENDER_CLIPPING_PLANE_H
 #define QDEMON_RENDER_CLIPPING_PLANE_H
-#include <QtDemonRuntimeRender/qdemonrender.h>
-#include <Qt3DSPlane.h>
-#include <Qt3DSFlags.h>
-#include <Qt3DSBounds3.h>
+
+#include <QtDemon/qdemonplane.h>
+#include <QtDemon/qdemonflags.h>
+#include <QtDemon/qdemonbounds3.h>
 
 QT_BEGIN_NAMESPACE
 

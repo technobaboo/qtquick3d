@@ -30,33 +30,25 @@
 #pragma once
 #ifndef QDEMON_RENDERER_H
 #define QDEMON_RENDERER_H
-#include <QtDemonRuntimeRender/qdemonrender.h>
-#include <Qt3DSDataRef.h>
-#include <Qt3DSFlags.h>
+
+#include <QtDemon/qdemondataref.h>
+#include <QtDemon/qdemonflags.h>
 #include <QtDemon/qdemonrefcounted.h>
-#include <QVector2D.h>
+#include <QtGui/QVector2D>
 #include <QtDemonRuntimeRender/qdemonrendergraphobjectpickquery.h>
 #include <QtDemonRuntimeRender/qdemonrendercamera.h>
 #include <QtDemonRender/qdemonrenderbasetypes.h>
 #include <QtDemonRuntimeRender/qdemonrenderray.h>
+#include <QtDemonRuntimeRender/qdemonrendernode.h>
 
 QT_BEGIN_NAMESPACE
 
-class IRenderableObject;
-struct SModel;
-struct SText;
-struct SCamera;
-struct SLight;
-struct SLayer;
-class IBufferManager;
 typedef void *SRenderInstanceId;
 
-using QDemonConstDataRef;
-
-class IQt3DSRenderNodeFilter
+class IQDemonRenderNodeFilter
 {
 protected:
-    virtual ~IQt3DSRenderNodeFilter() {}
+    virtual ~IQDemonRenderNodeFilter() {}
 public:
     virtual bool IncludeNode(const SNode &inNode) = 0;
 };
@@ -87,10 +79,10 @@ struct SScaleAndPosition
     SScaleAndPosition() {}
 };
 
-class IQt3DSRenderer : public QDemonRefCounted
+class IQDemonRenderer : public QDemonRefCounted
 {
 protected:
-    virtual ~IQt3DSRenderer() {}
+    virtual ~IQDemonRenderer() {}
 
 public:
     virtual void EnableLayerCaching(bool inEnabled) = 0;
@@ -100,12 +92,12 @@ public:
 
     // Get the camera that rendered this node last render
     virtual SCamera *GetCameraForNode(const SNode &inNode) const = 0;
-    virtual Option<SCuboidRect> GetCameraBounds(const SGraphObject &inObject) = 0;
+    virtual QDemonOption<SCuboidRect> GetCameraBounds(const SGraphObject &inObject) = 0;
     // Called when you have changed the number or order of children of a given node.
     virtual void ChildrenUpdated(SNode &inParent) = 0;
     virtual float GetTextScale(const SText &inText) = 0;
 
-    // The IQt3DSRenderContext calls these, clients should not.
+    // The IQDemonRenderContext calls these, clients should not.
     virtual void BeginFrame() = 0;
     virtual void EndFrame() = 0;
 
@@ -150,7 +142,7 @@ public:
     // to map the mouse coordinates into the subpresentation.  So for instance if inNode is in
     // a subpres then we need to know which image is displaying the subpres in order to map
     // the mouse coordinates into the subpres's render space.
-    virtual Option<QVector2D> FacePosition(SNode &inNode, QDemonBounds3 inBounds,
+    virtual QDemonOption<QVector2D> FacePosition(SNode &inNode, QDemonBounds3 inBounds,
                                            const QMatrix4x4 &inGlobalTransform,
                                            const QVector2D &inViewportDimensions,
                                            const QVector2D &inMouseCoords,
@@ -170,13 +162,13 @@ public:
     // around the center of the viewport and render just the part of the layer around this area.
     // The return value is optional because if the mouse point is completely outside the layer
     // obviously this method is irrelevant.
-    virtual Option<SLayerPickSetup> GetLayerPickSetup(SLayer &inLayer,
+    virtual QDemonOption<SLayerPickSetup> GetLayerPickSetup(SLayer &inLayer,
                                                       const QVector2D &inMouseCoords,
                                                       const QSize &inPickDims) = 0;
 
     // Return the layer's viewport rect after the layer's member variables have been applied.
     // Uses the last rendered viewport rect.
-    virtual Option<QDemonRenderRectF> GetLayerRect(SLayer &inLayer) = 0;
+    virtual QDemonOption<QDemonRenderRectF> GetLayerRect(SLayer &inLayer) = 0;
     // Testing function to allow clients to render a layer using a custom view project instead
     // of the one that would be setup
     // using the layer's camera in conjunction with the layer's position,scale.
@@ -221,14 +213,14 @@ public:
     virtual void ReleaseLayerRenderResources(SLayer &inLayer, const SRenderInstanceId id) = 0;
 
     // render a screen aligned 2D text
-    virtual void RenderText2D(float x, float y, Option<QVector3D> inColor,
+    virtual void RenderText2D(float x, float y, QDemonOption<QVector3D> inColor,
                               const char *text) = 0;
     // render Gpu profiler values
     virtual void RenderGpuProfilerStats(float x, float y,
-                                        Option<QVector3D> inColor) = 0;
+                                        QDemonOption<QVector3D> inColor) = 0;
 
     // Get the mouse coordinates as they relate to a given layer
-    virtual Option<QVector2D> GetLayerMouseCoords(SLayer &inLayer, const QVector2D &inMouseCoords,
+    virtual QDemonOption<QVector2D> GetLayerMouseCoords(SLayer &inLayer, const QVector2D &inMouseCoords,
                                                   const QVector2D &inViewportDimensions,
                                                   bool forceImageIntersect = false) const = 0;
 
@@ -239,7 +231,7 @@ public:
     static bool IsGl2Context(QDemonRenderContextType inContextType);
     static const char *GetGlslVesionString(QDemonRenderContextType inContextType);
 
-    static IQt3DSRenderer &CreateRenderer(IQt3DSRenderContext &inContext);
+    static IQDemonRenderer &CreateRenderer(IQDemonRenderContext &inContext);
 };
 QT_END_NAMESPACE
 

@@ -20,17 +20,17 @@ HEADERS += \
     $$PWD/qdemonrendertext.h
 
 SOURCES += \
-    $$PWD/qdemonrendercamera.cpp \
-    $$PWD/qdemonrenderdefaultmaterial.cpp \
-    $$PWD/qdemonrenderdynamicobject.cpp \
-    $$PWD/qdemonrendereffect.cpp \
-    $$PWD/qdemonrenderimage.cpp \
-    $$PWD/qdemonrenderlayer.cpp \
-    $$PWD/qdemonrenderlight.cpp \
-    $$PWD/qdemonrenderlightmaps.cpp \
-    $$PWD/qdemonrendermodel.cpp \
+#    $$PWD/qdemonrendercamera.cpp \
+#    $$PWD/qdemonrenderdefaultmaterial.cpp \
+#    $$PWD/qdemonrenderdynamicobject.cpp \
+#    $$PWD/qdemonrendereffect.cpp \
+#    $$PWD/qdemonrenderimage.cpp \
+#    $$PWD/qdemonrenderlayer.cpp \
+#    $$PWD/qdemonrenderlight.cpp \
+#    $$PWD/qdemonrenderlightmaps.cpp \
+#    $$PWD/qdemonrendermodel.cpp \
     $$PWD/qdemonrendernode.cpp \
-    $$PWD/qdemonrenderpath.cpp \
-    $$PWD/qdemonrenderpresentation.cpp \
-    $$PWD/qdemonrenderscene.cpp \
-    $$PWD/qdemonrendertext.cpp
+#    $$PWD/qdemonrenderpath.cpp \
+#    $$PWD/qdemonrenderpresentation.cpp \
+#    $$PWD/qdemonrenderscene.cpp \
+#    $$PWD/qdemonrendertext.cpp

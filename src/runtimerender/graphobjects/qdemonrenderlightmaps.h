@@ -32,7 +32,7 @@
 #ifndef QDEMON_RENDER_LIGHTMAPS_H
 #define QDEMON_RENDER_LIGHTMAPS_H
 
-#include <QtDemonRuntimeRender/qdemonrender.h>
+
 #include <QtDemonRuntimeRender/qdemonrendergraphobject.h>
 #include <QtDemonRuntimeRender/qdemonrenderer.h>
 #include <QtDemonRuntimeRender/qdemonrendermaterialdirty.h>

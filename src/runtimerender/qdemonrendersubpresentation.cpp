@@ -42,7 +42,7 @@ Qt3DSRenderPickResult CSubPresentationPickQuery::Pick(const QVector2D &inMouseCo
     return m_Renderer.DoGraphQueryPick(inMouseCoords, inViewportDimensions, inPickEverything);
 }
 
-CSubPresentationRenderer::CSubPresentationRenderer(IQt3DSRenderContext &inRenderContext,
+CSubPresentationRenderer::CSubPresentationRenderer(IQDemonRenderContext &inRenderContext,
                                                    SPresentation &inPresentation)
     : m_RenderContext(inRenderContext)
     , m_Presentation(inPresentation)

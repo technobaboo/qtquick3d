@@ -30,14 +30,16 @@
 #pragma once
 #ifndef QDEMON_RENDER_PLUGIN_GRAPH_OBJECT_H
 #define QDEMON_RENDER_PLUGIN_GRAPH_OBJECT_H
-#include <QtDemonRuntimeRender/qdemonrender.h>
+
 #include <QtDemonRuntimeRender/qdemonrendergraphobject.h>
+#include <QtDemonRuntimeRender/qdemonrendernode.h>
+#include <QtCore/QString>
 
 QT_BEGIN_NAMESPACE
 
 struct SRenderPlugin : public SGraphObject
 {
-    CRegisteredString m_PluginPath;
+    QString m_PluginPath;
     NodeFlags m_Flags;
 
     SRenderPlugin()

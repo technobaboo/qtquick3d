@@ -28,7 +28,7 @@
 **
 ****************************************************************************/
 
-#include <QtDemonRuntimeRender/qdemonrender.h>
+
 #include <QtDemonRuntimeRender/qdemonrenderer.h>
 #include <QtDemonRuntimeRender/qdemonrendererimpl.h>
 #include <QtDemonRuntimeRender/qdemonrenderlayer.h>
@@ -1013,14 +1013,14 @@ void SLayerRenderData::CreateGpuProfiler()
     }
 }
 
-void SLayerRenderData::StartProfiling(CRegisteredString &nameID, bool sync)
+void SLayerRenderData::StartProfiling(QString &nameID, bool sync)
 {
     if (m_LayerProfilerGpu.mPtr) {
         m_LayerProfilerGpu->StartTimer(nameID, false, sync);
     }
 }
 
-void SLayerRenderData::EndProfiling(CRegisteredString &nameID)
+void SLayerRenderData::EndProfiling(QString &nameID)
 {
     if (m_LayerProfilerGpu.mPtr) {
         m_LayerProfilerGpu->EndTimer(nameID);
@@ -1030,7 +1030,7 @@ void SLayerRenderData::EndProfiling(CRegisteredString &nameID)
 void SLayerRenderData::StartProfiling(const char *nameID, bool sync)
 {
     if (m_LayerProfilerGpu.mPtr) {
-        CRegisteredString theStr(
+        QString theStr(
                     m_Renderer.GetQt3DSContext().GetStringTable().RegisterStr(nameID));
         m_LayerProfilerGpu->StartTimer(theStr, false, sync);
     }
@@ -1039,7 +1039,7 @@ void SLayerRenderData::StartProfiling(const char *nameID, bool sync)
 void SLayerRenderData::EndProfiling(const char *nameID)
 {
     if (m_LayerProfilerGpu.mPtr) {
-        CRegisteredString theStr(
+        QString theStr(
                     m_Renderer.GetQt3DSContext().GetStringTable().RegisterStr(nameID));
         m_LayerProfilerGpu->EndTimer(theStr);
     }
@@ -1228,7 +1228,7 @@ static inline void OffsetProjectionMatrix(QMatrix4x4 &inProjectionMatrix, QVecto
             inProjectionMatrix.column3.y + inProjectionMatrix.column3.w * inVertexOffsets.y;
 }
 
-CRegisteredString depthPassStr;
+QString depthPassStr;
 
 // Render this layer's data to a texture.  Required if we have any effects,
 // prog AA, or if forced.

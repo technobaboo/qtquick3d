@@ -46,7 +46,7 @@ struct SWidgetBBox : public IRenderWidget
     QDemonRenderIndexBuffer *m_BoxIndexBuffer;
     QDemonRenderInputAssembler *m_BoxInputAssembler;
     QDemonRenderShaderProgram *m_BoxShader;
-    CRegisteredString m_ItemName;
+    QString m_ItemName;
     SWidgetBBox(SNode &inNode, const QDemonBounds3 &inBounds, const QVector3D &inColor)
         : IRenderWidget(inNode)
         , m_Bounds(inBounds)
@@ -176,7 +176,7 @@ struct SWidgetAxis : public IRenderWidget
     QDemonRenderVertexBuffer *m_AxisVertexBuffer;
     QDemonRenderInputAssembler *m_AxisInputAssembler;
     QDemonRenderShaderProgram *m_AxisShader;
-    CRegisteredString m_ItemName;
+    QString m_ItemName;
 
     SWidgetAxis(SNode &inNode)
         : IRenderWidget(inNode)

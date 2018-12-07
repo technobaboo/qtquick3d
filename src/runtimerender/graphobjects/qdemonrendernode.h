@@ -30,9 +30,11 @@
 #pragma once
 #ifndef QDEMON_RENDER_NODE_H
 #define QDEMON_RENDER_NODE_H
-#include <QtDemonRuntimeRender/qdemonrender.h>
+
+#include <QtDemonRuntimeRender/qdemonrenderer.h>
 #include <QtDemonRuntimeRender/qdemonrendergraphobject.h>
 #include <QtDemonRuntimeRender/qdemonrendereulerangles.h>
+#include <QtDemonRuntimeRender/qdemonrenderpathmanager.h>
 
 #include <QtDemon/QDemonBounds3>
 #include <QtDemon/QDemonFlags>
@@ -180,7 +182,7 @@ struct NodeFlags : public QDemonFlags<NodeFlagValues::Enum, quint32>
     }
 };
 
-struct QDEMON_AUTOTEST_EXPORT SNode : public SGraphObject
+struct Q_DEMONRUNTIMERENDER_EXPORT SNode : public SGraphObject
 {
     // changing any one of these means you have to
     // set this object dirty
@@ -267,10 +269,10 @@ struct QDEMON_AUTOTEST_EXPORT SNode : public SGraphObject
 
     // Get the bounds of us and our children in our local space.
     QDemonBounds3 GetBounds(IBufferManager &inManager, IPathManager &inPathManager,
-                        bool inIncludeChildren = true,
-                        IQt3DSRenderNodeFilter *inChildFilter = nullptr) const;
+                            bool inIncludeChildren = true,
+                            IQDemonRenderNodeFilter *inChildFilter = nullptr) const;
     QDemonBounds3 GetChildBounds(IBufferManager &inManager, IPathManager &inPathManager,
-                             IQt3DSRenderNodeFilter *inChildFilter = nullptr) const;
+                                 IQDemonRenderNodeFilter *inChildFilter = nullptr) const;
     // Assumes CalculateGlobalVariables has already been called.
     QVector3D GetGlobalPos() const;
     QVector3D GetGlobalPivot() const;

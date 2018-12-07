@@ -30,12 +30,12 @@
 #pragma once
 #ifndef QDEMON_RENDER_PATH_RENDER_CONTEXT_H
 #define QDEMON_RENDER_PATH_RENDER_CONTEXT_H
-#include <QtDemonRuntimeRender/qdemonrender.h>
+
 #include <QtDemon/qdemonrefcounted.h>
 #include <StringTable.h>
 #include <QtDemonRuntimeRender/qdemonrendershadercache.h>
-#include <QVector2D.h>
-#include <Qt3DSBounds3.h>
+#include <QtGui/QVector2D>
+#include <QtDemon/qdemonbounds3.h>
 #include <QtDemonRuntimeRender/qdemonrendershaderkeys.h>
 #include <QtDemonRuntimeRender/qdemonrenderableimage.h>
 

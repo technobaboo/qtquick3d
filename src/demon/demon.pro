@@ -17,7 +17,12 @@ HEADERS += \
     qdemonutils.h \
     qdemondataref.h \
     qdemonoption.h \
-    qdemoninvasivelinkedlist.h
+    qdemoninvasivelinkedlist.h \
+    qdemoninvasiveset.h \
+    qdemonunioncast.h \
+    qdemondiscriminatedunion.h \
+    qdemonperftimer.h \
+    qdemontime.h
 
 SOURCES += \
     qdemonflags.cpp \
@@ -26,6 +31,7 @@ SOURCES += \
     qdemonplane.cpp \
     qdemonutils.cpp \
     qdemondataref.cpp \
-    qdemonnocopy.cpp
+    qdemonnocopy.cpp \
+    qdemonperftimer.cpp
 
 load(qt_module)

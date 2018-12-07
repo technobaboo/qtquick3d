@@ -30,7 +30,7 @@
 #pragma once
 #ifndef QDEMON_RENDER_SHADER_GENERATOR_IMPL_H
 #define QDEMON_RENDER_SHADER_GENERATOR_IMPL_H
-#include <QtDemonRuntimeRender/qdemonrender.h>
+
 #include <QtDemonRuntimeRender/qdemonrenderer.h>
 #include <QtDemonRuntimeRender/qdemonrenderableobjects.h>
 #include <QtDemonRuntimeRender/qdemonrendererimplshaders.h>
@@ -60,10 +60,12 @@
 
 #include <QtDemon/QDemonFlags>
 #include <QtDemon/QDemonBounds3>
+#include <QtDemon/QDemonOption>
 #include <QtDemon/QDemonDataRef>
+#include <QtDemon/qdemoninvasiveset.h>
+#include <QtDemon/qdemonunioncast.h>
 
 //#include <Qt3DSUnionCast.h>
-//#include <Qt3DSInvasiveSet.h>
 
 QT_BEGIN_NAMESPACE
 inline bool FloatLessThan(float lhs, float rhs)
@@ -144,7 +146,7 @@ struct STextShaderPtr
     operator STextShader *() { return m_Shader; }
 };
 
-class Q_DEMONRUNTIMERENDER_EXPORT Qt3DSRendererImpl : public IQt3DSRenderer, public IRenderWidgetContext
+class Q_DEMONRUNTIMERENDER_EXPORT Qt3DSRendererImpl : public IQDemonRenderer, public IRenderWidgetContext
 {
     typedef QHash<SShaderDefaultMaterialKey, SShaderGeneratorGeneratedShader *> TShaderMap;
     typedef QHash<QString, QDemonScopedRefCounted<QDemonRenderConstantBuffer>> TStrConstanBufMap;
@@ -160,7 +162,7 @@ class Q_DEMONRUNTIMERENDER_EXPORT Qt3DSRendererImpl : public IQt3DSRenderer, pub
 
     typedef QHash<long, SNode *> TBoneIdNodeMap;
 
-    IQt3DSRenderContext &m_qt3dsContext;
+    IQDemonRenderContext &m_qt3dsContext;
     QDemonScopedRefCounted<QDemonRenderContext> m_Context;
     QDemonScopedRefCounted<IBufferManager> m_BufferManager;
     QDemonScopedRefCounted<IOffscreenRenderManager> m_OffscreenRenderManager;
@@ -195,50 +197,45 @@ class Q_DEMONRUNTIMERENDER_EXPORT Qt3DSRendererImpl : public IQt3DSRenderer, pub
     QDemonScopedRefCounted<QDemonRenderInputAssembler> m_PointInputAssembler;
     QDemonScopedRefCounted<QDemonRenderAttribLayout> m_PointAttribLayout;
 
-    Option<QDemonScopedRefCounted<SLayerSceneShader>> m_SceneLayerShader;
-    Option<QDemonScopedRefCounted<SLayerProgAABlendShader>> m_LayerProgAAShader;
+    QDemonOption<QDemonScopedRefCounted<SLayerSceneShader>> m_SceneLayerShader;
+    QDemonOption<QDemonScopedRefCounted<SLayerProgAABlendShader>> m_LayerProgAAShader;
 
     TShaderMap m_Shaders;
     TStrConstanBufMap m_ConstantBuffers; ///< store the the shader constant buffers
     // Option is true if we have attempted to generate the shader.
     // This does not mean we were successul, however.
-    Option<QDemonScopedRefCounted<SDefaultMaterialRenderableDepthShader>>
-    m_DefaultMaterialDepthPrepassShader;
-    Option<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> m_DepthPrepassShader;
-    Option<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> m_DepthPrepassShaderDisplaced;
-    Option<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> m_DepthTessLinearPrepassShader;
-    Option<QDemonScopedRefCounted<SRenderableDepthPrepassShader>>
-    m_DepthTessLinearPrepassShaderDisplaced;
-    Option<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> m_DepthTessPhongPrepassShader;
-    Option<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> m_DepthTessNPatchPrepassShader;
-    Option<QDemonScopedRefCounted<STextDepthShader>> m_TextDepthPrepassShader;
-    Option<QDemonScopedRefCounted<SDefaultAoPassShader>> m_DefaultAoPassShader;
-    Option<QDemonScopedRefCounted<SDefaultAoPassShader>> m_FakeDepthShader;
-    Option<QDemonScopedRefCounted<SDefaultAoPassShader>> m_FakeCubemapDepthShader;
-    Option<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> m_ParaboloidDepthShader;
-    Option<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> m_ParaboloidDepthTessLinearShader;
-    Option<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> m_ParaboloidDepthTessPhongShader;
-    Option<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> m_ParaboloidDepthTessNPatchShader;
-    Option<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> m_CubemapDepthShader;
-    Option<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> m_CubemapDepthTessLinearShader;
-    Option<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> m_CubemapDepthTessPhongShader;
-    Option<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> m_CubemapDepthTessNPatchShader;
-    Option<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> m_OrthographicDepthShader;
-    Option<QDemonScopedRefCounted<SRenderableDepthPrepassShader>>
-    m_OrthographicDepthTessLinearShader;
-    Option<QDemonScopedRefCounted<SRenderableDepthPrepassShader>>
-    m_OrthographicDepthTessPhongShader;
-    Option<QDemonScopedRefCounted<SRenderableDepthPrepassShader>>
-    m_OrthographicDepthTessNPatchShader;
-    Option<QDemonScopedRefCounted<SShadowmapPreblurShader>> m_CubeShadowBlurXShader;
-    Option<QDemonScopedRefCounted<SShadowmapPreblurShader>> m_CubeShadowBlurYShader;
-    Option<QDemonScopedRefCounted<SShadowmapPreblurShader>> m_OrthoShadowBlurXShader;
-    Option<QDemonScopedRefCounted<SShadowmapPreblurShader>> m_OrthoShadowBlurYShader;
+    QDemonOption<QDemonScopedRefCounted<SDefaultMaterialRenderableDepthShader>> m_DefaultMaterialDepthPrepassShader;
+    QDemonOption<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> m_DepthPrepassShader;
+    QDemonOption<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> m_DepthPrepassShaderDisplaced;
+    QDemonOption<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> m_DepthTessLinearPrepassShader;
+    QDemonOption<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> m_DepthTessLinearPrepassShaderDisplaced;
+    QDemonOption<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> m_DepthTessPhongPrepassShader;
+    QDemonOption<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> m_DepthTessNPatchPrepassShader;
+    QDemonOption<QDemonScopedRefCounted<STextDepthShader>> m_TextDepthPrepassShader;
+    QDemonOption<QDemonScopedRefCounted<SDefaultAoPassShader>> m_DefaultAoPassShader;
+    QDemonOption<QDemonScopedRefCounted<SDefaultAoPassShader>> m_FakeDepthShader;
+    QDemonOption<QDemonScopedRefCounted<SDefaultAoPassShader>> m_FakeCubemapDepthShader;
+    QDemonOption<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> m_ParaboloidDepthShader;
+    QDemonOption<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> m_ParaboloidDepthTessLinearShader;
+    QDemonOption<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> m_ParaboloidDepthTessPhongShader;
+    QDemonOption<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> m_ParaboloidDepthTessNPatchShader;
+    QDemonOption<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> m_CubemapDepthShader;
+    QDemonOption<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> m_CubemapDepthTessLinearShader;
+    QDemonOption<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> m_CubemapDepthTessPhongShader;
+    QDemonOption<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> m_CubemapDepthTessNPatchShader;
+    QDemonOption<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> m_OrthographicDepthShader;
+    QDemonOption<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> m_OrthographicDepthTessLinearShader;
+    QDemonOption<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> m_OrthographicDepthTessPhongShader;
+    QDemonOption<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> m_OrthographicDepthTessNPatchShader;
+    QDemonOption<QDemonScopedRefCounted<SShadowmapPreblurShader>> m_CubeShadowBlurXShader;
+    QDemonOption<QDemonScopedRefCounted<SShadowmapPreblurShader>> m_CubeShadowBlurYShader;
+    QDemonOption<QDemonScopedRefCounted<SShadowmapPreblurShader>> m_OrthoShadowBlurXShader;
+    QDemonOption<QDemonScopedRefCounted<SShadowmapPreblurShader>> m_OrthoShadowBlurYShader;
 
 #ifdef ADVANCED_BLEND_SW_FALLBACK
-    Option<QDemonScopedRefCounted<SAdvancedModeBlendShader>> m_AdvancedModeOverlayBlendShader;
-    Option<QDemonScopedRefCounted<SAdvancedModeBlendShader>> m_AdvancedModeColorBurnBlendShader;
-    Option<QDemonScopedRefCounted<SAdvancedModeBlendShader>> m_AdvancedModeColorDodgeBlendShader;
+    QDemonOption<QDemonScopedRefCounted<SAdvancedModeBlendShader>> m_AdvancedModeOverlayBlendShader;
+    QDemonOption<QDemonScopedRefCounted<SAdvancedModeBlendShader>> m_AdvancedModeColorBurnBlendShader;
+    QDemonOption<QDemonScopedRefCounted<SAdvancedModeBlendShader>> m_AdvancedModeColorDodgeBlendShader;
 #endif
     // Text shaders may be generated on demand.
     STextShaderPtr m_TextShader;
@@ -282,7 +279,7 @@ class Q_DEMONRUNTIMERENDER_EXPORT Qt3DSRendererImpl : public IQt3DSRenderer, pub
     SShaderDefaultMaterialKeyProperties m_DefaultMaterialShaderKeyProperties;
 
 public:
-    Qt3DSRendererImpl(IQt3DSRenderContext &ctx);
+    Qt3DSRendererImpl(IQDemonRenderContext &ctx);
     virtual ~Qt3DSRendererImpl();
     SShaderDefaultMaterialKeyProperties &DefaultMaterialShaderKeyProperties()
     {
@@ -313,7 +310,7 @@ public:
     float GetTextScale(const SText &inText) override;
 
     SCamera *GetCameraForNode(const SNode &inNode) const override;
-    Option<SCuboidRect> GetCameraBounds(const SGraphObject &inObject) override;
+    QDemonOption<SCuboidRect> GetCameraBounds(const SGraphObject &inObject) override;
     virtual SLayer *GetLayerForNode(const SNode &inNode) const;
     SLayerRenderData *GetOrCreateLayerRenderDataForNode(const SNode &inNode,
                                                         const SRenderInstanceId id = nullptr);
@@ -332,7 +329,7 @@ public:
                                bool inPickEverything,
                                const SRenderInstanceId id) override;
 
-    virtual Option<QVector2D>
+    virtual QDemonOption<QVector2D>
     FacePosition(SNode &inNode, QDemonBounds3 inBounds, const QMatrix4x4 &inGlobalTransform,
                  const QVector2D &inViewportDimensions, const QVector2D &inMouseCoords,
                  QDemonDataRef<SGraphObject *> inMapperObjects, SBasisPlanes::Enum inPlane) override;
@@ -348,19 +345,14 @@ public:
                                  const QVector3D &inMouseVec) const override;
     QVector3D ProjectPosition(SNode &inNode, const QVector3D &inPosition) const override;
 
-    Option<SLayerPickSetup> GetLayerPickSetup(SLayer &inLayer,
+    QDemonOption<SLayerPickSetup> GetLayerPickSetup(SLayer &inLayer,
                                               const QVector2D &inMouseCoords,
                                               const QSize &inPickDims) override;
 
-    Option<QDemonRenderRectF> GetLayerRect(SLayer &inLayer) override;
+    QDemonOption<QDemonRenderRectF> GetLayerRect(SLayer &inLayer) override;
 
     void RunLayerRender(SLayer &inLayer, const QMatrix4x4 &inViewProjection) override;
 
-    // Note that this allocator is completely reset on BeginFrame.
-    NVAllocatorCallback &GetPerFrameAllocator() override
-    {
-        return m_qt3dsContext.GetPerFrameAllocator();
-    }
     void RenderLayerRect(SLayer &inLayer, const QVector3D &inColor) override;
     void AddRenderWidget(IRenderWidget &inWidget) override;
 
@@ -379,13 +371,13 @@ public:
     void RenderPointsIndirect() override;
 
     // render a screen aligned 2D text
-    void RenderText2D(float x, float y, Option<QVector3D> inColor,
+    void RenderText2D(float x, float y, QDemonOption<QVector3D> inColor,
                       const char *text) override;
     bool PrepareTextureAtlasForRender();
 
     // render Gpu profiler values
     void RenderGpuProfilerStats(float x, float y,
-                                Option<QVector3D> inColor) override;
+                                QDemonOption<QVector3D> inColor) override;
 
     // Callback during the layer render process.
     void LayerNeedsFrameClear(SLayerRenderData &inLayer);
@@ -395,8 +387,8 @@ public:
     void EndLayerRender();
     void PrepareImageForIbl(SImage &inImage);
 
-    QDemonRenderShaderProgram *CompileShader(const QString &inName, const char8_t *inVert,
-                                             const char8_t *inFrame);
+    QDemonRenderShaderProgram *CompileShader(const QString &inName, const char *inVert,
+                                             const char *inFrame);
 
     QDemonRenderShaderProgram *GenerateShader(SSubsetRenderable &inRenderable,
                                               TShaderFeatureSet inFeatureSet);
@@ -460,7 +452,7 @@ public:
 
     QDemonRenderContext &GetContext() { return *m_Context; }
 
-    IQt3DSRenderContext &GetQt3DSContext() { return m_qt3dsContext; }
+    IQDemonRenderContext &GetQt3DSContext() { return m_qt3dsContext; }
 
     void DrawScreenRect(QDemonRenderRectF inRect, const QVector3D &inColor);
     // Binds an offscreen texture.  Widgets are rendered last.
@@ -515,12 +507,12 @@ public:
     GetWidgetRenderInformation(SNode &inNode, const QVector3D &inPos,
                                RenderWidgetModes::Enum inWidgetMode) override;
 
-    Option<QVector2D> GetLayerMouseCoords(SLayer &inLayer, const QVector2D &inMouseCoords,
+    QDemonOption<QVector2D> GetLayerMouseCoords(SLayer &inLayer, const QVector2D &inMouseCoords,
                                           const QVector2D &inViewportDimensions,
                                           bool forceImageIntersect = false) const override;
 
 protected:
-    Option<QVector2D> GetLayerMouseCoords(SLayerRenderData &inLayer, const QVector2D &inMouseCoords,
+    QDemonOption<QVector2D> GetLayerMouseCoords(SLayerRenderData &inLayer, const QVector2D &inMouseCoords,
                                           const QVector2D &inViewportDimensions,
                                           bool forceImageIntersect = false) const;
     SPickResultProcessResult ProcessPickResultList(bool inPickEverything);
@@ -528,12 +520,10 @@ protected:
     // this function
     void GetLayerHitObjectList(SLayerRenderData &inLayer, const QVector2D &inViewportDimensions,
                                const QVector2D &inMouseCoords, bool inPickEverything,
-                               TPickResultArray &outIntersectionResult,
-                               NVAllocatorCallback &inTempAllocator);
+                               TPickResultArray &outIntersectionResult);
     void IntersectRayWithSubsetRenderable(const SRay &inRay,
                                           SRenderableObject &inRenderableObject,
-                                          TPickResultArray &outIntersectionResultList,
-                                          NVAllocatorCallback &inTempAllocator);
+                                          TPickResultArray &outIntersectionResultList);
 };
 QT_END_NAMESPACE
 

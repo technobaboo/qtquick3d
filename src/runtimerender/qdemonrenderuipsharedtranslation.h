@@ -53,7 +53,7 @@ struct SEnumNameMap
 {
     quint32 m_Enum;
     const wchar_t *m_WideName;
-    const char8_t *m_Name;
+    const char *m_Name;
 };
 
 template <>
@@ -229,7 +229,7 @@ inline quint32 MapRotationOrder(const wchar_t *inOrderStr)
     return EulOrdYXZs;
 }
 
-inline quint32 MapRotationOrder(const char8_t *inOrderStr)
+inline quint32 MapRotationOrder(const char *inOrderStr)
 {
 #define MAP_ROTATION_ORDER(name, postfix)                                                          \
     if (strcmp(inOrderStr, QDEMON_RENDER_CHAR_T_##name##postfix) == 0) {                              \

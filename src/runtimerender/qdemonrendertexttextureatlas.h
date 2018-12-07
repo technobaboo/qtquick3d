@@ -30,16 +30,16 @@
 #pragma once
 #ifndef QDEMON_RENDER_TEXT_TEXTURE_ATLAS_H
 #define QDEMON_RENDER_TEXT_TEXTURE_ATLAS_H
-#include <QtDemonRuntimeRender/qdemonrender.h>
+
 #include <QtDemon/qdemonrefcounted.h>
 #include <QtDemonRuntimeRender/qdemonrendertext.h>
 
 QT_BEGIN_NAMESPACE
 class ITextRenderer;
 
-typedef eastl::pair<STextTextureAtlasDetails, QDemonScopedRefCounted<QDemonRenderTexture2D>>
+typedef QPair<STextTextureAtlasDetails, QDemonScopedRefCounted<QDemonRenderTexture2D>>
 TTextTextureAtlasDetailsAndTexture;
-typedef eastl::pair<SRenderTextureAtlasDetails, QDemonScopedRefCounted<QDemonRenderTexture2D>>
+typedef QPair<SRenderTextureAtlasDetails, QDemonScopedRefCounted<QDemonRenderTexture2D>>
 TTextRenderAtlasDetailsAndTexture;
 
 class ITextTextureAtlas : public QDemonRefCounted

@@ -30,11 +30,11 @@
 #pragma once
 #ifndef QDEMON_RENDER_EFFECT_SYSTEM_COMMANDS_H
 #define QDEMON_RENDER_EFFECT_SYSTEM_COMMANDS_H
-#include <QtDemonRuntimeRender/qdemonrender.h>
+
 #include <StringTable.h>
 #include <QtDemonRender/qdemonrenderbasetypes.h>
 #include <Qt3DSIntrinsics.h>
-#include <Qt3DSFlags.h>
+#include <QtDemon/qdemonflags.h>
 
 QT_BEGIN_NAMESPACE
 namespace dynamic {
@@ -133,7 +133,7 @@ struct SAllocateBufferFlags : public QDemonFlags<AllocateBufferFlagValues::Enum,
 
 struct SAllocateBuffer : public SCommand
 {
-    CRegisteredString m_Name;
+    QString m_Name;
     QDemonRenderTextureFormats::Enum m_Format;
     QDemonRenderTextureMagnifyingOp::Enum m_FilterOp;
     QDemonRenderTextureCoordOp::Enum m_TexCoordOp;
@@ -147,7 +147,7 @@ struct SAllocateBuffer : public SCommand
         , m_SizeMultiplier(1.0f)
     {
     }
-    SAllocateBuffer(CRegisteredString inName, QDemonRenderTextureFormats::Enum inFormat,
+    SAllocateBuffer(QString inName, QDemonRenderTextureFormats::Enum inFormat,
                     QDemonRenderTextureMagnifyingOp::Enum inFilterOp,
                     QDemonRenderTextureCoordOp::Enum inCoordOp, float inMultiplier,
                     SAllocateBufferFlags inFlags)
@@ -182,7 +182,7 @@ struct SAllocateImage : public SAllocateBuffer
     {
         m_Type = CommandTypes::AllocateImage;
     }
-    SAllocateImage(CRegisteredString inName, QDemonRenderTextureFormats::Enum inFormat,
+    SAllocateImage(QString inName, QDemonRenderTextureFormats::Enum inFormat,
                    QDemonRenderTextureMagnifyingOp::Enum inFilterOp,
                    QDemonRenderTextureCoordOp::Enum inCoordOp, float inMultiplier,
                    SAllocateBufferFlags inFlags, QDemonRenderImageAccessType::Enum inAccess)
@@ -204,9 +204,9 @@ struct SAllocateImage : public SAllocateBuffer
 
 struct SAllocateDataBuffer : public SCommand
 {
-    CRegisteredString m_Name;
+    QString m_Name;
     QDemonRenderBufferBindValues::Enum m_DataBufferType;
-    CRegisteredString m_WrapName;
+    QString m_WrapName;
     QDemonRenderBufferBindValues::Enum m_DataBufferWrapType;
     float m_Size;
     SAllocateBufferFlags m_BufferFlags;
@@ -216,9 +216,9 @@ struct SAllocateDataBuffer : public SCommand
     {
     }
 
-    SAllocateDataBuffer(CRegisteredString inName,
+    SAllocateDataBuffer(QString inName,
                         QDemonRenderBufferBindValues::Enum inBufferType,
-                        CRegisteredString inWrapName,
+                        QString inWrapName,
                         QDemonRenderBufferBindValues::Enum inBufferWrapType, float inSize,
                         SAllocateBufferFlags inFlags)
         : SCommand(CommandTypes::AllocateDataBuffer)
@@ -261,9 +261,9 @@ struct SBindTarget : public SCommand
 
 struct SBindBuffer : public SCommand
 {
-    CRegisteredString m_BufferName;
+    QString m_BufferName;
     bool m_NeedsClear;
-    SBindBuffer(CRegisteredString inBufName, bool inNeedsClear)
+    SBindBuffer(QString inBufName, bool inNeedsClear)
         : SCommand(CommandTypes::BindBuffer)
         , m_BufferName(inBufName)
         , m_NeedsClear(inNeedsClear)
@@ -279,14 +279,14 @@ struct SBindBuffer : public SCommand
 
 struct SBindShader : public SCommand
 {
-    CRegisteredString m_ShaderPath;
+    QString m_ShaderPath;
     // One GLSL file can hold multiple shaders in the case of multipass effects.
     // This makes it significantly easier for authors to reason about the shader
     // but it means we need to #define a preprocessor token to indicate which
     // effect we intend to compile at this point.
-    CRegisteredString m_ShaderDefine;
-    SBindShader(CRegisteredString inShaderPath,
-                CRegisteredString inShaderDefine = CRegisteredString())
+    QString m_ShaderDefine;
+    SBindShader(QString inShaderPath,
+                QString inShaderDefine = QString())
         : SCommand(CommandTypes::BindShader)
         , m_ShaderPath(inShaderPath)
         , m_ShaderDefine(inShaderDefine)
@@ -311,12 +311,12 @@ struct SBindShader : public SCommand
 struct SApplyInstanceValue : public SCommand
 {
     // Name of value to apply in shader
-    CRegisteredString m_PropertyName;
+    QString m_PropertyName;
     // type of value
     QDemonRenderShaderDataTypes::Enum m_ValueType;
     // offset in the effect data section of value.
     quint32 m_ValueOffset;
-    SApplyInstanceValue(CRegisteredString inName, QDemonRenderShaderDataTypes::Enum inValueType,
+    SApplyInstanceValue(QString inName, QDemonRenderShaderDataTypes::Enum inValueType,
                         quint32 inValueOffset)
         : SCommand(CommandTypes::ApplyInstanceValue)
         , m_PropertyName(inName)
@@ -342,10 +342,10 @@ struct SApplyInstanceValue : public SCommand
 
 struct SApplyValue : public SCommand
 {
-    CRegisteredString m_PropertyName;
+    QString m_PropertyName;
     QDemonRenderShaderDataTypes::Enum m_ValueType;
     QDemonDataRef<quint8> m_Value;
-    SApplyValue(CRegisteredString inName, QDemonRenderShaderDataTypes::Enum inValueType)
+    SApplyValue(QString inName, QDemonRenderShaderDataTypes::Enum inValueType)
         : SCommand(CommandTypes::ApplyValue)
         , m_PropertyName(inName)
         , m_ValueType(inValueType)
@@ -372,12 +372,12 @@ struct SApplyBufferValue : public SCommand
 {
     // If no buffer name is given then the special buffer [source]
     // is assumed.
-    CRegisteredString m_BufferName;
+    QString m_BufferName;
     // If no param name is given, the buffer is bound to the
     // input texture parameter (texture0).
-    CRegisteredString m_ParamName;
+    QString m_ParamName;
 
-    SApplyBufferValue(CRegisteredString bufferName, CRegisteredString shaderParam)
+    SApplyBufferValue(QString bufferName, QString shaderParam)
         : SCommand(CommandTypes::ApplyBufferValue)
         , m_BufferName(bufferName)
         , m_ParamName(shaderParam)
@@ -394,12 +394,12 @@ struct SApplyBufferValue : public SCommand
 // bind a buffer to a given shader parameter.
 struct SApplyImageValue : public SCommand
 {
-    CRegisteredString m_ImageName; ///< name which the image was allocated
-    CRegisteredString m_ParamName; ///< must match the name in the shader
+    QString m_ImageName; ///< name which the image was allocated
+    QString m_ParamName; ///< must match the name in the shader
     bool m_BindAsTexture; ///< bind image as texture
     bool m_NeedSync; ///< if true we add a memory barrier before usage
 
-    SApplyImageValue(CRegisteredString bufferName, CRegisteredString shaderParam,
+    SApplyImageValue(QString bufferName, QString shaderParam,
                      bool inBindAsTexture, bool inNeedSync)
         : SCommand(CommandTypes::ApplyImageValue)
         , m_ImageName(bufferName)
@@ -421,10 +421,10 @@ struct SApplyImageValue : public SCommand
 // bind a buffer to a given shader parameter.
 struct SApplyDataBufferValue : public SCommand
 {
-    CRegisteredString m_ParamName; ///< must match the name in the shader
+    QString m_ParamName; ///< must match the name in the shader
     QDemonRenderBufferBindValues::Enum m_BindAs; ///< to which target we bind this buffer
 
-    SApplyDataBufferValue(CRegisteredString inShaderParam,
+    SApplyDataBufferValue(QString inShaderParam,
                           QDemonRenderBufferBindValues::Enum inBufferType)
         : SCommand(CommandTypes::ApplyDataBufferValue)
         , m_ParamName(inShaderParam)
@@ -443,8 +443,8 @@ struct SApplyDepthValue : public SCommand
 {
     // If no param name is given, the buffer is bound to the
     // input texture parameter (texture0).
-    CRegisteredString m_ParamName;
-    SApplyDepthValue(CRegisteredString param)
+    QString m_ParamName;
+    SApplyDepthValue(QString param)
         : SCommand(CommandTypes::ApplyDepthValue)
         , m_ParamName(param)
     {
@@ -517,13 +517,13 @@ struct SApplyBlitFramebuffer : public SCommand
 {
     // If no buffer name is given then the special buffer [source]
     // is assumed. Which is the default render target
-    CRegisteredString m_SourceBufferName;
+    QString m_SourceBufferName;
     // If no buffer name is given then the special buffer [dest]
     // is assumed. Which is the default render target
-    CRegisteredString m_DestBufferName;
+    QString m_DestBufferName;
 
-    SApplyBlitFramebuffer(CRegisteredString inSourceBufferName,
-                          CRegisteredString inDestBufferName)
+    SApplyBlitFramebuffer(QString inSourceBufferName,
+                          QString inDestBufferName)
         : SCommand(CommandTypes::ApplyBlitFramebuffer)
         , m_SourceBufferName(inSourceBufferName)
         , m_DestBufferName(inDestBufferName)
@@ -564,7 +564,7 @@ struct SDepthStencilFlags : public QDemonFlags<DepthStencilFlagValues::Enum>
 
 struct SDepthStencil : public SCommand
 {
-    CRegisteredString m_BufferName;
+    QString m_BufferName;
     SDepthStencilFlags m_Flags;
     QDemonRenderStencilOp::Enum m_StencilFailOperation;
     QDemonRenderStencilOp::Enum m_DepthPassOperation;
@@ -584,7 +584,7 @@ struct SDepthStencil : public SCommand
     {
     }
 
-    SDepthStencil(CRegisteredString bufName, SDepthStencilFlags flags,
+    SDepthStencil(QString bufName, SDepthStencilFlags flags,
                   QDemonRenderStencilOp::Enum inStencilOp,
                   QDemonRenderStencilOp::Enum inDepthPassOp,
                   QDemonRenderStencilOp::Enum inDepthFailOp,

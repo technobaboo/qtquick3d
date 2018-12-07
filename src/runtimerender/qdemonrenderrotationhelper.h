@@ -30,7 +30,7 @@
 #pragma once
 #ifndef QDEMON_RENDER_ROTATION_HELPER_H
 #define QDEMON_RENDER_ROTATION_HELPER_H
-#include <QtDemonRuntimeRender/qdemonrender.h>
+
 #include <QtDemonRuntimeRender/qdemonrendernode.h>
 
 QT_BEGIN_NAMESPACE

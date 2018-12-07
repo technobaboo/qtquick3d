@@ -30,8 +30,8 @@
 #pragma once
 #ifndef QDEMON_RENDERER_IMPL_LAYER_RENDER_PREPARATION_DATA_H
 #define QDEMON_RENDERER_IMPL_LAYER_RENDER_PREPARATION_DATA_H
-#include <QtDemonRuntimeRender/qdemonrender.h>
-#include <Qt3DSFlags.h>
+
+#include <QtDemon/qdemonflags.h>
 #include <QtDemonRuntimeRender/qdemonrendererimpllayerrenderhelper.h>
 #include <QtDemonRuntimeRender/qdemonrendershadercache.h>
 #include <QtDemonRuntimeRender/qdemonrenderableobjects.h>
@@ -270,10 +270,10 @@ struct SLayerRenderPreparationData
     TRenderableObjectList m_RenderedTransparentObjects;
     QMatrix4x4 m_ViewProjection;
     SClippingFrustum m_ClippingFrustum;
-    Option<SLayerRenderPreparationResult> m_LayerPrepResult;
+    QDemonOption<SLayerRenderPreparationResult> m_LayerPrepResult;
     // Widgets drawn at particular times during the rendering process
     QVector<IRenderWidget *> m_IRenderWidgets;
-    Option<QVector3D> m_CameraDirection;
+    QDemonOption<QVector3D> m_CameraDirection;
     // Scoped lights need a level of indirection into a light direction list.  The source light
     // directions list is as long as there are lights on the layer.  It holds invalid
     // information for
@@ -288,7 +288,7 @@ struct SLayerRenderPreparationData
     QDemonScopedRefCounted<IOffscreenRenderer> m_LastFrameOffscreenRenderer;
 
     eastl::vector<SShaderPreprocessorFeature> m_Features;
-    CRegisteredString m_CGLightingFeatureName;
+    QString m_CGLightingFeatureName;
     bool m_FeaturesDirty;
     size_t m_FeatureSetHash;
     bool m_TooManyLightsError;
@@ -320,18 +320,18 @@ struct SLayerRenderPreparationData
                                    SRenderableObjectFlags &inExistingFlags, float inOpacity);
 
     bool PrepareModelForRender(SModel &inModel, const QMatrix4x4 &inViewProjection,
-                               const Option<SClippingFrustum> &inClipFrustum,
+                               const QDemonOption<SClippingFrustum> &inClipFrustum,
                                TNodeLightEntryList &inScopedLights);
 
     bool PrepareTextForRender(SText &inText, const QMatrix4x4 &inViewProjection,
                               float inTextScaleFactor,
                               SLayerRenderPreparationResultFlags &ioFlags);
     bool PreparePathForRender(SPath &inPath, const QMatrix4x4 &inViewProjection,
-                              const Option<SClippingFrustum> &inClipFrustum,
+                              const QDemonOption<SClippingFrustum> &inClipFrustum,
                               SLayerRenderPreparationResultFlags &ioFlags);
     // Helper function used during PRepareForRender and PrepareAndRender
     bool PrepareRenderablesForRender(const QMatrix4x4 &inViewProjection,
-                                     const Option<SClippingFrustum> &inClipFrustum,
+                                     const QDemonOption<SClippingFrustum> &inClipFrustum,
                                      float inTextScaleFactor,
                                      SLayerRenderPreparationResultFlags &ioFlags);
 
@@ -341,11 +341,11 @@ struct SLayerRenderPreparationData
     bool CheckLightProbeDirty(SImage &inLightProbe);
     void AddRenderWidget(IRenderWidget &inWidget);
     void SetShaderFeature(const char *inName, bool inValue);
-    void SetShaderFeature(CRegisteredString inName, bool inValue);
+    void SetShaderFeature(QString inName, bool inValue);
     QDemonConstDataRef<SShaderPreprocessorFeature> GetShaderFeatureSet();
     size_t GetShaderFeatureSetHash();
     // The graph object is not const because this traversal updates dirty state on the objects.
-    eastl::pair<bool, SGraphObject *> ResolveReferenceMaterial(SGraphObject *inMaterial);
+    QPair<bool, SGraphObject *> ResolveReferenceMaterial(SGraphObject *inMaterial);
 
     QVector3D GetCameraDirection();
     // Per-frame cache of renderable objects post-sort.

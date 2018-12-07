@@ -30,7 +30,7 @@
 #pragma once
 #ifndef QDEMON_RENDER_PROFILER_H
 #define QDEMON_RENDER_PROFILER_H
-#include <QtDemonRuntimeRender/qdemonrender.h>
+
 #include <QtDemon/qdemonrefcounted.h>
 #include <QtDemonRender/qdemonrenderbasetypes.h>
 
@@ -42,7 +42,7 @@ QT_BEGIN_NAMESPACE
 class IRenderProfiler : public QDemonRefCounted
 {
 public:
-    typedef QVector<CRegisteredString> TStrIDVec;
+    typedef QVector<QString> TStrIDVec;
 
 protected:
     virtual ~IRenderProfiler() {}
@@ -57,7 +57,7 @@ public:
          *
          * @return no return
          */
-    virtual void StartTimer(CRegisteredString &nameID, bool absoluteTime, bool sync) = 0;
+    virtual void StartTimer(QString &nameID, bool absoluteTime, bool sync) = 0;
 
     /**
          * @brief stop a timer query
@@ -66,7 +66,7 @@ public:
          *
          * @return no return
          */
-    virtual void EndTimer(CRegisteredString &nameID) = 0;
+    virtual void EndTimer(QString &nameID) = 0;
 
     /**
          * @brief Get elapsed timer value. Not this is an averaged time over several frames
@@ -75,7 +75,7 @@ public:
          *
          * @return no return
          */
-    virtual double GetElapsedTime(const CRegisteredString &nameID) const = 0;
+    virtual double GetElapsedTime(const QString &nameID) const = 0;
 
     /**
          * @brief Get ID list of tracked timers
@@ -99,7 +99,7 @@ public:
     virtual quint32 GetAndResetTriangleCount() const = 0;
 
     static IRenderProfiler &CreateGpuProfiler(NVFoundationBase &inFoundation,
-                                              IQt3DSRenderContext &inContext,
+                                              IQDemonRenderContext &inContext,
                                               QDemonRenderContext &inRenderContext);
 };
 QT_END_NAMESPACE

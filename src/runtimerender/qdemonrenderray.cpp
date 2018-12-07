@@ -34,7 +34,7 @@ QT_BEGIN_NAMESPACE
 
 // http://www.siggraph.org/education/materials/HyperGraph/raytrace/rayplane_intersection.htm
 
-Option<QVector3D> SRay::Intersect(const NVPlane &inPlane) const
+QDemonOption<QVector3D> SRay::Intersect(const QDemonPlane &inPlane) const
 {
     float Vd = inPlane.n.dot(m_Direction);
     if (fabs(Vd) < .0001f)
@@ -44,7 +44,7 @@ Option<QVector3D> SRay::Intersect(const NVPlane &inPlane) const
     return m_Origin + (m_Direction * t);
 }
 
-Option<SRayIntersectionResult> SRay::IntersectWithAABB(const QMatrix4x4 &inGlobalTransform,
+QDemonOption<SRayIntersectionResult> SRay::IntersectWithAABB(const QMatrix4x4 &inGlobalTransform,
                                                        const QDemonBounds3 &inBounds,
                                                        bool inForceIntersect) const
 {
@@ -119,7 +119,7 @@ Option<SRayIntersectionResult> SRay::IntersectWithAABB(const QMatrix4x4 &inGloba
     return SRayIntersectionResult(rayLengthSquared, relXY);
 }
 
-Option<QVector2D> SRay::GetRelative(const QMatrix4x4 &inGlobalTransform, const QDemonBounds3 &inBounds,
+QDemonOption<QVector2D> SRay::GetRelative(const QMatrix4x4 &inGlobalTransform, const QDemonBounds3 &inBounds,
                                     SBasisPlanes::Enum inPlane) const
 {
     QMatrix4x4 theOriginTransform = inGlobalTransform.getInverse();
@@ -146,12 +146,12 @@ Option<QVector2D> SRay::GetRelative(const QMatrix4x4 &inGlobalTransform, const Q
         theRight = QVector3D(0, 0, 1);
         break;
     }
-    NVPlane thePlane(theDirection, theDirection.dot(theTransformedDirection) > 0.0f
+    QDemonPlane thePlane(theDirection, theDirection.dot(theTransformedDirection) > 0.0f
                      ? theDirection.dot(inBounds.maximum)
                      : theDirection.dot(inBounds.minimum));
 
     SRay relativeRay(theTransformedOrigin, theTransformedDirection);
-    Option<QVector3D> localIsect = relativeRay.Intersect(thePlane);
+    QDemonOption<QVector3D> localIsect = relativeRay.Intersect(thePlane);
     if (localIsect.hasValue()) {
         float xRange = theRight.dot(inBounds.maximum) - theRight.dot(inBounds.minimum);
         float yRange = theUp.dot(inBounds.maximum) - theUp.dot(inBounds.minimum);

@@ -62,7 +62,7 @@ using QDemonRenderContextScopedProperty;
 using NVRenderCachedShaderProperty;
 using NVRenderCachedShaderBuffer;
 
-SCustomMaterialVertexPipeline::SCustomMaterialVertexPipeline(IQt3DSRenderContext *inContext,
+SCustomMaterialVertexPipeline::SCustomMaterialVertexPipeline(IQDemonRenderContext *inContext,
                                                              TessModeValues::Enum inTessMode)
     : SVertexPipelineImpl(
           inContext->GetAllocator(), inContext->GetCustomMaterialShaderGenerator(),
@@ -339,8 +339,8 @@ void SCustomMaterialVertexPipeline::BeginFragmentGeneration()
     Fragment() << "void main()" << Endl << "{" << Endl;
 }
 
-void SCustomMaterialVertexPipeline::AssignOutput(const char8_t *inVarName,
-                                                 const char8_t *inVarValue)
+void SCustomMaterialVertexPipeline::AssignOutput(const char *inVarName,
+                                                 const char *inVarValue)
 {
     Vertex() << "\t" << inVarName << " = " << inVarValue << ";\n";
 }
@@ -431,8 +431,8 @@ IShaderStageGenerator &SCustomMaterialVertexPipeline::ActiveStage()
     return Vertex();
 }
 
-void SCustomMaterialVertexPipeline::AddInterpolationParameter(const char8_t *inName,
-                                                              const char8_t *inType)
+void SCustomMaterialVertexPipeline::AddInterpolationParameter(const char *inName,
+                                                              const char *inType)
 {
     m_InterpolationParameters.insert(eastl::make_pair(Str(inName), Str(inType)));
     Vertex().AddOutgoing(inName, inType);
@@ -553,8 +553,8 @@ struct SMaterialClass
     }
 };
 
-typedef QHash<CRegisteredString, QDemonScopedRefCounted<SMaterialClass>> TStringMaterialMap;
-typedef eastl::pair<CRegisteredString, CRegisteredString> TStrStrPair;
+typedef QHash<QString, QDemonScopedRefCounted<SMaterialClass>> TStringMaterialMap;
+typedef QPair<QString, QString> TStrStrPair;
 
 namespace eastl {
 template <>
@@ -562,7 +562,7 @@ struct hash<TStrStrPair>
 {
     size_t operator()(const TStrStrPair &item) const
     {
-        return hash<CRegisteredString>()(item.first) ^ hash<CRegisteredString>()(item.second);
+        return hash<QString>()(item.first) ^ hash<QString>()(item.second);
     }
 };
 }
@@ -654,7 +654,7 @@ struct SCustomMaterialTextureData
     }
 };
 
-typedef eastl::pair<CRegisteredString, QDemonScopedRefCounted<SCustomMaterialTextureData>>
+typedef QPair<QString, QDemonScopedRefCounted<SCustomMaterialTextureData>>
     TCustomMaterialTextureEntry;
 
 /**
@@ -777,12 +777,12 @@ struct SMaterialOrComputeShader
 
 struct SCustomMaterialBuffer
 {
-    CRegisteredString m_Name;
+    QString m_Name;
     QDemonScopedRefCounted<QDemonRenderFrameBuffer> m_FrameBuffer;
     QDemonScopedRefCounted<QDemonRenderTexture2D> m_Texture;
     SAllocateBufferFlags m_Flags;
 
-    SCustomMaterialBuffer(CRegisteredString inName, QDemonRenderFrameBuffer &inFb,
+    SCustomMaterialBuffer(QString inName, QDemonRenderFrameBuffer &inFb,
                           QDemonRenderTexture2D &inTexture, SAllocateBufferFlags inFlags)
         : m_Name(inName)
         , m_FrameBuffer(&inFb)
@@ -794,16 +794,16 @@ struct SCustomMaterialBuffer
 };
 
 struct SMaterialSystem;
-typedef QHash<CRegisteredString, QDemonScopedRefCounted<QDemonRenderVertexBuffer>>
+typedef QHash<QString, QDemonScopedRefCounted<QDemonRenderVertexBuffer>>
     TStringVertexBufferMap;
-typedef QHash<CRegisteredString, QDemonScopedRefCounted<QDemonRenderInputAssembler>>
+typedef QHash<QString, QDemonScopedRefCounted<QDemonRenderInputAssembler>>
     TStringAssemblerMap;
 
 struct SStringMemoryBarrierFlagMap
 {
-    const char8_t *m_Name;
+    const char *m_Name;
     QDemonRenderBufferBarrierValues::Enum m_Value;
-    SStringMemoryBarrierFlagMap(const char8_t *nm,
+    SStringMemoryBarrierFlagMap(const char *nm,
                                 QDemonRenderBufferBarrierValues::Enum val)
         : m_Name(nm)
         , m_Value(val)
@@ -842,9 +842,9 @@ SStringMemoryBarrierFlagMap g_StringMemoryFlagMap[] = {
 
 struct SStringBlendFuncMap
 {
-    const char8_t *m_Name;
+    const char *m_Name;
     QDemonRenderSrcBlendFunc::Enum m_Value;
-    SStringBlendFuncMap(const char8_t *nm, QDemonRenderSrcBlendFunc::Enum val)
+    SStringBlendFuncMap(const char *nm, QDemonRenderSrcBlendFunc::Enum val)
         : m_Name(nm)
         , m_Value(val)
     {
@@ -864,10 +864,10 @@ SStringBlendFuncMap g_BlendFuncMap[] = {
 struct SMaterialSystem : public ICustomMaterialSystem
 {
     typedef QHash<SShaderMapKey, QDemonScopedRefCounted<SCustomMaterialShader>> TShaderMap;
-    typedef eastl::pair<CRegisteredString, SImage *> TAllocatedImageEntry;
+    typedef QPair<QString, SImage *> TAllocatedImageEntry;
 
-    IQt3DSRenderContextCore &m_CoreContext;
-    IQt3DSRenderContext *m_Context;
+    IQDemonRenderContextCore &m_CoreContext;
+    IQDemonRenderContext *m_Context;
     mutable SPreAllocatedAllocator m_Allocator;
     TStringMaterialMap m_StringMaterialMap;
     TShaderMap m_ShaderMap;
@@ -880,7 +880,7 @@ struct SMaterialSystem : public ICustomMaterialSystem
     float m_MillisecondsSinceLastFrame;
     qint32 mRefCount;
 
-    SMaterialSystem(IQt3DSRenderContextCore &ct)
+    SMaterialSystem(IQDemonRenderContextCore &ct)
         : m_CoreContext(ct)
         , m_Context(nullptr)
         , m_Allocator(ct.GetAllocator())
@@ -925,12 +925,12 @@ struct SMaterialSystem : public ICustomMaterialSystem
 
     QDEMON_IMPLEMENT_REF_COUNT_ADDREF_RELEASE_OVERRIDE(m_CoreContext.GetAllocator())
 
-    bool IsMaterialRegistered(CRegisteredString inStr) override
+    bool IsMaterialRegistered(QString inStr) override
     {
         return m_StringMaterialMap.find(inStr) != m_StringMaterialMap.end();
     }
 
-    bool RegisterMaterialClass(CRegisteredString inName,
+    bool RegisterMaterialClass(QString inName,
                                        QDemonConstDataRef<dynamic::SPropertyDeclaration> inProperties) override
     {
         if (IsMaterialRegistered(inName))
@@ -948,7 +948,7 @@ struct SMaterialSystem : public ICustomMaterialSystem
         return true;
     }
 
-    SMaterialClass *GetMaterialClass(CRegisteredString inStr)
+    SMaterialClass *GetMaterialClass(QString inStr)
     {
         TStringMaterialMap::iterator theIter = m_StringMaterialMap.find(inStr);
         if (theIter != m_StringMaterialMap.end())
@@ -956,13 +956,13 @@ struct SMaterialSystem : public ICustomMaterialSystem
         return nullptr;
     }
 
-    const SMaterialClass *GetMaterialClass(CRegisteredString inStr) const
+    const SMaterialClass *GetMaterialClass(QString inStr) const
     {
         return const_cast<SMaterialSystem *>(this)->GetMaterialClass(inStr);
     }
 
     virtual QDemonConstDataRef<SPropertyDefinition>
-    GetCustomMaterialProperties(CRegisteredString inCustomMaterialName) const override
+    GetCustomMaterialProperties(QString inCustomMaterialName) const override
     {
         IDynamicObjectClass *theMaterialClass =
             m_CoreContext.GetDynamicObjectSystemCore().GetDynamicObjectClass(inCustomMaterialName);
@@ -973,7 +973,7 @@ struct SMaterialSystem : public ICustomMaterialSystem
         return QDemonConstDataRef<SPropertyDefinition>();
     }
 
-    virtual quint32 FindBuffer(CRegisteredString inName)
+    virtual quint32 FindBuffer(QString inName)
     {
         for (quint32 idx = 0, end = m_AllocatedBuffers.size(); idx < end; ++idx)
             if (m_AllocatedBuffers[idx].m_Name == inName)
@@ -981,7 +981,7 @@ struct SMaterialSystem : public ICustomMaterialSystem
         return m_AllocatedBuffers.size();
     }
 
-    virtual quint32 FindAllocatedImage(CRegisteredString inName)
+    virtual quint32 FindAllocatedImage(QString inName)
     {
         for (quint32 idx = 0, end = m_AllocatedImages.size(); idx < end; ++idx)
             if (m_AllocatedImages[idx].first == inName)
@@ -1000,7 +1000,7 @@ struct SMaterialSystem : public ICustomMaterialSystem
         return false;
     }
 
-    virtual void SetTexture(QDemonRenderShaderProgram &inShader, CRegisteredString inPropName,
+    virtual void SetTexture(QDemonRenderShaderProgram &inShader, QString inPropName,
                             QDemonRenderTexture2D *inTexture,
                             const SPropertyDefinition *inPropDec = nullptr, bool needMips = false)
     {
@@ -1025,15 +1025,15 @@ struct SMaterialSystem : public ICustomMaterialSystem
         theTextureEntry->Set(inPropDec);
     }
 
-    void SetPropertyEnumNames(CRegisteredString inName, CRegisteredString inPropName,
-                                      QDemonConstDataRef<CRegisteredString> inNames) override
+    void SetPropertyEnumNames(QString inName, QString inPropName,
+                                      QDemonConstDataRef<QString> inNames) override
     {
         m_CoreContext.GetDynamicObjectSystemCore().SetPropertyEnumNames(inName, inPropName,
                                                                         inNames);
     }
 
-    void SetPropertyTextureSettings(CRegisteredString inName, CRegisteredString inPropName,
-                                            CRegisteredString inPropPath,
+    void SetPropertyTextureSettings(QString inName, QString inPropName,
+                                            QString inPropPath,
                                             QDemonRenderTextureTypeValue::Enum inTexType,
                                             QDemonRenderTextureCoordOp::Enum inCoordOp,
                                             QDemonRenderTextureMagnifyingOp::Enum inMagFilterOp,
@@ -1047,8 +1047,8 @@ struct SMaterialSystem : public ICustomMaterialSystem
             inName, inPropName, inPropPath, inTexType, inCoordOp, inMagFilterOp, inMinFilterOp);
     }
 
-    void SetMaterialClassShader(CRegisteredString inName, const char8_t *inShaderType,
-                                        const char8_t *inShaderVersion, const char8_t *inShaderData,
+    void SetMaterialClassShader(QString inName, const char *inShaderType,
+                                        const char *inShaderVersion, const char *inShaderData,
                                         bool inHasGeomShader, bool inIsComputeShader) override
     {
         m_CoreContext.GetDynamicObjectSystemCore().SetShaderData(inName, inShaderData, inShaderType,
@@ -1056,7 +1056,7 @@ struct SMaterialSystem : public ICustomMaterialSystem
                                                                  inIsComputeShader);
     }
 
-    SCustomMaterial *CreateCustomMaterial(CRegisteredString inName,
+    SCustomMaterial *CreateCustomMaterial(QString inName,
                                                   NVAllocatorCallback &inSceneGraphAllocator) override
     {
         SCustomMaterial *theMaterial = static_cast<SCustomMaterial *>(
@@ -1076,7 +1076,7 @@ struct SMaterialSystem : public ICustomMaterialSystem
         return theMaterial;
     }
 
-    void SetCustomMaterialTransparency(CRegisteredString inName, bool inHasTransparency) override
+    void SetCustomMaterialTransparency(QString inName, bool inHasTransparency) override
     {
         SMaterialClass *theClass = GetMaterialClass(inName);
 
@@ -1088,7 +1088,7 @@ struct SMaterialSystem : public ICustomMaterialSystem
         theClass->m_HasTransparency = inHasTransparency;
     }
 
-    void SetCustomMaterialRefraction(CRegisteredString inName, bool inHasRefraction) override
+    void SetCustomMaterialRefraction(QString inName, bool inHasRefraction) override
     {
         SMaterialClass *theClass = GetMaterialClass(inName);
 
@@ -1100,7 +1100,7 @@ struct SMaterialSystem : public ICustomMaterialSystem
         theClass->m_HasRefraction = inHasRefraction;
     }
 
-    void SetCustomMaterialAlwaysDirty(CRegisteredString inName, bool inIsAlwaysDirty) override
+    void SetCustomMaterialAlwaysDirty(QString inName, bool inIsAlwaysDirty) override
     {
         SMaterialClass *theClass = GetMaterialClass(inName);
 
@@ -1112,7 +1112,7 @@ struct SMaterialSystem : public ICustomMaterialSystem
         theClass->m_AlwaysDirty = inIsAlwaysDirty;
     }
 
-    void SetCustomMaterialShaderKey(CRegisteredString inName, quint32 inShaderKey) override
+    void SetCustomMaterialShaderKey(QString inName, quint32 inShaderKey) override
     {
         SMaterialClass *theClass = GetMaterialClass(inName);
 
@@ -1124,7 +1124,7 @@ struct SMaterialSystem : public ICustomMaterialSystem
         theClass->m_ShaderKey = inShaderKey;
     }
 
-    void SetCustomMaterialLayerCount(CRegisteredString inName, quint32 inLayerCount) override
+    void SetCustomMaterialLayerCount(QString inName, quint32 inLayerCount) override
     {
         SMaterialClass *theClass = GetMaterialClass(inName);
 
@@ -1136,14 +1136,14 @@ struct SMaterialSystem : public ICustomMaterialSystem
         theClass->m_LayerCount = inLayerCount;
     }
 
-    void SetCustomMaterialCommands(CRegisteredString inName,
+    void SetCustomMaterialCommands(QString inName,
                                    QDemonConstDataRef<dynamic::SCommand *> inCommands) override
     {
         m_CoreContext.GetDynamicObjectSystemCore().SetRenderCommands(inName, inCommands);
     }
 
-    CRegisteredString GetShaderCacheKey(CRenderString &inShaderKeyBuffer, const char8_t *inId,
-                                        const char8_t *inProgramMacro,
+    QString GetShaderCacheKey(CRenderString &inShaderKeyBuffer, const char *inId,
+                                        const char *inProgramMacro,
                                         const dynamic::SDynamicShaderProgramFlags &inFlags)
     {
         inShaderKeyBuffer.assign(inId);
@@ -1173,7 +1173,7 @@ struct SMaterialSystem : public ICustomMaterialSystem
 
         // generate key
         CRenderString theShaderKeyBuffer;
-        CRegisteredString theKey = GetShaderCacheKey(theShaderKeyBuffer, inCommand.m_ShaderPath,
+        QString theKey = GetShaderCacheKey(theShaderKeyBuffer, inCommand.m_ShaderPath,
                                                      inCommand.m_ShaderDefine, inFlags);
 
         SCustomMaterialVertexPipeline thePipeline(m_Context,
@@ -1204,7 +1204,7 @@ struct SMaterialSystem : public ICustomMaterialSystem
         SShaderMapKey skey = SShaderMapKey(
             TStrStrPair(inCommand.m_ShaderPath, inCommand.m_ShaderDefine), inFeatureSet,
             theFlags.m_TessMode, theFlags.m_WireframeMode, inRenderContext.m_MaterialKey);
-        eastl::pair<TShaderMap::iterator, bool> theInsertResult(m_ShaderMap.insert(
+        QPair<TShaderMap::iterator, bool> theInsertResult(m_ShaderMap.insert(
             eastl::make_pair(skey, QDemonScopedRefCounted<SCustomMaterialShader>(nullptr))));
 
         if (theInsertResult.second) {
@@ -1235,7 +1235,7 @@ struct SMaterialSystem : public ICustomMaterialSystem
     }
 
     void DoApplyInstanceValue(SCustomMaterial & /* inMaterial */, quint8 *inDataPtr,
-                              CRegisteredString inPropertyName,
+                              QString inPropertyName,
                               QDemonRenderShaderDataTypes::Enum inPropertyType,
                               QDemonRenderShaderProgram &inShader,
                               const SPropertyDefinition &inDefinition)
@@ -1246,9 +1246,9 @@ struct SMaterialSystem : public ICustomMaterialSystem
         if (theConstant) {
             if (theConstant->GetShaderConstantType() == inPropertyType) {
                 if (inPropertyType == QDemonRenderShaderDataTypes::QDemonRenderTexture2DPtr) {
-                    StaticAssert<sizeof(CRegisteredString)
+                    StaticAssert<sizeof(QString)
                                  == sizeof(QDemonRenderTexture2DPtr)>::valid_expression();
-                    CRegisteredString *theStrPtr = reinterpret_cast<CRegisteredString *>(inDataPtr);
+                    QString *theStrPtr = reinterpret_cast<QString *>(inDataPtr);
                     IBufferManager &theBufferManager(m_Context->GetBufferManager());
                     QDemonRenderTexture2D *theTexture = nullptr;
 
@@ -1820,7 +1820,7 @@ struct SMaterialSystem : public ICustomMaterialSystem
                     SImage *pImage = nullptr;
 
                     // we only do this to not miss if "None" is selected
-                    CRegisteredString theStrPtr = *reinterpret_cast<CRegisteredString *>(
+                    QString theStrPtr = *reinterpret_cast<QString *>(
                         inMaterial.GetDataSectionBegin() + thePropDefs[idx].m_Offset);
 
                     if (theStrPtr.IsValid()) {
@@ -1851,7 +1851,7 @@ struct SMaterialSystem : public ICustomMaterialSystem
                     SImage *pImage = nullptr;
 
                     // we only do this to not miss if "None" is selected
-                    CRegisteredString theStrPtr = *reinterpret_cast<CRegisteredString *>(
+                    QString theStrPtr = *reinterpret_cast<QString *>(
                         inMaterial.GetDataSectionBegin() + thePropDefs[idx].m_Offset);
 
                     if (theStrPtr.IsValid()) {
@@ -1977,7 +1977,7 @@ struct SMaterialSystem : public ICustomMaterialSystem
             if (theCommand.m_Type == CommandTypes::BindShader) {
                 const SBindShader &theBindCommand = static_cast<const SBindShader &>(theCommand);
                 thePrepassShader = m_Context->GetDynamicObjectSystem().GetDepthPrepassShader(
-                    theBindCommand.m_ShaderPath, CRegisteredString(), TShaderFeatureSet());
+                    theBindCommand.m_ShaderPath, QString(), TShaderFeatureSet());
             }
         }
 
@@ -2011,7 +2011,7 @@ struct SMaterialSystem : public ICustomMaterialSystem
 
     void Save(SWriteBuffer &ioBuffer,
                       const SStrRemapMap &inRemapMap,
-                      const char8_t * /*inProjectDir*/) const override
+                      const char * /*inProjectDir*/) const override
     {
         quint32 offset = ioBuffer.size();
         ioBuffer.write((quint32)m_StringMaterialMap.size());
@@ -2020,7 +2020,7 @@ struct SMaterialSystem : public ICustomMaterialSystem
              iter != end; ++iter) {
             size_t nameOffset = ioBuffer.size() - offset;
             (void)nameOffset;
-            CRegisteredString materialName(iter->first);
+            QString materialName(iter->first);
             materialName.Remap(inRemapMap);
             ioBuffer.write(materialName);
             const SMaterialClass *materialClass = iter->second.mPtr;
@@ -2034,14 +2034,14 @@ struct SMaterialSystem : public ICustomMaterialSystem
     }
 
     void Load(QDemonDataRef<quint8> inData, CStrTableOrDataRef inStrDataBlock,
-                      const char8_t * /*inProjectDir*/) override
+                      const char * /*inProjectDir*/) override
     {
         m_Allocator.m_PreAllocatedBlock = inData;
         m_Allocator.m_OwnsMemory = false;
         SDataReader theReader(inData.begin(), inData.end());
         quint32 numMaterialClasses = theReader.LoadRef<quint32>();
         for (quint32 idx = 0; idx < numMaterialClasses; ++idx) {
-            CRegisteredString clsName = theReader.LoadRef<CRegisteredString>();
+            QString clsName = theReader.LoadRef<QString>();
             clsName.Remap(inStrDataBlock);
             IDynamicObjectClass *theDynamicCls =
                 m_CoreContext.GetDynamicObjectSystemCore().GetDynamicObjectClass(clsName);
@@ -2054,7 +2054,7 @@ struct SMaterialSystem : public ICustomMaterialSystem
         }
     }
 
-    ICustomMaterialSystem &GetCustomMaterialSystem(IQt3DSRenderContext &inContext) override
+    ICustomMaterialSystem &GetCustomMaterialSystem(IQDemonRenderContext &inContext) override
     {
         m_Context = &inContext;
 
@@ -2069,7 +2069,7 @@ struct SMaterialSystem : public ICustomMaterialSystem
 }
 
 ICustomMaterialSystemCore &
-ICustomMaterialSystemCore::CreateCustomMaterialSystemCore(IQt3DSRenderContextCore &ctx)
+ICustomMaterialSystemCore::CreateCustomMaterialSystemCore(IQDemonRenderContextCore &ctx)
 {
     return *QDEMON_NEW(ctx.GetAllocator(), SMaterialSystem)(ctx);
 }

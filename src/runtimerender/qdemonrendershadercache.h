@@ -30,9 +30,9 @@
 #pragma once
 #ifndef QDEMON_RENDER_SHADER_CACHE_H
 #define QDEMON_RENDER_SHADER_CACHE_H
-#include <QtDemonRuntimeRender/qdemonrender.h>
+
 #include <QtDemon/qdemonrefcounted.h>
-#include <Qt3DSFlags.h>
+#include <QtDemon/qdemonflags.h>
 #include <StringTable.h>
 
 QT_BEGIN_NAMESPACE
@@ -70,13 +70,13 @@ struct SShaderCacheProgramFlags : public QDemonFlags<ShaderCacheProgramFlagValue
 //#define name value where value is 1 or zero depending on if the feature is enabled or not.
 struct SShaderPreprocessorFeature
 {
-    CRegisteredString m_Name;
+    QString m_Name;
     bool m_Enabled;
     SShaderPreprocessorFeature()
         : m_Enabled(false)
     {
     }
-    SShaderPreprocessorFeature(CRegisteredString name, bool val)
+    SShaderPreprocessorFeature(QString name, bool val)
         : m_Name(name)
         , m_Enabled(val)
     {
@@ -107,12 +107,12 @@ public:
     // This call immediately blocks and attempts to load all applicable shaders from the
     // shadercache.xml file in
     // the given directory.
-    virtual void SetShaderCachePersistenceEnabled(const char8_t *inDirectory) = 0;
+    virtual void SetShaderCachePersistenceEnabled(const char *inDirectory) = 0;
     virtual bool IsShaderCachePersistenceEnabled() const = 0;
     // It is up to the caller to ensure that inFeatures contains unique keys.
     // It is also up the the caller to ensure the keys are ordered in some way.
     virtual QDemonRenderShaderProgram *
-    GetProgram(CRegisteredString inKey,
+    GetProgram(QString inKey,
                QDemonConstDataRef<SShaderPreprocessorFeature> inFeatures) = 0;
 
     // Replace an existing program in the cache for the same key with this program.
@@ -125,17 +125,17 @@ public:
     // It is up to the caller to ensure that inFeatures contains unique keys.
     // It is also up the the caller to ensure the keys are ordered in some way.
     virtual QDemonRenderShaderProgram *
-    ForceCompileProgram(CRegisteredString inKey, const char8_t *inVert, const char8_t *inFrag,
-                        const char8_t *inTessCtrl, const char8_t *inTessEval,
-                        const char8_t *inGeom, const SShaderCacheProgramFlags &inFlags,
+    ForceCompileProgram(QString inKey, const char *inVert, const char *inFrag,
+                        const char *inTessCtrl, const char *inTessEval,
+                        const char *inGeom, const SShaderCacheProgramFlags &inFlags,
                         TShaderFeatureSet inFeatures, bool separableProgram,
                         bool fromDisk = false) = 0;
 
     // It is up to the caller to ensure that inFeatures contains unique keys.
     // It is also up the the caller to ensure the keys are ordered in some way.
     virtual QDemonRenderShaderProgram *
-    CompileProgram(CRegisteredString inKey, const char8_t *inVert, const char8_t *inFrag,
-                   const char8_t *inTessCtrl, const char8_t *inTessEval, const char8_t *inGeom,
+    CompileProgram(QString inKey, const char *inVert, const char *inFrag,
+                   const char *inTessCtrl, const char *inTessEval, const char *inGeom,
                    const SShaderCacheProgramFlags &inFlags, TShaderFeatureSet inFeatures,
                    bool separableProgram = false) = 0;
 
@@ -147,7 +147,7 @@ public:
 
     // Upping the shader version invalidates all previous cache files.
     static quint32 GetShaderVersion() { return 4; }
-    static const char8_t *GetShaderCacheFileName() { return "shadercache.xml"; }
+    static const char *GetShaderCacheFileName() { return "shadercache.xml"; }
 
     static IShaderCache &CreateShaderCache(QDemonRenderContext &inContext,
                                            IInputStreamFactory &inInputStreamFactory,

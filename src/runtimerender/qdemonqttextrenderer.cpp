@@ -139,7 +139,7 @@ struct Qt3DSQtTextRenderer : public ITextRenderer
         QFontDatabase::removeAllApplicationFonts();
     }
 
-    QString stringToQString(const CRegisteredString &str)
+    QString stringToQString(const QString &str)
     {
         return QString::fromUtf8(str.c_str());
     }
@@ -149,12 +149,12 @@ struct Qt3DSQtTextRenderer : public ITextRenderer
         return QString::fromUtf8(str.c_str());
     }
 
-    QString stringToQString(const char8_t *str)
+    QString stringToQString(const char *str)
     {
         return QString::fromUtf8(str);
     }
 
-    CRegisteredString QStringToRegisteredString(const QString &str)
+    QString QStringToRegisteredString(const QString &str)
     {
         return m_stringTable->RegisterStr(str.toUtf8().constData());
     }
@@ -240,34 +240,34 @@ struct Qt3DSQtTextRenderer : public ITextRenderer
 
     QDEMON_IMPLEMENT_REF_COUNT_ADDREF_RELEASE_OVERRIDE(m_foundation.getAllocator())
 
-    eastl::pair<TStrType, bool> AddFontDirectory(const TStrType &inDirectory, TStringSet &inDirSet)
+    QPair<TStrType, bool> AddFontDirectory(const TStrType &inDirectory, TStringSet &inDirSet)
     {
         if (inDirectory.empty()) {
             m_workspace.assign("./");
         } else {
             m_workspace.clear();
-            for (const char8_t *item = inDirectory.c_str(); item && *item; ++item) {
+            for (const char *item = inDirectory.c_str(); item && *item; ++item) {
                 if (*item == '\\')
                     m_workspace.append(1, '/');
                 else
-                    m_workspace.append(1, static_cast<char8_t>(*item));
+                    m_workspace.append(1, static_cast<char>(*item));
             }
             if (m_workspace.back() != '/')
                 m_workspace.append(1, '/');
         }
 
-        return eastl::make_pair(m_workspace, inDirSet.insert(m_workspace).second);
+        return QPair<TStrType, bool>(m_workspace, inDirSet.insert(m_workspace).second);
     }
 
     // You can have several standard font directories and these will be persistent
-    void AddSystemFontDirectory(const char8_t *inDirectory) override
+    void AddSystemFontDirectory(const char *inDirectory) override
     {
         AddFontDirectory(inDirectory, m_systemFontDirs);
     }
 
-    void AddProjectFontDirectory(const char8_t *inProjectDirectory) override
+    void AddProjectFontDirectory(const char *inProjectDirectory) override
     {
-        eastl::pair<TStrType, bool> theAddResult =
+        QPair<TStrType, bool> theAddResult =
                 AddFontDirectory(inProjectDirectory, m_projectFontDirs);
         if (theAddResult.second && m_projectFontsInitialized)
             ReloadFonts();
@@ -340,7 +340,7 @@ struct Qt3DSQtTextRenderer : public ITextRenderer
         return m_installedFonts;
     }
 
-    Option<CRegisteredString> GetFontNameForFont(CRegisteredString inFontname) override
+    QDemonOption<QString> GetFontNameForFont(QString inFontname) override
     {
         // This function is there to support legacy font names.
 
@@ -357,7 +357,7 @@ struct Qt3DSQtTextRenderer : public ITextRenderer
         return Empty();
     }
 
-    Option<CRegisteredString> GetFontNameForFont(const char8_t *inFontname) override
+    QDemonOption<QString> GetFontNameForFont(const char *inFontname) override
     {
         return GetFontNameForFont(m_stringTable->RegisterStr(inFontname));
     }
@@ -368,7 +368,7 @@ struct Qt3DSQtTextRenderer : public ITextRenderer
         return *this;
     }
 
-    FontInfo &fontInfoForName(const CRegisteredString &fontName)
+    FontInfo &fontInfoForName(const QString &fontName)
     {
         PreloadFonts();
         QString qtFontName = stringToQString(fontName);
@@ -393,14 +393,14 @@ struct Qt3DSQtTextRenderer : public ITextRenderer
         fi.font.setLetterSpacing(QFont::AbsoluteSpacing, qreal(inText.m_Tracking));
     }
 
-    QStringList splitText(const char8_t *theText)
+    QStringList splitText(const char *theText)
     {
         // Split the text into lines
         int lines = 1;
         int lineLen = 0;
         QStringList lineList;
-        const char8_t *lineStartItem = nullptr;
-        for (const char8_t *item = theText; item && *item; ++item) {
+        const char *lineStartItem = nullptr;
+        for (const char *item = theText; item && *item; ++item) {
             if (!lineLen)
                 lineStartItem = item;
             ++lineLen;
@@ -422,9 +422,9 @@ struct Qt3DSQtTextRenderer : public ITextRenderer
 
     QRectF textBoundingBox(const STextRenderInfo &inText,
                            const QFontMetricsF &fm, QStringList &lineList,
-                           QVector<qreal> &lineWidths, const char8_t *inTextOverride = nullptr)
+                           QVector<qreal> &lineWidths, const char *inTextOverride = nullptr)
     {
-        const char8_t *theText = inTextOverride ? inTextOverride : inText.m_Text.c_str();
+        const char *theText = inTextOverride ? inTextOverride : inText.m_Text.c_str();
         lineList = splitText(theText);
 
         QRectF boundingBox;
@@ -455,7 +455,7 @@ struct Qt3DSQtTextRenderer : public ITextRenderer
     }
 
     STextDimensions MeasureText(const STextRenderInfo &inText, float inTextScaleFactor,
-                                const char8_t *inTextOverride) override
+                                const char *inTextOverride) override
     {
         FontInfo &fi = fontInfoForName(inText.m_Font);
         updateFontInfo(fi, inText, inTextScaleFactor);

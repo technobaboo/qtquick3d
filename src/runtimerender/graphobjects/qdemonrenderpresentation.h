@@ -81,7 +81,7 @@ struct SPresentation : public SGraphObject
         inRemapper.Remap(m_PresentationDirectory);
     }
 
-    void Render(IQt3DSRenderContext &inContext);
+    void Render(IQDemonRenderContext &inContext);
 };
 
 QT_END_NAMESPACE

@@ -32,7 +32,7 @@
 #define QDEMON_RENDER_PREFILTER_TEXTURE_H
 #include <Qt3DSAtomic.h>
 #include <QtDemonRender/qdemonrendertexture2d.h>
-#include <QtDemonRuntimeRender/qdemonrender.h>
+
 #include <Qt3DSTypes.h>
 #include <QtDemonRuntimeRender/qdemonrenderloadedtexture.h>
 
