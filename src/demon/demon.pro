@@ -32,6 +32,7 @@ SOURCES += \
     qdemonutils.cpp \
     qdemondataref.cpp \
     qdemonnocopy.cpp \
-    qdemonperftimer.cpp
+    qdemonperftimer.cpp \
+    qdemontime.cpp
 
 load(qt_module)
