@@ -31,11 +31,9 @@
 #ifndef QDEMON_RENDER_DYNAMIC_OBJECT_SYSTEM_H
 #define QDEMON_RENDER_DYNAMIC_OBJECT_SYSTEM_H
 
-#include <Qt3DSSimpleTypes.h>
 #include <QtDemonRender/qdemonrenderbasetypes.h>
 #include <QtDemon/qdemonrefcounted.h>
 #include <QtDemonRender/qdemonrenderbasetypes.h>
-#include <StringTable.h>
 #include <QtGui/QVector2D>
 #include <QtDemonRuntimeRender/qdemonrendershadercache.h>
 #include <QtDemonRuntimeRender/qdemonrendertessmodevalues.h>
@@ -220,11 +218,10 @@ public:
     virtual QDemonConstDataRef<dynamic::SCommand *>
     GetRenderCommands(QString inClassName) const = 0;
 
-    virtual SDynamicObject *CreateInstance(QString inClassName,
-                                           NVAllocatorCallback &inSceneGraphAllocator) = 0;
+    virtual SDynamicObject *CreateInstance(QString inClassName) = 0;
 
     // scan shader for #includes and insert any found"
-    virtual void InsertShaderHeaderInformation(CRenderString &inShader,
+    virtual void InsertShaderHeaderInformation(QString &inShader,
                                                const char *inLogPath) = 0;
 
     // Set the shader data for a given path.  Used when a path doesn't correspond to a file but

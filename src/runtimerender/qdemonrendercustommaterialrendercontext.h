@@ -33,7 +33,7 @@
 
 #include <QtDemon/qdemonrefcounted.h>
 #include <QtGui/QMatrix4x4>
-#include <QMatrix3x3.h>
+#include <QtGui/QMatrix3x3>
 #include <QtDemonRuntimeRender/qdemonrendershaderkeys.h>
 
 QT_BEGIN_NAMESPACE

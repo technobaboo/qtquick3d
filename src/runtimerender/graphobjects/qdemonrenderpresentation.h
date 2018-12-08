@@ -32,10 +32,11 @@
 #define QDEMON_RENDER_PRESENTATION_H
 
 #include <QtDemonRuntimeRender/qdemonrendergraphobject.h>
-#include <QtDemonRuntimeRender/qdemonrenderscene.h>
 #include <QtGui/QVector2D>
 
 QT_BEGIN_NAMESPACE
+
+struct SScene;
 
 struct RenderRotationValues
 {

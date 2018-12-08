@@ -31,9 +31,7 @@
 #ifndef QDEMON_RENDER_SHADER_KEY_H
 #define QDEMON_RENDER_SHADER_KEY_H
 
-#include <Qt3DSSimpleTypes.h>
 #include <QtDemon/qdemondataref.h>
-#include <StringConversionImpl.h>
 #include <QtDemonRuntimeRender/qdemonrenderdefaultmaterial.h>
 #include <QtDemonRuntimeRender/qdemonrendertessmodevalues.h>
 #include <QtDemonRender/qdemonrenderbasetypes.h>

@@ -40,7 +40,6 @@
 #include <QtDemonRuntimeRender/qdemonoffscreenrendermanager.h>
 #include <QtDemonRuntimeRender/qdemonrenderprofiler.h>
 #include <QtDemonRuntimeRender/qdemonrendershadowmap.h>
-#include <Qt3DSPool.h>
 #include <QtDemonRuntimeRender/qdemonrenderableobjects.h>
 
 QT_BEGIN_NAMESPACE

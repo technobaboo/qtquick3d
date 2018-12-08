@@ -31,9 +31,9 @@
 #ifndef QDEMON_RENDER_PLUGIN_GRAPH_OBJECT_H
 #define QDEMON_RENDER_PLUGIN_GRAPH_OBJECT_H
 
-#include <QtDemonRuntimeRender/qdemonrendergraphobject.h>
-#include <QtDemonRuntimeRender/qdemonrendernode.h>
 #include <QtCore/QString>
+
+#include <QtDemonRuntimeRender/qdemonrendernode.h>
 
 QT_BEGIN_NAMESPACE
 

@@ -34,10 +34,7 @@
 #include <QtDemonRuntimeRender/qdemonoffscreenrendermanager.h>
 #include <QtDemonRuntimeRender/qdemonrendersubpresentationhelper.h>
 #include <QtDemonRuntimeRender/qdemonrenderpresentation.h>
-#include <Qt3DSSimpleTypes.h>
 #include <QtDemon/qdemonrefcounted.h>
-#include <Qt3DSAtomic.h>
-#include <StringTable.h>
 #include <QtDemonRender/qdemonrenderbasetypes.h>
 
 QT_BEGIN_NAMESPACE

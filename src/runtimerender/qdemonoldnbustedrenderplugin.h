@@ -33,13 +33,9 @@
 
 #include <QtDemonRuntimeRender/qdemonoffscreenrendermanager.h>
 #include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
-#include <QVector4D.h>
-#include <Qt3DSSimpleTypes.h>
+#include <QtGui/QVector4D>
 #include <QtDemon/qdemonrefcounted.h>
-#include <Qt3DSAtomic.h>
-#include <StringTable.h>
 #include <QtDemonRender/qdemonrenderbasetypes.h>
-#include <Qt3DSPluginDLL.h>
 
 QT_BEGIN_NAMESPACE
 

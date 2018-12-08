@@ -31,10 +31,9 @@
 #ifndef QDEMON_RENDER_NODE_H
 #define QDEMON_RENDER_NODE_H
 
-#include <QtDemonRuntimeRender/qdemonrenderer.h>
 #include <QtDemonRuntimeRender/qdemonrendergraphobject.h>
 #include <QtDemonRuntimeRender/qdemonrendereulerangles.h>
-#include <QtDemonRuntimeRender/qdemonrenderpathmanager.h>
+//#include <QtDemonRuntimeRender/qdemonrenderpathmanager.h>
 
 #include <QtDemon/QDemonBounds3>
 #include <QtDemon/QDemonFlags>
@@ -93,10 +92,11 @@ struct NodeTransformDirtyFlag
         TransformIsDirty,
     };
 };
+
 struct NodeFlags : public QDemonFlags<NodeFlagValues::Enum, quint32>
 {
     NodeFlags()
-        : QDemonFlags<NodeFlagValues::Enum, quint32>((quint32)0)
+        : QDemonFlags<NodeFlagValues::Enum, quint32>(0)
     {
     }
     void ClearOrSet(bool value, NodeFlagValues::Enum enumVal) { clearOrSet(value, enumVal); }
@@ -181,6 +181,9 @@ struct NodeFlags : public QDemonFlags<NodeFlagValues::Enum, quint32>
         ClearOrSet(value, NodeFlagValues::LayerEnableDepthPrePass);
     }
 };
+
+class IQDemonRenderNodeFilter;
+class IPathManager;
 
 struct Q_DEMONRUNTIMERENDER_EXPORT SNode : public SGraphObject
 {

@@ -3,6 +3,7 @@
 
 #include <QtDemon/qtdemonglobal.h>
 #include <QtDemon/qdemonunioncast.h>
+#include <QtDemon/qdemonutils.h>
 
 QT_BEGIN_NAMESPACE
 

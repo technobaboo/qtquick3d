@@ -41,7 +41,6 @@
 #include <QtDemonRuntimeRender/qdemonrenderlayer.h>
 #include <QtDemonRuntimeRender/qdemonrenderray.h>
 #include <QtDemonRuntimeRender/qdemonrendertext.h>
-#include <QtDemonRuntimeRender/qdemonoffscreenrendermanager.h>
 #include <QtDemonRuntimeRender/qdemonrendercamera.h>
 #include <QtDemonRuntimeRender/qdemonrendershadercache.h>
 #include <QtDemonRuntimeRender/qdemonrendercontextcore.h>

@@ -31,17 +31,16 @@
 #ifndef QDEMON_RENDER_INPUT_STREAM_FACTORY_H
 #define QDEMON_RENDER_INPUT_STREAM_FACTORY_H
 
-#include <IOStreams.h>
 #include <QtDemon/qdemonrefcounted.h>
 
 QT_BEGIN_NAMESPACE
-class IRefCountedInputStream : public ISeekableIOStream, public QDemonRefCounted
+class IRefCountedInputStream
 {
 protected:
     virtual ~IRefCountedInputStream() {}
 };
 // This class is threadsafe.
-class IInputStreamFactory : public QDemonRefCounted
+class IInputStreamFactory
 {
 protected:
     virtual ~IInputStreamFactory() {}
@@ -59,7 +58,7 @@ public:
     // Create an input stream factory using this foundation and an platform-optional app
     // directory
     // on android the app directory has no effect; use use the assets bundled with the APK file.
-    static IInputStreamFactory &Create(NVFoundationBase &inFoundation);
+    static IInputStreamFactory &Create();
 };
 QT_END_NAMESPACE
 

@@ -28,12 +28,15 @@
 **
 ****************************************************************************/
 
-#include <QtDemonRuntimeRender/qdemonrendermodel.h>
+#include <QtDemon/qdemonutils.h>
+
+//#include <QtDemonRuntimeRender/qdemonrendermodel.h>
 #include <QtDemonRuntimeRender/qdemonrendernode.h>
-#include <QtDemonRuntimeRender/qdemonrendertext.h>
-#include <QtDemonRuntimeRender/qdemonrenderer.h>
-#include <QtDemonRuntimeRender/qdemonrenderpathmanager.h>
-#include <QtDemonRuntimeRender/qdemonrenderpath.h>
+//#include <QtDemonRuntimeRender/qdemonrenderpathmanager.h>
+//#include <QtDemonRuntimeRender/qdemonrendertext.h>
+//#include <QtDemonRuntimeRender/qdemonrenderer.h>
+//#include <QtDemonRuntimeRender/qdemonrenderpathmanager.h>
+//#include <QtDemonRuntimeRender/qdemonrenderpath.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -174,7 +177,7 @@ bool SNode::CalculateGlobalVariables()
 inline EulerAngles RotationAndOrderToShoemake(QVector3D inRotation, quint32 inOrder)
 {
     EulerAngles retval;
-    retval.w = (float)inOrder;
+    retval.w = float(inOrder);
     int X = 0;
     int Y = 1;
     int Z = 2;
@@ -200,12 +203,19 @@ inline EulerAngles RotationAndOrderToShoemake(QVector3D inRotation, quint32 inOr
 
 QVector3D SNode::GetRotationVectorFromRotationMatrix(const QMatrix3x3 &inMatrix) const
 {
-    QMatrix4x4 theConvertMatrix(inMatrix, QVector3D(0, 0, 0));
+    float theConvertMatrixData[16] = {
+        inMatrix(0, 0), inMatrix(0, 1), inMatrix(0, 2), 0.0f,
+        inMatrix(1, 0), inMatrix(1, 1), inMatrix(1, 2), 0.0f,
+        inMatrix(2, 0), inMatrix(2, 1), inMatrix(2, 2), 0.0f,
+        0, 0, 0, 1
+    };
+
+    QMatrix4x4 theConvertMatrix(theConvertMatrixData);
     if (m_Flags.IsLeftHanded())
         SNode::FlipCoordinateSystem(theConvertMatrix);
     CEulerAngleConverter theConverter;
     HMatrix *theHMatrix =
-            reinterpret_cast<HMatrix *>(theConvertMatrix.front());
+            reinterpret_cast<HMatrix *>(theConvertMatrix.data());
     EulerAngles theAngles = theConverter.Eul_FromHMatrix(*theHMatrix, m_RotationOrder);
     return GetRotationVectorFromEulerAngles(theAngles);
 }
@@ -263,12 +273,12 @@ void SNode::CalculateLocalTransform()
     bool leftHanded = m_Flags.IsLeftHanded();
     m_LocalTransform = QMatrix4x4();
     m_GlobalTransform = m_LocalTransform;
-    float *writePtr = m_LocalTransform.data();5
+    float *writePtr = m_LocalTransform.data();
     QVector3D theScaledPivot(-m_Pivot[0] * m_Scale[0], -m_Pivot[1] * m_Scale[1],
             -m_Pivot[2] * m_Scale[2]);
-    m_LocalTransform.column0[0] = m_Scale[0];
-    m_LocalTransform.column1[1] = m_Scale[1];
-    m_LocalTransform.column2[2] = m_Scale[2];
+    m_LocalTransform(0, 0) = m_Scale[0];
+    m_LocalTransform(1, 1) = m_Scale[1];
+    m_LocalTransform(2, 2) = m_Scale[2];
 
     writePtr[12] = theScaledPivot[0];
     writePtr[13] = theScaledPivot[1];
@@ -302,36 +312,43 @@ void SNode::SetLocalTransformFromMatrix(QMatrix4x4 &inTransform)
     m_Pivot[0] = m_Pivot[1] = m_Pivot[2] = 0.0f;
 
     // set translation
-    m_Position[0] = inTransform[3][0];
-    m_Position[1] = inTransform[3][1];
-    m_Position[2] = inTransform[3][2];
+    m_Position[0] = inTransform(3, 0);
+    m_Position[1] = inTransform(3, 1);
+    m_Position[2] = inTransform(3, 2);
     // set scale
-    m_Scale[0] = inTransform.column0.magnitude();
-    m_Scale[1] = inTransform.column1.magnitude();
-    m_Scale[2] = inTransform.column2.magnitude();
-
+    const QVector3D column0(inTransform(0,0), inTransform(0,1), inTransform(0,2));
+    const QVector3D column1(inTransform(1,0), inTransform(1,1), inTransform(1,2));
+    const QVector3D column2(inTransform(2,0), inTransform(2,1), inTransform(2,2));
+    m_Scale[0] = vec3::magnitude(column0);
+    m_Scale[1] = vec3::magnitude(column1);
+    m_Scale[2] = vec3::magnitude(column2);
     // make sure there is no zero value
-    m_Scale[0] = (m_Scale[0] == 0.0) ? 1.0f : m_Scale[0];
-    m_Scale[1] = (m_Scale[1] == 0.0) ? 1.0f : m_Scale[1];
-    m_Scale[2] = (m_Scale[2] == 0.0) ? 1.0f : m_Scale[2];
+    m_Scale[0] = (m_Scale[0] == 0.0f) ? 1.0f : m_Scale[0];
+    m_Scale[1] = (m_Scale[1] == 0.0f) ? 1.0f : m_Scale[1];
+    m_Scale[2] = (m_Scale[2] == 0.0f) ? 1.0f : m_Scale[2];
 
     // extract rotation by first dividing through scale value
     float invScaleX = 1.0f / m_Scale[0];
     float invScaleY = 1.0f / m_Scale[1];
     float invScaleZ = 1.0f / m_Scale[2];
 
-    inTransform[0][0] *= invScaleX;
-    inTransform[0][1] *= invScaleX;
-    inTransform[0][2] *= invScaleX;
-    inTransform[1][0] *= invScaleY;
-    inTransform[1][1] *= invScaleY;
-    inTransform[1][2] *= invScaleY;
-    inTransform[2][0] *= invScaleZ;
-    inTransform[2][1] *= invScaleZ;
-    inTransform[2][2] *= invScaleZ;
+    inTransform(0, 0) *= invScaleX;
+    inTransform(0, 1) *= invScaleX;
+    inTransform(0, 2) *= invScaleX;
+    inTransform(1, 0) *= invScaleY;
+    inTransform(1, 1) *= invScaleY;
+    inTransform(1, 2) *= invScaleY;
+    inTransform(2, 0) *= invScaleZ;
+    inTransform(2, 1) *= invScaleZ;
+    inTransform(2, 2) *= invScaleZ;
 
-    QMatrix3x3 theRotationMatrix(inTransform.column0.getXYZ(), inTransform.column1.getXYZ(),
-                                 inTransform.column2.getXYZ());
+    float rotationMatrixData[9] = {
+        inTransform(0,0), inTransform(0,1), inTransform(0,2),
+        inTransform(1,0), inTransform(1,1), inTransform(1,2),
+        inTransform(2,0), inTransform(2,1), inTransform(2,2)
+    };
+
+    QMatrix3x3 theRotationMatrix(rotationMatrixData);
     m_Rotation = GetRotationVectorFromRotationMatrix(theRotationMatrix);
 }
 
@@ -414,12 +431,13 @@ QDemonBounds3 SNode::GetBounds(IBufferManager &inManager, IPathManager &inPathMa
     if (inIncludeChildren)
         retval = GetChildBounds(inManager, inPathManager, inChildFilter);
 
-    if (m_Type == GraphObjectTypes::Model)
-        retval.include(static_cast<const SModel *>(this)->GetModelBounds(inManager));
-    else if (m_Type == GraphObjectTypes::Text)
-        retval.include(static_cast<const SText *>(this)->GetTextBounds());
-    else if (m_Type == GraphObjectTypes::Path)
-        retval.include(inPathManager.GetBounds(*static_cast<const SPath *>(this)));
+// ### FIXME!!!!
+//    if (m_Type == GraphObjectTypes::Model)
+//        retval.include(static_cast<const SModel *>(this)->GetModelBounds(inManager));
+//    else if (m_Type == GraphObjectTypes::Text)
+//        retval.include(static_cast<const SText *>(this)->GetTextBounds());
+//    else if (m_Type == GraphObjectTypes::Path)
+//        retval.include(inPathManager.GetBounds(*static_cast<const SPath *>(this)));
     return retval;
 }
 
@@ -428,30 +446,33 @@ QDemonBounds3 SNode::GetChildBounds(IBufferManager &inManager, IPathManager &inP
 {
     QDemonBounds3 retval;
     retval.setEmpty();
-    for (SNode *child = m_FirstChild; child != nullptr; child = child->m_NextSibling) {
-        if (inChildFilter == nullptr || inChildFilter->IncludeNode(*child)) {
-            QDemonBounds3 childBounds;
-            if (child->m_Flags.IsTransformDirty())
-                child->CalculateLocalTransform();
-            childBounds = child->GetBounds(inManager, inPathManager);
-            if (childBounds.isEmpty() == false) {
-                // Transform the bounds into our local space.
-                childBounds.transform(child->m_LocalTransform);
-                retval.include(childBounds);
-            }
-        }
-    }
+// ### FIXME!!!!
+//    for (SNode *child = m_FirstChild; child != nullptr; child = child->m_NextSibling) {
+//        if (inChildFilter == nullptr || inChildFilter->IncludeNode(*child)) {
+//            QDemonBounds3 childBounds;
+//            if (child->m_Flags.IsTransformDirty())
+//                child->CalculateLocalTransform();
+//            childBounds = child->GetBounds(inManager, inPathManager);
+//            if (childBounds.isEmpty() == false) {
+//                // Transform the bounds into our local space.
+//                childBounds.transform(child->m_LocalTransform);
+//                retval.include(childBounds);
+//            }
+//        }
+//    }
     return retval;
 }
 
 QVector3D SNode::GetGlobalPos() const
 {
-    return m_GlobalTransform.getPosition();
+    return QVector3D(m_GlobalTransform(3, 0),
+                     m_GlobalTransform(3, 1),
+                     m_GlobalTransform(3, 2));
 }
 
 QVector3D SNode::GetDirection() const
 {
-    const float *dataPtr(m_GlobalTransform.front());
+    const float *dataPtr(m_GlobalTransform.data());
     QVector3D retval(dataPtr[8], dataPtr[9], dataPtr[10]);
     retval.normalize();
     return retval;
@@ -459,9 +480,15 @@ QVector3D SNode::GetDirection() const
 
 QVector3D SNode::GetScalingCorrectDirection() const
 {
-    QMatrix3x3 theDirMatrix(m_GlobalTransform.getUpper3x3().getInverse().getTranspose());
+    float theDirMatrixData[9] = {
+        m_GlobalTransform(0,0), m_GlobalTransform(0,1), m_GlobalTransform(0,2),
+        m_GlobalTransform(1,0), m_GlobalTransform(1,1), m_GlobalTransform(1,2),
+        m_GlobalTransform(2,0), m_GlobalTransform(2,1), m_GlobalTransform(2,2)
+    };
+    QMatrix3x3 theDirMatrix(theDirMatrixData);
+    theDirMatrix = mat33::getInverse(theDirMatrix).transposed();
     QVector3D theOriginalDir(0, 0, -1);
-    QVector3D retval = theDirMatrix.transform(theOriginalDir);
+    QVector3D retval = mat33::transform(theDirMatrix, theOriginalDir);
     retval.normalize();
     return retval;
 }
@@ -469,10 +496,13 @@ QVector3D SNode::GetScalingCorrectDirection() const
 QVector3D SNode::GetGlobalPivot() const
 {
     QVector3D retval(m_Position);
-    retval.z *= -1;
+    retval.setZ(retval.z() * -1);
 
-    if (m_Parent && m_Parent->m_Type != GraphObjectTypes::Layer)
-        return m_Parent->m_GlobalTransform.transform(retval);
+    if (m_Parent && m_Parent->m_Type != GraphObjectTypes::Layer) {
+        const QVector4D direction(retval.x(), retval.y(), retval.z(), 1.0f);
+        const QVector4D result = m_Parent->m_GlobalTransform * direction;
+        return QVector3D(result.x(), result.y(), result.z());
+    }
 
     return retval;
 }
@@ -486,15 +516,18 @@ void SNode::CalculateMVPAndNormalMatrix(const QMatrix4x4 &inViewProjection, QMat
 
 void SNode::GetMatrixUpper3x3(QMatrix3x3 &outDest, const QMatrix4x4 &inSrc)
 {
-    outDest.column0 = QVector3D(inSrc.column0[0], inSrc.column0[1], inSrc.column0[2]);
-    outDest.column1 = QVector3D(inSrc.column1[0], inSrc.column1[1], inSrc.column1[2]);
-    outDest.column2 = QVector3D(inSrc.column2[0], inSrc.column2[1], inSrc.column2[2]);
+    float matrixData[9] = {
+        inSrc(0,0), inSrc(0,1), inSrc(0,2),
+        inSrc(1,0), inSrc(1,1), inSrc(1,2),
+        inSrc(2,0), inSrc(2,1), inSrc(2,2)
+    };
+    outDest = QMatrix3x3(matrixData);
 }
 
 void SNode::CalculateNormalMatrix(QMatrix3x3 &outNormalMatrix) const
 {
     GetMatrixUpper3x3(outNormalMatrix, m_GlobalTransform);
-    outNormalMatrix = outNormalMatrix.getInverse().getTranspose();
+    outNormalMatrix = mat33::getInverse(outNormalMatrix).transposed();
 }
 
 QT_END_NAMESPACE

@@ -71,8 +71,7 @@ public:
     virtual TaskStates::Enum GetTaskState(quint64 inTaskId) = 0;
     virtual CancelReturnValues::Enum CancelTask(quint64 inTaskId) = 0;
 
-    static IThreadPool &CreateThreadPool(NVFoundationBase &inFoundation,
-                                         quint32 inNumThreads = 4);
+    static IThreadPool &CreateThreadPool(quint32 inNumThreads = 4);
 };
 QT_END_NAMESPACE
 #endif

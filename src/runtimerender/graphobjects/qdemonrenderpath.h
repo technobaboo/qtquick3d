@@ -61,6 +61,8 @@ struct PathPaintStyles
     };
 };
 
+struct SPathSubPath;
+
 struct SPath : public SNode
 {
     PathTypes::Enum m_PathType;

@@ -65,7 +65,7 @@ struct SClipPlane
 
     // For intersection tests, we only need to know if the numerator is greater than, equal to,
     // or less than zero.
-    inline float distance(const QVector3D &pt) const { return normal.dot(pt) + d; }
+    inline float distance(const QVector3D &pt) const { return QVector3D::dotProduct(normal, pt) + d; }
 
     // Only works if p0 is above the line and p1 is below the plane.
     inline QVector3D intersectWithLine(const QVector3D &p0, const QVector3D &p1) const
@@ -74,17 +74,17 @@ struct SClipPlane
         QVector3D pointOnPlane = normal * (-d);
 #ifdef _DEBUG
         float distanceOfPoint = distance(pointOnPlane);
-        Q_ASSERT(NVAbs(distanceOfPoint) < 0.0001f);
+        Q_ASSERT(qAbs(distanceOfPoint) < 0.0001f);
 #endif
-        float numerator = (pointOnPlane - p0).dot(normal);
-        float denominator = dir.dot(normal);
+        float numerator = QVector3D::dotProduct(pointOnPlane - p0, normal);
+        float denominator = QVector3D::dotProduct(dir, normal);
 
-        Q_ASSERT(NVAbs(denominator) > .0001f);
+        Q_ASSERT(qAbs(denominator) > .0001f);
         float t = (numerator / denominator);
         QVector3D retval = p0 + dir * t;
 #ifdef _DEBUG
         float retvalDistance = distance(retval);
-        Q_ASSERT(NVAbs(retvalDistance) < .0001f);
+        Q_ASSERT(qAbs(retvalDistance) < .0001f);
 #endif
         return retval;
     }
