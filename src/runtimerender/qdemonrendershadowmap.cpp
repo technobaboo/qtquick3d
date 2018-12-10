@@ -42,7 +42,6 @@ using NVRenderCachedShaderProperty;
 
 Qt3DSShadowMap::Qt3DSShadowMap(IQDemonRenderContext &inContext)
     : m_Context(inContext)
-    , mRefCount(0)
     , m_ShadowMapList(inContext.GetAllocator(), "Qt3DSShadowMap::m_ShadowMapList")
 {
 }
@@ -216,7 +215,7 @@ SShadowMapEntry *Qt3DSShadowMap::GetShadowMapEntry(quint32 index)
 
 Qt3DSShadowMap *Qt3DSShadowMap::Create(IQDemonRenderContext &inContext)
 {
-    return QDEMON_NEW(inContext.GetFoundation().getAllocator(), Qt3DSShadowMap)(inContext);
+    return new Qt3DSShadowMap(inContext);
 }
 
 QT_END_NAMESPACE

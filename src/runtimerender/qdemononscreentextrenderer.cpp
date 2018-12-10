@@ -94,15 +94,11 @@ typedef QHash<wchar_t, STextureAtlasFontEntry> TTextureAtlasMap;
 
 struct STextAtlasFont
 {
-    NVFoundationBase &m_Foundation;
-    volatile qint32 mRefCount;
     quint32 m_FontSize;
     TTextureAtlasMap m_AtlasEntries; ///< our entries in the atlas
 
-    STextAtlasFont(NVFoundationBase &inFoundation, quint32 fontSize)
-        : m_Foundation(inFoundation)
-        , mRefCount(0)
-        , m_FontSize(fontSize)
+    STextAtlasFont(quint32 fontSize)
+        : m_FontSize(fontSize)
         , m_AtlasEntries(inFoundation.getAllocator(),
                          "Qt3DSOnscreenRenderer::STextAtlasFont::m_AtlasEntrys")
     {
@@ -110,11 +106,9 @@ struct STextAtlasFont
 
     ~STextAtlasFont() { m_AtlasEntries.clear(); }
 
-    QDEMON_IMPLEMENT_REF_COUNT_ADDREF_RELEASE(m_Foundation.getAllocator())
-
-    static STextAtlasFont &CreateTextureAtlasFont(NVFoundationBase &inFnd, quint32 fontSize)
+    static STextAtlasFont &CreateTextureAtlasFont(quint32 fontSize)
     {
-        return *QDEMON_NEW(inFnd.getAllocator(), STextAtlasFont)(inFnd, fontSize);
+        return *new STextAtlasFont(fontSize);
     }
 };
 
@@ -127,18 +121,14 @@ struct Qt3DSOnscreenTextRenderer : public ITextRenderer
             256; // if you change this you need to adjust STextTextureAtlas size as well
 
 private:
-    NVFoundationBase &m_Foundation;
     QDemonScopedRefCounted<QDemonRenderContext> m_RenderContext;
-    volatile qint32 mRefCount;
     bool m_TextureAtlasInitialized; ///< true if atlas is setup
     QDemonScopedRefCounted<ITextureAtlas> m_TextTextureAtlas;
     QDemonScopedRefCounted<STextAtlasFont> m_TextFont;
     QRawFont *m_font;
 public:
-    Qt3DSOnscreenTextRenderer(NVFoundationBase &inFoundation)
-        : m_Foundation(inFoundation)
-        , mRefCount(0)
-        , m_TextureAtlasInitialized(false)
+    Qt3DSOnscreenTextRenderer()
+        : m_TextureAtlasInitialized(false)
         , m_font(nullptr)
     {
     }
@@ -146,8 +136,6 @@ public:
     virtual ~Qt3DSOnscreenTextRenderer()
     {
     }
-
-    QDEMON_IMPLEMENT_REF_COUNT_ADDREF_RELEASE_OVERRIDE(m_Foundation.getAllocator())
 
     void AddSystemFontDirectory(const char *) override {}
 
@@ -160,8 +148,7 @@ public:
     void AddProjectFontDirectory(const char *inProjectDirectory) override
     {
         if (m_RenderContext)
-            AddProjectFontDirectory(
-                        m_RenderContext->GetStringTable().RegisterStr(inProjectDirectory));
+            AddProjectFontDirectory(QString::fromLocal8Bit((inProjectDirectory));
     }
 
     void loadFont()
@@ -282,8 +269,6 @@ public:
 
     SRenderTextureAtlasDetails RenderText(const STextRenderInfo &inText) override
     {
-        IStringTable &theStringTable(m_RenderContext->GetStringTable());
-
         const wchar_t *wText = theStringTable.GetWideStr(inText.m_Text);
         quint32 length = (quint32)wcslen(wText);
 
@@ -403,9 +388,9 @@ public:
 };
 }
 
-ITextRendererCore &ITextRendererCore::CreateOnscreenTextRenderer(NVFoundationBase &inFnd)
+ITextRendererCore &ITextRendererCore::CreateOnscreenTextRenderer()
 {
-    return *QDEMON_NEW(inFnd.getAllocator(), Qt3DSOnscreenTextRenderer)(inFnd);
+    return *new Qt3DSOnscreenTextRenderer();
 }
 
 QT_END_NAMESPACE

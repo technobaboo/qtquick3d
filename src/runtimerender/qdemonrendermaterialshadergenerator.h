@@ -31,7 +31,6 @@
 #ifndef QDEMON_RENDER_MATERIAL_SHADER_GENERATOR_H
 #define QDEMON_RENDER_MATERIAL_SHADER_GENERATOR_H
 
-#include <QtDemon/qdemonrefcounted.h>
 #include <QtDemonRuntimeRender/qdemonrendershaderkeys.h>
 #include <QtDemonRuntimeRender/qdemonrendershadercache.h>
 #include <QtDemonRuntimeRender/qdemonrendershadercodegeneratorv2.h>
@@ -116,7 +115,7 @@ struct SLayerGlobalRenderProperties
     }
 };
 
-class IMaterialShaderGenerator : public QDemonRefCounted
+class IMaterialShaderGenerator
 {
 public:
     struct SImageVariableNames

@@ -94,7 +94,7 @@ struct SRenderPluginPropertyDeclaration
     }
 };
 
-class IRenderPluginClass : public QDemonRefCounted
+class IRenderPluginClass
 {
 protected:
     virtual ~IRenderPluginClass() {}
@@ -112,7 +112,7 @@ public:
 
 class IRenderPluginManager;
 
-class IRenderPluginManagerCore : public QDemonRefCounted
+class IRenderPluginManagerCore
 {
 public:
     virtual void SetDllDir(const char *inDllDir) = 0;
@@ -120,12 +120,10 @@ public:
                       const char *inProjectDir) = 0;
     virtual IRenderPluginManager &GetRenderPluginManager(QDemonRenderContext &rc) = 0;
 
-    static IRenderPluginManagerCore &Create(NVFoundationBase &inFoundation,
-                                            IStringTable &strTable,
-                                            IInputStreamFactory &inFactory);
+    static IRenderPluginManagerCore &Create(IInputStreamFactory &inFactory);
 };
 
-class IRenderPluginManager : public QDemonRefCounted
+class IRenderPluginManager
 {
 public:
     virtual IRenderPluginClass *GetRenderPlugin(QString inRelativePath) = 0;

@@ -56,7 +56,6 @@ struct SVertexPipelineImpl : public IDefaultMaterialVertexPipeline
 
     IMaterialShaderGenerator &m_MaterialGenerator;
     IShaderProgramGenerator &m_ProgramGenerator;
-    IStringTable &m_StringTable;
     CRenderString m_TempString;
 
     TGenerationFlags m_GenerationFlags;
@@ -66,16 +65,14 @@ struct SVertexPipelineImpl : public IDefaultMaterialVertexPipeline
     SRenderableImage *m_DisplacementImage;
     QStringList m_addedFunctions;
 
-    SVertexPipelineImpl(NVAllocatorCallback &inAllocator, IMaterialShaderGenerator &inMaterial,
-                        IShaderProgramGenerator &inProgram, IStringTable &inStringTable,
+    SVertexPipelineImpl(IMaterialShaderGenerator &inMaterial,
+                        IShaderProgramGenerator &inProgram,
                         bool inWireframe // only works if tessellation is true
                         )
 
         : m_MaterialGenerator(inMaterial)
         , m_ProgramGenerator(inProgram)
-        , m_StringTable(inStringTable)
         , m_Wireframe(inWireframe)
-        , m_InterpolationParameters(inAllocator, "m_InterpolationParameters")
         , m_DisplacementIdx(0)
         , m_DisplacementImage(nullptr)
     {
@@ -122,7 +119,7 @@ struct SVertexPipelineImpl : public IDefaultMaterialVertexPipeline
         m_DisplacementImage = displacementImage;
     }
 
-    QString Str(const char *inItem) { return m_StringTable.RegisterStr(inItem); }
+    QString Str(const char *inItem) { return QString::fromLocal8Bit(inItem); }
 
     bool HasTessellation() const
     {

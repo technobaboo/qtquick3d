@@ -42,17 +42,15 @@
 QT_BEGIN_NAMESPACE
 
 SLoadedTexture *SLoadedTexture::LoadQImage(const QString &inPath, qint32 flipVertical,
-                                           NVFoundationBase &fnd,
                                            QDemonRenderContextType renderContextType)
 {
     Q_UNUSED(flipVertical)
     Q_UNUSED(renderContextType)
     SLoadedTexture *retval(nullptr);
-    NVAllocatorCallback &alloc(fnd.getAllocator());
     QImage image(inPath);
     image = image.mirrored();
     image = image.rgbSwapped();
-    retval = QDEMON_NEW(alloc, SLoadedTexture)(alloc);
+    retval = new SLoadedTexture;
     retval->width = image.width();
     retval->height = image.height();
     retval->components = image.pixelFormat().channelCount();
@@ -312,7 +310,7 @@ struct STextureDataWriter
     quint32 m_Stride;
     quint32 m_NumComponents;
     STextureData &m_TextureData;
-    STextureDataWriter(quint32 w, quint32 h, bool hasA, STextureData &inTd, NVAllocatorCallback &alloc)
+    STextureDataWriter(quint32 w, quint32 h, bool hasA, STextureData &inTd)
         : m_Width(w)
         , m_Height(h)
         , m_Stride(hasA ? m_Width * 4 : m_Width * 3)
@@ -322,8 +320,7 @@ struct STextureDataWriter
         quint32 dataSize = m_Stride * m_Height;
         if (dataSize > m_TextureData.dataSizeInBytes) {
             alloc.deallocate(m_TextureData.data);
-            m_TextureData.data =
-                alloc.allocate(dataSize, "SLoadedTexture::DecompressDXTImage", __FILE__, __LINE__);
+            m_TextureData.data = malloc(dataSize);
             m_TextureData.dataSizeInBytes = dataSize;
         }
         memZero(m_TextureData.data, m_TextureData.dataSizeInBytes);
@@ -487,13 +484,6 @@ SLoadedTexture::~SLoadedTexture()
         m_Allocator.deallocate(m_TransparencyTable);
 }
 
-void SLoadedTexture::release()
-{
-    NVAllocatorCallback *theAllocator(&m_Allocator);
-    this->~SLoadedTexture();
-    theAllocator->deallocate(this);
-}
-
 bool SLoadedTexture::ScanForTransparency()
 {
     switch (format) {
@@ -567,7 +557,7 @@ bool SLoadedTexture::ScanForTransparency()
     return false;
 }
 
-void SLoadedTexture::EnsureMultiplerOfFour(NVFoundationBase &inFoundation, const char *inPath)
+void SLoadedTexture::EnsureMultiplerOfFour(const char *inPath)
 {
     if (width % 4 || height % 4) {
         qCWarning(PERF_WARNING,
@@ -576,9 +566,7 @@ void SLoadedTexture::EnsureMultiplerOfFour(NVFoundationBase &inFoundation, const
             quint32 newWidth = ITextRenderer::NextMultipleOf4(width);
             quint32 newHeight = ITextRenderer::NextMultipleOf4(height);
             quint32 newDataSize = newWidth * newHeight * components;
-            NVAllocatorCallback &theAllocator(inFoundation.getAllocator());
-            quint8 *newData = (quint8 *)(theAllocator.allocate(newDataSize, "Scaled Image Data",
-                                                           __FILE__, __LINE__));
+            quint8 *newData = static_cast<quint8 *>(::malloc(newDataSize));
             CImageScaler theScaler(theAllocator);
             if (components == 4) {
                 theScaler.FastExpandRowsAndColumns((unsigned char *)data, width, height, newData,
@@ -650,8 +638,7 @@ void SLoadedTexture::ReleaseDecompressedTexture(STextureData inImage)
 #define stricmp strcasecmp
 #endif
 
-SLoadedTexture *SLoadedTexture::Load(const QString &inPath, NVFoundationBase &inFoundation,
-                                     IInputStreamFactory &inFactory, bool inFlipY,
+SLoadedTexture *SLoadedTexture::Load(const QString &inPath, IInputStreamFactory &inFactory, bool inFlipY,
                                      QDemonRenderContextType renderContextType)
 {
     if (inPath.isEmpty())

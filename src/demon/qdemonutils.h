@@ -16,35 +16,35 @@ QT_BEGIN_NAMESPACE
 #define QDEMON_FOREACH(varname, stop) for (quint32 varname = 0, end = stop; varname < end; ++varname)
 
 namespace vec3 {
-QVector3D minimum(const QVector3D &v1, const QVector3D &v2);
-QVector3D maximum(const QVector3D &v1, const QVector3D &v2);
-bool isFinite(const QVector3D &v);
-float magnitude(const QVector3D &v);
+QVector3D Q_DEMON_EXPORT minimum(const QVector3D &v1, const QVector3D &v2);
+QVector3D Q_DEMON_EXPORT maximum(const QVector3D &v1, const QVector3D &v2);
+bool Q_DEMON_EXPORT isFinite(const QVector3D &v);
+float Q_DEMON_EXPORT magnitude(const QVector3D &v);
 
 }
 
 namespace mat33 {
-QVector3D transform(const QMatrix3x3 &m, const QVector3D &v);
+QVector3D Q_DEMON_EXPORT transform(const QMatrix3x3 &m, const QVector3D &v);
 QMatrix3x3 Q_DEMON_EXPORT getInverse(const QMatrix3x3 &m);
 }
 
 namespace mat44 {
-QMatrix4x4 getInverse(const QMatrix4x4 &m);
+QMatrix4x4 Q_DEMON_EXPORT getInverse(const QMatrix4x4 &m);
 }
 
 namespace quant {
-bool isFinite(const QQuaternion &q);
+bool Q_DEMON_EXPORT isFinite(const QQuaternion &q);
 
-float magnitude(const QQuaternion &q);
+float Q_DEMON_EXPORT magnitude(const QQuaternion &q);
 
-bool isSane(const QQuaternion &q);
+bool Q_DEMON_EXPORT isSane(const QQuaternion &q);
 
-bool isUnit(const QQuaternion &q);
+bool Q_DEMON_EXPORT isUnit(const QQuaternion &q);
 
 
-QVector3D rotated(const QQuaternion &q, const QVector3D &v);
+QVector3D Q_DEMON_EXPORT rotated(const QQuaternion &q, const QVector3D &v);
 
-QVector3D inverseRotated(const QQuaternion &q, const QVector3D &v);
+QVector3D Q_DEMON_EXPORT inverseRotated(const QQuaternion &q, const QVector3D &v);
 
 }
 

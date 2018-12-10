@@ -252,7 +252,6 @@ static AAModeValues::Enum ToAAMode(QDEMONRenderPluginMSAALevel inMode)
 
 struct InstanceImpl : public IRenderPluginInstance
 {
-    NVFoundationBase &m_Foundation;
     TRenderPluginInstancePtr m_Instance;
     TRenderPluginClass m_Class;
     QDemonScopedRefCounted<IInternalPluginClass> m_Owner;
@@ -261,26 +260,19 @@ struct InstanceImpl : public IRenderPluginInstance
     QVector<SRenderPluginPropertyData> m_PropertyValues;
     bool m_Dirty;
     QDemonRenderContext *m_RenderContext;
-    qint32 mRefCount;
 
-    InstanceImpl(NVFoundationBase &fnd, TRenderPluginInstancePtr instance, TRenderPluginClass cls,
-                 IInternalPluginClass &owner, IStringTable &strTable)
-        : m_Foundation(fnd)
-        , m_Instance(instance)
+    InstanceImpl(TRenderPluginInstancePtr instance, TRenderPluginClass cls,
+                 IInternalPluginClass &owner)
+        : m_Instance(instance)
         , m_Class(cls)
         , m_Owner(owner)
-        , m_RendererType(
-              strTable.RegisterStr(IRenderPluginInstance::IRenderPluginOffscreenRendererType()))
-        , m_PropertyValues(m_Foundation.getAllocator(), "InstanceImpl::m_PropertyValues")
+        , m_RendererType(QString::fromLocal8Bit(IRenderPluginInstance::IRenderPluginOffscreenRendererType()))
         , m_Dirty(false)
         , m_RenderContext(nullptr)
-        , mRefCount(0)
     {
     }
 
     virtual ~InstanceImpl() { m_Class.ReleaseInstance(m_Class.m_Class, m_Instance); }
-
-    QDEMON_IMPLEMENT_REF_COUNT_ADDREF_RELEASE(m_Foundation.getAllocator())
 
     void addCallback(IOffscreenRendererCallback *cb) override
     {
@@ -427,8 +419,6 @@ typedef QPair<QString, RenderPluginPropertyValueTypes::Enum> TStringTypePair;
 struct PluginClassImpl : public IInternalPluginClass
 {
     typedef QHash<QString, quint32> TStringIndexMap;
-    NVFoundationBase &m_Foundation;
-    IStringTable &m_StringTable;
     TRenderPluginClass m_Class;
     QString m_Type;
     CLoadedDynamicLibrary *m_DynamicLibrary;
@@ -439,23 +429,12 @@ struct PluginClassImpl : public IInternalPluginClass
     CRenderString m_TempString;
     qint32 m_APIVersion;
 
-    qint32 mRefCount;
-
-    PluginClassImpl(NVFoundationBase &fnd, IStringTable &strTable, TRenderPluginClass inClass,
+    PluginClassImpl(TRenderPluginClass inClass,
                     QString inType, CLoadedDynamicLibrary *inLibrary)
-        : m_Foundation(fnd)
-        , m_StringTable(strTable)
-        , m_Class(inClass)
+        : m_Class(inClass)
         , m_Type(inType)
         , m_DynamicLibrary(inLibrary)
-        , m_RegisteredProperties(m_Foundation.getAllocator(),
-                                 "PluginClassImpl::m_RegisteredProperties")
-        , m_ComponentNameToComponentIndexMap(m_Foundation.getAllocator(),
-                                             "PluginClassImpl::m_ComponentNameToComponentIndexMap")
-        , m_FullPropertyList(m_Foundation.getAllocator(), "PluginClassImpl::m_FullPropertyList")
-        , m_UpdateBuffer(m_Foundation.getAllocator(), "PluginClassImpl::m_UpdateBuffer")
         , m_APIVersion(m_Class.GetRenderPluginAPIVersion(m_Class.m_Class))
-        , mRefCount(0)
     {
     }
     ~PluginClassImpl()
@@ -463,10 +442,8 @@ struct PluginClassImpl : public IInternalPluginClass
         if (m_Class.ReleaseClass)
             m_Class.ReleaseClass(m_Class.m_Class);
         if (m_DynamicLibrary)
-            NVDelete(m_Foundation.getAllocator(), m_DynamicLibrary);
+            delete m_DynamicLibrary
     }
-
-    QDEMON_IMPLEMENT_REF_COUNT_ADDREF_RELEASE(m_Foundation.getAllocator())
 
     QDemonScopedRefCounted<IRenderPluginInstance> CreateInstance() override
     {
@@ -474,7 +451,7 @@ struct PluginClassImpl : public IInternalPluginClass
             TRenderPluginInstancePtr instance =
                     m_Class.CreateInstance(m_Class.m_Class, m_Type.c_str());
             if (instance) {
-                InstanceImpl *retval = QDEMON_NEW(m_Foundation.getAllocator(), InstanceImpl)(
+                InstanceImpl *retval = new InstanceImpl(
                             m_Foundation, instance, m_Class, *this, m_StringTable);
                 return retval;
             }
@@ -487,9 +464,9 @@ struct PluginClassImpl : public IInternalPluginClass
     void AddFullPropertyType(const char *name, RenderPluginPropertyValueTypes::Enum inType)
     {
         quint32 itemIndex = (quint32)m_FullPropertyList.size();
-        QString regName = m_StringTable.RegisterStr(name);
+        QString regName = QString::fromLocal8Bit(name);
         bool inserted =
-                m_ComponentNameToComponentIndexMap.insert(eastl::make_pair(regName, itemIndex)).second;
+                m_ComponentNameToComponentIndexMap.insert(regName, itemIndex).second;
         if (inserted) {
             m_FullPropertyList.push_back(eastl::make_pair(regName, inType));
         } else {
@@ -658,28 +635,17 @@ struct PluginManagerImpl : public IRenderPluginManager, public IRenderPluginMana
 {
     typedef QHash<QString, QDemonScopedRefCounted<IRenderPluginClass>> TLoadedClassMap;
     typedef QHash<PluginInstanceKey, QDemonScopedRefCounted<IRenderPluginInstance>> TInstanceMap;
-    NVFoundationBase &m_Foundation;
-    IStringTable &m_StringTable;
     TLoadedClassMap m_LoadedClasses;
     TInstanceMap m_Instances;
     QDemonScopedRefCounted<QDemonRenderContext> m_RenderContext;
     IInputStreamFactory &m_InputStreamFactory;
-    qint32 mRefCount;
     TStr m_DllDir;
     TLoadedPluginDataList m_LoadedPluginData;
 
-    PluginManagerImpl(NVFoundationBase &fnd, IStringTable &st, IInputStreamFactory &inFactory)
-        : m_Foundation(fnd)
-        , m_StringTable(st)
-        , m_LoadedClasses(fnd.getAllocator(), "PluginManagerImpl::m_LoadedClasses")
-        , m_Instances(fnd.getAllocator(), "PluginManagerImpl::m_Instances")
-        , m_InputStreamFactory(inFactory)
-        , mRefCount(0)
-        , m_DllDir(ForwardingAllocator(fnd.getAllocator(), "PluginManagerImpl::m_DllDir"))
+    PluginManagerImpl(IInputStreamFactory &inFactory)
+        : m_InputStreamFactory(inFactory)
     {
     }
-
-    QDEMON_IMPLEMENT_REF_COUNT_ADDREF_RELEASE(m_Foundation.getAllocator())
 
     IRenderPluginClass *GetRenderPlugin(QString inRelativePath) override
     {
@@ -700,7 +666,7 @@ struct PluginManagerImpl : public IRenderPluginManager, public IRenderPluginMana
         // We insert right here to keep us from going down this path potentially for every instance.
         iter =
                 m_LoadedClasses
-                .insert(eastl::make_pair(inRelativePath, QDemonScopedRefCounted<IRenderPluginClass>()))
+                .insert(inRelativePath, QDemonScopedRefCounted<IRenderPluginClass>())
                 .first;
         QString xmlDir, fname, extension;
 
@@ -801,16 +767,16 @@ struct PluginManagerImpl : public IRenderPluginManager, public IRenderPluginMana
                                    "CreateInstance, QueryInstanceRenderSurface, "
                                    "RenderInstance, ReleaseInstance, ReleaseClass",
                                    inRelativePath.c_str());
-                        NVDelete(m_Foundation.getAllocator(), library);
+                        delete library;
                         memSet(&newPluginClass, 0, sizeof(newPluginClass));
                     }
                 }
             }
         }
         if (newPluginClass.m_Class) {
-            PluginClassImpl *retval = QDEMON_NEW(m_Foundation.getAllocator(), PluginClassImpl)(
-                        m_Foundation, m_StringTable, newPluginClass,
-                        m_StringTable.RegisterStr(fname.c_str()), library);
+            PluginClassImpl *retval = new PluginClassImpl(
+                        m_StringTable, newPluginClass,
+                        QString::fromLocal8Bit(fname.c_str()), library);
 
             iter->second = retval;
             if (newPluginClass.InitializeClassGLResources) {
@@ -836,7 +802,7 @@ struct PluginManagerImpl : public IRenderPluginManager, public IRenderPluginMana
             if (theClass)
                 theInstance = theClass->CreateInstance();
 
-            iter = m_Instances.insert(eastl::make_pair(theKey, theInstance)).first;
+            iter = m_Instances.insert(theKey, theInstance).first;
         }
         return iter->second.mPtr;
     }
@@ -913,12 +879,9 @@ struct PluginManagerImpl : public IRenderPluginManager, public IRenderPluginMana
 };
 }
 
-IRenderPluginManagerCore &IRenderPluginManagerCore::Create(NVFoundationBase &inFoundation,
-                                                           IStringTable &strTable,
-                                                           IInputStreamFactory &inFactory)
+IRenderPluginManagerCore &IRenderPluginManagerCore::Create(IInputStreamFactory &inFactory)
 {
-    return *QDEMON_NEW(inFoundation.getAllocator(), PluginManagerImpl)(inFoundation, strTable,
-                                                                       inFactory);
+    return *new PluginManagerImpl(inFactory);
 }
 
 QT_END_NAMESPACE

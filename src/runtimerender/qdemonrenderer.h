@@ -33,13 +33,13 @@
 
 #include <QtDemon/qdemondataref.h>
 #include <QtDemon/qdemonflags.h>
-#include <QtDemon/qdemonrefcounted.h>
-#include <QtGui/QVector2D>
+#include <QtDemonRender/qdemonrenderbasetypes.h>
 #include <QtDemonRuntimeRender/qdemonrendergraphobjectpickquery.h>
 #include <QtDemonRuntimeRender/qdemonrendercamera.h>
-#include <QtDemonRender/qdemonrenderbasetypes.h>
 #include <QtDemonRuntimeRender/qdemonrenderray.h>
 #include <QtDemonRuntimeRender/qdemonrendernode.h>
+
+#include <QtGui/QVector2D>
 
 QT_BEGIN_NAMESPACE
 
@@ -79,7 +79,7 @@ struct SScaleAndPosition
     SScaleAndPosition() {}
 };
 
-class IQDemonRenderer : public QDemonRefCounted
+class IQDemonRenderer
 {
 protected:
     virtual ~IQDemonRenderer() {}
@@ -173,13 +173,6 @@ public:
     // of the one that would be setup
     // using the layer's camera in conjunction with the layer's position,scale.
     virtual void RunLayerRender(SLayer &inLayer, const QMatrix4x4 &inViewProjection) = 0;
-
-    // This allocator is cleared every frame on BeginFrame.  Objects constructed using this
-    // allocator
-    // Must not need their destructors called.  Objects are allocate on 4 byte boundaries using
-    // this allocator
-    // regardless
-    virtual NVAllocatorCallback &GetPerFrameAllocator() = 0;
 
     // Render the layer's rect onscreen.  Will only render one frame, you need to call this
     // every frame

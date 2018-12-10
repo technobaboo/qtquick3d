@@ -39,24 +39,17 @@ struct SRenderList : public IRenderList
     typedef QPair<quint32, IRenderTask *> TTaskIdTaskPair;
     typedef QVector<TTaskIdTaskPair> TTaskList;
 
-    NVFoundationBase &m_Foundation;
     TTaskList m_Tasks;
     quint32 m_NextTaskId;
-    qint32 mRefCount;
     bool m_ScissorEnabled;
     QDemonRenderRect m_ScissorRect;
     QDemonRenderRect m_Viewport;
 
-    SRenderList(NVFoundationBase &fnd)
-        : m_Foundation(fnd)
-        , m_Tasks(fnd.getAllocator(), "m_Tasks")
-        , m_NextTaskId(1)
-        , mRefCount(0)
+    SRenderList()
+        : m_NextTaskId(1)
         , m_ScissorEnabled(false)
     {
     }
-
-    QDEMON_IMPLEMENT_REF_COUNT_ADDREF_RELEASE(m_Foundation.getAllocator())
 
     void BeginFrame() override
     {
@@ -68,7 +61,7 @@ struct SRenderList : public IRenderList
     {
         quint32 taskId = m_NextTaskId;
         ++m_NextTaskId;
-        m_Tasks.push_back(eastl::make_pair(taskId, &inTask));
+        m_Tasks.push_back(QPair<quint32, IRenderTask *>(taskId, &inTask));
         return taskId;
     }
 
@@ -100,9 +93,9 @@ struct SRenderList : public IRenderList
 };
 }
 
-IRenderList &IRenderList::CreateRenderList(NVFoundationBase &fnd)
+IRenderList &IRenderList::CreateRenderList()
 {
-    return *QDEMON_NEW(fnd.getAllocator(), SRenderList)(fnd);
+    return *new SRenderList();
 }
 
 QT_END_NAMESPACE

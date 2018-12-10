@@ -390,7 +390,7 @@ struct SCubicBezierCurve
         QVector2D p234 = lerp(p23, p34, inT);
         QVector2D p1234 = lerp(p123, p234, inT);
 
-        return eastl::make_pair(SCubicBezierCurve(m_Points[0], p12, p123, p1234),
+        return QPair<SCubicBezierCurve, SCubicBezierCurve>(SCubicBezierCurve(m_Points[0], p12, p123, p1234),
                 SCubicBezierCurve(p1234, p234, p34, m_Points[3]));
     }
 };

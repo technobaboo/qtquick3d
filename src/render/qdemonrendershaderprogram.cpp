@@ -492,14 +492,14 @@ QDemonRenderShaderProgram::~QDemonRenderShaderProgram()
 
     for (TShaderConstantMap::iterator iter = m_Constants.begin(), end = m_Constants.end();
          iter != end; ++iter) {
-        iter.value()->Release();
+        //iter.value()->Release();
     }
 
     m_Constants.clear();
 
     for (TShaderBufferMap::iterator iter = m_ShaderBuffers.begin(), end = m_ShaderBuffers.end();
          iter != end; ++iter) {
-        iter.value()->Release();
+        //iter.value()->Release();
     }
 
     m_ShaderBuffers.clear();

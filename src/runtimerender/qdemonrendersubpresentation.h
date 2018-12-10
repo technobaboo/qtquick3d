@@ -34,7 +34,7 @@
 #include <QtDemonRuntimeRender/qdemonoffscreenrendermanager.h>
 #include <QtDemonRuntimeRender/qdemonrendersubpresentationhelper.h>
 #include <QtDemonRuntimeRender/qdemonrenderpresentation.h>
-#include <QtDemon/qdemonrefcounted.h>
+
 #include <QtDemonRender/qdemonrenderbasetypes.h>
 
 QT_BEGIN_NAMESPACE
@@ -59,14 +59,11 @@ class CSubPresentationRenderer : public IOffscreenRenderer
 public:
     IQDemonRenderContext &m_RenderContext;
     SPresentation &m_Presentation;
-    volatile qint32 mRefCount;
     SOffscreenRendererEnvironment m_LastRenderedEnvironment;
     CSubPresentationPickQuery m_PickQuery;
     QString m_OffscreenRendererType;
 
     CSubPresentationRenderer(IQDemonRenderContext &inRenderContext, SPresentation &inPresentation);
-
-    QDEMON_IMPLEMENT_REF_COUNT_ADDREF_RELEASE_OVERRIDE(m_RenderContext.GetAllocator())
 
     SOffscreenRendererEnvironment GetDesiredEnvironment(QVector2D inPresScale) override;
     virtual SOffscreenRenderFlags

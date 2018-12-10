@@ -123,19 +123,16 @@ struct SShadowMapEntry
     QMatrix4x4 m_LightView; ///< light view transform
 };
 
-class Qt3DSShadowMap : public QDemonRefCounted
+class Qt3DSShadowMap
 {
     typedef QVector<SShadowMapEntry> TShadowMapEntryList;
 
 public:
     IQDemonRenderContext &m_Context;
-    volatile qint32 mRefCount;
 
 public:
     Qt3DSShadowMap(IQDemonRenderContext &inContext);
     ~Qt3DSShadowMap();
-
-    QDEMON_IMPLEMENT_REF_COUNT_ADDREF_RELEASE(m_Context.GetAllocator())
 
     /*
          * @brief Add a shadow map entry

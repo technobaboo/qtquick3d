@@ -146,7 +146,7 @@ struct SWidgetBBox : public IRenderWidget
 
     void Render(IRenderWidgetContext &inWidgetContext, QDemonRenderContext &inRenderContext) override
     {
-        m_ItemName = inRenderContext.GetStringTable().RegisterStr("SWidgetBBox");
+        m_ItemName = QString::fromLocal8Bit("SWidgetBBox");
         SWidgetRenderInformation theInfo(inWidgetContext.GetWidgetRenderInformation(
                                              *m_Node, m_Node->m_Position, RenderWidgetModes::Local));
         TNVBounds2BoxPoints thePoints;
@@ -246,7 +246,7 @@ struct SWidgetAxis : public IRenderWidget
     }
     void Render(IRenderWidgetContext &inWidgetContext, QDemonRenderContext &inRenderContext) override
     {
-        m_ItemName = inRenderContext.GetStringTable().RegisterStr("SWidgetAxis");
+        m_ItemName = QString::fromLocal8Bit("SWidgetAxis");
 
         SetupAxisShader(inWidgetContext);
 
@@ -314,15 +314,14 @@ struct SWidgetAxis : public IRenderWidget
 }
 
 IRenderWidget &IRenderWidget::CreateBoundingBoxWidget(SNode &inNode, const QDemonBounds3 &inBounds,
-                                                      const QVector3D &inColor,
-                                                      NVAllocatorCallback &inAlloc)
+                                                      const QVector3D &inColor)
 {
-    return *QDEMON_NEW(inAlloc, SWidgetBBox)(inNode, inBounds, inColor);
+    return *new SWidgetBBox(inNode, inBounds, inColor);
 }
 
-IRenderWidget &IRenderWidget::CreateAxisWidget(SNode &inNode, NVAllocatorCallback &inAlloc)
+IRenderWidget &IRenderWidget::CreateAxisWidget(SNode &inNode)
 {
-    return *QDEMON_NEW(inAlloc, SWidgetAxis)(inNode);
+    return *new SWidgetAxis(inNode);
 }
 
 QT_END_NAMESPACE

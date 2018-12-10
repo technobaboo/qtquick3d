@@ -31,13 +31,13 @@
 #ifndef QDEMON_RENDER_PATH_RENDER_CONTEXT_H
 #define QDEMON_RENDER_PATH_RENDER_CONTEXT_H
 
-#include <QtDemon/qdemonrefcounted.h>
-#include <StringTable.h>
-#include <QtDemonRuntimeRender/qdemonrendershadercache.h>
-#include <QtGui/QVector2D>
 #include <QtDemon/qdemonbounds3.h>
+
+#include <QtDemonRuntimeRender/qdemonrendershadercache.h>
 #include <QtDemonRuntimeRender/qdemonrendershaderkeys.h>
 #include <QtDemonRuntimeRender/qdemonrenderableimage.h>
+
+#include <QtGui/QVector2D>
 
 QT_BEGIN_NAMESPACE
 

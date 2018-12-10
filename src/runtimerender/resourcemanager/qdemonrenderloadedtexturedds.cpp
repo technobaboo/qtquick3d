@@ -443,7 +443,7 @@ static FIBITMAP *DoLoadDDS(FreeImageIO *io, IInStream &inStream, qint32 flipVert
         }
 
         // allocated the memory for the structure we return
-        dib = QDEMON_NEW(io->m_Allocator, SLoadedTexture)(io->m_Allocator);
+        dib = new SLoadedTexture();
         if (dib == nullptr) {
             throw "DIB allocation failed";
         }
@@ -679,11 +679,10 @@ static FIBITMAP *DoLoadDDS(FreeImageIO *io, IInStream &inStream, qint32 flipVert
 }
 
 SLoadedTexture *SLoadedTexture::LoadDDS(IInStream &inStream, qint32 flipVertical,
-                                        NVFoundationBase &inFnd,
                                         QDemonRenderContextType renderContextType)
 {
     Q_UNUSED(renderContextType)
-    FreeImageIO theIO(inFnd.getAllocator(), inFnd);
+    FreeImageIO theIO();
     SLoadedTexture *retval = DoLoadDDS(&theIO, inStream, flipVertical);
 
     return retval;

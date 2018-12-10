@@ -31,14 +31,13 @@
 #ifndef QDEMON_RENDER_BUFFER_MANAGER_H
 #define QDEMON_RENDER_BUFFER_MANAGER_H
 
-#include <QtDemon/qdemonrefcounted.h>
-#include <StringTable.h>
 #include <QtDemonRuntimeRender/qdemonrenderimagetexturedata.h>
+
 #include <QtDemon/qdemonbounds3.h>
 
 QT_BEGIN_NAMESPACE
 
-class IBufferManager : public QDemonRefCounted
+class IBufferManager
 {
 protected:
     virtual ~IBufferManager() {}
@@ -90,9 +89,8 @@ public:
     // Remove *all* buffers from the buffer manager;
     virtual void Clear() = 0;
     virtual void InvalidateBuffer(QString inSourcePath) = 0;
-    virtual IStringTable &GetStringTable() = 0;
 
-    static IBufferManager &Create(QDemonRenderContext &inRenderContext, IStringTable &inStrTable,
+    static IBufferManager &Create(QDemonRenderContext &inRenderContext,
                                   IInputStreamFactory &inInputStreamFactory,
                                   IPerfTimer &inTimer);
 };

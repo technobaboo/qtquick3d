@@ -170,9 +170,8 @@ public:
 
     // Pure widgets.
     static IRenderWidget &CreateBoundingBoxWidget(SNode &inNode, const QDemonBounds3 &inBounds,
-                                                  const QVector3D &inColor,
-                                                  NVAllocatorCallback &inAlloc);
-    static IRenderWidget &CreateAxisWidget(SNode &inNode, NVAllocatorCallback &inAlloc);
+                                                  const QVector3D &inColor);
+    static IRenderWidget &CreateAxisWidget(SNode &inNode);
 };
 QT_END_NAMESPACE
 

@@ -127,8 +127,6 @@ IMPLEMENT_INVASIVE_LIST(TextCacheNode, m_PreviousSibling, m_NextSibling);
 struct STextTextureCache : public ITextTextureCache
 {
     typedef Pool<STextCacheNode, ForwardingAllocator> TPoolType;
-    NVFoundationBase &m_Foundation;
-    volatile qint32 mRefCount;
     QDemonScopedRefCounted<ITextRenderer> m_TextRenderer;
     TTextureInfoHash m_TextureCache;
     TTextCacheNodeList m_LRUList;
@@ -139,14 +137,9 @@ struct STextTextureCache : public ITextTextureCache
     QDemonScopedRefCounted<QDemonRenderContext> m_RenderContext;
     bool m_CanUsePathRendering; ///< true if we use hardware accelerated font rendering
 
-    STextTextureCache(NVFoundationBase &inFnd, ITextRenderer &inRenderer,
+    STextTextureCache(ITextRenderer &inRenderer,
                       QDemonRenderContext &inRenderContext)
-        : m_Foundation(inFnd)
-        , mRefCount(0)
-        , m_TextRenderer(inRenderer)
-        , m_TextureCache(m_Foundation.getAllocator(), "STextTextureCache::m_TextureCache")
-        , m_CacheNodePool(ForwardingAllocator(m_Foundation.getAllocator(),
-                                              "STextTextureCache::m_CacheNodePool"))
+        : m_TextRenderer(inRenderer)
         , m_HighWaterMark(0x100000)
         , m_FrameCount(0)
         , m_TextureTotalBytes(0)
@@ -163,8 +156,6 @@ struct STextTextureCache : public ITextTextureCache
              iter != end; ++iter)
             iter->~STextCacheNode();
     }
-
-    QDEMON_IMPLEMENT_REF_COUNT_ADDREF_RELEASE_OVERRIDE(m_Foundation.getAllocator())
 
     static inline quint32 GetNumBytes(QDemonRenderTexture2D &inTexture)
     {
@@ -243,7 +234,7 @@ struct STextTextureCache : public ITextTextureCache
                             TTextTextureDetailsAndTexture(theDetails, nextTexture)),
                         __FILE__, __LINE__);
             TTextureInfoHash::iterator insert =
-                    m_TextureCache.insert(eastl::make_pair(theKey, retval)).first;
+                    m_TextureCache.insert(theKey, retval).first;
             if (!m_CanUsePathRendering)
                 m_TextureTotalBytes += GetNumBytes(*(retval->m_TextInfo.second.second.mPtr));
         }
@@ -273,11 +264,10 @@ struct STextTextureCache : public ITextTextureCache
 };
 }
 
-ITextTextureCache &ITextTextureCache::CreateTextureCache(NVFoundationBase &inFnd,
-                                                         ITextRenderer &inTextRenderer,
+ITextTextureCache &ITextTextureCache::CreateTextureCache(ITextRenderer &inTextRenderer,
                                                          QDemonRenderContext &inRenderContext)
 {
-    return *QDEMON_NEW(inFnd.getAllocator(), STextTextureCache)(inFnd, inTextRenderer, inRenderContext);
+    return *new STextTextureCache(inTextRenderer, inRenderContext);
 }
 
 QT_END_NAMESPACE

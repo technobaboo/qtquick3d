@@ -237,10 +237,10 @@ static FIBITMAP *DoLoadHDR(FreeImageIO *io, fi_handle handle,
     return nullptr;
 }
 
-SLoadedTexture *SLoadedTexture::LoadHDR(ISeekableIOStream &inStream, NVFoundationBase &inFnd,
+SLoadedTexture *SLoadedTexture::LoadHDR(ISeekableIOStream &inStream,
                                         QDemonRenderContextType renderContextType)
 {
-    FreeImageIO theIO(inFnd.getAllocator(), inFnd);
+    FreeImageIO theIO();
     SLoadedTexture *retval = nullptr;
     if (renderContextType == QDemonRenderContextValues::GLES2)
         retval = DoLoadHDR(&theIO, &inStream, QDemonRenderTextureFormats::RGBA8);

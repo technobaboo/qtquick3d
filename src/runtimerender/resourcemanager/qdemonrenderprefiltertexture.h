@@ -30,21 +30,18 @@
 #pragma once
 #ifndef QDEMON_RENDER_PREFILTER_TEXTURE_H
 #define QDEMON_RENDER_PREFILTER_TEXTURE_H
-#include <Qt3DSAtomic.h>
-#include <QtDemonRender/qdemonrendertexture2d.h>
 
-#include <Qt3DSTypes.h>
+#include <QtDemonRender/qdemonrendertexture2d.h>
 #include <QtDemonRuntimeRender/qdemonrenderloadedtexture.h>
 
 QT_BEGIN_NAMESPACE
 
-class Qt3DSRenderPrefilterTexture : public QDemonRefCounted
+class Qt3DSRenderPrefilterTexture
 {
 public:
     Qt3DSRenderPrefilterTexture(QDemonRenderContext *inQDemonRenderContext, qint32 inWidth, qint32 inHeight,
                                 QDemonRenderTexture2D &inTexture,
-                                QDemonRenderTextureFormats::Enum inDestFormat,
-                                NVFoundationBase &inFnd);
+                                QDemonRenderTextureFormats::Enum inDestFormat);
     virtual ~Qt3DSRenderPrefilterTexture();
 
     virtual void Build(void *inTextureData, qint32 inTextureDataSize,
@@ -52,13 +49,9 @@ public:
 
     static Qt3DSRenderPrefilterTexture *Create(QDemonRenderContext *inQDemonRenderContext, qint32 inWidth,
                                                qint32 inHeight, QDemonRenderTexture2D &inTexture,
-                                               QDemonRenderTextureFormats::Enum inDestFormat,
-                                               NVFoundationBase &inFnd);
+                                               QDemonRenderTextureFormats::Enum inDestFormat);
 
 protected:
-    NVFoundationBase &m_Foundation; ///< Foundation class for allocations and other base things
-    volatile qint32 mRefCount; ///< reference count
-
     QDemonRenderTexture2D &m_Texture2D;
     QDemonRenderTextureFormats::Enum m_InternalFormat;
     QDemonRenderTextureFormats::Enum m_DestinationFormat;
@@ -78,15 +71,13 @@ class Qt3DSRenderPrefilterTextureCPU : public Qt3DSRenderPrefilterTexture
 public:
     Qt3DSRenderPrefilterTextureCPU(QDemonRenderContext *inQDemonRenderContext, qint32 inWidth,
                                    qint32 inHeight, QDemonRenderTexture2D &inTexture,
-                                   QDemonRenderTextureFormats::Enum inDestFormat,
-                                   NVFoundationBase &inFnd);
+                                   QDemonRenderTextureFormats::Enum inDestFormat);
 
     void Build(void *inTextureData, qint32 inTextureDataSize,
                QDemonRenderTextureFormats::Enum inFormat) override;
 
     STextureData CreateBsdfMipLevel(STextureData &inCurMipLevel, STextureData &inPrevMipLevel,
                                     qint32 width, qint32 height);
-    QDEMON_IMPLEMENT_REF_COUNT_ADDREF_RELEASE_OVERRIDE(m_Foundation)
 
     int wrapMod(int a, int base);
     void getWrappedCoords(int &sX, int &sY, int width, int height);
@@ -97,14 +88,11 @@ class Qt3DSRenderPrefilterTextureCompute : public Qt3DSRenderPrefilterTexture
 public:
     Qt3DSRenderPrefilterTextureCompute(QDemonRenderContext *inQDemonRenderContext, qint32 inWidth,
                                        qint32 inHeight, QDemonRenderTexture2D &inTexture,
-                                       QDemonRenderTextureFormats::Enum inDestFormat,
-                                       NVFoundationBase &inFnd);
+                                       QDemonRenderTextureFormats::Enum inDestFormat);
     ~Qt3DSRenderPrefilterTextureCompute();
 
     void Build(void *inTextureData, qint32 inTextureDataSize,
                QDemonRenderTextureFormats::Enum inFormat) override;
-
-    QDEMON_IMPLEMENT_REF_COUNT_ADDREF_RELEASE_OVERRIDE(m_Foundation)
 
     private:
         void CreateLevel0Tex(void *inTextureData, qint32 inTextureDataSize,

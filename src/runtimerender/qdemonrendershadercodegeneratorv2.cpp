@@ -44,11 +44,9 @@ QT_BEGIN_NAMESPACE
 namespace {
 struct SStageGeneratorBase : public IShaderStageGenerator
 {
-    NVFoundationBase &m_Foundation;
-    IStringTable &m_StringTable;
     TStrTableStrMap m_Incoming;
     TStrTableStrMap *m_Outgoing;
-    nvhash_set<QString> m_Includes;
+    QSet<QString> m_Includes;
     TStrTableStrMap m_Uniforms;
     TStrTableStrMap m_ConstantBuffers;
     TConstantBufferParamArray m_ConstantBufferParams;
@@ -58,17 +56,9 @@ struct SStageGeneratorBase : public IShaderStageGenerator
     TShaderGeneratorStageFlags m_EnabledStages;
     QStringList m_addedFunctions;
 
-    SStageGeneratorBase(NVFoundationBase &inFnd, IStringTable &strTable,
-                        ShaderGeneratorStages::Enum inStage)
+    SStageGeneratorBase(ShaderGeneratorStages::Enum inStage)
 
-        : m_Foundation(inFnd)
-        , m_StringTable(strTable)
-        , m_Incoming(inFnd.getAllocator(), "m_Incoming")
-        , m_Outgoing(nullptr)
-        , m_Includes(inFnd.getAllocator(), "m_Includes")
-        , m_Uniforms(inFnd.getAllocator(), "m_Uniforms")
-        , m_ConstantBuffers(inFnd.getAllocator(), "m_ConstantBuffers")
-        , m_ConstantBufferParams(inFnd.getAllocator(), "m_ConstantBufferParams")
+        : m_Outgoing(nullptr)
         , m_Stage(inStage)
     {
     }
@@ -88,11 +78,11 @@ struct SStageGeneratorBase : public IShaderStageGenerator
         // the shared buffers will be cleared elsewhere.
     }
 
-    QString Str(const char *var) { return m_StringTable.RegisterStr(var); }
+    QString Str(const char *var) { return QString::fromLocal8Bit(var); }
 
     void AddIncoming(const char *name, const char *type) override
     {
-        m_Incoming.insert(eastl::make_pair(Str(name), Str(type)));
+        m_Incoming.insert(Str(name), Str(type));
     }
     virtual const char *GetIncomingVariableName()
     {
@@ -109,7 +99,7 @@ struct SStageGeneratorBase : public IShaderStageGenerator
             Q_ASSERT(false);
             return;
         }
-        m_Outgoing->insert(eastl::make_pair(Str(name), Str(type)));
+        m_Outgoing->insert(Str(name), Str(type));
     }
     void AddOutgoing(const TStrType &name, const char *type) override
     {
@@ -118,7 +108,7 @@ struct SStageGeneratorBase : public IShaderStageGenerator
 
     void AddUniform(const char *name, const char *type) override
     {
-        m_Uniforms.insert(eastl::make_pair(Str(name), Str(type)));
+        m_Uniforms.insert(Str(name), Str(type));
     }
     void AddUniform(const TStrType &name, const char *type) override
     {
@@ -127,13 +117,13 @@ struct SStageGeneratorBase : public IShaderStageGenerator
 
     void AddConstantBuffer(const char *name, const char *layout) override
     {
-        m_ConstantBuffers.insert(eastl::make_pair(Str(name), Str(layout)));
+        m_ConstantBuffers.insert(Str(name), Str(layout));
     }
     void AddConstantBufferParam(const char *cbName, const char *paramName, const char *type) override
     {
-        TParamPair theParamPair(m_StringTable.RegisterStr(paramName),
-                                m_StringTable.RegisterStr(type));
-        TConstantBufferParamPair theBufferParamPair(m_StringTable.RegisterStr(cbName),
+        TParamPair theParamPair(QString::fromLocal8Bit(paramName),
+                                QString::fromLocal8Bit(type));
+        TConstantBufferParamPair theBufferParamPair(QString::fromLocal8Bit(cbName),
                                                     theParamPair);
         m_ConstantBufferParams.push_back(theBufferParamPair);
     }
@@ -234,7 +224,7 @@ struct SStageGeneratorBase : public IShaderStageGenerator
 
     virtual const char *BuildShaderSource()
     {
-        for (nvhash_set<QString>::const_iterator iter = m_Includes.begin(),
+        for (QSet<QString>::const_iterator iter = m_Includes.begin(),
              end = m_Includes.end();
              iter != end; ++iter) {
             m_FinalBuilder.append("#include \"");
@@ -264,8 +254,8 @@ struct SStageGeneratorBase : public IShaderStageGenerator
 
 struct SVertexShaderGenerator : public SStageGeneratorBase
 {
-    SVertexShaderGenerator(NVFoundationBase &inFnd, IStringTable &strTable)
-        : SStageGeneratorBase(inFnd, strTable, ShaderGeneratorStages::Vertex)
+    SVertexShaderGenerator()
+        : SStageGeneratorBase(ShaderGeneratorStages::Vertex)
     {
     }
 
@@ -278,8 +268,8 @@ struct SVertexShaderGenerator : public SStageGeneratorBase
 
 struct STessControlShaderGenerator : public SStageGeneratorBase
 {
-    STessControlShaderGenerator(NVFoundationBase &inFnd, IStringTable &strTable)
-        : SStageGeneratorBase(inFnd, strTable, ShaderGeneratorStages::TessControl)
+    STessControlShaderGenerator()
+        : SStageGeneratorBase(ShaderGeneratorStages::TessControl)
     {
     }
 
@@ -299,8 +289,8 @@ struct STessControlShaderGenerator : public SStageGeneratorBase
 
 struct STessEvalShaderGenerator : public SStageGeneratorBase
 {
-    STessEvalShaderGenerator(NVFoundationBase &inFnd, IStringTable &strTable)
-        : SStageGeneratorBase(inFnd, strTable, ShaderGeneratorStages::TessEval)
+    STessEvalShaderGenerator()
+        : SStageGeneratorBase(ShaderGeneratorStages::TessEval)
     {
     }
 
@@ -314,8 +304,8 @@ struct STessEvalShaderGenerator : public SStageGeneratorBase
 
 struct SGeometryShaderGenerator : public SStageGeneratorBase
 {
-    SGeometryShaderGenerator(NVFoundationBase &inFnd, IStringTable &strTable)
-        : SStageGeneratorBase(inFnd, strTable, ShaderGeneratorStages::Geometry)
+    SGeometryShaderGenerator()
+        : SStageGeneratorBase(ShaderGeneratorStages::Geometry)
     {
     }
 
@@ -334,8 +324,8 @@ struct SGeometryShaderGenerator : public SStageGeneratorBase
 
 struct SFragmentShaderGenerator : public SStageGeneratorBase
 {
-    SFragmentShaderGenerator(NVFoundationBase &inFnd, IStringTable &strTable)
-        : SStageGeneratorBase(inFnd, strTable, ShaderGeneratorStages::Fragment)
+    SFragmentShaderGenerator()
+        : SStageGeneratorBase(ShaderGeneratorStages::Fragment)
     {
     }
     void AddShaderIncomingMap() override { AddShaderItemMap("varying", m_Incoming); }
@@ -393,16 +383,6 @@ struct SProgramGenerator : public IShaderProgramGenerator
         , m_FS(inContext.GetFoundation(), inContext.GetStringTable())
         , m_RefCount(0)
     {
-    }
-
-    void addRef() override { atomicIncrement(&m_RefCount); }
-    void release() override
-    {
-        atomicDecrement(&m_RefCount);
-        if (m_RefCount <= 0) {
-            NVFoundationBase &theFoundation(m_Context.GetFoundation());
-            NVDelete(theFoundation.getAllocator(), this);
-        }
     }
 
     void LinkStages()
@@ -500,7 +480,7 @@ struct SProgramGenerator : public IShaderProgramGenerator
         const char *fragmentShaderSource = m_FS.m_FinalBuilder.c_str();
 
         IShaderCache &theCache = m_Context.GetShaderCache();
-        QString theCacheKey = m_Context.GetStringTable().RegisterStr(inShaderName);
+        QString theCacheKey = QString::fromLocal8Bit(inShaderName);
         return theCache.CompileProgram(theCacheKey, vertexShaderSource, fragmentShaderSource,
                                        tcShaderSource, teShaderSource, geShaderSource,
                                        theCacheFlags, inFeatureSet, separableProgram);
@@ -511,7 +491,7 @@ struct SProgramGenerator : public IShaderProgramGenerator
 IShaderProgramGenerator &
 IShaderProgramGenerator::CreateProgramGenerator(IQDemonRenderContext &inContext)
 {
-    return *QDEMON_NEW(inContext.GetAllocator(), SProgramGenerator)(inContext);
+    return *new SProgramGenerator(inContext);
 }
 
 void IShaderProgramGenerator::OutputParaboloidDepthVertex(IShaderStageGenerator &vertexShader)

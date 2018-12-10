@@ -101,8 +101,7 @@ struct SCommand
     }
     // Implemented in UICRenderEffectSystem.cpp
     static quint32 GetSizeofCommand(const SCommand &inCommand);
-    static void CopyConstructCommand(quint8 *inDataBuffer, const SCommand &inCommand,
-                                     IStringTable &inStrTable);
+    static void CopyConstructCommand(quint8 *inDataBuffer, const SCommand &inCommand);
 };
 
 struct AllocateBufferFlagValues
@@ -160,9 +159,9 @@ struct SAllocateBuffer : public SCommand
         , m_BufferFlags(inFlags)
     {
     }
-    SAllocateBuffer(const SAllocateBuffer &inOther, IStringTable &inStrTable)
+    SAllocateBuffer(const SAllocateBuffer &inOther)
         : SCommand(CommandTypes::AllocateBuffer)
-        , m_Name(inStrTable.RegisterStr(inOther.m_Name))
+        , m_Name(inOther.m_Name)
         , m_Format(inOther.m_Format)
         , m_FilterOp(inOther.m_FilterOp)
         , m_TexCoordOp(inOther.m_TexCoordOp)
@@ -192,8 +191,8 @@ struct SAllocateImage : public SAllocateBuffer
         m_Type = CommandTypes::AllocateImage;
     }
 
-    SAllocateImage(const SAllocateImage &inOther, IStringTable &inStrTable)
-        : SAllocateBuffer(inStrTable.RegisterStr(inOther.m_Name), inOther.m_Format,
+    SAllocateImage(const SAllocateImage &inOther)
+        : SAllocateBuffer(inOther.m_Name, inOther.m_Format,
                           inOther.m_FilterOp, inOther.m_TexCoordOp,
                           inOther.m_SizeMultiplier, inOther.m_BufferFlags)
         , m_Access(inOther.m_Access)
@@ -231,11 +230,11 @@ struct SAllocateDataBuffer : public SCommand
     {
     }
 
-    SAllocateDataBuffer(const SAllocateDataBuffer &inOther, IStringTable &inStrTable)
+    SAllocateDataBuffer(const SAllocateDataBuffer &inOther)
         : SCommand(CommandTypes::AllocateDataBuffer)
-        , m_Name(inStrTable.RegisterStr(inOther.m_Name))
+        , m_Name(inOther.m_Name)
         , m_DataBufferType(inOther.m_DataBufferType)
-        , m_WrapName(inStrTable.RegisterStr(inOther.m_WrapName))
+        , m_WrapName(inOther.m_WrapName)
         , m_DataBufferWrapType(inOther.m_DataBufferWrapType)
         , m_Size(inOther.m_Size)
         , m_BufferFlags(inOther.m_BufferFlags)
@@ -252,7 +251,7 @@ struct SBindTarget : public SCommand
         , m_OutputFormat(inFormat)
     {
     }
-    SBindTarget(const SBindTarget &inOther, IStringTable &)
+    SBindTarget(const SBindTarget &inOther)
         : SCommand(CommandTypes::BindTarget)
         , m_OutputFormat(inOther.m_OutputFormat)
     {
@@ -269,9 +268,9 @@ struct SBindBuffer : public SCommand
         , m_NeedsClear(inNeedsClear)
     {
     }
-    SBindBuffer(const SBindBuffer &inOther, IStringTable &inTable)
+    SBindBuffer(const SBindBuffer &inOther)
         : SCommand(CommandTypes::BindBuffer)
-        , m_BufferName(inTable.RegisterStr(inOther.m_BufferName))
+        , m_BufferName(inOther.m_BufferName)
         , m_NeedsClear(inOther.m_NeedsClear)
     {
     }
@@ -296,10 +295,10 @@ struct SBindShader : public SCommand
         : SCommand(CommandTypes::BindShader)
     {
     }
-    SBindShader(const SBindShader &inOther, IStringTable &inTable)
+    SBindShader(const SBindShader &inOther)
         : SCommand(CommandTypes::BindShader)
-        , m_ShaderPath(inTable.RegisterStr(inOther.m_ShaderPath))
-        , m_ShaderDefine(inTable.RegisterStr(inOther.m_ShaderDefine))
+        , m_ShaderPath(inOther.m_ShaderPath)
+        , m_ShaderDefine(inOther.m_ShaderDefine)
     {
     }
 };
@@ -331,9 +330,9 @@ struct SApplyInstanceValue : public SCommand
         , m_ValueOffset(0)
     {
     }
-    SApplyInstanceValue(const SApplyInstanceValue &inOther, IStringTable &inTable)
+    SApplyInstanceValue(const SApplyInstanceValue &inOther)
         : SCommand(CommandTypes::ApplyInstanceValue)
-        , m_PropertyName(inTable.RegisterStr(inOther.m_PropertyName))
+        , m_PropertyName(inOther.m_PropertyName)
         , m_ValueType(inOther.m_ValueType)
         , m_ValueOffset(inOther.m_ValueOffset)
     {
@@ -358,9 +357,9 @@ struct SApplyValue : public SCommand
     {
     }
 
-    SApplyValue(const SApplyValue &inOther, IStringTable &inTable)
+    SApplyValue(const SApplyValue &inOther)
         : SCommand(CommandTypes::ApplyValue)
-        , m_PropertyName(inTable.RegisterStr(inOther.m_PropertyName))
+        , m_PropertyName(inOther.m_PropertyName)
         , m_ValueType(inOther.m_ValueType)
         , m_Value(inOther.m_Value)
     {
@@ -383,10 +382,10 @@ struct SApplyBufferValue : public SCommand
         , m_ParamName(shaderParam)
     {
     }
-    SApplyBufferValue(const SApplyBufferValue &inOther, IStringTable &inTable)
+    SApplyBufferValue(const SApplyBufferValue &inOther)
         : SCommand(CommandTypes::ApplyBufferValue)
-        , m_BufferName(inTable.RegisterStr(inOther.m_BufferName))
-        , m_ParamName(inTable.RegisterStr(inOther.m_ParamName))
+        , m_BufferName(inOther.m_BufferName)
+        , m_ParamName(inOther.m_ParamName)
     {
     }
 };
@@ -408,10 +407,10 @@ struct SApplyImageValue : public SCommand
         , m_NeedSync(inNeedSync)
     {
     }
-    SApplyImageValue(const SApplyImageValue &inOther, IStringTable &inTable)
+    SApplyImageValue(const SApplyImageValue &inOther)
         : SCommand(CommandTypes::ApplyImageValue)
-        , m_ImageName(inTable.RegisterStr(inOther.m_ImageName))
-        , m_ParamName(inTable.RegisterStr(inOther.m_ParamName))
+        , m_ImageName(inOther.m_ImageName)
+        , m_ParamName(inOther.m_ParamName)
         , m_BindAsTexture(inOther.m_BindAsTexture)
         , m_NeedSync(inOther.m_NeedSync)
     {
@@ -431,9 +430,9 @@ struct SApplyDataBufferValue : public SCommand
         , m_BindAs(inBufferType)
     {
     }
-    SApplyDataBufferValue(const SApplyDataBufferValue &inOther, IStringTable &inTable)
+    SApplyDataBufferValue(const SApplyDataBufferValue &inOther)
         : SCommand(CommandTypes::ApplyDataBufferValue)
-        , m_ParamName(inTable.RegisterStr(inOther.m_ParamName))
+        , m_ParamName(inOther.m_ParamName)
         , m_BindAs(inOther.m_BindAs)
     {
     }
@@ -449,9 +448,9 @@ struct SApplyDepthValue : public SCommand
         , m_ParamName(param)
     {
     }
-    SApplyDepthValue(const SApplyDepthValue &inOther, IStringTable &inTable)
+    SApplyDepthValue(const SApplyDepthValue &inOther)
         : SCommand(CommandTypes::ApplyDepthValue)
-        , m_ParamName(inTable.RegisterStr(inOther.m_ParamName))
+        , m_ParamName(inOther.m_ParamName)
     {
     }
 };
@@ -465,7 +464,7 @@ struct SRender : public SCommand
     {
     }
 
-    SRender(const SRender &inOther, IStringTable &)
+    SRender(const SRender &inOther)
         : SCommand(CommandTypes::Render)
         , m_DrawIndirect(inOther.m_DrawIndirect)
     {
@@ -485,7 +484,7 @@ struct SApplyBlending : public SCommand
     {
     }
 
-    SApplyBlending(const SApplyBlending &inOther, IStringTable &)
+    SApplyBlending(const SApplyBlending &inOther)
         : SCommand(CommandTypes::ApplyBlending)
         , m_SrcBlendFunc(inOther.m_SrcBlendFunc)
         , m_DstBlendFunc(inOther.m_DstBlendFunc)
@@ -505,7 +504,7 @@ struct SApplyRenderState : public SCommand
     {
     }
 
-    SApplyRenderState(const SApplyRenderState &inOther, IStringTable &)
+    SApplyRenderState(const SApplyRenderState &inOther)
         : SCommand(CommandTypes::ApplyRenderState)
         , m_RenderState(inOther.m_RenderState)
         , m_Enabled(inOther.m_Enabled)
@@ -530,10 +529,10 @@ struct SApplyBlitFramebuffer : public SCommand
     {
     }
 
-    SApplyBlitFramebuffer(const SApplyBlitFramebuffer &inOther, IStringTable &inTable)
+    SApplyBlitFramebuffer(const SApplyBlitFramebuffer &inOther)
         : SCommand(CommandTypes::ApplyBlitFramebuffer)
-        , m_SourceBufferName(inTable.RegisterStr(inOther.m_SourceBufferName))
-        , m_DestBufferName(inTable.RegisterStr(inOther.m_DestBufferName))
+        , m_SourceBufferName(inOther.m_SourceBufferName)
+        , m_DestBufferName(inOther.m_DestBufferName))
     {
     }
 };
@@ -601,9 +600,9 @@ struct SDepthStencil : public SCommand
     {
     }
 
-    SDepthStencil(const SDepthStencil &inOther, IStringTable &inTable)
+    SDepthStencil(const SDepthStencil &inOther)
         : SCommand(CommandTypes::DepthStencil)
-        , m_BufferName(inTable.RegisterStr(inOther.m_BufferName))
+        , m_BufferName(inOther.m_BufferName)
         , m_Flags(inOther.m_Flags)
         , m_StencilFailOperation(inOther.m_StencilFailOperation)
         , m_DepthPassOperation(inOther.m_DepthPassOperation)

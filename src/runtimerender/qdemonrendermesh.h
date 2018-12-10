@@ -31,12 +31,12 @@
 #ifndef QDEMON_RENDER_MESH_H
 #define QDEMON_RENDER_MESH_H
 
-#include <Qt3DSRenderVertexBuffer.h>
-#include <Qt3DSRenderIndexBuffer.h>
-#include <Qt3DSRenderInputAssembler.h>
+#include <QtDemonRender/qdemonrendervertexbuffer.h>
+#include <QtDemonRender/qdemonrenderindexbuffer.h>
+#include <QtDemonRender/qdemonrenderinputassembler.h>
+
 #include <QtDemon/qdemonbounds3.h>
-#include <QtDemon/qdemonrefcounted.h>
-#include <Qt3DSQDemonNoCopy.h>
+#include <QtDemon/qdemonnocopy.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -89,7 +89,7 @@ struct SRenderSubset : public SRenderSubsetBase
     QString m_Name;
     QVector<SRenderSubsetBase> m_SubSubsets;
 
-    SRenderSubset(NVAllocatorCallback &alloc)
+    SRenderSubset()
         : m_InputAssembler(nullptr)
         , m_InputAssemblerDepth(nullptr)
         , m_InputAssemblerPoints(nullptr)
@@ -100,7 +100,6 @@ struct SRenderSubset : public SRenderSubsetBase
         , m_EdgeTessFactor(1.0)
         , m_InnerTessFactor(1.0)
         , m_WireframeMode(false)
-        , m_SubSubsets(alloc, "SRenderSubset::m_SubSubsets")
     {
     }
     SRenderSubset(const SRenderSubset &inOther)
@@ -121,7 +120,7 @@ struct SRenderSubset : public SRenderSubsetBase
     {
     }
     // Note that subSubsets is *not* copied.
-    SRenderSubset(NVAllocatorCallback &alloc, const SRenderSubset &inOther,
+    SRenderSubset(const SRenderSubset &inOther,
                   const SRenderSubsetBase &inBase)
         : SRenderSubsetBase(inBase)
         , m_InputAssembler(inOther.m_InputAssembler)
@@ -135,7 +134,6 @@ struct SRenderSubset : public SRenderSubsetBase
         , m_InnerTessFactor(inOther.m_InnerTessFactor)
         , m_WireframeMode(inOther.m_WireframeMode)
         , m_Name(inOther.m_Name)
-        , m_SubSubsets(alloc, "SRenderSubset::m_SubSubsets")
     {
     }
 
@@ -169,10 +167,8 @@ struct SRenderMesh : public QDemonNoCopy
     quint32 m_MeshId; // Id from the file of this mesh.
 
     SRenderMesh(QDemonRenderDrawMode::Enum inDrawMode, QDemonRenderWinding::Enum inWinding,
-                quint32 inMeshId, NVAllocatorCallback &alloc)
-        : m_Subsets(alloc, "SRenderMesh::m_Subsets")
-        , m_Joints(alloc, "SRenderMesh::Joints")
-        , m_DrawMode(inDrawMode)
+                quint32 inMeshId)
+        : m_DrawMode(inDrawMode)
         , m_Winding(inWinding)
         , m_MeshId(inMeshId)
     {

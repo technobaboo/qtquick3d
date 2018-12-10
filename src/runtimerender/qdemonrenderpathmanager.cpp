@@ -107,65 +107,36 @@ namespace {
 
 struct SPathSubPathBuffer
 {
-    NVAllocatorCallback &m_Allocator;
     QVector<SPathAnchorPoint> m_SourceData;
     SPathDirtyFlags m_Flags;
     SPathSubPath &m_SubPath;
     bool m_Closed;
 
-    qint32 m_RefCount;
-
-    SPathSubPathBuffer(NVAllocatorCallback &alloc, SPathSubPath &inSubPath)
-        : m_Allocator(alloc)
-        , m_SourceData(alloc, "m_SourceData")
+    SPathSubPathBuffer(SPathSubPath &inSubPath)
+        : m_SourceData(alloc, "m_SourceData")
         , m_SubPath(inSubPath)
         , m_Closed(false)
-        , m_RefCount(0)
     {
-    }
-
-    void addRef() { atomicIncrement(&m_RefCount); }
-    void release()
-    {
-        atomicDecrement(&m_RefCount);
-        if (m_RefCount <= 0) {
-            NVAllocatorCallback &alloc(m_Allocator);
-            NVDelete(alloc, this);
-        }
     }
 };
 
 struct SImportPathWrapper
 {
-    NVAllocatorCallback &m_Alloc;
     qt3dsimp::SPathBuffer *m_Path;
-    qint32 m_RefCount;
 
-    SImportPathWrapper(NVAllocatorCallback &inAlloc, qt3dsimp::SPathBuffer &inPath)
-        : m_Alloc(inAlloc)
-        , m_Path(&inPath)
-        , m_RefCount(0)
+    SImportPathWrapper(qt3dsimp::SPathBuffer &inPath)
+        : m_Path(&inPath)
     {
     }
 
     ~SImportPathWrapper() { m_Path->Free(m_Alloc); }
 
-    void addRef() { ++m_RefCount; }
-    void release()
-    {
-        --m_RefCount;
-        if (m_RefCount <= 0) {
-            NVAllocatorCallback &alloc(m_Alloc);
-            NVDelete(alloc, this);
-        }
-    }
 };
 
 typedef QDemonScopedRefCounted<SImportPathWrapper> TPathBufferPtr;
 
 struct SPathBuffer
 {
-    NVAllocatorCallback &m_Allocator;
     QVector<QDemonScopedRefCounted<SPathSubPathBuffer>> m_SubPaths;
     TPathBufferPtr m_PathBuffer;
 
@@ -190,26 +161,13 @@ struct SPathBuffer
 
     qint32 m_RefCount;
 
-    SPathBuffer(NVAllocatorCallback &alloc)
-        : m_Allocator(alloc)
-        , m_SubPaths(alloc, "m_SubPaths")
-        , m_NumVertexes(0)
+    SPathBuffer()
+        : m_NumVertexes(0)
         , m_PathType(PathTypes::Geometry)
         , m_Width(0.0f)
         , m_CPUError(0.0f)
         , m_Bounds(QDemonBounds3::empty())
-        , m_RefCount(0)
     {
-    }
-
-    void addRef() { atomicIncrement(&m_RefCount); }
-    void release()
-    {
-        atomicDecrement(&m_RefCount);
-        if (m_RefCount <= 0) {
-            NVAllocatorCallback &alloc(m_Allocator);
-            NVDelete(alloc, this);
-        }
     }
 
     void ClearGeometryPathData()
@@ -323,7 +281,6 @@ struct SPathBuffer
 
 struct SPathGeneratedShader
 {
-    NVAllocatorCallback &m_Allocator;
     QDemonRenderShaderProgram &m_Shader;
     NVRenderCachedShaderProperty<float> m_Width;
     NVRenderCachedShaderProperty<float> m_InnerTessAmount;
@@ -332,42 +289,30 @@ struct SPathGeneratedShader
     NVRenderCachedShaderProperty<QVector2D> m_EndTaperData;
     NVRenderCachedShaderProperty<QMatrix4x4> m_WireframeViewMatrix;
 
-    qint32 m_RefCount;
-
-    SPathGeneratedShader(QDemonRenderShaderProgram &sh, NVAllocatorCallback &alloc)
-        : m_Allocator(alloc)
-        , m_Shader(sh)
+    SPathGeneratedShader(QDemonRenderShaderProgram &sh)
+        : m_Shader(sh)
         , m_Width("pathWidth", sh)
         , m_InnerTessAmount("tessInnerLevel", sh)
         , m_EdgeTessAmount("tessEdgeLevel", sh)
         , m_BeginTaperData("beginTaperInfo", sh)
         , m_EndTaperData("endTaperInfo", sh)
         , m_WireframeViewMatrix("viewport_matrix", sh)
-        , m_RefCount(0)
     {
-        m_Shader.addRef();
+        //m_Shader.addRef();
     }
-    ~SPathGeneratedShader() { m_Shader.release(); }
+    ~SPathGeneratedShader() 
+    {
+         //m_Shader.release(); 
+    }
 
-    void addRef() { ++m_RefCount; }
-    void release()
-    {
-        --m_RefCount;
-        if (m_RefCount <= 0) {
-            NVAllocatorCallback &allocator(m_Allocator);
-            NVDelete(allocator, this);
-        }
-    }
 };
 
 struct SPathVertexPipeline : public SVertexPipelineImpl
 {
 
     SPathVertexPipeline(IShaderProgramGenerator &inProgGenerator,
-                        IMaterialShaderGenerator &inMaterialGenerator, NVAllocatorCallback &inAlloc,
-                        IStringTable &inStringTable, bool inWireframe)
-        : SVertexPipelineImpl(inAlloc, inMaterialGenerator, inProgGenerator, inStringTable,
-                              inWireframe)
+                        IMaterialShaderGenerator &inMaterialGenerator, bool inWireframe)
+        : SVertexPipelineImpl(inMaterialGenerator, inProgGenerator, inWireframe)
     {
     }
 
@@ -563,7 +508,7 @@ struct SPathVertexPipeline : public SVertexPipelineImpl
 
     void AddInterpolationParameter(const char *inName, const char *inType) override
     {
-        m_InterpolationParameters.insert(eastl::make_pair(Str(inName), Str(inType)));
+        m_InterpolationParameters.insert(Str(inName), Str(inType));
         Fragment().AddIncoming(inName, inType);
         if (HasTessellation()) {
             QString nameBuilder;
@@ -580,7 +525,6 @@ struct SPathVertexPipeline : public SVertexPipelineImpl
 
 struct SPathXYGeneratedShader
 {
-    NVAllocatorCallback &m_Allocator;
     QDemonRenderShaderProgram &m_Shader;
     NVRenderCachedShaderProperty<QVector4D> m_RectDimensions;
     NVRenderCachedShaderProperty<QMatrix4x4> m_ModelMatrix;
@@ -588,26 +532,18 @@ struct SPathXYGeneratedShader
     NVRenderCachedShaderProperty<QVector2D> m_CameraProperties;
     qint32 m_RefCount;
 
-    SPathXYGeneratedShader(QDemonRenderShaderProgram &sh, NVAllocatorCallback &alloc)
-        : m_Allocator(alloc)
-        , m_Shader(sh)
+    SPathXYGeneratedShader(QDemonRenderShaderProgram &sh)
+        : m_Shader(sh)
         , m_RectDimensions("uni_rect_dimensions", sh)
         , m_ModelMatrix("model_matrix", sh)
         , m_CameraPosition("camera_position", sh)
         , m_CameraProperties("camera_properties", sh)
-        , m_RefCount(0)
     {
-        m_Shader.addRef();
+        //m_Shader.addRef();
     }
-    virtual ~SPathXYGeneratedShader() { m_Shader.release(); }
-    void addRef() { ++m_RefCount; }
-    void release()
+    virtual ~SPathXYGeneratedShader() 
     {
-        --m_RefCount;
-        if (m_RefCount <= 0) {
-            NVAllocatorCallback &allocator(m_Allocator);
-            NVDelete(allocator, this);
-        }
+         /*m_Shader.release();*/
     }
 };
 
@@ -617,9 +553,8 @@ struct SXYRectVertexPipeline : public SVertexPipelineImpl
 {
 
     SXYRectVertexPipeline(IShaderProgramGenerator &inProgGenerator,
-                          IMaterialShaderGenerator &inMaterialGenerator,
-                          NVAllocatorCallback &inAlloc, IStringTable &inStringTable)
-        : SVertexPipelineImpl(inAlloc, inMaterialGenerator, inProgGenerator, inStringTable, false)
+                          IMaterialShaderGenerator &inMaterialGenerator)
+        : SVertexPipelineImpl(inMaterialGenerator, inProgGenerator, false)
     {
     }
 
@@ -765,7 +700,7 @@ struct SXYRectVertexPipeline : public SVertexPipelineImpl
 
     void AddInterpolationParameter(const char *inName, const char *inType) override
     {
-        m_InterpolationParameters.insert(eastl::make_pair(Str(inName), Str(inType)));
+        m_InterpolationParameters.insert(Str(inName), Str(inType));
         Vertex().AddOutgoing(inName, inType);
         Fragment().AddIncoming(inName, inType);
     }
@@ -835,29 +770,16 @@ struct SPathManager : public IPathManager
 
     virtual ~SPathManager() { m_PaintedRectInputAssembler = nullptr; }
 
-    NVAllocatorCallback &GetAllocator() { return m_CoreContext.GetAllocator(); }
-    IStringTable &GetStringTable() { return m_CoreContext.GetStringTable(); }
-    NVFoundationBase &GetFoundation() { return m_CoreContext.GetFoundation(); }
-
-    void addRef() override { atomicIncrement(&m_RefCount); }
-    void release() override
-    {
-        atomicDecrement(&m_RefCount);
-        if (m_RefCount <= 0) {
-            NVAllocatorCallback &alloc(GetAllocator());
-            NVDelete(alloc, this);
-        }
-    }
     // Called during binary load which is heavily threaded.
     void SetPathSubPathData(const SPathSubPath &inPath,
                             QDemonConstDataRef<SPathAnchorPoint> inPathCubicCurves) override
     {
         Mutex::ScopedLock __locker(m_PathBufferMutex);
         QPair<TPathSubPathBufferHash::iterator, bool> inserter =
-                m_SubPathBuffers.insert(eastl::make_pair((SPathSubPath *)&inPath,
-                                                         QDemonScopedRefCounted<SPathSubPathBuffer>(nullptr)));
+                m_SubPathBuffers.insert((SPathSubPath *)&inPath,
+                                                         QDemonScopedRefCounted<SPathSubPathBuffer>(nullptr));
         if (!inserter.first->second)
-            inserter.first->second = QDEMON_NEW(GetAllocator(), SPathSubPathBuffer)(
+            inserter.first->second = new SPathSubPathBuffer(
                         GetAllocator(), const_cast<SPathSubPath &>(inPath));
         SPathSubPathBuffer &theBuffer = *inserter.first->second.mPtr;
         theBuffer.m_SourceData.assign(inPathCubicCurves.begin(), inPathCubicCurves.end());
@@ -866,10 +788,9 @@ struct SPathManager : public IPathManager
 
     SPathBuffer *GetPathBufferObject(const SPath &inPath)
     {
-        QPair<TPathBufferHash::iterator, bool> inserter = m_Buffers.insert(
-                    eastl::make_pair((SPath *)&inPath, QDemonScopedRefCounted<SPathBuffer>(nullptr)));
+        QPair<TPathBufferHash::iterator, bool> inserter = m_Buffers.insert((SPath *)&inPath, QDemonScopedRefCounted<SPathBuffer>(nullptr));
         if (inserter.second) {
-            inserter.first->second = QDEMON_NEW(GetAllocator(), SPathBuffer)(GetAllocator());
+            inserter.first->second = new SPathBuffer(GetAllocator());
         }
         return inserter.first->second.mPtr;
     }
@@ -1004,7 +925,7 @@ struct SPathManager : public IPathManager
                         originalLength * breakTValue);
 
                 m_SubdivResult.insert(breakIter, newCubic);
-                return eastl::make_pair(idx, breakTValue);
+                return QPair<quint32, float>(idx, breakTValue);
             }
             lengthTotal += m_SubdivResult[idx].m_Length;
         }
@@ -1264,11 +1185,11 @@ struct SPathManager : public IPathManager
             const SCustomMaterial &theCustomMaterial(
                         reinterpret_cast<const SCustomMaterial &>(inRenderContext.m_Material));
 
-            return m_RenderContext->GetStringTable().RegisterStr(
+            return QString::fromLocal8Bit(
                         theMaterialSystem.GetShaderName(theCustomMaterial));
         }
 
-        return m_RenderContext->GetStringTable().RegisterStr("");
+        return QString();
     }
 
     bool PreparePaintedPathForRender(const SPath &inPath, SPathBuffer &inPathBuffer)
@@ -1382,8 +1303,7 @@ struct SPathManager : public IPathManager
         } else {
             thePathBuffer->m_SubPaths.clear();
             QPair<TStringPathBufferMap::iterator, bool> inserter =
-                    m_SourcePathBufferMap.insert(
-                        eastl::make_pair(inPath.m_PathBuffer, TPathBufferPtr()));
+                    m_SourcePathBufferMap.insert(inPath.m_PathBuffer, TPathBufferPtr());
             if (inserter.second) {
                 QDemonScopedRefCounted<IRefCountedInputStream> theStream =
                         m_CoreContext.GetInputStreamFactory().GetStreamForFile(
@@ -1392,7 +1312,7 @@ struct SPathManager : public IPathManager
                     qt3dsimp::SPathBuffer *theNewBuffer =
                             qt3dsimp::SPathBuffer::Load(*theStream, GetFoundation());
                     if (theNewBuffer)
-                        inserter.first->second = QDEMON_NEW(GetAllocator(), SImportPathWrapper)(
+                        inserter.first->second = new SImportPathWrapper(
                                     GetAllocator(), *theNewBuffer);
                 }
             }
@@ -1678,8 +1598,7 @@ struct SPathManager : public IPathManager
                                                                               inFeatureSet);
                 if (theProgram) {
                     theDesiredDepthShader =
-                            QDEMON_NEW(m_RenderContext->GetAllocator(),
-                                       SPathGeneratedShader)(*theProgram, m_RenderContext->GetAllocator());
+                            new SPathGeneratedShader(*theProgram, m_RenderContext->GetAllocator());
                 }
             }
             if (theDesiredDepthShader) {
@@ -1706,7 +1625,7 @@ struct SPathManager : public IPathManager
                                                                               inFeatureSet);
                 if (theProgram) {
                     m_PaintedDepthShader =
-                            QDEMON_NEW(m_RenderContext->GetAllocator(), SPathXYGeneratedShader)(
+                            new SPathXYGeneratedShader(
                                 *theProgram, m_RenderContext->GetAllocator());
                 }
             }
@@ -1746,7 +1665,7 @@ struct SPathManager : public IPathManager
                                                                               inFeatureSet);
                 if (theProgram) {
                     m_PaintedShadowShader =
-                            QDEMON_NEW(m_RenderContext->GetAllocator(), SPathXYGeneratedShader)(
+                            new SPathXYGeneratedShader(
                                 *theProgram, m_RenderContext->GetAllocator());
                 }
             }
@@ -1793,7 +1712,7 @@ struct SPathManager : public IPathManager
                                                                               inFeatureSet);
                 if (theProgram) {
                     m_PaintedCubeShadowShader =
-                            QDEMON_NEW(m_RenderContext->GetAllocator(), SPathXYGeneratedShader)(
+                            new SPathXYGeneratedShader(
                                 *theProgram, m_RenderContext->GetAllocator());
                 }
             }
@@ -1838,8 +1757,7 @@ struct SPathManager : public IPathManager
             // the same key can still need a different shader
             SPathShaderMapKey sPathkey = SPathShaderMapKey(GetMaterialNameForKey(inRenderContext),
                                                            inRenderContext.m_MaterialKey);
-            QPair<TShaderMap::iterator, bool> inserter = m_PathGeometryShaders.insert(
-                        eastl::make_pair(sPathkey, QDemonScopedRefCounted<SPathGeneratedShader>(nullptr)));
+            QPair<TShaderMap::iterator, bool> inserter = m_PathGeometryShaders.insert(sPathkey, QDemonScopedRefCounted<SPathGeneratedShader>(nullptr));
             if (inserter.second) {
                 SPathVertexPipeline thePipeline(
                             m_RenderContext->GetShaderProgramGenerator(), *theMaterialGenerator,
@@ -1868,8 +1786,7 @@ struct SPathManager : public IPathManager
 
                 if (theProgram)
                     inserter.first->second =
-                            QDEMON_NEW(m_RenderContext->GetAllocator(),
-                                       SPathGeneratedShader)(*theProgram, m_RenderContext->GetAllocator());
+                            new SPathGeneratedShader(*theProgram, m_RenderContext->GetAllocator());
             }
             if (!inserter.first->second)
                 return;
@@ -1885,8 +1802,7 @@ struct SPathManager : public IPathManager
             SPathShaderMapKey sPathkey = SPathShaderMapKey(GetMaterialNameForKey(inRenderContext),
                                                            inRenderContext.m_MaterialKey);
             QPair<TPaintedShaderMap::iterator, bool> inserter = m_PathPaintedShaders.insert(
-                        eastl::make_pair(sPathkey, QDemonScopedRefCounted<SPathXYGeneratedShader>(nullptr)));
-
+                        sPathkey, QDemonScopedRefCounted<SPathXYGeneratedShader>(nullptr));
             if (inserter.second) {
                 SXYRectVertexPipeline thePipeline(
                             m_RenderContext->GetShaderProgramGenerator(), *theMaterialGenerator,
@@ -1914,7 +1830,7 @@ struct SPathManager : public IPathManager
 
                 if (theProgram)
                     inserter.first->second =
-                            QDEMON_NEW(m_RenderContext->GetAllocator(), SPathXYGeneratedShader)(
+                            new SPathXYGeneratedShader(
                                 *theProgram, m_RenderContext->GetAllocator());
             }
             if (!inserter.first->second)
@@ -1949,7 +1865,7 @@ QVector2D IPathManagerCore::GetAngleDistanceFromControlPoint(QVector2D inPositio
 
 IPathManagerCore &IPathManagerCore::CreatePathManagerCore(IQDemonRenderContextCore &ctx)
 {
-    return *QDEMON_NEW(ctx.GetAllocator(), SPathManager)(ctx);
+    return *new SPathManager(ctx);
 }
 
 QT_END_NAMESPACE

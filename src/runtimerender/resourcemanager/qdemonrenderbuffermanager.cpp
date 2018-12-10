@@ -77,8 +77,8 @@ struct SImageEntry : public SImageTextureData
     }
     ~SImageEntry()
     {
-        if (m_BSDFMipMap)
-            m_BSDFMipMap->release();
+        // if (m_BSDFMipMap)
+        //     m_BSDFMipMap->release();
     }
 };
 
@@ -100,10 +100,8 @@ struct SBufferManager : public IBufferManager
     typedef QHash<QString, QString> TAliasImageMap;
 
     QDemonScopedRefCounted<QDemonRenderContext> m_Context;
-    QDemonScopedRefCounted<IStringTable> m_StrTable;
     QDemonScopedRefCounted<IInputStreamFactory> m_InputStreamFactory;
     IPerfTimer &m_PerfTimer;
-    volatile qint32 mRefCount;
     TStr m_PathBuilder;
     TImageMap m_ImageMap;
     Mutex m_LoadedImageSetMutex;
@@ -115,33 +113,22 @@ struct SBufferManager : public IBufferManager
     bool m_GPUSupportsDXT;
     static const char *GetPrimitivesDirectory() { return "res//primitives"; }
 
-    SBufferManager(QDemonRenderContext &ctx, IStringTable &strTable,
+    SBufferManager(QDemonRenderContext &ctx,
                    IInputStreamFactory &inInputStreamFactory, IPerfTimer &inTimer)
         : m_Context(ctx)
         , m_StrTable(strTable)
         , m_InputStreamFactory(inInputStreamFactory)
         , m_PerfTimer(inTimer)
-        , mRefCount(0)
-        , m_PathBuilder(ForwardingAllocator(ctx.GetAllocator(), "SBufferManager::m_PathBuilder"))
-        , m_ImageMap(ctx.GetAllocator(), "SBufferManager::m_ImageMap")
-        , m_LoadedImageSetMutex(ctx.GetAllocator())
-        , m_LoadedImageSet(
-              ForwardingAllocator(ctx.GetAllocator(), "SBufferManager::m_LoadedImageSet"))
-        , m_AliasImageMap(ctx.GetAllocator(), "SBufferManager::m_AliasImageMap")
-        , m_MeshMap(ctx.GetAllocator(), "SBufferManager::m_MeshMap")
-        , m_EntryBuffer(ctx.GetAllocator(), "SBufferManager::m_EntryBuffer")
         , m_GPUSupportsDXT(ctx.AreDXTImagesSupported())
     {
     }
     virtual ~SBufferManager() { Clear(); }
 
-    QDEMON_IMPLEMENT_REF_COUNT_ADDREF_RELEASE(m_Context->GetAllocator())
-
     QString CombineBaseAndRelative(const char *inBase,
                                              const char *inRelative) override
     {
         CFileTools::CombineBaseAndRelative(inBase, inRelative, m_PathBuilder);
-        return m_StrTable->RegisterStr(m_PathBuilder.c_str());
+        return QString::fromLocal8Bit(m_PathBuilder.c_str());
     }
 
     void SetImageHasTransparency(QString inImagePath, bool inHasTransparency) override
@@ -189,7 +176,7 @@ struct SBufferManager : public IBufferManager
         // If the image is loaded then we ignore this call in some cases.
         if (inIgnoreIfLoaded && IsImageLoaded(inSourcePath))
             return false;
-        m_AliasImageMap.insert(eastl::make_pair(inSourcePath, inAliasPath));
+        m_AliasImageMap.insert(inSourcePath, inAliasPath);
         return true;
     }
 
@@ -397,19 +384,18 @@ struct SBufferManager : public IBufferManager
 
     qt3dsimp::SMultiLoadResult LoadPrimitive(const char *inRelativePath)
     {
-        QString theName(m_StrTable->RegisterStr(inRelativePath));
+        QString theName(QString::fromLocal8Bit(inRelativePath));
         if (m_PrimitiveNames[0].m_PrimitiveName.IsValid() == false) {
-            IStringTable &strTable(m_Context->GetStringTable());
-            m_PrimitiveNames[0].m_PrimitiveName = strTable.RegisterStr("#Rectangle");
-            m_PrimitiveNames[0].m_FileName = strTable.RegisterStr("Rectangle.mesh");
-            m_PrimitiveNames[1].m_PrimitiveName = strTable.RegisterStr("#Sphere");
-            m_PrimitiveNames[1].m_FileName = strTable.RegisterStr("Sphere.mesh");
-            m_PrimitiveNames[2].m_PrimitiveName = strTable.RegisterStr("#Cube");
-            m_PrimitiveNames[2].m_FileName = strTable.RegisterStr("Cube.mesh");
-            m_PrimitiveNames[3].m_PrimitiveName = strTable.RegisterStr("#Cone");
-            m_PrimitiveNames[3].m_FileName = strTable.RegisterStr("Cone.mesh");
-            m_PrimitiveNames[4].m_PrimitiveName = strTable.RegisterStr("#Cylinder");
-            m_PrimitiveNames[4].m_FileName = strTable.RegisterStr("Cylinder.mesh");
+            m_PrimitiveNames[0].m_PrimitiveName = QStringLiteral("#Rectangle");
+            m_PrimitiveNames[0].m_FileName = QStringLiteral("Rectangle.mesh");
+            m_PrimitiveNames[1].m_PrimitiveName = QStringLiteral("#Sphere");
+            m_PrimitiveNames[1].m_FileName = QStringLiteral("Sphere.mesh");
+            m_PrimitiveNames[2].m_PrimitiveName = QStringLiteral("#Cube");
+            m_PrimitiveNames[2].m_FileName = QStringLiteral("Cube.mesh");
+            m_PrimitiveNames[3].m_PrimitiveName = QStringLiteral("#Cone");
+            m_PrimitiveNames[3].m_FileName = QStringLiteral("Cone.mesh");
+            m_PrimitiveNames[4].m_PrimitiveName = QStringLiteral("#Cylinder");
+            m_PrimitiveNames[4].m_FileName = QStringLiteral("Cylinder.mesh");
         }
         for (size_t idx = 0; idx < 5; ++idx) {
             if (m_PrimitiveNames[idx].m_PrimitiveName == theName) {
@@ -491,7 +477,7 @@ struct SBufferManager : public IBufferManager
             }
 
             if (theResult.m_Mesh) {
-                SRenderMesh *theNewMesh = QDEMON_NEW(m_Context->GetAllocator(), SRenderMesh)(
+                SRenderMesh *theNewMesh = new SRenderMesh(
                             QDemonRenderDrawMode::Triangles,
                             QDemonRenderWinding::CounterClockwise, theResult.m_Id,
                             m_Context->GetAllocator());
@@ -613,24 +599,24 @@ struct SBufferManager : public IBufferManager
                     theSubset.m_Count = source.m_Count;
                     theSubset.m_Offset = source.m_Offset;
                     theSubset.m_Joints = theNewMesh->m_Joints;
-                    theSubset.m_Name = m_StrTable->RegisterStr(source.m_Name.begin(baseAddress));
-                    theVertexBuffer->addRef();
+                    theSubset.m_Name = QString::fromLocal8Bit(source.m_Name.begin(baseAddress));
+                    //theVertexBuffer->addRef();
                     theSubset.m_VertexBuffer = theVertexBuffer;
                     if (thePosVertexBuffer) {
-                        thePosVertexBuffer->addRef();
+                        //thePosVertexBuffer->addRef();
                         theSubset.m_PosVertexBuffer = thePosVertexBuffer;
                     }
                     if (theIndexBuffer) {
-                        theIndexBuffer->addRef();
+                        //theIndexBuffer->addRef();
                         theSubset.m_IndexBuffer = theIndexBuffer;
                     }
                     theSubset.m_InputAssembler = theInputAssembler;
                     theSubset.m_InputAssemblerDepth = theInputAssemblerDepth;
                     theSubset.m_InputAssemblerPoints = theInputAssemblerPoints;
                     theSubset.m_PrimitiveType = theResult.m_Mesh->m_DrawMode;
-                    theInputAssembler->addRef();
-                    theInputAssemblerDepth->addRef();
-                    theSubset.m_InputAssemblerPoints->addRef();
+                    //theInputAssembler->addRef();
+                    //theInputAssemblerDepth->addRef();
+                    //theSubset.m_InputAssemblerPoints->addRef();
                     theNewMesh->m_Subsets.push_back(theSubset);
                 }
                 // If we want to, we can an in a quite stupid way break up modes into sub-subsets.
@@ -716,7 +702,7 @@ struct SBufferManager : public IBufferManager
                             quint32 inVertStride, quint32 *inIndexData, quint32 inIndexCount,
                             QDemonBounds3 inBounds) override
     {
-        QString sourcePath = m_StrTable->RegisterStr(inSourcePath);
+        QString sourcePath = QString::fromLocal8Bit(inSourcePath);
 
         // QPair<QString, SRenderMesh*> thePair(sourcePath, (SRenderMesh*)nullptr);
         QPair<TMeshMap::iterator, bool> theMesh;
@@ -728,7 +714,7 @@ struct SBufferManager : public IBufferManager
         }
 
         if (theMesh.second == true) {
-            SRenderMesh *theNewMesh = QDEMON_NEW(m_Context->GetAllocator(), SRenderMesh)(
+            SRenderMesh *theNewMesh = new SRenderMesh(
                         QDemonRenderDrawMode::Triangles,
                         QDemonRenderWinding::CounterClockwise, 0, m_Context->GetAllocator());
 
@@ -818,20 +804,20 @@ struct SBufferManager : public IBufferManager
             theSubset.m_Count = inIndexCount;
             theSubset.m_Offset = 0;
             theSubset.m_Joints = theNewMesh->m_Joints;
-            theSubset.m_Name = m_StrTable->RegisterStr(subName.c_str());
-            theVertexBuffer->addRef();
+            theSubset.m_Name = QString::fromLocal8Bit(subName.c_str());
+            //theVertexBuffer->addRef();
             theSubset.m_VertexBuffer = theVertexBuffer;
             theSubset.m_PosVertexBuffer = nullptr;
-            if (theIndexBuffer)
-                theIndexBuffer->addRef();
+            // if (theIndexBuffer)
+            //     theIndexBuffer->addRef();
             theSubset.m_IndexBuffer = theIndexBuffer;
             theSubset.m_InputAssembler = theInputAssembler;
             theSubset.m_InputAssemblerDepth = theInputAssembler;
             theSubset.m_InputAssemblerPoints = theInputAssembler;
             theSubset.m_PrimitiveType = QDemonRenderDrawMode::Triangles;
-            theSubset.m_InputAssembler->addRef();
-            theSubset.m_InputAssemblerDepth->addRef();
-            theSubset.m_InputAssemblerPoints->addRef();
+            //theSubset.m_InputAssembler->addRef();
+            //theSubset.m_InputAssemblerDepth->addRef();
+            //theSubset.m_InputAssemblerPoints->addRef();
             theNewMesh->m_Subsets.push_back(theSubset);
         }
 
@@ -842,22 +828,22 @@ struct SBufferManager : public IBufferManager
     {
         for (quint32 subsetIdx = 0, subsetEnd = inMesh.m_Subsets.size(); subsetIdx < subsetEnd;
              ++subsetIdx) {
-            inMesh.m_Subsets[subsetIdx].m_VertexBuffer->release();
-            if (inMesh.m_Subsets[subsetIdx].m_PosVertexBuffer) // can be nullptr
-                inMesh.m_Subsets[subsetIdx].m_PosVertexBuffer->release();
-            if (inMesh.m_Subsets[subsetIdx].m_IndexBuffer) // can be nullptr
-                inMesh.m_Subsets[subsetIdx].m_IndexBuffer->release();
-            inMesh.m_Subsets[subsetIdx].m_InputAssembler->release();
-            inMesh.m_Subsets[subsetIdx].m_InputAssemblerDepth->release();
-            if (inMesh.m_Subsets[subsetIdx].m_InputAssemblerPoints)
-                inMesh.m_Subsets[subsetIdx].m_InputAssemblerPoints->release();
+            //inMesh.m_Subsets[subsetIdx].m_VertexBuffer->release();
+            // if (inMesh.m_Subsets[subsetIdx].m_PosVertexBuffer) // can be nullptr
+            //     inMesh.m_Subsets[subsetIdx].m_PosVertexBuffer->release();
+            // if (inMesh.m_Subsets[subsetIdx].m_IndexBuffer) // can be nullptr
+            //     inMesh.m_Subsets[subsetIdx].m_IndexBuffer->release();
+            // inMesh.m_Subsets[subsetIdx].m_InputAssembler->release();
+            // inMesh.m_Subsets[subsetIdx].m_InputAssemblerDepth->release();
+            // if (inMesh.m_Subsets[subsetIdx].m_InputAssemblerPoints)
+            //     inMesh.m_Subsets[subsetIdx].m_InputAssemblerPoints->release();
         }
-        NVDelete(m_Context->GetAllocator(), &inMesh);
+        delete &inMesh;
     }
     void ReleaseTexture(SImageEntry &inEntry)
     {
-        if (inEntry.m_Texture)
-            inEntry.m_Texture->release();
+        // if (inEntry.m_Texture)
+        //     inEntry.m_Texture->release();
     }
     void Clear() override
     {
@@ -904,15 +890,13 @@ struct SBufferManager : public IBufferManager
             }
         }
     }
-    IStringTable &GetStringTable() override { return *m_StrTable; }
 };
 }
 
-IBufferManager &IBufferManager::Create(QDemonRenderContext &inRenderContext, IStringTable &inStrTable,
+IBufferManager &IBufferManager::Create(QDemonRenderContext &inRenderContext,
                                        IInputStreamFactory &inFactory, IPerfTimer &inPerfTimer)
 {
-    return *QDEMON_NEW(inRenderContext.GetAllocator(), SBufferManager)(inRenderContext, inStrTable,
-                                                                       inFactory, inPerfTimer);
+    return *new SBufferManager(inRenderContext, inFactory, inPerfTimer);
 }
 
 QT_END_NAMESPACE

@@ -94,11 +94,8 @@ struct Qt3DSQtTextRenderer : public ITextRenderer
     typedef eastl::set<TStrType> TStringSet;
     typedef QHash<QString, FontInfo> TFontInfoHash;
 
-    NVFoundationBase &m_foundation;
-    QDemonScopedRefCounted<IStringTable> m_stringTable;
     QDemonScopedRefCounted<QDemonRenderContext> m_renderContext;
     QDemonScopedRefCounted<IPerfTimer> m_perfTimer;
-    volatile qint32 mRefCount;
     QVector<SRendererFontEntry> m_installedFonts;
 
     Sync m_PreloadSync;
@@ -116,11 +113,8 @@ struct Qt3DSQtTextRenderer : public ITextRenderer
     QStringList m_nameFilters;
     qreal m_pixelRatio;
 
-    Qt3DSQtTextRenderer(NVFoundationBase &inFoundation, IStringTable &inStrTable)
-        : m_foundation(inFoundation)
-        , m_stringTable(inStrTable)
-        , mRefCount(0)
-        , m_installedFonts(inFoundation.getAllocator(), "Qt3DSQtTextRenderer::m_installedFonts")
+    Qt3DSQtTextRenderer()
+        : m_installedFonts(inFoundation.getAllocator(), "Qt3DSQtTextRenderer::m_installedFonts")
         , m_PreloadSync(inFoundation.getAllocator())
         , m_systemFontsInitialized(false)
         , m_projectFontsInitialized(false)
@@ -154,9 +148,10 @@ struct Qt3DSQtTextRenderer : public ITextRenderer
         return QString::fromUtf8(str);
     }
 
+    // ### Not needed anymore
     QString QStringToRegisteredString(const QString &str)
     {
-        return m_stringTable->RegisterStr(str.toUtf8().constData());
+        return str;
     }
 
     void unregisterProjectFonts()
@@ -237,8 +232,6 @@ struct Qt3DSQtTextRenderer : public ITextRenderer
         unregisterProjectFonts();
         m_projectFontDirs.clear();
     }
-
-    QDEMON_IMPLEMENT_REF_COUNT_ADDREF_RELEASE_OVERRIDE(m_foundation.getAllocator())
 
     QPair<TStrType, bool> AddFontDirectory(const TStrType &inDirectory, TStringSet &inDirSet)
     {
@@ -359,7 +352,7 @@ struct Qt3DSQtTextRenderer : public ITextRenderer
 
     QDemonOption<QString> GetFontNameForFont(const char *inFontname) override
     {
-        return GetFontNameForFont(m_stringTable->RegisterStr(inFontname));
+        return GetFontNameForFont(QString::fromLocal8Bit(inFontname);
     }
 
     ITextRenderer &GetTextRenderer(QDemonRenderContext &inRenderContext) override
@@ -630,10 +623,9 @@ struct Qt3DSQtTextRenderer : public ITextRenderer
 };
 }
 
-ITextRendererCore &ITextRendererCore::CreateQtTextRenderer(NVFoundationBase &inFnd,
-                                                           IStringTable &inStrTable)
+ITextRendererCore &ITextRendererCore::CreateQtTextRenderer()
 {
-    return *QDEMON_NEW(inFnd.getAllocator(), Qt3DSQtTextRenderer)(inFnd, inStrTable);
+    return *new Qt3DSQtTextRenderer();
 }
 
 QT_END_NAMESPACE

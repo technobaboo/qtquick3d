@@ -31,14 +31,13 @@
 #ifndef QDEMON_RENDER_RESOURCE_MANAGER_H
 #define QDEMON_RENDER_RESOURCE_MANAGER_H
 
-#include <QtDemon/qdemonrefcounted.h>
 #include <QtDemonRender/qdemonrenderbasetypes.h>
 
 QT_BEGIN_NAMESPACE
 /**
      *	Implements simple pooling of render resources
      */
-class IResourceManager : public QDemonRefCounted
+class IResourceManager
 {
 protected:
     virtual ~IResourceManager() {}

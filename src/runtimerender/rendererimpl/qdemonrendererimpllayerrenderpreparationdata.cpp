@@ -135,8 +135,7 @@ SLayerRenderPreparationData::SLayerRenderPreparationData(SLayer &inLayer,
                         "SLayerRenderPreparationData::m_LightDirections")
     , m_ModelContexts(inRenderer.GetContext().GetAllocator(),
                       "SLayerRenderPreparationData::m_ModelContexts")
-    , m_CGLightingFeatureName(
-          inRenderer.GetContext().GetStringTable().RegisterStr("QDEMON_ENABLE_CG_LIGHTING"))
+    , m_CGLightingFeatureName(QStringLiterial("QDEMON_ENABLE_CG_LIGHTING"))
     , m_FeaturesDirty(true)
     , m_FeatureSetHash(0)
     , m_TooManyLightsError(false)
@@ -175,7 +174,7 @@ void SLayerRenderPreparationData::SetShaderFeature(QString theStr, bool inValue)
 
 void SLayerRenderPreparationData::SetShaderFeature(const char *inName, bool inValue)
 {
-    QString theStr(m_Renderer.GetQt3DSContext().GetStringTable().RegisterStr(inName));
+    QString theStr(QString::fromLocal8Bit(inName));
     SetShaderFeature(theStr, inValue);
 }
 
@@ -314,8 +313,6 @@ void SLayerRenderPreparationData::AddRenderWidget(IRenderWidget &inWidget)
         m_IRenderWidgets.push_back(&inWidget);
 }
 
-#define RENDER_FRAME_NEW(type) QDEMON_NEW(m_Renderer.GetPerFrameAllocator(), type)
-
 #define QDEMON_RENDER_MINIMUM_RENDER_OPACITY .01f
 
 SShaderDefaultMaterialKey
@@ -400,7 +397,7 @@ bool SLayerRenderPreparationData::PrepareTextForRender(
         if (inText.m_PathFontDetails)
             ioFlags.SetRequiresStencilBuffer(true);
 
-        STextRenderable *theRenderable = RENDER_FRAME_NEW(STextRenderable)(
+        STextRenderable *theRenderable = new STextRenderable(
                     theFlags, inText.GetGlobalPos(), m_Renderer, inText, inText.m_Bounds, theMVP,
                     inViewProjection, *inText.m_TextTexture, theTextOffset, theTextScale);
         m_TransparentObjects.push_back(theRenderable);
@@ -432,7 +429,7 @@ SLayerRenderPreparationData::ResolveReferenceMaterial(SGraphObject *inMaterial)
     if (badIdea) {
         theMaterialObject = nullptr;
     }
-    return eastl::make_pair(subsetDirty, theMaterialObject);
+    return QPair<bool, SGraphObject *>(subsetDirty, theMaterialObject);
 }
 
 bool SLayerRenderPreparationData::PreparePathForRender(
@@ -507,7 +504,7 @@ bool SLayerRenderPreparationData::PreparePathForRender(
                     isStroke = false;
             }
 
-            SPathRenderable *theRenderable = RENDER_FRAME_NEW(SPathRenderable)(
+            SPathRenderable *theRenderable = new SPathRenderable(
                         theFlags, inPath.GetGlobalPos(), m_Renderer, inPath.m_GlobalTransform,
                         theBounds, inPath, theMVP, theNormalMatrix, *theMaterial, prepResult.m_Opacity,
                         prepResult.m_MaterialKey, isStroke);
@@ -550,7 +547,7 @@ bool SLayerRenderPreparationData::PreparePathForRender(
                     isStroke = false;
             }
 
-            SPathRenderable *theRenderable = RENDER_FRAME_NEW(SPathRenderable)(
+            SPathRenderable *theRenderable = new SPathRenderable(
                         theFlags, inPath.GetGlobalPos(), m_Renderer, inPath.m_GlobalTransform,
                         theBounds, inPath, theMVP, theNormalMatrix, *theMaterial, prepResult.m_Opacity,
                         prepResult.m_MaterialKey, isStroke);
@@ -605,7 +602,7 @@ void SLayerRenderPreparationData::PrepareImageForRender(
         // inImage.m_TextureData.m_Texture->SetMinFilter( QDemonRenderTextureMinifyingOp::Linear );
         // inImage.m_TextureData.m_Texture->SetMagFilter( QDemonRenderTextureMagnifyingOp::Linear );
 
-        SRenderableImage *theImage = RENDER_FRAME_NEW(SRenderableImage)(inMapType, inImage);
+        SRenderableImage *theImage = new SRenderableImage(inMapType, inImage);
         SShaderKeyImageMap &theKeyProp =
                 m_Renderer.DefaultMaterialShaderKeyProperties().m_ImageMaps[inImageIndex];
 
@@ -833,7 +830,7 @@ bool SLayerRenderPreparationData::PrepareModelForRender(
 
     SGraphObject *theSourceMaterialObject = inModel.m_FirstMaterial;
     SModelContext &theModelContext =
-            *RENDER_FRAME_NEW(SModelContext)(inModel, inViewProjection);
+            *new SModelContext(inModel, inViewProjection);
     m_ModelContexts.push_back(&theModelContext);
 
     bool subsetDirty = false;
@@ -936,7 +933,7 @@ bool SLayerRenderPreparationData::PrepareModelForRender(
                     Q_ASSERT(false);
                 }
 
-                theRenderableObject = RENDER_FRAME_NEW(SSubsetRenderable)(
+                theRenderableObject = new SSubsetRenderable(
                             renderableFlags, theModelCenter, m_Renderer, theSubset, theMaterial,
                             theModelContext, subsetOpacity, firstImage, theGeneratedKey, boneGlobals);
                 subsetDirty = subsetDirty || renderableFlags.IsDirty();
@@ -974,7 +971,7 @@ bool SLayerRenderPreparationData::PrepareModelForRender(
                     m_Renderer.PrepareImageForIbl(*theMaterial.m_IblProbe);
                 }
 
-                theRenderableObject = RENDER_FRAME_NEW(SCustomMaterialRenderable)(
+                theRenderableObject = new SCustomMaterialRenderable(
                             renderableFlags, theModelCenter, m_Renderer, theSubset, theMaterial,
                             theModelContext, subsetOpacity, firstImage, theGeneratedKey);
             }
@@ -1282,7 +1279,7 @@ SLayerRenderPreparationData::PrepareForRender(const QSize &inViewportDimensions)
                             }
                         }
                         TLightToNodeMap::iterator iter =
-                                m_LightToNodeMap.insert(eastl::make_pair(theLight, (SNode *)nullptr))
+                                m_LightToNodeMap.insert(theLight, (SNode *)nullptr)
                                 .first;
                         SNode *oldLightScope = iter->second;
                         SNode *newLightScope = theLight->m_Scope;

@@ -31,7 +31,6 @@
 #ifndef QDEMON_RENDER_TEXTURE_ATLAS_H
 #define QDEMON_RENDER_TEXTURE_ATLAS_H
 
-#include <QtDemon/qdemonrefcounted.h>
 #include <QtDemonRender/qdemonrenderbasetypes.h>
 
 QT_BEGIN_NAMESPACE
@@ -74,7 +73,7 @@ typedef QPair<STextureAtlasRect, QDemonDataRef<quint8>> TTextureAtlasEntryAndBuf
 /**
      *	Abstract class of a texture atlas representation
     */
-class ITextureAtlas : public QDemonRefCounted
+class ITextureAtlas
 {
 protected:
     virtual ~ITextureAtlas() {}
@@ -90,9 +89,7 @@ public:
                                             QDemonConstDataRef<quint8> bufferData) = 0;
     virtual void RelaseEntries() = 0;
 
-    static ITextureAtlas &CreateTextureAtlas(NVFoundationBase &inFnd,
-                                             QDemonRenderContext &inRenderContext, qint32 width,
-                                             qint32 height);
+    static ITextureAtlas &CreateTextureAtlas(QDemonRenderContext &inRenderContext, qint32 width, qint32 height);
 };
 QT_END_NAMESPACE
 

@@ -58,9 +58,8 @@ struct SShaderCodeGeneratorBase
         EnvMapReflection,
         UVCoords,
     };
-    IStringTable &m_StringTable;
-    nvhash_set<quint32> m_Codes; // set of enums we have included.
-    nvhash_set<QString> m_Includes;
+    QSet<quint32> m_Codes; // set of enums we have included.
+    QSet<QString> m_Includes;
     TStrTableStrMap m_Uniforms;
     TStrTableStrMap m_ConstantBuffers;
     TConstantBufferParamArray m_ConstantBufferParams;
@@ -69,8 +68,7 @@ struct SShaderCodeGeneratorBase
     TStrType m_CodeBuilder;
     QDemonRenderContextType m_RenderContextType;
 
-    SShaderCodeGeneratorBase(IStringTable &inStringTable, NVAllocatorCallback &alloc,
-                             QDemonRenderContextType ctxType);
+    SShaderCodeGeneratorBase(QDemonRenderContextType ctxType);
     virtual TStrTableStrMap &GetVaryings() = 0;
     void Begin();
     void Append(const char *data);
@@ -114,8 +112,7 @@ protected:
 struct SShaderVertexCodeGenerator : public SShaderCodeGeneratorBase
 {
     TStrTableStrMap m_Varyings;
-    SShaderVertexCodeGenerator(IStringTable &inStringTable, NVAllocatorCallback &alloc,
-                               QDemonRenderContextType ctxType);
+    SShaderVertexCodeGenerator(QDemonRenderContextType ctxType);
     TStrTableStrMap &GetVaryings() override;
 };
 
@@ -124,7 +121,6 @@ struct SShaderTessControlCodeGenerator : public SShaderCodeGeneratorBase
     SShaderVertexCodeGenerator &m_VertGenerator;
     TStrTableStrMap m_Varyings;
     SShaderTessControlCodeGenerator(SShaderVertexCodeGenerator &vert,
-                                    NVAllocatorCallback &alloc,
                                     QDemonRenderContextType ctxType);
 
     void AddShaderItemMap(const char *itemType, const TStrTableStrMap &itemMap) override;
@@ -137,7 +133,6 @@ struct SShaderTessEvalCodeGenerator : public SShaderCodeGeneratorBase
     bool m_hasGeometryStage;
 
     SShaderTessEvalCodeGenerator(SShaderTessControlCodeGenerator &tc,
-                                 NVAllocatorCallback &alloc,
                                  QDemonRenderContextType ctxType);
 
     void AddShaderItemMap(const char *itemType, const TStrTableStrMap &itemMap) override;
@@ -150,7 +145,7 @@ struct SShaderGeometryCodeGenerator : public SShaderCodeGeneratorBase
     SShaderVertexCodeGenerator &m_VertGenerator;
     bool m_hasTessellationStage;
 
-    SShaderGeometryCodeGenerator(SShaderVertexCodeGenerator &vert, NVAllocatorCallback &alloc,
+    SShaderGeometryCodeGenerator(SShaderVertexCodeGenerator &vert,
                                  QDemonRenderContextType ctxType);
 
     void AddShaderItemMap(const char *itemType, const TStrTableStrMap &itemMap) override;
@@ -161,7 +156,7 @@ struct SShaderGeometryCodeGenerator : public SShaderCodeGeneratorBase
 struct SShaderFragmentCodeGenerator : public SShaderCodeGeneratorBase
 {
     SShaderVertexCodeGenerator &m_VertGenerator;
-    SShaderFragmentCodeGenerator(SShaderVertexCodeGenerator &vert, NVAllocatorCallback &alloc,
+    SShaderFragmentCodeGenerator(SShaderVertexCodeGenerator &vert,
                                  QDemonRenderContextType ctxType);
     TStrTableStrMap &GetVaryings() override;
 };

@@ -31,7 +31,6 @@
 #ifndef QDEMON_RENDER_TEXT_TEXTURE_CACHE_H
 #define QDEMON_RENDER_TEXT_TEXTURE_CACHE_H
 
-#include <QtDemon/qdemonrefcounted.h>
 #include <QtDemonRuntimeRender/qdemonrendertext.h>
 
 QT_BEGIN_NAMESPACE
@@ -46,7 +45,7 @@ TTextTextureDetailsAndTexture;
 typedef QPair<TPathFontSpecAndPathObject, TTextTextureDetailsAndTexture>
 TTPathObjectAndTexture;
 
-class ITextTextureCache : public QDemonRefCounted
+class ITextTextureCache
 {
 protected:
     virtual ~ITextTextureCache() {}
@@ -63,8 +62,7 @@ public:
     // frame.
     virtual void EndFrame() = 0;
 
-    static ITextTextureCache &CreateTextureCache(NVFoundationBase &inFnd,
-                                                 ITextRenderer &inTextRenderer,
+    static ITextTextureCache &CreateTextureCache(ITextRenderer &inTextRenderer,
                                                  QDemonRenderContext &inRenderContext);
 };
 QT_END_NAMESPACE

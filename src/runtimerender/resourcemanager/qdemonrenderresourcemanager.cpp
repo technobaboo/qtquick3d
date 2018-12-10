@@ -51,23 +51,11 @@ struct SResourceManager : public IResourceManager
     QVector<QDemonRenderTextureCube *> m_FreeTexCubes;
     QVector<QDemonRenderImage2D *> m_FreeImages;
 
-    volatile qint32 mRefCount;
-
     SResourceManager(QDemonRenderContext &ctx)
         : m_RenderContext(ctx)
-        , m_AllocatedObjects(ctx.GetAllocator(), "SResourceManager::m_FrameBuffers")
-        , m_FreeFrameBuffers(ctx.GetAllocator(), "SResourceManager::m_FreeFrameBuffers")
-        , m_FreeRenderBuffers(ctx.GetAllocator(), "SResourceManager::m_FreeRenderBuffers")
-        , m_FreeTextures(ctx.GetAllocator(), "SResourceManager::m_FreeTextures")
-        , m_FreeTexArrays(ctx.GetAllocator(), "SResourceManager::m_FreeTexArrays")
-        , m_FreeTexCubes(ctx.GetAllocator(), "SResourceManager::m_FreeTexCubes")
-        , m_FreeImages(ctx.GetAllocator(), "SResourceManager::m_FreeImages")
-        , mRefCount(0)
     {
     }
     virtual ~SResourceManager() {}
-
-    QDEMON_IMPLEMENT_REF_COUNT_ADDREF_RELEASE_OVERRIDE(m_RenderContext->GetAllocator())
 
     QDemonRenderFrameBuffer *AllocateFrameBuffer() override
     {
@@ -429,7 +417,7 @@ struct SResourceManager : public IResourceManager
 
 IResourceManager &IResourceManager::CreateResourceManager(QDemonRenderContext &inContext)
 {
-    return *QDEMON_NEW(inContext.GetAllocator(), SResourceManager)(inContext);
+    return *new SResourceManager(inContext);
 }
 
 QT_END_NAMESPACE

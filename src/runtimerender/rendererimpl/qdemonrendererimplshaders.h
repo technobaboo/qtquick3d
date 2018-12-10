@@ -84,9 +84,12 @@ struct SShaderGeneratorGeneratedShader
         , m_ViewportMatrix("viewport_matrix", inShader)
         , m_Tessellation(inShader)
     {
-        m_Shader.addRef();
+        //m_Shader.addRef();
     }
-    ~SShaderGeneratorGeneratedShader() { m_Shader.release(); }
+    ~SShaderGeneratorGeneratedShader() 
+    { 
+        //m_Shader.release(); 
+    }
     static quint32 GetLayerIndex(const SShaderGeneratorGeneratedShader &inShader)
     {
         return inShader.m_LayerSetIndex;
@@ -99,30 +102,22 @@ struct SShaderGeneratorGeneratedShader
 
 struct SDefaultMaterialRenderableDepthShader
 {
-    NVAllocatorCallback &m_Allocator;
     QDemonRenderShaderProgram &m_Shader;
     NVRenderCachedShaderProperty<QMatrix4x4> m_MVP;
 
-    qint32 m_RefCount;
     SDefaultMaterialRenderableDepthShader(QDemonRenderShaderProgram &inShader,
                                           QDemonRenderContext &inContext)
-        : m_Allocator(inContext.GetAllocator())
-        , m_Shader(inShader)
+        : m_Shader(inShader)
         , m_MVP("model_view_projection", inShader)
         , m_RefCount(0)
     {
-        m_Shader.addRef();
+        //m_Shader.addRef();
     }
 
-    ~SDefaultMaterialRenderableDepthShader() { m_Shader.release(); }
-
-    void addRef() { ++m_RefCount; }
-    void release()
-    {
-        --m_RefCount;
-        if (m_RefCount <= 0)
-            NVDelete(m_Allocator, this);
+    ~SDefaultMaterialRenderableDepthShader() {
+        //  m_Shader.release();
     }
+
 };
 
 /**
@@ -146,7 +141,6 @@ struct SShaderTextureProperties
 
 struct SRenderableDepthPrepassShader
 {
-    NVAllocatorCallback &m_Allocator;
     QDemonRenderShaderProgram &m_Shader;
     NVRenderCachedShaderProperty<QMatrix4x4> m_MVP;
     NVRenderCachedShaderProperty<QMatrix4x4> m_GlobalTransform;
@@ -158,13 +152,11 @@ struct SRenderableDepthPrepassShader
     NVRenderCachedShaderProperty<QVector3D> m_CameraDirection;
     // NVRenderCachedShaderProperty<QMatrix4x4>	m_ShadowMV[6];
 
-    qint32 m_RefCount;
     // Cache the tessellation property name lookups
     SShaderTessellationProperties m_Tessellation;
 
     SRenderableDepthPrepassShader(QDemonRenderShaderProgram &inShader, QDemonRenderContext &inContext)
-        : m_Allocator(inContext.GetAllocator())
-        , m_Shader(inShader)
+        : m_Shader(inShader)
         , m_MVP("model_view_projection", inShader)
         , m_GlobalTransform("model_matrix", inShader)
         , m_Projection("projection", inShader)
@@ -174,7 +166,6 @@ struct SRenderableDepthPrepassShader
                               "displacementMap_rot", inShader)
         , m_CameraProperties("camera_properties", inShader)
         , m_CameraDirection("camera_direction", inShader)
-        , m_RefCount(0)
         , m_Tessellation(inShader)
     {
         /*
@@ -191,23 +182,18 @@ struct SRenderableDepthPrepassShader
             m_ShadowMV[5].m_Shader = &inShader;
             m_ShadowMV[5].m_Constant = inShader.GetShaderConstant( "shadow_mv5" );
             */
-        m_Shader.addRef();
+        //m_Shader.addRef();
     }
 
-    ~SRenderableDepthPrepassShader() { m_Shader.release(); }
-
-    void addRef() { ++m_RefCount; }
-    void release()
-    {
-        --m_RefCount;
-        if (m_RefCount <= 0)
-            NVDelete(m_Allocator, this);
+    ~SRenderableDepthPrepassShader() 
+    { 
+    //    m_Shader.release();
     }
+
 };
 
 struct SDefaultAoPassShader
 {
-    NVAllocatorCallback &m_Allocator;
     QDemonRenderShaderProgram &m_Shader;
     NVRenderCachedShaderProperty<QMatrix4x4> m_ViewMatrix;
     NVRenderCachedShaderProperty<QVector2D> m_CameraProperties;
@@ -231,16 +217,11 @@ struct SDefaultAoPassShader
         , m_AoShadowParams("cbAoShadow", inShader)
         , m_RefCount(0)
     {
-        m_Shader.addRef();
+        //m_Shader.addRef();
     }
-    ~SDefaultAoPassShader() { m_Shader.release(); }
-
-    void addRef() { ++m_RefCount; }
-    void release()
+    ~SDefaultAoPassShader() 
     {
-        --m_RefCount;
-        if (m_RefCount <= 0)
-            NVDelete(m_Allocator, this);
+        //m_Shader.release(); 
     }
 };
 
@@ -275,13 +256,14 @@ struct STextShader
         , m_CameraProperties("camera_properties", shader)
         , m_VertexOffsets("vertex_offsets", shader)
     {
-        if (!pipeline)
-            m_Shader.addRef();
+        if (!pipeline) {
+            //m_Shader.addRef();
+        }
     }
     ~STextShader()
     {
-        if (!m_ProgramPipeline.mPtr)
-            m_Shader.release();
+        // if (!m_ProgramPipeline.mPtr)
+        //     m_Shader.release();
     }
     void Render(QDemonRenderTexture2D &inTexture, const STextScaleAndOffset &inScaleAndOffset,
                 const QVector4D &inTextColor, const QMatrix4x4 &inMVP, const QVector2D &inCameraVec,
@@ -306,7 +288,6 @@ struct STextShader
 
 struct STextDepthShader
 {
-    NVAllocatorCallback &m_Allocator;
     QDemonRenderShaderProgram &m_Shader;
     NVRenderCachedShaderProperty<QMatrix4x4> m_MVP;
     // Dimensions and offsetting of the image.
@@ -315,29 +296,22 @@ struct STextDepthShader
     NVRenderCachedShaderProperty<QVector2D> m_CameraProperties;
     NVRenderCachedShaderProperty<QDemonRenderTexture2D *> m_Sampler;
     QDemonRenderInputAssembler &m_QuadInputAssembler;
-    qint32 m_RefCount;
 
-    STextDepthShader(NVAllocatorCallback &alloc, QDemonRenderShaderProgram &prog,
+    STextDepthShader(QDemonRenderShaderProgram &prog,
                      QDemonRenderInputAssembler &assembler)
-        : m_Allocator(alloc)
-        , m_Shader(prog)
+        : m_Shader(prog)
         , m_MVP("model_view_projection", prog)
         , m_Dimensions("text_dimensions", prog)
         , m_TextDimensions("text_textdimensions", prog)
         , m_CameraProperties("camera_properties", prog)
         , m_Sampler("text_image", prog)
         , m_QuadInputAssembler(assembler)
-        , m_RefCount(0)
     {
-        m_Shader.addRef();
+        //m_Shader.addRef();
     }
-    ~STextDepthShader() { m_Shader.release(); }
-    void addRef() { ++m_RefCount; }
-    void release()
+    ~STextDepthShader() 
     {
-        --m_RefCount;
-        if (m_RefCount <= 0)
-            NVDelete(m_Allocator, this);
+         /*m_Shader.release();*/
     }
 };
 
@@ -347,16 +321,13 @@ struct SLayerProgAABlendShader
     NVRenderCachedShaderProperty<QDemonRenderTexture2D *> m_AccumSampler;
     NVRenderCachedShaderProperty<QDemonRenderTexture2D *> m_LastFrame;
     NVRenderCachedShaderProperty<QVector2D> m_BlendFactors;
-    volatile qint32 mRefCount;
     SLayerProgAABlendShader(QDemonRenderShaderProgram &inShader)
         : m_Shader(inShader)
         , m_AccumSampler("accumulator", inShader)
         , m_LastFrame("last_frame", inShader)
         , m_BlendFactors("blend_factors", inShader)
-        , mRefCount(0)
     {
     }
-    QDEMON_IMPLEMENT_REF_COUNT_ADDREF_RELEASE(m_Shader->GetRenderContext().GetAllocator())
 };
 
 struct SLayerSceneShader
@@ -369,20 +340,18 @@ struct SLayerSceneShader
     // The fourth member of text color is the opacity
     NVRenderCachedShaderProperty<QDemonRenderTexture2D *> m_Sampler;
 
-    volatile qint32 mRefCount;
-
     SLayerSceneShader(QDemonRenderShaderProgram &inShader)
         : m_Shader(inShader)
         , m_MVP("model_view_projection", inShader)
         , m_Dimensions("layer_dimensions", inShader)
         , m_Sampler("layer_image", inShader)
-        , mRefCount(0)
     {
-        m_Shader.addRef();
+        //m_Shader.addRef();
     }
-    ~SLayerSceneShader() { m_Shader.release(); }
-
-    QDEMON_IMPLEMENT_REF_COUNT_ADDREF_RELEASE(m_Shader.GetRenderContext().GetAllocator())
+    ~SLayerSceneShader() 
+    {
+        //m_Shader.release(); 
+    }
 };
 
 struct SShadowmapPreblurShader
@@ -392,20 +361,18 @@ struct SShadowmapPreblurShader
     NVRenderCachedShaderProperty<QDemonRenderTextureCube *> m_DepthCube;
     NVRenderCachedShaderProperty<QDemonRenderTexture2D *> m_DepthMap;
 
-    volatile qint32 mRefCount;
-
     SShadowmapPreblurShader(QDemonRenderShaderProgram &inShader)
         : m_Shader(inShader)
         , m_CameraProperties("camera_properties", inShader)
         , m_DepthCube("depthCube", inShader)
         , m_DepthMap("depthSrc", inShader)
-        , mRefCount(0)
     {
-        m_Shader.addRef();
+        //m_Shader.addRef();
     }
-    ~SShadowmapPreblurShader() { m_Shader.release(); }
-
-    QDEMON_IMPLEMENT_REF_COUNT_ADDREF_RELEASE(m_Shader.GetRenderContext().GetAllocator())
+    ~SShadowmapPreblurShader() 
+    {
+        //m_Shader.release(); 
+    }
 };
 
 #ifdef ADVANCED_BLEND_SW_FALLBACK
@@ -415,20 +382,17 @@ struct SAdvancedModeBlendShader
     NVRenderCachedShaderProperty<QDemonRenderTexture2D *> m_baseLayer;
     NVRenderCachedShaderProperty<QDemonRenderTexture2D *> m_blendLayer;
 
-    volatile qint32 mRefCount;
-
     SAdvancedModeBlendShader(QDemonRenderShaderProgram &inShader)
         : m_Shader(inShader)
         , m_baseLayer("base_layer", inShader)
         , m_blendLayer("blend_layer", inShader)
-        , mRefCount(0)
     {
-        m_Shader.addRef();
+        //m_Shader.addRef();
     }
-    ~SAdvancedModeBlendShader() { m_Shader.release(); }
-
-    QDEMON_IMPLEMENT_REF_COUNT_ADDREF_RELEASE(m_Shader.GetRenderContext().GetAllocator())
-
+    ~SAdvancedModeBlendShader() 
+    { 
+        //m_Shader.release(); 
+    }
 };
 #endif
 

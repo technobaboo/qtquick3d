@@ -46,8 +46,6 @@ QT_BEGIN_NAMESPACE
 //==============================================================================
 class CImageScaler
 {
-    NVAllocatorCallback &m_Allocator;
-
 public:
     //==============================================================================
     //	Methods
@@ -65,7 +63,7 @@ public:
     // Access
 
 public:
-    CImageScaler(NVAllocatorCallback &inAlloc);
+    CImageScaler();
 
     void Scale(EScaleMethod inScaleMethod, unsigned char *inOldBuffer, unsigned long inOldWidth,
                unsigned long inOldHeight, unsigned char *&outNewBuffer,

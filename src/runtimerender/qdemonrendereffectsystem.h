@@ -31,11 +31,9 @@
 #ifndef QDEMON_RENDER_EFFECT_SYSTEM_H
 #define QDEMON_RENDER_EFFECT_SYSTEM_H
 
-#include <QtDemon/qdemonrefcounted.h>
 #include <QtDemonRender/qdemonrenderbasetypes.h>
-#include <StringTable.h>
-#include <QtGui/QVector2D>
 #include <QtDemonRuntimeRender/qdemonrenderdynamicobjectsystem.h>
+#include <QtGui/QVector2D>
 
 QT_BEGIN_NAMESPACE
 struct SEffect;
@@ -70,7 +68,7 @@ struct SEffectRenderArgument
     }
 };
 
-class IEffectSystemCore : public QDemonRefCounted
+class IEffectSystemCore
 {
 public:
     virtual bool IsEffectRegistered(QString inStr) = 0;
@@ -147,8 +145,7 @@ public:
 
     // An effect instance is just a property bag along with the name of the effect to run.
     // This instance is what is placed into the object graph.
-    virtual SEffect *CreateEffectInstance(QString inEffectName,
-                                          NVAllocatorCallback &inSceneGraphAllocator) = 0;
+    virtual SEffect *CreateEffectInstance(QString inEffectName) = 0;
 
     virtual void Save(SWriteBuffer &ioBuffer,
                       const SStrRemapMap &inRemapMap,

@@ -43,10 +43,9 @@ struct SGraphObjectSerializer
     // This will save the tree as it exists but clients may wish to save out extra objects in
     // addtion
     static void
-    Save(NVFoundationBase &inFoundation, const SPresentation &inPresentation,
+    Save(const SPresentation &inPresentation,
          SWriteBuffer &outSavedData, IDynamicObjectSystem &inDynamicObjectSystem,
          IPathManager &inPathManager, SPtrOffsetMap &outSceneGraphOffsets,
-         IStringTable &inStringTable,
          QDemonDataRef<SGraphObject *> inExtraGraphObjects = QDemonDataRef<SGraphObject *>());
 
     // Loading requires a correctly setup effect system because the effects have arbitrary data
@@ -55,7 +54,6 @@ struct SGraphObjectSerializer
     static SPresentation *Load(QDemonDataRef<quint8> inData, QDemonDataRef<quint8> inStrDataBlock,
                                IDynamicObjectSystemCore &inDynamicObjectSystem,
                                IPathManagerCore &inPathManager,
-                               NVAllocatorCallback &inAllocator,
                                const char *inProjectDirectory);
 };
 QT_END_NAMESPACE

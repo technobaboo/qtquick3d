@@ -45,8 +45,6 @@ public:
     Q3DSQmlRender(IQDemonRenderContext &inRenderContext, const char *asset);
     ~Q3DSQmlRender();
 
-    QDEMON_IMPLEMENT_REF_COUNT_ADDREF_RELEASE_OVERRIDE(m_RenderContext.GetAllocator())
-
     QString GetOffscreenRendererType() override;
 
     SOffscreenRendererEnvironment GetDesiredEnvironment(QVector2D inPresentationScaleFactor) override;
@@ -94,7 +92,6 @@ private:
     QString m_offscreenRenderType;
     QString m_assetString;
     IOffscreenRendererCallback *m_callback;
-    volatile qint32 mRefCount;
 };
 
 QT_END_NAMESPACE

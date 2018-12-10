@@ -54,12 +54,10 @@ struct SShaderLightProperties
     QDemonScopedRefCounted<QDemonRenderShaderProgram> m_Shader;
     RenderLightTypes::Enum m_LightType;
     SLightSourceShader m_LightData;
-    volatile qint32 mRefCount;
 
     SShaderLightProperties(QDemonRenderShaderProgram &inShader)
         : m_Shader(inShader)
         , m_LightType(RenderLightTypes::Directional)
-        , mRefCount(0)
     {
     }
 
@@ -118,8 +116,6 @@ struct SShaderLightProperties
         }
     }
 
-    QDEMON_IMPLEMENT_REF_COUNT_ADDREF_RELEASE(m_Shader->GetRenderContext().GetAllocator())
-
     static SShaderLightProperties CreateLightEntry(QDemonRenderShaderProgram &inShader)
     {
         return SShaderLightProperties(inShader);
@@ -150,7 +146,6 @@ struct SShaderGeneratorGeneratedShader
 {
     typedef QHash<quint32, SShaderTextureProperties> TCustomMaterialImagMap;
 
-    NVAllocatorCallback &m_Allocator;
     QDemonRenderShaderProgram &m_Shader;
     // Specific properties we know the shader has to have.
     NVRenderCachedShaderProperty<QMatrix4x4> m_ModelMatrix;
@@ -229,24 +224,14 @@ struct SShaderGeneratorGeneratedShader
         , m_Images(inContext.GetAllocator(), "SShaderGeneratorGeneratedShader::m_Images")
         , m_RefCount(0)
     {
-        m_Shader.addRef();
+        //m_Shader.addRef();
     }
 
     ~SShaderGeneratorGeneratedShader()
     {
-        m_Shader.release();
+        //m_Shader.release();
         delete m_lightsProperties;
         delete m_areaLightsProperties;
-    }
-
-    void addRef() { ++m_RefCount; }
-    void release()
-    {
-        --m_RefCount;
-        if (m_RefCount <= 0) {
-            NVAllocatorCallback &alloc(m_Allocator);
-            NVDelete(alloc, this);
-        }
     }
 
     SLightConstantProperties<SShaderGeneratorGeneratedShader> *GetLightProperties(int count)
@@ -326,16 +311,6 @@ struct SShaderGenerator : public ICustomMaterialShaderGenerator
         , m_ConstantBuffers(inRc.GetAllocator(), "m_ConstantBuffers")
         , m_RefCount(0)
     {
-    }
-
-    void addRef() override { atomicIncrement(&m_RefCount); }
-    void release() override
-    {
-        atomicDecrement(&m_RefCount);
-        if (m_RefCount <= 0) {
-            m_ConstantBuffers.clear();
-            NVDelete(m_RenderContext.GetAllocator(), this);
-        }
     }
 
     IShaderProgramGenerator &ProgramGenerator() { return m_ProgramGenerator; }
@@ -458,7 +433,7 @@ struct SShaderGenerator : public ICustomMaterialShaderGenerator
         if (!inLightCount || !theContext.GetConstantBufferSupport())
             return nullptr;
 
-        QString theName = theContext.GetStringTable().RegisterStr(name);
+        QString theName = QString::fromLocal8Bit(name);
         QDemonRenderConstantBuffer *pCB = theContext.GetConstantBuffer(theName);
 
         if (!pCB) {
@@ -514,9 +489,7 @@ struct SShaderGenerator : public ICustomMaterialShaderGenerator
                 m_ProgramToShaderMap.insert(
                                                 &inProgram, QDemonScopedRefCounted<SShaderGeneratorGeneratedShader>(nullptr));
         if (inserter.second) {
-            NVAllocatorCallback &alloc(m_RenderContext.GetRenderContext().GetAllocator());
-            inserter.first->second = QDEMON_NEW(alloc, SShaderGeneratorGeneratedShader)(
-                        inProgram, m_RenderContext.GetRenderContext());
+            inserter.first->second = new SShaderGeneratorGeneratedShader(inProgram, m_RenderContext.GetRenderContext());
         }
         return *inserter.first->second;
     }
@@ -547,8 +520,7 @@ struct SShaderGenerator : public ICustomMaterialShaderGenerator
             lightName.append(buf);
 
             QDemonScopedRefCounted<SShaderLightProperties> theNewEntry =
-                    QDEMON_NEW(m_RenderContext.GetAllocator(),
-                               SShaderLightProperties)(SShaderLightProperties::CreateLightEntry(inShader));
+                    new SShaderLightProperties(SShaderLightProperties::CreateLightEntry(inShader));
             m_LightEntries.push_back(TCustomMaterialLightEntry(lightIdx, theNewEntry));
             theLightEntry = theNewEntry.mPtr;
         }
@@ -996,7 +968,7 @@ struct SShaderGenerator : public ICustomMaterialShaderGenerator
                     m_RenderContext.GetDynamicObjectSystem());
         CRenderString theShaderBuffer;
         const char *fragSource = theDynamicSystem.GetShaderSource(
-                    m_RenderContext.GetStringTable().RegisterStr(inShaderPathName), theShaderBuffer);
+                    QString::fromLocal8Bit(inShaderPathName), theShaderBuffer);
 
         Q_ASSERT(fragSource);
 
@@ -1188,7 +1160,7 @@ struct SShaderGenerator : public ICustomMaterialShaderGenerator
 ICustomMaterialShaderGenerator &
 ICustomMaterialShaderGenerator::CreateCustomMaterialShaderGenerator(IQDemonRenderContext &inRc)
 {
-    return *QDEMON_NEW(inRc.GetAllocator(), SShaderGenerator)(inRc);
+    return *new SShaderGenerator(inRc);
 }
 
 QT_END_NAMESPACE

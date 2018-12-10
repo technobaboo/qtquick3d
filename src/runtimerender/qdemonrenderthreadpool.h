@@ -31,7 +31,7 @@
 #ifndef QDEMON_RENDER_THREAD_POOL_H
 #define QDEMON_RENDER_THREAD_POOL_H
 
-#include <QtDemon/qdemonrefcounted.h>
+#include <QtRuntimeRender/qtdemonruntimerenderglobal.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -55,7 +55,7 @@ struct CancelReturnValues
     };
 };
 
-class IThreadPool : public QDemonRefCounted
+class IThreadPool
 {
 protected:
     virtual ~IThreadPool() {}

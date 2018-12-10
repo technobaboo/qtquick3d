@@ -31,7 +31,7 @@
 #ifndef QDEMON_RENDER_INPUT_STREAM_FACTORY_H
 #define QDEMON_RENDER_INPUT_STREAM_FACTORY_H
 
-#include <QtDemon/qdemonrefcounted.h>
+#include <QtDemonRuntimeRender/qtdemonruntimerenderglobal.h>
 
 QT_BEGIN_NAMESPACE
 class IRefCountedInputStream

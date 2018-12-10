@@ -39,7 +39,7 @@ QT_BEGIN_NAMESPACE
 
 class IBufferLoaderCallback;
 
-class ILoadedBuffer : public QDemonRefCounted
+class ILoadedBuffer
 {
 public:
     virtual QString Path() = 0;
@@ -48,7 +48,7 @@ public:
     virtual IBufferLoaderCallback *UserData() = 0;
 };
 
-class IBufferLoaderCallback : public QDemonRefCounted
+class IBufferLoaderCallback
 {
 public:
     virtual void OnBufferLoaded(ILoadedBuffer &inBuffer) = 0;
@@ -57,7 +57,7 @@ public:
 };
 
 // Job of this object is to load buffers all the way to memory as fast as possible.
-class IBufferLoader : public QDemonRefCounted
+class IBufferLoader
 {
 public:
     // nonblocking.  Quiet failure is passed to the input stream factory.
@@ -75,7 +75,7 @@ public:
     // blocking, be careful with this.  No guarantees about timely return here.
     virtual QDemonScopedRefCounted<ILoadedBuffer> NextLoadedBuffer() = 0;
 
-    static IBufferLoader &Create(NVFoundationBase &fnd, IInputStreamFactory &inFactory,
+    static IBufferLoader &Create(IInputStreamFactory &inFactory,
                                  IThreadPool &inThreadPool);
 };
 QT_END_NAMESPACE

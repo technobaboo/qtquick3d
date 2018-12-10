@@ -31,7 +31,6 @@
 #ifndef QDEMON_RENDER_TEXT_TEXTURE_ATLAS_H
 #define QDEMON_RENDER_TEXT_TEXTURE_ATLAS_H
 
-#include <QtDemon/qdemonrefcounted.h>
 #include <QtDemonRuntimeRender/qdemonrendertext.h>
 
 QT_BEGIN_NAMESPACE
@@ -42,7 +41,7 @@ TTextTextureAtlasDetailsAndTexture;
 typedef QPair<SRenderTextureAtlasDetails, QDemonScopedRefCounted<QDemonRenderTexture2D>>
 TTextRenderAtlasDetailsAndTexture;
 
-class ITextTextureAtlas : public QDemonRefCounted
+class ITextTextureAtlas
 {
 protected:
     virtual ~ITextTextureAtlas() {}
@@ -51,8 +50,7 @@ public:
     virtual bool IsInitialized() = 0;
     virtual TTextTextureAtlasDetailsAndTexture PrepareTextureAtlas() = 0;
 
-    static ITextTextureAtlas &CreateTextureAtlas(NVFoundationBase &inFnd,
-                                                 ITextRenderer &inTextRenderer,
+    static ITextTextureAtlas &CreateTextureAtlas(ITextRenderer &inTextRenderer,
                                                  QDemonRenderContext &inRenderContext);
 };
 QT_END_NAMESPACE

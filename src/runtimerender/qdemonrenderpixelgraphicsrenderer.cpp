@@ -89,7 +89,6 @@ struct SPGRectShader
 struct SPGRenderer : public IPixelGraphicsRenderer
 {
     IQDemonRenderContext &m_RenderContext;
-    IStringTable &m_StringTable;
     QDemonScopedRefCounted<QDemonRenderVertexBuffer> m_QuadVertexBuffer;
     QDemonScopedRefCounted<QDemonRenderIndexBuffer> m_QuadIndexBuffer;
     QDemonScopedRefCounted<QDemonRenderInputAssembler> m_QuadInputAssembler;
@@ -97,20 +96,14 @@ struct SPGRenderer : public IPixelGraphicsRenderer
     SShaderVertexCodeGenerator m_VertexGenerator;
     SShaderFragmentCodeGenerator m_FragmentGenerator;
     SPGRectShader m_RectShader;
-    qint32 mRefCount;
 
-    SPGRenderer(IQDemonRenderContext &ctx, IStringTable &strt)
+    SPGRenderer(IQDemonRenderContext &ctx)
         : m_RenderContext(ctx)
-        , m_StringTable(strt)
-        , m_VertexGenerator(m_StringTable, ctx.GetAllocator(),
-                            m_RenderContext.GetRenderContext().GetRenderContextType())
-        , m_FragmentGenerator(m_VertexGenerator, ctx.GetAllocator(),
-                              m_RenderContext.GetRenderContext().GetRenderContextType())
-        , mRefCount(0)
+        , m_VertexGenerator(m_RenderContext.GetRenderContext().GetRenderContextType())
+        , m_FragmentGenerator(m_VertexGenerator, m_RenderContext.GetRenderContext().GetRenderContextType())
     {
     }
 
-    QDEMON_IMPLEMENT_REF_COUNT_ADDREF_RELEASE_OVERRIDE(m_RenderContext.GetAllocator())
     void GetRectShaderProgram()
     {
         if (!m_RectShader) {
@@ -135,7 +128,7 @@ struct SPGRenderer : public IPixelGraphicsRenderer
             m_FragmentGenerator.BuildShaderSource();
 
             m_RectShader.SetShader(m_RenderContext.GetShaderCache().CompileProgram(
-                m_StringTable.RegisterStr("PixelRectShader"),
+                QStringLiterial("PixelRectShader"),
                 m_VertexGenerator.m_FinalShaderBuilder.c_str(),
                 m_FragmentGenerator.m_FinalShaderBuilder.c_str(), nullptr // no tess control shader
                 ,
@@ -303,10 +296,9 @@ struct SPGRenderer : public IPixelGraphicsRenderer
 };
 }
 
-IPixelGraphicsRenderer &IPixelGraphicsRenderer::CreateRenderer(IQDemonRenderContext &ctx,
-                                                               IStringTable &strt)
+IPixelGraphicsRenderer &IPixelGraphicsRenderer::CreateRenderer(IQDemonRenderContext &ctx)
 {
-    return *QDEMON_NEW(ctx.GetAllocator(), SPGRenderer)(ctx, strt);
+    return *new SPGRenderer(ctx, strt);
 }
 
 QT_END_NAMESPACE

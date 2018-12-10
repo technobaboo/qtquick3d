@@ -233,22 +233,16 @@ struct STextureAtlasEntry
 
 struct STextureAtlas : public ITextureAtlas
 {
-    NVFoundationBase &m_Foundation;
-    volatile qint32 mRefCount;
     QDemonScopedRefCounted<QDemonRenderContext> m_RenderContext;
 
-    STextureAtlas(NVFoundationBase &inFnd, QDemonRenderContext &inRenderContext, qint32 width,
+    STextureAtlas(QDemonRenderContext &inRenderContext, qint32 width,
                   qint32 height)
-        : m_Foundation(inFnd)
-        , mRefCount(0)
-        , m_RenderContext(inRenderContext)
+        : m_RenderContext(inRenderContext)
         , m_Width(width)
         , m_Height(height)
         , m_Spacing(1)
-        , m_AtlasEntrys(inFnd.getAllocator(), "STextureAtlas::m_SkyLine")
     {
-        m_pBinPack =
-                QDEMON_NEW(inFnd.getAllocator(), STextureAtlasBinPackSL)(inRenderContext, width, height);
+        m_pBinPack = new STextureAtlasBinPackSL(inRenderContext, width, height);
     }
 
     virtual ~STextureAtlas()
@@ -256,7 +250,7 @@ struct STextureAtlas : public ITextureAtlas
         RelaseEntries();
 
         if (m_pBinPack)
-            NVDelete(m_Foundation.getAllocator(), m_pBinPack);
+            delete m_pBinPack;
     }
 
     void RelaseEntries() override
@@ -285,8 +279,6 @@ struct STextureAtlas : public ITextureAtlas
                                                   (qint32)m_AtlasEntrys[index].m_Height),
                                 m_AtlasEntrys[index].m_pBuffer);
     }
-
-    QDEMON_IMPLEMENT_REF_COUNT_ADDREF_RELEASE(m_Foundation.getAllocator())
 
     STextureAtlasRect AddAtlasEntry(qint32 width, qint32 height, qint32 pitch,
                                     qint32 dataWidth, QDemonConstDataRef<quint8> bufferData) override
@@ -352,11 +344,10 @@ private:
 
 } // namespace
 
-ITextureAtlas &ITextureAtlas::CreateTextureAtlas(NVFoundationBase &inFnd,
-                                                 QDemonRenderContext &inRenderContext, qint32 width,
+ITextureAtlas &ITextureAtlas::CreateTextureAtlas(QDemonRenderContext &inRenderContext, qint32 width,
                                                  qint32 height)
 {
-    return *QDEMON_NEW(inFnd.getAllocator(), STextureAtlas)(inFnd, inRenderContext, width, height);
+    return *new STextureAtlas(inRenderContext, width, height);
 }
 
 QT_END_NAMESPACE

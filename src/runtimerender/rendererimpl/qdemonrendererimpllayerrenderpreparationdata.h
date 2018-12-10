@@ -245,7 +245,6 @@ struct SLayerRenderPreparationData
 
     SLayer &m_Layer;
     Qt3DSRendererImpl &m_Renderer;
-    NVAllocatorCallback &m_Allocator;
     // List of nodes we can render, not all may be active.  Found by doing a depth-first
     // search through m_FirstChild if length is zero.
 

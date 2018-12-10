@@ -55,7 +55,7 @@ QT_BEGIN_NAMESPACE
 using namespace dynamic;
 
 namespace {
-typedef nvhash_set<void *> TPtrSet;
+typedef QSet<void *> TPtrSet;
 
 void Align(MemoryBuffer<> &inBuffer)
 {
@@ -76,13 +76,11 @@ struct SSerializerWriteContext
     CRenderString m_PathMapper;
     CRenderString m_BasePath;
     CRenderString m_RelativePath;
-    IStringTable &m_StringTable;
     SSerializerWriteContext(SPtrOffsetMap &inOffsetMap, SWriteBuffer &inWriteBuffer,
                             const SStrRemapMap &inStrMap, quint32 inDataBlockStart,
                             IDynamicObjectSystem &inDynamicObjectSystem,
                             IPathManager &inPathManager, TObjectFileStatList &inStats,
-                            NVAllocatorCallback &inAllocator, const char *inProjectDirectory,
-                            IStringTable &inStringTable)
+                            const char *inProjectDirectory)
         : m_OffsetMap(inOffsetMap)
         , m_MemoryBuffer(inWriteBuffer)
         , m_StrRemapMap(inStrMap)
@@ -90,9 +88,7 @@ struct SSerializerWriteContext
         , m_DynamicObjectSystem(inDynamicObjectSystem)
         , m_PathManager(inPathManager)
         , m_FileSizeStats(inStats)
-        , m_StringTable(inStringTable)
     {
-        Q_UNUSED(inAllocator)
         m_BasePath.assign(inProjectDirectory);
     }
 
@@ -103,7 +99,7 @@ struct SSerializerWriteContext
         for (quint32 idx = 0, end = m_FileSizeStats.size(); idx < end; ++idx)
             if (m_FileSizeStats[idx].first == inType)
                 return m_FileSizeStats[idx].second;
-        m_FileSizeStats.push_back(eastl::make_pair(inType, (quint32)0));
+        m_FileSizeStats.push_back(inType, (quint32)0);
         return m_FileSizeStats.back().second;
     }
 
@@ -157,8 +153,7 @@ struct SSerializerReadContext : public SDataReader
     const char *m_ProjectDirectory;
 
     SSerializerReadContext(IPathManagerCore &inPathManager, IDynamicObjectSystemCore &inDynSystem,
-                           QDemonDataRef<quint8> inDataBlock, QDemonDataRef<quint8> inStrTable,
-                           NVAllocatorCallback &inAllocator, const char *inProjectDirectory)
+                           QDemonDataRef<quint8> inDataBlock, QDemonDataRef<quint8> inStrTable, const char *inProjectDirectory)
         : SDataReader(inDataBlock.begin(), inDataBlock.end())
         , m_PathManager(inPathManager)
         , m_DynamicObjectSystem(inDynSystem)
@@ -166,7 +161,6 @@ struct SSerializerReadContext : public SDataReader
         , m_StrTableBlock(inStrTable)
         , m_ProjectDirectory(inProjectDirectory)
     {
-        Q_UNUSED(inAllocator)
     }
     void Remap(QString &inStr) { inStr.Remap(m_StrTableBlock); }
     template <typename TObjType>
@@ -555,21 +549,15 @@ SGraphObject *ReadGraphObject(SSerializerReadContext &inContext)
 }
 }
 
-void SGraphObjectSerializer::Save(NVFoundationBase &inFoundation,
-                                  const SPresentation &inPresentation,
+void SGraphObjectSerializer::Save(const SPresentation &inPresentation,
                                   SWriteBuffer &outSavedData,
                                   IDynamicObjectSystem &inDynamicObjectSystem,
                                   IPathManager &inPathManager, SPtrOffsetMap &outSceneGraphOffsets,
-                                  IStringTable &inStringTable,
                                   QDemonDataRef<SGraphObject *> inExtraGraphObjects)
 {
-    using namespace foundation;
-    QVector<const SNode *> theLightCameraList(inFoundation.getAllocator(),
-                                               "SGraphObjectSerializer::theLightCameraList");
-    QVector<const SNode *> theRenderableList(inFoundation.getAllocator(),
-                                              "SGraphObjectSerializer::theRenderableList");
-    TObjectFileStatList theStatList(inFoundation.getAllocator(),
-                                    "SGraphObjectSerializer::FileSizeStats");
+    QVector<const SNode *> theLightCameraList;
+    QVector<const SNode *> theRenderableList;
+    TObjectFileStatList theStatList;
     // We want to save out the scene graph in the order we are going to traverse it normally.
     // This is reverse depth first for the lights, cameras, and renderables and depth first for
     // everything else so we go
@@ -643,7 +631,6 @@ void SGraphObjectSerializer::Save(NVFoundationBase &inFoundation,
 SPresentation *SGraphObjectSerializer::Load(QDemonDataRef<quint8> inData, QDemonDataRef<quint8> inStrDataBlock,
                                             IDynamicObjectSystemCore &inDynamicObjectSystem,
                                             IPathManagerCore &inPathManager,
-                                            NVAllocatorCallback &inAllocator,
                                             const char *inProjectDirectory)
 {
     SSerializerReadContext theReadContext(inPathManager, inDynamicObjectSystem, inData,

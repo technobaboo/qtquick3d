@@ -31,7 +31,6 @@
 #ifndef QDEMON_RENDER_CONTEXT_CORE_H
 #define QDEMON_RENDER_CONTEXT_CORE_H
 
-#include <QtDemon/qdemonrefcounted.h>
 #include <QtDemonRuntimeRender/qdemonrenderpresentation.h>
 #include <QtDemonRuntimeRender/qdemonrenderinputstreamfactory.h>
 #include <QtDemonRuntimeRender/qdemonrenderthreadpool.h>
@@ -89,7 +88,7 @@ public:
     static IQDemonRenderContextCore &Create();
 };
 
-class IQDemonRenderContext : public QDemonRefCounted
+class IQDemonRenderContext
 {
 protected:
     virtual ~IQDemonRenderContext() {}

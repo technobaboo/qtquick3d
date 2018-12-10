@@ -31,20 +31,19 @@
 #ifndef QDEMON_RENDER_PIXEL_GRAPHICS_RENDERER_H
 #define QDEMON_RENDER_PIXEL_GRAPHICS_RENDERER_H
 
-#include <QtDemon/qdemonrefcounted.h>
 #include <QtDemon/qdemondataref.h>
 
 QT_BEGIN_NAMESPACE
 // Pixel graphics are graphics described in pixels.
 // Colors are expected to be non-premultiplied, we use ROP
 // hardware to do the alpha multiply into the color.
-class IPixelGraphicsRenderer : public QDemonRefCounted
+class IPixelGraphicsRenderer
 {
 public:
     // Renders the node to the current viewport.
     virtual void Render(QDemonConstDataRef<SPGGraphObject *> inObjects) = 0;
 
-    static IPixelGraphicsRenderer &CreateRenderer(IQDemonRenderContext &ctx, IStringTable &strt);
+    static IPixelGraphicsRenderer &CreateRenderer(IQDemonRenderContext &ctx);
 };
 QT_END_NAMESPACE
 

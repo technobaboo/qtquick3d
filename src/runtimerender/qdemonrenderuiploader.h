@@ -80,15 +80,7 @@ namespace render {
                     // to the presentation file
                     ,
                     const char *inFullPathToPresentationFile,
-                    Q3DStudio::IRuntimeMetaData &inMetaData, IStringTable &inStrTable,
-                    NVFoundationBase &inFoundation
-                    // Allocator used for the presentation objects themselves
-                    // this allows clients to pre-allocate a block of memory just for
-                    // the scene graph
-                    ,
-                    NVAllocatorCallback &inPresentationAllocator
-                    // Map of string ids to objects
-                    ,
+                    Q3DStudio::IRuntimeMetaData &inMetaData,
                     TIdObjectMap &ioObjectMap
                     // Buffer manager to load details about the images
                     ,
@@ -110,15 +102,13 @@ namespace render {
                     bool setValuesFromSlides = false);
 
         static void CreateEffectClassFromMetaEffect(QString inEffectName,
-                                                    NVFoundationBase &inFoundation,
                                                     IEffectSystem &inEffectSystem,
-                                                    const qt3dsdm::SMetaDataEffect &inMetaDataEffect,
-                                                    IStringTable &inStrTable);
+                                                    const qt3dsdm::SMetaDataEffect &inMetaDataEffect);
 
         static void CreateMaterialClassFromMetaMaterial(
-            QString inEffectName, NVFoundationBase &inFoundation,
+            QString inEffectName,
             ICustomMaterialSystem &inEffectSystem,
-            const qt3dsdm::SMetaDataCustomMaterial &inMetaDataMaterial, IStringTable &inStrTable);
+            const qt3dsdm::SMetaDataCustomMaterial &inMetaDataMaterial);
     };
 }
 }

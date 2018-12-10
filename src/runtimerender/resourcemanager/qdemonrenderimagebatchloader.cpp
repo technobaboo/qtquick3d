@@ -174,9 +174,6 @@ struct SBatchLoader : public IImageBatchLoader
     typedef Pool<SImageLoaderBatch, ForwardingAllocator> TBatchPool;
 
     // Accessed from loader thread
-    NVFoundationBase &m_Foundation;
-    volatile qint32 mRefCount;
-    // Accessed from loader thread
     IInputStreamFactory &m_InputStreamFactory;
     //!!Not threadsafe!  accessed only from main thread
     IBufferManager &m_BufferManager;
@@ -202,11 +199,9 @@ struct SBatchLoader : public IImageBatchLoader
     TLoadingImagePool m_LoadingImagePool;
     TBatchPool m_BatchPool;
 
-    SBatchLoader(NVFoundationBase &inFoundation, IInputStreamFactory &inFactory,
+    SBatchLoader(IInputStreamFactory &inFactory,
                  IBufferManager &inBufferManager, IThreadPool &inThreadPool, IPerfTimer &inTimer)
-        : m_Foundation(inFoundation)
-        , mRefCount(0)
-        , m_InputStreamFactory(inFactory)
+        : m_InputStreamFactory(inFactory)
         , m_BufferManager(inBufferManager)
         , m_ThreadPool(inThreadPool)
         , m_PerfTimer(inTimer)
@@ -238,8 +233,6 @@ struct SBatchLoader : public IImageBatchLoader
         Q_ASSERT(m_Batches.size() == 0);
     }
 
-    QDEMON_IMPLEMENT_REF_COUNT_ADDREF_RELEASE(m_Foundation.getAllocator())
-
     // Returns an ID to the load request.  Request a block of images to be loaded.
     // Also takes an image that the buffer system will return when requested for the given source
     // paths
@@ -265,7 +258,7 @@ struct SBatchLoader : public IImageBatchLoader
         SImageLoaderBatch *theBatch(SImageLoaderBatch::CreateLoaderBatch(
                                         *this, theBatchId, inSourcePaths, inImageTillLoaded, inListener, contextType));
         if (theBatch) {
-            m_Batches.insert(eastl::make_pair(theBatchId, theBatch));
+            m_Batches.insert(theBatchId, theBatch);
             return theBatchId;
         }
         return 0;
@@ -402,7 +395,7 @@ bool SBatchLoadedImage::Finalize(IBufferManager &inMgr)
                     m_SourcePath, m_Texture ? ImageLoadResult::Succeeded : ImageLoadResult::Failed);
 
     if (m_Texture) {
-        m_Texture->release();
+        //m_Texture->release();
         return true;
     }
 
@@ -507,14 +500,12 @@ void SImageLoaderBatch::Cancel(QString inSourcePath)
 }
 }
 
-IImageBatchLoader &IImageBatchLoader::CreateBatchLoader(NVFoundationBase &inFoundation,
-                                                        IInputStreamFactory &inFactory,
+IImageBatchLoader &IImageBatchLoader::CreateBatchLoader(IInputStreamFactory &inFactory,
                                                         IBufferManager &inBufferManager,
                                                         IThreadPool &inThreadPool,
                                                         IPerfTimer &inTimer)
 {
-    return *QDEMON_NEW(inFoundation.getAllocator(),
-                       SBatchLoader)(inFoundation, inFactory, inBufferManager, inThreadPool, inTimer);
+    return *new SBatchLoader(inFactory, inBufferManager, inThreadPool, inTimer);
 }
 
 QT_END_NAMESPACE

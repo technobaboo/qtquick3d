@@ -71,13 +71,11 @@ namespace {
 
 struct SRendererData : SOffscreenRenderResult
 {
-    NVAllocatorCallback &m_Allocator;
     IResourceManager &m_ResourceManager;
     quint32 m_FrameCount;
     bool m_Rendering;
 
-    SRendererData(NVAllocatorCallback &inAllocator, IResourceManager &inResourceManager)
-        : m_Allocator(inAllocator)
+    SRendererData(IResourceManager &inResourceManager)
         , m_ResourceManager(inResourceManager)
         , m_FrameCount(QDEMON_MAX_U32)
         , m_Rendering(false)
@@ -89,7 +87,6 @@ struct SRendererData : SOffscreenRenderResult
             m_ResourceManager.Release(*m_Texture);
         m_Texture = nullptr;
     }
-    void Release() { NVDelete(m_Allocator, this); }
 };
 
 struct SScopedRenderDataRenderMarker
@@ -120,8 +117,8 @@ struct SRenderDataReleaser
 
     ~SRenderDataReleaser()
     {
-        if (mPtr)
-            mPtr->Release();
+        // if (mPtr)
+        //     mPtr->Release();
     }
 };
 struct SOffscreenRenderManager;
@@ -149,19 +146,14 @@ struct SOffscreenRenderManager : public IOffscreenRenderManager
     TRendererMap m_Renderers;
     quint32 m_FrameCount; // cheap per-
 
-    volatile qint32 mRefCount;
-
     SOffscreenRenderManager(IResourceManager &inManager, IQDemonRenderContext &inContext)
         : m_Context(inContext)
         , m_ResourceManager(inManager)
         , m_FrameCount(0)
-        , mRefCount(0)
     {
     }
 
     virtual ~SOffscreenRenderManager() {}
-
-    QDEMON_IMPLEMENT_REF_COUNT_ADDREF_RELEASE_OVERRIDE(m_Allocator)
 
     QDemonOption<bool> MaybeRegisterOffscreenRenderer(const SOffscreenRendererKey &inKey,
                                                 IOffscreenRenderer &inRenderer) override
@@ -422,9 +414,7 @@ struct SOffscreenRenderManager : public IOffscreenRenderManager
                         theContext, &QDemonRenderContext::GetViewport, &QDemonRenderContext::SetViewport,
                         theViewport);
 
-            quint32 taskId = m_Context.GetRenderList().AddRenderTask(
-                        *QDEMON_NEW(m_Context.GetPerFrameAllocator(),
-                                    SOffscreenRunnable)(*this, theData, theDesiredEnvironment));
+            quint32 taskId = m_Context.GetRenderList().AddRenderTask(*new SOffscreenRunnable(*this, theData, theDesiredEnvironment));
 
             SOffscreenRenderFlags theFlags =
                     theData.m_Renderer->NeedsRender(theDesiredEnvironment, thePresScaleFactor, this);
@@ -473,11 +463,10 @@ void SOffscreenRunnable::Run()
 }
 
 IOffscreenRenderManager &IOffscreenRenderManager::CreateOffscreenRenderManager(
-        NVAllocatorCallback &inCallback, IStringTable &inStringTable, IResourceManager &inManager,
+        IResourceManager &inManager,
         IQDemonRenderContext &inContext)
 {
-    return *QDEMON_NEW(inCallback, SOffscreenRenderManager)(inCallback, inStringTable, inManager,
-                                                            inContext);
+    return *new SOffscreenRenderManager(inManager, inContext);
 }
 
 QT_END_NAMESPACE

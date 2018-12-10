@@ -43,36 +43,29 @@ namespace {
 struct SBufferLoader;
 struct SBufferLoadResult : public ILoadedBuffer
 {
-    NVFoundationBase &m_Foundation;
     QString m_Path;
     IBufferLoaderCallback *m_UserData;
     QDemonDataRef<quint8> m_Data;
-    qint32 mRefCount;
 
-    SBufferLoadResult(NVFoundationBase &fnd, QString p, IBufferLoaderCallback *ud,
+    SBufferLoadResult(QString p, IBufferLoaderCallback *ud,
                       QDemonDataRef<quint8> data)
-        : m_Foundation(fnd)
-        , m_Path(p)
+        : m_Path(p)
         , m_UserData(ud)
         , m_Data(data)
-        , mRefCount(0)
     {
     }
-
-    QDEMON_IMPLEMENT_REF_COUNT_ADDREF_RELEASE_OVERRIDE(m_Foundation.getAllocator())
 
     QString Path() override { return m_Path; }
     // Data is released when the buffer itself is released.
     QDemonDataRef<quint8> Data() override { return m_Data; }
     IBufferLoaderCallback *UserData() override { return m_UserData; }
 
-    static SBufferLoadResult *Allocate(quint32 inBufferSize, NVFoundationBase &fnd,
+    static SBufferLoadResult *Allocate(quint32 inBufferSize,
                                        QString p,
                                        QDemonScopedRefCounted<IBufferLoaderCallback> ud)
     {
         size_t allocSize = sizeof(SBufferLoadResult) + inBufferSize;
-        quint8 *allocMem =
-                (quint8 *)fnd.getAllocator().allocate(allocSize, "ILoadedBuffer", __FILE__, __LINE__);
+        quint8 *allocMem = static_cast<quint8 *>(::malloc(allocSize));
         if (allocMem == nullptr)
             return nullptr;
         quint8 *bufferStart = allocMem + sizeof(SBufferLoadResult);
@@ -113,7 +106,6 @@ IMPLEMENT_INVASIVE_LIST(LoadedBufferImpl, m_PreviousBuffer, m_NextBuffer);
 
 struct SBufferLoader : public IBufferLoader
 {
-    NVFoundationBase &m_Foundation;
     QDemonScopedRefCounted<IInputStreamFactory> m_Factory;
     QDemonScopedRefCounted<IThreadPool> m_ThreadPool;
 
@@ -130,18 +122,14 @@ struct SBufferLoader : public IBufferLoader
 
     quint64 m_NextBufferId;
 
-    qint32 mRefCount;
-
-    SBufferLoader(NVFoundationBase &fnd, IInputStreamFactory &fac, IThreadPool &tp)
-        : m_Foundation(fnd)
-        , m_Factory(fac)
+    SBufferLoader(InputStreamFactory &fac, IThreadPool &tp)
+        : m_Factory(fac)
         , m_ThreadPool(tp)
-        , m_BuffersToLoadMutex(fnd.getAllocator())
-        , m_BuffersLoadingMutex(fnd.getAllocator())
-        , m_LoadedBuffersMutex(fnd.getAllocator())
-        , m_BufferLoadedEvent(fnd.getAllocator())
+        , m_BuffersToLoadMutex()
+        , m_BuffersLoadingMutex()
+        , m_LoadedBuffersMutex()
+        , m_BufferLoadedEvent()
         , m_NextBufferId(1)
-        , mRefCount(0)
     {
         m_BufferLoadedEvent.reset();
     }
@@ -162,8 +150,6 @@ struct SBufferLoader : public IBufferLoader
             NextLoadedBuffer();
         }
     }
-
-    QDEMON_IMPLEMENT_REF_COUNT_ADDREF_RELEASE(m_Foundation.getAllocator())
 
     static void InitializeActiveLoadingBuffer(SLoadedBufferImpl &theBuffer)
     {
@@ -251,7 +237,7 @@ struct SBufferLoader : public IBufferLoader
                             IBufferLoaderCallback *inUserData = nullptr,
                             bool inQuietFailure = false) override
     {
-        SLoadedBufferImpl &theBuffer = *QDEMON_NEW(m_Foundation.getAllocator(), SLoadedBufferImpl)(
+        SLoadedBufferImpl &theBuffer = *new SLoadedBufferImpl(
                     *this, inPath, inUserData, inQuietFailure, m_NextBufferId);
         ++m_NextBufferId;
         {
@@ -313,16 +299,16 @@ struct SBufferLoader : public IBufferLoader
             retval = SBufferLoadResult::Allocate(0, m_Foundation, theBuffer->m_Path,
                                                  theBuffer->m_UserData);
         }
-        NVDelete(m_Foundation.getAllocator(), theBuffer);
+        delete theBuffer;
         return retval;
     }
 };
 }
 
-IBufferLoader &IBufferLoader::Create(NVFoundationBase &fnd, IInputStreamFactory &inFactory,
+IBufferLoader &IBufferLoader::Create(IInputStreamFactory &inFactory,
                                      IThreadPool &inThreadPool)
 {
-    return *QDEMON_NEW(fnd.getAllocator(), SBufferLoader)(fnd, inFactory, inThreadPool);
+    return *new SBufferLoader(inFactory, inThreadPool);
 }
 
 QT_END_NAMESPACE

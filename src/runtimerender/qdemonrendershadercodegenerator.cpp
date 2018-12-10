@@ -31,19 +31,8 @@
 
 QT_BEGIN_NAMESPACE
 
-using eastl::make_pair;
-
-SShaderCodeGeneratorBase::SShaderCodeGeneratorBase(IStringTable &inStringTable,
-                                                   NVAllocatorCallback &alloc,
-                                                   QDemonRenderContextType ctxType)
-    : m_StringTable(inStringTable)
-    , m_Codes(alloc, "SShaderCodeGenerator::m_Codes")
-    , m_Includes(alloc, "SShaderCodeGenerator::m_Includes")
-    , m_Uniforms(alloc, "SShaderCodeGenerator::m_Uniforms")
-    , m_ConstantBuffers(alloc, "SShaderCodeGenerator::m_ConstantBuffers")
-    , m_ConstantBufferParams(alloc, "SShaderCodeGenerator::m_ConstantBufferParams")
-    , m_Attributes(alloc, "SShaderCodeGenerator::m_Uniforms")
-    , m_RenderContextType(ctxType)
+SShaderCodeGeneratorBase::SShaderCodeGeneratorBase(QDemonRenderContextType ctxType)
+    : m_RenderContextType(ctxType)
 {
 }
 void SShaderCodeGeneratorBase::Begin()
@@ -70,7 +59,7 @@ void SShaderCodeGeneratorBase::AppendPartial(const char *data)
 }
 void SShaderCodeGeneratorBase::AddUniform(const char *name, const char *type)
 {
-    m_Uniforms.insert(make_pair(m_StringTable.RegisterStr(name), m_StringTable.RegisterStr(type)));
+    m_Uniforms.insert(QString::fromLocal8Bit(name), QString::fromLocal8Bit(type));
 }
 void SShaderCodeGeneratorBase::AddUniform(TStrType &name, const char *type)
 {
@@ -79,20 +68,18 @@ void SShaderCodeGeneratorBase::AddUniform(TStrType &name, const char *type)
 
 void SShaderCodeGeneratorBase::AddConstantBuffer(const char *name, const char *layout)
 {
-    m_ConstantBuffers.insert(
-                make_pair(m_StringTable.RegisterStr(name), m_StringTable.RegisterStr(layout)));
+    m_ConstantBuffers.insert(QString::fromLocal8Bit(name), QString::fromLocal8Bit(layout));
 }
 void SShaderCodeGeneratorBase::AddConstantBufferParam(const char *cbName, const char *paramName,
                                                       const char *type)
 {
-    TParamPair theParamPair(m_StringTable.RegisterStr(paramName), m_StringTable.RegisterStr(type));
-    TConstantBufferParamPair theBufferParamPair(m_StringTable.RegisterStr(cbName), theParamPair);
+    TParamPair theParamPair(QString::fromLocal8Bit(paramName), QString::fromLocal8Bit(type));
+    TConstantBufferParamPair theBufferParamPair(QString::fromLocal8Bit(cbName), theParamPair);
     m_ConstantBufferParams.push_back(theBufferParamPair);
 }
 void SShaderCodeGeneratorBase::AddAttribute(const char *name, const char *type)
 {
-    m_Attributes.insert(
-                make_pair(m_StringTable.RegisterStr(name), m_StringTable.RegisterStr(type)));
+    m_Attributes.insert(QString::fromLocal8Bit(name), QString::fromLocal8Bit(type));
 }
 void SShaderCodeGeneratorBase::AddAttribute(TStrType &name, const char *type)
 {
@@ -100,8 +87,7 @@ void SShaderCodeGeneratorBase::AddAttribute(TStrType &name, const char *type)
 }
 void SShaderCodeGeneratorBase::AddVarying(const char *name, const char *type)
 {
-    GetVaryings().insert(
-                make_pair(m_StringTable.RegisterStr(name), m_StringTable.RegisterStr(type)));
+    GetVaryings().insert(QString::fromLocal8Bit(name), QString::fromLocal8Bit(type));
 }
 void SShaderCodeGeneratorBase::AddVarying(TStrType &name, const char *type)
 {
@@ -119,7 +105,7 @@ void SShaderCodeGeneratorBase::AddLocalVariable(const char *name, const char *ty
 
 void SShaderCodeGeneratorBase::AddInclude(const char *name)
 {
-    m_Includes.insert(m_StringTable.RegisterStr(name));
+    m_Includes.insert(QString::fromLocal8Bit(name);
 }
 void SShaderCodeGeneratorBase::AddInclude(TStrType &name)
 {
@@ -289,7 +275,7 @@ void SShaderCodeGeneratorBase::AddShaderConstantBufferItemMap(
 
 const char *SShaderCodeGeneratorBase::BuildShaderSource()
 {
-    for (nvhash_set<QString>::const_iterator iter = m_Includes.begin(),
+    for (QSet<QString>::const_iterator iter = m_Includes.begin(),
          end = m_Includes.end();
          iter != end; ++iter) {
         m_FinalShaderBuilder.append("#include \"");
@@ -321,11 +307,8 @@ SShaderCodeGeneratorBase &SShaderCodeGeneratorBase::operator<<(const SEndlType &
     return *this;
 }
 
-SShaderVertexCodeGenerator::SShaderVertexCodeGenerator(IStringTable &inStringTable,
-                                                       NVAllocatorCallback &alloc,
-                                                       QDemonRenderContextType ctxType)
-    : SShaderCodeGeneratorBase(inStringTable, alloc, ctxType)
-    , m_Varyings(alloc, "SShaderVertexCodeGenerator::m_Varyings")
+SShaderVertexCodeGenerator::SShaderVertexCodeGenerator(QDemonRenderContextType ctxType)
+    : SShaderCodeGeneratorBase(ctxType)
 {
 }
 TStrTableStrMap &SShaderVertexCodeGenerator::GetVaryings()
@@ -334,11 +317,10 @@ TStrTableStrMap &SShaderVertexCodeGenerator::GetVaryings()
 }
 
 SShaderTessControlCodeGenerator::SShaderTessControlCodeGenerator(
-        SShaderVertexCodeGenerator &vert, NVAllocatorCallback &alloc,
+        SShaderVertexCodeGenerator &vert,
         QDemonRenderContextType ctxType)
-    : SShaderCodeGeneratorBase(vert.m_StringTable, alloc, ctxType)
+    : SShaderCodeGeneratorBase(ctxType)
     , m_VertGenerator(vert)
-    , m_Varyings(alloc, "SShaderTessControlCodeGenerator::m_Varyings")
 {
 }
 
@@ -391,9 +373,8 @@ TStrTableStrMap &SShaderTessControlCodeGenerator::GetVaryings()
 }
 
 SShaderTessEvalCodeGenerator::SShaderTessEvalCodeGenerator(SShaderTessControlCodeGenerator &tc,
-                                                           NVAllocatorCallback &alloc,
                                                            QDemonRenderContextType ctxType)
-    : SShaderCodeGeneratorBase(tc.m_StringTable, alloc, ctxType)
+    : SShaderCodeGeneratorBase(ctxType)
     , m_TessControlGenerator(tc)
     , m_hasGeometryStage(false)
 {
@@ -453,9 +434,8 @@ void SShaderTessEvalCodeGenerator::SetGeometryStage(bool hasGeometryStage)
 }
 
 SShaderGeometryCodeGenerator::SShaderGeometryCodeGenerator(SShaderVertexCodeGenerator &vert,
-                                                           NVAllocatorCallback &alloc,
                                                            QDemonRenderContextType ctxType)
-    : SShaderCodeGeneratorBase(vert.m_StringTable, alloc, ctxType)
+    : SShaderCodeGeneratorBase(ctxType)
     , m_VertGenerator(vert)
     , m_hasTessellationStage(true)
 {
@@ -514,9 +494,8 @@ void SShaderGeometryCodeGenerator::SetTessellationStage(bool hasTessellationStag
 }
 
 SShaderFragmentCodeGenerator::SShaderFragmentCodeGenerator(SShaderVertexCodeGenerator &vert,
-                                                           NVAllocatorCallback &alloc,
                                                            QDemonRenderContextType ctxType)
-    : SShaderCodeGeneratorBase(vert.m_StringTable, alloc, ctxType)
+    : SShaderCodeGeneratorBase(ctxType)
     , m_VertGenerator(vert)
 {
 }

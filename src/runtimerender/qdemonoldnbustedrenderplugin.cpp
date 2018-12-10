@@ -43,8 +43,7 @@ COldNBustedPluginRenderer::COldNBustedPluginRenderer(IQDemonRenderContext &inRen
                                                      long inDLLHandle)
     : m_RenderContext(inRenderContext)
     , m_DLLHandle(inDLLHandle)
-    , mRefCount(0)
-    , m_OffscreenRendererType(inRenderContext.GetStringTable().RegisterStr(GetRendererName()))
+    , m_OffscreenRendererType(QString::fromLocal8Bit(GetRendererName()))
 {
     if (m_DLLHandle != -1) {
         Q3DStudio::CDLLManager &theManager = Q3DStudio::CDLLManager::GetDLLManager();

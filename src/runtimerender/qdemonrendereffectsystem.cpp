@@ -82,24 +82,16 @@ namespace {
 
 struct SEffectClass
 {
-    NVAllocatorCallback *m_Allocator;
     IDynamicObjectClass *m_DynamicClass;
-    volatile qint32 mRefCount;
 
-    SEffectClass(NVAllocatorCallback &inFnd, IDynamicObjectClass &dynClass)
-        : m_Allocator(&inFnd)
+    SEffectClass(IDynamicObjectClass &dynClass)
         , m_DynamicClass(&dynClass)
-        , mRefCount(0)
     {
     }
 
-    QDEMON_IMPLEMENT_REF_COUNT_ADDREF_RELEASE(*m_Allocator)
-
-    void SetupThisObjectFromMemory(NVAllocatorCallback &inAlloc, IDynamicObjectClass &inClass)
+    void SetupThisObjectFromMemory(IDynamicObjectClass &inClass)
     {
-        m_Allocator = &inAlloc;
         m_DynamicClass = &inClass;
-        mRefCount = 0;
     }
 };
 
@@ -145,16 +137,12 @@ struct SImageEntry
 {
     QDemonScopedRefCounted<QDemonRenderShaderProgram> m_Shader;
     NVRenderCachedShaderProperty<QDemonRenderImage2D *> m_Image;
-    volatile qint32 mRefCount;
 
     SImageEntry(QDemonRenderShaderProgram &inShader, const char *inImageName)
         : m_Shader(inShader)
         , m_Image(inImageName, inShader)
-        , mRefCount(0)
     {
     }
-
-    QDEMON_IMPLEMENT_REF_COUNT_ADDREF_RELEASE(m_Shader->GetRenderContext().GetAllocator())
 
     void Set(QDemonRenderImage2D *inImage) { m_Image.Set(inImage); }
 
@@ -192,16 +180,12 @@ struct SDataBufferEntry
 {
     QDemonScopedRefCounted<QDemonRenderShaderProgram> m_Shader;
     NVRenderCachedShaderBuffer<QDemonRenderShaderBufferBase *> m_DataBuffer;
-    volatile qint32 mRefCount;
 
     SDataBufferEntry(QDemonRenderShaderProgram &inShader, const char *inBufferName)
         : m_Shader(inShader)
         , m_DataBuffer(inBufferName, inShader)
-        , mRefCount(0)
     {
     }
-
-    QDEMON_IMPLEMENT_REF_COUNT_ADDREF_RELEASE(m_Shader->GetRenderContext().GetAllocator())
 
     void Set(QDemonRenderDataBuffer *inBuffer)
     {
@@ -240,7 +224,6 @@ struct STextureEntry
     NVRenderCachedShaderProperty<QDemonRenderTexture2D *> m_Texture;
     NVRenderCachedShaderProperty<QVector4D> m_TextureData;
     NVRenderCachedShaderProperty<qint32> m_TextureFlags;
-    volatile qint32 mRefCount;
 
     STextureEntry(QDemonRenderShaderProgram &inShader, const char *inTexName, const char *inDataName,
                   const char *inFlagName)
@@ -248,11 +231,8 @@ struct STextureEntry
         , m_Texture(inTexName, inShader)
         , m_TextureData(inDataName, inShader)
         , m_TextureFlags(inFlagName, inShader)
-        , mRefCount(0)
     {
     }
-
-    QDEMON_IMPLEMENT_REF_COUNT_ADDREF_RELEASE(m_Shader->GetRenderContext().GetAllocator())
 
     void Set(QDemonRenderTexture2D *inTexture, bool inNeedsAlphaMultiply,
              const SPropertyDefinition *inDefinition)
@@ -398,9 +378,7 @@ struct SEffectContext
                 theTextureEntry = m_TextureEntries[idx].second;
         }
         if (theTextureEntry == nullptr) {
-            QDemonScopedRefCounted<STextureEntry> theNewEntry = QDEMON_NEW(
-                        m_Context.GetAllocator(), STextureEntry)(STextureEntry::CreateTextureEntry(
-                                                                     inShader, inPropName, inStringBuilder, inStringBuilder2));
+            QDemonScopedRefCounted<STextureEntry> theNewEntry = new STextureEntry(STextureEntry::CreateTextureEntry(inShader, inPropName, inStringBuilder, inStringBuilder2));
             m_TextureEntries.push_back(eastl::make_pair(inPropName, theNewEntry));
             theTextureEntry = theNewEntry.mPtr;
         }
@@ -419,8 +397,7 @@ struct SEffectContext
         }
         if (theImageEntry == nullptr) {
             QDemonScopedRefCounted<SImageEntry> theNewEntry =
-                    QDEMON_NEW(m_Context.GetAllocator(),
-                               SImageEntry)(SImageEntry::CreateImageEntry(inShader, inPropName));
+                    new SImageEntry(SImageEntry::CreateImageEntry(inShader, inPropName));
             m_ImageEntries.push_back(eastl::make_pair(inPropName, theNewEntry));
             theImageEntry = theNewEntry.mPtr;
         }
@@ -440,7 +417,7 @@ struct SEffectContext
         }
         if (theDataBufferEntry == nullptr) {
             QDemonScopedRefCounted<SDataBufferEntry> theNewEntry =
-                    QDEMON_NEW(m_Context.GetAllocator(), SDataBufferEntry)(
+                    new SDataBufferEntry(
                         SDataBufferEntry::CreateDataBufferEntry(inShader, inPropName));
             m_DataBufferEntries.push_back(eastl::make_pair(inPropName, theNewEntry));
             theDataBufferEntry = theNewEntry.mPtr;
@@ -466,7 +443,6 @@ struct SEffectShader
     NVRenderCachedShaderProperty<float> m_FPS;
     NVRenderCachedShaderProperty<QVector2D> m_CameraClipRange;
     STextureEntry m_TextureEntry;
-    volatile qint32 mRefCount;
     SEffectShader(QDemonRenderShaderProgram &inShader)
         : m_Shader(inShader)
         , m_MVP("ModelViewProjectionMatrix", inShader)
@@ -476,17 +452,14 @@ struct SEffectShader
         , m_FPS("FPS", inShader)
         , m_CameraClipRange("CameraClipRange", inShader)
         , m_TextureEntry(inShader, "Texture0", "Texture0Info", "Texture0Flags")
-        , mRefCount(0)
     {
     }
-
-    QDEMON_IMPLEMENT_REF_COUNT_ADDREF_RELEASE(m_Shader->GetRenderContext().GetAllocator())
 };
 
 struct SEffectSystem : public IEffectSystem
 {
     typedef QHash<QString, char *> TPathDataMap;
-    typedef nvhash_set<QString> TPathSet;
+    typedef QSet<QString> TPathSet;
     typedef QHash<QString, QDemonScopedRefCounted<SEffectClass>> TEffectClassMap;
     typedef QHash<TStrStrPair, QDemonScopedRefCounted<SEffectShader>> TShaderMap;
     typedef QVector<SEffectContext *> TContextList;
@@ -504,7 +477,6 @@ struct SEffectSystem : public IEffectSystem
     TShaderMap m_ShaderMap;
     QDemonScopedRefCounted<QDemonRenderDepthStencilState> m_DefaultStencilState;
     QVector<QDemonScopedRefCounted<QDemonRenderDepthStencilState>> m_DepthStencilStates;
-    volatile qint32 mRefCount;
 
     SEffectSystem(IQDemonRenderContextCore &inContext)
         : m_CoreContext(inContext)
@@ -515,14 +487,13 @@ struct SEffectSystem : public IEffectSystem
         , m_Contexts(inContext.GetAllocator(), "SEffectSystem::m_Contexts")
         , m_ShaderMap(inContext.GetAllocator(), "SEffectSystem::m_ShaderMap")
         , m_DepthStencilStates(inContext.GetAllocator(), "SEffectSystem::m_DepthStencilStates")
-        , mRefCount(0)
     {
     }
 
     ~SEffectSystem()
     {
         for (quint32 idx = 0, end = m_Contexts.size(); idx < end; ++idx)
-            NVDelete(m_Allocator, m_Contexts[idx]);
+            delete m_Contexts[idx];
         m_Contexts.clear();
     }
 
@@ -530,14 +501,12 @@ struct SEffectSystem : public IEffectSystem
     {
         if (inEffect.m_Context == nullptr) {
             inEffect.m_Context =
-                    QDEMON_NEW(m_Allocator, SEffectContext)(inEffect.m_ClassName,
+                    new SEffectContext(inEffect.m_ClassName,
                                                             *m_Context, m_ResourceManager);
             m_Contexts.push_back(inEffect.m_Context);
         }
         return *inEffect.m_Context;
     }
-
-    QDEMON_IMPLEMENT_REF_COUNT_ADDREF_RELEASE_OVERRIDE(m_CoreContext.GetAllocator());
 
     SEffectClass *GetEffectClass(QString inStr)
     {
@@ -577,8 +546,8 @@ struct SEffectSystem : public IEffectSystem
         IDynamicObjectClass &theClass =
                 *m_CoreContext.GetDynamicObjectSystemCore().GetDynamicObjectClass(inName);
 
-        SEffectClass *theEffect = QDEMON_NEW(m_Allocator, SEffectClass)(m_Allocator, theClass);
-        m_EffectClasses.insert(eastl::make_pair(inName, theEffect));
+        SEffectClass *theEffect = new SEffectClass(m_Allocator, theClass);
+        m_EffectClasses.insert(inName, theEffect);
 
         // Setup the commands required to run this effect
         StaticAssert<(sizeof(SBindShader) % 4 == 0)>::valid_expression();
@@ -613,7 +582,7 @@ struct SEffectSystem : public IEffectSystem
         ++theCommandPtr;
         dataBuffer += sizeof(SBindTarget);
 
-        new (dataBuffer) SBindShader(m_CoreContext.GetStringTable().RegisterStr(inPathToEffect));
+        new (dataBuffer) SBindShader(QString::fromLocal8Bit(inPathToEffect));
         *theCommandPtr = (SCommand *)dataBuffer;
         ++theCommandPtr;
         dataBuffer += sizeof(SBindShader);
@@ -664,8 +633,8 @@ struct SEffectSystem : public IEffectSystem
                                                             GraphObjectTypes::Effect);
         IDynamicObjectClass &theClass =
                 *m_CoreContext.GetDynamicObjectSystemCore().GetDynamicObjectClass(inName);
-        SEffectClass *theEffect = QDEMON_NEW(m_Allocator, SEffectClass)(m_Allocator, theClass);
-        m_EffectClasses.insert(eastl::make_pair(inName, theEffect));
+        SEffectClass *theEffect = new SEffectClass(m_Allocator, theClass);
+        m_EffectClasses.insert(inName, theEffect);
         return true;
     }
 
@@ -775,8 +744,7 @@ struct SEffectSystem : public IEffectSystem
         return m_CoreContext.GetDynamicObjectSystemCore().GetRenderCommands(inEffectName);
     }
 
-    SEffect *CreateEffectInstance(QString inEffectName,
-                                  NVAllocatorCallback &inSceneGraphAllocator) override
+    SEffect *CreateEffectInstance(QString inEffectName) override
     {
         SEffectClass *theClass = GetEffectClass(inEffectName);
         if (theClass == nullptr)
@@ -784,7 +752,7 @@ struct SEffectSystem : public IEffectSystem
         StaticAssert<(sizeof(SEffect) % 4 == 0)>::valid_expression();
 
         SEffect *theEffect = (SEffect *)m_CoreContext.GetDynamicObjectSystemCore().CreateInstance(
-                    inEffectName, inSceneGraphAllocator);
+                    inEffectName);
         theEffect->Initialize();
         return theEffect;
     }
@@ -1013,7 +981,7 @@ struct SEffectSystem : public IEffectSystem
                                       TShaderFeatureSet(), SDynamicShaderProgramFlags(),
                                       forceCompilation).first;
             if (theProgram)
-                theInsertResult.first->second = QDEMON_NEW(m_Allocator, SEffectShader)(*theProgram);
+                theInsertResult.first->second = new SEffectShader(*theProgram);
         }
         if (theInsertResult.first->second) {
             QDemonRenderContext &theContext(m_Context->GetRenderContext());
@@ -1736,7 +1704,7 @@ struct SEffectSystem : public IEffectSystem
         for (quint32 idx = 0, end = m_Contexts.size(); idx < end; ++idx) {
             if (m_Contexts[idx] == inContext) {
                 m_Contexts.replace_with_last(idx);
-                NVDelete(m_Allocator, inContext);
+                delete inContext;
             }
         }
     }
@@ -1802,7 +1770,7 @@ struct SEffectSystem : public IEffectSystem
             SEffectClass *theClass = theReader.Load<SEffectClass>();
             theClass->SetupThisObjectFromMemory(m_Allocator, *theBaseClass);
             QDemonScopedRefCounted<SEffectClass> theClassPtr(theClass);
-            m_EffectClasses.insert(eastl::make_pair(theBaseClass->GetId(), theClassPtr));
+            m_EffectClasses.insert(theBaseClass->GetId(), theClassPtr);
         }
     }
 
@@ -1837,7 +1805,7 @@ struct SEffectSystem : public IEffectSystem
 
 IEffectSystemCore &IEffectSystemCore::CreateEffectSystemCore(IQDemonRenderContextCore &inContext)
 {
-    return *QDEMON_NEW(inContext.GetAllocator(), SEffectSystem)(inContext);
+    return *new SEffectSystem(inContext);
 }
 
 QT_END_NAMESPACE

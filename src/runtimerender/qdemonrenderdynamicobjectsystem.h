@@ -32,7 +32,6 @@
 #define QDEMON_RENDER_DYNAMIC_OBJECT_SYSTEM_H
 
 #include <QtDemonRender/qdemonrenderbasetypes.h>
-#include <QtDemon/qdemonrefcounted.h>
 #include <QtDemonRender/qdemonrenderbasetypes.h>
 #include <QtGui/QVector2D>
 #include <QtDemonRuntimeRender/qdemonrendershadercache.h>
@@ -170,7 +169,7 @@ public:
     virtual QDemonRenderTextureFormats::Enum GetOutputTextureFormat() const = 0;
 };
 
-class IDynamicObjectSystemCore : public QDemonRefCounted
+class IDynamicObjectSystemCore
 {
 protected:
     virtual ~IDynamicObjectSystemCore() {}

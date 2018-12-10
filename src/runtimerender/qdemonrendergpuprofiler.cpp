@@ -30,9 +30,10 @@
 
 #include <QtDemonRuntimeRender/qdemonrenderprofiler.h>
 #include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
+#include <QtDemonRuntimeRender/qdemonrendertimerquery.h>
+#include <QtDemonRuntimeRender/qdemonrendersync.h>
 #include <QtDemonRender/qdemonrendercontext.h>
-#include <qdemonrendertimerquery.h>
-#include <qdemonrendersync.h>
+
 
 #define RECORDED_FRAME_DELAY 3
 #define RECORDED_FRAME_DELAY_MASK 0x0003
@@ -41,12 +42,8 @@ QT_BEGIN_NAMESPACE
 
 namespace {
 
-using eastl::make_pair;
-
 struct SGpuTimerInfo
 {
-    NVFoundationBase &m_Foundation;
-    volatile qint32 mRefCount;
     bool m_AbsoluteTime;
     quint16 m_WriteID;
     quint16 m_ReadID;
@@ -57,10 +54,8 @@ struct SGpuTimerInfo
     QDemonScopedRefCounted<QDemonRenderTimerQuery> m_TimerEndQueryObjects[RECORDED_FRAME_DELAY];
     QDemonScopedRefCounted<QDemonRenderSync> m_TimerSyncObjects[RECORDED_FRAME_DELAY];
 
-    SGpuTimerInfo(NVFoundationBase &inFoundation)
-        : m_Foundation(inFoundation)
-        , mRefCount(0)
-        , m_AbsoluteTime(false)
+    SGpuTimerInfo()
+        : m_AbsoluteTime(false)
         , m_WriteID(0)
         , m_ReadID(0)
         , m_AverageTimeWriteID(0)
@@ -69,8 +64,6 @@ struct SGpuTimerInfo
     }
 
     ~SGpuTimerInfo() {}
-
-    QDEMON_IMPLEMENT_REF_COUNT_ADDREF_RELEASE(m_Foundation.getAllocator())
 
     void IncrementWriteCounter()
     {
@@ -162,31 +155,23 @@ class Qt3DSCRenderGpuProfiler : public IRenderProfiler
     typedef QHash<QString, QDemonScopedRefCounted<SGpuTimerInfo>> TStrGpuTimerInfoMap;
 
 private:
-    NVFoundationBase &m_Foundation;
     QDemonScopedRefCounted<QDemonRenderContext> m_RenderContext;
     IQDemonRenderContext &m_Context;
-    volatile qint32 mRefCount;
 
     TStrGpuTimerInfoMap m_StrToGpuTimerMap;
     IRenderProfiler::TStrIDVec m_StrToIDVec;
     mutable quint32 m_VertexCount;
 
 public:
-    Qt3DSCRenderGpuProfiler(NVFoundationBase &inFoundation, IQDemonRenderContext &inContext,
+    Qt3DSCRenderGpuProfiler(IQDemonRenderContext &inContext,
                             QDemonRenderContext &inRenderContext)
-        : m_Foundation(inFoundation)
-        , m_RenderContext(inRenderContext)
+        : m_RenderContext(inRenderContext)
         , m_Context(inContext)
-        , mRefCount(0)
-        , m_StrToGpuTimerMap(inContext.GetAllocator(), "Qt3DSRenderGpuProfiler::m_StrToGpuTimerMap")
-        , m_StrToIDVec(inContext.GetAllocator(), "Qt3DSRenderGpuProfiler::m_StrToIDVec")
         , m_VertexCount(0)
     {
     }
 
     virtual ~Qt3DSCRenderGpuProfiler() { m_StrToGpuTimerMap.clear(); }
-
-    QDEMON_IMPLEMENT_REF_COUNT_ADDREF_RELEASE(m_Foundation.getAllocator())
 
     void StartTimer(QString &nameID, bool absoluteTime, bool sync) override
     {
@@ -240,8 +225,7 @@ private:
         if (theIter != m_StrToGpuTimerMap.end())
             return const_cast<SGpuTimerInfo *>(theIter->second.mPtr);
 
-        SGpuTimerInfo *theGpuTimerData =
-                QDEMON_NEW(m_Context.GetAllocator(), SGpuTimerInfo)(m_Foundation);
+        SGpuTimerInfo *theGpuTimerData = new SGpuTimerInfo(m_Foundation);
 
         if (theGpuTimerData) {
             // create queries
@@ -269,11 +253,10 @@ private:
 };
 }
 
-IRenderProfiler &IRenderProfiler::CreateGpuProfiler(NVFoundationBase &inFnd,
-                                                    IQDemonRenderContext &inContext,
+IRenderProfiler &IRenderProfiler::CreateGpuProfiler(IQDemonRenderContext &inContext,
                                                     QDemonRenderContext &inRenderContext)
 {
-    return *QDEMON_NEW(inFnd.getAllocator(), Qt3DSCRenderGpuProfiler)(inFnd, inContext, inRenderContext);
+    return *new Qt3DSCRenderGpuProfiler(inContext, inRenderContext);
 }
 
 QT_END_NAMESPACE

@@ -31,7 +31,6 @@
 #ifndef QDEMON_RENDER_THREADED_IMAGE_LOADER_H
 #define QDEMON_RENDER_THREADED_IMAGE_LOADER_H
 
-#include <QtDemon/qdemonrefcounted.h>
 #include <QtDemon/qdemondataref.h>
 #include <QtDemonRender/qdemonrenderbasetypes.h>
 
@@ -44,7 +43,7 @@ struct ImageLoadResult
     };
 };
 
-class IImageLoadListener : public QDemonRefCounted
+class IImageLoadListener
 {
 protected:
     virtual ~IImageLoadListener() {}
@@ -57,7 +56,7 @@ public:
 
 typedef quint32 TImageBatchId;
 
-class IImageBatchLoader : public QDemonRefCounted
+class IImageBatchLoader
 {
 protected:
     virtual ~IImageBatchLoader() {}
@@ -83,8 +82,7 @@ public:
     virtual void BeginFrame() = 0;
     virtual void EndFrame() = 0;
 
-    static IImageBatchLoader &CreateBatchLoader(NVFoundationBase &inFoundation,
-                                                IInputStreamFactory &inFactory,
+    static IImageBatchLoader &CreateBatchLoader(IInputStreamFactory &inFactory,
                                                 IBufferManager &inBufferManager,
                                                 IThreadPool &inThreadPool, IPerfTimer &inTimer);
 };

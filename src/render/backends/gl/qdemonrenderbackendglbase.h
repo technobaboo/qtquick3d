@@ -493,7 +493,6 @@ protected:
     virtual void setAndInspectHardwareCaps();
 
 protected:
-    volatile qint32 mRefCount; ///< reference count
     GLConversion m_Conversion; ///< Class for conversion from base type to GL types
     QStringList m_extensions; ///< contains the OpenGL extension string
     qint32 m_MaxAttribCount; ///< Maximum attributes which can be used

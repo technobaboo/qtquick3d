@@ -42,24 +42,19 @@ QT_BEGIN_NAMESPACE
 namespace {
 struct SInputStream : public IRefCountedInputStream
 {
-    NVFoundationBase &m_Foundation;
     QString m_Path;
     QFile m_File;
-    volatile qint32 mRefCount;
 
-    SInputStream(NVFoundationBase &inFoundation, const QString &inPath)
+    SInputStream(const QString &inPath)
         : m_Foundation(inFoundation)
         , m_Path(inPath)
         , m_File(inPath)
-        , mRefCount(0)
     {
         m_File.open(QIODevice::ReadOnly);
     }
     virtual ~SInputStream()
     {
     }
-
-    QDEMON_IMPLEMENT_REF_COUNT_ADDREF_RELEASE(m_Foundation.getAllocator())
 
     quint32 Read(QDemonDataRef<quint8> data) override
     {
@@ -87,34 +82,27 @@ struct SInputStream : public IRefCountedInputStream
         return m_File.pos();
     }
 
-    static SInputStream *OpenFile(const QString &inPath, NVFoundationBase &inFoundation)
+    static SInputStream *OpenFile(const QString &inPath)
     {
-        return QDEMON_NEW(inFoundation.getAllocator(), SInputStream)(inFoundation, inPath);
+        return new SInputStream(inPath);
     }
 };
 
 typedef eastl::basic_string<char, ForwardingAllocator> TStrType;
 struct SFactory : public IInputStreamFactory
 {
-    NVFoundationBase &m_Foundation;
-    volatile qint32 mRefCount;
-
     Mutex m_Mutex;
     typedef Mutex::ScopedLock TScopedLock;
 
     const QString QDEMONTUDIO_TAG = QStringLiteral("qt3dstudio");
 
-    SFactory(NVFoundationBase &inFoundation)
-        : m_Foundation(inFoundation)
-        , mRefCount(0)
-        , m_Mutex(inFoundation.getAllocator())
+    SFactory()
+        : m_Mutex(inFoundation.getAllocator())
     {
         // Add the top-level qrc directory
         if (!QDir::searchPaths(QDEMONTUDIO_TAG).contains(QLatin1String(":/")))
             QDir::addSearchPath(QDEMONTUDIO_TAG, QStringLiteral(":/"));
     }
-
-    QDEMON_IMPLEMENT_REF_COUNT_ADDREF_RELEASE_OVERRIDE(m_Foundation.getAllocator())
 
     QFileInfo matchCaseInsensitiveFile(const QString& file)
     {
@@ -193,9 +181,9 @@ struct SFactory : public IInputStreamFactory
 };
 }
 
-IInputStreamFactory &IInputStreamFactory::Create(NVFoundationBase &inFoundation)
+IInputStreamFactory &IInputStreamFactory::Create()
 {
-    return *QDEMON_NEW(inFoundation.getAllocator(), SFactory)(inFoundation);
+    return *new SFactory();
 }
 
 QT_END_NAMESPACE

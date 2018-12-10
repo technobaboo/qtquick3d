@@ -86,7 +86,7 @@ public:
     virtual ShaderGeneratorStages::Enum Stage() const = 0;
 };
 
-class IShaderProgramGenerator : public QDemonRefCounted
+class IShaderProgramGenerator
 {
 public:
     static TShaderGeneratorStageFlags DefaultFlags()

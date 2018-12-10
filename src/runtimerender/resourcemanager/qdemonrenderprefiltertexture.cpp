@@ -39,11 +39,8 @@ QT_BEGIN_NAMESPACE
 Qt3DSRenderPrefilterTexture::Qt3DSRenderPrefilterTexture(QDemonRenderContext *inQDemonRenderContext,
                                                      qint32 inWidth, qint32 inHeight,
                                                      QDemonRenderTexture2D &inTexture2D,
-                                                     QDemonRenderTextureFormats::Enum inDestFormat,
-                                                     NVFoundationBase &inFnd)
-    : m_Foundation(inFnd)
-    , mRefCount(0)
-    , m_Texture2D(inTexture2D)
+                                                     QDemonRenderTextureFormats::Enum inDestFormat)
+    : m_Texture2D(inTexture2D)
     , m_DestinationFormat(inDestFormat)
     , m_Width(inWidth)
     , m_Height(inHeight)
@@ -61,23 +58,22 @@ Qt3DSRenderPrefilterTexture::Qt3DSRenderPrefilterTexture(QDemonRenderContext *in
 Qt3DSRenderPrefilterTexture *
 Qt3DSRenderPrefilterTexture::Create(QDemonRenderContext *inQDemonRenderContext, qint32 inWidth, qint32 inHeight,
                                   QDemonRenderTexture2D &inTexture2D,
-                                  QDemonRenderTextureFormats::Enum inDestFormat,
-                                  NVFoundationBase &inFnd)
+                                  QDemonRenderTextureFormats::Enum inDestFormat)
 {
     Qt3DSRenderPrefilterTexture *theBSDFMipMap = nullptr;
 
     if (inQDemonRenderContext->IsComputeSupported()) {
-        theBSDFMipMap = QDEMON_NEW(inFnd.getAllocator(), Qt3DSRenderPrefilterTextureCompute)(
+        theBSDFMipMap = new Qt3DSRenderPrefilterTextureCompute(
             inQDemonRenderContext, inWidth, inHeight, inTexture2D, inDestFormat, inFnd);
     }
 
     if (!theBSDFMipMap) {
-        theBSDFMipMap = QDEMON_NEW(inFnd.getAllocator(), Qt3DSRenderPrefilterTextureCPU)(
+        theBSDFMipMap = new Qt3DSRenderPrefilterTextureCPU(
             inQDemonRenderContext, inWidth, inHeight, inTexture2D, inDestFormat, inFnd);
     }
 
-    if (theBSDFMipMap)
-        theBSDFMipMap->addRef();
+    // if (theBSDFMipMap)
+    //     theBSDFMipMap->addRef();
 
     return theBSDFMipMap;
 }
@@ -92,9 +88,8 @@ Qt3DSRenderPrefilterTexture::~Qt3DSRenderPrefilterTexture()
 
 Qt3DSRenderPrefilterTextureCPU::Qt3DSRenderPrefilterTextureCPU(
     QDemonRenderContext *inQDemonRenderContext, int inWidth, int inHeight, QDemonRenderTexture2D &inTexture2D,
-    QDemonRenderTextureFormats::Enum inDestFormat, NVFoundationBase &inFnd)
-    : Qt3DSRenderPrefilterTexture(inQDemonRenderContext, inWidth, inHeight, inTexture2D, inDestFormat,
-                                inFnd)
+    QDemonRenderTextureFormats::Enum inDestFormat)
+    : Qt3DSRenderPrefilterTexture(inQDemonRenderContext, inWidth, inHeight, inTexture2D, inDestFormat)
 {
 }
 
@@ -416,10 +411,8 @@ static bool isGLESContext(QDemonRenderContext *context)
 
 Qt3DSRenderPrefilterTextureCompute::Qt3DSRenderPrefilterTextureCompute(
     QDemonRenderContext *inQDemonRenderContext, qint32 inWidth, qint32 inHeight,
-    QDemonRenderTexture2D &inTexture2D, QDemonRenderTextureFormats::Enum inDestFormat,
-    NVFoundationBase &inFnd)
-    : Qt3DSRenderPrefilterTexture(inQDemonRenderContext, inWidth, inHeight, inTexture2D, inDestFormat,
-                                inFnd)
+    QDemonRenderTexture2D &inTexture2D, QDemonRenderTextureFormats::Enum inDestFormat)
+    : Qt3DSRenderPrefilterTexture(inQDemonRenderContext, inWidth, inHeight, inTexture2D, inDestFormat)
     , m_BSDFProgram(nullptr)
     , m_UploadProgram_RGBA8(nullptr)
     , m_UploadProgram_RGB8(nullptr)
@@ -514,7 +507,7 @@ void Qt3DSRenderPrefilterTextureCompute::Build(void *inTextureData, qint32 inTex
             m_MaxMipMapLevel + 1, m_Width, m_Height, m_DestinationFormat, inFormat, (needMipUpload)
                 ? QDemonDataRef<quint8>()
                 : QDemonDataRef<quint8>((quint8 *)inTextureData, inTextureDataSize));
-        m_Texture2D.addRef();
+        //m_Texture2D.addRef();
         // create a compute shader (if not aloread done) which computes the BSDF mipmaps for this
         // texture
         createComputeProgram(m_QDemonRenderContext);

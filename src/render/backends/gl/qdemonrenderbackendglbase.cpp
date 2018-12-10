@@ -58,8 +58,7 @@ QT_BEGIN_NAMESPACE
 
 /// constructor
 QDemonRenderBackendGLBase::QDemonRenderBackendGLBase(const QSurfaceFormat &format)
-    : mRefCount(0)
-    , m_Conversion()
+    : m_Conversion()
     , m_MaxAttribCount(0)
     , m_format(format)
 {

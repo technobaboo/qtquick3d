@@ -64,8 +64,6 @@ namespace {
 
 struct SRenderContextCore : public IQDemonRenderContextCore
 {
-    NVFoundationBase &m_Foundation;
-    QDemonScopedRefCounted<IStringTable> m_StringTable;
     QDemonScopedRefCounted<IPerfTimer> m_PerfTimer;
     QDemonScopedRefCounted<IInputStreamFactory> m_InputStreamFactory;
     QDemonScopedRefCounted<IThreadPool> m_ThreadPool;
@@ -78,14 +76,10 @@ struct SRenderContextCore : public IQDemonRenderContextCore
     QDemonScopedRefCounted<ITextRendererCore> m_OnscreenTexRenderer;
     QDemonScopedRefCounted<IPathManagerCore> m_PathManagerCore;
 
-    qint32 mRefCount;
-    SRenderContextCore(NVFoundationBase &fnd, IStringTable &strTable)
-        : m_Foundation(fnd)
-        , m_StringTable(strTable)
-        , m_PerfTimer(IPerfTimer::CreatePerfTimer(fnd))
+    SRenderContextCore())
+        : m_PerfTimer(IPerfTimer::CreatePerfTimer(fnd))
         , m_InputStreamFactory(IInputStreamFactory::Create(fnd))
         , m_ThreadPool(IThreadPool::CreateThreadPool(fnd, 4))
-        , mRefCount(0)
     {
         m_DynamicObjectSystem = IDynamicObjectSystemCore::CreateDynamicSystemCore(*this);
         m_MaterialSystem = ICustomMaterialSystemCore::CreateCustomMaterialSystemCore(*this);
@@ -98,11 +92,6 @@ struct SRenderContextCore : public IQDemonRenderContextCore
 
     virtual ~SRenderContextCore() {}
 
-    QDEMON_IMPLEMENT_REF_COUNT_ADDREF_RELEASE_OVERRIDE(m_Foundation.getAllocator())
-
-    IStringTable &GetStringTable() override { return *m_StringTable; }
-    NVFoundationBase &GetFoundation() override { return m_Foundation; }
-    NVAllocatorCallback &GetAllocator() override { return m_Foundation.getAllocator(); }
     IInputStreamFactory &GetInputStreamFactory() override { return *m_InputStreamFactory; }
     IThreadPool &GetThreadPool() override { return *m_ThreadPool; }
     IDynamicObjectSystemCore &GetDynamicObjectSystemCore() override
@@ -135,69 +124,10 @@ inline float Clamp(float val, float inMin = 0.0f, float inMax = 1.0f)
     return val;
 }
 
-struct SPerFrameAllocator : public NVAllocatorCallback
-{
-    SFastAllocator<> m_FastAllocator;
-    SSAutoDeallocatorAllocator m_LargeAllocator;
-
-    SPerFrameAllocator(NVAllocatorCallback &baseAllocator)
-        : m_FastAllocator(baseAllocator, "PerFrameAllocation")
-        , m_LargeAllocator(baseAllocator)
-    {
-    }
-
-    inline void *allocate(size_t inSize, const char *inFile, int inLine)
-    {
-        if (inSize < 8192)
-            return m_FastAllocator.allocate(inSize, "PerFrameAllocation", inFile, inLine, 0);
-        else
-            return m_LargeAllocator.allocate(inSize, "PerFrameAllocation", inFile, inLine, 0);
-    }
-
-    inline void *allocate(size_t inSize, const char *inFile, int inLine, int, int)
-    {
-        if (inSize < 8192)
-            return m_FastAllocator.allocate(inSize, "PerFrameAllocation", inFile, inLine, 0);
-        else
-            return m_LargeAllocator.allocate(inSize, "PerFrameAllocation", inFile, inLine, 0);
-    }
-
-    inline void deallocate(void *, size_t) {}
-
-    void reset()
-    {
-        m_FastAllocator.reset();
-        m_LargeAllocator.deallocateAllAllocations();
-    }
-
-    void *allocate(size_t inSize, const char *typeName, const char *inFile, int inLine,
-                   int flags = 0) override
-    {
-        if (inSize < SFastAllocator<>::SlabSize)
-            return m_FastAllocator.allocate(inSize, typeName, inFile, inLine, flags);
-        else
-            return m_LargeAllocator.allocate(inSize, typeName, inFile, inLine, flags);
-    }
-
-    void *allocate(size_t inSize, const char *typeName, const char *inFile, int inLine,
-                   size_t alignment, size_t alignmentOffset) override
-    {
-        if (inSize < SFastAllocator<>::SlabSize)
-            return m_FastAllocator.allocate(inSize, typeName, inFile, inLine, alignment,
-                                            alignmentOffset);
-        else
-            return m_LargeAllocator.allocate(inSize, typeName, inFile, inLine, alignment,
-                                             alignmentOffset);
-    }
-
-    void deallocate(void *) override {}
-};
-
 struct SRenderContext : public IQDemonRenderContext
 {
     QDemonScopedRefCounted<QDemonRenderContext> m_RenderContext;
     QDemonScopedRefCounted<IQDemonRenderContextCore> m_CoreContext;
-    QDemonScopedRefCounted<IStringTable> m_StringTable;
     QDemonScopedRefCounted<IPerfTimer> m_PerfTimer;
     QDemonScopedRefCounted<IInputStreamFactory> m_InputStreamFactory;
     QDemonScopedRefCounted<IBufferManager> m_BufferManager;
@@ -220,10 +150,8 @@ struct SRenderContext : public IQDemonRenderContext
     QDemonScopedRefCounted<IShaderProgramGenerator> m_ShaderProgramGenerator;
     QDemonScopedRefCounted<IDefaultMaterialShaderGenerator> m_DefaultMaterialShaderGenerator;
     QDemonScopedRefCounted<ICustomMaterialShaderGenerator> m_CustomMaterialShaderGenerator;
-    SPerFrameAllocator m_PerFrameAllocator;
     QDemonScopedRefCounted<IRenderList> m_RenderList;
     quint32 m_FrameCount;
-    volatile qint32 mRefCount;
     // Viewport that this render context should use
     QDemonOption<QDemonRenderRect> m_Viewport;
     QSize m_WindowDimensions;
@@ -261,7 +189,6 @@ struct SRenderContext : public IQDemonRenderContext
         , m_RenderList(IRenderList::CreateRenderList(ctx.GetFoundation()))
         , m_PerFrameAllocator(ctx.GetAllocator())
         , m_FrameCount(0)
-        , mRefCount(0)
         , m_WindowDimensions(800, 480)
         , m_ScaleMode(ScaleModes::ExactSize)
         , m_WireframeMode(false)
@@ -345,11 +272,6 @@ struct SRenderContext : public IQDemonRenderContext
 #endif
     }
 
-    QDEMON_IMPLEMENT_REF_COUNT_ADDREF_RELEASE_OVERRIDE(m_RenderContext->GetAllocator());
-
-    IStringTable &GetStringTable() override { return *m_StringTable; }
-    NVFoundationBase &GetFoundation() override { return m_RenderContext->GetFoundation(); }
-    NVAllocatorCallback &GetAllocator() override { return m_RenderContext->GetAllocator(); }
     IQDemonRenderer &GetRenderer() override { return *m_Renderer; }
     IBufferManager &GetBufferManager() override { return *m_BufferManager; }
     IResourceManager &GetResourceManager() override { return *m_ResourceManager; }
@@ -384,7 +306,6 @@ struct SRenderContext : public IQDemonRenderContext
     {
         return *m_CustomMaterialShaderGenerator;
     }
-    NVAllocatorCallback &GetPerFrameAllocator() override { return m_PerFrameAllocator; }
 
     quint32 GetFrameCount() override { return m_FrameCount; }
     void SetFPS(QPair<float, int> inFPS) override { m_FPS = inFPS; }
@@ -825,14 +746,13 @@ struct SRenderContext : public IQDemonRenderContext
 IQDemonRenderContext &SRenderContextCore::CreateRenderContext(QDemonRenderContext &inContext,
                                                              const char *inPrimitivesDirectory)
 {
-    return *QDEMON_NEW(m_Foundation.getAllocator(), SRenderContext)(inContext, *this,
-                                                                    inPrimitivesDirectory);
+    return *new SRenderContext(inContext, *this, inPrimitivesDirectory);
 }
 }
 
-IQDemonRenderContextCore &IQDemonRenderContextCore::Create(NVFoundationBase &fnd, IStringTable &strt)
+IQDemonRenderContextCore &IQDemonRenderContextCore::Create()
 {
-    return *QDEMON_NEW(fnd.getAllocator(), SRenderContextCore)(fnd, strt);
+    return *new SRenderContextCore();
 }
 
 QT_END_NAMESPACE

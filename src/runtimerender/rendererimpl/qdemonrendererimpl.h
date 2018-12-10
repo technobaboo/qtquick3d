@@ -165,7 +165,6 @@ class Q_DEMONRUNTIMERENDER_EXPORT Qt3DSRendererImpl : public IQDemonRenderer, pu
     QDemonScopedRefCounted<QDemonRenderContext> m_Context;
     QDemonScopedRefCounted<IBufferManager> m_BufferManager;
     QDemonScopedRefCounted<IOffscreenRenderManager> m_OffscreenRenderManager;
-    QDemonScopedRefCounted<IStringTable> m_StringTable;
     InvasiveSet<SShaderGeneratorGeneratedShader, SGGSGet, SGGSSet> m_LayerShaders;
     // For rendering bounding boxes.
     QDemonScopedRefCounted<QDemonRenderVertexBuffer> m_BoxVertexBuffer;
@@ -255,7 +254,6 @@ class Q_DEMONRUNTIMERENDER_EXPORT Qt3DSRendererImpl : public IQDemonRenderer, pu
     // Allocator for temporary data that is cleared after every layer.
     TInstanceRenderMap m_InstanceRenderMap;
     TLayerRenderList m_LastFrameLayers;
-    volatile qint32 mRefCount;
 
     // Set from the first layer.
     TPickResultArray m_LastPickResults;
@@ -284,10 +282,6 @@ public:
     {
         return m_DefaultMaterialShaderKeyProperties;
     }
-
-    // QDemonRefCounted
-    void addRef() override;
-    void release() override;
 
     void EnableLayerCaching(bool inEnabled) override { m_LayerCachingEnabled = inEnabled; }
     bool IsLayerCachingEnabled() const override { return m_LayerCachingEnabled; }

@@ -61,8 +61,6 @@ typedef ISeekableIOStream *fi_handle;
 
 struct FreeImageIO
 {
-    NVAllocatorCallback &m_Allocator;
-    NVFoundationBase &m_Foundation;
     int (*read_proc)(void *data, int size, int itemSize, fi_handle handle);
     void (*seek_proc)(fi_handle handle, int offset, int pos);
     int (*tell_proc)(fi_handle handle);
@@ -96,10 +94,8 @@ struct FreeImageIO
         handle->SetPosition(offset, seekPos);
     }
     static inline int teller(fi_handle handle) { return (int)handle->GetPosition(); }
-    FreeImageIO(NVAllocatorCallback &alloc, NVFoundationBase &fnd)
-        : m_Allocator(alloc)
-        , m_Foundation(fnd)
-        , read_proc(reader)
+    FreeImageIO()
+        : read_proc(reader)
         , seek_proc(seeker)
         , tell_proc(teller)
     {
@@ -336,7 +332,7 @@ inline BYTE *FreeImage_GetScanLine(FIBITMAP *bmp, int height)
 
 inline SLoadedTexture *FreeImage_Allocate(int width, int height, int bit_count, FreeImageIO *io)
 {
-    SLoadedTexture *theTexture = QDEMON_NEW(io->m_Allocator, SLoadedTexture)(io->m_Allocator);
+    SLoadedTexture *theTexture = new SLoadedTexture();
     int pitch = CalculatePitch(CalculateLine(width, bit_count));
     quint32 dataSize = (quint32)(height * pitch);
     theTexture->dataSizeInBytes = dataSize;
@@ -374,7 +370,10 @@ inline RGBQUAD *FreeImage_GetPalette(SLoadedTexture *texture)
     return (RGBQUAD *)texture->m_Palette;
 }
 
-inline void FreeImage_Unload(SLoadedTexture *texture) { texture->release(); }
+inline void FreeImage_Unload(SLoadedTexture *texture) 
+{ 
+//    texture->release(); 
+}
 inline void FreeImage_OutputMessageProc(int, const char *message, FreeImageIO *io)
 {
     Q_UNUSED(io);

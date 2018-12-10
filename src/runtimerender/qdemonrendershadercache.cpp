@@ -233,7 +233,6 @@ struct ShaderCache : public IShaderCache
     QDemonScopedRefCounted<IDOMWriter> m_ShaderCache;
     IInputStreamFactory &m_InputStreamFactory;
     bool m_ShaderCompilationEnabled;
-    volatile qint32 mRefCount;
 
     ShaderCache(QDemonRenderContext &ctx, IInputStreamFactory &inInputStreamFactory,
                 IPerfTimer &inPerfTimer)
@@ -242,10 +241,8 @@ struct ShaderCache : public IShaderCache
         , m_Shaders(ctx.GetAllocator(), "ShaderCache::m_Shaders")
         , m_InputStreamFactory(inInputStreamFactory)
         , m_ShaderCompilationEnabled(true)
-        , mRefCount(0)
     {
     }
-    QDEMON_IMPLEMENT_REF_COUNT_ADDREF_RELEASE_OVERRIDE(m_RenderContext.GetAllocator())
 
     QDemonRenderShaderProgram *GetProgram(QString inKey,
                                           QDemonConstDataRef<SShaderPreprocessorFeature> inFeatures) override
@@ -566,8 +563,6 @@ struct ShaderCache : public IShaderCache
         if (m_CacheFilePath.c_str() && m_ShaderCache && m_ShaderCompilationEnabled) {
             CFileSeekableIOStream theStream(m_CacheFilePath.c_str(), FileWriteFlags());
             if (theStream.IsOpen()) {
-                QDemonScopedRefCounted<IStringTable> theStringTable(
-                            IStringTable::CreateStringTable(m_RenderContext.GetAllocator()));
                 CDOMSerializer::WriteXMLHeader(theStream);
                 CDOMSerializer::Write(m_RenderContext.GetAllocator(),
                                       *m_ShaderCache->GetTopElement(), theStream, *theStringTable);
@@ -578,8 +573,6 @@ struct ShaderCache : public IShaderCache
 
     void BootupDOMWriter()
     {
-        QDemonScopedRefCounted<IStringTable> theStringTable(
-                    IStringTable::CreateStringTable(m_RenderContext.GetAllocator()));
         m_ShaderCache = IDOMWriter::CreateDOMWriter(m_RenderContext.GetAllocator(),
                                                     "Qt3DSShaderCache", theStringTable)
                 .first;
@@ -599,8 +592,6 @@ struct ShaderCache : public IShaderCache
                 m_InputStreamFactory.GetStreamForFile(m_CacheFilePath.c_str());
         if (theInStream) {
             SStackPerfTimer __perfTimer(m_PerfTimer, "ShaderCache - Load");
-            QDemonScopedRefCounted<IStringTable> theStringTable(
-                        IStringTable::CreateStringTable(m_RenderContext.GetAllocator()));
             QDemonScopedRefCounted<IDOMFactory> theFactory(
                         IDOMFactory::CreateDOMFactory(m_RenderContext.GetAllocator(), theStringTable));
             eastl::vector<SShaderPreprocessorFeature> theFeatures;
@@ -618,13 +609,12 @@ struct ShaderCache : public IShaderCache
                     CRenderString loadTessEvalData;
                     CRenderString loadGeometryData;
                     CRenderString shaderTypeString;
-                    IStringTable &theStringTable(m_RenderContext.GetStringTable());
                     for (bool success = theReader->MoveToFirstChild(); success;
                          success = theReader->MoveToNextSibling()) {
                         const char *theKeyStr = nullptr;
                         theReader->UnregisteredAtt("key", theKeyStr);
 
-                        QString theKey = theStringTable.RegisterStr(theKeyStr);
+                        QString theKey = QString::fromLocal8Bit(theKeyStr);
                         if (theKey.IsValid()) {
                             m_FlagString.clear();
                             const char *theFlagStr = "";
@@ -650,7 +640,7 @@ struct ShaderCache : public IShaderCache
                                         StringConversion<bool>().StrTo(theAttribute->m_Value,
                                                                        featureValue);
                                         theFeatures.push_back(SShaderPreprocessorFeature(
-                                                                  theStringTable.RegisterStr(
+                                                                  QString::fromLocal8Bit(
                                                                       theAttribute->m_Name.c_str()),
                                                                   featureValue));
                                     }
@@ -754,8 +744,7 @@ IShaderCache &IShaderCache::CreateShaderCache(QDemonRenderContext &inContext,
                                               IInputStreamFactory &inInputStreamFactory,
                                               IPerfTimer &inPerfTimer)
 {
-    return *QDEMON_NEW(inContext.GetAllocator(), ShaderCache)(inContext, inInputStreamFactory,
-                                                              inPerfTimer);
+    return *new ShaderCache(inContext, inInputStreamFactory, inPerfTimer);
 }
 
 QT_END_NAMESPACE

@@ -31,11 +31,10 @@
 #ifndef QDEMON_RENDER_LOADED_TEXTURE_H
 #define QDEMON_RENDER_LOADED_TEXTURE_H
 
-#include <Qt3DSSimpleTypes.h>
+#include <QtDemonRuntimeRender/qdemonsimpletypes.h>
 #include <QtDemonRender/qdemonrenderbasetypes.h>
 #include <QtDemonRuntimeRender/qdemonrenderloadedtexturedds.h>
-#include <QtDemon/qdemonrefcounted.h>
-#include <QImage>
+#include <QtGui/QImage>
 
 
 QT_BEGIN_NAMESPACE
@@ -69,7 +68,6 @@ private:
     ~SLoadedTexture();
 
 public:
-    NVAllocatorCallback &m_Allocator;
     qint32 width;
     qint32 height;
     qint32 components;
@@ -87,9 +85,8 @@ public:
     uint8_t *m_TransparencyTable;
     int32_t m_TransparentPaletteIndex;
 
-    SLoadedTexture(NVAllocatorCallback &inAllocator)
-        : m_Allocator(inAllocator)
-        , width(0)
+    SLoadedTexture()
+        : width(0)
         , height(0)
         , components(0)
         , data(nullptr)
@@ -131,36 +128,29 @@ public:
         }
     }
 
-    void EnsureMultiplerOfFour(NVFoundationBase &inFoundation, const char *inPath);
+    void EnsureMultiplerOfFour(const char *inPath);
     // Returns true if this image has a pixel less than 255.
     bool ScanForTransparency();
-
-    // Be sure to call this or risk leaking an enormous amount of memory
-    void release() override;
 
     // Not all video cards support dxt compression.  Giving the last image allows
     // this object to potentially reuse the memory
     STextureData DecompressDXTImage(int inMipMapIdx, STextureData *inOptLastImage = nullptr);
     void ReleaseDecompressedTexture(STextureData inImage);
 
-    static SLoadedTexture *Load(const QString &inPath, NVFoundationBase &inAllocator,
+    static SLoadedTexture *Load(const QString &inPath,
                                 IInputStreamFactory &inFactory, bool inFlipY = true,
                                 QDemonRenderContextType renderContextType
                                 = QDemonRenderContextValues::NullContext);
     static SLoadedTexture *LoadDDS(IInStream &inStream, qint32 flipVertical,
-                                   NVFoundationBase &fnd,
                                    QDemonRenderContextType renderContextType);
     static SLoadedTexture *LoadBMP(ISeekableIOStream &inStream, bool inFlipY,
-                                   NVFoundationBase &inFnd,
                                    QDemonRenderContextType renderContextType);
     static SLoadedTexture *LoadGIF(ISeekableIOStream &inStream, bool inFlipY,
-                                   NVFoundationBase &inFnd,
                                    QDemonRenderContextType renderContextType);
-    static SLoadedTexture *LoadHDR(ISeekableIOStream &inStream, NVFoundationBase &inFnd,
+    static SLoadedTexture *LoadHDR(ISeekableIOStream &inStream,
                                    QDemonRenderContextType renderContextType);
 
     static SLoadedTexture *LoadQImage(const QString &inPath, qint32 flipVertical,
-                                      NVFoundationBase &fnd,
                                       QDemonRenderContextType renderContextType);
 
 private:

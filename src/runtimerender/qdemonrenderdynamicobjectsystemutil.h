@@ -41,16 +41,12 @@ namespace dynamic {
 struct SStringLoadRemapper
 {
     CStrTableOrDataRef m_StrData;
-    IStringTable &m_StringTable;
     CRenderString m_PathMapper;
     const char *m_ProjectDir;
-    SStringLoadRemapper(NVAllocatorCallback &alloc, CStrTableOrDataRef inData,
-                        const char *inProjectDir, IStringTable &inStrTable)
+    SStringLoadRemapper(CStrTableOrDataRef inData, const char *inProjectDir)
         : m_StrData(inData)
-        , m_StringTable(inStrTable)
         , m_ProjectDir(inProjectDir)
     {
-        Q_UNUSED(alloc)
     }
     void Remap(QString &inStr) { inStr.Remap(m_StrData); }
 };
@@ -61,13 +57,10 @@ struct SStringSaveRemapper
     CRenderString m_RelativeBuffer;
     CRenderString m_ProjectDir;
     CRenderString m_FinalBuffer;
-    IStringTable &m_StringTable;
-    SStringSaveRemapper(NVAllocatorCallback &alloc, const SStrRemapMap &map,
-                        const char *inProjectDir, IStringTable &inStrTable)
+    SStringSaveRemapper(const SStrRemapMap &map, const char *inProjectDir)
         : m_Map(map)
         , m_StringTable(inStrTable)
     {
-        Q_UNUSED(alloc)
         m_ProjectDir.assign(inProjectDir);
     }
     void Remap(QString &inStr) { inStr.Remap(m_Map); }

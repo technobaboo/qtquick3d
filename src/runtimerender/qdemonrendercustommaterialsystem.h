@@ -31,7 +31,6 @@
 #ifndef QDEMON_RENDER_CUSTOM_MATERIAL_SYSTEM_H
 #define QDEMON_RENDER_CUSTOM_MATERIAL_SYSTEM_H
 
-#include <QtDemon/qdemonrefcounted.h>
 #include <QtDemonRuntimeRender/qdemonrenderdynamicobjectsystem.h>
 #include <QtDemonRuntimeRender/qdemonvertexpipelineimpl.h>
 
@@ -43,7 +42,7 @@ struct SCommand; // UICRenderEffectCommands.h
 
 struct SCustomMaterialRenderContext;
 
-class ICustomMaterialSystemCore : public QDemonRefCounted
+class ICustomMaterialSystemCore
 {
 public:
     virtual bool IsMaterialRegistered(QString inStr) = 0;
@@ -78,8 +77,7 @@ public:
                                         bool inIsComputeShader) = 0;
 
     virtual SCustomMaterial *
-    CreateCustomMaterial(QString inName,
-                         NVAllocatorCallback &inSceneGraphAllocator) = 0;
+    CreateCustomMaterial(QString inName) = 0;
 
     virtual void SetPropertyEnumNames(QString inName, QString inPropName,
                                       QDemonConstDataRef<QString> inNames) = 0;

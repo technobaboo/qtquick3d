@@ -832,11 +832,10 @@ static void DLL_CALLCONV Close(void *data)
 }
 
 SLoadedTexture *SLoadedTexture::LoadGIF(ISeekableIOStream &inStream, bool inFlipY,
-                                        NVFoundationBase &inFnd,
                                         QDemonRenderContextType renderContextType)
 {
     Q_UNUSED(renderContextType)
-    FreeImageIO theIO(inFnd.getAllocator(), inFnd);
+    FreeImageIO theIO(;
     void *gifData = Open(&theIO, &inStream);
     if (gifData) {
         SLoadedTexture *retval = DoLoadGIF(&theIO, &inStream, 0, gifData);

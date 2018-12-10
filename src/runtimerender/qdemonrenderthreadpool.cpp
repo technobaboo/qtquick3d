@@ -100,9 +100,8 @@ public:
 struct SThreadPoolThread : public Thread
 {
     IInternalTaskManager &m_Mgr;
-    SThreadPoolThread(NVFoundationBase &foundation, IInternalTaskManager &inMgr)
-        : Thread(foundation)
-        , m_Mgr(inMgr)
+    SThreadPoolThread(IInternalTaskManager &inMgr)
+        : m_Mgr(inMgr)
     {
     }
     void execute(void) override
@@ -125,8 +124,6 @@ struct SThreadPool : public IThreadPool, public IInternalTaskManager
     typedef Mutex::ScopedLock TLockType;
     typedef Pool<STask, ForwardingAllocator> TTaskPool;
 
-    NVFoundationBase &m_Foundation;
-    volatile qint32 mRefCount;
     QVector<SThreadPoolThread *> m_Threads;
     TIdTaskMap m_Tasks;
     Sync m_TaskListEvent;
@@ -137,21 +134,15 @@ struct SThreadPool : public IThreadPool, public IInternalTaskManager
 
     quint64 m_NextId;
 
-    SThreadPool(NVFoundationBase &inBase, quint32 inMaxThreads)
-        : m_Foundation(inBase)
-        , mRefCount(0)
-        , m_Threads(inBase.getAllocator(), "SThreadPool::m_Threads")
-        , m_Tasks(inBase.getAllocator(), "SThreadPool::m_Tasks")
-        , m_TaskListEvent(inBase.getAllocator())
+    SThreadPool(quint32 inMaxThreads)
+        : m_TaskListEvent(inBase.getAllocator())
         , m_Running(true)
         , m_TaskListMutex(m_Foundation.getAllocator())
-        , m_TaskPool(ForwardingAllocator(m_Foundation.getAllocator(), "SThreadPool::m_TaskPool"))
         , m_NextId(1)
     {
         // Fire up our little pools of chaos.
         for (quint32 idx = 0; idx < inMaxThreads; ++idx) {
-            m_Threads.push_back(
-                        QDEMON_NEW(m_Foundation.getAllocator(), SThreadPoolThread)(m_Foundation, *this));
+            m_Threads.push_back(new SThreadPoolThread(*this));
             m_Threads.back()->start(Thread::DEFAULT_STACK_SIZE);
         }
     }
@@ -188,7 +179,7 @@ struct SThreadPool : public IThreadPool, public IInternalTaskManager
 
         for (quint32 idx = 0, end = m_Threads.size(); idx < end; ++idx) {
             m_Threads[idx]->waitForQuit();
-            NVDelete(m_Foundation.getAllocator(), m_Threads[idx]);
+            delete m_Threads[idx];
         }
 
         m_Threads.clear();
@@ -201,8 +192,6 @@ struct SThreadPool : public IThreadPool, public IInternalTaskManager
 
         m_Tasks.clear();
     }
-
-    QDEMON_IMPLEMENT_REF_COUNT_ADDREF_RELEASE(m_Foundation.getAllocator())
 
     void VerifyTaskList()
     {
@@ -228,8 +217,7 @@ struct SThreadPool : public IThreadPool, public IInternalTaskManager
 
             STask *theTask = (STask *)m_TaskPool.allocate(__FILE__, __LINE__);
             new (theTask) STask(inUserData, inFunction, inCancelFunction, taskId);
-            TIdTaskMap::iterator theTaskIter =
-                    m_Tasks.insert(eastl::make_pair(taskId, theTask)).first;
+            TIdTaskMap::iterator theTaskIter = m_Tasks.insert(taskId, theTask).first;
 
             m_TaskList.push_back(*theTask);
             Q_ASSERT(m_TaskList.m_Tail == theTask);
@@ -310,9 +298,9 @@ struct SThreadPool : public IThreadPool, public IInternalTaskManager
 };
 }
 
-IThreadPool &IThreadPool::CreateThreadPool(NVFoundationBase &inFoundation, quint32 inNumThreads)
+IThreadPool &IThreadPool::CreateThreadPool(quint32 inNumThreads)
 {
-    return *QDEMON_NEW(inFoundation.getAllocator(), SThreadPool)(inFoundation, inNumThreads);
+    return *new SThreadPool(inNumThreads);
 }
 
 QT_END_NAMESPACE

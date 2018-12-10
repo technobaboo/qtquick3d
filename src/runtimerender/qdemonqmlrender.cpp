@@ -39,10 +39,9 @@ QT_BEGIN_NAMESPACE
 Q3DSQmlQ3DSQmlRender(IQDemonRenderContext &inRenderContext, const char *asset)
     : m_RenderContext(inRenderContext)
     , m_qmlStreamRenderer(nullptr)
-    , m_offscreenRenderType(inRenderContext.GetStringTable().RegisterStr(GetRendererName()))
-    , m_assetString(inRenderContext.GetStringTable().RegisterStr(asset))
+    , m_offscreenRenderType(QString::fromLocal8Bit(GetRendererName()))
+    , m_assetString(QString::fromLocal8Bit(asset)
     , m_callback(nullptr)
-    , mRefCount(0)
 {
 
 }

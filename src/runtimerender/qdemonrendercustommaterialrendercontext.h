@@ -31,7 +31,6 @@
 #ifndef QDEMON_RENDER_CUSTOM_MATERIAL_RENDER_CONTEXT_H
 #define QDEMON_RENDER_CUSTOM_MATERIAL_RENDER_CONTEXT_H
 
-#include <QtDemon/qdemonrefcounted.h>
 #include <QtGui/QMatrix4x4>
 #include <QtGui/QMatrix3x3>
 #include <QtDemonRuntimeRender/qdemonrendershaderkeys.h>

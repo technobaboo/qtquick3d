@@ -86,8 +86,6 @@ using DefaultMaterialLighting;
 using ImageMappingModes;
 using DefaultMaterialBlendMode;
 using QDemonRenderTextureCoordOp;
-using IStringTable;
-using NVFoundationBase;
 using namespace qt3ds;
 using namespace foundation;
 using TIdObjectMap;
@@ -128,7 +126,6 @@ struct WStrOps<SFloat2>
         ioTempBuf.resize(len + 1);
         ::memcpy(ioTempBuf.data(), buffer, (len + 1) * sizeof(char));
         MemoryBuffer<RawAllocator> unused;
-        qt3dsdm::IStringTable *theTable(nullptr);
         WCharTReader reader(ioTempBuf.begin(), unused, *theTable);
         reader.ReadRef(QDemonDataRef<float>(item.m_Floats, 2));
     }
@@ -143,7 +140,6 @@ struct WStrOps<SFloat3>
         ioTempBuf.resize(len + 1);
         ::memcpy(ioTempBuf.data(), buffer, (len + 1) * sizeof(char));
         MemoryBuffer<RawAllocator> unused;
-        qt3dsdm::IStringTable *theTable(nullptr);
         WCharTReader reader(ioTempBuf.begin(), unused, *theTable);
         reader.ReadRef(QDemonDataRef<float>(item.m_Floats, 3));
     }
@@ -176,14 +172,14 @@ struct SMetaPropertyParser : public IPropertyParser
     SMetaPropertyParser(const char *inType, const char *inClass,
                         Q3DStudio::IRuntimeMetaData &inMeta)
         : m_MetaData(inMeta)
-        , m_Type(inMeta.GetStringTable()->GetRenderStringTable().RegisterStr(inType))
-        , m_ClassId(inMeta.GetStringTable()->GetRenderStringTable().RegisterStr(inClass))
+        , m_Type(QString::fromLocal8Bit(inType))
+        , m_ClassId(QString::fromLocal8Bit(inClass))
     {
     }
 
     QString Register(const char *inName)
     {
-        return m_MetaData.GetStringTable()->GetRenderStringTable().RegisterStr(inName);
+        return QString::fromLocal8Bit(inName);
     }
 
     QDemonOption<TStrType> ParseStr(const char *inName) override
@@ -449,9 +445,6 @@ struct SRenderUIPLoader : public IDOMReferenceResolver
     typedef eastl::hash_map<QString, SPathAndAnchorIndex> TIdPathAnchorIndexMap;
     qt3dsdm::IDOMReader &m_Reader;
     Q3DStudio::IRuntimeMetaData &m_MetaData;
-    IStringTable &m_StrTable;
-    NVFoundationBase &m_Foundation;
-    NVAllocatorCallback &m_PresentationAllocator;
     TIdObjectMap &m_ObjectMap;
     IBufferManager &m_BufferManager;
     SPresentation *m_Presentation;
@@ -471,15 +464,7 @@ struct SRenderUIPLoader : public IDOMReferenceResolver
     TIdPathAnchorIndexMap m_AnchorIdToPathAndAnchorIndexMap;
 
     SRenderUIPLoader(qt3dsdm::IDOMReader &inReader, const char *inFullPathToPresentationFile,
-                     Q3DStudio::IRuntimeMetaData &inMetaData, IStringTable &inStrTable
-                     // Allocator for datastructures we need to parse the file.
-                     ,
-                     NVFoundationBase &inFoundation
-                     // Allocator used for the presentation objects themselves
-                     ,
-                     NVAllocatorCallback &inPresentationAllocator
-                     // Map of string ids to objects
-                     ,
+                     Q3DStudio::IRuntimeMetaData &inMetaData,
                      TIdObjectMap &ioObjectMap, IBufferManager &inBufferManager,
                      IEffectSystem &inEffectSystem, const char *inPresentationDir,
                      IRenderPluginManager &inRPM,
@@ -507,7 +492,7 @@ struct SRenderUIPLoader : public IDOMReferenceResolver
         std::string::size_type pos = presentationFile.find_last_of("\\/");
         if (pos != std::string::npos) {
             std::string path = presentationFile.substr(0, pos);
-            m_Presentation->m_PresentationDirectory = inStrTable.RegisterStr(path.c_str());
+            m_Presentation->m_PresentationDirectory = QString::fromLocal8Bit(path.c_str());
         }
     }
 
@@ -617,13 +602,13 @@ struct SRenderUIPLoader : public IDOMReferenceResolver
                                    QString &ioString)
     {
         if (ParseProperty(inParser, inName, m_TempParseString))
-            ioString = m_StrTable.RegisterStr(m_TempParseString.c_str());
+            ioString = QString::fromLocal8Bit(m_TempParseString.c_str());
     }
     void ParseProperty(IPropertyParser &inParser, const char *inName, SImage *&ioImage)
     {
         if (ParseProperty(inParser, inName, m_TempParseString)) {
             TIdObjectMap::iterator theIter =
-                m_ObjectMap.find(m_StrTable.RegisterStr(m_TempParseString.c_str() + 1));
+                m_ObjectMap.find(QString::fromLocal8Bit(m_TempParseString.c_str() + 1));
             if (theIter != m_ObjectMap.end()
                 && theIter->second->m_Type == GraphObjectTypes::Image) {
                 ioImage = static_cast<SImage *>(theIter->second);
@@ -635,7 +620,7 @@ struct SRenderUIPLoader : public IDOMReferenceResolver
     void ParseProperty(IPropertyParser &inParser, const char *inName, QString &ioStr)
     {
         if (ParseProperty(inParser, inName, m_TempParseString))
-            ioStr = m_StrTable.RegisterStr(m_TempParseString.c_str());
+            ioStr = QString::fromLocal8Bit(m_TempParseString.c_str());
     }
 
     void ParseNodeFlagsProperty(IPropertyParser &inParser, const char *inName,
@@ -1002,7 +987,7 @@ struct SRenderUIPLoader : public IDOMReferenceResolver
                 if (theTexture.hasValue()) {
                     QString theStr;
                     if (theTexture->size())
-                        theStr = m_StrTable.RegisterStr(theTexture->c_str());
+                        theStr = QString::fromLocal8Bit(theTexture->c_str());
 
                     SetDynamicObjectProperty(inDynamicObject, theDefinition, theStr);
                 }
@@ -1080,7 +1065,7 @@ struct SRenderUIPLoader : public IDOMReferenceResolver
         if (dataOpt.hasValue()) {
             QString &data = dataOpt.getValue();
             ioUpdates.push_back(SRenderPropertyValueUpdate(
-                inDeclaration.m_Name, m_StrTable.RegisterStr(data.c_str())));
+                inDeclaration.m_Name, QString::fromLocal8Bit(data.c_str())));
         }
     }
     void AddPluginPropertyUpdate(eastl::vector<SRenderPropertyValueUpdate> &ioUpdates,
@@ -1218,7 +1203,7 @@ struct SRenderUIPLoader : public IDOMReferenceResolver
                  success = m_Reader.MoveToNextSibling("PathAnchorPoint")) {
                 const char *theId;
                 m_Reader.Att("id", theId);
-                QString theIdStr = m_StrTable.RegisterStr(theId);
+                QString theIdStr = QString::fromLocal8Bit(theId);
                 m_AnchorIdToPathAndAnchorIndexMap.insert(
                     eastl::make_pair(theIdStr, SPathAndAnchorIndex(thePath, anchorCount)));
                 ++anchorCount;
@@ -1228,7 +1213,7 @@ struct SRenderUIPLoader : public IDOMReferenceResolver
         case qt3dsdm::ComposerObjectTypes::Effect: {
             const char *effectClassId;
             m_Reader.Att("class", effectClassId);
-            QString theStr = m_StrTable.RegisterStr(effectClassId + 1);
+            QString theStr = QString::fromLocal8Bit(effectClassId + 1);
             if (m_EffectSystem.IsEffectRegistered(theStr))
                 theNewObject = m_EffectSystem.CreateEffectInstance(theStr, m_PresentationAllocator);
         } break;
@@ -1238,9 +1223,9 @@ struct SRenderUIPLoader : public IDOMReferenceResolver
             if (!isTrivial(classId)) {
                 ++classId;
                 TIdStringMap::iterator iter =
-                    m_RenderPluginSourcePaths.find(m_StrTable.RegisterStr(classId));
+                    m_RenderPluginSourcePaths.find(QString::fromLocal8Bit(classId));
                 if (iter != m_RenderPluginSourcePaths.end()) {
-                    QString thePluginPath = m_StrTable.RegisterStr(iter->second.c_str());
+                    QString thePluginPath = QString::fromLocal8Bit(iter->second.c_str());
                     IRenderPluginClass *theClass =
                         m_RenderPluginManager.GetRenderPlugin(thePluginPath);
                     if (theClass) {
@@ -1256,7 +1241,7 @@ struct SRenderUIPLoader : public IDOMReferenceResolver
         case qt3dsdm::ComposerObjectTypes::CustomMaterial: {
             const char *materialClassId;
             m_Reader.Att("class", materialClassId);
-            QString theStr = m_StrTable.RegisterStr(materialClassId + 1);
+            QString theStr = QString::fromLocal8Bit(materialClassId + 1);
             if (m_CustomMaterialSystem.IsMaterialRegistered(theStr))
                 theNewObject =
                     m_CustomMaterialSystem.CreateCustomMaterial(theStr, m_PresentationAllocator);
@@ -1266,7 +1251,7 @@ struct SRenderUIPLoader : public IDOMReferenceResolver
             break;
         }
         if (theNewObject) {
-            QString theObjectId(m_StrTable.RegisterStr(theId));
+            QString theObjectId(QString::fromLocal8Bit(theId));
             m_ObjectMap.insert(eastl::make_pair(theObjectId, theNewObject));
             theNewObject->m_Id = theObjectId;
             // setup hierarchy
@@ -1411,7 +1396,7 @@ struct SRenderUIPLoader : public IDOMReferenceResolver
         m_Reader.Att("id", theId);
         const char *theClass = "";
         m_Reader.Att("class", theClass);
-        TIdObjectMap::iterator theObject = m_ObjectMap.find(m_StrTable.RegisterStr(theId));
+        TIdObjectMap::iterator theObject = m_ObjectMap.find(QString::fromLocal8Bit(theId));
         if (theObject != m_ObjectMap.end()) {
             switch (theObject->second->m_Type) {
             case GraphObjectTypes::Scene:
@@ -1497,7 +1482,7 @@ struct SRenderUIPLoader : public IDOMReferenceResolver
                 || (inSetSetValues && strcmp(m_Reader.GetNarrowElementName(), "Set") == 0)) {
                 const char *theId;
                 m_Reader.Att("ref", theId);
-                QString theIdStr(m_StrTable.RegisterStr(theId + 1));
+                QString theIdStr(QString::fromLocal8Bit(theId + 1));
                 TIdObjectMap::iterator theObject = m_ObjectMap.find(theIdStr);
                 if (theObject != m_ObjectMap.end()) {
                     SDomReaderPropertyParser parser(m_Reader, m_TempBuf, *this, *theObject->second);
@@ -1588,7 +1573,7 @@ struct SRenderUIPLoader : public IDOMReferenceResolver
     {
         tempStr.assign(propName);
         SRenderPluginPropertyDeclaration theDec(
-            m_StrTable.RegisterStr(tempStr.c_str()), inPropType);
+            QString::fromLocal8Bit(tempStr.c_str()), inPropType);
         pluginClass.RegisterProperty(theDec);
     }
 
@@ -1625,7 +1610,7 @@ struct SRenderUIPLoader : public IDOMReferenceResolver
                     m_Reader.Att("name", name);
                     m_Reader.Att("sourcepath", sourcepath);
                     if (AreEqual(m_Reader.GetNarrowElementName(), "Effect")) {
-                        QString theId(m_StrTable.RegisterStr(idStr));
+                        QString theId(QString::fromLocal8Bit(idStr));
                         if (m_EffectSystem.IsEffectRegistered(theId) == false) {
                             // File should already be loaded.
                             QDemonOption<qt3dsdm::SMetaDataEffect> theEffectMetaData =
@@ -1639,7 +1624,7 @@ struct SRenderUIPLoader : public IDOMReferenceResolver
                             }
                         }
                     } else if (AreEqual(m_Reader.GetNarrowElementName(), "CustomMaterial")) {
-                        QString theId(m_StrTable.RegisterStr(idStr));
+                        QString theId(QString::fromLocal8Bit(idStr));
                         if (m_CustomMaterialSystem.IsMaterialRegistered(theId) == false) {
                             // File should already be loaded.
                             QDemonOption<qt3dsdm::SMetaDataCustomMaterial> theMetaData =
@@ -1653,29 +1638,29 @@ struct SRenderUIPLoader : public IDOMReferenceResolver
                             }
                         }
                     } else if (AreEqual(m_Reader.GetNarrowElementName(), "RenderPlugin")) {
-                        QString theId(m_StrTable.RegisterStr(idStr));
+                        QString theId(QString::fromLocal8Bit(idStr));
                         m_MetaData.LoadPluginXMLFile(m_Reader.GetNarrowElementName(), idStr, name,
                                                      sourcepath);
                         eastl::vector<Q3DStudio::TRuntimeMetaDataStrType> theProperties;
                         IRenderPluginClass *thePluginClass =
                             m_RenderPluginManager.GetOrCreateRenderPlugin(
-                                m_StrTable.RegisterStr(sourcepath));
+                                QString::fromLocal8Bit(sourcepath));
                         if (thePluginClass) {
                             m_RenderPluginSourcePaths.insert(
-                                eastl::make_pair(m_StrTable.RegisterStr(idStr), sourcepath));
+                                eastl::make_pair(QString::fromLocal8Bit(idStr), sourcepath));
                             m_MetaData.GetInstanceProperties(m_Reader.GetNarrowElementName(), idStr,
                                                              theProperties, false);
                             QString thePropertyStr;
                             QString metaType =
-                                m_MetaData.GetStringTable()->GetRenderStringTable().RegisterStr(
+                                QString::fromLocal8Bit(
                                     m_Reader.GetNarrowElementName());
                             QString metaId =
-                                m_MetaData.GetStringTable()->GetRenderStringTable().RegisterStr(
+                                QString::fromLocal8Bit(
                                     idStr);
                             for (quint32 idx = 0, end = theProperties.size(); idx < end; ++idx) {
                                 using namespace Q3DStudio;
                                 QString metaProp =
-                                    m_MetaData.GetStringTable()->GetRenderStringTable().RegisterStr(
+                                    QString::fromLocal8Bit(
                                         theProperties[idx].c_str());
                                 Q3DStudio::ERuntimeDataModelDataType thePropType =
                                     m_MetaData.GetPropertyType(metaType, metaProp, metaId);
@@ -1741,7 +1726,7 @@ struct SRenderUIPLoader : public IDOMReferenceResolver
                          valid = m_Reader.MoveToNextSibling()) {
                         const char *srcPath;
                         m_Reader.UnregisteredAtt("sourcepath", srcPath);
-                        QString imgPath = m_StrTable.RegisterStr(srcPath);
+                        QString imgPath = QString::fromLocal8Bit(srcPath);
                         bool hasTransparency = false;
                         m_Reader.Att("hasTransparency", hasTransparency);
                         m_BufferManager.SetImageHasTransparency(imgPath, hasTransparency);
@@ -1796,15 +1781,7 @@ struct SRenderUIPLoader : public IDOMReferenceResolver
 
 SPresentation *IUIPLoader::LoadUIPFile(
     qt3dsdm::IDOMReader &inReader, const char *inFullPathToPresentationFile,
-    Q3DStudio::IRuntimeMetaData &inMetaData, IStringTable &inStrTable,
-    NVFoundationBase &inFoundation
-    // Allocator used for the presentation objects themselves
-    // this allows clients to pre-allocate a block of memory just for
-    // the scene graph
-    ,
-    NVAllocatorCallback &inPresentationAllocator
-    // Map of string ids to objects
-    ,
+    Q3DStudio::IRuntimeMetaData &inMetaData,
     TIdObjectMap &ioObjectMap, IBufferManager &inBufferManager, IEffectSystem &inEffectSystem,
     const char *inPresentationDir, IRenderPluginManager &inPluginManager,
     ICustomMaterialSystem &inCMS, IDynamicObjectSystem &inDynamicSystem,
@@ -1820,8 +1797,7 @@ SPresentation *IUIPLoader::LoadUIPFile(
 using namespace qt3dsdm;
 
 inline QDemonRenderTextureFormats::Enum
-ConvertTypeAndFormatToTextureFormat(const char *inType, const char *inFormat,
-                                    NVFoundationBase &inFoundation)
+ConvertTypeAndFormatToTextureFormat(const char *inType, const char *inFormat)
 {
     QDemonRenderTextureFormats::Enum retval = QDemonRenderTextureFormats::RGBA8;
     if (AreEqual(inType, "ubyte")) {
@@ -1848,7 +1824,7 @@ ConvertTypeAndFormatToTextureFormat(const char *inType, const char *inFormat,
 }
 
 inline QDemonRenderTextureMagnifyingOp::Enum
-ConvertFilterToMagOp(const char *inFilter, NVFoundationBase &inFoundation)
+ConvertFilterToMagOp(const char *inFilter)
 {
     if (AreEqual(inFilter, "linear"))
         return QDemonRenderTextureMagnifyingOp::Linear;
@@ -1862,7 +1838,7 @@ ConvertFilterToMagOp(const char *inFilter, NVFoundationBase &inFoundation)
 }
 
 inline QDemonRenderTextureCoordOp::Enum
-ConvertTextureCoordOp(const char *inWrap, NVFoundationBase &inFoundation)
+ConvertTextureCoordOp(const char *inWrap)
 {
     if (AreEqual(inWrap, "clamp"))
         return QDemonRenderTextureCoordOp::ClampToEdge;
@@ -1899,8 +1875,8 @@ QString ConvertUTFtoQString(const wchar_t *string)
 // Re-register all strings because we can't be sure that the meta data system and the effect
 // system are sharing the same string table.
 void IUIPLoader::CreateEffectClassFromMetaEffect(
-    QString inEffectName, NVFoundationBase &inFoundation, IEffectSystem &inEffectSystem,
-    const qt3dsdm::SMetaDataEffect &inMetaDataEffect, IStringTable &inStrTable)
+    QString inEffectName, IEffectSystem &inEffectSystem,
+    const qt3dsdm::SMetaDataEffect &inMetaDataEffect)
 {
     using namespace dynamic;
     if (inEffectSystem.IsEffectRegistered(inEffectName)) {
@@ -1929,14 +1905,14 @@ void IUIPLoader::CreateEffectClassFromMetaEffect(
             for (quint32 enumIdx = 0, enumEnd = theDefinition.m_EnumValueNames.size();
                  enumIdx < enumEnd; ++enumIdx)
                 theEnumNames.push_back(
-                    inStrTable.RegisterStr(theDefinition.m_EnumValueNames[enumIdx]));
+                    QString::fromLocal8Bit(theDefinition.m_EnumValueNames[enumIdx]));
             inEffectSystem.SetEffectPropertyEnumNames(
-                inEffectName, inStrTable.RegisterStr(theDefinition.m_Name), theEnumNames);
+                inEffectName, QString::fromLocal8Bit(theDefinition.m_Name), theEnumNames);
         }
         if (theDefinition.m_DataType == QDemonRenderShaderDataTypes::QDemonRenderTexture2DPtr)
             inEffectSystem.SetEffectPropertyTextureSettings(
-                inEffectName, inStrTable.RegisterStr(theDefinition.m_Name),
-                inStrTable.RegisterStr(theDefinition.m_ImagePath), theDefinition.m_TexUsageType,
+                inEffectName, QString::fromLocal8Bit(theDefinition.m_Name),
+                QString::fromLocal8Bit(theDefinition.m_ImagePath), theDefinition.m_TexUsageType,
                 theDefinition.m_CoordOp, theDefinition.m_MagFilterOp, theDefinition.m_MinFilterOp);
     }
     for (quint32 idx = 0, end = inMetaDataEffect.m_Shaders.size(); idx < end; ++idx) {
@@ -1949,7 +1925,7 @@ void IUIPLoader::CreateEffectClassFromMetaEffect(
         theConvertShaderVersionStr = ConvertUTFtoQString(
             theShader.m_Version.c_str()).toStdString();
 
-        inEffectSystem.SetShaderData(inStrTable.RegisterStr(theShader.m_Name.c_str()),
+        inEffectSystem.SetShaderData(QString::fromLocal8Bit(theShader.m_Name.c_str()),
                                      theConvertStr.c_str(), theConvertShaderVersionStr.c_str(),
                                      theConvertStr.c_str(), theShader.m_HasGeomShader,
                                      theShader.m_IsComputeShader);
@@ -1959,9 +1935,9 @@ void IUIPLoader::CreateEffectClassFromMetaEffect(
 }
 
 void IUIPLoader::CreateMaterialClassFromMetaMaterial(
-    QString inClassName, NVFoundationBase &inFoundation,
+    QString inClassName,
     ICustomMaterialSystem &inMaterialSystem,
-    const qt3dsdm::SMetaDataCustomMaterial &inMetaDataMaterial, IStringTable &inStrTable)
+    const qt3dsdm::SMetaDataCustomMaterial &inMetaDataMaterial)
 {
     using namespace dynamic;
     if (inMaterialSystem.IsMaterialRegistered(inClassName)) {
@@ -1991,14 +1967,14 @@ void IUIPLoader::CreateMaterialClassFromMetaMaterial(
             for (quint32 enumIdx = 0, enumEnd = theDefinition.m_EnumValueNames.size();
                  enumIdx < enumEnd; ++enumIdx)
                 theEnumNames.push_back(
-                    inStrTable.RegisterStr(theDefinition.m_EnumValueNames[enumIdx]));
+                    QString::fromLocal8Bit(theDefinition.m_EnumValueNames[enumIdx]));
             inMaterialSystem.SetPropertyEnumNames(
-                inClassName, inStrTable.RegisterStr(theDefinition.m_Name), theEnumNames);
+                inClassName, QString::fromLocal8Bit(theDefinition.m_Name), theEnumNames);
         }
         if (theDefinition.m_DataType == QDemonRenderShaderDataTypes::QDemonRenderTexture2DPtr)
             inMaterialSystem.SetPropertyTextureSettings(
-                inClassName, inStrTable.RegisterStr(theDefinition.m_Name),
-                inStrTable.RegisterStr(theDefinition.m_ImagePath), theDefinition.m_TexUsageType,
+                inClassName, QString::fromLocal8Bit(theDefinition.m_Name),
+                QString::fromLocal8Bit(theDefinition.m_ImagePath), theDefinition.m_TexUsageType,
                 theDefinition.m_CoordOp, theDefinition.m_MagFilterOp, theDefinition.m_MinFilterOp);
     }
     if (inMetaDataMaterial.m_Shaders.size()) {
@@ -2011,7 +1987,7 @@ void IUIPLoader::CreateMaterialClassFromMetaMaterial(
             theConvertShaderVersionStr = ConvertUTFtoQString(
                 theShader.m_Version.c_str()).toStdString();
             inMaterialSystem.SetMaterialClassShader(
-                inStrTable.RegisterStr(theShader.m_Name.c_str()), theConvertShaderTypeStr.c_str(),
+                QString::fromLocal8Bit(theShader.m_Name.c_str()), theConvertShaderTypeStr.c_str(),
                 theConvertShaderVersionStr.c_str(), theConvertStr.c_str(),
                 theShader.m_HasGeomShader, theShader.m_IsComputeShader);
         }

@@ -31,7 +31,6 @@
 #ifndef QDEMON_RENDER_SHADER_CACHE_H
 #define QDEMON_RENDER_SHADER_CACHE_H
 
-#include <QtDemon/qdemonrefcounted.h>
 #include <QtDemon/qdemonflags.h>
 
 #include <QtCore/QString>
@@ -93,7 +92,7 @@ inline TShaderFeatureSet ShaderCacheNoFeatures() { return TShaderFeatureSet(); }
 // Hash is dependent on the order of the keys; so make sure their order is consistent!!
 size_t HashShaderFeatureSet(QDemonConstDataRef<SShaderPreprocessorFeature> inFeatureSet);
 
-class IShaderCache : public QDemonRefCounted
+class IShaderCache
 {
 protected:
     virtual ~IShaderCache() {}

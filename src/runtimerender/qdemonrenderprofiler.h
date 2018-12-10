@@ -31,7 +31,6 @@
 #ifndef QDEMON_RENDER_PROFILER_H
 #define QDEMON_RENDER_PROFILER_H
 
-#include <QtDemon/qdemonrefcounted.h>
 #include <QtDemonRender/qdemonrenderbasetypes.h>
 
 QT_BEGIN_NAMESPACE
@@ -39,7 +38,7 @@ QT_BEGIN_NAMESPACE
 /**
      *	Opaque profiling system for rendering.
      */
-class IRenderProfiler : public QDemonRefCounted
+class IRenderProfiler
 {
 public:
     typedef QVector<QString> TStrIDVec;
@@ -98,8 +97,7 @@ public:
          */
     virtual quint32 GetAndResetTriangleCount() const = 0;
 
-    static IRenderProfiler &CreateGpuProfiler(NVFoundationBase &inFoundation,
-                                              IQDemonRenderContext &inContext,
+    static IRenderProfiler &CreateGpuProfiler(IQDemonRenderContext &inContext,
                                               QDemonRenderContext &inRenderContext);
 };
 QT_END_NAMESPACE

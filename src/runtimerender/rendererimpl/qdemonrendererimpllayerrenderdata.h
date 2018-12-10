@@ -89,7 +89,6 @@ struct QDEMON_AUTOTEST_EXPORT SLayerRenderData : public SLayerRenderPreparationD
     quint32 m_NonDirtyTemporalAAPassIndex;
     float m_TextScale;
 
-    volatile qint32 mRefCount;
     QDemonOption<QVector3D> m_BoundingRectColor;
     QDemonRenderTextureFormats::Enum m_DepthBufferFormat;
 
@@ -156,9 +155,6 @@ struct QDEMON_AUTOTEST_EXPORT SLayerRenderData : public SLayerRenderPreparationD
 
     SOffscreenRendererEnvironment CreateOffscreenRenderEnvironment() override;
     IRenderTask &CreateRenderToTextureRunnable() override;
-
-    void addRef();
-    void release();
 
 protected:
     // Used for both the normal passes and the depth pass.

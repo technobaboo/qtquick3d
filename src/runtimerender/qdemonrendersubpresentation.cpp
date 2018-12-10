@@ -46,9 +46,8 @@ CSubPresentationRenderer::CSubPresentationRenderer(IQDemonRenderContext &inRende
                                                    SPresentation &inPresentation)
     : m_RenderContext(inRenderContext)
     , m_Presentation(inPresentation)
-    , mRefCount(0)
     , m_PickQuery(*this)
-    , m_OffscreenRendererType(inRenderContext.GetStringTable().RegisterStr(GetRendererName()))
+    , m_OffscreenRendererType(QString::fromLocal8Bit(GetRendererName()))
 {
 }
 

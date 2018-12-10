@@ -31,7 +31,6 @@
 #ifndef QDEMON_RENDER_RENDER_LIST_H
 #define QDEMON_RENDER_RENDER_LIST_H
 
-#include <QtDemon/qdemonrefcounted.h>
 #include <QtDemonRender/qdemonrenderbasetypes.h>
 
 QT_BEGIN_NAMESPACE
@@ -66,7 +65,7 @@ public:
      * by
      * the offscreen render manager.
      */
-class IRenderList : public QDemonRefCounted
+class IRenderList
 {
 public:
     // Called by the render context, do not call this.
@@ -93,7 +92,7 @@ public:
     virtual QDemonRenderRect GetScissor() const = 0;
     virtual QDemonRenderRect GetViewport() const = 0;
 
-    static IRenderList &CreateRenderList(NVFoundationBase &inFnd);
+    static IRenderList &CreateRenderList();
 };
 
 // Now for scoped property access.

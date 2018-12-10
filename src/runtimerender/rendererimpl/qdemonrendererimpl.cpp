@@ -99,7 +99,6 @@ Qt3DSRendererImpl::Qt3DSRendererImpl(IQDemonRenderContext &ctx)
     , m_LayerBlendTexture(ctx.GetResourceManager())
     , m_BlendFB(nullptr)
     #endif
-    , mRefCount(0)
     , m_CurrentLayer(nullptr)
     , m_PickRenderPlugins(true)
     , m_LayerCachingEnabled(true)
@@ -285,7 +284,7 @@ SLayerRenderData *Qt3DSRendererImpl::GetOrCreateLayerRenderDataForNode(const SNo
         if (theIter != m_InstanceRenderMap.end())
             return const_cast<SLayerRenderData *>(theIter->second.mPtr);
 
-        SLayerRenderData *theRenderData = QDEMON_NEW(m_Context->GetAllocator(), SLayerRenderData)(
+        SLayerRenderData *theRenderData = new SLayerRenderData(
                     const_cast<SLayer &>(*theLayer), *this);
         m_InstanceRenderMap.insert(combineLayerAndId(theLayer, id), theRenderData);
 
@@ -1584,15 +1583,15 @@ void Qt3DSRendererImpl::UpdateCbAoShadow(const SLayer *pLayer, const SCamera *pC
             m_ConstantBuffers.insert(theName, pCB);
 
             // Add paramters. Note should match the appearance in the shader program
-            pCB->AddParam(m_Context->GetStringTable().RegisterStr("ao_properties"),
+            pCB->AddParam(QString::fromLocal8Bit("ao_properties"),
                           QDemonRenderShaderDataTypes::Vec4, 1);
-            pCB->AddParam(m_Context->GetStringTable().RegisterStr("ao_properties2"),
+            pCB->AddParam(QString::fromLocal8Bit("ao_properties2"),
                           QDemonRenderShaderDataTypes::Vec4, 1);
-            pCB->AddParam(m_Context->GetStringTable().RegisterStr("shadow_properties"),
+            pCB->AddParam(QString::fromLocal8Bit("shadow_properties"),
                           QDemonRenderShaderDataTypes::Vec4, 1);
-            pCB->AddParam(m_Context->GetStringTable().RegisterStr("aoScreenConst"),
+            pCB->AddParam(QString::fromLocal8Bit("aoScreenConst"),
                           QDemonRenderShaderDataTypes::Vec4, 1);
-            pCB->AddParam(m_Context->GetStringTable().RegisterStr("UvToEyeConst"),
+            pCB->AddParam(QString::fromLocal8Bit("UvToEyeConst"),
                           QDemonRenderShaderDataTypes::Vec4, 1);
         }
 
@@ -1776,7 +1775,7 @@ void Qt3DSRendererImpl::RenderText2D(float x, float y,
 
             const wchar_t *wText = m_StringTable->GetWideStr(text);
             STextRenderInfo theInfo;
-            theInfo.m_Text = m_StringTable->RegisterStr(wText);
+            theInfo.m_Text = QString::fromLocal8Bit(wText);
             theInfo.m_FontSize = 20;
             // text scale 2% of screen we don't scale Y though because it becomes unreadable
             theInfo.m_ScaleX = (theWindow.width() / 100.0f) * 1.5f / (theInfo.m_FontSize);

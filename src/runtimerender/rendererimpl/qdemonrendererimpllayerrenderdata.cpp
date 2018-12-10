@@ -91,7 +91,6 @@ SLayerRenderData::SLayerRenderData(SLayer &inLayer, Qt3DSRendererImpl &inRendere
     , m_TemporalAAPassIndex(0)
     , m_NonDirtyTemporalAAPassIndex(0)
     , m_TextScale(1.0f)
-    , mRefCount(0)
     , m_DepthBufferFormat(QDemonRenderTextureFormats::Unknown)
 {
 }
@@ -102,11 +101,11 @@ SLayerRenderData::~SLayerRenderData()
     if (m_LayerCachedTexture && m_LayerCachedTexture != m_LayerTexture)
         theResourceManager.Release(*m_LayerCachedTexture);
     if (m_AdvancedModeDrawFB) {
-        m_AdvancedModeDrawFB->release();
+        //m_AdvancedModeDrawFB->release();
         m_AdvancedModeDrawFB = nullptr;
     }
     if (m_AdvancedModeBlendFB) {
-        m_AdvancedModeBlendFB->release();
+        //m_AdvancedModeBlendFB->release();
         m_AdvancedModeBlendFB = nullptr;
     }
     if (m_AdvancedBlendBlendTexture)
@@ -1030,8 +1029,7 @@ void SLayerRenderData::EndProfiling(QString &nameID)
 void SLayerRenderData::StartProfiling(const char *nameID, bool sync)
 {
     if (m_LayerProfilerGpu.mPtr) {
-        QString theStr(
-                    m_Renderer.GetQt3DSContext().GetStringTable().RegisterStr(nameID));
+        QString theStr(QString::fromLocal8Bit(nameID));
         m_LayerProfilerGpu->StartTimer(theStr, false, sync);
     }
 }
@@ -1039,8 +1037,7 @@ void SLayerRenderData::StartProfiling(const char *nameID, bool sync)
 void SLayerRenderData::EndProfiling(const char *nameID)
 {
     if (m_LayerProfilerGpu.mPtr) {
-        QString theStr(
-                    m_Renderer.GetQt3DSContext().GetStringTable().RegisterStr(nameID));
+        QString theStr(QString::fromLocal8Bit(nameID));
         m_LayerProfilerGpu->EndTimer(theStr);
     }
 }
@@ -2006,7 +2003,7 @@ void SLayerRenderData::RunnableRenderToViewport(QDemonRenderFrameBuffer *theFB)
                                                                 theLayerViewport.m_Height));
                         BlendAdvancedEquationSwFallback(theLayerColorTexture, blendBlitTexture,
                                                         advancedMode);
-                        blitFB->release();
+                        //blitFB->release();
                         // save blending result to screen texture for use with other layers
                         theContext.SetViewport(theLayerViewport);
                         theContext.SetRenderTarget(blendFB);
@@ -2019,7 +2016,7 @@ void SLayerRenderData::RunnableRenderToViewport(QDemonRenderFrameBuffer *theFB)
                         m_Renderer.RenderQuad(QVector2D((float)theLayerViewport.m_Width,
                                                         (float)theLayerViewport.m_Height),
                                               theFinalMVP, *blendResultTexture);
-                        resultFB->release();
+                        //resultFB->release();
                     } else {
                         // Layers with normal blending modes
                         // save result for future use
@@ -2101,8 +2098,6 @@ void SLayerRenderData::RunnableRenderToViewport(QDemonRenderFrameBuffer *theFB)
     theContext.SetBlendEquation(QDemonRenderBlendEquationArgument(
                                     QDemonRenderBlendEquation::Add, QDemonRenderBlendEquation::Add));
 }
-
-#define RENDER_FRAME_NEW(type) QDEMON_NEW(m_Renderer.GetPerFrameAllocator(), type)
 
 void SLayerRenderData::AddLayerRenderStep()
 {
@@ -2188,10 +2183,7 @@ SOffscreenRendererEnvironment SLayerRenderData::CreateOffscreenRenderEnvironment
 
 IRenderTask &SLayerRenderData::CreateRenderToTextureRunnable()
 {
-    return *RENDER_FRAME_NEW(SLayerRenderToTextureRunnable)(*this);
+    return *new SLayerRenderToTextureRunnable(*this);
 }
 
-void SLayerRenderData::addRef() { atomicIncrement(&mRefCount); }
-
-void SLayerRenderData::release() { QDEMON_IMPLEMENT_REF_COUNT_RELEASE(m_Allocator); }
 QT_END_NAMESPACE

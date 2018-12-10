@@ -44,16 +44,12 @@ struct STextTextureAtlas : public ITextTextureAtlas
     static const qint32 TEXTURE_ATLAS_DIM =
             256; // if you change this you need to adjust Qt3DSOnscreenTextRenderer size as well
 
-    NVFoundationBase &m_Foundation;
-    volatile qint32 mRefCount;
     QDemonScopedRefCounted<ITextRenderer> m_TextRenderer;
     QDemonScopedRefCounted<QDemonRenderContext> m_RenderContext;
 
-    STextTextureAtlas(NVFoundationBase &inFnd, ITextRenderer &inRenderer,
+    STextTextureAtlas(ITextRenderer &inRenderer,
                       QDemonRenderContext &inRenderContext)
-        : m_Foundation(inFnd)
-        , mRefCount(0)
-        , m_TextRenderer(inRenderer)
+        : m_TextRenderer(inRenderer)
         , m_RenderContext(inRenderContext)
         , m_TextureAtlasInitialized(false)
         , m_textureAtlas(nullptr)
@@ -62,12 +58,10 @@ struct STextTextureAtlas : public ITextTextureAtlas
 
     virtual ~STextTextureAtlas()
     {
-        if (m_textureAtlas) {
-            m_textureAtlas->release();
-        }
+        // if (m_textureAtlas) {
+        //     m_textureAtlas->release();
+        // }
     }
-
-    QDEMON_IMPLEMENT_REF_COUNT_ADDREF_RELEASE_OVERRIDE(m_Foundation.getAllocator())
 
     TTextRenderAtlasDetailsAndTexture RenderText(const STextRenderInfo &inText) override
     {
@@ -87,7 +81,7 @@ struct STextTextureAtlas : public ITextTextureAtlas
             m_textureAtlas = m_RenderContext->CreateTexture2D();
             if (m_textureAtlas && count) {
                 m_TextureAtlasInitialized = true;
-                m_textureAtlas->addRef();
+                //m_textureAtlas->addRef();
                 // if you change the size you need to adjust Qt3DSOnscreenTextRenderer too
                 if (m_RenderContext->GetRenderContextType() == QDemonRenderContextValues::GLES2) {
                     m_textureAtlas->SetTextureData(QDemonDataRef<quint8>(), 0, TEXTURE_ATLAS_DIM,
@@ -118,11 +112,10 @@ private:
 
 } // namespace
 
-ITextTextureAtlas &ITextTextureAtlas::CreateTextureAtlas(NVFoundationBase &inFnd,
-                                                         ITextRenderer &inTextRenderer,
+ITextTextureAtlas &ITextTextureAtlas::CreateTextureAtlas(ITextRenderer &inTextRenderer,
                                                          QDemonRenderContext &inRenderContext)
 {
-    return *QDEMON_NEW(inFnd.getAllocator(), STextTextureAtlas)(inFnd, inTextRenderer, inRenderContext);
+    return *new STextTextureAtlas(inTextRenderer, inRenderContext);
 }
 
 QT_END_NAMESPACE

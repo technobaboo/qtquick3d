@@ -34,7 +34,6 @@
 #include <QtDemonRuntimeRender/qdemonoffscreenrendermanager.h>
 #include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
 #include <QtGui/QVector4D>
-#include <QtDemon/qdemonrefcounted.h>
 #include <QtDemonRender/qdemonrenderbasetypes.h>
 
 QT_BEGIN_NAMESPACE
@@ -46,7 +45,6 @@ class COldNBustedPluginRenderer : public IOffscreenRenderer
 public:
     IQDemonRenderContext &m_RenderContext;
     long m_DLLHandle;
-    volatile qint32 mRefCount;
     SOffscreenRendererEnvironment m_LastRenderedEnvironment;
     QString m_OffscreenRendererType;
 
@@ -54,8 +52,6 @@ public:
     PROC_Render m_RenderProc;
 
     COldNBustedPluginRenderer(IQDemonRenderContext &inRenderContext, long inDLLHandle);
-
-    QDEMON_IMPLEMENT_REF_COUNT_ADDREF_RELEASE_OVERRIDE(m_RenderContext.GetAllocator())
 
     SOffscreenRendererEnvironment GetDesiredEnvironment(QVector2D inPresScale) override;
     virtual SOffscreenRenderFlags

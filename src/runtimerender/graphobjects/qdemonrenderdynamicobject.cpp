@@ -105,7 +105,7 @@ void SDynamicObject::SetPropertyValue(const dynamic::SPropertyDefinition &inDefi
 template <typename TStrType>
 void SDynamicObject::SetStrPropertyValueT(dynamic::SPropertyDefinition &inDefinition,
                                           const char *inValue, const char *inProjectDir,
-                                          TStrType &ioWorkspace, IStringTable &inStrTable)
+                                          TStrType &ioWorkspace)
 {
     if (inValue == nullptr)
         inValue = "";
@@ -123,17 +123,17 @@ void SDynamicObject::SetStrPropertyValueT(dynamic::SPropertyDefinition &inDefini
         if (CFileTools::RequiresCombineBaseAndRelative(inValue)) {
             QString absolute = QDir(inProjectDir).filePath(inValue);
             ioWorkspace.assign(absolute.toLatin1().constData());
-            SetPropertyValueT(inDefinition, inStrTable.RegisterStr(ioWorkspace.c_str()));
+            SetPropertyValueT(inDefinition, QString::fromLocal8Bit(ioWorkspace.c_str()));
             // We also adjust the image path in the definition
             // I could not find a better place
-            inDefinition.m_ImagePath = inStrTable.RegisterStr(ioWorkspace.c_str());
+            inDefinition.m_ImagePath = QString::fromLocal8Bit((ioWorkspace.c_str());
         } else {
-            SetPropertyValueT(inDefinition, inStrTable.RegisterStr(inValue));
+            SetPropertyValueT(inDefinition, QString::fromLocal8Bit((inValue));
         }
     } else if (inDefinition.m_DataType == QDemonRenderShaderDataTypes::QDemonRenderImage2DPtr) {
-        SetPropertyValueT(inDefinition, inStrTable.RegisterStr(inValue));
+        SetPropertyValueT(inDefinition, QString::fromLocal8Bit((inValue));
     } else if (inDefinition.m_DataType == QDemonRenderShaderDataTypes::QDemonRenderDataBufferPtr) {
-        SetPropertyValueT(inDefinition, inStrTable.RegisterStr(inValue));
+        SetPropertyValueT(inDefinition, QString::fromLocal8Bit((inValue));
     } else {
         Q_ASSERT(false);
     }
@@ -141,18 +141,18 @@ void SDynamicObject::SetStrPropertyValueT(dynamic::SPropertyDefinition &inDefini
 
 void SDynamicObject::SetPropertyValue(const dynamic::SPropertyDefinition &inDefinition,
                                       const char *inValue, const char *inProjectDir,
-                                      CRenderString &ioWorkspace, IStringTable &inStrTable)
+                                      CRenderString &ioWorkspace)
 {
     SetStrPropertyValueT(const_cast<dynamic::SPropertyDefinition &>(inDefinition), inValue,
-                         inProjectDir, ioWorkspace, inStrTable);
+                         inProjectDir, ioWorkspace);
 }
 
 void SDynamicObject::SetPropertyValue(const dynamic::SPropertyDefinition &inDefinition,
                                       const char *inValue, const char *inProjectDir,
-                                      QString &ioWorkspace, IStringTable &inStrTable)
+                                      QString &ioWorkspace)
 {
     SetStrPropertyValueT(const_cast<dynamic::SPropertyDefinition &>(inDefinition), inValue,
-                         inProjectDir, ioWorkspace, inStrTable);
+                         inProjectDir, ioWorkspace);
 }
 
 QT_END_NAMESPACE

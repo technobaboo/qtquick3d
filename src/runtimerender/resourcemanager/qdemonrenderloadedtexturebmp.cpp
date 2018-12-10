@@ -1250,11 +1250,10 @@ void SLoadedTexture::FreeImagePostProcess(bool inFlipY)
 }
 
 SLoadedTexture *SLoadedTexture::LoadBMP(ISeekableIOStream &inStream, bool inFlipY,
-                                        NVFoundationBase &inFnd,
                                         QDemonRenderContextType renderContextType)
 {
     Q_UNUSED(renderContextType)
-    FreeImageIO theIO(inFnd.getAllocator(), inFnd);
+    FreeImageIO theIO();
     SLoadedTexture *retval = DoLoadBMP(&theIO, &inStream, 0);
     if (retval)
         retval->FreeImagePostProcess(inFlipY);

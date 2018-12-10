@@ -31,7 +31,6 @@
 #ifndef QDEMON_OFFSCREEN_RENDER_MANAGER_H
 #define QDEMON_OFFSCREEN_RENDER_MANAGER_H
 
-#include <QtDemon/qdemonrefcounted.h>
 #include <QtDemon/qdemonoption.h>
 #include <QtDemonRender/qdemonrenderbasetypes.h>
 #include <QtDemonRuntimeRender/qdemonrenderscene.h>
@@ -125,7 +124,7 @@ struct SOffscreenRenderFlags
 
 typedef void *SRenderInstanceId;
 
-class IOffscreenRenderer : public QDemonRefCounted
+class IOffscreenRenderer
 {
 public:
     class IOffscreenRendererCallback
@@ -219,7 +218,7 @@ struct SOffscreenRendererKey;
      *than
      *	that if they don't require a new render.
      */
-class IOffscreenRenderManager : public QDemonRefCounted
+class IOffscreenRenderManager
 {
 protected:
     virtual ~IOffscreenRenderManager() {}
@@ -244,8 +243,7 @@ public:
     virtual void EndFrame() = 0;
 
     static IOffscreenRenderManager &
-    CreateOffscreenRenderManager(NVAllocatorCallback &inCallback, IStringTable &inStringTable,
-                                 IResourceManager &inManager, IQDemonRenderContext &inContext);
+    CreateOffscreenRenderManager(IResourceManager &inManager, IQDemonRenderContext &inContext);
 };
 QT_END_NAMESPACE
 #endif

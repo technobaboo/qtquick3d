@@ -36,6 +36,7 @@
 
 QT_BEGIN_NAMESPACE
 
+class IQDemonRenderContext;
 struct SScene;
 
 struct RenderRotationValues

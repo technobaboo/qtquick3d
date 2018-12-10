@@ -434,7 +434,7 @@ IShaderStageGenerator &SCustomMaterialVertexPipeline::ActiveStage()
 void SCustomMaterialVertexPipeline::AddInterpolationParameter(const char *inName,
                                                               const char *inType)
 {
-    m_InterpolationParameters.insert(eastl::make_pair(Str(inName), Str(inType)));
+    m_InterpolationParameters.insert(Str(inName), Str(inType));
     Vertex().AddOutgoing(inName, inType);
     Fragment().AddIncoming(inName, inType);
 
@@ -512,7 +512,6 @@ void SCustomMaterialVertexPipeline::DoGenerateVertexColor()
 
 struct SMaterialClass
 {
-    NVAllocatorCallback *m_Allocator;
     IDynamicObjectClass *m_Class;
     bool m_HasTransparency;
     bool m_HasRefraction;
@@ -520,9 +519,7 @@ struct SMaterialClass
     bool m_AlwaysDirty;
     quint32 m_ShaderKey;
     quint32 m_LayerCount;
-    qint32 mRefCount;
-    SMaterialClass(NVAllocatorCallback &alloc, IDynamicObjectClass &inCls)
-        : m_Allocator(&alloc)
+    SMaterialClass(IDynamicObjectClass &inCls)
         , m_Class(&inCls)
         , m_HasTransparency(false)
         , m_HasRefraction(false)
@@ -530,26 +527,20 @@ struct SMaterialClass
         , m_AlwaysDirty(false)
         , m_ShaderKey(0)
         , m_LayerCount(0)
-        , mRefCount(0)
     {
     }
 
     ~SMaterialClass() {}
 
-    QDEMON_IMPLEMENT_REF_COUNT_ADDREF_RELEASE(*m_Allocator)
-
     void AfterWrite()
     {
         m_Allocator = nullptr;
         m_Class = nullptr;
-        mRefCount = 0;
     }
 
-    void AfterRead(NVAllocatorCallback &alloc, IDynamicObjectClass &inCls)
+    void AfterRead(IDynamicObjectClass &inCls)
     {
-        m_Allocator = &alloc;
         m_Class = &inCls;
-        mRefCount = 0;
     }
 };
 
@@ -612,7 +603,6 @@ struct SCustomMaterialTextureData
     NVRenderCachedShaderProperty<QDemonRenderTexture2D *> m_Sampler;
     QDemonRenderTexture2D *m_Texture;
     bool m_needsMips;
-    volatile qint32 mRefCount;
 
     SCustomMaterialTextureData(QDemonRenderShaderProgram &inShader, QDemonRenderTexture2D *inTexture,
                                const char *inTexName, bool needMips)
@@ -620,7 +610,6 @@ struct SCustomMaterialTextureData
         , m_Sampler(inTexName, inShader)
         , m_Texture(inTexture)
         , m_needsMips(needMips)
-        , mRefCount(0)
     {
     }
 
@@ -643,8 +632,6 @@ struct SCustomMaterialTextureData
 
         m_Sampler.Set(m_Texture);
     }
-
-    QDEMON_IMPLEMENT_REF_COUNT_ADDREF_RELEASE(m_Shader->GetRenderContext().GetAllocator())
 
     static SCustomMaterialTextureData CreateTextureEntry(QDemonRenderShaderProgram &inShader,
                                                          QDemonRenderTexture2D *inTexture,
@@ -708,7 +695,7 @@ struct SCustomMaterialShader
     NVRenderCachedShaderBuffer<QDemonRenderShaderConstantBuffer *> m_AoShadowParams;
     SCustomMaterialsTessellationProperties m_Tessellation;
     SDynamicShaderProgramFlags m_ProgramFlags;
-    volatile qint32 mRefCount;
+
     SCustomMaterialShader(QDemonRenderShaderProgram &inShader, SDynamicShaderProgramFlags inFlags)
         : m_Shader(inShader)
         , m_ModelMatrix("model_matrix", inShader)
@@ -733,11 +720,8 @@ struct SCustomMaterialShader
         , m_AoShadowParams("cbAoShadow", inShader)
         , m_Tessellation(inShader)
         , m_ProgramFlags(inFlags)
-        , mRefCount(0)
     {
     }
-
-    QDEMON_IMPLEMENT_REF_COUNT_ADDREF_RELEASE(m_Shader->GetRenderContext().GetAllocator())
 };
 
 struct SMaterialOrComputeShader
@@ -878,7 +862,6 @@ struct SMaterialSystem : public ICustomMaterialSystem
     QString m_ShaderNameBuilder;
     quint64 m_LastFrameTime;
     float m_MillisecondsSinceLastFrame;
-    qint32 mRefCount;
 
     SMaterialSystem(IQDemonRenderContextCore &ct)
         : m_CoreContext(ct)
@@ -892,7 +875,6 @@ struct SMaterialSystem : public ICustomMaterialSystem
         , m_UseFastBlits(true)
         , m_LastFrameTime(0)
         , m_MillisecondsSinceLastFrame(0)
-        , mRefCount(0)
     {
     }
 
@@ -923,8 +905,6 @@ struct SMaterialSystem : public ICustomMaterialSystem
         m_AllocatedBuffers.replace_with_last(inIdx);
     }
 
-    QDEMON_IMPLEMENT_REF_COUNT_ADDREF_RELEASE_OVERRIDE(m_CoreContext.GetAllocator())
-
     bool IsMaterialRegistered(QString inStr) override
     {
         return m_StringMaterialMap.find(inStr) != m_StringMaterialMap.end();
@@ -943,8 +923,8 @@ struct SMaterialSystem : public ICustomMaterialSystem
             Q_ASSERT(false);
             return false;
         }
-        SMaterialClass *theNewClass = QDEMON_NEW(m_Allocator, SMaterialClass)(m_Allocator, *theClass);
-        m_StringMaterialMap.insert(eastl::make_pair(inName, theNewClass));
+        SMaterialClass *theNewClass = new SMaterialClass(m_Allocator, *theClass);
+        m_StringMaterialMap.insert(inName, theNewClass);
         return true;
     }
 
@@ -1016,10 +996,8 @@ struct SMaterialSystem : public ICustomMaterialSystem
         }
         if (theTextureEntry == nullptr) {
             QDemonScopedRefCounted<SCustomMaterialTextureData> theNewEntry =
-                QDEMON_NEW(m_CoreContext.GetAllocator(), SCustomMaterialTextureData)(
-                    SCustomMaterialTextureData::CreateTextureEntry(inShader, inTexture, inPropName,
-                                                                   needMips));
-            m_TextureEntries.push_back(eastl::make_pair(inPropName, theNewEntry));
+                new SCustomMaterialTextureData(SCustomMaterialTextureData::CreateTextureEntry(inShader, inTexture, inPropName, needMips));
+            m_TextureEntries.push_back(QPair(inPropName, theNewEntry));
             theTextureEntry = theNewEntry.mPtr;
         }
         theTextureEntry->Set(inPropDec);
@@ -1056,8 +1034,7 @@ struct SMaterialSystem : public ICustomMaterialSystem
                                                                  inIsComputeShader);
     }
 
-    SCustomMaterial *CreateCustomMaterial(QString inName,
-                                                  NVAllocatorCallback &inSceneGraphAllocator) override
+    SCustomMaterial *CreateCustomMaterial(QString inName) override
     {
         SCustomMaterial *theMaterial = static_cast<SCustomMaterial *>(
             m_CoreContext.GetDynamicObjectSystemCore().CreateInstance(inName,
@@ -1160,7 +1137,7 @@ struct SMaterialSystem : public ICustomMaterialSystem
             inShaderKeyBuffer.append(inFlags.wireframeToString(inFlags.m_WireframeMode));
         }
 
-        return m_CoreContext.GetStringTable().RegisterStr(inShaderKeyBuffer.c_str());
+        return QString::fromLocal8Bit(inShaderKeyBuffer.c_str());
     }
 
     QDemonRenderShaderProgram *GetShader(SCustomMaterialRenderContext &inRenderContext,
@@ -1204,15 +1181,14 @@ struct SMaterialSystem : public ICustomMaterialSystem
         SShaderMapKey skey = SShaderMapKey(
             TStrStrPair(inCommand.m_ShaderPath, inCommand.m_ShaderDefine), inFeatureSet,
             theFlags.m_TessMode, theFlags.m_WireframeMode, inRenderContext.m_MaterialKey);
-        QPair<TShaderMap::iterator, bool> theInsertResult(m_ShaderMap.insert(
-            eastl::make_pair(skey, QDemonScopedRefCounted<SCustomMaterialShader>(nullptr))));
+        QPair<TShaderMap::iterator, bool> theInsertResult(m_ShaderMap.insert(skey, QDemonScopedRefCounted<SCustomMaterialShader>(nullptr)));
 
         if (theInsertResult.second) {
             theProgram = GetShader(inRenderContext, inMaterial, inCommand, inFeatureSet, theFlags);
 
             if (theProgram) {
                 theInsertResult.first->second =
-                    QDEMON_NEW(m_Allocator, SCustomMaterialShader)(*theProgram, theFlags);
+                    new SCustomMaterialShader(*theProgram, theFlags);
             }
         } else if (theInsertResult.first->second)
             theProgram = theInsertResult.first->second->m_Shader;
@@ -1827,9 +1803,9 @@ struct SMaterialSystem : public ICustomMaterialSystem
 
                         quint32 index = FindAllocatedImage(thePropDefs[idx].m_ImagePath);
                         if (index == quint32(-1)) {
-                            pImage = QDEMON_NEW(m_CoreContext.GetAllocator(), SImage)();
+                            pImage = new SImage();
                             m_AllocatedImages.push_back(
-                                eastl::make_pair(thePropDefs[idx].m_ImagePath, pImage));
+                                QPair(thePropDefs[idx].m_ImagePath, pImage));
                         } else
                             pImage = m_AllocatedImages[index].second;
 
@@ -1857,9 +1833,9 @@ struct SMaterialSystem : public ICustomMaterialSystem
                     if (theStrPtr.IsValid()) {
                         quint32 index = FindAllocatedImage(thePropDefs[idx].m_ImagePath);
                         if (index == quint32(-1)) {
-                            pImage = QDEMON_NEW(m_CoreContext.GetAllocator(), SImage)();
+                            pImage = new SImage();
                             m_AllocatedImages.push_back(
-                                eastl::make_pair(thePropDefs[idx].m_ImagePath, pImage));
+                                QPair(thePropDefs[idx].m_ImagePath, pImage));
                         } else
                             pImage = m_AllocatedImages[index].second;
 
@@ -2049,7 +2025,7 @@ struct SMaterialSystem : public ICustomMaterialSystem
             theReader.Align(4);
             if (theDynamicCls) {
                 theReadClass->AfterRead(m_Allocator, *theDynamicCls);
-                m_StringMaterialMap.insert(eastl::make_pair(clsName, theReadClass));
+                m_StringMaterialMap.insert(clsName, theReadClass);
             }
         }
     }
@@ -2071,7 +2047,7 @@ struct SMaterialSystem : public ICustomMaterialSystem
 ICustomMaterialSystemCore &
 ICustomMaterialSystemCore::CreateCustomMaterialSystemCore(IQDemonRenderContextCore &ctx)
 {
-    return *QDEMON_NEW(ctx.GetAllocator(), SMaterialSystem)(ctx);
+    return *new SMaterialSystem(ctx);
 }
 
 QT_END_NAMESPACE

@@ -74,7 +74,7 @@ struct SDynamicObject : public SGraphObject
     template <typename TStrType>
     void SetStrPropertyValueT(dynamic::SPropertyDefinition &inDefinition,
                               const char *inValue, const char *inProjectDir,
-                              TStrType &ioWorkspace, IStringTable &inStrTable);
+                              TStrType &ioWorkspace);
 
     void SetPropertyValue(const dynamic::SPropertyDefinition &inDefinition, bool inValue);
     void SetPropertyValue(const dynamic::SPropertyDefinition &inDefinition, float inValue);
@@ -92,11 +92,11 @@ struct SDynamicObject : public SGraphObject
 
     void SetPropertyValue(const dynamic::SPropertyDefinition &inDefinition,
                           const char *inValue, const char *inProjectDir,
-                          CRenderString &ioWorkspace, IStringTable &inStrTable);
+                          CRenderString &ioWorkspace);
 
     void SetPropertyValue(const dynamic::SPropertyDefinition &inDefinition,
                           const char *inValue, const char *inProjectDir,
-                          QString &ioWorkspace, IStringTable &inStrTable);
+                          QString &ioWorkspace);
 
     // Generic method used during serialization
     // to remap string and object pointers

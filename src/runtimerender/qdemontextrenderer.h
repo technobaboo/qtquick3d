@@ -31,9 +31,8 @@
 #ifndef QDEMON_TEXT_RENDERER_H
 #define QDEMON_TEXT_RENDERER_H
 
-#include <QtDemon/qdemonrefcounted.h>
 #include <QtDemonRender/qdemonrenderbasetypes.h>
-#include <StringTable.h>
+
 #include <QtDemonRuntimeRender/qdemonrendertexttypes.h>
 
 QT_BEGIN_NAMESPACE
@@ -50,7 +49,7 @@ struct SRendererFontEntry
     }
 };
 
-class ITextRendererCore : public QDemonRefCounted
+class ITextRendererCore
 {
 public:
     // You can have several standard font directories and these will be persistent
@@ -75,12 +74,11 @@ public:
 
     virtual ITextRenderer &GetTextRenderer(QDemonRenderContext &inContext) = 0;
 
-    static ITextRendererCore &CreateQtTextRenderer(NVFoundationBase &inFoundation,
-                                                   IStringTable &inStrTable);
+    static ITextRendererCore &CreateQtTextRenderer();
 
     // call this to create onscreen text renderer
     // it needs true type fonts
-    static ITextRendererCore &CreateOnscreenTextRenderer(NVFoundationBase &inFoundation);
+    static ITextRendererCore &CreateOnscreenTextRenderer();
 };
 /**
      *	Opaque text rendering system.  Must be able to render text to an opengl texture object.

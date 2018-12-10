@@ -63,7 +63,7 @@ struct SPathAnchorPoint
     }
 };
 
-class IPathManagerCore : public QDemonRefCounted
+class IPathManagerCore
 {
 public:
     // returns the path buffer id
