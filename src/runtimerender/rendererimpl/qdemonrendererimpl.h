@@ -148,92 +148,92 @@ struct STextShaderPtr
 class Q_DEMONRUNTIMERENDER_EXPORT Qt3DSRendererImpl : public IQDemonRenderer, public IRenderWidgetContext
 {
     typedef QHash<SShaderDefaultMaterialKey, SShaderGeneratorGeneratedShader *> TShaderMap;
-    typedef QHash<QString, QDemonScopedRefCounted<QDemonRenderConstantBuffer>> TStrConstanBufMap;
-    typedef QHash<SRenderInstanceId, QDemonScopedRefCounted<SLayerRenderData>, eastl::hash<SRenderInstanceId>> TInstanceRenderMap;
+    typedef QHash<QString, QSharedPointer<QDemonRenderConstantBuffer>> TStrConstanBufMap;
+    typedef QHash<SRenderInstanceId, QSharedPointer<SLayerRenderData>, eastl::hash<SRenderInstanceId>> TInstanceRenderMap;
     typedef QVector<SLayerRenderData *> TLayerRenderList;
     typedef QVector<Qt3DSRenderPickResult> TPickResultArray;
 
     // Items to implement the widget context.
-    typedef QHash<QString, QDemonScopedRefCounted<QDemonRenderVertexBuffer>> TStrVertBufMap;
-    typedef QHash<QString, QDemonScopedRefCounted<QDemonRenderIndexBuffer>> TStrIndexBufMap;
-    typedef QHash<QString, QDemonScopedRefCounted<QDemonRenderShaderProgram>> TStrShaderMap;
-    typedef QHash<QString, QDemonScopedRefCounted<QDemonRenderInputAssembler>> TStrIAMap;
+    typedef QHash<QString, QSharedPointer<QDemonRenderVertexBuffer>> TStrVertBufMap;
+    typedef QHash<QString, QSharedPointer<QDemonRenderIndexBuffer>> TStrIndexBufMap;
+    typedef QHash<QString, QSharedPointer<QDemonRenderShaderProgram>> TStrShaderMap;
+    typedef QHash<QString, QSharedPointer<QDemonRenderInputAssembler>> TStrIAMap;
 
     typedef QHash<long, SNode *> TBoneIdNodeMap;
 
     IQDemonRenderContext &m_qt3dsContext;
-    QDemonScopedRefCounted<QDemonRenderContext> m_Context;
-    QDemonScopedRefCounted<IBufferManager> m_BufferManager;
-    QDemonScopedRefCounted<IOffscreenRenderManager> m_OffscreenRenderManager;
+    QSharedPointer<QDemonRenderContext> m_Context;
+    QSharedPointer<IBufferManager> m_BufferManager;
+    QSharedPointer<IOffscreenRenderManager> m_OffscreenRenderManager;
     InvasiveSet<SShaderGeneratorGeneratedShader, SGGSGet, SGGSSet> m_LayerShaders;
     // For rendering bounding boxes.
-    QDemonScopedRefCounted<QDemonRenderVertexBuffer> m_BoxVertexBuffer;
-    QDemonScopedRefCounted<QDemonRenderIndexBuffer> m_BoxIndexBuffer;
-    QDemonScopedRefCounted<QDemonRenderShaderProgram> m_BoxShader;
-    QDemonScopedRefCounted<QDemonRenderShaderProgram> m_ScreenRectShader;
+    QSharedPointer<QDemonRenderVertexBuffer> m_BoxVertexBuffer;
+    QSharedPointer<QDemonRenderIndexBuffer> m_BoxIndexBuffer;
+    QSharedPointer<QDemonRenderShaderProgram> m_BoxShader;
+    QSharedPointer<QDemonRenderShaderProgram> m_ScreenRectShader;
 
-    QDemonScopedRefCounted<QDemonRenderVertexBuffer> m_AxisVertexBuffer;
-    QDemonScopedRefCounted<QDemonRenderShaderProgram> m_AxisShader;
+    QSharedPointer<QDemonRenderVertexBuffer> m_AxisVertexBuffer;
+    QSharedPointer<QDemonRenderShaderProgram> m_AxisShader;
 
     // X,Y quad, broken down into 2 triangles and normalized over
     //-1,1.
-    QDemonScopedRefCounted<QDemonRenderVertexBuffer> m_QuadVertexBuffer;
-    QDemonScopedRefCounted<QDemonRenderIndexBuffer> m_QuadIndexBuffer;
-    QDemonScopedRefCounted<QDemonRenderIndexBuffer> m_RectIndexBuffer;
-    QDemonScopedRefCounted<QDemonRenderInputAssembler> m_QuadInputAssembler;
-    QDemonScopedRefCounted<QDemonRenderInputAssembler> m_RectInputAssembler;
-    QDemonScopedRefCounted<QDemonRenderAttribLayout> m_QuadAttribLayout;
-    QDemonScopedRefCounted<QDemonRenderAttribLayout> m_RectAttribLayout;
+    QSharedPointer<QDemonRenderVertexBuffer> m_QuadVertexBuffer;
+    QSharedPointer<QDemonRenderIndexBuffer> m_QuadIndexBuffer;
+    QSharedPointer<QDemonRenderIndexBuffer> m_RectIndexBuffer;
+    QSharedPointer<QDemonRenderInputAssembler> m_QuadInputAssembler;
+    QSharedPointer<QDemonRenderInputAssembler> m_RectInputAssembler;
+    QSharedPointer<QDemonRenderAttribLayout> m_QuadAttribLayout;
+    QSharedPointer<QDemonRenderAttribLayout> m_RectAttribLayout;
 
     // X,Y triangle strip quads in screen coord dynamiclly setup
-    QDemonScopedRefCounted<QDemonRenderVertexBuffer> m_QuadStripVertexBuffer;
-    QDemonScopedRefCounted<QDemonRenderInputAssembler> m_QuadStripInputAssembler;
-    QDemonScopedRefCounted<QDemonRenderAttribLayout> m_QuadStripAttribLayout;
+    QSharedPointer<QDemonRenderVertexBuffer> m_QuadStripVertexBuffer;
+    QSharedPointer<QDemonRenderInputAssembler> m_QuadStripInputAssembler;
+    QSharedPointer<QDemonRenderAttribLayout> m_QuadStripAttribLayout;
 
     // X,Y,Z point which is used for instanced based rendering of points
-    QDemonScopedRefCounted<QDemonRenderVertexBuffer> m_PointVertexBuffer;
-    QDemonScopedRefCounted<QDemonRenderInputAssembler> m_PointInputAssembler;
-    QDemonScopedRefCounted<QDemonRenderAttribLayout> m_PointAttribLayout;
+    QSharedPointer<QDemonRenderVertexBuffer> m_PointVertexBuffer;
+    QSharedPointer<QDemonRenderInputAssembler> m_PointInputAssembler;
+    QSharedPointer<QDemonRenderAttribLayout> m_PointAttribLayout;
 
-    QDemonOption<QDemonScopedRefCounted<SLayerSceneShader>> m_SceneLayerShader;
-    QDemonOption<QDemonScopedRefCounted<SLayerProgAABlendShader>> m_LayerProgAAShader;
+    QDemonOption<QSharedPointer<SLayerSceneShader>> m_SceneLayerShader;
+    QDemonOption<QSharedPointer<SLayerProgAABlendShader>> m_LayerProgAAShader;
 
     TShaderMap m_Shaders;
     TStrConstanBufMap m_ConstantBuffers; ///< store the the shader constant buffers
     // Option is true if we have attempted to generate the shader.
     // This does not mean we were successul, however.
-    QDemonOption<QDemonScopedRefCounted<SDefaultMaterialRenderableDepthShader>> m_DefaultMaterialDepthPrepassShader;
-    QDemonOption<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> m_DepthPrepassShader;
-    QDemonOption<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> m_DepthPrepassShaderDisplaced;
-    QDemonOption<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> m_DepthTessLinearPrepassShader;
-    QDemonOption<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> m_DepthTessLinearPrepassShaderDisplaced;
-    QDemonOption<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> m_DepthTessPhongPrepassShader;
-    QDemonOption<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> m_DepthTessNPatchPrepassShader;
-    QDemonOption<QDemonScopedRefCounted<STextDepthShader>> m_TextDepthPrepassShader;
-    QDemonOption<QDemonScopedRefCounted<SDefaultAoPassShader>> m_DefaultAoPassShader;
-    QDemonOption<QDemonScopedRefCounted<SDefaultAoPassShader>> m_FakeDepthShader;
-    QDemonOption<QDemonScopedRefCounted<SDefaultAoPassShader>> m_FakeCubemapDepthShader;
-    QDemonOption<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> m_ParaboloidDepthShader;
-    QDemonOption<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> m_ParaboloidDepthTessLinearShader;
-    QDemonOption<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> m_ParaboloidDepthTessPhongShader;
-    QDemonOption<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> m_ParaboloidDepthTessNPatchShader;
-    QDemonOption<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> m_CubemapDepthShader;
-    QDemonOption<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> m_CubemapDepthTessLinearShader;
-    QDemonOption<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> m_CubemapDepthTessPhongShader;
-    QDemonOption<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> m_CubemapDepthTessNPatchShader;
-    QDemonOption<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> m_OrthographicDepthShader;
-    QDemonOption<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> m_OrthographicDepthTessLinearShader;
-    QDemonOption<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> m_OrthographicDepthTessPhongShader;
-    QDemonOption<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> m_OrthographicDepthTessNPatchShader;
-    QDemonOption<QDemonScopedRefCounted<SShadowmapPreblurShader>> m_CubeShadowBlurXShader;
-    QDemonOption<QDemonScopedRefCounted<SShadowmapPreblurShader>> m_CubeShadowBlurYShader;
-    QDemonOption<QDemonScopedRefCounted<SShadowmapPreblurShader>> m_OrthoShadowBlurXShader;
-    QDemonOption<QDemonScopedRefCounted<SShadowmapPreblurShader>> m_OrthoShadowBlurYShader;
+    QDemonOption<QSharedPointer<SDefaultMaterialRenderableDepthShader>> m_DefaultMaterialDepthPrepassShader;
+    QDemonOption<QSharedPointer<SRenderableDepthPrepassShader>> m_DepthPrepassShader;
+    QDemonOption<QSharedPointer<SRenderableDepthPrepassShader>> m_DepthPrepassShaderDisplaced;
+    QDemonOption<QSharedPointer<SRenderableDepthPrepassShader>> m_DepthTessLinearPrepassShader;
+    QDemonOption<QSharedPointer<SRenderableDepthPrepassShader>> m_DepthTessLinearPrepassShaderDisplaced;
+    QDemonOption<QSharedPointer<SRenderableDepthPrepassShader>> m_DepthTessPhongPrepassShader;
+    QDemonOption<QSharedPointer<SRenderableDepthPrepassShader>> m_DepthTessNPatchPrepassShader;
+    QDemonOption<QSharedPointer<STextDepthShader>> m_TextDepthPrepassShader;
+    QDemonOption<QSharedPointer<SDefaultAoPassShader>> m_DefaultAoPassShader;
+    QDemonOption<QSharedPointer<SDefaultAoPassShader>> m_FakeDepthShader;
+    QDemonOption<QSharedPointer<SDefaultAoPassShader>> m_FakeCubemapDepthShader;
+    QDemonOption<QSharedPointer<SRenderableDepthPrepassShader>> m_ParaboloidDepthShader;
+    QDemonOption<QSharedPointer<SRenderableDepthPrepassShader>> m_ParaboloidDepthTessLinearShader;
+    QDemonOption<QSharedPointer<SRenderableDepthPrepassShader>> m_ParaboloidDepthTessPhongShader;
+    QDemonOption<QSharedPointer<SRenderableDepthPrepassShader>> m_ParaboloidDepthTessNPatchShader;
+    QDemonOption<QSharedPointer<SRenderableDepthPrepassShader>> m_CubemapDepthShader;
+    QDemonOption<QSharedPointer<SRenderableDepthPrepassShader>> m_CubemapDepthTessLinearShader;
+    QDemonOption<QSharedPointer<SRenderableDepthPrepassShader>> m_CubemapDepthTessPhongShader;
+    QDemonOption<QSharedPointer<SRenderableDepthPrepassShader>> m_CubemapDepthTessNPatchShader;
+    QDemonOption<QSharedPointer<SRenderableDepthPrepassShader>> m_OrthographicDepthShader;
+    QDemonOption<QSharedPointer<SRenderableDepthPrepassShader>> m_OrthographicDepthTessLinearShader;
+    QDemonOption<QSharedPointer<SRenderableDepthPrepassShader>> m_OrthographicDepthTessPhongShader;
+    QDemonOption<QSharedPointer<SRenderableDepthPrepassShader>> m_OrthographicDepthTessNPatchShader;
+    QDemonOption<QSharedPointer<SShadowmapPreblurShader>> m_CubeShadowBlurXShader;
+    QDemonOption<QSharedPointer<SShadowmapPreblurShader>> m_CubeShadowBlurYShader;
+    QDemonOption<QSharedPointer<SShadowmapPreblurShader>> m_OrthoShadowBlurXShader;
+    QDemonOption<QSharedPointer<SShadowmapPreblurShader>> m_OrthoShadowBlurYShader;
 
 #ifdef ADVANCED_BLEND_SW_FALLBACK
-    QDemonOption<QDemonScopedRefCounted<SAdvancedModeBlendShader>> m_AdvancedModeOverlayBlendShader;
-    QDemonOption<QDemonScopedRefCounted<SAdvancedModeBlendShader>> m_AdvancedModeColorBurnBlendShader;
-    QDemonOption<QDemonScopedRefCounted<SAdvancedModeBlendShader>> m_AdvancedModeColorDodgeBlendShader;
+    QDemonOption<QSharedPointer<SAdvancedModeBlendShader>> m_AdvancedModeOverlayBlendShader;
+    QDemonOption<QSharedPointer<SAdvancedModeBlendShader>> m_AdvancedModeColorBurnBlendShader;
+    QDemonOption<QSharedPointer<SAdvancedModeBlendShader>> m_AdvancedModeColorDodgeBlendShader;
 #endif
     // Text shaders may be generated on demand.
     STextShaderPtr m_TextShader;
@@ -243,13 +243,13 @@ class Q_DEMONRUNTIMERENDER_EXPORT Qt3DSRendererImpl : public IQDemonRenderer, pu
 
     // Overlay used to render all widgets.
     QDemonRenderRect m_BeginFrameViewport;
-    QDemonScopedRefCounted<QDemonRenderTexture2D> m_WidgetTexture;
-    QDemonScopedRefCounted<QDemonRenderFrameBuffer> m_WidgetFBO;
+    QSharedPointer<QDemonRenderTexture2D> m_WidgetTexture;
+    QSharedPointer<QDemonRenderFrameBuffer> m_WidgetFBO;
 
 #ifdef ADVANCED_BLEND_SW_FALLBACK
     // Advanced blend mode SW fallback
     CResourceTexture2D m_LayerBlendTexture;
-    QDemonScopedRefCounted<QDemonRenderFrameBuffer> m_BlendFB;
+    QSharedPointer<QDemonRenderFrameBuffer> m_BlendFB;
 #endif
     // Allocator for temporary data that is cleared after every layer.
     TInstanceRenderMap m_InstanceRenderMap;
@@ -452,12 +452,12 @@ public:
     void SetupWidgetLayer();
 
 #ifdef ADVANCED_BLEND_SW_FALLBACK
-    QDemonScopedRefCounted<QDemonRenderTexture2D> GetLayerBlendTexture()
+    QSharedPointer<QDemonRenderTexture2D> GetLayerBlendTexture()
     {
         return m_LayerBlendTexture.GetTexture();
     }
 
-    QDemonScopedRefCounted<QDemonRenderFrameBuffer> GetBlendFB()
+    QSharedPointer<QDemonRenderFrameBuffer> GetBlendFB()
     {
         return m_BlendFB;
     }

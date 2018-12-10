@@ -527,8 +527,8 @@ void Qt3DSRenderPrefilterTextureCompute::Build(void *inTextureData, qint32 inTex
         CreateLevel0Tex(inTextureData, inTextureDataSize, inFormat);
     }
 
-    QDemonScopedRefCounted<QDemonRenderImage2D> theInputImage;
-    QDemonScopedRefCounted<QDemonRenderImage2D> theOutputImage;
+    QSharedPointer<QDemonRenderImage2D> theInputImage;
+    QSharedPointer<QDemonRenderImage2D> theOutputImage;
     theInputImage =
         m_QDemonRenderContext->CreateImage2D(&m_Texture2D, QDemonRenderImageAccessType::ReadWrite);
     theOutputImage =
@@ -542,7 +542,7 @@ void Qt3DSRenderPrefilterTextureCompute::Build(void *inTextureData, qint32 inTex
 
         m_QDemonRenderContext->SetActiveShader(uploadProg);
 
-        QDemonScopedRefCounted<QDemonRenderImage2D> theInputImage0;
+        QSharedPointer<QDemonRenderImage2D> theInputImage0;
         theInputImage0 =
             m_QDemonRenderContext->CreateImage2D(m_Level0Tex, QDemonRenderImageAccessType::ReadWrite);
 

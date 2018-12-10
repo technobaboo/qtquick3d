@@ -679,9 +679,9 @@ void SLayerRenderData::RenderShadowMapPass(CResourceFrameBuffer *theFB)
 
     // we render the shadow map with a slight offset to prevent shadow acne and cull the front
     // faces
-    QDemonScopedRefCounted<QDemonRenderRasterizerState> rsdefaultstate =
+    QSharedPointer<QDemonRenderRasterizerState> rsdefaultstate =
             theRenderContext.CreateRasterizerState(0.0, 0.0, QDemonRenderFaces::Back);
-    QDemonScopedRefCounted<QDemonRenderRasterizerState> rsstate =
+    QSharedPointer<QDemonRenderRasterizerState> rsstate =
             theRenderContext.CreateRasterizerState(1.5, 2.0, QDemonRenderFaces::Front);
     theRenderContext.SetRasterizerState(rsstate);
 
@@ -1928,9 +1928,9 @@ void SLayerRenderData::RunnableRenderToViewport(QDemonRenderFrameBuffer *theFB)
                 theContext.SetBlendingEnabled(blendingEnabled);
                 theContext.SetDepthTestEnabled(false);
 #ifdef ADVANCED_BLEND_SW_FALLBACK
-                QDemonScopedRefCounted<QDemonRenderTexture2D> screenTexture =
+                QSharedPointer<QDemonRenderTexture2D> screenTexture =
                         m_Renderer.GetLayerBlendTexture();
-                QDemonScopedRefCounted<QDemonRenderFrameBuffer> blendFB = m_Renderer.GetBlendFB();
+                QSharedPointer<QDemonRenderFrameBuffer> blendFB = m_Renderer.GetBlendFB();
 
                 // Layer blending for advanced blending modes if SW fallback is needed
                 // rendering to FBO and blending with separate shader

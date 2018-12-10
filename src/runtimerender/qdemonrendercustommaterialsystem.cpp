@@ -544,7 +544,7 @@ struct SMaterialClass
     }
 };
 
-typedef QHash<QString, QDemonScopedRefCounted<SMaterialClass>> TStringMaterialMap;
+typedef QHash<QString, QSharedPointer<SMaterialClass>> TStringMaterialMap;
 typedef QPair<QString, QString> TStrStrPair;
 
 namespace eastl {
@@ -599,7 +599,7 @@ namespace {
 
 struct SCustomMaterialTextureData
 {
-    QDemonScopedRefCounted<QDemonRenderShaderProgram> m_Shader;
+    QSharedPointer<QDemonRenderShaderProgram> m_Shader;
     NVRenderCachedShaderProperty<QDemonRenderTexture2D *> m_Sampler;
     QDemonRenderTexture2D *m_Texture;
     bool m_needsMips;
@@ -641,7 +641,7 @@ struct SCustomMaterialTextureData
     }
 };
 
-typedef QPair<QString, QDemonScopedRefCounted<SCustomMaterialTextureData>>
+typedef QPair<QString, QSharedPointer<SCustomMaterialTextureData>>
     TCustomMaterialTextureEntry;
 
 /**
@@ -672,7 +672,7 @@ struct SCustomMaterialsTessellationProperties
 /* We setup some shared state on the custom material shaders */
 struct SCustomMaterialShader
 {
-    QDemonScopedRefCounted<QDemonRenderShaderProgram> m_Shader;
+    QSharedPointer<QDemonRenderShaderProgram> m_Shader;
     NVRenderCachedShaderProperty<QMatrix4x4> m_ModelMatrix;
     NVRenderCachedShaderProperty<QMatrix4x4> m_ViewProjMatrix;
     NVRenderCachedShaderProperty<QMatrix4x4> m_ViewMatrix;
@@ -762,8 +762,8 @@ struct SMaterialOrComputeShader
 struct SCustomMaterialBuffer
 {
     QString m_Name;
-    QDemonScopedRefCounted<QDemonRenderFrameBuffer> m_FrameBuffer;
-    QDemonScopedRefCounted<QDemonRenderTexture2D> m_Texture;
+    QSharedPointer<QDemonRenderFrameBuffer> m_FrameBuffer;
+    QSharedPointer<QDemonRenderTexture2D> m_Texture;
     SAllocateBufferFlags m_Flags;
 
     SCustomMaterialBuffer(QString inName, QDemonRenderFrameBuffer &inFb,
@@ -778,9 +778,9 @@ struct SCustomMaterialBuffer
 };
 
 struct SMaterialSystem;
-typedef QHash<QString, QDemonScopedRefCounted<QDemonRenderVertexBuffer>>
+typedef QHash<QString, QSharedPointer<QDemonRenderVertexBuffer>>
     TStringVertexBufferMap;
-typedef QHash<QString, QDemonScopedRefCounted<QDemonRenderInputAssembler>>
+typedef QHash<QString, QSharedPointer<QDemonRenderInputAssembler>>
     TStringAssemblerMap;
 
 struct SStringMemoryBarrierFlagMap
@@ -847,7 +847,7 @@ SStringBlendFuncMap g_BlendFuncMap[] = {
 
 struct SMaterialSystem : public ICustomMaterialSystem
 {
-    typedef QHash<SShaderMapKey, QDemonScopedRefCounted<SCustomMaterialShader>> TShaderMap;
+    typedef QHash<SShaderMapKey, QSharedPointer<SCustomMaterialShader>> TShaderMap;
     typedef QPair<QString, SImage *> TAllocatedImageEntry;
 
     IQDemonRenderContextCore &m_CoreContext;
@@ -995,7 +995,7 @@ struct SMaterialSystem : public ICustomMaterialSystem
             }
         }
         if (theTextureEntry == nullptr) {
-            QDemonScopedRefCounted<SCustomMaterialTextureData> theNewEntry =
+            QSharedPointer<SCustomMaterialTextureData> theNewEntry =
                 new SCustomMaterialTextureData(SCustomMaterialTextureData::CreateTextureEntry(inShader, inTexture, inPropName, needMips));
             m_TextureEntries.push_back(QPair(inPropName, theNewEntry));
             theTextureEntry = theNewEntry.mPtr;
@@ -1119,7 +1119,7 @@ struct SMaterialSystem : public ICustomMaterialSystem
         m_CoreContext.GetDynamicObjectSystemCore().SetRenderCommands(inName, inCommands);
     }
 
-    QString GetShaderCacheKey(CRenderString &inShaderKeyBuffer, const char *inId,
+    QString GetShaderCacheKey(QString &inShaderKeyBuffer, const char *inId,
                                         const char *inProgramMacro,
                                         const dynamic::SDynamicShaderProgramFlags &inFlags)
     {
@@ -1149,7 +1149,7 @@ struct SMaterialSystem : public ICustomMaterialSystem
             m_Context->GetCustomMaterialShaderGenerator());
 
         // generate key
-        CRenderString theShaderKeyBuffer;
+        QString theShaderKeyBuffer;
         QString theKey = GetShaderCacheKey(theShaderKeyBuffer, inCommand.m_ShaderPath,
                                                      inCommand.m_ShaderDefine, inFlags);
 
@@ -1181,7 +1181,7 @@ struct SMaterialSystem : public ICustomMaterialSystem
         SShaderMapKey skey = SShaderMapKey(
             TStrStrPair(inCommand.m_ShaderPath, inCommand.m_ShaderDefine), inFeatureSet,
             theFlags.m_TessMode, theFlags.m_WireframeMode, inRenderContext.m_MaterialKey);
-        QPair<TShaderMap::iterator, bool> theInsertResult(m_ShaderMap.insert(skey, QDemonScopedRefCounted<SCustomMaterialShader>(nullptr)));
+        QPair<TShaderMap::iterator, bool> theInsertResult(m_ShaderMap.insert(skey, QSharedPointer<SCustomMaterialShader>(nullptr)));
 
         if (theInsertResult.second) {
             theProgram = GetShader(inRenderContext, inMaterial, inCommand, inFeatureSet, theFlags);

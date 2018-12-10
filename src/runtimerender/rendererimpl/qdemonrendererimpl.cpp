@@ -1112,9 +1112,9 @@ bool Qt3DSRendererImpl::PrepareTextureAtlasForRender()
     // this is a one time creation
     if (!theTextureAtlas->IsInitialized()) {
         QDemonRenderContext &theContext(*m_Context);
-        QDemonScopedRefCounted<QDemonRenderVertexBuffer> mVertexBuffer;
-        QDemonScopedRefCounted<QDemonRenderInputAssembler> mInputAssembler;
-        QDemonScopedRefCounted<QDemonRenderAttribLayout> mAttribLayout;
+        QSharedPointer<QDemonRenderVertexBuffer> mVertexBuffer;
+        QSharedPointer<QDemonRenderInputAssembler> mInputAssembler;
+        QSharedPointer<QDemonRenderAttribLayout> mAttribLayout;
         // temporay FB
         using QDemonRenderContextScopedProperty;
         QDemonRenderContextScopedProperty<QDemonRenderFrameBuffer *> __fbo(

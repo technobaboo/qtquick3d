@@ -42,6 +42,11 @@
 
 QT_BEGIN_NAMESPACE
 struct SDynamicObject;
+struct SWriteBuffer;
+struct SStrRemapMap;
+class IQDemonRenderContext;
+class IDynamicObjectSystem;
+class IQDemonRenderContextCore;
 
 namespace dynamic {
 
@@ -233,21 +238,19 @@ public:
                                bool inHasGeomShader = false,
                                bool inIsComputeShader = false) = 0;
 
-    // Overall save functions for saving the class information out to the binary file.
-    virtual void Save(SWriteBuffer &ioBuffer,
-                      const SStrRemapMap &inRemapMap,
-                      const char *inProjectDir) const = 0;
-    virtual void Load(QDemonDataRef<quint8> inData, CStrTableOrDataRef inStrDataBlock,
-                      const char *inProjectDir) = 0;
+//    // Overall save functions for saving the class information out to the binary file.
+//    virtual void Save(SWriteBuffer &ioBuffer,
+//                      const SStrRemapMap &inRemapMap,
+//                      const char *inProjectDir) const = 0;
+//    virtual void Load(QDemonDataRef<quint8> inData, CStrTableOrDataRef inStrDataBlock,
+//                      const char *inProjectDir) = 0;
 
     virtual IDynamicObjectSystem &CreateDynamicSystem(IQDemonRenderContext &rc) = 0;
 
     static IDynamicObjectSystemCore &CreateDynamicSystemCore(IQDemonRenderContextCore &rc);
 };
 
-typedef QPair<QDemonScopedRefCounted<QDemonRenderShaderProgram>,
-dynamic::SDynamicShaderProgramFlags>
-TShaderAndFlags;
+typedef QPair<QSharedPointer<QDemonRenderShaderProgram>, dynamic::SDynamicShaderProgramFlags> TShaderAndFlags;
 
 class IDynamicObjectSystem : public IDynamicObjectSystemCore
 {
@@ -261,7 +264,7 @@ public:
                      const dynamic::SDynamicShaderProgramFlags &inFlags,
                      bool inForceCompilation = false) = 0;
 
-    virtual const char *GetShaderSource(QString inPath, CRenderString &source) = 0;
+    virtual const char *GetShaderSource(QString inPath, QString &source) = 0;
 
     // Will return null in the case where a custom prepass shader isn't needed for this object
     // If no geom shader, then no depth prepass shader.

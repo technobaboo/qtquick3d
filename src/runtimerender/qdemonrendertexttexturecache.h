@@ -37,10 +37,10 @@ QT_BEGIN_NAMESPACE
 
 class ITextRenderer;
 
-typedef QPair<QDemonScopedRefCounted<QDemonRenderPathFontSpecification>,
-QDemonScopedRefCounted<QDemonRenderPathFontItem>>
+typedef QPair<QSharedPointer<QDemonRenderPathFontSpecification>,
+QSharedPointer<QDemonRenderPathFontItem>>
 TPathFontSpecAndPathObject;
-typedef QPair<STextTextureDetails, QDemonScopedRefCounted<QDemonRenderTexture2D>>
+typedef QPair<STextTextureDetails, QSharedPointer<QDemonRenderTexture2D>>
 TTextTextureDetailsAndTexture;
 typedef QPair<TPathFontSpecAndPathObject, TTextTextureDetailsAndTexture>
 TTPathObjectAndTexture;

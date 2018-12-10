@@ -283,7 +283,7 @@ struct SLayerRenderPreparationData
     QVector<QVector3D> m_SourceLightDirections;
     QVector<QVector3D> m_LightDirections;
     TModelContextPtrList m_ModelContexts;
-    QDemonScopedRefCounted<IOffscreenRenderer> m_LastFrameOffscreenRenderer;
+    QSharedPointer<IOffscreenRenderer> m_LastFrameOffscreenRenderer;
 
     eastl::vector<SShaderPreprocessorFeature> m_Features;
     QString m_CGLightingFeatureName;
@@ -292,7 +292,7 @@ struct SLayerRenderPreparationData
     bool m_TooManyLightsError;
 
     // shadow mapps
-    QDemonScopedRefCounted<Qt3DSShadowMap> m_ShadowMapManager;
+    QSharedPointer<Qt3DSShadowMap> m_ShadowMapManager;
 
     SLayerRenderPreparationData(SLayer &inLayer, Qt3DSRendererImpl &inRenderer);
     virtual ~SLayerRenderPreparationData();

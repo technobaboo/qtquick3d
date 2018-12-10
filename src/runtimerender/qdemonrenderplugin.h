@@ -38,6 +38,7 @@ QT_BEGIN_NAMESPACE
 
 // UICRenderPluginPropertyValue.h
 struct SRenderPropertyValueUpdate;
+class IRenderPluginClass;
 
 class IRenderPluginInstance : public IOffscreenRenderer
 {
@@ -99,7 +100,7 @@ class IRenderPluginClass
 protected:
     virtual ~IRenderPluginClass() {}
 public:
-    virtual QDemonScopedRefCounted<IRenderPluginInstance> CreateInstance() = 0;
+    virtual QSharedPointer<IRenderPluginInstance> CreateInstance() = 0;
     virtual void RegisterProperty(const SRenderPluginPropertyDeclaration &dec) = 0;
     virtual QDemonConstDataRef<SRenderPluginPropertyDeclaration> GetRegisteredProperties() = 0;
     // The declaration contains an offset
@@ -116,8 +117,8 @@ class IRenderPluginManagerCore
 {
 public:
     virtual void SetDllDir(const char *inDllDir) = 0;
-    virtual void Load(QDemonDataRef<quint8> inData, CStrTableOrDataRef inStrDataBlock,
-                      const char *inProjectDir) = 0;
+//    virtual void Load(QDemonDataRef<quint8> inData, CStrTableOrDataRef inStrDataBlock,
+//                      const char *inProjectDir) = 0;
     virtual IRenderPluginManager &GetRenderPluginManager(QDemonRenderContext &rc) = 0;
 
     static IRenderPluginManagerCore &Create(IInputStreamFactory &inFactory);
@@ -134,9 +135,9 @@ public:
     virtual IRenderPluginInstance *
     GetOrCreateRenderPluginInstance(QString inRelativePath, void *inKey) = 0;
 
-    virtual void Save(SWriteBuffer &ioBuffer,
-                      const SStrRemapMap &inRemapMap,
-                      const char *inProjectDir) const = 0;
+//    virtual void Save(SWriteBuffer &ioBuffer,
+//                      const SStrRemapMap &inRemapMap,
+//                      const char *inProjectDir) const = 0;
 };
 QT_END_NAMESPACE
 

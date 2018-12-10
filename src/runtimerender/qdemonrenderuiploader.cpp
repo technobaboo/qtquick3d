@@ -108,7 +108,7 @@ using SCustomMaterial;
 using GraphObjectTypes;
 using NodeFlags;
 using QString;
-using CRenderString;
+using QString;
 using CFileTools;
 using SReferencedMaterial;
 using IUIPReferenceResolver;
@@ -452,7 +452,7 @@ struct SRenderUIPLoader : public IDOMReferenceResolver
     TStrType m_TempParseString;
     IEffectSystem &m_EffectSystem;
     const char *m_PresentationDir;
-    CRenderString m_PathString;
+    QString m_PathString;
     IRenderPluginManager &m_RenderPluginManager;
     ICustomMaterialSystem &m_CustomMaterialSystem;
     IDynamicObjectSystem &m_DynamicObjectSystem;
@@ -1889,9 +1889,9 @@ void IUIPLoader::CreateEffectClassFromMetaEffect(
         inFoundation.getAllocator(), "IUIPLoader::CreateEffectClassFromMetaEffect");
     QVector<QString> theEnumNames(
         inFoundation.getAllocator(), "IUIPLoader::CreateEffectClassFromMetaEffect");
-    CRenderString theConvertStr;
-    CRenderString theConvertShaderTypeStr;
-    CRenderString theConvertShaderVersionStr;
+    QString theConvertStr;
+    QString theConvertShaderTypeStr;
+    QString theConvertShaderVersionStr;
 
     for (quint32 idx = 0, end = inMetaDataEffect.m_Properties.size(); idx < end; ++idx)
         thePropertyDeclarations.push_back(
@@ -1952,9 +1952,9 @@ void IUIPLoader::CreateMaterialClassFromMetaMaterial(
     QVector<QString> theEnumNames(
         inFoundation.getAllocator(),
         "IUIPLoader::CreateMaterialClassFromMetaMaterial");
-    CRenderString theConvertStr;
-    CRenderString theConvertShaderTypeStr;
-    CRenderString theConvertShaderVersionStr;
+    QString theConvertStr;
+    QString theConvertShaderTypeStr;
+    QString theConvertShaderVersionStr;
     for (quint32 idx = 0, end = inMetaDataMaterial.m_Properties.size(); idx < end; ++idx)
         thePropertyDeclarations.push_back(
             SPropertyDeclaration(inMetaDataMaterial.m_Properties[idx].m_Name.c_str(),

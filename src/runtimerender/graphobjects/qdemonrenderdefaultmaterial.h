@@ -72,7 +72,7 @@ struct DefaultMaterialSpecularModel
 
 struct SImage;
 
-struct QDEMON_AUTOTEST_EXPORT SDefaultMaterial : SGraphObject
+struct Q_DEMONRUNTIMERENDER_EXPORT SDefaultMaterial : SGraphObject
 {
     CMaterialDirty m_Dirty;
     // lightmap section

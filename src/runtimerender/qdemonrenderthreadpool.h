@@ -31,7 +31,7 @@
 #ifndef QDEMON_RENDER_THREAD_POOL_H
 #define QDEMON_RENDER_THREAD_POOL_H
 
-#include <QtRuntimeRender/qtdemonruntimerenderglobal.h>
+#include <QtDemonRuntimeRender/qtdemonruntimerenderglobal.h>
 
 QT_BEGIN_NAMESPACE
 

@@ -73,7 +73,7 @@ public:
     virtual bool AreLoadedBuffersAvailable() = 0;
 
     // blocking, be careful with this.  No guarantees about timely return here.
-    virtual QDemonScopedRefCounted<ILoadedBuffer> NextLoadedBuffer() = 0;
+    virtual QSharedPointer<ILoadedBuffer> NextLoadedBuffer() = 0;
 
     static IBufferLoader &Create(IInputStreamFactory &inFactory,
                                  IThreadPool &inThreadPool);

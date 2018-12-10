@@ -87,7 +87,7 @@ struct SImageLoaderBatch
     // All variables setup in main thread and constant from then on except
     // loaded image count.
     SBatchLoader &m_Loader;
-    QDemonScopedRefCounted<IImageLoadListener> m_LoadListener;
+    QSharedPointer<IImageLoadListener> m_LoadListener;
     Sync m_LoadEvent;
     Mutex m_LoadMutex;
     TLoadingImageList m_Images;

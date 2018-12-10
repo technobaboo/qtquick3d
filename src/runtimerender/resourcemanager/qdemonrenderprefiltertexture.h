@@ -98,10 +98,10 @@ public:
         void CreateLevel0Tex(void *inTextureData, qint32 inTextureDataSize,
                              QDemonRenderTextureFormats::Enum inFormat);
 
-    QDemonScopedRefCounted<QDemonRenderShaderProgram> m_BSDFProgram;
-    QDemonScopedRefCounted<QDemonRenderShaderProgram> m_UploadProgram_RGBA8;
-    QDemonScopedRefCounted<QDemonRenderShaderProgram> m_UploadProgram_RGB8;
-    QDemonScopedRefCounted<QDemonRenderTexture2D> m_Level0Tex;
+    QSharedPointer<QDemonRenderShaderProgram> m_BSDFProgram;
+    QSharedPointer<QDemonRenderShaderProgram> m_UploadProgram_RGBA8;
+    QSharedPointer<QDemonRenderShaderProgram> m_UploadProgram_RGB8;
+    QSharedPointer<QDemonRenderTexture2D> m_Level0Tex;
     bool m_TextureCreated;
 
     void createComputeProgram(QDemonRenderContext *context);

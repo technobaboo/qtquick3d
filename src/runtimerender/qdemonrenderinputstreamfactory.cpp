@@ -169,7 +169,7 @@ struct SFactory : public IInputStreamFactory
     bool GetPathForFile(const QString &inFilename, QString &outFile,
                         bool inQuiet = false) override
     {
-        QDemonScopedRefCounted<IRefCountedInputStream> theStream =
+        QSharedPointer<IRefCountedInputStream> theStream =
                 GetStreamForFile(inFilename, inQuiet);
         if (theStream) {
             SInputStream *theRealStream = static_cast<SInputStream *>(theStream.mPtr);

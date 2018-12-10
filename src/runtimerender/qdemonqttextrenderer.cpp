@@ -94,8 +94,8 @@ struct Qt3DSQtTextRenderer : public ITextRenderer
     typedef eastl::set<TStrType> TStringSet;
     typedef QHash<QString, FontInfo> TFontInfoHash;
 
-    QDemonScopedRefCounted<QDemonRenderContext> m_renderContext;
-    QDemonScopedRefCounted<IPerfTimer> m_perfTimer;
+    QSharedPointer<QDemonRenderContext> m_renderContext;
+    QSharedPointer<IPerfTimer> m_perfTimer;
     QVector<SRendererFontEntry> m_installedFonts;
 
     Sync m_PreloadSync;

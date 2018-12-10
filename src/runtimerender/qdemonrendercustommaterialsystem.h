@@ -90,11 +90,11 @@ public:
                                             QDemonRenderTextureMagnifyingOp::Enum inMagFilterOp,
                                             QDemonRenderTextureMinifyingOp::Enum inMinFilterOp) = 0;
 
-    virtual void Save(SWriteBuffer &ioBuffer,
-                      const SStrRemapMap &inRemapMap,
-                      const char *inProjectDir) const = 0;
-    virtual void Load(QDemonDataRef<quint8> inData, CStrTableOrDataRef inStrDataBlock,
-                      const char *inProjectDir) = 0;
+//    virtual void Save(SWriteBuffer &ioBuffer,
+//                      const SStrRemapMap &inRemapMap,
+//                      const char *inProjectDir) const = 0;
+//    virtual void Load(QDemonDataRef<quint8> inData, CStrTableOrDataRef inStrDataBlock,
+//                      const char *inProjectDir) = 0;
 
     virtual ICustomMaterialSystem &GetCustomMaterialSystem(IQDemonRenderContext &inContext) = 0;
 

@@ -229,7 +229,7 @@ struct STextShader
 {
     QDemonRenderShaderProgram &m_Shader;
 
-    QDemonScopedRefCounted<QDemonRenderProgramPipeline> m_ProgramPipeline;
+    QSharedPointer<QDemonRenderProgramPipeline> m_ProgramPipeline;
 
     NVRenderCachedShaderProperty<QMatrix4x4> m_MVP;
     // Dimensions and offsetting of the image.
@@ -317,7 +317,7 @@ struct STextDepthShader
 
 struct SLayerProgAABlendShader
 {
-    QDemonScopedRefCounted<QDemonRenderShaderProgram> m_Shader;
+    QSharedPointer<QDemonRenderShaderProgram> m_Shader;
     NVRenderCachedShaderProperty<QDemonRenderTexture2D *> m_AccumSampler;
     NVRenderCachedShaderProperty<QDemonRenderTexture2D *> m_LastFrame;
     NVRenderCachedShaderProperty<QVector2D> m_BlendFactors;

@@ -41,7 +41,7 @@ namespace dynamic {
 struct SStringLoadRemapper
 {
     CStrTableOrDataRef m_StrData;
-    CRenderString m_PathMapper;
+    QString m_PathMapper;
     const char *m_ProjectDir;
     SStringLoadRemapper(CStrTableOrDataRef inData, const char *inProjectDir)
         : m_StrData(inData)
@@ -54,9 +54,9 @@ struct SStringLoadRemapper
 struct SStringSaveRemapper
 {
     const SStrRemapMap &m_Map;
-    CRenderString m_RelativeBuffer;
-    CRenderString m_ProjectDir;
-    CRenderString m_FinalBuffer;
+    QString m_RelativeBuffer;
+    QString m_ProjectDir;
+    QString m_FinalBuffer;
     SStringSaveRemapper(const SStrRemapMap &map, const char *inProjectDir)
         : m_Map(map)
         , m_StringTable(inStrTable)

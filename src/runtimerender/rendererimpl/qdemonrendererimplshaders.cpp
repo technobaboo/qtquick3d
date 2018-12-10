@@ -91,7 +91,7 @@ void STextShader::RenderPath(QDemonRenderPathFontItem &inPathFontItem,
     QDemonRenderStencilOperationArgument theOpArg(QDemonRenderStencilOp::Keep,
                                                   QDemonRenderStencilOp::Keep,
                                                   QDemonRenderStencilOp::Zero);
-    QDemonScopedRefCounted<QDemonRenderDepthStencilState> depthStencilState =
+    QSharedPointer<QDemonRenderDepthStencilState> depthStencilState =
             inRenderContext.CreateDepthStencilState(isDepthEnabled, isDepthWriteEnabled,
                                                     theDepthFunction, false, theArg, theArg,
                                                     theOpArg, theOpArg);
@@ -601,7 +601,7 @@ Qt3DSRendererImpl::GetParaboloidDepthShader(TessModeValues::Enum inTessMode)
 
 SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetParaboloidDepthNoTessShader()
 {
-    QDemonOption<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> &theDepthShader =
+    QDemonOption<QSharedPointer<SRenderableDepthPrepassShader>> &theDepthShader =
             m_ParaboloidDepthShader;
 
     if (theDepthShader.hasValue() == false) {
@@ -626,10 +626,10 @@ SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetParaboloidDepthNoTessShader
                     name.c_str(), SShaderCacheProgramFlags(), TShaderFeatureSet());
 
         if (depthShaderProgram) {
-            theDepthShader = QDemonScopedRefCounted<SRenderableDepthPrepassShader>(
+            theDepthShader = QSharedPointer<SRenderableDepthPrepassShader>(
                         new SRenderableDepthPrepassShader(*depthShaderProgram, GetContext()));
         } else {
-            theDepthShader = QDemonScopedRefCounted<SRenderableDepthPrepassShader>();
+            theDepthShader = QSharedPointer<SRenderableDepthPrepassShader>();
         }
     }
 
@@ -638,7 +638,7 @@ SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetParaboloidDepthNoTessShader
 
 SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetParaboloidDepthTessLinearShader()
 {
-    QDemonOption<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> &theDepthShader =
+    QDemonOption<QSharedPointer<SRenderableDepthPrepassShader>> &theDepthShader =
             m_ParaboloidDepthTessLinearShader;
 
     if (theDepthShader.hasValue() == false) {
@@ -699,10 +699,10 @@ SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetParaboloidDepthTessLinearSh
                     name.c_str(), SShaderCacheProgramFlags(), TShaderFeatureSet());
 
         if (depthShaderProgram) {
-            theDepthShader = QDemonScopedRefCounted<SRenderableDepthPrepassShader>(
+            theDepthShader = QSharedPointer<SRenderableDepthPrepassShader>(
                         new SRenderableDepthPrepassShader(*depthShaderProgram, GetContext()));
         } else {
-            theDepthShader = QDemonScopedRefCounted<SRenderableDepthPrepassShader>();
+            theDepthShader = QSharedPointer<SRenderableDepthPrepassShader>();
         }
     }
 
@@ -711,7 +711,7 @@ SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetParaboloidDepthTessLinearSh
 
 SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetParaboloidDepthTessPhongShader()
 {
-    QDemonOption<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> &theDepthShader =
+    QDemonOption<QSharedPointer<SRenderableDepthPrepassShader>> &theDepthShader =
             m_ParaboloidDepthTessPhongShader;
 
     if (theDepthShader.hasValue() == false) {
@@ -772,10 +772,10 @@ SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetParaboloidDepthTessPhongSha
                     name.c_str(), SShaderCacheProgramFlags(), TShaderFeatureSet());
 
         if (depthShaderProgram) {
-            theDepthShader = QDemonScopedRefCounted<SRenderableDepthPrepassShader>(
+            theDepthShader = QSharedPointer<SRenderableDepthPrepassShader>(
                         new SRenderableDepthPrepassShader(*depthShaderProgram, GetContext()));
         } else {
-            theDepthShader = QDemonScopedRefCounted<SRenderableDepthPrepassShader>();
+            theDepthShader = QSharedPointer<SRenderableDepthPrepassShader>();
         }
     }
 
@@ -784,7 +784,7 @@ SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetParaboloidDepthTessPhongSha
 
 SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetParaboloidDepthTessNPatchShader()
 {
-    QDemonOption<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> &theDepthShader =
+    QDemonOption<QSharedPointer<SRenderableDepthPrepassShader>> &theDepthShader =
             m_ParaboloidDepthTessNPatchShader;
 
     if (theDepthShader.hasValue() == false) {
@@ -845,10 +845,10 @@ SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetParaboloidDepthTessNPatchSh
                     name.c_str(), SShaderCacheProgramFlags(), TShaderFeatureSet());
 
         if (depthShaderProgram) {
-            theDepthShader = QDemonScopedRefCounted<SRenderableDepthPrepassShader>(
+            theDepthShader = QSharedPointer<SRenderableDepthPrepassShader>(
                         new SRenderableDepthPrepassShader(*depthShaderProgram, GetContext()));
         } else {
-            theDepthShader = QDemonScopedRefCounted<SRenderableDepthPrepassShader>();
+            theDepthShader = QSharedPointer<SRenderableDepthPrepassShader>();
         }
     }
 
@@ -874,7 +874,7 @@ Qt3DSRendererImpl::GetCubeShadowDepthShader(TessModeValues::Enum inTessMode)
 
 SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetCubeDepthNoTessShader()
 {
-    QDemonOption<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> &theDepthShader =
+    QDemonOption<QSharedPointer<SRenderableDepthPrepassShader>> &theDepthShader =
             m_CubemapDepthShader;
 
     if (theDepthShader.hasValue() == false) {
@@ -910,10 +910,10 @@ SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetCubeDepthNoTessShader()
                     name.c_str(), SShaderCacheProgramFlags(), TShaderFeatureSet());
 
         if (depthShaderProgram) {
-            theDepthShader = QDemonScopedRefCounted<SRenderableDepthPrepassShader>(
+            theDepthShader = QSharedPointer<SRenderableDepthPrepassShader>(
                         new SRenderableDepthPrepassShader(*depthShaderProgram, GetContext()));
         } else {
-            theDepthShader = QDemonScopedRefCounted<SRenderableDepthPrepassShader>();
+            theDepthShader = QSharedPointer<SRenderableDepthPrepassShader>();
         }
     }
 
@@ -922,7 +922,7 @@ SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetCubeDepthNoTessShader()
 
 SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetCubeDepthTessLinearShader()
 {
-    QDemonOption<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> &theDepthShader =
+    QDemonOption<QSharedPointer<SRenderableDepthPrepassShader>> &theDepthShader =
             m_CubemapDepthTessLinearShader;
 
     if (theDepthShader.hasValue() == false) {
@@ -985,10 +985,10 @@ SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetCubeDepthTessLinearShader()
                     name.c_str(), SShaderCacheProgramFlags(), TShaderFeatureSet());
 
         if (depthShaderProgram) {
-            theDepthShader = QDemonScopedRefCounted<SRenderableDepthPrepassShader>(
+            theDepthShader = QSharedPointer<SRenderableDepthPrepassShader>(
                         new SRenderableDepthPrepassShader(*depthShaderProgram, GetContext()));
         } else {
-            theDepthShader = QDemonScopedRefCounted<SRenderableDepthPrepassShader>();
+            theDepthShader = QSharedPointer<SRenderableDepthPrepassShader>();
         }
     }
 
@@ -997,7 +997,7 @@ SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetCubeDepthTessLinearShader()
 
 SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetCubeDepthTessPhongShader()
 {
-    QDemonOption<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> &theDepthShader =
+    QDemonOption<QSharedPointer<SRenderableDepthPrepassShader>> &theDepthShader =
             m_CubemapDepthTessPhongShader;
 
     if (theDepthShader.hasValue() == false) {
@@ -1066,10 +1066,10 @@ SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetCubeDepthTessPhongShader()
                     name.c_str(), SShaderCacheProgramFlags(), TShaderFeatureSet());
 
         if (depthShaderProgram) {
-            theDepthShader = QDemonScopedRefCounted<SRenderableDepthPrepassShader>(
+            theDepthShader = QSharedPointer<SRenderableDepthPrepassShader>(
                         new SRenderableDepthPrepassShader(*depthShaderProgram, GetContext()));
         } else {
-            theDepthShader = QDemonScopedRefCounted<SRenderableDepthPrepassShader>();
+            theDepthShader = QSharedPointer<SRenderableDepthPrepassShader>();
         }
     }
 
@@ -1078,7 +1078,7 @@ SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetCubeDepthTessPhongShader()
 
 SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetCubeDepthTessNPatchShader()
 {
-    QDemonOption<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> &theDepthShader =
+    QDemonOption<QSharedPointer<SRenderableDepthPrepassShader>> &theDepthShader =
             m_CubemapDepthTessNPatchShader;
 
     if (theDepthShader.hasValue() == false) {
@@ -1153,10 +1153,10 @@ SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetCubeDepthTessNPatchShader()
                     name.c_str(), SShaderCacheProgramFlags(), TShaderFeatureSet());
 
         if (depthShaderProgram) {
-            theDepthShader = QDemonScopedRefCounted<SRenderableDepthPrepassShader>(
+            theDepthShader = QSharedPointer<SRenderableDepthPrepassShader>(
                         new SRenderableDepthPrepassShader(*depthShaderProgram, GetContext()));
         } else {
-            theDepthShader = QDemonScopedRefCounted<SRenderableDepthPrepassShader>();
+            theDepthShader = QSharedPointer<SRenderableDepthPrepassShader>();
         }
     }
 
@@ -1182,7 +1182,7 @@ Qt3DSRendererImpl::GetOrthographicDepthShader(TessModeValues::Enum inTessMode)
 
 SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetOrthographicDepthNoTessShader()
 {
-    QDemonOption<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> &theDepthShader =
+    QDemonOption<QSharedPointer<SRenderableDepthPrepassShader>> &theDepthShader =
             m_OrthographicDepthShader;
 
     if (theDepthShader.hasValue() == false) {
@@ -1217,10 +1217,10 @@ SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetOrthographicDepthNoTessShad
                     name.c_str(), SShaderCacheProgramFlags(), TShaderFeatureSet());
 
         if (depthShaderProgram) {
-            theDepthShader = QDemonScopedRefCounted<SRenderableDepthPrepassShader>(
+            theDepthShader = QSharedPointer<SRenderableDepthPrepassShader>(
                         new SRenderableDepthPrepassShader(*depthShaderProgram, GetContext()));
         } else {
-            theDepthShader = QDemonScopedRefCounted<SRenderableDepthPrepassShader>();
+            theDepthShader = QSharedPointer<SRenderableDepthPrepassShader>();
         }
     }
 
@@ -1229,7 +1229,7 @@ SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetOrthographicDepthNoTessShad
 
 SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetOrthographicDepthTessLinearShader()
 {
-    QDemonOption<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> &theDepthShader =
+    QDemonOption<QSharedPointer<SRenderableDepthPrepassShader>> &theDepthShader =
             m_OrthographicDepthTessLinearShader;
 
     if (theDepthShader.hasValue() == false) {
@@ -1287,10 +1287,10 @@ SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetOrthographicDepthTessLinear
                     name.c_str(), SShaderCacheProgramFlags(), TShaderFeatureSet());
 
         if (depthShaderProgram) {
-            theDepthShader = QDemonScopedRefCounted<SRenderableDepthPrepassShader>(
+            theDepthShader = QSharedPointer<SRenderableDepthPrepassShader>(
                         new SRenderableDepthPrepassShader(*depthShaderProgram, GetContext()));
         } else {
-            theDepthShader = QDemonScopedRefCounted<SRenderableDepthPrepassShader>();
+            theDepthShader = QSharedPointer<SRenderableDepthPrepassShader>();
         }
     }
 
@@ -1299,7 +1299,7 @@ SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetOrthographicDepthTessLinear
 
 SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetOrthographicDepthTessPhongShader()
 {
-    QDemonOption<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> &theDepthShader =
+    QDemonOption<QSharedPointer<SRenderableDepthPrepassShader>> &theDepthShader =
             m_OrthographicDepthTessPhongShader;
 
     if (theDepthShader.hasValue() == false) {
@@ -1363,10 +1363,10 @@ SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetOrthographicDepthTessPhongS
                     name.c_str(), SShaderCacheProgramFlags(), TShaderFeatureSet());
 
         if (depthShaderProgram) {
-            theDepthShader = QDemonScopedRefCounted<SRenderableDepthPrepassShader>(
+            theDepthShader = QSharedPointer<SRenderableDepthPrepassShader>(
                         SRenderableDepthPrepassShader(*depthShaderProgram, GetContext()));
         } else {
-            theDepthShader = QDemonScopedRefCounted<SRenderableDepthPrepassShader>();
+            theDepthShader = QSharedPointer<SRenderableDepthPrepassShader>();
         }
     }
 
@@ -1375,7 +1375,7 @@ SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetOrthographicDepthTessPhongS
 
 SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetOrthographicDepthTessNPatchShader()
 {
-    QDemonOption<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> &theDepthShader =
+    QDemonOption<QSharedPointer<SRenderableDepthPrepassShader>> &theDepthShader =
             m_OrthographicDepthTessNPatchShader;
 
     if (theDepthShader.hasValue() == false) {
@@ -1448,10 +1448,10 @@ SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetOrthographicDepthTessNPatch
                     name.c_str(), SShaderCacheProgramFlags(), TShaderFeatureSet());
 
         if (depthShaderProgram) {
-            theDepthShader = QDemonScopedRefCounted<SRenderableDepthPrepassShader>(
+            theDepthShader = QSharedPointer<SRenderableDepthPrepassShader>(
                         new SRenderableDepthPrepassShader(*depthShaderProgram, GetContext()));
         } else {
-            theDepthShader = QDemonScopedRefCounted<SRenderableDepthPrepassShader>();
+            theDepthShader = QSharedPointer<SRenderableDepthPrepassShader>();
         }
     }
 
@@ -1462,7 +1462,7 @@ SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetOrthographicDepthTessNPatch
 
 SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetDepthPrepassShader(bool inDisplaced)
 {
-    QDemonOption<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> &theDepthPrePassShader =
+    QDemonOption<QSharedPointer<SRenderableDepthPrepassShader>> &theDepthPrePassShader =
             (!inDisplaced) ? m_DepthPrepassShader : m_DepthPrepassShaderDisplaced;
 
     if (theDepthPrePassShader.hasValue() == false) {
@@ -1508,10 +1508,10 @@ SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetDepthPrepassShader(bool inD
                     name.c_str(), SShaderCacheProgramFlags(), TShaderFeatureSet());
 
         if (depthShaderProgram) {
-            theDepthPrePassShader = QDemonScopedRefCounted<SRenderableDepthPrepassShader>(
+            theDepthPrePassShader = QSharedPointer<SRenderableDepthPrepassShader>(
                         new SRenderableDepthPrepassShader(*depthShaderProgram, GetContext()));
         } else {
-            theDepthPrePassShader = QDemonScopedRefCounted<SRenderableDepthPrepassShader>();
+            theDepthPrePassShader = QSharedPointer<SRenderableDepthPrepassShader>();
         }
     }
     return theDepthPrePassShader.getValue();
@@ -1537,7 +1537,7 @@ Qt3DSRendererImpl::GetDepthTessPrepassShader(TessModeValues::Enum inTessMode, bo
 SRenderableDepthPrepassShader *
 Qt3DSRendererImpl::GetDepthTessLinearPrepassShader(bool inDisplaced)
 {
-    QDemonOption<QDemonScopedRefCounted<SRenderableDepthPrepassShader>> &theDepthPrePassShader =
+    QDemonOption<QSharedPointer<SRenderableDepthPrepassShader>> &theDepthPrePassShader =
             (!inDisplaced) ? m_DepthTessLinearPrepassShader
                            : m_DepthTessLinearPrepassShaderDisplaced;
 
@@ -1664,10 +1664,10 @@ Qt3DSRendererImpl::GetDepthTessLinearPrepassShader(bool inDisplaced)
                     name.c_str(), theFlags, TShaderFeatureSet());
 
         if (depthShaderProgram) {
-            theDepthPrePassShader = QDemonScopedRefCounted<SRenderableDepthPrepassShader>(
+            theDepthPrePassShader = QSharedPointer<SRenderableDepthPrepassShader>(
                         new SRenderableDepthPrepassShader(*depthShaderProgram, GetContext()));
         } else {
-            theDepthPrePassShader = QDemonScopedRefCounted<SRenderableDepthPrepassShader>();
+            theDepthPrePassShader = QSharedPointer<SRenderableDepthPrepassShader>();
         }
     }
     return theDepthPrePassShader->mPtr;
@@ -1742,10 +1742,10 @@ SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetDepthTessPhongPrepassShader
                     "depth tess phong prepass shader", theFlags, TShaderFeatureSet());
 
         if (depthShaderProgram) {
-            m_DepthTessPhongPrepassShader = QDemonScopedRefCounted<SRenderableDepthPrepassShader>(
+            m_DepthTessPhongPrepassShader = QSharedPointer<SRenderableDepthPrepassShader>(
                         new SRenderableDepthPrepassShader(*depthShaderProgram, GetContext()));
         } else {
-            m_DepthTessPhongPrepassShader = QDemonScopedRefCounted<SRenderableDepthPrepassShader>();
+            m_DepthTessPhongPrepassShader = QSharedPointer<SRenderableDepthPrepassShader>();
         }
     }
     return m_DepthTessPhongPrepassShader->mPtr;
@@ -1834,11 +1834,11 @@ SRenderableDepthPrepassShader *Qt3DSRendererImpl::GetDepthTessNPatchPrepassShade
                     "depth tess npatch prepass shader", theFlags, TShaderFeatureSet());
 
         if (depthShaderProgram) {
-            m_DepthTessNPatchPrepassShader = QDemonScopedRefCounted<SRenderableDepthPrepassShader>(
+            m_DepthTessNPatchPrepassShader = QSharedPointer<SRenderableDepthPrepassShader>(
                         new SRenderableDepthPrepassShader(*depthShaderProgram, GetContext()));
         } else {
             m_DepthTessNPatchPrepassShader =
-                    QDemonScopedRefCounted<SRenderableDepthPrepassShader>();
+                    QSharedPointer<SRenderableDepthPrepassShader>();
         }
     }
     return m_DepthTessNPatchPrepassShader->mPtr;
@@ -1957,11 +1957,11 @@ SDefaultAoPassShader *Qt3DSRendererImpl::GetDefaultAoPassShader(TShaderFeatureSe
                     "fullscreen AO pass shader", SShaderCacheProgramFlags(), inFeatureSet);
 
         if (aoPassShaderProgram) {
-            m_DefaultAoPassShader = QDemonScopedRefCounted<SDefaultAoPassShader>(
+            m_DefaultAoPassShader = QSharedPointer<SDefaultAoPassShader>(
                         new SDefaultAoPassShader(*aoPassShaderProgram,
                                                                                       GetContext()));
         } else {
-            m_DefaultAoPassShader = QDemonScopedRefCounted<SDefaultAoPassShader>();
+            m_DefaultAoPassShader = QSharedPointer<SDefaultAoPassShader>();
         }
     }
     return m_DefaultAoPassShader->mPtr;
@@ -2003,11 +2003,11 @@ SDefaultAoPassShader *Qt3DSRendererImpl::GetFakeDepthShader(TShaderFeatureSet in
                     "depth display shader", SShaderCacheProgramFlags(), inFeatureSet);
 
         if (depthShaderProgram) {
-            m_FakeDepthShader = QDemonScopedRefCounted<SDefaultAoPassShader>(
+            m_FakeDepthShader = QSharedPointer<SDefaultAoPassShader>(
                         new SDefaultAoPassShader(
                             *depthShaderProgram, GetContext()));
         } else {
-            m_FakeDepthShader = QDemonScopedRefCounted<SDefaultAoPassShader>();
+            m_FakeDepthShader = QSharedPointer<SDefaultAoPassShader>();
         }
     }
     return m_FakeDepthShader->mPtr;
@@ -2047,11 +2047,11 @@ SDefaultAoPassShader *Qt3DSRendererImpl::GetFakeCubeDepthShader(TShaderFeatureSe
                     "cube depth display shader", SShaderCacheProgramFlags(), inFeatureSet);
 
         if (cubeShaderProgram) {
-            m_FakeCubemapDepthShader = QDemonScopedRefCounted<SDefaultAoPassShader>(
+            m_FakeCubemapDepthShader = QSharedPointer<SDefaultAoPassShader>(
                         new SDefaultAoPassShader(*cubeShaderProgram,
                                                                                       GetContext()));
         } else {
-            m_FakeCubemapDepthShader = QDemonScopedRefCounted<SDefaultAoPassShader>();
+            m_FakeCubemapDepthShader = QSharedPointer<SDefaultAoPassShader>();
         }
     }
     return m_FakeCubemapDepthShader.getValue();
@@ -2193,10 +2193,10 @@ STextDepthShader *Qt3DSRendererImpl::GetTextDepthShader()
         QDemonRenderShaderProgram *theShader = GetProgramGenerator().CompileGeneratedShader(
                     shaderName, SShaderCacheProgramFlags(), TShaderFeatureSet());
         if (theShader == nullptr) {
-            m_TextDepthPrepassShader = QDemonScopedRefCounted<STextDepthShader>();
+            m_TextDepthPrepassShader = QSharedPointer<STextDepthShader>();
         } else {
             GenerateXYQuad();
-            m_TextDepthPrepassShader = QDemonScopedRefCounted<STextDepthShader>(
+            m_TextDepthPrepassShader = QSharedPointer<STextDepthShader>(
                         new STextDepthShader(*theShader, *m_QuadInputAssembler));
         }
     }
@@ -2378,7 +2378,7 @@ SLayerSceneShader *Qt3DSRendererImpl::GetSceneLayerShader()
     fragmentGenerator.Append("}");
     QDemonRenderShaderProgram *theShader = GetProgramGenerator().CompileGeneratedShader(
                 "layer shader", SShaderCacheProgramFlags(), TShaderFeatureSet());
-    QDemonScopedRefCounted<SLayerSceneShader> retval;
+    QSharedPointer<SLayerSceneShader> retval;
     if (theShader)
         retval = new SLayerSceneShader(*theShader);
     m_SceneLayerShader = retval;
@@ -2414,7 +2414,7 @@ SLayerProgAABlendShader *Qt3DSRendererImpl::GetLayerProgAABlendShader()
     fragmentGenerator.Append("}");
     QDemonRenderShaderProgram *theShader = GetProgramGenerator().CompileGeneratedShader(
                 "layer progressiveAA blend shader", SShaderCacheProgramFlags(), TShaderFeatureSet());
-    QDemonScopedRefCounted<SLayerProgAABlendShader> retval;
+    QSharedPointer<SLayerProgAABlendShader> retval;
     if (theShader)
         retval = new SLayerProgAABlendShader(*theShader);
     m_LayerProgAAShader = retval;
@@ -2545,7 +2545,7 @@ SShadowmapPreblurShader *Qt3DSRendererImpl::GetCubeShadowBlurXShader()
 
     QDemonRenderShaderProgram *theShader = GetProgramGenerator().CompileGeneratedShader(
                 "cubemap shadow blur X shader", SShaderCacheProgramFlags(), TShaderFeatureSet());
-    QDemonScopedRefCounted<SShadowmapPreblurShader> retval;
+    QSharedPointer<SShadowmapPreblurShader> retval;
     if (theShader)
         retval = new SShadowmapPreblurShader(*theShader);
     m_CubeShadowBlurXShader = retval;
@@ -2676,7 +2676,7 @@ SShadowmapPreblurShader *Qt3DSRendererImpl::GetCubeShadowBlurYShader()
 
     QDemonRenderShaderProgram *theShader = GetProgramGenerator().CompileGeneratedShader(
                 "cubemap shadow blur Y shader", SShaderCacheProgramFlags(), TShaderFeatureSet());
-    QDemonScopedRefCounted<SShadowmapPreblurShader> retval;
+    QSharedPointer<SShadowmapPreblurShader> retval;
     if (theShader)
         retval = new SShadowmapPreblurShader(*theShader);
     m_CubeShadowBlurYShader = retval;
@@ -2719,7 +2719,7 @@ SShadowmapPreblurShader *Qt3DSRendererImpl::GetOrthoShadowBlurXShader()
 
     QDemonRenderShaderProgram *theShader = GetProgramGenerator().CompileGeneratedShader(
                 "shadow map blur X shader", SShaderCacheProgramFlags(), TShaderFeatureSet());
-    QDemonScopedRefCounted<SShadowmapPreblurShader> retval;
+    QSharedPointer<SShadowmapPreblurShader> retval;
     if (theShader)
         retval = new SShadowmapPreblurShader(*theShader);
     m_OrthoShadowBlurXShader = retval;
@@ -2762,7 +2762,7 @@ SShadowmapPreblurShader *Qt3DSRendererImpl::GetOrthoShadowBlurYShader()
 
     QDemonRenderShaderProgram *theShader = GetProgramGenerator().CompileGeneratedShader(
                 "shadow map blur Y shader", SShaderCacheProgramFlags(), TShaderFeatureSet());
-    QDemonScopedRefCounted<SShadowmapPreblurShader> retval;
+    QSharedPointer<SShadowmapPreblurShader> retval;
     if (theShader)
         retval = new SShadowmapPreblurShader(*theShader);
     m_OrthoShadowBlurYShader = retval;
@@ -2838,7 +2838,7 @@ SAdvancedModeBlendShader *Qt3DSRendererImpl::GetOverlayBlendModeShader()
     theShader = GetProgramGenerator().CompileGeneratedShader(
                 "advanced overlay shader", SShaderCacheProgramFlags(), TShaderFeatureSet());
 
-    QDemonScopedRefCounted<SAdvancedModeBlendShader> retval;
+    QSharedPointer<SAdvancedModeBlendShader> retval;
     if (theShader)
         retval = new SAdvancedModeBlendShader(*theShader);
     m_AdvancedModeOverlayBlendShader = retval;
@@ -2899,7 +2899,7 @@ SAdvancedModeBlendShader *Qt3DSRendererImpl::GetColorBurnBlendModeShader()
 
     theShader = GetProgramGenerator().CompileGeneratedShader(
                 "advanced colorBurn shader", SShaderCacheProgramFlags(), TShaderFeatureSet());
-    QDemonScopedRefCounted<SAdvancedModeBlendShader> retval;
+    QSharedPointer<SAdvancedModeBlendShader> retval;
     if (theShader)
         retval = new SAdvancedModeBlendShader(*theShader);
     m_AdvancedModeColorBurnBlendShader = retval;
@@ -2961,7 +2961,7 @@ SAdvancedModeBlendShader *Qt3DSRendererImpl::GetColorDodgeBlendModeShader()
     fragmentGenerator.Append("}");
     theShader = GetProgramGenerator().CompileGeneratedShader(
                 "advanced colorDodge shader", SShaderCacheProgramFlags(), TShaderFeatureSet());
-    QDemonScopedRefCounted<SAdvancedModeBlendShader> retval;
+    QSharedPointer<SAdvancedModeBlendShader> retval;
     if (theShader)
         retval = new SAdvancedModeBlendShader(*theShader);
     m_AdvancedModeColorDodgeBlendShader = retval;

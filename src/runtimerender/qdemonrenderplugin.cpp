@@ -254,7 +254,7 @@ struct InstanceImpl : public IRenderPluginInstance
 {
     TRenderPluginInstancePtr m_Instance;
     TRenderPluginClass m_Class;
-    QDemonScopedRefCounted<IInternalPluginClass> m_Owner;
+    QSharedPointer<IInternalPluginClass> m_Owner;
     QString m_RendererType;
     // Backing store of property values
     QVector<SRenderPluginPropertyData> m_PropertyValues;
@@ -426,7 +426,7 @@ struct PluginClassImpl : public IInternalPluginClass
     TStringIndexMap m_ComponentNameToComponentIndexMap;
     QVector<TStringTypePair> m_FullPropertyList;
     QVector<TRenderPluginPropertyUpdate> m_UpdateBuffer;
-    CRenderString m_TempString;
+    QString m_TempString;
     qint32 m_APIVersion;
 
     PluginClassImpl(TRenderPluginClass inClass,
@@ -445,7 +445,7 @@ struct PluginClassImpl : public IInternalPluginClass
             delete m_DynamicLibrary
     }
 
-    QDemonScopedRefCounted<IRenderPluginInstance> CreateInstance() override
+    QSharedPointer<IRenderPluginInstance> CreateInstance() override
     {
         if (m_Class.CreateInstance) {
             TRenderPluginInstancePtr instance =
@@ -456,7 +456,7 @@ struct PluginClassImpl : public IInternalPluginClass
                 return retval;
             }
         }
-        return QDemonScopedRefCounted<IRenderPluginInstance>();
+        return QSharedPointer<IRenderPluginInstance>();
     }
 
     qint32 GetAPIVersion() override { return m_APIVersion; }
@@ -633,11 +633,11 @@ typedef eastl::vector<SLoadedPluginData> TLoadedPluginDataList;
 
 struct PluginManagerImpl : public IRenderPluginManager, public IRenderPluginManagerCore
 {
-    typedef QHash<QString, QDemonScopedRefCounted<IRenderPluginClass>> TLoadedClassMap;
-    typedef QHash<PluginInstanceKey, QDemonScopedRefCounted<IRenderPluginInstance>> TInstanceMap;
+    typedef QHash<QString, QSharedPointer<IRenderPluginClass>> TLoadedClassMap;
+    typedef QHash<PluginInstanceKey, QSharedPointer<IRenderPluginInstance>> TInstanceMap;
     TLoadedClassMap m_LoadedClasses;
     TInstanceMap m_Instances;
-    QDemonScopedRefCounted<QDemonRenderContext> m_RenderContext;
+    QSharedPointer<QDemonRenderContext> m_RenderContext;
     IInputStreamFactory &m_InputStreamFactory;
     TStr m_DllDir;
     TLoadedPluginDataList m_LoadedPluginData;
@@ -653,7 +653,7 @@ struct PluginManagerImpl : public IRenderPluginManager, public IRenderPluginMana
         if (iter != m_LoadedClasses.end())
             return iter->second;
 
-        return QDemonScopedRefCounted<IRenderPluginClass>();
+        return QSharedPointer<IRenderPluginClass>();
     }
 
     IRenderPluginClass *GetOrCreateRenderPlugin(QString inRelativePath) override
@@ -666,7 +666,7 @@ struct PluginManagerImpl : public IRenderPluginManager, public IRenderPluginMana
         // We insert right here to keep us from going down this path potentially for every instance.
         iter =
                 m_LoadedClasses
-                .insert(inRelativePath, QDemonScopedRefCounted<IRenderPluginClass>())
+                .insert(inRelativePath, QSharedPointer<IRenderPluginClass>())
                 .first;
         QString xmlDir, fname, extension;
 
@@ -699,7 +699,7 @@ struct PluginManagerImpl : public IRenderPluginManager, public IRenderPluginMana
                    libpath.c_str(), targetFile.c_str());
 
             // try to open the library.
-            QDemonScopedRefCounted<IRefCountedInputStream> theStream =
+            QSharedPointer<IRefCountedInputStream> theStream =
                     m_InputStreamFactory.GetStreamForFile(libpath.c_str());
             if (!theStream) {
                 qCCritical(INVALID_OPERATION, "Failed to load render plugin %s",
@@ -798,7 +798,7 @@ struct PluginManagerImpl : public IRenderPluginManager, public IRenderPluginMana
         TInstanceMap::iterator iter = m_Instances.find(theKey);
         if (iter == m_Instances.end()) {
             IRenderPluginClass *theClass = GetOrCreateRenderPlugin(inRelativePath);
-            QDemonScopedRefCounted<IRenderPluginInstance> theInstance;
+            QSharedPointer<IRenderPluginInstance> theInstance;
             if (theClass)
                 theInstance = theClass->CreateInstance();
 

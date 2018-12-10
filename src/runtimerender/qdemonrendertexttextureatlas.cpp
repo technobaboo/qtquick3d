@@ -44,8 +44,8 @@ struct STextTextureAtlas : public ITextTextureAtlas
     static const qint32 TEXTURE_ATLAS_DIM =
             256; // if you change this you need to adjust Qt3DSOnscreenTextRenderer size as well
 
-    QDemonScopedRefCounted<ITextRenderer> m_TextRenderer;
-    QDemonScopedRefCounted<QDemonRenderContext> m_RenderContext;
+    QSharedPointer<ITextRenderer> m_TextRenderer;
+    QSharedPointer<QDemonRenderContext> m_RenderContext;
 
     STextTextureAtlas(ITextRenderer &inRenderer,
                       QDemonRenderContext &inRenderContext)

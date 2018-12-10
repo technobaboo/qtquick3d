@@ -56,7 +56,7 @@ struct SVertexPipelineImpl : public IDefaultMaterialVertexPipeline
 
     IMaterialShaderGenerator &m_MaterialGenerator;
     IShaderProgramGenerator &m_ProgramGenerator;
-    CRenderString m_TempString;
+    QString m_TempString;
 
     TGenerationFlags m_GenerationFlags;
     bool m_Wireframe;

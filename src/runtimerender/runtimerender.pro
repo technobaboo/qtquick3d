@@ -56,7 +56,6 @@ HEADERS += \
     qdemonrendershadercodegeneratorv2.h \
     qdemonrendershaderkeys.h \
     qdemonrendershadowmap.h \
-    qdemonrenderstring.h \
     qdemonrendersubpresentation.h \
     qdemonrendersubpresentationhelper.h \
     qdemonrendertaggedpointer.h \
@@ -71,7 +70,7 @@ HEADERS += \
     qdemonrenderwidgets.h \
     qdemontextrenderer.h
 
-#SOURCES += \
+SOURCES += \
 #    qdemonqmlrender.cpp \
 #    qdemonoffscreenrendermanager.cpp \
 #    qdemonoldnbustedrenderplugin.cpp \
@@ -85,7 +84,7 @@ HEADERS += \
 #    qdemonrenderdynamicobjectsystem.cpp \
 #    qdemonrendereffectsystem.cpp \
 #    qdemonrendererutil.cpp \
-#    qdemonrendereulerangles.cpp \
+    qdemonrendereulerangles.cpp \
 #    qdemonrendergpuprofiler.cpp \
 #    qdemonrendergraphobjectserializer.cpp \
 #    qdemonrenderimagescaler.cpp \

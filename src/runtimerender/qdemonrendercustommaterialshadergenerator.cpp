@@ -51,7 +51,7 @@ using NVRenderCachedShaderBuffer;
 namespace {
 struct SShaderLightProperties
 {
-    QDemonScopedRefCounted<QDemonRenderShaderProgram> m_Shader;
+    QSharedPointer<QDemonRenderShaderProgram> m_Shader;
     RenderLightTypes::Enum m_LightType;
     SLightSourceShader m_LightData;
 
@@ -258,16 +258,16 @@ struct SShaderGeneratorGeneratedShader
 
 struct SShaderGenerator : public ICustomMaterialShaderGenerator
 {
-    typedef CRenderString TStrType;
-    typedef QHash<QDemonRenderShaderProgram *, QDemonScopedRefCounted<SShaderGeneratorGeneratedShader>>
+    typedef QString TStrType;
+    typedef QHash<QDemonRenderShaderProgram *, QSharedPointer<SShaderGeneratorGeneratedShader>>
     TProgramToShaderMap;
-    typedef QPair<size_t, QDemonScopedRefCounted<SShaderLightProperties>>
+    typedef QPair<size_t, QSharedPointer<SShaderLightProperties>>
     TCustomMaterialLightEntry;
     typedef QPair<size_t, NVRenderCachedShaderProperty<QDemonRenderTexture2D *>> TShadowMapEntry;
     typedef QPair<size_t, NVRenderCachedShaderProperty<QDemonRenderTextureCube *>>
     TShadowCubeEntry;
     typedef QHash<QString,
-    QDemonScopedRefCounted<QDemonRenderConstantBuffer>>
+    QSharedPointer<QDemonRenderConstantBuffer>>
     TStrConstanBufMap;
 
     IQDemonRenderContext &m_RenderContext;
@@ -487,7 +487,7 @@ struct SShaderGenerator : public ICustomMaterialShaderGenerator
     {
         QPair<TProgramToShaderMap::iterator, bool> inserter =
                 m_ProgramToShaderMap.insert(
-                                                &inProgram, QDemonScopedRefCounted<SShaderGeneratorGeneratedShader>(nullptr));
+                                                &inProgram, QSharedPointer<SShaderGeneratorGeneratedShader>(nullptr));
         if (inserter.second) {
             inserter.first->second = new SShaderGeneratorGeneratedShader(inProgram, m_RenderContext.GetRenderContext());
         }
@@ -519,7 +519,7 @@ struct SShaderGenerator : public ICustomMaterialShaderGenerator
             _snprintf(buf, 16, "[%d]", int(shadeIdx));
             lightName.append(buf);
 
-            QDemonScopedRefCounted<SShaderLightProperties> theNewEntry =
+            QSharedPointer<SShaderLightProperties> theNewEntry =
                     new SShaderLightProperties(SShaderLightProperties::CreateLightEntry(inShader));
             m_LightEntries.push_back(TCustomMaterialLightEntry(lightIdx, theNewEntry));
             theLightEntry = theNewEntry.mPtr;
@@ -966,7 +966,7 @@ struct SShaderGenerator : public ICustomMaterialShaderGenerator
     {
         IDynamicObjectSystem &theDynamicSystem(
                     m_RenderContext.GetDynamicObjectSystem());
-        CRenderString theShaderBuffer;
+        QString theShaderBuffer;
         const char *fragSource = theDynamicSystem.GetShaderSource(
                     QString::fromLocal8Bit(inShaderPathName), theShaderBuffer);
 

@@ -40,9 +40,9 @@ namespace {
 
 struct SResourceManager : public IResourceManager
 {
-    QDemonScopedRefCounted<QDemonRenderContext> m_RenderContext;
+    QSharedPointer<QDemonRenderContext> m_RenderContext;
     // Complete list of all allocated objects
-    QVector<QDemonScopedRefCounted<QDemonRefCounted>> m_AllocatedObjects;
+    QVector<QSharedPointer<QDemonRefCounted>> m_AllocatedObjects;
 
     QVector<QDemonRenderFrameBuffer *> m_FreeFrameBuffers;
     QVector<QDemonRenderRenderBuffer *> m_FreeRenderBuffers;

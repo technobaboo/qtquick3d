@@ -64,17 +64,17 @@ namespace {
 
 struct SRenderContextCore : public IQDemonRenderContextCore
 {
-    QDemonScopedRefCounted<IPerfTimer> m_PerfTimer;
-    QDemonScopedRefCounted<IInputStreamFactory> m_InputStreamFactory;
-    QDemonScopedRefCounted<IThreadPool> m_ThreadPool;
-    QDemonScopedRefCounted<IDynamicObjectSystemCore> m_DynamicObjectSystem;
-    QDemonScopedRefCounted<ICustomMaterialSystemCore> m_MaterialSystem;
-    QDemonScopedRefCounted<IEffectSystemCore> m_EffectSystem;
-    QDemonScopedRefCounted<IBufferLoader> m_BufferLoader;
-    QDemonScopedRefCounted<IRenderPluginManagerCore> m_RenderPluginManagerCore;
-    QDemonScopedRefCounted<ITextRendererCore> m_TextRenderer;
-    QDemonScopedRefCounted<ITextRendererCore> m_OnscreenTexRenderer;
-    QDemonScopedRefCounted<IPathManagerCore> m_PathManagerCore;
+    QSharedPointer<IPerfTimer> m_PerfTimer;
+    QSharedPointer<IInputStreamFactory> m_InputStreamFactory;
+    QSharedPointer<IThreadPool> m_ThreadPool;
+    QSharedPointer<IDynamicObjectSystemCore> m_DynamicObjectSystem;
+    QSharedPointer<ICustomMaterialSystemCore> m_MaterialSystem;
+    QSharedPointer<IEffectSystemCore> m_EffectSystem;
+    QSharedPointer<IBufferLoader> m_BufferLoader;
+    QSharedPointer<IRenderPluginManagerCore> m_RenderPluginManagerCore;
+    QSharedPointer<ITextRendererCore> m_TextRenderer;
+    QSharedPointer<ITextRendererCore> m_OnscreenTexRenderer;
+    QSharedPointer<IPathManagerCore> m_PathManagerCore;
 
     SRenderContextCore())
         : m_PerfTimer(IPerfTimer::CreatePerfTimer(fnd))
@@ -126,31 +126,31 @@ inline float Clamp(float val, float inMin = 0.0f, float inMax = 1.0f)
 
 struct SRenderContext : public IQDemonRenderContext
 {
-    QDemonScopedRefCounted<QDemonRenderContext> m_RenderContext;
-    QDemonScopedRefCounted<IQDemonRenderContextCore> m_CoreContext;
-    QDemonScopedRefCounted<IPerfTimer> m_PerfTimer;
-    QDemonScopedRefCounted<IInputStreamFactory> m_InputStreamFactory;
-    QDemonScopedRefCounted<IBufferManager> m_BufferManager;
-    QDemonScopedRefCounted<IResourceManager> m_ResourceManager;
-    QDemonScopedRefCounted<IOffscreenRenderManager> m_OffscreenRenderManager;
-    QDemonScopedRefCounted<IQDemonRenderer> m_Renderer;
-    QDemonScopedRefCounted<ITextRenderer> m_TextRenderer;
-    QDemonScopedRefCounted<ITextRenderer> m_OnscreenTextRenderer;
-    QDemonScopedRefCounted<ITextTextureCache> m_TextTextureCache;
-    QDemonScopedRefCounted<ITextTextureAtlas> m_TextTextureAtlas;
-    QDemonScopedRefCounted<IDynamicObjectSystem> m_DynamicObjectSystem;
-    QDemonScopedRefCounted<IEffectSystem> m_EffectSystem;
-    QDemonScopedRefCounted<IShaderCache> m_ShaderCache;
-    QDemonScopedRefCounted<IThreadPool> m_ThreadPool;
-    QDemonScopedRefCounted<IImageBatchLoader> m_ImageBatchLoader;
-    QDemonScopedRefCounted<IRenderPluginManager> m_RenderPluginManager;
-    QDemonScopedRefCounted<ICustomMaterialSystem> m_CustomMaterialSystem;
-    QDemonScopedRefCounted<IPixelGraphicsRenderer> m_PixelGraphicsRenderer;
-    QDemonScopedRefCounted<IPathManager> m_PathManager;
-    QDemonScopedRefCounted<IShaderProgramGenerator> m_ShaderProgramGenerator;
-    QDemonScopedRefCounted<IDefaultMaterialShaderGenerator> m_DefaultMaterialShaderGenerator;
-    QDemonScopedRefCounted<ICustomMaterialShaderGenerator> m_CustomMaterialShaderGenerator;
-    QDemonScopedRefCounted<IRenderList> m_RenderList;
+    QSharedPointer<QDemonRenderContext> m_RenderContext;
+    QSharedPointer<IQDemonRenderContextCore> m_CoreContext;
+    QSharedPointer<IPerfTimer> m_PerfTimer;
+    QSharedPointer<IInputStreamFactory> m_InputStreamFactory;
+    QSharedPointer<IBufferManager> m_BufferManager;
+    QSharedPointer<IResourceManager> m_ResourceManager;
+    QSharedPointer<IOffscreenRenderManager> m_OffscreenRenderManager;
+    QSharedPointer<IQDemonRenderer> m_Renderer;
+    QSharedPointer<ITextRenderer> m_TextRenderer;
+    QSharedPointer<ITextRenderer> m_OnscreenTextRenderer;
+    QSharedPointer<ITextTextureCache> m_TextTextureCache;
+    QSharedPointer<ITextTextureAtlas> m_TextTextureAtlas;
+    QSharedPointer<IDynamicObjectSystem> m_DynamicObjectSystem;
+    QSharedPointer<IEffectSystem> m_EffectSystem;
+    QSharedPointer<IShaderCache> m_ShaderCache;
+    QSharedPointer<IThreadPool> m_ThreadPool;
+    QSharedPointer<IImageBatchLoader> m_ImageBatchLoader;
+    QSharedPointer<IRenderPluginManager> m_RenderPluginManager;
+    QSharedPointer<ICustomMaterialSystem> m_CustomMaterialSystem;
+    QSharedPointer<IPixelGraphicsRenderer> m_PixelGraphicsRenderer;
+    QSharedPointer<IPathManager> m_PathManager;
+    QSharedPointer<IShaderProgramGenerator> m_ShaderProgramGenerator;
+    QSharedPointer<IDefaultMaterialShaderGenerator> m_DefaultMaterialShaderGenerator;
+    QSharedPointer<ICustomMaterialShaderGenerator> m_CustomMaterialShaderGenerator;
+    QSharedPointer<IRenderList> m_RenderList;
     quint32 m_FrameCount;
     // Viewport that this render context should use
     QDemonOption<QDemonRenderRect> m_Viewport;
@@ -161,9 +161,9 @@ struct SRenderContext : public IQDemonRenderContext
     QDemonOption<QVector4D> m_SceneColor;
     QDemonOption<QVector4D> m_MatteColor;
     RenderRotationValues::Enum m_Rotation;
-    QDemonScopedRefCounted<QDemonRenderFrameBuffer> m_RotationFBO;
-    QDemonScopedRefCounted<QDemonRenderTexture2D> m_RotationTexture;
-    QDemonScopedRefCounted<QDemonRenderRenderBuffer> m_RotationDepthBuffer;
+    QSharedPointer<QDemonRenderFrameBuffer> m_RotationFBO;
+    QSharedPointer<QDemonRenderTexture2D> m_RotationTexture;
+    QSharedPointer<QDemonRenderRenderBuffer> m_RotationDepthBuffer;
     QDemonRenderFrameBuffer *m_ContextRenderTarget;
     QDemonRenderRect m_PresentationViewport;
     QSize m_PresentationDimensions;

@@ -133,16 +133,16 @@ struct SImportPathWrapper
 
 };
 
-typedef QDemonScopedRefCounted<SImportPathWrapper> TPathBufferPtr;
+typedef QSharedPointer<SImportPathWrapper> TPathBufferPtr;
 
 struct SPathBuffer
 {
-    QVector<QDemonScopedRefCounted<SPathSubPathBuffer>> m_SubPaths;
+    QVector<QSharedPointer<SPathSubPathBuffer>> m_SubPaths;
     TPathBufferPtr m_PathBuffer;
 
-    QDemonScopedRefCounted<QDemonRenderVertexBuffer> m_PatchData;
-    QDemonScopedRefCounted<QDemonRenderInputAssembler> m_InputAssembler;
-    QDemonScopedRefCounted<QDemonRenderPathRender> m_PathRender;
+    QSharedPointer<QDemonRenderVertexBuffer> m_PatchData;
+    QSharedPointer<QDemonRenderInputAssembler> m_InputAssembler;
+    QSharedPointer<QDemonRenderPathRender> m_PathRender;
 
     QVector2D m_BeginTaperData;
     QVector2D m_EndTaperData;
@@ -710,11 +710,11 @@ struct SXYRectVertexPipeline : public SVertexPipelineImpl
 
 struct SPathManager : public IPathManager
 {
-    typedef QHash<SPath *, QDemonScopedRefCounted<SPathBuffer>> TPathBufferHash;
-    typedef QHash<SPathSubPath *, QDemonScopedRefCounted<SPathSubPathBuffer>>
+    typedef QHash<SPath *, QSharedPointer<SPathBuffer>> TPathBufferHash;
+    typedef QHash<SPathSubPath *, QSharedPointer<SPathSubPathBuffer>>
     TPathSubPathBufferHash;
-    typedef QHash<SPathShaderMapKey, QDemonScopedRefCounted<SPathGeneratedShader>> TShaderMap;
-    typedef QHash<SPathShaderMapKey, QDemonScopedRefCounted<SPathXYGeneratedShader>>
+    typedef QHash<SPathShaderMapKey, QSharedPointer<SPathGeneratedShader>> TShaderMap;
+    typedef QHash<SPathShaderMapKey, QSharedPointer<SPathXYGeneratedShader>>
     TPaintedShaderMap;
     typedef QHash<QString, TPathBufferPtr> TStringPathBufferMap;
 
@@ -731,23 +731,23 @@ struct SPathManager : public IPathManager
     TStringPathBufferMap m_SourcePathBufferMap;
     Mutex m_PathBufferMutex;
 
-    QDemonScopedRefCounted<SPathGeneratedShader> m_DepthShader;
-    QDemonScopedRefCounted<SPathGeneratedShader> m_DepthDisplacementShader;
-    QDemonScopedRefCounted<SPathGeneratedShader> m_GeometryShadowShader;
-    QDemonScopedRefCounted<SPathGeneratedShader> m_GeometryCubeShadowShader;
-    QDemonScopedRefCounted<SPathGeneratedShader> m_GeometryDisplacementShadowShader;
+    QSharedPointer<SPathGeneratedShader> m_DepthShader;
+    QSharedPointer<SPathGeneratedShader> m_DepthDisplacementShader;
+    QSharedPointer<SPathGeneratedShader> m_GeometryShadowShader;
+    QSharedPointer<SPathGeneratedShader> m_GeometryCubeShadowShader;
+    QSharedPointer<SPathGeneratedShader> m_GeometryDisplacementShadowShader;
 
-    QDemonScopedRefCounted<SPathXYGeneratedShader> m_PaintedDepthShader;
-    QDemonScopedRefCounted<SPathXYGeneratedShader> m_PaintedShadowShader;
-    QDemonScopedRefCounted<SPathXYGeneratedShader> m_PaintedCubeShadowShader;
-    QDemonScopedRefCounted<QDemonRenderInputAssembler> m_PaintedRectInputAssembler;
-    QDemonScopedRefCounted<QDemonRenderVertexBuffer> m_PaintedRectVertexBuffer;
-    QDemonScopedRefCounted<QDemonRenderIndexBuffer> m_PaintedRectIndexBuffer;
+    QSharedPointer<SPathXYGeneratedShader> m_PaintedDepthShader;
+    QSharedPointer<SPathXYGeneratedShader> m_PaintedShadowShader;
+    QSharedPointer<SPathXYGeneratedShader> m_PaintedCubeShadowShader;
+    QSharedPointer<QDemonRenderInputAssembler> m_PaintedRectInputAssembler;
+    QSharedPointer<QDemonRenderVertexBuffer> m_PaintedRectVertexBuffer;
+    QSharedPointer<QDemonRenderIndexBuffer> m_PaintedRectIndexBuffer;
 
-    QVector<QDemonScopedRefCounted<QDemonRenderDepthStencilState>> m_DepthStencilStates;
+    QVector<QSharedPointer<QDemonRenderDepthStencilState>> m_DepthStencilStates;
 
-    QDemonScopedRefCounted<QDemonRenderPathSpecification> m_PathSpecification;
-    QDemonScopedRefCounted<qt3dsimp::IPathBufferBuilder> m_PathBuilder;
+    QSharedPointer<QDemonRenderPathSpecification> m_PathSpecification;
+    QSharedPointer<qt3dsimp::IPathBufferBuilder> m_PathBuilder;
 
     qint32 m_RefCount;
 
@@ -777,7 +777,7 @@ struct SPathManager : public IPathManager
         Mutex::ScopedLock __locker(m_PathBufferMutex);
         QPair<TPathSubPathBufferHash::iterator, bool> inserter =
                 m_SubPathBuffers.insert((SPathSubPath *)&inPath,
-                                                         QDemonScopedRefCounted<SPathSubPathBuffer>(nullptr));
+                                                         QSharedPointer<SPathSubPathBuffer>(nullptr));
         if (!inserter.first->second)
             inserter.first->second = new SPathSubPathBuffer(
                         GetAllocator(), const_cast<SPathSubPath &>(inPath));
@@ -788,7 +788,7 @@ struct SPathManager : public IPathManager
 
     SPathBuffer *GetPathBufferObject(const SPath &inPath)
     {
-        QPair<TPathBufferHash::iterator, bool> inserter = m_Buffers.insert((SPath *)&inPath, QDemonScopedRefCounted<SPathBuffer>(nullptr));
+        QPair<TPathBufferHash::iterator, bool> inserter = m_Buffers.insert((SPath *)&inPath, QSharedPointer<SPathBuffer>(nullptr));
         if (inserter.second) {
             inserter.first->second = new SPathBuffer(GetAllocator());
         }
@@ -1305,7 +1305,7 @@ struct SPathManager : public IPathManager
             QPair<TStringPathBufferMap::iterator, bool> inserter =
                     m_SourcePathBufferMap.insert(inPath.m_PathBuffer, TPathBufferPtr());
             if (inserter.second) {
-                QDemonScopedRefCounted<IRefCountedInputStream> theStream =
+                QSharedPointer<IRefCountedInputStream> theStream =
                         m_CoreContext.GetInputStreamFactory().GetStreamForFile(
                             inPath.m_PathBuffer.c_str());
                 if (theStream) {
@@ -1574,7 +1574,7 @@ struct SPathManager : public IPathManager
                 }
             }
 
-            QDemonScopedRefCounted<SPathGeneratedShader> &theDesiredDepthShader =
+            QSharedPointer<SPathGeneratedShader> &theDesiredDepthShader =
                     displacementImage == nullptr ? m_DepthShader : m_DepthDisplacementShader;
 
             if (!theDesiredDepthShader) {
@@ -1757,7 +1757,7 @@ struct SPathManager : public IPathManager
             // the same key can still need a different shader
             SPathShaderMapKey sPathkey = SPathShaderMapKey(GetMaterialNameForKey(inRenderContext),
                                                            inRenderContext.m_MaterialKey);
-            QPair<TShaderMap::iterator, bool> inserter = m_PathGeometryShaders.insert(sPathkey, QDemonScopedRefCounted<SPathGeneratedShader>(nullptr));
+            QPair<TShaderMap::iterator, bool> inserter = m_PathGeometryShaders.insert(sPathkey, QSharedPointer<SPathGeneratedShader>(nullptr));
             if (inserter.second) {
                 SPathVertexPipeline thePipeline(
                             m_RenderContext->GetShaderProgramGenerator(), *theMaterialGenerator,
@@ -1802,7 +1802,7 @@ struct SPathManager : public IPathManager
             SPathShaderMapKey sPathkey = SPathShaderMapKey(GetMaterialNameForKey(inRenderContext),
                                                            inRenderContext.m_MaterialKey);
             QPair<TPaintedShaderMap::iterator, bool> inserter = m_PathPaintedShaders.insert(
-                        sPathkey, QDemonScopedRefCounted<SPathXYGeneratedShader>(nullptr));
+                        sPathkey, QSharedPointer<SPathXYGeneratedShader>(nullptr));
             if (inserter.second) {
                 SXYRectVertexPipeline thePipeline(
                             m_RenderContext->GetShaderProgramGenerator(), *theMaterialGenerator,

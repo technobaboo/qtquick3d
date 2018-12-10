@@ -645,7 +645,7 @@ SLoadedTexture *SLoadedTexture::Load(const QString &inPath, IInputStreamFactory 
         return nullptr;
 
     SLoadedTexture *theLoadedImage = nullptr;
-    QDemonScopedRefCounted<IRefCountedInputStream> theStream(inFactory.GetStreamForFile(inPath));
+    QSharedPointer<IRefCountedInputStream> theStream(inFactory.GetStreamForFile(inPath));
     QString fileName;
     inFactory.GetPathForFile(inPath, fileName);
     if (theStream.mPtr && inPath.size() > 3) {

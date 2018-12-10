@@ -32,7 +32,6 @@
 #define QDEMON_RENDER_SHADER_CODE_GENERATOR_H
 
 #include <QtDemonRender/qdemonrenderbasetypes.h>
-#include <QtDemonRuntimeRender/qdemonrenderstring.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -64,7 +63,7 @@ struct SShaderCodeGeneratorBase
     TStrTableStrMap m_ConstantBuffers;
     TConstantBufferParamArray m_ConstantBufferParams;
     TStrTableStrMap m_Attributes;
-    CRenderString m_FinalShaderBuilder;
+    QString m_FinalShaderBuilder;
     TStrType m_CodeBuilder;
     QDemonRenderContextType m_RenderContextType;
 

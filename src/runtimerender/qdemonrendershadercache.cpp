@@ -44,13 +44,13 @@ namespace {
 using QDemonRenderContextScopedProperty;
 const char *TessellationEnabledStr = "TessellationStageEnabled";
 const char *GeometryEnabledStr = "GeometryStageEnabled";
-inline void AppendFlagValue(CRenderString &inStr, const char *flag)
+inline void AppendFlagValue(QString &inStr, const char *flag)
 {
     if (inStr.length())
         inStr.append(1, ',');
     inStr.append(flag);
 }
-inline void CacheFlagsToStr(const SShaderCacheProgramFlags &inFlags, CRenderString &inString)
+inline void CacheFlagsToStr(const SShaderCacheProgramFlags &inFlags, QString &inString)
 {
     inString.clear();
     if (inFlags.IsTessellationEnabled())
@@ -64,7 +64,7 @@ struct ShaderType
     enum Enum { Vertex, TessControl, TessEval, Fragment, Geometry, Compute };
 };
 
-inline ShaderType::Enum StringToShaderType(CRenderString &inShaderType)
+inline ShaderType::Enum StringToShaderType(QString &inShaderType)
 {
     ShaderType::Enum retval = ShaderType::Vertex;
 
@@ -87,12 +87,12 @@ inline ShaderType::Enum StringToShaderType(CRenderString &inShaderType)
     return retval;
 }
 
-inline SShaderCacheProgramFlags CacheFlagsToStr(const CRenderString &inString)
+inline SShaderCacheProgramFlags CacheFlagsToStr(const QString &inString)
 {
     SShaderCacheProgramFlags retval;
-    if (inString.find(TessellationEnabledStr) != CRenderString::npos)
+    if (inString.find(TessellationEnabledStr) != QString::npos)
         retval.SetTessellationEnabled(true);
-    if (inString.find(GeometryEnabledStr) != CRenderString::npos)
+    if (inString.find(GeometryEnabledStr) != QString::npos)
         retval.SetGeometryShaderEnabled(true);
     return retval;
 }
@@ -119,7 +119,7 @@ size_t g_NumStringToContextValueEntries =
         sizeof(g_StringToContextTypeValue) / sizeof(*g_StringToContextTypeValue);
 
 inline void ContextTypeToString(QDemonRenderContextType inType,
-                                CRenderString &outContextType)
+                                QString &outContextType)
 {
     outContextType.clear();
     for (size_t idx = 0, end = g_NumStringToContextValueEntries; idx < end; ++idx) {
@@ -131,7 +131,7 @@ inline void ContextTypeToString(QDemonRenderContextType inType,
     }
 }
 
-inline QDemonRenderContextType StringToContextType(const CRenderString &inContextType)
+inline QDemonRenderContextType StringToContextType(const QString &inContextType)
 {
     QDemonRenderContextType retval;
     char tempBuffer[128];
@@ -215,22 +215,22 @@ namespace {
 
 struct ShaderCache : public IShaderCache
 {
-    typedef QHash<SShaderCacheKey, QDemonScopedRefCounted<QDemonRenderShaderProgram>> TShaderMap;
+    typedef QHash<SShaderCacheKey, QSharedPointer<QDemonRenderShaderProgram>> TShaderMap;
     QDemonRenderContext &m_RenderContext;
     IPerfTimer &m_PerfTimer;
     TShaderMap m_Shaders;
-    CRenderString m_CacheFilePath;
-    CRenderString m_VertexCode;
-    CRenderString m_TessCtrlCode;
-    CRenderString m_TessEvalCode;
-    CRenderString m_GeometryCode;
-    CRenderString m_FragmentCode;
-    CRenderString m_InsertStr;
-    CRenderString m_FlagString;
-    CRenderString m_ContextTypeString;
+    QString m_CacheFilePath;
+    QString m_VertexCode;
+    QString m_TessCtrlCode;
+    QString m_TessEvalCode;
+    QString m_GeometryCode;
+    QString m_FragmentCode;
+    QString m_InsertStr;
+    QString m_FlagString;
+    QString m_ContextTypeString;
     SShaderCacheKey m_TempKey;
 
-    QDemonScopedRefCounted<IDOMWriter> m_ShaderCache;
+    QSharedPointer<IDOMWriter> m_ShaderCache;
     IInputStreamFactory &m_InputStreamFactory;
     bool m_ShaderCompilationEnabled;
 
@@ -314,7 +314,7 @@ struct ShaderCache : public IShaderCache
         }
     }
 
-    void AddShaderPreprocessor(CRenderString &str, QString inKey,
+    void AddShaderPreprocessor(QString &str, QString inKey,
                                ShaderType::Enum shaderType,
                                QDemonConstDataRef<SShaderPreprocessorFeature> inFeatures)
     {
@@ -588,27 +588,27 @@ struct ShaderCache : public IShaderCache
         BootupDOMWriter();
         m_CacheFilePath = QDir(inDirectory).filePath(GetShaderCacheFileName()).toStdString();
 
-        QDemonScopedRefCounted<IRefCountedInputStream> theInStream =
+        QSharedPointer<IRefCountedInputStream> theInStream =
                 m_InputStreamFactory.GetStreamForFile(m_CacheFilePath.c_str());
         if (theInStream) {
             SStackPerfTimer __perfTimer(m_PerfTimer, "ShaderCache - Load");
-            QDemonScopedRefCounted<IDOMFactory> theFactory(
+            QSharedPointer<IDOMFactory> theFactory(
                         IDOMFactory::CreateDOMFactory(m_RenderContext.GetAllocator(), theStringTable));
             eastl::vector<SShaderPreprocessorFeature> theFeatures;
 
             SDOMElement *theElem = CDOMSerializer::Read(*theFactory, *theInStream).second;
             if (theElem) {
-                QDemonScopedRefCounted<IDOMReader> theReader = IDOMReader::CreateDOMReader(
+                QSharedPointer<IDOMReader> theReader = IDOMReader::CreateDOMReader(
                             m_RenderContext.GetAllocator(), *theElem, theStringTable, theFactory);
                 quint32 theAttValue = 0;
                 theReader->Att("cache_version", theAttValue);
                 if (theAttValue == IShaderCache::GetShaderVersion()) {
-                    CRenderString loadVertexData;
-                    CRenderString loadFragmentData;
-                    CRenderString loadTessControlData;
-                    CRenderString loadTessEvalData;
-                    CRenderString loadGeometryData;
-                    CRenderString shaderTypeString;
+                    QString loadVertexData;
+                    QString loadFragmentData;
+                    QString loadTessControlData;
+                    QString loadTessEvalData;
+                    QString loadGeometryData;
+                    QString shaderTypeString;
                     for (bool success = theReader->MoveToFirstChild(); success;
                          success = theReader->MoveToNextSibling()) {
                         const char *theKeyStr = nullptr;

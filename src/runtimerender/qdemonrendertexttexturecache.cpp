@@ -127,14 +127,14 @@ IMPLEMENT_INVASIVE_LIST(TextCacheNode, m_PreviousSibling, m_NextSibling);
 struct STextTextureCache : public ITextTextureCache
 {
     typedef Pool<STextCacheNode, ForwardingAllocator> TPoolType;
-    QDemonScopedRefCounted<ITextRenderer> m_TextRenderer;
+    QSharedPointer<ITextRenderer> m_TextRenderer;
     TTextureInfoHash m_TextureCache;
     TTextCacheNodeList m_LRUList;
     TPoolType m_CacheNodePool;
     quint32 m_HighWaterMark;
     quint32 m_FrameCount;
     quint32 m_TextureTotalBytes;
-    QDemonScopedRefCounted<QDemonRenderContext> m_RenderContext;
+    QSharedPointer<QDemonRenderContext> m_RenderContext;
     bool m_CanUsePathRendering; ///< true if we use hardware accelerated font rendering
 
     STextTextureCache(ITextRenderer &inRenderer,
@@ -164,9 +164,9 @@ struct STextTextureCache : public ITextTextureCache
                 * QDemonRenderTextureFormats::getSizeofFormat(theDetails.m_Format);
     }
 
-    QDemonScopedRefCounted<QDemonRenderTexture2D> InvalidateLastItem()
+    QSharedPointer<QDemonRenderTexture2D> InvalidateLastItem()
     {
-        QDemonScopedRefCounted<QDemonRenderTexture2D> nextTexture;
+        QSharedPointer<QDemonRenderTexture2D> nextTexture;
         if (m_LRUList.empty() == false) {
             STextCacheNode &theEnd = m_LRUList.back();
             if (theEnd.m_FrameCount != m_FrameCount) {
@@ -193,15 +193,15 @@ struct STextTextureCache : public ITextTextureCache
             retval = theFind->second;
             m_LRUList.remove(*retval);
         } else {
-            QDemonScopedRefCounted<QDemonRenderTexture2D> nextTexture;
+            QSharedPointer<QDemonRenderTexture2D> nextTexture;
             if (m_TextureTotalBytes >= m_HighWaterMark && m_LRUList.empty() == false)
                 nextTexture = InvalidateLastItem();
 
             if (nextTexture.mPtr == nullptr)
                 nextTexture = m_RenderContext->CreateTexture2D();
 
-            QDemonScopedRefCounted<QDemonRenderPathFontItem> nextPathFontItemObject;
-            QDemonScopedRefCounted<QDemonRenderPathFontSpecification> nextPathFontObject;
+            QSharedPointer<QDemonRenderPathFontItem> nextPathFontItemObject;
+            QSharedPointer<QDemonRenderPathFontSpecification> nextPathFontObject;
             // HW acceleration for fonts not supported
             //if (m_CanUsePathRendering && inText.m_EnableAcceleratedFont) {
             //    nextPathFontItemObject = m_RenderContext->CreatePathFontItem();

@@ -121,10 +121,10 @@ struct Qt3DSOnscreenTextRenderer : public ITextRenderer
             256; // if you change this you need to adjust STextTextureAtlas size as well
 
 private:
-    QDemonScopedRefCounted<QDemonRenderContext> m_RenderContext;
+    QSharedPointer<QDemonRenderContext> m_RenderContext;
     bool m_TextureAtlasInitialized; ///< true if atlas is setup
-    QDemonScopedRefCounted<ITextureAtlas> m_TextTextureAtlas;
-    QDemonScopedRefCounted<STextAtlasFont> m_TextFont;
+    QSharedPointer<ITextureAtlas> m_TextTextureAtlas;
+    QSharedPointer<STextAtlasFont> m_TextFont;
     QRawFont *m_font;
 public:
     Qt3DSOnscreenTextRenderer()

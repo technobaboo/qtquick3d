@@ -43,7 +43,7 @@ namespace {
 
 struct SPGRectShader
 {
-    QDemonScopedRefCounted<QDemonRenderShaderProgram> m_RectShader;
+    QSharedPointer<QDemonRenderShaderProgram> m_RectShader;
     QDemonRenderShaderConstantBase *mvp;
     QDemonRenderShaderConstantBase *rectColor;
     QDemonRenderShaderConstantBase *leftright;
@@ -89,10 +89,10 @@ struct SPGRectShader
 struct SPGRenderer : public IPixelGraphicsRenderer
 {
     IQDemonRenderContext &m_RenderContext;
-    QDemonScopedRefCounted<QDemonRenderVertexBuffer> m_QuadVertexBuffer;
-    QDemonScopedRefCounted<QDemonRenderIndexBuffer> m_QuadIndexBuffer;
-    QDemonScopedRefCounted<QDemonRenderInputAssembler> m_QuadInputAssembler;
-    QDemonScopedRefCounted<QDemonRenderAttribLayout> m_QuadAttribLayout;
+    QSharedPointer<QDemonRenderVertexBuffer> m_QuadVertexBuffer;
+    QSharedPointer<QDemonRenderIndexBuffer> m_QuadIndexBuffer;
+    QSharedPointer<QDemonRenderInputAssembler> m_QuadInputAssembler;
+    QSharedPointer<QDemonRenderAttribLayout> m_QuadAttribLayout;
     SShaderVertexCodeGenerator m_VertexGenerator;
     SShaderFragmentCodeGenerator m_FragmentGenerator;
     SPGRectShader m_RectShader;

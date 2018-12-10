@@ -75,7 +75,7 @@ struct QDEMON_AUTOTEST_EXPORT SLayerRenderData : public SLayerRenderPreparationD
     SOffscreenRendererEnvironment m_LastOffscreenRenderEnvironment;
 
     // GPU profiler per layer
-    QDemonScopedRefCounted<IRenderProfiler> m_LayerProfilerGpu;
+    QSharedPointer<IRenderProfiler> m_LayerProfilerGpu;
 
     SCamera m_SceneCamera;
     QVector2D m_SceneDimensions;

@@ -142,7 +142,7 @@ struct SOffscreenRenderManager : public IOffscreenRenderManager
 {
     typedef QHash<SOffscreenRendererKey, SRenderDataReleaser> TRendererMap;
     IQDemonRenderContext &m_Context;
-    QDemonScopedRefCounted<IResourceManager> m_ResourceManager;
+    QSharedPointer<IResourceManager> m_ResourceManager;
     TRendererMap m_Renderers;
     quint32 m_FrameCount; // cheap per-
 

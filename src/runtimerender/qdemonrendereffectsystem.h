@@ -147,11 +147,11 @@ public:
     // This instance is what is placed into the object graph.
     virtual SEffect *CreateEffectInstance(QString inEffectName) = 0;
 
-    virtual void Save(SWriteBuffer &ioBuffer,
-                      const SStrRemapMap &inRemapMap,
-                      const char *inProjectDir) const = 0;
-    virtual void Load(QDemonDataRef<quint8> inData, CStrTableOrDataRef inStrDataBlock,
-                      const char *inProjectDir) = 0;
+//    virtual void Save(SWriteBuffer &ioBuffer,
+//                      const SStrRemapMap &inRemapMap,
+//                      const char *inProjectDir) const = 0;
+//    virtual void Load(QDemonDataRef<quint8> inData, CStrTableOrDataRef inStrDataBlock,
+//                      const char *inProjectDir) = 0;
 
     virtual IEffectSystem &GetEffectSystem(IQDemonRenderContext &context) = 0;
 

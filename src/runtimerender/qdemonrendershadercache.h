@@ -32,10 +32,16 @@
 #define QDEMON_RENDER_SHADER_CACHE_H
 
 #include <QtDemon/qdemonflags.h>
+#include <QtDemon/qdemondataref.h>
 
 #include <QtCore/QString>
 
 QT_BEGIN_NAMESPACE
+class QDemonRenderShaderProgram;
+class QDemonRenderContext;
+class IInputStreamFactory;
+class IPerfTimer;
+
 struct ShaderCacheProgramFlagValues
 {
     enum Enum {

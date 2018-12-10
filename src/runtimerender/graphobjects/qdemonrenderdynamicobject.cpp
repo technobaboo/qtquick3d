@@ -141,7 +141,7 @@ void SDynamicObject::SetStrPropertyValueT(dynamic::SPropertyDefinition &inDefini
 
 void SDynamicObject::SetPropertyValue(const dynamic::SPropertyDefinition &inDefinition,
                                       const char *inValue, const char *inProjectDir,
-                                      CRenderString &ioWorkspace)
+                                      QString &ioWorkspace)
 {
     SetStrPropertyValueT(const_cast<dynamic::SPropertyDefinition &>(inDefinition), inValue,
                          inProjectDir, ioWorkspace);

@@ -109,13 +109,13 @@ struct SShadowMapEntry
     // the shadow maps (depth+stencil is necessary), but use a more compact format for the
     // actual
     // shadow map used at shade time.  See if it's worth adding.
-    QDemonScopedRefCounted<QDemonRenderTexture2D> m_DepthMap; ///< shadow map texture
-    QDemonScopedRefCounted<QDemonRenderTexture2D>
+    QSharedPointer<QDemonRenderTexture2D> m_DepthMap; ///< shadow map texture
+    QSharedPointer<QDemonRenderTexture2D>
     m_DepthCopy; ///< shadow map buffer used during blur passes
-    QDemonScopedRefCounted<QDemonRenderTextureCube> m_DepthCube; ///< shadow cube map
-    QDemonScopedRefCounted<QDemonRenderTextureCube>
+    QSharedPointer<QDemonRenderTextureCube> m_DepthCube; ///< shadow cube map
+    QSharedPointer<QDemonRenderTextureCube>
     m_CubeCopy; ///< cube map buffer used during the blur passes
-    QDemonScopedRefCounted<QDemonRenderTexture2D>
+    QSharedPointer<QDemonRenderTexture2D>
     m_DepthRender; ///< shadow depth+stencil map used during rendering
 
     QMatrix4x4 m_LightVP; ///< light view projection matrix

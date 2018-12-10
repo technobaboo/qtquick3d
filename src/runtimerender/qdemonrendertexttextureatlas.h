@@ -36,9 +36,9 @@
 QT_BEGIN_NAMESPACE
 class ITextRenderer;
 
-typedef QPair<STextTextureAtlasDetails, QDemonScopedRefCounted<QDemonRenderTexture2D>>
+typedef QPair<STextTextureAtlasDetails, QSharedPointer<QDemonRenderTexture2D>>
 TTextTextureAtlasDetailsAndTexture;
-typedef QPair<SRenderTextureAtlasDetails, QDemonScopedRefCounted<QDemonRenderTexture2D>>
+typedef QPair<SRenderTextureAtlasDetails, QSharedPointer<QDemonRenderTexture2D>>
 TTextRenderAtlasDetailsAndTexture;
 
 class ITextTextureAtlas

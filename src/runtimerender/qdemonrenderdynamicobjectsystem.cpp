@@ -561,7 +561,7 @@ struct hash<SShaderMapKey>
 
 namespace {
 
-typedef QHash<QString, QDemonScopedRefCounted<SDynamicObjClassImpl>> TStringClassMap;
+typedef QHash<QString, QSharedPointer<SDynamicObjClassImpl>> TStringClassMap;
 typedef QHash<QString, char *> TPathDataMap;
 typedef QHash<QString, SDynamicObjectShaderInfo> TShaderInfoMap;
 typedef QSet<QString> TPathSet;
@@ -578,14 +578,14 @@ struct SDynamicObjectSystemImpl : public IDynamicObjectSystem
     IQDemonRenderContext *m_Context;
     TStringClassMap m_Classes;
     TPathDataMap m_ExpandedFiles;
-    CRenderString m_ShaderKeyBuilder;
+    QString m_ShaderKeyBuilder;
     TShaderMap m_ShaderMap;
     TShaderInfoMap m_ShaderInfoMap;
-    CRenderString m_IncludePath;
-    CRenderString m_IncludeSearch;
-    CRenderString m_VertShader;
-    CRenderString m_FragShader;
-    CRenderString m_GeometryShader;
+    QString m_IncludePath;
+    QString m_IncludeSearch;
+    QString m_VertShader;
+    QString m_FragShader;
+    QString m_GeometryShader;
     QString m_shaderLibraryVersion;
     QString m_shaderLibraryPlatformDirectory;
     mutable Mutex m_PropertyLoadMutex;
@@ -898,34 +898,34 @@ struct SDynamicObjectSystemImpl : public IDynamicObjectSystem
         return QString::fromLocal8Bit(m_ShaderKeyBuilder.c_str());
     }
 
-    void InsertShaderHeaderInformation(CRenderString &theReadBuffer,
+    void InsertShaderHeaderInformation(QString &theReadBuffer,
                                        const char *inPathToEffect) override
     {
         DoInsertShaderHeaderInformation(theReadBuffer, inPathToEffect);
     }
 
-    void DoInsertShaderHeaderInformation(CRenderString &theReadBuffer,
+    void DoInsertShaderHeaderInformation(QString &theReadBuffer,
                                          const char *inPathToEffect)
     {
         // Now do search and replace for the headers
-        for (CRenderString::size_type thePos = theReadBuffer.find(m_IncludeSearch);
-             thePos != CRenderString::npos;
+        for (QString::size_type thePos = theReadBuffer.find(m_IncludeSearch);
+             thePos != QString::npos;
              thePos = theReadBuffer.find(m_IncludeSearch, thePos + 1)) {
-            CRenderString::size_type theEndQuote =
+            QString::size_type theEndQuote =
                     theReadBuffer.find('\"', thePos + m_IncludeSearch.size() + 1);
             // Indicates an unterminated include file.
-            if (theEndQuote == CRenderString::npos) {
+            if (theEndQuote == QString::npos) {
                 qCCritical(INVALID_OPERATION, "Unterminated include in file: %s", inPathToEffect);
                 theReadBuffer.clear();
                 break;
             }
-            CRenderString::size_type theActualBegin = thePos + m_IncludeSearch.size();
-            CRenderString::iterator theIncludeBegin = theReadBuffer.begin() + theActualBegin;
-            CRenderString::iterator theIncludeEnd = theReadBuffer.begin() + theEndQuote;
+            QString::size_type theActualBegin = thePos + m_IncludeSearch.size();
+            QString::iterator theIncludeBegin = theReadBuffer.begin() + theActualBegin;
+            QString::iterator theIncludeEnd = theReadBuffer.begin() + theEndQuote;
             m_IncludePath.clear();
             m_IncludePath.append(theIncludeBegin, theIncludeEnd);
             // If we haven't included the file yet this round
-            CRenderString theIncludeBuffer;
+            QString theIncludeBuffer;
             const char *theHeader = DoLoadShader(m_IncludePath.c_str(), theIncludeBuffer);
             quint32 theLen = (quint32)strlen(theHeader);
             theReadBuffer =
@@ -934,12 +934,12 @@ struct SDynamicObjectSystemImpl : public IDynamicObjectSystem
         }
     }
 
-    const char *DoLoadShader(const char *inPathToEffect, CRenderString &outShaderData)
+    const char *DoLoadShader(const char *inPathToEffect, QString &outShaderData)
     {
         QPair<TPathDataMap::iterator, bool> theInsert =
                 m_ExpandedFiles.insert(QString::fromLocal8Bit(inPathToEffect), (char *)"");
 
-        CRenderString &theReadBuffer(outShaderData);
+        QString &theReadBuffer(outShaderData);
         if (theInsert.second) {
 
             const QString defaultDir = m_Context->GetDynamicObjectSystem()
@@ -950,7 +950,7 @@ struct SDynamicObjectSystemImpl : public IDynamicObjectSystem
                     .shaderCodeLibraryVersion();
 
             QString fullPath;
-            QDemonScopedRefCounted<IRefCountedInputStream> theStream;
+            QSharedPointer<IRefCountedInputStream> theStream;
             if (!platformDir.isEmpty()) {
                 QTextStream stream(&fullPath);
                 stream << platformDir << QLatin1Char('/') << inPathToEffect;
@@ -995,8 +995,7 @@ struct SDynamicObjectSystemImpl : public IDynamicObjectSystem
         return theReadBuffer.c_str();
     }
 
-    void Save(SWriteBuffer &ioBuffer,
-              const SStrRemapMap &inRemapMap, const char *inProjectDir) const override
+    void Save(SWriteBuffer &ioBuffer, const SStrRemapMap &inRemapMap, const char *inProjectDir) const override
     {
         quint32 startOffset = ioBuffer.size();
         ioBuffer.write((quint32)m_ExpandedFiles.size());
@@ -1359,7 +1358,7 @@ struct SDynamicObjectSystemImpl : public IDynamicObjectSystem
     }
 
     // This just returns the custom material shader source without compiling
-    const char *GetShaderSource(QString inPath, CRenderString &inBuffer) override
+    const char *GetShaderSource(QString inPath, QString &inBuffer) override
     {
         inBuffer.clear();
         inBuffer.append("#define FRAGMENT_SHADER\n");
@@ -1388,14 +1387,14 @@ struct SDynamicObjectSystemImpl : public IDynamicObjectSystem
                         m_ShaderInfoMap.insert(inPath, SDynamicObjectShaderInfo())
                         .first->second;
                 if (theShaderInfo.m_IsComputeShader == false) {
-                    CRenderString theShaderBuffer;
+                    QString theShaderBuffer;
                     const char *programSource = DoLoadShader(inPath, theShaderBuffer);
                     if (theShaderInfo.m_HasGeomShader)
                         theFlags.SetGeometryShaderEnabled(true);
                     theProgram = CompileShader(inPath, programSource, nullptr, inProgramMacro,
                                                inFeatureSet, theFlags, inForceCompilation);
                 } else {
-                    CRenderString theShaderBuffer;
+                    QString theShaderBuffer;
                     const char *shaderVersionStr = "#version 430\n";
                     if ((quint32)m_Context->GetRenderContext().GetRenderContextType()
                             == QDemonRenderContextValues::GLES3PLUS)
@@ -1442,7 +1441,7 @@ struct SDynamicObjectSystemImpl : public IDynamicObjectSystem
                         GetShaderCacheKey(inPath, theProgramMacro, theFlags), inFeatureSet);
             SDynamicShaderProgramFlags flags(theFlags);
             if (!theProgram) {
-                CRenderString theShaderBuffer;
+                QString theShaderBuffer;
                 const char *geomSource = DoLoadShader(inPath, theShaderBuffer);
                 SShaderVertexCodeGenerator vertexShader(
                             m_Context->GetStringTable(), m_Allocator,
@@ -1462,7 +1461,7 @@ struct SDynamicObjectSystemImpl : public IDynamicObjectSystem
                 const char *vertexSource = vertexShader.BuildShaderSource();
                 const char *fragmentSource = fragmentShader.BuildShaderSource();
 
-                CRenderString programBuffer;
+                QString programBuffer;
                 programBuffer.assign("#ifdef VERTEX_SHADER\n");
                 programBuffer.append(vertexSource);
                 programBuffer.append("\n#endif\n");

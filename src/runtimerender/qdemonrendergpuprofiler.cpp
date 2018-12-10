@@ -50,9 +50,9 @@ struct SGpuTimerInfo
     quint16 m_AverageTimeWriteID;
     quint64 m_AverageTime[10];
     quint32 m_FrameID[RECORDED_FRAME_DELAY];
-    QDemonScopedRefCounted<QDemonRenderTimerQuery> m_TimerStartQueryObjects[RECORDED_FRAME_DELAY];
-    QDemonScopedRefCounted<QDemonRenderTimerQuery> m_TimerEndQueryObjects[RECORDED_FRAME_DELAY];
-    QDemonScopedRefCounted<QDemonRenderSync> m_TimerSyncObjects[RECORDED_FRAME_DELAY];
+    QSharedPointer<QDemonRenderTimerQuery> m_TimerStartQueryObjects[RECORDED_FRAME_DELAY];
+    QSharedPointer<QDemonRenderTimerQuery> m_TimerEndQueryObjects[RECORDED_FRAME_DELAY];
+    QSharedPointer<QDemonRenderSync> m_TimerSyncObjects[RECORDED_FRAME_DELAY];
 
     SGpuTimerInfo()
         : m_AbsoluteTime(false)
@@ -152,10 +152,10 @@ struct SGpuTimerInfo
 
 class Qt3DSCRenderGpuProfiler : public IRenderProfiler
 {
-    typedef QHash<QString, QDemonScopedRefCounted<SGpuTimerInfo>> TStrGpuTimerInfoMap;
+    typedef QHash<QString, QSharedPointer<SGpuTimerInfo>> TStrGpuTimerInfoMap;
 
 private:
-    QDemonScopedRefCounted<QDemonRenderContext> m_RenderContext;
+    QSharedPointer<QDemonRenderContext> m_RenderContext;
     IQDemonRenderContext &m_Context;
 
     TStrGpuTimerInfoMap m_StrToGpuTimerMap;

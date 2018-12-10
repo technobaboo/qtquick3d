@@ -92,7 +92,7 @@ struct SDynamicObject : public SGraphObject
 
     void SetPropertyValue(const dynamic::SPropertyDefinition &inDefinition,
                           const char *inValue, const char *inProjectDir,
-                          CRenderString &ioWorkspace);
+                          QString &ioWorkspace);
 
     void SetPropertyValue(const dynamic::SPropertyDefinition &inDefinition,
                           const char *inValue, const char *inProjectDir,

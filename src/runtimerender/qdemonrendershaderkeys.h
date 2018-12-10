@@ -70,17 +70,17 @@ struct SShaderKeyPropertyBase
 protected:
     void InternalToString(QString &ioStr, const char *inBuffer) const
     {
-        ioStr.append(m_Name);
-        ioStr.append("=");
-        ioStr.append(inBuffer);
+        ioStr.append(QString::fromLocal8Bit(m_Name));
+        ioStr.append(QStringLiteral("="));
+        ioStr.append(QString::fromLocal8Bit(inBuffer));
     }
 
     static void InternalToString(QString &ioStr, const char *name, bool inValue)
     {
         if (inValue) {
-            ioStr.append(name);
-            ioStr.append("=");
-            ioStr.append(inValue ? "true" : "false");
+            ioStr.append(QString::fromLocal8Bit(name));
+            ioStr.append(QStringLiteral("="));
+            ioStr.append(inValue ? QStringLiteral("true") : QStringLiteral("false"));
         }
     }
 };
@@ -266,16 +266,16 @@ struct SShaderKeyTessellation : public SShaderKeyUnsigned<4>
 
     void ToString(QString &ioStr, QDemonConstDataRef<quint32> inKeySet) const
     {
-        ioStr.append(m_Name);
-        ioStr.append("={");
+        ioStr.append(QString::fromLocal8Bit(m_Name));
+        ioStr.append(QStringLiteral("={"));
         InternalToString(ioStr, "noTessellation", IsNoTessellation(inKeySet));
-        ioStr.append(";");
+        ioStr.append(QStringLiteral(";"));
         InternalToString(ioStr, "linearTessellation", IsLinearTessellation(inKeySet));
-        ioStr.append(";");
+        ioStr.append(QStringLiteral(";"));
         InternalToString(ioStr, "npatchTessellation", IsNPatchTessellation(inKeySet));
-        ioStr.append(";");
+        ioStr.append(QStringLiteral(";"));
         InternalToString(ioStr, "phongTessellation", IsPhongTessellation(inKeySet));
-        ioStr.append("}");
+        ioStr.append(QStringLiteral("}"));
     }
 };
 
@@ -384,18 +384,18 @@ struct SShaderKeyTextureSwizzle : public SShaderKeyUnsigned<5>
 
     void ToString(QString &ioStr, QDemonConstDataRef<quint32> inKeySet) const
     {
-        ioStr.append(m_Name);
-        ioStr.append("={");
+        ioStr.append(QString::fromLocal8Bit(m_Name));
+        ioStr.append(QStringLiteral("={"));
         InternalToString(ioStr, "noswizzle", IsNoSwizzled(inKeySet));
-        ioStr.append(";");
+        ioStr.append(QStringLiteral(";"));
         InternalToString(ioStr, "l8swizzle", IsL8Swizzled(inKeySet));
-        ioStr.append(";");
+        ioStr.append(QStringLiteral(";"));
         InternalToString(ioStr, "a8swizzle", IsA8Swizzled(inKeySet));
-        ioStr.append(";");
+        ioStr.append(QStringLiteral(";"));
         InternalToString(ioStr, "l8a8swizzle", IsL8A8Swizzled(inKeySet));
-        ioStr.append(";");
+        ioStr.append(QStringLiteral(";"));
         InternalToString(ioStr, "l16swizzle", IsL16Swizzled(inKeySet));
-        ioStr.append("}");
+        ioStr.append(QStringLiteral("}"));
     }
 };
 
@@ -476,18 +476,18 @@ struct SShaderKeyImageMap : public SShaderKeyUnsigned<5>
 
     void ToString(QString &ioStr, QDemonConstDataRef<quint32> inKeySet) const
     {
-        ioStr.append(m_Name);
-        ioStr.append("={");
+        ioStr.append(QString::fromLocal8Bit(m_Name));
+        ioStr.append(QStringLiteral("={"));
         InternalToString(ioStr, "enabled", IsEnabled(inKeySet));
-        ioStr.append(";");
+        ioStr.append(QStringLiteral(";"));
         InternalToString(ioStr, "envMap", IsEnvMap(inKeySet));
-        ioStr.append(";");
+        ioStr.append(QStringLiteral(";"));
         InternalToString(ioStr, "lightProbe", IsLightProbe(inKeySet));
-        ioStr.append(";");
+        ioStr.append(QStringLiteral(";"));
         InternalToString(ioStr, "invertUV", IsInvertUVMap(inKeySet));
-        ioStr.append(";");
+        ioStr.append(QStringLiteral(";"));
         InternalToString(ioStr, "premultiplied", IsPremultiplied(inKeySet));
-        ioStr.append("}");
+        ioStr.append(QStringLiteral("}"));
     }
 };
 
@@ -512,20 +512,20 @@ struct SShaderKeySpecularModel : SShaderKeyUnsigned<2>
 
     void ToString(QString &ioStr, QDemonConstDataRef<quint32> inKeySet) const
     {
-        ioStr.append(m_Name);
-        ioStr.append("=");
+        ioStr.append(QString::fromLocal8Bit(m_Name));
+        ioStr.append(QStringLiteral("="));
         switch (GetSpecularModel(inKeySet)) {
         case DefaultMaterialSpecularModel::KGGX:
-            ioStr.append("KGGX");
+            ioStr.append(QStringLiteral("KGGX"));
             break;
         case DefaultMaterialSpecularModel::KWard:
-            ioStr.append("KWard");
+            ioStr.append(QStringLiteral("KWard"));
             break;
         case DefaultMaterialSpecularModel::Default:
-            ioStr.append("Default");
+            ioStr.append(QStringLiteral("Default"));
             break;
         }
-        ioStr.append(";");
+        ioStr.append(QStringLiteral(";"));
     }
 };
 
@@ -792,6 +792,6 @@ QT_END_NAMESPACE
 //        return key.hash();
 //    }
 //};
-}
+
 
 #endif

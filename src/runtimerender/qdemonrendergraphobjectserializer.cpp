@@ -73,9 +73,9 @@ struct SSerializerWriteContext
     IDynamicObjectSystem &m_DynamicObjectSystem;
     IPathManager &m_PathManager;
     TObjectFileStatList &m_FileSizeStats;
-    CRenderString m_PathMapper;
-    CRenderString m_BasePath;
-    CRenderString m_RelativePath;
+    QString m_PathMapper;
+    QString m_BasePath;
+    QString m_RelativePath;
     SSerializerWriteContext(SPtrOffsetMap &inOffsetMap, SWriteBuffer &inWriteBuffer,
                             const SStrRemapMap &inStrMap, quint32 inDataBlockStart,
                             IDynamicObjectSystem &inDynamicObjectSystem,
@@ -149,7 +149,7 @@ struct SSerializerReadContext : public SDataReader
     IDynamicObjectSystemCore &m_DynamicObjectSystem;
     QDemonDataRef<quint8> m_DataBlock;
     QDemonDataRef<quint8> m_StrTableBlock;
-    CRenderString m_PathMapper;
+    QString m_PathMapper;
     const char *m_ProjectDirectory;
 
     SSerializerReadContext(IPathManagerCore &inPathManager, IDynamicObjectSystemCore &inDynSystem,

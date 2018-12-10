@@ -62,7 +62,7 @@ struct SBufferLoadResult : public ILoadedBuffer
 
     static SBufferLoadResult *Allocate(quint32 inBufferSize,
                                        QString p,
-                                       QDemonScopedRefCounted<IBufferLoaderCallback> ud)
+                                       QSharedPointer<IBufferLoaderCallback> ud)
     {
         size_t allocSize = sizeof(SBufferLoadResult) + inBufferSize;
         quint8 *allocMem = static_cast<quint8 *>(::malloc(allocSize));
@@ -79,15 +79,15 @@ struct SLoadedBufferImpl
     quint64 m_JobId;
     quint64 m_LoadId;
     QString m_Path;
-    QDemonScopedRefCounted<IBufferLoaderCallback> m_UserData;
+    QSharedPointer<IBufferLoaderCallback> m_UserData;
     bool m_Quiet;
     volatile bool m_Cancel;
-    QDemonScopedRefCounted<SBufferLoadResult> m_Result;
+    QSharedPointer<SBufferLoadResult> m_Result;
     SLoadedBufferImpl *m_NextBuffer;
     SLoadedBufferImpl *m_PreviousBuffer;
 
     SLoadedBufferImpl(SBufferLoader &l, QString inPath,
-                      QDemonScopedRefCounted<IBufferLoaderCallback> ud, bool inQuiet, quint64 loadId)
+                      QSharedPointer<IBufferLoaderCallback> ud, bool inQuiet, quint64 loadId)
         : m_Loader(l)
         , m_JobId(0)
         , m_LoadId(loadId)
@@ -106,8 +106,8 @@ IMPLEMENT_INVASIVE_LIST(LoadedBufferImpl, m_PreviousBuffer, m_NextBuffer);
 
 struct SBufferLoader : public IBufferLoader
 {
-    QDemonScopedRefCounted<IInputStreamFactory> m_Factory;
-    QDemonScopedRefCounted<IThreadPool> m_ThreadPool;
+    QSharedPointer<IInputStreamFactory> m_Factory;
+    QSharedPointer<IThreadPool> m_ThreadPool;
 
     Mutex m_BuffersToLoadMutex;
     TLoadedBufferImplList m_BuffersToLoad;
@@ -174,7 +174,7 @@ struct SBufferLoader : public IBufferLoader
         SLoadedBufferImpl &theBuffer = *reinterpret_cast<SLoadedBufferImpl *>(loader);
 
         InitializeActiveLoadingBuffer(theBuffer);
-        QDemonScopedRefCounted<IRefCountedInputStream> theStream =
+        QSharedPointer<IRefCountedInputStream> theStream =
                 theBuffer.m_Loader.m_Factory->GetStreamForFile(theBuffer.m_Path.c_str(),
                                                                theBuffer.m_Quiet);
         if (theStream && theBuffer.m_Cancel == false) {
@@ -283,7 +283,7 @@ struct SBufferLoader : public IBufferLoader
     }
 
     // blocking, be careful with this.  No order guarantees here.
-    QDemonScopedRefCounted<ILoadedBuffer> NextLoadedBuffer() override
+    QSharedPointer<ILoadedBuffer> NextLoadedBuffer() override
     {
         while (!AreLoadedBuffersAvailable()) {
             m_BufferLoadedEvent.wait();
@@ -294,7 +294,7 @@ struct SBufferLoader : public IBufferLoader
             theBuffer = m_LoadedBuffers.back_ptr();
             m_LoadedBuffers.remove(*theBuffer);
         }
-        QDemonScopedRefCounted<ILoadedBuffer> retval(theBuffer->m_Result);
+        QSharedPointer<ILoadedBuffer> retval(theBuffer->m_Result);
         if (retval.mPtr == nullptr) {
             retval = SBufferLoadResult::Allocate(0, m_Foundation, theBuffer->m_Path,
                                                  theBuffer->m_UserData);

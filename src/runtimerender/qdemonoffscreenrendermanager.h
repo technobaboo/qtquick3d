@@ -187,7 +187,7 @@ public:
 
 struct SOffscreenRenderResult
 {
-    QDemonScopedRefCounted<IOffscreenRenderer> m_Renderer;
+    QSharedPointer<IOffscreenRenderer> m_Renderer;
     QDemonRenderTexture2D *m_Texture;
     bool m_HasTransparency;
     bool m_HasChangedSinceLastFrame;

@@ -242,11 +242,11 @@ struct SShaderGeneratorGeneratedShader
 
 struct SShaderGenerator : public IDefaultMaterialShaderGenerator
 {
-    typedef CRenderString TStrType;
-    typedef QHash<QDemonRenderShaderProgram *, QDemonScopedRefCounted<SShaderGeneratorGeneratedShader>>
+    typedef QString TStrType;
+    typedef QHash<QDemonRenderShaderProgram *, QSharedPointer<SShaderGeneratorGeneratedShader>>
     TProgramToShaderMap;
     typedef QHash<QString,
-    QDemonScopedRefCounted<QDemonRenderConstantBuffer>>
+    QSharedPointer<QDemonRenderConstantBuffer>>
     TStrConstanBufMap;
 
     IQDemonRenderContext &m_RenderContext;
@@ -313,9 +313,6 @@ struct SShaderGenerator : public IDefaultMaterialShaderGenerator
         , m_CurrentPipeline(nullptr)
         , m_FirstImage(nullptr)
         , m_LightsAsSeparateUniforms(false)
-        , m_ProgramToShaderMap(inRc.GetAllocator(), "m_ProgramToShaderMap")
-        , m_ConstantBuffers(inRc.GetAllocator(), "m_ConstantBuffers")
-        , m_RefCount(0)
     {
     }
 
@@ -1526,7 +1523,7 @@ struct SShaderGenerator : public IDefaultMaterialShaderGenerator
     SShaderGeneratorGeneratedShader &GetShaderForProgram(QDemonRenderShaderProgram &inProgram)
     {
         QPair<TProgramToShaderMap::iterator, bool> inserter =
-                m_ProgramToShaderMap.insert(&inProgram, QDemonScopedRefCounted<SShaderGeneratorGeneratedShader>(nullptr));
+                m_ProgramToShaderMap.insert(&inProgram, QSharedPointer<SShaderGeneratorGeneratedShader>(nullptr));
         if (inserter.second) {
             inserter.first->second = new SShaderGeneratorGeneratedShader(inProgram, m_RenderContext.GetRenderContext());
         }

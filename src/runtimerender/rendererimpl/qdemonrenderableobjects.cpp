@@ -393,7 +393,7 @@ void STextRenderable::RenderDepthPass(const QVector2D &inCameraVec)
         QDemonRenderStencilOperationArgument theOpArg(
                     QDemonRenderStencilOp::Keep, QDemonRenderStencilOp::Keep,
                     QDemonRenderStencilOp::Zero);
-        QDemonScopedRefCounted<QDemonRenderDepthStencilState> depthStencilState =
+        QSharedPointer<QDemonRenderDepthStencilState> depthStencilState =
                 context.CreateDepthStencilState(isDepthEnabled, isDepthWriteEnabled,
                                                 theDepthFunction, false, theArg, theArg, theOpArg,
                                                 theOpArg);

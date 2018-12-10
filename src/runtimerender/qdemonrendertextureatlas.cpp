@@ -233,7 +233,7 @@ struct STextureAtlasEntry
 
 struct STextureAtlas : public ITextureAtlas
 {
-    QDemonScopedRefCounted<QDemonRenderContext> m_RenderContext;
+    QSharedPointer<QDemonRenderContext> m_RenderContext;
 
     STextureAtlas(QDemonRenderContext &inRenderContext, qint32 width,
                   qint32 height)

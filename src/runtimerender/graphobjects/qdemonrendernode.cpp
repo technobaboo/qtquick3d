@@ -29,6 +29,7 @@
 ****************************************************************************/
 
 #include <QtDemon/qdemonutils.h>
+#include <QtDemonRuntimeRender/qdemonrendereulerangles.h>
 
 //#include <QtDemonRuntimeRender/qdemonrendermodel.h>
 #include <QtDemonRuntimeRender/qdemonrendernode.h>

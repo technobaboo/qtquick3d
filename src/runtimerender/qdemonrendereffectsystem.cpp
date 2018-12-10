@@ -98,8 +98,8 @@ struct SEffectClass
 struct SAllocatedBufferEntry
 {
     QString m_Name;
-    QDemonScopedRefCounted<QDemonRenderFrameBuffer> m_FrameBuffer;
-    QDemonScopedRefCounted<QDemonRenderTexture2D> m_Texture;
+    QSharedPointer<QDemonRenderFrameBuffer> m_FrameBuffer;
+    QSharedPointer<QDemonRenderTexture2D> m_Texture;
     SAllocateBufferFlags m_Flags;
     bool m_NeedsClear;
 
@@ -118,8 +118,8 @@ struct SAllocatedBufferEntry
 struct SAllocatedImageEntry
 {
     QString m_Name;
-    QDemonScopedRefCounted<QDemonRenderImage2D> m_Image;
-    QDemonScopedRefCounted<QDemonRenderTexture2D> m_Texture;
+    QSharedPointer<QDemonRenderImage2D> m_Image;
+    QSharedPointer<QDemonRenderTexture2D> m_Texture;
     SAllocateBufferFlags m_Flags;
 
     SAllocatedImageEntry(QString inName, QDemonRenderImage2D &inImage,
@@ -135,7 +135,7 @@ struct SAllocatedImageEntry
 
 struct SImageEntry
 {
-    QDemonScopedRefCounted<QDemonRenderShaderProgram> m_Shader;
+    QSharedPointer<QDemonRenderShaderProgram> m_Shader;
     NVRenderCachedShaderProperty<QDemonRenderImage2D *> m_Image;
 
     SImageEntry(QDemonRenderShaderProgram &inShader, const char *inImageName)
@@ -155,7 +155,7 @@ struct SImageEntry
 struct SAllocatedDataBufferEntry
 {
     QString m_Name;
-    QDemonScopedRefCounted<QDemonRenderDataBuffer> m_DataBuffer;
+    QSharedPointer<QDemonRenderDataBuffer> m_DataBuffer;
     QDemonRenderBufferBindValues::Enum m_BufferType;
     QDemonDataRef<quint8> m_BufferData;
     SAllocateBufferFlags m_Flags;
@@ -178,7 +178,7 @@ struct SAllocatedDataBufferEntry
 
 struct SDataBufferEntry
 {
-    QDemonScopedRefCounted<QDemonRenderShaderProgram> m_Shader;
+    QSharedPointer<QDemonRenderShaderProgram> m_Shader;
     NVRenderCachedShaderBuffer<QDemonRenderShaderBufferBase *> m_DataBuffer;
 
     SDataBufferEntry(QDemonRenderShaderProgram &inShader, const char *inBufferName)
@@ -220,7 +220,7 @@ struct SEffectTextureData
 
 struct STextureEntry
 {
-    QDemonScopedRefCounted<QDemonRenderShaderProgram> m_Shader;
+    QSharedPointer<QDemonRenderShaderProgram> m_Shader;
     NVRenderCachedShaderProperty<QDemonRenderTexture2D *> m_Texture;
     NVRenderCachedShaderProperty<QVector4D> m_TextureData;
     NVRenderCachedShaderProperty<qint32> m_TextureFlags;
@@ -257,7 +257,7 @@ struct STextureEntry
     }
 
     static STextureEntry CreateTextureEntry(QDemonRenderShaderProgram &inShader, const char *inStem,
-                                            CRenderString &inBuilder, CRenderString &inBuilder2)
+                                            QString &inBuilder, QString &inBuilder2)
     {
         inBuilder.assign(inStem);
         inBuilder.append("Info");
@@ -267,9 +267,9 @@ struct STextureEntry
     }
 };
 
-typedef QPair<QString, QDemonScopedRefCounted<STextureEntry>> TNamedTextureEntry;
-typedef QPair<QString, QDemonScopedRefCounted<SImageEntry>> TNamedImageEntry;
-typedef QPair<QString, QDemonScopedRefCounted<SDataBufferEntry>> TNamedDataBufferEntry;
+typedef QPair<QString, QSharedPointer<STextureEntry>> TNamedTextureEntry;
+typedef QPair<QString, QSharedPointer<SImageEntry>> TNamedImageEntry;
+typedef QPair<QString, QSharedPointer<SDataBufferEntry>> TNamedDataBufferEntry;
 }
 
 namespace qt3ds {
@@ -367,7 +367,7 @@ struct SEffectContext
 
     void SetTexture(QDemonRenderShaderProgram &inShader, QString inPropName,
                     QDemonRenderTexture2D *inTexture, bool inNeedsMultiply,
-                    CRenderString &inStringBuilder, CRenderString &inStringBuilder2,
+                    QString &inStringBuilder, QString &inStringBuilder2,
                     const SPropertyDefinition *inPropDec = nullptr)
     {
         STextureEntry *theTextureEntry(nullptr);
@@ -378,7 +378,7 @@ struct SEffectContext
                 theTextureEntry = m_TextureEntries[idx].second;
         }
         if (theTextureEntry == nullptr) {
-            QDemonScopedRefCounted<STextureEntry> theNewEntry = new STextureEntry(STextureEntry::CreateTextureEntry(inShader, inPropName, inStringBuilder, inStringBuilder2));
+            QSharedPointer<STextureEntry> theNewEntry = new STextureEntry(STextureEntry::CreateTextureEntry(inShader, inPropName, inStringBuilder, inStringBuilder2));
             m_TextureEntries.push_back(eastl::make_pair(inPropName, theNewEntry));
             theTextureEntry = theNewEntry.mPtr;
         }
@@ -396,7 +396,7 @@ struct SEffectContext
                 theImageEntry = m_ImageEntries[idx].second;
         }
         if (theImageEntry == nullptr) {
-            QDemonScopedRefCounted<SImageEntry> theNewEntry =
+            QSharedPointer<SImageEntry> theNewEntry =
                     new SImageEntry(SImageEntry::CreateImageEntry(inShader, inPropName));
             m_ImageEntries.push_back(eastl::make_pair(inPropName, theNewEntry));
             theImageEntry = theNewEntry.mPtr;
@@ -416,7 +416,7 @@ struct SEffectContext
                 theDataBufferEntry = m_DataBufferEntries[idx].second;
         }
         if (theDataBufferEntry == nullptr) {
-            QDemonScopedRefCounted<SDataBufferEntry> theNewEntry =
+            QSharedPointer<SDataBufferEntry> theNewEntry =
                     new SDataBufferEntry(
                         SDataBufferEntry::CreateDataBufferEntry(inShader, inPropName));
             m_DataBufferEntries.push_back(eastl::make_pair(inPropName, theNewEntry));
@@ -435,7 +435,7 @@ using NVRenderCachedShaderProperty;
 /* We setup some shared state on the effect shaders */
 struct SEffectShader
 {
-    QDemonScopedRefCounted<QDemonRenderShaderProgram> m_Shader;
+    QSharedPointer<QDemonRenderShaderProgram> m_Shader;
     NVRenderCachedShaderProperty<QMatrix4x4> m_MVP;
     NVRenderCachedShaderProperty<QVector2D> m_FragColorAlphaSettings;
     NVRenderCachedShaderProperty<QVector2D> m_DestSize;
@@ -460,23 +460,23 @@ struct SEffectSystem : public IEffectSystem
 {
     typedef QHash<QString, char *> TPathDataMap;
     typedef QSet<QString> TPathSet;
-    typedef QHash<QString, QDemonScopedRefCounted<SEffectClass>> TEffectClassMap;
-    typedef QHash<TStrStrPair, QDemonScopedRefCounted<SEffectShader>> TShaderMap;
+    typedef QHash<QString, QSharedPointer<SEffectClass>> TEffectClassMap;
+    typedef QHash<TStrStrPair, QSharedPointer<SEffectShader>> TShaderMap;
     typedef QVector<SEffectContext *> TContextList;
 
     IQDemonRenderContextCore &m_CoreContext;
     IQDemonRenderContext *m_Context;
-    QDemonScopedRefCounted<IResourceManager> m_ResourceManager;
+    QSharedPointer<IResourceManager> m_ResourceManager;
     mutable SPreAllocatedAllocator m_Allocator;
     // Keep from dual-including headers.
     TEffectClassMap m_EffectClasses;
     QVector<QString> m_EffectList;
     TContextList m_Contexts;
-    CRenderString m_TextureStringBuilder;
-    CRenderString m_TextureStringBuilder2;
+    QString m_TextureStringBuilder;
+    QString m_TextureStringBuilder2;
     TShaderMap m_ShaderMap;
-    QDemonScopedRefCounted<QDemonRenderDepthStencilState> m_DefaultStencilState;
-    QVector<QDemonScopedRefCounted<QDemonRenderDepthStencilState>> m_DepthStencilStates;
+    QSharedPointer<QDemonRenderDepthStencilState> m_DefaultStencilState;
+    QVector<QSharedPointer<QDemonRenderDepthStencilState>> m_DepthStencilStates;
 
     SEffectSystem(IQDemonRenderContextCore &inContext)
         : m_CoreContext(inContext)
@@ -969,9 +969,9 @@ struct SEffectSystem : public IEffectSystem
 
         bool forceCompilation = theClass->m_DynamicClass->RequiresCompilation();
 
-        QPair<const TStrStrPair, QDemonScopedRefCounted<SEffectShader>> theInserter(
+        QPair<const TStrStrPair, QSharedPointer<SEffectShader>> theInserter(
                     TStrStrPair(inCommand.m_ShaderPath, inCommand.m_ShaderDefine),
-                    QDemonScopedRefCounted<SEffectShader>());
+                    QSharedPointer<SEffectShader>());
         QPair<TShaderMap::iterator, bool> theInsertResult(m_ShaderMap.insert(theInserter));
 
         if (theInsertResult.second || forceCompilation) {
@@ -1769,7 +1769,7 @@ struct SEffectSystem : public IEffectSystem
             }
             SEffectClass *theClass = theReader.Load<SEffectClass>();
             theClass->SetupThisObjectFromMemory(m_Allocator, *theBaseClass);
-            QDemonScopedRefCounted<SEffectClass> theClassPtr(theClass);
+            QSharedPointer<SEffectClass> theClassPtr(theClass);
             m_EffectClasses.insert(theBaseClass->GetId(), theClassPtr);
         }
     }

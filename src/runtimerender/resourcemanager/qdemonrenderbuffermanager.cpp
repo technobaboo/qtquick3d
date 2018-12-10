@@ -99,8 +99,8 @@ struct SBufferManager : public IBufferManager
     typedef QHash<QString, SRenderMesh *> TMeshMap;
     typedef QHash<QString, QString> TAliasImageMap;
 
-    QDemonScopedRefCounted<QDemonRenderContext> m_Context;
-    QDemonScopedRefCounted<IInputStreamFactory> m_InputStreamFactory;
+    QSharedPointer<QDemonRenderContext> m_Context;
+    QSharedPointer<IInputStreamFactory> m_InputStreamFactory;
     IPerfTimer &m_PerfTimer;
     TStr m_PathBuilder;
     TImageMap m_ImageMap;
@@ -402,7 +402,7 @@ struct SBufferManager : public IBufferManager
                 CFileTools::CombineBaseAndRelative(GetPrimitivesDirectory(),
                                                    m_PrimitiveNames[idx].m_FileName, m_PathBuilder);
                 quint32 id = 1;
-                QDemonScopedRefCounted<IRefCountedInputStream> theInStream(
+                QSharedPointer<IRefCountedInputStream> theInStream(
                             m_InputStreamFactory->GetStreamForFile(m_PathBuilder.c_str()));
                 if (theInStream)
                     return qt3dsimp::Mesh::LoadMulti(m_Context->GetAllocator(), *theInStream, id);
@@ -467,7 +467,7 @@ struct SBufferManager : public IBufferManager
                     id = atoi(m_PathBuilder.c_str() + pound + 1);
                     m_PathBuilder.erase(m_PathBuilder.begin() + pound, m_PathBuilder.end());
                 }
-                QDemonScopedRefCounted<IRefCountedInputStream> theStream(
+                QSharedPointer<IRefCountedInputStream> theStream(
                             m_InputStreamFactory->GetStreamForFile(m_PathBuilder.c_str()));
                 if (theStream) {
                     theResult = qt3dsimp::Mesh::LoadMulti(m_Context->GetAllocator(), *theStream, id);
