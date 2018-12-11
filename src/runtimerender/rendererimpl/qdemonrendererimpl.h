@@ -108,10 +108,10 @@ struct STextRenderHelper
     }
 };
 
-struct SPickResultProcessResult : public Qt3DSRenderPickResult
+struct SPickResultProcessResult : public QDemonRenderPickResult
 {
-    SPickResultProcessResult(const Qt3DSRenderPickResult &inSrc)
-        : Qt3DSRenderPickResult(inSrc)
+    SPickResultProcessResult(const QDemonRenderPickResult &inSrc)
+        : QDemonRenderPickResult(inSrc)
         , m_WasPickConsumed(false)
     {
     }
@@ -151,7 +151,7 @@ class Q_DEMONRUNTIMERENDER_EXPORT Qt3DSRendererImpl : public IQDemonRenderer, pu
     typedef QHash<QString, QSharedPointer<QDemonRenderConstantBuffer>> TStrConstanBufMap;
     typedef QHash<SRenderInstanceId, QSharedPointer<SLayerRenderData>, eastl::hash<SRenderInstanceId>> TInstanceRenderMap;
     typedef QVector<SLayerRenderData *> TLayerRenderList;
-    typedef QVector<Qt3DSRenderPickResult> TPickResultArray;
+    typedef QVector<QDemonRenderPickResult> TPickResultArray;
 
     // Items to implement the widget context.
     typedef QHash<QString, QSharedPointer<QDemonRenderVertexBuffer>> TStrVertBufMap;
@@ -317,7 +317,7 @@ public:
     void EndFrame() override;
 
     void PickRenderPlugins(bool inPick) override { m_PickRenderPlugins = inPick; }
-    Qt3DSRenderPickResult Pick(SLayer &inLayer, const QVector2D &inViewportDimensions,
+    QDemonRenderPickResult Pick(SLayer &inLayer, const QVector2D &inViewportDimensions,
                                const QVector2D &inMouseCoords, bool inPickSiblings,
                                bool inPickEverything,
                                const SRenderInstanceId id) override;
@@ -327,7 +327,7 @@ public:
                  const QVector2D &inViewportDimensions, const QVector2D &inMouseCoords,
                  QDemonDataRef<SGraphObject *> inMapperObjects, SBasisPlanes::Enum inPlane) override;
 
-    virtual Qt3DSRenderPickResult PickOffscreenLayer(SLayer &inLayer,
+    virtual QDemonRenderPickResult PickOffscreenLayer(SLayer &inLayer,
                                                      const QVector2D &inViewportDimensions,
                                                      const QVector2D &inMouseCoords,
                                                      bool inPickEverything);

@@ -554,7 +554,7 @@ struct SShaderGenerator : public ICustomMaterialShaderGenerator
     void SetGlobalProperties(QDemonRenderShaderProgram &inProgram, const SLayer & /*inLayer*/
                              ,
                              SCamera &inCamera, QVector3D, QDemonDataRef<SLight *> inLights,
-                             QDemonDataRef<QVector3D>, Qt3DSShadowMap *inShadowMaps)
+                             QDemonDataRef<QVector3D>, QDemonRenderShadowMap *inShadowMaps)
     {
         SShaderGeneratorGeneratedShader &theShader(GetShaderForProgram(inProgram));
         m_RenderContext.GetRenderContext().SetActiveShader(&inProgram);

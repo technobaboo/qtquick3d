@@ -49,7 +49,7 @@ struct CSubPresentationPickQuery : public IGraphObjectPickQuery
         : m_Renderer(renderer)
     {
     }
-    Qt3DSRenderPickResult Pick(const QVector2D &inMouseCoords,
+    QDemonRenderPickResult Pick(const QVector2D &inMouseCoords,
                                const QVector2D &inViewportDimensions,
                                bool inPickEverything) override;
 };
@@ -93,7 +93,7 @@ public:
     static const char *GetRendererName() { return "SubPresentation"; }
     QString GetOffscreenRendererType() override { return m_OffscreenRendererType; }
 
-    Qt3DSRenderPickResult DoGraphQueryPick(const QVector2D &inMouseCoords,
+    QDemonRenderPickResult DoGraphQueryPick(const QVector2D &inMouseCoords,
                                            const QVector2D &inViewportDimensions,
                                            bool inPickEverything);
 };

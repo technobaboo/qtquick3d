@@ -34,7 +34,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class Qt3DSShadowMap;
+class QDemonRenderShadowMap;
 
 class ICustomMaterialShaderGenerator : public IMaterialShaderGenerator
 {

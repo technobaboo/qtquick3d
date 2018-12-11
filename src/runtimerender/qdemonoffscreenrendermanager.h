@@ -38,7 +38,7 @@
 
 QT_BEGIN_NAMESPACE
 class IResourceManager;
-struct Qt3DSRenderPickResult;
+struct QDemonRenderPickResult;
 class IGraphObjectPickQuery;
 struct OffscreenRendererDepthValues
 {
@@ -242,8 +242,8 @@ public:
     virtual void BeginFrame() = 0;
     virtual void EndFrame() = 0;
 
-    static IOffscreenRenderManager &
-    CreateOffscreenRenderManager(IResourceManager &inManager, IQDemonRenderContext &inContext);
+    static IOffscreenRenderManager &CreateOffscreenRenderManager(IResourceManager &inManager, IQDemonRenderContext &inContext);
 };
+
 QT_END_NAMESPACE
 #endif

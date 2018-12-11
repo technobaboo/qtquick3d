@@ -199,7 +199,7 @@ bool SLayerRenderPreparationData::GetShadowMapManager()
     if (m_ShadowMapManager.mPtr)
         return true;
 
-    m_ShadowMapManager.mPtr = Qt3DSShadowMap::Create(m_Renderer.GetQt3DSContext());
+    m_ShadowMapManager.mPtr = QDemonRenderShadowMap::Create(m_Renderer.GetQt3DSContext());
 
     return m_ShadowMapManager.mPtr != nullptr;
 }

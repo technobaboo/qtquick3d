@@ -93,8 +93,8 @@ struct SShaderCodeGeneratorBase
     void GenerateEnvMapReflection(SShaderCodeGeneratorBase &inFragmentShader);
     void GenerateUVCoords();
     void GenerateTextureSwizzle(QDemonRenderTextureSwizzleMode::Enum swizzleMode,
-                                eastl::basic_string<char> &texSwizzle,
-                                eastl::basic_string<char> &lookupSwizzle);
+                                QString &texSwizzle,
+                                QString &lookupSwizzle);
     void GenerateShadedWireframeBase();
     void AddLighting();
     const char *BuildShaderSource();

@@ -74,7 +74,7 @@ struct Qt3DSRenderPickSubResult
     }
 };
 
-struct Qt3DSRenderPickResult
+struct QDemonRenderPickResult
 {
     const SGraphObject *m_HitObject;
     float m_CameraDistanceSq;
@@ -86,7 +86,7 @@ struct Qt3DSRenderPickResult
     // from.
     IOffscreenRenderer *m_OffscreenRenderer;
 
-    Qt3DSRenderPickResult(const SGraphObject &inHitObject, float inCameraDistance,
+    QDemonRenderPickResult(const SGraphObject &inHitObject, float inCameraDistance,
                           const QVector2D &inLocalUVCoords)
         : m_HitObject(&inHitObject)
         , m_CameraDistanceSq(inCameraDistance)
@@ -95,7 +95,7 @@ struct Qt3DSRenderPickResult
         , m_OffscreenRenderer(nullptr)
     {
     }
-    Qt3DSRenderPickResult()
+    QDemonRenderPickResult()
         : m_HitObject(nullptr)
         , m_CameraDistanceSq(std::numeric_limits<float>::max())
         , m_LocalUVCoords(0, 0)
@@ -117,7 +117,7 @@ public:
     // If the return value has size of zero then we assume nothing more can be picked and the
     // pick
     // is finished.
-    virtual Qt3DSRenderPickResult Pick(const QVector2D &inMouseCoords,
+    virtual QDemonRenderPickResult Pick(const QVector2D &inMouseCoords,
                                        const QVector2D &inViewportDimensions,
                                        bool inPickEverything) = 0;
 };

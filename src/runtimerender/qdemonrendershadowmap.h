@@ -123,7 +123,7 @@ struct SShadowMapEntry
     QMatrix4x4 m_LightView; ///< light view transform
 };
 
-class Qt3DSShadowMap
+class QDemonRenderShadowMap
 {
     typedef QVector<SShadowMapEntry> TShadowMapEntryList;
 
@@ -131,8 +131,8 @@ public:
     IQDemonRenderContext &m_Context;
 
 public:
-    Qt3DSShadowMap(IQDemonRenderContext &inContext);
-    ~Qt3DSShadowMap();
+    QDemonRenderShadowMap(IQDemonRenderContext &inContext);
+    ~QDemonRenderShadowMap();
 
     /*
          * @brief Add a shadow map entry
@@ -168,7 +168,7 @@ public:
          */
     quint32 GetShadowMapEntryCount() { return m_ShadowMapList.size(); }
 
-    static Qt3DSShadowMap *Create(IQDemonRenderContext &inContext);
+    static QDemonRenderShadowMap *Create(IQDemonRenderContext &inContext);
 
 private:
     TShadowMapEntryList m_ShadowMapList; ///< List of shadow map entries

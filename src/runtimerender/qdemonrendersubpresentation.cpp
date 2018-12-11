@@ -35,7 +35,7 @@
 #endif
 QT_BEGIN_NAMESPACE
 
-Qt3DSRenderPickResult CSubPresentationPickQuery::Pick(const QVector2D &inMouseCoords,
+QDemonRenderPickResult CSubPresentationPickQuery::Pick(const QVector2D &inMouseCoords,
                                                       const QVector2D &inViewportDimensions,
                                                       bool inPickEverything)
 {
@@ -109,10 +109,10 @@ void CSubPresentationRenderer::RenderWithClear(
 }
 
 // You know the viewport dimensions because
-Qt3DSRenderPickResult CSubPresentationRenderer::DoGraphQueryPick(
+QDemonRenderPickResult CSubPresentationRenderer::DoGraphQueryPick(
         const QVector2D &inMouseCoords, const QVector2D &inViewportDimensions, bool inPickEverything)
 {
-    Qt3DSRenderPickResult thePickResult;
+    QDemonRenderPickResult thePickResult;
 
     if (m_Presentation.m_Scene && m_Presentation.m_Scene->m_FirstChild) {
         thePickResult = m_RenderContext.GetRenderer().Pick(

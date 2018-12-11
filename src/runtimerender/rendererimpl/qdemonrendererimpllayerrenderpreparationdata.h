@@ -292,7 +292,7 @@ struct SLayerRenderPreparationData
     bool m_TooManyLightsError;
 
     // shadow mapps
-    QSharedPointer<Qt3DSShadowMap> m_ShadowMapManager;
+    QSharedPointer<QDemonRenderShadowMap> m_ShadowMapManager;
 
     SLayerRenderPreparationData(SLayer &inLayer, Qt3DSRendererImpl &inRenderer);
     virtual ~SLayerRenderPreparationData();

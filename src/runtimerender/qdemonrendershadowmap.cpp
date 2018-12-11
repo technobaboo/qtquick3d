@@ -40,13 +40,13 @@ QT_BEGIN_NAMESPACE
 using QDemonRenderContextScopedProperty;
 using NVRenderCachedShaderProperty;
 
-Qt3DSShadowMap::Qt3DSShadowMap(IQDemonRenderContext &inContext)
+QDemonRenderShadowMap::QDemonRenderShadowMap(IQDemonRenderContext &inContext)
     : m_Context(inContext)
-    , m_ShadowMapList(inContext.GetAllocator(), "Qt3DSShadowMap::m_ShadowMapList")
+    , m_ShadowMapList(inContext.GetAllocator(), "QDemonRenderShadowMap::m_ShadowMapList")
 {
 }
 
-Qt3DSShadowMap::~Qt3DSShadowMap()
+QDemonRenderShadowMap::~QDemonRenderShadowMap()
 {
     m_ShadowMapList.clear();
 }
@@ -66,7 +66,7 @@ bool IsDepthFormat(QDemonRenderTextureFormats::Enum format)
 }
 }
 
-void Qt3DSShadowMap::AddShadowMapEntry(quint32 index, quint32 width, quint32 height,
+void QDemonRenderShadowMap::AddShadowMapEntry(quint32 index, quint32 width, quint32 height,
                                        QDemonRenderTextureFormats::Enum format, quint32 samples,
                                        ShadowMapModes::Enum mode, ShadowFilterValues::Enum filter)
 {
@@ -200,7 +200,7 @@ void Qt3DSShadowMap::AddShadowMapEntry(quint32 index, quint32 width, quint32 hei
     }
 }
 
-SShadowMapEntry *Qt3DSShadowMap::GetShadowMapEntry(quint32 index)
+SShadowMapEntry *QDemonRenderShadowMap::GetShadowMapEntry(quint32 index)
 {
     SShadowMapEntry *pEntry = nullptr;
 
@@ -213,9 +213,9 @@ SShadowMapEntry *Qt3DSShadowMap::GetShadowMapEntry(quint32 index)
     return nullptr;
 }
 
-Qt3DSShadowMap *Qt3DSShadowMap::Create(IQDemonRenderContext &inContext)
+QDemonRenderShadowMap *QDemonRenderShadowMap::Create(IQDemonRenderContext &inContext)
 {
-    return new Qt3DSShadowMap(inContext);
+    return new QDemonRenderShadowMap(inContext);
 }
 
 QT_END_NAMESPACE

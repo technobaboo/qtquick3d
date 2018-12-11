@@ -35,7 +35,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class Qt3DSShadowMap;
+class QDemonRenderShadowMap;
 struct SShaderGeneratorGeneratedShader;
 
 class IDefaultMaterialVertexPipeline : public IShaderStageGenerator

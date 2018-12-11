@@ -34,6 +34,10 @@
 #include <QtDemonRuntimeRender/qdemonrendershaderkeys.h>
 #include <QtDemonRuntimeRender/qdemonrendershadercache.h>
 #include <QtDemonRuntimeRender/qdemonrendershadercodegeneratorv2.h>
+#include <QtDemonRuntimeRender/qdemonrenderlayer.h>
+#include <QtDemonRuntimeRender/qdemonrenderimage.h>
+#include <QtDemonRuntimeRender/qdemonrendershadowmap.h>
+#include <QtDemonRuntimeRender/qdemonrenderableimage.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -74,7 +78,7 @@ struct SLayerGlobalRenderProperties
     QVector3D m_CameraDirection;
     QDemonDataRef<SLight *> m_Lights;
     QDemonDataRef<QVector3D> m_LightDirections;
-    Qt3DSShadowMap *m_ShadowMapManager;
+    QDemonRenderShadowMap *m_ShadowMapManager;
     QDemonRenderTexture2D *m_DepthTexture;
     QDemonRenderTexture2D *m_SSaoTexture;
     SImage *m_LightProbe;
@@ -89,7 +93,7 @@ struct SLayerGlobalRenderProperties
     SLayerGlobalRenderProperties(const SLayer &inLayer, SCamera &inCamera,
                                  QVector3D inCameraDirection, QDemonDataRef<SLight *> inLights,
                                  QDemonDataRef<QVector3D> inLightDirections,
-                                 Qt3DSShadowMap *inShadowMapManager,
+                                 QDemonRenderShadowMap *inShadowMapManager,
                                  QDemonRenderTexture2D *inDepthTexture,
                                  QDemonRenderTexture2D *inSSaoTexture, SImage *inLightProbe,
                                  SImage *inLightProbe2, float inProbeHorizon,

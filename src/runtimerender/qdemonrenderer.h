@@ -79,6 +79,9 @@ struct SScaleAndPosition
     SScaleAndPosition() {}
 };
 
+struct SLayer;
+class IRenderWidget;
+
 class IQDemonRenderer
 {
 protected:
@@ -131,7 +134,7 @@ public:
     // that have handlers
     // in some cases and just pick everything in other things.
     virtual void PickRenderPlugins(bool inPick) = 0;
-    virtual Qt3DSRenderPickResult Pick(SLayer &inLayer, const QVector2D &inViewportDimensions,
+    virtual QDemonRenderPickResult Pick(SLayer &inLayer, const QVector2D &inViewportDimensions,
                                        const QVector2D &inMouseCoords, bool inPickSiblings = true,
                                        bool inPickEverything = false,
                                        const SRenderInstanceId id = nullptr) = 0;

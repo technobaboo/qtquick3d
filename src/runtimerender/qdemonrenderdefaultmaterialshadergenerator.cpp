@@ -254,7 +254,7 @@ struct SShaderGenerator : public IDefaultMaterialShaderGenerator
 
     const SDefaultMaterial *m_CurrentMaterial;
     SShaderDefaultMaterialKey *m_CurrentKey;
-    Qt3DSShadowMap *m_ShadowMapManager;
+    QDemonRenderShadowMap *m_ShadowMapManager;
     IDefaultMaterialVertexPipeline *m_CurrentPipeline;
     TShaderFeatureSet m_CurrentFeatureSet;
     QDemonDataRef<SLight *> m_Lights;
@@ -1534,7 +1534,7 @@ struct SShaderGenerator : public IDefaultMaterialShaderGenerator
                              ,
                              SCamera &inCamera, QVector3D inCameraDirection,
                              QDemonDataRef<SLight *> inLights, QDemonDataRef<QVector3D> inLightDirections,
-                             Qt3DSShadowMap *inShadowMapManager)
+                             QDemonRenderShadowMap *inShadowMapManager)
     {
         SShaderGeneratorGeneratedShader &shader(GetShaderForProgram(inProgram));
         m_RenderContext.GetRenderContext().SetActiveShader(&inProgram);

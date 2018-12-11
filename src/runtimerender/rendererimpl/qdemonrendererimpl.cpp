@@ -487,7 +487,7 @@ void Qt3DSRendererImpl::EndFrame()
     }
 }
 
-inline bool PickResultLessThan(const Qt3DSRenderPickResult &lhs, const Qt3DSRenderPickResult &rhs)
+inline bool PickResultLessThan(const QDemonRenderPickResult &lhs, const QDemonRenderPickResult &rhs)
 {
     return FloatLessThan(lhs.m_CameraDistanceSq, rhs.m_CameraDistanceSq);
 }
@@ -566,11 +566,11 @@ SPickResultProcessResult Qt3DSRendererImpl::ProcessPickResultList(bool inPickEve
     // onto the next object.
 
     quint32 maxPerFrameAllocationPickResultCount =
-            SFastAllocator<>::SlabSize / sizeof(Qt3DSRenderPickResult);
+            SFastAllocator<>::SlabSize / sizeof(QDemonRenderPickResult);
     quint32 numToCopy =
             qMin(maxPerFrameAllocationPickResultCount, (quint32)m_LastPickResults.size());
-    quint32 numCopyBytes = numToCopy * sizeof(Qt3DSRenderPickResult);
-    Qt3DSRenderPickResult *thePickResults = reinterpret_cast<Qt3DSRenderPickResult *>(
+    quint32 numCopyBytes = numToCopy * sizeof(QDemonRenderPickResult);
+    QDemonRenderPickResult *thePickResults = reinterpret_cast<QDemonRenderPickResult *>(
                 GetPerFrameAllocator().allocate(numCopyBytes, "tempPickData", __FILE__, __LINE__));
     ::memcpy(thePickResults, m_LastPickResults.data(), numCopyBytes);
     m_LastPickResults.clear();
@@ -594,7 +594,7 @@ SPickResultProcessResult Qt3DSRendererImpl::ProcessPickResultList(bool inPickEve
             QVector2D theViewportDimensions = mouseAndViewport.second;
             IGraphObjectPickQuery *theQuery = theSubRenderer->GetGraphObjectPickQuery(this);
             if (theQuery) {
-                Qt3DSRenderPickResult theInnerPickResult =
+                QDemonRenderPickResult theInnerPickResult =
                         theQuery->Pick(theMouseCoords, theViewportDimensions, inPickEverything);
                 if (theInnerPickResult.m_HitObject) {
                     thePickResult = theInnerPickResult;
@@ -628,7 +628,7 @@ SPickResultProcessResult Qt3DSRendererImpl::ProcessPickResultList(bool inPickEve
     return thePickResult;
 }
 
-Qt3DSRenderPickResult Qt3DSRendererImpl::Pick(SLayer &inLayer, const QVector2D &inViewportDimensions,
+QDemonRenderPickResult Qt3DSRendererImpl::Pick(SLayer &inLayer, const QVector2D &inViewportDimensions,
                                               const QVector2D &inMouseCoords, bool inPickSiblings,
                                               bool inPickEverything, const SRenderInstanceId id)
 {
@@ -661,7 +661,7 @@ Qt3DSRenderPickResult Qt3DSRendererImpl::Pick(SLayer &inLayer, const QVector2D &
             theLayer = nullptr;
     } while (theLayer != nullptr);
 
-    return Qt3DSRenderPickResult();
+    return QDemonRenderPickResult();
 }
 
 static inline QDemonOption<QVector2D> IntersectRayWithNode(const SNode &inNode,
@@ -775,14 +775,14 @@ QDemonOption<QVector2D> Qt3DSRendererImpl::FacePosition(SNode &inNode, QDemonBou
     return newValue;
 }
 
-Qt3DSRenderPickResult
+QDemonRenderPickResult
 Qt3DSRendererImpl::PickOffscreenLayer(SLayer &/*inLayer*/, const QVector2D & /*inViewportDimensions*/
                                       ,
                                       const QVector2D & /*inMouseCoords*/
                                       ,
                                       bool /*inPickEverything*/)
 {
-    return Qt3DSRenderPickResult();
+    return QDemonRenderPickResult();
 }
 
 QVector3D Qt3DSRendererImpl::UnprojectToPosition(SNode &inNode, QVector3D &inPosition,
@@ -1290,7 +1290,7 @@ void Qt3DSRendererImpl::GetLayerHitObjectList(SLayerRenderData &inLayerRenderDat
             IGraphObjectPickQuery *theQuery =
                     inLayerRenderData.m_LastFrameOffscreenRenderer->GetGraphObjectPickQuery(this);
             if (theQuery) {
-                Qt3DSRenderPickResult theResult =
+                QDemonRenderPickResult theResult =
                         theQuery->Pick(inPresCoords, inViewportDimensions, inPickEverything);
                 if (theResult.m_HitObject) {
                     theResult.m_OffscreenRenderer =
@@ -1332,7 +1332,7 @@ void Qt3DSRendererImpl::IntersectRayWithSubsetRenderable(
         thePickObject = &static_cast<SPathRenderable *>(&inRenderableObject)->m_Path;
 
     if (thePickObject != nullptr) {
-        outIntersectionResultList.push_back(Qt3DSRenderPickResult(
+        outIntersectionResultList.push_back(QDemonRenderPickResult(
                                                 *thePickObject, theResult.m_RayLengthSquared, theResult.m_RelXY));
 
         // For subsets, we know we can find images on them which may have been the result
