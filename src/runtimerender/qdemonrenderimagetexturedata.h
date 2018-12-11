@@ -36,7 +36,7 @@
 
 QT_BEGIN_NAMESPACE
 // forward declararion
-class Qt3DSRenderPrefilterTexture;
+class QDemonRenderPrefilterTexture;
 
 struct ImageTextureFlagValues
 {
@@ -81,7 +81,7 @@ struct SImageTextureData
 {
     QDemonRenderTexture2D *m_Texture;
     SImageTextureFlags m_TextureFlags;
-    Qt3DSRenderPrefilterTexture *m_BSDFMipMap;
+    QDemonRenderPrefilterTexture *m_BSDFMipMap;
 
     SImageTextureData()
         : m_Texture(nullptr)

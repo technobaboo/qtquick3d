@@ -31,9 +31,7 @@
 #ifndef QDEMON_RENDER_TEXT_TYPES_H
 #define QDEMON_RENDER_TEXT_TYPES_H
 
-#include <Qt3DSSimpleTypes.h>
 #include <QtDemon/qdemondataref.h>
-#include <StringTable.h>
 #include <QtGui/QVector2D>
 
 QT_BEGIN_NAMESPACE

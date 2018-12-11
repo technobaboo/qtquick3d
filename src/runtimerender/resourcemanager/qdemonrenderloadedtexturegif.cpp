@@ -73,10 +73,10 @@ struct GIFinfo
     size_t global_color_table_offset;
     int global_color_table_size;
     BYTE background_color;
-    eastl::vector<size_t> application_extension_offsets;
-    eastl::vector<size_t> comment_extension_offsets;
-    eastl::vector<size_t> graphic_control_extension_offsets;
-    eastl::vector<size_t> image_descriptor_offsets;
+    QVector<size_t> application_extension_offsets;
+    QVector<size_t> comment_extension_offsets;
+    QVector<size_t> graphic_control_extension_offsets;
+    QVector<size_t> image_descriptor_offsets;
 
     GIFinfo()
         : read(0)

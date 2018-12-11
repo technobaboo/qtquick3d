@@ -353,8 +353,8 @@ struct SRenderContext : public IQDemonRenderContext
         QDemonRenderRect theOuterViewport(GetContextViewport());
         if (m_Rotation == RenderRotationValues::Clockwise90
                 || m_Rotation == RenderRotationValues::Clockwise270) {
-            eastl::swap(theOuterViewport.m_Width, theOuterViewport.m_Height);
-            eastl::swap(theOuterViewport.m_X, theOuterViewport.m_Y);
+            std::swap(theOuterViewport.m_Width, theOuterViewport.m_Height);
+            std::swap(theOuterViewport.m_X, theOuterViewport.m_Y);
         }
         // Calculate the presentation viewport perhaps with the window width and height swapped.
         return QPair<QDemonRenderRect, QDemonRenderRect>(
@@ -423,7 +423,7 @@ struct SRenderContext : public IQDemonRenderContext
                 Q_ASSERT(false);
                 break;
             case RenderRotationValues::Clockwise90:
-                eastl::swap(theLocalMouse.x, theLocalMouse.y);
+                std::swap(theLocalMouse.x, theLocalMouse.y);
                 theLocalMouse.y = thePresentationViewport.m_Width - theLocalMouse.y;
                 break;
             case RenderRotationValues::Clockwise180:
@@ -431,7 +431,7 @@ struct SRenderContext : public IQDemonRenderContext
                 theLocalMouse.x = thePresentationViewport.m_Width - theLocalMouse.x;
                 break;
             case RenderRotationValues::Clockwise270:
-                eastl::swap(theLocalMouse.x, theLocalMouse.y);
+                std::swap(theLocalMouse.x, theLocalMouse.y);
                 theLocalMouse.x = thePresentationViewport.m_Height - theLocalMouse.x;
                 break;
             }

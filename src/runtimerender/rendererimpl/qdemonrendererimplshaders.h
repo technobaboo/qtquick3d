@@ -78,7 +78,7 @@ struct SShaderGeneratorGeneratedShader
 
     SShaderGeneratorGeneratedShader(QString inQueryString,
                                     QDemonRenderShaderProgram &inShader)
-        : m_LayerSetIndex(QDEMON_MAX_U32)
+        : m_LayerSetIndex(std::numeric_limits<quint32>::max())
         , m_QueryString(inQueryString)
         , m_Shader(inShader)
         , m_ViewportMatrix("viewport_matrix", inShader)

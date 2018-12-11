@@ -77,7 +77,7 @@ struct SRendererData : SOffscreenRenderResult
 
     SRendererData(IResourceManager &inResourceManager)
         , m_ResourceManager(inResourceManager)
-        , m_FrameCount(QDEMON_MAX_U32)
+        , m_FrameCount(std::numeric_limits<quint32>::max())
         , m_Rendering(false)
     {
     }

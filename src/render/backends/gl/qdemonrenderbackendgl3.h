@@ -150,12 +150,12 @@ public:
 protected:
     QDemonRenderBackendMiscStateGL *m_pCurrentMiscState; ///< this holds the current misc state
 #if defined(QT_OPENGL_ES_2)
-    QDemonOpenGLES2Extensions *m_qt3dsExtensions;
+    QDemonOpenGLES2Extensions *m_qdemonExtensions;
 #else
     QOpenGLExtension_ARB_timer_query *m_timerExtension;
     QOpenGLExtension_ARB_tessellation_shader *m_tessellationShader;
     QOpenGLExtension_ARB_texture_multisample *m_multiSample;
-    QDemonOpenGLExtensions *m_qt3dsExtensions;
+    QDemonOpenGLExtensions *m_qdemonExtensions;
 #endif
 };
 

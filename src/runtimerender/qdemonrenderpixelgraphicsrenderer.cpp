@@ -27,9 +27,9 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <qdemonrenderpixelgraphicsrenderer.h>
-#include <qdemonrenderpixelgraphicstypes.h>
-#include <Qt3DSAtomic.h>
+#include "qdemonrenderpixelgraphicsrenderer.h"
+
+#include <QtDemonRuntimeRender/qdemonrenderpixelgraphicstypes.h>
 #include <QtDemonRender/qdemonrendercontext.h>
 #include <QtDemonRuntimeRender/qdemonrendercamera.h>
 #include <QtDemonRuntimeRender/qdemonrendercontextcore.h>

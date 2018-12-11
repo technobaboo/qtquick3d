@@ -31,9 +31,7 @@
 #ifndef QDEMON_RENDER_EFFECT_SYSTEM_COMMANDS_H
 #define QDEMON_RENDER_EFFECT_SYSTEM_COMMANDS_H
 
-#include <StringTable.h>
 #include <QtDemonRender/qdemonrenderbasetypes.h>
-#include <Qt3DSIntrinsics.h>
 #include <QtDemon/qdemonflags.h>
 
 QT_BEGIN_NAMESPACE
@@ -579,7 +577,7 @@ struct SDepthStencil : public SCommand
         , m_DepthFailOperation(QDemonRenderStencilOp::Keep)
         , m_StencilFunction(QDemonRenderBoolOp::Equal)
         , m_Reference(0)
-        , m_Mask(QDEMON_MAX_U32)
+        , m_Mask(std::numeric_limits<quint32>::max())
     {
     }
 

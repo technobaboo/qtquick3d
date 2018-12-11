@@ -67,7 +67,7 @@ public:
         const TDataType *dataPtr = getDataPtr<TDataType>();
         if (dataPtr)
             return *dataPtr;
-        QT3DS_ASSERT(false);
+        Q_ASSERT(false);
         return TDataType();
     }
 

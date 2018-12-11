@@ -28,11 +28,9 @@
 **
 ****************************************************************************/
 
-#include <qdemonrendertexttextureatlas.h>
-#include <qdemontextrenderer.h>
-#include <Qt3DSAtomic.h>
-#include <Qt3DSFoundation.h>
-#include <Qt3DSBroadcastingAllocator.h>
+#include "qdemonrendertexttextureatlas.h"
+
+#include <QtDemonRuntimeRender/qdemontextrenderer.h>
 #include <QtDemonRender/qdemonrendercontext.h>
 
 QT_BEGIN_NAMESPACE
@@ -42,7 +40,7 @@ namespace {
 struct STextTextureAtlas : public ITextTextureAtlas
 {
     static const qint32 TEXTURE_ATLAS_DIM =
-            256; // if you change this you need to adjust Qt3DSOnscreenTextRenderer size as well
+            256; // if you change this you need to adjust QDemonOnscreenTextRenderer size as well
 
     QSharedPointer<ITextRenderer> m_TextRenderer;
     QSharedPointer<QDemonRenderContext> m_RenderContext;
@@ -82,7 +80,7 @@ struct STextTextureAtlas : public ITextTextureAtlas
             if (m_textureAtlas && count) {
                 m_TextureAtlasInitialized = true;
                 //m_textureAtlas->addRef();
-                // if you change the size you need to adjust Qt3DSOnscreenTextRenderer too
+                // if you change the size you need to adjust QDemonOnscreenTextRenderer too
                 if (m_RenderContext->GetRenderContextType() == QDemonRenderContextValues::GLES2) {
                     m_textureAtlas->SetTextureData(QDemonDataRef<quint8>(), 0, TEXTURE_ATLAS_DIM,
                                                    TEXTURE_ATLAS_DIM, QDemonRenderTextureFormats::RGBA8);

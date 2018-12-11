@@ -421,7 +421,7 @@ SImageLoaderBatch::CreateLoaderBatch(SBatchLoader &inLoader, TImageBatchId inBat
             continue;
 
         QPair<SBatchLoader::TSourcePathToBatchMap::iterator, bool> theInserter =
-                inLoader.m_SourcePathToBatches.insert(eastl::make_pair(inSourcePaths[idx], inBatchId));
+                inLoader.m_SourcePathToBatches.insert(inSourcePaths[idx], inBatchId);
 
         // If the loader has already seen this image.
         if (theInserter.second == false)

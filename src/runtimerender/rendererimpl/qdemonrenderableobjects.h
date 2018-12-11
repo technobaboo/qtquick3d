@@ -224,19 +224,19 @@ struct SModelContext
 
 typedef QVector<SModelContext *> TModelContextPtrList;
 
-class Qt3DSRendererImpl;
+class QDemonRendererImpl;
 struct SLayerRenderData;
 struct SShadowMapEntry;
 
 struct SSubsetRenderableBase : public SRenderableObject
 {
-    Qt3DSRendererImpl &m_Generator;
+    QDemonRendererImpl &m_Generator;
     const SModelContext &m_ModelContext;
     SRenderSubset m_Subset;
     float m_Opacity;
 
     SSubsetRenderableBase(SRenderableObjectFlags inFlags, QVector3D inWorldCenterPt,
-                          Qt3DSRendererImpl &gen, const SRenderSubset &subset,
+                          QDemonRendererImpl &gen, const SRenderSubset &subset,
                           const SModelContext &modelContext, float inOpacity)
 
         : SRenderableObject(inFlags, inWorldCenterPt, modelContext.m_Model.m_GlobalTransform,
@@ -267,7 +267,7 @@ struct SSubsetRenderable : public SSubsetRenderableBase
     QDemonConstDataRef<QMatrix4x4> m_Bones;
 
     SSubsetRenderable(SRenderableObjectFlags inFlags, QVector3D inWorldCenterPt,
-                      Qt3DSRendererImpl &gen, const SRenderSubset &subset,
+                      QDemonRendererImpl &gen, const SRenderSubset &subset,
                       const SDefaultMaterial &mat, const SModelContext &modelContext,
                       float inOpacity, SRenderableImage *inFirstImage,
                       SShaderDefaultMaterialKey inShaderKey,
@@ -301,7 +301,7 @@ struct SCustomMaterialRenderable : public SSubsetRenderableBase
     SShaderDefaultMaterialKey m_ShaderDescription;
 
     SCustomMaterialRenderable(SRenderableObjectFlags inFlags, QVector3D inWorldCenterPt,
-                              Qt3DSRendererImpl &gen, const SRenderSubset &subset,
+                              QDemonRendererImpl &gen, const SRenderSubset &subset,
                               const SCustomMaterial &mat, const SModelContext &modelContext,
                               float inOpacity, SRenderableImage *inFirstImage,
                               SShaderDefaultMaterialKey inShaderKey)
@@ -338,14 +338,14 @@ struct STextScaleAndOffset
 
 struct STextRenderable : public SRenderableObject, public STextScaleAndOffset
 {
-    Qt3DSRendererImpl &m_Generator;
+    QDemonRendererImpl &m_Generator;
     const SText &m_Text;
     QDemonRenderTexture2D &m_Texture;
     QMatrix4x4 m_ModelViewProjection;
     QMatrix4x4 m_ViewProjection;
 
     STextRenderable(SRenderableObjectFlags inFlags, QVector3D inWorldCenterPt,
-                    Qt3DSRendererImpl &gen, const SText &inText, const QDemonBounds3 &inBounds,
+                    QDemonRendererImpl &gen, const SText &inText, const QDemonBounds3 &inBounds,
                     const QMatrix4x4 &inModelViewProjection, const QMatrix4x4 &inViewProjection,
                     QDemonRenderTexture2D &inTextTexture, const QVector2D &inTextOffset,
                     const QVector2D &inTextScale)
@@ -368,7 +368,7 @@ struct STextRenderable : public SRenderableObject, public STextScaleAndOffset
 
 struct SPathRenderable : public SRenderableObject
 {
-    Qt3DSRendererImpl &m_Generator;
+    QDemonRendererImpl &m_Generator;
     SPath &m_Path;
     QDemonBounds3 m_Bounds;
     QMatrix4x4 m_ModelViewProjection;
@@ -380,7 +380,7 @@ struct SPathRenderable : public SRenderableObject
     bool m_IsStroke;
 
     SPathRenderable(SRenderableObjectFlags inFlags, QVector3D inWorldCenterPt,
-                    Qt3DSRendererImpl &gen, const QMatrix4x4 &inGlobalTransform,
+                    QDemonRendererImpl &gen, const QMatrix4x4 &inGlobalTransform,
                     QDemonBounds3 &inBounds, SPath &inPath, const QMatrix4x4 &inModelViewProjection,
                     const QMatrix3x3 inNormalMat, const SGraphObject &inMaterial, float inOpacity,
                     SShaderDefaultMaterialKey inShaderKey, bool inIsStroke)

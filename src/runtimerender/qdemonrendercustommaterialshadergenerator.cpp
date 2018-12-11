@@ -27,9 +27,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <qdemonrendercustommaterialshadergenerator.h>
+#include "qdemonrendercustommaterialshadergenerator.h"
 #include <QtDemonRuntimeRender/qdemonrenderdefaultmaterialshadergenerator.h>
-#include <Qt3DSAtomic.h>
 #include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
 #include <QtDemonRuntimeRender/qdemonrendershadercodegeneratorv2.h>
 #include <QtDemonRuntimeRender/qdemonrenderableimage.h>

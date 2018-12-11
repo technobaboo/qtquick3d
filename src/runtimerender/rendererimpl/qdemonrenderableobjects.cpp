@@ -246,7 +246,7 @@ void SSubsetRenderable::Render(const QVector2D &inCameraVec, TShaderFeatureSet i
 
     context.SetActiveShader(&shader->m_Shader);
 
-    m_Generator.GetQt3DSContext().GetDefaultMaterialShaderGenerator().SetMaterialProperties(
+    m_Generator.GetDemonContext().GetDefaultMaterialShaderGenerator().SetMaterialProperties(
                 shader->m_Shader, m_Material, inCameraVec, m_ModelContext.m_ModelViewProjection,
                 m_ModelContext.m_NormalMatrix, m_ModelContext.m_Model.m_GlobalTransform, m_FirstImage,
                 m_Opacity, m_Generator.GetLayerGlobalRenderProperties());
@@ -433,14 +433,14 @@ void SCustomMaterialRenderable::Render(const QVector2D & /*inCameraVec*/,
                                        const QDemonRenderTexture2D *inSsaoTexture,
                                        TShaderFeatureSet inFeatureSet)
 {
-    IQDemonRenderContext &qt3dsContext(m_Generator.GetQt3DSContext());
+    IQDemonRenderContext &demonContext(m_Generator.GetDemonContext());
     SCustomMaterialRenderContext theRenderContext(
                 inLayer, inLayerData, inLights, inCamera, m_ModelContext.m_Model, m_Subset,
                 m_ModelContext.m_ModelViewProjection, m_GlobalTransform, m_ModelContext.m_NormalMatrix,
                 m_Material, inDepthTexture, inSsaoTexture, m_ShaderDescription, m_FirstImage,
                 m_Opacity);
 
-    qt3dsContext.GetCustomMaterialSystem().RenderSubset(theRenderContext, inFeatureSet);
+    demonContext.GetCustomMaterialSystem().RenderSubset(theRenderContext, inFeatureSet);
 }
 
 void SCustomMaterialRenderable::RenderDepthPass(const QVector2D &inCameraVec,
@@ -451,8 +451,8 @@ void SCustomMaterialRenderable::RenderDepthPass(const QVector2D &inCameraVec,
                                                 const QDemonRenderTexture2D * /*inDepthTexture*/)
 {
 
-    IQDemonRenderContext &qt3dsContext(m_Generator.GetQt3DSContext());
-    if (!qt3dsContext.GetCustomMaterialSystem().RenderDepthPrepass(
+    IQDemonRenderContext &demonContext(m_Generator.GetDemonContext());
+    if (!demonContext.GetCustomMaterialSystem().RenderDepthPrepass(
                 m_ModelContext.m_ModelViewProjection, m_Material, m_Subset)) {
         SRenderableImage *displacementImage = nullptr;
         for (SRenderableImage *theImage = m_FirstImage;
@@ -471,13 +471,13 @@ void SPathRenderable::RenderDepthPass(const QVector2D &inCameraVec, const SLayer
                                       const SCamera &inCamera,
                                       const QDemonRenderTexture2D * /*inDepthTexture*/)
 {
-    IQDemonRenderContext &qt3dsContext(m_Generator.GetQt3DSContext());
+    IQDemonRenderContext &demonContext(m_Generator.GetDemonContext());
     SPathRenderContext theRenderContext(
                 inLights, inCamera, m_Path, m_ModelViewProjection, m_GlobalTransform, m_NormalMatrix,
-                m_Opacity, m_Material, m_ShaderDescription, m_FirstImage, qt3dsContext.GetWireframeMode(),
+                m_Opacity, m_Material, m_ShaderDescription, m_FirstImage, demonContext.GetWireframeMode(),
                 inCameraVec, false, m_IsStroke);
 
-    qt3dsContext.GetPathManager().RenderDepthPrepass(
+    demonContext.GetPathManager().RenderDepthPrepass(
                 theRenderContext, m_Generator.GetLayerGlobalRenderProperties(), TShaderFeatureSet());
 }
 
@@ -489,13 +489,13 @@ void SPathRenderable::Render(const QVector2D &inCameraVec, const SLayer & /*inLa
                              ,
                              TShaderFeatureSet inFeatureSet)
 {
-    IQDemonRenderContext &qt3dsContext(m_Generator.GetQt3DSContext());
+    IQDemonRenderContext &demonContext(m_Generator.GetDemonContext());
     SPathRenderContext theRenderContext(
                 inLights, inCamera, m_Path, m_ModelViewProjection, m_GlobalTransform, m_NormalMatrix,
-                m_Opacity, m_Material, m_ShaderDescription, m_FirstImage, qt3dsContext.GetWireframeMode(),
+                m_Opacity, m_Material, m_ShaderDescription, m_FirstImage, demonContext.GetWireframeMode(),
                 inCameraVec, m_RenderableFlags.HasTransparency(), m_IsStroke);
 
-    qt3dsContext.GetPathManager().RenderPath(
+    demonContext.GetPathManager().RenderPath(
                 theRenderContext, m_Generator.GetLayerGlobalRenderProperties(), inFeatureSet);
 }
 
@@ -504,20 +504,20 @@ void SPathRenderable::RenderShadowMapPass(const QVector2D &inCameraVec, const SL
                                           SShadowMapEntry *inShadowMapEntry)
 {
     QDemonConstDataRef<SLight *> theLights;
-    IQDemonRenderContext &qt3dsContext(m_Generator.GetQt3DSContext());
+    IQDemonRenderContext &demonContext(m_Generator.GetDemonContext());
 
     QMatrix4x4 theModelViewProjection = inShadowMapEntry->m_LightVP * m_GlobalTransform;
     SPathRenderContext theRenderContext(
                 theLights, inCamera, m_Path, theModelViewProjection, m_GlobalTransform, m_NormalMatrix,
-                m_Opacity, m_Material, m_ShaderDescription, m_FirstImage, qt3dsContext.GetWireframeMode(),
+                m_Opacity, m_Material, m_ShaderDescription, m_FirstImage, demonContext.GetWireframeMode(),
                 inCameraVec, false, m_IsStroke);
 
     if (inLight->m_LightType != RenderLightTypes::Directional) {
-        qt3dsContext.GetPathManager().RenderCubeFaceShadowPass(
+        demonContext.GetPathManager().RenderCubeFaceShadowPass(
                     theRenderContext, m_Generator.GetLayerGlobalRenderProperties(),
                     TShaderFeatureSet());
     } else
-        qt3dsContext.GetPathManager().RenderShadowMapPass(
+        demonContext.GetPathManager().RenderShadowMapPass(
                     theRenderContext, m_Generator.GetLayerGlobalRenderProperties(),
                     TShaderFeatureSet());
 }

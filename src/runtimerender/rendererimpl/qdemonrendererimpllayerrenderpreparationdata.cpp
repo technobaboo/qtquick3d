@@ -37,27 +37,25 @@
 #include <QtDemonRuntimeRender/qdemonrendercamera.h>
 #include <QtDemonRuntimeRender/qdemonrenderscene.h>
 #include <QtDemonRuntimeRender/qdemonrenderpresentation.h>
-#include <Qt3DSFoundation.h>
 #include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
 #include <QtDemonRuntimeRender/qdemonrenderresourcemanager.h>
-#include <qdemontextrenderer.h>
-#include <qdemonrendereffectsystem.h>
+#include <QtDemonRuntimeRender/qdemontextrenderer.h>
+#include <QtDemonRuntimeRender/qdemonrendereffectsystem.h>
 #include <QtDemonRender/qdemonrenderframebuffer.h>
 #include <QtDemonRender/qdemonrenderrenderbuffer.h>
-#include <qdemonoffscreenrenderkey.h>
+#include <QtDemonRuntimeRender/qdemonoffscreenrenderkey.h>
 #include <QtDemonRuntimeRender/qdemonrenderplugin.h>
-#include <qdemonrenderplugingraphobject.h>
+#include <QtDemonRuntimeRender/qdemonrenderplugingraphobject.h>
 #include <QtDemonRuntimeRender/qdemonrenderresourcebufferobjects.h>
-#include <Qt3DSPerfTimer.h>
-#include <AutoDeallocatorAllocator.h>
-#include <qdemonrendermaterialhelpers.h>
+#include <QtDemon/qdemonperftimer.h>
+#include <QtDemonRuntimeRender/qdemonrendermaterialhelpers.h>
 #include <QtDemonRuntimeRender/qdemonrenderbuffermanager.h>
-#include <qdemonrendercustommaterialsystem.h>
-#include <qdemonrendertexttexturecache.h>
-#include <qdemonrendertexttextureatlas.h>
-#include <qdemonrenderrenderlist.h>
+#include <QtDemonRuntimeRender/qdemonrendercustommaterialsystem.h>
+#include <QtDemonRuntimeRender/qdemonrendertexttexturecache.h>
+#include <QtDemonRuntimeRender/qdemonrendertexttextureatlas.h>
+#include <QtDemonRuntimeRender/qdemonrenderrenderlist.h>
 #include <QtDemonRuntimeRender/qdemonrenderpath.h>
-#include <qdemonrenderpathmanager.h>
+#include <QtDemonRuntimeRender/qdemonrenderpathmanager.h>
 
 #ifdef _WIN32
 #pragma warning(disable : 4355)
@@ -104,7 +102,7 @@ SDefaultMaterialPreparationResult::SDefaultMaterialPreparationResult(
 #define MAX_AA_LEVELS 8
 
 SLayerRenderPreparationData::SLayerRenderPreparationData(SLayer &inLayer,
-                                                         Qt3DSRendererImpl &inRenderer)
+                                                         QDemonRendererImpl &inRenderer)
     : m_Layer(inLayer)
     , m_Renderer(inRenderer)
     , m_Allocator(inRenderer.GetContext().GetAllocator())
@@ -152,7 +150,7 @@ bool SLayerRenderPreparationData::NeedsWidgetTexture() const
 void SLayerRenderPreparationData::SetShaderFeature(QString theStr, bool inValue)
 {
     SShaderPreprocessorFeature item(theStr, inValue);
-    eastl::vector<SShaderPreprocessorFeature>::iterator iter = m_Features.begin(),
+    QVector<SShaderPreprocessorFeature>::iterator iter = m_Features.begin(),
             end = m_Features.end();
 
     // empty loop intentional.
@@ -199,7 +197,7 @@ bool SLayerRenderPreparationData::GetShadowMapManager()
     if (m_ShadowMapManager.mPtr)
         return true;
 
-    m_ShadowMapManager.mPtr = QDemonRenderShadowMap::Create(m_Renderer.GetQt3DSContext());
+    m_ShadowMapManager.mPtr = QDemonRenderShadowMap::Create(m_Renderer.GetDemonContext());
 
     return m_ShadowMapManager.mPtr != nullptr;
 }
@@ -211,10 +209,10 @@ bool SLayerRenderPreparationData::GetOffscreenRenderer()
 
     if (m_Layer.m_RenderPlugin && m_Layer.m_RenderPlugin->m_Flags.IsActive()) {
         IRenderPluginInstance *theInstance =
-                m_Renderer.GetQt3DSContext().GetRenderPluginManager().GetOrCreateRenderPluginInstance(
+                m_Renderer.GetDemonContext().GetRenderPluginManager().GetOrCreateRenderPluginInstance(
                     m_Layer.m_RenderPlugin->m_PluginPath, m_Layer.m_RenderPlugin);
         if (theInstance) {
-            m_Renderer.GetQt3DSContext()
+            m_Renderer.GetDemonContext()
                     .GetOffscreenRenderManager()
                     .MaybeRegisterOffscreenRenderer(&theInstance, *theInstance);
             m_LastFrameOffscreenRenderer = theInstance;
@@ -222,7 +220,7 @@ bool SLayerRenderPreparationData::GetOffscreenRenderer()
     }
     if (m_LastFrameOffscreenRenderer.mPtr == nullptr)
         m_LastFrameOffscreenRenderer =
-                m_Renderer.GetQt3DSContext().GetOffscreenRenderManager().GetOffscreenRenderer(
+                m_Renderer.GetDemonContext().GetOffscreenRenderManager().GetOffscreenRenderer(
                     m_Layer.m_TexturePath);
     return m_LastFrameOffscreenRenderer.mPtr != nullptr;
 }
@@ -362,7 +360,7 @@ bool SLayerRenderPreparationData::PrepareTextForRender(
         SText &inText, const QMatrix4x4 &inViewProjection, float inTextScaleFactor,
         SLayerRenderPreparationResultFlags &ioFlags)
 {
-    ITextTextureCache *theTextRenderer = m_Renderer.GetQt3DSContext().GetTextureCache();
+    ITextTextureCache *theTextRenderer = m_Renderer.GetDemonContext().GetTextureCache();
     if (theTextRenderer == nullptr)
         return false;
 
@@ -445,7 +443,7 @@ bool SLayerRenderPreparationData::PreparePathForRender(
     QMatrix3x3 theNormalMatrix;
 
     inPath.CalculateMVPAndNormalMatrix(inViewProjection, theMVP, theNormalMatrix);
-    QDemonBounds3 theBounds(this->m_Renderer.GetQt3DSContext().GetPathManager().GetBounds(inPath));
+    QDemonBounds3 theBounds(this->m_Renderer.GetDemonContext().GetPathManager().GetBounds(inPath));
 
     if (inPath.m_GlobalOpacity >= QDEMON_RENDER_MINIMUM_RENDER_OPACITY
             && inClipFrustum.hasValue()) {
@@ -466,7 +464,7 @@ bool SLayerRenderPreparationData::PreparePathForRender(
     // In the timeline, however, this is reversed.
 
     if (theMaterials[1])
-        eastl::swap(theMaterials[1], theMaterials[0]);
+        std::swap(theMaterials[1], theMaterials[0]);
 
     for (quint32 idx = 0, end = 2; idx < end; ++idx) {
         if (theMaterials[idx] == nullptr)
@@ -510,11 +508,11 @@ bool SLayerRenderPreparationData::PreparePathForRender(
                         prepResult.m_MaterialKey, isStroke);
             theRenderable->m_FirstImage = prepResult.m_FirstImage;
 
-            IQDemonRenderContext &qt3dsContext(m_Renderer.GetQt3DSContext());
-            IPathManager &thePathManager = qt3dsContext.GetPathManager();
+            IQDemonRenderContext &demonContext(m_Renderer.GetDemonContext());
+            IPathManager &thePathManager = demonContext.GetPathManager();
             retval = thePathManager.PrepareForRender(inPath) || retval;
-            retval |= (inPath.m_WireframeMode != qt3dsContext.GetWireframeMode());
-            inPath.m_WireframeMode = qt3dsContext.GetWireframeMode();
+            retval |= (inPath.m_WireframeMode != demonContext.GetWireframeMode());
+            inPath.m_WireframeMode = demonContext.GetWireframeMode();
 
             if (theFlags.HasTransparency())
                 m_TransparentObjects.push_back(theRenderable);
@@ -553,11 +551,11 @@ bool SLayerRenderPreparationData::PreparePathForRender(
                         prepResult.m_MaterialKey, isStroke);
             theRenderable->m_FirstImage = prepResult.m_FirstImage;
 
-            IQDemonRenderContext &qt3dsContext(m_Renderer.GetQt3DSContext());
-            IPathManager &thePathManager = qt3dsContext.GetPathManager();
+            IQDemonRenderContext &demonContext(m_Renderer.GetDemonContext());
+            IPathManager &thePathManager = demonContext.GetPathManager();
             retval = thePathManager.PrepareForRender(inPath) || retval;
-            retval |= (inPath.m_WireframeMode != qt3dsContext.GetWireframeMode());
-            inPath.m_WireframeMode = qt3dsContext.GetWireframeMode();
+            retval |= (inPath.m_WireframeMode != demonContext.GetWireframeMode());
+            inPath.m_WireframeMode = demonContext.GetWireframeMode();
 
             if (theFlags.HasTransparency())
                 m_TransparentObjects.push_back(theRenderable);
@@ -573,11 +571,11 @@ void SLayerRenderPreparationData::PrepareImageForRender(
         SRenderableImage *&ioNextImage, SRenderableObjectFlags &ioFlags,
         SShaderDefaultMaterialKey &inShaderKey, quint32 inImageIndex)
 {
-    IQDemonRenderContext &qt3dsContext(m_Renderer.GetQt3DSContext());
-    IBufferManager &bufferManager = qt3dsContext.GetBufferManager();
+    IQDemonRenderContext &demonContext(m_Renderer.GetDemonContext());
+    IBufferManager &bufferManager = demonContext.GetBufferManager();
     IOffscreenRenderManager &theOffscreenRenderManager(
-                qt3dsContext.GetOffscreenRenderManager());
-    IRenderPluginManager &theRenderPluginManager(qt3dsContext.GetRenderPluginManager());
+                demonContext.GetOffscreenRenderManager());
+    IRenderPluginManager &theRenderPluginManager(demonContext.GetRenderPluginManager());
     if (inImage.ClearDirty(bufferManager, theOffscreenRenderManager, theRenderPluginManager))
         ioFlags |= RenderPreparationResultFlagValues::Dirty;
 
@@ -665,7 +663,7 @@ SDefaultMaterialPreparationResult SLayerRenderPreparationData::PrepareDefaultMat
 
     // set wireframe mode
     m_Renderer.DefaultMaterialShaderKeyProperties().m_WireframeMode.SetValue(
-                theGeneratedKey, m_Renderer.GetQt3DSContext().GetWireframeMode());
+                theGeneratedKey, m_Renderer.GetDemonContext().GetWireframeMode());
 
     if (theMaterial->m_IblProbe && CheckLightProbeDirty(*theMaterial->m_IblProbe)) {
         m_Renderer.PrepareImageForIbl(*theMaterial->m_IblProbe);
@@ -779,7 +777,7 @@ SDefaultMaterialPreparationResult SLayerRenderPreparationData::PrepareCustomMate
 
     // set wireframe mode
     m_Renderer.DefaultMaterialShaderKeyProperties().m_WireframeMode.SetValue(
-                theGeneratedKey, m_Renderer.GetQt3DSContext().GetWireframeMode());
+                theGeneratedKey, m_Renderer.GetDemonContext().GetWireframeMode());
 
     if (subsetOpacity < QDEMON_RENDER_MINIMUM_RENDER_OPACITY) {
         subsetOpacity = 0.0f;
@@ -822,8 +820,8 @@ bool SLayerRenderPreparationData::PrepareModelForRender(
         SModel &inModel, const QMatrix4x4 &inViewProjection,
         const QDemonOption<SClippingFrustum> &inClipFrustum, TNodeLightEntryList &inScopedLights)
 {
-    IQDemonRenderContext &qt3dsContext(m_Renderer.GetQt3DSContext());
-    IBufferManager &bufferManager = qt3dsContext.GetBufferManager();
+    IQDemonRenderContext &demonContext(m_Renderer.GetDemonContext());
+    IBufferManager &bufferManager = demonContext.GetBufferManager();
     SRenderMesh *theMesh = bufferManager.LoadMesh(inModel.m_MeshPath);
     if (theMesh == nullptr)
         return false;
@@ -888,11 +886,11 @@ bool SLayerRenderPreparationData::PrepareModelForRender(
                 theSubset.m_InputAssembler->SetPatchVertexCount(3);
                 theSubset.m_InputAssemblerDepth->SetPatchVertexCount(3);
                 // check wireframe mode
-                theSubset.m_WireframeMode = qt3dsContext.GetWireframeMode();
+                theSubset.m_WireframeMode = demonContext.GetWireframeMode();
 
                 subsetDirty =
                         subsetDirty | (theSubset.m_WireframeMode != inModel.m_WireframeMode);
-                inModel.m_WireframeMode = qt3dsContext.GetWireframeMode();
+                inModel.m_WireframeMode = demonContext.GetWireframeMode();
             } else {
                 theSubset.m_PrimitiveType = theSubset.m_InputAssembler->GetPrimitiveType();
                 theSubset.m_InputAssembler->SetPatchVertexCount(1);
@@ -944,7 +942,7 @@ bool SLayerRenderPreparationData::PrepareModelForRender(
                             static_cast<SCustomMaterial &>(*theMaterialObject));
 
                 ICustomMaterialSystem &theMaterialSystem(
-                            qt3dsContext.GetCustomMaterialSystem());
+                            demonContext.GetCustomMaterialSystem());
                 subsetDirty |= theMaterialSystem.PrepareForRender(
                             theModelContext.m_Model, theSubset, theMaterial, clearMaterialDirtyFlags);
 
@@ -996,12 +994,12 @@ bool SLayerRenderPreparationData::PrepareRenderablesForRender(
         const QMatrix4x4 &inViewProjection, const QDemonOption<SClippingFrustum> &inClipFrustum,
         float inTextScaleFactor, SLayerRenderPreparationResultFlags &ioFlags)
 {
-    SStackPerfTimer __timer(m_Renderer.GetQt3DSContext().GetPerfTimer(),
+    SStackPerfTimer __timer(m_Renderer.GetDemonContext().GetPerfTimer(),
                             "SLayerRenderData::PrepareRenderablesForRender");
     m_ViewProjection = inViewProjection;
     float theTextScaleFactor = inTextScaleFactor;
     bool wasDataDirty = false;
-    bool hasTextRenderer = m_Renderer.GetQt3DSContext().GetTextRenderer() != nullptr;
+    bool hasTextRenderer = m_Renderer.GetDemonContext().GetTextRenderer() != nullptr;
     for (quint32 idx = 0, end = m_RenderableNodes.size(); idx < end; ++idx) {
         SRenderableNodeEntry &theNodeEntry(m_RenderableNodes[idx]);
         SNode *theNode = theNodeEntry.m_Node;
@@ -1046,7 +1044,7 @@ bool SLayerRenderPreparationData::PrepareRenderablesForRender(
 
 bool SLayerRenderPreparationData::CheckLightProbeDirty(SImage &inLightProbe)
 {
-    IQDemonRenderContext &theContext(m_Renderer.GetQt3DSContext());
+    IQDemonRenderContext &theContext(m_Renderer.GetDemonContext());
     return inLightProbe.ClearDirty(theContext.GetBufferManager(),
                                    theContext.GetOffscreenRenderManager(),
                                    theContext.GetRenderPluginManager(), true);
@@ -1073,7 +1071,7 @@ struct SLightNodeMarker
     {
         if (inNode.m_Type == GraphObjectTypes::Layer) {
             m_FirstValidIndex = 0;
-            m_JustPastLastValidIndex = QDEMON_MAX_U32;
+            m_JustPastLastValidIndex = std::numeric_limits<quint32>::max();
         } else {
             m_FirstValidIndex = inNode.m_DFSIndex;
             SNode *lastChild = nullptr;
@@ -1102,7 +1100,7 @@ struct SLightNodeMarker
 void
 SLayerRenderPreparationData::PrepareForRender(const QSize &inViewportDimensions)
 {
-    SStackPerfTimer __timer(m_Renderer.GetQt3DSContext().GetPerfTimer(),
+    SStackPerfTimer __timer(m_Renderer.GetDemonContext().GetPerfTimer(),
                             "SLayerRenderData::PrepareForRender");
     if (m_LayerPrepResult.hasValue())
         return;
@@ -1111,7 +1109,7 @@ SLayerRenderPreparationData::PrepareForRender(const QSize &inViewportDimensions)
     m_FeatureSetHash = 0;
     QVector2D thePresentationDimensions((float)inViewportDimensions.width(),
                                         (float)inViewportDimensions.height());
-    IRenderList &theGraph(m_Renderer.GetQt3DSContext().GetRenderList());
+    IRenderList &theGraph(m_Renderer.GetDemonContext().GetRenderList());
     QDemonRenderRect theViewport(theGraph.GetViewport());
     QDemonRenderRect theScissor(theGraph.GetViewport());
     if (theGraph.IsScissorTestEnabled())
@@ -1140,7 +1138,7 @@ SLayerRenderPreparationData::PrepareForRender(const QSize &inViewportDimensions)
 
     if (m_Layer.m_Flags.IsActive()) {
         // Get the layer's width and height.
-        IEffectSystem &theEffectSystem(m_Renderer.GetQt3DSContext().GetEffectSystem());
+        IEffectSystem &theEffectSystem(m_Renderer.GetDemonContext().GetEffectSystem());
         for (SEffect *theEffect = m_Layer.m_FirstEffect; theEffect;
              theEffect = theEffect->m_NextEffect) {
             if (theEffect->m_Flags.IsDirty()) {
@@ -1171,8 +1169,8 @@ SLayerRenderPreparationData::PrepareForRender(const QSize &inViewportDimensions)
 
         thePrepResult = SLayerRenderPreparationResult(SLayerRenderHelper(
                                                           theViewport, theScissor, m_Layer.m_Scene->m_Presentation->m_PresentationDimensions,
-                                                          m_Layer, shouldRenderToTexture, m_Renderer.GetQt3DSContext().GetScaleMode(),
-                                                          m_Renderer.GetQt3DSContext().GetPresentationScaleFactor()));
+                                                          m_Layer, shouldRenderToTexture, m_Renderer.GetDemonContext().GetScaleMode(),
+                                                          m_Renderer.GetDemonContext().GetPresentationScaleFactor()));
         thePrepResult.m_LastEffect = theLastEffect;
         thePrepResult.m_MaxAAPassIndex = maxNumAAPasses;
         thePrepResult.m_Flags.SetRequiresDepthTexture(requiresDepthPrepass
@@ -1183,7 +1181,7 @@ SLayerRenderPreparationData::PrepareForRender(const QSize &inViewportDimensions)
 
         if (thePrepResult.IsLayerVisible()) {
             if (shouldRenderToTexture) {
-                m_Renderer.GetQt3DSContext().GetRenderList().AddRenderTask(
+                m_Renderer.GetDemonContext().GetRenderList().AddRenderTask(
                             CreateRenderToTextureRunnable());
             }
             if (m_Layer.m_LightProbe && CheckLightProbeDirty(*m_Layer.m_LightProbe)) {
@@ -1380,7 +1378,7 @@ SLayerRenderPreparationData::PrepareForRender(const QSize &inViewportDimensions)
                 QDemonRenderRect theScissorRect =
                         thePrepResult.GetLayerToPresentationScissorRect().ToIntegerRect();
                 // This happens here because if there are any fancy render steps
-                IRenderList &theRenderList(m_Renderer.GetQt3DSContext().GetRenderList());
+                IRenderList &theRenderList(m_Renderer.GetDemonContext().GetRenderList());
                 QDemonRenderContext &theContext(m_Renderer.GetContext());
                 SRenderListScopedProperty<bool> _listScissorEnabled(
                             theRenderList, &IRenderList::IsScissorTestEnabled,
@@ -1404,7 +1402,7 @@ SLayerRenderPreparationData::PrepareForRender(const QSize &inViewportDimensions)
                             theViewport);
                 SOffscreenRenderFlags theResult = m_LastFrameOffscreenRenderer->NeedsRender(
                             CreateOffscreenRenderEnvironment(),
-                            m_Renderer.GetQt3DSContext().GetPresentationScaleFactor(), &m_Layer);
+                            m_Renderer.GetDemonContext().GetPresentationScaleFactor(), &m_Layer);
                 wasDataDirty = wasDataDirty || theResult.m_HasChangedSinceLastFrame;
             }
         }

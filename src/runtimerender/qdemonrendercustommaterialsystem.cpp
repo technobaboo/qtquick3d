@@ -27,14 +27,12 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <qdemonrendercustommaterialsystem.h>
-#include <qdemonrendercustommaterialrendercontext.h>
+#include "qdemonrendercustommaterialsystem.h"
+
+#include <QtDemonRuntimeRender/qdemonrendercustommaterialrendercontext.h>
 #include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
-#include <Qt3DSFoundation.h>
-#include <Qt3DSBroadcastingAllocator.h>
-#include <Qt3DSAtomic.h>
 #include <QtDemonRuntimeRender/qdemonrendercustommaterial.h>
-#include <qdemonrenderdynamicobjectsystemcommands.h>
+#include <QtDemonRuntimeRender/qdemonrenderdynamicobjectsystemcommands.h>
 #include <QtDemonRuntimeRender/qdemonrenderbuffermanager.h>
 #include <QtDemonRuntimeRender/qdemonrenderresourcemanager.h>
 #include <QtDemonRuntimeRender/qdemonrendermesh.h>
@@ -43,15 +41,13 @@
 #include <QtDemonRuntimeRender/qdemonrenderlayer.h>
 #include <QtDemonRender/qdemonrendercontext.h>
 #include <QtDemonRender/qdemonrendershaderprogram.h>
-#include <qdemonrendecomputeshader.h>
-#include <PreAllocatedAllocator.h>
-#include <SerializationTypes.h>
-#include <Qt3DSTime.h>
-#include <qdemonrenderdynamicobjectsystemutil.h>
+#include <QtDemonRender/qdemonrendecomputeshader.h>
+#include <QtDemon/QDemonTime.h>
+#include <QtDemonRuntimeRender/qdemonrenderdynamicobjectsystemutil.h>
 #include <QtDemonRuntimeRender/qdemonrenderableimage.h>
 #include <QtDemonRuntimeRender/qdemonvertexpipelineimpl.h>
 #include <QtDemonRuntimeRender/qdemonrendererimpllayerrenderdata.h>
-#include <qdemonrendercustommaterialshadergenerator.h>
+#include <QtDemonRuntimeRender/qdemonrendercustommaterialshadergenerator.h>
 #include <QtDemonRuntimeRender/qdemonrendermodel.h>
 
 
@@ -547,21 +543,21 @@ struct SMaterialClass
 typedef QHash<QString, QSharedPointer<SMaterialClass>> TStringMaterialMap;
 typedef QPair<QString, QString> TStrStrPair;
 
-namespace eastl {
-template <>
-struct hash<TStrStrPair>
-{
-    size_t operator()(const TStrStrPair &item) const
-    {
-        return hash<QString>()(item.first) ^ hash<QString>()(item.second);
-    }
-};
-}
+// namespace eastl {
+// template <>
+// struct hash<TStrStrPair>
+// {
+//     size_t operator()(const TStrStrPair &item) const
+//     {
+//         return hash<QString>()(item.first) ^ hash<QString>()(item.second);
+//     }
+// };
+// }
 
 struct SShaderMapKey
 {
     TStrStrPair m_Name;
-    eastl::vector<SShaderPreprocessorFeature> m_Features;
+    QVector<SShaderPreprocessorFeature> m_Features;
     TessModeValues::Enum m_TessMode;
     bool m_WireframeMode;
     SShaderDefaultMaterialKey m_MaterialKey;
@@ -587,13 +583,13 @@ struct SShaderMapKey
     }
 };
 
-namespace eastl {
-template <>
-struct hash<SShaderMapKey>
-{
-    size_t operator()(const SShaderMapKey &inKey) const { return inKey.m_HashCode; }
-};
-}
+// namespace eastl {
+// template <>
+// struct hash<SShaderMapKey>
+// {
+//     size_t operator()(const SShaderMapKey &inKey) const { return inKey.m_HashCode; }
+// };
+// }
 
 namespace {
 

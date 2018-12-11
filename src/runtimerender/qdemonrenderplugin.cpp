@@ -28,17 +28,10 @@
 **
 ****************************************************************************/
 #include <QtDemonRuntimeRender/qdemonrenderplugin.h>
-#include <Qt3DSAtomic.h>
-#include <Qt3DSFoundation.h>
-#include <Qt3DSBroadcastingAllocator.h>
-#include <SerializationTypes.h>
-#include <IOStreams.h>
-#include <Qt3DSSystem.h>
-#include <FileTools.h>
 #include <QtDemonRender/qdemonrendercontext.h>
 #include <QtDemonRuntimeRender/qdemonrenderstring.h>
-#include <qdemonrenderpluginpropertyvalue.h>
-#include <qdemonrenderinputstreamfactory.h>
+#include <QtDemonRuntimeRender/qdemonrenderpluginpropertyvalue.h>
+#include <QtDemonRuntimeRender/qdemonrenderinputstreamfactory.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -626,10 +619,10 @@ namespace {
 struct SLoadedPluginData
 {
     QString m_PluginPath;
-    eastl::vector<SRenderPluginPropertyDeclaration> m_Properties;
+    QVector<SRenderPluginPropertyDeclaration> m_Properties;
 };
 
-typedef eastl::vector<SLoadedPluginData> TLoadedPluginDataList;
+typedef QVector<SLoadedPluginData> TLoadedPluginDataList;
 
 struct PluginManagerImpl : public IRenderPluginManager, public IRenderPluginManagerCore
 {
@@ -865,7 +858,7 @@ struct PluginManagerImpl : public IRenderPluginManager, public IRenderPluginMana
             IRenderPluginClass *theClass =
                     GetOrCreateRenderPlugin(m_LoadedPluginData[idx].m_PluginPath);
             if (theClass) {
-                eastl::vector<SRenderPluginPropertyDeclaration> &propertyBuffer(
+                QVector<SRenderPluginPropertyDeclaration> &propertyBuffer(
                             m_LoadedPluginData[idx].m_Properties);
                 for (quint32 propIdx = 0, propEnd = propertyBuffer.size(); propIdx < propEnd;
                      ++propIdx) {

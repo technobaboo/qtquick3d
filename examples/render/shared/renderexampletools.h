@@ -28,8 +28,8 @@
 **
 ****************************************************************************/
 #pragma once
-#ifndef QT3DS_RENDER_EXAMPLE_TOOLS_H
-#define QT3DS_RENDER_EXAMPLE_TOOLS_H
+#ifndef QDEMON_RENDER_EXAMPLE_TOOLS_H
+#define QDEMON_RENDER_EXAMPLE_TOOLS_H
 #include "renderexample.h"
 
 class QDemonRenderExampleTools

@@ -64,8 +64,6 @@
 #include <QtDemon/qdemoninvasiveset.h>
 #include <QtDemon/qdemonunioncast.h>
 
-//#include <Qt3DSUnionCast.h>
-
 QT_BEGIN_NAMESPACE
 inline bool FloatLessThan(float lhs, float rhs)
 {
@@ -145,7 +143,7 @@ struct STextShaderPtr
     operator STextShader *() { return m_Shader; }
 };
 
-class Q_DEMONRUNTIMERENDER_EXPORT Qt3DSRendererImpl : public IQDemonRenderer, public IRenderWidgetContext
+class Q_DEMONRUNTIMERENDER_EXPORT QDemonRendererImpl : public IQDemonRenderer, public IRenderWidgetContext
 {
     typedef QHash<SShaderDefaultMaterialKey, SShaderGeneratorGeneratedShader *> TShaderMap;
     typedef QHash<QString, QSharedPointer<QDemonRenderConstantBuffer>> TStrConstanBufMap;
@@ -161,7 +159,7 @@ class Q_DEMONRUNTIMERENDER_EXPORT Qt3DSRendererImpl : public IQDemonRenderer, pu
 
     typedef QHash<long, SNode *> TBoneIdNodeMap;
 
-    IQDemonRenderContext &m_qt3dsContext;
+    IQDemonRenderContext &m_demonContext;
     QSharedPointer<QDemonRenderContext> m_Context;
     QSharedPointer<IBufferManager> m_BufferManager;
     QSharedPointer<IOffscreenRenderManager> m_OffscreenRenderManager;
@@ -276,8 +274,8 @@ class Q_DEMONRUNTIMERENDER_EXPORT Qt3DSRendererImpl : public IQDemonRenderer, pu
     SShaderDefaultMaterialKeyProperties m_DefaultMaterialShaderKeyProperties;
 
 public:
-    Qt3DSRendererImpl(IQDemonRenderContext &ctx);
-    virtual ~Qt3DSRendererImpl();
+    QDemonRendererImpl(IQDemonRenderContext &ctx);
+    virtual ~QDemonRendererImpl();
     SShaderDefaultMaterialKeyProperties &DefaultMaterialShaderKeyProperties()
     {
         return m_DefaultMaterialShaderKeyProperties;
@@ -445,7 +443,7 @@ public:
 
     QDemonRenderContext &GetContext() { return *m_Context; }
 
-    IQDemonRenderContext &GetQt3DSContext() { return m_qt3dsContext; }
+    IQDemonRenderContext &GetDemonContext() { return m_demonContext; }
 
     void DrawScreenRect(QDemonRenderRectF inRect, const QVector3D &inColor);
     // Binds an offscreen texture.  Widgets are rendered last.

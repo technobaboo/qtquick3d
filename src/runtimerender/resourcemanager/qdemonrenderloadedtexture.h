@@ -75,7 +75,7 @@ public:
     QImage image;
     quint32 dataSizeInBytes;
     QDemonRenderTextureFormats::Enum format;
-    Qt3DSDDSImage *dds;
+    QDemonDDSImage *dds;
     ExtendedTextureFormats::Enum m_ExtendedFormat;
     // Used for palettized images.
     void *m_Palette;

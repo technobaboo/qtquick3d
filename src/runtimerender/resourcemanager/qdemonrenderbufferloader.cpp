@@ -28,12 +28,7 @@
 **
 ****************************************************************************/
 #include <QtDemonRuntimeRender/qdemonrenderbufferloader.h>
-#include <Qt3DSInvasiveLinkedList.h>
-#include <Qt3DSMutex.h>
-#include <Qt3DSFoundation.h>
-#include <Qt3DSBroadcastingAllocator.h>
-#include <Qt3DSAtomic.h>
-#include <Qt3DSSync.h>
+#include <QtDemon/qdemoninvasivelinkedlist.h>
 #include <qdemonrenderinputstreamfactory.h>
 #include <qdemonrenderthreadpool.h>
 
@@ -180,7 +175,7 @@ struct SBufferLoader : public IBufferLoader
         if (theStream && theBuffer.m_Cancel == false) {
             theStream->SetPosition(0, SeekPosition::End);
             qint64 theFileLen = theStream->GetPosition();
-            if (theFileLen > 0 && theFileLen < (quint32)QDEMON_MAX_U32) {
+            if (theFileLen > 0 && theFileLen < (quint32)std::numeric_limits<quint32>::max()) {
                 quint32 required = (quint32)theFileLen;
                 theBuffer.m_Result =
                         SBufferLoadResult::Allocate(required, theBuffer.m_Loader.m_Foundation,

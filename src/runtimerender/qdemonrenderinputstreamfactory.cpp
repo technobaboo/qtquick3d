@@ -94,21 +94,21 @@ struct SFactory : public IInputStreamFactory
     Mutex m_Mutex;
     typedef Mutex::ScopedLock TScopedLock;
 
-    const QString QDEMONTUDIO_TAG = QStringLiteral("qt3dstudio");
+    const QString Q3DSTUDIO_TAG = QStringLiteral("qt3dstudio");
 
     SFactory()
         : m_Mutex(inFoundation.getAllocator())
     {
         // Add the top-level qrc directory
-        if (!QDir::searchPaths(QDEMONTUDIO_TAG).contains(QLatin1String(":/")))
-            QDir::addSearchPath(QDEMONTUDIO_TAG, QStringLiteral(":/"));
+        if (!QDir::searchPaths(Q3DSTUDIO_TAG).contains(QLatin1String(":/")))
+            QDir::addSearchPath(Q3DSTUDIO_TAG, QStringLiteral(":/"));
     }
 
     QFileInfo matchCaseInsensitiveFile(const QString& file)
     {
         qCWarning(WARNING, PERF_INFO, "Case-insensitive matching with file: %s",
                   file.toLatin1().constData());
-        const QStringList searchDirectories = QDir::searchPaths(QDEMONTUDIO_TAG);
+        const QStringList searchDirectories = QDir::searchPaths(Q3DSTUDIO_TAG);
         for (const auto &directoryPath : searchDirectories) {
             QFileInfo fileInfo(file);
             QDirIterator it(directoryPath, {fileInfo.fileName()}, QDir::NoFilter,
@@ -135,8 +135,8 @@ struct SFactory : public IInputStreamFactory
             return;
         }
 
-        if (!QDir::searchPaths(QDEMONTUDIO_TAG).contains(localDir))
-            QDir::addSearchPath(QDEMONTUDIO_TAG, localDir);
+        if (!QDir::searchPaths(Q3DSTUDIO_TAG).contains(localDir))
+            QDir::addSearchPath(Q3DSTUDIO_TAG, localDir);
     }
 
 
@@ -161,7 +161,7 @@ struct SFactory : public IInputStreamFactory
             // Print extensive debugging information.
             qCCritical(INTERNAL_ERROR, "Failed to find file: %s", inFilename.toLatin1().data());
             qCCritical(INTERNAL_ERROR, "Searched path: %s",
-                       QDir::searchPaths(QDEMONTUDIO_TAG).join(',').toLatin1().constData());
+                       QDir::searchPaths(Q3DSTUDIO_TAG).join(',').toLatin1().constData());
         }
         return inputStream;
     }

@@ -46,7 +46,7 @@ QT_BEGIN_NAMESPACE
             always use NVHHDDSAlloc/NVHHDDSAllocData/NVHHDDSFree to manage them properly.
     */
 
-struct Qt3DSDDSImage
+struct QDemonDDSImage
 {
     /** Width of the overall texture in texels */
     int width;

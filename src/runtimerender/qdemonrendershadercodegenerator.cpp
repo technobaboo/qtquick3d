@@ -181,8 +181,8 @@ void SShaderCodeGeneratorBase::GenerateUVCoords()
 }
 
 void SShaderCodeGeneratorBase::GenerateTextureSwizzle(QDemonRenderTextureSwizzleMode::Enum swizzleMode,
-                                                      eastl::basic_string<char> &texSwizzle,
-                                                      eastl::basic_string<char> &lookupSwizzle)
+                                                      QString &texSwizzle,
+                                                      QString &lookupSwizzle)
 {
     QDemonRenderContextType deprecatedContextFlags(QDemonRenderContextValues::GL2
                                                    | QDemonRenderContextValues::GLES2);

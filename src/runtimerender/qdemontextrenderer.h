@@ -131,7 +131,7 @@ public:
                QDemonRenderTextureFormats::Enum inFormat, bool inFlipYAxis);
 
     // Helper function to return the next power of two.
-    // Fails for values of 0 or QDEMON_MAX_U32
+    // Fails for values of 0 or std::numeric_limits<quint32>::max()
     static quint32 NextPowerOf2(quint32 inValue);
     // If inValue is divisible by four, then return inValue
     // else next largest number that is divisible by four.

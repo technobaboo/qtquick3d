@@ -175,7 +175,7 @@ public:
 protected:
     QDemonRenderBackendMiscStateGL *m_pCurrentMiscState; ///< this holds the current misc state
 #if defined(QT_OPENGL_ES) || defined(QT_OPENGL_ES_2_ANGLE)
-    QDemonOpenGLES2Extensions *m_qt3dsExtensions;
+    QDemonOpenGLES2Extensions *m_qdemonExtensions;
 #endif
 };
 

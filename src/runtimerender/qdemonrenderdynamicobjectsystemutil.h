@@ -31,8 +31,6 @@
 #ifndef QDEMON_RENDER_DYNAMIC_OBJECT_SYSTEM_UTIL_H
 #define QDEMON_RENDER_DYNAMIC_OBJECT_SYSTEM_UTIL_H
 
-#include <StringTable.h>
-#include <Qt3DSAllocatorCallback.h>
 #include <QtDemonRuntimeRender/qdemonrenderstring.h>
 
 QT_BEGIN_NAMESPACE
@@ -82,8 +80,6 @@ inline quint32 Align8(quint32 inValue)
 
 inline quint32 getSizeofShaderDataType(QDemonRenderShaderDataTypes::Enum value)
 {
-    using namespace qt3ds;
-    using namespace render;
     switch (value) {
 #define HANDLE_QDEMON_SHADER_DATA_TYPE(x)                                                              \
     case QDemonRenderShaderDataTypes::x:                                                               \

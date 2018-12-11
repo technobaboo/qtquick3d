@@ -35,8 +35,8 @@ QT_BEGIN_NAMESPACE
 // http://acius2.blogspot.com/2007/11/calculating-next-power-of-2.html
 quint32 ITextRenderer::NextPowerOf2(quint32 input)
 {
-    // Algorithm doesn't work for 0 or QDEMON_MAX_U32
-    Q_ASSERT(input > 0 && input < QDEMON_MAX_U32);
+    // Algorithm doesn't work for 0 or std::numeric_limits<quint32>::max()
+    Q_ASSERT(input > 0 && input < std::numeric_limits<quint32>::max());
     input--;
     input = (input >> 1) | input;
     input = (input >> 2) | input;

@@ -150,7 +150,7 @@ struct SGpuTimerInfo
     }
 };
 
-class Qt3DSCRenderGpuProfiler : public IRenderProfiler
+class QDemonRenderGpuProfiler : public IRenderProfiler
 {
     typedef QHash<QString, QSharedPointer<SGpuTimerInfo>> TStrGpuTimerInfoMap;
 
@@ -163,7 +163,7 @@ private:
     mutable quint32 m_VertexCount;
 
 public:
-    Qt3DSCRenderGpuProfiler(IQDemonRenderContext &inContext,
+    QDemonRenderGpuProfiler(IQDemonRenderContext &inContext,
                             QDemonRenderContext &inRenderContext)
         : m_RenderContext(inRenderContext)
         , m_Context(inContext)
@@ -171,7 +171,7 @@ public:
     {
     }
 
-    virtual ~Qt3DSCRenderGpuProfiler() { m_StrToGpuTimerMap.clear(); }
+    virtual ~QDemonRenderGpuProfiler() { m_StrToGpuTimerMap.clear(); }
 
     void StartTimer(QString &nameID, bool absoluteTime, bool sync) override
     {
@@ -256,7 +256,7 @@ private:
 IRenderProfiler &IRenderProfiler::CreateGpuProfiler(IQDemonRenderContext &inContext,
                                                     QDemonRenderContext &inRenderContext)
 {
-    return *new Qt3DSCRenderGpuProfiler(inContext, inRenderContext);
+    return *new QDemonRenderGpuProfiler(inContext, inRenderContext);
 }
 
 QT_END_NAMESPACE

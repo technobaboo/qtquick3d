@@ -36,7 +36,7 @@
 
 QT_BEGIN_NAMESPACE
 
-Qt3DSRenderPrefilterTexture::Qt3DSRenderPrefilterTexture(QDemonRenderContext *inQDemonRenderContext,
+QDemonRenderPrefilterTexture::QDemonRenderPrefilterTexture(QDemonRenderContext *inQDemonRenderContext,
                                                      qint32 inWidth, qint32 inHeight,
                                                      QDemonRenderTexture2D &inTexture2D,
                                                      QDemonRenderTextureFormats::Enum inDestFormat)
@@ -55,20 +55,20 @@ Qt3DSRenderPrefilterTexture::Qt3DSRenderPrefilterTexture(QDemonRenderContext *in
     m_NoOfComponent = QDemonRenderTextureFormats::getNumberOfComponent(m_DestinationFormat);
 }
 
-Qt3DSRenderPrefilterTexture *
-Qt3DSRenderPrefilterTexture::Create(QDemonRenderContext *inQDemonRenderContext, qint32 inWidth, qint32 inHeight,
+QDemonRenderPrefilterTexture *
+QDemonRenderPrefilterTexture::Create(QDemonRenderContext *inQDemonRenderContext, qint32 inWidth, qint32 inHeight,
                                   QDemonRenderTexture2D &inTexture2D,
                                   QDemonRenderTextureFormats::Enum inDestFormat)
 {
-    Qt3DSRenderPrefilterTexture *theBSDFMipMap = nullptr;
+    QDemonRenderPrefilterTexture *theBSDFMipMap = nullptr;
 
     if (inQDemonRenderContext->IsComputeSupported()) {
-        theBSDFMipMap = new Qt3DSRenderPrefilterTextureCompute(
+        theBSDFMipMap = new QDemonRenderPrefilterTextureCompute(
             inQDemonRenderContext, inWidth, inHeight, inTexture2D, inDestFormat, inFnd);
     }
 
     if (!theBSDFMipMap) {
-        theBSDFMipMap = new Qt3DSRenderPrefilterTextureCPU(
+        theBSDFMipMap = new QDemonRenderPrefilterTextureCPU(
             inQDemonRenderContext, inWidth, inHeight, inTexture2D, inDestFormat, inFnd);
     }
 
@@ -78,7 +78,7 @@ Qt3DSRenderPrefilterTexture::Create(QDemonRenderContext *inQDemonRenderContext, 
     return theBSDFMipMap;
 }
 
-Qt3DSRenderPrefilterTexture::~Qt3DSRenderPrefilterTexture()
+QDemonRenderPrefilterTexture::~QDemonRenderPrefilterTexture()
 {
 }
 
@@ -86,19 +86,19 @@ Qt3DSRenderPrefilterTexture::~Qt3DSRenderPrefilterTexture()
 // CPU based filtering
 //------------------------------------------------------------------------------------
 
-Qt3DSRenderPrefilterTextureCPU::Qt3DSRenderPrefilterTextureCPU(
+QDemonRenderPrefilterTextureCPU::QDemonRenderPrefilterTextureCPU(
     QDemonRenderContext *inQDemonRenderContext, int inWidth, int inHeight, QDemonRenderTexture2D &inTexture2D,
     QDemonRenderTextureFormats::Enum inDestFormat)
-    : Qt3DSRenderPrefilterTexture(inQDemonRenderContext, inWidth, inHeight, inTexture2D, inDestFormat)
+    : QDemonRenderPrefilterTexture(inQDemonRenderContext, inWidth, inHeight, inTexture2D, inDestFormat)
 {
 }
 
-inline int Qt3DSRenderPrefilterTextureCPU::wrapMod(int a, int base)
+inline int QDemonRenderPrefilterTextureCPU::wrapMod(int a, int base)
 {
     return (a >= 0) ? a % base : (a % base) + base;
 }
 
-inline void Qt3DSRenderPrefilterTextureCPU::getWrappedCoords(int &sX, int &sY, int width, int height)
+inline void QDemonRenderPrefilterTextureCPU::getWrappedCoords(int &sX, int &sY, int width, int height)
 {
     if (sY < 0) {
         sX -= width >> 1;
@@ -112,7 +112,7 @@ inline void Qt3DSRenderPrefilterTextureCPU::getWrappedCoords(int &sX, int &sY, i
 }
 
 STextureData
-Qt3DSRenderPrefilterTextureCPU::CreateBsdfMipLevel(STextureData &inCurMipLevel,
+QDemonRenderPrefilterTextureCPU::CreateBsdfMipLevel(STextureData &inCurMipLevel,
                                                  STextureData &inPrevMipLevel, int width,
                                                  int height) //, IPerfTimer& inPerfTimer )
 {
@@ -190,7 +190,7 @@ Qt3DSRenderPrefilterTextureCPU::CreateBsdfMipLevel(STextureData &inCurMipLevel,
     return retval;
 }
 
-void Qt3DSRenderPrefilterTextureCPU::Build(void *inTextureData, qint32 inTextureDataSize,
+void QDemonRenderPrefilterTextureCPU::Build(void *inTextureData, qint32 inTextureDataSize,
                                          QDemonRenderTextureFormats::Enum inFormat)
 {
 
@@ -409,10 +409,10 @@ static bool isGLESContext(QDemonRenderContext *context)
 
 #define WORKGROUP_SIZE 16
 
-Qt3DSRenderPrefilterTextureCompute::Qt3DSRenderPrefilterTextureCompute(
+QDemonRenderPrefilterTextureCompute::QDemonRenderPrefilterTextureCompute(
     QDemonRenderContext *inQDemonRenderContext, qint32 inWidth, qint32 inHeight,
     QDemonRenderTexture2D &inTexture2D, QDemonRenderTextureFormats::Enum inDestFormat)
-    : Qt3DSRenderPrefilterTexture(inQDemonRenderContext, inWidth, inHeight, inTexture2D, inDestFormat)
+    : QDemonRenderPrefilterTexture(inQDemonRenderContext, inWidth, inHeight, inTexture2D, inDestFormat)
     , m_BSDFProgram(nullptr)
     , m_UploadProgram_RGBA8(nullptr)
     , m_UploadProgram_RGB8(nullptr)
@@ -421,7 +421,7 @@ Qt3DSRenderPrefilterTextureCompute::Qt3DSRenderPrefilterTextureCompute(
 {
 }
 
-Qt3DSRenderPrefilterTextureCompute::~Qt3DSRenderPrefilterTextureCompute()
+QDemonRenderPrefilterTextureCompute::~QDemonRenderPrefilterTextureCompute()
 {
     m_UploadProgram_RGB8 = nullptr;
     m_UploadProgram_RGBA8 = nullptr;
@@ -429,7 +429,7 @@ Qt3DSRenderPrefilterTextureCompute::~Qt3DSRenderPrefilterTextureCompute()
     m_Level0Tex = nullptr;
 }
 
-void Qt3DSRenderPrefilterTextureCompute::createComputeProgram(QDemonRenderContext *context)
+void QDemonRenderPrefilterTextureCompute::createComputeProgram(QDemonRenderContext *context)
 {
     std::string computeProg;
 
@@ -442,7 +442,7 @@ void Qt3DSRenderPrefilterTextureCompute::createComputeProgram(QDemonRenderContex
     }
 }
 
-QDemonRenderShaderProgram *Qt3DSRenderPrefilterTextureCompute::getOrCreateUploadComputeProgram(
+QDemonRenderShaderProgram *QDemonRenderPrefilterTextureCompute::getOrCreateUploadComputeProgram(
     QDemonRenderContext *context, QDemonRenderTextureFormats::Enum inFormat)
 {
     std::string computeProg;
@@ -472,7 +472,7 @@ QDemonRenderShaderProgram *Qt3DSRenderPrefilterTextureCompute::getOrCreateUpload
     }
 }
 
-void Qt3DSRenderPrefilterTextureCompute::CreateLevel0Tex(void *inTextureData, qint32 inTextureDataSize,
+void QDemonRenderPrefilterTextureCompute::CreateLevel0Tex(void *inTextureData, qint32 inTextureDataSize,
                                                        QDemonRenderTextureFormats::Enum inFormat)
 {
     QDemonRenderTextureFormats::Enum theFormat = inFormat;
@@ -497,7 +497,7 @@ void Qt3DSRenderPrefilterTextureCompute::CreateLevel0Tex(void *inTextureData, qi
     }
 }
 
-void Qt3DSRenderPrefilterTextureCompute::Build(void *inTextureData, qint32 inTextureDataSize,
+void QDemonRenderPrefilterTextureCompute::Build(void *inTextureData, qint32 inTextureDataSize,
                                              QDemonRenderTextureFormats::Enum inFormat)
 {
     bool needMipUpload = (inFormat != m_DestinationFormat);

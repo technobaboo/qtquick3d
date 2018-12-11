@@ -90,8 +90,8 @@ static SRenderInstanceId combineLayerAndId(const SLayer *layer, const SRenderIns
     return (SRenderInstanceId)x;
 }
 
-Qt3DSRendererImpl::Qt3DSRendererImpl(IQDemonRenderContext &ctx)
-    : m_qt3dsContext(ctx)
+QDemonRendererImpl::QDemonRendererImpl(IQDemonRenderContext &ctx)
+    : m_demonContext(ctx)
     , m_Context(ctx.GetRenderContext())
     , m_BufferManager(ctx.GetBufferManager())
     , m_OffscreenRenderManager(ctx.GetOffscreenRenderManager())
@@ -105,7 +105,7 @@ Qt3DSRendererImpl::Qt3DSRendererImpl(IQDemonRenderContext &ctx)
     , m_LayerGPuProfilingEnabled(false)
 {
 }
-Qt3DSRendererImpl::~Qt3DSRendererImpl()
+QDemonRendererImpl::~QDemonRendererImpl()
 {
     m_LayerShaders.clear();
     for (TShaderMap::iterator iter = m_Shaders.begin(), end = m_Shaders.end(); iter != end;
@@ -117,7 +117,7 @@ Qt3DSRendererImpl::~Qt3DSRendererImpl()
     m_ConstantBuffers.clear();
 }
 
-void Qt3DSRendererImpl::ChildrenUpdated(SNode &inParent)
+void QDemonRendererImpl::ChildrenUpdated(SNode &inParent)
 {
     if (inParent.m_Type == GraphObjectTypes::Layer) {
         TInstanceRenderMap::iterator theIter =
@@ -130,7 +130,7 @@ void Qt3DSRendererImpl::ChildrenUpdated(SNode &inParent)
         ChildrenUpdated(*inParent.m_Parent);
 }
 
-float Qt3DSRendererImpl::GetTextScale(const SText &inText)
+float QDemonRendererImpl::GetTextScale(const SText &inText)
 {
     SLayerRenderData *theData = GetOrCreateLayerRenderDataForNode(inText);
     if (theData)
@@ -162,13 +162,13 @@ static void BuildRenderableLayers(SLayer &inLayer, QVector<SLayer *> &renderable
     }
 }
 
-bool Qt3DSRendererImpl::PrepareLayerForRender(SLayer &inLayer,
+bool QDemonRendererImpl::PrepareLayerForRender(SLayer &inLayer,
                                               const QVector2D &inViewportDimensions,
                                               bool inRenderSiblings,
                                               const SRenderInstanceId id)
 {
     (void)inViewportDimensions;
-    QVector<SLayer *> renderableLayers(m_qt3dsContext.GetPerFrameAllocator(), "LayerVector");
+    QVector<SLayer *> renderableLayers(m_demonContext.GetPerFrameAllocator(), "LayerVector");
     // Found by fair roll of the dice.
     renderableLayers.reserve(4);
 
@@ -194,18 +194,18 @@ bool Qt3DSRendererImpl::PrepareLayerForRender(SLayer &inLayer,
     return retval;
 }
 
-void Qt3DSRendererImpl::RenderLayer(SLayer &inLayer, const QVector2D &inViewportDimensions,
+void QDemonRendererImpl::RenderLayer(SLayer &inLayer, const QVector2D &inViewportDimensions,
                                     bool clear, QVector3D clearColor, bool inRenderSiblings,
                                     const SRenderInstanceId id)
 {
     (void)inViewportDimensions;
-    QVector<SLayer *> renderableLayers(m_qt3dsContext.GetPerFrameAllocator(), "LayerVector");
+    QVector<SLayer *> renderableLayers(m_demonContext.GetPerFrameAllocator(), "LayerVector");
     // Found by fair roll of the dice.
     renderableLayers.reserve(4);
 
     BuildRenderableLayers(inLayer, renderableLayers, inRenderSiblings);
 
-    QDemonRenderContext &theRenderContext(m_qt3dsContext.GetRenderContext());
+    QDemonRenderContext &theRenderContext(m_demonContext.GetRenderContext());
     QDemonRenderFrameBuffer *theFB = theRenderContext.GetRenderTarget();
     for (QVector<SLayer *>::reverse_iterator iter = renderableLayers.rbegin(),
          end = renderableLayers.rend();
@@ -264,7 +264,7 @@ void Qt3DSRendererImpl::RenderLayer(SLayer &inLayer, const QVector2D &inViewport
     }
 }
 
-SLayer *Qt3DSRendererImpl::GetLayerForNode(const SNode &inNode) const
+SLayer *QDemonRendererImpl::GetLayerForNode(const SNode &inNode) const
 {
     if (inNode.m_Type == GraphObjectTypes::Layer) {
         return &const_cast<SLayer &>(static_cast<const SLayer &>(inNode));
@@ -274,7 +274,7 @@ SLayer *Qt3DSRendererImpl::GetLayerForNode(const SNode &inNode) const
     return nullptr;
 }
 
-SLayerRenderData *Qt3DSRendererImpl::GetOrCreateLayerRenderDataForNode(const SNode &inNode,
+SLayerRenderData *QDemonRendererImpl::GetOrCreateLayerRenderDataForNode(const SNode &inNode,
                                                                        const SRenderInstanceId id)
 {
     const SLayer *theLayer = GetLayerForNode(inNode);
@@ -297,16 +297,16 @@ SLayerRenderData *Qt3DSRendererImpl::GetOrCreateLayerRenderDataForNode(const SNo
     return nullptr;
 }
 
-SCamera *Qt3DSRendererImpl::GetCameraForNode(const SNode &inNode) const
+SCamera *QDemonRendererImpl::GetCameraForNode(const SNode &inNode) const
 {
     SLayerRenderData *theLayer =
-            const_cast<Qt3DSRendererImpl &>(*this).GetOrCreateLayerRenderDataForNode(inNode);
+            const_cast<QDemonRendererImpl &>(*this).GetOrCreateLayerRenderDataForNode(inNode);
     if (theLayer)
         return theLayer->m_Camera;
     return nullptr;
 }
 
-QDemonOption<SCuboidRect> Qt3DSRendererImpl::GetCameraBounds(const SGraphObject &inObject)
+QDemonOption<SCuboidRect> QDemonRendererImpl::GetCameraBounds(const SGraphObject &inObject)
 {
     if (GraphObjectTypes::IsNodeType(inObject.m_Type)) {
         const SNode &theNode = static_cast<const SNode &>(inObject);
@@ -322,7 +322,7 @@ QDemonOption<SCuboidRect> Qt3DSRendererImpl::GetCameraBounds(const SGraphObject 
     return QDemonOption<SCuboidRect>();
 }
 
-void Qt3DSRendererImpl::DrawScreenRect(QDemonRenderRectF inRect, const QVector3D &inColor)
+void QDemonRendererImpl::DrawScreenRect(QDemonRenderRectF inRect, const QVector3D &inColor)
 {
     SCamera theScreenCamera;
     theScreenCamera.MarkDirty(NodeTransformDirtyFlag::TransformIsDirty);
@@ -414,12 +414,12 @@ void Qt3DSRendererImpl::DrawScreenRect(QDemonRenderRectF inRect, const QVector3D
     m_Context->Draw(QDemonRenderDrawMode::Lines, m_RectIndexBuffer->GetNumIndices(), 0);
 }
 
-void Qt3DSRendererImpl::SetupWidgetLayer()
+void QDemonRendererImpl::SetupWidgetLayer()
 {
-    QDemonRenderContext &theContext = m_qt3dsContext.GetRenderContext();
+    QDemonRenderContext &theContext = m_demonContext.GetRenderContext();
 
     if (!m_WidgetTexture) {
-        IResourceManager &theManager = m_qt3dsContext.GetResourceManager();
+        IResourceManager &theManager = m_demonContext.GetResourceManager();
         m_WidgetTexture = theManager.AllocateTexture2D(m_BeginFrameViewport.m_Width,
                                                        m_BeginFrameViewport.m_Height,
                                                        QDemonRenderTextureFormats::RGBA8);
@@ -442,14 +442,14 @@ void Qt3DSRendererImpl::SetupWidgetLayer()
         theContext.SetRenderTarget(m_WidgetFBO);
 }
 
-void Qt3DSRendererImpl::BeginFrame()
+void QDemonRendererImpl::BeginFrame()
 {
     for (quint32 idx = 0, end = m_LastFrameLayers.size(); idx < end; ++idx)
         m_LastFrameLayers[idx]->ResetForFrame();
     m_LastFrameLayers.clear();
-    m_BeginFrameViewport = m_qt3dsContext.GetRenderList().GetViewport();
+    m_BeginFrameViewport = m_demonContext.GetRenderList().GetViewport();
 }
-void Qt3DSRendererImpl::EndFrame()
+void QDemonRendererImpl::EndFrame()
 {
     if (m_WidgetTexture) {
         using QDemonRenderContextScopedProperty;
@@ -479,7 +479,7 @@ void Qt3DSRendererImpl::EndFrame()
         theCamera.CalculateViewProjectionMatrix(theViewProj);
         RenderQuad(theTextureDims, theViewProj, *m_WidgetTexture);
 
-        IResourceManager &theManager(m_qt3dsContext.GetResourceManager());
+        IResourceManager &theManager(m_demonContext.GetResourceManager());
         theManager.Release(*m_WidgetFBO);
         theManager.Release(*m_WidgetTexture);
         m_WidgetTexture = nullptr;
@@ -535,7 +535,7 @@ inline float ClampUVCoord(float inUVCoord, QDemonRenderTextureCoordOp::Enum inCo
 
 static QPair<QVector2D, QVector2D>
 GetMouseCoordsAndViewportFromSubObject(QVector2D inLocalHitUVSpace,
-                                       Qt3DSRenderPickSubResult &inSubResult)
+                                       QDemonRenderPickSubResult &inSubResult)
 {
     QMatrix4x4 theTextureMatrix(inSubResult.m_TextureMatrix);
     QVector3D theNewUVCoords(
@@ -550,7 +550,7 @@ GetMouseCoordsAndViewportFromSubObject(QVector2D inLocalHitUVSpace,
     return QPair<QVector2D, QVector2D>(theMouseCoords, theViewportDimensions);
 }
 
-SPickResultProcessResult Qt3DSRendererImpl::ProcessPickResultList(bool inPickEverything)
+SPickResultProcessResult QDemonRendererImpl::ProcessPickResultList(bool inPickEverything)
 {
     if (m_LastPickResults.empty())
         return SPickResultProcessResult();
@@ -628,7 +628,7 @@ SPickResultProcessResult Qt3DSRendererImpl::ProcessPickResultList(bool inPickEve
     return thePickResult;
 }
 
-QDemonRenderPickResult Qt3DSRendererImpl::Pick(SLayer &inLayer, const QVector2D &inViewportDimensions,
+QDemonRenderPickResult QDemonRendererImpl::Pick(SLayer &inLayer, const QVector2D &inViewportDimensions,
                                               const QVector2D &inMouseCoords, bool inPickSiblings,
                                               bool inPickEverything, const SRenderInstanceId id)
 {
@@ -690,16 +690,16 @@ static inline QDemonOption<QVector2D> IntersectRayWithNode(const SNode &inNode,
     return QDemonEmpty();
 }
 
-static inline Qt3DSRenderPickSubResult ConstructSubResult(SImage &inImage)
+static inline QDemonRenderPickSubResult ConstructSubResult(SImage &inImage)
 {
     STextureDetails theDetails = inImage.m_TextureData.m_Texture->GetTextureDetails();
-    return Qt3DSRenderPickSubResult(*inImage.m_LastFrameOffscreenRenderer,
+    return QDemonRenderPickSubResult(*inImage.m_LastFrameOffscreenRenderer,
                                     inImage.m_TextureTransform, inImage.m_HorizontalTilingMode,
                                     inImage.m_VerticalTilingMode, theDetails.m_Width,
                                     theDetails.m_Height);
 }
 
-QDemonOption<QVector2D> Qt3DSRendererImpl::FacePosition(SNode &inNode, QDemonBounds3 inBounds,
+QDemonOption<QVector2D> QDemonRendererImpl::FacePosition(SNode &inNode, QDemonBounds3 inBounds,
                                                   const QMatrix4x4 &inGlobalTransform,
                                                   const QVector2D &inViewportDimensions,
                                                   const QVector2D &inMouseCoords,
@@ -742,7 +742,7 @@ QDemonOption<QVector2D> Qt3DSRendererImpl::FacePosition(SNode &inNode, QDemonBou
                 return QDemonEmpty();
             }
             QDemonBounds3 theModelBounds = theParentModel->GetBounds(
-                        GetQt3DSContext().GetBufferManager(), GetQt3DSContext().GetPathManager(), false);
+                        GetDemonContext().GetBufferManager(), GetDemonContext().GetPathManager(), false);
 
             if (theModelBounds.isEmpty()) {
                 Q_ASSERT(false);
@@ -755,7 +755,7 @@ QDemonOption<QVector2D> Qt3DSRendererImpl::FacePosition(SNode &inNode, QDemonBou
             if (relativeHit.isEmpty()) {
                 return QDemonEmpty();
             }
-            Qt3DSRenderPickSubResult theResult = ConstructSubResult(theImage);
+            QDemonRenderPickSubResult theResult = ConstructSubResult(theImage);
             QVector2D hitInUVSpace = (*relativeHit) + QVector2D(.5f, .5f);
             QPair<QVector2D, QVector2D> mouseAndViewport =
                     GetMouseCoordsAndViewportFromSubObject(hitInUVSpace, theResult);
@@ -776,7 +776,7 @@ QDemonOption<QVector2D> Qt3DSRendererImpl::FacePosition(SNode &inNode, QDemonBou
 }
 
 QDemonRenderPickResult
-Qt3DSRendererImpl::PickOffscreenLayer(SLayer &/*inLayer*/, const QVector2D & /*inViewportDimensions*/
+QDemonRendererImpl::PickOffscreenLayer(SLayer &/*inLayer*/, const QVector2D & /*inViewportDimensions*/
                                       ,
                                       const QVector2D & /*inMouseCoords*/
                                       ,
@@ -785,17 +785,17 @@ Qt3DSRendererImpl::PickOffscreenLayer(SLayer &/*inLayer*/, const QVector2D & /*i
     return QDemonRenderPickResult();
 }
 
-QVector3D Qt3DSRendererImpl::UnprojectToPosition(SNode &inNode, QVector3D &inPosition,
+QVector3D QDemonRendererImpl::UnprojectToPosition(SNode &inNode, QVector3D &inPosition,
                                                  const QVector2D &inMouseVec) const
 {
     // Translate mouse into layer's coordinates
     SLayerRenderData *theData =
-            const_cast<Qt3DSRendererImpl &>(*this).GetOrCreateLayerRenderDataForNode(inNode);
+            const_cast<QDemonRendererImpl &>(*this).GetOrCreateLayerRenderDataForNode(inNode);
     if (theData == nullptr || theData->m_Camera == nullptr) {
         return QVector3D(0, 0, 0);
     } // Q_ASSERT( false ); return QVector3D(0,0,0); }
 
-    QSize theWindow = m_qt3dsContext.GetWindowDimensions();
+    QSize theWindow = m_demonContext.GetWindowDimensions();
     QVector2D theDims((float)theWindow.width(), (float)theWindow.height());
 
     SLayerRenderPreparationResult &thePrepResult(*theData->m_LayerPrepResult);
@@ -804,12 +804,12 @@ QVector3D Qt3DSRendererImpl::UnprojectToPosition(SNode &inNode, QVector3D &inPos
     return theData->m_Camera->UnprojectToPosition(inPosition, theRay);
 }
 
-QVector3D Qt3DSRendererImpl::UnprojectWithDepth(SNode &inNode, QVector3D &,
+QVector3D QDemonRendererImpl::UnprojectWithDepth(SNode &inNode, QVector3D &,
                                                 const QVector3D &inMouseVec) const
 {
     // Translate mouse into layer's coordinates
     SLayerRenderData *theData =
-            const_cast<Qt3DSRendererImpl &>(*this).GetOrCreateLayerRenderDataForNode(inNode);
+            const_cast<QDemonRendererImpl &>(*this).GetOrCreateLayerRenderDataForNode(inNode);
     if (theData == nullptr || theData->m_Camera == nullptr) {
         return QVector3D(0, 0, 0);
     } // Q_ASSERT( false ); return QVector3D(0,0,0); }
@@ -819,7 +819,7 @@ QVector3D Qt3DSRendererImpl::UnprojectWithDepth(SNode &inNode, QVector3D &,
     float theDepth = inMouseVec.z();
 
     SLayerRenderPreparationResult &thePrepResult(*theData->m_LayerPrepResult);
-    QSize theWindow = m_qt3dsContext.GetWindowDimensions();
+    QSize theWindow = m_demonContext.GetWindowDimensions();
     SRay theRay = thePrepResult.GetPickRay(
                 theMouse, QVector2D((float)theWindow.width(), (float)theWindow.height()), true);
     QVector3D theTargetPosition = theRay.m_Origin + theRay.m_Direction * theDepth;
@@ -833,11 +833,11 @@ QVector3D Qt3DSRendererImpl::UnprojectWithDepth(SNode &inNode, QVector3D &,
     return theTargetPosition;
 }
 
-QVector3D Qt3DSRendererImpl::ProjectPosition(SNode &inNode, const QVector3D &inPosition) const
+QVector3D QDemonRendererImpl::ProjectPosition(SNode &inNode, const QVector3D &inPosition) const
 {
     // Translate mouse into layer's coordinates
     SLayerRenderData *theData =
-            const_cast<Qt3DSRendererImpl &>(*this).GetOrCreateLayerRenderDataForNode(inNode);
+            const_cast<QDemonRendererImpl &>(*this).GetOrCreateLayerRenderDataForNode(inNode);
     if (theData == nullptr || theData->m_Camera == nullptr) {
         return QVector3D(0, 0, 0);
     }
@@ -864,13 +864,13 @@ QVector3D Qt3DSRendererImpl::ProjectPosition(SNode &inNode, const QVector3D &inP
     mouseVec.setY(mouseVec.y() + theViewport.m_Y);
 
     // Flip the y into window coordinates so it matches the mouse.
-    QSize theWindow = m_qt3dsContext.GetWindowDimensions();
+    QSize theWindow = m_demonContext.GetWindowDimensions();
     mouseVec.setY(theWindow.height() - mouseVec.y());
 
     return mouseVec;
 }
 
-QDemonOption<SLayerPickSetup> Qt3DSRendererImpl::GetLayerPickSetup(SLayer &inLayer,
+QDemonOption<SLayerPickSetup> QDemonRendererImpl::GetLayerPickSetup(SLayer &inLayer,
                                                              const QVector2D &inMouseCoords,
                                                              const QSize &inPickDims)
 {
@@ -879,7 +879,7 @@ QDemonOption<SLayerPickSetup> Qt3DSRendererImpl::GetLayerPickSetup(SLayer &inLay
         Q_ASSERT(false);
         return QDemonEmpty();
     }
-    QSize theWindow = m_qt3dsContext.GetWindowDimensions();
+    QSize theWindow = m_demonContext.GetWindowDimensions();
     QVector2D theDims((float)theWindow.width(), (float)theWindow.height());
     // The mouse is relative to the layer
     QDemonOption<QVector2D> theLocalMouse = GetLayerMouseCoords(*theData, inMouseCoords, theDims, false);
@@ -926,7 +926,7 @@ QDemonOption<SLayerPickSetup> Qt3DSRendererImpl::GetLayerPickSetup(SLayer &inLay
                                             (quint32)layerToPresentation.m_Height));
 }
 
-QDemonOption<QDemonRenderRectF> Qt3DSRendererImpl::GetLayerRect(SLayer &inLayer)
+QDemonOption<QDemonRenderRectF> QDemonRendererImpl::GetLayerRect(SLayer &inLayer)
 {
     SLayerRenderData *theData = GetOrCreateLayerRenderDataForNode(inLayer);
     if (theData == nullptr || theData->m_Camera == nullptr) {
@@ -938,7 +938,7 @@ QDemonOption<QDemonRenderRectF> Qt3DSRendererImpl::GetLayerRect(SLayer &inLayer)
 }
 
 // This doesn't have to be cheap.
-void Qt3DSRendererImpl::RunLayerRender(SLayer &inLayer, const QMatrix4x4 &inViewProjection)
+void QDemonRendererImpl::RunLayerRender(SLayer &inLayer, const QMatrix4x4 &inViewProjection)
 {
     SLayerRenderData *theData = GetOrCreateLayerRenderDataForNode(inLayer);
     if (theData == nullptr || theData->m_Camera == nullptr) {
@@ -948,21 +948,21 @@ void Qt3DSRendererImpl::RunLayerRender(SLayer &inLayer, const QMatrix4x4 &inView
     theData->PrepareAndRender(inViewProjection);
 }
 
-void Qt3DSRendererImpl::AddRenderWidget(IRenderWidget &inWidget)
+void QDemonRendererImpl::AddRenderWidget(IRenderWidget &inWidget)
 {
     SLayerRenderData *theData = GetOrCreateLayerRenderDataForNode(inWidget.GetNode());
     if (theData)
         theData->AddRenderWidget(inWidget);
 }
 
-void Qt3DSRendererImpl::RenderLayerRect(SLayer &inLayer, const QVector3D &inColor)
+void QDemonRendererImpl::RenderLayerRect(SLayer &inLayer, const QVector3D &inColor)
 {
     SLayerRenderData *theData = GetOrCreateLayerRenderDataForNode(inLayer);
     if (theData)
         theData->m_BoundingRectColor = inColor;
 }
 
-SScaleAndPosition Qt3DSRendererImpl::GetWorldToPixelScaleFactor(const SCamera &inCamera,
+SScaleAndPosition QDemonRendererImpl::GetWorldToPixelScaleFactor(const SCamera &inCamera,
                                                                 const QVector3D &inWorldPoint,
                                                                 SLayerRenderData &inRenderData)
 {
@@ -993,7 +993,7 @@ SScaleAndPosition Qt3DSRendererImpl::GetWorldToPixelScaleFactor(const SCamera &i
     }
 }
 
-SScaleAndPosition Qt3DSRendererImpl::GetWorldToPixelScaleFactor(SLayer &inLayer,
+SScaleAndPosition QDemonRendererImpl::GetWorldToPixelScaleFactor(SLayer &inLayer,
                                                                 const QVector3D &inWorldPoint)
 {
     SLayerRenderData *theData = GetOrCreateLayerRenderDataForNode(inLayer);
@@ -1004,12 +1004,12 @@ SScaleAndPosition Qt3DSRendererImpl::GetWorldToPixelScaleFactor(SLayer &inLayer,
     return GetWorldToPixelScaleFactor(*theData->m_Camera, inWorldPoint, *theData);
 }
 
-void Qt3DSRendererImpl::ReleaseLayerRenderResources(SLayer &inLayer, const SRenderInstanceId id)
+void QDemonRendererImpl::ReleaseLayerRenderResources(SLayer &inLayer, const SRenderInstanceId id)
 {
     TInstanceRenderMap::iterator theIter
             = m_InstanceRenderMap.find(combineLayerAndId(&inLayer, id));
     if (theIter != m_InstanceRenderMap.end()) {
-        TLayerRenderList::iterator theLastFrm = eastl::find(
+        TLayerRenderList::iterator theLastFrm = std::find(
                     m_LastFrameLayers.begin(), m_LastFrameLayers.end(), theIter->second.mPtr);
         if (theLastFrm != m_LastFrameLayers.end()) {
             theIter->second->ResetForFrame();
@@ -1019,7 +1019,7 @@ void Qt3DSRendererImpl::ReleaseLayerRenderResources(SLayer &inLayer, const SRend
     }
 }
 
-void Qt3DSRendererImpl::RenderQuad(const QVector2D inDimensions, const QMatrix4x4 &inMVP,
+void QDemonRendererImpl::RenderQuad(const QVector2D inDimensions, const QMatrix4x4 &inMVP,
                                    QDemonRenderTexture2D &inQuadTexture)
 {
     m_Context->SetCullingEnabled(false);
@@ -1035,7 +1035,7 @@ void Qt3DSRendererImpl::RenderQuad(const QVector2D inDimensions, const QMatrix4x
     theContext.Draw(QDemonRenderDrawMode::Triangles, m_QuadIndexBuffer->GetNumIndices(), 0);
 }
 
-void Qt3DSRendererImpl::RenderQuad()
+void QDemonRendererImpl::RenderQuad()
 {
     m_Context->SetCullingEnabled(false);
     GenerateXYQuad();
@@ -1043,7 +1043,7 @@ void Qt3DSRendererImpl::RenderQuad()
     m_Context->Draw(QDemonRenderDrawMode::Triangles, m_QuadIndexBuffer->GetNumIndices(), 0);
 }
 
-void Qt3DSRendererImpl::RenderPointsIndirect()
+void QDemonRendererImpl::RenderPointsIndirect()
 {
     m_Context->SetCullingEnabled(false);
     GenerateXYZPoint();
@@ -1051,19 +1051,19 @@ void Qt3DSRendererImpl::RenderPointsIndirect()
     m_Context->DrawIndirect(QDemonRenderDrawMode::Points, 0);
 }
 
-void Qt3DSRendererImpl::LayerNeedsFrameClear(SLayerRenderData &inLayer)
+void QDemonRendererImpl::LayerNeedsFrameClear(SLayerRenderData &inLayer)
 {
     m_LastFrameLayers.push_back(&inLayer);
 }
 
-void Qt3DSRendererImpl::BeginLayerDepthPassRender(SLayerRenderData &inLayer)
+void QDemonRendererImpl::BeginLayerDepthPassRender(SLayerRenderData &inLayer)
 {
     m_CurrentLayer = &inLayer;
 }
 
-void Qt3DSRendererImpl::EndLayerDepthPassRender() { m_CurrentLayer = nullptr; }
+void QDemonRendererImpl::EndLayerDepthPassRender() { m_CurrentLayer = nullptr; }
 
-void Qt3DSRendererImpl::BeginLayerRender(SLayerRenderData &inLayer)
+void QDemonRendererImpl::BeginLayerRender(SLayerRenderData &inLayer)
 {
     m_CurrentLayer = &inLayer;
     // Remove all of the shaders from the layer shader set
@@ -1071,13 +1071,13 @@ void Qt3DSRendererImpl::BeginLayerRender(SLayerRenderData &inLayer)
     // shaders that are in the layer.
     m_LayerShaders.clear();
 }
-void Qt3DSRendererImpl::EndLayerRender() { m_CurrentLayer = nullptr; }
+void QDemonRendererImpl::EndLayerRender() { m_CurrentLayer = nullptr; }
 
 // Allocate an object that lasts only this frame.
 #define RENDER_FRAME_NEW(type)                                                                     \
     new (m_PerFrameAllocator.m_FastAllocator.allocate(sizeof(type), __FILE__, __LINE__)) type
 
-void Qt3DSRendererImpl::PrepareImageForIbl(SImage &inImage)
+void QDemonRendererImpl::PrepareImageForIbl(SImage &inImage)
 {
     if (inImage.m_TextureData.m_Texture && inImage.m_TextureData.m_Texture->GetNumMipmaps() < 1)
         inImage.m_TextureData.m_Texture->GenerateMipmaps();
@@ -1103,9 +1103,9 @@ void FillBoneIdNodeMap(SNode &childNode, QHash<long, SNode *> &ioMap)
         FillBoneIdNodeMap(*childChild, ioMap);
 }
 
-bool Qt3DSRendererImpl::PrepareTextureAtlasForRender()
+bool QDemonRendererImpl::PrepareTextureAtlasForRender()
 {
-    ITextTextureAtlas *theTextureAtlas = m_qt3dsContext.GetTextureAtlas();
+    ITextTextureAtlas *theTextureAtlas = m_demonContext.GetTextureAtlas();
     if (theTextureAtlas == nullptr)
         return false;
 
@@ -1120,7 +1120,7 @@ bool Qt3DSRendererImpl::PrepareTextureAtlasForRender()
         QDemonRenderContextScopedProperty<QDemonRenderFrameBuffer *> __fbo(
                     *m_Context, &QDemonRenderContext::GetRenderTarget, &QDemonRenderContext::SetRenderTarget);
 
-        ITextRenderer &theTextRenderer(*m_qt3dsContext.GetOnscreenTextRenderer());
+        ITextRenderer &theTextRenderer(*m_demonContext.GetOnscreenTextRenderer());
         TTextTextureAtlasDetailsAndTexture theResult = theTextureAtlas->PrepareTextureAtlas();
         if (!theResult.first.m_EntryCount) {
             Q_ASSERT(theResult.first.m_EntryCount);
@@ -1141,17 +1141,17 @@ bool Qt3DSRendererImpl::PrepareTextureAtlasForRender()
         mAttribLayout = m_Context->CreateAttributeLayout(toConstDataRef(theEntries, 2));
 
         QDemonRenderFrameBuffer *theAtlasFB(
-                    m_qt3dsContext.GetResourceManager().AllocateFrameBuffer());
+                    m_demonContext.GetResourceManager().AllocateFrameBuffer());
         theAtlasFB->Attach(QDemonRenderFrameBufferAttachments::Color0, *theResult.second);
-        m_qt3dsContext.GetRenderContext().SetRenderTarget(theAtlasFB);
+        m_demonContext.GetRenderContext().SetRenderTarget(theAtlasFB);
 
         // this texture contains our single entries
         QDemonRenderTexture2D *theTexture = nullptr;
         if (m_Context->GetRenderContextType() == QDemonRenderContextValues::GLES2) {
-            theTexture = m_qt3dsContext.GetResourceManager()
+            theTexture = m_demonContext.GetResourceManager()
                     .AllocateTexture2D(32, 32, QDemonRenderTextureFormats::RGBA8);
         } else {
-            theTexture = m_qt3dsContext.GetResourceManager()
+            theTexture = m_demonContext.GetResourceManager()
                     .AllocateTexture2D(32, 32, QDemonRenderTextureFormats::Alpha8);
         }
         m_Context->SetClearColor(QVector4D(0, 0, 0, 0));
@@ -1229,8 +1229,8 @@ bool Qt3DSRendererImpl::PrepareTextureAtlasForRender()
             }
         }
 
-        m_qt3dsContext.GetResourceManager().Release(*theTexture);
-        m_qt3dsContext.GetResourceManager().Release(*theAtlasFB);
+        m_demonContext.GetResourceManager().Release(*theTexture);
+        m_demonContext.GetResourceManager().Release(*theAtlasFB);
 
         return true;
     }
@@ -1238,7 +1238,7 @@ bool Qt3DSRendererImpl::PrepareTextureAtlasForRender()
     return theTextureAtlas->IsInitialized();
 }
 
-QDemonOption<QVector2D> Qt3DSRendererImpl::GetLayerMouseCoords(SLayerRenderData &inLayerRenderData,
+QDemonOption<QVector2D> QDemonRendererImpl::GetLayerMouseCoords(SLayerRenderData &inLayerRenderData,
                                                          const QVector2D &inMouseCoords,
                                                          const QVector2D &inViewportDimensions,
                                                          bool forceImageIntersect) const
@@ -1249,7 +1249,7 @@ QDemonOption<QVector2D> Qt3DSRendererImpl::GetLayerMouseCoords(SLayerRenderData 
     return QDemonEmpty();
 }
 
-void Qt3DSRendererImpl::GetLayerHitObjectList(SLayerRenderData &inLayerRenderData,
+void QDemonRendererImpl::GetLayerHitObjectList(SLayerRenderData &inLayerRenderData,
                                               const QVector2D &inViewportDimensions,
                                               const QVector2D &inPresCoords, bool inPickEverything,
                                               TPickResultArray &outIntersectionResult)
@@ -1305,12 +1305,12 @@ void Qt3DSRendererImpl::GetLayerHitObjectList(SLayerRenderData &inLayerRenderDat
     }
 }
 
-static inline Qt3DSRenderPickSubResult ConstructSubResult(SRenderableImage &inImage)
+static inline QDemonRenderPickSubResult ConstructSubResult(SRenderableImage &inImage)
 {
     return ConstructSubResult(inImage.m_Image);
 }
 
-void Qt3DSRendererImpl::IntersectRayWithSubsetRenderable(
+void QDemonRendererImpl::IntersectRayWithSubsetRenderable(
         const SRay &inRay, SRenderableObject &inRenderableObject,
         TPickResultArray &outIntersectionResultList)
 {
@@ -1338,13 +1338,13 @@ void Qt3DSRendererImpl::IntersectRayWithSubsetRenderable(
         // For subsets, we know we can find images on them which may have been the result
         // of rendering a sub-presentation.
         if (inRenderableObject.m_RenderableFlags.IsDefaultMaterialMeshSubset()) {
-            Qt3DSRenderPickSubResult *theLastResult = nullptr;
+            QDemonRenderPickSubResult *theLastResult = nullptr;
             for (SRenderableImage *theImage =
                  static_cast<SSubsetRenderable *>(&inRenderableObject)->m_FirstImage;
                  theImage != nullptr; theImage = theImage->m_NextImage) {
                 if (theImage->m_Image.m_LastFrameOffscreenRenderer != nullptr
                         && theImage->m_Image.m_TextureData.m_Texture != nullptr) {
-                    Qt3DSRenderPickSubResult *theSubResult = new Qt3DSRenderPickSubResult(ConstructSubResult(*theImage));
+                    QDemonRenderPickSubResult *theSubResult = new QDemonRenderPickSubResult(ConstructSubResult(*theImage));
                     if (theLastResult == nullptr)
                         outIntersectionResultList.back().m_FirstSubObject = theSubResult;
                     else
@@ -1360,7 +1360,7 @@ void Qt3DSRendererImpl::IntersectRayWithSubsetRenderable(
 #define _snprintf snprintf
 #endif
 
-QDemonRenderShaderProgram *Qt3DSRendererImpl::CompileShader(const QString &inName,
+QDemonRenderShaderProgram *QDemonRendererImpl::CompileShader(const QString &inName,
                                                             const char *inVert,
                                                             const char *inFrag)
 {
@@ -1392,7 +1392,7 @@ float TranslateQuadraticAttenuation(float attenuation)
     return attenuation * 0.0000001f;
 }
 
-SShaderGeneratorGeneratedShader *Qt3DSRendererImpl::GetShader(SSubsetRenderable &inRenderable,
+SShaderGeneratorGeneratedShader *QDemonRendererImpl::GetShader(SSubsetRenderable &inRenderable,
                                                               TShaderFeatureSet inFeatureSet)
 {
     if (m_CurrentLayer == nullptr) {
@@ -1436,7 +1436,7 @@ static QVector3D g_fullScreenRectFace[] = {
 static QVector2D g_fullScreenRectUVs[] = { QVector2D(0, 0), QVector2D(0, 1), QVector2D(1, 1),
                                            QVector2D(1, 0) };
 
-void Qt3DSRendererImpl::GenerateXYQuad()
+void QDemonRendererImpl::GenerateXYQuad()
 {
     if (m_QuadInputAssembler)
         return;
@@ -1481,7 +1481,7 @@ void Qt3DSRendererImpl::GenerateXYQuad()
                 toConstDataRef(&strides, 1), toConstDataRef(&offsets, 1));
 }
 
-void Qt3DSRendererImpl::GenerateXYZPoint()
+void QDemonRendererImpl::GenerateXYZPoint()
 {
     if (m_PointInputAssembler)
         return;
@@ -1512,7 +1512,7 @@ void Qt3DSRendererImpl::GenerateXYZPoint()
                 toConstDataRef(&strides, 1), toConstDataRef(&offsets, 1));
 }
 
-QPair<QDemonRenderVertexBuffer *, QDemonRenderIndexBuffer *> Qt3DSRendererImpl::GetXYQuad()
+QPair<QDemonRenderVertexBuffer *, QDemonRenderIndexBuffer *> QDemonRendererImpl::GetXYQuad()
 {
     if (!m_QuadInputAssembler)
         GenerateXYQuad();
@@ -1520,7 +1520,7 @@ QPair<QDemonRenderVertexBuffer *, QDemonRenderIndexBuffer *> Qt3DSRendererImpl::
     return QPair<QDemonRenderVertexBuffer *, QDemonRenderIndexBuffer *>(m_QuadVertexBuffer.mPtr, m_QuadIndexBuffer.mPtr);
 }
 
-SLayerGlobalRenderProperties Qt3DSRendererImpl::GetLayerGlobalRenderProperties()
+SLayerGlobalRenderProperties QDemonRendererImpl::GetLayerGlobalRenderProperties()
 {
     SLayerRenderData &theData = *m_CurrentLayer;
     SLayer &theLayer = theData.m_Layer;
@@ -1535,7 +1535,7 @@ SLayerGlobalRenderProperties Qt3DSRendererImpl::GetLayerGlobalRenderProperties()
                 theLayer.m_Probe2Pos, theLayer.m_Probe2Fade, theLayer.m_ProbeFov);
 }
 
-void Qt3DSRendererImpl::GenerateXYQuadStrip()
+void QDemonRendererImpl::GenerateXYQuadStrip()
 {
     if (m_QuadStripInputAssembler)
         return;
@@ -1565,7 +1565,7 @@ void Qt3DSRendererImpl::GenerateXYQuadStrip()
                 toConstDataRef(&strides, 1), toConstDataRef(&offsets, 1));
 }
 
-void Qt3DSRendererImpl::UpdateCbAoShadow(const SLayer *pLayer, const SCamera *pCamera,
+void QDemonRendererImpl::UpdateCbAoShadow(const SLayer *pLayer, const SCamera *pCamera,
                                          CResourceTexture2D &inDepthTexture)
 {
     if (m_Context->GetConstantBufferSupport()) {
@@ -1630,7 +1630,7 @@ void Qt3DSRendererImpl::UpdateCbAoShadow(const SLayer *pLayer, const SCamera *pC
 
 // widget context implementation
 
-QDemonRenderVertexBuffer &Qt3DSRendererImpl::GetOrCreateVertexBuffer(QString &inStr,
+QDemonRenderVertexBuffer &QDemonRendererImpl::GetOrCreateVertexBuffer(QString &inStr,
                                                                      quint32 stride,
                                                                      QDemonConstDataRef<quint8> bufferData)
 {
@@ -1646,7 +1646,7 @@ QDemonRenderVertexBuffer &Qt3DSRendererImpl::GetOrCreateVertexBuffer(QString &in
     return *retval;
 }
 QDemonRenderIndexBuffer &
-Qt3DSRendererImpl::GetOrCreateIndexBuffer(QString &inStr,
+QDemonRendererImpl::GetOrCreateIndexBuffer(QString &inStr,
                                           QDemonRenderComponentTypes::Enum componentType,
                                           size_t size, QDemonConstDataRef<quint8> bufferData)
 {
@@ -1663,7 +1663,7 @@ Qt3DSRendererImpl::GetOrCreateIndexBuffer(QString &inStr,
     return *retval;
 }
 
-QDemonRenderAttribLayout &Qt3DSRendererImpl::CreateAttributeLayout(
+QDemonRenderAttribLayout &QDemonRendererImpl::CreateAttributeLayout(
         QDemonConstDataRef<QDemonRenderVertexBufferEntry> attribs)
 {
     // create our attribute layout
@@ -1671,7 +1671,7 @@ QDemonRenderAttribLayout &Qt3DSRendererImpl::CreateAttributeLayout(
     return *theAttribLAyout;
 }
 
-QDemonRenderInputAssembler &Qt3DSRendererImpl::GetOrCreateInputAssembler(
+QDemonRenderInputAssembler &QDemonRendererImpl::GetOrCreateInputAssembler(
         QString &inStr, QDemonRenderAttribLayout *attribLayout,
         QDemonConstDataRef<QDemonRenderVertexBuffer *> buffers, const QDemonRenderIndexBuffer *indexBuffer,
         QDemonConstDataRef<quint32> strides, QDemonConstDataRef<quint32> offsets)
@@ -1686,7 +1686,7 @@ QDemonRenderInputAssembler &Qt3DSRendererImpl::GetOrCreateInputAssembler(
     return *retval;
 }
 
-QDemonRenderVertexBuffer *Qt3DSRendererImpl::GetVertexBuffer(QString &inStr)
+QDemonRenderVertexBuffer *QDemonRendererImpl::GetVertexBuffer(QString &inStr)
 {
     TStrVertBufMap::iterator theIter = m_WidgetVertexBuffers.find(inStr);
     if (theIter != m_WidgetVertexBuffers.end())
@@ -1694,7 +1694,7 @@ QDemonRenderVertexBuffer *Qt3DSRendererImpl::GetVertexBuffer(QString &inStr)
     return nullptr;
 }
 
-QDemonRenderIndexBuffer *Qt3DSRendererImpl::GetIndexBuffer(QString &inStr)
+QDemonRenderIndexBuffer *QDemonRendererImpl::GetIndexBuffer(QString &inStr)
 {
     TStrIndexBufMap::iterator theIter = m_WidgetIndexBuffers.find(inStr);
     if (theIter != m_WidgetIndexBuffers.end())
@@ -1702,7 +1702,7 @@ QDemonRenderIndexBuffer *Qt3DSRendererImpl::GetIndexBuffer(QString &inStr)
     return nullptr;
 }
 
-QDemonRenderInputAssembler *Qt3DSRendererImpl::GetInputAssembler(QString &inStr)
+QDemonRenderInputAssembler *QDemonRendererImpl::GetInputAssembler(QString &inStr)
 {
     TStrIAMap::iterator theIter = m_WidgetInputAssembler.find(inStr);
     if (theIter != m_WidgetInputAssembler.end())
@@ -1710,7 +1710,7 @@ QDemonRenderInputAssembler *Qt3DSRendererImpl::GetInputAssembler(QString &inStr)
     return nullptr;
 }
 
-QDemonRenderShaderProgram *Qt3DSRendererImpl::GetShader(const QString &inStr)
+QDemonRenderShaderProgram *QDemonRendererImpl::GetShader(const QString &inStr)
 {
     TStrShaderMap::iterator theIter = m_WidgetShaders.find(inStr);
     if (theIter != m_WidgetShaders.end())
@@ -1718,7 +1718,7 @@ QDemonRenderShaderProgram *Qt3DSRendererImpl::GetShader(const QString &inStr)
     return nullptr;
 }
 
-QDemonRenderShaderProgram *Qt3DSRendererImpl::CompileAndStoreShader(const QString &inStr)
+QDemonRenderShaderProgram *QDemonRendererImpl::CompileAndStoreShader(const QString &inStr)
 {
     QDemonRenderShaderProgram *newProgram = GetProgramGenerator().CompileGeneratedShader(inStr);
     if (newProgram)
@@ -1726,30 +1726,30 @@ QDemonRenderShaderProgram *Qt3DSRendererImpl::CompileAndStoreShader(const QStrin
     return newProgram;
 }
 
-IShaderProgramGenerator &Qt3DSRendererImpl::GetProgramGenerator()
+IShaderProgramGenerator &QDemonRendererImpl::GetProgramGenerator()
 {
-    return m_qt3dsContext.GetShaderProgramGenerator();
+    return m_demonContext.GetShaderProgramGenerator();
 }
 
-STextDimensions Qt3DSRendererImpl::MeasureText(const STextRenderInfo &inText)
+STextDimensions QDemonRendererImpl::MeasureText(const STextRenderInfo &inText)
 {
-    if (m_qt3dsContext.GetTextRenderer() != nullptr)
-        return m_qt3dsContext.GetTextRenderer()->MeasureText(inText, 0);
+    if (m_demonContext.GetTextRenderer() != nullptr)
+        return m_demonContext.GetTextRenderer()->MeasureText(inText, 0);
     return STextDimensions();
 }
 
-void Qt3DSRendererImpl::RenderText(const STextRenderInfo &inText, const QVector3D &inTextColor,
+void QDemonRendererImpl::RenderText(const STextRenderInfo &inText, const QVector3D &inTextColor,
                                    const QVector3D &inBackgroundColor, const QMatrix4x4 &inMVP)
 {
-    if (m_qt3dsContext.GetTextRenderer() != nullptr) {
-        ITextRenderer &theTextRenderer(*m_qt3dsContext.GetTextRenderer());
-        QDemonRenderTexture2D *theTexture = m_qt3dsContext.GetResourceManager().AllocateTexture2D(
+    if (m_demonContext.GetTextRenderer() != nullptr) {
+        ITextRenderer &theTextRenderer(*m_demonContext.GetTextRenderer());
+        QDemonRenderTexture2D *theTexture = m_demonContext.GetResourceManager().AllocateTexture2D(
                     32, 32, QDemonRenderTextureFormats::RGBA8);
         STextTextureDetails theTextTextureDetails =
                 theTextRenderer.RenderText(inText, *theTexture);
         STextRenderHelper theTextHelper(GetTextWidgetShader());
         if (theTextHelper.m_Shader != nullptr) {
-            m_qt3dsContext.GetRenderContext().SetBlendingEnabled(false);
+            m_demonContext.GetRenderContext().SetBlendingEnabled(false);
             STextScaleAndOffset theScaleAndOffset(*theTexture, theTextTextureDetails, inText);
             theTextHelper.m_Shader->Render(*theTexture, theScaleAndOffset,
                                            QVector4D(inTextColor, 1.0f), inMVP, QVector2D(0, 0),
@@ -1757,21 +1757,21 @@ void Qt3DSRendererImpl::RenderText(const STextRenderInfo &inText, const QVector3
                                            theTextHelper.m_QuadInputAssembler.GetIndexCount(),
                                            theTextTextureDetails, inBackgroundColor);
         }
-        m_qt3dsContext.GetResourceManager().Release(*theTexture);
+        m_demonContext.GetResourceManager().Release(*theTexture);
     }
 }
 
-void Qt3DSRendererImpl::RenderText2D(float x, float y,
+void QDemonRendererImpl::RenderText2D(float x, float y,
                                      QDemonOption<QVector3D> inColor,
                                      const char *text)
 {
-    if (m_qt3dsContext.GetOnscreenTextRenderer() != nullptr) {
+    if (m_demonContext.GetOnscreenTextRenderer() != nullptr) {
         GenerateXYQuadStrip();
 
         if (PrepareTextureAtlasForRender()) {
             TTextRenderAtlasDetailsAndTexture theRenderTextDetails;
-            ITextTextureAtlas *theTextureAtlas = m_qt3dsContext.GetTextureAtlas();
-            QSize theWindow = m_qt3dsContext.GetWindowDimensions();
+            ITextTextureAtlas *theTextureAtlas = m_demonContext.GetTextureAtlas();
+            QSize theWindow = m_demonContext.GetWindowDimensions();
 
             const wchar_t *wText = m_StringTable->GetWideStr(text);
             STextRenderInfo theInfo;
@@ -1820,7 +1820,7 @@ void Qt3DSRendererImpl::RenderText2D(float x, float y,
     }
 }
 
-void Qt3DSRendererImpl::RenderGpuProfilerStats(float x, float y,
+void QDemonRendererImpl::RenderGpuProfilerStats(float x, float y,
                                                QDemonOption<QVector3D> inColor)
 {
     if (!IsLayerGpuProfilingEnabled())
@@ -1860,7 +1860,7 @@ void Qt3DSRendererImpl::RenderGpuProfilerStats(float x, float y,
 // a new position and a floating point scale factor so you can render in 1/2 perspective mode
 // or orthographic mode if you would like to.
 SWidgetRenderInformation
-Qt3DSRendererImpl::GetWidgetRenderInformation(SNode &inNode, const QVector3D &inPos,
+QDemonRendererImpl::GetWidgetRenderInformation(SNode &inNode, const QVector3D &inPos,
                                               RenderWidgetModes::Enum inWidgetMode)
 {
     SLayerRenderData *theData = GetOrCreateLayerRenderDataForNode(inNode);
@@ -1940,13 +1940,13 @@ Qt3DSRendererImpl::GetWidgetRenderInformation(SNode &inNode, const QVector3D &in
                 theScaleAndPos.m_Scale, *theCamera);
 }
 
-QDemonOption<QVector2D> Qt3DSRendererImpl::GetLayerMouseCoords(SLayer &inLayer,
+QDemonOption<QVector2D> QDemonRendererImpl::GetLayerMouseCoords(SLayer &inLayer,
                                                          const QVector2D &inMouseCoords,
                                                          const QVector2D &inViewportDimensions,
                                                          bool forceImageIntersect) const
 {
     SLayerRenderData *theData =
-            const_cast<Qt3DSRendererImpl &>(*this).GetOrCreateLayerRenderDataForNode(inLayer);
+            const_cast<QDemonRendererImpl &>(*this).GetOrCreateLayerRenderDataForNode(inLayer);
     return GetLayerMouseCoords(*theData, inMouseCoords, inViewportDimensions,
                                forceImageIntersect);
 }
@@ -1982,6 +1982,6 @@ bool IQDemonRenderer::IsGl2Context(QDemonRenderContextType inContextType)
 
 IQDemonRenderer &IQDemonRenderer::CreateRenderer(IQDemonRenderContext &inContext)
 {
-    return *new Qt3DSRendererImpl(inContext);
+    return *new QDemonRendererImpl(inContext);
 }
 QT_END_NAMESPACE

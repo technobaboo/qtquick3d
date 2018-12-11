@@ -30,9 +30,7 @@
 #pragma once
 #ifndef QDEMON_RENDER_LOADED_TEXTURE_FREEIMAGE_COMPAT_H
 #define QDEMON_RENDER_LOADED_TEXTURE_FREEIMAGE_COMPAT_H
-#include <IOStreams.h>
-#include <Qt3DSFoundation.h>
-#include <Qt3DSBroadcastingAllocator.h>
+
 #include <QtDemonRuntimeRender/qdemonrenderloadedtexture.h>
 #include <stdlib.h>
 #ifndef _MACOSX
@@ -108,7 +106,7 @@ inline BYTE *FreeImage_GetBits(FIBITMAP *bmp) { return (BYTE *)bmp->data; }
 inline int FreeImage_GetHeight(FIBITMAP *bmp) { return bmp->height; }
 inline int FreeImage_GetWidth(FIBITMAP *bmp) { return bmp->width; }
 
-#define INPLACESWAP(x, y) eastl::swap(x, y)
+#define INPLACESWAP(x, y) std::swap(x, y)
 #define MIN(x, y) NVMin(x, y)
 #define MAX(x, y) NVMax(x, y)
 

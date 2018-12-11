@@ -36,18 +36,18 @@
 
 QT_BEGIN_NAMESPACE
 
-class Qt3DSRenderPrefilterTexture
+class QDemonRenderPrefilterTexture
 {
 public:
-    Qt3DSRenderPrefilterTexture(QDemonRenderContext *inQDemonRenderContext, qint32 inWidth, qint32 inHeight,
+    QDemonRenderPrefilterTexture(QDemonRenderContext *inQDemonRenderContext, qint32 inWidth, qint32 inHeight,
                                 QDemonRenderTexture2D &inTexture,
                                 QDemonRenderTextureFormats::Enum inDestFormat);
-    virtual ~Qt3DSRenderPrefilterTexture();
+    virtual ~QDemonRenderPrefilterTexture();
 
     virtual void Build(void *inTextureData, qint32 inTextureDataSize,
                        QDemonRenderTextureFormats::Enum inFormat) = 0;
 
-    static Qt3DSRenderPrefilterTexture *Create(QDemonRenderContext *inQDemonRenderContext, qint32 inWidth,
+    static QDemonRenderPrefilterTexture *Create(QDemonRenderContext *inQDemonRenderContext, qint32 inWidth,
                                                qint32 inHeight, QDemonRenderTexture2D &inTexture,
                                                QDemonRenderTextureFormats::Enum inDestFormat);
 
@@ -66,10 +66,10 @@ protected:
     QDemonRenderContext *m_QDemonRenderContext;
 };
 
-class Qt3DSRenderPrefilterTextureCPU : public Qt3DSRenderPrefilterTexture
+class QDemonRenderPrefilterTextureCPU : public QDemonRenderPrefilterTexture
 {
 public:
-    Qt3DSRenderPrefilterTextureCPU(QDemonRenderContext *inQDemonRenderContext, qint32 inWidth,
+    QDemonRenderPrefilterTextureCPU(QDemonRenderContext *inQDemonRenderContext, qint32 inWidth,
                                    qint32 inHeight, QDemonRenderTexture2D &inTexture,
                                    QDemonRenderTextureFormats::Enum inDestFormat);
 
@@ -83,13 +83,13 @@ public:
     void getWrappedCoords(int &sX, int &sY, int width, int height);
 };
 
-class Qt3DSRenderPrefilterTextureCompute : public Qt3DSRenderPrefilterTexture
+class QDemonRenderPrefilterTextureCompute : public QDemonRenderPrefilterTexture
 {
 public:
-    Qt3DSRenderPrefilterTextureCompute(QDemonRenderContext *inQDemonRenderContext, qint32 inWidth,
+    QDemonRenderPrefilterTextureCompute(QDemonRenderContext *inQDemonRenderContext, qint32 inWidth,
                                        qint32 inHeight, QDemonRenderTexture2D &inTexture,
                                        QDemonRenderTextureFormats::Enum inDestFormat);
-    ~Qt3DSRenderPrefilterTextureCompute();
+    ~QDemonRenderPrefilterTextureCompute();
 
     void Build(void *inTextureData, qint32 inTextureDataSize,
                QDemonRenderTextureFormats::Enum inFormat) override;

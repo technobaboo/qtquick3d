@@ -65,7 +65,6 @@ HEADERS += \
     qdemonrendertexttypes.h \
     qdemonrendertextureatlas.h \
     qdemonrenderthreadpool.h \
-    qdemonrenderuiploader.h \
     qdemonrenderuipsharedtranslation.h \
     qdemonrenderwidgets.h \
     qdemontextrenderer.h
@@ -104,7 +103,6 @@ SOURCES += \
 #    qdemonrendertexttexturecache.cpp \
 #    qdemonrendertextureatlas.cpp \
 #    qdemonrenderthreadpool.cpp \
-#    qdemonrenderuiploader.cpp \
 #    qdemonrenderuipsharedtranslation.cpp \
 #    qdemonrenderwidgets.cpp \
 #    qdemontextrenderer.cpp

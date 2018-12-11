@@ -45,12 +45,12 @@ QT_BEGIN_NAMESPACE
 #define GL_CALL_EXTRA_FUNCTION(x) m_glExtraFunctions->x; RENDER_LOG_ERROR_PARAMS(x);
 
 #if defined(QT_OPENGL_ES)
-#define GL_CALL_NVPATH_EXT(x) m_qt3dsExtensions->x; RENDER_LOG_ERROR_PARAMS(x);
-#define GL_CALL_QDEMON_EXT(x) m_qt3dsExtensions->x; RENDER_LOG_ERROR_PARAMS(x);
+#define GL_CALL_NVPATH_EXT(x) m_qdemonExtensions->x; RENDER_LOG_ERROR_PARAMS(x);
+#define GL_CALL_QDEMON_EXT(x) m_qdemonExtensions->x; RENDER_LOG_ERROR_PARAMS(x);
 #else
 #define GL_CALL_NVPATH_EXT(x) m_nvPathRendering->x; RENDER_LOG_ERROR_PARAMS(x);
 #define GL_CALL_DIRECTSTATE_EXT(x) m_directStateAccess->x; RENDER_LOG_ERROR_PARAMS(x);
-#define GL_CALL_QDEMON_EXT(x) m_qt3dsExtensions->x; RENDER_LOG_ERROR_PARAMS(x);
+#define GL_CALL_QDEMON_EXT(x) m_qdemonExtensions->x; RENDER_LOG_ERROR_PARAMS(x);
 #endif
 
 #ifndef GL_GEOMETRY_SHADER_EXT

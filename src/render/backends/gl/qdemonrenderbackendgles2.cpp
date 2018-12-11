@@ -41,11 +41,11 @@ QT_BEGIN_NAMESPACE
 #endif
 
 #if defined(QT_OPENGL_ES) || defined(QT_OPENGL_ES_2_ANGLE)
-#define GL_CALL_TIMER_EXT(x) m_qt3dsExtensions->x; RENDER_LOG_ERROR_PARAMS(x);
-#define GL_CALL_TESSELATION_EXT(x) m_qt3dsExtensions->x; RENDER_LOG_ERROR_PARAMS(x);
-#define GL_CALL_MULTISAMPLE_EXT(x) m_qt3dsExtensions->x; RENDER_LOG_ERROR_PARAMS(x);
+#define GL_CALL_TIMER_EXT(x) m_qdemonExtensions->x; RENDER_LOG_ERROR_PARAMS(x);
+#define GL_CALL_TESSELATION_EXT(x) m_qdemonExtensions->x; RENDER_LOG_ERROR_PARAMS(x);
+#define GL_CALL_MULTISAMPLE_EXT(x) m_qdemonExtensions->x; RENDER_LOG_ERROR_PARAMS(x);
 #define GL_CALL_EXTRA_FUNCTION(x) m_glExtraFunctions->x; RENDER_LOG_ERROR_PARAMS(x);
-#define GL_CALL_EXTENSION_FUNCTION(x) m_qt3dsExtensions->x; RENDER_LOG_ERROR_PARAMS(x);
+#define GL_CALL_EXTENSION_FUNCTION(x) m_qdemonExtensions->x; RENDER_LOG_ERROR_PARAMS(x);
 #else
 #define GL_CALL_TIMER_EXT(x)
 #define GL_CALL_TESSELATION_EXT(x)
@@ -149,8 +149,8 @@ QDemonRenderBackendGLES2Impl::QDemonRenderBackendGLES2Impl(const QSurfaceFormat 
 
     // Initialize extensions
 #if defined(QT_OPENGL_ES) || defined(QT_OPENGL_ES_2_ANGLE)
-    m_qt3dsExtensions = new QDemonOpenGLES2Extensions;
-    m_qt3dsExtensions->initializeOpenGLFunctions();
+    m_qdemonExtensions = new QDemonOpenGLES2Extensions;
+    m_qdemonExtensions->initializeOpenGLFunctions();
 #endif
 }
 /// destructor
@@ -159,8 +159,8 @@ QDemonRenderBackendGLES2Impl::~QDemonRenderBackendGLES2Impl()
     if (m_pCurrentMiscState)
         delete m_pCurrentMiscState;
 #if defined(QT_OPENGL_ES) || defined(QT_OPENGL_ES_2_ANGLE)
-    if (m_qt3dsExtensions)
-        delete m_qt3dsExtensions;
+    if (m_qdemonExtensions)
+        delete m_qdemonExtensions;
 #endif
 }
 

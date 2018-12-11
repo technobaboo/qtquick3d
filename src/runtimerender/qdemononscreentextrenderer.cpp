@@ -89,7 +89,7 @@ struct STextureAtlasFontEntry
     float m_t1;
 };
 
-typedef eastl::basic_string<char, ForwardingAllocator> TStrType;
+typedef QString TStrType;
 typedef QHash<wchar_t, STextureAtlasFontEntry> TTextureAtlasMap;
 
 struct STextAtlasFont
@@ -99,8 +99,6 @@ struct STextAtlasFont
 
     STextAtlasFont(quint32 fontSize)
         : m_FontSize(fontSize)
-        , m_AtlasEntries(inFoundation.getAllocator(),
-                         "Qt3DSOnscreenRenderer::STextAtlasFont::m_AtlasEntrys")
     {
     }
 
@@ -114,7 +112,7 @@ struct STextAtlasFont
 
 // This class is only for rendering 2D screen aligned text
 // it uses a predefined true type font and character set with various sizes
-struct Qt3DSOnscreenTextRenderer : public ITextRenderer
+struct QDemonOnscreenTextRenderer : public ITextRenderer
 {
 
     static const qint32 TEXTURE_ATLAS_DIM =
@@ -127,13 +125,13 @@ private:
     QSharedPointer<STextAtlasFont> m_TextFont;
     QRawFont *m_font;
 public:
-    Qt3DSOnscreenTextRenderer()
+    QDemonOnscreenTextRenderer()
         : m_TextureAtlasInitialized(false)
         , m_font(nullptr)
     {
     }
 
-    virtual ~Qt3DSOnscreenTextRenderer()
+    virtual ~QDemonOnscreenTextRenderer()
     {
     }
 
@@ -284,7 +282,7 @@ public:
             float *vertexData =
                     (float *)QDEMON_ALLOC(m_Foundation.getAllocator(),
                                           length * 6 * 5 * sizeof(float),
-                                          "Qt3DSOnscreenTextRenderer");
+                                          "QDemonOnscreenTextRenderer");
             float *bufPtr = vertexData;
             if (vertexData) {
                 for (size_t i = 0; i < length; ++i) {
@@ -390,7 +388,7 @@ public:
 
 ITextRendererCore &ITextRendererCore::CreateOnscreenTextRenderer()
 {
-    return *new Qt3DSOnscreenTextRenderer();
+    return *new QDemonOnscreenTextRenderer();
 }
 
 QT_END_NAMESPACE

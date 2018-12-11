@@ -47,7 +47,7 @@ QT_BEGIN_NAMESPACE
 
 namespace {
 
-struct Qt3DSQtTextRenderer : public ITextRenderer
+struct QDemonQtTextRenderer : public ITextRenderer
 {
     struct FontInfo
     {
@@ -91,7 +91,7 @@ struct Qt3DSQtTextRenderer : public ITextRenderer
     };
 
     typedef QString TStrType;
-    typedef eastl::set<TStrType> TStringSet;
+    typedef QSet<TStrType> TStringSet;
     typedef QHash<QString, FontInfo> TFontInfoHash;
 
     QSharedPointer<QDemonRenderContext> m_renderContext;
@@ -113,8 +113,8 @@ struct Qt3DSQtTextRenderer : public ITextRenderer
     QStringList m_nameFilters;
     qreal m_pixelRatio;
 
-    Qt3DSQtTextRenderer()
-        : m_installedFonts(inFoundation.getAllocator(), "Qt3DSQtTextRenderer::m_installedFonts")
+    QDemonQtTextRenderer()
+        : m_installedFonts(inFoundation.getAllocator(), "QDemonQtTextRenderer::m_installedFonts")
         , m_PreloadSync(inFoundation.getAllocator())
         , m_systemFontsInitialized(false)
         , m_projectFontsInitialized(false)
@@ -128,7 +128,7 @@ struct Qt3DSQtTextRenderer : public ITextRenderer
         m_nameFilters << QStringLiteral("*.ttf");
         m_nameFilters << QStringLiteral("*.otf");
     }
-    virtual ~Qt3DSQtTextRenderer()
+    virtual ~QDemonQtTextRenderer()
     {
         QFontDatabase::removeAllApplicationFonts();
     }
@@ -292,7 +292,7 @@ struct Qt3DSQtTextRenderer : public ITextRenderer
 
     static void PreloadThreadCallback(void *inData)
     {
-        Qt3DSQtTextRenderer *theRenderer(reinterpret_cast<Qt3DSQtTextRenderer *>(inData));
+        QDemonQtTextRenderer *theRenderer(reinterpret_cast<QDemonQtTextRenderer *>(inData));
         theRenderer->PreloadFonts();
         theRenderer->m_PreloadSync.set();
     }
@@ -625,7 +625,7 @@ struct Qt3DSQtTextRenderer : public ITextRenderer
 
 ITextRendererCore &ITextRendererCore::CreateQtTextRenderer()
 {
-    return *new Qt3DSQtTextRenderer();
+    return *new QDemonQtTextRenderer();
 }
 
 QT_END_NAMESPACE

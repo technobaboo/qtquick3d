@@ -27,9 +27,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <qdemonoldnbustedrenderplugin.h>
-#include <SystemPrefix.h>
-#include <Qt3DSDLLManager.h>
+#include "qdemonoldnbustedrenderplugin.h"
 #include <QtDemonRender/qdemonrendercontext.h>
 
 #ifdef WIN32
@@ -51,10 +49,10 @@ COldNBustedPluginRenderer::COldNBustedPluginRenderer(IQDemonRenderContext &inRen
         // Grab function procs
         m_GetTextureSizeProc = reinterpret_cast<PROC_GetDesiredTextureSize>(
                     theManager.GetProc("GetDesiredTextureSize", m_DLLHandle));
-        Q3DStudio_ASSERT(m_GetTextureSizeProc);
+        Q_ASSERT(m_GetTextureSizeProc);
 
         m_RenderProc = reinterpret_cast<PROC_Render>(theManager.GetProc("Render", m_DLLHandle));
-        Q3DStudio_ASSERT(m_RenderProc);
+        Q_ASSERT(m_RenderProc);
     }
 }
 

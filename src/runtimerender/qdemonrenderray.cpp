@@ -28,7 +28,7 @@
 **
 ****************************************************************************/
 #include <QtDemonRuntimeRender/qdemonrenderray.h>
-#include <Qt3DSPlane.h>
+#include <QtDemon/qdemonplane.h>
 
 QT_BEGIN_NAMESPACE
 

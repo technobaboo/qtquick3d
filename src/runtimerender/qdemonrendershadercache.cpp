@@ -166,7 +166,7 @@ inline QDemonRenderContextType StringToContextType(const QString &inContextType)
 struct SShaderCacheKey
 {
     QString m_Key;
-    eastl::vector<SShaderPreprocessorFeature> m_Features;
+    QVector<SShaderPreprocessorFeature> m_Features;
     size_t m_HashCode;
 
     SShaderCacheKey(QString key = QString())
@@ -573,9 +573,7 @@ struct ShaderCache : public IShaderCache
 
     void BootupDOMWriter()
     {
-        m_ShaderCache = IDOMWriter::CreateDOMWriter(m_RenderContext.GetAllocator(),
-                                                    "Qt3DSShaderCache", theStringTable)
-                .first;
+        m_ShaderCache = IDOMWriter::CreateDOMWriter("QDemonShaderCache").first;
         m_ShaderCache->Att("cache_version", IShaderCache::GetShaderVersion());
     }
 
@@ -594,7 +592,7 @@ struct ShaderCache : public IShaderCache
             SStackPerfTimer __perfTimer(m_PerfTimer, "ShaderCache - Load");
             QSharedPointer<IDOMFactory> theFactory(
                         IDOMFactory::CreateDOMFactory(m_RenderContext.GetAllocator(), theStringTable));
-            eastl::vector<SShaderPreprocessorFeature> theFeatures;
+            QVector<SShaderPreprocessorFeature> theFeatures;
 
             SDOMElement *theElem = CDOMSerializer::Read(*theFactory, *theInStream).second;
             if (theElem) {

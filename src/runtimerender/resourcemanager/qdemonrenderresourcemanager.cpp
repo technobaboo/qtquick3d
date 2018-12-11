@@ -98,7 +98,7 @@ struct SResourceManager : public IResourceManager
         }
 #ifdef _DEBUG
         QVector<QDemonRenderFrameBuffer *>::iterator theFind =
-                eastl::find(m_FreeFrameBuffers.begin(), m_FreeFrameBuffers.end(), &inBuffer);
+                std::find(m_FreeFrameBuffers.begin(), m_FreeFrameBuffers.end(), &inBuffer);
         Q_ASSERT(theFind == m_FreeFrameBuffers.end());
 #endif
         m_FreeFrameBuffers.push_back(&inBuffer);
@@ -140,7 +140,7 @@ struct SResourceManager : public IResourceManager
     {
 #ifdef _DEBUG
         QVector<QDemonRenderRenderBuffer *>::iterator theFind =
-                eastl::find(m_FreeRenderBuffers.begin(), m_FreeRenderBuffers.end(), &inBuffer);
+                std::find(m_FreeRenderBuffers.begin(), m_FreeRenderBuffers.end(), &inBuffer);
         Q_ASSERT(theFind == m_FreeRenderBuffers.end());
 #endif
         m_FreeRenderBuffers.push_back(&inBuffer);
@@ -200,7 +200,7 @@ struct SResourceManager : public IResourceManager
     {
 #ifdef _DEBUG
         QVector<QDemonRenderTexture2D *>::iterator theFind =
-                eastl::find(m_FreeTextures.begin(), m_FreeTextures.end(), &inBuffer);
+                std::find(m_FreeTextures.begin(), m_FreeTextures.end(), &inBuffer);
         Q_ASSERT(theFind == m_FreeTextures.end());
 #endif
         m_FreeTextures.push_back(&inBuffer);
@@ -262,7 +262,7 @@ struct SResourceManager : public IResourceManager
     {
 #ifdef _DEBUG
         QVector<QDemonRenderTexture2DArray *>::iterator theFind =
-                eastl::find(m_FreeTexArrays.begin(), m_FreeTexArrays.end(), &inBuffer);
+                std::find(m_FreeTexArrays.begin(), m_FreeTexArrays.end(), &inBuffer);
         Q_ASSERT(theFind == m_FreeTexArrays.end());
 #endif
         m_FreeTexArrays.push_back(&inBuffer);
@@ -345,7 +345,7 @@ struct SResourceManager : public IResourceManager
     {
 #ifdef _DEBUG
         QVector<QDemonRenderTextureCube *>::iterator theFind =
-                eastl::find(m_FreeTexCubes.begin(), m_FreeTexCubes.end(), &inBuffer);
+                std::find(m_FreeTexCubes.begin(), m_FreeTexCubes.end(), &inBuffer);
         Q_ASSERT(theFind == m_FreeTexCubes.end());
 #endif
         m_FreeTexCubes.push_back(&inBuffer);
@@ -372,7 +372,7 @@ struct SResourceManager : public IResourceManager
     {
 #ifdef _DEBUG
         QVector<QDemonRenderImage2D *>::iterator theFind =
-                eastl::find(m_FreeImages.begin(), m_FreeImages.end(), &inBuffer);
+                std::find(m_FreeImages.begin(), m_FreeImages.end(), &inBuffer);
         Q_ASSERT(theFind == m_FreeImages.end());
 #endif
         m_FreeImages.push_back(&inBuffer);

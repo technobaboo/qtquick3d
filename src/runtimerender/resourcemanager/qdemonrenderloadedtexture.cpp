@@ -28,16 +28,10 @@
 **
 ****************************************************************************/
 #include <QtDemonRuntimeRender/qdemonrenderloadedtexture.h>
-#include <IOStreams.h>
-#include <Qt3DSFoundation.h>
-#include <Qt3DSBroadcastingAllocator.h>
-#include <Qt3DSDMWindowsCompatibility.h>
-#include <qdemonrenderinputstreamfactory.h>
-#include <Qt3DSFoundation.h>
-#include <Qt3DSBroadcastingAllocator.h>
-#include <qdemonrenderimagescaler.h>
-#include <qdemontextrenderer.h>
-#include <QImage>
+#include <QtDemonRuntimeRender/qdemonrenderinputstreamfactory.h>
+#include <QtDemonRuntimeRender/qdemonrenderimagescaler.h>
+#include <QtDemonRuntimeRender/qdemontextrenderer.h>
+#include <QtGui/QImage>
 
 QT_BEGIN_NAMESPACE
 
@@ -409,7 +403,7 @@ static void DecompressDDS(void *inSrc, quint32 inDataSize, quint32 inWidth, quin
     }
 }
 
-bool ScanDDSForAlpha(Qt3DSDDSImage *dds)
+bool ScanDDSForAlpha(QDemonDDSImage *dds)
 {
     bool hasAlpha = false;
     switch (dds->format) {

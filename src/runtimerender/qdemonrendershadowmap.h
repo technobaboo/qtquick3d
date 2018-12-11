@@ -31,23 +31,16 @@
 #ifndef QDEMON_RENDER_SHADOW_MAP_H
 #define QDEMON_RENDER_SHADOW_MAP_H
 #include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
-#include <Qt3DSAtomic.h>
 #include <QtGui/QMatrix4x4>
 #include <QtGui/QVector3D>
 #include <QtDemon/qdemonflags.h>
-#include <StringTable.h>
 #include <QtDemonRender/qdemonrenderbasetypes.h>
-#include <Qt3DSRenderTexture2D.h>
-#ifdef _INTEGRITYPLATFORM
-#include <Qt3DSRenderTextureCube.h>
-#endif
 
 QT_BEGIN_NAMESPACE
 
 struct SLayerRenderData;
 
-struct ShadowMapModes
-{
+struct ShadowMapModes {
     enum Enum {
         SSM, ///< standard shadow mapping
         VSM, ///< variance shadow mapping
@@ -55,8 +48,7 @@ struct ShadowMapModes
     };
 };
 
-struct ShadowFilterValues
-{
+struct ShadowFilterValues {
     enum Enum {
         NONE = 1 << 0, ///< hard shadows
         PCF = 1 << 1, ///< Percentage close filtering
@@ -64,10 +56,9 @@ struct ShadowFilterValues
     };
 };
 
-struct SShadowMapEntry
-{
+struct SShadowMapEntry {
     SShadowMapEntry()
-        : m_LightIndex(QDEMON_MAX_U32)
+        : m_LightIndex(std::numeric_limits<quint32>::max())
         , m_ShadowMapMode(ShadowMapModes::SSM)
         , m_ShadowFilterFlags(ShadowFilterValues::NONE)
     {
@@ -110,13 +101,10 @@ struct SShadowMapEntry
     // actual
     // shadow map used at shade time.  See if it's worth adding.
     QSharedPointer<QDemonRenderTexture2D> m_DepthMap; ///< shadow map texture
-    QSharedPointer<QDemonRenderTexture2D>
-    m_DepthCopy; ///< shadow map buffer used during blur passes
+    QSharedPointer<QDemonRenderTexture2D> m_DepthCopy; ///< shadow map buffer used during blur passes
     QSharedPointer<QDemonRenderTextureCube> m_DepthCube; ///< shadow cube map
-    QSharedPointer<QDemonRenderTextureCube>
-    m_CubeCopy; ///< cube map buffer used during the blur passes
-    QSharedPointer<QDemonRenderTexture2D>
-    m_DepthRender; ///< shadow depth+stencil map used during rendering
+    QSharedPointer<QDemonRenderTextureCube> m_CubeCopy; ///< cube map buffer used during the blur passes
+    QSharedPointer<QDemonRenderTexture2D> m_DepthRender; ///< shadow depth+stencil map used during rendering
 
     QMatrix4x4 m_LightVP; ///< light view projection matrix
     QMatrix4x4 m_LightCubeView[6]; ///< light cubemap view matrices

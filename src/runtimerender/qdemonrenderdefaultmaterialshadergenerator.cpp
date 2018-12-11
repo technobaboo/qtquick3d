@@ -28,7 +28,6 @@
 **
 ****************************************************************************/
 #include <QtDemonRuntimeRender/qdemonrenderdefaultmaterialshadergenerator.h>
-#include <Qt3DSAtomic.h>
 #include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
 #include <QtDemonRuntimeRender/qdemonrendershadercodegeneratorv2.h>
 #include <QtDemonRuntimeRender/qdemonrenderableimage.h>
@@ -734,8 +733,8 @@ struct SShaderGenerator : public IDefaultMaterialShaderGenerator
     }
 
     void GenerateTextureSwizzle(QDemonRenderTextureSwizzleMode::Enum swizzleMode,
-                                eastl::basic_string<char> &texSwizzle,
-                                eastl::basic_string<char> &lookupSwizzle)
+                                QString &texSwizzle,
+                                QString &lookupSwizzle)
     {
         QDemonRenderContextType deprecatedContextFlags(QDemonRenderContextValues::GL2
                                                        | QDemonRenderContextValues::GLES2);
@@ -1397,7 +1396,9 @@ struct SShaderGenerator : public IDefaultMaterialShaderGenerator
                     continue;
                 }
 
-                eastl::basic_string<char> texSwizzle, lookupSwizzle, texLodStr;
+                QString texSwizzle;
+                QString lookupSwizzle;
+                QString texLodStr;
 
                 GenerateImageUVCoordinates(idx, *image, 0);
 

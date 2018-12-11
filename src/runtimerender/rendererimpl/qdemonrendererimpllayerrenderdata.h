@@ -94,7 +94,7 @@ struct QDEMON_AUTOTEST_EXPORT SLayerRenderData : public SLayerRenderPreparationD
 
     QSize m_previousDimensions;
 
-    SLayerRenderData(SLayer &inLayer, Qt3DSRendererImpl &inRenderer);
+    SLayerRenderData(SLayer &inLayer, QDemonRendererImpl &inRenderer);
 
     virtual ~SLayerRenderData();
 

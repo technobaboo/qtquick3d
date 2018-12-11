@@ -31,8 +31,7 @@
 #ifndef QDEMON_RENDER_PLUGIN_PROPERTY_VALUE_H
 #define QDEMON_RENDER_PLUGIN_PROPERTY_VALUE_H
 
-#include <StringTable.h>
-#include <Qt3DSDiscriminatedUnion.h>
+#include <QtDemon/QDemonDiscriminatedUnion.h>
 #include <QtDemonRuntimeRender/qdemonrenderplugin.h>
 
 QT_BEGIN_NAMESPACE

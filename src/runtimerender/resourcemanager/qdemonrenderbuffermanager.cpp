@@ -32,29 +32,20 @@
 #endif
 
 #include <QtDemonRuntimeRender/qdemonrenderbuffermanager.h>
-#include <Qt3DSAllocator.h>
 #include <QtDemonRender/qdemonrendercontext.h>
-#include <Qt3DSAtomic.h>
-#include <EASTL/hash_map.h>
-#include <FileTools.h>
-#include <Qt3DSImportMesh.h>
 #include <QtDemonRuntimeRender/qdemonrendermesh.h>
-#include <Qt3DSAllocatorCallback.h>
 #include <QtDemonRuntimeRender/qdemonrenderloadedtexture.h>
-#include <Qt3DSFoundation.h>
-#include <qdemonrenderinputstreamfactory.h>
-#include <qdemonrenderimagescaler.h>
-#include <qdemontextrenderer.h>
-#include <Qt3DSPerfTimer.h>
-#include <Qt3DSMutex.h>
+#include <QtDemonRuntimeRender/qdemonrenderinputstreamfactory.h>
+#include <QtDemonRuntimeRender/qdemonrenderimagescaler.h>
+#include <QtDemonRuntimeRender/qdemontextrenderer.h>
 #include <QtDemonRuntimeRender/qdemonrenderprefiltertexture.h>
-#include <QtCore/qdir.h>
+#include <QtCore/QDir>
 
 QT_BEGIN_NAMESPACE
 
 namespace {
 
-typedef eastl::basic_string<char, ForwardingAllocator> TStr;
+typedef QString TStr;
 struct StrHasher
 {
     size_t operator()(const TStr &str) const
@@ -248,9 +239,9 @@ struct SBufferManager : public IBufferManager
             if (inBsdfMipmaps
                     && QDemonRenderTextureFormats::isUncompressedTextureFormat(inLoadedImage.format)) {
                 theTexture->SetMinFilter(QDemonRenderTextureMinifyingOp::LinearMipmapLinear);
-                Qt3DSRenderPrefilterTexture *theBSDFMipMap = theImage.first->second.m_BSDFMipMap;
+                QDemonRenderPrefilterTexture *theBSDFMipMap = theImage.first->second.m_BSDFMipMap;
                 if (theBSDFMipMap == nullptr) {
-                    theBSDFMipMap = Qt3DSRenderPrefilterTexture::Create(
+                    theBSDFMipMap = QDemonRenderPrefilterTexture::Create(
                                 m_Context, inLoadedImage.width, inLoadedImage.height, *theTexture,
                                 destFormat, m_Context->GetFoundation());
                     theImage.first->second.m_BSDFMipMap = theBSDFMipMap;

@@ -44,7 +44,7 @@ QT_BEGIN_NAMESPACE
 
 class IOffscreenRenderer;
 
-struct Qt3DSRenderPickSubResult
+struct QDemonRenderPickSubResult
 {
     IOffscreenRenderer *m_SubRenderer;
     QMatrix4x4 m_TextureMatrix;
@@ -52,14 +52,14 @@ struct Qt3DSRenderPickSubResult
     QDemonRenderTextureCoordOp::Enum m_VerticalTilingMode;
     quint32 m_ViewportWidth;
     quint32 m_ViewportHeight;
-    Qt3DSRenderPickSubResult *m_NextSibling;
+    QDemonRenderPickSubResult *m_NextSibling;
 
-    Qt3DSRenderPickSubResult()
+    QDemonRenderPickSubResult()
         : m_SubRenderer(nullptr)
         , m_NextSibling(nullptr)
     {
     }
-    Qt3DSRenderPickSubResult(IOffscreenRenderer &inSubRenderer, QMatrix4x4 inTextureMatrix,
+    QDemonRenderPickSubResult(IOffscreenRenderer &inSubRenderer, QMatrix4x4 inTextureMatrix,
                              QDemonRenderTextureCoordOp::Enum inHorizontalTilingMode,
                              QDemonRenderTextureCoordOp::Enum inVerticalTilingMode, quint32 width,
                              quint32 height)
@@ -81,7 +81,7 @@ struct QDemonRenderPickResult
     // The local coordinates in X,Y UV space where the hit occured
     QVector2D m_LocalUVCoords;
     // The local mouse coordinates will be the same on all of the sub objects.
-    Qt3DSRenderPickSubResult *m_FirstSubObject;
+    QDemonRenderPickSubResult *m_FirstSubObject;
     // The offscreen renderer that was used to render the scene graph this result was produced
     // from.
     IOffscreenRenderer *m_OffscreenRenderer;

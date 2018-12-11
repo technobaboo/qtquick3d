@@ -254,7 +254,7 @@ static void flip_blocks_dxtc5(DXTColBlock *line, qint32 numBlocks)
 }
 
 static void flip_data_vertical(FreeImageIO *io, qint8 *image, qint32 width, qint32 height,
-                               Qt3DSDDSImage *info)
+                               QDemonDDSImage *info)
 {
     if (info->compressed) {
         qint32 linesize, j;
@@ -330,7 +330,7 @@ static void flip_data_vertical(FreeImageIO *io, qint8 *image, qint32 width, qint
     }
 }
 
-static qint32 size_image(qint32 width, qint32 height, const Qt3DSDDSImage *image)
+static qint32 size_image(qint32 width, qint32 height, const QDemonDDSImage *image)
 {
     if (image->compressed) {
         return ((width + 3) / 4) * ((height + 3) / 4)
@@ -340,7 +340,7 @@ static qint32 size_image(qint32 width, qint32 height, const Qt3DSDDSImage *image
     }
 }
 
-static qint32 total_image_data_size(Qt3DSDDSImage *image)
+static qint32 total_image_data_size(QDemonDDSImage *image)
 {
     qint32 i, j, index = 0, size = 0, w, h;
     qint32 cubeCount = image->cubemap ? 6 : 1;
@@ -369,14 +369,14 @@ static qint32 total_image_data_size(Qt3DSDDSImage *image)
     return (size);
 }
 
-void *Qt3DSDDSAllocDataBlock(FreeImageIO *io, Qt3DSDDSImage *image)
+void *QDemonDDSAllocDataBlock(FreeImageIO *io, QDemonDDSImage *image)
 {
     if (image) {
         qint32 i;
         qint32 size = total_image_data_size(image);
         image->dataBlock =
                 QDEMON_ALLOC(io->m_Allocator, size,
-                             "Qt3DSDDSAllocDataBlock"); // no need to calloc, as we fill every bit...
+                             "QDemonDDSAllocDataBlock"); // no need to calloc, as we fill every bit...
         if (image->dataBlock == nullptr) {
             return nullptr;
         }
@@ -401,7 +401,7 @@ static FIBITMAP *DoLoadDDS(FreeImageIO *io, IInStream &inStream, qint32 flipVert
     FIBITMAP *dib = nullptr;
     DDS_HEADER ddsh;
     qint8 filecode[4];
-    Qt3DSDDSImage *image = nullptr;
+    QDemonDDSImage *image = nullptr;
     bool needsBGRASwap = false;
     ;
     bool isAllreadyFlipped = false;
@@ -413,11 +413,11 @@ static FIBITMAP *DoLoadDDS(FreeImageIO *io, IInStream &inStream, qint32 flipVert
             throw "Invalid DDS file";
         }
 
-        image = (Qt3DSDDSImage *)QDEMON_ALLOC(io->m_Allocator, sizeof(Qt3DSDDSImage), "DoLoadDDS");
+        image = (QDemonDDSImage *)QDEMON_ALLOC(io->m_Allocator, sizeof(QDemonDDSImage), "DoLoadDDS");
         if (image == nullptr) {
-            throw "Qt3DSDDSImage allocation failed";
+            throw "QDemonDDSImage allocation failed";
         }
-        memset(image, 0, sizeof(Qt3DSDDSImage));
+        memset(image, 0, sizeof(QDemonDDSImage));
 
         // read in DDS header
         inStream.Read(&ddsh, 1);
@@ -577,7 +577,7 @@ static FIBITMAP *DoLoadDDS(FreeImageIO *io, IInStream &inStream, qint32 flipVert
         }
 
         // allocate the meta datablock for all mip storage.
-        Qt3DSDDSAllocDataBlock(io, image);
+        QDemonDDSAllocDataBlock(io, image);
         if (image->dataBlock == nullptr) {
             throw "Failed to allocate memory for image data storage";
         }

@@ -44,8 +44,8 @@ QT_BEGIN_NAMESPACE
 #define GL_CALL_EXTRA_FUNCTION(x) m_glExtraFunctions->x; RENDER_LOG_ERROR_PARAMS(x);
 
 #if defined(QT_OPENGL_ES)
-#define GL_CALL_TIMER_EXT(x) m_qt3dsExtensions->x; RENDER_LOG_ERROR_PARAMS(x);
-#define GL_CALL_TESSELATION_EXT(x) m_qt3dsExtensions->x; RENDER_LOG_ERROR_PARAMS(x);
+#define GL_CALL_TIMER_EXT(x) m_qdemonExtensions->x; RENDER_LOG_ERROR_PARAMS(x);
+#define GL_CALL_TESSELATION_EXT(x) m_qdemonExtensions->x; RENDER_LOG_ERROR_PARAMS(x);
 #else
 #define GL_CALL_TIMER_EXT(x) m_timerExtension->x; RENDER_LOG_ERROR_PARAMS(x);
 #define GL_CALL_TESSELATION_EXT(x) m_tessellationShader->x; RENDER_LOG_ERROR_PARAMS(x);
@@ -152,8 +152,8 @@ QDemonRenderBackendGL3Impl::QDemonRenderBackendGL3Impl(const QSurfaceFormat &for
 
     // Initialize extensions
 #if defined(QT_OPENGL_ES_2)
-    m_qt3dsExtensions = new QDemonOpenGLES2Extensions;
-    m_qt3dsExtensions->initializeOpenGLFunctions();
+    m_qdemonExtensions = new QDemonOpenGLES2Extensions;
+    m_qdemonExtensions->initializeOpenGLFunctions();
 #else
     m_timerExtension = new QOpenGLExtension_ARB_timer_query;
     m_timerExtension->initializeOpenGLFunctions();
@@ -161,8 +161,8 @@ QDemonRenderBackendGL3Impl::QDemonRenderBackendGL3Impl(const QSurfaceFormat &for
     m_tessellationShader->initializeOpenGLFunctions();
     m_multiSample = new QOpenGLExtension_ARB_texture_multisample;
     m_multiSample->initializeOpenGLFunctions();
-    m_qt3dsExtensions = new QDemonOpenGLExtensions;
-    m_qt3dsExtensions->initializeOpenGLFunctions();
+    m_qdemonExtensions = new QDemonOpenGLExtensions;
+    m_qdemonExtensions->initializeOpenGLFunctions();
 #endif
 }
 /// destructor
@@ -178,8 +178,8 @@ QDemonRenderBackendGL3Impl::~QDemonRenderBackendGL3Impl()
     if (m_multiSample)
         delete m_multiSample;
 #endif
-    if (m_qt3dsExtensions)
-        delete m_qt3dsExtensions;
+    if (m_qdemonExtensions)
+        delete m_qdemonExtensions;
 }
 
 void QDemonRenderBackendGL3Impl::SetMultisampledTextureData2D(

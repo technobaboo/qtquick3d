@@ -161,7 +161,7 @@ struct InvasiveSingleLinkedList
             for (iterator iter = begin(), endIter = end(); iter != endIter; ++iter)
                 lastObj = &(*iter);
 
-            QT3DS_ASSERT(lastObj);
+            Q_ASSERT(lastObj);
             if (lastObj)
                 TObjTailOp().set(*lastObj, &inObj);
         }
@@ -215,12 +215,12 @@ struct InvasiveLinkedList : public SInvasiveLinkListBase<TObjType, TObjHeadOp, T
 
     TObjType &front() const
     {
-        QT3DS_ASSERT(m_Head);
+        Q_ASSERT(m_Head);
         return *m_Head;
     }
     TObjType &back() const
     {
-        QT3DS_ASSERT(m_Tail);
+        Q_ASSERT(m_Tail);
         return *m_Tail;
     }
 

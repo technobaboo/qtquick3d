@@ -31,10 +31,6 @@
 #ifndef QDEMON_RENDER_BUFFER_LOADED_H
 #define QDEMON_RENDER_BUFFER_LOADED_H
 
-
-#include <foundation/Qt3DSRefCounted.h>
-#include <foundation/StringTable.h>
-
 QT_BEGIN_NAMESPACE
 
 class IBufferLoaderCallback;

@@ -35,7 +35,6 @@
 #include <QtDemonRuntimeRender/qdemonrenderdefaultmaterial.h>
 #include <QtDemonRuntimeRender/qdemonrenderimage.h>
 #include <QtDemonRuntimeRender/qdemonrendertext.h>
-#include <Qt3DSDMWindowsCompatibility.h>
 #include <QtDemonRuntimeRender/qdemonrenderlayer.h>
 #include <QtDemonRuntimeRender/qdemonrendermodel.h>
 #include <QtDemonRuntimeRender/qdemonrenderpath.h>
@@ -259,7 +258,7 @@ inline quint32 MapRotationOrder(const char *inOrderStr)
 // object
 // along with some information about what portion of the object model this property affects.
 
-struct Qt3DSRenderDirtyFlags
+struct QDemonRenderDirtyFlags
 {
     enum Enum {
         Unknown = 0,

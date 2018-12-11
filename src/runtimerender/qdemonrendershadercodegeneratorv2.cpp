@@ -28,12 +28,7 @@
 **
 ****************************************************************************/
 #include <QtDemonRuntimeRender/qdemonrendershadercodegeneratorv2.h>
-#include <Qt3DSFoundation.h>
-#include <Qt3DSBroadcastingAllocator.h>
-#include <StringTable.h>
-#include <Qt3DSIntrinsics.h>
-#include <Qt3DSAtomic.h>
-#include <Utils.h>
+#include <QtDemon/qdemonutils.h>
 #include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
 #include <QtDemonRuntimeRender/qdemonrenderdynamicobjectsystem.h>
 

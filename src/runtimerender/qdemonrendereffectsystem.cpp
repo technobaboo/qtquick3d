@@ -35,7 +35,7 @@
 #include <QtDemonRuntimeRender/qdemonrenderresourcemanager.h>
 #include <qdemonrenderdynamicobjectsystemcommands.h>
 #include <QtDemonRender/qdemonrenderframebuffer.h>
-#include <Qt3DSRenderShaderConstant.h>
+#include <QtDemonRender/qdemonrendershaderconstant.h>
 #include <QtDemonRender/qdemonrendershaderprogram.h>
 #include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
 #include <QtDemonRuntimeRender/qdemonrenderer.h>
@@ -272,9 +272,6 @@ typedef QPair<QString, QSharedPointer<SImageEntry>> TNamedImageEntry;
 typedef QPair<QString, QSharedPointer<SDataBufferEntry>> TNamedDataBufferEntry;
 }
 
-namespace qt3ds {
-namespace render {
-
 struct SEffectContext
 {
     QString m_ClassName;
@@ -426,8 +423,6 @@ struct SEffectContext
         theDataBufferEntry->Set(inBuffer);
     }
 };
-}
-}
 
 namespace {
 

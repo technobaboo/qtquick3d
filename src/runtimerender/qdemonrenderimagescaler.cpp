@@ -32,10 +32,7 @@
 //	Includes
 //==============================================================================
 
-#include <Qt3DSMath.h>
-#include <Qt3DSAllocatorCallback.h>
-#include <qdemonrenderimagescaler.h>
-#include <Qt3DSMemoryBuffer.h>
+#include "qdemonrenderimagescaler.h"
 
 QT_BEGIN_NAMESPACE
 //==============================================================================

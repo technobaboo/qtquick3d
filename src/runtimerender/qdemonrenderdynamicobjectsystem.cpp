@@ -29,7 +29,7 @@
 ****************************************************************************/
 #include <QtDemonRuntimeRender/qdemonrenderdynamicobjectsystem.h>
 #include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
-#include <Qt3DSRenderShaderConstant.h>
+#include <QtDemonRender/qdemonrendershaderconstant.h>
 #include <QtDemonRuntimeRender/qdemonrenderdynamicobject.h>
 #include <QtDemonRender/qdemonrendershaderprogram.h>
 #include <QtDemonRuntimeRender/qdemonrenderstring.h>
@@ -48,19 +48,17 @@ namespace {
 typedef QPair<QString, QString> TStrStrPair;
 }
 
-namespace eastl {
-template <>
-struct hash<TStrStrPair>
-{
-    size_t operator()(const TStrStrPair &item) const
-    {
-        return hash<QString>()(item.first) ^ hash<QString>()(item.second);
-    }
-};
-}
+// namespace eastl {
+// template <>
+// struct hash<TStrStrPair>
+// {
+//     size_t operator()(const TStrStrPair &item) const
+//     {
+//         return hash<QString>()(item.first) ^ hash<QString>()(item.second);
+//     }
+// };
+// }
 
-namespace qt3ds {
-namespace render {
 namespace dynamic {
 
 quint32 SCommand::GetSizeofCommand(const SCommand &inCommand)
@@ -180,8 +178,6 @@ void SCommand::CopyConstructCommand(quint8 *inDataBuffer, const SCommand &inComm
         Q_ASSERT(false);
         break;
     }
-}
-}
 }
 }
 
@@ -349,8 +345,6 @@ inline const char *GetShaderDatatypeName(QDemonRenderShaderDataTypes::Enum inVal
 
 inline quint32 getSizeofShaderDataType(QDemonRenderShaderDataTypes::Enum value)
 {
-    using namespace qt3ds;
-    using namespace render;
     switch (value) {
 #define HANDLE_QDEMON_SHADER_DATA_TYPE(x)                                                              \
     case QDemonRenderShaderDataTypes::x:                                                               \
@@ -528,7 +522,7 @@ struct SDataRemapper
 struct SShaderMapKey
 {
     TStrStrPair m_Name;
-    eastl::vector<SShaderPreprocessorFeature> m_Features;
+    QVector<SShaderPreprocessorFeature> m_Features;
     TessModeValues::Enum m_TessMode;
     bool m_WireframeMode;
     size_t m_HashCode;

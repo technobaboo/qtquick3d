@@ -44,7 +44,7 @@
 
 QT_BEGIN_NAMESPACE
 struct SLayerRenderData;
-class Qt3DSRendererImpl;
+class QDemonRendererImpl;
 struct SRenderableObject;
 
 struct LayerRenderPreparationResultFlagValues
@@ -244,7 +244,7 @@ struct SLayerRenderPreparationData
     };
 
     SLayer &m_Layer;
-    Qt3DSRendererImpl &m_Renderer;
+    QDemonRendererImpl &m_Renderer;
     // List of nodes we can render, not all may be active.  Found by doing a depth-first
     // search through m_FirstChild if length is zero.
 
@@ -285,7 +285,7 @@ struct SLayerRenderPreparationData
     TModelContextPtrList m_ModelContexts;
     QSharedPointer<IOffscreenRenderer> m_LastFrameOffscreenRenderer;
 
-    eastl::vector<SShaderPreprocessorFeature> m_Features;
+    QVector<SShaderPreprocessorFeature> m_Features;
     QString m_CGLightingFeatureName;
     bool m_FeaturesDirty;
     size_t m_FeatureSetHash;
@@ -294,7 +294,7 @@ struct SLayerRenderPreparationData
     // shadow mapps
     QSharedPointer<QDemonRenderShadowMap> m_ShadowMapManager;
 
-    SLayerRenderPreparationData(SLayer &inLayer, Qt3DSRendererImpl &inRenderer);
+    SLayerRenderPreparationData(SLayer &inLayer, QDemonRendererImpl &inRenderer);
     virtual ~SLayerRenderPreparationData();
     bool GetOffscreenRenderer();
     bool GetShadowMapManager();
