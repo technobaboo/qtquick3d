@@ -70,7 +70,7 @@ class QDemonRenderTextureBase
 
 protected:
     QDemonRenderContextImpl &m_Context; ///< pointer to context
-    QDemonRenderBackend *m_Backend; ///< pointer to backend
+    QSharedPointer<QDemonRenderBackend> m_Backend; ///< pointer to backend
     QDemonRenderBackend::QDemonRenderBackendTextureObject m_TextureHandle; ///< opaque backend handle
     quint32 m_TextureUnit; ///< texture unit this texture should use
     bool m_SamplerParamsDirty; ///< true if sampler state is dirty

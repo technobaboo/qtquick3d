@@ -109,7 +109,7 @@ public:
         // mDepthBuffer = m_Context.CreateRenderBuffer( QDemonRenderRenderBufferFormats::Depth16,
         // mFBWidth, mFBHeight );
 
-        m_Context->SetInputAssembler(mInputAssembler.data());
+        m_Context->SetInputAssembler(mInputAssembler);
 
         mDepthBuffer.reset(m_Context->CreateTexture2D());
         mDepthBuffer->SetTextureData(QDemonDataRef<quint8>(), 0, mFBWidth, mFBHeight,

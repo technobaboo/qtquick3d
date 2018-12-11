@@ -514,22 +514,21 @@ void QDemonRenderContextImpl::FrameBufferDestroyed(QDemonRenderFrameBuffer &fb)
         m_HardwarePropertyContext.m_FrameBuffer = nullptr;
 }
 
-QDemonRenderAttribLayout *
-QDemonRenderContextImpl::CreateAttributeLayout(QDemonConstDataRef<QDemonRenderVertexBufferEntry> attribs)
+QSharedPointer<QDemonRenderAttribLayout> QDemonRenderContextImpl::CreateAttributeLayout(QDemonConstDataRef<QDemonRenderVertexBufferEntry> attribs)
 {
-    return new QDemonRenderAttribLayout(*this, attribs);
+    return QSharedPointer<QDemonRenderAttribLayout>(new QDemonRenderAttribLayout(*this, attribs));
 }
 
-QDemonRenderInputAssembler *QDemonRenderContextImpl::CreateInputAssembler(
-        QDemonRenderAttribLayout *attribLayout, QDemonConstDataRef<QDemonRenderVertexBuffer *> buffers,
+QSharedPointer<QDemonRenderInputAssembler> QDemonRenderContextImpl::CreateInputAssembler(
+        QSharedPointer<QDemonRenderAttribLayout> attribLayout, QDemonConstDataRef<QDemonRenderVertexBuffer *> buffers,
         const QDemonRenderIndexBuffer *indexBuffer, QDemonConstDataRef<quint32> strides,
         QDemonConstDataRef<quint32> offsets, QDemonRenderDrawMode::Enum primType, quint32 patchVertexCount)
 {
-    return new QDemonRenderInputAssembler(*this, attribLayout, buffers, indexBuffer, strides,
-                                                  offsets, primType, patchVertexCount);
+    return QSharedPointer<QDemonRenderInputAssembler>(new QDemonRenderInputAssembler(*this, attribLayout, buffers, indexBuffer, strides,
+                                                  offsets, primType, patchVertexCount));
 }
 
-void QDemonRenderContextImpl::SetInputAssembler(QDemonRenderInputAssembler *inputAssembler)
+void QDemonRenderContextImpl::SetInputAssembler(QSharedPointer<QDemonRenderInputAssembler> inputAssembler)
 {
     if (m_HardwarePropertyContext.m_InputAssembler != inputAssembler) {
         DoSetInputAssembler(inputAssembler);
@@ -896,7 +895,7 @@ void QDemonRenderContextImpl::BlitFramebuffer(qint32 srcX0, qint32 srcY0, qint32
 }
 
 bool
-QDemonRenderContextImpl::BindShaderToInputAssembler(const QDemonRenderInputAssembler *inputAssembler,
+QDemonRenderContextImpl::BindShaderToInputAssembler(const QSharedPointer<QDemonRenderInputAssembler> inputAssembler,
                                                     QSharedPointer<QDemonRenderShaderProgram> shader)
 {
     // setup the input assembler object
@@ -907,7 +906,7 @@ QDemonRenderContextImpl::BindShaderToInputAssembler(const QDemonRenderInputAssem
 bool QDemonRenderContextImpl::ApplyPreDrawProperties()
 {
     // Get the currently bound vertex and shader
-    QDemonRenderInputAssembler *inputAssembler = this->m_HardwarePropertyContext.m_InputAssembler;
+    QSharedPointer<QDemonRenderInputAssembler> inputAssembler = this->m_HardwarePropertyContext.m_InputAssembler;
     QSharedPointer<QDemonRenderShaderProgram> shader(this->m_HardwarePropertyContext.m_ActiveShader);
 
     // we could render through a program pipline

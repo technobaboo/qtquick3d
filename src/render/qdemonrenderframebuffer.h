@@ -134,7 +134,7 @@ class QDemonRenderFrameBuffer : public QDemonRenderImplemented
 {
 private:
     QDemonRenderContextImpl &m_Context; ///< pointer to context
-    QDemonRenderBackend *m_Backend; ///< pointer to backend
+    QSharedPointer<QDemonRenderBackend> m_Backend; ///< pointer to backend
 
     QDemonRenderTextureOrRenderBuffer
     m_Attachments[QDemonRenderFrameBufferAttachments::LastAttachment]; ///< attachments array

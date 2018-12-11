@@ -200,7 +200,7 @@ public:
 
     virtual QDemonRenderTexture2D *CreateTexture2D() = 0;
     virtual QDemonRenderTexture2D *GetTexture2D(const void *implementationHandle) = 0;
-    virtual QDemonRenderBackend *GetBackend() = 0;
+    virtual QSharedPointer<QDemonRenderBackend> GetBackend() = 0;
 
     virtual QDemonRenderTexture2DArray *CreateTexture2DArray() = 0;
 
@@ -217,17 +217,16 @@ public:
     virtual QDemonRenderFrameBuffer *CreateFrameBuffer() = 0;
     virtual QDemonRenderFrameBuffer *GetFrameBuffer(const void *implementationHandle) = 0;
 
-    virtual QDemonRenderAttribLayout *
-    CreateAttributeLayout(QDemonConstDataRef<QDemonRenderVertexBufferEntry> attribs) = 0;
+    virtual QSharedPointer<QDemonRenderAttribLayout> CreateAttributeLayout(QDemonConstDataRef<QDemonRenderVertexBufferEntry> attribs) = 0;
 
-    virtual QDemonRenderInputAssembler *
-    CreateInputAssembler(QDemonRenderAttribLayout *attribLayout,
+    virtual QSharedPointer<QDemonRenderInputAssembler>
+    CreateInputAssembler(QSharedPointer<QDemonRenderAttribLayout> attribLayout,
                          QDemonConstDataRef<QDemonRenderVertexBuffer *> buffers,
                          const QDemonRenderIndexBuffer *indexBuffer, QDemonConstDataRef<quint32> strides,
                          QDemonConstDataRef<quint32> offsets,
                          QDemonRenderDrawMode::Enum primType = QDemonRenderDrawMode::Triangles,
                          quint32 patchVertexCount = 1) = 0;
-    virtual void SetInputAssembler(QDemonRenderInputAssembler *inputAssembler) = 0;
+    virtual void SetInputAssembler(QSharedPointer<QDemonRenderInputAssembler> inputAssembler) = 0;
 
     virtual QDemonRenderVertFragCompilationResult CompileSource(
             const char *shaderName, QDemonConstDataRef<qint8> vertShader,
@@ -581,7 +580,7 @@ protected:
     void DoSetActiveShader(QSharedPointer<QDemonRenderShaderProgram> inShader);
     void DoSetActiveProgramPipeline(QDemonRenderProgramPipeline *inProgramPipeline);
 
-    void DoSetInputAssembler(QDemonRenderInputAssembler *inAssembler)
+    void DoSetInputAssembler(QSharedPointer<QDemonRenderInputAssembler> inAssembler)
     {
         m_HardwarePropertyContext.m_InputAssembler = inAssembler;
         m_DirtyFlags |= QDemonRenderContextDirtyValues::InputAssembler;
@@ -605,7 +604,7 @@ protected:
             m_backend->SetReadTarget(QDemonRenderBackend::QDemonRenderBackendRenderTargetObject(nullptr));
     }
 
-    bool BindShaderToInputAssembler(const QDemonRenderInputAssembler *inputAssembler,
+    bool BindShaderToInputAssembler(const QSharedPointer<QDemonRenderInputAssembler> inputAssembler,
                                     QSharedPointer<QDemonRenderShaderProgram> shader);
     bool ApplyPreDrawProperties();
     void OnPostDraw();
@@ -614,7 +613,7 @@ public:
     QDemonRenderContextImpl(QSharedPointer<QDemonRenderBackend> inBackend);
     virtual ~QDemonRenderContextImpl();
 
-    QDemonRenderBackend *GetBackend() override { return m_backend.data(); } // ### Dont do this
+    QSharedPointer<QDemonRenderBackend> GetBackend() override { return m_backend; }
 
     void getMaxTextureSize(quint32 &oWidth, quint32 &oHeight) override;
 
@@ -850,13 +849,13 @@ public:
     QDemonRenderFrameBuffer *GetFrameBuffer(const void *implementationHandle) override;
     virtual void FrameBufferDestroyed(QDemonRenderFrameBuffer &fb);
 
-    virtual QDemonRenderAttribLayout *
+    virtual QSharedPointer<QDemonRenderAttribLayout>
     CreateAttributeLayout(QDemonConstDataRef<QDemonRenderVertexBufferEntry> attribs) override;
-    QDemonRenderInputAssembler *CreateInputAssembler(
-            QDemonRenderAttribLayout *attribLayout, QDemonConstDataRef<QDemonRenderVertexBuffer *> buffers,
+    QSharedPointer<QDemonRenderInputAssembler> CreateInputAssembler(
+            QSharedPointer<QDemonRenderAttribLayout> attribLayout, QDemonConstDataRef<QDemonRenderVertexBuffer *> buffers,
             const QDemonRenderIndexBuffer *indexBuffer, QDemonConstDataRef<quint32> strides,
             QDemonConstDataRef<quint32> offsets, QDemonRenderDrawMode::Enum primType, quint32 patchVertexCount) override;
-    void SetInputAssembler(QDemonRenderInputAssembler *inputAssembler) override;
+    void SetInputAssembler(QSharedPointer<QDemonRenderInputAssembler> inputAssembler) override;
 
     QDemonRenderVertFragCompilationResult CompileSource(
             const char *shaderName, QDemonConstDataRef<qint8> vertShader,

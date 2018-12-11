@@ -43,7 +43,7 @@ class QDemonRenderPathFontItem;
 class QDemonRenderPathFontSpecification
 {
     QDemonRenderContextImpl &m_Context; ///< pointer to context
-    QDemonRenderBackend *m_Backend; ///< pointer to backend
+    QSharedPointer<QDemonRenderBackend> m_Backend; ///< pointer to backend
 
 public:
     /**
@@ -127,8 +127,7 @@ private:
     QDemonRenderPathFormatType::Enum m_Type; ///< type ( byte, int,... )
     QDemonRenderPathTransformType::Enum m_TransformType; ///< transform type default 2D
     QString m_FontName; ///< Name of Font
-    QDemonRenderBackend::QDemonRenderBackendPathObject
-    m_PathRenderHandle; ///< opaque backend handle
+    QDemonRenderBackend::QDemonRenderBackendPathObject m_PathRenderHandle; ///< opaque backend handle
 
 private:
     /**

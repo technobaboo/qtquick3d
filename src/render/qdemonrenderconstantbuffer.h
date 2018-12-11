@@ -106,7 +106,7 @@ public:
          *
          * @return return if successful
          */
-    bool SetupBuffer(QSharedPointer<QDemonRenderShaderProgram> pProgram, qint32 index, qint32 bufSize,
+    bool SetupBuffer(const QDemonRenderShaderProgram *program, qint32 index, qint32 bufSize,
                      qint32 paramCount);
 
     /**

@@ -52,7 +52,7 @@ struct ShaderConstantApplier
 template <>
 struct ShaderConstantApplier<qint32>
 {
-    void ApplyConstant(QDemonRenderShaderProgram *program, QDemonRenderBackend *backend, qint32 location,
+    void ApplyConstant(const QDemonRenderShaderProgram *program, QSharedPointer<QDemonRenderBackend> backend, qint32 location,
                        qint32 count, QDemonRenderShaderDataTypes::Enum type, const qint32 &inValue,
                        qint32 &oldValue)
     {
@@ -67,7 +67,7 @@ struct ShaderConstantApplier<qint32>
 template <>
 struct ShaderConstantApplier<qint32_2>
 {
-    void ApplyConstant(QDemonRenderShaderProgram *program, QDemonRenderBackend *backend, qint32 location,
+    void ApplyConstant(const QDemonRenderShaderProgram *program, QSharedPointer<QDemonRenderBackend> backend, qint32 location,
                        qint32 count, QDemonRenderShaderDataTypes::Enum type, const qint32_2 &inValue,
                        qint32_2 &oldValue)
     {
@@ -82,7 +82,7 @@ struct ShaderConstantApplier<qint32_2>
 template <>
 struct ShaderConstantApplier<qint32_3>
 {
-    void ApplyConstant(QDemonRenderShaderProgram *program, QDemonRenderBackend *backend, qint32 location,
+    void ApplyConstant(const QDemonRenderShaderProgram *program, QSharedPointer<QDemonRenderBackend> backend, qint32 location,
                        qint32 count, QDemonRenderShaderDataTypes::Enum type, const qint32_3 &inValue,
                        qint32_3 &oldValue)
     {
@@ -97,7 +97,7 @@ struct ShaderConstantApplier<qint32_3>
 template <>
 struct ShaderConstantApplier<qint32_4>
 {
-    void ApplyConstant(QDemonRenderShaderProgram *program, QDemonRenderBackend *backend, qint32 location,
+    void ApplyConstant(const QDemonRenderShaderProgram *program, QSharedPointer<QDemonRenderBackend> backend, qint32 location,
                        qint32 count, QDemonRenderShaderDataTypes::Enum type, const qint32_4 &inValue,
                        qint32_4 &oldValue)
     {
@@ -112,7 +112,7 @@ struct ShaderConstantApplier<qint32_4>
 template <>
 struct ShaderConstantApplier<bool>
 {
-    void ApplyConstant(QDemonRenderShaderProgram *program, QDemonRenderBackend *backend, qint32 location,
+    void ApplyConstant(const QDemonRenderShaderProgram *program, QSharedPointer<QDemonRenderBackend> backend, qint32 location,
                        qint32 count, QDemonRenderShaderDataTypes::Enum type,
                        const bool inValue, bool &oldValue)
     {
@@ -127,7 +127,7 @@ struct ShaderConstantApplier<bool>
 template <>
 struct ShaderConstantApplier<bool_2>
 {
-    void ApplyConstant(QDemonRenderShaderProgram *program, QDemonRenderBackend *backend, qint32 location,
+    void ApplyConstant(const QDemonRenderShaderProgram *program, QSharedPointer<QDemonRenderBackend> backend, qint32 location,
                        qint32 count, QDemonRenderShaderDataTypes::Enum type, const bool_2 &inValue,
                        bool_2 &oldValue)
     {
@@ -142,7 +142,7 @@ struct ShaderConstantApplier<bool_2>
 template <>
 struct ShaderConstantApplier<bool_3>
 {
-    void ApplyConstant(QDemonRenderShaderProgram *program, QDemonRenderBackend *backend, qint32 location,
+    void ApplyConstant(const QDemonRenderShaderProgram *program, QSharedPointer<QDemonRenderBackend> backend, qint32 location,
                        qint32 count, QDemonRenderShaderDataTypes::Enum type, const bool_3 &inValue,
                        bool_3 &oldValue)
     {
@@ -157,7 +157,7 @@ struct ShaderConstantApplier<bool_3>
 template <>
 struct ShaderConstantApplier<bool_4>
 {
-    void ApplyConstant(QDemonRenderShaderProgram *program, QDemonRenderBackend *backend, qint32 location,
+    void ApplyConstant(const QDemonRenderShaderProgram *program, QSharedPointer<QDemonRenderBackend> backend, qint32 location,
                        qint32 count, QDemonRenderShaderDataTypes::Enum type, const bool_4 &inValue,
                        bool_4 &oldValue)
     {
@@ -172,7 +172,7 @@ struct ShaderConstantApplier<bool_4>
 template <>
 struct ShaderConstantApplier<float>
 {
-    void ApplyConstant(QDemonRenderShaderProgram *program, QDemonRenderBackend *backend, qint32 location,
+    void ApplyConstant(const QDemonRenderShaderProgram *program, QSharedPointer<QDemonRenderBackend> backend, qint32 location,
                        qint32 count, QDemonRenderShaderDataTypes::Enum type, const float &inValue,
                        float &oldValue)
     {
@@ -187,7 +187,7 @@ struct ShaderConstantApplier<float>
 template <>
 struct ShaderConstantApplier<QVector2D>
 {
-    void ApplyConstant(QDemonRenderShaderProgram *program, QDemonRenderBackend *backend, qint32 location,
+    void ApplyConstant(const QDemonRenderShaderProgram *program, QSharedPointer<QDemonRenderBackend> backend, qint32 location,
                        qint32 count, QDemonRenderShaderDataTypes::Enum type, const QVector2D &inValue,
                        QVector2D &oldValue)
     {
@@ -202,7 +202,7 @@ struct ShaderConstantApplier<QVector2D>
 template <>
 struct ShaderConstantApplier<QVector3D>
 {
-    void ApplyConstant(QDemonRenderShaderProgram *program, QDemonRenderBackend *backend, qint32 location,
+    void ApplyConstant(const QDemonRenderShaderProgram *program, QSharedPointer<QDemonRenderBackend> backend, qint32 location,
                        qint32 count, QDemonRenderShaderDataTypes::Enum type, const QVector3D &inValue,
                        QVector3D &oldValue)
     {
@@ -217,7 +217,7 @@ struct ShaderConstantApplier<QVector3D>
 template <>
 struct ShaderConstantApplier<QVector4D>
 {
-    void ApplyConstant(QDemonRenderShaderProgram *program, QDemonRenderBackend *backend, qint32 location,
+    void ApplyConstant(const QDemonRenderShaderProgram *program, QSharedPointer<QDemonRenderBackend> backend, qint32 location,
                        qint32 count, QDemonRenderShaderDataTypes::Enum type, const QVector4D &inValue,
                        QVector4D &oldValue)
     {
@@ -232,7 +232,7 @@ struct ShaderConstantApplier<QVector4D>
 template <>
 struct ShaderConstantApplier<quint32>
 {
-    void ApplyConstant(QDemonRenderShaderProgram *program, QDemonRenderBackend *backend, qint32 location,
+    void ApplyConstant(const QDemonRenderShaderProgram *program, QSharedPointer<QDemonRenderBackend> backend, qint32 location,
                        qint32 count, QDemonRenderShaderDataTypes::Enum type, const quint32 &inValue,
                        quint32 &oldValue)
     {
@@ -247,7 +247,7 @@ struct ShaderConstantApplier<quint32>
 template <>
 struct ShaderConstantApplier<quint32_2>
 {
-    void ApplyConstant(QDemonRenderShaderProgram *program, QDemonRenderBackend *backend, qint32 location,
+    void ApplyConstant(const QDemonRenderShaderProgram *program, QSharedPointer<QDemonRenderBackend> backend, qint32 location,
                        qint32 count, QDemonRenderShaderDataTypes::Enum type, const quint32_2 &inValue,
                        quint32_2 &oldValue)
     {
@@ -262,7 +262,7 @@ struct ShaderConstantApplier<quint32_2>
 template <>
 struct ShaderConstantApplier<quint32_3>
 {
-    void ApplyConstant(QDemonRenderShaderProgram *program, QDemonRenderBackend *backend, qint32 location,
+    void ApplyConstant(const QDemonRenderShaderProgram *program, QSharedPointer<QDemonRenderBackend> backend, qint32 location,
                        qint32 count, QDemonRenderShaderDataTypes::Enum type, const quint32_3 &inValue,
                        quint32_3 &oldValue)
     {
@@ -277,7 +277,7 @@ struct ShaderConstantApplier<quint32_3>
 template <>
 struct ShaderConstantApplier<quint32_4>
 {
-    void ApplyConstant(QDemonRenderShaderProgram *program, QDemonRenderBackend *backend, qint32 location,
+    void ApplyConstant(const QDemonRenderShaderProgram *program, QSharedPointer<QDemonRenderBackend> backend, qint32 location,
                        qint32 count, QDemonRenderShaderDataTypes::Enum type, const quint32_4 &inValue,
                        quint32_4 &oldValue)
     {
@@ -292,7 +292,7 @@ struct ShaderConstantApplier<quint32_4>
 template <>
 struct ShaderConstantApplier<QMatrix3x3>
 {
-    void ApplyConstant(QDemonRenderShaderProgram *program, QDemonRenderBackend *backend, qint32 location,
+    void ApplyConstant(const QDemonRenderShaderProgram *program, QSharedPointer<QDemonRenderBackend> backend, qint32 location,
                        qint32 count, QDemonRenderShaderDataTypes::Enum type, const QMatrix3x3 inValue,
                        QMatrix3x3 &, bool inTranspose)
     {
@@ -304,7 +304,7 @@ struct ShaderConstantApplier<QMatrix3x3>
 template <>
 struct ShaderConstantApplier<QMatrix4x4>
 {
-    void ApplyConstant(QDemonRenderShaderProgram *program, QDemonRenderBackend *backend, qint32 location,
+    void ApplyConstant(const QDemonRenderShaderProgram *program, QSharedPointer<QDemonRenderBackend> backend, qint32 location,
                        qint32 count, QDemonRenderShaderDataTypes::Enum type, const QMatrix4x4 inValue,
                        QMatrix4x4 &, bool inTranspose)
     {
@@ -312,7 +312,7 @@ struct ShaderConstantApplier<QMatrix4x4>
                                   inValue.constData(), inTranspose);
     }
 
-    void ApplyConstant(QDemonRenderShaderProgram *program, QDemonRenderBackend *backend, qint32 location,
+    void ApplyConstant(const QDemonRenderShaderProgram *program, QSharedPointer<QDemonRenderBackend> backend, qint32 location,
                        qint32 count, QDemonRenderShaderDataTypes::Enum type,
                        QDemonConstDataRef<QMatrix4x4> inValue, QMatrix4x4 &, bool inTranspose)
     {
@@ -325,7 +325,7 @@ struct ShaderConstantApplier<QMatrix4x4>
 template <>
 struct ShaderConstantApplier<QDemonRenderTexture2DPtr>
 {
-    void ApplyConstant(QDemonRenderShaderProgram *program, QDemonRenderBackend *backend, qint32 location,
+    void ApplyConstant(const QDemonRenderShaderProgram *program, QSharedPointer<QDemonRenderBackend> backend, qint32 location,
                        qint32 count, QDemonRenderShaderDataTypes::Enum type,
                        QDemonRenderTexture2DPtr inValue, quint32 &oldValue)
     {
@@ -345,7 +345,7 @@ struct ShaderConstantApplier<QDemonRenderTexture2DPtr>
 template <>
 struct ShaderConstantApplier<QDemonRenderTexture2DHandle>
 {
-    void ApplyConstant(QDemonRenderShaderProgram *program, QDemonRenderBackend *backend,
+    void ApplyConstant(const QDemonRenderShaderProgram *program, QSharedPointer<QDemonRenderBackend> backend,
                        qint32 location, qint32 count, QDemonRenderShaderDataTypes::Enum type,
                        QDemonRenderTexture2DHandle inValue, QVector<quint32> &oldValue)
     {
@@ -375,7 +375,7 @@ struct ShaderConstantApplier<QDemonRenderTexture2DHandle>
 template <>
 struct ShaderConstantApplier<QDemonRenderTexture2DArrayPtr>
 {
-    void ApplyConstant(QDemonRenderShaderProgram *program, QDemonRenderBackend *backend, qint32 location,
+    void ApplyConstant(const QDemonRenderShaderProgram *program, QSharedPointer<QDemonRenderBackend> backend, qint32 location,
                        qint32 count, QDemonRenderShaderDataTypes::Enum type,
                        QDemonRenderTexture2DArrayPtr inValue, quint32 &oldValue)
     {
@@ -396,7 +396,7 @@ struct ShaderConstantApplier<QDemonRenderTexture2DArrayPtr>
 template <>
 struct ShaderConstantApplier<QDemonRenderTextureCubePtr>
 {
-    void ApplyConstant(QDemonRenderShaderProgram *program, QDemonRenderBackend *backend, qint32 location,
+    void ApplyConstant(const QDemonRenderShaderProgram *program, QSharedPointer<QDemonRenderBackend> backend, qint32 location,
                        qint32 count, QDemonRenderShaderDataTypes::Enum type,
                        QDemonRenderTextureCubePtr inValue, quint32 &oldValue)
     {
@@ -416,7 +416,7 @@ struct ShaderConstantApplier<QDemonRenderTextureCubePtr>
 template <>
 struct ShaderConstantApplier<QDemonRenderTextureCubeHandle>
 {
-    void ApplyConstant(QDemonRenderShaderProgram *program, QDemonRenderBackend *backend,
+    void ApplyConstant(const QDemonRenderShaderProgram *program, QSharedPointer<QDemonRenderBackend> backend,
                        qint32 location, qint32 count, QDemonRenderShaderDataTypes::Enum type,
                        QDemonRenderTextureCubeHandle inValue, QVector<quint32> &oldValue)
     {
@@ -446,7 +446,7 @@ struct ShaderConstantApplier<QDemonRenderTextureCubeHandle>
 template <>
 struct ShaderConstantApplier<QDemonRenderImage2DPtr>
 {
-    void ApplyConstant(QDemonRenderShaderProgram *program, QDemonRenderBackend *backend, qint32 location,
+    void ApplyConstant(const QDemonRenderShaderProgram *program, QSharedPointer<QDemonRenderBackend> backend, qint32 location,
                        qint32 count, QDemonRenderShaderDataTypes::Enum type,
                        QDemonRenderImage2DPtr inValue, quint32 &oldValue, qint32 binding)
     {
@@ -520,7 +520,7 @@ void QDemonRenderShaderProgram::Detach(TShaderObject *pShader)
 }
 
 static QDemonRenderShaderConstantBase *
-ShaderConstantFactory(QDemonRenderBackend *backend, const QString &inName,
+ShaderConstantFactory(QSharedPointer<QDemonRenderBackend> backend, const QString &inName,
                       qint32 uniLoc, qint32 elementCount,
                       QDemonRenderShaderDataTypes::Enum inConstantType, qint32 binding)
 {
@@ -616,9 +616,7 @@ bool QDemonRenderShaderProgram::Link()
             }
             if (location != -1) {
                 const QString theName = QString::fromLocal8Bit(nameBuf);
-                m_Constants.insert(theName,
-                                   ShaderConstantFactory(m_Backend, theName,
-                                                         location, elementCount, type, binding));
+                m_Constants.insert(theName, ShaderConstantFactory(m_Backend, theName, location, elementCount, type, binding));
             }
         }
 
@@ -636,7 +634,7 @@ bool QDemonRenderShaderProgram::Link()
                 // find constant buffer in our DB
                 QDemonRenderConstantBuffer *cb = m_Context.GetConstantBuffer(theName);
                 if (cb) {
-                    cb->SetupBuffer(QSharedPointer<QDemonRenderShaderProgram>(this), location, bufferSize, paramCount);
+                    cb->SetupBuffer(this, location, bufferSize, paramCount);
                     //cb->addRef();
                 }
 
@@ -740,7 +738,7 @@ QDemonRenderShaderBufferBase *QDemonRenderShaderProgram::GetShaderBuffer(const c
 QDemonRenderContextImpl &QDemonRenderShaderProgram::GetRenderContext() { return m_Context; }
 
 template <typename TDataType>
-void SetConstantValueOfType(QDemonRenderShaderProgram *program,
+void SetConstantValueOfType(const QDemonRenderShaderProgram *program,
                             QDemonRenderShaderConstantBase *inConstantBase,
                             const TDataType &inValue, const qint32 inCount)
 {
@@ -764,7 +762,7 @@ void SetConstantValueOfType(QDemonRenderShaderProgram *program,
 }
 
 template <typename TDataType>
-void SetSamplerConstantValueOfType(QDemonRenderShaderProgram *program,
+void SetSamplerConstantValueOfType(const QDemonRenderShaderProgram *program,
                                    QDemonRenderShaderConstantBase *inConstantBase,
                                    const TDataType &inValue, const qint32 inCount)
 {
@@ -788,7 +786,7 @@ void SetSamplerConstantValueOfType(QDemonRenderShaderProgram *program,
 }
 
 template <typename TDataType>
-void SetMatrixConstantValueOfType(QDemonRenderShaderProgram *program,
+void SetMatrixConstantValueOfType(const QDemonRenderShaderProgram *program,
                                   QDemonRenderShaderConstantBase *inConstantBase,
                                   const TDataType &inValue, const qint32 inCount,
                                   bool inTranspose)
@@ -813,7 +811,7 @@ void SetMatrixConstantValueOfType(QDemonRenderShaderProgram *program,
 }
 
 template <typename TDataType>
-void SetMatrixConstantValueOfType(QDemonRenderShaderProgram *program,
+void SetMatrixConstantValueOfType(const QDemonRenderShaderProgram *program,
                                   QDemonRenderShaderConstantBase *inConstantBase,
                                   const QDemonConstDataRef<TDataType> inValue,
                                   const qint32 /*inCount*/, bool inTranspose)

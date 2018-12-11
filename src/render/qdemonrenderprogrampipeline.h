@@ -44,7 +44,7 @@ class Q_DEMONRENDER_EXPORT QDemonRenderProgramPipeline
 {
 protected:
     QDemonRenderContextImpl &m_Context; ///< pointer to context
-    QDemonRenderBackend *m_Backend; ///< pointer to backend
+    QSharedPointer<QDemonRenderBackend> m_Backend; ///< pointer to backend
 
 public:
     /**

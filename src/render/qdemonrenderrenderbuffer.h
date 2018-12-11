@@ -59,7 +59,7 @@ class QDemonRenderRenderBuffer : public QDemonRenderImplemented
 {
 private:
     QDemonRenderContextImpl &m_Context; ///< pointer to context
-    QDemonRenderBackend *m_Backend; ///< pointer to backend
+    QSharedPointer<QDemonRenderBackend> m_Backend; ///< pointer to backend
     quint32 m_Width; ///< buffer width
     quint32 m_Height; ///< buffer height
     QDemonRenderRenderBufferFormats::Enum m_StorageFormat; ///< buffer storage format

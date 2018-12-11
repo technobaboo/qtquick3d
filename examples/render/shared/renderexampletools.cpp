@@ -78,7 +78,7 @@ QSharedPointer<QDemonRenderInputAssembler> QDemonRenderExampleTools::createBox(Q
         QDemonRenderVertexBufferEntry("attr_uv", QDemonRenderComponentTypes::Float32, 2, 6 * sizeof(float)),
     };
 
-    QDemonRenderAttribLayout *attribLayout = context->CreateAttributeLayout(toConstDataRef(entries, 3));
+    QSharedPointer<QDemonRenderAttribLayout> attribLayout = context->CreateAttributeLayout(toConstDataRef(entries, 3));
 
     // Vertex Buffer
     quint32 bufStride = 8 * sizeof(float);
@@ -139,12 +139,12 @@ QSharedPointer<QDemonRenderInputAssembler> QDemonRenderExampleTools::createBox(Q
     quint32 offsets = 0;
 
     QDemonRenderVertexBuffer *vertexBuffer = outVertexBuffer.data();
-    QDemonRenderInputAssembler *inputAssembler = context->CreateInputAssembler(attribLayout,
+    QSharedPointer<QDemonRenderInputAssembler> inputAssembler = context->CreateInputAssembler(attribLayout,
                                                                                toConstDataRef(&vertexBuffer, 1),
                                                                                outIndexBuffer.data(),
                                                                                toConstDataRef(&strides, 1),
                                                                                toConstDataRef(&offsets, 1));
-    return QSharedPointer<QDemonRenderInputAssembler>(inputAssembler);
+    return inputAssembler;
 }
 
 

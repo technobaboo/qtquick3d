@@ -125,7 +125,7 @@ void QDemonRenderConstantBuffer::BindToShaderProgram(QSharedPointer<QDemonRender
     m_Backend->ProgramSetConstantBuffer(binding, m_BufferHandle);
 }
 
-bool QDemonRenderConstantBuffer::SetupBuffer(QSharedPointer<QDemonRenderShaderProgram> pProgram, qint32 index,
+bool QDemonRenderConstantBuffer::SetupBuffer(const QDemonRenderShaderProgram *program, qint32 index,
                                              qint32 bufSize, qint32 paramCount)
 {
     bool bSuccess = false;
@@ -158,11 +158,11 @@ bool QDemonRenderConstantBuffer::SetupBuffer(QSharedPointer<QDemonRenderShaderPr
         bSuccess = true;
 
         // get indices for the individal constant buffer entries
-        m_Backend->GetConstantBufferParamIndices(pProgram->GetShaderProgramHandle(), index,
+        m_Backend->GetConstantBufferParamIndices(program->GetShaderProgramHandle(), index,
                                                  theIndices);
 
         // get constant buffer uniform information
-        m_Backend->GetConstantBufferParamInfoByIndices(pProgram->GetShaderProgramHandle(),
+        m_Backend->GetConstantBufferParamInfoByIndices(program->GetShaderProgramHandle(),
                                                        paramCount, (quint32 *)theIndices,
                                                        theTypes, theSizes, theOffsets);
 
@@ -173,7 +173,7 @@ bool QDemonRenderConstantBuffer::SetupBuffer(QSharedPointer<QDemonRenderShaderPr
 
         QDEMON_FOREACH(idx, paramCount)
         {
-            m_Backend->GetConstantInfoByID(pProgram->GetShaderProgramHandle(), theIndices[idx],
+            m_Backend->GetConstantInfoByID(program->GetShaderProgramHandle(), theIndices[idx],
                                            512, &elementCount, &type, &binding, nameBuf);
             // check if we already have this entry
             const QString theName = QString::fromLocal8Bit(nameBuf);

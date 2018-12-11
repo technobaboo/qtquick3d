@@ -50,7 +50,7 @@ class QDemonRenderConstantBuffer;
 class Q_DEMONRENDER_EXPORT QDemonRenderShaderConstantBase
 {
 public:
-    QDemonRenderBackend *m_Backend; ///< pointer to backend
+    QSharedPointer<QDemonRenderBackend> m_Backend; ///< pointer to backend
     QString m_Name; ///< register constant name
     qint32 m_Location; ///< constant index
     qint32 m_ElementCount; ///< constant element count for arrays
@@ -58,7 +58,7 @@ public:
     qint32 m_Binding; ///< sampler/imnage binding point
 
 public:
-    QDemonRenderShaderConstantBase(QDemonRenderBackend *backend, const QString &name, qint32 location,
+    QDemonRenderShaderConstantBase(QSharedPointer<QDemonRenderBackend> backend, const QString &name, qint32 location,
                                    qint32 elementCount, QDemonRenderShaderDataTypes::Enum type,
                                    qint32 binding)
         : m_Backend(backend)
@@ -83,7 +83,7 @@ public:
     TDataType m_Value; ///< constant value
 
 public:
-    QDemonRenderShaderConstant(QDemonRenderBackend *backend, const QString &name, qint32 location,
+    QDemonRenderShaderConstant(QSharedPointer<QDemonRenderBackend> backend, const QString &name, qint32 location,
                                qint32 elementCount, QDemonRenderShaderDataTypes::Enum type,
                                qint32 binding)
         : QDemonRenderShaderConstantBase(backend, name, location, elementCount, type, binding)
@@ -102,7 +102,7 @@ public:
     quint32 m_Value; ///< constant value
 
 public:
-    QDemonRenderShaderConstant(QDemonRenderBackend *backend, const QString &name, qint32 location,
+    QDemonRenderShaderConstant(QSharedPointer<QDemonRenderBackend> backend, const QString &name, qint32 location,
                                qint32 elementCount, QDemonRenderShaderDataTypes::Enum type,
                                qint32 binding)
         : QDemonRenderShaderConstantBase(backend, name, location, elementCount, type, binding)
@@ -121,7 +121,7 @@ public:
     QVector<quint32> m_Value; ///< constant value
 
 public:
-    QDemonRenderShaderConstant(QDemonRenderBackend *backend, const QString &name, qint32 location,
+    QDemonRenderShaderConstant(QSharedPointer<QDemonRenderBackend> backend, const QString &name, qint32 location,
                                qint32 elementCount, QDemonRenderShaderDataTypes::Enum type,
                                qint32 binding)
         : QDemonRenderShaderConstantBase(backend, name, location, elementCount, type, binding)
@@ -141,7 +141,7 @@ public:
     quint32 m_Value; ///< constant value
 
 public:
-    QDemonRenderShaderConstant(QDemonRenderBackend *backend, const QString &name, qint32 location,
+    QDemonRenderShaderConstant(QSharedPointer<QDemonRenderBackend> backend, const QString &name, qint32 location,
                                qint32 elementCount, QDemonRenderShaderDataTypes::Enum type,
                                qint32 binding)
         : QDemonRenderShaderConstantBase(backend, name, location, elementCount, type, binding)
@@ -160,7 +160,7 @@ public:
     quint32 m_Value; ///< constant value
 
 public:
-    QDemonRenderShaderConstant(QDemonRenderBackend *backend, const QString &name, qint32 location,
+    QDemonRenderShaderConstant(QSharedPointer<QDemonRenderBackend> backend, const QString &name, qint32 location,
                                qint32 elementCount, QDemonRenderShaderDataTypes::Enum type,
                                qint32 binding)
         : QDemonRenderShaderConstantBase(backend, name, location, elementCount, type, binding)
@@ -179,7 +179,7 @@ public:
     QVector<quint32> m_Value; ///< constant value
 
 public:
-    QDemonRenderShaderConstant(QDemonRenderBackend *backend, const QString &name, qint32 location,
+    QDemonRenderShaderConstant(QSharedPointer<QDemonRenderBackend> backend, const QString &name, qint32 location,
                                qint32 elementCount, QDemonRenderShaderDataTypes::Enum type,
                                qint32 binding)
         : QDemonRenderShaderConstantBase(backend, name, location, elementCount, type, binding)
@@ -199,7 +199,7 @@ public:
     quint32 m_Value; ///< constant value
 
 public:
-    QDemonRenderShaderConstant(QDemonRenderBackend *backend, const QString &name, qint32 location,
+    QDemonRenderShaderConstant(QSharedPointer<QDemonRenderBackend> backend, const QString &name, qint32 location,
                                qint32 elementCount, QDemonRenderShaderDataTypes::Enum type,
                                qint32 binding)
         : QDemonRenderShaderConstantBase(backend, name, location, elementCount, type, binding)
@@ -272,7 +272,7 @@ public:
 
         QDemonRenderConstantBuffer *cb = m_Context.GetConstantBuffer(m_Name);
         if (cb) {
-            cb->SetupBuffer(inShader, m_Location, m_Size, m_ParamCount);
+            cb->SetupBuffer(inShader.data(), m_Location, m_Size, m_ParamCount);
             //cb->addRef();
             m_pCB = cb;
         } else {

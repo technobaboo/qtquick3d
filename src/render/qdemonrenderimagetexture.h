@@ -47,7 +47,7 @@ class QDemonRenderImage2D
 
 private:
     QDemonRenderContextImpl &m_Context; ///< pointer to context
-    QDemonRenderBackend *m_Backend; ///< pointer to backend
+    QSharedPointer<QDemonRenderBackend> m_Backend; ///< pointer to backend
     QDemonRenderTexture2D *m_Texture2D; ///< pointer to texture
     qint32 m_TextureUnit; ///< texture unit this texture should use
     QDemonRenderImageAccessType::Enum m_AccessType; ///< texture / image access type ( read, write, read_write )

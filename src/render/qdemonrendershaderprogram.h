@@ -64,7 +64,7 @@ public:
 
 private:
     QDemonRenderContextImpl &m_Context; ///< pointer to context
-    QDemonRenderBackend *m_Backend; ///< pointer to backend
+    QSharedPointer<QDemonRenderBackend> m_Backend; ///< pointer to backend
     const char *m_ProgramName; /// Name of the program
     QDemonRenderBackend::QDemonRenderBackendShaderProgramObject m_ProgramHandle; ///< opaque backend handle
     TShaderConstantMap m_Constants; ///< map of shader constants
@@ -231,58 +231,32 @@ public:
     QDemonRenderShaderBufferBase *GetShaderBuffer(const char *bufferName);
 
     // concrete set functions
-    void SetConstantValue(QDemonRenderShaderConstantBase *inConstant, qint32 inValue,
-                          const qint32 inCount);
-    void SetConstantValue(QDemonRenderShaderConstantBase *inConstant, const qint32_2 &inValue,
-                          const qint32 inCount);
-    void SetConstantValue(QDemonRenderShaderConstantBase *inConstant, const qint32_3 &inValue,
-                          const qint32 inCount);
-    void SetConstantValue(QDemonRenderShaderConstantBase *inConstant, const qint32_4 &inValue,
-                          const qint32 inCount);
-    void SetConstantValue(QDemonRenderShaderConstantBase *inConstant, bool inValue,
-                          const qint32 inCount);
-    void SetConstantValue(QDemonRenderShaderConstantBase *inConstant, const bool_2 &inValue,
-                          const qint32 inCount);
-    void SetConstantValue(QDemonRenderShaderConstantBase *inConstant, const bool_3 &inValue,
-                          const qint32 inCount);
-    void SetConstantValue(QDemonRenderShaderConstantBase *inConstant, const bool_4 &inValue,
-                          const qint32 inCount);
-    void SetConstantValue(QDemonRenderShaderConstantBase *inConstant, const float &inValue,
-                          const qint32 inCount);
-    void SetConstantValue(QDemonRenderShaderConstantBase *inConstant, const QVector2D &inValue,
-                          const qint32 inCount);
-    void SetConstantValue(QDemonRenderShaderConstantBase *inConstant, const QVector3D &inValue,
-                          const qint32 inCount);
-    void SetConstantValue(QDemonRenderShaderConstantBase *inConstant, const QVector4D &inValue,
-                          const qint32 inCount);
-    void SetConstantValue(QDemonRenderShaderConstantBase *inConstant, const quint32 &inValue,
-                          const qint32 inCount);
-    void SetConstantValue(QDemonRenderShaderConstantBase *inConstant, const quint32_2 &inValue,
-                          const qint32 inCount);
-    void SetConstantValue(QDemonRenderShaderConstantBase *inConstant, const quint32_3 &inValue,
-                          const qint32 inCount);
-    void SetConstantValue(QDemonRenderShaderConstantBase *inConstant, const quint32_4 &inValue,
-                          const qint32 inCount);
-    void SetConstantValue(QDemonRenderShaderConstantBase *inConstant, const QMatrix3x3 &inValue,
-                          const qint32 inCount, bool inTranspose = false);
-    void SetConstantValue(QDemonRenderShaderConstantBase *inConstant, const QMatrix4x4 &inValue,
-                          const qint32 inCount, bool inTranspose = false);
-    void SetConstantValue(QDemonRenderShaderConstantBase *inConstant,
-                          const QDemonConstDataRef<QMatrix4x4> inValue, const qint32 inCount);
-    void SetConstantValue(QDemonRenderShaderConstantBase *inConstant, QDemonRenderTexture2D *inValue,
-                          const qint32 inCount);
-    void SetConstantValue(QDemonRenderShaderConstantBase *inConstant, QDemonRenderTexture2D **inValue,
-                          const qint32 inCount);
-    void SetConstantValue(QDemonRenderShaderConstantBase *inConstant,
-                          QDemonRenderTexture2DArray *inValue, const qint32 inCount);
-    void SetConstantValue(QDemonRenderShaderConstantBase *inConstant, QDemonRenderTextureCube *inValue,
-                          const qint32 inCount);
-    void SetConstantValue(QDemonRenderShaderConstantBase *inConstant, QDemonRenderTextureCube **inValue,
-                          const qint32 inCount);
-    void SetConstantValue(QDemonRenderShaderConstantBase *inConstant, QDemonRenderImage2D *inValue,
-                          const qint32 inCount);
-    void SetConstantValue(QDemonRenderShaderConstantBase *inConstant, QDemonRenderDataBuffer *inValue,
-                          const qint32 inCount);
+    void SetConstantValue(QDemonRenderShaderConstantBase *inConstant, qint32 inValue, const qint32 inCount);
+    void SetConstantValue(QDemonRenderShaderConstantBase *inConstant, const qint32_2 &inValue, const qint32 inCount);
+    void SetConstantValue(QDemonRenderShaderConstantBase *inConstant, const qint32_3 &inValue, const qint32 inCount);
+    void SetConstantValue(QDemonRenderShaderConstantBase *inConstant, const qint32_4 &inValue, const qint32 inCount);
+    void SetConstantValue(QDemonRenderShaderConstantBase *inConstant, bool inValue, const qint32 inCount);
+    void SetConstantValue(QDemonRenderShaderConstantBase *inConstant, const bool_2 &inValue, const qint32 inCount);
+    void SetConstantValue(QDemonRenderShaderConstantBase *inConstant, const bool_3 &inValue, const qint32 inCount);
+    void SetConstantValue(QDemonRenderShaderConstantBase *inConstant, const bool_4 &inValue, const qint32 inCount);
+    void SetConstantValue(QDemonRenderShaderConstantBase *inConstant, const float &inValue, const qint32 inCount);
+    void SetConstantValue(QDemonRenderShaderConstantBase *inConstant, const QVector2D &inValue, const qint32 inCount);
+    void SetConstantValue(QDemonRenderShaderConstantBase *inConstant, const QVector3D &inValue, const qint32 inCount);
+    void SetConstantValue(QDemonRenderShaderConstantBase *inConstant, const QVector4D &inValue, const qint32 inCount);
+    void SetConstantValue(QDemonRenderShaderConstantBase *inConstant, const quint32 &inValue, const qint32 inCount);
+    void SetConstantValue(QDemonRenderShaderConstantBase *inConstant, const quint32_2 &inValue, const qint32 inCount);
+    void SetConstantValue(QDemonRenderShaderConstantBase *inConstant, const quint32_3 &inValue, const qint32 inCount);
+    void SetConstantValue(QDemonRenderShaderConstantBase *inConstant, const quint32_4 &inValue, const qint32 inCount);
+    void SetConstantValue(QDemonRenderShaderConstantBase *inConstant, const QMatrix3x3 &inValue, const qint32 inCount, bool inTranspose = false);
+    void SetConstantValue(QDemonRenderShaderConstantBase *inConstant, const QMatrix4x4 &inValue, const qint32 inCount, bool inTranspose = false);
+    void SetConstantValue(QDemonRenderShaderConstantBase *inConstant, const QDemonConstDataRef<QMatrix4x4> inValue, const qint32 inCount);
+    void SetConstantValue(QDemonRenderShaderConstantBase *inConstant, QDemonRenderTexture2D *inValue, const qint32 inCount);
+    void SetConstantValue(QDemonRenderShaderConstantBase *inConstant, QDemonRenderTexture2D **inValue, const qint32 inCount);
+    void SetConstantValue(QDemonRenderShaderConstantBase *inConstant, QDemonRenderTexture2DArray *inValue, const qint32 inCount);
+    void SetConstantValue(QDemonRenderShaderConstantBase *inConstant, QDemonRenderTextureCube *inValue, const qint32 inCount);
+    void SetConstantValue(QDemonRenderShaderConstantBase *inConstant, QDemonRenderTextureCube **inValue, const qint32 inCount);
+    void SetConstantValue(QDemonRenderShaderConstantBase *inConstant, QDemonRenderImage2D *inValue, const qint32 inCount);
+    void SetConstantValue(QDemonRenderShaderConstantBase *inConstant, QDemonRenderDataBuffer *inValue, const qint32 inCount);
 
     /**
          * @brief Template to set constant value via name
@@ -398,19 +372,19 @@ public:
 template <typename TDataType>
 struct QDemonRenderCachedShaderProperty
 {
-    QDemonRenderShaderProgram *m_Shader; ///< pointer to shader program
+    QSharedPointer<QDemonRenderShaderProgram> m_Shader; ///< pointer to shader program
     QDemonRenderShaderConstantBase *m_Constant; ///< poiner to shader constant object
 
-    QDemonRenderCachedShaderProperty(const QString &inConstantName, QDemonRenderShaderProgram &inShader)
+    QDemonRenderCachedShaderProperty(const QString &inConstantName, QSharedPointer<QDemonRenderShaderProgram> inShader)
         : QDemonRenderCachedShaderProperty(qPrintable(inConstantName), inShader)
     {
     }
 
-    QDemonRenderCachedShaderProperty(const char *inConstantName, QDemonRenderShaderProgram &inShader)
-        : m_Shader(&inShader)
+    QDemonRenderCachedShaderProperty(const char *inConstantName, QSharedPointer<QDemonRenderShaderProgram> inShader)
+        : m_Shader(inShader)
         , m_Constant(nullptr)
     {
-        QDemonRenderShaderConstantBase *theConstant = inShader.GetShaderConstant(inConstantName);
+        QDemonRenderShaderConstantBase *theConstant = inShader->GetShaderConstant(inConstantName);
         if (theConstant) {
             if (theConstant->GetShaderConstantType()
                     == QDemonDataTypeToShaderDataTypeMap<TDataType>::GetType()) {
@@ -442,24 +416,24 @@ struct QDemonRenderCachedShaderProperty
 template <typename TDataType, int size>
 struct QDemonRenderCachedShaderPropertyArray
 {
-    QDemonRenderShaderProgram *m_Shader; ///< pointer to shader program
+    QSharedPointer<QDemonRenderShaderProgram> m_Shader; ///< pointer to shader program
     QDemonRenderShaderConstantBase *m_Constant; ///< poiner to shader constant object
     TDataType m_array[size];
 
     QDemonRenderCachedShaderPropertyArray(const QString &inConstantName,
-                                      QDemonRenderShaderProgram &inShader)
+                                      QSharedPointer<QDemonRenderShaderProgram> inShader)
         : QDemonRenderCachedShaderPropertyArray(qPrintable(inConstantName), inShader)
     {
 
     }
 
     QDemonRenderCachedShaderPropertyArray(const char *inConstantName,
-                                      QDemonRenderShaderProgram &inShader)
-        : m_Shader(&inShader)
+                                      QSharedPointer<QDemonRenderShaderProgram> inShader)
+        : m_Shader(inShader)
         , m_Constant(nullptr)
     {
         memset(m_array,  0, sizeof(m_array));
-        QDemonRenderShaderConstantBase *theConstant = inShader.GetShaderConstant(inConstantName);
+        QDemonRenderShaderConstantBase *theConstant = inShader->GetShaderConstant(inConstantName);
         if (theConstant) {
             if (theConstant->m_ElementCount > 1 && theConstant->m_ElementCount <= size &&
                     theConstant->GetShaderConstantType()
@@ -494,15 +468,15 @@ struct QDemonRenderCachedShaderPropertyArray
 template <typename TDataType>
 struct QDemonRenderCachedShaderBuffer
 {
-    QDemonRenderShaderProgram *m_Shader; ///< pointer to shader program
+    QSharedPointer<QDemonRenderShaderProgram> m_Shader; ///< pointer to shader program
     TDataType m_ShaderBuffer; ///< poiner to shader buffer object
 
-    QDemonRenderCachedShaderBuffer(const char *inShaderBufferName, QDemonRenderShaderProgram &inShader)
+    QDemonRenderCachedShaderBuffer(const char *inShaderBufferName, QSharedPointer<QDemonRenderShaderProgram> inShader)
         : m_Shader(&inShader)
         , m_ShaderBuffer(nullptr)
     {
         TDataType theShaderBuffer =
-                static_cast<TDataType>(inShader.GetShaderBuffer(inShaderBufferName));
+                static_cast<TDataType>(inShader->GetShaderBuffer(inShaderBufferName));
         if (theShaderBuffer) {
             m_ShaderBuffer = theShaderBuffer;
         }

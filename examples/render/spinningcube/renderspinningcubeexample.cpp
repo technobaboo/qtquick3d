@@ -87,7 +87,7 @@ public:
         QDemonConstDataRef<quint8> instance((quint8 *)mvp, 16 * sizeof(float));
         m_context->Clear(
             QDemonRenderClearFlags(QDemonRenderClearValues::Color | QDemonRenderClearValues::Depth));
-        m_context->SetInputAssembler(m_inputAssembler.data());
+        m_context->SetInputAssembler(m_inputAssembler);
 
         m_shader->SetPropertyValue("mat_mvp", *reinterpret_cast<QMatrix4x4 *>(mvp));
         m_context->Draw(QDemonRenderDrawMode::Triangles, m_indexBuffer->GetNumIndices(), 0);

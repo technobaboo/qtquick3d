@@ -41,7 +41,7 @@ class QDemonRenderContextImpl;
 class QDemonRenderPathSpecification
 {
     QDemonRenderContextImpl &m_Context; ///< pointer to context
-    QDemonRenderBackend *m_Backend; ///< pointer to backend
+    QSharedPointer<QDemonRenderBackend> m_Backend; ///< pointer to backend
 
 public:
     /**

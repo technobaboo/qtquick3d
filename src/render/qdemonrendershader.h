@@ -44,7 +44,7 @@ class QDemonRenderShader
 {
 protected:
     QDemonRenderContextImpl &m_Context; ///< pointer to context
-    QDemonRenderBackend *m_Backend; ///< pointer to backend
+    QSharedPointer<QDemonRenderBackend> m_Backend; ///< pointer to backend
     QDemonConstDataRef<qint8> m_Source; ///< shader source code
     bool m_Binary; ///< true for binary programs
     QString m_ErrorMessage; ///< contains the error message if linking fails
