@@ -125,7 +125,7 @@ public:
          *
          * @return No return.
          */
-    static QDemonRenderImage2D *Create(QDemonRenderContextImpl &context, QSharedPointer<QDemonRenderTexture2D> inTexture,
+    static QSharedPointer<QDemonRenderImage2D> Create(QDemonRenderContextImpl &context, QSharedPointer<QDemonRenderTexture2D> inTexture,
                                        QDemonRenderImageAccessType::Enum inAccess);
 };
 

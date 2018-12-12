@@ -436,19 +436,19 @@ void QDemonRenderContextImpl::TextureDestroyed(QDemonRenderTextureCube *buffer)
     m_TexCubeToImpMap.remove(buffer->GetTextureObjectHandle());
 }
 
-QDemonRenderImage2D *QDemonRenderContextImpl::CreateImage2D(QSharedPointer<QDemonRenderTexture2D> inTexture,
+QSharedPointer<QDemonRenderImage2D> QDemonRenderContextImpl::CreateImage2D(QSharedPointer<QDemonRenderTexture2D> inTexture,
                                                             QDemonRenderImageAccessType::Enum inAccess)
 {
-    QDemonRenderImage2D *retval = QDemonRenderImage2D::Create(*this, inTexture, inAccess);
+    QSharedPointer<QDemonRenderImage2D> retval = QDemonRenderImage2D::Create(*this, inTexture, inAccess);
     if (retval)
-        m_Image2DtoImpMap.insert(retval->GetTextureObjectHandle(), retval);
+        m_Image2DtoImpMap.insert(retval->GetTextureObjectHandle(), retval.data());
 
     return retval;
 }
 
-void QDemonRenderContextImpl::ImageDestroyed(QDemonRenderImage2D &image)
+void QDemonRenderContextImpl::ImageDestroyed(QDemonRenderImage2D *image)
 {
-    m_Image2DtoImpMap.remove(image.GetTextureObjectHandle());
+    m_Image2DtoImpMap.remove(image->GetTextureObjectHandle());
 }
 
 // IF this texture isn't on a texture unit, put it on one.

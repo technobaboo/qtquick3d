@@ -46,13 +46,11 @@ QDemonRenderImage2D::QDemonRenderImage2D(QDemonRenderContextImpl &context,
     , m_AccessType(inAccess)
     , m_TextureLevel(0)
 {
-    //inTexture->addRef();
 }
 
 QDemonRenderImage2D::~QDemonRenderImage2D()
 {
-    m_Context.ImageDestroyed(*this);
-    //m_Texture2D->release();
+    m_Context.ImageDestroyed(this);
 }
 
 void QDemonRenderImage2D::SetTextureLevel(qint32 inLevel)
@@ -82,13 +80,13 @@ QDemonRenderBackend::QDemonRenderBackendTextureObject QDemonRenderImage2D::GetTe
     return m_Texture2D->GetTextureObjectHandle();
 }
 
-QDemonRenderImage2D *QDemonRenderImage2D::Create(QDemonRenderContextImpl &context,
+QSharedPointer<QDemonRenderImage2D> QDemonRenderImage2D::Create(QDemonRenderContextImpl &context,
                                                  QSharedPointer<QDemonRenderTexture2D> inTexture,
                                                  QDemonRenderImageAccessType::Enum inAccess)
 {
+    QSharedPointer<QDemonRenderImage2D> retval;
     if (inTexture)
-        return new QDemonRenderImage2D(context, inTexture, inAccess);
-    else
-        return nullptr;
+        retval.reset(new QDemonRenderImage2D(context, inTexture, inAccess));
+    return retval;
 }
 QT_END_NAMESPACE
