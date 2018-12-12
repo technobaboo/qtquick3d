@@ -490,13 +490,7 @@ QDemonRenderShaderProgram::~QDemonRenderShaderProgram()
     if (m_ProgramHandle)
         m_Backend->ReleaseShaderProgram(m_ProgramHandle);
 
-    for (TShaderConstantMap::iterator iter = m_Constants.begin(), end = m_Constants.end();
-         iter != end; ++iter) {
-        //iter.value()->Release();
-    }
-
     m_Constants.clear();
-
     m_ShaderBuffers.clear();
 
     m_ProgramHandle = nullptr;
@@ -514,62 +508,62 @@ void QDemonRenderShaderProgram::Detach(TShaderObject *pShader)
     m_Backend->DetachShader(m_ProgramHandle, pShader->GetShaderHandle());
 }
 
-static QDemonRenderShaderConstantBase *
+static QSharedPointer<QDemonRenderShaderConstantBase>
 ShaderConstantFactory(QSharedPointer<QDemonRenderBackend> backend, const QString &inName,
                       qint32 uniLoc, qint32 elementCount,
                       QDemonRenderShaderDataTypes::Enum inConstantType, qint32 binding)
 {
     switch (inConstantType) {
     case QDemonRenderShaderDataTypes::Integer:
-        return new QDemonRenderShaderConstant<qint32>(backend, inName, uniLoc, elementCount, inConstantType, binding);
+        return QSharedPointer<QDemonRenderShaderConstantBase>(new QDemonRenderShaderConstant<qint32>(backend, inName, uniLoc, elementCount, inConstantType, binding));
     case QDemonRenderShaderDataTypes::IntegerVec2:
-        return new QDemonRenderShaderConstant<qint32_2>(backend, inName, uniLoc, elementCount, inConstantType, binding);
+        return QSharedPointer<QDemonRenderShaderConstantBase>(new QDemonRenderShaderConstant<qint32_2>(backend, inName, uniLoc, elementCount, inConstantType, binding));
     case QDemonRenderShaderDataTypes::IntegerVec3:
-        return new QDemonRenderShaderConstant<qint32_3>(backend, inName, uniLoc, elementCount, inConstantType, binding);
+        return QSharedPointer<QDemonRenderShaderConstantBase>(new QDemonRenderShaderConstant<qint32_3>(backend, inName, uniLoc, elementCount, inConstantType, binding));
     case QDemonRenderShaderDataTypes::IntegerVec4:
-        return new QDemonRenderShaderConstant<qint32_4>(backend, inName, uniLoc, elementCount, inConstantType, binding);
+        return QSharedPointer<QDemonRenderShaderConstantBase>(new QDemonRenderShaderConstant<qint32_4>(backend, inName, uniLoc, elementCount, inConstantType, binding));
     case QDemonRenderShaderDataTypes::Boolean:
-        return new QDemonRenderShaderConstant<bool>(backend, inName, uniLoc, elementCount, inConstantType, binding);
+        return QSharedPointer<QDemonRenderShaderConstantBase>(new QDemonRenderShaderConstant<bool>(backend, inName, uniLoc, elementCount, inConstantType, binding));
     case QDemonRenderShaderDataTypes::BooleanVec2:
-        return new QDemonRenderShaderConstant<bool_2>(backend, inName, uniLoc, elementCount, inConstantType, binding);
+        return QSharedPointer<QDemonRenderShaderConstantBase>(new QDemonRenderShaderConstant<bool_2>(backend, inName, uniLoc, elementCount, inConstantType, binding));
     case QDemonRenderShaderDataTypes::BooleanVec3:
-        return new QDemonRenderShaderConstant<bool_3>(backend, inName, uniLoc, elementCount, inConstantType, binding);
+        return QSharedPointer<QDemonRenderShaderConstantBase>(new QDemonRenderShaderConstant<bool_3>(backend, inName, uniLoc, elementCount, inConstantType, binding));
     case QDemonRenderShaderDataTypes::BooleanVec4:
-        return new QDemonRenderShaderConstant<bool_4>(backend, inName, uniLoc, elementCount, inConstantType, binding);
+        return QSharedPointer<QDemonRenderShaderConstantBase>(new QDemonRenderShaderConstant<bool_4>(backend, inName, uniLoc, elementCount, inConstantType, binding));
     case QDemonRenderShaderDataTypes::Float:
-        return new QDemonRenderShaderConstant<float>(backend, inName, uniLoc, elementCount, inConstantType, binding);
+        return QSharedPointer<QDemonRenderShaderConstantBase>(new QDemonRenderShaderConstant<float>(backend, inName, uniLoc, elementCount, inConstantType, binding));
     case QDemonRenderShaderDataTypes::Vec2:
-        return new QDemonRenderShaderConstant<QVector2D>(backend, inName, uniLoc, elementCount, inConstantType, binding);
+        return QSharedPointer<QDemonRenderShaderConstantBase>(new QDemonRenderShaderConstant<QVector2D>(backend, inName, uniLoc, elementCount, inConstantType, binding));
     case QDemonRenderShaderDataTypes::Vec3:
-        return new QDemonRenderShaderConstant<QVector3D>(backend, inName, uniLoc, elementCount, inConstantType, binding);
+        return QSharedPointer<QDemonRenderShaderConstantBase>(new QDemonRenderShaderConstant<QVector3D>(backend, inName, uniLoc, elementCount, inConstantType, binding));
     case QDemonRenderShaderDataTypes::Vec4:
-        return new QDemonRenderShaderConstant<QVector4D>(backend, inName, uniLoc, elementCount, inConstantType, binding);
+        return QSharedPointer<QDemonRenderShaderConstantBase>(new QDemonRenderShaderConstant<QVector4D>(backend, inName, uniLoc, elementCount, inConstantType, binding));
     case QDemonRenderShaderDataTypes::UnsignedInteger:
-        return new QDemonRenderShaderConstant<quint32>(backend, inName, uniLoc, elementCount, inConstantType, binding);
+        return QSharedPointer<QDemonRenderShaderConstantBase>(new QDemonRenderShaderConstant<quint32>(backend, inName, uniLoc, elementCount, inConstantType, binding));
     case QDemonRenderShaderDataTypes::UnsignedIntegerVec2:
-        return new QDemonRenderShaderConstant<quint32_2>(backend, inName, uniLoc, elementCount, inConstantType, binding);
+        return QSharedPointer<QDemonRenderShaderConstantBase>(new QDemonRenderShaderConstant<quint32_2>(backend, inName, uniLoc, elementCount, inConstantType, binding));
     case QDemonRenderShaderDataTypes::UnsignedIntegerVec3:
-        return new QDemonRenderShaderConstant<quint32_3>(backend, inName, uniLoc, elementCount, inConstantType, binding);
+        return QSharedPointer<QDemonRenderShaderConstantBase>(new QDemonRenderShaderConstant<quint32_3>(backend, inName, uniLoc, elementCount, inConstantType, binding));
     case QDemonRenderShaderDataTypes::UnsignedIntegerVec4:
-        return new QDemonRenderShaderConstant<quint32_4>(backend, inName, uniLoc, elementCount, inConstantType, binding);
+        return QSharedPointer<QDemonRenderShaderConstantBase>(new QDemonRenderShaderConstant<quint32_4>(backend, inName, uniLoc, elementCount, inConstantType, binding));
     case QDemonRenderShaderDataTypes::Matrix3x3:
-        return new QDemonRenderShaderConstant<QMatrix3x3>(backend, inName, uniLoc, elementCount, inConstantType, binding);
+        return QSharedPointer<QDemonRenderShaderConstantBase>(new QDemonRenderShaderConstant<QMatrix3x3>(backend, inName, uniLoc, elementCount, inConstantType, binding));
     case QDemonRenderShaderDataTypes::Matrix4x4:
-        return new QDemonRenderShaderConstant<QMatrix4x4>(backend, inName, uniLoc, elementCount, inConstantType, binding);
+        return QSharedPointer<QDemonRenderShaderConstantBase>(new QDemonRenderShaderConstant<QMatrix4x4>(backend, inName, uniLoc, elementCount, inConstantType, binding));
     case QDemonRenderShaderDataTypes::Texture2D:
-        return new QDemonRenderShaderConstant<QDemonRenderTexture2DPtr>(backend, inName, uniLoc, elementCount, inConstantType, binding);
+        return QSharedPointer<QDemonRenderShaderConstantBase>(new QDemonRenderShaderConstant<QDemonRenderTexture2DPtr>(backend, inName, uniLoc, elementCount, inConstantType, binding));
     case QDemonRenderShaderDataTypes::Texture2DHandle:
-        return new QDemonRenderShaderConstant<QDemonRenderTexture2DHandle>(backend, inName, uniLoc, elementCount, inConstantType, binding);
+        return QSharedPointer<QDemonRenderShaderConstantBase>(new QDemonRenderShaderConstant<QDemonRenderTexture2DHandle>(backend, inName, uniLoc, elementCount, inConstantType, binding));
     case QDemonRenderShaderDataTypes::Texture2DArray:
-        return new QDemonRenderShaderConstant<QDemonRenderTexture2DArrayPtr>(backend, inName, uniLoc, elementCount, inConstantType, binding);
+        return QSharedPointer<QDemonRenderShaderConstantBase>(new QDemonRenderShaderConstant<QDemonRenderTexture2DArrayPtr>(backend, inName, uniLoc, elementCount, inConstantType, binding));
     case QDemonRenderShaderDataTypes::TextureCube:
-        return new QDemonRenderShaderConstant<QDemonRenderTextureCubePtr>(backend, inName, uniLoc, elementCount, inConstantType, binding);
+        return QSharedPointer<QDemonRenderShaderConstantBase>(new QDemonRenderShaderConstant<QDemonRenderTextureCubePtr>(backend, inName, uniLoc, elementCount, inConstantType, binding));
     case QDemonRenderShaderDataTypes::TextureCubeHandle:
-        return new QDemonRenderShaderConstant<QDemonRenderTextureCubeHandle>(backend, inName, uniLoc, elementCount, inConstantType, binding);
+        return QSharedPointer<QDemonRenderShaderConstantBase>(new QDemonRenderShaderConstant<QDemonRenderTextureCubeHandle>(backend, inName, uniLoc, elementCount, inConstantType, binding));
     case QDemonRenderShaderDataTypes::Image2D:
-        return new QDemonRenderShaderConstant<QDemonRenderImage2DPtr>(backend, inName, uniLoc, elementCount, inConstantType, binding);
+        return QSharedPointer<QDemonRenderShaderConstantBase>(new QDemonRenderShaderConstant<QDemonRenderImage2DPtr>(backend, inName, uniLoc, elementCount, inConstantType, binding));
     case QDemonRenderShaderDataTypes::DataBuffer:
-        return new QDemonRenderShaderConstant<QDemonRenderDataBufferPtr>(backend, inName, uniLoc, elementCount, inConstantType, binding);
+        return QSharedPointer<QDemonRenderShaderConstantBase>(new QDemonRenderShaderConstant<QDemonRenderDataBufferPtr>(backend, inName, uniLoc, elementCount, inConstantType, binding));
     default:
         break;
     }
@@ -697,14 +691,13 @@ void QDemonRenderShaderProgram::GetErrorMessage(qint32 *messageLength, const cha
 
 const char *QDemonRenderShaderProgram::GetErrorMessage() { return qPrintable(m_ErrorMessage); }
 
-QDemonRenderShaderConstantBase *QDemonRenderShaderProgram::GetShaderConstant(const char *constantName)
+QSharedPointer<QDemonRenderShaderConstantBase> QDemonRenderShaderProgram::GetShaderConstant(const char *constantName)
 {
     TShaderConstantMap::iterator theIter =
             m_Constants.find(QString::fromLocal8Bit(constantName));
 
     if (theIter != m_Constants.end()) {
-        QDemonRenderShaderConstantBase *theConstant =
-                static_cast<QDemonRenderShaderConstantBase *>(theIter.value());
+        QSharedPointer<QDemonRenderShaderConstantBase> theConstant = theIter.value();
         return theConstant;
     }
 

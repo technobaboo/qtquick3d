@@ -49,7 +49,7 @@ class QDemonRenderShaderConstantBase;
 class QDemonRenderShaderBufferBase;
 class QDemonRenderComputeShader;
 
-typedef QHash<QString, QDemonRenderShaderConstantBase *> TShaderConstantMap;
+typedef QHash<QString, QSharedPointer<QDemonRenderShaderConstantBase>> TShaderConstantMap;
 typedef QHash<QString, QSharedPointer<QDemonRenderShaderBufferBase>> TShaderBufferMap;
 
 ///< A shader program is an object composed of a multiple shaders (vertex, fragment,
@@ -219,7 +219,7 @@ public:
          *
          * @return return a pointer to a constant class.
          */
-    QDemonRenderShaderConstantBase *GetShaderConstant(const char *constantName);
+    QSharedPointer<QDemonRenderShaderConstantBase> GetShaderConstant(const char *constantName);
 
     /**
          * @brief Query a shader buffer (constant, ... )
@@ -271,12 +271,12 @@ public:
     void SetPropertyValue(const char *inConstantName, const TDataType &inValue,
                           const qint32 inCount = 1)
     {
-        QDemonRenderShaderConstantBase *theConstant = GetShaderConstant(inConstantName);
+        QSharedPointer<QDemonRenderShaderConstantBase> theConstant = GetShaderConstant(inConstantName);
 
         if (theConstant) {
             if (theConstant->GetShaderConstantType()
                     == QDemonDataTypeToShaderDataTypeMap<TDataType>::GetType()) {
-                SetConstantValue(theConstant, inValue, inCount);
+                SetConstantValue(theConstant.data(), inValue, inCount);
             } else {
                 // Types don't match or property not found
                 Q_ASSERT(false);
@@ -373,7 +373,7 @@ template <typename TDataType>
 struct QDemonRenderCachedShaderProperty
 {
     QSharedPointer<QDemonRenderShaderProgram> m_Shader; ///< pointer to shader program
-    QDemonRenderShaderConstantBase *m_Constant; ///< poiner to shader constant object
+    QSharedPointer<QDemonRenderShaderConstantBase> m_Constant; ///< poiner to shader constant object
 
     QDemonRenderCachedShaderProperty(const QString &inConstantName, QSharedPointer<QDemonRenderShaderProgram> inShader)
         : QDemonRenderCachedShaderProperty(qPrintable(inConstantName), inShader)
@@ -384,7 +384,7 @@ struct QDemonRenderCachedShaderProperty
         : m_Shader(inShader)
         , m_Constant(nullptr)
     {
-        QDemonRenderShaderConstantBase *theConstant = inShader->GetShaderConstant(inConstantName);
+        QSharedPointer<QDemonRenderShaderConstantBase> theConstant = inShader->GetShaderConstant(inConstantName);
         if (theConstant) {
             if (theConstant->GetShaderConstantType()
                     == QDemonDataTypeToShaderDataTypeMap<TDataType>::GetType()) {
@@ -417,7 +417,7 @@ template <typename TDataType, int size>
 struct QDemonRenderCachedShaderPropertyArray
 {
     QSharedPointer<QDemonRenderShaderProgram> m_Shader; ///< pointer to shader program
-    QDemonRenderShaderConstantBase *m_Constant; ///< poiner to shader constant object
+    QSharedPointer<QDemonRenderShaderConstantBase> m_Constant; ///< poiner to shader constant object
     TDataType m_array[size];
 
     QDemonRenderCachedShaderPropertyArray(const QString &inConstantName,
@@ -433,7 +433,7 @@ struct QDemonRenderCachedShaderPropertyArray
         , m_Constant(nullptr)
     {
         memset(m_array,  0, sizeof(m_array));
-        QDemonRenderShaderConstantBase *theConstant = inShader->GetShaderConstant(inConstantName);
+        QSharedPointer<QDemonRenderShaderConstantBase> theConstant = inShader->GetShaderConstant(inConstantName);
         if (theConstant) {
             if (theConstant->m_ElementCount > 1 && theConstant->m_ElementCount <= size &&
                     theConstant->GetShaderConstantType()
