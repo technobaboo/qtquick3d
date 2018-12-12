@@ -50,7 +50,7 @@ QDemonRenderRenderBuffer::QDemonRenderRenderBuffer(QDemonRenderContextImpl &cont
 
 QDemonRenderRenderBuffer::~QDemonRenderRenderBuffer()
 {
-    m_Context.RenderBufferDestroyed(*this);
+    m_Context.RenderBufferDestroyed(this);
     m_Backend->ReleaseRenderbuffer(m_BufferHandle);
     m_BufferHandle = nullptr;
 }
@@ -89,18 +89,18 @@ void QDemonRenderRenderBuffer::SetDimensions(const QDemonRenderRenderBufferDimen
 
 
 
-QDemonRenderRenderBuffer *
+QSharedPointer<QDemonRenderRenderBuffer>
 QDemonRenderRenderBuffer::Create(QDemonRenderContextImpl &context,
                                  QDemonRenderRenderBufferFormats::Enum format, quint32 width,
                                  quint32 height)
 {
-    QDemonRenderRenderBuffer *retval = nullptr;
+    QSharedPointer<QDemonRenderRenderBuffer> retval = nullptr;
     if (width == 0 || height == 0) {
         qCCritical(INVALID_PARAMETER, "Invalid renderbuffer width or height");
         return retval;
     }
 
-    retval = new QDemonRenderRenderBuffer(context, format, width, height);
+    retval.reset(new QDemonRenderRenderBuffer(context, format, width, height));
 
     return retval;
 }

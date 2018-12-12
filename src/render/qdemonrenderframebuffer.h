@@ -47,7 +47,7 @@ class QDemonRenderTextureOrRenderBuffer
     QDemonRenderTexture2D *m_Texture2D;
     QDemonRenderTexture2DArray *m_Texture2DArray;
     QDemonRenderTextureCube *m_TextureCube;
-    QDemonRenderRenderBuffer *m_RenderBuffer;
+    QSharedPointer<QDemonRenderRenderBuffer> m_RenderBuffer;
 
 public:
     QDemonRenderTextureOrRenderBuffer(QDemonRenderTexture2D &texture)
@@ -57,11 +57,11 @@ public:
         , m_RenderBuffer(nullptr)
     {
     }
-    QDemonRenderTextureOrRenderBuffer(QDemonRenderRenderBuffer &render)
+    QDemonRenderTextureOrRenderBuffer(QSharedPointer<QDemonRenderRenderBuffer> render)
         : m_Texture2D(nullptr)
         , m_Texture2DArray(nullptr)
         , m_TextureCube(nullptr)
-        , m_RenderBuffer(&render)
+        , m_RenderBuffer(render)
     {
     }
     QDemonRenderTextureOrRenderBuffer(QDemonRenderTexture2DArray &textureArray)
@@ -97,7 +97,7 @@ public:
         if (this != &other) {
             m_Texture2D = const_cast<QDemonRenderTexture2D *>(other.m_Texture2D);
             m_Texture2DArray = const_cast<QDemonRenderTexture2DArray *>(other.m_Texture2DArray);
-            m_RenderBuffer = const_cast<QDemonRenderRenderBuffer *>(other.m_RenderBuffer);
+            m_RenderBuffer = QSharedPointer<QDemonRenderRenderBuffer>(other.m_RenderBuffer);
             m_TextureCube = const_cast<QDemonRenderTextureCube *>(other.m_TextureCube);
         }
         return *this;
@@ -123,7 +123,7 @@ public:
         Q_ASSERT(HasTextureCube());
         return m_TextureCube;
     }
-    QDemonRenderRenderBuffer *GetRenderBuffer() const
+    QSharedPointer<QDemonRenderRenderBuffer> GetRenderBuffer() const
     {
         Q_ASSERT(HasRenderBuffer());
         return m_RenderBuffer;
@@ -136,8 +136,7 @@ private:
     QDemonRenderContextImpl &m_Context; ///< pointer to context
     QSharedPointer<QDemonRenderBackend> m_Backend; ///< pointer to backend
 
-    QDemonRenderTextureOrRenderBuffer
-    m_Attachments[QDemonRenderFrameBufferAttachments::LastAttachment]; ///< attachments array
+    QDemonRenderTextureOrRenderBuffer m_Attachments[QDemonRenderFrameBufferAttachments::LastAttachment]; ///< attachments array
     QDemonRenderBackend::QDemonRenderBackendRenderTargetObject m_BufferHandle; ///< opaque backend handle
 
 public:

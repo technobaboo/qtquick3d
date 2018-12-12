@@ -209,10 +209,10 @@ public:
     virtual QDemonRenderImage2D *CreateImage2D(QDemonRenderTexture2D *inTexture,
                                                QDemonRenderImageAccessType::Enum inAccess) = 0;
 
-    virtual QDemonRenderRenderBuffer *
+    virtual QSharedPointer<QDemonRenderRenderBuffer>
     CreateRenderBuffer(QDemonRenderRenderBufferFormats::Enum bufferFormat, quint32 width,
                        quint32 height) = 0;
-    virtual QDemonRenderRenderBuffer *GetRenderBuffer(const void *implementationHandle) = 0;
+    virtual QSharedPointer<QDemonRenderRenderBuffer> GetRenderBuffer(const void *implementationHandle) = 0;
     // Create a new frame buffer and set the current render target to that frame buffer.
     virtual QSharedPointer<QDemonRenderFrameBuffer> CreateFrameBuffer() = 0;
     virtual QSharedPointer<QDemonRenderFrameBuffer> GetFrameBuffer(const void *implementationHandle) = 0;
@@ -839,11 +839,10 @@ public:
                                        QDemonRenderImageAccessType::Enum inAccess) override;
     virtual void ImageDestroyed(QDemonRenderImage2D &buffer);
 
-    virtual QDemonRenderRenderBuffer *
-    CreateRenderBuffer(QDemonRenderRenderBufferFormats::Enum bufferFormat, quint32 width,
+    virtual QSharedPointer<QDemonRenderRenderBuffer> CreateRenderBuffer(QDemonRenderRenderBufferFormats::Enum bufferFormat, quint32 width,
                        quint32 height) override;
-    QDemonRenderRenderBuffer *GetRenderBuffer(const void *implementationHandle) override;
-    virtual void RenderBufferDestroyed(QDemonRenderRenderBuffer &buffer);
+    QSharedPointer<QDemonRenderRenderBuffer> GetRenderBuffer(const void *implementationHandle) override;
+    virtual void RenderBufferDestroyed(QDemonRenderRenderBuffer *buffer);
 
     QSharedPointer<QDemonRenderFrameBuffer> CreateFrameBuffer() override;
     QSharedPointer<QDemonRenderFrameBuffer> GetFrameBuffer(const void *implementationHandle) override;

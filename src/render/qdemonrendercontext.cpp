@@ -467,28 +467,28 @@ quint32 QDemonRenderContextImpl::GetNextTextureUnit()
     return retval;
 }
 
-QDemonRenderRenderBuffer *
+QSharedPointer<QDemonRenderRenderBuffer>
 QDemonRenderContextImpl::CreateRenderBuffer(QDemonRenderRenderBufferFormats::Enum bufferFormat,
                                             quint32 width, quint32 height)
 {
-    QDemonRenderRenderBuffer *retval =
+    QSharedPointer<QDemonRenderRenderBuffer> retval =
             QDemonRenderRenderBuffer::Create(*this, bufferFormat, width, height);
     if (retval != nullptr)
-        m_RenderBufferToImpMap.insert(retval->GetImplementationHandle(), retval);
+        m_RenderBufferToImpMap.insert(retval->GetImplementationHandle(), retval.data());
     return retval;
 }
 
-QDemonRenderRenderBuffer *QDemonRenderContextImpl::GetRenderBuffer(const void *implementationHandle)
+QSharedPointer<QDemonRenderRenderBuffer> QDemonRenderContextImpl::GetRenderBuffer(const void *implementationHandle)
 {
     const QHash<const void *, QDemonRenderRenderBuffer *>::iterator entry = m_RenderBufferToImpMap.find(implementationHandle);
     if (entry != m_RenderBufferToImpMap.end())
-        return entry.value();
+        return entry.value()->sharedFromThis();
     return nullptr;
 }
 
-void QDemonRenderContextImpl::RenderBufferDestroyed(QDemonRenderRenderBuffer &buffer)
+void QDemonRenderContextImpl::RenderBufferDestroyed(QDemonRenderRenderBuffer *buffer)
 {
-    m_RenderBufferToImpMap.remove(buffer.GetImplementationHandle());
+    m_RenderBufferToImpMap.remove(buffer->GetImplementationHandle());
 }
 
 QSharedPointer<QDemonRenderFrameBuffer> QDemonRenderContextImpl::CreateFrameBuffer()

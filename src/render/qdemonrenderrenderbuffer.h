@@ -55,7 +55,7 @@ struct QDemonRenderRenderBufferDimensions
     }
 };
 
-class QDemonRenderRenderBuffer : public QDemonRenderImplemented
+class QDemonRenderRenderBuffer : public QDemonRenderImplemented, public QEnableSharedFromThis<QDemonRenderRenderBuffer>
 {
 private:
     QDemonRenderContextImpl &m_Context; ///< pointer to context
@@ -126,7 +126,7 @@ public:
          *
          * @return No return.
          */
-    static QDemonRenderRenderBuffer *Create(QDemonRenderContextImpl &context,
+    static QSharedPointer<QDemonRenderRenderBuffer> Create(QDemonRenderContextImpl &context,
                                             QDemonRenderRenderBufferFormats::Enum format, quint32 width,
                                             quint32 height);
 
