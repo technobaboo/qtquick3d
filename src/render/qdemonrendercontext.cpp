@@ -404,11 +404,11 @@ QSharedPointer<QDemonRenderTexture2DArray> QDemonRenderContextImpl::CreateTextur
     return retval;
 }
 
-QDemonRenderTextureCube *QDemonRenderContextImpl::CreateTextureCube()
+QSharedPointer<QDemonRenderTextureCube> QDemonRenderContextImpl::CreateTextureCube()
 {
-    QDemonRenderTextureCube *retval = QDemonRenderTextureCube::Create(*this);
+    QSharedPointer<QDemonRenderTextureCube> retval(QDemonRenderTextureCube::Create(*this));
     if (retval)
-        m_TexCubeToImpMap.insert(retval->GetTextureObjectHandle(), retval);
+        m_TexCubeToImpMap.insert(retval->GetTextureObjectHandle(), retval.data());
 
     return retval;
 }
@@ -433,9 +433,9 @@ void QDemonRenderContextImpl::TextureDestroyed(QDemonRenderTexture2DArray *buffe
     m_Tex2DArrayToImpMap.remove(buffer->GetTextureObjectHandle());
 }
 
-void QDemonRenderContextImpl::TextureDestroyed(QDemonRenderTextureCube &buffer)
+void QDemonRenderContextImpl::TextureDestroyed(QDemonRenderTextureCube *buffer)
 {
-    m_TexCubeToImpMap.remove(buffer.GetTextureObjectHandle());
+    m_TexCubeToImpMap.remove(buffer->GetTextureObjectHandle());
 }
 
 QDemonRenderImage2D *QDemonRenderContextImpl::CreateImage2D(QSharedPointer<QDemonRenderTexture2D> inTexture,

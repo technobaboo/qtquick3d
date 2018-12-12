@@ -204,7 +204,7 @@ public:
 
     virtual QSharedPointer<QDemonRenderTexture2DArray> CreateTexture2DArray() = 0;
 
-    virtual QDemonRenderTextureCube *CreateTextureCube() = 0;
+    virtual QSharedPointer<QDemonRenderTextureCube> CreateTextureCube() = 0;
 
     virtual QDemonRenderImage2D *CreateImage2D(QSharedPointer<QDemonRenderTexture2D> inTexture,
                                                QDemonRenderImageAccessType::Enum inAccess) = 0;
@@ -830,8 +830,8 @@ public:
     QSharedPointer<QDemonRenderTexture2DArray> CreateTexture2DArray() override;
     virtual void TextureDestroyed(QDemonRenderTexture2DArray *buffer);
 
-    QDemonRenderTextureCube *CreateTextureCube() override;
-    virtual void TextureDestroyed(QDemonRenderTextureCube &buffer);
+    QSharedPointer<QDemonRenderTextureCube> CreateTextureCube() override;
+    virtual void TextureDestroyed(QDemonRenderTextureCube *buffer);
 
     virtual quint32 GetNextTextureUnit();
 

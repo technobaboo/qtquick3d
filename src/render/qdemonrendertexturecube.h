@@ -40,7 +40,7 @@ QT_BEGIN_NAMESPACE
 class QDemonRenderContextImpl;
 class QDemonRenderTextureSampler;
 
-class QDemonRenderTextureCube : public QDemonRenderTextureBase
+class QDemonRenderTextureCube : public QDemonRenderTextureBase, public QEnableSharedFromThis<QDemonRenderTextureCube>
 {
 private:
     quint32 m_Width; ///< texture width (per face)
@@ -95,7 +95,7 @@ public:
          *
          * @ return a texture array object
          */
-    static QDemonRenderTextureCube *Create(QDemonRenderContextImpl &context);
+    static QSharedPointer<QDemonRenderTextureCube> Create(QDemonRenderContextImpl &context);
 };
 
 QT_END_NAMESPACE
