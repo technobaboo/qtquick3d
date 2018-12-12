@@ -40,7 +40,7 @@ QT_BEGIN_NAMESPACE
 class QDemonRenderContextImpl;
 
 ///< Vertex buffer representation
-class QDemonRenderVertexBuffer : public QDemonRenderDataBuffer
+class QDemonRenderVertexBuffer : public QDemonRenderDataBuffer, public QEnableSharedFromThis<QDemonRenderVertexBuffer>
 {
 public:
     /**
@@ -109,7 +109,7 @@ public:
     // No stride means that stride is calculated from the size of last entry found via entry
     // offset
     // Leaves this buffer temporarily bound.
-    static QDemonRenderVertexBuffer *Create(QDemonRenderContextImpl &context,
+    static QSharedPointer<QDemonRenderVertexBuffer> Create(QDemonRenderContextImpl &context,
                                             QDemonRenderBufferUsageType::Enum usageType, size_t size,
                                             quint32 stride, QDemonConstDataRef<quint8> bufferData);
 

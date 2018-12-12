@@ -64,8 +64,8 @@ public:
          * @return No return.
          */
     QDemonRenderInputAssembler(QDemonRenderContextImpl &context, QSharedPointer<QDemonRenderAttribLayout> attribLayout,
-                               QDemonConstDataRef<QDemonRenderVertexBuffer *> buffers,
-                               const QDemonRenderIndexBuffer *indexBuffer,
+                               QDemonConstDataRef<QSharedPointer<QDemonRenderVertexBuffer>> buffers,
+                               const QSharedPointer<QDemonRenderIndexBuffer> indexBuffer,
                                QDemonConstDataRef<quint32> strides, QDemonConstDataRef<quint32> offsets,
                                QDemonRenderDrawMode::Enum primType = QDemonRenderDrawMode::Triangles,
                                quint32 patchVertexCount = 1);
@@ -87,7 +87,7 @@ public:
          *
          * @return the index buffer
          */
-    const QDemonRenderIndexBuffer *GetIndexBuffer() { return m_IndexBuffer; }
+    const QSharedPointer<QDemonRenderIndexBuffer> GetIndexBuffer() { return m_IndexBuffer; }
 
     /**
          * @brief get the index count of the attached index buffer (if any)
@@ -132,8 +132,8 @@ private:
     QSharedPointer<QDemonRenderBackend> m_Backend; ///< pointer to backend
 
     QSharedPointer<QDemonRenderAttribLayout> m_AttribLayout; ///< pointer to attribute layout
-    QVector<QDemonRenderVertexBuffer *> m_VertexBuffers; ///< vertex buffers
-    const QDemonRenderIndexBuffer *m_IndexBuffer; ///< index buffer
+    QVector<QSharedPointer<QDemonRenderVertexBuffer>> m_VertexBuffers; ///< vertex buffers
+    const QSharedPointer<QDemonRenderIndexBuffer> m_IndexBuffer; ///< index buffer
     QDemonConstDataRef<QDemonRenderBackend::QDemonRenderBackendBufferObject> m_VertexbufferHandles; ///< opaque vertex buffer backend handles
 
     QDemonRenderBackend::QDemonRenderBackendInputAssemblerObject m_InputAssemblertHandle; ///< opaque backend handle

@@ -45,7 +45,10 @@ QDemonRenderDrawIndirectBuffer::QDemonRenderDrawIndirectBuffer(QDemonRenderConte
 {
 }
 
-QDemonRenderDrawIndirectBuffer::~QDemonRenderDrawIndirectBuffer() { m_Context.BufferDestroyed(*this); }
+QDemonRenderDrawIndirectBuffer::~QDemonRenderDrawIndirectBuffer()
+{
+    m_Context.BufferDestroyed(this);
+}
 
 void QDemonRenderDrawIndirectBuffer::Bind()
 {
@@ -75,12 +78,11 @@ void QDemonRenderDrawIndirectBuffer::UpdateData(qint32 offset, QDemonDataRef<qui
                                 data.begin() + offset);
 }
 
-QDemonRenderDrawIndirectBuffer *
-QDemonRenderDrawIndirectBuffer::Create(QDemonRenderContextImpl &context,
+QSharedPointer<QDemonRenderDrawIndirectBuffer> QDemonRenderDrawIndirectBuffer::Create(QDemonRenderContextImpl &context,
                                        QDemonRenderBufferUsageType::Enum usageType, size_t size,
                                        QDemonConstDataRef<quint8> bufferData)
 {
-    QDemonRenderDrawIndirectBuffer *retval = nullptr;
+    QSharedPointer<QDemonRenderDrawIndirectBuffer> retval = nullptr;
 
     // these are the context flags which do not support this drawing mode
     QDemonRenderContextType noDrawIndirectSupported(
@@ -91,9 +93,9 @@ QDemonRenderDrawIndirectBuffer::Create(QDemonRenderContextImpl &context,
     if (!(ctxType & noDrawIndirectSupported)) {
         quint32 bufSize = sizeof(QDemonRenderDrawIndirectBuffer);
         quint8 *newMem = static_cast<quint8 *>(::malloc(bufSize));
-        retval = new (newMem) QDemonRenderDrawIndirectBuffer(
+        retval.reset(new (newMem) QDemonRenderDrawIndirectBuffer(
                     context, size, usageType,
-                    toDataRef(const_cast<quint8 *>(bufferData.begin()), bufferData.size()));
+                    toDataRef(const_cast<quint8 *>(bufferData.begin()), bufferData.size())));
     } else {
         Q_ASSERT(false);
     }

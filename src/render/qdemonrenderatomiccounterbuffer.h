@@ -45,7 +45,7 @@ class AtomicCounterBufferEntry;
 typedef QHash<QString, AtomicCounterBufferEntry *> TRenderAtomiCounterBufferEntryMap;
 
 ///< Constant (uniform) buffer representation
-class Q_DEMONRENDER_EXPORT QDemonRenderAtomicCounterBuffer : public QDemonRenderDataBuffer
+class Q_DEMONRENDER_EXPORT QDemonRenderAtomicCounterBuffer : public QDemonRenderDataBuffer, public QEnableSharedFromThis<QDemonRenderAtomicCounterBuffer>
 {
 public:
     /**
@@ -162,7 +162,7 @@ public:
          *
          * @return the buffer object or nullptr
          */
-    static QDemonRenderAtomicCounterBuffer *Create(QDemonRenderContextImpl &context,
+    static QSharedPointer<QDemonRenderAtomicCounterBuffer> Create(QDemonRenderContextImpl &context,
                                                    const char *bufferName,
                                                    QDemonRenderBufferUsageType::Enum usageType,
                                                    size_t size, QDemonConstDataRef<quint8> bufferData);

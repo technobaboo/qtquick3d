@@ -44,7 +44,10 @@ QDemonRenderIndexBuffer::QDemonRenderIndexBuffer(QDemonRenderContextImpl &contex
 {
 }
 
-QDemonRenderIndexBuffer::~QDemonRenderIndexBuffer() { m_Context.BufferDestroyed(*this); }
+QDemonRenderIndexBuffer::~QDemonRenderIndexBuffer()
+{
+    m_Context.BufferDestroyed(this);
+}
 
 quint32 QDemonRenderIndexBuffer::GetNumIndices() const
 {
@@ -74,10 +77,10 @@ void QDemonRenderIndexBuffer::Bind()
     m_Backend->BindBuffer(m_BufferHandle, m_BindFlags);
 }
 
-QDemonRenderIndexBuffer *QDemonRenderIndexBuffer::Create(QDemonRenderContextImpl &context,
-                                                         QDemonRenderBufferUsageType::Enum usageType,
-                                                         QDemonRenderComponentTypes::Enum componentType,
-                                                         size_t size, QDemonConstDataRef<quint8> bufferData)
+QSharedPointer<QDemonRenderIndexBuffer> QDemonRenderIndexBuffer::Create(QDemonRenderContextImpl &context,
+                                                                        QDemonRenderBufferUsageType::Enum usageType,
+                                                                        QDemonRenderComponentTypes::Enum componentType,
+                                                                        size_t size, QDemonConstDataRef<quint8> bufferData)
 {
     if (componentType != QDemonRenderComponentTypes::UnsignedInteger32
             && componentType != QDemonRenderComponentTypes::UnsignedInteger16
@@ -89,9 +92,8 @@ QDemonRenderIndexBuffer *QDemonRenderIndexBuffer::Create(QDemonRenderContextImpl
 
     quint32 ibufSize = sizeof(QDemonRenderIndexBuffer);
     quint8 *baseMem = static_cast<quint8 *>(::malloc(ibufSize));
-    QDemonRenderIndexBuffer *retval = new (baseMem) QDemonRenderIndexBuffer(
-                context, size, componentType, usageType,
-                toDataRef(const_cast<quint8 *>(bufferData.begin()), bufferData.size()));
-    return retval;
+    return QSharedPointer<QDemonRenderIndexBuffer>(new (baseMem) QDemonRenderIndexBuffer(
+                                                       context, size, componentType, usageType,
+                                                       toDataRef(const_cast<quint8 *>(bufferData.begin()), bufferData.size())));
 }
 QT_END_NAMESPACE

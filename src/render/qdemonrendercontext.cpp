@@ -75,9 +75,9 @@ QDemonRenderContextImpl::QDemonRenderContextImpl(QSharedPointer<QDemonRenderBack
 
 QDemonRenderContextImpl::~QDemonRenderContextImpl()
 {
-    Q_ASSERT(m_VertToImpMap.size() == 0);
+    //Q_ASSERT(m_VertToImpMap.size() == 0);
     m_VertToImpMap.clear();
-    Q_ASSERT(m_IndexToImpMap.size() == 0);
+    //Q_ASSERT(m_IndexToImpMap.size() == 0);
     m_IndexToImpMap.clear();
     Q_ASSERT(m_ConstantToImpMap.size() == 0);
     m_ConstantToImpMap.clear();
@@ -170,84 +170,82 @@ void QDemonRenderContextImpl::StateDestroyed(QDemonRenderRasterizerState *state)
     m_RasterizerStateToImpMap.remove(state->GetRasterizerObjectHandle());
 }
 
-QDemonRenderVertexBuffer *
-QDemonRenderContextImpl::CreateVertexBuffer(QDemonRenderBufferUsageType::Enum usageType, size_t size,
+QSharedPointer<QDemonRenderVertexBuffer> QDemonRenderContextImpl::CreateVertexBuffer(QDemonRenderBufferUsageType::Enum usageType, size_t size,
                                             quint32 stride, QDemonConstDataRef<quint8> bufferData)
 {
-    QDemonRenderVertexBuffer *buffer =
+    QSharedPointer<QDemonRenderVertexBuffer> buffer =
             QDemonRenderVertexBuffer::Create(*this, usageType, size, stride, bufferData);
     if (buffer)
-        m_VertToImpMap.insert(buffer->GetImplementationHandle(), buffer);
+        m_VertToImpMap.insert(buffer->GetImplementationHandle(), buffer.data());
     return buffer;
 }
 
-QDemonRenderVertexBuffer *QDemonRenderContextImpl::GetVertexBuffer(const void *implementationHandle)
+QSharedPointer<QDemonRenderVertexBuffer> QDemonRenderContextImpl::GetVertexBuffer(const void *implementationHandle)
 {
     QHash<const void *, QDemonRenderVertexBuffer *>::const_iterator entry = m_VertToImpMap.find(implementationHandle);
     if (entry != m_VertToImpMap.end())
-        return entry.value();
+        return entry.value()->sharedFromThis();
     return nullptr;
 }
 
-void QDemonRenderContextImpl::BufferDestroyed(QDemonRenderVertexBuffer &buffer)
+void QDemonRenderContextImpl::BufferDestroyed(QDemonRenderVertexBuffer *buffer)
 {
-    m_VertToImpMap.remove(buffer.GetImplementationHandle());
+    m_VertToImpMap.remove(buffer->GetImplementationHandle());
 }
 
-QDemonRenderIndexBuffer *
-QDemonRenderContextImpl::CreateIndexBuffer(QDemonRenderBufferUsageType::Enum usageType,
+QSharedPointer<QDemonRenderIndexBuffer> QDemonRenderContextImpl::CreateIndexBuffer(QDemonRenderBufferUsageType::Enum usageType,
                                            QDemonRenderComponentTypes::Enum componentType,
                                            size_t size, QDemonConstDataRef<quint8> bufferData)
 {
-    QDemonRenderIndexBuffer *buffer =
+    QSharedPointer<QDemonRenderIndexBuffer> buffer =
             QDemonRenderIndexBuffer::Create(*this, usageType, componentType, size, bufferData);
 
     if (buffer) {
-        m_IndexToImpMap.insert(buffer->GetImplementationHandle(), buffer);
+        m_IndexToImpMap.insert(buffer->GetImplementationHandle(), buffer.data());
     }
 
     return buffer;
 }
 
-QDemonRenderIndexBuffer *QDemonRenderContextImpl::GetIndexBuffer(const void *implementationHandle)
+QSharedPointer<QDemonRenderIndexBuffer> QDemonRenderContextImpl::GetIndexBuffer(const void *implementationHandle)
 {
     const QHash<const void *, QDemonRenderIndexBuffer *>::iterator entry = m_IndexToImpMap.find(implementationHandle);
     if (entry != m_IndexToImpMap.end())
-        return entry.value();
+        return entry.value()->sharedFromThis();
     return nullptr;
 }
 
-void QDemonRenderContextImpl::BufferDestroyed(QDemonRenderIndexBuffer &buffer)
+void QDemonRenderContextImpl::BufferDestroyed(QDemonRenderIndexBuffer *buffer)
 {
-    m_IndexToImpMap.remove(buffer.GetImplementationHandle());
+    m_IndexToImpMap.remove(buffer->GetImplementationHandle());
 }
 
-QDemonRenderConstantBuffer *
+QSharedPointer<QDemonRenderConstantBuffer>
 QDemonRenderContextImpl::CreateConstantBuffer(const char *bufferName,
                                               QDemonRenderBufferUsageType::Enum usageType,
                                               size_t size, QDemonConstDataRef<quint8> bufferData)
 {
-    QDemonRenderConstantBuffer *buffer =
+    QSharedPointer<QDemonRenderConstantBuffer> buffer =
             QDemonRenderConstantBuffer::Create(*this, bufferName, usageType, size, bufferData);
 
     if (buffer) {
-        m_ConstantToImpMap.insert(buffer->GetBufferName(), buffer);
+        m_ConstantToImpMap.insert(buffer->GetBufferName(), buffer.data());
     }
 
     return buffer;
 }
 
-QDemonRenderConstantBuffer *QDemonRenderContextImpl::GetConstantBuffer(const QString &bufferName)
+QSharedPointer<QDemonRenderConstantBuffer> QDemonRenderContextImpl::GetConstantBuffer(const QString &bufferName)
 {
     TContextConstantBufferMap::iterator entry = m_ConstantToImpMap.find(bufferName);
     if (entry != m_ConstantToImpMap.end())
-        return entry.value();
+        return entry.value()->sharedFromThis();
     return nullptr;
 }
 
-void QDemonRenderContextImpl::BufferDestroyed(QDemonRenderConstantBuffer &buffer)
+void QDemonRenderContextImpl::BufferDestroyed(QDemonRenderConstantBuffer *buffer)
 {
-    m_ConstantToImpMap.remove(buffer.GetBufferName());
+    m_ConstantToImpMap.remove(buffer->GetBufferName());
 }
 
 quint32 QDemonRenderContextImpl::GetNextConstantBufferUnit()
@@ -262,102 +260,100 @@ quint32 QDemonRenderContextImpl::GetNextConstantBufferUnit()
     return retval;
 }
 
-QDemonRenderStorageBuffer *QDemonRenderContextImpl::CreateStorageBuffer(
+QSharedPointer<QDemonRenderStorageBuffer> QDemonRenderContextImpl::CreateStorageBuffer(
         const char *bufferName, QDemonRenderBufferUsageType::Enum usageType, size_t size,
         QDemonConstDataRef<quint8> bufferData, QDemonRenderDataBuffer *pBuffer)
 {
-    QDemonRenderStorageBuffer *buffer =
+    QSharedPointer<QDemonRenderStorageBuffer> buffer =
             QDemonRenderStorageBuffer::Create(*this, bufferName, usageType, size, bufferData, pBuffer);
 
     if (buffer) {
-        m_StorageToImpMap.insert(buffer->GetBufferName(), buffer);
+        m_StorageToImpMap.insert(buffer->GetBufferName(), buffer.data());
     }
 
     return buffer;
 }
 
-QDemonRenderStorageBuffer *QDemonRenderContextImpl::GetStorageBuffer(const QString &bufferName)
+QSharedPointer<QDemonRenderStorageBuffer> QDemonRenderContextImpl::GetStorageBuffer(const QString &bufferName)
 {
     TContextStorageBufferMap::iterator entry = m_StorageToImpMap.find(bufferName);
     if (entry != m_StorageToImpMap.end())
-        return entry.value();
+        return entry.value()->sharedFromThis();
     return nullptr;
 }
 
-void QDemonRenderContextImpl::BufferDestroyed(QDemonRenderStorageBuffer &buffer)
+void QDemonRenderContextImpl::BufferDestroyed(QDemonRenderStorageBuffer *buffer)
 {
-    m_StorageToImpMap.remove(buffer.GetBufferName());
+    m_StorageToImpMap.remove(buffer->GetBufferName());
 }
 
-QDemonRenderAtomicCounterBuffer *QDemonRenderContextImpl::CreateAtomicCounterBuffer(
+QSharedPointer<QDemonRenderAtomicCounterBuffer> QDemonRenderContextImpl::CreateAtomicCounterBuffer(
         const char *bufferName, QDemonRenderBufferUsageType::Enum usageType, size_t size,
         QDemonConstDataRef<quint8> bufferData)
 {
-    QDemonRenderAtomicCounterBuffer *buffer =
+    QSharedPointer<QDemonRenderAtomicCounterBuffer> buffer =
             QDemonRenderAtomicCounterBuffer::Create(*this, bufferName, usageType, size, bufferData);
 
     if (buffer) {
-        m_AtomicCounterToImpMap.insert(buffer->GetBufferName(), buffer);
+        m_AtomicCounterToImpMap.insert(buffer->GetBufferName(), buffer.data());
     }
 
     return buffer;
 }
 
-QDemonRenderAtomicCounterBuffer *
-QDemonRenderContextImpl::GetAtomicCounterBuffer(const QString &bufferName)
+QSharedPointer<QDemonRenderAtomicCounterBuffer> QDemonRenderContextImpl::GetAtomicCounterBuffer(const QString &bufferName)
 {
     TContextAtomicCounterBufferMap::iterator entry = m_AtomicCounterToImpMap.find(bufferName);
     if (entry != m_AtomicCounterToImpMap.end())
-        return entry.value();
+        return entry.value()->sharedFromThis();
     return nullptr;
 }
 
-QDemonRenderAtomicCounterBuffer *
-QDemonRenderContextImpl::GetAtomicCounterBufferByParam(const QString &paramName)
+QSharedPointer<QDemonRenderAtomicCounterBuffer> QDemonRenderContextImpl::GetAtomicCounterBufferByParam(const QString &paramName)
 {
     // iterate through all atomic counter buffers
     for (TContextAtomicCounterBufferMap::iterator iter = m_AtomicCounterToImpMap.begin(),
          end = m_AtomicCounterToImpMap.end();
          iter != end; ++iter) {
         if (iter.value() && iter.value()->ContainsParam(paramName))
-            return iter.value();
+            return iter.value()->sharedFromThis();
     }
 
     return nullptr;
 }
 
-void QDemonRenderContextImpl::BufferDestroyed(QDemonRenderAtomicCounterBuffer &buffer)
+void QDemonRenderContextImpl::BufferDestroyed(QDemonRenderAtomicCounterBuffer *buffer)
 {
-    m_AtomicCounterToImpMap.remove(buffer.GetBufferName());
+    m_AtomicCounterToImpMap.remove(buffer->GetBufferName());
 }
 
-QDemonRenderDrawIndirectBuffer *QDemonRenderContextImpl::CreateDrawIndirectBuffer(
+QSharedPointer<QDemonRenderDrawIndirectBuffer> QDemonRenderContextImpl::CreateDrawIndirectBuffer(
         QDemonRenderBufferUsageType::Enum usageType, size_t size,
         QDemonConstDataRef<quint8> bufferData)
 {
-    QDemonRenderDrawIndirectBuffer *buffer =
+    QSharedPointer<QDemonRenderDrawIndirectBuffer> buffer =
             QDemonRenderDrawIndirectBuffer::Create(*this, usageType, size, bufferData);
 
     if (buffer) {
-        m_DrawIndirectToImpMap.insert(buffer->GetBuffertHandle(), buffer);
+        m_DrawIndirectToImpMap.insert(buffer->GetBuffertHandle(), buffer.data());
     }
 
     return buffer;
 }
 
-QDemonRenderDrawIndirectBuffer *QDemonRenderContextImpl::GetDrawIndirectBuffer(
+QSharedPointer<QDemonRenderDrawIndirectBuffer> QDemonRenderContextImpl::GetDrawIndirectBuffer(
         QDemonRenderBackend::QDemonRenderBackendBufferObject implementationHandle)
 {
     TContextDrawIndirectBufferMap::iterator entry =
             m_DrawIndirectToImpMap.find(implementationHandle);
     if (entry != m_DrawIndirectToImpMap.end())
-        return entry.value();
+        return entry.value()->sharedFromThis();
     return nullptr;
 }
 
-void QDemonRenderContextImpl::BufferDestroyed(QDemonRenderDrawIndirectBuffer &buffer)
+void QDemonRenderContextImpl::BufferDestroyed(QDemonRenderDrawIndirectBuffer *buffer)
 {
-    m_DrawIndirectToImpMap.remove(buffer.GetBuffertHandle());
+    m_DrawIndirectToImpMap.remove(buffer->GetBuffertHandle());
 }
 
 void QDemonRenderContextImpl::SetMemoryBarrier(QDemonRenderBufferBarrierFlags barriers)
@@ -512,9 +508,8 @@ QSharedPointer<QDemonRenderAttribLayout> QDemonRenderContextImpl::CreateAttribut
     return QSharedPointer<QDemonRenderAttribLayout>(new QDemonRenderAttribLayout(*this, attribs));
 }
 
-QSharedPointer<QDemonRenderInputAssembler> QDemonRenderContextImpl::CreateInputAssembler(
-        QSharedPointer<QDemonRenderAttribLayout> attribLayout, QDemonConstDataRef<QDemonRenderVertexBuffer *> buffers,
-        const QDemonRenderIndexBuffer *indexBuffer, QDemonConstDataRef<quint32> strides,
+QSharedPointer<QDemonRenderInputAssembler> QDemonRenderContextImpl::CreateInputAssembler(QSharedPointer<QDemonRenderAttribLayout> attribLayout, QDemonConstDataRef<QSharedPointer<QDemonRenderVertexBuffer>> buffers,
+        const QSharedPointer<QDemonRenderIndexBuffer> indexBuffer, QDemonConstDataRef<quint32> strides,
         QDemonConstDataRef<quint32> offsets, QDemonRenderDrawMode::Enum primType, quint32 patchVertexCount)
 {
     return QSharedPointer<QDemonRenderInputAssembler>(new QDemonRenderInputAssembler(*this, attribLayout, buffers, indexBuffer, strides,
@@ -934,8 +929,7 @@ void QDemonRenderContextImpl::Draw(QDemonRenderDrawMode::Enum drawMode, quint32 
     if (!ApplyPreDrawProperties())
         return;
 
-    QDemonRenderIndexBuffer *theIndexBuffer = const_cast<QDemonRenderIndexBuffer *>(
-                m_HardwarePropertyContext.m_InputAssembler->GetIndexBuffer());
+    QSharedPointer<QDemonRenderIndexBuffer> theIndexBuffer = m_HardwarePropertyContext.m_InputAssembler->GetIndexBuffer();
     if (theIndexBuffer == nullptr)
         m_backend->Draw(drawMode, offset, count);
     else
@@ -949,8 +943,7 @@ void QDemonRenderContextImpl::DrawIndirect(QDemonRenderDrawMode::Enum drawMode, 
     if (!ApplyPreDrawProperties())
         return;
 
-    QDemonRenderIndexBuffer *theIndexBuffer = const_cast<QDemonRenderIndexBuffer *>(
-                m_HardwarePropertyContext.m_InputAssembler->GetIndexBuffer());
+    QSharedPointer<QDemonRenderIndexBuffer> theIndexBuffer = m_HardwarePropertyContext.m_InputAssembler->GetIndexBuffer();
     if (theIndexBuffer == nullptr)
         m_backend->DrawIndirect(drawMode, (const void *)offset);
     else

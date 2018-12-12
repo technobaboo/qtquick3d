@@ -46,17 +46,12 @@ QDemonRenderStorageBuffer::QDemonRenderStorageBuffer(QDemonRenderContextImpl &co
     , m_Dirty(true)
 {
     Q_ASSERT(context.IsStorageBufferSupported());
-
-//    if (pBuffer)
-//        pBuffer->addRef();
 }
 
 QDemonRenderStorageBuffer::~QDemonRenderStorageBuffer()
 {
-//    if (m_WrappedBuffer)
-//        m_WrappedBuffer->release();
 
-    m_Context.BufferDestroyed(*this);
+    m_Context.BufferDestroyed(this);
 }
 
 void QDemonRenderStorageBuffer::Bind()
@@ -96,20 +91,19 @@ void QDemonRenderStorageBuffer::UpdateData(qint32 offset, QDemonDataRef<quint8> 
                                 data.begin() + offset);
 }
 
-QDemonRenderStorageBuffer *
-QDemonRenderStorageBuffer::Create(QDemonRenderContextImpl &context, const char *bufferName,
-                                  QDemonRenderBufferUsageType::Enum usageType, size_t size,
-                                  QDemonConstDataRef<quint8> bufferData, QDemonRenderDataBuffer *pBuffer)
+QSharedPointer<QDemonRenderStorageBuffer> QDemonRenderStorageBuffer::Create(QDemonRenderContextImpl &context, const char *bufferName,
+                                                                            QDemonRenderBufferUsageType::Enum usageType, size_t size,
+                                                                            QDemonConstDataRef<quint8> bufferData, QDemonRenderDataBuffer *pBuffer)
 {
-    QDemonRenderStorageBuffer *retval = nullptr;
+    QSharedPointer<QDemonRenderStorageBuffer> retval = nullptr;
 
     if (context.IsStorageBufferSupported()) {
         const QString theBufferName = QString::fromLocal8Bit(bufferName);
         quint32 cbufSize = sizeof(QDemonRenderStorageBuffer);
         quint8 *newMem = static_cast<quint8 *>(::malloc(cbufSize));
-        retval = new (newMem) QDemonRenderStorageBuffer(
-                    context, theBufferName, size, usageType,
-                    toDataRef(const_cast<quint8 *>(bufferData.begin()), bufferData.size()), pBuffer);
+        retval.reset(new (newMem) QDemonRenderStorageBuffer(
+                         context, theBufferName, size, usageType,
+                         toDataRef(const_cast<quint8 *>(bufferData.begin()), bufferData.size()), pBuffer));
     } else {
         QString errorMsg = QObject::tr("Shader storage buffers are not supported: %1")
                 .arg(bufferName);

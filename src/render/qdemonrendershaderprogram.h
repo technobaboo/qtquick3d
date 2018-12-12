@@ -50,7 +50,7 @@ class QDemonRenderShaderBufferBase;
 class QDemonRenderComputeShader;
 
 typedef QHash<QString, QDemonRenderShaderConstantBase *> TShaderConstantMap;
-typedef QHash<QString, QDemonRenderShaderBufferBase *> TShaderBufferMap;
+typedef QHash<QString, QSharedPointer<QDemonRenderShaderBufferBase>> TShaderBufferMap;
 
 ///< A shader program is an object composed of a multiple shaders (vertex, fragment,
 ///geometry,....)
@@ -228,7 +228,7 @@ public:
          *
          * @return return a pointer to a constant class.
          */
-    QDemonRenderShaderBufferBase *GetShaderBuffer(const char *bufferName);
+    QSharedPointer<QDemonRenderShaderBufferBase> GetShaderBuffer(const char *bufferName);
 
     // concrete set functions
     void SetConstantValue(QDemonRenderShaderConstantBase *inConstant, qint32 inValue, const qint32 inCount);

@@ -242,12 +242,12 @@ class QDemonRenderShaderConstantBuffer : public QDemonRenderShaderBufferBase
 {
 public:
     qint32 m_ParamCount; ///< count of parameters contained in the constant buffer
-    QDemonRenderConstantBuffer *m_pCB; ///< pointer to constant buffer
+    QSharedPointer<QDemonRenderConstantBuffer> m_pCB; ///< pointer to constant buffer
 
 public:
     QDemonRenderShaderConstantBuffer(QDemonRenderContextImpl &context, const QString &name,
                                      quint32 location, qint32 binding, qint32 size, qint32 count,
-                                     QDemonRenderConstantBuffer *pCB)
+                                     QSharedPointer<QDemonRenderConstantBuffer> pCB)
         : QDemonRenderShaderBufferBase(context, name, location, binding, size)
         , m_ParamCount(count)
         , m_pCB(pCB)
@@ -256,10 +256,6 @@ public:
 
     void Release() override
     {
-//        if (m_pCB)
-//            m_pCB->release();
-
-        // ### cleanup
     }
 
     void Validate(QSharedPointer<QDemonRenderShaderProgram> inShader) override
@@ -270,7 +266,7 @@ public:
         if (m_pCB)
             return;
 
-        QDemonRenderConstantBuffer *cb = m_Context.GetConstantBuffer(m_Name);
+        QSharedPointer<QDemonRenderConstantBuffer> cb = m_Context.GetConstantBuffer(m_Name);
         if (cb) {
             cb->SetupBuffer(inShader.data(), m_Location, m_Size, m_ParamCount);
             //cb->addRef();
@@ -297,12 +293,12 @@ class QDemonRenderShaderStorageBuffer : public QDemonRenderShaderBufferBase
 {
 public:
     qint32 m_ParamCount; ///< count of parameters contained in the constant buffer
-    QDemonRenderStorageBuffer *m_pSB; ///< pointer to storage buffer
+    QSharedPointer<QDemonRenderStorageBuffer> m_pSB; ///< pointer to storage buffer
 
 public:
     QDemonRenderShaderStorageBuffer(QDemonRenderContextImpl &context, const QString &name,
                                     quint32 location, qint32 binding, qint32 size, qint32 count,
-                                    QDemonRenderStorageBuffer *pSB)
+                                    QSharedPointer<QDemonRenderStorageBuffer> pSB)
         : QDemonRenderShaderBufferBase(context, name, location, binding, size)
         , m_ParamCount(count)
         , m_pSB(pSB)
@@ -311,10 +307,6 @@ public:
 
     void Release() override
     {
-//        if (m_pSB)
-//            m_pSB->release();
-
-        // ### cleanup
     }
 
     void Validate(QSharedPointer<QDemonRenderShaderProgram> /*inShader*/) override
@@ -325,9 +317,8 @@ public:
         if (m_pSB)
             return;
 
-        QDemonRenderStorageBuffer *sb = m_Context.GetStorageBuffer(m_Name);
+        QSharedPointer<QDemonRenderStorageBuffer> sb = m_Context.GetStorageBuffer(m_Name);
         if (sb) {
-            //sb->addRef();
             m_pSB = sb;
         } else {
             Q_ASSERT(false);
@@ -351,12 +342,12 @@ class QDemonRenderShaderAtomicCounterBuffer : public QDemonRenderShaderBufferBas
 {
 public:
     qint32 m_ParamCount; ///< count of parameters contained in the constant buffer
-    QDemonRenderAtomicCounterBuffer *m_pAcB; ///< pointer to atomic counter buffer
+    QSharedPointer<QDemonRenderAtomicCounterBuffer> m_pAcB; ///< pointer to atomic counter buffer
 
 public:
     QDemonRenderShaderAtomicCounterBuffer(QDemonRenderContextImpl &context, const QString &name,
                                           quint32 location, qint32 binding, qint32 size, qint32 count,
-                                          QDemonRenderAtomicCounterBuffer *pAcB)
+                                          QSharedPointer<QDemonRenderAtomicCounterBuffer> pAcB)
         : QDemonRenderShaderBufferBase(context, name, location, binding, size)
         , m_ParamCount(count)
         , m_pAcB(pAcB)
@@ -365,10 +356,6 @@ public:
 
     void Release() override
     {
-//        if (m_pAcB)
-//            m_pAcB->release();
-
-        // ### cleanup
     }
 
     void Validate(QSharedPointer<QDemonRenderShaderProgram> /*inShader*/) override
@@ -379,9 +366,8 @@ public:
         if (m_pAcB)
             return;
 
-        QDemonRenderAtomicCounterBuffer *acb = m_Context.GetAtomicCounterBuffer(m_Name);
+        QSharedPointer<QDemonRenderAtomicCounterBuffer> acb = m_Context.GetAtomicCounterBuffer(m_Name);
         if (acb) {
-            //acb->addRef();
             m_pAcB = acb;
         } else {
             Q_ASSERT(false);

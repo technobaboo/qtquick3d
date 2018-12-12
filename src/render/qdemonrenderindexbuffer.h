@@ -38,7 +38,7 @@ QT_BEGIN_NAMESPACE
 // forward declaration
 class QDemonRenderContextImpl;
 
-class QDemonRenderIndexBuffer : public QDemonRenderDataBuffer, public QDemonRenderDrawable
+class QDemonRenderIndexBuffer : public QDemonRenderDataBuffer, public QDemonRenderDrawable, public QEnableSharedFromThis<QDemonRenderIndexBuffer>
 {
 public:
     /**
@@ -119,7 +119,7 @@ public:
         return reinterpret_cast<void *>(m_BufferHandle);
     }
 
-    static QDemonRenderIndexBuffer *Create(QDemonRenderContextImpl &context,
+    static QSharedPointer<QDemonRenderIndexBuffer> Create(QDemonRenderContextImpl &context,
                                            QDemonRenderBufferUsageType::Enum usageType,
                                            QDemonRenderComponentTypes::Enum componentType, size_t size,
                                            QDemonConstDataRef<quint8> bufferData);

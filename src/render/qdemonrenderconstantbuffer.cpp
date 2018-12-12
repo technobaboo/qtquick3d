@@ -95,12 +95,12 @@ QDemonRenderConstantBuffer::~QDemonRenderConstantBuffer()
     for (TRenderConstantBufferEntryMap::iterator iter = m_ConstantBufferEntryMap.begin(),
          end = m_ConstantBufferEntryMap.end();
          iter != end; ++iter) {
-         delete iter.value();
+        delete iter.value();
     }
 
     m_ConstantBufferEntryMap.clear();
 
-    m_Context.BufferDestroyed(*this);
+    m_Context.BufferDestroyed(this);
 }
 
 void QDemonRenderConstantBuffer::Bind()
@@ -387,24 +387,25 @@ bool QDemonRenderConstantBuffer::allocateShadowBuffer(quint32 size)
     return true;
 }
 
-QDemonRenderConstantBuffer *QDemonRenderConstantBuffer::Create(QDemonRenderContextImpl &context,
-                                                               const char *bufferName,
-                                                               QDemonRenderBufferUsageType::Enum usageType,
-                                                               size_t size,
-                                                               QDemonConstDataRef<quint8> bufferData)
+QSharedPointer<QDemonRenderConstantBuffer> QDemonRenderConstantBuffer::Create(QDemonRenderContextImpl &context,
+                                                                              const char *bufferName,
+                                                                              QDemonRenderBufferUsageType::Enum usageType,
+                                                                              size_t size,
+                                                                              QDemonConstDataRef<quint8> bufferData)
 {
-    QDemonRenderConstantBuffer *retval = nullptr;
+    QSharedPointer<QDemonRenderConstantBuffer> retval = nullptr;
 
     if (context.GetConstantBufferSupport()) {
         const QString theBufferName = QString::fromLocal8Bit(bufferName);
         quint32 cbufSize = sizeof(QDemonRenderConstantBuffer);
         quint8 *newMem = static_cast<quint8 *>(::malloc(cbufSize));
-        retval = new (newMem) QDemonRenderConstantBuffer(
+        retval.reset(new (newMem) QDemonRenderConstantBuffer(
                     context, theBufferName, size, usageType,
-                    toDataRef(const_cast<quint8 *>(bufferData.begin()), bufferData.size()));
+                    toDataRef(const_cast<quint8 *>(bufferData.begin()), bufferData.size())));
     } else {
         Q_ASSERT(false);
     }
     return retval;
 }
+
 QT_END_NAMESPACE

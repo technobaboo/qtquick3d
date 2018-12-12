@@ -105,10 +105,10 @@ QSharedPointer<QDemonRenderInputAssembler> QDemonRenderExampleTools::createBox(Q
         }
     }
 
-    outVertexBuffer.reset(context->CreateVertexBuffer(QDemonRenderBufferUsageType::Static,
-                                                      bufSize,
-                                                      bufStride,
-                                                      vertData));
+    outVertexBuffer= context->CreateVertexBuffer(QDemonRenderBufferUsageType::Static,
+                                                 bufSize,
+                                                 bufStride,
+                                                 vertData);
     Q_ASSERT(bufStride == outVertexBuffer->GetStride());
     // Clean up data
     ::free(vertData.begin());
@@ -129,21 +129,20 @@ QSharedPointer<QDemonRenderInputAssembler> QDemonRenderExampleTools::createBox(Q
         *(indices++) = base + 2;
         *(indices++) = base + 3;
     }
-    outIndexBuffer.reset(context->CreateIndexBuffer(QDemonRenderBufferUsageType::Static,
-                                                    QDemonRenderComponentTypes::UnsignedInteger16,
-                                                    bufSize,
-                                                    indexData));
+    outIndexBuffer= context->CreateIndexBuffer(QDemonRenderBufferUsageType::Static,
+                                               QDemonRenderComponentTypes::UnsignedInteger16,
+                                               bufSize,
+                                               indexData);
     ::free(indexData.begin());
 
     quint32 strides = outVertexBuffer->GetStride();
     quint32 offsets = 0;
 
-    QDemonRenderVertexBuffer *vertexBuffer = outVertexBuffer.data();
     QSharedPointer<QDemonRenderInputAssembler> inputAssembler = context->CreateInputAssembler(attribLayout,
-                                                                               toConstDataRef(&vertexBuffer, 1),
-                                                                               outIndexBuffer.data(),
-                                                                               toConstDataRef(&strides, 1),
-                                                                               toConstDataRef(&offsets, 1));
+                                                                                              toConstDataRef(&outVertexBuffer, 1),
+                                                                                              outIndexBuffer,
+                                                                                              toConstDataRef(&strides, 1),
+                                                                                              toConstDataRef(&offsets, 1));
     return inputAssembler;
 }
 

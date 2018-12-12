@@ -48,7 +48,7 @@ class QDemonRenderShaderProgram;
 typedef QHash<QString, ConstantBufferParamEntry *> TRenderConstantBufferEntryMap;
 
 ///< Constant (uniform) buffer representation
-class Q_DEMONRENDER_EXPORT QDemonRenderConstantBuffer : public QDemonRenderDataBuffer
+class Q_DEMONRENDER_EXPORT QDemonRenderConstantBuffer : public QDemonRenderDataBuffer, public QEnableSharedFromThis<QDemonRenderConstantBuffer>
 {
 public:
     /**
@@ -176,7 +176,7 @@ public:
          *
          * @return the backend object handle.
          */
-    static QDemonRenderConstantBuffer *Create(QDemonRenderContextImpl &context, const char *bufferName,
+    static QSharedPointer<QDemonRenderConstantBuffer> Create(QDemonRenderContextImpl &context, const char *bufferName,
                                               QDemonRenderBufferUsageType::Enum usageType, size_t size,
                                               QDemonConstDataRef<quint8> bufferData);
 

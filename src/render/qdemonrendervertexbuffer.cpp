@@ -44,7 +44,10 @@ QDemonRenderVertexBuffer::QDemonRenderVertexBuffer(QDemonRenderContextImpl &cont
     Q_ASSERT(m_Stride);
 }
 
-QDemonRenderVertexBuffer::~QDemonRenderVertexBuffer() { m_Context.BufferDestroyed(*this); }
+QDemonRenderVertexBuffer::~QDemonRenderVertexBuffer()
+{
+    m_Context.BufferDestroyed(this);
+}
 
 void QDemonRenderVertexBuffer::Bind()
 {
@@ -56,17 +59,16 @@ void QDemonRenderVertexBuffer::Bind()
     m_Backend->BindBuffer(m_BufferHandle, m_BindFlags);
 }
 
-QDemonRenderVertexBuffer *QDemonRenderVertexBuffer::Create(QDemonRenderContextImpl &context,
-                                                           QDemonRenderBufferUsageType::Enum usageType,
-                                                           size_t size, quint32 stride,
-                                                           QDemonConstDataRef<quint8> bufferData)
+QSharedPointer<QDemonRenderVertexBuffer> QDemonRenderVertexBuffer::Create(QDemonRenderContextImpl &context,
+                                                                          QDemonRenderBufferUsageType::Enum usageType,
+                                                                          size_t size, quint32 stride,
+                                                                          QDemonConstDataRef<quint8> bufferData)
 {
     quint32 vbufSize = sizeof(QDemonRenderVertexBuffer);
     quint8 *newMem = static_cast<quint8 *>(::malloc(vbufSize));
-    QDemonRenderVertexBuffer *retval = new (newMem) QDemonRenderVertexBuffer(
-                context, size, stride, QDemonRenderBufferBindValues::Vertex, usageType,
-                toDataRef(const_cast<quint8 *>(bufferData.begin()), bufferData.size()));
-    return retval;
+    return QSharedPointer<QDemonRenderVertexBuffer>(new (newMem) QDemonRenderVertexBuffer(
+                                                        context, size, stride, QDemonRenderBufferBindValues::Vertex, usageType,
+                                                        toDataRef(const_cast<quint8 *>(bufferData.begin()), bufferData.size())));
 }
 
 QT_END_NAMESPACE

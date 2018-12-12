@@ -42,7 +42,7 @@ class QDemonRenderContextImpl;
 class QDemonRenderVertexBuffer;
 
 ///< Constant (uniform) buffer representation
-class QDemonRenderStorageBuffer : public QDemonRenderDataBuffer
+class QDemonRenderStorageBuffer : public QDemonRenderDataBuffer, public QEnableSharedFromThis<QDemonRenderStorageBuffer>
 {
 public:
     /**
@@ -139,7 +139,7 @@ public:
          *
          * @return the buffer object or nullptr
          */
-    static QDemonRenderStorageBuffer *Create(QDemonRenderContextImpl &context, const char *bufferName,
+    static QSharedPointer<QDemonRenderStorageBuffer> Create(QDemonRenderContextImpl &context, const char *bufferName,
                                              QDemonRenderBufferUsageType::Enum usageType, size_t size,
                                              QDemonConstDataRef<quint8> bufferData,
                                              QDemonRenderDataBuffer *pBuffer);
