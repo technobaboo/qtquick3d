@@ -115,23 +115,23 @@ void QDemonRenderContextImpl::getMaxTextureSize(quint32 &oWidth, quint32 &oHeigh
     oHeight = (quint32)theMaxTextureSize;
 }
 
-QDemonRenderDepthStencilState *QDemonRenderContextImpl::CreateDepthStencilState(
+QSharedPointer<QDemonRenderDepthStencilState> QDemonRenderContextImpl::CreateDepthStencilState(
         bool enableDepth, bool depthMask, QDemonRenderBoolOp::Enum depthFunc, bool enableStencil,
         QDemonRenderStencilFunctionArgument &stencilFuncFront,
         QDemonRenderStencilFunctionArgument &stencilFuncBack,
         QDemonRenderStencilOperationArgument &depthStencilOpFront,
         QDemonRenderStencilOperationArgument &depthStencilOpBack)
 {
-    QDemonRenderDepthStencilState *state = QDemonRenderDepthStencilState::Create(
+    QSharedPointer<QDemonRenderDepthStencilState> state = QDemonRenderDepthStencilState::Create(
                 *this, enableDepth, depthMask, depthFunc, enableStencil, stencilFuncFront,
                 stencilFuncBack, depthStencilOpFront, depthStencilOpBack);
     if (state)
-        m_DepthStencilStateToImpMap.insert(state->GetDepthStencilObjectHandle(), state);
+        m_DepthStencilStateToImpMap.insert(state->GetDepthStencilObjectHandle(), state.data());
 
     return state;
 }
 
-void QDemonRenderContextImpl::SetDepthStencilState(QDemonRenderDepthStencilState *inDepthStencilState)
+void QDemonRenderContextImpl::SetDepthStencilState(QSharedPointer<QDemonRenderDepthStencilState> inDepthStencilState)
 {
     if (inDepthStencilState) {
         m_backend->SetDepthStencilState(inDepthStencilState->GetDepthStencilObjectHandle());
@@ -143,9 +143,9 @@ void QDemonRenderContextImpl::SetDepthStencilState(QDemonRenderDepthStencilState
     }
 }
 
-void QDemonRenderContextImpl::StateDestroyed(QDemonRenderDepthStencilState &state)
+void QDemonRenderContextImpl::StateDestroyed(QDemonRenderDepthStencilState *state)
 {
-    m_DepthStencilStateToImpMap.remove(state.GetDepthStencilObjectHandle());
+    m_DepthStencilStateToImpMap.remove(state->GetDepthStencilObjectHandle());
 }
 
 QDemonRenderRasterizerState *

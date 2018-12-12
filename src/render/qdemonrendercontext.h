@@ -143,7 +143,7 @@ public:
     virtual void SetDefaultRenderTarget(quint64 targetID) = 0;
     virtual void SetDefaultDepthBufferBitCount(qint32 depthBits) = 0;
 
-    virtual QDemonRenderDepthStencilState *
+    virtual QSharedPointer<QDemonRenderDepthStencilState>
     CreateDepthStencilState(bool enableDepth, bool depthMask, QDemonRenderBoolOp::Enum depthFunc,
                             bool enableStencil,
                             QDemonRenderStencilFunctionArgument &stencilFuncFront,
@@ -152,7 +152,7 @@ public:
                             QDemonRenderStencilOperationArgument &depthStencilOpBack) = 0;
 
     virtual QDemonRenderRasterizerState *CreateRasterizerState(float depthBias, float depthScale,
-                                                           QDemonRenderFaces::Enum cullFace) = 0;
+                                                               QDemonRenderFaces::Enum cullFace) = 0;
 
     virtual QDemonRenderVertexBuffer *
     CreateVertexBuffer(QDemonRenderBufferUsageType::Enum usageType, size_t size, quint32 stride = 0,
@@ -207,7 +207,7 @@ public:
     virtual QSharedPointer<QDemonRenderTextureCube> CreateTextureCube() = 0;
 
     virtual QSharedPointer<QDemonRenderImage2D> CreateImage2D(QSharedPointer<QDemonRenderTexture2D> inTexture,
-                                               QDemonRenderImageAccessType::Enum inAccess) = 0;
+                                                              QDemonRenderImageAccessType::Enum inAccess) = 0;
 
     virtual QSharedPointer<QDemonRenderRenderBuffer>
     CreateRenderBuffer(QDemonRenderRenderBufferFormats::Enum bufferFormat, quint32 width,
@@ -300,7 +300,7 @@ public:
     virtual void SetDepthTestEnabled(bool inEnabled) = 0;
     virtual bool IsDepthTestEnabled() const = 0;
 
-    virtual void SetDepthStencilState(QDemonRenderDepthStencilState *inDepthStencilState) = 0;
+    virtual void SetDepthStencilState(QSharedPointer<QDemonRenderDepthStencilState> inDepthStencilState) = 0;
     virtual void SetStencilTestEnabled(bool inEnabled) = 0;
     virtual bool IsStencilTestEnabled() const = 0;
 
@@ -757,18 +757,18 @@ public:
 
     void SetDefaultDepthBufferBitCount(qint32 depthBits) override { m_DephBits = depthBits; }
 
-    virtual QDemonRenderDepthStencilState *
+    virtual QSharedPointer<QDemonRenderDepthStencilState>
     CreateDepthStencilState(bool enableDepth, bool depthMask, QDemonRenderBoolOp::Enum depthFunc,
                             bool enableStencil,
                             QDemonRenderStencilFunctionArgument &stencilFuncFront,
                             QDemonRenderStencilFunctionArgument &stencilFuncBack,
                             QDemonRenderStencilOperationArgument &depthStencilOpFront,
                             QDemonRenderStencilOperationArgument &depthStencilOpBack) override;
-    void SetDepthStencilState(QDemonRenderDepthStencilState *inDepthStencilState) override;
-    virtual void StateDestroyed(QDemonRenderDepthStencilState &state);
+    void SetDepthStencilState(QSharedPointer<QDemonRenderDepthStencilState> inDepthStencilState) override;
+    virtual void StateDestroyed(QDemonRenderDepthStencilState *state);
 
     QDemonRenderRasterizerState *CreateRasterizerState(float depthBias, float depthScale,
-                                                   QDemonRenderFaces::Enum cullFace) override;
+                                                       QDemonRenderFaces::Enum cullFace) override;
     void SetRasterizerState(QDemonRenderRasterizerState *inRasterizerState) override;
     virtual void StateDestroyed(QDemonRenderRasterizerState &state);
 
@@ -836,11 +836,11 @@ public:
     virtual quint32 GetNextTextureUnit();
 
     QSharedPointer<QDemonRenderImage2D> CreateImage2D(QSharedPointer<QDemonRenderTexture2D> inTexture,
-                                       QDemonRenderImageAccessType::Enum inAccess) override;
+                                                      QDemonRenderImageAccessType::Enum inAccess) override;
     virtual void ImageDestroyed(QDemonRenderImage2D *buffer);
 
     virtual QSharedPointer<QDemonRenderRenderBuffer> CreateRenderBuffer(QDemonRenderRenderBufferFormats::Enum bufferFormat, quint32 width,
-                       quint32 height) override;
+                                                                        quint32 height) override;
     QSharedPointer<QDemonRenderRenderBuffer> GetRenderBuffer(const void *implementationHandle) override;
     virtual void RenderBufferDestroyed(QDemonRenderRenderBuffer *buffer);
 

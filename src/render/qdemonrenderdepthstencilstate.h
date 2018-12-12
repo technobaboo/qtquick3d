@@ -99,7 +99,7 @@ public:
         return m_StateHandle;
     }
 
-    static QDemonRenderDepthStencilState *
+    static QSharedPointer<QDemonRenderDepthStencilState>
     Create(QDemonRenderContextImpl &context, bool enableDepth, bool depthMask,
            QDemonRenderBoolOp::Enum depthFunc, bool enableStencil,
            QDemonRenderStencilFunctionArgument &stencilFuncFront,
