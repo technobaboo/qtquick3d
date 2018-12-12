@@ -214,8 +214,8 @@ public:
                        quint32 height) = 0;
     virtual QDemonRenderRenderBuffer *GetRenderBuffer(const void *implementationHandle) = 0;
     // Create a new frame buffer and set the current render target to that frame buffer.
-    virtual QDemonRenderFrameBuffer *CreateFrameBuffer() = 0;
-    virtual QDemonRenderFrameBuffer *GetFrameBuffer(const void *implementationHandle) = 0;
+    virtual QSharedPointer<QDemonRenderFrameBuffer> CreateFrameBuffer() = 0;
+    virtual QSharedPointer<QDemonRenderFrameBuffer> GetFrameBuffer(const void *implementationHandle) = 0;
 
     virtual QSharedPointer<QDemonRenderAttribLayout> CreateAttributeLayout(QDemonConstDataRef<QDemonRenderVertexBufferEntry> attribs) = 0;
 
@@ -329,9 +329,9 @@ public:
                                            const QDemonRenderRectF &inViewport,
                                            const QDemonRenderRectF &inVirtualViewport);
 
-    virtual void SetRenderTarget(QDemonRenderFrameBuffer *inBuffer) = 0;
-    virtual void SetReadTarget(QDemonRenderFrameBuffer *inBuffer) = 0;
-    virtual QDemonRenderFrameBuffer *GetRenderTarget() const = 0;
+    virtual void SetRenderTarget(QSharedPointer<QDemonRenderFrameBuffer> inBuffer) = 0;
+    virtual void SetReadTarget(QSharedPointer<QDemonRenderFrameBuffer> inBuffer) = 0;
+    virtual QSharedPointer<QDemonRenderFrameBuffer> GetRenderTarget() const = 0;
 
     virtual void SetActiveShader(QSharedPointer<QDemonRenderShaderProgram> inShader) = 0;
     virtual QSharedPointer<QDemonRenderShaderProgram> GetActiveShader() const = 0;
@@ -365,7 +365,7 @@ public:
     // Clear the current render target
     virtual void Clear(QDemonRenderClearFlags flags) = 0;
     // Clear this framebuffer without changing the active frame buffer
-    virtual void Clear(QDemonRenderFrameBuffer &framebuffer, QDemonRenderClearFlags flags) = 0;
+    virtual void Clear(QSharedPointer<QDemonRenderFrameBuffer> framebuffer, QDemonRenderClearFlags flags) = 0;
     // copy framebuffer content between read target and render target
     virtual void BlitFramebuffer(qint32 srcX0, qint32 srcY0, qint32 srcX1, qint32 srcY1,
                                  qint32 dstX0, qint32 dstY0, qint32 dstX1, qint32 dstY1,
@@ -586,7 +586,7 @@ protected:
         m_DirtyFlags |= QDemonRenderContextDirtyValues::InputAssembler;
     }
 
-    void DoSetRenderTarget(QDemonRenderFrameBuffer *inBuffer)
+    void DoSetRenderTarget(QSharedPointer<QDemonRenderFrameBuffer> inBuffer)
     {
         if (inBuffer)
             m_backend->SetRenderTarget(inBuffer->GetFrameBuffertHandle());
@@ -596,7 +596,7 @@ protected:
         m_HardwarePropertyContext.m_FrameBuffer = inBuffer;
     }
 
-    void DoSetReadTarget(QDemonRenderFrameBuffer *inBuffer)
+    void DoSetReadTarget(QSharedPointer<QDemonRenderFrameBuffer> inBuffer)
     {
         if (inBuffer)
             m_backend->SetReadTarget(inBuffer->GetFrameBuffertHandle());
@@ -845,9 +845,9 @@ public:
     QDemonRenderRenderBuffer *GetRenderBuffer(const void *implementationHandle) override;
     virtual void RenderBufferDestroyed(QDemonRenderRenderBuffer &buffer);
 
-    QDemonRenderFrameBuffer *CreateFrameBuffer() override;
-    QDemonRenderFrameBuffer *GetFrameBuffer(const void *implementationHandle) override;
-    virtual void FrameBufferDestroyed(QDemonRenderFrameBuffer &fb);
+    QSharedPointer<QDemonRenderFrameBuffer> CreateFrameBuffer() override;
+    QSharedPointer<QDemonRenderFrameBuffer> GetFrameBuffer(const void *implementationHandle) override;
+    virtual void FrameBufferDestroyed(QDemonRenderFrameBuffer *fb);
 
     virtual QSharedPointer<QDemonRenderAttribLayout>
     CreateAttributeLayout(QDemonConstDataRef<QDemonRenderVertexBufferEntry> attribs) override;
@@ -987,9 +987,9 @@ public:
     void ReadPixels(QDemonRenderRect inRect, QDemonRenderReadPixelFormats::Enum inFormat,
                     QDemonDataRef<quint8> inWriteBuffer) override;
 
-    void SetRenderTarget(QDemonRenderFrameBuffer *inBuffer) override;
-    void SetReadTarget(QDemonRenderFrameBuffer *inBuffer) override;
-    QDemonRenderFrameBuffer *GetRenderTarget() const override
+    void SetRenderTarget(QSharedPointer<QDemonRenderFrameBuffer> inBuffer) override;
+    void SetReadTarget(QSharedPointer<QDemonRenderFrameBuffer> inBuffer) override;
+    QSharedPointer<QDemonRenderFrameBuffer> GetRenderTarget() const override
     {
         return m_HardwarePropertyContext.m_FrameBuffer;
     }
@@ -1006,7 +1006,7 @@ public:
     // clear current bound render target
     void Clear(QDemonRenderClearFlags flags) override;
     // clear passed in rendertarget
-    void Clear(QDemonRenderFrameBuffer &fb, QDemonRenderClearFlags flags) override;
+    void Clear(QSharedPointer<QDemonRenderFrameBuffer> fb, QDemonRenderClearFlags flags) override;
 
     // copy framebuffer content between read target and render target
     void BlitFramebuffer(qint32 srcX0, qint32 srcY0, qint32 srcX1, qint32 srcY1,

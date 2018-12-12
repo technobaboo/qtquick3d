@@ -99,7 +99,7 @@ QDemonRenderContextImpl::~QDemonRenderContextImpl()
     m_ShaderToImpMap.clear();
     Q_ASSERT(m_RenderBufferToImpMap.size() == 0);
     m_RenderBufferToImpMap.clear();
-    Q_ASSERT(m_FrameBufferToImpMap.size() == 0);
+    //Q_ASSERT(m_FrameBufferToImpMap.size() == 0);
     m_FrameBufferToImpMap.clear();
 
     m_backend = nullptr;
@@ -491,26 +491,26 @@ void QDemonRenderContextImpl::RenderBufferDestroyed(QDemonRenderRenderBuffer &bu
     m_RenderBufferToImpMap.remove(buffer.GetImplementationHandle());
 }
 
-QDemonRenderFrameBuffer *QDemonRenderContextImpl::CreateFrameBuffer()
+QSharedPointer<QDemonRenderFrameBuffer> QDemonRenderContextImpl::CreateFrameBuffer()
 {
-    QDemonRenderFrameBuffer *retval = QDemonRenderFrameBuffer::Create(*this);
+    QSharedPointer<QDemonRenderFrameBuffer> retval = QDemonRenderFrameBuffer::Create(*this);
     if (retval != nullptr)
-        m_FrameBufferToImpMap.insert(retval->GetImplementationHandle(), retval);
+        m_FrameBufferToImpMap.insert(retval->GetImplementationHandle(), retval.data());
     return retval;
 }
 
-QDemonRenderFrameBuffer *QDemonRenderContextImpl::GetFrameBuffer(const void *implementationHandle)
+QSharedPointer<QDemonRenderFrameBuffer> QDemonRenderContextImpl::GetFrameBuffer(const void *implementationHandle)
 {
     const QHash<const void *, QDemonRenderFrameBuffer *>::iterator entry = m_FrameBufferToImpMap.find(implementationHandle);
     if (entry != m_FrameBufferToImpMap.end())
-        return entry.value();
+        return entry.value()->sharedFromThis();
     return nullptr;
 }
 
-void QDemonRenderContextImpl::FrameBufferDestroyed(QDemonRenderFrameBuffer &fb)
+void QDemonRenderContextImpl::FrameBufferDestroyed(QDemonRenderFrameBuffer *fb)
 {
-    m_FrameBufferToImpMap.remove(fb.GetImplementationHandle());
-    if (m_HardwarePropertyContext.m_FrameBuffer == &fb)
+    m_FrameBufferToImpMap.remove(fb->GetImplementationHandle());
+    if (m_HardwarePropertyContext.m_FrameBuffer == fb)
         m_HardwarePropertyContext.m_FrameBuffer = nullptr;
 }
 
@@ -814,14 +814,14 @@ void QDemonRenderContextImpl::ReadPixels(QDemonRenderRect inRect,
                          inFormat, (void *)inWriteBuffer.begin());
 }
 
-void QDemonRenderContextImpl::SetRenderTarget(QDemonRenderFrameBuffer *inBuffer)
+void QDemonRenderContextImpl::SetRenderTarget(QSharedPointer<QDemonRenderFrameBuffer> inBuffer)
 {
     if (inBuffer != m_HardwarePropertyContext.m_FrameBuffer) {
         DoSetRenderTarget(inBuffer);
     }
 }
 
-void QDemonRenderContextImpl::SetReadTarget(QDemonRenderFrameBuffer *inBuffer)
+void QDemonRenderContextImpl::SetReadTarget(QSharedPointer<QDemonRenderFrameBuffer> inBuffer)
 {
     if (inBuffer != m_HardwarePropertyContext.m_FrameBuffer) {
         DoSetReadTarget(inBuffer);
@@ -873,15 +873,15 @@ void QDemonRenderContextImpl::Clear(QDemonRenderClearFlags flags)
     m_backend->Clear(flags);
 }
 
-void QDemonRenderContextImpl::Clear(QDemonRenderFrameBuffer &fb, QDemonRenderClearFlags flags)
+void QDemonRenderContextImpl::Clear(QSharedPointer<QDemonRenderFrameBuffer> fb, QDemonRenderClearFlags flags)
 {
-    QDemonRenderFrameBuffer *previous = m_HardwarePropertyContext.m_FrameBuffer;
-    if (previous != &fb)
-        SetRenderTarget(&fb);
+    QSharedPointer<QDemonRenderFrameBuffer> previous = m_HardwarePropertyContext.m_FrameBuffer;
+    if (previous != fb)
+        SetRenderTarget(fb);
 
     Clear(flags);
 
-    if (previous != &fb)
+    if (previous != fb)
         SetRenderTarget(previous);
 }
 

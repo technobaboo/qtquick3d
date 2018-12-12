@@ -39,7 +39,7 @@ QT_BEGIN_NAMESPACE
 // The set of all properties as they are currently set in hardware.
 struct QDemonGLHardPropertyContext
 {
-    QDemonRenderFrameBuffer *m_FrameBuffer;
+    QSharedPointer<QDemonRenderFrameBuffer> m_FrameBuffer;
     QSharedPointer<QDemonRenderShaderProgram> m_ActiveShader;
     QDemonRenderProgramPipeline *m_ActiveProgramPipeline;
     QSharedPointer<QDemonRenderInputAssembler> m_InputAssembler;

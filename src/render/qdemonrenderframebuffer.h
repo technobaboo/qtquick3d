@@ -130,7 +130,7 @@ public:
     }
 };
 
-class QDemonRenderFrameBuffer : public QDemonRenderImplemented
+class QDemonRenderFrameBuffer : public QDemonRenderImplemented, public QEnableSharedFromThis<QDemonRenderFrameBuffer>
 {
 private:
     QDemonRenderContextImpl &m_Context; ///< pointer to context
@@ -250,7 +250,7 @@ public:
          *
          * @return a pointer to framebuffer object.
          */
-    static QDemonRenderFrameBuffer *Create(QDemonRenderContextImpl &context);
+    static QSharedPointer<QDemonRenderFrameBuffer> Create(QDemonRenderContextImpl &context);
 
 private:
     /**

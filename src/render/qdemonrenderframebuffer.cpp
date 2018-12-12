@@ -49,7 +49,7 @@ QDemonRenderFrameBuffer::QDemonRenderFrameBuffer(QDemonRenderContextImpl &contex
 
 QDemonRenderFrameBuffer::~QDemonRenderFrameBuffer()
 {
-    m_Context.FrameBufferDestroyed(*this);
+    m_Context.FrameBufferDestroyed(this);
     m_Backend->ReleaseRenderTarget(m_BufferHandle);
     m_BufferHandle = 0;
     m_AttachmentBits = 0;
@@ -137,7 +137,7 @@ void QDemonRenderFrameBuffer::Attach(QDemonRenderFrameBufferAttachments::Enum at
 
     CheckAttachment(m_Context, attachment);
     // Ensure we are the bound framebuffer
-    m_Context.SetRenderTarget(this);
+    m_Context.SetRenderTarget(sharedFromThis());
 
     // release previous attachments
     QDemonRenderTextureTargetType::Enum theRelTarget = releaseAttachment(attachment);
@@ -203,7 +203,7 @@ void QDemonRenderFrameBuffer::AttachLayer(QDemonRenderFrameBufferAttachments::En
 
     CheckAttachment(m_Context, attachment);
     // Ensure we are the bound framebuffer
-    m_Context.SetRenderTarget(this);
+    m_Context.SetRenderTarget(sharedFromThis());
 
     // release previous attachments
     QDemonRenderTextureTargetType::Enum theRelTarget = releaseAttachment(attachment);
@@ -242,7 +242,7 @@ void QDemonRenderFrameBuffer::AttachFace(QDemonRenderFrameBufferAttachments::Enu
 
     CheckAttachment(m_Context, attachment);
     // Ensure we are the bound framebuffer
-    m_Context.SetRenderTarget(this);
+    m_Context.SetRenderTarget(sharedFromThis());
 
     // release previous attachments
     QDemonRenderTextureTargetType::Enum attachTarget = static_cast<QDemonRenderTextureTargetType::Enum>(
@@ -278,15 +278,14 @@ void QDemonRenderFrameBuffer::AttachFace(QDemonRenderFrameBufferAttachments::Enu
 bool QDemonRenderFrameBuffer::IsComplete()
 {
     // Ensure we are the bound framebuffer
-    m_Context.SetRenderTarget(this);
+    m_Context.SetRenderTarget(sharedFromThis());
 
     return m_Backend->RenderTargetIsValid(m_BufferHandle);
 }
 
-QDemonRenderFrameBuffer *
-QDemonRenderFrameBuffer::Create(QDemonRenderContextImpl &context)
+QSharedPointer<QDemonRenderFrameBuffer> QDemonRenderFrameBuffer::Create(QDemonRenderContextImpl &context)
 {
-    return new QDemonRenderFrameBuffer(context);
+    return QSharedPointer<QDemonRenderFrameBuffer>(new QDemonRenderFrameBuffer(context));
 }
 
 QT_END_NAMESPACE

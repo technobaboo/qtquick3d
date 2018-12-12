@@ -123,7 +123,7 @@ public:
             // need
             // to push the current state
             // Auto-binds the framebuffer.
-            mFrameBuffer.reset(m_Context->CreateFrameBuffer());
+            mFrameBuffer = m_Context->CreateFrameBuffer();
             mFrameBuffer->Attach(QDemonRenderFrameBufferAttachments::Color0, *mColorBuffer);
             mFrameBuffer->Attach(QDemonRenderFrameBufferAttachments::Depth, *mDepthBuffer);
             Q_ASSERT(mFrameBuffer->IsComplete());
@@ -148,11 +148,11 @@ public:
         QDemonRenderClearFlags clearFlags(QDemonRenderClearValues::Color | QDemonRenderClearValues::Depth);
         // render to frame buffer
         {
-            QDemonRenderContextScopedProperty<QDemonRenderFrameBufferPtr> framebuffer(
+            QDemonRenderContextScopedProperty<QSharedPointer<QDemonRenderFrameBuffer>> framebuffer(
                 *m_Context.data(),
                 &QDemonRenderContext::GetRenderTarget,
                 &QDemonRenderContext::SetRenderTarget,
-                mFrameBuffer.data());
+                mFrameBuffer);
             QDemonRenderContextScopedProperty<QDemonRenderRect> viewport(
                 *m_Context.data(), &QDemonRenderContext::GetViewport, &QDemonRenderContext::SetViewport,
                 QDemonRenderRect(0, 0, mFBWidth, mFBHeight));
