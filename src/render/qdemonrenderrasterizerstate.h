@@ -73,7 +73,7 @@ public:
         return m_StateHandle;
     }
 
-    static QDemonRenderRasterizerState *Create(QDemonRenderContextImpl &context, float depthBias,
+    static QSharedPointer<QDemonRenderRasterizerState> Create(QDemonRenderContextImpl &context, float depthBias,
                                                float depthScale, QDemonRenderFaces::Enum cullFace);
 
 };

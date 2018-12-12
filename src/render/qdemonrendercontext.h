@@ -151,7 +151,7 @@ public:
                             QDemonRenderStencilOperationArgument &depthStencilOpFront,
                             QDemonRenderStencilOperationArgument &depthStencilOpBack) = 0;
 
-    virtual QDemonRenderRasterizerState *CreateRasterizerState(float depthBias, float depthScale,
+    virtual QSharedPointer<QDemonRenderRasterizerState> CreateRasterizerState(float depthBias, float depthScale,
                                                                QDemonRenderFaces::Enum cullFace) = 0;
 
     virtual QDemonRenderVertexBuffer *
@@ -304,7 +304,7 @@ public:
     virtual void SetStencilTestEnabled(bool inEnabled) = 0;
     virtual bool IsStencilTestEnabled() const = 0;
 
-    virtual void SetRasterizerState(QDemonRenderRasterizerState *inRasterizerState) = 0;
+    virtual void SetRasterizerState(QSharedPointer<QDemonRenderRasterizerState> inRasterizerState) = 0;
 
     virtual void SetScissorTestEnabled(bool inEnabled) = 0;
     virtual bool IsScissorTestEnabled() const = 0;
@@ -767,10 +767,10 @@ public:
     void SetDepthStencilState(QSharedPointer<QDemonRenderDepthStencilState> inDepthStencilState) override;
     virtual void StateDestroyed(QDemonRenderDepthStencilState *state);
 
-    QDemonRenderRasterizerState *CreateRasterizerState(float depthBias, float depthScale,
+    QSharedPointer<QDemonRenderRasterizerState> CreateRasterizerState(float depthBias, float depthScale,
                                                        QDemonRenderFaces::Enum cullFace) override;
-    void SetRasterizerState(QDemonRenderRasterizerState *inRasterizerState) override;
-    virtual void StateDestroyed(QDemonRenderRasterizerState &state);
+    void SetRasterizerState(QSharedPointer<QDemonRenderRasterizerState> inRasterizerState) override;
+    virtual void StateDestroyed(QDemonRenderRasterizerState *state);
 
     QDemonRenderVertexBuffer *CreateVertexBuffer(QDemonRenderBufferUsageType::Enum usageType,
                                                  size_t size, quint32 stride,

@@ -148,27 +148,26 @@ void QDemonRenderContextImpl::StateDestroyed(QDemonRenderDepthStencilState *stat
     m_DepthStencilStateToImpMap.remove(state->GetDepthStencilObjectHandle());
 }
 
-QDemonRenderRasterizerState *
+QSharedPointer<QDemonRenderRasterizerState>
 QDemonRenderContextImpl::CreateRasterizerState(float depthBias, float depthScale,
                                                QDemonRenderFaces::Enum cullFace)
 {
-    QDemonRenderRasterizerState *state =
-            QDemonRenderRasterizerState::Create(*this, depthBias, depthScale, cullFace);
+    QSharedPointer<QDemonRenderRasterizerState> state = QDemonRenderRasterizerState::Create(*this, depthBias, depthScale, cullFace);
     if (state)
-        m_RasterizerStateToImpMap.insert(state->GetRasterizerObjectHandle(), state);
+        m_RasterizerStateToImpMap.insert(state->GetRasterizerObjectHandle(), state.data());
 
     return state;
 }
 
-void QDemonRenderContextImpl::SetRasterizerState(QDemonRenderRasterizerState *inRasterizerState)
+void QDemonRenderContextImpl::SetRasterizerState(QSharedPointer<QDemonRenderRasterizerState> inRasterizerState)
 {
     if (inRasterizerState)
         m_backend->SetRasterizerState(inRasterizerState->GetRasterizerObjectHandle());
 }
 
-void QDemonRenderContextImpl::StateDestroyed(QDemonRenderRasterizerState &state)
+void QDemonRenderContextImpl::StateDestroyed(QDemonRenderRasterizerState *state)
 {
-    m_RasterizerStateToImpMap.remove(state.GetRasterizerObjectHandle());
+    m_RasterizerStateToImpMap.remove(state->GetRasterizerObjectHandle());
 }
 
 QDemonRenderVertexBuffer *

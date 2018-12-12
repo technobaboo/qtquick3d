@@ -47,15 +47,15 @@ QDemonRenderRasterizerState::~QDemonRenderRasterizerState()
 {
     if (m_StateHandle) {
         m_Backend->ReleaseRasterizerState(m_StateHandle);
-        m_Context.StateDestroyed(*this);
+        m_Context.StateDestroyed(this);
     }
 }
 
-QDemonRenderRasterizerState *QDemonRenderRasterizerState::Create(QDemonRenderContextImpl &context,
+QSharedPointer<QDemonRenderRasterizerState> QDemonRenderRasterizerState::Create(QDemonRenderContextImpl &context,
                                                                  float depthBias, float depthScale,
                                                                  QDemonRenderFaces::Enum cullFace)
 {
-    return new QDemonRenderRasterizerState(context, depthBias, depthScale, cullFace);
+    return QSharedPointer<QDemonRenderRasterizerState>(new QDemonRenderRasterizerState(context, depthBias, depthScale, cullFace));
 }
 
 QT_END_NAMESPACE
