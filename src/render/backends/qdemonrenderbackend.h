@@ -1257,7 +1257,7 @@ public:
          * @return The created vertex shader object or nullptr if the creation failed.
          */
     virtual QDemonRenderBackendVertexShaderObject CreateVertexShader(QDemonConstDataRef<qint8> source,
-                                                                     QString &errorMessage,
+                                                                     QByteArray &errorMessage,
                                                                      bool binary) = 0;
 
     /**
@@ -1279,7 +1279,7 @@ public:
          * @return The created vertex shader object or nullptr if the creation failed.
          */
     virtual QDemonRenderBackendFragmentShaderObject
-    CreateFragmentShader(QDemonConstDataRef<qint8> source, QString &errorMessage,
+    CreateFragmentShader(QDemonConstDataRef<qint8> source, QByteArray &errorMessage,
                          bool binary) = 0;
 
     /**
@@ -1301,7 +1301,7 @@ public:
          * @return The created tessellation control shader object or nullptr if the creation failed.
          */
     virtual QDemonRenderBackendTessControlShaderObject
-    CreateTessControlShader(QDemonConstDataRef<qint8> source, QString &errorMessage,
+    CreateTessControlShader(QDemonConstDataRef<qint8> source, QByteArray &errorMessage,
                             bool binary) = 0;
 
     /**
@@ -1323,7 +1323,7 @@ public:
          * @return The created tessellation evaluation shader object or nullptr if the creation failed.
          */
     virtual QDemonRenderBackendTessEvaluationShaderObject
-    CreateTessEvaluationShader(QDemonConstDataRef<qint8> source, QString &errorMessage,
+    CreateTessEvaluationShader(QDemonConstDataRef<qint8> source, QByteArray &errorMessage,
                                bool binary) = 0;
 
     /**
@@ -1346,7 +1346,7 @@ public:
          * @return The created geometry shader object or nullptr if the creation failed.
          */
     virtual QDemonRenderBackendGeometryShaderObject
-    CreateGeometryShader(QDemonConstDataRef<qint8> source, QString &errorMessage,
+    CreateGeometryShader(QDemonConstDataRef<qint8> source, QByteArray &errorMessage,
                          bool binary) = 0;
 
     /**
@@ -1368,7 +1368,7 @@ public:
          * @return The created compute shader object or nullptr if the creation failed.
          */
     virtual QDemonRenderBackendComputeShaderObject CreateComputeShader(QDemonConstDataRef<qint8> source,
-                                                                       QString &errorMessage,
+                                                                       QByteArray &errorMessage,
                                                                        bool binary) = 0;
 
     /**
@@ -1539,7 +1539,7 @@ public:
          * @return True if program is succesful linked.
          */
     virtual bool LinkProgram(QDemonRenderBackendShaderProgramObject po,
-                             QString &errorMessage) = 0;
+                             QByteArray &errorMessage) = 0;
 
     /**
          * @brief Make a program current

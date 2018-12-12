@@ -291,19 +291,19 @@ public:
 
     // shader
     virtual QDemonRenderBackendVertexShaderObject
-    CreateVertexShader(QDemonConstDataRef<qint8> source, QString &errorMessage, bool binary) override;
+    CreateVertexShader(QDemonConstDataRef<qint8> source, QByteArray &errorMessage, bool binary) override;
     virtual QDemonRenderBackendFragmentShaderObject
-    CreateFragmentShader(QDemonConstDataRef<qint8> source, QString &errorMessage, bool binary) override;
+    CreateFragmentShader(QDemonConstDataRef<qint8> source, QByteArray &errorMessage, bool binary) override;
     virtual QDemonRenderBackendTessControlShaderObject
-    CreateTessControlShader(QDemonConstDataRef<qint8> source, QString &errorMessage,
+    CreateTessControlShader(QDemonConstDataRef<qint8> source, QByteArray &errorMessage,
                             bool binary) override;
     virtual QDemonRenderBackendTessEvaluationShaderObject
-    CreateTessEvaluationShader(QDemonConstDataRef<qint8> source, QString &errorMessage,
+    CreateTessEvaluationShader(QDemonConstDataRef<qint8> source, QByteArray &errorMessage,
                                bool binary) override;
     virtual QDemonRenderBackendGeometryShaderObject
-    CreateGeometryShader(QDemonConstDataRef<qint8> source, QString &errorMessage, bool binary) override;
+    CreateGeometryShader(QDemonConstDataRef<qint8> source, QByteArray &errorMessage, bool binary) override;
     virtual QDemonRenderBackendComputeShaderObject
-    CreateComputeShader(QDemonConstDataRef<qint8> source, QString &errorMessage, bool binary) override;
+    CreateComputeShader(QDemonConstDataRef<qint8> source, QByteArray &errorMessage, bool binary) override;
     void ReleaseVertexShader(QDemonRenderBackendVertexShaderObject vso) override;
     void ReleaseFragmentShader(QDemonRenderBackendFragmentShaderObject fso) override;
     void ReleaseTessControlShader(QDemonRenderBackendTessControlShaderObject tcso) override;
@@ -337,7 +337,7 @@ public:
     QDemonRenderBackendShaderProgramObject CreateShaderProgram(bool isSeparable) override;
     void ReleaseShaderProgram(QDemonRenderBackendShaderProgramObject po) override;
     bool LinkProgram(QDemonRenderBackendShaderProgramObject po,
-                     QString &errorMessage) override;
+                     QByteArray &errorMessage) override;
     void SetActiveProgram(QDemonRenderBackendShaderProgramObject po) override;
     void DispatchCompute(QDemonRenderBackendShaderProgramObject po, quint32 numGroupsX,
                          quint32 numGroupsY, quint32 numGroupsZ) override;
@@ -484,7 +484,7 @@ public:
 
 protected:
     virtual bool compileSource(GLuint shaderID, QDemonConstDataRef<qint8> source,
-                               QString &errorMessage, bool binary);
+                               QByteArray &errorMessage, bool binary);
     virtual const char *getVersionString();
     virtual const char *getVendorString();
     virtual const char *getRendererString();

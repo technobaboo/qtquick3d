@@ -239,7 +239,7 @@ void QDemonRenderBackendGL4Impl::SetMultisampledTextureData2D(
 
 QDemonRenderBackend::QDemonRenderBackendTessControlShaderObject
 QDemonRenderBackendGL4Impl::CreateTessControlShader(QDemonConstDataRef<qint8> source,
-                                                    QString &errorMessage, bool binary)
+                                                    QByteArray &errorMessage, bool binary)
 {
 #if !defined(QT_OPENGL_ES)
     GLuint shaderID = GL_CALL_EXTRA_FUNCTION(glCreateShader(GL_TESS_CONTROL_SHADER));
@@ -256,7 +256,7 @@ QDemonRenderBackendGL4Impl::CreateTessControlShader(QDemonConstDataRef<qint8> so
 
 QDemonRenderBackend::QDemonRenderBackendTessEvaluationShaderObject
 QDemonRenderBackendGL4Impl::CreateTessEvaluationShader(QDemonConstDataRef<qint8> source,
-                                                       QString &errorMessage, bool binary)
+                                                       QByteArray &errorMessage, bool binary)
 {
 #if !defined(QT_OPENGL_ES)
     GLuint shaderID = GL_CALL_EXTRA_FUNCTION(glCreateShader(GL_TESS_EVALUATION_SHADER));
@@ -274,7 +274,7 @@ QDemonRenderBackendGL4Impl::CreateTessEvaluationShader(QDemonConstDataRef<qint8>
 
 QDemonRenderBackend::QDemonRenderBackendGeometryShaderObject
 QDemonRenderBackendGL4Impl::CreateGeometryShader(QDemonConstDataRef<qint8> source,
-                                                 QString &errorMessage, bool binary)
+                                                 QByteArray &errorMessage, bool binary)
 {
 #if defined(QT_OPENGL_ES)
     GLuint shaderID = GL_CALL_EXTRA_FUNCTION(glCreateShader(GL_GEOMETRY_SHADER_EXT));
@@ -528,7 +528,7 @@ void QDemonRenderBackendGL4Impl::SetConstantValue(QDemonRenderBackendShaderProgr
 
 QDemonRenderBackend::QDemonRenderBackendComputeShaderObject
 QDemonRenderBackendGL4Impl::CreateComputeShader(QDemonConstDataRef<qint8> source,
-                                                QString &errorMessage, bool binary)
+                                                QByteArray &errorMessage, bool binary)
 {
     GLuint shaderID = 0;
 #if defined(GL_COMPUTE_SHADER)

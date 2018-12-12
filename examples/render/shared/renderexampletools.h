@@ -37,7 +37,8 @@ class QDemonRenderExampleTools
 public:
     static const char *getSimpleVertShader()
     {
-        return "uniform mat4 mat_mvp;\n"
+        return "#version 120\n"
+               "uniform mat4 mat_mvp;\n"
                "attribute vec3 attr_pos;			// Vertex pos\n"
                "attribute vec3 attr_norm;			// Vertex pos\n"
                "attribute vec2 attr_uv; 			// UV coords\n"
@@ -54,7 +55,8 @@ public:
 
     static const char *getSimpleFragShader()
     {
-        return "precision mediump sampler2D;\n"
+        return "#version 120\n"
+               "precision mediump sampler2D;\n"
                "precision mediump float;\n"
                "varying vec4 color_to_add;\n"
                "void main()\n"
@@ -65,7 +67,8 @@ public:
 
     static const char *getSimpleFragShaderTex()
     {
-        return "precision mediump sampler2D;\n"
+        return "#version 120\n"
+               "precision mediump sampler2D;\n"
                "precision mediump float;\n"
                "uniform sampler2D image0;\n"
                "varying vec2 uv_coords;\n"

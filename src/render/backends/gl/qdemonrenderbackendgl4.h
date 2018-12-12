@@ -69,13 +69,13 @@ public:
 
     void SetPatchVertexCount(QDemonRenderBackendInputAssemblerObject iao, quint32 count) override;
     virtual QDemonRenderBackendTessControlShaderObject
-    CreateTessControlShader(QDemonConstDataRef<qint8> source, QString &errorMessage,
+    CreateTessControlShader(QDemonConstDataRef<qint8> source, QByteArray &errorMessage,
                             bool binary) override;
     virtual QDemonRenderBackendTessEvaluationShaderObject
-    CreateTessEvaluationShader(QDemonConstDataRef<qint8> source, QString &errorMessage,
+    CreateTessEvaluationShader(QDemonConstDataRef<qint8> source, QByteArray &errorMessage,
                                bool binary) override;
     virtual QDemonRenderBackendGeometryShaderObject
-    CreateGeometryShader(QDemonConstDataRef<qint8> source, QString &errorMessage, bool binary) override;
+    CreateGeometryShader(QDemonConstDataRef<qint8> source, QByteArray &errorMessage, bool binary) override;
 
     qint32 GetStorageBufferCount(QDemonRenderBackendShaderProgramObject po) override;
     qint32 GetStorageBufferInfoByID(QDemonRenderBackendShaderProgramObject po, quint32 id,
@@ -97,7 +97,7 @@ public:
                           QDemonRenderTextureFormats::Enum format) override;
 
     virtual QDemonRenderBackendComputeShaderObject
-    CreateComputeShader(QDemonConstDataRef<qint8> source, QString &errorMessage, bool binary) override;
+    CreateComputeShader(QDemonConstDataRef<qint8> source, QByteArray &errorMessage, bool binary) override;
     void DispatchCompute(QDemonRenderBackendShaderProgramObject po, quint32 numGroupsX,
                          quint32 numGroupsY, quint32 numGroupsZ) override;
 

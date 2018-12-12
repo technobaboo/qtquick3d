@@ -1250,7 +1250,7 @@ void QDemonRenderBackendGLBase::ReleaseInputAssembler(QDemonRenderBackendInputAs
 }
 
 bool QDemonRenderBackendGLBase::compileSource(GLuint shaderID, QDemonConstDataRef<qint8> source,
-                                              QString &errorMessage, bool binary)
+                                              QByteArray &errorMessage, bool binary)
 {
     GLint shaderSourceSize = static_cast<GLint>(source.size());
     const char *shaderSourceData = (const char *)source.begin();
@@ -1271,8 +1271,7 @@ bool QDemonRenderBackendGLBase::compileSource(GLuint shaderID, QDemonConstDataRe
             errorMessage.resize(logLen + 1);
 
             GLint lenWithoutNull;
-            GL_CALL_FUNCTION(glGetShaderInfoLog(shaderID, logLen, &lenWithoutNull,
-                                                (char *)qPrintable(errorMessage)));
+            GL_CALL_FUNCTION(glGetShaderInfoLog(shaderID, logLen, &lenWithoutNull, errorMessage.data()));
         }
     } else {
         GL_CALL_FUNCTION(glShaderBinary(1, &shaderID, GL_NVIDIA_PLATFORM_BINARY_NV, shaderSourceData,
@@ -1289,7 +1288,7 @@ bool QDemonRenderBackendGLBase::compileSource(GLuint shaderID, QDemonConstDataRe
 
 QDemonRenderBackend::QDemonRenderBackendVertexShaderObject
 QDemonRenderBackendGLBase::CreateVertexShader(QDemonConstDataRef<qint8> source,
-                                              QString &errorMessage, bool binary)
+                                              QByteArray &errorMessage, bool binary)
 {
     GLuint shaderID = GL_CALL_FUNCTION(glCreateShader(GL_VERTEX_SHADER));
 
@@ -1303,7 +1302,7 @@ QDemonRenderBackendGLBase::CreateVertexShader(QDemonConstDataRef<qint8> source,
 
 QDemonRenderBackend::QDemonRenderBackendFragmentShaderObject
 QDemonRenderBackendGLBase::CreateFragmentShader(QDemonConstDataRef<qint8> source,
-                                                QString &errorMessage, bool binary)
+                                                QByteArray &errorMessage, bool binary)
 {
     GLuint shaderID = GL_CALL_FUNCTION(glCreateShader(GL_FRAGMENT_SHADER));
 
@@ -1317,7 +1316,7 @@ QDemonRenderBackendGLBase::CreateFragmentShader(QDemonConstDataRef<qint8> source
 
 QDemonRenderBackend::QDemonRenderBackendTessControlShaderObject
 QDemonRenderBackendGLBase::CreateTessControlShader(QDemonConstDataRef<qint8> source,
-                                                   QString &errorMessage, bool binary)
+                                                   QByteArray &errorMessage, bool binary)
 {
     // needs GL 4 or GLES EXT_tessellation_shader support
     NVRENDER_BACKEND_UNUSED(source);
@@ -1331,7 +1330,7 @@ QDemonRenderBackendGLBase::CreateTessControlShader(QDemonConstDataRef<qint8> sou
 
 QDemonRenderBackend::QDemonRenderBackendTessEvaluationShaderObject
 QDemonRenderBackendGLBase::CreateTessEvaluationShader(QDemonConstDataRef<qint8> source,
-                                                      QString &errorMessage, bool binary)
+                                                      QByteArray &errorMessage, bool binary)
 {
     // needs GL 4 or GLES EXT_tessellation_shader support
     NVRENDER_BACKEND_UNUSED(source);
@@ -1345,7 +1344,7 @@ QDemonRenderBackendGLBase::CreateTessEvaluationShader(QDemonConstDataRef<qint8> 
 
 QDemonRenderBackend::QDemonRenderBackendGeometryShaderObject
 QDemonRenderBackendGLBase::CreateGeometryShader(QDemonConstDataRef<qint8> source,
-                                                QString &errorMessage, bool binary)
+                                                QByteArray &errorMessage, bool binary)
 {
     // needs GL 4 or GLES EXT_geometry_shader support
     NVRENDER_BACKEND_UNUSED(source);
@@ -1359,7 +1358,7 @@ QDemonRenderBackendGLBase::CreateGeometryShader(QDemonConstDataRef<qint8> source
 
 QDemonRenderBackend::QDemonRenderBackendComputeShaderObject
 QDemonRenderBackendGLBase::CreateComputeShader(QDemonConstDataRef<qint8> source,
-                                               QString &errorMessage, bool binary)
+                                               QByteArray &errorMessage, bool binary)
 {
     // needs GL 4.3 or GLES3.1 support
     NVRENDER_BACKEND_UNUSED(source);
@@ -1558,7 +1557,7 @@ void QDemonRenderBackendGLBase::ReleaseShaderProgram(QDemonRenderBackendShaderPr
 }
 
 bool QDemonRenderBackendGLBase::LinkProgram(QDemonRenderBackendShaderProgramObject po,
-                                            QString &errorMessage)
+                                            QByteArray &errorMessage)
 {
     QDemonRenderBackendShaderProgramGL *pProgram = (QDemonRenderBackendShaderProgramGL *)po;
     GLuint programID = static_cast<GLuint>(pProgram->m_ProgramID);
@@ -1648,8 +1647,7 @@ bool QDemonRenderBackendGLBase::LinkProgram(QDemonRenderBackendShaderProgramObje
         errorMessage.resize(logLen + 1);
 
         GLint lenWithoutNull;
-        GL_CALL_FUNCTION(glGetProgramInfoLog(programID, logLen, &lenWithoutNull,
-                                             (char *)qPrintable(errorMessage)));
+        GL_CALL_FUNCTION(glGetProgramInfoLog(programID, logLen, &lenWithoutNull, errorMessage.data()));
     }
 
     return (linkStatus == GL_TRUE);

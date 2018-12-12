@@ -47,7 +47,7 @@ protected:
     QSharedPointer<QDemonRenderBackend> m_Backend; ///< pointer to backend
     QDemonConstDataRef<qint8> m_Source; ///< shader source code
     bool m_Binary; ///< true for binary programs
-    QString m_ErrorMessage; ///< contains the error message if linking fails
+    QByteArray m_ErrorMessage; ///< contains the error message if linking fails
 
 public:
     /**
@@ -89,10 +89,10 @@ public:
     {
         // Since we do not have any error message just generate a generic one
         if (m_Binary)
-            m_ErrorMessage = QStringLiteral("Binary shader compilation failed");
+            m_ErrorMessage = QByteArrayLiteral("Binary shader compilation failed");
 
         *messageLength = m_ErrorMessage.size();
-        errorMessage = qPrintable(m_ErrorMessage);
+        errorMessage = m_ErrorMessage.constData();
     }
 
     /**
@@ -104,9 +104,9 @@ public:
     virtual const char *GetErrorMessage()
     {
         if (m_Binary)
-            m_ErrorMessage = QStringLiteral("Binary shader compilation failed");
+            m_ErrorMessage = QByteArrayLiteral("Binary shader compilation failed");
 
-        return qPrintable(m_ErrorMessage);
+        return m_ErrorMessage.constData();
     }
 };
 

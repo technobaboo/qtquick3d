@@ -70,7 +70,7 @@ private:
     TShaderConstantMap m_Constants; ///< map of shader constants
     TShaderBufferMap m_ShaderBuffers; ///< map of shader buffers
     ProgramType::Enum m_ProgramType; ///< shader type
-    QString m_ErrorMessage; ///< contains the error message if linking fails
+    QByteArray m_ErrorMessage; ///< contains the error message if linking fails
 
     /**
          * @brief create vertex shader

@@ -309,37 +309,37 @@ struct SNullBackend : public QDemonRenderBackend
     }
     void SetPatchVertexCount(QDemonRenderBackendInputAssemblerObject, quint32) override {}
     QDemonRenderBackendVertexShaderObject CreateVertexShader(QDemonConstDataRef<qint8>,
-                                                                 QString &, bool) override
+                                                                 QByteArray &, bool) override
     {
         return QDemonRenderBackendVertexShaderObject(1);
     }
     void ReleaseVertexShader(QDemonRenderBackendVertexShaderObject) override {}
     QDemonRenderBackendFragmentShaderObject CreateFragmentShader(QDemonConstDataRef<qint8>,
-                                                                     QString &, bool) override
+                                                                     QByteArray &, bool) override
     {
         return QDemonRenderBackendFragmentShaderObject(1);
     }
     void ReleaseFragmentShader(QDemonRenderBackendFragmentShaderObject) override {}
     QDemonRenderBackendTessControlShaderObject CreateTessControlShader(QDemonConstDataRef<qint8>,
-                                                                           QString &, bool) override
+                                                                           QByteArray &, bool) override
     {
         return QDemonRenderBackendTessControlShaderObject(1);
     }
     void ReleaseTessControlShader(QDemonRenderBackendTessControlShaderObject) override {}
     virtual QDemonRenderBackendTessEvaluationShaderObject
-    CreateTessEvaluationShader(QDemonConstDataRef<qint8>, QString &, bool) override
+    CreateTessEvaluationShader(QDemonConstDataRef<qint8>, QByteArray &, bool) override
     {
         return QDemonRenderBackendTessEvaluationShaderObject(1);
     }
     void ReleaseTessEvaluationShader(QDemonRenderBackendTessEvaluationShaderObject) override {}
     QDemonRenderBackendGeometryShaderObject CreateGeometryShader(QDemonConstDataRef<qint8>,
-                                                                     QString &, bool) override
+                                                                     QByteArray &, bool) override
     {
         return QDemonRenderBackendGeometryShaderObject(1);
     }
     void ReleaseGeometryShader(QDemonRenderBackendGeometryShaderObject) override {}
     QDemonRenderBackendComputeShaderObject CreateComputeShader(QDemonConstDataRef<qint8>,
-                                                                   QString &, bool) override
+                                                                   QByteArray &, bool) override
     {
         return QDemonRenderBackendComputeShaderObject(1);
     }
@@ -401,7 +401,7 @@ struct SNullBackend : public QDemonRenderBackend
     }
     void ReleaseProgramPipeline(QDemonRenderBackendProgramPipeline) override {}
 
-    bool LinkProgram(QDemonRenderBackendShaderProgramObject, QString &) override { return false; }
+    bool LinkProgram(QDemonRenderBackendShaderProgramObject, QByteArray &) override { return false; }
     void SetActiveProgram(QDemonRenderBackendShaderProgramObject) override {}
     void SetActiveProgramPipeline(QDemonRenderBackendProgramPipeline) override {}
     void SetProgramStages(QDemonRenderBackendProgramPipeline, QDemonRenderShaderTypeFlags,
