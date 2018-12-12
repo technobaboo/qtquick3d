@@ -260,16 +260,16 @@ public:
 
     virtual QSharedPointer<QDemonRenderProgramPipeline> CreateProgramPipeline() = 0;
 
-    virtual QDemonRenderPathSpecification *CreatePathSpecification() = 0;
-    virtual QDemonRenderPathRender *CreatePathRender(size_t range = 1) = 0;
+    virtual QSharedPointer<QDemonRenderPathSpecification> CreatePathSpecification() = 0;
+    virtual QSharedPointer<QDemonRenderPathRender> CreatePathRender(size_t range = 1) = 0;
     virtual void SetPathProjectionMatrix(const QMatrix4x4 inPathProjection) = 0;
     virtual void SetPathModelViewMatrix(const QMatrix4x4 inPathModelview) = 0;
     virtual void SetPathStencilDepthOffset(float inSlope, float inBias) = 0;
     virtual void SetPathCoverDepthFunc(QDemonRenderBoolOp::Enum inFunc) = 0;
 
-    virtual QDemonRenderPathFontSpecification *
+    virtual QSharedPointer<QDemonRenderPathFontSpecification>
     CreatePathFontSpecification(const QString &fontName) = 0;
-    virtual QDemonRenderPathFontItem *CreatePathFontItem() = 0;
+    virtual QSharedPointer<QDemonRenderPathFontItem> CreatePathFontItem() = 0;
 
     // Specific setters for the guaranteed-to-exist context properties to set them as fast as
     // possible.
@@ -880,17 +880,17 @@ public:
     virtual void ShaderDestroyed(QDemonRenderShaderProgram *shader);
 
     QSharedPointer<QDemonRenderProgramPipeline> CreateProgramPipeline() override;
-    QDemonRenderPathSpecification *CreatePathSpecification() override;
-    QDemonRenderPathRender *CreatePathRender(size_t range = 1) override;
+    QSharedPointer<QDemonRenderPathSpecification> CreatePathSpecification() override;
+    QSharedPointer<QDemonRenderPathRender> CreatePathRender(size_t range = 1) override;
     void SetPathProjectionMatrix(const QMatrix4x4 inPathProjection) override;
     void SetPathModelViewMatrix(const QMatrix4x4 inPathModelview) override;
     void SetPathStencilDepthOffset(float inSlope, float inBias) override;
     void SetPathCoverDepthFunc(QDemonRenderBoolOp::Enum inFunc) override;
 
-    virtual QDemonRenderPathFontSpecification *
+    virtual QSharedPointer<QDemonRenderPathFontSpecification>
     CreatePathFontSpecification(const QString &fontName) override;
-    virtual void ReleasePathFontSpecification(QDemonRenderPathFontSpecification &inPathSpec);
-    QDemonRenderPathFontItem *CreatePathFontItem() override;
+    virtual void ReleasePathFontSpecification(QDemonRenderPathFontSpecification *inPathSpec);
+    QSharedPointer<QDemonRenderPathFontItem> CreatePathFontItem() override;
 
     void SetClearColor(QVector4D inClearColor) override;
     QVector4D GetClearColor() const override { return m_HardwarePropertyContext.m_ClearColor; }

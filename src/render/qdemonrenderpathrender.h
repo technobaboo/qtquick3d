@@ -70,7 +70,7 @@ public:
     QDemonRenderBackend::QDemonRenderBackendPathObject GetPathHandle() { return m_PathRenderHandle; }
 
     // The render context can create a path specification object.
-    void SetPathSpecification(QDemonRenderPathSpecification &inCommandBuffer);
+    void SetPathSpecification(QSharedPointer<QDemonRenderPathSpecification> inCommandBuffer);
 
     QDemonBounds3 GetPathObjectBoundingBox();
     QDemonBounds3 GetPathObjectFillBox();
@@ -90,7 +90,7 @@ public:
          *
          * @return the backend object handle.
          */
-    static QDemonRenderPathRender *Create(QDemonRenderContextImpl &context, size_t range);
+    static QSharedPointer<QDemonRenderPathRender> Create(QDemonRenderContextImpl &context, size_t range);
 
 private:
     QDemonRenderBackend::QDemonRenderBackendPathObject m_PathRenderHandle; ///< opaque backend handle

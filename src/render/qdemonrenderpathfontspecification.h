@@ -40,7 +40,7 @@ class QDemonRenderContextImpl;
 class QDemonRenderPathRender;
 class QDemonRenderPathFontItem;
 
-class QDemonRenderPathFontSpecification
+class QDemonRenderPathFontSpecification : public QEnableSharedFromThis<QDemonRenderPathFontSpecification>
 {
     QDemonRenderContextImpl &m_Context; ///< pointer to context
     QSharedPointer<QDemonRenderBackend> m_Backend; ///< pointer to backend
@@ -82,7 +82,7 @@ public:
              *
              * @return no return
              */
-    void StencilFillPathInstanced(QDemonRenderPathFontItem &inPathFontItem);
+    void StencilFillPathInstanced(QSharedPointer<QDemonRenderPathFontItem> inPathFontItem);
 
     /**
              * @brief Render a cover fill pass for fonts
@@ -91,7 +91,7 @@ public:
              *
              * @return no return
              */
-    void CoverFillPathInstanced(QDemonRenderPathFontItem &inPathFontItem);
+    void CoverFillPathInstanced(QSharedPointer<QDemonRenderPathFontItem> inPathFontItem);
 
     /**
              * @brief get type for font path set
@@ -140,7 +140,7 @@ private:
     quint32 getSizeofType(QDemonRenderPathFormatType::Enum type);
 
 public:
-    static QDemonRenderPathFontSpecification *
+    static QSharedPointer<QDemonRenderPathFontSpecification>
     CreatePathFontSpecification(QDemonRenderContextImpl &context, const QString &fontName);
 };
 

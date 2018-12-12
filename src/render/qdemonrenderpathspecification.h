@@ -123,7 +123,7 @@ private:
     void P(QVector2D inData);
 
 public:
-    static QDemonRenderPathSpecification *CreatePathSpecification(QDemonRenderContextImpl &context);
+    static QSharedPointer<QDemonRenderPathSpecification> CreatePathSpecification(QDemonRenderContextImpl &context);
 };
 
 QT_END_NAMESPACE

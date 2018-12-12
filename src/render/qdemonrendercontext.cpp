@@ -602,12 +602,12 @@ QSharedPointer<QDemonRenderProgramPipeline> QDemonRenderContextImpl::CreateProgr
     return QSharedPointer<QDemonRenderProgramPipeline>(new QDemonRenderProgramPipeline(*this));
 }
 
-QDemonRenderPathSpecification *QDemonRenderContextImpl::CreatePathSpecification()
+QSharedPointer<QDemonRenderPathSpecification> QDemonRenderContextImpl::CreatePathSpecification()
 {
     return QDemonRenderPathSpecification::CreatePathSpecification(*this);
 }
 
-QDemonRenderPathRender *QDemonRenderContextImpl::CreatePathRender(size_t range)
+QSharedPointer<QDemonRenderPathRender> QDemonRenderContextImpl::CreatePathRender(size_t range)
 {
     return QDemonRenderPathRender::Create(*this, range);
 }
@@ -631,31 +631,31 @@ void QDemonRenderContextImpl::SetPathCoverDepthFunc(QDemonRenderBoolOp::Enum inF
     m_backend->SetPathCoverDepthFunc(inFunc);
 }
 
-QDemonRenderPathFontSpecification *
+QSharedPointer<QDemonRenderPathFontSpecification>
 QDemonRenderContextImpl::CreatePathFontSpecification(const QString &fontName)
 {
     // first check if it already exists
     QHash<QString, QDemonRenderPathFontSpecification *>::const_iterator entry = m_PathFontSpecToImpMap.find(fontName);
     if (entry != m_PathFontSpecToImpMap.end())
-        return entry.value();
+        return entry.value()->sharedFromThis();
 
     // if not create new one
-    QDemonRenderPathFontSpecification *pPathFontSpec =
+    QSharedPointer<QDemonRenderPathFontSpecification> pPathFontSpec =
             QDemonRenderPathFontSpecification::CreatePathFontSpecification(*this, fontName);
 
     if (pPathFontSpec)
-        m_PathFontSpecToImpMap.insert(fontName, pPathFontSpec);
+        m_PathFontSpecToImpMap.insert(fontName, pPathFontSpec.data());
 
     return pPathFontSpec;
 }
 
 void
-QDemonRenderContextImpl::ReleasePathFontSpecification(QDemonRenderPathFontSpecification &inPathSpec)
+QDemonRenderContextImpl::ReleasePathFontSpecification(QDemonRenderPathFontSpecification *inPathSpec)
 {
-    m_PathFontSpecToImpMap.remove(inPathSpec.GetFontName());
+    m_PathFontSpecToImpMap.remove(inPathSpec->GetFontName());
 }
 
-QDemonRenderPathFontItem *QDemonRenderContextImpl::CreatePathFontItem()
+QSharedPointer<QDemonRenderPathFontItem> QDemonRenderContextImpl::CreatePathFontItem()
 {
     // if not create new one
     return QDemonRenderPathFontItem::CreatePathFontItem(*this);

@@ -48,7 +48,7 @@ QDemonRenderPathFontSpecification::QDemonRenderPathFontSpecification(QDemonRende
 
 QDemonRenderPathFontSpecification::~QDemonRenderPathFontSpecification()
 {
-    m_Context.ReleasePathFontSpecification(*this);
+    m_Context.ReleasePathFontSpecification(this);
 }
 
 void QDemonRenderPathFontSpecification::LoadPathGlyphs(const char *fontName,
@@ -79,31 +79,31 @@ void QDemonRenderPathFontSpecification::LoadPathGlyphs(const char *fontName,
 }
 
 void
-QDemonRenderPathFontSpecification::StencilFillPathInstanced(QDemonRenderPathFontItem &inPathFontItem)
+QDemonRenderPathFontSpecification::StencilFillPathInstanced(QSharedPointer<QDemonRenderPathFontItem> inPathFontItem)
 {
-    const void *glyphIDs = inPathFontItem.GetGlyphIDs();
-    const float *spacing = inPathFontItem.GetSpacing();
-    if (!glyphIDs || !spacing || !inPathFontItem.GetGlyphsCount()) {
-        Q_ASSERT(false || !inPathFontItem.GetGlyphsCount());
+    const void *glyphIDs = inPathFontItem->GetGlyphIDs();
+    const float *spacing = inPathFontItem->GetSpacing();
+    if (!glyphIDs || !spacing || !inPathFontItem->GetGlyphsCount()) {
+        Q_ASSERT(false || !inPathFontItem->GetGlyphsCount());
         return;
     }
 
-    m_Backend->StencilFillPathInstanced(m_PathRenderHandle, inPathFontItem.GetGlyphsCount(),
+    m_Backend->StencilFillPathInstanced(m_PathRenderHandle, inPathFontItem->GetGlyphsCount(),
                                         m_Type, glyphIDs, QDemonRenderPathFillMode::Fill, 0xFF,
                                         m_TransformType, spacing);
 }
 
-void QDemonRenderPathFontSpecification::CoverFillPathInstanced(QDemonRenderPathFontItem &inPathFontItem)
+void QDemonRenderPathFontSpecification::CoverFillPathInstanced(QSharedPointer<QDemonRenderPathFontItem> inPathFontItem)
 {
-    const void *glyphIDs = inPathFontItem.GetGlyphIDs();
-    const float *spacing = inPathFontItem.GetSpacing();
-    if (!glyphIDs || !spacing || !inPathFontItem.GetGlyphsCount()) {
-        Q_ASSERT(false || !inPathFontItem.GetGlyphsCount());
+    const void *glyphIDs = inPathFontItem->GetGlyphIDs();
+    const float *spacing = inPathFontItem->GetSpacing();
+    if (!glyphIDs || !spacing || !inPathFontItem->GetGlyphsCount()) {
+        Q_ASSERT(false || !inPathFontItem->GetGlyphsCount());
         return;
     }
 
     m_Backend->CoverFillPathInstanced(
-                m_PathRenderHandle, inPathFontItem.GetGlyphsCount(), m_Type, glyphIDs,
+                m_PathRenderHandle, inPathFontItem->GetGlyphsCount(), m_Type, glyphIDs,
                 QDemonRenderPathCoverMode::BoundingBoxOfBoundingBox, m_TransformType, spacing);
 }
 
@@ -127,12 +127,12 @@ QDemonRenderPathFontSpecification::getSizeofType(QDemonRenderPathFormatType::Enu
     }
 }
 
-QDemonRenderPathFontSpecification *
+QSharedPointer<QDemonRenderPathFontSpecification>
 QDemonRenderPathFontSpecification::CreatePathFontSpecification(QDemonRenderContextImpl &context,
                                                                const QString &fontName)
 {
     Q_ASSERT(context.IsPathRenderingSupported());
 
-    return new QDemonRenderPathFontSpecification(context, fontName);
+    return QSharedPointer<QDemonRenderPathFontSpecification>(new QDemonRenderPathFontSpecification(context, fontName));
 }
 QT_END_NAMESPACE

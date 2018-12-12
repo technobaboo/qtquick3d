@@ -73,11 +73,10 @@ void QDemonRenderPathSpecification::ClosePath()
     m_PathCommands.push_back(QDemonRenderPathCommands::Close);
 }
 
-QDemonRenderPathSpecification *
-QDemonRenderPathSpecification::CreatePathSpecification(QDemonRenderContextImpl &context)
+QSharedPointer<QDemonRenderPathSpecification> QDemonRenderPathSpecification::CreatePathSpecification(QDemonRenderContextImpl &context)
 {
     Q_ASSERT(context.IsPathRenderingSupported());
 
-    return new QDemonRenderPathSpecification(context);
+    return QSharedPointer<QDemonRenderPathSpecification>(new QDemonRenderPathSpecification(context));
 }
 QT_END_NAMESPACE

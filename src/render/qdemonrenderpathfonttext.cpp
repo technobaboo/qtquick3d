@@ -177,10 +177,10 @@ QDemonRenderPathFontItem::getSizeofType(QDemonRenderPathFormatType::Enum type)
     }
 }
 
-QDemonRenderPathFontItem *QDemonRenderPathFontItem::CreatePathFontItem(QDemonRenderContextImpl &context)
+QSharedPointer<QDemonRenderPathFontItem> QDemonRenderPathFontItem::CreatePathFontItem(QDemonRenderContextImpl &context)
 {
     Q_ASSERT(context.IsPathRenderingSupported());
 
-    return new QDemonRenderPathFontItem();
+    return QSharedPointer<QDemonRenderPathFontItem>(new QDemonRenderPathFontItem());
 }
 QT_END_NAMESPACE

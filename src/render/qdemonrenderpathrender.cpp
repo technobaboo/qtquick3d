@@ -52,11 +52,11 @@ QDemonRenderPathRender::~QDemonRenderPathRender()
     }
 }
 
-void QDemonRenderPathRender::SetPathSpecification(QDemonRenderPathSpecification &inCommandBuffer)
+void QDemonRenderPathRender::SetPathSpecification(QSharedPointer<QDemonRenderPathSpecification> inCommandBuffer)
 {
     m_Backend->SetPathSpecification(m_PathRenderHandle,
-                                    toConstDataRef(inCommandBuffer.GetPathCommands().constData(), inCommandBuffer.GetPathCommands().size()),
-                                    toConstDataRef(inCommandBuffer.GetPathCoords().constData(), inCommandBuffer.GetPathCoords().size()));
+                                    toConstDataRef(inCommandBuffer->GetPathCommands().constData(), inCommandBuffer->GetPathCommands().size()),
+                                    toConstDataRef(inCommandBuffer->GetPathCoords().constData(), inCommandBuffer->GetPathCoords().size()));
 }
 
 QDemonBounds3 QDemonRenderPathRender::GetPathObjectBoundingBox()
@@ -88,14 +88,12 @@ void QDemonRenderPathRender::StencilStroke() { m_Backend->StencilStrokePath(m_Pa
 
 void QDemonRenderPathRender::StencilFill() { m_Backend->StencilFillPath(m_PathRenderHandle); }
 
-QDemonRenderPathRender *QDemonRenderPathRender::Create(QDemonRenderContextImpl &context, size_t range)
+QSharedPointer<QDemonRenderPathRender> QDemonRenderPathRender::Create(QDemonRenderContextImpl &context, size_t range)
 {
     if (!context.IsPathRenderingSupported())
         return nullptr;
 
-    QDemonRenderPathRender *retval = new QDemonRenderPathRender(context, range);
-
-    return retval;
+    return QSharedPointer<QDemonRenderPathRender>(new QDemonRenderPathRender(context, range));
 }
 
 QT_END_NAMESPACE
