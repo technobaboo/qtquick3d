@@ -100,7 +100,7 @@ public:
          *
          * * @return a occlusion query object on success
          */
-    static QDemonRenderOcclusionQuery *Create(QDemonRenderContextImpl &context);
+    static QSharedPointer<QDemonRenderOcclusionQuery> Create(QDemonRenderContextImpl &context);
 };
 
 QT_END_NAMESPACE

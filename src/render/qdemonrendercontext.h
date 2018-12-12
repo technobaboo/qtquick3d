@@ -194,8 +194,8 @@ public:
 
     virtual void SetMemoryBarrier(QDemonRenderBufferBarrierFlags barriers) = 0;
 
-    virtual QDemonRenderOcclusionQuery *CreateOcclusionQuery() = 0;
-    virtual QDemonRenderTimerQuery *CreateTimerQuery() = 0;
+    virtual QSharedPointer<QDemonRenderOcclusionQuery> CreateOcclusionQuery() = 0;
+    virtual QSharedPointer<QDemonRenderTimerQuery> CreateTimerQuery() = 0;
     virtual QSharedPointer<QDemonRenderSync> CreateSync() = 0;
 
     virtual QSharedPointer<QDemonRenderTexture2D> CreateTexture2D() = 0;
@@ -819,8 +819,8 @@ public:
 
     void SetMemoryBarrier(QDemonRenderBufferBarrierFlags barriers) override;
 
-    QDemonRenderOcclusionQuery *CreateOcclusionQuery() override;
-    QDemonRenderTimerQuery *CreateTimerQuery() override;
+    QSharedPointer<QDemonRenderOcclusionQuery> CreateOcclusionQuery() override;
+    QSharedPointer<QDemonRenderTimerQuery> CreateTimerQuery() override;
     QSharedPointer<QDemonRenderSync> CreateSync() override;
 
     QSharedPointer<QDemonRenderTexture2D> CreateTexture2D() override;

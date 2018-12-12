@@ -109,7 +109,7 @@ public:
          *
          * * @return a timer query object on success
          */
-    static QDemonRenderTimerQuery *Create(QDemonRenderContextImpl &context);
+    static QSharedPointer<QDemonRenderTimerQuery> Create(QDemonRenderContextImpl &context);
 };
 
 QT_END_NAMESPACE

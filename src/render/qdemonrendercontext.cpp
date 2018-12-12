@@ -365,18 +365,14 @@ void QDemonRenderContextImpl::SetMemoryBarrier(QDemonRenderBufferBarrierFlags ba
     m_backend->SetMemoryBarrier(barriers);
 }
 
-QDemonRenderOcclusionQuery *QDemonRenderContextImpl::CreateOcclusionQuery()
+QSharedPointer<QDemonRenderOcclusionQuery> QDemonRenderContextImpl::CreateOcclusionQuery()
 {
-    QDemonRenderOcclusionQuery *theQuery = QDemonRenderOcclusionQuery::Create(*this);
-
-    return theQuery;
+    return QDemonRenderOcclusionQuery::Create(*this);
 }
 
-QDemonRenderTimerQuery *QDemonRenderContextImpl::CreateTimerQuery()
+QSharedPointer<QDemonRenderTimerQuery> QDemonRenderContextImpl::CreateTimerQuery()
 {
-    QDemonRenderTimerQuery *theQuery = QDemonRenderTimerQuery::Create(*this);
-
-    return theQuery;
+    return QDemonRenderTimerQuery::Create(*this);
 }
 
 QSharedPointer<QDemonRenderSync> QDemonRenderContextImpl::CreateSync()

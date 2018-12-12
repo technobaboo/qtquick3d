@@ -59,13 +59,11 @@ void QDemonRenderTimerQuery::GetResult(quint64 *params)
 
 void QDemonRenderTimerQuery::SetTimerQuery() { m_Backend->SetQueryTimer(m_QueryHandle); }
 
-QDemonRenderTimerQuery *QDemonRenderTimerQuery::Create(QDemonRenderContextImpl &context)
+QSharedPointer<QDemonRenderTimerQuery> QDemonRenderTimerQuery::Create(QDemonRenderContextImpl &context)
 {
     if (!context.IsTimerQuerySupported())
         return nullptr;
 
-    QDemonRenderTimerQuery *retval = new QDemonRenderTimerQuery(context);
-
-    return retval;
+    return QSharedPointer<QDemonRenderTimerQuery>(new QDemonRenderTimerQuery(context));
 }
 QT_END_NAMESPACE

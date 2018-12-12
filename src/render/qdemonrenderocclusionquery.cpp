@@ -63,13 +63,11 @@ bool QDemonRenderOcclusionQuery::GetResultAvailable()
     return (param == 1);
 }
 
-QDemonRenderOcclusionQuery *QDemonRenderOcclusionQuery::Create(QDemonRenderContextImpl &context)
+QSharedPointer<QDemonRenderOcclusionQuery> QDemonRenderOcclusionQuery::Create(QDemonRenderContextImpl &context)
 {
     if (!context.IsSampleQuerySupported())
         return nullptr;
 
-    QDemonRenderOcclusionQuery *retval = new QDemonRenderOcclusionQuery(context);
-
-    return retval;
+    return QSharedPointer<QDemonRenderOcclusionQuery>(new QDemonRenderOcclusionQuery(context));
 }
 QT_END_NAMESPACE
