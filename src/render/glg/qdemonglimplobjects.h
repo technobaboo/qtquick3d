@@ -41,7 +41,7 @@ struct QDemonGLHardPropertyContext
 {
     QSharedPointer<QDemonRenderFrameBuffer> m_FrameBuffer;
     QSharedPointer<QDemonRenderShaderProgram> m_ActiveShader;
-    QDemonRenderProgramPipeline *m_ActiveProgramPipeline;
+    QSharedPointer<QDemonRenderProgramPipeline> m_ActiveProgramPipeline;
     QSharedPointer<QDemonRenderInputAssembler> m_InputAssembler;
     QDemonRenderBlendFunctionArgument m_BlendFunction;
     QDemonRenderBlendEquationArgument m_BlendEquation;

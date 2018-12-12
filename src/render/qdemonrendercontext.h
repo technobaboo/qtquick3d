@@ -258,7 +258,7 @@ public:
 
     virtual QSharedPointer<QDemonRenderShaderProgram> GetShaderProgram(const void *implementationHandle) = 0;
 
-    virtual QDemonRenderProgramPipeline *CreateProgramPipeline() = 0;
+    virtual QSharedPointer<QDemonRenderProgramPipeline> CreateProgramPipeline() = 0;
 
     virtual QDemonRenderPathSpecification *CreatePathSpecification() = 0;
     virtual QDemonRenderPathRender *CreatePathRender(size_t range = 1) = 0;
@@ -336,8 +336,8 @@ public:
     virtual void SetActiveShader(QSharedPointer<QDemonRenderShaderProgram> inShader) = 0;
     virtual QSharedPointer<QDemonRenderShaderProgram> GetActiveShader() const = 0;
 
-    virtual void SetActiveProgramPipeline(QDemonRenderProgramPipeline *inProgramPipeline) = 0;
-    virtual QDemonRenderProgramPipeline *GetActiveProgramPipeline() const = 0;
+    virtual void SetActiveProgramPipeline(QSharedPointer<QDemonRenderProgramPipeline> inProgramPipeline) = 0;
+    virtual QSharedPointer<QDemonRenderProgramPipeline> GetActiveProgramPipeline() const = 0;
 
     virtual void DispatchCompute(QSharedPointer<QDemonRenderShaderProgram> inShader, quint32 numGroupsX,
                                  quint32 numGroupsY, quint32 numGroupsZ) = 0;
@@ -578,7 +578,7 @@ protected:
     // Circular dependencies between shader constants and shader programs preclude
     // implementation in header
     void DoSetActiveShader(QSharedPointer<QDemonRenderShaderProgram> inShader);
-    void DoSetActiveProgramPipeline(QDemonRenderProgramPipeline *inProgramPipeline);
+    void DoSetActiveProgramPipeline(QSharedPointer<QDemonRenderProgramPipeline> inProgramPipeline);
 
     void DoSetInputAssembler(QSharedPointer<QDemonRenderInputAssembler> inAssembler)
     {
@@ -879,7 +879,7 @@ public:
     QSharedPointer<QDemonRenderShaderProgram> GetShaderProgram(const void *implementationHandle) override;
     virtual void ShaderDestroyed(QDemonRenderShaderProgram *shader);
 
-    QDemonRenderProgramPipeline *CreateProgramPipeline() override;
+    QSharedPointer<QDemonRenderProgramPipeline> CreateProgramPipeline() override;
     QDemonRenderPathSpecification *CreatePathSpecification() override;
     QDemonRenderPathRender *CreatePathRender(size_t range = 1) override;
     void SetPathProjectionMatrix(const QMatrix4x4 inPathProjection) override;
@@ -971,8 +971,8 @@ public:
         return m_HardwarePropertyContext.m_ActiveShader;
     }
 
-    void SetActiveProgramPipeline(QDemonRenderProgramPipeline *inProgramPipeline) override;
-    QDemonRenderProgramPipeline *GetActiveProgramPipeline() const override
+    void SetActiveProgramPipeline(QSharedPointer<QDemonRenderProgramPipeline> inProgramPipeline) override;
+    QSharedPointer<QDemonRenderProgramPipeline> GetActiveProgramPipeline() const override
     {
         return m_HardwarePropertyContext.m_ActiveProgramPipeline;
     }

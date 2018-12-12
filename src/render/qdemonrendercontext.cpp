@@ -598,9 +598,9 @@ void QDemonRenderContextImpl::ShaderDestroyed(QDemonRenderShaderProgram *shader)
         SetActiveShader(nullptr);
 }
 
-QDemonRenderProgramPipeline *QDemonRenderContextImpl::CreateProgramPipeline()
+QSharedPointer<QDemonRenderProgramPipeline> QDemonRenderContextImpl::CreateProgramPipeline()
 {
-    return new QDemonRenderProgramPipeline(*this);
+    return QSharedPointer<QDemonRenderProgramPipeline>(new QDemonRenderProgramPipeline(*this));
 }
 
 QDemonRenderPathSpecification *QDemonRenderContextImpl::CreatePathSpecification()
@@ -768,7 +768,7 @@ void QDemonRenderContextImpl::SetActiveShader(QSharedPointer<QDemonRenderShaderP
         DoSetActiveShader(inShader);
 }
 
-void QDemonRenderContextImpl::SetActiveProgramPipeline(QDemonRenderProgramPipeline *inProgramPipeline)
+void QDemonRenderContextImpl::SetActiveProgramPipeline(QSharedPointer<QDemonRenderProgramPipeline> inProgramPipeline)
 {
     if (inProgramPipeline != m_HardwarePropertyContext.m_ActiveProgramPipeline)
         DoSetActiveProgramPipeline(inProgramPipeline);
@@ -1032,7 +1032,7 @@ void QDemonRenderContextImpl::DoSetActiveShader(QSharedPointer<QDemonRenderShade
     m_HardwarePropertyContext.m_ActiveShader = inShader;
 }
 
-void QDemonRenderContextImpl::DoSetActiveProgramPipeline(QDemonRenderProgramPipeline *inProgramPipeline)
+void QDemonRenderContextImpl::DoSetActiveProgramPipeline(QSharedPointer<QDemonRenderProgramPipeline> inProgramPipeline)
 {
     if (inProgramPipeline) {
         // invalid any bound shader
