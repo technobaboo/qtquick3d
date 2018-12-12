@@ -42,7 +42,10 @@ QDemonRenderTexture2D::QDemonRenderTexture2D(QDemonRenderContextImpl &context,
 {
 }
 
-QDemonRenderTexture2D::~QDemonRenderTexture2D() { m_Context.TextureDestroyed(*this); }
+QDemonRenderTexture2D::~QDemonRenderTexture2D()
+{
+    m_Context.TextureDestroyed(this);
+}
 
 STextureDetails QDemonRenderTexture2D::GetTextureDetails() const
 {
@@ -248,9 +251,9 @@ void QDemonRenderTexture2D::Bind()
     applyTexSwizzle();
 }
 
-QDemonRenderTexture2D *QDemonRenderTexture2D::Create(QDemonRenderContextImpl &context)
+QSharedPointer<QDemonRenderTexture2D> QDemonRenderTexture2D::Create(QDemonRenderContextImpl &context)
 {
-    return new QDemonRenderTexture2D(context);
+    return QSharedPointer<QDemonRenderTexture2D>(new QDemonRenderTexture2D(context));
 }
 
 QT_END_NAMESPACE

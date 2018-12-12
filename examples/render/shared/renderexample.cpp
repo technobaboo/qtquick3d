@@ -38,8 +38,6 @@
 
 #include <QtGui/QSurfaceFormat>
 
-//QDemonRenderContext::CreateGL(format());
-
 QDemonRenderExample::QDemonRenderExample(QWindow *parent)
     : QWindow(parent)
 {

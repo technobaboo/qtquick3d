@@ -387,11 +387,11 @@ QDemonRenderSync *QDemonRenderContextImpl::CreateSync()
     return theSync;
 }
 
-QDemonRenderTexture2D *QDemonRenderContextImpl::CreateTexture2D()
+QSharedPointer<QDemonRenderTexture2D> QDemonRenderContextImpl::CreateTexture2D()
 {
-    QDemonRenderTexture2D *retval = QDemonRenderTexture2D::Create(*this);
+    QSharedPointer<QDemonRenderTexture2D> retval(QDemonRenderTexture2D::Create(*this));
     if (retval)
-        m_Tex2DToImpMap.insert(retval->GetImplementationHandle(), retval);
+        m_Tex2DToImpMap.insert(retval->GetImplementationHandle(), retval.data());
     return retval;
 }
 
@@ -413,17 +413,17 @@ QDemonRenderTextureCube *QDemonRenderContextImpl::CreateTextureCube()
     return retval;
 }
 
-QDemonRenderTexture2D *QDemonRenderContextImpl::GetTexture2D(const void *implementationHandle)
+QSharedPointer<QDemonRenderTexture2D> QDemonRenderContextImpl::GetTexture2D(const void *implementationHandle)
 {
     const QHash<const void *, QDemonRenderTexture2D *>::iterator entry = m_Tex2DToImpMap.find(implementationHandle);
     if (entry != m_Tex2DToImpMap.end())
-        return entry.value();
+        return entry.value()->sharedFromThis();
     return nullptr;
 }
 
-void QDemonRenderContextImpl::TextureDestroyed(QDemonRenderTexture2D &buffer)
+void QDemonRenderContextImpl::TextureDestroyed(QDemonRenderTexture2D *buffer)
 {
-    m_Tex2DToImpMap.remove(buffer.GetImplementationHandle());
+    m_Tex2DToImpMap.remove(buffer->GetImplementationHandle());
     // We would like to find and catch any situations where this texture is being used
     // but that would require some real work that we don't want to do right now.
 }
@@ -438,7 +438,7 @@ void QDemonRenderContextImpl::TextureDestroyed(QDemonRenderTextureCube &buffer)
     m_TexCubeToImpMap.remove(buffer.GetTextureObjectHandle());
 }
 
-QDemonRenderImage2D *QDemonRenderContextImpl::CreateImage2D(QDemonRenderTexture2D *inTexture,
+QDemonRenderImage2D *QDemonRenderContextImpl::CreateImage2D(QSharedPointer<QDemonRenderTexture2D> inTexture,
                                                             QDemonRenderImageAccessType::Enum inAccess)
 {
     QDemonRenderImage2D *retval = QDemonRenderImage2D::Create(*this, inTexture, inAccess);

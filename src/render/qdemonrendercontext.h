@@ -198,15 +198,15 @@ public:
     virtual QDemonRenderTimerQuery *CreateTimerQuery() = 0;
     virtual QDemonRenderSync *CreateSync() = 0;
 
-    virtual QDemonRenderTexture2D *CreateTexture2D() = 0;
-    virtual QDemonRenderTexture2D *GetTexture2D(const void *implementationHandle) = 0;
+    virtual QSharedPointer<QDemonRenderTexture2D> CreateTexture2D() = 0;
+    virtual QSharedPointer<QDemonRenderTexture2D> GetTexture2D(const void *implementationHandle) = 0;
     virtual QSharedPointer<QDemonRenderBackend> GetBackend() = 0;
 
     virtual QDemonRenderTexture2DArray *CreateTexture2DArray() = 0;
 
     virtual QDemonRenderTextureCube *CreateTextureCube() = 0;
 
-    virtual QDemonRenderImage2D *CreateImage2D(QDemonRenderTexture2D *inTexture,
+    virtual QDemonRenderImage2D *CreateImage2D(QSharedPointer<QDemonRenderTexture2D> inTexture,
                                                QDemonRenderImageAccessType::Enum inAccess) = 0;
 
     virtual QSharedPointer<QDemonRenderRenderBuffer>
@@ -823,9 +823,9 @@ public:
     QDemonRenderTimerQuery *CreateTimerQuery() override;
     QDemonRenderSync *CreateSync() override;
 
-    QDemonRenderTexture2D *CreateTexture2D() override;
-    QDemonRenderTexture2D *GetTexture2D(const void *implementationHandle) override;
-    virtual void TextureDestroyed(QDemonRenderTexture2D &buffer);
+    QSharedPointer<QDemonRenderTexture2D> CreateTexture2D() override;
+    QSharedPointer<QDemonRenderTexture2D> GetTexture2D(const void *implementationHandle) override;
+    virtual void TextureDestroyed(QDemonRenderTexture2D *buffer);
 
     QDemonRenderTexture2DArray *CreateTexture2DArray() override;
     virtual void TextureDestroyed(QDemonRenderTexture2DArray &buffer);
@@ -835,7 +835,7 @@ public:
 
     virtual quint32 GetNextTextureUnit();
 
-    QDemonRenderImage2D *CreateImage2D(QDemonRenderTexture2D *inTexture,
+    QDemonRenderImage2D *CreateImage2D(QSharedPointer<QDemonRenderTexture2D> inTexture,
                                        QDemonRenderImageAccessType::Enum inAccess) override;
     virtual void ImageDestroyed(QDemonRenderImage2D &buffer);
 

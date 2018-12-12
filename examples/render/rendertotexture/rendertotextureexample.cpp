@@ -111,10 +111,10 @@ public:
 
         m_Context->SetInputAssembler(mInputAssembler);
 
-        mDepthBuffer.reset(m_Context->CreateTexture2D());
+        mDepthBuffer = m_Context->CreateTexture2D();
         mDepthBuffer->SetTextureData(QDemonDataRef<quint8>(), 0, mFBWidth, mFBHeight,
                                      QDemonRenderTextureFormats::Depth16);
-        mColorBuffer.reset(m_Context->CreateTexture2D());
+        mColorBuffer = m_Context->CreateTexture2D();
         mColorBuffer->SetTextureData(QDemonDataRef<quint8>(), 0, mFBWidth, mFBHeight,
                                      QDemonRenderTextureFormats::RGBA8);
         if (mDepthBuffer && mColorBuffer) {
@@ -124,8 +124,8 @@ public:
             // to push the current state
             // Auto-binds the framebuffer.
             mFrameBuffer = m_Context->CreateFrameBuffer();
-            mFrameBuffer->Attach(QDemonRenderFrameBufferAttachments::Color0, *mColorBuffer);
-            mFrameBuffer->Attach(QDemonRenderFrameBufferAttachments::Depth, *mDepthBuffer);
+            mFrameBuffer->Attach(QDemonRenderFrameBufferAttachments::Color0, mColorBuffer);
+            mFrameBuffer->Attach(QDemonRenderFrameBufferAttachments::Depth, mDepthBuffer);
             Q_ASSERT(mFrameBuffer->IsComplete());
 
             m_Context->SetRenderTarget(nullptr);

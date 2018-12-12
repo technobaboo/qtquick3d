@@ -41,7 +41,7 @@ QT_BEGIN_NAMESPACE
 class QDemonRenderContextImpl;
 class QDemonRenderTextureSampler;
 
-class QDemonRenderTexture2D : public QDemonRenderTextureBase, public QDemonRenderImplemented
+class QDemonRenderTexture2D : public QDemonRenderTextureBase, public QDemonRenderImplemented, public QEnableSharedFromThis<QDemonRenderTexture2D>
 {
 
 private:
@@ -155,7 +155,7 @@ public:
         return reinterpret_cast<void *>(m_TextureHandle);
     }
 
-    static QDemonRenderTexture2D *Create(QDemonRenderContextImpl &context);
+    static QSharedPointer<QDemonRenderTexture2D> Create(QDemonRenderContextImpl &context);
 };
 
 QT_END_NAMESPACE

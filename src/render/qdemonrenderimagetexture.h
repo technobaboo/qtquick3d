@@ -48,7 +48,7 @@ class QDemonRenderImage2D
 private:
     QDemonRenderContextImpl &m_Context; ///< pointer to context
     QSharedPointer<QDemonRenderBackend> m_Backend; ///< pointer to backend
-    QDemonRenderTexture2D *m_Texture2D; ///< pointer to texture
+    QSharedPointer<QDemonRenderTexture2D> m_Texture2D; ///< pointer to texture
     qint32 m_TextureUnit; ///< texture unit this texture should use
     QDemonRenderImageAccessType::Enum m_AccessType; ///< texture / image access type ( read, write, read_write )
     quint32 m_TextureLevel; ///< texture level we use for this image
@@ -65,7 +65,7 @@ public:
          * @return No return.
          */
     QDemonRenderImage2D(QDemonRenderContextImpl &context,
-                        QDemonRenderTexture2D *inTexture, QDemonRenderImageAccessType::Enum inAccess);
+                        QSharedPointer<QDemonRenderTexture2D> inTexture, QDemonRenderImageAccessType::Enum inAccess);
 
     virtual ~QDemonRenderImage2D();
 
@@ -125,7 +125,7 @@ public:
          *
          * @return No return.
          */
-    static QDemonRenderImage2D *Create(QDemonRenderContextImpl &context, QDemonRenderTexture2D *inTexture,
+    static QDemonRenderImage2D *Create(QDemonRenderContextImpl &context, QSharedPointer<QDemonRenderTexture2D> inTexture,
                                        QDemonRenderImageAccessType::Enum inAccess);
 };
 

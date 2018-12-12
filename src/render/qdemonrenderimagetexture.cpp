@@ -37,7 +37,7 @@
 QT_BEGIN_NAMESPACE
 
 QDemonRenderImage2D::QDemonRenderImage2D(QDemonRenderContextImpl &context,
-                                         QDemonRenderTexture2D *inTexture,
+                                         QSharedPointer<QDemonRenderTexture2D> inTexture,
                                          QDemonRenderImageAccessType::Enum inAccess)
     : m_Context(context)
     , m_Backend(context.GetBackend())
@@ -83,7 +83,7 @@ QDemonRenderBackend::QDemonRenderBackendTextureObject QDemonRenderImage2D::GetTe
 }
 
 QDemonRenderImage2D *QDemonRenderImage2D::Create(QDemonRenderContextImpl &context,
-                                                 QDemonRenderTexture2D *inTexture,
+                                                 QSharedPointer<QDemonRenderTexture2D> inTexture,
                                                  QDemonRenderImageAccessType::Enum inAccess)
 {
     if (inTexture)
