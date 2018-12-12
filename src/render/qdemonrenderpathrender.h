@@ -44,7 +44,7 @@ class QDemonRenderPathFontSpecification;
 class QDemonRenderPathRender
 {
 protected:
-    QDemonRenderContextImpl &m_Context; ///< pointer to context
+    QSharedPointer<QDemonRenderContextImpl> m_Context; ///< pointer to context
     QSharedPointer<QDemonRenderBackend> m_Backend; ///< pointer to backend
 
 public:
@@ -57,7 +57,7 @@ public:
          *
          * @return No return.
          */
-    QDemonRenderPathRender(QDemonRenderContextImpl &context, size_t range);
+    QDemonRenderPathRender(QSharedPointer<QDemonRenderContextImpl> context, size_t range);
 
     /// @brief destructor
     ~QDemonRenderPathRender();
@@ -90,7 +90,7 @@ public:
          *
          * @return the backend object handle.
          */
-    static QSharedPointer<QDemonRenderPathRender> Create(QDemonRenderContextImpl &context, size_t range);
+    static QSharedPointer<QDemonRenderPathRender> Create(QSharedPointer<QDemonRenderContextImpl> context, size_t range);
 
 private:
     QDemonRenderBackend::QDemonRenderBackendPathObject m_PathRenderHandle; ///< opaque backend handle

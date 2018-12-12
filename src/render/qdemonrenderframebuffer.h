@@ -133,7 +133,7 @@ public:
 class QDemonRenderFrameBuffer : public QDemonRenderImplemented, public QEnableSharedFromThis<QDemonRenderFrameBuffer>
 {
 private:
-    QDemonRenderContextImpl &m_Context; ///< pointer to context
+    QSharedPointer<QDemonRenderContextImpl> m_Context; ///< pointer to context
     QSharedPointer<QDemonRenderBackend> m_Backend; ///< pointer to backend
 
     QDemonRenderTextureOrRenderBuffer m_Attachments[QDemonRenderFrameBufferAttachments::LastAttachment]; ///< attachments array
@@ -148,7 +148,7 @@ public:
          *
          * @return No return.
          */
-    QDemonRenderFrameBuffer(QDemonRenderContextImpl &context);
+    QDemonRenderFrameBuffer(QSharedPointer<QDemonRenderContextImpl> context);
 
     /// destructor
     virtual ~QDemonRenderFrameBuffer();
@@ -249,7 +249,7 @@ public:
          *
          * @return a pointer to framebuffer object.
          */
-    static QSharedPointer<QDemonRenderFrameBuffer> Create(QDemonRenderContextImpl &context);
+    static QSharedPointer<QDemonRenderFrameBuffer> Create(QSharedPointer<QDemonRenderContextImpl> context);
 
 private:
     /**

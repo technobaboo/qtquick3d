@@ -42,7 +42,7 @@ class QDemonRenderPathFontItem;
 
 class QDemonRenderPathFontSpecification : public QEnableSharedFromThis<QDemonRenderPathFontSpecification>
 {
-    QDemonRenderContextImpl &m_Context; ///< pointer to context
+    QSharedPointer<QDemonRenderContextImpl> m_Context; ///< pointer to context
     QSharedPointer<QDemonRenderBackend> m_Backend; ///< pointer to backend
 
 public:
@@ -56,7 +56,7 @@ public:
              *
              * @return No return.
              */
-    QDemonRenderPathFontSpecification(QDemonRenderContextImpl &context, const QString &fontName);
+    QDemonRenderPathFontSpecification(QSharedPointer<QDemonRenderContextImpl> context, const QString &fontName);
 
     /// @QDemonRenderPathSpecification destructor
     ~QDemonRenderPathFontSpecification();
@@ -141,7 +141,7 @@ private:
 
 public:
     static QSharedPointer<QDemonRenderPathFontSpecification>
-    CreatePathFontSpecification(QDemonRenderContextImpl &context, const QString &fontName);
+    CreatePathFontSpecification(QSharedPointer<QDemonRenderContextImpl> context, const QString &fontName);
 };
 
 QT_END_NAMESPACE

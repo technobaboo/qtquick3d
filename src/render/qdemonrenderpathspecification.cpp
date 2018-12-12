@@ -34,9 +34,9 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonRenderPathSpecification::QDemonRenderPathSpecification(QDemonRenderContextImpl &context)
+QDemonRenderPathSpecification::QDemonRenderPathSpecification(QSharedPointer<QDemonRenderContextImpl> context)
     : m_Context(context)
-    , m_Backend(context.GetBackend())
+    , m_Backend(context->GetBackend())
 {
 }
 
@@ -73,9 +73,9 @@ void QDemonRenderPathSpecification::ClosePath()
     m_PathCommands.push_back(QDemonRenderPathCommands::Close);
 }
 
-QSharedPointer<QDemonRenderPathSpecification> QDemonRenderPathSpecification::CreatePathSpecification(QDemonRenderContextImpl &context)
+QSharedPointer<QDemonRenderPathSpecification> QDemonRenderPathSpecification::CreatePathSpecification(QSharedPointer<QDemonRenderContextImpl> context)
 {
-    Q_ASSERT(context.IsPathRenderingSupported());
+    Q_ASSERT(context->IsPathRenderingSupported());
 
     return QSharedPointer<QDemonRenderPathSpecification>(new QDemonRenderPathSpecification(context));
 }

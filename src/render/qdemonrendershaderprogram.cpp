@@ -469,11 +469,11 @@ struct ShaderConstantApplier<QDemonRenderImage2DPtr>
     }
 };
 
-QDemonRenderShaderProgram::QDemonRenderShaderProgram(QDemonRenderContextImpl &context,
+QDemonRenderShaderProgram::QDemonRenderShaderProgram(QSharedPointer<QDemonRenderContextImpl> context,
                                                      const char *programName,
                                                      bool separableProgram)
     : m_Context(context)
-    , m_Backend(context.GetBackend())
+    , m_Backend(context->GetBackend())
     , m_ProgramName(programName)
     , m_ProgramHandle(nullptr)
     , m_ProgramType(ProgramType::Graphics)
@@ -485,7 +485,7 @@ QDemonRenderShaderProgram::QDemonRenderShaderProgram(QDemonRenderContextImpl &co
 
 QDemonRenderShaderProgram::~QDemonRenderShaderProgram()
 {
-    m_Context.ShaderDestroyed(this);
+    m_Context->ShaderDestroyed(this);
 
     if (m_ProgramHandle)
         m_Backend->ReleaseShaderProgram(m_ProgramHandle);
@@ -573,7 +573,7 @@ ShaderConstantFactory(QSharedPointer<QDemonRenderBackend> backend, const QString
 
 template <typename TShaderBufferType, typename TBufferDataType>
 static QSharedPointer<QDemonRenderShaderBufferBase>
-ShaderBufferFactory(QDemonRenderContextImpl &context, const QString &inName,
+ShaderBufferFactory(QSharedPointer<QDemonRenderContextImpl> context, const QString &inName,
                     qint32 cbLoc, qint32 cbBinding, qint32 cbSize,
                     qint32 cbCount, QSharedPointer<TBufferDataType> pBuffer)
 {
@@ -621,7 +621,7 @@ bool QDemonRenderShaderProgram::Link()
                 const QString theName = QString::fromLocal8Bit(nameBuf);
 
                 // find constant buffer in our DB
-                QSharedPointer<QDemonRenderConstantBuffer> cb = m_Context.GetConstantBuffer(theName);
+                QSharedPointer<QDemonRenderConstantBuffer> cb = m_Context->GetConstantBuffer(theName);
                 if (cb) {
                     cb->SetupBuffer(this, location, bufferSize, paramCount);
                 }
@@ -643,7 +643,7 @@ bool QDemonRenderShaderProgram::Link()
                 const QString theName = QString::fromLocal8Bit(nameBuf);
 
                 // find constant buffer in our DB
-                QSharedPointer<QDemonRenderStorageBuffer> sb = m_Context.GetStorageBuffer(theName);
+                QSharedPointer<QDemonRenderStorageBuffer> sb = m_Context->GetStorageBuffer(theName);
                 m_ShaderBuffers.insert(theName, ShaderBufferFactory<QDemonRenderShaderStorageBuffer, QDemonRenderStorageBuffer>(
                                            m_Context, theName, location, -1, bufferSize,
                                            paramCount, sb));
@@ -670,7 +670,7 @@ bool QDemonRenderShaderProgram::Link()
                 // We get the actual buffer name by searching for this uniform name
                 // See NVRenderTestAtomicCounterBuffer.cpp how the setup works
                 QSharedPointer<QDemonRenderAtomicCounterBuffer> acb =
-                        m_Context.GetAtomicCounterBufferByParam(theName);
+                        m_Context->GetAtomicCounterBufferByParam(theName);
                 if (acb) {
                     m_ShaderBuffers.insert(acb->GetBufferName(), ShaderBufferFactory<QDemonRenderShaderAtomicCounterBuffer,
                                            QDemonRenderAtomicCounterBuffer>(m_Context, acb->GetBufferName(),
@@ -716,7 +716,7 @@ QSharedPointer<QDemonRenderShaderBufferBase> QDemonRenderShaderProgram::GetShade
     return nullptr;
 }
 
-QDemonRenderContextImpl &QDemonRenderShaderProgram::GetRenderContext() { return m_Context; }
+QSharedPointer<QDemonRenderContextImpl> QDemonRenderShaderProgram::GetRenderContext() { return m_Context; }
 
 template <typename TDataType>
 void SetConstantValueOfType(const QDemonRenderShaderProgram *program,
@@ -974,7 +974,7 @@ void WriteErrorMessage(const char *tag, const char *message)
 }
 
 QDemonOption<QDemonRenderVertexShader *> QDemonRenderShaderProgram::createVertexShader(
-        QDemonRenderContextImpl &context, QDemonConstDataRef<qint8> vertexShaderSource, bool binaryProgram)
+        QSharedPointer<QDemonRenderContextImpl> context, QDemonConstDataRef<qint8> vertexShaderSource, bool binaryProgram)
 {
     if (vertexShaderSource.size() == 0)
         return QDemonEmpty();
@@ -983,7 +983,7 @@ QDemonOption<QDemonRenderVertexShader *> QDemonRenderShaderProgram::createVertex
 }
 
 QDemonOption<QDemonRenderFragmentShader *> QDemonRenderShaderProgram::createFragmentShader(
-        QDemonRenderContextImpl &context, QDemonConstDataRef<qint8> fragmentShaderSource, bool binaryProgram)
+        QSharedPointer<QDemonRenderContextImpl> context, QDemonConstDataRef<qint8> fragmentShaderSource, bool binaryProgram)
 {
     if (fragmentShaderSource.size() == 0)
         return QDemonEmpty();
@@ -992,7 +992,7 @@ QDemonOption<QDemonRenderFragmentShader *> QDemonRenderShaderProgram::createFrag
 }
 
 QDemonOption<QDemonRenderTessControlShader *>
-QDemonRenderShaderProgram::createTessControlShader(QDemonRenderContextImpl &context,
+QDemonRenderShaderProgram::createTessControlShader(QSharedPointer<QDemonRenderContextImpl> context,
                                                    QDemonConstDataRef<qint8> tessControlShaderSource,
                                                    bool binaryProgram)
 {
@@ -1003,7 +1003,7 @@ QDemonRenderShaderProgram::createTessControlShader(QDemonRenderContextImpl &cont
 }
 
 QDemonOption<QDemonRenderTessEvaluationShader *>
-QDemonRenderShaderProgram::createTessEvaluationShader(QDemonRenderContextImpl &context,
+QDemonRenderShaderProgram::createTessEvaluationShader(QSharedPointer<QDemonRenderContextImpl> context,
                                                       QDemonConstDataRef<qint8> tessControlShaderSource,
                                                       bool binaryProgram)
 {
@@ -1014,7 +1014,7 @@ QDemonRenderShaderProgram::createTessEvaluationShader(QDemonRenderContextImpl &c
 }
 
 QDemonOption<QDemonRenderGeometryShader *> QDemonRenderShaderProgram::createGeometryShader(
-        QDemonRenderContextImpl &context, QDemonConstDataRef<qint8> geometryShaderSource, bool binaryProgram)
+        QSharedPointer<QDemonRenderContextImpl> context, QDemonConstDataRef<qint8> geometryShaderSource, bool binaryProgram)
 {
     if (geometryShaderSource.size() == 0)
         return QDemonEmpty();
@@ -1023,7 +1023,7 @@ QDemonOption<QDemonRenderGeometryShader *> QDemonRenderShaderProgram::createGeom
 }
 
 QDemonRenderVertFragCompilationResult QDemonRenderShaderProgram::Create(
-        QDemonRenderContextImpl &context, const char *programName,
+        QSharedPointer<QDemonRenderContextImpl> context, const char *programName,
         QDemonConstDataRef<qint8> vertShaderSource, QDemonConstDataRef<qint8> fragShaderSource,
         QDemonConstDataRef<qint8> tessControlShaderSource,
         QDemonConstDataRef<qint8> tessEvaluationShaderSource, QDemonConstDataRef<qint8> geometryShaderSource,
@@ -1180,7 +1180,7 @@ QDemonRenderVertFragCompilationResult QDemonRenderShaderProgram::Create(
 }
 
 QDemonRenderVertFragCompilationResult
-QDemonRenderShaderProgram::CreateCompute(QDemonRenderContextImpl &context, const char *programName,
+QDemonRenderShaderProgram::CreateCompute(QSharedPointer<QDemonRenderContextImpl> context, const char *programName,
                                          QDemonConstDataRef<qint8> computeShaderSource)
 {
     QDemonRenderVertFragCompilationResult result;

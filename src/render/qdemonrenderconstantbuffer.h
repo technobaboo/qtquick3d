@@ -63,7 +63,7 @@ public:
          *
          * @return No return.
          */
-    QDemonRenderConstantBuffer(QDemonRenderContextImpl &context, const QString &bufferName,
+    QDemonRenderConstantBuffer(QSharedPointer<QDemonRenderContextImpl> context, const QString &bufferName,
                                size_t size, QDemonRenderBufferUsageType::Enum usageType,
                                QDemonDataRef<quint8> data);
 
@@ -176,7 +176,7 @@ public:
          *
          * @return the backend object handle.
          */
-    static QSharedPointer<QDemonRenderConstantBuffer> Create(QDemonRenderContextImpl &context, const char *bufferName,
+    static QSharedPointer<QDemonRenderConstantBuffer> Create(QSharedPointer<QDemonRenderContextImpl> context, const char *bufferName,
                                               QDemonRenderBufferUsageType::Enum usageType, size_t size,
                                               QDemonConstDataRef<quint8> bufferData);
 

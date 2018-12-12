@@ -35,12 +35,12 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonRenderDataBuffer::QDemonRenderDataBuffer(QDemonRenderContextImpl &context,
+QDemonRenderDataBuffer::QDemonRenderDataBuffer(QSharedPointer<QDemonRenderContextImpl> context,
                                                size_t size, QDemonRenderBufferBindFlags bindFlags,
                                                QDemonRenderBufferUsageType::Enum usageType,
                                                QDemonDataRef<quint8> data)
     : m_Context(context)
-    , m_Backend(context.GetBackend())
+    , m_Backend(context->GetBackend())
     , m_UsageType(usageType)
     , m_BindFlags(bindFlags)
     , m_BufferData(data)

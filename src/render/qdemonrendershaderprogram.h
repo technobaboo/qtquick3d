@@ -63,7 +63,7 @@ public:
     };
 
 private:
-    QDemonRenderContextImpl &m_Context; ///< pointer to context
+    QSharedPointer<QDemonRenderContextImpl> m_Context; ///< pointer to context
     QSharedPointer<QDemonRenderBackend> m_Backend; ///< pointer to backend
     const char *m_ProgramName; /// Name of the program
     QDemonRenderBackend::QDemonRenderBackendShaderProgramObject m_ProgramHandle; ///< opaque backend handle
@@ -82,7 +82,7 @@ private:
          * @return pointer to vertex shader object
          */
     static QDemonOption<QDemonRenderVertexShader *>
-    createVertexShader(QDemonRenderContextImpl &context, QDemonConstDataRef<qint8> vertexShaderSource,
+    createVertexShader(QSharedPointer<QDemonRenderContextImpl> context, QDemonConstDataRef<qint8> vertexShaderSource,
                        bool binaryProgram = false);
 
     /**
@@ -95,7 +95,7 @@ private:
          * @return pointer to fragment shader object
          */
     static QDemonOption<QDemonRenderFragmentShader *>
-    createFragmentShader(QDemonRenderContextImpl &context,
+    createFragmentShader(QSharedPointer<QDemonRenderContextImpl> context,
                          QDemonConstDataRef<qint8> fragmentShaderSource, bool binaryProgram = false);
 
     /**
@@ -108,7 +108,7 @@ private:
          * @return pointer to tessellation control shader
          */
     static QDemonOption<QDemonRenderTessControlShader *>
-    createTessControlShader(QDemonRenderContextImpl &context,
+    createTessControlShader(QSharedPointer<QDemonRenderContextImpl> context,
                             QDemonConstDataRef<qint8> tessControlShaderSource,
                             bool binaryProgram = false);
 
@@ -122,7 +122,7 @@ private:
          * @return pointer to tessellation evaluation shader
          */
     static QDemonOption<QDemonRenderTessEvaluationShader *>
-    createTessEvaluationShader(QDemonRenderContextImpl &context,
+    createTessEvaluationShader(QSharedPointer<QDemonRenderContextImpl> context,
                                QDemonConstDataRef<qint8> tessEvaluationShaderSource,
                                bool binaryProgram = false);
 
@@ -136,7 +136,7 @@ private:
          * @return pointer to geometry shader
          */
     static QDemonOption<QDemonRenderGeometryShader *>
-    createGeometryShader(QDemonRenderContextImpl &context,
+    createGeometryShader(QSharedPointer<QDemonRenderContextImpl> context,
                          QDemonConstDataRef<qint8> geometryShaderSource, bool binaryProgram = false);
 
 public:
@@ -150,7 +150,7 @@ public:
          *
          * @return No return.
          */
-    QDemonRenderShaderProgram(QDemonRenderContextImpl &context,
+    QDemonRenderShaderProgram(QSharedPointer<QDemonRenderContextImpl> context,
                               const char *programName, bool separableProgram);
 
     /// destructor
@@ -325,7 +325,7 @@ public:
          *
          * @return context which this shader belongs to.
          */
-    QDemonRenderContextImpl &GetRenderContext();
+    QSharedPointer<QDemonRenderContextImpl> GetRenderContext();
 
     /**
          * @brief Create a shader program
@@ -344,7 +344,7 @@ public:
          * @return a render result
          */
     static QDemonRenderVertFragCompilationResult Create(
-            QDemonRenderContextImpl &context, const char *programName,
+            QSharedPointer<QDemonRenderContextImpl> context, const char *programName,
             QDemonConstDataRef<qint8> vertShaderSource, QDemonConstDataRef<qint8> fragShaderSource,
             QDemonConstDataRef<qint8> tessControlShaderSource = QDemonConstDataRef<qint8>(),
             QDemonConstDataRef<qint8> tessEvaluationShaderSource = QDemonConstDataRef<qint8>(),
@@ -363,7 +363,7 @@ public:
          * @return a render result
          */
     static QDemonRenderVertFragCompilationResult
-    CreateCompute(QDemonRenderContextImpl &context, const char *programName,
+    CreateCompute(QSharedPointer<QDemonRenderContextImpl> context, const char *programName,
                   QDemonConstDataRef<qint8> computeShaderSource);
 };
 

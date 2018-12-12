@@ -69,7 +69,7 @@ class QDemonRenderTextureBase
 {
 
 protected:
-    QDemonRenderContextImpl &m_Context; ///< pointer to context
+    QSharedPointer<QDemonRenderContextImpl> m_Context; ///< pointer to context
     QSharedPointer<QDemonRenderBackend> m_Backend; ///< pointer to backend
     QDemonRenderBackend::QDemonRenderBackendTextureObject m_TextureHandle; ///< opaque backend handle
     quint32 m_TextureUnit; ///< texture unit this texture should use
@@ -94,7 +94,7 @@ public:
          *
          * @return No return.
          */
-    QDemonRenderTextureBase(QDemonRenderContextImpl &context,
+    QDemonRenderTextureBase(QSharedPointer<QDemonRenderContextImpl> context,
                             QDemonRenderTextureTargetType::Enum texTarget);
 
     virtual ~QDemonRenderTextureBase();

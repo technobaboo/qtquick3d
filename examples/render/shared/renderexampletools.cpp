@@ -63,7 +63,7 @@ static const QVector3D g_BoxUVs[] = {
     QVector3D(0, 1, 0), QVector3D(0, 0, 0), QVector3D(1, 0, 0), QVector3D(1, 1, 0),
 };
 
-QSharedPointer<QDemonRenderInputAssembler> QDemonRenderExampleTools::createBox(QDemonRenderContext *context,
+QSharedPointer<QDemonRenderInputAssembler> QDemonRenderExampleTools::createBox(QSharedPointer<QDemonRenderContext> context,
                                                                                QSharedPointer<QDemonRenderVertexBuffer> &outVertexBuffer,
                                                                                QSharedPointer<QDemonRenderIndexBuffer> &outIndexBuffer)
 {
@@ -155,7 +155,7 @@ inline QDemonConstDataRef<qint8> toRef(const char *data)
     return QDemonConstDataRef<qint8>((const qint8 *)data, len);
 }
 
-static void dumpShaderOutput(QDemonRenderContext *ctx, const QDemonRenderVertFragCompilationResult &compResult)
+static void dumpShaderOutput(QSharedPointer<QDemonRenderContext> ctx, const QDemonRenderVertFragCompilationResult &compResult)
 {
     //    if (!isTrivial(compResult.mFragCompilationOutput)) {
     //        qWarning("Frag output:\n%s", compResult.mFragCompilationOutput);
@@ -168,7 +168,7 @@ static void dumpShaderOutput(QDemonRenderContext *ctx, const QDemonRenderVertFra
     //    }
 }
 
-QSharedPointer<QDemonRenderShaderProgram> compileAndDump(QDemonRenderContext *ctx, const char *name, const char *vertShader, const char *fragShader)
+QSharedPointer<QDemonRenderShaderProgram> compileAndDump(QSharedPointer<QDemonRenderContext> ctx, const char *name, const char *vertShader, const char *fragShader)
 {
     QDemonRenderVertFragCompilationResult compResult =
             ctx->CompileSource(name, toRef(vertShader), toRef(fragShader));
@@ -177,12 +177,12 @@ QSharedPointer<QDemonRenderShaderProgram> compileAndDump(QDemonRenderContext *ct
 }
 }
 
-QSharedPointer<QDemonRenderShaderProgram> QDemonRenderExampleTools::createSimpleShader(QDemonRenderContext *ctx)
+QSharedPointer<QDemonRenderShaderProgram> QDemonRenderExampleTools::createSimpleShader(QSharedPointer<QDemonRenderContext> ctx)
 {
     return compileAndDump(ctx, "SimpleShader", getSimpleVertShader(), getSimpleFragShader());
 }
 
-QSharedPointer<QDemonRenderShaderProgram> QDemonRenderExampleTools::createSimpleShaderTex(QDemonRenderContext *ctx)
+QSharedPointer<QDemonRenderShaderProgram> QDemonRenderExampleTools::createSimpleShaderTex(QSharedPointer<QDemonRenderContext> ctx)
 {
     return compileAndDump(ctx, "SimpleShader", getSimpleVertShader(), getSimpleFragShaderTex());
 }

@@ -52,7 +52,7 @@ public:
          *
          * @return No return.
          */
-    QDemonRenderVertexShader(QDemonRenderContextImpl &context,
+    QDemonRenderVertexShader(QSharedPointer<QDemonRenderContextImpl> context,
                          QDemonConstDataRef<qint8> source, bool binaryProgram);
 
     /// @brief destructor

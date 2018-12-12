@@ -58,7 +58,7 @@ public:
          * @return No return.
          */
     QDemonRenderTexture2DArray(
-            QDemonRenderContextImpl &context,
+            QSharedPointer<QDemonRenderContextImpl> context,
             QDemonRenderTextureTargetType::Enum texTarget = QDemonRenderTextureTargetType::Texture2D_Array);
 
     virtual ~QDemonRenderTexture2DArray();
@@ -95,7 +95,7 @@ public:
          *
          * @ return a texture array object
          */
-    static QSharedPointer<QDemonRenderTexture2DArray> Create(QDemonRenderContextImpl &context);
+    static QSharedPointer<QDemonRenderTexture2DArray> Create(QSharedPointer<QDemonRenderContextImpl> context);
 };
 
 QT_END_NAMESPACE

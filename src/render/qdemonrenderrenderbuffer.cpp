@@ -35,11 +35,11 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonRenderRenderBuffer::QDemonRenderRenderBuffer(QDemonRenderContextImpl &context,
+QDemonRenderRenderBuffer::QDemonRenderRenderBuffer(QSharedPointer<QDemonRenderContextImpl> context,
                                                    QDemonRenderRenderBufferFormats::Enum format,
                                                    quint32 width, quint32 height)
     : m_Context(context)
-    , m_Backend(context.GetBackend())
+    , m_Backend(context->GetBackend())
     , m_Width(width)
     , m_Height(height)
     , m_StorageFormat(format)
@@ -50,7 +50,7 @@ QDemonRenderRenderBuffer::QDemonRenderRenderBuffer(QDemonRenderContextImpl &cont
 
 QDemonRenderRenderBuffer::~QDemonRenderRenderBuffer()
 {
-    m_Context.RenderBufferDestroyed(this);
+    m_Context->RenderBufferDestroyed(this);
     m_Backend->ReleaseRenderbuffer(m_BufferHandle);
     m_BufferHandle = nullptr;
 }
@@ -62,7 +62,7 @@ void QDemonRenderRenderBuffer::SetDimensions(const QDemonRenderRenderBufferDimen
     m_Height = inDimensions.m_Height;
 
     // get max size and clamp to max value
-    m_Context.getMaxTextureSize(maxWidth, maxHeight);
+    m_Context->getMaxTextureSize(maxWidth, maxHeight);
     if (m_Width > maxWidth || m_Height > maxHeight) {
         qCCritical(INVALID_OPERATION, "Width or height is greater than max texture size (%d, %d)",
                    maxWidth, maxHeight);
@@ -90,7 +90,7 @@ void QDemonRenderRenderBuffer::SetDimensions(const QDemonRenderRenderBufferDimen
 
 
 QSharedPointer<QDemonRenderRenderBuffer>
-QDemonRenderRenderBuffer::Create(QDemonRenderContextImpl &context,
+QDemonRenderRenderBuffer::Create(QSharedPointer<QDemonRenderContextImpl> context,
                                  QDemonRenderRenderBufferFormats::Enum format, quint32 width,
                                  quint32 height)
 {

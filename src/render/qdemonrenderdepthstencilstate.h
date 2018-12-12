@@ -43,7 +43,7 @@ class QDemonRenderDepthStencilState
 {
 
 private:
-    QDemonRenderContextImpl &m_Context; ///< pointer to context
+    QSharedPointer<QDemonRenderContextImpl> m_Context; ///< pointer to context
     QSharedPointer<QDemonRenderBackend> m_Backend; ///< pointer to backend
     QDemonRenderBackend::QDemonRenderBackendDepthStencilStateObject m_StateHandle; ///< opaque backend handle
 
@@ -64,7 +64,7 @@ public:
          *
          * @return No return.
          */
-    QDemonRenderDepthStencilState(QDemonRenderContextImpl &context,
+    QDemonRenderDepthStencilState(QSharedPointer<QDemonRenderContextImpl> context,
                                   bool enableDepth, bool depthMask, QDemonRenderBoolOp::Enum depthFunc,
                                   bool enableStencil,
                                   QDemonRenderStencilFunctionArgument &stencilFuncFront,
@@ -100,7 +100,7 @@ public:
     }
 
     static QSharedPointer<QDemonRenderDepthStencilState>
-    Create(QDemonRenderContextImpl &context, bool enableDepth, bool depthMask,
+    Create(QSharedPointer<QDemonRenderContextImpl> context, bool enableDepth, bool depthMask,
            QDemonRenderBoolOp::Enum depthFunc, bool enableStencil,
            QDemonRenderStencilFunctionArgument &stencilFuncFront,
            QDemonRenderStencilFunctionArgument &stencilFuncBack,

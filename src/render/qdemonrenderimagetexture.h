@@ -46,7 +46,7 @@ class QDemonRenderImage2D
 {
 
 private:
-    QDemonRenderContextImpl &m_Context; ///< pointer to context
+    QSharedPointer<QDemonRenderContextImpl> m_Context; ///< pointer to context
     QSharedPointer<QDemonRenderBackend> m_Backend; ///< pointer to backend
     QSharedPointer<QDemonRenderTexture2D> m_Texture2D; ///< pointer to texture
     qint32 m_TextureUnit; ///< texture unit this texture should use
@@ -64,7 +64,7 @@ public:
          *
          * @return No return.
          */
-    QDemonRenderImage2D(QDemonRenderContextImpl &context,
+    QDemonRenderImage2D(QSharedPointer<QDemonRenderContextImpl> context,
                         QSharedPointer<QDemonRenderTexture2D> inTexture, QDemonRenderImageAccessType::Enum inAccess);
 
     virtual ~QDemonRenderImage2D();
@@ -125,7 +125,7 @@ public:
          *
          * @return No return.
          */
-    static QSharedPointer<QDemonRenderImage2D> Create(QDemonRenderContextImpl &context, QSharedPointer<QDemonRenderTexture2D> inTexture,
+    static QSharedPointer<QDemonRenderImage2D> Create(QSharedPointer<QDemonRenderContextImpl> context, QSharedPointer<QDemonRenderTexture2D> inTexture,
                                        QDemonRenderImageAccessType::Enum inAccess);
 };
 

@@ -55,7 +55,7 @@ public:
     }
 };
 
-QDemonRenderConstantBuffer::QDemonRenderConstantBuffer(QDemonRenderContextImpl &context,
+QDemonRenderConstantBuffer::QDemonRenderConstantBuffer(QSharedPointer<QDemonRenderContextImpl> context,
                                                        const QString &bufferName, size_t size,
                                                        QDemonRenderBufferUsageType::Enum usageType,
                                                        QDemonDataRef<quint8> data)
@@ -70,7 +70,7 @@ QDemonRenderConstantBuffer::QDemonRenderConstantBuffer(QDemonRenderContextImpl &
     , m_RangeEnd(0)
     , m_MaxBlockSize(0)
 {
-    Q_ASSERT(context.GetConstantBufferSupport());
+    Q_ASSERT(context->GetConstantBufferSupport());
 
     m_Backend->GetRenderBackendValue(
                 QDemonRenderBackend::QDemonRenderBackendQuery::MaxConstantBufferBlockSize, &m_MaxBlockSize);
@@ -100,7 +100,7 @@ QDemonRenderConstantBuffer::~QDemonRenderConstantBuffer()
 
     m_ConstantBufferEntryMap.clear();
 
-    m_Context.BufferDestroyed(this);
+    m_Context->BufferDestroyed(this);
 }
 
 void QDemonRenderConstantBuffer::Bind()
@@ -117,7 +117,7 @@ void QDemonRenderConstantBuffer::BindToShaderProgram(QSharedPointer<QDemonRender
                                                      quint32 blockIndex, quint32 binding)
 {
     if ((qint32)binding == -1) {
-        binding = m_Context.GetNextConstantBufferUnit();
+        binding = m_Context->GetNextConstantBufferUnit();
         m_Backend->ProgramSetConstantBlock(inShader->GetShaderProgramHandle(), blockIndex,
                                            binding);
     }
@@ -387,7 +387,7 @@ bool QDemonRenderConstantBuffer::allocateShadowBuffer(quint32 size)
     return true;
 }
 
-QSharedPointer<QDemonRenderConstantBuffer> QDemonRenderConstantBuffer::Create(QDemonRenderContextImpl &context,
+QSharedPointer<QDemonRenderConstantBuffer> QDemonRenderConstantBuffer::Create(QSharedPointer<QDemonRenderContextImpl> context,
                                                                               const char *bufferName,
                                                                               QDemonRenderBufferUsageType::Enum usageType,
                                                                               size_t size,
@@ -395,7 +395,7 @@ QSharedPointer<QDemonRenderConstantBuffer> QDemonRenderConstantBuffer::Create(QD
 {
     QSharedPointer<QDemonRenderConstantBuffer> retval = nullptr;
 
-    if (context.GetConstantBufferSupport()) {
+    if (context->GetConstantBufferSupport()) {
         const QString theBufferName = QString::fromLocal8Bit(bufferName);
         quint32 cbufSize = sizeof(QDemonRenderConstantBuffer);
         quint8 *newMem = static_cast<quint8 *>(::malloc(cbufSize));

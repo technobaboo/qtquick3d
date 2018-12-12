@@ -101,9 +101,9 @@ public:
     void initialize() override
     {
         m_Context = QDemonRenderContext::CreateGL(format());
-        mInputAssembler = QDemonRenderExampleTools::createBox(m_Context.data(), mVertexBuffer, mIndexBuffer);
-        mSimpleShader = QDemonRenderExampleTools::createSimpleShader(m_Context.data());
-        mSimpleShaderTex = QDemonRenderExampleTools::createSimpleShaderTex(m_Context.data());
+        mInputAssembler = QDemonRenderExampleTools::createBox(m_Context, mVertexBuffer, mIndexBuffer);
+        mSimpleShader = QDemonRenderExampleTools::createSimpleShader(m_Context);
+        mSimpleShaderTex = QDemonRenderExampleTools::createSimpleShaderTex(m_Context);
         // If you don't want the depth buffer information back out of the system, then you can
         // do this.
         // mDepthBuffer = m_Context.CreateRenderBuffer( QDemonRenderRenderBufferFormats::Depth16,

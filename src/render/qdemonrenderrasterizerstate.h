@@ -43,7 +43,7 @@ class QDemonRenderRasterizerState
 {
 
 private:
-    QDemonRenderContextImpl &m_Context; ///< pointer to context
+    QSharedPointer<QDemonRenderContextImpl> m_Context; ///< pointer to context
     QSharedPointer<QDemonRenderBackend> m_Backend; ///< pointer to backend
     QDemonRenderBackend::QDemonRenderBackendRasterizerStateObject m_StateHandle; ///< opaque backend handle
 
@@ -59,7 +59,7 @@ public:
          *
          * @return No return.
          */
-    QDemonRenderRasterizerState(QDemonRenderContextImpl &context, float depthBias, float depthScale, QDemonRenderFaces::Enum cullFace);
+    QDemonRenderRasterizerState(QSharedPointer<QDemonRenderContextImpl> context, float depthBias, float depthScale, QDemonRenderFaces::Enum cullFace);
 
     virtual ~QDemonRenderRasterizerState();
 
@@ -73,7 +73,7 @@ public:
         return m_StateHandle;
     }
 
-    static QSharedPointer<QDemonRenderRasterizerState> Create(QDemonRenderContextImpl &context, float depthBias,
+    static QSharedPointer<QDemonRenderRasterizerState> Create(QSharedPointer<QDemonRenderContextImpl> context, float depthBias,
                                                float depthScale, QDemonRenderFaces::Enum cullFace);
 
 };

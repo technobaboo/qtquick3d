@@ -35,7 +35,7 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonRenderTexture2DArray::QDemonRenderTexture2DArray(QDemonRenderContextImpl &context,
+QDemonRenderTexture2DArray::QDemonRenderTexture2DArray(QSharedPointer<QDemonRenderContextImpl> context,
                                                        QDemonRenderTextureTargetType::Enum texTarget)
     : QDemonRenderTextureBase(context, texTarget)
     , m_Width(0)
@@ -46,7 +46,7 @@ QDemonRenderTexture2DArray::QDemonRenderTexture2DArray(QDemonRenderContextImpl &
 
 QDemonRenderTexture2DArray::~QDemonRenderTexture2DArray()
 {
-    m_Context.TextureDestroyed(this);
+    m_Context->TextureDestroyed(this);
 }
 
 void QDemonRenderTexture2DArray::SetTextureData(QDemonDataRef<quint8> newBuffer, quint8 inMipLevel,
@@ -102,7 +102,7 @@ STextureDetails QDemonRenderTexture2DArray::GetTextureDetails() const
 
 void QDemonRenderTexture2DArray::Bind()
 {
-    m_TextureUnit = m_Context.GetNextTextureUnit();
+    m_TextureUnit = m_Context->GetNextTextureUnit();
 
     m_Backend->BindTexture(m_TextureHandle, m_TexTarget, m_TextureUnit);
 
@@ -110,7 +110,7 @@ void QDemonRenderTexture2DArray::Bind()
     applyTexSwizzle();
 }
 
-QSharedPointer<QDemonRenderTexture2DArray> QDemonRenderTexture2DArray::Create(QDemonRenderContextImpl &context)
+QSharedPointer<QDemonRenderTexture2DArray> QDemonRenderTexture2DArray::Create(QSharedPointer<QDemonRenderContextImpl> context)
 {
     return QSharedPointer<QDemonRenderTexture2DArray>(new QDemonRenderTexture2DArray(context));
 }

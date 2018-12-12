@@ -34,9 +34,9 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonRenderProgramPipeline::QDemonRenderProgramPipeline(QDemonRenderContextImpl &context)
+QDemonRenderProgramPipeline::QDemonRenderProgramPipeline(QSharedPointer<QDemonRenderContextImpl> context)
     : m_Context(context)
-    , m_Backend(context.GetBackend())
+    , m_Backend(context->GetBackend())
     , m_Program(nullptr)
     , m_VertexProgram(nullptr)
     , m_FragmentProgram(nullptr)

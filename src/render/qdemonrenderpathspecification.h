@@ -40,7 +40,7 @@ class QDemonRenderContextImpl;
 
 class QDemonRenderPathSpecification
 {
-    QDemonRenderContextImpl &m_Context; ///< pointer to context
+    QSharedPointer<QDemonRenderContextImpl> m_Context; ///< pointer to context
     QSharedPointer<QDemonRenderBackend> m_Backend; ///< pointer to backend
 
 public:
@@ -52,7 +52,7 @@ public:
          *
          * @return No return.
          */
-    QDemonRenderPathSpecification(QDemonRenderContextImpl &context);
+    QDemonRenderPathSpecification(QSharedPointer<QDemonRenderContextImpl> context);
 
     /// @QDemonRenderPathSpecification destructor
     ~QDemonRenderPathSpecification();
@@ -123,7 +123,7 @@ private:
     void P(QVector2D inData);
 
 public:
-    static QSharedPointer<QDemonRenderPathSpecification> CreatePathSpecification(QDemonRenderContextImpl &context);
+    static QSharedPointer<QDemonRenderPathSpecification> CreatePathSpecification(QSharedPointer<QDemonRenderContextImpl> context);
 };
 
 QT_END_NAMESPACE

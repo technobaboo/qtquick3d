@@ -35,9 +35,9 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonRenderPathFontSpecification::QDemonRenderPathFontSpecification(QDemonRenderContextImpl &context, const QString &fontName)
+QDemonRenderPathFontSpecification::QDemonRenderPathFontSpecification(QSharedPointer<QDemonRenderContextImpl> context, const QString &fontName)
     : m_Context(context)
-    , m_Backend(context.GetBackend())
+    , m_Backend(context->GetBackend())
     , m_NumFontGlyphs(0)
     , m_EmScale(2048) // 2048 is default true type scale
     , m_Type(QDemonRenderPathFormatType::UByte)
@@ -48,7 +48,7 @@ QDemonRenderPathFontSpecification::QDemonRenderPathFontSpecification(QDemonRende
 
 QDemonRenderPathFontSpecification::~QDemonRenderPathFontSpecification()
 {
-    m_Context.ReleasePathFontSpecification(this);
+    m_Context->ReleasePathFontSpecification(this);
 }
 
 void QDemonRenderPathFontSpecification::LoadPathGlyphs(const char *fontName,
@@ -128,10 +128,10 @@ QDemonRenderPathFontSpecification::getSizeofType(QDemonRenderPathFormatType::Enu
 }
 
 QSharedPointer<QDemonRenderPathFontSpecification>
-QDemonRenderPathFontSpecification::CreatePathFontSpecification(QDemonRenderContextImpl &context,
+QDemonRenderPathFontSpecification::CreatePathFontSpecification(QSharedPointer<QDemonRenderContextImpl> context,
                                                                const QString &fontName)
 {
-    Q_ASSERT(context.IsPathRenderingSupported());
+    Q_ASSERT(context->IsPathRenderingSupported());
 
     return QSharedPointer<QDemonRenderPathFontSpecification>(new QDemonRenderPathFontSpecification(context, fontName));
 }

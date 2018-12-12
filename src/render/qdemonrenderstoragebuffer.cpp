@@ -35,7 +35,7 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonRenderStorageBuffer::QDemonRenderStorageBuffer(QDemonRenderContextImpl &context,
+QDemonRenderStorageBuffer::QDemonRenderStorageBuffer(QSharedPointer<QDemonRenderContextImpl> context,
                                                      const QString &bufferName, size_t size,
                                                      QDemonRenderBufferUsageType::Enum usageType,
                                                      QDemonDataRef<quint8> data, QDemonRenderDataBuffer *pBuffer)
@@ -45,13 +45,13 @@ QDemonRenderStorageBuffer::QDemonRenderStorageBuffer(QDemonRenderContextImpl &co
     , m_WrappedBuffer(pBuffer)
     , m_Dirty(true)
 {
-    Q_ASSERT(context.IsStorageBufferSupported());
+    Q_ASSERT(context->IsStorageBufferSupported());
 }
 
 QDemonRenderStorageBuffer::~QDemonRenderStorageBuffer()
 {
 
-    m_Context.BufferDestroyed(this);
+    m_Context->BufferDestroyed(this);
 }
 
 void QDemonRenderStorageBuffer::Bind()
@@ -91,13 +91,13 @@ void QDemonRenderStorageBuffer::UpdateData(qint32 offset, QDemonDataRef<quint8> 
                                 data.begin() + offset);
 }
 
-QSharedPointer<QDemonRenderStorageBuffer> QDemonRenderStorageBuffer::Create(QDemonRenderContextImpl &context, const char *bufferName,
+QSharedPointer<QDemonRenderStorageBuffer> QDemonRenderStorageBuffer::Create(QSharedPointer<QDemonRenderContextImpl> context, const char *bufferName,
                                                                             QDemonRenderBufferUsageType::Enum usageType, size_t size,
                                                                             QDemonConstDataRef<quint8> bufferData, QDemonRenderDataBuffer *pBuffer)
 {
     QSharedPointer<QDemonRenderStorageBuffer> retval = nullptr;
 
-    if (context.IsStorageBufferSupported()) {
+    if (context->IsStorageBufferSupported()) {
         const QString theBufferName = QString::fromLocal8Bit(bufferName);
         quint32 cbufSize = sizeof(QDemonRenderStorageBuffer);
         quint8 *newMem = static_cast<quint8 *>(::malloc(cbufSize));

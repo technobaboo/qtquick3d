@@ -52,7 +52,7 @@ public:
          *
          * @return No return.
          */
-    QDemonRenderTessControlShader(QDemonRenderContextImpl &context,
+    QDemonRenderTessControlShader(QSharedPointer<QDemonRenderContextImpl> context,
                                   QDemonConstDataRef<qint8> source, bool binaryProgram);
 
     /// @brief destructor
@@ -95,7 +95,7 @@ public:
          *
          * @return No return.
          */
-    QDemonRenderTessEvaluationShader(QDemonRenderContextImpl &context,
+    QDemonRenderTessEvaluationShader(QSharedPointer<QDemonRenderContextImpl> context,
                                  QDemonConstDataRef<qint8> source, bool binaryProgram);
 
     /// @brief destructor

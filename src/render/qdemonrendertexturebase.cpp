@@ -36,10 +36,10 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonRenderTextureBase::QDemonRenderTextureBase(QDemonRenderContextImpl &context,
+QDemonRenderTextureBase::QDemonRenderTextureBase(QSharedPointer<QDemonRenderContextImpl> context,
                                                  QDemonRenderTextureTargetType::Enum texTarget)
     : m_Context(context)
-    , m_Backend(context.GetBackend())
+    , m_Backend(context->GetBackend())
     , m_TextureHandle(nullptr)
     , m_TextureUnit(std::numeric_limits<quint32>::max())
     , m_SamplerParamsDirty(true)

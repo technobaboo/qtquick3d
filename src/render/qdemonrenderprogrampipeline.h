@@ -43,7 +43,7 @@ class QDemonRenderShaderProgram;
 class Q_DEMONRENDER_EXPORT QDemonRenderProgramPipeline
 {
 protected:
-    QDemonRenderContextImpl &m_Context; ///< pointer to context
+    QSharedPointer<QDemonRenderContextImpl> m_Context; ///< pointer to context
     QSharedPointer<QDemonRenderBackend> m_Backend; ///< pointer to backend
 
 public:
@@ -55,7 +55,7 @@ public:
          *
          * @return No return.
          */
-    QDemonRenderProgramPipeline(QDemonRenderContextImpl &context);
+    QDemonRenderProgramPipeline(QSharedPointer<QDemonRenderContextImpl> context);
 
     /// @brief destructor
     ~QDemonRenderProgramPipeline();

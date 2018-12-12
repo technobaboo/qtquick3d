@@ -34,10 +34,10 @@
 QT_BEGIN_NAMESPACE
 
 ///< constructor
-QDemonRenderAttribLayout::QDemonRenderAttribLayout(QDemonRenderContextImpl &context,
+QDemonRenderAttribLayout::QDemonRenderAttribLayout(QSharedPointer<QDemonRenderContextImpl> context,
                                                    QDemonConstDataRef<QDemonRenderVertexBufferEntry> attribs)
     : m_Context(context)
-    , m_Backend(context.GetBackend())
+    , m_Backend(context->GetBackend())
 {
     m_AttribLayoutHandle = m_Backend->CreateAttribLayout(attribs);
     Q_ASSERT(m_AttribLayoutHandle);

@@ -77,7 +77,7 @@ public:
          * @return No return.
          */
     QDemonRenderTextureSampler(
-            QDemonRenderContextImpl &context,
+            QSharedPointer<QDemonRenderContextImpl> context,
             QDemonRenderTextureMinifyingOp::Enum minFilter = QDemonRenderTextureMinifyingOp::Linear,
             QDemonRenderTextureMagnifyingOp::Enum magFilter = QDemonRenderTextureMagnifyingOp::Linear,
             QDemonRenderTextureCoordOp::Enum wrapS = QDemonRenderTextureCoordOp::ClampToEdge,
@@ -106,7 +106,7 @@ public:
     }
 
 private:
-    QDemonRenderContextImpl &m_Context; ///< pointer to context
+    QSharedPointer<QDemonRenderContextImpl> m_Context; ///< pointer to context
     QSharedPointer<QDemonRenderBackend> m_Backend; ///< pointer to backend
     QDemonRenderBackend::QDemonRenderBackendSamplerObject m_SamplerHandle; ///< opaque backend handle
 };

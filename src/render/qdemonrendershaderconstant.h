@@ -214,14 +214,14 @@ public:
 class QDemonRenderShaderBufferBase
 {
 public:
-    QDemonRenderContextImpl &m_Context; ///< pointer to context
+    QSharedPointer<QDemonRenderContextImpl> m_Context; ///< pointer to context
     QString m_Name; ///< buffer name
     quint32 m_Location; ///< program buffer block location
     quint32 m_Binding; ///< program buffer binding
     qint32 m_Size; ///< buffer size
 
 public:
-    QDemonRenderShaderBufferBase(QDemonRenderContextImpl &context, const QString &name,
+    QDemonRenderShaderBufferBase(QSharedPointer<QDemonRenderContextImpl> context, const QString &name,
                                  qint32 location, qint32 binding, qint32 size)
         : m_Context(context)
         , m_Name(name)
@@ -245,7 +245,7 @@ public:
     QSharedPointer<QDemonRenderConstantBuffer> m_pCB; ///< pointer to constant buffer
 
 public:
-    QDemonRenderShaderConstantBuffer(QDemonRenderContextImpl &context, const QString &name,
+    QDemonRenderShaderConstantBuffer(QSharedPointer<QDemonRenderContextImpl> context, const QString &name,
                                      quint32 location, qint32 binding, qint32 size, qint32 count,
                                      QSharedPointer<QDemonRenderConstantBuffer> pCB)
         : QDemonRenderShaderBufferBase(context, name, location, binding, size)
@@ -266,7 +266,7 @@ public:
         if (m_pCB)
             return;
 
-        QSharedPointer<QDemonRenderConstantBuffer> cb = m_Context.GetConstantBuffer(m_Name);
+        QSharedPointer<QDemonRenderConstantBuffer> cb = m_Context->GetConstantBuffer(m_Name);
         if (cb) {
             cb->SetupBuffer(inShader.data(), m_Location, m_Size, m_ParamCount);
             //cb->addRef();
@@ -296,7 +296,7 @@ public:
     QSharedPointer<QDemonRenderStorageBuffer> m_pSB; ///< pointer to storage buffer
 
 public:
-    QDemonRenderShaderStorageBuffer(QDemonRenderContextImpl &context, const QString &name,
+    QDemonRenderShaderStorageBuffer(QSharedPointer<QDemonRenderContextImpl> context, const QString &name,
                                     quint32 location, qint32 binding, qint32 size, qint32 count,
                                     QSharedPointer<QDemonRenderStorageBuffer> pSB)
         : QDemonRenderShaderBufferBase(context, name, location, binding, size)
@@ -317,7 +317,7 @@ public:
         if (m_pSB)
             return;
 
-        QSharedPointer<QDemonRenderStorageBuffer> sb = m_Context.GetStorageBuffer(m_Name);
+        QSharedPointer<QDemonRenderStorageBuffer> sb = m_Context->GetStorageBuffer(m_Name);
         if (sb) {
             m_pSB = sb;
         } else {
@@ -345,7 +345,7 @@ public:
     QSharedPointer<QDemonRenderAtomicCounterBuffer> m_pAcB; ///< pointer to atomic counter buffer
 
 public:
-    QDemonRenderShaderAtomicCounterBuffer(QDemonRenderContextImpl &context, const QString &name,
+    QDemonRenderShaderAtomicCounterBuffer(QSharedPointer<QDemonRenderContextImpl> context, const QString &name,
                                           quint32 location, qint32 binding, qint32 size, qint32 count,
                                           QSharedPointer<QDemonRenderAtomicCounterBuffer> pAcB)
         : QDemonRenderShaderBufferBase(context, name, location, binding, size)
@@ -366,7 +366,7 @@ public:
         if (m_pAcB)
             return;
 
-        QSharedPointer<QDemonRenderAtomicCounterBuffer> acb = m_Context.GetAtomicCounterBuffer(m_Name);
+        QSharedPointer<QDemonRenderAtomicCounterBuffer> acb = m_Context->GetAtomicCounterBuffer(m_Name);
         if (acb) {
             m_pAcB = acb;
         } else {

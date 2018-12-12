@@ -34,9 +34,9 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonRenderQueryBase::QDemonRenderQueryBase(QDemonRenderContextImpl &context)
+QDemonRenderQueryBase::QDemonRenderQueryBase(QSharedPointer<QDemonRenderContextImpl> context)
     : m_Context(context)
-    , m_Backend(context.GetBackend())
+    , m_Backend(context->GetBackend())
 {
     m_QueryHandle = m_Backend->CreateQuery();
 }

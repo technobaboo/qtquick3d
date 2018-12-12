@@ -63,7 +63,7 @@ public:
          *
          * @return No return.
          */
-    QDemonRenderInputAssembler(QDemonRenderContextImpl &context, QSharedPointer<QDemonRenderAttribLayout> attribLayout,
+    QDemonRenderInputAssembler(QSharedPointer<QDemonRenderContextImpl> context, QSharedPointer<QDemonRenderAttribLayout> attribLayout,
                                QDemonConstDataRef<QSharedPointer<QDemonRenderVertexBuffer>> buffers,
                                const QSharedPointer<QDemonRenderIndexBuffer> indexBuffer,
                                QDemonConstDataRef<quint32> strides, QDemonConstDataRef<quint32> offsets,
@@ -128,7 +128,7 @@ public:
     }
 
 private:
-    QDemonRenderContextImpl &m_Context; ///< pointer to context
+    QSharedPointer<QDemonRenderContextImpl> m_Context; ///< pointer to context
     QSharedPointer<QDemonRenderBackend> m_Backend; ///< pointer to backend
 
     QSharedPointer<QDemonRenderAttribLayout> m_AttribLayout; ///< pointer to attribute layout

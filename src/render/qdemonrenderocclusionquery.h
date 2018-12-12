@@ -49,7 +49,7 @@ public:
          *
          * @return No return.
          */
-    QDemonRenderOcclusionQuery(QDemonRenderContextImpl &context);
+    QDemonRenderOcclusionQuery(QSharedPointer<QDemonRenderContextImpl> context);
 
     ///< destructor
     ~QDemonRenderOcclusionQuery() override;
@@ -100,7 +100,7 @@ public:
          *
          * * @return a occlusion query object on success
          */
-    static QSharedPointer<QDemonRenderOcclusionQuery> Create(QDemonRenderContextImpl &context);
+    static QSharedPointer<QDemonRenderOcclusionQuery> Create(QSharedPointer<QDemonRenderContextImpl> context);
 };
 
 QT_END_NAMESPACE

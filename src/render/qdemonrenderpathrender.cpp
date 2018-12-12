@@ -36,9 +36,9 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonRenderPathRender::QDemonRenderPathRender(QDemonRenderContextImpl &context, size_t range)
+QDemonRenderPathRender::QDemonRenderPathRender(QSharedPointer<QDemonRenderContextImpl> context, size_t range)
     : m_Context(context)
-    , m_Backend(context.GetBackend())
+    , m_Backend(context->GetBackend())
     , m_StrokeWidth(0.0f)
 {
     m_Range = range;
@@ -88,9 +88,9 @@ void QDemonRenderPathRender::StencilStroke() { m_Backend->StencilStrokePath(m_Pa
 
 void QDemonRenderPathRender::StencilFill() { m_Backend->StencilFillPath(m_PathRenderHandle); }
 
-QSharedPointer<QDemonRenderPathRender> QDemonRenderPathRender::Create(QDemonRenderContextImpl &context, size_t range)
+QSharedPointer<QDemonRenderPathRender> QDemonRenderPathRender::Create(QSharedPointer<QDemonRenderContextImpl> context, size_t range)
 {
-    if (!context.IsPathRenderingSupported())
+    if (!context->IsPathRenderingSupported())
         return nullptr;
 
     return QSharedPointer<QDemonRenderPathRender>(new QDemonRenderPathRender(context, range));

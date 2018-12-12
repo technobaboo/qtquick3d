@@ -446,7 +446,7 @@ struct QDemonRenderContextScopedProperty
 
 // forward declarations
 
-class QDemonRenderContextImpl : public QDemonRenderContext, public QDemonNoCopy
+class QDemonRenderContextImpl : public QDemonRenderContext, public QDemonNoCopy, public QEnableSharedFromThis<QDemonRenderContextImpl>
 {
 public:
     // these variables represent the current hardware state of the render context.

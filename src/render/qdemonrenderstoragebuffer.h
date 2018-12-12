@@ -58,7 +58,7 @@ public:
          *
          * @return No return.
          */
-    QDemonRenderStorageBuffer(QDemonRenderContextImpl &context, const QString &bufferName,
+    QDemonRenderStorageBuffer(QSharedPointer<QDemonRenderContextImpl> context, const QString &bufferName,
                               size_t size, QDemonRenderBufferUsageType::Enum usageType,
                               QDemonDataRef<quint8> data, QDemonRenderDataBuffer *pBuffer = nullptr);
 
@@ -139,7 +139,7 @@ public:
          *
          * @return the buffer object or nullptr
          */
-    static QSharedPointer<QDemonRenderStorageBuffer> Create(QDemonRenderContextImpl &context, const char *bufferName,
+    static QSharedPointer<QDemonRenderStorageBuffer> Create(QSharedPointer<QDemonRenderContextImpl> context, const char *bufferName,
                                              QDemonRenderBufferUsageType::Enum usageType, size_t size,
                                              QDemonConstDataRef<quint8> bufferData,
                                              QDemonRenderDataBuffer *pBuffer);

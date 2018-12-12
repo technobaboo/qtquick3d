@@ -34,9 +34,9 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonRenderSync::QDemonRenderSync(QDemonRenderContextImpl &context)
+QDemonRenderSync::QDemonRenderSync(QSharedPointer<QDemonRenderContextImpl> context)
     : m_Context(context)
-    , m_Backend(context.GetBackend())
+    , m_Backend(context->GetBackend())
     , m_SyncHandle(nullptr)
 {
 }
@@ -69,9 +69,9 @@ void QDemonRenderSync::Wait()
         m_Backend->WaitSync(m_SyncHandle, QDemonRenderCommandFlushFlags(), 0);
 }
 
-QSharedPointer<QDemonRenderSync> QDemonRenderSync::Create(QDemonRenderContextImpl &context)
+QSharedPointer<QDemonRenderSync> QDemonRenderSync::Create(QSharedPointer<QDemonRenderContextImpl> context)
 {
-    if (!context.IsCommandSyncSupported())
+    if (!context->IsCommandSyncSupported())
         return nullptr;
 
     return QSharedPointer<QDemonRenderSync>(new QDemonRenderSync(context));

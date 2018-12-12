@@ -35,7 +35,7 @@
 
 
 QT_BEGIN_NAMESPACE
-QDemonRenderDrawIndirectBuffer::QDemonRenderDrawIndirectBuffer(QDemonRenderContextImpl &context,
+QDemonRenderDrawIndirectBuffer::QDemonRenderDrawIndirectBuffer(QSharedPointer<QDemonRenderContextImpl> context,
                                                                size_t size,
                                                                QDemonRenderBufferUsageType::Enum usageType,
                                                                QDemonDataRef<quint8> data)
@@ -47,7 +47,7 @@ QDemonRenderDrawIndirectBuffer::QDemonRenderDrawIndirectBuffer(QDemonRenderConte
 
 QDemonRenderDrawIndirectBuffer::~QDemonRenderDrawIndirectBuffer()
 {
-    m_Context.BufferDestroyed(this);
+    m_Context->BufferDestroyed(this);
 }
 
 void QDemonRenderDrawIndirectBuffer::Bind()
@@ -78,7 +78,7 @@ void QDemonRenderDrawIndirectBuffer::UpdateData(qint32 offset, QDemonDataRef<qui
                                 data.begin() + offset);
 }
 
-QSharedPointer<QDemonRenderDrawIndirectBuffer> QDemonRenderDrawIndirectBuffer::Create(QDemonRenderContextImpl &context,
+QSharedPointer<QDemonRenderDrawIndirectBuffer> QDemonRenderDrawIndirectBuffer::Create(QSharedPointer<QDemonRenderContextImpl> context,
                                        QDemonRenderBufferUsageType::Enum usageType, size_t size,
                                        QDemonConstDataRef<quint8> bufferData)
 {
@@ -88,7 +88,7 @@ QSharedPointer<QDemonRenderDrawIndirectBuffer> QDemonRenderDrawIndirectBuffer::C
     QDemonRenderContextType noDrawIndirectSupported(
                 QDemonRenderContextValues::GL2 | QDemonRenderContextValues::GLES2 | QDemonRenderContextValues::GL3
                 | QDemonRenderContextValues::GLES3);
-    QDemonRenderContextType ctxType = context.GetRenderContextType();
+    QDemonRenderContextType ctxType = context->GetRenderContextType();
 
     if (!(ctxType & noDrawIndirectSupported)) {
         quint32 bufSize = sizeof(QDemonRenderDrawIndirectBuffer);

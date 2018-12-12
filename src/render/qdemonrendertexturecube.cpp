@@ -35,7 +35,7 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonRenderTextureCube::QDemonRenderTextureCube(QDemonRenderContextImpl &context,
+QDemonRenderTextureCube::QDemonRenderTextureCube(QSharedPointer<QDemonRenderContextImpl> context,
                                                  QDemonRenderTextureTargetType::Enum texTarget)
     : QDemonRenderTextureBase(context, texTarget)
     , m_Width(0)
@@ -45,7 +45,7 @@ QDemonRenderTextureCube::QDemonRenderTextureCube(QDemonRenderContextImpl &contex
 
 QDemonRenderTextureCube::~QDemonRenderTextureCube()
 {
-    m_Context.TextureDestroyed(this);
+    m_Context->TextureDestroyed(this);
 }
 
 void QDemonRenderTextureCube::SetTextureData(QDemonDataRef<quint8> newBuffer, quint8 inMipLevel,
@@ -99,7 +99,7 @@ STextureDetails QDemonRenderTextureCube::GetTextureDetails() const
 
 void QDemonRenderTextureCube::Bind()
 {
-    m_TextureUnit = m_Context.GetNextTextureUnit();
+    m_TextureUnit = m_Context->GetNextTextureUnit();
 
     m_Backend->BindTexture(m_TextureHandle, m_TexTarget, m_TextureUnit);
 
@@ -107,7 +107,7 @@ void QDemonRenderTextureCube::Bind()
     applyTexSwizzle();
 }
 
-QSharedPointer<QDemonRenderTextureCube> QDemonRenderTextureCube::Create(QDemonRenderContextImpl &context)
+QSharedPointer<QDemonRenderTextureCube> QDemonRenderTextureCube::Create(QSharedPointer<QDemonRenderContextImpl> context)
 {
     return QSharedPointer<QDemonRenderTextureCube>(new QDemonRenderTextureCube(context));
 }

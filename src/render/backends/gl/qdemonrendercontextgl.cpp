@@ -66,8 +66,8 @@ QSharedPointer<QDemonRenderContext> QDemonRenderContext::CreateGL(const QSurface
         qCCritical(INTERNAL_ERROR) << "Can't find a suitable OpenGL version for" << format;
     }
 
-
-    retval.reset(new QDemonRenderContextImpl(theBackend));
+    QSharedPointer<QDemonRenderContextImpl> impl(new QDemonRenderContextImpl(theBackend));
+    retval = impl;
 
     return retval;
 }

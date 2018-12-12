@@ -36,11 +36,11 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonRenderImage2D::QDemonRenderImage2D(QDemonRenderContextImpl &context,
+QDemonRenderImage2D::QDemonRenderImage2D(QSharedPointer<QDemonRenderContextImpl> context,
                                          QSharedPointer<QDemonRenderTexture2D> inTexture,
                                          QDemonRenderImageAccessType::Enum inAccess)
     : m_Context(context)
-    , m_Backend(context.GetBackend())
+    , m_Backend(context->GetBackend())
     , m_Texture2D(inTexture)
     , m_TextureUnit(std::numeric_limits<int>::max())
     , m_AccessType(inAccess)
@@ -50,7 +50,7 @@ QDemonRenderImage2D::QDemonRenderImage2D(QDemonRenderContextImpl &context,
 
 QDemonRenderImage2D::~QDemonRenderImage2D()
 {
-    m_Context.ImageDestroyed(this);
+    m_Context->ImageDestroyed(this);
 }
 
 void QDemonRenderImage2D::SetTextureLevel(qint32 inLevel)
@@ -63,7 +63,7 @@ void QDemonRenderImage2D::SetTextureLevel(qint32 inLevel)
 void QDemonRenderImage2D::Bind(quint32 unit)
 {
     if (unit == -1)
-        m_TextureUnit = m_Context.GetNextTextureUnit();
+        m_TextureUnit = m_Context->GetNextTextureUnit();
     else
         m_TextureUnit = unit;
 
@@ -80,7 +80,7 @@ QDemonRenderBackend::QDemonRenderBackendTextureObject QDemonRenderImage2D::GetTe
     return m_Texture2D->GetTextureObjectHandle();
 }
 
-QSharedPointer<QDemonRenderImage2D> QDemonRenderImage2D::Create(QDemonRenderContextImpl &context,
+QSharedPointer<QDemonRenderImage2D> QDemonRenderImage2D::Create(QSharedPointer<QDemonRenderContextImpl> context,
                                                  QSharedPointer<QDemonRenderTexture2D> inTexture,
                                                  QDemonRenderImageAccessType::Enum inAccess)
 {

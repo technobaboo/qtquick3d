@@ -34,7 +34,7 @@
 QT_BEGIN_NAMESPACE
 
 QDemonRenderTextureSampler::QDemonRenderTextureSampler(
-        QDemonRenderContextImpl &context,
+        QSharedPointer<QDemonRenderContextImpl> context,
         QDemonRenderTextureMinifyingOp::Enum minFilter, QDemonRenderTextureMagnifyingOp::Enum magFilter,
         QDemonRenderTextureCoordOp::Enum wrapS, QDemonRenderTextureCoordOp::Enum wrapT,
         QDemonRenderTextureCoordOp::Enum wrapR, QDemonRenderTextureSwizzleMode::Enum swizzleMode,
@@ -53,7 +53,7 @@ QDemonRenderTextureSampler::QDemonRenderTextureSampler(
     , m_CompareOp(compareFunc)
     , m_Anisotropy(anisotropy)
     , m_Context(context)
-    , m_Backend(context.GetBackend())
+    , m_Backend(context->GetBackend())
     , m_SamplerHandle(nullptr)
 {
     // create backend handle

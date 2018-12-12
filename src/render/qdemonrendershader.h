@@ -43,7 +43,7 @@ class QDemonRenderContextImpl;
 class QDemonRenderShader
 {
 protected:
-    QDemonRenderContextImpl &m_Context; ///< pointer to context
+    QSharedPointer<QDemonRenderContextImpl> m_Context; ///< pointer to context
     QSharedPointer<QDemonRenderBackend> m_Backend; ///< pointer to backend
     QDemonConstDataRef<qint8> m_Source; ///< shader source code
     bool m_Binary; ///< true for binary programs
@@ -58,10 +58,10 @@ public:
          *
          * @return No return.
          */
-    QDemonRenderShader(QDemonRenderContextImpl &context,
+    QDemonRenderShader(QSharedPointer<QDemonRenderContextImpl> context,
                        QDemonConstDataRef<qint8> source, bool binaryProgram)
         : m_Context(context)
-        , m_Backend(context.GetBackend())
+        , m_Backend(context->GetBackend())
         , m_Source(source)
         , m_Binary(binaryProgram)
     {

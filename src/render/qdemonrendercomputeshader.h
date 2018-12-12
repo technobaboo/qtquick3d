@@ -52,7 +52,7 @@ public:
          *
          * @return No return.
          */
-    QDemonRenderComputeShader(QDemonRenderContextImpl &context,
+    QDemonRenderComputeShader(QSharedPointer<QDemonRenderContextImpl> context,
                               QDemonConstDataRef<qint8> source,
                               bool binaryProgram);
 

@@ -56,8 +56,8 @@ public:
     void initialize() override
     {
         m_context = QDemonRenderContext::CreateGL(format());
-        m_inputAssembler = QDemonRenderExampleTools::createBox(m_context.data(), m_vertexBuffer, m_indexBuffer);
-        m_shader = QDemonRenderExampleTools::createSimpleShader(m_context.data());
+        m_inputAssembler = QDemonRenderExampleTools::createBox(m_context, m_vertexBuffer, m_indexBuffer);
+        m_shader = QDemonRenderExampleTools::createSimpleShader(m_context);
         if (m_shader) {
             m_context->SetActiveShader(m_shader);
         }
