@@ -45,7 +45,7 @@ class QDemonRenderTextureCube;
 class QDemonRenderTextureOrRenderBuffer
 {
     QSharedPointer<QDemonRenderTexture2D> m_Texture2D;
-    QDemonRenderTexture2DArray *m_Texture2DArray;
+    QSharedPointer<QDemonRenderTexture2DArray> m_Texture2DArray;
     QDemonRenderTextureCube *m_TextureCube;
     QSharedPointer<QDemonRenderRenderBuffer> m_RenderBuffer;
 
@@ -64,9 +64,9 @@ public:
         , m_RenderBuffer(render)
     {
     }
-    QDemonRenderTextureOrRenderBuffer(QDemonRenderTexture2DArray &textureArray)
+    QDemonRenderTextureOrRenderBuffer(QSharedPointer<QDemonRenderTexture2DArray> textureArray)
         : m_Texture2D(nullptr)
-        , m_Texture2DArray(&textureArray)
+        , m_Texture2DArray(textureArray)
         , m_TextureCube(nullptr)
         , m_RenderBuffer(nullptr)
     {
@@ -96,7 +96,7 @@ public:
     {
         if (this != &other) {
             m_Texture2D = QSharedPointer<QDemonRenderTexture2D>(other.m_Texture2D);
-            m_Texture2DArray = const_cast<QDemonRenderTexture2DArray *>(other.m_Texture2DArray);
+            m_Texture2DArray = QSharedPointer<QDemonRenderTexture2DArray>(other.m_Texture2DArray);
             m_RenderBuffer = QSharedPointer<QDemonRenderRenderBuffer>(other.m_RenderBuffer);
             m_TextureCube = const_cast<QDemonRenderTextureCube *>(other.m_TextureCube);
         }
@@ -113,7 +113,7 @@ public:
         Q_ASSERT(HasTexture2D());
         return m_Texture2D;
     }
-    QDemonRenderTexture2DArray *GetTexture2DArray() const
+    QSharedPointer<QDemonRenderTexture2DArray> GetTexture2DArray() const
     {
         Q_ASSERT(HasTexture2DArray());
         return m_Texture2DArray;

@@ -395,11 +395,11 @@ QSharedPointer<QDemonRenderTexture2D> QDemonRenderContextImpl::CreateTexture2D()
     return retval;
 }
 
-QDemonRenderTexture2DArray *QDemonRenderContextImpl::CreateTexture2DArray()
+QSharedPointer<QDemonRenderTexture2DArray> QDemonRenderContextImpl::CreateTexture2DArray()
 {
-    QDemonRenderTexture2DArray *retval = QDemonRenderTexture2DArray::Create(*this);
+    QSharedPointer<QDemonRenderTexture2DArray> retval(QDemonRenderTexture2DArray::Create(*this));
     if (retval)
-        m_Tex2DArrayToImpMap.insert(retval->GetTextureObjectHandle(), retval);
+        m_Tex2DArrayToImpMap.insert(retval->GetTextureObjectHandle(), retval.data());
 
     return retval;
 }
@@ -428,9 +428,9 @@ void QDemonRenderContextImpl::TextureDestroyed(QDemonRenderTexture2D *buffer)
     // but that would require some real work that we don't want to do right now.
 }
 
-void QDemonRenderContextImpl::TextureDestroyed(QDemonRenderTexture2DArray &buffer)
+void QDemonRenderContextImpl::TextureDestroyed(QDemonRenderTexture2DArray *buffer)
 {
-    m_Tex2DArrayToImpMap.remove(buffer.GetTextureObjectHandle());
+    m_Tex2DArrayToImpMap.remove(buffer->GetTextureObjectHandle());
 }
 
 void QDemonRenderContextImpl::TextureDestroyed(QDemonRenderTextureCube &buffer)

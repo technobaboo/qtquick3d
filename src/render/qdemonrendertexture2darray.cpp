@@ -44,7 +44,10 @@ QDemonRenderTexture2DArray::QDemonRenderTexture2DArray(QDemonRenderContextImpl &
 {
 }
 
-QDemonRenderTexture2DArray::~QDemonRenderTexture2DArray() { m_Context.TextureDestroyed(*this); }
+QDemonRenderTexture2DArray::~QDemonRenderTexture2DArray()
+{
+    m_Context.TextureDestroyed(this);
+}
 
 void QDemonRenderTexture2DArray::SetTextureData(QDemonDataRef<quint8> newBuffer, quint8 inMipLevel,
                                                 quint32 width, quint32 height, quint32 slices,
@@ -107,8 +110,8 @@ void QDemonRenderTexture2DArray::Bind()
     applyTexSwizzle();
 }
 
-QDemonRenderTexture2DArray *QDemonRenderTexture2DArray::Create(QDemonRenderContextImpl &context)
+QSharedPointer<QDemonRenderTexture2DArray> QDemonRenderTexture2DArray::Create(QDemonRenderContextImpl &context)
 {
-    return new QDemonRenderTexture2DArray(context);
+    return QSharedPointer<QDemonRenderTexture2DArray>(new QDemonRenderTexture2DArray(context));
 }
 QT_END_NAMESPACE
