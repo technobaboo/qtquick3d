@@ -30,11 +30,12 @@
 //==============================================================================
 //	Includes
 //==============================================================================
+#include "qdemonrendereulerangles.h"
+
 #include <math.h>
 #include <float.h>
 #include <string.h>
 #include <stdio.h>
-#include <QtDemonRuntimeRender/qdemonrendereulerangles.h>
 
 #ifdef _MSC_VER
 #pragma warning(disable : 4365) // warnings on conversion from unsigned int to int
