@@ -380,11 +380,9 @@ QDemonRenderTimerQuery *QDemonRenderContextImpl::CreateTimerQuery()
     return theQuery;
 }
 
-QDemonRenderSync *QDemonRenderContextImpl::CreateSync()
+QSharedPointer<QDemonRenderSync> QDemonRenderContextImpl::CreateSync()
 {
-    QDemonRenderSync *theSync = QDemonRenderSync::Create(*this);
-
-    return theSync;
+    return QDemonRenderSync::Create(*this);
 }
 
 QSharedPointer<QDemonRenderTexture2D> QDemonRenderContextImpl::CreateTexture2D()

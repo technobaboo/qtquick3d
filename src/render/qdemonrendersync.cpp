@@ -69,14 +69,12 @@ void QDemonRenderSync::Wait()
         m_Backend->WaitSync(m_SyncHandle, QDemonRenderCommandFlushFlags(), 0);
 }
 
-QDemonRenderSync *QDemonRenderSync::Create(QDemonRenderContextImpl &context)
+QSharedPointer<QDemonRenderSync> QDemonRenderSync::Create(QDemonRenderContextImpl &context)
 {
     if (!context.IsCommandSyncSupported())
         return nullptr;
 
-    QDemonRenderSync *retval = new QDemonRenderSync(context);
-
-    return retval;
+    return QSharedPointer<QDemonRenderSync>(new QDemonRenderSync(context));
 }
 
 QT_END_NAMESPACE

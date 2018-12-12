@@ -196,7 +196,7 @@ public:
 
     virtual QDemonRenderOcclusionQuery *CreateOcclusionQuery() = 0;
     virtual QDemonRenderTimerQuery *CreateTimerQuery() = 0;
-    virtual QDemonRenderSync *CreateSync() = 0;
+    virtual QSharedPointer<QDemonRenderSync> CreateSync() = 0;
 
     virtual QSharedPointer<QDemonRenderTexture2D> CreateTexture2D() = 0;
     virtual QSharedPointer<QDemonRenderTexture2D> GetTexture2D(const void *implementationHandle) = 0;
@@ -821,7 +821,7 @@ public:
 
     QDemonRenderOcclusionQuery *CreateOcclusionQuery() override;
     QDemonRenderTimerQuery *CreateTimerQuery() override;
-    QDemonRenderSync *CreateSync() override;
+    QSharedPointer<QDemonRenderSync> CreateSync() override;
 
     QSharedPointer<QDemonRenderTexture2D> CreateTexture2D() override;
     QSharedPointer<QDemonRenderTexture2D> GetTexture2D(const void *implementationHandle) override;

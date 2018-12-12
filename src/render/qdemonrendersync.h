@@ -104,7 +104,7 @@ public:
          *
          * @return a sync object on success
          */
-    static QDemonRenderSync *Create(QDemonRenderContextImpl &context);
+    static QSharedPointer<QDemonRenderSync> Create(QDemonRenderContextImpl &context);
 };
 
 QT_END_NAMESPACE
