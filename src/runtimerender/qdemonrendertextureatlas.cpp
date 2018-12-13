@@ -39,10 +39,9 @@ namespace {
 struct STextureAtlasBinPackSL
 {
 public:
-    STextureAtlasBinPackSL(QDemonRenderContext &inContext, qint32 width, qint32 height)
+    STextureAtlasBinPackSL(QSharedPointer<QDemonRenderContext> inContext, qint32 width, qint32 height)
         : m_BinWidth(width)
         , m_BinHeight(height)
-        , m_SkyLine(inContext.GetAllocator(), "STextureAtlasBinPackSL::m_SkyLine")
     {
         // setup first entry
         SSkylineNode theNode = { 0, 0, width };
@@ -235,7 +234,7 @@ struct STextureAtlas : public ITextureAtlas
 {
     QSharedPointer<QDemonRenderContext> m_RenderContext;
 
-    STextureAtlas(QDemonRenderContext &inRenderContext, qint32 width,
+    STextureAtlas(QSharedPointer<QDemonRenderContext> inRenderContext, qint32 width,
                   qint32 height)
         : m_RenderContext(inRenderContext)
         , m_Width(width)
@@ -258,7 +257,7 @@ struct STextureAtlas : public ITextureAtlas
         QVector<STextureAtlasEntry>::iterator it;
 
         for (it = m_AtlasEntrys.begin(); it != m_AtlasEntrys.end(); it++) {
-            QDEMON_FREE(m_Foundation.getAllocator(), it->m_pBuffer.begin());
+            ::free(it->m_pBuffer.begin());
         }
 
         m_AtlasEntrys.clear();
@@ -271,13 +270,13 @@ struct STextureAtlas : public ITextureAtlas
     TTextureAtlasEntryAndBuffer GetAtlasEntryByIndex(quint32 index) override
     {
         if (index >= m_AtlasEntrys.size())
-            return eastl::make_pair(STextureAtlasRect(), QDemonDataRef<quint8>());
+            return TTextureAtlasEntryAndBuffer(STextureAtlasRect(), QDemonDataRef<quint8>());
 
-        return eastl::make_pair(STextureAtlasRect((qint32)m_AtlasEntrys[index].m_X,
-                                                  (qint32)m_AtlasEntrys[index].m_Y,
-                                                  (qint32)m_AtlasEntrys[index].m_Width,
-                                                  (qint32)m_AtlasEntrys[index].m_Height),
-                                m_AtlasEntrys[index].m_pBuffer);
+        return TTextureAtlasEntryAndBuffer(STextureAtlasRect((qint32)m_AtlasEntrys[index].m_X,
+                                                             (qint32)m_AtlasEntrys[index].m_Y,
+                                                             (qint32)m_AtlasEntrys[index].m_Width,
+                                                             (qint32)m_AtlasEntrys[index].m_Height),
+                                           m_AtlasEntrys[index].m_pBuffer);
     }
 
     STextureAtlasRect AddAtlasEntry(qint32 width, qint32 height, qint32 pitch,
@@ -304,8 +303,7 @@ struct STextureAtlas : public ITextureAtlas
 
             // since we do spacing around the character we need to copy line by line
             quint8 *glyphBuffer =
-                    (quint8 *)QDEMON_ALLOC(m_Foundation.getAllocator(),
-                                           paddedHeight * paddedPitch * sizeof(quint8), "STextureAtlas");
+                    static_cast<quint8 *>(::malloc(paddedHeight * paddedPitch * sizeof(quint8)));
             if (glyphBuffer) {
                 memset(glyphBuffer, 0, paddedHeight * paddedPitch);
 
@@ -344,10 +342,9 @@ private:
 
 } // namespace
 
-ITextureAtlas &ITextureAtlas::CreateTextureAtlas(QDemonRenderContext &inRenderContext, qint32 width,
-                                                 qint32 height)
+QSharedPointer<ITextureAtlas> ITextureAtlas::CreateTextureAtlas(QSharedPointer<QDemonRenderContext> inRenderContext, qint32 width, qint32 height)
 {
-    return *new STextureAtlas(inRenderContext, width, height);
+    return QSharedPointer<ITextureAtlas>(new STextureAtlas(inRenderContext, width, height));
 }
 
 QT_END_NAMESPACE

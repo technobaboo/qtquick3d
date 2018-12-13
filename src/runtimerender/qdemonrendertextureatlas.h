@@ -36,6 +36,7 @@
 QT_BEGIN_NAMESPACE
 
 class ITextRenderer;
+class QDemonRenderContext;
 
 struct STextureAtlasRect
 {
@@ -89,7 +90,7 @@ public:
                                             QDemonConstDataRef<quint8> bufferData) = 0;
     virtual void RelaseEntries() = 0;
 
-    static ITextureAtlas &CreateTextureAtlas(QDemonRenderContext &inRenderContext, qint32 width, qint32 height);
+    static QSharedPointer<ITextureAtlas> CreateTextureAtlas(QSharedPointer<QDemonRenderContext> inRenderContext, qint32 width, qint32 height);
 };
 QT_END_NAMESPACE
 

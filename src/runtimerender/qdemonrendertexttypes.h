@@ -32,6 +32,9 @@
 #define QDEMON_RENDER_TEXT_TYPES_H
 
 #include <QtDemon/qdemondataref.h>
+
+#include <QtCore/QString>
+
 #include <QtGui/QVector2D>
 
 QT_BEGIN_NAMESPACE
@@ -83,7 +86,7 @@ struct STextTextureDetails : public STextDimensions
     {
     }
     STextTextureDetails()
-        : m_ScaleFactor(1.0f)
+        : m_ScaleFactor(1.0f, 1.0f)
         , m_FlipY(false)
     {
     }
@@ -126,7 +129,7 @@ struct STextTextureAtlasDetails : public STextTextureDetails
 {
     quint32 m_EntryCount;
     STextTextureAtlasDetails(quint32 w, quint32 h, bool inFlipY, quint32 count)
-        : STextTextureDetails(w, h, inFlipY, QVector2D(1.0f))
+        : STextTextureDetails(w, h, inFlipY, QVector2D(1.0f, 1.0f))
         , m_EntryCount(count)
     {
     }

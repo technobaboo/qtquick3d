@@ -66,7 +66,7 @@ STextTextureDetails ITextRenderer::UploadData(QDemonDataRef<quint8> inTextureDat
     if (inTextWidth == 0 || inTextHeight == 0) {
         quint32 black[] = { 0, 0, 0, 0 };
         inTexture.SetTextureData(toU8DataRef(black, 4), 0, 2, 2, QDemonRenderTextureFormats::RGBA8);
-        return STextTextureDetails(2, 2, false, QVector2D(1.0));
+        return STextTextureDetails(2, 2, false, QVector2D(1.0f, 1.0f));
     }
     Q_ASSERT(NextMultipleOf4(inDataWidth) == inDataWidth);
     quint32 theNecessaryHeight = NextMultipleOf4(inTextHeight);

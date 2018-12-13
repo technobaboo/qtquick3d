@@ -49,7 +49,7 @@ HEADERS += \
 #    qdemonrenderpluginpropertyvalue.h \
 #    qdemonrenderprofiler.h \
 #    qdemonrenderray.h \
-#    qdemonrenderrenderlist.h \
+    qdemonrenderrenderlist.h \
 #    qdemonrenderrotationhelper.h \
 #    qdemonrendershadercache.h \
 #    qdemonrendershadercodegenerator.h \
@@ -62,12 +62,12 @@ HEADERS += \
 #    qdemonrendertessmodevalues.h \
 #    qdemonrendertexttextureatlas.h \
 #    qdemonrendertexttexturecache.h \
-#    qdemonrendertexttypes.h \
-#    qdemonrendertextureatlas.h \
+    qdemonrendertexttypes.h \
+    qdemonrendertextureatlas.h \
 #    qdemonrenderthreadpool.h \
 #    qdemonrenderuipsharedtranslation.h \
 #    qdemonrenderwidgets.h \
-#    qdemontextrenderer.h
+    qdemontextrenderer.h
 
 SOURCES += \
 #    qdemonqmlrender.cpp \
@@ -93,7 +93,7 @@ SOURCES += \
 #    qdemonrenderpixelgraphicstypes.cpp \
 #    qdemonrenderplugin.cpp \
 #    qdemonrenderray.cpp \
-#    qdemonrenderrenderlist.cpp \
+    qdemonrenderrenderlist.cpp \
 #    qdemonrendershadercache.cpp \
 #    qdemonrendershadercodegenerator.cpp \
 #    qdemonrendershadercodegeneratorv2.cpp \
@@ -101,10 +101,10 @@ SOURCES += \
 #    qdemonrendersubpresentation.cpp \
 #    qdemonrendertexttextureatlas.cpp \
 #    qdemonrendertexttexturecache.cpp \
-#    qdemonrendertextureatlas.cpp \
+    qdemonrendertextureatlas.cpp \
 #    qdemonrenderthreadpool.cpp \
 #    qdemonrenderuipsharedtranslation.cpp \
 #    qdemonrenderwidgets.cpp \
-#    qdemontextrenderer.cpp
+    qdemontextrenderer.cpp
 
 load(qt_module)

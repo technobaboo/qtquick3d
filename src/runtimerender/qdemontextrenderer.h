@@ -31,6 +31,8 @@
 #ifndef QDEMON_TEXT_RENDERER_H
 #define QDEMON_TEXT_RENDERER_H
 
+#include <QtDemon/QDemonOption>
+
 #include <QtDemonRender/qdemonrenderbasetypes.h>
 
 #include <QtDemonRuntimeRender/qdemonrendertexttypes.h>
@@ -48,6 +50,13 @@ struct SRendererFontEntry
     {
     }
 };
+
+class ITextRenderer;
+class QDemonRenderPathFontItem;
+class IThreadPool;
+class IPerfTimer;
+class QDemonRenderContext;
+class QDemonRenderPathFontSpecification;
 
 class ITextRendererCore
 {
