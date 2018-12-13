@@ -31,9 +31,9 @@
 #ifndef QDEMON_RENDER_CLIPPING_PLANE_H
 #define QDEMON_RENDER_CLIPPING_PLANE_H
 
-#include <QtDemon/qdemonplane.h>
-#include <QtDemon/qdemonflags.h>
-#include <QtDemon/qdemonbounds3.h>
+#include <QtDemon/QDemonPlane>
+#include <QtDemon/QDemonFlags>
+#include <QtDemon/QDemonBounds3>
 
 QT_BEGIN_NAMESPACE
 

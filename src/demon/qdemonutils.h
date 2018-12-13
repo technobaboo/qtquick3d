@@ -20,6 +20,7 @@ QVector3D Q_DEMON_EXPORT minimum(const QVector3D &v1, const QVector3D &v2);
 QVector3D Q_DEMON_EXPORT maximum(const QVector3D &v1, const QVector3D &v2);
 bool Q_DEMON_EXPORT isFinite(const QVector3D &v);
 float Q_DEMON_EXPORT magnitude(const QVector3D &v);
+float Q_DEMON_EXPORT normalize(QVector3D &v);
 
 }
 

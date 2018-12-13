@@ -26,6 +26,15 @@ float vec3::magnitude(const QVector3D &v)
     return sqrtf(v.x() * v.x() + v.y() * v.y() + v.z() * v.z());
 }
 
+// This special normalize function normalizes a vector in place
+// and returns the magnnitude (needed for compatiblity)
+float vec3::normalize(QVector3D &v)
+{
+    const float m = vec3::magnitude(v);
+    if (m > 0)
+        v /= m;
+    return m;
+}
 
 QVector3D mat33::transform(const QMatrix3x3 &m, const QVector3D &v)
 {
@@ -171,3 +180,4 @@ void memZero(void *ptr, size_t size)
 const char *nonNull(const char *src) { return src == NULL ? "" : src; }
 
 QT_END_NAMESPACE
+
