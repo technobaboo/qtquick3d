@@ -26,6 +26,12 @@ float vec3::magnitude(const QVector3D &v)
     return sqrtf(v.x() * v.x() + v.y() * v.y() + v.z() * v.z());
 }
 
+float vec3::magnitudeSquared(const QVector3D &v)
+{
+    return v.x() * v.x() + v.y() * v.y() + v.z() * v.z();
+}
+
+
 // This special normalize function normalizes a vector in place
 // and returns the magnnitude (needed for compatiblity)
 float vec3::normalize(QVector3D &v)
@@ -125,6 +131,35 @@ QMatrix4x4 mat44::getInverse(const QMatrix4x4 &m)
     return retval;
 }
 
+QVector3D mat44::rotate(const QMatrix4x4 &m, const QVector3D &v)
+{
+    const QVector4D tmp = mat44::rotate(m, QVector4D(v.x(), v.y(), v.z(), 1.0f));
+    return QVector3D(tmp.x(), tmp.y(), tmp.z());
+}
+
+QVector4D mat44::rotate(const QMatrix4x4 &m, const QVector4D &v)
+{
+    const QVector4D column0(m(0, 0), m(0, 1), m(0, 2), m(0, 3));
+    const QVector4D column1(m(1, 0), m(1, 1), m(1, 2), m(1, 3));
+    const QVector4D column2(m(2, 0), m(2, 1), m(2, 2), m(2, 3));
+    return column0 * v.x() + column1 * v.y() + column2 * v.z();
+}
+
+QVector3D mat44::transform(const QMatrix4x4 &m, const QVector3D &v)
+{
+    const QVector4D tmp = mat44::transform(m, QVector4D(v.x(), v.y(), v.z(), 1.0f));
+    return QVector3D(tmp.x(), tmp.y(), tmp.z());
+}
+
+QVector4D mat44::transform(const QMatrix4x4 &m, const QVector4D &v)
+{
+    const QVector4D column0(m(0, 0), m(0, 1), m(0, 2), m(0, 3));
+    const QVector4D column1(m(1, 0), m(1, 1), m(1, 2), m(1, 3));
+    const QVector4D column2(m(2, 0), m(2, 1), m(2, 2), m(2, 3));
+    const QVector4D column3(m(3, 0), m(3, 1), m(3, 2), m(3, 3));
+    return column0 * v.x() + column1 * v.y() + column2 * v.z() + column3 * v.w();
+}
+
 bool quant::isFinite(const QQuaternion &q)
 {
     return qIsFinite(q.x()) && qIsFinite(q.y()) && qIsFinite(q.z()) && qIsFinite(q.scalar());
@@ -180,4 +215,3 @@ void memZero(void *ptr, size_t size)
 const char *nonNull(const char *src) { return src == NULL ? "" : src; }
 
 QT_END_NAMESPACE
-

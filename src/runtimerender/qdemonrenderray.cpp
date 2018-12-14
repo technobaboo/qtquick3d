@@ -27,8 +27,11 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <QtDemonRuntimeRender/qdemonrenderray.h>
-#include <QtDemon/qdemonplane.h>
+
+#include "qdemonrenderray.h"
+
+#include <QtDemon/QDemonPlane>
+#include <QtDemon/qdemonutils.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -36,10 +39,10 @@ QT_BEGIN_NAMESPACE
 
 QDemonOption<QVector3D> SRay::Intersect(const QDemonPlane &inPlane) const
 {
-    float Vd = inPlane.n.dot(m_Direction);
+    float Vd = QVector3D::dotProduct(inPlane.n, m_Direction);
     if (fabs(Vd) < .0001f)
-        return Empty();
-    float V0 = -1.0f * (inPlane.n.dot(m_Origin) + inPlane.d);
+        return QDemonEmpty();
+    float V0 = -1.0f * (QVector3D::dotProduct(inPlane.n, m_Origin) + inPlane.d);
     float t = V0 / Vd;
     return m_Origin + (m_Direction * t);
 }
@@ -59,12 +62,13 @@ QDemonOption<SRayIntersectionResult> SRay::IntersectWithAABB(const QMatrix4x4 &i
     // that the pick could possibly be in.
 
     // Transform pick origin and direction into the subset's space.
-    QMatrix4x4 theOriginTransform = inGlobalTransform.getInverse();
+    QMatrix4x4 theOriginTransform = mat44::getInverse(inGlobalTransform);
 
-    QVector3D theTransformedOrigin = theOriginTransform.transform(m_Origin);
-    float *outOriginTransformPtr(theOriginTransform.front());
+    QVector3D theTransformedOrigin = mat44::transform(theOriginTransform, m_Origin);
+    float *outOriginTransformPtr(theOriginTransform.data());
     outOriginTransformPtr[12] = outOriginTransformPtr[13] = outOriginTransformPtr[14] = 0.0f;
-    QVector3D theTransformedDirection = theOriginTransform.rotate(m_Direction);
+
+    QVector3D theTransformedDirection = mat44::rotate(theOriginTransform, m_Direction);
 
     static const float KD_FLT_MAX = 3.40282346638528860e+38;
     static const float kEpsilon = 1e-5f;
@@ -91,30 +95,30 @@ QDemonOption<SRayIntersectionResult> SRay::IntersectWithAABB(const QMatrix4x4 &i
                    && inForceIntersect == false) {
             // Pickray is roughly parallel to the plane of the slab
             // so, if the origin is not in the range, we have no intersection
-            return Empty();
+            return QDemonEmpty();
         }
 
         // Shrink the intersections to find the closest hit
-        theMinWinner = NVMax(theMinWinner, theMinAxis);
-        theMaxWinner = NVMin(theMaxWinner, theMaxAxis);
+        theMinWinner = qMax(theMinWinner, theMinAxis);
+        theMaxWinner = qMin(theMaxWinner, theMaxAxis);
 
         if ((theMinWinner > theMaxWinner || theMaxWinner < 0) && inForceIntersect == false)
-            return Empty();
+            return QDemonEmpty();
     }
 
     QVector3D scaledDir = theTransformedDirection * theMinWinner;
     QVector3D newPosInLocal = theTransformedOrigin + scaledDir;
-    QVector3D newPosInGlobal = inGlobalTransform.transform(newPosInLocal);
+    QVector3D newPosInGlobal = mat44::transform(inGlobalTransform, newPosInLocal);
     QVector3D cameraToLocal = m_Origin - newPosInGlobal;
 
-    float rayLengthSquared = cameraToLocal.magnitudeSquared();
+    float rayLengthSquared = vec3::magnitudeSquared(cameraToLocal);
 
-    float xRange = inBounds.maximum.x - inBounds.minimum.x;
-    float yRange = inBounds.maximum.y - inBounds.minimum.y;
+    float xRange = inBounds.maximum.x() - inBounds.minimum.x();
+    float yRange = inBounds.maximum.y() - inBounds.minimum.y();
 
     QVector2D relXY;
-    relXY.x = (newPosInLocal[0] - inBounds.minimum.x) / xRange;
-    relXY.y = (newPosInLocal[1] - inBounds.minimum.y) / yRange;
+    relXY.setX((newPosInLocal[0] - inBounds.minimum.x()) / xRange);
+    relXY.setY((newPosInLocal[1] - inBounds.minimum.y()) / yRange);
 
     return SRayIntersectionResult(rayLengthSquared, relXY);
 }
@@ -122,12 +126,12 @@ QDemonOption<SRayIntersectionResult> SRay::IntersectWithAABB(const QMatrix4x4 &i
 QDemonOption<QVector2D> SRay::GetRelative(const QMatrix4x4 &inGlobalTransform, const QDemonBounds3 &inBounds,
                                     SBasisPlanes::Enum inPlane) const
 {
-    QMatrix4x4 theOriginTransform = inGlobalTransform.getInverse();
+    QMatrix4x4 theOriginTransform = mat44::getInverse(inGlobalTransform);
 
-    QVector3D theTransformedOrigin = theOriginTransform.transform(m_Origin);
-    float *outOriginTransformPtr(theOriginTransform.front());
+    QVector3D theTransformedOrigin = mat44::transform(theOriginTransform, m_Origin);
+    float *outOriginTransformPtr(theOriginTransform.data());
     outOriginTransformPtr[12] = outOriginTransformPtr[13] = outOriginTransformPtr[14] = 0.0f;
-    QVector3D theTransformedDirection = theOriginTransform.rotate(m_Direction);
+    QVector3D theTransformedDirection = mat44::rotate(theOriginTransform, m_Direction);
 
     // The XY plane is going to be a plane with either positive or negative Z direction that runs
     // through
@@ -146,21 +150,21 @@ QDemonOption<QVector2D> SRay::GetRelative(const QMatrix4x4 &inGlobalTransform, c
         theRight = QVector3D(0, 0, 1);
         break;
     }
-    QDemonPlane thePlane(theDirection, theDirection.dot(theTransformedDirection) > 0.0f
-                     ? theDirection.dot(inBounds.maximum)
-                     : theDirection.dot(inBounds.minimum));
+    QDemonPlane thePlane(theDirection, QVector3D::dotProduct(theDirection, theTransformedDirection) > 0.0f
+                     ? QVector3D::dotProduct(theDirection, inBounds.maximum)
+                     : QVector3D::dotProduct(theDirection, inBounds.minimum));
 
     SRay relativeRay(theTransformedOrigin, theTransformedDirection);
     QDemonOption<QVector3D> localIsect = relativeRay.Intersect(thePlane);
     if (localIsect.hasValue()) {
-        float xRange = theRight.dot(inBounds.maximum) - theRight.dot(inBounds.minimum);
-        float yRange = theUp.dot(inBounds.maximum) - theUp.dot(inBounds.minimum);
-        float xOrigin = xRange / 2.0f + theRight.dot(inBounds.minimum);
-        float yOrigin = yRange / 2.0f + theUp.dot(inBounds.minimum);
-        return QVector2D((theRight.dot(*localIsect) - xOrigin) / xRange,
-                         (theUp.dot(*localIsect) - yOrigin) / yRange);
+        float xRange = QVector3D::dotProduct(theRight, inBounds.maximum) - QVector3D::dotProduct(theRight, inBounds.minimum);
+        float yRange = QVector3D::dotProduct(theUp, inBounds.maximum) - QVector3D::dotProduct(theUp, inBounds.minimum);
+        float xOrigin = xRange / 2.0f + QVector3D::dotProduct(theRight, inBounds.minimum);
+        float yOrigin = yRange / 2.0f + QVector3D::dotProduct(theUp, inBounds.minimum);
+        return QVector2D((QVector3D::dotProduct(theRight, *localIsect) - xOrigin) / xRange,
+                         (QVector3D::dotProduct(theUp, *localIsect) - yOrigin) / yRange);
     }
-    return Empty();
+    return QDemonEmpty();
 }
 
 QT_END_NAMESPACE

@@ -31,6 +31,7 @@
 #ifndef QDEMON_RENDER_TESS_MODE_VALUES_H
 #define QDEMON_RENDER_TESS_MODE_VALUES_H
 
+#include <QtDemonRuntimeRender/qtdemonruntimerenderglobal.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -67,6 +68,7 @@ struct TessModeValues
         }
     }
 };
+
 QT_END_NAMESPACE
 
 #endif

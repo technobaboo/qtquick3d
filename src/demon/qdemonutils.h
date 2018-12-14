@@ -20,6 +20,7 @@ QVector3D Q_DEMON_EXPORT minimum(const QVector3D &v1, const QVector3D &v2);
 QVector3D Q_DEMON_EXPORT maximum(const QVector3D &v1, const QVector3D &v2);
 bool Q_DEMON_EXPORT isFinite(const QVector3D &v);
 float Q_DEMON_EXPORT magnitude(const QVector3D &v);
+float Q_DEMON_EXPORT magnitudeSquared(const QVector3D &v);
 float Q_DEMON_EXPORT normalize(QVector3D &v);
 
 }
@@ -31,6 +32,10 @@ QMatrix3x3 Q_DEMON_EXPORT getInverse(const QMatrix3x3 &m);
 
 namespace mat44 {
 QMatrix4x4 Q_DEMON_EXPORT getInverse(const QMatrix4x4 &m);
+QVector3D Q_DEMON_EXPORT rotate(const QMatrix4x4 &m, const QVector3D &v);
+QVector4D Q_DEMON_EXPORT rotate(const QMatrix4x4 &m, const QVector4D &v);
+QVector3D Q_DEMON_EXPORT transform(const QMatrix4x4 &m, const QVector3D &v);
+QVector4D Q_DEMON_EXPORT transform(const QMatrix4x4 &m, const QVector4D &v);
 }
 
 namespace quant {

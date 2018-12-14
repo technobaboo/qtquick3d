@@ -31,12 +31,13 @@
 #ifndef QDEMON_RENDER_RAY_H
 #define QDEMON_RENDER_RAY_H
 
+#include <QtDemon/QDemonOption>
+#include <QtDemon/QDemonBounds3>
 
 #include <QtGui/QVector2D>
 #include <QtGui/QVector3D>
-#include <QtDemon/qdemonoption.h>
 #include <QtGui/QMatrix4x4>
-#include <QtDemon/qdemonbounds3.h>
+
 
 QT_BEGIN_NAMESPACE
 struct SBasisPlanes

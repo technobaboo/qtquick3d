@@ -153,6 +153,7 @@ quint64 QDemonThreadPool::AddTask(void *inUserData, TTaskFunction inFunction, TT
     auto task = new QDemonTask(inUserData, inFunction, inCancelFunction, taskID, this);
     m_taskMap.insert(taskID, task);
     m_threadPool.start(task);
+    return taskID;
 }
 
 TaskStates::Enum QDemonThreadPool::GetTaskState(quint64 inTaskId)

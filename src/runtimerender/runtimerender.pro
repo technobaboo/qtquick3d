@@ -48,7 +48,7 @@ HEADERS += \
 #    qdemonrenderplugingraphobject.h \
 #    qdemonrenderpluginpropertyvalue.h \
 #    qdemonrenderprofiler.h \
-#    qdemonrenderray.h \
+    qdemonrenderray.h \
     qdemonrenderrenderlist.h \
 #    qdemonrenderrotationhelper.h \
 #    qdemonrendershadercache.h \
@@ -58,8 +58,8 @@ HEADERS += \
 #    qdemonrendershadowmap.h \
 #    qdemonrendersubpresentation.h \
 #    qdemonrendersubpresentationhelper.h \
-#    qdemonrendertaggedpointer.h \
-#    qdemonrendertessmodevalues.h \
+    qdemonrendertaggedpointer.h \
+    qdemonrendertessmodevalues.h \
 #    qdemonrendertexttextureatlas.h \
 #    qdemonrendertexttexturecache.h \
     qdemonrendertexttypes.h \
@@ -92,7 +92,7 @@ SOURCES += \
 #    qdemonrenderpixelgraphicsrenderer.cpp \
 #    qdemonrenderpixelgraphicstypes.cpp \
 #    qdemonrenderplugin.cpp \
-#    qdemonrenderray.cpp \
+    qdemonrenderray.cpp \
     qdemonrenderrenderlist.cpp \
 #    qdemonrendershadercache.cpp \
 #    qdemonrendershadercodegenerator.cpp \
