@@ -33,6 +33,8 @@
 
 #include <QtDemonRuntimeRender/qtdemonruntimerenderglobal.h>
 
+#include <QtCore/QSharedPointer>
+
 QT_BEGIN_NAMESPACE
 
 typedef void (*TTaskFunction)(void *inUserData);
@@ -71,7 +73,7 @@ public:
     virtual TaskStates::Enum GetTaskState(quint64 inTaskId) = 0;
     virtual CancelReturnValues::Enum CancelTask(quint64 inTaskId) = 0;
 
-    static IThreadPool &CreateThreadPool(quint32 inNumThreads = 4);
+    static QSharedPointer<IThreadPool> CreateThreadPool(quint32 inNumThreads = 4);
 };
 QT_END_NAMESPACE
 #endif
