@@ -60,7 +60,7 @@ HEADERS += \
 #    qdemonrendersubpresentationhelper.h \
     qdemonrendertaggedpointer.h \
     qdemonrendertessmodevalues.h \
-#    qdemonrendertexttextureatlas.h \
+    qdemonrendertexttextureatlas.h \
     qdemonrendertexttexturecache.h \
     qdemonrendertexttypes.h \
     qdemonrendertextureatlas.h \
@@ -99,7 +99,7 @@ SOURCES += \
 #    qdemonrendershadercodegeneratorv2.cpp \
 #    qdemonrendershadowmap.cpp \
 #    qdemonrendersubpresentation.cpp \
-#    qdemonrendertexttextureatlas.cpp \
+    qdemonrendertexttextureatlas.cpp \
     qdemonrendertexttexturecache.cpp \
     qdemonrendertextureatlas.cpp \
     qdemonrenderthreadpool.cpp \

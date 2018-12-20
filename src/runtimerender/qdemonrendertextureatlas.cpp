@@ -27,7 +27,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <qdemonrendertextureatlas.h>
+#include "qdemonrendertextureatlas.h"
+
 #include <QtDemonRender/qdemonrendertexture2d.h>
 #include <QtDemonRender/qdemonrendercontext.h>
 

@@ -14,7 +14,7 @@ HEADERS += \
     $$PWD/qdemonrendernode.h \
     $$PWD/qdemonrenderpath.h \
     $$PWD/qdemonrenderpathsubpath.h \
-#    $$PWD/qdemonrenderpresentation.h \
+    $$PWD/qdemonrenderpresentation.h \
     $$PWD/qdemonrenderreferencedmaterial.h \
 #    $$PWD/qdemonrenderscene.h \
     $$PWD/qdemonrendertext.h
@@ -31,6 +31,6 @@ SOURCES += \
 #    $$PWD/qdemonrendermodel.cpp \
     $$PWD/qdemonrendernode.cpp \
     $$PWD/qdemonrenderpath.cpp \
-#    $$PWD/qdemonrenderpresentation.cpp \
+    $$PWD/qdemonrenderpresentation.cpp \
 #    $$PWD/qdemonrenderscene.cpp \
     $$PWD/qdemonrendertext.cpp

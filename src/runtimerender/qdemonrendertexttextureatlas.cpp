@@ -45,8 +45,8 @@ struct STextTextureAtlas : public ITextTextureAtlas
     QSharedPointer<ITextRenderer> m_TextRenderer;
     QSharedPointer<QDemonRenderContext> m_RenderContext;
 
-    STextTextureAtlas(ITextRenderer &inRenderer,
-                      QDemonRenderContext &inRenderContext)
+    STextTextureAtlas(QSharedPointer<ITextRenderer> inRenderer,
+                      QSharedPointer<QDemonRenderContext> inRenderContext)
         : m_TextRenderer(inRenderer)
         , m_RenderContext(inRenderContext)
         , m_TextureAtlasInitialized(false)
@@ -54,11 +54,8 @@ struct STextTextureAtlas : public ITextTextureAtlas
     {
     }
 
-    virtual ~STextTextureAtlas()
+    virtual ~STextTextureAtlas() override
     {
-        // if (m_textureAtlas) {
-        //     m_textureAtlas->release();
-        // }
     }
 
     TTextRenderAtlasDetailsAndTexture RenderText(const STextRenderInfo &inText) override
@@ -105,13 +102,13 @@ struct STextTextureAtlas : public ITextTextureAtlas
 
 private:
     bool m_TextureAtlasInitialized;
-    QDemonRenderTexture2D *m_textureAtlas; // this is the actual texture which has application lifetime
+    QSharedPointer<QDemonRenderTexture2D> m_textureAtlas; // this is the actual texture which has application lifetime
 };
 
 } // namespace
 
-ITextTextureAtlas &ITextTextureAtlas::CreateTextureAtlas(ITextRenderer &inTextRenderer,
-                                                         QDemonRenderContext &inRenderContext)
+ITextTextureAtlas &ITextTextureAtlas::CreateTextureAtlas(QSharedPointer<ITextRenderer> inTextRenderer,
+                                                         QSharedPointer<QDemonRenderContext> inRenderContext)
 {
     return *new STextTextureAtlas(inTextRenderer, inRenderContext);
 }

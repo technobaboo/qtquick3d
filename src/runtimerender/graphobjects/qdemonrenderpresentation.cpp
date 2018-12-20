@@ -27,19 +27,20 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <QtDemonRuntimeRender/qdemonrenderpresentation.h>
+#include "qdemonrenderpresentation.h"
+
 #include <QtDemonRender/qdemonrendercontext.h>
-#include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
 
 QT_BEGIN_NAMESPACE
 
 void SPresentation::Render(IQDemonRenderContext &inContext)
 {
-    if (m_Scene) {
-        QDemonRenderRect theViewportSize(inContext.GetRenderContext().GetViewport());
-        m_Scene->Render(QVector2D((float)theViewportSize.m_Width, (float)theViewportSize.m_Height),
-                        inContext);
-    }
+    // ### TODO: Re add QDemonRenderContextCore!!!
+//    if (m_Scene) {
+//        QDemonRenderRect theViewportSize(inContext.GetRenderContext().GetViewport());
+//        m_Scene->Render(QVector2D((float)theViewportSize.m_Width, (float)theViewportSize.m_Height),
+//                        inContext);
+//    }
 }
 
 QT_END_NAMESPACE

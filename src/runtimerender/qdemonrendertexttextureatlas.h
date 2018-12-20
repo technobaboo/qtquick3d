@@ -35,6 +35,7 @@
 
 QT_BEGIN_NAMESPACE
 class ITextRenderer;
+class QDemonRenderContext;
 
 typedef QPair<STextTextureAtlasDetails, QSharedPointer<QDemonRenderTexture2D>>
 TTextTextureAtlasDetailsAndTexture;
@@ -50,8 +51,8 @@ public:
     virtual bool IsInitialized() = 0;
     virtual TTextTextureAtlasDetailsAndTexture PrepareTextureAtlas() = 0;
 
-    static ITextTextureAtlas &CreateTextureAtlas(ITextRenderer &inTextRenderer,
-                                                 QDemonRenderContext &inRenderContext);
+    static ITextTextureAtlas &CreateTextureAtlas(QSharedPointer<ITextRenderer> inTextRenderer,
+                                                 QSharedPointer<QDemonRenderContext> inRenderContext);
 };
 QT_END_NAMESPACE
 #endif
