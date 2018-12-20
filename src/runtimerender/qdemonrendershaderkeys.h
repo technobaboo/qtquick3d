@@ -32,9 +32,11 @@
 #define QDEMON_RENDER_SHADER_KEY_H
 
 #include <QtDemon/qdemondataref.h>
+
+#include <QtDemonRender/qdemonrenderbasetypes.h>
+
 #include <QtDemonRuntimeRender/qdemonrenderdefaultmaterial.h>
 #include <QtDemonRuntimeRender/qdemonrendertessmodevalues.h>
-#include <QtDemonRender/qdemonrenderbasetypes.h>
 
 QT_BEGIN_NAMESPACE
 // We have an ever expanding set of properties we like to hash into one or more 32 bit
@@ -169,8 +171,15 @@ struct SShaderKeyUnsigned : public SShaderKeyPropertyBase
     {
         quint32 value = GetValue(inKeySet);
         char buf[64];
-        StringConversion<quint32>().ToStr(value, toDataRef(buf, 64));
+        ToStr(value, toDataRef(buf, 64));
         InternalToString(ioStr, buf);
+    }
+
+private:
+    static quint32 ToStr(quint32 item, QDemonDataRef<char> buffer)
+    {
+        // hope the buffer is big enough...
+        return static_cast<quint32>(_snprintf(buffer.begin(), buffer.size(), "%u", item));
     }
 };
 
@@ -221,9 +230,6 @@ struct SShaderKeyTessellation : public SShaderKeyUnsigned<4>
             break;
         case TessModeValues::TessPhong:
             SetBitValue(phongTessellation, val, inKeySet);
-            break;
-        default:
-            Q_ASSERT(false);
             break;
         }
     }
@@ -330,9 +336,6 @@ struct SShaderKeyTextureSwizzle : public SShaderKeyUnsigned<5>
             break;
         case QDemonRenderTextureSwizzleMode::L16toR16:
             SetBitValue(L16toR16, val, inKeySet);
-            break;
-        default:
-            Q_ASSERT(false);
             break;
         }
     }
@@ -501,7 +504,7 @@ struct SShaderKeySpecularModel : SShaderKeyUnsigned<2>
     void SetSpecularModel(QDemonDataRef<quint32> inKeySet,
                           DefaultMaterialSpecularModel::Enum inModel)
     {
-        SetValue(inKeySet, (quint32)inModel);
+        SetValue(inKeySet, quint32(inModel));
     }
 
     DefaultMaterialSpecularModel::Enum
@@ -711,9 +714,9 @@ struct SShaderDefaultMaterialKey
         DataBufferSize = 7,
     };
     quint32 m_DataBuffer[DataBufferSize];
-    size_t m_FeatureSetHash;
+    uint m_FeatureSetHash;
 
-    SShaderDefaultMaterialKey(size_t inFeatureSetHash)
+    SShaderDefaultMaterialKey(uint inFeatureSetHash)
         : m_FeatureSetHash(inFeatureSetHash)
     {
         for (size_t idx = 0; idx < DataBufferSize; ++idx)
@@ -727,11 +730,11 @@ struct SShaderDefaultMaterialKey
             m_DataBuffer[idx] = 0;
     }
 
-    size_t hash() const
+    uint hash() const
     {
-        size_t retval = 0;
+        uint retval = 0;
         for (size_t idx = 0; idx < DataBufferSize; ++idx)
-            retval = retval ^ eastl::hash<quint32>()(m_DataBuffer[idx]);
+            retval = retval ^ qHash(m_DataBuffer[idx]);
         return retval ^ m_FeatureSetHash;
     }
 
@@ -765,7 +768,7 @@ struct SShaderDefaultMaterialKey
         {
             quint32 originalSize = m_Str.size();
             if (m_Str.size())
-                m_Str.append(";");
+                m_Str.append(QStringLiteral(";"));
             prop.ToString(m_Str, m_KeyStore);
             // if the only thing we added was the semicolon
             // then nuke the semicolon
@@ -783,15 +786,8 @@ struct SShaderDefaultMaterialKey
 };
 QT_END_NAMESPACE
 
-//namespace eastl {
-//template <>
-//struct hash<SShaderDefaultMaterialKey>
-//{
-//    size_t operator()(const SShaderDefaultMaterialKey &key) const
-//    {
-//        return key.hash();
-//    }
-//};
-
+uint qHash(const SShaderDefaultMaterialKey &key) {
+    return key.hash();
+}
 
 #endif

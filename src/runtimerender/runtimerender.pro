@@ -54,7 +54,7 @@ HEADERS += \
 #    qdemonrendershadercache.h \
     qdemonrendershadercodegenerator.h \
 #    qdemonrendershadercodegeneratorv2.h \
-#    qdemonrendershaderkeys.h \
+    qdemonrendershaderkeys.h \
 #    qdemonrendershadowmap.h \
 #    qdemonrendersubpresentation.h \
 #    qdemonrendersubpresentationhelper.h \
