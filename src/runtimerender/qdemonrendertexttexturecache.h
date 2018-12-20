@@ -36,22 +36,18 @@
 QT_BEGIN_NAMESPACE
 
 class ITextRenderer;
+class QDemonRenderContext;
 
-typedef QPair<QSharedPointer<QDemonRenderPathFontSpecification>,
-QSharedPointer<QDemonRenderPathFontItem>>
-TPathFontSpecAndPathObject;
-typedef QPair<STextTextureDetails, QSharedPointer<QDemonRenderTexture2D>>
-TTextTextureDetailsAndTexture;
-typedef QPair<TPathFontSpecAndPathObject, TTextTextureDetailsAndTexture>
-TTPathObjectAndTexture;
+typedef QPair<QSharedPointer<QDemonRenderPathFontSpecification>, QSharedPointer<QDemonRenderPathFontItem>> TPathFontSpecAndPathObject;
+typedef QPair<STextTextureDetails, QSharedPointer<QDemonRenderTexture2D>> TTextTextureDetailsAndTexture;
+typedef QPair<TPathFontSpecAndPathObject, TTextTextureDetailsAndTexture> TTPathObjectAndTexture;
 
 class ITextTextureCache
 {
 protected:
     virtual ~ITextTextureCache() {}
 public:
-    virtual TTPathObjectAndTexture RenderText(const STextRenderInfo &inText,
-                                              float inScaleFactor) = 0;
+    virtual TTPathObjectAndTexture RenderText(const STextRenderInfo &inText, float inScaleFactor) = 0;
     // We may have one more texture in cache than this byte count, but this will be the limiting
     // factor.
     virtual quint32 GetCacheHighWaterBytes() const = 0;
@@ -62,8 +58,7 @@ public:
     // frame.
     virtual void EndFrame() = 0;
 
-    static ITextTextureCache &CreateTextureCache(ITextRenderer &inTextRenderer,
-                                                 QDemonRenderContext &inRenderContext);
+    static ITextTextureCache &CreateTextureCache(QSharedPointer<ITextRenderer> inTextRenderer, QSharedPointer<QDemonRenderContext> inRenderContext);
 };
 QT_END_NAMESPACE
 #endif
