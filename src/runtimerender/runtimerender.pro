@@ -11,7 +11,7 @@ HEADERS += \
     qtdemonruntimerenderglobal.h \
     qtdemonruntimerenderglobal_p.h \
 #    qdemonqmlrender.h \
-#    qdemonoffscreenrenderkey.h \
+    qdemonoffscreenrenderkey.h \
 #    qdemonoffscreenrendermanager.h \
 #    qdemonoldnbustedrenderplugin.h \
 #    qdemonrenderableimage.h \
@@ -30,7 +30,7 @@ HEADERS += \
     qdemonrendereulerangles.h \
 #    qdemonrendergraphobjectpickquery.h \
 #    qdemonrendergraphobjectserializer.h \
-#    qdemonrendergraphobjecttypes.h \
+    qdemonrendergraphobjecttypes.h \
     qdemonrenderimagescaler.h \
     qdemonrenderimagetexturedata.h \
 #    qdemonrenderinputstreamfactory.h \
@@ -50,7 +50,7 @@ HEADERS += \
     qdemonrenderprofiler.h \
     qdemonrenderray.h \
     qdemonrenderrenderlist.h \
-#    qdemonrenderrotationhelper.h \
+    qdemonrenderrotationhelper.h \
 #    qdemonrendershadercache.h \
     qdemonrendershadercodegenerator.h \
 #    qdemonrendershadercodegeneratorv2.h \

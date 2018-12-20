@@ -79,9 +79,9 @@ struct SRotationHelper
     {
         // step 1 - reduce all components to less than 2*pi but greater than 0
         QVector3D retval(inSrcAngle);
-        retval.x = ToMinimalAngle(retval.x);
-        retval.y = ToMinimalAngle(retval.y);
-        retval.z = ToMinimalAngle(retval.z);
+        retval.setX(ToMinimalAngle(retval.x()));
+        retval.setY(ToMinimalAngle(retval.y()));
+        retval.setZ(ToMinimalAngle(retval.z()));
 
         // step 2 - if any two components are equal to or greater than pi
         // then subtract pi from all three, then run two pi reduce again.
@@ -150,8 +150,9 @@ struct SRotationHelper
 
     static QVector3D ToMinimalAngleDiff(const QVector3D inDiff)
     {
-        return QVector3D(ToMinimalAngle(inDiff.x), ToMinimalAngle(inDiff.y),
-                         ToMinimalAngle(inDiff.z));
+        return QVector3D(ToMinimalAngle(inDiff.x()),
+                         ToMinimalAngle(inDiff.y()),
+                         ToMinimalAngle(inDiff.z()));
     }
 
     /**

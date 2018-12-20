@@ -27,8 +27,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <QtDemonRuntimeRender/qdemonrenderpath.h>
-#include <QtDemonRuntimeRender/qdemonrenderpathsubpath.h>
+#include "qdemonrenderpath.h"
+#include "qdemonrenderpathsubpath.h"
 
 QT_BEGIN_NAMESPACE
 

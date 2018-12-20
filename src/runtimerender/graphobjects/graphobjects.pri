@@ -4,20 +4,20 @@ HEADERS += \
 #    $$PWD/qdemonrenderdefaultmaterial.h \
 #    $$PWD/qdemonrenderdynamicobject.h \
 #    $$PWD/qdemonrendereffect.h \
-#    $$PWD/qdemonrendergraphobject.h \
+    $$PWD/qdemonrendergraphobject.h \
 #    $$PWD/qdemonrenderimage.h \
 #    $$PWD/qdemonrenderlayer.h \
-#    $$PWD/qdemonrenderlight.h \
+    $$PWD/qdemonrenderlight.h \
 #    $$PWD/qdemonrenderlightmaps.h \
-#    $$PWD/qdemonrendermaterialdirty.h \
+    $$PWD/qdemonrendermaterialdirty.h \
 #    $$PWD/qdemonrendermodel.h \
-#    $$PWD/qdemonrendernode.h \
-#    $$PWD/qdemonrenderpath.h \
-#    $$PWD/qdemonrenderpathsubpath.h \
+    $$PWD/qdemonrendernode.h \
+    $$PWD/qdemonrenderpath.h \
+    $$PWD/qdemonrenderpathsubpath.h \
 #    $$PWD/qdemonrenderpresentation.h \
-#    $$PWD/qdemonrenderreferencedmaterial.h \
+    $$PWD/qdemonrenderreferencedmaterial.h \
 #    $$PWD/qdemonrenderscene.h \
-#    $$PWD/qdemonrendertext.h
+    $$PWD/qdemonrendertext.h
 
 SOURCES += \
 #    $$PWD/qdemonrendercamera.cpp \
@@ -26,11 +26,11 @@ SOURCES += \
 #    $$PWD/qdemonrendereffect.cpp \
 #    $$PWD/qdemonrenderimage.cpp \
 #    $$PWD/qdemonrenderlayer.cpp \
-#    $$PWD/qdemonrenderlight.cpp \
+    $$PWD/qdemonrenderlight.cpp \
 #    $$PWD/qdemonrenderlightmaps.cpp \
 #    $$PWD/qdemonrendermodel.cpp \
-#    $$PWD/qdemonrendernode.cpp \
-#    $$PWD/qdemonrenderpath.cpp \
+    $$PWD/qdemonrendernode.cpp \
+    $$PWD/qdemonrenderpath.cpp \
 #    $$PWD/qdemonrenderpresentation.cpp \
 #    $$PWD/qdemonrenderscene.cpp \
-#    $$PWD/qdemonrendertext.cpp
+    $$PWD/qdemonrendertext.cpp

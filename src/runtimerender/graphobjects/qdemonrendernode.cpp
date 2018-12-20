@@ -28,11 +28,13 @@
 **
 ****************************************************************************/
 
+#include "qdemonrendernode.h"
+
 #include <QtDemon/qdemonutils.h>
 #include <QtDemonRuntimeRender/qdemonrendereulerangles.h>
 
 //#include <QtDemonRuntimeRender/qdemonrendermodel.h>
-#include <QtDemonRuntimeRender/qdemonrendernode.h>
+
 //#include <QtDemonRuntimeRender/qdemonrenderpathmanager.h>
 //#include <QtDemonRuntimeRender/qdemonrendertext.h>
 //#include <QtDemonRuntimeRender/qdemonrenderer.h>
