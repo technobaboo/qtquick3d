@@ -31,6 +31,8 @@
 #ifndef QDEMON_OBJECT_RENDER_PLUGIN_H
 #define QDEMON_OBJECT_RENDER_PLUGIN_H
 
+#include <QtDemonRuntimeRender/qtdemonruntimerenderglobal.h>
+
 /*
  *	Below are the definitions required in order to write a render plugin for UIComposer.
  *	Please note that calling anything related to opengl is explicitly not allowed except
@@ -40,45 +42,44 @@
  */
 
 QT_BEGIN_NAMESPACE
-QT_END_NAMESPACE
 
 #ifdef _cplusplus
 #extern "C" {
 #endif
 
-enum QDEMONRenderPluginPropertyTypes {
-    QDEMONRenderPluginPropertyTypeNone = 0,
-    QDEMONRenderPluginPropertyTypeLong = 1,
-    QDEMONRenderPluginPropertyTypeFloat = 2,
-    QDEMONRenderPluginPropertyTypeCharPtr = 3,
+enum QDemonRenderPluginPropertyTypes {
+    QDemonRenderPluginPropertyTypeNone = 0,
+    QDemonRenderPluginPropertyTypeLong = 1,
+    QDemonRenderPluginPropertyTypeFloat = 2,
+    QDemonRenderPluginPropertyTypeCharPtr = 3,
 };
 
-enum QDEMONRenderPluginDepthTypes {
-    QDEMONRenderPluginDepthTypeNoDepthBuffer = 0,
-    QDEMONRenderPluginDepthTypeDepth16, // 16 bit depth buffer
-    QDEMONRenderPluginDepthTypeDepth24, // 24 bit depth buffer
-    QDEMONRenderPluginDepthTypeDepth32, // 32 bit depth buffer
+enum QDemonRenderPluginDepthTypes {
+    QDemonRenderPluginDepthTypeNoDepthBuffer = 0,
+    QDemonRenderPluginDepthTypeDepth16, // 16 bit depth buffer
+    QDemonRenderPluginDepthTypeDepth24, // 24 bit depth buffer
+    QDemonRenderPluginDepthTypeDepth32, // 32 bit depth buffer
 };
 
-enum QDEMONRenderPluginTextureTypes {
-    QDEMONRenderPluginTextureTypeNoTexture = 0,
-    QDEMONRenderPluginTextureTypeRGBA8, // 32 bit format
-    QDEMONRenderPluginTextureTypeRGB8, // 24 bit format
-    QDEMONRenderPluginTextureTypeRGB565, // 16 bit format
-    QDEMONRenderPluginTextureTypeRGBA5551, // 16 bit format
+enum QDemonRenderPluginTextureTypes {
+    QDemonRenderPluginTextureTypeNoTexture = 0,
+    QDemonRenderPluginTextureTypeRGBA8, // 32 bit format
+    QDemonRenderPluginTextureTypeRGB8, // 24 bit format
+    QDemonRenderPluginTextureTypeRGB565, // 16 bit format
+    QDemonRenderPluginTextureTypeRGBA5551, // 16 bit format
 };
 
-enum QDEMONRenderPluginColorClearState {
-    QDEMONRenderPluginColorClearStateClearIsOptional = 0,
-    QDEMONRenderPluginColorClearStateDoNotClear,
-    QDEMONRenderPluginColorClearStateAlwaysClear,
+enum QDemonRenderPluginColorClearState {
+    QDemonRenderPluginColorClearStateClearIsOptional = 0,
+    QDemonRenderPluginColorClearStateDoNotClear,
+    QDemonRenderPluginColorClearStateAlwaysClear,
 };
 
-enum QDEMONRenderPluginMSAALevel {
-    QDEMONRenderPluginMSAALevelNoMSAA = 0, // no MSAA, one also works.
-    QDEMONRenderPluginMSAALevelTwo = 2, // 2 samples
-    QDEMONRenderPluginMSAALevelFour = 4, // 4 samples
-    QDEMONRenderPluginMSAALevelEight = 8, // 8 samples
+enum QDemonRenderPluginMSAALevel {
+    QDemonRenderPluginMSAALevelNoMSAA = 0, // no MSAA, one also works.
+    QDemonRenderPluginMSAALevelTwo = 2, // 2 samples
+    QDemonRenderPluginMSAALevelFour = 4, // 4 samples
+    QDemonRenderPluginMSAALevelEight = 8, // 8 samples
 };
 
 typedef long TBool;
@@ -94,7 +95,7 @@ typedef void *TRenderPluginClassPtr;
 typedef struct _RenderPluginPropertyUpdate
 {
     const char *m_PropName;
-    enum QDEMONRenderPluginPropertyTypes m_PropertyType;
+    enum QDemonRenderPluginPropertyTypes m_PropertyType;
 
     // Is either a float or a long or a const char* depending on the property type.
     // for specify types of properties, example code would be:
@@ -108,10 +109,10 @@ typedef struct _RenderPluginSurfaceDescription
 {
     long m_Width;
     long m_Height;
-    enum QDEMONRenderPluginDepthTypes m_DepthBuffer;
-    enum QDEMONRenderPluginTextureTypes m_ColorBuffer;
+    enum QDemonRenderPluginDepthTypes m_DepthBuffer;
+    enum QDemonRenderPluginTextureTypes m_ColorBuffer;
     TBool m_HasStencilBuffer;
-    QDEMONRenderPluginMSAALevel m_MSAALevel;
+    QDemonRenderPluginMSAALevel m_MSAALevel;
 } TRenderPluginSurfaceDescription;
 
 typedef struct _TVec2
@@ -216,7 +217,7 @@ typedef TNeedsRenderResult (*TNeedsRenderFunction)(TRenderPluginClassPtr cls,
  */
 typedef void (*TRenderFunction)(TRenderPluginClassPtr cls, TRenderPluginInstancePtr instance,
                                 TRenderPluginSurfaceDescription surface, TVec2 presScaleFactor,
-                                QDEMONRenderPluginColorClearState inClearColorBuffer);
+                                QDemonRenderPluginColorClearState inClearColorBuffer);
 
 /*
  *	Pick - handle a mouse pick into the plugin.
@@ -329,5 +330,7 @@ typedef TRenderPluginClass (*TCreateRenderPluginClassFunction)(const char *inTyp
 #ifdef _cplusplus
 }
 #endif
+
+QT_END_NAMESPACE
 
 #endif

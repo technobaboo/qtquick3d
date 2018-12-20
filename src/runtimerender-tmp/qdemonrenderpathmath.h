@@ -32,13 +32,19 @@
 
 #include <QtGui/QVector2D>
 #include <QtGui/QVector3D>
+#include <QtGui/QVector4D>
+#include <QtCore/QVector>
+
+#include <QtDemon/QDemonFlags>
+#include <QtDemon/QDemonOption>
+#include <QtDemon/qdemonutils.h>
+#include <QtDemon/qdemondataref.h>
 
 QT_BEGIN_NAMESPACE
 
 namespace path {
 // Solve quadratic equation in with a templated real number system.
 template <typename REAL>
-
 int quadratic(REAL b, REAL c, REAL rts[2])
 {
     int nquad;
@@ -90,11 +96,11 @@ void cubicInflectionPoint(const QVector2D cp[4], QVector<float> &key_point)
     const QVector2D B = (cp[0] - cp[1] * 2.0 + cp[2]) * 3.0, C = (cp[1] - cp[0]) * 3.0;
     const QVector2D D = cp[0];
 
-    double a = 3 * (B.x * A.y - A.x * B.y);
-    double b = 3 * (C.x * A.y - C.y * A.x);
-    double c = C.x * B.y - C.y * B.x;
+    float a = 3 * (B.x() * A.y() - A.x() * B.y());
+    float b = 3 * (C.x() * A.y() - C.y() * A.x());
+    float c = C.x() * B.y() - C.y() * B.x();
 
-    double roots[2];
+    float roots[2];
     int solutions;
     // Is the quadratic really a degenerate line?
     if (a == 0) {
@@ -106,7 +112,7 @@ void cubicInflectionPoint(const QVector2D cp[4], QVector<float> &key_point)
             roots[0] = c / b;
         }
     } else {
-        solutions = quadratic(b / a, c / a, roots);
+        solutions = path::quadratic(b / a, c / a, roots);
     }
     for (int i = 0; i < solutions; i++) {
         float t = static_cast<float>(roots[i]);
@@ -148,12 +154,12 @@ inline QVector3D crossv1(const QVector2D &a, const QVector2D &b)
 
 inline bool sameVertex(const QVector2D &a, const QVector2D &b)
 {
-    return (a.x == b.x && a.y == b.y);
+    return (a.x() == b.x() && a.y() == b.y());
 }
 
 inline bool sameVertex(const QVector3D &a, const QVector3D &b)
 {
-    return (a.x == b.x && a.y == b.y && a.z == b.z);
+    return (a.x() == b.x() && a.y() == b.y() && a.z() == b.z());
 }
 
 // This function "normalizes" the input vector so the larger of its components
@@ -186,12 +192,12 @@ inline double fastfrexp(double d, int *exponent)
 
 QVector3D CreateVec3(QVector2D xy, float z)
 {
-    return QVector3D(xy.x, xy.y, z);
+    return QVector3D(xy.x(), xy.y(), z);
 }
 
 QVector2D GetXY(const QVector3D &data)
 {
-    return QVector2D(data.x, data.y);
+    return QVector2D(data.x(), data.y());
 }
 
 CurveType cubicDoublePoint(const QVector2D points[4], QVector<float> &key_point)
@@ -224,9 +230,9 @@ CurveType cubicDoublePoint(const QVector2D points[4], QVector<float> &key_point)
     const QVector3D AD = crossv1(GetXY(A), GetXY(D));
     const QVector3D BA = crossv1(GetXY(B), GetXY(A));
 
-    const double a1 = A.dot(DC);
-    const double a2 = B.dot(AD);
-    const double a3 = C.dot(BA);
+    const double a1 = QVector3D::dotProduct(A, DC);
+    const double a2 = QVector3D::dotProduct(B, AD);
+    const double a3 = QVector3D::dotProduct(C, BA);
     const double d1 = a1 - 2 * a2 + 3 * a3;
     const double d2 = -a2 + 3 * a3;
     const double d3 = 3 * a3;
@@ -271,7 +277,7 @@ CurveType cubicDoublePoint(const QVector2D points[4], QVector<float> &key_point)
         //
         // This situation can occur when the 1st and 2nd (or 3rd and 4th?)
         // control point of a cubic Bezier path SubPath are identical.
-        if (e.x == 0 && e.y == 0)
+        if (e.x() == 0 && e.y() == 0)
             e = d;
 
         // d, e, or both could be very large values.  To mitigate the risk of
@@ -281,16 +287,16 @@ CurveType cubicDoublePoint(const QVector2D points[4], QVector<float> &key_point)
 
         // Be careful to divide by a power-of-two to disturb mantissa bits.
 
-        double d_max_mag = NVMax(fabs(d.x), fabs(d.y));
+        double d_max_mag = qMax(fabs(d.x()), fabs(d.y()));
         int exponent;
         fastfrexp(d_max_mag, &exponent);
         scaleTo512To1024(d, exponent);
 
-        double e_max_mag = NVMax(fabs(e.x), fabs(e.y));
+        double e_max_mag = qMax(fabs(e.x()), fabs(e.y()));
         fastfrexp(e_max_mag, &exponent);
         scaleTo512To1024(e, exponent);
 
-        const QVector2D roots = QVector2D(d.x / d.y, e.x / e.y);
+        const QVector2D roots = QVector2D(d.x() / d.y(), e.x() / e.y());
 
         double tt;
 #if 0
@@ -321,7 +327,7 @@ CurveType cubicDoublePoint(const QVector2D points[4], QVector<float> &key_point)
 
 QVector4D CreateVec4(QVector2D p1, QVector2D p2)
 {
-    return QVector4D(p1.x, p1.y, p2.x, p2.y);
+    return QVector4D(p1.x(), p1.y(), p2.x(), p2.y());
 }
 
 QVector2D lerp(QVector2D p1, QVector2D p2, float distance)
@@ -353,7 +359,8 @@ QVector2D midpoint(QVector2D p1, QVector2D p2)
 
 float LineLength(QVector2D inStart, QVector2D inStop)
 {
-    return (inStop - inStart).magnitude();
+    const QVector2D diff = inStop - inStart;
+    return ::sqrtf(diff.x() * diff.x() + diff.y() * diff.y());
 }
 
 struct SCubicBezierCurve
@@ -371,10 +378,10 @@ struct SCubicBezierCurve
     QVector2D NormalAt(float inT) const
     {
         QVector2D tangent = QVector2D(
-                    TangentAt(inT, m_Points[0].x, m_Points[1].x, m_Points[2].x, m_Points[3].x),
-                TangentAt(inT, m_Points[0].y, m_Points[1].y, m_Points[2].y, m_Points[3].y));
+                    TangentAt(inT, m_Points[0].x(), m_Points[1].x(), m_Points[2].x(), m_Points[3].x()),
+                TangentAt(inT, m_Points[0].y(), m_Points[1].y(), m_Points[2].y(), m_Points[3].y()));
 
-        QVector2D result(tangent.y, -tangent.x);
+        QVector2D result(tangent.y(), -tangent.x());
         result.normalize();
         return result;
     }
@@ -394,16 +401,6 @@ struct SCubicBezierCurve
                 SCubicBezierCurve(p1234, p234, p34, m_Points[3]));
     }
 };
-
-#if 0
-static QVector2D NormalToLine( QVector2D startPoint, QVector2D endPoint )
-{
-    QVector2D lineDxDy = endPoint - startPoint;
-    QVector2D result( lineDxDy.y, -lineDxDy.x );
-    result.normalize();
-    return result;
-}
-#endif
 
 struct SResultCubic
 {
@@ -611,7 +608,7 @@ void OuterAdaptiveSubdivideBezierCurve(QVector<SResultCubic> &ioResultVec,
             // It is not clear that the code results in a sorted vector,
             // or a vector where all values are within the range of 0-1
             if (keyPointVec.size() > 1)
-                eastl::sort(keyPointVec.begin(), keyPointVec.end());
+                std::sort(keyPointVec.begin(), keyPointVec.end());
             for (quint32 idx = 0, end = (quint32)keyPointVec.size();
                  idx < end && keyPointVec[idx] < 1.0f; ++idx) {
                 // We have a list of T values I believe sorted from beginning to end, we
@@ -645,7 +642,7 @@ void OuterAdaptiveSubdivideBezierCurve(QVector<SResultCubic> &ioResultVec,
 static float DistanceFromPointToLine(QVector2D inLineDxDy, QVector2D lineStart, QVector2D point)
 {
     QVector2D pointToLineStart = lineStart - point;
-    return fabs((inLineDxDy.x * pointToLineStart.y) - (inLineDxDy.y * pointToLineStart.x));
+    return fabs((inLineDxDy.x() * pointToLineStart.y()) - (inLineDxDy.y() * pointToLineStart.x()));
 }
 
 // There are two options here.  The first is to just subdivide below a given error

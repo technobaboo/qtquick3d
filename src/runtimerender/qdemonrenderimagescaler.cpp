@@ -34,6 +34,8 @@
 
 #include "qdemonrenderimagescaler.h"
 
+#include <QtCore/QByteArray>
+
 QT_BEGIN_NAMESPACE
 //==============================================================================
 //	Namespace
@@ -141,7 +143,7 @@ void CImageScaler::Crop(unsigned char *inOldBuffer, unsigned long inOldWidth,
     Q_ASSERT(inNewWidth <= inOldWidth);
     Q_ASSERT(inNewHeight <= inOldHeight);
 
-    long theMinWidth = NVMin(inOldWidth, inNewWidth);
+    long theMinWidth = qMin(inOldWidth, inNewWidth);
 
     outNewBuffer = new unsigned char[inNewWidth * inNewHeight * inPlanes];
     ::memset(outNewBuffer, 0, inNewWidth * inNewHeight * inPlanes);
@@ -379,9 +381,9 @@ void CImageScaler::Resize(unsigned char *inOldBuffer, unsigned long inOldWidth,
     } else {
         // The downsampling algorithms *do* assume four planes.
         if (inOldWidth > inNewWidth && inOldHeight > inNewHeight) {
-            MemoryBuffer<> theBuffer(ForwardingAllocator(m_Allocator, "ImageScaler::TempBuffer"));
-            theBuffer.reserve(inNewWidth * inOldHeight * 4);
-            unsigned char *theTempBuffer = theBuffer.begin();
+            QByteArray theBuffer;
+            theBuffer.resize(inNewWidth * inOldHeight * 4);
+            unsigned char *theTempBuffer = reinterpret_cast<unsigned char *>(theBuffer.data());
             CImageScaler::ReduceCols(inOldBuffer, inOldWidth, inOldHeight, theTempBuffer,
                                      inNewWidth);
             CImageScaler::ReduceRows(theTempBuffer, inNewWidth, inOldHeight, outNewBuffer,

@@ -32,9 +32,10 @@
 #define QDEMON_RENDER_PIXEL_GRAPHICS_TYPES_H
 
 #include <QtGui/QVector2D>
-#include <QVector4D.h>
-#include <QMatrix3x3.h>
-#include <QtDemon/qdemonoption.h>
+#include <QtGui/QVector4D>
+#include <QtGui/QMatrix3x3>
+
+#include <QtDemon/QDemonOption>
 
 QT_BEGIN_NAMESPACE
 

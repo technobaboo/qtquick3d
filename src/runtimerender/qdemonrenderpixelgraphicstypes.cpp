@@ -27,7 +27,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <qdemonrenderpixelgraphicstypes.h>
+#include "qdemonrenderpixelgraphicstypes.h"
 
 QT_BEGIN_NAMESPACE
 

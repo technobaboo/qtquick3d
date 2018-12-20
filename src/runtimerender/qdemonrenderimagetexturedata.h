@@ -31,7 +31,8 @@
 #ifndef QDEMON_RENDER_IMAGE_TEXTURE_DATA_H
 #define QDEMON_RENDER_IMAGE_TEXTURE_DATA_H
 
-#include <QtDemon/qdemonflags.h>
+#include <QtDemon/QDemonFlags>
+
 #include <QtDemonRender/qdemonrendertexture2d.h>
 
 QT_BEGIN_NAMESPACE

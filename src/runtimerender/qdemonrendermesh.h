@@ -35,8 +35,8 @@
 #include <QtDemonRender/qdemonrenderindexbuffer.h>
 #include <QtDemonRender/qdemonrenderinputassembler.h>
 
-#include <QtDemon/qdemonbounds3.h>
-#include <QtDemon/qdemonnocopy.h>
+#include <QtDemon/QDemonBounds3>
+#include <QtDemon/QDemonNoCopy>
 
 QT_BEGIN_NAMESPACE
 

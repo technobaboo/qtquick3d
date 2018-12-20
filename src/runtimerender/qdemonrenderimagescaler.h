@@ -31,9 +31,10 @@
 //==============================================================================
 //	Prefix
 //==============================================================================
-#ifndef __IMAGESCALER_H_
-#define __IMAGESCALER_H_
+#ifndef QDEMONRENDERIMAGESCALER_H_
+#define QDEMONRENDERIMAGESCALER_H_
 
+#include <QtDemonRuntimeRender/qtdemonruntimerenderglobal.h>
 
 QT_BEGIN_NAMESPACE
 //==============================================================================
@@ -114,4 +115,4 @@ public:
 };
 QT_END_NAMESPACE
 
-#endif // !defined(__IMAGESCALER_H_)
+#endif // !defined(QDEMONRENDERIMAGESCALER_H_)

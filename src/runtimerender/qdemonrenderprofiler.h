@@ -38,6 +38,10 @@ QT_BEGIN_NAMESPACE
 /**
      *	Opaque profiling system for rendering.
      */
+
+class IQDemonRenderContext;
+class QDemonRenderContext;
+
 class IRenderProfiler
 {
 public:
@@ -97,8 +101,7 @@ public:
          */
     virtual quint32 GetAndResetTriangleCount() const = 0;
 
-    static IRenderProfiler &CreateGpuProfiler(IQDemonRenderContext &inContext,
-                                              QDemonRenderContext &inRenderContext);
+    static IRenderProfiler &CreateGpuProfiler(IQDemonRenderContext &inContext, QDemonRenderContext &inRenderContext);
 };
 QT_END_NAMESPACE
 

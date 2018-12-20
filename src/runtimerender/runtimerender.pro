@@ -31,23 +31,23 @@ HEADERS += \
 #    qdemonrendergraphobjectpickquery.h \
 #    qdemonrendergraphobjectserializer.h \
 #    qdemonrendergraphobjecttypes.h \
-#    qdemonrenderimagescaler.h \
-#    qdemonrenderimagetexturedata.h \
+    qdemonrenderimagescaler.h \
+    qdemonrenderimagetexturedata.h \
 #    qdemonrenderinputstreamfactory.h \
 #    qdemonrenderlightconstantproperties.h \
 #    qdemonrendermaterialhelpers.h \
 #    qdemonrendermaterialshadergenerator.h \
-#    qdemonrendermesh.h \
+    qdemonrendermesh.h \
 #    qdemonrenderpathmanager.h \
 #    qdemonrenderpathmath.h \
 #    qdemonrenderpathrendercontext.h \
 #    qdemonrenderpixelgraphicsrenderer.h \
-#    qdemonrenderpixelgraphicstypes.h \
+    qdemonrenderpixelgraphicstypes.h \
 #    qdemonrenderplugin.h \
-#    qdemonrenderplugincinterface.h \
+    qdemonrenderplugincinterface.h \
 #    qdemonrenderplugingraphobject.h \
 #    qdemonrenderpluginpropertyvalue.h \
-#    qdemonrenderprofiler.h \
+    qdemonrenderprofiler.h \
     qdemonrenderray.h \
     qdemonrenderrenderlist.h \
 #    qdemonrenderrotationhelper.h \
@@ -86,11 +86,11 @@ SOURCES += \
     qdemonrendereulerangles.cpp \
 #    qdemonrendergpuprofiler.cpp \
 #    qdemonrendergraphobjectserializer.cpp \
-#    qdemonrenderimagescaler.cpp \
+    qdemonrenderimagescaler.cpp \
 #    qdemonrenderinputstreamfactory.cpp \
 #    qdemonrenderpathmanager.cpp \
 #    qdemonrenderpixelgraphicsrenderer.cpp \
-#    qdemonrenderpixelgraphicstypes.cpp \
+    qdemonrenderpixelgraphicstypes.cpp \
 #    qdemonrenderplugin.cpp \
     qdemonrenderray.cpp \
     qdemonrenderrenderlist.cpp \
