@@ -84,9 +84,9 @@ struct Q_DEMONRUNTIMERENDER_EXPORT SDefaultMaterial : SGraphObject
     QVector3D m_DiffuseColor; // colors are 0-1 normalized
     SImage *m_DiffuseMaps[3];
     float m_EmissivePower; // 0-100, defaults to 0
-    QVector3D m_EmissiveColor;
     SImage *m_EmissiveMap;
     SImage *m_EmissiveMap2;
+    QVector3D m_EmissiveColor;
     SImage *m_SpecularReflection;
     SImage *m_SpecularMap;
     DefaultMaterialSpecularModel::Enum m_SpecularModel;

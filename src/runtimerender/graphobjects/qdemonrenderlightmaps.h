@@ -28,16 +28,48 @@
 **
 ****************************************************************************/
 
-#include <QtDemonRuntimeRender/qdemonrenderlightmaps.h>
+#pragma once
+#ifndef QDEMON_RENDER_LIGHTMAPS_H
+#define QDEMON_RENDER_LIGHTMAPS_H
+
+
+#include <QtDemonRuntimeRender/qdemonrendergraphobject.h>
+#include <QtDemonRuntimeRender/qdemonrenderer.h>
+#include <QtDemonRuntimeRender/qdemonrendermaterialdirty.h>
 
 QT_BEGIN_NAMESPACE
 
-SLightmaps::SLightmaps()
-    : SGraphObject(GraphObjectTypes::Lightmaps)
-    , m_LightmapIndirect(nullptr)
-    , m_LightmapRadiosity(nullptr)
-    , m_LightmapShadow(nullptr)
+struct MaterialLightmapsUsage
 {
-}
+    enum Enum {
+        Dynamic = 0,
+        Baked,
+        DynamicAndBaked,
+    };
+};
 
+struct SImage;
+struct Q_DEMONRUNTIMERENDER_EXPORT SLightmaps : public SGraphObject
+{
+    CMaterialDirty m_Dirty;
+
+    SImage *m_LightmapIndirect;
+    SImage *m_LightmapRadiosity;
+    SImage *m_LightmapShadow;
+
+    SLightmaps();
+
+    // Generic method used during serialization
+    // to remap string and object pointers
+    template <typename TRemapperType>
+    void Remap(TRemapperType &inRemapper)
+    {
+        SGraphObject::Remap(inRemapper);
+        inRemapper.Remap(m_LightmapIndirect);
+        inRemapper.Remap(m_LightmapRadiosity);
+        inRemapper.Remap(m_LightmapShadow);
+    }
+};
 QT_END_NAMESPACE
+
+#endif

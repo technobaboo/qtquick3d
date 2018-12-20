@@ -30,8 +30,11 @@
 #pragma once
 #ifndef QDEMON_RENDER_CAMERA_H
 #define QDEMON_RENDER_CAMERA_H
+
 #include <QtDemonRuntimeRender/qdemonrendernode.h>
 #include <QtDemonRuntimeRender/qdemonrenderray.h>
+
+#include <QtDemonRender/qdemonrenderbasetypes.h>
 
 QT_BEGIN_NAMESPACE
 

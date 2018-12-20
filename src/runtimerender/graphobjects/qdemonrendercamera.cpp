@@ -27,7 +27,9 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <QtDemonRuntimeRender/qdemonrendercamera.h>
+
+#include "qdemonrendercamera.h"
+
 #include <QtDemonRuntimeRender/qdemonrenderpresentation.h>
 #include <QtDemonRuntimeRender/qdemontextrenderer.h>
 
@@ -277,7 +279,7 @@ float SCamera::GetOrthographicScaleFactor(const QDemonRenderRectF &inViewport,
 {
     if (m_ScaleMode == CameraScaleModes::SameSize)
         return 1.0f;
-    QMatrix4x4 temp();
+    QMatrix4x4 temp;
     float designAspect = GetAspectRatio(inDesignDimensions);
     float theAspectRatio = GetAspectRatio(inViewport);
     if (m_ScaleMode == CameraScaleModes::Fit) {
@@ -456,11 +458,11 @@ SRay SCamera::Unproject(const QVector2D &inViewportRelativeCoords, const QDemonR
         outDir.setZ(-1.0f);
     }
 
-    outOrigin = m_GlobalTransform.transform(outOrigin);
+    outOrigin = mat44::transform(m_GlobalTransform, outOrigin);
     QMatrix3x3 theNormalMatrix;
     CalculateNormalMatrix(theNormalMatrix);
 
-    outDir = theNormalMatrix.transform(outDir);
+    outDir = mat33::transform(theNormalMatrix, outDir);
     outDir.normalize();
     /*
     char printBuf[2000];

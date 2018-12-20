@@ -33,10 +33,13 @@
 
 
 #include <QtGui/QVector2D>
-#include <QtDemon/qdemondataref.h>
 #include <QtGui/QMatrix4x4>
-#include <QtDemonRuntimeRender/qdemonrenderimage.h>
+
+#include <QtDemon/qdemondataref.h>
+
 #include <QtDemonRender/qdemonrenderbasetypes.h>
+
+#include <QtDemonRuntimeRender/qdemonrendergraphobject.h>
 
 #include <limits>
 

@@ -25,10 +25,10 @@ HEADERS += \
 #    qdemonrenderdynamicobjectsystemcommands.h \
 #    qdemonrenderdynamicobjectsystemutil.h \
 #    qdemonrendereffectsystem.h \
-#    qdemonrenderer.h \
+    qdemonrenderer.h \
 #    qdemonrendererutil.h \
     qdemonrendereulerangles.h \
-#    qdemonrendergraphobjectpickquery.h \
+    qdemonrendergraphobjectpickquery.h \
 #    qdemonrendergraphobjectserializer.h \
     qdemonrendergraphobjecttypes.h \
     qdemonrenderimagescaler.h \

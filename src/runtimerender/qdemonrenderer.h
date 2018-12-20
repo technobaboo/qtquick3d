@@ -81,6 +81,8 @@ struct SScaleAndPosition
 
 struct SLayer;
 class IRenderWidget;
+class IRenderWidgetContext;
+class IQDemonRenderContext;
 
 class IQDemonRenderer
 {
