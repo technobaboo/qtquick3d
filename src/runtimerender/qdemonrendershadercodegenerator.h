@@ -35,16 +35,10 @@
 
 QT_BEGIN_NAMESPACE
 
-struct SEndlType
-{
-};
-extern SEndlType Endl;
-
-typedef std::basic_string<char> TStrType;
-typedef QPair<QString, QString> TParamPair;
-typedef QPair<QString, TParamPair> TConstantBufferParamPair;
+typedef QPair<QByteArray, QByteArray> TParamPair;
+typedef QPair<QByteArray, TParamPair> TConstantBufferParamPair;
 typedef QVector<TConstantBufferParamPair> TConstantBufferParamArray;
-typedef QHash<QString, QString> TStrTableStrMap;
+typedef QHash<QByteArray, QByteArray> TStrTableStrMap;
 
 struct SShaderCodeGeneratorBase
 {
@@ -58,13 +52,13 @@ struct SShaderCodeGeneratorBase
         UVCoords,
     };
     QSet<quint32> m_Codes; // set of enums we have included.
-    QSet<QString> m_Includes;
+    QSet<QByteArray> m_Includes;
     TStrTableStrMap m_Uniforms;
     TStrTableStrMap m_ConstantBuffers;
     TConstantBufferParamArray m_ConstantBufferParams;
     TStrTableStrMap m_Attributes;
-    QString m_FinalShaderBuilder;
-    TStrType m_CodeBuilder;
+    QByteArray m_FinalShaderBuilder;
+    QByteArray m_CodeBuilder;
     QDemonRenderContextType m_RenderContextType;
 
     SShaderCodeGeneratorBase(QDemonRenderContextType ctxType);
@@ -76,15 +70,15 @@ struct SShaderCodeGeneratorBase
     void AddConstantBuffer(const char *name, const char *layout);
     void AddConstantBufferParam(const char *cbName, const char *paramName, const char *type);
     void AddUniform(const char *name, const char *type);
-    void AddUniform(TStrType &name, const char *type);
+    void AddUniform(const QString &name, const char *type);
     void AddAttribute(const char *name, const char *type);
-    void AddAttribute(TStrType &name, const char *type);
+    void AddAttribute(const QString &name, const char *type);
     void AddVarying(const char *name, const char *type);
-    void AddVarying(TStrType &name, const char *type);
+    void AddVarying(const QString &name, const char *type);
     void AddLocalVariable(const char *name, const char *type, int tabCount = 1);
-    void AddLocalVariable(TStrType &name, const char *type, int tabCount = 1);
+    void AddLocalVariable(const QString &name, const char *type, int tabCount = 1);
     void AddInclude(const char *name);
-    void AddInclude(TStrType &name);
+    void AddInclude(const QString &name);
     bool HasCode(Enum value);
     void SetCode(Enum value);
     void SetupWorldPosition();
@@ -93,14 +87,13 @@ struct SShaderCodeGeneratorBase
     void GenerateEnvMapReflection(SShaderCodeGeneratorBase &inFragmentShader);
     void GenerateUVCoords();
     void GenerateTextureSwizzle(QDemonRenderTextureSwizzleMode::Enum swizzleMode,
-                                QString &texSwizzle,
-                                QString &lookupSwizzle);
+                                QByteArray &texSwizzle,
+                                QByteArray &lookupSwizzle);
     void GenerateShadedWireframeBase();
     void AddLighting();
     const char *BuildShaderSource();
     SShaderCodeGeneratorBase &operator<<(const char *data);
-    SShaderCodeGeneratorBase &operator<<(const TStrType &data);
-    SShaderCodeGeneratorBase &operator<<(const SEndlType & /*data*/);
+    SShaderCodeGeneratorBase &operator<<(const QString &data);
 
 protected:
     virtual void AddShaderItemMap(const char *itemType, const TStrTableStrMap &itemMap);

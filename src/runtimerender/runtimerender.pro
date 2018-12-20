@@ -52,7 +52,7 @@ HEADERS += \
     qdemonrenderrenderlist.h \
 #    qdemonrenderrotationhelper.h \
 #    qdemonrendershadercache.h \
-#    qdemonrendershadercodegenerator.h \
+    qdemonrendershadercodegenerator.h \
 #    qdemonrendershadercodegeneratorv2.h \
 #    qdemonrendershaderkeys.h \
 #    qdemonrendershadowmap.h \
@@ -95,7 +95,7 @@ SOURCES += \
     qdemonrenderray.cpp \
     qdemonrenderrenderlist.cpp \
 #    qdemonrendershadercache.cpp \
-#    qdemonrendershadercodegenerator.cpp \
+    qdemonrendershadercodegenerator.cpp \
 #    qdemonrendershadercodegeneratorv2.cpp \
 #    qdemonrendershadowmap.cpp \
 #    qdemonrendersubpresentation.cpp \
