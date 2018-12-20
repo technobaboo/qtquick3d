@@ -33,7 +33,7 @@ HEADERS += \
     qdemonrendergraphobjecttypes.h \
     qdemonrenderimagescaler.h \
     qdemonrenderimagetexturedata.h \
-#    qdemonrenderinputstreamfactory.h \
+    qdemonrenderinputstreamfactory.h \
 #    qdemonrenderlightconstantproperties.h \
 #    qdemonrendermaterialhelpers.h \
 #    qdemonrendermaterialshadergenerator.h \
@@ -87,7 +87,7 @@ SOURCES += \
 #    qdemonrendergpuprofiler.cpp \
 #    qdemonrendergraphobjectserializer.cpp \
     qdemonrenderimagescaler.cpp \
-#    qdemonrenderinputstreamfactory.cpp \
+    qdemonrenderinputstreamfactory.cpp \
 #    qdemonrenderpathmanager.cpp \
 #    qdemonrenderpixelgraphicsrenderer.cpp \
     qdemonrenderpixelgraphicstypes.cpp \

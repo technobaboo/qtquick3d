@@ -27,32 +27,33 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <qdemonrenderinputstreamfactory.h>
+#include "qdemonrenderinputstreamfactory.h"
 
-#include <stdio.h>
+#include <QtCore/QDir>
+#include <QtCore/QDirIterator>
+#include <QtCore/QFile>
+#include <QtCore/QFileInfo>
+#include <QtCore/QUrl>
+#include <QtCore/QMutex>
+#include <QtCore/QMutexLocker>
 
-#include <QDir>
-#include <QDirIterator>
-#include <QFile>
-#include <QFileInfo>
-#include <QUrl>
+#include <limits>
 
 QT_BEGIN_NAMESPACE
 
 namespace {
-struct SInputStream : public IRefCountedInputStream
+struct SInputStream : public IInputStream
 {
     QString m_Path;
     QFile m_File;
 
     SInputStream(const QString &inPath)
-        : m_Foundation(inFoundation)
-        , m_Path(inPath)
+        : m_Path(inPath)
         , m_File(inPath)
     {
         m_File.open(QIODevice::ReadOnly);
     }
-    virtual ~SInputStream()
+    virtual ~SInputStream() override
     {
     }
 
@@ -67,14 +68,14 @@ struct SInputStream : public IRefCountedInputStream
         return false;
     }
 
-    void SetPosition(qint64 inOffset, SeekPosition::Enum inEnum) override
+    void SetPosition(qint64 inOffset) override
     {
-        if (inOffset > QDEMON_MAX_I32 || inOffset < QDEMON_MIN_I32) {
-            qCCritical(INVALID_OPERATION, "Attempt to seek further than platform allows");
+        if (inOffset > std::numeric_limits<qint32>::max() || inOffset < std::numeric_limits<qint32>::min()) {
+            qCritical("Attempt to seek further than platform allows");
             Q_ASSERT(false);
             return;
         } else {
-            CFileTools::SetStreamPosition(m_File, inOffset, inEnum);
+            m_File.seek(inOffset);
         }
     }
     qint64 GetPosition() const override
@@ -88,16 +89,25 @@ struct SInputStream : public IRefCountedInputStream
     }
 };
 
-typedef eastl::basic_string<char, ForwardingAllocator> TStrType;
+QString NormalizePathForQtUsage(const QString &path)
+{
+    // path can be a file path or a qrc URL string.
+
+    QString filePath = QDir::cleanPath(path);
+
+    if (filePath.startsWith(QLatin1String("qrc:/")))
+        return filePath.mid(3);
+    else
+        return filePath;
+}
+
 struct SFactory : public IInputStreamFactory
 {
-    Mutex m_Mutex;
-    typedef Mutex::ScopedLock TScopedLock;
+    QMutex m_Mutex;
 
     const QString Q3DSTUDIO_TAG = QStringLiteral("qt3dstudio");
 
     SFactory()
-        : m_Mutex(inFoundation.getAllocator())
     {
         // Add the top-level qrc directory
         if (!QDir::searchPaths(Q3DSTUDIO_TAG).contains(QLatin1String(":/")))
@@ -106,8 +116,8 @@ struct SFactory : public IInputStreamFactory
 
     QFileInfo matchCaseInsensitiveFile(const QString& file)
     {
-        qCWarning(WARNING, PERF_INFO, "Case-insensitive matching with file: %s",
-                  file.toLatin1().constData());
+//        qCWarning(WARNING, PERF_INFO, "Case-insensitive matching with file: %s",
+//                  file.toLatin1().constData());
         const QStringList searchDirectories = QDir::searchPaths(Q3DSTUDIO_TAG);
         for (const auto &directoryPath : searchDirectories) {
             QFileInfo fileInfo(file);
@@ -127,11 +137,11 @@ struct SFactory : public IInputStreamFactory
 
     void AddSearchDirectory(const char *inDirectory) override
     {
-        TScopedLock __factoryLocker(m_Mutex);
-        QString localDir = CFileTools::NormalizePathForQtUsage(inDirectory);
+        QMutexLocker factoryLocker(&m_Mutex);
+        QString localDir = NormalizePathForQtUsage(QString::fromLocal8Bit(inDirectory));
         QDir directory(localDir);
         if (!directory.exists()) {
-            qCCritical(INTERNAL_ERROR, "Adding search directory: %s", inDirectory);
+            qCritical("Adding search directory: %s", inDirectory);
             return;
         }
 
@@ -140,10 +150,10 @@ struct SFactory : public IInputStreamFactory
     }
 
 
-    IRefCountedInputStream *GetStreamForFile(const QString &inFilename, bool inQuiet) override
+    QSharedPointer<IInputStream> GetStreamForFile(const QString &inFilename, bool inQuiet) override
     {
-        TScopedLock __factoryLocker(m_Mutex);
-        QString localFile = CFileTools::NormalizePathForQtUsage(inFilename);
+        QMutexLocker factoryLocker(&m_Mutex);
+        QString localFile = NormalizePathForQtUsage(inFilename);
         QFileInfo fileInfo = QFileInfo(localFile);
         SInputStream *inputStream = nullptr;
         // Try to match the file with the search paths
@@ -155,24 +165,22 @@ struct SFactory : public IInputStreamFactory
             fileInfo = matchCaseInsensitiveFile(localFile);
 
         if (fileInfo.exists())
-            inputStream = SInputStream::OpenFile(fileInfo.absoluteFilePath(), m_Foundation);
+            inputStream = SInputStream::OpenFile(fileInfo.absoluteFilePath());
 
         if (!inputStream && !inQuiet) {
             // Print extensive debugging information.
-            qCCritical(INTERNAL_ERROR, "Failed to find file: %s", inFilename.toLatin1().data());
-            qCCritical(INTERNAL_ERROR, "Searched path: %s",
-                       QDir::searchPaths(Q3DSTUDIO_TAG).join(',').toLatin1().constData());
+            qCritical("Failed to find file: %s", inFilename.toLatin1().data());
+            qCritical("Searched path: %s", QDir::searchPaths(Q3DSTUDIO_TAG).join(',').toLatin1().constData());
         }
-        return inputStream;
+        return QSharedPointer<IInputStream>(inputStream);
     }
 
     bool GetPathForFile(const QString &inFilename, QString &outFile,
                         bool inQuiet = false) override
     {
-        QSharedPointer<IRefCountedInputStream> theStream =
-                GetStreamForFile(inFilename, inQuiet);
+        QSharedPointer<IInputStream> theStream = GetStreamForFile(inFilename, inQuiet);
         if (theStream) {
-            SInputStream *theRealStream = static_cast<SInputStream *>(theStream.mPtr);
+            SInputStream *theRealStream = static_cast<SInputStream *>(theStream.data());
             outFile = theRealStream->m_Path;
             return true;
         }
