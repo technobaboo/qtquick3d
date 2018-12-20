@@ -36,6 +36,9 @@
 
 #include <QtCore/QString>
 
+#include <QtCore/QSharedPointer>
+#include <QtCore/QVector>
+
 QT_BEGIN_NAMESPACE
 class QDemonRenderShaderProgram;
 class QDemonRenderContext;
@@ -91,12 +94,10 @@ struct SShaderPreprocessorFeature
     bool operator==(const SShaderPreprocessorFeature &inOther) const;
 };
 
-typedef QDemonConstDataRef<SShaderPreprocessorFeature> TShaderFeatureSet;
-
-inline TShaderFeatureSet ShaderCacheNoFeatures() { return TShaderFeatureSet(); }
+inline const QVector<SShaderPreprocessorFeature> ShaderCacheNoFeatures() { return QVector<SShaderPreprocessorFeature>(); }
 
 // Hash is dependent on the order of the keys; so make sure their order is consistent!!
-size_t HashShaderFeatureSet(QDemonConstDataRef<SShaderPreprocessorFeature> inFeatureSet);
+uint HashShaderFeatureSet(QVector<SShaderPreprocessorFeature> inFeatureSet);
 
 class IShaderCache
 {
@@ -117,9 +118,8 @@ public:
     virtual bool IsShaderCachePersistenceEnabled() const = 0;
     // It is up to the caller to ensure that inFeatures contains unique keys.
     // It is also up the the caller to ensure the keys are ordered in some way.
-    virtual QDemonRenderShaderProgram *
-    GetProgram(QString inKey,
-               QDemonConstDataRef<SShaderPreprocessorFeature> inFeatures) = 0;
+    virtual QSharedPointer<QDemonRenderShaderProgram>
+    GetProgram(QString inKey, const QVector<SShaderPreprocessorFeature> &inFeatures) = 0;
 
     // Replace an existing program in the cache for the same key with this program.
     // The shaders returned by *CompileProgram functions can be released by this object
@@ -130,19 +130,20 @@ public:
     // reduce program compilations.
     // It is up to the caller to ensure that inFeatures contains unique keys.
     // It is also up the the caller to ensure the keys are ordered in some way.
-    virtual QDemonRenderShaderProgram *
+    virtual QSharedPointer<QDemonRenderShaderProgram>
     ForceCompileProgram(QString inKey, const char *inVert, const char *inFrag,
                         const char *inTessCtrl, const char *inTessEval,
                         const char *inGeom, const SShaderCacheProgramFlags &inFlags,
-                        TShaderFeatureSet inFeatures, bool separableProgram,
+                        const QVector<SShaderPreprocessorFeature> &inFeatures, bool separableProgram,
                         bool fromDisk = false) = 0;
 
     // It is up to the caller to ensure that inFeatures contains unique keys.
     // It is also up the the caller to ensure the keys are ordered in some way.
-    virtual QDemonRenderShaderProgram *
+    virtual QSharedPointer<QDemonRenderShaderProgram>
     CompileProgram(QString inKey, const char *inVert, const char *inFrag,
                    const char *inTessCtrl, const char *inTessEval, const char *inGeom,
-                   const SShaderCacheProgramFlags &inFlags, TShaderFeatureSet inFeatures,
+                   const SShaderCacheProgramFlags &inFlags,
+                   const QVector<SShaderPreprocessorFeature> &inFeatures,
                    bool separableProgram = false) = 0;
 
     // Used to disable any shader compilation during loading.  This is used when we are just

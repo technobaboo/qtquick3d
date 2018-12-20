@@ -51,7 +51,7 @@ HEADERS += \
     qdemonrenderray.h \
     qdemonrenderrenderlist.h \
     qdemonrenderrotationhelper.h \
-#    qdemonrendershadercache.h \
+    qdemonrendershadercache.h \
     qdemonrendershadercodegenerator.h \
 #    qdemonrendershadercodegeneratorv2.h \
     qdemonrendershaderkeys.h \
@@ -67,7 +67,8 @@ HEADERS += \
     qdemonrenderthreadpool.h \
 #    qdemonrenderuipsharedtranslation.h \
 #    qdemonrenderwidgets.h \
-    qdemontextrenderer.h
+    qdemontextrenderer.h \
+    qdemonruntimerenderlogging.h
 
 SOURCES += \
 #    qdemonqmlrender.cpp \
@@ -94,7 +95,7 @@ SOURCES += \
 #    qdemonrenderplugin.cpp \
     qdemonrenderray.cpp \
     qdemonrenderrenderlist.cpp \
-#    qdemonrendershadercache.cpp \
+    qdemonrendershadercache.cpp \
     qdemonrendershadercodegenerator.cpp \
 #    qdemonrendershadercodegeneratorv2.cpp \
 #    qdemonrendershadowmap.cpp \
@@ -105,6 +106,8 @@ SOURCES += \
     qdemonrenderthreadpool.cpp \
 #    qdemonrenderuipsharedtranslation.cpp \
 #    qdemonrenderwidgets.cpp \
-    qdemontextrenderer.cpp
+    qdemontextrenderer.cpp \
+    qdemonruntimerenderlogging.cpp \
+    qdemonrenderer.cpp
 
 load(qt_module)
