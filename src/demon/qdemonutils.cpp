@@ -1,4 +1,5 @@
 #include <QtDemon/qdemonutils.h>
+#include <QtCore/QDir>
 
 QT_BEGIN_NAMESPACE
 
@@ -213,5 +214,18 @@ void memZero(void *ptr, size_t size)
 
 
 const char *nonNull(const char *src) { return src == NULL ? "" : src; }
+
+QString CFileTools::NormalizePathForQtUsage(const QString &path)
+{
+    // path can be a file path or a qrc URL string.
+
+    QString filePath = QDir::cleanPath(path);
+
+    if (filePath.startsWith(QLatin1String("qrc:/")))
+        return filePath.mid(3);
+    else
+        return filePath;
+}
+
 
 QT_END_NAMESPACE

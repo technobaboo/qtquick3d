@@ -22,8 +22,8 @@ HEADERS += \
 #    qdemonrendercustommaterialsystem.h \
 #    qdemonrenderdefaultmaterialshadergenerator.h \
 #    qdemonrenderdynamicobjectsystem.h \
-#    qdemonrenderdynamicobjectsystemcommands.h \
-#    qdemonrenderdynamicobjectsystemutil.h \
+    qdemonrenderdynamicobjectsystemcommands.h \
+    qdemonrenderdynamicobjectsystemutil.h \
 #    qdemonrendereffectsystem.h \
     qdemonrenderer.h \
 #    qdemonrendererutil.h \
@@ -75,7 +75,7 @@ SOURCES += \
 #    qdemonoffscreenrendermanager.cpp \
 #    qdemonoldnbustedrenderplugin.cpp \
 #    qdemononscreentextrenderer.cpp \
-#    qdemonqttextrenderer.cpp \
+    qdemonqttextrenderer.cpp \
     qdemonrenderclippingfrustum.cpp \
 #    qdemonrendercontextcore.cpp \
 #    qdemonrendercustommaterialshadergenerator.cpp \

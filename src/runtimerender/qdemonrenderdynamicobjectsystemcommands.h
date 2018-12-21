@@ -36,7 +36,6 @@
 
 QT_BEGIN_NAMESPACE
 namespace dynamic {
-using QDemonRenderBufferBarrierFlags;
 
 struct CommandTypes
 {
@@ -530,7 +529,7 @@ struct SApplyBlitFramebuffer : public SCommand
     SApplyBlitFramebuffer(const SApplyBlitFramebuffer &inOther)
         : SCommand(CommandTypes::ApplyBlitFramebuffer)
         , m_SourceBufferName(inOther.m_SourceBufferName)
-        , m_DestBufferName(inOther.m_DestBufferName))
+        , m_DestBufferName(inOther.m_DestBufferName)
     {
     }
 };

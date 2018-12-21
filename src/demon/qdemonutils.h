@@ -3,12 +3,14 @@
 
 #include <QtDemon/qtdemonglobal.h>
 #include <QtDemon/qdemondataref.h>
-#include <QVector3D>
-#include <QQuaternion>
-#include <QMatrix3x3>
-#include <QMatrix4x4>
+
+#include <QtGui/QVector3D>
+#include <QtGui/QQuaternion>
+#include <QtGui/QMatrix3x3>
+#include <QtGui/QMatrix4x4>
 
 #include <QtCore/qdebug.h>
+#include <QtCore/QString>
 #include <QtCore/qloggingcategory.h>
 
 QT_BEGIN_NAMESPACE
@@ -63,6 +65,10 @@ QDemonDataRef<TDataType> PtrAtOffset(quint8 *baseData, quint32 offset, quint32 b
 void Q_DEMON_EXPORT memZero(void *ptr, size_t size);
 
 inline Q_DEMON_EXPORT const char *nonNull(const char *src);
+
+namespace CFileTools {
+QString Q_DEMON_EXPORT NormalizePathForQtUsage(const QString &path);
+}
 
 QT_END_NAMESPACE
 

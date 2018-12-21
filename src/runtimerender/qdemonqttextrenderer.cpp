@@ -28,20 +28,28 @@
 **
 ****************************************************************************/
 
-#include <qdemontextrenderer.h>
-#include <QtDemonRuntimeRender/qdemonrendertext.h>
-#include <QtDemonRender/qdemonrendercontext.h>
-#include <qdemonrenderthreadpool.h>
+#include "qdemontextrenderer.h"
+#include "qdemonrenderthreadpool.h"
 
-#include <QPainter>
-#include <QImage>
-#include <QFontDatabase>
-#include <QDir>
-#include <QDebug>
-#include <QHash>
-#include <QGuiApplication>
+#include <QtDemonRuntimeRender/qdemonrendertext.h>
+
+#include <QtDemonRender/qdemonrendercontext.h>
+
+#include <QtDemon/qdemonutils.h>
+
+#include <QtGui/QPainter>
+#include <QtGui/QImage>
+#include <QtGui/QFontDatabase>
+#include <QtGui/QRawFont>
+#include <QtGui/QGuiApplication>
+
+#include <QtCore/QDir>
+#include <QtCore/QDebug>
+#include <QtCore/QHash>
+#include <QtCore/QWaitCondition>
+#include <QtCore/QMutex>
+
 #include <QtMath>
-#include <QRawFont>
 
 QT_BEGIN_NAMESPACE
 
@@ -90,21 +98,21 @@ struct QDemonQtTextRenderer : public ITextRenderer
         }
     };
 
-    typedef QString TStrType;
-    typedef QSet<TStrType> TStringSet;
+    typedef QSet<QString> TStringSet;
     typedef QHash<QString, FontInfo> TFontInfoHash;
 
     QSharedPointer<QDemonRenderContext> m_renderContext;
     QSharedPointer<IPerfTimer> m_perfTimer;
     QVector<SRendererFontEntry> m_installedFonts;
 
-    Sync m_PreloadSync;
+    QWaitCondition m_PreloadSync;
+    QMutex m_mutex;
 
     TStringSet m_systemFontDirs;
     TStringSet m_projectFontDirs;
     TFontInfoHash m_projectFontInfos;
     TFontInfoHash m_systemFontInfos;
-    TStrType m_workspace;
+    QString m_workspace;
 
     bool m_systemFontsInitialized;
     bool m_projectFontsInitialized;
@@ -114,9 +122,7 @@ struct QDemonQtTextRenderer : public ITextRenderer
     qreal m_pixelRatio;
 
     QDemonQtTextRenderer()
-        : m_installedFonts(inFoundation.getAllocator(), "QDemonQtTextRenderer::m_installedFonts")
-        , m_PreloadSync(inFoundation.getAllocator())
-        , m_systemFontsInitialized(false)
+        : m_systemFontsInitialized(false)
         , m_projectFontsInitialized(false)
         , m_PreloadingFonts(false)
         , m_pixelRatio(1.0)
@@ -131,27 +137,6 @@ struct QDemonQtTextRenderer : public ITextRenderer
     virtual ~QDemonQtTextRenderer()
     {
         QFontDatabase::removeAllApplicationFonts();
-    }
-
-    QString stringToQString(const QString &str)
-    {
-        return QString::fromUtf8(str.c_str());
-    }
-
-    QString stringToQString(const QString &str)
-    {
-        return QString::fromUtf8(str.c_str());
-    }
-
-    QString stringToQString(const char *str)
-    {
-        return QString::fromUtf8(str);
-    }
-
-    // ### Not needed anymore
-    QString QStringToRegisteredString(const QString &str)
-    {
-        return str;
     }
 
     void unregisterProjectFonts()
@@ -180,7 +165,7 @@ struct QDemonQtTextRenderer : public ITextRenderer
         for (TStringSet::const_iterator theIter = dirSet.begin(),
              theEnd = dirSet.end();
              theIter != theEnd; ++theIter) {
-            QString localDir = CFileTools::NormalizePathForQtUsage(stringToQString(*theIter));
+            QString localDir = CFileTools::NormalizePathForQtUsage(*theIter);
             QDir dir(localDir);
             if (!dir.exists()) {
                 qCCritical(INTERNAL_ERROR) << "Adding font directory:" << localDir;
@@ -233,36 +218,35 @@ struct QDemonQtTextRenderer : public ITextRenderer
         m_projectFontDirs.clear();
     }
 
-    QPair<TStrType, bool> AddFontDirectory(const TStrType &inDirectory, TStringSet &inDirSet)
+    bool AddFontDirectory(const QString &inDirectory, TStringSet &inDirSet)
     {
-        if (inDirectory.empty()) {
-            m_workspace.assign("./");
+        if (inDirectory.isEmpty()) {
+            m_workspace = QStringLiteral("./");
         } else {
             m_workspace.clear();
-            for (const char *item = inDirectory.c_str(); item && *item; ++item) {
+            for (const char *item = inDirectory.toLocal8Bit().constData(); item && *item; ++item) {
                 if (*item == '\\')
-                    m_workspace.append(1, '/');
+                    m_workspace.append(QStringLiteral("/"));
                 else
-                    m_workspace.append(1, static_cast<char>(*item));
+                    m_workspace.append(QString::fromLocal8Bit(item));
             }
             if (m_workspace.back() != '/')
-                m_workspace.append(1, '/');
+                m_workspace.append(QStringLiteral("/"));
         }
-
-        return QPair<TStrType, bool>(m_workspace, inDirSet.insert(m_workspace).second);
+        auto iterator = inDirSet.insert(m_workspace);
+        return iterator->isEmpty();
     }
 
     // You can have several standard font directories and these will be persistent
     void AddSystemFontDirectory(const char *inDirectory) override
     {
-        AddFontDirectory(inDirectory, m_systemFontDirs);
+        AddFontDirectory(QString::fromLocal8Bit(inDirectory), m_systemFontDirs);
     }
 
     void AddProjectFontDirectory(const char *inProjectDirectory) override
     {
-        QPair<TStrType, bool> theAddResult =
-                AddFontDirectory(inProjectDirectory, m_projectFontDirs);
-        if (theAddResult.second && m_projectFontsInitialized)
+        bool theAddResult = AddFontDirectory(QString::fromLocal8Bit(inProjectDirectory), m_projectFontDirs);
+        if (theAddResult && m_projectFontsInitialized)
             ReloadFonts();
     }
 
@@ -294,14 +278,14 @@ struct QDemonQtTextRenderer : public ITextRenderer
     {
         QDemonQtTextRenderer *theRenderer(reinterpret_cast<QDemonQtTextRenderer *>(inData));
         theRenderer->PreloadFonts();
-        theRenderer->m_PreloadSync.set();
+        theRenderer->m_PreloadSync.wakeAll();
     }
 
-    void BeginPreloadFonts(IThreadPool &inThreadPool, IPerfTimer &inTimer) override
+    void BeginPreloadFonts(IThreadPool &inThreadPool, QSharedPointer<IPerfTimer> inTimer) override
     {
         m_PreloadingFonts = true;
 
-        m_PreloadSync.reset();
+        m_PreloadSync.wakeAll();
         m_perfTimer = inTimer;
 
         inThreadPool.AddTask(this, PreloadThreadCallback, nullptr);
@@ -309,13 +293,15 @@ struct QDemonQtTextRenderer : public ITextRenderer
 
     void EndPreloadFonts() override
     {
+        m_mutex.lock();
         if (m_PreloadingFonts) {
             {
-                SStackPerfTimer __perfTimer(*m_perfTimer, "QtText: Wait till font preloading completed");
-                m_PreloadSync.wait();
+                //SStackPerfTimer __perfTimer(*m_perfTimer, "QtText: Wait till font preloading completed");
+                m_PreloadSync.wait(&m_mutex);
             }
         }
         m_PreloadingFonts = false;
+        m_mutex.unlock();
     }
 
     // Get the list of project fonts. These are the only fonts that can be displayed.
@@ -325,37 +311,35 @@ struct QDemonQtTextRenderer : public ITextRenderer
         if (m_installedFonts.empty()) {
             m_installedFonts.reserve(m_projectFontInfos.size());
             for (FontInfo &fi : m_projectFontInfos.values()) {
-                m_installedFonts.push_back(SRendererFontEntry(
-                                               QStringToRegisteredString(fi.fontName),
-                                               QStringToRegisteredString(fi.fontFileName)));
+                m_installedFonts.push_back(SRendererFontEntry(fi.fontName, fi.fontFileName));
             }
         }
-        return m_installedFonts;
+        return toConstDataRef(m_installedFonts.constData(), m_installedFonts.count());
     }
 
     QDemonOption<QString> GetFontNameForFont(QString inFontname) override
     {
         // This function is there to support legacy font names.
 
-        QString inStr = stringToQString(inFontname);
+        QString inStr = inFontname;
         if (m_projectFontInfos.keys().contains(inStr))
             return inFontname;
 
         // Fall back for family name detection if not found by font name
         for (FontInfo &fi : m_projectFontInfos.values()) {
             if (inStr == fi.fontFamily)
-                return QStringToRegisteredString(fi.fontName);
+                return fi.fontName;
         }
 
-        return Empty();
+        return QDemonEmpty();
     }
 
     QDemonOption<QString> GetFontNameForFont(const char *inFontname) override
     {
-        return GetFontNameForFont(QString::fromLocal8Bit(inFontname);
+        return GetFontNameForFont(QString::fromLocal8Bit(inFontname));
     }
 
-    ITextRenderer &GetTextRenderer(QDemonRenderContext &inRenderContext) override
+    ITextRenderer &GetTextRenderer(QSharedPointer<QDemonRenderContext> inRenderContext) override
     {
         m_renderContext = inRenderContext;
         return *this;
@@ -364,7 +348,7 @@ struct QDemonQtTextRenderer : public ITextRenderer
     FontInfo &fontInfoForName(const QString &fontName)
     {
         PreloadFonts();
-        QString qtFontName = stringToQString(fontName);
+        QString qtFontName = fontName;
         if (m_projectFontInfos.contains(qtFontName))
             return m_projectFontInfos[qtFontName];
 
@@ -372,7 +356,7 @@ struct QDemonQtTextRenderer : public ITextRenderer
             return m_systemFontInfos[qtFontName];
 
         // Unknown font, create a system font for it
-        FontInfo fi("", qtFontName, qtFontName, -1);
+        FontInfo fi(QString(), qtFontName, qtFontName, -1);
         m_systemFontInfos.insert(qtFontName, fi);
 
         return m_systemFontInfos[qtFontName];
@@ -417,7 +401,7 @@ struct QDemonQtTextRenderer : public ITextRenderer
                            const QFontMetricsF &fm, QStringList &lineList,
                            QVector<qreal> &lineWidths, const char *inTextOverride = nullptr)
     {
-        const char *theText = inTextOverride ? inTextOverride : inText.m_Text.c_str();
+        const char *theText = inTextOverride ? inTextOverride : inText.m_Text.toLocal8Bit().constData();
         lineList = splitText(theText);
 
         QRectF boundingBox;

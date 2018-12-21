@@ -69,7 +69,7 @@ public:
     // Force font loading *right now*
     virtual void PreloadFonts() = 0;
     // Do not access object in between begin/end preload pairs.
-    virtual void BeginPreloadFonts(IThreadPool &inThreadPool, IPerfTimer &inTimer) = 0;
+    virtual void BeginPreloadFonts(IThreadPool &inThreadPool, QSharedPointer<IPerfTimer> inTimer) = 0;
     virtual void EndPreloadFonts() = 0;
     // Force a clear and reload of all of the fonts.
     virtual void ReloadFonts() = 0;
@@ -81,7 +81,7 @@ public:
     virtual QDemonOption<QString> GetFontNameForFont(QString inFontname) = 0;
     virtual QDemonOption<QString> GetFontNameForFont(const char *inFontname) = 0;
 
-    virtual ITextRenderer &GetTextRenderer(QDemonRenderContext &inContext) = 0;
+    virtual ITextRenderer &GetTextRenderer(QSharedPointer<QDemonRenderContext> inContext) = 0;
 
     static ITextRendererCore &CreateQtTextRenderer();
 
