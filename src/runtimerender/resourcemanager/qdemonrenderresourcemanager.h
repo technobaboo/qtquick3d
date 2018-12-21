@@ -32,6 +32,8 @@
 #define QDEMON_RENDER_RESOURCE_MANAGER_H
 
 #include <QtDemonRender/qdemonrenderbasetypes.h>
+#include <QtDemonRender/qdemonrenderrenderbuffer.h>
+#include <QtDemonRender/qdemonrendercontext.h>
 
 QT_BEGIN_NAMESPACE
 /**
@@ -43,35 +45,35 @@ protected:
     virtual ~IResourceManager() {}
 
 public:
-    virtual QDemonRenderFrameBuffer *AllocateFrameBuffer() = 0;
-    virtual void Release(QDemonRenderFrameBuffer &inBuffer) = 0;
-    virtual QDemonRenderRenderBuffer *
+    virtual QSharedPointer<QDemonRenderFrameBuffer> AllocateFrameBuffer() = 0;
+    virtual void Release(QSharedPointer<QDemonRenderFrameBuffer> inBuffer) = 0;
+    virtual QSharedPointer<QDemonRenderRenderBuffer>
     AllocateRenderBuffer(quint32 inWidth, quint32 inHeight,
                          QDemonRenderRenderBufferFormats::Enum inBufferFormat) = 0;
-    virtual void Release(QDemonRenderRenderBuffer &inBuffer) = 0;
-    virtual QDemonRenderTexture2D *AllocateTexture2D(quint32 inWidth, quint32 inHeight,
-                                                     QDemonRenderTextureFormats::Enum inTextureFormat,
-                                                     quint32 inSampleCount = 1,
-                                                     bool immutable = false) = 0;
-    virtual void Release(QDemonRenderTexture2D &inBuffer) = 0;
-    virtual QDemonRenderTexture2DArray *
+    virtual void Release(QSharedPointer<QDemonRenderRenderBuffer> inBuffer) = 0;
+    virtual QSharedPointer<QDemonRenderTexture2D> AllocateTexture2D(quint32 inWidth, quint32 inHeight,
+                                                                    QDemonRenderTextureFormats::Enum inTextureFormat,
+                                                                    quint32 inSampleCount = 1,
+                                                                    bool immutable = false) = 0;
+    virtual void Release(QSharedPointer<QDemonRenderTexture2D> inBuffer) = 0;
+    virtual QSharedPointer<QDemonRenderTexture2DArray>
     AllocateTexture2DArray(quint32 inWidth, quint32 inHeight, quint32 inSlices,
                            QDemonRenderTextureFormats::Enum inTextureFormat,
                            quint32 inSampleCount = 1) = 0;
-    virtual void Release(QDemonRenderTexture2DArray &inBuffer) = 0;
-    virtual QDemonRenderTextureCube *
+    virtual void Release(QSharedPointer<QDemonRenderTexture2DArray> inBuffer) = 0;
+    virtual QSharedPointer<QDemonRenderTextureCube>
     AllocateTextureCube(quint32 inWidth, quint32 inHeight,
                         QDemonRenderTextureFormats::Enum inTextureFormat,
                         quint32 inSampleCount = 1) = 0;
-    virtual void Release(QDemonRenderTextureCube &inBuffer) = 0;
-    virtual QDemonRenderImage2D *AllocateImage2D(QDemonRenderTexture2D *inTexture,
-                                                 QDemonRenderImageAccessType::Enum inAccess) = 0;
-    virtual void Release(QDemonRenderImage2D &inBuffer) = 0;
+    virtual void Release(QSharedPointer<QDemonRenderTextureCube> inBuffer) = 0;
+    virtual QSharedPointer<QDemonRenderImage2D> AllocateImage2D(QSharedPointer<QDemonRenderTexture2D> inTexture,
+                                                                QDemonRenderImageAccessType::Enum inAccess) = 0;
+    virtual void Release(QSharedPointer<QDemonRenderImage2D> inBuffer) = 0;
 
-    virtual QDemonRenderContext &GetRenderContext() = 0;
+    virtual QSharedPointer<QDemonRenderContext> GetRenderContext() = 0;
     virtual void DestroyFreeSizedResources() = 0;
 
-    static IResourceManager &CreateResourceManager(QDemonRenderContext &inContext);
+    static IResourceManager &CreateResourceManager(QSharedPointer<QDemonRenderContext> inContext);
 };
 QT_END_NAMESPACE
 

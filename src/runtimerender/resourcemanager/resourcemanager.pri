@@ -1,4 +1,4 @@
-#HEADERS += \
+HEADERS += \
 #    $$PWD/qdemonrenderbufferloader.h \
 #    $$PWD/qdemonrenderbuffermanager.h \
 #    $$PWD/qdemonrenderimagebatchloader.h \
@@ -7,9 +7,10 @@
 #    $$PWD/qdemonrenderloadedtexturefreeimagecompat.h \
 #    $$PWD/qdemonrenderprefiltertexture.h \
 #    $$PWD/qdemonrenderresourcebufferobjects.h \
-#    $$PWD/qdemonrenderresourcemanager.h \
+    $$PWD/qdemonrenderresourcemanager.h \
 #    $$PWD/qdemonrenderresourcetexture2d.h
-#SOURCES += \
+
+SOURCES += \
 #    $$PWD/qdemonrenderbufferloader.cpp \
 #    $$PWD/qdemonrenderbuffermanager.cpp \
 #    $$PWD/qdemonrenderimagebatchloader.cpp \
@@ -20,5 +21,5 @@
 #    $$PWD/qdemonrenderloadedtexturehdr.cpp \
 #    $$PWD/qdemonrenderprefiltertexture.cpp \
 #    $$PWD/qdemonrenderresourcebufferobjects.cpp \
-#    $$PWD/qdemonrenderresourcemanager.cpp \
+    $$PWD/qdemonrenderresourcemanager.cpp \
 #    $$PWD/qdemonrenderresourcetexture2d.cpp
