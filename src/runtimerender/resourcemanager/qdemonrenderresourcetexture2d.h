@@ -41,7 +41,7 @@ class CResourceTexture2D
 {
 protected:
     IResourceManager &m_ResourceManager;
-    QDemonRenderTexture2D *m_Texture;
+    QSharedPointer<QDemonRenderTexture2D> m_Texture;
     STextureDetails m_TextureDetails;
 
 public:
@@ -67,13 +67,13 @@ public:
         Q_ASSERT(m_Texture);
         return *m_Texture;
     }
-    QDemonRenderTexture2D *operator->()
+    QSharedPointer<QDemonRenderTexture2D> operator->()
     {
         Q_ASSERT(m_Texture);
         return m_Texture;
     }
-    operator QDemonRenderTexture2D *() { return m_Texture; }
-    QDemonRenderTexture2D *GetTexture() { return m_Texture; }
+    operator QSharedPointer<QDemonRenderTexture2D> () { return m_Texture; }
+    QSharedPointer<QDemonRenderTexture2D> GetTexture() { return m_Texture; }
     void ForgetTexture();
     // Enforces single ownership rules.
     void StealTexture(CResourceTexture2D &inOther);
@@ -83,7 +83,7 @@ class CResourceTexture2DArray
 {
 protected:
     IResourceManager &m_ResourceManager;
-    QDemonRenderTexture2DArray *m_Texture;
+    QSharedPointer<QDemonRenderTexture2DArray> m_Texture;
     STextureDetails m_TextureDetails;
 
 public:
@@ -109,13 +109,13 @@ public:
         Q_ASSERT(m_Texture);
         return *m_Texture;
     }
-    QDemonRenderTexture2DArray *operator->()
+    QSharedPointer<QDemonRenderTexture2DArray> operator->()
     {
         Q_ASSERT(m_Texture);
         return m_Texture;
     }
-    operator QDemonRenderTexture2DArray *() { return m_Texture; }
-    QDemonRenderTexture2DArray *GetTexture() { return m_Texture; }
+    operator QSharedPointer<QDemonRenderTexture2DArray> () { return m_Texture; }
+    QSharedPointer<QDemonRenderTexture2DArray> GetTexture() { return m_Texture; }
     // Enforces single ownership rules.
     void StealTexture(CResourceTexture2DArray &inOther);
 };

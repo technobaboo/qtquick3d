@@ -32,16 +32,17 @@
 #define QDEMON_RENDER_RESOURCE_BUFFER_OBJECTS_H
 
 #include <QtDemonRender/qdemonrendercontext.h>
-#include <QtDemonRuntimeRender/qdemonrenderresourcemanager.h>
 #include <QtDemonRender/qdemonrenderframebuffer.h>
 #include <QtDemonRender/qdemonrenderrenderbuffer.h>
+
+#include <QtDemonRuntimeRender/qdemonrenderresourcemanager.h>
 
 QT_BEGIN_NAMESPACE
 class CResourceFrameBuffer
 {
 protected:
     IResourceManager &m_ResourceManager;
-    QDemonRenderFrameBuffer *m_FrameBuffer;
+    QSharedPointer<QDemonRenderFrameBuffer> m_FrameBuffer;
 
 public:
     CResourceFrameBuffer(IResourceManager &mgr);
@@ -50,8 +51,8 @@ public:
     void ReleaseFrameBuffer();
 
     IResourceManager &GetResourceManager() { return m_ResourceManager; }
-    operator QDemonRenderFrameBuffer *() { return m_FrameBuffer; }
-    QDemonRenderFrameBuffer *operator->()
+    operator QSharedPointer<QDemonRenderFrameBuffer> () { return m_FrameBuffer; }
+    QSharedPointer<QDemonRenderFrameBuffer> operator->()
     {
         Q_ASSERT(m_FrameBuffer);
         return m_FrameBuffer;
@@ -67,7 +68,7 @@ class CResourceRenderBuffer
 {
 protected:
     IResourceManager &m_ResourceManager;
-    QDemonRenderRenderBuffer *m_RenderBuffer;
+    QSharedPointer<QDemonRenderRenderBuffer> m_RenderBuffer;
     QDemonRenderRenderBufferFormats::Enum m_StorageFormat;
     QDemonRenderRenderBufferDimensions m_Dimensions;
 
@@ -78,8 +79,8 @@ public:
                             QDemonRenderRenderBufferFormats::Enum storageFormat);
     void ReleaseRenderBuffer();
 
-    operator QDemonRenderRenderBuffer *() { return m_RenderBuffer; }
-    QDemonRenderRenderBuffer *operator->()
+    operator QSharedPointer<QDemonRenderRenderBuffer> () { return m_RenderBuffer; }
+    QSharedPointer<QDemonRenderRenderBuffer> operator->()
     {
         Q_ASSERT(m_RenderBuffer);
         return m_RenderBuffer;

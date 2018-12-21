@@ -27,7 +27,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <QtDemonRuntimeRender/qdemonrenderresourcebufferobjects.h>
+
+#include "qdemonrenderresourcebufferobjects.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -59,7 +60,7 @@ bool CResourceFrameBuffer::EnsureFrameBuffer()
 void CResourceFrameBuffer::ReleaseFrameBuffer()
 {
     if (m_FrameBuffer) {
-        m_ResourceManager.Release(*m_FrameBuffer);
+        m_ResourceManager.Release(m_FrameBuffer);
     }
 }
 
@@ -95,7 +96,7 @@ bool CResourceRenderBuffer::EnsureRenderBuffer(quint32 width, quint32 height,
 void CResourceRenderBuffer::ReleaseRenderBuffer()
 {
     if (m_RenderBuffer) {
-        m_ResourceManager.Release(*m_RenderBuffer);
+        m_ResourceManager.Release(m_RenderBuffer);
         m_RenderBuffer = nullptr;
     }
 }

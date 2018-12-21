@@ -27,7 +27,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <QtDemonRuntimeRender/qdemonrenderresourcetexture2d.h>
+
+#include "qdemonrenderresourcetexture2d.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -86,7 +87,7 @@ bool CResourceTexture2D::EnsureTexture(quint32 width, quint32 height,
 void CResourceTexture2D::ReleaseTexture()
 {
     if (m_Texture) {
-        m_ResourceManager.Release(*m_Texture);
+        m_ResourceManager.Release(m_Texture);
         ForgetTexture();
     }
 }
@@ -145,8 +146,7 @@ bool CResourceTexture2DArray::EnsureTexture(quint32 width, quint32 height, quint
     }
 
     if (!m_Texture)
-        m_Texture =
-                m_ResourceManager.AllocateTexture2DArray(width, height, slices, inFormat, inSamples);
+        m_Texture = m_ResourceManager.AllocateTexture2DArray(width, height, slices, inFormat, inSamples);
     else {
         // multisampled textures are immuteable
         Q_ASSERT(inSamples == 1);
@@ -160,7 +160,7 @@ bool CResourceTexture2DArray::EnsureTexture(quint32 width, quint32 height, quint
 void CResourceTexture2DArray::ReleaseTexture()
 {
     if (m_Texture) {
-        m_ResourceManager.Release(*m_Texture);
+        m_ResourceManager.Release(m_Texture);
         m_Texture = nullptr;
     }
 }
