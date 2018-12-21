@@ -33,18 +33,20 @@
 #include <QtDemonRuntimeRender/qdemontextrenderer.h>
 #include <QtGui/QImage>
 
+#include <QtDemon/qdemonutils.h>
+
 QT_BEGIN_NAMESPACE
 
-SLoadedTexture *SLoadedTexture::LoadQImage(const QString &inPath, qint32 flipVertical,
+QSharedPointer<SLoadedTexture> SLoadedTexture::LoadQImage(const QString &inPath, qint32 flipVertical,
                                            QDemonRenderContextType renderContextType)
 {
     Q_UNUSED(flipVertical)
     Q_UNUSED(renderContextType)
-    SLoadedTexture *retval(nullptr);
+    QSharedPointer<SLoadedTexture> retval(nullptr);
     QImage image(inPath);
     image = image.mirrored();
     image = image.rgbSwapped();
-    retval = new SLoadedTexture;
+    retval.reset(new SLoadedTexture);
     retval->width = image.width();
     retval->height = image.height();
     retval->components = image.pixelFormat().channelCount();
@@ -313,7 +315,7 @@ struct STextureDataWriter
     {
         quint32 dataSize = m_Stride * m_Height;
         if (dataSize > m_TextureData.dataSizeInBytes) {
-            alloc.deallocate(m_TextureData.data);
+            ::free(m_TextureData.data);
             m_TextureData.data = malloc(dataSize);
             m_TextureData.dataSizeInBytes = dataSize;
         }
@@ -393,9 +395,9 @@ static void DecompressDDS(void *inSrc, quint32 inDataSize, quint32 inWidth, quin
     int height = (int)inHeight;
     int lineStride = 16;
     for (int y = 0; y < height && ioWriter.Finished() == false; y += 4) {
-        int yPixels = NVMin(height - y, 4);
+        int yPixels = qMin(height - y, 4);
         for (int x = 0; x < width && ioWriter.Finished() == false; x += 4) {
-            int xPixels = NVMin(width - x, 4);
+            int xPixels = qMin(width - x, 4);
             DecodeDXTBlock<DECODER>(pbDst, pbSrc, lineStride, xPixels, yPixels);
             pbSrc += INFO::bytesPerBlock;
             ioWriter.WriteBlock(x, y, xPixels, yPixels, pbDstData);
@@ -466,16 +468,16 @@ SLoadedTexture::~SLoadedTexture()
 {
     if (dds) {
         if (dds->dataBlock)
-            QDEMON_FREE(m_Allocator, dds->dataBlock);
+            ::free(dds->dataBlock);
 
-        QDEMON_FREE(m_Allocator, dds);
+        ::free(dds);
     } else if (data && image.byteCount() <= 0) {
-        m_Allocator.deallocate(data);
+        ::free(data);
     }
     if (m_Palette)
-        m_Allocator.deallocate(m_Palette);
+        ::free(m_Palette);
     if (m_TransparencyTable)
-        m_Allocator.deallocate(m_TransparencyTable);
+        ::free(m_TransparencyTable);
 }
 
 bool SLoadedTexture::ScanForTransparency()
@@ -561,7 +563,7 @@ void SLoadedTexture::EnsureMultiplerOfFour(const char *inPath)
             quint32 newHeight = ITextRenderer::NextMultipleOf4(height);
             quint32 newDataSize = newWidth * newHeight * components;
             quint8 *newData = static_cast<quint8 *>(::malloc(newDataSize));
-            CImageScaler theScaler(theAllocator);
+            CImageScaler theScaler;
             if (components == 4) {
                 theScaler.FastExpandRowsAndColumns((unsigned char *)data, width, height, newData,
                                                    newWidth, newHeight);
@@ -569,7 +571,7 @@ void SLoadedTexture::EnsureMultiplerOfFour(const char *inPath)
                 theScaler.ExpandRowsAndColumns((unsigned char *)data, width, height, newData,
                                                newWidth, newHeight, components);
 
-            theAllocator.deallocate(data);
+            ::free(data);
             data = newData;
             width = newWidth;
             height = newHeight;
@@ -598,22 +600,22 @@ STextureData SLoadedTexture::DecompressDXTImage(int inMipMapIdx, STextureData *i
     case QDemonRenderTextureFormats::RGB_DXT1:
         DecompressDDS<DXT_BLOCKDECODER_1>(
             srcData, srcDataSize, imgWidth, imgHeight,
-            STextureDataWriter(imgWidth, imgHeight, false, retval, m_Allocator));
+            STextureDataWriter(imgWidth, imgHeight, false, retval));
         break;
     case QDemonRenderTextureFormats::RGBA_DXT1:
         DecompressDDS<DXT_BLOCKDECODER_1>(
             srcData, srcDataSize, imgWidth, imgHeight,
-            STextureDataWriter(imgWidth, imgHeight, true, retval, m_Allocator));
+            STextureDataWriter(imgWidth, imgHeight, true, retval));
         break;
     case QDemonRenderTextureFormats::RGBA_DXT3:
         DecompressDDS<DXT_BLOCKDECODER_3>(
             srcData, srcDataSize, imgWidth, imgHeight,
-            STextureDataWriter(imgWidth, imgHeight, true, retval, m_Allocator));
+            STextureDataWriter(imgWidth, imgHeight, true, retval));
         break;
     case QDemonRenderTextureFormats::RGBA_DXT5:
         DecompressDDS<DXT_BLOCKDECODER_5>(
             srcData, srcDataSize, imgWidth, imgHeight,
-            STextureDataWriter(imgWidth, imgHeight, true, retval, m_Allocator));
+            STextureDataWriter(imgWidth, imgHeight, true, retval));
         break;
     default:
         Q_ASSERT(false);
@@ -625,37 +627,37 @@ STextureData SLoadedTexture::DecompressDXTImage(int inMipMapIdx, STextureData *i
 void SLoadedTexture::ReleaseDecompressedTexture(STextureData inImage)
 {
     if (inImage.data)
-        m_Allocator.deallocate(inImage.data);
+        ::free(inImage.data);
 }
 
 #ifndef EA_PLATFORM_WINDOWS
 #define stricmp strcasecmp
 #endif
 
-SLoadedTexture *SLoadedTexture::Load(const QString &inPath, IInputStreamFactory &inFactory, bool inFlipY,
+QSharedPointer<SLoadedTexture> SLoadedTexture::Load(const QString &inPath, IInputStreamFactory &inFactory, bool inFlipY,
                                      QDemonRenderContextType renderContextType)
 {
     if (inPath.isEmpty())
         return nullptr;
 
-    SLoadedTexture *theLoadedImage = nullptr;
-    QSharedPointer<IRefCountedInputStream> theStream(inFactory.GetStreamForFile(inPath));
+    QSharedPointer<SLoadedTexture> theLoadedImage = nullptr;
+    QSharedPointer<IInputStream> theStream(inFactory.GetStreamForFile(inPath));
     QString fileName;
     inFactory.GetPathForFile(inPath, fileName);
-    if (theStream.mPtr && inPath.size() > 3) {
+    if (theStream && inPath.size() > 3) {
         if (inPath.endsWith("png", Qt::CaseInsensitive)
                 || inPath.endsWith("jpg", Qt::CaseInsensitive)
                 || inPath.endsWith("peg", Qt::CaseInsensitive)
                 || inPath.endsWith("ktx", Qt::CaseInsensitive)) {
-            theLoadedImage = LoadQImage(fileName, inFlipY, inFoundation, renderContextType);
+            theLoadedImage = LoadQImage(fileName, inFlipY, renderContextType);
         } else if (inPath.endsWith("dds", Qt::CaseInsensitive)) {
-            theLoadedImage = LoadDDS(*theStream, inFlipY, inFoundation, renderContextType);
+            theLoadedImage = LoadDDS(theStream, inFlipY, renderContextType);
         } else if (inPath.endsWith("gif", Qt::CaseInsensitive)) {
-            theLoadedImage = LoadGIF(*theStream, !inFlipY, inFoundation, renderContextType);
+            theLoadedImage = LoadGIF(theStream, !inFlipY, renderContextType);
         } else if (inPath.endsWith("bmp", Qt::CaseInsensitive)) {
-            theLoadedImage = LoadBMP(*theStream, !inFlipY, inFoundation, renderContextType);
+            theLoadedImage = LoadBMP(theStream, !inFlipY, renderContextType);
         } else if (inPath.endsWith("hdr", Qt::CaseInsensitive)) {
-            theLoadedImage = LoadHDR(*theStream, inFoundation, renderContextType);
+            theLoadedImage = LoadHDR(theStream, renderContextType);
         } else {
             qCWarning(INTERNAL_ERROR, "Unrecognized image extension: %s", qPrintable(inPath));
         }

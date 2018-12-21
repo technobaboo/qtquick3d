@@ -32,6 +32,8 @@
 #ifndef QDEMON_RENDER_LOAD_DDS_H
 #define QDEMON_RENDER_LOAD_DDS_H
 
+#include <QtDemonRuntimeRender/qtdemonruntimerenderglobal.h>
+
 QT_BEGIN_NAMESPACE
 
 /** The maximum number of mipmap levels (per texture or per cubemap face) */

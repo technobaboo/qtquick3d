@@ -32,6 +32,9 @@
 #define QDEMON_RENDER_LOADED_TEXTURE_FREEIMAGE_COMPAT_H
 
 #include <QtDemonRuntimeRender/qdemonrenderloadedtexture.h>
+
+#include <QtDemon/qdemonutils.h>
+
 #include <stdlib.h>
 #ifndef _MACOSX
 #ifndef _INTEGRITYPLATFORM
@@ -334,7 +337,7 @@ inline SLoadedTexture *FreeImage_Allocate(int width, int height, int bit_count, 
     int pitch = CalculatePitch(CalculateLine(width, bit_count));
     quint32 dataSize = (quint32)(height * pitch);
     theTexture->dataSizeInBytes = dataSize;
-    theTexture->data = io->m_Allocator.allocate(dataSize, "image data", __FILE__, __LINE__);
+    theTexture->data = ::malloc(dataSize);
     memZero(theTexture->data, dataSize);
     theTexture->width = width;
     theTexture->height = height;
@@ -360,8 +363,7 @@ inline RGBQUAD *FreeImage_GetPalette(SLoadedTexture *texture)
         texture->m_ExtendedFormat = ExtendedTextureFormats::Palettized;
         quint32 memory = 256 * sizeof(RGBQUAD);
         if (memory) {
-            texture->m_Palette =
-                    texture->m_Allocator.allocate(memory, "texture palette", __FILE__, __LINE__);
+            texture->m_Palette = ::malloc(memory);
             memZero(texture->m_Palette, memory);
         }
     }
@@ -370,7 +372,7 @@ inline RGBQUAD *FreeImage_GetPalette(SLoadedTexture *texture)
 
 inline void FreeImage_Unload(SLoadedTexture *texture) 
 { 
-//    texture->release(); 
+    delete texture;
 }
 inline void FreeImage_OutputMessageProc(int, const char *message, FreeImageIO *io)
 {
@@ -391,11 +393,10 @@ inline void FreeImage_SetBackgroundColor(SLoadedTexture *texture, RGBQUAD *inCol
 inline void FreeImage_SetTransparencyTable(SLoadedTexture *texture, BYTE *table, int size)
 {
     if (texture->m_TransparencyTable)
-        texture->m_Allocator.deallocate(texture->m_TransparencyTable);
+        delete texture->m_TransparencyTable;
     texture->m_TransparencyTable = nullptr;
     if (table && size) {
-        texture->m_TransparencyTable = (uint8_t *)texture->m_Allocator.allocate(
-                    size, "texture transparency table", __FILE__, __LINE__);
+        texture->m_TransparencyTable = static_cast<uint8_t *>(::malloc(size));
         ::memcpy(texture->m_TransparencyTable, table, size);
     }
 }

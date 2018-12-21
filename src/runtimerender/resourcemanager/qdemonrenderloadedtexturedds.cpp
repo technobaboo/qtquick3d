@@ -28,8 +28,8 @@
 **
 ****************************************************************************/
 
-#include <QtDemonRuntimeRender/qdemonrenderloadedtexturedds.h>
-#include <QtDemonRuntimeRender/qdemonrenderloadedtexturefreeimagecompat.h>
+#include "qdemonrenderloadedtexturedds.h"
+#include "qdemonrenderloadedtexturefreeimagecompat.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -284,7 +284,7 @@ static void flip_data_vertical(FreeImageIO *io, qint8 *image, qint32 width, qint
         }
 
         linesize = xblocks * blocksize;
-        tmp = (qint8 *)QDEMON_ALLOC(io->m_Allocator, linesize, "flip_data_vertical compressed");
+        tmp = static_cast<qint8 *>(::malloc(linesize));
 
         for (j = 0; j < (yblocks >> 1); j++) {
             top = (DXTColBlock *)(void *)(image + j * linesize);
@@ -305,7 +305,7 @@ static void flip_data_vertical(FreeImageIO *io, qint8 *image, qint32 width, qint
             (*flipblocks)(middle, xblocks);
         }
 
-        QDEMON_FREE(io->m_Allocator, tmp);
+        ::free(tmp);
     } else {
         qint32 linesize = width * info->bytesPerPixel;
         qint32 j;
@@ -314,7 +314,7 @@ static void flip_data_vertical(FreeImageIO *io, qint8 *image, qint32 width, qint
         qint8 *tmp;
 
         // much simpler - just compute the line length and swap each row
-        tmp = (qint8 *)QDEMON_ALLOC(io->m_Allocator, linesize, "flip_data_vertical");
+        tmp = static_cast<qint8 *>(::malloc(linesize));
         ;
 
         for (j = 0; j < (height >> 1); j++) {
@@ -326,7 +326,7 @@ static void flip_data_vertical(FreeImageIO *io, qint8 *image, qint32 width, qint
             memcpy(top, tmp, linesize);
         }
 
-        QDEMON_FREE(io->m_Allocator, tmp);
+        ::free(tmp);
     }
 }
 
@@ -374,9 +374,7 @@ void *QDemonDDSAllocDataBlock(FreeImageIO *io, QDemonDDSImage *image)
     if (image) {
         qint32 i;
         qint32 size = total_image_data_size(image);
-        image->dataBlock =
-                QDEMON_ALLOC(io->m_Allocator, size,
-                             "QDemonDDSAllocDataBlock"); // no need to calloc, as we fill every bit...
+        image->dataBlock = ::malloc(size);
         if (image->dataBlock == nullptr) {
             return nullptr;
         }
@@ -396,14 +394,14 @@ void *QDemonDDSAllocDataBlock(FreeImageIO *io, QDemonDDSImage *image)
     return (nullptr);
 }
 
-static FIBITMAP *DoLoadDDS(FreeImageIO *io, IInStream &inStream, qint32 flipVertical)
+static QSharedPointer<SLoadedTexture> DoLoadDDS(FreeImageIO *io, QSharedPointer<IInputStream> inStream, qint32 flipVertical)
 {
     FIBITMAP *dib = nullptr;
     DDS_HEADER ddsh;
     qint8 filecode[4];
     QDemonDDSImage *image = nullptr;
     bool needsBGRASwap = false;
-    ;
+
     bool isAllreadyFlipped = false;
 
     try {
@@ -413,7 +411,7 @@ static FIBITMAP *DoLoadDDS(FreeImageIO *io, IInStream &inStream, qint32 flipVert
             throw "Invalid DDS file";
         }
 
-        image = (QDemonDDSImage *)QDEMON_ALLOC(io->m_Allocator, sizeof(QDemonDDSImage), "DoLoadDDS");
+        image = reinterpret_cast<QDemonDDSImage *>(::malloc(sizeof(QDemonDDSImage)));
         if (image == nullptr) {
             throw "QDemonDDSImage allocation failed";
         }
@@ -485,7 +483,7 @@ static FIBITMAP *DoLoadDDS(FreeImageIO *io, IInStream &inStream, qint32 flipVert
                 // memory, equivalent to GL's RGBA
                 image->format = QDemonRenderTextureFormats::RGBA8;
                 image->components = 4;
-                image->componentFormat = QDemonRenderComponentTypes::quint8;
+                image->componentFormat = QDemonRenderComponentTypes::UnsignedInteger8;
                 image->bytesPerPixel = 4;
                 image->alpha = 1;
                 image->compressed = 0;
@@ -498,7 +496,7 @@ static FIBITMAP *DoLoadDDS(FreeImageIO *io, IInStream &inStream, qint32 flipVert
                 // memory, need to be
                 image->format = QDemonRenderTextureFormats::RGBA8;
                 image->components = 4;
-                image->componentFormat = QDemonRenderComponentTypes::quint8;
+                image->componentFormat = QDemonRenderComponentTypes::UnsignedInteger8;
                 image->bytesPerPixel = 4;
                 image->alpha = 1;
                 image->compressed = 0;
@@ -513,7 +511,7 @@ static FIBITMAP *DoLoadDDS(FreeImageIO *io, IInStream &inStream, qint32 flipVert
                 image->format = QDemonRenderTextureFormats::RGB8;
                 image->components = 3;
                 image->alpha = 0;
-                image->componentFormat = QDemonRenderComponentTypes::quint16;
+                image->componentFormat = QDemonRenderComponentTypes::UnsignedInteger16;
                 image->bytesPerPixel = 2;
                 image->compressed = 0;
                 dib->format = QDemonRenderTextureFormats::RGB8;
@@ -525,7 +523,7 @@ static FIBITMAP *DoLoadDDS(FreeImageIO *io, IInStream &inStream, qint32 flipVert
                 image->format = QDemonRenderTextureFormats::Alpha8;
                 image->components = 1;
                 image->alpha = 1;
-                image->componentFormat = QDemonRenderComponentTypes::quint8;
+                image->componentFormat = QDemonRenderComponentTypes::UnsignedInteger8;
                 image->bytesPerPixel = 1;
                 image->compressed = 0;
                 dib->format = QDemonRenderTextureFormats::Alpha8;
@@ -537,7 +535,7 @@ static FIBITMAP *DoLoadDDS(FreeImageIO *io, IInStream &inStream, qint32 flipVert
                 image->format = QDemonRenderTextureFormats::Luminance8;
                 image->components = 1;
                 image->alpha = 0;
-                image->componentFormat = QDemonRenderComponentTypes::quint8;
+                image->componentFormat = QDemonRenderComponentTypes::UnsignedInteger8;
                 image->bytesPerPixel = 1;
                 image->compressed = 0;
                 dib->format = QDemonRenderTextureFormats::Luminance8;
@@ -549,7 +547,7 @@ static FIBITMAP *DoLoadDDS(FreeImageIO *io, IInStream &inStream, qint32 flipVert
                 image->format = QDemonRenderTextureFormats::LuminanceAlpha8;
                 image->components = 2;
                 image->alpha = 1;
-                image->componentFormat = QDemonRenderComponentTypes::quint8;
+                image->componentFormat = QDemonRenderComponentTypes::UnsignedInteger8;
                 image->bytesPerPixel = 2;
                 image->compressed = 0;
                 dib->format = QDemonRenderTextureFormats::LuminanceAlpha8;
@@ -596,8 +594,7 @@ static FIBITMAP *DoLoadDDS(FreeImageIO *io, IInStream &inStream, qint32 flipVert
 
             for (qint32 i = 0; i < image->numMipmaps; i++) {
                 // Get the size, read in the data.
-                inStream.Read(
-                            QDemonDataRef<quint8>((quint8 *)image->data[index], (quint32)image->size[index]));
+                inStream.Read(QDemonDataRef<quint8>((quint8 *)image->data[index], (quint32)image->size[index]));
 
                 // Flip in Y for OpenGL if needed
                 if (flipVertical)
@@ -663,9 +660,9 @@ static FIBITMAP *DoLoadDDS(FreeImageIO *io, IInStream &inStream, qint32 flipVert
     } catch (const char *message) {
         if (image) {
             if (image->dataBlock)
-                QDEMON_FREE(io->m_Allocator, image->dataBlock);
+                ::free(image->dataBlock);
 
-            QDEMON_FREE(io->m_Allocator, image);
+            ::free(image);
         }
         if (dib) {
             FreeImage_Unload(dib);
@@ -675,15 +672,15 @@ static FIBITMAP *DoLoadDDS(FreeImageIO *io, IInStream &inStream, qint32 flipVert
         }
     }
 
-    return dib;
+    return QSharedPointer<SLoadedTexture>(dib);
 }
 
-SLoadedTexture *SLoadedTexture::LoadDDS(IInStream &inStream, qint32 flipVertical,
+QSharedPointer<SLoadedTexture> SLoadedTexture::LoadDDS(QSharedPointer<IInputStream> inStream, qint32 flipVertical,
                                         QDemonRenderContextType renderContextType)
 {
     Q_UNUSED(renderContextType)
-    FreeImageIO theIO();
-    SLoadedTexture *retval = DoLoadDDS(&theIO, inStream, flipVertical);
+    FreeImageIO theIO;
+    QSharedPointer<SLoadedTexture> retval = DoLoadDDS(&theIO, inStream, flipVertical);
 
     return retval;
 }

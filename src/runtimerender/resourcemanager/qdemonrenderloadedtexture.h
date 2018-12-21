@@ -31,11 +31,12 @@
 #ifndef QDEMON_RENDER_LOADED_TEXTURE_H
 #define QDEMON_RENDER_LOADED_TEXTURE_H
 
-#include <QtDemonRuntimeRender/qdemonsimpletypes.h>
 #include <QtDemonRender/qdemonrenderbasetypes.h>
-#include <QtDemonRuntimeRender/qdemonrenderloadedtexturedds.h>
-#include <QtGui/QImage>
 
+#include <QtDemonRuntimeRender/qdemonrenderloadedtexturedds.h>
+#include <QtDemonRuntimeRender/qdemonrenderinputstreamfactory.h>
+
+#include <QtGui/QImage>
 
 QT_BEGIN_NAMESPACE
 class IInputStreamFactory;
@@ -62,11 +63,8 @@ struct ExtendedTextureFormats
 };
 // Utility class used for loading image data from disk.
 // Supports jpg, png, and dds.
-struct SLoadedTexture : public NVReleasable
+struct SLoadedTexture
 {
-private:
-    ~SLoadedTexture();
-
 public:
     qint32 width;
     qint32 height;
@@ -107,6 +105,8 @@ public:
         m_BackgroundColor[1] = 0;
         m_BackgroundColor[2] = 0;
     }
+
+    ~SLoadedTexture();
     void setFormatFromComponents()
     {
         switch (components) {
@@ -137,21 +137,21 @@ public:
     STextureData DecompressDXTImage(int inMipMapIdx, STextureData *inOptLastImage = nullptr);
     void ReleaseDecompressedTexture(STextureData inImage);
 
-    static SLoadedTexture *Load(const QString &inPath,
-                                IInputStreamFactory &inFactory, bool inFlipY = true,
-                                QDemonRenderContextType renderContextType
-                                = QDemonRenderContextValues::NullContext);
-    static SLoadedTexture *LoadDDS(IInStream &inStream, qint32 flipVertical,
-                                   QDemonRenderContextType renderContextType);
-    static SLoadedTexture *LoadBMP(ISeekableIOStream &inStream, bool inFlipY,
-                                   QDemonRenderContextType renderContextType);
-    static SLoadedTexture *LoadGIF(ISeekableIOStream &inStream, bool inFlipY,
-                                   QDemonRenderContextType renderContextType);
-    static SLoadedTexture *LoadHDR(ISeekableIOStream &inStream,
-                                   QDemonRenderContextType renderContextType);
+    static QSharedPointer<SLoadedTexture> Load(const QString &inPath,
+                                               IInputStreamFactory &inFactory, bool inFlipY = true,
+                                               QDemonRenderContextType renderContextType
+                                               = QDemonRenderContextValues::NullContext);
+    static QSharedPointer<SLoadedTexture> LoadDDS(QSharedPointer<IInputStream> inStream, qint32 flipVertical,
+                                                  QDemonRenderContextType renderContextType);
+    static QSharedPointer<SLoadedTexture> LoadBMP(QSharedPointer<IInputStream> inStream, bool inFlipY,
+                                                  QDemonRenderContextType renderContextType);
+    static QSharedPointer<SLoadedTexture> LoadGIF(QSharedPointer<IInputStream> inStream, bool inFlipY,
+                                                  QDemonRenderContextType renderContextType);
+    static QSharedPointer<SLoadedTexture> LoadHDR(QSharedPointer<IInputStream> inStream,
+                                                  QDemonRenderContextType renderContextType);
 
-    static SLoadedTexture *LoadQImage(const QString &inPath, qint32 flipVertical,
-                                      QDemonRenderContextType renderContextType);
+    static QSharedPointer<SLoadedTexture> LoadQImage(const QString &inPath, qint32 flipVertical,
+                                                     QDemonRenderContextType renderContextType);
 
 private:
     // Implemented in the bmp loader.
