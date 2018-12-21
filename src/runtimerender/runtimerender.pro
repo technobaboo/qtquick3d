@@ -74,7 +74,7 @@ SOURCES += \
 #    qdemonqmlrender.cpp \
 #    qdemonoffscreenrendermanager.cpp \
 #    qdemonoldnbustedrenderplugin.cpp \
-#    qdemononscreentextrenderer.cpp \
+    qdemononscreentextrenderer.cpp \
     qdemonqttextrenderer.cpp \
     qdemonrenderclippingfrustum.cpp \
 #    qdemonrendercontextcore.cpp \

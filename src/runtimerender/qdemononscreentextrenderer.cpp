@@ -30,13 +30,15 @@
 #define QDEMON_RENDER_ONSCREEN_TEXT
 #ifdef QDEMON_RENDER_ONSCREEN_TEXT
 
-#include <qdemontextrenderer.h>
-#include <qdemonrendertextureatlas.h>
+#include "qdemontextrenderer.h"
+#include "qdemonrendertextureatlas.h"
+
 #include <QtDemonRender/qdemonrendercontext.h>
-#include <QtGui/qpainter.h>
-#include <QtGui/qimage.h>
-#include <QtGui/qrawfont.h>
-#include <QtCore/qfile.h>
+
+#include <QtGui/QPainter>
+#include <QtGui/QImage>
+#include <QtGui/QRawFont>
+#include <QtCore/QFile>
 
 QT_BEGIN_NAMESPACE
 
@@ -104,9 +106,9 @@ struct STextAtlasFont
 
     ~STextAtlasFont() { m_AtlasEntries.clear(); }
 
-    static STextAtlasFont &CreateTextureAtlasFont(quint32 fontSize)
+    static QSharedPointer<STextAtlasFont> CreateTextureAtlasFont(quint32 fontSize)
     {
-        return *new STextAtlasFont(fontSize);
+        return QSharedPointer<STextAtlasFont>(new STextAtlasFont(fontSize));
     }
 };
 
@@ -131,7 +133,7 @@ public:
     {
     }
 
-    virtual ~QDemonOnscreenTextRenderer()
+    virtual ~QDemonOnscreenTextRenderer() override
     {
     }
 
@@ -146,7 +148,7 @@ public:
     void AddProjectFontDirectory(const char *inProjectDirectory) override
     {
         if (m_RenderContext)
-            AddProjectFontDirectory(QString::fromLocal8Bit((inProjectDirectory));
+            AddProjectFontDirectory(QString::fromLocal8Bit(inProjectDirectory));
     }
 
     void loadFont()
@@ -157,16 +159,14 @@ public:
             m_font = new QRawFont(QStringLiteral(":res/Font/TitilliumWeb-Regular.ttf"), 20.0);
 
         // setup texture atlas
-        m_TextTextureAtlas =
-                ITextureAtlas::CreateTextureAtlas(m_RenderContext->GetFoundation(), *m_RenderContext,
-                                                  TEXTURE_ATLAS_DIM, TEXTURE_ATLAS_DIM);
+        m_TextTextureAtlas = ITextureAtlas::CreateTextureAtlas(m_RenderContext, TEXTURE_ATLAS_DIM, TEXTURE_ATLAS_DIM);
 
         // our list of predefined cached characters
         QString cache = QStringLiteral(" !\"#$%&'()*+,-./0123456789:;<=>?"
                                        "@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_"
                                        "`abcdefghijklmnopqrstuvwxyz{|}~");
 
-        m_TextFont = STextAtlasFont::CreateTextureAtlasFont(m_Foundation, 20);
+        m_TextFont = STextAtlasFont::CreateTextureAtlasFont(20);
         CreateTextureAtlasEntries(m_font, *m_TextFont, cache);
         m_TextureAtlasInitialized = true;
     }
@@ -213,7 +213,7 @@ public:
 
     void ClearProjectFontDirectories() override {}
 
-    ITextRenderer &GetTextRenderer(QDemonRenderContext &inRenderContext) override
+    ITextRenderer &GetTextRenderer(QSharedPointer<QDemonRenderContext> inRenderContext) override
     {
         m_RenderContext = inRenderContext;
         return *this;
@@ -233,14 +233,14 @@ public:
     QDemonOption<QString> GetFontNameForFont(QString) override
     {
         Q_ASSERT(false);
-        return Empty();
+        return QDemonEmpty();
     }
 
     // unused
     QDemonOption<QString> GetFontNameForFont(const char *) override
     {
         Q_ASSERT(false);
-        return Empty();
+        return QDemonEmpty();
     }
 
     // unused
@@ -267,80 +267,79 @@ public:
 
     SRenderTextureAtlasDetails RenderText(const STextRenderInfo &inText) override
     {
-        const wchar_t *wText = theStringTable.GetWideStr(inText.m_Text);
-        quint32 length = (quint32)wcslen(wText);
+//        const wchar_t *wText = theStringTable.GetWideStr(inText.m_Text);
+//        quint32 length = (quint32)wcslen(wText);
+        // ### Fix this to not use w_char's and instead use 8bit values
+        QByteArray wText = inText.m_Text.toLocal8Bit();
+        const int length = wText.size();
 
         if (length) {
-            STextAtlasFont *pFont = m_TextFont;
-            const STextureAtlasFontEntry *pEntry;
+            QSharedPointer<STextAtlasFont> pFont = m_TextFont;
+
             float x1, y1, x2, y2;
             float s, t, s1, t1;
             float advance = 0.0;
             // allocate buffer for all the vertex data we need
             // we construct triangles here
             // which means character count x 6 vertices x 5 floats
-            float *vertexData =
-                    (float *)QDEMON_ALLOC(m_Foundation.getAllocator(),
-                                          length * 6 * 5 * sizeof(float),
-                                          "QDemonOnscreenTextRenderer");
+            float *vertexData = static_cast<float*>(::malloc(length * 6 * 5 * sizeof(float)));
             float *bufPtr = vertexData;
             if (vertexData) {
-                for (size_t i = 0; i < length; ++i) {
-                    pEntry = &pFont->m_AtlasEntries.find(wText[i])->second;
+                for (int i = 0; i < length; ++i) {
+                    if (!pFont->m_AtlasEntries.contains(wText[i]))
+                        continue;
+                    const STextureAtlasFontEntry pEntry = pFont->m_AtlasEntries.value(wText[i]);
 
-                    if (pEntry) {
-                        x1 = advance + pEntry->m_xOffset;
-                        x2 = x1 + pEntry->m_width * inText.m_ScaleX;
-                        y1 = pEntry->m_yOffset;
-                        y2 = y1 + pEntry->m_height * inText.m_ScaleY;
+                    x1 = advance + pEntry.m_xOffset;
+                    x2 = x1 + pEntry.m_width * inText.m_ScaleX;
+                    y1 = pEntry.m_yOffset;
+                    y2 = y1 + pEntry.m_height * inText.m_ScaleY;
 
-                        s = pEntry->m_s;
-                        s1 = pEntry->m_s1;
-                        t = pEntry->m_t;
-                        t1 = pEntry->m_t1;
-                        // store vertex data
-                        bufPtr[0] = x1;
-                        bufPtr[1] = y1;
-                        bufPtr[2] = 0.0;
-                        bufPtr[3] = s;
-                        bufPtr[4] = t;
-                        bufPtr[5] = x2;
-                        bufPtr[6] = y1;
-                        bufPtr[7] = 0.0;
-                        bufPtr[8] = s1;
-                        bufPtr[9] = t;
-                        bufPtr[10] = x2;
-                        bufPtr[11] = y2;
-                        bufPtr[12] = 0.0;
-                        bufPtr[13] = s1;
-                        bufPtr[14] = t1;
+                    s = pEntry.m_s;
+                    s1 = pEntry.m_s1;
+                    t = pEntry.m_t;
+                    t1 = pEntry.m_t1;
+                    // store vertex data
+                    bufPtr[0] = x1;
+                    bufPtr[1] = y1;
+                    bufPtr[2] = 0.0;
+                    bufPtr[3] = s;
+                    bufPtr[4] = t;
+                    bufPtr[5] = x2;
+                    bufPtr[6] = y1;
+                    bufPtr[7] = 0.0;
+                    bufPtr[8] = s1;
+                    bufPtr[9] = t;
+                    bufPtr[10] = x2;
+                    bufPtr[11] = y2;
+                    bufPtr[12] = 0.0;
+                    bufPtr[13] = s1;
+                    bufPtr[14] = t1;
 
-                        bufPtr[15] = x1;
-                        bufPtr[16] = y1;
-                        bufPtr[17] = 0.0;
-                        bufPtr[18] = s;
-                        bufPtr[19] = t;
-                        bufPtr[20] = x2;
-                        bufPtr[21] = y2;
-                        bufPtr[22] = 0.0;
-                        bufPtr[23] = s1;
-                        bufPtr[24] = t1;
-                        bufPtr[25] = x1;
-                        bufPtr[26] = y2;
-                        bufPtr[27] = 0.0;
-                        bufPtr[28] = s;
-                        bufPtr[29] = t1;
+                    bufPtr[15] = x1;
+                    bufPtr[16] = y1;
+                    bufPtr[17] = 0.0;
+                    bufPtr[18] = s;
+                    bufPtr[19] = t;
+                    bufPtr[20] = x2;
+                    bufPtr[21] = y2;
+                    bufPtr[22] = 0.0;
+                    bufPtr[23] = s1;
+                    bufPtr[24] = t1;
+                    bufPtr[25] = x1;
+                    bufPtr[26] = y2;
+                    bufPtr[27] = 0.0;
+                    bufPtr[28] = s;
+                    bufPtr[29] = t1;
 
-                        advance += pEntry->m_advance * inText.m_ScaleX;
+                    advance += pEntry.m_advance * inText.m_ScaleX;
 
-                        bufPtr += 30;
-                    }
+                    bufPtr += 30;
                 }
 
                 m_TextTextureAtlas->RelaseEntries();
 
-                return SRenderTextureAtlasDetails(length * 6,
-                                                  toU8DataRef(vertexData, length * 6 * 5));
+                return SRenderTextureAtlasDetails(length * 6, toU8DataRef(vertexData, length * 6 * 5));
             }
         }
 
@@ -381,7 +380,7 @@ public:
 
     void BeginFrame() override {}
     void EndFrame() override {}
-    void BeginPreloadFonts(IThreadPool &, IPerfTimer &) override {}
+    void BeginPreloadFonts(IThreadPool &, QSharedPointer<IPerfTimer>) override {}
     void EndPreloadFonts() override {}
 };
 }
