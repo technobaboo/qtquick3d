@@ -34,7 +34,7 @@ HEADERS += \
     qdemonrenderimagescaler.h \
     qdemonrenderimagetexturedata.h \
     qdemonrenderinputstreamfactory.h \
-#    qdemonrenderlightconstantproperties.h \
+    qdemonrenderlightconstantproperties.h \
 #    qdemonrendermaterialhelpers.h \
 #    qdemonrendermaterialshadergenerator.h \
     qdemonrendermesh.h \
@@ -45,7 +45,7 @@ HEADERS += \
     qdemonrenderpixelgraphicstypes.h \
 #    qdemonrenderplugin.h \
     qdemonrenderplugincinterface.h \
-#    qdemonrenderplugingraphobject.h \
+    qdemonrenderplugingraphobject.h \
 #    qdemonrenderpluginpropertyvalue.h \
     qdemonrenderprofiler.h \
     qdemonrenderray.h \

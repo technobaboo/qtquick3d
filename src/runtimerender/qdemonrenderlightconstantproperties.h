@@ -63,25 +63,25 @@ struct SLightConstantProperties
 {
     struct LightConstants
     {
-        NVRenderCachedShaderProperty<QVector4D> m_position;
-        NVRenderCachedShaderProperty<QVector4D> m_direction;
-        NVRenderCachedShaderProperty<QVector4D> m_up;
-        NVRenderCachedShaderProperty<QVector4D> m_right;
-        NVRenderCachedShaderProperty<QVector4D> m_diffuse;
-        NVRenderCachedShaderProperty<QVector4D> m_ambient;
-        NVRenderCachedShaderProperty<QVector4D> m_specular;
-        NVRenderCachedShaderProperty<float> m_spotExponent;
-        NVRenderCachedShaderProperty<float> m_spotCutoff;
-        NVRenderCachedShaderProperty<float> m_constantAttenuation;
-        NVRenderCachedShaderProperty<float> m_linearAttenuation;
-        NVRenderCachedShaderProperty<float> m_quadraticAttenuation;
-        NVRenderCachedShaderProperty<float> m_range;
-        NVRenderCachedShaderProperty<float> m_width;
-        NVRenderCachedShaderProperty<float> m_height;
-        NVRenderCachedShaderProperty<QVector4D> m_shadowControls;
-        NVRenderCachedShaderProperty<QMatrix4x4> m_shadowView;
-        NVRenderCachedShaderProperty<qint32> m_shadowIdx;
-        NVRenderCachedShaderProperty<QVector3D> m_attenuation;
+        QDemonRenderCachedShaderProperty<QVector4D> m_position;
+        QDemonRenderCachedShaderProperty<QVector4D> m_direction;
+        QDemonRenderCachedShaderProperty<QVector4D> m_up;
+        QDemonRenderCachedShaderProperty<QVector4D> m_right;
+        QDemonRenderCachedShaderProperty<QVector4D> m_diffuse;
+        QDemonRenderCachedShaderProperty<QVector4D> m_ambient;
+        QDemonRenderCachedShaderProperty<QVector4D> m_specular;
+        QDemonRenderCachedShaderProperty<float> m_spotExponent;
+        QDemonRenderCachedShaderProperty<float> m_spotCutoff;
+        QDemonRenderCachedShaderProperty<float> m_constantAttenuation;
+        QDemonRenderCachedShaderProperty<float> m_linearAttenuation;
+        QDemonRenderCachedShaderProperty<float> m_quadraticAttenuation;
+        QDemonRenderCachedShaderProperty<float> m_range;
+        QDemonRenderCachedShaderProperty<float> m_width;
+        QDemonRenderCachedShaderProperty<float> m_height;
+        QDemonRenderCachedShaderProperty<QVector4D> m_shadowControls;
+        QDemonRenderCachedShaderProperty<QMatrix4x4> m_shadowView;
+        QDemonRenderCachedShaderProperty<qint32> m_shadowIdx;
+        QDemonRenderCachedShaderProperty<QVector3D> m_attenuation;
 
         LightConstants(const QString &lightRef, QDemonRenderShaderProgram &shader)
             : m_position(LCSEED.arg(lightRef, lconstantnames[0]), shader)
@@ -187,7 +187,7 @@ struct SLightConstantProperties
     }
 
     QVector<LightConstants *> m_constants;
-    NVRenderCachedShaderProperty<qint32> m_lightCount;
+    QDemonRenderCachedShaderProperty<qint32> m_lightCount;
     int m_lightCountInt;
 };
 

@@ -31,15 +31,17 @@
 #ifndef QDEMON_RENDER_WIDGETS_H
 #define QDEMON_RENDER_WIDGETS_H
 
-
-#include <QtDemon/qdemonoption.h>
 #include <QtGui/QMatrix4x4>
-#include <QMatrix3x3.h>
-#include <QtDemon/qdemonbounds3.h>
+#include <QtGui/QMatrix3x3>
 #include <QtGui/QVector3D>
+
+#include <QtDemon/QDemonOption>
+#include <QtDemon/QDemonBounds3>
 #include <QtDemon/qdemondataref.h>
+
 #include <QtDemonRender/qdemonrendervertexbuffer.h>
 #include <QtDemonRender/qdemonrenderindexbuffer.h>
+
 #include <QtDemonRuntimeRender/qdemonrendertext.h>
 
 QT_BEGIN_NAMESPACE
@@ -95,8 +97,7 @@ struct SWidgetRenderInformation
     {
     }
 };
-typedef QPair<SShaderVertexCodeGenerator &, SShaderFragmentCodeGenerator &>
-TShaderGeneratorPair;
+typedef QPair<SShaderVertexCodeGenerator &, SShaderFragmentCodeGenerator &> TShaderGeneratorPair;
 
 struct RenderWidgetModes
 {
@@ -105,6 +106,9 @@ struct RenderWidgetModes
         Global,
     };
 };
+
+class QDemonRenderContext;
+class IShaderProgramGenerator;
 // Context used to get render data for the widget.
 class IRenderWidgetContext
 {
