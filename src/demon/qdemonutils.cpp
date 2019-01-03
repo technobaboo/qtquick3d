@@ -1,4 +1,5 @@
-#include <QtDemon/qdemonutils.h>
+#include "qdemonutils.h"
+
 #include <QtCore/QDir>
 
 QT_BEGIN_NAMESPACE
@@ -212,8 +213,48 @@ void memZero(void *ptr, size_t size)
     memset(ptr, 0, size);
 }
 
+void memSet(void *ptr, quint8 value, size_t size)
+{
+    memset(ptr, value, size);
+}
 
-const char *nonNull(const char *src) { return src == NULL ? "" : src; }
+
+const char *nonNull(const char *src) { return src == nullptr ? "" : src; }
+
+qint64 IOStream::positionHelper(const QIODevice &device, qint64 offset, IOStream::SeekPosition::Enum seekPosition)
+{
+    qint64 startPos = 0;
+
+    switch (seekPosition) {
+    case IOStream::SeekPosition::Begin:
+        startPos = 0;
+        break;
+    case IOStream::SeekPosition::Current:
+        startPos = device.pos();
+        break;
+    case IOStream::SeekPosition::End:
+        startPos = device.size();
+        break;
+    default:
+        break;
+    }
+
+    startPos += offset;
+    if (device.size() == 0 && offset != 0) {
+        Q_ASSERT(false);
+        return 0;
+    }
+    if (startPos < 0) {
+        Q_ASSERT(false);
+        startPos = 0;
+    }
+    if (startPos >= device.size() && startPos != 0) {
+        Q_ASSERT(false);
+        startPos = device.size() - 1;
+    }
+    return startPos;
+}
+
 
 QString CFileTools::NormalizePathForQtUsage(const QString &path)
 {

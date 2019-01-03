@@ -12,6 +12,7 @@
 #include <QtCore/qdebug.h>
 #include <QtCore/QString>
 #include <QtCore/qloggingcategory.h>
+#include <QtCore/QIODevice>
 
 QT_BEGIN_NAMESPACE
 
@@ -63,8 +64,23 @@ QDemonDataRef<TDataType> PtrAtOffset(quint8 *baseData, quint32 offset, quint32 b
 }
 
 void Q_DEMON_EXPORT memZero(void *ptr, size_t size);
+void Q_DEMON_EXPORT memSet(void *ptr, quint8 value, size_t size);
 
 inline Q_DEMON_EXPORT const char *nonNull(const char *src);
+
+namespace IOStream {
+struct SeekPosition
+{
+    enum Enum {
+        Unknown,
+        Begin,
+        Current,
+        End,
+    };
+};
+qint64 Q_DEMON_EXPORT positionHelper(const QIODevice &device, qint64 offset, SeekPosition::Enum seekPosition);
+}
+
 
 namespace CFileTools {
 QString Q_DEMON_EXPORT NormalizePathForQtUsage(const QString &path);

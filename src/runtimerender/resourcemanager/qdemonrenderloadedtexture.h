@@ -33,7 +33,6 @@
 
 #include <QtDemonRender/qdemonrenderbasetypes.h>
 
-#include <QtDemonRuntimeRender/qdemonrenderloadedtexturedds.h>
 #include <QtDemonRuntimeRender/qdemonrenderinputstreamfactory.h>
 
 #include <QtGui/QImage>
@@ -73,7 +72,6 @@ public:
     QImage image;
     quint32 dataSizeInBytes;
     QDemonRenderTextureFormats::Enum format;
-    QDemonDDSImage *dds;
     ExtendedTextureFormats::Enum m_ExtendedFormat;
     // Used for palettized images.
     void *m_Palette;
@@ -88,10 +86,9 @@ public:
         , height(0)
         , components(0)
         , data(nullptr)
-        , image(0)
+        , image(nullptr)
         , dataSizeInBytes(0)
         , format(QDemonRenderTextureFormats::RGBA8)
-        , dds(nullptr)
         , m_ExtendedFormat(ExtendedTextureFormats::NoExtendedFormat)
         , m_Palette(nullptr)
         , m_BitCount(0)
@@ -141,15 +138,6 @@ public:
                                                IInputStreamFactory &inFactory, bool inFlipY = true,
                                                QDemonRenderContextType renderContextType
                                                = QDemonRenderContextValues::NullContext);
-    static QSharedPointer<SLoadedTexture> LoadDDS(QSharedPointer<IInputStream> inStream, qint32 flipVertical,
-                                                  QDemonRenderContextType renderContextType);
-    static QSharedPointer<SLoadedTexture> LoadBMP(QSharedPointer<IInputStream> inStream, bool inFlipY,
-                                                  QDemonRenderContextType renderContextType);
-    static QSharedPointer<SLoadedTexture> LoadGIF(QSharedPointer<IInputStream> inStream, bool inFlipY,
-                                                  QDemonRenderContextType renderContextType);
-    static QSharedPointer<SLoadedTexture> LoadHDR(QSharedPointer<IInputStream> inStream,
-                                                  QDemonRenderContextType renderContextType);
-
     static QSharedPointer<SLoadedTexture> LoadQImage(const QString &inPath, qint32 flipVertical,
                                                      QDemonRenderContextType renderContextType);
 

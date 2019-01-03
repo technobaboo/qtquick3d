@@ -34,21 +34,12 @@
 #include <QtDemonRuntimeRender/qtdemonruntimerenderglobal.h>
 
 #include <QtDemon/qdemondataref.h>
-
 #include <QtCore/QSharedPointer>
+#include <QtCore/QIODevice>
+
+
 
 QT_BEGIN_NAMESPACE
-class IInputStream
-{
-public:
-    virtual quint32 Read(QDemonDataRef<quint8> data) = 0;
-    virtual bool Write(QDemonConstDataRef<quint8> data) = 0;
-    virtual void SetPosition(qint64 inOffset) = 0;
-    virtual qint64 GetPosition() const = 0;
-protected:
-    virtual ~IInputStream() {}
-};
-
 // This class is threadsafe.
 class IInputStreamFactory
 {
@@ -57,7 +48,7 @@ protected:
 public:
     // These directories must have a '/' on them
     virtual void AddSearchDirectory(const char *inDirectory) = 0;
-    virtual QSharedPointer<IInputStream> GetStreamForFile(const QString &inFilename, bool inQuiet = false) = 0;
+    virtual QSharedPointer<QIODevice> GetStreamForFile(const QString &inFilename, bool inQuiet = false) = 0;
     // Return a path for this file.  Returns true if GetStreamForFile would return a valid
     // stream.
     // else returns false

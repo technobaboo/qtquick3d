@@ -44,51 +44,24 @@
 QT_BEGIN_NAMESPACE
 
 namespace {
-struct SInputStream : public IInputStream
+class SInputStream : public QFile
 {
-    QString m_Path;
-    QFile m_File;
+public:
 
     SInputStream(const QString &inPath)
-        : m_Path(inPath)
-        , m_File(inPath)
+        : QFile(inPath)
+        , m_Path(inPath)
     {
-        m_File.open(QIODevice::ReadOnly);
+        open(QIODevice::ReadOnly);
     }
     virtual ~SInputStream() override
     {
+        close();
     }
+    QString path() const { return m_Path; }
 
-    quint32 Read(QDemonDataRef<quint8> data) override
-    {
-        return m_File.read((char *)data.begin(), data.size());
-    }
-
-    bool Write(QDemonConstDataRef<quint8> /*data*/) override
-    {
-        Q_ASSERT(false);
-        return false;
-    }
-
-    void SetPosition(qint64 inOffset) override
-    {
-        if (inOffset > std::numeric_limits<qint32>::max() || inOffset < std::numeric_limits<qint32>::min()) {
-            qCritical("Attempt to seek further than platform allows");
-            Q_ASSERT(false);
-            return;
-        } else {
-            m_File.seek(inOffset);
-        }
-    }
-    qint64 GetPosition() const override
-    {
-        return m_File.pos();
-    }
-
-    static SInputStream *OpenFile(const QString &inPath)
-    {
-        return new SInputStream(inPath);
-    }
+private:
+    QString m_Path;
 };
 
 struct SFactory : public IInputStreamFactory
@@ -140,12 +113,12 @@ struct SFactory : public IInputStreamFactory
     }
 
 
-    QSharedPointer<IInputStream> GetStreamForFile(const QString &inFilename, bool inQuiet) override
+    QSharedPointer<QIODevice> GetStreamForFile(const QString &inFilename, bool inQuiet) override
     {
         QMutexLocker factoryLocker(&m_Mutex);
         QString localFile = CFileTools::NormalizePathForQtUsage(inFilename);
         QFileInfo fileInfo = QFileInfo(localFile);
-        SInputStream *inputStream = nullptr;
+        QIODevice *inputStream = nullptr;
         // Try to match the file with the search paths
         if (!fileInfo.exists())
             fileInfo.setFile(QStringLiteral("qt3dstudio:") + localFile);
@@ -154,24 +127,26 @@ struct SFactory : public IInputStreamFactory
         if (!fileInfo.exists())
             fileInfo = matchCaseInsensitiveFile(localFile);
 
-        if (fileInfo.exists())
-            inputStream = SInputStream::OpenFile(fileInfo.absoluteFilePath());
+        if (fileInfo.exists()) {
+            SInputStream *file = new SInputStream(fileInfo.absoluteFilePath());
+            if (file->open(QIODevice::ReadOnly))
+                inputStream = file;
+        }
 
         if (!inputStream && !inQuiet) {
             // Print extensive debugging information.
             qCritical("Failed to find file: %s", inFilename.toLatin1().data());
             qCritical("Searched path: %s", QDir::searchPaths(Q3DSTUDIO_TAG).join(',').toLatin1().constData());
         }
-        return QSharedPointer<IInputStream>(inputStream);
+        return QSharedPointer<QIODevice>(inputStream);
     }
 
-    bool GetPathForFile(const QString &inFilename, QString &outFile,
-                        bool inQuiet = false) override
+    bool GetPathForFile(const QString &inFilename, QString &outFile, bool inQuiet = false) override
     {
-        QSharedPointer<IInputStream> theStream = GetStreamForFile(inFilename, inQuiet);
+        QSharedPointer<QIODevice> theStream = GetStreamForFile(inFilename, inQuiet);
         if (theStream) {
             SInputStream *theRealStream = static_cast<SInputStream *>(theStream.data());
-            outFile = theRealStream->m_Path;
+            outFile = theRealStream->path();
             return true;
         }
         return false;

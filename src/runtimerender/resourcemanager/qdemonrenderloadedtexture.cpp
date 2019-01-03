@@ -67,39 +67,36 @@ namespace {
 // ----------------------------------------------------------
 //   Structures used by DXT textures
 // ----------------------------------------------------------
-typedef quint8 BYTE;
-typedef quint16 WORD;
-
 typedef struct tagColor8888
 {
-    BYTE b;
-    BYTE g;
-    BYTE r;
-    BYTE a;
+    quint8 b;
+    quint8 g;
+    quint8 r;
+    quint8 a;
 } Color8888;
 
 typedef struct tagColor565
 {
-    WORD b : 5;
-    WORD g : 6;
-    WORD r : 5;
+    quint16 b : 5;
+    quint16 g : 6;
+    quint16 r : 5;
 } Color565;
 
 typedef struct tagDXTColBlock
 {
     Color565 colors[2];
-    BYTE row[4];
+    quint8 row[4];
 } DXTColBlock;
 
 typedef struct tagDXTAlphaBlockExplicit
 {
-    WORD row[4];
+    quint16 row[4];
 } DXTAlphaBlockExplicit;
 
 typedef struct tagDXTAlphaBlock3BitLinear
 {
-    BYTE alpha[2];
-    BYTE data[6];
+    quint8 alpha[2];
+    quint8 data[6];
 } DXTAlphaBlock3BitLinear;
 
 typedef struct tagDXT1Block
@@ -124,29 +121,29 @@ static void GetBlockColors(const DXTColBlock &block, Color8888 colors[4], bool i
     int i;
     for (i = 0; i < 2; i++) {
         colors[i].a = 0xff;
-        colors[i].r = (BYTE)(block.colors[i].r * 0xff / 0x1f);
-        colors[i].g = (BYTE)(block.colors[i].g * 0xff / 0x3f);
-        colors[i].b = (BYTE)(block.colors[i].b * 0xff / 0x1f);
+        colors[i].r = (quint8)(block.colors[i].r * 0xff / 0x1f);
+        colors[i].g = (quint8)(block.colors[i].g * 0xff / 0x3f);
+        colors[i].b = (quint8)(block.colors[i].b * 0xff / 0x1f);
     }
 
-    WORD *wCol = (WORD *)block.colors;
+    quint16 *wCol = (quint16 *)block.colors;
     if (wCol[0] > wCol[1] || !isDXT1) {
         // 4 color block
         for (i = 0; i < 2; i++) {
             colors[i + 2].a = 0xff;
             colors[i + 2].r =
-                (BYTE)((WORD(colors[0].r) * (2 - i) + WORD(colors[1].r) * (1 + i)) / 3);
+                (quint8)((quint16(colors[0].r) * (2 - i) + quint16(colors[1].r) * (1 + i)) / 3);
             colors[i + 2].g =
-                (BYTE)((WORD(colors[0].g) * (2 - i) + WORD(colors[1].g) * (1 + i)) / 3);
+                (quint8)((quint16(colors[0].g) * (2 - i) + quint16(colors[1].g) * (1 + i)) / 3);
             colors[i + 2].b =
-                (BYTE)((WORD(colors[0].b) * (2 - i) + WORD(colors[1].b) * (1 + i)) / 3);
+                (quint8)((quint16(colors[0].b) * (2 - i) + quint16(colors[1].b) * (1 + i)) / 3);
         }
     } else {
         // 3 color block, number 4 is transparent
         colors[2].a = 0xff;
-        colors[2].r = (BYTE)((WORD(colors[0].r) + WORD(colors[1].r)) / 2);
-        colors[2].g = (BYTE)((WORD(colors[0].g) + WORD(colors[1].g)) / 2);
-        colors[2].b = (BYTE)((WORD(colors[0].b) + WORD(colors[1].b)) / 2);
+        colors[2].r = (quint8)((quint16(colors[0].r) + quint16(colors[1].r)) / 2);
+        colors[2].g = (quint8)((quint16(colors[0].g) + quint16(colors[1].g)) / 2);
+        colors[2].b = (quint8)((quint16(colors[0].b) + quint16(colors[1].b)) / 2);
 
         colors[3].a = 0x00;
         colors[3].g = 0x00;
@@ -182,7 +179,7 @@ protected:
     unsigned m_colorRow;
 
 public:
-    void Setup(const BYTE *pBlock)
+    void Setup(const quint8 *pBlock)
     {
         m_pBlock = (const typename INFO::Block *)pBlock;
         GetBlockColors(m_pBlock->color, m_colors, INFO::isDXT1);
@@ -225,7 +222,7 @@ public:
     {
         base::GetColor(x, y, color);
         const unsigned bits = (m_alphaRow >> (x * 4)) & 0xF;
-        color.a = (BYTE)((bits * 0xFF) / 0xF);
+        color.a = (quint8)((bits * 0xFF) / 0xF);
     }
 };
 
@@ -241,7 +238,7 @@ protected:
     int m_offset;
 
 public:
-    void Setup(const BYTE *pBlock)
+    void Setup(const quint8 *pBlock)
     {
         base::Setup(pBlock);
 
@@ -277,20 +274,20 @@ public:
     {
         base::GetColor(x, y, color);
         unsigned bits = (m_alphaBits >> (x * 3 + m_offset)) & 7;
-        color.a = (BYTE)m_alphas[bits];
+        color.a = (quint8)m_alphas[bits];
         std::swap(color.r, color.b);
     }
 };
 
 template <class DECODER>
-void DecodeDXTBlock(BYTE *dstData, const BYTE *srcBlock, long dstPitch, int bw, int bh)
+void DecodeDXTBlock(quint8 *dstData, const quint8 *srcBlock, long dstPitch, int bw, int bh)
 {
     DECODER decoder;
     decoder.Setup(srcBlock);
     for (int y = 0; y < bh; y++) {
         // Note that this assumes the pointer is pointing to the *last* valid start
         // row.
-        BYTE *dst = dstData - y * dstPitch;
+        quint8 *dst = dstData - y * dstPitch;
         decoder.SetY(y);
         for (int x = 0; x < bw; x++) {
             decoder.GetColor(x, y, (Color8888 &)*dst);
@@ -405,29 +402,6 @@ static void DecompressDDS(void *inSrc, quint32 inDataSize, quint32 inWidth, quin
     }
 }
 
-bool ScanDDSForAlpha(QDemonDDSImage *dds)
-{
-    bool hasAlpha = false;
-    switch (dds->format) {
-    case QDemonRenderTextureFormats::RGBA_DXT1:
-        DecompressDDS<DXT_BLOCKDECODER_1>(dds->data[0], dds->size[0], dds->mipwidth[0],
-                                          dds->mipheight[0], STextureAlphaScanner(hasAlpha));
-        break;
-    case QDemonRenderTextureFormats::RGBA_DXT3:
-        DecompressDDS<DXT_BLOCKDECODER_3>(dds->data[0], dds->size[0], dds->mipwidth[0],
-                                          dds->mipheight[0], STextureAlphaScanner(hasAlpha));
-        break;
-    case QDemonRenderTextureFormats::RGBA_DXT5:
-        DecompressDDS<DXT_BLOCKDECODER_5>(dds->data[0], dds->size[0], dds->mipwidth[0],
-                                          dds->mipheight[0], STextureAlphaScanner(hasAlpha));
-        break;
-    default:
-        Q_ASSERT(false);
-        break;
-    }
-    return hasAlpha;
-}
-
 bool ScanImageForAlpha(const void *inData, quint32 inWidth, quint32 inHeight, quint32 inPixelSizeInBytes,
                        quint8 inAlphaSizeInBits)
 {
@@ -466,12 +440,7 @@ bool ScanImageForAlpha(const void *inData, quint32 inWidth, quint32 inHeight, qu
 
 SLoadedTexture::~SLoadedTexture()
 {
-    if (dds) {
-        if (dds->dataBlock)
-            ::free(dds->dataBlock);
-
-        ::free(dds);
-    } else if (data && image.byteCount() <= 0) {
+    if (data && image.byteCount() <= 0) {
         ::free(data);
     }
     if (m_Palette)
@@ -525,12 +494,7 @@ bool SLoadedTexture::ScanForTransparency()
     case QDemonRenderTextureFormats::RGBA_DXT3:
     case QDemonRenderTextureFormats::RGBA_DXT1:
     case QDemonRenderTextureFormats::RGBA_DXT5:
-        if (dds) {
-            return ScanDDSForAlpha(dds);
-        } else {
-            Q_ASSERT(false);
-            return false;
-        }
+        return false;
         break;
     case QDemonRenderTextureFormats::RGB9E5:
         return false;
@@ -580,50 +544,6 @@ void SLoadedTexture::EnsureMultiplerOfFour(const char *inPath)
     }
 }
 
-STextureData SLoadedTexture::DecompressDXTImage(int inMipMapIdx, STextureData *inOptLastImage)
-{
-    STextureData retval;
-    if (inOptLastImage)
-        retval = *inOptLastImage;
-
-    if (dds == nullptr || inMipMapIdx >= dds->numMipmaps) {
-        Q_ASSERT(false);
-        ReleaseDecompressedTexture(retval);
-        return STextureData();
-    }
-    char *srcData = (char *)dds->data[inMipMapIdx];
-    int srcDataSize = dds->size[inMipMapIdx];
-    quint32 imgWidth = (quint32)dds->mipwidth[inMipMapIdx];
-    quint32 imgHeight = (quint32)dds->mipheight[inMipMapIdx];
-
-    switch (format) {
-    case QDemonRenderTextureFormats::RGB_DXT1:
-        DecompressDDS<DXT_BLOCKDECODER_1>(
-            srcData, srcDataSize, imgWidth, imgHeight,
-            STextureDataWriter(imgWidth, imgHeight, false, retval));
-        break;
-    case QDemonRenderTextureFormats::RGBA_DXT1:
-        DecompressDDS<DXT_BLOCKDECODER_1>(
-            srcData, srcDataSize, imgWidth, imgHeight,
-            STextureDataWriter(imgWidth, imgHeight, true, retval));
-        break;
-    case QDemonRenderTextureFormats::RGBA_DXT3:
-        DecompressDDS<DXT_BLOCKDECODER_3>(
-            srcData, srcDataSize, imgWidth, imgHeight,
-            STextureDataWriter(imgWidth, imgHeight, true, retval));
-        break;
-    case QDemonRenderTextureFormats::RGBA_DXT5:
-        DecompressDDS<DXT_BLOCKDECODER_5>(
-            srcData, srcDataSize, imgWidth, imgHeight,
-            STextureDataWriter(imgWidth, imgHeight, true, retval));
-        break;
-    default:
-        Q_ASSERT(false);
-        break;
-    }
-    return retval;
-}
-
 void SLoadedTexture::ReleaseDecompressedTexture(STextureData inImage)
 {
     if (inImage.data)
@@ -641,23 +561,21 @@ QSharedPointer<SLoadedTexture> SLoadedTexture::Load(const QString &inPath, IInpu
         return nullptr;
 
     QSharedPointer<SLoadedTexture> theLoadedImage = nullptr;
-    QSharedPointer<IInputStream> theStream(inFactory.GetStreamForFile(inPath));
+    QSharedPointer<QIODevice> theStream(inFactory.GetStreamForFile(inPath));
     QString fileName;
     inFactory.GetPathForFile(inPath, fileName);
     if (theStream && inPath.size() > 3) {
-        if (inPath.endsWith("png", Qt::CaseInsensitive)
-                || inPath.endsWith("jpg", Qt::CaseInsensitive)
-                || inPath.endsWith("peg", Qt::CaseInsensitive)
-                || inPath.endsWith("ktx", Qt::CaseInsensitive)) {
+        if (inPath.endsWith(QStringLiteral("png"), Qt::CaseInsensitive)
+                || inPath.endsWith(QStringLiteral("jpg"), Qt::CaseInsensitive)
+                || inPath.endsWith(QStringLiteral("peg"), Qt::CaseInsensitive)
+                || inPath.endsWith(QStringLiteral("ktx"), Qt::CaseInsensitive)
+                || inPath.endsWith(QStringLiteral("gif"), Qt::CaseInsensitive)
+                || inPath.endsWith(QStringLiteral("bmp"), Qt::CaseInsensitive)) {
             theLoadedImage = LoadQImage(fileName, inFlipY, renderContextType);
-        } else if (inPath.endsWith("dds", Qt::CaseInsensitive)) {
-            theLoadedImage = LoadDDS(theStream, inFlipY, renderContextType);
-        } else if (inPath.endsWith("gif", Qt::CaseInsensitive)) {
-            theLoadedImage = LoadGIF(theStream, !inFlipY, renderContextType);
-        } else if (inPath.endsWith("bmp", Qt::CaseInsensitive)) {
-            theLoadedImage = LoadBMP(theStream, !inFlipY, renderContextType);
-        } else if (inPath.endsWith("hdr", Qt::CaseInsensitive)) {
-            theLoadedImage = LoadHDR(theStream, renderContextType);
+//        } else if (inPath.endsWith("dds", Qt::CaseInsensitive)) {
+//            theLoadedImage = LoadDDS(theStream, inFlipY, renderContextType);
+//        } else if (inPath.endsWith("hdr", Qt::CaseInsensitive)) {
+//            theLoadedImage = LoadHDR(theStream, renderContextType);
         } else {
             qCWarning(INTERNAL_ERROR, "Unrecognized image extension: %s", qPrintable(inPath));
         }
