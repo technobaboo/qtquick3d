@@ -27,10 +27,14 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <QtDemonRuntimeRender/qdemonrenderbufferloader.h>
+
+#include "qdemonrenderbufferloader.h"
+
 #include <QtDemon/qdemoninvasivelinkedlist.h>
-#include <qdemonrenderinputstreamfactory.h>
-#include <qdemonrenderthreadpool.h>
+#include <QtDemon/qdemonutils.h>
+#include <QtCore/QMutex>
+#include <QtCore/QMutexLocker>
+#include <QtCore/QWaitCondition>
 
 QT_BEGIN_NAMESPACE
 
@@ -39,10 +43,10 @@ struct SBufferLoader;
 struct SBufferLoadResult : public ILoadedBuffer
 {
     QString m_Path;
-    IBufferLoaderCallback *m_UserData;
+    QSharedPointer<IBufferLoaderCallback> m_UserData;
     QDemonDataRef<quint8> m_Data;
 
-    SBufferLoadResult(QString p, IBufferLoaderCallback *ud,
+    SBufferLoadResult(QString p, QSharedPointer<IBufferLoaderCallback> ud,
                       QDemonDataRef<quint8> data)
         : m_Path(p)
         , m_UserData(ud)
@@ -53,9 +57,9 @@ struct SBufferLoadResult : public ILoadedBuffer
     QString Path() override { return m_Path; }
     // Data is released when the buffer itself is released.
     QDemonDataRef<quint8> Data() override { return m_Data; }
-    IBufferLoaderCallback *UserData() override { return m_UserData; }
+    QSharedPointer<IBufferLoaderCallback> UserData() override { return m_UserData; }
 
-    static SBufferLoadResult *Allocate(quint32 inBufferSize,
+    static QSharedPointer<SBufferLoadResult> Allocate(quint32 inBufferSize,
                                        QString p,
                                        QSharedPointer<IBufferLoaderCallback> ud)
     {
@@ -65,7 +69,7 @@ struct SBufferLoadResult : public ILoadedBuffer
             return nullptr;
         quint8 *bufferStart = allocMem + sizeof(SBufferLoadResult);
         QDemonDataRef<quint8> dataBuffer = toDataRef(bufferStart, inBufferSize);
-        return new (allocMem) SBufferLoadResult(fnd, p, ud, dataBuffer);
+        return QSharedPointer<SBufferLoadResult>(new (allocMem) SBufferLoadResult(p, ud, dataBuffer));
     }
 };
 struct SLoadedBufferImpl
@@ -104,20 +108,20 @@ struct SBufferLoader : public IBufferLoader
     QSharedPointer<IInputStreamFactory> m_Factory;
     QSharedPointer<IThreadPool> m_ThreadPool;
 
-    Mutex m_BuffersToLoadMutex;
+    QMutex m_BuffersToLoadMutex;
     TLoadedBufferImplList m_BuffersToLoad;
 
-    Mutex m_BuffersLoadingMutex;
+    QMutex m_BuffersLoadingMutex;
     TLoadedBufferImplList m_BuffersLoading;
 
-    Mutex m_LoadedBuffersMutex;
+    QMutex m_LoadedBuffersMutex;
     TLoadedBufferImplList m_LoadedBuffers;
 
-    Sync m_BufferLoadedEvent;
+    QWaitCondition m_BufferLoadedEvent;
 
     quint64 m_NextBufferId;
 
-    SBufferLoader(InputStreamFactory &fac, IThreadPool &tp)
+    SBufferLoader(QSharedPointer<IInputStreamFactory> fac, QSharedPointer<IThreadPool> tp)
         : m_Factory(fac)
         , m_ThreadPool(tp)
         , m_BuffersToLoadMutex()
@@ -126,13 +130,13 @@ struct SBufferLoader : public IBufferLoader
         , m_BufferLoadedEvent()
         , m_NextBufferId(1)
     {
-        m_BufferLoadedEvent.reset();
+        m_BufferLoadedEvent.wakeAll();
     }
 
     virtual ~SBufferLoader()
     {
         {
-            Mutex::ScopedLock __locker(m_BuffersToLoadMutex);
+            QMutexLocker locker(&m_BuffersToLoadMutex);
             for (TLoadedBufferImplList::iterator iter = m_BuffersToLoad.begin(),
                  end = m_BuffersToLoad.end();
                  iter != end; ++iter) {
@@ -148,20 +152,19 @@ struct SBufferLoader : public IBufferLoader
 
     static void InitializeActiveLoadingBuffer(SLoadedBufferImpl &theBuffer)
     {
-        Mutex::ScopedLock theLocker(theBuffer.m_Loader.m_BuffersToLoadMutex);
-        Mutex::ScopedLock theSecondLocker(theBuffer.m_Loader.m_BuffersLoadingMutex);
+        QMutexLocker theLocker(&theBuffer.m_Loader.m_BuffersToLoadMutex);
+        QMutexLocker theSecondLocker(&theBuffer.m_Loader.m_BuffersLoadingMutex);
         theBuffer.m_Loader.m_BuffersToLoad.remove(theBuffer);
         theBuffer.m_Loader.m_BuffersLoading.push_back(theBuffer);
     }
 
     static void SetBufferAsLoaded(SLoadedBufferImpl &theBuffer)
     {
-        Mutex::ScopedLock theSecondLocker(theBuffer.m_Loader.m_BuffersLoadingMutex);
-        Mutex::ScopedLock theLocker(theBuffer.m_Loader.m_LoadedBuffersMutex);
+        QMutexLocker theSecondLocker(&theBuffer.m_Loader.m_BuffersLoadingMutex);
+        QMutexLocker theLocker(&theBuffer.m_Loader.m_LoadedBuffersMutex);
         theBuffer.m_Loader.m_BuffersLoading.remove(theBuffer);
         theBuffer.m_Loader.m_LoadedBuffers.push_back(theBuffer);
-        theBuffer.m_Loader.m_BufferLoadedEvent.set();
-        theBuffer.m_Loader.m_BufferLoadedEvent.reset();
+        theBuffer.m_Loader.m_BufferLoadedEvent.wakeAll();
     }
 
     static void LoadNextBuffer(void *loader)
@@ -169,28 +172,25 @@ struct SBufferLoader : public IBufferLoader
         SLoadedBufferImpl &theBuffer = *reinterpret_cast<SLoadedBufferImpl *>(loader);
 
         InitializeActiveLoadingBuffer(theBuffer);
-        QSharedPointer<IRefCountedInputStream> theStream =
-                theBuffer.m_Loader.m_Factory->GetStreamForFile(theBuffer.m_Path.c_str(),
-                                                               theBuffer.m_Quiet);
+        QSharedPointer<QIODevice> theStream =
+                theBuffer.m_Loader.m_Factory->GetStreamForFile(theBuffer.m_Path, theBuffer.m_Quiet);
         if (theStream && theBuffer.m_Cancel == false) {
-            theStream->SetPosition(0, SeekPosition::End);
-            qint64 theFileLen = theStream->GetPosition();
+            theStream->seek(IOStream::positionHelper(*theStream.data(), 0, IOStream::SeekPosition::End));
+            qint64 theFileLen = theStream->pos();
             if (theFileLen > 0 && theFileLen < (quint32)std::numeric_limits<quint32>::max()) {
-                quint32 required = (quint32)theFileLen;
-                theBuffer.m_Result =
-                        SBufferLoadResult::Allocate(required, theBuffer.m_Loader.m_Foundation,
-                                                    theBuffer.m_Path, theBuffer.m_UserData);
-                quint32 amountRead = 0;
-                quint32 total = amountRead;
+                quint64 required = theFileLen;
+                theBuffer.m_Result = SBufferLoadResult::Allocate(required, theBuffer.m_Path, theBuffer.m_UserData);
+                quint64 amountRead = 0;
+                quint64 total = amountRead;
                 if (theBuffer.m_Result && theBuffer.m_Cancel == false) {
                     QDemonDataRef<quint8> theDataBuffer(theBuffer.m_Result->m_Data);
-                    theStream->SetPosition(0, SeekPosition::Begin);
-                    amountRead = theStream->Read(theDataBuffer);
+                    theStream->seek(0);
+                    amountRead = theStream->read(reinterpret_cast<char *>(theDataBuffer.mData), theDataBuffer.mSize);
                     total += amountRead;
                     // Ensure we keep trying, not all file systems allow huge reads.
                     while (total < required && amountRead > 0 && theBuffer.m_Cancel == false) {
                         QDemonDataRef<quint8> newBuffer(theDataBuffer.mData + total, required - total);
-                        amountRead = theStream->Read(newBuffer);
+                        amountRead = theStream->read(reinterpret_cast<char *>(newBuffer.mData), newBuffer.mSize);
                         total += amountRead;
                     }
                 }
@@ -202,9 +202,9 @@ struct SBufferLoader : public IBufferLoader
 
         // only callback if the file was successfully loaded.
         if (theBuffer.m_UserData) {
-            if (theBuffer.m_Cancel == false && theBuffer.m_Result.mPtr
+            if (theBuffer.m_Cancel == false && theBuffer.m_Result
                     && theBuffer.m_Result->m_Data.size()) {
-                theBuffer.m_UserData->OnBufferLoaded(*theBuffer.m_Result.mPtr);
+                theBuffer.m_UserData->OnBufferLoaded(*theBuffer.m_Result);
             } else {
                 if (theBuffer.m_Cancel)
                     theBuffer.m_UserData->OnBufferLoadCancelled(theBuffer.m_Path);
@@ -229,14 +229,13 @@ struct SBufferLoader : public IBufferLoader
 
     // nonblocking.  Quiet failure is passed to the input stream factory.
     quint64 QueueForLoading(QString inPath,
-                            IBufferLoaderCallback *inUserData = nullptr,
+                            QSharedPointer<IBufferLoaderCallback> inUserData = nullptr,
                             bool inQuietFailure = false) override
     {
-        SLoadedBufferImpl &theBuffer = *new SLoadedBufferImpl(
-                    *this, inPath, inUserData, inQuietFailure, m_NextBufferId);
+        SLoadedBufferImpl &theBuffer = *new SLoadedBufferImpl(*this, inPath, inUserData, inQuietFailure, m_NextBufferId);
         ++m_NextBufferId;
         {
-            Mutex::ScopedLock theLocker(m_BuffersToLoadMutex);
+            QMutexLocker theLocker(&m_BuffersToLoadMutex);
             m_BuffersToLoad.push_back(theBuffer);
         }
         theBuffer.m_JobId = m_ThreadPool->AddTask(&theBuffer, LoadNextBuffer, CancelNextBuffer);
@@ -246,7 +245,7 @@ struct SBufferLoader : public IBufferLoader
     void CancelBufferLoad(quint64 inBufferId) override
     {
         {
-            Mutex::ScopedLock theLocker(m_BuffersToLoadMutex);
+            QMutexLocker theLocker(&m_BuffersToLoadMutex);
             SLoadedBufferImpl *theLoadedBuffer = nullptr;
             for (TLoadedBufferImplList::iterator iter = m_BuffersToLoad.begin(),
                  end = m_BuffersToLoad.end();
@@ -265,15 +264,15 @@ struct SBufferLoader : public IBufferLoader
     // If we were will to wait, will we ever get another buffer
     bool WillLoadedBuffersBeAvailable() override
     {
-        Mutex::ScopedLock theLocker(m_BuffersToLoadMutex);
-        Mutex::ScopedLock theSecondLocker(m_BuffersLoadingMutex);
+        QMutexLocker theLocker(&m_BuffersToLoadMutex);
+        QMutexLocker theSecondLocker(&m_BuffersLoadingMutex);
         return AreLoadedBuffersAvailable() || m_BuffersToLoad.empty() == false
                 || m_BuffersLoading.empty() == false;
     }
     // Will nextLoadedBuffer block or not?
     bool AreLoadedBuffersAvailable() override
     {
-        Mutex::ScopedLock theLocker(m_LoadedBuffersMutex);
+        QMutexLocker theLocker(&m_LoadedBuffersMutex);
         return m_LoadedBuffers.empty() == false;
     }
 
@@ -281,18 +280,17 @@ struct SBufferLoader : public IBufferLoader
     QSharedPointer<ILoadedBuffer> NextLoadedBuffer() override
     {
         while (!AreLoadedBuffersAvailable()) {
-            m_BufferLoadedEvent.wait();
+            m_BufferLoadedEvent.wait(&m_LoadedBuffersMutex);
         }
         SLoadedBufferImpl *theBuffer;
         {
-            Mutex::ScopedLock theLocker(m_LoadedBuffersMutex);
+            QMutexLocker theLocker(&m_LoadedBuffersMutex);
             theBuffer = m_LoadedBuffers.back_ptr();
             m_LoadedBuffers.remove(*theBuffer);
         }
         QSharedPointer<ILoadedBuffer> retval(theBuffer->m_Result);
-        if (retval.mPtr == nullptr) {
-            retval = SBufferLoadResult::Allocate(0, m_Foundation, theBuffer->m_Path,
-                                                 theBuffer->m_UserData);
+        if (retval == nullptr) {
+            retval = SBufferLoadResult::Allocate(0, theBuffer->m_Path, theBuffer->m_UserData);
         }
         delete theBuffer;
         return retval;
@@ -300,10 +298,9 @@ struct SBufferLoader : public IBufferLoader
 };
 }
 
-IBufferLoader &IBufferLoader::Create(IInputStreamFactory &inFactory,
-                                     IThreadPool &inThreadPool)
+QSharedPointer<IBufferLoader> IBufferLoader::Create(QSharedPointer<IInputStreamFactory> &inFactory, QSharedPointer<IThreadPool> inThreadPool)
 {
-    return *new SBufferLoader(inFactory, inThreadPool);
+    return QSharedPointer<IBufferLoader>(new SBufferLoader(inFactory, inThreadPool));
 }
 
 QT_END_NAMESPACE

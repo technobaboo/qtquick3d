@@ -1,5 +1,5 @@
 HEADERS += \
-#    $$PWD/qdemonrenderbufferloader.h \
+    $$PWD/qdemonrenderbufferloader.h \
 #    $$PWD/qdemonrenderbuffermanager.h \
 #    $$PWD/qdemonrenderimagebatchloader.h \
     $$PWD/qdemonrenderloadedtexture.h \
@@ -9,7 +9,7 @@ HEADERS += \
     $$PWD/qdemonrenderresourcetexture2d.h
 
 SOURCES += \
-#    $$PWD/qdemonrenderbufferloader.cpp \
+    $$PWD/qdemonrenderbufferloader.cpp \
 #    $$PWD/qdemonrenderbuffermanager.cpp \
 #    $$PWD/qdemonrenderimagebatchloader.cpp \
     $$PWD/qdemonrenderloadedtexture.cpp \

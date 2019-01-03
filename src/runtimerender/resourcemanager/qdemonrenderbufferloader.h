@@ -31,6 +31,12 @@
 #ifndef QDEMON_RENDER_BUFFER_LOADED_H
 #define QDEMON_RENDER_BUFFER_LOADED_H
 
+#include <QtDemonRuntimeRender/qtdemonruntimerenderglobal.h>
+#include <QtDemonRuntimeRender/qdemonrenderinputstreamfactory.h>
+#include <QtDemonRuntimeRender/qdemonrenderthreadpool.h>
+
+#include <QtDemon/QDemonDataRef>
+
 QT_BEGIN_NAMESPACE
 
 class IBufferLoaderCallback;
@@ -41,7 +47,7 @@ public:
     virtual QString Path() = 0;
     // Data is released when the buffer itself is released.
     virtual QDemonDataRef<quint8> Data() = 0;
-    virtual IBufferLoaderCallback *UserData() = 0;
+    virtual QSharedPointer<IBufferLoaderCallback> UserData() = 0;
 };
 
 class IBufferLoaderCallback
@@ -59,7 +65,7 @@ public:
     // nonblocking.  Quiet failure is passed to the input stream factory.
     // Returns handle to loading buffer
     virtual quint64 QueueForLoading(QString inPath,
-                                    IBufferLoaderCallback *inUserData = nullptr,
+                                    QSharedPointer<IBufferLoaderCallback> inUserData = nullptr,
                                     bool inQuietFailure = false) = 0;
     // Cancel a buffer that has not made it to the loaded buffers list.
     virtual void CancelBufferLoad(quint64 inBufferId) = 0;
@@ -71,8 +77,7 @@ public:
     // blocking, be careful with this.  No guarantees about timely return here.
     virtual QSharedPointer<ILoadedBuffer> NextLoadedBuffer() = 0;
 
-    static IBufferLoader &Create(IInputStreamFactory &inFactory,
-                                 IThreadPool &inThreadPool);
+    static QSharedPointer<IBufferLoader> Create(QSharedPointer<IInputStreamFactory> &inFactory, QSharedPointer<IThreadPool> inThreadPool);
 };
 QT_END_NAMESPACE
 
