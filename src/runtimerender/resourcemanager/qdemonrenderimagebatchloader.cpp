@@ -27,19 +27,24 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <QtDemonRuntimeRender/qdemonrenderimagebatchloader.h>
-#include <qdemonrenderinputstreamfactory.h>
+#include "qdemonrenderimagebatchloader.h"
+
+#include <QtDemon/qdemoninvasivelinkedlist.h>
+
 #include <QtDemonRuntimeRender/qdemonrenderbuffermanager.h>
-#include <qdemonrenderthreadpool.h>
-#include <qdemonrenderimagescaler.h>
+#include <QtDemonRuntimeRender/qdemonrenderinputstreamfactory.h>
+#include <QtDemonRuntimeRender/qdemonrenderthreadpool.h>
+#include <QtDemonRuntimeRender/qdemonrenderimagescaler.h>
 #include <QtDemonRuntimeRender/qdemonrenderloadedtexture.h>
+
+#include <QtCore/QMutex>
+#include <QtCore/QWaitCondition>
 
 QT_BEGIN_NAMESPACE
 
 namespace {
 
 struct SImageLoaderBatch;
-typedef Mutex::ScopedLock TScopedLock;
 
 struct SLoadingImage
 {
@@ -88,8 +93,8 @@ struct SImageLoaderBatch
     // loaded image count.
     SBatchLoader &m_Loader;
     QSharedPointer<IImageLoadListener> m_LoadListener;
-    Sync m_LoadEvent;
-    Mutex m_LoadMutex;
+    QWaitCondition m_LoadEvent;
+    QMutex m_LoadMutex;
     TLoadingImageList m_Images;
 
     TImageBatchId m_BatchId;
@@ -117,24 +122,24 @@ struct SImageLoaderBatch
     // Called from main thread
     bool IsLoadingFinished()
     {
-        Mutex::ScopedLock __locker(m_LoadMutex);
+        QMutexLocker locker(&m_LoadMutex);
         return m_LoadedOrCanceledImageCount >= m_NumImages;
     }
 
     bool IsFinalizedFinished()
     {
-        Mutex::ScopedLock __locker(m_LoadMutex);
+        QMutexLocker locker(&m_LoadMutex);
         return m_FinalizedImageCount >= m_NumImages;
     }
 
     void IncrementLoadedImageCount()
     {
-        Mutex::ScopedLock __locker(m_LoadMutex);
+        QMutexLocker locker(&m_LoadMutex);
         ++m_LoadedOrCanceledImageCount;
     }
     void IncrementFinalizedImageCount()
     {
-        Mutex::ScopedLock __locker(m_LoadMutex);
+        QMutexLocker locker(&m_LoadMutex);
         ++m_FinalizedImageCount;
     }
     // Called from main thread
@@ -170,23 +175,21 @@ struct SBatchLoader : public IImageBatchLoader
 {
     typedef QHash<TImageBatchId, SImageLoaderBatch *> TImageLoaderBatchMap;
     typedef QHash<QString, TImageBatchId> TSourcePathToBatchMap;
-    typedef Pool<SLoadingImage, ForwardingAllocator> TLoadingImagePool;
-    typedef Pool<SImageLoaderBatch, ForwardingAllocator> TBatchPool;
 
     // Accessed from loader thread
-    IInputStreamFactory &m_InputStreamFactory;
+    QSharedPointer<IInputStreamFactory> m_InputStreamFactory;
     //!!Not threadsafe!  accessed only from main thread
-    IBufferManager &m_BufferManager;
+    QSharedPointer<IBufferManager> m_BufferManager;
     // Accessed from main thread
-    IThreadPool &m_ThreadPool;
+    QSharedPointer<IThreadPool> m_ThreadPool;
     // Accessed from both threads
-    IPerfTimer &m_PerfTimer;
+    QSharedPointer<IPerfTimer> m_PerfTimer;
     // main thread
     TImageBatchId m_NextBatchId;
     // main thread
     TImageLoaderBatchMap m_Batches;
     // main thread
-    Mutex m_LoaderMutex;
+    QMutex m_LoaderMutex;
 
     // Both loader and main threads
     QVector<SBatchLoadedImage> m_LoadedImages;
@@ -196,32 +199,22 @@ struct SBatchLoader : public IImageBatchLoader
     TSourcePathToBatchMap m_SourcePathToBatches;
     // main thread
     QVector<SLoadingImage> m_LoaderBuilderWorkspace;
-    TLoadingImagePool m_LoadingImagePool;
-    TBatchPool m_BatchPool;
 
-    SBatchLoader(IInputStreamFactory &inFactory,
-                 IBufferManager &inBufferManager, IThreadPool &inThreadPool, IPerfTimer &inTimer)
+    SBatchLoader(QSharedPointer<IInputStreamFactory> inFactory,
+                 QSharedPointer<IBufferManager> inBufferManager,
+                 QSharedPointer<IThreadPool> inThreadPool,
+                 QSharedPointer<IPerfTimer> inTimer)
         : m_InputStreamFactory(inFactory)
         , m_BufferManager(inBufferManager)
         , m_ThreadPool(inThreadPool)
         , m_PerfTimer(inTimer)
         , m_NextBatchId(1)
-        , m_Batches(inFoundation.getAllocator(), "SBatchLoader::m_Batches")
-        , m_LoaderMutex(inFoundation.getAllocator())
-        , m_LoadedImages(inFoundation.getAllocator(), "SBatchLoader::m_LoadedImages")
-        , m_FinishedBatches(inFoundation.getAllocator(), "SBatchLoader::m_FinishedBatches")
-        , m_SourcePathToBatches(inFoundation.getAllocator(), "SBatchLoader::m_SourcePathToBatches")
-        , m_LoaderBuilderWorkspace(inFoundation.getAllocator(),
-                                   "SBatchLoader::m_LoaderBuilderWorkspace")
-        , m_LoadingImagePool(
-              ForwardingAllocator(inFoundation.getAllocator(), "SBatchLoader::m_LoadingImagePool"))
-        , m_BatchPool(ForwardingAllocator(inFoundation.getAllocator(), "SBatchLoader::m_BatchPool"))
     {
     }
 
     virtual ~SBatchLoader()
     {
-        QVector<TImageBatchId> theCancelledBatches(m_Foundation.getAllocator(), "~SBatchLoader");
+        QVector<TImageBatchId> theCancelledBatches;
         for (TImageLoaderBatchMap::iterator theIter = m_Batches.begin(), theEnd = m_Batches.end();
              theIter != theEnd; ++theIter) {
             theIter->second->Cancel();
@@ -246,7 +239,7 @@ struct SBatchLoader : public IImageBatchLoader
         if (inSourcePaths.size() == 0)
             return 0;
 
-        TScopedLock __loaderLock(m_LoaderMutex);
+        QMutexLocker loaderLock(&m_LoaderMutex);
 
         TImageBatchId theBatchId = 0;
 
@@ -274,7 +267,7 @@ struct SBatchLoader : public IImageBatchLoader
     // Blocks if the image is currently in-flight
     void CancelImageLoading(QString inSourcePath) override
     {
-        TScopedLock __loaderLock(m_LoaderMutex);
+        QMutexLocker loaderLock(&m_LoaderMutex);
         TSourcePathToBatchMap::iterator theIter = m_SourcePathToBatches.find(inSourcePath);
         if (theIter != m_SourcePathToBatches.end()) {
             TImageBatchId theBatchId = theIter->second;
@@ -286,7 +279,7 @@ struct SBatchLoader : public IImageBatchLoader
 
     SImageLoaderBatch *GetBatch(TImageBatchId inId)
     {
-        TScopedLock __loaderLock(m_LoaderMutex);
+        QMutexLocker loaderLock(&m_LoaderMutex);
         TImageLoaderBatchMap::iterator theIter = m_Batches.find(inId);
         if (theIter != m_Batches.end())
             return theIter->second;
@@ -307,7 +300,7 @@ struct SBatchLoader : public IImageBatchLoader
     }
     void ImageLoaded(SLoadingImage &inImage, SLoadedTexture *inTexture)
     {
-        TScopedLock __loaderLock(m_LoaderMutex);
+        QMutexLocker loaderLock(&m_LoaderMutex);
         m_LoadedImages.push_back(
                     SBatchLoadedImage(inImage.m_SourcePath, inTexture, *inImage.m_Batch));
         inImage.m_Batch->IncrementLoadedImageCount();
@@ -316,11 +309,11 @@ struct SBatchLoader : public IImageBatchLoader
     // These are called by the render context, users don't need to call this.
     void BeginFrame() override
     {
-        TScopedLock __loaderLock(m_LoaderMutex);
+        QMutexLocker loaderLock(&m_LoaderMutex);
         // Pass 1 - send out all image loaded signals
         for (quint32 idx = 0, end = m_LoadedImages.size(); idx < end; ++idx) {
 
-            m_SourcePathToBatches.erase(m_LoadedImages[idx].m_SourcePath);
+            m_SourcePathToBatches.remove(m_LoadedImages[idx].m_SourcePath);
             m_LoadedImages[idx].Finalize(m_BufferManager);
             m_LoadedImages[idx].m_Batch->IncrementFinalizedImageCount();
             if (m_LoadedImages[idx].m_Batch->IsFinalizedFinished())
@@ -334,9 +327,8 @@ struct SBatchLoader : public IImageBatchLoader
                 SImageLoaderBatch *theBatch = theIter->second;
                 if (theBatch->m_LoadListener)
                     theBatch->m_LoadListener->OnImageBatchComplete(theBatch->m_BatchId);
-                m_Batches.erase(m_FinishedBatches[idx]);
+                m_Batches.remove(m_FinishedBatches[idx]);
                 theBatch->~SImageLoaderBatch();
-                m_BatchPool.deallocate(theBatch);
             }
         }
         m_FinishedBatches.clear();
@@ -348,7 +340,7 @@ struct SBatchLoader : public IImageBatchLoader
 void SLoadingImage::Setup(SImageLoaderBatch &inBatch)
 {
     m_Batch = &inBatch;
-    m_TaskId = inBatch.m_Loader.m_ThreadPool.AddTask(this, LoadImage, TaskCancelled);
+    m_TaskId = inBatch.m_Loader.m_ThreadPool->AddTask(this, LoadImage, TaskCancelled);
 }
 
 void SLoadingImage::LoadImage(void *inImg)
@@ -417,7 +409,7 @@ SImageLoaderBatch::CreateLoaderBatch(SBatchLoader &inLoader, TImageBatchId inBat
         if (theSourcePath.IsValid() == false)
             continue;
 
-        if (inLoader.m_BufferManager.IsImageLoaded(theSourcePath))
+        if (inLoader.m_BufferManager->IsImageLoaded(theSourcePath))
             continue;
 
         QPair<SBatchLoader::TSourcePathToBatchMap::iterator, bool> theInserter =
@@ -431,21 +423,16 @@ SImageLoaderBatch::CreateLoaderBatch(SBatchLoader &inLoader, TImageBatchId inBat
             // Alias the image so any further requests for this source path will result in
             // the default images (image till loaded).
             bool aliasSuccess =
-                    inLoader.m_BufferManager.AliasImagePath(theSourcePath, inImageTillLoaded, true);
+                    inLoader.m_BufferManager->AliasImagePath(theSourcePath, inImageTillLoaded, true);
             (void)aliasSuccess;
             Q_ASSERT(aliasSuccess);
         }
 
-        theImages.push_front(
-                    *inLoader.m_LoadingImagePool.construct(theSourcePath, __FILE__, __LINE__));
+        theImages.push_front(*inLoader.m_LoadingImagePool.construct(theSourcePath, __FILE__, __LINE__));
         ++theLoadingImageCount;
     }
     if (theImages.empty() == false) {
-        SImageLoaderBatch *theBatch =
-                (SImageLoaderBatch *)inLoader.m_BatchPool.allocate(__FILE__, __LINE__);
-        new (theBatch)
-                SImageLoaderBatch(inLoader, inListener, theImages, inBatchId, theLoadingImageCount,
-                                  contextType);
+        SImageLoaderBatch *theBatch = new SImageLoaderBatch(inLoader, inListener, theImages, inBatchId, theLoadingImageCount, contextType);
         return theBatch;
     }
     return nullptr;
@@ -456,8 +443,6 @@ SImageLoaderBatch::SImageLoaderBatch(SBatchLoader &inLoader, IImageLoadListener 
                                      quint32 inImageCount, QDemonRenderContextType contextType)
     : m_Loader(inLoader)
     , m_LoadListener(inLoadListener)
-    , m_LoadEvent(inLoader.m_Foundation.getAllocator())
-    , m_LoadMutex(inLoader.m_Foundation.getAllocator())
     , m_Images(inImageList)
     , m_BatchId(inBatchId)
     , m_LoadedOrCanceledImageCount(0)
@@ -477,7 +462,7 @@ SImageLoaderBatch::~SImageLoaderBatch()
          ++iter) {
         TLoadingImageList::iterator temp(iter);
         ++iter;
-        m_Loader.m_LoadingImagePool.deallocate(temp.m_Obj);
+        delete temp.m_Obj;
     }
 }
 
@@ -485,7 +470,7 @@ void SImageLoaderBatch::Cancel()
 {
     for (TLoadingImageList::iterator iter = m_Images.begin(), end = m_Images.end(); iter != end;
          ++iter)
-        m_Loader.m_ThreadPool.CancelTask(iter->m_TaskId);
+        m_Loader.m_ThreadPool->CancelTask(iter->m_TaskId);
 }
 
 void SImageLoaderBatch::Cancel(QString inSourcePath)
@@ -493,19 +478,19 @@ void SImageLoaderBatch::Cancel(QString inSourcePath)
     for (TLoadingImageList::iterator iter = m_Images.begin(), end = m_Images.end(); iter != end;
          ++iter) {
         if (iter->m_SourcePath == inSourcePath) {
-            m_Loader.m_ThreadPool.CancelTask(iter->m_TaskId);
+            m_Loader.m_ThreadPool->CancelTask(iter->m_TaskId);
             break;
         }
     }
 }
 }
 
-IImageBatchLoader &IImageBatchLoader::CreateBatchLoader(IInputStreamFactory &inFactory,
-                                                        IBufferManager &inBufferManager,
-                                                        IThreadPool &inThreadPool,
-                                                        IPerfTimer &inTimer)
+QSharedPointer<IImageBatchLoader> IImageBatchLoader::CreateBatchLoader(QSharedPointer<IInputStreamFactory> inFactory,
+                                                        QSharedPointer<IBufferManager> inBufferManager,
+                                                        QSharedPointer<IThreadPool> inThreadPool,
+                                                        QSharedPointer<IPerfTimer> inTimer)
 {
-    return *new SBatchLoader(inFactory, inBufferManager, inThreadPool, inTimer);
+    return QSharedPointer<IImageBatchLoader>(new SBatchLoader(inFactory, inBufferManager, inThreadPool, inTimer));
 }
 
 QT_END_NAMESPACE

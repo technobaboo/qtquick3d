@@ -268,5 +268,158 @@ QString CFileTools::NormalizePathForQtUsage(const QString &path)
         return filePath;
 }
 
+namespace  {
+bool IsAbsolute(const char *inPath, size_t inLen)
+{
+    if (inLen > 2 && inPath[1] == ':')
+        return true;
+    else if (inLen > 1 && (inPath[0] == '\\' || inPath[0] == '/'))
+        return true;
+    return false;
+}
+inline uint StrLen(const char *inType)
+{
+    uint retval = 0;
+    while (inType && *inType) {
+        ++retval;
+        ++inType;
+    }
+    return retval;
+}
+//// State machine where you can add a character
+//// and it will tell you how many characters to erase
+//struct SPathStateMachine
+//{
+//    struct States
+//    {
+//        enum Enum {
+//            NoState = 0, // Don't care
+//            Slash, // Last char was either a forward or backward slash
+//            Period, // Last char was a period
+//            TwoPeriods, // Last two characters were periods
+//        };
+//    };
+//    struct Actions
+//    {
+//        enum Enum {
+//            NoAction = 0,
+//            DeleteBack1Slash,
+//            DeleteBack2Slashes,
+//        };
+//    };
+
+//    States::Enum m_State;
+
+//    SPathStateMachine()
+//        : m_State(States::NoState)
+//    {
+//    }
+
+//    Actions::Enum AnalyzeChar(QCharRef inChar)
+//    {
+//        switch (inChar.toLatin1()) {
+//        case '\\':
+//        case '/':
+//            switch (m_State) {
+//            case States::NoState:
+//                m_State = States::Slash;
+//                break;
+//            case States::Period:
+//                m_State = States::Slash;
+//                return Actions::DeleteBack1Slash;
+
+//            case States::TwoPeriods:
+//                m_State = States::Slash;
+//                return Actions::DeleteBack2Slashes;
+//            case States::Slash:
+//                return Actions::DeleteBack1Slash;
+//            }
+//            break;
+//        case '.':
+//            switch (m_State) {
+//            case States::Slash:
+//            case States::NoState:
+//                m_State = States::Period;
+//                break;
+//            case States::Period:
+//                m_State = States::TwoPeriods;
+//                break;
+//            case States::TwoPeriods:
+//                break;
+//            }
+//            break;
+//        default:
+//            m_State = States::NoState;
+//            break;
+//        }
+//        return Actions::NoAction;
+//    }
+//};
+//inline bool DoDeleteBack1Slash(int &idx, QString &ioPath)
+//{
+//    int slashLoc = ioPath.indexOf('/', idx - 1);
+//    if ((slashLoc != -1) && (slashLoc > 2)
+//        // and the next *two* characters aren't both dots.
+//        && ((ioPath[slashLoc - 1] != '.') || (ioPath[slashLoc - 2] != '.'))) {
+
+//        ioPath.remove(ioPath.begin() + slashLoc, ioPath.begin() + idx);
+//        idx = slashLoc;
+//        return true;
+//    }
+//    return false;
+//}
+
+//void NormalizePath(QString &ioPath)
+//{
+//    int pathLen = ioPath.size();
+//    SPathStateMachine theStateMachine;
+//    for (int idx = 0; idx < pathLen; ++idx) {
+//        QCharRef currentChar = ioPath[idx];
+//        if (currentChar == '\\')
+//            currentChar = QChar::fromLatin1('/');
+//        SPathStateMachine::Actions::Enum action = theStateMachine.AnalyzeChar(currentChar);
+//        switch (action) {
+//        case SPathStateMachine::Actions::DeleteBack2Slashes:
+//            if (DoDeleteBack1Slash(idx, ioPath))
+//                DoDeleteBack1Slash(idx, ioPath);
+//            pathLen = ioPath.size();
+//            break;
+
+//        case SPathStateMachine::Actions::DeleteBack1Slash:
+//            DoDeleteBack1Slash(idx, ioPath);
+//            pathLen = ioPath.size();
+//            break;
+//        default:
+//            break;
+//        }
+//    }
+//}
+
+}
+// ### Fix to Normalize Path
+void CFileTools::CombinBaseAndRelative(const char *inBase, const char *inRelative, QString &outString)
+{
+    if (IsAbsolute(inRelative, StrLen(inRelative))) {
+        outString = QString::fromLocal8Bit(nonNull(inRelative));
+    } else {
+        if (inRelative && *inRelative) {
+            if (inRelative[0] == '#')
+                outString = QString::fromLocal8Bit(inRelative);
+            else {
+                if (IsAbsolute(inRelative, strlen(inRelative))) {
+                    outString = QString::fromLocal8Bit(inRelative);
+                } else {
+                    outString = inBase ? QString::fromLocal8Bit(inBase) : QString();
+                    if (outString.size())
+                        outString.append(QStringLiteral("/"));
+                    outString.append(inRelative ? QString::fromLocal8Bit(inRelative) : QString());
+                }
+                //NormalizePath(outString);
+            }
+        }
+    }
+}
+
 
 QT_END_NAMESPACE
+

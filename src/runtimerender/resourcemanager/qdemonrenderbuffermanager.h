@@ -37,6 +37,11 @@
 
 QT_BEGIN_NAMESPACE
 
+struct SRenderMesh;
+struct SLoadedTexture;
+class QDemonRenderContext;
+class IInputStreamFactory;
+class IPerfTimer;
 class IBufferManager
 {
 protected:
@@ -45,7 +50,7 @@ protected:
 public:
     // Path manipulation used to get the final path form a base path plus relative extension
     virtual QString CombineBaseAndRelative(const char *inBase,
-                                                     const char *inRelative) = 0;
+                                           const char *inRelative) = 0;
     virtual void SetImageHasTransparency(QString inSourcePath,
                                          bool inHasTransparency) = 0;
     virtual bool GetImageHasTransparency(QString inSourcePath) const = 0;
@@ -74,7 +79,7 @@ public:
     // Can't name this LoadImage because that gets mangled by windows to LoadImageA (uggh)
     // In some cases we need to only scan particular images for transparency.
     virtual SImageTextureData LoadRenderImage(QString inImagePath,
-                                              SLoadedTexture &inTexture,
+                                              QSharedPointer<SLoadedTexture> inTexture,
                                               bool inForceScanForTransparency = false,
                                               bool inBsdfMipmaps = false) = 0;
     virtual SImageTextureData LoadRenderImage(QString inSourcePath,
@@ -90,9 +95,9 @@ public:
     virtual void Clear() = 0;
     virtual void InvalidateBuffer(QString inSourcePath) = 0;
 
-    static IBufferManager &Create(QDemonRenderContext &inRenderContext,
-                                  IInputStreamFactory &inInputStreamFactory,
-                                  IPerfTimer &inTimer);
+    static QSharedPointer<IBufferManager> Create(QSharedPointer<QDemonRenderContext> inRenderContext,
+                                                 QSharedPointer<IInputStreamFactory> inInputStreamFactory,
+                                                 QSharedPointer<IPerfTimer> inTimer);
 };
 QT_END_NAMESPACE
 

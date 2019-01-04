@@ -56,6 +56,11 @@ public:
 
 typedef quint32 TImageBatchId;
 
+
+class IInputStreamFactory;
+class IBufferManager;
+class IThreadPool;
+class IPerfTimer;
 class IImageBatchLoader
 {
 protected:
@@ -82,9 +87,10 @@ public:
     virtual void BeginFrame() = 0;
     virtual void EndFrame() = 0;
 
-    static IImageBatchLoader &CreateBatchLoader(IInputStreamFactory &inFactory,
-                                                IBufferManager &inBufferManager,
-                                                IThreadPool &inThreadPool, IPerfTimer &inTimer);
+    static QSharedPointer<IImageBatchLoader> CreateBatchLoader(QSharedPointer<IInputStreamFactory> inFactory,
+                                                QSharedPointer<IBufferManager> inBufferManager,
+                                                QSharedPointer<IThreadPool> inThreadPool,
+                                                QSharedPointer<IPerfTimer> inTimer);
 };
 QT_END_NAMESPACE
 

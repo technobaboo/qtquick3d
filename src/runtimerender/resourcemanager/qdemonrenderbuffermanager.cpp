@@ -31,21 +31,27 @@
 #pragma warning(disable : 4201) // nonstandard extension used : nameless struct/union
 #endif
 
-#include <QtDemonRuntimeRender/qdemonrenderbuffermanager.h>
+#include "qdemonrenderbuffermanager.h"
+
+#include <QtDemon/qdemonutils.h>
+
 #include <QtDemonRender/qdemonrendercontext.h>
+
 #include <QtDemonRuntimeRender/qdemonrendermesh.h>
 #include <QtDemonRuntimeRender/qdemonrenderloadedtexture.h>
 #include <QtDemonRuntimeRender/qdemonrenderinputstreamfactory.h>
 #include <QtDemonRuntimeRender/qdemonrenderimagescaler.h>
 #include <QtDemonRuntimeRender/qdemontextrenderer.h>
 #include <QtDemonRuntimeRender/qdemonrenderprefiltertexture.h>
+
 #include <QtCore/QDir>
+#include <QtCore/QMutex>
+#include <QtCore/QMutexLocker>
 
 QT_BEGIN_NAMESPACE
 
 namespace {
 
-typedef QString TStr;
 struct StrHasher
 {
     size_t operator()(const TStr &str) const
@@ -83,19 +89,17 @@ struct SPrimitiveEntry
 
 struct SBufferManager : public IBufferManager
 {
-    typedef eastl::hash_set<QString, eastl::hash<QString>,
-    eastl::equal_to<QString>, ForwardingAllocator>
-    TStringSet;
+    typedef eastl::hash_set<QString, eastl::hash<QString>, eastl::equal_to<QString>, ForwardingAllocator> TStringSet;
     typedef QHash<QString, SImageEntry> TImageMap;
     typedef QHash<QString, SRenderMesh *> TMeshMap;
     typedef QHash<QString, QString> TAliasImageMap;
 
     QSharedPointer<QDemonRenderContext> m_Context;
     QSharedPointer<IInputStreamFactory> m_InputStreamFactory;
-    IPerfTimer &m_PerfTimer;
-    TStr m_PathBuilder;
+    QSharedPointer<IPerfTimer> m_PerfTimer;
+    QString m_PathBuilder;
     TImageMap m_ImageMap;
-    Mutex m_LoadedImageSetMutex;
+    QMutex m_LoadedImageSetMutex;
     TStringSet m_LoadedImageSet;
     TAliasImageMap m_AliasImageMap;
     TMeshMap m_MeshMap;
@@ -104,22 +108,21 @@ struct SBufferManager : public IBufferManager
     bool m_GPUSupportsDXT;
     static const char *GetPrimitivesDirectory() { return "res//primitives"; }
 
-    SBufferManager(QDemonRenderContext &ctx,
-                   IInputStreamFactory &inInputStreamFactory, IPerfTimer &inTimer)
+    SBufferManager(QSharedPointer<QDemonRenderContext> ctx,
+                   QSharedPointer<IInputStreamFactory> inInputStreamFactory,
+                   QSharedPointer<IPerfTimer> inTimer)
         : m_Context(ctx)
-        , m_StrTable(strTable)
         , m_InputStreamFactory(inInputStreamFactory)
         , m_PerfTimer(inTimer)
-        , m_GPUSupportsDXT(ctx.AreDXTImagesSupported())
+        , m_GPUSupportsDXT(ctx->AreDXTImagesSupported())
     {
     }
-    virtual ~SBufferManager() { Clear(); }
+    virtual ~SBufferManager() override { Clear(); }
 
-    QString CombineBaseAndRelative(const char *inBase,
-                                             const char *inRelative) override
+    QString CombineBaseAndRelative(const char *inBase, const char *inRelative) override
     {
         CFileTools::CombineBaseAndRelative(inBase, inRelative, m_PathBuilder);
-        return QString::fromLocal8Bit(m_PathBuilder.c_str());
+        return m_PathBuilder;
     }
 
     void SetImageHasTransparency(QString inImagePath, bool inHasTransparency) override
@@ -884,10 +887,11 @@ struct SBufferManager : public IBufferManager
 };
 }
 
-IBufferManager &IBufferManager::Create(QDemonRenderContext &inRenderContext,
-                                       IInputStreamFactory &inFactory, IPerfTimer &inPerfTimer)
+QSharedPointer<IBufferManager> Create(QSharedPointer<QDemonRenderContext> inRenderContext,
+                                  QSharedPointer<IInputStreamFactory> inInputStreamFactory,
+                                  QSharedPointer<IPerfTimer> inTimer)
 {
-    return *new SBufferManager(inRenderContext, inFactory, inPerfTimer);
+    return QSharedPointer<IBufferManager>(new SBufferManager(inRenderContext, inFactory, inPerfTimer));
 }
 
 QT_END_NAMESPACE
