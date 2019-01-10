@@ -118,11 +118,11 @@ public:
     void RenderTargetAttach(QDemonRenderBackendRenderTargetObject rto,
                             QDemonRenderFrameBufferAttachments::Enum attachment,
                             QDemonRenderBackendTextureObject to,
-                            QDemonRenderTextureTargetType::Enum target
-                            = QDemonRenderTextureTargetType::Texture2D) override;
+                            QDemonRenderTextureTargetType::Enum target = QDemonRenderTextureTargetType::Texture2D) override;
     void RenderTargetAttach(QDemonRenderBackendRenderTargetObject rto,
                             QDemonRenderFrameBufferAttachments::Enum attachment,
-                            QDemonRenderBackendTextureObject to, qint32 level,
+                            QDemonRenderBackendTextureObject to,
+                            qint32 level,
                             qint32 layer) override;
     void SetRenderTarget(QDemonRenderBackendRenderTargetObject rto) override;
     bool RenderTargetIsValid(QDemonRenderBackendRenderTargetObject rto) override;

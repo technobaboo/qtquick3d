@@ -26,7 +26,7 @@
 **
 ** $QT_END_LICENSE$
 **
-****************************************************************************/ #pragma once
+****************************************************************************/
 #ifndef QDEMON_RENDER_PATH_FONT_TEXT_H
 #define QDEMON_RENDER_PATH_FONT_TEXT_H
 
@@ -89,7 +89,7 @@ public:
              *
              * @return name set
              */
-    const void *GetGlyphIDs() { return (void *)m_GlyphIDs; }
+    const void *GetGlyphIDs() { return reinterpret_cast<void *>(m_GlyphIDs); }
 
     /**
              * @brief Get Y bound of font metric

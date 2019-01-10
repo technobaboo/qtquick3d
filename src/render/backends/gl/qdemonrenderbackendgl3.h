@@ -27,7 +27,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#pragma once
 #ifndef QDEMON_RENDER_BACKEND_GL3_H
 #define QDEMON_RENDER_BACKEND_GL3_H
 
@@ -52,7 +51,7 @@ public:
     /// constructor
     QDemonRenderBackendGL3Impl(const QSurfaceFormat &format);
     /// destructor
-    virtual ~QDemonRenderBackendGL3Impl();
+    ~QDemonRenderBackendGL3Impl() override;
 
     public:
         quint32 GetDepthBits() const override;
@@ -105,7 +104,20 @@ public:
 
     void RenderTargetAttach(QDemonRenderBackendRenderTargetObject rto,
                             QDemonRenderFrameBufferAttachments::Enum attachment,
-                            QDemonRenderBackendTextureObject to, qint32 level, qint32 layer) override;
+                            QDemonRenderBackendRenderbufferObject rbo) override
+    { QDemonRenderBackendGLBase::RenderTargetAttach(rto, attachment, rbo); }
+
+    void RenderTargetAttach(QDemonRenderBackendRenderTargetObject rto,
+                            QDemonRenderFrameBufferAttachments::Enum attachment,
+                            QDemonRenderBackendTextureObject to,
+                            QDemonRenderTextureTargetType::Enum target = QDemonRenderTextureTargetType::Texture2D) override
+    { QDemonRenderBackendGLBase::RenderTargetAttach(rto, attachment, to, target); }
+
+    void RenderTargetAttach(QDemonRenderBackendRenderTargetObject rto,
+                            QDemonRenderFrameBufferAttachments::Enum attachment,
+                            QDemonRenderBackendTextureObject to,
+                            qint32 level,
+                            qint32 layer) override;
     void SetReadTarget(QDemonRenderBackendRenderTargetObject rto) override;
 
     void BlitFramebuffer(qint32 srcX0, qint32 srcY0, qint32 srcX1, qint32 srcY1,

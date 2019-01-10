@@ -27,7 +27,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#pragma once
 #ifndef QDEMON_RENDER_SHADER_KEY_H
 #define QDEMON_RENDER_SHADER_KEY_H
 
@@ -179,7 +178,7 @@ private:
     static quint32 ToStr(quint32 item, QDemonDataRef<char> buffer)
     {
         // hope the buffer is big enough...
-        return static_cast<quint32>(_snprintf(buffer.begin(), buffer.size(), "%u", item));
+        return static_cast<quint32>(::snprintf(buffer.begin(), buffer.size(), "%u", item));
     }
 };
 
@@ -772,8 +771,8 @@ struct SShaderDefaultMaterialKey
             prop.ToString(m_Str, m_KeyStore);
             // if the only thing we added was the semicolon
             // then nuke the semicolon
-            if (originalSize && m_Str.size() == originalSize + 1)
-                m_Str.resize(originalSize);
+            if (originalSize && m_Str.size() == int(originalSize + 1))
+                m_Str.resize(int(originalSize));
         }
     };
 

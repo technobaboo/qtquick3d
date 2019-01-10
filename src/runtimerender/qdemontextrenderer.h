@@ -27,7 +27,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#pragma once
 #ifndef QDEMON_TEXT_RENDERER_H
 #define QDEMON_TEXT_RENDERER_H
 
@@ -61,6 +60,7 @@ class QDemonRenderPathFontSpecification;
 class ITextRendererCore
 {
 public:
+    virtual ~ITextRendererCore() {}
     // You can have several standard font directories and these will be persistent
     virtual void AddSystemFontDirectory(const char *inDirectory) = 0;
     // Should be called to clear the current context.

@@ -27,7 +27,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#pragma once
 #ifndef QDEMON_RENDER_SHADER_PROGRAM_H
 #define QDEMON_RENDER_SHADER_PROGRAM_H
 
@@ -154,7 +153,7 @@ public:
                               const char *programName, bool separableProgram);
 
     /// destructor
-    ~QDemonRenderShaderProgram();
+    virtual ~QDemonRenderShaderProgram();
 
     /**
          * @brief attach a shader to the program
@@ -457,7 +456,7 @@ struct QDemonRenderCachedShaderPropertyArray
     void Set(int count)
     {
         if (m_Constant)
-            m_Shader->SetPropertyValue(m_Constant, (TDataType*)m_array, qMin(size, count));
+            m_Shader->SetPropertyValue(m_Constant, static_cast<TDataType *>(m_array), qMin(size, count));
     }
 
     bool IsValid() const { return m_Constant != 0; }

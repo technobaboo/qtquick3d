@@ -17,7 +17,7 @@ struct QDemonConstDataRef
     {
     }
     QDemonConstDataRef()
-        : mData(0)
+        : mData(nullptr)
         , mSize(0)
     {
     }
@@ -71,7 +71,7 @@ struct QDemonDataRef
     {
     }
     QDemonDataRef()
-        : mData(0)
+        : mData(nullptr)
         , mSize(0)
     {
     }

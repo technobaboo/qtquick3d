@@ -27,7 +27,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#pragma once
 #ifndef QDEMON_RENDER_GEOMETRY_SHADER_H
 #define QDEMON_RENDER_GEOMETRY_SHADER_H
 
@@ -56,7 +55,7 @@ public:
                                QDemonConstDataRef<qint8> source, bool binaryProgram);
 
     /// @brief destructor
-    ~QDemonRenderGeometryShader();
+    virtual ~QDemonRenderGeometryShader();
 
     /**
          * @brief Query if shader compiled succesfuly

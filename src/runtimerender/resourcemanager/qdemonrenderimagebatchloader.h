@@ -27,7 +27,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#pragma once
 #ifndef QDEMON_RENDER_THREADED_IMAGE_LOADER_H
 #define QDEMON_RENDER_THREADED_IMAGE_LOADER_H
 

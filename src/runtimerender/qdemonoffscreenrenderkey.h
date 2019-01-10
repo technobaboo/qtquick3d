@@ -27,7 +27,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#pragma once
 #ifndef QDEMON_OFFSCREEN_RENDER_KEY_H
 #define QDEMON_OFFSCREEN_RENDER_KEY_H
 
@@ -78,7 +77,7 @@ struct SOffscreenRendererKeyUnionTraits
     template <typename TDataType>
     static TIdType getType()
     {
-        return (TIdType)SOffscreenRendererKeyTypeMap<TDataType>::KeyType;
+        return static_cast<TIdType>(SOffscreenRendererKeyTypeMap<TDataType>::KeyType);
     }
 
     template <typename TRetType, typename TVisitorType>

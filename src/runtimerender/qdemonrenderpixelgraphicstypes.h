@@ -27,7 +27,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#pragma once
 #ifndef QDEMON_RENDER_PIXEL_GRAPHICS_TYPES_H
 #define QDEMON_RENDER_PIXEL_GRAPHICS_TYPES_H
 

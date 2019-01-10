@@ -27,8 +27,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
-#pragma once
+#ifndef QDEMONRENDEREULERANGLES_H
+#define QDEMONRENDEREULERANGLES_H
 
 #include <qmath.h>
 
@@ -138,3 +138,5 @@ public:
     const char *DumpOrderInfo();
 };
 QT_END_NAMESPACE
+
+#endif // QDEMONRENDEREULERANGLES_H

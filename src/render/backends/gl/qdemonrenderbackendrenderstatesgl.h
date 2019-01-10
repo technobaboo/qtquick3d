@@ -27,7 +27,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#pragma once
 #ifndef QDEMON_RENDER_BACKEND_RENDER_STATE_OBJECTS_GL_H
 #define QDEMON_RENDER_BACKEND_RENDER_STATE_OBJECTS_GL_H
 
@@ -156,7 +155,9 @@ public:
 
     bool operator==(const QDemonRenderBackendRasterizerStateGL &other) const
     {
-        return (m_DepthBias == other.m_DepthBias && m_DepthScale == other.m_DepthScale
+        // TODO: Added fuzzy compare to hide warning, but we should make sure if we actuall want this behavior
+        // and disable the warning instead.
+        return (qFuzzyCompare(m_DepthBias, other.m_DepthBias) && qFuzzyCompare(m_DepthScale, other.m_DepthScale)
                 && m_CullFace == other.m_CullFace);
     }
 

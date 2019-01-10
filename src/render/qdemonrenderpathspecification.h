@@ -27,7 +27,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#pragma once
 #ifndef QDEMON_RENDER_PATH_SPECIFICATION_H
 #define QDEMON_RENDER_PATH_SPECIFICATION_H
 
@@ -55,7 +54,7 @@ public:
     QDemonRenderPathSpecification(QSharedPointer<QDemonRenderContextImpl> context);
 
     /// @QDemonRenderPathSpecification destructor
-    ~QDemonRenderPathSpecification();
+    virtual ~QDemonRenderPathSpecification();
 
 
     /**

@@ -27,7 +27,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#pragma once
 #ifndef QDEMON_RENDER_CLIPPING_PLANE_H
 #define QDEMON_RENDER_CLIPPING_PLANE_H
 
@@ -91,9 +90,9 @@ struct SClipPlane
 
     static inline QVector3D corner(const QDemonBounds3 &bounds, TRenderBoxEdge edge)
     {
-        return QVector3D((edge & BoxEdgeFlagValues::xMax) ? bounds.maximum[0] : bounds.minimum[0],
-                (edge & BoxEdgeFlagValues::yMax) ? bounds.maximum[1] : bounds.minimum[1],
-                    (edge & BoxEdgeFlagValues::zMax) ? bounds.maximum[2] : bounds.minimum[2]);
+        return QVector3D((edge & BoxEdgeFlagValues::xMax) ? bounds.m_maximum[0] : bounds.m_minimum[0],
+                (edge & BoxEdgeFlagValues::yMax) ? bounds.m_maximum[1] : bounds.m_minimum[1],
+                    (edge & BoxEdgeFlagValues::zMax) ? bounds.m_maximum[2] : bounds.m_minimum[2]);
         }
 
         // dividing the distance numerator
@@ -126,7 +125,7 @@ struct SClipPlane
                     | (normal[1] >= 0.0f ? BoxEdgeFlagValues::yMax : 0)
                 | (normal[2] >= 0.0f ? BoxEdgeFlagValues::zMax : 0)));
 
-        mEdges.lowerEdge = TRenderBoxEdge((~((quint8)mEdges.upperEdge)) & 7);
+        mEdges.lowerEdge = TRenderBoxEdge((~(quint8(mEdges.upperEdge))) & 7);
     }
 };
 

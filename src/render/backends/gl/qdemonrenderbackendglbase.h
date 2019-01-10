@@ -27,7 +27,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#pragma once
 #ifndef QDEMON_RENDER_BACKEND_GL_BASE_H
 #define QDEMON_RENDER_BACKEND_GL_BASE_H
 
@@ -57,11 +56,12 @@ class QDemonRenderBackendDepthStencilStateGL;
 
 class QDemonRenderBackendGLBase : public QDemonRenderBackend
 {
+    QDemonRenderBackendGLBase() = default;
 public:
     /// constructor
     QDemonRenderBackendGLBase(const QSurfaceFormat &format);
     /// destructor
-    virtual ~QDemonRenderBackendGLBase();
+    ~QDemonRenderBackendGLBase() override;
 
 public:
     /// API Interface
@@ -149,16 +149,22 @@ public:
 
     QDemonRenderBackendRenderTargetObject CreateRenderTarget() override;
     void ReleaseRenderTarget(QDemonRenderBackendRenderTargetObject rto) override;
+
     void RenderTargetAttach(QDemonRenderBackendRenderTargetObject rto,
                             QDemonRenderFrameBufferAttachments::Enum attachment,
                             QDemonRenderBackendRenderbufferObject rbo) override;
-    void RenderTargetAttach(
-            QDemonRenderBackendRenderTargetObject rto, QDemonRenderFrameBufferAttachments::Enum attachment,
-            QDemonRenderBackendTextureObject to,
-            QDemonRenderTextureTargetType::Enum target = QDemonRenderTextureTargetType::Texture2D) override;
+
     void RenderTargetAttach(QDemonRenderBackendRenderTargetObject rto,
                             QDemonRenderFrameBufferAttachments::Enum attachment,
-                            QDemonRenderBackendTextureObject to, qint32 level, qint32 layer) override;
+                            QDemonRenderBackendTextureObject to,
+                            QDemonRenderTextureTargetType::Enum target = QDemonRenderTextureTargetType::Texture2D) override;
+
+    void RenderTargetAttach(QDemonRenderBackendRenderTargetObject rto,
+                            QDemonRenderFrameBufferAttachments::Enum attachment,
+                            QDemonRenderBackendTextureObject to,
+                            qint32 level,
+                            qint32 layer) override;
+
     void SetRenderTarget(QDemonRenderBackendRenderTargetObject rto) override;
     bool RenderTargetIsValid(QDemonRenderBackendRenderTargetObject rto) override;
 
@@ -499,16 +505,16 @@ protected:
     QVector<GLenum> m_DrawBuffersArray; ///< Contains the drawbuffer enums
     QSurfaceFormat m_format;
 
-    QDemonRenderBackendRasterizerStateGL *m_pCurrentRasterizerState; ///< this holds the current rasterizer state
-    QDemonRenderBackendDepthStencilStateGL *m_pCurrentDepthStencilState; ///< this holds the current depth stencil state
+    QDemonRenderBackendRasterizerStateGL *m_pCurrentRasterizerState = nullptr; ///< this holds the current rasterizer state
+    QDemonRenderBackendDepthStencilStateGL *m_pCurrentDepthStencilState = nullptr; ///< this holds the current depth stencil state
 
 #ifdef RENDER_BACKEND_LOG_GL_ERRORS
     void checkGLError(const char *function, const char *file, const unsigned int line) const;
 #else
     void checkGLError() const;
 #endif
-    QOpenGLFunctions *m_glFunctions;
-    QOpenGLExtraFunctions *m_glExtraFunctions;
+    QOpenGLFunctions *m_glFunctions = nullptr;
+    QOpenGLExtraFunctions *m_glExtraFunctions = nullptr;
 };
 
 QT_END_NAMESPACE

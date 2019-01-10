@@ -529,7 +529,8 @@ void QDemonRenderBackendGL3Impl::SetReadBuffer(QDemonRenderBackendRenderTargetOb
 
 void QDemonRenderBackendGL3Impl::RenderTargetAttach(QDemonRenderBackendRenderTargetObject,
                                                     QDemonRenderFrameBufferAttachments::Enum attachment,
-                                                    QDemonRenderBackendTextureObject to, qint32 level,
+                                                    QDemonRenderBackendTextureObject to,
+                                                    qint32 level,
                                                     qint32 layer)
 {
     // rto must be the current render target
@@ -727,6 +728,7 @@ void QDemonRenderBackendGL3Impl::GetQueryResult(QDemonRenderBackendQueryObject q
                                                 QDemonRenderQueryResultType::Enum resultType,
                                                 quint64 *params)
 {
+    // TODO: params type!
     if (m_backendSupport.caps.bits.bTimerQuerySupported) {
         GLuint queryID = HandleToID_cast(GLuint, size_t, qo);
 
@@ -736,7 +738,7 @@ void QDemonRenderBackendGL3Impl::GetQueryResult(QDemonRenderBackendQueryObject q
                                   queryID, m_Conversion.fromQueryResultTypeToGL(resultType), params));
 #else
             GL_CALL_TIMER_EXT(glGetQueryObjectui64v(
-                                  queryID, m_Conversion.fromQueryResultTypeToGL(resultType), params));
+                                  queryID, m_Conversion.fromQueryResultTypeToGL(resultType), (GLuint64 *)params));
 #endif
     }
 }

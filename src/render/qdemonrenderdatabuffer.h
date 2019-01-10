@@ -27,7 +27,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#pragma once
 #ifndef QDEMON_RENDER_DATA_BUFFER_H
 #define QDEMON_RENDER_DATA_BUFFER_H
 
@@ -99,7 +98,7 @@ public:
          *
          * @return Return size
          */
-    virtual quint32 Size() { return (quint32)m_BufferSize; }
+    virtual quint32 Size() { return quint32(m_BufferSize); }
 
     /**
          * @brief Get a pointer to the foundation

@@ -11,6 +11,7 @@ class Q_DEMON_EXPORT QDemonNoCopy
     QDemonNoCopy &operator=(const QDemonNoCopy &c);
 
 public:
+
     QDemonNoCopy() {}
 };
 

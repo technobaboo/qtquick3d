@@ -722,7 +722,7 @@ QDemonRenderBackend::QDemonRenderBackendRenderTargetObject QDemonRenderBackendGL
 
     GL_CALL_FUNCTION(glGenFramebuffers(1, &fboID));
 
-    return (QDemonRenderBackend::QDemonRenderBackendRenderTargetObject)fboID;
+    return reinterpret_cast<QDemonRenderBackend::QDemonRenderBackendRenderTargetObject>(fboID);
 }
 
 void QDemonRenderBackendGLBase::ReleaseRenderTarget(QDemonRenderBackendRenderTargetObject rto)

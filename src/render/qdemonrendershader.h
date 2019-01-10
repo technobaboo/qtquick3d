@@ -27,7 +27,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#pragma once
 #ifndef QDEMON_RENDER_SHADER_H
 #define QDEMON_RENDER_SHADER_H
 
@@ -68,7 +67,7 @@ public:
     }
 
     /// @brief destructor
-    ~QDemonRenderShader(){}
+    virtual ~QDemonRenderShader(){}
 
     /**
          * @brief Query if shader compiled succesfuly
@@ -93,6 +92,8 @@ public:
 
         *messageLength = m_ErrorMessage.size();
         errorMessage = m_ErrorMessage.constData();
+        // TODO: WTF
+        (void)errorMessage;
     }
 
     /**

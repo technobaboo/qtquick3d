@@ -27,7 +27,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#pragma once
 #ifndef QDEMON_RENDER_SHADER_CACHE_H
 #define QDEMON_RENDER_SHADER_CACHE_H
 

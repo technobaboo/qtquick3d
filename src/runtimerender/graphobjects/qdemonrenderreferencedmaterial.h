@@ -27,7 +27,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#pragma once
 #ifndef QDEMON_RENDER_REFERENCED_MATERIAL_H
 #define QDEMON_RENDER_REFERENCED_MATERIAL_H
 

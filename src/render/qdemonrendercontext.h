@@ -27,7 +27,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#pragma once
 #ifndef QDEMON_RENDER_CONTEXT_H
 #define QDEMON_RENDER_CONTEXT_H
 
@@ -752,7 +751,7 @@ public:
 
     void SetDefaultRenderTarget(quint64 targetID) override
     {
-        m_DefaultOffscreenRenderTarget = (QDemonRenderBackend::QDemonRenderBackendRenderTargetObject)targetID;
+        m_DefaultOffscreenRenderTarget = reinterpret_cast<QDemonRenderBackend::QDemonRenderBackendRenderTargetObject>(targetID);
     }
 
     void SetDefaultDepthBufferBitCount(qint32 depthBits) override { m_DephBits = depthBits; }

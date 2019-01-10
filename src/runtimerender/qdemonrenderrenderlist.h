@@ -27,7 +27,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#pragma once
 #ifndef QDEMON_RENDER_RENDER_LIST_H
 #define QDEMON_RENDER_RENDER_LIST_H
 
@@ -68,6 +67,7 @@ public:
 class IRenderList
 {
 public:
+    virtual ~IRenderList() {}
     // Called by the render context, do not call this.
     virtual void BeginFrame() = 0;
 

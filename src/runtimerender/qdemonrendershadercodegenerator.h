@@ -27,7 +27,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#pragma once
 #ifndef QDEMON_RENDER_SHADER_CODE_GENERATOR_H
 #define QDEMON_RENDER_SHADER_CODE_GENERATOR_H
 
@@ -62,6 +61,7 @@ struct SShaderCodeGeneratorBase
     QDemonRenderContextType m_RenderContextType;
 
     SShaderCodeGeneratorBase(QDemonRenderContextType ctxType);
+    virtual ~SShaderCodeGeneratorBase();
     virtual TStrTableStrMap &GetVaryings() = 0;
     void Begin();
     void Append(const char *data);

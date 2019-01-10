@@ -27,7 +27,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#pragma once
 #ifndef QDEMON_RENDER_RESOURCE_TEXTURE_2D_H
 #define QDEMON_RENDER_RESOURCE_TEXTURE_2D_H
 

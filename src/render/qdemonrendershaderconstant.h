@@ -27,7 +27,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#pragma once
 #ifndef QDEMON_RENDER_SHADER_CONSTANT_H
 #define QDEMON_RENDER_SHADER_CONSTANT_H
 
@@ -69,6 +68,8 @@ public:
         , m_Binding(binding)
     {
     }
+
+    virtual ~QDemonRenderShaderConstantBase() {}
 
     QDemonRenderShaderDataTypes::Enum GetShaderConstantType() const { return m_Type; }
 
@@ -230,6 +231,8 @@ public:
         , m_Size(size)
     {
     }
+
+    virtual ~QDemonRenderShaderBufferBase() {}
 
     virtual void Release() = 0;
 

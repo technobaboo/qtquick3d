@@ -42,10 +42,14 @@ QT_BEGIN_NAMESPACE
 #define HandleToID_cast(staticType, dynamicType, handle)                                           \
     static_cast<staticType>(reinterpret_cast<dynamicType>(handle))
 
-class Q_DEMONRENDER_EXPORT QDemonRenderBackend : public QDemonNoCopy
+class Q_DEMONRENDER_EXPORT QDemonRenderBackend
 {
+    QDemonRenderBackend(const QDemonRenderBackend &) = delete;
+    QDemonRenderBackend &operator=(const QDemonRenderBackend &) = delete ;
 
 public:
+    QDemonRenderBackend() = default;
+    virtual ~QDemonRenderBackend() {}
     /// opaque buffer object handle
     typedef struct _QDemonRenderBackendBufferObject *QDemonRenderBackendBufferObject;
     /// opaque attribute layout object handle
@@ -706,7 +710,8 @@ public:
          */
     virtual void RenderTargetAttach(QDemonRenderBackendRenderTargetObject rto,
                                     QDemonRenderFrameBufferAttachments::Enum attachment,
-                                    QDemonRenderBackendTextureObject to, qint32 level,
+                                    QDemonRenderBackendTextureObject to,
+                                    qint32 level,
                                     qint32 layer) = 0;
 
     /**

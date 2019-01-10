@@ -35,6 +35,11 @@ SShaderCodeGeneratorBase::SShaderCodeGeneratorBase(QDemonRenderContextType ctxTy
     : m_RenderContextType(ctxType)
 {
 }
+
+SShaderCodeGeneratorBase::~SShaderCodeGeneratorBase()
+{
+
+}
 void SShaderCodeGeneratorBase::Begin()
 {
     m_Uniforms.clear();

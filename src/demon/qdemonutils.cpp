@@ -2,6 +2,8 @@
 
 #include <QtCore/QDir>
 
+#include <cmath>
+
 QT_BEGIN_NAMESPACE
 
 QVector3D vec3::minimum(const QVector3D &v1, const QVector3D &v2)
@@ -169,7 +171,7 @@ bool quant::isFinite(const QQuaternion &q)
 
 float quant::magnitude(const QQuaternion &q)
 {
-    return std::sqrtf(q.x() * q.x() + q.y() * q.y() + q.z() * q.z() + q.scalar() * q.scalar());
+    return std::sqrt(q.x() * q.x() + q.y() * q.y() + q.z() * q.z() + q.scalar() * q.scalar());
 }
 
 bool quant::isSane(const QQuaternion &q)

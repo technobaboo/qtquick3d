@@ -27,7 +27,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#pragma once
 #ifndef QDEMON_RENDER_DYNAMIC_OBJECT_SYSTEM_UTIL_H
 #define QDEMON_RENDER_DYNAMIC_OBJECT_SYSTEM_UTIL_H
 
@@ -144,7 +143,7 @@ inline const char *GetShaderDatatypeName(QDemonRenderShaderDataTypes::Enum inVal
 {
     switch (inValue) {
     case QDemonRenderShaderDataTypes::Unknown:
-        return 0;
+        return nullptr;
     case QDemonRenderShaderDataTypes::Integer:            //qint32,
         return "qint32";
     case QDemonRenderShaderDataTypes::IntegerVec2:        //qint32_2,

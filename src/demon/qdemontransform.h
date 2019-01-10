@@ -37,7 +37,7 @@ public:
 
     Q_ALWAYS_INLINE QDemonTransform getInverse() const;
 
-    Q_ALWAYS_INLINE QVector3D transform(const QVector3D &input) const;
+    QVector3D transform(const QVector3D &input) const;
 
     Q_ALWAYS_INLINE QVector3D transformInv(const QVector3D &input) const;
 
@@ -46,7 +46,7 @@ public:
     Q_ALWAYS_INLINE QVector3D rotateInv(const QVector3D &input) const;
 
     //! Transform transform to parent (returns compound transform: first src, then *this)
-    Q_ALWAYS_INLINE QDemonTransform transform(const QDemonTransform &src) const;
+    QDemonTransform transform(const QDemonTransform &src) const;
 
     /**
     \brief returns true if finite and q is a unit quaternion

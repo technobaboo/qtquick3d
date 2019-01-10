@@ -27,7 +27,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#pragma once
 #ifndef QDEMON_RENDER_FRAGMENT_SHADER_H
 #define QDEMON_RENDER_FRAGMENT_SHADER_H
 
@@ -55,7 +54,7 @@ public:
     QDemonRenderFragmentShader(QSharedPointer<QDemonRenderContextImpl> context, QDemonConstDataRef<qint8> source, bool binaryProgram);
 
     /// @brief destructor
-    ~QDemonRenderFragmentShader();
+    ~QDemonRenderFragmentShader() override;
 
     /**
          * @brief Query if shader compiled succesfuly

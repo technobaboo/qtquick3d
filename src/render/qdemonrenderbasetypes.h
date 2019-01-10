@@ -42,6 +42,8 @@
 #include <QtGui/QMatrix3x3>
 #include <QFloat16>
 
+#include <cmath>
+
 QT_BEGIN_NAMESPACE
 
 struct QDemonRenderComponentTypes
@@ -895,7 +897,7 @@ struct QDemonRenderTextureFormats
             // ((float)src[byteOfs+3]) / 255.0f : 1.0f;
             for (quint32 i = 0; i < QDemonRenderTextureFormats::getSizeofFormat(inFmt); ++i) {
                 float val = (float(src[byteOfs + i])) / 255.0f;
-                outPtr[i] = (i < 3) ? powf(val, 0.4545454545f) : val;
+                outPtr[i] = (i < 3) ? std::pow(val, 0.4545454545f) : val;
                 // Assuming RGBA8 actually means RGBD (which is stupid, I know)
                 // if ( QDemonRenderTextureFormats::getSizeofFormat(inFmt) == 4 ) { outPtr[i] /=
                 // divisor; }
@@ -1011,7 +1013,7 @@ struct QDemonRenderTextureFormats
                 if (inPtr[i] > 65519.0f) {
                     inPtr[i] = 65519.0f;
                 }
-                if (fabs(inPtr[i]) < 6.10352E-5f) {
+                if (std::fabs(inPtr[i]) < 6.10352E-5f) {
                     inPtr[i] = 0.0f;
                 }
                 quint32 f = reinterpret_cast<quint32 *>(inPtr)[i];

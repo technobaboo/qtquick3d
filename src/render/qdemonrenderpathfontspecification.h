@@ -26,7 +26,7 @@
 **
 ** $QT_END_LICENSE$
 **
-****************************************************************************/ #pragma once
+****************************************************************************/
 #ifndef QDEMON_RENDER_PATH_FONT_SPECIFICATION_H
 #define QDEMON_RENDER_PATH_FONT_SPECIFICATION_H
 #include <QVector2D>
@@ -59,7 +59,7 @@ public:
     QDemonRenderPathFontSpecification(QSharedPointer<QDemonRenderContextImpl> context, const QString &fontName);
 
     /// @QDemonRenderPathSpecification destructor
-    ~QDemonRenderPathFontSpecification();
+    virtual ~QDemonRenderPathFontSpecification();
 
     /**
              * @brief Load numGlyphs glyphs from specified font file

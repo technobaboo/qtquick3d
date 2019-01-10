@@ -28,7 +28,6 @@
 **
 ****************************************************************************/
 
-#pragma once
 #ifndef QDEMON_RENDER_LIGHTMAPS_H
 #define QDEMON_RENDER_LIGHTMAPS_H
 

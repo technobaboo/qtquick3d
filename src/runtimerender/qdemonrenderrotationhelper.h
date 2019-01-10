@@ -27,7 +27,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#pragma once
 #ifndef QDEMON_RENDER_ROTATION_HELPER_H
 #define QDEMON_RENDER_ROTATION_HELPER_H
 
@@ -49,9 +48,9 @@ struct SRotationHelper
     // Goal is to keep the fabs of the angle low.
     static float ToMinimalAngle(float value)
     {
-        float epsilon = (float)M_PI + .001f;
-        while (fabs(value) > epsilon) {
-            float tpi = (float)(2.0f * M_PI);
+        float epsilon = float(M_PI) + .001f;
+        while (std::abs(value) > epsilon) {
+            float tpi = 2.0f * float(M_PI);
             if (value > 0.0f)
                 value -= tpi;
             else
@@ -89,7 +88,7 @@ struct SRotationHelper
         quint32 greaterThanPiSum = 0;
         float pi = (float)M_PI;
         for (quint32 idx = 0; idx < 3; ++idx)
-            if (fabs(retval[idx]) >= pi)
+            if (std::abs(retval[int(idx)]) >= pi)
                 greaterThanPiSum++;
 
         if (greaterThanPiSum > 1) {
@@ -181,7 +180,7 @@ struct SRotationHelper
             QVector3D newA = ToCanonicalFormStaticAxis(inNewAngle, inRotOrder);
             QVector3D diff = newA - oldA;
             return inOldAngle + ToMinimalAngleDiff(diff);
-        } break;
+        }
         default:
             return inNewAngle;
         }

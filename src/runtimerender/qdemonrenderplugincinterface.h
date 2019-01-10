@@ -27,7 +27,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#pragma once
 #ifndef QDEMON_OBJECT_RENDER_PLUGIN_H
 #define QDEMON_OBJECT_RENDER_PLUGIN_H
 

@@ -27,7 +27,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#pragma once
 #ifndef QDEMON_RENDER_BUFFER_LOADED_H
 #define QDEMON_RENDER_BUFFER_LOADED_H
 
@@ -44,6 +43,7 @@ class IBufferLoaderCallback;
 class ILoadedBuffer
 {
 public:
+    virtual ~ILoadedBuffer() {}
     virtual QString Path() = 0;
     // Data is released when the buffer itself is released.
     virtual QDemonDataRef<quint8> Data() = 0;
@@ -53,6 +53,7 @@ public:
 class IBufferLoaderCallback
 {
 public:
+    virtual ~IBufferLoaderCallback() {}
     virtual void OnBufferLoaded(ILoadedBuffer &inBuffer) = 0;
     virtual void OnBufferLoadFailed(QString inPath) = 0;
     virtual void OnBufferLoadCancelled(QString inPath) = 0;
@@ -62,6 +63,7 @@ public:
 class IBufferLoader
 {
 public:
+    virtual ~IBufferLoader() {}
     // nonblocking.  Quiet failure is passed to the input stream factory.
     // Returns handle to loading buffer
     virtual quint64 QueueForLoading(QString inPath,
