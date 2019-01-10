@@ -12,15 +12,15 @@ QDemonBounds3::QDemonBounds3()
 void QDemonBounds3::include(const QVector3D &v)
 {
     Q_ASSERT(isFinite());
-    m_minimum = vec3::minimum(m_minimum, v);
-    m_maximum = vec3::maximum(m_maximum, v);
+    minimum = vec3::minimum(minimum, v);
+    maximum = vec3::maximum(maximum, v);
 }
 
 void QDemonBounds3::include(const QDemonBounds3 &b)
 {
     Q_ASSERT(isFinite());
-    m_minimum = vec3::minimum(m_minimum, b.m_minimum);
-    m_maximum = vec3::maximum(m_maximum, b.m_maximum);
+    minimum = vec3::minimum(minimum, b.minimum);
+    maximum = vec3::maximum(maximum, b.maximum);
 }
 
 QDemonBounds3 QDemonBounds3::poseExtent(const QDemonTransform &pose,
@@ -31,7 +31,7 @@ QDemonBounds3 QDemonBounds3::poseExtent(const QDemonTransform &pose,
 
 bool QDemonBounds3::isFinite() const
 {
-    return vec3::isFinite(m_minimum) && vec3::isFinite(m_maximum);
+    return vec3::isFinite(minimum) && vec3::isFinite(maximum);
 }
 
 QDemonBounds3 QDemonBounds3::boundsOfPoints(const QVector3D &v0, const QVector3D &v1)

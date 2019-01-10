@@ -164,45 +164,6 @@ inline QDemonRenderContextType StringToContextType(const QString &inContextType)
 
     return retval;
 }
-
-struct SShaderCacheKey
-{
-    QString m_Key;
-    QVector<SShaderPreprocessorFeature> m_Features;
-    uint m_HashCode;
-
-    SShaderCacheKey(QString key = QString())
-        : m_Key(key)
-        , m_HashCode(0)
-    {
-    }
-
-    SShaderCacheKey(const SShaderCacheKey &other)
-        : m_Key(other.m_Key)
-        , m_Features(other.m_Features)
-        , m_HashCode(other.m_HashCode)
-    {
-    }
-
-    SShaderCacheKey &operator=(const SShaderCacheKey &other)
-    {
-        m_Key = other.m_Key;
-        m_Features = other.m_Features;
-        m_HashCode = other.m_HashCode;
-        return *this;
-    }
-
-    void GenerateHashCode()
-    {
-        m_HashCode = qHash(m_Key);
-        m_HashCode = m_HashCode ^ HashShaderFeatureSet(m_Features);
-    }
-
-    bool operator==(const SShaderCacheKey &inOther) const
-    {
-        return m_Key == inOther.m_Key && m_Features == inOther.m_Features;
-    }
-};
 }
 
 uint qHash(const SShaderCacheKey &key)

@@ -554,8 +554,10 @@ void SLoadedTexture::ReleaseDecompressedTexture(STextureData inImage)
 #define stricmp strcasecmp
 #endif
 
-QSharedPointer<SLoadedTexture> SLoadedTexture::Load(const QString &inPath, IInputStreamFactory &inFactory, bool inFlipY,
-                                     QDemonRenderContextType renderContextType)
+QSharedPointer<SLoadedTexture> SLoadedTexture::Load(const QString &inPath,
+                                                    IInputStreamFactory &inFactory,
+                                                    bool inFlipY,
+                                                    QDemonRenderContextType renderContextType)
 {
     if (inPath.isEmpty())
         return nullptr;

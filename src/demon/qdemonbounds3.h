@@ -34,7 +34,7 @@ public:
     /**
     \brief Construct from two bounding points
     */
-    Q_ALWAYS_INLINE QDemonBounds3(const QVector3D &m_minimum, const QVector3D &m_maximum);
+    Q_ALWAYS_INLINE QDemonBounds3(const QVector3D &minimum, const QVector3D &maximum);
 
     /**
     \brief Return empty bounds.
@@ -106,7 +106,7 @@ public:
     \brief expands the volume to include b.
     \param b Bounds to perform union with.
     */
-    Q_ALWAYS_INLINE void include(const QDemonBounds3 &b);
+    void include(const QDemonBounds3 &b);
 
     Q_ALWAYS_INLINE bool isEmpty() const;
 
@@ -181,13 +181,13 @@ public:
 
     Q_ALWAYS_INLINE void transform(const QMatrix4x4 &inMatrix);
 
-    QVector3D m_minimum;
-    QVector3D m_maximum;
+    QVector3D minimum;
+    QVector3D maximum;
 };
 
-Q_ALWAYS_INLINE QDemonBounds3::QDemonBounds3(const QVector3D &minimum, const QVector3D &maximum)
-    : m_minimum(minimum)
-    , m_maximum(maximum)
+Q_ALWAYS_INLINE QDemonBounds3::QDemonBounds3(const QVector3D &_minimum, const QVector3D &_maximum)
+    : minimum(_minimum)
+    , maximum(_maximum)
 {
 }
 
@@ -206,15 +206,15 @@ Q_ALWAYS_INLINE QDemonBounds3 QDemonBounds3::centerExtents(const QVector3D &cent
 Q_ALWAYS_INLINE void QDemonBounds3::setEmpty()
 {
     const float maxFloat = std::numeric_limits<float>::max();
-    m_minimum = QVector3D(maxFloat, maxFloat, maxFloat);
-    m_maximum = QVector3D(-maxFloat, -maxFloat, -maxFloat);
+    minimum = QVector3D(maxFloat, maxFloat, maxFloat);
+    maximum = QVector3D(-maxFloat, -maxFloat, -maxFloat);
 }
 
 Q_ALWAYS_INLINE void QDemonBounds3::setInfinite()
 {
     const float maxFloat = std::numeric_limits<float>::max();
-    m_minimum = QVector3D(-maxFloat, -maxFloat, -maxFloat);
-    m_maximum = QVector3D(maxFloat, maxFloat, maxFloat);
+    minimum = QVector3D(-maxFloat, -maxFloat, -maxFloat);
+    maximum = QVector3D(maxFloat, maxFloat, maxFloat);
 }
 
 
@@ -222,44 +222,44 @@ Q_ALWAYS_INLINE bool QDemonBounds3::isEmpty() const
 {
     Q_ASSERT(isFinite());
     // Consistency condition for (Min, Max) boxes: minimum < maximum
-    return m_minimum.x() > m_maximum.x() || m_minimum.y() > m_maximum.y() || m_minimum.z() > m_maximum.z();
+    return minimum.x() > maximum.x() || minimum.y() > maximum.y() || minimum.z() > maximum.z();
 }
 
 Q_ALWAYS_INLINE bool QDemonBounds3::intersects(const QDemonBounds3 &b) const
 {
     Q_ASSERT(isFinite() && b.isFinite());
-    return !(b.m_minimum.x() > m_maximum.x() || m_minimum.x() > b.m_maximum.x() || b.m_minimum.y() > m_maximum.y()
-             || m_minimum.y() > b.m_maximum.y() || b.m_minimum.z() > m_maximum.z() || m_minimum.z() > b.m_maximum.z());
+    return !(b.minimum.x() > maximum.x() || minimum.x() > b.maximum.x() || b.minimum.y() > maximum.y()
+             || minimum.y() > b.maximum.y() || b.minimum.z() > maximum.z() || minimum.z() > b.maximum.z());
 }
 
 Q_ALWAYS_INLINE bool QDemonBounds3::intersects1D(const QDemonBounds3 &a, quint32 axis) const
 {
     Q_ASSERT(isFinite() && a.isFinite());
-    return m_maximum[int(axis)] >= a.m_minimum[axis] && a.m_maximum[axis] >= m_minimum[axis];
+    return maximum[int(axis)] >= a.minimum[axis] && a.maximum[axis] >= minimum[axis];
 }
 
 Q_ALWAYS_INLINE bool QDemonBounds3::contains(const QVector3D &v) const
 {
     Q_ASSERT(isFinite());
 
-    return !(v.x() < m_minimum.x() || v.x() > m_maximum.x() || v.y() < m_minimum.y() || v.y() > m_maximum.y()
-             || v.z() < m_minimum.z() || v.z() > m_maximum.z());
+    return !(v.x() < minimum.x() || v.x() > maximum.x() || v.y() < minimum.y() || v.y() > maximum.y()
+             || v.z() < minimum.z() || v.z() > maximum.z());
 }
 
 Q_ALWAYS_INLINE bool QDemonBounds3::isInside(const QDemonBounds3 &box) const
 {
     Q_ASSERT(isFinite() && box.isFinite());
-    if (box.m_minimum.x() > m_minimum.x())
+    if (box.minimum.x() > minimum.x())
         return false;
-    if (box.m_minimum.y() > m_minimum.y())
+    if (box.minimum.y() > minimum.y())
         return false;
-    if (box.m_minimum.z() > m_minimum.z())
+    if (box.minimum.z() > minimum.z())
         return false;
-    if (box.m_maximum.x() < m_maximum.x())
+    if (box.maximum.x() < maximum.x())
         return false;
-    if (box.m_maximum.y() < m_maximum.y())
+    if (box.maximum.y() < maximum.y())
         return false;
-    if (box.m_maximum.z() < m_maximum.z())
+    if (box.maximum.z() < maximum.z())
         return false;
     return true;
 }
@@ -267,25 +267,25 @@ Q_ALWAYS_INLINE bool QDemonBounds3::isInside(const QDemonBounds3 &box) const
 Q_ALWAYS_INLINE QVector3D QDemonBounds3::getCenter() const
 {
     Q_ASSERT(isFinite());
-    return (m_minimum + m_maximum) * double(0.5);
+    return (minimum + maximum) * double(0.5);
 }
 
 Q_ALWAYS_INLINE float QDemonBounds3::getCenter(quint32 axis) const
 {
     Q_ASSERT(isFinite());
-    return (m_minimum[int(axis)] + m_maximum[int(axis)]) * 0.5f;
+    return (minimum[int(axis)] + maximum[int(axis)]) * 0.5f;
 }
 
 Q_ALWAYS_INLINE float QDemonBounds3::getExtents(quint32 axis) const
 {
     Q_ASSERT(isFinite());
-    return (m_maximum[int(axis)] - m_minimum[int(axis)]) * 0.5f;
+    return (maximum[int(axis)] - minimum[int(axis)]) * 0.5f;
 }
 
 Q_ALWAYS_INLINE QVector3D QDemonBounds3::getDimensions() const
 {
     Q_ASSERT(isFinite());
-    return m_maximum - m_minimum;
+    return maximum - minimum;
 }
 
 Q_ALWAYS_INLINE QVector3D QDemonBounds3::getExtents() const
@@ -303,8 +303,8 @@ Q_ALWAYS_INLINE void QDemonBounds3::scale(float scale)
 Q_ALWAYS_INLINE void QDemonBounds3::fatten(double distance)
 {
     Q_ASSERT(isFinite());
-    m_minimum -= QVector3D(float(distance), float(distance), float(distance));
-    m_maximum += QVector3D(float(distance), float(distance), float(distance));
+    minimum -= QVector3D(float(distance), float(distance), float(distance));
+    maximum += QVector3D(float(distance), float(distance), float(distance));
 }
 
 Q_ALWAYS_INLINE void QDemonBounds3::expand(TNVBounds2BoxPoints &outPoints) const
@@ -314,16 +314,16 @@ Q_ALWAYS_INLINE void QDemonBounds3::expand(TNVBounds2BoxPoints &outPoints) const
             outPoints[idx] = QVector3D(0, 0, 0);
     } else {
         // Min corner of box
-        outPoints[0] = QVector3D(m_minimum[0], m_minimum[1], m_minimum[2]);
-        outPoints[1] = QVector3D(m_maximum[0], m_minimum[1], m_minimum[2]);
-        outPoints[2] = QVector3D(m_minimum[0], m_maximum[1], m_minimum[2]);
-        outPoints[3] = QVector3D(m_minimum[0], m_minimum[1], m_maximum[2]);
+        outPoints[0] = QVector3D(minimum[0], minimum[1], minimum[2]);
+        outPoints[1] = QVector3D(maximum[0], minimum[1], minimum[2]);
+        outPoints[2] = QVector3D(minimum[0], maximum[1], minimum[2]);
+        outPoints[3] = QVector3D(minimum[0], minimum[1], maximum[2]);
 
         // Max corner of box
-        outPoints[4] = QVector3D(m_maximum[0], m_maximum[1], m_maximum[2]);
-        outPoints[5] = QVector3D(m_minimum[0], m_maximum[1], m_maximum[2]);
-        outPoints[6] = QVector3D(m_maximum[0], m_minimum[1], m_maximum[2]);
-        outPoints[7] = QVector3D(m_maximum[0], m_maximum[1], m_minimum[2]);
+        outPoints[4] = QVector3D(maximum[0], maximum[1], maximum[2]);
+        outPoints[5] = QVector3D(minimum[0], maximum[1], maximum[2]);
+        outPoints[6] = QVector3D(maximum[0], minimum[1], maximum[2]);
+        outPoints[7] = QVector3D(maximum[0], maximum[1], minimum[2]);
     }
 }
 

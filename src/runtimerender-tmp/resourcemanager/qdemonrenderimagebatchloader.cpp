@@ -112,9 +112,12 @@ struct SImageLoaderBatch
                                                 QDemonRenderContextType contextType);
 
     // Called from main thread
-    SImageLoaderBatch(SBatchLoader &inLoader, IImageLoadListener *inLoadListener,
-                      const TLoadingImageList &inImageList, TImageBatchId inBatchId,
-                      quint32 inImageCount, QDemonRenderContextType contextType);
+    SImageLoaderBatch(SBatchLoader &inLoader,
+                      IImageLoadListener *inLoadListener,
+                      const TLoadingImageList &inImageList,
+                      TImageBatchId inBatchId,
+                      quint32 inImageCount,
+                      QDemonRenderContextType contextType);
 
     // Called from main thread
     ~SImageLoaderBatch();
@@ -150,7 +153,7 @@ struct SImageLoaderBatch
 struct SBatchLoadedImage
 {
     QString m_SourcePath;
-    SLoadedTexture *m_Texture;
+    QSharedPointer<SLoadedTexture> m_Texture;
     SImageLoaderBatch *m_Batch;
     SBatchLoadedImage()
         : m_Texture(nullptr)
@@ -217,8 +220,8 @@ struct SBatchLoader : public IImageBatchLoader
         QVector<TImageBatchId> theCancelledBatches;
         for (TImageLoaderBatchMap::iterator theIter = m_Batches.begin(), theEnd = m_Batches.end();
              theIter != theEnd; ++theIter) {
-            theIter->second->Cancel();
-            theCancelledBatches.push_back(theIter->second->m_BatchId);
+            theIter.value()->Cancel();
+            theCancelledBatches.push_back(theIter.value()->m_BatchId);
         }
         for (quint32 idx = 0, end = theCancelledBatches.size(); idx < end; ++idx)
             BlockUntilLoaded(theCancelledBatches[idx]);
@@ -270,10 +273,10 @@ struct SBatchLoader : public IImageBatchLoader
         QMutexLocker loaderLock(&m_LoaderMutex);
         TSourcePathToBatchMap::iterator theIter = m_SourcePathToBatches.find(inSourcePath);
         if (theIter != m_SourcePathToBatches.end()) {
-            TImageBatchId theBatchId = theIter->second;
+            TImageBatchId theBatchId = theIter.value();
             TImageLoaderBatchMap::iterator theBatchIter = m_Batches.find(theBatchId);
             if (theBatchIter != m_Batches.end())
-                theBatchIter->second->Cancel(inSourcePath);
+                theBatchIter.value()->Cancel(inSourcePath);
         }
     }
 
@@ -282,18 +285,20 @@ struct SBatchLoader : public IImageBatchLoader
         QMutexLocker loaderLock(&m_LoaderMutex);
         TImageLoaderBatchMap::iterator theIter = m_Batches.find(inId);
         if (theIter != m_Batches.end())
-            return theIter->second;
+            return theIter.value();
         return nullptr;
     }
 
     void BlockUntilLoaded(TImageBatchId inId) override
     {
+        // TODO: This is not sane
+        QMutexLocker locker(&m_LoaderMutex);
         for (SImageLoaderBatch *theBatch = GetBatch(inId); theBatch; theBatch = GetBatch(inId)) {
             // Only need to block if images aren't loaded.  Don't need to block if they aren't
             // finalized.
             if (!theBatch->IsLoadingFinished()) {
-                theBatch->m_LoadEvent.wait(200);
-                theBatch->m_LoadEvent.reset();
+                theBatch->m_LoadEvent.wait(&m_LoaderMutex, 200);
+//                theBatch->m_LoadEvent.reset(); ???
             }
             BeginFrame();
         }
@@ -304,7 +309,7 @@ struct SBatchLoader : public IImageBatchLoader
         m_LoadedImages.push_back(
                     SBatchLoadedImage(inImage.m_SourcePath, inTexture, *inImage.m_Batch));
         inImage.m_Batch->IncrementLoadedImageCount();
-        inImage.m_Batch->m_LoadEvent.set();
+        inImage.m_Batch->m_LoadEvent.wakeAll();
     }
     // These are called by the render context, users don't need to call this.
     void BeginFrame() override
@@ -314,7 +319,7 @@ struct SBatchLoader : public IImageBatchLoader
         for (quint32 idx = 0, end = m_LoadedImages.size(); idx < end; ++idx) {
 
             m_SourcePathToBatches.remove(m_LoadedImages[idx].m_SourcePath);
-            m_LoadedImages[idx].Finalize(m_BufferManager);
+            m_LoadedImages[idx].Finalize(*m_BufferManager);
             m_LoadedImages[idx].m_Batch->IncrementFinalizedImageCount();
             if (m_LoadedImages[idx].m_Batch->IsFinalizedFinished())
                 m_FinishedBatches.push_back(m_LoadedImages[idx].m_Batch->m_BatchId);
@@ -324,7 +329,7 @@ struct SBatchLoader : public IImageBatchLoader
         for (quint32 idx = 0, end = m_FinishedBatches.size(); idx < end; ++idx) {
             TImageLoaderBatchMap::iterator theIter = m_Batches.find(m_FinishedBatches[idx]);
             if (theIter != m_Batches.end()) {
-                SImageLoaderBatch *theBatch = theIter->second;
+                SImageLoaderBatch *theBatch = theIter.value();
                 if (theBatch->m_LoadListener)
                     theBatch->m_LoadListener->OnImageBatchComplete(theBatch->m_BatchId);
                 m_Batches.remove(m_FinishedBatches[idx]);
@@ -346,17 +351,17 @@ void SLoadingImage::Setup(SImageLoaderBatch &inBatch)
 void SLoadingImage::LoadImage(void *inImg)
 {
     SLoadingImage *theThis = reinterpret_cast<SLoadingImage *>(inImg);
-    SStackPerfTimer theTimer(theThis->m_Batch->m_Loader.m_PerfTimer, "Image Decompression");
-    if (theThis->m_Batch->m_Loader.m_BufferManager.IsImageLoaded(theThis->m_SourcePath) == false) {
-        SLoadedTexture *theTexture = SLoadedTexture::Load(
-                    theThis->m_SourcePath.c_str(), theThis->m_Batch->m_Loader.m_Foundation,
-                    theThis->m_Batch->m_Loader.m_InputStreamFactory, true,
-                    theThis->m_Batch->m_contextType);
+//    SStackPerfTimer theTimer(theThis->m_Batch->m_Loader.m_PerfTimer, "Image Decompression");
+    if (theThis->m_Batch->m_Loader.m_BufferManager->IsImageLoaded(theThis->m_SourcePath) == false) {
+        QSharedPointer<SLoadedTexture> theTexture = SLoadedTexture::Load(theThis->m_SourcePath,
+                                                                         *theThis->m_Batch->m_Loader.m_InputStreamFactory,
+                                                                         true,
+                                                                         theThis->m_Batch->m_contextType);
         // if ( theTexture )
         //	theTexture->EnsureMultiplerOfFour( theThis->m_Batch->m_Loader.m_Foundation,
         //theThis->m_SourcePath.c_str() );
 
-        theThis->m_Batch->m_Loader.ImageLoaded(*theThis, theTexture);
+        theThis->m_Batch->m_Loader.ImageLoaded(*theThis, theTexture.data());
     } else {
         theThis->m_Batch->m_Loader.ImageLoaded(*theThis, nullptr);
     }
@@ -376,10 +381,10 @@ bool SBatchLoadedImage::Finalize(IBufferManager &inMgr)
         // miplevels (if the image doesn't have
         // mipmaps of its own that is).
         QString thepath(m_SourcePath);
-        bool isIBL = (thepath.find(".hdr") != QString::npos)
-                || (thepath.find("\\IBL\\") != QString::npos)
-                || (thepath.find("/IBL/") != QString::npos);
-        inMgr.LoadRenderImage(m_SourcePath, *m_Texture, false, isIBL);
+        bool isIBL = (thepath.contains(".hdr"))
+                || (thepath.contains("\\IBL\\"))
+                || (thepath.contains("/IBL/"));
+        inMgr.LoadRenderImage(m_SourcePath, m_Texture, false, isIBL);
         inMgr.UnaliasImagePath(m_SourcePath);
     }
     if (m_Batch->m_LoadListener)
@@ -406,20 +411,23 @@ SImageLoaderBatch::CreateLoaderBatch(SBatchLoader &inLoader, TImageBatchId inBat
     for (quint32 idx = 0, end = inSourcePaths.size(); idx < end; ++idx) {
         QString theSourcePath(inSourcePaths[idx]);
 
-        if (theSourcePath.IsValid() == false)
+        // TODO: What was the meaning of isValid() (now isEmpty())??
+        if (theSourcePath.isEmpty() == false)
             continue;
 
         if (inLoader.m_BufferManager->IsImageLoaded(theSourcePath))
             continue;
 
-        QPair<SBatchLoader::TSourcePathToBatchMap::iterator, bool> theInserter =
-                inLoader.m_SourcePathToBatches.insert(inSourcePaths[idx], inBatchId);
+        const auto foundIt = inLoader.m_SourcePathToBatches.find(inSourcePaths[idx]);
+
+        // TODO: This is a bit funky, check if we really need to update the inBatchId...
+        inLoader.m_SourcePathToBatches.insert(inSourcePaths[idx], inBatchId);
 
         // If the loader has already seen this image.
-        if (theInserter.second == false)
+        if (foundIt != inLoader.m_SourcePathToBatches.constEnd())
             continue;
 
-        if (inImageTillLoaded.IsValid()) {
+        if (inImageTillLoaded.isEmpty()) {
             // Alias the image so any further requests for this source path will result in
             // the default images (image till loaded).
             bool aliasSuccess =
@@ -428,7 +436,9 @@ SImageLoaderBatch::CreateLoaderBatch(SBatchLoader &inLoader, TImageBatchId inBat
             Q_ASSERT(aliasSuccess);
         }
 
-        theImages.push_front(*inLoader.m_LoadingImagePool.construct(theSourcePath, __FILE__, __LINE__));
+        // TODO: Yeah... make sure this is cleaned up correctly.
+        SLoadingImage *sli = new SLoadingImage(theSourcePath);
+        theImages.push_front(*sli);
         ++theLoadingImageCount;
     }
     if (theImages.empty() == false) {

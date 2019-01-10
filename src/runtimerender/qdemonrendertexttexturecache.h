@@ -59,5 +59,31 @@ public:
 
     static ITextTextureCache &CreateTextureCache(QSharedPointer<ITextRenderer> inTextRenderer, QSharedPointer<QDemonRenderContext> inRenderContext);
 };
+
+struct STextRenderInfoAndHash
+{
+    STextRenderInfo m_Info;
+    float m_ScaleFactor;
+    uint m_Hashcode;
+    STextRenderInfoAndHash(const STextRenderInfo &inInfo, float inScaleFactor);
+    bool operator==(const STextRenderInfoAndHash &inOther) const
+    {
+        return     m_Info.m_Text == inOther.m_Info.m_Text
+                && m_Info.m_Font == inOther.m_Info.m_Font
+                && qFuzzyCompare(m_Info.m_FontSize, inOther.m_Info.m_FontSize)
+                && m_Info.m_HorizontalAlignment == inOther.m_Info.m_HorizontalAlignment
+                && m_Info.m_VerticalAlignment == inOther.m_Info.m_VerticalAlignment
+                && qFuzzyCompare(m_Info.m_Leading, inOther.m_Info.m_Leading)
+                && qFuzzyCompare(m_Info.m_Tracking, inOther.m_Info.m_Tracking)
+                && m_Info.m_DropShadow == inOther.m_Info.m_DropShadow
+                && qFuzzyCompare(m_Info.m_DropShadowStrength, inOther.m_Info.m_DropShadowStrength)
+                && qFuzzyCompare(m_Info.m_DropShadowOffset, inOther.m_Info.m_DropShadowOffset)
+                && m_Info.m_DropShadowHorizontalAlignment == inOther.m_Info.m_DropShadowHorizontalAlignment
+                && m_Info.m_DropShadowVerticalAlignment == inOther.m_Info.m_DropShadowVerticalAlignment
+                && m_Info.m_EnableAcceleratedFont == inOther.m_Info.m_EnableAcceleratedFont
+                && qFuzzyCompare(m_ScaleFactor, inOther.m_ScaleFactor);
+    }
+};
+
 QT_END_NAMESPACE
 #endif

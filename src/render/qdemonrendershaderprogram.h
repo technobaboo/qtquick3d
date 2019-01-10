@@ -405,8 +405,9 @@ struct QDemonRenderCachedShaderProperty
 
     void Set(const TDataType &inValue)
     {
+        // TODO: Make sure the raw pointer her is ok
         if (m_Constant)
-            m_Shader->SetPropertyValue(m_Constant, inValue);
+            m_Shader->SetPropertyValue(m_Constant.data(), inValue);
     }
 
     bool IsValid() const { return m_Constant != 0; }

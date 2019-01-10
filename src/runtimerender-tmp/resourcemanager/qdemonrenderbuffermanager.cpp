@@ -52,19 +52,6 @@ QT_BEGIN_NAMESPACE
 
 namespace {
 
-struct StrHasher
-{
-    size_t operator()(const TStr &str) const
-    {
-        return hash<const char *>()((const char *)str.c_str());
-    }
-};
-
-struct StrEq
-{
-    bool operator()(const TStr &lhs, const TStr &rhs) const { return lhs == rhs; }
-};
-
 struct SImageEntry : public SImageTextureData
 {
     bool m_Loaded;
@@ -89,7 +76,7 @@ struct SPrimitiveEntry
 
 struct SBufferManager : public IBufferManager
 {
-    typedef eastl::hash_set<QString, eastl::hash<QString>, eastl::equal_to<QString>, ForwardingAllocator> TStringSet;
+    typedef QHash<QString, QString> TStringSet;
     typedef QHash<QString, SImageEntry> TImageMap;
     typedef QHash<QString, SRenderMesh *> TMeshMap;
     typedef QHash<QString, QString> TAliasImageMap;
@@ -158,7 +145,7 @@ struct SBufferManager : public IBufferManager
 
     bool IsImageLoaded(QString inSourcePath) override
     {
-        Mutex::ScopedLock __locker(m_LoadedImageSetMutex);
+        QMutexLocker __locker(&m_LoadedImageSetMutex);
         return m_LoadedImageSet.find(inSourcePath) != m_LoadedImageSet.end();
     }
 
@@ -213,9 +200,9 @@ struct SBufferManager : public IBufferManager
                                       SLoadedTexture &inLoadedImage,
                                       bool inForceScanForTransparency, bool inBsdfMipmaps) override
     {
-        SStackPerfTimer __perfTimer(m_PerfTimer, "Image Upload");
+//        SStackPerfTimer __perfTimer(m_PerfTimer, "Image Upload");
         {
-            Mutex::ScopedLock __mapLocker(m_LoadedImageSetMutex);
+            QMutexLocker __mapLocker(&m_LoadedImageSetMutex);
             m_LoadedImageSet.insert(inImagePath);
         }
         pair<TImageMap::iterator, bool> theImage =
@@ -314,7 +301,7 @@ struct SBufferManager : public IBufferManager
         if (theIter == m_ImageMap.end() && inImagePath.IsValid()) {
             NVScopedReleasable<SLoadedTexture> theLoadedImage;
             {
-                SStackPerfTimer __perfTimer(m_PerfTimer, "Image Decompression");
+//                SStackPerfTimer __perfTimer(m_PerfTimer, "Image Decompression");
                 theLoadedImage = SLoadedTexture::Load(
                             inImagePath.c_str(), m_Context->GetFoundation(), *m_InputStreamFactory,
                             true, m_Context->GetRenderContextType());
@@ -856,7 +843,7 @@ struct SBufferManager : public IBufferManager
         m_ImageMap.clear();
         m_AliasImageMap.clear();
         {
-            Mutex::ScopedLock __locker(m_LoadedImageSetMutex);
+            QMutexLocker __locker(&m_LoadedImageSetMutex);
             m_LoadedImageSet.clear();
         }
     }
@@ -878,7 +865,7 @@ struct SBufferManager : public IBufferManager
                 ReleaseTexture(theEntry);
                 m_ImageMap.erase(inSourcePath);
                 {
-                    Mutex::ScopedLock __locker(m_LoadedImageSetMutex);
+                    QMutexLocker __locker(&m_LoadedImageSetMutex);
                     m_LoadedImageSet.erase(inSourcePath);
                 }
             }

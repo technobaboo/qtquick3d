@@ -90,9 +90,9 @@ struct SClipPlane
 
     static inline QVector3D corner(const QDemonBounds3 &bounds, TRenderBoxEdge edge)
     {
-        return QVector3D((edge & BoxEdgeFlagValues::xMax) ? bounds.m_maximum[0] : bounds.m_minimum[0],
-                (edge & BoxEdgeFlagValues::yMax) ? bounds.m_maximum[1] : bounds.m_minimum[1],
-                    (edge & BoxEdgeFlagValues::zMax) ? bounds.m_maximum[2] : bounds.m_minimum[2]);
+        return QVector3D((edge & BoxEdgeFlagValues::xMax) ? bounds.maximum[0] : bounds.minimum[0],
+                (edge & BoxEdgeFlagValues::yMax) ? bounds.maximum[1] : bounds.minimum[1],
+                    (edge & BoxEdgeFlagValues::zMax) ? bounds.maximum[2] : bounds.minimum[2]);
         }
 
         // dividing the distance numerator

@@ -329,7 +329,7 @@ void SShaderTessControlCodeGenerator::AddShaderItemMap(const char *itemType, con
     QByteArray extVtx("");
     QByteArray extTC("");
     QByteArray type(itemType);
-    if (!type.compare("varying")) {
+    if (type != QByteArrayLiteral("varying")) {
         extVtx = "[]";
         extTC = "TC[]";
         itemType = "attribute";
@@ -384,7 +384,7 @@ void SShaderTessEvalCodeGenerator::AddShaderItemMap(const char *itemType,
     QByteArray extTC("");
     QByteArray extTE("");
     QByteArray type(itemType);
-    if (!type.compare("varying")) {
+    if (type != QByteArrayLiteral("varying")) {
         extTC = "TC[]";
         itemType = "attribute";
     }
@@ -445,7 +445,7 @@ void SShaderGeometryCodeGenerator::AddShaderItemMap(const char *itemType,
 {
     QByteArray inExt("");
     QByteArray type(itemType);
-    if (!type.compare("varying")) {
+    if (type != QByteArrayLiteral("varying")) {
         itemType = "attribute";
         if (m_hasTessellationStage)
             inExt = "TE[]";
@@ -467,7 +467,7 @@ void SShaderGeometryCodeGenerator::AddShaderItemMap(const char *itemType,
     }
 
     // if this are varyings write output of geometry shader
-    if (!type.compare("varying")) {
+    if (type != QByteArrayLiteral("varying")) {
         m_FinalShaderBuilder.append("\n");
         itemType = "varying";
 
