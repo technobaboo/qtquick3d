@@ -94,6 +94,8 @@ struct SShaderPreprocessorFeature
     bool operator==(const SShaderPreprocessorFeature &inOther) const;
 };
 
+typedef QDemonConstDataRef<SShaderPreprocessorFeature> TShaderFeatureSet;
+
 inline const QVector<SShaderPreprocessorFeature> ShaderCacheNoFeatures() { return QVector<SShaderPreprocessorFeature>(); }
 
 // Hash is dependent on the order of the keys; so make sure their order is consistent!!
@@ -156,9 +158,9 @@ public:
     static quint32 GetShaderVersion() { return 4; }
     static const char *GetShaderCacheFileName() { return "shadercache.xml"; }
 
-    static IShaderCache &CreateShaderCache(QDemonRenderContext &inContext,
-                                           IInputStreamFactory &inInputStreamFactory,
-                                           IPerfTimer &inPerfTimer);
+    static QSharedPointer<IShaderCache> CreateShaderCache(QSharedPointer<QDemonRenderContext> inContext,
+                                                          QSharedPointer<IInputStreamFactory> inInputStreamFactory,
+                                                          QSharedPointer<IPerfTimer> inPerfTimer);
 };
 
 struct SShaderCacheKey

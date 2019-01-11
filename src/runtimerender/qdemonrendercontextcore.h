@@ -91,6 +91,7 @@ public:
 
 class ITextTextureAtlas;
 class IQDemonRenderer;
+class IShaderCache;
 
 class IQDemonRenderContext
 {
@@ -105,7 +106,7 @@ public:
     //    virtual QSharedPointer<IOffscreenRenderManager> GetOffscreenRenderManager() = 0;
     virtual QSharedPointer<IInputStreamFactory> GetInputStreamFactory() = 0;
     //    virtual QSharedPointer<IEffectSystem> GetEffectSystem() = 0;
-    //    virtual QSharedPointer<IShaderCache> GetShaderCache() = 0;
+    virtual QSharedPointer<IShaderCache> GetShaderCache() = 0;
     virtual QSharedPointer<IThreadPool> GetThreadPool() = 0;
     //    virtual QSharedPointer<IImageBatchLoader> GetImageBatchLoader() = 0;
     //    virtual QSharedPointer<IRenderPluginManager> GetRenderPluginManager() = 0;

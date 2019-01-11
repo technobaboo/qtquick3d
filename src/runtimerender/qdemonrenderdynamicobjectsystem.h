@@ -33,12 +33,14 @@
 
 #include <QtDemonRender/qdemonrenderbasetypes.h>
 #include <QtDemonRender/qdemonrenderbasetypes.h>
-#include <QtGui/QVector2D>
+
 #include <QtDemonRuntimeRender/qdemonrendershadercache.h>
 #include <QtDemonRuntimeRender/qdemonrendertessmodevalues.h>
 #include <QtDemonRuntimeRender/qdemonrendergraphobjecttypes.h>
 
-#include <QtCore/qstring.h>
+#include <QtGui/QVector2D>
+
+#include <QtCore/QString>
 
 QT_BEGIN_NAMESPACE
 struct SDynamicObject;
@@ -100,6 +102,7 @@ struct SPropertyDefinition
     // Set min Filter
     QDemonRenderTextureMinifyingOp::Enum m_MinFilterOp;
     bool m_IsEnumProperty;
+
     SPropertyDefinition()
         : m_DataType(QDemonRenderShaderDataTypes::Unknown)
         , m_Offset(0)
@@ -215,10 +218,9 @@ public:
     // system exactly
     // explicitly things like bind this shader, bind this render target, apply this property,
     // run this shader
-    // See UICRenderEffectCommands.h for the list of commands.
+    // See qdemonrenderdynamicobjectssystemcommands.h for the list of commands.
     // These commands are copied into the effect.
-    virtual void SetRenderCommands(QString inClassName,
-                                   QDemonConstDataRef<dynamic::SCommand *> inCommands) = 0;
+    virtual void SetRenderCommands(QString inClassName, QDemonConstDataRef<dynamic::SCommand *> inCommands) = 0;
     virtual QDemonConstDataRef<dynamic::SCommand *>
     GetRenderCommands(QString inClassName) const = 0;
 
@@ -238,16 +240,16 @@ public:
                                bool inHasGeomShader = false,
                                bool inIsComputeShader = false) = 0;
 
-//    // Overall save functions for saving the class information out to the binary file.
-//    virtual void Save(SWriteBuffer &ioBuffer,
-//                      const SStrRemapMap &inRemapMap,
-//                      const char *inProjectDir) const = 0;
-//    virtual void Load(QDemonDataRef<quint8> inData, CStrTableOrDataRef inStrDataBlock,
-//                      const char *inProjectDir) = 0;
+    //    // Overall save functions for saving the class information out to the binary file.
+    //    virtual void Save(SWriteBuffer &ioBuffer,
+    //                      const SStrRemapMap &inRemapMap,
+    //                      const char *inProjectDir) const = 0;
+    //    virtual void Load(QDemonDataRef<quint8> inData, CStrTableOrDataRef inStrDataBlock,
+    //                      const char *inProjectDir) = 0;
 
-    virtual IDynamicObjectSystem &CreateDynamicSystem(IQDemonRenderContext &rc) = 0;
+    virtual QSharedPointer<IDynamicObjectSystem> CreateDynamicSystem(QSharedPointer<IQDemonRenderContext> rc) = 0;
 
-    static IDynamicObjectSystemCore &CreateDynamicSystemCore(IQDemonRenderContextCore &rc);
+    static QSharedPointer<IDynamicObjectSystemCore> CreateDynamicSystemCore(QSharedPointer<IQDemonRenderContextCore> rc);
 };
 
 typedef QPair<QSharedPointer<QDemonRenderShaderProgram>, dynamic::SDynamicShaderProgramFlags> TShaderAndFlags;

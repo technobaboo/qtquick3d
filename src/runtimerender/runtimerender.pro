@@ -21,7 +21,7 @@ HEADERS += \
 #    qdemonrendercustommaterialshadergenerator.h \
 #    qdemonrendercustommaterialsystem.h \
 #    qdemonrenderdefaultmaterialshadergenerator.h \
-#    qdemonrenderdynamicobjectsystem.h \
+    qdemonrenderdynamicobjectsystem.h \
     qdemonrenderdynamicobjectsystemcommands.h \
     qdemonrenderdynamicobjectsystemutil.h \
 #    qdemonrendereffectsystem.h \
@@ -81,7 +81,7 @@ SOURCES += \
 #    qdemonrendercustommaterialshadergenerator.cpp \
 #    qdemonrendercustommaterialsystem.cpp \
 #    qdemonrenderdefaultmaterialshadergenerator.cpp \
-#    qdemonrenderdynamicobjectsystem.cpp \
+    qdemonrenderdynamicobjectsystem.cpp \
 #    qdemonrendereffectsystem.cpp \
     qdemonrendererutil.cpp \
     qdemonrendereulerangles.cpp \

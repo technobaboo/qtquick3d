@@ -2,7 +2,7 @@ HEADERS += \
     $$PWD/qdemonrendercamera.h \
 #    $$PWD/qdemonrendercustommaterial.h \
     $$PWD/qdemonrenderdefaultmaterial.h \
-#    $$PWD/qdemonrenderdynamicobject.h \
+    $$PWD/qdemonrenderdynamicobject.h \
 #    $$PWD/qdemonrendereffect.h \
     $$PWD/qdemonrendergraphobject.h \
 #    $$PWD/qdemonrenderimage.h \
@@ -22,7 +22,7 @@ HEADERS += \
 SOURCES += \
     $$PWD/qdemonrendercamera.cpp \
     $$PWD/qdemonrenderdefaultmaterial.cpp \
-#    $$PWD/qdemonrenderdynamicobject.cpp \
+    $$PWD/qdemonrenderdynamicobject.cpp \
 #    $$PWD/qdemonrendereffect.cpp \
 #    $$PWD/qdemonrenderimage.cpp \
 #    $$PWD/qdemonrenderlayer.cpp \

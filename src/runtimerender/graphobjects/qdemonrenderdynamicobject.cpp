@@ -28,9 +28,9 @@
 **
 ****************************************************************************/
 
-#include <QtDemonRuntimeRender/qdemonrenderdynamicobject.h>
+#include "qdemonrenderdynamicobject.h"
+
 #include <QtDemonRuntimeRender/qdemonrenderdynamicobjectsystem.h>
-#include <QtDemonRuntimeRender/qdemonrenderstring.h>
 
 #include <QtCore/qdir.h>
 

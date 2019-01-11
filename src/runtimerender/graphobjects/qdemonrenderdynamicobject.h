@@ -94,10 +94,6 @@ struct SDynamicObject : public SGraphObject
                           const char *inValue, const char *inProjectDir,
                           QString &ioWorkspace);
 
-    void SetPropertyValue(const dynamic::SPropertyDefinition &inDefinition,
-                          const char *inValue, const char *inProjectDir,
-                          QString &ioWorkspace);
-
     // Generic method used during serialization
     // to remap string and object pointers
     template <typename TRemapperType>

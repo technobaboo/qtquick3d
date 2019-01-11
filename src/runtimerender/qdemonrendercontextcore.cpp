@@ -186,7 +186,7 @@ struct SRenderContext : public IQDemonRenderContext
         , m_PerfTimer(inCore->GetPerfTimer())
         , m_InputStreamFactory(inCore->GetInputStreamFactory())
         //, m_ResourceManager(IResourceManager::CreateResourceManager(ctx))
-        //, m_ShaderCache(IShaderCache::CreateShaderCache(ctx, *m_InputStreamFactory, *m_PerfTimer))
+        , m_ShaderCache(IShaderCache::CreateShaderCache(ctx, m_InputStreamFactory, m_PerfTimer))
         , m_ThreadPool(inCore->GetThreadPool())
         , m_FrameCount(0)
         , m_WindowDimensions(800, 480)
@@ -281,7 +281,7 @@ struct SRenderContext : public IQDemonRenderContext
 //    }
     QSharedPointer<IInputStreamFactory> GetInputStreamFactory() override { return m_InputStreamFactory; }
     //QSharedPointer<IEffectSystem> GetEffectSystem() override { return m_EffectSystem; }
-//    QSharedPointer<IShaderCache> GetShaderCache() override { return m_ShaderCache; }
+    QSharedPointer<IShaderCache> GetShaderCache() override { return m_ShaderCache; }
     QSharedPointer<IThreadPool> GetThreadPool() override { return m_ThreadPool; }
     //QSharedPointer<IImageBatchLoader> GetImageBatchLoader() override { return m_ImageBatchLoader; }
     QSharedPointer<ITextTextureCache> GetTextureCache() override { return m_TextTextureCache; }

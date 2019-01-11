@@ -176,8 +176,8 @@ namespace {
 struct ShaderCache : public IShaderCache
 {
     typedef QHash<SShaderCacheKey, QSharedPointer<QDemonRenderShaderProgram>> TShaderMap;
-    QDemonRenderContext &m_RenderContext;
-    IPerfTimer &m_PerfTimer;
+    QSharedPointer<QDemonRenderContext> m_RenderContext;
+    QSharedPointer<IPerfTimer> m_PerfTimer;
     TShaderMap m_Shaders;
     QString m_CacheFilePath;
     QString m_VertexCode;
@@ -192,10 +192,12 @@ struct ShaderCache : public IShaderCache
 
     // ### Shader Chache Writing Code is disabled
     //QSharedPointer<IDOMWriter> m_ShaderCache;
-    IInputStreamFactory &m_InputStreamFactory;
+    QSharedPointer<IInputStreamFactory> m_InputStreamFactory;
     bool m_ShaderCompilationEnabled;
 
-    ShaderCache(QDemonRenderContext &ctx, IInputStreamFactory &inInputStreamFactory, IPerfTimer &inPerfTimer)
+    ShaderCache(QSharedPointer<QDemonRenderContext> ctx,
+                QSharedPointer<IInputStreamFactory> inInputStreamFactory,
+                QSharedPointer<IPerfTimer> inPerfTimer)
         : m_RenderContext(ctx)
         , m_PerfTimer(inPerfTimer)
         , m_InputStreamFactory(inInputStreamFactory)
@@ -225,7 +227,7 @@ struct ShaderCache : public IShaderCache
             m_InsertStr += QStringLiteral("#define texture2D texture\n");
             m_InsertStr += QStringLiteral("#define gl_FragColor fragOutput\n");
 
-            if (m_RenderContext.IsAdvancedBlendHwSupportedKHR())
+            if (m_RenderContext->IsAdvancedBlendHwSupportedKHR())
                 m_InsertStr += QStringLiteral("layout(blend_support_all_equations) out;\n ");
             m_InsertStr += QStringLiteral("out vec4 fragOutput;\n");
         }
@@ -234,39 +236,39 @@ struct ShaderCache : public IShaderCache
     void AddShaderExtensionStrings(ShaderType::Enum shaderType, bool isGLES)
     {
         if (isGLES) {
-            if (m_RenderContext.IsStandardDerivativesSupported())
+            if (m_RenderContext->IsStandardDerivativesSupported())
                 m_InsertStr += QStringLiteral("#extension GL_OES_standard_derivatives : enable\n");
             else
                 m_InsertStr += QStringLiteral("#extension GL_OES_standard_derivatives : disable\n");
         }
 
-        if (IQDemonRenderer::IsGlEs3Context(m_RenderContext.GetRenderContextType())) {
+        if (IQDemonRenderer::IsGlEs3Context(m_RenderContext->GetRenderContextType())) {
             if (shaderType == ShaderType::TessControl || shaderType == ShaderType::TessEval) {
                 m_InsertStr += QStringLiteral("#extension GL_EXT_tessellation_shader : enable\n");
             } else if (shaderType == ShaderType::Geometry) {
                 m_InsertStr += QStringLiteral("#extension GL_EXT_geometry_shader : enable\n");
             } else if (shaderType == ShaderType::Vertex || shaderType == ShaderType::Fragment) {
-                if (m_RenderContext.GetRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::gpuShader5))
+                if (m_RenderContext->GetRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::gpuShader5))
                     m_InsertStr += QStringLiteral("#extension GL_EXT_gpu_shader5 : enable\n");
-                if (m_RenderContext.IsAdvancedBlendHwSupportedKHR())
+                if (m_RenderContext->IsAdvancedBlendHwSupportedKHR())
                     m_InsertStr += QStringLiteral("#extension GL_KHR_blend_equation_advanced : enable\n");
             }
         } else {
             if (shaderType == ShaderType::Vertex || shaderType == ShaderType::Fragment
                     || shaderType == ShaderType::Geometry) {
-                if (m_RenderContext.GetRenderContextType() != QDemonRenderContextValues::GLES2) {
+                if (m_RenderContext->GetRenderContextType() != QDemonRenderContextValues::GLES2) {
                     m_InsertStr += QStringLiteral("#extension GL_ARB_gpu_shader5 : enable\n");
                     m_InsertStr += QStringLiteral("#extension GL_ARB_shading_language_420pack : enable\n");
                 }
-                if (isGLES && m_RenderContext.IsTextureLodSupported())
+                if (isGLES && m_RenderContext->IsTextureLodSupported())
                     m_InsertStr += QStringLiteral("#extension GL_EXT_shader_texture_lod : enable\n");
-                if (m_RenderContext.IsShaderImageLoadStoreSupported())
+                if (m_RenderContext->IsShaderImageLoadStoreSupported())
                     m_InsertStr += QStringLiteral("#extension GL_ARB_shader_image_load_store : enable\n");
-                if (m_RenderContext.IsAtomicCounterBufferSupported())
+                if (m_RenderContext->IsAtomicCounterBufferSupported())
                     m_InsertStr += QStringLiteral("#extension GL_ARB_shader_atomic_counters : enable\n");
-                if (m_RenderContext.IsStorageBufferSupported())
+                if (m_RenderContext->IsStorageBufferSupported())
                     m_InsertStr += QStringLiteral("#extension GL_ARB_shader_storage_buffer_object : enable\n");
-                if (m_RenderContext.IsAdvancedBlendHwSupportedKHR())
+                if (m_RenderContext->IsAdvancedBlendHwSupportedKHR())
                     m_InsertStr += QStringLiteral("#extension GL_KHR_blend_equation_advanced : enable\n");
             }
         }
@@ -279,13 +281,13 @@ struct ShaderCache : public IShaderCache
         // Don't use shading language version returned by the driver as it might
         // differ from the context version. Instead use the context type to specify
         // the version string.
-        bool isGlES = IQDemonRenderer::IsGlEsContext(m_RenderContext.GetRenderContextType());
+        bool isGlES = IQDemonRenderer::IsGlEsContext(m_RenderContext->GetRenderContextType());
         m_InsertStr.clear();
-        int minor = m_RenderContext.format().minorVersion();
+        int minor = m_RenderContext->format().minorVersion();
         QString versionStr;
         QTextStream stream(&versionStr);
         stream << "#version ";
-        const quint32 type = quint32(m_RenderContext.GetRenderContextType());
+        const quint32 type = quint32(m_RenderContext->GetRenderContextType());
         switch (type) {
         case QDemonRenderContextValues::GLES2:
             stream << "1" << minor << "0\n";
@@ -314,7 +316,7 @@ struct ShaderCache : public IShaderCache
         m_InsertStr.append(versionStr);
 
         if (isGlES) {
-            if (!IQDemonRenderer::IsGlEs3Context(m_RenderContext.GetRenderContextType())) {
+            if (!IQDemonRenderer::IsGlEs3Context(m_RenderContext->GetRenderContextType())) {
                 if (shaderType == ShaderType::Fragment) {
                     m_InsertStr += QStringLiteral("#define fragOutput gl_FragData[0]\n");
                 }
@@ -326,14 +328,14 @@ struct ShaderCache : public IShaderCache
             AddShaderExtensionStrings(shaderType, isGlES);
 
             // add precision qualifier depending on backend
-            if (IQDemonRenderer::IsGlEs3Context(m_RenderContext.GetRenderContextType())) {
+            if (IQDemonRenderer::IsGlEs3Context(m_RenderContext->GetRenderContextType())) {
                 m_InsertStr.append(QStringLiteral("precision highp float;\n"
                                                   "precision highp int;\n"));
-                if( m_RenderContext.GetRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::gpuShader5) ) {
+                if( m_RenderContext->GetRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::gpuShader5) ) {
                     m_InsertStr.append(QStringLiteral("precision mediump sampler2D;\n"
                                                       "precision mediump sampler2DArray;\n"
                                                       "precision mediump sampler2DShadow;\n"));
-                    if (m_RenderContext.IsShaderImageLoadStoreSupported()) {
+                    if (m_RenderContext->IsShaderImageLoadStoreSupported()) {
                         m_InsertStr.append(QStringLiteral("precision mediump image2D;\n"));
                     }
                 }
@@ -344,13 +346,13 @@ struct ShaderCache : public IShaderCache
                 m_InsertStr.append(QStringLiteral("precision mediump float;\n"
                                                   "precision mediump int;\n"
                                                   "#define texture texture2D\n"));
-                if (m_RenderContext.IsTextureLodSupported())
+                if (m_RenderContext->IsTextureLodSupported())
                     m_InsertStr.append(QStringLiteral("#define textureLod texture2DLodEXT\n"));
                 else
                     m_InsertStr.append(QStringLiteral("#define textureLod(s, co, lod) texture2D(s, co)\n"));
             }
         } else {
-            if (!IQDemonRenderer::IsGl2Context(m_RenderContext.GetRenderContextType())) {
+            if (!IQDemonRenderer::IsGl2Context(m_RenderContext->GetRenderContextType())) {
                 m_InsertStr += QStringLiteral("#define texture2D texture\n");
 
                 AddShaderExtensionStrings(shaderType, isGlES);
@@ -450,62 +452,62 @@ struct ShaderCache : public IShaderCache
         if (inFlags.IsGeometryShaderEnabled())
             AddShaderPreprocessor(m_GeometryCode, inKey, ShaderType::Geometry, inFeatures);
         // ### this call is awful because of QString conversions!
-        auto shaderProgram = m_RenderContext.CompileSource(inKey.toLocal8Bit().constData(),
-                                                           m_VertexCode.toLocal8Bit().constData(),
-                                                           quint32(m_VertexCode.toLocal8Bit().size()),
-                                                           m_FragmentCode.toLocal8Bit().constData(),
-                                                           quint32(m_FragmentCode.toLocal8Bit().size()),
-                                                           m_TessCtrlCode.toLocal8Bit().constData(),
-                                                           quint32(m_TessCtrlCode.toLocal8Bit().size()),
-                                                           m_TessEvalCode.toLocal8Bit().constData(),
-                                                           quint32(m_TessEvalCode.toLocal8Bit().size()),
-                                                           m_GeometryCode.toLocal8Bit().constData(),
-                                                           quint32(m_GeometryCode.toLocal8Bit().size()),
-                                                           separableProgram).mShader;
+        auto shaderProgram = m_RenderContext->CompileSource(inKey.toLocal8Bit().constData(),
+                                                            m_VertexCode.toLocal8Bit().constData(),
+                                                            quint32(m_VertexCode.toLocal8Bit().size()),
+                                                            m_FragmentCode.toLocal8Bit().constData(),
+                                                            quint32(m_FragmentCode.toLocal8Bit().size()),
+                                                            m_TessCtrlCode.toLocal8Bit().constData(),
+                                                            quint32(m_TessCtrlCode.toLocal8Bit().size()),
+                                                            m_TessEvalCode.toLocal8Bit().constData(),
+                                                            quint32(m_TessEvalCode.toLocal8Bit().size()),
+                                                            m_GeometryCode.toLocal8Bit().constData(),
+                                                            quint32(m_GeometryCode.toLocal8Bit().size()),
+                                                            separableProgram).mShader;
         m_Shaders.insert(tempKey, shaderProgram);
         if (shaderProgram) {
             // ### Shader Chache Writing Code is disabled
-//            if (m_ShaderCache) {
-//                IDOMWriter::Scope __writeScope(*m_ShaderCache, "Program");
-//                m_ShaderCache->Att("key", inKey.toLocal8Bit().constData());
-//                CacheFlagsToStr(inFlags, m_FlagString);
-//                if (m_FlagString.size())
-//                    m_ShaderCache->Att("glflags", m_FlagString.toLocal8Bit().constData());
-//                // write out the GL version.
-//                {
-//                    QDemonRenderContextType theContextType =
-//                            m_RenderContext.GetRenderContextType();
-//                    ContextTypeToString(theContextType, m_ContextTypeString);
-//                    m_ShaderCache->Att("gl-context-type", m_ContextTypeString.toLocal8Bit().constData());
-//                }
-//                if (inFeatures.size()) {
-//                    IDOMWriter::Scope __writeScope(*m_ShaderCache, "Features");
-//                    for (int idx = 0, end = inFeatures.size(); idx < end; ++idx) {
-//                        m_ShaderCache->Att(inFeatures[idx].m_Name, inFeatures[idx].m_Enabled);
-//                    }
-//                }
+            //            if (m_ShaderCache) {
+            //                IDOMWriter::Scope __writeScope(*m_ShaderCache, "Program");
+            //                m_ShaderCache->Att("key", inKey.toLocal8Bit().constData());
+            //                CacheFlagsToStr(inFlags, m_FlagString);
+            //                if (m_FlagString.size())
+            //                    m_ShaderCache->Att("glflags", m_FlagString.toLocal8Bit().constData());
+            //                // write out the GL version.
+            //                {
+            //                    QDemonRenderContextType theContextType =
+            //                            m_RenderContext.GetRenderContextType();
+            //                    ContextTypeToString(theContextType, m_ContextTypeString);
+            //                    m_ShaderCache->Att("gl-context-type", m_ContextTypeString.toLocal8Bit().constData());
+            //                }
+            //                if (inFeatures.size()) {
+            //                    IDOMWriter::Scope __writeScope(*m_ShaderCache, "Features");
+            //                    for (int idx = 0, end = inFeatures.size(); idx < end; ++idx) {
+            //                        m_ShaderCache->Att(inFeatures[idx].m_Name, inFeatures[idx].m_Enabled);
+            //                    }
+            //                }
 
-//                {
-//                    IDOMWriter::Scope __writeScope(*m_ShaderCache, "VertexCode");
-//                    m_ShaderCache->Value(inVert);
-//                }
-//                {
-//                    IDOMWriter::Scope __writeScope(*m_ShaderCache, "FragmentCode");
-//                    m_ShaderCache->Value(inFrag);
-//                }
-//                if (m_TessCtrlCode.size()) {
-//                    IDOMWriter::Scope __writeScope(*m_ShaderCache, "TessControlCode");
-//                    m_ShaderCache->Value(inTessCtrl);
-//                }
-//                if (m_TessEvalCode.size()) {
-//                    IDOMWriter::Scope __writeScope(*m_ShaderCache, "TessEvalCode");
-//                    m_ShaderCache->Value(inTessEval);
-//                }
-//                if (m_GeometryCode.size()) {
-//                    IDOMWriter::Scope __writeScope(*m_ShaderCache, "GeometryCode");
-//                    m_ShaderCache->Value(inGeom);
-//                }
-//            }
+            //                {
+            //                    IDOMWriter::Scope __writeScope(*m_ShaderCache, "VertexCode");
+            //                    m_ShaderCache->Value(inVert);
+            //                }
+            //                {
+            //                    IDOMWriter::Scope __writeScope(*m_ShaderCache, "FragmentCode");
+            //                    m_ShaderCache->Value(inFrag);
+            //                }
+            //                if (m_TessCtrlCode.size()) {
+            //                    IDOMWriter::Scope __writeScope(*m_ShaderCache, "TessControlCode");
+            //                    m_ShaderCache->Value(inTessCtrl);
+            //                }
+            //                if (m_TessEvalCode.size()) {
+            //                    IDOMWriter::Scope __writeScope(*m_ShaderCache, "TessEvalCode");
+            //                    m_ShaderCache->Value(inTessEval);
+            //                }
+            //                if (m_GeometryCode.size()) {
+            //                    IDOMWriter::Scope __writeScope(*m_ShaderCache, "GeometryCode");
+            //                    m_ShaderCache->Value(inGeom);
+            //                }
+            //            }
         }
         return shaderProgram;
     }
@@ -524,149 +526,149 @@ struct ShaderCache : public IShaderCache
                 ForceCompileProgram(inKey, inVert, inFrag, inTessCtrl, inTessEval, inGeom, inFlags,
                                     inFeatures, separableProgram);
         // ### Shader Chache Writing Code is disabled
-//        if (m_CacheFilePath.toLocal8Bit().constData() && m_ShaderCache && m_ShaderCompilationEnabled) {
-//            CFileSeekableIOStream theStream(m_CacheFilePath.toLocal8Bit().constData(), FileWriteFlags());
-//            if (theStream.IsOpen()) {
-//                CDOMSerializer::WriteXMLHeader(theStream);
-//                CDOMSerializer::Write(*m_ShaderCache->GetTopElement(), theStream);
-//            }
-//        }
+        //        if (m_CacheFilePath.toLocal8Bit().constData() && m_ShaderCache && m_ShaderCompilationEnabled) {
+        //            CFileSeekableIOStream theStream(m_CacheFilePath.toLocal8Bit().constData(), FileWriteFlags());
+        //            if (theStream.IsOpen()) {
+        //                CDOMSerializer::WriteXMLHeader(theStream);
+        //                CDOMSerializer::Write(*m_ShaderCache->GetTopElement(), theStream);
+        //            }
+        //        }
         return retval;
     }
 
-//    void BootupDOMWriter()
-//    {
-//        m_ShaderCache = IDOMWriter::CreateDOMWriter("QDemonShaderCache").first;
-//        m_ShaderCache->Att("cache_version", IShaderCache::GetShaderVersion());
-//    }
+    //    void BootupDOMWriter()
+    //    {
+    //        m_ShaderCache = IDOMWriter::CreateDOMWriter("QDemonShaderCache").first;
+    //        m_ShaderCache->Att("cache_version", IShaderCache::GetShaderVersion());
+    //    }
 
     void SetShaderCachePersistenceEnabled(const char *inDirectory) override
     {
         // ### Shader Chache Writing Code is disabled
         Q_UNUSED(inDirectory)
 
-//        if (inDirectory == nullptr) {
-//            m_ShaderCache = nullptr;
-//            return;
-//        }
-//        BootupDOMWriter();
-//        m_CacheFilePath = QDir(inDirectory).filePath(GetShaderCacheFileName()).toStdString();
+        //        if (inDirectory == nullptr) {
+        //            m_ShaderCache = nullptr;
+        //            return;
+        //        }
+        //        BootupDOMWriter();
+        //        m_CacheFilePath = QDir(inDirectory).filePath(GetShaderCacheFileName()).toStdString();
 
-//        QSharedPointer<IRefCountedInputStream> theInStream =
-//                m_InputStreamFactory.GetStreamForFile(m_CacheFilePath.c_str());
-//        if (theInStream) {
-//            SStackPerfTimer __perfTimer(m_PerfTimer, "ShaderCache - Load");
-//            QSharedPointer<IDOMFactory> theFactory(
-//                        IDOMFactory::CreateDOMFactory(m_RenderContext.GetAllocator(), theStringTable));
-//            QVector<SShaderPreprocessorFeature> theFeatures;
+        //        QSharedPointer<IRefCountedInputStream> theInStream =
+        //                m_InputStreamFactory.GetStreamForFile(m_CacheFilePath.c_str());
+        //        if (theInStream) {
+        //            SStackPerfTimer __perfTimer(m_PerfTimer, "ShaderCache - Load");
+        //            QSharedPointer<IDOMFactory> theFactory(
+        //                        IDOMFactory::CreateDOMFactory(m_RenderContext.GetAllocator(), theStringTable));
+        //            QVector<SShaderPreprocessorFeature> theFeatures;
 
-//            SDOMElement *theElem = CDOMSerializer::Read(*theFactory, *theInStream).second;
-//            if (theElem) {
-//                QSharedPointer<IDOMReader> theReader = IDOMReader::CreateDOMReader(
-//                            m_RenderContext.GetAllocator(), *theElem, theStringTable, theFactory);
-//                quint32 theAttValue = 0;
-//                theReader->Att("cache_version", theAttValue);
-//                if (theAttValue == IShaderCache::GetShaderVersion()) {
-//                    QString loadVertexData;
-//                    QString loadFragmentData;
-//                    QString loadTessControlData;
-//                    QString loadTessEvalData;
-//                    QString loadGeometryData;
-//                    QString shaderTypeString;
-//                    for (bool success = theReader->MoveToFirstChild(); success;
-//                         success = theReader->MoveToNextSibling()) {
-//                        const char *theKeyStr = nullptr;
-//                        theReader->UnregisteredAtt("key", theKeyStr);
+        //            SDOMElement *theElem = CDOMSerializer::Read(*theFactory, *theInStream).second;
+        //            if (theElem) {
+        //                QSharedPointer<IDOMReader> theReader = IDOMReader::CreateDOMReader(
+        //                            m_RenderContext.GetAllocator(), *theElem, theStringTable, theFactory);
+        //                quint32 theAttValue = 0;
+        //                theReader->Att("cache_version", theAttValue);
+        //                if (theAttValue == IShaderCache::GetShaderVersion()) {
+        //                    QString loadVertexData;
+        //                    QString loadFragmentData;
+        //                    QString loadTessControlData;
+        //                    QString loadTessEvalData;
+        //                    QString loadGeometryData;
+        //                    QString shaderTypeString;
+        //                    for (bool success = theReader->MoveToFirstChild(); success;
+        //                         success = theReader->MoveToNextSibling()) {
+        //                        const char *theKeyStr = nullptr;
+        //                        theReader->UnregisteredAtt("key", theKeyStr);
 
-//                        QString theKey = QString::fromLocal8Bit(theKeyStr);
-//                        if (theKey.IsValid()) {
-//                            m_FlagString.clear();
-//                            const char *theFlagStr = "";
-//                            SShaderCacheProgramFlags theFlags;
-//                            if (theReader->UnregisteredAtt("glflags", theFlagStr)) {
-//                                m_FlagString.assign(theFlagStr);
-//                                theFlags = CacheFlagsToStr(m_FlagString);
-//                            }
+        //                        QString theKey = QString::fromLocal8Bit(theKeyStr);
+        //                        if (theKey.IsValid()) {
+        //                            m_FlagString.clear();
+        //                            const char *theFlagStr = "";
+        //                            SShaderCacheProgramFlags theFlags;
+        //                            if (theReader->UnregisteredAtt("glflags", theFlagStr)) {
+        //                                m_FlagString.assign(theFlagStr);
+        //                                theFlags = CacheFlagsToStr(m_FlagString);
+        //                            }
 
-//                            m_ContextTypeString.clear();
-//                            if (theReader->UnregisteredAtt("gl-context-type", theFlagStr))
-//                                m_ContextTypeString.assign(theFlagStr);
+        //                            m_ContextTypeString.clear();
+        //                            if (theReader->UnregisteredAtt("gl-context-type", theFlagStr))
+        //                                m_ContextTypeString.assign(theFlagStr);
 
-//                            theFeatures.clear();
-//                            {
-//                                IDOMReader::Scope __featureScope(*theReader);
-//                                if (theReader->MoveToFirstChild("Features")) {
-//                                    for (SDOMAttribute *theAttribute =
-//                                         theReader->GetFirstAttribute();
-//                                         theAttribute;
-//                                         theAttribute = theAttribute->m_NextAttribute) {
-//                                        bool featureValue = false;
-//                                        StringConversion<bool>().StrTo(theAttribute->m_Value,
-//                                                                       featureValue);
-//                                        theFeatures.push_back(SShaderPreprocessorFeature(
-//                                                                  QString::fromLocal8Bit(
-//                                                                      theAttribute->m_Name.c_str()),
-//                                                                  featureValue));
-//                                    }
-//                                }
-//                            }
+        //                            theFeatures.clear();
+        //                            {
+        //                                IDOMReader::Scope __featureScope(*theReader);
+        //                                if (theReader->MoveToFirstChild("Features")) {
+        //                                    for (SDOMAttribute *theAttribute =
+        //                                         theReader->GetFirstAttribute();
+        //                                         theAttribute;
+        //                                         theAttribute = theAttribute->m_NextAttribute) {
+        //                                        bool featureValue = false;
+        //                                        StringConversion<bool>().StrTo(theAttribute->m_Value,
+        //                                                                       featureValue);
+        //                                        theFeatures.push_back(SShaderPreprocessorFeature(
+        //                                                                  QString::fromLocal8Bit(
+        //                                                                      theAttribute->m_Name.c_str()),
+        //                                                                  featureValue));
+        //                                    }
+        //                                }
+        //                            }
 
-//                            QDemonRenderContextType theContextType =
-//                                    StringToContextType(m_ContextTypeString);
-//                            if (((quint32)theContextType != 0)
-//                                    && (theContextType & m_RenderContext.GetRenderContextType())
-//                                    == theContextType) {
-//                                IDOMReader::Scope __readerScope(*theReader);
-//                                loadVertexData.clear();
-//                                loadFragmentData.clear();
-//                                loadTessControlData.clear();
-//                                loadTessEvalData.clear();
-//                                loadGeometryData.clear();
+        //                            QDemonRenderContextType theContextType =
+        //                                    StringToContextType(m_ContextTypeString);
+        //                            if (((quint32)theContextType != 0)
+        //                                    && (theContextType & m_RenderContext.GetRenderContextType())
+        //                                    == theContextType) {
+        //                                IDOMReader::Scope __readerScope(*theReader);
+        //                                loadVertexData.clear();
+        //                                loadFragmentData.clear();
+        //                                loadTessControlData.clear();
+        //                                loadTessEvalData.clear();
+        //                                loadGeometryData.clear();
 
-//                                // Vertex *MUST* be the first
-//                                // Todo deal with pure compute shader programs
-//                                if (theReader->MoveToFirstChild("VertexCode")) {
-//                                    const char *theValue = nullptr;
-//                                    theReader->Value(theValue);
-//                                    loadVertexData.assign(theValue);
-//                                    while (theReader->MoveToNextSibling()) {
-//                                        theReader->Value(theValue);
+        //                                // Vertex *MUST* be the first
+        //                                // Todo deal with pure compute shader programs
+        //                                if (theReader->MoveToFirstChild("VertexCode")) {
+        //                                    const char *theValue = nullptr;
+        //                                    theReader->Value(theValue);
+        //                                    loadVertexData.assign(theValue);
+        //                                    while (theReader->MoveToNextSibling()) {
+        //                                        theReader->Value(theValue);
 
-//                                        shaderTypeString.assign(
-//                                                    theReader->GetElementName().c_str());
-//                                        ShaderType::Enum shaderType =
-//                                                StringToShaderType(shaderTypeString);
+        //                                        shaderTypeString.assign(
+        //                                                    theReader->GetElementName().c_str());
+        //                                        ShaderType::Enum shaderType =
+        //                                                StringToShaderType(shaderTypeString);
 
-//                                        if (shaderType == ShaderType::Fragment)
-//                                            loadFragmentData.assign(theValue);
-//                                        else if (shaderType == ShaderType::TessControl)
-//                                            loadTessControlData.assign(theValue);
-//                                        else if (shaderType == ShaderType::TessEval)
-//                                            loadTessEvalData.assign(theValue);
-//                                        else if (shaderType == ShaderType::Geometry)
-//                                            loadGeometryData.assign(theValue);
-//                                    }
-//                                }
+        //                                        if (shaderType == ShaderType::Fragment)
+        //                                            loadFragmentData.assign(theValue);
+        //                                        else if (shaderType == ShaderType::TessControl)
+        //                                            loadTessControlData.assign(theValue);
+        //                                        else if (shaderType == ShaderType::TessEval)
+        //                                            loadTessEvalData.assign(theValue);
+        //                                        else if (shaderType == ShaderType::Geometry)
+        //                                            loadGeometryData.assign(theValue);
+        //                                    }
+        //                                }
 
-//                                if (loadVertexData.size()
-//                                        && (loadFragmentData.size() || loadGeometryData.size())) {
+        //                                if (loadVertexData.size()
+        //                                        && (loadFragmentData.size() || loadGeometryData.size())) {
 
-//                                    QSharedPointer<QDemonRenderShaderProgram> theShader = ForceCompileProgram(
-//                                                theKey, loadVertexData.toLocal8Bit().constData(), loadFragmentData.toLocal8Bit().constData(),
-//                                                loadTessControlData.toLocal8Bit().constData(), loadTessEvalData.toLocal8Bit().constData(),
-//                                                loadGeometryData.toLocal8Bit().constData(), theFlags,
-//                                                theFeatures, false, true /*fromDisk*/);
-//                                    // If something doesn't save or load correctly, get the runtime
-//                                    // to re-generate.
-//                                    if (!theShader)
-//                                        m_Shaders.remove(theKey);
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }
+        //                                    QSharedPointer<QDemonRenderShaderProgram> theShader = ForceCompileProgram(
+        //                                                theKey, loadVertexData.toLocal8Bit().constData(), loadFragmentData.toLocal8Bit().constData(),
+        //                                                loadTessControlData.toLocal8Bit().constData(), loadTessEvalData.toLocal8Bit().constData(),
+        //                                                loadGeometryData.toLocal8Bit().constData(), theFlags,
+        //                                                theFeatures, false, true /*fromDisk*/);
+        //                                    // If something doesn't save or load correctly, get the runtime
+        //                                    // to re-generate.
+        //                                    if (!theShader)
+        //                                        m_Shaders.remove(theKey);
+        //                                }
+        //                            }
+        //                        }
+        //                    }
+        //                }
+        //            }
+        //        }
     }
 
     bool IsShaderCachePersistenceEnabled() const override
@@ -707,11 +709,11 @@ bool SShaderPreprocessorFeature::operator==(const SShaderPreprocessorFeature &ot
     return m_Name == other.m_Name && m_Enabled == other.m_Enabled;
 }
 
-IShaderCache &IShaderCache::CreateShaderCache(QDemonRenderContext &inContext,
-                                              IInputStreamFactory &inInputStreamFactory,
-                                              IPerfTimer &inPerfTimer)
+QSharedPointer<IShaderCache> IShaderCache::CreateShaderCache(QSharedPointer<QDemonRenderContext> inContext,
+                                                             QSharedPointer<IInputStreamFactory> inInputStreamFactory,
+                                                             QSharedPointer<IPerfTimer> inPerfTimer)
 {
-    return *new ShaderCache(inContext, inInputStreamFactory, inPerfTimer);
+    return QSharedPointer<ShaderCache>(new ShaderCache(inContext, inInputStreamFactory, inPerfTimer));
 }
 
 QT_END_NAMESPACE
