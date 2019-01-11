@@ -114,7 +114,7 @@ struct STextAtlasFont
 
 // This class is only for rendering 2D screen aligned text
 // it uses a predefined true type font and character set with various sizes
-struct QDemonOnscreenTextRenderer : public ITextRenderer
+struct QDemonOnscreenTextRenderer : public ITextRenderer, public QEnableSharedFromThis<QDemonOnscreenTextRenderer>
 {
 
     static const qint32 TEXTURE_ATLAS_DIM =
@@ -213,10 +213,10 @@ public:
 
     void ClearProjectFontDirectories() override {}
 
-    ITextRenderer &GetTextRenderer(QSharedPointer<QDemonRenderContext> inRenderContext) override
+    QSharedPointer<ITextRenderer> GetTextRenderer(QSharedPointer<QDemonRenderContext> inRenderContext) override
     {
         m_RenderContext = inRenderContext;
-        return *this;
+        return this->sharedFromThis();
     }
 
     void PreloadFonts() override {}
@@ -385,9 +385,9 @@ public:
 };
 }
 
-ITextRendererCore &ITextRendererCore::CreateOnscreenTextRenderer()
+QSharedPointer<ITextRendererCore> ITextRendererCore::CreateOnscreenTextRenderer()
 {
-    return *new QDemonOnscreenTextRenderer();
+    return QSharedPointer<QDemonOnscreenTextRenderer>(new QDemonOnscreenTextRenderer());
 }
 
 QT_END_NAMESPACE

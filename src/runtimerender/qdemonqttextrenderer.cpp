@@ -55,7 +55,7 @@ QT_BEGIN_NAMESPACE
 
 namespace {
 
-struct QDemonQtTextRenderer : public ITextRenderer
+struct QDemonQtTextRenderer : public ITextRenderer, public QEnableSharedFromThis<QDemonQtTextRenderer>
 {
     struct FontInfo
     {
@@ -339,10 +339,10 @@ struct QDemonQtTextRenderer : public ITextRenderer
         return GetFontNameForFont(QString::fromLocal8Bit(inFontname));
     }
 
-    ITextRenderer &GetTextRenderer(QSharedPointer<QDemonRenderContext> inRenderContext) override
+    QSharedPointer<ITextRenderer> GetTextRenderer(QSharedPointer<QDemonRenderContext> inRenderContext) override
     {
         m_renderContext = inRenderContext;
-        return *this;
+        return this->sharedFromThis();
     }
 
     FontInfo &fontInfoForName(const QString &fontName)
@@ -607,9 +607,9 @@ struct QDemonQtTextRenderer : public ITextRenderer
 };
 }
 
-ITextRendererCore &ITextRendererCore::CreateQtTextRenderer()
+QSharedPointer<ITextRendererCore> ITextRendererCore::CreateQtTextRenderer()
 {
-    return *new QDemonQtTextRenderer();
+    return QSharedPointer<QDemonQtTextRenderer>(new QDemonQtTextRenderer());
 }
 
 QT_END_NAMESPACE

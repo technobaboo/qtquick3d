@@ -4,9 +4,11 @@
 #include <QtDemon/qtdemonglobal.h>
 #include <QtDemon/qdemontime.h>
 
+#include <QtCore/QSharedPointer>
+
 QT_BEGIN_NAMESPACE
 
-class IPerfTimer
+class Q_DEMON_EXPORT IPerfTimer
 {
 protected:
     virtual ~IPerfTimer() {}
@@ -17,7 +19,7 @@ public:
     virtual void OutputTimerData(quint32 inFrameCount = 0) = 0;
     virtual void ResetTimerData() = 0;
 
-    static IPerfTimer &CreatePerfTimer();
+    static QSharedPointer<IPerfTimer> CreatePerfTimer();
 };
 
 // Specialize this struct to get the perf timer in different contexts.

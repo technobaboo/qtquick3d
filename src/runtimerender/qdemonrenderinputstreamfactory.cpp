@@ -154,9 +154,9 @@ struct SFactory : public IInputStreamFactory
 };
 }
 
-IInputStreamFactory &IInputStreamFactory::Create()
+QSharedPointer<IInputStreamFactory> IInputStreamFactory::Create()
 {
-    return *new SFactory();
+    return QSharedPointer<IInputStreamFactory>(new SFactory());
 }
 
 QT_END_NAMESPACE

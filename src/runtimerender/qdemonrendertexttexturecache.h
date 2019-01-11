@@ -57,7 +57,7 @@ public:
     // frame.
     virtual void EndFrame() = 0;
 
-    static ITextTextureCache &CreateTextureCache(QSharedPointer<ITextRenderer> inTextRenderer, QSharedPointer<QDemonRenderContext> inRenderContext);
+    static QSharedPointer<ITextTextureCache> CreateTextureCache(QSharedPointer<ITextRenderer> inTextRenderer, QSharedPointer<QDemonRenderContext> inRenderContext);
 };
 
 struct STextRenderInfoAndHash

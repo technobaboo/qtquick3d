@@ -133,9 +133,9 @@ struct SPerfTimer : public IPerfTimer
 };
 }
 
-IPerfTimer &IPerfTimer::CreatePerfTimer()
+QSharedPointer<IPerfTimer> IPerfTimer::CreatePerfTimer()
 {
-    return *new SPerfTimer();
+    return QSharedPointer<IPerfTimer>(new SPerfTimer());
 }
 
 QT_END_NAMESPACE

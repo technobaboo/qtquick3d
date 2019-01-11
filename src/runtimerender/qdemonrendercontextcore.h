@@ -31,25 +31,27 @@
 #ifndef QDEMON_RENDER_CONTEXT_CORE_H
 #define QDEMON_RENDER_CONTEXT_CORE_H
 
+// ### TODO Re-enable subsystems when they are done
+
 #include <QtDemonRuntimeRender/qdemonrenderpresentation.h>
 #include <QtDemonRuntimeRender/qdemonrenderinputstreamfactory.h>
 #include <QtDemonRuntimeRender/qdemonrenderthreadpool.h>
-#include <QtDemonRuntimeRender/qdemonrenderdynamicobjectsystem.h>
-#include <QtDemonRuntimeRender/qdemonrendercustommaterialsystem.h>
-#include <QtDemonRuntimeRender/qdemonrendereffectsystem.h>
+//#include <QtDemonRuntimeRender/qdemonrenderdynamicobjectsystem.h>
+//#include <QtDemonRuntimeRender/qdemonrendercustommaterialsystem.h>
+//#include <QtDemonRuntimeRender/qdemonrendereffectsystem.h>
 #include <QtDemonRuntimeRender/qdemonrenderbufferloader.h>
 #include <QtDemonRuntimeRender/qdemontextrenderer.h>
-#include <QtDemonRuntimeRender/qdemonrenderwidgets.h>
-#include <QtDemonRuntimeRender/qdemonrenderimagebatchloader.h>
-#include <QtDemonRuntimeRender/qdemonrenderpixelgraphicsrenderer.h>
+//#include <QtDemonRuntimeRender/qdemonrenderwidgets.h>
+//#include <QtDemonRuntimeRender/qdemonrenderimagebatchloader.h>
+//#include <QtDemonRuntimeRender/qdemonrenderpixelgraphicsrenderer.h>
 #include <QtDemonRuntimeRender/qdemonrendertexttexturecache.h>
 #include <QtDemonRuntimeRender/qdemonrenderrenderlist.h>
-#include <QtDemonRuntimeRender/qdemonrendercustommaterialshadergenerator.h>
+//#include <QtDemonRuntimeRender/qdemonrendercustommaterialshadergenerator.h>
 
 #include <QtDemon/qdemonperftimer.h>
 
-#include <QtCore/qpair.h>
-#include <QtCore/qsize.h>
+#include <QtCore/QPair>
+#include <QtCore/QSize>
 
 QT_BEGIN_NAMESPACE
 struct ScaleModes
@@ -66,56 +68,58 @@ struct ScaleModes
 class IQDemonRenderContextCore
 {
 public:
-    virtual IInputStreamFactory &GetInputStreamFactory() = 0;
-    virtual IThreadPool &GetThreadPool() = 0;
-    virtual IDynamicObjectSystemCore &GetDynamicObjectSystemCore() = 0;
-    virtual ICustomMaterialSystemCore &GetMaterialSystemCore() = 0;
-    virtual IEffectSystemCore &GetEffectSystemCore() = 0;
-    virtual IPerfTimer &GetPerfTimer() = 0;
-    virtual IBufferLoader &GetBufferLoader() = 0;
-    virtual IRenderPluginManagerCore &GetRenderPluginCore() = 0;
-    virtual IPathManagerCore &GetPathManagerCore() = 0;
+    virtual QSharedPointer<IInputStreamFactory> GetInputStreamFactory() = 0;
+    virtual QSharedPointer<IThreadPool> GetThreadPool() = 0;
+    //    virtual QSharedPointer<IDynamicObjectSystemCore> GetDynamicObjectSystemCore() = 0;
+    //    virtual QSharedPointer<ICustomMaterialSystemCore> GetMaterialSystemCore() = 0;
+    //    virtual QSharedPointer<IEffectSystemCore> GetEffectSystemCore() = 0;
+    virtual QSharedPointer<IPerfTimer> GetPerfTimer() = 0;
+    virtual QSharedPointer<IBufferLoader> GetBufferLoader() = 0;
+    //    virtual QSharedPointer<IRenderPluginManagerCore> GetRenderPluginCore() = 0;
+    //    virtual QSharedPointer<IPathManagerCore> GetPathManagerCore() = 0;
     // Text renderers may be provided by clients at runtime.
-    virtual void SetTextRendererCore(ITextRendererCore &inRenderer) = 0;
-    virtual ITextRendererCore *GetTextRendererCore() = 0;
+    virtual void SetTextRendererCore(QSharedPointer<ITextRendererCore> inRenderer) = 0;
+    virtual QSharedPointer<ITextRendererCore> GetTextRendererCore() = 0;
     // this is our default 2D text onscreen renderer
-    virtual void SetOnscreenTextRendererCore(ITextRendererCore &inRenderer) = 0;
-    virtual ITextRendererCore *GetOnscreenTextRendererCore() = 0;
+    virtual void SetOnscreenTextRendererCore(QSharedPointer<ITextRendererCore> inRenderer) = 0;
+    virtual QSharedPointer<ITextRendererCore> GetOnscreenTextRendererCore() = 0;
     // The render context maintains a reference to this object.
-    virtual IQDemonRenderContext &CreateRenderContext(QDemonRenderContext &inContext,
-                                                     const char *inPrimitivesDirectory) = 0;
+    virtual QSharedPointer<IQDemonRenderContext> CreateRenderContext(QSharedPointer<QDemonRenderContext> inContext, const char *inPrimitivesDirectory) = 0;
 
-    static IQDemonRenderContextCore &Create();
+    static QSharedPointer<IQDemonRenderContextCore> Create();
 };
+
+class ITextTextureAtlas;
+class IQDemonRenderer;
 
 class IQDemonRenderContext
 {
 protected:
     virtual ~IQDemonRenderContext() {}
 public:
-    virtual IQDemonRenderer &GetRenderer() = 0;
-    virtual IRenderWidgetContext &GetRenderWidgetContext() = 0;
-    virtual IBufferManager &GetBufferManager() = 0;
-    virtual IResourceManager &GetResourceManager() = 0;
-    virtual QDemonRenderContext &GetRenderContext() = 0;
-    virtual IOffscreenRenderManager &GetOffscreenRenderManager() = 0;
-    virtual IInputStreamFactory &GetInputStreamFactory() = 0;
-    virtual IEffectSystem &GetEffectSystem() = 0;
-    virtual IShaderCache &GetShaderCache() = 0;
-    virtual IThreadPool &GetThreadPool() = 0;
-    virtual IImageBatchLoader &GetImageBatchLoader() = 0;
-    virtual IRenderPluginManager &GetRenderPluginManager() = 0;
-    virtual IDynamicObjectSystem &GetDynamicObjectSystem() = 0;
-    virtual ICustomMaterialSystem &GetCustomMaterialSystem() = 0;
-    virtual IPixelGraphicsRenderer &GetPixelGraphicsRenderer() = 0;
-    virtual IPerfTimer &GetPerfTimer() = 0;
-    virtual ITextTextureCache *GetTextureCache() = 0;
-    virtual ITextRenderer *GetTextRenderer() = 0;
-    virtual IRenderList &GetRenderList() = 0;
-    virtual IPathManager &GetPathManager() = 0;
-    virtual IShaderProgramGenerator &GetShaderProgramGenerator() = 0;
-    virtual IDefaultMaterialShaderGenerator &GetDefaultMaterialShaderGenerator() = 0;
-    virtual ICustomMaterialShaderGenerator &GetCustomMaterialShaderGenerator() = 0;
+        virtual QSharedPointer<IQDemonRenderer> GetRenderer() = 0;
+    //    virtual QSharedPointer<IRenderWidgetContext> GetRenderWidgetContext() = 0;
+    //    virtual QSharedPointer<IBufferManager> GetBufferManager() = 0;
+    //    virtual QSharedPointer<IResourceManager> GetResourceManager() = 0;
+    virtual QSharedPointer<QDemonRenderContext> GetRenderContext() = 0;
+    //    virtual QSharedPointer<IOffscreenRenderManager> GetOffscreenRenderManager() = 0;
+    virtual QSharedPointer<IInputStreamFactory> GetInputStreamFactory() = 0;
+    //    virtual QSharedPointer<IEffectSystem> GetEffectSystem() = 0;
+    //    virtual QSharedPointer<IShaderCache> GetShaderCache() = 0;
+    virtual QSharedPointer<IThreadPool> GetThreadPool() = 0;
+    //    virtual QSharedPointer<IImageBatchLoader> GetImageBatchLoader() = 0;
+    //    virtual QSharedPointer<IRenderPluginManager> GetRenderPluginManager() = 0;
+    //    virtual QSharedPointer<IDynamicObjectSystem> GetDynamicObjectSystem() = 0;
+    //    virtual QSharedPointer<ICustomMaterialSystem> GetCustomMaterialSystem() = 0;
+    //    virtual QSharedPointer<IPixelGraphicsRenderer> GetPixelGraphicsRenderer() = 0;
+    virtual QSharedPointer<IPerfTimer> GetPerfTimer() = 0;
+    virtual QSharedPointer<ITextTextureCache> GetTextureCache() = 0;
+    virtual QSharedPointer<ITextRenderer> GetTextRenderer() = 0;
+    virtual QSharedPointer<IRenderList> GetRenderList() = 0;
+    //virtual QSharedPointer<IPathManager> GetPathManager() = 0;
+    //    virtual QSharedPointer<IShaderProgramGenerator> GetShaderProgramGenerator() = 0;
+    //    virtual QSharedPointer<IDefaultMaterialShaderGenerator> GetDefaultMaterialShaderGenerator() = 0;
+    //    virtual QSharedPointer<ICustomMaterialShaderGenerator> GetCustomMaterialShaderGenerator() = 0;
     // Get the number of times EndFrame has been called
     virtual quint32 GetFrameCount() = 0;
 
@@ -133,8 +137,8 @@ public:
     virtual void SetAuthoringMode(bool inMode) = 0;
 
     // This one is setup by the runtime binding
-    virtual ITextRenderer *GetOnscreenTextRenderer() = 0;
-    virtual ITextTextureAtlas *GetTextureAtlas() = 0;
+    virtual QSharedPointer<ITextRenderer> GetOnscreenTextRenderer() = 0;
+    virtual QSharedPointer<ITextTextureAtlas> GetTextureAtlas() = 0;
 
     // Sub presentations change the rendering somewhat.
     virtual bool IsInSubPresentation() = 0;

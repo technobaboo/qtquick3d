@@ -56,7 +56,7 @@ public:
     // Create an input stream factory using this foundation and an platform-optional app
     // directory
     // on android the app directory has no effect; use use the assets bundled with the APK file.
-    static IInputStreamFactory &Create();
+    static QSharedPointer<IInputStreamFactory> Create();
 };
 QT_END_NAMESPACE
 

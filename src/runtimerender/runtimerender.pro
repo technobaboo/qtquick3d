@@ -16,7 +16,7 @@ HEADERS += \
 #    qdemonoldnbustedrenderplugin.h \
 #    qdemonrenderableimage.h \
     qdemonrenderclippingfrustum.h \
-#    qdemonrendercontextcore.h \
+    qdemonrendercontextcore.h \
     qdemonrendercustommaterialrendercontext.h \
 #    qdemonrendercustommaterialshadergenerator.h \
 #    qdemonrendercustommaterialsystem.h \
@@ -77,7 +77,7 @@ SOURCES += \
     qdemononscreentextrenderer.cpp \
     qdemonqttextrenderer.cpp \
     qdemonrenderclippingfrustum.cpp \
-#    qdemonrendercontextcore.cpp \
+    qdemonrendercontextcore.cpp \
 #    qdemonrendercustommaterialshadergenerator.cpp \
 #    qdemonrendercustommaterialsystem.cpp \
 #    qdemonrenderdefaultmaterialshadergenerator.cpp \

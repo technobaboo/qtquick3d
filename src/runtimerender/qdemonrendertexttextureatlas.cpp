@@ -107,10 +107,10 @@ private:
 
 } // namespace
 
-ITextTextureAtlas &ITextTextureAtlas::CreateTextureAtlas(QSharedPointer<ITextRenderer> inTextRenderer,
+QSharedPointer<ITextTextureAtlas> ITextTextureAtlas::CreateTextureAtlas(QSharedPointer<ITextRenderer> inTextRenderer,
                                                          QSharedPointer<QDemonRenderContext> inRenderContext)
 {
-    return *new STextTextureAtlas(inTextRenderer, inRenderContext);
+    return QSharedPointer<ITextTextureAtlas>(new STextTextureAtlas(inTextRenderer, inRenderContext));
 }
 
 QT_END_NAMESPACE

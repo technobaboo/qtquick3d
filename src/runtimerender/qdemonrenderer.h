@@ -228,7 +228,7 @@ public:
     static bool IsGl2Context(QDemonRenderContextType inContextType);
     static const char *GetGlslVesionString(QDemonRenderContextType inContextType);
 
-    static IQDemonRenderer &CreateRenderer(IQDemonRenderContext &inContext);
+    static QSharedPointer<IQDemonRenderer> CreateRenderer(IQDemonRenderContext &inContext);
 };
 QT_END_NAMESPACE
 

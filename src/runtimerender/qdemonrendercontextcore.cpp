@@ -28,91 +28,89 @@
 **
 ****************************************************************************/
 
-#include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
+#include "qdemonrendercontextcore.h"
 #include <QtDemonRuntimeRender/qdemonrendernode.h>
-#include <QtDemonRuntimeRender/qdemonrenderbuffermanager.h>
+//#include <QtDemonRuntimeRender/qdemonrenderbuffermanager.h>
 #include <QtDemonRuntimeRender/qdemonrenderer.h>
 #include <QtDemonRuntimeRender/qdemonrenderresourcemanager.h>
 #include <QtDemonRender/qdemonrendercontext.h>
-#include <QtDemonRuntimeRender/qdemonoffscreenrendermanager.h>
-#include <qdemontextrenderer.h>
-#include <qdemonrenderinputstreamfactory.h>
-#include <qdemonrendereffectsystem.h>
+//#include <QtDemonRuntimeRender/qdemonoffscreenrendermanager.h>
+#include <QtDemonRuntimeRender/qdemontextrenderer.h>
+#include <QtDemonRuntimeRender/qdemonrenderinputstreamfactory.h>
+//#include <qdemonrendereffectsystem.h>
 #include <QtDemonRuntimeRender/qdemonrendershadercache.h>
 #include <QtDemonRender/qdemonrenderframebuffer.h>
 #include <QtDemonRender/qdemonrenderrenderbuffer.h>
 #include <QtDemonRender/qdemonrendertexture2d.h>
 #include <QtDemonRuntimeRender/qdemonrendercamera.h>
-#include <qdemonrenderthreadpool.h>
-#include <QtDemonRuntimeRender/qdemonrenderimagebatchloader.h>
-#include <qdemonrendertexttexturecache.h>
-#include <qdemonrendertexttextureatlas.h>
-#include <QtDemonRuntimeRender/qdemonrenderplugin.h>
-#include <QtDemonRuntimeRender/qdemonrenderdynamicobjectsystem.h>
-#include <qdemonrendercustommaterialsystem.h>
-#include <qdemonrenderpixelgraphicsrenderer.h>
+#include <QtDemonRuntimeRender/qdemonrenderthreadpool.h>
+//#include <QtDemonRuntimeRender/qdemonrenderimagebatchloader.h>
+#include <QtDemonRuntimeRender/qdemonrendertexttexturecache.h>
+#include <QtDemonRuntimeRender/qdemonrendertexttextureatlas.h>
+//#include <QtDemonRuntimeRender/qdemonrenderplugin.h>
+//#include <QtDemonRuntimeRender/qdemonrenderdynamicobjectsystem.h>
+//#include <QtDemonRuntimeRender/qdemonrendercustommaterialsystem.h>
+//#include <QtDemonRuntimeRender/qdemonrenderpixelgraphicsrenderer.h>
 #include <QtDemonRuntimeRender/qdemonrenderbufferloader.h>
-#include <qdemonrenderrenderlist.h>
-#include <qdemonrenderpathmanager.h>
-#include <QtDemonRuntimeRender/qdemonrendershadercodegeneratorv2.h>
-#include <QtDemonRuntimeRender/qdemonrenderdefaultmaterialshadergenerator.h>
-#include <qdemonrendercustommaterialshadergenerator.h>
+#include <QtDemonRuntimeRender/qdemonrenderrenderlist.h>
+//#include <QtDemonRuntimeRender/qdemonrenderpathmanager.h>
+//#include <QtDemonRuntimeRender/qdemonrendershadercodegeneratorv2.h>
+//#include <QtDemonRuntimeRender/qdemonrenderdefaultmaterialshadergenerator.h>
+//#include <QtDemonRuntimeRender/qdemonrendercustommaterialshadergenerator.h>
 
 QT_BEGIN_NAMESPACE
 
 namespace {
 
-struct SRenderContextCore : public IQDemonRenderContextCore
+struct SRenderContextCore : public IQDemonRenderContextCore, public QEnableSharedFromThis<SRenderContextCore>
 {
     QSharedPointer<IPerfTimer> m_PerfTimer;
     QSharedPointer<IInputStreamFactory> m_InputStreamFactory;
     QSharedPointer<IThreadPool> m_ThreadPool;
-    QSharedPointer<IDynamicObjectSystemCore> m_DynamicObjectSystem;
-    QSharedPointer<ICustomMaterialSystemCore> m_MaterialSystem;
-    QSharedPointer<IEffectSystemCore> m_EffectSystem;
+    //QSharedPointer<IDynamicObjectSystemCore> m_DynamicObjectSystem;
+    //QSharedPointer<ICustomMaterialSystemCore> m_MaterialSystem;
+    //QSharedPointer<IEffectSystemCore> m_EffectSystem;
     QSharedPointer<IBufferLoader> m_BufferLoader;
-    QSharedPointer<IRenderPluginManagerCore> m_RenderPluginManagerCore;
+    //QSharedPointer<IRenderPluginManagerCore> m_RenderPluginManagerCore;
     QSharedPointer<ITextRendererCore> m_TextRenderer;
     QSharedPointer<ITextRendererCore> m_OnscreenTexRenderer;
-    QSharedPointer<IPathManagerCore> m_PathManagerCore;
+    //QSharedPointer<IPathManagerCore> m_PathManagerCore;
 
-    SRenderContextCore())
-        : m_PerfTimer(IPerfTimer::CreatePerfTimer(fnd))
-        , m_InputStreamFactory(IInputStreamFactory::Create(fnd))
-        , m_ThreadPool(IThreadPool::CreateThreadPool(fnd, 4))
+    SRenderContextCore()
+        : m_PerfTimer(IPerfTimer::CreatePerfTimer())
+        , m_InputStreamFactory(IInputStreamFactory::Create())
+        , m_ThreadPool(IThreadPool::CreateThreadPool(4))
     {
-        m_DynamicObjectSystem = IDynamicObjectSystemCore::CreateDynamicSystemCore(*this);
-        m_MaterialSystem = ICustomMaterialSystemCore::CreateCustomMaterialSystemCore(*this);
-        m_EffectSystem = IEffectSystemCore::CreateEffectSystemCore(*this);
-        m_RenderPluginManagerCore =
-                IRenderPluginManagerCore::Create(fnd, strTable, *m_InputStreamFactory);
-        m_BufferLoader = IBufferLoader::Create(m_Foundation, *m_InputStreamFactory, *m_ThreadPool);
-        m_PathManagerCore = IPathManagerCore::CreatePathManagerCore(*this);
+        //m_DynamicObjectSystem = IDynamicObjectSystemCore::CreateDynamicSystemCore(*this);
+        //m_MaterialSystem = ICustomMaterialSystemCore::CreateCustomMaterialSystemCore(*this);
+        //m_EffectSystem = IEffectSystemCore::CreateEffectSystemCore(*this);
+        //m_RenderPluginManagerCore = IRenderPluginManagerCore::Create(fnd, strTable, *m_InputStreamFactory);
+        //m_BufferLoader = IBufferLoader::Create(m_Foundation, *m_InputStreamFactory, *m_ThreadPool);
+        //m_PathManagerCore = IPathManagerCore::CreatePathManagerCore(*this);
     }
 
     virtual ~SRenderContextCore() {}
 
-    IInputStreamFactory &GetInputStreamFactory() override { return *m_InputStreamFactory; }
-    IThreadPool &GetThreadPool() override { return *m_ThreadPool; }
-    IDynamicObjectSystemCore &GetDynamicObjectSystemCore() override
-    {
-        return *m_DynamicObjectSystem;
-    }
-    ICustomMaterialSystemCore &GetMaterialSystemCore() override { return *m_MaterialSystem; }
-    IEffectSystemCore &GetEffectSystemCore() override { return *m_EffectSystem; }
-    IPerfTimer &GetPerfTimer() override { return *m_PerfTimer; }
-    IBufferLoader &GetBufferLoader() override { return *m_BufferLoader; }
-    IRenderPluginManagerCore &GetRenderPluginCore() override { return *m_RenderPluginManagerCore; }
-    IPathManagerCore &GetPathManagerCore() override { return *m_PathManagerCore; }
-    IQDemonRenderContext &CreateRenderContext(QDemonRenderContext &inContext,
-                                             const char *inPrimitivesDirectory) override;
-    void SetTextRendererCore(ITextRendererCore &inRenderer) override { m_TextRenderer = inRenderer; }
-    ITextRendererCore *GetTextRendererCore() override { return m_TextRenderer.mPtr; }
-    void SetOnscreenTextRendererCore(ITextRendererCore &inRenderer) override
+    QSharedPointer<IInputStreamFactory> GetInputStreamFactory() override { return m_InputStreamFactory; }
+    QSharedPointer<IThreadPool> GetThreadPool() override { return m_ThreadPool; }
+//    QSharedPointer<IDynamicObjectSystemCore> GetDynamicObjectSystemCore() override
+//    {
+//        return m_DynamicObjectSystem;
+//    }
+    //QSharedPointer<ICustomMaterialSystemCore> GetMaterialSystemCore() override { return m_MaterialSystem; }
+    //QSharedPointer<IEffectSystemCore> GetEffectSystemCore() override { return m_EffectSystem; }
+    QSharedPointer<IPerfTimer> GetPerfTimer() override { return m_PerfTimer; }
+    QSharedPointer<IBufferLoader> GetBufferLoader() override { return m_BufferLoader; }
+    //QSharedPointer<IRenderPluginManagerCore> GetRenderPluginCore() override { return m_RenderPluginManagerCore; }
+    //QSharedPointer<IPathManagerCore> GetPathManagerCore() override { return m_PathManagerCore; }
+    QSharedPointer<IQDemonRenderContext> CreateRenderContext(QSharedPointer<QDemonRenderContext> inContext, const char *inPrimitivesDirectory) override;
+    void SetTextRendererCore(QSharedPointer<ITextRendererCore> inRenderer) override { m_TextRenderer = inRenderer; }
+    QSharedPointer<ITextRendererCore> GetTextRendererCore() override { return m_TextRenderer; }
+    void SetOnscreenTextRendererCore(QSharedPointer<ITextRendererCore> inRenderer) override
     {
         m_OnscreenTexRenderer = inRenderer;
     }
-    ITextRendererCore *GetOnscreenTextRendererCore() override { return m_OnscreenTexRenderer.mPtr; }
+    QSharedPointer<ITextRendererCore> GetOnscreenTextRendererCore() override { return m_OnscreenTexRenderer; }
 };
 
 inline float Clamp(float val, float inMin = 0.0f, float inMax = 1.0f)
@@ -124,32 +122,40 @@ inline float Clamp(float val, float inMin = 0.0f, float inMax = 1.0f)
     return val;
 }
 
+namespace {
+void swapXY(QVector2D &v) {
+    const auto tmp = v.x();
+    v.setX(v.y());
+    v.setY(tmp);
+}
+}
+
 struct SRenderContext : public IQDemonRenderContext
 {
     QSharedPointer<QDemonRenderContext> m_RenderContext;
     QSharedPointer<IQDemonRenderContextCore> m_CoreContext;
     QSharedPointer<IPerfTimer> m_PerfTimer;
     QSharedPointer<IInputStreamFactory> m_InputStreamFactory;
-    QSharedPointer<IBufferManager> m_BufferManager;
+    //QSharedPointer<IBufferManager> m_BufferManager;
     QSharedPointer<IResourceManager> m_ResourceManager;
-    QSharedPointer<IOffscreenRenderManager> m_OffscreenRenderManager;
+    //QSharedPointer<IOffscreenRenderManager> m_OffscreenRenderManager;
     QSharedPointer<IQDemonRenderer> m_Renderer;
     QSharedPointer<ITextRenderer> m_TextRenderer;
     QSharedPointer<ITextRenderer> m_OnscreenTextRenderer;
     QSharedPointer<ITextTextureCache> m_TextTextureCache;
     QSharedPointer<ITextTextureAtlas> m_TextTextureAtlas;
-    QSharedPointer<IDynamicObjectSystem> m_DynamicObjectSystem;
-    QSharedPointer<IEffectSystem> m_EffectSystem;
+    //QSharedPointer<IDynamicObjectSystem> m_DynamicObjectSystem;
+    //QSharedPointer<IEffectSystem> m_EffectSystem;
     QSharedPointer<IShaderCache> m_ShaderCache;
     QSharedPointer<IThreadPool> m_ThreadPool;
-    QSharedPointer<IImageBatchLoader> m_ImageBatchLoader;
-    QSharedPointer<IRenderPluginManager> m_RenderPluginManager;
-    QSharedPointer<ICustomMaterialSystem> m_CustomMaterialSystem;
-    QSharedPointer<IPixelGraphicsRenderer> m_PixelGraphicsRenderer;
+    //QSharedPointer<IImageBatchLoader> m_ImageBatchLoader;
+    //QSharedPointer<IRenderPluginManager> m_RenderPluginManager;
+    //QSharedPointer<ICustomMaterialSystem> m_CustomMaterialSystem;
+    //QSharedPointer<IPixelGraphicsRenderer> m_PixelGraphicsRenderer;
     QSharedPointer<IPathManager> m_PathManager;
-    QSharedPointer<IShaderProgramGenerator> m_ShaderProgramGenerator;
-    QSharedPointer<IDefaultMaterialShaderGenerator> m_DefaultMaterialShaderGenerator;
-    QSharedPointer<ICustomMaterialShaderGenerator> m_CustomMaterialShaderGenerator;
+    //QSharedPointer<IShaderProgramGenerator> m_ShaderProgramGenerator;
+    //QSharedPointer<IDefaultMaterialShaderGenerator> m_DefaultMaterialShaderGenerator;
+    //QSharedPointer<ICustomMaterialShaderGenerator> m_CustomMaterialShaderGenerator;
     QSharedPointer<IRenderList> m_RenderList;
     quint32 m_FrameCount;
     // Viewport that this render context should use
@@ -164,7 +170,7 @@ struct SRenderContext : public IQDemonRenderContext
     QSharedPointer<QDemonRenderFrameBuffer> m_RotationFBO;
     QSharedPointer<QDemonRenderTexture2D> m_RotationTexture;
     QSharedPointer<QDemonRenderRenderBuffer> m_RotationDepthBuffer;
-    QDemonRenderFrameBuffer *m_ContextRenderTarget;
+    QSharedPointer<QDemonRenderFrameBuffer> m_ContextRenderTarget;
     QDemonRenderRect m_PresentationViewport;
     QSize m_PresentationDimensions;
     QSize m_RenderPresentationDimensions;
@@ -174,20 +180,14 @@ struct SRenderContext : public IQDemonRenderContext
     QPair<float, int> m_FPS;
     bool m_AuthoringMode;
 
-    SRenderContext(QDemonRenderContext &ctx, IQDemonRenderContextCore &inCore,
-                   const char *inApplicationDirectory)
+    SRenderContext(QSharedPointer<QDemonRenderContext> ctx, QSharedPointer<IQDemonRenderContextCore> inCore, const char *inApplicationDirectory)
         : m_RenderContext(ctx)
         , m_CoreContext(inCore)
-        , m_StringTable(ctx.GetStringTable())
-        , m_PerfTimer(inCore.GetPerfTimer())
-        , m_InputStreamFactory(inCore.GetInputStreamFactory())
-        , m_BufferManager(
-              IBufferManager::Create(ctx, *m_StringTable, *m_InputStreamFactory, *m_PerfTimer))
-        , m_ResourceManager(IResourceManager::CreateResourceManager(ctx))
-        , m_ShaderCache(IShaderCache::CreateShaderCache(ctx, *m_InputStreamFactory, *m_PerfTimer))
-        , m_ThreadPool(inCore.GetThreadPool())
-        , m_RenderList(IRenderList::CreateRenderList(ctx.GetFoundation()))
-        , m_PerFrameAllocator(ctx.GetAllocator())
+        , m_PerfTimer(inCore->GetPerfTimer())
+        , m_InputStreamFactory(inCore->GetInputStreamFactory())
+        //, m_ResourceManager(IResourceManager::CreateResourceManager(ctx))
+        //, m_ShaderCache(IShaderCache::CreateShaderCache(ctx, *m_InputStreamFactory, *m_PerfTimer))
+        , m_ThreadPool(inCore->GetThreadPool())
         , m_FrameCount(0)
         , m_WindowDimensions(800, 480)
         , m_ScaleMode(ScaleModes::ExactSize)
@@ -199,43 +199,42 @@ struct SRenderContext : public IQDemonRenderContext
         , m_FPS(qMakePair(0.0, 0))
         , m_AuthoringMode(false)
     {
-        m_OffscreenRenderManager = IOffscreenRenderManager::CreateOffscreenRenderManager(
-                    ctx.GetAllocator(), *m_StringTable, *m_ResourceManager, *this);
-        m_Renderer = IQDemonRenderer::CreateRenderer(*this);
+        //m_BufferManager.reset(IBufferManager::Create(ctx, m_InputStreamFactory, m_PerfTimer))
+        //m_RenderList.reset(IRenderList::CreateRenderList())
+//        m_OffscreenRenderManager = IOffscreenRenderManager::CreateOffscreenRenderManager(
+//                    ctx.GetAllocator(), *m_StringTable, *m_ResourceManager, *this);
+//        m_Renderer = IQDemonRenderer::CreateRenderer(*this); // ### "this" should be fixed
         if (inApplicationDirectory && *inApplicationDirectory)
             m_InputStreamFactory->AddSearchDirectory(inApplicationDirectory);
 
-        m_ImageBatchLoader =
-                IImageBatchLoader::CreateBatchLoader(ctx.GetFoundation(), *m_InputStreamFactory,
-                                                     *m_BufferManager, *m_ThreadPool, *m_PerfTimer);
-        m_RenderPluginManager = inCore.GetRenderPluginCore().GetRenderPluginManager(ctx);
-        m_DynamicObjectSystem = inCore.GetDynamicObjectSystemCore().CreateDynamicSystem(*this);
-        m_EffectSystem = inCore.GetEffectSystemCore().GetEffectSystem(*this);
-        m_CustomMaterialSystem = inCore.GetMaterialSystemCore().GetCustomMaterialSystem(*this);
+        //m_ImageBatchLoader = IImageBatchLoader::CreateBatchLoader(m_InputStreamFactory,m_BufferManager, m_ThreadPool, m_PerfTimer);
+
+        //m_RenderPluginManager = inCore.GetRenderPluginCore().GetRenderPluginManager(ctx);
+        //m_DynamicObjectSystem = inCore.GetDynamicObjectSystemCore().CreateDynamicSystem(*this);
+        //m_EffectSystem = inCore.GetEffectSystemCore().GetEffectSystem(*this);
+        //m_CustomMaterialSystem = inCore.GetMaterialSystemCore().GetCustomMaterialSystem(*this);
         // as does the custom material system
-        m_PixelGraphicsRenderer = IPixelGraphicsRenderer::CreateRenderer(*this, *m_StringTable);
-        ITextRendererCore *theTextCore = inCore.GetTextRendererCore();
-        m_ShaderProgramGenerator = IShaderProgramGenerator::CreateProgramGenerator(*this);
-        m_DefaultMaterialShaderGenerator =
-                IDefaultMaterialShaderGenerator::CreateDefaultMaterialShaderGenerator(*this);
-        m_CustomMaterialShaderGenerator =
-                ICustomMaterialShaderGenerator::CreateCustomMaterialShaderGenerator(*this);
+        //m_PixelGraphicsRenderer = IPixelGraphicsRenderer::CreateRenderer(*this, *m_StringTable);
+        QSharedPointer<ITextRendererCore> theTextCore = inCore->GetTextRendererCore();
+        //m_ShaderProgramGenerator = IShaderProgramGenerator::CreateProgramGenerator(*this);
+//        m_DefaultMaterialShaderGenerator =
+//                IDefaultMaterialShaderGenerator::CreateDefaultMaterialShaderGenerator(*this);
+//        m_CustomMaterialShaderGenerator =
+//                ICustomMaterialShaderGenerator::CreateCustomMaterialShaderGenerator(*this);
         if (theTextCore) {
             m_TextRenderer = theTextCore->GetTextRenderer(ctx);
-            m_TextTextureCache = ITextTextureCache::CreateTextureCache(
-                        m_RenderContext->GetFoundation(), *m_TextRenderer, *m_RenderContext);
+            m_TextTextureCache = ITextTextureCache::CreateTextureCache(m_TextRenderer, m_RenderContext);
         }
 
-        ITextRendererCore *theOnscreenTextCore = inCore.GetOnscreenTextRendererCore();
+        QSharedPointer<ITextRendererCore> theOnscreenTextCore = inCore->GetOnscreenTextRendererCore();
         if (theOnscreenTextCore) {
             m_OnscreenTextRenderer = theOnscreenTextCore->GetTextRenderer(ctx);
-            m_TextTextureAtlas = ITextTextureAtlas::CreateTextureAtlas(
-                        m_RenderContext->GetFoundation(), *m_OnscreenTextRenderer, *m_RenderContext);
+            m_TextTextureAtlas = ITextTextureAtlas::CreateTextureAtlas(m_OnscreenTextRenderer, m_RenderContext);
         }
-        m_PathManager = inCore.GetPathManagerCore().OnRenderSystemInitialize(*this);
+        //m_PathManager = inCore->GetPathManagerCore().OnRenderSystemInitialize(*this); // ### "this" should be fixed
 
         QString versionString;
-        switch ((quint32)ctx.GetRenderContextType()) {
+        switch ((quint32)ctx->GetRenderContextType()) {
         case QDemonRenderContextValues::GLES2:
             versionString = QLatin1Literal("gles2");
             break;
@@ -258,54 +257,54 @@ struct SRenderContext : public IQDemonRenderContext
             break;
         }
 
-        GetDynamicObjectSystem().setShaderCodeLibraryVersion(versionString);
-#if defined (QDEMON_SHADER_PLATFORM_LIBRARY_DIR)
-        const QString platformDirectory;
-#if defined(_WIN32)
-        platformDirectory = QStringLiteral("res/platform/win");
-#elif defined(_LINUX)
-        platformDirectory = QStringLiteral("res/platform/linux");
-#elif defined(_MACOSX)
-        platformDirectory = QStringLiteral("res/platform/macos");
-#endif
-        GetDynamicObjectSystem().setShaderCodeLibraryPlatformDirectory(platformDirectory);
-#endif
+//        GetDynamicObjectSystem().setShaderCodeLibraryVersion(versionString);
+//#if defined (QDEMON_SHADER_PLATFORM_LIBRARY_DIR)
+//        const QString platformDirectory;
+//#if defined(_WIN32)
+//        platformDirectory = QStringLiteral("res/platform/win");
+//#elif defined(_LINUX)
+//        platformDirectory = QStringLiteral("res/platform/linux");
+//#elif defined(_MACOSX)
+//        platformDirectory = QStringLiteral("res/platform/macos");
+//#endif
+//        GetDynamicObjectSystem().setShaderCodeLibraryPlatformDirectory(platformDirectory);
+//#endif
     }
 
-    IQDemonRenderer &GetRenderer() override { return *m_Renderer; }
-    IBufferManager &GetBufferManager() override { return *m_BufferManager; }
-    IResourceManager &GetResourceManager() override { return *m_ResourceManager; }
-    QDemonRenderContext &GetRenderContext() override { return *m_RenderContext; }
-    IOffscreenRenderManager &GetOffscreenRenderManager() override
-    {
-        return *m_OffscreenRenderManager;
-    }
-    IInputStreamFactory &GetInputStreamFactory() override { return *m_InputStreamFactory; }
-    IEffectSystem &GetEffectSystem() override { return *m_EffectSystem; }
-    IShaderCache &GetShaderCache() override { return *m_ShaderCache; }
-    IThreadPool &GetThreadPool() override { return *m_ThreadPool; }
-    IImageBatchLoader &GetImageBatchLoader() override { return *m_ImageBatchLoader; }
-    ITextTextureCache *GetTextureCache() override { return m_TextTextureCache.mPtr; }
-    ITextTextureAtlas *GetTextureAtlas() override { return m_TextTextureAtlas.mPtr; }
-    IRenderPluginManager &GetRenderPluginManager() override { return *m_RenderPluginManager; }
-    IDynamicObjectSystem &GetDynamicObjectSystem() override { return *m_DynamicObjectSystem; }
-    ICustomMaterialSystem &GetCustomMaterialSystem() override { return *m_CustomMaterialSystem; }
-    IPixelGraphicsRenderer &GetPixelGraphicsRenderer() override { return *m_PixelGraphicsRenderer; }
-    IPerfTimer &GetPerfTimer() override { return *m_PerfTimer; }
-    IRenderList &GetRenderList() override { return *m_RenderList; }
-    IPathManager &GetPathManager() override { return *m_PathManager; }
-    IShaderProgramGenerator &GetShaderProgramGenerator() override
-    {
-        return *m_ShaderProgramGenerator;
-    }
-    IDefaultMaterialShaderGenerator &GetDefaultMaterialShaderGenerator() override
-    {
-        return *m_DefaultMaterialShaderGenerator;
-    }
-    ICustomMaterialShaderGenerator &GetCustomMaterialShaderGenerator() override
-    {
-        return *m_CustomMaterialShaderGenerator;
-    }
+    QSharedPointer<IQDemonRenderer> GetRenderer() override { return m_Renderer; }
+    //QSharedPointer<IBufferManager> GetBufferManager() override { return m_BufferManager; }
+    //QSharedPointer<IResourceManager> GetResourceManager() override { return m_ResourceManager; }
+    QSharedPointer<QDemonRenderContext> GetRenderContext() override { return m_RenderContext; }
+//    QSharedPointer<IOffscreenRenderManager> GetOffscreenRenderManager() override
+//    {
+//        return m_OffscreenRenderManager;
+//    }
+    QSharedPointer<IInputStreamFactory> GetInputStreamFactory() override { return m_InputStreamFactory; }
+    //QSharedPointer<IEffectSystem> GetEffectSystem() override { return m_EffectSystem; }
+//    QSharedPointer<IShaderCache> GetShaderCache() override { return m_ShaderCache; }
+    QSharedPointer<IThreadPool> GetThreadPool() override { return m_ThreadPool; }
+    //QSharedPointer<IImageBatchLoader> GetImageBatchLoader() override { return m_ImageBatchLoader; }
+    QSharedPointer<ITextTextureCache> GetTextureCache() override { return m_TextTextureCache; }
+    QSharedPointer<ITextTextureAtlas> GetTextureAtlas() override { return m_TextTextureAtlas; }
+    //QSharedPointer<IRenderPluginManager> GetRenderPluginManager() override { return m_RenderPluginManager; }
+    //QSharedPointer<IDynamicObjectSystem> GetDynamicObjectSystem() override { return m_DynamicObjectSystem; }
+    //QSharedPointer<ICustomMaterialSystem> GetCustomMaterialSystem() override { return m_CustomMaterialSystem; }
+    //QSharedPointer<IPixelGraphicsRenderer> GetPixelGraphicsRenderer() override { return m_PixelGraphicsRenderer; }
+    QSharedPointer<IPerfTimer> GetPerfTimer() override { return m_PerfTimer; }
+    QSharedPointer<IRenderList> GetRenderList() override { return m_RenderList; }
+    //QSharedPointer<IPathManager> GetPathManager() override { return m_PathManager; }
+//    QSharedPointer<IShaderProgramGenerator> GetShaderProgramGenerator() override
+//    {
+//        return m_ShaderProgramGenerator;
+//    }
+//    QSharedPointer<IDefaultMaterialShaderGenerator> GetDefaultMaterialShaderGenerator() override
+//    {
+//        return m_DefaultMaterialShaderGenerator;
+//    }
+//    QSharedPointer<ICustomMaterialShaderGenerator> GetCustomMaterialShaderGenerator() override
+//    {
+//        return m_CustomMaterialShaderGenerator;
+//    }
 
     quint32 GetFrameCount() override { return m_FrameCount; }
     void SetFPS(QPair<float, int> inFPS) override { m_FPS = inFPS; }
@@ -317,9 +316,9 @@ struct SRenderContext : public IQDemonRenderContext
     bool IsInSubPresentation() override { return m_IsInSubPresentation; }
     void SetInSubPresentation(bool inValue) override { m_IsInSubPresentation = inValue; }
 
-    ITextRenderer *GetTextRenderer() override { return m_TextRenderer; }
+    QSharedPointer<ITextRenderer> GetTextRenderer() override { return m_TextRenderer; }
 
-    ITextRenderer *GetOnscreenTextRenderer() override { return m_OnscreenTextRenderer; }
+    QSharedPointer<ITextRenderer> GetOnscreenTextRenderer() override { return m_OnscreenTextRenderer; }
 
     void SetSceneColor(QDemonOption<QVector4D> inSceneColor) override { m_SceneColor = inSceneColor; }
     void SetMatteColor(QDemonOption<QVector4D> inMatteColor) override { m_MatteColor = inMatteColor; }
@@ -342,10 +341,10 @@ struct SRenderContext : public IQDemonRenderContext
     void SetViewport(QDemonOption<QDemonRenderRect> inViewport) override { m_Viewport = inViewport; }
     QDemonOption<QDemonRenderRect> GetViewport() const override { return m_Viewport; }
 
-    IRenderWidgetContext &GetRenderWidgetContext() override
-    {
-        return m_Renderer->GetRenderWidgetContext();
-    }
+//    QSharedPointer<IRenderWidgetContext> GetRenderWidgetContext() override
+//    {
+//        return m_Renderer->GetRenderWidgetContext();
+//    }
 
     QPair<QDemonRenderRect, QDemonRenderRect> GetPresentationViewportAndOuterViewport() const
     {
@@ -415,24 +414,24 @@ struct SRenderContext : public IQDemonRenderContext
             // Translate pick into presentation space without rotations or anything else.
             float YHeightDiff = (float)((float)m_WindowDimensions.height()
                                         - (float)thePresentationViewport.m_Height);
-            QVector2D theLocalMouse((inMouseCoords.x - thePresentationViewport.m_X),
-                                    (inMouseCoords.y - YHeightDiff + thePresentationViewport.m_Y));
+            QVector2D theLocalMouse((inMouseCoords.x() - thePresentationViewport.m_X),
+                                    (inMouseCoords.y() - YHeightDiff + thePresentationViewport.m_Y));
             switch (m_Rotation) {
             default:
             case RenderRotationValues::NoRotation:
                 Q_ASSERT(false);
                 break;
             case RenderRotationValues::Clockwise90:
-                std::swap(theLocalMouse.x, theLocalMouse.y);
-                theLocalMouse.y = thePresentationViewport.m_Width - theLocalMouse.y;
+                swapXY(theLocalMouse);
+                theLocalMouse.setY(thePresentationViewport.m_Width - theLocalMouse.y());
                 break;
             case RenderRotationValues::Clockwise180:
-                theLocalMouse.y = thePresentationViewport.m_Height - theLocalMouse.y;
-                theLocalMouse.x = thePresentationViewport.m_Width - theLocalMouse.x;
+                theLocalMouse.setY(thePresentationViewport.m_Height - theLocalMouse.y());
+                theLocalMouse.setX(thePresentationViewport.m_Width - theLocalMouse.x());
                 break;
             case RenderRotationValues::Clockwise270:
-                std::swap(theLocalMouse.x, theLocalMouse.y);
-                theLocalMouse.x = thePresentationViewport.m_Height - theLocalMouse.x;
+                swapXY(theLocalMouse);
+                theLocalMouse.setX(thePresentationViewport.m_Height - theLocalMouse.x());
                 break;
             }
             return theLocalMouse;
@@ -531,7 +530,6 @@ struct SRenderContext : public IQDemonRenderContext
         m_PreRenderPresentationDimensions = m_PresentationDimensions;
         QSize thePresentationDimensions(m_PreRenderPresentationDimensions);
         QDemonRenderRect theContextViewport(GetContextViewport());
-        m_PerFrameAllocator.reset();
         IRenderList &theRenderList(*m_RenderList);
         theRenderList.BeginFrame();
         if (m_Viewport.hasValue()) {
@@ -580,12 +578,12 @@ struct SRenderContext : public IQDemonRenderContext
                     m_RenderList->GetScissor(), m_RenderList->GetViewport(), fboDimensions);
 
         m_Renderer->BeginFrame();
-        m_OffscreenRenderManager->BeginFrame();
+        //m_OffscreenRenderManager->BeginFrame();
         if (m_TextRenderer)
             m_TextRenderer->BeginFrame();
         if (m_TextTextureCache)
             m_TextTextureCache->BeginFrame();
-        m_ImageBatchLoader->BeginFrame();
+        //m_ImageBatchLoader->BeginFrame();
     }
 
     QVector2D GetPresentationScaleFactor() const override { return m_PresentationScale; }
@@ -616,14 +614,14 @@ struct SRenderContext : public IQDemonRenderContext
         if (m_PresentationViewport.m_Width > 0 && m_PresentationViewport.m_Height > 0) {
             if (renderOffscreen == false) {
                 if (m_RotationFBO != nullptr) {
-                    m_ResourceManager->Release(*m_RotationFBO);
-                    m_ResourceManager->Release(*m_RotationTexture);
-                    m_ResourceManager->Release(*m_RotationDepthBuffer);
+//                    m_ResourceManager->Release(*m_RotationFBO);
+//                    m_ResourceManager->Release(*m_RotationTexture);
+//                    m_ResourceManager->Release(*m_RotationDepthBuffer);
                     m_RotationFBO = nullptr;
                     m_RotationTexture = nullptr;
                     m_RotationDepthBuffer = nullptr;
                 }
-                if (m_SceneColor.hasValue() && m_SceneColor.getValue().w != 0.0f) {
+                if (m_SceneColor.hasValue() && m_SceneColor.getValue().w() != 0.0f) {
                     m_RenderContext->SetClearColor(m_SceneColor);
                     m_RenderContext->Clear(QDemonRenderClearValues::Color);
                 }
@@ -631,8 +629,7 @@ struct SRenderContext : public IQDemonRenderContext
                 quint32 imageWidth = m_BeginFrameResult.m_FBODimensions.width();
                 quint32 imageHeight = m_BeginFrameResult.m_FBODimensions.height();
                 QDemonRenderTextureFormats::Enum theColorBufferFormat = QDemonRenderTextureFormats::RGBA8;
-                QDemonRenderRenderBufferFormats::Enum theDepthBufferFormat =
-                        QDemonRenderRenderBufferFormats::Depth16;
+                QDemonRenderRenderBufferFormats::Enum theDepthBufferFormat = QDemonRenderRenderBufferFormats::Depth16;
                 m_ContextRenderTarget = m_RenderContext->GetRenderTarget();
                 if (m_RotationFBO == nullptr) {
                     m_RotationFBO = m_ResourceManager->AllocateFrameBuffer();
@@ -641,9 +638,9 @@ struct SRenderContext : public IQDemonRenderContext
                     m_RotationDepthBuffer = m_ResourceManager->AllocateRenderBuffer(
                                 imageWidth, imageHeight, theDepthBufferFormat);
                     m_RotationFBO->Attach(QDemonRenderFrameBufferAttachments::Color0,
-                                          *m_RotationTexture);
+                                          m_RotationTexture);
                     m_RotationFBO->Attach(QDemonRenderFrameBufferAttachments::Depth,
-                                          *m_RotationDepthBuffer);
+                                          m_RotationDepthBuffer);
                 } else {
                     STextureDetails theDetails = m_RotationTexture->GetTextureDetails();
                     if (theDetails.m_Width != imageWidth || theDetails.m_Height != imageHeight) {
@@ -692,16 +689,18 @@ struct SRenderContext : public IQDemonRenderContext
                 Q_ASSERT(false);
                 break;
             case RenderRotationValues::Clockwise90:
-                theCamera.m_Rotation.z = 90;
+                theCamera.m_Rotation.setZ(90);
                 break;
             case RenderRotationValues::Clockwise180:
-                theCamera.m_Rotation.z = 180;
+                theCamera.m_Rotation.setZ(180);
                 break;
             case RenderRotationValues::Clockwise270:
-                theCamera.m_Rotation.z = 270;
+                theCamera.m_Rotation.setZ(270);
                 break;
             }
-            TORAD(theCamera.m_Rotation.z);
+            float z = theCamera.m_Rotation.z();
+            TORAD(z);
+            theCamera.m_Rotation.setZ(z);
             theCamera.MarkDirty(NodeTransformDirtyFlag::TransformIsDirty);
             theCamera.m_Flags.SetOrthographic(true);
             m_RenderContext->SetViewport(thePresentationViewport);
@@ -730,29 +729,28 @@ struct SRenderContext : public IQDemonRenderContext
     void EndFrame() override
     {
         TeardownRenderTarget();
-        m_ImageBatchLoader->EndFrame();
+        //m_ImageBatchLoader->EndFrame();
         if (m_TextTextureCache)
             m_TextTextureCache->EndFrame();
         if (m_TextRenderer)
             m_TextRenderer->EndFrame();
-        m_OffscreenRenderManager->EndFrame();
+        //m_OffscreenRenderManager->EndFrame();
         m_Renderer->EndFrame();
-        m_CustomMaterialSystem->EndFrame();
+        //m_CustomMaterialSystem->EndFrame();
         m_PresentationDimensions = m_PreRenderPresentationDimensions;
         ++m_FrameCount;
     }
 };
 
-IQDemonRenderContext &SRenderContextCore::CreateRenderContext(QDemonRenderContext &inContext,
-                                                             const char *inPrimitivesDirectory)
+QSharedPointer<IQDemonRenderContext> SRenderContextCore::CreateRenderContext(QSharedPointer<QDemonRenderContext> inContext, const char *inPrimitivesDirectory)
 {
-    return *new SRenderContext(inContext, *this, inPrimitivesDirectory);
+    return QSharedPointer<IQDemonRenderContext>(new SRenderContext(inContext, this->sharedFromThis(), inPrimitivesDirectory));
 }
 }
 
-IQDemonRenderContextCore &IQDemonRenderContextCore::Create()
+QSharedPointer<IQDemonRenderContextCore> IQDemonRenderContextCore::Create()
 {
-    return *new SRenderContextCore();
+    return QSharedPointer<SRenderContextCore>(new SRenderContextCore());
 }
 
 QT_END_NAMESPACE

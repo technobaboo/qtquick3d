@@ -179,8 +179,8 @@ struct STextTextureCache : public ITextTextureCache
             }
             theKey = STextRenderInfoAndHash(inText, inScaleFactor);
             retval = new STextCacheNode(theKey, TTPathObjectAndTexture(
-                            TPathFontSpecAndPathObject(nextPathFontObject, nextPathFontItemObject),
-                            TTextTextureDetailsAndTexture(theDetails, nextTexture)));
+                                            TPathFontSpecAndPathObject(nextPathFontObject, nextPathFontItemObject),
+                                            TTextTextureDetailsAndTexture(theDetails, nextTexture)));
             m_TextureCache.insert(theKey, retval);
             if (!m_CanUsePathRendering)
                 m_TextureTotalBytes += GetNumBytes(*(retval->m_TextInfo.second.second.data()));
@@ -211,16 +211,16 @@ struct STextTextureCache : public ITextTextureCache
 };
 }
 
-ITextTextureCache &ITextTextureCache::CreateTextureCache(QSharedPointer<ITextRenderer> inTextRenderer,
-                                                         QSharedPointer<QDemonRenderContext> inRenderContext)
+QSharedPointer<ITextTextureCache> ITextTextureCache::CreateTextureCache(QSharedPointer<ITextRenderer> inTextRenderer,
+                                                                        QSharedPointer<QDemonRenderContext> inRenderContext)
 {
-    return *new STextTextureCache(inTextRenderer, inRenderContext);
+    return QSharedPointer<ITextTextureCache>(new STextTextureCache(inTextRenderer, inRenderContext));
 }
 
 STextRenderInfoAndHash::STextRenderInfoAndHash(const STextRenderInfo &inInfo, float inScaleFactor)
-        : m_Info(inInfo)
-        , m_ScaleFactor(inScaleFactor)
-        , m_Hashcode(qHash(inInfo) ^ qHash(inScaleFactor))
+    : m_Info(inInfo)
+    , m_ScaleFactor(inScaleFactor)
+    , m_Hashcode(qHash(inInfo) ^ qHash(inScaleFactor))
 {
 }
 

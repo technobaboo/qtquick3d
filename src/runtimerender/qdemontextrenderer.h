@@ -81,13 +81,13 @@ public:
     virtual QDemonOption<QString> GetFontNameForFont(QString inFontname) = 0;
     virtual QDemonOption<QString> GetFontNameForFont(const char *inFontname) = 0;
 
-    virtual ITextRenderer &GetTextRenderer(QSharedPointer<QDemonRenderContext> inContext) = 0;
+    virtual QSharedPointer<ITextRenderer> GetTextRenderer(QSharedPointer<QDemonRenderContext> inContext) = 0;
 
-    static ITextRendererCore &CreateQtTextRenderer();
+    static QSharedPointer<ITextRendererCore> CreateQtTextRenderer();
 
     // call this to create onscreen text renderer
     // it needs true type fonts
-    static ITextRendererCore &CreateOnscreenTextRenderer();
+    static QSharedPointer<ITextRendererCore> CreateOnscreenTextRenderer();
 };
 /**
      *	Opaque text rendering system.  Must be able to render text to an opengl texture object.
