@@ -34,26 +34,37 @@
 #include <QtDemonRender/qdemonrenderbasetypes.h>
 
 QT_BEGIN_NAMESPACE
+
+class IResourceManager;
+class CResourceTexture2D;
+class QDemonRenderContext;
+
 class CRendererUtil
 {
     static const quint32 MAX_SSAA_DIM = 8192; // max render traget size for SSAA mode
 
 public:
-    static void ResolveMutisampleFBOColorOnly(IResourceManager &inManager,
-                                              CResourceTexture2D &ioResult,
-                                              QDemonRenderContext &inRenderContext, quint32 inWidth,
+    static void ResolveMutisampleFBOColorOnly(QSharedPointer<IResourceManager> inManager,
+                                              QSharedPointer<CResourceTexture2D> ioResult,
+                                              QSharedPointer<QDemonRenderContext> inRenderContext,
+                                              quint32 inWidth,
                                               quint32 inHeight,
                                               QDemonRenderTextureFormats::Enum inColorFormat,
-                                              QDemonRenderFrameBuffer &inSourceFBO);
+                                              QSharedPointer<QDemonRenderFrameBuffer> inSourceFBO);
 
-    static void ResolveSSAAFBOColorOnly(IResourceManager &inManager,
-                                        CResourceTexture2D &ioResult, quint32 outWidth,
-                                        quint32 outHeight, QDemonRenderContext &inRenderContext,
-                                        quint32 inWidth, quint32 inHeight,
+    static void ResolveSSAAFBOColorOnly(QSharedPointer<IResourceManager> inManager,
+                                        QSharedPointer<CResourceTexture2D> ioResult,
+                                        quint32 outWidth,
+                                        quint32 outHeight,
+                                        QSharedPointer<QDemonRenderContext> inRenderContext,
+                                        quint32 inWidth,
+                                        quint32 inHeight,
                                         QDemonRenderTextureFormats::Enum inColorFormat,
-                                        QDemonRenderFrameBuffer &inSourceFBO);
+                                        QSharedPointer<QDemonRenderFrameBuffer> inSourceFBO);
 
-    static void GetSSAARenderSize(quint32 inWidth, quint32 inHeight, quint32 &outWidth,
+    static void GetSSAARenderSize(quint32 inWidth,
+                                  quint32 inHeight,
+                                  quint32 &outWidth,
                                   quint32 &outHeight);
 };
 QT_END_NAMESPACE

@@ -40,16 +40,16 @@ QT_BEGIN_NAMESPACE
 class CResourceFrameBuffer
 {
 protected:
-    IResourceManager &m_ResourceManager;
+    QSharedPointer<IResourceManager> m_ResourceManager;
     QSharedPointer<QDemonRenderFrameBuffer> m_FrameBuffer;
 
 public:
-    CResourceFrameBuffer(IResourceManager &mgr);
+    CResourceFrameBuffer(QSharedPointer<IResourceManager> mgr);
     ~CResourceFrameBuffer();
     bool EnsureFrameBuffer();
     void ReleaseFrameBuffer();
 
-    IResourceManager &GetResourceManager() { return m_ResourceManager; }
+    QSharedPointer<IResourceManager> GetResourceManager() { return m_ResourceManager; }
     operator QSharedPointer<QDemonRenderFrameBuffer> () { return m_FrameBuffer; }
     QSharedPointer<QDemonRenderFrameBuffer> operator->()
     {
@@ -66,13 +66,13 @@ public:
 class CResourceRenderBuffer
 {
 protected:
-    IResourceManager &m_ResourceManager;
+    QSharedPointer<IResourceManager> m_ResourceManager;
     QSharedPointer<QDemonRenderRenderBuffer> m_RenderBuffer;
     QDemonRenderRenderBufferFormats::Enum m_StorageFormat;
     QDemonRenderRenderBufferDimensions m_Dimensions;
 
 public:
-    CResourceRenderBuffer(IResourceManager &mgr);
+    CResourceRenderBuffer(QSharedPointer<IResourceManager> mgr);
     ~CResourceRenderBuffer();
     bool EnsureRenderBuffer(quint32 width, quint32 height,
                             QDemonRenderRenderBufferFormats::Enum storageFormat);

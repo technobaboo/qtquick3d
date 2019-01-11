@@ -32,12 +32,8 @@
 
 QT_BEGIN_NAMESPACE
 
-/*
-        IResourceManager&		m_ResourceManager;
-        QDemonRenderFrameBuffer*	m_FrameBuffer;
-        */
 
-CResourceFrameBuffer::CResourceFrameBuffer(IResourceManager &mgr)
+CResourceFrameBuffer::CResourceFrameBuffer(QSharedPointer<IResourceManager> mgr)
     : m_ResourceManager(mgr)
     , m_FrameBuffer(nullptr)
 {
@@ -51,7 +47,7 @@ CResourceFrameBuffer::~CResourceFrameBuffer()
 bool CResourceFrameBuffer::EnsureFrameBuffer()
 {
     if (!m_FrameBuffer) {
-        m_FrameBuffer = m_ResourceManager.AllocateFrameBuffer();
+        m_FrameBuffer = m_ResourceManager->AllocateFrameBuffer();
         return true;
     }
     return false;
@@ -60,11 +56,11 @@ bool CResourceFrameBuffer::EnsureFrameBuffer()
 void CResourceFrameBuffer::ReleaseFrameBuffer()
 {
     if (m_FrameBuffer) {
-        m_ResourceManager.Release(m_FrameBuffer);
+        m_ResourceManager->Release(m_FrameBuffer);
     }
 }
 
-CResourceRenderBuffer::CResourceRenderBuffer(IResourceManager &mgr)
+CResourceRenderBuffer::CResourceRenderBuffer(QSharedPointer<IResourceManager> mgr)
     : m_ResourceManager(mgr)
     , m_RenderBuffer(nullptr)
 {
@@ -82,10 +78,9 @@ bool CResourceRenderBuffer::EnsureRenderBuffer(quint32 width, quint32 height,
             || m_StorageFormat != storageFormat) {
         if (m_RenderBuffer == nullptr || m_StorageFormat != storageFormat) {
             ReleaseRenderBuffer();
-            m_RenderBuffer = m_ResourceManager.AllocateRenderBuffer(width, height, storageFormat);
+            m_RenderBuffer = m_ResourceManager->AllocateRenderBuffer(width, height, storageFormat);
         } else
-            m_RenderBuffer->SetDimensions(
-                        QDemonRenderRenderBufferDimensions(width, height));
+            m_RenderBuffer->SetDimensions(QDemonRenderRenderBufferDimensions(width, height));
         m_Dimensions = m_RenderBuffer->GetDimensions();
         m_StorageFormat = m_RenderBuffer->GetStorageFormat();
         return true;
@@ -96,7 +91,7 @@ bool CResourceRenderBuffer::EnsureRenderBuffer(quint32 width, quint32 height,
 void CResourceRenderBuffer::ReleaseRenderBuffer()
 {
     if (m_RenderBuffer) {
-        m_ResourceManager.Release(m_RenderBuffer);
+        m_ResourceManager->Release(m_RenderBuffer);
         m_RenderBuffer = nullptr;
     }
 }

@@ -39,24 +39,31 @@ QT_BEGIN_NAMESPACE
 class CResourceTexture2D
 {
 protected:
-    IResourceManager &m_ResourceManager;
+    QSharedPointer<IResourceManager> m_ResourceManager;
     QSharedPointer<QDemonRenderTexture2D> m_Texture;
     STextureDetails m_TextureDetails;
 
 public:
-    CResourceTexture2D(IResourceManager &mgr, QDemonRenderTexture2D *inTexture = nullptr);
+    CResourceTexture2D(QSharedPointer<IResourceManager> mgr, QSharedPointer<QDemonRenderTexture2D> inTexture = nullptr);
     // create and allocate the texture right away.
-    CResourceTexture2D(IResourceManager &mgr, quint32 width, quint32 height,
-                       QDemonRenderTextureFormats::Enum inFormat, quint32 inSamples = 1);
+    CResourceTexture2D(QSharedPointer<IResourceManager> mgr,
+                       quint32 width,
+                       quint32 height,
+                       QDemonRenderTextureFormats::Enum inFormat,
+                       quint32 inSamples = 1);
     ~CResourceTexture2D();
     // Returns true if the texture matches the specs, false if the texture needs to be
     // reallocated
-    bool TextureMatches(quint32 width, quint32 height, QDemonRenderTextureFormats::Enum inFormat,
+    bool TextureMatches(quint32 width,
+                        quint32 height,
+                        QDemonRenderTextureFormats::Enum inFormat,
                         quint32 inSamples = 1);
 
     // Returns true if the texture was allocated, false if nothing changed (no allocation).
     // Note this is the exact opposite of TextureMatches.
-    bool EnsureTexture(quint32 width, quint32 height, QDemonRenderTextureFormats::Enum inFormat,
+    bool EnsureTexture(quint32 width,
+                       quint32 height,
+                       QDemonRenderTextureFormats::Enum inFormat,
                        quint32 inSamples = 1);
 
     // Force release the texture.
@@ -81,25 +88,35 @@ public:
 class CResourceTexture2DArray
 {
 protected:
-    IResourceManager &m_ResourceManager;
+    QSharedPointer<IResourceManager> m_ResourceManager;
     QSharedPointer<QDemonRenderTexture2DArray> m_Texture;
     STextureDetails m_TextureDetails;
 
 public:
-    CResourceTexture2DArray(IResourceManager &mgr);
+    CResourceTexture2DArray(QSharedPointer<IResourceManager> mgr);
     // create and allocate the texture right away.
-    CResourceTexture2DArray(IResourceManager &mgr, quint32 width, quint32 height, quint32 slices,
-                            QDemonRenderTextureFormats::Enum inFormat, quint32 inSamples = 1);
+    CResourceTexture2DArray(QSharedPointer<IResourceManager> mgr,
+                            quint32 width,
+                            quint32 height,
+                            quint32 slices,
+                            QDemonRenderTextureFormats::Enum inFormat,
+                            quint32 inSamples = 1);
     ~CResourceTexture2DArray();
     // Returns true if the texture matches the specs, false if the texture needs to be
     // reallocated
-    bool TextureMatches(quint32 width, quint32 height, quint32 slices,
-                        QDemonRenderTextureFormats::Enum inFormat, quint32 inSamples = 1);
+    bool TextureMatches(quint32 width,
+                        quint32 height,
+                        quint32 slices,
+                        QDemonRenderTextureFormats::Enum inFormat,
+                        quint32 inSamples = 1);
 
     // Returns true if the texture was allocated, false if nothing changed (no allocation).
     // Note this is the exact opposite of TextureMatches.
-    bool EnsureTexture(quint32 width, quint32 height, quint32 slices,
-                       QDemonRenderTextureFormats::Enum inFormat, quint32 inSamples = 1);
+    bool EnsureTexture(quint32 width,
+                       quint32 height,
+                       quint32 slices,
+                       QDemonRenderTextureFormats::Enum inFormat,
+                       quint32 inSamples = 1);
 
     // Force release the texture.
     void ReleaseTexture();

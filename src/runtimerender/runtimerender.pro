@@ -26,7 +26,7 @@ HEADERS += \
     qdemonrenderdynamicobjectsystemutil.h \
 #    qdemonrendereffectsystem.h \
     qdemonrenderer.h \
-#    qdemonrendererutil.h \
+    qdemonrendererutil.h \
     qdemonrendereulerangles.h \
     qdemonrendergraphobjectpickquery.h \
 #    qdemonrendergraphobjectserializer.h \
@@ -83,7 +83,7 @@ SOURCES += \
 #    qdemonrenderdefaultmaterialshadergenerator.cpp \
 #    qdemonrenderdynamicobjectsystem.cpp \
 #    qdemonrendereffectsystem.cpp \
-#    qdemonrendererutil.cpp \
+    qdemonrendererutil.cpp \
     qdemonrendereulerangles.cpp \
 #    qdemonrendergpuprofiler.cpp \
 #    qdemonrendergraphobjectserializer.cpp \

@@ -32,7 +32,7 @@
 
 QT_BEGIN_NAMESPACE
 
-CResourceTexture2D::CResourceTexture2D(IResourceManager &mgr, QDemonRenderTexture2D *inTexture)
+CResourceTexture2D::CResourceTexture2D(QSharedPointer<IResourceManager> mgr, QSharedPointer<QDemonRenderTexture2D> inTexture)
     : m_ResourceManager(mgr)
     , m_Texture(inTexture)
 {
@@ -40,7 +40,7 @@ CResourceTexture2D::CResourceTexture2D(IResourceManager &mgr, QDemonRenderTextur
         m_TextureDetails = inTexture->GetTextureDetails();
 }
 
-CResourceTexture2D::CResourceTexture2D(IResourceManager &mgr, quint32 width, quint32 height,
+CResourceTexture2D::CResourceTexture2D(QSharedPointer<IResourceManager> mgr, quint32 width, quint32 height,
                                        QDemonRenderTextureFormats::Enum inFormat, quint32 inSamples)
     : m_ResourceManager(mgr)
     , m_Texture(nullptr)
@@ -73,7 +73,7 @@ bool CResourceTexture2D::EnsureTexture(quint32 width, quint32 height,
     }
 
     if (!m_Texture)
-        m_Texture = m_ResourceManager.AllocateTexture2D(width, height, inFormat, inSamples);
+        m_Texture = m_ResourceManager->AllocateTexture2D(width, height, inFormat, inSamples);
     else {
         // multisampled textures are immuteable
         Q_ASSERT(inSamples == 1);
@@ -87,7 +87,7 @@ bool CResourceTexture2D::EnsureTexture(quint32 width, quint32 height,
 void CResourceTexture2D::ReleaseTexture()
 {
     if (m_Texture) {
-        m_ResourceManager.Release(m_Texture);
+        m_ResourceManager->Release(m_Texture);
         ForgetTexture();
     }
 }
@@ -105,13 +105,13 @@ void CResourceTexture2D::StealTexture(CResourceTexture2D &inOther)
     inOther.m_Texture = nullptr;
 }
 
-CResourceTexture2DArray::CResourceTexture2DArray(IResourceManager &mgr)
+CResourceTexture2DArray::CResourceTexture2DArray(QSharedPointer<IResourceManager> mgr)
     : m_ResourceManager(mgr)
     , m_Texture(nullptr)
 {
 }
 
-CResourceTexture2DArray::CResourceTexture2DArray(IResourceManager &mgr, quint32 width, quint32 height,
+CResourceTexture2DArray::CResourceTexture2DArray(QSharedPointer<IResourceManager> mgr, quint32 width, quint32 height,
                                                  quint32 slices,
                                                  QDemonRenderTextureFormats::Enum inFormat,
                                                  quint32 inSamples)
@@ -146,7 +146,7 @@ bool CResourceTexture2DArray::EnsureTexture(quint32 width, quint32 height, quint
     }
 
     if (!m_Texture)
-        m_Texture = m_ResourceManager.AllocateTexture2DArray(width, height, slices, inFormat, inSamples);
+        m_Texture = m_ResourceManager->AllocateTexture2DArray(width, height, slices, inFormat, inSamples);
     else {
         // multisampled textures are immuteable
         Q_ASSERT(inSamples == 1);
@@ -160,7 +160,7 @@ bool CResourceTexture2DArray::EnsureTexture(quint32 width, quint32 height, quint
 void CResourceTexture2DArray::ReleaseTexture()
 {
     if (m_Texture) {
-        m_ResourceManager.Release(m_Texture);
+        m_ResourceManager->Release(m_Texture);
         m_Texture = nullptr;
     }
 }
