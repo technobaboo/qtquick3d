@@ -38,6 +38,9 @@
 QT_BEGIN_NAMESPACE
 
 struct SLayerRenderData;
+struct SRenderSubset;
+struct SCustomMaterial;
+struct SRenderableImage;
 
 struct SCustomMaterialRenderContext
 {
@@ -86,6 +89,7 @@ struct SCustomMaterialRenderContext
     {
     }
 };
+
 QT_END_NAMESPACE
 
 #endif
