@@ -59,36 +59,36 @@ protected:
     virtual ~IShaderStageGenerator() {}
 public:
     virtual void AddIncoming(const char *name, const char *type) = 0;
-    virtual void AddIncoming(const TStrType &name, const char *type) = 0;
+    virtual void AddIncoming(const QString &name, const char *type) = 0;
 
     virtual void AddOutgoing(const char *name, const char *type) = 0;
-    virtual void AddOutgoing(const TStrType &name, const char *type) = 0;
+    virtual void AddOutgoing(const QString &name, const char *type) = 0;
 
     virtual void AddUniform(const char *name, const char *type) = 0;
-    virtual void AddUniform(const TStrType &name, const char *type) = 0;
+    virtual void AddUniform(const QString &name, const char *type) = 0;
 
     virtual void AddInclude(const char *name) = 0;
-    virtual void AddInclude(const TStrType &name) = 0;
     virtual void AddInclude(const QString &name) = 0;
 
     virtual void AddFunction(const QString &functionName) = 0;
 
     virtual void AddConstantBuffer(const char *name, const char *layout) = 0;
-    virtual void AddConstantBufferParam(const char *cbName, const char *paramName,
-                                        const char *type) = 0;
+    virtual void AddConstantBufferParam(const char *cbName, const char *paramName, const char *type) = 0;
 
     virtual IShaderStageGenerator &operator<<(const char *data) = 0;
-    virtual IShaderStageGenerator &operator<<(const TStrType &data) = 0;
-    virtual IShaderStageGenerator &operator<<(const SEndlType & /*data*/) = 0;
+    virtual IShaderStageGenerator &operator<<(const QString &data) = 0;
     virtual void Append(const char *data) = 0;
     virtual void AppendPartial(const char *data) = 0;
 
     virtual ShaderGeneratorStages::Enum Stage() const = 0;
 };
 
+class IQDemonRenderContext;
+
 class IShaderProgramGenerator
 {
 public:
+    virtual ~IShaderProgramGenerator() {}
     static TShaderGeneratorStageFlags DefaultFlags()
     {
         return TShaderGeneratorStageFlags(ShaderGeneratorStages::Vertex
@@ -102,29 +102,27 @@ public:
     virtual IShaderStageGenerator *GetStage(ShaderGeneratorStages::Enum inStage) = 0;
 
     // Implicit call to end program.
-    virtual QDemonRenderShaderProgram *
+    virtual QSharedPointer<QDemonRenderShaderProgram>
     CompileGeneratedShader(const char *inShaderName, const SShaderCacheProgramFlags &inFlags,
                            TShaderFeatureSet inFeatureSet, bool separableProgram = false) = 0;
 
-    QDemonRenderShaderProgram *CompileGeneratedShader(const char *inShaderName,
-                                                      bool separableProgram = false)
+    QSharedPointer<QDemonRenderShaderProgram> CompileGeneratedShader(const char *inShaderName, bool separableProgram = false)
     {
-        return CompileGeneratedShader(inShaderName, SShaderCacheProgramFlags(),
-                                      TShaderFeatureSet(), separableProgram);
+        return CompileGeneratedShader(inShaderName, SShaderCacheProgramFlags(), TShaderFeatureSet(), separableProgram);
     }
 
-    static IShaderProgramGenerator &CreateProgramGenerator(IQDemonRenderContext &inContext);
+    static QSharedPointer<IShaderProgramGenerator> CreateProgramGenerator(QSharedPointer<IQDemonRenderContext> inContext);
 
-    static void OutputParaboloidDepthVertex(IShaderStageGenerator &inGenerator);
+    static void OutputParaboloidDepthVertex(QSharedPointer<IShaderStageGenerator> inGenerator);
     // By convention, the local space result of the TE is stored in vec4 pos local variable.
     // This function expects such state.
-    static void OutputParaboloidDepthTessEval(IShaderStageGenerator &inGenerator);
+    static void OutputParaboloidDepthTessEval(QSharedPointer<IShaderStageGenerator> inGenerator);
     // Utilities shared among the various different systems.
-    static void OutputParaboloidDepthFragment(IShaderStageGenerator &inGenerator);
+    static void OutputParaboloidDepthFragment(QSharedPointer<IShaderStageGenerator> inGenerator);
 
-    static void OutputCubeFaceDepthVertex(IShaderStageGenerator &inGenerator);
-    static void OutputCubeFaceDepthGeometry(IShaderStageGenerator &inGenerator);
-    static void OutputCubeFaceDepthFragment(IShaderStageGenerator &inGenerator);
+    static void OutputCubeFaceDepthVertex(QSharedPointer<IShaderStageGenerator> inGenerator);
+    static void OutputCubeFaceDepthGeometry(QSharedPointer<IShaderStageGenerator> inGenerator);
+    static void OutputCubeFaceDepthFragment(QSharedPointer<IShaderStageGenerator> inGenerator);
 };
 QT_END_NAMESPACE
 #endif

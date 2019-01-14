@@ -89,7 +89,7 @@ struct SRenderContextCore : public IQDemonRenderContextCore, public QEnableShare
         //m_PathManagerCore = IPathManagerCore::CreatePathManagerCore(*this);
     }
 
-    virtual ~SRenderContextCore() {}
+    ~SRenderContextCore() override {}
 
     QSharedPointer<IInputStreamFactory> GetInputStreamFactory() override { return m_InputStreamFactory; }
     QSharedPointer<IThreadPool> GetThreadPool() override { return m_ThreadPool; }
@@ -130,7 +130,7 @@ void swapXY(QVector2D &v) {
 }
 }
 
-struct SRenderContext : public IQDemonRenderContext
+struct SRenderContext : public IQDemonRenderContext, public QEnableSharedFromThis<SRenderContext>
 {
     QSharedPointer<QDemonRenderContext> m_RenderContext;
     QSharedPointer<IQDemonRenderContextCore> m_CoreContext;
@@ -210,7 +210,7 @@ struct SRenderContext : public IQDemonRenderContext
         //m_ImageBatchLoader = IImageBatchLoader::CreateBatchLoader(m_InputStreamFactory,m_BufferManager, m_ThreadPool, m_PerfTimer);
 
         //m_RenderPluginManager = inCore.GetRenderPluginCore().GetRenderPluginManager(ctx);
-        //m_DynamicObjectSystem = inCore.GetDynamicObjectSystemCore().CreateDynamicSystem(*this);
+        m_DynamicObjectSystem = inCore->GetDynamicObjectSystemCore()->CreateDynamicSystem(this->sharedFromThis());
         //m_EffectSystem = inCore.GetEffectSystemCore().GetEffectSystem(*this);
         //m_CustomMaterialSystem = inCore.GetMaterialSystemCore().GetCustomMaterialSystem(*this);
         // as does the custom material system
@@ -257,18 +257,18 @@ struct SRenderContext : public IQDemonRenderContext
             break;
         }
 
-//        GetDynamicObjectSystem().setShaderCodeLibraryVersion(versionString);
-//#if defined (QDEMON_SHADER_PLATFORM_LIBRARY_DIR)
-//        const QString platformDirectory;
-//#if defined(_WIN32)
-//        platformDirectory = QStringLiteral("res/platform/win");
-//#elif defined(_LINUX)
-//        platformDirectory = QStringLiteral("res/platform/linux");
-//#elif defined(_MACOSX)
-//        platformDirectory = QStringLiteral("res/platform/macos");
-//#endif
-//        GetDynamicObjectSystem().setShaderCodeLibraryPlatformDirectory(platformDirectory);
-//#endif
+        GetDynamicObjectSystem()->setShaderCodeLibraryVersion(versionString);
+#if defined (QDEMON_SHADER_PLATFORM_LIBRARY_DIR)
+        const QString platformDirectory;
+#if defined(_WIN32)
+        platformDirectory = QStringLiteral("res/platform/win");
+#elif defined(_LINUX)
+        platformDirectory = QStringLiteral("res/platform/linux");
+#elif defined(_MACOSX)
+        platformDirectory = QStringLiteral("res/platform/macos");
+#endif
+        GetDynamicObjectSystem().setShaderCodeLibraryPlatformDirectory(platformDirectory);
+#endif
     }
 
     QSharedPointer<IQDemonRenderer> GetRenderer() override { return m_Renderer; }

@@ -110,7 +110,7 @@ public:
     virtual QSharedPointer<IThreadPool> GetThreadPool() = 0;
     //    virtual QSharedPointer<IImageBatchLoader> GetImageBatchLoader() = 0;
     //    virtual QSharedPointer<IRenderPluginManager> GetRenderPluginManager() = 0;
-        virtual QSharedPointer<IDynamicObjectSystem> GetDynamicObjectSystem() = 0;
+    virtual QSharedPointer<IDynamicObjectSystem> GetDynamicObjectSystem() = 0;
     //    virtual QSharedPointer<ICustomMaterialSystem> GetCustomMaterialSystem() = 0;
     //    virtual QSharedPointer<IPixelGraphicsRenderer> GetPixelGraphicsRenderer() = 0;
     virtual QSharedPointer<IPerfTimer> GetPerfTimer() = 0;

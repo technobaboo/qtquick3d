@@ -94,7 +94,7 @@ struct SShaderPreprocessorFeature
     bool operator==(const SShaderPreprocessorFeature &inOther) const;
 };
 
-typedef QDemonConstDataRef<SShaderPreprocessorFeature> TShaderFeatureSet;
+typedef QVector<SShaderPreprocessorFeature> TShaderFeatureSet;
 
 inline const QVector<SShaderPreprocessorFeature> ShaderCacheNoFeatures() { return QVector<SShaderPreprocessorFeature>(); }
 
