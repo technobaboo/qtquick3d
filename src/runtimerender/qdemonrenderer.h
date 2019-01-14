@@ -221,7 +221,7 @@ public:
                                                   const QVector2D &inViewportDimensions,
                                                   bool forceImageIntersect = false) const = 0;
 
-    virtual IRenderWidgetContext &GetRenderWidgetContext() = 0;
+    virtual QSharedPointer<IRenderWidgetContext> GetRenderWidgetContext() = 0;
 
     static bool IsGlEsContext(QDemonRenderContextType inContextType);
     static bool IsGlEs3Context(QDemonRenderContextType inContextType);

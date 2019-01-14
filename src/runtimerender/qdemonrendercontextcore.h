@@ -40,7 +40,7 @@
 //#include <QtDemonRuntimeRender/qdemonrendereffectsystem.h>
 #include <QtDemonRuntimeRender/qdemonrenderbufferloader.h>
 #include <QtDemonRuntimeRender/qdemontextrenderer.h>
-//#include <QtDemonRuntimeRender/qdemonrenderwidgets.h>
+#include <QtDemonRuntimeRender/qdemonrenderwidgets.h>
 //#include <QtDemonRuntimeRender/qdemonrenderimagebatchloader.h>
 #include <QtDemonRuntimeRender/qdemonrenderpixelgraphicsrenderer.h>
 #include <QtDemonRuntimeRender/qdemonrendertexttexturecache.h>
@@ -99,7 +99,7 @@ protected:
     virtual ~IQDemonRenderContext() {}
 public:
         virtual QSharedPointer<IQDemonRenderer> GetRenderer() = 0;
-    //    virtual QSharedPointer<IRenderWidgetContext> GetRenderWidgetContext() = 0;
+        virtual QSharedPointer<IRenderWidgetContext> GetRenderWidgetContext() = 0;
     //    virtual QSharedPointer<IBufferManager> GetBufferManager() = 0;
     //    virtual QSharedPointer<IResourceManager> GetResourceManager() = 0;
     virtual QSharedPointer<QDemonRenderContext> GetRenderContext() = 0;

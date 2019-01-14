@@ -27,7 +27,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#pragma once
 #ifndef QDEMON_RENDER_SHADER_CODE_GENERATOR_V2_H
 #define QDEMON_RENDER_SHADER_CODE_GENERATOR_V2_H
 #include <QtDemonRuntimeRender/qdemonrendershadercodegenerator.h>

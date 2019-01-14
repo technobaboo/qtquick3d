@@ -504,7 +504,7 @@ struct SDynamicObjClassImpl : public IDynamicObjectClass
     {
     }
 
-    ~SDynamicObjClassImpl()
+    ~SDynamicObjClassImpl() override
     {
         if (m_PropertyDefinitions.size()) {
             for (quint32 idx = 0, end = m_PropertyDefinitions.size(); idx < end; ++idx) {

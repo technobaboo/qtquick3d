@@ -28,11 +28,13 @@
 **
 ****************************************************************************/
 
+#include <QtDemonRender/qdemonrenderbasetypes.h>
 #include <QtDemonRuntimeRender/qdemonrenderwidgets.h>
 #include <QtDemonRuntimeRender/qdemonrendernode.h>
 #include <QtDemonRender/qdemonrendercontext.h>
 #include <QtDemonRuntimeRender/qdemonrendershadercodegeneratorv2.h>
 #include <QtDemonRender/qdemonrendershaderprogram.h>
+#include <QtDemon/qdemonutils.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -44,8 +46,8 @@ struct SWidgetBBox : public IRenderWidget
     QVector3D m_Color;
     QDemonRenderVertexBuffer *m_BoxVertexBuffer;
     QDemonRenderIndexBuffer *m_BoxIndexBuffer;
-    QDemonRenderInputAssembler *m_BoxInputAssembler;
-    QDemonRenderShaderProgram *m_BoxShader;
+    QSharedPointer<QDemonRenderInputAssembler> m_BoxInputAssembler;
+    QSharedPointer<QDemonRenderShaderProgram> m_BoxShader;
     QString m_ItemName;
     SWidgetBBox(SNode &inNode, const QDemonBounds3 &inBounds, const QVector3D &inColor)
         : IRenderWidget(inNode)
@@ -60,7 +62,7 @@ struct SWidgetBBox : public IRenderWidget
 
     void SetupBoxShader(IRenderWidgetContext &inContext)
     {
-        m_BoxShader = inContext.GetShader(m_ItemName);
+        m_BoxShader.reset(inContext.GetShader(m_ItemName));
         if (!m_BoxShader) {
             IShaderProgramGenerator &theGenerator(inContext.GetProgramGenerator());
             theGenerator.BeginProgram();
@@ -80,7 +82,7 @@ struct SWidgetBBox : public IRenderWidget
             theFragmentGenerator.Append("\tgl_FragColor.rgb = output_color;");
             theFragmentGenerator.Append("\tgl_FragColor.a = 1.0;");
             theFragmentGenerator.Append("}");
-            m_BoxShader = inContext.CompileAndStoreShader(m_ItemName);
+            m_BoxShader.reset(inContext.CompileAndStoreShader(m_ItemName));
         }
     }
 
@@ -88,7 +90,7 @@ struct SWidgetBBox : public IRenderWidget
                                          QDemonDataRef<QVector3D> thePoints)
     {
         QDemonRenderVertexBufferEntry theEntry(
-                    "attr_pos", QDemonRenderComponentTypes::float, 3);
+                    "attr_pos", QDemonRenderComponentTypes::Float16, 3);
         m_BoxVertexBuffer = &inContext.GetOrCreateVertexBuffer(
                     m_ItemName, 3 * sizeof(float), toU8DataRef(thePoints.begin(), thePoints.size()));
         m_BoxIndexBuffer = inContext.GetIndexBuffer(m_ItemName);
@@ -125,11 +127,11 @@ struct SWidgetBBox : public IRenderWidget
                 xyZ, XyZ, xyZ, xYZ,
             };
             m_BoxIndexBuffer = &inContext.GetOrCreateIndexBuffer(
-                        m_ItemName, QDemonRenderComponentTypes::quint8, sizeof(indexes),
+                        m_ItemName, QDemonRenderComponentTypes::UnsignedInteger8, sizeof(indexes),
                         toU8DataRef(indexes, sizeof(indexes)));
         }
 
-        m_BoxInputAssembler = inContext.GetInputAssembler(m_ItemName);
+        m_BoxInputAssembler.reset(inContext.GetInputAssembler(m_ItemName));
         if (!m_BoxInputAssembler && m_BoxIndexBuffer && m_BoxVertexBuffer) {
             // create our attribute layout
             QDemonRenderAttribLayout *theAttribLAyout =
@@ -137,9 +139,9 @@ struct SWidgetBBox : public IRenderWidget
 
             quint32 strides = m_BoxVertexBuffer->GetStride();
             quint32 offsets = 0;
-            m_BoxInputAssembler = &inContext.GetOrCreateInputAssembler(
+            m_BoxInputAssembler.reset(&inContext.GetOrCreateInputAssembler(
                         m_ItemName, theAttribLAyout, toConstDataRef(&m_BoxVertexBuffer, 1),
-                        m_BoxIndexBuffer, toConstDataRef(&strides, 1), toConstDataRef(&offsets, 1));
+                        m_BoxIndexBuffer, toConstDataRef(&strides, 1), toConstDataRef(&offsets, 1)));
         }
         SetupBoxShader(inContext);
     }
@@ -154,7 +156,7 @@ struct SWidgetBBox : public IRenderWidget
         QMatrix4x4 theNodeRotation;
         QMatrix4x4 theNodeToCamera = theInfo.m_NodeParentToCamera * m_Node->m_LocalTransform;
         for (quint32 idx = 0; idx < 8; ++idx)
-            thePoints[idx] = theNodeToCamera.transform(thePoints[idx]);
+            thePoints[idx] = mat44::transform(theNodeToCamera, thePoints[idx]);
         SetupBoundingBoxGraphicsObjects(inWidgetContext, toDataRef(thePoints, 8));
         if (m_BoxShader && m_BoxInputAssembler) {
             inRenderContext.SetBlendingEnabled(false);
@@ -174,8 +176,8 @@ struct SWidgetBBox : public IRenderWidget
 struct SWidgetAxis : public IRenderWidget
 {
     QDemonRenderVertexBuffer *m_AxisVertexBuffer;
-    QDemonRenderInputAssembler *m_AxisInputAssembler;
-    QDemonRenderShaderProgram *m_AxisShader;
+    QSharedPointer<QDemonRenderInputAssembler> m_AxisInputAssembler;
+    QSharedPointer<QDemonRenderShaderProgram> m_AxisShader;
     QString m_ItemName;
 
     SWidgetAxis(SNode &inNode)
@@ -188,7 +190,7 @@ struct SWidgetAxis : public IRenderWidget
 
     void SetupAxisShader(IRenderWidgetContext &inContext)
     {
-        m_AxisShader = inContext.GetShader(m_ItemName);
+        m_AxisShader.reset(inContext.GetShader(m_ItemName));
         if (!m_AxisShader) {
             IShaderProgramGenerator &theGenerator(inContext.GetProgramGenerator());
             theGenerator.BeginProgram();
@@ -209,7 +211,7 @@ struct SWidgetAxis : public IRenderWidget
             theFragmentGenerator.Append("\tgl_FragColor.rgb = output_color;");
             theFragmentGenerator.Append("\tgl_FragColor.a = 1.0;");
             theFragmentGenerator.Append("}");
-            m_AxisShader = inContext.CompileAndStoreShader(m_ItemName);
+            m_AxisShader.reset(inContext.CompileAndStoreShader(m_ItemName));
         }
     }
 
@@ -217,9 +219,9 @@ struct SWidgetAxis : public IRenderWidget
     {
         QDemonRenderVertexBufferEntry theEntries[] = {
             QDemonRenderVertexBufferEntry("attr_pos",
-            QDemonRenderComponentTypes::float, 3),
+            QDemonRenderComponentTypes::Float16, 3),
             QDemonRenderVertexBufferEntry("attr_color",
-            QDemonRenderComponentTypes::float, 3, 12),
+            QDemonRenderComponentTypes::Float16, 3, 12),
         };
 
         m_AxisVertexBuffer = &inContext.GetOrCreateVertexBuffer(
@@ -232,15 +234,15 @@ struct SWidgetAxis : public IRenderWidget
 
             quint32 strides = m_AxisVertexBuffer->GetStride();
             quint32 offsets = 0;
-            m_AxisInputAssembler = &inContext.GetOrCreateInputAssembler(
+            m_AxisInputAssembler.reset(&inContext.GetOrCreateInputAssembler(
                         m_ItemName, theAttribLAyout, toConstDataRef(&m_AxisVertexBuffer, 1), nullptr,
-                        toConstDataRef(&strides, 1), toConstDataRef(&offsets, 1));
+                        toConstDataRef(&strides, 1), toConstDataRef(&offsets, 1)));
         }
     }
 
     inline QVector3D TransformDirection(const QMatrix3x3 &inMatrix, const QVector3D &inDir)
     {
-        QVector3D retval = inMatrix.transform(inDir);
+        QVector3D retval = mat33::transform(inMatrix, inDir);
         retval.normalize();
         return retval;
     }
@@ -259,7 +261,7 @@ struct SWidgetAxis : public IRenderWidget
             }
             QVector3D thePivot(m_Node->m_Pivot);
             if (m_Node->m_Flags.IsLeftHanded())
-                thePivot.z *= -1;
+                thePivot[2] /* .z */ *= -1;
             SWidgetRenderInformation theInfo(inWidgetContext.GetWidgetRenderInformation(
                                                  *m_Node, thePivot, RenderWidgetModes::Local));
 
@@ -267,9 +269,7 @@ struct SWidgetAxis : public IRenderWidget
             m_Node->CalculateRotationMatrix(theNodeRotation);
             if (m_Node->m_Flags.IsLeftHanded())
                 SNode::FlipCoordinateSystem(theNodeRotation);
-            QMatrix3x3 theRotationMatrix(theNodeRotation.column0.getXYZ(),
-                                         theNodeRotation.column1.getXYZ(),
-                                         theNodeRotation.column2.getXYZ());
+            QMatrix3x3 theRotationMatrix(theNodeRotation.constData());
             // Move the camera position into camera space.  This is so that when we render we don't
             // have to account
             // for scaling done in the camera's MVP.
@@ -313,6 +313,11 @@ struct SWidgetAxis : public IRenderWidget
 };
 }
 
+IRenderWidget::~IRenderWidget()
+{
+
+}
+
 IRenderWidget &IRenderWidget::CreateBoundingBoxWidget(SNode &inNode, const QDemonBounds3 &inBounds,
                                                       const QVector3D &inColor)
 {
@@ -324,4 +329,8 @@ IRenderWidget &IRenderWidget::CreateAxisWidget(SNode &inNode)
     return *new SWidgetAxis(inNode);
 }
 
+IRenderWidgetContext::~IRenderWidgetContext()
+{
+
+}
 QT_END_NAMESPACE

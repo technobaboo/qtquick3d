@@ -66,7 +66,7 @@ HEADERS += \
     qdemonrendertextureatlas.h \
     qdemonrenderthreadpool.h \
 #    qdemonrenderuipsharedtranslation.h \
-#    qdemonrenderwidgets.h \
+    qdemonrenderwidgets.h \
     qdemontextrenderer.h \
     qdemonruntimerenderlogging.h
 
@@ -105,7 +105,7 @@ SOURCES += \
     qdemonrendertextureatlas.cpp \
     qdemonrenderthreadpool.cpp \
 #    qdemonrenderuipsharedtranslation.cpp \
-#    qdemonrenderwidgets.cpp \
+    qdemonrenderwidgets.cpp \
     qdemontextrenderer.cpp \
     qdemonruntimerenderlogging.cpp \
     qdemonrenderer.cpp

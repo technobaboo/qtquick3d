@@ -341,10 +341,10 @@ struct SRenderContext : public IQDemonRenderContext, public QEnableSharedFromThi
     void SetViewport(QDemonOption<QDemonRenderRect> inViewport) override { m_Viewport = inViewport; }
     QDemonOption<QDemonRenderRect> GetViewport() const override { return m_Viewport; }
 
-//    QSharedPointer<IRenderWidgetContext> GetRenderWidgetContext() override
-//    {
-//        return m_Renderer->GetRenderWidgetContext();
-//    }
+    QSharedPointer<IRenderWidgetContext> GetRenderWidgetContext() override
+    {
+        return m_Renderer->GetRenderWidgetContext();
+    }
 
     QPair<QDemonRenderRect, QDemonRenderRect> GetPresentationViewportAndOuterViewport() const
     {

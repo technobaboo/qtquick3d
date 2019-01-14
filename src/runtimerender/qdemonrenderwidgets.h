@@ -27,9 +27,10 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#pragma once
 #ifndef QDEMON_RENDER_WIDGETS_H
 #define QDEMON_RENDER_WIDGETS_H
+
+#include <QtCore/qpair.h>
 
 #include <QtGui/QMatrix4x4>
 #include <QtGui/QMatrix3x3>
@@ -43,6 +44,8 @@
 #include <QtDemonRender/qdemonrenderindexbuffer.h>
 
 #include <QtDemonRuntimeRender/qdemonrendertext.h>
+
+#include <QtDemonRuntimeRender/qdemonrendershadercodegenerator.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -113,7 +116,7 @@ class IShaderProgramGenerator;
 class IRenderWidgetContext
 {
 protected:
-    virtual ~IRenderWidgetContext() {}
+    virtual ~IRenderWidgetContext();
 public:
     virtual QDemonRenderVertexBuffer &
     GetOrCreateVertexBuffer(QString &inStr, quint32 stride,
@@ -156,7 +159,7 @@ public:
 class IRenderWidget
 {
 protected:
-    virtual ~IRenderWidget() {}
+    virtual ~IRenderWidget();
     SNode *m_Node;
 
 public:
