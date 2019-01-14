@@ -27,7 +27,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#pragma once
 #ifndef QDEMON_RENDER_CONTEXT_CORE_H
 #define QDEMON_RENDER_CONTEXT_CORE_H
 
@@ -68,6 +67,7 @@ struct ScaleModes
 class IQDemonRenderContextCore
 {
 public:
+    virtual ~IQDemonRenderContextCore();
     virtual QSharedPointer<IInputStreamFactory> GetInputStreamFactory() = 0;
     virtual QSharedPointer<IThreadPool> GetThreadPool() = 0;
     //    virtual QSharedPointer<IDynamicObjectSystemCore> GetDynamicObjectSystemCore() = 0;

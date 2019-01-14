@@ -748,6 +748,11 @@ QSharedPointer<IQDemonRenderContext> SRenderContextCore::CreateRenderContext(QSh
 }
 }
 
+IQDemonRenderContextCore::~IQDemonRenderContextCore()
+{
+
+}
+
 QSharedPointer<IQDemonRenderContextCore> IQDemonRenderContextCore::Create()
 {
     return QSharedPointer<SRenderContextCore>(new SRenderContextCore());

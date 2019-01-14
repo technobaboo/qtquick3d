@@ -112,28 +112,30 @@ void SDynamicObject::SetStrPropertyValueT(dynamic::SPropertyDefinition &inDefini
     if (inDefinition.m_DataType == QDemonRenderShaderDataTypes::Integer) {
         QDemonConstDataRef<QString> theEnumValues = inDefinition.m_EnumValueNames;
         for (qint32 idx = 0, end = (qint32)theEnumValues.size(); idx < end; ++idx) {
-            if (strcmp(theEnumValues[idx].c_str(), inValue) == 0) {
+            if (theEnumValues[idx].compare(inValue) == 0) {
                 SetPropertyValueT(inDefinition, idx);
                 break;
             }
         }
-    } else if (inDefinition.m_DataType == QDemonRenderShaderDataTypes::QDemonRenderTexture2DPtr) {
+    } else if (inDefinition.m_DataType == QDemonRenderShaderDataTypes::Texture2D) {
         if (inProjectDir == nullptr)
             inProjectDir = "";
-        if (CFileTools::RequiresCombineBaseAndRelative(inValue)) {
-            QString absolute = QDir(inProjectDir).filePath(inValue);
-            ioWorkspace.assign(absolute.toLatin1().constData());
-            SetPropertyValueT(inDefinition, QString::fromLocal8Bit(ioWorkspace.c_str()));
+
+        const bool RequiresCombineBaseAndRelative = (inValue && (::strncmp(inValue, ".", 1) == 0)) ? true : false;
+        if (RequiresCombineBaseAndRelative) {
+            const QString absolute = QDir(inProjectDir).filePath(inValue);
+            ioWorkspace = absolute;
+            SetPropertyValueT(inDefinition, ioWorkspace);
             // We also adjust the image path in the definition
             // I could not find a better place
-            inDefinition.m_ImagePath = QString::fromLocal8Bit((ioWorkspace.c_str());
+            inDefinition.m_ImagePath = ioWorkspace;
         } else {
-            SetPropertyValueT(inDefinition, QString::fromLocal8Bit((inValue));
+            SetPropertyValueT(inDefinition, inValue);
         }
-    } else if (inDefinition.m_DataType == QDemonRenderShaderDataTypes::QDemonRenderImage2DPtr) {
-        SetPropertyValueT(inDefinition, QString::fromLocal8Bit((inValue));
-    } else if (inDefinition.m_DataType == QDemonRenderShaderDataTypes::QDemonRenderDataBufferPtr) {
-        SetPropertyValueT(inDefinition, QString::fromLocal8Bit((inValue));
+    } else if (inDefinition.m_DataType == QDemonRenderShaderDataTypes::Image2D) {
+        SetPropertyValueT(inDefinition, inValue);
+    } else if (inDefinition.m_DataType == QDemonRenderShaderDataTypes::DataBuffer) {
+        SetPropertyValueT(inDefinition, inValue);
     } else {
         Q_ASSERT(false);
     }
@@ -147,12 +149,12 @@ void SDynamicObject::SetPropertyValue(const dynamic::SPropertyDefinition &inDefi
                          inProjectDir, ioWorkspace);
 }
 
-void SDynamicObject::SetPropertyValue(const dynamic::SPropertyDefinition &inDefinition,
-                                      const char *inValue, const char *inProjectDir,
-                                      QString &ioWorkspace)
-{
-    SetStrPropertyValueT(const_cast<dynamic::SPropertyDefinition &>(inDefinition), inValue,
-                         inProjectDir, ioWorkspace);
-}
+//void SDynamicObject::SetPropertyValue(const dynamic::SPropertyDefinition &inDefinition,
+//                                      const char *inValue, const char *inProjectDir,
+//                                      QString &ioWorkspace)
+//{
+//    SetStrPropertyValueT(const_cast<dynamic::SPropertyDefinition &>(inDefinition), inValue,
+//                         inProjectDir, ioWorkspace);
+//}
 
 QT_END_NAMESPACE
