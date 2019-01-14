@@ -1371,18 +1371,16 @@ struct SDynamicObjectSystemImpl : public IDynamicObjectSystem
         QSharedPointer<IShaderCache> theShaderCache = m_Context->GetShaderCache();
 
         QString theKey = GetShaderCacheKey(inId.toLocal8Bit(), inProgramMacroName.toLocal8Bit(), inFlags);
-        QVector<SShaderPreprocessorFeature> inFeatureSetCpy; // Lazy
-        std::copy(inFeatureSet.begin(), inFeatureSet.end(), inFeatureSetCpy.begin());
         if (inForceCompilation) {
             return theShaderCache->ForceCompileProgram(theKey, m_VertShader.toLocal8Bit(),
                                                       m_FragShader.toLocal8Bit(), nullptr, nullptr,
                                                       m_GeometryShader.toLocal8Bit(), theFlags,
-                                                      inFeatureSetCpy, false);
+                                                      inFeatureSet, false);
         }
 
         return theShaderCache->CompileProgram(theKey, m_VertShader.toLocal8Bit(), m_FragShader.toLocal8Bit(),
                                              nullptr, nullptr, m_GeometryShader.toLocal8Bit(), theFlags,
-                                             inFeatureSetCpy);
+                                             inFeatureSet);
     }
 
     // This just returns the custom material shader source without compiling
@@ -1410,10 +1408,8 @@ struct SDynamicObjectSystemImpl : public IDynamicObjectSystem
 
         // TODO: This looks funky (if found)...
         if (found || inForceCompilation) {
-            QVector<SShaderPreprocessorFeature> inFeatureSetCpy; // Lazy
-            std::copy(inFeatureSet.begin(), inFeatureSet.end(), inFeatureSetCpy.begin());
             QSharedPointer<QDemonRenderShaderProgram> theProgram = m_Context->GetShaderCache()->GetProgram(
-                        GetShaderCacheKey(inPath.toLocal8Bit(), inProgramMacro.toLocal8Bit(), inFlags), inFeatureSetCpy);
+                        GetShaderCacheKey(inPath.toLocal8Bit(), inProgramMacro.toLocal8Bit(), inFlags), inFeatureSet);
             SDynamicShaderProgramFlags theFlags(inFlags);
             if (!theProgram || inForceCompilation) {
                 SDynamicObjectShaderInfo &theShaderInfo =
@@ -1462,9 +1458,7 @@ struct SDynamicObjectSystemImpl : public IDynamicObjectSystem
         auto theInserter = m_ShaderMap.find(shaderMapKey);
         const bool found = theInserter != m_ShaderMap.end();
         if (found) {
-            QVector<SShaderPreprocessorFeature> inFeatureSetCpy; // TODO: Lazy
-            std::copy(inFeatureSet.begin(), inFeatureSet.end(), inFeatureSetCpy.begin());
-            QSharedPointer<QDemonRenderShaderProgram> theProgram = m_Context->GetShaderCache()->GetProgram(GetShaderCacheKey(inPath.toLocal8Bit(), theProgramMacro.toLocal8Bit(), theFlags), inFeatureSetCpy);
+            QSharedPointer<QDemonRenderShaderProgram> theProgram = m_Context->GetShaderCache()->GetProgram(GetShaderCacheKey(inPath.toLocal8Bit(), theProgramMacro.toLocal8Bit(), theFlags), inFeatureSet);
             SDynamicShaderProgramFlags flags(theFlags);
             if (!theProgram) {
                 QString theShaderBuffer;
