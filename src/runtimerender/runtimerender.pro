@@ -57,7 +57,7 @@ HEADERS += \
     qdemonrendershaderkeys.h \
 #    qdemonrendershadowmap.h \
 #    qdemonrendersubpresentation.h \
-#    qdemonrendersubpresentationhelper.h \
+    qdemonrendersubpresentationhelper.h \
     qdemonrendertaggedpointer.h \
     qdemonrendertessmodevalues.h \
     qdemonrendertexttextureatlas.h \
