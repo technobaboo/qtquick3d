@@ -50,13 +50,14 @@ QT_BEGIN_NAMESPACE
 
 using namespace dynamic;
 
-namespace {
-typedef QPair<QString, QString> TStrStrPair;
-}
-
 uint qHash(const TStrStrPair &item)
 {
     return qHash(item.first) ^ qHash(item.second);
+}
+
+uint qHash(const SShaderMapKey &inKey)
+{
+    return inKey.m_HashCode;
 }
 
 namespace dynamic {
@@ -610,46 +611,12 @@ struct SDataRemapper
     }
 };
 
-struct SShaderMapKey
-{
-    TStrStrPair m_Name;
-    QVector<SShaderPreprocessorFeature> m_Features;
-    TessModeValues::Enum m_TessMode;
-    bool m_WireframeMode;
-    size_t m_HashCode;
-    SShaderMapKey(TStrStrPair inName, TShaderFeatureSet inFeatures, TessModeValues::Enum inTessMode,
-                  bool inWireframeMode)
-        : m_Name(inName)
-        , m_TessMode(inTessMode)
-        , m_WireframeMode(inWireframeMode)
-    {
-        for (quint32 i = 0; i < inFeatures.size(); ++i) {
-            m_Features.append(inFeatures[i]);
-        }
-
-        m_HashCode = qHash(m_Name)
-                ^ HashShaderFeatureSet(m_Features)
-                ^ qHash(m_TessMode) ^ qHash(m_WireframeMode);
-    }
-    bool operator==(const SShaderMapKey &inKey) const
-    {
-        return m_Name == inKey.m_Name &&
-               m_Features == inKey.m_Features &&
-               m_TessMode == inKey.m_TessMode &&
-               m_WireframeMode == inKey.m_WireframeMode;
-    }
-};
-}
-
-uint qHash(const SShaderMapKey &inKey)
-{
-    return inKey.m_HashCode;
 }
 
 namespace {
 
 typedef QHash<QString, QSharedPointer<SDynamicObjClassImpl>> TStringClassMap;
-typedef QHash<QString, char *> TPathDataMap;
+typedef QHash<QString, QByteArray> TPathDataMap;
 typedef QHash<QString, SDynamicObjectShaderInfo> TShaderInfoMap;
 typedef QSet<QString> TPathSet;
 typedef QHash<SShaderMapKey, TShaderAndFlags> TShaderMap;
@@ -686,9 +653,6 @@ struct SDynamicObjectSystemImpl : public IDynamicObjectSystem
 
     virtual ~SDynamicObjectSystemImpl()
     {
-        for (TPathDataMap::iterator iter = m_ExpandedFiles.begin(), end = m_ExpandedFiles.end();
-             iter != end; ++iter)
-            ::free(iter->second);
     }
 
     bool IsRegistered(QString inStr) override
@@ -746,30 +710,30 @@ struct SDynamicObjectSystemImpl : public IDynamicObjectSystem
         return true;
     }
 
-    SDynamicObjClassImpl *FindClass(QString inName)
+    QSharedPointer<SDynamicObjClassImpl> FindClass(QString inName)
     {
         TStringClassMap::iterator iter = m_Classes.find(inName);
         if (iter != m_Classes.end())
-            return iter->second.mPtr;
+            return iter.value();
         return nullptr;
     }
 
-    QPair<const SPropertyDefinition *, SDynamicObjClassImpl *>
+    QPair<const SPropertyDefinition *, QSharedPointer<SDynamicObjClassImpl> >
     FindProperty(QString inName, QString inPropName)
     {
-        SDynamicObjClassImpl *cls = FindClass(inName);
+        QSharedPointer<SDynamicObjClassImpl> cls = FindClass(inName);
         if (cls) {
             const SPropertyDefinition *def = cls->FindDefinition(inPropName);
             if (def)
-                return QPair<const SPropertyDefinition *, SDynamicObjClassImpl *>(def, cls);
+                return QPair<const SPropertyDefinition *, QSharedPointer<SDynamicObjClassImpl> >(def, cls);
         }
-        return QPair<const SPropertyDefinition *, SDynamicObjClassImpl *>(nullptr, nullptr);
+        return QPair<const SPropertyDefinition *, QSharedPointer<SDynamicObjClassImpl> >(nullptr, nullptr);
     }
 
     void SetPropertyDefaultValue(QString inName, QString inPropName,
                                  QDemonConstDataRef<quint8> inDefaultData) override
     {
-        QPair<const SPropertyDefinition *, SDynamicObjClassImpl *> def =
+        QPair<const SPropertyDefinition *, QSharedPointer<SDynamicObjClassImpl> > def =
                 FindProperty(inName, inPropName);
         if (def.first && inDefaultData.size() >= def.first->m_ByteSize) {
             ::memcpy(def.second->m_PropertyDefaultData + def.first->m_Offset, inDefaultData.begin(),
@@ -783,7 +747,7 @@ struct SDynamicObjectSystemImpl : public IDynamicObjectSystem
                               QDemonConstDataRef<QString> inNames) override
     {
 
-        QPair<const SPropertyDefinition *, SDynamicObjClassImpl *> def =
+        QPair<const SPropertyDefinition *, QSharedPointer<SDynamicObjClassImpl> > def =
                 FindProperty(inName, inPropName);
         SPropertyDefinition *theDefinitionPtr = const_cast<SPropertyDefinition *>(def.first);
         if (theDefinitionPtr == nullptr) {
@@ -791,25 +755,21 @@ struct SDynamicObjectSystemImpl : public IDynamicObjectSystem
             return;
         }
         if (theDefinitionPtr->m_EnumValueNames.size()) {
-            ::free(theDefinitionPtr->m_EnumValueNames.begin());
+            ::free((void *)theDefinitionPtr->m_EnumValueNames.begin());
             theDefinitionPtr->m_EnumValueNames = QDemonConstDataRef<QString>();
         }
         theDefinitionPtr->m_IsEnumProperty = true;
         if (inNames.size()) {
-            QString *theNameValues = (QString *)m_Allocator.allocate(
-                        inNames.size() * sizeof(QString), "PropertyEnumNames", __FILE__,
-                        __LINE__);
-
+            QString *theNameValues = new QString[inName.size()];
             ::memcpy(theNameValues, inNames.begin(), inNames.size() * sizeof(QString));
-            theDefinitionPtr->m_EnumValueNames =
-                    QDemonConstDataRef<QString>(theNameValues, inNames.size());
+            theDefinitionPtr->m_EnumValueNames = QDemonConstDataRef<QString>(theNameValues, inNames.size());
         }
     }
 
     virtual QDemonConstDataRef<QString>
     GetPropertyEnumNames(QString inName, QString inPropName) const override
     {
-        QPair<const SPropertyDefinition *, SDynamicObjClassImpl *> def =
+        QPair<const SPropertyDefinition *, QSharedPointer<SDynamicObjClassImpl> > def =
                 const_cast<SDynamicObjectSystemImpl &>(*this).FindProperty(inName, inPropName);
         if (def.first)
             return def.first->m_EnumValueNames;
@@ -821,7 +781,7 @@ struct SDynamicObjectSystemImpl : public IDynamicObjectSystem
     GetProperties(QString inName) const override
     {
         QMutexLocker locker(&m_PropertyLoadMutex);
-        SDynamicObjClassImpl *cls = const_cast<SDynamicObjectSystemImpl &>(*this).FindClass(inName);
+        QSharedPointer<SDynamicObjClassImpl> cls = const_cast<SDynamicObjectSystemImpl &>(*this).FindClass(inName);
         if (cls)
             return cls->m_PropertyDefinitions;
         return QDemonConstDataRef<dynamic::SPropertyDefinition>();
@@ -834,7 +794,7 @@ struct SDynamicObjectSystemImpl : public IDynamicObjectSystem
                                     QDemonRenderTextureMagnifyingOp::Enum inMagFilterOp,
                                     QDemonRenderTextureMinifyingOp::Enum inMinFilterOp) override
     {
-        QPair<const SPropertyDefinition *, SDynamicObjClassImpl *> def =
+        QPair<const SPropertyDefinition *, QSharedPointer<SDynamicObjClassImpl> > def =
                 FindProperty(inName, inPropName);
         SPropertyDefinition *theDefinitionPtr = const_cast<SPropertyDefinition *>(def.first);
         if (theDefinitionPtr == nullptr) {
@@ -850,13 +810,14 @@ struct SDynamicObjectSystemImpl : public IDynamicObjectSystem
 
     IDynamicObjectClass *GetDynamicObjectClass(QString inName) override
     {
-        return FindClass(inName);
+        // TODO: Should probably shared pointer
+        return FindClass(inName).data();
     }
 
     void SetRenderCommands(QString inClassName,
                            QDemonConstDataRef<dynamic::SCommand *> inCommands) override
     {
-        SDynamicObjClassImpl *theClass =
+        QSharedPointer<SDynamicObjClassImpl> theClass =
                 const_cast<SDynamicObjectSystemImpl &>(*this).FindClass(inClassName);
         if (theClass == nullptr) {
             Q_ASSERT(false);
@@ -901,7 +862,7 @@ struct SDynamicObjectSystemImpl : public IDynamicObjectSystem
     virtual QDemonConstDataRef<dynamic::SCommand *>
     GetRenderCommands(QString inClassName) const override
     {
-        SDynamicObjClassImpl *cls =
+        QSharedPointer<SDynamicObjClassImpl> cls =
                 const_cast<SDynamicObjectSystemImpl &>(*this).FindClass(inClassName);
         if (cls)
             return cls->m_RenderCommands;
@@ -910,7 +871,7 @@ struct SDynamicObjectSystemImpl : public IDynamicObjectSystem
 
     SDynamicObject *CreateInstance(QString inClassName) override
     {
-        SDynamicObjClassImpl *theClass = FindClass(inClassName);
+        QSharedPointer<SDynamicObjClassImpl> theClass = FindClass(inClassName);
         if (!theClass) {
             Q_ASSERT(false);
             return nullptr;
@@ -930,23 +891,18 @@ struct SDynamicObjectSystemImpl : public IDynamicObjectSystem
                        bool inHasGeomShader, bool inIsComputeShader) override
     {
         inData = inData ? inData : "";
-        QPair<TPathDataMap::iterator, bool> theInserter = m_ExpandedFiles.insert(inPath, (char *)"");
-        if (theInserter.second == false) {
-            // Delete the existing entry.
-            ::free(theInserter.first->second);
-        }
-        quint32 theLen = (quint32)strlen(inData) + 1;
-        char *newData = (char *)::malloc(theLen);
-        ::memcpy(newData, inData, theLen);
-        theInserter.first->second = newData;
+        auto foundIt = m_ExpandedFiles.find(inPath);
+        const QByteArray newData(inData);
+        if (foundIt != m_ExpandedFiles.end())
+            foundIt.value() = newData;
+        else
+            m_ExpandedFiles.insert(inPath, newData);
 
         // set shader type and version if available
         if (inShaderType || inShaderVersion || inHasGeomShader || inIsComputeShader) {
             // UdoL TODO: Add this to the load / save setction
             // In addition we should merge the source code into SDynamicObjectShaderInfo as well
-            SDynamicObjectShaderInfo &theShaderInfo =
-                    m_ShaderInfoMap.insert(inPath, SDynamicObjectShaderInfo())
-                    .first->second;
+            SDynamicObjectShaderInfo &theShaderInfo = m_ShaderInfoMap.insert(inPath, SDynamicObjectShaderInfo()).value();
             theShaderInfo.m_Type = QString::fromLocal8Bit(nonNull(inShaderType));
             theShaderInfo.m_Version = QString::fromLocal8Bit(nonNull(inShaderVersion));
             theShaderInfo.m_HasGeomShader = inHasGeomShader;
@@ -985,89 +941,82 @@ struct SDynamicObjectSystemImpl : public IDynamicObjectSystem
                                          const char *inPathToEffect)
     {
         // Now do search and replace for the headers
-        for (QString::size_type thePos = theReadBuffer.find(m_IncludeSearch);
-             thePos != QString::npos;
-             thePos = theReadBuffer.find(m_IncludeSearch, thePos + 1)) {
-            QString::size_type theEndQuote =
-                    theReadBuffer.find('\"', thePos + m_IncludeSearch.size() + 1);
+        for (int thePos = theReadBuffer.indexOf(m_IncludeSearch); thePos != -1; thePos = theReadBuffer.indexOf(m_IncludeSearch, thePos + 1)) {
+            QString::size_type theEndQuote = theReadBuffer.indexOf('\"', thePos + m_IncludeSearch.size() + 1);
             // Indicates an unterminated include file.
-            if (theEndQuote == QString::npos) {
+            if (theEndQuote == -1) {
                 qCCritical(INVALID_OPERATION, "Unterminated include in file: %s", inPathToEffect);
                 theReadBuffer.clear();
                 break;
             }
             QString::size_type theActualBegin = thePos + m_IncludeSearch.size();
-            QString::iterator theIncludeBegin = theReadBuffer.begin() + theActualBegin;
-            QString::iterator theIncludeEnd = theReadBuffer.begin() + theEndQuote;
+//            QString::iterator theIncludeBegin = theReadBuffer.begin() + theActualBegin;
+//            QString::iterator theIncludeEnd = theReadBuffer.begin() + theEndQuote;
+            // TODO: Make sure that we're off here
+            QStringRef theInclude = theReadBuffer.midRef(theActualBegin, theEndQuote);
             m_IncludePath.clear();
-            m_IncludePath.append(theIncludeBegin, theIncludeEnd);
+            m_IncludePath.append(theInclude);
             // If we haven't included the file yet this round
             QString theIncludeBuffer;
-            const char *theHeader = DoLoadShader(m_IncludePath.c_str(), theIncludeBuffer);
-            quint32 theLen = (quint32)strlen(theHeader);
-            theReadBuffer =
-                    theReadBuffer.replace(theReadBuffer.begin() + thePos,
-                                          theReadBuffer.begin() + theEndQuote + 1, theHeader, theLen);
+            const char *theHeader = DoLoadShader(m_IncludePath.toLocal8Bit(), theIncludeBuffer);
+//            quint32 theLen = (quint32)strlen(theHeader);
+//            theReadBuffer = theReadBuffer.replace(theReadBuffer.begin() + thePos, theReadBuffer.begin() + theEndQuote + 1, theHeader, theLen);
+            theReadBuffer = theReadBuffer.replace(thePos, theEndQuote + 1, QString::fromLatin1(theHeader));
         }
     }
 
     const char *DoLoadShader(const char *inPathToEffect, QString &outShaderData)
     {
-        QPair<TPathDataMap::iterator, bool> theInsert =
-                m_ExpandedFiles.insert(QString::fromLocal8Bit(inPathToEffect), (char *)"");
+        auto theInsert = m_ExpandedFiles.find(QString::fromLocal8Bit(inPathToEffect));
+        const bool found = (theInsert != m_ExpandedFiles.end());
+        if (found)
+            *theInsert = QByteArray();
+        else
+            theInsert = m_ExpandedFiles.insert(QString::fromLocal8Bit(inPathToEffect), QByteArray());
 
         QString &theReadBuffer(outShaderData);
-        if (theInsert.second) {
-
-            const QString defaultDir = m_Context->GetDynamicObjectSystem()
-                    .GetShaderCodeLibraryDirectory();
-            const QString platformDir = m_Context->GetDynamicObjectSystem()
-                    .shaderCodeLibraryPlatformDirectory();
-            const QString ver = m_Context->GetDynamicObjectSystem()
-                    .shaderCodeLibraryVersion();
+        if (found) {
+            const QString defaultDir = m_Context->GetDynamicObjectSystem()->GetShaderCodeLibraryDirectory();
+            const QString platformDir = m_Context->GetDynamicObjectSystem()->shaderCodeLibraryPlatformDirectory();
+            const QString ver = m_Context->GetDynamicObjectSystem()->shaderCodeLibraryVersion();
 
             QString fullPath;
-            QSharedPointer<IRefCountedInputStream> theStream;
+            QSharedPointer<QIODevice> theStream;
             if (!platformDir.isEmpty()) {
                 QTextStream stream(&fullPath);
                 stream << platformDir << QLatin1Char('/') << inPathToEffect;
-                theStream = m_CoreContext.GetInputStreamFactory()
-                        .GetStreamForFile(fullPath.toLatin1().data());
+                theStream = m_CoreContext->GetInputStreamFactory()->GetStreamForFile(fullPath.toLatin1().data());
             }
 
-            if (theStream.mPtr == nullptr) {
+            if (theStream.isNull()) {
                 fullPath.clear();
                 QTextStream stream(&fullPath);
                 stream << defaultDir << QLatin1Char('/') << ver << QLatin1Char('/')
                        << inPathToEffect;
-                theStream = m_CoreContext.GetInputStreamFactory()
-                        .GetStreamForFile(fullPath.toLatin1().data());
-                if (theStream.mPtr == nullptr) {
+                theStream = m_CoreContext->GetInputStreamFactory()->GetStreamForFile(fullPath.toLatin1().data());
+                if (theStream.isNull()) {
                     fullPath.clear();
                     QTextStream stream(&fullPath);
                     stream << defaultDir << QLatin1Char('/') << inPathToEffect;
-                    theStream = m_CoreContext.GetInputStreamFactory()
-                            .GetStreamForFile(fullPath.toLatin1().data());
+                    theStream = m_CoreContext->GetInputStreamFactory()->GetStreamForFile(fullPath.toLatin1().data());
                 }
             }
-            if (theStream.mPtr != nullptr) {
+            if (!theStream.isNull()) {
                 quint8 readBuf[1024];
                 quint32 amountRead = 0;
                 do {
-                    amountRead = theStream->Read(QDemonDataRef<quint8>(readBuf, 1024));
+                    amountRead = theStream->read((char *)readBuf, 1024);
                     if (amountRead)
-                        theReadBuffer.append((const char *)readBuf, amountRead);
+                        theReadBuffer.append(QByteArray::fromRawData((const char *)readBuf, amountRead));
                 } while (amountRead);
             } else {
                 qCCritical(INVALID_OPERATION, "Failed to find include file %s", inPathToEffect);
                 Q_ASSERT(false);
             }
-            theInsert.first->second = (char *)m_Allocator.allocate(
-                        theReadBuffer.size() + 1, "SDynamicObjectSystem::DoLoadShader", __FILE__, __LINE__);
-            ::memcpy(theInsert.first->second, theReadBuffer.c_str(),
-                    quint32(theReadBuffer.size()) + 1);
-        } else
-            theReadBuffer = theInsert.first->second;
+            theInsert.value() = theReadBuffer.toLatin1();
+        } else {
+            theReadBuffer = QString::fromLatin1(theInsert.value());
+        }
         DoInsertShaderHeaderInformation(theReadBuffer, inPathToEffect);
         return theReadBuffer.toLocal8Bit();
     }
@@ -1275,7 +1224,7 @@ struct SDynamicObjectSystemImpl : public IDynamicObjectSystem
     QSharedPointer<IDynamicObjectSystem> CreateDynamicSystem(QSharedPointer<IQDemonRenderContext> rc) override
     {
         m_Context = rc;
-        return *this; // ### Fix this
+        return sharedFromThis();
     }
 
     QStringList getParameters(const QString &str, int begin, int end)
@@ -1363,12 +1312,12 @@ struct SDynamicObjectSystemImpl : public IDynamicObjectSystem
         }
     }
 
-    QDemonRenderShaderProgram *CompileShader(QString inId, const char *inProgramSource,
-                                             const char *inGeomSource,
-                                             QString inProgramMacroName,
-                                             TShaderFeatureSet inFeatureSet,
-                                             const dynamic::SDynamicShaderProgramFlags &inFlags,
-                                             bool inForceCompilation = false)
+    QSharedPointer<QDemonRenderShaderProgram> CompileShader(QString inId, const char *inProgramSource,
+                                                            const char *inGeomSource,
+                                                            QString inProgramMacroName,
+                                                            TShaderFeatureSet inFeatureSet,
+                                                            const dynamic::SDynamicShaderProgramFlags &inFlags,
+                                                            bool inForceCompilation = false)
     {
         m_VertShader.clear();
         m_FragShader.clear();
@@ -1378,13 +1327,13 @@ struct SDynamicObjectSystemImpl : public IDynamicObjectSystem
         m_VertShader.append("#define VERTEX_SHADER\n");
         m_FragShader.append("#define FRAGMENT_SHADER\n");
 
-        if (inProgramMacroName.IsValid()) {
+        if (!inProgramMacroName.isEmpty()) {
             m_VertShader.append("#define ");
-            m_VertShader.append(inProgramMacroName.c_str());
+            m_VertShader.append(inProgramMacroName.toLatin1());
             m_VertShader.append("\n");
 
             m_FragShader.append("#define ");
-            m_FragShader.append(inProgramMacroName.c_str());
+            m_FragShader.append(inProgramMacroName.toLatin1());
             m_FragShader.append("\n");
         }
 
@@ -1422,16 +1371,18 @@ struct SDynamicObjectSystemImpl : public IDynamicObjectSystem
         QSharedPointer<IShaderCache> theShaderCache = m_Context->GetShaderCache();
 
         QString theKey = GetShaderCacheKey(inId.toLocal8Bit(), inProgramMacroName.toLocal8Bit(), inFlags);
-
+        QVector<SShaderPreprocessorFeature> inFeatureSetCpy; // Lazy
+        std::copy(inFeatureSet.begin(), inFeatureSet.end(), inFeatureSetCpy.begin());
         if (inForceCompilation) {
             return theShaderCache->ForceCompileProgram(theKey, m_VertShader.toLocal8Bit(),
                                                       m_FragShader.toLocal8Bit(), nullptr, nullptr,
                                                       m_GeometryShader.toLocal8Bit(), theFlags,
-                                                      inFeatureSet, false);
+                                                      inFeatureSetCpy, false);
         }
+
         return theShaderCache->CompileProgram(theKey, m_VertShader.toLocal8Bit(), m_FragShader.toLocal8Bit(),
                                              nullptr, nullptr, m_GeometryShader.toLocal8Bit(), theFlags,
-                                             inFeatureSet);
+                                             inFeatureSetCpy);
     }
 
     // This just returns the custom material shader source without compiling
@@ -1450,18 +1401,23 @@ struct SDynamicObjectSystemImpl : public IDynamicObjectSystem
                                      const SDynamicShaderProgramFlags &inFlags,
                                      bool inForceCompilation) override
     {
-        QPair<const SShaderMapKey, TShaderAndFlags> theInserter(
-                    SShaderMapKey(TStrStrPair(inPath, inProgramMacro), inFeatureSet, inFlags.m_TessMode,
-                                  inFlags.m_WireframeMode),
-                    TShaderAndFlags());
-        QPair<TShaderMap::iterator, bool> theInsertResult(m_ShaderMap.insert(theInserter));
-        if (theInsertResult.second || inForceCompilation) {
-            QSharedPointer<QDemonRenderShaderProgram> theProgram = m_Context->GetShaderCache().GetProgram(
-                        GetShaderCacheKey(inPath.toLocal8Bit(), inProgramMacro.toLocal8Bit(), inFlags), inFeatureSet);
+        SShaderMapKey shaderMapKey(TStrStrPair(inPath, inProgramMacro), inFeatureSet, inFlags.m_TessMode, inFlags.m_WireframeMode);
+        auto theInserter = m_ShaderMap.find(shaderMapKey);
+        const bool found = (theInserter != m_ShaderMap.end());
+
+        if (!found)
+            theInserter = m_ShaderMap.insert(shaderMapKey, TShaderAndFlags());
+
+        // TODO: This looks funky (if found)...
+        if (found || inForceCompilation) {
+            QVector<SShaderPreprocessorFeature> inFeatureSetCpy; // Lazy
+            std::copy(inFeatureSet.begin(), inFeatureSet.end(), inFeatureSetCpy.begin());
+            QSharedPointer<QDemonRenderShaderProgram> theProgram = m_Context->GetShaderCache()->GetProgram(
+                        GetShaderCacheKey(inPath.toLocal8Bit(), inProgramMacro.toLocal8Bit(), inFlags), inFeatureSetCpy);
             SDynamicShaderProgramFlags theFlags(inFlags);
             if (!theProgram || inForceCompilation) {
                 SDynamicObjectShaderInfo &theShaderInfo =
-                        m_ShaderInfoMap.insert(inPath, SDynamicObjectShaderInfo()).first->second;
+                        m_ShaderInfoMap.insert(inPath, SDynamicObjectShaderInfo()).value();
                 if (theShaderInfo.m_IsComputeShader == false) {
                     QString theShaderBuffer;
                     const char *programSource = DoLoadShader(inPath.toLocal8Bit(), theShaderBuffer);
@@ -1471,7 +1427,7 @@ struct SDynamicObjectSystemImpl : public IDynamicObjectSystem
                 } else {
                     QString theShaderBuffer;
                     const char *shaderVersionStr = "#version 430\n";
-                    if ((quint32)m_Context->GetRenderContext().GetRenderContextType()
+                    if ((quint32)m_Context->GetRenderContext()->GetRenderContextType()
                             == QDemonRenderContextValues::GLES3PLUS)
                         shaderVersionStr = "#version 310 es\n";
                     DoLoadShader(inPath.toLocal8Bit(), theShaderBuffer);
@@ -1481,9 +1437,9 @@ struct SDynamicObjectSystemImpl : public IDynamicObjectSystem
                     theProgram = m_Context->GetRenderContext()->CompileComputeSource(inPath.toLocal8Bit(), QDemonConstDataRef<qint8>((qint8 *)programSource, len)).mShader;
                 }
             }
-            theInsertResult.first->second = TShaderAndFlags(theProgram, theFlags);
+            theInserter.value() = TShaderAndFlags(theProgram, theFlags);
         }
-        return theInsertResult.first->second;
+        return theInserter.value();
     }
 
     TShaderAndFlags GetDepthPrepassShader(QString inPath,
@@ -1491,7 +1447,7 @@ struct SDynamicObjectSystemImpl : public IDynamicObjectSystem
                                           TShaderFeatureSet inFeatureSet) override
     {
         SDynamicObjectShaderInfo &theShaderInfo =
-                m_ShaderInfoMap.insert(inPath, SDynamicObjectShaderInfo()).first->second;
+                m_ShaderInfoMap.insert(inPath, SDynamicObjectShaderInfo()).value();
         if (theShaderInfo.m_HasGeomShader == false)
             return TShaderAndFlags();
         // else, here we go...
@@ -1501,10 +1457,14 @@ struct SDynamicObjectSystemImpl : public IDynamicObjectSystem
 
         QString theProgramMacro = m_ShaderKeyBuilder;
 
-        QPair<const SShaderMapKey, TShaderAndFlags> theInserter(SShaderMapKey(TStrStrPair(inPath, theProgramMacro), inFeatureSet, theFlags.m_TessMode, theFlags.m_WireframeMode), TShaderAndFlags());
-        QPair<TShaderMap::iterator, bool> theInsertResult(m_ShaderMap.insert(theInserter));
-        if (theInsertResult.second) {
-            QDemonRenderShaderProgram *theProgram = m_Context->GetShaderCache().GetProgram(GetShaderCacheKey(inPath.toLocal8Bit(), theProgramMacro.toLocal8Bit(), theFlags), inFeatureSet);
+        const SShaderMapKey shaderMapKey(TStrStrPair(inPath, theProgramMacro), inFeatureSet, theFlags.m_TessMode, theFlags.m_WireframeMode);
+        const TShaderAndFlags shaderFlags;
+        auto theInserter = m_ShaderMap.find(shaderMapKey);
+        const bool found = theInserter != m_ShaderMap.end();
+        if (found) {
+            QVector<SShaderPreprocessorFeature> inFeatureSetCpy; // TODO: Lazy
+            std::copy(inFeatureSet.begin(), inFeatureSet.end(), inFeatureSetCpy.begin());
+            QSharedPointer<QDemonRenderShaderProgram> theProgram = m_Context->GetShaderCache()->GetProgram(GetShaderCacheKey(inPath.toLocal8Bit(), theProgramMacro.toLocal8Bit(), theFlags), inFeatureSetCpy);
             SDynamicShaderProgramFlags flags(theFlags);
             if (!theProgram) {
                 QString theShaderBuffer;
@@ -1531,12 +1491,12 @@ struct SDynamicObjectSystemImpl : public IDynamicObjectSystem
                 programBuffer.append(fragmentSource);
                 programBuffer.append("\n#endif");
                 flags.SetGeometryShaderEnabled(true);
-                theProgram = CompileShader(inPath, programBuffer.c_str(), geomSource,
+                theProgram = CompileShader(inPath, programBuffer.toLatin1(), geomSource,
                                            theProgramMacro, inFeatureSet, flags);
             }
-            theInsertResult.first->second = TShaderAndFlags(theProgram, flags);
+            theInserter.value() = TShaderAndFlags(theProgram, flags);
         }
-        return theInsertResult.first->second;
+        return theInserter.value();
     }
 
     void setShaderCodeLibraryVersion(const QString &version) override

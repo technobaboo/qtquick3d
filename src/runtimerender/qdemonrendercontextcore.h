@@ -35,7 +35,7 @@
 #include <QtDemonRuntimeRender/qdemonrenderpresentation.h>
 #include <QtDemonRuntimeRender/qdemonrenderinputstreamfactory.h>
 #include <QtDemonRuntimeRender/qdemonrenderthreadpool.h>
-//#include <QtDemonRuntimeRender/qdemonrenderdynamicobjectsystem.h>
+#include <QtDemonRuntimeRender/qdemonrenderdynamicobjectsystem.h>
 //#include <QtDemonRuntimeRender/qdemonrendercustommaterialsystem.h>
 //#include <QtDemonRuntimeRender/qdemonrendereffectsystem.h>
 #include <QtDemonRuntimeRender/qdemonrenderbufferloader.h>
@@ -70,7 +70,7 @@ public:
     virtual ~IQDemonRenderContextCore();
     virtual QSharedPointer<IInputStreamFactory> GetInputStreamFactory() = 0;
     virtual QSharedPointer<IThreadPool> GetThreadPool() = 0;
-    //    virtual QSharedPointer<IDynamicObjectSystemCore> GetDynamicObjectSystemCore() = 0;
+    virtual QSharedPointer<IDynamicObjectSystemCore> GetDynamicObjectSystemCore() = 0;
     //    virtual QSharedPointer<ICustomMaterialSystemCore> GetMaterialSystemCore() = 0;
     //    virtual QSharedPointer<IEffectSystemCore> GetEffectSystemCore() = 0;
     virtual QSharedPointer<IPerfTimer> GetPerfTimer() = 0;
@@ -110,7 +110,7 @@ public:
     virtual QSharedPointer<IThreadPool> GetThreadPool() = 0;
     //    virtual QSharedPointer<IImageBatchLoader> GetImageBatchLoader() = 0;
     //    virtual QSharedPointer<IRenderPluginManager> GetRenderPluginManager() = 0;
-    //    virtual QSharedPointer<IDynamicObjectSystem> GetDynamicObjectSystem() = 0;
+        virtual QSharedPointer<IDynamicObjectSystem> GetDynamicObjectSystem() = 0;
     //    virtual QSharedPointer<ICustomMaterialSystem> GetCustomMaterialSystem() = 0;
     //    virtual QSharedPointer<IPixelGraphicsRenderer> GetPixelGraphicsRenderer() = 0;
     virtual QSharedPointer<IPerfTimer> GetPerfTimer() = 0;

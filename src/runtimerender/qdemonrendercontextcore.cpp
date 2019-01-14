@@ -48,7 +48,7 @@
 #include <QtDemonRuntimeRender/qdemonrendertexttexturecache.h>
 #include <QtDemonRuntimeRender/qdemonrendertexttextureatlas.h>
 //#include <QtDemonRuntimeRender/qdemonrenderplugin.h>
-//#include <QtDemonRuntimeRender/qdemonrenderdynamicobjectsystem.h>
+#include <QtDemonRuntimeRender/qdemonrenderdynamicobjectsystem.h>
 //#include <QtDemonRuntimeRender/qdemonrendercustommaterialsystem.h>
 //#include <QtDemonRuntimeRender/qdemonrenderpixelgraphicsrenderer.h>
 #include <QtDemonRuntimeRender/qdemonrenderbufferloader.h>
@@ -67,7 +67,7 @@ struct SRenderContextCore : public IQDemonRenderContextCore, public QEnableShare
     QSharedPointer<IPerfTimer> m_PerfTimer;
     QSharedPointer<IInputStreamFactory> m_InputStreamFactory;
     QSharedPointer<IThreadPool> m_ThreadPool;
-    //QSharedPointer<IDynamicObjectSystemCore> m_DynamicObjectSystem;
+    QSharedPointer<IDynamicObjectSystemCore> m_DynamicObjectSystem;
     //QSharedPointer<ICustomMaterialSystemCore> m_MaterialSystem;
     //QSharedPointer<IEffectSystemCore> m_EffectSystem;
     QSharedPointer<IBufferLoader> m_BufferLoader;
@@ -81,7 +81,7 @@ struct SRenderContextCore : public IQDemonRenderContextCore, public QEnableShare
         , m_InputStreamFactory(IInputStreamFactory::Create())
         , m_ThreadPool(IThreadPool::CreateThreadPool(4))
     {
-        //m_DynamicObjectSystem = IDynamicObjectSystemCore::CreateDynamicSystemCore(*this);
+        m_DynamicObjectSystem = IDynamicObjectSystemCore::CreateDynamicSystemCore(sharedFromThis());
         //m_MaterialSystem = ICustomMaterialSystemCore::CreateCustomMaterialSystemCore(*this);
         //m_EffectSystem = IEffectSystemCore::CreateEffectSystemCore(*this);
         //m_RenderPluginManagerCore = IRenderPluginManagerCore::Create(fnd, strTable, *m_InputStreamFactory);
@@ -93,10 +93,10 @@ struct SRenderContextCore : public IQDemonRenderContextCore, public QEnableShare
 
     QSharedPointer<IInputStreamFactory> GetInputStreamFactory() override { return m_InputStreamFactory; }
     QSharedPointer<IThreadPool> GetThreadPool() override { return m_ThreadPool; }
-//    QSharedPointer<IDynamicObjectSystemCore> GetDynamicObjectSystemCore() override
-//    {
-//        return m_DynamicObjectSystem;
-//    }
+    QSharedPointer<IDynamicObjectSystemCore> GetDynamicObjectSystemCore() override
+    {
+        return m_DynamicObjectSystem;
+    }
     //QSharedPointer<ICustomMaterialSystemCore> GetMaterialSystemCore() override { return m_MaterialSystem; }
     //QSharedPointer<IEffectSystemCore> GetEffectSystemCore() override { return m_EffectSystem; }
     QSharedPointer<IPerfTimer> GetPerfTimer() override { return m_PerfTimer; }
@@ -144,7 +144,7 @@ struct SRenderContext : public IQDemonRenderContext
     QSharedPointer<ITextRenderer> m_OnscreenTextRenderer;
     QSharedPointer<ITextTextureCache> m_TextTextureCache;
     QSharedPointer<ITextTextureAtlas> m_TextTextureAtlas;
-    //QSharedPointer<IDynamicObjectSystem> m_DynamicObjectSystem;
+    QSharedPointer<IDynamicObjectSystem> m_DynamicObjectSystem;
     //QSharedPointer<IEffectSystem> m_EffectSystem;
     QSharedPointer<IShaderCache> m_ShaderCache;
     QSharedPointer<IThreadPool> m_ThreadPool;
@@ -287,7 +287,7 @@ struct SRenderContext : public IQDemonRenderContext
     QSharedPointer<ITextTextureCache> GetTextureCache() override { return m_TextTextureCache; }
     QSharedPointer<ITextTextureAtlas> GetTextureAtlas() override { return m_TextTextureAtlas; }
     //QSharedPointer<IRenderPluginManager> GetRenderPluginManager() override { return m_RenderPluginManager; }
-    //QSharedPointer<IDynamicObjectSystem> GetDynamicObjectSystem() override { return m_DynamicObjectSystem; }
+    QSharedPointer<IDynamicObjectSystem> GetDynamicObjectSystem() override { return m_DynamicObjectSystem; }
     //QSharedPointer<ICustomMaterialSystem> GetCustomMaterialSystem() override { return m_CustomMaterialSystem; }
     //QSharedPointer<IPixelGraphicsRenderer> GetPixelGraphicsRenderer() override { return m_PixelGraphicsRenderer; }
     QSharedPointer<IPerfTimer> GetPerfTimer() override { return m_PerfTimer; }

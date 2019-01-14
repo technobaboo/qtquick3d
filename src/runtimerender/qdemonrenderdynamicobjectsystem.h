@@ -49,6 +49,38 @@ class IQDemonRenderContext;
 class IDynamicObjectSystem;
 class IQDemonRenderContextCore;
 
+typedef QPair<QString, QString> TStrStrPair;
+
+struct SShaderMapKey
+{
+    TStrStrPair m_Name;
+    QVector<SShaderPreprocessorFeature> m_Features;
+    TessModeValues::Enum m_TessMode;
+    bool m_WireframeMode;
+    size_t m_HashCode;
+    SShaderMapKey(TStrStrPair inName, TShaderFeatureSet inFeatures, TessModeValues::Enum inTessMode,
+                  bool inWireframeMode)
+        : m_Name(inName)
+        , m_TessMode(inTessMode)
+        , m_WireframeMode(inWireframeMode)
+    {
+        for (quint32 i = 0; i < inFeatures.size(); ++i) {
+            m_Features.append(inFeatures[i]);
+        }
+
+        m_HashCode = qHash(m_Name)
+                ^ HashShaderFeatureSet(m_Features)
+                ^ qHash(m_TessMode) ^ qHash(m_WireframeMode);
+    }
+    bool operator==(const SShaderMapKey &inKey) const
+    {
+        return m_Name == inKey.m_Name &&
+               m_Features == inKey.m_Features &&
+               m_TessMode == inKey.m_TessMode &&
+               m_WireframeMode == inKey.m_WireframeMode;
+    }
+};
+
 namespace dynamic {
 
 struct SCommand;
@@ -253,7 +285,7 @@ public:
 
 typedef QPair<QSharedPointer<QDemonRenderShaderProgram>, dynamic::SDynamicShaderProgramFlags> TShaderAndFlags;
 
-class IDynamicObjectSystem : public IDynamicObjectSystemCore
+class IDynamicObjectSystem : public IDynamicObjectSystemCore , public QEnableSharedFromThis<IDynamicObjectSystem>
 {
 protected:
     virtual ~IDynamicObjectSystem() {}
