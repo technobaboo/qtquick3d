@@ -64,7 +64,7 @@ struct SShaderMapKey
         , m_TessMode(inTessMode)
         , m_WireframeMode(inWireframeMode)
     {
-        for (quint32 i = 0; i < inFeatures.size(); ++i) {
+        for (int i = 0; i < inFeatures.size(); ++i) {
             m_Features.append(inFeatures[i]);
         }
 

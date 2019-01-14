@@ -744,7 +744,7 @@ struct SRenderContext : public IQDemonRenderContext, public QEnableSharedFromThi
 
 QSharedPointer<IQDemonRenderContext> SRenderContextCore::CreateRenderContext(QSharedPointer<QDemonRenderContext> inContext, const char *inPrimitivesDirectory)
 {
-    return QSharedPointer<IQDemonRenderContext>(new SRenderContext(inContext, this->sharedFromThis(), inPrimitivesDirectory));
+    return QSharedPointer<SRenderContext>(new SRenderContext(inContext, this->sharedFromThis(), inPrimitivesDirectory));
 }
 }
 
