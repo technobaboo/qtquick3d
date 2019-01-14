@@ -41,7 +41,7 @@ HEADERS += \
 #    qdemonrenderpathmanager.h \
 #    qdemonrenderpathmath.h \
 #    qdemonrenderpathrendercontext.h \
-#    qdemonrenderpixelgraphicsrenderer.h \
+    qdemonrenderpixelgraphicsrenderer.h \
     qdemonrenderpixelgraphicstypes.h \
 #    qdemonrenderplugin.h \
     qdemonrenderplugincinterface.h \
@@ -90,7 +90,7 @@ SOURCES += \
     qdemonrenderimagescaler.cpp \
     qdemonrenderinputstreamfactory.cpp \
 #    qdemonrenderpathmanager.cpp \
-#    qdemonrenderpixelgraphicsrenderer.cpp \
+    qdemonrenderpixelgraphicsrenderer.cpp \
     qdemonrenderpixelgraphicstypes.cpp \
 #    qdemonrenderplugin.cpp \
     qdemonrenderray.cpp \

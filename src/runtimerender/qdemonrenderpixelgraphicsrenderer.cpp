@@ -29,12 +29,15 @@
 ****************************************************************************/
 #include "qdemonrenderpixelgraphicsrenderer.h"
 
-#include <QtDemonRuntimeRender/qdemonrenderpixelgraphicstypes.h>
+#include <QtDemon/qdemonutils.h>
+
 #include <QtDemonRender/qdemonrendercontext.h>
+#include <QtDemonRender/qdemonrendershaderprogram.h>
+
+#include <QtDemonRuntimeRender/qdemonrenderpixelgraphicstypes.h>
 #include <QtDemonRuntimeRender/qdemonrendercamera.h>
 #include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
 #include <QtDemonRuntimeRender/qdemonrendershadercodegenerator.h>
-#include <QtDemonRender/qdemonrendershaderprogram.h>
 #include <QtDemonRuntimeRender/qdemonrendershadercache.h>
 
 QT_BEGIN_NAMESPACE
@@ -44,10 +47,10 @@ namespace {
 struct SPGRectShader
 {
     QSharedPointer<QDemonRenderShaderProgram> m_RectShader;
-    QDemonRenderShaderConstantBase *mvp;
-    QDemonRenderShaderConstantBase *rectColor;
-    QDemonRenderShaderConstantBase *leftright;
-    QDemonRenderShaderConstantBase *bottomtop;
+    QSharedPointer<QDemonRenderShaderConstantBase> mvp;
+    QSharedPointer<QDemonRenderShaderConstantBase> rectColor;
+    QSharedPointer<QDemonRenderShaderConstantBase> leftright;
+    QSharedPointer<QDemonRenderShaderConstantBase> bottomtop;
 
     SPGRectShader()
         : mvp(nullptr)
@@ -56,7 +59,7 @@ struct SPGRectShader
         , bottomtop(nullptr)
     {
     }
-    void SetShader(QDemonRenderShaderProgram *program)
+    void SetShader(QSharedPointer<QDemonRenderShaderProgram> program)
     {
         m_RectShader = program;
         if (program) {
@@ -70,25 +73,25 @@ struct SPGRectShader
     void Apply(QMatrix4x4 &inVP, const SPGRect &inObject)
     {
         if (mvp)
-            m_RectShader->SetConstantValue(mvp, toConstDataRef(inVP), 1);
+            m_RectShader->SetConstantValue(mvp.data(), toConstDataRef(inVP), 1);
         if (rectColor)
-            m_RectShader->SetConstantValue(rectColor, inObject.m_FillColor, 1);
+            m_RectShader->SetConstantValue(rectColor.data(), inObject.m_FillColor, 1);
         if (leftright) {
             float theData[] = { inObject.m_Left, inObject.m_Right };
-            m_RectShader->SetConstantValue(leftright, *theData, 2);
+            m_RectShader->SetConstantValue(leftright.data(), *theData, 2);
         }
         if (bottomtop) {
             float theData[] = { inObject.m_Bottom, inObject.m_Top };
-            m_RectShader->SetConstantValue(bottomtop, *theData, 2);
+            m_RectShader->SetConstantValue(bottomtop.data(), *theData, 2);
         }
     }
 
-    operator bool() { return m_RectShader.mPtr != nullptr; }
+    operator bool() { return m_RectShader != nullptr; }
 };
 
 struct SPGRenderer : public IPixelGraphicsRenderer
 {
-    IQDemonRenderContext &m_RenderContext;
+    QSharedPointer<IQDemonRenderContext> m_RenderContext;
     QSharedPointer<QDemonRenderVertexBuffer> m_QuadVertexBuffer;
     QSharedPointer<QDemonRenderIndexBuffer> m_QuadIndexBuffer;
     QSharedPointer<QDemonRenderInputAssembler> m_QuadInputAssembler;
@@ -97,10 +100,10 @@ struct SPGRenderer : public IPixelGraphicsRenderer
     SShaderFragmentCodeGenerator m_FragmentGenerator;
     SPGRectShader m_RectShader;
 
-    SPGRenderer(IQDemonRenderContext &ctx)
+    SPGRenderer(QSharedPointer<IQDemonRenderContext> ctx)
         : m_RenderContext(ctx)
-        , m_VertexGenerator(m_RenderContext.GetRenderContext().GetRenderContextType())
-        , m_FragmentGenerator(m_VertexGenerator, m_RenderContext.GetRenderContext().GetRenderContextType())
+        , m_VertexGenerator(m_RenderContext->GetRenderContext()->GetRenderContextType())
+        , m_FragmentGenerator(m_VertexGenerator, m_RenderContext->GetRenderContext()->GetRenderContextType())
     {
     }
 
@@ -115,62 +118,60 @@ struct SPGRenderer : public IPixelGraphicsRenderer
             m_VertexGenerator.AddUniform("bottomtop[2]", "float");
             m_FragmentGenerator.AddVarying("rect_uvs", "vec2");
             m_FragmentGenerator.AddUniform("rect_color", "vec4");
-            m_VertexGenerator << "void main() {" << Endl
+            m_VertexGenerator << "void main() {" << "\n"
                               << "\tgl_Position = model_view_projection * vec4( "
                                  "leftright[int(attr_pos.x)], bottomtop[int(attr_pos.y)], 0.0, 1.0 "
                                  ");"
-                              << Endl << "\trect_uvs = attr_pos;" << Endl << "}" << Endl;
+                              << "\n" << "\trect_uvs = attr_pos;" << "\n" << "}" << "\n";
 
-            m_FragmentGenerator << "void main() {" << Endl << "\tfragOutput = rect_color;" << Endl
-                                << "}" << Endl;
+            m_FragmentGenerator << "void main() {" << "\n" << "\tfragOutput = rect_color;" << "\n"
+                                << "}" << "\n";
 
             m_VertexGenerator.BuildShaderSource();
             m_FragmentGenerator.BuildShaderSource();
 
-            m_RectShader.SetShader(m_RenderContext.GetShaderCache().CompileProgram(
-                QStringLiterial("PixelRectShader"),
-                m_VertexGenerator.m_FinalShaderBuilder.c_str(),
-                m_FragmentGenerator.m_FinalShaderBuilder.c_str(), nullptr // no tess control shader
-                ,
-                nullptr // no tess eval shader
-                ,
-                nullptr // no geometry shader
-                ,
-                SShaderCacheProgramFlags(), ShaderCacheNoFeatures()));
+            m_RectShader.SetShader(m_RenderContext->GetShaderCache()->CompileProgram(
+                                       QStringLiteral("PixelRectShader"),
+                                       m_VertexGenerator.m_FinalShaderBuilder,
+                                       m_FragmentGenerator.m_FinalShaderBuilder,
+                                       nullptr, // no tess control shader
+                                       nullptr, // no tess eval shader
+                                       nullptr, // no geometry shader
+                                       SShaderCacheProgramFlags(),
+                                       ShaderCacheNoFeatures()));
         }
     }
     void GenerateXYQuad()
     {
-        QDemonRenderContext &theRenderContext(m_RenderContext.GetRenderContext());
+        QSharedPointer<QDemonRenderContext> theRenderContext(m_RenderContext->GetRenderContext());
 
         QDemonRenderVertexBufferEntry theEntries[] = {
-            QDemonRenderVertexBufferEntry("attr_pos",
-                                                  QDemonRenderComponentTypes::float, 2),
+            QDemonRenderVertexBufferEntry("attr_pos", QDemonRenderComponentTypes::Float32, 2),
         };
 
         QVector2D pos[] = { QVector2D(0, 0), QVector2D(0, 1), QVector2D(1, 1), QVector2D(1, 0) };
 
         if (m_QuadVertexBuffer == nullptr) {
             size_t bufSize = sizeof(pos);
-            m_QuadVertexBuffer = theRenderContext.CreateVertexBuffer(
-                QDemonRenderBufferUsageType::Static, bufSize, 2 * sizeof(float),
-                toU8DataRef(pos, 4));
+            m_QuadVertexBuffer = theRenderContext->CreateVertexBuffer(
+                        QDemonRenderBufferUsageType::Static, bufSize, 2 * sizeof(float),
+                        toU8DataRef(pos, 4));
         }
 
         if (m_QuadIndexBuffer == nullptr) {
             quint8 indexData[] = {
                 0, 1, 2, 0, 2, 3,
             };
-            m_QuadIndexBuffer = theRenderContext.CreateIndexBuffer(
-                QDemonRenderBufferUsageType::Static,
-                QDemonRenderComponentTypes::quint8, sizeof(indexData),
-                toU8DataRef(indexData, sizeof(indexData)));
+            m_QuadIndexBuffer = theRenderContext->CreateIndexBuffer(
+                        QDemonRenderBufferUsageType::Static,
+                        QDemonRenderComponentTypes::UnsignedInteger8, sizeof(indexData),
+                        toU8DataRef(indexData, sizeof(indexData)));
         }
 
         if (m_QuadAttribLayout == nullptr) {
             // create our attribute layout
             m_QuadAttribLayout =
-                theRenderContext.CreateAttributeLayout(toConstDataRef(theEntries, 1));
+                    theRenderContext->CreateAttributeLayout(toConstDataRef(theEntries, 1));
         }
 
         if (m_QuadInputAssembler == nullptr) {
@@ -178,9 +179,9 @@ struct SPGRenderer : public IPixelGraphicsRenderer
             // create input assembler object
             quint32 strides = m_QuadVertexBuffer->GetStride();
             quint32 offsets = 0;
-            m_QuadInputAssembler = theRenderContext.CreateInputAssembler(
-                m_QuadAttribLayout, toConstDataRef(&m_QuadVertexBuffer.mPtr, 1), m_QuadIndexBuffer,
-                toConstDataRef(&strides, 1), toConstDataRef(&offsets, 1));
+            m_QuadInputAssembler = theRenderContext->CreateInputAssembler(
+                        m_QuadAttribLayout, toConstDataRef(&m_QuadVertexBuffer, 1), m_QuadIndexBuffer,
+                        toConstDataRef(&strides, 1), toConstDataRef(&offsets, 1));
         }
     }
 
@@ -189,12 +190,12 @@ struct SPGRenderer : public IPixelGraphicsRenderer
         GenerateXYQuad();
         GetRectShaderProgram();
         if (m_RectShader) {
-            m_RenderContext.GetRenderContext().SetActiveShader(m_RectShader.m_RectShader.mPtr);
+            m_RenderContext->GetRenderContext()->SetActiveShader(m_RectShader.m_RectShader);
             m_RectShader.Apply(inProjection, inObject);
 
-            m_RenderContext.GetRenderContext().SetInputAssembler(m_QuadInputAssembler.mPtr);
-            m_RenderContext.GetRenderContext().Draw(QDemonRenderDrawMode::Triangles,
-                                                    m_QuadInputAssembler->GetIndexCount(), 0);
+            m_RenderContext->GetRenderContext()->SetInputAssembler(m_QuadInputAssembler);
+            m_RenderContext->GetRenderContext()->Draw(QDemonRenderDrawMode::Triangles,
+                                                     m_QuadInputAssembler->GetIndexCount(), 0);
         }
     }
 
@@ -223,30 +224,30 @@ struct SPGRenderer : public IPixelGraphicsRenderer
         RenderPixelObject(inProjection, theRect);
     }
 
-    void Render(QDemonConstDataRef<SPGGraphObject *> inObjects) override
+    void Render(const QVector<SPGGraphObject *> &inObjects) override
     {
-        QDemonRenderContext &theRenderContext(m_RenderContext.GetRenderContext());
-        theRenderContext.PushPropertySet();
+        QSharedPointer<QDemonRenderContext> theRenderContext(m_RenderContext->GetRenderContext());
+        theRenderContext->PushPropertySet();
         // Setup an orthographic camera that places the center at the
         // lower left of the viewport.
-        QDemonRenderRectF theViewport = theRenderContext.GetViewport();
+        QDemonRenderRectF theViewport = theRenderContext->GetViewport();
         // With no projection at all, we are going to get a square view box
         // with boundaries from -1,1 in all dimensions.  This is close to what we want.
-        theRenderContext.SetDepthTestEnabled(false);
-        theRenderContext.SetDepthWriteEnabled(false);
-        theRenderContext.SetScissorTestEnabled(false);
-        theRenderContext.SetBlendingEnabled(true);
-        theRenderContext.SetCullingEnabled(false);
+        theRenderContext->SetDepthTestEnabled(false);
+        theRenderContext->SetDepthWriteEnabled(false);
+        theRenderContext->SetScissorTestEnabled(false);
+        theRenderContext->SetBlendingEnabled(true);
+        theRenderContext->SetCullingEnabled(false);
         // Colors are expected to be non-premultiplied, so we premultiply alpha into them at this
         // point.
-        theRenderContext.SetBlendFunction(QDemonRenderBlendFunctionArgument(
-            QDemonRenderSrcBlendFunc::SrcAlpha, QDemonRenderDstBlendFunc::OneMinusSrcAlpha,
-            QDemonRenderSrcBlendFunc::One, QDemonRenderDstBlendFunc::OneMinusSrcAlpha));
-        theRenderContext.SetBlendEquation(QDemonRenderBlendEquationArgument(
-            QDemonRenderBlendEquation::Add, QDemonRenderBlendEquation::Add));
+        theRenderContext->SetBlendFunction(QDemonRenderBlendFunctionArgument(
+                                               QDemonRenderSrcBlendFunc::SrcAlpha, QDemonRenderDstBlendFunc::OneMinusSrcAlpha,
+                                               QDemonRenderSrcBlendFunc::One, QDemonRenderDstBlendFunc::OneMinusSrcAlpha));
+        theRenderContext->SetBlendEquation(QDemonRenderBlendEquationArgument(
+                                               QDemonRenderBlendEquation::Add, QDemonRenderBlendEquation::Add));
 
         SCamera theCamera;
-        theCamera.m_Position.z = -5;
+        theCamera.m_Position.setZ(-5.f);
         theCamera.m_ClipNear = 1.0f;
         theCamera.m_ClipFar = 10.0f;
         theCamera.m_Flags.SetOrthographic(true);
@@ -258,16 +259,16 @@ struct SPGRenderer : public IPixelGraphicsRenderer
         theIdealViewport.m_X -= theViewport.m_Width / 2.0f;
         theIdealViewport.m_Y -= theViewport.m_Height / 2.0f;
         QMatrix4x4 theProjectionMatrix = QDemonRenderContext::ApplyVirtualViewportToProjectionMatrix(
-            theCamera.m_Projection, theViewport, theIdealViewport);
+                    theCamera.m_Projection, theViewport, theIdealViewport);
         theCamera.m_Projection = theProjectionMatrix;
         // Explicitly call the node's calculate global variables so that the camera doesn't attempt
         // to change the projection we setup.
         static_cast<SNode &>(theCamera).CalculateGlobalVariables();
-        QMatrix4x4 theVPMatrix(QMatrix4x4::createIdentity());
+        QMatrix4x4 theVPMatrix;
         theCamera.CalculateViewProjectionMatrix(theVPMatrix);
 
         QVector4D theTest(60, 200, 0, 1);
-        QVector4D theResult = theVPMatrix.transform(theTest);
+        QVector4D theResult = mat44::transform(theVPMatrix, theTest);
 
         (void)theTest;
         (void)theResult;
@@ -291,14 +292,14 @@ struct SPGRenderer : public IPixelGraphicsRenderer
             }
         }
 
-        theRenderContext.PopPropertySet(false);
+        theRenderContext->PopPropertySet(false);
     }
 };
 }
 
-IPixelGraphicsRenderer &IPixelGraphicsRenderer::CreateRenderer(IQDemonRenderContext &ctx)
+QSharedPointer<IPixelGraphicsRenderer> IPixelGraphicsRenderer::CreateRenderer(QSharedPointer<IQDemonRenderContext> ctx)
 {
-    return *new SPGRenderer(ctx, strt);
+    return QSharedPointer<SPGRenderer>(new SPGRenderer(ctx));
 }
 
 QT_END_NAMESPACE

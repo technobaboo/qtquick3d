@@ -50,7 +50,7 @@
 //#include <QtDemonRuntimeRender/qdemonrenderplugin.h>
 #include <QtDemonRuntimeRender/qdemonrenderdynamicobjectsystem.h>
 //#include <QtDemonRuntimeRender/qdemonrendercustommaterialsystem.h>
-//#include <QtDemonRuntimeRender/qdemonrenderpixelgraphicsrenderer.h>
+#include <QtDemonRuntimeRender/qdemonrenderpixelgraphicsrenderer.h>
 #include <QtDemonRuntimeRender/qdemonrenderbufferloader.h>
 #include <QtDemonRuntimeRender/qdemonrenderrenderlist.h>
 //#include <QtDemonRuntimeRender/qdemonrenderpathmanager.h>
@@ -151,7 +151,7 @@ struct SRenderContext : public IQDemonRenderContext, public QEnableSharedFromThi
     //QSharedPointer<IImageBatchLoader> m_ImageBatchLoader;
     //QSharedPointer<IRenderPluginManager> m_RenderPluginManager;
     //QSharedPointer<ICustomMaterialSystem> m_CustomMaterialSystem;
-    //QSharedPointer<IPixelGraphicsRenderer> m_PixelGraphicsRenderer;
+    QSharedPointer<IPixelGraphicsRenderer> m_PixelGraphicsRenderer;
     QSharedPointer<IPathManager> m_PathManager;
     //QSharedPointer<IShaderProgramGenerator> m_ShaderProgramGenerator;
     //QSharedPointer<IDefaultMaterialShaderGenerator> m_DefaultMaterialShaderGenerator;
@@ -214,7 +214,7 @@ struct SRenderContext : public IQDemonRenderContext, public QEnableSharedFromThi
         //m_EffectSystem = inCore.GetEffectSystemCore().GetEffectSystem(*this);
         //m_CustomMaterialSystem = inCore.GetMaterialSystemCore().GetCustomMaterialSystem(*this);
         // as does the custom material system
-        //m_PixelGraphicsRenderer = IPixelGraphicsRenderer::CreateRenderer(*this, *m_StringTable);
+        m_PixelGraphicsRenderer = IPixelGraphicsRenderer::CreateRenderer(sharedFromThis());
         QSharedPointer<ITextRendererCore> theTextCore = inCore->GetTextRendererCore();
         //m_ShaderProgramGenerator = IShaderProgramGenerator::CreateProgramGenerator(*this);
 //        m_DefaultMaterialShaderGenerator =
@@ -289,7 +289,7 @@ struct SRenderContext : public IQDemonRenderContext, public QEnableSharedFromThi
     //QSharedPointer<IRenderPluginManager> GetRenderPluginManager() override { return m_RenderPluginManager; }
     QSharedPointer<IDynamicObjectSystem> GetDynamicObjectSystem() override { return m_DynamicObjectSystem; }
     //QSharedPointer<ICustomMaterialSystem> GetCustomMaterialSystem() override { return m_CustomMaterialSystem; }
-    //QSharedPointer<IPixelGraphicsRenderer> GetPixelGraphicsRenderer() override { return m_PixelGraphicsRenderer; }
+    QSharedPointer<IPixelGraphicsRenderer> GetPixelGraphicsRenderer() override { return m_PixelGraphicsRenderer; }
     QSharedPointer<IPerfTimer> GetPerfTimer() override { return m_PerfTimer; }
     QSharedPointer<IRenderList> GetRenderList() override { return m_RenderList; }
     //QSharedPointer<IPathManager> GetPathManager() override { return m_PathManager; }

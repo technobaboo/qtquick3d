@@ -27,23 +27,29 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#pragma once
 #ifndef QDEMON_RENDER_PIXEL_GRAPHICS_RENDERER_H
 #define QDEMON_RENDER_PIXEL_GRAPHICS_RENDERER_H
 
-#include <QtDemon/qdemondataref.h>
+#include <QtCore/QVector>
+#include <QtCore/QSharedPointer>
+#include <QtDemonRuntimeRender/qtdemonruntimerenderglobal.h>
 
 QT_BEGIN_NAMESPACE
 // Pixel graphics are graphics described in pixels.
 // Colors are expected to be non-premultiplied, we use ROP
 // hardware to do the alpha multiply into the color.
+
+class SPGGraphObject;
+class IQDemonRenderContext;
 class IPixelGraphicsRenderer
 {
 public:
-    // Renders the node to the current viewport.
-    virtual void Render(QDemonConstDataRef<SPGGraphObject *> inObjects) = 0;
+    virtual ~IPixelGraphicsRenderer() {}
 
-    static IPixelGraphicsRenderer &CreateRenderer(IQDemonRenderContext &ctx);
+    // Renders the node to the current viewport.
+    virtual void Render(const QVector<SPGGraphObject *> &inObjects) = 0;
+
+    static QSharedPointer<IPixelGraphicsRenderer> CreateRenderer(QSharedPointer<IQDemonRenderContext> ctx);
 };
 QT_END_NAMESPACE
 
