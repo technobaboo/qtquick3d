@@ -71,20 +71,18 @@ struct SRenderJoint
 
 struct SRenderSubset : public SRenderSubsetBase
 {
-    QDemonRenderInputAssembler *m_InputAssembler;
-    QDemonRenderInputAssembler *m_InputAssemblerDepth;
-    QDemonRenderInputAssembler
-    *m_InputAssemblerPoints; ///< similar to depth but ignores index buffer.
-    QDemonRenderVertexBuffer *m_VertexBuffer;
-    QDemonRenderVertexBuffer
-    *m_PosVertexBuffer; ///< separate position buffer for fast depth path rendering
-    QDemonRenderIndexBuffer *m_IndexBuffer;
+    QSharedPointer<QDemonRenderInputAssembler> m_InputAssembler;
+    QSharedPointer<QDemonRenderInputAssembler> m_InputAssemblerDepth;
+    QSharedPointer<QDemonRenderInputAssembler> m_InputAssemblerPoints; ///< similar to depth but ignores index buffer.
+    QSharedPointer<QDemonRenderVertexBuffer> m_VertexBuffer;
+    QSharedPointer<QDemonRenderVertexBuffer> m_PosVertexBuffer; ///< separate position buffer for fast depth path rendering
+    QSharedPointer<QDemonRenderIndexBuffer> m_IndexBuffer;
     QDemonRenderDrawMode::Enum m_PrimitiveType; ///< primitive type used for drawing
     float m_EdgeTessFactor; ///< edge tessellation amount used for tessellation shaders
     float m_InnerTessFactor; ///< inner tessellation amount used for tessellation shaders
     bool m_WireframeMode; ///< true if we should draw the object as wireframe ( currently ony if
     ///tessellation is enabled )
-    QDemonConstDataRef<SRenderJoint> m_Joints;
+    QVector<SRenderJoint> m_Joints;
     QString m_Name;
     QVector<SRenderSubsetBase> m_SubSubsets;
 

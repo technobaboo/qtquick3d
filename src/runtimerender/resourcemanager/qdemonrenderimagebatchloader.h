@@ -44,12 +44,9 @@ struct ImageLoadResult
 
 class IImageLoadListener
 {
-protected:
-    virtual ~IImageLoadListener() {}
-
 public:
-    virtual void OnImageLoadComplete(QString inPath,
-                                     ImageLoadResult::Enum inResult) = 0;
+    virtual ~IImageLoadListener() {}
+    virtual void OnImageLoadComplete(QString inPath, ImageLoadResult::Enum inResult) = 0;
     virtual void OnImageBatchComplete(quint64 inBatch) = 0;
 };
 
@@ -87,9 +84,9 @@ public:
     virtual void EndFrame() = 0;
 
     static QSharedPointer<IImageBatchLoader> CreateBatchLoader(QSharedPointer<IInputStreamFactory> inFactory,
-                                                QSharedPointer<IBufferManager> inBufferManager,
-                                                QSharedPointer<IThreadPool> inThreadPool,
-                                                QSharedPointer<IPerfTimer> inTimer);
+                                                               QSharedPointer<IBufferManager> inBufferManager,
+                                                               QSharedPointer<IThreadPool> inThreadPool,
+                                                               QSharedPointer<IPerfTimer> inTimer);
 };
 QT_END_NAMESPACE
 

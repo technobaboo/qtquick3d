@@ -399,7 +399,7 @@ inline uint StrLen(const char *inType)
 
 }
 // ### Fix to Normalize Path
-void CFileTools::CombinBaseAndRelative(const char *inBase, const char *inRelative, QString &outString)
+void CFileTools::CombineBaseAndRelative(const char *inBase, const char *inRelative, QString &outString)
 {
     if (IsAbsolute(inRelative, StrLen(inRelative))) {
         outString = QString::fromLocal8Bit(nonNull(inRelative));

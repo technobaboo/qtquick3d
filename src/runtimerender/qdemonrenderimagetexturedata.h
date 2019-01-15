@@ -79,9 +79,9 @@ struct SImageTextureFlags : public QDemonFlags<ImageTextureFlagValues::Enum, qui
 
 struct SImageTextureData
 {
-    QDemonRenderTexture2D *m_Texture;
+    QSharedPointer<QDemonRenderTexture2D> m_Texture;
     SImageTextureFlags m_TextureFlags;
-    QDemonRenderPrefilterTexture *m_BSDFMipMap;
+    QSharedPointer<QDemonRenderPrefilterTexture> m_BSDFMipMap;
 
     SImageTextureData()
         : m_Texture(nullptr)
