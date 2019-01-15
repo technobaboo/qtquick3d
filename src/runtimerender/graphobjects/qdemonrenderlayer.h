@@ -27,18 +27,19 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#pragma once
 #ifndef QDEMON_RENDER_LAYER_H
 #define QDEMON_RENDER_LAYER_H
 
+#include <QtDemonRuntimeRender/qdemonrenderscene.h>
 #include <QtDemonRuntimeRender/qdemonrendernode.h>
 #include <QtDemonRuntimeRender/qdemonrenderer.h>
 
 QT_BEGIN_NAMESPACE
 class IQDemonRenderContext;
 struct SPresentation;
-struct SScene;
 struct SEffect;
+struct SRenderPlugin;
+struct SImage;
 
 struct AAModeValues
 {

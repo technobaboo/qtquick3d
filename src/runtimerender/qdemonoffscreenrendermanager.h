@@ -27,19 +27,20 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#pragma once
 #ifndef QDEMON_OFFSCREEN_RENDER_MANAGER_H
 #define QDEMON_OFFSCREEN_RENDER_MANAGER_H
 
 #include <QtDemon/qdemonoption.h>
 #include <QtDemonRender/qdemonrenderbasetypes.h>
-#include <QtDemonRuntimeRender/qdemonrenderscene.h>
 #include <QtDemonRuntimeRender/qdemonrenderlayer.h>
 
 QT_BEGIN_NAMESPACE
 class IResourceManager;
 struct QDemonRenderPickResult;
 class IGraphObjectPickQuery;
+class IQDemonRenderContext;
+class QDemonRenderContext;
+
 struct OffscreenRendererDepthValues
 {
     enum Enum {
@@ -136,8 +137,8 @@ public:
         virtual ~IOffscreenRendererCallback() {}
     };
 
-protected:
-    virtual ~IOffscreenRenderer() {}
+    virtual ~IOffscreenRenderer();
+
 public:
     virtual void addCallback(IOffscreenRendererCallback *cb) = 0;
     // Arbitrary const char* returned to indicate the type of this renderer
@@ -188,14 +189,14 @@ public:
 struct SOffscreenRenderResult
 {
     QSharedPointer<IOffscreenRenderer> m_Renderer;
-    QDemonRenderTexture2D *m_Texture;
+    QSharedPointer<QDemonRenderTexture2D> m_Texture;
     bool m_HasTransparency;
     bool m_HasChangedSinceLastFrame;
 
-    SOffscreenRenderResult(IOffscreenRenderer &inRenderer, QDemonRenderTexture2D &inTexture,
+    SOffscreenRenderResult(QSharedPointer<IOffscreenRenderer> inRenderer, QSharedPointer<QDemonRenderTexture2D> inTexture,
                            bool inTrans, bool inDirty)
-        : m_Renderer(&inRenderer)
-        , m_Texture(&inTexture)
+        : m_Renderer(inRenderer)
+        , m_Texture(inTexture)
         , m_HasTransparency(inTrans)
         , m_HasChangedSinceLastFrame(inDirty)
     {
@@ -220,17 +221,16 @@ struct SOffscreenRendererKey;
      */
 class IOffscreenRenderManager
 {
-protected:
-    virtual ~IOffscreenRenderManager() {}
 public:
+    virtual ~IOffscreenRenderManager();
     // returns true if the renderer has not been registered.
     // No return value means there was an error registering this id.
     virtual QDemonOption<bool> MaybeRegisterOffscreenRenderer(const SOffscreenRendererKey &inKey,
-                                                        IOffscreenRenderer &inRenderer) = 0;
+                                                              QSharedPointer<IOffscreenRenderer> inRenderer) = 0;
     virtual void RegisterOffscreenRenderer(const SOffscreenRendererKey &inKey,
-                                           IOffscreenRenderer &inRenderer) = 0;
+                                           QSharedPointer<IOffscreenRenderer> inRenderer) = 0;
     virtual bool HasOffscreenRenderer(const SOffscreenRendererKey &inKey) = 0;
-    virtual IOffscreenRenderer *GetOffscreenRenderer(const SOffscreenRendererKey &inKey) = 0;
+    virtual QSharedPointer<IOffscreenRenderer> GetOffscreenRenderer(const SOffscreenRendererKey &inKey) = 0;
     virtual void ReleaseOffscreenRenderer(const SOffscreenRendererKey &inKey) = 0;
 
     // This doesn't trigger rendering right away.  A node is added to the render graph that
@@ -242,7 +242,7 @@ public:
     virtual void BeginFrame() = 0;
     virtual void EndFrame() = 0;
 
-    static IOffscreenRenderManager &CreateOffscreenRenderManager(IResourceManager &inManager, IQDemonRenderContext &inContext);
+    static QSharedPointer<IOffscreenRenderManager> CreateOffscreenRenderManager(QSharedPointer<IResourceManager> inManager, QSharedPointer<IQDemonRenderContext> inContext);
 };
 
 QT_END_NAMESPACE

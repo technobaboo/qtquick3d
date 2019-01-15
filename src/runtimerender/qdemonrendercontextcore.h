@@ -32,12 +32,13 @@
 
 // ### TODO Re-enable subsystems when they are done
 
+//#include <QtDemonRuntimeRender/qdemonoffscreenrendermanager.h>
 #include <QtDemonRuntimeRender/qdemonrenderpresentation.h>
 #include <QtDemonRuntimeRender/qdemonrenderinputstreamfactory.h>
 #include <QtDemonRuntimeRender/qdemonrenderthreadpool.h>
 #include <QtDemonRuntimeRender/qdemonrenderdynamicobjectsystem.h>
 //#include <QtDemonRuntimeRender/qdemonrendercustommaterialsystem.h>
-//#include <QtDemonRuntimeRender/qdemonrendereffectsystem.h>
+#include <QtDemonRuntimeRender/qdemonrendereffectsystem.h>
 #include <QtDemonRuntimeRender/qdemonrenderbufferloader.h>
 #include <QtDemonRuntimeRender/qdemontextrenderer.h>
 #include <QtDemonRuntimeRender/qdemonrenderwidgets.h>
@@ -53,6 +54,7 @@
 #include <QtCore/QSize>
 
 QT_BEGIN_NAMESPACE
+
 struct ScaleModes
 {
     enum Enum {
@@ -72,7 +74,7 @@ public:
     virtual QSharedPointer<IThreadPool> GetThreadPool() = 0;
     virtual QSharedPointer<IDynamicObjectSystemCore> GetDynamicObjectSystemCore() = 0;
     //    virtual QSharedPointer<ICustomMaterialSystemCore> GetMaterialSystemCore() = 0;
-    //    virtual QSharedPointer<IEffectSystemCore> GetEffectSystemCore() = 0;
+    virtual QSharedPointer<IEffectSystemCore> GetEffectSystemCore() = 0;
     virtual QSharedPointer<IPerfTimer> GetPerfTimer() = 0;
     virtual QSharedPointer<IBufferLoader> GetBufferLoader() = 0;
     //    virtual QSharedPointer<IRenderPluginManagerCore> GetRenderPluginCore() = 0;
@@ -92,20 +94,20 @@ public:
 class ITextTextureAtlas;
 class IQDemonRenderer;
 class IShaderCache;
+class IOffscreenRenderManager;
 
 class IQDemonRenderContext
 {
-protected:
-    virtual ~IQDemonRenderContext() {}
 public:
+    virtual ~IQDemonRenderContext() {}
         virtual QSharedPointer<IQDemonRenderer> GetRenderer() = 0;
         virtual QSharedPointer<IRenderWidgetContext> GetRenderWidgetContext() = 0;
-    //    virtual QSharedPointer<IBufferManager> GetBufferManager() = 0;
-    //    virtual QSharedPointer<IResourceManager> GetResourceManager() = 0;
+    virtual QSharedPointer<IBufferManager> GetBufferManager() = 0;
+    virtual QSharedPointer<IResourceManager> GetResourceManager() = 0;
     virtual QSharedPointer<QDemonRenderContext> GetRenderContext() = 0;
-    //    virtual QSharedPointer<IOffscreenRenderManager> GetOffscreenRenderManager() = 0;
+    virtual QSharedPointer<IOffscreenRenderManager> GetOffscreenRenderManager() = 0;
     virtual QSharedPointer<IInputStreamFactory> GetInputStreamFactory() = 0;
-    //    virtual QSharedPointer<IEffectSystem> GetEffectSystem() = 0;
+    virtual QSharedPointer<IEffectSystem> GetEffectSystem() = 0;
     virtual QSharedPointer<IShaderCache> GetShaderCache() = 0;
     virtual QSharedPointer<IThreadPool> GetThreadPool() = 0;
     //    virtual QSharedPointer<IImageBatchLoader> GetImageBatchLoader() = 0;

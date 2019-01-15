@@ -30,7 +30,6 @@
 #include <QtDemonRuntimeRender/qdemonoffscreenrendermanager.h>
 #include <QtDemonRender/qdemonrenderbasetypes.h>
 #include <QtDemonRender/qdemonrenderframebuffer.h>
-#include <QtDemonRender/qdemonrendertexture2d.h>
 #include <QtDemonRuntimeRender/qdemonrenderresourcemanager.h>
 #include <QtDemonRender/qdemonrendercontext.h>
 #include <qdemontextrenderer.h>
@@ -40,52 +39,41 @@
 #include <QtDemonRuntimeRender/qdemonrenderresourcetexture2d.h>
 #include <QtDemonRuntimeRender/qdemonrenderresourcebufferobjects.h>
 #include <qdemonrendererutil.h>
+#include <QtDemonRender/qdemonrendertexture2d.h>
+
+#include <limits>
 
 QT_BEGIN_NAMESPACE
 
-//namespace eastl {
-//template <>
-//struct hash<SOffscreenRendererKey>
-//{
-//    size_t operator()(const SOffscreenRendererKey &key) const
-//    {
-//        switch (key.getType()) {
-//        case OffscreenRendererKeyTypes::RegisteredString:
-//            return hash<QString>()(key.getData<QString>());
-//        case OffscreenRendererKeyTypes::VoidPtr:
-//            return hash<size_t>()(reinterpret_cast<size_t>(key.getData<void *>()));
-//        default:
-//            break;
-//        }
-//        Q_ASSERT(false);
-//        return 0;
-//    }
-//    bool operator()(const SOffscreenRendererKey &lhs, const SOffscreenRendererKey &rhs) const
-//    {
-//        return lhs == rhs;
-//    }
-//};
-//}
+uint qHash(const SOffscreenRendererKey &key)
+{
+    switch (key.getType()) {
+    case OffscreenRendererKeyTypes::RegisteredString:
+        return qHash(key.getData<QString>());
+    case OffscreenRendererKeyTypes::VoidPtr:
+        return qHash(reinterpret_cast<size_t>(key.getData<void *>()));
+    default:
+        Q_UNREACHABLE();
+        return 0;
+    }
+}
 
 namespace {
 
 struct SRendererData : SOffscreenRenderResult
 {
-    IResourceManager &m_ResourceManager;
+    QSharedPointer<IResourceManager> m_ResourceManager;
     quint32 m_FrameCount;
     bool m_Rendering;
 
-    SRendererData(IResourceManager &inResourceManager)
-        , m_ResourceManager(inResourceManager)
+    SRendererData(QSharedPointer<IResourceManager> inResourceManager)
+        : m_ResourceManager(inResourceManager)
         , m_FrameCount(std::numeric_limits<quint32>::max())
         , m_Rendering(false)
     {
     }
     ~SRendererData()
     {
-        if (m_Texture)
-            m_ResourceManager.Release(*m_Texture);
-        m_Texture = nullptr;
     }
 };
 
@@ -103,8 +91,8 @@ struct SScopedRenderDataRenderMarker
 
 struct SRenderDataReleaser
 {
-    SRendererData *mPtr;
-    SRenderDataReleaser(SRendererData *inItem)
+    QSharedPointer<SRendererData> mPtr;
+    SRenderDataReleaser(QSharedPointer<SRendererData> inItem)
         : mPtr(inItem)
     {
     }
@@ -140,34 +128,34 @@ struct SOffscreenRunnable : public IRenderTask
 
 struct SOffscreenRenderManager : public IOffscreenRenderManager
 {
-    typedef QHash<SOffscreenRendererKey, SRenderDataReleaser> TRendererMap;
-    IQDemonRenderContext &m_Context;
+    typedef QHash<SOffscreenRendererKey, SRendererData> TRendererMap;
+    QSharedPointer<IQDemonRenderContext> m_Context;
     QSharedPointer<IResourceManager> m_ResourceManager;
     TRendererMap m_Renderers;
     quint32 m_FrameCount; // cheap per-
 
-    SOffscreenRenderManager(IResourceManager &inManager, IQDemonRenderContext &inContext)
+    SOffscreenRenderManager(QSharedPointer<IResourceManager> inManager, QSharedPointer<IQDemonRenderContext> inContext)
         : m_Context(inContext)
         , m_ResourceManager(inManager)
         , m_FrameCount(0)
     {
     }
 
-    virtual ~SOffscreenRenderManager() {}
+    virtual ~SOffscreenRenderManager() override {}
 
     QDemonOption<bool> MaybeRegisterOffscreenRenderer(const SOffscreenRendererKey &inKey,
-                                                IOffscreenRenderer &inRenderer) override
+                                                      QSharedPointer<IOffscreenRenderer> inRenderer) override
     {
         TRendererMap::iterator theIter = m_Renderers.find(inKey);
         if (theIter != m_Renderers.end()) {
-            SRendererData &theData = *(theIter->second.mPtr);
-            if (theData.m_Renderer != &inRenderer) {
+            SRendererData &theData = theIter.value();
+            if (theData.m_Renderer != inRenderer) {
                 if (inKey.getType() == OffscreenRendererKeyTypes::RegisteredString) {
                     qCCritical(INVALID_OPERATION, "Different renderers registered under same key: %s",
-                               inKey.getData<QString>().c_str());
+                               inKey.getData<QString>().toLatin1().constData());
                 }
                 Q_ASSERT(false);
-                return Empty();
+                return QDemonEmpty();
             }
             return false;
         }
@@ -176,12 +164,13 @@ struct SOffscreenRenderManager : public IOffscreenRenderManager
     }
 
     void RegisterOffscreenRenderer(const SOffscreenRendererKey &inKey,
-                                   IOffscreenRenderer &inRenderer) override
+                                   QSharedPointer<IOffscreenRenderer> inRenderer) override
     {
-        QPair<TRendererMap::iterator, bool> theInsert = m_Renderers.insert(inKey, new SRendererData(*m_ResourceManager));
-        Q_ASSERT(theInsert.second);
-        SRendererData &theData = *(theInsert.first->second.mPtr);
-        theData.m_Renderer = &inRenderer;
+        auto inserter = m_Renderers.find(inKey);
+        if (inserter == m_Renderers.end())
+            inserter = m_Renderers.insert(inKey, SRendererData(m_ResourceManager));
+        SRendererData &theData = inserter.value();
+        theData.m_Renderer = inRenderer;
     }
 
     bool HasOffscreenRenderer(const SOffscreenRendererKey &inKey) override
@@ -189,11 +178,11 @@ struct SOffscreenRenderManager : public IOffscreenRenderManager
         return m_Renderers.find(inKey) != m_Renderers.end();
     }
 
-    IOffscreenRenderer *GetOffscreenRenderer(const SOffscreenRendererKey &inKey) override
+    QSharedPointer<IOffscreenRenderer> GetOffscreenRenderer(const SOffscreenRendererKey &inKey) override
     {
         TRendererMap::iterator theRenderer = m_Renderers.find(inKey);
         if (theRenderer != m_Renderers.end()) {
-            SRendererData &theData = *theRenderer->second.mPtr;
+            SRendererData &theData = theRenderer.value();
             return theData.m_Renderer;
         }
         return nullptr;
@@ -205,39 +194,39 @@ struct SOffscreenRenderManager : public IOffscreenRenderManager
 
     void RenderItem(SRendererData &theData, SOffscreenRendererEnvironment theDesiredEnvironment)
     {
-        QDemonRenderContext &theContext = m_ResourceManager->GetRenderContext();
-        QVector2D thePresScaleFactor = m_Context.GetPresentationScaleFactor();
+        auto theContext = m_ResourceManager->GetRenderContext();
+        QVector2D thePresScaleFactor = m_Context->GetPresentationScaleFactor();
         SOffscreenRendererEnvironment theOriginalDesiredEnvironment(theDesiredEnvironment);
         // Ensure that our overall render context comes back no matter what the client does.
         QDemonRenderContextScopedProperty<QVector4D> __clearColor(
-                    theContext, &QDemonRenderContext::GetClearColor, &QDemonRenderContext::SetClearColor,
+                    *theContext, &QDemonRenderContext::GetClearColor, &QDemonRenderContext::SetClearColor,
                     QVector4D(0, 0, 0, 0));
         QDemonRenderContextScopedProperty<bool> __scissorEnabled(
-                    theContext, &QDemonRenderContext::IsScissorTestEnabled,
+                    *theContext, &QDemonRenderContext::IsScissorTestEnabled,
                     &QDemonRenderContext::SetScissorTestEnabled, false);
         QDemonRenderContextScopedProperty<QDemonRenderRect> __scissorRect(
-                    theContext, &QDemonRenderContext::GetScissorRect, &QDemonRenderContext::SetScissorRect);
+                    *theContext, &QDemonRenderContext::GetScissorRect, &QDemonRenderContext::SetScissorRect);
         QDemonRenderContextScopedProperty<QDemonRenderRect> __viewportRect(
-                    theContext, &QDemonRenderContext::GetViewport, &QDemonRenderContext::SetViewport);
+                    *theContext, &QDemonRenderContext::GetViewport, &QDemonRenderContext::SetViewport);
         QDemonRenderContextScopedProperty<bool> __depthWrite(
-                    theContext, &QDemonRenderContext::IsDepthWriteEnabled,
+                    *theContext, &QDemonRenderContext::IsDepthWriteEnabled,
                     &QDemonRenderContext::SetDepthWriteEnabled, false);
         QDemonRenderContextScopedProperty<QDemonRenderBoolOp::Enum> __depthFunction(
-                    theContext, &QDemonRenderContext::GetDepthFunction, &QDemonRenderContext::SetDepthFunction,
+                    *theContext, &QDemonRenderContext::GetDepthFunction, &QDemonRenderContext::SetDepthFunction,
                     QDemonRenderBoolOp::Less);
         QDemonRenderContextScopedProperty<bool> __blendEnabled(
-                    theContext, &QDemonRenderContext::IsBlendingEnabled, &QDemonRenderContext::SetBlendingEnabled,
+                    *theContext, &QDemonRenderContext::IsBlendingEnabled, &QDemonRenderContext::SetBlendingEnabled,
                     false);
         QDemonRenderContextScopedProperty<QDemonRenderBlendFunctionArgument>
-                __blendFunction(theContext, &QDemonRenderContext::GetBlendFunction,
+                __blendFunction(*theContext, &QDemonRenderContext::GetBlendFunction,
                                 &QDemonRenderContext::SetBlendFunction,
                                 QDemonRenderBlendFunctionArgument());
         QDemonRenderContextScopedProperty<QDemonRenderBlendEquationArgument>
-                __blendEquation(theContext, &QDemonRenderContext::GetBlendEquation,
+                __blendEquation(*theContext, &QDemonRenderContext::GetBlendEquation,
                                 &QDemonRenderContext::SetBlendEquation,
                                 QDemonRenderBlendEquationArgument());
-        QDemonRenderContextScopedProperty<QDemonRenderFrameBufferPtr>
-                __rendertarget(theContext, &QDemonRenderContext::GetRenderTarget,
+        QDemonRenderContextScopedProperty<QSharedPointer<QDemonRenderFrameBuffer> >
+                __rendertarget(*theContext, &QDemonRenderContext::GetRenderTarget,
                                &QDemonRenderContext::SetRenderTarget);
 
         quint32 theSampleCount = 1;
@@ -272,9 +261,9 @@ struct SOffscreenRenderManager : public IOffscreenRenderManager
                             theDesiredEnvironment.m_Width, theDesiredEnvironment.m_Height);
             }
         }
-        CResourceFrameBuffer theFrameBuffer(*m_ResourceManager);
+        CResourceFrameBuffer theFrameBuffer(m_ResourceManager);
         theFrameBuffer.EnsureFrameBuffer();
-        QDemonRenderTexture2D *renderTargetTexture(theData.m_Texture);
+        auto &renderTargetTexture = theData.m_Texture;
         QDemonRenderTextureTargetType::Enum fboAttachmentType =
                 QDemonRenderTextureTargetType::Texture2D;
         if (isMultisamplePass) {
@@ -283,12 +272,12 @@ struct SOffscreenRenderManager : public IOffscreenRenderManager
                 fboAttachmentType = QDemonRenderTextureTargetType::Texture2D_MS;
         }
 
-        CResourceTexture2D renderColorTexture(*m_ResourceManager, renderTargetTexture);
+        CResourceTexture2D renderColorTexture(m_ResourceManager, renderTargetTexture);
 
-        CResourceTexture2D renderDepthStencilTexture(*m_ResourceManager);
+        CResourceTexture2D renderDepthStencilTexture(m_ResourceManager);
 
         if (theSampleCount > 1)
-            m_Context.GetRenderContext().SetMultisampleEnabled(true);
+            m_Context->GetRenderContext()->SetMultisampleEnabled(true);
 
         QDemonRenderClearFlags theClearFlags;
         QDemonRenderTextureFormats::Enum theDepthStencilTextureFormat(QDemonRenderTextureFormats::Unknown);
@@ -318,49 +307,49 @@ struct SOffscreenRenderManager : public IOffscreenRenderManager
         renderColorTexture.EnsureTexture(theDesiredEnvironment.m_Width,
                                          theDesiredEnvironment.m_Height,
                                          theDesiredEnvironment.m_Format, theSampleCount);
-        theFrameBuffer->Attach(QDemonRenderFrameBufferAttachments::Color0, *renderColorTexture,
+        theFrameBuffer->Attach(QDemonRenderFrameBufferAttachments::Color0, renderColorTexture.GetTexture(),
                                fboAttachmentType);
 
         if (theDepthStencilTextureFormat != QDemonRenderTextureFormats::Unknown) {
             renderDepthStencilTexture.EnsureTexture(theDesiredEnvironment.m_Width,
                                                     theDesiredEnvironment.m_Height,
                                                     theDepthStencilTextureFormat, theSampleCount);
-            theFrameBuffer->Attach(theAttachmentLocation, *renderDepthStencilTexture,
+            theFrameBuffer->Attach(theAttachmentLocation, renderDepthStencilTexture.GetTexture(),
                                    fboAttachmentType);
         }
         // IsComplete check takes a really long time so I am not going to worry about it for now.
 
-        theContext.SetRenderTarget(theFrameBuffer);
-        theContext.SetViewport(
+        theContext->SetRenderTarget(theFrameBuffer);
+        theContext->SetViewport(
                     QDemonRenderRect(0, 0, theDesiredEnvironment.m_Width, theDesiredEnvironment.m_Height));
-        theContext.SetScissorTestEnabled(false);
+        theContext->SetScissorTestEnabled(false);
 
-        theContext.SetBlendingEnabled(false);
-        theData.m_Renderer->Render(theDesiredEnvironment, theContext, thePresScaleFactor,
+        theContext->SetBlendingEnabled(false);
+        theData.m_Renderer->Render(theDesiredEnvironment, *theContext, thePresScaleFactor,
                                    SScene::AlwaysClear, this);
 
         if (theSampleCount > 1) {
-            CResourceTexture2D theResult(*m_ResourceManager, theData.m_Texture);
+            QSharedPointer<CResourceTexture2D> theResult(new CResourceTexture2D(m_ResourceManager, theData.m_Texture));
 
             if (theDesiredEnvironment.m_MSAAMode != AAModeValues::SSAA) {
                 // Have to downsample the FBO.
                 CRendererUtil::ResolveMutisampleFBOColorOnly(
-                            *m_ResourceManager, theResult, m_Context.GetRenderContext(),
+                            m_ResourceManager, theResult, m_Context->GetRenderContext(),
                             theDesiredEnvironment.m_Width, theDesiredEnvironment.m_Height,
-                            theDesiredEnvironment.m_Format, *theFrameBuffer);
+                            theDesiredEnvironment.m_Format, theFrameBuffer);
 
-                m_Context.GetRenderContext().SetMultisampleEnabled(false);
+                m_Context->GetRenderContext()->SetMultisampleEnabled(false);
             } else {
                 // Resolve the FBO to the layer texture
                 CRendererUtil::ResolveSSAAFBOColorOnly(
-                            *m_ResourceManager, theResult, theOriginalDesiredEnvironment.m_Width,
-                            theOriginalDesiredEnvironment.m_Height, m_Context.GetRenderContext(),
+                            m_ResourceManager, theResult, theOriginalDesiredEnvironment.m_Width,
+                            theOriginalDesiredEnvironment.m_Height, m_Context->GetRenderContext(),
                             theDesiredEnvironment.m_Width, theDesiredEnvironment.m_Height,
-                            theDesiredEnvironment.m_Format, *theFrameBuffer);
+                            theDesiredEnvironment.m_Format, theFrameBuffer);
             }
 
-            Q_ASSERT(theData.m_Texture == theResult.GetTexture());
-            theResult.ForgetTexture();
+            Q_ASSERT(theData.m_Texture == theResult->GetTexture());
+            theResult->ForgetTexture();
         } else {
             renderColorTexture.ForgetTexture();
         }
@@ -374,9 +363,9 @@ struct SOffscreenRenderManager : public IOffscreenRenderManager
     SOffscreenRenderResult GetRenderedItem(const SOffscreenRendererKey &inKey) override
     {
         TRendererMap::iterator theRenderer = m_Renderers.find(inKey);
-        QVector2D thePresScaleFactor = m_Context.GetPresentationScaleFactor();
-        if (theRenderer != m_Renderers.end() && theRenderer->second.mPtr->m_Rendering == false) {
-            SRendererData &theData = *theRenderer->second.mPtr;
+        QVector2D thePresScaleFactor = m_Context->GetPresentationScaleFactor();
+        if (theRenderer != m_Renderers.end() && theRenderer.value().m_Rendering == false) {
+            SRendererData &theData = theRenderer.value();
             SScopedRenderDataRenderMarker __renderMarker(theData);
 
             bool renderedThisFrame = theData.m_Texture && theData.m_FrameCount == m_FrameCount;
@@ -398,23 +387,23 @@ struct SOffscreenRenderManager : public IOffscreenRenderManager
 
             QDemonRenderRect theViewport(0, 0, theDesiredEnvironment.m_Width,
                                          theDesiredEnvironment.m_Height);
-            IRenderList &theRenderList(m_Context.GetRenderList());
-            QDemonRenderContext &theContext(m_Context.GetRenderContext());
+            auto theRenderList = m_Context->GetRenderList();
+            auto theContext = m_Context->GetRenderContext();
             // This happens here because if there are any fancy render steps
-            SRenderListScopedProperty<bool> _scissor(theRenderList,
+            SRenderListScopedProperty<bool> scissor(*theRenderList,
                                                      &IRenderList::IsScissorTestEnabled,
                                                      &IRenderList::SetScissorTestEnabled, false);
-            SRenderListScopedProperty<QDemonRenderRect> _viewport(
-                        theRenderList, &IRenderList::GetViewport, &IRenderList::SetViewport, theViewport);
+            SRenderListScopedProperty<QDemonRenderRect> viewport(
+                        *theRenderList, &IRenderList::GetViewport, &IRenderList::SetViewport, theViewport);
             // Some plugins don't use the render list so they need the actual gl context setup.
-            QDemonRenderContextScopedProperty<bool> __scissorEnabled(
-                        theContext, &QDemonRenderContext::IsScissorTestEnabled,
+            QDemonRenderContextScopedProperty<bool> scissorEnabled(
+                        *theContext, &QDemonRenderContext::IsScissorTestEnabled,
                         &QDemonRenderContext::SetScissorTestEnabled, false);
             QDemonRenderContextScopedProperty<QDemonRenderRect> __viewportRect(
-                        theContext, &QDemonRenderContext::GetViewport, &QDemonRenderContext::SetViewport,
+                        *theContext, &QDemonRenderContext::GetViewport, &QDemonRenderContext::SetViewport,
                         theViewport);
 
-            quint32 taskId = m_Context.GetRenderList().AddRenderTask(*new SOffscreenRunnable(*this, theData, theDesiredEnvironment));
+            quint32 taskId = m_Context->GetRenderList()->AddRenderTask(*new SOffscreenRunnable(*this, theData, theDesiredEnvironment));
 
             SOffscreenRenderFlags theFlags =
                     theData.m_Renderer->NeedsRender(theDesiredEnvironment, thePresScaleFactor, this);
@@ -423,7 +412,7 @@ struct SOffscreenRenderManager : public IOffscreenRenderManager
             if (theData.m_Texture) {
                 // Quick-out if the renderer doesn't need to render itself.
                 if (theData.m_HasChangedSinceLastFrame == false) {
-                    m_Context.GetRenderList().DiscardRenderTask(taskId);
+                    m_Context->GetRenderList()->DiscardRenderTask(taskId);
                     return theData;
                 }
             } else
@@ -435,7 +424,7 @@ struct SOffscreenRenderManager : public IOffscreenRenderManager
                 if (theDesiredEnvironment.m_Width != theDetails.m_Width
                         || theDesiredEnvironment.m_Height != theDetails.m_Height
                         || theDesiredEnvironment.m_Format != theDetails.m_Format) {
-                    m_ResourceManager->Release(*theData.m_Texture);
+                    m_ResourceManager->Release(theData.m_Texture);
                     theData.m_Texture = nullptr;
                 }
             }
@@ -452,7 +441,7 @@ struct SOffscreenRenderManager : public IOffscreenRenderManager
         return SOffscreenRenderResult();
     }
 
-    void BeginFrame() override { m_PerFrameAllocator.reset(); }
+    void BeginFrame() override { /* TODO: m_PerFrameAllocator.reset();*/ }
     void EndFrame() override { ++m_FrameCount; }
 };
 
@@ -462,11 +451,21 @@ void SOffscreenRunnable::Run()
 }
 }
 
-IOffscreenRenderManager &IOffscreenRenderManager::CreateOffscreenRenderManager(
-        IResourceManager &inManager,
-        IQDemonRenderContext &inContext)
+IOffscreenRenderManager::~IOffscreenRenderManager()
 {
-    return *new SOffscreenRenderManager(inManager, inContext);
+
+}
+
+QSharedPointer<IOffscreenRenderManager> IOffscreenRenderManager::CreateOffscreenRenderManager(
+        QSharedPointer<IResourceManager> inManager,
+        QSharedPointer<IQDemonRenderContext> inContext)
+{
+    return QSharedPointer<IOffscreenRenderManager>(new SOffscreenRenderManager(inManager, inContext));
+}
+
+IOffscreenRenderer::~IOffscreenRenderer()
+{
+
 }
 
 QT_END_NAMESPACE

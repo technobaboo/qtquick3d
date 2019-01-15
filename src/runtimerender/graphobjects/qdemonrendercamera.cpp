@@ -406,6 +406,8 @@ void SCamera::SetupOrthographicCameraForOffscreenRender(QDemonRenderTexture2D &i
                                                         QMatrix4x4 &outVP)
 {
     STextureDetails theDetails(inTexture.GetTextureDetails());
+    // TODO:
+    Q_UNUSED(theDetails);
     SCamera theTempCamera;
     SetupOrthographicCameraForOffscreenRender(inTexture, outVP, theTempCamera);
 }

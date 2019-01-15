@@ -62,7 +62,7 @@ public:
             QSharedPointer<QDemonRenderContextImpl> context,
             QDemonRenderTextureTargetType::Enum texTarget = QDemonRenderTextureTargetType::Texture2D);
 
-    virtual ~QDemonRenderTexture2D();
+    virtual ~QDemonRenderTexture2D() override;
 
     // Get the texture details for mipmap level 0 if it was set.
     STextureDetails GetTextureDetails() const override;

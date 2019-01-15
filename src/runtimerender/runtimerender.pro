@@ -12,7 +12,7 @@ HEADERS += \
     qtdemonruntimerenderglobal_p.h \
 #    qdemonqmlrender.h \
     qdemonoffscreenrenderkey.h \
-#    qdemonoffscreenrendermanager.h \
+    qdemonoffscreenrendermanager.h \
 #    qdemonoldnbustedrenderplugin.h \
 #    qdemonrenderableimage.h \
     qdemonrenderclippingfrustum.h \
@@ -24,7 +24,7 @@ HEADERS += \
     qdemonrenderdynamicobjectsystem.h \
     qdemonrenderdynamicobjectsystemcommands.h \
     qdemonrenderdynamicobjectsystemutil.h \
-#    qdemonrendereffectsystem.h \
+    qdemonrendereffectsystem.h \
     qdemonrenderer.h \
     qdemonrendererutil.h \
     qdemonrendereulerangles.h \
@@ -72,7 +72,7 @@ HEADERS += \
 
 SOURCES += \
 #    qdemonqmlrender.cpp \
-#    qdemonoffscreenrendermanager.cpp \
+    qdemonoffscreenrendermanager.cpp \
 #    qdemonoldnbustedrenderplugin.cpp \
     qdemononscreentextrenderer.cpp \
     qdemonqttextrenderer.cpp \
@@ -82,7 +82,7 @@ SOURCES += \
 #    qdemonrendercustommaterialsystem.cpp \
 #    qdemonrenderdefaultmaterialshadergenerator.cpp \
     qdemonrenderdynamicobjectsystem.cpp \
-#    qdemonrendereffectsystem.cpp \
+    qdemonrendereffectsystem.cpp \
     qdemonrendererutil.cpp \
     qdemonrendereulerangles.cpp \
 #    qdemonrendergpuprofiler.cpp \

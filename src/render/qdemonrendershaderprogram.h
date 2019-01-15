@@ -469,14 +469,13 @@ template <typename TDataType>
 struct QDemonRenderCachedShaderBuffer
 {
     QSharedPointer<QDemonRenderShaderProgram> m_Shader; ///< pointer to shader program
-    TDataType m_ShaderBuffer; ///< poiner to shader buffer object
+    QSharedPointer<TDataType> m_ShaderBuffer; ///< poiner to shader buffer object
 
     QDemonRenderCachedShaderBuffer(const char *inShaderBufferName, QSharedPointer<QDemonRenderShaderProgram> inShader)
-        : m_Shader(&inShader)
+        : m_Shader(inShader)
         , m_ShaderBuffer(nullptr)
     {
-        TDataType theShaderBuffer =
-                static_cast<TDataType>(inShader->GetShaderBuffer(inShaderBufferName));
+        QSharedPointer<TDataType> theShaderBuffer = qSharedPointerCast<TDataType>(inShader->GetShaderBuffer(inShaderBufferName));
         if (theShaderBuffer) {
             m_ShaderBuffer = theShaderBuffer;
         }

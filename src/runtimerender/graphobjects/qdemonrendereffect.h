@@ -27,56 +27,56 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#pragma once
-#ifndef QDEMON_RENDER_SCENE_H
-#define QDEMON_RENDER_SCENE_H
+#ifndef QDEMON_RENDER_EFFECT_H
+#define QDEMON_RENDER_EFFECT_H
 
 #include <QtDemonRuntimeRender/qdemonrendergraphobject.h>
-#include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
-#include <QtGui/QVector3D>
+#include <QtDemonRuntimeRender/qdemonrendernode.h>
+#include <QtDemonRuntimeRender/qdemonrenderdynamicobject.h>
 
 QT_BEGIN_NAMESPACE
 struct SLayer;
-struct SPresentation;
-typedef void *SRenderInstanceId;
+struct SEffectContext;
+struct IEffectSystem;
 
-struct SScene : public SGraphObject
+// Effects are post-render effect applied to the layer.  There can be more than one of
+// them and they have completely variable properties.
+// see IEffectManager in order to create these effects.
+// The data for the effect immediately follows the effect
+struct SEffect : public SDynamicObject
 {
-    SPresentation *m_Presentation;
-    SLayer *m_FirstChild;
-    QVector3D m_ClearColor;
-    bool m_UseClearColor;
-    bool m_Dirty;
+private:
+    // These objects are only created via the dynamic object system.
+    SEffect(const SEffect &);
+    SEffect &operator=(const SEffect &);
+    SEffect();
 
-    enum RenderClearCommand {
-        ClearIsOptional = 0,
-        DoNotClear = 1,
-        AlwaysClear = 2,
-    };
+public:
+    SLayer *m_Layer;
+    SEffect *m_NextEffect;
+    // Opaque pointer to context type implemented by the effect system.
+    // May be null in which case the effect system will generate a new context
+    // the first time it needs to render this effect.
+    QSharedPointer<SEffectContext> m_Context;
 
-    SScene();
+    void Initialize();
 
-    void AddChild(SLayer &inLayer);
-    SLayer *GetLastChild();
+    // If our active flag value changes, then we ask the effect manager
+    // to reset our context.
+    void SetActive(bool inActive, IEffectSystem &inSystem);
+
+    void Reset(IEffectSystem &inSystem);
 
     // Generic method used during serialization
     // to remap string and object pointers
     template <typename TRemapperType>
     void Remap(TRemapperType &inRemapper)
     {
-        SGraphObject::Remap(inRemapper);
-        inRemapper.Remap(m_Presentation);
-        inRemapper.Remap(m_FirstChild);
+        SDynamicObject::Remap(inRemapper);
+        inRemapper.Remap(m_Layer);
+        inRemapper.Remap(m_NextEffect);
+        inRemapper.NullPtr(m_Context);
     }
-    // returns true if any of the layers were dirty or if this object was dirty
-    bool PrepareForRender(const QVector2D &inViewportDimensions, IQDemonRenderContext &inContext,
-                          const SRenderInstanceId id = nullptr);
-    void Render(const QVector2D &inViewportDimensions, IQDemonRenderContext &inContext,
-                RenderClearCommand command = ClearIsOptional,
-                const SRenderInstanceId id = nullptr);
-    void RenderWithClear(const QVector2D &inViewportDimensions, IQDemonRenderContext &inContext,
-                         RenderClearCommand inClearColorBuffer,
-                         QVector3D inclearColor, const SRenderInstanceId id = nullptr);
 };
 QT_END_NAMESPACE
 

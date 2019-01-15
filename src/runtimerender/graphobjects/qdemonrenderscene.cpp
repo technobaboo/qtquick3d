@@ -73,8 +73,8 @@ bool SScene::PrepareForRender(const QVector2D &inViewportDimensions, IQDemonRend
     m_Dirty = false;
     if (m_FirstChild) {
         wasDirty |=
-            inContext.GetRenderer().PrepareLayerForRender(*m_FirstChild, inViewportDimensions,
-                                                          true, id);
+            inContext.GetRenderer()->PrepareLayerForRender(*m_FirstChild, inViewportDimensions,
+                                                           true, id);
     }
     return wasDirty;
 }
@@ -94,12 +94,12 @@ void SScene::Render(const QVector2D &inViewportDimensions, IQDemonRenderContext 
         }
         // Maybe clear and reset to previous clear color after we leave.
         QDemonRenderContextScopedProperty<QVector4D> __clearColor(
-            inContext.GetRenderContext(), &QDemonRenderContext::GetClearColor,
-            &QDemonRenderContext::SetClearColor, clearColor);
-        inContext.GetRenderContext().Clear(QDemonRenderClearValues::Color);
+            *inContext.GetRenderContext(), &QDemonRenderContext::GetClearColor,
+                    &QDemonRenderContext::SetClearColor, clearColor);
+        inContext.GetRenderContext()->Clear(QDemonRenderClearValues::Color);
     }
     if (m_FirstChild) {
-        inContext.GetRenderer().RenderLayer(*m_FirstChild, inViewportDimensions, m_UseClearColor,
+        inContext.GetRenderer()->RenderLayer(*m_FirstChild, inViewportDimensions, m_UseClearColor,
                                             m_ClearColor, true, id);
     }
 }

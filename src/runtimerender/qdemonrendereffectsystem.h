@@ -27,7 +27,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#pragma once
 #ifndef QDEMON_RENDER_EFFECT_SYSTEM_H
 #define QDEMON_RENDER_EFFECT_SYSTEM_H
 
@@ -38,26 +37,30 @@
 QT_BEGIN_NAMESPACE
 struct SEffect;
 struct SEffectContext;
+struct IEffectSystem;
+class IResourceManager;
+
 namespace dynamic {
 struct SCommand; // UICRenderEffectCommands.h
 }
 
 struct SEffectRenderArgument {
-    SEffect &m_Effect;
-    QDemonRenderTexture2D &m_ColorBuffer;
+    QSharedPointer<SEffect> m_Effect;
+    QSharedPointer<QDemonRenderTexture2D> m_ColorBuffer;
     // Some effects need the camera near and far ranges.
     QVector2D m_CameraClipRange;
     // Some effects require the depth buffer from the rendering of thelayer
     // most do not.
-    QDemonRenderTexture2D *m_DepthTexture;
+    QSharedPointer<QDemonRenderTexture2D> m_DepthTexture;
     // this is a depth preapass texture we need for some effects like bloom
     // actually we need the stencil values
-    QDemonRenderTexture2D *m_DepthStencilBuffer;
+    QSharedPointer<QDemonRenderTexture2D> m_DepthStencilBuffer;
 
-    SEffectRenderArgument(SEffect &inEffect, QDemonRenderTexture2D &inColorBuffer,
+    SEffectRenderArgument(QSharedPointer<SEffect> inEffect,
+                          QSharedPointer<QDemonRenderTexture2D> inColorBuffer,
                           const QVector2D &inCameraClipRange,
-                          QDemonRenderTexture2D *inDepthTexture = nullptr,
-                          QDemonRenderTexture2D *inDepthBuffer = nullptr)
+                          QSharedPointer<QDemonRenderTexture2D> inDepthTexture = nullptr,
+                          QSharedPointer<QDemonRenderTexture2D> inDepthBuffer = nullptr)
         : m_Effect(inEffect)
         , m_ColorBuffer(inColorBuffer)
         , m_CameraClipRange(inCameraClipRange)
@@ -70,8 +73,9 @@ struct SEffectRenderArgument {
 class IEffectSystemCore
 {
 public:
+    virtual ~IEffectSystemCore();
     virtual bool IsEffectRegistered(QString inStr) = 0;
-    virtual QDemonConstDataRef<QString> GetRegisteredEffects() = 0;
+    virtual QVector<QString> GetRegisteredEffects() = 0;
     // Register an effect class that uses exactly these commands to render.
     // Effect properties cannot change after the effect is created because that would invalidate
     // existing effect instances.
@@ -152,11 +156,11 @@ public:
     //    virtual void Load(QDemonDataRef<quint8> inData, CStrTableOrDataRef inStrDataBlock,
     //                      const char *inProjectDir) = 0;
 
-    virtual IEffectSystem &GetEffectSystem(IQDemonRenderContext &context) = 0;
+    virtual QSharedPointer<IEffectSystem> GetEffectSystem(QSharedPointer<IQDemonRenderContext> context) = 0;
 
-    virtual IResourceManager &GetResourceManager() = 0;
+    virtual QSharedPointer<IResourceManager> GetResourceManager() = 0;
 
-    static IEffectSystemCore &CreateEffectSystemCore(IQDemonRenderContextCore &context);
+    static QSharedPointer<IEffectSystemCore> CreateEffectSystemCore(QSharedPointer<IQDemonRenderContextCore> context);
 };
 
 /**
@@ -190,7 +194,7 @@ public:
     // Pass in true if you want the result image premultiplied.  Most of the functions in the
     // system
     // assume non-premultiplied color for images so probably this is false.
-    virtual QDemonRenderTexture2D *RenderEffect(SEffectRenderArgument inRenderArgument) = 0;
+    virtual QSharedPointer<QDemonRenderTexture2D> RenderEffect(SEffectRenderArgument inRenderArgument) = 0;
 
     // Render the effect to the currently bound render target using this MVP and optionally
     // enabling blending when rendering to the target

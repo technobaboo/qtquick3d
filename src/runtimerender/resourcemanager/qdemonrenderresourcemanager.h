@@ -72,7 +72,7 @@ public:
     virtual QSharedPointer<QDemonRenderContext> GetRenderContext() = 0;
     virtual void DestroyFreeSizedResources() = 0;
 
-    static IResourceManager &CreateResourceManager(QSharedPointer<QDemonRenderContext> inContext);
+    static QSharedPointer<IResourceManager> CreateResourceManager(QSharedPointer<QDemonRenderContext> inContext);
 };
 QT_END_NAMESPACE
 

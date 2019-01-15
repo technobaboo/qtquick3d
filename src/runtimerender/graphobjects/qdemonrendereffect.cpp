@@ -29,7 +29,7 @@
 ****************************************************************************/
 #include <QtDemonRuntimeRender/qdemonrendereffect.h>
 #include <QtDemonRuntimeRender/qdemonrendereffectsystem.h>
-#include <QtDemonRuntimeRender/qdemonrenderstring.h>
+//#include <QtDemonRuntimeRender/qdemonrenderstring.h>
 
 #include <QtGui/QVector2D>
 #include <QtGui/QVector3D>

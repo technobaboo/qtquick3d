@@ -400,9 +400,9 @@ struct SResourceManager : public IResourceManager
 };
 }
 
-IResourceManager &IResourceManager::CreateResourceManager(QSharedPointer<QDemonRenderContext> inContext)
+QSharedPointer<IResourceManager> IResourceManager::CreateResourceManager(QSharedPointer<QDemonRenderContext> inContext)
 {
-    return *new SResourceManager(inContext);
+    return QSharedPointer<IResourceManager>(new SResourceManager(inContext));
 }
 
 QT_END_NAMESPACE
