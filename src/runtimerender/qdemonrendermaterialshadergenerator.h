@@ -31,13 +31,14 @@
 #ifndef QDEMON_RENDER_MATERIAL_SHADER_GENERATOR_H
 #define QDEMON_RENDER_MATERIAL_SHADER_GENERATOR_H
 
-#include <QtDemonRuntimeRender/qdemonrendershaderkeys.h>
+#include <QtDemonRuntimeRender/qtdemonruntimerenderglobal.h>
+#include <QtDemon/QDemonDataRef>
+
+#include <QtGui/QVector4D>
+#include <QtGui/QMatrix4x4>
+
 #include <QtDemonRuntimeRender/qdemonrendershadercache.h>
-#include <QtDemonRuntimeRender/qdemonrendershadercodegeneratorv2.h>
-#include <QtDemonRuntimeRender/qdemonrenderlayer.h>
-#include <QtDemonRuntimeRender/qdemonrenderimage.h>
-#include <QtDemonRuntimeRender/qdemonrendershadowmap.h>
-#include <QtDemonRuntimeRender/qdemonrenderableimage.h>
+
 
 QT_BEGIN_NAMESPACE
 
@@ -71,6 +72,18 @@ struct SLightSourceShader
     float m_padding1[3];
 };
 
+struct SLayer;
+struct SCamera;
+struct SLight;
+class QDemonRenderShadowMap;
+class QDemonRenderTexture2D;
+struct SImage;
+class IShaderStageGenerator;
+struct SRenderableImage;
+class QDemonRenderShaderProgram;
+struct SGraphObject;
+struct SShaderDefaultMaterialKey;
+
 struct SLayerGlobalRenderProperties
 {
     const SLayer &m_Layer;
@@ -78,9 +91,9 @@ struct SLayerGlobalRenderProperties
     QVector3D m_CameraDirection;
     QDemonDataRef<SLight *> m_Lights;
     QDemonDataRef<QVector3D> m_LightDirections;
-    QDemonRenderShadowMap *m_ShadowMapManager;
-    QDemonRenderTexture2D *m_DepthTexture;
-    QDemonRenderTexture2D *m_SSaoTexture;
+    QSharedPointer<QDemonRenderShadowMap> m_ShadowMapManager;
+    QSharedPointer<QDemonRenderTexture2D> m_DepthTexture;
+    QSharedPointer<QDemonRenderTexture2D> m_SSaoTexture;
     SImage *m_LightProbe;
     SImage *m_LightProbe2;
     float m_ProbeHorizon;
@@ -93,9 +106,9 @@ struct SLayerGlobalRenderProperties
     SLayerGlobalRenderProperties(const SLayer &inLayer, SCamera &inCamera,
                                  QVector3D inCameraDirection, QDemonDataRef<SLight *> inLights,
                                  QDemonDataRef<QVector3D> inLightDirections,
-                                 QDemonRenderShadowMap *inShadowMapManager,
-                                 QDemonRenderTexture2D *inDepthTexture,
-                                 QDemonRenderTexture2D *inSSaoTexture, SImage *inLightProbe,
+                                 QSharedPointer<QDemonRenderShadowMap> inShadowMapManager,
+                                 QSharedPointer<QDemonRenderTexture2D> inDepthTexture,
+                                 QSharedPointer<QDemonRenderTexture2D> inSSaoTexture, SImage *inLightProbe,
                                  SImage *inLightProbe2, float inProbeHorizon,
                                  float inProbeBright, float inProbe2Window, float inProbe2Pos,
                                  float inProbe2Fade, float inProbeFOV)
@@ -122,31 +135,41 @@ struct SLayerGlobalRenderProperties
 class IMaterialShaderGenerator
 {
 public:
+    virtual ~IMaterialShaderGenerator() {}
     struct SImageVariableNames
     {
-        const char *m_ImageSampler;
-        const char *m_ImageFragCoords;
+        QString m_ImageSampler;
+        QString m_ImageFragCoords;
     };
 
     virtual SImageVariableNames GetImageVariableNames(quint32 inIdx) = 0;
-    virtual void GenerateImageUVCoordinates(IShaderStageGenerator &inVertexPipeline, quint32 idx,
-                                            quint32 uvSet, SRenderableImage &image) = 0;
+    virtual void GenerateImageUVCoordinates(IShaderStageGenerator &inVertexPipeline,
+                                            quint32 idx,
+                                            quint32 uvSet,
+                                            SRenderableImage &image) = 0;
 
     // inPipelineName needs to be unique else the shader cache will just return shaders from
     // different pipelines.
-    virtual QDemonRenderShaderProgram *GenerateShader(
-            const SGraphObject &inMaterial, SShaderDefaultMaterialKey inShaderDescription,
-            IShaderStageGenerator &inVertexPipeline, TShaderFeatureSet inFeatureSet,
-            QDemonDataRef<SLight *> inLights, SRenderableImage *inFirstImage, bool inHasTransparency,
-            const char *inVertexPipelineName, const char *inCustomMaterialName = "") = 0;
+    virtual QSharedPointer<QDemonRenderShaderProgram> GenerateShader(const SGraphObject &inMaterial,
+                                                                     SShaderDefaultMaterialKey inShaderDescription,
+                                                                     IShaderStageGenerator &inVertexPipeline,
+                                                                     TShaderFeatureSet inFeatureSet,
+                                                                     QDemonDataRef<SLight *> inLights,
+                                                                     SRenderableImage *inFirstImage,
+                                                                     bool inHasTransparency,
+                                                                     const QString &inVertexPipelineName,
+                                                                     const QString &inCustomMaterialName = QString()) = 0;
 
     // Also sets the blend function on the render context.
-    virtual void
-    SetMaterialProperties(QDemonRenderShaderProgram &inProgram, const SGraphObject &inMaterial,
-                          const QVector2D &inCameraVec, const QMatrix4x4 &inModelViewProjection,
-                          const QMatrix3x3 &inNormalMatrix, const QMatrix4x4 &inGlobalTransform,
-                          SRenderableImage *inFirstImage, float inOpacity,
-                          SLayerGlobalRenderProperties inRenderProperties) = 0;
+    virtual void SetMaterialProperties(QSharedPointer<QDemonRenderShaderProgram> inProgram,
+                                       const SGraphObject &inMaterial,
+                                       const QVector2D &inCameraVec,
+                                       const QMatrix4x4 &inModelViewProjection,
+                                       const QMatrix3x3 &inNormalMatrix,
+                                       const QMatrix4x4 &inGlobalTransform,
+                                       SRenderableImage *inFirstImage,
+                                       float inOpacity,
+                                       SLayerGlobalRenderProperties inRenderProperties) = 0;
 };
 QT_END_NAMESPACE
 

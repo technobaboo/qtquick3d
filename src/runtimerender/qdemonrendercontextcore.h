@@ -37,16 +37,16 @@
 #include <QtDemonRuntimeRender/qdemonrenderinputstreamfactory.h>
 #include <QtDemonRuntimeRender/qdemonrenderthreadpool.h>
 #include <QtDemonRuntimeRender/qdemonrenderdynamicobjectsystem.h>
-//#include <QtDemonRuntimeRender/qdemonrendercustommaterialsystem.h>
+#include <QtDemonRuntimeRender/qdemonrendercustommaterialsystem.h>
 #include <QtDemonRuntimeRender/qdemonrendereffectsystem.h>
 #include <QtDemonRuntimeRender/qdemonrenderbufferloader.h>
 #include <QtDemonRuntimeRender/qdemontextrenderer.h>
 #include <QtDemonRuntimeRender/qdemonrenderwidgets.h>
-//#include <QtDemonRuntimeRender/qdemonrenderimagebatchloader.h>
+#include <QtDemonRuntimeRender/qdemonrenderimagebatchloader.h>
 #include <QtDemonRuntimeRender/qdemonrenderpixelgraphicsrenderer.h>
 #include <QtDemonRuntimeRender/qdemonrendertexttexturecache.h>
 #include <QtDemonRuntimeRender/qdemonrenderrenderlist.h>
-//#include <QtDemonRuntimeRender/qdemonrendercustommaterialshadergenerator.h>
+#include <QtDemonRuntimeRender/qdemonrendercustommaterialshadergenerator.h>
 
 #include <QtDemon/qdemonperftimer.h>
 
@@ -65,6 +65,9 @@ struct ScaleModes
     };
 };
 
+class IPathManagerCore;
+class ICustomMaterialSystemCore;
+
 // Part of render context that does not require the render system.
 class IQDemonRenderContextCore
 {
@@ -73,12 +76,12 @@ public:
     virtual QSharedPointer<IInputStreamFactory> GetInputStreamFactory() = 0;
     virtual QSharedPointer<IThreadPool> GetThreadPool() = 0;
     virtual QSharedPointer<IDynamicObjectSystemCore> GetDynamicObjectSystemCore() = 0;
-    //    virtual QSharedPointer<ICustomMaterialSystemCore> GetMaterialSystemCore() = 0;
+    virtual QSharedPointer<ICustomMaterialSystemCore> GetMaterialSystemCore() = 0;
     virtual QSharedPointer<IEffectSystemCore> GetEffectSystemCore() = 0;
     virtual QSharedPointer<IPerfTimer> GetPerfTimer() = 0;
     virtual QSharedPointer<IBufferLoader> GetBufferLoader() = 0;
-    //    virtual QSharedPointer<IRenderPluginManagerCore> GetRenderPluginCore() = 0;
-    //    virtual QSharedPointer<IPathManagerCore> GetPathManagerCore() = 0;
+    //virtual QSharedPointer<IRenderPluginManagerCore> GetRenderPluginCore() = 0;
+    virtual QSharedPointer<IPathManagerCore> GetPathManagerCore() = 0;
     // Text renderers may be provided by clients at runtime.
     virtual void SetTextRendererCore(QSharedPointer<ITextRendererCore> inRenderer) = 0;
     virtual QSharedPointer<ITextRendererCore> GetTextRendererCore() = 0;
@@ -100,8 +103,8 @@ class IQDemonRenderContext
 {
 public:
     virtual ~IQDemonRenderContext() {}
-        virtual QSharedPointer<IQDemonRenderer> GetRenderer() = 0;
-        virtual QSharedPointer<IRenderWidgetContext> GetRenderWidgetContext() = 0;
+    virtual QSharedPointer<IQDemonRenderer> GetRenderer() = 0;
+    virtual QSharedPointer<IRenderWidgetContext> GetRenderWidgetContext() = 0;
     virtual QSharedPointer<IBufferManager> GetBufferManager() = 0;
     virtual QSharedPointer<IResourceManager> GetResourceManager() = 0;
     virtual QSharedPointer<QDemonRenderContext> GetRenderContext() = 0;
@@ -110,19 +113,19 @@ public:
     virtual QSharedPointer<IEffectSystem> GetEffectSystem() = 0;
     virtual QSharedPointer<IShaderCache> GetShaderCache() = 0;
     virtual QSharedPointer<IThreadPool> GetThreadPool() = 0;
-    //    virtual QSharedPointer<IImageBatchLoader> GetImageBatchLoader() = 0;
-    //    virtual QSharedPointer<IRenderPluginManager> GetRenderPluginManager() = 0;
+    virtual QSharedPointer<IImageBatchLoader> GetImageBatchLoader() = 0;
+    //virtual QSharedPointer<IRenderPluginManager> GetRenderPluginManager() = 0;
     virtual QSharedPointer<IDynamicObjectSystem> GetDynamicObjectSystem() = 0;
-    //    virtual QSharedPointer<ICustomMaterialSystem> GetCustomMaterialSystem() = 0;
+    virtual QSharedPointer<ICustomMaterialSystem> GetCustomMaterialSystem() = 0;
     virtual QSharedPointer<IPixelGraphicsRenderer> GetPixelGraphicsRenderer() = 0;
     virtual QSharedPointer<IPerfTimer> GetPerfTimer() = 0;
     virtual QSharedPointer<ITextTextureCache> GetTextureCache() = 0;
     virtual QSharedPointer<ITextRenderer> GetTextRenderer() = 0;
     virtual QSharedPointer<IRenderList> GetRenderList() = 0;
-    //virtual QSharedPointer<IPathManager> GetPathManager() = 0;
-    //    virtual QSharedPointer<IShaderProgramGenerator> GetShaderProgramGenerator() = 0;
-    //    virtual QSharedPointer<IDefaultMaterialShaderGenerator> GetDefaultMaterialShaderGenerator() = 0;
-    //    virtual QSharedPointer<ICustomMaterialShaderGenerator> GetCustomMaterialShaderGenerator() = 0;
+    virtual QSharedPointer<IPathManager> GetPathManager() = 0;
+    virtual QSharedPointer<IShaderProgramGenerator> GetShaderProgramGenerator() = 0;
+    virtual QSharedPointer<IDefaultMaterialShaderGenerator> GetDefaultMaterialShaderGenerator() = 0;
+    virtual QSharedPointer<ICustomMaterialShaderGenerator> GetCustomMaterialShaderGenerator() = 0;
     // Get the number of times EndFrame has been called
     virtual quint32 GetFrameCount() = 0;
 

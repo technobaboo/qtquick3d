@@ -783,10 +783,7 @@ struct SShaderDefaultMaterialKey
         inProperties.VisitProperties(theVisitor);
     }
 };
-QT_END_NAMESPACE
 
-uint qHash(const SShaderDefaultMaterialKey &key) {
-    return key.hash();
-}
+QT_END_NAMESPACE
 
 #endif

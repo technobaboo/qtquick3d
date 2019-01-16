@@ -385,8 +385,7 @@ struct QDemonRenderCachedShaderProperty
     {
         QSharedPointer<QDemonRenderShaderConstantBase> theConstant = inShader->GetShaderConstant(inConstantName);
         if (theConstant) {
-            if (theConstant->GetShaderConstantType()
-                    == QDemonDataTypeToShaderDataTypeMap<TDataType>::GetType()) {
+            if (theConstant->GetShaderConstantType() == QDemonDataTypeToShaderDataTypeMap<TDataType>::GetType()) {
                 m_Constant = theConstant;
             } else {
                 // Property types do not match, this probably indicates that the shader changed
@@ -457,7 +456,7 @@ struct QDemonRenderCachedShaderPropertyArray
     void Set(int count)
     {
         if (m_Constant)
-            m_Shader->SetPropertyValue(m_Constant, static_cast<TDataType *>(m_array), qMin(size, count));
+            m_Shader->SetPropertyValue(m_Constant.data(), static_cast<TDataType*>(m_array), qMin(size, count));
     }
 
     bool IsValid() const { return m_Constant != 0; }

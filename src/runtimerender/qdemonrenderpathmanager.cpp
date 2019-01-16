@@ -27,67 +27,54 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <qdemonrenderpathmanager.h>
-#include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
+#include "qdemonrenderpathmanager.h"
+
+#include <QtDemon/QDemonFlags>
+
 #include <QtDemonRender/qdemonrendervertexbuffer.h>
-#include <qdemonrenderinputassembler.h>
-#include <QtDemonRuntimeRender/qdemonrenderpath.h>
+#include <QtDemonRender/qdemonrenderinputassembler.h>
 #include <QtDemonRender/qdemonrendercontext.h>
 #include <QtDemonRender/qdemonrendervertexbuffer.h>
 #include <QtDemonRender/qdemonrendershaderprogram.h>
+#include <QtDemonRender/qdemonrendershaderprogram.h>
+#include <QtDemonRender/qdemonrenderpathrender.h>
+#include <QtDemonRender/qdemonrenderpathspecification.h>
+
+#include <QtDemonRuntimeRender/qdemonrenderpath.h>
+#include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
 #include <QtDemonRuntimeRender/qdemonrendershadercodegenerator.h>
 #include <QtDemonRuntimeRender/qdemonrenderdynamicobjectsystem.h>
 #include <QtDemonRuntimeRender/qdemonrendercamera.h>
-#include <qdemonrenderpathrendercontext.h>
+#include <QtDemonRuntimeRender/qdemonrenderpathrendercontext.h>
 #include <QtDemonRuntimeRender/qdemonrendershadercodegeneratorv2.h>
 #include <QtDemonRuntimeRender/qdemonrenderdefaultmaterialshadergenerator.h>
-#include <qdemonrendercustommaterialshadergenerator.h>
+#include <QtDemonRuntimeRender/qdemonrendercustommaterialshadergenerator.h>
 #include <QtDemonRuntimeRender/qdemonrendercustommaterial.h>
-#include <qdemonrendercustommaterialsystem.h>
-#include <QtDemonRender/qdemonrendershaderprogram.h>
+#include <QtDemonRuntimeRender/qdemonrendercustommaterialsystem.h>
 #include <QtDemonRuntimeRender/qdemonvertexpipelineimpl.h>
-#include <qdemonrenderpathrender.h>
-#include <qdemonrenderpathspecification.h>
 #include <QtDemonRuntimeRender/qdemonrenderpathsubpath.h>
-#include <qdemonrenderpathmath.h>
-#include <qdemonrenderinputstreamfactory.h>
+#include <QtDemonRuntimeRender/qdemonrenderpathmath.h>
+#include <QtDemonRuntimeRender/qdemonrenderinputstreamfactory.h>
+
+#include <QtDemonAssetImport/qdemonpathutilities.h>
 
 QT_BEGIN_NAMESPACE
 
-using NVRenderCachedShaderProperty;
-using NVRenderCachedShaderBuffer;
-using QDemonRenderStencilFunctionArgument;
-using QDemonRenderBoolOp;
-using QDemonRenderStencilOperationArgument;
-using QDemonRenderStencilOp;
-
-typedef qt3dsimp::SPathBuffer TImportPathBuffer;
+typedef QDemonPathUtilities::SPathBuffer TImportPathBuffer;
 using namespace path;
 
 typedef QPair<QString, QString> TStrStrPair;
-
-namespace eastl {
-template <>
-struct hash<TStrStrPair>
-{
-    size_t operator()(const TStrStrPair &item) const
-    {
-        return eastl::hash<QString>()(item.first)
-                ^ eastl::hash<QString>()(item.second);
-    }
-};
-}
 
 struct SPathShaderMapKey
 {
     QString m_Name;
     SShaderDefaultMaterialKey m_MaterialKey;
-    size_t m_HashCode;
+    uint m_HashCode;
     SPathShaderMapKey(QString inName, SShaderDefaultMaterialKey inKey)
         : m_Name(inName)
         , m_MaterialKey(inKey)
     {
-        m_HashCode = eastl::hash<TStrStrPair>()(m_Name) ^ m_MaterialKey.hash();
+        m_HashCode = qHash(m_Name) ^ m_MaterialKey.hash();
     }
     bool operator==(const SPathShaderMapKey &inKey) const
     {
@@ -95,13 +82,11 @@ struct SPathShaderMapKey
     }
 };
 
-namespace eastl {
-template <>
-struct hash<SPathShaderMapKey>
+uint qHash(const SPathShaderMapKey &inKey)
 {
-    size_t operator()(const SPathShaderMapKey &inKey) const { return inKey.m_HashCode; }
-};
+    return inKey.m_HashCode;
 }
+
 
 namespace {
 
@@ -113,8 +98,7 @@ struct SPathSubPathBuffer
     bool m_Closed;
 
     SPathSubPathBuffer(SPathSubPath &inSubPath)
-        : m_SourceData(alloc, "m_SourceData")
-        , m_SubPath(inSubPath)
+        : m_SubPath(inSubPath)
         , m_Closed(false)
     {
     }
@@ -122,14 +106,14 @@ struct SPathSubPathBuffer
 
 struct SImportPathWrapper
 {
-    qt3dsimp::SPathBuffer *m_Path;
+    QDemonPathUtilities::SPathBuffer *m_Path;
 
-    SImportPathWrapper(qt3dsimp::SPathBuffer &inPath)
+    SImportPathWrapper(QDemonPathUtilities::SPathBuffer &inPath)
         : m_Path(&inPath)
     {
     }
 
-    ~SImportPathWrapper() { m_Path->Free(m_Alloc); }
+    ~SImportPathWrapper() { delete m_Path; }
 
 };
 
@@ -178,7 +162,7 @@ struct SPathBuffer
 
     void ClearPaintedPathData() { m_PathRender = nullptr; }
 
-    qt3dsimp::SPathBuffer GetPathData(qt3dsimp::IPathBufferBuilder &inSpec)
+    QDemonPathUtilities::SPathBuffer GetPathData(QDemonPathUtilities::IPathBufferBuilder &inSpec)
     {
         if (m_SubPaths.size()) {
             inSpec.Clear();
@@ -206,9 +190,9 @@ struct SPathBuffer
                     inSpec.Close();
             }
             return inSpec.GetPathBuffer();
-        } else if (m_PathBuffer.mPtr)
-            return *m_PathBuffer.mPtr->m_Path;
-        return qt3dsimp::SPathBuffer();
+        } else if (m_PathBuffer)
+            return *m_PathBuffer->m_Path;
+        return QDemonPathUtilities::SPathBuffer();
     }
 
     void SetPathType(PathTypes::Enum inPathType)
@@ -222,7 +206,7 @@ struct SPathBuffer
                 ClearPaintedPathData();
                 break;
             default:
-                QDEMON_ALWAYS_ASSERT_MESSAGE("Unexpected path type");
+                Q_UNREACHABLE();
                 // No further processing for unexpected path type
                 return;
             }
@@ -232,10 +216,10 @@ struct SPathBuffer
     }
 
     static QDemonOption<STaperInformation> ToTaperInfo(PathCapping::Enum capping, float capOffset,
-                                                 float capOpacity, float capWidth)
+                                                       float capOpacity, float capWidth)
     {
         if (capping == PathCapping::Noner)
-            return Empty();
+            return QDemonEmpty();
 
         return STaperInformation(capOffset, capOpacity, capWidth);
     }
@@ -281,15 +265,15 @@ struct SPathBuffer
 
 struct SPathGeneratedShader
 {
-    QDemonRenderShaderProgram &m_Shader;
-    NVRenderCachedShaderProperty<float> m_Width;
-    NVRenderCachedShaderProperty<float> m_InnerTessAmount;
-    NVRenderCachedShaderProperty<float> m_EdgeTessAmount;
-    NVRenderCachedShaderProperty<QVector2D> m_BeginTaperData;
-    NVRenderCachedShaderProperty<QVector2D> m_EndTaperData;
-    NVRenderCachedShaderProperty<QMatrix4x4> m_WireframeViewMatrix;
+    QSharedPointer<QDemonRenderShaderProgram> m_Shader;
+    QDemonRenderCachedShaderProperty<float> m_Width;
+    QDemonRenderCachedShaderProperty<float> m_InnerTessAmount;
+    QDemonRenderCachedShaderProperty<float> m_EdgeTessAmount;
+    QDemonRenderCachedShaderProperty<QVector2D> m_BeginTaperData;
+    QDemonRenderCachedShaderProperty<QVector2D> m_EndTaperData;
+    QDemonRenderCachedShaderProperty<QMatrix4x4> m_WireframeViewMatrix;
 
-    SPathGeneratedShader(QDemonRenderShaderProgram &sh)
+    SPathGeneratedShader(QSharedPointer<QDemonRenderShaderProgram> sh)
         : m_Shader(sh)
         , m_Width("pathWidth", sh)
         , m_InnerTessAmount("tessInnerLevel", sh)
@@ -298,11 +282,9 @@ struct SPathGeneratedShader
         , m_EndTaperData("endTaperInfo", sh)
         , m_WireframeViewMatrix("viewport_matrix", sh)
     {
-        //m_Shader.addRef();
     }
-    ~SPathGeneratedShader() 
+    ~SPathGeneratedShader()
     {
-         //m_Shader.release(); 
     }
 
 };
@@ -310,8 +292,7 @@ struct SPathGeneratedShader
 struct SPathVertexPipeline : public SVertexPipelineImpl
 {
 
-    SPathVertexPipeline(IShaderProgramGenerator &inProgGenerator,
-                        IMaterialShaderGenerator &inMaterialGenerator, bool inWireframe)
+    SPathVertexPipeline(QSharedPointer<IShaderProgramGenerator> inProgGenerator, QSharedPointer<IMaterialShaderGenerator> inMaterialGenerator, bool inWireframe)
         : SVertexPipelineImpl(inMaterialGenerator, inProgGenerator, inWireframe)
     {
     }
@@ -325,15 +306,15 @@ struct SPathVertexPipeline : public SVertexPipelineImpl
         return false;
     }
 
-    void AssignTessEvalVarying(const char *inVarName, const char *inVarValueExpr)
+    void AssignTessEvalVarying(const QString &inVarName, const QString &inVarValueExpr)
     {
-        const char *ext = "";
-        if (ProgramGenerator().GetEnabledStages() & ShaderGeneratorStages::Geometry)
-            ext = "TE";
-        TessEval() << "\t" << inVarName << ext << " = " << inVarValueExpr << ";" << Endl;
+        QString ext;
+        if (ProgramGenerator()->GetEnabledStages() & ShaderGeneratorStages::Geometry)
+            ext = QStringLiteral("TE");
+        TessEval() << "\t" << inVarName << ext << " = " << inVarValueExpr << ";" << "\n";
     }
 
-    void AssignOutput(const char *inVarName, const char *inVarValueExpr) override
+    void AssignOutput(const QString &inVarName, const QString &inVarValueExpr) override
     {
         AssignTessEvalVarying(inVarName, inVarValueExpr);
     }
@@ -354,8 +335,7 @@ struct SPathVertexPipeline : public SVertexPipelineImpl
                     "\tgl_out[gl_InvocationID].gl_Position = gl_in[gl_InvocationID].gl_Position;");
         theTessControl.Append("\ttessShader( tessEdgeLevel, tessInnerLevel );\n");
 
-        bool hasGeometryShader =
-                ProgramGenerator().GetStage(ShaderGeneratorStages::Geometry) != nullptr;
+        bool hasGeometryShader = ProgramGenerator()->GetStage(ShaderGeneratorStages::Geometry) != nullptr;
 
         // second setup tessellation control shader
         QString outExt("");
@@ -384,25 +364,24 @@ struct SPathVertexPipeline : public SVertexPipelineImpl
         theTessEval << "\tvec3 binormal = vec3( shaderResult.m_Binormal, 0.0 );\n";
 
         // These are necessary for texture generation.
-        theTessEval << "\tvec3 uTransform;" << Endl;
-        theTessEval << "\tvec3 vTransform;" << Endl;
+        theTessEval << "\tvec3 uTransform;" << "\n";
+        theTessEval << "\tvec3 vTransform;" << "\n";
 
         if (m_DisplacementImage) {
-            MaterialGenerator().GenerateImageUVCoordinates(*this, m_DisplacementIdx, 0,
-                                                           *m_DisplacementImage);
+            MaterialGenerator()->GenerateImageUVCoordinates(*this, m_DisplacementIdx, 0, *m_DisplacementImage);
             theTessEval.AddUniform("displaceAmount", "float");
             theTessEval.AddUniform("model_matrix", "mat4");
             theTessEval.AddInclude("defaultMaterialFileDisplacementTexture.glsllib");
             IDefaultMaterialShaderGenerator::SImageVariableNames theVarNames =
-                    MaterialGenerator().GetImageVariableNames(m_DisplacementIdx);
+                    MaterialGenerator()->GetImageVariableNames(m_DisplacementIdx);
 
             theTessEval.AddUniform(theVarNames.m_ImageSampler, "sampler2D");
             IDefaultMaterialShaderGenerator::SImageVariableNames theNames =
-                    MaterialGenerator().GetImageVariableNames(m_DisplacementIdx);
+                    MaterialGenerator()->GetImageVariableNames(m_DisplacementIdx);
             theTessEval << "\tpos = defaultMaterialFileDisplacementTexture( "
                         << theNames.m_ImageSampler << ", displaceAmount, "
-                        << theNames.m_ImageFragCoords << outExt.c_str() << ", vec3( 0.0, 0.0, 1.0 )"
-                        << ", pos.xyz );" << Endl;
+                        << theNames.m_ImageFragCoords << outExt << ", vec3( 0.0, 0.0, 1.0 )"
+                        << ", pos.xyz );" << "\n";
         }
     }
     void FinalizeTessControlShader() {}
@@ -410,11 +389,11 @@ struct SPathVertexPipeline : public SVertexPipelineImpl
     void FinalizeTessEvaluationShader()
     {
         QString outExt("");
-        if (ProgramGenerator().GetEnabledStages() & ShaderGeneratorStages::Geometry)
+        if (ProgramGenerator()->GetEnabledStages() & ShaderGeneratorStages::Geometry)
             outExt = "TE";
 
         IShaderStageGenerator &tessEvalShader(
-                    *ProgramGenerator().GetStage(ShaderGeneratorStages::TessEval));
+                    *ProgramGenerator()->GetStage(ShaderGeneratorStages::TessEval));
         tessEvalShader.Append("\tgl_Position = model_view_projection * vec4( pos, 1.0 );\n");
     }
 
@@ -429,7 +408,7 @@ struct SPathVertexPipeline : public SVertexPipelineImpl
         if (m_Wireframe) {
             theStages |= ShaderGeneratorStages::Geometry;
         }
-        ProgramGenerator().BeginProgram(theStages);
+        ProgramGenerator()->BeginProgram(theStages);
         InitializeTessShaders();
         if (m_Wireframe) {
             InitializeWireframeGeometryShader();
@@ -450,9 +429,9 @@ struct SPathVertexPipeline : public SVertexPipelineImpl
     void BeginFragmentGeneration() override
     {
         Fragment().AddUniform("material_diffuse", "vec4");
-        Fragment() << "void main()" << Endl << "{" << Endl;
+        Fragment() << "void main()" << "\n" << "{" << "\n";
         // We do not pass object opacity through the pipeline.
-        Fragment() << "\tfloat object_opacity = varTessOpacity * material_diffuse.a;" << Endl;
+        Fragment() << "\tfloat object_opacity = varTessOpacity * material_diffuse.a;" << "\n";
     }
     void DoGenerateUVCoords(quint32) override
     {
@@ -482,7 +461,7 @@ struct SPathVertexPipeline : public SVertexPipelineImpl
     void DoGenerateVertexColor() override
     {
         Vertex().AddIncoming("attr_color", "vec3");
-        Vertex() << "\tvarColor = attr_color;" << Endl;
+        Vertex() << "\tvarColor = attr_color;" << "\n";
     }
 
     void EndVertexGeneration() override
@@ -506,17 +485,17 @@ struct SPathVertexPipeline : public SVertexPipelineImpl
 
     void EndFragmentGeneration() override { Fragment().Append("}"); }
 
-    void AddInterpolationParameter(const char *inName, const char *inType) override
+    void AddInterpolationParameter(const QString &inName, const QString &inType) override
     {
-        m_InterpolationParameters.insert(Str(inName), Str(inType));
+        m_InterpolationParameters.insert(inName, inType);
         Fragment().AddIncoming(inName, inType);
         if (HasTessellation()) {
             QString nameBuilder;
-            nameBuilder.assign(inName);
-            if (ProgramGenerator().GetEnabledStages() & ShaderGeneratorStages::Geometry)
+            nameBuilder = inName;
+            if (ProgramGenerator()->GetEnabledStages() & ShaderGeneratorStages::Geometry)
                 nameBuilder.append("TE");
 
-            TessEval().AddOutgoing(nameBuilder.c_str(), inType);
+            TessEval().AddOutgoing(nameBuilder, inType);
         }
     }
 
@@ -525,25 +504,23 @@ struct SPathVertexPipeline : public SVertexPipelineImpl
 
 struct SPathXYGeneratedShader
 {
-    QDemonRenderShaderProgram &m_Shader;
-    NVRenderCachedShaderProperty<QVector4D> m_RectDimensions;
-    NVRenderCachedShaderProperty<QMatrix4x4> m_ModelMatrix;
-    NVRenderCachedShaderProperty<QVector3D> m_CameraPosition;
-    NVRenderCachedShaderProperty<QVector2D> m_CameraProperties;
+    QSharedPointer<QDemonRenderShaderProgram> m_Shader;
+    QDemonRenderCachedShaderProperty<QVector4D> m_RectDimensions;
+    QDemonRenderCachedShaderProperty<QMatrix4x4> m_ModelMatrix;
+    QDemonRenderCachedShaderProperty<QVector3D> m_CameraPosition;
+    QDemonRenderCachedShaderProperty<QVector2D> m_CameraProperties;
     qint32 m_RefCount;
 
-    SPathXYGeneratedShader(QDemonRenderShaderProgram &sh)
+    SPathXYGeneratedShader(QSharedPointer<QDemonRenderShaderProgram> sh)
         : m_Shader(sh)
         , m_RectDimensions("uni_rect_dimensions", sh)
         , m_ModelMatrix("model_matrix", sh)
         , m_CameraPosition("camera_position", sh)
         , m_CameraProperties("camera_properties", sh)
     {
-        //m_Shader.addRef();
     }
-    virtual ~SPathXYGeneratedShader() 
+    virtual ~SPathXYGeneratedShader()
     {
-         /*m_Shader.release();*/
     }
 };
 
@@ -552,8 +529,8 @@ struct SPathXYGeneratedShader
 struct SXYRectVertexPipeline : public SVertexPipelineImpl
 {
 
-    SXYRectVertexPipeline(IShaderProgramGenerator &inProgGenerator,
-                          IMaterialShaderGenerator &inMaterialGenerator)
+    SXYRectVertexPipeline(QSharedPointer<IShaderProgramGenerator> inProgGenerator,
+                          QSharedPointer<IMaterialShaderGenerator> inMaterialGenerator)
         : SVertexPipelineImpl(inMaterialGenerator, inProgGenerator, false)
     {
     }
@@ -565,45 +542,45 @@ struct SXYRectVertexPipeline : public SVertexPipelineImpl
         m_DisplacementImage = displacementImage;
 
         TShaderGeneratorStageFlags theStages(IShaderProgramGenerator::DefaultFlags());
-        ProgramGenerator().BeginProgram(theStages);
+        ProgramGenerator()->BeginProgram(theStages);
         // Open up each stage.
         IShaderStageGenerator &vertexShader(Vertex());
         vertexShader.AddIncoming("attr_pos", "vec2");
         vertexShader.AddUniform("uni_rect_dimensions", "vec4");
 
-        vertexShader << "void main()" << Endl << "{" << Endl;
-        vertexShader << "\tvec3 uTransform;" << Endl;
-        vertexShader << "\tvec3 vTransform;" << Endl;
+        vertexShader << "void main()" << "\n" << "{" << "\n";
+        vertexShader << "\tvec3 uTransform;" << "\n";
+        vertexShader << "\tvec3 vTransform;" << "\n";
 
         vertexShader.AddUniform("model_view_projection", "mat4");
         vertexShader
                 << "\tfloat posX = mix( uni_rect_dimensions.x, uni_rect_dimensions.z, attr_pos.x );"
-                << Endl;
+                << "\n";
         vertexShader
                 << "\tfloat posY = mix( uni_rect_dimensions.y, uni_rect_dimensions.w, attr_pos.y );"
-                << Endl;
-        vertexShader << "\tvec3  pos = vec3(posX, posY, 0.0 );" << Endl;
+                << "\n";
+        vertexShader << "\tvec3  pos = vec3(posX, posY, 0.0 );" << "\n";
         vertexShader.Append("\tgl_Position = model_view_projection * vec4(pos, 1.0);");
     }
 
     void OutputParaboloidDepthShaders()
     {
         TShaderGeneratorStageFlags theStages(IShaderProgramGenerator::DefaultFlags());
-        ProgramGenerator().BeginProgram(theStages);
+        ProgramGenerator()->BeginProgram(theStages);
         IShaderStageGenerator &vertexShader(Vertex());
         vertexShader.AddIncoming("attr_pos", "vec2");
         vertexShader.AddUniform("uni_rect_dimensions", "vec4");
         vertexShader.AddUniform("model_view_projection", "mat4");
-        vertexShader << "void main()" << Endl << "{" << Endl;
+        vertexShader << "void main()" << "\n" << "{" << "\n";
         vertexShader
                 << "\tfloat posX = mix( uni_rect_dimensions.x, uni_rect_dimensions.z, attr_pos.x );"
-                << Endl;
+                << "\n";
         vertexShader
                 << "\tfloat posY = mix( uni_rect_dimensions.y, uni_rect_dimensions.w, attr_pos.y );"
-                << Endl;
-        vertexShader << "\tvec3 pos = vec3(posX, posY, 0.0 );" << Endl;
+                << "\n";
+        vertexShader << "\tvec3 pos = vec3(posX, posY, 0.0 );" << "\n";
         IShaderProgramGenerator::OutputParaboloidDepthTessEval(vertexShader);
-        vertexShader << "}" << Endl;
+        vertexShader << "}" << "\n";
 
         IShaderProgramGenerator::OutputParaboloidDepthFragment(Fragment());
     }
@@ -611,7 +588,7 @@ struct SXYRectVertexPipeline : public SVertexPipelineImpl
     void OutputCubeFaceDepthShaders()
     {
         TShaderGeneratorStageFlags theStages(IShaderProgramGenerator::DefaultFlags());
-        ProgramGenerator().BeginProgram(theStages);
+        ProgramGenerator()->BeginProgram(theStages);
         IShaderStageGenerator &vertexShader(Vertex());
         IShaderStageGenerator &fragmentShader(Fragment());
         vertexShader.AddIncoming("attr_pos", "vec2");
@@ -646,16 +623,16 @@ struct SXYRectVertexPipeline : public SVertexPipelineImpl
     void BeginFragmentGeneration() override
     {
         Fragment().AddUniform("material_diffuse", "vec4");
-        Fragment() << "void main()" << Endl << "{" << Endl;
+        Fragment() << "void main()" << "\n" << "{" << "\n";
         // We do not pass object opacity through the pipeline.
-        Fragment() << "\tfloat object_opacity = material_diffuse.a;" << Endl;
+        Fragment() << "\tfloat object_opacity = material_diffuse.a;" << "\n";
     }
 
-    void AssignOutput(const char *inVarName, const char *inVarValue) override
+    void AssignOutput(const QString &inVarName, const QString &inVarValue) override
     {
         Vertex() << "\t" << inVarName << " = " << inVarValue << ";\n";
     }
-    void DoGenerateUVCoords(quint32) override { Vertex() << "\tvarTexCoord0 = attr_pos;" << Endl; }
+    void DoGenerateUVCoords(quint32) override { Vertex() << "\tvarTexCoord0 = attr_pos;" << "\n"; }
 
     // fragment shader expects varying vertex normal
     // lighting in vertex pipeline expects world_normal
@@ -684,23 +661,23 @@ struct SXYRectVertexPipeline : public SVertexPipelineImpl
     {
         Vertex().AddIncoming("attr_textan", "vec3");
         Vertex().AddIncoming("attr_binormal", "vec3");
-        Vertex() << "\tvarTangent = normal_matrix * vec3(1.0, 0.0, 0.0);" << Endl
-                 << "\tvarBinormal = normal_matrix * vec3(0.0, 1.0, 0.0);" << Endl;
+        Vertex() << "\tvarTangent = normal_matrix * vec3(1.0, 0.0, 0.0);" << "\n"
+                 << "\tvarBinormal = normal_matrix * vec3(0.0, 1.0, 0.0);" << "\n";
     }
 
     void DoGenerateVertexColor() override
     {
         Vertex().AddIncoming("attr_color", "vec3");
-        Vertex() << "\tvarColor = attr_color;" << Endl;
+        Vertex() << "\tvarColor = attr_color;" << "\n";
     }
 
     void EndVertexGeneration() override { Vertex().Append("}"); }
 
     void EndFragmentGeneration() override { Fragment().Append("}"); }
 
-    void AddInterpolationParameter(const char *inName, const char *inType) override
+    void AddInterpolationParameter(const QString &inName, const QString &inType) override
     {
-        m_InterpolationParameters.insert(Str(inName), Str(inType));
+        m_InterpolationParameters.insert(inName, inType);
         Vertex().AddOutgoing(inName, inType);
         Fragment().AddIncoming(inName, inType);
     }
@@ -708,18 +685,16 @@ struct SXYRectVertexPipeline : public SVertexPipelineImpl
     IShaderStageGenerator &ActiveStage() override { return Vertex(); }
 };
 
-struct SPathManager : public IPathManager
+struct SPathManager : public IPathManager, public QEnableSharedFromThis<SPathManager>
 {
     typedef QHash<SPath *, QSharedPointer<SPathBuffer>> TPathBufferHash;
-    typedef QHash<SPathSubPath *, QSharedPointer<SPathSubPathBuffer>>
-    TPathSubPathBufferHash;
+    typedef QHash<SPathSubPath *, QSharedPointer<SPathSubPathBuffer>> TPathSubPathBufferHash;
     typedef QHash<SPathShaderMapKey, QSharedPointer<SPathGeneratedShader>> TShaderMap;
-    typedef QHash<SPathShaderMapKey, QSharedPointer<SPathXYGeneratedShader>>
-    TPaintedShaderMap;
+    typedef QHash<SPathShaderMapKey, QSharedPointer<SPathXYGeneratedShader>> TPaintedShaderMap;
     typedef QHash<QString, TPathBufferPtr> TStringPathBufferMap;
 
-    IQDemonRenderContextCore &m_CoreContext;
-    IQDemonRenderContext *m_RenderContext;
+    QSharedPointer<IQDemonRenderContextCore> m_CoreContext;
+    QSharedPointer<IQDemonRenderContext> m_RenderContext;
     QString m_IdBuilder;
     TPathSubPathBufferHash m_SubPathBuffers;
     TPathBufferHash m_Buffers;
@@ -729,7 +704,7 @@ struct SPathManager : public IPathManager
     TShaderMap m_PathGeometryShaders;
     TPaintedShaderMap m_PathPaintedShaders;
     TStringPathBufferMap m_SourcePathBufferMap;
-    Mutex m_PathBufferMutex;
+    QMutex m_PathBufferMutex;
 
     QSharedPointer<SPathGeneratedShader> m_DepthShader;
     QSharedPointer<SPathGeneratedShader> m_DepthDisplacementShader;
@@ -747,24 +722,11 @@ struct SPathManager : public IPathManager
     QVector<QSharedPointer<QDemonRenderDepthStencilState>> m_DepthStencilStates;
 
     QSharedPointer<QDemonRenderPathSpecification> m_PathSpecification;
-    QSharedPointer<qt3dsimp::IPathBufferBuilder> m_PathBuilder;
+    QSharedPointer<QDemonPathUtilities::IPathBufferBuilder> m_PathBuilder;
 
-    qint32 m_RefCount;
-
-    SPathManager(IQDemonRenderContextCore &inRC)
+    SPathManager(QSharedPointer<IQDemonRenderContextCore> inRC)
         : m_CoreContext(inRC)
         , m_RenderContext(nullptr)
-        , m_SubPathBuffers(inRC.GetAllocator(), "m_SubPathBuffers")
-        , m_Buffers(inRC.GetAllocator(), "m_Buffers")
-        , m_SubdivResult(inRC.GetAllocator(), "m_SubdivResult")
-        , m_KeyPointVec(inRC.GetAllocator(), "m_KeyPointVec")
-        , m_PatchBuffer(inRC.GetAllocator(), "m_QuadStrip")
-        , m_PathGeometryShaders(inRC.GetAllocator(), "m_PathGeometryShaders")
-        , m_PathPaintedShaders(inRC.GetAllocator(), "m_PathPaintedShaders")
-        , m_SourcePathBufferMap(inRC.GetAllocator(), "m_SourcePathBufferMap")
-        , m_PathBufferMutex(inRC.GetAllocator())
-        , m_DepthStencilStates(inRC.GetAllocator(), "m_DepthStencilStates")
-        , m_RefCount(0)
     {
     }
 
@@ -774,38 +736,39 @@ struct SPathManager : public IPathManager
     void SetPathSubPathData(const SPathSubPath &inPath,
                             QDemonConstDataRef<SPathAnchorPoint> inPathCubicCurves) override
     {
-        Mutex::ScopedLock __locker(m_PathBufferMutex);
-        QPair<TPathSubPathBufferHash::iterator, bool> inserter =
-                m_SubPathBuffers.insert((SPathSubPath *)&inPath,
-                                                         QSharedPointer<SPathSubPathBuffer>(nullptr));
-        if (!inserter.first->second)
-            inserter.first->second = new SPathSubPathBuffer(
-                        GetAllocator(), const_cast<SPathSubPath &>(inPath));
-        SPathSubPathBuffer &theBuffer = *inserter.first->second.mPtr;
-        theBuffer.m_SourceData.assign(inPathCubicCurves.begin(), inPathCubicCurves.end());
-        theBuffer.m_Flags.clearOrSet(true, PathDirtyFlagValues::SourceData);
-    }
-
-    SPathBuffer *GetPathBufferObject(const SPath &inPath)
-    {
-        QPair<TPathBufferHash::iterator, bool> inserter = m_Buffers.insert((SPath *)&inPath, QSharedPointer<SPathBuffer>(nullptr));
-        if (inserter.second) {
-            inserter.first->second = new SPathBuffer(GetAllocator());
+        QMutexLocker locker(&m_PathBufferMutex);
+        TPathSubPathBufferHash::iterator inserter = m_SubPathBuffers.find((SPathSubPath *)&inPath);
+        if (inserter == m_SubPathBuffers.end()) {
+            inserter = m_SubPathBuffers.insert((SPathSubPath *)&inPath, QSharedPointer<SPathSubPathBuffer>(new SPathSubPathBuffer(const_cast<SPathSubPath &>(inPath))));
         }
-        return inserter.first->second.mPtr;
+
+        QSharedPointer<SPathSubPathBuffer> theBuffer = inserter.value();
+        theBuffer->m_SourceData.clear();
+        for (int i = 0; i < inPathCubicCurves.size(); ++i)
+            theBuffer->m_SourceData.append(inPathCubicCurves[i]);
+        theBuffer->m_Flags.clearOrSet(true, PathDirtyFlagValues::SourceData);
     }
 
-    SPathSubPathBuffer *GetPathBufferObject(const SPathSubPath &inSubPath)
+    QSharedPointer<SPathBuffer> GetPathBufferObject(const SPath &inPath)
+    {
+        TPathBufferHash::iterator inserter = m_Buffers.find((SPath *)&inPath);
+        if (inserter == m_Buffers.end())
+            inserter = m_Buffers.insert((SPath *)&inPath, QSharedPointer<SPathBuffer>(new SPathBuffer()));
+
+        return inserter.value();
+    }
+
+    QSharedPointer<SPathSubPathBuffer> GetPathBufferObject(const SPathSubPath &inSubPath)
     {
         TPathSubPathBufferHash::iterator iter = m_SubPathBuffers.find((SPathSubPath *)&inSubPath);
         if (iter != m_SubPathBuffers.end())
-            return iter->second.mPtr;
+            return iter.value();
         return nullptr;
     }
 
     QDemonDataRef<SPathAnchorPoint> GetPathSubPathBuffer(const SPathSubPath &inPath) override
     {
-        SPathSubPathBuffer *theBuffer = GetPathBufferObject(inPath);
+        QSharedPointer<SPathSubPathBuffer> theBuffer = GetPathBufferObject(inPath);
         if (theBuffer)
             return toDataRef(theBuffer->m_SourceData.data(), (quint32)theBuffer->m_SourceData.size());
         return QDemonDataRef<SPathAnchorPoint>();
@@ -814,7 +777,7 @@ struct SPathManager : public IPathManager
     QDemonDataRef<SPathAnchorPoint> ResizePathSubPathBuffer(const SPathSubPath &inPath,
                                                             quint32 inNumAnchors) override
     {
-        SPathSubPathBuffer *theBuffer = GetPathBufferObject(inPath);
+        QSharedPointer<SPathSubPathBuffer> theBuffer = GetPathBufferObject(inPath);
         if (theBuffer == nullptr)
             SetPathSubPathData(inPath, QDemonConstDataRef<SPathAnchorPoint>());
         theBuffer = GetPathBufferObject(inPath);
@@ -828,7 +791,7 @@ struct SPathManager : public IPathManager
     {
         QDemonBounds3 retval(QDemonBounds3::empty());
 
-        SPathBuffer *thePathBuffer = GetPathBufferObject(inPath);
+        QSharedPointer<SPathBuffer> thePathBuffer = GetPathBufferObject(inPath);
         if (thePathBuffer) {
             SPathDirtyFlags geomDirtyFlags(
                         PathDirtyFlagValues::SourceData | PathDirtyFlagValues::BeginTaper
@@ -842,7 +805,7 @@ struct SPathManager : public IPathManager
 
         for (SPathSubPath *theSubPath = inPath.m_FirstSubPath; theSubPath;
              theSubPath = theSubPath->m_NextSubPath) {
-            SPathSubPathBuffer *theBuffer = GetPathBufferObject(*theSubPath);
+            QSharedPointer<SPathSubPathBuffer> theBuffer = GetPathBufferObject(*theSubPath);
             if (!theBuffer)
                 continue;
 
@@ -850,19 +813,19 @@ struct SPathManager : public IPathManager
             for (quint32 idx = 0, end = numAnchors; idx < end; ++idx) {
                 const SPathAnchorPoint &thePoint(theBuffer->m_SourceData[idx]);
                 QVector2D position(thePoint.m_Position);
-                retval.include(QVector3D(position.x, position.y, 0.0f));
+                retval.include(QVector3D(position.x(), position.y(), 0.0f));
                 if (idx) {
                     QVector2D incoming(IPathManagerCore::GetControlPointFromAngleDistance(
                                            thePoint.m_Position, thePoint.m_IncomingAngle,
                                            thePoint.m_IncomingDistance));
-                    retval.include(QVector3D(incoming.x, incoming.y, 0.0f));
+                    retval.include(QVector3D(incoming.x(), incoming.y(), 0.0f));
                 }
 
                 if (idx < (numAnchors - 1)) {
                     QVector2D outgoing(IPathManagerCore::GetControlPointFromAngleDistance(
                                            thePoint.m_Position, thePoint.m_OutgoingAngle,
                                            thePoint.m_OutgoingDistance));
-                    retval.include(QVector3D(outgoing.x, outgoing.y, 0.0f));
+                    retval.include(QVector3D(outgoing.x(), outgoing.y(), 0.0f));
                 }
             }
         }
@@ -870,10 +833,10 @@ struct SPathManager : public IPathManager
         return retval;
     }
 
-    IPathManager &OnRenderSystemInitialize(IQDemonRenderContext &context) override
+    QSharedPointer<IPathManager> OnRenderSystemInitialize(QSharedPointer<IQDemonRenderContext> context) override
     {
-        m_RenderContext = &context;
-        return *this;
+        m_RenderContext = context;
+        return sharedFromThis();
     }
 
     // find a point that will join these two curves *if* they are not first derivative continuous
@@ -883,18 +846,18 @@ struct SPathManager : public IPathManager
         QVector2D outgoingDxDy = (C1 - point);
         incomingDxDy.normalize();
         outgoingDxDy.normalize();
-        float determinant = (incomingDxDy.x * outgoingDxDy.y) - (incomingDxDy.y * outgoingDxDy.x);
+        float determinant = (incomingDxDy.x() * outgoingDxDy.y()) - (incomingDxDy.y() * outgoingDxDy.x());
         if (fabs(determinant) > .001f) {
             float mult = determinant > 0.0f ? 1.0f : -1.0f;
-            QVector2D incomingNormal(incomingDxDy.y, -incomingDxDy.x);
-            QVector2D outgoingNormal(outgoingDxDy.y, -outgoingDxDy.x);
+            QVector2D incomingNormal(incomingDxDy.y(), -incomingDxDy.x());
+            QVector2D outgoingNormal(outgoingDxDy.y(), -outgoingDxDy.x());
 
             QVector2D leftEdge = point + mult * incomingNormal * pathWidth;
             QVector2D rightEdge = point + mult * outgoingNormal * pathWidth;
 
             return (leftEdge + rightEdge) / 2.0f;
         }
-        return Empty();
+        return QDemonEmpty();
     }
 
     QDemonOption<QPair<quint32, float>> FindBreakEquation(float inTaperStart)
@@ -929,7 +892,7 @@ struct SPathManager : public IPathManager
             }
             lengthTotal += m_SubdivResult[idx].m_Length;
         }
-        return Empty();
+        return QDemonEmpty();
     }
 
     bool PrepareGeometryPathForRender(const SPath &inPath, SPathBuffer &inPathBuffer)
@@ -954,7 +917,7 @@ struct SPathManager : public IPathManager
         bool retval = false;
         if (!inPathBuffer.m_PatchData
                 || (((quint32)inPathBuffer.m_Flags) & (quint32)geomDirtyFlags) != 0) {
-            qt3dsimp::SPathBuffer thePathData = inPathBuffer.GetPathData(*m_PathBuilder);
+            QDemonPathUtilities::SPathBuffer thePathData = inPathBuffer.GetPathData(*m_PathBuilder);
 
             quint32 dataIdx = 0;
             QVector2D prevPoint(0, 0);
@@ -962,12 +925,11 @@ struct SPathManager : public IPathManager
             for (quint32 commandIdx = 0, commandEnd = thePathData.m_Commands.size();
                  commandIdx < commandEnd; ++commandIdx) {
                 switch (thePathData.m_Commands[commandIdx]) {
-                case qt3dsimp::PathCommand::MoveTo:
-                    prevPoint =
-                            QVector2D(thePathData.m_Data[dataIdx], thePathData.m_Data[dataIdx + 1]);
+                case QDemonPathUtilities::PathCommand::MoveTo:
+                    prevPoint = QVector2D(thePathData.m_Data[dataIdx], thePathData.m_Data[dataIdx + 1]);
                     dataIdx += 2;
                     break;
-                case qt3dsimp::PathCommand::CubicCurveTo: {
+                case QDemonPathUtilities::PathCommand::CubicCurveTo: {
                     QVector2D c1(thePathData.m_Data[dataIdx], thePathData.m_Data[dataIdx + 1]);
                     dataIdx += 2;
                     QVector2D c2(thePathData.m_Data[dataIdx], thePathData.m_Data[dataIdx + 1]);
@@ -976,11 +938,11 @@ struct SPathManager : public IPathManager
                     dataIdx += 2;
                     OuterAdaptiveSubdivideBezierCurve(
                                 m_SubdivResult, m_KeyPointVec, SCubicBezierCurve(prevPoint, c1, c2, p2),
-                                NVMax(inPath.m_LinearError, 1.0f), equationIdx);
+                                qMax(inPath.m_LinearError, 1.0f), equationIdx);
                     ++equationIdx;
                     prevPoint = p2;
                 } break;
-                case qt3dsimp::PathCommand::Close:
+                case QDemonPathUtilities::PathCommand::Close:
                     break;
 
                 default:
@@ -1003,7 +965,7 @@ struct SPathManager : public IPathManager
                 float maxTaperStart = pathLength / 2.0f;
                 if (thePath.m_BeginCapping == PathCapping::Taper) {
                     // Can't start more than halfway across the path.
-                    float taperStart = NVMin(thePath.m_BeginCapOffset, maxTaperStart);
+                    float taperStart = qMin(thePath.m_BeginCapOffset, maxTaperStart);
                     float endTaperWidth = thePath.m_BeginCapWidth;
                     float endTaperOpacity = thePath.m_GlobalOpacity * thePath.m_BeginCapOpacity;
                     theBeginTaperData = QVector2D(endTaperWidth, endTaperOpacity);
@@ -1025,7 +987,7 @@ struct SPathManager : public IPathManager
                     }
                 }
                 if (thePath.m_EndCapping == PathCapping::Taper) {
-                    float taperStart = NVMin(thePath.m_EndCapOffset, maxTaperStart);
+                    float taperStart = qMin(thePath.m_EndCapOffset, maxTaperStart);
                     float endTaperWidth = thePath.m_EndCapWidth;
                     float endTaperOpacity = thePath.m_GlobalOpacity * thePath.m_EndCapOpacity;
                     theEndTaperData = QVector2D(endTaperWidth, endTaperOpacity);
@@ -1051,7 +1013,7 @@ struct SPathManager : public IPathManager
                 }
             }
 
-            QDemonRenderContext &theRenderContext(m_RenderContext->GetRenderContext());
+            QSharedPointer<QDemonRenderContext> theRenderContext(m_RenderContext->GetRenderContext());
             // Create quads out of each point.
             if (m_SubdivResult.empty())
                 return false;
@@ -1080,7 +1042,7 @@ struct SPathManager : public IPathManager
                     SResultCubic previousCurve = m_SubdivResult[idx - 1];
                     if (previousCurve.m_EquationIndex != thePoint.m_EquationIndex) {
                         float anchorWidth =
-                                thePoint.GetP1Width(pathWidth, theBeginTaperData.x, theEndTaperData.x);
+                                thePoint.GetP1Width(pathWidth, theBeginTaperData.x(), theEndTaperData.x());
                         QDemonOption<QVector2D> adjoining = GetAdjoiningPoint(
                                     previousCurve.m_C2, thePoint.m_P1, thePoint.m_C1, anchorWidth);
                         if (adjoining.hasValue())
@@ -1091,28 +1053,28 @@ struct SPathManager : public IPathManager
                     SResultCubic nextCurve = m_SubdivResult[idx + 1];
                     if (nextCurve.m_EquationIndex != thePoint.m_EquationIndex) {
                         float anchorWidth =
-                                thePoint.GetP2Width(pathWidth, theBeginTaperData.x, theEndTaperData.x);
+                                thePoint.GetP2Width(pathWidth, theBeginTaperData.x(), theEndTaperData.x());
                         QDemonOption<QVector2D> adjoining = GetAdjoiningPoint(thePoint.m_C2, thePoint.m_P2,
-                                                                        nextCurve.m_C1, anchorWidth);
+                                                                              nextCurve.m_C1, anchorWidth);
                         if (adjoining.hasValue())
                             outgoingAdjoining = *adjoining;
                     }
                 }
                 m_PatchBuffer.push_back(CreateVec4(incomingAdjoining, outgoingAdjoining));
 
-                QVector4D taperData(0.0f);
-                taperData.x = thePoint.m_TaperMultiplier.x;
-                taperData.y = thePoint.m_TaperMultiplier.y;
+                QVector4D taperData(0.0f, 0.0f, 0.0f, 0.0f);
+                taperData.setX(thePoint.m_TaperMultiplier.x());
+                taperData.setY(thePoint.m_TaperMultiplier.y());
                 // Note we could put a *lot* more data into this thing.
-                taperData.z = (float)thePoint.m_Mode;
+                taperData.setZ((float)thePoint.m_Mode);
                 m_PatchBuffer.push_back(taperData);
 
                 // texture coord generation
                 // note we only generate u here. v is generated in the tess shader
                 // u coord for P1 and C1
                 QVector2D udata(texCoordU, texCoordU + (thePoint.m_Length / pathLength));
-                texCoordU = udata.y;
-                m_PatchBuffer.push_back(QVector4D(udata.x, udata.y, 0.0, 0.0));
+                texCoordU = udata.y();
+                m_PatchBuffer.push_back(QVector4D(udata.x(), udata.y(), 0.0, 0.0));
             }
 
             // buffer size is 3.0*4.0*bufSize
@@ -1120,7 +1082,7 @@ struct SPathManager : public IPathManager
             quint32 stride = sizeof(QVector4D);
 
             if ((!inPathBuffer.m_PatchData) || inPathBuffer.m_PatchData->Size() < bufSize) {
-                inPathBuffer.m_PatchData = theRenderContext.CreateVertexBuffer(
+                inPathBuffer.m_PatchData = theRenderContext->CreateVertexBuffer(
                             QDemonRenderBufferUsageType::Dynamic, bufSize, stride,
                             toU8DataRef(m_PatchBuffer.data(), (quint32)m_PatchBuffer.size()));
                 inPathBuffer.m_NumVertexes = (quint32)m_PatchBuffer.size();
@@ -1134,18 +1096,18 @@ struct SPathManager : public IPathManager
             if (!inPathBuffer.m_InputAssembler) {
                 QDemonRenderVertexBufferEntry theEntries[] = {
                     QDemonRenderVertexBufferEntry(
-                    "attr_pos", QDemonRenderComponentTypes::float, 4),
+                    "attr_pos", QDemonRenderComponentTypes::Float32, 4),
                 };
 
                 QDemonRenderDrawMode::Enum primType = QDemonRenderDrawMode::Patches;
 
-                QDemonRenderAttribLayout *theLayout =
-                        theRenderContext.CreateAttributeLayout(toConstDataRef(theEntries, 1));
+                QSharedPointer<QDemonRenderAttribLayout> theLayout =
+                        theRenderContext->CreateAttributeLayout(toConstDataRef(theEntries, 1));
                 // How many vertices the TCS shader has access to in order to produce its output
                 // array of vertices.
                 const quint32 inputPatchVertexCount = 5;
-                inPathBuffer.m_InputAssembler = theRenderContext.CreateInputAssembler(
-                            theLayout, toConstDataRef(inPathBuffer.m_PatchData.mPtr), nullptr,
+                inPathBuffer.m_InputAssembler = theRenderContext->CreateInputAssembler(
+                            theLayout, toConstDataRef(inPathBuffer.m_PatchData), nullptr,
                             toConstDataRef(stride), toConstDataRef((quint32)0), primType,
                             inputPatchVertexCount);
             }
@@ -1161,16 +1123,16 @@ struct SPathManager : public IPathManager
         return retval;
     }
 
-    IMaterialShaderGenerator *GetMaterialShaderGenertator(SPathRenderContext &inRenderContext)
+    QSharedPointer<IMaterialShaderGenerator> GetMaterialShaderGenertator(SPathRenderContext &inRenderContext)
     {
         bool isDefaultMaterial =
                 (inRenderContext.m_Material.m_Type == GraphObjectTypes::DefaultMaterial);
 
-        IMaterialShaderGenerator *theMaterialGenerator = nullptr;
+        QSharedPointer<IMaterialShaderGenerator> theMaterialGenerator = nullptr;
         if (isDefaultMaterial)
-            theMaterialGenerator = &m_RenderContext->GetDefaultMaterialShaderGenerator();
+            theMaterialGenerator = m_RenderContext->GetDefaultMaterialShaderGenerator();
         else
-            theMaterialGenerator = &m_RenderContext->GetCustomMaterialShaderGenerator();
+            theMaterialGenerator = m_RenderContext->GetCustomMaterialShaderGenerator();
 
         return theMaterialGenerator;
     }
@@ -1181,12 +1143,11 @@ struct SPathManager : public IPathManager
                 (inRenderContext.m_Material.m_Type == GraphObjectTypes::DefaultMaterial);
 
         if (!isDefaultMaterial) {
-            ICustomMaterialSystem &theMaterialSystem(m_RenderContext->GetCustomMaterialSystem());
+            QSharedPointer<ICustomMaterialSystem> theMaterialSystem(m_RenderContext->GetCustomMaterialSystem());
             const SCustomMaterial &theCustomMaterial(
                         reinterpret_cast<const SCustomMaterial &>(inRenderContext.m_Material));
 
-            return QString::fromLocal8Bit(
-                        theMaterialSystem.GetShaderName(theCustomMaterial));
+            return theMaterialSystem->GetShaderName(theCustomMaterial);
         }
 
         return QString();
@@ -1194,11 +1155,11 @@ struct SPathManager : public IPathManager
 
     bool PreparePaintedPathForRender(const SPath &inPath, SPathBuffer &inPathBuffer)
     {
-        QDemonRenderContext &theContext(this->m_RenderContext->GetRenderContext());
+        QSharedPointer<QDemonRenderContext> theContext(this->m_RenderContext->GetRenderContext());
         if (!inPathBuffer.m_PathRender
                 || (((quint32)inPathBuffer.m_Flags) & PathDirtyFlagValues::SourceData)) {
             if (!inPathBuffer.m_PathRender) {
-                inPathBuffer.m_PathRender = theContext.CreatePathRender();
+                inPathBuffer.m_PathRender = theContext->CreatePathRender();
             }
 
             if (inPathBuffer.m_PathRender == nullptr || m_PathSpecification == nullptr) {
@@ -1207,19 +1168,19 @@ struct SPathManager : public IPathManager
             }
 
             m_PathSpecification->Reset();
-            qt3dsimp::SPathBuffer thePathData = inPathBuffer.GetPathData(*m_PathBuilder);
+            QDemonPathUtilities::SPathBuffer thePathData = inPathBuffer.GetPathData(*m_PathBuilder);
 
             quint32 dataIdx = 0;
             for (quint32 commandIdx = 0, commandEnd = thePathData.m_Commands.size();
                  commandIdx < commandEnd; ++commandIdx) {
 
                 switch (thePathData.m_Commands[commandIdx]) {
-                case qt3dsimp::PathCommand::MoveTo:
+                case QDemonPathUtilities::PathCommand::MoveTo:
                     m_PathSpecification->MoveTo(
                                 QVector2D(thePathData.m_Data[dataIdx], thePathData.m_Data[dataIdx + 1]));
                     dataIdx += 2;
                     break;
-                case qt3dsimp::PathCommand::CubicCurveTo: {
+                case QDemonPathUtilities::PathCommand::CubicCurveTo: {
                     QVector2D c1(thePathData.m_Data[dataIdx], thePathData.m_Data[dataIdx + 1]);
                     dataIdx += 2;
                     QVector2D c2(thePathData.m_Data[dataIdx], thePathData.m_Data[dataIdx + 1]);
@@ -1228,7 +1189,7 @@ struct SPathManager : public IPathManager
                     dataIdx += 2;
                     m_PathSpecification->CubicCurveTo(c1, c2, p2);
                 } break;
-                case qt3dsimp::PathCommand::Close:
+                case QDemonPathUtilities::PathCommand::Close:
                     m_PathSpecification->ClosePath();
                     break;
                 default:
@@ -1237,7 +1198,7 @@ struct SPathManager : public IPathManager
                 }
             }
 
-            inPathBuffer.m_PathRender->SetPathSpecification(*m_PathSpecification);
+            inPathBuffer.m_PathRender->SetPathSpecification(m_PathSpecification);
 
             // cache bounds
             QDemonBounds3 bounds = GetBounds(inPath);
@@ -1252,28 +1213,28 @@ struct SPathManager : public IPathManager
 
     bool PrepareForRender(const SPath &inPath) override
     {
-        SPathBuffer *thePathBuffer = GetPathBufferObject(inPath);
+        QSharedPointer<SPathBuffer> thePathBuffer = GetPathBufferObject(inPath);
         if (!thePathBuffer) {
             return false;
         }
-        QDemonRenderContext &theContext(this->m_RenderContext->GetRenderContext());
+        QSharedPointer<QDemonRenderContext> theContext(this->m_RenderContext->GetRenderContext());
         if (!m_PathSpecification)
-            m_PathSpecification = theContext.CreatePathSpecification();
+            m_PathSpecification = theContext->CreatePathSpecification();
         if (!m_PathSpecification)
             return false;
         if (!m_PathBuilder)
-            m_PathBuilder = qt3dsimp::IPathBufferBuilder::CreateBuilder(GetFoundation());
+            m_PathBuilder = QDemonPathUtilities::IPathBufferBuilder::CreateBuilder();
 
         thePathBuffer->SetPathType(inPath.m_PathType);
         bool retval = false;
-        if (inPath.m_PathBuffer.IsValid() == false) {
+        if (inPath.m_PathBuffer.isEmpty()) {
             thePathBuffer->m_PathBuffer = nullptr;
             // Ensure the SubPath list is identical and clear, percolating any dirty flags up to the
             // path buffer.
             quint32 SubPathIdx = 0;
             for (const SPathSubPath *theSubPath = inPath.m_FirstSubPath; theSubPath;
                  theSubPath = theSubPath->m_NextSubPath, ++SubPathIdx) {
-                SPathSubPathBuffer *theSubPathBuffer = GetPathBufferObject(*theSubPath);
+                QSharedPointer<SPathSubPathBuffer> theSubPathBuffer = GetPathBufferObject(*theSubPath);
                 if (theSubPathBuffer == nullptr)
                     continue;
                 thePathBuffer->m_Flags =
@@ -1302,22 +1263,21 @@ struct SPathManager : public IPathManager
             }
         } else {
             thePathBuffer->m_SubPaths.clear();
-            QPair<TStringPathBufferMap::iterator, bool> inserter =
-                    m_SourcePathBufferMap.insert(inPath.m_PathBuffer, TPathBufferPtr());
-            if (inserter.second) {
-                QSharedPointer<IRefCountedInputStream> theStream =
-                        m_CoreContext.GetInputStreamFactory().GetStreamForFile(
-                            inPath.m_PathBuffer.c_str());
+            TStringPathBufferMap::iterator inserter = m_SourcePathBufferMap.find(inPath.m_PathBuffer);
+            //            QPair<TStringPathBufferMap::iterator, bool> inserter =
+            //                    m_SourcePathBufferMap.insert(inPath.m_PathBuffer, TPathBufferPtr());
+            if (inserter == m_SourcePathBufferMap.end()) {
+                QSharedPointer<QIODevice> theStream =
+                        m_CoreContext->GetInputStreamFactory()->GetStreamForFile(inPath.m_PathBuffer);
                 if (theStream) {
-                    qt3dsimp::SPathBuffer *theNewBuffer =
-                            qt3dsimp::SPathBuffer::Load(*theStream, GetFoundation());
+                    QDemonPathUtilities::SPathBuffer *theNewBuffer = QDemonPathUtilities::SPathBuffer::Load(*theStream);
                     if (theNewBuffer)
-                        inserter.first->second = new SImportPathWrapper(
-                                    GetAllocator(), *theNewBuffer);
+                        inserter = m_SourcePathBufferMap.insert(inPath.m_PathBuffer,
+                                                                QSharedPointer<SImportPathWrapper>(new SImportPathWrapper(*theNewBuffer)));
                 }
             }
-            if (thePathBuffer->m_PathBuffer != inserter.first->second) {
-                thePathBuffer->m_PathBuffer = inserter.first->second;
+            if (thePathBuffer->m_PathBuffer != inserter.value()) {
+                thePathBuffer->m_PathBuffer = inserter.value();
                 thePathBuffer->m_Flags.clearOrSet(true, PathDirtyFlagValues::SourceData);
             }
         }
@@ -1330,13 +1290,13 @@ struct SPathManager : public IPathManager
         return retval;
     }
 
-    void SetMaterialProperties(QDemonRenderShaderProgram &inShader, SPathRenderContext &inRenderContext,
+    void SetMaterialProperties(QSharedPointer<QDemonRenderShaderProgram> inShader,
+                               SPathRenderContext &inRenderContext,
                                SLayerGlobalRenderProperties &inRenderProperties)
     {
-        IMaterialShaderGenerator *theMaterialGenerator =
-                GetMaterialShaderGenertator(inRenderContext);
-        QDemonRenderContext &theRenderContext(m_RenderContext->GetRenderContext());
-        theRenderContext.SetActiveShader(&inShader);
+        QSharedPointer<IMaterialShaderGenerator> theMaterialGenerator = GetMaterialShaderGenertator(inRenderContext);
+        QSharedPointer<QDemonRenderContext> theRenderContext(m_RenderContext->GetRenderContext());
+        theRenderContext->SetActiveShader(inShader);
 
         theMaterialGenerator->SetMaterialProperties(
                     inShader, inRenderContext.m_Material, inRenderContext.m_CameraVec,
@@ -1345,61 +1305,61 @@ struct SPathManager : public IPathManager
                     inRenderContext.m_Opacity, inRenderProperties);
     }
 
-    void DoRenderGeometryPath(SPathGeneratedShader &inShader, SPathRenderContext &inRenderContext,
+    void DoRenderGeometryPath(QSharedPointer<SPathGeneratedShader> inShader,
+                              SPathRenderContext &inRenderContext,
                               SLayerGlobalRenderProperties &inRenderProperties,
-                              SPathBuffer &inPathBuffer)
+                              QSharedPointer<SPathBuffer> inPathBuffer)
     {
-        if (inPathBuffer.m_InputAssembler == nullptr)
+        if (inPathBuffer->m_InputAssembler == nullptr)
             return;
 
-        SetMaterialProperties(inShader.m_Shader, inRenderContext, inRenderProperties);
-        QDemonRenderContext &theRenderContext(m_RenderContext->GetRenderContext());
+        SetMaterialProperties(inShader->m_Shader, inRenderContext, inRenderProperties);
+        QSharedPointer<QDemonRenderContext> theRenderContext(m_RenderContext->GetRenderContext());
 
-        inShader.m_BeginTaperData.Set(inPathBuffer.m_BeginTaperData);
-        inShader.m_EndTaperData.Set(inPathBuffer.m_EndTaperData);
+        inShader->m_BeginTaperData.Set(inPathBuffer->m_BeginTaperData);
+        inShader->m_EndTaperData.Set(inPathBuffer->m_EndTaperData);
         if (inRenderContext.m_EnableWireframe) {
             // we need the viewport matrix
-            QDemonRenderRect theViewport(theRenderContext.GetViewport());
-            QMatrix4x4 vpMatrix;
-            vpMatrix.column0 = QVector4D((float)theViewport.m_Width / 2.0f, 0.0, 0.0, 0.0);
-            vpMatrix.column1 = QVector4D(0.0, (float)theViewport.m_Height / 2.0f, 0.0, 0.0);
-            vpMatrix.column2 = QVector4D(0.0, 0.0, 1.0, 0.0);
-            vpMatrix.column3 =
-                    QVector4D((float)theViewport.m_Width / 2.0f + (float)theViewport.m_X,
-                              (float)theViewport.m_Height / 2.0f + (float)theViewport.m_Y, 0.0, 1.0);
-
-            inShader.m_WireframeViewMatrix.Set(vpMatrix);
+            QDemonRenderRect theViewport(theRenderContext->GetViewport());
+            QMatrix4x4 vpMatrix = {
+                (float)theViewport.m_Width / 2.0f, 0.0, 0.0, 0.0,
+                0.0, (float)theViewport.m_Height / 2.0f, 0.0, 0.0,
+                0.0, 0.0, 1.0, 0.0,
+                (float)theViewport.m_Width / 2.0f + (float)theViewport.m_X,
+                (float)theViewport.m_Height / 2.0f + (float)theViewport.m_Y, 0.0, 1.0
+            };
+            inShader->m_WireframeViewMatrix.Set(vpMatrix);
         }
 
-        float tessEdgeValue = NVMin(64.0f, NVMax(1.0f, inRenderContext.m_Path.m_EdgeTessAmount));
-        float tessInnerValue = NVMin(64.0f, NVMax(1.0f, inRenderContext.m_Path.m_InnerTessAmount));
-        inShader.m_EdgeTessAmount.Set(tessEdgeValue);
-        inShader.m_InnerTessAmount.Set(tessInnerValue);
-        inShader.m_Width.Set(inRenderContext.m_Path.m_Width / 2.0f);
-        theRenderContext.SetInputAssembler(inPathBuffer.m_InputAssembler);
-        theRenderContext.SetCullingEnabled(false);
+        float tessEdgeValue = qMin(64.0f, qMax(1.0f, inRenderContext.m_Path.m_EdgeTessAmount));
+        float tessInnerValue = qMin(64.0f, qMax(1.0f, inRenderContext.m_Path.m_InnerTessAmount));
+        inShader->m_EdgeTessAmount.Set(tessEdgeValue);
+        inShader->m_InnerTessAmount.Set(tessInnerValue);
+        inShader->m_Width.Set(inRenderContext.m_Path.m_Width / 2.0f);
+        theRenderContext->SetInputAssembler(inPathBuffer->m_InputAssembler);
+        theRenderContext->SetCullingEnabled(false);
         QDemonRenderDrawMode::Enum primType = QDemonRenderDrawMode::Patches;
-        theRenderContext.Draw(primType, (quint32)inPathBuffer.m_NumVertexes, 0);
+        theRenderContext->Draw(primType, (quint32)inPathBuffer->m_NumVertexes, 0);
     }
 
-    QDemonRenderDepthStencilState *GetDepthStencilState()
+    QSharedPointer<QDemonRenderDepthStencilState> GetDepthStencilState()
     {
-        QDemonRenderContext &theRenderContext(m_RenderContext->GetRenderContext());
-        QDemonRenderBoolOp::Enum theDepthFunction = theRenderContext.GetDepthFunction();
-        bool isDepthEnabled = theRenderContext.IsDepthTestEnabled();
-        bool isStencilEnabled = theRenderContext.IsStencilTestEnabled();
-        bool isDepthWriteEnabled = theRenderContext.IsDepthWriteEnabled();
+        QSharedPointer<QDemonRenderContext> theRenderContext(m_RenderContext->GetRenderContext());
+        QDemonRenderBoolOp::Enum theDepthFunction = theRenderContext->GetDepthFunction();
+        bool isDepthEnabled = theRenderContext->IsDepthTestEnabled();
+        bool isStencilEnabled = theRenderContext->IsStencilTestEnabled();
+        bool isDepthWriteEnabled = theRenderContext->IsDepthWriteEnabled();
         for (quint32 idx = 0, end = m_DepthStencilStates.size(); idx < end; ++idx) {
-            QDemonRenderDepthStencilState &theState = *m_DepthStencilStates[idx];
-            if (theState.GetDepthFunc() == theDepthFunction
-                    && theState.GetDepthEnabled() == isDepthEnabled
-                    && theState.GetDepthMask() == isDepthWriteEnabled)
-                return &theState;
+            QSharedPointer<QDemonRenderDepthStencilState> theState = m_DepthStencilStates[idx];
+            if (theState->GetDepthFunc() == theDepthFunction
+                    && theState->GetDepthEnabled() == isDepthEnabled
+                    && theState->GetDepthMask() == isDepthWriteEnabled)
+                return theState;
         }
         QDemonRenderStencilFunctionArgument theArg(QDemonRenderBoolOp::NotEqual, 0, 0xFF);
         QDemonRenderStencilOperationArgument theOpArg(QDemonRenderStencilOp::Keep, QDemonRenderStencilOp::Keep,
                                                       QDemonRenderStencilOp::Zero);
-        m_DepthStencilStates.push_back(theRenderContext.CreateDepthStencilState(
+        m_DepthStencilStates.push_back(theRenderContext->CreateDepthStencilState(
                                            isDepthEnabled, isDepthWriteEnabled, theDepthFunction, isStencilEnabled, theArg, theArg,
                                            theOpArg, theOpArg));
         return m_DepthStencilStates.back();
@@ -1412,18 +1372,19 @@ struct SPathManager : public IPathManager
         QVector3D points[4];
         QVector3D projReg[4], projParab[4];
         points[0] = pathBounds.minimum;
-        points[1] = QVector3D(pathBounds.maximum.x, pathBounds.minimum.y, pathBounds.minimum.z);
+        points[1] = QVector3D(pathBounds.maximum.x(), pathBounds.minimum.y(), pathBounds.minimum.z());
         points[2] = pathBounds.maximum;
-        points[3] = QVector3D(pathBounds.minimum.x, pathBounds.maximum.y, pathBounds.maximum.z);
+        points[3] = QVector3D(pathBounds.minimum.x(), pathBounds.maximum.y(), pathBounds.maximum.z());
 
         // Do the two different projections.
         for (int i = 0; i < 4; ++i) {
             QVector4D tmp;
-            tmp = mvp.transform(QVector4D(points[i], 1.0f));
-            tmp /= tmp.w;
-            projReg[i] = tmp.getXYZ();
-            projParab[i] = tmp.getXYZ().getNormalized();
-            projParab[i] /= projParab[i].z + 1.0f;
+            tmp = mat44::transform(mvp, QVector4D(points[i], 1.0f));
+            tmp /= tmp.w();
+            QVector3D tmp3d(tmp.x(), tmp.y(), tmp.z());
+            projReg[i] = tmp3d;
+            projParab[i] = tmp3d.normalized();
+            projParab[i] /= projParab[i].z() + 1.0f;
         }
 
         QDemonBounds3 boundsA, boundsB;
@@ -1432,26 +1393,26 @@ struct SPathManager : public IPathManager
             boundsB.include(projParab[i]);
         }
         float xscale =
-                (boundsB.maximum.x - boundsB.minimum.x) / (boundsA.maximum.x - boundsA.minimum.x);
+                (boundsB.maximum.x() - boundsB.minimum.x()) / (boundsA.maximum.x() - boundsA.minimum.x());
         float yscale =
-                (boundsB.maximum.y - boundsB.minimum.y) / (boundsA.maximum.y - boundsA.minimum.y);
-        float zscale = (boundsB.maximum - boundsB.minimum).magnitudeSquared()
-                / (boundsA.maximum - boundsA.minimum).magnitudeSquared();
+                (boundsB.maximum.y() - boundsB.minimum.y()) / (boundsA.maximum.y() - boundsA.minimum.y());
+        float zscale = vec3::magnitudeSquared(boundsB.maximum - boundsB.minimum)
+                / vec3::magnitudeSquared(boundsA.maximum - boundsA.minimum);
         // The default minimum here is just a stupid figure that looks good on our content because
         // we'd
         // been using it for a little while before.  Just for demo.
-        xscale = NVMin<float>(0.5333333f, NVMin<float>(xscale, yscale));
-        yscale = NVMin<float>(0.5333333f, NVMin<float>(xscale, yscale));
-        outScale.scale(QVector4D(xscale, yscale, zscale, 1.0f));
+        xscale = qMin<float>(0.5333333f, qMin<float>(xscale, yscale));
+        yscale = qMin<float>(0.5333333f, qMin<float>(xscale, yscale));
+        outScale.scale(xscale, yscale, zscale);
     }
 
-    void DoRenderPaintedPath(SPathXYGeneratedShader &inShader, SPathRenderContext &inRenderContext,
+    void DoRenderPaintedPath(QSharedPointer<SPathXYGeneratedShader> inShader, SPathRenderContext &inRenderContext,
                              SLayerGlobalRenderProperties &inRenderProperties,
-                             SPathBuffer &inPathBuffer, bool isParaboloidPass = false)
+                             QSharedPointer<SPathBuffer> inPathBuffer, bool isParaboloidPass = false)
     {
-        if (!inPathBuffer.m_PathRender)
+        if (!inPathBuffer->m_PathRender)
             return;
-        QDemonRenderContext &theRenderContext(m_RenderContext->GetRenderContext());
+        QSharedPointer<QDemonRenderContext> theRenderContext(m_RenderContext->GetRenderContext());
         if (!m_PaintedRectInputAssembler) {
             QVector2D vertexes[] = {
                 QVector2D(0.0, 0.0), QVector2D(1.0, 0.0), QVector2D(1.0, 1.0), QVector2D(0.0, 1.0),
@@ -1464,32 +1425,32 @@ struct SPathManager : public IPathManager
             quint32 stride = sizeof(QVector2D);
 
             QDemonRenderVertexBufferEntry theBufferEntries[] = { QDemonRenderVertexBufferEntry(
-                                                                 "attr_pos", QDemonRenderComponentTypes::float, 2, 0) };
+                                                                 "attr_pos", QDemonRenderComponentTypes::Float32, 2, 0) };
 
-            m_PaintedRectVertexBuffer = theRenderContext.CreateVertexBuffer(
+            m_PaintedRectVertexBuffer = theRenderContext->CreateVertexBuffer(
                         QDemonRenderBufferUsageType::Static, 4 * sizeof(QVector2D), sizeof(QVector2D),
                         toU8DataRef(vertexes, 4));
-            m_PaintedRectIndexBuffer = theRenderContext.CreateIndexBuffer(
+            m_PaintedRectIndexBuffer = theRenderContext->CreateIndexBuffer(
                         QDemonRenderBufferUsageType::Static,
-                        QDemonRenderComponentTypes::quint8, 6, toU8DataRef(indexes, 6));
-            QDemonRenderAttribLayout *theAttribLayout =
-                    theRenderContext.CreateAttributeLayout(toConstDataRef(theBufferEntries, 1));
-            m_PaintedRectInputAssembler = theRenderContext.CreateInputAssembler(
-                        theAttribLayout, toConstDataRef(m_PaintedRectVertexBuffer.mPtr),
-                        m_PaintedRectIndexBuffer.mPtr, toConstDataRef(stride), toConstDataRef((quint32)0),
+                        QDemonRenderComponentTypes::UnsignedInteger8, 6, toU8DataRef(indexes, 6));
+            QSharedPointer<QDemonRenderAttribLayout> theAttribLayout =
+                    theRenderContext->CreateAttributeLayout(toConstDataRef(theBufferEntries, 1));
+            m_PaintedRectInputAssembler = theRenderContext->CreateInputAssembler(
+                        theAttribLayout, toConstDataRef(m_PaintedRectVertexBuffer),
+                        m_PaintedRectIndexBuffer, toConstDataRef(stride), toConstDataRef((quint32)0),
                         QDemonRenderDrawMode::Triangles);
         }
 
         // our current render target needs stencil
-        Q_ASSERT(theRenderContext.GetStencilBits() > 0);
+        Q_ASSERT(theRenderContext->GetStencilBits() > 0);
 
-        theRenderContext.SetDepthStencilState(GetDepthStencilState());
+        theRenderContext->SetDepthStencilState(GetDepthStencilState());
 
         // http://developer.download.nvidia.com/assets/gamedev/files/Mixing_Path_Rendering_and_3D.pdf
-        theRenderContext.SetPathStencilDepthOffset(-.05f, -1.0f);
+        theRenderContext->SetPathStencilDepthOffset(-.05f, -1.0f);
 
         // Stencil out the geometry.
-        QMatrix4x4 pathMdlView = QMatrix4x4::createIdentity();
+        QMatrix4x4 pathMdlView;
         // Why is this happening?  Well, it's because the painted-on path rendering is always
         // a flat splatted 2D object.  This is bad because a paraboloid projection demands a very
         // different
@@ -1517,45 +1478,45 @@ struct SPathManager : public IPathManager
         // way.
         if (isParaboloidPass) {
             DoSetCorrectiveScale(inRenderContext.m_ModelViewProjection, pathMdlView,
-                                 inPathBuffer.m_PathRender->GetPathObjectStrokeBox());
+                                 inPathBuffer->m_PathRender->GetPathObjectStrokeBox());
         }
 
-        bool isStencilEnabled = theRenderContext.IsStencilTestEnabled();
-        theRenderContext.SetStencilTestEnabled(true);
-        theRenderContext.SetPathProjectionMatrix(inRenderContext.m_ModelViewProjection);
-        theRenderContext.SetPathModelViewMatrix(pathMdlView);
+        bool isStencilEnabled = theRenderContext->IsStencilTestEnabled();
+        theRenderContext->SetStencilTestEnabled(true);
+        theRenderContext->SetPathProjectionMatrix(inRenderContext.m_ModelViewProjection);
+        theRenderContext->SetPathModelViewMatrix(pathMdlView);
 
         if (inRenderContext.m_IsStroke) {
-            inPathBuffer.m_PathRender->SetStrokeWidth(inRenderContext.m_Path.m_Width);
-            inPathBuffer.m_PathRender->StencilStroke();
+            inPathBuffer->m_PathRender->SetStrokeWidth(inRenderContext.m_Path.m_Width);
+            inPathBuffer->m_PathRender->StencilStroke();
         } else
-            inPathBuffer.m_PathRender->StencilFill();
+            inPathBuffer->m_PathRender->StencilFill();
 
         // The stencil buffer will dictate whether this object renders or not.  So we need to ignore
         // the depth test result.
-        QDemonRenderBoolOp::Enum theDepthFunc = theRenderContext.GetDepthFunction();
-        theRenderContext.SetDepthFunction(QDemonRenderBoolOp::AlwaysTrue);
+        QDemonRenderBoolOp::Enum theDepthFunc = theRenderContext->GetDepthFunction();
+        theRenderContext->SetDepthFunction(QDemonRenderBoolOp::AlwaysTrue);
         // Now render the path; this resets the stencil buffer.
-        SetMaterialProperties(inShader.m_Shader, inRenderContext, inRenderProperties);
-        QDemonBounds3 rectBounds = inPathBuffer.m_PathRender->GetPathObjectStrokeBox();
+        SetMaterialProperties(inShader->m_Shader, inRenderContext, inRenderProperties);
+        QDemonBounds3 rectBounds = inPathBuffer->m_PathRender->GetPathObjectStrokeBox();
         if (isParaboloidPass) {
             rectBounds.scale(1.570796326795f);
         } // PKC : More of the same ugly hack.
-        inShader.m_RectDimensions.Set(QVector4D(rectBounds.minimum.x, rectBounds.minimum.y,
-                                                rectBounds.maximum.x, rectBounds.maximum.y));
-        theRenderContext.SetInputAssembler(m_PaintedRectInputAssembler);
-        theRenderContext.SetCullingEnabled(false);
+        inShader->m_RectDimensions.Set(QVector4D(rectBounds.minimum.x(), rectBounds.minimum.y(),
+                                                 rectBounds.maximum.x(), rectBounds.maximum.y()));
+        theRenderContext->SetInputAssembler(m_PaintedRectInputAssembler);
+        theRenderContext->SetCullingEnabled(false);
         // Render exactly two triangles
-        theRenderContext.Draw(QDemonRenderDrawMode::Triangles, 6, 0);
-        theRenderContext.SetStencilTestEnabled(isStencilEnabled);
-        theRenderContext.SetDepthFunction(theDepthFunc);
+        theRenderContext->Draw(QDemonRenderDrawMode::Triangles, 6, 0);
+        theRenderContext->SetStencilTestEnabled(isStencilEnabled);
+        theRenderContext->SetDepthFunction(theDepthFunc);
     }
 
     void RenderDepthPrepass(SPathRenderContext &inRenderContext,
                             SLayerGlobalRenderProperties inRenderProperties,
                             TShaderFeatureSet inFeatureSet) override
     {
-        SPathBuffer *thePathBuffer = GetPathBufferObject(inRenderContext.m_Path);
+        QSharedPointer<SPathBuffer> thePathBuffer = GetPathBufferObject(inRenderContext.m_Path);
         if (!thePathBuffer) {
             return;
         }
@@ -1574,65 +1535,59 @@ struct SPathManager : public IPathManager
                 }
             }
 
-            QSharedPointer<SPathGeneratedShader> &theDesiredDepthShader =
+            QSharedPointer<SPathGeneratedShader> theDesiredDepthShader =
                     displacementImage == nullptr ? m_DepthShader : m_DepthDisplacementShader;
 
             if (!theDesiredDepthShader) {
-                IDefaultMaterialShaderGenerator &theMaterialGenerator(
+                QSharedPointer<IDefaultMaterialShaderGenerator> theMaterialGenerator(
                             m_RenderContext->GetDefaultMaterialShaderGenerator());
                 SPathVertexPipeline thePipeline(
                             m_RenderContext->GetShaderProgramGenerator(), theMaterialGenerator,
-                            m_RenderContext->GetAllocator(), m_RenderContext->GetStringTable(), false);
+                            false);
                 thePipeline.BeginVertexGeneration(displacementIdx, displacementImage);
                 thePipeline.BeginFragmentGeneration();
                 thePipeline.Fragment().Append("\tfragOutput = vec4(1.0, 1.0, 1.0, 1.0);");
                 thePipeline.EndVertexGeneration();
                 thePipeline.EndFragmentGeneration();
-                const char *shaderName = "path depth";
+                QString shaderName = QStringLiteral("path depth");
                 if (displacementImage)
-                    shaderName = "path depth displacement";
+                    shaderName = QStringLiteral("path depth displacement");
 
                 SShaderCacheProgramFlags theFlags;
-                QDemonRenderShaderProgram *theProgram =
-                        thePipeline.ProgramGenerator().CompileGeneratedShader(shaderName, theFlags,
-                                                                              inFeatureSet);
+                QSharedPointer<QDemonRenderShaderProgram> theProgram =
+                        thePipeline.ProgramGenerator()->CompileGeneratedShader(shaderName, theFlags,
+                                                                               inFeatureSet);
                 if (theProgram) {
-                    theDesiredDepthShader =
-                            new SPathGeneratedShader(*theProgram, m_RenderContext->GetAllocator());
+                    theDesiredDepthShader = QSharedPointer<SPathGeneratedShader>(new SPathGeneratedShader(theProgram));
                 }
             }
             if (theDesiredDepthShader) {
-                DoRenderGeometryPath(*theDesiredDepthShader, inRenderContext, inRenderProperties,
-                                     *thePathBuffer);
+                DoRenderGeometryPath(theDesiredDepthShader, inRenderContext, inRenderProperties,
+                                     thePathBuffer);
             }
         } else {
             // painted path, go stroke route for now.
             if (!m_PaintedDepthShader) {
-                IDefaultMaterialShaderGenerator &theMaterialGenerator(
-                            m_RenderContext->GetDefaultMaterialShaderGenerator());
-                SXYRectVertexPipeline thePipeline(
-                            m_RenderContext->GetShaderProgramGenerator(), theMaterialGenerator,
-                            m_RenderContext->GetAllocator(), m_RenderContext->GetStringTable());
+                QSharedPointer<IDefaultMaterialShaderGenerator> theMaterialGenerator(m_RenderContext->GetDefaultMaterialShaderGenerator());
+                SXYRectVertexPipeline thePipeline(m_RenderContext->GetShaderProgramGenerator(), theMaterialGenerator);
                 thePipeline.BeginVertexGeneration(0, nullptr);
                 thePipeline.BeginFragmentGeneration();
                 thePipeline.Fragment().Append("\tfragOutput = vec4(1.0, 1.0, 1.0, 1.0);");
                 thePipeline.EndVertexGeneration();
                 thePipeline.EndFragmentGeneration();
-                const char *shaderName = "path painted depth";
+                QString shaderName = QStringLiteral("path painted depth");
                 SShaderCacheProgramFlags theFlags;
-                QDemonRenderShaderProgram *theProgram =
-                        thePipeline.ProgramGenerator().CompileGeneratedShader(shaderName, theFlags,
-                                                                              inFeatureSet);
+                QSharedPointer<QDemonRenderShaderProgram> theProgram =
+                        thePipeline.ProgramGenerator()->CompileGeneratedShader(shaderName, theFlags,
+                                                                               inFeatureSet);
                 if (theProgram) {
-                    m_PaintedDepthShader =
-                            new SPathXYGeneratedShader(
-                                *theProgram, m_RenderContext->GetAllocator());
+                    m_PaintedDepthShader = QSharedPointer<SPathXYGeneratedShader>(new SPathXYGeneratedShader(theProgram));
                 }
             }
             if (m_PaintedDepthShader) {
 
-                DoRenderPaintedPath(*m_PaintedDepthShader, inRenderContext, inRenderProperties,
-                                    *thePathBuffer);
+                DoRenderPaintedPath(m_PaintedDepthShader, inRenderContext, inRenderProperties,
+                                    thePathBuffer);
             }
         }
     }
@@ -1641,7 +1596,7 @@ struct SPathManager : public IPathManager
                              SLayerGlobalRenderProperties inRenderProperties,
                              TShaderFeatureSet inFeatureSet) override
     {
-        SPathBuffer *thePathBuffer = GetPathBufferObject(inRenderContext.m_Path);
+        QSharedPointer<SPathBuffer> thePathBuffer = GetPathBufferObject(inRenderContext.m_Path);
         if (!thePathBuffer) {
             return;
         }
@@ -1652,30 +1607,24 @@ struct SPathManager : public IPathManager
         if (thePathBuffer->m_PathType == PathTypes::Painted) {
             // painted path, go stroke route for now.
             if (!m_PaintedShadowShader) {
-                IDefaultMaterialShaderGenerator &theMaterialGenerator(
-                            m_RenderContext->GetDefaultMaterialShaderGenerator());
-                SXYRectVertexPipeline thePipeline(
-                            m_RenderContext->GetShaderProgramGenerator(), theMaterialGenerator,
-                            m_RenderContext->GetAllocator(), m_RenderContext->GetStringTable());
+                QSharedPointer<IDefaultMaterialShaderGenerator> theMaterialGenerator(m_RenderContext->GetDefaultMaterialShaderGenerator());
+                SXYRectVertexPipeline thePipeline(m_RenderContext->GetShaderProgramGenerator(), theMaterialGenerator);
                 thePipeline.OutputParaboloidDepthShaders();
-                const char *shaderName = "path painted paraboloid depth";
+                QString shaderName = QStringLiteral("path painted paraboloid depth");
                 SShaderCacheProgramFlags theFlags;
-                QDemonRenderShaderProgram *theProgram =
-                        thePipeline.ProgramGenerator().CompileGeneratedShader(shaderName, theFlags,
-                                                                              inFeatureSet);
+                QSharedPointer<QDemonRenderShaderProgram> theProgram =
+                        thePipeline.ProgramGenerator()->CompileGeneratedShader(shaderName, theFlags, inFeatureSet);
                 if (theProgram) {
-                    m_PaintedShadowShader =
-                            new SPathXYGeneratedShader(
-                                *theProgram, m_RenderContext->GetAllocator());
+                    m_PaintedShadowShader = QSharedPointer<SPathXYGeneratedShader>(new SPathXYGeneratedShader(theProgram));
                 }
             }
             if (m_PaintedShadowShader) {
                 // Setup the shader paraboloid information.
-                QDemonRenderContext &theRenderContext(m_RenderContext->GetRenderContext());
-                theRenderContext.SetActiveShader(&m_PaintedShadowShader->m_Shader);
+                QSharedPointer<QDemonRenderContext> theRenderContext(m_RenderContext->GetRenderContext());
+                theRenderContext->SetActiveShader(m_PaintedShadowShader->m_Shader);
 
-                DoRenderPaintedPath(*m_PaintedShadowShader, inRenderContext, inRenderProperties,
-                                    *thePathBuffer, true);
+                DoRenderPaintedPath(m_PaintedShadowShader, inRenderContext, inRenderProperties,
+                                    thePathBuffer, true);
             }
         } else {
             // Until we've also got a proper path render path for this, we'll call the old-fashioned
@@ -1689,7 +1638,7 @@ struct SPathManager : public IPathManager
                                   SLayerGlobalRenderProperties inRenderProperties,
                                   TShaderFeatureSet inFeatureSet) override
     {
-        SPathBuffer *thePathBuffer = GetPathBufferObject(inRenderContext.m_Path);
+        QSharedPointer<SPathBuffer> thePathBuffer = GetPathBufferObject(inRenderContext.m_Path);
         if (!thePathBuffer) {
             return;
         }
@@ -1699,27 +1648,24 @@ struct SPathManager : public IPathManager
 
         if (thePathBuffer->m_PathType == PathTypes::Painted) {
             if (!m_PaintedCubeShadowShader) {
-                IDefaultMaterialShaderGenerator &theMaterialGenerator(
+                QSharedPointer<IDefaultMaterialShaderGenerator> theMaterialGenerator(
                             m_RenderContext->GetDefaultMaterialShaderGenerator());
                 SXYRectVertexPipeline thePipeline(
-                            m_RenderContext->GetShaderProgramGenerator(), theMaterialGenerator,
-                            m_RenderContext->GetAllocator(), m_RenderContext->GetStringTable());
+                            m_RenderContext->GetShaderProgramGenerator(), theMaterialGenerator);
                 thePipeline.OutputCubeFaceDepthShaders();
-                const char *shaderName = "path painted cube face depth";
+                QString shaderName = "path painted cube face depth";
                 SShaderCacheProgramFlags theFlags;
-                QDemonRenderShaderProgram *theProgram =
-                        thePipeline.ProgramGenerator().CompileGeneratedShader(shaderName, theFlags,
-                                                                              inFeatureSet);
+                QSharedPointer<QDemonRenderShaderProgram> theProgram =
+                        thePipeline.ProgramGenerator()->CompileGeneratedShader(shaderName, theFlags,
+                                                                               inFeatureSet);
                 if (theProgram) {
-                    m_PaintedCubeShadowShader =
-                            new SPathXYGeneratedShader(
-                                *theProgram, m_RenderContext->GetAllocator());
+                    m_PaintedCubeShadowShader = QSharedPointer<SPathXYGeneratedShader>(new SPathXYGeneratedShader(theProgram));
                 }
             }
             if (m_PaintedCubeShadowShader) {
                 // Setup the shader information.
-                QDemonRenderContext &theRenderContext(m_RenderContext->GetRenderContext());
-                theRenderContext.SetActiveShader(&m_PaintedCubeShadowShader->m_Shader);
+                QSharedPointer<QDemonRenderContext> theRenderContext(m_RenderContext->GetRenderContext());
+                theRenderContext->SetActiveShader(m_PaintedCubeShadowShader->m_Shader);
 
                 m_PaintedCubeShadowShader->m_CameraPosition.Set(
                             inRenderContext.m_Camera.GetGlobalPos());
@@ -1727,8 +1673,8 @@ struct SPathManager : public IPathManager
                             QVector2D(1.0f, inRenderContext.m_Camera.m_ClipFar));
                 m_PaintedCubeShadowShader->m_ModelMatrix.Set(inRenderContext.m_ModelMatrix);
 
-                DoRenderPaintedPath(*m_PaintedCubeShadowShader, inRenderContext, inRenderProperties,
-                                    *thePathBuffer, false);
+                DoRenderPaintedPath(m_PaintedCubeShadowShader, inRenderContext, inRenderProperties,
+                                    thePathBuffer, false);
             }
         } else {
             // Until we've also got a proper path render path for this, we'll call the old-fashioned
@@ -1741,7 +1687,7 @@ struct SPathManager : public IPathManager
                     SLayerGlobalRenderProperties inRenderProperties,
                     TShaderFeatureSet inFeatureSet) override
     {
-        SPathBuffer *thePathBuffer = GetPathBufferObject(inRenderContext.m_Path);
+        QSharedPointer<SPathBuffer> thePathBuffer = GetPathBufferObject(inRenderContext.m_Path);
         if (!thePathBuffer) {
             return;
         }
@@ -1750,29 +1696,29 @@ struct SPathManager : public IPathManager
                 (inRenderContext.m_Material.m_Type == GraphObjectTypes::DefaultMaterial);
 
         if (thePathBuffer->m_PathType == PathTypes::Geometry) {
-            IMaterialShaderGenerator *theMaterialGenerator =
+            QSharedPointer<IMaterialShaderGenerator> theMaterialGenerator =
                     GetMaterialShaderGenertator(inRenderContext);
 
             // we need a more evolved key her for custom materials
             // the same key can still need a different shader
             SPathShaderMapKey sPathkey = SPathShaderMapKey(GetMaterialNameForKey(inRenderContext),
                                                            inRenderContext.m_MaterialKey);
-            QPair<TShaderMap::iterator, bool> inserter = m_PathGeometryShaders.insert(sPathkey, QSharedPointer<SPathGeneratedShader>(nullptr));
-            if (inserter.second) {
+            TShaderMap::iterator inserter = m_PathGeometryShaders.find(sPathkey);
+            //QPair<TShaderMap::iterator, bool> inserter = m_PathGeometryShaders.insert(sPathkey, QSharedPointer<SPathGeneratedShader>(nullptr));
+            if (inserter == m_PathGeometryShaders.end()) {
                 SPathVertexPipeline thePipeline(
-                            m_RenderContext->GetShaderProgramGenerator(), *theMaterialGenerator,
-                            m_RenderContext->GetAllocator(), m_RenderContext->GetStringTable(),
+                            m_RenderContext->GetShaderProgramGenerator(), theMaterialGenerator,
                             m_RenderContext->GetWireframeMode());
 
-                QDemonRenderShaderProgram *theProgram = nullptr;
+                QSharedPointer<QDemonRenderShaderProgram> theProgram = nullptr;
 
                 if (isDefaultMaterial) {
                     theProgram = theMaterialGenerator->GenerateShader(
                                 inRenderContext.m_Material, inRenderContext.m_MaterialKey, thePipeline,
                                 inFeatureSet, inRenderProperties.m_Lights, inRenderContext.m_FirstImage,
-                                inRenderContext.m_Opacity < 1.0, "path geometry pipeline-- ");
+                                inRenderContext.m_Opacity < 1.0, QStringLiteral("path geometry pipeline-- "));
                 } else {
-                    ICustomMaterialSystem &theMaterialSystem(
+                    QSharedPointer<ICustomMaterialSystem> theMaterialSystem(
                                 m_RenderContext->GetCustomMaterialSystem());
                     const SCustomMaterial &theCustomMaterial(
                                 reinterpret_cast<const SCustomMaterial &>(inRenderContext.m_Material));
@@ -1781,34 +1727,32 @@ struct SPathManager : public IPathManager
                                 inRenderContext.m_Material, inRenderContext.m_MaterialKey, thePipeline,
                                 inFeatureSet, inRenderProperties.m_Lights, inRenderContext.m_FirstImage,
                                 inRenderContext.m_Opacity < 1.0, "path geometry pipeline-- ",
-                                theMaterialSystem.GetShaderName(theCustomMaterial));
+                                theMaterialSystem->GetShaderName(theCustomMaterial));
                 }
 
                 if (theProgram)
-                    inserter.first->second =
-                            new SPathGeneratedShader(*theProgram, m_RenderContext->GetAllocator());
+                    inserter = m_PathGeometryShaders.insert(sPathkey, QSharedPointer<SPathGeneratedShader>(new SPathGeneratedShader(theProgram)));
             }
-            if (!inserter.first->second)
+            if (inserter == m_PathGeometryShaders.end())
                 return;
 
-            DoRenderGeometryPath(*inserter.first->second.mPtr, inRenderContext, inRenderProperties,
-                                 *thePathBuffer);
+            DoRenderGeometryPath(inserter.value(), inRenderContext, inRenderProperties,
+                                 thePathBuffer);
         } else {
-            IMaterialShaderGenerator *theMaterialGenerator =
+            QSharedPointer<IMaterialShaderGenerator> theMaterialGenerator =
                     GetMaterialShaderGenertator(inRenderContext);
 
             // we need a more evolved key her for custom materials
             // the same key can still need a different shader
             SPathShaderMapKey sPathkey = SPathShaderMapKey(GetMaterialNameForKey(inRenderContext),
                                                            inRenderContext.m_MaterialKey);
-            QPair<TPaintedShaderMap::iterator, bool> inserter = m_PathPaintedShaders.insert(
-                        sPathkey, QSharedPointer<SPathXYGeneratedShader>(nullptr));
-            if (inserter.second) {
-                SXYRectVertexPipeline thePipeline(
-                            m_RenderContext->GetShaderProgramGenerator(), *theMaterialGenerator,
-                            m_RenderContext->GetAllocator(), m_RenderContext->GetStringTable());
+            TPaintedShaderMap::iterator inserter = m_PathPaintedShaders.find(sPathkey);
 
-                QDemonRenderShaderProgram *theProgram = nullptr;
+            if (inserter == m_PathPaintedShaders.end()) {
+                SXYRectVertexPipeline thePipeline(
+                            m_RenderContext->GetShaderProgramGenerator(), theMaterialGenerator);
+
+                QSharedPointer<QDemonRenderShaderProgram> theProgram = nullptr;
 
                 if (isDefaultMaterial) {
                     theProgram = theMaterialGenerator->GenerateShader(
@@ -1816,7 +1760,7 @@ struct SPathManager : public IPathManager
                                 inFeatureSet, inRenderProperties.m_Lights, inRenderContext.m_FirstImage,
                                 inRenderContext.m_Opacity < 1.0, "path painted pipeline-- ");
                 } else {
-                    ICustomMaterialSystem &theMaterialSystem(
+                    QSharedPointer<ICustomMaterialSystem> theMaterialSystem(
                                 m_RenderContext->GetCustomMaterialSystem());
                     const SCustomMaterial &theCustomMaterial(
                                 reinterpret_cast<const SCustomMaterial &>(inRenderContext.m_Material));
@@ -1825,19 +1769,17 @@ struct SPathManager : public IPathManager
                                 inRenderContext.m_Material, inRenderContext.m_MaterialKey, thePipeline,
                                 inFeatureSet, inRenderProperties.m_Lights, inRenderContext.m_FirstImage,
                                 inRenderContext.m_Opacity < 1.0, "path painted pipeline-- ",
-                                theMaterialSystem.GetShaderName(theCustomMaterial));
+                                theMaterialSystem->GetShaderName(theCustomMaterial));
                 }
 
                 if (theProgram)
-                    inserter.first->second =
-                            new SPathXYGeneratedShader(
-                                *theProgram, m_RenderContext->GetAllocator());
+                    inserter = m_PathPaintedShaders.insert(sPathkey, QSharedPointer<SPathXYGeneratedShader>(new SPathXYGeneratedShader(theProgram)));
             }
-            if (!inserter.first->second)
+            if (inserter == m_PathPaintedShaders.end())
                 return;
 
-            DoRenderPaintedPath(*inserter.first->second.mPtr, inRenderContext, inRenderProperties,
-                                *thePathBuffer);
+            DoRenderPaintedPath(inserter.value(), inRenderContext, inRenderProperties,
+                                thePathBuffer);
         }
     }
 };
@@ -1849,8 +1791,8 @@ QVector2D IPathManagerCore::GetControlPointFromAngleDistance(QVector2D inPositio
     if (inIncomingDistance == 0.0f)
         return inPosition;
     float angleRad = degToRad(inIncomingAngle);
-    float angleSin = NVSin(angleRad);
-    float angleCos = NVCos(angleRad);
+    float angleSin = sin(angleRad);
+    float angleCos = cos(angleRad);
     QVector2D relativeAngles = QVector2D(angleCos * inIncomingDistance, angleSin * inIncomingDistance);
     return inPosition + relativeAngles;
 }
@@ -1858,14 +1800,14 @@ QVector2D IPathManagerCore::GetControlPointFromAngleDistance(QVector2D inPositio
 QVector2D IPathManagerCore::GetAngleDistanceFromControlPoint(QVector2D inPosition, QVector2D inControlPoint)
 {
     QVector2D relative = inControlPoint - inPosition;
-    float angleRad = atan2(relative.y, relative.x);
-    float distance = relative.magnitude();
+    float angleRad = atan2(relative.y(), relative.x());
+    float distance = vec2::magnitude(relative);
     return QVector2D(radToDeg(angleRad), distance);
 }
 
-IPathManagerCore &IPathManagerCore::CreatePathManagerCore(IQDemonRenderContextCore &ctx)
+QSharedPointer<IPathManagerCore> IPathManagerCore::CreatePathManagerCore(QSharedPointer<IQDemonRenderContextCore> ctx)
 {
-    return *new SPathManager(ctx);
+    return QSharedPointer<SPathManager>(new SPathManager(ctx));
 }
 
 QT_END_NAMESPACE

@@ -93,9 +93,9 @@ struct SRenderList : public IRenderList
 };
 }
 
-IRenderList &IRenderList::CreateRenderList()
+QSharedPointer<IRenderList> IRenderList::CreateRenderList()
 {
-    return *new SRenderList();
+    return QSharedPointer<IRenderList>(new SRenderList());
 }
 
 QT_END_NAMESPACE

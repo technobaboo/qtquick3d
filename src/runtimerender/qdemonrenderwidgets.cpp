@@ -151,7 +151,7 @@ struct SWidgetBBox : public IRenderWidget
         m_ItemName = QString::fromLocal8Bit("SWidgetBBox");
         SWidgetRenderInformation theInfo(inWidgetContext.GetWidgetRenderInformation(
                                              *m_Node, m_Node->m_Position, RenderWidgetModes::Local));
-        TNVBounds2BoxPoints thePoints;
+        QDemonBounds2BoxPoints thePoints;
         m_Bounds.expand(thePoints);
         QMatrix4x4 theNodeRotation;
         QMatrix4x4 theNodeToCamera = theInfo.m_NodeParentToCamera * m_Node->m_LocalTransform;

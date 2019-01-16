@@ -132,8 +132,8 @@ struct SPGRenderer : public IPixelGraphicsRenderer
 
             m_RectShader.SetShader(m_RenderContext->GetShaderCache()->CompileProgram(
                                        QStringLiteral("PixelRectShader"),
-                                       m_VertexGenerator.m_FinalShaderBuilder,
-                                       m_FragmentGenerator.m_FinalShaderBuilder,
+                                       m_VertexGenerator.m_FinalShaderBuilder.toLocal8Bit().constData(),
+                                       m_FragmentGenerator.m_FinalShaderBuilder.toLocal8Bit().constData(),
                                        nullptr, // no tess control shader
                                        nullptr, // no tess eval shader
                                        nullptr, // no geometry shader

@@ -79,7 +79,7 @@ QDemonBounds3 QDemonBounds3::transform(const QDemonTransform &transform,
 void QDemonBounds3::transform(const QMatrix4x4 &inMatrix)
 {
     if (!isEmpty()) {
-        TNVBounds2BoxPoints thePoints;
+        QDemonBounds2BoxPoints thePoints;
         expand(thePoints);
         setEmpty();
         for (quint32 idx = 0; idx < 8; ++idx)

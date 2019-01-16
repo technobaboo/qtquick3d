@@ -52,53 +52,43 @@ void SShaderCodeGeneratorBase::Begin()
     m_ConstantBuffers.clear();
     m_ConstantBufferParams.clear();
 }
-void SShaderCodeGeneratorBase::Append(const char *data)
+void SShaderCodeGeneratorBase::Append(const QString &data)
 {
     m_CodeBuilder.append(data);
     m_CodeBuilder.append("\n");
 }
 // don't add the newline
-void SShaderCodeGeneratorBase::AppendPartial(const char *data)
+void SShaderCodeGeneratorBase::AppendPartial(const QString &data)
 {
     m_CodeBuilder.append(data);
 }
-void SShaderCodeGeneratorBase::AddUniform(const char *name, const char *type)
+void SShaderCodeGeneratorBase::AddUniform(const QString &name, const QString &type)
 {
     m_Uniforms.insert(name, type);
 }
-void SShaderCodeGeneratorBase::AddUniform(const QString &name, const char *type)
-{
-    AddUniform(name.toLocal8Bit().data(), type);
-}
-
-void SShaderCodeGeneratorBase::AddConstantBuffer(const char *name, const char *layout)
+void SShaderCodeGeneratorBase::AddConstantBuffer(const QString &name, const QString &layout)
 {
     m_ConstantBuffers.insert(name, layout);
 }
-void SShaderCodeGeneratorBase::AddConstantBufferParam(const char *cbName, const char *paramName,
-                                                      const char *type)
+void SShaderCodeGeneratorBase::AddConstantBufferParam(const QString &cbName, const QString &paramName,
+                                                      const QString &type)
 {
     TParamPair theParamPair(paramName, type);
     TConstantBufferParamPair theBufferParamPair(cbName, theParamPair);
     m_ConstantBufferParams.push_back(theBufferParamPair);
 }
-void SShaderCodeGeneratorBase::AddAttribute(const char *name, const char *type)
+
+void SShaderCodeGeneratorBase::AddAttribute(const QString &name, const QString &type)
 {
     m_Attributes.insert(name, type);
 }
-void SShaderCodeGeneratorBase::AddAttribute(const QString &name, const char *type)
-{
-    AddAttribute(name.toLocal8Bit().data(), type);
-}
-void SShaderCodeGeneratorBase::AddVarying(const char *name, const char *type)
+
+void SShaderCodeGeneratorBase::AddVarying(const QString &name, const QString &type)
 {
     GetVaryings().insert(name, type);
 }
-void SShaderCodeGeneratorBase::AddVarying(const QString &name, const char *type)
-{
-    AddVarying(name.toLocal8Bit().data(), type);
-}
-void SShaderCodeGeneratorBase::AddLocalVariable(const char *name, const char *type, int tabCount)
+
+void SShaderCodeGeneratorBase::AddLocalVariable(const QString &name, const QString &type, int tabCount)
 {
     for (; tabCount >= 0; --tabCount)
         m_CodeBuilder.append("\t");
@@ -108,18 +98,11 @@ void SShaderCodeGeneratorBase::AddLocalVariable(const char *name, const char *ty
     m_CodeBuilder.append(";\n");
 }
 
-void SShaderCodeGeneratorBase::AddInclude(const char *name)
+void SShaderCodeGeneratorBase::AddInclude(const QString &name)
 {
     m_Includes.insert(name);
 }
-void SShaderCodeGeneratorBase::AddInclude(const QString &name)
-{
-    AddInclude(name.toLocal8Bit().data());
-}
-void SShaderCodeGeneratorBase::AddLocalVariable(const QString &name, const char *type, int tabCount)
-{
-    AddLocalVariable(name.toLocal8Bit().data(), type, tabCount);
-}
+
 bool SShaderCodeGeneratorBase::HasCode(Enum value)
 {
     return m_Codes.contains(value);
@@ -232,7 +215,7 @@ void SShaderCodeGeneratorBase::GenerateShadedWireframeBase()
            "\tfloat hc = abs( e2 * sin( alpha ) );\n");
 }
 
-void SShaderCodeGeneratorBase::AddShaderItemMap(const char *itemType,
+void SShaderCodeGeneratorBase::AddShaderItemMap(const QString &itemType,
                                                 const TStrTableStrMap &itemMap)
 {
     m_FinalShaderBuilder.append("\n");
@@ -249,7 +232,7 @@ void SShaderCodeGeneratorBase::AddShaderItemMap(const char *itemType,
 }
 
 void SShaderCodeGeneratorBase::AddShaderConstantBufferItemMap(
-        const char *itemType, const TStrTableStrMap &cbMap, TConstantBufferParamArray cbParamsArray)
+        const QString &itemType, const TStrTableStrMap &cbMap, TConstantBufferParamArray cbParamsArray)
 {
     m_FinalShaderBuilder.append("\n");
 
@@ -278,13 +261,14 @@ void SShaderCodeGeneratorBase::AddShaderConstantBufferItemMap(
     }
 }
 
-const char *SShaderCodeGeneratorBase::BuildShaderSource()
+const QString &SShaderCodeGeneratorBase::BuildShaderSource()
 {
-    for (QSet<QByteArray>::const_iterator iter = m_Includes.begin(),
+    for (QSet<QString>::const_iterator iter = m_Includes.begin(),
          end = m_Includes.end();
          iter != end; ++iter) {
+
         m_FinalShaderBuilder.append("#include \"");
-        m_FinalShaderBuilder.append(iter->data());
+        m_FinalShaderBuilder.append(*iter);
         m_FinalShaderBuilder.append("\"\n");
     }
     AddShaderItemMap("attribute", m_Attributes);
@@ -293,16 +277,11 @@ const char *SShaderCodeGeneratorBase::BuildShaderSource()
     AddShaderItemMap("varying", GetVaryings());
     m_FinalShaderBuilder.append("\n");
     m_FinalShaderBuilder.append(m_CodeBuilder);
-    return m_FinalShaderBuilder.constData();
-}
-SShaderCodeGeneratorBase &SShaderCodeGeneratorBase::operator<<(const char *data)
-{
-    m_CodeBuilder.append(data);
-    return *this;
+    return m_FinalShaderBuilder;
 }
 SShaderCodeGeneratorBase &SShaderCodeGeneratorBase::operator<<(const QString &data)
 {
-    m_CodeBuilder.append(data.toLocal8Bit().constData());
+    m_CodeBuilder.append(data);
     return *this;
 }
 
@@ -324,43 +303,43 @@ SShaderTessControlCodeGenerator::SShaderTessControlCodeGenerator(
 }
 
 // overwritten from base
-void SShaderTessControlCodeGenerator::AddShaderItemMap(const char *itemType, const TStrTableStrMap &itemMap)
+void SShaderTessControlCodeGenerator::AddShaderItemMap(const QString &itemType, const TStrTableStrMap &itemMap)
 {
-    QByteArray extVtx("");
-    QByteArray extTC("");
-    QByteArray type(itemType);
+    QString extVtx("");
+    QString extTC("");
+    QString type(itemType);
     if (type != QByteArrayLiteral("varying")) {
         extVtx = "[]";
         extTC = "TC[]";
-        itemType = "attribute";
+        type = "attribute";
     }
 
     m_FinalShaderBuilder.append("\n");
 
     for (TStrTableStrMap::const_iterator iter = itemMap.begin(), end = itemMap.end(); iter != end;
          ++iter) {
-        m_FinalShaderBuilder.append(itemType);
+        m_FinalShaderBuilder.append(type);
         m_FinalShaderBuilder.append(" ");
         m_FinalShaderBuilder.append(iter.value());
         m_FinalShaderBuilder.append(" ");
         m_FinalShaderBuilder.append(iter.key());
-        m_FinalShaderBuilder.append(extVtx.constData());
+        m_FinalShaderBuilder.append(extVtx);
         m_FinalShaderBuilder.append(";\n");
     }
 
     // if this is varyings write output of tess control shader
     if (!extVtx.isEmpty()) {
         m_FinalShaderBuilder.append("\n");
-        itemType = "varying";
+        type = "varying";
 
         for (TStrTableStrMap::const_iterator iter = itemMap.begin(), end = itemMap.end();
              iter != end; ++iter) {
-            m_FinalShaderBuilder.append(itemType);
+            m_FinalShaderBuilder.append(type);
             m_FinalShaderBuilder.append(" ");
             m_FinalShaderBuilder.append(iter.value());
             m_FinalShaderBuilder.append(" ");
             m_FinalShaderBuilder.append(iter.key());
-            m_FinalShaderBuilder.append(extTC.constData());
+            m_FinalShaderBuilder.append(extTC);
             m_FinalShaderBuilder.append(";\n");
         }
     }
@@ -378,15 +357,15 @@ SShaderTessEvalCodeGenerator::SShaderTessEvalCodeGenerator(SShaderTessControlCod
 {
 }
 // overwritten from base
-void SShaderTessEvalCodeGenerator::AddShaderItemMap(const char *itemType,
+void SShaderTessEvalCodeGenerator::AddShaderItemMap(const QString &itemType,
                                                     const TStrTableStrMap &itemMap)
 {
-    QByteArray extTC("");
-    QByteArray extTE("");
-    QByteArray type(itemType);
+    QString extTC("");
+    QString extTE("");
+    QString type(itemType);
     if (type != QByteArrayLiteral("varying")) {
         extTC = "TC[]";
-        itemType = "attribute";
+        type = "attribute";
     }
     if (m_hasGeometryStage) {
         extTE = "TE";
@@ -396,28 +375,28 @@ void SShaderTessEvalCodeGenerator::AddShaderItemMap(const char *itemType,
 
     for (TStrTableStrMap::const_iterator iter = itemMap.begin(), end = itemMap.end(); iter != end;
          ++iter) {
-        m_FinalShaderBuilder.append(itemType);
+        m_FinalShaderBuilder.append(type);
         m_FinalShaderBuilder.append(" ");
         m_FinalShaderBuilder.append(iter.value());
         m_FinalShaderBuilder.append(" ");
         m_FinalShaderBuilder.append(iter.key());
-        m_FinalShaderBuilder.append(extTC.constData());
+        m_FinalShaderBuilder.append(extTC);
         m_FinalShaderBuilder.append(";\n");
     }
 
     // if this are varyings write output of tess eval shader
     if (!extTC.isEmpty()) {
         m_FinalShaderBuilder.append("\n");
-        itemType = "varying";
+        type = "varying";
 
         for (TStrTableStrMap::const_iterator iter = itemMap.begin(), end = itemMap.end();
              iter != end; ++iter) {
-            m_FinalShaderBuilder.append(itemType);
+            m_FinalShaderBuilder.append(type);
             m_FinalShaderBuilder.append(" ");
             m_FinalShaderBuilder.append(iter.value());
             m_FinalShaderBuilder.append(" ");
             m_FinalShaderBuilder.append(iter.key());
-            m_FinalShaderBuilder.append(extTE.constData());
+            m_FinalShaderBuilder.append(extTE);
             m_FinalShaderBuilder.append(";\n");
         }
     }
@@ -440,13 +419,13 @@ SShaderGeometryCodeGenerator::SShaderGeometryCodeGenerator(SShaderVertexCodeGene
 }
 
 // overwritten from base
-void SShaderGeometryCodeGenerator::AddShaderItemMap(const char *itemType,
+void SShaderGeometryCodeGenerator::AddShaderItemMap(const QString &itemType,
                                                     const TStrTableStrMap &itemMap)
 {
-    QByteArray inExt("");
-    QByteArray type(itemType);
+    QString inExt("");
+    QString type(itemType);
     if (type != QByteArrayLiteral("varying")) {
-        itemType = "attribute";
+        type = "attribute";
         if (m_hasTessellationStage)
             inExt = "TE[]";
         else
@@ -457,23 +436,23 @@ void SShaderGeometryCodeGenerator::AddShaderItemMap(const char *itemType,
 
     for (TStrTableStrMap::const_iterator iter = itemMap.begin(), end = itemMap.end(); iter != end;
          ++iter) {
-        m_FinalShaderBuilder.append(itemType);
+        m_FinalShaderBuilder.append(type);
         m_FinalShaderBuilder.append(" ");
         m_FinalShaderBuilder.append(iter.value());
         m_FinalShaderBuilder.append(" ");
         m_FinalShaderBuilder.append(iter.key());
-        m_FinalShaderBuilder.append(inExt.constData());
+        m_FinalShaderBuilder.append(inExt);
         m_FinalShaderBuilder.append(";\n");
     }
 
     // if this are varyings write output of geometry shader
-    if (type != QByteArrayLiteral("varying")) {
+    if (itemType != QByteArrayLiteral("varying")) {
         m_FinalShaderBuilder.append("\n");
-        itemType = "varying";
+        type = "varying";
 
         for (TStrTableStrMap::const_iterator iter = itemMap.begin(), end = itemMap.end();
              iter != end; ++iter) {
-            m_FinalShaderBuilder.append(itemType);
+            m_FinalShaderBuilder.append(type);
             m_FinalShaderBuilder.append(" ");
             m_FinalShaderBuilder.append(iter.value());
             m_FinalShaderBuilder.append(" ");

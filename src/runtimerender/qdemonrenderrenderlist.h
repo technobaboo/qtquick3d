@@ -92,7 +92,7 @@ public:
     virtual QDemonRenderRect GetScissor() const = 0;
     virtual QDemonRenderRect GetViewport() const = 0;
 
-    static IRenderList &CreateRenderList();
+    static QSharedPointer<IRenderList> CreateRenderList();
 };
 
 // Now for scoped property access.

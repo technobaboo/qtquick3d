@@ -5,7 +5,7 @@
 
 QT_BEGIN_NAMESPACE
 
-struct QDemonTimeCounterFrequencyToTensOfNanos
+struct Q_DEMON_EXPORT QDemonTimeCounterFrequencyToTensOfNanos
 {
     quint64 mNumerator;
     quint64 mDenominator;
@@ -22,7 +22,7 @@ struct QDemonTimeCounterFrequencyToTensOfNanos
     }
 };
 
-class QDemonTime
+class Q_DEMON_EXPORT QDemonTime
 {
 public:
     typedef double Second;

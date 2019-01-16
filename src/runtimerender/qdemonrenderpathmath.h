@@ -40,6 +40,8 @@
 #include <QtDemon/qdemonutils.h>
 #include <QtDemon/qdemondataref.h>
 
+#include <QtDemonRuntimeRender/qdemonrenderpathmanager.h>
+
 QT_BEGIN_NAMESPACE
 
 namespace path {

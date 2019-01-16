@@ -48,14 +48,12 @@
 
 QT_BEGIN_NAMESPACE
 
-using namespace dynamic;
-
 uint qHash(const TStrStrPair &item)
 {
     return qHash(item.first) ^ qHash(item.second);
 }
 
-uint qHash(const SShaderMapKey &inKey)
+uint qHash(const dynamic::SShaderMapKey &inKey)
 {
     return inKey.m_HashCode;
 }
@@ -194,30 +192,30 @@ struct SCommandRemapping
 };
 
 template <>
-struct SCommandRemapping<SAllocateBuffer>
+struct SCommandRemapping<dynamic::SAllocateBuffer>
 {
     template <typename TRemapper>
-    static void RemapCommandData(SAllocateBuffer &cmd, TRemapper &remapper)
+    static void RemapCommandData(dynamic::SAllocateBuffer &cmd, TRemapper &remapper)
     {
         remapper.Remap(cmd.m_Name);
     }
 };
 
 template <>
-struct SCommandRemapping<SAllocateImage>
+struct SCommandRemapping<dynamic::SAllocateImage>
 {
     template <typename TRemapper>
-    static void RemapCommandData(SAllocateImage &cmd, TRemapper &remapper)
+    static void RemapCommandData(dynamic::SAllocateImage &cmd, TRemapper &remapper)
     {
         remapper.Remap(cmd.m_Name);
     }
 };
 
 template <>
-struct SCommandRemapping<SAllocateDataBuffer>
+struct SCommandRemapping<dynamic::SAllocateDataBuffer>
 {
     template <typename TRemapper>
-    static void RemapCommandData(SAllocateDataBuffer &cmd, TRemapper &remapper)
+    static void RemapCommandData(dynamic::SAllocateDataBuffer &cmd, TRemapper &remapper)
     {
         remapper.Remap(cmd.m_Name);
         if (!cmd.m_WrapName.isEmpty())
@@ -226,38 +224,38 @@ struct SCommandRemapping<SAllocateDataBuffer>
 };
 
 template <>
-struct SCommandRemapping<SBindBuffer>
+struct SCommandRemapping<dynamic::SBindBuffer>
 {
     template <typename TRemapper>
-    static void RemapCommandData(SBindBuffer &cmd, TRemapper &remapper)
+    static void RemapCommandData(dynamic::SBindBuffer &cmd, TRemapper &remapper)
     {
         remapper.Remap(cmd.m_BufferName);
     }
 };
 template <>
-struct SCommandRemapping<SBindShader>
+struct SCommandRemapping<dynamic::SBindShader>
 {
     template <typename TRemapper>
-    static void RemapCommandData(SBindShader &cmd, TRemapper &remapper)
+    static void RemapCommandData(dynamic::SBindShader &cmd, TRemapper &remapper)
     {
         remapper.Remap(cmd.m_ShaderPath);
         remapper.Remap(cmd.m_ShaderDefine);
     }
 };
 template <>
-struct SCommandRemapping<SApplyInstanceValue>
+struct SCommandRemapping<dynamic::SApplyInstanceValue>
 {
     template <typename TRemapper>
-    static void RemapCommandData(SApplyInstanceValue &cmd, TRemapper &remapper)
+    static void RemapCommandData(dynamic::SApplyInstanceValue &cmd, TRemapper &remapper)
     {
         remapper.Remap(cmd.m_PropertyName);
     }
 };
 template <>
-struct SCommandRemapping<SApplyBufferValue>
+struct SCommandRemapping<dynamic::SApplyBufferValue>
 {
     template <typename TRemapper>
-    static void RemapCommandData(SApplyBufferValue &cmd, TRemapper &remapper)
+    static void RemapCommandData(dynamic::SApplyBufferValue &cmd, TRemapper &remapper)
     {
         remapper.Remap(cmd.m_BufferName);
         remapper.Remap(cmd.m_ParamName);
@@ -265,20 +263,20 @@ struct SCommandRemapping<SApplyBufferValue>
 };
 
 template <>
-struct SCommandRemapping<SApplyDepthValue>
+struct SCommandRemapping<dynamic::SApplyDepthValue>
 {
     template <typename TRemapper>
-    static void RemapCommandData(SApplyDepthValue &cmd, TRemapper &remapper)
+    static void RemapCommandData(dynamic::SApplyDepthValue &cmd, TRemapper &remapper)
     {
         remapper.Remap(cmd.m_ParamName);
     }
 };
 
 template <>
-struct SCommandRemapping<SApplyBlitFramebuffer>
+struct SCommandRemapping<dynamic::SApplyBlitFramebuffer>
 {
     template <typename TRemapper>
-    static void RemapCommandData(SApplyBlitFramebuffer &cmd, TRemapper &remapper)
+    static void RemapCommandData(dynamic::SApplyBlitFramebuffer &cmd, TRemapper &remapper)
     {
         remapper.Remap(cmd.m_SourceBufferName);
         remapper.Remap(cmd.m_DestBufferName);
@@ -286,30 +284,30 @@ struct SCommandRemapping<SApplyBlitFramebuffer>
 };
 
 template <>
-struct SCommandRemapping<SApplyValue>
+struct SCommandRemapping<dynamic::SApplyValue>
 {
     template <typename TRemapper>
-    static void RemapCommandData(SApplyValue &cmd, TRemapper &remapper)
+    static void RemapCommandData(dynamic::SApplyValue &cmd, TRemapper &remapper)
     {
         remapper.Remap(cmd.m_PropertyName);
     }
 };
 
 template <>
-struct SCommandRemapping<SApplyDataBufferValue>
+struct SCommandRemapping<dynamic::SApplyDataBufferValue>
 {
     template <typename TRemapper>
-    static void RemapCommandData(SApplyDataBufferValue &cmd, TRemapper &remapper)
+    static void RemapCommandData(dynamic::SApplyDataBufferValue &cmd, TRemapper &remapper)
     {
         remapper.Remap(cmd.m_ParamName);
     }
 };
 
 template <>
-struct SCommandRemapping<SDepthStencil>
+struct SCommandRemapping<dynamic::SDepthStencil>
 {
     template <typename TRemapper>
-    static void RemapCommandData(SDepthStencil &cmd, TRemapper &remapper)
+    static void RemapCommandData(dynamic::SDepthStencil &cmd, TRemapper &remapper)
     {
         remapper.Remap(cmd.m_BufferName);
     }
@@ -474,18 +472,18 @@ struct SDynamicObjectShaderInfo
 struct SDynamicObjClassImpl : public IDynamicObjectClass
 {
     QString m_Id;
-    QDemonConstDataRef<SPropertyDefinition> m_PropertyDefinitions;
+    QDemonConstDataRef<dynamic::SPropertyDefinition> m_PropertyDefinitions;
     quint32 m_PropertySectionByteSize;
     quint32 m_BaseObjectSize;
     GraphObjectTypes::Enum m_GraphObjectType;
     quint8 *m_PropertyDefaultData;
-    QDemonConstDataRef<SCommand *> m_RenderCommands;
+    QDemonConstDataRef<dynamic::SCommand *> m_RenderCommands;
     bool m_RequiresDepthTexture;
     bool m_RequiresCompilation;
     QDemonRenderTextureFormats::Enum m_OutputFormat;
 
     SDynamicObjClassImpl(QString id,
-                         QDemonConstDataRef<SPropertyDefinition> definitions,
+                         QDemonConstDataRef<dynamic::SPropertyDefinition> definitions,
                          quint32 propertySectionByteSize,
                          quint32 baseObjectSize,
                          GraphObjectTypes::Enum objectType,
@@ -516,12 +514,12 @@ struct SDynamicObjClassImpl : public IDynamicObjectClass
     }
 
     template <typename TRemapperType>
-    static void RemapCommand(SCommand &inCommand, TRemapperType &inRemapper)
+    static void RemapCommand(dynamic::SCommand &inCommand, TRemapperType &inRemapper)
     {
         switch (inCommand.m_Type) {
 #define QDEMON_RENDER_EFFECTS_HANDLE_COMMAND_TYPES(type)                                              \
-        case CommandTypes::type:                                                                       \
-    SCommandRemapping<S##type>::RemapCommandData(static_cast<S##type &>(inCommand),            \
+        case dynamic::CommandTypes::type:                                                                       \
+    SCommandRemapping<dynamic::S##type>::RemapCommandData(static_cast<dynamic::S##type &>(inCommand),            \
     inRemapper);                                  \
     break;
         QDEMON_RENDER_EFFECTS_ITERATE_COMMAND_TYPES
@@ -537,33 +535,33 @@ struct SDynamicObjClassImpl : public IDynamicObjectClass
         quint8 *theCommandPtrBegin = inCommandStart;
         quint32 theCommandOffset = 0;
         for (quint32 idx = 0; idx < numEffectCommands; ++idx) {
-            SCommand *theCommand = reinterpret_cast<SCommand *>(inCommandStart + theCommandOffset);
-            theCommandOffset += SCommand::GetSizeofCommand(*theCommand);
+            dynamic::SCommand *theCommand = reinterpret_cast<dynamic::SCommand *>(inCommandStart + theCommandOffset);
+            theCommandOffset += dynamic::SCommand::GetSizeofCommand(*theCommand);
         }
-        SCommand **theCommandPtrStart =
-                reinterpret_cast<SCommand **>(theCommandPtrBegin + theCommandOffset);
-        m_RenderCommands = QDemonConstDataRef<SCommand *>(theCommandPtrStart, numEffectCommands);
+        dynamic::SCommand **theCommandPtrStart =
+                reinterpret_cast<dynamic::SCommand **>(theCommandPtrBegin + theCommandOffset);
+        m_RenderCommands = QDemonConstDataRef<dynamic::SCommand *>(theCommandPtrStart, numEffectCommands);
         // Now run through the commands, fixup strings and setup the command ptrs
         theCommandOffset = 0;
         for (quint32 idx = 0; idx < numEffectCommands; ++idx) {
-            SCommand *theCommand =
-                    reinterpret_cast<SCommand *>(theCommandPtrBegin + theCommandOffset);
+            dynamic::SCommand *theCommand =
+                    reinterpret_cast<dynamic::SCommand *>(theCommandPtrBegin + theCommandOffset);
             theCommandPtrStart[idx] = theCommand;
             RemapCommand(*theCommand, inRemapper);
-            theCommandOffset += SCommand::GetSizeofCommand(*theCommand);
+            theCommandOffset += dynamic::SCommand::GetSizeofCommand(*theCommand);
         }
     }
 
     void ReleaseCommands()
     {
         if (m_RenderCommands.size()) {
-            ::free(const_cast<SCommand *>(*m_RenderCommands.begin()));
-            m_RenderCommands = QDemonConstDataRef<SCommand *>();
+            ::free(const_cast<dynamic::SCommand *>(*m_RenderCommands.begin()));
+            m_RenderCommands = QDemonConstDataRef<dynamic::SCommand *>();
         }
     }
 
     QString GetId() const override { return m_Id; }
-    QDemonConstDataRef<SPropertyDefinition> GetProperties() const override
+    QDemonConstDataRef<dynamic::SPropertyDefinition> GetProperties() const override
     {
         return m_PropertyDefinitions;
     }
@@ -571,16 +569,16 @@ struct SDynamicObjClassImpl : public IDynamicObjectClass
     const quint8 *GetDefaultValueBuffer() const override { return m_PropertyDefaultData; }
     quint32 GetBaseObjectSize() const override { return m_BaseObjectSize; }
     GraphObjectTypes::Enum GraphObjectType() const override { return m_GraphObjectType; }
-    const SPropertyDefinition *FindDefinition(QString &str) const
+    const dynamic::SPropertyDefinition *FindDefinition(QString &str) const
     {
         for (quint32 idx = 0, end = m_PropertyDefinitions.size(); idx < end; ++idx) {
-            const SPropertyDefinition &def(m_PropertyDefinitions[idx]);
+            const dynamic::SPropertyDefinition &def(m_PropertyDefinitions[idx]);
             if (def.m_Name == str)
                 return &def;
         }
         return nullptr;
     }
-    const SPropertyDefinition *FindPropertyByName(QString inName) const override
+    const dynamic::SPropertyDefinition *FindPropertyByName(QString inName) const override
     {
         return FindDefinition(inName);
     }
@@ -598,7 +596,7 @@ struct SDynamicObjClassImpl : public IDynamicObjectClass
 struct SDataRemapper
 {
     template <typename TRemapper>
-    void Remap(quint8 *inData, SPropertyDefinition &item, TRemapper &remapper)
+    void Remap(quint8 *inData, dynamic::SPropertyDefinition &item, TRemapper &remapper)
     {
         switch (item.m_DataType) {
         default:
@@ -619,7 +617,7 @@ typedef QHash<QString, QSharedPointer<SDynamicObjClassImpl>> TStringClassMap;
 typedef QHash<QString, QByteArray> TPathDataMap;
 typedef QHash<QString, SDynamicObjectShaderInfo> TShaderInfoMap;
 typedef QSet<QString> TPathSet;
-typedef QHash<SShaderMapKey, TShaderAndFlags> TShaderMap;
+typedef QHash<dynamic::SShaderMapKey, TShaderAndFlags> TShaderMap;
 
 struct SDynamicObjectSystemCoreImpl : public IDynamicObjectSystem
 {
@@ -661,33 +659,33 @@ struct SDynamicObjectSystemImpl : public IDynamicObjectSystem
     }
 
     bool Register(QString inName,
-                  QDemonConstDataRef<SPropertyDeclaration> inProperties, quint32 inBaseObjectSize,
+                  QDemonConstDataRef<dynamic::SPropertyDeclaration> inProperties, quint32 inBaseObjectSize,
                   GraphObjectTypes::Enum inGraphObjectType) override
     {
         if (IsRegistered(inName)) {
             Q_ASSERT(false);
             return false;
         }
-        QVector<SPropertyDefinition> definitions;
+        QVector<dynamic::SPropertyDefinition> definitions;
         quint32 theCurrentOffset = 0;
         for (quint32 idx = 0, end = inProperties.size(); idx < end; ++idx) {
-            const SPropertyDeclaration &thePropDec = inProperties[idx];
+            const dynamic::SPropertyDeclaration &thePropDec = inProperties[idx];
             QString thePropName(QString::fromLocal8Bit(thePropDec.m_Name));
             quint32 propSize = getSizeofShaderDataType(thePropDec.m_DataType);
-            definitions.push_back(SPropertyDefinition(thePropName, thePropDec.m_DataType,
+            definitions.push_back(dynamic::SPropertyDefinition(thePropName, thePropDec.m_DataType,
                                                       theCurrentOffset, propSize));
             theCurrentOffset += propSize;
             theCurrentOffset = Align(theCurrentOffset);
         }
         quint32 dataSectionSize = theCurrentOffset;
         quint32 clsSize = Align(sizeof(SDynamicObjClassImpl));
-        quint32 defSize = Align(sizeof(SPropertyDefinition) * inProperties.size());
+        quint32 defSize = Align(sizeof(dynamic::SPropertyDefinition) * inProperties.size());
         quint32 defaultSize = dataSectionSize;
         quint32 allocSize = clsSize + defSize + defaultSize;
         quint8 *allocData = reinterpret_cast<quint8 *>(::malloc(allocSize));
         quint8 *defData = allocData + clsSize;
         quint8 *defaultData = defData + defSize;
-        SPropertyDefinition *defPtr = reinterpret_cast<SPropertyDefinition *>(defData);
+        dynamic::SPropertyDefinition *defPtr = reinterpret_cast<dynamic::SPropertyDefinition *>(defData);
         if (defSize)
             ::memcpy(defPtr, definitions.data(), defSize);
         if (defaultSize)
@@ -718,22 +716,22 @@ struct SDynamicObjectSystemImpl : public IDynamicObjectSystem
         return nullptr;
     }
 
-    QPair<const SPropertyDefinition *, QSharedPointer<SDynamicObjClassImpl> >
+    QPair<const dynamic::SPropertyDefinition *, QSharedPointer<SDynamicObjClassImpl> >
     FindProperty(QString inName, QString inPropName)
     {
         QSharedPointer<SDynamicObjClassImpl> cls = FindClass(inName);
         if (cls) {
-            const SPropertyDefinition *def = cls->FindDefinition(inPropName);
+            const dynamic::SPropertyDefinition *def = cls->FindDefinition(inPropName);
             if (def)
-                return QPair<const SPropertyDefinition *, QSharedPointer<SDynamicObjClassImpl> >(def, cls);
+                return QPair<const dynamic::SPropertyDefinition *, QSharedPointer<SDynamicObjClassImpl> >(def, cls);
         }
-        return QPair<const SPropertyDefinition *, QSharedPointer<SDynamicObjClassImpl> >(nullptr, nullptr);
+        return QPair<const dynamic::SPropertyDefinition *, QSharedPointer<SDynamicObjClassImpl> >(nullptr, nullptr);
     }
 
     void SetPropertyDefaultValue(QString inName, QString inPropName,
                                  QDemonConstDataRef<quint8> inDefaultData) override
     {
-        QPair<const SPropertyDefinition *, QSharedPointer<SDynamicObjClassImpl> > def =
+        QPair<const dynamic::SPropertyDefinition *, QSharedPointer<SDynamicObjClassImpl> > def =
                 FindProperty(inName, inPropName);
         if (def.first && inDefaultData.size() >= def.first->m_ByteSize) {
             ::memcpy(def.second->m_PropertyDefaultData + def.first->m_Offset, inDefaultData.begin(),
@@ -747,9 +745,9 @@ struct SDynamicObjectSystemImpl : public IDynamicObjectSystem
                               QDemonConstDataRef<QString> inNames) override
     {
 
-        QPair<const SPropertyDefinition *, QSharedPointer<SDynamicObjClassImpl> > def =
+        QPair<const dynamic::SPropertyDefinition *, QSharedPointer<SDynamicObjClassImpl> > def =
                 FindProperty(inName, inPropName);
-        SPropertyDefinition *theDefinitionPtr = const_cast<SPropertyDefinition *>(def.first);
+        dynamic::SPropertyDefinition *theDefinitionPtr = const_cast<dynamic::SPropertyDefinition *>(def.first);
         if (theDefinitionPtr == nullptr) {
             Q_ASSERT(false);
             return;
@@ -769,7 +767,7 @@ struct SDynamicObjectSystemImpl : public IDynamicObjectSystem
     virtual QDemonConstDataRef<QString>
     GetPropertyEnumNames(QString inName, QString inPropName) const override
     {
-        QPair<const SPropertyDefinition *, QSharedPointer<SDynamicObjClassImpl> > def =
+        QPair<const dynamic::SPropertyDefinition *, QSharedPointer<SDynamicObjClassImpl> > def =
                 const_cast<SDynamicObjectSystemImpl &>(*this).FindProperty(inName, inPropName);
         if (def.first)
             return def.first->m_EnumValueNames;
@@ -794,9 +792,9 @@ struct SDynamicObjectSystemImpl : public IDynamicObjectSystem
                                     QDemonRenderTextureMagnifyingOp::Enum inMagFilterOp,
                                     QDemonRenderTextureMinifyingOp::Enum inMinFilterOp) override
     {
-        QPair<const SPropertyDefinition *, QSharedPointer<SDynamicObjClassImpl> > def =
+        QPair<const dynamic::SPropertyDefinition *, QSharedPointer<SDynamicObjClassImpl> > def =
                 FindProperty(inName, inPropName);
-        SPropertyDefinition *theDefinitionPtr = const_cast<SPropertyDefinition *>(def.first);
+        dynamic::SPropertyDefinition *theDefinitionPtr = const_cast<dynamic::SPropertyDefinition *>(def.first);
         if (theDefinitionPtr == nullptr) {
             Q_ASSERT(false);
             return;
@@ -826,37 +824,37 @@ struct SDynamicObjectSystemImpl : public IDynamicObjectSystem
         theClass->ReleaseCommands();
         quint32 commandAllocationSize = 0;
         for (quint32 idx = 0, end = inCommands.size(); idx < end; ++idx) {
-            quint32 commandSize = Align(SCommand::GetSizeofCommand(*inCommands[idx]));
+            quint32 commandSize = Align(dynamic::SCommand::GetSizeofCommand(*inCommands[idx]));
             commandAllocationSize += commandSize;
         }
-        quint32 commandPtrSize = inCommands.size() * sizeof(SCommand *);
+        quint32 commandPtrSize = inCommands.size() * sizeof(dynamic::SCommand *);
         quint32 totalAllocationSize = Align8(commandAllocationSize) + commandPtrSize;
         quint8 *theCommandDataBegin = (quint8 *)::malloc(totalAllocationSize);
         quint8 *theCurrentCommandData(theCommandDataBegin);
-        SCommand **theCommandPtrBegin = reinterpret_cast<SCommand **>(theCommandDataBegin + Align8(commandAllocationSize));
-        SCommand **theCurrentCommandPtr = theCommandPtrBegin;
+        dynamic::SCommand **theCommandPtrBegin = reinterpret_cast<dynamic::SCommand **>(theCommandDataBegin + Align8(commandAllocationSize));
+        dynamic::SCommand **theCurrentCommandPtr = theCommandPtrBegin;
         memZero(theCommandDataBegin, totalAllocationSize);
 
         theClass->m_RequiresDepthTexture = false;
         for (quint32 idx = 0, end = inCommands.size(); idx < end; ++idx) {
-            SCommand &theCommand(*inCommands[idx]);
-            quint32 theCommandSize = SCommand::GetSizeofCommand(theCommand);
-            SCommand::CopyConstructCommand(theCurrentCommandData, theCommand);
-            if (theCommand.m_Type == CommandTypes::ApplyDepthValue)
+            dynamic::SCommand &theCommand(*inCommands[idx]);
+            quint32 theCommandSize = dynamic::SCommand::GetSizeofCommand(theCommand);
+            dynamic::SCommand::CopyConstructCommand(theCurrentCommandData, theCommand);
+            if (theCommand.m_Type == dynamic::CommandTypes::ApplyDepthValue)
                 theClass->m_RequiresDepthTexture = true;
-            if (theCommand.m_Type == CommandTypes::BindTarget) {
-                SBindTarget *bt = reinterpret_cast<SBindTarget *>(&theCommand);
+            if (theCommand.m_Type == dynamic::CommandTypes::BindTarget) {
+                dynamic::SBindTarget *bt = reinterpret_cast<dynamic::SBindTarget *>(&theCommand);
                 theClass->m_OutputFormat = bt->m_OutputFormat;
             }
 
-            *theCurrentCommandPtr = reinterpret_cast<SCommand *>(theCurrentCommandData);
+            *theCurrentCommandPtr = reinterpret_cast<dynamic::SCommand *>(theCurrentCommandData);
             ++theCurrentCommandPtr;
             theCurrentCommandData += Align(theCommandSize);
         }
         Q_ASSERT(theCurrentCommandData - theCommandDataBegin == (int)commandAllocationSize);
         Q_ASSERT((quint8 *)theCurrentCommandPtr - theCommandDataBegin == (int)totalAllocationSize);
         theClass->m_RenderCommands =
-                QDemonConstDataRef<SCommand *>(theCommandPtrBegin, inCommands.size());
+                QDemonConstDataRef<dynamic::SCommand *>(theCommandPtrBegin, inCommands.size());
     }
 
     virtual QDemonConstDataRef<dynamic::SCommand *>
@@ -1396,10 +1394,10 @@ struct SDynamicObjectSystemImpl : public IDynamicObjectSystem
     TShaderAndFlags GetShaderProgram(QString inPath,
                                      QString inProgramMacro,
                                      TShaderFeatureSet inFeatureSet,
-                                     const SDynamicShaderProgramFlags &inFlags,
+                                     const dynamic::SDynamicShaderProgramFlags &inFlags,
                                      bool inForceCompilation) override
     {
-        SShaderMapKey shaderMapKey(TStrStrPair(inPath, inProgramMacro), inFeatureSet, inFlags.m_TessMode, inFlags.m_WireframeMode);
+        dynamic::SShaderMapKey shaderMapKey(TStrStrPair(inPath, inProgramMacro), inFeatureSet, inFlags.m_TessMode, inFlags.m_WireframeMode);
         auto theInserter = m_ShaderMap.find(shaderMapKey);
         const bool found = (theInserter != m_ShaderMap.end());
 
@@ -1410,7 +1408,7 @@ struct SDynamicObjectSystemImpl : public IDynamicObjectSystem
         if (found || inForceCompilation) {
             QSharedPointer<QDemonRenderShaderProgram> theProgram = m_Context->GetShaderCache()->GetProgram(
                         GetShaderCacheKey(inPath.toLocal8Bit(), inProgramMacro.toLocal8Bit(), inFlags), inFeatureSet);
-            SDynamicShaderProgramFlags theFlags(inFlags);
+            dynamic::SDynamicShaderProgramFlags theFlags(inFlags);
             if (!theProgram || inForceCompilation) {
                 SDynamicObjectShaderInfo &theShaderInfo =
                         m_ShaderInfoMap.insert(inPath, SDynamicObjectShaderInfo()).value();
@@ -1447,19 +1445,19 @@ struct SDynamicObjectSystemImpl : public IDynamicObjectSystem
         if (theShaderInfo.m_HasGeomShader == false)
             return TShaderAndFlags();
         // else, here we go...
-        SDynamicShaderProgramFlags theFlags;
+        dynamic::SDynamicShaderProgramFlags theFlags;
         m_ShaderKeyBuilder = inPMacro;
         m_ShaderKeyBuilder.append(QStringLiteral("depthprepass"));
 
         QString theProgramMacro = m_ShaderKeyBuilder;
 
-        const SShaderMapKey shaderMapKey(TStrStrPair(inPath, theProgramMacro), inFeatureSet, theFlags.m_TessMode, theFlags.m_WireframeMode);
+        const dynamic::SShaderMapKey shaderMapKey(TStrStrPair(inPath, theProgramMacro), inFeatureSet, theFlags.m_TessMode, theFlags.m_WireframeMode);
         const TShaderAndFlags shaderFlags;
         auto theInserter = m_ShaderMap.find(shaderMapKey);
         const bool found = theInserter != m_ShaderMap.end();
         if (found) {
             QSharedPointer<QDemonRenderShaderProgram> theProgram = m_Context->GetShaderCache()->GetProgram(GetShaderCacheKey(inPath.toLocal8Bit(), theProgramMacro.toLocal8Bit(), theFlags), inFeatureSet);
-            SDynamicShaderProgramFlags flags(theFlags);
+            dynamic::SDynamicShaderProgramFlags flags(theFlags);
             if (!theProgram) {
                 QString theShaderBuffer;
                 const char *geomSource = DoLoadShader(inPath.toLocal8Bit(), theShaderBuffer);
@@ -1474,8 +1472,8 @@ struct SDynamicObjectSystemImpl : public IDynamicObjectSystem
                 fragmentShader.Append("void main() {");
                 fragmentShader.Append("\tfragOutput = vec4(0.0, 0.0, 0.0, 0.0);");
                 fragmentShader.Append("}");
-                const char *vertexSource = vertexShader.BuildShaderSource();
-                const char *fragmentSource = fragmentShader.BuildShaderSource();
+                const char *vertexSource = vertexShader.BuildShaderSource().toLocal8Bit().constData();
+                const char *fragmentSource = fragmentShader.BuildShaderSource().toLocal8Bit().constData();
 
                 QString programBuffer;
                 programBuffer = QStringLiteral("#ifdef VERTEX_SHADER\n");

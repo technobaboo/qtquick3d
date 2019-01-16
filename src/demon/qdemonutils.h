@@ -4,6 +4,7 @@
 #include <QtDemon/qtdemonglobal.h>
 #include <QtDemon/qdemondataref.h>
 
+#include <QtGui/QVector2D>
 #include <QtGui/QVector3D>
 #include <QtGui/QQuaternion>
 #include <QtGui/QMatrix3x3>
@@ -17,6 +18,10 @@
 QT_BEGIN_NAMESPACE
 
 #define QDEMON_FOREACH(varname, stop) for (quint32 varname = 0, end = stop; varname < end; ++varname)
+
+namespace vec2 {
+float Q_DEMON_EXPORT magnitude(const QVector2D &v);
+}
 
 namespace vec3 {
 QVector3D Q_DEMON_EXPORT minimum(const QVector3D &v1, const QVector3D &v2);
@@ -35,10 +40,13 @@ QMatrix3x3 Q_DEMON_EXPORT getInverse(const QMatrix3x3 &m);
 
 namespace mat44 {
 QMatrix4x4 Q_DEMON_EXPORT getInverse(const QMatrix4x4 &m);
+QMatrix3x3 Q_DEMON_EXPORT getUpper3x3(const QMatrix4x4 &m);
 QVector3D Q_DEMON_EXPORT rotate(const QMatrix4x4 &m, const QVector3D &v);
 QVector4D Q_DEMON_EXPORT rotate(const QMatrix4x4 &m, const QVector4D &v);
 QVector3D Q_DEMON_EXPORT transform(const QMatrix4x4 &m, const QVector3D &v);
 QVector4D Q_DEMON_EXPORT transform(const QMatrix4x4 &m, const QVector4D &v);
+//QVector3D Q_DEMON_EXPORT scale(const QMatrix4x4 &m, const QVector3D &v);
+//QVector4D Q_DEMON_EXPORT scale(const QMatrix4x4 &m, const QVector4D &v);
 }
 
 namespace quant {
@@ -67,6 +75,11 @@ void Q_DEMON_EXPORT memZero(void *ptr, size_t size);
 void Q_DEMON_EXPORT memSet(void *ptr, quint8 value, size_t size);
 
 inline Q_DEMON_EXPORT const char *nonNull(const char *src);
+
+inline Q_DEMON_EXPORT float radToDeg(const float a);
+inline Q_DEMON_EXPORT double radToDeg(const double a);
+inline Q_DEMON_EXPORT float degToRad(const float a);
+inline Q_DEMON_EXPORT double degToRad(const double a);
 
 namespace IOStream {
 struct SeekPosition

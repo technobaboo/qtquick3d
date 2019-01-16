@@ -1,7 +1,7 @@
 TARGET = QtDemonRuntimeRender
 MODULE = demonruntimerender
 
-QT += demon demonrender
+QT += demon demonrender demonassetimport
 
 include(graphobjects/graphobjects.pri)
 include(rendererimpl/rendererimpl.pri)
@@ -14,13 +14,13 @@ HEADERS += \
     qdemonoffscreenrenderkey.h \
     qdemonoffscreenrendermanager.h \
 #    qdemonoldnbustedrenderplugin.h \
-#    qdemonrenderableimage.h \
+    qdemonrenderableimage.h \
     qdemonrenderclippingfrustum.h \
     qdemonrendercontextcore.h \
     qdemonrendercustommaterialrendercontext.h \
-#    qdemonrendercustommaterialshadergenerator.h \
-#    qdemonrendercustommaterialsystem.h \
-#    qdemonrenderdefaultmaterialshadergenerator.h \
+    qdemonrendercustommaterialshadergenerator.h \
+    qdemonrendercustommaterialsystem.h \
+    qdemonrenderdefaultmaterialshadergenerator.h \
     qdemonrenderdynamicobjectsystem.h \
     qdemonrenderdynamicobjectsystemcommands.h \
     qdemonrenderdynamicobjectsystemutil.h \
@@ -36,11 +36,11 @@ HEADERS += \
     qdemonrenderinputstreamfactory.h \
     qdemonrenderlightconstantproperties.h \
     qdemonrendermaterialhelpers.h \
-#    qdemonrendermaterialshadergenerator.h \
+    qdemonrendermaterialshadergenerator.h \
     qdemonrendermesh.h \
-#    qdemonrenderpathmanager.h \
-#    qdemonrenderpathmath.h \
-#    qdemonrenderpathrendercontext.h \
+    qdemonrenderpathmanager.h \
+    qdemonrenderpathmath.h \
+    qdemonrenderpathrendercontext.h \
     qdemonrenderpixelgraphicsrenderer.h \
     qdemonrenderpixelgraphicstypes.h \
 #    qdemonrenderplugin.h \
@@ -55,7 +55,7 @@ HEADERS += \
     qdemonrendershadercodegenerator.h \
     qdemonrendershadercodegeneratorv2.h \
     qdemonrendershaderkeys.h \
-#    qdemonrendershadowmap.h \
+    qdemonrendershadowmap.h \
     qdemonrendersubpresentation.h \
     qdemonrendersubpresentationhelper.h \
     qdemonrendertaggedpointer.h \
@@ -78,9 +78,9 @@ SOURCES += \
     qdemonqttextrenderer.cpp \
     qdemonrenderclippingfrustum.cpp \
     qdemonrendercontextcore.cpp \
-#    qdemonrendercustommaterialshadergenerator.cpp \
-#    qdemonrendercustommaterialsystem.cpp \
-#    qdemonrenderdefaultmaterialshadergenerator.cpp \
+    qdemonrendercustommaterialshadergenerator.cpp \
+    qdemonrendercustommaterialsystem.cpp \
+    qdemonrenderdefaultmaterialshadergenerator.cpp \
     qdemonrenderdynamicobjectsystem.cpp \
     qdemonrendereffectsystem.cpp \
     qdemonrendererutil.cpp \
@@ -89,7 +89,7 @@ SOURCES += \
 #    qdemonrendergraphobjectserializer.cpp \
     qdemonrenderimagescaler.cpp \
     qdemonrenderinputstreamfactory.cpp \
-#    qdemonrenderpathmanager.cpp \
+    qdemonrenderpathmanager.cpp \
     qdemonrenderpixelgraphicsrenderer.cpp \
     qdemonrenderpixelgraphicstypes.cpp \
 #    qdemonrenderplugin.cpp \
@@ -98,7 +98,7 @@ SOURCES += \
     qdemonrendershadercache.cpp \
     qdemonrendershadercodegenerator.cpp \
     qdemonrendershadercodegeneratorv2.cpp \
-#    qdemonrendershadowmap.cpp \
+    qdemonrendershadowmap.cpp \
     qdemonrendersubpresentation.cpp \
     qdemonrendertexttextureatlas.cpp \
     qdemonrendertexttexturecache.cpp \

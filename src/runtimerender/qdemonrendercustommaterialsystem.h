@@ -31,35 +31,35 @@
 #ifndef QDEMON_RENDER_CUSTOM_MATERIAL_SYSTEM_H
 #define QDEMON_RENDER_CUSTOM_MATERIAL_SYSTEM_H
 
+#include <QtDemonRuntimeRender/qtdemonruntimerenderglobal.h>
+
 #include <QtDemonRuntimeRender/qdemonrenderdynamicobjectsystem.h>
 #include <QtDemonRuntimeRender/qdemonvertexpipelineimpl.h>
 
 QT_BEGIN_NAMESPACE
 
 namespace dynamic {
-struct SCommand; // UICRenderEffectCommands.h
+struct SCommand;
 }
 
 struct SCustomMaterialRenderContext;
+struct SCustomMaterial;
+class ICustomMaterialSystem;
+struct SRenderSubset;
 
 class ICustomMaterialSystemCore
 {
 public:
+    virtual ~ICustomMaterialSystemCore() {}
     virtual bool IsMaterialRegistered(QString inStr) = 0;
 
-    virtual bool
-    RegisterMaterialClass(QString inName,
-                          QDemonConstDataRef<dynamic::SPropertyDeclaration> inProperties) = 0;
+    virtual bool RegisterMaterialClass(QString inName, QDemonConstDataRef<dynamic::SPropertyDeclaration> inProperties) = 0;
 
-    virtual QDemonConstDataRef<dynamic::SPropertyDefinition>
-    GetCustomMaterialProperties(QString inCustomMaterialName) const = 0;
+    virtual QDemonConstDataRef<dynamic::SPropertyDefinition> GetCustomMaterialProperties(QString inCustomMaterialName) const = 0;
 
-    virtual void SetCustomMaterialRefraction(QString inName,
-                                             bool inHasRefraction) = 0;
-    virtual void SetCustomMaterialTransparency(QString inName,
-                                               bool inHasTransparency) = 0;
-    virtual void SetCustomMaterialAlwaysDirty(QString inName,
-                                              bool inIsAlwaysDirty) = 0;
+    virtual void SetCustomMaterialRefraction(QString inName, bool inHasRefraction) = 0;
+    virtual void SetCustomMaterialTransparency(QString inName, bool inHasTransparency) = 0;
+    virtual void SetCustomMaterialAlwaysDirty(QString inName, bool inIsAlwaysDirty) = 0;
     virtual void SetCustomMaterialShaderKey(QString inName, quint32 inShaderKey) = 0;
     virtual void SetCustomMaterialLayerCount(QString inName, quint32 inLayerCount) = 0;
     // The custom material commands are the actual commands that run for a given material
@@ -68,19 +68,18 @@ public:
     // run this shader
     // See UICRenderEffectCommands.h for the list of commands.
     // These commands are copied into the effect.
-    virtual void SetCustomMaterialCommands(QString inName,
-                                           QDemonConstDataRef<dynamic::SCommand *> inCommands) = 0;
+    virtual void SetCustomMaterialCommands(QString inName, QDemonConstDataRef<dynamic::SCommand *> inCommands) = 0;
 
-    virtual void SetMaterialClassShader(QString inName, const char *inShaderType,
+    virtual void SetMaterialClassShader(QString inName,
+                                        const char *inShaderType,
                                         const char *inShaderVersion,
-                                        const char *inShaderData, bool inHasGeomShader,
+                                        const char *inShaderData,
+                                        bool inHasGeomShader,
                                         bool inIsComputeShader) = 0;
 
-    virtual SCustomMaterial *
-    CreateCustomMaterial(QString inName) = 0;
+    virtual SCustomMaterial *CreateCustomMaterial(QString inName) = 0;
 
-    virtual void SetPropertyEnumNames(QString inName, QString inPropName,
-                                      QDemonConstDataRef<QString> inNames) = 0;
+    virtual void SetPropertyEnumNames(QString inName, QString inPropName, QDemonConstDataRef<QString> inNames) = 0;
 
     virtual void SetPropertyTextureSettings(QString inEffectName,
                                             QString inPropName,
@@ -90,48 +89,48 @@ public:
                                             QDemonRenderTextureMagnifyingOp::Enum inMagFilterOp,
                                             QDemonRenderTextureMinifyingOp::Enum inMinFilterOp) = 0;
 
-//    virtual void Save(SWriteBuffer &ioBuffer,
-//                      const SStrRemapMap &inRemapMap,
-//                      const char *inProjectDir) const = 0;
-//    virtual void Load(QDemonDataRef<quint8> inData, CStrTableOrDataRef inStrDataBlock,
-//                      const char *inProjectDir) = 0;
+    //    virtual void Save(SWriteBuffer &ioBuffer,
+    //                      const SStrRemapMap &inRemapMap,
+    //                      const char *inProjectDir) const = 0;
+    //    virtual void Load(QDemonDataRef<quint8> inData, CStrTableOrDataRef inStrDataBlock,
+    //                      const char *inProjectDir) = 0;
 
-    virtual ICustomMaterialSystem &GetCustomMaterialSystem(IQDemonRenderContext &inContext) = 0;
+    virtual QSharedPointer<ICustomMaterialSystem> GetCustomMaterialSystem(QSharedPointer<IQDemonRenderContext> inContext) = 0;
 
-    static ICustomMaterialSystemCore &
-    CreateCustomMaterialSystemCore(IQDemonRenderContextCore &inContext);
+    static QSharedPointer<ICustomMaterialSystemCore> CreateCustomMaterialSystemCore(QSharedPointer<IQDemonRenderContextCore> inContext);
 };
 // How to handle blend modes?
+struct SModel;
 class ICustomMaterialSystem : public ICustomMaterialSystemCore
 {
 public:
+    virtual ~ICustomMaterialSystem() override {}
     // Returns true if the material is dirty and thus will produce a different render result
     // than previously.  This effects things like progressive AA.
-    virtual bool PrepareForRender(const SModel &inModel, const SRenderSubset &inSubset,
-                                  SCustomMaterial &inMaterial, bool inClearDirty) = 0;
+    virtual bool PrepareForRender(const SModel &inModel,
+                                  const SRenderSubset &inSubset,
+                                  SCustomMaterial &inMaterial,
+                                  bool inClearDirty) = 0;
 
-    virtual bool RenderDepthPrepass(const QMatrix4x4 &inMVP, const SCustomMaterial &inMaterial,
-                                    const SRenderSubset &inSubset) = 0;
-    virtual void RenderSubset(SCustomMaterialRenderContext &inRenderContext,
-                              TShaderFeatureSet inFeatureSet) = 0;
-    virtual void OnMaterialActivationChange(const SCustomMaterial &inMaterial,
-                                            bool inActive) = 0;
+    virtual bool RenderDepthPrepass(const QMatrix4x4 &inMVP, const SCustomMaterial &inMaterial, const SRenderSubset &inSubset) = 0;
+    virtual void RenderSubset(QSharedPointer<SCustomMaterialRenderContext> inRenderContext, TShaderFeatureSet inFeatureSet) = 0;
+    virtual void OnMaterialActivationChange(const SCustomMaterial &inMaterial, bool inActive) = 0;
 
     // get shader name
-    virtual const char *GetShaderName(const SCustomMaterial &inMaterial) = 0;
+    virtual QString GetShaderName(const SCustomMaterial &inMaterial) = 0;
     // apply property values
     virtual void ApplyShaderPropertyValues(const SCustomMaterial &inMaterial,
-                                           QDemonRenderShaderProgram &inProgram) = 0;
+                                           QSharedPointer<QDemonRenderShaderProgram> inProgram) = 0;
     // Called by the uiccontext so this system can clear any per-frame render information.
     virtual void EndFrame() = 0;
 };
 
-struct QDEMON_AUTOTEST_EXPORT SCustomMaterialVertexPipeline : public SVertexPipelineImpl
+struct SCustomMaterialVertexPipeline : public SVertexPipelineImpl
 {
-    IQDemonRenderContext *m_Context;
+    QSharedPointer<IQDemonRenderContext> m_Context;
     TessModeValues::Enum m_TessMode;
 
-    SCustomMaterialVertexPipeline(IQDemonRenderContext *inContext, TessModeValues::Enum inTessMode);
+    SCustomMaterialVertexPipeline(QSharedPointer<IQDemonRenderContext> inContext, TessModeValues::Enum inTessMode);
     void InitializeTessControlShader();
     void InitializeTessEvaluationShader();
     void FinalizeTessControlShader();
@@ -145,7 +144,7 @@ struct QDEMON_AUTOTEST_EXPORT SCustomMaterialVertexPipeline : public SVertexPipe
     virtual void BeginFragmentGeneration() override;
     // Output variables may be mangled in some circumstances so the shader generation
     // system needs an abstraction mechanism around this.
-    virtual void AssignOutput(const char *inVarName, const char *inVarValue) override;
+    virtual void AssignOutput(const QString &inVarName, const QString &inVarValue) override;
     virtual void GenerateEnvMapReflection() override {}
     virtual void GenerateViewVector() override {}
     virtual void GenerateUVCoords(quint32 inUVSet) override;
@@ -157,7 +156,7 @@ struct QDEMON_AUTOTEST_EXPORT SCustomMaterialVertexPipeline : public SVertexPipe
     virtual void EndVertexGeneration() override;
     virtual void EndFragmentGeneration() override;
     virtual IShaderStageGenerator &ActiveStage() override;
-    virtual void AddInterpolationParameter(const char *inName, const char *inType) override;
+    virtual void AddInterpolationParameter(const QString &inName, const QString &inType) override;
     virtual void DoGenerateUVCoords(quint32 inUVSet) override;
     virtual void DoGenerateWorldNormal() override;
     virtual void DoGenerateObjectNormal() override;

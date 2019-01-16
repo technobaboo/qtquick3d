@@ -30,6 +30,7 @@
 #ifndef QDEMON_RENDER_BUFFER_MANAGER_H
 #define QDEMON_RENDER_BUFFER_MANAGER_H
 
+#include <QtDemonRuntimeRender/qtdemonruntimerenderglobal.h>
 #include <QtDemonRuntimeRender/qdemonrenderimagetexturedata.h>
 
 #include <QtDemon/qdemonbounds3.h>
@@ -41,7 +42,8 @@ struct SLoadedTexture;
 class QDemonRenderContext;
 class IInputStreamFactory;
 class IPerfTimer;
-class IBufferManager
+
+class Q_DEMONRUNTIMERENDER_EXPORT IBufferManager
 {
 protected:
     virtual ~IBufferManager() {}

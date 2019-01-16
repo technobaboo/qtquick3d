@@ -89,9 +89,9 @@ public:
     // Returns angle in x, distance in y.
     static QVector2D GetAngleDistanceFromControlPoint(QVector2D inPosition, QVector2D inControlPoint);
 
-    virtual IPathManager &OnRenderSystemInitialize(IQDemonRenderContext &context) = 0;
+    virtual QSharedPointer<IPathManager> OnRenderSystemInitialize(QSharedPointer<IQDemonRenderContext> context) = 0;
 
-    static IPathManagerCore &CreatePathManagerCore(IQDemonRenderContextCore &inContext);
+    static QSharedPointer<IPathManagerCore> CreatePathManagerCore(QSharedPointer<IQDemonRenderContextCore> inContext);
 };
 
 struct SPathRenderContext; // UICRenderPathRenderContext.h

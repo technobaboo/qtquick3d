@@ -51,6 +51,8 @@ class IQDemonRenderContextCore;
 
 typedef QPair<QString, QString> TStrStrPair;
 
+namespace dynamic {
+
 struct SShaderMapKey
 {
     TStrStrPair m_Name;
@@ -80,8 +82,6 @@ struct SShaderMapKey
                m_WireframeMode == inKey.m_WireframeMode;
     }
 };
-
-namespace dynamic {
 
 struct SCommand;
 

@@ -64,9 +64,12 @@ struct SShadowMapEntry {
     {
     }
 
-    SShadowMapEntry(quint32 index, ShadowMapModes::Enum mode, ShadowFilterValues::Enum filter,
-                    QDemonRenderTexture2D &depthMap, QDemonRenderTexture2D &depthCopy,
-                    QDemonRenderTexture2D &depthTemp)
+    SShadowMapEntry(quint32 index,
+                    ShadowMapModes::Enum mode,
+                    ShadowFilterValues::Enum filter,
+                    QSharedPointer<QDemonRenderTexture2D> depthMap,
+                    QSharedPointer<QDemonRenderTexture2D> depthCopy,
+                    QSharedPointer<QDemonRenderTexture2D> depthTemp)
         : m_LightIndex(index)
         , m_ShadowMapMode(mode)
         , m_ShadowFilterFlags(filter)
@@ -78,9 +81,12 @@ struct SShadowMapEntry {
     {
     }
 
-    SShadowMapEntry(quint32 index, ShadowMapModes::Enum mode, ShadowFilterValues::Enum filter,
-                    QDemonRenderTextureCube &depthCube, QDemonRenderTextureCube &cubeTmp,
-                    QDemonRenderTexture2D &depthTemp)
+    SShadowMapEntry(quint32 index,
+                    ShadowMapModes::Enum mode,
+                    ShadowFilterValues::Enum filter,
+                    QSharedPointer<QDemonRenderTextureCube> depthCube,
+                    QSharedPointer<QDemonRenderTextureCube> cubeTmp,
+                    QSharedPointer<QDemonRenderTexture2D> depthTemp)
         : m_LightIndex(index)
         , m_ShadowMapMode(mode)
         , m_ShadowFilterFlags(filter)
@@ -116,10 +122,10 @@ class QDemonRenderShadowMap
     typedef QVector<SShadowMapEntry> TShadowMapEntryList;
 
 public:
-    IQDemonRenderContext &m_Context;
+    QSharedPointer<IQDemonRenderContext> m_Context;
 
 public:
-    QDemonRenderShadowMap(IQDemonRenderContext &inContext);
+    QDemonRenderShadowMap(QSharedPointer<IQDemonRenderContext> inContext);
     ~QDemonRenderShadowMap();
 
     /*
@@ -136,9 +142,13 @@ public:
          *
          * @ return no return
          */
-    void AddShadowMapEntry(quint32 index, quint32 width, quint32 height,
-                           QDemonRenderTextureFormats::Enum format, quint32 samples,
-                           ShadowMapModes::Enum mode, ShadowFilterValues::Enum filter);
+    void AddShadowMapEntry(quint32 index,
+                           quint32 width,
+                           quint32 height,
+                           QDemonRenderTextureFormats::Enum format,
+                           quint32 samples,
+                           ShadowMapModes::Enum mode,
+                           ShadowFilterValues::Enum filter);
 
     /*
          * @brief Get a shadow map entry
@@ -156,7 +166,7 @@ public:
          */
     quint32 GetShadowMapEntryCount() { return m_ShadowMapList.size(); }
 
-    static QDemonRenderShadowMap *Create(IQDemonRenderContext &inContext);
+    static QSharedPointer<QDemonRenderShadowMap> Create(QSharedPointer<IQDemonRenderContext> inContext);
 
 private:
     TShadowMapEntryList m_ShadowMapList; ///< List of shadow map entries

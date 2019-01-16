@@ -83,7 +83,7 @@ struct SLightConstantProperties
         QDemonRenderCachedShaderProperty<qint32> m_shadowIdx;
         QDemonRenderCachedShaderProperty<QVector3D> m_attenuation;
 
-        LightConstants(const QString &lightRef, QDemonRenderShaderProgram &shader)
+        LightConstants(const QString &lightRef, QSharedPointer<QDemonRenderShaderProgram> shader)
             : m_position(LCSEED.arg(lightRef, lconstantnames[0]), shader)
             , m_direction(LCSEED.arg(lightRef).arg(lconstantnames[1]), shader)
             , m_up(LCSEED.arg(lightRef, lconstantnames[2]), shader)
@@ -134,26 +134,26 @@ struct SLightConstantProperties
         }
     };
 
-    SLightConstantProperties(GeneratedShader &shader, bool packed)
-        : m_lightCount("uNumLights", shader.m_Shader)
+    SLightConstantProperties(GeneratedShader *shader, bool packed)
+        : m_lightCount("uNumLights", shader->m_Shader)
     {
-        m_constants.resize(shader.m_Lights.size());
-        for (unsigned int i = 0; i < shader.m_Lights.size(); ++i) {
+        m_constants.resize(shader->m_Lights.size());
+        for (unsigned int i = 0; i < shader->m_Lights.size(); ++i) {
             QString lref;
             if (packed)
                 lref = QStringLiteral("light_%1_");
             else
                 lref = QStringLiteral("lights[%1].");
             lref = lref.arg(i);
-            m_constants[i] = new LightConstants(lref, shader.m_Shader);
+            m_constants[i] = new LightConstants(lref, shader->m_Shader);
         }
-        m_lightCount.Set(shader.m_Lights.size());
-        m_lightCountInt = shader.m_Lights.size();
+        m_lightCount.Set(shader->m_Lights.size());
+        m_lightCountInt = shader->m_Lights.size();
     }
 
     SLightConstantProperties(const QString &lseed, const QString &lcount,
-                             GeneratedShader &shader, bool packed, int count)
-        : m_lightCount(lcount, shader.m_Shader)
+                             GeneratedShader *shader, bool packed, int count)
+        : m_lightCount(lcount, shader->m_Shader)
     {
         m_constants.resize(count);
         for (int i = 0; i < count; ++i) {
@@ -163,7 +163,7 @@ struct SLightConstantProperties
             else
                 lref = lseed + QStringLiteral("[%1].");
             lref = lref.arg(i);
-            m_constants[i] = new LightConstants(lref, shader.m_Shader);
+            m_constants[i] = new LightConstants(lref, shader->m_Shader);
         }
         m_lightCount.Set(count);
         m_lightCountInt = count;
@@ -174,13 +174,13 @@ struct SLightConstantProperties
         qDeleteAll(m_constants);
     }
 
-    void updateLights(GeneratedShader &shader)
+    void updateLights(QSharedPointer<GeneratedShader> shader)
     {
         for (int i = 0; i < m_constants.size(); ++i)
-            m_constants[i]->updateLights(shader.m_Lights[i].m_LightData);
+            m_constants[i]->updateLights(shader->m_Lights[i].m_LightData);
     }
     template <typename LightProps>
-    void updateLights(const QVector<LightProps*> &props)
+    void updateLights(const QVector<QSharedPointer<LightProps>> &props)
     {
         for (int i = 0; i < m_constants.size(); ++i)
             m_constants[i]->updateLights(props[i]->m_LightData);

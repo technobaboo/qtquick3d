@@ -34,6 +34,7 @@
 #include "qdemonrenderbuffermanager.h"
 
 #include <QtDemon/qdemonutils.h>
+#include <QtDemon/qdemonperftimer.h>
 
 #include <QtDemonRender/qdemonrendercontext.h>
 

@@ -6,6 +6,11 @@
 
 QT_BEGIN_NAMESPACE
 
+float vec2::magnitude(const QVector2D &v)
+{
+    return ::sqrtf(v.x() * v.x() + v.y() * v.y());
+}
+
 QVector3D vec3::minimum(const QVector3D &v1, const QVector3D &v2)
 {
     return QVector3D(qMin(v1.x(), v2.x()),
@@ -83,6 +88,16 @@ QMatrix3x3 mat33::getInverse(const QMatrix3x3 &m)
     } else {
         return QMatrix3x3();
     }
+}
+
+QMatrix3x3 mat44::getUpper3x3(const QMatrix4x4 &m)
+{
+    const float values[9] = {
+        m(0, 0), m(0, 1), m(0, 2),
+        m(1, 0), m(1, 1), m(1, 2),
+        m(2, 0), m(2, 1), m(2, 2)
+    };
+    return QMatrix3x3(values);
 }
 
 QMatrix4x4 mat44::getInverse(const QMatrix4x4 &m)
@@ -164,6 +179,24 @@ QVector4D mat44::transform(const QMatrix4x4 &m, const QVector4D &v)
     return column0 * v.x() + column1 * v.y() + column2 * v.z() + column3 * v.w();
 }
 
+//QVector3D mat44::scale(const QMatrix4x4 &m, const QVector3D &v)
+//{
+//    const QVector4D v4(v.x(), v.y(), v.z(), 1.0f);
+//    mat44::scale(m, v4);
+//}
+
+//QVector4D mat44::scale(const QMatrix4x4 &m, const QVector4D &v)
+//{
+//    QVector4D column0(m(0, 0), m(0, 1), m(0, 2), m(0, 3));
+//    QVector4D column1(m(1, 0), m(1, 1), m(1, 2), m(1, 3));
+//    QVector4D column2(m(2, 0), m(2, 1), m(2, 2), m(2, 3));
+//    QVector4D column3(m(3, 0), m(3, 1), m(3, 2), m(3, 3));
+//    column0 *= v.x();
+//    column1 *= v.y();
+//    column2 *= v.z();
+//    column3 *= v.w();
+//}
+
 bool quant::isFinite(const QQuaternion &q)
 {
     return qIsFinite(q.x()) && qIsFinite(q.y()) && qIsFinite(q.z()) && qIsFinite(q.scalar());
@@ -222,6 +255,27 @@ void memSet(void *ptr, quint8 value, size_t size)
 
 
 const char *nonNull(const char *src) { return src == nullptr ? "" : src; }
+
+
+float radToDeg(const float a)
+{
+    return 57.29577951308232286465f * a;
+}
+
+double radToDeg(const double a)
+{
+    return 57.29577951308232286465 * a;
+}
+
+float degToRad(const float a)
+{
+    return 0.01745329251994329547f * a;
+}
+
+double degToRad(const double a)
+{
+    return 0.01745329251994329547 * a;
+}
 
 qint64 IOStream::positionHelper(const QIODevice &device, qint64 offset, IOStream::SeekPosition::Enum seekPosition)
 {
@@ -424,4 +478,3 @@ void CFileTools::CombineBaseAndRelative(const char *inBase, const char *inRelati
 
 
 QT_END_NAMESPACE
-

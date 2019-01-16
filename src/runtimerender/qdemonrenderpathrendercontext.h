@@ -36,6 +36,7 @@
 #include <QtDemonRuntimeRender/qdemonrendershadercache.h>
 #include <QtDemonRuntimeRender/qdemonrendershaderkeys.h>
 #include <QtDemonRuntimeRender/qdemonrenderableimage.h>
+#include <QtDemonRuntimeRender/qdemonrenderpath.h>
 
 #include <QtGui/QVector2D>
 

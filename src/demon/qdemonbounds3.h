@@ -13,7 +13,7 @@
 
 QT_BEGIN_NAMESPACE
 
-typedef QVector3D TNVBounds2BoxPoints[8];
+typedef QVector3D QDemonBounds2BoxPoints[8];
 
 /**
 \brief Class representing 3D range or axis aligned bounding box.
@@ -177,7 +177,7 @@ public:
 
     bool isFinite() const;
 
-    Q_ALWAYS_INLINE void expand(TNVBounds2BoxPoints &outPoints) const;
+    Q_ALWAYS_INLINE void expand(QDemonBounds2BoxPoints &outPoints) const;
 
     Q_ALWAYS_INLINE void transform(const QMatrix4x4 &inMatrix);
 
@@ -307,7 +307,7 @@ Q_ALWAYS_INLINE void QDemonBounds3::fatten(double distance)
     maximum += QVector3D(float(distance), float(distance), float(distance));
 }
 
-Q_ALWAYS_INLINE void QDemonBounds3::expand(TNVBounds2BoxPoints &outPoints) const
+Q_ALWAYS_INLINE void QDemonBounds3::expand(QDemonBounds2BoxPoints &outPoints) const
 {
     if (isEmpty()) {
         for (quint32 idx = 0; idx < 8; ++idx)
