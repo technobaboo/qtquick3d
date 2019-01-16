@@ -137,7 +137,7 @@ private:
              *
              * @return true if successful
              */
-    quint32 getSizeofType(QDemonRenderPathFormatType::Enum type);
+    quint32 getSizeOfType(QDemonRenderPathFormatType::Enum type);
 
 public:
     static QSharedPointer<QDemonRenderPathFontSpecification>

@@ -106,7 +106,7 @@ private:
              *
              * @return true if successful
              */
-    quint32 getSizeofType(QDemonRenderPathFormatType::Enum type);
+    quint32 getSizeOfType(QDemonRenderPathFormatType::Enum type);
 
 private:
     size_t m_NumGlyphs; ///< glyph count

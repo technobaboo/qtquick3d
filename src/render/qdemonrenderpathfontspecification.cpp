@@ -108,7 +108,7 @@ void QDemonRenderPathFontSpecification::CoverFillPathInstanced(QSharedPointer<QD
 }
 
 quint32
-QDemonRenderPathFontSpecification::getSizeofType(QDemonRenderPathFormatType::Enum type)
+QDemonRenderPathFontSpecification::getSizeOfType(QDemonRenderPathFormatType::Enum type)
 {
     switch (type) {
     case QDemonRenderPathFormatType::Byte:

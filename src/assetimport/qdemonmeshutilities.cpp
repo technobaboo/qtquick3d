@@ -46,7 +46,7 @@ struct MeshSubsetV1
     quint32 m_Offset;
     // Bounds of this subset.  This is filled in by the builder
     // see AddMeshSubset
-    Bounds3 m_Bounds;
+    QDemonBounds3 m_Bounds;
 };
 
 struct LogicalVertexBuffer
@@ -71,8 +71,8 @@ struct MeshV1
     IndexBuffer m_IndexBuffer;
     OffsetDataRef<LogicalVertexBuffer> m_LogicalVertexBuffers; // may be empty
     OffsetDataRef<MeshSubsetV1> m_Subsets;
-    RenderDrawMode::Enum m_DrawMode;
-    RenderWinding::Enum m_Winding;
+    QDemonRenderDrawMode::Enum m_DrawMode;
+    QDemonRenderWinding::Enum m_Winding;
     typedef MeshSubsetV1 TSubsetType;
 };
 
@@ -105,7 +105,7 @@ struct MeshSubsetV2
     quint32 m_LogicalVbufIndex;
     quint32 m_Count;
     quint32 m_Offset;
-    Bounds3 m_Bounds;
+    QDemonBounds3 m_Bounds;
     OffsetDataRef<char16_t> m_Name;
 };
 
@@ -117,8 +117,8 @@ struct MeshV2
     IndexBuffer m_IndexBuffer;
     OffsetDataRef<LogicalVertexBuffer> m_LogicalVertexBuffers; // may be empty
     OffsetDataRef<MeshSubsetV2> m_Subsets;
-    RenderDrawMode::Enum m_DrawMode;
-    RenderWinding::Enum m_Winding;
+    QDemonRenderDrawMode::Enum m_DrawMode;
+    QDemonRenderWinding::Enum m_Winding;
     typedef MeshSubsetV2 TSubsetType;
 };
 
@@ -149,34 +149,6 @@ void Serialize(TSerializer &serializer, MeshV2 &mesh)
         serializer.streamify(theSubset.m_Name);
         serializer.align();
     }
-}
-
-size_t RenderComponentTypes::getSizeOfType(RenderComponentTypes::Enum type) {
-    size_t size = 4;
-    switch (type) {
-    case RenderComponentTypes::Unknown:
-        break; // use default
-    case RenderComponentTypes::UnsignedInt64:
-    case RenderComponentTypes::Int64:
-    case RenderComponentTypes::Float64:
-        size = 8;
-        break;
-    case RenderComponentTypes::UnsignedInt8:
-    case RenderComponentTypes::Int8:
-        size = 1;
-        break;
-    case RenderComponentTypes::UnsignedInt16:
-    case RenderComponentTypes::Int16:
-    case RenderComponentTypes::Float16:
-        size = 2;
-        break;
-    case RenderComponentTypes::UnsignedInt32:
-    case RenderComponentTypes::Int32:
-    case RenderComponentTypes::Float32:
-        size = 4;
-        break;
-    }
-    return size;
 }
 
 // Localize the knowledge required to read/write a mesh into one function
@@ -413,23 +385,22 @@ quint32 NextIndex(const QByteArray &data, quint32 idx)
     }
 }
 
-inline quint32 NextIndex(const QByteArray &inData,
-                       RenderComponentTypes::Enum inCompType, quint32 idx)
+inline quint32 NextIndex(const QByteArray &inData, QDemonRenderComponentTypes::Enum inCompType, quint32 idx)
 {
     if (inData.size() == 0)
         return idx;
     switch (inCompType) {
-    case RenderComponentTypes::UnsignedInt8:
+    case QDemonRenderComponentTypes::UnsignedInteger8:
         return NextIndex<quint8>(inData, idx);
-    case RenderComponentTypes::Int8:
+    case QDemonRenderComponentTypes::Integer8:
         return NextIndex<quint8>(inData, idx);
-    case RenderComponentTypes::UnsignedInt16:
+    case QDemonRenderComponentTypes::UnsignedInteger16:
         return NextIndex<quint16>(inData, idx);
-    case RenderComponentTypes::Int16:
+    case QDemonRenderComponentTypes::Integer16:
         return NextIndex<qint16>(inData, idx);
-    case RenderComponentTypes::UnsignedInt32:
+    case QDemonRenderComponentTypes::UnsignedInteger32:
         return NextIndex<quint32>(inData, idx);
-    case RenderComponentTypes::Int32:
+    case QDemonRenderComponentTypes::Integer32:
         return NextIndex<qint32>(inData, idx);
     default:
         // Invalid index buffer index type.
@@ -512,7 +483,7 @@ Mesh *CreateMeshFromPreviousMesh(TPreviousMeshType *temp)
     quint32 entryNameSize = 0;
     for (quint32 entryIdx = 0, entryEnd = temp->m_VertexBuffer.m_Entries.size(); entryIdx < entryEnd;
          ++entryIdx) {
-        const RenderVertexBufferEntry theEntry =
+        const QDemonRenderVertexBufferEntry theEntry =
             temp->m_VertexBuffer.m_Entries.index(tempBaseAddress, entryIdx).ToVertexBufferEntry(tempBaseAddress);
         const char *namePtr = theEntry.m_Name;
         if (namePtr == nullptr)
@@ -589,11 +560,11 @@ Mesh *CreateMeshFromPreviousMesh(TPreviousMeshType *temp)
     return retval;
 }
 
-Bounds3 Mesh::CalculateSubsetBounds(const RenderVertexBufferEntry &inEntry, const QByteArray &inVertxData, quint32 inStride, const QByteArray &inIndexData, RenderComponentTypes::Enum inIndexCompType, quint32 inSubsetCount, quint32 inSubsetOffset)
+QDemonBounds3 Mesh::CalculateSubsetBounds(const QDemonRenderVertexBufferEntry &inEntry, const QByteArray &inVertxData, quint32 inStride, const QByteArray &inIndexData, QDemonRenderComponentTypes::Enum inIndexCompType, quint32 inSubsetCount, quint32 inSubsetOffset)
 {
-    Bounds3 retval = Bounds3();
-    const RenderVertexBufferEntry &entry(inEntry);
-    if (entry.m_ComponentType != RenderComponentTypes::Float32 || entry.m_NumComponents != 3) {
+    QDemonBounds3 retval = QDemonBounds3();
+    const QDemonRenderVertexBufferEntry &entry(inEntry);
+    if (entry.m_ComponentType != QDemonRenderComponentTypes::Float32 || entry.m_NumComponents != 3) {
         Q_ASSERT(false);
         return retval;
     }
@@ -611,7 +582,8 @@ Bounds3 Mesh::CalculateSubsetBounds(const RenderVertexBufferEntry &inEntry, cons
         quint32 finalOffset = (dataIdx * dataStride) + posOffset;
         if (finalOffset + sizeof(Vec3) <= numBytes) {
             const quint8 *dataPtr = beginPtr + finalOffset;
-            retval.include(*reinterpret_cast<const Vec3 *>(dataPtr));
+            const auto vec3 = *reinterpret_cast<const Vec3 *>(dataPtr);
+            retval.include(QVector3D(vec3.x, vec3.y, vec3.z));
         } else {
             Q_ASSERT(false);
         }
@@ -898,13 +870,13 @@ namespace  {
 
 MeshBuilderVBufEntry ToEntry(const QVector<float> &data, const char *name, quint32 numComponents)
 {
-    return MeshBuilderVBufEntry(name, QByteArray(reinterpret_cast<const char *>(data.data())), RenderComponentTypes::Float32, numComponents);
+    return MeshBuilderVBufEntry(name, QByteArray(reinterpret_cast<const char *>(data.data())), QDemonRenderComponentTypes::Float32, numComponents);
 }
 
 struct DynamicVBuf
 {
     quint32 m_Stride;
-    QVector<RenderVertexBufferEntry> m_VertexBufferEntries;
+    QVector<QDemonRenderVertexBufferEntry> m_VertexBufferEntries;
     QByteArray m_VertexData;
 
     void clear()
@@ -916,7 +888,7 @@ struct DynamicVBuf
 };
 struct DynamicIndexBuf
 {
-    RenderComponentTypes::Enum m_CompType;
+    QDemonRenderComponentTypes::Enum m_CompType;
     QByteArray m_IndexData;
     DynamicIndexBuf() {}
 
@@ -928,7 +900,7 @@ struct SubsetDesc
     quint32 m_Count;
     quint32 m_Offset;
 
-    Bounds3 m_Bounds;
+    QDemonBounds3 m_Bounds;
     QString m_Name;
     SubsetDesc(quint32 c, quint32 off)
         : m_Count(c)
@@ -948,8 +920,8 @@ class MeshBuilderImpl : public MeshBuilder
     DynamicIndexBuf m_IndexBuffer;
     QVector<Joint> m_Joints;
     QVector<SubsetDesc> m_MeshSubsetDescs;
-    RenderDrawMode::Enum m_DrawMode;
-    RenderWinding::Enum m_Winding;
+    QDemonRenderDrawMode::Enum m_DrawMode;
+    QDemonRenderWinding::Enum m_Winding;
     QByteArray m_RemappedVertexData;
     QByteArray m_NewIndexBuffer;
     QVector<quint8> m_MeshBuffer;
@@ -964,12 +936,12 @@ public:
         m_IndexBuffer.clear();
         m_Joints.clear();
         m_MeshSubsetDescs.clear();
-        m_DrawMode = RenderDrawMode::Triangles;
-        m_Winding = RenderWinding::CounterClockwise;
+        m_DrawMode = QDemonRenderDrawMode::Triangles;
+        m_Winding = QDemonRenderWinding::CounterClockwise;
         m_MeshBuffer.clear();
     }
 
-    void SetDrawParameters(RenderDrawMode::Enum drawMode, RenderWinding::Enum winding) override
+    void SetDrawParameters(QDemonRenderDrawMode::Enum drawMode, QDemonRenderWinding::Enum winding) override
     {
         m_DrawMode = drawMode;
         m_Winding = winding;
@@ -990,7 +962,7 @@ public:
             if (entry.m_Data.begin() == nullptr || entry.m_Data.size() == 0)
                 continue;
 
-            quint32 alignment = (quint32)RenderComponentTypes::getSizeOfType(entry.m_ComponentType);
+            quint32 alignment = (quint32)QDemonRenderComponentTypes::getSizeOfType(entry.m_ComponentType);
             bufferAlignment = qMax(bufferAlignment, alignment);
             quint32 byteSize = alignment * entry.m_NumComponents;
 
@@ -1010,7 +982,7 @@ public:
             // Lots of platforms can't handle non-aligned data.
             // so ensure we are aligned.
             currentOffset = GetAlignedOffset(currentOffset, alignment);
-            RenderVertexBufferEntry vbufEntry(entry.m_Name, entry.m_ComponentType,
+            QDemonRenderVertexBufferEntry vbufEntry(entry.m_Name, entry.m_ComponentType,
                                                 entry.m_NumComponents, currentOffset);
             m_VertexBuffer.m_VertexBufferEntries.push_back(vbufEntry);
             currentOffset += byteSize;
@@ -1028,7 +1000,7 @@ public:
                 if (entry.m_Data.begin() == NULL || entry.m_Data.size() == 0)
                     continue;
 
-                quint32 alignment = (quint32)RenderComponentTypes::getSizeOfType(entry.m_ComponentType);
+                quint32 alignment = (quint32)QDemonRenderComponentTypes::getSizeOfType(entry.m_ComponentType);
                 quint32 byteSize = alignment * entry.m_NumComponents;
                 quint32 offset = byteSize * idx;
                 quint32 newOffset = GetAlignedOffset(dataOffset, alignment);
@@ -1045,7 +1017,7 @@ public:
         return retval;
     }
 
-    void SetVertexBuffer(const QVector<RenderVertexBufferEntry> &entries, quint32 stride,
+    void SetVertexBuffer(const QVector<QDemonRenderVertexBufferEntry> &entries, quint32 stride,
                                  QByteArray data) override
     {
         for (quint32 idx = 0, __numItems = (quint32)entries.size(); idx < __numItems; ++idx)
@@ -1058,14 +1030,14 @@ public:
             // Calculate the stride of the buffer using the vbuf entries
             for (quint32 idx = 0, __numItems = (quint32)entries.size(); idx < __numItems; ++idx)
             {
-                const RenderVertexBufferEntry &entry(entries[idx]);
-                stride = qMax(stride, (quint32)(entry.m_FirstItemOffset + (entry.m_NumComponents * RenderComponentTypes::getSizeOfType(entry.m_ComponentType))));
+                const QDemonRenderVertexBufferEntry &entry(entries[idx]);
+                stride = qMax(stride, (quint32)(entry.m_FirstItemOffset + (entry.m_NumComponents * QDemonRenderComponentTypes::getSizeOfType(entry.m_ComponentType))));
             }
         }
         m_VertexBuffer.m_Stride = stride;
     }
 
-    void SetIndexBuffer(const QByteArray &data, RenderComponentTypes::Enum comp) override
+    void SetIndexBuffer(const QByteArray &data, QDemonRenderComponentTypes::Enum comp) override
     {
         m_IndexBuffer.m_CompType = comp;
         QBuffer indexBuffer(&m_IndexBuffer.m_IndexData);
@@ -1103,8 +1075,7 @@ public:
         m_MeshSubsetDescs.push_back(retval);
     }
 
-    void AddMeshSubset(const char16_t *inName, quint32 count, quint32 offset,
-                               const Bounds3 &inBounds) override
+    void AddMeshSubset(const char16_t *inName, quint32 count, quint32 offset, const QDemonBounds3 &inBounds) override
     {
         SubsetDesc retval = CreateSubset(inName, count, offset);
         retval.m_Bounds = inBounds;
@@ -1163,7 +1134,7 @@ public:
 
                 curMatName = theIter->m_Name;
 
-                quint32 theIndexCompSize = (quint32)RenderComponentTypes::getSizeOfType(m_IndexBuffer.m_CompType);
+                quint32 theIndexCompSize = (quint32)QDemonRenderComponentTypes::getSizeOfType(m_IndexBuffer.m_CompType);
                 // get pointer to indices
                 char *theIndices = (m_IndexBuffer.m_IndexData.begin()) + (theIter->m_Offset * theIndexCompSize);
                 // write new offset
@@ -1211,10 +1182,10 @@ public:
     // Here is the NVTriStrip magic.
     void OptimizeMesh() override
     {
-        if (RenderComponentTypes::getSizeOfType(m_IndexBuffer.m_CompType) != 2) {
+        if (QDemonRenderComponentTypes::getSizeOfType(m_IndexBuffer.m_CompType) != 2) {
             // we currently re-arrange unsigned int indices.
             // this is because NvTriStrip only supports short indices
-            Q_ASSERT(RenderComponentTypes::getSizeOfType(m_IndexBuffer.m_CompType) == 4);
+            Q_ASSERT(QDemonRenderComponentTypes::getSizeOfType(m_IndexBuffer.m_CompType) == 4);
             return;
         }
     }
@@ -1252,12 +1223,11 @@ public:
         quint32 vertDataSize = GetAlignedOffset(m_VertexBuffer.m_VertexData.size(), alignment);
         meshSize += vertDataSize;
         quint32 entrySize = m_VertexBuffer.m_VertexBufferEntries.size()
-                * sizeof(RenderVertexBufferEntry);
+                * sizeof(QDemonRenderVertexBufferEntry);
         meshSize += entrySize;
         quint32 entryNameSize = 0;
         for (quint32 idx = 0, end = m_VertexBuffer.m_VertexBufferEntries.size(); idx < end; ++idx) {
-            const RenderVertexBufferEntry &theEntry(
-                        m_VertexBuffer.m_VertexBufferEntries[idx]);
+            const QDemonRenderVertexBufferEntry &theEntry(m_VertexBuffer.m_VertexBufferEntries[idx]);
             const char *entryName = theEntry.m_Name;
             if (entryName == nullptr)
                 entryName = "";
@@ -1300,7 +1270,7 @@ public:
         retval->m_VertexBuffer.m_Entries.m_Size = m_VertexBuffer.m_VertexBufferEntries.size();
         retval->m_VertexBuffer.m_Entries.m_Offset = (quint32)(vertEntryData - baseAddress);
         for (quint32 idx = 0, end = m_VertexBuffer.m_VertexBufferEntries.size(); idx < end; ++idx) {
-            const RenderVertexBufferEntry &theEntry(m_VertexBuffer.m_VertexBufferEntries[idx]);
+            const QDemonRenderVertexBufferEntry &theEntry(m_VertexBuffer.m_VertexBufferEntries[idx]);
             MeshVertexBufferEntry &theDestEntry(
                         retval->m_VertexBuffer.m_Entries.index(baseAddress, idx));
             theDestEntry.m_ComponentType = theEntry.m_ComponentType;

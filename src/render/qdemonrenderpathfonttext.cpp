@@ -118,7 +118,7 @@ void QDemonRenderPathFontItem::InitTextItem(size_t glyphCount, const quint32 *gl
     if (m_TranslateXY)
         ::free(m_TranslateXY);
 
-    m_GlyphIDs = static_cast<quint32 *>(::malloc(glyphCount * getSizeofType(type)));
+    m_GlyphIDs = static_cast<quint32 *>(::malloc(glyphCount * getSizeOfType(type)));
     m_TranslateXY = static_cast<float *>(::malloc(2 * (glyphCount + 1) * sizeof(float)));
 
     if (!m_GlyphIDs || !m_TranslateXY)
@@ -158,7 +158,7 @@ const QMatrix4x4 QDemonRenderPathFontItem::GetTransform()
 }
 
 quint32
-QDemonRenderPathFontItem::getSizeofType(QDemonRenderPathFormatType::Enum type)
+QDemonRenderPathFontItem::getSizeOfType(QDemonRenderPathFormatType::Enum type)
 {
     switch (type) {
     case QDemonRenderPathFormatType::Byte:

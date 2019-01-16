@@ -484,7 +484,7 @@ struct SBufferManager : public IBufferManager
 //                    QDemonRenderComponentTypes::Enum bufComponentType =
 //                            theResult.m_Mesh->m_IndexBuffer.m_ComponentType;
 //                    quint32 sizeofType =
-//                            QDemonRenderComponentTypes::getSizeofType(bufComponentType);
+//                            QDemonRenderComponentTypes::getSizeOfType(bufComponentType);
 
 //                    if (sizeofType == 2 || sizeofType == 4) {
 //                        // Ensure type is unsigned; else things will fail in rendering pipeline.

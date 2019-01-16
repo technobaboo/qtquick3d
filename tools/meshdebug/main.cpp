@@ -191,12 +191,12 @@ int main(int argc, char *argv[])
                     qDebug() << "\t\thasCount: " << subset.HasCount();
                     qDebug() << "\t\tcount: " << subset.m_Count;
                     qDebug() << "\t\toffset(size): " << subset.m_Offset;
-                    qDebug() << "\t\tbounds: << (" << subset.m_Bounds.minimum.x << "," <<
-                                                      subset.m_Bounds.minimum.y << "," <<
-                                                      subset.m_Bounds.minimum.z << ") (" <<
-                                                      subset.m_Bounds.maximum.x << "," <<
-                                                      subset.m_Bounds.maximum.y << "," <<
-                                                      subset.m_Bounds.maximum.z << ")";
+                    qDebug() << "\t\tbounds: (" << subset.m_Bounds.minimum.x() << "," <<
+                                subset.m_Bounds.minimum.y() << "," <<
+                                subset.m_Bounds.minimum.z() << ") (" <<
+                                subset.m_Bounds.maximum.x() << "," <<
+                                subset.m_Bounds.maximum.y() << "," <<
+                                subset.m_Bounds.maximum.z() << ")";
                     meshFile.seek(offsetTracker.offset());
                     offsetTracker.advance(subset.m_Name);
                     qDebug() << "\t\tname offset: " << hex << subset.m_Name.m_Offset;

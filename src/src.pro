@@ -2,7 +2,7 @@ TEMPLATE = subdirs
 CONFIG += ordered
 SUBDIRS = \
     demon \
+    render \
     assetimport \
     plugins \
-    render \
     runtimerender \

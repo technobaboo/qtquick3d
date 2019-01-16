@@ -3,7 +3,7 @@ MODULE = demonassetimport
 
 MODULE_PLUGIN_TYPES = assetimporters
 
-QT += core-private gui qml
+QT += core-private gui qml demon demonrender
 
 SOURCES = \
     qdemonassetimporterfactory.cpp \

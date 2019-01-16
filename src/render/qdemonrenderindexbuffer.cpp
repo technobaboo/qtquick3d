@@ -51,7 +51,7 @@ QDemonRenderIndexBuffer::~QDemonRenderIndexBuffer()
 
 quint32 QDemonRenderIndexBuffer::GetNumIndices() const
 {
-    quint32 dtypeSize = QDemonRenderComponentTypes::getSizeofType(m_ComponentType);
+    quint32 dtypeSize = QDemonRenderComponentTypes::getSizeOfType(m_ComponentType);
     return m_BufferCapacity / dtypeSize;
 }
 
@@ -59,7 +59,7 @@ void QDemonRenderIndexBuffer::Draw(QDemonRenderDrawMode::Enum drawMode, quint32 
 {
     m_Backend->DrawIndexed(
                 drawMode, count, m_ComponentType,
-                (const void *)(offset * QDemonRenderComponentTypes::getSizeofType(m_ComponentType)));
+                (const void *)(offset * QDemonRenderComponentTypes::getSizeOfType(m_ComponentType)));
 }
 
 void QDemonRenderIndexBuffer::DrawIndirect(QDemonRenderDrawMode::Enum drawMode, quint32 offset)

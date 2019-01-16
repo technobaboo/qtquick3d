@@ -93,7 +93,7 @@ struct QDemonRenderComponentTypes
         return "Unknown";
     }
 
-    static quint32 getSizeofType(Enum value)
+    static quint32 getSizeOfType(Enum value)
     {
         switch (value) {
         case UnsignedInteger8:

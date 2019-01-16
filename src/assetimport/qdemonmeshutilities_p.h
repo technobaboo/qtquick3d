@@ -43,6 +43,10 @@
 
 #include <QtDemonAssetImport/qtdemonassetimportglobal.h>
 
+#include <QtDemon/QDemonBounds3>
+
+#include <QtDemonRender/qdemonrenderbasetypes.h>
+
 #include <QtCore/QString>
 #include <QtCore/QByteArray>
 #include <QtCore/QIODevice>
@@ -87,125 +91,28 @@ struct OffsetDataRef
     }
 };
 
-struct RenderComponentTypes {
-    enum Enum {
-        Unknown = 0,
-        UnsignedInt8,
-        Int8,
-        UnsignedInt16,
-        Int16,
-        UnsignedInt32,
-        Int32,
-        UnsignedInt64,
-        Int64,
-        Float16,
-        Float32,
-        Float64
-    };
-    static size_t getSizeOfType(RenderComponentTypes::Enum type);
-};
-
-struct RenderDrawMode
-{
-    enum Enum {
-        Unknown = 0,
-        Points,
-        LineStrip,
-        LineLoop,
-        Lines,
-        TriangleStrip,
-        TriangleFan,
-        Triangles,
-        Patches,
-    };
-};
-
-struct RenderWinding
-{
-    enum Enum {
-        Unknown = 0,
-        Clockwise,
-        CounterClockwise
-    };
-};
-
-
-struct RenderVertexBufferEntry
-{
-    const char *m_Name;
-    /** Datatype of the this entry points to in the buffer */
-    RenderComponentTypes::Enum m_ComponentType;
-    /** Number of components of each data member. 1,2,3, or 4.  Don't be stupid.*/
-    quint32 m_NumComponents;
-    /** Offset from the beginning of the buffer of the first item */
-    quint32 m_FirstItemOffset;
-    /** Attribute input slot used for this entry*/
-    quint32 m_InputSlot;
-
-    RenderVertexBufferEntry(const char *nm, RenderComponentTypes::Enum type,
-                              quint32 numComponents, quint32 firstItemOffset = 0,
-                              quint32 inputSlot = 0)
-        : m_Name(nm)
-        , m_ComponentType(type)
-        , m_NumComponents(numComponents)
-        , m_FirstItemOffset(firstItemOffset)
-        , m_InputSlot(inputSlot)
-    {
-    }
-
-    RenderVertexBufferEntry()
-        : m_Name(nullptr)
-        , m_ComponentType(RenderComponentTypes::Unknown)
-        , m_NumComponents(0)
-        , m_FirstItemOffset(0)
-        , m_InputSlot(0)
-    {
-    }
-
-    RenderVertexBufferEntry(const RenderVertexBufferEntry &inOther)
-        : m_Name(inOther.m_Name)
-        , m_ComponentType(inOther.m_ComponentType)
-        , m_NumComponents(inOther.m_NumComponents)
-        , m_FirstItemOffset(inOther.m_FirstItemOffset)
-        , m_InputSlot(inOther.m_InputSlot)
-    {
-    }
-
-    RenderVertexBufferEntry &operator=(const RenderVertexBufferEntry &inOther)
-    {
-        if (this != &inOther) {
-            m_Name = inOther.m_Name;
-            m_ComponentType = inOther.m_ComponentType;
-            m_NumComponents = inOther.m_NumComponents;
-            m_FirstItemOffset = inOther.m_FirstItemOffset;
-            m_InputSlot = inOther.m_InputSlot;
-        }
-        return *this;
-    }
-};
-
 struct MeshVertexBufferEntry
 {
     quint32 m_NameOffset;
     /** Datatype of the this entry points to in the buffer */
-    RenderComponentTypes::Enum m_ComponentType;
+    QDemonRenderComponentTypes::Enum m_ComponentType;
     /** Number of components of each data member. 1,2,3, or 4.  Don't be stupid.*/
     quint32 m_NumComponents;
     /** Offset from the beginning of the buffer of the first item */
     quint32 m_FirstItemOffset;
     MeshVertexBufferEntry()
         : m_NameOffset(0)
-        , m_ComponentType(RenderComponentTypes::Float32)
+        , m_ComponentType(QDemonRenderComponentTypes::Float32)
         , m_NumComponents(3)
         , m_FirstItemOffset(0)
     {
     }
-    RenderVertexBufferEntry ToVertexBufferEntry(quint8 *inBaseAddress) const
+    QDemonRenderVertexBufferEntry ToVertexBufferEntry(quint8 *inBaseAddress) const
     {
         const char *nameBuffer = "";
         if (m_NameOffset)
             nameBuffer = reinterpret_cast<const char *>(inBaseAddress + m_NameOffset);
-        return RenderVertexBufferEntry(nameBuffer, m_ComponentType, m_NumComponents, m_FirstItemOffset);
+        return QDemonRenderVertexBufferEntry(nameBuffer, m_ComponentType, m_NumComponents, m_FirstItemOffset);
     }
 };
 
@@ -231,17 +138,17 @@ struct IndexBuffer
 {
     // Component types must be either UnsignedInt16 or UnsignedInt8 in order for the
     // graphics hardware to deal with the buffer correctly.
-    RenderComponentTypes::Enum m_ComponentType;
+    QDemonRenderComponentTypes::Enum m_ComponentType;
     OffsetDataRef<quint8> m_Data;
     // Either quint8 or quint16 component types are allowed by the underlying rendering
     // system, so you would be wise to stick with those.
-    IndexBuffer(RenderComponentTypes::Enum compType, OffsetDataRef<quint8> data)
+    IndexBuffer(QDemonRenderComponentTypes::Enum compType, OffsetDataRef<quint8> data)
         : m_ComponentType(compType)
         , m_Data(data)
     {
     }
     IndexBuffer()
-        : m_ComponentType(RenderComponentTypes::Unknown)
+        : m_ComponentType(QDemonRenderComponentTypes::Unknown)
     {
     }
 };
@@ -259,29 +166,6 @@ struct Vec3 {
     float z;
 };
 
-struct Bounds3 {
-    Vec3 minimum;
-    Vec3 maximum;
-    Bounds3()
-    {
-        minimum.x = .0f;
-        minimum.y = .0f;
-        minimum.z = .0f;
-        maximum.x = .0f;
-        maximum.y = .0f;
-        maximum.z = .0f;
-    }
-
-    void include(const Vec3 &vector) {
-        minimum.x = qMin(minimum.x, vector.x);
-        minimum.y = qMin(minimum.y, vector.y);
-        minimum.z = qMin(minimum.z, vector.z);
-        maximum.x = qMax(maximum.x, vector.x);
-        maximum.y = qMax(maximum.y, vector.y);
-        maximum.z = qMax(maximum.z, vector.z);
-    }
-};
-
 struct MeshSubset
 {
     // QDEMON_MAX_U32 means use all available items
@@ -290,14 +174,14 @@ struct MeshSubset
     quint32 m_Offset;
     // Bounds of this subset.  This is filled in by the builder
     // see AddMeshSubset
-    Bounds3 m_Bounds;
+    QDemonBounds3 m_Bounds;
 
     // Subsets have to be named else artists will be unable to use
     // a mesh with multiple subsets as they won't have any idea
     // while part of the model a given mesh actually maps to.
     OffsetDataRef<char16_t> m_Name;
 
-    MeshSubset(quint32 count, quint32 off, const Bounds3 &bounds, OffsetDataRef<char16_t> inName)
+    MeshSubset(quint32 count, quint32 off, const QDemonBounds3 &bounds, OffsetDataRef<char16_t> inName)
         : m_Count(count)
         , m_Offset(off)
         , m_Bounds(bounds)
@@ -305,7 +189,7 @@ struct MeshSubset
     {
     }
     MeshSubset()
-        : m_Count((quint32)-1)
+        : m_Count(quint32(-1))
         , m_Offset(0)
         , m_Bounds()
     {
@@ -406,18 +290,18 @@ struct Q_DEMONASSETIMPORT_EXPORT Mesh
     IndexBuffer m_IndexBuffer;
     OffsetDataRef<MeshSubset> m_Subsets;
     OffsetDataRef<Joint> m_Joints;
-    RenderDrawMode::Enum m_DrawMode;
-    RenderWinding::Enum m_Winding;
+    QDemonRenderDrawMode::Enum m_DrawMode;
+    QDemonRenderWinding::Enum m_Winding;
 
     Mesh()
-        : m_DrawMode(RenderDrawMode::Triangles)
-        , m_Winding(RenderWinding::CounterClockwise)
+        : m_DrawMode(QDemonRenderDrawMode::Triangles)
+        , m_Winding(QDemonRenderWinding::CounterClockwise)
     {
     }
     Mesh(VertexBuffer vbuf, IndexBuffer ibuf, const OffsetDataRef<MeshSubset> &insts,
          const OffsetDataRef<Joint> &joints,
-         RenderDrawMode::Enum drawMode = RenderDrawMode::Triangles,
-         RenderWinding::Enum winding = RenderWinding::CounterClockwise)
+         QDemonRenderDrawMode::Enum drawMode = QDemonRenderDrawMode::Triangles,
+         QDemonRenderWinding::Enum winding = QDemonRenderWinding::CounterClockwise)
         : m_VertexBuffer(vbuf)
         , m_IndexBuffer(ibuf)
         , m_Subsets(insts)
@@ -446,11 +330,11 @@ struct Q_DEMONASSETIMPORT_EXPORT Mesh
     // Using this entry and the (possibly empty) index buffer
     // along with the (possibly emtpy) logical vbuf data
     // return a bounds of the given vertex buffer.
-    static Bounds3 CalculateSubsetBounds(const RenderVertexBufferEntry &inEntry,
+    static QDemonBounds3 CalculateSubsetBounds(const QDemonRenderVertexBufferEntry &inEntry,
                                          const QByteArray &inVertxData,
                                          quint32 inStride,
                                          const QByteArray &inIndexData,
-                                         RenderComponentTypes::Enum inIndexCompType,
+                                         QDemonRenderComponentTypes::Enum inIndexCompType,
                                          quint32 inSubsetCount,
                                          quint32 inSubsetOffset);
 
@@ -498,7 +382,7 @@ struct Q_DEMONASSETIMPORT_EXPORT Mesh
 
 struct MeshDataHeader
 {
-    static quint32 GetFileId() { return (quint32)-929005747; }
+    static quint32 GetFileId() { return quint32(-929005747); }
     static quint16 GetCurrentFileVersion() { return 3; }
     quint32 m_FileId;
     quint16 m_FileVersion;
@@ -516,16 +400,16 @@ struct MeshBuilderVBufEntry
 {
     const char *m_Name;
     QByteArray m_Data;
-    RenderComponentTypes::Enum m_ComponentType;
+    QDemonRenderComponentTypes::Enum m_ComponentType;
     quint32 m_NumComponents;
     MeshBuilderVBufEntry()
         : m_Name(nullptr)
-        , m_ComponentType(RenderComponentTypes::Unknown)
+        , m_ComponentType(QDemonRenderComponentTypes::Unknown)
         , m_NumComponents(0)
     {
     }
     MeshBuilderVBufEntry(const char *name, QByteArray data,
-                         RenderComponentTypes::Enum componentType, quint32 numComponents)
+                         QDemonRenderComponentTypes::Enum componentType, quint32 numComponents)
         : m_Name(name)
         , m_Data(data)
         , m_ComponentType(componentType)
@@ -543,18 +427,21 @@ public:
     virtual void Release() = 0;
     virtual void Reset() = 0;
     // Set the draw parameters for any subsets.  Defaults to triangles and counter clockwise
-    virtual void SetDrawParameters(RenderDrawMode::Enum drawMode,
-                                   RenderWinding::Enum winding) = 0;
+    virtual void SetDrawParameters(QDemonRenderDrawMode::Enum drawMode,
+                                   QDemonRenderWinding::Enum winding) = 0;
     // Set the vertex buffer and have the mesh builder interleave the data for you
     virtual bool SetVertexBuffer(const QVector<MeshBuilderVBufEntry> &entries) = 0;
     // Set the vertex buffer from interleaved data.
-    virtual void SetVertexBuffer(const QVector<RenderVertexBufferEntry> &entries, quint32 stride,
+    virtual void SetVertexBuffer(const QVector<QDemonRenderVertexBufferEntry> &entries,
+                                 quint32 stride,
                                  QByteArray data) = 0;
     // The builder (and the majority of the rest of the product) only supports unsigned 16 bit
     // indexes
-    virtual void SetIndexBuffer(const QByteArray &data, RenderComponentTypes::Enum comp) = 0;
+    virtual void SetIndexBuffer(const QByteArray &data, QDemonRenderComponentTypes::Enum comp) = 0;
     // Assets if the supplied parameters are out of range.
-    virtual void AddJoint(qint32 jointID, qint32 parentID, const float *invBindPose,
+    virtual void AddJoint(qint32 jointID,
+                          qint32 parentID,
+                          const float *invBindPose,
                           const float *localToGlobalBoneSpace) = 0;
     /**
     *	Add a subset, which equates roughly to a draw call.
@@ -566,18 +453,20 @@ public:
     *	using mesh::CalculateSubsetBounds
     */
     virtual void AddMeshSubset(const char16_t *inSubsetName = Mesh::s_DefaultName,
-                               quint32 count = QDEMON_MAX_U32, quint32 offset = 0,
+                               quint32 count = QDEMON_MAX_U32,
+                               quint32 offset = 0,
                                quint32 boundsPositionEntryIndex = QDEMON_MAX_U32) = 0;
 
-    virtual void AddMeshSubset(const char16_t *inSubsetName, quint32 count, quint32 offset,
-                               const Bounds3 &inBounds) = 0;
+    virtual void AddMeshSubset(const char16_t *inSubsetName,
+                               quint32 count,
+                               quint32 offset,
+                               const QDemonBounds3 &inBounds) = 0;
 
     // Call to optimize the index and vertex buffers.  This doesn't change the subset information,
     // each triangle is rendered precisely the same.
     // It just orders the vertex data so we iterate through it as linearly as possible.
     // This *only* works if the *entire* builder is using triangles as the draw mode.  This will be
-    // a disaster if that
-    // condition is not met.
+    // a disaster if that condition is not met.
     virtual void OptimizeMesh() = 0;
 
     /**
