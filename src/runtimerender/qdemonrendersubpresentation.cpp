@@ -42,8 +42,8 @@ QDemonRenderPickResult CSubPresentationPickQuery::Pick(const QVector2D &inMouseC
     return m_Renderer.DoGraphQueryPick(inMouseCoords, inViewportDimensions, inPickEverything);
 }
 
-CSubPresentationRenderer::CSubPresentationRenderer(IQDemonRenderContext &inRenderContext,
-                                                   SPresentation &inPresentation)
+CSubPresentationRenderer::CSubPresentationRenderer(QSharedPointer<IQDemonRenderContext> inRenderContext,
+                                                   QSharedPointer<SPresentation> inPresentation)
     : m_RenderContext(inRenderContext)
     , m_Presentation(inPresentation)
     , m_PickQuery(*this)
@@ -55,11 +55,11 @@ SOffscreenRendererEnvironment
 CSubPresentationRenderer::GetDesiredEnvironment(QVector2D /*inPresScale*/)
 {
     // If we aren't using a clear color, then we are expected to blend with the background
-    bool hasTransparency = m_Presentation.m_Scene->m_UseClearColor ? false : true;
+    bool hasTransparency = m_Presentation->m_Scene->m_UseClearColor ? false : true;
     QDemonRenderTextureFormats::Enum format =
             hasTransparency ? QDemonRenderTextureFormats::RGBA8 : QDemonRenderTextureFormats::RGB8;
-    return SOffscreenRendererEnvironment((quint32)(m_Presentation.m_PresentationDimensions.x),
-                                         (quint32)(m_Presentation.m_PresentationDimensions.y),
+    return SOffscreenRendererEnvironment((quint32)(m_Presentation->m_PresentationDimensions.x()),
+                                         (quint32)(m_Presentation->m_PresentationDimensions.y()),
                                          format, OffscreenRendererDepthValues::Depth16, false,
                                          AAModeValues::NoAA);
 }
@@ -69,9 +69,9 @@ CSubPresentationRenderer::NeedsRender(const SOffscreenRendererEnvironment & /*in
                                       QVector2D /*inPresScale*/,
                                       const SRenderInstanceId instanceId)
 {
-    bool hasTransparency = m_Presentation.m_Scene->m_UseClearColor ? false : true;
-    QDemonRenderRect theViewportSize(m_RenderContext.GetRenderList().GetViewport());
-    bool wasDirty = m_Presentation.m_Scene->PrepareForRender(
+    bool hasTransparency = m_Presentation->m_Scene->m_UseClearColor ? false : true;
+    QDemonRenderRect theViewportSize(m_RenderContext->GetRenderList()->GetViewport());
+    bool wasDirty = m_Presentation->m_Scene->PrepareForRender(
                 QVector2D((float)theViewportSize.m_Width, (float)theViewportSize.m_Height),
                 m_RenderContext, instanceId);
     return SOffscreenRenderFlags(hasTransparency, wasDirty);
@@ -84,11 +84,9 @@ void CSubPresentationRenderer::Render(const SOffscreenRendererEnvironment &inEnv
                                       SScene::RenderClearCommand inClearColorBuffer,
                                       const SRenderInstanceId instanceId)
 {
-    SSubPresentationHelper theHelper(
-                m_RenderContext,
-                QSize((quint32)inEnvironment.m_Width, (quint32)inEnvironment.m_Height));
+    SSubPresentationHelper theHelper(m_RenderContext, QSize((quint32)inEnvironment.m_Width, (quint32)inEnvironment.m_Height));
     QDemonRenderRect theViewportSize(inRenderContext.GetViewport());
-    m_Presentation.m_Scene->Render(
+    m_Presentation->m_Scene->Render(
                 QVector2D((float)theViewportSize.m_Width, (float)theViewportSize.m_Height),
                 m_RenderContext, inClearColorBuffer, instanceId);
     m_LastRenderedEnvironment = inEnvironment;
@@ -103,7 +101,7 @@ void CSubPresentationRenderer::RenderWithClear(
     Q_UNUSED(inEnvironment);
     Q_UNUSED(inPresScale);
     QDemonRenderRect theViewportSize(inRenderContext.GetViewport());
-    m_Presentation.m_Scene->RenderWithClear(
+    m_Presentation->m_Scene->RenderWithClear(
                 QVector2D((float)theViewportSize.m_Width, (float)theViewportSize.m_Height),
                 m_RenderContext, inClearBuffer, inClearColor, id);
 }
@@ -114,10 +112,10 @@ QDemonRenderPickResult CSubPresentationRenderer::DoGraphQueryPick(
 {
     QDemonRenderPickResult thePickResult;
 
-    if (m_Presentation.m_Scene && m_Presentation.m_Scene->m_FirstChild) {
-        thePickResult = m_RenderContext.GetRenderer().Pick(
-                    *m_Presentation.m_Scene->m_FirstChild, inViewportDimensions,
-                    QVector2D(inMouseCoords.x, inMouseCoords.y), true, inPickEverything);
+    if (m_Presentation->m_Scene && m_Presentation->m_Scene->m_FirstChild) {
+        thePickResult = m_RenderContext->GetRenderer()->Pick(
+                    *m_Presentation->m_Scene->m_FirstChild, inViewportDimensions,
+                    QVector2D(inMouseCoords.x(), inMouseCoords.y()), true, inPickEverything);
     }
     return thePickResult;
 }

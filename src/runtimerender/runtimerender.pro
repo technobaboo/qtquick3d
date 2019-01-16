@@ -56,7 +56,7 @@ HEADERS += \
     qdemonrendershadercodegeneratorv2.h \
     qdemonrendershaderkeys.h \
 #    qdemonrendershadowmap.h \
-#    qdemonrendersubpresentation.h \
+    qdemonrendersubpresentation.h \
     qdemonrendersubpresentationhelper.h \
     qdemonrendertaggedpointer.h \
     qdemonrendertessmodevalues.h \
@@ -99,7 +99,7 @@ SOURCES += \
     qdemonrendershadercodegenerator.cpp \
     qdemonrendershadercodegeneratorv2.cpp \
 #    qdemonrendershadowmap.cpp \
-#    qdemonrendersubpresentation.cpp \
+    qdemonrendersubpresentation.cpp \
     qdemonrendertexttextureatlas.cpp \
     qdemonrendertexttexturecache.cpp \
     qdemonrendertextureatlas.cpp \

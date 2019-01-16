@@ -68,12 +68,12 @@ struct SScene : public SGraphObject
         inRemapper.Remap(m_FirstChild);
     }
     // returns true if any of the layers were dirty or if this object was dirty
-    bool PrepareForRender(const QVector2D &inViewportDimensions, IQDemonRenderContext &inContext,
+    bool PrepareForRender(const QVector2D &inViewportDimensions, QSharedPointer<IQDemonRenderContext> inContext,
                           const SRenderInstanceId id = nullptr);
-    void Render(const QVector2D &inViewportDimensions, IQDemonRenderContext &inContext,
+    void Render(const QVector2D &inViewportDimensions, QSharedPointer<IQDemonRenderContext> inContext,
                 RenderClearCommand command = ClearIsOptional,
                 const SRenderInstanceId id = nullptr);
-    void RenderWithClear(const QVector2D &inViewportDimensions, IQDemonRenderContext &inContext,
+    void RenderWithClear(const QVector2D &inViewportDimensions, QSharedPointer<IQDemonRenderContext> inContext,
                          RenderClearCommand inClearColorBuffer,
                          QVector3D inclearColor, const SRenderInstanceId id = nullptr);
 };

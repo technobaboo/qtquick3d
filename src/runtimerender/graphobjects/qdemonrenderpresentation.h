@@ -32,6 +32,7 @@
 
 #include <QtDemonRuntimeRender/qdemonrendergraphobject.h>
 #include <QtGui/QVector2D>
+#include <QtCore/QSharedPointer>
 
 QT_BEGIN_NAMESPACE
 
@@ -52,7 +53,7 @@ struct SPresentation : public SGraphObject
 {
     QVector2D m_PresentationDimensions;
     RenderRotationValues::Enum m_PresentationRotation;
-    SScene *m_Scene;
+    QSharedPointer<SScene> m_Scene;
 
     QString m_PresentationDirectory;
 
@@ -82,7 +83,7 @@ struct SPresentation : public SGraphObject
         inRemapper.Remap(m_PresentationDirectory);
     }
 
-    void Render(IQDemonRenderContext &inContext);
+    void Render(QSharedPointer<IQDemonRenderContext> inContext);
 };
 
 QT_END_NAMESPACE

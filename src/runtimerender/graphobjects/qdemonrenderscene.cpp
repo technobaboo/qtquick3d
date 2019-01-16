@@ -65,7 +65,7 @@ SLayer *SScene::GetLastChild()
     return child;
 }
 
-bool SScene::PrepareForRender(const QVector2D &inViewportDimensions, IQDemonRenderContext &inContext,
+bool SScene::PrepareForRender(const QVector2D &inViewportDimensions, QSharedPointer<IQDemonRenderContext> inContext,
                               const SRenderInstanceId id)
 {
     // We need to iterate through the layers in reverse order and ask them to render.
@@ -73,19 +73,19 @@ bool SScene::PrepareForRender(const QVector2D &inViewportDimensions, IQDemonRend
     m_Dirty = false;
     if (m_FirstChild) {
         wasDirty |=
-            inContext.GetRenderer()->PrepareLayerForRender(*m_FirstChild, inViewportDimensions,
-                                                           true, id);
+            inContext->GetRenderer()->PrepareLayerForRender(*m_FirstChild, inViewportDimensions, true, id);
     }
     return wasDirty;
 }
 
-void SScene::Render(const QVector2D &inViewportDimensions, IQDemonRenderContext &inContext,
-                    RenderClearCommand inClearColorBuffer, const SRenderInstanceId id)
+void SScene::Render(const QVector2D &inViewportDimensions,
+                    QSharedPointer<IQDemonRenderContext> inContext,
+                    RenderClearCommand inClearColorBuffer,
+                    const SRenderInstanceId id)
 {
     if ((inClearColorBuffer == SScene::ClearIsOptional && m_UseClearColor)
         || inClearColorBuffer == SScene::AlwaysClear) {
-        float clearColorAlpha
-                = inContext.IsInSubPresentation() && !m_UseClearColor ? 0.0f : 1.0f;
+        float clearColorAlpha = inContext->IsInSubPresentation() && !m_UseClearColor ? 0.0f : 1.0f;
         QVector4D clearColor(0.0f, 0.0f, 0.0f, clearColorAlpha);
         if (m_UseClearColor) {
             clearColor.setX(m_ClearColor.x());
@@ -94,17 +94,15 @@ void SScene::Render(const QVector2D &inViewportDimensions, IQDemonRenderContext 
         }
         // Maybe clear and reset to previous clear color after we leave.
         QDemonRenderContextScopedProperty<QVector4D> __clearColor(
-            *inContext.GetRenderContext(), &QDemonRenderContext::GetClearColor,
+            *inContext->GetRenderContext(), &QDemonRenderContext::GetClearColor,
                     &QDemonRenderContext::SetClearColor, clearColor);
-        inContext.GetRenderContext()->Clear(QDemonRenderClearValues::Color);
+        inContext->GetRenderContext()->Clear(QDemonRenderClearValues::Color);
     }
-    if (m_FirstChild) {
-        inContext.GetRenderer()->RenderLayer(*m_FirstChild, inViewportDimensions, m_UseClearColor,
-                                            m_ClearColor, true, id);
-    }
+    if (m_FirstChild)
+        inContext->GetRenderer()->RenderLayer(*m_FirstChild, inViewportDimensions, m_UseClearColor, m_ClearColor, true, id);
 }
 void SScene::RenderWithClear(const QVector2D &inViewportDimensions,
-                             IQDemonRenderContext &inContext,
+                             QSharedPointer<IQDemonRenderContext> inContext,
                              RenderClearCommand inClearColorBuffer,
                              QVector3D inClearColor,
                              const SRenderInstanceId id)

@@ -31,16 +31,17 @@
 
 #include <QtDemonRender/qdemonrendercontext.h>
 
+#include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
+#include <QtDemonRuntimeRender/qdemonrenderscene.h>
+
 QT_BEGIN_NAMESPACE
 
-void SPresentation::Render(IQDemonRenderContext &inContext)
+void SPresentation::Render(QSharedPointer<IQDemonRenderContext> inContext)
 {
-    // ### TODO: Re add QDemonRenderContextCore!!!
-//    if (m_Scene) {
-//        QDemonRenderRect theViewportSize(inContext.GetRenderContext().GetViewport());
-//        m_Scene->Render(QVector2D((float)theViewportSize.m_Width, (float)theViewportSize.m_Height),
-//                        inContext);
-//    }
+    if (m_Scene) {
+        QDemonRenderRect theViewportSize(inContext->GetRenderContext()->GetViewport());
+        m_Scene->Render(QVector2D(float(theViewportSize.m_Width), float(theViewportSize.m_Height)), inContext);
+    }
 }
 
 QT_END_NAMESPACE

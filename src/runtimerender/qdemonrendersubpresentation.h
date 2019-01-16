@@ -50,52 +50,54 @@ struct CSubPresentationPickQuery : public IGraphObjectPickQuery
     {
     }
     QDemonRenderPickResult Pick(const QVector2D &inMouseCoords,
-                               const QVector2D &inViewportDimensions,
-                               bool inPickEverything) override;
+                                const QVector2D &inViewportDimensions,
+                                bool inPickEverything) override;
 };
 
 class CSubPresentationRenderer : public IOffscreenRenderer
 {
 public:
-    IQDemonRenderContext &m_RenderContext;
-    SPresentation &m_Presentation;
+    QSharedPointer<IQDemonRenderContext> m_RenderContext;
+    QSharedPointer<SPresentation> m_Presentation;
     SOffscreenRendererEnvironment m_LastRenderedEnvironment;
     CSubPresentationPickQuery m_PickQuery;
     QString m_OffscreenRendererType;
 
-    CSubPresentationRenderer(IQDemonRenderContext &inRenderContext, SPresentation &inPresentation);
+    CSubPresentationRenderer(QSharedPointer<IQDemonRenderContext> inRenderContext, QSharedPointer<SPresentation> inPresentation);
 
     SOffscreenRendererEnvironment GetDesiredEnvironment(QVector2D inPresScale) override;
     virtual SOffscreenRenderFlags
-    NeedsRender(const SOffscreenRendererEnvironment &inEnvironment, QVector2D inPresScale,
+    NeedsRender(const SOffscreenRendererEnvironment &inEnvironment,
+                QVector2D inPresScale,
                 const SRenderInstanceId instanceId) override;
     void Render(const SOffscreenRendererEnvironment &inEnvironment,
                 QDemonRenderContext & /*inRenderContext*/,
-                QVector2D inPresScale, SScene::RenderClearCommand inClearBuffer,
+                QVector2D inPresScale,
+                SScene::RenderClearCommand inClearBuffer,
                 const SRenderInstanceId instanceId) override;
     void RenderWithClear(const SOffscreenRendererEnvironment &inEnvironment,
                          QDemonRenderContext &inRenderContext,
-                         QVector2D inPresScale, SScene::RenderClearCommand inClearBuffer,
+                         QVector2D inPresScale,
+                         SScene::RenderClearCommand inClearBuffer,
                          QVector3D inClearColor,
                          const SRenderInstanceId instanceId) override;
     IGraphObjectPickQuery *GetGraphObjectPickQuery(const SRenderInstanceId) override { return &m_PickQuery; }
-    bool Pick(const QVector2D & /*inMouseCoords*/, const QVector2D & /*inViewportDimensions*/,
+    bool Pick(const QVector2D & /*inMouseCoords*/,
+              const QVector2D & /*inViewportDimensions*/,
               const SRenderInstanceId) override
     {
         return false;
     }
     void addCallback(IOffscreenRendererCallback *cb) override
     {
-
+        Q_UNUSED(cb)
     }
     // Used for RTTI purposes so we can safely static-cast an offscreen renderer to a
     // CSubPresentationRenderer
     static const char *GetRendererName() { return "SubPresentation"; }
     QString GetOffscreenRendererType() override { return m_OffscreenRendererType; }
 
-    QDemonRenderPickResult DoGraphQueryPick(const QVector2D &inMouseCoords,
-                                           const QVector2D &inViewportDimensions,
-                                           bool inPickEverything);
+    QDemonRenderPickResult DoGraphQueryPick(const QVector2D &inMouseCoords, const QVector2D &inViewportDimensions, bool inPickEverything);
 };
 QT_END_NAMESPACE
 #endif
