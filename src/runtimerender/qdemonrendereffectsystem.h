@@ -37,7 +37,7 @@
 QT_BEGIN_NAMESPACE
 struct SEffect;
 struct SEffectContext;
-struct IEffectSystem;
+class IEffectSystem;
 class IResourceManager;
 
 namespace dynamic {

@@ -137,6 +137,8 @@ inline quint32 getSizeofShaderDataType(QDemonRenderShaderDataTypes::Enum value)
     case QDemonRenderShaderDataTypes::DataBuffer:          //QDemonRenderDataBufferPtr
         return sizeof(QDemonRenderDataBufferPtr);
     }
+    Q_UNREACHABLE();
+    return 0;
 }
 
 inline const char *GetShaderDatatypeName(QDemonRenderShaderDataTypes::Enum inValue)

@@ -37,7 +37,7 @@
 QT_BEGIN_NAMESPACE
 struct SLayer;
 struct SEffectContext;
-struct IEffectSystem;
+class IEffectSystem;
 
 // Effects are post-render effect applied to the layer.  There can be more than one of
 // them and they have completely variable properties.

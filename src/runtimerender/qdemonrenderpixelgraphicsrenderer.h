@@ -39,7 +39,7 @@ QT_BEGIN_NAMESPACE
 // Colors are expected to be non-premultiplied, we use ROP
 // hardware to do the alpha multiply into the color.
 
-class SPGGraphObject;
+struct SPGGraphObject;
 class IQDemonRenderContext;
 class IPixelGraphicsRenderer
 {
