@@ -31,6 +31,7 @@
 #define QDEMON_OBJECT_RENDER_PLUGIN_H
 
 #include <QtDemonRuntimeRender/qtdemonruntimerenderglobal.h>
+#include <QtCore/qbytearray.h>
 
 /*
  *	Below are the definitions required in order to write a render plugin for UIComposer.
@@ -93,7 +94,7 @@ typedef void *TRenderPluginClassPtr;
 // We will pass the componentized properties to the instance ptr.
 typedef struct _RenderPluginPropertyUpdate
 {
-    const char *m_PropName;
+    QByteArray m_PropName;
     enum QDemonRenderPluginPropertyTypes m_PropertyType;
 
     // Is either a float or a long or a const char* depending on the property type.

@@ -100,7 +100,7 @@ public:
     \brief expands the volume to include v
     \param v Point to expand to.
     */
-    Q_ALWAYS_INLINE void include(const QVector3D &v);
+    void include(const QVector3D &v);
 
     /**
     \brief expands the volume to include b.

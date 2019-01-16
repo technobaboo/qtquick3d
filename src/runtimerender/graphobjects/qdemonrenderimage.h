@@ -27,7 +27,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#pragma once
 #ifndef QDEMON_RENDER_IMAGE_H
 #define QDEMON_RENDER_IMAGE_H
 
@@ -36,7 +35,8 @@
 #include <QtDemonRuntimeRender/qdemonrenderimagetexturedata.h>
 #include <QtDemonRuntimeRender/qtdemonruntimerenderglobal.h>
 #include <QtDemonRuntimeRender/qdemonrenderplugingraphobject.h>
-#include <QtDemonRuntimeRender/qdemonrenderplugin.h>
+// TODO: Add back later
+//#include <QtDemonRuntimeRender/qdemonrenderplugin.h>
 #include <QtDemonRender/qdemonrendertexture2d.h>
 
 #include <QtGui/QVector2D>
@@ -64,7 +64,7 @@ struct Q_DEMONRUNTIMERENDER_EXPORT SImage : public SGraphObject
     // Presentation id.
     QString m_OffscreenRendererId; // overrides source path if available
     SRenderPlugin *m_RenderPlugin; // Overrides everything if available.
-    IOffscreenRenderer *m_LastFrameOffscreenRenderer;
+    QSharedPointer<IOffscreenRenderer> m_LastFrameOffscreenRenderer;
     SGraphObject *m_Parent;
 
     SImageTextureData m_TextureData;
@@ -89,7 +89,7 @@ struct Q_DEMONRUNTIMERENDER_EXPORT SImage : public SGraphObject
     // Or finds the image.
     // and sets up the texture transform
     bool ClearDirty(IBufferManager &inBufferManager, IOffscreenRenderManager &inRenderManager,
-                    IRenderPluginManager &pluginManager, bool forIbl = false);
+                    /*IRenderPluginManager &pluginManager,*/ bool forIbl = false);
 
     void CalculateTextureTransform();
 

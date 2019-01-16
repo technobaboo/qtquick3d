@@ -27,7 +27,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#pragma once
 #ifndef QDEMON_RENDER_CUSTOM_MATERIAL_H
 #define QDEMON_RENDER_CUSTOM_MATERIAL_H
 
@@ -95,7 +94,7 @@ public:
         m_EmissiveMap2 = nullptr;
         m_DisplacementMap = nullptr;
         m_DisplaceAmount = 0.0;
-        m_ShaderKeyValues = (SCustomMaterialShaderKeyFlags)inKey;
+        m_ShaderKeyValues = static_cast<SCustomMaterialShaderKeyFlags>(inKey);
         m_LayerCount = inLayerCount;
     }
 

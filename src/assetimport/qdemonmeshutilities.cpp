@@ -367,7 +367,7 @@ quint32 NextIndex(const quint8 *inBaseAddress, const OffsetDataRef<quint8> data,
         const TDataType *dataPtr(reinterpret_cast<const TDataType *>(data.begin(inBaseAddress)));
         return dataPtr[idx];
     } else {
-        QT3DS_ASSERT(false);
+        Q_UNREACHABLE();
         return 0;
     }
 }
