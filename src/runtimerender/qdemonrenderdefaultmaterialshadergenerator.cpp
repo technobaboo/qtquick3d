@@ -315,7 +315,7 @@ struct SShaderGenerator : public IDefaultMaterialShaderGenerator
     {
         m_ImageStem = "image";
         char buf[16];
-        _snprintf(buf, 16, "%d", int(imageIdx));
+        qsnprintf(buf, 16, "%d", int(imageIdx));
         m_ImageStem.append(buf);
         m_ImageStem.append("_");
 
@@ -335,7 +335,7 @@ struct SShaderGenerator : public IDefaultMaterialShaderGenerator
     {
         m_TexCoordTemp = "varTexCoord";
         char buf[16];
-        _snprintf(buf, 16, "%d", int(uvSet));
+        qsnprintf(buf, 16, "%d", int(uvSet));
         m_TexCoordTemp.append(buf);
     }
 
@@ -520,7 +520,7 @@ struct SShaderGenerator : public IDefaultMaterialShaderGenerator
         m_ShadowMapStem = "shadowmap";
         m_ShadowCubeStem = "shadowcube";
         char buf[16];
-        _snprintf(buf, 16, "%d", int(lightIdx));
+        qsnprintf(buf, 16, "%d", int(lightIdx));
         m_ShadowMapStem.append(buf);
         m_ShadowCubeStem.append(buf);
         m_ShadowMatrixStem = m_ShadowMapStem;
@@ -627,7 +627,7 @@ struct SShaderGenerator : public IDefaultMaterialShaderGenerator
     {
         if (m_LightsAsSeparateUniforms) {
             char buf[16];
-            _snprintf(buf, 16, "light_%d", int(lightIdx));
+            qsnprintf(buf, 16, "light_%d", int(lightIdx));
             m_LightStem = buf;
             m_LightColor = m_LightStem;
             m_LightColor.append("_diffuse");
@@ -651,7 +651,7 @@ struct SShaderGenerator : public IDefaultMaterialShaderGenerator
         } else {
             m_LightStem = "lights";
             char buf[16];
-            _snprintf(buf, 16, "[%d].", int(lightIdx));
+            qsnprintf(buf, 16, "[%d].", int(lightIdx));
             m_LightStem.append(buf);
 
             m_LightColor = m_LightStem;

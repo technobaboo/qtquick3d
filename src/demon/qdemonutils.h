@@ -76,10 +76,10 @@ void Q_DEMON_EXPORT memSet(void *ptr, quint8 value, size_t size);
 
 inline Q_DEMON_EXPORT const char *nonNull(const char *src);
 
-inline Q_DEMON_EXPORT float radToDeg(const float a);
-inline Q_DEMON_EXPORT double radToDeg(const double a);
-inline Q_DEMON_EXPORT float degToRad(const float a);
-inline Q_DEMON_EXPORT double degToRad(const double a);
+Q_DEMON_EXPORT float radToDeg(const float a);
+Q_DEMON_EXPORT double radToDeg(const double a);
+Q_DEMON_EXPORT float degToRad(const float a);
+Q_DEMON_EXPORT double degToRad(const double a);
 
 namespace IOStream {
 struct SeekPosition

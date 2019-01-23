@@ -53,12 +53,12 @@ uint qHash(const TStrStrPair &item)
     return qHash(item.first) ^ qHash(item.second);
 }
 
-uint qHash(const dynamic::SShaderMapKey &inKey)
+namespace dynamic {
+
+uint qHash(const SDynamicShaderMapKey &inKey)
 {
     return inKey.m_HashCode;
 }
-
-namespace dynamic {
 
 quint32 SCommand::GetSizeofCommand(const SCommand &inCommand)
 {
@@ -617,7 +617,7 @@ typedef QHash<QString, QSharedPointer<SDynamicObjClassImpl>> TStringClassMap;
 typedef QHash<QString, QByteArray> TPathDataMap;
 typedef QHash<QString, SDynamicObjectShaderInfo> TShaderInfoMap;
 typedef QSet<QString> TPathSet;
-typedef QHash<dynamic::SShaderMapKey, TShaderAndFlags> TShaderMap;
+typedef QHash<dynamic::SDynamicShaderMapKey, TShaderAndFlags> TShaderMap;
 
 struct SDynamicObjectSystemCoreImpl : public IDynamicObjectSystem
 {
@@ -1397,7 +1397,7 @@ struct SDynamicObjectSystemImpl : public IDynamicObjectSystem
                                      const dynamic::SDynamicShaderProgramFlags &inFlags,
                                      bool inForceCompilation) override
     {
-        dynamic::SShaderMapKey shaderMapKey(TStrStrPair(inPath, inProgramMacro), inFeatureSet, inFlags.m_TessMode, inFlags.m_WireframeMode);
+        dynamic::SDynamicShaderMapKey shaderMapKey(TStrStrPair(inPath, inProgramMacro), inFeatureSet, inFlags.m_TessMode, inFlags.m_WireframeMode);
         auto theInserter = m_ShaderMap.find(shaderMapKey);
         const bool found = (theInserter != m_ShaderMap.end());
 
@@ -1451,7 +1451,7 @@ struct SDynamicObjectSystemImpl : public IDynamicObjectSystem
 
         QString theProgramMacro = m_ShaderKeyBuilder;
 
-        const dynamic::SShaderMapKey shaderMapKey(TStrStrPair(inPath, theProgramMacro), inFeatureSet, theFlags.m_TessMode, theFlags.m_WireframeMode);
+        const dynamic::SDynamicShaderMapKey shaderMapKey(TStrStrPair(inPath, theProgramMacro), inFeatureSet, theFlags.m_TessMode, theFlags.m_WireframeMode);
         const TShaderAndFlags shaderFlags;
         auto theInserter = m_ShaderMap.find(shaderMapKey);
         const bool found = theInserter != m_ShaderMap.end();

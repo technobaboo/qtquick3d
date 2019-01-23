@@ -27,7 +27,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#pragma once
 #ifndef QDEMON_RENDER_CUSTOM_MATERIAL_SHADER_GENERATOR_H
 #define QDEMON_RENDER_CUSTOM_MATERIAL_SHADER_GENERATOR_H
 #include <QtDemonRuntimeRender/qdemonrendermaterialshadergenerator.h>

@@ -507,7 +507,7 @@ struct SShaderGenerator : public ICustomMaterialShaderGenerator
             else
                 lightName = "lights";
             char buf[16];
-            _snprintf(buf, 16, "[%d]", int(shadeIdx));
+            qsnprintf(buf, 16, "[%d]", int(shadeIdx));
             lightName.append(buf);
 
             QSharedPointer<SShaderLightProperties> theNewEntry(new SShaderLightProperties(SShaderLightProperties::CreateLightEntry(inShader)));
@@ -927,7 +927,7 @@ struct SShaderGenerator : public ICustomMaterialShaderGenerator
 
         char buf[16];
         for (quint32 idx = 0; idx < Material().m_LayerCount; idx++) {
-            _snprintf(buf, 16, "[%d]", idx);
+            qsnprintf(buf, 16, "[%d]", idx);
             inFragmentShader << "  layers" << buf << ".base += " << finalValue;
             inFragmentShader << "  layers" << buf << ".layer += " << finalValue;
         }

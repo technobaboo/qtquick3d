@@ -1785,6 +1785,11 @@ struct SPathManager : public IPathManager, public QEnableSharedFromThis<SPathMan
 };
 }
 
+IPathManagerCore::~IPathManagerCore()
+{
+
+}
+
 QVector2D IPathManagerCore::GetControlPointFromAngleDistance(QVector2D inPosition, float inIncomingAngle,
                                                              float inIncomingDistance)
 {

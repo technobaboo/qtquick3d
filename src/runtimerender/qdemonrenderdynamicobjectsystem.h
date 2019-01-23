@@ -53,14 +53,14 @@ typedef QPair<QString, QString> TStrStrPair;
 
 namespace dynamic {
 
-struct SShaderMapKey
+struct SDynamicShaderMapKey
 {
     TStrStrPair m_Name;
     QVector<SShaderPreprocessorFeature> m_Features;
     TessModeValues::Enum m_TessMode;
     bool m_WireframeMode;
     size_t m_HashCode;
-    SShaderMapKey(TStrStrPair inName, TShaderFeatureSet inFeatures, TessModeValues::Enum inTessMode,
+    SDynamicShaderMapKey(TStrStrPair inName, TShaderFeatureSet inFeatures, TessModeValues::Enum inTessMode,
                   bool inWireframeMode)
         : m_Name(inName)
         , m_TessMode(inTessMode)
@@ -74,7 +74,7 @@ struct SShaderMapKey
                 ^ HashShaderFeatureSet(m_Features)
                 ^ qHash(m_TessMode) ^ qHash(m_WireframeMode);
     }
-    bool operator==(const SShaderMapKey &inKey) const
+    bool operator==(const SDynamicShaderMapKey &inKey) const
     {
         return m_Name == inKey.m_Name &&
                m_Features == inKey.m_Features &&
@@ -313,6 +313,7 @@ public:
 
     static QString GetShaderCodeLibraryDirectory() { return QStringLiteral("res/effectlib"); }
 };
+
 QT_END_NAMESPACE
 
 #endif

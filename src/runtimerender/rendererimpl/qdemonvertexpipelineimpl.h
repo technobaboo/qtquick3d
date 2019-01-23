@@ -84,14 +84,14 @@ struct SVertexPipelineImpl : public IDefaultMaterialVertexPipeline
     // Trues true if the code was *not* set.
     bool SetCode(GenerationFlagValues::Enum inCode)
     {
-        if (((quint32)m_GenerationFlags & inCode) != 0)
+        if ((quint32(m_GenerationFlags) & inCode) != 0)
             return true;
         m_GenerationFlags |= inCode;
         return false;
     }
     bool HasCode(GenerationFlagValues::Enum inCode)
     {
-        return ((quint32)(m_GenerationFlags & inCode)) != 0;
+        return ((quint32(m_GenerationFlags) & inCode)) != 0;
     }
     QSharedPointer<IShaderProgramGenerator> ProgramGenerator() { return m_ProgramGenerator; }
 

@@ -27,7 +27,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#pragma once
 #ifndef QDEMON_RENDERABLE_IMAGE_H
 #define QDEMON_RENDERABLE_IMAGE_H
 

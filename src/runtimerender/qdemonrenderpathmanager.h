@@ -27,7 +27,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#pragma once
 #ifndef QDEMON_RENDER_PATH_MANAGER_H
 #define QDEMON_RENDER_PATH_MANAGER_H
 
@@ -73,6 +72,7 @@ public:
     SetPathSubPathData(const SPathSubPath &inPathSubPath,
                        QDemonConstDataRef<SPathAnchorPoint> inPathSubPathAnchorPoints) = 0;
 
+    virtual ~IPathManagerCore();
     virtual QDemonDataRef<SPathAnchorPoint>
     GetPathSubPathBuffer(const SPathSubPath &inPathSubPath) = 0;
     // Marks the PathSubPath anchor points as dirty.  This will mean rebuilding any PathSubPath
