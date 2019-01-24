@@ -104,11 +104,11 @@ public:
                                                              SShaderDefaultMaterialKey inShaderDescription,
                                                              IShaderStageGenerator &inVertexPipeline,
                                                              TShaderFeatureSet inFeatureSet,
-                                                             QDemonDataRef<SLight *> inLights,
+                                                             const QVector<SLight *> &inLights,
                                                              SRenderableImage *inFirstImage,
                                                              bool inHasTransparency,
                                                              const QString &inVertexPipelineName,
-                                                             const QString &inCustomMaterialName) override = 0;
+                                                             const QString &inCustomMaterialName = QString()) override = 0;
 
     // Also sets the blend function on the render context.
     virtual void SetMaterialProperties(QSharedPointer<QDemonRenderShaderProgram> inProgram,

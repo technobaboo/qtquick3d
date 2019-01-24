@@ -47,11 +47,11 @@ struct SText : public SNode, public STextRenderInfo
     // These properties can change every frame with no additional cost.
     QVector3D m_TextColor;
     // Setup and utilized by the rendering system
-    QDemonRenderTexture2D *m_TextTexture;
+    QSharedPointer<QDemonRenderTexture2D> m_TextTexture;
     STextTextureDetails m_TextTextureDetails;
     // used for nv path rendering
-    QDemonRenderPathFontItem *m_PathFontItem;
-    QDemonRenderPathFontSpecification *m_PathFontDetails;
+    QSharedPointer<QDemonRenderPathFontItem> m_PathFontItem;
+    QSharedPointer<QDemonRenderPathFontSpecification> m_PathFontDetails;
 
     QDemonBounds3 m_Bounds;
 

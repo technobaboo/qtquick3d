@@ -35,6 +35,7 @@
 #include <QtDemonRuntimeRender/qdemonrendershadercodegeneratorv2.h>
 #include <QtDemonRender/qdemonrendershaderprogram.h>
 #include <QtDemon/qdemonutils.h>
+#include <QtDemon/qdemondataref.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -44,8 +45,8 @@ struct SWidgetBBox : public IRenderWidget
 {
     QDemonBounds3 m_Bounds;
     QVector3D m_Color;
-    QDemonRenderVertexBuffer *m_BoxVertexBuffer;
-    QDemonRenderIndexBuffer *m_BoxIndexBuffer;
+    QSharedPointer<QDemonRenderVertexBuffer> m_BoxVertexBuffer;
+    QSharedPointer<QDemonRenderIndexBuffer> m_BoxIndexBuffer;
     QSharedPointer<QDemonRenderInputAssembler> m_BoxInputAssembler;
     QSharedPointer<QDemonRenderShaderProgram> m_BoxShader;
     QString m_ItemName;
@@ -62,14 +63,14 @@ struct SWidgetBBox : public IRenderWidget
 
     void SetupBoxShader(IRenderWidgetContext &inContext)
     {
-        m_BoxShader.reset(inContext.GetShader(m_ItemName));
+        m_BoxShader = inContext.GetShader(m_ItemName);
         if (!m_BoxShader) {
-            IShaderProgramGenerator &theGenerator(inContext.GetProgramGenerator());
-            theGenerator.BeginProgram();
+            QSharedPointer<IShaderProgramGenerator> theGenerator(inContext.GetProgramGenerator());
+            theGenerator->BeginProgram();
             IShaderStageGenerator &theVertexGenerator(
-                        *theGenerator.GetStage(ShaderGeneratorStages::Vertex));
+                        *theGenerator->GetStage(ShaderGeneratorStages::Vertex));
             IShaderStageGenerator &theFragmentGenerator(
-                        *theGenerator.GetStage(ShaderGeneratorStages::Fragment));
+                        *theGenerator->GetStage(ShaderGeneratorStages::Fragment));
 
             theVertexGenerator.AddIncoming("attr_pos", "vec3");
             theVertexGenerator.AddUniform("model_view_projection", "mat4");
@@ -82,17 +83,15 @@ struct SWidgetBBox : public IRenderWidget
             theFragmentGenerator.Append("\tgl_FragColor.rgb = output_color;");
             theFragmentGenerator.Append("\tgl_FragColor.a = 1.0;");
             theFragmentGenerator.Append("}");
-            m_BoxShader.reset(inContext.CompileAndStoreShader(m_ItemName));
+            m_BoxShader = inContext.CompileAndStoreShader(m_ItemName);
         }
     }
 
     void SetupBoundingBoxGraphicsObjects(IRenderWidgetContext &inContext,
                                          QDemonDataRef<QVector3D> thePoints)
     {
-        QDemonRenderVertexBufferEntry theEntry(
-                    "attr_pos", QDemonRenderComponentTypes::Float16, 3);
-        m_BoxVertexBuffer = &inContext.GetOrCreateVertexBuffer(
-                    m_ItemName, 3 * sizeof(float), toU8DataRef(thePoints.begin(), thePoints.size()));
+        QDemonRenderVertexBufferEntry theEntry("attr_pos", QDemonRenderComponentTypes::Float16, 3);
+        m_BoxVertexBuffer = inContext.GetOrCreateVertexBuffer(m_ItemName, 3 * sizeof(float), toU8DataRef(thePoints.begin(), thePoints.size()));
         m_BoxIndexBuffer = inContext.GetIndexBuffer(m_ItemName);
         if (!m_BoxIndexBuffer) {
             // The way the bounds lays out the bounds for the box
@@ -126,21 +125,20 @@ struct SWidgetBBox : public IRenderWidget
 
                 xyZ, XyZ, xyZ, xYZ,
             };
-            m_BoxIndexBuffer = &inContext.GetOrCreateIndexBuffer(
+            m_BoxIndexBuffer = inContext.GetOrCreateIndexBuffer(
                         m_ItemName, QDemonRenderComponentTypes::UnsignedInteger8, sizeof(indexes),
                         toU8DataRef(indexes, sizeof(indexes)));
         }
 
-        m_BoxInputAssembler.reset(inContext.GetInputAssembler(m_ItemName));
+        m_BoxInputAssembler = inContext.GetInputAssembler(m_ItemName);
         if (!m_BoxInputAssembler && m_BoxIndexBuffer && m_BoxVertexBuffer) {
             // create our attribute layout
-            QDemonRenderAttribLayout *theAttribLAyout =
-                    &inContext.CreateAttributeLayout(toConstDataRef(&theEntry, 1));
+            QSharedPointer<QDemonRenderAttribLayout> theAttribLayout = inContext.CreateAttributeLayout(toConstDataRef(&theEntry, 1));
 
             quint32 strides = m_BoxVertexBuffer->GetStride();
             quint32 offsets = 0;
-            m_BoxInputAssembler.reset(&inContext.GetOrCreateInputAssembler(
-                        m_ItemName, theAttribLAyout, toConstDataRef(&m_BoxVertexBuffer, 1),
+            m_BoxInputAssembler = (inContext.GetOrCreateInputAssembler(
+                        m_ItemName, theAttribLayout, toConstDataRef(&m_BoxVertexBuffer, 1),
                         m_BoxIndexBuffer, toConstDataRef(&strides, 1), toConstDataRef(&offsets, 1)));
         }
         SetupBoxShader(inContext);
@@ -175,7 +173,7 @@ struct SWidgetBBox : public IRenderWidget
 
 struct SWidgetAxis : public IRenderWidget
 {
-    QDemonRenderVertexBuffer *m_AxisVertexBuffer;
+    QSharedPointer<QDemonRenderVertexBuffer> m_AxisVertexBuffer;
     QSharedPointer<QDemonRenderInputAssembler> m_AxisInputAssembler;
     QSharedPointer<QDemonRenderShaderProgram> m_AxisShader;
     QString m_ItemName;
@@ -190,14 +188,12 @@ struct SWidgetAxis : public IRenderWidget
 
     void SetupAxisShader(IRenderWidgetContext &inContext)
     {
-        m_AxisShader.reset(inContext.GetShader(m_ItemName));
+        m_AxisShader = inContext.GetShader(m_ItemName);
         if (!m_AxisShader) {
-            IShaderProgramGenerator &theGenerator(inContext.GetProgramGenerator());
-            theGenerator.BeginProgram();
-            IShaderStageGenerator &theVertexGenerator(
-                        *theGenerator.GetStage(ShaderGeneratorStages::Vertex));
-            IShaderStageGenerator &theFragmentGenerator(
-                        *theGenerator.GetStage(ShaderGeneratorStages::Fragment));
+            QSharedPointer<IShaderProgramGenerator> theGenerator(inContext.GetProgramGenerator());
+            theGenerator->BeginProgram();
+            IShaderStageGenerator &theVertexGenerator(*theGenerator->GetStage(ShaderGeneratorStages::Vertex));
+            IShaderStageGenerator &theFragmentGenerator(*theGenerator->GetStage(ShaderGeneratorStages::Fragment));
             theVertexGenerator.AddIncoming("attr_pos", "vec3");
             theVertexGenerator.AddIncoming("attr_color", "vec3");
             theVertexGenerator.AddOutgoing("output_color", "vec3");
@@ -211,30 +207,26 @@ struct SWidgetAxis : public IRenderWidget
             theFragmentGenerator.Append("\tgl_FragColor.rgb = output_color;");
             theFragmentGenerator.Append("\tgl_FragColor.a = 1.0;");
             theFragmentGenerator.Append("}");
-            m_AxisShader.reset(inContext.CompileAndStoreShader(m_ItemName));
+            m_AxisShader = inContext.CompileAndStoreShader(m_ItemName);
         }
     }
 
     void SetupAxesGraphicsObjects(IRenderWidgetContext &inContext, QDemonDataRef<QVector3D> theAxes)
     {
         QDemonRenderVertexBufferEntry theEntries[] = {
-            QDemonRenderVertexBufferEntry("attr_pos",
-            QDemonRenderComponentTypes::Float16, 3),
-            QDemonRenderVertexBufferEntry("attr_color",
-            QDemonRenderComponentTypes::Float16, 3, 12),
+            QDemonRenderVertexBufferEntry("attr_pos", QDemonRenderComponentTypes::Float16, 3),
+            QDemonRenderVertexBufferEntry("attr_color", QDemonRenderComponentTypes::Float16, 3, 12),
         };
 
-        m_AxisVertexBuffer = &inContext.GetOrCreateVertexBuffer(
-                    m_ItemName, 6 * sizeof(float), toU8DataRef(theAxes.begin(), theAxes.size()));
+        m_AxisVertexBuffer = inContext.GetOrCreateVertexBuffer(m_ItemName, 6 * sizeof(float), toU8DataRef(theAxes.begin(), theAxes.size()));
 
         if (!m_AxisInputAssembler && m_AxisVertexBuffer) {
             // create our attribute layout
-            QDemonRenderAttribLayout *theAttribLAyout =
-                    &inContext.CreateAttributeLayout(toConstDataRef(theEntries, 2));
+            QSharedPointer<QDemonRenderAttribLayout> theAttribLAyout = inContext.CreateAttributeLayout(toConstDataRef(theEntries, 2));
 
             quint32 strides = m_AxisVertexBuffer->GetStride();
             quint32 offsets = 0;
-            m_AxisInputAssembler.reset(&inContext.GetOrCreateInputAssembler(
+            m_AxisInputAssembler = (inContext.GetOrCreateInputAssembler(
                         m_ItemName, theAttribLAyout, toConstDataRef(&m_AxisVertexBuffer, 1), nullptr,
                         toConstDataRef(&strides, 1), toConstDataRef(&offsets, 1)));
         }
@@ -318,15 +310,14 @@ IRenderWidget::~IRenderWidget()
 
 }
 
-IRenderWidget &IRenderWidget::CreateBoundingBoxWidget(SNode &inNode, const QDemonBounds3 &inBounds,
-                                                      const QVector3D &inColor)
+QSharedPointer<IRenderWidget> IRenderWidget::CreateBoundingBoxWidget(SNode &inNode, const QDemonBounds3 &inBounds, const QVector3D &inColor)
 {
-    return *new SWidgetBBox(inNode, inBounds, inColor);
+    return QSharedPointer<IRenderWidget>(new SWidgetBBox(inNode, inBounds, inColor));
 }
 
-IRenderWidget &IRenderWidget::CreateAxisWidget(SNode &inNode)
+QSharedPointer<IRenderWidget> IRenderWidget::CreateAxisWidget(SNode &inNode)
 {
-    return *new SWidgetAxis(inNode);
+    return QSharedPointer<IRenderWidget>(new SWidgetAxis(inNode));
 }
 
 IRenderWidgetContext::~IRenderWidgetContext()

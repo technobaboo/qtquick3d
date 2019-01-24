@@ -36,7 +36,7 @@ namespace {
 
 struct SRenderList : public IRenderList
 {
-    typedef QPair<quint32, IRenderTask *> TTaskIdTaskPair;
+    typedef QPair<quint32, QSharedPointer<IRenderTask>> TTaskIdTaskPair;
     typedef QVector<TTaskIdTaskPair> TTaskList;
 
     TTaskList m_Tasks;
@@ -57,11 +57,11 @@ struct SRenderList : public IRenderList
         m_Tasks.clear();
     }
 
-    quint32 AddRenderTask(IRenderTask &inTask) override
+    quint32 AddRenderTask(QSharedPointer<IRenderTask> inTask) override
     {
         quint32 taskId = m_NextTaskId;
         ++m_NextTaskId;
-        m_Tasks.push_back(QPair<quint32, IRenderTask *>(taskId, &inTask));
+        m_Tasks.push_back(QPair<quint32, QSharedPointer<IRenderTask>>(taskId, inTask));
         return taskId;
     }
 

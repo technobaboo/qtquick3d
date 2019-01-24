@@ -211,7 +211,7 @@ public:
 
     // render a screen aligned 2D text
     virtual void RenderText2D(float x, float y, QDemonOption<QVector3D> inColor,
-                              const char *text) = 0;
+                              const QString &text) = 0;
     // render Gpu profiler values
     virtual void RenderGpuProfilerStats(float x, float y,
                                         QDemonOption<QVector3D> inColor) = 0;

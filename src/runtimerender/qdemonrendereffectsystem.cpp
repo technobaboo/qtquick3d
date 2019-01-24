@@ -883,7 +883,7 @@ struct SEffectSystem : public IEffectSystem, public QEnableSharedFromThis<SEffec
         }
     }
 
-    QSharedPointer<QDemonRenderTexture2D> FindTexture(QSharedPointer<SEffect> inEffect, QString inName)
+    QSharedPointer<QDemonRenderTexture2D> FindTexture(SEffect *inEffect, QString inName)
     {
         if (inEffect->m_Context) {
             SEffectContext &theContext(*inEffect->m_Context);
@@ -967,7 +967,7 @@ struct SEffectSystem : public IEffectSystem, public QEnableSharedFromThis<SEffec
         return theInsertResult.value();
     }
 
-    void DoApplyInstanceValue(QSharedPointer<SEffect> inEffect, quint8 *inDataPtr, QString inPropertyName,
+    void DoApplyInstanceValue(SEffect *inEffect, quint8 *inDataPtr, QString inPropertyName,
                               QDemonRenderShaderDataTypes::Enum inPropertyType,
                               QSharedPointer<QDemonRenderShaderProgram> inShader,
                               const SPropertyDefinition &inDefinition)
@@ -1075,7 +1075,7 @@ struct SEffectSystem : public IEffectSystem, public QEnableSharedFromThis<SEffec
         }
     }
 
-    void ApplyInstanceValue(QSharedPointer<SEffect> inEffect,
+    void ApplyInstanceValue(SEffect *inEffect,
                             QSharedPointer<SEffectClass> inClass,
                             QSharedPointer<QDemonRenderShaderProgram> inShader,
                             const SApplyInstanceValue &inCommand)
@@ -1111,7 +1111,7 @@ struct SEffectSystem : public IEffectSystem, public QEnableSharedFromThis<SEffec
         }
     }
 
-    void ApplyValue(QSharedPointer<SEffect> inEffect,
+    void ApplyValue(SEffect *inEffect,
                     QSharedPointer<SEffectClass> inClass,
                     QSharedPointer<QDemonRenderShaderProgram> inShader,
                     const SApplyValue &inCommand)
@@ -1147,7 +1147,7 @@ struct SEffectSystem : public IEffectSystem, public QEnableSharedFromThis<SEffec
     }
 
     // This has the potential to change the source texture for the current render pass
-    SEffectTextureData ApplyBufferValue(QSharedPointer<SEffect> inEffect,
+    SEffectTextureData ApplyBufferValue(SEffect *inEffect,
                                         QSharedPointer<QDemonRenderShaderProgram> inShader,
                                         const SApplyBufferValue &inCommand,
                                         QSharedPointer<QDemonRenderTexture2D> inSourceTexture,
@@ -1219,7 +1219,7 @@ struct SEffectSystem : public IEffectSystem, public QEnableSharedFromThis<SEffec
         }
     }
 
-    void ApplyDepthValue(QSharedPointer<SEffect> inEffect,
+    void ApplyDepthValue(SEffect *inEffect,
                          QSharedPointer<QDemonRenderShaderProgram> inShader,
                          const SApplyDepthValue &inCommand,
                          QSharedPointer<QDemonRenderTexture2D> inTexture)
@@ -1242,7 +1242,7 @@ struct SEffectSystem : public IEffectSystem, public QEnableSharedFromThis<SEffec
         }
     }
 
-    void ApplyImageValue(QSharedPointer<SEffect> inEffect,
+    void ApplyImageValue(SEffect *inEffect,
                          QSharedPointer<QDemonRenderShaderProgram> inShader,
                          const SApplyImageValue &inCommand)
     {
@@ -1296,7 +1296,7 @@ struct SEffectSystem : public IEffectSystem, public QEnableSharedFromThis<SEffec
         }
     }
 
-    void ApplyDataBufferValue(QSharedPointer<SEffect> inEffect,
+    void ApplyDataBufferValue(SEffect *inEffect,
                               QSharedPointer<QDemonRenderShaderProgram> inShader,
                               const SApplyDataBufferValue &inCommand)
     {
@@ -1460,7 +1460,7 @@ struct SEffectSystem : public IEffectSystem, public QEnableSharedFromThis<SEffec
         }
     }
 
-    void DoRenderEffect(QSharedPointer<SEffect> inEffect,
+    void DoRenderEffect(SEffect *inEffect,
                         QSharedPointer<SEffectClass> inClass,
                         QSharedPointer<QDemonRenderTexture2D> inSourceTexture,
                         QMatrix4x4 &inMVP,

@@ -34,8 +34,8 @@
 QT_BEGIN_NAMESPACE
 
 void CRendererUtil::ResolveMutisampleFBOColorOnly(QSharedPointer<IResourceManager> inManager,
-                                                  QSharedPointer<CResourceTexture2D> ioResult,
-                                                  QSharedPointer<QDemonRenderContext> inRenderContext, quint32 inWidth,
+                                                  CResourceTexture2D &ioResult,
+                                                  QDemonRenderContext &inRenderContext, quint32 inWidth,
                                                   quint32 inHeight,
                                                   QDemonRenderTextureFormats::Enum inColorFormat,
                                                   QSharedPointer<QDemonRenderFrameBuffer> inSourceFBO)
@@ -49,8 +49,8 @@ void CRendererUtil::ResolveMutisampleFBOColorOnly(QSharedPointer<IResourceManage
     QDemonRenderClearFlags copyFlags(QDemonRenderClearValues::Color);
 
     // get / create resolve targets and attach
-    ioResult->EnsureTexture(inWidth, inHeight, inColorFormat);
-    theResolveFB->Attach(QDemonRenderFrameBufferAttachments::Color0, ioResult->GetTexture());
+    ioResult.EnsureTexture(inWidth, inHeight, inColorFormat);
+    theResolveFB->Attach(QDemonRenderFrameBufferAttachments::Color0, ioResult.GetTexture());
     // CN - I don't believe we have to resolve the depth.
     // The reason is we render the depth texture specially unresolved.  So there is no need to
     // resolve
@@ -61,16 +61,16 @@ void CRendererUtil::ResolveMutisampleFBOColorOnly(QSharedPointer<IResourceManage
     // 3. Do the blit from MSAA to non MSAA
 
     // 2.
-    inRenderContext->SetReadTarget(inSourceFBO);
-    inRenderContext->SetReadBuffer(QDemonReadFaces::Color0);
+    inRenderContext.SetReadTarget(inSourceFBO);
+    inRenderContext.SetReadBuffer(QDemonReadFaces::Color0);
     // 3.
-    inRenderContext->BlitFramebuffer(0, 0, inWidth, inHeight, 0, 0, inWidth, inHeight, copyFlags,
+    inRenderContext.BlitFramebuffer(0, 0, inWidth, inHeight, 0, 0, inWidth, inHeight, copyFlags,
                                     QDemonRenderTextureMagnifyingOp::Nearest);
 }
 
 void CRendererUtil::ResolveSSAAFBOColorOnly(QSharedPointer<IResourceManager> inManager,
-                                            QSharedPointer<CResourceTexture2D> ioResult, quint32 outWidth,
-                                            quint32 outHeight, QSharedPointer<QDemonRenderContext> inRenderContext,
+                                            CResourceTexture2D &ioResult, quint32 outWidth,
+                                            quint32 outHeight, QDemonRenderContext &inRenderContext,
                                             quint32 inWidth, quint32 inHeight,
                                             QDemonRenderTextureFormats::Enum inColorFormat,
                                             QSharedPointer<QDemonRenderFrameBuffer> inSourceFBO)
@@ -84,8 +84,8 @@ void CRendererUtil::ResolveSSAAFBOColorOnly(QSharedPointer<IResourceManager> inM
     QDemonRenderClearFlags copyFlags(QDemonRenderClearValues::Color);
 
     // get / create resolve targets and attach
-    ioResult->EnsureTexture(outWidth, outHeight, inColorFormat);
-    theResolveFB->Attach(QDemonRenderFrameBufferAttachments::Color0, ioResult->GetTexture());
+    ioResult.EnsureTexture(outWidth, outHeight, inColorFormat);
+    theResolveFB->Attach(QDemonRenderFrameBufferAttachments::Color0, ioResult.GetTexture());
     // CN - I don't believe we have to resolve the depth.
     // The reason is we render the depth texture specially unresolved.  So there is no need to
     // resolve
@@ -96,10 +96,10 @@ void CRendererUtil::ResolveSSAAFBOColorOnly(QSharedPointer<IResourceManager> inM
     // 3. Do the blit from High res to low res buffer
 
     // 2.
-    inRenderContext->SetReadTarget(inSourceFBO);
-    inRenderContext->SetReadBuffer(QDemonReadFaces::Color0);
+    inRenderContext.SetReadTarget(inSourceFBO);
+    inRenderContext.SetReadBuffer(QDemonReadFaces::Color0);
     // 3.
-    inRenderContext->BlitFramebuffer(0, 0, inWidth, inHeight, 0, 0, outWidth, outHeight, copyFlags,
+    inRenderContext.BlitFramebuffer(0, 0, inWidth, inHeight, 0, 0, outWidth, outHeight, copyFlags,
                                     QDemonRenderTextureMagnifyingOp::Linear);
 }
 

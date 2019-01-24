@@ -272,7 +272,7 @@ struct SShaderGenerator : public ICustomMaterialShaderGenerator
     SShaderDefaultMaterialKey *m_CurrentKey;
     IDefaultMaterialVertexPipeline *m_CurrentPipeline;
     TShaderFeatureSet m_CurrentFeatureSet;
-    QDemonDataRef<SLight *> m_Lights;
+    QVector<SLight *> m_Lights;
     SRenderableImage *m_FirstImage;
     bool m_HasTransparency;
 
@@ -548,8 +548,8 @@ struct SShaderGenerator : public ICustomMaterialShaderGenerator
                              const SLayer & /*inLayer*/,
                              SCamera &inCamera,
                              QVector3D,
-                             QDemonDataRef<SLight *> inLights,
-                             QDemonDataRef<QVector3D>,
+                             QVector<SLight *> &inLights,
+                             QVector<QVector3D> &,
                              QSharedPointer<QDemonRenderShadowMap> inShadowMaps)
     {
         QSharedPointer<SShaderGeneratorGeneratedShader> theShader(GetShaderForProgram(inProgram));
@@ -1145,7 +1145,7 @@ struct SShaderGenerator : public ICustomMaterialShaderGenerator
                    SShaderDefaultMaterialKey inShaderDescription,
                    IShaderStageGenerator &inVertexPipeline,
                    TShaderFeatureSet inFeatureSet,
-                   QDemonDataRef<SLight *> inLights,
+                   const QVector<SLight *> &inLights,
                    SRenderableImage *inFirstImage,
                    bool inHasTransparency,
                    const QString &inShaderPrefix,

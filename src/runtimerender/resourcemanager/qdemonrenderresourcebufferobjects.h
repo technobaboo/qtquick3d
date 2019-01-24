@@ -50,6 +50,7 @@ public:
     void ReleaseFrameBuffer();
 
     QSharedPointer<IResourceManager> GetResourceManager() { return m_ResourceManager; }
+    QSharedPointer<QDemonRenderFrameBuffer> GetFrameBuffer() { return m_FrameBuffer; }
     operator QSharedPointer<QDemonRenderFrameBuffer> () { return m_FrameBuffer; }
     QSharedPointer<QDemonRenderFrameBuffer> operator->()
     {

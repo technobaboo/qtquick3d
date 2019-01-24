@@ -56,7 +56,7 @@ struct Q_DEMONRUNTIMERENDER_EXPORT SModel : public SNode
 
     void AddMaterial(SGraphObject &inMaterial);
 
-    QDemonBounds3 GetModelBounds(IBufferManager &inManager) const;
+    QDemonBounds3 GetModelBounds(QSharedPointer<IBufferManager> inManager) const;
 
     // Generic method used during serialization
     // to remap string and object pointers

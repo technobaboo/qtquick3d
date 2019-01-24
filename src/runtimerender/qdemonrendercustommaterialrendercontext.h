@@ -47,7 +47,7 @@ struct SCustomMaterialRenderContext
     // so that information can be set once for all the shaders.
     const SLayer &m_Layer;
     const SLayerRenderData &m_LayerData;
-    QDemonDataRef<SLight *> m_Lights;
+    const QVector<SLight *> &m_Lights;
     const SCamera &m_Camera;
 
     // Per-object information.
@@ -64,7 +64,7 @@ struct SCustomMaterialRenderContext
     float m_Opacity;
 
     SCustomMaterialRenderContext(
-            const SLayer &layer, const SLayerRenderData &data, QDemonDataRef<SLight *> lights,
+            const SLayer &layer, const SLayerRenderData &data, const QVector<SLight *> &lights,
             const SCamera &cam, const SModel &m, const SRenderSubset &subset, const QMatrix4x4 &mvp,
             const QMatrix4x4 &world, const QMatrix3x3 &nm, const SCustomMaterial &material,
             const QSharedPointer<QDemonRenderTexture2D> depthTex, const QSharedPointer<QDemonRenderTexture2D> aoTex,

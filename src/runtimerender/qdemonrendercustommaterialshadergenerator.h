@@ -35,6 +35,9 @@ QT_BEGIN_NAMESPACE
 
 class QDemonRenderShadowMap;
 class IQDemonRenderContext;
+
+uint qHash(const SShaderDefaultMaterialKey &key);
+
 class ICustomMaterialShaderGenerator : public IMaterialShaderGenerator
 {
 public:
@@ -50,7 +53,7 @@ public:
                                                              SShaderDefaultMaterialKey inShaderDescription,
                                                              IShaderStageGenerator &inVertexPipeline,
                                                              TShaderFeatureSet inFeatureSet,
-                                                             QDemonDataRef<SLight *> inLights,
+                                                             const QVector<SLight *> &inLights,
                                                              SRenderableImage *inFirstImage,
                                                              bool inHasTransparency,
                                                              const QString &inVertexPipelineName,

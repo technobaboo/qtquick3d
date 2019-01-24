@@ -33,13 +33,13 @@
 #include <QtDemon/qdemonutils.h>
 #include <QtDemonRuntimeRender/qdemonrendereulerangles.h>
 
-//#include <QtDemonRuntimeRender/qdemonrendermodel.h>
+#include <QtDemonRuntimeRender/qdemonrendermodel.h>
 
-//#include <QtDemonRuntimeRender/qdemonrenderpathmanager.h>
-//#include <QtDemonRuntimeRender/qdemonrendertext.h>
-//#include <QtDemonRuntimeRender/qdemonrenderer.h>
-//#include <QtDemonRuntimeRender/qdemonrenderpathmanager.h>
-//#include <QtDemonRuntimeRender/qdemonrenderpath.h>
+#include <QtDemonRuntimeRender/qdemonrenderpathmanager.h>
+#include <QtDemonRuntimeRender/qdemonrendertext.h>
+#include <QtDemonRuntimeRender/qdemonrenderer.h>
+#include <QtDemonRuntimeRender/qdemonrenderpathmanager.h>
+#include <QtDemonRuntimeRender/qdemonrenderpath.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -426,7 +426,7 @@ void SNode::RemoveFromGraph()
     }
 }
 
-QDemonBounds3 SNode::GetBounds(IBufferManager &inManager, IPathManager &inPathManager,
+QDemonBounds3 SNode::GetBounds(QSharedPointer<IBufferManager> inManager, QSharedPointer<IPathManager> inPathManager,
                                bool inIncludeChildren, IQDemonRenderNodeFilter *inChildFilter) const
 {
     QDemonBounds3 retval;
@@ -434,35 +434,33 @@ QDemonBounds3 SNode::GetBounds(IBufferManager &inManager, IPathManager &inPathMa
     if (inIncludeChildren)
         retval = GetChildBounds(inManager, inPathManager, inChildFilter);
 
-// ### FIXME!!!!
-//    if (m_Type == GraphObjectTypes::Model)
-//        retval.include(static_cast<const SModel *>(this)->GetModelBounds(inManager));
-//    else if (m_Type == GraphObjectTypes::Text)
-//        retval.include(static_cast<const SText *>(this)->GetTextBounds());
-//    else if (m_Type == GraphObjectTypes::Path)
-//        retval.include(inPathManager.GetBounds(*static_cast<const SPath *>(this)));
+    if (m_Type == GraphObjectTypes::Model)
+        retval.include(static_cast<const SModel *>(this)->GetModelBounds(inManager));
+    else if (m_Type == GraphObjectTypes::Text)
+        retval.include(static_cast<const SText *>(this)->GetTextBounds());
+    else if (m_Type == GraphObjectTypes::Path)
+        retval.include(inPathManager->GetBounds(*static_cast<const SPath *>(this)));
     return retval;
 }
 
-QDemonBounds3 SNode::GetChildBounds(IBufferManager &inManager, IPathManager &inPathManager,
+QDemonBounds3 SNode::GetChildBounds(QSharedPointer<IBufferManager> inManager, QSharedPointer<IPathManager> inPathManager,
                                     IQDemonRenderNodeFilter *inChildFilter) const
 {
     QDemonBounds3 retval;
     retval.setEmpty();
-// ### FIXME!!!!
-//    for (SNode *child = m_FirstChild; child != nullptr; child = child->m_NextSibling) {
-//        if (inChildFilter == nullptr || inChildFilter->IncludeNode(*child)) {
-//            QDemonBounds3 childBounds;
-//            if (child->m_Flags.IsTransformDirty())
-//                child->CalculateLocalTransform();
-//            childBounds = child->GetBounds(inManager, inPathManager);
-//            if (childBounds.isEmpty() == false) {
-//                // Transform the bounds into our local space.
-//                childBounds.transform(child->m_LocalTransform);
-//                retval.include(childBounds);
-//            }
-//        }
-//    }
+    for (SNode *child = m_FirstChild; child != nullptr; child = child->m_NextSibling) {
+        if (inChildFilter == nullptr || inChildFilter->IncludeNode(*child)) {
+            QDemonBounds3 childBounds;
+            if (child->m_Flags.IsTransformDirty())
+                child->CalculateLocalTransform();
+            childBounds = child->GetBounds(inManager, inPathManager);
+            if (childBounds.isEmpty() == false) {
+                // Transform the bounds into our local space.
+                childBounds.transform(child->m_LocalTransform);
+                retval.include(childBounds);
+            }
+        }
+    }
     return retval;
 }
 

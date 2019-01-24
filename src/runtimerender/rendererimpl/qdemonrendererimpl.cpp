@@ -81,8 +81,6 @@ struct SRenderableImage;
 struct SShaderGeneratorGeneratedShader;
 struct SSubsetRenderable;
 
-SEndlType Endl;
-
 static SRenderInstanceId combineLayerAndId(const SLayer *layer, const SRenderInstanceId id)
 {
     uint64_t x = (uint64_t)layer;
@@ -90,13 +88,13 @@ static SRenderInstanceId combineLayerAndId(const SLayer *layer, const SRenderIns
     return (SRenderInstanceId)x;
 }
 
-QDemonRendererImpl::QDemonRendererImpl(IQDemonRenderContext &ctx)
+QDemonRendererImpl::QDemonRendererImpl(QSharedPointer<IQDemonRenderContext> ctx)
     : m_demonContext(ctx)
-    , m_Context(ctx.GetRenderContext())
-    , m_BufferManager(ctx.GetBufferManager())
-    , m_OffscreenRenderManager(ctx.GetOffscreenRenderManager())
+    , m_Context(ctx->GetRenderContext())
+    , m_BufferManager(ctx->GetBufferManager())
+    , m_OffscreenRenderManager(ctx->GetOffscreenRenderManager())
     #ifdef ADVANCED_BLEND_SW_FALLBACK
-    , m_LayerBlendTexture(ctx.GetResourceManager())
+    , m_LayerBlendTexture(ctx->GetResourceManager())
     , m_BlendFB(nullptr)
     #endif
     , m_CurrentLayer(nullptr)
@@ -108,10 +106,6 @@ QDemonRendererImpl::QDemonRendererImpl(IQDemonRenderContext &ctx)
 QDemonRendererImpl::~QDemonRendererImpl()
 {
     m_LayerShaders.clear();
-    for (TShaderMap::iterator iter = m_Shaders.begin(), end = m_Shaders.end(); iter != end;
-         ++iter)
-        delete iter.value();
-
     m_Shaders.clear();
     m_InstanceRenderMap.clear();
     m_ConstantBuffers.clear();
@@ -120,11 +114,10 @@ QDemonRendererImpl::~QDemonRendererImpl()
 void QDemonRendererImpl::ChildrenUpdated(SNode &inParent)
 {
     if (inParent.m_Type == GraphObjectTypes::Layer) {
-        TInstanceRenderMap::iterator theIter =
-                m_InstanceRenderMap.find(static_cast<SRenderInstanceId>(&inParent));
+        TInstanceRenderMap::iterator theIter = m_InstanceRenderMap.find(static_cast<SRenderInstanceId>(&inParent));
         if (theIter != m_InstanceRenderMap.end()) {
-            theIter->second->m_CamerasAndLights.clear();
-            theIter->second->m_RenderableNodes.clear();
+            theIter.value()->m_CamerasAndLights.clear();
+            theIter.value()->m_RenderableNodes.clear();
         }
     } else if (inParent.m_Parent)
         ChildrenUpdated(*inParent.m_Parent);
@@ -132,7 +125,7 @@ void QDemonRendererImpl::ChildrenUpdated(SNode &inParent)
 
 float QDemonRendererImpl::GetTextScale(const SText &inText)
 {
-    SLayerRenderData *theData = GetOrCreateLayerRenderDataForNode(inText);
+    QSharedPointer<SLayerRenderData> theData = GetOrCreateLayerRenderDataForNode(inText);
     if (theData)
         return theData->m_TextScale;
     return 1.0f;
@@ -163,12 +156,12 @@ static void BuildRenderableLayers(SLayer &inLayer, QVector<SLayer *> &renderable
 }
 
 bool QDemonRendererImpl::PrepareLayerForRender(SLayer &inLayer,
-                                              const QVector2D &inViewportDimensions,
-                                              bool inRenderSiblings,
-                                              const SRenderInstanceId id)
+                                               const QVector2D &inViewportDimensions,
+                                               bool inRenderSiblings,
+                                               const SRenderInstanceId id)
 {
     (void)inViewportDimensions;
-    QVector<SLayer *> renderableLayers(m_demonContext.GetPerFrameAllocator(), "LayerVector");
+    QVector<SLayer *> renderableLayers;
     // Found by fair roll of the dice.
     renderableLayers.reserve(4);
 
@@ -181,7 +174,7 @@ bool QDemonRendererImpl::PrepareLayerForRender(SLayer &inLayer,
          iter != end; ++iter) {
         // Store the previous state of if we were rendering a layer.
         SLayer *theLayer = *iter;
-        SLayerRenderData *theRenderData = GetOrCreateLayerRenderDataForNode(*theLayer, id);
+        QSharedPointer<SLayerRenderData> theRenderData = GetOrCreateLayerRenderDataForNode(*theLayer, id);
 
         if (theRenderData) {
             theRenderData->PrepareForRender();
@@ -195,41 +188,41 @@ bool QDemonRendererImpl::PrepareLayerForRender(SLayer &inLayer,
 }
 
 void QDemonRendererImpl::RenderLayer(SLayer &inLayer, const QVector2D &inViewportDimensions,
-                                    bool clear, QVector3D clearColor, bool inRenderSiblings,
-                                    const SRenderInstanceId id)
+                                     bool clear, QVector3D clearColor, bool inRenderSiblings,
+                                     const SRenderInstanceId id)
 {
     (void)inViewportDimensions;
-    QVector<SLayer *> renderableLayers(m_demonContext.GetPerFrameAllocator(), "LayerVector");
+    QVector<SLayer *> renderableLayers;
     // Found by fair roll of the dice.
     renderableLayers.reserve(4);
 
     BuildRenderableLayers(inLayer, renderableLayers, inRenderSiblings);
 
-    QDemonRenderContext &theRenderContext(m_demonContext.GetRenderContext());
-    QDemonRenderFrameBuffer *theFB = theRenderContext.GetRenderTarget();
+    QSharedPointer<QDemonRenderContext> theRenderContext(m_demonContext->GetRenderContext());
+    QSharedPointer<QDemonRenderFrameBuffer> theFB = theRenderContext->GetRenderTarget();
     for (QVector<SLayer *>::reverse_iterator iter = renderableLayers.rbegin(),
          end = renderableLayers.rend();
          iter != end; ++iter) {
         SLayer *theLayer = *iter;
-        SLayerRenderData *theRenderData = GetOrCreateLayerRenderDataForNode(*theLayer, id);
+        QSharedPointer<SLayerRenderData> theRenderData = GetOrCreateLayerRenderDataForNode(*theLayer, id);
         SLayerRenderPreparationResult &prepRes(*theRenderData->m_LayerPrepResult);
         LayerBlendTypes::Enum layerBlend = prepRes.GetLayer()->GetLayerBlend();
 #ifdef ADVANCED_BLEND_SW_FALLBACK
         if ((layerBlend == LayerBlendTypes::Overlay ||
              layerBlend == LayerBlendTypes::ColorBurn ||
              layerBlend == LayerBlendTypes::ColorDodge) &&
-                !theRenderContext.IsAdvancedBlendHwSupported() &&
-                !theRenderContext.IsAdvancedBlendHwSupportedKHR()) {
+                !theRenderContext->IsAdvancedBlendHwSupported() &&
+                !theRenderContext->IsAdvancedBlendHwSupportedKHR()) {
             // Create and set up FBO and texture for advanced blending SW fallback
-            QDemonRenderRect viewport = theRenderContext.GetViewport();
+            QDemonRenderRect viewport = theRenderContext->GetViewport();
             m_LayerBlendTexture.EnsureTexture(viewport.m_Width + viewport.m_X,
                                               viewport.m_Height + viewport.m_Y,
                                               QDemonRenderTextureFormats::RGBA8);
             if (m_BlendFB == nullptr)
-                m_BlendFB = theRenderContext.CreateFrameBuffer();
-            m_BlendFB->Attach(QDemonRenderFrameBufferAttachments::Color0, *m_LayerBlendTexture);
-            theRenderContext.SetRenderTarget(m_BlendFB);
-            theRenderContext.SetScissorTestEnabled(false);
+                m_BlendFB = theRenderContext->CreateFrameBuffer();
+            m_BlendFB->Attach(QDemonRenderFrameBufferAttachments::Color0, m_LayerBlendTexture.GetTexture());
+            theRenderContext->SetRenderTarget(m_BlendFB);
+            theRenderContext->SetScissorTestEnabled(false);
             QVector4D color(0.0f, 0.0f, 0.0f, 0.0f);
             if (clear) {
                 color.setX(clearColor.x());
@@ -237,11 +230,11 @@ void QDemonRendererImpl::RenderLayer(SLayer &inLayer, const QVector2D &inViewpor
                 color.setZ(clearColor.z());
                 color.setW(1.0f);
             }
-            QVector4D origColor = theRenderContext.GetClearColor();
-            theRenderContext.SetClearColor(color);
-            theRenderContext.Clear(QDemonRenderClearValues::Color);
-            theRenderContext.SetClearColor(origColor);
-            theRenderContext.SetRenderTarget(theFB);
+            QVector4D origColor = theRenderContext->GetClearColor();
+            theRenderContext->SetClearColor(color);
+            theRenderContext->Clear(QDemonRenderClearValues::Color);
+            theRenderContext->SetClearColor(origColor);
+            theRenderContext->SetRenderTarget(theFB);
             break;
         } else {
             m_LayerBlendTexture.ReleaseTexture();
@@ -253,7 +246,7 @@ void QDemonRendererImpl::RenderLayer(SLayer &inLayer, const QVector2D &inViewpor
          iter != end; ++iter) {
         // Store the previous state of if we were rendering a layer.
         SLayer *theLayer = *iter;
-        SLayerRenderData *theRenderData = GetOrCreateLayerRenderDataForNode(*theLayer, id);
+        QSharedPointer<SLayerRenderData> theRenderData = GetOrCreateLayerRenderDataForNode(*theLayer, id);
 
         if (theRenderData) {
             if (theRenderData->m_LayerPrepResult->IsLayerVisible())
@@ -274,18 +267,16 @@ SLayer *QDemonRendererImpl::GetLayerForNode(const SNode &inNode) const
     return nullptr;
 }
 
-SLayerRenderData *QDemonRendererImpl::GetOrCreateLayerRenderDataForNode(const SNode &inNode,
-                                                                       const SRenderInstanceId id)
+QSharedPointer<SLayerRenderData> QDemonRendererImpl::GetOrCreateLayerRenderDataForNode(const SNode &inNode, const SRenderInstanceId id)
 {
     const SLayer *theLayer = GetLayerForNode(inNode);
     if (theLayer) {
-        TInstanceRenderMap::const_iterator theIter
-                = m_InstanceRenderMap.find(combineLayerAndId(theLayer, id));
+        TInstanceRenderMap::const_iterator theIter = m_InstanceRenderMap.find(combineLayerAndId(theLayer, id));
         if (theIter != m_InstanceRenderMap.end())
-            return const_cast<SLayerRenderData *>(theIter->second.mPtr);
+            return QSharedPointer<SLayerRenderData>(theIter.value());
 
-        SLayerRenderData *theRenderData = new SLayerRenderData(
-                    const_cast<SLayer &>(*theLayer), *this);
+        QSharedPointer<SLayerRenderData> theRenderData = QSharedPointer<SLayerRenderData>(new SLayerRenderData(
+                                                                                              const_cast<SLayer &>(*theLayer), sharedFromThis()));
         m_InstanceRenderMap.insert(combineLayerAndId(theLayer, id), theRenderData);
 
         // create a profiler if enabled
@@ -299,7 +290,7 @@ SLayerRenderData *QDemonRendererImpl::GetOrCreateLayerRenderDataForNode(const SN
 
 SCamera *QDemonRendererImpl::GetCameraForNode(const SNode &inNode) const
 {
-    SLayerRenderData *theLayer =
+    QSharedPointer<SLayerRenderData> theLayer =
             const_cast<QDemonRendererImpl &>(*this).GetOrCreateLayerRenderDataForNode(inNode);
     if (theLayer)
         return theLayer->m_Camera;
@@ -310,7 +301,7 @@ QDemonOption<SCuboidRect> QDemonRendererImpl::GetCameraBounds(const SGraphObject
 {
     if (GraphObjectTypes::IsNodeType(inObject.m_Type)) {
         const SNode &theNode = static_cast<const SNode &>(inObject);
-        SLayerRenderData *theLayer = GetOrCreateLayerRenderDataForNode(theNode);
+        QSharedPointer<SLayerRenderData> theLayer = GetOrCreateLayerRenderDataForNode(theNode);
         if (theLayer->GetOffscreenRenderer() == false) {
             SCamera *theCamera = theLayer->m_Camera;
             if (theCamera)
@@ -332,12 +323,12 @@ void QDemonRendererImpl::DrawScreenRect(QDemonRenderRectF inRect, const QVector3
                                              QVector2D(theViewport.m_Width, theViewport.m_Height));
     GenerateXYQuad();
     if (!m_ScreenRectShader) {
-        IShaderProgramGenerator &theGenerator(GetProgramGenerator());
-        theGenerator.BeginProgram();
+        QSharedPointer<IShaderProgramGenerator> theGenerator(GetProgramGenerator());
+        theGenerator->BeginProgram();
         IShaderStageGenerator &vertexGenerator(
-                    *theGenerator.GetStage(ShaderGeneratorStages::Vertex));
+                    *theGenerator->GetStage(ShaderGeneratorStages::Vertex));
         IShaderStageGenerator &fragmentGenerator(
-                    *theGenerator.GetStage(ShaderGeneratorStages::Fragment));
+                    *theGenerator->GetStage(ShaderGeneratorStages::Fragment));
         vertexGenerator.AddIncoming("attr_pos", "vec3");
         vertexGenerator.AddUniform("model_view_projection", "mat4");
         vertexGenerator.AddUniform("rectangle_dims", "vec3");
@@ -351,7 +342,7 @@ void QDemonRendererImpl::DrawScreenRect(QDemonRenderRectF inRect, const QVector3
         fragmentGenerator.Append("\tgl_FragColor.a = 1.0;");
         fragmentGenerator.Append("}");
         // No flags enabled
-        m_ScreenRectShader = theGenerator.CompileGeneratedShader(
+        m_ScreenRectShader = theGenerator->CompileGeneratedShader(
                     "DrawScreenRect", SShaderCacheProgramFlags(), TShaderFeatureSet());
     }
     if (m_ScreenRectShader) {
@@ -367,8 +358,8 @@ void QDemonRendererImpl::DrawScreenRect(QDemonRenderRectF inRect, const QVector3
 
         QVector2D rectGlobalCenter = inRect.Center();
         QVector2D rectCenter(theViewport.ToNormalizedRectRelative(rectGlobalCenter));
-        theNode.m_Position.x = rectCenter.x;
-        theNode.m_Position.y = rectCenter.y;
+        theNode.m_Position.setX(rectCenter.x());
+        theNode.m_Position.setY(rectCenter.y());
         theNode.MarkDirty(NodeTransformDirtyFlag::TransformIsDirty);
         theNode.CalculateGlobalVariables();
         QMatrix4x4 theViewProjection;
@@ -392,7 +383,7 @@ void QDemonRendererImpl::DrawScreenRect(QDemonRenderRectF inRect, const QVector3
 
         m_RectIndexBuffer = m_Context->CreateIndexBuffer(
                     QDemonRenderBufferUsageType::Static,
-                    QDemonRenderComponentTypes::quint8, sizeof(indexData),
+                    QDemonRenderComponentTypes::UnsignedInteger8, sizeof(indexData),
                     toConstDataRef(indexData, sizeof(indexData)));
 
         QDemonRenderVertexBufferEntry theEntries[] = {
@@ -406,7 +397,7 @@ void QDemonRendererImpl::DrawScreenRect(QDemonRenderRectF inRect, const QVector3
         quint32 strides = m_QuadVertexBuffer->GetStride();
         quint32 offsets = 0;
         m_RectInputAssembler = m_Context->CreateInputAssembler(
-                    m_RectAttribLayout, toConstDataRef(&m_QuadVertexBuffer.mPtr, 1), m_RectIndexBuffer,
+                    m_RectAttribLayout, toConstDataRef(&m_QuadVertexBuffer, 1), m_RectIndexBuffer,
                     toConstDataRef(&strides, 1), toConstDataRef(&offsets, 1));
     }
 
@@ -416,30 +407,30 @@ void QDemonRendererImpl::DrawScreenRect(QDemonRenderRectF inRect, const QVector3
 
 void QDemonRendererImpl::SetupWidgetLayer()
 {
-    QDemonRenderContext &theContext = m_demonContext.GetRenderContext();
+    QSharedPointer<QDemonRenderContext> theContext = m_demonContext->GetRenderContext();
 
     if (!m_WidgetTexture) {
-        IResourceManager &theManager = m_demonContext.GetResourceManager();
-        m_WidgetTexture = theManager.AllocateTexture2D(m_BeginFrameViewport.m_Width,
-                                                       m_BeginFrameViewport.m_Height,
-                                                       QDemonRenderTextureFormats::RGBA8);
-        m_WidgetFBO = theManager.AllocateFrameBuffer();
+        QSharedPointer<IResourceManager> theManager = m_demonContext->GetResourceManager();
+        m_WidgetTexture = theManager->AllocateTexture2D(m_BeginFrameViewport.m_Width,
+                                                        m_BeginFrameViewport.m_Height,
+                                                        QDemonRenderTextureFormats::RGBA8);
+        m_WidgetFBO = theManager->AllocateFrameBuffer();
         m_WidgetFBO->Attach(QDemonRenderFrameBufferAttachments::Color0,
-                            QDemonRenderTextureOrRenderBuffer(*m_WidgetTexture));
-        theContext.SetRenderTarget(m_WidgetFBO);
+                            QDemonRenderTextureOrRenderBuffer(m_WidgetTexture));
+        theContext->SetRenderTarget(m_WidgetFBO);
 
         // QDemonRenderRect theScissorRect( 0, 0, m_BeginFrameViewport.m_Width,
         // m_BeginFrameViewport.m_Height );
         // QDemonRenderContextScopedProperty<QDemonRenderRect> __scissorRect( theContext,
         // &QDemonRenderContext::GetScissorRect, &QDemonRenderContext::SetScissorRect, theScissorRect );
         QDemonRenderContextScopedProperty<bool> __scissorEnabled(
-                    theContext, &QDemonRenderContext::IsScissorTestEnabled,
+                    *theContext, &QDemonRenderContext::IsScissorTestEnabled,
                     &QDemonRenderContext::SetScissorTestEnabled, false);
         m_Context->SetClearColor(QVector4D(0, 0, 0, 0));
         m_Context->Clear(QDemonRenderClearValues::Color);
 
     } else
-        theContext.SetRenderTarget(m_WidgetFBO);
+        theContext->SetRenderTarget(m_WidgetFBO);
 }
 
 void QDemonRendererImpl::BeginFrame()
@@ -447,14 +438,13 @@ void QDemonRendererImpl::BeginFrame()
     for (quint32 idx = 0, end = m_LastFrameLayers.size(); idx < end; ++idx)
         m_LastFrameLayers[idx]->ResetForFrame();
     m_LastFrameLayers.clear();
-    m_BeginFrameViewport = m_demonContext.GetRenderList().GetViewport();
+    m_BeginFrameViewport = m_demonContext->GetRenderList()->GetViewport();
 }
 void QDemonRendererImpl::EndFrame()
 {
     if (m_WidgetTexture) {
-        using QDemonRenderContextScopedProperty;
         // Releasing the widget FBO can set it as the active frame buffer.
-        QDemonRenderContextScopedProperty<QDemonRenderFrameBuffer *> __fbo(
+        QDemonRenderContextScopedProperty<QSharedPointer<QDemonRenderFrameBuffer>> __fbo(
                     *m_Context, &QDemonRenderContext::GetRenderTarget, &QDemonRenderContext::SetRenderTarget);
         STextureDetails theDetails = m_WidgetTexture->GetTextureDetails();
         m_Context->SetBlendingEnabled(true);
@@ -479,9 +469,9 @@ void QDemonRendererImpl::EndFrame()
         theCamera.CalculateViewProjectionMatrix(theViewProj);
         RenderQuad(theTextureDims, theViewProj, *m_WidgetTexture);
 
-        IResourceManager &theManager(m_demonContext.GetResourceManager());
-        theManager.Release(*m_WidgetFBO);
-        theManager.Release(*m_WidgetTexture);
+        QSharedPointer<IResourceManager> theManager(m_demonContext->GetResourceManager());
+        theManager->Release(m_WidgetFBO);
+        theManager->Release(m_WidgetTexture);
         m_WidgetTexture = nullptr;
         m_WidgetFBO = nullptr;
     }
@@ -539,7 +529,7 @@ GetMouseCoordsAndViewportFromSubObject(QVector2D inLocalHitUVSpace,
 {
     QMatrix4x4 theTextureMatrix(inSubResult.m_TextureMatrix);
     QVector3D theNewUVCoords(
-                theTextureMatrix.transform(QVector3D(inLocalHitUVSpace.x(), inLocalHitUVSpace.y(), 0)));
+                mat44::transform(theTextureMatrix, (QVector3D(inLocalHitUVSpace.x(), inLocalHitUVSpace.y(), 0))));
     theNewUVCoords.setX(ClampUVCoord(theNewUVCoords.x(), inSubResult.m_HorizontalTilingMode));
     theNewUVCoords.setY(ClampUVCoord(theNewUVCoords.y(), inSubResult.m_VerticalTilingMode));
     QVector2D theViewportDimensions =
@@ -565,13 +555,9 @@ SPickResultProcessResult QDemonRendererImpl::ProcessPickResultList(bool inPickEv
     // completely misses *and* the parent object locally pickable is false then we need to move
     // onto the next object.
 
-    quint32 maxPerFrameAllocationPickResultCount =
-            SFastAllocator<>::SlabSize / sizeof(QDemonRenderPickResult);
-    quint32 numToCopy =
-            qMin(maxPerFrameAllocationPickResultCount, (quint32)m_LastPickResults.size());
+    quint32 numToCopy = (quint32)m_LastPickResults.size();
     quint32 numCopyBytes = numToCopy * sizeof(QDemonRenderPickResult);
-    QDemonRenderPickResult *thePickResults = reinterpret_cast<QDemonRenderPickResult *>(
-                GetPerFrameAllocator().allocate(numCopyBytes, "tempPickData", __FILE__, __LINE__));
+    QDemonRenderPickResult *thePickResults = reinterpret_cast<QDemonRenderPickResult *>(::malloc(numCopyBytes));
     ::memcpy(thePickResults, m_LastPickResults.data(), numCopyBytes);
     m_LastPickResults.clear();
     bool foundValidResult = false;
@@ -584,9 +570,9 @@ SPickResultProcessResult QDemonRendererImpl::ProcessPickResultList(bool inPickEv
         // by the pick query.
         if (thePickResult.m_HitObject != nullptr && thePickResult.m_FirstSubObject != nullptr
                 && m_PickRenderPlugins) {
-            QVector2D theUVCoords(thePickResult.m_LocalUVCoords.x,
-                                  thePickResult.m_LocalUVCoords.y);
-            IOffscreenRenderer *theSubRenderer(thePickResult.m_FirstSubObject->m_SubRenderer);
+            QVector2D theUVCoords(thePickResult.m_LocalUVCoords.x(),
+                                  thePickResult.m_LocalUVCoords.y());
+            QSharedPointer<IOffscreenRenderer> theSubRenderer(thePickResult.m_FirstSubObject->m_SubRenderer);
             QPair<QVector2D, QVector2D> mouseAndViewport =
                     GetMouseCoordsAndViewportFromSubObject(theUVCoords,
                                                            *thePickResult.m_FirstSubObject);
@@ -629,8 +615,8 @@ SPickResultProcessResult QDemonRendererImpl::ProcessPickResultList(bool inPickEv
 }
 
 QDemonRenderPickResult QDemonRendererImpl::Pick(SLayer &inLayer, const QVector2D &inViewportDimensions,
-                                              const QVector2D &inMouseCoords, bool inPickSiblings,
-                                              bool inPickEverything, const SRenderInstanceId id)
+                                                const QVector2D &inMouseCoords, bool inPickSiblings,
+                                                bool inPickEverything, const SRenderInstanceId id)
 {
     m_LastPickResults.clear();
 
@@ -644,9 +630,8 @@ QDemonRenderPickResult QDemonRendererImpl::Pick(SLayer &inLayer, const QVector2D
                     = m_InstanceRenderMap.find(combineLayerAndId(theLayer, id));
             if (theIter != m_InstanceRenderMap.end()) {
                 m_LastPickResults.clear();
-                GetLayerHitObjectList(*theIter->second, inViewportDimensions, inMouseCoords,
-                                      inPickEverything, m_LastPickResults,
-                                      GetPerFrameAllocator());
+                GetLayerHitObjectList(*theIter.value(), inViewportDimensions, inMouseCoords,
+                                      inPickEverything, m_LastPickResults);
                 SPickResultProcessResult retval(ProcessPickResultList(inPickEverything));
                 if (retval.m_WasPickConsumed)
                     return retval;
@@ -665,8 +650,8 @@ QDemonRenderPickResult QDemonRendererImpl::Pick(SLayer &inLayer, const QVector2D
 }
 
 static inline QDemonOption<QVector2D> IntersectRayWithNode(const SNode &inNode,
-                                                     SRenderableObject &inRenderableObject,
-                                                     const SRay &inPickRay)
+                                                           SRenderableObject &inRenderableObject,
+                                                           const SRay &inPickRay)
 {
     if (inRenderableObject.m_RenderableFlags.IsText()) {
         STextRenderable &theRenderable = static_cast<STextRenderable &>(inRenderableObject);
@@ -693,20 +678,20 @@ static inline QDemonOption<QVector2D> IntersectRayWithNode(const SNode &inNode,
 static inline QDemonRenderPickSubResult ConstructSubResult(SImage &inImage)
 {
     STextureDetails theDetails = inImage.m_TextureData.m_Texture->GetTextureDetails();
-    return QDemonRenderPickSubResult(*inImage.m_LastFrameOffscreenRenderer,
-                                    inImage.m_TextureTransform, inImage.m_HorizontalTilingMode,
-                                    inImage.m_VerticalTilingMode, theDetails.m_Width,
-                                    theDetails.m_Height);
+    return QDemonRenderPickSubResult(inImage.m_LastFrameOffscreenRenderer,
+                                     inImage.m_TextureTransform, inImage.m_HorizontalTilingMode,
+                                     inImage.m_VerticalTilingMode, theDetails.m_Width,
+                                     theDetails.m_Height);
 }
 
 QDemonOption<QVector2D> QDemonRendererImpl::FacePosition(SNode &inNode, QDemonBounds3 inBounds,
-                                                  const QMatrix4x4 &inGlobalTransform,
-                                                  const QVector2D &inViewportDimensions,
-                                                  const QVector2D &inMouseCoords,
-                                                  QDemonDataRef<SGraphObject *> inMapperObjects,
-                                                  SBasisPlanes::Enum inPlane)
+                                                         const QMatrix4x4 &inGlobalTransform,
+                                                         const QVector2D &inViewportDimensions,
+                                                         const QVector2D &inMouseCoords,
+                                                         QDemonDataRef<SGraphObject *> inMapperObjects,
+                                                         SBasisPlanes::Enum inPlane)
 {
-    SLayerRenderData *theLayerData = GetOrCreateLayerRenderDataForNode(inNode);
+    QSharedPointer<SLayerRenderData> theLayerData = GetOrCreateLayerRenderDataForNode(inNode);
     if (theLayerData == nullptr)
         return QDemonEmpty();
     // This function assumes the layer was rendered to the scene itself.  There is another
@@ -715,7 +700,7 @@ QDemonOption<QVector2D> QDemonRendererImpl::FacePosition(SNode &inNode, QDemonBo
     bool wasRenderToTarget(theLayerData->m_Layer.m_Flags.IsLayerRenderToTarget());
     if (wasRenderToTarget == false || theLayerData->m_Camera == nullptr
             || theLayerData->m_LayerPrepResult.hasValue() == false
-            || theLayerData->m_LastFrameOffscreenRenderer.mPtr != nullptr)
+            || theLayerData->m_LastFrameOffscreenRenderer != nullptr)
         return QDemonEmpty();
 
     QVector2D theMouseCoords(inMouseCoords);
@@ -742,7 +727,7 @@ QDemonOption<QVector2D> QDemonRendererImpl::FacePosition(SNode &inNode, QDemonBo
                 return QDemonEmpty();
             }
             QDemonBounds3 theModelBounds = theParentModel->GetBounds(
-                        GetDemonContext().GetBufferManager(), GetDemonContext().GetPathManager(), false);
+                        GetDemonContext()->GetBufferManager(), GetDemonContext()->GetPathManager(), false);
 
             if (theModelBounds.isEmpty()) {
                 Q_ASSERT(false);
@@ -777,25 +762,25 @@ QDemonOption<QVector2D> QDemonRendererImpl::FacePosition(SNode &inNode, QDemonBo
 
 QDemonRenderPickResult
 QDemonRendererImpl::PickOffscreenLayer(SLayer &/*inLayer*/, const QVector2D & /*inViewportDimensions*/
-                                      ,
-                                      const QVector2D & /*inMouseCoords*/
-                                      ,
-                                      bool /*inPickEverything*/)
+                                       ,
+                                       const QVector2D & /*inMouseCoords*/
+                                       ,
+                                       bool /*inPickEverything*/)
 {
     return QDemonRenderPickResult();
 }
 
 QVector3D QDemonRendererImpl::UnprojectToPosition(SNode &inNode, QVector3D &inPosition,
-                                                 const QVector2D &inMouseVec) const
+                                                  const QVector2D &inMouseVec) const
 {
     // Translate mouse into layer's coordinates
-    SLayerRenderData *theData =
+    QSharedPointer<SLayerRenderData> theData =
             const_cast<QDemonRendererImpl &>(*this).GetOrCreateLayerRenderDataForNode(inNode);
     if (theData == nullptr || theData->m_Camera == nullptr) {
         return QVector3D(0, 0, 0);
     } // Q_ASSERT( false ); return QVector3D(0,0,0); }
 
-    QSize theWindow = m_demonContext.GetWindowDimensions();
+    QSize theWindow = m_demonContext->GetWindowDimensions();
     QVector2D theDims((float)theWindow.width(), (float)theWindow.height());
 
     SLayerRenderPreparationResult &thePrepResult(*theData->m_LayerPrepResult);
@@ -805,10 +790,10 @@ QVector3D QDemonRendererImpl::UnprojectToPosition(SNode &inNode, QVector3D &inPo
 }
 
 QVector3D QDemonRendererImpl::UnprojectWithDepth(SNode &inNode, QVector3D &,
-                                                const QVector3D &inMouseVec) const
+                                                 const QVector3D &inMouseVec) const
 {
     // Translate mouse into layer's coordinates
-    SLayerRenderData *theData =
+    QSharedPointer<SLayerRenderData> theData =
             const_cast<QDemonRendererImpl &>(*this).GetOrCreateLayerRenderDataForNode(inNode);
     if (theData == nullptr || theData->m_Camera == nullptr) {
         return QVector3D(0, 0, 0);
@@ -819,13 +804,13 @@ QVector3D QDemonRendererImpl::UnprojectWithDepth(SNode &inNode, QVector3D &,
     float theDepth = inMouseVec.z();
 
     SLayerRenderPreparationResult &thePrepResult(*theData->m_LayerPrepResult);
-    QSize theWindow = m_demonContext.GetWindowDimensions();
+    QSize theWindow = m_demonContext->GetWindowDimensions();
     SRay theRay = thePrepResult.GetPickRay(
                 theMouse, QVector2D((float)theWindow.width(), (float)theWindow.height()), true);
     QVector3D theTargetPosition = theRay.m_Origin + theRay.m_Direction * theDepth;
     if (inNode.m_Parent != nullptr && inNode.m_Parent->m_Type != GraphObjectTypes::Layer)
         theTargetPosition =
-                inNode.m_Parent->m_GlobalTransform.getInverse().transform(theTargetPosition);
+                mat44::transform(mat44::getInverse(inNode.m_Parent->m_GlobalTransform), theTargetPosition);
     // Our default global space is right handed, so if you are left handed z means something
     // opposite.
     if (inNode.m_Flags.IsLeftHanded())
@@ -836,7 +821,7 @@ QVector3D QDemonRendererImpl::UnprojectWithDepth(SNode &inNode, QVector3D &,
 QVector3D QDemonRendererImpl::ProjectPosition(SNode &inNode, const QVector3D &inPosition) const
 {
     // Translate mouse into layer's coordinates
-    SLayerRenderData *theData =
+    QSharedPointer<SLayerRenderData> theData =
             const_cast<QDemonRendererImpl &>(*this).GetOrCreateLayerRenderDataForNode(inNode);
     if (theData == nullptr || theData->m_Camera == nullptr) {
         return QVector3D(0, 0, 0);
@@ -844,7 +829,7 @@ QVector3D QDemonRendererImpl::ProjectPosition(SNode &inNode, const QVector3D &in
 
     QMatrix4x4 viewProj;
     theData->m_Camera->CalculateViewProjectionMatrix(viewProj);
-    QVector4D projPos = viewProj.transform(QVector4D(inPosition, 1.0f));
+    QVector4D projPos = mat44::transform(viewProj, QVector4D(inPosition, 1.0f));
     projPos.setX(projPos.x() / projPos.w());
     projPos.setY(projPos.y() / projPos.w());
 
@@ -864,22 +849,22 @@ QVector3D QDemonRendererImpl::ProjectPosition(SNode &inNode, const QVector3D &in
     mouseVec.setY(mouseVec.y() + theViewport.m_Y);
 
     // Flip the y into window coordinates so it matches the mouse.
-    QSize theWindow = m_demonContext.GetWindowDimensions();
+    QSize theWindow = m_demonContext->GetWindowDimensions();
     mouseVec.setY(theWindow.height() - mouseVec.y());
 
     return mouseVec;
 }
 
 QDemonOption<SLayerPickSetup> QDemonRendererImpl::GetLayerPickSetup(SLayer &inLayer,
-                                                             const QVector2D &inMouseCoords,
-                                                             const QSize &inPickDims)
+                                                                    const QVector2D &inMouseCoords,
+                                                                    const QSize &inPickDims)
 {
-    SLayerRenderData *theData = GetOrCreateLayerRenderDataForNode(inLayer);
+    QSharedPointer<SLayerRenderData> theData = GetOrCreateLayerRenderDataForNode(inLayer);
     if (theData == nullptr || theData->m_Camera == nullptr) {
         Q_ASSERT(false);
         return QDemonEmpty();
     }
-    QSize theWindow = m_demonContext.GetWindowDimensions();
+    QSize theWindow = m_demonContext->GetWindowDimensions();
     QVector2D theDims((float)theWindow.width(), (float)theWindow.height());
     // The mouse is relative to the layer
     QDemonOption<QVector2D> theLocalMouse = GetLayerMouseCoords(*theData, inMouseCoords, theDims, false);
@@ -916,7 +901,7 @@ QDemonOption<SLayerPickSetup> QDemonRendererImpl::GetLayerPickSetup(SLayer &inLa
                 projectionPremult, layerToPresentation, thePickRect);
     projectionPremult = mat44::getInverse(projectionPremult);
 
-    QMatrix4x4 globalInverse = mat44::getInverse(theCamera.m_GlobalTransform)
+    QMatrix4x4 globalInverse = mat44::getInverse(theCamera.m_GlobalTransform);
     QMatrix4x4 theVP = theCamera.m_Projection * globalInverse;
     // For now we won't setup the scissor, so we may be off by inPickDims at most because
     // GetLayerMouseCoords will return
@@ -928,7 +913,7 @@ QDemonOption<SLayerPickSetup> QDemonRendererImpl::GetLayerPickSetup(SLayer &inLa
 
 QDemonOption<QDemonRenderRectF> QDemonRendererImpl::GetLayerRect(SLayer &inLayer)
 {
-    SLayerRenderData *theData = GetOrCreateLayerRenderDataForNode(inLayer);
+    QSharedPointer<SLayerRenderData> theData = GetOrCreateLayerRenderDataForNode(inLayer);
     if (theData == nullptr || theData->m_Camera == nullptr) {
         Q_ASSERT(false);
         return QDemonEmpty();
@@ -940,7 +925,7 @@ QDemonOption<QDemonRenderRectF> QDemonRendererImpl::GetLayerRect(SLayer &inLayer
 // This doesn't have to be cheap.
 void QDemonRendererImpl::RunLayerRender(SLayer &inLayer, const QMatrix4x4 &inViewProjection)
 {
-    SLayerRenderData *theData = GetOrCreateLayerRenderDataForNode(inLayer);
+    QSharedPointer<SLayerRenderData> theData = GetOrCreateLayerRenderDataForNode(inLayer);
     if (theData == nullptr || theData->m_Camera == nullptr) {
         Q_ASSERT(false);
         return;
@@ -950,21 +935,21 @@ void QDemonRendererImpl::RunLayerRender(SLayer &inLayer, const QMatrix4x4 &inVie
 
 void QDemonRendererImpl::AddRenderWidget(IRenderWidget &inWidget)
 {
-    SLayerRenderData *theData = GetOrCreateLayerRenderDataForNode(inWidget.GetNode());
+    QSharedPointer<SLayerRenderData> theData = GetOrCreateLayerRenderDataForNode(inWidget.GetNode());
     if (theData)
         theData->AddRenderWidget(inWidget);
 }
 
 void QDemonRendererImpl::RenderLayerRect(SLayer &inLayer, const QVector3D &inColor)
 {
-    SLayerRenderData *theData = GetOrCreateLayerRenderDataForNode(inLayer);
+    QSharedPointer<SLayerRenderData> theData = GetOrCreateLayerRenderDataForNode(inLayer);
     if (theData)
         theData->m_BoundingRectColor = inColor;
 }
 
 SScaleAndPosition QDemonRendererImpl::GetWorldToPixelScaleFactor(const SCamera &inCamera,
-                                                                const QVector3D &inWorldPoint,
-                                                                SLayerRenderData &inRenderData)
+                                                                 const QVector3D &inWorldPoint,
+                                                                 SLayerRenderData &inRenderData)
 {
     if (inCamera.m_Flags.IsOrthographic() == true) {
         // There are situations where the camera can scale.
@@ -984,7 +969,7 @@ SScaleAndPosition QDemonRendererImpl::GetWorldToPixelScaleFactor(const SCamera &
             theItemPosition = *theIntersection;
         // The special number comes in from physically measuring how off we are on the screen.
         float theScaleFactor = (1.0f / inCamera.m_Projection(1, 1));
-        SLayerRenderData *theData = GetOrCreateLayerRenderDataForNode(inCamera);
+        QSharedPointer<SLayerRenderData> theData = GetOrCreateLayerRenderDataForNode(inCamera);
         quint32 theHeight = theData->m_LayerPrepResult->GetTextureDimensions().height();
         float theScaleMultiplier = 600.0f / ((float)theHeight / 2.0f);
         theScaleFactor *= theScaleMultiplier;
@@ -994,9 +979,9 @@ SScaleAndPosition QDemonRendererImpl::GetWorldToPixelScaleFactor(const SCamera &
 }
 
 SScaleAndPosition QDemonRendererImpl::GetWorldToPixelScaleFactor(SLayer &inLayer,
-                                                                const QVector3D &inWorldPoint)
+                                                                 const QVector3D &inWorldPoint)
 {
-    SLayerRenderData *theData = GetOrCreateLayerRenderDataForNode(inLayer);
+    QSharedPointer<SLayerRenderData> theData = GetOrCreateLayerRenderDataForNode(inLayer);
     if (theData == nullptr || theData->m_Camera == nullptr) {
         Q_ASSERT(false);
         return SScaleAndPosition();
@@ -1010,9 +995,9 @@ void QDemonRendererImpl::ReleaseLayerRenderResources(SLayer &inLayer, const SRen
             = m_InstanceRenderMap.find(combineLayerAndId(&inLayer, id));
     if (theIter != m_InstanceRenderMap.end()) {
         TLayerRenderList::iterator theLastFrm = std::find(
-                    m_LastFrameLayers.begin(), m_LastFrameLayers.end(), theIter->second.mPtr);
+                    m_LastFrameLayers.begin(), m_LastFrameLayers.end(), theIter.value());
         if (theLastFrm != m_LastFrameLayers.end()) {
-            theIter->second->ResetForFrame();
+            theIter.value()->ResetForFrame();
             m_LastFrameLayers.erase(theLastFrm);
         }
         m_InstanceRenderMap.erase(theIter);
@@ -1020,12 +1005,12 @@ void QDemonRendererImpl::ReleaseLayerRenderResources(SLayer &inLayer, const SRen
 }
 
 void QDemonRendererImpl::RenderQuad(const QVector2D inDimensions, const QMatrix4x4 &inMVP,
-                                   QDemonRenderTexture2D &inQuadTexture)
+                                    QDemonRenderTexture2D &inQuadTexture)
 {
     m_Context->SetCullingEnabled(false);
-    SLayerSceneShader *theShader = GetSceneLayerShader();
+    QSharedPointer<SLayerSceneShader> theShader = GetSceneLayerShader();
     QDemonRenderContext &theContext(*m_Context);
-    theContext.SetActiveShader(&theShader->m_Shader);
+    theContext.SetActiveShader(theShader->m_Shader);
     theShader->m_MVP.Set(inMVP);
     theShader->m_Dimensions.Set(inDimensions);
     theShader->m_Sampler.Set(&inQuadTexture);
@@ -1105,7 +1090,7 @@ void FillBoneIdNodeMap(SNode &childNode, QHash<long, SNode *> &ioMap)
 
 bool QDemonRendererImpl::PrepareTextureAtlasForRender()
 {
-    ITextTextureAtlas *theTextureAtlas = m_demonContext.GetTextureAtlas();
+    QSharedPointer<ITextTextureAtlas> theTextureAtlas = m_demonContext->GetTextureAtlas();
     if (theTextureAtlas == nullptr)
         return false;
 
@@ -1116,11 +1101,10 @@ bool QDemonRendererImpl::PrepareTextureAtlasForRender()
         QSharedPointer<QDemonRenderInputAssembler> mInputAssembler;
         QSharedPointer<QDemonRenderAttribLayout> mAttribLayout;
         // temporay FB
-        using QDemonRenderContextScopedProperty;
-        QDemonRenderContextScopedProperty<QDemonRenderFrameBuffer *> __fbo(
+        QDemonRenderContextScopedProperty<QSharedPointer<QDemonRenderFrameBuffer>> __fbo(
                     *m_Context, &QDemonRenderContext::GetRenderTarget, &QDemonRenderContext::SetRenderTarget);
 
-        ITextRenderer &theTextRenderer(*m_demonContext.GetOnscreenTextRenderer());
+        ITextRenderer &theTextRenderer(*m_demonContext->GetOnscreenTextRenderer());
         TTextTextureAtlasDetailsAndTexture theResult = theTextureAtlas->PrepareTextureAtlas();
         if (!theResult.first.m_EntryCount) {
             Q_ASSERT(theResult.first.m_EntryCount);
@@ -1140,19 +1124,19 @@ bool QDemonRendererImpl::PrepareTextureAtlasForRender()
         // create our attribute layout
         mAttribLayout = m_Context->CreateAttributeLayout(toConstDataRef(theEntries, 2));
 
-        QDemonRenderFrameBuffer *theAtlasFB(
-                    m_demonContext.GetResourceManager().AllocateFrameBuffer());
-        theAtlasFB->Attach(QDemonRenderFrameBufferAttachments::Color0, *theResult.second);
-        m_demonContext.GetRenderContext().SetRenderTarget(theAtlasFB);
+        QSharedPointer<QDemonRenderFrameBuffer> theAtlasFB(
+                    m_demonContext->GetResourceManager()->AllocateFrameBuffer());
+        theAtlasFB->Attach(QDemonRenderFrameBufferAttachments::Color0, theResult.second);
+        m_demonContext->GetRenderContext()->SetRenderTarget(theAtlasFB);
 
         // this texture contains our single entries
-        QDemonRenderTexture2D *theTexture = nullptr;
+        QSharedPointer<QDemonRenderTexture2D> theTexture = nullptr;
         if (m_Context->GetRenderContextType() == QDemonRenderContextValues::GLES2) {
-            theTexture = m_demonContext.GetResourceManager()
-                    .AllocateTexture2D(32, 32, QDemonRenderTextureFormats::RGBA8);
+            theTexture = m_demonContext->GetResourceManager()
+                    ->AllocateTexture2D(32, 32, QDemonRenderTextureFormats::RGBA8);
         } else {
-            theTexture = m_demonContext.GetResourceManager()
-                    .AllocateTexture2D(32, 32, QDemonRenderTextureFormats::Alpha8);
+            theTexture = m_demonContext->GetResourceManager()
+                    ->AllocateTexture2D(32, 32, QDemonRenderTextureFormats::Alpha8);
         }
         m_Context->SetClearColor(QVector4D(0, 0, 0, 0));
         m_Context->Clear(QDemonRenderClearValues::Color);
@@ -1190,11 +1174,11 @@ bool QDemonRendererImpl::PrepareTextureAtlasForRender()
         quint32 strides = mVertexBuffer->GetStride();
         quint32 offsets = 0;
         mInputAssembler = theContext.CreateInputAssembler(
-                    mAttribLayout, toConstDataRef(&mVertexBuffer.mPtr, 1), m_QuadIndexBuffer.mPtr,
+                    mAttribLayout, toConstDataRef(&mVertexBuffer, 1), m_QuadIndexBuffer,
                     toConstDataRef(&strides, 1), toConstDataRef(&offsets, 1));
 
-        QDemonRenderShaderProgram *theShader = GetTextAtlasEntryShader();
-        STextShader theTextShader(*theShader);
+        QSharedPointer<QDemonRenderShaderProgram> theShader = GetTextAtlasEntryShader();
+        STextShader theTextShader(theShader);
 
         if (theShader) {
             theContext.SetActiveShader(theShader);
@@ -1221,7 +1205,7 @@ bool QDemonRendererImpl::PrepareTextureAtlasForRender()
                 QDemonDataRef<quint8> vertData((quint8 *)box, bufSize);
                 mVertexBuffer->UpdateBuffer(vertData, false);
 
-                theTextShader.m_Sampler.Set(theTexture);
+                theTextShader.m_Sampler.Set(theTexture.data());
 
                 theContext.SetInputAssembler(mInputAssembler);
                 theContext.Draw(QDemonRenderDrawMode::Triangles, m_QuadIndexBuffer->GetNumIndices(),
@@ -1229,8 +1213,8 @@ bool QDemonRendererImpl::PrepareTextureAtlasForRender()
             }
         }
 
-        m_demonContext.GetResourceManager().Release(*theTexture);
-        m_demonContext.GetResourceManager().Release(*theAtlasFB);
+        m_demonContext->GetResourceManager()->Release(theTexture);
+        m_demonContext->GetResourceManager()->Release(theAtlasFB);
 
         return true;
     }
@@ -1239,9 +1223,9 @@ bool QDemonRendererImpl::PrepareTextureAtlasForRender()
 }
 
 QDemonOption<QVector2D> QDemonRendererImpl::GetLayerMouseCoords(SLayerRenderData &inLayerRenderData,
-                                                         const QVector2D &inMouseCoords,
-                                                         const QVector2D &inViewportDimensions,
-                                                         bool forceImageIntersect) const
+                                                                const QVector2D &inMouseCoords,
+                                                                const QVector2D &inViewportDimensions,
+                                                                bool forceImageIntersect) const
 {
     if (inLayerRenderData.m_LayerPrepResult.hasValue())
         return inLayerRenderData.m_LayerPrepResult->GetLayerMouseCoords(
@@ -1250,9 +1234,9 @@ QDemonOption<QVector2D> QDemonRendererImpl::GetLayerMouseCoords(SLayerRenderData
 }
 
 void QDemonRendererImpl::GetLayerHitObjectList(SLayerRenderData &inLayerRenderData,
-                                              const QVector2D &inViewportDimensions,
-                                              const QVector2D &inPresCoords, bool inPickEverything,
-                                              TPickResultArray &outIntersectionResult)
+                                               const QVector2D &inViewportDimensions,
+                                               const QVector2D &inPresCoords, bool inPickEverything,
+                                               TPickResultArray &outIntersectionResult)
 {
     // This function assumes the layer was rendered to the scene itself.  There is another
     // function
@@ -1263,7 +1247,7 @@ void QDemonRendererImpl::GetLayerHitObjectList(SLayerRenderData &inLayerRenderDa
         if (inLayerRenderData.m_LayerPrepResult.hasValue())
             theHitRay = inLayerRenderData.m_LayerPrepResult->GetPickRay(
                         inPresCoords, inViewportDimensions, false);
-        if (inLayerRenderData.m_LastFrameOffscreenRenderer.mPtr == nullptr) {
+        if (inLayerRenderData.m_LastFrameOffscreenRenderer == nullptr) {
             if (theHitRay.hasValue()) {
                 // Scale the mouse coords to change them into the camera's numerical space.
                 SRay thePickRay = *theHitRay;
@@ -1315,7 +1299,7 @@ void QDemonRendererImpl::IntersectRayWithSubsetRenderable(
         TPickResultArray &outIntersectionResultList)
 {
     QDemonOption<SRayIntersectionResult> theIntersectionResultOpt(inRay.IntersectWithAABB(
-                                                                inRenderableObject.m_GlobalTransform, inRenderableObject.m_Bounds));
+                                                                      inRenderableObject.m_GlobalTransform, inRenderableObject.m_Bounds));
     if (theIntersectionResultOpt.hasValue() == false)
         return;
     SRayIntersectionResult &theResult(*theIntersectionResultOpt);
@@ -1356,18 +1340,14 @@ void QDemonRendererImpl::IntersectRayWithSubsetRenderable(
     }
 }
 
-#ifndef EA_PLATFORM_WINDOWS
-#define _snprintf snprintf
-#endif
-
-QDemonRenderShaderProgram *QDemonRendererImpl::CompileShader(const QString &inName,
-                                                            const char *inVert,
-                                                            const char *inFrag)
+QSharedPointer<QDemonRenderShaderProgram> QDemonRendererImpl::CompileShader(const QString &inName,
+                                                                            const char *inVert,
+                                                                            const char *inFrag)
 {
-    GetProgramGenerator().BeginProgram();
-    GetProgramGenerator().GetStage(ShaderGeneratorStages::Vertex)->Append(inVert);
-    GetProgramGenerator().GetStage(ShaderGeneratorStages::Fragment)->Append(inFrag);
-    return GetProgramGenerator().CompileGeneratedShader(inName);
+    GetProgramGenerator()->BeginProgram();
+    GetProgramGenerator()->GetStage(ShaderGeneratorStages::Vertex)->Append(inVert);
+    GetProgramGenerator()->GetStage(ShaderGeneratorStages::Fragment)->Append(inFrag);
+    return GetProgramGenerator()->CompileGeneratedShader(inName);
 }
 
 const float MINATTENUATION = 0;
@@ -1392,21 +1372,21 @@ float TranslateQuadraticAttenuation(float attenuation)
     return attenuation * 0.0000001f;
 }
 
-SShaderGeneratorGeneratedShader *QDemonRendererImpl::GetShader(SSubsetRenderable &inRenderable,
-                                                              TShaderFeatureSet inFeatureSet)
+QSharedPointer<SShaderGeneratorGeneratedShader> QDemonRendererImpl::GetShader(SSubsetRenderable &inRenderable,
+                                                                              TShaderFeatureSet inFeatureSet)
 {
     if (m_CurrentLayer == nullptr) {
         Q_ASSERT(false);
         return nullptr;
     }
     TShaderMap::iterator theFind = m_Shaders.find(inRenderable.m_ShaderDescription);
-    SShaderGeneratorGeneratedShader *retval = nullptr;
+    QSharedPointer<SShaderGeneratorGeneratedShader> retval = nullptr;
     if (theFind == m_Shaders.end()) {
         // Generate the shader.
-        QDemonRenderShaderProgram *theShader(GenerateShader(inRenderable, inFeatureSet));
+        QSharedPointer<QDemonRenderShaderProgram> theShader(GenerateShader(inRenderable, inFeatureSet));
         if (theShader) {
-            SShaderGeneratorGeneratedShader *theGeneratedShader = new SShaderGeneratorGeneratedShader(
-                        qPrintable(m_GeneratedShaderString), *theShader);
+            QSharedPointer<SShaderGeneratorGeneratedShader> theGeneratedShader = QSharedPointer<SShaderGeneratorGeneratedShader>(new SShaderGeneratorGeneratedShader(
+                                                                                                                                     m_GeneratedShaderString, theShader));
             m_Shaders.insert(inRenderable.m_ShaderDescription, theGeneratedShader);
             retval = theGeneratedShader;
         }
@@ -1477,7 +1457,7 @@ void QDemonRendererImpl::GenerateXYQuad()
     quint32 strides = m_QuadVertexBuffer->GetStride();
     quint32 offsets = 0;
     m_QuadInputAssembler = m_Context->CreateInputAssembler(
-                m_QuadAttribLayout, toConstDataRef(&m_QuadVertexBuffer.mPtr, 1), m_QuadIndexBuffer,
+                m_QuadAttribLayout, toConstDataRef(&m_QuadVertexBuffer, 1), m_QuadIndexBuffer,
                 toConstDataRef(&strides, 1), toConstDataRef(&offsets, 1));
 }
 
@@ -1508,16 +1488,16 @@ void QDemonRendererImpl::GenerateXYZPoint()
     quint32 strides = m_PointVertexBuffer->GetStride();
     quint32 offsets = 0;
     m_PointInputAssembler = m_Context->CreateInputAssembler(
-                m_PointAttribLayout, toConstDataRef(&m_PointVertexBuffer.mPtr, 1), nullptr,
+                m_PointAttribLayout, toConstDataRef(&m_PointVertexBuffer, 1), nullptr,
                 toConstDataRef(&strides, 1), toConstDataRef(&offsets, 1));
 }
 
-QPair<QDemonRenderVertexBuffer *, QDemonRenderIndexBuffer *> QDemonRendererImpl::GetXYQuad()
+QPair<QSharedPointer<QDemonRenderVertexBuffer>, QSharedPointer<QDemonRenderIndexBuffer >> QDemonRendererImpl::GetXYQuad()
 {
     if (!m_QuadInputAssembler)
         GenerateXYQuad();
 
-    return QPair<QDemonRenderVertexBuffer *, QDemonRenderIndexBuffer *>(m_QuadVertexBuffer.mPtr, m_QuadIndexBuffer.mPtr);
+    return QPair<QSharedPointer<QDemonRenderVertexBuffer>, QSharedPointer<QDemonRenderIndexBuffer >>(m_QuadVertexBuffer, m_QuadIndexBuffer);
 }
 
 SLayerGlobalRenderProperties QDemonRendererImpl::GetLayerGlobalRenderProperties()
@@ -1529,7 +1509,7 @@ SLayerGlobalRenderProperties QDemonRendererImpl::GetLayerGlobalRenderProperties(
 
     return SLayerGlobalRenderProperties(
                 theLayer, *theData.m_Camera, *theData.m_CameraDirection, theData.m_Lights,
-                theData.m_LightDirections, theData.m_ShadowMapManager.mPtr, theData.m_LayerDepthTexture,
+                theData.m_LightDirections, theData.m_ShadowMapManager, theData.m_LayerDepthTexture,
                 theData.m_LayerSsaoTexture, theLayer.m_LightProbe, theLayer.m_LightProbe2,
                 theLayer.m_ProbeHorizon, theLayer.m_ProbeBright, theLayer.m_Probe2Window,
                 theLayer.m_Probe2Pos, theLayer.m_Probe2Fade, theLayer.m_ProbeFov);
@@ -1561,21 +1541,21 @@ void QDemonRendererImpl::GenerateXYQuadStrip()
     quint32 strides = m_QuadStripVertexBuffer->GetStride();
     quint32 offsets = 0;
     m_QuadStripInputAssembler = m_Context->CreateInputAssembler(
-                m_QuadStripAttribLayout, toConstDataRef(&m_QuadStripVertexBuffer.mPtr, 1), nullptr,
+                m_QuadStripAttribLayout, toConstDataRef(&m_QuadStripVertexBuffer, 1), nullptr,
                 toConstDataRef(&strides, 1), toConstDataRef(&offsets, 1));
 }
 
 void QDemonRendererImpl::UpdateCbAoShadow(const SLayer *pLayer, const SCamera *pCamera,
-                                         CResourceTexture2D &inDepthTexture)
+                                          CResourceTexture2D &inDepthTexture)
 {
     if (m_Context->GetConstantBufferSupport()) {
         QString theName = QString::fromLocal8Bit("cbAoShadow");
-        QDemonRenderConstantBuffer *pCB = m_Context->GetConstantBuffer(theName);
+        QSharedPointer<QDemonRenderConstantBuffer> pCB = m_Context->GetConstantBuffer(theName);
 
         if (!pCB) {
             // the  size is determined automatically later on
             pCB = m_Context->CreateConstantBuffer(
-                        theName, QDemonRenderBufferUsageType::Static, 0, QDemonDataRef<quint8>());
+                        theName.toLocal8Bit().constData(), QDemonRenderBufferUsageType::Static, 0, QDemonDataRef<quint8>());
             if (!pCB) {
                 Q_ASSERT(false);
                 return;
@@ -1609,7 +1589,7 @@ void QDemonRendererImpl::UpdateCbAoShadow(const SLayer *pLayer, const SCamera *p
         float R2 = pLayer->m_AoDistance * pLayer->m_AoDistance * 0.16f;
         float rw = 100, rh = 100;
 
-        if (inDepthTexture && inDepthTexture.GetTexture()) {
+        if (inDepthTexture.GetTexture() && inDepthTexture.GetTexture()) {
             rw = (float)inDepthTexture.GetTexture()->GetTextureDetails().m_Width;
             rh = (float)inDepthTexture.GetTexture()->GetTextureDetails().m_Height;
         }
@@ -1630,63 +1610,63 @@ void QDemonRendererImpl::UpdateCbAoShadow(const SLayer *pLayer, const SCamera *p
 
 // widget context implementation
 
-QDemonRenderVertexBuffer &QDemonRendererImpl::GetOrCreateVertexBuffer(QString &inStr,
-                                                                     quint32 stride,
-                                                                     QDemonConstDataRef<quint8> bufferData)
+QSharedPointer<QDemonRenderVertexBuffer> QDemonRendererImpl::GetOrCreateVertexBuffer(QString &inStr,
+                                                                      quint32 stride,
+                                                                      QDemonConstDataRef<quint8> bufferData)
 {
-    QDemonRenderVertexBuffer *retval = GetVertexBuffer(inStr);
+    QSharedPointer<QDemonRenderVertexBuffer> retval = GetVertexBuffer(inStr);
     if (retval) {
         // we update the buffer
         retval->UpdateBuffer(bufferData, false);
-        return *retval;
+        return retval;
     }
     retval = m_Context->CreateVertexBuffer(QDemonRenderBufferUsageType::Dynamic,
                                            bufferData.size(), stride, bufferData);
     m_WidgetVertexBuffers.insert(inStr, retval);
-    return *retval;
+    return retval;
 }
-QDemonRenderIndexBuffer &
+QSharedPointer<QDemonRenderIndexBuffer>
 QDemonRendererImpl::GetOrCreateIndexBuffer(QString &inStr,
-                                          QDemonRenderComponentTypes::Enum componentType,
-                                          size_t size, QDemonConstDataRef<quint8> bufferData)
+                                           QDemonRenderComponentTypes::Enum componentType,
+                                           size_t size, QDemonConstDataRef<quint8> bufferData)
 {
-    QDemonRenderIndexBuffer *retval = GetIndexBuffer(inStr);
+    QSharedPointer<QDemonRenderIndexBuffer> retval = GetIndexBuffer(inStr);
     if (retval) {
         // we update the buffer
         retval->UpdateBuffer(bufferData, false);
-        return *retval;
+        return retval;
     }
 
     retval = m_Context->CreateIndexBuffer(QDemonRenderBufferUsageType::Dynamic,
                                           componentType, size, bufferData);
     m_WidgetIndexBuffers.insert(inStr, retval);
-    return *retval;
+    return retval;
 }
 
-QDemonRenderAttribLayout &QDemonRendererImpl::CreateAttributeLayout(
+QSharedPointer<QDemonRenderAttribLayout> QDemonRendererImpl::CreateAttributeLayout(
         QDemonConstDataRef<QDemonRenderVertexBufferEntry> attribs)
 {
     // create our attribute layout
-    QDemonRenderAttribLayout *theAttribLAyout = m_Context->CreateAttributeLayout(attribs);
-    return *theAttribLAyout;
+    QSharedPointer<QDemonRenderAttribLayout> theAttribLayout = m_Context->CreateAttributeLayout(attribs);
+    return theAttribLayout;
 }
 
-QDemonRenderInputAssembler &QDemonRendererImpl::GetOrCreateInputAssembler(
-        QString &inStr, QDemonRenderAttribLayout *attribLayout,
-        QDemonConstDataRef<QDemonRenderVertexBuffer *> buffers, const QDemonRenderIndexBuffer *indexBuffer,
+QSharedPointer<QDemonRenderInputAssembler> QDemonRendererImpl::GetOrCreateInputAssembler(
+        QString &inStr, QSharedPointer<QDemonRenderAttribLayout> attribLayout,
+        QDemonConstDataRef<QSharedPointer<QDemonRenderVertexBuffer>> buffers, const QSharedPointer<QDemonRenderIndexBuffer> indexBuffer,
         QDemonConstDataRef<quint32> strides, QDemonConstDataRef<quint32> offsets)
 {
-    QDemonRenderInputAssembler *retval = GetInputAssembler(inStr);
+    QSharedPointer<QDemonRenderInputAssembler> retval = GetInputAssembler(inStr);
     if (retval)
-        return *retval;
+        return retval;
 
     retval =
             m_Context->CreateInputAssembler(attribLayout, buffers, indexBuffer, strides, offsets);
     m_WidgetInputAssembler.insert(inStr, retval);
-    return *retval;
+    return retval;
 }
 
-QDemonRenderVertexBuffer *QDemonRendererImpl::GetVertexBuffer(QString &inStr)
+QSharedPointer<QDemonRenderVertexBuffer> QDemonRendererImpl::GetVertexBuffer(const QString &inStr)
 {
     TStrVertBufMap::iterator theIter = m_WidgetVertexBuffers.find(inStr);
     if (theIter != m_WidgetVertexBuffers.end())
@@ -1694,7 +1674,7 @@ QDemonRenderVertexBuffer *QDemonRendererImpl::GetVertexBuffer(QString &inStr)
     return nullptr;
 }
 
-QDemonRenderIndexBuffer *QDemonRendererImpl::GetIndexBuffer(QString &inStr)
+QSharedPointer<QDemonRenderIndexBuffer> QDemonRendererImpl::GetIndexBuffer(const QString &inStr)
 {
     TStrIndexBufMap::iterator theIter = m_WidgetIndexBuffers.find(inStr);
     if (theIter != m_WidgetIndexBuffers.end())
@@ -1702,7 +1682,7 @@ QDemonRenderIndexBuffer *QDemonRendererImpl::GetIndexBuffer(QString &inStr)
     return nullptr;
 }
 
-QDemonRenderInputAssembler *QDemonRendererImpl::GetInputAssembler(QString &inStr)
+QSharedPointer<QDemonRenderInputAssembler> QDemonRendererImpl::GetInputAssembler(const QString &inStr)
 {
     TStrIAMap::iterator theIter = m_WidgetInputAssembler.find(inStr);
     if (theIter != m_WidgetInputAssembler.end())
@@ -1710,7 +1690,7 @@ QDemonRenderInputAssembler *QDemonRendererImpl::GetInputAssembler(QString &inStr
     return nullptr;
 }
 
-QDemonRenderShaderProgram *QDemonRendererImpl::GetShader(const QString &inStr)
+QSharedPointer<QDemonRenderShaderProgram> QDemonRendererImpl::GetShader(const QString &inStr)
 {
     TStrShaderMap::iterator theIter = m_WidgetShaders.find(inStr);
     if (theIter != m_WidgetShaders.end())
@@ -1718,64 +1698,61 @@ QDemonRenderShaderProgram *QDemonRendererImpl::GetShader(const QString &inStr)
     return nullptr;
 }
 
-QDemonRenderShaderProgram *QDemonRendererImpl::CompileAndStoreShader(const QString &inStr)
+QSharedPointer<QDemonRenderShaderProgram> QDemonRendererImpl::CompileAndStoreShader(const QString &inStr)
 {
-    QDemonRenderShaderProgram *newProgram = GetProgramGenerator().CompileGeneratedShader(inStr);
+    QSharedPointer<QDemonRenderShaderProgram> newProgram = GetProgramGenerator()->CompileGeneratedShader(inStr);
     if (newProgram)
         m_WidgetShaders.insert(inStr, newProgram);
     return newProgram;
 }
 
-IShaderProgramGenerator &QDemonRendererImpl::GetProgramGenerator()
+QSharedPointer<IShaderProgramGenerator> QDemonRendererImpl::GetProgramGenerator()
 {
-    return m_demonContext.GetShaderProgramGenerator();
+    return m_demonContext->GetShaderProgramGenerator();
 }
 
 STextDimensions QDemonRendererImpl::MeasureText(const STextRenderInfo &inText)
 {
-    if (m_demonContext.GetTextRenderer() != nullptr)
-        return m_demonContext.GetTextRenderer()->MeasureText(inText, 0);
+    if (m_demonContext->GetTextRenderer() != nullptr)
+        return m_demonContext->GetTextRenderer()->MeasureText(inText, 0);
     return STextDimensions();
 }
 
 void QDemonRendererImpl::RenderText(const STextRenderInfo &inText, const QVector3D &inTextColor,
-                                   const QVector3D &inBackgroundColor, const QMatrix4x4 &inMVP)
+                                    const QVector3D &inBackgroundColor, const QMatrix4x4 &inMVP)
 {
-    if (m_demonContext.GetTextRenderer() != nullptr) {
-        ITextRenderer &theTextRenderer(*m_demonContext.GetTextRenderer());
-        QDemonRenderTexture2D *theTexture = m_demonContext.GetResourceManager().AllocateTexture2D(
+    if (m_demonContext->GetTextRenderer() != nullptr) {
+        ITextRenderer &theTextRenderer(*m_demonContext->GetTextRenderer());
+        QSharedPointer<QDemonRenderTexture2D> theTexture = m_demonContext->GetResourceManager()->AllocateTexture2D(
                     32, 32, QDemonRenderTextureFormats::RGBA8);
         STextTextureDetails theTextTextureDetails =
                 theTextRenderer.RenderText(inText, *theTexture);
         STextRenderHelper theTextHelper(GetTextWidgetShader());
         if (theTextHelper.m_Shader != nullptr) {
-            m_demonContext.GetRenderContext().SetBlendingEnabled(false);
+            m_demonContext->GetRenderContext()->SetBlendingEnabled(false);
             STextScaleAndOffset theScaleAndOffset(*theTexture, theTextTextureDetails, inText);
-            theTextHelper.m_Shader->Render(*theTexture, theScaleAndOffset,
+            theTextHelper.m_Shader->Render(theTexture, theScaleAndOffset,
                                            QVector4D(inTextColor, 1.0f), inMVP, QVector2D(0, 0),
                                            GetContext(), theTextHelper.m_QuadInputAssembler,
-                                           theTextHelper.m_QuadInputAssembler.GetIndexCount(),
+                                           theTextHelper.m_QuadInputAssembler->GetIndexCount(),
                                            theTextTextureDetails, inBackgroundColor);
         }
-        m_demonContext.GetResourceManager().Release(*theTexture);
+        m_demonContext->GetResourceManager()->Release(theTexture);
     }
 }
 
-void QDemonRendererImpl::RenderText2D(float x, float y,
-                                     QDemonOption<QVector3D> inColor,
-                                     const char *text)
+void QDemonRendererImpl::RenderText2D(float x, float y, QDemonOption<QVector3D> inColor, const QString &text)
 {
-    if (m_demonContext.GetOnscreenTextRenderer() != nullptr) {
+    if (m_demonContext->GetOnscreenTextRenderer() != nullptr) {
         GenerateXYQuadStrip();
 
         if (PrepareTextureAtlasForRender()) {
             TTextRenderAtlasDetailsAndTexture theRenderTextDetails;
-            ITextTextureAtlas *theTextureAtlas = m_demonContext.GetTextureAtlas();
-            QSize theWindow = m_demonContext.GetWindowDimensions();
+            QSharedPointer<ITextTextureAtlas> theTextureAtlas = m_demonContext->GetTextureAtlas();
+            QSize theWindow = m_demonContext->GetWindowDimensions();
 
-            const wchar_t *wText = m_StringTable->GetWideStr(text);
             STextRenderInfo theInfo;
-            theInfo.m_Text = QString::fromLocal8Bit(wText);
+            theInfo.m_Text = text;
             theInfo.m_FontSize = 20;
             // text scale 2% of screen we don't scale Y though because it becomes unreadable
             theInfo.m_ScaleX = (theWindow.width() / 100.0f) * 1.5f / (theInfo.m_FontSize);
@@ -1798,7 +1775,7 @@ void QDemonRendererImpl::RenderText2D(float x, float y,
                                 QDemonRenderRect(0, 0, theWindow.width(), theWindow.height()),
                                 theWindowDim);
                     // We want a 2D lower left projection
-                    float *writePtr(theCamera.m_Projection.front());
+                    float *writePtr(theCamera.m_Projection.data());
                     writePtr[12] = -1;
                     writePtr[13] = -1;
 
@@ -1807,21 +1784,20 @@ void QDemonRendererImpl::RenderText2D(float x, float y,
                                                           false);
 
                     theTextHelper.m_Shader->Render2D(
-                                *theRenderTextDetails.second, QVector4D(inColor, 1.0f),
+                                theRenderTextDetails.second, QVector4D(inColor, 1.0f),
                                 theCamera.m_Projection, GetContext(),
                                 theTextHelper.m_QuadInputAssembler,
                                 theRenderTextDetails.first.m_VertexCount, QVector2D(x, y));
                 }
                 // we release the memory here
-                QDEMON_FREE(m_Context->GetAllocator(),
-                            theRenderTextDetails.first.m_Vertices.begin());
+                ::free(theRenderTextDetails.first.m_Vertices.begin());
             }
         }
     }
 }
 
 void QDemonRendererImpl::RenderGpuProfilerStats(float x, float y,
-                                               QDemonOption<QVector3D> inColor)
+                                                QDemonOption<QVector3D> inColor)
 {
     if (!IsLayerGpuProfilingEnabled())
         return;
@@ -1833,20 +1809,20 @@ void QDemonRendererImpl::RenderGpuProfilerStats(float x, float y,
 
     for (theIter = m_InstanceRenderMap.begin(); theIter != m_InstanceRenderMap.end(); theIter++) {
         float startX = x;
-        const SLayerRenderData *theLayerRenderData = theIter->second;
+        const QSharedPointer<SLayerRenderData> theLayerRenderData = theIter.value();
         const SLayer *theLayer = &theLayerRenderData->m_Layer;
 
-        if (theLayer->m_Flags.IsActive() && theLayerRenderData->m_LayerProfilerGpu.mPtr) {
+        if (theLayer->m_Flags.IsActive() && theLayerRenderData->m_LayerProfilerGpu) {
             const IRenderProfiler::TStrIDVec &idList =
                     theLayerRenderData->m_LayerProfilerGpu->GetTimerIDs();
             if (!idList.empty()) {
                 startY -= 22;
                 startX += 20;
-                RenderText2D(startX, startY, inColor, theLayer->m_Id);
+                RenderText2D(startX, startY, inColor, theLayer->m_Id.toLocal8Bit().constData());
                 IRenderProfiler::TStrIDVec::const_iterator theIdIter = idList.begin();
                 for (theIdIter = idList.begin(); theIdIter != idList.end(); theIdIter++) {
                     startY -= 22;
-                    sprintf(messageLine, "%s: %.3f ms", theIdIter->c_str(),
+                    sprintf(messageLine, "%s: %.3f ms", theIdIter,
                             theLayerRenderData->m_LayerProfilerGpu->GetElapsedTime(*theIdIter));
                     RenderText2D(startX + 20, startY, inColor, messageLine);
                 }
@@ -1861,9 +1837,9 @@ void QDemonRendererImpl::RenderGpuProfilerStats(float x, float y,
 // or orthographic mode if you would like to.
 SWidgetRenderInformation
 QDemonRendererImpl::GetWidgetRenderInformation(SNode &inNode, const QVector3D &inPos,
-                                              RenderWidgetModes::Enum inWidgetMode)
+                                               RenderWidgetModes::Enum inWidgetMode)
 {
-    SLayerRenderData *theData = GetOrCreateLayerRenderDataForNode(inNode);
+    QSharedPointer<SLayerRenderData> theData = GetOrCreateLayerRenderDataForNode(inNode);
     SCamera *theCamera = theData->m_Camera;
     if (theCamera == nullptr || theData->m_LayerPrepResult.hasValue() == false) {
         Q_ASSERT(false);
@@ -1911,7 +1887,7 @@ QDemonRendererImpl::GetWidgetRenderInformation(SNode &inNode, const QVector3D &i
     theGlobalTransform = theGlobalTransform * theTranslation;
 
     QMatrix4x4 theNodeToParentPlusTranslation = theCameraInverse * theGlobalTransform;
-    QVector3D thePos = theNodeToParentPlusTranslation.transform(inPos);
+    QVector3D thePos = mat44::transform(theNodeToParentPlusTranslation, inPos);
     SScaleAndPosition theScaleAndPos = GetWorldToPixelScaleFactor(*theCamera, thePos, *theData);
     QMatrix3x3 theLookAtMatrix;
     if (theCamera->m_Flags.IsOrthographic() == false) {
@@ -1927,7 +1903,7 @@ QDemonRendererImpl::GetWidgetRenderInformation(SNode &inNode, const QVector3D &i
             theLookAtMatrix = theQuat.toRotationMatrix();
         }
     }
-    QVector3D thePosInWorldSpace = theGlobalTransform.transform(inPos);
+    QVector3D thePosInWorldSpace = mat44::transform(theGlobalTransform, inPos);
     QVector3D theCameraPosInWorldSpace = theCamera->GetGlobalPos();
     QVector3D theCameraOffset = thePosInWorldSpace - theCameraPosInWorldSpace;
     QVector3D theDir = theCameraOffset;
@@ -1941,11 +1917,11 @@ QDemonRendererImpl::GetWidgetRenderInformation(SNode &inNode, const QVector3D &i
 }
 
 QDemonOption<QVector2D> QDemonRendererImpl::GetLayerMouseCoords(SLayer &inLayer,
-                                                         const QVector2D &inMouseCoords,
-                                                         const QVector2D &inViewportDimensions,
-                                                         bool forceImageIntersect) const
+                                                                const QVector2D &inMouseCoords,
+                                                                const QVector2D &inViewportDimensions,
+                                                                bool forceImageIntersect) const
 {
-    SLayerRenderData *theData =
+    QSharedPointer<SLayerRenderData> theData =
             const_cast<QDemonRendererImpl &>(*this).GetOrCreateLayerRenderDataForNode(inLayer);
     return GetLayerMouseCoords(*theData, inMouseCoords, inViewportDimensions,
                                forceImageIntersect);
@@ -1980,8 +1956,8 @@ bool IQDemonRenderer::IsGl2Context(QDemonRenderContextType inContextType)
     return false;
 }
 
-IQDemonRenderer &IQDemonRenderer::CreateRenderer(IQDemonRenderContext &inContext)
+QSharedPointer<IQDemonRenderer> IQDemonRenderer::CreateRenderer(QSharedPointer<IQDemonRenderContext> inContext)
 {
-    return *new QDemonRendererImpl(inContext);
+    return QSharedPointer<QDemonRendererImpl>(new QDemonRendererImpl(inContext));
 }
 QT_END_NAMESPACE

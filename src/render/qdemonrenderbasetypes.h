@@ -2058,12 +2058,12 @@ struct QDemonRenderRectT
     // Ensure this rect is inside the bounds of the other rect
     void EnsureInBounds(const QDemonRenderRectT<TDataType> &inOther)
     {
-        TDataType rightExtent = NVMin(GetRightExtent(), inOther.GetRightExtent());
-        TDataType bottomExtent = NVMin(GetBottomExtent(), inOther.GetBottomExtent());
-        m_X = NVMax(m_X, inOther.m_X);
-        m_Y = NVMax(m_Y, inOther.m_Y);
-        m_Width = NVMax(static_cast<TDataType>(0), rightExtent - m_X);
-        m_Height = NVMax(static_cast<TDataType>(0), bottomExtent - m_Y);
+        TDataType rightExtent = qMin(GetRightExtent(), inOther.GetRightExtent());
+        TDataType bottomExtent = qMin(GetBottomExtent(), inOther.GetBottomExtent());
+        m_X = qMax(m_X, inOther.m_X);
+        m_Y = qMax(m_Y, inOther.m_Y);
+        m_Width = qMax(static_cast<TDataType>(0), rightExtent - m_X);
+        m_Height = qMax(static_cast<TDataType>(0), bottomExtent - m_Y);
     }
 };
 

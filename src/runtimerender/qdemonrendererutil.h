@@ -44,18 +44,18 @@ class CRendererUtil
 
 public:
     static void ResolveMutisampleFBOColorOnly(QSharedPointer<IResourceManager> inManager,
-                                              QSharedPointer<CResourceTexture2D> ioResult,
-                                              QSharedPointer<QDemonRenderContext> inRenderContext,
+                                              CResourceTexture2D &ioResult,
+                                              QDemonRenderContext &inRenderContext,
                                               quint32 inWidth,
                                               quint32 inHeight,
                                               QDemonRenderTextureFormats::Enum inColorFormat,
                                               QSharedPointer<QDemonRenderFrameBuffer> inSourceFBO);
 
     static void ResolveSSAAFBOColorOnly(QSharedPointer<IResourceManager> inManager,
-                                        QSharedPointer<CResourceTexture2D> ioResult,
+                                        CResourceTexture2D &ioResult,
                                         quint32 outWidth,
                                         quint32 outHeight,
-                                        QSharedPointer<QDemonRenderContext> inRenderContext,
+                                        QDemonRenderContext &inRenderContext,
                                         quint32 inWidth,
                                         quint32 inHeight,
                                         QDemonRenderTextureFormats::Enum inColorFormat,

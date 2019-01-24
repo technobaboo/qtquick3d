@@ -32,29 +32,26 @@
 #define QDEMON_RENDERER_IMPL_SHADERS_H
 
 #include <QtDemonRender/qdemonrendershaderprogram.h>
-#include <QtDemonRuntimeRender/qdemonrenderprogrampipeline.h>
+#include <QtDemonRender/qdemonrenderprogrampipeline.h>
+#include <QtDemonRuntimeRender/qdemonrenderableobjects.h>
 
 QT_BEGIN_NAMESPACE
-using NVRenderCachedShaderProperty;
-using NVRenderCachedShaderBuffer;
 
 /**
      *	Cached tessellation property lookups this is on a per mesh base
      */
 struct SShaderTessellationProperties
 {
-    NVRenderCachedShaderProperty<float> m_EdgeTessLevel; ///< tesselation value for the edges
-    NVRenderCachedShaderProperty<float> m_InsideTessLevel; ///< tesselation value for the inside
-    NVRenderCachedShaderProperty<float>
-    m_PhongBlend; ///< blending between linear and phong component
-    NVRenderCachedShaderProperty<QVector2D>
-    m_DistanceRange; ///< distance range for min and max tess level
-    NVRenderCachedShaderProperty<float> m_DisableCulling; ///< if set to 1.0 this disables
+    QDemonRenderCachedShaderProperty<float> m_EdgeTessLevel; ///< tesselation value for the edges
+    QDemonRenderCachedShaderProperty<float> m_InsideTessLevel; ///< tesselation value for the inside
+    QDemonRenderCachedShaderProperty<float> m_PhongBlend; ///< blending between linear and phong component
+    QDemonRenderCachedShaderProperty<QVector2D> m_DistanceRange; ///< distance range for min and max tess level
+    QDemonRenderCachedShaderProperty<float> m_DisableCulling; ///< if set to 1.0 this disables
     ///backface culling optimization in
     ///the tess shader
 
     SShaderTessellationProperties() {}
-    SShaderTessellationProperties(QDemonRenderShaderProgram &inShader)
+    SShaderTessellationProperties(QSharedPointer<QDemonRenderShaderProgram> inShader)
         : m_EdgeTessLevel("tessLevelOuter", inShader)
         , m_InsideTessLevel("tessLevelInner", inShader)
         , m_PhongBlend("phongBlend", inShader)
@@ -72,23 +69,21 @@ struct SShaderGeneratorGeneratedShader
 {
     quint32 m_LayerSetIndex;
     QString m_QueryString;
-    QDemonRenderShaderProgram &m_Shader;
-    NVRenderCachedShaderProperty<QMatrix4x4> m_ViewportMatrix;
+    QSharedPointer<QDemonRenderShaderProgram> m_Shader;
+    QDemonRenderCachedShaderProperty<QMatrix4x4> m_ViewportMatrix;
     SShaderTessellationProperties m_Tessellation;
 
     SShaderGeneratorGeneratedShader(QString inQueryString,
-                                    QDemonRenderShaderProgram &inShader)
+                                    QSharedPointer<QDemonRenderShaderProgram> inShader)
         : m_LayerSetIndex(std::numeric_limits<quint32>::max())
         , m_QueryString(inQueryString)
         , m_Shader(inShader)
         , m_ViewportMatrix("viewport_matrix", inShader)
         , m_Tessellation(inShader)
     {
-        //m_Shader.addRef();
     }
     ~SShaderGeneratorGeneratedShader() 
     { 
-        //m_Shader.release(); 
     }
     static quint32 GetLayerIndex(const SShaderGeneratorGeneratedShader &inShader)
     {
@@ -102,20 +97,18 @@ struct SShaderGeneratorGeneratedShader
 
 struct SDefaultMaterialRenderableDepthShader
 {
-    QDemonRenderShaderProgram &m_Shader;
-    NVRenderCachedShaderProperty<QMatrix4x4> m_MVP;
+    QSharedPointer<QDemonRenderShaderProgram> m_Shader;
+    QDemonRenderCachedShaderProperty<QMatrix4x4> m_MVP;
 
-    SDefaultMaterialRenderableDepthShader(QDemonRenderShaderProgram &inShader,
+    SDefaultMaterialRenderableDepthShader(QSharedPointer<QDemonRenderShaderProgram> inShader,
                                           QDemonRenderContext &inContext)
         : m_Shader(inShader)
         , m_MVP("model_view_projection", inShader)
-        , m_RefCount(0)
     {
-        //m_Shader.addRef();
+        Q_UNUSED(inContext)
     }
 
     ~SDefaultMaterialRenderableDepthShader() {
-        //  m_Shader.release();
     }
 
 };
@@ -126,11 +119,11 @@ struct SDefaultMaterialRenderableDepthShader
      */
 struct SShaderTextureProperties
 {
-    NVRenderCachedShaderProperty<QDemonRenderTexture2D *> m_Sampler;
-    NVRenderCachedShaderProperty<QVector3D> m_Offsets;
-    NVRenderCachedShaderProperty<QVector4D> m_Rotations;
+    QDemonRenderCachedShaderProperty<QDemonRenderTexture2D *> m_Sampler;
+    QDemonRenderCachedShaderProperty<QVector3D> m_Offsets;
+    QDemonRenderCachedShaderProperty<QVector4D> m_Rotations;
     SShaderTextureProperties(const char *sampName, const char *offName, const char *rotName,
-                             QDemonRenderShaderProgram &inShader)
+                             QSharedPointer<QDemonRenderShaderProgram> inShader)
         : m_Sampler(sampName, inShader)
         , m_Offsets(offName, inShader)
         , m_Rotations(rotName, inShader)
@@ -141,21 +134,21 @@ struct SShaderTextureProperties
 
 struct SRenderableDepthPrepassShader
 {
-    QDemonRenderShaderProgram &m_Shader;
-    NVRenderCachedShaderProperty<QMatrix4x4> m_MVP;
-    NVRenderCachedShaderProperty<QMatrix4x4> m_GlobalTransform;
-    NVRenderCachedShaderProperty<QMatrix4x4> m_Projection;
-    NVRenderCachedShaderProperty<QVector3D> m_CameraPosition;
-    NVRenderCachedShaderProperty<float> m_DisplaceAmount;
+    QSharedPointer<QDemonRenderShaderProgram> m_Shader;
+    QDemonRenderCachedShaderProperty<QMatrix4x4> m_MVP;
+    QDemonRenderCachedShaderProperty<QMatrix4x4> m_GlobalTransform;
+    QDemonRenderCachedShaderProperty<QMatrix4x4> m_Projection;
+    QDemonRenderCachedShaderProperty<QVector3D> m_CameraPosition;
+    QDemonRenderCachedShaderProperty<float> m_DisplaceAmount;
     SShaderTextureProperties m_DisplacementProps;
-    NVRenderCachedShaderProperty<QVector2D> m_CameraProperties;
-    NVRenderCachedShaderProperty<QVector3D> m_CameraDirection;
-    // NVRenderCachedShaderProperty<QMatrix4x4>	m_ShadowMV[6];
+    QDemonRenderCachedShaderProperty<QVector2D> m_CameraProperties;
+    QDemonRenderCachedShaderProperty<QVector3D> m_CameraDirection;
+    // QDemonRenderCachedShaderProperty<QMatrix4x4>	m_ShadowMV[6];
 
     // Cache the tessellation property name lookups
     SShaderTessellationProperties m_Tessellation;
 
-    SRenderableDepthPrepassShader(QDemonRenderShaderProgram &inShader, QDemonRenderContext &inContext)
+    SRenderableDepthPrepassShader(QSharedPointer<QDemonRenderShaderProgram> inShader, QSharedPointer<QDemonRenderContext> inContext)
         : m_Shader(inShader)
         , m_MVP("model_view_projection", inShader)
         , m_GlobalTransform("model_matrix", inShader)
@@ -182,32 +175,28 @@ struct SRenderableDepthPrepassShader
             m_ShadowMV[5].m_Shader = &inShader;
             m_ShadowMV[5].m_Constant = inShader.GetShaderConstant( "shadow_mv5" );
             */
-        //m_Shader.addRef();
     }
 
     ~SRenderableDepthPrepassShader() 
     { 
-    //    m_Shader.release();
     }
 
 };
 
 struct SDefaultAoPassShader
 {
-    QDemonRenderShaderProgram &m_Shader;
-    NVRenderCachedShaderProperty<QMatrix4x4> m_ViewMatrix;
-    NVRenderCachedShaderProperty<QVector2D> m_CameraProperties;
-    NVRenderCachedShaderProperty<QVector3D> m_CameraDirection;
-    NVRenderCachedShaderProperty<QDemonRenderTexture2D *> m_DepthTexture;
-    NVRenderCachedShaderProperty<QDemonRenderTextureCube *> m_CubeTexture;
-    NVRenderCachedShaderProperty<QVector2D> m_DepthSamplerSize;
+    QSharedPointer<QDemonRenderShaderProgram> m_Shader;
+    QDemonRenderCachedShaderProperty<QMatrix4x4> m_ViewMatrix;
+    QDemonRenderCachedShaderProperty<QVector2D> m_CameraProperties;
+    QDemonRenderCachedShaderProperty<QVector3D> m_CameraDirection;
+    QDemonRenderCachedShaderProperty<QDemonRenderTexture2D *> m_DepthTexture;
+    QDemonRenderCachedShaderProperty<QDemonRenderTextureCube *> m_CubeTexture;
+    QDemonRenderCachedShaderProperty<QVector2D> m_DepthSamplerSize;
 
-    NVRenderCachedShaderBuffer<QDemonRenderShaderConstantBuffer *> m_AoShadowParams;
-    qint32 m_RefCount;
+    QDemonRenderCachedShaderBuffer<QDemonRenderShaderConstantBuffer> m_AoShadowParams;
 
-    SDefaultAoPassShader(QDemonRenderShaderProgram &inShader, QDemonRenderContext &inContext)
-        : m_Allocator(inContext.GetAllocator())
-        , m_Shader(inShader)
+    SDefaultAoPassShader(QSharedPointer<QDemonRenderShaderProgram> inShader, QSharedPointer<QDemonRenderContext> inContext)
+        : m_Shader(inShader)
         , m_ViewMatrix("view_matrix", inShader)
         , m_CameraProperties("camera_properties", inShader)
         , m_CameraDirection("camera_direction", inShader)
@@ -215,36 +204,33 @@ struct SDefaultAoPassShader
         , m_CubeTexture("depth_cube", inShader)
         , m_DepthSamplerSize("depth_sampler_size", inShader)
         , m_AoShadowParams("cbAoShadow", inShader)
-        , m_RefCount(0)
     {
-        //m_Shader.addRef();
     }
     ~SDefaultAoPassShader() 
     {
-        //m_Shader.release(); 
     }
 };
 
 struct STextShader
 {
-    QDemonRenderShaderProgram &m_Shader;
+    QSharedPointer<QDemonRenderShaderProgram> m_Shader;
 
     QSharedPointer<QDemonRenderProgramPipeline> m_ProgramPipeline;
 
-    NVRenderCachedShaderProperty<QMatrix4x4> m_MVP;
+    QDemonRenderCachedShaderProperty<QMatrix4x4> m_MVP;
     // Dimensions and offsetting of the image.
-    NVRenderCachedShaderProperty<QVector4D> m_Dimensions;
+    QDemonRenderCachedShaderProperty<QVector4D> m_Dimensions;
     // The fourth member of text color is the opacity
-    NVRenderCachedShaderProperty<QVector4D> m_TextColor;
-    NVRenderCachedShaderProperty<QVector3D> m_BackgroundColor;
-    NVRenderCachedShaderProperty<QDemonRenderTexture2D *> m_Sampler;
+    QDemonRenderCachedShaderProperty<QVector4D> m_TextColor;
+    QDemonRenderCachedShaderProperty<QVector3D> m_BackgroundColor;
+    QDemonRenderCachedShaderProperty<QDemonRenderTexture2D *> m_Sampler;
     // Dimensions and offsetting of the texture
-    NVRenderCachedShaderProperty<QVector3D> m_TextDimensions;
-    NVRenderCachedShaderProperty<QVector2D> m_CameraProperties;
+    QDemonRenderCachedShaderProperty<QVector3D> m_TextDimensions;
+    QDemonRenderCachedShaderProperty<QVector2D> m_CameraProperties;
     // Used only for onscreen text
-    NVRenderCachedShaderProperty<QVector2D> m_VertexOffsets;
+    QDemonRenderCachedShaderProperty<QVector2D> m_VertexOffsets;
 
-    STextShader(QDemonRenderShaderProgram &shader, QDemonRenderProgramPipeline *pipeline = nullptr)
+    STextShader(QSharedPointer<QDemonRenderShaderProgram> shader, QSharedPointer<QDemonRenderProgramPipeline> pipeline = nullptr)
         : m_Shader(shader)
         , m_ProgramPipeline(pipeline)
         , m_MVP("model_view_projection", shader)
@@ -257,48 +243,54 @@ struct STextShader
         , m_VertexOffsets("vertex_offsets", shader)
     {
         if (!pipeline) {
-            //m_Shader.addRef();
         }
     }
     ~STextShader()
     {
-        // if (!m_ProgramPipeline.mPtr)
-        //     m_Shader.release();
     }
-    void Render(QDemonRenderTexture2D &inTexture, const STextScaleAndOffset &inScaleAndOffset,
-                const QVector4D &inTextColor, const QMatrix4x4 &inMVP, const QVector2D &inCameraVec,
-                QDemonRenderContext &inRenderContext,
-                QDemonRenderInputAssembler &inInputAssemblerBuffer, quint32 count,
+    void Render(QSharedPointer<QDemonRenderTexture2D> inTexture,
+                const STextScaleAndOffset &inScaleAndOffset,
+                const QVector4D &inTextColor,
+                const QMatrix4x4 &inMVP,
+                const QVector2D &inCameraVec,
+                QSharedPointer<QDemonRenderContext> inRenderContext,
+                QSharedPointer<QDemonRenderInputAssembler> inInputAssemblerBuffer,
+                quint32 count,
                 const STextTextureDetails &inTextTextureDetails,
                 const QVector3D &inBackgroundColor);
 
-    void RenderPath(QDemonRenderPathFontItem &inPathFontItem,
-                    QDemonRenderPathFontSpecification &inPathFontSpec,
-                    const STextScaleAndOffset &inScaleAndOffset, const QVector4D &inTextColor,
-                    const QMatrix4x4 &inViewProjection, const QMatrix4x4 &inModel,
-                    const QVector2D &inCameraVec, QDemonRenderContext &inRenderContext,
+    void RenderPath(QSharedPointer<QDemonRenderPathFontItem> inPathFontItem,
+                    QSharedPointer<QDemonRenderPathFontSpecification> inPathFontSpec,
+                    const STextScaleAndOffset &inScaleAndOffset,
+                    const QVector4D &inTextColor,
+                    const QMatrix4x4 &inViewProjection,
+                    const QMatrix4x4 &inModel,
+                    const QVector2D &inCameraVec,
+                    QSharedPointer<QDemonRenderContext> inRenderContext,
                     const STextTextureDetails &inTextTextureDetails,
                     const QVector3D &inBackgroundColor);
 
-    void Render2D(QDemonRenderTexture2D &inTexture, const QVector4D &inTextColor, const QMatrix4x4 &inMVP,
-                  QDemonRenderContext &inRenderContext,
-                  QDemonRenderInputAssembler &inInputAssemblerBuffer, quint32 count,
+    void Render2D(QSharedPointer<QDemonRenderTexture2D> inTexture,
+                  const QVector4D &inTextColor, const QMatrix4x4 &inMVP,
+                  QSharedPointer<QDemonRenderContext> inRenderContext,
+                  QSharedPointer<QDemonRenderInputAssembler> inInputAssemblerBuffer,
+                  quint32 count,
                   QVector2D inVertexOffsets);
 };
 
 struct STextDepthShader
 {
-    QDemonRenderShaderProgram &m_Shader;
-    NVRenderCachedShaderProperty<QMatrix4x4> m_MVP;
+    QSharedPointer<QDemonRenderShaderProgram> m_Shader;
+    QDemonRenderCachedShaderProperty<QMatrix4x4> m_MVP;
     // Dimensions and offsetting of the image.
-    NVRenderCachedShaderProperty<QVector4D> m_Dimensions;
-    NVRenderCachedShaderProperty<QVector3D> m_TextDimensions;
-    NVRenderCachedShaderProperty<QVector2D> m_CameraProperties;
-    NVRenderCachedShaderProperty<QDemonRenderTexture2D *> m_Sampler;
-    QDemonRenderInputAssembler &m_QuadInputAssembler;
+    QDemonRenderCachedShaderProperty<QVector4D> m_Dimensions;
+    QDemonRenderCachedShaderProperty<QVector3D> m_TextDimensions;
+    QDemonRenderCachedShaderProperty<QVector2D> m_CameraProperties;
+    QDemonRenderCachedShaderProperty<QDemonRenderTexture2D *> m_Sampler;
+    QSharedPointer<QDemonRenderInputAssembler> m_QuadInputAssembler;
 
-    STextDepthShader(QDemonRenderShaderProgram &prog,
-                     QDemonRenderInputAssembler &assembler)
+    STextDepthShader(QSharedPointer<QDemonRenderShaderProgram> prog,
+                     QSharedPointer<QDemonRenderInputAssembler> assembler)
         : m_Shader(prog)
         , m_MVP("model_view_projection", prog)
         , m_Dimensions("text_dimensions", prog)
@@ -307,21 +299,19 @@ struct STextDepthShader
         , m_Sampler("text_image", prog)
         , m_QuadInputAssembler(assembler)
     {
-        //m_Shader.addRef();
     }
     ~STextDepthShader() 
     {
-         /*m_Shader.release();*/
     }
 };
 
 struct SLayerProgAABlendShader
 {
     QSharedPointer<QDemonRenderShaderProgram> m_Shader;
-    NVRenderCachedShaderProperty<QDemonRenderTexture2D *> m_AccumSampler;
-    NVRenderCachedShaderProperty<QDemonRenderTexture2D *> m_LastFrame;
-    NVRenderCachedShaderProperty<QVector2D> m_BlendFactors;
-    SLayerProgAABlendShader(QDemonRenderShaderProgram &inShader)
+    QDemonRenderCachedShaderProperty<QDemonRenderTexture2D *> m_AccumSampler;
+    QDemonRenderCachedShaderProperty<QDemonRenderTexture2D *> m_LastFrame;
+    QDemonRenderCachedShaderProperty<QVector2D> m_BlendFactors;
+    SLayerProgAABlendShader(QSharedPointer<QDemonRenderShaderProgram> inShader)
         : m_Shader(inShader)
         , m_AccumSampler("accumulator", inShader)
         , m_LastFrame("last_frame", inShader)
@@ -332,66 +322,60 @@ struct SLayerProgAABlendShader
 
 struct SLayerSceneShader
 {
-    QDemonRenderShaderProgram &m_Shader;
+    QSharedPointer<QDemonRenderShaderProgram> m_Shader;
 
-    NVRenderCachedShaderProperty<QMatrix4x4> m_MVP;
+    QDemonRenderCachedShaderProperty<QMatrix4x4> m_MVP;
     // Dimensions and offsetting of the image.
-    NVRenderCachedShaderProperty<QVector2D> m_Dimensions;
+    QDemonRenderCachedShaderProperty<QVector2D> m_Dimensions;
     // The fourth member of text color is the opacity
-    NVRenderCachedShaderProperty<QDemonRenderTexture2D *> m_Sampler;
+    QDemonRenderCachedShaderProperty<QDemonRenderTexture2D *> m_Sampler;
 
-    SLayerSceneShader(QDemonRenderShaderProgram &inShader)
+    SLayerSceneShader(QSharedPointer<QDemonRenderShaderProgram> inShader)
         : m_Shader(inShader)
         , m_MVP("model_view_projection", inShader)
         , m_Dimensions("layer_dimensions", inShader)
         , m_Sampler("layer_image", inShader)
     {
-        //m_Shader.addRef();
     }
     ~SLayerSceneShader() 
     {
-        //m_Shader.release(); 
     }
 };
 
 struct SShadowmapPreblurShader
 {
-    QDemonRenderShaderProgram &m_Shader;
-    NVRenderCachedShaderProperty<QVector2D> m_CameraProperties;
-    NVRenderCachedShaderProperty<QDemonRenderTextureCube *> m_DepthCube;
-    NVRenderCachedShaderProperty<QDemonRenderTexture2D *> m_DepthMap;
+    QSharedPointer<QDemonRenderShaderProgram> m_Shader;
+    QDemonRenderCachedShaderProperty<QVector2D> m_CameraProperties;
+    QDemonRenderCachedShaderProperty<QDemonRenderTextureCube *> m_DepthCube;
+    QDemonRenderCachedShaderProperty<QDemonRenderTexture2D *> m_DepthMap;
 
-    SShadowmapPreblurShader(QDemonRenderShaderProgram &inShader)
+    SShadowmapPreblurShader(QSharedPointer<QDemonRenderShaderProgram> inShader)
         : m_Shader(inShader)
         , m_CameraProperties("camera_properties", inShader)
         , m_DepthCube("depthCube", inShader)
         , m_DepthMap("depthSrc", inShader)
     {
-        //m_Shader.addRef();
     }
     ~SShadowmapPreblurShader() 
     {
-        //m_Shader.release(); 
     }
 };
 
 #ifdef ADVANCED_BLEND_SW_FALLBACK
 struct SAdvancedModeBlendShader
 {
-    QDemonRenderShaderProgram &m_Shader;
-    NVRenderCachedShaderProperty<QDemonRenderTexture2D *> m_baseLayer;
-    NVRenderCachedShaderProperty<QDemonRenderTexture2D *> m_blendLayer;
+    QSharedPointer<QDemonRenderShaderProgram> m_Shader;
+    QDemonRenderCachedShaderProperty<QDemonRenderTexture2D *> m_baseLayer;
+    QDemonRenderCachedShaderProperty<QDemonRenderTexture2D *> m_blendLayer;
 
-    SAdvancedModeBlendShader(QDemonRenderShaderProgram &inShader)
+    SAdvancedModeBlendShader(QSharedPointer<QDemonRenderShaderProgram> inShader)
         : m_Shader(inShader)
         , m_baseLayer("base_layer", inShader)
         , m_blendLayer("blend_layer", inShader)
     {
-        //m_Shader.addRef();
     }
     ~SAdvancedModeBlendShader() 
     { 
-        //m_Shader.release(); 
     }
 };
 #endif

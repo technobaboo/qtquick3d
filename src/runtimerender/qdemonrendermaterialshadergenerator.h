@@ -88,8 +88,8 @@ struct SLayerGlobalRenderProperties
     const SLayer &m_Layer;
     SCamera &m_Camera;
     QVector3D m_CameraDirection;
-    QDemonDataRef<SLight *> m_Lights;
-    QDemonDataRef<QVector3D> m_LightDirections;
+    QVector<SLight *> &m_Lights;
+    QVector<QVector3D> m_LightDirections;
     QSharedPointer<QDemonRenderShadowMap> m_ShadowMapManager;
     QSharedPointer<QDemonRenderTexture2D> m_DepthTexture;
     QSharedPointer<QDemonRenderTexture2D> m_SSaoTexture;
@@ -102,15 +102,22 @@ struct SLayerGlobalRenderProperties
     float m_Probe2Fade;
     float m_ProbeFOV;
 
-    SLayerGlobalRenderProperties(const SLayer &inLayer, SCamera &inCamera,
-                                 QVector3D inCameraDirection, QDemonDataRef<SLight *> inLights,
-                                 QDemonDataRef<QVector3D> inLightDirections,
+    SLayerGlobalRenderProperties(const SLayer &inLayer,
+                                 SCamera &inCamera,
+                                 QVector3D inCameraDirection,
+                                 QVector<SLight *> &inLights,
+                                 QVector<QVector3D> &inLightDirections,
                                  QSharedPointer<QDemonRenderShadowMap> inShadowMapManager,
                                  QSharedPointer<QDemonRenderTexture2D> inDepthTexture,
-                                 QSharedPointer<QDemonRenderTexture2D> inSSaoTexture, SImage *inLightProbe,
-                                 SImage *inLightProbe2, float inProbeHorizon,
-                                 float inProbeBright, float inProbe2Window, float inProbe2Pos,
-                                 float inProbe2Fade, float inProbeFOV)
+                                 QSharedPointer<QDemonRenderTexture2D> inSSaoTexture,
+                                 SImage *inLightProbe,
+                                 SImage *inLightProbe2,
+                                 float inProbeHorizon,
+                                 float inProbeBright,
+                                 float inProbe2Window,
+                                 float inProbe2Pos,
+                                 float inProbe2Fade,
+                                 float inProbeFOV)
         : m_Layer(inLayer)
         , m_Camera(inCamera)
         , m_CameraDirection(inCameraDirection)
@@ -153,7 +160,7 @@ public:
                                                                      SShaderDefaultMaterialKey inShaderDescription,
                                                                      IShaderStageGenerator &inVertexPipeline,
                                                                      TShaderFeatureSet inFeatureSet,
-                                                                     QDemonDataRef<SLight *> inLights,
+                                                                     const QVector<SLight *> &inLights,
                                                                      SRenderableImage *inFirstImage,
                                                                      bool inHasTransparency,
                                                                      const QString &inVertexPipelineName,

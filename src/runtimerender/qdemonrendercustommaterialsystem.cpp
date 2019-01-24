@@ -49,7 +49,7 @@
 #include <QtDemonRuntimeRender/qdemonrenderdynamicobjectsystemutil.h>
 #include <QtDemonRuntimeRender/qdemonrenderableimage.h>
 #include <QtDemonRuntimeRender/qdemonvertexpipelineimpl.h>
-//#include <QtDemonRuntimeRender/qdemonrendererimpllayerrenderdata.h>
+#include <QtDemonRuntimeRender/qdemonrendererimpllayerrenderdata.h>
 #include <QtDemonRuntimeRender/qdemonrendercustommaterialshadergenerator.h>
 #include <QtDemonRuntimeRender/qdemonrendermodel.h>
 
@@ -1136,7 +1136,7 @@ struct SMaterialSystem : public ICustomMaterialSystem, public QEnableSharedFromT
         return inShaderKeyBuffer;
     }
 
-    QSharedPointer<QDemonRenderShaderProgram> GetShader(QSharedPointer<SCustomMaterialRenderContext> inRenderContext,
+    QSharedPointer<QDemonRenderShaderProgram> GetShader(SCustomMaterialRenderContext &inRenderContext,
                                                         const SCustomMaterial &inMaterial,
                                                         const dynamic::SBindShader &inCommand, TShaderFeatureSet inFeatureSet,
                                                         const dynamic::SDynamicShaderProgramFlags &inFlags)
@@ -1148,32 +1148,32 @@ struct SMaterialSystem : public ICustomMaterialSystem, public QEnableSharedFromT
         QString theKey = GetShaderCacheKey(theShaderKeyBuffer, inCommand.m_ShaderPath,
                                            inCommand.m_ShaderDefine, inFlags);
 
-        SCustomMaterialVertexPipeline thePipeline(m_Context, inRenderContext->m_Model.m_TessellationMode);
+        SCustomMaterialVertexPipeline thePipeline(m_Context, inRenderContext.m_Model.m_TessellationMode);
 
         QSharedPointer<QDemonRenderShaderProgram> theProgram = theMaterialGenerator->GenerateShader(
-                    inMaterial, inRenderContext->m_MaterialKey, thePipeline, inFeatureSet,
-                    inRenderContext->m_Lights, inRenderContext->m_FirstImage,
+                    inMaterial, inRenderContext.m_MaterialKey, thePipeline, inFeatureSet,
+                    inRenderContext.m_Lights, inRenderContext.m_FirstImage,
                     (inMaterial.m_hasTransparency || inMaterial.m_hasRefraction),
                     "custom material pipeline-- ", inCommand.m_ShaderPath);
 
         return theProgram;
     }
 
-    SMaterialOrComputeShader BindShader(QSharedPointer<SCustomMaterialRenderContext> inRenderContext,
+    SMaterialOrComputeShader BindShader(SCustomMaterialRenderContext &inRenderContext,
                                         const SCustomMaterial &inMaterial,
                                         const dynamic::SBindShader &inCommand,
                                         TShaderFeatureSet inFeatureSet)
     {
         QSharedPointer<QDemonRenderShaderProgram> theProgram;
 
-        dynamic::SDynamicShaderProgramFlags theFlags(inRenderContext->m_Model.m_TessellationMode,
-                                                     inRenderContext->m_Subset.m_WireframeMode);
-        theFlags.SetTessellationEnabled(inRenderContext->m_Model.m_TessellationMode != TessModeValues::NoTess);
-        theFlags.SetGeometryShaderEnabled(inRenderContext->m_Subset.m_WireframeMode);
+        dynamic::SDynamicShaderProgramFlags theFlags(inRenderContext.m_Model.m_TessellationMode,
+                                                     inRenderContext.m_Subset.m_WireframeMode);
+        theFlags.SetTessellationEnabled(inRenderContext.m_Model.m_TessellationMode != TessModeValues::NoTess);
+        theFlags.SetGeometryShaderEnabled(inRenderContext.m_Subset.m_WireframeMode);
 
         SShaderMapKey skey = SShaderMapKey(
                     TStrStrPair(inCommand.m_ShaderPath, inCommand.m_ShaderDefine), inFeatureSet,
-                    theFlags.m_TessMode, theFlags.m_WireframeMode, inRenderContext->m_MaterialKey);
+                    theFlags.m_TessMode, theFlags.m_WireframeMode, inRenderContext.m_MaterialKey);
         auto theInsertResult = m_ShaderMap.find(skey);
         //QPair<TShaderMap::iterator, bool> theInsertResult(m_ShaderMap.insert(skey, QSharedPointer<SCustomMaterialShader>(nullptr)));
 
@@ -1499,7 +1499,7 @@ struct SMaterialSystem : public ICustomMaterialSystem, public QEnableSharedFromT
         return theBuffer;
     }
 
-    void computeScreenCoverage(QSharedPointer<SCustomMaterialRenderContext> inRenderContext, qint32 *xMin,
+    void computeScreenCoverage(SCustomMaterialRenderContext &inRenderContext, qint32 *xMin,
                                qint32 *yMin, qint32 *xMax, qint32 *yMax)
     {
         QSharedPointer<QDemonRenderContext> theContext(m_Context->GetRenderContext());
@@ -1509,10 +1509,10 @@ struct SMaterialSystem : public ICustomMaterialSystem, public QEnableSharedFromT
         QVector4D projMax(-MaxFloat, -MaxFloat, -MaxFloat, -MaxFloat);
 
         // get points
-        inRenderContext->m_Subset.m_Bounds.expand(outPoints);
+        inRenderContext.m_Subset.m_Bounds.expand(outPoints);
         for (quint32 idx = 0; idx < 8; ++idx) {
             QVector4D homPoint(outPoints[idx], 1.0);
-            QVector4D projPoint = mat44::transform(inRenderContext->m_ModelViewProjection, homPoint);
+            QVector4D projPoint = mat44::transform(inRenderContext.m_ModelViewProjection, homPoint);
             projPoint /= projPoint.w();
 
             if (projMin.x() > projPoint.x())
@@ -1557,7 +1557,7 @@ struct SMaterialSystem : public ICustomMaterialSystem, public QEnableSharedFromT
         }
     }
 
-    void BlitFramebuffer(QSharedPointer<SCustomMaterialRenderContext> inRenderContext,
+    void BlitFramebuffer(SCustomMaterialRenderContext &inRenderContext,
                          const dynamic::SApplyBlitFramebuffer &inCommand,
                          QSharedPointer<QDemonRenderFrameBuffer> inTarget)
     {
@@ -1616,8 +1616,8 @@ struct SMaterialSystem : public ICustomMaterialSystem, public QEnableSharedFromT
 
             // same dimension
             theContext->BlitFramebuffer(xMin, yMin, xMax, yMax, xMin, yMin, xMax, yMax,
-                                       QDemonRenderClearValues::Color,
-                                       QDemonRenderTextureMagnifyingOp::Nearest);
+                                        QDemonRenderClearValues::Color,
+                                        QDemonRenderTextureMagnifyingOp::Nearest);
         } else {
             // same dimension
             theContext->BlitFramebuffer(
@@ -1629,31 +1629,32 @@ struct SMaterialSystem : public ICustomMaterialSystem, public QEnableSharedFromT
     }
 
     SLayerGlobalRenderProperties
-    GetLayerGlobalRenderProperties(QSharedPointer<SCustomMaterialRenderContext> inRenderContext)
+    GetLayerGlobalRenderProperties(SCustomMaterialRenderContext &inRenderContext)
     {
-        const SLayer &theLayer = inRenderContext->m_Layer;
-        const SLayerRenderData &theData = inRenderContext->m_LayerData;
+        const SLayer &theLayer = inRenderContext.m_Layer;
+        const SLayerRenderData &theData = inRenderContext.m_LayerData;
 
-        // ### Use SLayerRenderData when it is ready
-//        return SLayerGlobalRenderProperties(
-//                    theLayer, const_cast<SCamera &>(inRenderContext->m_Camera), theData.m_CameraDirection,
-//                    inRenderContext->m_Lights, QDemonDataRef<QVector3D>(), theData.m_ShadowMapManager,
-//                    const_cast<QDemonRenderTexture2D *>(inRenderContext->m_DepthTexture),
-//                    const_cast<QDemonRenderTexture2D *>(inRenderContext->m_AOTexture), theLayer.m_LightProbe,
-//                    theLayer.m_LightProbe2, theLayer.m_ProbeHorizon, theLayer.m_ProbeBright,
-//                    theLayer.m_Probe2Window, theLayer.m_Probe2Pos, theLayer.m_Probe2Fade,
-//                    theLayer.m_ProbeFov);
-        return SLayerGlobalRenderProperties(
-                    theLayer, const_cast<SCamera &>(inRenderContext->m_Camera), QVector3D(),
-                    inRenderContext->m_Lights, QDemonDataRef<QVector3D>(), QSharedPointer<QDemonRenderShadowMap>(),
-                    inRenderContext->m_DepthTexture,
-                    inRenderContext->m_AOTexture, theLayer.m_LightProbe,
-                    theLayer.m_LightProbe2, theLayer.m_ProbeHorizon, theLayer.m_ProbeBright,
-                    theLayer.m_Probe2Window, theLayer.m_Probe2Pos, theLayer.m_Probe2Fade,
-                    theLayer.m_ProbeFov);
+        QVector<QVector3D> tempDirection;
+
+        return SLayerGlobalRenderProperties(theLayer,
+                                            const_cast<SCamera &>(inRenderContext.m_Camera),
+                                            theData.m_CameraDirection,
+                                            const_cast<QVector<SLight *> &>(inRenderContext.m_Lights),
+                                            tempDirection,
+                                            theData.m_ShadowMapManager,
+                                            inRenderContext.m_DepthTexture,
+                                            inRenderContext.m_AOTexture,
+                                            theLayer.m_LightProbe,
+                                            theLayer.m_LightProbe2,
+                                            theLayer.m_ProbeHorizon,
+                                            theLayer.m_ProbeBright,
+                                            theLayer.m_Probe2Window,
+                                            theLayer.m_Probe2Pos,
+                                            theLayer.m_Probe2Fade,
+                                            theLayer.m_ProbeFov);
     }
 
-    void RenderPass(QSharedPointer<SCustomMaterialRenderContext> inRenderContext,
+    void RenderPass(SCustomMaterialRenderContext &inRenderContext,
                     QSharedPointer<SCustomMaterialShader> inShader,
                     QSharedPointer<QDemonRenderTexture2D> /* inSourceTexture */,
                     QSharedPointer<QDemonRenderFrameBuffer> inFrameBuffer,
@@ -1676,9 +1677,9 @@ struct SMaterialSystem : public ICustomMaterialSystem, public QEnableSharedFromT
         QSharedPointer<ICustomMaterialShaderGenerator> theMaterialGenerator(m_Context->GetCustomMaterialShaderGenerator());
 
         theMaterialGenerator->SetMaterialProperties(
-                    inShader->m_Shader, inRenderContext->m_Material, QVector2D(1.0, 1.0),
-                    inRenderContext->m_ModelViewProjection, inRenderContext->m_NormalMatrix,
-                    inRenderContext->m_ModelMatrix, inRenderContext->m_FirstImage, inRenderContext->m_Opacity,
+                    inShader->m_Shader, inRenderContext.m_Material, QVector2D(1.0, 1.0),
+                    inRenderContext.m_ModelViewProjection, inRenderContext.m_NormalMatrix,
+                    inRenderContext.m_ModelMatrix, inRenderContext.m_FirstImage, inRenderContext.m_Opacity,
                     GetLayerGlobalRenderProperties(inRenderContext));
 
         // I think the prim type should always be fetched from the
@@ -1687,13 +1688,11 @@ struct SMaterialSystem : public ICustomMaterialSystem, public QEnableSharedFromT
         QDemonRenderDrawMode::Enum theDrawMode = inAssembler->GetPrimitiveType();
 
         // tesselation
-        if (inRenderContext->m_Subset.m_PrimitiveType == QDemonRenderDrawMode::Patches) {
-            QVector2D camProps(inRenderContext->m_Camera.m_ClipNear,
-                               inRenderContext->m_Camera.m_ClipFar);
-            theDrawMode = inRenderContext->m_Subset.m_PrimitiveType;
-            inShader->m_Tessellation.m_EdgeTessLevel.Set(inRenderContext->m_Subset.m_EdgeTessFactor);
-            inShader->m_Tessellation.m_InsideTessLevel.Set(
-                        inRenderContext->m_Subset.m_InnerTessFactor);
+        if (inRenderContext.m_Subset.m_PrimitiveType == QDemonRenderDrawMode::Patches) {
+            QVector2D camProps(inRenderContext.m_Camera.m_ClipNear, inRenderContext.m_Camera.m_ClipFar);
+            theDrawMode = inRenderContext.m_Subset.m_PrimitiveType;
+            inShader->m_Tessellation.m_EdgeTessLevel.Set(inRenderContext.m_Subset.m_EdgeTessFactor);
+            inShader->m_Tessellation.m_InsideTessLevel.Set(inRenderContext.m_Subset.m_InnerTessFactor);
             // the blend value is hardcoded
             inShader->m_Tessellation.m_PhongBlend.Set(0.75);
             // this should finally be based on some user input
@@ -1702,7 +1701,7 @@ struct SMaterialSystem : public ICustomMaterialSystem, public QEnableSharedFromT
             inShader->m_Tessellation.m_DisableCulling.Set(0.0);
         }
 
-        if (inRenderContext->m_Subset.m_WireframeMode) {
+        if (inRenderContext.m_Subset.m_WireframeMode) {
             QDemonRenderRect theViewport(theContext->GetViewport());
             QMatrix4x4 vpMatrix = {
                 (float)theViewport.m_Width / 2.0f, 0.0, 0.0, 0.0,
@@ -1724,7 +1723,7 @@ struct SMaterialSystem : public ICustomMaterialSystem, public QEnableSharedFromT
         theContext->Draw(theDrawMode, count, offset);
     }
 
-    void DoRenderCustomMaterial(QSharedPointer<SCustomMaterialRenderContext> inRenderContext,
+    void DoRenderCustomMaterial(SCustomMaterialRenderContext &inRenderContext,
                                 const SCustomMaterial &inMaterial,
                                 SMaterialClass &inClass,
                                 QSharedPointer<QDemonRenderFrameBuffer> inTarget,
@@ -1785,8 +1784,8 @@ struct SMaterialSystem : public ICustomMaterialSystem, public QEnableSharedFromT
                 if (theCurrentShader) {
                     RenderPass(inRenderContext, theCurrentShader, theCurrentSourceTexture,
                                theCurrentRenderTarget, theRenderTargetNeedsClear,
-                               inRenderContext->m_Subset.m_InputAssembler,
-                               inRenderContext->m_Subset.m_Count, inRenderContext->m_Subset.m_Offset);
+                               inRenderContext.m_Subset.m_InputAssembler,
+                               inRenderContext.m_Subset.m_Count, inRenderContext.m_Subset.m_Offset);
                 }
                 // reset
                 theRenderTargetNeedsClear = false;
@@ -1985,10 +1984,10 @@ struct SMaterialSystem : public ICustomMaterialSystem, public QEnableSharedFromT
     }
 
     // TODO - handle UIC specific features such as vertex offsets for prog-aa and opacity.
-    void RenderSubset(QSharedPointer<SCustomMaterialRenderContext> inRenderContext,
+    void RenderSubset(SCustomMaterialRenderContext &inRenderContext,
                       TShaderFeatureSet inFeatureSet) override
     {
-        SMaterialClass *theClass = GetMaterialClass(inRenderContext->m_Material.m_ClassName);
+        SMaterialClass *theClass = GetMaterialClass(inRenderContext.m_Material.m_ClassName);
 
         // Ensure that our overall render context comes back no matter what the client does.
         QDemonRenderContextScopedProperty<QDemonRenderBlendFunctionArgument>
@@ -2004,7 +2003,7 @@ struct SMaterialSystem : public ICustomMaterialSystem, public QEnableSharedFromT
                                                                 &QDemonRenderContext::IsBlendingEnabled,
                                                                 &QDemonRenderContext::SetBlendingEnabled);
 
-        DoRenderCustomMaterial(inRenderContext, inRenderContext->m_Material, *theClass,
+        DoRenderCustomMaterial(inRenderContext, inRenderContext.m_Material, *theClass,
                                m_Context->GetRenderContext()->GetRenderTarget(), inFeatureSet);
     }
 

@@ -39,6 +39,7 @@
 #include <QtDemonRuntimeRender/qdemonrendershaderkeys.h>
 #include <QtDemonRuntimeRender/qdemonrendershadercache.h>
 #include <QtDemonRuntimeRender/qdemonrenderableimage.h>
+#include <QtDemonRuntimeRender/qdemonrenderpath.h>
 
 #include <QtDemon/qdemoninvasivelinkedlist.h>
 
@@ -230,13 +231,13 @@ struct SShadowMapEntry;
 
 struct SSubsetRenderableBase : public SRenderableObject
 {
-    QDemonRendererImpl &m_Generator;
+    QSharedPointer<QDemonRendererImpl> m_Generator;
     const SModelContext &m_ModelContext;
     SRenderSubset m_Subset;
     float m_Opacity;
 
     SSubsetRenderableBase(SRenderableObjectFlags inFlags, QVector3D inWorldCenterPt,
-                          QDemonRendererImpl &gen, const SRenderSubset &subset,
+                          QSharedPointer<QDemonRendererImpl> gen, const SRenderSubset &subset,
                           const SModelContext &modelContext, float inOpacity)
 
         : SRenderableObject(inFlags, inWorldCenterPt, modelContext.m_Model.m_GlobalTransform,
@@ -267,7 +268,7 @@ struct SSubsetRenderable : public SSubsetRenderableBase
     QDemonConstDataRef<QMatrix4x4> m_Bones;
 
     SSubsetRenderable(SRenderableObjectFlags inFlags, QVector3D inWorldCenterPt,
-                      QDemonRendererImpl &gen, const SRenderSubset &subset,
+                      QSharedPointer<QDemonRendererImpl> gen, const SRenderSubset &subset,
                       const SDefaultMaterial &mat, const SModelContext &modelContext,
                       float inOpacity, SRenderableImage *inFirstImage,
                       SShaderDefaultMaterialKey inShaderKey,
@@ -301,7 +302,7 @@ struct SCustomMaterialRenderable : public SSubsetRenderableBase
     SShaderDefaultMaterialKey m_ShaderDescription;
 
     SCustomMaterialRenderable(SRenderableObjectFlags inFlags, QVector3D inWorldCenterPt,
-                              QDemonRendererImpl &gen, const SRenderSubset &subset,
+                              QSharedPointer<QDemonRendererImpl> gen, const SRenderSubset &subset,
                               const SCustomMaterial &mat, const SModelContext &modelContext,
                               float inOpacity, SRenderableImage *inFirstImage,
                               SShaderDefaultMaterialKey inShaderKey)
@@ -313,13 +314,17 @@ struct SCustomMaterialRenderable : public SSubsetRenderableBase
         m_RenderableFlags.SetCustomMaterialMeshSubset(true);
     }
 
-    void Render(const QVector2D &inCameraVec, const SLayerRenderData &inLayerData,
-                const SLayer &inLayer, QDemonDataRef<SLight *> inLights, const SCamera &inCamera,
-                const QDemonRenderTexture2D *inDepthTexture, const QDemonRenderTexture2D *inSsaoTexture,
+    void Render(const QVector2D &inCameraVec,
+                const SLayerRenderData &inLayerData,
+                const SLayer &inLayer,
+                const QVector<SLight *> &inLights,
+                const SCamera &inCamera,
+                const QSharedPointer<QDemonRenderTexture2D> inDepthTexture,
+                const QSharedPointer<QDemonRenderTexture2D> inSsaoTexture,
                 TShaderFeatureSet inFeatureSet);
 
     void RenderDepthPass(const QVector2D &inCameraVec, const SLayer &inLayer,
-                         QDemonConstDataRef<SLight *> inLights, const SCamera &inCamera,
+                         const QVector<SLight *> inLights, const SCamera &inCamera,
                          const QDemonRenderTexture2D *inDepthTexture);
 };
 
@@ -368,7 +373,7 @@ struct STextRenderable : public SRenderableObject, public STextScaleAndOffset
 
 struct SPathRenderable : public SRenderableObject
 {
-    QDemonRendererImpl &m_Generator;
+    QSharedPointer<QDemonRendererImpl> m_Generator;
     SPath &m_Path;
     QDemonBounds3 m_Bounds;
     QMatrix4x4 m_ModelViewProjection;
@@ -380,7 +385,7 @@ struct SPathRenderable : public SRenderableObject
     bool m_IsStroke;
 
     SPathRenderable(SRenderableObjectFlags inFlags, QVector3D inWorldCenterPt,
-                    QDemonRendererImpl &gen, const QMatrix4x4 &inGlobalTransform,
+                    QSharedPointer<QDemonRendererImpl> gen, const QMatrix4x4 &inGlobalTransform,
                     QDemonBounds3 &inBounds, SPath &inPath, const QMatrix4x4 &inModelViewProjection,
                     const QMatrix3x3 inNormalMat, const SGraphObject &inMaterial, float inOpacity,
                     SShaderDefaultMaterialKey inShaderKey, bool inIsStroke)
@@ -399,17 +404,24 @@ struct SPathRenderable : public SRenderableObject
     {
         m_RenderableFlags.SetPath(true);
     }
-    void Render(const QVector2D &inCameraVec, const SLayer &inLayer,
-                QDemonConstDataRef<SLight *> inLights, const SCamera &inCamera,
-                const QDemonRenderTexture2D *inDepthTexture, const QDemonRenderTexture2D *inSsaoTexture,
+    void Render(const QVector2D &inCameraVec,
+                const SLayer &inLayer,
+                const QVector<SLight *> &inLights,
+                const SCamera &inCamera,
+                const QSharedPointer<QDemonRenderTexture2D> inDepthTexture,
+                const QSharedPointer<QDemonRenderTexture2D> inSsaoTexture,
                 TShaderFeatureSet inFeatureSet);
 
-    void RenderDepthPass(const QVector2D &inCameraVec, const SLayer &inLayer,
-                         QDemonConstDataRef<SLight *> inLights, const SCamera &inCamera,
+    void RenderDepthPass(const QVector2D &inCameraVec,
+                         const SLayer &inLayer,
+                         const QVector<SLight *> &inLights,
+                         const SCamera &inCamera,
                          const QDemonRenderTexture2D *inDepthTexture);
 
-    void RenderShadowMapPass(const QVector2D &inCameraVec, const SLight *inLight,
-                             const SCamera &inCamera, SShadowMapEntry *inShadowMapEntry);
+    void RenderShadowMapPass(const QVector2D &inCameraVec,
+                             const SLight *inLight,
+                             const SCamera &inCamera,
+                             SShadowMapEntry *inShadowMapEntry);
 };
 QT_END_NAMESPACE
 

@@ -112,7 +112,7 @@ public:
                                   bool inClearDirty) = 0;
 
     virtual bool RenderDepthPrepass(const QMatrix4x4 &inMVP, const SCustomMaterial &inMaterial, const SRenderSubset &inSubset) = 0;
-    virtual void RenderSubset(QSharedPointer<SCustomMaterialRenderContext> inRenderContext, TShaderFeatureSet inFeatureSet) = 0;
+    virtual void RenderSubset(SCustomMaterialRenderContext &inRenderContext, TShaderFeatureSet inFeatureSet) = 0;
     virtual void OnMaterialActivationChange(const SCustomMaterial &inMaterial, bool inActive) = 0;
 
     // get shader name

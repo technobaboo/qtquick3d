@@ -32,6 +32,7 @@
 
 #include <QtGui/QVector2D>
 
+#include <QtDemonRender/qtdemonrenderglobal.h>
 #include <QtDemonRender/qdemonrenderbackend.h>
 
 QT_BEGIN_NAMESPACE
@@ -39,7 +40,7 @@ QT_BEGIN_NAMESPACE
 class QDemonRenderContextImpl;
 class QDemonRenderPathFontSpecification;
 
-class QDemonRenderPathFontItem
+class Q_DEMONRENDER_EXPORT QDemonRenderPathFontItem
 {
 
 public:

@@ -29,6 +29,9 @@
 ****************************************************************************/
 #ifndef QDEMON_RENDER_PATH_FONT_SPECIFICATION_H
 #define QDEMON_RENDER_PATH_FONT_SPECIFICATION_H
+
+
+#include <QtDemonRender/qtdemonrenderglobal.h>
 #include <QVector2D>
 #include <QtDemonRender/qdemonrenderbackend.h>
 
@@ -40,7 +43,7 @@ class QDemonRenderContextImpl;
 class QDemonRenderPathRender;
 class QDemonRenderPathFontItem;
 
-class QDemonRenderPathFontSpecification : public QEnableSharedFromThis<QDemonRenderPathFontSpecification>
+class Q_DEMONRENDER_EXPORT QDemonRenderPathFontSpecification : public QEnableSharedFromThis<QDemonRenderPathFontSpecification>
 {
     QSharedPointer<QDemonRenderContextImpl> m_Context; ///< pointer to context
     QSharedPointer<QDemonRenderBackend> m_Backend; ///< pointer to backend

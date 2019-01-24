@@ -270,10 +270,10 @@ struct Q_DEMONRUNTIMERENDER_EXPORT SNode : public SGraphObject
     void SetLocalTransformFromMatrix(QMatrix4x4 &inTransform);
 
     // Get the bounds of us and our children in our local space.
-    QDemonBounds3 GetBounds(IBufferManager &inManager, IPathManager &inPathManager,
+    QDemonBounds3 GetBounds(QSharedPointer<IBufferManager> inManager, QSharedPointer<IPathManager> inPathManager,
                             bool inIncludeChildren = true,
                             IQDemonRenderNodeFilter *inChildFilter = nullptr) const;
-    QDemonBounds3 GetChildBounds(IBufferManager &inManager, IPathManager &inPathManager,
+    QDemonBounds3 GetChildBounds(QSharedPointer<IBufferManager> inManager, QSharedPointer<IPathManager> inPathManager,
                                  IQDemonRenderNodeFilter *inChildFilter = nullptr) const;
     // Assumes CalculateGlobalVariables has already been called.
     QVector3D GetGlobalPos() const;

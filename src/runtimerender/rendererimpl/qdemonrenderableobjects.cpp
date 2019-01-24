@@ -27,7 +27,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <QtDemonRuntimeRender/qdemonrenderableobjects.h>
+#include "qdemonrenderableobjects.h"
+
 #include <QtDemonRuntimeRender/qdemonrendererimpl.h>
 #include <QtDemonRuntimeRender/qdemonrendercustommaterialsystem.h>
 #include <QtDemonRuntimeRender/qdemonrendercustommaterialrendercontext.h>
@@ -90,9 +91,9 @@ void SSubsetRenderableBase::RenderShadowMapPass(const QVector2D &inCameraVec,
                                                 const SLight *inLight, const SCamera &inCamera,
                                                 SShadowMapEntry *inShadowMapEntry)
 {
-    QDemonRenderContext &context(m_Generator.GetContext());
-    SRenderableDepthPrepassShader *shader = nullptr;
-    QDemonRenderInputAssembler *pIA = nullptr;
+    QDemonRenderContext &context(*m_Generator->GetContext());
+    QSharedPointer<SRenderableDepthPrepassShader> shader = nullptr;
+    QSharedPointer<QDemonRenderInputAssembler> pIA = nullptr;
 
     /*
         if ( inLight->m_LightType == RenderLightTypes::Area )
@@ -105,9 +106,9 @@ void SSubsetRenderableBase::RenderShadowMapPass(const QVector2D &inCameraVec,
         */
 
     if (inLight->m_LightType == RenderLightTypes::Directional)
-        shader = m_Generator.GetOrthographicDepthShader(m_TessellationMode);
+        shader = m_Generator->GetOrthographicDepthShader(m_TessellationMode);
     else
-        shader = m_Generator.GetCubeShadowDepthShader(m_TessellationMode);
+        shader = m_Generator->GetCubeShadowDepthShader(m_TessellationMode);
 
     if (shader == nullptr || inShadowMapEntry == nullptr)
         return;
@@ -122,7 +123,7 @@ void SSubsetRenderableBase::RenderShadowMapPass(const QVector2D &inCameraVec,
     QMatrix4x4 theModelViewProjection = inShadowMapEntry->m_LightVP * m_GlobalTransform;
     // QMatrix4x4 theModelView = inLight->m_GlobalTransform.getInverse() * m_GlobalTransform;
 
-    context.SetActiveShader(&shader->m_Shader);
+    context.SetActiveShader(shader->m_Shader);
     shader->m_MVP.Set(theModelViewProjection);
     shader->m_CameraPosition.Set(inCamera.m_Position);
     shader->m_GlobalTransform.Set(m_GlobalTransform);
@@ -160,15 +161,15 @@ void SSubsetRenderableBase::RenderDepthPass(const QVector2D &inCameraVec,
                                             SRenderableImage *inDisplacementImage,
                                             float inDisplacementAmount)
 {
-    QDemonRenderContext &context(m_Generator.GetContext());
-    SRenderableDepthPrepassShader *shader = nullptr;
-    QDemonRenderInputAssembler *pIA = nullptr;
+    QDemonRenderContext &context(*m_Generator->GetContext());
+    QSharedPointer<SRenderableDepthPrepassShader> shader = nullptr;
+    QSharedPointer<QDemonRenderInputAssembler> pIA = nullptr;
     SRenderableImage *displacementImage = inDisplacementImage;
 
     if (m_Subset.m_PrimitiveType != QDemonRenderDrawMode::Patches)
-        shader = m_Generator.GetDepthPrepassShader(displacementImage != nullptr);
+        shader = m_Generator->GetDepthPrepassShader(displacementImage != nullptr);
     else
-        shader = m_Generator.GetDepthTessPrepassShader(m_TessellationMode,
+        shader = m_Generator->GetDepthTessPrepassShader(m_TessellationMode,
                                                        displacementImage != nullptr);
 
     if (shader == nullptr)
@@ -183,7 +184,7 @@ void SSubsetRenderableBase::RenderDepthPass(const QVector2D &inCameraVec,
     else
         pIA = m_Subset.m_InputAssembler;
 
-    context.SetActiveShader(&shader->m_Shader);
+    context.SetActiveShader(shader->m_Shader);
     context.SetCullingEnabled(true);
 
     shader->m_MVP.Set(m_ModelContext.m_ModelViewProjection);
@@ -205,8 +206,7 @@ void SSubsetRenderableBase::RenderDepthPass(const QVector2D &inCameraVec,
         shader->m_DisplaceAmount.Set(inDisplacementAmount);
         shader->m_DisplacementProps.m_Offsets.Set(offsets);
         shader->m_DisplacementProps.m_Rotations.Set(rotations);
-        shader->m_DisplacementProps.m_Sampler.Set(
-                    displacementImage->m_Image.m_TextureData.m_Texture);
+        shader->m_DisplacementProps.m_Sampler.Set(displacementImage->m_Image.m_TextureData.m_Texture.data());
     }
 
     // tesselation
@@ -214,10 +214,10 @@ void SSubsetRenderableBase::RenderDepthPass(const QVector2D &inCameraVec,
         // set uniforms we need
         shader->m_GlobalTransform.Set(m_GlobalTransform);
 
-        if (m_Generator.GetLayerRenderData() && m_Generator.GetLayerRenderData()->m_Camera)
+        if (m_Generator->GetLayerRenderData() && m_Generator->GetLayerRenderData()->m_Camera)
             shader->m_CameraPosition.Set(
-                        m_Generator.GetLayerRenderData()->m_Camera->GetGlobalPos());
-        else if (m_Generator.GetLayerRenderData()->m_Camera)
+                        m_Generator->GetLayerRenderData()->m_Camera->GetGlobalPos());
+        else if (m_Generator->GetLayerRenderData()->m_Camera)
             shader->m_CameraPosition.Set(QVector3D(0.0, 0.0, 1.0));
 
         shader->m_Tessellation.m_EdgeTessLevel.Set(m_Subset.m_EdgeTessFactor);
@@ -238,18 +238,18 @@ void SSubsetRenderableBase::RenderDepthPass(const QVector2D &inCameraVec,
 
 void SSubsetRenderable::Render(const QVector2D &inCameraVec, TShaderFeatureSet inFeatureSet)
 {
-    QDemonRenderContext &context(m_Generator.GetContext());
+    QDemonRenderContext &context(*m_Generator->GetContext());
 
-    SShaderGeneratorGeneratedShader *shader = m_Generator.GetShader(*this, inFeatureSet);
+    QSharedPointer<SShaderGeneratorGeneratedShader> shader = m_Generator->GetShader(*this, inFeatureSet);
     if (shader == nullptr)
         return;
 
-    context.SetActiveShader(&shader->m_Shader);
+    context.SetActiveShader(shader->m_Shader);
 
-    m_Generator.GetDemonContext().GetDefaultMaterialShaderGenerator().SetMaterialProperties(
+    m_Generator->GetDemonContext()->GetDefaultMaterialShaderGenerator()->SetMaterialProperties(
                 shader->m_Shader, m_Material, inCameraVec, m_ModelContext.m_ModelViewProjection,
                 m_ModelContext.m_NormalMatrix, m_ModelContext.m_Model.m_GlobalTransform, m_FirstImage,
-                m_Opacity, m_Generator.GetLayerGlobalRenderProperties());
+                m_Opacity, m_Generator->GetLayerGlobalRenderProperties());
 
     // tesselation
     if (m_Subset.m_PrimitiveType == QDemonRenderDrawMode::Patches) {
@@ -297,7 +297,7 @@ void SSubsetRenderable::RenderDepthPass(const QVector2D &inCameraVec)
 
 void STextRenderable::Render(const QVector2D &inCameraVec)
 {
-    QDemonRenderContext &context(m_Generator.GetContext());
+    QSharedPointer<QDemonRenderContext> context(m_Generator.GetContext());
 
     if (!m_Text.m_PathFontDetails) {
 
@@ -312,17 +312,17 @@ void STextRenderable::Render(const QVector2D &inCameraVec)
         QDemonRenderBlendEquationArgument blendEqu(QDemonRenderBlendEquation::Add,
                                                    QDemonRenderBlendEquation::Add);
 
-        context.SetBlendFunction(blendFunc);
-        context.SetBlendEquation(blendEqu);
+        context->SetBlendFunction(blendFunc);
+        context->SetBlendEquation(blendEqu);
         QVector4D theColor(m_Text.m_TextColor, m_Text.m_GlobalOpacity);
 
         STextShader &shader(*theInfo.m_Shader);
-        shader.Render(*m_Text.m_TextTexture, *this, theColor, m_ModelViewProjection,
+        shader.Render(m_Text.m_TextTexture, *this, theColor, m_ModelViewProjection,
                       inCameraVec, context, theInfo.m_QuadInputAssembler,
-                      theInfo.m_QuadInputAssembler.GetIndexCount(), m_Text.m_TextTextureDetails,
+                      theInfo.m_QuadInputAssembler->GetIndexCount(), m_Text.m_TextTextureDetails,
                       QVector3D(0, 0, 0));
     } else {
-        Q_ASSERT(context.IsPathRenderingSupported() && context.IsProgramPipelineSupported());
+        Q_ASSERT(context->IsPathRenderingSupported() && context->IsProgramPipelineSupported());
 
         STextRenderHelper theInfo = m_Generator.GetShader(*this, true);
         if (theInfo.m_Shader == nullptr)
@@ -336,13 +336,13 @@ void STextRenderable::Render(const QVector2D &inCameraVec)
         QDemonRenderBlendEquationArgument blendEqu(QDemonRenderBlendEquation::Add,
                                                    QDemonRenderBlendEquation::Add);
 
-        context.SetBlendFunction(blendFunc);
-        context.SetBlendEquation(blendEqu);
+        context->SetBlendFunction(blendFunc);
+        context->SetBlendEquation(blendEqu);
         QVector4D theColor(m_Text.m_TextColor, m_Text.m_GlobalOpacity);
 
         STextShader &shader(*theInfo.m_Shader);
 
-        shader.RenderPath(*m_Text.m_PathFontItem, *m_Text.m_PathFontDetails, *this, theColor,
+        shader.RenderPath(m_Text.m_PathFontItem, m_Text.m_PathFontDetails, *this, theColor,
                           m_ViewProjection, m_GlobalTransform, inCameraVec, context,
                           m_Text.m_TextTextureDetails, QVector3D(0, 0, 0));
     }
@@ -350,8 +350,8 @@ void STextRenderable::Render(const QVector2D &inCameraVec)
 
 void STextRenderable::RenderDepthPass(const QVector2D &inCameraVec)
 {
-    QDemonRenderContext &context(m_Generator.GetContext());
-    STextDepthShader *theDepthShader = m_Generator.GetTextDepthShader();
+    QDemonRenderContext &context(*m_Generator.GetContext());
+    QSharedPointer<STextDepthShader> theDepthShader = m_Generator.GetTextDepthShader();
     if (theDepthShader == nullptr)
         return;
 
@@ -361,15 +361,15 @@ void STextRenderable::RenderDepthPass(const QVector2D &inCameraVec)
                     context, &QDemonRenderContext::IsStencilTestEnabled,
                     &QDemonRenderContext::SetStencilTestEnabled, true);
 
-        QDemonRenderShaderProgram &theShader(theDepthShader->m_Shader);
+        QSharedPointer<QDemonRenderShaderProgram> theShader(theDepthShader->m_Shader);
         context.SetCullingEnabled(false);
-        context.SetActiveShader(&theShader);
+        context.SetActiveShader(theShader);
         theDepthShader->m_MVP.Set(m_ModelViewProjection);
-        theDepthShader->m_Sampler.Set(m_Text.m_TextTexture);
+        theDepthShader->m_Sampler.Set(m_Text.m_TextTexture.data());
         const STextScaleAndOffset &theScaleAndOffset(*this);
         theDepthShader->m_Dimensions.Set(
-                    QVector4D(theScaleAndOffset.m_TextScale.x, theScaleAndOffset.m_TextScale.y,
-                              theScaleAndOffset.m_TextOffset.x, theScaleAndOffset.m_TextOffset.y));
+                    QVector4D(theScaleAndOffset.m_TextScale.x(), theScaleAndOffset.m_TextScale.y(),
+                              theScaleAndOffset.m_TextOffset.x(), theScaleAndOffset.m_TextOffset.y()));
         theDepthShader->m_CameraProperties.Set(inCameraVec);
 
         STextureDetails theTextureDetails = m_Text.m_TextTexture->GetTextureDetails();
@@ -380,9 +380,9 @@ void STextRenderable::RenderDepthPass(const QVector2D &inCameraVec)
                 (float)theTextTextureDetails.m_TextHeight / (float)theTextureDetails.m_Height;
         theDepthShader->m_TextDimensions.Set(
                     QVector3D(theWidthScale, theHeightScale, theTextTextureDetails.m_FlipY ? 1.0f : 0.0f));
-        context.SetInputAssembler(&theDepthShader->m_QuadInputAssembler);
+        context.SetInputAssembler(theDepthShader->m_QuadInputAssembler);
         context.Draw(QDemonRenderDrawMode::Triangles,
-                     theDepthShader->m_QuadInputAssembler.GetIndexCount(), 0);
+                     theDepthShader->m_QuadInputAssembler->GetIndexCount(), 0);
     } else {
         QDemonRenderBoolOp::Enum theDepthFunction = context.GetDepthFunction();
         bool isDepthEnabled = context.IsDepthTestEnabled();
@@ -414,11 +414,11 @@ void STextRenderable::RenderDepthPass(const QVector2D &inCameraVec)
         context.SetPathModelViewMatrix(m_GlobalTransform * offsetMatrix * pathMatrix);
 
         // first pass
-        m_Text.m_PathFontDetails->StencilFillPathInstanced(*m_Text.m_PathFontItem);
+        m_Text.m_PathFontDetails->StencilFillPathInstanced(m_Text.m_PathFontItem);
 
         // second pass
         context.SetStencilTestEnabled(true);
-        m_Text.m_PathFontDetails->CoverFillPathInstanced(*m_Text.m_PathFontItem);
+        m_Text.m_PathFontDetails->CoverFillPathInstanced(m_Text.m_PathFontItem);
 
         context.SetStencilTestEnabled(isStencilEnabled);
         context.SetDepthFunction(theDepthFunction);
@@ -427,32 +427,33 @@ void STextRenderable::RenderDepthPass(const QVector2D &inCameraVec)
 
 void SCustomMaterialRenderable::Render(const QVector2D & /*inCameraVec*/,
                                        const SLayerRenderData &inLayerData,
-                                       const SLayer &inLayer, QDemonDataRef<SLight *> inLights,
+                                       const SLayer &inLayer,
+                                       const QVector<SLight *> &inLights,
                                        const SCamera &inCamera,
-                                       const QDemonRenderTexture2D *inDepthTexture,
-                                       const QDemonRenderTexture2D *inSsaoTexture,
+                                       const QSharedPointer<QDemonRenderTexture2D> inDepthTexture,
+                                       const QSharedPointer<QDemonRenderTexture2D> inSsaoTexture,
                                        TShaderFeatureSet inFeatureSet)
 {
-    IQDemonRenderContext &demonContext(m_Generator.GetDemonContext());
+    QSharedPointer<IQDemonRenderContext> demonContext(m_Generator->GetDemonContext());
     SCustomMaterialRenderContext theRenderContext(
                 inLayer, inLayerData, inLights, inCamera, m_ModelContext.m_Model, m_Subset,
                 m_ModelContext.m_ModelViewProjection, m_GlobalTransform, m_ModelContext.m_NormalMatrix,
                 m_Material, inDepthTexture, inSsaoTexture, m_ShaderDescription, m_FirstImage,
                 m_Opacity);
 
-    demonContext.GetCustomMaterialSystem().RenderSubset(theRenderContext, inFeatureSet);
+    demonContext->GetCustomMaterialSystem()->RenderSubset(theRenderContext, inFeatureSet);
 }
 
 void SCustomMaterialRenderable::RenderDepthPass(const QVector2D &inCameraVec,
                                                 const SLayer & /*inLayer*/,
-                                                QDemonConstDataRef<SLight *> /*inLights*/
+                                                const QVector<SLight *> /*inLights*/
                                                 ,
                                                 const SCamera & /*inCamera*/,
                                                 const QDemonRenderTexture2D * /*inDepthTexture*/)
 {
 
-    IQDemonRenderContext &demonContext(m_Generator.GetDemonContext());
-    if (!demonContext.GetCustomMaterialSystem().RenderDepthPrepass(
+    QSharedPointer<IQDemonRenderContext> demonContext(m_Generator->GetDemonContext());
+    if (!demonContext->GetCustomMaterialSystem()->RenderDepthPrepass(
                 m_ModelContext.m_ModelViewProjection, m_Material, m_Subset)) {
         SRenderableImage *displacementImage = nullptr;
         for (SRenderableImage *theImage = m_FirstImage;
@@ -467,58 +468,57 @@ void SCustomMaterialRenderable::RenderDepthPass(const QVector2D &inCameraVec,
 }
 
 void SPathRenderable::RenderDepthPass(const QVector2D &inCameraVec, const SLayer & /*inLayer*/,
-                                      QDemonConstDataRef<SLight *> inLights,
+                                      const QVector<SLight *> &inLights,
                                       const SCamera &inCamera,
                                       const QDemonRenderTexture2D * /*inDepthTexture*/)
 {
-    IQDemonRenderContext &demonContext(m_Generator.GetDemonContext());
+    QSharedPointer<IQDemonRenderContext> demonContext(m_Generator->GetDemonContext());
     SPathRenderContext theRenderContext(
                 inLights, inCamera, m_Path, m_ModelViewProjection, m_GlobalTransform, m_NormalMatrix,
-                m_Opacity, m_Material, m_ShaderDescription, m_FirstImage, demonContext.GetWireframeMode(),
+                m_Opacity, m_Material, m_ShaderDescription, m_FirstImage, demonContext->GetWireframeMode(),
                 inCameraVec, false, m_IsStroke);
 
-    demonContext.GetPathManager().RenderDepthPrepass(
-                theRenderContext, m_Generator.GetLayerGlobalRenderProperties(), TShaderFeatureSet());
+    demonContext->GetPathManager()->RenderDepthPrepass(
+                theRenderContext, m_Generator->GetLayerGlobalRenderProperties(), TShaderFeatureSet());
 }
 
 void SPathRenderable::Render(const QVector2D &inCameraVec, const SLayer & /*inLayer*/,
-                             QDemonConstDataRef<SLight *> inLights, const SCamera &inCamera,
-                             const QDemonRenderTexture2D * /*inDepthTexture*/
+                             const QVector<SLight *> &inLights, const SCamera &inCamera,
+                             const QSharedPointer<QDemonRenderTexture2D> /*inDepthTexture*/
                              ,
-                             const QDemonRenderTexture2D * /*inSsaoTexture*/
+                             const QSharedPointer<QDemonRenderTexture2D> /*inSsaoTexture*/
                              ,
                              TShaderFeatureSet inFeatureSet)
 {
-    IQDemonRenderContext &demonContext(m_Generator.GetDemonContext());
+    QSharedPointer<IQDemonRenderContext> demonContext(m_Generator->GetDemonContext());
     SPathRenderContext theRenderContext(
                 inLights, inCamera, m_Path, m_ModelViewProjection, m_GlobalTransform, m_NormalMatrix,
-                m_Opacity, m_Material, m_ShaderDescription, m_FirstImage, demonContext.GetWireframeMode(),
+                m_Opacity, m_Material, m_ShaderDescription, m_FirstImage, demonContext->GetWireframeMode(),
                 inCameraVec, m_RenderableFlags.HasTransparency(), m_IsStroke);
 
-    demonContext.GetPathManager().RenderPath(
-                theRenderContext, m_Generator.GetLayerGlobalRenderProperties(), inFeatureSet);
+    demonContext->GetPathManager()->RenderPath(theRenderContext, m_Generator->GetLayerGlobalRenderProperties(), inFeatureSet);
 }
 
 void SPathRenderable::RenderShadowMapPass(const QVector2D &inCameraVec, const SLight *inLight,
                                           const SCamera &inCamera,
                                           SShadowMapEntry *inShadowMapEntry)
 {
-    QDemonConstDataRef<SLight *> theLights;
-    IQDemonRenderContext &demonContext(m_Generator.GetDemonContext());
+    QVector<SLight *> theLights;
+    QSharedPointer<IQDemonRenderContext> demonContext(m_Generator->GetDemonContext());
 
     QMatrix4x4 theModelViewProjection = inShadowMapEntry->m_LightVP * m_GlobalTransform;
     SPathRenderContext theRenderContext(
                 theLights, inCamera, m_Path, theModelViewProjection, m_GlobalTransform, m_NormalMatrix,
-                m_Opacity, m_Material, m_ShaderDescription, m_FirstImage, demonContext.GetWireframeMode(),
+                m_Opacity, m_Material, m_ShaderDescription, m_FirstImage, demonContext->GetWireframeMode(),
                 inCameraVec, false, m_IsStroke);
 
     if (inLight->m_LightType != RenderLightTypes::Directional) {
-        demonContext.GetPathManager().RenderCubeFaceShadowPass(
-                    theRenderContext, m_Generator.GetLayerGlobalRenderProperties(),
+        demonContext->GetPathManager()->RenderCubeFaceShadowPass(
+                    theRenderContext, m_Generator->GetLayerGlobalRenderProperties(),
                     TShaderFeatureSet());
     } else
-        demonContext.GetPathManager().RenderShadowMapPass(
-                    theRenderContext, m_Generator.GetLayerGlobalRenderProperties(),
+        demonContext->GetPathManager()->RenderShadowMapPass(
+                    theRenderContext, m_Generator->GetLayerGlobalRenderProperties(),
                     TShaderFeatureSet());
 }
 QT_END_NAMESPACE

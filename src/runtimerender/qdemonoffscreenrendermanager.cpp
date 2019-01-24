@@ -334,7 +334,7 @@ struct SOffscreenRenderManager : public IOffscreenRenderManager
             if (theDesiredEnvironment.m_MSAAMode != AAModeValues::SSAA) {
                 // Have to downsample the FBO.
                 CRendererUtil::ResolveMutisampleFBOColorOnly(
-                            m_ResourceManager, theResult, m_Context->GetRenderContext(),
+                            m_ResourceManager, *theResult, *m_Context->GetRenderContext(),
                             theDesiredEnvironment.m_Width, theDesiredEnvironment.m_Height,
                             theDesiredEnvironment.m_Format, theFrameBuffer);
 
@@ -342,8 +342,8 @@ struct SOffscreenRenderManager : public IOffscreenRenderManager
             } else {
                 // Resolve the FBO to the layer texture
                 CRendererUtil::ResolveSSAAFBOColorOnly(
-                            m_ResourceManager, theResult, theOriginalDesiredEnvironment.m_Width,
-                            theOriginalDesiredEnvironment.m_Height, m_Context->GetRenderContext(),
+                            m_ResourceManager, *theResult, theOriginalDesiredEnvironment.m_Width,
+                            theOriginalDesiredEnvironment.m_Height, *m_Context->GetRenderContext(),
                             theDesiredEnvironment.m_Width, theDesiredEnvironment.m_Height,
                             theDesiredEnvironment.m_Format, theFrameBuffer);
             }
@@ -403,7 +403,7 @@ struct SOffscreenRenderManager : public IOffscreenRenderManager
                         *theContext, &QDemonRenderContext::GetViewport, &QDemonRenderContext::SetViewport,
                         theViewport);
 
-            quint32 taskId = m_Context->GetRenderList()->AddRenderTask(*new SOffscreenRunnable(*this, theData, theDesiredEnvironment));
+            quint32 taskId = m_Context->GetRenderList()->AddRenderTask(QSharedPointer<SOffscreenRunnable>(new SOffscreenRunnable(*this, theData, theDesiredEnvironment)));
 
             SOffscreenRenderFlags theFlags =
                     theData.m_Renderer->NeedsRender(theDesiredEnvironment, thePresScaleFactor, this);

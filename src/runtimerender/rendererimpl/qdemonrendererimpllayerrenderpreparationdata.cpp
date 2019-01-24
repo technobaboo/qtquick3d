@@ -44,8 +44,8 @@
 #include <QtDemonRender/qdemonrenderframebuffer.h>
 #include <QtDemonRender/qdemonrenderrenderbuffer.h>
 #include <QtDemonRuntimeRender/qdemonoffscreenrenderkey.h>
-#include <QtDemonRuntimeRender/qdemonrenderplugin.h>
-#include <QtDemonRuntimeRender/qdemonrenderplugingraphobject.h>
+//#include <QtDemonRuntimeRender/qdemonrenderplugin.h>
+//#include <QtDemonRuntimeRender/qdemonrenderplugingraphobject.h>
 #include <QtDemonRuntimeRender/qdemonrenderresourcebufferobjects.h>
 #include <QtDemon/qdemonperftimer.h>
 #include <QtDemonRuntimeRender/qdemonrendermaterialhelpers.h>
@@ -56,17 +56,13 @@
 #include <QtDemonRuntimeRender/qdemonrenderrenderlist.h>
 #include <QtDemonRuntimeRender/qdemonrenderpath.h>
 #include <QtDemonRuntimeRender/qdemonrenderpathmanager.h>
+#include <QtDemonRuntimeRender/qdemonrendershadercache.h>
 
 #ifdef _WIN32
 #pragma warning(disable : 4355)
 #endif
 
 QT_BEGIN_NAMESPACE
-
-using eastl::reverse;
-using eastl::stable_sort;
-using QDemonRenderContextScopedProperty;
-using QVector2D;
 
 namespace {
 void MaybeQueueNodeForRender(SNode &inNode, QVector<SRenderableNodeEntry> &outRenderables,
@@ -101,39 +97,11 @@ SDefaultMaterialPreparationResult::SDefaultMaterialPreparationResult(
 
 #define MAX_AA_LEVELS 8
 
-SLayerRenderPreparationData::SLayerRenderPreparationData(SLayer &inLayer,
-                                                         QDemonRendererImpl &inRenderer)
+SLayerRenderPreparationData::SLayerRenderPreparationData(SLayer &inLayer, QSharedPointer<QDemonRendererImpl> inRenderer)
     : m_Layer(inLayer)
     , m_Renderer(inRenderer)
-    , m_Allocator(inRenderer.GetContext().GetAllocator())
-    , m_RenderableNodeLightEntryPool(
-          ForwardingAllocator(inRenderer.GetContext().GetAllocator(),
-                              "SLayerRenderPreparationData::m_RenderableNodes"))
-    , m_RenderableNodes(inRenderer.GetContext().GetAllocator(),
-                        "SLayerRenderPreparationData::m_RenderableNodes")
-    , m_LightToNodeMap(inRenderer.GetContext().GetAllocator(),
-                       "SLayerRenderPreparationData::m_LightToNodeMap")
-    , m_CamerasAndLights(inRenderer.GetContext().GetAllocator(),
-                         "SLayerRenderPreparationData::m_CamerasAndLights")
     , m_Camera(nullptr)
-    , m_Lights(inRenderer.GetContext().GetAllocator(), "SLayerRenderPreparationData::m_Lights")
-    , m_OpaqueObjects(inRenderer.GetContext().GetAllocator(),
-                      "SLayerRenderPreparationData::m_OpaqueObjects")
-    , m_TransparentObjects(inRenderer.GetContext().GetAllocator(),
-                           "SLayerRenderPreparationData::m_TransparentObjects")
-    , m_RenderedOpaqueObjects(inRenderer.GetContext().GetAllocator(),
-                              "SLayerRenderPreparationData::m_RenderedOpaqueObjects")
-    , m_RenderedTransparentObjects(inRenderer.GetContext().GetAllocator(),
-                                   "SLayerRenderPreparationData::m_RenderedTransparentObjects")
-    , m_IRenderWidgets(inRenderer.GetContext().GetAllocator(),
-                       "SLayerRenderPreparationData::m_IRenderWidgets")
-    , m_SourceLightDirections(inRenderer.GetContext().GetAllocator(),
-                              "SLayerRenderPreparationData::m_SourceLightDirections")
-    , m_LightDirections(inRenderer.GetContext().GetAllocator(),
-                        "SLayerRenderPreparationData::m_LightDirections")
-    , m_ModelContexts(inRenderer.GetContext().GetAllocator(),
-                      "SLayerRenderPreparationData::m_ModelContexts")
-    , m_CGLightingFeatureName(QStringLiterial("QDEMON_ENABLE_CG_LIGHTING"))
+    , m_CGLightingFeatureName(QStringLiteral("QDEMON_ENABLE_CG_LIGHTING"))
     , m_FeaturesDirty(true)
     , m_FeatureSetHash(0)
     , m_TooManyLightsError(false)
@@ -176,13 +144,13 @@ void SLayerRenderPreparationData::SetShaderFeature(const char *inName, bool inVa
     SetShaderFeature(theStr, inValue);
 }
 
-QDemonConstDataRef<SShaderPreprocessorFeature> SLayerRenderPreparationData::GetShaderFeatureSet()
+QVector<SShaderPreprocessorFeature> SLayerRenderPreparationData::GetShaderFeatureSet()
 {
     if (m_FeaturesDirty) {
-        eastl::sort(m_Features.begin(), m_Features.end());
+        std::sort(m_Features.begin(), m_Features.end());
         m_FeaturesDirty = false;
     }
-    return toConstDataRef(m_Features.data(), (quint32)m_Features.size());
+    return m_Features;
 }
 
 size_t SLayerRenderPreparationData::GetShaderFeatureSetHash()
@@ -194,35 +162,33 @@ size_t SLayerRenderPreparationData::GetShaderFeatureSetHash()
 
 bool SLayerRenderPreparationData::GetShadowMapManager()
 {
-    if (m_ShadowMapManager.mPtr)
+    if (m_ShadowMapManager)
         return true;
 
-    m_ShadowMapManager.mPtr = QDemonRenderShadowMap::Create(m_Renderer.GetDemonContext());
+    m_ShadowMapManager = QDemonRenderShadowMap::Create(m_Renderer->GetDemonContext());
 
-    return m_ShadowMapManager.mPtr != nullptr;
+    return m_ShadowMapManager != nullptr;
 }
 
 bool SLayerRenderPreparationData::GetOffscreenRenderer()
 {
-    if (m_LastFrameOffscreenRenderer.mPtr)
+    if (m_LastFrameOffscreenRenderer)
         return true;
 
-    if (m_Layer.m_RenderPlugin && m_Layer.m_RenderPlugin->m_Flags.IsActive()) {
-        IRenderPluginInstance *theInstance =
-                m_Renderer.GetDemonContext().GetRenderPluginManager().GetOrCreateRenderPluginInstance(
-                    m_Layer.m_RenderPlugin->m_PluginPath, m_Layer.m_RenderPlugin);
-        if (theInstance) {
-            m_Renderer.GetDemonContext()
-                    .GetOffscreenRenderManager()
-                    .MaybeRegisterOffscreenRenderer(&theInstance, *theInstance);
-            m_LastFrameOffscreenRenderer = theInstance;
-        }
-    }
-    if (m_LastFrameOffscreenRenderer.mPtr == nullptr)
-        m_LastFrameOffscreenRenderer =
-                m_Renderer.GetDemonContext().GetOffscreenRenderManager().GetOffscreenRenderer(
-                    m_Layer.m_TexturePath);
-    return m_LastFrameOffscreenRenderer.mPtr != nullptr;
+//    if (m_Layer.m_RenderPlugin && m_Layer.m_RenderPlugin->m_Flags.IsActive()) {
+//        IRenderPluginInstance *theInstance =
+//                m_Renderer.GetDemonContext().GetRenderPluginManager().GetOrCreateRenderPluginInstance(
+//                    m_Layer.m_RenderPlugin->m_PluginPath, m_Layer.m_RenderPlugin);
+//        if (theInstance) {
+//            m_Renderer.GetDemonContext()
+//                    .GetOffscreenRenderManager()
+//                    .MaybeRegisterOffscreenRenderer(&theInstance, *theInstance);
+//            m_LastFrameOffscreenRenderer = theInstance;
+//        }
+//    }
+    if (m_LastFrameOffscreenRenderer == nullptr)
+        m_LastFrameOffscreenRenderer = m_Renderer->GetDemonContext()->GetOffscreenRenderManager()->GetOffscreenRenderer(m_Layer.m_TexturePath);
+    return m_LastFrameOffscreenRenderer != nullptr;
 }
 
 QVector3D SLayerRenderPreparationData::GetCameraDirection()
@@ -237,41 +203,36 @@ QVector3D SLayerRenderPreparationData::GetCameraDirection()
 }
 
 // Per-frame cache of renderable objects post-sort.
-QDemonDataRef<SRenderableObject *> SLayerRenderPreparationData::GetOpaqueRenderableObjects()
+QVector<SRenderableObject *> SLayerRenderPreparationData::GetOpaqueRenderableObjects()
 {
     if (m_RenderedOpaqueObjects.empty() == false || m_Camera == nullptr)
         return m_RenderedOpaqueObjects;
     if (m_Layer.m_Flags.IsLayerEnableDepthTest() && m_OpaqueObjects.empty() == false) {
         QVector3D theCameraDirection(GetCameraDirection());
         QVector3D theCameraPosition = m_Camera->GetGlobalPos();
-        m_RenderedOpaqueObjects.assign(m_OpaqueObjects.begin(), m_OpaqueObjects.end());
+        m_RenderedOpaqueObjects = m_OpaqueObjects;
         // Setup the object's sorting information
         for (quint32 idx = 0, end = m_RenderedOpaqueObjects.size(); idx < end; ++idx) {
             SRenderableObject &theInfo = *m_RenderedOpaqueObjects[idx];
             QVector3D difference = theInfo.m_WorldCenterPoint - theCameraPosition;
-            theInfo.m_CameraDistanceSq = difference.dot(theCameraDirection);
+            theInfo.m_CameraDistanceSq = QVector3D::dotProduct(difference, theCameraDirection);
         }
-
-        ForwardingAllocator alloc(m_Renderer.GetPerFrameAllocator(), "SortAllocations");
         // Render nearest to furthest objects
-        eastl::merge_sort(m_RenderedOpaqueObjects.begin(), m_RenderedOpaqueObjects.end(), alloc,
-                          ISRenderObjectPtrLessThan);
+        std::sort(m_RenderedOpaqueObjects.begin(), m_RenderedOpaqueObjects.end(), ISRenderObjectPtrLessThan);
     }
     return m_RenderedOpaqueObjects;
 }
 
 // If layer depth test is false, this may also contain opaque objects.
-QDemonDataRef<SRenderableObject *> SLayerRenderPreparationData::GetTransparentRenderableObjects()
+QVector<SRenderableObject *> SLayerRenderPreparationData::GetTransparentRenderableObjects()
 {
     if (m_RenderedTransparentObjects.empty() == false || m_Camera == nullptr)
         return m_RenderedTransparentObjects;
 
-    m_RenderedTransparentObjects.assign(m_TransparentObjects.begin(),
-                                        m_TransparentObjects.end());
+    m_RenderedTransparentObjects = m_TransparentObjects;
 
     if (m_Layer.m_Flags.IsLayerEnableDepthTest() == false)
-        m_RenderedTransparentObjects.insert(m_RenderedTransparentObjects.end(),
-                                            m_OpaqueObjects.begin(), m_OpaqueObjects.end());
+        m_RenderedTransparentObjects.append(m_OpaqueObjects);
 
     if (m_RenderedTransparentObjects.empty() == false) {
         QVector3D theCameraDirection(GetCameraDirection());
@@ -281,13 +242,10 @@ QDemonDataRef<SRenderableObject *> SLayerRenderPreparationData::GetTransparentRe
         for (quint32 idx = 0, end = m_RenderedTransparentObjects.size(); idx < end; ++idx) {
             SRenderableObject &theInfo = *m_RenderedTransparentObjects[idx];
             QVector3D difference = theInfo.m_WorldCenterPoint - theCameraPosition;
-            theInfo.m_CameraDistanceSq = difference.dot(theCameraDirection);
+            theInfo.m_CameraDistanceSq = QVector3D::dotProduct(difference, theCameraDirection);
         }
-        ForwardingAllocator alloc(m_Renderer.GetPerFrameAllocator(), "SortAllocations");
         // render furthest to nearest.
-        eastl::merge_sort(m_RenderedTransparentObjects.begin(),
-                          m_RenderedTransparentObjects.end(), alloc,
-                          ISRenderObjectPtrGreatThan);
+        std::sort(m_RenderedTransparentObjects.begin(), m_RenderedTransparentObjects.end(), ISRenderObjectPtrGreatThan);
     }
 
     return m_RenderedTransparentObjects;
@@ -305,7 +263,7 @@ void SLayerRenderPreparationData::AddRenderWidget(IRenderWidget &inWidget)
         return;
 
     // Ensure we clear the widget layer always
-    m_Renderer.LayerNeedsFrameClear(*static_cast<SLayerRenderData *>(this));
+    m_Renderer->LayerNeedsFrameClear(*static_cast<SLayerRenderData *>(this));
 
     if (m_IRenderWidgets.size() < MAX_LAYER_WIDGETS)
         m_IRenderWidgets.push_back(&inWidget);
@@ -318,13 +276,11 @@ SLayerRenderPreparationData::GenerateLightingKey(DefaultMaterialLighting::Enum i
 {
     SShaderDefaultMaterialKey theGeneratedKey(GetShaderFeatureSetHash());
     const bool lighting = inLightingType != DefaultMaterialLighting::NoLighting;
-    m_Renderer.DefaultMaterialShaderKeyProperties().m_HasLighting.SetValue(theGeneratedKey,
-                                                                           lighting);
+    m_Renderer->DefaultMaterialShaderKeyProperties().m_HasLighting.SetValue(theGeneratedKey, lighting);
     if (lighting) {
         const bool lightProbe = m_Layer.m_LightProbe
                 && m_Layer.m_LightProbe->m_TextureData.m_Texture;
-        m_Renderer.DefaultMaterialShaderKeyProperties().m_HasIbl.SetValue(theGeneratedKey,
-                                                                          lightProbe);
+        m_Renderer->DefaultMaterialShaderKeyProperties().m_HasIbl.SetValue(theGeneratedKey, lightProbe);
 
         quint32 numLights = (quint32)m_Lights.size();
         if (numLights > SShaderDefaultMaterialKeyProperties::LightCount
@@ -334,8 +290,7 @@ SLayerRenderPreparationData::GenerateLightingKey(DefaultMaterialLighting::Enum i
             qCCritical(INVALID_OPERATION, "Too many lights on layer, max is 7");
             Q_ASSERT(false);
         }
-        m_Renderer.DefaultMaterialShaderKeyProperties().m_LightCount.SetValue(theGeneratedKey,
-                                                                              numLights);
+        m_Renderer->DefaultMaterialShaderKeyProperties().m_LightCount.SetValue(theGeneratedKey, numLights);
 
         for (quint32 lightIdx = 0, lightEnd = m_Lights.size();
              lightIdx < lightEnd; ++lightIdx) {
@@ -345,11 +300,11 @@ SLayerRenderPreparationData::GenerateLightingKey(DefaultMaterialLighting::Enum i
             const bool castShadowsArea = (theLight->m_LightType != RenderLightTypes::Area)
                     && (theLight->m_CastShadow);
 
-            m_Renderer.DefaultMaterialShaderKeyProperties().m_LightFlags[lightIdx]
+            m_Renderer->DefaultMaterialShaderKeyProperties().m_LightFlags[lightIdx]
                     .SetValue(theGeneratedKey, !isDirectional);
-            m_Renderer.DefaultMaterialShaderKeyProperties().m_LightAreaFlags[lightIdx]
+            m_Renderer->DefaultMaterialShaderKeyProperties().m_LightAreaFlags[lightIdx]
                     .SetValue(theGeneratedKey, isArea);
-            m_Renderer.DefaultMaterialShaderKeyProperties().m_LightShadowFlags[lightIdx]
+            m_Renderer->DefaultMaterialShaderKeyProperties().m_LightShadowFlags[lightIdx]
                     .SetValue(theGeneratedKey, castShadowsArea);
         }
     }
@@ -360,7 +315,7 @@ bool SLayerRenderPreparationData::PrepareTextForRender(
         SText &inText, const QMatrix4x4 &inViewProjection, float inTextScaleFactor,
         SLayerRenderPreparationResultFlags &ioFlags)
 {
-    ITextTextureCache *theTextRenderer = m_Renderer.GetDemonContext().GetTextureCache();
+    QSharedPointer<ITextTextureCache> theTextRenderer = m_Renderer->GetDemonContext()->GetTextureCache();
     if (theTextRenderer == nullptr)
         return false;
 
@@ -373,9 +328,8 @@ bool SLayerRenderPreparationData::PrepareTextForRender(
     if (theFlags.IsCompletelyTransparent() == false) {
         retval = inText.m_Flags.IsDirty() || inText.m_Flags.IsTextDirty();
         inText.m_Flags.SetTextDirty(false);
-        TTPathObjectAndTexture theResult =
-                theTextRenderer->RenderText(inText, inTextScaleFactor);
-        inText.m_TextTexture = theResult.second.second.mPtr;
+        TTPathObjectAndTexture theResult = theTextRenderer->RenderText(inText, inTextScaleFactor);
+        inText.m_TextTexture = theResult.second.second;
         inText.m_TextTextureDetails = theResult.second.first;
         inText.m_PathFontItem = theResult.first.second;
         inText.m_PathFontDetails = theResult.first.first;
@@ -396,7 +350,7 @@ bool SLayerRenderPreparationData::PrepareTextForRender(
             ioFlags.SetRequiresStencilBuffer(true);
 
         STextRenderable *theRenderable = new STextRenderable(
-                    theFlags, inText.GetGlobalPos(), m_Renderer, inText, inText.m_Bounds, theMVP,
+                    theFlags, inText.GetGlobalPos(), *m_Renderer, inText, inText.m_Bounds, theMVP,
                     inViewProjection, *inText.m_TextTexture, theTextOffset, theTextScale);
         m_TransparentObjects.push_back(theRenderable);
     }
@@ -443,7 +397,7 @@ bool SLayerRenderPreparationData::PreparePathForRender(
     QMatrix3x3 theNormalMatrix;
 
     inPath.CalculateMVPAndNormalMatrix(inViewProjection, theMVP, theNormalMatrix);
-    QDemonBounds3 theBounds(this->m_Renderer.GetDemonContext().GetPathManager().GetBounds(inPath));
+    QDemonBounds3 theBounds(this->m_Renderer->GetDemonContext()->GetPathManager()->GetBounds(inPath));
 
     if (inPath.m_GlobalOpacity >= QDEMON_RENDER_MINIMUM_RENDER_OPACITY
             && inClipFrustum.hasValue()) {
@@ -508,11 +462,11 @@ bool SLayerRenderPreparationData::PreparePathForRender(
                         prepResult.m_MaterialKey, isStroke);
             theRenderable->m_FirstImage = prepResult.m_FirstImage;
 
-            IQDemonRenderContext &demonContext(m_Renderer.GetDemonContext());
-            IPathManager &thePathManager = demonContext.GetPathManager();
-            retval = thePathManager.PrepareForRender(inPath) || retval;
-            retval |= (inPath.m_WireframeMode != demonContext.GetWireframeMode());
-            inPath.m_WireframeMode = demonContext.GetWireframeMode();
+            QSharedPointer<IQDemonRenderContext> demonContext(m_Renderer->GetDemonContext());
+            QSharedPointer<IPathManager> thePathManager = demonContext->GetPathManager();
+            retval = thePathManager->PrepareForRender(inPath) || retval;
+            retval |= (inPath.m_WireframeMode != demonContext->GetWireframeMode());
+            inPath.m_WireframeMode = demonContext->GetWireframeMode();
 
             if (theFlags.HasTransparency())
                 m_TransparentObjects.push_back(theRenderable);
@@ -551,11 +505,11 @@ bool SLayerRenderPreparationData::PreparePathForRender(
                         prepResult.m_MaterialKey, isStroke);
             theRenderable->m_FirstImage = prepResult.m_FirstImage;
 
-            IQDemonRenderContext &demonContext(m_Renderer.GetDemonContext());
-            IPathManager &thePathManager = demonContext.GetPathManager();
-            retval = thePathManager.PrepareForRender(inPath) || retval;
-            retval |= (inPath.m_WireframeMode != demonContext.GetWireframeMode());
-            inPath.m_WireframeMode = demonContext.GetWireframeMode();
+            QSharedPointer<IQDemonRenderContext> demonContext(m_Renderer->GetDemonContext());
+            QSharedPointer<IPathManager> thePathManager = demonContext->GetPathManager();
+            retval = thePathManager->PrepareForRender(inPath) || retval;
+            retval |= (inPath.m_WireframeMode != demonContext->GetWireframeMode());
+            inPath.m_WireframeMode = demonContext->GetWireframeMode();
 
             if (theFlags.HasTransparency())
                 m_TransparentObjects.push_back(theRenderable);
@@ -571,12 +525,11 @@ void SLayerRenderPreparationData::PrepareImageForRender(
         SRenderableImage *&ioNextImage, SRenderableObjectFlags &ioFlags,
         SShaderDefaultMaterialKey &inShaderKey, quint32 inImageIndex)
 {
-    IQDemonRenderContext &demonContext(m_Renderer.GetDemonContext());
-    IBufferManager &bufferManager = demonContext.GetBufferManager();
-    IOffscreenRenderManager &theOffscreenRenderManager(
-                demonContext.GetOffscreenRenderManager());
-    IRenderPluginManager &theRenderPluginManager(demonContext.GetRenderPluginManager());
-    if (inImage.ClearDirty(bufferManager, theOffscreenRenderManager, theRenderPluginManager))
+    QSharedPointer<IQDemonRenderContext> demonContext(m_Renderer->GetDemonContext());
+    QSharedPointer<IBufferManager> bufferManager = demonContext->GetBufferManager();
+    QSharedPointer<IOffscreenRenderManager> theOffscreenRenderManager(demonContext->GetOffscreenRenderManager());
+//    IRenderPluginManager &theRenderPluginManager(demonContext.GetRenderPluginManager());
+    if (inImage.ClearDirty(*bufferManager, *theOffscreenRenderManager/*, theRenderPluginManager*/))
         ioFlags |= RenderPreparationResultFlagValues::Dirty;
 
     // All objects with offscreen renderers are pickable so we can pass the pick through to the
@@ -601,8 +554,7 @@ void SLayerRenderPreparationData::PrepareImageForRender(
         // inImage.m_TextureData.m_Texture->SetMagFilter( QDemonRenderTextureMagnifyingOp::Linear );
 
         SRenderableImage *theImage = new SRenderableImage(inMapType, inImage);
-        SShaderKeyImageMap &theKeyProp =
-                m_Renderer.DefaultMaterialShaderKeyProperties().m_ImageMaps[inImageIndex];
+        SShaderKeyImageMap &theKeyProp = m_Renderer->DefaultMaterialShaderKeyProperties().m_ImageMaps[inImageIndex];
 
         theKeyProp.SetEnabled(inShaderKey, true);
         switch (inImage.m_MappingMode) {
@@ -632,7 +584,7 @@ void SLayerRenderPreparationData::PrepareImageForRender(
             theKeyProp.SetPremultiplied(inShaderKey, true);
 
         SShaderKeyTextureSwizzle &theSwizzleKeyProp =
-                m_Renderer.DefaultMaterialShaderKeyProperties().m_TextureSwizzle[inImageIndex];
+                m_Renderer->DefaultMaterialShaderKeyProperties().m_TextureSwizzle[inImageIndex];
         theSwizzleKeyProp.SetSwizzleMode(
                     inShaderKey, inImage.m_TextureData.m_Texture->GetTextureSwizzleMode(), true);
 
@@ -662,17 +614,17 @@ SDefaultMaterialPreparationResult SLayerRenderPreparationData::PrepareDefaultMat
     SRenderableImage *firstImage = nullptr;
 
     // set wireframe mode
-    m_Renderer.DefaultMaterialShaderKeyProperties().m_WireframeMode.SetValue(
-                theGeneratedKey, m_Renderer.GetDemonContext().GetWireframeMode());
+    m_Renderer->DefaultMaterialShaderKeyProperties().m_WireframeMode.SetValue(
+                theGeneratedKey, m_Renderer->GetDemonContext()->GetWireframeMode());
 
     if (theMaterial->m_IblProbe && CheckLightProbeDirty(*theMaterial->m_IblProbe)) {
-        m_Renderer.PrepareImageForIbl(*theMaterial->m_IblProbe);
+        m_Renderer->PrepareImageForIbl(*theMaterial->m_IblProbe);
     }
 
-    if (!m_Renderer.DefaultMaterialShaderKeyProperties().m_HasIbl.GetValue(theGeneratedKey)) {
+    if (!m_Renderer->DefaultMaterialShaderKeyProperties().m_HasIbl.GetValue(theGeneratedKey)) {
         bool lightProbeValid = HasValidLightProbe(theMaterial->m_IblProbe);
         SetShaderFeature("QDEMON_ENABLE_LIGHT_PROBE", lightProbeValid);
-        m_Renderer.DefaultMaterialShaderKeyProperties().m_HasIbl.SetValue(theGeneratedKey,
+        m_Renderer->DefaultMaterialShaderKeyProperties().m_HasIbl.SetValue(theGeneratedKey,
                                                                           lightProbeValid);
         // SetShaderFeature( "QDEMON_ENABLE_IBL_FOV",
         // m_Renderer.GetLayerRenderData()->m_Layer.m_ProbeFov < 180.0f );
@@ -686,17 +638,17 @@ SDefaultMaterialPreparationResult SLayerRenderPreparationData::PrepareDefaultMat
         }
 
         bool specularEnabled = theMaterial->IsSpecularEnabled();
-        m_Renderer.DefaultMaterialShaderKeyProperties().m_SpecularEnabled.SetValue(
+        m_Renderer->DefaultMaterialShaderKeyProperties().m_SpecularEnabled.SetValue(
                     theGeneratedKey, specularEnabled);
         if (specularEnabled) {
-            m_Renderer.DefaultMaterialShaderKeyProperties().m_SpecularModel.SetSpecularModel(
+            m_Renderer->DefaultMaterialShaderKeyProperties().m_SpecularModel.SetSpecularModel(
                         theGeneratedKey, theMaterial->m_SpecularModel);
         }
 
-        m_Renderer.DefaultMaterialShaderKeyProperties().m_FresnelEnabled.SetValue(
+        m_Renderer->DefaultMaterialShaderKeyProperties().m_FresnelEnabled.SetValue(
                     theGeneratedKey, theMaterial->IsFresnelEnabled());
 
-        m_Renderer.DefaultMaterialShaderKeyProperties().m_VertexColorsEnabled.SetValue(
+        m_Renderer->DefaultMaterialShaderKeyProperties().m_VertexColorsEnabled.SetValue(
                     theGeneratedKey, theMaterial->IsVertexColorsEnabled());
 
         // Run through the material's images and prepare them for render.
@@ -776,8 +728,8 @@ SDefaultMaterialPreparationResult SLayerRenderPreparationData::PrepareCustomMate
     float &subsetOpacity(retval.m_Opacity);
 
     // set wireframe mode
-    m_Renderer.DefaultMaterialShaderKeyProperties().m_WireframeMode.SetValue(
-                theGeneratedKey, m_Renderer.GetDemonContext().GetWireframeMode());
+    m_Renderer->DefaultMaterialShaderKeyProperties().m_WireframeMode.SetValue(
+                theGeneratedKey, m_Renderer->GetDemonContext()->GetWireframeMode());
 
     if (subsetOpacity < QDEMON_RENDER_MINIMUM_RENDER_OPACITY) {
         subsetOpacity = 0.0f;
@@ -820,21 +772,19 @@ bool SLayerRenderPreparationData::PrepareModelForRender(
         SModel &inModel, const QMatrix4x4 &inViewProjection,
         const QDemonOption<SClippingFrustum> &inClipFrustum, TNodeLightEntryList &inScopedLights)
 {
-    IQDemonRenderContext &demonContext(m_Renderer.GetDemonContext());
-    IBufferManager &bufferManager = demonContext.GetBufferManager();
-    SRenderMesh *theMesh = bufferManager.LoadMesh(inModel.m_MeshPath);
+    QSharedPointer<IQDemonRenderContext> demonContext(m_Renderer->GetDemonContext());
+    QSharedPointer<IBufferManager> bufferManager = demonContext->GetBufferManager();
+    SRenderMesh *theMesh = bufferManager->LoadMesh(inModel.m_MeshPath);
     if (theMesh == nullptr)
         return false;
 
     SGraphObject *theSourceMaterialObject = inModel.m_FirstMaterial;
-    SModelContext &theModelContext =
-            *new SModelContext(inModel, inViewProjection);
+    SModelContext &theModelContext = *new SModelContext(inModel, inViewProjection);
     m_ModelContexts.push_back(&theModelContext);
 
     bool subsetDirty = false;
 
-    SScopedLightsListScope lightsScope(m_Lights, m_LightDirections, m_SourceLightDirections,
-                                       inScopedLights);
+    SScopedLightsListScope lightsScope(m_Lights, m_LightDirections, m_SourceLightDirections, inScopedLights);
     SetShaderFeature(m_CGLightingFeatureName, m_Lights.empty() == false);
     for (quint32 idx = 0, end = theMesh->m_Subsets.size(); idx < end && theSourceMaterialObject;
          ++idx, theSourceMaterialObject = GetNextMaterialSibling(theSourceMaterialObject)) {
@@ -845,7 +795,7 @@ bool SLayerRenderPreparationData::PrepareModelForRender(
             renderableFlags.SetPickable(false);
             float subsetOpacity = inModel.m_GlobalOpacity;
             QVector3D theModelCenter(theSubset.m_Bounds.getCenter());
-            theModelCenter = inModel.m_GlobalTransform.transform(theModelCenter);
+            theModelCenter = mat44::transform(inModel.m_GlobalTransform, theModelCenter);
 
             if (subsetOpacity >= QDEMON_RENDER_MINIMUM_RENDER_OPACITY
                     && inClipFrustum.hasValue()) {
@@ -886,11 +836,11 @@ bool SLayerRenderPreparationData::PrepareModelForRender(
                 theSubset.m_InputAssembler->SetPatchVertexCount(3);
                 theSubset.m_InputAssemblerDepth->SetPatchVertexCount(3);
                 // check wireframe mode
-                theSubset.m_WireframeMode = demonContext.GetWireframeMode();
+                theSubset.m_WireframeMode = demonContext->GetWireframeMode();
 
                 subsetDirty =
                         subsetDirty | (theSubset.m_WireframeMode != inModel.m_WireframeMode);
-                inModel.m_WireframeMode = demonContext.GetWireframeMode();
+                inModel.m_WireframeMode = demonContext->GetWireframeMode();
             } else {
                 theSubset.m_PrimitiveType = theSubset.m_InputAssembler->GetPrimitiveType();
                 theSubset.m_InputAssembler->SetPatchVertexCount(1);
@@ -922,7 +872,7 @@ bool SLayerRenderPreparationData::PrepareModelForRender(
                 subsetDirty |= theMaterialPrepResult.m_Dirty;
                 renderableFlags = theMaterialPrepResult.m_RenderableFlags;
 
-                m_Renderer.DefaultMaterialShaderKeyProperties()
+                m_Renderer->DefaultMaterialShaderKeyProperties()
                         .m_TessellationMode.SetTessellationMode(theGeneratedKey,
                                                                 inModel.m_TessellationMode, true);
 
@@ -941,10 +891,8 @@ bool SLayerRenderPreparationData::PrepareModelForRender(
                 SCustomMaterial &theMaterial(
                             static_cast<SCustomMaterial &>(*theMaterialObject));
 
-                ICustomMaterialSystem &theMaterialSystem(
-                            demonContext.GetCustomMaterialSystem());
-                subsetDirty |= theMaterialSystem.PrepareForRender(
-                            theModelContext.m_Model, theSubset, theMaterial, clearMaterialDirtyFlags);
+                QSharedPointer<ICustomMaterialSystem> theMaterialSystem(demonContext->GetCustomMaterialSystem());
+                subsetDirty |= theMaterialSystem->PrepareForRender(theModelContext.m_Model, theSubset, theMaterial, clearMaterialDirtyFlags);
 
                 SDefaultMaterialPreparationResult theMaterialPrepResult(
                             PrepareCustomMaterialForRender(theMaterial, renderableFlags,
@@ -961,12 +909,12 @@ bool SLayerRenderPreparationData::PrepareModelForRender(
                 if (theMaterial.m_hasRefraction)
                     renderableFlags |= RenderPreparationResultFlagValues::HasRefraction;
 
-                m_Renderer.DefaultMaterialShaderKeyProperties()
+                m_Renderer->DefaultMaterialShaderKeyProperties()
                         .m_TessellationMode.SetTessellationMode(theGeneratedKey,
                                                                 inModel.m_TessellationMode, true);
 
                 if (theMaterial.m_IblProbe && CheckLightProbeDirty(*theMaterial.m_IblProbe)) {
-                    m_Renderer.PrepareImageForIbl(*theMaterial.m_IblProbe);
+                    m_Renderer->PrepareImageForIbl(*theMaterial.m_IblProbe);
                 }
 
                 theRenderableObject = new SCustomMaterialRenderable(
@@ -994,12 +942,11 @@ bool SLayerRenderPreparationData::PrepareRenderablesForRender(
         const QMatrix4x4 &inViewProjection, const QDemonOption<SClippingFrustum> &inClipFrustum,
         float inTextScaleFactor, SLayerRenderPreparationResultFlags &ioFlags)
 {
-    SStackPerfTimer __timer(m_Renderer.GetDemonContext().GetPerfTimer(),
-                            "SLayerRenderData::PrepareRenderablesForRender");
+    SStackPerfTimer __timer(*m_Renderer->GetDemonContext()->GetPerfTimer(), "SLayerRenderData::PrepareRenderablesForRender");
     m_ViewProjection = inViewProjection;
     float theTextScaleFactor = inTextScaleFactor;
     bool wasDataDirty = false;
-    bool hasTextRenderer = m_Renderer.GetDemonContext().GetTextRenderer() != nullptr;
+    bool hasTextRenderer = m_Renderer->GetDemonContext()->GetTextRenderer() != nullptr;
     for (quint32 idx = 0, end = m_RenderableNodes.size(); idx < end; ++idx) {
         SRenderableNodeEntry &theNodeEntry(m_RenderableNodes[idx]);
         SNode *theNode = theNodeEntry.m_Node;
@@ -1044,10 +991,10 @@ bool SLayerRenderPreparationData::PrepareRenderablesForRender(
 
 bool SLayerRenderPreparationData::CheckLightProbeDirty(SImage &inLightProbe)
 {
-    IQDemonRenderContext &theContext(m_Renderer.GetDemonContext());
-    return inLightProbe.ClearDirty(theContext.GetBufferManager(),
-                                   theContext.GetOffscreenRenderManager(),
-                                   theContext.GetRenderPluginManager(), true);
+    QSharedPointer<IQDemonRenderContext> theContext(m_Renderer->GetDemonContext());
+    return inLightProbe.ClearDirty(*theContext->GetBufferManager(),
+                                   *theContext->GetOffscreenRenderManager()/*,
+                                   theContext.GetRenderPluginManager()*/, true);
 }
 
 struct SLightNodeMarker
@@ -1100,7 +1047,7 @@ struct SLightNodeMarker
 void
 SLayerRenderPreparationData::PrepareForRender(const QSize &inViewportDimensions)
 {
-    SStackPerfTimer __timer(m_Renderer.GetDemonContext().GetPerfTimer(),
+    SStackPerfTimer __timer(*m_Renderer->GetDemonContext()->GetPerfTimer(),
                             "SLayerRenderData::PrepareForRender");
     if (m_LayerPrepResult.hasValue())
         return;
@@ -1109,11 +1056,11 @@ SLayerRenderPreparationData::PrepareForRender(const QSize &inViewportDimensions)
     m_FeatureSetHash = 0;
     QVector2D thePresentationDimensions((float)inViewportDimensions.width(),
                                         (float)inViewportDimensions.height());
-    IRenderList &theGraph(m_Renderer.GetDemonContext().GetRenderList());
-    QDemonRenderRect theViewport(theGraph.GetViewport());
-    QDemonRenderRect theScissor(theGraph.GetViewport());
-    if (theGraph.IsScissorTestEnabled())
-        theScissor = m_Renderer.GetContext().GetScissorRect();
+    QSharedPointer<IRenderList> theGraph(m_Renderer->GetDemonContext()->GetRenderList());
+    QDemonRenderRect theViewport(theGraph->GetViewport());
+    QDemonRenderRect theScissor(theGraph->GetViewport());
+    if (theGraph->IsScissorTestEnabled())
+        theScissor = m_Renderer->GetContext()->GetScissorRect();
     bool wasDirty = false;
     bool wasDataDirty = false;
     wasDirty = m_Layer.m_Flags.IsDirty();
@@ -1121,7 +1068,7 @@ SLayerRenderPreparationData::PrepareForRender(const QSize &inViewportDimensions)
     quint32 maxNumAAPasses = m_Layer.m_ProgressiveAAMode == AAModeValues::NoAA
             ? (quint32)0
             : (quint32)(m_Layer.m_ProgressiveAAMode) + 1;
-    maxNumAAPasses = NVMin((quint32)(MAX_AA_LEVELS + 1), maxNumAAPasses);
+    maxNumAAPasses = qMin((quint32)(MAX_AA_LEVELS + 1), maxNumAAPasses);
     SEffect *theLastEffect = nullptr;
     // Uncomment the line below to disable all progressive AA.
     // maxNumAAPasses = 0;
@@ -1138,7 +1085,7 @@ SLayerRenderPreparationData::PrepareForRender(const QSize &inViewportDimensions)
 
     if (m_Layer.m_Flags.IsActive()) {
         // Get the layer's width and height.
-        IEffectSystem &theEffectSystem(m_Renderer.GetDemonContext().GetEffectSystem());
+        QSharedPointer<IEffectSystem> theEffectSystem(m_Renderer->GetDemonContext()->GetEffectSystem());
         for (SEffect *theEffect = m_Layer.m_FirstEffect; theEffect;
              theEffect = theEffect->m_NextEffect) {
             if (theEffect->m_Flags.IsDirty()) {
@@ -1148,7 +1095,7 @@ SLayerRenderPreparationData::PrepareForRender(const QSize &inViewportDimensions)
             if (theEffect->m_Flags.IsActive()) {
                 theLastEffect = theEffect;
                 if (hasOffscreenRenderer == false
-                        && theEffectSystem.DoesEffectRequireDepthTexture(theEffect->m_ClassName))
+                        && theEffectSystem->DoesEffectRequireDepthTexture(theEffect->m_ClassName))
                     requiresDepthPrepass = true;
             }
         }
@@ -1169,23 +1116,23 @@ SLayerRenderPreparationData::PrepareForRender(const QSize &inViewportDimensions)
 
         thePrepResult = SLayerRenderPreparationResult(SLayerRenderHelper(
                                                           theViewport, theScissor, m_Layer.m_Scene->m_Presentation->m_PresentationDimensions,
-                                                          m_Layer, shouldRenderToTexture, m_Renderer.GetDemonContext().GetScaleMode(),
-                                                          m_Renderer.GetDemonContext().GetPresentationScaleFactor()));
+                                                          m_Layer, shouldRenderToTexture, m_Renderer->GetDemonContext()->GetScaleMode(),
+                                                          m_Renderer->GetDemonContext()->GetPresentationScaleFactor()));
         thePrepResult.m_LastEffect = theLastEffect;
         thePrepResult.m_MaxAAPassIndex = maxNumAAPasses;
         thePrepResult.m_Flags.SetRequiresDepthTexture(requiresDepthPrepass
                                                       || NeedsWidgetTexture());
         thePrepResult.m_Flags.SetShouldRenderToTexture(shouldRenderToTexture);
-        if (m_Renderer.GetContext().GetRenderContextType() != QDemonRenderContextValues::GLES2)
+        if (m_Renderer->GetContext()->GetRenderContextType() != QDemonRenderContextValues::GLES2)
             thePrepResult.m_Flags.SetRequiresSsaoPass(SSAOEnabled);
 
         if (thePrepResult.IsLayerVisible()) {
             if (shouldRenderToTexture) {
-                m_Renderer.GetDemonContext().GetRenderList().AddRenderTask(
+                m_Renderer->GetDemonContext()->GetRenderList()->AddRenderTask(
                             CreateRenderToTextureRunnable());
             }
             if (m_Layer.m_LightProbe && CheckLightProbeDirty(*m_Layer.m_LightProbe)) {
-                m_Renderer.PrepareImageForIbl(*m_Layer.m_LightProbe);
+                m_Renderer->PrepareImageForIbl(*m_Layer.m_LightProbe);
                 wasDataDirty = true;
             }
 
@@ -1196,7 +1143,7 @@ SLayerRenderPreparationData::PrepareForRender(const QSize &inViewportDimensions)
 
             if (lightProbeValid && m_Layer.m_LightProbe2
                     && CheckLightProbeDirty(*m_Layer.m_LightProbe2)) {
-                m_Renderer.PrepareImageForIbl(*m_Layer.m_LightProbe2);
+                m_Renderer->PrepareImageForIbl(*m_Layer.m_LightProbe2);
                 wasDataDirty = true;
             }
 
@@ -1211,16 +1158,15 @@ SLayerRenderPreparationData::PrepareForRender(const QSize &inViewportDimensions)
                      theChild = theChild->m_NextSibling)
                     MaybeQueueNodeForRender(*theChild, m_RenderableNodes, m_CamerasAndLights,
                                             dfsIndex);
-                reverse(m_CamerasAndLights.begin(), m_CamerasAndLights.end());
-                reverse(m_RenderableNodes.begin(), m_RenderableNodes.end());
+                std::reverse(m_CamerasAndLights.begin(), m_CamerasAndLights.end());
+                std::reverse(m_RenderableNodes.begin(), m_RenderableNodes.end());
                 m_LightToNodeMap.clear();
             }
             m_Camera = nullptr;
             m_Lights.clear();
             m_OpaqueObjects.clear();
             m_TransparentObjects.clear();
-            QVector<SLightNodeMarker> theLightNodeMarkers(m_Renderer.GetPerFrameAllocator(),
-                                                           "LightNodeMarkers");
+            QVector<SLightNodeMarker> theLightNodeMarkers;
             m_SourceLightDirections.clear();
 
             for (quint32 idx = 0, end = m_CamerasAndLights.size(); idx < end; ++idx) {
@@ -1229,8 +1175,7 @@ SLayerRenderPreparationData::PrepareForRender(const QSize &inViewportDimensions)
                 switch (theNode->m_Type) {
                 case GraphObjectTypes::Camera: {
                     SCamera *theCamera = static_cast<SCamera *>(theNode);
-                    SCameraGlobalCalculationResult theResult =
-                            thePrepResult.SetupCameraForRender(*theCamera);
+                    SCameraGlobalCalculationResult theResult = thePrepResult.SetupCameraForRender(*theCamera);
                     wasDataDirty = wasDataDirty || theResult.m_WasDirty;
                     if (theCamera->m_Flags.IsGloballyActive())
                         m_Camera = theCamera;
@@ -1246,7 +1191,7 @@ SLayerRenderPreparationData::PrepareForRender(const QSize &inViewportDimensions)
                     // the
                     // light is active or scoped.
                     quint32 lightIndex = (quint32)m_SourceLightDirections.size();
-                    m_SourceLightDirections.push_back(QVector3D(0.0f));
+                    m_SourceLightDirections.push_back(QVector3D(0.0, 0.0, 0.0));
                     // Note we still need a light check when building the renderable light list.
                     // We also cannot cache shader-light bindings based on layers any more
                     // because
@@ -1256,7 +1201,7 @@ SLayerRenderPreparationData::PrepareForRender(const QSize &inViewportDimensions)
                     if (theLight->m_Flags.IsGloballyActive()) {
                         if (theLight->m_Scope == nullptr) {
                             m_Lights.push_back(theLight);
-                            if (m_Renderer.GetContext().GetRenderContextType()
+                            if (m_Renderer->GetContext()->GetRenderContextType()
                                     != QDemonRenderContextValues::GLES2
                                     && theLight->m_CastShadow && GetShadowMapManager()) {
                                 // PKC -- use of "res" as an exponent of two is an annoying
@@ -1276,14 +1221,12 @@ SLayerRenderPreparationData::PrepareForRender(const QSize &inViewportDimensions)
                                 SetShaderFeature("QDEMON_ENABLE_SSM", true);
                             }
                         }
-                        TLightToNodeMap::iterator iter =
-                                m_LightToNodeMap.insert(theLight, (SNode *)nullptr)
-                                .first;
-                        SNode *oldLightScope = iter->second;
+                        TLightToNodeMap::iterator iter = m_LightToNodeMap.insert(theLight, (SNode *)nullptr);
+                        SNode *oldLightScope = iter.value();
                         SNode *newLightScope = theLight->m_Scope;
 
                         if (oldLightScope != newLightScope) {
-                            iter->second = newLightScope;
+                            iter.value() = newLightScope;
                             if (oldLightScope)
                                 theLightNodeMarkers.push_back(SLightNodeMarker(
                                                                   *theLight, lightIndex, *oldLightScope, false));
@@ -1313,10 +1256,7 @@ SLayerRenderPreparationData::PrepareForRender(const QSize &inViewportDimensions)
                         if (nodeDFSIndex >= theMarker.m_FirstValidIndex
                                 && nodeDFSIndex < theMarker.m_JustPastLastValidIndex) {
                             if (theMarker.m_AddOrRemove) {
-                                SNodeLightEntry *theNewEntry =
-                                        m_RenderableNodeLightEntryPool.construct(
-                                            theMarker.m_Light, theMarker.m_LightIndex, __FILE__,
-                                            __LINE__);
+                                SNodeLightEntry *theNewEntry = new SNodeLightEntry(theMarker.m_Light, theMarker.m_LightIndex);
                                 theNodeEntry.m_Lights.push_back(*theNewEntry);
                             } else {
                                 for (TNodeLightEntryList::iterator
@@ -1326,7 +1266,7 @@ SLayerRenderPreparationData::PrepareForRender(const QSize &inViewportDimensions)
                                     if (lightIter->m_Light == theMarker.m_Light) {
                                         SNodeLightEntry &theEntry = *lightIter;
                                         theNodeEntry.m_Lights.remove(theEntry);
-                                        m_RenderableNodeLightEntryPool.deallocate(&theEntry);
+                                        delete &theEntry;
                                         break;
                                     }
                                 }
@@ -1343,18 +1283,18 @@ SLayerRenderPreparationData::PrepareForRender(const QSize &inViewportDimensions)
                             thePrepResult.GetLayerToPresentationViewport(),
                             thePrepResult.GetPresentationDesignDimensions());
                 SClipPlane nearPlane;
-                QMatrix3x3 theUpper33(m_Camera->m_GlobalTransform.getUpper3x3InverseTranspose());
+                QMatrix3x3 theUpper33(m_Camera->m_GlobalTransform.normalMatrix());
 
-                QVector3D dir(theUpper33.transform(QVector3D(0, 0, -1)));
+                QVector3D dir(mat33::transform(theUpper33, QVector3D(0, 0, -1)));
                 dir.normalize();
                 nearPlane.normal = dir;
                 QVector3D theGlobalPos = m_Camera->GetGlobalPos() + m_Camera->m_ClipNear * dir;
-                nearPlane.d = -(dir.dot(theGlobalPos));
+                nearPlane.d = -(QVector3D::dotProduct(dir, theGlobalPos));
                 // the near plane's bbox edges are calculated in the clipping frustum's
                 // constructor.
                 m_ClippingFrustum = SClippingFrustum(m_ViewProjection, nearPlane);
             } else
-                m_ViewProjection = QMatrix4x4::createIdentity();
+                m_ViewProjection = QMatrix4x4();
 
             // Setup the light directions here.
 
@@ -1378,16 +1318,16 @@ SLayerRenderPreparationData::PrepareForRender(const QSize &inViewportDimensions)
                 QDemonRenderRect theScissorRect =
                         thePrepResult.GetLayerToPresentationScissorRect().ToIntegerRect();
                 // This happens here because if there are any fancy render steps
-                IRenderList &theRenderList(m_Renderer.GetDemonContext().GetRenderList());
-                QDemonRenderContext &theContext(m_Renderer.GetContext());
+                QSharedPointer<IRenderList> theRenderList(m_Renderer->GetDemonContext()->GetRenderList());
+                QDemonRenderContext &theContext(*m_Renderer->GetContext());
                 SRenderListScopedProperty<bool> _listScissorEnabled(
-                            theRenderList, &IRenderList::IsScissorTestEnabled,
+                            *theRenderList, &IRenderList::IsScissorTestEnabled,
                             &IRenderList::SetScissorTestEnabled, theScissor);
                 SRenderListScopedProperty<QDemonRenderRect> _listViewport(
-                            theRenderList, &IRenderList::GetViewport, &IRenderList::SetViewport,
+                            *theRenderList, &IRenderList::GetViewport, &IRenderList::SetViewport,
                             theViewport);
                 SRenderListScopedProperty<QDemonRenderRect> _listScissor(
-                            theRenderList, &IRenderList::GetScissor, &IRenderList::SetScissorRect,
+                            *theRenderList, &IRenderList::GetScissor, &IRenderList::SetScissorRect,
                             theScissorRect);
                 // Some plugins don't use the render list so they need the actual gl context
                 // setup.
@@ -1402,7 +1342,7 @@ SLayerRenderPreparationData::PrepareForRender(const QSize &inViewportDimensions)
                             theViewport);
                 SOffscreenRenderFlags theResult = m_LastFrameOffscreenRenderer->NeedsRender(
                             CreateOffscreenRenderEnvironment(),
-                            m_Renderer.GetDemonContext().GetPresentationScaleFactor(), &m_Layer);
+                            m_Renderer->GetDemonContext()->GetPresentationScaleFactor(), &m_Layer);
                 wasDataDirty = wasDataDirty || theResult.m_HasChangedSinceLastFrame;
             }
         }
@@ -1423,18 +1363,18 @@ SLayerRenderPreparationData::PrepareForRender(const QSize &inViewportDimensions)
 
 void SLayerRenderPreparationData::ResetForFrame()
 {
-    m_TransparentObjects.clear_unsafe();
-    m_OpaqueObjects.clear_unsafe();
+    m_TransparentObjects.clear();
+    m_OpaqueObjects.clear();
     m_LayerPrepResult.setEmpty();
     // The check for if the camera is or is not null is used
     // to figure out if this layer was rendered at all.
     m_Camera = nullptr;
     m_LastFrameOffscreenRenderer = nullptr;
-    m_IRenderWidgets.clear_unsafe();
+    m_IRenderWidgets.clear();
     m_CameraDirection.setEmpty();
-    m_LightDirections.clear_unsafe();
-    m_RenderedOpaqueObjects.clear_unsafe();
-    m_RenderedTransparentObjects.clear_unsafe();
+    m_LightDirections.clear();
+    m_RenderedOpaqueObjects.clear();
+    m_RenderedTransparentObjects.clear();
 }
 
 QT_END_NAMESPACE

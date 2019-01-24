@@ -33,6 +33,7 @@
 
 #include <QtDemonRuntimeRender/qdemonrendererimpllayerrenderpreparationdata.h>
 #include <QtDemonRuntimeRender/qdemonrenderresourcebufferobjects.h>
+#include <QtDemonRuntimeRender/qdemonrenderresourcetexture2d.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -45,7 +46,7 @@ struct AdvancedBlendModes
         ColorDodge
     };
 };
-struct QDEMON_AUTOTEST_EXPORT SLayerRenderData : public SLayerRenderPreparationData
+struct SLayerRenderData : public SLayerRenderPreparationData
 {
 
     // Layers can be rendered offscreen for many reasons; effects, progressive aa,
@@ -63,12 +64,12 @@ struct QDEMON_AUTOTEST_EXPORT SLayerRenderData : public SLayerRenderPreparationD
     CResourceTexture2D m_LayerMultisamplePrepassDepthTexture;
     CResourceTexture2D m_LayerMultisampleWidgetTexture;
     // the texture contains the render result inclusive post effects
-    QDemonRenderTexture2D *m_LayerCachedTexture;
+    QSharedPointer<QDemonRenderTexture2D> m_LayerCachedTexture;
 
-    QDemonRenderTexture2D *m_AdvancedBlendDrawTexture;
-    QDemonRenderTexture2D *m_AdvancedBlendBlendTexture;
-    QDemonRenderFrameBuffer *m_AdvancedModeDrawFB;
-    QDemonRenderFrameBuffer *m_AdvancedModeBlendFB;
+    QSharedPointer<QDemonRenderTexture2D> m_AdvancedBlendDrawTexture;
+    QSharedPointer<QDemonRenderTexture2D> m_AdvancedBlendBlendTexture;
+    QSharedPointer<QDemonRenderFrameBuffer> m_AdvancedModeDrawFB;
+    QSharedPointer<QDemonRenderFrameBuffer> m_AdvancedModeBlendFB;
 
     // True if this layer was rendered offscreen.
     // If this object has no value then this layer wasn't rendered at all.
@@ -94,7 +95,7 @@ struct QDEMON_AUTOTEST_EXPORT SLayerRenderData : public SLayerRenderPreparationD
 
     QSize m_previousDimensions;
 
-    SLayerRenderData(SLayer &inLayer, QDemonRendererImpl &inRenderer);
+    SLayerRenderData(SLayer &inLayer, QSharedPointer<QDemonRendererImpl> inRenderer);
 
     virtual ~SLayerRenderData();
 
@@ -111,13 +112,18 @@ struct QDEMON_AUTOTEST_EXPORT SLayerRenderData : public SLayerRenderPreparationD
     // no effects.
     void RenderDepthPass(bool inEnableTransparentDepthWrite = false);
     void RenderAoPass();
-    void RenderFakeDepthMapPass(QDemonRenderTexture2D *theDepthTex,
-                                QDemonRenderTextureCube *theDepthCube);
+    void RenderFakeDepthMapPass(QDemonRenderTexture2D *theDepthTex, QDemonRenderTextureCube *theDepthCube);
     void RenderShadowMapPass(CResourceFrameBuffer *theFB);
-    void RenderShadowCubeBlurPass(CResourceFrameBuffer *theFB, QDemonRenderTextureCube *target0,
-                                  QDemonRenderTextureCube *target1, float filterSz, float clipFar);
-    void RenderShadowMapBlurPass(CResourceFrameBuffer *theFB, QDemonRenderTexture2D *target0,
-                                 QDemonRenderTexture2D *target1, float filterSz, float clipFar);
+    void RenderShadowCubeBlurPass(CResourceFrameBuffer *theFB,
+                                  QSharedPointer<QDemonRenderTextureCube> target0,
+                                  QSharedPointer<QDemonRenderTextureCube> target1,
+                                  float filterSz,
+                                  float clipFar);
+    void RenderShadowMapBlurPass(CResourceFrameBuffer *theFB,
+                                 QSharedPointer<QDemonRenderTexture2D> target0,
+                                 QSharedPointer<QDemonRenderTexture2D> target1,
+                                 float filterSz,
+                                 float clipFar);
 
     void Render(CResourceFrameBuffer *theFB = nullptr);
     void ResetForFrame() override;
@@ -136,15 +142,15 @@ struct QDEMON_AUTOTEST_EXPORT SLayerRenderData : public SLayerRenderPreparationD
 
     void ApplyLayerPostEffects();
 
-    void RunnableRenderToViewport(QDemonRenderFrameBuffer *theFB);
+    void RunnableRenderToViewport(QSharedPointer<QDemonRenderFrameBuffer> theFB);
 
     void AddLayerRenderStep();
 
     void RenderRenderWidgets();
 
 #ifdef ADVANCED_BLEND_SW_FALLBACK
-    void BlendAdvancedEquationSwFallback(QDemonRenderTexture2D *drawTexture,
-                                         QDemonRenderTexture2D *m_LayerTexture,
+    void BlendAdvancedEquationSwFallback(QSharedPointer<QDemonRenderTexture2D> drawTexture,
+                                         QSharedPointer<QDemonRenderTexture2D> m_LayerTexture,
                                          AdvancedBlendModes::Enum blendMode);
 #endif
     // test method to render this layer to a given view projection without running the entire
@@ -154,21 +160,25 @@ struct QDEMON_AUTOTEST_EXPORT SLayerRenderData : public SLayerRenderPreparationD
     void PrepareAndRender(const QMatrix4x4 &inViewProjection);
 
     SOffscreenRendererEnvironment CreateOffscreenRenderEnvironment() override;
-    IRenderTask &CreateRenderToTextureRunnable() override;
+    QSharedPointer<IRenderTask> CreateRenderToTextureRunnable() override;
 
 protected:
     // Used for both the normal passes and the depth pass.
     // When doing the depth pass, we disable blending completely because it does not really make
     // sense
     // to write blend equations into
-    void RunRenderPass(TRenderRenderableFunction renderFn, bool inEnableBlending,
-                       bool inEnableDepthWrite, bool inEnableTransparentDepthWrite,
-                       quint32 indexLight, const SCamera &inCamera,
+    void RunRenderPass(TRenderRenderableFunction renderFn,
+                       bool inEnableBlending,
+                       bool inEnableDepthWrite,
+                       bool inEnableTransparentDepthWrite,
+                       quint32 indexLight,
+                       const SCamera &inCamera,
                        CResourceFrameBuffer *theFB = nullptr);
 #ifdef ADVANCED_BLEND_SW_FALLBACK
     //Functions for advanced blending mode fallback
     void SetupDrawFB(bool depthEnabled);
-    void BlendAdvancedToFB(DefaultMaterialBlendMode::Enum blendMode, bool depthEnabled,
+    void BlendAdvancedToFB(DefaultMaterialBlendMode::Enum blendMode,
+                           bool depthEnabled,
                            CResourceFrameBuffer *theFB);
 #endif
 };

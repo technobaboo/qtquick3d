@@ -45,7 +45,7 @@ struct SPathRenderContext
 {
     // The lights and camera will not change per layer,
     // so that information can be set once for all the shaders.
-    QDemonConstDataRef<SLight *> m_Lights;
+    const QVector<SLight *> &m_Lights;
     const SCamera &m_Camera;
 
     // Per-object information.
@@ -64,7 +64,7 @@ struct SPathRenderContext
     bool m_HasTransparency;
     bool m_IsStroke;
 
-    SPathRenderContext(QDemonConstDataRef<SLight *> lights, const SCamera &cam, const SPath &p,
+    SPathRenderContext(const QVector<SLight *> &lights, const SCamera &cam, const SPath &p,
                        const QMatrix4x4 &mvp, const QMatrix4x4 &world, const QMatrix3x3 &nm,
                        float inOpacity, const SGraphObject &inMaterial,
                        SShaderDefaultMaterialKey inMaterialKey, SRenderableImage *inFirstImage,

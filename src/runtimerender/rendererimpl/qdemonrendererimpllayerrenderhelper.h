@@ -29,7 +29,6 @@
 ****************************************************************************/
 #pragma once
 
-#include <foundation/QVector2D.h>
 #include <QtDemonRender/qdemonrenderbasetypes.h>
 #include <QtDemonRuntimeRender/qdemonrendercamera.h>
 #include <QtDemonRuntimeRender/qdemonrendercontextcore.h>

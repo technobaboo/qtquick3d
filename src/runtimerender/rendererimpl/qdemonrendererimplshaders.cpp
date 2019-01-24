@@ -43,23 +43,26 @@
 
 QT_BEGIN_NAMESPACE
 
-void STextShader::Render(QDemonRenderTexture2D &inTexture,
-                         const STextScaleAndOffset &inScaleAndOffset, const QVector4D &inTextColor,
-                         const QMatrix4x4 &inMVP, const QVector2D &inCameraVec,
-                         QDemonRenderContext &inRenderContext,
-                         QDemonRenderInputAssembler &inInputAssemblerBuffer, quint32 count,
+void STextShader::Render(QSharedPointer<QDemonRenderTexture2D> inTexture,
+                         const STextScaleAndOffset &inScaleAndOffset,
+                         const QVector4D &inTextColor,
+                         const QMatrix4x4 &inMVP,
+                         const QVector2D &inCameraVec,
+                         QSharedPointer<QDemonRenderContext> inRenderContext,
+                         QSharedPointer<QDemonRenderInputAssembler> inInputAssemblerBuffer,
+                         quint32 count,
                          const STextTextureDetails &inTextTextureDetails,
                          const QVector3D &inBackgroundColor)
 {
-    inRenderContext.SetCullingEnabled(false);
-    inRenderContext.SetActiveShader(&m_Shader);
+    inRenderContext->SetCullingEnabled(false);
+    inRenderContext->SetActiveShader(m_Shader);
     m_MVP.Set(inMVP);
-    m_Sampler.Set(&inTexture);
+    m_Sampler.Set(inTexture.data());
     m_TextColor.Set(inTextColor);
-    m_Dimensions.Set(QVector4D(inScaleAndOffset.m_TextScale.x, inScaleAndOffset.m_TextScale.y,
-                               inScaleAndOffset.m_TextOffset.x, inScaleAndOffset.m_TextOffset.y));
+    m_Dimensions.Set(QVector4D(inScaleAndOffset.m_TextScale.x(), inScaleAndOffset.m_TextScale.y(),
+                               inScaleAndOffset.m_TextOffset.x(), inScaleAndOffset.m_TextOffset.y()));
     m_CameraProperties.Set(inCameraVec);
-    STextureDetails theTextureDetails = inTexture.GetTextureDetails();
+    STextureDetails theTextureDetails = inTexture->GetTextureDetails();
     float theWidthScale =
             (float)inTextTextureDetails.m_TextWidth / (float)theTextureDetails.m_Width;
     float theHeightScale =
@@ -68,78 +71,77 @@ void STextShader::Render(QDemonRenderTexture2D &inTexture,
 
     m_TextDimensions.Set(
                 QVector3D(theWidthScale, theHeightScale, inTextTextureDetails.m_FlipY ? 1.0f : 0.0f));
-    inRenderContext.SetInputAssembler(&inInputAssemblerBuffer);
-    inRenderContext.Draw(QDemonRenderDrawMode::Triangles, count, 0);
+    inRenderContext->SetInputAssembler(inInputAssemblerBuffer);
+    inRenderContext->Draw(QDemonRenderDrawMode::Triangles, count, 0);
 }
 
-void STextShader::RenderPath(QDemonRenderPathFontItem &inPathFontItem,
-                             QDemonRenderPathFontSpecification &inPathFontSpec,
+void STextShader::RenderPath(QSharedPointer<QDemonRenderPathFontItem> inPathFontItem,
+                             QSharedPointer<QDemonRenderPathFontSpecification> inPathFontSpec,
                              const STextScaleAndOffset &inScaleAndOffset,
                              const QVector4D &inTextColor, const QMatrix4x4 &inViewProjection,
                              const QMatrix4x4 &inModel, const QVector2D &,
-                             QDemonRenderContext &inRenderContext,
+                             QSharedPointer<QDemonRenderContext> inRenderContext,
                              const STextTextureDetails &inTextTextureDetails,
                              const QVector3D &inBackgroundColor)
 {
-    QDemonRenderBoolOp::Enum theDepthFunction = inRenderContext.GetDepthFunction();
-    bool isDepthEnabled = inRenderContext.IsDepthTestEnabled();
-    bool isStencilEnabled = inRenderContext.IsStencilTestEnabled();
-    bool isDepthWriteEnabled = inRenderContext.IsDepthWriteEnabled();
+    QDemonRenderBoolOp::Enum theDepthFunction = inRenderContext->GetDepthFunction();
+    bool isDepthEnabled = inRenderContext->IsDepthTestEnabled();
+    bool isStencilEnabled = inRenderContext->IsStencilTestEnabled();
+    bool isDepthWriteEnabled = inRenderContext->IsDepthWriteEnabled();
     QDemonRenderStencilFunctionArgument theArg(QDemonRenderBoolOp::NotEqual, 0,
                                                0xFF);
     QDemonRenderStencilOperationArgument theOpArg(QDemonRenderStencilOp::Keep,
                                                   QDemonRenderStencilOp::Keep,
                                                   QDemonRenderStencilOp::Zero);
     QSharedPointer<QDemonRenderDepthStencilState> depthStencilState =
-            inRenderContext.CreateDepthStencilState(isDepthEnabled, isDepthWriteEnabled,
+            inRenderContext->CreateDepthStencilState(isDepthEnabled, isDepthWriteEnabled,
                                                     theDepthFunction, false, theArg, theArg,
                                                     theOpArg, theOpArg);
 
-    inRenderContext.SetActiveShader(nullptr);
-    inRenderContext.SetCullingEnabled(false);
+    inRenderContext->SetActiveShader(nullptr);
+    inRenderContext->SetCullingEnabled(false);
 
-    inRenderContext.SetDepthStencilState(depthStencilState);
+    inRenderContext->SetDepthStencilState(depthStencilState);
 
     // setup transform
-    QMatrix4x4 offsetMatrix = QMatrix4x4::createIdentity();
-    offsetMatrix.setPosition(QVector3D(
-                                 inScaleAndOffset.m_TextOffset.x - (float)inTextTextureDetails.m_TextWidth / 2.0f,
-                                 inScaleAndOffset.m_TextOffset.y - (float)inTextTextureDetails.m_TextHeight / 2.0f,
-                                 0.0));
+    QMatrix4x4 offsetMatrix;
+    offsetMatrix.translate(inScaleAndOffset.m_TextOffset.x() - (float)inTextTextureDetails.m_TextWidth / 2.0f,
+                                 inScaleAndOffset.m_TextOffset.y() - (float)inTextTextureDetails.m_TextHeight / 2.0f,
+                                 0.0);
 
-    QMatrix4x4 pathMatrix = inPathFontItem.GetTransform();
+    QMatrix4x4 pathMatrix = inPathFontItem->GetTransform();
 
-    inRenderContext.SetPathProjectionMatrix(inViewProjection);
-    inRenderContext.SetPathModelViewMatrix(inModel * offsetMatrix * pathMatrix);
+    inRenderContext->SetPathProjectionMatrix(inViewProjection);
+    inRenderContext->SetPathModelViewMatrix(inModel * offsetMatrix * pathMatrix);
 
     // first pass
-    inPathFontSpec.StencilFillPathInstanced(inPathFontItem);
+    inPathFontSpec->StencilFillPathInstanced(inPathFontItem);
 
     // second pass
-    inRenderContext.SetActiveProgramPipeline(m_ProgramPipeline);
+    inRenderContext->SetActiveProgramPipeline(m_ProgramPipeline);
     m_TextColor.Set(inTextColor);
     m_BackgroundColor.Set(inBackgroundColor);
 
-    inRenderContext.SetStencilTestEnabled(true);
-    inPathFontSpec.CoverFillPathInstanced(inPathFontItem);
+    inRenderContext->SetStencilTestEnabled(true);
+    inPathFontSpec->CoverFillPathInstanced(inPathFontItem);
 
-    inRenderContext.SetStencilTestEnabled(isStencilEnabled);
-    inRenderContext.SetDepthFunction(theDepthFunction);
+    inRenderContext->SetStencilTestEnabled(isStencilEnabled);
+    inRenderContext->SetDepthFunction(theDepthFunction);
 
-    inRenderContext.SetActiveProgramPipeline(nullptr);
+    inRenderContext->SetActiveProgramPipeline(nullptr);
 }
 
-void STextShader::Render2D(QDemonRenderTexture2D &inTexture, const QVector4D &inTextColor,
-                           const QMatrix4x4 &inMVP, QDemonRenderContext &inRenderContext,
-                           QDemonRenderInputAssembler &inInputAssemblerBuffer, quint32 count,
+void STextShader::Render2D(QSharedPointer<QDemonRenderTexture2D> inTexture, const QVector4D &inTextColor,
+                           const QMatrix4x4 &inMVP, QSharedPointer<QDemonRenderContext> inRenderContext,
+                           QSharedPointer<QDemonRenderInputAssembler> inInputAssemblerBuffer, quint32 count,
                            QVector2D inVertexOffsets)
 {
     // inRenderContext.SetCullingEnabled( false );
-    inRenderContext.SetBlendingEnabled(true);
-    inRenderContext.SetDepthWriteEnabled(false);
-    inRenderContext.SetDepthTestEnabled(false);
+    inRenderContext->SetBlendingEnabled(true);
+    inRenderContext->SetDepthWriteEnabled(false);
+    inRenderContext->SetDepthTestEnabled(false);
 
-    inRenderContext.SetActiveShader(&m_Shader);
+    inRenderContext->SetActiveShader(m_Shader);
 
     QDemonRenderBlendFunctionArgument blendFunc(
                 QDemonRenderSrcBlendFunc::SrcAlpha, QDemonRenderDstBlendFunc::OneMinusSrcAlpha,
@@ -147,16 +149,16 @@ void STextShader::Render2D(QDemonRenderTexture2D &inTexture, const QVector4D &in
     QDemonRenderBlendEquationArgument blendEqu(QDemonRenderBlendEquation::Add,
                                                QDemonRenderBlendEquation::Add);
 
-    inRenderContext.SetBlendFunction(blendFunc);
-    inRenderContext.SetBlendEquation(blendEqu);
+    inRenderContext->SetBlendFunction(blendFunc);
+    inRenderContext->SetBlendEquation(blendEqu);
 
     m_MVP.Set(inMVP);
-    m_Sampler.Set(&inTexture);
+    m_Sampler.Set(inTexture.data());
     m_TextColor.Set(inTextColor);
     m_VertexOffsets.Set(inVertexOffsets);
 
-    inRenderContext.SetInputAssembler(&inInputAssemblerBuffer);
-    inRenderContext.Draw(QDemonRenderDrawMode::Triangles, count, 0);
+    inRenderContext->SetInputAssembler(inInputAssemblerBuffer);
+    inRenderContext->Draw(QDemonRenderDrawMode::Triangles, count, 0);
 }
 
 static inline void AddVertexDepth(SShaderVertexCodeGenerator &vertexShader)
@@ -169,7 +171,7 @@ static inline void AddVertexDepth(SShaderVertexCodeGenerator &vertexShader)
     // the near plane, of the object in the vertex depth variable.
 
     vertexShader << "\tvertex_depth = calculateVertexDepth( camera_properties, gl_Position );"
-                 << Endl;
+                 << QStringLiteral("\n");
 }
 
 // Helper implements the vertex pipeline for mesh subsets when bound to the default material.
@@ -182,19 +184,17 @@ struct SSubsetMaterialVertexPipeline : public SVertexPipelineImpl
 
     SSubsetMaterialVertexPipeline(QDemonRendererImpl &renderer, SSubsetRenderable &renderable,
                                   bool inWireframeRequested)
-        : SVertexPipelineImpl(renderer.GetDemonContext().GetAllocator(),
-                              renderer.GetDemonContext().GetDefaultMaterialShaderGenerator(),
-                              renderer.GetDemonContext().GetShaderProgramGenerator(),
-                              renderer.GetDemonContext().GetStringTable(), false)
+        : SVertexPipelineImpl(renderer.GetDemonContext()->GetDefaultMaterialShaderGenerator(),
+                              renderer.GetDemonContext()->GetShaderProgramGenerator(), false)
         , m_Renderer(renderer)
         , m_Renderable(renderable)
         , m_TessMode(TessModeValues::NoTess)
     {
-        if (m_Renderer.GetContext().IsTessellationSupported()) {
+        if (m_Renderer.GetContext()->IsTessellationSupported()) {
             m_TessMode = renderable.m_TessellationMode;
         }
 
-        if (m_Renderer.GetContext().IsGeometryStageSupported()
+        if (m_Renderer.GetContext()->IsGeometryStageSupported()
                 && m_TessMode != TessModeValues::NoTess)
             m_Wireframe = inWireframeRequested;
     }
@@ -202,11 +202,11 @@ struct SSubsetMaterialVertexPipeline : public SVertexPipelineImpl
     void InitializeTessControlShader()
     {
         if (m_TessMode == TessModeValues::NoTess
-                || ProgramGenerator().GetStage(ShaderGeneratorStages::TessControl) == nullptr)
+                || ProgramGenerator()->GetStage(ShaderGeneratorStages::TessControl) == nullptr)
             return;
 
         IShaderStageGenerator &tessCtrlShader(
-                    *ProgramGenerator().GetStage(ShaderGeneratorStages::TessControl));
+                    *ProgramGenerator()->GetStage(ShaderGeneratorStages::TessControl));
 
         tessCtrlShader.AddUniform("tessLevelInner", "float");
         tessCtrlShader.AddUniform("tessLevelOuter", "float");
@@ -238,18 +238,18 @@ struct SSubsetMaterialVertexPipeline : public SVertexPipelineImpl
     void InitializeTessEvaluationShader()
     {
         if (m_TessMode == TessModeValues::NoTess
-                || ProgramGenerator().GetStage(ShaderGeneratorStages::TessEval) == nullptr)
+                || ProgramGenerator()->GetStage(ShaderGeneratorStages::TessEval) == nullptr)
             return;
 
         IShaderStageGenerator &tessEvalShader(
-                    *ProgramGenerator().GetStage(ShaderGeneratorStages::TessEval));
+                    *ProgramGenerator()->GetStage(ShaderGeneratorStages::TessEval));
 
         SetupTessIncludes(ShaderGeneratorStages::TessEval, m_TessMode);
 
         if (m_TessMode == TessModeValues::TessLinear)
             m_Renderer.GetDemonContext()
-                    .GetDefaultMaterialShaderGenerator()
-                    .AddDisplacementImageUniforms(tessEvalShader, m_DisplacementIdx,
+                    ->GetDefaultMaterialShaderGenerator()
+                    ->AddDisplacementImageUniforms(tessEvalShader, m_DisplacementIdx,
                                                   m_DisplacementImage);
 
         tessEvalShader.AddUniform("model_view_projection", "mat4");
@@ -273,14 +273,14 @@ struct SSubsetMaterialVertexPipeline : public SVertexPipelineImpl
     void FinalizeTessControlShader()
     {
         IShaderStageGenerator &tessCtrlShader(
-                    *ProgramGenerator().GetStage(ShaderGeneratorStages::TessControl));
+                    *ProgramGenerator()->GetStage(ShaderGeneratorStages::TessControl));
         // add varyings we must pass through
         typedef TStrTableStrMap::const_iterator TParamIter;
         for (TParamIter iter = m_InterpolationParameters.begin(),
              end = m_InterpolationParameters.end();
              iter != end; ++iter) {
-            tessCtrlShader << "\t" << iter->first.c_str()
-                           << "TC[gl_InvocationID] = " << iter->first.c_str()
+            tessCtrlShader << "\t" << iter.value()
+                           << "TC[gl_InvocationID] = " << iter.value()
                            << "[gl_InvocationID];\n";
         }
     }
@@ -288,67 +288,65 @@ struct SSubsetMaterialVertexPipeline : public SVertexPipelineImpl
     void FinalizeTessEvaluationShader()
     {
         IShaderStageGenerator &tessEvalShader(
-                    *ProgramGenerator().GetStage(ShaderGeneratorStages::TessEval));
+                    *ProgramGenerator()->GetStage(ShaderGeneratorStages::TessEval));
 
-        QString outExt("");
-        if (ProgramGenerator().GetEnabledStages() & ShaderGeneratorStages::Geometry)
+        QString outExt;
+        if (ProgramGenerator()->GetEnabledStages() & ShaderGeneratorStages::Geometry)
             outExt = "TE";
 
         // add varyings we must pass through
         typedef TStrTableStrMap::const_iterator TParamIter;
         if (m_TessMode == TessModeValues::TessNPatch) {
-            for (TParamIter iter = m_InterpolationParameters.begin(),
-                 end = m_InterpolationParameters.end();
-                 iter != end; ++iter) {
-                tessEvalShader << "\t" << iter->first.c_str() << outExt.c_str()
-                               << " = gl_TessCoord.z * " << iter->first.c_str() << "TC[0] + ";
-                tessEvalShader << "gl_TessCoord.x * " << iter->first.c_str() << "TC[1] + ";
-                tessEvalShader << "gl_TessCoord.y * " << iter->first.c_str() << "TC[2];\n";
+            for (TParamIter iter = m_InterpolationParameters.begin(), end = m_InterpolationParameters.end(); iter != end; ++iter) {
+                tessEvalShader << "\t" << iter.key() << outExt
+                               << " = gl_TessCoord.z * " << iter.key() << "TC[0] + ";
+                tessEvalShader << "gl_TessCoord.x * " << iter.key() << "TC[1] + ";
+                tessEvalShader << "gl_TessCoord.y * " << iter.key() << "TC[2];\n";
             }
 
             // transform the normal
             if (m_GenerationFlags & GenerationFlagValues::WorldNormal)
-                tessEvalShader << "\n\tvarNormal" << outExt.c_str()
+                tessEvalShader << "\n\tvarNormal" << outExt
                                << " = normalize(normal_matrix * teNorm);\n";
             // transform the tangent
             if (m_GenerationFlags & GenerationFlagValues::TangentBinormal) {
-                tessEvalShader << "\n\tvarTangent" << outExt.c_str()
+                tessEvalShader << "\n\tvarTangent" << outExt
                                << " = normalize(normal_matrix * teTangent);\n";
                 // transform the binormal
-                tessEvalShader << "\n\tvarBinormal" << outExt.c_str()
+                tessEvalShader << "\n\tvarBinormal" << outExt
                                << " = normalize(normal_matrix * teBinormal);\n";
             }
         } else {
             for (TParamIter iter = m_InterpolationParameters.begin(),
                  end = m_InterpolationParameters.end();
                  iter != end; ++iter) {
-                tessEvalShader << "\t" << iter->first.c_str() << outExt.c_str()
-                               << " = gl_TessCoord.x * " << iter->first.c_str() << "TC[0] + ";
-                tessEvalShader << "gl_TessCoord.y * " << iter->first.c_str() << "TC[1] + ";
-                tessEvalShader << "gl_TessCoord.z * " << iter->first.c_str() << "TC[2];\n";
+                tessEvalShader << "\t" << iter.key() << outExt
+                               << " = gl_TessCoord.x * " << iter.key() << "TC[0] + ";
+                tessEvalShader << "gl_TessCoord.y * " << iter.key() << "TC[1] + ";
+                tessEvalShader << "gl_TessCoord.z * " << iter.key() << "TC[2];\n";
             }
 
             // displacement mapping makes only sense with linear tessellation
             if (m_TessMode == TessModeValues::TessLinear && m_DisplacementImage) {
                 IDefaultMaterialShaderGenerator::SImageVariableNames theNames =
                         m_Renderer.GetDemonContext()
-                        .GetDefaultMaterialShaderGenerator()
-                        .GetImageVariableNames(m_DisplacementIdx);
+                        ->GetDefaultMaterialShaderGenerator()
+                        ->GetImageVariableNames(m_DisplacementIdx);
                 tessEvalShader << "\tpos.xyz = defaultMaterialFileDisplacementTexture( "
                                << theNames.m_ImageSampler << ", displaceAmount, "
-                               << theNames.m_ImageFragCoords << outExt.c_str();
-                tessEvalShader << ", varObjectNormal" << outExt.c_str() << ", pos.xyz );"
-                               << Endl;
-                tessEvalShader << "\tvarWorldPos" << outExt.c_str()
-                               << "= (model_matrix * pos).xyz;" << Endl;
-                tessEvalShader << "\tvarViewVector" << outExt.c_str()
+                               << theNames.m_ImageFragCoords << outExt;
+                tessEvalShader << ", varObjectNormal" << outExt << ", pos.xyz );"
+                               << QStringLiteral("\n");
+                tessEvalShader << "\tvarWorldPos" << outExt
+                               << "= (model_matrix * pos).xyz;" << QStringLiteral("\n");
+                tessEvalShader << "\tvarViewVector" << outExt
                                << "= normalize(camera_position - "
-                               << "varWorldPos" << outExt.c_str() << ");" << Endl;
+                               << "varWorldPos" << outExt << ");" << QStringLiteral("\n");
             }
 
             // transform the normal
-            tessEvalShader << "\n\tvarNormal" << outExt.c_str()
-                           << " = normalize(normal_matrix * varObjectNormal" << outExt.c_str()
+            tessEvalShader << "\n\tvarNormal" << outExt
+                           << " = normalize(normal_matrix * varObjectNormal" << outExt
                            << ");\n";
         }
 
@@ -369,7 +367,7 @@ struct SSubsetMaterialVertexPipeline : public SVertexPipelineImpl
         if (m_Wireframe) {
             theStages |= ShaderGeneratorStages::Geometry;
         }
-        ProgramGenerator().BeginProgram(theStages);
+        ProgramGenerator()->BeginProgram(theStages);
         if (m_TessMode != TessModeValues::NoTess) {
             InitializeTessControlShader();
             InitializeTessEvaluationShader();
@@ -380,13 +378,13 @@ struct SSubsetMaterialVertexPipeline : public SVertexPipelineImpl
         // Open up each stage.
         IShaderStageGenerator &vertexShader(Vertex());
         vertexShader.AddIncoming("attr_pos", "vec3");
-        vertexShader << "void main()" << Endl << "{" << Endl;
-        vertexShader << "\tvec3 uTransform;" << Endl;
-        vertexShader << "\tvec3 vTransform;" << Endl;
+        vertexShader << "void main()" << QStringLiteral("\n") << "{" << QStringLiteral("\n");
+        vertexShader << "\tvec3 uTransform;" << QStringLiteral("\n");
+        vertexShader << "\tvec3 vTransform;" << QStringLiteral("\n");
 
         if (displacementImage) {
             GenerateUVCoords();
-            MaterialGenerator().GenerateImageUVCoordinates(*this, displacementImageIdx, 0,
+            MaterialGenerator()->GenerateImageUVCoordinates(*this, displacementImageIdx, 0,
                                                            *displacementImage);
             if (!HasTessellation()) {
                 vertexShader.AddUniform("displaceAmount", "float");
@@ -397,14 +395,14 @@ struct SSubsetMaterialVertexPipeline : public SVertexPipelineImpl
 
                 vertexShader.AddInclude("defaultMaterialFileDisplacementTexture.glsllib");
                 IDefaultMaterialShaderGenerator::SImageVariableNames theVarNames =
-                        MaterialGenerator().GetImageVariableNames(displacementImageIdx);
+                        MaterialGenerator()->GetImageVariableNames(displacementImageIdx);
 
                 vertexShader.AddUniform(theVarNames.m_ImageSampler, "sampler2D");
 
                 vertexShader
                         << "\tvec3 displacedPos = defaultMaterialFileDisplacementTexture( "
                         << theVarNames.m_ImageSampler << ", displaceAmount, "
-                        << theVarNames.m_ImageFragCoords << ", attr_norm, attr_pos );" << Endl;
+                        << theVarNames.m_ImageFragCoords << ", attr_norm, attr_pos );" << QStringLiteral("\n");
                 AddInterpolationParameter("varWorldPos", "vec3");
                 vertexShader.Append("\tvec3 local_model_world_position = (model_matrix * "
                                     "vec4(displacedPos, 1.0)).xyz;");
@@ -436,12 +434,12 @@ struct SSubsetMaterialVertexPipeline : public SVertexPipelineImpl
     void BeginFragmentGeneration() override
     {
         Fragment().AddUniform("material_diffuse", "vec4");
-        Fragment() << "void main()" << Endl << "{" << Endl;
+        Fragment() << "void main()" << QStringLiteral("\n") << "{" << QStringLiteral("\n");
         // We do not pass object opacity through the pipeline.
-        Fragment() << "\tfloat object_opacity = material_diffuse.a;" << Endl;
+        Fragment() << "\tfloat object_opacity = material_diffuse.a;" << QStringLiteral("\n");
     }
 
-    void AssignOutput(const char *inVarName, const char *inVarValue) override
+    void AssignOutput(const QString &inVarName, const QString &inVarValue) override
     {
         Vertex() << "\t" << inVarName << " = " << inVarValue << ";\n";
     }
@@ -451,10 +449,10 @@ struct SSubsetMaterialVertexPipeline : public SVertexPipelineImpl
 
         if (inUVSet == 0) {
             Vertex().AddIncoming("attr_uv0", "vec2");
-            Vertex() << "\tvarTexCoord0 = attr_uv0;" << Endl;
+            Vertex() << "\tvarTexCoord0 = attr_uv0;" << QStringLiteral("\n");
         } else if (inUVSet == 1) {
             Vertex().AddIncoming("attr_uv1", "vec2");
-            Vertex() << "\tvarTexCoord1 = attr_uv1;" << Endl;
+            Vertex() << "\tvarTexCoord1 = attr_uv1;" << QStringLiteral("\n");
         }
     }
 
@@ -491,11 +489,11 @@ struct SSubsetMaterialVertexPipeline : public SVertexPipelineImpl
         bool hasNPatchTessellation = m_TessMode == TessModeValues::TessNPatch;
 
         if (!hasNPatchTessellation) {
-            Vertex() << "\tvarTangent = normal_matrix * attr_textan;" << Endl
-                     << "\tvarBinormal = normal_matrix * attr_binormal;" << Endl;
+            Vertex() << "\tvarTangent = normal_matrix * attr_textan;" << QStringLiteral("\n")
+                     << "\tvarBinormal = normal_matrix * attr_binormal;" << QStringLiteral("\n");
         } else {
-            Vertex() << "\tvarTangent = attr_textan;" << Endl
-                     << "\tvarBinormal = attr_binormal;" << Endl;
+            Vertex() << "\tvarTangent = attr_textan;" << QStringLiteral("\n")
+                     << "\tvarBinormal = attr_binormal;" << QStringLiteral("\n");
         }
     }
 
@@ -527,29 +525,29 @@ struct SSubsetMaterialVertexPipeline : public SVertexPipelineImpl
 
     void EndFragmentGeneration() override { Fragment().Append("}"); }
 
-    void AddInterpolationParameter(const char *inName, const char *inType) override
+    void AddInterpolationParameter(const QString &inName, const QString &inType) override
     {
-        m_InterpolationParameters.insert(Str(inName), Str(inType));
+        m_InterpolationParameters.insert(inName, inType);
         Vertex().AddOutgoing(inName, inType);
         Fragment().AddIncoming(inName, inType);
         if (HasTessellation()) {
             QString nameBuilder(inName);
             nameBuilder.append("TC");
-            TessControl().AddOutgoing(nameBuilder.c_str(), inType);
+            TessControl().AddOutgoing(nameBuilder, inType);
 
-            nameBuilder.assign(inName);
-            if (ProgramGenerator().GetEnabledStages() & ShaderGeneratorStages::Geometry) {
+            nameBuilder = inName;
+            if (ProgramGenerator()->GetEnabledStages() & ShaderGeneratorStages::Geometry) {
                 nameBuilder.append("TE");
                 Geometry().AddOutgoing(inName, inType);
             }
-            TessEval().AddOutgoing(nameBuilder.c_str(), inType);
+            TessEval().AddOutgoing(nameBuilder, inType);
         }
     }
 
     IShaderStageGenerator &ActiveStage() override { return Vertex(); }
 };
 
-QDemonRenderShaderProgram *QDemonRendererImpl::GenerateShader(SSubsetRenderable &inRenderable,
+QSharedPointer<QDemonRenderShaderProgram> QDemonRendererImpl::GenerateShader(SSubsetRenderable &inRenderable,
                                                              TShaderFeatureSet inFeatureSet)
 {
     // build a string that allows us to print out the shader we are generating to the log.
@@ -559,32 +557,32 @@ QDemonRenderShaderProgram *QDemonRendererImpl::GenerateShader(SSubsetRenderable 
     QLatin1String logPrefix("mesh subset pipeline-- ");
 
     m_GeneratedShaderString.clear();
-    m_GeneratedShaderString.assign(logPrefix.data());
+    m_GeneratedShaderString = logPrefix;
 
     SShaderDefaultMaterialKey theKey(inRenderable.m_ShaderDescription);
     theKey.ToString(m_GeneratedShaderString, m_DefaultMaterialShaderKeyProperties);
-    IShaderCache &theCache = m_demonContext.GetShaderCache();
-    QString theCacheKey =QString::fromLocal8Bit(m_GeneratedShaderString.c_str());
-    QDemonRenderShaderProgram *cachedProgram = theCache.GetProgram(theCacheKey, inFeatureSet);
+    QSharedPointer<IShaderCache> theCache = m_demonContext->GetShaderCache();
+    QString theCacheKey = m_GeneratedShaderString;
+    QSharedPointer<QDemonRenderShaderProgram> cachedProgram = theCache->GetProgram(theCacheKey, inFeatureSet);
     if (cachedProgram)
         return cachedProgram;
 
     SSubsetMaterialVertexPipeline pipeline(
                 *this, inRenderable,
                 m_DefaultMaterialShaderKeyProperties.m_WireframeMode.GetValue(theKey));
-    return m_demonContext.GetDefaultMaterialShaderGenerator().GenerateShader(
+    return m_demonContext->GetDefaultMaterialShaderGenerator()->GenerateShader(
                 inRenderable.m_Material, inRenderable.m_ShaderDescription, pipeline, inFeatureSet,
                 m_CurrentLayer->m_Lights, inRenderable.m_FirstImage,
                 inRenderable.m_RenderableFlags.HasTransparency(),
-                logPrefix.data());
+                logPrefix);
 }
 
 // --------------  Special cases for shadows  -------------------
 
-SRenderableDepthPrepassShader *
+QSharedPointer<SRenderableDepthPrepassShader>
 QDemonRendererImpl::GetParaboloidDepthShader(TessModeValues::Enum inTessMode)
 {
-    if (!m_demonContext.GetRenderContext().IsTessellationSupported()
+    if (!m_demonContext->GetRenderContext()->IsTessellationSupported()
             || inTessMode == TessModeValues::NoTess) {
         return GetParaboloidDepthNoTessShader();
     } else if (inTessMode == TessModeValues::TessLinear) {
@@ -598,35 +596,34 @@ QDemonRendererImpl::GetParaboloidDepthShader(TessModeValues::Enum inTessMode)
     return GetParaboloidDepthNoTessShader();
 }
 
-SRenderableDepthPrepassShader *QDemonRendererImpl::GetParaboloidDepthNoTessShader()
+QSharedPointer<SRenderableDepthPrepassShader> QDemonRendererImpl::GetParaboloidDepthNoTessShader()
 {
-    QDemonOption<QSharedPointer<SRenderableDepthPrepassShader>> &theDepthShader =
-            m_ParaboloidDepthShader;
+    QDemonOption<QSharedPointer<SRenderableDepthPrepassShader>> &theDepthShader = m_ParaboloidDepthShader;
 
     if (theDepthShader.hasValue() == false) {
-        TStrType name;
-        name.assign("paraboloid depth shader");
+        QString name;
+        name = QStringLiteral("paraboloid depth shader");
 
-        IShaderCache &theCache = m_demonContext.GetShaderCache();
-        QString theCacheKey = QString::fromLocal8Bit(name.c_str());
-        QDemonRenderShaderProgram *depthShaderProgram =
-                theCache.GetProgram(theCacheKey, TShaderFeatureSet());
+        QSharedPointer<IShaderCache> theCache = m_demonContext->GetShaderCache();
+        QString theCacheKey = name;
+        QSharedPointer<QDemonRenderShaderProgram> depthShaderProgram =
+                theCache->GetProgram(theCacheKey, TShaderFeatureSet());
         if (!depthShaderProgram) {
-            GetProgramGenerator().BeginProgram();
+            GetProgramGenerator()->BeginProgram();
             IShaderStageGenerator &vertexShader(
-                        *GetProgramGenerator().GetStage(ShaderGeneratorStages::Vertex));
+                        *GetProgramGenerator()->GetStage(ShaderGeneratorStages::Vertex));
             IShaderStageGenerator &fragmentShader(
-                        *GetProgramGenerator().GetStage(ShaderGeneratorStages::Fragment));
+                        *GetProgramGenerator()->GetStage(ShaderGeneratorStages::Fragment));
             IShaderProgramGenerator::OutputParaboloidDepthVertex(vertexShader);
             IShaderProgramGenerator::OutputParaboloidDepthFragment(fragmentShader);
         }
 
-        depthShaderProgram = GetProgramGenerator().CompileGeneratedShader(
-                    name.c_str(), SShaderCacheProgramFlags(), TShaderFeatureSet());
+        depthShaderProgram = GetProgramGenerator()->CompileGeneratedShader(
+                    name, SShaderCacheProgramFlags(), TShaderFeatureSet());
 
         if (depthShaderProgram) {
             theDepthShader = QSharedPointer<SRenderableDepthPrepassShader>(
-                        new SRenderableDepthPrepassShader(*depthShaderProgram, GetContext()));
+                        new SRenderableDepthPrepassShader(depthShaderProgram, GetContext()));
         } else {
             theDepthShader = QSharedPointer<SRenderableDepthPrepassShader>();
         }
@@ -635,31 +632,31 @@ SRenderableDepthPrepassShader *QDemonRendererImpl::GetParaboloidDepthNoTessShade
     return theDepthShader.getValue();
 }
 
-SRenderableDepthPrepassShader *QDemonRendererImpl::GetParaboloidDepthTessLinearShader()
+QSharedPointer<SRenderableDepthPrepassShader> QDemonRendererImpl::GetParaboloidDepthTessLinearShader()
 {
     QDemonOption<QSharedPointer<SRenderableDepthPrepassShader>> &theDepthShader =
             m_ParaboloidDepthTessLinearShader;
 
     if (theDepthShader.hasValue() == false) {
-        TStrType name;
-        name.assign("paraboloid depth tess linear shader");
+        QString name;
+        name = QStringLiteral("paraboloid depth tess linear shader");
 
-        IShaderCache &theCache = m_demonContext.GetShaderCache();
-        QString theCacheKey = QString::fromLocal8Bit(name.c_str());
-        QDemonRenderShaderProgram *depthShaderProgram =
-                theCache.GetProgram(theCacheKey, TShaderFeatureSet());
+        QSharedPointer<IShaderCache> theCache = m_demonContext->GetShaderCache();
+        QString theCacheKey = name;
+        QSharedPointer<QDemonRenderShaderProgram> depthShaderProgram =
+                theCache->GetProgram(theCacheKey, TShaderFeatureSet());
         if (!depthShaderProgram) {
-            GetProgramGenerator().BeginProgram(TShaderGeneratorStageFlags(
+            GetProgramGenerator()->BeginProgram(TShaderGeneratorStageFlags(
                                                    ShaderGeneratorStages::Vertex | ShaderGeneratorStages::TessControl
                                                    | ShaderGeneratorStages::TessEval | ShaderGeneratorStages::Fragment));
             IShaderStageGenerator &vertexShader(
-                        *GetProgramGenerator().GetStage(ShaderGeneratorStages::Vertex));
+                        *GetProgramGenerator()->GetStage(ShaderGeneratorStages::Vertex));
             IShaderStageGenerator &tessCtrlShader(
-                        *GetProgramGenerator().GetStage(ShaderGeneratorStages::TessControl));
+                        *GetProgramGenerator()->GetStage(ShaderGeneratorStages::TessControl));
             IShaderStageGenerator &tessEvalShader(
-                        *GetProgramGenerator().GetStage(ShaderGeneratorStages::TessEval));
+                        *GetProgramGenerator()->GetStage(ShaderGeneratorStages::TessEval));
             IShaderStageGenerator &fragmentShader(
-                        *GetProgramGenerator().GetStage(ShaderGeneratorStages::Fragment));
+                        *GetProgramGenerator()->GetStage(ShaderGeneratorStages::Fragment));
 
             vertexShader.AddIncoming("attr_pos", "vec3");
             // vertexShader.AddOutgoing("world_pos", "vec4");
@@ -694,12 +691,12 @@ SRenderableDepthPrepassShader *QDemonRendererImpl::GetParaboloidDepthTessLinearS
 
             IShaderProgramGenerator::OutputParaboloidDepthFragment(fragmentShader);
         }
-        depthShaderProgram = GetProgramGenerator().CompileGeneratedShader(
-                    name.c_str(), SShaderCacheProgramFlags(), TShaderFeatureSet());
+        depthShaderProgram = GetProgramGenerator()->CompileGeneratedShader(
+                    name, SShaderCacheProgramFlags(), TShaderFeatureSet());
 
         if (depthShaderProgram) {
             theDepthShader = QSharedPointer<SRenderableDepthPrepassShader>(
-                        new SRenderableDepthPrepassShader(*depthShaderProgram, GetContext()));
+                        new SRenderableDepthPrepassShader(depthShaderProgram, GetContext()));
         } else {
             theDepthShader = QSharedPointer<SRenderableDepthPrepassShader>();
         }
@@ -708,31 +705,31 @@ SRenderableDepthPrepassShader *QDemonRendererImpl::GetParaboloidDepthTessLinearS
     return theDepthShader.getValue();
 }
 
-SRenderableDepthPrepassShader *QDemonRendererImpl::GetParaboloidDepthTessPhongShader()
+QSharedPointer<SRenderableDepthPrepassShader> QDemonRendererImpl::GetParaboloidDepthTessPhongShader()
 {
     QDemonOption<QSharedPointer<SRenderableDepthPrepassShader>> &theDepthShader =
             m_ParaboloidDepthTessPhongShader;
 
     if (theDepthShader.hasValue() == false) {
-        TStrType name;
-        name.assign("paraboloid depth tess phong shader");
+        QString name;
+        name = QStringLiteral("paraboloid depth tess phong shader");
 
-        IShaderCache &theCache = m_demonContext.GetShaderCache();
-        QString theCacheKey = QString::fromLocal8Bit(name.c_str());
-        QDemonRenderShaderProgram *depthShaderProgram =
-                theCache.GetProgram(theCacheKey, TShaderFeatureSet());
+        QSharedPointer<IShaderCache> theCache = m_demonContext->GetShaderCache();
+        QString theCacheKey = name;
+        QSharedPointer<QDemonRenderShaderProgram> depthShaderProgram =
+                theCache->GetProgram(theCacheKey, TShaderFeatureSet());
         if (!depthShaderProgram) {
-            GetProgramGenerator().BeginProgram(TShaderGeneratorStageFlags(
+            GetProgramGenerator()->BeginProgram(TShaderGeneratorStageFlags(
                                                    ShaderGeneratorStages::Vertex | ShaderGeneratorStages::TessControl
                                                    | ShaderGeneratorStages::TessEval | ShaderGeneratorStages::Fragment));
             IShaderStageGenerator &vertexShader(
-                        *GetProgramGenerator().GetStage(ShaderGeneratorStages::Vertex));
+                        *GetProgramGenerator()->GetStage(ShaderGeneratorStages::Vertex));
             IShaderStageGenerator &tessCtrlShader(
-                        *GetProgramGenerator().GetStage(ShaderGeneratorStages::TessControl));
+                        *GetProgramGenerator()->GetStage(ShaderGeneratorStages::TessControl));
             IShaderStageGenerator &tessEvalShader(
-                        *GetProgramGenerator().GetStage(ShaderGeneratorStages::TessEval));
+                        *GetProgramGenerator()->GetStage(ShaderGeneratorStages::TessEval));
             IShaderStageGenerator &fragmentShader(
-                        *GetProgramGenerator().GetStage(ShaderGeneratorStages::Fragment));
+                        *GetProgramGenerator()->GetStage(ShaderGeneratorStages::Fragment));
 
             vertexShader.AddIncoming("attr_pos", "vec3");
             // vertexShader.AddOutgoing("world_pos", "vec4");
@@ -767,12 +764,12 @@ SRenderableDepthPrepassShader *QDemonRendererImpl::GetParaboloidDepthTessPhongSh
 
             IShaderProgramGenerator::OutputParaboloidDepthFragment(fragmentShader);
         }
-        depthShaderProgram = GetProgramGenerator().CompileGeneratedShader(
-                    name.c_str(), SShaderCacheProgramFlags(), TShaderFeatureSet());
+        depthShaderProgram = GetProgramGenerator()->CompileGeneratedShader(
+                    name, SShaderCacheProgramFlags(), TShaderFeatureSet());
 
         if (depthShaderProgram) {
             theDepthShader = QSharedPointer<SRenderableDepthPrepassShader>(
-                        new SRenderableDepthPrepassShader(*depthShaderProgram, GetContext()));
+                        new SRenderableDepthPrepassShader(depthShaderProgram, GetContext()));
         } else {
             theDepthShader = QSharedPointer<SRenderableDepthPrepassShader>();
         }
@@ -781,31 +778,30 @@ SRenderableDepthPrepassShader *QDemonRendererImpl::GetParaboloidDepthTessPhongSh
     return theDepthShader.getValue();
 }
 
-SRenderableDepthPrepassShader *QDemonRendererImpl::GetParaboloidDepthTessNPatchShader()
+QSharedPointer<SRenderableDepthPrepassShader> QDemonRendererImpl::GetParaboloidDepthTessNPatchShader()
 {
-    QDemonOption<QSharedPointer<SRenderableDepthPrepassShader>> &theDepthShader =
-            m_ParaboloidDepthTessNPatchShader;
+    QDemonOption<QSharedPointer<SRenderableDepthPrepassShader>> &theDepthShader = m_ParaboloidDepthTessNPatchShader;
 
     if (theDepthShader.hasValue() == false) {
-        TStrType name;
-        name.assign("paraboloid depth tess NPatch shader");
+        QString name;
+        name = QStringLiteral("paraboloid depth tess NPatch shader");
 
-        IShaderCache &theCache = m_demonContext.GetShaderCache();
-        QString theCacheKey = QString::fromLocal8Bit(name.c_str());
-        QDemonRenderShaderProgram *depthShaderProgram =
-                theCache.GetProgram(theCacheKey, TShaderFeatureSet());
+        QSharedPointer<IShaderCache> theCache = m_demonContext->GetShaderCache();
+        QString theCacheKey = name;
+        QSharedPointer<QDemonRenderShaderProgram> depthShaderProgram =
+                theCache->GetProgram(theCacheKey, TShaderFeatureSet());
         if (!depthShaderProgram) {
-            GetProgramGenerator().BeginProgram(TShaderGeneratorStageFlags(
+            GetProgramGenerator()->BeginProgram(TShaderGeneratorStageFlags(
                                                    ShaderGeneratorStages::Vertex | ShaderGeneratorStages::TessControl
                                                    | ShaderGeneratorStages::TessEval | ShaderGeneratorStages::Fragment));
             IShaderStageGenerator &vertexShader(
-                        *GetProgramGenerator().GetStage(ShaderGeneratorStages::Vertex));
+                        *GetProgramGenerator()->GetStage(ShaderGeneratorStages::Vertex));
             IShaderStageGenerator &tessCtrlShader(
-                        *GetProgramGenerator().GetStage(ShaderGeneratorStages::TessControl));
+                        *GetProgramGenerator()->GetStage(ShaderGeneratorStages::TessControl));
             IShaderStageGenerator &tessEvalShader(
-                        *GetProgramGenerator().GetStage(ShaderGeneratorStages::TessEval));
+                        *GetProgramGenerator()->GetStage(ShaderGeneratorStages::TessEval));
             IShaderStageGenerator &fragmentShader(
-                        *GetProgramGenerator().GetStage(ShaderGeneratorStages::Fragment));
+                        *GetProgramGenerator()->GetStage(ShaderGeneratorStages::Fragment));
 
             vertexShader.AddIncoming("attr_pos", "vec3");
             // vertexShader.AddOutgoing("world_pos", "vec4");
@@ -840,12 +836,12 @@ SRenderableDepthPrepassShader *QDemonRendererImpl::GetParaboloidDepthTessNPatchS
 
             IShaderProgramGenerator::OutputParaboloidDepthFragment(fragmentShader);
         }
-        depthShaderProgram = GetProgramGenerator().CompileGeneratedShader(
-                    name.c_str(), SShaderCacheProgramFlags(), TShaderFeatureSet());
+        depthShaderProgram = GetProgramGenerator()->CompileGeneratedShader(
+                    name, SShaderCacheProgramFlags(), TShaderFeatureSet());
 
         if (depthShaderProgram) {
             theDepthShader = QSharedPointer<SRenderableDepthPrepassShader>(
-                        new SRenderableDepthPrepassShader(*depthShaderProgram, GetContext()));
+                        new SRenderableDepthPrepassShader(depthShaderProgram, GetContext()));
         } else {
             theDepthShader = QSharedPointer<SRenderableDepthPrepassShader>();
         }
@@ -854,10 +850,10 @@ SRenderableDepthPrepassShader *QDemonRendererImpl::GetParaboloidDepthTessNPatchS
     return theDepthShader.getValue();
 }
 
-SRenderableDepthPrepassShader *
+QSharedPointer<SRenderableDepthPrepassShader>
 QDemonRendererImpl::GetCubeShadowDepthShader(TessModeValues::Enum inTessMode)
 {
-    if (!m_demonContext.GetRenderContext().IsTessellationSupported()
+    if (!m_demonContext->GetRenderContext()->IsTessellationSupported()
             || inTessMode == TessModeValues::NoTess) {
         return GetCubeDepthNoTessShader();
     } else if (inTessMode == TessModeValues::TessLinear) {
@@ -871,46 +867,46 @@ QDemonRendererImpl::GetCubeShadowDepthShader(TessModeValues::Enum inTessMode)
     return GetCubeDepthNoTessShader();
 }
 
-SRenderableDepthPrepassShader *QDemonRendererImpl::GetCubeDepthNoTessShader()
+QSharedPointer<SRenderableDepthPrepassShader> QDemonRendererImpl::GetCubeDepthNoTessShader()
 {
     QDemonOption<QSharedPointer<SRenderableDepthPrepassShader>> &theDepthShader =
             m_CubemapDepthShader;
 
     if (theDepthShader.hasValue() == false) {
-        TStrType name;
-        name.assign("cubemap face depth shader");
+        QString name;
+        name = QStringLiteral("cubemap face depth shader");
 
-        IShaderCache &theCache = m_demonContext.GetShaderCache();
-        QString theCacheKey = QString::fromLocal8Bit(name.c_str());
-        QDemonRenderShaderProgram *depthShaderProgram =
-                theCache.GetProgram(theCacheKey, TShaderFeatureSet());
+        QSharedPointer<IShaderCache> theCache = m_demonContext->GetShaderCache();
+        QString theCacheKey = name;
+        QSharedPointer<QDemonRenderShaderProgram> depthShaderProgram =
+                theCache->GetProgram(theCacheKey, TShaderFeatureSet());
 
         if (!depthShaderProgram) {
-            // GetProgramGenerator().BeginProgram(
+            // GetProgramGenerator()->BeginProgram(
             // TShaderGeneratorStageFlags(ShaderGeneratorStages::Vertex |
             // ShaderGeneratorStages::Fragment | ShaderGeneratorStages::Geometry) );
-            GetProgramGenerator().BeginProgram();
+            GetProgramGenerator()->BeginProgram();
             IShaderStageGenerator &vertexShader(
-                        *GetProgramGenerator().GetStage(ShaderGeneratorStages::Vertex));
+                        *GetProgramGenerator()->GetStage(ShaderGeneratorStages::Vertex));
             IShaderStageGenerator &fragmentShader(
-                        *GetProgramGenerator().GetStage(ShaderGeneratorStages::Fragment));
-            // IShaderStageGenerator& geometryShader( *GetProgramGenerator().GetStage(
+                        *GetProgramGenerator()->GetStage(ShaderGeneratorStages::Fragment));
+            // IShaderStageGenerator& geometryShader( *GetProgramGenerator()->GetStage(
             // ShaderGeneratorStages::Geometry ) );
 
             IShaderProgramGenerator::OutputCubeFaceDepthVertex(vertexShader);
             // IShaderProgramGenerator::OutputCubeFaceDepthGeometry( geometryShader );
             IShaderProgramGenerator::OutputCubeFaceDepthFragment(fragmentShader);
-        } else if (theCache.IsShaderCachePersistenceEnabled()) {
+        } else if (theCache->IsShaderCachePersistenceEnabled()) {
             // we load from shader cache set default shader stages
-            GetProgramGenerator().BeginProgram();
+            GetProgramGenerator()->BeginProgram();
         }
 
-        depthShaderProgram = GetProgramGenerator().CompileGeneratedShader(
-                    name.c_str(), SShaderCacheProgramFlags(), TShaderFeatureSet());
+        depthShaderProgram = GetProgramGenerator()->CompileGeneratedShader(
+                    name, SShaderCacheProgramFlags(), TShaderFeatureSet());
 
         if (depthShaderProgram) {
             theDepthShader = QSharedPointer<SRenderableDepthPrepassShader>(
-                        new SRenderableDepthPrepassShader(*depthShaderProgram, GetContext()));
+                        new SRenderableDepthPrepassShader(depthShaderProgram, GetContext()));
         } else {
             theDepthShader = QSharedPointer<SRenderableDepthPrepassShader>();
         }
@@ -919,37 +915,37 @@ SRenderableDepthPrepassShader *QDemonRendererImpl::GetCubeDepthNoTessShader()
     return theDepthShader.getValue();
 }
 
-SRenderableDepthPrepassShader *QDemonRendererImpl::GetCubeDepthTessLinearShader()
+QSharedPointer<SRenderableDepthPrepassShader> QDemonRendererImpl::GetCubeDepthTessLinearShader()
 {
     QDemonOption<QSharedPointer<SRenderableDepthPrepassShader>> &theDepthShader =
             m_CubemapDepthTessLinearShader;
 
     if (theDepthShader.hasValue() == false) {
-        TStrType name;
-        name.assign("cubemap face depth linear tess shader");
+        QString name;
+        name = QStringLiteral("cubemap face depth linear tess shader");
 
-        IShaderCache &theCache = m_demonContext.GetShaderCache();
-        QString theCacheKey = QString::fromLocal8Bit(name.c_str());
-        QDemonRenderShaderProgram *depthShaderProgram =
-                theCache.GetProgram(theCacheKey, TShaderFeatureSet());
+        QSharedPointer<IShaderCache> theCache = m_demonContext->GetShaderCache();
+        QString theCacheKey = name;
+        QSharedPointer<QDemonRenderShaderProgram> depthShaderProgram =
+                theCache->GetProgram(theCacheKey, TShaderFeatureSet());
 
         if (!depthShaderProgram) {
-            // GetProgramGenerator().BeginProgram(
+            // GetProgramGenerator()->BeginProgram(
             // TShaderGeneratorStageFlags(ShaderGeneratorStages::Vertex |
             // ShaderGeneratorStages::Fragment | ShaderGeneratorStages::Geometry) );
-            GetProgramGenerator().BeginProgram(TShaderGeneratorStageFlags(
+            GetProgramGenerator()->BeginProgram(TShaderGeneratorStageFlags(
                                                    ShaderGeneratorStages::Vertex | ShaderGeneratorStages::TessControl
                                                    | ShaderGeneratorStages::TessEval | ShaderGeneratorStages::Fragment));
             IShaderStageGenerator &vertexShader(
-                        *GetProgramGenerator().GetStage(ShaderGeneratorStages::Vertex));
+                        *GetProgramGenerator()->GetStage(ShaderGeneratorStages::Vertex));
             IShaderStageGenerator &fragmentShader(
-                        *GetProgramGenerator().GetStage(ShaderGeneratorStages::Fragment));
-            // IShaderStageGenerator& geometryShader( *GetProgramGenerator().GetStage(
+                        *GetProgramGenerator()->GetStage(ShaderGeneratorStages::Fragment));
+            // IShaderStageGenerator& geometryShader( *GetProgramGenerator()->GetStage(
             // ShaderGeneratorStages::Geometry ) );
             IShaderStageGenerator &tessCtrlShader(
-                        *GetProgramGenerator().GetStage(ShaderGeneratorStages::TessControl));
+                        *GetProgramGenerator()->GetStage(ShaderGeneratorStages::TessControl));
             IShaderStageGenerator &tessEvalShader(
-                        *GetProgramGenerator().GetStage(ShaderGeneratorStages::TessEval));
+                        *GetProgramGenerator()->GetStage(ShaderGeneratorStages::TessEval));
 
             vertexShader.AddIncoming("attr_pos", "vec3");
             vertexShader.Append("void main() {");
@@ -980,12 +976,12 @@ SRenderableDepthPrepassShader *QDemonRendererImpl::GetCubeDepthTessLinearShader(
             tessEvalShader.Append("}");
         }
 
-        depthShaderProgram = GetProgramGenerator().CompileGeneratedShader(
-                    name.c_str(), SShaderCacheProgramFlags(), TShaderFeatureSet());
+        depthShaderProgram = GetProgramGenerator()->CompileGeneratedShader(
+                    name, SShaderCacheProgramFlags(), TShaderFeatureSet());
 
         if (depthShaderProgram) {
             theDepthShader = QSharedPointer<SRenderableDepthPrepassShader>(
-                        new SRenderableDepthPrepassShader(*depthShaderProgram, GetContext()));
+                        new SRenderableDepthPrepassShader(depthShaderProgram, GetContext()));
         } else {
             theDepthShader = QSharedPointer<SRenderableDepthPrepassShader>();
         }
@@ -994,37 +990,37 @@ SRenderableDepthPrepassShader *QDemonRendererImpl::GetCubeDepthTessLinearShader(
     return theDepthShader.getValue();
 }
 
-SRenderableDepthPrepassShader *QDemonRendererImpl::GetCubeDepthTessPhongShader()
+QSharedPointer<SRenderableDepthPrepassShader> QDemonRendererImpl::GetCubeDepthTessPhongShader()
 {
     QDemonOption<QSharedPointer<SRenderableDepthPrepassShader>> &theDepthShader =
             m_CubemapDepthTessPhongShader;
 
     if (theDepthShader.hasValue() == false) {
-        TStrType name;
-        name.assign("cubemap face depth phong tess shader");
+        QString name;
+        name = QStringLiteral("cubemap face depth phong tess shader");
 
-        IShaderCache &theCache = m_demonContext.GetShaderCache();
-        QString theCacheKey = QString::fromLocal8Bit(name.c_str());
-        QDemonRenderShaderProgram *depthShaderProgram =
-                theCache.GetProgram(theCacheKey, TShaderFeatureSet());
+        QSharedPointer<IShaderCache> theCache = m_demonContext->GetShaderCache();
+        QString theCacheKey = name;
+        QSharedPointer<QDemonRenderShaderProgram> depthShaderProgram =
+                theCache->GetProgram(theCacheKey, TShaderFeatureSet());
 
         if (!depthShaderProgram) {
-            // GetProgramGenerator().BeginProgram(
+            // GetProgramGenerator()->BeginProgram(
             // TShaderGeneratorStageFlags(ShaderGeneratorStages::Vertex |
             // ShaderGeneratorStages::Fragment | ShaderGeneratorStages::Geometry) );
-            GetProgramGenerator().BeginProgram(TShaderGeneratorStageFlags(
+            GetProgramGenerator()->BeginProgram(TShaderGeneratorStageFlags(
                                                    ShaderGeneratorStages::Vertex | ShaderGeneratorStages::TessControl
                                                    | ShaderGeneratorStages::TessEval | ShaderGeneratorStages::Fragment));
             IShaderStageGenerator &vertexShader(
-                        *GetProgramGenerator().GetStage(ShaderGeneratorStages::Vertex));
+                        *GetProgramGenerator()->GetStage(ShaderGeneratorStages::Vertex));
             IShaderStageGenerator &fragmentShader(
-                        *GetProgramGenerator().GetStage(ShaderGeneratorStages::Fragment));
-            // IShaderStageGenerator& geometryShader( *GetProgramGenerator().GetStage(
+                        *GetProgramGenerator()->GetStage(ShaderGeneratorStages::Fragment));
+            // IShaderStageGenerator& geometryShader( *GetProgramGenerator()->GetStage(
             // ShaderGeneratorStages::Geometry ) );
             IShaderStageGenerator &tessCtrlShader(
-                        *GetProgramGenerator().GetStage(ShaderGeneratorStages::TessControl));
+                        *GetProgramGenerator()->GetStage(ShaderGeneratorStages::TessControl));
             IShaderStageGenerator &tessEvalShader(
-                        *GetProgramGenerator().GetStage(ShaderGeneratorStages::TessEval));
+                        *GetProgramGenerator()->GetStage(ShaderGeneratorStages::TessEval));
 
             vertexShader.AddIncoming("attr_pos", "vec3");
             vertexShader.AddIncoming("attr_norm", "vec3");
@@ -1061,12 +1057,12 @@ SRenderableDepthPrepassShader *QDemonRendererImpl::GetCubeDepthTessPhongShader()
             tessEvalShader.Append("}");
         }
 
-        depthShaderProgram = GetProgramGenerator().CompileGeneratedShader(
-                    name.c_str(), SShaderCacheProgramFlags(), TShaderFeatureSet());
+        depthShaderProgram = GetProgramGenerator()->CompileGeneratedShader(
+                    name, SShaderCacheProgramFlags(), TShaderFeatureSet());
 
         if (depthShaderProgram) {
             theDepthShader = QSharedPointer<SRenderableDepthPrepassShader>(
-                        new SRenderableDepthPrepassShader(*depthShaderProgram, GetContext()));
+                        new SRenderableDepthPrepassShader(depthShaderProgram, GetContext()));
         } else {
             theDepthShader = QSharedPointer<SRenderableDepthPrepassShader>();
         }
@@ -1075,37 +1071,37 @@ SRenderableDepthPrepassShader *QDemonRendererImpl::GetCubeDepthTessPhongShader()
     return theDepthShader.getValue();
 }
 
-SRenderableDepthPrepassShader *QDemonRendererImpl::GetCubeDepthTessNPatchShader()
+QSharedPointer<SRenderableDepthPrepassShader> QDemonRendererImpl::GetCubeDepthTessNPatchShader()
 {
     QDemonOption<QSharedPointer<SRenderableDepthPrepassShader>> &theDepthShader =
             m_CubemapDepthTessNPatchShader;
 
     if (theDepthShader.hasValue() == false) {
-        TStrType name;
-        name.assign("cubemap face depth npatch tess shader");
+        QString name;
+        name = QStringLiteral("cubemap face depth npatch tess shader");
 
-        IShaderCache &theCache = m_demonContext.GetShaderCache();
-        QString theCacheKey = QString::fromLocal8Bit(name.c_str());
-        QDemonRenderShaderProgram *depthShaderProgram =
-                theCache.GetProgram(theCacheKey, TShaderFeatureSet());
+        QSharedPointer<IShaderCache> theCache = m_demonContext->GetShaderCache();
+        QString theCacheKey = name;
+        QSharedPointer<QDemonRenderShaderProgram> depthShaderProgram =
+                theCache->GetProgram(theCacheKey, TShaderFeatureSet());
 
         if (!depthShaderProgram) {
-            // GetProgramGenerator().BeginProgram(
+            // GetProgramGenerator()->BeginProgram(
             // TShaderGeneratorStageFlags(ShaderGeneratorStages::Vertex |
             // ShaderGeneratorStages::Fragment | ShaderGeneratorStages::Geometry) );
-            GetProgramGenerator().BeginProgram(TShaderGeneratorStageFlags(
+            GetProgramGenerator()->BeginProgram(TShaderGeneratorStageFlags(
                                                    ShaderGeneratorStages::Vertex | ShaderGeneratorStages::TessControl
                                                    | ShaderGeneratorStages::TessEval | ShaderGeneratorStages::Fragment));
             IShaderStageGenerator &vertexShader(
-                        *GetProgramGenerator().GetStage(ShaderGeneratorStages::Vertex));
+                        *GetProgramGenerator()->GetStage(ShaderGeneratorStages::Vertex));
             IShaderStageGenerator &fragmentShader(
-                        *GetProgramGenerator().GetStage(ShaderGeneratorStages::Fragment));
-            // IShaderStageGenerator& geometryShader( *GetProgramGenerator().GetStage(
+                        *GetProgramGenerator()->GetStage(ShaderGeneratorStages::Fragment));
+            // IShaderStageGenerator& geometryShader( *GetProgramGenerator()->GetStage(
             // ShaderGeneratorStages::Geometry ) );
             IShaderStageGenerator &tessCtrlShader(
-                        *GetProgramGenerator().GetStage(ShaderGeneratorStages::TessControl));
+                        *GetProgramGenerator()->GetStage(ShaderGeneratorStages::TessControl));
             IShaderStageGenerator &tessEvalShader(
-                        *GetProgramGenerator().GetStage(ShaderGeneratorStages::TessEval));
+                        *GetProgramGenerator()->GetStage(ShaderGeneratorStages::TessEval));
 
             vertexShader.AddIncoming("attr_pos", "vec3");
             vertexShader.AddIncoming("attr_norm", "vec3");
@@ -1148,12 +1144,12 @@ SRenderableDepthPrepassShader *QDemonRendererImpl::GetCubeDepthTessNPatchShader(
             tessEvalShader.Append("}");
         }
 
-        depthShaderProgram = GetProgramGenerator().CompileGeneratedShader(
-                    name.c_str(), SShaderCacheProgramFlags(), TShaderFeatureSet());
+        depthShaderProgram = GetProgramGenerator()->CompileGeneratedShader(
+                    name, SShaderCacheProgramFlags(), TShaderFeatureSet());
 
         if (depthShaderProgram) {
             theDepthShader = QSharedPointer<SRenderableDepthPrepassShader>(
-                        new SRenderableDepthPrepassShader(*depthShaderProgram, GetContext()));
+                        new SRenderableDepthPrepassShader(depthShaderProgram, GetContext()));
         } else {
             theDepthShader = QSharedPointer<SRenderableDepthPrepassShader>();
         }
@@ -1162,10 +1158,10 @@ SRenderableDepthPrepassShader *QDemonRendererImpl::GetCubeDepthTessNPatchShader(
     return theDepthShader.getValue();
 }
 
-SRenderableDepthPrepassShader *
+QSharedPointer<SRenderableDepthPrepassShader>
 QDemonRendererImpl::GetOrthographicDepthShader(TessModeValues::Enum inTessMode)
 {
-    if (!m_demonContext.GetRenderContext().IsTessellationSupported()
+    if (!m_demonContext->GetRenderContext()->IsTessellationSupported()
             || inTessMode == TessModeValues::NoTess) {
         return GetOrthographicDepthNoTessShader();
     } else if (inTessMode == TessModeValues::TessLinear) {
@@ -1179,25 +1175,25 @@ QDemonRendererImpl::GetOrthographicDepthShader(TessModeValues::Enum inTessMode)
     return GetOrthographicDepthNoTessShader();
 }
 
-SRenderableDepthPrepassShader *QDemonRendererImpl::GetOrthographicDepthNoTessShader()
+QSharedPointer<SRenderableDepthPrepassShader> QDemonRendererImpl::GetOrthographicDepthNoTessShader()
 {
     QDemonOption<QSharedPointer<SRenderableDepthPrepassShader>> &theDepthShader =
             m_OrthographicDepthShader;
 
     if (theDepthShader.hasValue() == false) {
-        TStrType name;
-        name.assign("orthographic depth shader");
+        QString name;
+        name = QStringLiteral("orthographic depth shader");
 
-        IShaderCache &theCache = m_demonContext.GetShaderCache();
-        QString theCacheKey = QString::fromLocal8Bit(name.c_str());
-        QDemonRenderShaderProgram *depthShaderProgram =
-                theCache.GetProgram(theCacheKey, TShaderFeatureSet());
+        QSharedPointer<IShaderCache> theCache = m_demonContext->GetShaderCache();
+        QString theCacheKey = name;
+        QSharedPointer<QDemonRenderShaderProgram> depthShaderProgram =
+                theCache->GetProgram(theCacheKey, TShaderFeatureSet());
         if (!depthShaderProgram) {
-            GetProgramGenerator().BeginProgram();
+            GetProgramGenerator()->BeginProgram();
             IShaderStageGenerator &vertexShader(
-                        *GetProgramGenerator().GetStage(ShaderGeneratorStages::Vertex));
+                        *GetProgramGenerator()->GetStage(ShaderGeneratorStages::Vertex));
             IShaderStageGenerator &fragmentShader(
-                        *GetProgramGenerator().GetStage(ShaderGeneratorStages::Fragment));
+                        *GetProgramGenerator()->GetStage(ShaderGeneratorStages::Fragment));
             vertexShader.AddIncoming("attr_pos", "vec3");
             vertexShader.AddUniform("model_view_projection", "mat4");
             vertexShader.AddOutgoing("outDepth", "vec3");
@@ -1212,12 +1208,12 @@ SRenderableDepthPrepassShader *QDemonRendererImpl::GetOrthographicDepthNoTessSha
             fragmentShader.Append("}");
         }
 
-        depthShaderProgram = GetProgramGenerator().CompileGeneratedShader(
-                    name.c_str(), SShaderCacheProgramFlags(), TShaderFeatureSet());
+        depthShaderProgram = GetProgramGenerator()->CompileGeneratedShader(
+                    name, SShaderCacheProgramFlags(), TShaderFeatureSet());
 
         if (depthShaderProgram) {
             theDepthShader = QSharedPointer<SRenderableDepthPrepassShader>(
-                        new SRenderableDepthPrepassShader(*depthShaderProgram, GetContext()));
+                        new SRenderableDepthPrepassShader(depthShaderProgram, GetContext()));
         } else {
             theDepthShader = QSharedPointer<SRenderableDepthPrepassShader>();
         }
@@ -1226,31 +1222,31 @@ SRenderableDepthPrepassShader *QDemonRendererImpl::GetOrthographicDepthNoTessSha
     return theDepthShader.getValue();
 }
 
-SRenderableDepthPrepassShader *QDemonRendererImpl::GetOrthographicDepthTessLinearShader()
+QSharedPointer<SRenderableDepthPrepassShader> QDemonRendererImpl::GetOrthographicDepthTessLinearShader()
 {
     QDemonOption<QSharedPointer<SRenderableDepthPrepassShader>> &theDepthShader =
             m_OrthographicDepthTessLinearShader;
 
     if (theDepthShader.hasValue() == false) {
-        TStrType name;
-        name.assign("orthographic depth tess linear shader");
+        QString name;
+        name = QStringLiteral("orthographic depth tess linear shader");
 
-        IShaderCache &theCache = m_demonContext.GetShaderCache();
-        QString theCacheKey = QString::fromLocal8Bit(name.c_str());
-        QDemonRenderShaderProgram *depthShaderProgram =
-                theCache.GetProgram(theCacheKey, TShaderFeatureSet());
+        QSharedPointer<IShaderCache> theCache = m_demonContext->GetShaderCache();
+        QString theCacheKey = name;
+        QSharedPointer<QDemonRenderShaderProgram> depthShaderProgram =
+                theCache->GetProgram(theCacheKey, TShaderFeatureSet());
         if (!depthShaderProgram) {
-            GetProgramGenerator().BeginProgram(TShaderGeneratorStageFlags(
+            GetProgramGenerator()->BeginProgram(TShaderGeneratorStageFlags(
                                                    ShaderGeneratorStages::Vertex | ShaderGeneratorStages::TessControl
                                                    | ShaderGeneratorStages::TessEval | ShaderGeneratorStages::Fragment));
             IShaderStageGenerator &vertexShader(
-                        *GetProgramGenerator().GetStage(ShaderGeneratorStages::Vertex));
+                        *GetProgramGenerator()->GetStage(ShaderGeneratorStages::Vertex));
             IShaderStageGenerator &tessCtrlShader(
-                        *GetProgramGenerator().GetStage(ShaderGeneratorStages::TessControl));
+                        *GetProgramGenerator()->GetStage(ShaderGeneratorStages::TessControl));
             IShaderStageGenerator &tessEvalShader(
-                        *GetProgramGenerator().GetStage(ShaderGeneratorStages::TessEval));
+                        *GetProgramGenerator()->GetStage(ShaderGeneratorStages::TessEval));
             IShaderStageGenerator &fragmentShader(
-                        *GetProgramGenerator().GetStage(ShaderGeneratorStages::Fragment));
+                        *GetProgramGenerator()->GetStage(ShaderGeneratorStages::Fragment));
 
             vertexShader.AddIncoming("attr_pos", "vec3");
             vertexShader.AddUniform("model_view_projection", "mat4");
@@ -1282,12 +1278,12 @@ SRenderableDepthPrepassShader *QDemonRendererImpl::GetOrthographicDepthTessLinea
             tessEvalShader.Append("}");
         }
 
-        depthShaderProgram = GetProgramGenerator().CompileGeneratedShader(
-                    name.c_str(), SShaderCacheProgramFlags(), TShaderFeatureSet());
+        depthShaderProgram = GetProgramGenerator()->CompileGeneratedShader(
+                    name, SShaderCacheProgramFlags(), TShaderFeatureSet());
 
         if (depthShaderProgram) {
             theDepthShader = QSharedPointer<SRenderableDepthPrepassShader>(
-                        new SRenderableDepthPrepassShader(*depthShaderProgram, GetContext()));
+                        new SRenderableDepthPrepassShader(depthShaderProgram, GetContext()));
         } else {
             theDepthShader = QSharedPointer<SRenderableDepthPrepassShader>();
         }
@@ -1296,31 +1292,31 @@ SRenderableDepthPrepassShader *QDemonRendererImpl::GetOrthographicDepthTessLinea
     return theDepthShader.getValue();
 }
 
-SRenderableDepthPrepassShader *QDemonRendererImpl::GetOrthographicDepthTessPhongShader()
+QSharedPointer<SRenderableDepthPrepassShader> QDemonRendererImpl::GetOrthographicDepthTessPhongShader()
 {
     QDemonOption<QSharedPointer<SRenderableDepthPrepassShader>> &theDepthShader =
             m_OrthographicDepthTessPhongShader;
 
     if (theDepthShader.hasValue() == false) {
-        TStrType name;
-        name.assign("orthographic depth tess phong shader");
+        QString name;
+        name = QStringLiteral("orthographic depth tess phong shader");
 
-        IShaderCache &theCache = m_demonContext.GetShaderCache();
-        QString theCacheKey = QString::fromLocal8Bit(name.c_str());
-        QDemonRenderShaderProgram *depthShaderProgram =
-                theCache.GetProgram(theCacheKey, TShaderFeatureSet());
+        QSharedPointer<IShaderCache> theCache = m_demonContext->GetShaderCache();
+        QString theCacheKey = name;
+        QSharedPointer<QDemonRenderShaderProgram> depthShaderProgram =
+                theCache->GetProgram(theCacheKey, TShaderFeatureSet());
         if (!depthShaderProgram) {
-            GetProgramGenerator().BeginProgram(TShaderGeneratorStageFlags(
+            GetProgramGenerator()->BeginProgram(TShaderGeneratorStageFlags(
                                                    ShaderGeneratorStages::Vertex | ShaderGeneratorStages::TessControl
                                                    | ShaderGeneratorStages::TessEval | ShaderGeneratorStages::Fragment));
             IShaderStageGenerator &vertexShader(
-                        *GetProgramGenerator().GetStage(ShaderGeneratorStages::Vertex));
+                        *GetProgramGenerator()->GetStage(ShaderGeneratorStages::Vertex));
             IShaderStageGenerator &tessCtrlShader(
-                        *GetProgramGenerator().GetStage(ShaderGeneratorStages::TessControl));
+                        *GetProgramGenerator()->GetStage(ShaderGeneratorStages::TessControl));
             IShaderStageGenerator &tessEvalShader(
-                        *GetProgramGenerator().GetStage(ShaderGeneratorStages::TessEval));
+                        *GetProgramGenerator()->GetStage(ShaderGeneratorStages::TessEval));
             IShaderStageGenerator &fragmentShader(
-                        *GetProgramGenerator().GetStage(ShaderGeneratorStages::Fragment));
+                        *GetProgramGenerator()->GetStage(ShaderGeneratorStages::Fragment));
 
             vertexShader.AddIncoming("attr_pos", "vec3");
             vertexShader.AddIncoming("attr_norm", "vec3");
@@ -1358,12 +1354,12 @@ SRenderableDepthPrepassShader *QDemonRendererImpl::GetOrthographicDepthTessPhong
             tessEvalShader.Append("}");
         }
 
-        depthShaderProgram = GetProgramGenerator().CompileGeneratedShader(
-                    name.c_str(), SShaderCacheProgramFlags(), TShaderFeatureSet());
+        depthShaderProgram = GetProgramGenerator()->CompileGeneratedShader(
+                    name, SShaderCacheProgramFlags(), TShaderFeatureSet());
 
         if (depthShaderProgram) {
             theDepthShader = QSharedPointer<SRenderableDepthPrepassShader>(
-                        SRenderableDepthPrepassShader(*depthShaderProgram, GetContext()));
+                        new SRenderableDepthPrepassShader(depthShaderProgram, GetContext()));
         } else {
             theDepthShader = QSharedPointer<SRenderableDepthPrepassShader>();
         }
@@ -1372,31 +1368,31 @@ SRenderableDepthPrepassShader *QDemonRendererImpl::GetOrthographicDepthTessPhong
     return theDepthShader.getValue();
 }
 
-SRenderableDepthPrepassShader *QDemonRendererImpl::GetOrthographicDepthTessNPatchShader()
+QSharedPointer<SRenderableDepthPrepassShader> QDemonRendererImpl::GetOrthographicDepthTessNPatchShader()
 {
     QDemonOption<QSharedPointer<SRenderableDepthPrepassShader>> &theDepthShader =
             m_OrthographicDepthTessNPatchShader;
 
     if (theDepthShader.hasValue() == false) {
-        TStrType name;
-        name.assign("orthographic depth tess npatch shader");
+        QString name;
+        name = QStringLiteral("orthographic depth tess npatch shader");
 
-        IShaderCache &theCache = m_demonContext.GetShaderCache();
-        QString theCacheKey = QString::fromLocal8Bit(name.c_str());
-        QDemonRenderShaderProgram *depthShaderProgram =
-                theCache.GetProgram(theCacheKey, TShaderFeatureSet());
+        QSharedPointer<IShaderCache> theCache = m_demonContext->GetShaderCache();
+        QString theCacheKey = name;
+        QSharedPointer<QDemonRenderShaderProgram> depthShaderProgram =
+                theCache->GetProgram(theCacheKey, TShaderFeatureSet());
         if (!depthShaderProgram) {
-            GetProgramGenerator().BeginProgram(TShaderGeneratorStageFlags(
+            GetProgramGenerator()->BeginProgram(TShaderGeneratorStageFlags(
                                                    ShaderGeneratorStages::Vertex | ShaderGeneratorStages::TessControl
                                                    | ShaderGeneratorStages::TessEval | ShaderGeneratorStages::Fragment));
             IShaderStageGenerator &vertexShader(
-                        *GetProgramGenerator().GetStage(ShaderGeneratorStages::Vertex));
+                        *GetProgramGenerator()->GetStage(ShaderGeneratorStages::Vertex));
             IShaderStageGenerator &tessCtrlShader(
-                        *GetProgramGenerator().GetStage(ShaderGeneratorStages::TessControl));
+                        *GetProgramGenerator()->GetStage(ShaderGeneratorStages::TessControl));
             IShaderStageGenerator &tessEvalShader(
-                        *GetProgramGenerator().GetStage(ShaderGeneratorStages::TessEval));
+                        *GetProgramGenerator()->GetStage(ShaderGeneratorStages::TessEval));
             IShaderStageGenerator &fragmentShader(
-                        *GetProgramGenerator().GetStage(ShaderGeneratorStages::Fragment));
+                        *GetProgramGenerator()->GetStage(ShaderGeneratorStages::Fragment));
 
             vertexShader.AddIncoming("attr_pos", "vec3");
             vertexShader.AddIncoming("attr_norm", "vec3");
@@ -1443,12 +1439,12 @@ SRenderableDepthPrepassShader *QDemonRendererImpl::GetOrthographicDepthTessNPatc
             tessEvalShader.Append("}");
         }
 
-        depthShaderProgram = GetProgramGenerator().CompileGeneratedShader(
-                    name.c_str(), SShaderCacheProgramFlags(), TShaderFeatureSet());
+        depthShaderProgram = GetProgramGenerator()->CompileGeneratedShader(
+                    name, SShaderCacheProgramFlags(), TShaderFeatureSet());
 
         if (depthShaderProgram) {
             theDepthShader = QSharedPointer<SRenderableDepthPrepassShader>(
-                        new SRenderableDepthPrepassShader(*depthShaderProgram, GetContext()));
+                        new SRenderableDepthPrepassShader(depthShaderProgram, GetContext()));
         } else {
             theDepthShader = QSharedPointer<SRenderableDepthPrepassShader>();
         }
@@ -1459,28 +1455,28 @@ SRenderableDepthPrepassShader *QDemonRendererImpl::GetOrthographicDepthTessNPatc
 
 // ---------------------------------
 
-SRenderableDepthPrepassShader *QDemonRendererImpl::GetDepthPrepassShader(bool inDisplaced)
+QSharedPointer<SRenderableDepthPrepassShader> QDemonRendererImpl::GetDepthPrepassShader(bool inDisplaced)
 {
     QDemonOption<QSharedPointer<SRenderableDepthPrepassShader>> &theDepthPrePassShader =
             (!inDisplaced) ? m_DepthPrepassShader : m_DepthPrepassShaderDisplaced;
 
     if (theDepthPrePassShader.hasValue() == false) {
         // check if we do displacement mapping
-        TStrType name;
-        name.assign("depth prepass shader");
+        QString name;
+        name = QStringLiteral("depth prepass shader");
         if (inDisplaced)
             name.append(" displacement");
 
-        IShaderCache &theCache = m_demonContext.GetShaderCache();
-        QString theCacheKey = QString::fromLocal8Bit(name.c_str());
-        QDemonRenderShaderProgram *depthShaderProgram =
-                theCache.GetProgram(theCacheKey, TShaderFeatureSet());
+        QSharedPointer<IShaderCache> theCache = m_demonContext->GetShaderCache();
+        QString theCacheKey = name;
+        QSharedPointer<QDemonRenderShaderProgram> depthShaderProgram =
+                theCache->GetProgram(theCacheKey, TShaderFeatureSet());
         if (!depthShaderProgram) {
-            GetProgramGenerator().BeginProgram();
+            GetProgramGenerator()->BeginProgram();
             IShaderStageGenerator &vertexShader(
-                        *GetProgramGenerator().GetStage(ShaderGeneratorStages::Vertex));
+                        *GetProgramGenerator()->GetStage(ShaderGeneratorStages::Vertex));
             IShaderStageGenerator &fragmentShader(
-                        *GetProgramGenerator().GetStage(ShaderGeneratorStages::Fragment));
+                        *GetProgramGenerator()->GetStage(ShaderGeneratorStages::Fragment));
             vertexShader.AddIncoming("attr_pos", "vec3");
             vertexShader.AddUniform("model_view_projection", "mat4");
 
@@ -1488,8 +1484,8 @@ SRenderableDepthPrepassShader *QDemonRendererImpl::GetDepthPrepassShader(bool in
 
             if (inDisplaced) {
                 GetDemonContext()
-                        .GetDefaultMaterialShaderGenerator()
-                        .AddDisplacementMappingForDepthPass(vertexShader);
+                        ->GetDefaultMaterialShaderGenerator()
+                        ->AddDisplacementMappingForDepthPass(vertexShader);
             } else {
                 vertexShader.Append(
                             "\tgl_Position = model_view_projection * vec4(attr_pos, 1.0);");
@@ -1498,17 +1494,17 @@ SRenderableDepthPrepassShader *QDemonRendererImpl::GetDepthPrepassShader(bool in
             fragmentShader.Append("void main() {");
             fragmentShader.Append("\tfragOutput = vec4(0.0, 0.0, 0.0, 0.0);");
             fragmentShader.Append("}");
-        } else if (theCache.IsShaderCachePersistenceEnabled()) {
+        } else if (theCache->IsShaderCachePersistenceEnabled()) {
             // we load from shader cache set default shader stages
-            GetProgramGenerator().BeginProgram();
+            GetProgramGenerator()->BeginProgram();
         }
 
-        depthShaderProgram = GetProgramGenerator().CompileGeneratedShader(
-                    name.c_str(), SShaderCacheProgramFlags(), TShaderFeatureSet());
+        depthShaderProgram = GetProgramGenerator()->CompileGeneratedShader(
+                    name, SShaderCacheProgramFlags(), TShaderFeatureSet());
 
         if (depthShaderProgram) {
             theDepthPrePassShader = QSharedPointer<SRenderableDepthPrepassShader>(
-                        new SRenderableDepthPrepassShader(*depthShaderProgram, GetContext()));
+                        new SRenderableDepthPrepassShader(depthShaderProgram, GetContext()));
         } else {
             theDepthPrePassShader = QSharedPointer<SRenderableDepthPrepassShader>();
         }
@@ -1516,10 +1512,10 @@ SRenderableDepthPrepassShader *QDemonRendererImpl::GetDepthPrepassShader(bool in
     return theDepthPrePassShader.getValue();
 }
 
-SRenderableDepthPrepassShader *
+QSharedPointer<SRenderableDepthPrepassShader>
 QDemonRendererImpl::GetDepthTessPrepassShader(TessModeValues::Enum inTessMode, bool inDisplaced)
 {
-    if (!m_demonContext.GetRenderContext().IsTessellationSupported()
+    if (!m_demonContext->GetRenderContext()->IsTessellationSupported()
             || inTessMode == TessModeValues::NoTess) {
         return GetDepthPrepassShader(inDisplaced);
     } else if (inTessMode == TessModeValues::TessLinear) {
@@ -1533,7 +1529,7 @@ QDemonRendererImpl::GetDepthTessPrepassShader(TessModeValues::Enum inTessMode, b
     return GetDepthPrepassShader(inDisplaced);
 }
 
-SRenderableDepthPrepassShader *
+QSharedPointer<SRenderableDepthPrepassShader>
 QDemonRendererImpl::GetDepthTessLinearPrepassShader(bool inDisplaced)
 {
     QDemonOption<QSharedPointer<SRenderableDepthPrepassShader>> &theDepthPrePassShader =
@@ -1542,27 +1538,27 @@ QDemonRendererImpl::GetDepthTessLinearPrepassShader(bool inDisplaced)
 
     if (theDepthPrePassShader.hasValue() == false) {
         // check if we do displacement mapping
-        TStrType name;
-        name.assign("depth tess linear prepass shader");
+        QString name;
+        name = QStringLiteral("depth tess linear prepass shader");
         if (inDisplaced)
             name.append(" displacement");
 
-        IShaderCache &theCache = m_demonContext.GetShaderCache();
-        QString theCacheKey = QString::fromLocal8Bit(name.c_str());
-        QDemonRenderShaderProgram *depthShaderProgram =
-                theCache.GetProgram(theCacheKey, TShaderFeatureSet());
+        QSharedPointer<IShaderCache> theCache = m_demonContext->GetShaderCache();
+        QString theCacheKey = name;
+        QSharedPointer<QDemonRenderShaderProgram> depthShaderProgram =
+                theCache->GetProgram(theCacheKey, TShaderFeatureSet());
         if (!depthShaderProgram) {
-            GetProgramGenerator().BeginProgram(TShaderGeneratorStageFlags(
+            GetProgramGenerator()->BeginProgram(TShaderGeneratorStageFlags(
                                                    ShaderGeneratorStages::Vertex | ShaderGeneratorStages::TessControl
                                                    | ShaderGeneratorStages::TessEval | ShaderGeneratorStages::Fragment));
             IShaderStageGenerator &vertexShader(
-                        *GetProgramGenerator().GetStage(ShaderGeneratorStages::Vertex));
+                        *GetProgramGenerator()->GetStage(ShaderGeneratorStages::Vertex));
             IShaderStageGenerator &tessCtrlShader(
-                        *GetProgramGenerator().GetStage(ShaderGeneratorStages::TessControl));
+                        *GetProgramGenerator()->GetStage(ShaderGeneratorStages::TessControl));
             IShaderStageGenerator &tessEvalShader(
-                        *GetProgramGenerator().GetStage(ShaderGeneratorStages::TessEval));
+                        *GetProgramGenerator()->GetStage(ShaderGeneratorStages::TessEval));
             IShaderStageGenerator &fragmentShader(
-                        *GetProgramGenerator().GetStage(ShaderGeneratorStages::Fragment));
+                        *GetProgramGenerator()->GetStage(ShaderGeneratorStages::Fragment));
             vertexShader.AddIncoming("attr_pos", "vec3");
             if (inDisplaced) {
                 vertexShader.AddIncoming("attr_uv0", "vec2");
@@ -1588,7 +1584,7 @@ QDemonRendererImpl::GetDepthTessLinearPrepassShader(bool inDisplaced)
                 vertexShader.AddInclude(
                             "defaultMaterialLighting.glsllib"); // getTransformedUVCoords is in the
                 // lighting code addition.
-                vertexShader << "\tvec2 uv_coords = attr_uv0;" << Endl;
+                vertexShader << "\tvec2 uv_coords = attr_uv0;" << QStringLiteral("\n");
                 vertexShader << "\toutUV = getTransformedUVCoords( vec3( uv_coords, 1.0), "
                                 "uTransform, vTransform );\n";
             }
@@ -1634,24 +1630,24 @@ QDemonRendererImpl::GetDepthTessLinearPrepassShader(bool inDisplaced)
             if (inDisplaced) {
                 tessEvalShader << "\toutUV = gl_TessCoord.x * outUVTC[0] + gl_TessCoord.y * "
                                   "outUVTC[1] + gl_TessCoord.z * outUVTC[2];"
-                               << Endl;
+                               << QStringLiteral("\n");
                 tessEvalShader
                         << "\toutNormal = gl_TessCoord.x * outNormalTC[0] + gl_TessCoord.y * "
                            "outNormalTC[1] + gl_TessCoord.z * outNormalTC[2];"
-                        << Endl;
+                        << QStringLiteral("\n");
                 tessEvalShader
                         << "\tvec3 displacedPos = defaultMaterialFileDisplacementTexture( "
                            "displacementSampler , displaceAmount, outUV , outNormal, pos.xyz );"
-                        << Endl;
+                        << QStringLiteral("\n");
                 tessEvalShader.Append(
                             "\tgl_Position = model_view_projection * vec4(displacedPos, 1.0);");
             } else
                 tessEvalShader.Append("\tgl_Position = model_view_projection * pos;");
 
             tessEvalShader.Append("}");
-        } else if (theCache.IsShaderCachePersistenceEnabled()) {
+        } else if (theCache->IsShaderCachePersistenceEnabled()) {
             // we load from shader cache set default shader stages
-            GetProgramGenerator().BeginProgram(TShaderGeneratorStageFlags(
+            GetProgramGenerator()->BeginProgram(TShaderGeneratorStageFlags(
                                                    ShaderGeneratorStages::Vertex | ShaderGeneratorStages::TessControl
                                                    | ShaderGeneratorStages::TessEval | ShaderGeneratorStages::Fragment));
         }
@@ -1659,38 +1655,38 @@ QDemonRendererImpl::GetDepthTessLinearPrepassShader(bool inDisplaced)
         SShaderCacheProgramFlags theFlags;
         theFlags.SetTessellationEnabled(true);
 
-        depthShaderProgram = GetProgramGenerator().CompileGeneratedShader(
-                    name.c_str(), theFlags, TShaderFeatureSet());
+        depthShaderProgram = GetProgramGenerator()->CompileGeneratedShader(
+                    name, theFlags, TShaderFeatureSet());
 
         if (depthShaderProgram) {
             theDepthPrePassShader = QSharedPointer<SRenderableDepthPrepassShader>(
-                        new SRenderableDepthPrepassShader(*depthShaderProgram, GetContext()));
+                        new SRenderableDepthPrepassShader(depthShaderProgram, GetContext()));
         } else {
             theDepthPrePassShader = QSharedPointer<SRenderableDepthPrepassShader>();
         }
     }
-    return theDepthPrePassShader->mPtr;
+    return theDepthPrePassShader;
 }
 
-SRenderableDepthPrepassShader *QDemonRendererImpl::GetDepthTessPhongPrepassShader()
+QSharedPointer<SRenderableDepthPrepassShader> QDemonRendererImpl::GetDepthTessPhongPrepassShader()
 {
     if (m_DepthTessPhongPrepassShader.hasValue() == false) {
-        IShaderCache &theCache = m_demonContext.GetShaderCache();
+        QSharedPointer<IShaderCache> theCache = m_demonContext->GetShaderCache();
         QString theCacheKey = QString::fromLocal8Bit("depth tess phong prepass shader");
-        QDemonRenderShaderProgram *depthShaderProgram =
-                theCache.GetProgram(theCacheKey, TShaderFeatureSet());
+        QSharedPointer<QDemonRenderShaderProgram> depthShaderProgram =
+                theCache->GetProgram(theCacheKey, TShaderFeatureSet());
         if (!depthShaderProgram) {
-            GetProgramGenerator().BeginProgram(TShaderGeneratorStageFlags(
+            GetProgramGenerator()->BeginProgram(TShaderGeneratorStageFlags(
                                                    ShaderGeneratorStages::Vertex | ShaderGeneratorStages::TessControl
                                                    | ShaderGeneratorStages::TessEval | ShaderGeneratorStages::Fragment));
             IShaderStageGenerator &vertexShader(
-                        *GetProgramGenerator().GetStage(ShaderGeneratorStages::Vertex));
+                        *GetProgramGenerator()->GetStage(ShaderGeneratorStages::Vertex));
             IShaderStageGenerator &tessCtrlShader(
-                        *GetProgramGenerator().GetStage(ShaderGeneratorStages::TessControl));
+                        *GetProgramGenerator()->GetStage(ShaderGeneratorStages::TessControl));
             IShaderStageGenerator &tessEvalShader(
-                        *GetProgramGenerator().GetStage(ShaderGeneratorStages::TessEval));
+                        *GetProgramGenerator()->GetStage(ShaderGeneratorStages::TessEval));
             IShaderStageGenerator &fragmentShader(
-                        *GetProgramGenerator().GetStage(ShaderGeneratorStages::Fragment));
+                        *GetProgramGenerator()->GetStage(ShaderGeneratorStages::Fragment));
             vertexShader.AddIncoming("attr_pos", "vec3");
             vertexShader.AddIncoming("attr_norm", "vec3");
             vertexShader.AddOutgoing("outNormal", "vec3");
@@ -1727,9 +1723,9 @@ SRenderableDepthPrepassShader *QDemonRendererImpl::GetDepthTessPhongPrepassShade
             tessEvalShader.Append("\tvec4 pos = tessShader( );\n");
             tessEvalShader.Append("\tgl_Position = model_view_projection * pos;\n");
             tessEvalShader.Append("}");
-        } else if (theCache.IsShaderCachePersistenceEnabled()) {
+        } else if (theCache->IsShaderCachePersistenceEnabled()) {
             // we load from shader cache set default shader stages
-            GetProgramGenerator().BeginProgram(TShaderGeneratorStageFlags(
+            GetProgramGenerator()->BeginProgram(TShaderGeneratorStageFlags(
                                                    ShaderGeneratorStages::Vertex | ShaderGeneratorStages::TessControl
                                                    | ShaderGeneratorStages::TessEval | ShaderGeneratorStages::Fragment));
         }
@@ -1737,38 +1733,38 @@ SRenderableDepthPrepassShader *QDemonRendererImpl::GetDepthTessPhongPrepassShade
         SShaderCacheProgramFlags theFlags;
         theFlags.SetTessellationEnabled(true);
 
-        depthShaderProgram = GetProgramGenerator().CompileGeneratedShader(
+        depthShaderProgram = GetProgramGenerator()->CompileGeneratedShader(
                     "depth tess phong prepass shader", theFlags, TShaderFeatureSet());
 
         if (depthShaderProgram) {
             m_DepthTessPhongPrepassShader = QSharedPointer<SRenderableDepthPrepassShader>(
-                        new SRenderableDepthPrepassShader(*depthShaderProgram, GetContext()));
+                        new SRenderableDepthPrepassShader(depthShaderProgram, GetContext()));
         } else {
             m_DepthTessPhongPrepassShader = QSharedPointer<SRenderableDepthPrepassShader>();
         }
     }
-    return m_DepthTessPhongPrepassShader->mPtr;
+    return m_DepthTessPhongPrepassShader;
 }
 
-SRenderableDepthPrepassShader *QDemonRendererImpl::GetDepthTessNPatchPrepassShader()
+QSharedPointer<SRenderableDepthPrepassShader> QDemonRendererImpl::GetDepthTessNPatchPrepassShader()
 {
     if (m_DepthTessNPatchPrepassShader.hasValue() == false) {
-        IShaderCache &theCache = m_demonContext.GetShaderCache();
+        QSharedPointer<IShaderCache> theCache = m_demonContext->GetShaderCache();
         QString theCacheKey = QString::fromLocal8Bit("depth tess npatch prepass shader");
-        QDemonRenderShaderProgram *depthShaderProgram =
-                theCache.GetProgram(theCacheKey, TShaderFeatureSet());
+        QSharedPointer<QDemonRenderShaderProgram> depthShaderProgram =
+                theCache->GetProgram(theCacheKey, TShaderFeatureSet());
         if (!depthShaderProgram) {
-            GetProgramGenerator().BeginProgram(TShaderGeneratorStageFlags(
+            GetProgramGenerator()->BeginProgram(TShaderGeneratorStageFlags(
                                                    ShaderGeneratorStages::Vertex | ShaderGeneratorStages::TessControl
                                                    | ShaderGeneratorStages::TessEval | ShaderGeneratorStages::Fragment));
             IShaderStageGenerator &vertexShader(
-                        *GetProgramGenerator().GetStage(ShaderGeneratorStages::Vertex));
+                        *GetProgramGenerator()->GetStage(ShaderGeneratorStages::Vertex));
             IShaderStageGenerator &tessCtrlShader(
-                        *GetProgramGenerator().GetStage(ShaderGeneratorStages::TessControl));
+                        *GetProgramGenerator()->GetStage(ShaderGeneratorStages::TessControl));
             IShaderStageGenerator &tessEvalShader(
-                        *GetProgramGenerator().GetStage(ShaderGeneratorStages::TessEval));
+                        *GetProgramGenerator()->GetStage(ShaderGeneratorStages::TessEval));
             IShaderStageGenerator &fragmentShader(
-                        *GetProgramGenerator().GetStage(ShaderGeneratorStages::Fragment));
+                        *GetProgramGenerator()->GetStage(ShaderGeneratorStages::Fragment));
             vertexShader.AddIncoming("attr_pos", "vec3");
             vertexShader.AddIncoming("attr_norm", "vec3");
             vertexShader.AddOutgoing("outNormal", "vec3");
@@ -1819,9 +1815,9 @@ SRenderableDepthPrepassShader *QDemonRendererImpl::GetDepthTessNPatchPrepassShad
             tessEvalShader.Append("\tvec4 pos = tessShader( );\n");
             tessEvalShader.Append("\tgl_Position = model_view_projection * pos;\n");
             tessEvalShader.Append("}");
-        } else if (theCache.IsShaderCachePersistenceEnabled()) {
+        } else if (theCache->IsShaderCachePersistenceEnabled()) {
             // we load from shader cache set default shader stages
-            GetProgramGenerator().BeginProgram(TShaderGeneratorStageFlags(
+            GetProgramGenerator()->BeginProgram(TShaderGeneratorStageFlags(
                                                    ShaderGeneratorStages::Vertex | ShaderGeneratorStages::TessControl
                                                    | ShaderGeneratorStages::TessEval | ShaderGeneratorStages::Fragment));
         }
@@ -1829,33 +1825,33 @@ SRenderableDepthPrepassShader *QDemonRendererImpl::GetDepthTessNPatchPrepassShad
         SShaderCacheProgramFlags theFlags;
         theFlags.SetTessellationEnabled(true);
 
-        depthShaderProgram = GetProgramGenerator().CompileGeneratedShader(
+        depthShaderProgram = GetProgramGenerator()->CompileGeneratedShader(
                     "depth tess npatch prepass shader", theFlags, TShaderFeatureSet());
 
         if (depthShaderProgram) {
             m_DepthTessNPatchPrepassShader = QSharedPointer<SRenderableDepthPrepassShader>(
-                        new SRenderableDepthPrepassShader(*depthShaderProgram, GetContext()));
+                        new SRenderableDepthPrepassShader(depthShaderProgram, GetContext()));
         } else {
             m_DepthTessNPatchPrepassShader =
                     QSharedPointer<SRenderableDepthPrepassShader>();
         }
     }
-    return m_DepthTessNPatchPrepassShader->mPtr;
+    return m_DepthTessNPatchPrepassShader;
 }
 
-SDefaultAoPassShader *QDemonRendererImpl::GetDefaultAoPassShader(TShaderFeatureSet inFeatureSet)
+QSharedPointer<SDefaultAoPassShader> QDemonRendererImpl::GetDefaultAoPassShader(TShaderFeatureSet inFeatureSet)
 {
     if (m_DefaultAoPassShader.hasValue() == false) {
-        IShaderCache &theCache = m_demonContext.GetShaderCache();
+        QSharedPointer<IShaderCache> theCache = m_demonContext->GetShaderCache();
         QString theCacheKey = QString::fromLocal8Bit("fullscreen AO pass shader");
-        QDemonRenderShaderProgram *aoPassShaderProgram =
-                theCache.GetProgram(theCacheKey, TShaderFeatureSet());
+        QSharedPointer<QDemonRenderShaderProgram> aoPassShaderProgram =
+                theCache->GetProgram(theCacheKey, TShaderFeatureSet());
         if (!aoPassShaderProgram) {
-            GetProgramGenerator().BeginProgram();
+            GetProgramGenerator()->BeginProgram();
             IShaderStageGenerator &theVertexGenerator(
-                        *GetProgramGenerator().GetStage(ShaderGeneratorStages::Vertex));
+                        *GetProgramGenerator()->GetStage(ShaderGeneratorStages::Vertex));
             IShaderStageGenerator &theFragmentGenerator(
-                        *GetProgramGenerator().GetStage(ShaderGeneratorStages::Fragment));
+                        *GetProgramGenerator()->GetStage(ShaderGeneratorStages::Fragment));
             theVertexGenerator.AddIncoming("attr_pos", "vec3");
             theVertexGenerator.AddIncoming("attr_uv", "vec2");
             theVertexGenerator.AddOutgoing("uv_coords", "vec2");
@@ -1869,23 +1865,23 @@ SDefaultAoPassShader *QDemonRendererImpl::GetDefaultAoPassShader(TShaderFeatureS
             theFragmentGenerator.AddInclude("screenSpaceAO.glsllib");
             if (m_Context->GetRenderContextType() == QDemonRenderContextValues::GLES2) {
                 theFragmentGenerator
-                        << "\tuniform vec4 ao_properties;" << Endl
-                        << "\tuniform vec4 ao_properties2;" << Endl
-                        << "\tuniform vec4 shadow_properties;" << Endl
-                        << "\tuniform vec4 aoScreenConst;" << Endl
-                        << "\tuniform vec4 UvToEyeConst;" << Endl;
+                        << "\tuniform vec4 ao_properties;" << QStringLiteral("\n")
+                        << "\tuniform vec4 ao_properties2;" << QStringLiteral("\n")
+                        << "\tuniform vec4 shadow_properties;" << QStringLiteral("\n")
+                        << "\tuniform vec4 aoScreenConst;" << QStringLiteral("\n")
+                        << "\tuniform vec4 UvToEyeConst;" << QStringLiteral("\n");
             } else {
                 theFragmentGenerator
-                        << "layout (std140) uniform cbAoShadow { " << Endl << "\tvec4 ao_properties;"
-                        << Endl << "\tvec4 ao_properties2;" << Endl << "\tvec4 shadow_properties;"
-                        << Endl << "\tvec4 aoScreenConst;" << Endl << "\tvec4 UvToEyeConst;" << Endl
-                        << "};" << Endl;
+                        << "layout (std140) uniform cbAoShadow { " << QStringLiteral("\n") << "\tvec4 ao_properties;"
+                        << QStringLiteral("\n") << "\tvec4 ao_properties2;" << QStringLiteral("\n") << "\tvec4 shadow_properties;"
+                        << QStringLiteral("\n") << "\tvec4 aoScreenConst;" << QStringLiteral("\n") << "\tvec4 UvToEyeConst;" << QStringLiteral("\n")
+                        << "};" << QStringLiteral("\n");
             }
             theFragmentGenerator.AddUniform("camera_direction", "vec3");
             theFragmentGenerator.AddUniform("depth_sampler", "sampler2D");
             theFragmentGenerator.Append("void main() {");
-            theFragmentGenerator << "\tfloat aoFactor;" << Endl;
-            theFragmentGenerator << "\tvec3 screenNorm;" << Endl;
+            theFragmentGenerator << "\tfloat aoFactor;" << QStringLiteral("\n");
+            theFragmentGenerator << "\tvec3 screenNorm;" << QStringLiteral("\n");
 
             // We're taking multiple depth samples and getting the derivatives at each of them
             // to get a more
@@ -1952,33 +1948,32 @@ SDefaultAoPassShader *QDemonRendererImpl::GetDefaultAoPassShader(TShaderFeatureS
             theFragmentGenerator.Append("}");
         }
 
-        aoPassShaderProgram = GetProgramGenerator().CompileGeneratedShader(
+        aoPassShaderProgram = GetProgramGenerator()->CompileGeneratedShader(
                     "fullscreen AO pass shader", SShaderCacheProgramFlags(), inFeatureSet);
 
         if (aoPassShaderProgram) {
             m_DefaultAoPassShader = QSharedPointer<SDefaultAoPassShader>(
-                        new SDefaultAoPassShader(*aoPassShaderProgram,
-                                                                                      GetContext()));
+                        new SDefaultAoPassShader(aoPassShaderProgram, GetContext()));
         } else {
             m_DefaultAoPassShader = QSharedPointer<SDefaultAoPassShader>();
         }
     }
-    return m_DefaultAoPassShader->mPtr;
+    return m_DefaultAoPassShader;
 }
 
-SDefaultAoPassShader *QDemonRendererImpl::GetFakeDepthShader(TShaderFeatureSet inFeatureSet)
+QSharedPointer<SDefaultAoPassShader> QDemonRendererImpl::GetFakeDepthShader(TShaderFeatureSet inFeatureSet)
 {
     if (m_FakeDepthShader.hasValue() == false) {
-        IShaderCache &theCache = m_demonContext.GetShaderCache();
+        QSharedPointer<IShaderCache> theCache = m_demonContext->GetShaderCache();
         QString theCacheKey = QString::fromLocal8Bit("depth display shader");
-        QDemonRenderShaderProgram *depthShaderProgram =
-                theCache.GetProgram(theCacheKey, TShaderFeatureSet());
+        QSharedPointer<QDemonRenderShaderProgram> depthShaderProgram =
+                theCache->GetProgram(theCacheKey, TShaderFeatureSet());
         if (!depthShaderProgram) {
-            GetProgramGenerator().BeginProgram();
+            GetProgramGenerator()->BeginProgram();
             IShaderStageGenerator &theVertexGenerator(
-                        *GetProgramGenerator().GetStage(ShaderGeneratorStages::Vertex));
+                        *GetProgramGenerator()->GetStage(ShaderGeneratorStages::Vertex));
             IShaderStageGenerator &theFragmentGenerator(
-                        *GetProgramGenerator().GetStage(ShaderGeneratorStages::Fragment));
+                        *GetProgramGenerator()->GetStage(ShaderGeneratorStages::Fragment));
             theVertexGenerator.AddIncoming("attr_pos", "vec3");
             theVertexGenerator.AddIncoming("attr_uv", "vec2");
             theVertexGenerator.AddOutgoing("uv_coords", "vec2");
@@ -1998,33 +1993,33 @@ SDefaultAoPassShader *QDemonRendererImpl::GetFakeDepthShader(TShaderFeatureSet i
             theFragmentGenerator.Append("}");
         }
 
-        depthShaderProgram = GetProgramGenerator().CompileGeneratedShader(
+        depthShaderProgram = GetProgramGenerator()->CompileGeneratedShader(
                     "depth display shader", SShaderCacheProgramFlags(), inFeatureSet);
 
         if (depthShaderProgram) {
             m_FakeDepthShader = QSharedPointer<SDefaultAoPassShader>(
                         new SDefaultAoPassShader(
-                            *depthShaderProgram, GetContext()));
+                            depthShaderProgram, GetContext()));
         } else {
             m_FakeDepthShader = QSharedPointer<SDefaultAoPassShader>();
         }
     }
-    return m_FakeDepthShader->mPtr;
+    return m_FakeDepthShader;
 }
 
-SDefaultAoPassShader *QDemonRendererImpl::GetFakeCubeDepthShader(TShaderFeatureSet inFeatureSet)
+QSharedPointer<SDefaultAoPassShader> QDemonRendererImpl::GetFakeCubeDepthShader(TShaderFeatureSet inFeatureSet)
 {
     if (!m_FakeCubemapDepthShader.hasValue()) {
-        IShaderCache &theCache = m_demonContext.GetShaderCache();
+        QSharedPointer<IShaderCache> theCache = m_demonContext->GetShaderCache();
         QString theCacheKey = QString::fromLocal8Bit("cube depth display shader");
-        QDemonRenderShaderProgram *cubeShaderProgram =
-                theCache.GetProgram(theCacheKey, TShaderFeatureSet());
+        QSharedPointer<QDemonRenderShaderProgram> cubeShaderProgram =
+                theCache->GetProgram(theCacheKey, TShaderFeatureSet());
         if (!cubeShaderProgram) {
-            GetProgramGenerator().BeginProgram();
+            GetProgramGenerator()->BeginProgram();
             IShaderStageGenerator &theVertexGenerator(
-                        *GetProgramGenerator().GetStage(ShaderGeneratorStages::Vertex));
+                        *GetProgramGenerator()->GetStage(ShaderGeneratorStages::Vertex));
             IShaderStageGenerator &theFragmentGenerator(
-                        *GetProgramGenerator().GetStage(ShaderGeneratorStages::Fragment));
+                        *GetProgramGenerator()->GetStage(ShaderGeneratorStages::Fragment));
             theVertexGenerator.AddIncoming("attr_pos", "vec3");
             theVertexGenerator.AddIncoming("attr_uv", "vec2");
             theVertexGenerator.AddOutgoing("sample_dir", "vec3");
@@ -2042,12 +2037,12 @@ SDefaultAoPassShader *QDemonRendererImpl::GetFakeCubeDepthShader(TShaderFeatureS
             theFragmentGenerator.Append("}");
         }
 
-        cubeShaderProgram = GetProgramGenerator().CompileGeneratedShader(
+        cubeShaderProgram = GetProgramGenerator()->CompileGeneratedShader(
                     "cube depth display shader", SShaderCacheProgramFlags(), inFeatureSet);
 
         if (cubeShaderProgram) {
             m_FakeCubemapDepthShader = QSharedPointer<SDefaultAoPassShader>(
-                        new SDefaultAoPassShader(*cubeShaderProgram,
+                        new SDefaultAoPassShader(cubeShaderProgram,
                                                                                       GetContext()));
         } else {
             m_FakeCubemapDepthShader = QSharedPointer<SDefaultAoPassShader>();
@@ -2060,17 +2055,17 @@ STextRenderHelper QDemonRendererImpl::GetTextShader(bool inUsePathRendering)
 {
     STextShaderPtr &thePtr = (!inUsePathRendering) ? m_TextShader : m_TextPathShader;
     if (thePtr.HasGeneratedShader())
-        return STextRenderHelper(thePtr, *m_QuadInputAssembler);
+        return STextRenderHelper(thePtr, m_QuadInputAssembler);
 
-    QDemonRenderShaderProgram *theShader = nullptr;
-    QDemonRenderProgramPipeline *thePipeline = nullptr;
+    QSharedPointer<QDemonRenderShaderProgram> theShader = nullptr;
+    QSharedPointer<QDemonRenderProgramPipeline> thePipeline = nullptr;
 
     if (!inUsePathRendering) {
-        GetProgramGenerator().BeginProgram();
+        GetProgramGenerator()->BeginProgram();
         IShaderStageGenerator &vertexGenerator(
-                    *GetProgramGenerator().GetStage(ShaderGeneratorStages::Vertex));
+                    *GetProgramGenerator()->GetStage(ShaderGeneratorStages::Vertex));
         IShaderStageGenerator &fragmentGenerator(
-                    *GetProgramGenerator().GetStage(ShaderGeneratorStages::Fragment));
+                    *GetProgramGenerator()->GetStage(ShaderGeneratorStages::Fragment));
 
         vertexGenerator.AddIncoming("attr_pos", "vec3");
         vertexGenerator.AddIncoming("attr_uv", "vec2");
@@ -2082,7 +2077,7 @@ STextRenderHelper QDemonRendererImpl::GetTextShader(bool inUsePathRendering)
         vertexGenerator
                 << "\tvec3 textPos = vec3(attr_pos.x * text_dimensions.x + text_dimensions.z"
                 << ", attr_pos.y * text_dimensions.y + text_dimensions.w"
-                << ", attr_pos.z);" << Endl;
+                << ", attr_pos.z);" << QStringLiteral("\n");
 
         vertexGenerator.Append("\tgl_Position = model_view_projection * vec4(textPos, 1.0);");
         vertexGenerator.Append("\tuv_coords = attr_uv;");
@@ -2096,10 +2091,10 @@ STextRenderHelper QDemonRendererImpl::GetTextShader(bool inUsePathRendering)
         // Enable rendering from a sub-rect
 
         fragmentGenerator
-                << "\ttheCoords.x = theCoords.x * text_textdimensions.x;" << Endl
-                << "\ttheCoords.y = theCoords.y * text_textdimensions.y;" << Endl
+                << "\ttheCoords.x = theCoords.x * text_textdimensions.x;" << QStringLiteral("\n")
+                << "\ttheCoords.y = theCoords.y * text_textdimensions.y;" << QStringLiteral("\n")
                    // flip the y uv coord if the dimension's z variable is set
-                << "\tif ( text_textdimensions.z > 0.0 ) theCoords.y = 1.0 - theCoords.y;" << Endl;
+                << "\tif ( text_textdimensions.z > 0.0 ) theCoords.y = 1.0 - theCoords.y;" << QStringLiteral("\n");
         fragmentGenerator.Append(
                     "\tvec4 c = texture2D(text_image, theCoords);");
         fragmentGenerator.Append(
@@ -2109,13 +2104,13 @@ STextRenderHelper QDemonRendererImpl::GetTextShader(bool inUsePathRendering)
         vertexGenerator.Append("}");
         fragmentGenerator.Append("}");
         const char *shaderName = "text shader";
-        theShader = GetProgramGenerator().CompileGeneratedShader(
+        theShader = GetProgramGenerator()->CompileGeneratedShader(
                     shaderName, SShaderCacheProgramFlags(), TShaderFeatureSet(), false);
     } else {
-        GetProgramGenerator().BeginProgram(
+        GetProgramGenerator()->BeginProgram(
                     TShaderGeneratorStageFlags(ShaderGeneratorStages::Fragment));
         IShaderStageGenerator &fragmentGenerator(
-                    *GetProgramGenerator().GetStage(ShaderGeneratorStages::Fragment));
+                    *GetProgramGenerator()->GetStage(ShaderGeneratorStages::Fragment));
 
         fragmentGenerator.AddUniform("text_textcolor", "vec4");
         fragmentGenerator.AddUniform("text_backgroundcolor", "vec3");
@@ -2126,12 +2121,12 @@ STextRenderHelper QDemonRendererImpl::GetTextShader(bool inUsePathRendering)
         fragmentGenerator.Append("}");
 
         const char *shaderName = "text path shader";
-        theShader = GetProgramGenerator().CompileGeneratedShader(
+        theShader = GetProgramGenerator()->CompileGeneratedShader(
                     shaderName, SShaderCacheProgramFlags(), TShaderFeatureSet(), true);
 
         // setup program pipeline
         if (theShader) {
-            thePipeline = GetContext().CreateProgramPipeline();
+            thePipeline = GetContext()->CreateProgramPipeline();
             if (thePipeline) {
                 thePipeline->SetProgramStages(
                             theShader,
@@ -2144,20 +2139,20 @@ STextRenderHelper QDemonRendererImpl::GetTextShader(bool inUsePathRendering)
         thePtr.Set(nullptr);
     } else {
         GenerateXYQuad();
-        thePtr.Set(new STextShader(*theShader, thePipeline));
+        thePtr.Set(new STextShader(theShader, thePipeline));
     }
-    return STextRenderHelper(thePtr, *m_QuadInputAssembler);
+    return STextRenderHelper(thePtr, m_QuadInputAssembler);
 }
 
-STextDepthShader *QDemonRendererImpl::GetTextDepthShader()
+QSharedPointer<STextDepthShader> QDemonRendererImpl::GetTextDepthShader()
 {
     if (m_TextDepthPrepassShader.hasValue() == false) {
-        GetProgramGenerator().BeginProgram();
+        GetProgramGenerator()->BeginProgram();
 
         IShaderStageGenerator &vertexGenerator(
-                    *GetProgramGenerator().GetStage(ShaderGeneratorStages::Vertex));
+                    *GetProgramGenerator()->GetStage(ShaderGeneratorStages::Vertex));
         IShaderStageGenerator &fragmentGenerator(
-                    *GetProgramGenerator().GetStage(ShaderGeneratorStages::Fragment));
+                    *GetProgramGenerator()->GetStage(ShaderGeneratorStages::Fragment));
         vertexGenerator.AddIncoming("attr_pos", "vec3");
         vertexGenerator.AddIncoming("attr_uv", "vec2");
         // xy of text dimensions are scaling factors, zw are offset factors.
@@ -2168,7 +2163,7 @@ STextDepthShader *QDemonRendererImpl::GetTextDepthShader()
         vertexGenerator
                 << "\tvec3 textPos = vec3(attr_pos.x * text_dimensions.x + text_dimensions.z"
                 << ", attr_pos.y * text_dimensions.y + text_dimensions.w"
-                << ", attr_pos.z);" << Endl;
+                << ", attr_pos.z);" << QStringLiteral("\n");
 
         vertexGenerator.Append("\tgl_Position = model_view_projection * vec4(textPos, 1.0);");
         vertexGenerator.Append("\tuv_coords = attr_uv;");
@@ -2180,39 +2175,39 @@ STextDepthShader *QDemonRendererImpl::GetTextDepthShader()
         // Enable rendering from a sub-rect
 
         fragmentGenerator
-                << "\ttheCoords.x = theCoords.x * text_textdimensions.x;" << Endl
-                << "\ttheCoords.y = theCoords.y * text_textdimensions.y;" << Endl
+                << "\ttheCoords.x = theCoords.x * text_textdimensions.x;" << QStringLiteral("\n")
+                << "\ttheCoords.y = theCoords.y * text_textdimensions.y;" << QStringLiteral("\n")
                    // flip the y uv coord if the dimension's z variable is set
-                << "\tif ( text_textdimensions.z > 0.0 ) theCoords.y = 1.0 - theCoords.y;" << Endl;
+                << "\tif ( text_textdimensions.z > 0.0 ) theCoords.y = 1.0 - theCoords.y;" << QStringLiteral("\n");
         fragmentGenerator.Append("\tfloat alpha_mask = texture2D( text_image, theCoords ).r;");
         fragmentGenerator.Append("\tif ( alpha_mask < .05 ) discard;");
         vertexGenerator.Append("}");
         fragmentGenerator.Append("}");
         const char *shaderName = "text depth shader";
-        QDemonRenderShaderProgram *theShader = GetProgramGenerator().CompileGeneratedShader(
+        QSharedPointer<QDemonRenderShaderProgram> theShader = GetProgramGenerator()->CompileGeneratedShader(
                     shaderName, SShaderCacheProgramFlags(), TShaderFeatureSet());
         if (theShader == nullptr) {
             m_TextDepthPrepassShader = QSharedPointer<STextDepthShader>();
         } else {
             GenerateXYQuad();
             m_TextDepthPrepassShader = QSharedPointer<STextDepthShader>(
-                        new STextDepthShader(*theShader, *m_QuadInputAssembler));
+                        new STextDepthShader(theShader, m_QuadInputAssembler));
         }
     }
-    return m_TextDepthPrepassShader->mPtr;
+    return m_TextDepthPrepassShader;
 }
 
 STextRenderHelper QDemonRendererImpl::GetTextWidgetShader()
 {
     if (m_TextWidgetShader.HasGeneratedShader())
-        return STextRenderHelper(m_TextWidgetShader, *m_QuadInputAssembler);
+        return STextRenderHelper(m_TextWidgetShader, m_QuadInputAssembler);
 
-    GetProgramGenerator().BeginProgram();
+    GetProgramGenerator()->BeginProgram();
 
     IShaderStageGenerator &vertexGenerator(
-                *GetProgramGenerator().GetStage(ShaderGeneratorStages::Vertex));
+                *GetProgramGenerator()->GetStage(ShaderGeneratorStages::Vertex));
     IShaderStageGenerator &fragmentGenerator(
-                *GetProgramGenerator().GetStage(ShaderGeneratorStages::Fragment));
+                *GetProgramGenerator()->GetStage(ShaderGeneratorStages::Fragment));
 
     vertexGenerator.AddIncoming("attr_pos", "vec3");
     vertexGenerator.AddIncoming("attr_uv", "vec2");
@@ -2224,7 +2219,7 @@ STextRenderHelper QDemonRendererImpl::GetTextWidgetShader()
     vertexGenerator
             << "\tvec3 textPos = vec3(attr_pos.x * text_dimensions.x + text_dimensions.z"
             << ", attr_pos.y * text_dimensions.y + text_dimensions.w"
-            << ", attr_pos.z);" << Endl;
+            << ", attr_pos.z);" << QStringLiteral("\n");
 
     vertexGenerator.Append("\tgl_Position = model_view_projection * vec4(textPos, 1.0);");
     vertexGenerator.Append("\tuv_coords = attr_uv;");
@@ -2238,39 +2233,39 @@ STextRenderHelper QDemonRendererImpl::GetTextWidgetShader()
     fragmentGenerator.Append("\tvec2 theCoords = uv_coords;");
     // Enable rendering from a sub-rect
 
-    fragmentGenerator << "\ttheCoords.x = theCoords.x * text_textdimensions.x;" << Endl
-                      << "\ttheCoords.y = theCoords.y * text_textdimensions.y;" << Endl
+    fragmentGenerator << "\ttheCoords.x = theCoords.x * text_textdimensions.x;" << QStringLiteral("\n")
+                      << "\ttheCoords.y = theCoords.y * text_textdimensions.y;" << QStringLiteral("\n")
                          // flip the y uv coord if the dimension's z variable is set
                       << "\tif ( text_textdimensions.z > 0.0 ) theCoords.y = 1.0 - theCoords.y;"
-                      << Endl;
+                      << QStringLiteral("\n");
     fragmentGenerator.Append(
                 "\tfloat alpha_mask = texture2D( text_image, theCoords ).r * text_textcolor.a;");
     fragmentGenerator.Append("\tfragOutput = vec4(mix(text_backgroundcolor.rgb, "
                              "text_textcolor.rgb, alpha_mask), 1.0 );");
     fragmentGenerator.Append("}");
-    QDemonRenderShaderProgram *theShader = GetProgramGenerator().CompileGeneratedShader(
+    QSharedPointer<QDemonRenderShaderProgram> theShader = GetProgramGenerator()->CompileGeneratedShader(
                 "text widget shader", SShaderCacheProgramFlags(), TShaderFeatureSet());
 
     if (theShader == nullptr)
         m_TextWidgetShader.Set(nullptr);
     else {
         GenerateXYQuad();
-        m_TextWidgetShader.Set(new STextShader(*theShader));
+        m_TextWidgetShader.Set(new STextShader(theShader));
     }
-    return STextRenderHelper(m_TextWidgetShader, *m_QuadInputAssembler);
+    return STextRenderHelper(m_TextWidgetShader, m_QuadInputAssembler);
 }
 
 STextRenderHelper QDemonRendererImpl::GetOnscreenTextShader()
 {
     if (m_TextOnscreenShader.HasGeneratedShader())
-        return STextRenderHelper(m_TextOnscreenShader, *m_QuadStripInputAssembler);
+        return STextRenderHelper(m_TextOnscreenShader, m_QuadStripInputAssembler);
 
-    GetProgramGenerator().BeginProgram();
+    GetProgramGenerator()->BeginProgram();
 
     IShaderStageGenerator &vertexGenerator(
-                *GetProgramGenerator().GetStage(ShaderGeneratorStages::Vertex));
+                *GetProgramGenerator()->GetStage(ShaderGeneratorStages::Vertex));
     IShaderStageGenerator &fragmentGenerator(
-                *GetProgramGenerator().GetStage(ShaderGeneratorStages::Fragment));
+                *GetProgramGenerator()->GetStage(ShaderGeneratorStages::Fragment));
 
     vertexGenerator.AddIncoming("attr_pos", "vec3");
     vertexGenerator.AddIncoming("attr_uv", "vec2");
@@ -2292,26 +2287,26 @@ STextRenderHelper QDemonRendererImpl::GetOnscreenTextShader()
                 "\tfragOutput = vec4(text_textcolor.r, text_textcolor.g, text_textcolor.b, alpha);");
     fragmentGenerator.Append("}");
 
-    QDemonRenderShaderProgram *theShader = GetProgramGenerator().CompileGeneratedShader(
+    QSharedPointer<QDemonRenderShaderProgram> theShader = GetProgramGenerator()->CompileGeneratedShader(
                 "onscreen texture shader", SShaderCacheProgramFlags(), TShaderFeatureSet());
 
     if (theShader == nullptr)
         m_TextOnscreenShader.Set(nullptr);
     else {
         GenerateXYQuadStrip();
-        m_TextOnscreenShader.Set(new STextShader(*theShader));
+        m_TextOnscreenShader.Set(new STextShader(theShader));
     }
-    return STextRenderHelper(m_TextOnscreenShader, *m_QuadStripInputAssembler);
+    return STextRenderHelper(m_TextOnscreenShader, m_QuadStripInputAssembler);
 }
 
-QDemonRenderShaderProgram *QDemonRendererImpl::GetTextAtlasEntryShader()
+QSharedPointer<QDemonRenderShaderProgram> QDemonRendererImpl::GetTextAtlasEntryShader()
 {
-    GetProgramGenerator().BeginProgram();
+    GetProgramGenerator()->BeginProgram();
 
     IShaderStageGenerator &vertexGenerator(
-                *GetProgramGenerator().GetStage(ShaderGeneratorStages::Vertex));
+                *GetProgramGenerator()->GetStage(ShaderGeneratorStages::Vertex));
     IShaderStageGenerator &fragmentGenerator(
-                *GetProgramGenerator().GetStage(ShaderGeneratorStages::Fragment));
+                *GetProgramGenerator()->GetStage(ShaderGeneratorStages::Fragment));
 
     vertexGenerator.AddIncoming("attr_pos", "vec3");
     vertexGenerator.AddIncoming("attr_uv", "vec2");
@@ -2329,7 +2324,7 @@ QDemonRenderShaderProgram *QDemonRendererImpl::GetTextAtlasEntryShader()
     fragmentGenerator.Append("\tfragOutput = vec4(alpha, alpha, alpha, alpha);");
     fragmentGenerator.Append("}");
 
-    QDemonRenderShaderProgram *theShader = GetProgramGenerator().CompileGeneratedShader(
+    QSharedPointer<QDemonRenderShaderProgram> theShader = GetProgramGenerator()->CompileGeneratedShader(
                 "texture atlas entry shader", SShaderCacheProgramFlags(), TShaderFeatureSet());
 
     return theShader;
@@ -2341,17 +2336,17 @@ STextRenderHelper QDemonRendererImpl::GetShader(STextRenderable & /*inRenderable
     return GetTextShader(inUsePathRendering);
 }
 
-SLayerSceneShader *QDemonRendererImpl::GetSceneLayerShader()
+QSharedPointer<SLayerSceneShader> QDemonRendererImpl::GetSceneLayerShader()
 {
     if (m_SceneLayerShader.hasValue())
         return m_SceneLayerShader.getValue();
 
-    GetProgramGenerator().BeginProgram();
+    GetProgramGenerator()->BeginProgram();
 
     IShaderStageGenerator &vertexGenerator(
-                *GetProgramGenerator().GetStage(ShaderGeneratorStages::Vertex));
+                *GetProgramGenerator()->GetStage(ShaderGeneratorStages::Vertex));
     IShaderStageGenerator &fragmentGenerator(
-                *GetProgramGenerator().GetStage(ShaderGeneratorStages::Fragment));
+                *GetProgramGenerator()->GetStage(ShaderGeneratorStages::Fragment));
 
     vertexGenerator.AddIncoming("attr_pos", "vec3");
     vertexGenerator.AddIncoming("attr_uv", "vec2");
@@ -2362,7 +2357,7 @@ SLayerSceneShader *QDemonRendererImpl::GetSceneLayerShader()
     vertexGenerator.Append("void main() {");
     vertexGenerator << "\tvec3 layerPos = vec3(attr_pos.x * layer_dimensions.x / 2.0"
                     << ", attr_pos.y * layer_dimensions.y / 2.0"
-                    << ", attr_pos.z);" << Endl;
+                    << ", attr_pos.z);" << QStringLiteral("\n");
 
     vertexGenerator.Append("\tgl_Position = model_view_projection * vec4(layerPos, 1.0);");
     vertexGenerator.Append("\tuv_coords = attr_uv;");
@@ -2375,26 +2370,26 @@ SLayerSceneShader *QDemonRendererImpl::GetSceneLayerShader()
     fragmentGenerator.Append("\tif( theLayerTexture.a == 0.0 ) discard;\n");
     fragmentGenerator.Append("\tfragOutput = theLayerTexture;\n");
     fragmentGenerator.Append("}");
-    QDemonRenderShaderProgram *theShader = GetProgramGenerator().CompileGeneratedShader(
+    QSharedPointer<QDemonRenderShaderProgram> theShader = GetProgramGenerator()->CompileGeneratedShader(
                 "layer shader", SShaderCacheProgramFlags(), TShaderFeatureSet());
     QSharedPointer<SLayerSceneShader> retval;
     if (theShader)
-        retval = new SLayerSceneShader(*theShader);
+        retval = QSharedPointer<SLayerSceneShader>(new SLayerSceneShader(theShader));
     m_SceneLayerShader = retval;
     return m_SceneLayerShader.getValue();
 }
 
-SLayerProgAABlendShader *QDemonRendererImpl::GetLayerProgAABlendShader()
+QSharedPointer<SLayerProgAABlendShader> QDemonRendererImpl::GetLayerProgAABlendShader()
 {
     if (m_LayerProgAAShader.hasValue())
         return m_LayerProgAAShader.getValue();
 
-    GetProgramGenerator().BeginProgram();
+    GetProgramGenerator()->BeginProgram();
 
     IShaderStageGenerator &vertexGenerator(
-                *GetProgramGenerator().GetStage(ShaderGeneratorStages::Vertex));
+                *GetProgramGenerator()->GetStage(ShaderGeneratorStages::Vertex));
     IShaderStageGenerator &fragmentGenerator(
-                *GetProgramGenerator().GetStage(ShaderGeneratorStages::Fragment));
+                *GetProgramGenerator()->GetStage(ShaderGeneratorStages::Fragment));
     vertexGenerator.AddIncoming("attr_pos", "vec3");
     vertexGenerator.AddIncoming("attr_uv", "vec2");
     vertexGenerator.AddOutgoing("uv_coords", "vec2");
@@ -2411,26 +2406,26 @@ SLayerProgAABlendShader *QDemonRendererImpl::GetLayerProgAABlendShader()
     fragmentGenerator.Append(
                 "\tgl_FragColor = accum*blend_factors.y + lastFrame*blend_factors.x;");
     fragmentGenerator.Append("}");
-    QDemonRenderShaderProgram *theShader = GetProgramGenerator().CompileGeneratedShader(
+    QSharedPointer<QDemonRenderShaderProgram> theShader = GetProgramGenerator()->CompileGeneratedShader(
                 "layer progressiveAA blend shader", SShaderCacheProgramFlags(), TShaderFeatureSet());
     QSharedPointer<SLayerProgAABlendShader> retval;
     if (theShader)
-        retval = new SLayerProgAABlendShader(*theShader);
+        retval = QSharedPointer<SLayerProgAABlendShader>(new SLayerProgAABlendShader(theShader));
     m_LayerProgAAShader = retval;
     return m_LayerProgAAShader.getValue();
 }
 
-SShadowmapPreblurShader *QDemonRendererImpl::GetCubeShadowBlurXShader()
+QSharedPointer<SShadowmapPreblurShader> QDemonRendererImpl::GetCubeShadowBlurXShader()
 {
     if (m_CubeShadowBlurXShader.hasValue())
         return m_CubeShadowBlurXShader.getValue();
 
-    GetProgramGenerator().BeginProgram();
+    GetProgramGenerator()->BeginProgram();
 
     IShaderStageGenerator &vertexGenerator(
-                *GetProgramGenerator().GetStage(ShaderGeneratorStages::Vertex));
+                *GetProgramGenerator()->GetStage(ShaderGeneratorStages::Vertex));
     IShaderStageGenerator &fragmentGenerator(
-                *GetProgramGenerator().GetStage(ShaderGeneratorStages::Fragment));
+                *GetProgramGenerator()->GetStage(ShaderGeneratorStages::Fragment));
     vertexGenerator.AddIncoming("attr_pos", "vec3");
     // vertexGenerator.AddIncoming("attr_uv", "vec2");
     vertexGenerator.AddOutgoing("uv_coords", "vec2");
@@ -2542,26 +2537,26 @@ SShadowmapPreblurShader *QDemonRendererImpl::GetCubeShadowBlurXShader()
 
     fragmentGenerator.Append("}");
 
-    QDemonRenderShaderProgram *theShader = GetProgramGenerator().CompileGeneratedShader(
+    QSharedPointer<QDemonRenderShaderProgram> theShader = GetProgramGenerator()->CompileGeneratedShader(
                 "cubemap shadow blur X shader", SShaderCacheProgramFlags(), TShaderFeatureSet());
     QSharedPointer<SShadowmapPreblurShader> retval;
     if (theShader)
-        retval = new SShadowmapPreblurShader(*theShader);
+        retval = QSharedPointer<SShadowmapPreblurShader>(new SShadowmapPreblurShader(theShader));
     m_CubeShadowBlurXShader = retval;
     return m_CubeShadowBlurXShader.getValue();
 }
 
-SShadowmapPreblurShader *QDemonRendererImpl::GetCubeShadowBlurYShader()
+QSharedPointer<SShadowmapPreblurShader> QDemonRendererImpl::GetCubeShadowBlurYShader()
 {
     if (m_CubeShadowBlurYShader.hasValue())
         return m_CubeShadowBlurYShader.getValue();
 
-    GetProgramGenerator().BeginProgram();
+    GetProgramGenerator()->BeginProgram();
 
     IShaderStageGenerator &vertexGenerator(
-                *GetProgramGenerator().GetStage(ShaderGeneratorStages::Vertex));
+                *GetProgramGenerator()->GetStage(ShaderGeneratorStages::Vertex));
     IShaderStageGenerator &fragmentGenerator(
-                *GetProgramGenerator().GetStage(ShaderGeneratorStages::Fragment));
+                *GetProgramGenerator()->GetStage(ShaderGeneratorStages::Fragment));
     vertexGenerator.AddIncoming("attr_pos", "vec3");
     // vertexGenerator.AddIncoming("attr_uv", "vec2");
     vertexGenerator.AddOutgoing("uv_coords", "vec2");
@@ -2673,26 +2668,26 @@ SShadowmapPreblurShader *QDemonRendererImpl::GetCubeShadowBlurYShader()
 
     fragmentGenerator.Append("}");
 
-    QDemonRenderShaderProgram *theShader = GetProgramGenerator().CompileGeneratedShader(
+    QSharedPointer<QDemonRenderShaderProgram> theShader = GetProgramGenerator()->CompileGeneratedShader(
                 "cubemap shadow blur Y shader", SShaderCacheProgramFlags(), TShaderFeatureSet());
     QSharedPointer<SShadowmapPreblurShader> retval;
     if (theShader)
-        retval = new SShadowmapPreblurShader(*theShader);
+        retval = QSharedPointer<SShadowmapPreblurShader>(new SShadowmapPreblurShader(theShader));
     m_CubeShadowBlurYShader = retval;
     return m_CubeShadowBlurYShader.getValue();
 }
 
-SShadowmapPreblurShader *QDemonRendererImpl::GetOrthoShadowBlurXShader()
+QSharedPointer<SShadowmapPreblurShader> QDemonRendererImpl::GetOrthoShadowBlurXShader()
 {
     if (m_OrthoShadowBlurXShader.hasValue())
         return m_OrthoShadowBlurXShader.getValue();
 
-    GetProgramGenerator().BeginProgram();
+    GetProgramGenerator()->BeginProgram();
 
     IShaderStageGenerator &vertexGenerator(
-                *GetProgramGenerator().GetStage(ShaderGeneratorStages::Vertex));
+                *GetProgramGenerator()->GetStage(ShaderGeneratorStages::Vertex));
     IShaderStageGenerator &fragmentGenerator(
-                *GetProgramGenerator().GetStage(ShaderGeneratorStages::Fragment));
+                *GetProgramGenerator()->GetStage(ShaderGeneratorStages::Fragment));
     vertexGenerator.AddIncoming("attr_pos", "vec3");
     vertexGenerator.AddIncoming("attr_uv", "vec2");
     vertexGenerator.AddOutgoing("uv_coords", "vec2");
@@ -2716,26 +2711,26 @@ SShadowmapPreblurShader *QDemonRendererImpl::GetOrthoShadowBlurXShader()
     fragmentGenerator.Append("\tfragOutput = vec4(outDepth);");
     fragmentGenerator.Append("}");
 
-    QDemonRenderShaderProgram *theShader = GetProgramGenerator().CompileGeneratedShader(
+    QSharedPointer<QDemonRenderShaderProgram> theShader = GetProgramGenerator()->CompileGeneratedShader(
                 "shadow map blur X shader", SShaderCacheProgramFlags(), TShaderFeatureSet());
     QSharedPointer<SShadowmapPreblurShader> retval;
     if (theShader)
-        retval = new SShadowmapPreblurShader(*theShader);
+        retval = QSharedPointer<SShadowmapPreblurShader>(new SShadowmapPreblurShader(theShader));
     m_OrthoShadowBlurXShader = retval;
     return m_OrthoShadowBlurXShader.getValue();
 }
 
-SShadowmapPreblurShader *QDemonRendererImpl::GetOrthoShadowBlurYShader()
+QSharedPointer<SShadowmapPreblurShader> QDemonRendererImpl::GetOrthoShadowBlurYShader()
 {
     if (m_OrthoShadowBlurYShader.hasValue())
         return m_OrthoShadowBlurYShader.getValue();
 
-    GetProgramGenerator().BeginProgram();
+    GetProgramGenerator()->BeginProgram();
 
     IShaderStageGenerator &vertexGenerator(
-                *GetProgramGenerator().GetStage(ShaderGeneratorStages::Vertex));
+                *GetProgramGenerator()->GetStage(ShaderGeneratorStages::Vertex));
     IShaderStageGenerator &fragmentGenerator(
-                *GetProgramGenerator().GetStage(ShaderGeneratorStages::Fragment));
+                *GetProgramGenerator()->GetStage(ShaderGeneratorStages::Fragment));
     vertexGenerator.AddIncoming("attr_pos", "vec3");
     vertexGenerator.AddIncoming("attr_uv", "vec2");
     vertexGenerator.AddOutgoing("uv_coords", "vec2");
@@ -2759,17 +2754,17 @@ SShadowmapPreblurShader *QDemonRendererImpl::GetOrthoShadowBlurYShader()
     fragmentGenerator.Append("\tfragOutput = vec4(outDepth);");
     fragmentGenerator.Append("}");
 
-    QDemonRenderShaderProgram *theShader = GetProgramGenerator().CompileGeneratedShader(
+    QSharedPointer<QDemonRenderShaderProgram> theShader = GetProgramGenerator()->CompileGeneratedShader(
                 "shadow map blur Y shader", SShaderCacheProgramFlags(), TShaderFeatureSet());
     QSharedPointer<SShadowmapPreblurShader> retval;
     if (theShader)
-        retval = new SShadowmapPreblurShader(*theShader);
+        retval = QSharedPointer<SShadowmapPreblurShader>(new SShadowmapPreblurShader(theShader));
     m_OrthoShadowBlurYShader = retval;
     return m_OrthoShadowBlurYShader.getValue();
 }
 
 #ifdef ADVANCED_BLEND_SW_FALLBACK
-SAdvancedModeBlendShader *
+QSharedPointer<SAdvancedModeBlendShader>
 QDemonRendererImpl::GetAdvancedBlendModeShader(AdvancedBlendModes::Enum blendMode)
 {
     // Select between blend equations.
@@ -2783,17 +2778,17 @@ QDemonRendererImpl::GetAdvancedBlendModeShader(AdvancedBlendModes::Enum blendMod
     return {};
 }
 
-SAdvancedModeBlendShader *QDemonRendererImpl::GetOverlayBlendModeShader()
+QSharedPointer<SAdvancedModeBlendShader> QDemonRendererImpl::GetOverlayBlendModeShader()
 {
     if (m_AdvancedModeOverlayBlendShader.hasValue())
         return m_AdvancedModeOverlayBlendShader.getValue();
 
-    GetProgramGenerator().BeginProgram();
+    GetProgramGenerator()->BeginProgram();
 
     IShaderStageGenerator &vertexGenerator(
-                *GetProgramGenerator().GetStage(ShaderGeneratorStages::Vertex));
+                *GetProgramGenerator()->GetStage(ShaderGeneratorStages::Vertex));
     IShaderStageGenerator &fragmentGenerator(
-                *GetProgramGenerator().GetStage(ShaderGeneratorStages::Fragment));
+                *GetProgramGenerator()->GetStage(ShaderGeneratorStages::Fragment));
     vertexGenerator.AddIncoming("attr_pos", "vec3");
     vertexGenerator.AddIncoming("attr_uv", "vec2");
     vertexGenerator.AddOutgoing("uv_coords", "vec2");
@@ -2819,7 +2814,7 @@ SAdvancedModeBlendShader *QDemonRendererImpl::GetOverlayBlendModeShader()
     fragmentGenerator.Append("\tfloat p2 = blend.a * (1.0 - base.a);");
     fragmentGenerator.Append("\tres.a = p0 + p1 + p2;");
 
-    QDemonRenderShaderProgram *theShader;
+    QSharedPointer<QDemonRenderShaderProgram> theShader;
     fragmentGenerator.Append(
                 "\tfloat f_rs_rd = (base.r < 0.5? (2.0 * base.r * blend.r) : "
                 "(1.0 - 2.0 * (1.0 - base.r) * (1.0 - blend.r)));");
@@ -2834,27 +2829,27 @@ SAdvancedModeBlendShader *QDemonRendererImpl::GetOverlayBlendModeShader()
     fragmentGenerator.Append("\tres.b = f_bs_bd * p0 + base.b * p1 + blend.b * p2;");
     fragmentGenerator.Append("\tgl_FragColor = vec4(res.rgb * res.a, res.a);");
     fragmentGenerator.Append("}");
-    theShader = GetProgramGenerator().CompileGeneratedShader(
+    theShader = GetProgramGenerator()->CompileGeneratedShader(
                 "advanced overlay shader", SShaderCacheProgramFlags(), TShaderFeatureSet());
 
     QSharedPointer<SAdvancedModeBlendShader> retval;
     if (theShader)
-        retval = new SAdvancedModeBlendShader(*theShader);
+        retval = QSharedPointer<SAdvancedModeBlendShader>(new SAdvancedModeBlendShader(theShader));
     m_AdvancedModeOverlayBlendShader = retval;
     return m_AdvancedModeOverlayBlendShader.getValue();
 }
 
-SAdvancedModeBlendShader *QDemonRendererImpl::GetColorBurnBlendModeShader()
+ QSharedPointer<SAdvancedModeBlendShader> QDemonRendererImpl::GetColorBurnBlendModeShader()
 {
     if (m_AdvancedModeColorBurnBlendShader.hasValue())
         return m_AdvancedModeColorBurnBlendShader.getValue();
 
-    GetProgramGenerator().BeginProgram();
+    GetProgramGenerator()->BeginProgram();
 
     IShaderStageGenerator &vertexGenerator(
-                *GetProgramGenerator().GetStage(ShaderGeneratorStages::Vertex));
+                *GetProgramGenerator()->GetStage(ShaderGeneratorStages::Vertex));
     IShaderStageGenerator &fragmentGenerator(
-                *GetProgramGenerator().GetStage(ShaderGeneratorStages::Fragment));
+                *GetProgramGenerator()->GetStage(ShaderGeneratorStages::Fragment));
     vertexGenerator.AddIncoming("attr_pos", "vec3");
     vertexGenerator.AddIncoming("attr_uv", "vec2");
     vertexGenerator.AddOutgoing("uv_coords", "vec2");
@@ -2880,7 +2875,7 @@ SAdvancedModeBlendShader *QDemonRendererImpl::GetColorBurnBlendModeShader()
     fragmentGenerator.Append("\tfloat p2 = blend.a * (1.0 - base.a);");
     fragmentGenerator.Append("\tres.a = p0 + p1 + p2;");
 
-    QDemonRenderShaderProgram *theShader;
+    QSharedPointer<QDemonRenderShaderProgram> theShader;
     fragmentGenerator.Append(
                 "\tfloat f_rs_rd = ((base.r == 1.0) ? 1.0 : "
                 "(blend.r == 0.0) ? 0.0 : 1.0 - min(1.0, ((1.0 - base.r) / blend.r)));");
@@ -2896,27 +2891,27 @@ SAdvancedModeBlendShader *QDemonRendererImpl::GetColorBurnBlendModeShader()
     fragmentGenerator.Append("\tgl_FragColor =  vec4(res.rgb * res.a, res.a);");
     fragmentGenerator.Append("}");
 
-    theShader = GetProgramGenerator().CompileGeneratedShader(
+    theShader = GetProgramGenerator()->CompileGeneratedShader(
                 "advanced colorBurn shader", SShaderCacheProgramFlags(), TShaderFeatureSet());
     QSharedPointer<SAdvancedModeBlendShader> retval;
     if (theShader)
-        retval = new SAdvancedModeBlendShader(*theShader);
+        retval = QSharedPointer<SAdvancedModeBlendShader>(new SAdvancedModeBlendShader(theShader));
     m_AdvancedModeColorBurnBlendShader = retval;
     return m_AdvancedModeColorBurnBlendShader.getValue();
 
 }
 
-SAdvancedModeBlendShader *QDemonRendererImpl::GetColorDodgeBlendModeShader()
+QSharedPointer<SAdvancedModeBlendShader> QDemonRendererImpl::GetColorDodgeBlendModeShader()
 {
     if (m_AdvancedModeColorDodgeBlendShader.hasValue())
         return m_AdvancedModeColorDodgeBlendShader.getValue();
 
-    GetProgramGenerator().BeginProgram();
+    GetProgramGenerator()->BeginProgram();
 
     IShaderStageGenerator &vertexGenerator(
-                *GetProgramGenerator().GetStage(ShaderGeneratorStages::Vertex));
+                *GetProgramGenerator()->GetStage(ShaderGeneratorStages::Vertex));
     IShaderStageGenerator &fragmentGenerator(
-                *GetProgramGenerator().GetStage(ShaderGeneratorStages::Fragment));
+                *GetProgramGenerator()->GetStage(ShaderGeneratorStages::Fragment));
     vertexGenerator.AddIncoming("attr_pos", "vec3");
     vertexGenerator.AddIncoming("attr_uv", "vec2");
     vertexGenerator.AddOutgoing("uv_coords", "vec2");
@@ -2942,7 +2937,7 @@ SAdvancedModeBlendShader *QDemonRendererImpl::GetColorDodgeBlendModeShader()
     fragmentGenerator.Append("\tfloat p2 = blend.a * (1.0 - base.a);");
     fragmentGenerator.Append("\tres.a = p0 + p1 + p2;");
 
-    QDemonRenderShaderProgram *theShader;
+    QSharedPointer<QDemonRenderShaderProgram> theShader;
     fragmentGenerator.Append(
                 "\tfloat f_rs_rd = ((base.r == 0.0) ? 0.0 : "
                 "(blend.r == 1.0) ? 1.0 : min(base.r / (1.0 - blend.r), 1.0));");
@@ -2958,11 +2953,11 @@ SAdvancedModeBlendShader *QDemonRendererImpl::GetColorDodgeBlendModeShader()
 
     fragmentGenerator.Append("\tgl_FragColor =  vec4(res.rgb * res.a, res.a);");
     fragmentGenerator.Append("}");
-    theShader = GetProgramGenerator().CompileGeneratedShader(
+    theShader = GetProgramGenerator()->CompileGeneratedShader(
                 "advanced colorDodge shader", SShaderCacheProgramFlags(), TShaderFeatureSet());
     QSharedPointer<SAdvancedModeBlendShader> retval;
     if (theShader)
-        retval = new SAdvancedModeBlendShader(*theShader);
+        retval = QSharedPointer<SAdvancedModeBlendShader>(new SAdvancedModeBlendShader(theShader));
     m_AdvancedModeColorDodgeBlendShader = retval;
     return m_AdvancedModeColorDodgeBlendShader.getValue();
 

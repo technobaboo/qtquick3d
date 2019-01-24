@@ -29,7 +29,7 @@
 ****************************************************************************/
 #include <QtDemonRuntimeRender/qdemonrendererimpllayerrenderhelper.h>
 #include <QtDemonRuntimeRender/qdemonrenderlayer.h>
-#include <qdemontextrenderer.h>
+#include <QtDemonRuntimeRender/qdemontextrenderer.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -63,7 +63,7 @@ float GetMaxValue(float start, float width, float value, LayerUnitTypes::Enum un
 
 QVector2D ToRectRelativeCoords(const QVector2D &inCoords, const QDemonRenderRectF &inRect)
 {
-    return QVector2D(inCoords.x - inRect.m_X, inCoords.y - inRect.m_Y);
+    return QVector2D(inCoords.x() - inRect.m_X, inCoords.y() - inRect.m_Y);
 }
 }
 
@@ -95,13 +95,13 @@ SLayerRenderHelper::SLayerRenderHelper(const QDemonRenderRectF &inPresentationVi
 
         if (m_ScaleMode == ScaleModes::FitSelected) {
             if (m_Layer->m_LeftUnits == LayerUnitTypes::Pixels)
-                left *= m_ScaleFactor.x;
+                left *= m_ScaleFactor.x();
 
             if (m_Layer->m_RightUnits == LayerUnitTypes::Pixels)
-                right *= m_ScaleFactor.x;
+                right *= m_ScaleFactor.x();
 
             if (m_Layer->m_WidthUnits == LayerUnitTypes::Pixels)
-                width *= m_ScaleFactor.x;
+                width *= m_ScaleFactor.x();
         }
 
         float horzMin = GetMinValue(inPresentationViewport.m_X, inPresentationViewport.m_Width,
@@ -133,13 +133,13 @@ SLayerRenderHelper::SLayerRenderHelper(const QDemonRenderRectF &inPresentationVi
         if (m_ScaleMode == ScaleModes::FitSelected) {
 
             if (m_Layer->m_TopUnits == LayerUnitTypes::Pixels)
-                top *= m_ScaleFactor.y;
+                top *= m_ScaleFactor.y();
 
             if (m_Layer->m_BottomUnits == LayerUnitTypes::Pixels)
-                bottom *= m_ScaleFactor.y;
+                bottom *= m_ScaleFactor.y();
 
             if (m_Layer->m_HeightUnits == LayerUnitTypes::Pixels)
-                height *= m_ScaleFactor.y;
+                height *= m_ScaleFactor.y();
         }
 
         float vertMin = GetMinValue(inPresentationViewport.m_Y, inPresentationViewport.m_Height,
@@ -165,8 +165,8 @@ SLayerRenderHelper::SLayerRenderHelper(const QDemonRenderRectF &inPresentationVi
         }
     }
 
-    m_Viewport.m_Width = NVMax(1.0f, m_Viewport.m_Width);
-    m_Viewport.m_Height = NVMax(1.0f, m_Viewport.m_Height);
+    m_Viewport.m_Width = qMax(1.0f, m_Viewport.m_Width);
+    m_Viewport.m_Height = qMax(1.0f, m_Viewport.m_Height);
     // Now force the viewport to be a multiple of four in width and height.  This is because
     // when rendering to a texture we have to respect this and not forcing it causes scaling issues
     // that are noticeable especially in situations where customers are using text and such.
@@ -209,9 +209,9 @@ SCameraGlobalCalculationResult SLayerRenderHelper::SetupCameraForRender(SCamera 
     QDemonRenderRectF rect = GetLayerRenderViewport();
     if (m_ScaleMode == ScaleModes::FitSelected) {
         rect.m_Width =
-                (float)(ITextRenderer::NextMultipleOf4((quint32)(rect.m_Width / m_ScaleFactor.x)));
+                (float)(ITextRenderer::NextMultipleOf4((quint32)(rect.m_Width / m_ScaleFactor.x())));
         rect.m_Height =
-                (float)(ITextRenderer::NextMultipleOf4((quint32)(rect.m_Height / m_ScaleFactor.y)));
+                (float)(ITextRenderer::NextMultipleOf4((quint32)(rect.m_Height / m_ScaleFactor.y())));
     }
     return m_Camera->CalculateGlobalVariables(rect, m_PresentationDesignDimensions);
 }
@@ -222,16 +222,16 @@ QDemonOption<QVector2D> SLayerRenderHelper::GetLayerMouseCoords(const QVector2D 
 {
     // First invert the y so we are dealing with numbers in a normal coordinate space.
     // Second, move into our layer's coordinate space
-    QVector2D correctCoords(inMouseCoords.x, inWindowDimensions.y - inMouseCoords.y);
+    QVector2D correctCoords(inMouseCoords.x(), inWindowDimensions.y() - inMouseCoords.y());
     QVector2D theLocalMouse = m_Viewport.ToRectRelative(correctCoords);
 
     float theRenderRectWidth = m_Viewport.m_Width;
     float theRenderRectHeight = m_Viewport.m_Height;
     // Crop the mouse to the rect.  Apply no further translations.
     if (inForceIntersect == false
-            && (theLocalMouse.x < 0.0f || theLocalMouse.x >= theRenderRectWidth
-                || theLocalMouse.y < 0.0f || theLocalMouse.y >= theRenderRectHeight)) {
-        return Empty();
+            && (theLocalMouse.x() < 0.0f || theLocalMouse.x() >= theRenderRectWidth
+                || theLocalMouse.y() < 0.0f || theLocalMouse.y() >= theRenderRectHeight)) {
+        return QDemonEmpty();
     }
     return theLocalMouse;
 }
@@ -241,7 +241,7 @@ QDemonOption<SRay> SLayerRenderHelper::GetPickRay(const QVector2D &inMouseCoords
                                             bool inForceIntersect) const
 {
     if (m_Camera == nullptr)
-        return Empty();
+        return QDemonEmpty();
     QDemonOption<QVector2D> theCoords(
                 GetLayerMouseCoords(inMouseCoords, inWindowDimensions, inForceIntersect));
     if (theCoords.hasValue()) {
@@ -250,7 +250,7 @@ QDemonOption<SRay> SLayerRenderHelper::GetPickRay(const QVector2D &inMouseCoords
         // to the layer.
         return m_Camera->Unproject(*theCoords, m_Viewport, m_PresentationDesignDimensions);
     }
-    return Empty();
+    return QDemonEmpty();
 }
 
 bool SLayerRenderHelper::IsLayerVisible() const

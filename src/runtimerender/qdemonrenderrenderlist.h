@@ -76,7 +76,7 @@ public:
     // we agree to *not* have rendered anything, no clears or anything so if you are caching
     // render state and you detect nothing has changed it may not be necessary to swap egl
     // buffers.
-    virtual quint32 AddRenderTask(IRenderTask &inTask) = 0;
+    virtual quint32 AddRenderTask(QSharedPointer<IRenderTask> inTask) = 0;
     virtual void DiscardRenderTask(quint32 inTaskId) = 0;
     // This runs through the added tasks in reverse order.  This is used to render dependencies
     // before rendering to the main render target.

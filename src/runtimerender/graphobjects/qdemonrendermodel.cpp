@@ -61,11 +61,11 @@ void SModel::AddMaterial(SGraphObject &inMaterial)
         static_cast<SDefaultMaterial &>(inMaterial).m_Parent = this;
 }
 
-QDemonBounds3 SModel::GetModelBounds(IBufferManager &inManager) const
+QDemonBounds3 SModel::GetModelBounds(QSharedPointer<IBufferManager> inManager) const
 {
     QDemonBounds3 retval;
     retval.setEmpty();
-    SRenderMesh *theMesh = inManager.LoadMesh(m_MeshPath);
+    SRenderMesh *theMesh = inManager->LoadMesh(m_MeshPath);
     if (theMesh) {
         for (quint32 idx = 0, end = theMesh->m_Subsets.size(); idx < end; ++idx)
             retval.include(theMesh->m_Subsets[idx].m_Bounds);

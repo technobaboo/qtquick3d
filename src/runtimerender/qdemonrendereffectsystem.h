@@ -45,7 +45,7 @@ struct SCommand; // UICRenderEffectCommands.h
 }
 
 struct SEffectRenderArgument {
-    QSharedPointer<SEffect> m_Effect;
+    SEffect *m_Effect;
     QSharedPointer<QDemonRenderTexture2D> m_ColorBuffer;
     // Some effects need the camera near and far ranges.
     QVector2D m_CameraClipRange;
@@ -56,7 +56,7 @@ struct SEffectRenderArgument {
     // actually we need the stencil values
     QSharedPointer<QDemonRenderTexture2D> m_DepthStencilBuffer;
 
-    SEffectRenderArgument(QSharedPointer<SEffect> inEffect,
+    SEffectRenderArgument(SEffect *inEffect,
                           QSharedPointer<QDemonRenderTexture2D> inColorBuffer,
                           const QVector2D &inCameraClipRange,
                           QSharedPointer<QDemonRenderTexture2D> inDepthTexture = nullptr,

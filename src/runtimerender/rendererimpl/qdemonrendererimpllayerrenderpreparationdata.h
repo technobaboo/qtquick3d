@@ -236,7 +236,7 @@ struct SLayerRenderPreparationData
                                               TShaderFeatureSet inShaderFeatures,
                                               quint32 lightIndex, const SCamera &inCamera);
     typedef QHash<SLight *, SNode *> TLightToNodeMap;
-    typedef Pool<SNodeLightEntry, ForwardingAllocator> TNodeLightEntryPoolType;
+    //typedef Pool<SNodeLightEntry, ForwardingAllocator> TNodeLightEntryPoolType;
 
     enum Enum {
         MAX_AA_LEVELS = 8,
@@ -244,11 +244,11 @@ struct SLayerRenderPreparationData
     };
 
     SLayer &m_Layer;
-    QDemonRendererImpl &m_Renderer;
+    QSharedPointer<QDemonRendererImpl> m_Renderer;
     // List of nodes we can render, not all may be active.  Found by doing a depth-first
     // search through m_FirstChild if length is zero.
 
-    TNodeLightEntryPoolType m_RenderableNodeLightEntryPool;
+    //TNodeLightEntryPoolType m_RenderableNodeLightEntryPool;
     QVector<SRenderableNodeEntry> m_RenderableNodes;
     TLightToNodeMap m_LightToNodeMap; // map of lights to nodes to cache if we have looked up a
     // given scoped light yet.
@@ -294,7 +294,7 @@ struct SLayerRenderPreparationData
     // shadow mapps
     QSharedPointer<QDemonRenderShadowMap> m_ShadowMapManager;
 
-    SLayerRenderPreparationData(SLayer &inLayer, QDemonRendererImpl &inRenderer);
+    SLayerRenderPreparationData(SLayer &inLayer, QSharedPointer<QDemonRendererImpl> inRenderer);
     virtual ~SLayerRenderPreparationData();
     bool GetOffscreenRenderer();
     bool GetShadowMapManager();
@@ -340,16 +340,16 @@ struct SLayerRenderPreparationData
     void AddRenderWidget(IRenderWidget &inWidget);
     void SetShaderFeature(const char *inName, bool inValue);
     void SetShaderFeature(QString inName, bool inValue);
-    QDemonConstDataRef<SShaderPreprocessorFeature> GetShaderFeatureSet();
+    QVector<SShaderPreprocessorFeature> GetShaderFeatureSet();
     size_t GetShaderFeatureSetHash();
     // The graph object is not const because this traversal updates dirty state on the objects.
     QPair<bool, SGraphObject *> ResolveReferenceMaterial(SGraphObject *inMaterial);
 
     QVector3D GetCameraDirection();
     // Per-frame cache of renderable objects post-sort.
-    QDemonDataRef<SRenderableObject *> GetOpaqueRenderableObjects();
+    QVector<SRenderableObject *> GetOpaqueRenderableObjects();
     // If layer depth test is false, this may also contain opaque objects.
-    QDemonDataRef<SRenderableObject *> GetTransparentRenderableObjects();
+    QVector<SRenderableObject *> GetTransparentRenderableObjects();
 
     virtual void ResetForFrame();
 
@@ -357,7 +357,7 @@ struct SLayerRenderPreparationData
     // need.
     virtual SOffscreenRendererEnvironment CreateOffscreenRenderEnvironment() = 0;
 
-    virtual IRenderTask &CreateRenderToTextureRunnable() = 0;
+    virtual QSharedPointer<IRenderTask> CreateRenderToTextureRunnable() = 0;
 };
 QT_END_NAMESPACE
 #endif
