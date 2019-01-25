@@ -85,7 +85,7 @@ SOURCES += \
     qdemonrendereffectsystem.cpp \
     qdemonrendererutil.cpp \
     qdemonrendereulerangles.cpp \
-#    qdemonrendergpuprofiler.cpp \
+    qdemonrendergpuprofiler.cpp \
 #    qdemonrendergraphobjectserializer.cpp \
     qdemonrenderimagescaler.cpp \
     qdemonrenderinputstreamfactory.cpp \

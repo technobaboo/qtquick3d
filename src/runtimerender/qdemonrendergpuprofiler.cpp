@@ -30,8 +30,8 @@
 
 #include <QtDemonRuntimeRender/qdemonrenderprofiler.h>
 #include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
-#include <QtDemonRuntimeRender/qdemonrendertimerquery.h>
-#include <QtDemonRuntimeRender/qdemonrendersync.h>
+#include <QtDemonRender/qdemonrendertimerquery.h>
+#include <QtDemonRender/qdemonrendersync.h>
 #include <QtDemonRender/qdemonrendercontext.h>
 
 
@@ -156,15 +156,15 @@ class QDemonRenderGpuProfiler : public IRenderProfiler
 
 private:
     QSharedPointer<QDemonRenderContext> m_RenderContext;
-    IQDemonRenderContext &m_Context;
+    QSharedPointer<IQDemonRenderContext> m_Context;
 
     TStrGpuTimerInfoMap m_StrToGpuTimerMap;
     IRenderProfiler::TStrIDVec m_StrToIDVec;
     mutable quint32 m_VertexCount;
 
 public:
-    QDemonRenderGpuProfiler(IQDemonRenderContext &inContext,
-                            QDemonRenderContext &inRenderContext)
+    QDemonRenderGpuProfiler(QSharedPointer<IQDemonRenderContext> inContext,
+                            QSharedPointer<QDemonRenderContext> inRenderContext)
         : m_RenderContext(inRenderContext)
         , m_Context(inContext)
         , m_VertexCount(0)
@@ -175,20 +175,20 @@ public:
 
     void StartTimer(QString &nameID, bool absoluteTime, bool sync) override
     {
-        SGpuTimerInfo *theGpuTimerData = GetOrCreateGpuTimerInfo(nameID);
+        QSharedPointer<SGpuTimerInfo> theGpuTimerData = GetOrCreateGpuTimerInfo(nameID);
 
         if (theGpuTimerData) {
             if (sync)
                 theGpuTimerData->AddSync();
 
             theGpuTimerData->m_AbsoluteTime = absoluteTime;
-            theGpuTimerData->StartTimerQuery(m_Context.GetFrameCount());
+            theGpuTimerData->StartTimerQuery(m_Context->GetFrameCount());
         }
     }
 
     void EndTimer(QString &nameID) override
     {
-        SGpuTimerInfo *theGpuTimerData = GetOrCreateGpuTimerInfo(nameID);
+        QSharedPointer<SGpuTimerInfo> theGpuTimerData = GetOrCreateGpuTimerInfo(nameID);
 
         if (theGpuTimerData) {
             theGpuTimerData->EndTimerQuery();
@@ -198,10 +198,10 @@ public:
     double GetElapsedTime(const QString &nameID) const override
     {
         double time = 0;
-        SGpuTimerInfo *theGpuTimerData = GetGpuTimerInfo(nameID);
+        QSharedPointer<SGpuTimerInfo> theGpuTimerData = GetGpuTimerInfo(nameID);
 
         if (theGpuTimerData) {
-            time = theGpuTimerData->GetElapsedTimeInMs(m_Context.GetFrameCount());
+            time = theGpuTimerData->GetElapsedTimeInMs(m_Context->GetFrameCount());
         }
 
         return time;
@@ -219,13 +219,13 @@ public:
     }
 
 private:
-    SGpuTimerInfo *GetOrCreateGpuTimerInfo(QString &nameID)
+    QSharedPointer<SGpuTimerInfo> GetOrCreateGpuTimerInfo(QString &nameID)
     {
         TStrGpuTimerInfoMap::const_iterator theIter = m_StrToGpuTimerMap.find(nameID);
         if (theIter != m_StrToGpuTimerMap.end())
-            return const_cast<SGpuTimerInfo *>(theIter->second.mPtr);
+            return theIter.value();
 
-        SGpuTimerInfo *theGpuTimerData = new SGpuTimerInfo(m_Foundation);
+        QSharedPointer<SGpuTimerInfo> theGpuTimerData = QSharedPointer<SGpuTimerInfo>(new SGpuTimerInfo());
 
         if (theGpuTimerData) {
             // create queries
@@ -235,28 +235,28 @@ private:
                 theGpuTimerData->m_TimerSyncObjects[i] = m_RenderContext->CreateSync();
                 theGpuTimerData->m_FrameID[i] = 0;
             }
-            m_StrToGpuTimerMap.insert(make_pair(nameID, theGpuTimerData));
+            m_StrToGpuTimerMap.insert(nameID, theGpuTimerData);
             m_StrToIDVec.push_back(nameID);
         }
 
         return theGpuTimerData;
     }
 
-    SGpuTimerInfo *GetGpuTimerInfo(const QString &nameID) const
+    QSharedPointer<SGpuTimerInfo> GetGpuTimerInfo(const QString &nameID) const
     {
         TStrGpuTimerInfoMap::const_iterator theIter = m_StrToGpuTimerMap.find(nameID);
         if (theIter != m_StrToGpuTimerMap.end())
-            return const_cast<SGpuTimerInfo *>(theIter->second.mPtr);
+            return theIter.value();
 
         return nullptr;
     }
 };
 }
 
-IRenderProfiler &IRenderProfiler::CreateGpuProfiler(IQDemonRenderContext &inContext,
-                                                    QDemonRenderContext &inRenderContext)
+QSharedPointer<IRenderProfiler> IRenderProfiler::CreateGpuProfiler(QSharedPointer<IQDemonRenderContext> inContext,
+                                                                   QSharedPointer<QDemonRenderContext> inRenderContext)
 {
-    return *new QDemonRenderGpuProfiler(inContext, inRenderContext);
+    return QSharedPointer<IRenderProfiler>(new QDemonRenderGpuProfiler(inContext, inRenderContext));
 }
 
 QT_END_NAMESPACE
