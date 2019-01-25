@@ -30,6 +30,10 @@
 #ifndef QDEMON_RENDER_PATH_MATH_H
 #define QDEMON_RENDER_PATH_MATH_H
 
+#if _MSC_VER > 1000
+#pragma warning(disable:4267)
+#endif
+
 #include <QtGui/QVector2D>
 #include <QtGui/QVector3D>
 #include <QtGui/QVector4D>
@@ -612,6 +616,7 @@ void OuterAdaptiveSubdivideBezierCurve(QVector<SResultCubic> &ioResultVec,
         if (!keyPointVec.empty()) {
             // It is not clear that the code results in a sorted vector,
             // or a vector where all values are within the range of 0-1
+
             if (keyPointVec.size() > 1)
                 std::sort(keyPointVec.begin(), keyPointVec.end());
             for (quint32 idx = 0, end = quint32(keyPointVec.size());
@@ -712,4 +717,8 @@ void AdaptiveSubdivideBezierCurve(QVector<SResultCubic> &ioResultVec,
 }
 }
 QT_END_NAMESPACE
+
+#if _MSC_VER > 1000
+#pragma warning(default:4267)
+#endif
 #endif
