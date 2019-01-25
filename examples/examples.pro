@@ -1,2 +1,4 @@
 TEMPLATE = subdirs
-SUBDIRS += render
+SUBDIRS += \
+    render \
+    runtimerender
