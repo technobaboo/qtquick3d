@@ -80,7 +80,6 @@ public:
     virtual QSharedPointer<IEffectSystemCore> GetEffectSystemCore() = 0;
     virtual QSharedPointer<IPerfTimer> GetPerfTimer() = 0;
     virtual QSharedPointer<IBufferLoader> GetBufferLoader() = 0;
-    //virtual QSharedPointer<IRenderPluginManagerCore> GetRenderPluginCore() = 0;
     virtual QSharedPointer<IPathManagerCore> GetPathManagerCore() = 0;
     // Text renderers may be provided by clients at runtime.
     virtual void SetTextRendererCore(QSharedPointer<ITextRendererCore> inRenderer) = 0;
@@ -114,7 +113,6 @@ public:
     virtual QSharedPointer<IShaderCache> GetShaderCache() = 0;
     virtual QSharedPointer<IThreadPool> GetThreadPool() = 0;
     virtual QSharedPointer<IImageBatchLoader> GetImageBatchLoader() = 0;
-    //virtual QSharedPointer<IRenderPluginManager> GetRenderPluginManager() = 0;
     virtual QSharedPointer<IDynamicObjectSystem> GetDynamicObjectSystem() = 0;
     virtual QSharedPointer<ICustomMaterialSystem> GetCustomMaterialSystem() = 0;
     virtual QSharedPointer<IPixelGraphicsRenderer> GetPixelGraphicsRenderer() = 0;

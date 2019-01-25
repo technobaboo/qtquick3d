@@ -70,7 +70,6 @@ struct SRenderContextCore : public IQDemonRenderContextCore, public QEnableShare
     QSharedPointer<ICustomMaterialSystemCore> m_MaterialSystem;
     QSharedPointer<IEffectSystemCore> m_EffectSystem;
     QSharedPointer<IBufferLoader> m_BufferLoader;
-    //QSharedPointer<IRenderPluginManagerCore> m_RenderPluginManagerCore;
     QSharedPointer<ITextRendererCore> m_TextRenderer;
     QSharedPointer<ITextRendererCore> m_OnscreenTexRenderer;
     QSharedPointer<IPathManagerCore> m_PathManagerCore;
@@ -83,7 +82,6 @@ struct SRenderContextCore : public IQDemonRenderContextCore, public QEnableShare
         m_DynamicObjectSystem = IDynamicObjectSystemCore::CreateDynamicSystemCore(sharedFromThis());
         m_MaterialSystem = ICustomMaterialSystemCore::CreateCustomMaterialSystemCore(sharedFromThis());
         m_EffectSystem = IEffectSystemCore::CreateEffectSystemCore(sharedFromThis());
-        //m_RenderPluginManagerCore = IRenderPluginManagerCore::Create(fnd, strTable, *m_InputStreamFactory);
         m_BufferLoader = IBufferLoader::Create(m_InputStreamFactory, m_ThreadPool);
         m_PathManagerCore = IPathManagerCore::CreatePathManagerCore(sharedFromThis());
     }
@@ -100,7 +98,6 @@ struct SRenderContextCore : public IQDemonRenderContextCore, public QEnableShare
     QSharedPointer<IEffectSystemCore> GetEffectSystemCore() override { return m_EffectSystem; }
     QSharedPointer<IPerfTimer> GetPerfTimer() override { return m_PerfTimer; }
     QSharedPointer<IBufferLoader> GetBufferLoader() override { return m_BufferLoader; }
-    //QSharedPointer<IRenderPluginManagerCore> GetRenderPluginCore() override { return m_RenderPluginManagerCore; }
     QSharedPointer<IPathManagerCore> GetPathManagerCore() override { return m_PathManagerCore; }
     QSharedPointer<IQDemonRenderContext> CreateRenderContext(QSharedPointer<QDemonRenderContext> inContext, const char *inPrimitivesDirectory) override;
     void SetTextRendererCore(QSharedPointer<ITextRendererCore> inRenderer) override { m_TextRenderer = inRenderer; }
@@ -148,7 +145,6 @@ struct SRenderContext : public IQDemonRenderContext, public QEnableSharedFromThi
     QSharedPointer<IShaderCache> m_ShaderCache;
     QSharedPointer<IThreadPool> m_ThreadPool;
     QSharedPointer<IImageBatchLoader> m_ImageBatchLoader;
-    //QSharedPointer<IRenderPluginManager> m_RenderPluginManager;
     QSharedPointer<ICustomMaterialSystem> m_CustomMaterialSystem;
     QSharedPointer<IPixelGraphicsRenderer> m_PixelGraphicsRenderer;
     QSharedPointer<IPathManager> m_PathManager;
@@ -198,18 +194,14 @@ struct SRenderContext : public IQDemonRenderContext, public QEnableSharedFromThi
         , m_FPS(qMakePair(0.0, 0))
         , m_AuthoringMode(false)
     {
-        // ### for some reason this create fails in the linker.
-        //m_BufferManager = IBufferManager::Create(ctx, m_InputStreamFactory, m_PerfTimer);
+        m_BufferManager = IBufferManager::Create(ctx, m_InputStreamFactory, m_PerfTimer);
         m_RenderList = IRenderList::CreateRenderList();
         m_OffscreenRenderManager = IOffscreenRenderManager::CreateOffscreenRenderManager(m_ResourceManager, sharedFromThis());
-        // ### Re-add this when there is a function to call
-        //m_Renderer = IQDemonRenderer::CreateRenderer(sharedFromThis());
+        m_Renderer = IQDemonRenderer::CreateRenderer(sharedFromThis());
         if (inApplicationDirectory && *inApplicationDirectory)
             m_InputStreamFactory->AddSearchDirectory(inApplicationDirectory);
 
         m_ImageBatchLoader = IImageBatchLoader::CreateBatchLoader(m_InputStreamFactory, m_BufferManager, m_ThreadPool, m_PerfTimer);
-
-        //m_RenderPluginManager = inCore.GetRenderPluginCore().GetRenderPluginManager(ctx);
         m_DynamicObjectSystem = inCore->GetDynamicObjectSystemCore()->CreateDynamicSystem(sharedFromThis());
         m_EffectSystem = inCore->GetEffectSystemCore()->GetEffectSystem(sharedFromThis());
         m_CustomMaterialSystem = inCore->GetMaterialSystemCore()->GetCustomMaterialSystem(sharedFromThis());
@@ -284,7 +276,6 @@ struct SRenderContext : public IQDemonRenderContext, public QEnableSharedFromThi
     QSharedPointer<IImageBatchLoader> GetImageBatchLoader() override { return m_ImageBatchLoader; }
     QSharedPointer<ITextTextureCache> GetTextureCache() override { return m_TextTextureCache; }
     QSharedPointer<ITextTextureAtlas> GetTextureAtlas() override { return m_TextTextureAtlas; }
-    //QSharedPointer<IRenderPluginManager> GetRenderPluginManager() override { return m_RenderPluginManager; }
     QSharedPointer<IDynamicObjectSystem> GetDynamicObjectSystem() override { return m_DynamicObjectSystem; }
     QSharedPointer<ICustomMaterialSystem> GetCustomMaterialSystem() override { return m_CustomMaterialSystem; }
     QSharedPointer<IPixelGraphicsRenderer> GetPixelGraphicsRenderer() override { return m_PixelGraphicsRenderer; }
@@ -727,14 +718,14 @@ struct SRenderContext : public IQDemonRenderContext, public QEnableSharedFromThi
     void EndFrame() override
     {
         TeardownRenderTarget();
-        //m_ImageBatchLoader->EndFrame();
+        m_ImageBatchLoader->EndFrame();
         if (m_TextTextureCache)
             m_TextTextureCache->EndFrame();
         if (m_TextRenderer)
             m_TextRenderer->EndFrame();
         m_OffscreenRenderManager->EndFrame();
         m_Renderer->EndFrame();
-        //m_CustomMaterialSystem->EndFrame();
+        m_CustomMaterialSystem->EndFrame();
         m_PresentationDimensions = m_PreRenderPresentationDimensions;
         ++m_FrameCount;
     }
