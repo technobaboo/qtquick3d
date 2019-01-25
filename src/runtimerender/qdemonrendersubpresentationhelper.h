@@ -42,12 +42,12 @@ QT_BEGIN_NAMESPACE
 // set to 1
 struct SSubPresentationHelper
 {
-    QSharedPointer<IQDemonRenderContext> m_RenderContext;
+    IQDemonRenderContext *m_RenderContext;
     QSize m_PreviousPresentationDimensions;
 
     bool m_WasInSubPresentation;
 
-    SSubPresentationHelper(QSharedPointer<IQDemonRenderContext> inContext, const QSize &inPresDimensions)
+    SSubPresentationHelper(IQDemonRenderContext *inContext, const QSize &inPresDimensions)
         : m_RenderContext(inContext)
         , m_PreviousPresentationDimensions(inContext->GetCurrentPresentationDimensions())
         , m_WasInSubPresentation(inContext->IsInSubPresentation())

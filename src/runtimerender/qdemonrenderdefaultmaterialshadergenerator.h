@@ -41,7 +41,7 @@ class QDemonRenderShadowMap;
 struct SShaderGeneratorGeneratedShader;
 struct SRenderableImage;
 
-class IDefaultMaterialVertexPipeline : public IShaderStageGenerator
+class Q_DEMONRUNTIMERENDER_EXPORT IDefaultMaterialVertexPipeline : public IShaderStageGenerator
 {
 protected:
     virtual ~IDefaultMaterialVertexPipeline() {}
@@ -83,7 +83,7 @@ public:
     virtual void EndFragmentGeneration() = 0;
 };
 
-class IDefaultMaterialShaderGenerator : public IMaterialShaderGenerator
+class Q_DEMONRUNTIMERENDER_EXPORT IDefaultMaterialShaderGenerator : public IMaterialShaderGenerator
 {
 public:
     virtual ~IDefaultMaterialShaderGenerator() override {}
@@ -121,7 +121,7 @@ public:
                                        float inOpacity,
                                        SLayerGlobalRenderProperties inRenderProperties) override = 0;
 
-    static QSharedPointer<IDefaultMaterialShaderGenerator> CreateDefaultMaterialShaderGenerator(QSharedPointer<IQDemonRenderContext> inRenderContext);
+    static QSharedPointer<IDefaultMaterialShaderGenerator> CreateDefaultMaterialShaderGenerator(IQDemonRenderContext *inRenderContext);
 
     SLightConstantProperties<SShaderGeneratorGeneratedShader> *GetLightConstantProperties(SShaderGeneratorGeneratedShader &shader);
 };

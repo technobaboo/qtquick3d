@@ -56,7 +56,7 @@ struct CancelReturnValues
     };
 };
 
-class IThreadPool
+class Q_DEMONRUNTIMERENDER_EXPORT IThreadPool
 {
 protected:
     virtual ~IThreadPool() {}

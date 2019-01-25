@@ -219,7 +219,7 @@ struct SOffscreenRendererKey;
      *than
      *	that if they don't require a new render.
      */
-class IOffscreenRenderManager
+class Q_DEMONRUNTIMERENDER_EXPORT IOffscreenRenderManager
 {
 public:
     virtual ~IOffscreenRenderManager();
@@ -242,7 +242,7 @@ public:
     virtual void BeginFrame() = 0;
     virtual void EndFrame() = 0;
 
-    static QSharedPointer<IOffscreenRenderManager> CreateOffscreenRenderManager(QSharedPointer<IResourceManager> inManager, QSharedPointer<IQDemonRenderContext> inContext);
+    static QSharedPointer<IOffscreenRenderManager> CreateOffscreenRenderManager(QSharedPointer<IResourceManager> inManager, IQDemonRenderContext *inContext);
 };
 
 QT_END_NAMESPACE

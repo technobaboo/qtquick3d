@@ -121,10 +121,10 @@ class QDemonRenderShadowMap
     typedef QVector<SShadowMapEntry> TShadowMapEntryList;
 
 public:
-    QSharedPointer<IQDemonRenderContext> m_Context;
+    IQDemonRenderContext *m_Context;
 
 public:
-    QDemonRenderShadowMap(QSharedPointer<IQDemonRenderContext> inContext);
+    QDemonRenderShadowMap(IQDemonRenderContext *inContext);
     ~QDemonRenderShadowMap();
 
     /*
@@ -165,7 +165,7 @@ public:
          */
     quint32 GetShadowMapEntryCount() { return m_ShadowMapList.size(); }
 
-    static QSharedPointer<QDemonRenderShadowMap> Create(QSharedPointer<IQDemonRenderContext> inContext);
+    static QSharedPointer<QDemonRenderShadowMap> Create(IQDemonRenderContext *inContext);
 
 private:
     TShadowMapEntryList m_ShadowMapList; ///< List of shadow map entries

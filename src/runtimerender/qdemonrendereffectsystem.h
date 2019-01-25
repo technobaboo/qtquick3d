@@ -70,7 +70,7 @@ struct SEffectRenderArgument {
     }
 };
 
-class IEffectSystemCore
+class Q_DEMONRUNTIMERENDER_EXPORT IEffectSystemCore
 {
 public:
     virtual ~IEffectSystemCore();
@@ -156,11 +156,11 @@ public:
     //    virtual void Load(QDemonDataRef<quint8> inData, CStrTableOrDataRef inStrDataBlock,
     //                      const char *inProjectDir) = 0;
 
-    virtual QSharedPointer<IEffectSystem> GetEffectSystem(QSharedPointer<IQDemonRenderContext> context) = 0;
+    virtual QSharedPointer<IEffectSystem> GetEffectSystem(IQDemonRenderContext *context) = 0;
 
     virtual QSharedPointer<IResourceManager> GetResourceManager() = 0;
 
-    static QSharedPointer<IEffectSystemCore> CreateEffectSystemCore(QSharedPointer<IQDemonRenderContextCore> context);
+    static QSharedPointer<IEffectSystemCore> CreateEffectSystemCore(IQDemonRenderContextCore * context);
 };
 
 /**
@@ -173,7 +173,7 @@ public:
       *destination buffer
       *	using the given MVP.
       */
-class IEffectSystem : public IEffectSystemCore
+class Q_DEMONRUNTIMERENDER_EXPORT IEffectSystem : public IEffectSystemCore
 {
 protected:
     virtual ~IEffectSystem() {}

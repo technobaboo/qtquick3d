@@ -38,7 +38,7 @@ class IQDemonRenderContext;
 
 uint qHash(const SShaderDefaultMaterialKey &key);
 
-class ICustomMaterialShaderGenerator : public IMaterialShaderGenerator
+class Q_DEMONRUNTIMERENDER_EXPORT ICustomMaterialShaderGenerator : public IMaterialShaderGenerator
 {
 public:
     SImageVariableNames GetImageVariableNames(quint32 inIdx) override = 0;
@@ -71,7 +71,7 @@ public:
                           float inOpacity,
                           SLayerGlobalRenderProperties inRenderProperties) override = 0;
 
-    static QSharedPointer<ICustomMaterialShaderGenerator> CreateCustomMaterialShaderGenerator(QSharedPointer<IQDemonRenderContext> inRenderContext);
+    static QSharedPointer<ICustomMaterialShaderGenerator> CreateCustomMaterialShaderGenerator(IQDemonRenderContext *inRenderContext);
 };
 QT_END_NAMESPACE
 

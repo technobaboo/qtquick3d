@@ -61,7 +61,7 @@ QT_BEGIN_NAMESPACE
 
 namespace {
 
-struct SRenderContextCore : public IQDemonRenderContextCore, public QEnableSharedFromThis<SRenderContextCore>
+struct SRenderContextCore : public IQDemonRenderContextCore
 {
     QSharedPointer<IPerfTimer> m_PerfTimer;
     QSharedPointer<IInputStreamFactory> m_InputStreamFactory;
@@ -79,11 +79,11 @@ struct SRenderContextCore : public IQDemonRenderContextCore, public QEnableShare
         , m_InputStreamFactory(IInputStreamFactory::Create())
         , m_ThreadPool(IThreadPool::CreateThreadPool(4))
     {
-        m_DynamicObjectSystem = IDynamicObjectSystemCore::CreateDynamicSystemCore(sharedFromThis());
-        m_MaterialSystem = ICustomMaterialSystemCore::CreateCustomMaterialSystemCore(sharedFromThis());
-        m_EffectSystem = IEffectSystemCore::CreateEffectSystemCore(sharedFromThis());
+        m_DynamicObjectSystem = IDynamicObjectSystemCore::CreateDynamicSystemCore(this);
+        m_MaterialSystem = ICustomMaterialSystemCore::CreateCustomMaterialSystemCore(this);
+        m_EffectSystem = IEffectSystemCore::CreateEffectSystemCore(this);
         m_BufferLoader = IBufferLoader::Create(m_InputStreamFactory, m_ThreadPool);
-        m_PathManagerCore = IPathManagerCore::CreatePathManagerCore(sharedFromThis());
+        m_PathManagerCore = IPathManagerCore::CreatePathManagerCore(this);
     }
 
     ~SRenderContextCore() override {}
@@ -126,10 +126,10 @@ void swapXY(QVector2D &v) {
 }
 }
 
-struct SRenderContext : public IQDemonRenderContext, public QEnableSharedFromThis<SRenderContext>
+struct SRenderContext : public IQDemonRenderContext
 {
     QSharedPointer<QDemonRenderContext> m_RenderContext;
-    QSharedPointer<IQDemonRenderContextCore> m_CoreContext;
+    IQDemonRenderContextCore *m_CoreContext;
     QSharedPointer<IPerfTimer> m_PerfTimer;
     QSharedPointer<IInputStreamFactory> m_InputStreamFactory;
     QSharedPointer<IBufferManager> m_BufferManager;
@@ -175,7 +175,7 @@ struct SRenderContext : public IQDemonRenderContext, public QEnableSharedFromThi
     QPair<float, int> m_FPS;
     bool m_AuthoringMode;
 
-    SRenderContext(QSharedPointer<QDemonRenderContext> ctx, QSharedPointer<IQDemonRenderContextCore> inCore, const char *inApplicationDirectory)
+    SRenderContext(QSharedPointer<QDemonRenderContext> ctx, IQDemonRenderContextCore *inCore, const char *inApplicationDirectory)
         : m_RenderContext(ctx)
         , m_CoreContext(inCore)
         , m_PerfTimer(inCore->GetPerfTimer())
@@ -196,21 +196,21 @@ struct SRenderContext : public IQDemonRenderContext, public QEnableSharedFromThi
     {
         m_BufferManager = IBufferManager::Create(ctx, m_InputStreamFactory, m_PerfTimer);
         m_RenderList = IRenderList::CreateRenderList();
-        m_OffscreenRenderManager = IOffscreenRenderManager::CreateOffscreenRenderManager(m_ResourceManager, sharedFromThis());
-        m_Renderer = IQDemonRenderer::CreateRenderer(sharedFromThis());
+        m_OffscreenRenderManager = IOffscreenRenderManager::CreateOffscreenRenderManager(m_ResourceManager, this);
+        m_Renderer = IQDemonRenderer::CreateRenderer(this);
         if (inApplicationDirectory && *inApplicationDirectory)
             m_InputStreamFactory->AddSearchDirectory(inApplicationDirectory);
 
         m_ImageBatchLoader = IImageBatchLoader::CreateBatchLoader(m_InputStreamFactory, m_BufferManager, m_ThreadPool, m_PerfTimer);
-        m_DynamicObjectSystem = inCore->GetDynamicObjectSystemCore()->CreateDynamicSystem(sharedFromThis());
-        m_EffectSystem = inCore->GetEffectSystemCore()->GetEffectSystem(sharedFromThis());
-        m_CustomMaterialSystem = inCore->GetMaterialSystemCore()->GetCustomMaterialSystem(sharedFromThis());
+        m_DynamicObjectSystem = inCore->GetDynamicObjectSystemCore()->CreateDynamicSystem(this);
+        m_EffectSystem = inCore->GetEffectSystemCore()->GetEffectSystem(this);
+        m_CustomMaterialSystem = inCore->GetMaterialSystemCore()->GetCustomMaterialSystem(this);
         // as does the custom material system
-        m_PixelGraphicsRenderer = IPixelGraphicsRenderer::CreateRenderer(sharedFromThis());
+        m_PixelGraphicsRenderer = IPixelGraphicsRenderer::CreateRenderer(this);
         QSharedPointer<ITextRendererCore> theTextCore = inCore->GetTextRendererCore();
-        m_ShaderProgramGenerator = IShaderProgramGenerator::CreateProgramGenerator(sharedFromThis());
-        m_DefaultMaterialShaderGenerator = IDefaultMaterialShaderGenerator::CreateDefaultMaterialShaderGenerator(sharedFromThis());
-        m_CustomMaterialShaderGenerator = ICustomMaterialShaderGenerator::CreateCustomMaterialShaderGenerator(sharedFromThis());
+        m_ShaderProgramGenerator = IShaderProgramGenerator::CreateProgramGenerator(this);
+        m_DefaultMaterialShaderGenerator = IDefaultMaterialShaderGenerator::CreateDefaultMaterialShaderGenerator(this);
+        m_CustomMaterialShaderGenerator = ICustomMaterialShaderGenerator::CreateCustomMaterialShaderGenerator(this);
         if (theTextCore) {
             m_TextRenderer = theTextCore->GetTextRenderer(ctx);
             m_TextTextureCache = ITextTextureCache::CreateTextureCache(m_TextRenderer, m_RenderContext);
@@ -221,7 +221,7 @@ struct SRenderContext : public IQDemonRenderContext, public QEnableSharedFromThi
             m_OnscreenTextRenderer = theOnscreenTextCore->GetTextRenderer(ctx);
             m_TextTextureAtlas = ITextTextureAtlas::CreateTextureAtlas(m_OnscreenTextRenderer, m_RenderContext);
         }
-        m_PathManager = inCore->GetPathManagerCore()->OnRenderSystemInitialize(sharedFromThis());
+        m_PathManager = inCore->GetPathManagerCore()->OnRenderSystemInitialize(this);
 
         QString versionString;
         switch ((quint32)ctx->GetRenderContextType()) {
@@ -733,7 +733,7 @@ struct SRenderContext : public IQDemonRenderContext, public QEnableSharedFromThi
 
 QSharedPointer<IQDemonRenderContext> SRenderContextCore::CreateRenderContext(QSharedPointer<QDemonRenderContext> inContext, const char *inPrimitivesDirectory)
 {
-    return QSharedPointer<SRenderContext>(new SRenderContext(inContext, this->sharedFromThis(), inPrimitivesDirectory));
+    return QSharedPointer<SRenderContext>(new SRenderContext(inContext, this, inPrimitivesDirectory));
 }
 }
 

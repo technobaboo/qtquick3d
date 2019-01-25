@@ -34,11 +34,13 @@
 #include <QtDemonRender/qdemonrenderrenderbuffer.h>
 #include <QtDemonRender/qdemonrendercontext.h>
 
+#include <QtDemonRuntimeRender/qtdemonruntimerenderglobal.h>
+
 QT_BEGIN_NAMESPACE
 /**
      *	Implements simple pooling of render resources
      */
-class IResourceManager
+class Q_DEMONRUNTIMERENDER_EXPORT IResourceManager
 {
 protected:
     virtual ~IResourceManager() {}

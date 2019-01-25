@@ -265,7 +265,7 @@ typedef QPair<QString, QSharedPointer<SDataBufferEntry>> TNamedDataBufferEntry;
 struct SEffectContext
 {
     QString m_ClassName;
-    QSharedPointer<IQDemonRenderContext> m_Context;
+    IQDemonRenderContext *m_Context;
     QSharedPointer<IResourceManager> m_ResourceManager;
     QVector<SAllocatedBufferEntry> m_AllocatedBuffers;
     QVector<SAllocatedImageEntry> m_AllocatedImages;
@@ -274,7 +274,7 @@ struct SEffectContext
     QVector<TNamedImageEntry> m_ImageEntries;
     QVector<TNamedDataBufferEntry> m_DataBufferEntries;
 
-    SEffectContext(QString inName, QSharedPointer<IQDemonRenderContext> ctx, QSharedPointer<IResourceManager> inManager)
+    SEffectContext(QString inName, IQDemonRenderContext *ctx, QSharedPointer<IResourceManager> inManager)
         : m_ClassName(inName)
         , m_Context(ctx)
         , m_ResourceManager(inManager)
@@ -449,8 +449,8 @@ struct SEffectSystem : public IEffectSystem, public QEnableSharedFromThis<SEffec
     typedef QHash<TStrStrPair, QSharedPointer<SEffectShader>> TShaderMap;
     typedef QVector<QSharedPointer<SEffectContext>> TContextList;
 
-    QSharedPointer<IQDemonRenderContextCore> m_CoreContext;
-    QSharedPointer<IQDemonRenderContext> m_Context;
+    IQDemonRenderContextCore * m_CoreContext;
+    IQDemonRenderContext *m_Context;
     QSharedPointer<IResourceManager> m_ResourceManager;
     // Keep from dual-including headers.
     TEffectClassMap m_EffectClasses;
@@ -462,7 +462,7 @@ struct SEffectSystem : public IEffectSystem, public QEnableSharedFromThis<SEffec
     QSharedPointer<QDemonRenderDepthStencilState> m_DefaultStencilState;
     QVector<QSharedPointer<QDemonRenderDepthStencilState>> m_DepthStencilStates;
 
-    SEffectSystem(QSharedPointer<IQDemonRenderContextCore> inContext)
+    SEffectSystem(IQDemonRenderContextCore * inContext)
         : m_CoreContext(inContext)
         , m_Context(nullptr)
     {
@@ -1812,7 +1812,7 @@ struct SEffectSystem : public IEffectSystem, public QEnableSharedFromThis<SEffec
 //        }
 //    }
 
-    QSharedPointer<IEffectSystem> GetEffectSystem(QSharedPointer<IQDemonRenderContext> context) override
+    QSharedPointer<IEffectSystem> GetEffectSystem(IQDemonRenderContext *context) override
     {
         m_Context = context;
 
@@ -1846,7 +1846,7 @@ IEffectSystemCore::~IEffectSystemCore()
 
 }
 
-QSharedPointer<IEffectSystemCore> IEffectSystemCore::CreateEffectSystemCore(QSharedPointer<IQDemonRenderContextCore> inContext)
+QSharedPointer<IEffectSystemCore> IEffectSystemCore::CreateEffectSystemCore(IQDemonRenderContextCore * inContext)
 {
     return QSharedPointer<SEffectSystem>(new SEffectSystem(inContext));
 }

@@ -326,7 +326,7 @@ struct SShaderGeneratedProgramOutput
 
 struct SProgramGenerator : public IShaderProgramGenerator
 {
-    QSharedPointer<IQDemonRenderContext> m_Context;
+    IQDemonRenderContext *m_Context;
     SVertexShaderGenerator m_VS;
     STessControlShaderGenerator m_TC;
     STessEvalShaderGenerator m_TE;
@@ -335,7 +335,7 @@ struct SProgramGenerator : public IShaderProgramGenerator
 
     TShaderGeneratorStageFlags m_EnabledStages;
 
-    SProgramGenerator(QSharedPointer<IQDemonRenderContext> inContext)
+    SProgramGenerator(IQDemonRenderContext *inContext)
         : m_Context(inContext)
     {
     }
@@ -443,7 +443,7 @@ struct SProgramGenerator : public IShaderProgramGenerator
 };
 
 QSharedPointer<IShaderProgramGenerator>
-IShaderProgramGenerator::CreateProgramGenerator(QSharedPointer<IQDemonRenderContext> inContext)
+IShaderProgramGenerator::CreateProgramGenerator(IQDemonRenderContext *inContext)
 {
     return QSharedPointer<IShaderProgramGenerator>(new SProgramGenerator(inContext));
 }

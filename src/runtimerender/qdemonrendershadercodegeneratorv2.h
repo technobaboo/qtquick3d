@@ -29,6 +29,8 @@
 ****************************************************************************/
 #ifndef QDEMON_RENDER_SHADER_CODE_GENERATOR_V2_H
 #define QDEMON_RENDER_SHADER_CODE_GENERATOR_V2_H
+
+#include <QtDemonRuntimeRender/qtdemonruntimerenderglobal.h>
 #include <QtDemonRuntimeRender/qdemonrendershadercodegenerator.h>
 #include <QtDemonRuntimeRender/qdemonrendershadercache.h>
 #include <QtDemon/qdemonflags.h>
@@ -52,7 +54,7 @@ struct ShaderGeneratorStages
 
 typedef QDemonFlags<ShaderGeneratorStages::Enum, quint32> TShaderGeneratorStageFlags;
 
-class IShaderStageGenerator
+class Q_DEMONRUNTIMERENDER_EXPORT IShaderStageGenerator
 {
 protected:
     virtual ~IShaderStageGenerator() {}
@@ -79,7 +81,7 @@ public:
 
 class IQDemonRenderContext;
 
-class IShaderProgramGenerator
+class Q_DEMONRUNTIMERENDER_EXPORT IShaderProgramGenerator
 {
 public:
     virtual ~IShaderProgramGenerator() {}
@@ -107,7 +109,7 @@ public:
         return CompileGeneratedShader(inShaderName, SShaderCacheProgramFlags(), TShaderFeatureSet(), separableProgram);
     }
 
-    static QSharedPointer<IShaderProgramGenerator> CreateProgramGenerator(QSharedPointer<IQDemonRenderContext> inContext);
+    static QSharedPointer<IShaderProgramGenerator> CreateProgramGenerator(IQDemonRenderContext *inContext);
 
     static void OutputParaboloidDepthVertex(IShaderStageGenerator &inGenerator);
     // By convention, the local space result of the TE is stored in vec4 pos local variable.

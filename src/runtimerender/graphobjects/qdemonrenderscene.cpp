@@ -65,7 +65,7 @@ SLayer *SScene::GetLastChild()
     return child;
 }
 
-bool SScene::PrepareForRender(const QVector2D &inViewportDimensions, QSharedPointer<IQDemonRenderContext> inContext,
+bool SScene::PrepareForRender(const QVector2D &inViewportDimensions, IQDemonRenderContext *inContext,
                               const SRenderInstanceId id)
 {
     // We need to iterate through the layers in reverse order and ask them to render.
@@ -79,7 +79,7 @@ bool SScene::PrepareForRender(const QVector2D &inViewportDimensions, QSharedPoin
 }
 
 void SScene::Render(const QVector2D &inViewportDimensions,
-                    QSharedPointer<IQDemonRenderContext> inContext,
+                    IQDemonRenderContext *inContext,
                     RenderClearCommand inClearColorBuffer,
                     const SRenderInstanceId id)
 {
@@ -102,7 +102,7 @@ void SScene::Render(const QVector2D &inViewportDimensions,
         inContext->GetRenderer()->RenderLayer(*m_FirstChild, inViewportDimensions, m_UseClearColor, m_ClearColor, true, id);
 }
 void SScene::RenderWithClear(const QVector2D &inViewportDimensions,
-                             QSharedPointer<IQDemonRenderContext> inContext,
+                             IQDemonRenderContext *inContext,
                              RenderClearCommand inClearColorBuffer,
                              QVector3D inClearColor,
                              const SRenderInstanceId id)

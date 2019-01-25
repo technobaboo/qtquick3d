@@ -230,7 +230,7 @@ struct SShaderGenerator : public IDefaultMaterialShaderGenerator
     typedef QHash<QSharedPointer<QDemonRenderShaderProgram>, QSharedPointer<SShaderGeneratorGeneratedShader>> TProgramToShaderMap;
     typedef QHash<QString, QSharedPointer<QDemonRenderConstantBuffer>> TStrConstanBufMap;
 
-    QSharedPointer<IQDemonRenderContext> m_RenderContext;
+    IQDemonRenderContext *m_RenderContext;
     QSharedPointer<IShaderProgramGenerator> m_ProgramGenerator;
 
     const SDefaultMaterial *m_CurrentMaterial;
@@ -283,7 +283,7 @@ struct SShaderGenerator : public IDefaultMaterialShaderGenerator
 
     TStrConstanBufMap m_ConstantBuffers; ///< store all constants buffers
 
-    SShaderGenerator(QSharedPointer<IQDemonRenderContext> inRc)
+    SShaderGenerator(IQDemonRenderContext *inRc)
         : m_RenderContext(inRc)
         , m_ProgramGenerator(m_RenderContext->GetShaderProgramGenerator())
         , m_CurrentMaterial(nullptr)
@@ -1891,7 +1891,7 @@ struct SShaderGenerator : public IDefaultMaterialShaderGenerator
 }
 
 QSharedPointer<IDefaultMaterialShaderGenerator>
-IDefaultMaterialShaderGenerator::CreateDefaultMaterialShaderGenerator(QSharedPointer<IQDemonRenderContext> inRc)
+IDefaultMaterialShaderGenerator::CreateDefaultMaterialShaderGenerator(IQDemonRenderContext *inRc)
 {
     return QSharedPointer<IDefaultMaterialShaderGenerator>(new SShaderGenerator(inRc));
 }

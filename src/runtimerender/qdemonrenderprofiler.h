@@ -100,7 +100,7 @@ public:
          */
     virtual quint32 GetAndResetTriangleCount() const = 0;
 
-    static QSharedPointer<IRenderProfiler> CreateGpuProfiler(QSharedPointer<IQDemonRenderContext> inContext,
+    static QSharedPointer<IRenderProfiler> CreateGpuProfiler(IQDemonRenderContext *inContext,
                                                              QSharedPointer<QDemonRenderContext> inRenderContext);
 };
 QT_END_NAMESPACE

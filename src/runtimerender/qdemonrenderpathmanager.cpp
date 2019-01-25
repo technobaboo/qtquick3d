@@ -693,8 +693,8 @@ struct SPathManager : public IPathManager, public QEnableSharedFromThis<SPathMan
     typedef QHash<SPathShaderMapKey, QSharedPointer<SPathXYGeneratedShader>> TPaintedShaderMap;
     typedef QHash<QString, TPathBufferPtr> TStringPathBufferMap;
 
-    QSharedPointer<IQDemonRenderContextCore> m_CoreContext;
-    QSharedPointer<IQDemonRenderContext> m_RenderContext;
+    IQDemonRenderContextCore * m_CoreContext;
+    IQDemonRenderContext *m_RenderContext;
     QString m_IdBuilder;
     TPathSubPathBufferHash m_SubPathBuffers;
     TPathBufferHash m_Buffers;
@@ -724,7 +724,7 @@ struct SPathManager : public IPathManager, public QEnableSharedFromThis<SPathMan
     QSharedPointer<QDemonRenderPathSpecification> m_PathSpecification;
     QSharedPointer<QDemonPathUtilities::IPathBufferBuilder> m_PathBuilder;
 
-    SPathManager(QSharedPointer<IQDemonRenderContextCore> inRC)
+    SPathManager(IQDemonRenderContextCore * inRC)
         : m_CoreContext(inRC)
         , m_RenderContext(nullptr)
     {
@@ -833,7 +833,7 @@ struct SPathManager : public IPathManager, public QEnableSharedFromThis<SPathMan
         return retval;
     }
 
-    QSharedPointer<IPathManager> OnRenderSystemInitialize(QSharedPointer<IQDemonRenderContext> context) override
+    QSharedPointer<IPathManager> OnRenderSystemInitialize(IQDemonRenderContext *context) override
     {
         m_RenderContext = context;
         return sharedFromThis();
@@ -1810,7 +1810,7 @@ QVector2D IPathManagerCore::GetAngleDistanceFromControlPoint(QVector2D inPositio
     return QVector2D(radToDeg(angleRad), distance);
 }
 
-QSharedPointer<IPathManagerCore> IPathManagerCore::CreatePathManagerCore(QSharedPointer<IQDemonRenderContextCore> ctx)
+QSharedPointer<IPathManagerCore> IPathManagerCore::CreatePathManagerCore(IQDemonRenderContextCore * ctx)
 {
     return QSharedPointer<SPathManager>(new SPathManager(ctx));
 }

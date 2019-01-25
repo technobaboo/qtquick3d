@@ -187,7 +187,7 @@ struct SDynamicShaderProgramFlags : public SShaderCacheProgramFlags
 };
 }
 
-class IDynamicObjectClass
+class Q_DEMONRUNTIMERENDER_EXPORT IDynamicObjectClass
 {
 protected:
     virtual ~IDynamicObjectClass() {}
@@ -208,7 +208,7 @@ public:
     virtual QDemonRenderTextureFormats::Enum GetOutputTextureFormat() const = 0;
 };
 
-class IDynamicObjectSystemCore
+class Q_DEMONRUNTIMERENDER_EXPORT IDynamicObjectSystemCore
 {
 protected:
     virtual ~IDynamicObjectSystemCore() {}
@@ -278,14 +278,14 @@ public:
     //    virtual void Load(QDemonDataRef<quint8> inData, CStrTableOrDataRef inStrDataBlock,
     //                      const char *inProjectDir) = 0;
 
-    virtual QSharedPointer<IDynamicObjectSystem> CreateDynamicSystem(QSharedPointer<IQDemonRenderContext> rc) = 0;
+    virtual QSharedPointer<IDynamicObjectSystem> CreateDynamicSystem(IQDemonRenderContext *rc) = 0;
 
-    static QSharedPointer<IDynamicObjectSystemCore> CreateDynamicSystemCore(QSharedPointer<IQDemonRenderContextCore> rc);
+    static QSharedPointer<IDynamicObjectSystemCore> CreateDynamicSystemCore(IQDemonRenderContextCore *rc);
 };
 
 typedef QPair<QSharedPointer<QDemonRenderShaderProgram>, dynamic::SDynamicShaderProgramFlags> TShaderAndFlags;
 
-class IDynamicObjectSystem : public IDynamicObjectSystemCore , public QEnableSharedFromThis<IDynamicObjectSystem>
+class Q_DEMONRUNTIMERENDER_EXPORT IDynamicObjectSystem : public IDynamicObjectSystemCore , public QEnableSharedFromThis<IDynamicObjectSystem>
 {
 protected:
     virtual ~IDynamicObjectSystem() {}

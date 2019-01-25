@@ -36,6 +36,8 @@
 
 #include <QtDemonRuntimeRender/qdemonrendertexttypes.h>
 
+#include <QtDemonRuntimeRender/qtdemonruntimerenderglobal.h>
+
 QT_BEGIN_NAMESPACE
 
 struct SRendererFontEntry
@@ -57,7 +59,7 @@ class IPerfTimer;
 class QDemonRenderContext;
 class QDemonRenderPathFontSpecification;
 
-class ITextRendererCore
+class Q_DEMONRUNTIMERENDER_EXPORT ITextRendererCore
 {
 public:
     virtual ~ITextRendererCore() {}
@@ -92,7 +94,7 @@ public:
 /**
      *	Opaque text rendering system.  Must be able to render text to an opengl texture object.
      */
-class ITextRenderer : public ITextRendererCore
+class Q_DEMONRUNTIMERENDER_EXPORT ITextRenderer : public ITextRendererCore
 {
 protected:
     virtual ~ITextRenderer() {}

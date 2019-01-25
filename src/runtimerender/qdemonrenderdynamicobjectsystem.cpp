@@ -625,8 +625,8 @@ struct SDynamicObjectSystemCoreImpl : public IDynamicObjectSystem
 
 struct SDynamicObjectSystemImpl : public IDynamicObjectSystem
 {
-    QSharedPointer<IQDemonRenderContextCore> m_CoreContext;
-    QSharedPointer<IQDemonRenderContext> m_Context;
+    IQDemonRenderContextCore *m_CoreContext;
+    IQDemonRenderContext *m_Context;
     TStringClassMap m_Classes;
     TPathDataMap m_ExpandedFiles;
     QString m_ShaderKeyBuilder;
@@ -641,7 +641,7 @@ struct SDynamicObjectSystemImpl : public IDynamicObjectSystem
     QString m_shaderLibraryPlatformDirectory;
     mutable QMutex m_PropertyLoadMutex;
 
-    SDynamicObjectSystemImpl(QSharedPointer<IQDemonRenderContextCore> inCore)
+    SDynamicObjectSystemImpl(IQDemonRenderContextCore *inCore)
         : m_CoreContext(inCore)
         , m_Context(nullptr)
         , m_PropertyLoadMutex()
@@ -1219,7 +1219,7 @@ struct SDynamicObjectSystemImpl : public IDynamicObjectSystem
 //        }
 //    }
 
-    QSharedPointer<IDynamicObjectSystem> CreateDynamicSystem(QSharedPointer<IQDemonRenderContext> rc) override
+    QSharedPointer<IDynamicObjectSystem> CreateDynamicSystem(IQDemonRenderContext *rc) override
     {
         m_Context = rc;
         return sharedFromThis();
@@ -1513,7 +1513,7 @@ struct SDynamicObjectSystemImpl : public IDynamicObjectSystem
 };
 }
 
-QSharedPointer<IDynamicObjectSystemCore> IDynamicObjectSystemCore::CreateDynamicSystemCore(QSharedPointer<IQDemonRenderContextCore> rc)
+QSharedPointer<IDynamicObjectSystemCore> IDynamicObjectSystemCore::CreateDynamicSystemCore(IQDemonRenderContextCore *rc)
 {
     return QSharedPointer<SDynamicObjectSystemImpl>(new SDynamicObjectSystemImpl(rc));
 }

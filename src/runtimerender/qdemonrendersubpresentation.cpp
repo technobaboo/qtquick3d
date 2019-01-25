@@ -42,7 +42,7 @@ QDemonRenderPickResult CSubPresentationPickQuery::Pick(const QVector2D &inMouseC
     return m_Renderer.DoGraphQueryPick(inMouseCoords, inViewportDimensions, inPickEverything);
 }
 
-CSubPresentationRenderer::CSubPresentationRenderer(QSharedPointer<IQDemonRenderContext> inRenderContext,
+CSubPresentationRenderer::CSubPresentationRenderer(IQDemonRenderContext *inRenderContext,
                                                    QSharedPointer<SPresentation> inPresentation)
     : m_RenderContext(inRenderContext)
     , m_Presentation(inPresentation)

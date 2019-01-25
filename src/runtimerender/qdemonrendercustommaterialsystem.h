@@ -46,7 +46,7 @@ struct SCustomMaterial;
 class ICustomMaterialSystem;
 struct SRenderSubset;
 
-class ICustomMaterialSystemCore
+class Q_DEMONRUNTIMERENDER_EXPORT ICustomMaterialSystemCore
 {
 public:
     virtual ~ICustomMaterialSystemCore() {}
@@ -94,13 +94,13 @@ public:
     //    virtual void Load(QDemonDataRef<quint8> inData, CStrTableOrDataRef inStrDataBlock,
     //                      const char *inProjectDir) = 0;
 
-    virtual QSharedPointer<ICustomMaterialSystem> GetCustomMaterialSystem(QSharedPointer<IQDemonRenderContext> inContext) = 0;
+    virtual QSharedPointer<ICustomMaterialSystem> GetCustomMaterialSystem(IQDemonRenderContext *inContext) = 0;
 
-    static QSharedPointer<ICustomMaterialSystemCore> CreateCustomMaterialSystemCore(QSharedPointer<IQDemonRenderContextCore> inContext);
+    static QSharedPointer<ICustomMaterialSystemCore> CreateCustomMaterialSystemCore(IQDemonRenderContextCore * inContext);
 };
 // How to handle blend modes?
 struct SModel;
-class ICustomMaterialSystem : public ICustomMaterialSystemCore
+class Q_DEMONRUNTIMERENDER_EXPORT ICustomMaterialSystem : public ICustomMaterialSystemCore
 {
 public:
     virtual ~ICustomMaterialSystem() override {}
@@ -124,12 +124,12 @@ public:
     virtual void EndFrame() = 0;
 };
 
-struct SCustomMaterialVertexPipeline : public SVertexPipelineImpl
+struct Q_DEMONRUNTIMERENDER_EXPORT SCustomMaterialVertexPipeline : public SVertexPipelineImpl
 {
-    QSharedPointer<IQDemonRenderContext> m_Context;
+    IQDemonRenderContext *m_Context;
     TessModeValues::Enum m_TessMode;
 
-    SCustomMaterialVertexPipeline(QSharedPointer<IQDemonRenderContext> inContext, TessModeValues::Enum inTessMode);
+    SCustomMaterialVertexPipeline(IQDemonRenderContext *inContext, TessModeValues::Enum inTessMode);
     void InitializeTessControlShader();
     void InitializeTessEvaluationShader();
     void FinalizeTessControlShader();

@@ -32,6 +32,8 @@
 
 #include <QtDemonRender/qdemonrenderbasetypes.h>
 
+#include <QtDemonRuntimeRender/qtdemonruntimerenderglobal.h>
+
 QT_BEGIN_NAMESPACE
 
 class IRenderTask
@@ -64,7 +66,7 @@ public:
      * by
      * the offscreen render manager.
      */
-class IRenderList
+class Q_DEMONRUNTIMERENDER_EXPORT IRenderList
 {
 public:
     virtual ~IRenderList() {}

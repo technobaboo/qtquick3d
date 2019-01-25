@@ -41,7 +41,7 @@ QT_BEGIN_NAMESPACE
 
 struct SPGGraphObject;
 class IQDemonRenderContext;
-class IPixelGraphicsRenderer
+class Q_DEMONRUNTIMERENDER_EXPORT IPixelGraphicsRenderer
 {
 public:
     virtual ~IPixelGraphicsRenderer() {}
@@ -49,7 +49,7 @@ public:
     // Renders the node to the current viewport.
     virtual void Render(const QVector<SPGGraphObject *> &inObjects) = 0;
 
-    static QSharedPointer<IPixelGraphicsRenderer> CreateRenderer(QSharedPointer<IQDemonRenderContext> ctx);
+    static QSharedPointer<IPixelGraphicsRenderer> CreateRenderer(IQDemonRenderContext *ctx);
 };
 QT_END_NAMESPACE
 

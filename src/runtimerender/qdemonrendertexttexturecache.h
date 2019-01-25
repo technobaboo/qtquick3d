@@ -41,7 +41,7 @@ typedef QPair<QSharedPointer<QDemonRenderPathFontSpecification>, QSharedPointer<
 typedef QPair<STextTextureDetails, QSharedPointer<QDemonRenderTexture2D>> TTextTextureDetailsAndTexture;
 typedef QPair<TPathFontSpecAndPathObject, TTextTextureDetailsAndTexture> TTPathObjectAndTexture;
 
-class ITextTextureCache
+class Q_DEMONRUNTIMERENDER_EXPORT ITextTextureCache
 {
 protected:
     virtual ~ITextTextureCache() {}

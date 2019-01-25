@@ -40,7 +40,7 @@
 
 QT_BEGIN_NAMESPACE
 // This class is threadsafe.
-class IInputStreamFactory
+class Q_DEMONRUNTIMERENDER_EXPORT IInputStreamFactory
 {
 protected:
     virtual ~IInputStreamFactory() {}

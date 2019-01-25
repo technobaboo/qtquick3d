@@ -58,7 +58,7 @@
 
 QT_BEGIN_NAMESPACE
 
-SCustomMaterialVertexPipeline::SCustomMaterialVertexPipeline(QSharedPointer<IQDemonRenderContext> inContext, TessModeValues::Enum inTessMode)
+SCustomMaterialVertexPipeline::SCustomMaterialVertexPipeline(IQDemonRenderContext *inContext, TessModeValues::Enum inTessMode)
     : SVertexPipelineImpl(
           inContext->GetCustomMaterialShaderGenerator(),
           inContext->GetShaderProgramGenerator(),
@@ -848,8 +848,8 @@ struct SMaterialSystem : public ICustomMaterialSystem, public QEnableSharedFromT
     typedef QHash<SShaderMapKey, QSharedPointer<SCustomMaterialShader>> TShaderMap;
     typedef QPair<QString, SImage *> TAllocatedImageEntry;
 
-    QSharedPointer<IQDemonRenderContextCore> m_CoreContext;
-    QSharedPointer<IQDemonRenderContext> m_Context;
+    IQDemonRenderContextCore * m_CoreContext;
+    IQDemonRenderContext *m_Context;
     TStringMaterialMap m_StringMaterialMap;
     TShaderMap m_ShaderMap;
     QVector<TCustomMaterialTextureEntry> m_TextureEntries;
@@ -860,7 +860,7 @@ struct SMaterialSystem : public ICustomMaterialSystem, public QEnableSharedFromT
     quint64 m_LastFrameTime;
     float m_MillisecondsSinceLastFrame;
 
-    SMaterialSystem(QSharedPointer<IQDemonRenderContextCore> ct)
+    SMaterialSystem(IQDemonRenderContextCore * ct)
         : m_CoreContext(ct)
         , m_Context(nullptr)
         , m_UseFastBlits(true)
@@ -2095,7 +2095,7 @@ struct SMaterialSystem : public ICustomMaterialSystem, public QEnableSharedFromT
     //        }
     //    }
 
-    QSharedPointer<ICustomMaterialSystem> GetCustomMaterialSystem(QSharedPointer<IQDemonRenderContext> inContext) override
+    QSharedPointer<ICustomMaterialSystem> GetCustomMaterialSystem(IQDemonRenderContext *inContext) override
     {
         m_Context = inContext;
 
@@ -2108,7 +2108,7 @@ struct SMaterialSystem : public ICustomMaterialSystem, public QEnableSharedFromT
 };
 }
 
-QSharedPointer<ICustomMaterialSystemCore> ICustomMaterialSystemCore::CreateCustomMaterialSystemCore(QSharedPointer<IQDemonRenderContextCore> ctx)
+QSharedPointer<ICustomMaterialSystemCore> ICustomMaterialSystemCore::CreateCustomMaterialSystemCore(IQDemonRenderContextCore * ctx)
 {
     return QSharedPointer<SMaterialSystem>(new SMaterialSystem(ctx));
 }

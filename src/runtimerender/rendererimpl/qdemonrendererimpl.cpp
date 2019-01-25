@@ -88,7 +88,7 @@ static SRenderInstanceId combineLayerAndId(const SLayer *layer, const SRenderIns
     return (SRenderInstanceId)x;
 }
 
-QDemonRendererImpl::QDemonRendererImpl(QSharedPointer<IQDemonRenderContext> ctx)
+QDemonRendererImpl::QDemonRendererImpl(IQDemonRenderContext *ctx)
     : m_demonContext(ctx)
     , m_Context(ctx->GetRenderContext())
     , m_BufferManager(ctx->GetBufferManager())
@@ -1956,7 +1956,7 @@ bool IQDemonRenderer::IsGl2Context(QDemonRenderContextType inContextType)
     return false;
 }
 
-QSharedPointer<IQDemonRenderer> IQDemonRenderer::CreateRenderer(QSharedPointer<IQDemonRenderContext> inContext)
+QSharedPointer<IQDemonRenderer> IQDemonRenderer::CreateRenderer(IQDemonRenderContext *inContext)
 {
     return QSharedPointer<QDemonRendererImpl>(new QDemonRendererImpl(inContext));
 }

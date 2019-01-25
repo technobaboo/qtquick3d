@@ -129,12 +129,12 @@ struct SOffscreenRunnable : public IRenderTask
 struct SOffscreenRenderManager : public IOffscreenRenderManager
 {
     typedef QHash<SOffscreenRendererKey, SRendererData> TRendererMap;
-    QSharedPointer<IQDemonRenderContext> m_Context;
+    IQDemonRenderContext *m_Context;
     QSharedPointer<IResourceManager> m_ResourceManager;
     TRendererMap m_Renderers;
     quint32 m_FrameCount; // cheap per-
 
-    SOffscreenRenderManager(QSharedPointer<IResourceManager> inManager, QSharedPointer<IQDemonRenderContext> inContext)
+    SOffscreenRenderManager(QSharedPointer<IResourceManager> inManager, IQDemonRenderContext *inContext)
         : m_Context(inContext)
         , m_ResourceManager(inManager)
         , m_FrameCount(0)
@@ -458,7 +458,7 @@ IOffscreenRenderManager::~IOffscreenRenderManager()
 
 QSharedPointer<IOffscreenRenderManager> IOffscreenRenderManager::CreateOffscreenRenderManager(
         QSharedPointer<IResourceManager> inManager,
-        QSharedPointer<IQDemonRenderContext> inContext)
+        IQDemonRenderContext *inContext)
 {
     return QSharedPointer<IOffscreenRenderManager>(new SOffscreenRenderManager(inManager, inContext));
 }

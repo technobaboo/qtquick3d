@@ -462,7 +462,7 @@ bool SLayerRenderPreparationData::PreparePathForRender(
                         prepResult.m_MaterialKey, isStroke);
             theRenderable->m_FirstImage = prepResult.m_FirstImage;
 
-            QSharedPointer<IQDemonRenderContext> demonContext(m_Renderer->GetDemonContext());
+            IQDemonRenderContext *demonContext(m_Renderer->GetDemonContext());
             QSharedPointer<IPathManager> thePathManager = demonContext->GetPathManager();
             retval = thePathManager->PrepareForRender(inPath) || retval;
             retval |= (inPath.m_WireframeMode != demonContext->GetWireframeMode());
@@ -505,7 +505,7 @@ bool SLayerRenderPreparationData::PreparePathForRender(
                         prepResult.m_MaterialKey, isStroke);
             theRenderable->m_FirstImage = prepResult.m_FirstImage;
 
-            QSharedPointer<IQDemonRenderContext> demonContext(m_Renderer->GetDemonContext());
+            IQDemonRenderContext *demonContext(m_Renderer->GetDemonContext());
             QSharedPointer<IPathManager> thePathManager = demonContext->GetPathManager();
             retval = thePathManager->PrepareForRender(inPath) || retval;
             retval |= (inPath.m_WireframeMode != demonContext->GetWireframeMode());
@@ -525,7 +525,7 @@ void SLayerRenderPreparationData::PrepareImageForRender(
         SRenderableImage *&ioNextImage, SRenderableObjectFlags &ioFlags,
         SShaderDefaultMaterialKey &inShaderKey, quint32 inImageIndex)
 {
-    QSharedPointer<IQDemonRenderContext> demonContext(m_Renderer->GetDemonContext());
+    IQDemonRenderContext *demonContext(m_Renderer->GetDemonContext());
     QSharedPointer<IBufferManager> bufferManager = demonContext->GetBufferManager();
     QSharedPointer<IOffscreenRenderManager> theOffscreenRenderManager(demonContext->GetOffscreenRenderManager());
 //    IRenderPluginManager &theRenderPluginManager(demonContext.GetRenderPluginManager());
@@ -772,7 +772,7 @@ bool SLayerRenderPreparationData::PrepareModelForRender(
         SModel &inModel, const QMatrix4x4 &inViewProjection,
         const QDemonOption<SClippingFrustum> &inClipFrustum, TNodeLightEntryList &inScopedLights)
 {
-    QSharedPointer<IQDemonRenderContext> demonContext(m_Renderer->GetDemonContext());
+    IQDemonRenderContext *demonContext(m_Renderer->GetDemonContext());
     QSharedPointer<IBufferManager> bufferManager = demonContext->GetBufferManager();
     SRenderMesh *theMesh = bufferManager->LoadMesh(inModel.m_MeshPath);
     if (theMesh == nullptr)
@@ -991,7 +991,7 @@ bool SLayerRenderPreparationData::PrepareRenderablesForRender(
 
 bool SLayerRenderPreparationData::CheckLightProbeDirty(SImage &inLightProbe)
 {
-    QSharedPointer<IQDemonRenderContext> theContext(m_Renderer->GetDemonContext());
+    IQDemonRenderContext *theContext(m_Renderer->GetDemonContext());
     return inLightProbe.ClearDirty(*theContext->GetBufferManager(),
                                    *theContext->GetOffscreenRenderManager()/*,
                                    theContext.GetRenderPluginManager()*/, true);

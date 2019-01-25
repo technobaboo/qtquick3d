@@ -113,7 +113,7 @@ struct RenderWidgetModes
 class QDemonRenderContext;
 class IShaderProgramGenerator;
 // Context used to get render data for the widget.
-class IRenderWidgetContext
+class Q_DEMONRUNTIMERENDER_EXPORT IRenderWidgetContext
 {
 protected:
     virtual ~IRenderWidgetContext();

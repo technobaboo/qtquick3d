@@ -265,7 +265,7 @@ struct SShaderGenerator : public ICustomMaterialShaderGenerator
     QSharedPointer<QDemonRenderConstantBuffer>>
     TStrConstanBufMap;
 
-    QSharedPointer<IQDemonRenderContext> m_RenderContext;
+    IQDemonRenderContext *m_RenderContext;
     QSharedPointer<IShaderProgramGenerator> m_ProgramGenerator;
 
     const SCustomMaterial *m_CurrentMaterial;
@@ -291,7 +291,7 @@ struct SShaderGenerator : public ICustomMaterialShaderGenerator
 
     TStrConstanBufMap m_ConstantBuffers; ///< store all constants buffers
 
-    SShaderGenerator(QSharedPointer<IQDemonRenderContext> inRc)
+    SShaderGenerator(IQDemonRenderContext *inRc)
         : m_RenderContext(inRc)
         , m_ProgramGenerator(m_RenderContext->GetShaderProgramGenerator())
         , m_CurrentMaterial(nullptr)
@@ -1165,7 +1165,7 @@ struct SShaderGenerator : public ICustomMaterialShaderGenerator
 };
 }
 
-QSharedPointer<ICustomMaterialShaderGenerator> ICustomMaterialShaderGenerator::CreateCustomMaterialShaderGenerator(QSharedPointer<IQDemonRenderContext> inRc)
+QSharedPointer<ICustomMaterialShaderGenerator> ICustomMaterialShaderGenerator::CreateCustomMaterialShaderGenerator(IQDemonRenderContext *inRc)
 {
     return QSharedPointer<ICustomMaterialShaderGenerator>(new SShaderGenerator(inRc));
 }

@@ -30,7 +30,11 @@ void RenderWindow::initialize()
 
 void RenderWindow::drawFrame(qint64 delta)
 {
+    m_context->BeginFrame();
 
+    m_context->RunRenderTasks();
+
+    m_context->EndFrame();
 }
 
 void RenderWindow::renderLater()

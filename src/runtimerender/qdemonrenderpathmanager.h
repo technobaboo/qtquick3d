@@ -62,7 +62,7 @@ struct SPathAnchorPoint
     }
 };
 
-class IPathManagerCore
+class Q_DEMONRUNTIMERENDER_EXPORT IPathManagerCore
 {
 public:
     // returns the path buffer id
@@ -89,14 +89,14 @@ public:
     // Returns angle in x, distance in y.
     static QVector2D GetAngleDistanceFromControlPoint(QVector2D inPosition, QVector2D inControlPoint);
 
-    virtual QSharedPointer<IPathManager> OnRenderSystemInitialize(QSharedPointer<IQDemonRenderContext> context) = 0;
+    virtual QSharedPointer<IPathManager> OnRenderSystemInitialize(IQDemonRenderContext *context) = 0;
 
-    static QSharedPointer<IPathManagerCore> CreatePathManagerCore(QSharedPointer<IQDemonRenderContextCore> inContext);
+    static QSharedPointer<IPathManagerCore> CreatePathManagerCore(IQDemonRenderContextCore * inContext);
 };
 
 struct SPathRenderContext; // UICRenderPathRenderContext.h
 
-class IPathManager : public IPathManagerCore
+class Q_DEMONRUNTIMERENDER_EXPORT IPathManager : public IPathManagerCore
 {
 public:
     // The path segments are next expected to change after this call; changes will be ignored.

@@ -160,7 +160,7 @@ class Q_DEMONRUNTIMERENDER_EXPORT QDemonRendererImpl : public IQDemonRenderer, p
 
     typedef QHash<long, SNode *> TBoneIdNodeMap;
 
-    QSharedPointer<IQDemonRenderContext> m_demonContext;
+    IQDemonRenderContext *m_demonContext;
     QSharedPointer<QDemonRenderContext> m_Context;
     QSharedPointer<IBufferManager> m_BufferManager;
     QSharedPointer<IOffscreenRenderManager> m_OffscreenRenderManager;
@@ -275,7 +275,7 @@ class Q_DEMONRUNTIMERENDER_EXPORT QDemonRendererImpl : public IQDemonRenderer, p
     SShaderDefaultMaterialKeyProperties m_DefaultMaterialShaderKeyProperties;
 
 public:
-    QDemonRendererImpl(QSharedPointer<IQDemonRenderContext> ctx);
+    QDemonRendererImpl(IQDemonRenderContext *ctx);
     virtual ~QDemonRendererImpl();
     SShaderDefaultMaterialKeyProperties &DefaultMaterialShaderKeyProperties()
     {
@@ -442,7 +442,7 @@ public:
 
     QSharedPointer<QDemonRenderContext> GetContext() { return m_Context; }
 
-    QSharedPointer<IQDemonRenderContext> GetDemonContext() { return m_demonContext; }
+    IQDemonRenderContext *GetDemonContext() { return m_demonContext; }
 
     void DrawScreenRect(QDemonRenderRectF inRect, const QVector3D &inColor);
     // Binds an offscreen texture.  Widgets are rendered last.

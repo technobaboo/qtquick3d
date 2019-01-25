@@ -69,7 +69,7 @@ class IPathManagerCore;
 class ICustomMaterialSystemCore;
 
 // Part of render context that does not require the render system.
-class IQDemonRenderContextCore
+class Q_DEMONRUNTIMERENDER_EXPORT IQDemonRenderContextCore
 {
 public:
     virtual ~IQDemonRenderContextCore();
@@ -98,7 +98,7 @@ class IQDemonRenderer;
 class IShaderCache;
 class IOffscreenRenderManager;
 
-class IQDemonRenderContext
+class Q_DEMONRUNTIMERENDER_EXPORT IQDemonRenderContext
 {
 public:
     virtual ~IQDemonRenderContext() {}

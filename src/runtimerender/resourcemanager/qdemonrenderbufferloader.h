@@ -60,7 +60,7 @@ public:
 };
 
 // Job of this object is to load buffers all the way to memory as fast as possible.
-class IBufferLoader
+class Q_DEMONRUNTIMERENDER_EXPORT IBufferLoader
 {
 public:
     virtual ~IBufferLoader() {}

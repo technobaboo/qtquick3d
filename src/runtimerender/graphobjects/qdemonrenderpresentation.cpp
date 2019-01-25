@@ -36,7 +36,7 @@
 
 QT_BEGIN_NAMESPACE
 
-void SPresentation::Render(QSharedPointer<IQDemonRenderContext> inContext)
+void SPresentation::Render(IQDemonRenderContext *inContext)
 {
     if (m_Scene) {
         QDemonRenderRect theViewportSize(inContext->GetRenderContext()->GetViewport());

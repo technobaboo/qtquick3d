@@ -38,7 +38,7 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonRenderShadowMap::QDemonRenderShadowMap(QSharedPointer<IQDemonRenderContext> inContext)
+QDemonRenderShadowMap::QDemonRenderShadowMap(IQDemonRenderContext *inContext)
     : m_Context(inContext)
 {
 }
@@ -197,7 +197,7 @@ SShadowMapEntry *QDemonRenderShadowMap::GetShadowMapEntry(quint32 index)
     return nullptr;
 }
 
-QSharedPointer<QDemonRenderShadowMap> QDemonRenderShadowMap::Create(QSharedPointer<IQDemonRenderContext> inContext)
+QSharedPointer<QDemonRenderShadowMap> QDemonRenderShadowMap::Create(IQDemonRenderContext *inContext)
 {
     return QSharedPointer<QDemonRenderShadowMap>(new QDemonRenderShadowMap(inContext));
 }

@@ -156,14 +156,14 @@ class QDemonRenderGpuProfiler : public IRenderProfiler
 
 private:
     QSharedPointer<QDemonRenderContext> m_RenderContext;
-    QSharedPointer<IQDemonRenderContext> m_Context;
+    IQDemonRenderContext *m_Context;
 
     TStrGpuTimerInfoMap m_StrToGpuTimerMap;
     IRenderProfiler::TStrIDVec m_StrToIDVec;
     mutable quint32 m_VertexCount;
 
 public:
-    QDemonRenderGpuProfiler(QSharedPointer<IQDemonRenderContext> inContext,
+    QDemonRenderGpuProfiler(IQDemonRenderContext *inContext,
                             QSharedPointer<QDemonRenderContext> inRenderContext)
         : m_RenderContext(inRenderContext)
         , m_Context(inContext)
@@ -253,7 +253,7 @@ private:
 };
 }
 
-QSharedPointer<IRenderProfiler> IRenderProfiler::CreateGpuProfiler(QSharedPointer<IQDemonRenderContext> inContext,
+QSharedPointer<IRenderProfiler> IRenderProfiler::CreateGpuProfiler(IQDemonRenderContext *inContext,
                                                                    QSharedPointer<QDemonRenderContext> inRenderContext)
 {
     return QSharedPointer<IRenderProfiler>(new QDemonRenderGpuProfiler(inContext, inRenderContext));

@@ -56,13 +56,13 @@ struct CSubPresentationPickQuery : public IGraphObjectPickQuery
 class CSubPresentationRenderer : public IOffscreenRenderer
 {
 public:
-    QSharedPointer<IQDemonRenderContext> m_RenderContext;
+    IQDemonRenderContext *m_RenderContext;
     QSharedPointer<SPresentation> m_Presentation;
     SOffscreenRendererEnvironment m_LastRenderedEnvironment;
     CSubPresentationPickQuery m_PickQuery;
     QString m_OffscreenRendererType;
 
-    CSubPresentationRenderer(QSharedPointer<IQDemonRenderContext> inRenderContext, QSharedPointer<SPresentation> inPresentation);
+    CSubPresentationRenderer(IQDemonRenderContext *inRenderContext, QSharedPointer<SPresentation> inPresentation);
 
     SOffscreenRendererEnvironment GetDesiredEnvironment(QVector2D inPresScale) override;
     virtual SOffscreenRenderFlags

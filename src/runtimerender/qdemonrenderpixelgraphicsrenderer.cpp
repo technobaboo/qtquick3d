@@ -91,7 +91,7 @@ struct SPGRectShader
 
 struct SPGRenderer : public IPixelGraphicsRenderer
 {
-    QSharedPointer<IQDemonRenderContext> m_RenderContext;
+    IQDemonRenderContext *m_RenderContext;
     QSharedPointer<QDemonRenderVertexBuffer> m_QuadVertexBuffer;
     QSharedPointer<QDemonRenderIndexBuffer> m_QuadIndexBuffer;
     QSharedPointer<QDemonRenderInputAssembler> m_QuadInputAssembler;
@@ -100,7 +100,7 @@ struct SPGRenderer : public IPixelGraphicsRenderer
     SShaderFragmentCodeGenerator m_FragmentGenerator;
     SPGRectShader m_RectShader;
 
-    SPGRenderer(QSharedPointer<IQDemonRenderContext> ctx)
+    SPGRenderer(IQDemonRenderContext *ctx)
         : m_RenderContext(ctx)
         , m_VertexGenerator(m_RenderContext->GetRenderContext()->GetRenderContextType())
         , m_FragmentGenerator(m_VertexGenerator, m_RenderContext->GetRenderContext()->GetRenderContextType())
@@ -297,7 +297,7 @@ struct SPGRenderer : public IPixelGraphicsRenderer
 };
 }
 
-QSharedPointer<IPixelGraphicsRenderer> IPixelGraphicsRenderer::CreateRenderer(QSharedPointer<IQDemonRenderContext> ctx)
+QSharedPointer<IPixelGraphicsRenderer> IPixelGraphicsRenderer::CreateRenderer(IQDemonRenderContext *ctx)
 {
     return QSharedPointer<SPGRenderer>(new SPGRenderer(ctx));
 }
