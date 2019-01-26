@@ -9,6 +9,9 @@
 class IQDemonRenderContextCore;
 class IQDemonRenderContext;
 class QDemonRenderContext;
+struct SPresentation;
+struct SScene;
+
 class RenderWindow : public QWindow
 {
 public:
@@ -29,6 +32,8 @@ protected:
 
 private:
     void preInit();
+    void buildTestScene();
+
     QElapsedTimer m_frameTimer;
     bool m_autoUpdate = true;
     bool m_isIntialized = false;
@@ -36,6 +41,8 @@ private:
     QSharedPointer<IQDemonRenderContextCore> m_contextCore;
     QSharedPointer<IQDemonRenderContext> m_context;
     QSharedPointer<QDemonRenderContext> m_renderContext;
+    QSharedPointer<SPresentation> m_presentation;
+    QSharedPointer<SScene> m_scene;
 
 };
 

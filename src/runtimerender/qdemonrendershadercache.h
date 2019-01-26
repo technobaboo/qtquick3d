@@ -116,7 +116,7 @@ public:
     // This call immediately blocks and attempts to load all applicable shaders from the
     // shadercache.xml file in
     // the given directory.
-    virtual void SetShaderCachePersistenceEnabled(const char *inDirectory) = 0;
+    virtual void SetShaderCachePersistenceEnabled(const QString &inDirectory) = 0;
     virtual bool IsShaderCachePersistenceEnabled() const = 0;
     // It is up to the caller to ensure that inFeatures contains unique keys.
     // It is also up the the caller to ensure the keys are ordered in some way.
@@ -133,17 +133,17 @@ public:
     // It is up to the caller to ensure that inFeatures contains unique keys.
     // It is also up the the caller to ensure the keys are ordered in some way.
     virtual QSharedPointer<QDemonRenderShaderProgram>
-    ForceCompileProgram(QString inKey, const char *inVert, const char *inFrag,
-                        const char *inTessCtrl, const char *inTessEval,
-                        const char *inGeom, const SShaderCacheProgramFlags &inFlags,
+    ForceCompileProgram(QString inKey, const QString &inVert, const QString &inFrag,
+                        const QString &inTessCtrl, const QString &inTessEval,
+                        const QString &inGeom, const SShaderCacheProgramFlags &inFlags,
                         const QVector<SShaderPreprocessorFeature> &inFeatures, bool separableProgram,
                         bool fromDisk = false) = 0;
 
     // It is up to the caller to ensure that inFeatures contains unique keys.
     // It is also up the the caller to ensure the keys are ordered in some way.
     virtual QSharedPointer<QDemonRenderShaderProgram>
-    CompileProgram(QString inKey, const char *inVert, const char *inFrag,
-                   const char *inTessCtrl, const char *inTessEval, const char *inGeom,
+    CompileProgram(QString inKey, const QString &inVert, const QString &inFrag,
+                   const QString &inTessCtrl, const QString &inTessEval, const QString &inGeom,
                    const SShaderCacheProgramFlags &inFlags,
                    const QVector<SShaderPreprocessorFeature> &inFeatures,
                    bool separableProgram = false) = 0;
@@ -156,7 +156,7 @@ public:
 
     // Upping the shader version invalidates all previous cache files.
     static quint32 GetShaderVersion() { return 4; }
-    static const char *GetShaderCacheFileName() { return "shadercache.xml"; }
+    static const QString GetShaderCacheFileName() { return QStringLiteral("shadercache.xml"); }
 
     static QSharedPointer<IShaderCache> CreateShaderCache(QSharedPointer<QDemonRenderContext> inContext,
                                                           QSharedPointer<IInputStreamFactory> inInputStreamFactory,

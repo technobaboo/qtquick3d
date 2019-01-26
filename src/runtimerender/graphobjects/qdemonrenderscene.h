@@ -30,6 +30,7 @@
 #ifndef QDEMON_RENDER_SCENE_H
 #define QDEMON_RENDER_SCENE_H
 
+#include <QtDemonRuntimeRender/qtdemonruntimerenderglobal.h>
 #include <QtDemonRuntimeRender/qdemonrendergraphobject.h>
 #include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
 #include <QtGui/QVector3D>
@@ -39,7 +40,7 @@ struct SLayer;
 struct SPresentation;
 typedef void *SRenderInstanceId;
 
-struct SScene : public SGraphObject
+struct Q_DEMONRUNTIMERENDER_EXPORT SScene : public SGraphObject
 {
     SPresentation *m_Presentation;
     SLayer *m_FirstChild;

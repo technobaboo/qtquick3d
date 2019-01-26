@@ -427,16 +427,13 @@ struct SProgramGenerator : public IShaderProgramGenerator
             }
         }
 
-        const char *vertexShaderSource = m_VS.m_FinalBuilder.toLocal8Bit();
-        const char *tcShaderSource = m_TC.m_FinalBuilder.toLocal8Bit();
-        const char *teShaderSource = m_TE.m_FinalBuilder.toLocal8Bit();
-        const char *geShaderSource = m_GS.m_FinalBuilder.toLocal8Bit();
-        const char *fragmentShaderSource = m_FS.m_FinalBuilder.toLocal8Bit();
+        qDebug() << "VS: " << m_VS.m_FinalBuilder;
+        qDebug() << "FS: " << m_FS.m_FinalBuilder;
 
         QSharedPointer<IShaderCache> theCache = m_Context->GetShaderCache();
         QString theCacheKey = inShaderName;
-        return theCache->CompileProgram(theCacheKey, vertexShaderSource, fragmentShaderSource,
-                                        tcShaderSource, teShaderSource, geShaderSource,
+        return theCache->CompileProgram(theCacheKey, m_VS.m_FinalBuilder, m_FS.m_FinalBuilder,
+                                        m_TC.m_FinalBuilder, m_TE.m_FinalBuilder, m_GS.m_FinalBuilder,
                                         theCacheFlags, inFeatureSet, separableProgram);
     }
 };

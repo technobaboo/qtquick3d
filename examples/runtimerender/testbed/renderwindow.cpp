@@ -3,6 +3,10 @@
 #include <QtDemonRender/qdemonrendercontext.h>
 #include <QtDemonRuntimeRender/qdemontextrenderer.h>
 
+#include <QtDemonRuntimeRender/qdemonrenderpresentation.h>
+#include <QtDemonRuntimeRender/qdemonrenderscene.h>
+#include <QtDemonRuntimeRender/qdemonrenderlayer.h>
+
 RenderWindow::RenderWindow(QWindow *parent)
     : QWindow(parent)
 {
@@ -27,6 +31,8 @@ void RenderWindow::initialize()
 
     m_context = m_contextCore->CreateRenderContext(m_renderContext, ".");
     m_context->SetSceneColor(QVector4D(1.0, 0.0, 0.0, 1.0));
+
+    buildTestScene();
 }
 
 void RenderWindow::drawFrame(qint64 delta)
@@ -81,12 +87,54 @@ void RenderWindow::drawFrame(qint64 delta)
 
 //        return wasDirty;
 //    }
+//    bool PrepareForRender()
+//    {
+//        TransferDirtyProperties();
+//        m_LastRenderViewport = m_Context->GetRenderList().GetViewport();
+//        if (m_Presentation && m_Presentation->m_Scene) {
+//            NVRenderRect theViewportSize(m_LastRenderViewport);
+//            return m_Presentation->m_Scene->PrepareForRender(
+//                QT3DSVec2((QT3DSF32)theViewportSize.m_Width, (QT3DSF32)theViewportSize.m_Height),
+//                *m_Context);
+//        }
+//        return false;
+//    }
+
+//    void Render()
+//    {
+//        if (m_Presentation && m_Presentation->m_Scene) {
+//            NVRenderRect theViewportSize(m_LastRenderViewport);
+//            m_Presentation->m_Scene->Render(
+//                QT3DSVec2((QT3DSF32)theViewportSize.m_Width, (QT3DSF32)theViewportSize.m_Height), *m_Context,
+//                SScene::DoNotClear);
+//        }
+//    }
+
+
+    // Set Clear Color
+    if (m_scene && m_scene->m_UseClearColor)
+        m_context->SetSceneColor(QVector4D(m_scene->m_ClearColor, 1.0f));
+    else
+        m_context->SetSceneColor(QVector4D(0.0f, 0.0f, 0.0f, 0.0f));
+
+    m_context->SetPresentationDimensions(QSize(m_presentation->m_PresentationDimensions.x(),
+                                               m_presentation->m_PresentationDimensions.y()));
 
     m_context->BeginFrame();
+    m_renderContext->ResetBlendState();
 
     // Render the first presentation (QDemonRenderPresentation)
+    auto lastRenderViewport = m_context->GetRenderList()->GetViewport();
+    if (m_presentation && m_presentation->m_Scene) {
+        QDemonRenderRect theViewportSize(lastRenderViewport);
+        m_presentation->m_Scene->PrepareForRender(QVector2D(theViewportSize.m_Width, theViewportSize.m_Height), m_context.data());
+    }
 
     m_context->RunRenderTasks();
+    if (m_presentation && m_presentation->m_Scene) {
+        QDemonRenderRect theViewportSize(lastRenderViewport);
+        m_presentation->m_Scene->Render(QVector2D(theViewportSize.m_Width, theViewportSize.m_Height), m_context.data(), SScene::DoNotClear);
+    }
 
     m_context->EndFrame();
 }
@@ -139,4 +187,19 @@ void RenderWindow::preInit()
 
     if (!m_glContext->makeCurrent(this))
         qDebug("fail");
+}
+
+void RenderWindow::buildTestScene()
+{
+    m_presentation.reset(new SPresentation());
+    m_scene.reset(new SScene());
+    m_scene->m_ClearColor = QVector3D(0.0, 1.0, 0.0);
+    m_presentation->m_Scene = m_scene;
+    m_scene->m_Presentation = m_presentation.data();
+
+    auto layer = new SLayer();
+    layer->m_ClearColor = QVector3D(0.0, 0.0, 1.0);
+    layer->m_Background = LayerBackground::Color;
+
+    m_scene->AddChild(*layer);
 }

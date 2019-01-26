@@ -400,8 +400,8 @@ struct ShaderCache : public IShaderCache
     }
     // Compile this program overwriting any existing ones.
     QSharedPointer<QDemonRenderShaderProgram>
-    ForceCompileProgram(QString inKey, const char *inVert, const char *inFrag,
-                        const char *inTessCtrl, const char *inTessEval, const char *inGeom,
+    ForceCompileProgram(QString inKey, const QString &inVert, const QString &inFrag,
+                        const QString &inTessCtrl, const QString &inTessEval, const QString &inGeom,
                         const SShaderCacheProgramFlags &inFlags,
                         const QVector<SShaderPreprocessorFeature> &inFeatures,
                         bool separableProgram, bool fromDisk = false) override
@@ -420,23 +420,12 @@ struct ShaderCache : public IShaderCache
                                << tempKey.m_Key << ">'";
         }
 
-        if (!inVert)
-            inVert = "";
-        if (!inTessCtrl)
-            inTessCtrl = "";
-        if (!inTessEval)
-            inTessEval = "";
-        if (!inGeom)
-            inGeom = "";
-        if (!inFrag)
-            inFrag = "";
-
         //SStackPerfTimer __perfTimer(m_PerfTimer, "Shader Compilation");
-        m_VertexCode = QString::fromLocal8Bit(inVert);
-        m_TessCtrlCode = QString::fromLocal8Bit(inTessCtrl);
-        m_TessEvalCode = QString::fromLocal8Bit(inTessEval);
-        m_GeometryCode = QString::fromLocal8Bit(inGeom);
-        m_FragmentCode = QString::fromLocal8Bit(inFrag);
+        m_VertexCode = inVert;
+        m_TessCtrlCode = inTessCtrl;
+        m_TessEvalCode = inTessEval;
+        m_GeometryCode = inGeom;
+        m_FragmentCode = inFrag;
         // Add defines and such so we can write unified shaders that work across platforms.
         // vertex and fragment shaders are optional for separable shaders
         if (!separableProgram || !m_VertexCode.isEmpty())
@@ -513,8 +502,8 @@ struct ShaderCache : public IShaderCache
     }
 
     virtual QSharedPointer<QDemonRenderShaderProgram>
-    CompileProgram(QString inKey, const char *inVert, const char *inFrag,
-                   const char *inTessCtrl, const char *inTessEval, const char *inGeom,
+    CompileProgram(QString inKey, const QString &inVert, const QString &inFrag,
+                   const QString &inTessCtrl, const QString &inTessEval, const QString &inGeom,
                    const SShaderCacheProgramFlags &inFlags,
                    const QVector<SShaderPreprocessorFeature> &inFeatures, bool separableProgram) override
     {
@@ -542,7 +531,7 @@ struct ShaderCache : public IShaderCache
     //        m_ShaderCache->Att("cache_version", IShaderCache::GetShaderVersion());
     //    }
 
-    void SetShaderCachePersistenceEnabled(const char *inDirectory) override
+    void SetShaderCachePersistenceEnabled(const QString &inDirectory) override
     {
         // ### Shader Chache Writing Code is disabled
         Q_UNUSED(inDirectory)
