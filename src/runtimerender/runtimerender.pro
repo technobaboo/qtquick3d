@@ -44,8 +44,8 @@ HEADERS += \
     qdemonrenderpixelgraphicsrenderer.h \
     qdemonrenderpixelgraphicstypes.h \
 #    qdemonrenderplugin.h \
-    qdemonrenderplugincinterface.h \
-    qdemonrenderplugingraphobject.h \
+#    qdemonrenderplugincinterface.h \
+#    qdemonrenderplugingraphobject.h \
 #    qdemonrenderpluginpropertyvalue.h \
     qdemonrenderprofiler.h \
     qdemonrenderray.h \

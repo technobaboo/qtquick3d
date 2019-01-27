@@ -33,13 +33,13 @@
 #include <qdemonoffscreenrenderkey.h>
 // TODO: Re-add later
 //#include <QtDemonRuntimeRender/qdemonrenderplugin.h>
-#include <qdemonrenderplugingraphobject.h>
+//#include <qdemonrenderplugingraphobject.h>
 
 QT_BEGIN_NAMESPACE
 
 SImage::SImage()
     : SGraphObject(GraphObjectTypes::Image)
-    , m_RenderPlugin(nullptr)
+    //, m_RenderPlugin(nullptr)
     , m_LastFrameOffscreenRenderer(nullptr)
     , m_Parent(nullptr)
     , m_Scale(1, 1)
