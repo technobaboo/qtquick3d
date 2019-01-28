@@ -43,7 +43,7 @@ class IEffectSystem;
 // them and they have completely variable properties.
 // see IEffectManager in order to create these effects.
 // The data for the effect immediately follows the effect
-struct SEffect : public SDynamicObject
+struct Q_DEMONRUNTIMERENDER_EXPORT SEffect : public SDynamicObject
 {
 private:
     // These objects are only created via the dynamic object system.

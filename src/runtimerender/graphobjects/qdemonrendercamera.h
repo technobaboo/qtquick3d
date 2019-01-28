@@ -30,6 +30,8 @@
 #ifndef QDEMON_RENDER_CAMERA_H
 #define QDEMON_RENDER_CAMERA_H
 
+#include <QtDemonRuntimeRender/qtdemonruntimerenderglobal.h>
+
 #include <QtDemonRuntimeRender/qdemonrendernode.h>
 #include <QtDemonRuntimeRender/qdemonrenderray.h>
 
@@ -95,7 +97,7 @@ struct SCuboidRect
     }
 };
 
-struct SCamera : public SNode
+struct Q_DEMONRUNTIMERENDER_EXPORT SCamera : public SNode
 {
 
     // Setting these variables should set dirty on the camera.

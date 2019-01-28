@@ -52,11 +52,9 @@ public:
         : QFile(inPath)
         , m_Path(inPath)
     {
-        open(QIODevice::ReadOnly);
     }
     virtual ~SInputStream() override
     {
-        close();
     }
     QString path() const { return m_Path; }
 

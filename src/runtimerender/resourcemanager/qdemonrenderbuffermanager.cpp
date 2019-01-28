@@ -94,7 +94,9 @@ struct SBufferManager : public IBufferManager
     SPrimitiveEntry m_PrimitiveNames[5];
     QVector<QDemonRenderVertexBufferEntry> m_EntryBuffer;
     bool m_GPUSupportsDXT;
-    static const char *GetPrimitivesDirectory() { return "res//primitives"; }
+    //static const char *GetPrimitivesDirectory() { return "res//primitives"; }
+    // ### Temp test directory
+    static const char *GetPrimitivesDirectory() { return "Q:\\Code\\qt3d-runtime\\res\\primitives"; }
 
     SBufferManager(QSharedPointer<QDemonRenderContext> ctx,
                    QSharedPointer<IInputStreamFactory> inInputStreamFactory,

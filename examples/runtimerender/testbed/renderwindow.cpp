@@ -6,6 +6,10 @@
 #include <QtDemonRuntimeRender/qdemonrenderpresentation.h>
 #include <QtDemonRuntimeRender/qdemonrenderscene.h>
 #include <QtDemonRuntimeRender/qdemonrenderlayer.h>
+#include <QtDemonRuntimeRender/qdemonrendercamera.h>
+#include <QtDemonRuntimeRender/qdemonrenderlight.h>
+#include <QtDemonRuntimeRender/qdemonrendermodel.h>
+#include <QtDemonRuntimeRender/qdemonrenderdefaultmaterial.h>
 
 RenderWindow::RenderWindow(QWindow *parent)
     : QWindow(parent)
@@ -202,4 +206,24 @@ void RenderWindow::buildTestScene()
     layer->m_Background = LayerBackground::Color;
 
     m_scene->AddChild(*layer);
+
+    // Camera
+    auto camera = new SCamera();
+    layer->AddChild(*camera);
+    camera->LookAt(QVector3D(0.0, 0.0, -600.0),
+                   QVector3D(0.0, 1.0, 0.0),
+                   QVector3D(0.0, 0.0, 0.0));
+
+    // Light
+    auto light = new SLight();
+    layer->AddChild(*light);
+
+    // Mesh (#Cube)
+    auto mesh = new SModel();
+    mesh->m_MeshPath = QStringLiteral("#Cube");
+    layer->AddChild(*mesh);
+
+    // Default Material
+    auto material = new SDefaultMaterial();
+    mesh->AddMaterial(*material);
 }

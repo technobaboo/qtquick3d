@@ -38,7 +38,7 @@ class QDemonRenderTexture2D;
 class QDemonRenderPathFontItem;
 class QDemonRenderPathFontSpecification;
 
-struct SText : public SNode, public STextRenderInfo
+struct Q_DEMONRUNTIMERENDER_EXPORT SText : public SNode, public STextRenderInfo
 {
     // Change any of these properties and you can expect
     // that the text will force an expensive re-layer and render.

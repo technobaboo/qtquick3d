@@ -42,7 +42,7 @@ struct SPropertyDefinition;
 }
 
 // Dynamic objects are objects that have variable number of properties during runtime.
-struct SDynamicObject : public SGraphObject
+struct Q_DEMONRUNTIMERENDER_EXPORT SDynamicObject : public SGraphObject
 {
     QString m_ClassName;
     NodeFlags m_Flags;

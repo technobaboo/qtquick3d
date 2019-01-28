@@ -55,7 +55,7 @@ struct SCustomMaterialShaderKeyValues
 
 typedef QDemonFlags<SCustomMaterialShaderKeyValues::Enum, quint32> SCustomMaterialShaderKeyFlags;
 
-struct SCustomMaterial : public SDynamicObject
+struct Q_DEMONRUNTIMERENDER_EXPORT SCustomMaterial : public SDynamicObject
 {
 private:
     // These objects are only created via the dynamic object system.
