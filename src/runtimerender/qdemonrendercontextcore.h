@@ -30,9 +30,6 @@
 #ifndef QDEMON_RENDER_CONTEXT_CORE_H
 #define QDEMON_RENDER_CONTEXT_CORE_H
 
-// ### TODO Re-enable subsystems when they are done
-
-//#include <QtDemonRuntimeRender/qdemonoffscreenrendermanager.h>
 #include <QtDemonRuntimeRender/qdemonrenderpresentation.h>
 #include <QtDemonRuntimeRender/qdemonrenderinputstreamfactory.h>
 #include <QtDemonRuntimeRender/qdemonrenderthreadpool.h>

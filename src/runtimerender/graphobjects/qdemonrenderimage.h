@@ -34,9 +34,6 @@
 #include <QtDemonRuntimeRender/qdemonrendernode.h>
 #include <QtDemonRuntimeRender/qdemonrenderimagetexturedata.h>
 #include <QtDemonRuntimeRender/qtdemonruntimerenderglobal.h>
-//#include <QtDemonRuntimeRender/qdemonrenderplugingraphobject.h>
-// TODO: Add back later
-//#include <QtDemonRuntimeRender/qdemonrenderplugin.h>
 #include <QtDemonRender/qdemonrendertexture2d.h>
 
 #include <QtGui/QVector2D>
@@ -63,7 +60,6 @@ struct Q_DEMONRUNTIMERENDER_EXPORT SImage : public SGraphObject
 
     // Presentation id.
     QString m_OffscreenRendererId; // overrides source path if available
-    //SRenderPlugin *m_RenderPlugin; // Overrides everything if available.
     QSharedPointer<IOffscreenRenderer> m_LastFrameOffscreenRenderer;
     SGraphObject *m_Parent;
 
@@ -104,7 +100,6 @@ struct Q_DEMONRUNTIMERENDER_EXPORT SImage : public SGraphObject
         // Null out objects that should be null when loading from file.
         inRemapper.NullPtr(m_LastFrameOffscreenRenderer);
         inRemapper.NullPtr(m_TextureData.m_Texture);
-       // inRemapper.Remap(m_RenderPlugin);
         inRemapper.Remap(m_Parent);
     }
 };

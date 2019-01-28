@@ -31,15 +31,11 @@
 #include <QtDemonRuntimeRender/qdemonrenderbuffermanager.h>
 #include <QtDemonRuntimeRender/qdemonoffscreenrendermanager.h>
 #include <qdemonoffscreenrenderkey.h>
-// TODO: Re-add later
-//#include <QtDemonRuntimeRender/qdemonrenderplugin.h>
-//#include <qdemonrenderplugingraphobject.h>
 
 QT_BEGIN_NAMESPACE
 
 SImage::SImage()
     : SGraphObject(GraphObjectTypes::Image)
-    //, m_RenderPlugin(nullptr)
     , m_LastFrameOffscreenRenderer(nullptr)
     , m_Parent(nullptr)
     , m_Scale(1, 1)
@@ -74,15 +70,6 @@ bool SImage::ClearDirty(IBufferManager &inBufferManager, IOffscreenRenderManager
     m_Flags.SetDirty(false);
     SImageTextureData newImage;
     bool replaceTexture(false);
-//    if (m_RenderPlugin && m_RenderPlugin->m_Flags.IsActive()) {
-//        auto theInstance = inPluginManager.GetOrCreateRenderPluginInstance(m_RenderPlugin->m_PluginPath, m_RenderPlugin);
-//        if (theInstance) {
-//            inRenderManager.MaybeRegisterOffscreenRenderer(&theInstance, theInstance);
-//            SOffscreenRenderResult theResult = inRenderManager.GetRenderedItem(&theInstance);
-//            HandleOffscreenResult(*this, newImage, theResult, replaceTexture, wasDirty);
-//        }
-//    }
-
     if (newImage.m_Texture == nullptr) {
         if (!m_OffscreenRendererId.isEmpty()) {
             SOffscreenRenderResult theResult =

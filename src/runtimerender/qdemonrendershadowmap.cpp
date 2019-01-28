@@ -31,8 +31,7 @@
 #include <QtDemonRuntimeRender/qdemonrenderlayer.h>
 #include <QtDemonRuntimeRender/qdemonrendershadowmap.h>
 #include <QtDemonRuntimeRender/qdemonrenderresourcemanager.h>
-// ### TODO Re-enable when doing the IMPL classes
-//#include <QtDemonRuntimeRender/qdemonrendererimpllayerrenderdata.h>
+#include <QtDemonRuntimeRender/qdemonrendererimpllayerrenderdata.h>
 #include <QtDemonRender/qdemonrendershaderconstant.h>
 #include <QtDemonRender/qdemonrendershaderprogram.h>
 
@@ -132,16 +131,14 @@ void QDemonRenderShadowMap::AddShadowMapEntry(quint32 index, quint32 width, quin
         QSharedPointer<QDemonRenderTextureCube> theDepthTex = theManager->AllocateTextureCube(width, height, format, samples);
         QSharedPointer<QDemonRenderTextureCube> theDepthCopy = theManager->AllocateTextureCube(width, height, format, samples);
         QSharedPointer<QDemonRenderTexture2D> theDepthTemp = theManager->AllocateTexture2D(width, height, QDemonRenderTextureFormats::Depth24Stencil8, samples);
-        // ### TODO Re-enable when doing the IMPL classes
-        //m_ShadowMapList.push_back(SShadowMapEntry(index, mode, filter, *theDepthTex, *theDepthCopy, *theDepthTemp));
+        m_ShadowMapList.push_back(SShadowMapEntry(index, mode, filter, theDepthTex, theDepthCopy, theDepthTemp));
 
         pEntry = &m_ShadowMapList.back();
     } else {
         QSharedPointer<QDemonRenderTexture2D> theDepthMap = theManager->AllocateTexture2D(width, height, format, samples);
         QSharedPointer<QDemonRenderTexture2D> theDepthCopy = theManager->AllocateTexture2D(width, height, format, samples);
         QSharedPointer<QDemonRenderTexture2D> theDepthTemp = theManager->AllocateTexture2D(width, height, QDemonRenderTextureFormats::Depth24Stencil8, samples);
-        // ### TODO Re-enable when doing the IMPL classes
-        //m_ShadowMapList.push_back(SShadowMapEntry(index, mode, filter, *theDepthMap, *theDepthCopy, *theDepthTemp));
+        m_ShadowMapList.push_back(SShadowMapEntry(index, mode, filter, theDepthMap, theDepthCopy, theDepthTemp));
 
         pEntry = &m_ShadowMapList.back();
     }

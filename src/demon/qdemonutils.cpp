@@ -431,5 +431,11 @@ void CFileTools::CombineBaseAndRelative(const char *inBase, const char *inRelati
     }
 }
 
+void CFileTools::CombineBaseAndRelative(const QString &inBase, const QString &inRelative, QString &outString)
+{
+    CombineBaseAndRelative(inBase.toLocal8Bit().constData(), inRelative.toLocal8Bit().constData(), outString);
+}
 
 QT_END_NAMESPACE
+
+

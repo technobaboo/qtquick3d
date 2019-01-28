@@ -46,7 +46,6 @@
 #include <QtDemonRuntimeRender/qdemonrenderimagebatchloader.h>
 #include <QtDemonRuntimeRender/qdemonrendertexttexturecache.h>
 #include <QtDemonRuntimeRender/qdemonrendertexttextureatlas.h>
-//#include <QtDemonRuntimeRender/qdemonrenderplugin.h>
 #include <QtDemonRuntimeRender/qdemonrenderdynamicobjectsystem.h>
 #include <QtDemonRuntimeRender/qdemonrendercustommaterialsystem.h>
 #include <QtDemonRuntimeRender/qdemonrenderpixelgraphicsrenderer.h>
@@ -572,7 +571,7 @@ struct SRenderContext : public IQDemonRenderContext
             m_TextRenderer->BeginFrame();
         if (m_TextTextureCache)
             m_TextTextureCache->BeginFrame();
-        //m_ImageBatchLoader->BeginFrame();
+        m_ImageBatchLoader->BeginFrame();
     }
 
     QVector2D GetPresentationScaleFactor() const override { return m_PresentationScale; }

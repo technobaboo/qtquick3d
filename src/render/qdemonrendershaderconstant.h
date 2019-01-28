@@ -92,7 +92,7 @@ public:
         memset(&m_Value, 0, sizeof(TDataType));
     }
 
-    void Release() override {  } // ### cleanup
+    void Release() override {  }
 };
 
 ///< A specialized class for textures
@@ -111,7 +111,7 @@ public:
         m_Value = std::numeric_limits<quint32>::max();
     }
 
-    void Release() override { } // ### cleanup
+    void Release() override { }
 };
 
 ///< A specialized class for textures
@@ -131,7 +131,7 @@ public:
         m_Value.fill(std::numeric_limits<quint32>::max());
     }
 
-    void Release() override {  } // ### cleanup
+    void Release() override {  }
 };
 
 ///< A specialized class for texture arrays
@@ -150,7 +150,7 @@ public:
         m_Value = std::numeric_limits<quint32>::max();
     }
 
-    void Release() override {  } // ### cleanup
+    void Release() override {  }
 };
 
 ///< A specialized class for cubemap textures
@@ -169,7 +169,7 @@ public:
         m_Value = std::numeric_limits<quint32>::max();
     }
 
-    void Release() override {  } // ### cleanup
+    void Release() override {  }
 };
 
 ///< A specialized class for cubemap textures
@@ -189,7 +189,7 @@ public:
         m_Value.fill(std::numeric_limits<quint32>::max());
     }
 
-    void Release() override {  } // ### cleanup
+    void Release() override {  }
 };
 
 ///< A specialized class for texture image buffer
@@ -208,7 +208,7 @@ public:
         m_Value = std::numeric_limits<quint32>::max();
     }
 
-    void Release() override {  } // ### cleanup
+    void Release() override {  }
 };
 
 ///< Base for any buffer ( constant, texture, ... ) which is used by this program

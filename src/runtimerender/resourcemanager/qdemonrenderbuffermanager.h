@@ -86,11 +86,15 @@ public:
     virtual SImageTextureData LoadRenderImage(QString inSourcePath,
                                               bool inForceScanForTransparency = false,
                                               bool inBsdfMipmaps = false) = 0;
-    virtual SRenderMesh *LoadMesh(QString inSourcePath) = 0;
+    virtual SRenderMesh *LoadMesh(const QString &inSourcePath) = 0;
 
-    virtual SRenderMesh *CreateMesh(const char *inSourcePath, quint8 *inVertData,
-                                    quint32 inNumVerts, quint32 inVertStride, quint32 *inIndexData,
-                                    quint32 inIndexCount, QDemonBounds3 inBounds) = 0;
+    virtual SRenderMesh *CreateMesh(const QString &inSourcePath,
+                                    quint8 *inVertData,
+                                    quint32 inNumVerts,
+                                    quint32 inVertStride,
+                                    quint32 *inIndexData,
+                                    quint32 inIndexCount,
+                                    QDemonBounds3 inBounds) = 0;
 
     // Remove *all* buffers from the buffer manager;
     virtual void Clear() = 0;
