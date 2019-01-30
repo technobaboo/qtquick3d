@@ -154,9 +154,9 @@ struct SNodeLightEntry
     }
 };
 
-DEFINE_INVASIVE_SINGLE_LIST(NodeLightEntry);
+DEFINE_INVASIVE_SINGLE_LIST(NodeLightEntry)
 
-IMPLEMENT_INVASIVE_SINGLE_LIST(NodeLightEntry, m_NextNode);
+IMPLEMENT_INVASIVE_SINGLE_LIST(NodeLightEntry, m_NextNode)
 
 struct SRenderableObject;
 
