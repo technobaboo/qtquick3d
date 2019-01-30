@@ -632,26 +632,25 @@ Mesh *Mesh::Load(QIODevice &inStream)
     char *meshBufferData = reinterpret_cast<char *>(::malloc(header.m_SizeInBytes));
     qint64 sizeRead = inStream.read(meshBufferData, header.m_SizeInBytes);
 //    QByteArray meshBuffer = inStream.read(header.m_SizeInBytes);
-    if (sizeRead != header.m_SizeInBytes)
-        goto failure;
+    if (sizeRead == header.m_SizeInBytes) {
+        QDemonDataRef<char> meshBuffer = toDataRef(meshBufferData, header.m_SizeInBytes);
+        if (header.m_FileVersion == 1) {
+            MeshV1 *temp = DoInitialize<MeshV1>(header.m_HeaderFlags, meshBuffer);
+            if (temp == nullptr)
+                goto failure;
+            return CreateMeshFromPreviousMesh(temp);
 
-    QDemonDataRef<char> meshBuffer = toDataRef(meshBufferData, header.m_SizeInBytes);
-    if (header.m_FileVersion == 1) {
-        MeshV1 *temp = DoInitialize<MeshV1>(header.m_HeaderFlags, meshBuffer);
-        if (temp == nullptr)
-            goto failure;
-        return CreateMeshFromPreviousMesh(temp);
-
-    } else if (header.m_FileVersion == 2) {
-        MeshV2 *temp = DoInitialize<MeshV2>(header.m_HeaderFlags, meshBuffer);
-        if (temp == nullptr)
-            goto failure;
-        return CreateMeshFromPreviousMesh(temp);
-    } else {
-        Mesh *retval = Initialize(header.m_FileVersion, header.m_HeaderFlags, meshBuffer);
-        if (retval == nullptr)
-            goto failure;
-        return retval;
+        } else if (header.m_FileVersion == 2) {
+            MeshV2 *temp = DoInitialize<MeshV2>(header.m_HeaderFlags, meshBuffer);
+            if (temp == nullptr)
+                goto failure;
+            return CreateMeshFromPreviousMesh(temp);
+        } else {
+            Mesh *retval = Initialize(header.m_FileVersion, header.m_HeaderFlags, meshBuffer);
+            if (retval == nullptr)
+                goto failure;
+            return retval;
+        }
     }
 
 failure:
