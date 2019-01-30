@@ -11,6 +11,7 @@ class IQDemonRenderContext;
 class QDemonRenderContext;
 struct SPresentation;
 struct SScene;
+struct SModel;
 
 class RenderWindow : public QWindow
 {
@@ -25,6 +26,9 @@ public:
 public slots:
     void renderLater();
     void renderNow();
+
+private slots:
+    void updateAnimations();
 
 protected:
     bool event(QEvent *event) override;
@@ -43,6 +47,7 @@ private:
     QSharedPointer<QDemonRenderContext> m_renderContext;
     QSharedPointer<SPresentation> m_presentation;
     QSharedPointer<SScene> m_scene;
+    SModel *m_cube;
 
 };
 

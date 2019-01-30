@@ -113,7 +113,7 @@ void RenderWindow::drawFrame(qint64 delta)
 //                SScene::DoNotClear);
 //        }
 //    }
-
+    updateAnimations();
 
     // Set Clear Color
     if (m_scene && m_scene->m_UseClearColor)
@@ -162,6 +162,12 @@ void RenderWindow::renderNow()
     m_glContext->doneCurrent();
     if (m_autoUpdate)
         renderLater();
+}
+
+void RenderWindow::updateAnimations()
+{
+    m_cube->m_Rotation = QVector3D(0.785398f, m_cube->m_Rotation.y() + 0.01f, 0.785398f);
+    m_cube->MarkDirty(NodeTransformDirtyFlag::TransformIsDirty);
 }
 
 bool RenderWindow::event(QEvent *event)
@@ -219,13 +225,11 @@ void RenderWindow::buildTestScene()
     layer->AddChild(*light);
 
     // Mesh (#Cube)
-    auto mesh = new SModel();
-    mesh->m_Rotation = QVector3D(0.785398f, 0.785398f, 0.785398f);
-    mesh->MarkDirty(NodeTransformDirtyFlag::TransformIsDirty);
-    mesh->m_MeshPath = QStringLiteral("#Cube");
-    layer->AddChild(*mesh);
+    m_cube = new SModel();
+    m_cube->m_MeshPath = QStringLiteral("#Cube");
+    layer->AddChild(*m_cube);
 
     // Default Material
     auto material = new SDefaultMaterial();
-    mesh->AddMaterial(*material);
+    m_cube->AddMaterial(*material);
 }
