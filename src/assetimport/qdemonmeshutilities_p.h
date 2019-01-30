@@ -356,7 +356,7 @@ struct Q_DEMONASSETIMPORT_EXPORT Mesh
     // Create a mesh given this header, and that data.  data.size() must match
     // header.SizeInBytes.  The mesh returned starts a data[0], so however data
     // was allocated is how the mesh should be deallocated.
-    static Mesh *Initialize(quint16 meshVersion, quint16 meshFlags, QByteArray &data);
+    static Mesh *Initialize(quint16 meshVersion, quint16 meshFlags, QDemonDataRef<char> data);
 
     // You can save multiple meshes in a file.  Each mesh returns an incrementing
     // integer for the multi file.  The original meshes aren't changed, and the file

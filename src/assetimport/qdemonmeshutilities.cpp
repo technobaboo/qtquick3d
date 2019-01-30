@@ -31,6 +31,7 @@
 
 #include <QtCore/QVector>
 #include <QtCore/QBuffer>
+#include <QtDemon/qdemondataref.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -412,7 +413,7 @@ inline quint32 NextIndex(const QByteArray &inData, QDemonRenderComponentTypes::E
 
 template <typename TMeshType>
 // Not exposed to the outside world
-TMeshType *DoInitialize(quint16 /*meshFlags*/, QByteArray &data)
+TMeshType *DoInitialize(quint16 /*meshFlags*/, QDemonDataRef<char> data)
 {
     quint8 *newMem = reinterpret_cast<quint8*>(data.begin());
     quint32 amountLeft = data.size() - sizeof(TMeshType);
@@ -628,10 +629,13 @@ Mesh *Mesh::Load(QIODevice &inStream)
         return nullptr;
     if (header.m_SizeInBytes < sizeof(Mesh))
         return nullptr;
-    QByteArray meshBuffer = inStream.read(header.m_SizeInBytes);
-    if (meshBuffer.size() != header.m_SizeInBytes)
+    char *meshBufferData = reinterpret_cast<char *>(::malloc(header.m_SizeInBytes));
+    qint64 sizeRead = inStream.read(meshBufferData, header.m_SizeInBytes);
+//    QByteArray meshBuffer = inStream.read(header.m_SizeInBytes);
+    if (sizeRead != header.m_SizeInBytes)
         goto failure;
 
+    QDemonDataRef<char> meshBuffer = toDataRef(meshBufferData, header.m_SizeInBytes);
     if (header.m_FileVersion == 1) {
         MeshV1 *temp = DoInitialize<MeshV1>(header.m_HeaderFlags, meshBuffer);
         if (temp == nullptr)
@@ -652,6 +656,7 @@ Mesh *Mesh::Load(QIODevice &inStream)
 
 failure:
     Q_ASSERT(false);
+    ::free(meshBufferData);
     return nullptr;
 }
 
@@ -668,7 +673,7 @@ Mesh *Mesh::Load(const char *inFilePath)
     return mesh;
 }
 
-Mesh *Mesh::Initialize(quint16 meshVersion, quint16 meshFlags, QByteArray &data)
+Mesh *Mesh::Initialize(quint16 meshVersion, quint16 meshFlags, QDemonDataRef<char> data)
 {
     if (meshVersion != MeshDataHeader::GetCurrentFileVersion())
         return nullptr;
