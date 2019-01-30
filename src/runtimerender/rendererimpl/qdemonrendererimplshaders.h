@@ -160,6 +160,7 @@ struct SRenderableDepthPrepassShader
         , m_CameraDirection("camera_direction", inShader)
         , m_Tessellation(inShader)
     {
+        Q_UNUSED(inContext)
         /*
             m_ShadowMV[0].m_Shader = &inShader;
             m_ShadowMV[0].m_Constant = inShader.GetShaderConstant( "shadow_mv0" );
@@ -204,6 +205,7 @@ struct SDefaultAoPassShader
         , m_DepthSamplerSize("depth_sampler_size", inShader)
         , m_AoShadowParams("cbAoShadow", inShader)
     {
+        Q_UNUSED(inContext)
     }
     ~SDefaultAoPassShader() 
     {
