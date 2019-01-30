@@ -351,9 +351,7 @@ struct SVertexPipelineImpl : public IDefaultMaterialVertexPipeline
     {
         if (!m_addedFunctions.contains(functionName)) {
             m_addedFunctions.push_back(functionName);
-            QString includeName;
-            QTextStream stream(&includeName);
-            stream << "func" << functionName << ".glsllib";
+            QString includeName = QStringLiteral("func") + functionName + QStringLiteral(".glsllib");
             AddInclude(includeName);
         }
     }

@@ -200,6 +200,8 @@ struct SStageGeneratorBase : public IShaderStageGenerator
         AddShaderOutgoingMap();
         m_FinalBuilder.append(QStringLiteral("\n"));
         AppendShaderCode();
+
+        qDebug() << "####: " << m_FinalBuilder;
         return m_FinalBuilder;
     }
 
@@ -208,8 +210,7 @@ struct SStageGeneratorBase : public IShaderStageGenerator
         if (!m_addedFunctions.contains(functionName)) {
             m_addedFunctions.push_back(functionName);
             QString includeName;
-            QTextStream stream(&includeName);
-            stream << QStringLiteral("func") << functionName << QStringLiteral(".glsllib");
+            includeName = QStringLiteral("func") + functionName + QStringLiteral(".glsllib");
             AddInclude(includeName);
         }
     }

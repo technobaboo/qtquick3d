@@ -297,7 +297,7 @@ public:
                      const dynamic::SDynamicShaderProgramFlags &inFlags,
                      bool inForceCompilation = false) = 0;
 
-    virtual const char *GetShaderSource(QString inPath, QString &source) = 0;
+    virtual QString GetShaderSource(QString inPath) = 0;
 
     // Will return null in the case where a custom prepass shader isn't needed for this object
     // If no geom shader, then no depth prepass shader.

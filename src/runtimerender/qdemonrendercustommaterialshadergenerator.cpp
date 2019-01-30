@@ -970,10 +970,9 @@ struct SShaderGenerator : public ICustomMaterialShaderGenerator
     void GenerateFragmentShader(SShaderDefaultMaterialKey &, const QString &inShaderPathName)
     {
         QSharedPointer<IDynamicObjectSystem> theDynamicSystem(m_RenderContext->GetDynamicObjectSystem());
-        QString theShaderBuffer;
-        const char *fragSource = theDynamicSystem->GetShaderSource(inShaderPathName, theShaderBuffer);
+        QString fragSource = theDynamicSystem->GetShaderSource(inShaderPathName);
 
-        Q_ASSERT(fragSource);
+        Q_ASSERT(!fragSource.isEmpty());
 
         // light maps
         bool hasLightmaps = false;
@@ -1002,7 +1001,7 @@ struct SShaderGenerator : public ICustomMaterialShaderGenerator
         IDefaultMaterialVertexPipeline &vertexShader(VertexGenerator());
         IShaderStageGenerator &fragmentShader(FragmentGenerator());
 
-        QString srcString(QString::fromLocal8Bit(fragSource));
+        QString srcString(fragSource);
 
         if (m_RenderContext->GetRenderContext()->GetRenderContextType()
                 == QDemonRenderContextValues::GLES2) {
