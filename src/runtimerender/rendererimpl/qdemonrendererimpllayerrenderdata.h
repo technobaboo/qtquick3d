@@ -27,7 +27,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#pragma once
 #ifndef QDEMON_RENDERER_IMPL_LAYER_RENDER_DATA_H
 #define QDEMON_RENDERER_IMPL_LAYER_RENDER_DATA_H
 

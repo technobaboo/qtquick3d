@@ -27,7 +27,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#pragma once
 #ifndef QDEMON_RENDER_SHADER_GENERATOR_IMPL_H
 #define QDEMON_RENDER_SHADER_GENERATOR_IMPL_H
 
