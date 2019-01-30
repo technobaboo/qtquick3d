@@ -1500,7 +1500,7 @@ struct SShaderGenerator : public IDefaultMaterialShaderGenerator
     {
         TProgramToShaderMap::iterator inserter = m_ProgramToShaderMap.find(inProgram);
         if (inserter == m_ProgramToShaderMap.end())
-            m_ProgramToShaderMap.insert(inProgram, QSharedPointer<SShaderGeneratorGeneratedShader>(new SShaderGeneratorGeneratedShader(inProgram, m_RenderContext->GetRenderContext())));
+            inserter = m_ProgramToShaderMap.insert(inProgram, QSharedPointer<SShaderGeneratorGeneratedShader>(new SShaderGeneratorGeneratedShader(inProgram, m_RenderContext->GetRenderContext())));
 
         return inserter.value();
     }

@@ -220,6 +220,8 @@ void RenderWindow::buildTestScene()
 
     // Mesh (#Cube)
     auto mesh = new SModel();
+    mesh->m_Rotation = QVector3D(0.785398f, 0.785398f, 0.785398f);
+    mesh->MarkDirty(NodeTransformDirtyFlag::TransformIsDirty);
     mesh->m_MeshPath = QStringLiteral("#Cube");
     layer->AddChild(*mesh);
 
