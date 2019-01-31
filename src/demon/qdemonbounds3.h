@@ -179,7 +179,7 @@ public:
 
     Q_ALWAYS_INLINE void expand(QDemonBounds2BoxPoints &outPoints) const;
 
-    Q_ALWAYS_INLINE void transform(const QMatrix4x4 &inMatrix);
+    void transform(const QMatrix4x4 &inMatrix);
 
     QVector3D minimum;
     QVector3D maximum;

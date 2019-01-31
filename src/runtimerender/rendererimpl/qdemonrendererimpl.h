@@ -27,7 +27,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#pragma once
 #ifndef QDEMON_RENDER_SHADER_GENERATOR_IMPL_H
 #define QDEMON_RENDER_SHADER_GENERATOR_IMPL_H
 
@@ -82,10 +81,10 @@ inline bool ISRenderObjectPtrGreatThan(const SRenderableObject *lhs,
 {
     return FloatLessThan(rhs->m_CameraDistanceSq, lhs->m_CameraDistanceSq);
 }
-inline bool NonZero(float inValue) { return fabs(inValue) > .001f; }
+inline bool NonZero(float inValue) { return std::abs(inValue) > .001f; }
 inline bool NonZero(quint32 inValue) { return inValue != 0; }
-inline bool IsZero(float inValue) { return fabs(inValue) < .001f; }
-inline bool IsNotOne(float inValue) { return fabs(1.0f - inValue) > .001f; }
+inline bool IsZero(float inValue) { return std::abs(inValue) < .001f; }
+inline bool IsNotOne(float inValue) { return std::abs(1.0f - inValue) > .001f; }
 
 inline bool IsRectEdgeInBounds(qint32 inNewRectOffset, qint32 inNewRectWidth,
                                qint32 inCurrentRectOffset, qint32 inCurrentRectWidth)

@@ -27,7 +27,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#pragma once
 #ifndef QDEMON_RENDERER_IMPL_SHADERS_H
 #define QDEMON_RENDERER_IMPL_SHADERS_H
 
@@ -161,6 +160,7 @@ struct SRenderableDepthPrepassShader
         , m_CameraDirection("camera_direction", inShader)
         , m_Tessellation(inShader)
     {
+        Q_UNUSED(inContext)
         /*
             m_ShadowMV[0].m_Shader = &inShader;
             m_ShadowMV[0].m_Constant = inShader.GetShaderConstant( "shadow_mv0" );
@@ -205,6 +205,7 @@ struct SDefaultAoPassShader
         , m_DepthSamplerSize("depth_sampler_size", inShader)
         , m_AoShadowParams("cbAoShadow", inShader)
     {
+        Q_UNUSED(inContext)
     }
     ~SDefaultAoPassShader() 
     {

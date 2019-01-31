@@ -27,7 +27,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#pragma once
+#ifndef QDEMON_RENDER_LAYER_HELPER_IMPL_H
+#define QDEMON_RENDER_LAYER_HELPER_IMPL_H
 
 #include <QtDemonRender/qdemonrenderbasetypes.h>
 #include <QtDemonRuntimeRender/qdemonrendercamera.h>
@@ -110,3 +111,5 @@ private:
     QDemonRenderRectF GetLayerRenderViewport() const;
 };
 QT_END_NAMESPACE
+
+#endif // QDEMON_RENDER_LAYER_HELPER_IMPL_H

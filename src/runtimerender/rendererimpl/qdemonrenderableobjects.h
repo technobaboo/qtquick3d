@@ -27,7 +27,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#pragma once
 #ifndef QDEMON_RENDER_IMPL_RENDERABLE_OBJECTS_H
 #define QDEMON_RENDER_IMPL_RENDERABLE_OBJECTS_H
 
@@ -155,9 +154,9 @@ struct SNodeLightEntry
     }
 };
 
-DEFINE_INVASIVE_SINGLE_LIST(NodeLightEntry);
+DEFINE_INVASIVE_SINGLE_LIST(NodeLightEntry)
 
-IMPLEMENT_INVASIVE_SINGLE_LIST(NodeLightEntry, m_NextNode);
+IMPLEMENT_INVASIVE_SINGLE_LIST(NodeLightEntry, m_NextNode)
 
 struct SRenderableObject;
 

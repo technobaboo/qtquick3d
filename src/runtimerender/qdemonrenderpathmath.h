@@ -30,7 +30,7 @@
 #ifndef QDEMON_RENDER_PATH_MATH_H
 #define QDEMON_RENDER_PATH_MATH_H
 
-#if _MSC_VER > 1000
+#if defined(_MSC_VER) && (_MSC_VER > 1000)
 #pragma warning(disable:4267)
 #endif
 
@@ -718,7 +718,7 @@ void AdaptiveSubdivideBezierCurve(QVector<SResultCubic> &ioResultVec,
 }
 QT_END_NAMESPACE
 
-#if _MSC_VER > 1000
+#if defined(_MSC_VER) && (_MSC_VER > 1000)
 #pragma warning(default:4267)
 #endif
 #endif
