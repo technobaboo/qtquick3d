@@ -201,7 +201,6 @@ struct SStageGeneratorBase : public IShaderStageGenerator
         m_FinalBuilder.append(QStringLiteral("\n"));
         AppendShaderCode();
 
-        qDebug() << "####: " << m_FinalBuilder;
         return m_FinalBuilder;
     }
 
@@ -427,9 +426,6 @@ struct SProgramGenerator : public IShaderProgramGenerator
                 theDynamicSystem->InsertShaderHeaderInformation(theStage.m_FinalBuilder, inShaderName.toLocal8Bit().constData());
             }
         }
-
-        qDebug() << "VS: " << m_VS.m_FinalBuilder;
-        qDebug() << "FS: " << m_FS.m_FinalBuilder;
 
         QSharedPointer<IShaderCache> theCache = m_Context->GetShaderCache();
         QString theCacheKey = inShaderName;
