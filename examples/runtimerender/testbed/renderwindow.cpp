@@ -33,7 +33,7 @@ void RenderWindow::initialize()
 
     m_renderContext = QDemonRenderContext::CreateGL(format());
 
-    m_context = m_contextCore->CreateRenderContext(m_renderContext, "Q:\\Code\\qt3dstudio\\src\\Runtime");
+    m_context = m_contextCore->CreateRenderContext(m_renderContext, "./");
     m_context->SetSceneColor(QVector4D(1.0, 0.0, 0.0, 1.0));
 
     buildTestScene();

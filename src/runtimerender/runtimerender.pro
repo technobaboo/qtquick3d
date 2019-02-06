@@ -110,4 +110,6 @@ SOURCES += \
     qdemonruntimerenderlogging.cpp \
     qdemonrenderer.cpp
 
+RESOURCES += res.qrc
+
 load(qt_module)
