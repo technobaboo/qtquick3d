@@ -17,7 +17,10 @@ SOURCES += \
     qdemonnode.cpp \
     qdemonimage.cpp \
     qdemoncamera.cpp \
-    qdemonlight.cpp
+    qdemonlight.cpp \
+    qdemonmodel.cpp \
+    qdemonlayer.cpp \
+    qdemoneffect.cpp
 
 HEADERS += \
     qdemonobject.h \
@@ -25,4 +28,7 @@ HEADERS += \
     qdemonnode.h \
     qdemonimage.h \
     qdemoncamera.h \
-    qdemonlight.h
+    qdemonlight.h \
+    qdemonmodel.h \
+    qdemonlayer.h \
+    qdemoneffect.h
