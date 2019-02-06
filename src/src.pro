@@ -6,3 +6,4 @@ SUBDIRS = \
     assetimport \
     plugins \
     runtimerender \
+    imports
