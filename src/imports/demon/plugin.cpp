@@ -30,6 +30,19 @@
 #include <QtQml/qqmlextensionplugin.h>
 #include <QtQml/qqml.h>
 
+#include <qdemoncamera.h>
+#include <qdemoncustommaterial.h>
+#include <qdemondefaultmaterial.h>
+#include <qdemoneffect.h>
+#include <qdemonimage.h>
+#include <qdemonlayer.h>
+#include <qdemonlight.h>
+#include <qdemonmaterial.h>
+#include <qdemonmodel.h>
+#include <qdemonnode.h>
+#include <qdemonobject.h>
+#include <qdemonscene.h>
+
 static void initResources()
 {
 #ifdef QT_STATIC
@@ -39,43 +52,27 @@ static void initResources()
 
 QT_BEGIN_NAMESPACE
 
-class Q3DSStudio3DPlugin : public QQmlExtensionPlugin
+class QDemonPlugin : public QQmlExtensionPlugin
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID QQmlExtensionInterface_iid)
 
 public:
-    Q3DSStudio3DPlugin(QObject *parent = 0) : QQmlExtensionPlugin(parent) { initResources(); }
+    QDemonPlugin(QObject *parent = 0) : QQmlExtensionPlugin(parent) { initResources(); }
     void registerTypes(const char *uri) override
     {
-//        qmlRegisterType<Q3DSStudio3DItem>(uri, 2, 0, "Studio3D");
-//        qmlRegisterType<Q3DSPresentationItem>(uri, 2, 0, "Presentation");
-//        qmlRegisterType<Q3DSSubPresentationSettings>(uri, 2, 0, "SubPresentationSettings");
-//        qmlRegisterType<Q3DSViewerSettings>(uri, 2, 0, "ViewerSettings");
-
-//        qmlRegisterType<Q3DSDataInput>(uri, 2, 0, "DataInput");
-//        qmlRegisterType<Q3DSElement>(uri, 2, 0, "Element");
-//        qmlRegisterType<Q3DSSceneElement>(uri, 2, 0, "SceneElement");
-//        qmlRegisterType<Q3DSViewerSettings>(uri, 2, 0, "ViewerSettings");
-//        qmlRegisterType<Q3DSInlineQmlSubPresentation>(uri, 2, 0, "QmlStream");
-
-//        qmlRegisterType<Q3DSStudio3DView>(uri, 2, 2, "View3D");
-//#if QT_CONFIG(q3ds_profileui)
-//        qmlRegisterType<Q3DSImGuiItem>(uri, 2, 2, "Studio3DProfiler");
-//#endif
-
-//        // Stereo API added in 2.3
-//        qmlRegisterType<Q3DSViewerSettings, 3>(uri, 2, 3, "ViewerSettings");
-
-//        // API NG
-//        qmlRegisterType<Q3DSStudio3DEngine>(uri, 2, 1, "Studio3DEngine");
-//        qmlRegisterType<Q3DSLayer3D>(uri, 2, 1, "Layer3D");
-//        qmlRegisterUncreatableType<Q3DSObject3D>(uri, 2, 1, "Object3D", QLatin1String("Object3D is a base class"));
-//        qmlRegisterUncreatableType<Q3DSNode3D>(uri, 2, 1, "Node3D", QLatin1String("Node3D is a base class"));
-//        qmlRegisterType<Q3DSGroup3D>(uri, 2, 1, "Group3D");
-//        qmlRegisterType<Q3DSModel3D>(uri, 2, 1, "Model3D");
-//        qmlRegisterType<Q3DSCamera3D>(uri, 2, 1, "Camera3D");
-//        qmlRegisterType<Q3DSLight3D>(uri, 2, 1, "Light3D");
+        qmlRegisterType<QDemonCamera>(uri, 1, 0, "DemonCamera");
+        qmlRegisterType<QDemonCustomMaterial>(uri, 1, 0, "DemonCustomMaterial");
+        qmlRegisterType<QDemonDefaultMaterial>(uri, 1, 0, "DemonDefaultMaterial");
+        qmlRegisterType<QDemonEffect>(uri, 1, 0, "DemonEffect");
+        qmlRegisterType<QDemonImage>(uri, 1, 0, "DemonImage");
+        qmlRegisterType<QDemonLayer>(uri, 1, 0, "DemonLayer");
+        qmlRegisterType<QDemonLight>(uri, 1, 0, "DemonLight");
+        qmlRegisterUncreatableType<QDemonMaterial>(uri, 1, 0, "DemonMaterial", QLatin1String("Material is Abstract"));
+        qmlRegisterType<QDemonModel>(uri, 1, 0, "DemonModel");
+        qmlRegisterType<QDemonNode>(uri, 1, 0, "DemonNode");
+        qmlRegisterUncreatableType<QDemonObject>(uri, 1, 0, "DemonObject", QLatin1String("Object is Abtract"));
+        qmlRegisterType<QDemonScene>(uri, 1, 0, "DemonScene");
     }
 };
 

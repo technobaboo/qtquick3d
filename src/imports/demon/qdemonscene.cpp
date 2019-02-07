@@ -5,6 +5,16 @@ QDemonScene::QDemonScene()
 
 }
 
+QDemonScene::~QDemonScene()
+{
+
+}
+
+QDemonObject::Type QDemonScene::type() const
+{
+    return QDemonObject::Scene;
+}
+
 bool QDemonScene::useClearColor() const
 {
     return m_useClearColor;

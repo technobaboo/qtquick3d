@@ -12,6 +12,9 @@ class QDemonScene : public QDemonObject
     Q_PROPERTY(QColor clearColor READ clearColor WRITE setClearColor NOTIFY clearColorChanged)
 public:
     QDemonScene();
+    ~QDemonScene() override;
+
+    QDemonObject::Type type() const override;
 
     bool useClearColor() const;
     QColor clearColor() const;
@@ -31,6 +34,7 @@ private:
     SScene *m_sceneNode;
     bool m_useClearColor;
     QColor m_clearColor;
+
 };
 
 #endif // QDEMONSCENE_H
