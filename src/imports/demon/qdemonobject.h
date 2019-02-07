@@ -47,7 +47,7 @@ public slots:
     void setName(QString name);
 
 protected:
-    virtual SGraphObject *updateSpacialNode(SGraphObject *node) = 0;
+    virtual SGraphObject *updateSpatialNode(SGraphObject *node) = 0;
 
 private:
     void markDirty();

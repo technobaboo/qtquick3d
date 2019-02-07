@@ -78,7 +78,7 @@ signals:
     void piviotVChanged(float pivotv);
 
 protected:
-    SGraphObject *updateSpacialNode(SGraphObject *node) override;
+    SGraphObject *updateSpatialNode(SGraphObject *node) override;
 
 private:
     QString m_source;

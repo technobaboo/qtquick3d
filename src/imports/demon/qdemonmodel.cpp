@@ -103,7 +103,7 @@ void QDemonModel::setIsWireframeMode(bool isWireframeMode)
     emit isWireframeModeChanged(m_isWireframeMode);
 }
 
-SGraphObject *QDemonModel::updateSpacialNode(SGraphObject *node)
+SGraphObject *QDemonModel::updateSpatialNode(SGraphObject *node)
 {
     if (!node)
         node = new SModel();

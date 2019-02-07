@@ -153,7 +153,7 @@ void QDemonNode::setVisible(bool visible)
     update();
 }
 
-SGraphObject *QDemonNode::updateSpacialNode(SGraphObject *node)
+SGraphObject *QDemonNode::updateSpatialNode(SGraphObject *node)
 {
     if (!node) {
         node = new SNode();

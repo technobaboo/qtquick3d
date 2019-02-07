@@ -20,7 +20,10 @@ SOURCES += \
     qdemonlight.cpp \
     qdemonmodel.cpp \
     qdemonlayer.cpp \
-    qdemoneffect.cpp
+    qdemoneffect.cpp \
+    qdemonmaterial.cpp \
+    qdemondefaultmaterial.cpp \
+    qdemoncustommaterial.cpp
 
 HEADERS += \
     qdemonobject.h \
@@ -31,4 +34,7 @@ HEADERS += \
     qdemonlight.h \
     qdemonmodel.h \
     qdemonlayer.h \
-    qdemoneffect.h
+    qdemoneffect.h \
+    qdemonmaterial.h \
+    qdemondefaultmaterial.h \
+    qdemoncustommaterial.h

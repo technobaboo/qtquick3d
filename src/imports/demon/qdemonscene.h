@@ -25,7 +25,7 @@ Q_SIGNALS:
     void clearColorChanged(QColor clearColor);
 
 protected:
-    SGraphObject *updateSpacialNode(SGraphObject *node) override;
+    SGraphObject *updateSpatialNode(SGraphObject *node) override;
 
 private:
     SScene *m_sceneNode;

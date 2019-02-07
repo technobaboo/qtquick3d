@@ -80,7 +80,7 @@ signals:
     void visibleChanged(bool visible);
 
 protected:
-    SGraphObject *updateSpacialNode(SGraphObject *node) override;
+    SGraphObject *updateSpatialNode(SGraphObject *node) override;
 
 private:
     QVector3D m_rotation;

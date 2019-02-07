@@ -53,7 +53,7 @@ signals:
     void isWireframeModeChanged(bool isWireframeMode);
 
 protected:
-    SGraphObject *updateSpacialNode(SGraphObject *node) override;
+    SGraphObject *updateSpatialNode(SGraphObject *node) override;
 
 private:
 

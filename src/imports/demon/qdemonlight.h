@@ -91,7 +91,7 @@ signals:
     void shadowFilterChanged(float shadowFilter);
 
 protected:
-    SGraphObject *updateSpacialNode(SGraphObject *node) override;
+    SGraphObject *updateSpatialNode(SGraphObject *node) override;
 
 private:
 

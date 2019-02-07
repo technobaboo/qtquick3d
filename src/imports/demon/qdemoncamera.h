@@ -80,7 +80,7 @@ signals:
     void frustumScaleYChanged(float frustumScaleY);
 
 protected:
-    SGraphObject *updateSpacialNode(SGraphObject *node) override;
+    SGraphObject *updateSpatialNode(SGraphObject *node) override;
 
 private:
 

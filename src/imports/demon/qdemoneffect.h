@@ -22,7 +22,7 @@ signals:
     void sourceChanged(QString source);
 
 protected:
-    SGraphObject *updateSpacialNode(SGraphObject *node) override;
+    SGraphObject *updateSpatialNode(SGraphObject *node) override;
 
 private:
 
