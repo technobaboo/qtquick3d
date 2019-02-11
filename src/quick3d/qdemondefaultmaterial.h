@@ -5,7 +5,9 @@
 #include <qdemonimage.h>
 #include <QColor>
 
-class QDemonDefaultMaterial : public QDemonMaterial
+QT_BEGIN_NAMESPACE
+
+class Q_QUICK3D_EXPORT QDemonDefaultMaterial : public QDemonMaterial
 {
     Q_OBJECT
     Q_PROPERTY(DefaultMaterialLighting lighting READ lighting WRITE setLighting NOTIFY lightingChanged)
@@ -111,7 +113,7 @@ public:
     float diffuseLightWrap() const;
     bool vertexColors() const;
 
-public slots:
+public Q_SLOTS:
 
     void setLighting(DefaultMaterialLighting lighting);
     void setBlendMode(DefaultMaterialBlendMode blendMode);
@@ -143,7 +145,7 @@ public slots:
     void setDiffuseLightWrap(float diffuseLightWrap);
     void setVertexColors(bool vertexColors);
 
-signals:
+Q_SIGNALS:
     void lightingChanged(DefaultMaterialLighting lighting);
     void blendModeChanged(DefaultMaterialBlendMode blendMode);
     void diffuseColorChanged(QColor diffuseColor);
@@ -207,5 +209,7 @@ private:
     float m_diffuseLightWrap;
     bool m_vertexColors;
 };
+
+QT_END_NAMESPACE
 
 #endif // QDEMONDEFAULTMATERIAL_H

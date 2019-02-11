@@ -3,7 +3,9 @@
 
 #include <qdemonmaterial.h>
 
-class QDemonCustomMaterial : public QDemonMaterial
+QT_BEGIN_NAMESPACE
+
+class Q_QUICK3D_EXPORT QDemonCustomMaterial : public QDemonMaterial
 {
     Q_OBJECT
     Q_PROPERTY(bool hasTransparency READ hasTransparency WRITE setHasTransparency NOTIFY hasTransparencyChanged)
@@ -20,12 +22,12 @@ public:
     bool hasRefraction() const;
     bool hasVolumetricDF() const;
 
-public slots:
+public Q_SLOTS:
     void setHasTransparency(bool hasTransparency);
     void setHasRefraction(bool hasRefraction);
     void setHasVolumetricDF(bool hasVolumetricDF);
 
-signals:
+Q_SIGNALS:
     void hasTransparencyChanged(bool hasTransparency);
     void hasRefractionChanged(bool hasRefraction);
     void hasVolumetricDFChanged(bool hasVolumetricDF);
@@ -38,5 +40,7 @@ private:
     bool m_hasRefraction;
     bool m_hasVolumetricDF;
 };
+
+QT_END_NAMESPACE
 
 #endif // QDEMONCUSTOMMATERIAL_H

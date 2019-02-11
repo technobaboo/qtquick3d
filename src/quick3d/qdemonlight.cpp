@@ -2,6 +2,8 @@
 
 #include <QtDemonRuntimeRender/qdemonrenderlight.h>
 
+QT_BEGIN_NAMESPACE
+
 QDemonLight::QDemonLight()
 {
 
@@ -276,3 +278,5 @@ SGraphObject *QDemonLight::updateSpatialNode(SGraphObject *node)
 
     return node;
 }
+
+QT_END_NAMESPACE

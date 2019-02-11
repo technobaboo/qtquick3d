@@ -2,8 +2,9 @@
 #define QDEMONEFFECT_H
 
 #include <qdemonobject.h>
+QT_BEGIN_NAMESPACE
 
-class QDemonEffect : public QDemonObject
+class Q_QUICK3D_EXPORT QDemonEffect : public QDemonObject
 {
     Q_OBJECT
     Q_PROPERTY(QString source READ source WRITE setSource NOTIFY sourceChanged)
@@ -15,10 +16,10 @@ public:
 
     QString source() const;
 
-public slots:
+public Q_SLOTS:
     void setSource(QString source);
 
-signals:
+Q_SIGNALS:
     void sourceChanged(QString source);
 
 protected:
@@ -29,4 +30,5 @@ private:
     QString m_source;
 };
 
+QT_END_NAMESPACE
 #endif // QDEMONEFFECT_H

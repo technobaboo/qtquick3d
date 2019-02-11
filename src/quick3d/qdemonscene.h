@@ -5,7 +5,9 @@
 #include <QtDemonRuntimeRender/qdemonrenderscene.h>
 #include <QColor>
 
-class QDemonScene : public QDemonObject
+QT_BEGIN_NAMESPACE
+
+class Q_QUICK3D_EXPORT QDemonScene : public QDemonObject
 {
     Q_OBJECT
     Q_PROPERTY(bool useClearColor READ useClearColor WRITE setUseClearColor NOTIFY useClearColorChanged)
@@ -19,7 +21,7 @@ public:
     bool useClearColor() const;
     QColor clearColor() const;
 
-public slots:
+public Q_SLOTS:
     void setUseClearColor(bool useClearColor);
     void setClearColor(QColor clearColor);
 
@@ -36,5 +38,7 @@ private:
     QColor m_clearColor;
 
 };
+
+QT_END_NAMESPACE
 
 #endif // QDEMONSCENE_H

@@ -3,7 +3,9 @@
 
 #include <qdemonnode.h>
 
-class QDemonModel : public QDemonNode
+QT_BEGIN_NAMESPACE
+
+class Q_QUICK3D_EXPORT QDemonModel : public QDemonNode
 {
     Q_OBJECT
     Q_PROPERTY(QString source READ source WRITE setSource NOTIFY sourceChanged)
@@ -36,7 +38,7 @@ public:
     float innerTess() const;
     bool isWireframeMode() const;
 
-public slots:
+public Q_SLOTS:
     void setSource(QString source);
     void setSkeletonRoot(int skeletonRoot);
     void setTesselationMode(TessModeValues tesselationMode);
@@ -44,7 +46,7 @@ public slots:
     void setInnerTess(float innerTess);
     void setIsWireframeMode(bool isWireframeMode);
 
-signals:
+Q_SIGNALS:
     void sourceChanged(QString source);
     void skeletonRootChanged(int skeletonRoot);
     void tesselationModeChanged(TessModeValues tesselationMode);
@@ -64,5 +66,7 @@ private:
     float m_innerTess;
     bool m_isWireframeMode;
 };
+
+QT_END_NAMESPACE
 
 #endif // QDEMONMODEL_H

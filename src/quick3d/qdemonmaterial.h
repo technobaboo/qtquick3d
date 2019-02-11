@@ -4,7 +4,9 @@
 #include <qdemonobject.h>
 #include <qdemonimage.h>
 
-class QDemonMaterial : public QDemonObject
+QT_BEGIN_NAMESPACE
+
+class Q_QUICK3D_EXPORT QDemonMaterial : public QDemonObject
 {
     Q_OBJECT
     Q_PROPERTY(QDemonImage* lightmapIndirect READ lightmapIndirect WRITE setLightmapIndirect NOTIFY lightmapIndirectChanged)
@@ -33,7 +35,7 @@ public:
     QDemonImage* displacementMap() const;
     float displacementAmount() const;
 
-public slots:
+public Q_SLOTS:
     void setLightmapIndirect(QDemonImage* lightmapIndirect);
     void setLightmapRadiosity(QDemonImage* lightmapRadiosity);
     void setLightmapShadow(QDemonImage* lightmapShadow);
@@ -44,7 +46,7 @@ public slots:
     void setDisplacementMap(QDemonImage* displacementMap);
     void setDisplacementAmount(float displacementAmount);
 
-signals:
+Q_SIGNALS:
     void lightmapIndirectChanged(QDemonImage* lightmapIndirect);
     void lightmapRadiosityChanged(QDemonImage* lightmapRadiosity);
     void lightmapShadowChanged(QDemonImage* lightmapShadow);
@@ -68,5 +70,7 @@ private:
     QDemonImage* m_displacementMap;
     float m_displacementAmount;
 };
+
+QT_END_NAMESPACE
 
 #endif // QDEMONMATERIAL_H

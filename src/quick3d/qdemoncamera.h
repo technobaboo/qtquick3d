@@ -3,7 +3,9 @@
 
 #include <qdemonnode.h>
 
-class QDemonCamera : public QDemonNode
+QT_BEGIN_NAMESPACE
+
+class Q_QUICK3D_EXPORT QDemonCamera : public QDemonNode
 {
     Q_OBJECT
     Q_PROPERTY(float clipNear READ clipNear WRITE setClipNear NOTIFY clipNearChanged)
@@ -47,7 +49,7 @@ public:
     float frustumScaleY() const;
     QDemonObject::Type type() const override;
 
-public slots:
+public Q_SLOTS:
     void setClipNear(float clipNear);
     void setClipFar(float clipFar);
     void setFieldOfView(float fieldOfView);
@@ -62,7 +64,7 @@ public slots:
 
     void setFrustumScaleY(float frustumScaleY);
 
-signals:
+Q_SIGNALS:
     void clipNearChanged(float clipNear);
 
     void clipFarChanged(float clipFar);
@@ -97,6 +99,7 @@ private:
 
 };
 
+QT_END_NAMESPACE
 
 
 #endif // QDEMONCAMERA_H

@@ -2,6 +2,8 @@
 
 #include <QtDemonRuntimeRender/qdemonrendercamera.h>
 
+QT_BEGIN_NAMESPACE
+
 QDemonCamera::QDemonCamera()
 {
 
@@ -139,3 +141,5 @@ SGraphObject *QDemonCamera::updateSpatialNode(SGraphObject *node)
 
     return node;
 }
+
+QT_END_NAMESPACE

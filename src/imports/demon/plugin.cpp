@@ -30,18 +30,19 @@
 #include <QtQml/qqmlextensionplugin.h>
 #include <QtQml/qqml.h>
 
-#include <qdemoncamera.h>
-#include <qdemoncustommaterial.h>
-#include <qdemondefaultmaterial.h>
-#include <qdemoneffect.h>
-#include <qdemonimage.h>
-#include <qdemonlayer.h>
-#include <qdemonlight.h>
-#include <qdemonmaterial.h>
-#include <qdemonmodel.h>
-#include <qdemonnode.h>
-#include <qdemonobject.h>
-#include <qdemonscene.h>
+#include <QtQuick3d/qdemoncamera.h>
+#include <QtQuick3d/qdemoncustommaterial.h>
+#include <QtQuick3d/qdemondefaultmaterial.h>
+#include <QtQuick3d/qdemoneffect.h>
+#include <QtQuick3d/qdemonimage.h>
+#include <QtQuick3d/qdemonlayer.h>
+#include <QtQuick3d/qdemonlight.h>
+#include <QtQuick3d/qdemonmaterial.h>
+#include <QtQuick3d/qdemonmodel.h>
+#include <QtQuick3d/qdemonnode.h>
+#include <QtQuick3d/qdemonobject.h>
+#include <QtQuick3d/qdemonscene.h>
+#include <QtQuick3d/qdemonwindow.h>s
 
 static void initResources()
 {
@@ -73,6 +74,7 @@ public:
         qmlRegisterType<QDemonNode>(uri, 1, 0, "DemonNode");
         qmlRegisterUncreatableType<QDemonObject>(uri, 1, 0, "DemonObject", QLatin1String("Object is Abtract"));
         qmlRegisterType<QDemonScene>(uri, 1, 0, "DemonScene");
+        qmlRegisterType<QDemonWindow>(uri, 1, 0, "DemonWindow");
     }
 };
 

@@ -3,7 +3,9 @@
 
 #include <qdemonobject.h>
 
-class QDemonImage : public QDemonObject
+QT_BEGIN_NAMESPACE
+
+class Q_QUICK3D_EXPORT QDemonImage : public QDemonObject
 {
     Q_OBJECT
     Q_PROPERTY(QString source READ source WRITE setSource NOTIFY sourceChanged)
@@ -51,7 +53,7 @@ public:
     float pivotV() const;
     QDemonObject::Type type() const override;
 
-public slots:
+public Q_SLOTS:
     void setSource(QString source);
     void setScaleU(float scaleu);
     void setScaleV(float scalev);
@@ -64,7 +66,7 @@ public slots:
     void setPivotU(float pivotu);
     void setPivotV(float pivotv);
 
-signals:
+Q_SIGNALS:
     void sourceChanged(QString source);
     void scaleUChanged(float scaleu);
     void scaleVChanged(float scalev);
@@ -94,5 +96,7 @@ private:
     float m_pivotv;
 
 };
+
+QT_END_NAMESPACE
 
 #endif // QDEMONIMAGE_H

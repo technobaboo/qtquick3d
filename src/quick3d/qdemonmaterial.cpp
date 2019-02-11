@@ -1,5 +1,7 @@
 #include "qdemonmaterial.h"
 
+QT_BEGIN_NAMESPACE
+
 QDemonMaterial::QDemonMaterial()
 {
 
@@ -117,3 +119,4 @@ SGraphObject *QDemonMaterial::updateSpatialNode(SGraphObject *node)
     return node;
 }
 
+QT_END_NAMESPACE

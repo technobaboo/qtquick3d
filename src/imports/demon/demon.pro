@@ -3,7 +3,7 @@ TARGET = qdemonplugin
 TARGETPATH = QtDemon
 IMPORT_VERSION = 5.12
 
-QT += qml quick demonruntimerender-private
+QT += qml quick quick3d
 
 OTHER_FILES += \
     qmldir
@@ -11,30 +11,4 @@ OTHER_FILES += \
 load(qml_plugin)
 
 SOURCES += \
-    plugin.cpp \
-    qdemonobject.cpp \
-    qdemonscene.cpp \
-    qdemonnode.cpp \
-    qdemonimage.cpp \
-    qdemoncamera.cpp \
-    qdemonlight.cpp \
-    qdemonmodel.cpp \
-    qdemonlayer.cpp \
-    qdemoneffect.cpp \
-    qdemonmaterial.cpp \
-    qdemondefaultmaterial.cpp \
-    qdemoncustommaterial.cpp
-
-HEADERS += \
-    qdemonobject.h \
-    qdemonscene.h \
-    qdemonnode.h \
-    qdemonimage.h \
-    qdemoncamera.h \
-    qdemonlight.h \
-    qdemonmodel.h \
-    qdemonlayer.h \
-    qdemoneffect.h \
-    qdemonmaterial.h \
-    qdemondefaultmaterial.h \
-    qdemoncustommaterial.h
+    plugin.cpp

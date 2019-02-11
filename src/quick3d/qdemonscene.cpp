@@ -1,5 +1,7 @@
 #include "qdemonscene.h"
 
+QT_BEGIN_NAMESPACE
+
 QDemonScene::QDemonScene()
 {
 
@@ -60,3 +62,5 @@ SGraphObject *QDemonScene::updateSpatialNode(SGraphObject *node)
 
     return m_sceneNode;
 }
+
+QT_END_NAMESPACE

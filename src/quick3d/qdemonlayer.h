@@ -4,8 +4,10 @@
 #include <qdemonnode.h>
 #include <QtGui/QColor>
 
+QT_BEGIN_NAMESPACE
+
 class QDemonImage;
-class QDemonLayer : public QDemonNode
+class Q_QUICK3D_EXPORT QDemonLayer : public QDemonNode
 {
     Q_OBJECT
     Q_PROPERTY(QString texturePath READ texturePath WRITE setTexturePath NOTIFY texturePathChanged)
@@ -154,7 +156,7 @@ public:
 
     bool temporalAAEnabled() const;
 
-public slots:
+public Q_SLOTS:
     void setTexturePath(QString texturePath);
     void setProgressiveAAMode(AAModeValues progressiveAAMode);
     void setMultisampleAAMode(AAModeValues multisampleAAMode);
@@ -194,7 +196,7 @@ public slots:
     void setProbe2Postion(float probe2Postion);
     void setTemporalAAEnabled(bool temporalAAEnabled);
 
-signals:
+Q_SIGNALS:
     void texturePathChanged(QString texturePath);
     void progressiveAAModeChanged(AAModeValues progressiveAAMode);
     void multisampleAAModeChanged(AAModeValues multisampleAAMode);
@@ -278,5 +280,7 @@ private:
     float m_probe2Postion;
     bool m_temporalAAEnabled;
 };
+
+QT_END_NAMESPACE
 
 #endif // QDEMONLAYER_H

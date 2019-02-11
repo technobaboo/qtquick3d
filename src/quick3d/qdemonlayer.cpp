@@ -3,6 +3,8 @@
 #include <QtDemonRuntimeRender/qdemonrenderlayer.h>
 
 #include <qdemonimage.h>
+QT_BEGIN_NAMESPACE
+
 
 QDemonLayer::QDemonLayer()
 {
@@ -585,3 +587,5 @@ SGraphObject *QDemonLayer::updateSpatialNode(SGraphObject *node)
 
     return node;
 }
+
+QT_END_NAMESPACE

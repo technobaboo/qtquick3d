@@ -1,6 +1,8 @@
 #include "qdemoneffect.h"
 #include <QtDemonRuntimeRender/qdemonrendereffect.h>
 
+QT_BEGIN_NAMESPACE
+
 QDemonEffect::QDemonEffect()
 {
 
@@ -37,3 +39,5 @@ SGraphObject *QDemonEffect::updateSpatialNode(SGraphObject *node)
     return node;
 
 }
+
+QT_END_NAMESPACE

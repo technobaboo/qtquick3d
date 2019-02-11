@@ -1,6 +1,8 @@
 #include "qdemoncustommaterial.h"
 #include <QtDemonRuntimeRender/qdemonrendercustommaterial.h>
 
+QT_BEGIN_NAMESPACE
+
 QDemonCustomMaterial::QDemonCustomMaterial()
 {
 
@@ -64,3 +66,5 @@ SGraphObject *QDemonCustomMaterial::updateSpatialNode(SGraphObject *node)
 
     return node;
 }
+
+QT_END_NAMESPACE

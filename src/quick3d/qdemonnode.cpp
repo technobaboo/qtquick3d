@@ -2,6 +2,8 @@
 
 #include <QtDemonRuntimeRender/qdemonrendernode.h>
 
+QT_BEGIN_NAMESPACE
+
 QDemonNode::QDemonNode()
 {
 
@@ -171,3 +173,5 @@ SGraphObject *QDemonNode::updateSpatialNode(SGraphObject *node)
     return spacialNode;
 
 }
+
+QT_END_NAMESPACE

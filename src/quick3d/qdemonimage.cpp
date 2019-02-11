@@ -1,6 +1,8 @@
 #include "qdemonimage.h"
 #include <QtDemonRuntimeRender/qdemonrenderimage.h>
 
+QT_BEGIN_NAMESPACE
+
 QDemonImage::QDemonImage()
 {
 
@@ -217,3 +219,5 @@ SGraphObject *QDemonImage::updateSpatialNode(SGraphObject *node)
 //    mat44 textureTransform
     return imageNode;
 }
+
+QT_END_NAMESPACE

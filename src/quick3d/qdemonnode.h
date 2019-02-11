@@ -7,7 +7,9 @@
 
 #include <QtDemonRuntimeRender/qdemonrendereulerangles.h>
 
-class QDemonNode : public QDemonObject
+QT_BEGIN_NAMESPACE
+
+class Q_QUICK3D_EXPORT QDemonNode : public QDemonObject
 {
     Q_OBJECT
     Q_PROPERTY(QVector3D rotation READ rotation WRITE setRotation NOTIFY rotationChanged)
@@ -57,7 +59,7 @@ public:
 
     QDemonObject::Type type() const override;
 
-public slots:
+public Q_SLOTS:
     void setRotation(QVector3D rotation);
     void setPosition(QVector3D position);
     void setScale(QVector3D scale);
@@ -68,7 +70,7 @@ public slots:
     void setOrientation(Orientation orientation);
     void setVisible(bool visible);
 
-signals:
+Q_SIGNALS:
     void rotationChanged(QVector3D rotation);
     void positionChanged(QVector3D position);
     void scaleChanged(QVector3D scale);
@@ -93,5 +95,7 @@ private:
     Orientation m_orientation;
     bool m_visible;
 };
+
+QT_END_NAMESPACE
 
 #endif // QDEMONNODE_H

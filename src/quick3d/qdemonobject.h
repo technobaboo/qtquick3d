@@ -1,10 +1,13 @@
 #ifndef QDEMONOBJECT_H
 #define QDEMONOBJECT_H
 
+#include <QtQuick3d/qtquick3dglobal.h>
 #include <QtCore/QObject>
 #include <QtDemonRuntimeRender/qdemonrendergraphobject.h>
 
-class QDemonObject : public QObject
+QT_BEGIN_NAMESPACE
+
+class Q_QUICK3D_EXPORT QDemonObject : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QByteArray id READ id)
@@ -43,7 +46,7 @@ public:
     QString name() const;
     virtual QDemonObject::Type type() const = 0;
 
-public slots:
+public Q_SLOTS:
     void setName(QString name);
 
 protected:
@@ -56,5 +59,7 @@ private:
     QByteArray m_id;
     QString m_name;
 };
+
+QT_END_NAMESPACE
 
 #endif // QDEMONOBJECT_H

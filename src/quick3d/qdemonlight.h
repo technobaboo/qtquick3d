@@ -4,7 +4,9 @@
 #include <qdemonnode.h>
 #include <QColor>
 
-class QDemonLight : public QDemonNode
+QT_BEGIN_NAMESPACE
+
+class Q_QUICK3D_EXPORT QDemonLight : public QDemonNode
 {
     Q_OBJECT
     Q_PROPERTY(RenderLightTypes lightType READ lightType WRITE setLightType NOTIFY lightTypeChanged)
@@ -54,7 +56,7 @@ public:
     float shadowMapFieldOfView() const;
     float shadowFilter() const;
 
-public slots:
+public Q_SLOTS:
     void setLightType(RenderLightTypes lightType);
     void setDiffuseColor(QColor diffuseColor);
     void setSpecularColor(QColor specularColor);
@@ -72,7 +74,7 @@ public slots:
     void setShadowMapFieldOfView(float shadowMapFieldOfView);
     void setShadowFilter(float shadowFilter);
 
-signals:
+Q_SIGNALS:
     void lightTypeChanged(RenderLightTypes lightType);
     void diffuseColorChanged(QColor diffuseColor);
     void specularColorChanged(QColor specularColor);
@@ -112,4 +114,6 @@ private:
     float m_shadowMapFieldOfView;
     float m_shadowFilter;
 };
+
+QT_END_NAMESPACE
 #endif // QDEMONLIGHT_H

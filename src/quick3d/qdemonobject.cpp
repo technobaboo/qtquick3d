@@ -1,5 +1,7 @@
 #include "qdemonobject.h"
 
+QT_BEGIN_NAMESPACE
+
 QDemonObject::QDemonObject(QObject *parent) : QObject(parent)
 {
 
@@ -44,3 +46,5 @@ void QDemonObject::removeFromDirtyList()
 {
 
 }
+
+QT_END_NAMESPACE
