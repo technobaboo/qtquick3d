@@ -1,7 +1,7 @@
 #ifndef QDEMONMODEL_H
 #define QDEMONMODEL_H
 
-#include <qdemonnode.h>
+#include <QtQuick3d/qdemonnode.h>
 
 QT_BEGIN_NAMESPACE
 

@@ -1,7 +1,7 @@
 #ifndef QDEMONCUSTOMMATERIAL_H
 #define QDEMONCUSTOMMATERIAL_H
 
-#include <qdemonmaterial.h>
+#include <QtQuick3d/qdemonmaterial.h>
 
 QT_BEGIN_NAMESPACE
 

@@ -1,7 +1,7 @@
 #ifndef QDEMONSCENE_H
 #define QDEMONSCENE_H
 
-#include <qdemonobject.h>
+#include <QtQuick3d/qdemonobject.h>
 #include <QtDemonRuntimeRender/qdemonrenderscene.h>
 #include <QColor>
 

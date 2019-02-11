@@ -1,7 +1,7 @@
 #ifndef QDEMONEFFECT_H
 #define QDEMONEFFECT_H
 
-#include <qdemonobject.h>
+#include <QtQuick3d/qdemonobject.h>
 QT_BEGIN_NAMESPACE
 
 class Q_QUICK3D_EXPORT QDemonEffect : public QDemonObject

@@ -1,4 +1,5 @@
 TEMPLATE = subdirs
 SUBDIRS += \
     render \
-    runtimerender
+    runtimerender \
+    quick3d

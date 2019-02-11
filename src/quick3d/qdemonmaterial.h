@@ -1,8 +1,8 @@
 #ifndef QDEMONMATERIAL_H
 #define QDEMONMATERIAL_H
 
-#include <qdemonobject.h>
-#include <qdemonimage.h>
+#include <QtQuick3d/qdemonobject.h>
+#include <QtQuick3d/qdemonimage.h>
 
 QT_BEGIN_NAMESPACE
 

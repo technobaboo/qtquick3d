@@ -1,7 +1,7 @@
 #ifndef QDEMONLAYER_H
 #define QDEMONLAYER_H
 
-#include <qdemonnode.h>
+#include <QtQuick3d/qdemonnode.h>
 #include <QtGui/QColor>
 
 QT_BEGIN_NAMESPACE
