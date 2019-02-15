@@ -38,121 +38,121 @@ QT_BEGIN_NAMESPACE
 
 QDemonRenderTextureBase::QDemonRenderTextureBase(QSharedPointer<QDemonRenderContextImpl> context,
                                                  QDemonRenderTextureTargetType::Enum texTarget)
-    : m_Context(context)
-    , m_Backend(context->GetBackend())
-    , m_TextureHandle(nullptr)
-    , m_TextureUnit(std::numeric_limits<quint32>::max())
-    , m_SamplerParamsDirty(true)
-    , m_TexStateDirty(false)
-    , m_SampleCount(1)
-    , m_Format(QDemonRenderTextureFormats::Unknown)
-    , m_TexTarget(texTarget)
-    , m_BaseLevel(0)
-    , m_MaxLevel(1000)
-    , m_MaxMipLevel(0)
-    , m_Immutable(false)
+    : m_context(context)
+    , m_backend(context->getBackend())
+    , m_textureHandle(nullptr)
+    , m_textureUnit(std::numeric_limits<quint32>::max())
+    , m_samplerParamsDirty(true)
+    , m_texStateDirty(false)
+    , m_sampleCount(1)
+    , m_format(QDemonRenderTextureFormats::Unknown)
+    , m_texTarget(texTarget)
+    , m_baseLevel(0)
+    , m_maxLevel(1000)
+    , m_maxMipLevel(0)
+    , m_immutable(false)
 {
-    m_TextureHandle = m_Backend->CreateTexture();
-    m_Sampler = new QDemonRenderTextureSampler(context);
+    m_textureHandle = m_backend->createTexture();
+    m_sampler = new QDemonRenderTextureSampler(context);
 }
 
 QDemonRenderTextureBase::~QDemonRenderTextureBase()
 {
-    if (m_Sampler)
-        ::free(m_Sampler);
-    if (m_TextureHandle)
-        m_Backend->ReleaseTexture(m_TextureHandle);
+    if (m_sampler)
+        ::free(m_sampler);
+    if (m_textureHandle)
+        m_backend->releaseTexture(m_textureHandle);
 }
 
-void QDemonRenderTextureBase::SetBaseLevel(qint32 value)
+void QDemonRenderTextureBase::setBaseLevel(qint32 value)
 {
-    if (m_BaseLevel != value) {
-        m_BaseLevel = value;
-        m_TexStateDirty = true;
+    if (m_baseLevel != value) {
+        m_baseLevel = value;
+        m_texStateDirty = true;
     }
 }
 
-void QDemonRenderTextureBase::SetMaxLevel(qint32 value)
+void QDemonRenderTextureBase::setMaxLevel(qint32 value)
 {
-    if (m_MaxLevel != value) {
-        m_MaxLevel = value;
-        m_TexStateDirty = true;
+    if (m_maxLevel != value) {
+        m_maxLevel = value;
+        m_texStateDirty = true;
     }
 }
 
-void QDemonRenderTextureBase::SetMinFilter(QDemonRenderTextureMinifyingOp::Enum value)
+void QDemonRenderTextureBase::setMinFilter(QDemonRenderTextureMinifyingOp::Enum value)
 {
-    if (m_Sampler->m_MinFilter != value) {
-        m_Sampler->m_MinFilter = value;
-        m_SamplerParamsDirty = true;
+    if (m_sampler->m_minFilter != value) {
+        m_sampler->m_minFilter = value;
+        m_samplerParamsDirty = true;
     }
 }
 
-void QDemonRenderTextureBase::SetMagFilter(QDemonRenderTextureMagnifyingOp::Enum value)
+void QDemonRenderTextureBase::setMagFilter(QDemonRenderTextureMagnifyingOp::Enum value)
 {
-    if (m_Sampler->m_MagFilter != value) {
-        m_Sampler->m_MagFilter = value;
-        m_SamplerParamsDirty = true;
+    if (m_sampler->m_magFilter != value) {
+        m_sampler->m_magFilter = value;
+        m_samplerParamsDirty = true;
     }
 }
 
-void QDemonRenderTextureBase::SetTextureWrapS(QDemonRenderTextureCoordOp::Enum value)
+void QDemonRenderTextureBase::setTextureWrapS(QDemonRenderTextureCoordOp::Enum value)
 {
-    if (m_Sampler->m_WrapS != value) {
-        m_Sampler->m_WrapS = value;
-        m_SamplerParamsDirty = true;
+    if (m_sampler->m_wrapS != value) {
+        m_sampler->m_wrapS = value;
+        m_samplerParamsDirty = true;
     }
 }
 
-void QDemonRenderTextureBase::SetTextureWrapT(QDemonRenderTextureCoordOp::Enum value)
+void QDemonRenderTextureBase::setTextureWrapT(QDemonRenderTextureCoordOp::Enum value)
 {
-    if (m_Sampler->m_WrapT != value) {
-        m_Sampler->m_WrapT = value;
-        m_SamplerParamsDirty = true;
+    if (m_sampler->m_wrapT != value) {
+        m_sampler->m_wrapT = value;
+        m_samplerParamsDirty = true;
     }
 }
 
-void QDemonRenderTextureBase::SetTextureCompareMode(QDemonRenderTextureCompareMode::Enum value)
+void QDemonRenderTextureBase::setTextureCompareMode(QDemonRenderTextureCompareMode::Enum value)
 {
-    if (m_Sampler->m_CompareMode != value) {
-        m_Sampler->m_CompareMode = value;
-        m_SamplerParamsDirty = true;
+    if (m_sampler->m_compareMode != value) {
+        m_sampler->m_compareMode = value;
+        m_samplerParamsDirty = true;
     }
 }
 
-void QDemonRenderTextureBase::SetTextureCompareFunc(QDemonRenderTextureCompareOp::Enum value)
+void QDemonRenderTextureBase::setTextureCompareFunc(QDemonRenderTextureCompareOp::Enum value)
 {
-    if (m_Sampler->m_CompareOp != value) {
-        m_Sampler->m_CompareOp = value;
-        m_SamplerParamsDirty = true;
+    if (m_sampler->m_compareOp != value) {
+        m_sampler->m_compareOp = value;
+        m_samplerParamsDirty = true;
     }
 }
 
 void QDemonRenderTextureBase::applyTexParams()
 {
-    if (m_SamplerParamsDirty) {
-        m_Backend->UpdateSampler(m_Sampler->GetSamplerHandle(), m_TexTarget,
-                                 m_Sampler->m_MinFilter, m_Sampler->m_MagFilter,
-                                 m_Sampler->m_WrapS, m_Sampler->m_WrapT, m_Sampler->m_WrapR,
-                                 m_Sampler->m_MinLod, m_Sampler->m_MaxLod, m_Sampler->m_LodBias,
-                                 m_Sampler->m_CompareMode, m_Sampler->m_CompareOp);
+    if (m_samplerParamsDirty) {
+        m_backend->updateSampler(m_sampler->GetSamplerHandle(), m_texTarget,
+                                 m_sampler->m_minFilter, m_sampler->m_magFilter,
+                                 m_sampler->m_wrapS, m_sampler->m_wrapT, m_sampler->m_wrapR,
+                                 m_sampler->m_minLod, m_sampler->m_maxLod, m_sampler->m_lodBias,
+                                 m_sampler->m_compareMode, m_sampler->m_compareOp);
 
-        m_SamplerParamsDirty = false;
+        m_samplerParamsDirty = false;
     }
 
-    if (m_TexStateDirty) {
-        m_Backend->UpdateTextureObject(m_TextureHandle, m_TexTarget, m_BaseLevel, m_MaxLevel);
-        m_TexStateDirty = false;
+    if (m_texStateDirty) {
+        m_backend->updateTextureObject(m_textureHandle, m_texTarget, m_baseLevel, m_maxLevel);
+        m_texStateDirty = false;
     }
 }
 
 void QDemonRenderTextureBase::applyTexSwizzle()
 {
     QDemonRenderTextureSwizzleMode::Enum theSwizzleMode =
-            m_Backend->GetTextureSwizzleMode(m_Format);
-    if (theSwizzleMode != m_Sampler->m_SwizzleMode) {
-        m_Sampler->m_SwizzleMode = theSwizzleMode;
-        m_Backend->UpdateTextureSwizzle(m_TextureHandle, m_TexTarget, theSwizzleMode);
+            m_backend->getTextureSwizzleMode(m_format);
+    if (theSwizzleMode != m_sampler->m_swizzleMode) {
+        m_sampler->m_swizzleMode = theSwizzleMode;
+        m_backend->updateTextureSwizzle(m_textureHandle, m_texTarget, theSwizzleMode);
     }
 }
 QT_END_NAMESPACE

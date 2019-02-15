@@ -38,46 +38,43 @@ QDemonRenderIndexBuffer::QDemonRenderIndexBuffer(QSharedPointer<QDemonRenderCont
                                                  QDemonRenderComponentTypes::Enum componentType,
                                                  QDemonRenderBufferUsageType::Enum usageType,
                                                  QDemonDataRef<quint8> data)
-    : QDemonRenderDataBuffer(context, size,
-                             QDemonRenderBufferBindValues::Index, usageType, data)
-    , m_ComponentType(componentType)
+    : QDemonRenderDataBuffer(context, size, QDemonRenderBufferBindValues::Index, usageType, data)
+    , m_componentType(componentType)
 {
 }
 
 QDemonRenderIndexBuffer::~QDemonRenderIndexBuffer()
 {
-    m_Context->BufferDestroyed(this);
+    m_context->bufferDestroyed(this);
 }
 
-quint32 QDemonRenderIndexBuffer::GetNumIndices() const
+quint32 QDemonRenderIndexBuffer::getNumIndices() const
 {
-    quint32 dtypeSize = QDemonRenderComponentTypes::getSizeOfType(m_ComponentType);
-    return m_BufferCapacity / dtypeSize;
+    quint32 dtypeSize = QDemonRenderComponentTypes::getSizeOfType(m_componentType);
+    return m_bufferCapacity / dtypeSize;
 }
 
-void QDemonRenderIndexBuffer::Draw(QDemonRenderDrawMode::Enum drawMode, quint32 count, quint32 offset)
+void QDemonRenderIndexBuffer::draw(QDemonRenderDrawMode::Enum drawMode, quint32 count, quint32 offset)
 {
-    m_Backend->DrawIndexed(
-                drawMode, count, m_ComponentType,
-                (const void *)(offset * QDemonRenderComponentTypes::getSizeOfType(m_ComponentType)));
+    m_backend->drawIndexed(drawMode, count, m_componentType, (const void *)(offset * QDemonRenderComponentTypes::getSizeOfType(m_componentType)));
 }
 
-void QDemonRenderIndexBuffer::DrawIndirect(QDemonRenderDrawMode::Enum drawMode, quint32 offset)
+void QDemonRenderIndexBuffer::drawIndirect(QDemonRenderDrawMode::Enum drawMode, quint32 offset)
 {
-    m_Backend->DrawIndexedIndirect(drawMode, m_ComponentType, (const void *)offset);
+    m_backend->drawIndexedIndirect(drawMode, m_componentType, (const void *)offset);
 }
 
-void QDemonRenderIndexBuffer::Bind()
+void QDemonRenderIndexBuffer::bind()
 {
-    if (m_Mapped) {
+    if (m_mapped) {
         qCCritical(INVALID_OPERATION, "Attempting to Bind a locked buffer");
         Q_ASSERT(false);
     }
 
-    m_Backend->BindBuffer(m_BufferHandle, m_BindFlags);
+    m_backend->bindBuffer(m_bufferHandle, m_bindFlags);
 }
 
-QSharedPointer<QDemonRenderIndexBuffer> QDemonRenderIndexBuffer::Create(QSharedPointer<QDemonRenderContextImpl> context,
+QSharedPointer<QDemonRenderIndexBuffer> QDemonRenderIndexBuffer::create(QSharedPointer<QDemonRenderContextImpl> context,
                                                                         QDemonRenderBufferUsageType::Enum usageType,
                                                                         QDemonRenderComponentTypes::Enum componentType,
                                                                         size_t size, QDemonConstDataRef<quint8> bufferData)

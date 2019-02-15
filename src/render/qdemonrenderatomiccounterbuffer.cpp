@@ -42,102 +42,103 @@ QT_BEGIN_NAMESPACE
 class AtomicCounterBufferEntry
 {
 public:
-    QString m_Name; ///< parameter Name
-    qint32 m_Offset; ///< offset into the memory buffer
+    QString m_name; ///< parameter Name
+    qint32 m_offset; ///< offset into the memory buffer
 
     AtomicCounterBufferEntry(const QString &name, qint32 offset)
-        : m_Name(name)
-        , m_Offset(offset)
+        : m_name(name)
+        , m_offset(offset)
     {
     }
 };
 
-QDemonRenderAtomicCounterBuffer::QDemonRenderAtomicCounterBuffer(
-        QSharedPointer<QDemonRenderContextImpl> context, const QString &bufferName, size_t size,
-        QDemonRenderBufferUsageType::Enum usageType, QDemonDataRef<quint8> data)
-    : QDemonRenderDataBuffer(context, size,
-                             QDemonRenderBufferBindValues::Storage, usageType, data)
-    , m_Name(bufferName)
-    , m_Dirty(true)
+QDemonRenderAtomicCounterBuffer::QDemonRenderAtomicCounterBuffer(QSharedPointer<QDemonRenderContextImpl> context,
+                                                                 const QString &bufferName,
+                                                                 size_t size,
+                                                                 QDemonRenderBufferUsageType::Enum usageType,
+                                                                 QDemonDataRef<quint8> data)
+    : QDemonRenderDataBuffer(context, size, QDemonRenderBufferBindValues::Storage, usageType, data)
+    , m_name(bufferName)
+    , m_dirty(true)
 {
-    Q_ASSERT(context->IsStorageBufferSupported());
+    Q_ASSERT(context->isStorageBufferSupported());
 }
 
 QDemonRenderAtomicCounterBuffer::~QDemonRenderAtomicCounterBuffer()
 {
     for (TRenderAtomiCounterBufferEntryMap::iterator
-         iter = m_AtomicCounterBufferEntryMap.begin(),
-         end = m_AtomicCounterBufferEntryMap.end();
+         iter = m_atomicCounterBufferEntryMap.begin(),
+         end = m_atomicCounterBufferEntryMap.end();
          iter != end; ++iter) {
         delete iter.value();
     }
 
-    m_AtomicCounterBufferEntryMap.clear();
+    m_atomicCounterBufferEntryMap.clear();
 
-    m_Context->BufferDestroyed(this);
+    m_context->bufferDestroyed(this);
 }
 
-void QDemonRenderAtomicCounterBuffer::Bind()
+void QDemonRenderAtomicCounterBuffer::bind()
 {
-    if (m_Mapped) {
+    if (m_mapped) {
         qCCritical(INVALID_OPERATION, "Attempting to Bind a locked buffer");
         Q_ASSERT(false);
     }
 
-    m_Backend->BindBuffer(m_BufferHandle, m_BindFlags);
+    m_backend->bindBuffer(m_bufferHandle, m_bindFlags);
 }
 
-void QDemonRenderAtomicCounterBuffer::BindToShaderProgram(quint32 index)
+void QDemonRenderAtomicCounterBuffer::bindToShaderProgram(quint32 index)
 {
-    m_Backend->ProgramSetAtomicCounterBuffer(index, m_BufferHandle);
+    m_backend->programSetAtomicCounterBuffer(index, m_bufferHandle);
 }
 
-void QDemonRenderAtomicCounterBuffer::Update()
+void QDemonRenderAtomicCounterBuffer::update()
 {
     // we only update the buffer if it is dirty and we actually have some data
-    if (m_Dirty && m_BufferData.size()) {
-        m_Backend->UpdateBuffer(m_BufferHandle, m_BindFlags, m_BufferData.size(), m_UsageType,
-                                m_BufferData.begin());
-        m_Dirty = false;
+    if (m_dirty && m_bufferData.size()) {
+        m_backend->updateBuffer(m_bufferHandle, m_bindFlags, m_bufferData.size(), m_usageType,
+                                m_bufferData.begin());
+        m_dirty = false;
     }
 }
 
-void QDemonRenderAtomicCounterBuffer::UpdateData(qint32 offset, QDemonDataRef<quint8> data)
+void QDemonRenderAtomicCounterBuffer::updateData(qint32 offset, QDemonDataRef<quint8> data)
 {
     // we only update the buffer if we something
     if (data.size())
-        m_Backend->UpdateBuffer(m_BufferHandle, m_BindFlags, data.size(), m_UsageType,
+        m_backend->updateBuffer(m_bufferHandle, m_bindFlags, data.size(), m_usageType,
                                 data.begin() + offset);
 }
 
-void QDemonRenderAtomicCounterBuffer::AddParam(const QString &name, quint32 offset)
+void QDemonRenderAtomicCounterBuffer::addParam(const QString &name, quint32 offset)
 {
-    if (m_AtomicCounterBufferEntryMap.find(name) == m_AtomicCounterBufferEntryMap.end()) {
+    if (m_atomicCounterBufferEntryMap.find(name) == m_atomicCounterBufferEntryMap.end()) {
         AtomicCounterBufferEntry *newEntry = new AtomicCounterBufferEntry(name, offset);
 
         if (newEntry)
-            m_AtomicCounterBufferEntryMap.insert(name, newEntry);
+            m_atomicCounterBufferEntryMap.insert(name, newEntry);
     } else {
         // no duplicated entries
         return;
     }
 }
 
-bool QDemonRenderAtomicCounterBuffer::ContainsParam(const QString &name)
+bool QDemonRenderAtomicCounterBuffer::containsParam(const QString &name)
 {
-    if (m_AtomicCounterBufferEntryMap.find(name) != m_AtomicCounterBufferEntryMap.end())
+    if (m_atomicCounterBufferEntryMap.find(name) != m_atomicCounterBufferEntryMap.end())
         return true;
     else
         return false;
 }
 
-QSharedPointer<QDemonRenderAtomicCounterBuffer> QDemonRenderAtomicCounterBuffer::Create(QSharedPointer<QDemonRenderContextImpl> context, const char *bufferName,
+QSharedPointer<QDemonRenderAtomicCounterBuffer> QDemonRenderAtomicCounterBuffer::create(QSharedPointer<QDemonRenderContextImpl> context, const char *bufferName,
                                                                                         QDemonRenderBufferUsageType::Enum usageType, size_t size,
                                                                                         QDemonConstDataRef<quint8> bufferData)
 {
     QSharedPointer<QDemonRenderAtomicCounterBuffer> retval = nullptr;
 
-    if (context->IsAtomicCounterBufferSupported()) {
+    if (context->isAtomicCounterBufferSupported()) {
         const QString theBufferName = QString::fromLocal8Bit(bufferName);
         quint32 bufSize = sizeof(QDemonRenderAtomicCounterBuffer);
         quint8 *newMem = static_cast<quint8 *>(::malloc(bufSize));

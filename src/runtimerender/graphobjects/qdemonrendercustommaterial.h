@@ -38,7 +38,7 @@
 QT_BEGIN_NAMESPACE
 
 // IMPORTANT: These flags matches the key produced by a MDL export file
-struct SCustomMaterialShaderKeyValues
+struct QDemonCustomMaterialShaderKeyValues
 {
     enum Enum {
         diffuse = 1 << 0,
@@ -53,91 +53,91 @@ struct SCustomMaterialShaderKeyValues
     };
 };
 
-typedef QDemonFlags<SCustomMaterialShaderKeyValues::Enum, quint32> SCustomMaterialShaderKeyFlags;
+typedef QDemonFlags<QDemonCustomMaterialShaderKeyValues::Enum, quint32> SCustomMaterialShaderKeyFlags;
 
-struct Q_DEMONRUNTIMERENDER_EXPORT SCustomMaterial : public SDynamicObject
+struct Q_DEMONRUNTIMERENDER_EXPORT QDemonCustomMaterial : public QDemonDynamicObject
 {
 private:
     // These objects are only created via the dynamic object system.
-    SCustomMaterial(const SCustomMaterial &);
-    SCustomMaterial &operator=(const SCustomMaterial &);
-    SCustomMaterial();
+    QDemonCustomMaterial(const QDemonCustomMaterial &);
+    QDemonCustomMaterial &operator=(const QDemonCustomMaterial &);
+    QDemonCustomMaterial();
 
 public:
     // lightmap section
-    SLightmaps m_Lightmaps;
+    QDemonRenderLightmaps m_lightmaps;
     // material section
     bool m_hasTransparency;
     bool m_hasRefraction;
     bool m_hasVolumetricDF;
-    SImage *m_IblProbe;
-    SImage *m_EmissiveMap2;
-    SImage *m_DisplacementMap;
-    float m_DisplaceAmount; ///< depends on the object size
+    QDemonRenderImage *m_iblProbe;
+    QDemonRenderImage *m_emissiveMap2;
+    QDemonRenderImage *m_displacementMap;
+    float m_displaceAmount; ///< depends on the object size
 
-    SGraphObject *m_NextSibling;
+    QDemonGraphObject *m_nextSibling;
 
-    SCustomMaterialShaderKeyFlags m_ShaderKeyValues; ///< input from MDL files
-    quint32 m_LayerCount; ///< input from MDL files
+    SCustomMaterialShaderKeyFlags m_shaderKeyValues; ///< input from MDL files
+    quint32 m_layerCount; ///< input from MDL files
 
-    void Initialize(quint32 inKey, quint32 inLayerCount)
+    void initialize(quint32 inKey, quint32 inLayerCount)
     {
-        m_Lightmaps.m_LightmapIndirect = nullptr;
-        m_Lightmaps.m_LightmapRadiosity = nullptr;
-        m_Lightmaps.m_LightmapShadow = nullptr;
+        m_lightmaps.m_lightmapIndirect = nullptr;
+        m_lightmaps.m_lightmapRadiosity = nullptr;
+        m_lightmaps.m_lightmapShadow = nullptr;
         m_hasTransparency = false;
         m_hasRefraction = false;
         m_hasVolumetricDF = false;
-        m_NextSibling = nullptr;
-        m_DirtyFlagWithInFrame = m_Flags.IsDirty();
-        m_IblProbe = nullptr;
-        m_EmissiveMap2 = nullptr;
-        m_DisplacementMap = nullptr;
-        m_DisplaceAmount = 0.0;
-        m_ShaderKeyValues = static_cast<SCustomMaterialShaderKeyFlags>(inKey);
-        m_LayerCount = inLayerCount;
+        m_nextSibling = nullptr;
+        m_dirtyFlagWithInFrame = flags.isDirty();
+        m_iblProbe = nullptr;
+        m_emissiveMap2 = nullptr;
+        m_displacementMap = nullptr;
+        m_displaceAmount = 0.0;
+        m_shaderKeyValues = static_cast<SCustomMaterialShaderKeyFlags>(inKey);
+        m_layerCount = inLayerCount;
     }
 
-    bool IsDielectric() const
+    bool isDielectric() const
     {
-        return m_ShaderKeyValues & SCustomMaterialShaderKeyValues::diffuse;
+        return m_shaderKeyValues & QDemonCustomMaterialShaderKeyValues::diffuse;
     }
-    bool IsSpecularEnabled() const
+    bool isSpecularEnabled() const
     {
-        return m_ShaderKeyValues & SCustomMaterialShaderKeyValues::specular;
+        return m_shaderKeyValues & QDemonCustomMaterialShaderKeyValues::specular;
     }
-    bool IsCutOutEnabled() const
+    bool isCutOutEnabled() const
     {
-        return m_ShaderKeyValues & SCustomMaterialShaderKeyValues::cutout;
+        return m_shaderKeyValues & QDemonCustomMaterialShaderKeyValues::cutout;
     }
-    bool IsVolumetric() const
+    bool isVolumetric() const
     {
-        return m_ShaderKeyValues & SCustomMaterialShaderKeyValues::volumetric;
+        return m_shaderKeyValues & QDemonCustomMaterialShaderKeyValues::volumetric;
     }
-    bool IsTransmissive() const
+    bool isTransmissive() const
     {
-        return m_ShaderKeyValues & SCustomMaterialShaderKeyValues::transmissive;
+        return m_shaderKeyValues & QDemonCustomMaterialShaderKeyValues::transmissive;
     }
-    bool HasLighting() const { return true; }
+    bool hasLighting() const { return true; }
 
     template <typename TRemapperType>
-    void Remap(TRemapperType &inRemapper)
+    void remap(TRemapperType &inRemapper)
     {
-        SDynamicObject::Remap(inRemapper);
-        m_Lightmaps.Remap(inRemapper);
-        inRemapper.Remap(m_IblProbe);
-        inRemapper.RemapMaterial(m_NextSibling);
-        inRemapper.Remap(m_EmissiveMap2);
-        inRemapper.Remap(m_DisplacementMap);
+        QDemonDynamicObject::remap(inRemapper);
+        m_lightmaps.remap(inRemapper);
+        inRemapper.remap(m_iblProbe);
+        inRemapper.remapMaterial(m_nextSibling);
+        inRemapper.remap(m_emissiveMap2);
+        inRemapper.remap(m_displacementMap);
     }
 
     // Dirty
-    bool m_DirtyFlagWithInFrame;
-    bool IsDirty() const { return m_Flags.IsDirty() || m_DirtyFlagWithInFrame; }
-    void UpdateDirtyForFrame()
+    bool m_dirtyFlagWithInFrame;
+    bool isDirty() const { return flags.isDirty() || m_dirtyFlagWithInFrame; }
+    void updateDirtyForFrame()
     {
-        m_DirtyFlagWithInFrame = m_Flags.IsDirty();
-        m_Flags.SetDirty(false);
+        m_dirtyFlagWithInFrame = flags.isDirty();
+        flags.setDirty(false);
     }
 };
 

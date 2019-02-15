@@ -38,16 +38,16 @@ QT_BEGIN_NAMESPACE
      *	Opaque profiling system for rendering.
      */
 
-class IQDemonRenderContext;
+class QDemonRenderContextInterface;
 class QDemonRenderContext;
 
-class IRenderProfiler
+class QDemonRenderProfilerInterface
 {
 public:
     typedef QVector<QString> TStrIDVec;
 
 protected:
-    virtual ~IRenderProfiler() {}
+    virtual ~QDemonRenderProfilerInterface() {}
 
 public:
     /**
@@ -59,7 +59,7 @@ public:
          *
          * @return no return
          */
-    virtual void StartTimer(QString &nameID, bool absoluteTime, bool sync) = 0;
+    virtual void startTimer(QString &nameID, bool absoluteTime, bool sync) = 0;
 
     /**
          * @brief stop a timer query
@@ -68,7 +68,7 @@ public:
          *
          * @return no return
          */
-    virtual void EndTimer(QString &nameID) = 0;
+    virtual void endTimer(QString &nameID) = 0;
 
     /**
          * @brief Get elapsed timer value. Not this is an averaged time over several frames
@@ -77,31 +77,31 @@ public:
          *
          * @return no return
          */
-    virtual double GetElapsedTime(const QString &nameID) const = 0;
+    virtual double getElapsedTime(const QString &nameID) const = 0;
 
     /**
          * @brief Get ID list of tracked timers
          *
          * @return ID list
          */
-    virtual const TStrIDVec &GetTimerIDs() const = 0;
+    virtual const TStrIDVec &getTimerIDs() const = 0;
 
     /**
          * @brief add vertex count to current counter
          *
          * @return
          */
-    virtual void AddVertexCount(quint32 count) = 0;
+    virtual void addVertexCount(quint32 count) = 0;
 
     /**
          * @brief get current vertex count and reset
          *
          * @return
          */
-    virtual quint32 GetAndResetTriangleCount() const = 0;
+    virtual quint32 getAndResetTriangleCount() const = 0;
 
-    static QSharedPointer<IRenderProfiler> CreateGpuProfiler(IQDemonRenderContext *inContext,
-                                                             QSharedPointer<QDemonRenderContext> inRenderContext);
+    static QSharedPointer<QDemonRenderProfilerInterface> createGpuProfiler(QDemonRenderContextInterface *inContext,
+                                                                           QSharedPointer<QDemonRenderContext> inRenderContext);
 };
 QT_END_NAMESPACE
 

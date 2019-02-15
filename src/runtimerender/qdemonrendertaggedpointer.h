@@ -37,7 +37,7 @@ QT_BEGIN_NAMESPACE
 // User's will need to define specialize this struct in order
 // to de-tag a pointer.
 template <typename TDataType>
-struct SPointerTag
+struct QDemonPointerTag
 {
     /* Expected API for runtime RTTI
         static QString GetTag() { return g_dtype_specific_string; }
@@ -46,34 +46,36 @@ struct SPointerTag
 
 // A pointer tagged with an identifier so we can have generic
 // user data that is still somewhat typesafe.
-struct STaggedPointer
+// TODO:
+struct QDemonTaggedPointer
 {
-    void *m_UserData;
-    quint32 m_Tag;
-    STaggedPointer()
-        : m_UserData(nullptr)
-        , m_Tag(0)
+    void *m_userData;
+    quint32 m_tag;
+    QDemonTaggedPointer()
+        : m_userData(nullptr)
+        , m_tag(0)
     {
     }
 
-    STaggedPointer(void *inUserData, quint32 inTag)
-        : m_UserData(inUserData)
-        , m_Tag(inTag)
-    {
-    }
-
-    template <typename TDataType>
-    STaggedPointer(TDataType *inType)
-        : m_UserData(reinterpret_cast<void *>(inType))
-        , m_Tag(SPointerTag<TDataType>::GetTag())
+    QDemonTaggedPointer(void *inUserData, quint32 inTag)
+        : m_userData(inUserData)
+        , m_tag(inTag)
     {
     }
 
     template <typename TDataType>
-    TDataType *DynamicCast() const
+    QDemonTaggedPointer(TDataType *inType)
+        : m_userData(reinterpret_cast<void *>(inType))
+        , m_tag(QDemonPointerTag<TDataType>::GetTag())
     {
-        if (m_Tag == SPointerTag<TDataType>::GetTag())
-            return reinterpret_cast<TDataType *>(m_UserData);
+    }
+
+    template <typename TDataType>
+    TDataType *dynamicCast() const
+    {
+        // TODO:
+        if (m_tag == QDemonPointerTag<TDataType>::GetTag())
+            return reinterpret_cast<TDataType *>(m_userData);
         return nullptr;
     }
 };

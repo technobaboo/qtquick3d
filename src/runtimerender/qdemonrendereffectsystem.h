@@ -35,95 +35,95 @@
 #include <QtGui/QVector2D>
 
 QT_BEGIN_NAMESPACE
-struct SEffect;
-struct SEffectContext;
-class IEffectSystem;
-class IResourceManager;
+struct QDemonEffect;
+struct QDemonEffectContext;
+class QDemonEffectSystemInterface;
+class QDemonResourceManagerInterface;
 
 namespace dynamic {
-struct SCommand; // UICRenderEffectCommands.h
+struct QDemonCommand; // UICRenderEffectCommands.h
 }
 
-struct SEffectRenderArgument {
-    SEffect *m_Effect;
-    QSharedPointer<QDemonRenderTexture2D> m_ColorBuffer;
+struct QDemonEffectRenderArgument {
+    QDemonEffect *m_effect;
+    QSharedPointer<QDemonRenderTexture2D> m_colorBuffer;
     // Some effects need the camera near and far ranges.
-    QVector2D m_CameraClipRange;
+    QVector2D m_cameraClipRange;
     // Some effects require the depth buffer from the rendering of thelayer
     // most do not.
-    QSharedPointer<QDemonRenderTexture2D> m_DepthTexture;
+    QSharedPointer<QDemonRenderTexture2D> m_depthTexture;
     // this is a depth preapass texture we need for some effects like bloom
     // actually we need the stencil values
-    QSharedPointer<QDemonRenderTexture2D> m_DepthStencilBuffer;
+    QSharedPointer<QDemonRenderTexture2D> m_depthStencilBuffer;
 
-    SEffectRenderArgument(SEffect *inEffect,
-                          QSharedPointer<QDemonRenderTexture2D> inColorBuffer,
-                          const QVector2D &inCameraClipRange,
-                          QSharedPointer<QDemonRenderTexture2D> inDepthTexture = nullptr,
-                          QSharedPointer<QDemonRenderTexture2D> inDepthBuffer = nullptr)
-        : m_Effect(inEffect)
-        , m_ColorBuffer(inColorBuffer)
-        , m_CameraClipRange(inCameraClipRange)
-        , m_DepthTexture(inDepthTexture)
-        , m_DepthStencilBuffer(inDepthBuffer)
+    QDemonEffectRenderArgument(QDemonEffect *inEffect,
+                               QSharedPointer<QDemonRenderTexture2D> inColorBuffer,
+                               const QVector2D &inCameraClipRange,
+                               QSharedPointer<QDemonRenderTexture2D> inDepthTexture = nullptr,
+                               QSharedPointer<QDemonRenderTexture2D> inDepthBuffer = nullptr)
+        : m_effect(inEffect)
+        , m_colorBuffer(inColorBuffer)
+        , m_cameraClipRange(inCameraClipRange)
+        , m_depthTexture(inDepthTexture)
+        , m_depthStencilBuffer(inDepthBuffer)
     {
     }
 };
 
-class Q_DEMONRUNTIMERENDER_EXPORT IEffectSystemCore
+class Q_DEMONRUNTIMERENDER_EXPORT QDemonEffectSystemCoreInterface
 {
 public:
-    virtual ~IEffectSystemCore();
-    virtual bool IsEffectRegistered(QString inStr) = 0;
-    virtual QVector<QString> GetRegisteredEffects() = 0;
+    virtual ~QDemonEffectSystemCoreInterface();
+    virtual bool isEffectRegistered(QString inStr) = 0;
+    virtual QVector<QString> getRegisteredEffects() = 0;
     // Register an effect class that uses exactly these commands to render.
     // Effect properties cannot change after the effect is created because that would invalidate
     // existing effect instances.
     // Effect commands, which are stored on the effect class, can change.
-    virtual bool RegisterEffect(QString inName,
-                                QDemonConstDataRef<dynamic::SPropertyDeclaration> inProperties) = 0;
+    virtual bool registerEffect(QString inName,
+                                QDemonConstDataRef<dynamic::QDemonPropertyDeclaration> inProperties) = 0;
 
-    virtual bool UnregisterEffect(QString inName) = 0;
+    virtual bool unregisterEffect(QString inName) = 0;
 
     // Shorthand method that creates an effect and auto-generates the effect commands like such:
     // BindShader(inPathToEffect)
     // foreach( propdec in inProperties ) ApplyValue( propDecType )
     // ApplyShader()
-    virtual bool
-    RegisterGLSLEffect(QString inName, const char *inPathToEffect,
-                       QDemonConstDataRef<dynamic::SPropertyDeclaration> inProperties) = 0;
+    virtual bool registerGLSLEffect(QString inName,
+                                    const char *inPathToEffect,
+                                    QDemonConstDataRef<dynamic::QDemonPropertyDeclaration> inProperties) = 0;
     // Set the default value.  THis is unnecessary if the default is zero as that is what it is
     // assumed to be.
-    virtual void SetEffectPropertyDefaultValue(QString inName,
+    virtual void setEffectPropertyDefaultValue(QString inName,
                                                QString inPropName,
                                                QDemonConstDataRef<quint8> inDefaultData) = 0;
-    virtual void SetEffectPropertyEnumNames(QString inName,
+    virtual void setEffectPropertyEnumNames(QString inName,
                                             QString inPropName,
                                             QDemonConstDataRef<QString> inNames) = 0;
-    virtual QDemonConstDataRef<QString>
-    GetEffectPropertyEnumNames(QString inName,
-                               QString inPropName) const = 0;
+    virtual QDemonConstDataRef<QString> getEffectPropertyEnumNames(QString inName,
+                                                                   QString inPropName) const = 0;
 
-    virtual QDemonConstDataRef<dynamic::SPropertyDefinition>
-    GetEffectProperties(QString inEffectName) const = 0;
+    virtual QDemonConstDataRef<dynamic::QDemonPropertyDefinition> getEffectProperties(QString inEffectName) const = 0;
 
-    virtual void SetEffectPropertyTextureSettings(
-            QString inEffectName, QString inPropName,
-            QString inPropPath, QDemonRenderTextureTypeValue::Enum inTexType,
-            QDemonRenderTextureCoordOp::Enum inCoordOp, QDemonRenderTextureMagnifyingOp::Enum inMagFilterOp,
-            QDemonRenderTextureMinifyingOp::Enum inMinFilterOp) = 0;
+    virtual void setEffectPropertyTextureSettings(QString inEffectName,
+                                                  QString inPropName,
+                                                  QString inPropPath,
+                                                  QDemonRenderTextureTypeValue::Enum inTexType,
+                                                  QDemonRenderTextureCoordOp::Enum inCoordOp,
+                                                  QDemonRenderTextureMagnifyingOp::Enum inMagFilterOp,
+                                                  QDemonRenderTextureMinifyingOp::Enum inMinFilterOp) = 0;
 
     // Setting the effect commands also sets this as if there isn't a specific "apply depth
     // value"
     // command then this effect does not require the depth texture.
     // So the setter here is completely optional.
-    virtual void SetEffectRequiresDepthTexture(QString inEffectName,
+    virtual void setEffectRequiresDepthTexture(QString inEffectName,
                                                bool inValue) = 0;
-    virtual bool DoesEffectRequireDepthTexture(QString inEffectName) const = 0;
+    virtual bool doesEffectRequireDepthTexture(QString inEffectName) const = 0;
 
-    virtual void SetEffectRequiresCompilation(QString inEffectName,
+    virtual void setEffectRequiresCompilation(QString inEffectName,
                                               bool inValue) = 0;
-    virtual bool DoesEffectRequireCompilation(QString inEffectName) const = 0;
+    virtual bool doesEffectRequireCompilation(QString inEffectName) const = 0;
 
     // The effect commands are the actual commands that run for a given effect.  The tell the
     // system exactly
@@ -131,16 +131,16 @@ public:
     // run this shader
     // See UICRenderEffectCommands.h for the list of commands.
     // These commands are copied into the effect.
-    virtual void SetEffectCommands(QString inEffectName,
-                                   QDemonConstDataRef<dynamic::SCommand *> inCommands) = 0;
-    virtual QDemonConstDataRef<dynamic::SCommand *>
-    GetEffectCommands(QString inEffectName) const = 0;
+    virtual void setEffectCommands(QString inEffectName,
+                                   QDemonConstDataRef<dynamic::QDemonCommand *> inCommands) = 0;
+    virtual QDemonConstDataRef<dynamic::QDemonCommand *> getEffectCommands(QString inEffectName) const = 0;
 
     // Set the shader data for a given path.  Used when a path doesn't correspond to a file but
     // the data has been
     // auto-generated.  The system will look for data under this path key during the BindShader
     // effect command.
-    virtual void SetShaderData(QString inPath, const char *inData,
+    virtual void setShaderData(QString inPath,
+                               const char *inData,
                                const char *inShaderType = nullptr,
                                const char *inShaderVersion = nullptr,
                                bool inHasGeomShader = false,
@@ -148,7 +148,7 @@ public:
 
     // An effect instance is just a property bag along with the name of the effect to run.
     // This instance is what is placed into the object graph.
-    virtual SEffect *CreateEffectInstance(QString inEffectName) = 0;
+    virtual QDemonEffect *createEffectInstance(QString inEffectName) = 0;
 
     //    virtual void Save(SWriteBuffer &ioBuffer,
     //                      const SStrRemapMap &inRemapMap,
@@ -156,11 +156,11 @@ public:
     //    virtual void Load(QDemonDataRef<quint8> inData, CStrTableOrDataRef inStrDataBlock,
     //                      const char *inProjectDir) = 0;
 
-    virtual QSharedPointer<IEffectSystem> GetEffectSystem(IQDemonRenderContext *context) = 0;
+    virtual QSharedPointer<QDemonEffectSystemInterface> getEffectSystem(QDemonRenderContextInterface *context) = 0;
 
-    virtual QSharedPointer<IResourceManager> GetResourceManager() = 0;
+    virtual QSharedPointer<QDemonResourceManagerInterface> getResourceManager() = 0;
 
-    static QSharedPointer<IEffectSystemCore> CreateEffectSystemCore(IQDemonRenderContextCore * context);
+    static QSharedPointer<QDemonEffectSystemCoreInterface> createEffectSystemCore(QDemonRenderContextCoreInterface * context);
 };
 
 /**
@@ -173,18 +173,18 @@ public:
       *destination buffer
       *	using the given MVP.
       */
-class Q_DEMONRUNTIMERENDER_EXPORT IEffectSystem : public IEffectSystemCore
+class Q_DEMONRUNTIMERENDER_EXPORT QDemonEffectSystemInterface : public QDemonEffectSystemCoreInterface
 {
 protected:
-    virtual ~IEffectSystem() {}
+    virtual ~QDemonEffectSystemInterface() {}
 
 public:
     // Calling release effect context with no context results in no problems.
-    virtual void ReleaseEffectContext(SEffectContext *inEffect) = 0;
+    virtual void releaseEffectContext(QDemonEffectContext *inEffect) = 0;
 
     // If the effect has a context you can call this to clear persistent buffers back to their
     // original value.
-    virtual void ResetEffectFrameData(SEffectContext &inContext) = 0;
+    virtual void resetEffectFrameData(QDemonEffectContext &inContext) = 0;
 
     // Render this effect.  Returns false in the case the effect wasn't rendered and the render
     // state
@@ -194,11 +194,12 @@ public:
     // Pass in true if you want the result image premultiplied.  Most of the functions in the
     // system
     // assume non-premultiplied color for images so probably this is false.
-    virtual QSharedPointer<QDemonRenderTexture2D> RenderEffect(SEffectRenderArgument inRenderArgument) = 0;
+    virtual QSharedPointer<QDemonRenderTexture2D> renderEffect(QDemonEffectRenderArgument inRenderArgument) = 0;
 
     // Render the effect to the currently bound render target using this MVP and optionally
     // enabling blending when rendering to the target
-    virtual bool RenderEffect(SEffectRenderArgument inRenderArgument, QMatrix4x4 &inMVP,
+    virtual bool renderEffect(QDemonEffectRenderArgument inRenderArgument,
+                              QMatrix4x4 &inMVP,
                               bool inEnableBlendWhenRenderToTarget) = 0;
 };
 QT_END_NAMESPACE

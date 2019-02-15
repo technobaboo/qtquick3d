@@ -36,11 +36,11 @@
 
 QT_BEGIN_NAMESPACE
 
-class IRenderTask
+class QDemonRenderTask
 {
 public:
-    virtual ~IRenderTask() {}
-    virtual void Run() = 0;
+    virtual ~QDemonRenderTask();
+    virtual void run() = 0;
 };
 
 /**
@@ -66,50 +66,50 @@ public:
      * by
      * the offscreen render manager.
      */
-class Q_DEMONRUNTIMERENDER_EXPORT IRenderList
+class Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderListInterface
 {
 public:
-    virtual ~IRenderList() {}
+    virtual ~QDemonRenderListInterface() {}
     // Called by the render context, do not call this.
-    virtual void BeginFrame() = 0;
+    virtual void beginFrame() = 0;
 
     // Next tell all sub render target rendering systems to add themselves to the render list.
     // At this point
     // we agree to *not* have rendered anything, no clears or anything so if you are caching
     // render state and you detect nothing has changed it may not be necessary to swap egl
     // buffers.
-    virtual quint32 AddRenderTask(QSharedPointer<IRenderTask> inTask) = 0;
-    virtual void DiscardRenderTask(quint32 inTaskId) = 0;
+    virtual quint32 addRenderTask(QSharedPointer<QDemonRenderTask> inTask) = 0;
+    virtual void discardRenderTask(quint32 inTaskId) = 0;
     // This runs through the added tasks in reverse order.  This is used to render dependencies
     // before rendering to the main render target.
-    virtual void RunRenderTasks() = 0;
+    virtual void runRenderTasks() = 0;
 
     // We used to use GL state to pass information down the callstack.
     // I have replaced those calls with this state here because that information
     // controls how layers size themselves (which is quite a complicated process).
-    virtual void SetScissorTestEnabled(bool enabled) = 0;
-    virtual void SetScissorRect(QDemonRenderRect rect) = 0;
-    virtual void SetViewport(QDemonRenderRect rect) = 0;
-    virtual bool IsScissorTestEnabled() const = 0;
-    virtual QDemonRenderRect GetScissor() const = 0;
-    virtual QDemonRenderRect GetViewport() const = 0;
+    virtual void setScissorTestEnabled(bool enabled) = 0;
+    virtual void setScissorRect(QDemonRenderRect rect) = 0;
+    virtual void setViewport(QDemonRenderRect rect) = 0;
+    virtual bool isScissorTestEnabled() const = 0;
+    virtual QDemonRenderRect getScissor() const = 0;
+    virtual QDemonRenderRect getViewport() const = 0;
 
-    static QSharedPointer<IRenderList> CreateRenderList();
+    static QSharedPointer<QDemonRenderListInterface> createRenderList();
 };
 
 // Now for scoped property access.
 template <typename TDataType>
-struct SRenderListScopedProperty
-        : public QDemonRenderGenericScopedProperty<IRenderList, TDataType>
+struct QDemonRenderListScopedProperty
+        : public QDemonRenderGenericScopedProperty<QDemonRenderListInterface, TDataType>
 {
-    typedef QDemonRenderGenericScopedProperty<IRenderList, TDataType> TBaseType;
+    typedef QDemonRenderGenericScopedProperty<QDemonRenderListInterface, TDataType> TBaseType;
     typedef typename TBaseType::TGetter TGetter;
     typedef typename TBaseType::TSetter TSetter;
-    SRenderListScopedProperty(IRenderList &ctx, TGetter getter, TSetter setter)
+    QDemonRenderListScopedProperty(QDemonRenderListInterface &ctx, TGetter getter, TSetter setter)
         : TBaseType(ctx, getter, setter)
     {
     }
-    SRenderListScopedProperty(IRenderList &ctx, TGetter getter, TSetter setter,
+    QDemonRenderListScopedProperty(QDemonRenderListInterface &ctx, TGetter getter, TSetter setter,
                               const TDataType &inNewValue)
         : TBaseType(ctx, getter, setter, inNewValue)
     {

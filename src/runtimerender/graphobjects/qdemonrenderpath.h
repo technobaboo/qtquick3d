@@ -60,95 +60,76 @@ struct PathPaintStyles
     };
 };
 
-struct SPathSubPath;
+struct QDemonPathSubPath;
 
-struct SPath : public SNode
+struct QDemonPath : public QDemonGraphNode
 {
-    PathTypes::Enum m_PathType;
-    float m_Width;
-    float m_LinearError;
-    float m_EdgeTessAmount;
-    float m_InnerTessAmount;
-    PathCapping::Enum m_BeginCapping;
-    float m_BeginCapOffset;
-    float m_BeginCapOpacity;
-    float m_BeginCapWidth;
-    PathCapping::Enum m_EndCapping;
-    float m_EndCapOffset;
-    float m_EndCapOpacity;
-    float m_EndCapWidth;
-    SGraphObject *m_Material;
-    SGraphObject *m_SecondMaterial;
+    PathTypes::Enum m_pathType = PathTypes::Geometry;
+    float m_width = 5.0f;
+    float m_linearError = 100.0f;
+    float m_edgeTessAmount = 8.0f;
+    float m_innerTessAmount = 1.0f;
+    PathCapping::Enum m_beginCapping = PathCapping::Noner;
+    float m_beginCapOffset = 10.f;
+    float m_beginCapOpacity = 0.2f;
+    float m_beginCapWidth = 0.0f;
+    PathCapping::Enum m_endCapping = PathCapping::Noner;
+    float m_endCapOffset = 10.0f;
+    float m_endCapOpacity = 0.2f;
+    float m_endCapWidth = 0.0f;
+    QDemonGraphObject *m_material = nullptr;
+    QDemonGraphObject *m_secondMaterial = nullptr;
     // Paths can either be immediate - children attached define path
     // or they can link to a path buffer that defines the path.
-    SPathSubPath *m_FirstSubPath;
-    QString m_PathBuffer;
-    PathPaintStyles::Enum m_PaintStyle;
+    QDemonPathSubPath *m_firstSubPath = nullptr;
+    QString m_pathBuffer;
+    PathPaintStyles::Enum m_paintStyle = PathPaintStyles::Stroked;
 
-    bool m_WireframeMode;
+    bool m_wireframeMode = false;
     // Loaded onto the card just as data.
-    SPath()
-        : SNode(GraphObjectTypes::Path)
-        , m_PathType(PathTypes::Geometry)
-        , m_Width(5.0f)
-        , m_LinearError(100.0f)
-        , m_EdgeTessAmount(8.0f)
-        , m_InnerTessAmount(1.0f)
-        , m_BeginCapping(PathCapping::Noner)
-        , m_BeginCapOffset(10.0f)
-        , m_BeginCapOpacity(.2f)
-        , m_BeginCapWidth(0.0f)
-        , m_EndCapping(PathCapping::Noner)
-        , m_EndCapOffset(10.0f)
-        , m_EndCapOpacity(.2f)
-        , m_EndCapWidth(0.0f)
-        , m_Material(nullptr)
-        , m_SecondMaterial(nullptr)
-        , m_FirstSubPath(nullptr)
-        , m_PaintStyle(PathPaintStyles::Stroked)
-        , m_WireframeMode(false)
+    QDemonPath() : QDemonGraphNode(QDemonGraphObjectTypes::Path)
     {
     }
 
-    bool IsStroked() const
+    bool isStroked() const
     {
-        return m_PaintStyle == PathPaintStyles::Stroked
-                || m_PaintStyle == PathPaintStyles::FilledAndStroked;
+        return m_paintStyle == PathPaintStyles::Stroked
+                || m_paintStyle == PathPaintStyles::FilledAndStroked;
     }
 
-    bool IsFilled() const
+    bool isFilled() const
     {
-        return m_PaintStyle == PathPaintStyles::Filled
-                || m_PaintStyle == PathPaintStyles::FilledAndStroked;
+        return m_paintStyle == PathPaintStyles::Filled
+                || m_paintStyle == PathPaintStyles::FilledAndStroked;
     }
 
-    void AddMaterial(SGraphObject *inMaterial)
+    void addMaterial(QDemonGraphObject *inMaterial)
     {
-        if (m_Material == nullptr)
-            m_Material = inMaterial;
+        if (m_material == nullptr)
+            m_material = inMaterial;
         else
-            m_SecondMaterial = inMaterial;
+            m_secondMaterial = inMaterial;
     }
 
-    void ClearMaterials()
+    void clearMaterials()
     {
-        m_Material = nullptr;
-        m_SecondMaterial = nullptr;
+        m_material = nullptr;
+        m_secondMaterial = nullptr;
     }
 
-    void AddSubPath(SPathSubPath &inSubPath);
-    void ClearSubPaths();
+    void addSubPath(QDemonPathSubPath &inSubPath);
+    void clearSubPaths();
 
     // Generic method used during serialization
     // to remap string and object pointers
     template <typename TRemapperType>
-    void Remap(TRemapperType &inRemapper)
+    void remap(TRemapperType &inRemapper)
     {
-        SNode::Remap(inRemapper);
-        inRemapper.Remap(m_PathBuffer);
-        inRemapper.RemapMaterial(m_Material);
-        inRemapper.RemapMaterial(m_SecondMaterial);
-        inRemapper.Remap(m_FirstSubPath);
+        QDemonGraphNode::remap(inRemapper);
+        inRemapper.remap(m_pathBuffer);
+        inRemapper.remapMaterial(m_material);
+        inRemapper.remapMaterial(m_secondMaterial);
+        inRemapper.remap(m_firstSubPath);
     }
 };
 QT_END_NAMESPACE

@@ -42,11 +42,11 @@ class QDemonRenderContextImpl;
 class QDemonRenderShader
 {
 protected:
-    QSharedPointer<QDemonRenderContextImpl> m_Context; ///< pointer to context
-    QSharedPointer<QDemonRenderBackend> m_Backend; ///< pointer to backend
-    QDemonConstDataRef<qint8> m_Source; ///< shader source code
-    bool m_Binary; ///< true for binary programs
-    QByteArray m_ErrorMessage; ///< contains the error message if linking fails
+    QSharedPointer<QDemonRenderContextImpl> m_context; ///< pointer to context
+    QSharedPointer<QDemonRenderBackend> m_backend; ///< pointer to backend
+    QDemonConstDataRef<qint8> m_source; ///< shader source code
+    bool m_binary; ///< true for binary programs
+    QByteArray m_errorMessage; ///< contains the error message if linking fails
 
 public:
     /**
@@ -58,11 +58,12 @@ public:
          * @return No return.
          */
     QDemonRenderShader(QSharedPointer<QDemonRenderContextImpl> context,
-                       QDemonConstDataRef<qint8> source, bool binaryProgram)
-        : m_Context(context)
-        , m_Backend(context->GetBackend())
-        , m_Source(source)
-        , m_Binary(binaryProgram)
+                       QDemonConstDataRef<qint8> source,
+                       bool binaryProgram)
+        : m_context(context)
+        , m_backend(context->getBackend())
+        , m_source(source)
+        , m_binary(binaryProgram)
     {
     }
 
@@ -74,7 +75,7 @@ public:
          *
          * @return True if shader is valid.
          */
-    virtual bool IsValid() = 0;
+    virtual bool isValid() = 0;
 
     /**
          * @brief Get Error Message
@@ -84,14 +85,14 @@ public:
          *
          * @return no return
          */
-    virtual void GetErrorMessage(qint32 *messageLength, const char *errorMessage)
+    virtual void getErrorMessage(qint32 *messageLength, const char *errorMessage)
     {
         // Since we do not have any error message just generate a generic one
-        if (m_Binary)
-            m_ErrorMessage = QByteArrayLiteral("Binary shader compilation failed");
+        if (m_binary)
+            m_errorMessage = QByteArrayLiteral("Binary shader compilation failed");
 
-        *messageLength = m_ErrorMessage.size();
-        errorMessage = m_ErrorMessage.constData();
+        *messageLength = m_errorMessage.size();
+        errorMessage = m_errorMessage.constData();
         // TODO: WTF
         (void)errorMessage;
     }
@@ -102,12 +103,12 @@ public:
          *
          * @return error message.
          */
-    virtual const char *GetErrorMessage()
+    virtual const char *getErrorMessage()
     {
-        if (m_Binary)
-            m_ErrorMessage = QByteArrayLiteral("Binary shader compilation failed");
+        if (m_binary)
+            m_errorMessage = QByteArrayLiteral("Binary shader compilation failed");
 
-        return m_ErrorMessage.constData();
+        return m_errorMessage.constData();
     }
 };
 

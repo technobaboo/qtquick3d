@@ -36,121 +36,125 @@
 
 QT_BEGIN_NAMESPACE
 
-uint qHash(const STextRenderInfo &inInfo)
+uint qHash(const QDemonTextRenderInfo &inInfo)
 {
-    uint retval = qHash(inInfo.m_Text);
-    retval = retval ^ qHash(inInfo.m_Font);
-    retval = retval ^ qHash(inInfo.m_FontSize);
-    retval = retval ^ qHash(inInfo.m_HorizontalAlignment);
-    retval = retval ^ qHash(inInfo.m_VerticalAlignment);
-    retval = retval ^ qHash(inInfo.m_Leading);
-    retval = retval ^ qHash(inInfo.m_Tracking);
-    retval = retval ^ qHash(inInfo.m_DropShadow);
-    retval = retval ^ qHash(inInfo.m_DropShadowStrength);
-    retval = retval ^ qHash(inInfo.m_DropShadowOffset);
-    retval = retval ^ qHash(inInfo.m_DropShadowHorizontalAlignment);
-    retval = retval ^ qHash(inInfo.m_DropShadowVerticalAlignment);
-    retval = retval ^ qHash(inInfo.m_EnableAcceleratedFont);
+    uint retval = qHash(inInfo.text);
+    retval = retval ^ qHash(inInfo.font);
+    retval = retval ^ qHash(inInfo.fontSize);
+    retval = retval ^ qHash(inInfo.horizontalAlignment);
+    retval = retval ^ qHash(inInfo.verticalAlignment);
+    retval = retval ^ qHash(inInfo.leading);
+    retval = retval ^ qHash(inInfo.tracking);
+    retval = retval ^ qHash(inInfo.dropShadow);
+    retval = retval ^ qHash(inInfo.dropShadowStrength);
+    retval = retval ^ qHash(inInfo.dropShadowOffset);
+    retval = retval ^ qHash(inInfo.dropShadowHorizontalAlignment);
+    retval = retval ^ qHash(inInfo.dropShadowVerticalAlignment);
+    retval = retval ^ qHash(inInfo.enableAcceleratedFont);
     return retval;
 }
 
-uint qHash(const STextRenderInfoAndHash &inInfo)
+uint qHash(const QDemonTextRenderInfoAndHash &inInfo)
 {
-    return inInfo.m_Hashcode;
+    return inInfo.m_hashcode;
 }
 
 namespace {
 
-struct STextCacheNode
+struct QDemonTextCacheNode
 {
-    STextCacheNode *m_PreviousSibling;
-    STextCacheNode *m_NextSibling;
-    STextRenderInfoAndHash m_RenderInfo;
-    TTPathObjectAndTexture m_TextInfo;
-    quint32 m_FrameCount;
+    QDemonTextCacheNode *previousSibling;
+    QDemonTextCacheNode *nextSibling;
+    QDemonTextRenderInfoAndHash renderInfo;
+    TTPathObjectAndTexture textInfo;
+    quint32 frameCount;
 
-    STextCacheNode(const STextRenderInfoAndHash &inRenderInfo, const TTPathObjectAndTexture &inTextInfo)
-        : m_PreviousSibling(nullptr)
-        , m_NextSibling(nullptr)
-        , m_RenderInfo(inRenderInfo)
-        , m_TextInfo(inTextInfo)
-        , m_FrameCount(0)
+    QDemonTextCacheNode(const QDemonTextRenderInfoAndHash &inRenderInfo, const TTPathObjectAndTexture &inTextInfo)
+        : previousSibling(nullptr)
+        , nextSibling(nullptr)
+        , renderInfo(inRenderInfo)
+        , textInfo(inTextInfo)
+        , frameCount(0)
     {
     }
 };
 
-typedef QHash<STextRenderInfoAndHash, STextCacheNode *> TTextureInfoHash;
+typedef QHash<QDemonTextRenderInfoAndHash, QDemonTextCacheNode *> QDemonTextureInfoHash;
 
-DEFINE_INVASIVE_LIST(TextCacheNode);
-IMPLEMENT_INVASIVE_LIST(TextCacheNode, m_PreviousSibling, m_NextSibling);
+DEFINE_INVASIVE_LIST(QDemonTextCacheNode);
+IMPLEMENT_INVASIVE_LIST(QDemonTextCacheNode, previousSibling, nextSibling);
 
-struct STextTextureCache : public ITextTextureCache
+struct QDemonTextTextureCache : public QDemonTextTextureCacheInterface
 {
-    QSharedPointer<ITextRenderer> m_TextRenderer;
-    TTextureInfoHash m_TextureCache;
-    TTextCacheNodeList m_LRUList;
-    quint32 m_HighWaterMark;
-    quint32 m_FrameCount;
-    quint32 m_TextureTotalBytes;
-    QSharedPointer<QDemonRenderContext> m_RenderContext;
-    bool m_CanUsePathRendering; ///< true if we use hardware accelerated font rendering
+    QSharedPointer<QDemonTextRendererInterface> textRenderer;
+    QDemonTextureInfoHash textureCache;
+    QDemonTextCacheNodeList textCacheNodeList;
+    quint32 highWaterMark;
+    quint32 frameCount;
+    quint32 textureTotalBytes;
+    QSharedPointer<QDemonRenderContext> renderContext;
+    bool canUsePathRendering; ///< true if we use hardware accelerated font rendering
 
-    STextTextureCache(QSharedPointer<ITextRenderer> inRenderer, QSharedPointer<QDemonRenderContext> inRenderContext)
-        : m_TextRenderer(inRenderer)
-        , m_HighWaterMark(0x100000)
-        , m_FrameCount(0)
-        , m_TextureTotalBytes(0)
-        , m_RenderContext(inRenderContext)
+    QDemonTextTextureCache(QSharedPointer<QDemonTextRendererInterface> inRenderer, QSharedPointer<QDemonRenderContext> inRenderContext)
+        : textRenderer(inRenderer)
+        , highWaterMark(0x100000)
+        , frameCount(0)
+        , textureTotalBytes(0)
+        , renderContext(inRenderContext)
     {
         // hardware accelerate font rendering not ready yet
-        m_CanUsePathRendering = (m_RenderContext->IsPathRenderingSupported() && m_RenderContext->IsProgramPipelineSupported());
+        canUsePathRendering = (renderContext->isPathRenderingSupported() && renderContext->isProgramPipelineSupported());
     }
 
-    virtual ~STextTextureCache() override
+    virtual ~QDemonTextTextureCache() override
     {
-        for (TTextCacheNodeList::iterator iter = m_LRUList.begin(), end = m_LRUList.end(); iter != end; ++iter)
+        auto iter = textCacheNodeList.begin();
+        const auto end = textCacheNodeList.end();
+        while (iter != end) {
             delete &iter;
+            ++iter;
+        }
     }
 
-    static inline quint32 GetNumBytes(QDemonRenderTexture2D &inTexture)
+    static inline quint32 getNumBytes(QDemonRenderTexture2D &inTexture)
     {
-        STextureDetails theDetails(inTexture.GetTextureDetails());
-        return theDetails.m_Width * theDetails.m_Height * QDemonRenderTextureFormats::getSizeofFormat(theDetails.m_Format);
+        QDemonTextureDetails theDetails(inTexture.getTextureDetails());
+        return theDetails.width * theDetails.height * QDemonRenderTextureFormats::getSizeofFormat(theDetails.format);
     }
 
-    QSharedPointer<QDemonRenderTexture2D> InvalidateLastItem()
+    QSharedPointer<QDemonRenderTexture2D> invalidateLastItem()
     {
         QSharedPointer<QDemonRenderTexture2D> nextTexture;
-        if (m_LRUList.empty() == false) {
-            STextCacheNode *theEnd = m_LRUList.back_ptr();
-            if (theEnd->m_FrameCount != m_FrameCount) {
-                nextTexture = theEnd->m_TextInfo.second.second;
+        if (textCacheNodeList.empty() == false) {
+            QDemonTextCacheNode *theEnd = textCacheNodeList.back_ptr();
+            if (theEnd->frameCount != frameCount) {
+                nextTexture = theEnd->textInfo.second.second;
                 //STextureDetails theDetails = nextTexture->GetTextureDetails();
-                m_TextureTotalBytes -= GetNumBytes(*nextTexture.data());
-                m_LRUList.remove(*theEnd);
+                textureTotalBytes -= getNumBytes(*nextTexture.data());
+                textCacheNodeList.remove(*theEnd);
                 // copy the key because the next statement will destroy memory
-                m_TextureCache.remove(theEnd->m_RenderInfo);
+                textureCache.remove(theEnd->renderInfo);
                 delete theEnd;
             }
         }
         return nextTexture;
     }
 
-    TTPathObjectAndTexture RenderText(const STextRenderInfo &inText, float inScaleFactor) override
+    TTPathObjectAndTexture renderText(const QDemonTextRenderInfo &inText, float inScaleFactor) override
     {
-        STextRenderInfoAndHash theKey(inText, inScaleFactor);
-        TTextureInfoHash::iterator theFind(m_TextureCache.find(STextRenderInfoAndHash(inText, inScaleFactor)));
-        STextCacheNode *retval = nullptr;
-        if (theFind != m_TextureCache.end()) {
+        QDemonTextRenderInfoAndHash theKey(inText, inScaleFactor);
+        QDemonTextureInfoHash::iterator theFind(textureCache.find(QDemonTextRenderInfoAndHash(inText, inScaleFactor)));
+        QDemonTextCacheNode *retval = nullptr;
+        if (theFind != textureCache.end()) {
             retval = theFind.value();
-            m_LRUList.remove(*retval);
+            textCacheNodeList.remove(*retval);
         } else {
             QSharedPointer<QDemonRenderTexture2D> nextTexture;
-            if (m_TextureTotalBytes >= m_HighWaterMark && m_LRUList.empty() == false)
-                nextTexture = InvalidateLastItem();
+            if (textureTotalBytes >= highWaterMark && textCacheNodeList.empty() == false)
+                nextTexture = invalidateLastItem();
 
             if (nextTexture.isNull())
-                nextTexture = m_RenderContext->CreateTexture2D();
+                nextTexture = renderContext->createTexture2D();
 
             QSharedPointer<QDemonRenderPathFontItem> nextPathFontItemObject;
             QSharedPointer<QDemonRenderPathFontSpecification> nextPathFontObject;
@@ -160,46 +164,46 @@ struct STextTextureCache : public ITextTextureCache
             //    nextPathFontObject = m_RenderContext->CreatePathFontSpecification(inText.m_Font);
             //}
 
-            STextRenderInfo theTextInfo(inText);
-            theTextInfo.m_FontSize *= inScaleFactor;
-            STextTextureDetails theDetails;
+            QDemonTextRenderInfo theTextInfo(inText);
+            theTextInfo.fontSize *= inScaleFactor;
+            QDemonTextTextureDetails theDetails;
 
 
             // HW acceleration for fonts not supported
             //if (!m_CanUsePathRendering || !inText.m_EnableAcceleratedFont)
-            theDetails = m_TextRenderer->RenderText(theTextInfo, *nextTexture.data());
+            theDetails = textRenderer->renderText(theTextInfo, *nextTexture.data());
             //else
             //    theDetails = m_TextRenderer->RenderText(theTextInfo, *nextPathFontItemObject.mPtr,
             //                                            *nextPathFontObject.mPtr);
 
-            if (fabs(inScaleFactor - 1.0f) > .001f) {
-                TTPathObjectAndTexture theCanonicalDetails = RenderText(inText, 1.0f);
-                theDetails.m_ScaleFactor.setX(float(theDetails.m_TextWidth) / theCanonicalDetails.second.first.m_TextWidth);
-                theDetails.m_ScaleFactor.setY(float(theDetails.m_TextHeight) / theCanonicalDetails.second.first.m_TextHeight);
+            if (std::fabs(inScaleFactor - 1.0f) > .001f) {
+                TTPathObjectAndTexture theCanonicalDetails = renderText(inText, 1.0f);
+                theDetails.scaleFactor.setX(float(theDetails.textWidth) / theCanonicalDetails.second.first.textWidth);
+                theDetails.scaleFactor.setY(float(theDetails.textHeight) / theCanonicalDetails.second.first.textHeight);
             }
-            theKey = STextRenderInfoAndHash(inText, inScaleFactor);
-            retval = new STextCacheNode(theKey, TTPathObjectAndTexture(
+            theKey = QDemonTextRenderInfoAndHash(inText, inScaleFactor);
+            retval = new QDemonTextCacheNode(theKey, TTPathObjectAndTexture(
                                             TPathFontSpecAndPathObject(nextPathFontObject, nextPathFontItemObject),
                                             TTextTextureDetailsAndTexture(theDetails, nextTexture)));
-            m_TextureCache.insert(theKey, retval);
-            if (!m_CanUsePathRendering)
-                m_TextureTotalBytes += GetNumBytes(*(retval->m_TextInfo.second.second.data()));
+            textureCache.insert(theKey, retval);
+            if (!canUsePathRendering)
+                textureTotalBytes += getNumBytes(*(retval->textInfo.second.second.data()));
         }
-        retval->m_FrameCount = m_FrameCount;
-        m_LRUList.push_front(*retval);
-        return retval->m_TextInfo;
+        retval->frameCount = frameCount;
+        textCacheNodeList.push_front(*retval);
+        return retval->textInfo;
     }
     // We may have one more texture in cache than this byte count, but this will be the limiting
     // factor.
-    quint32 GetCacheHighWaterBytes() const override { return m_HighWaterMark; }
+    quint32 getCacheHighWaterBytes() const override { return highWaterMark; }
     // default cache size is 10 MB.
-    void SetCacheHighWaterBytes(quint32 inByteCount) override { m_HighWaterMark = inByteCount; }
+    void setCacheHighWaterBytes(quint32 inByteCount) override { highWaterMark = inByteCount; }
 
-    void BeginFrame() override {}
-    void EndFrame() override
+    void beginFrame() override {}
+    void endFrame() override
     {
         // algorithm is resistant to rollover.
-        ++m_FrameCount;
+        ++frameCount;
         // Release any texture that put us over the limit.
         // This almost guarantees thrashing if the limit is set too low.  Enable at your
         // own risk at *TEST CAREFULLY*
@@ -211,16 +215,17 @@ struct STextTextureCache : public ITextTextureCache
 };
 }
 
-QSharedPointer<ITextTextureCache> ITextTextureCache::CreateTextureCache(QSharedPointer<ITextRenderer> inTextRenderer,
-                                                                        QSharedPointer<QDemonRenderContext> inRenderContext)
+QSharedPointer<QDemonTextTextureCacheInterface> QDemonTextTextureCacheInterface::createTextureCache(QSharedPointer<QDemonTextRendererInterface> inTextRenderer,
+                                                                                                    QSharedPointer<QDemonRenderContext> inRenderContext)
 {
-    return QSharedPointer<ITextTextureCache>(new STextTextureCache(inTextRenderer, inRenderContext));
+    return QSharedPointer<QDemonTextTextureCacheInterface>(new QDemonTextTextureCache(inTextRenderer, inRenderContext));
 }
 
-STextRenderInfoAndHash::STextRenderInfoAndHash(const STextRenderInfo &inInfo, float inScaleFactor)
-    : m_Info(inInfo)
-    , m_ScaleFactor(inScaleFactor)
-    , m_Hashcode(qHash(inInfo) ^ qHash(inScaleFactor))
+QDemonTextRenderInfoAndHash::QDemonTextRenderInfoAndHash(const QDemonTextRenderInfo &inInfo,
+                                                         float inScaleFactor)
+    : m_info(inInfo)
+    , m_scaleFactor(inScaleFactor)
+    , m_hashcode(qHash(inInfo) ^ qHash(inScaleFactor))
 {
 }
 

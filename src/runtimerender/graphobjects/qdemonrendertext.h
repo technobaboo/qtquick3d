@@ -38,38 +38,38 @@ class QDemonRenderTexture2D;
 class QDemonRenderPathFontItem;
 class QDemonRenderPathFontSpecification;
 
-struct Q_DEMONRUNTIMERENDER_EXPORT SText : public SNode, public STextRenderInfo
+struct Q_DEMONRUNTIMERENDER_EXPORT QDemonText : public QDemonGraphNode, public QDemonTextRenderInfo
 {
     // Change any of these properties and you can expect
     // that the text will force an expensive re-layer and render.
     // For these you need to set TextDirty.
 
     // These properties can change every frame with no additional cost.
-    QVector3D m_TextColor;
+    QVector3D m_textColor;
     // Setup and utilized by the rendering system
-    QSharedPointer<QDemonRenderTexture2D> m_TextTexture;
-    STextTextureDetails m_TextTextureDetails;
+    QSharedPointer<QDemonRenderTexture2D> m_textTexture;
+    QDemonTextTextureDetails m_textTextureDetails;
     // used for nv path rendering
-    QSharedPointer<QDemonRenderPathFontItem> m_PathFontItem;
-    QSharedPointer<QDemonRenderPathFontSpecification> m_PathFontDetails;
+    QSharedPointer<QDemonRenderPathFontItem> m_pathFontItem;
+    QSharedPointer<QDemonRenderPathFontSpecification> m_pathFontDetails;
 
-    QDemonBounds3 m_Bounds;
+    QDemonBounds3 m_bounds;
 
-    SText();
+    QDemonText();
 
-    QDemonBounds3 GetTextBounds() const;
+    QDemonBounds3 getTextBounds() const;
 
     // Generic method used during serialization
     // to remap string and object pointers
     template <typename TRemapperType>
-    void Remap(TRemapperType &inRemapper)
+    void remap(TRemapperType &inRemapper)
     {
-        SNode::Remap(inRemapper);
-        inRemapper.Remap(m_Text);
-        inRemapper.Remap(m_Font);
-        inRemapper.NullPtr(m_TextTexture);
-        inRemapper.NullPtr(m_PathFontItem);
-        inRemapper.NullPtr(m_PathFontDetails);
+        QDemonGraphNode::remap(inRemapper);
+        inRemapper.remap(text);
+        inRemapper.remap(font);
+        inRemapper.NullPtr(m_textTexture);
+        inRemapper.NullPtr(m_pathFontItem);
+        inRemapper.NullPtr(m_pathFontDetails);
     }
 };
 QT_END_NAMESPACE

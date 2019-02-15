@@ -43,9 +43,9 @@ class QDemonRenderBackend;
 class QDemonRenderSync
 {
 protected:
-    QSharedPointer<QDemonRenderContextImpl> m_Context; ///< pointer to context
-    QSharedPointer<QDemonRenderBackend> m_Backend; ///< pointer to backend
-    QDemonRenderBackend::QDemonRenderBackendSyncObject m_SyncHandle; ///< opaque backend handle
+    QSharedPointer<QDemonRenderContextImpl> m_context; ///< pointer to context
+    QSharedPointer<QDemonRenderBackend> m_backend; ///< pointer to backend
+    QDemonRenderBackend::QDemonRenderBackendSyncObject m_syncHandle; ///< opaque backend handle
 
 public:
     /**
@@ -65,7 +65,7 @@ public:
          *
          * @return Return query type
          */
-    virtual QDemonRenderSyncType::Enum GetSyncType() const
+    virtual QDemonRenderSyncType::Enum getSyncType() const
     {
         return QDemonRenderSyncType::GpuCommandsComplete;
     }
@@ -78,7 +78,7 @@ public:
          *
          * @return no return.
          */
-    virtual void Sync();
+    virtual void sync();
 
     /**
          * @brief Wait for a sync to be signaled
@@ -86,16 +86,16 @@ public:
          *
          * @return no return.
          */
-    virtual void Wait();
+    virtual void wait();
 
     /**
          * @brief get the backend object handle
          *
          * @return the backend object handle.
          */
-    virtual QDemonRenderBackend::QDemonRenderBackendSyncObject GetSyncHandle() const
+    virtual QDemonRenderBackend::QDemonRenderBackendSyncObject getSyncHandle() const
     {
-        return m_SyncHandle;
+        return m_syncHandle;
     }
 
     /*
@@ -103,7 +103,7 @@ public:
          *
          * @return a sync object on success
          */
-    static QSharedPointer<QDemonRenderSync> Create(QSharedPointer<QDemonRenderContextImpl> context);
+    static QSharedPointer<QDemonRenderSync> create(QSharedPointer<QDemonRenderContextImpl> context);
 };
 
 QT_END_NAMESPACE

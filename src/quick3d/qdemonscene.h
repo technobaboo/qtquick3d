@@ -30,7 +30,7 @@ Q_SIGNALS:
     void clearColorChanged(QColor clearColor);
 
 protected:
-    SGraphObject *updateSpatialNode(SGraphObject *node) override;
+    QDemonGraphObject *updateSpatialNode(QDemonGraphObject *node) override;
 
 private:
     SScene *m_sceneNode;

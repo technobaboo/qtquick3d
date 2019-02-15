@@ -47,52 +47,52 @@ struct ImageTextureFlagValues
     };
 };
 
-struct SImageTextureFlags : public QDemonFlags<ImageTextureFlagValues::Enum, quint32>
+struct QDemonRenderImageTextureFlags : public QDemonFlags<ImageTextureFlagValues::Enum, quint32>
 {
-    bool HasTransparency() const
+    bool hasTransparency() const
     {
         return this->operator&(ImageTextureFlagValues::HasTransparency);
     }
-    void SetHasTransparency(bool inValue)
+    void setHasTransparency(bool inValue)
     {
         clearOrSet(inValue, ImageTextureFlagValues::HasTransparency);
     }
 
-    bool IsInvertUVCoords() const
+    bool isInvertUVCoords() const
     {
         return this->operator&(ImageTextureFlagValues::InvertUVCoords);
     }
-    void SetInvertUVCoords(bool inValue)
+    void setInvertUVCoords(bool inValue)
     {
         clearOrSet(inValue, ImageTextureFlagValues::InvertUVCoords);
     }
 
-    bool IsPreMultiplied() const
+    bool isPreMultiplied() const
     {
         return this->operator&(ImageTextureFlagValues::PreMultiplied);
     }
-    void SetPreMultiplied(bool inValue)
+    void setPreMultiplied(bool inValue)
     {
         clearOrSet(inValue, ImageTextureFlagValues::PreMultiplied);
     }
 };
 
-struct SImageTextureData
+struct QDemonRenderImageTextureData
 {
-    QSharedPointer<QDemonRenderTexture2D> m_Texture;
-    SImageTextureFlags m_TextureFlags;
-    QSharedPointer<QDemonRenderPrefilterTexture> m_BSDFMipMap;
+    QSharedPointer<QDemonRenderTexture2D> m_texture;
+    QDemonRenderImageTextureFlags m_textureFlags;
+    QSharedPointer<QDemonRenderPrefilterTexture> m_bsdfMipMap;
 
-    SImageTextureData()
-        : m_Texture(nullptr)
-        , m_BSDFMipMap(nullptr)
+    QDemonRenderImageTextureData()
+        : m_texture(nullptr)
+        , m_bsdfMipMap(nullptr)
     {
     }
 
-    bool operator!=(const SImageTextureData &inOther)
+    bool operator!=(const QDemonRenderImageTextureData &inOther)
     {
-        return m_Texture != inOther.m_Texture || m_TextureFlags != inOther.m_TextureFlags
-                || m_BSDFMipMap != inOther.m_BSDFMipMap;
+        return m_texture != inOther.m_texture || m_textureFlags != inOther.m_textureFlags
+                || m_bsdfMipMap != inOther.m_bsdfMipMap;
     }
 };
 QT_END_NAMESPACE

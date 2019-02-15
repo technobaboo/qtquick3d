@@ -34,26 +34,20 @@
 QT_BEGIN_NAMESPACE
 
 namespace {
-struct SNullBackend : public QDemonRenderBackend
+struct QDemonNullBackend : public QDemonRenderBackend
 {
-    SNullBackend()
-    {
-    }
-
-    virtual ~SNullBackend()
-    {
-    }
+    virtual ~QDemonNullBackend() override {}
 
     /// backend interface
 
-    QDemonRenderContextType GetRenderContextType() const override
+    QDemonRenderContextType getRenderContextType() const override
     {
         return QDemonRenderContextValues::NullContext;
     }
-    const char *GetShadingLanguageVersion() override { return ""; }
-    quint32 GetMaxCombinedTextureUnits() override { return 32; }
-    bool GetRenderBackendCap(QDemonRenderBackendCaps::Enum) const override { return false; }
-    void GetRenderBackendValue(QDemonRenderBackendQuery::Enum inQuery, qint32 *params) const override
+    const char *getShadingLanguageVersion() override { return ""; }
+    quint32 getMaxCombinedTextureUnits() override { return 32; }
+    bool getRenderBackendCap(QDemonRenderBackendCaps::Enum) const override { return false; }
+    void getRenderBackendValue(QDemonRenderBackendQuery::Enum inQuery, qint32 *params) const override
     {
         if (params) {
             switch (inQuery) {
@@ -70,195 +64,195 @@ struct SNullBackend : public QDemonRenderBackend
             }
         }
     }
-    quint32 GetDepthBits() const override { return 16; }
-    quint32 GetStencilBits() const override { return 0; }
-    void SetRenderState(bool, const QDemonRenderState::Enum) override {}
-    bool GetRenderState(const QDemonRenderState::Enum) override { return false; }
+    quint32 getDepthBits() const override { return 16; }
+    quint32 getStencilBits() const override { return 0; }
+    void setRenderState(bool, const QDemonRenderState::Enum) override {}
+    bool getRenderState(const QDemonRenderState::Enum) override { return false; }
     virtual QDemonRenderBackendDepthStencilStateObject
-    CreateDepthStencilState(bool, bool, QDemonRenderBoolOp::Enum, bool,
+    createDepthStencilState(bool, bool, QDemonRenderBoolOp::Enum, bool,
                             QDemonRenderStencilFunctionArgument &, QDemonRenderStencilFunctionArgument &,
                             QDemonRenderStencilOperationArgument &, QDemonRenderStencilOperationArgument &) override
     {
         return QDemonRenderBackendDepthStencilStateObject(1);
     }
-    void ReleaseDepthStencilState(QDemonRenderBackendDepthStencilStateObject) override {}
-    QDemonRenderBackendRasterizerStateObject CreateRasterizerState(float, float,
+    void releaseDepthStencilState(QDemonRenderBackendDepthStencilStateObject) override {}
+    QDemonRenderBackendRasterizerStateObject createRasterizerState(float, float,
                                                                        QDemonRenderFaces::Enum) override
     {
         return QDemonRenderBackendRasterizerStateObject(1);
     }
-    void ReleaseRasterizerState(QDemonRenderBackendRasterizerStateObject) override {}
-    void SetDepthStencilState(QDemonRenderBackendDepthStencilStateObject) override {}
-    void SetRasterizerState(QDemonRenderBackendRasterizerStateObject) override {}
-    QDemonRenderBoolOp::Enum GetDepthFunc() override { return QDemonRenderBoolOp::Equal; }
-    void SetDepthFunc(const QDemonRenderBoolOp::Enum) override {}
-    bool GetDepthWrite() override { return false; }
+    void releaseRasterizerState(QDemonRenderBackendRasterizerStateObject) override {}
+    void setDepthStencilState(QDemonRenderBackendDepthStencilStateObject) override {}
+    void setRasterizerState(QDemonRenderBackendRasterizerStateObject) override {}
+    QDemonRenderBoolOp::Enum getDepthFunc() override { return QDemonRenderBoolOp::Equal; }
+    void setDepthFunc(const QDemonRenderBoolOp::Enum) override {}
+    bool getDepthWrite() override { return false; }
 
-    void SetDepthWrite(bool) override {}
-    void SetColorWrites(bool, bool, bool, bool) override {}
-    void SetMultisample(bool) override {}
-    void GetBlendFunc(QDemonRenderBlendFunctionArgument *) override {}
-    void SetBlendFunc(const QDemonRenderBlendFunctionArgument &) override {}
-    void SetBlendEquation(const QDemonRenderBlendEquationArgument &) override {}
-    void SetBlendBarrier(void) override {}
-    void GetScissorRect(QDemonRenderRect *) override {}
-    void SetScissorRect(const QDemonRenderRect &) override {}
-    void GetViewportRect(QDemonRenderRect *) override {}
-    void SetViewportRect(const QDemonRenderRect &) override {}
-    void SetClearColor(const QVector4D *) override {}
-    void Clear(QDemonRenderClearFlags) override {}
-    QDemonRenderBackendBufferObject CreateBuffer(size_t, QDemonRenderBufferBindFlags,
+    void setDepthWrite(bool) override {}
+    void setColorWrites(bool, bool, bool, bool) override {}
+    void setMultisample(bool) override {}
+    void getBlendFunc(QDemonRenderBlendFunctionArgument *) override {}
+    void setBlendFunc(const QDemonRenderBlendFunctionArgument &) override {}
+    void setBlendEquation(const QDemonRenderBlendEquationArgument &) override {}
+    void setBlendBarrier(void) override {}
+    void getScissorRect(QDemonRenderRect *) override {}
+    void setScissorRect(const QDemonRenderRect &) override {}
+    void getViewportRect(QDemonRenderRect *) override {}
+    void setViewportRect(const QDemonRenderRect &) override {}
+    void setClearColor(const QVector4D *) override {}
+    void clear(QDemonRenderClearFlags) override {}
+    QDemonRenderBackendBufferObject createBuffer(size_t, QDemonRenderBufferBindFlags,
                                                      QDemonRenderBufferUsageType::Enum, const void *) override
     {
         return QDemonRenderBackendBufferObject(1);
     }
-    void BindBuffer(QDemonRenderBackendBufferObject, QDemonRenderBufferBindFlags) override {}
-    void ReleaseBuffer(QDemonRenderBackendBufferObject) override {}
+    void bindBuffer(QDemonRenderBackendBufferObject, QDemonRenderBufferBindFlags) override {}
+    void releaseBuffer(QDemonRenderBackendBufferObject) override {}
 
-    void UpdateBuffer(QDemonRenderBackendBufferObject, QDemonRenderBufferBindFlags, size_t,
+    void updateBuffer(QDemonRenderBackendBufferObject, QDemonRenderBufferBindFlags, size_t,
                               QDemonRenderBufferUsageType::Enum, const void *) override
     {
     }
-    void UpdateBufferRange(QDemonRenderBackendBufferObject, QDemonRenderBufferBindFlags, size_t, size_t,
+    void updateBufferRange(QDemonRenderBackendBufferObject, QDemonRenderBufferBindFlags, size_t, size_t,
                            const void *) override
     {
     }
-    void *MapBuffer(QDemonRenderBackendBufferObject, QDemonRenderBufferBindFlags, size_t, size_t,
+    void *mapBuffer(QDemonRenderBackendBufferObject, QDemonRenderBufferBindFlags, size_t, size_t,
                             QDemonRenderBufferAccessFlags) override
     {
         return nullptr;
     }
-    bool UnmapBuffer(QDemonRenderBackendBufferObject, QDemonRenderBufferBindFlags) override { return true; }
-    void SetMemoryBarrier(QDemonRenderBufferBarrierFlags) override {}
-    QDemonRenderBackendQueryObject CreateQuery() override { return QDemonRenderBackendQueryObject(1); }
-    void ReleaseQuery(QDemonRenderBackendQueryObject) override {}
-    void BeginQuery(QDemonRenderBackendQueryObject, QDemonRenderQueryType::Enum) override {}
-    void EndQuery(QDemonRenderBackendQueryObject, QDemonRenderQueryType::Enum) override {}
-    void GetQueryResult(QDemonRenderBackendQueryObject, QDemonRenderQueryResultType::Enum,
+    bool unmapBuffer(QDemonRenderBackendBufferObject, QDemonRenderBufferBindFlags) override { return true; }
+    void setMemoryBarrier(QDemonRenderBufferBarrierFlags) override {}
+    QDemonRenderBackendQueryObject createQuery() override { return QDemonRenderBackendQueryObject(1); }
+    void releaseQuery(QDemonRenderBackendQueryObject) override {}
+    void beginQuery(QDemonRenderBackendQueryObject, QDemonRenderQueryType::Enum) override {}
+    void endQuery(QDemonRenderBackendQueryObject, QDemonRenderQueryType::Enum) override {}
+    void getQueryResult(QDemonRenderBackendQueryObject, QDemonRenderQueryResultType::Enum,
                                 quint32 *) override {}
-    void GetQueryResult(QDemonRenderBackendQueryObject, QDemonRenderQueryResultType::Enum,
+    void getQueryResult(QDemonRenderBackendQueryObject, QDemonRenderQueryResultType::Enum,
                                 quint64 *) override {}
-    void SetQueryTimer(QDemonRenderBackendQueryObject) override {}
-    QDemonRenderBackendSyncObject CreateSync(QDemonRenderSyncType::Enum, QDemonRenderSyncFlags) override
+    void setQueryTimer(QDemonRenderBackendQueryObject) override {}
+    QDemonRenderBackendSyncObject createSync(QDemonRenderSyncType::Enum, QDemonRenderSyncFlags) override
     {
         return QDemonRenderBackendSyncObject(1);
     }
-    void ReleaseSync(QDemonRenderBackendSyncObject) override {}
-    void WaitSync(QDemonRenderBackendSyncObject, QDemonRenderCommandFlushFlags, quint64) override {}
-    QDemonRenderBackendRenderTargetObject CreateRenderTarget() override
+    void releaseSync(QDemonRenderBackendSyncObject) override {}
+    void waitSync(QDemonRenderBackendSyncObject, QDemonRenderCommandFlushFlags, quint64) override {}
+    QDemonRenderBackendRenderTargetObject createRenderTarget() override
     {
         return QDemonRenderBackendRenderTargetObject(1);
     }
-    void ReleaseRenderTarget(QDemonRenderBackendRenderTargetObject) override {}
-    void RenderTargetAttach(QDemonRenderBackendRenderTargetObject,
+    void releaseRenderTarget(QDemonRenderBackendRenderTargetObject) override {}
+    void renderTargetAttach(QDemonRenderBackendRenderTargetObject,
                                     QDemonRenderFrameBufferAttachments::Enum,
                                     QDemonRenderBackendRenderbufferObject) override
     {
     }
-    void RenderTargetAttach(QDemonRenderBackendRenderTargetObject,
+    void renderTargetAttach(QDemonRenderBackendRenderTargetObject,
                                     QDemonRenderFrameBufferAttachments::Enum,
                                     QDemonRenderBackendTextureObject, QDemonRenderTextureTargetType::Enum) override
     {
     }
-    void RenderTargetAttach(QDemonRenderBackendRenderTargetObject,
+    void renderTargetAttach(QDemonRenderBackendRenderTargetObject,
                                     QDemonRenderFrameBufferAttachments::Enum,
                                     QDemonRenderBackendTextureObject, qint32, qint32) override
     {
     }
-    void SetRenderTarget(QDemonRenderBackendRenderTargetObject) override {}
-    bool RenderTargetIsValid(QDemonRenderBackendRenderTargetObject) override { return false; }
-    void SetReadTarget(QDemonRenderBackendRenderTargetObject) override {}
-    void SetDrawBuffers(QDemonRenderBackendRenderTargetObject, QDemonConstDataRef<qint32>) override {}
-    void SetReadBuffer(QDemonRenderBackendRenderTargetObject, QDemonReadFaces::Enum) override {}
+    void setRenderTarget(QDemonRenderBackendRenderTargetObject) override {}
+    bool renderTargetIsValid(QDemonRenderBackendRenderTargetObject) override { return false; }
+    void setReadTarget(QDemonRenderBackendRenderTargetObject) override {}
+    void setDrawBuffers(QDemonRenderBackendRenderTargetObject, QDemonConstDataRef<qint32>) override {}
+    void setReadBuffer(QDemonRenderBackendRenderTargetObject, QDemonReadFaces::Enum) override {}
 
-    void BlitFramebuffer(qint32, qint32, qint32, qint32, qint32, qint32, qint32, qint32,
+    void blitFramebuffer(qint32, qint32, qint32, qint32, qint32, qint32, qint32, qint32,
                                  QDemonRenderClearFlags, QDemonRenderTextureMagnifyingOp::Enum) override
     {
     }
-    QDemonRenderBackendRenderbufferObject CreateRenderbuffer(QDemonRenderRenderBufferFormats::Enum,
+    QDemonRenderBackendRenderbufferObject createRenderbuffer(QDemonRenderRenderBufferFormats::Enum,
                                                                  size_t, size_t) override
     {
         return QDemonRenderBackendRenderbufferObject(1);
     }
-    void ReleaseRenderbuffer(QDemonRenderBackendRenderbufferObject) override {}
+    void releaseRenderbuffer(QDemonRenderBackendRenderbufferObject) override {}
 
-    bool ResizeRenderbuffer(QDemonRenderBackendRenderbufferObject,
+    bool resizeRenderbuffer(QDemonRenderBackendRenderbufferObject,
                                     QDemonRenderRenderBufferFormats::Enum, size_t, size_t) override
     {
         return false;
     }
-    QDemonRenderBackendTextureObject CreateTexture() override { return QDemonRenderBackendTextureObject(1); }
+    QDemonRenderBackendTextureObject createTexture() override { return QDemonRenderBackendTextureObject(1); }
 
-    void SetTextureData2D(QDemonRenderBackendTextureObject, QDemonRenderTextureTargetType::Enum,
+    void setTextureData2D(QDemonRenderBackendTextureObject, QDemonRenderTextureTargetType::Enum,
                                   quint32, QDemonRenderTextureFormats::Enum, size_t, size_t, qint32,
                                   QDemonRenderTextureFormats::Enum, const void *) override
     {
     }
-    void SetTextureDataCubeFace(QDemonRenderBackendTextureObject,
+    void setTextureDataCubeFace(QDemonRenderBackendTextureObject,
                                         QDemonRenderTextureTargetType::Enum, quint32,
                                         QDemonRenderTextureFormats::Enum, size_t, size_t, qint32,
                                         QDemonRenderTextureFormats::Enum, const void *) override
     {
     }
-    void CreateTextureStorage2D(QDemonRenderBackendTextureObject,
+    void createTextureStorage2D(QDemonRenderBackendTextureObject,
                                         QDemonRenderTextureTargetType::Enum, quint32,
                                         QDemonRenderTextureFormats::Enum, size_t, size_t) override
     {
     }
-    void SetTextureSubData2D(QDemonRenderBackendTextureObject, QDemonRenderTextureTargetType::Enum,
+    void setTextureSubData2D(QDemonRenderBackendTextureObject, QDemonRenderTextureTargetType::Enum,
                                      quint32, qint32, qint32, size_t, size_t,
                                      QDemonRenderTextureFormats::Enum, const void *) override
     {
     }
-    void SetCompressedTextureData2D(QDemonRenderBackendTextureObject,
+    void setCompressedTextureData2D(QDemonRenderBackendTextureObject,
                                             QDemonRenderTextureTargetType::Enum, quint32,
                                             QDemonRenderTextureFormats::Enum, size_t, size_t, qint32,
                                             size_t, const void *) override
     {
     }
-    void SetCompressedTextureDataCubeFace(QDemonRenderBackendTextureObject,
+    void setCompressedTextureDataCubeFace(QDemonRenderBackendTextureObject,
                                                   QDemonRenderTextureTargetType::Enum, quint32,
                                                   QDemonRenderTextureFormats::Enum, size_t, size_t,
                                                   qint32, size_t, const void *) override
     {
     }
-    void SetCompressedTextureSubData2D(QDemonRenderBackendTextureObject,
+    void setCompressedTextureSubData2D(QDemonRenderBackendTextureObject,
                                                QDemonRenderTextureTargetType::Enum, quint32, qint32, qint32,
                                                size_t, size_t, QDemonRenderTextureFormats::Enum, size_t,
                                                const void *) override
     {
     }
-    void SetMultisampledTextureData2D(QDemonRenderBackendTextureObject,
+    void setMultisampledTextureData2D(QDemonRenderBackendTextureObject,
                                               QDemonRenderTextureTargetType::Enum, size_t,
                                               QDemonRenderTextureFormats::Enum, size_t, size_t, bool) override
     {
     }
-    void SetTextureData3D(QDemonRenderBackendTextureObject, QDemonRenderTextureTargetType::Enum,
+    void setTextureData3D(QDemonRenderBackendTextureObject, QDemonRenderTextureTargetType::Enum,
                                   quint32, QDemonRenderTextureFormats::Enum, size_t, size_t, size_t,
                                   qint32, QDemonRenderTextureFormats::Enum, const void *) override
     {
     }
-    void GenerateMipMaps(QDemonRenderBackendTextureObject, QDemonRenderTextureTargetType::Enum,
+    void generateMipMaps(QDemonRenderBackendTextureObject, QDemonRenderTextureTargetType::Enum,
                                  QDemonRenderHint::Enum) override
     {
     }
-    void BindTexture(QDemonRenderBackendTextureObject, QDemonRenderTextureTargetType::Enum, quint32) override
+    void bindTexture(QDemonRenderBackendTextureObject, QDemonRenderTextureTargetType::Enum, quint32) override
     {
     }
-    void BindImageTexture(QDemonRenderBackendTextureObject, quint32, qint32, bool, qint32,
+    void bindImageTexture(QDemonRenderBackendTextureObject, quint32, qint32, bool, qint32,
                                   QDemonRenderImageAccessType::Enum, QDemonRenderTextureFormats::Enum) override
     {
     }
-    void ReleaseTexture(QDemonRenderBackendTextureObject) override {}
+    void releaseTexture(QDemonRenderBackendTextureObject) override {}
 
     virtual QDemonRenderTextureSwizzleMode::Enum
-    GetTextureSwizzleMode(const QDemonRenderTextureFormats::Enum) const override
+    getTextureSwizzleMode(const QDemonRenderTextureFormats::Enum) const override
     {
         return QDemonRenderTextureSwizzleMode::NoSwizzle;
     }
 
     virtual QDemonRenderBackendSamplerObject
-    CreateSampler(QDemonRenderTextureMinifyingOp::Enum, QDemonRenderTextureMagnifyingOp::Enum,
+    createSampler(QDemonRenderTextureMinifyingOp::Enum, QDemonRenderTextureMagnifyingOp::Enum,
                   QDemonRenderTextureCoordOp::Enum, QDemonRenderTextureCoordOp::Enum,
                   QDemonRenderTextureCoordOp::Enum, qint32, qint32, float,
                   QDemonRenderTextureCompareMode::Enum, QDemonRenderTextureCompareOp::Enum, float, float *) override
@@ -266,7 +260,7 @@ struct SNullBackend : public QDemonRenderBackend
         return QDemonRenderBackendSamplerObject(1);
     }
 
-    void UpdateSampler(QDemonRenderBackendSamplerObject, QDemonRenderTextureTargetType::Enum,
+    void updateSampler(QDemonRenderBackendSamplerObject, QDemonRenderTextureTargetType::Enum,
                                QDemonRenderTextureMinifyingOp::Enum, QDemonRenderTextureMagnifyingOp::Enum,
                                QDemonRenderTextureCoordOp::Enum, QDemonRenderTextureCoordOp::Enum,
                                QDemonRenderTextureCoordOp::Enum, float, float, float,
@@ -275,217 +269,217 @@ struct SNullBackend : public QDemonRenderBackend
     {
     }
 
-    void UpdateTextureObject(QDemonRenderBackendTextureObject, QDemonRenderTextureTargetType::Enum,
+    void updateTextureObject(QDemonRenderBackendTextureObject, QDemonRenderTextureTargetType::Enum,
                                      qint32, qint32) override
     {
     }
 
-    void UpdateTextureSwizzle(QDemonRenderBackendTextureObject, QDemonRenderTextureTargetType::Enum,
+    void updateTextureSwizzle(QDemonRenderBackendTextureObject, QDemonRenderTextureTargetType::Enum,
                                       QDemonRenderTextureSwizzleMode::Enum) override
     {
     }
 
-    void ReleaseSampler(QDemonRenderBackendSamplerObject) override {}
+    void releaseSampler(QDemonRenderBackendSamplerObject) override {}
 
     virtual QDemonRenderBackendAttribLayoutObject
-        CreateAttribLayout(QDemonConstDataRef<QDemonRenderVertexBufferEntry>) override
+        createAttribLayout(QDemonConstDataRef<QDemonRenderVertexBufferEntry>) override
     {
         return QDemonRenderBackendAttribLayoutObject(1);
     }
 
-    void ReleaseAttribLayout(QDemonRenderBackendAttribLayoutObject) override {}
+    void releaseAttribLayout(QDemonRenderBackendAttribLayoutObject) override {}
 
-    QDemonRenderBackendInputAssemblerObject CreateInputAssembler(
+    QDemonRenderBackendInputAssemblerObject createInputAssembler(
         QDemonRenderBackendAttribLayoutObject, QDemonConstDataRef<QDemonRenderBackendBufferObject>,
         const QDemonRenderBackendBufferObject, QDemonConstDataRef<quint32>, QDemonConstDataRef<quint32>, quint32) override
     {
         return QDemonRenderBackendInputAssemblerObject(1);
     }
-    void ReleaseInputAssembler(QDemonRenderBackendInputAssemblerObject) override {}
-    bool SetInputAssembler(QDemonRenderBackendInputAssemblerObject,
+    void releaseInputAssembler(QDemonRenderBackendInputAssemblerObject) override {}
+    bool setInputAssembler(QDemonRenderBackendInputAssemblerObject,
                                    QDemonRenderBackendShaderProgramObject) override
     {
         return false;
     }
-    void SetPatchVertexCount(QDemonRenderBackendInputAssemblerObject, quint32) override {}
-    QDemonRenderBackendVertexShaderObject CreateVertexShader(QDemonConstDataRef<qint8>,
+    void setPatchVertexCount(QDemonRenderBackendInputAssemblerObject, quint32) override {}
+    QDemonRenderBackendVertexShaderObject createVertexShader(QDemonConstDataRef<qint8>,
                                                                  QByteArray &, bool) override
     {
         return QDemonRenderBackendVertexShaderObject(1);
     }
-    void ReleaseVertexShader(QDemonRenderBackendVertexShaderObject) override {}
-    QDemonRenderBackendFragmentShaderObject CreateFragmentShader(QDemonConstDataRef<qint8>,
+    void releaseVertexShader(QDemonRenderBackendVertexShaderObject) override {}
+    QDemonRenderBackendFragmentShaderObject createFragmentShader(QDemonConstDataRef<qint8>,
                                                                      QByteArray &, bool) override
     {
         return QDemonRenderBackendFragmentShaderObject(1);
     }
-    void ReleaseFragmentShader(QDemonRenderBackendFragmentShaderObject) override {}
-    QDemonRenderBackendTessControlShaderObject CreateTessControlShader(QDemonConstDataRef<qint8>,
+    void releaseFragmentShader(QDemonRenderBackendFragmentShaderObject) override {}
+    QDemonRenderBackendTessControlShaderObject createTessControlShader(QDemonConstDataRef<qint8>,
                                                                            QByteArray &, bool) override
     {
         return QDemonRenderBackendTessControlShaderObject(1);
     }
-    void ReleaseTessControlShader(QDemonRenderBackendTessControlShaderObject) override {}
+    void releaseTessControlShader(QDemonRenderBackendTessControlShaderObject) override {}
     virtual QDemonRenderBackendTessEvaluationShaderObject
-    CreateTessEvaluationShader(QDemonConstDataRef<qint8>, QByteArray &, bool) override
+    createTessEvaluationShader(QDemonConstDataRef<qint8>, QByteArray &, bool) override
     {
         return QDemonRenderBackendTessEvaluationShaderObject(1);
     }
-    void ReleaseTessEvaluationShader(QDemonRenderBackendTessEvaluationShaderObject) override {}
-    QDemonRenderBackendGeometryShaderObject CreateGeometryShader(QDemonConstDataRef<qint8>,
+    void releaseTessEvaluationShader(QDemonRenderBackendTessEvaluationShaderObject) override {}
+    QDemonRenderBackendGeometryShaderObject createGeometryShader(QDemonConstDataRef<qint8>,
                                                                      QByteArray &, bool) override
     {
         return QDemonRenderBackendGeometryShaderObject(1);
     }
-    void ReleaseGeometryShader(QDemonRenderBackendGeometryShaderObject) override {}
-    QDemonRenderBackendComputeShaderObject CreateComputeShader(QDemonConstDataRef<qint8>,
+    void releaseGeometryShader(QDemonRenderBackendGeometryShaderObject) override {}
+    QDemonRenderBackendComputeShaderObject createComputeShader(QDemonConstDataRef<qint8>,
                                                                    QByteArray &, bool) override
     {
         return QDemonRenderBackendComputeShaderObject(1);
     }
-    void ReleaseComputeShader(QDemonRenderBackendComputeShaderObject) override {}
-    void AttachShader(QDemonRenderBackendShaderProgramObject, QDemonRenderBackendVertexShaderObject) override
+    void releaseComputeShader(QDemonRenderBackendComputeShaderObject) override {}
+    void attachShader(QDemonRenderBackendShaderProgramObject, QDemonRenderBackendVertexShaderObject) override
     {
     }
-    void AttachShader(QDemonRenderBackendShaderProgramObject,
+    void attachShader(QDemonRenderBackendShaderProgramObject,
                               QDemonRenderBackendFragmentShaderObject) override
     {
     }
-    void AttachShader(QDemonRenderBackendShaderProgramObject,
+    void attachShader(QDemonRenderBackendShaderProgramObject,
                               QDemonRenderBackendTessControlShaderObject) override
     {
     }
-    void AttachShader(QDemonRenderBackendShaderProgramObject,
+    void attachShader(QDemonRenderBackendShaderProgramObject,
                               QDemonRenderBackendTessEvaluationShaderObject) override
     {
     }
-    void AttachShader(QDemonRenderBackendShaderProgramObject,
+    void attachShader(QDemonRenderBackendShaderProgramObject,
                               QDemonRenderBackendGeometryShaderObject) override
     {
     }
-    void AttachShader(QDemonRenderBackendShaderProgramObject,
+    void attachShader(QDemonRenderBackendShaderProgramObject,
                               QDemonRenderBackendComputeShaderObject) override
     {
     }
-    void DetachShader(QDemonRenderBackendShaderProgramObject, QDemonRenderBackendVertexShaderObject) override
+    void detachShader(QDemonRenderBackendShaderProgramObject, QDemonRenderBackendVertexShaderObject) override
     {
     }
-    void DetachShader(QDemonRenderBackendShaderProgramObject,
+    void detachShader(QDemonRenderBackendShaderProgramObject,
                               QDemonRenderBackendFragmentShaderObject) override
     {
     }
-    void DetachShader(QDemonRenderBackendShaderProgramObject,
+    void detachShader(QDemonRenderBackendShaderProgramObject,
                               QDemonRenderBackendTessControlShaderObject) override
     {
     }
-    void DetachShader(QDemonRenderBackendShaderProgramObject,
+    void detachShader(QDemonRenderBackendShaderProgramObject,
                               QDemonRenderBackendTessEvaluationShaderObject) override
     {
     }
-    void DetachShader(QDemonRenderBackendShaderProgramObject,
+    void detachShader(QDemonRenderBackendShaderProgramObject,
                               QDemonRenderBackendGeometryShaderObject) override
     {
     }
-    void DetachShader(QDemonRenderBackendShaderProgramObject,
+    void detachShader(QDemonRenderBackendShaderProgramObject,
                               QDemonRenderBackendComputeShaderObject) override
     {
     }
-    QDemonRenderBackendShaderProgramObject CreateShaderProgram(bool) override
+    QDemonRenderBackendShaderProgramObject createShaderProgram(bool) override
     {
         return QDemonRenderBackendShaderProgramObject(1);
     }
-    void ReleaseShaderProgram(QDemonRenderBackendShaderProgramObject) override {}
-    QDemonRenderBackendProgramPipeline CreateProgramPipeline() override
+    void releaseShaderProgram(QDemonRenderBackendShaderProgramObject) override {}
+    QDemonRenderBackendProgramPipeline createProgramPipeline() override
     {
         return QDemonRenderBackendProgramPipeline(1);
     }
-    void ReleaseProgramPipeline(QDemonRenderBackendProgramPipeline) override {}
+    void releaseProgramPipeline(QDemonRenderBackendProgramPipeline) override {}
 
-    bool LinkProgram(QDemonRenderBackendShaderProgramObject, QByteArray &) override { return false; }
-    void SetActiveProgram(QDemonRenderBackendShaderProgramObject) override {}
-    void SetActiveProgramPipeline(QDemonRenderBackendProgramPipeline) override {}
-    void SetProgramStages(QDemonRenderBackendProgramPipeline, QDemonRenderShaderTypeFlags,
+    bool linkProgram(QDemonRenderBackendShaderProgramObject, QByteArray &) override { return false; }
+    void setActiveProgram(QDemonRenderBackendShaderProgramObject) override {}
+    void setActiveProgramPipeline(QDemonRenderBackendProgramPipeline) override {}
+    void setProgramStages(QDemonRenderBackendProgramPipeline, QDemonRenderShaderTypeFlags,
                                   QDemonRenderBackendShaderProgramObject) override {}
-    void DispatchCompute(QDemonRenderBackendShaderProgramObject, quint32, quint32, quint32) override {}
-    qint32 GetConstantCount(QDemonRenderBackendShaderProgramObject) override { return 0; }
-    qint32 GetConstantBufferCount(QDemonRenderBackendShaderProgramObject) override { return 0; }
-    qint32 GetConstantInfoByID(QDemonRenderBackendShaderProgramObject, quint32, quint32, qint32 *,
+    void dispatchCompute(QDemonRenderBackendShaderProgramObject, quint32, quint32, quint32) override {}
+    qint32 getConstantCount(QDemonRenderBackendShaderProgramObject) override { return 0; }
+    qint32 getConstantBufferCount(QDemonRenderBackendShaderProgramObject) override { return 0; }
+    qint32 getConstantInfoByID(QDemonRenderBackendShaderProgramObject, quint32, quint32, qint32 *,
                                       QDemonRenderShaderDataTypes::Enum *, qint32 *, char *) override
     {
         return 0;
     }
 
-    qint32 GetConstantBufferInfoByID(QDemonRenderBackendShaderProgramObject, quint32, quint32,
+    qint32 getConstantBufferInfoByID(QDemonRenderBackendShaderProgramObject, quint32, quint32,
                                             qint32 *, qint32 *, qint32 *, char *) override
     {
         return 0;
     }
 
-    void GetConstantBufferParamIndices(QDemonRenderBackendShaderProgramObject, quint32, qint32 *) override
+    void getConstantBufferParamIndices(QDemonRenderBackendShaderProgramObject, quint32, qint32 *) override
     {
     }
-    void GetConstantBufferParamInfoByIndices(QDemonRenderBackendShaderProgramObject, quint32,
+    void getConstantBufferParamInfoByIndices(QDemonRenderBackendShaderProgramObject, quint32,
                                                      quint32 *, qint32 *, qint32 *, qint32 *) override {}
-    void ProgramSetConstantBlock(QDemonRenderBackendShaderProgramObject, quint32, quint32) override {}
-    void ProgramSetConstantBuffer(quint32, QDemonRenderBackendBufferObject) override {}
+    void programSetConstantBlock(QDemonRenderBackendShaderProgramObject, quint32, quint32) override {}
+    void programSetConstantBuffer(quint32, QDemonRenderBackendBufferObject) override {}
 
-    qint32 GetStorageBufferCount(QDemonRenderBackendShaderProgramObject) override { return 0; }
-    qint32 GetStorageBufferInfoByID(QDemonRenderBackendShaderProgramObject, quint32, quint32,
+    qint32 getStorageBufferCount(QDemonRenderBackendShaderProgramObject) override { return 0; }
+    qint32 getStorageBufferInfoByID(QDemonRenderBackendShaderProgramObject, quint32, quint32,
                                            qint32 *, qint32 *, qint32 *, char *) override
     {
         return -1;
     }
-    void ProgramSetStorageBuffer(quint32, QDemonRenderBackendBufferObject) override {}
+    void programSetStorageBuffer(quint32, QDemonRenderBackendBufferObject) override {}
 
-    qint32 GetAtomicCounterBufferCount(QDemonRenderBackendShaderProgramObject) override { return 0; }
-    qint32 GetAtomicCounterBufferInfoByID(QDemonRenderBackendShaderProgramObject, quint32, quint32,
+    qint32 getAtomicCounterBufferCount(QDemonRenderBackendShaderProgramObject) override { return 0; }
+    qint32 getAtomicCounterBufferInfoByID(QDemonRenderBackendShaderProgramObject, quint32, quint32,
                                                  qint32 *, qint32 *, qint32 *, char *) override
     {
         return -1;
     }
-    void ProgramSetAtomicCounterBuffer(quint32, QDemonRenderBackendBufferObject) override {}
+    void programSetAtomicCounterBuffer(quint32, QDemonRenderBackendBufferObject) override {}
 
-    void SetConstantValue(QDemonRenderBackendShaderProgramObject, quint32,
+    void setConstantValue(QDemonRenderBackendShaderProgramObject, quint32,
                                   QDemonRenderShaderDataTypes::Enum, qint32, const void *, bool) override
     {
     }
 
-    void Draw(QDemonRenderDrawMode::Enum, quint32, quint32) override {}
-    void DrawIndirect(QDemonRenderDrawMode::Enum, const void *) override {}
+    void draw(QDemonRenderDrawMode::Enum, quint32, quint32) override {}
+    void drawIndirect(QDemonRenderDrawMode::Enum, const void *) override {}
 
-    void DrawIndexed(QDemonRenderDrawMode::Enum, quint32, QDemonRenderComponentTypes::Enum,
+    void drawIndexed(QDemonRenderDrawMode::Enum, quint32, QDemonRenderComponentTypes::Enum,
                              const void *) override
     {
     }
-    void DrawIndexedIndirect(QDemonRenderDrawMode::Enum, QDemonRenderComponentTypes::Enum,
+    void drawIndexedIndirect(QDemonRenderDrawMode::Enum, QDemonRenderComponentTypes::Enum,
                                      const void *) override
     {
     }
 
-    void ReadPixel(QDemonRenderBackendRenderTargetObject, qint32, qint32, qint32, qint32,
+    void readPixel(QDemonRenderBackendRenderTargetObject, qint32, qint32, qint32, qint32,
                            QDemonRenderReadPixelFormats::Enum, void *) override
     {
     }
 
-    QDemonRenderBackendPathObject CreatePathNVObject(size_t) override
+    QDemonRenderBackendPathObject createPathNVObject(size_t) override
     {
         return QDemonRenderBackendPathObject(1);
     }
-    void SetPathSpecification(QDemonRenderBackendPathObject, QDemonConstDataRef<quint8>,
+    void setPathSpecification(QDemonRenderBackendPathObject, QDemonConstDataRef<quint8>,
                                       QDemonConstDataRef<float>) override
     {
     }
 
     ///< Bounds of the fill and stroke
-    QDemonBounds3 GetPathObjectBoundingBox(QDemonRenderBackendPathObject /*inPathObject*/) override
+    QDemonBounds3 getPathObjectBoundingBox(QDemonRenderBackendPathObject /*inPathObject*/) override
     {
         return QDemonBounds3();
     }
-    QDemonBounds3 GetPathObjectFillBox(QDemonRenderBackendPathObject /*inPathObject*/) override
+    QDemonBounds3 getPathObjectFillBox(QDemonRenderBackendPathObject /*inPathObject*/) override
     {
         return QDemonBounds3();
     }
-    QDemonBounds3 GetPathObjectStrokeBox(QDemonRenderBackendPathObject /*inPathObject*/) override
+    QDemonBounds3 getPathObjectStrokeBox(QDemonRenderBackendPathObject /*inPathObject*/) override
     {
         return QDemonBounds3();
     }
@@ -493,30 +487,30 @@ struct SNullBackend : public QDemonRenderBackend
     /**
      *	Defaults to 0 if unset.
      */
-    void SetStrokeWidth(QDemonRenderBackendPathObject /*inPathObject*/, float) override {}
-    void SetPathProjectionMatrix(const QMatrix4x4 /*inPathProjection*/) override {}
-    void SetPathModelViewMatrix(const QMatrix4x4 /*inPathModelview*/) override {}
+    void setStrokeWidth(QDemonRenderBackendPathObject /*inPathObject*/, float) override {}
+    void setPathProjectionMatrix(const QMatrix4x4 /*inPathProjection*/) override {}
+    void setPathModelViewMatrix(const QMatrix4x4 /*inPathModelview*/) override {}
 
-    void SetPathStencilDepthOffset(float /*inSlope*/, float /*inBias*/) override {}
-    void SetPathCoverDepthFunc(QDemonRenderBoolOp::Enum /*inDepthFunction*/) override {}
-    void StencilStrokePath(QDemonRenderBackendPathObject /*inPathObject*/) override {}
-    void StencilFillPath(QDemonRenderBackendPathObject /*inPathObject*/) override {}
-    void ReleasePathNVObject(QDemonRenderBackendPathObject, size_t) override {}
+    void setPathStencilDepthOffset(float /*inSlope*/, float /*inBias*/) override {}
+    void setPathCoverDepthFunc(QDemonRenderBoolOp::Enum /*inDepthFunction*/) override {}
+    void stencilStrokePath(QDemonRenderBackendPathObject /*inPathObject*/) override {}
+    void stencilFillPath(QDemonRenderBackendPathObject /*inPathObject*/) override {}
+    void releasePathNVObject(QDemonRenderBackendPathObject, size_t) override {}
 
-    void LoadPathGlyphs(QDemonRenderBackendPathObject, QDemonRenderPathFontTarget::Enum,
+    void loadPathGlyphs(QDemonRenderBackendPathObject, QDemonRenderPathFontTarget::Enum,
                                 const void *, QDemonRenderPathFontStyleFlags, size_t,
                                 QDemonRenderPathFormatType::Enum, const void *,
                                 QDemonRenderPathMissingGlyphs::Enum, QDemonRenderBackendPathObject, float) override
     {
     }
     virtual QDemonRenderPathReturnValues::Enum
-    LoadPathGlyphsIndexed(QDemonRenderBackendPathObject, QDemonRenderPathFontTarget::Enum, const void *,
+    loadPathGlyphsIndexed(QDemonRenderBackendPathObject, QDemonRenderPathFontTarget::Enum, const void *,
                           QDemonRenderPathFontStyleFlags, quint32, size_t, QDemonRenderBackendPathObject,
                           float) override
     {
         return QDemonRenderPathReturnValues::FontUnavailable;
     }
-    QDemonRenderBackendPathObject LoadPathGlyphsIndexedRange(QDemonRenderPathFontTarget::Enum,
+    QDemonRenderBackendPathObject loadPathGlyphsIndexedRange(QDemonRenderPathFontTarget::Enum,
                                                                  const void *,
                                                                  QDemonRenderPathFontStyleFlags,
                                                                  QDemonRenderBackendPathObject, float,
@@ -524,44 +518,44 @@ struct SNullBackend : public QDemonRenderBackend
     {
         return QDemonRenderBackendPathObject(1);
     }
-    void LoadPathGlyphRange(QDemonRenderBackendPathObject, QDemonRenderPathFontTarget::Enum,
+    void loadPathGlyphRange(QDemonRenderBackendPathObject, QDemonRenderPathFontTarget::Enum,
                                     const void *, QDemonRenderPathFontStyleFlags, quint32, size_t,
                                     QDemonRenderPathMissingGlyphs::Enum, QDemonRenderBackendPathObject,
                                     float) override
     {
     }
-    void GetPathMetrics(QDemonRenderBackendPathObject, size_t, QDemonRenderPathGlyphFontMetricFlags,
+    void getPathMetrics(QDemonRenderBackendPathObject, size_t, QDemonRenderPathGlyphFontMetricFlags,
                                 QDemonRenderPathFormatType::Enum, const void *, size_t, float *) override
     {
     }
-    void GetPathMetricsRange(QDemonRenderBackendPathObject, size_t,
+    void getPathMetricsRange(QDemonRenderBackendPathObject, size_t,
                                      QDemonRenderPathGlyphFontMetricFlags, size_t, float *) override
     {
     }
-    void GetPathSpacing(QDemonRenderBackendPathObject, size_t, QDemonRenderPathListMode::Enum,
+    void getPathSpacing(QDemonRenderBackendPathObject, size_t, QDemonRenderPathListMode::Enum,
                                 QDemonRenderPathFormatType::Enum, const void *, float, float,
                                 QDemonRenderPathTransformType::Enum, float *) override
     {
     }
 
-    void StencilFillPathInstanced(QDemonRenderBackendPathObject, size_t,
+    void stencilFillPathInstanced(QDemonRenderBackendPathObject, size_t,
                                           QDemonRenderPathFormatType::Enum, const void *,
                                           QDemonRenderPathFillMode::Enum, quint32,
                                           QDemonRenderPathTransformType::Enum, const float *) override
     {
     }
-    void StencilStrokePathInstancedN(QDemonRenderBackendPathObject, size_t,
+    void stencilStrokePathInstancedN(QDemonRenderBackendPathObject, size_t,
                                              QDemonRenderPathFormatType::Enum, const void *, qint32,
                                              quint32, QDemonRenderPathTransformType::Enum, const float *) override
     {
     }
-    void CoverFillPathInstanced(QDemonRenderBackendPathObject, size_t,
+    void coverFillPathInstanced(QDemonRenderBackendPathObject, size_t,
                                         QDemonRenderPathFormatType::Enum, const void *,
                                         QDemonRenderPathCoverMode::Enum,
                                         QDemonRenderPathTransformType::Enum, const float *) override
     {
     }
-    void CoverStrokePathInstanced(QDemonRenderBackendPathObject, size_t,
+    void coverStrokePathInstanced(QDemonRenderBackendPathObject, size_t,
                                           QDemonRenderPathFormatType::Enum, const void *,
                                           QDemonRenderPathCoverMode::Enum,
                                           QDemonRenderPathTransformType::Enum, const float *) override
@@ -574,9 +568,9 @@ struct SNullBackend : public QDemonRenderBackend
 };
 }
 
-QSharedPointer<QDemonRenderBackend> QDemonRenderBackendNULL::CreateBackend()
+QSharedPointer<QDemonRenderBackend> QDemonRenderBackendNULL::createBackend()
 {
-    return QSharedPointer<QDemonRenderBackend>(new SNullBackend());
+    return QSharedPointer<QDemonRenderBackend>(new QDemonNullBackend());
 }
 
 QT_END_NAMESPACE

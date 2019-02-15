@@ -51,64 +51,67 @@ QT_BEGIN_NAMESPACE
      *	I am using language level access control on this object because it needs specific
      *	interface design that will enable future modifications.
      */
-struct SLayerRenderHelper
+struct QDemonLayerRenderHelper
 {
 private:
-    QDemonRenderRectF m_PresentationViewport;
-    QDemonRenderRectF m_PresentationScissor;
-    QVector2D m_PresentationDesignDimensions;
-    SLayer *m_Layer;
-    SCamera *m_Camera;
-    bool m_Offscreen;
+    QDemonRenderRectF m_presentationViewport;
+    QDemonRenderRectF m_presentationScissor;
+    QVector2D m_presentationDesignDimensions;
+    QDemonLayer *m_layer = nullptr;
+    QDemonRenderCamera *m_camera = nullptr;
+    bool m_offscreen = false;
 
-    QDemonRenderRectF m_Viewport;
-    QDemonRenderRectF m_Scissor;
+    QDemonRenderRectF m_viewport;
+    QDemonRenderRectF m_scissor;
 
-    ScaleModes::Enum m_ScaleMode;
-    QVector2D m_ScaleFactor;
+    ScaleModes::Enum m_scaleMode;
+    QVector2D m_scaleFactor;
 
 public:
-    SLayerRenderHelper();
+    QDemonLayerRenderHelper() = default;
 
-    SLayerRenderHelper(const QDemonRenderRectF &inPresentationViewport,
-                       const QDemonRenderRectF &inPresentationScissor,
-                       const QVector2D &inPresentationDesignDimensions, SLayer &inLayer,
-                       bool inOffscreen, ScaleModes::Enum inScaleMode,
-                       QVector2D inScaleFactor);
+    QDemonLayerRenderHelper(const QDemonRenderRectF &inPresentationViewport,
+                            const QDemonRenderRectF &inPresentationScissor,
+                            const QVector2D &inPresentationDesignDimensions,
+                            QDemonLayer &inLayer,
+                            bool inOffscreen,
+                            ScaleModes::Enum inScaleMode,
+                            QVector2D inScaleFactor);
 
-    QDemonRenderRectF GetPresentationViewport() const { return m_PresentationViewport; }
-    QDemonRenderRectF GetPresentationScissor() const { return m_PresentationScissor; }
-    QVector2D GetPresentationDesignDimensions() const { return m_PresentationDesignDimensions; }
-    SLayer *GetLayer() const { return m_Layer; }
-    SCamera *GetCamera() const { return m_Camera; }
-    bool IsOffscreen() const { return m_Offscreen; }
+    QDemonRenderRectF getPresentationViewport() const { return m_presentationViewport; }
+    QDemonRenderRectF getPresentationScissor() const { return m_presentationScissor; }
+    QVector2D getPresentationDesignDimensions() const { return m_presentationDesignDimensions; }
+    QDemonLayer *getLayer() const { return m_layer; }
+    QDemonRenderCamera *getCamera() const { return m_camera; }
+    bool isOffscreen() const { return m_offscreen; }
 
     // Does not differ whether offscreen or not, simply states how this layer maps to the
     // presentation
-    QDemonRenderRectF GetLayerToPresentationViewport() const { return m_Viewport; }
+    QDemonRenderRectF getLayerToPresentationViewport() const { return m_viewport; }
     // Does not differ whether offscreen or not, scissor rect of how this layer maps to
     // presentation.
-    QDemonRenderRectF GetLayerToPresentationScissorRect() const { return m_Scissor; }
+    QDemonRenderRectF getLayerToPresentationScissorRect() const { return m_scissor; }
 
-    QSize GetTextureDimensions() const;
+    QSize getTextureDimensions() const;
 
-    SCameraGlobalCalculationResult SetupCameraForRender(SCamera &inCamera);
+    QDemonCameraGlobalCalculationResult setupCameraForRender(QDemonRenderCamera &inCamera);
 
-    QDemonOption<QVector2D> GetLayerMouseCoords(const QVector2D &inMouseCoords,
-                                          const QVector2D &inWindowDimensions,
-                                          bool inForceIntersect) const;
+    QDemonOption<QVector2D> getLayerMouseCoords(const QVector2D &inMouseCoords,
+                                                const QVector2D &inWindowDimensions,
+                                                bool inForceIntersect) const;
 
-    QDemonOption<SRay> GetPickRay(const QVector2D &inMouseCoords, const QVector2D &inWindowDimensions,
-                            bool inForceIntersect) const;
+    QDemonOption<QDemonRenderRay> getPickRay(const QVector2D &inMouseCoords,
+                                             const QVector2D &inWindowDimensions,
+                                             bool inForceIntersect) const;
 
     // Checks the various viewports and determines if the layer is visible or not.
-    bool IsLayerVisible() const;
+    bool isLayerVisible() const;
 
 private:
     // Viewport used when actually rendering.  In the case where this is an offscreen item then
     // it may be
     // different than the layer to presentation viewport.
-    QDemonRenderRectF GetLayerRenderViewport() const;
+    QDemonRenderRectF getLayerRenderViewport() const;
 };
 QT_END_NAMESPACE
 

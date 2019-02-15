@@ -34,54 +34,54 @@
 
 QT_BEGIN_NAMESPACE
 
-class ITextRenderer;
+class QDemonTextRendererInterface;
 class QDemonRenderContext;
 
 typedef QPair<QSharedPointer<QDemonRenderPathFontSpecification>, QSharedPointer<QDemonRenderPathFontItem>> TPathFontSpecAndPathObject;
-typedef QPair<STextTextureDetails, QSharedPointer<QDemonRenderTexture2D>> TTextTextureDetailsAndTexture;
+typedef QPair<QDemonTextTextureDetails, QSharedPointer<QDemonRenderTexture2D>> TTextTextureDetailsAndTexture;
 typedef QPair<TPathFontSpecAndPathObject, TTextTextureDetailsAndTexture> TTPathObjectAndTexture;
 
-class Q_DEMONRUNTIMERENDER_EXPORT ITextTextureCache
+class Q_DEMONRUNTIMERENDER_EXPORT QDemonTextTextureCacheInterface
 {
 protected:
-    virtual ~ITextTextureCache() {}
+    virtual ~QDemonTextTextureCacheInterface() {}
 public:
-    virtual TTPathObjectAndTexture RenderText(const STextRenderInfo &inText, float inScaleFactor) = 0;
+    virtual TTPathObjectAndTexture renderText(const QDemonTextRenderInfo &inText, float inScaleFactor) = 0;
     // We may have one more texture in cache than this byte count, but this will be the limiting
     // factor.
-    virtual quint32 GetCacheHighWaterBytes() const = 0;
-    virtual void SetCacheHighWaterBytes(quint32 inNumBytes) = 0;
+    virtual quint32 getCacheHighWaterBytes() const = 0;
+    virtual void setCacheHighWaterBytes(quint32 inNumBytes) = 0;
 
-    virtual void BeginFrame() = 0;
+    virtual void beginFrame() = 0;
     // We need to know the frame rhythm because we can't release anything that was touched this
     // frame.
-    virtual void EndFrame() = 0;
+    virtual void endFrame() = 0;
 
-    static QSharedPointer<ITextTextureCache> CreateTextureCache(QSharedPointer<ITextRenderer> inTextRenderer, QSharedPointer<QDemonRenderContext> inRenderContext);
+    static QSharedPointer<QDemonTextTextureCacheInterface> createTextureCache(QSharedPointer<QDemonTextRendererInterface> inTextRenderer, QSharedPointer<QDemonRenderContext> inRenderContext);
 };
 
-struct STextRenderInfoAndHash
+struct QDemonTextRenderInfoAndHash
 {
-    STextRenderInfo m_Info;
-    float m_ScaleFactor;
-    uint m_Hashcode;
-    STextRenderInfoAndHash(const STextRenderInfo &inInfo, float inScaleFactor);
-    bool operator==(const STextRenderInfoAndHash &inOther) const
+    QDemonTextRenderInfo m_info;
+    float m_scaleFactor;
+    uint m_hashcode;
+    QDemonTextRenderInfoAndHash(const QDemonTextRenderInfo &inInfo, float inScaleFactor);
+    bool operator==(const QDemonTextRenderInfoAndHash &inOther) const
     {
-        return     m_Info.m_Text == inOther.m_Info.m_Text
-                && m_Info.m_Font == inOther.m_Info.m_Font
-                && qFuzzyCompare(m_Info.m_FontSize, inOther.m_Info.m_FontSize)
-                && m_Info.m_HorizontalAlignment == inOther.m_Info.m_HorizontalAlignment
-                && m_Info.m_VerticalAlignment == inOther.m_Info.m_VerticalAlignment
-                && qFuzzyCompare(m_Info.m_Leading, inOther.m_Info.m_Leading)
-                && qFuzzyCompare(m_Info.m_Tracking, inOther.m_Info.m_Tracking)
-                && m_Info.m_DropShadow == inOther.m_Info.m_DropShadow
-                && qFuzzyCompare(m_Info.m_DropShadowStrength, inOther.m_Info.m_DropShadowStrength)
-                && qFuzzyCompare(m_Info.m_DropShadowOffset, inOther.m_Info.m_DropShadowOffset)
-                && m_Info.m_DropShadowHorizontalAlignment == inOther.m_Info.m_DropShadowHorizontalAlignment
-                && m_Info.m_DropShadowVerticalAlignment == inOther.m_Info.m_DropShadowVerticalAlignment
-                && m_Info.m_EnableAcceleratedFont == inOther.m_Info.m_EnableAcceleratedFont
-                && qFuzzyCompare(m_ScaleFactor, inOther.m_ScaleFactor);
+        return m_info.text == inOther.m_info.text
+                && m_info.font == inOther.m_info.font
+                && qFuzzyCompare(m_info.fontSize, inOther.m_info.fontSize)
+                && m_info.horizontalAlignment == inOther.m_info.horizontalAlignment
+                && m_info.verticalAlignment == inOther.m_info.verticalAlignment
+                && qFuzzyCompare(m_info.leading, inOther.m_info.leading)
+                && qFuzzyCompare(m_info.tracking, inOther.m_info.tracking)
+                && m_info.dropShadow == inOther.m_info.dropShadow
+                && qFuzzyCompare(m_info.dropShadowStrength, inOther.m_info.dropShadowStrength)
+                && qFuzzyCompare(m_info.dropShadowOffset, inOther.m_info.dropShadowOffset)
+                && m_info.dropShadowHorizontalAlignment == inOther.m_info.dropShadowHorizontalAlignment
+                && m_info.dropShadowVerticalAlignment == inOther.m_info.dropShadowVerticalAlignment
+                && m_info.enableAcceleratedFont == inOther.m_info.enableAcceleratedFont
+                && qFuzzyCompare(m_scaleFactor, inOther.m_scaleFactor);
     }
 };
 

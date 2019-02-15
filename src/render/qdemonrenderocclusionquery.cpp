@@ -39,33 +39,33 @@ QDemonRenderOcclusionQuery::QDemonRenderOcclusionQuery(QSharedPointer<QDemonRend
 
 QDemonRenderOcclusionQuery::~QDemonRenderOcclusionQuery() {}
 
-void QDemonRenderOcclusionQuery::Begin()
+void QDemonRenderOcclusionQuery::begin()
 {
-    m_Backend->BeginQuery(m_QueryHandle, QDemonRenderQueryType::Samples);
+    m_backend->beginQuery(m_queryHandle, QDemonRenderQueryType::Samples);
 }
 
-void QDemonRenderOcclusionQuery::End()
+void QDemonRenderOcclusionQuery::end()
 {
-    m_Backend->EndQuery(m_QueryHandle, QDemonRenderQueryType::Samples);
+    m_backend->endQuery(m_queryHandle, QDemonRenderQueryType::Samples);
 }
 
-void QDemonRenderOcclusionQuery::GetResult(quint32 *params)
+void QDemonRenderOcclusionQuery::getResult(quint32 *params)
 {
-    m_Backend->GetQueryResult(m_QueryHandle, QDemonRenderQueryResultType::Result, params);
+    m_backend->getQueryResult(m_queryHandle, QDemonRenderQueryResultType::Result, params);
 }
 
 bool QDemonRenderOcclusionQuery::GetResultAvailable()
 {
     quint32 param;
 
-    m_Backend->GetQueryResult(m_QueryHandle, QDemonRenderQueryResultType::ResultAvailable, &param);
+    m_backend->getQueryResult(m_queryHandle, QDemonRenderQueryResultType::ResultAvailable, &param);
 
     return (param == 1);
 }
 
-QSharedPointer<QDemonRenderOcclusionQuery> QDemonRenderOcclusionQuery::Create(QSharedPointer<QDemonRenderContextImpl> context)
+QSharedPointer<QDemonRenderOcclusionQuery> QDemonRenderOcclusionQuery::create(QSharedPointer<QDemonRenderContextImpl> context)
 {
-    if (!context->IsSampleQuerySupported())
+    if (!context->isSampleQuerySupported())
         return nullptr;
 
     return QSharedPointer<QDemonRenderOcclusionQuery>(new QDemonRenderOcclusionQuery(context));

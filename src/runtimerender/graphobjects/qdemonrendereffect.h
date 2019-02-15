@@ -35,47 +35,47 @@
 #include <QtDemonRuntimeRender/qdemonrenderdynamicobject.h>
 
 QT_BEGIN_NAMESPACE
-struct SLayer;
-struct SEffectContext;
-class IEffectSystem;
+struct QDemonLayer;
+struct QDemonEffectContext;
+class QDemonEffectSystemInterface;
 
 // Effects are post-render effect applied to the layer.  There can be more than one of
 // them and they have completely variable properties.
 // see IEffectManager in order to create these effects.
 // The data for the effect immediately follows the effect
-struct Q_DEMONRUNTIMERENDER_EXPORT SEffect : public SDynamicObject
+struct Q_DEMONRUNTIMERENDER_EXPORT QDemonEffect : public QDemonDynamicObject
 {
 private:
     // These objects are only created via the dynamic object system.
-    SEffect(const SEffect &);
-    SEffect &operator=(const SEffect &);
-    SEffect();
+    QDemonEffect(const QDemonEffect &);
+    QDemonEffect &operator=(const QDemonEffect &);
+    QDemonEffect();
 
 public:
-    SLayer *m_Layer;
-    SEffect *m_NextEffect;
+    QDemonLayer *m_layer;
+    QDemonEffect *m_nextEffect;
     // Opaque pointer to context type implemented by the effect system.
     // May be null in which case the effect system will generate a new context
     // the first time it needs to render this effect.
-    QSharedPointer<SEffectContext> m_Context;
+    QSharedPointer<QDemonEffectContext> m_context;
 
-    void Initialize();
+    void initialize();
 
     // If our active flag value changes, then we ask the effect manager
     // to reset our context.
-    void SetActive(bool inActive, IEffectSystem &inSystem);
+    void setActive(bool inActive, QDemonEffectSystemInterface &inSystem);
 
-    void Reset(IEffectSystem &inSystem);
+    void reset(QDemonEffectSystemInterface &inSystem);
 
     // Generic method used during serialization
     // to remap string and object pointers
     template <typename TRemapperType>
-    void Remap(TRemapperType &inRemapper)
+    void remap(TRemapperType &inRemapper)
     {
-        SDynamicObject::Remap(inRemapper);
-        inRemapper.Remap(m_Layer);
-        inRemapper.Remap(m_NextEffect);
-        inRemapper.NullPtr(m_Context);
+        QDemonDynamicObject::remap(inRemapper);
+        inRemapper.remap(m_layer);
+        inRemapper.remap(m_nextEffect);
+        inRemapper.NullPtr(m_context);
     }
 };
 QT_END_NAMESPACE

@@ -47,7 +47,7 @@ void QDemonScene::setClearColor(QColor clearColor)
     update();
 }
 
-SGraphObject *QDemonScene::updateSpatialNode(SGraphObject *node)
+QDemonGraphObject *QDemonScene::updateSpatialNode(QDemonGraphObject *node)
 {
     if (!node) {
         m_sceneNode = new SScene();

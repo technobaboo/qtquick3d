@@ -37,7 +37,7 @@
 
 QT_BEGIN_NAMESPACE
 
-struct SLayerRenderData;
+struct QDemonLayerRenderData;
 
 struct ShadowMapModes {
     enum Enum {
@@ -55,76 +55,76 @@ struct ShadowFilterValues {
     };
 };
 
-struct SShadowMapEntry {
-    SShadowMapEntry()
-        : m_LightIndex(std::numeric_limits<quint32>::max())
-        , m_ShadowMapMode(ShadowMapModes::SSM)
-        , m_ShadowFilterFlags(ShadowFilterValues::NONE)
+struct QDemonShadowMapEntry {
+    QDemonShadowMapEntry()
+        : m_lightIndex(std::numeric_limits<quint32>::max())
+        , m_shadowMapMode(ShadowMapModes::SSM)
+        , m_shadowFilterFlags(ShadowFilterValues::NONE)
     {
     }
 
-    SShadowMapEntry(quint32 index,
+    QDemonShadowMapEntry(quint32 index,
                     ShadowMapModes::Enum mode,
                     ShadowFilterValues::Enum filter,
                     QSharedPointer<QDemonRenderTexture2D> depthMap,
                     QSharedPointer<QDemonRenderTexture2D> depthCopy,
                     QSharedPointer<QDemonRenderTexture2D> depthTemp)
-        : m_LightIndex(index)
-        , m_ShadowMapMode(mode)
-        , m_ShadowFilterFlags(filter)
-        , m_DepthMap(depthMap)
-        , m_DepthCopy(depthCopy)
-        , m_DepthCube(nullptr)
-        , m_CubeCopy(nullptr)
-        , m_DepthRender(depthTemp)
+        : m_lightIndex(index)
+        , m_shadowMapMode(mode)
+        , m_shadowFilterFlags(filter)
+        , m_depthMap(depthMap)
+        , m_depthCopy(depthCopy)
+        , m_depthCube(nullptr)
+        , m_cubeCopy(nullptr)
+        , m_depthRender(depthTemp)
     {
     }
 
-    SShadowMapEntry(quint32 index,
+    QDemonShadowMapEntry(quint32 index,
                     ShadowMapModes::Enum mode,
                     ShadowFilterValues::Enum filter,
                     QSharedPointer<QDemonRenderTextureCube> depthCube,
                     QSharedPointer<QDemonRenderTextureCube> cubeTmp,
                     QSharedPointer<QDemonRenderTexture2D> depthTemp)
-        : m_LightIndex(index)
-        , m_ShadowMapMode(mode)
-        , m_ShadowFilterFlags(filter)
-        , m_DepthMap(nullptr)
-        , m_DepthCopy(nullptr)
-        , m_DepthCube(depthCube)
-        , m_CubeCopy(cubeTmp)
-        , m_DepthRender(depthTemp)
+        : m_lightIndex(index)
+        , m_shadowMapMode(mode)
+        , m_shadowFilterFlags(filter)
+        , m_depthMap(nullptr)
+        , m_depthCopy(nullptr)
+        , m_depthCube(depthCube)
+        , m_cubeCopy(cubeTmp)
+        , m_depthRender(depthTemp)
     {
     }
 
-    quint32 m_LightIndex; ///< the light index it belongs to
-    ShadowMapModes::Enum m_ShadowMapMode; ///< shadow map method
-    ShadowFilterValues::Enum m_ShadowFilterFlags; ///< shadow filter mode
+    quint32 m_lightIndex; ///< the light index it belongs to
+    ShadowMapModes::Enum m_shadowMapMode; ///< shadow map method
+    ShadowFilterValues::Enum m_shadowFilterFlags; ///< shadow filter mode
 
     // PKC : Adding the DepthRender buffer allows us to have a depth+stencil format when filling
     // the shadow maps (depth+stencil is necessary), but use a more compact format for the
     // actual
     // shadow map used at shade time.  See if it's worth adding.
-    QSharedPointer<QDemonRenderTexture2D> m_DepthMap; ///< shadow map texture
-    QSharedPointer<QDemonRenderTexture2D> m_DepthCopy; ///< shadow map buffer used during blur passes
-    QSharedPointer<QDemonRenderTextureCube> m_DepthCube; ///< shadow cube map
-    QSharedPointer<QDemonRenderTextureCube> m_CubeCopy; ///< cube map buffer used during the blur passes
-    QSharedPointer<QDemonRenderTexture2D> m_DepthRender; ///< shadow depth+stencil map used during rendering
+    QSharedPointer<QDemonRenderTexture2D> m_depthMap; ///< shadow map texture
+    QSharedPointer<QDemonRenderTexture2D> m_depthCopy; ///< shadow map buffer used during blur passes
+    QSharedPointer<QDemonRenderTextureCube> m_depthCube; ///< shadow cube map
+    QSharedPointer<QDemonRenderTextureCube> m_cubeCopy; ///< cube map buffer used during the blur passes
+    QSharedPointer<QDemonRenderTexture2D> m_depthRender; ///< shadow depth+stencil map used during rendering
 
-    QMatrix4x4 m_LightVP; ///< light view projection matrix
-    QMatrix4x4 m_LightCubeView[6]; ///< light cubemap view matrices
-    QMatrix4x4 m_LightView; ///< light view transform
+    QMatrix4x4 m_lightVP; ///< light view projection matrix
+    QMatrix4x4 m_lightCubeView[6]; ///< light cubemap view matrices
+    QMatrix4x4 m_lightView; ///< light view transform
 };
 
 class QDemonRenderShadowMap
 {
-    typedef QVector<SShadowMapEntry> TShadowMapEntryList;
+    typedef QVector<QDemonShadowMapEntry> TShadowMapEntryList;
 
 public:
-    IQDemonRenderContext *m_Context;
+    QDemonRenderContextInterface *m_context;
 
 public:
-    QDemonRenderShadowMap(IQDemonRenderContext *inContext);
+    QDemonRenderShadowMap(QDemonRenderContextInterface *inContext);
     ~QDemonRenderShadowMap();
 
     /*
@@ -141,7 +141,7 @@ public:
          *
          * @ return no return
          */
-    void AddShadowMapEntry(quint32 index,
+    void addShadowMapEntry(quint32 index,
                            quint32 width,
                            quint32 height,
                            QDemonRenderTextureFormats::Enum format,
@@ -156,19 +156,19 @@ public:
          *
          * @ return shadow map entry or nullptr
          */
-    SShadowMapEntry *GetShadowMapEntry(quint32 index);
+    QDemonShadowMapEntry *getShadowMapEntry(int index);
 
     /*
          * @brief Get shadow map entry count
          *
          * @ return count of shadow map entries
          */
-    quint32 GetShadowMapEntryCount() { return m_ShadowMapList.size(); }
+    quint32 getShadowMapEntryCount() { return m_shadowMapList.size(); }
 
-    static QSharedPointer<QDemonRenderShadowMap> Create(IQDemonRenderContext *inContext);
+    static QSharedPointer<QDemonRenderShadowMap> create(QDemonRenderContextInterface *inContext);
 
 private:
-    TShadowMapEntryList m_ShadowMapList; ///< List of shadow map entries
+    TShadowMapEntryList m_shadowMapList; ///< List of shadow map entries
 };
 QT_END_NAMESPACE
 

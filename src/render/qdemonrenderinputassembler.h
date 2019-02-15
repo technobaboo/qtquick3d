@@ -62,10 +62,12 @@ public:
          *
          * @return No return.
          */
-    QDemonRenderInputAssembler(QSharedPointer<QDemonRenderContextImpl> context, QSharedPointer<QDemonRenderAttribLayout> attribLayout,
+    QDemonRenderInputAssembler(QSharedPointer<QDemonRenderContextImpl> context,
+                               QSharedPointer<QDemonRenderAttribLayout> attribLayout,
                                QDemonConstDataRef<QSharedPointer<QDemonRenderVertexBuffer>> buffers,
                                const QSharedPointer<QDemonRenderIndexBuffer> indexBuffer,
-                               QDemonConstDataRef<quint32> strides, QDemonConstDataRef<quint32> offsets,
+                               QDemonConstDataRef<quint32> strides,
+                               QDemonConstDataRef<quint32> offsets,
                                QDemonRenderDrawMode::Enum primType = QDemonRenderDrawMode::Triangles,
                                quint32 patchVertexCount = 1);
     ///< destructor
@@ -76,9 +78,9 @@ public:
          *
          * @return the backend object handle.
          */
-    QDemonRenderBackend::QDemonRenderBackendInputAssemblerObject GetInputAssemblerHandle() const
+    QDemonRenderBackend::QDemonRenderBackendInputAssemblerObject getInputAssemblerHandle() const
     {
-        return m_InputAssemblertHandle;
+        return m_inputAssemblertHandle;
     }
 
     /**
@@ -86,14 +88,14 @@ public:
          *
          * @return the index buffer
          */
-    const QSharedPointer<QDemonRenderIndexBuffer> GetIndexBuffer() { return m_IndexBuffer; }
+    const QSharedPointer<QDemonRenderIndexBuffer> getIndexBuffer() { return m_indexBuffer; }
 
     /**
          * @brief get the index count of the attached index buffer (if any)
          *
          * @return the index buffer count
          */
-    quint32 GetIndexCount() const;
+    quint32 getIndexCount() const;
 
     /**
          * @brief get the vertex count of the buffer
@@ -102,42 +104,42 @@ public:
          *
          * @return the vertex buffer count
          */
-    quint32 GetVertexCount() const;
+    quint32 getVertexCount() const;
 
     /**
          * @brief get the primitive type used for drawing
          *
          * @return primitive type
          */
-    QDemonRenderDrawMode::Enum GetPrimitiveType() const { return m_PrimitiveType; }
+    QDemonRenderDrawMode::Enum getPrimitiveType() const { return m_primitiveType; }
 
     /**
          * @brief set the per vertex patch count
          *
          * @return none
          */
-    void SetPatchVertexCount(quint32 count)
+    void setPatchVertexCount(quint32 count)
     {
-        if (count != m_PatchVertexCount) {
+        if (count != m_patchVertexCount) {
             // clamp to 1;
-            m_PatchVertexCount = (count == 0) ? 1 : count;
+            m_patchVertexCount = (count == 0) ? 1 : count;
             ;
-            m_Backend->SetPatchVertexCount(m_InputAssemblertHandle, m_PatchVertexCount);
+            m_backend->setPatchVertexCount(m_inputAssemblertHandle, m_patchVertexCount);
         }
     }
 
 private:
-    QSharedPointer<QDemonRenderContextImpl> m_Context; ///< pointer to context
-    QSharedPointer<QDemonRenderBackend> m_Backend; ///< pointer to backend
+    QSharedPointer<QDemonRenderContextImpl> m_context; ///< pointer to context
+    QSharedPointer<QDemonRenderBackend> m_backend; ///< pointer to backend
 
-    QSharedPointer<QDemonRenderAttribLayout> m_AttribLayout; ///< pointer to attribute layout
-    QVector<QSharedPointer<QDemonRenderVertexBuffer>> m_VertexBuffers; ///< vertex buffers
-    const QSharedPointer<QDemonRenderIndexBuffer> m_IndexBuffer; ///< index buffer
-    QDemonConstDataRef<QDemonRenderBackend::QDemonRenderBackendBufferObject> m_VertexbufferHandles; ///< opaque vertex buffer backend handles
+    QSharedPointer<QDemonRenderAttribLayout> m_attribLayout; ///< pointer to attribute layout
+    QVector<QSharedPointer<QDemonRenderVertexBuffer>> m_vertexBuffers; ///< vertex buffers
+    const QSharedPointer<QDemonRenderIndexBuffer> m_indexBuffer; ///< index buffer
+    QDemonConstDataRef<QDemonRenderBackend::QDemonRenderBackendBufferObject> m_vertexbufferHandles; ///< opaque vertex buffer backend handles
 
-    QDemonRenderBackend::QDemonRenderBackendInputAssemblerObject m_InputAssemblertHandle; ///< opaque backend handle
-    QDemonRenderDrawMode::Enum m_PrimitiveType; ///< primitive type used for drawing
-    quint32 m_PatchVertexCount; ///< vertex count if primitive type is patch
+    QDemonRenderBackend::QDemonRenderBackendInputAssemblerObject m_inputAssemblertHandle; ///< opaque backend handle
+    QDemonRenderDrawMode::Enum m_primitiveType; ///< primitive type used for drawing
+    quint32 m_patchVertexCount; ///< vertex count if primitive type is patch
 };
 
 QT_END_NAMESPACE

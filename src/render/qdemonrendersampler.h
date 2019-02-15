@@ -40,19 +40,19 @@ class QDemonRenderContextImpl;
 class QDemonRenderTextureSampler
 {
 public:
-    QDemonRenderTextureMinifyingOp::Enum m_MinFilter;
-    QDemonRenderTextureMagnifyingOp::Enum m_MagFilter;
-    QDemonRenderTextureCoordOp::Enum m_WrapS;
-    QDemonRenderTextureCoordOp::Enum m_WrapT;
-    QDemonRenderTextureCoordOp::Enum m_WrapR;
-    QDemonRenderTextureSwizzleMode::Enum m_SwizzleMode;
-    float m_MinLod;
-    float m_MaxLod;
-    float m_LodBias;
-    QDemonRenderTextureCompareMode::Enum m_CompareMode;
-    QDemonRenderTextureCompareOp::Enum m_CompareOp;
-    float m_Anisotropy;
-    float m_BorderColor[4];
+    QDemonRenderTextureMinifyingOp::Enum m_minFilter;
+    QDemonRenderTextureMagnifyingOp::Enum m_magFilter;
+    QDemonRenderTextureCoordOp::Enum m_wrapS;
+    QDemonRenderTextureCoordOp::Enum m_wrapT;
+    QDemonRenderTextureCoordOp::Enum m_wrapR;
+    QDemonRenderTextureSwizzleMode::Enum m_swizzleMode;
+    float m_minLod;
+    float m_maxLod;
+    float m_lodBias;
+    QDemonRenderTextureCompareMode::Enum m_compareMode;
+    QDemonRenderTextureCompareOp::Enum m_compareOp;
+    float m_anisotropy;
+    float m_borderColor[4];
 
     /**
          * @brief constructor
@@ -101,13 +101,13 @@ public:
          */
     QDemonRenderBackend::QDemonRenderBackendSamplerObject GetSamplerHandle() const
     {
-        return m_SamplerHandle;
+        return m_samplerHandle;
     }
 
 private:
-    QSharedPointer<QDemonRenderContextImpl> m_Context; ///< pointer to context
-    QSharedPointer<QDemonRenderBackend> m_Backend; ///< pointer to backend
-    QDemonRenderBackend::QDemonRenderBackendSamplerObject m_SamplerHandle; ///< opaque backend handle
+    QSharedPointer<QDemonRenderContextImpl> m_context; ///< pointer to context
+    QSharedPointer<QDemonRenderBackend> m_backend; ///< pointer to backend
+    QDemonRenderBackend::QDemonRenderBackendSamplerObject m_samplerHandle; ///< opaque backend handle
 };
 
 QT_END_NAMESPACE

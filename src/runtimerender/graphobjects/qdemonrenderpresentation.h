@@ -36,8 +36,8 @@
 
 QT_BEGIN_NAMESPACE
 
-class IQDemonRenderContext;
-struct SScene;
+class QDemonRenderContextInterface;
+struct QDemonRenderScene;
 
 struct RenderRotationValues
 {
@@ -49,41 +49,41 @@ struct RenderRotationValues
     };
 };
 
-struct SPresentation : public SGraphObject
+struct QDemonPresentation : public QDemonGraphObject
 {
-    QVector2D m_PresentationDimensions;
-    RenderRotationValues::Enum m_PresentationRotation;
-    QSharedPointer<SScene> m_Scene;
+    QVector2D presentationDimensions;
+    RenderRotationValues::Enum presentationRotation;
+    QSharedPointer<QDemonRenderScene> scene;
 
-    QString m_PresentationDirectory;
+    QString presentationDirectory;
 
-    SPresentation()
-        : SGraphObject(GraphObjectTypes::Presentation)
-        , m_PresentationDimensions(800, 400)
-        , m_PresentationRotation(RenderRotationValues::NoRotation)
-        , m_Scene(nullptr)
+    QDemonPresentation()
+        : QDemonGraphObject(QDemonGraphObjectTypes::Presentation)
+        , presentationDimensions(800, 400)
+        , presentationRotation(RenderRotationValues::NoRotation)
+        , scene(nullptr)
     {
     }
 
-    SPresentation(float w, float h, const QString &presDir)
-        : SGraphObject(GraphObjectTypes::Presentation)
-        , m_PresentationDimensions(w, h)
-        , m_PresentationRotation(RenderRotationValues::NoRotation)
-        , m_Scene(nullptr)
-        , m_PresentationDirectory(presDir)
+    QDemonPresentation(float w, float h, const QString &presDir)
+        : QDemonGraphObject(QDemonGraphObjectTypes::Presentation)
+        , presentationDimensions(w, h)
+        , presentationRotation(RenderRotationValues::NoRotation)
+        , scene(nullptr)
+        , presentationDirectory(presDir)
     {
     }
     // Generic method used during serialization
     // to remap string and object pointers
     template <typename TRemapperType>
-    void Remap(TRemapperType &inRemapper)
+    void remap(TRemapperType &inRemapper)
     {
-        SGraphObject::Remap(inRemapper);
-        inRemapper.Remap(m_Scene);
-        inRemapper.Remap(m_PresentationDirectory);
+        QDemonGraphObject::remap(inRemapper);
+        inRemapper.remap(scene);
+        inRemapper.remap(presentationDirectory);
     }
 
-    void Render(IQDemonRenderContext *inContext);
+    void render(QDemonRenderContextInterface *inContext);
 };
 
 QT_END_NAMESPACE

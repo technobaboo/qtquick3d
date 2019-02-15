@@ -43,21 +43,21 @@
 
 QT_BEGIN_NAMESPACE
 
-struct SModel;
-struct SLight;
-struct SCamera;
-struct SText;
-struct SNode;
-class IBufferManager;
+struct QDemonRenderModel;
+struct QDemonRenderLight;
+struct QDemonRenderCamera;
+struct QDemonText;
+struct QDemonGraphNode;
+class QDemonBufferManagerInterface;
 
 class INodeQueue
 {
 protected:
-    virtual ~INodeQueue() {}
+    virtual ~INodeQueue();
 public:
-    virtual void Enqueue(SModel &inModel) = 0;
-    virtual void Enqueue(SLight &inLight) = 0;
-    virtual void Enqueue(SCamera &inCamera) = 0;
+    virtual void enqueue(QDemonRenderModel &inModel) = 0;
+    virtual void enqueue(QDemonRenderLight &inLight) = 0;
+    virtual void enqueue(QDemonRenderCamera &inCamera) = 0;
     // virtual void Enqueue( SText& inText ) = 0;
 };
 
@@ -92,171 +92,169 @@ struct NodeTransformDirtyFlag
     };
 };
 
-struct NodeFlags : public QDemonFlags<NodeFlagValues::Enum, quint32>
+struct QDemonNodeFlags : public QDemonFlags<NodeFlagValues::Enum, quint32>
 {
-    NodeFlags()
-        : QDemonFlags<NodeFlagValues::Enum, quint32>(0)
+    QDemonNodeFlags() : QDemonFlags<NodeFlagValues::Enum, quint32>(0)
     {
     }
-    void ClearOrSet(bool value, NodeFlagValues::Enum enumVal) { clearOrSet(value, enumVal); }
-    void SetActive(bool value) { ClearOrSet(value, NodeFlagValues::Active); }
-    bool IsActive() const { return this->operator&(NodeFlagValues::Active); }
+    void clearOrSet(bool value, NodeFlagValues::Enum enumVal) { QDemonFlags::clearOrSet(value, enumVal); }
+    void setActive(bool value) { clearOrSet(value, NodeFlagValues::Active); }
+    bool isActive() const { return this->operator&(NodeFlagValues::Active); }
 
-    void SetGlobalActive(bool value) { ClearOrSet(value, NodeFlagValues::GlobalActive); }
-    bool IsGloballyActive() const { return this->operator&(NodeFlagValues::GlobalActive); }
+    void setGlobalActive(bool value) { clearOrSet(value, NodeFlagValues::GlobalActive); }
+    bool isGloballyActive() const { return this->operator&(NodeFlagValues::GlobalActive); }
 
-    void SetTransformDirty(bool value) { ClearOrSet(value, NodeFlagValues::TransformDirty); }
-    bool IsTransformDirty() const { return this->operator&(NodeFlagValues::TransformDirty); }
+    void setTransformDirty(bool value) { clearOrSet(value, NodeFlagValues::TransformDirty); }
+    bool isTransformDirty() const { return this->operator&(NodeFlagValues::TransformDirty); }
 
-    void SetDirty(bool value) { ClearOrSet(value, NodeFlagValues::Dirty); }
-    bool IsDirty() const { return this->operator&(NodeFlagValues::Dirty); }
+    void setDirty(bool value) { clearOrSet(value, NodeFlagValues::Dirty); }
+    bool isDirty() const { return this->operator&(NodeFlagValues::Dirty); }
 
-    bool IsLeftHanded() const { return this->operator&(NodeFlagValues::LeftHanded); }
-    void SetLeftHanded(bool value) { ClearOrSet(value, NodeFlagValues::LeftHanded); }
+    bool isLeftHanded() const { return this->operator&(NodeFlagValues::LeftHanded); }
+    void setLeftHanded(bool value) { clearOrSet(value, NodeFlagValues::LeftHanded); }
 
-    bool IsOrthographic() const { return this->operator&(NodeFlagValues::Orthographic); }
-    void SetOrthographic(bool value) { ClearOrSet(value, NodeFlagValues::Orthographic); }
+    bool isOrthographic() const { return this->operator&(NodeFlagValues::Orthographic); }
+    void setOrthographic(bool value) { clearOrSet(value, NodeFlagValues::Orthographic); }
 
-    bool IsPointLight() const { return this->operator&(NodeFlagValues::PointLight); }
-    void SetPointLight(bool value) { ClearOrSet(value, NodeFlagValues::PointLight); }
+    bool isPointLight() const { return this->operator&(NodeFlagValues::PointLight); }
+    void setPointLight(bool value) { clearOrSet(value, NodeFlagValues::PointLight); }
 
-    bool IsTextDirty() const { return this->operator&(NodeFlagValues::TextDirty); }
-    void SetTextDirty(bool value) { ClearOrSet(value, NodeFlagValues::TextDirty); }
+    bool isTextDirty() const { return this->operator&(NodeFlagValues::TextDirty); }
+    void setTextDirty(bool value) { clearOrSet(value, NodeFlagValues::TextDirty); }
 
-    bool IsLocallyPickable() const { return this->operator&(NodeFlagValues::LocallyPickable); }
-    void SetLocallyPickable(bool value) { ClearOrSet(value, NodeFlagValues::LocallyPickable); }
+    bool isLocallyPickable() const { return this->operator&(NodeFlagValues::LocallyPickable); }
+    void setLocallyPickable(bool value) { clearOrSet(value, NodeFlagValues::LocallyPickable); }
 
-    bool IsGloballyPickable() const
+    bool isGloballyPickable() const
     {
         return this->operator&(NodeFlagValues::GloballyPickable);
     }
-    void SetGloballyPickable(bool value)
+    void setGloballyPickable(bool value)
     {
-        ClearOrSet(value, NodeFlagValues::GloballyPickable);
+        clearOrSet(value, NodeFlagValues::GloballyPickable);
     }
 
-    bool IsLayerRenderToTarget() const
+    bool isLayerRenderToTarget() const
     {
         return this->operator&(NodeFlagValues::LayerRenderToTarget);
     }
-    void SetLayerRenderToTarget(bool value)
+    void setLayerRenderToTarget(bool value)
     {
-        ClearOrSet(value, NodeFlagValues::LayerRenderToTarget);
+        clearOrSet(value, NodeFlagValues::LayerRenderToTarget);
     }
 
-    bool IsLayerEnableDepthTest() const
+    bool isLayerEnableDepthTest() const
     {
         return this->operator&(NodeFlagValues::LayerEnableDepthTest);
     }
-    void SetLayerEnableDepthTest(bool value)
+    void setLayerEnableDepthTest(bool value)
     {
-        ClearOrSet(value, NodeFlagValues::LayerEnableDepthTest);
+        clearOrSet(value, NodeFlagValues::LayerEnableDepthTest);
     }
 
-    bool IsForceLayerOffscreen() const
+    bool isForceLayerOffscreen() const
     {
         return this->operator&(NodeFlagValues::ForceLayerOffscreen);
     }
-    void SetForceLayerOffscreen(bool value)
+    void setForceLayerOffscreen(bool value)
     {
-        ClearOrSet(value, NodeFlagValues::ForceLayerOffscreen);
+        clearOrSet(value, NodeFlagValues::ForceLayerOffscreen);
     }
 
-    bool IsIgnoreParentTransform() const
+    bool isIgnoreParentTransform() const
     {
         return this->operator&(NodeFlagValues::IgnoreParentTransform);
     }
-    void SetIgnoreParentTransform(bool value)
+    void setIgnoreParentTransform(bool value)
     {
-        ClearOrSet(value, NodeFlagValues::IgnoreParentTransform);
+        clearOrSet(value, NodeFlagValues::IgnoreParentTransform);
     }
 
-    bool IsLayerEnableDepthPrepass() const
+    bool isLayerEnableDepthPrepass() const
     {
         return this->operator&(NodeFlagValues::LayerEnableDepthPrePass);
     }
-    void SetLayerEnableDepthPrepass(bool value)
+    void setLayerEnableDepthPrepass(bool value)
     {
-        ClearOrSet(value, NodeFlagValues::LayerEnableDepthPrePass);
+        clearOrSet(value, NodeFlagValues::LayerEnableDepthPrePass);
     }
 };
 
-class IQDemonRenderNodeFilter;
-class IPathManager;
+class QDemonRenderNodeFilterInterface;
+class QDemonPathManagerInterface;
 
-struct Q_DEMONRUNTIMERENDER_EXPORT SNode : public SGraphObject
+struct Q_DEMONRUNTIMERENDER_EXPORT QDemonGraphNode : public QDemonGraphObject
 {
     // changing any one of these means you have to
     // set this object dirty
-    QVector3D m_Rotation; // Radians
-    QVector3D m_Position;
-    QVector3D m_Scale;
-    QVector3D m_Pivot;
-    quint32 m_RotationOrder; // UICEulerOrder::EulOrd, defaults YXZs
+    QVector3D rotation; // Radians
+    QVector3D position;
+    QVector3D scale;
+    QVector3D pivot;
+    quint32 rotationOrder; // UICEulerOrder::EulOrd, defaults YXZs
 
     // This only sets dirty, not transform dirty
     // Opacity of 1 means opaque, opacity of zero means transparent.
-    float m_LocalOpacity;
+    float localOpacity;
 
     // results of clearing dirty.
-    NodeFlags m_Flags;
+    QDemonNodeFlags flags;
     // These end up right handed
-    QMatrix4x4 m_LocalTransform;
-    QMatrix4x4 m_GlobalTransform;
-    float m_GlobalOpacity;
-    qint32 m_SkeletonId;
+    QMatrix4x4 localTransform;
+    QMatrix4x4 globalTransform;
+    float globalOpacity;
+    qint32 skeletonId;
 
     // node graph members.
-    SNode *m_Parent;
-    SNode *m_NextSibling;
-    SNode *m_PreviousSibling;
-    SNode *m_FirstChild;
+    QDemonGraphNode *parent;
+    QDemonGraphNode *nextSibling;
+    QDemonGraphNode *previousSibling;
+    QDemonGraphNode *firstChild;
     // Property maintained solely by the render system.
     // Depth-first-search index assigned and maintained by render system.
-    quint32 m_DFSIndex;
+    quint32 dfsIndex;
 
-    SNode(GraphObjectTypes::Enum inType = GraphObjectTypes::Node);
-    SNode(const SNode &inCloningObject);
-    ~SNode() {}
+    QDemonGraphNode(QDemonGraphObjectTypes::Enum inType = QDemonGraphObjectTypes::Node);
+    QDemonGraphNode(const QDemonGraphNode &inCloningObject);
+    ~QDemonGraphNode() {}
 
     // Sets this object dirty and walks down the graph setting all
     // children who are not dirty to be dirty.
-    void MarkDirty(NodeTransformDirtyFlag::Enum inTransformDirty =
-            NodeTransformDirtyFlag::TransformNotDirty);
+    void markDirty(NodeTransformDirtyFlag::Enum inTransformDirty = NodeTransformDirtyFlag::TransformNotDirty);
 
-    void AddChild(SNode &inChild);
-    void RemoveChild(SNode &inChild);
-    SNode *GetLastChild();
+    void addChild(QDemonGraphNode &inChild);
+    void removeChild(QDemonGraphNode &inChild);
+    QDemonGraphNode *getLastChild();
 
     // Remove this node from the graph.
     // It is no longer the the parent's child lists
     // and all of its children no longer have a parent
     // finally they are no longer siblings of each other.
-    void RemoveFromGraph();
+    void removeFromGraph();
 
     // Calculate global transform and opacity
     // Walks up the graph ensure all parents are not dirty so they have
     // valid global transforms.
-    bool CalculateGlobalVariables();
+    bool calculateGlobalVariables();
 
     // Given our rotation order and handedness, calculate the final rotation matrix
     // Only the upper 3x3 of this matrix is filled in.
     // If this object is left handed, then you need to call FlipCoordinateSystem
     // to get a result identical to the result produced in CalculateLocalTransform
-    void CalculateRotationMatrix(QMatrix4x4 &outMatrix) const;
+    void calculateRotationMatrix(QMatrix4x4 &outMatrix) const;
 
     // Get a rotation vector that would produce the given 3x.3 matrix.
     // Takes m_RotationOrder and m_Flags.IsLeftHandled into account.
     // Returns a rotation vector in radians.
-    QVector3D GetRotationVectorFromRotationMatrix(const QMatrix3x3 &inMatrix) const;
+    QVector3D getRotationVectorFromRotationMatrix(const QMatrix3x3 &inMatrix) const;
 
-    static QVector3D GetRotationVectorFromEulerAngles(const EulerAngles &inAngles);
+    static QVector3D getRotationVectorFromEulerAngles(const EulerAngles &inAngles);
 
     // Flip a matrix from left-handed to right-handed and vice versa
-    static void FlipCoordinateSystem(QMatrix4x4 &ioMatrix);
+    static void flipCoordinateSystem(QMatrix4x4 &ioMatrix);
 
     // Force the calculation of the local transform
-    void CalculateLocalTransform();
+    void calculateLocalTransform();
 
     /**
          * @brief setup local tranform from a matrix.
@@ -267,42 +265,44 @@ struct Q_DEMONRUNTIMERENDER_EXPORT SNode : public SGraphObject
          *
          * @return true backend type
          */
-    void SetLocalTransformFromMatrix(QMatrix4x4 &inTransform);
+    void setLocalTransformFromMatrix(QMatrix4x4 &inTransform);
 
     // Get the bounds of us and our children in our local space.
-    QDemonBounds3 GetBounds(QSharedPointer<IBufferManager> inManager, QSharedPointer<IPathManager> inPathManager,
+    QDemonBounds3 getBounds(QSharedPointer<QDemonBufferManagerInterface> inManager,
+                            QSharedPointer<QDemonPathManagerInterface> inPathManager,
                             bool inIncludeChildren = true,
-                            IQDemonRenderNodeFilter *inChildFilter = nullptr) const;
-    QDemonBounds3 GetChildBounds(QSharedPointer<IBufferManager> inManager, QSharedPointer<IPathManager> inPathManager,
-                                 IQDemonRenderNodeFilter *inChildFilter = nullptr) const;
+                            QDemonRenderNodeFilterInterface *inChildFilter = nullptr) const;
+    QDemonBounds3 getChildBounds(QSharedPointer<QDemonBufferManagerInterface> inManager,
+                                 QSharedPointer<QDemonPathManagerInterface> inPathManager,
+                                 QDemonRenderNodeFilterInterface *inChildFilter = nullptr) const;
     // Assumes CalculateGlobalVariables has already been called.
-    QVector3D GetGlobalPos() const;
-    QVector3D GetGlobalPivot() const;
+    QVector3D getGlobalPos() const;
+    QVector3D getGlobalPivot() const;
     // Pulls the 3rd column out of the global transform.
-    QVector3D GetDirection() const;
+    QVector3D getDirection() const;
     // Multiplies (0,0,-1) by the inverse transpose of the upper 3x3 of the global transform.
     // This is correct w/r/t to scaling and which the above getDirection is not.
-    QVector3D GetScalingCorrectDirection() const;
+    QVector3D getScalingCorrectDirection() const;
 
     // outMVP and outNormalMatrix are returned ready to upload to openGL, meaning they are
     // row-major.
-    void CalculateMVPAndNormalMatrix(const QMatrix4x4 &inViewProjection, QMatrix4x4 &outMVP,
+    void calculateMVPAndNormalMatrix(const QMatrix4x4 &inViewProjection, QMatrix4x4 &outMVP,
                                      QMatrix3x3 &outNormalMatrix) const;
 
     // This should be in a utility file somewhere
-    static void GetMatrixUpper3x3(QMatrix3x3 &inDest, const QMatrix4x4 &inSrc);
-    void CalculateNormalMatrix(QMatrix3x3 &outNormalMatrix) const;
+    static void getMatrixUpper3x3(QMatrix3x3 &inDest, const QMatrix4x4 &inSrc);
+    void calculateNormalMatrix(QMatrix3x3 &outNormalMatrix) const;
 
     // Generic method used during serialization
     // to remap string and object pointers
     template <typename TRemapperType>
-    void Remap(TRemapperType &inRemapper)
+    void remap(TRemapperType &inRemapper)
     {
-        SGraphObject::Remap(inRemapper);
-        inRemapper.Remap(m_Parent);
-        inRemapper.Remap(m_FirstChild);
-        inRemapper.Remap(m_NextSibling);
-        inRemapper.Remap(m_PreviousSibling);
+        QDemonGraphObject::remap(inRemapper);
+        inRemapper.remap(parent);
+        inRemapper.remap(firstChild);
+        inRemapper.remap(nextSibling);
+        inRemapper.remap(previousSibling);
     }
 };
 QT_END_NAMESPACE

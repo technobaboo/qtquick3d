@@ -36,18 +36,18 @@ QT_BEGIN_NAMESPACE
 ///< constructor
 QDemonRenderAttribLayout::QDemonRenderAttribLayout(QSharedPointer<QDemonRenderContextImpl> context,
                                                    QDemonConstDataRef<QDemonRenderVertexBufferEntry> attribs)
-    : m_Context(context)
-    , m_Backend(context->GetBackend())
+    : m_context(context)
+    , m_backend(context->getBackend())
 {
-    m_AttribLayoutHandle = m_Backend->CreateAttribLayout(attribs);
-    Q_ASSERT(m_AttribLayoutHandle);
+    m_attribLayoutHandle = m_backend->createAttribLayout(attribs);
+    Q_ASSERT(m_attribLayoutHandle);
 }
 
 ///< destructor
 QDemonRenderAttribLayout::~QDemonRenderAttribLayout()
 {
-    if (m_AttribLayoutHandle) {
-        m_Backend->ReleaseAttribLayout(m_AttribLayoutHandle);
+    if (m_attribLayoutHandle) {
+        m_backend->releaseAttribLayout(m_attribLayoutHandle);
     }
 }
 QT_END_NAMESPACE

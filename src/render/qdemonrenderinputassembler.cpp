@@ -40,32 +40,32 @@ QDemonRenderInputAssembler::QDemonRenderInputAssembler(QSharedPointer<QDemonRend
         QDemonConstDataRef<QSharedPointer<QDemonRenderVertexBuffer> > buffers, const QSharedPointer<QDemonRenderIndexBuffer> indexBuffer,
         QDemonConstDataRef<quint32> strides, QDemonConstDataRef<quint32> offsets,
         QDemonRenderDrawMode::Enum primType, quint32 patchVertexCount)
-    : m_Context(context)
-    , m_Backend(context->GetBackend())
-    , m_AttribLayout(attribLayout)
-    , m_IndexBuffer(indexBuffer)
-    , m_PrimitiveType(primType)
-    , m_PatchVertexCount(patchVertexCount)
+    : m_context(context)
+    , m_backend(context->getBackend())
+    , m_attribLayout(attribLayout)
+    , m_indexBuffer(indexBuffer)
+    , m_primitiveType(primType)
+    , m_patchVertexCount(patchVertexCount)
 {
     // we cannot currently attach more than 16  vertex buffers
     Q_ASSERT(buffers.size() < 16);
     // if primitive is "Patch" we need a patch per vertex count > 0
-    Q_ASSERT(m_PrimitiveType != QDemonRenderDrawMode::Patches || m_PatchVertexCount > 1);
+    Q_ASSERT(m_primitiveType != QDemonRenderDrawMode::Patches || m_patchVertexCount > 1);
 
     quint32 entrySize = sizeof(QDemonRenderBackend::QDemonRenderBackendBufferObject) * buffers.size();
     QDemonRenderBackend::QDemonRenderBackendBufferObject *bufferHandle = static_cast<QDemonRenderBackend::QDemonRenderBackendBufferObject *>(::malloc(entrySize));
     // setup vertex buffer backend handle array
     QDEMON_FOREACH(idx, buffers.size())
     {
-        m_VertexBuffers.push_back(buffers.mData[idx]);
-        bufferHandle[idx] = buffers.mData[idx]->GetBuffertHandle();
+        m_vertexBuffers.push_back(buffers.mData[idx]);
+        bufferHandle[idx] = buffers.mData[idx]->getBuffertHandle();
     };
 
-    m_VertexbufferHandles = toConstDataRef(bufferHandle, buffers.size());
+    m_vertexbufferHandles = toConstDataRef(bufferHandle, buffers.size());
 
-    m_InputAssemblertHandle = m_Backend->CreateInputAssembler(
-                m_AttribLayout->GetAttribLayoutHandle(), m_VertexbufferHandles,
-                (m_IndexBuffer) ? m_IndexBuffer->GetBuffertHandle() : nullptr, strides, offsets,
+    m_inputAssemblertHandle = m_backend->createInputAssembler(
+                m_attribLayout->GetAttribLayoutHandle(), m_vertexbufferHandles,
+                (m_indexBuffer) ? m_indexBuffer->getBuffertHandle() : nullptr, strides, offsets,
                 patchVertexCount);
 
     //attribLayout->addRef();
@@ -74,26 +74,26 @@ QDemonRenderInputAssembler::QDemonRenderInputAssembler(QSharedPointer<QDemonRend
 ///< destructor
 QDemonRenderInputAssembler::~QDemonRenderInputAssembler()
 {
-    //m_AttribLayout->release();
+    //m_attribLayout->release();
 
-    if (m_InputAssemblertHandle) {
-        m_Backend->ReleaseInputAssembler(m_InputAssemblertHandle);
+    if (m_inputAssemblertHandle) {
+        m_backend->releaseInputAssembler(m_inputAssemblertHandle);
     }
     // ### sketchy
-    ::free(const_cast<QDemonRenderBackend::QDemonRenderBackendBufferObject *>(m_VertexbufferHandles.mData));
+    ::free(const_cast<QDemonRenderBackend::QDemonRenderBackendBufferObject *>(m_vertexbufferHandles.mData));
 }
 
-quint32 QDemonRenderInputAssembler::GetIndexCount() const
+quint32 QDemonRenderInputAssembler::getIndexCount() const
 {
-    return (m_IndexBuffer) ? m_IndexBuffer->GetNumIndices() : 0;
+    return (m_indexBuffer) ? m_indexBuffer->getNumIndices() : 0;
 }
 
-quint32 QDemonRenderInputAssembler::GetVertexCount() const
+quint32 QDemonRenderInputAssembler::getVertexCount() const
 {
     // makes only sense if we have a single vertex buffer
-    Q_ASSERT(m_VertexBuffers.size() == 1);
+    Q_ASSERT(m_vertexBuffers.size() == 1);
 
-    return m_VertexBuffers[0]->GetNumVertexes();
+    return m_vertexBuffers[0]->getNumVertexes();
 }
 
 QT_END_NAMESPACE

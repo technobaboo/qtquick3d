@@ -53,7 +53,7 @@ public:
 
     void clear()
     {
-        for (quint32 idx = 0; idx < mSet.size(); ++idx)
+        for (int idx = 0; idx < mSet.size(); ++idx)
             TSetSetIndexOp()(*(mSet[idx]), std::numeric_limits<quint32>::max());
         mSet.clear();
     }

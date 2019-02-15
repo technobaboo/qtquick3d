@@ -96,9 +96,9 @@ qint64 Q_DEMON_EXPORT positionHelper(const QIODevice &device, qint64 offset, See
 
 
 namespace CFileTools {
-QString Q_DEMON_EXPORT NormalizePathForQtUsage(const QString &path);
-void Q_DEMON_EXPORT CombineBaseAndRelative(const char *inBase, const char *inRelative, QString &outString);
-void Q_DEMON_EXPORT CombineBaseAndRelative(const QString &inBase, const QString &inRelative, QString &outString);
+QString Q_DEMON_EXPORT normalizePathForQtUsage(const QString &path);
+void Q_DEMON_EXPORT combineBaseAndRelative(const char *inBase, const char *inRelative, QString &outString);
+void Q_DEMON_EXPORT combineBaseAndRelative(const QString &inBase, const QString &inRelative, QString &outString);
 }
 
 QT_END_NAMESPACE

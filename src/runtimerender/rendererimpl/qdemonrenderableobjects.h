@@ -60,9 +60,9 @@ struct RenderPreparationResultFlagValues
     };
 };
 
-struct SRenderableObjectFlags : public QDemonFlags<RenderPreparationResultFlagValues::Enum, quint32>
+struct QDemonRenderableObjectFlags : public QDemonFlags<RenderPreparationResultFlagValues::Enum, quint32>
 {
-    void ClearOrSet(bool value, RenderPreparationResultFlagValues::Enum enumVal)
+    void clearOrSet(bool value, RenderPreparationResultFlagValues::Enum enumVal)
     {
         if (value)
             this->operator|=(enumVal);
@@ -70,187 +70,190 @@ struct SRenderableObjectFlags : public QDemonFlags<RenderPreparationResultFlagVa
             clear(enumVal);
     }
 
-    void SetHasTransparency(bool inHasTransparency)
+    void setHasTransparency(bool inHasTransparency)
     {
-        ClearOrSet(inHasTransparency, RenderPreparationResultFlagValues::HasTransparency);
+        clearOrSet(inHasTransparency, RenderPreparationResultFlagValues::HasTransparency);
     }
-    bool HasTransparency() const
+    bool hasTransparency() const
     {
         return this->operator&(RenderPreparationResultFlagValues::HasTransparency);
     }
-    bool HasRefraction() const
+    bool hasRefraction() const
     {
         return this->operator&(RenderPreparationResultFlagValues::HasRefraction);
     }
-    void SetCompletelyTransparent(bool inTransparent)
+    void setCompletelyTransparent(bool inTransparent)
     {
-        ClearOrSet(inTransparent, RenderPreparationResultFlagValues::CompletelyTransparent);
+        clearOrSet(inTransparent, RenderPreparationResultFlagValues::CompletelyTransparent);
     }
-    bool IsCompletelyTransparent() const
+    bool isCompletelyTransparent() const
     {
         return this->operator&(RenderPreparationResultFlagValues::CompletelyTransparent);
     }
-    void SetDirty(bool inDirty)
+    void setDirty(bool inDirty)
     {
-        ClearOrSet(inDirty, RenderPreparationResultFlagValues::Dirty);
+        clearOrSet(inDirty, RenderPreparationResultFlagValues::Dirty);
     }
-    bool IsDirty() const { return this->operator&(RenderPreparationResultFlagValues::Dirty); }
-    void SetPickable(bool inPickable)
+    bool isDirty() const { return this->operator&(RenderPreparationResultFlagValues::Dirty); }
+    void setPickable(bool inPickable)
     {
-        ClearOrSet(inPickable, RenderPreparationResultFlagValues::Pickable);
+        clearOrSet(inPickable, RenderPreparationResultFlagValues::Pickable);
     }
-    bool GetPickable() const
+    bool getPickable() const
     {
         return this->operator&(RenderPreparationResultFlagValues::Pickable);
     }
 
     // Mutually exclusive values
-    void SetDefaultMaterialMeshSubset(bool inMeshSubset)
+    void setDefaultMaterialMeshSubset(bool inMeshSubset)
     {
-        ClearOrSet(inMeshSubset, RenderPreparationResultFlagValues::DefaultMaterialMeshSubset);
+        clearOrSet(inMeshSubset, RenderPreparationResultFlagValues::DefaultMaterialMeshSubset);
     }
-    bool IsDefaultMaterialMeshSubset() const
+    bool isDefaultMaterialMeshSubset() const
     {
         return this->operator&(RenderPreparationResultFlagValues::DefaultMaterialMeshSubset);
     }
 
-    void SetCustomMaterialMeshSubset(bool inMeshSubset)
+    void setCustomMaterialMeshSubset(bool inMeshSubset)
     {
-        ClearOrSet(inMeshSubset, RenderPreparationResultFlagValues::CustomMaterialMeshSubset);
+        clearOrSet(inMeshSubset, RenderPreparationResultFlagValues::CustomMaterialMeshSubset);
     }
-    bool IsCustomMaterialMeshSubset() const
+    bool isCustomMaterialMeshSubset() const
     {
         return this->operator&(RenderPreparationResultFlagValues::CustomMaterialMeshSubset);
     }
 
-    void SetText(bool inText) { ClearOrSet(inText, RenderPreparationResultFlagValues::Text); }
+    void setText(bool inText) { clearOrSet(inText, RenderPreparationResultFlagValues::Text); }
     bool IsText() const { return this->operator&(RenderPreparationResultFlagValues::Text); }
 
-    void SetCustom(bool inCustom)
+    void setCustom(bool inCustom)
     {
-        ClearOrSet(inCustom, RenderPreparationResultFlagValues::Custom);
+        clearOrSet(inCustom, RenderPreparationResultFlagValues::Custom);
     }
-    bool IsCustom() const { return this->operator&(RenderPreparationResultFlagValues::Custom); }
+    bool isCustom() const { return this->operator&(RenderPreparationResultFlagValues::Custom); }
 
-    void SetPath(bool inPath) { ClearOrSet(inPath, RenderPreparationResultFlagValues::Path); }
-    bool IsPath() const { return this->operator&(RenderPreparationResultFlagValues::Path); }
+    void setPath(bool inPath) { clearOrSet(inPath, RenderPreparationResultFlagValues::Path); }
+    bool isPath() const { return this->operator&(RenderPreparationResultFlagValues::Path); }
 };
 
-struct SNodeLightEntry
+struct QDemonNodeLightEntry
 {
-    SLight *m_Light;
-    quint32 m_LightIndex;
-    SNodeLightEntry *m_NextNode;
-    SNodeLightEntry()
-        : m_Light(nullptr)
-        , m_NextNode(nullptr)
-    {
-    }
-    SNodeLightEntry(SLight *inLight, quint32 inLightIndex)
-        : m_Light(inLight)
-        , m_LightIndex(inLightIndex)
-        , m_NextNode(nullptr)
+    QDemonRenderLight *light = nullptr;
+    quint32 lightIndex;
+    QDemonNodeLightEntry *nextNode = nullptr;
+    QDemonNodeLightEntry() = default;
+    QDemonNodeLightEntry(QDemonRenderLight *inLight, quint32 inLightIndex)
+        : light(inLight)
+        , lightIndex(inLightIndex)
+        , nextNode(nullptr)
     {
     }
 };
 
-DEFINE_INVASIVE_SINGLE_LIST(NodeLightEntry)
+DEFINE_INVASIVE_SINGLE_LIST(QDemonNodeLightEntry)
+IMPLEMENT_INVASIVE_SINGLE_LIST(QDemonNodeLightEntry, nextNode)
 
-IMPLEMENT_INVASIVE_SINGLE_LIST(NodeLightEntry, m_NextNode)
+struct QDemonRenderableObject;
 
-struct SRenderableObject;
+typedef void (*TRenderFunction)(QDemonRenderableObject &inObject, const QVector2D &inCameraProperties);
 
-typedef void (*TRenderFunction)(SRenderableObject &inObject, const QVector2D &inCameraProperties);
-
-struct SRenderableObject
+struct QDemonRenderableObject
 {
     // Variables used for picking
-    const QMatrix4x4 &m_GlobalTransform;
-    const QDemonBounds3 &m_Bounds;
-    SRenderableObjectFlags m_RenderableFlags;
+    const QMatrix4x4 &globalTransform;
+    const QDemonBounds3 &bounds;
+    QDemonRenderableObjectFlags renderableFlags;
     // For rough sorting for transparency and for depth
-    QVector3D m_WorldCenterPoint;
-    float m_CameraDistanceSq;
-    TessModeValues::Enum m_TessellationMode;
+    QVector3D worldCenterPoint;
+    float cameraDistanceSq;
+    TessModeValues::Enum tessellationMode;
     // For custom renderable objects the render function must be defined
-    TRenderFunction m_RenderFunction;
-    TNodeLightEntryList m_ScopedLights;
-    SRenderableObject(SRenderableObjectFlags inFlags, QVector3D inWorldCenterPt,
-                      const QMatrix4x4 &inGlobalTransform, const QDemonBounds3 &inBounds,
-                      TessModeValues::Enum inTessMode = TessModeValues::NoTess,
-                      TRenderFunction inFunction = nullptr)
+    TRenderFunction renderFunction;
+    QDemonNodeLightEntryList scopedLights;
+    QDemonRenderableObject(QDemonRenderableObjectFlags inFlags,
+                           QVector3D inWorldCenterPt,
+                           const QMatrix4x4 &inGlobalTransform,
+                           const QDemonBounds3 &inBounds,
+                           TessModeValues::Enum inTessMode = TessModeValues::NoTess,
+                           TRenderFunction inFunction = nullptr)
 
-        : m_GlobalTransform(inGlobalTransform)
-        , m_Bounds(inBounds)
-        , m_RenderableFlags(inFlags)
-        , m_WorldCenterPoint(inWorldCenterPt)
-        , m_CameraDistanceSq(0)
-        , m_TessellationMode(inTessMode)
-        , m_RenderFunction(inFunction)
+        : globalTransform(inGlobalTransform)
+        , bounds(inBounds)
+        , renderableFlags(inFlags)
+        , worldCenterPoint(inWorldCenterPt)
+        , cameraDistanceSq(0)
+        , tessellationMode(inTessMode)
+        , renderFunction(inFunction)
     {
     }
-    bool operator<(SRenderableObject *inOther) const
+    bool operator<(QDemonRenderableObject *inOther) const
     {
-        return m_CameraDistanceSq < inOther->m_CameraDistanceSq;
+        return cameraDistanceSq < inOther->cameraDistanceSq;
     }
 };
 
-typedef QVector<SRenderableObject *> TRenderableObjectList;
+typedef QVector<QDemonRenderableObject *> TRenderableObjectList;
 
 // Different subsets from the same model will get the same
 // model context so we can generate the MVP and normal matrix once
 // and only once per subset.
-struct SModelContext
+struct QDemonModelContext
 {
-    const SModel &m_Model;
-    QMatrix4x4 m_ModelViewProjection;
-    QMatrix3x3 m_NormalMatrix;
+    const QDemonRenderModel &model;
+    QMatrix4x4 modelViewProjection;
+    QMatrix3x3 normalMatrix;
 
-    SModelContext(const SModel &inModel, const QMatrix4x4 &inViewProjection)
-        : m_Model(inModel)
+    QDemonModelContext(const QDemonRenderModel &inModel, const QMatrix4x4 &inViewProjection)
+        : model(inModel)
     {
-        m_Model.CalculateMVPAndNormalMatrix(inViewProjection, m_ModelViewProjection,
-                                            m_NormalMatrix);
+        model.calculateMVPAndNormalMatrix(inViewProjection,
+                                          modelViewProjection,
+                                          normalMatrix);
     }
-    SModelContext(const SModelContext &inOther)
-        : m_Model(inOther.m_Model)
+    QDemonModelContext(const QDemonModelContext &inOther)
+        : model(inOther.model)
     {
         // The default copy constructor for these objects is pretty darn slow.
-        ::memcpy(&m_ModelViewProjection, &inOther.m_ModelViewProjection,
-                sizeof(m_ModelViewProjection));
-        ::memcpy(&m_NormalMatrix, &inOther.m_NormalMatrix, sizeof(m_NormalMatrix));
+        ::memcpy(&modelViewProjection, &inOther.modelViewProjection,
+                sizeof(modelViewProjection));
+        ::memcpy(&normalMatrix, &inOther.normalMatrix, sizeof(normalMatrix));
     }
 };
 
-typedef QVector<SModelContext *> TModelContextPtrList;
+typedef QVector<QDemonModelContext *> TModelContextPtrList;
 
 class QDemonRendererImpl;
-struct SLayerRenderData;
-struct SShadowMapEntry;
+struct QDemonLayerRenderData;
+struct QDemonShadowMapEntry;
 
-struct SSubsetRenderableBase : public SRenderableObject
+struct QDemonSubsetRenderableBase : public QDemonRenderableObject
 {
-    QSharedPointer<QDemonRendererImpl> m_Generator;
-    const SModelContext &m_ModelContext;
-    SRenderSubset m_Subset;
-    float m_Opacity;
+    QSharedPointer<QDemonRendererImpl> generator;
+    const QDemonModelContext &modelContext;
+    QDemonRenderSubset subset;
+    float opacity;
 
-    SSubsetRenderableBase(SRenderableObjectFlags inFlags, QVector3D inWorldCenterPt,
-                          QSharedPointer<QDemonRendererImpl> gen, const SRenderSubset &subset,
-                          const SModelContext &modelContext, float inOpacity)
+    QDemonSubsetRenderableBase(QDemonRenderableObjectFlags inFlags,
+                               QVector3D inWorldCenterPt,
+                               QSharedPointer<QDemonRendererImpl> gen,
+                               const QDemonRenderSubset &inSubset,
+                               const QDemonModelContext &inModelContext,
+                               float inOpacity)
 
-        : SRenderableObject(inFlags, inWorldCenterPt, modelContext.m_Model.m_GlobalTransform,
-                            m_Subset.m_Bounds)
-        , m_Generator(gen)
-        , m_ModelContext(modelContext)
-        , m_Subset(subset)
-        , m_Opacity(inOpacity)
+        : QDemonRenderableObject(inFlags, inWorldCenterPt, inModelContext.model.globalTransform, inSubset.bounds)
+        , generator(gen)
+        , modelContext(inModelContext)
+        , subset(inSubset)
+        , opacity(inOpacity)
     {
     }
-    void RenderShadowMapPass(const QVector2D &inCameraVec, const SLight *inLight,
-                             const SCamera &inCamera, SShadowMapEntry *inShadowMapEntry);
+    void renderShadowMapPass(const QVector2D &inCameraVec,
+                             const QDemonRenderLight *inLight,
+                             const QDemonRenderCamera &inCamera,
+                             QDemonShadowMapEntry *inShadowMapEntry);
 
-    void RenderDepthPass(const QVector2D &inCameraVec, SRenderableImage *inDisplacementImage,
+    void renderDepthPass(const QVector2D &inCameraVec,
+                         QDemonRenderableImage *inDisplacementImage,
                          float inDisplacementAmount);
 };
 
@@ -259,168 +262,191 @@ struct SSubsetRenderableBase : public SRenderableObject
      *	These are created per subset per layer and are responsible for actually
      *	rendering this type of object.
      */
-struct SSubsetRenderable : public SSubsetRenderableBase
+struct QDemonSubsetRenderable : public QDemonSubsetRenderableBase
 {
-    const SDefaultMaterial &m_Material;
-    SRenderableImage *m_FirstImage;
-    SShaderDefaultMaterialKey m_ShaderDescription;
-    QDemonConstDataRef<QMatrix4x4> m_Bones;
+    const QDemonRenderDefaultMaterial &material;
+    QDemonRenderableImage *firstImage;
+    QDemonShaderDefaultMaterialKey shaderDescription;
+    QDemonConstDataRef<QMatrix4x4> bones;
 
-    SSubsetRenderable(SRenderableObjectFlags inFlags, QVector3D inWorldCenterPt,
-                      QSharedPointer<QDemonRendererImpl> gen, const SRenderSubset &subset,
-                      const SDefaultMaterial &mat, const SModelContext &modelContext,
-                      float inOpacity, SRenderableImage *inFirstImage,
-                      SShaderDefaultMaterialKey inShaderKey,
-                      QDemonConstDataRef<QMatrix4x4> inBoneGlobals)
+    QDemonSubsetRenderable(QDemonRenderableObjectFlags inFlags,
+                           QVector3D inWorldCenterPt,
+                           QSharedPointer<QDemonRendererImpl> gen,
+                           const QDemonRenderSubset &inSubset,
+                           const QDemonRenderDefaultMaterial &mat,
+                           const QDemonModelContext &inModelContext,
+                           float inOpacity,
+                           QDemonRenderableImage *inFirstImage,
+                           QDemonShaderDefaultMaterialKey inShaderKey,
+                           QDemonConstDataRef<QMatrix4x4> inBoneGlobals)
 
-        : SSubsetRenderableBase(inFlags, inWorldCenterPt, gen, subset, modelContext, inOpacity)
-        , m_Material(mat)
-        , m_FirstImage(inFirstImage)
-        , m_ShaderDescription(inShaderKey)
-        , m_Bones(inBoneGlobals)
+        : QDemonSubsetRenderableBase(inFlags, inWorldCenterPt, gen, inSubset, inModelContext, inOpacity)
+        , material(mat)
+        , firstImage(inFirstImage)
+        , shaderDescription(inShaderKey)
+        , bones(inBoneGlobals)
     {
-        m_RenderableFlags.SetDefaultMaterialMeshSubset(true);
-        m_RenderableFlags.SetCustom(false);
-        m_RenderableFlags.SetText(false);
+        renderableFlags.setDefaultMaterialMeshSubset(true);
+        renderableFlags.setCustom(false);
+        renderableFlags.setText(false);
     }
 
-    void Render(const QVector2D &inCameraVec, TShaderFeatureSet inFeatureSet);
+    void render(const QVector2D &inCameraVec, TShaderFeatureSet inFeatureSet);
 
-    void RenderDepthPass(const QVector2D &inCameraVec);
+    void renderDepthPass(const QVector2D &inCameraVec);
 
     DefaultMaterialBlendMode::Enum getBlendingMode()
     {
-        return m_Material.m_BlendMode;
+        return material.blendMode;
     }
 };
 
-struct SCustomMaterialRenderable : public SSubsetRenderableBase
+struct QDemonCustomMaterialRenderable : public QDemonSubsetRenderableBase
 {
-    const SCustomMaterial &m_Material;
-    SRenderableImage *m_FirstImage;
-    SShaderDefaultMaterialKey m_ShaderDescription;
+    const QDemonCustomMaterial &material;
+    QDemonRenderableImage *firstImage;
+    QDemonShaderDefaultMaterialKey shaderDescription;
 
-    SCustomMaterialRenderable(SRenderableObjectFlags inFlags, QVector3D inWorldCenterPt,
-                              QSharedPointer<QDemonRendererImpl> gen, const SRenderSubset &subset,
-                              const SCustomMaterial &mat, const SModelContext &modelContext,
-                              float inOpacity, SRenderableImage *inFirstImage,
-                              SShaderDefaultMaterialKey inShaderKey)
-        : SSubsetRenderableBase(inFlags, inWorldCenterPt, gen, subset, modelContext, inOpacity)
-        , m_Material(mat)
-        , m_FirstImage(inFirstImage)
-        , m_ShaderDescription(inShaderKey)
+    QDemonCustomMaterialRenderable(QDemonRenderableObjectFlags inFlags,
+                                   QVector3D inWorldCenterPt,
+                                   QSharedPointer<QDemonRendererImpl> gen,
+                                   const QDemonRenderSubset &inSubset,
+                                   const QDemonCustomMaterial &mat,
+                                   const QDemonModelContext &inModelContext,
+                                   float inOpacity,
+                                   QDemonRenderableImage *inFirstImage,
+                                   QDemonShaderDefaultMaterialKey inShaderKey)
+        : QDemonSubsetRenderableBase(inFlags, inWorldCenterPt, gen, inSubset, inModelContext, inOpacity)
+        , material(mat)
+        , firstImage(inFirstImage)
+        , shaderDescription(inShaderKey)
     {
-        m_RenderableFlags.SetCustomMaterialMeshSubset(true);
+        renderableFlags.setCustomMaterialMeshSubset(true);
     }
 
-    void Render(const QVector2D &inCameraVec,
-                const SLayerRenderData &inLayerData,
-                const SLayer &inLayer,
-                const QVector<SLight *> &inLights,
-                const SCamera &inCamera,
+    void render(const QVector2D &inCameraVec,
+                const QDemonLayerRenderData &inLayerData,
+                const QDemonLayer &inLayer,
+                const QVector<QDemonRenderLight *> &inLights,
+                const QDemonRenderCamera &inCamera,
                 const QSharedPointer<QDemonRenderTexture2D> inDepthTexture,
                 const QSharedPointer<QDemonRenderTexture2D> inSsaoTexture,
                 TShaderFeatureSet inFeatureSet);
 
-    void RenderDepthPass(const QVector2D &inCameraVec, const SLayer &inLayer,
-                         const QVector<SLight *> inLights, const SCamera &inCamera,
+    void renderDepthPass(const QVector2D &inCameraVec,
+                         const QDemonLayer &inLayer,
+                         const QVector<QDemonRenderLight *> inLights,
+                         const QDemonRenderCamera &inCamera,
                          const QDemonRenderTexture2D *inDepthTexture);
 };
 
-struct STextScaleAndOffset
+struct QDemonTextScaleAndOffset
 {
-    QVector2D m_TextOffset;
-    QVector2D m_TextScale;
-    STextScaleAndOffset(const QVector2D &inTextOffset, const QVector2D &inTextScale)
-        : m_TextOffset(inTextOffset)
-        , m_TextScale(inTextScale)
+    QVector2D textOffset;
+    QVector2D textScale;
+    QDemonTextScaleAndOffset(const QVector2D &inTextOffset, const QVector2D &inTextScale)
+        : textOffset(inTextOffset)
+        , textScale(inTextScale)
     {
     }
-    STextScaleAndOffset(QDemonRenderTexture2D &inTexture, const STextTextureDetails &inTextDetails,
-                        const STextRenderInfo &inInfo);
+    QDemonTextScaleAndOffset(QDemonRenderTexture2D &inTexture,
+                             const QDemonTextTextureDetails &inTextDetails,
+                             const QDemonTextRenderInfo &inInfo);
 };
 
-struct STextRenderable : public SRenderableObject, public STextScaleAndOffset
+struct QDemonTextRenderable : public QDemonRenderableObject, public QDemonTextScaleAndOffset
 {
-    QDemonRendererImpl &m_Generator;
-    const SText &m_Text;
-    QDemonRenderTexture2D &m_Texture;
-    QMatrix4x4 m_ModelViewProjection;
-    QMatrix4x4 m_ViewProjection;
+    QDemonRendererImpl &generator;
+    const QDemonText &text;
+    QDemonRenderTexture2D &texture;
+    QMatrix4x4 modelViewProjection;
+    QMatrix4x4 viewProjection;
 
-    STextRenderable(SRenderableObjectFlags inFlags, QVector3D inWorldCenterPt,
-                    QDemonRendererImpl &gen, const SText &inText, const QDemonBounds3 &inBounds,
-                    const QMatrix4x4 &inModelViewProjection, const QMatrix4x4 &inViewProjection,
-                    QDemonRenderTexture2D &inTextTexture, const QVector2D &inTextOffset,
-                    const QVector2D &inTextScale)
-        : SRenderableObject(inFlags, inWorldCenterPt, inText.m_GlobalTransform, inBounds)
-        , STextScaleAndOffset(inTextOffset, inTextScale)
-        , m_Generator(gen)
-        , m_Text(inText)
-        , m_Texture(inTextTexture)
-        , m_ModelViewProjection(inModelViewProjection)
-        , m_ViewProjection(inViewProjection)
+    QDemonTextRenderable(QDemonRenderableObjectFlags inFlags,
+                         QVector3D inWorldCenterPt,
+                         QDemonRendererImpl &gen,
+                         const QDemonText &inText,
+                         const QDemonBounds3 &inBounds,
+                         const QMatrix4x4 &inModelViewProjection,
+                         const QMatrix4x4 &inViewProjection,
+                         QDemonRenderTexture2D &inTextTexture,
+                         const QVector2D &inTextOffset,
+                         const QVector2D &inTextScale)
+        : QDemonRenderableObject(inFlags, inWorldCenterPt, inText.globalTransform, inBounds)
+        , QDemonTextScaleAndOffset(inTextOffset, inTextScale)
+        , generator(gen)
+        , text(inText)
+        , texture(inTextTexture)
+        , modelViewProjection(inModelViewProjection)
+        , viewProjection(inViewProjection)
     {
-        m_RenderableFlags.SetDefaultMaterialMeshSubset(false);
-        m_RenderableFlags.SetCustom(false);
-        m_RenderableFlags.SetText(true);
+        renderableFlags.setDefaultMaterialMeshSubset(false);
+        renderableFlags.setCustom(false);
+        renderableFlags.setText(true);
     }
 
-    void Render(const QVector2D &inCameraVec);
-    void RenderDepthPass(const QVector2D &inCameraVec);
+    void render(const QVector2D &inCameraVec);
+    void renderDepthPass(const QVector2D &inCameraVec);
 };
 
-struct SPathRenderable : public SRenderableObject
+struct QDemonPathRenderable : public QDemonRenderableObject
 {
-    QSharedPointer<QDemonRendererImpl> m_Generator;
-    SPath &m_Path;
-    QDemonBounds3 m_Bounds;
-    QMatrix4x4 m_ModelViewProjection;
-    QMatrix3x3 m_NormalMatrix;
-    const SGraphObject &m_Material;
-    float m_Opacity;
-    SRenderableImage *m_FirstImage;
-    SShaderDefaultMaterialKey m_ShaderDescription;
-    bool m_IsStroke;
+    QSharedPointer<QDemonRendererImpl> m_generator;
+    QDemonPath &m_path;
+    QDemonBounds3 bounds;
+    QMatrix4x4 m_mvp;
+    QMatrix3x3 m_normalMatrix;
+    const QDemonGraphObject &m_material;
+    float m_opacity;
+    QDemonRenderableImage *m_firstImage;
+    QDemonShaderDefaultMaterialKey m_shaderDescription;
+    bool m_isStroke;
 
-    SPathRenderable(SRenderableObjectFlags inFlags, QVector3D inWorldCenterPt,
-                    QSharedPointer<QDemonRendererImpl> gen, const QMatrix4x4 &inGlobalTransform,
-                    QDemonBounds3 &inBounds, SPath &inPath, const QMatrix4x4 &inModelViewProjection,
-                    const QMatrix3x3 inNormalMat, const SGraphObject &inMaterial, float inOpacity,
-                    SShaderDefaultMaterialKey inShaderKey, bool inIsStroke)
+    QDemonPathRenderable(QDemonRenderableObjectFlags inFlags,
+                         QVector3D inWorldCenterPt,
+                         QSharedPointer<QDemonRendererImpl> gen,
+                         const QMatrix4x4 &inGlobalTransform,
+                         QDemonBounds3 &inBounds,
+                         QDemonPath &inPath,
+                         const QMatrix4x4 &inModelViewProjection,
+                         const QMatrix3x3 inNormalMat,
+                         const QDemonGraphObject &inMaterial,
+                         float inOpacity,
+                         QDemonShaderDefaultMaterialKey inShaderKey,
+                         bool inIsStroke)
 
-        : SRenderableObject(inFlags, inWorldCenterPt, inGlobalTransform, m_Bounds)
-        , m_Generator(gen)
-        , m_Path(inPath)
-        , m_Bounds(inBounds)
-        , m_ModelViewProjection(inModelViewProjection)
-        , m_NormalMatrix(inNormalMat)
-        , m_Material(inMaterial)
-        , m_Opacity(inOpacity)
-        , m_FirstImage(nullptr)
-        , m_ShaderDescription(inShaderKey)
-        , m_IsStroke(inIsStroke)
+        : QDemonRenderableObject(inFlags, inWorldCenterPt, inGlobalTransform, bounds)
+        , m_generator(gen)
+        , m_path(inPath)
+        , bounds(inBounds)
+        , m_mvp(inModelViewProjection)
+        , m_normalMatrix(inNormalMat)
+        , m_material(inMaterial)
+        , m_opacity(inOpacity)
+        , m_firstImage(nullptr)
+        , m_shaderDescription(inShaderKey)
+        , m_isStroke(inIsStroke)
     {
-        m_RenderableFlags.SetPath(true);
+        renderableFlags.setPath(true);
     }
-    void Render(const QVector2D &inCameraVec,
-                const SLayer &inLayer,
-                const QVector<SLight *> &inLights,
-                const SCamera &inCamera,
+    void render(const QVector2D &inCameraVec,
+                const QDemonLayer &inLayer,
+                const QVector<QDemonRenderLight *> &inLights,
+                const QDemonRenderCamera &inCamera,
                 const QSharedPointer<QDemonRenderTexture2D> inDepthTexture,
                 const QSharedPointer<QDemonRenderTexture2D> inSsaoTexture,
                 TShaderFeatureSet inFeatureSet);
 
-    void RenderDepthPass(const QVector2D &inCameraVec,
-                         const SLayer &inLayer,
-                         const QVector<SLight *> &inLights,
-                         const SCamera &inCamera,
+    void renderDepthPass(const QVector2D &inCameraVec,
+                         const QDemonLayer &inLayer,
+                         const QVector<QDemonRenderLight *> &inLights,
+                         const QDemonRenderCamera &inCamera,
                          const QDemonRenderTexture2D *inDepthTexture);
 
-    void RenderShadowMapPass(const QVector2D &inCameraVec,
-                             const SLight *inLight,
-                             const SCamera &inCamera,
-                             SShadowMapEntry *inShadowMapEntry);
+    void renderShadowMapPass(const QVector2D &inCameraVec,
+                             const QDemonRenderLight *inLight,
+                             const QDemonRenderCamera &inCamera,
+                             QDemonShadowMapEntry *inShadowMapEntry);
 };
 QT_END_NAMESPACE
 

@@ -63,143 +63,143 @@ const float QDEMON_HALFPI = 1.57079632679489661923f;
 
 QT_BEGIN_NAMESPACE
 
-SLayerRenderData::SLayerRenderData(SLayer &inLayer, QSharedPointer<QDemonRendererImpl> inRenderer)
-    : SLayerRenderPreparationData(inLayer, inRenderer)
-    , m_LayerTexture(inRenderer->GetDemonContext()->GetResourceManager())
-    , m_TemporalAATexture(inRenderer->GetDemonContext()->GetResourceManager())
-    , m_LayerDepthTexture(inRenderer->GetDemonContext()->GetResourceManager())
-    , m_LayerPrepassDepthTexture(inRenderer->GetDemonContext()->GetResourceManager())
-    , m_LayerWidgetTexture(inRenderer->GetDemonContext()->GetResourceManager())
-    , m_LayerSsaoTexture(inRenderer->GetDemonContext()->GetResourceManager())
-    , m_LayerMultisampleTexture(inRenderer->GetDemonContext()->GetResourceManager())
-    , m_LayerMultisamplePrepassDepthTexture(inRenderer->GetDemonContext()->GetResourceManager())
-    , m_LayerMultisampleWidgetTexture(inRenderer->GetDemonContext()->GetResourceManager())
-    , m_LayerCachedTexture(nullptr)
-    , m_AdvancedBlendDrawTexture(nullptr)
-    , m_AdvancedBlendBlendTexture(nullptr)
-    , m_AdvancedModeDrawFB(nullptr)
-    , m_AdvancedModeBlendFB(nullptr)
-    , m_ProgressiveAAPassIndex(0)
-    , m_TemporalAAPassIndex(0)
-    , m_NonDirtyTemporalAAPassIndex(0)
-    , m_TextScale(1.0f)
-    , m_DepthBufferFormat(QDemonRenderTextureFormats::Unknown)
+QDemonLayerRenderData::QDemonLayerRenderData(QDemonLayer &inLayer, QSharedPointer<QDemonRendererImpl> inRenderer)
+    : QDemonLayerRenderPreparationData(inLayer, inRenderer)
+    , m_layerTexture(inRenderer->getDemonContext()->getResourceManager())
+    , m_temporalAATexture(inRenderer->getDemonContext()->getResourceManager())
+    , m_layerDepthTexture(inRenderer->getDemonContext()->getResourceManager())
+    , m_layerPrepassDepthTexture(inRenderer->getDemonContext()->getResourceManager())
+    , m_layerWidgetTexture(inRenderer->getDemonContext()->getResourceManager())
+    , m_layerSsaoTexture(inRenderer->getDemonContext()->getResourceManager())
+    , m_layerMultisampleTexture(inRenderer->getDemonContext()->getResourceManager())
+    , m_layerMultisamplePrepassDepthTexture(inRenderer->getDemonContext()->getResourceManager())
+    , m_layerMultisampleWidgetTexture(inRenderer->getDemonContext()->getResourceManager())
+    , m_layerCachedTexture(nullptr)
+    , m_advancedBlendDrawTexture(nullptr)
+    , m_advancedBlendBlendTexture(nullptr)
+    , m_advancedModeDrawFB(nullptr)
+    , m_advancedModeBlendFB(nullptr)
+    , m_progressiveAAPassIndex(0)
+    , m_temporalAAPassIndex(0)
+    , m_nonDirtyTemporalAAPassIndex(0)
+    , m_textScale(1.0f)
+    , m_depthBufferFormat(QDemonRenderTextureFormats::Unknown)
 {
 }
 
-SLayerRenderData::~SLayerRenderData()
+QDemonLayerRenderData::~QDemonLayerRenderData()
 {
-    QSharedPointer<IResourceManager> theResourceManager(m_Renderer->GetDemonContext()->GetResourceManager());
-    if (m_LayerCachedTexture && m_LayerCachedTexture != m_LayerTexture.GetTexture())
-        theResourceManager->Release(m_LayerCachedTexture);
-    if (m_AdvancedModeDrawFB) {
-        m_AdvancedModeDrawFB = nullptr;
+    QSharedPointer<QDemonResourceManagerInterface> theResourceManager(renderer->getDemonContext()->getResourceManager());
+    if (m_layerCachedTexture && m_layerCachedTexture != m_layerTexture.getTexture())
+        theResourceManager->release(m_layerCachedTexture);
+    if (m_advancedModeDrawFB) {
+        m_advancedModeDrawFB = nullptr;
     }
-    if (m_AdvancedModeBlendFB) {
-        m_AdvancedModeBlendFB = nullptr;
+    if (m_advancedModeBlendFB) {
+        m_advancedModeBlendFB = nullptr;
     }
-    if (m_AdvancedBlendBlendTexture)
-        m_AdvancedBlendBlendTexture = nullptr;
-    if (m_AdvancedBlendDrawTexture)
-        m_AdvancedBlendDrawTexture = nullptr;
+    if (m_advancedBlendBlendTexture)
+        m_advancedBlendBlendTexture = nullptr;
+    if (m_advancedBlendDrawTexture)
+        m_advancedBlendDrawTexture = nullptr;
 }
-void SLayerRenderData::PrepareForRender(const QSize &inViewportDimensions)
+void QDemonLayerRenderData::prepareForRender(const QSize &inViewportDimensions)
 {
-    SLayerRenderPreparationData::PrepareForRender(inViewportDimensions);
-    SLayerRenderPreparationResult &thePrepResult(*m_LayerPrepResult);
-    QSharedPointer<IResourceManager> theResourceManager(m_Renderer->GetDemonContext()->GetResourceManager());
+    QDemonLayerRenderPreparationData::prepareForRender(inViewportDimensions);
+    QDemonLayerRenderPreparationResult &thePrepResult(*layerPrepResult);
+    QSharedPointer<QDemonResourceManagerInterface> theResourceManager(renderer->getDemonContext()->getResourceManager());
     // at that time all values shoud be updated
-    m_Renderer->UpdateCbAoShadow(&m_Layer, m_Camera, m_LayerDepthTexture);
+    renderer->updateCbAoShadow(&layer, camera, m_layerDepthTexture);
 
     // Generate all necessary lighting keys
 
-    if (thePrepResult.m_Flags.WasLayerDataDirty()) {
-        m_ProgressiveAAPassIndex = 0;
+    if (thePrepResult.flags.wasLayerDataDirty()) {
+        m_progressiveAAPassIndex = 0;
     }
 
     // Get rid of the layer texture if we aren't rendering to texture this frame.
-    if (m_LayerTexture.GetTexture() && !thePrepResult.m_Flags.ShouldRenderToTexture()) {
-        if (m_LayerCachedTexture && m_LayerCachedTexture != m_LayerTexture.GetTexture()) {
-            theResourceManager->Release(m_LayerCachedTexture);
-            m_LayerCachedTexture = nullptr;
+    if (m_layerTexture.getTexture() && !thePrepResult.flags.shouldRenderToTexture()) {
+        if (m_layerCachedTexture && m_layerCachedTexture != m_layerTexture.getTexture()) {
+            theResourceManager->release(m_layerCachedTexture);
+            m_layerCachedTexture = nullptr;
         }
 
-        m_LayerTexture.ReleaseTexture();
-        m_LayerDepthTexture.ReleaseTexture();
-        m_LayerWidgetTexture.ReleaseTexture();
-        m_LayerSsaoTexture.ReleaseTexture();
-        m_LayerMultisampleTexture.ReleaseTexture();
-        m_LayerMultisamplePrepassDepthTexture.ReleaseTexture();
-        m_LayerMultisampleWidgetTexture.ReleaseTexture();
+        m_layerTexture.releaseTexture();
+        m_layerDepthTexture.releaseTexture();
+        m_layerWidgetTexture.releaseTexture();
+        m_layerSsaoTexture.releaseTexture();
+        m_layerMultisampleTexture.releaseTexture();
+        m_layerMultisamplePrepassDepthTexture.releaseTexture();
+        m_layerMultisampleWidgetTexture.releaseTexture();
     }
 
-    if (NeedsWidgetTexture() == false)
-        m_LayerWidgetTexture.ReleaseTexture();
+    if (needsWidgetTexture() == false)
+        m_layerWidgetTexture.releaseTexture();
 
-    if (m_LayerDepthTexture.GetTexture() && !thePrepResult.m_Flags.RequiresDepthTexture())
-        m_LayerDepthTexture.ReleaseTexture();
+    if (m_layerDepthTexture.getTexture() && !thePrepResult.flags.requiresDepthTexture())
+        m_layerDepthTexture.releaseTexture();
 
-    if (m_LayerSsaoTexture.GetTexture() && !thePrepResult.m_Flags.RequiresSsaoPass())
-        m_LayerSsaoTexture.ReleaseTexture();
+    if (m_layerSsaoTexture.getTexture() && !thePrepResult.flags.requiresSsaoPass())
+        m_layerSsaoTexture.releaseTexture();
 
-    m_Renderer->LayerNeedsFrameClear(*this);
+    renderer->layerNeedsFrameClear(*this);
 
     // Clean up the texture cache if layer dimensions changed
     if (inViewportDimensions.width() != m_previousDimensions.width()
             || inViewportDimensions.height() != m_previousDimensions.height()) {
-        m_LayerTexture.ReleaseTexture();
-        m_LayerDepthTexture.ReleaseTexture();
-        m_LayerSsaoTexture.ReleaseTexture();
-        m_LayerWidgetTexture.ReleaseTexture();
-        m_LayerPrepassDepthTexture.ReleaseTexture();
-        m_TemporalAATexture.ReleaseTexture();
-        m_LayerMultisampleTexture.ReleaseTexture();
-        m_LayerMultisamplePrepassDepthTexture.ReleaseTexture();
-        m_LayerMultisampleWidgetTexture.ReleaseTexture();
+        m_layerTexture.releaseTexture();
+        m_layerDepthTexture.releaseTexture();
+        m_layerSsaoTexture.releaseTexture();
+        m_layerWidgetTexture.releaseTexture();
+        m_layerPrepassDepthTexture.releaseTexture();
+        m_temporalAATexture.releaseTexture();
+        m_layerMultisampleTexture.releaseTexture();
+        m_layerMultisamplePrepassDepthTexture.releaseTexture();
+        m_layerMultisampleWidgetTexture.releaseTexture();
 
         m_previousDimensions.setWidth(inViewportDimensions.width());
         m_previousDimensions.setHeight(inViewportDimensions.height());
 
-        theResourceManager->DestroyFreeSizedResources();
+        theResourceManager->destroyFreeSizedResources();
 
         // Effect system uses different resource manager, so clean that up too
-        m_Renderer->GetDemonContext()->GetEffectSystem()->GetResourceManager()->DestroyFreeSizedResources();
+        renderer->getDemonContext()->getEffectSystem()->getResourceManager()->destroyFreeSizedResources();
     }
 }
 
-QDemonRenderTextureFormats::Enum SLayerRenderData::GetDepthBufferFormat()
+QDemonRenderTextureFormats::Enum QDemonLayerRenderData::getDepthBufferFormat()
 {
-    if (m_DepthBufferFormat == QDemonRenderTextureFormats::Unknown) {
-        quint32 theExistingDepthBits = m_Renderer->GetContext()->GetDepthBits();
-        quint32 theExistingStencilBits = m_Renderer->GetContext()->GetStencilBits();
+    if (m_depthBufferFormat == QDemonRenderTextureFormats::Unknown) {
+        quint32 theExistingDepthBits = renderer->getContext()->getDepthBits();
+        quint32 theExistingStencilBits = renderer->getContext()->getStencilBits();
         switch (theExistingDepthBits) {
         case 32:
-            m_DepthBufferFormat = QDemonRenderTextureFormats::Depth32;
+            m_depthBufferFormat = QDemonRenderTextureFormats::Depth32;
             break;
         case 24:
             //  check if we have stencil bits
             if (theExistingStencilBits > 0)
-                m_DepthBufferFormat =
+                m_depthBufferFormat =
                         QDemonRenderTextureFormats::Depth24Stencil8; // currently no stencil usage
             // should be Depth24Stencil8 in
             // this case
             else
-                m_DepthBufferFormat = QDemonRenderTextureFormats::Depth24;
+                m_depthBufferFormat = QDemonRenderTextureFormats::Depth24;
             break;
         case 16:
-            m_DepthBufferFormat = QDemonRenderTextureFormats::Depth16;
+            m_depthBufferFormat = QDemonRenderTextureFormats::Depth16;
             break;
         default:
             Q_ASSERT(false);
-            m_DepthBufferFormat = QDemonRenderTextureFormats::Depth16;
+            m_depthBufferFormat = QDemonRenderTextureFormats::Depth16;
             break;
         }
     }
-    return m_DepthBufferFormat;
+    return m_depthBufferFormat;
 }
 
 QDemonRenderFrameBufferAttachments::Enum
-SLayerRenderData::GetFramebufferDepthAttachmentFormat(QDemonRenderTextureFormats::Enum depthFormat)
+QDemonLayerRenderData::getFramebufferDepthAttachmentFormat(QDemonRenderTextureFormats::Enum depthFormat)
 {
     QDemonRenderFrameBufferAttachments::Enum fmt = QDemonRenderFrameBufferAttachments::Depth;
 
@@ -220,90 +220,90 @@ SLayerRenderData::GetFramebufferDepthAttachmentFormat(QDemonRenderTextureFormats
     return fmt;
 }
 
-void SLayerRenderData::RenderAoPass()
+void QDemonLayerRenderData::renderAoPass()
 {
-    m_Renderer->BeginLayerDepthPassRender(*this);
+    renderer->beginLayerDepthPassRender(*this);
 
-    QDemonRenderContext &theContext(*m_Renderer->GetContext());
-    QSharedPointer<SDefaultAoPassShader> shader = m_Renderer->GetDefaultAoPassShader(GetShaderFeatureSet());
+    QDemonRenderContext &theContext(*renderer->getContext());
+    QSharedPointer<QDemonDefaultAoPassShader> shader = renderer->getDefaultAoPassShader(getShaderFeatureSet());
     if (shader == nullptr)
         return;
 
     // Set initial state
-    theContext.SetBlendingEnabled(false);
-    theContext.SetDepthWriteEnabled(false);
-    theContext.SetDepthTestEnabled(false);
-    theContext.SetActiveShader(shader->m_Shader);
+    theContext.setBlendingEnabled(false);
+    theContext.setDepthWriteEnabled(false);
+    theContext.setDepthTestEnabled(false);
+    theContext.setActiveShader(shader->shader);
 
     // Setup constants
-    shader->m_CameraDirection.Set(m_CameraDirection);
-    shader->m_ViewMatrix.Set(m_Camera->m_GlobalTransform);
+    shader->cameraDirection.set(cameraDirection);
+    shader->viewMatrix.set(camera->globalTransform);
 
-    shader->m_DepthTexture.Set(m_LayerDepthTexture.GetTexture().data());
-    shader->m_DepthSamplerSize.Set(QVector2D(m_LayerDepthTexture->GetTextureDetails().m_Width,
-                                             m_LayerDepthTexture->GetTextureDetails().m_Height));
+    shader->depthTexture.set(m_layerDepthTexture.getTexture().data());
+    shader->depthSamplerSize.set(QVector2D(m_layerDepthTexture->getTextureDetails().width,
+                                             m_layerDepthTexture->getTextureDetails().height));
 
     // Important uniforms for AO calculations
-    QVector2D theCameraProps = QVector2D(m_Camera->m_ClipNear, m_Camera->m_ClipFar);
-    shader->m_CameraProperties.Set(theCameraProps);
-    shader->m_AoShadowParams.Set();
+    QVector2D theCameraProps = QVector2D(camera->clipNear, camera->clipFar);
+    shader->cameraProperties.set(theCameraProps);
+    shader->aoShadowParams.set();
 
     // Draw a fullscreen quad
-    m_Renderer->RenderQuad();
+    renderer->renderQuad();
 
-    m_Renderer->EndLayerDepthPassRender();
+    renderer->endLayerDepthPassRender();
 }
 
-void SLayerRenderData::RenderFakeDepthMapPass(QDemonRenderTexture2D *theDepthTex,
+void QDemonLayerRenderData::renderFakeDepthMapPass(QDemonRenderTexture2D *theDepthTex,
                                               QDemonRenderTextureCube *theDepthCube)
 {
-    m_Renderer->BeginLayerDepthPassRender(*this);
+    renderer->beginLayerDepthPassRender(*this);
 
-    QDemonRenderContext &theContext(*m_Renderer->GetContext());
-    QSharedPointer<SDefaultAoPassShader> shader = theDepthTex
-            ? m_Renderer->GetFakeDepthShader(GetShaderFeatureSet())
-            : m_Renderer->GetFakeCubeDepthShader(GetShaderFeatureSet());
+    QDemonRenderContext &theContext(*renderer->getContext());
+    QSharedPointer<QDemonDefaultAoPassShader> shader = theDepthTex
+            ? renderer->getFakeDepthShader(getShaderFeatureSet())
+            : renderer->getFakeCubeDepthShader(getShaderFeatureSet());
     if (shader == nullptr)
         return;
 
     // Set initial state
-    theContext.SetBlendingEnabled(false);
-    theContext.SetDepthWriteEnabled(false);
-    theContext.SetDepthTestEnabled(false);
-    theContext.SetActiveShader(shader->m_Shader);
+    theContext.setBlendingEnabled(false);
+    theContext.setDepthWriteEnabled(false);
+    theContext.setDepthTestEnabled(false);
+    theContext.setActiveShader(shader->shader);
 
     // Setup constants
-    shader->m_CameraDirection.Set(m_CameraDirection);
-    shader->m_ViewMatrix.Set(m_Camera->m_GlobalTransform);
+    shader->cameraDirection.set(cameraDirection);
+    shader->viewMatrix.set(camera->globalTransform);
 
-    shader->m_DepthTexture.Set(theDepthTex);
-    shader->m_CubeTexture.Set(theDepthCube);
-    shader->m_DepthSamplerSize.Set(QVector2D(theDepthTex->GetTextureDetails().m_Width,
-                                             theDepthTex->GetTextureDetails().m_Height));
+    shader->depthTexture.set(theDepthTex);
+    shader->cubeTexture.set(theDepthCube);
+    shader->depthSamplerSize.set(QVector2D(theDepthTex->getTextureDetails().width,
+                                             theDepthTex->getTextureDetails().height));
 
     // Important uniforms for AO calculations
-    QVector2D theCameraProps = QVector2D(m_Camera->m_ClipNear, m_Camera->m_ClipFar);
-    shader->m_CameraProperties.Set(theCameraProps);
-    shader->m_AoShadowParams.Set();
+    QVector2D theCameraProps = QVector2D(camera->clipNear, camera->clipFar);
+    shader->cameraProperties.set(theCameraProps);
+    shader->aoShadowParams.set();
 
     // Draw a fullscreen quad
-    m_Renderer->RenderQuad();
+    renderer->renderQuad();
 }
 
 namespace {
 
-void computeFrustumBounds(const SCamera &inCamera, const QDemonRenderRectF &inViewPort,
+void computeFrustumBounds(const QDemonRenderCamera &inCamera, const QDemonRenderRectF &inViewPort,
                           QVector3D &ctrBound, QVector3D camVerts[8])
 {
     QVector3D camEdges[4];
 
-    const float *dataPtr(inCamera.m_GlobalTransform.constData());
+    const float *dataPtr(inCamera.globalTransform.constData());
     QVector3D camX(dataPtr[0], dataPtr[1], dataPtr[2]);
     QVector3D camY(dataPtr[4], dataPtr[5], dataPtr[6]);
     QVector3D camZ(dataPtr[8], dataPtr[9], dataPtr[10]);
 
     float tanFOV = tanf(inCamera.verticalFov(inViewPort) * 0.5f);
-    float asTanFOV = tanFOV * inViewPort.m_Width / inViewPort.m_Height;
+    float asTanFOV = tanFOV * inViewPort.m_width / inViewPort.m_height;
     camEdges[0] = -asTanFOV * camX + tanFOV * camY + camZ;
     camEdges[1] = asTanFOV * camX + tanFOV * camY + camZ;
     camEdges[2] = asTanFOV * camX - tanFOV * camY + camZ;
@@ -314,14 +314,14 @@ void computeFrustumBounds(const SCamera &inCamera, const QDemonRenderRectF &inVi
         camEdges[i].setY(-camEdges[i].y());
     }
 
-    camVerts[0] = inCamera.m_Position + camEdges[0] * inCamera.m_ClipNear;
-    camVerts[1] = inCamera.m_Position + camEdges[0] * inCamera.m_ClipFar;
-    camVerts[2] = inCamera.m_Position + camEdges[1] * inCamera.m_ClipNear;
-    camVerts[3] = inCamera.m_Position + camEdges[1] * inCamera.m_ClipFar;
-    camVerts[4] = inCamera.m_Position + camEdges[2] * inCamera.m_ClipNear;
-    camVerts[5] = inCamera.m_Position + camEdges[2] * inCamera.m_ClipFar;
-    camVerts[6] = inCamera.m_Position + camEdges[3] * inCamera.m_ClipNear;
-    camVerts[7] = inCamera.m_Position + camEdges[3] * inCamera.m_ClipFar;
+    camVerts[0] = inCamera.position + camEdges[0] * inCamera.clipNear;
+    camVerts[1] = inCamera.position + camEdges[0] * inCamera.clipFar;
+    camVerts[2] = inCamera.position + camEdges[1] * inCamera.clipNear;
+    camVerts[3] = inCamera.position + camEdges[1] * inCamera.clipFar;
+    camVerts[4] = inCamera.position + camEdges[2] * inCamera.clipNear;
+    camVerts[5] = inCamera.position + camEdges[2] * inCamera.clipFar;
+    camVerts[6] = inCamera.position + camEdges[3] * inCamera.clipNear;
+    camVerts[7] = inCamera.position + camEdges[3] * inCamera.clipFar;
 
     ctrBound = camVerts[0];
     for (int i = 1; i < 8; ++i) {
@@ -331,25 +331,25 @@ void computeFrustumBounds(const SCamera &inCamera, const QDemonRenderRectF &inVi
 }
 
 void SetupCameraForShadowMap(const QVector2D &inCameraVec, QDemonRenderContext & /*inContext*/,
-                             const QDemonRenderRectF &inViewport, const SCamera &inCamera,
-                             const SLight *inLight, SCamera &theCamera)
+                             const QDemonRenderRectF &inViewport, const QDemonRenderCamera &inCamera,
+                             const QDemonRenderLight *inLight, QDemonRenderCamera &theCamera)
 {
     // setup light matrix
-    quint32 mapRes = 1 << inLight->m_ShadowMapRes;
+    quint32 mapRes = 1 << inLight->m_shadowMapRes;
     QDemonRenderRectF theViewport(0.0f, 0.0f, (float)mapRes, (float)mapRes);
-    theCamera.m_ClipNear = 1.0f;
-    theCamera.m_ClipFar = inLight->m_ShadowMapFar;
+    theCamera.clipNear = 1.0f;
+    theCamera.clipFar = inLight->m_shadowMapFar;
     // Setup camera projection
-    QVector3D inLightPos = inLight->GetGlobalPos();
-    QVector3D inLightDir = inLight->GetDirection();
+    QVector3D inLightPos = inLight->getGlobalPos();
+    QVector3D inLightDir = inLight->getDirection();
 
-    if (inLight->m_Flags.IsLeftHanded())
+    if (inLight->flags.isLeftHanded())
         inLightPos.setZ(-inLightPos.z());
 
-    inLightPos -= inLightDir * inCamera.m_ClipNear;
-    theCamera.m_FOV = inLight->m_ShadowMapFov * QDEMON_DEGREES_TO_RADIANS;
+    inLightPos -= inLightDir * inCamera.clipNear;
+    theCamera.fov = inLight->m_shadowMapFov * QDEMON_DEGREES_TO_RADIANS;
 
-    if (inLight->m_LightType == RenderLightTypes::Directional) {
+    if (inLight->m_lightType == RenderLightTypes::Directional) {
         QVector3D frustBounds[8], boundCtr;
         computeFrustumBounds(inCamera, inViewport, boundCtr, frustBounds);
 
@@ -388,42 +388,42 @@ void SetupCameraForShadowMap(const QVector2D &inCameraVec, QDemonRenderContext &
         // Apply bounding box parameters to shadow map camera projection matrix
         // so that the whole scene is fit inside the shadow map
         inLightPos = boundCtr;
-        theViewport.m_Height = abs(maxDistanceY - minDistanceY);
-        theViewport.m_Width = abs(maxDistanceX - minDistanceX);
-        theCamera.m_ClipNear = -abs(maxDistanceZ - minDistanceZ);
-        theCamera.m_ClipFar = abs(maxDistanceZ - minDistanceZ);
+        theViewport.m_height = abs(maxDistanceY - minDistanceY);
+        theViewport.m_width = abs(maxDistanceX - minDistanceX);
+        theCamera.clipNear = -abs(maxDistanceZ - minDistanceZ);
+        theCamera.clipFar = abs(maxDistanceZ - minDistanceZ);
     }
 
-    theCamera.m_Flags.SetLeftHanded(false);
+    theCamera.flags.setLeftHanded(false);
 
-    theCamera.m_Flags.ClearOrSet(inLight->m_LightType == RenderLightTypes::Directional,
+    theCamera.flags.clearOrSet(inLight->m_lightType == RenderLightTypes::Directional,
                                  NodeFlagValues::Orthographic);
-    theCamera.m_Parent = nullptr;
-    theCamera.m_Pivot = inLight->m_Pivot;
+    theCamera.parent = nullptr;
+    theCamera.pivot = inLight->pivot;
 
-    if (inLight->m_LightType != RenderLightTypes::Point) {
-        theCamera.LookAt(inLightPos, QVector3D(0, 1.0, 0), inLightPos + inLightDir);
+    if (inLight->m_lightType != RenderLightTypes::Point) {
+        theCamera.lookAt(inLightPos, QVector3D(0, 1.0, 0), inLightPos + inLightDir);
     } else {
-        theCamera.LookAt(inLightPos, QVector3D(0, 1.0, 0), QVector3D(0, 0, 0));
+        theCamera.lookAt(inLightPos, QVector3D(0, 1.0, 0), QVector3D(0, 0, 0));
     }
 
-    theCamera.CalculateGlobalVariables(theViewport,
-                                       QVector2D(theViewport.m_Width, theViewport.m_Height));
+    theCamera.calculateGlobalVariables(theViewport,
+                                       QVector2D(theViewport.m_width, theViewport.m_height));
 }
 }
 
-void SetupCubeShadowCameras(const SLight *inLight, SCamera inCameras[6])
+void SetupCubeShadowCameras(const QDemonRenderLight *inLight, QDemonRenderCamera inCameras[6])
 {
     // setup light matrix
-    quint32 mapRes = 1 << inLight->m_ShadowMapRes;
+    quint32 mapRes = 1 << inLight->m_shadowMapRes;
     QDemonRenderRectF theViewport(0.0f, 0.0f, (float)mapRes, (float)mapRes);
     QVector3D rotOfs[6];
 
     Q_ASSERT(inLight != nullptr);
-    Q_ASSERT(inLight->m_LightType != RenderLightTypes::Directional);
+    Q_ASSERT(inLight->m_lightType != RenderLightTypes::Directional);
 
-    QVector3D inLightPos = inLight->GetGlobalPos();
-    if (inLight->m_Flags.IsLeftHanded())
+    QVector3D inLightPos = inLight->getGlobalPos();
+    if (inLight->flags.isLeftHanded())
         inLightPos.setZ(-inLightPos.z());
 
     rotOfs[0] = QVector3D(0.f, -QDEMON_HALFPI, QDEMON_PI);
@@ -434,18 +434,18 @@ void SetupCubeShadowCameras(const SLight *inLight, SCamera inCameras[6])
     rotOfs[5] = QVector3D(0.f, 0.f, QDEMON_PI);
 
     for (int i = 0; i < 6; ++i) {
-        inCameras[i].m_Flags.SetLeftHanded(false);
+        inCameras[i].flags.setLeftHanded(false);
 
-        inCameras[i].m_Flags.ClearOrSet(false, NodeFlagValues::Orthographic);
-        inCameras[i].m_Parent = nullptr;
-        inCameras[i].m_Pivot = inLight->m_Pivot;
-        inCameras[i].m_ClipNear = 1.0f;
-        inCameras[i].m_ClipFar = qMax<float>(2.0f, inLight->m_ShadowMapFar);
-        inCameras[i].m_FOV = inLight->m_ShadowMapFov * QDEMON_DEGREES_TO_RADIANS;
+        inCameras[i].flags.clearOrSet(false, NodeFlagValues::Orthographic);
+        inCameras[i].parent = nullptr;
+        inCameras[i].pivot = inLight->pivot;
+        inCameras[i].clipNear = 1.0f;
+        inCameras[i].clipFar = qMax<float>(2.0f, inLight->m_shadowMapFar);
+        inCameras[i].fov = inLight->m_shadowMapFov * QDEMON_DEGREES_TO_RADIANS;
 
-        inCameras[i].m_Position = inLightPos;
-        inCameras[i].m_Rotation = rotOfs[i];
-        inCameras[i].CalculateGlobalVariables(theViewport, QVector2D(theViewport.m_Width, theViewport.m_Height));
+        inCameras[i].position = inLightPos;
+        inCameras[i].rotation = rotOfs[i];
+        inCameras[i].calculateGlobalVariables(theViewport, QVector2D(theViewport.m_width, theViewport.m_height));
     }
 
     /*
@@ -479,34 +479,34 @@ void SetupCubeShadowCameras(const SLight *inLight, SCamera inCameras[6])
         */
 }
 
-inline void RenderRenderableShadowMapPass(SLayerRenderData &inData, SRenderableObject &inObject,
+inline void RenderRenderableShadowMapPass(QDemonLayerRenderData &inData, QDemonRenderableObject &inObject,
                                           const QVector2D &inCameraProps, TShaderFeatureSet,
-                                          quint32 lightIndex, const SCamera &inCamera)
+                                          quint32 lightIndex, const QDemonRenderCamera &inCamera)
 {
-    SShadowMapEntry *pEntry = inData.m_ShadowMapManager->GetShadowMapEntry(lightIndex);
+    QDemonShadowMapEntry *pEntry = inData.shadowMapManager->getShadowMapEntry(lightIndex);
 
-    if (inObject.m_RenderableFlags.IsDefaultMaterialMeshSubset())
-        static_cast<SSubsetRenderableBase &>(inObject).RenderShadowMapPass(
-                inCameraProps, inData.m_Lights[lightIndex], inCamera, pEntry);
-    else if (inObject.m_RenderableFlags.IsCustomMaterialMeshSubset()) {
-        static_cast<SSubsetRenderableBase &>(inObject).RenderShadowMapPass(
-                    inCameraProps, inData.m_Lights[lightIndex], inCamera, pEntry);
-    } else if (inObject.m_RenderableFlags.IsPath()) {
-        static_cast<SPathRenderable &>(inObject).RenderShadowMapPass(
-                    inCameraProps, inData.m_Lights[lightIndex], inCamera, pEntry);
+    if (inObject.renderableFlags.isDefaultMaterialMeshSubset())
+        static_cast<QDemonSubsetRenderableBase &>(inObject).renderShadowMapPass(
+                inCameraProps, inData.lights[lightIndex], inCamera, pEntry);
+    else if (inObject.renderableFlags.isCustomMaterialMeshSubset()) {
+        static_cast<QDemonSubsetRenderableBase &>(inObject).renderShadowMapPass(
+                    inCameraProps, inData.lights[lightIndex], inCamera, pEntry);
+    } else if (inObject.renderableFlags.isPath()) {
+        static_cast<QDemonPathRenderable &>(inObject).renderShadowMapPass(
+                    inCameraProps, inData.lights[lightIndex], inCamera, pEntry);
     }
 }
 
-void SLayerRenderData::RenderShadowCubeBlurPass(CResourceFrameBuffer *theFB,
+void QDemonLayerRenderData::renderShadowCubeBlurPass(QDemonResourceFrameBuffer *theFB,
                                                 QSharedPointer<QDemonRenderTextureCube> target0,
                                                 QSharedPointer<QDemonRenderTextureCube> target1,
                                                 float filterSz,
                                                 float clipFar)
 {
-    QDemonRenderContext &theContext(*m_Renderer->GetContext());
+    QDemonRenderContext &theContext(*renderer->getContext());
 
-    QSharedPointer<SShadowmapPreblurShader> shaderX = m_Renderer->GetCubeShadowBlurXShader();
-    QSharedPointer<SShadowmapPreblurShader> shaderY = m_Renderer->GetCubeShadowBlurYShader();
+    QSharedPointer<QDemonShadowmapPreblurShader> shaderX = renderer->getCubeShadowBlurXShader();
+    QSharedPointer<QDemonShadowmapPreblurShader> shaderY = renderer->getCubeShadowBlurYShader();
 
     if (shaderX == nullptr)
         return;
@@ -517,87 +517,87 @@ void SLayerRenderData::RenderShadowCubeBlurPass(CResourceFrameBuffer *theFB,
     // Enable drawing to 6 color attachment buffers for cubemap passes
     qint32 buffers[6] = { 0, 1, 2, 3, 4, 5 };
     QDemonConstDataRef<qint32> bufferList(buffers, 6);
-    theContext.SetDrawBuffers(bufferList);
+    theContext.setDrawBuffers(bufferList);
 
     // Attach framebuffer targets
-    (*theFB)->AttachFace(QDemonRenderFrameBufferAttachments::Color0, target1,
+    (*theFB)->attachFace(QDemonRenderFrameBufferAttachments::Color0, target1,
                          QDemonRenderTextureCubeFaces::CubePosX);
-    (*theFB)->AttachFace(QDemonRenderFrameBufferAttachments::Color1, target1,
+    (*theFB)->attachFace(QDemonRenderFrameBufferAttachments::Color1, target1,
                          QDemonRenderTextureCubeFaces::CubeNegX);
-    (*theFB)->AttachFace(QDemonRenderFrameBufferAttachments::Color2, target1,
+    (*theFB)->attachFace(QDemonRenderFrameBufferAttachments::Color2, target1,
                          QDemonRenderTextureCubeFaces::CubePosY);
-    (*theFB)->AttachFace(QDemonRenderFrameBufferAttachments::Color3, target1,
+    (*theFB)->attachFace(QDemonRenderFrameBufferAttachments::Color3, target1,
                          QDemonRenderTextureCubeFaces::CubeNegY);
-    (*theFB)->AttachFace(QDemonRenderFrameBufferAttachments::Color4, target1,
+    (*theFB)->attachFace(QDemonRenderFrameBufferAttachments::Color4, target1,
                          QDemonRenderTextureCubeFaces::CubePosZ);
-    (*theFB)->AttachFace(QDemonRenderFrameBufferAttachments::Color5, target1,
+    (*theFB)->attachFace(QDemonRenderFrameBufferAttachments::Color5, target1,
                          QDemonRenderTextureCubeFaces::CubeNegZ);
 
     // Set initial state
-    theContext.SetBlendingEnabled(false);
-    theContext.SetDepthWriteEnabled(false);
-    theContext.SetDepthTestEnabled(false);
+    theContext.setBlendingEnabled(false);
+    theContext.setDepthWriteEnabled(false);
+    theContext.setDepthTestEnabled(false);
     // theContext.SetColorWritesEnabled(true);
-    theContext.SetActiveShader(shaderX->m_Shader);
+    theContext.setActiveShader(shaderX->shader);
 
-    shaderX->m_CameraProperties.Set(QVector2D(filterSz, clipFar));
-    shaderX->m_DepthCube.Set(target0.data());
+    shaderX->cameraProperties.set(QVector2D(filterSz, clipFar));
+    shaderX->depthCube.set(target0.data());
 
     // Draw a fullscreen quad
-    m_Renderer->RenderQuad();
+    renderer->renderQuad();
 
-    theContext.SetActiveShader(shaderY->m_Shader);
+    theContext.setActiveShader(shaderY->shader);
 
     // Lather, Rinse, and Repeat for the Y-blur pass
-    (*theFB)->AttachFace(QDemonRenderFrameBufferAttachments::Color0, target0,
+    (*theFB)->attachFace(QDemonRenderFrameBufferAttachments::Color0, target0,
                          QDemonRenderTextureCubeFaces::CubePosX);
-    (*theFB)->AttachFace(QDemonRenderFrameBufferAttachments::Color1, target0,
+    (*theFB)->attachFace(QDemonRenderFrameBufferAttachments::Color1, target0,
                          QDemonRenderTextureCubeFaces::CubeNegX);
-    (*theFB)->AttachFace(QDemonRenderFrameBufferAttachments::Color2, target0,
+    (*theFB)->attachFace(QDemonRenderFrameBufferAttachments::Color2, target0,
                          QDemonRenderTextureCubeFaces::CubePosY);
-    (*theFB)->AttachFace(QDemonRenderFrameBufferAttachments::Color3, target0,
+    (*theFB)->attachFace(QDemonRenderFrameBufferAttachments::Color3, target0,
                          QDemonRenderTextureCubeFaces::CubeNegY);
-    (*theFB)->AttachFace(QDemonRenderFrameBufferAttachments::Color4, target0,
+    (*theFB)->attachFace(QDemonRenderFrameBufferAttachments::Color4, target0,
                          QDemonRenderTextureCubeFaces::CubePosZ);
-    (*theFB)->AttachFace(QDemonRenderFrameBufferAttachments::Color5, target0,
+    (*theFB)->attachFace(QDemonRenderFrameBufferAttachments::Color5, target0,
                          QDemonRenderTextureCubeFaces::CubeNegZ);
 
-    shaderY->m_CameraProperties.Set(QVector2D(filterSz, clipFar));
-    shaderY->m_DepthCube.Set(target1.data());
+    shaderY->cameraProperties.set(QVector2D(filterSz, clipFar));
+    shaderY->depthCube.set(target1.data());
 
     // Draw a fullscreen quad
-    m_Renderer->RenderQuad();
+    renderer->renderQuad();
 
-    theContext.SetDepthWriteEnabled(true);
-    theContext.SetDepthTestEnabled(true);
+    theContext.setDepthWriteEnabled(true);
+    theContext.setDepthTestEnabled(true);
     // theContext.SetColorWritesEnabled(false);
 
-    (*theFB)->AttachFace(QDemonRenderFrameBufferAttachments::Color0, QDemonRenderTextureOrRenderBuffer(),
+    (*theFB)->attachFace(QDemonRenderFrameBufferAttachments::Color0, QDemonRenderTextureOrRenderBuffer(),
                          QDemonRenderTextureCubeFaces::CubePosX);
-    (*theFB)->AttachFace(QDemonRenderFrameBufferAttachments::Color1, QDemonRenderTextureOrRenderBuffer(),
+    (*theFB)->attachFace(QDemonRenderFrameBufferAttachments::Color1, QDemonRenderTextureOrRenderBuffer(),
                          QDemonRenderTextureCubeFaces::CubeNegX);
-    (*theFB)->AttachFace(QDemonRenderFrameBufferAttachments::Color2, QDemonRenderTextureOrRenderBuffer(),
+    (*theFB)->attachFace(QDemonRenderFrameBufferAttachments::Color2, QDemonRenderTextureOrRenderBuffer(),
                          QDemonRenderTextureCubeFaces::CubePosY);
-    (*theFB)->AttachFace(QDemonRenderFrameBufferAttachments::Color3, QDemonRenderTextureOrRenderBuffer(),
+    (*theFB)->attachFace(QDemonRenderFrameBufferAttachments::Color3, QDemonRenderTextureOrRenderBuffer(),
                          QDemonRenderTextureCubeFaces::CubeNegY);
-    (*theFB)->AttachFace(QDemonRenderFrameBufferAttachments::Color4, QDemonRenderTextureOrRenderBuffer(),
+    (*theFB)->attachFace(QDemonRenderFrameBufferAttachments::Color4, QDemonRenderTextureOrRenderBuffer(),
                          QDemonRenderTextureCubeFaces::CubePosZ);
-    (*theFB)->AttachFace(QDemonRenderFrameBufferAttachments::Color5, QDemonRenderTextureOrRenderBuffer(),
+    (*theFB)->attachFace(QDemonRenderFrameBufferAttachments::Color5, QDemonRenderTextureOrRenderBuffer(),
                          QDemonRenderTextureCubeFaces::CubeNegZ);
 
-    theContext.SetDrawBuffers(toConstDataRef((qint32)0));
+    theContext.setDrawBuffers(toConstDataRef((qint32)0));
 }
 
-void SLayerRenderData::RenderShadowMapBlurPass(CResourceFrameBuffer *theFB,
+void QDemonLayerRenderData::renderShadowMapBlurPass(QDemonResourceFrameBuffer *theFB,
                                                QSharedPointer<QDemonRenderTexture2D> target0,
                                                QSharedPointer<QDemonRenderTexture2D> target1,
                                                float filterSz,
                                                float clipFar)
 {
-    QDemonRenderContext &theContext(*m_Renderer->GetContext());
+    QDemonRenderContext &theContext(*renderer->getContext());
 
-    QSharedPointer<SShadowmapPreblurShader> shaderX = m_Renderer->GetOrthoShadowBlurXShader();
-    QSharedPointer<SShadowmapPreblurShader> shaderY = m_Renderer->GetOrthoShadowBlurYShader();
+    QSharedPointer<QDemonShadowmapPreblurShader> shaderX = renderer->getOrthoShadowBlurXShader();
+    QSharedPointer<QDemonShadowmapPreblurShader> shaderY = renderer->getOrthoShadowBlurYShader();
 
     if (shaderX == nullptr)
         return;
@@ -605,127 +605,127 @@ void SLayerRenderData::RenderShadowMapBlurPass(CResourceFrameBuffer *theFB,
         return;
 
     // Attach framebuffer target
-    (*theFB)->Attach(QDemonRenderFrameBufferAttachments::Color0, target1);
+    (*theFB)->attach(QDemonRenderFrameBufferAttachments::Color0, target1);
     //(*theFB)->Attach( QDemonRenderFrameBufferAttachments::DepthStencil, *target1 );
 
     // Set initial state
-    theContext.SetBlendingEnabled(false);
-    theContext.SetDepthWriteEnabled(false);
-    theContext.SetDepthTestEnabled(false);
-    theContext.SetColorWritesEnabled(true);
-    theContext.SetActiveShader(shaderX->m_Shader);
+    theContext.setBlendingEnabled(false);
+    theContext.setDepthWriteEnabled(false);
+    theContext.setDepthTestEnabled(false);
+    theContext.setColorWritesEnabled(true);
+    theContext.setActiveShader(shaderX->shader);
 
-    shaderX->m_CameraProperties.Set(QVector2D(filterSz, clipFar));
-    shaderX->m_DepthMap.Set(target0.data());
+    shaderX->cameraProperties.set(QVector2D(filterSz, clipFar));
+    shaderX->depthMap.set(target0.data());
 
     // Draw a fullscreen quad
-    m_Renderer->RenderQuad();
+    renderer->renderQuad();
 
-    (*theFB)->Attach(QDemonRenderFrameBufferAttachments::Color0, target0);
+    (*theFB)->attach(QDemonRenderFrameBufferAttachments::Color0, target0);
     //(*theFB)->Attach( QDemonRenderFrameBufferAttachments::DepthStencil, *target0 );
-    theContext.SetActiveShader(shaderY->m_Shader);
+    theContext.setActiveShader(shaderY->shader);
 
-    shaderY->m_CameraProperties.Set(QVector2D(filterSz, clipFar));
-    shaderY->m_DepthMap.Set(target1.data());
+    shaderY->cameraProperties.set(QVector2D(filterSz, clipFar));
+    shaderY->depthMap.set(target1.data());
 
     // Draw a fullscreen quad
-    m_Renderer->RenderQuad();
+    renderer->renderQuad();
 
-    theContext.SetDepthWriteEnabled(true);
-    theContext.SetDepthTestEnabled(true);
-    theContext.SetColorWritesEnabled(false);
+    theContext.setDepthWriteEnabled(true);
+    theContext.setDepthTestEnabled(true);
+    theContext.setColorWritesEnabled(false);
 
     //(*theFB)->Attach( QDemonRenderFrameBufferAttachments::DepthStencil,
     //QDemonRenderTextureOrRenderBuffer() );
-    (*theFB)->Attach(QDemonRenderFrameBufferAttachments::Color0, QDemonRenderTextureOrRenderBuffer());
+    (*theFB)->attach(QDemonRenderFrameBufferAttachments::Color0, QDemonRenderTextureOrRenderBuffer());
 }
 
-void SLayerRenderData::RenderShadowMapPass(CResourceFrameBuffer *theFB)
+void QDemonLayerRenderData::renderShadowMapPass(QDemonResourceFrameBuffer *theFB)
 {
-    SStackPerfTimer ___timer(*m_Renderer->GetDemonContext()->GetPerfTimer(),
+    QDemonStackPerfTimer ___timer(*renderer->getDemonContext()->getPerfTimer(),
                              "SLayerRenderData::RenderShadowMapPass");
 
-    if (m_Camera == nullptr || !GetShadowMapManager())
+    if (camera == nullptr || !getShadowMapManager())
         return;
 
     // Check if we have anything to render
-    if (m_OpaqueObjects.size() == 0 || m_Lights.size() == 0)
+    if (opaqueObjects.size() == 0 || lights.size() == 0)
         return;
 
-    m_Renderer->BeginLayerDepthPassRender(*this);
+    renderer->beginLayerDepthPassRender(*this);
 
-    QDemonRenderContext &theRenderContext(*m_Renderer->GetContext());
+    QDemonRenderContext &theRenderContext(*renderer->getContext());
 
     // we may change the viewport
     QDemonRenderContextScopedProperty<QDemonRenderRect> __viewport(
-                theRenderContext, &QDemonRenderContext::GetViewport, &QDemonRenderContext::SetViewport);
+                theRenderContext, &QDemonRenderContext::getViewport, &QDemonRenderContext::setViewport);
 
     // disable color writes
     // theRenderContext.SetColorWritesEnabled( false );
-    theRenderContext.SetColorWritesEnabled(true);
-    theRenderContext.SetDepthWriteEnabled(true);
-    theRenderContext.SetCullingEnabled(false);
-    theRenderContext.SetClearColor(QVector4D(1.0, 1.0, 1.0, 1.0));
+    theRenderContext.setColorWritesEnabled(true);
+    theRenderContext.setDepthWriteEnabled(true);
+    theRenderContext.setCullingEnabled(false);
+    theRenderContext.setClearColor(QVector4D(1.0, 1.0, 1.0, 1.0));
 
     // we render the shadow map with a slight offset to prevent shadow acne and cull the front
     // faces
     QSharedPointer<QDemonRenderRasterizerState> rsdefaultstate =
-            theRenderContext.CreateRasterizerState(0.0, 0.0, QDemonRenderFaces::Back);
+            theRenderContext.createRasterizerState(0.0, 0.0, QDemonRenderFaces::Back);
     QSharedPointer<QDemonRenderRasterizerState> rsstate =
-            theRenderContext.CreateRasterizerState(1.5, 2.0, QDemonRenderFaces::Front);
-    theRenderContext.SetRasterizerState(rsstate);
+            theRenderContext.createRasterizerState(1.5, 2.0, QDemonRenderFaces::Front);
+    theRenderContext.setRasterizerState(rsstate);
 
     QDemonRenderClearFlags clearFlags(QDemonRenderClearValues::Depth
                                       | QDemonRenderClearValues::Stencil
                                       | QDemonRenderClearValues::Color);
 
-    for (quint32 i = 0; i < m_Lights.size(); i++) {
+    for (int i = 0; i < lights.size(); i++) {
         // don't render shadows when not casting
-        if (m_Lights[i]->m_CastShadow == false)
+        if (lights[i]->m_castShadow == false)
             continue;
-        SShadowMapEntry *pEntry = m_ShadowMapManager->GetShadowMapEntry(i);
-        if (pEntry && pEntry->m_DepthMap && pEntry->m_DepthCopy && pEntry->m_DepthRender) {
-            SCamera theCamera;
+        QDemonShadowMapEntry *pEntry = shadowMapManager->getShadowMapEntry(i);
+        if (pEntry && pEntry->m_depthMap && pEntry->m_depthCopy && pEntry->m_depthRender) {
+            QDemonRenderCamera theCamera;
 
-            QVector2D theCameraProps = QVector2D(m_Camera->m_ClipNear, m_Camera->m_ClipFar);
-            SetupCameraForShadowMap(theCameraProps, *m_Renderer->GetContext(),
-                                    __viewport.m_InitialValue, *m_Camera,
-                                    m_Lights[i], theCamera);
+            QVector2D theCameraProps = QVector2D(camera->clipNear, camera->clipFar);
+            SetupCameraForShadowMap(theCameraProps, *renderer->getContext(),
+                                    __viewport.m_initialValue, *camera,
+                                    lights[i], theCamera);
             // we need this matrix for the final rendering
-            theCamera.CalculateViewProjectionMatrix(pEntry->m_LightVP);
-            pEntry->m_LightView = mat44::getInverse(theCamera.m_GlobalTransform);
+            theCamera.calculateViewProjectionMatrix(pEntry->m_lightVP);
+            pEntry->m_lightView = mat44::getInverse(theCamera.globalTransform);
 
-            STextureDetails theDetails(pEntry->m_DepthMap->GetTextureDetails());
-            theRenderContext.SetViewport(
-                        QDemonRenderRect(0, 0, (quint32)theDetails.m_Width, (quint32)theDetails.m_Height));
+            QDemonTextureDetails theDetails(pEntry->m_depthMap->getTextureDetails());
+            theRenderContext.setViewport(
+                        QDemonRenderRect(0, 0, (quint32)theDetails.width, (quint32)theDetails.height));
 
-            (*theFB)->Attach(QDemonRenderFrameBufferAttachments::Color0, pEntry->m_DepthMap);
-            (*theFB)->Attach(QDemonRenderFrameBufferAttachments::DepthStencil, pEntry->m_DepthRender);
-            theRenderContext.Clear(clearFlags);
+            (*theFB)->attach(QDemonRenderFrameBufferAttachments::Color0, pEntry->m_depthMap);
+            (*theFB)->attach(QDemonRenderFrameBufferAttachments::DepthStencil, pEntry->m_depthRender);
+            theRenderContext.clear(clearFlags);
 
-            RunRenderPass(RenderRenderableShadowMapPass, false, true, true, i, theCamera);
-            RenderShadowMapBlurPass(theFB, pEntry->m_DepthMap, pEntry->m_DepthCopy,
-                                    m_Lights[i]->m_ShadowFilter, m_Lights[i]->m_ShadowMapFar);
-        } else if (pEntry && pEntry->m_DepthCube && pEntry->m_CubeCopy
-                   && pEntry->m_DepthRender) {
-            SCamera theCameras[6];
+            runRenderPass(RenderRenderableShadowMapPass, false, true, true, i, theCamera);
+            renderShadowMapBlurPass(theFB, pEntry->m_depthMap, pEntry->m_depthCopy,
+                                    lights[i]->m_shadowFilter, lights[i]->m_shadowMapFar);
+        } else if (pEntry && pEntry->m_depthCube && pEntry->m_cubeCopy
+                   && pEntry->m_depthRender) {
+            QDemonRenderCamera theCameras[6];
 
-            SetupCubeShadowCameras(m_Lights[i], theCameras);
+            SetupCubeShadowCameras(lights[i], theCameras);
 
             // pEntry->m_LightView = m_Lights[i]->m_LightType == RenderLightTypes::Point ?
             // QMatrix4x4::createIdentity()
             //	: m_Lights[i]->m_GlobalTransform;
-            pEntry->m_LightView = QMatrix4x4();
+            pEntry->m_lightView = QMatrix4x4();
 
-            STextureDetails theDetails(pEntry->m_DepthCube->GetTextureDetails());
-            theRenderContext.SetViewport(QDemonRenderRect(0, 0, (quint32)theDetails.m_Width, (quint32)theDetails.m_Height));
+            QDemonTextureDetails theDetails(pEntry->m_depthCube->getTextureDetails());
+            theRenderContext.setViewport(QDemonRenderRect(0, 0, (quint32)theDetails.width, (quint32)theDetails.height));
 
             // int passes = m_Lights[i]->m_LightType == RenderLightTypes::Point ? 6 : 5;
             int passes = 6;
             for (int k = 0; k < passes; ++k) {
                 // theCameras[k].CalculateViewProjectionMatrix( pEntry->m_LightCubeVP[k] );
-                pEntry->m_LightCubeView[k] = mat44::getInverse(theCameras[k].m_GlobalTransform);
-                theCameras[k].CalculateViewProjectionMatrix(pEntry->m_LightVP);
+                pEntry->m_lightCubeView[k] = mat44::getInverse(theCameras[k].globalTransform);
+                theCameras[k].calculateViewProjectionMatrix(pEntry->m_lightVP);
 
                 // Geometry shader multiplication really doesn't work unless you have a
                 // 6-layered 3D depth texture...
@@ -736,195 +736,195 @@ void SLayerRenderData::RenderShadowMapPass(CResourceFrameBuffer *theFB)
                         (QDemonRenderTextureCubeFaces::Enum)(k + 1);
                 //(*theFB)->AttachFace( QDemonRenderFrameBufferAttachments::DepthStencil,
                 //*pEntry->m_DepthCube, curFace );
-                (*theFB)->Attach(QDemonRenderFrameBufferAttachments::DepthStencil, pEntry->m_DepthRender);
-                (*theFB)->AttachFace(QDemonRenderFrameBufferAttachments::Color0, pEntry->m_DepthCube, curFace);
-                (*theFB)->IsComplete();
-                theRenderContext.Clear(clearFlags);
+                (*theFB)->attach(QDemonRenderFrameBufferAttachments::DepthStencil, pEntry->m_depthRender);
+                (*theFB)->attachFace(QDemonRenderFrameBufferAttachments::Color0, pEntry->m_depthCube, curFace);
+                (*theFB)->isComplete();
+                theRenderContext.clear(clearFlags);
 
-                RunRenderPass(RenderRenderableShadowMapPass, false, true, true, i,
+                runRenderPass(RenderRenderableShadowMapPass, false, true, true, i,
                               theCameras[k]);
             }
 
-            RenderShadowCubeBlurPass(theFB, pEntry->m_DepthCube, pEntry->m_CubeCopy,
-                                     m_Lights[i]->m_ShadowFilter, m_Lights[i]->m_ShadowMapFar);
+            renderShadowCubeBlurPass(theFB, pEntry->m_depthCube, pEntry->m_cubeCopy,
+                                     lights[i]->m_shadowFilter, lights[i]->m_shadowMapFar);
         }
     }
 
-    (*theFB)->Attach(QDemonRenderFrameBufferAttachments::Depth, QDemonRenderTextureOrRenderBuffer());
-    (*theFB)->Attach(QDemonRenderFrameBufferAttachments::Color0, QDemonRenderTextureOrRenderBuffer());
+    (*theFB)->attach(QDemonRenderFrameBufferAttachments::Depth, QDemonRenderTextureOrRenderBuffer());
+    (*theFB)->attach(QDemonRenderFrameBufferAttachments::Color0, QDemonRenderTextureOrRenderBuffer());
 
     // enable color writes
-    theRenderContext.SetColorWritesEnabled(true);
-    theRenderContext.SetCullingEnabled(true);
-    theRenderContext.SetClearColor(QVector4D(0.0, 0.0, 0.0, 0.0));
+    theRenderContext.setColorWritesEnabled(true);
+    theRenderContext.setCullingEnabled(true);
+    theRenderContext.setClearColor(QVector4D(0.0, 0.0, 0.0, 0.0));
     // reset rasterizer state
-    theRenderContext.SetRasterizerState(rsdefaultstate);
+    theRenderContext.setRasterizerState(rsdefaultstate);
 
-    m_Renderer->EndLayerDepthPassRender();
+    renderer->endLayerDepthPassRender();
 }
 
-inline void RenderRenderableDepthPass(SLayerRenderData &inData, SRenderableObject &inObject,
+inline void RenderRenderableDepthPass(QDemonLayerRenderData &inData, QDemonRenderableObject &inObject,
                                       const QVector2D &inCameraProps, TShaderFeatureSet, quint32,
-                                      const SCamera &inCamera)
+                                      const QDemonRenderCamera &inCamera)
 {
-    if (inObject.m_RenderableFlags.IsDefaultMaterialMeshSubset())
-        static_cast<SSubsetRenderable &>(inObject).RenderDepthPass(inCameraProps);
-    else if (inObject.m_RenderableFlags.IsText())
-        static_cast<STextRenderable &>(inObject).RenderDepthPass(inCameraProps);
-    else if (inObject.m_RenderableFlags.IsCustomMaterialMeshSubset()) {
-        static_cast<SCustomMaterialRenderable &>(inObject).RenderDepthPass(
-                    inCameraProps, inData.m_Layer, inData.m_Lights, inCamera, nullptr);
-    } else if (inObject.m_RenderableFlags.IsPath()) {
-        static_cast<SPathRenderable &>(inObject).RenderDepthPass(
-                    inCameraProps, inData.m_Layer, inData.m_Lights, inCamera, nullptr);
+    if (inObject.renderableFlags.isDefaultMaterialMeshSubset())
+        static_cast<QDemonSubsetRenderable &>(inObject).renderDepthPass(inCameraProps);
+    else if (inObject.renderableFlags.IsText())
+        static_cast<QDemonTextRenderable &>(inObject).renderDepthPass(inCameraProps);
+    else if (inObject.renderableFlags.isCustomMaterialMeshSubset()) {
+        static_cast<QDemonCustomMaterialRenderable &>(inObject).renderDepthPass(
+                    inCameraProps, inData.layer, inData.lights, inCamera, nullptr);
+    } else if (inObject.renderableFlags.isPath()) {
+        static_cast<QDemonPathRenderable &>(inObject).renderDepthPass(
+                    inCameraProps, inData.layer, inData.lights, inCamera, nullptr);
     } else {
         Q_ASSERT(false);
     }
 }
 
-void SLayerRenderData::RenderDepthPass(bool inEnableTransparentDepthWrite)
+void QDemonLayerRenderData::renderDepthPass(bool inEnableTransparentDepthWrite)
 {
-    SStackPerfTimer ___timer(*m_Renderer->GetDemonContext()->GetPerfTimer(),
-                             "SLayerRenderData::RenderDepthPass");
-    if (m_Camera == nullptr)
+    QDemonStackPerfTimer ___timer(*renderer->getDemonContext()->getPerfTimer(),
+                             "SLayerRenderData::renderDepthPass");
+    if (camera == nullptr)
         return;
 
     // Avoid running this method if possible.
     if ((inEnableTransparentDepthWrite == false
-         && (m_OpaqueObjects.size() == 0
-             || m_Layer.m_Flags.IsLayerEnableDepthPrepass() == false))
-            || m_Layer.m_Flags.IsLayerEnableDepthTest() == false)
+         && (opaqueObjects.size() == 0
+             || layer.flags.isLayerEnableDepthPrepass() == false))
+            || layer.flags.isLayerEnableDepthTest() == false)
         return;
 
-    m_Renderer->BeginLayerDepthPassRender(*this);
+    renderer->beginLayerDepthPassRender(*this);
 
-    QDemonRenderContext &theRenderContext(*m_Renderer->GetContext());
+    QDemonRenderContext &theRenderContext(*renderer->getContext());
 
     // disable color writes
-    theRenderContext.SetColorWritesEnabled(false);
-    theRenderContext.SetDepthWriteEnabled(true);
+    theRenderContext.setColorWritesEnabled(false);
+    theRenderContext.setDepthWriteEnabled(true);
 
     QDemonRenderClearFlags clearFlags(QDemonRenderClearValues::Stencil
                                       | QDemonRenderClearValues::Depth);
-    theRenderContext.Clear(clearFlags);
+    theRenderContext.clear(clearFlags);
 
-    RunRenderPass(RenderRenderableDepthPass, false, true, inEnableTransparentDepthWrite, 0,
-                  *m_Camera);
+    runRenderPass(RenderRenderableDepthPass, false, true, inEnableTransparentDepthWrite, 0,
+                  *camera);
 
     // enable color writes
-    theRenderContext.SetColorWritesEnabled(true);
+    theRenderContext.setColorWritesEnabled(true);
 
-    m_Renderer->EndLayerDepthPassRender();
+    renderer->endLayerDepthPassRender();
 }
 
-inline void RenderRenderable(SLayerRenderData &inData, SRenderableObject &inObject,
+inline void RenderRenderable(QDemonLayerRenderData &inData, QDemonRenderableObject &inObject,
                              const QVector2D &inCameraProps, TShaderFeatureSet inFeatureSet, quint32,
-                             const SCamera &inCamera)
+                             const QDemonRenderCamera &inCamera)
 {
-    if (inObject.m_RenderableFlags.IsDefaultMaterialMeshSubset())
-        static_cast<SSubsetRenderable &>(inObject).Render(inCameraProps, inFeatureSet);
-    else if (inObject.m_RenderableFlags.IsText())
-        static_cast<STextRenderable &>(inObject).Render(inCameraProps);
-    else if (inObject.m_RenderableFlags.IsCustomMaterialMeshSubset()) {
+    if (inObject.renderableFlags.isDefaultMaterialMeshSubset())
+        static_cast<QDemonSubsetRenderable &>(inObject).render(inCameraProps, inFeatureSet);
+    else if (inObject.renderableFlags.IsText())
+        static_cast<QDemonTextRenderable &>(inObject).render(inCameraProps);
+    else if (inObject.renderableFlags.isCustomMaterialMeshSubset()) {
         // PKC : Need a better place to do this.
-        SCustomMaterialRenderable &theObject =
-                static_cast<SCustomMaterialRenderable &>(inObject);
-        if (!inData.m_Layer.m_LightProbe && theObject.m_Material.m_IblProbe)
-            inData.SetShaderFeature("QDEMON_ENABLE_LIGHT_PROBE",
-                                    theObject.m_Material.m_IblProbe->m_TextureData.m_Texture
+        QDemonCustomMaterialRenderable &theObject =
+                static_cast<QDemonCustomMaterialRenderable &>(inObject);
+        if (!inData.layer.lightProbe && theObject.material.m_iblProbe)
+            inData.setShaderFeature("QDEMON_ENABLE_LIGHT_PROBE",
+                                    theObject.material.m_iblProbe->m_textureData.m_texture
                                     != nullptr);
-        else if (inData.m_Layer.m_LightProbe)
-            inData.SetShaderFeature("QDEMON_ENABLE_LIGHT_PROBE",
-                                    inData.m_Layer.m_LightProbe->m_TextureData.m_Texture
+        else if (inData.layer.lightProbe)
+            inData.setShaderFeature("QDEMON_ENABLE_LIGHT_PROBE",
+                                    inData.layer.lightProbe->m_textureData.m_texture
                                     != nullptr);
 
-        static_cast<SCustomMaterialRenderable &>(inObject).Render(
-                    inCameraProps, inData, inData.m_Layer, inData.m_Lights, inCamera,
-                    inData.m_LayerDepthTexture, inData.m_LayerSsaoTexture, inFeatureSet);
-    } else if (inObject.m_RenderableFlags.IsPath()) {
-        static_cast<SPathRenderable &>(inObject).Render(
-                    inCameraProps, inData.m_Layer, inData.m_Lights, inCamera,
-                    inData.m_LayerDepthTexture, inData.m_LayerSsaoTexture, inFeatureSet);
+        static_cast<QDemonCustomMaterialRenderable &>(inObject).render(
+                    inCameraProps, inData, inData.layer, inData.lights, inCamera,
+                    inData.m_layerDepthTexture, inData.m_layerSsaoTexture, inFeatureSet);
+    } else if (inObject.renderableFlags.isPath()) {
+        static_cast<QDemonPathRenderable &>(inObject).render(
+                    inCameraProps, inData.layer, inData.lights, inCamera,
+                    inData.m_layerDepthTexture, inData.m_layerSsaoTexture, inFeatureSet);
     } else {
         Q_ASSERT(false);
     }
 }
 
-void SLayerRenderData::RunRenderPass(TRenderRenderableFunction inRenderFn,
+void QDemonLayerRenderData::runRenderPass(TRenderRenderableFunction inRenderFn,
                                      bool inEnableBlending, bool inEnableDepthWrite,
                                      bool inEnableTransparentDepthWrite, quint32 indexLight,
-                                     const SCamera &inCamera, CResourceFrameBuffer *theFB)
+                                     const QDemonRenderCamera &inCamera, QDemonResourceFrameBuffer *theFB)
 {
-    QDemonRenderContext &theRenderContext(*m_Renderer->GetContext());
-    theRenderContext.SetDepthFunction(QDemonRenderBoolOp::LessThanOrEqual);
-    theRenderContext.SetBlendingEnabled(false);
-    QVector2D theCameraProps = QVector2D(m_Camera->m_ClipNear, m_Camera->m_ClipFar);
-    auto theOpaqueObjects = GetOpaqueRenderableObjects();
+    QDemonRenderContext &theRenderContext(*renderer->getContext());
+    theRenderContext.setDepthFunction(QDemonRenderBoolOp::LessThanOrEqual);
+    theRenderContext.setBlendingEnabled(false);
+    QVector2D theCameraProps = QVector2D(camera->clipNear, camera->clipFar);
+    auto theOpaqueObjects = getOpaqueRenderableObjects();
     bool usingDepthBuffer =
-            m_Layer.m_Flags.IsLayerEnableDepthTest() && theOpaqueObjects.size() > 0;
+            layer.flags.isLayerEnableDepthTest() && theOpaqueObjects.size() > 0;
 
     if (usingDepthBuffer) {
-        theRenderContext.SetDepthTestEnabled(true);
-        theRenderContext.SetDepthWriteEnabled(inEnableDepthWrite);
+        theRenderContext.setDepthTestEnabled(true);
+        theRenderContext.setDepthWriteEnabled(inEnableDepthWrite);
     } else {
-        theRenderContext.SetDepthWriteEnabled(false);
-        theRenderContext.SetDepthTestEnabled(false);
+        theRenderContext.setDepthWriteEnabled(false);
+        theRenderContext.setDepthTestEnabled(false);
     }
 
     for (quint32 idx = 0, end = theOpaqueObjects.size(); idx < end; ++idx) {
-        SRenderableObject &theObject(*theOpaqueObjects[idx]);
-        SScopedLightsListScope lightsScope(m_Lights, m_LightDirections, m_SourceLightDirections,
-                                           theObject.m_ScopedLights);
-        SetShaderFeature(m_CGLightingFeatureName, m_Lights.empty() == false);
-        inRenderFn(*this, theObject, theCameraProps, GetShaderFeatureSet(), indexLight,
+        QDemonRenderableObject &theObject(*theOpaqueObjects[idx]);
+        QDemonScopedLightsListScope lightsScope(lights, lightDirections, sourceLightDirections,
+                                           theObject.scopedLights);
+        setShaderFeature(cgLightingFeatureName, lights.empty() == false);
+        inRenderFn(*this, theObject, theCameraProps, getShaderFeatureSet(), indexLight,
                    inCamera);
     }
 
     // transparent objects
-    if (inEnableBlending || m_Layer.m_Flags.IsLayerEnableDepthTest() == false) {
-        theRenderContext.SetBlendingEnabled(true && inEnableBlending);
-        theRenderContext.SetDepthWriteEnabled(inEnableTransparentDepthWrite);
+    if (inEnableBlending || layer.flags.isLayerEnableDepthTest() == false) {
+        theRenderContext.setBlendingEnabled(true && inEnableBlending);
+        theRenderContext.setDepthWriteEnabled(inEnableTransparentDepthWrite);
 
-        auto theTransparentObjects = GetTransparentRenderableObjects();
+        auto theTransparentObjects = getTransparentRenderableObjects();
         // Assume all objects have transparency if the layer's depth test enabled flag is true.
-        if (m_Layer.m_Flags.IsLayerEnableDepthTest() == true) {
+        if (layer.flags.isLayerEnableDepthTest() == true) {
             for (quint32 idx = 0, end = theTransparentObjects.size(); idx < end; ++idx) {
-                SRenderableObject &theObject(*theTransparentObjects[idx]);
-                if (!(theObject.m_RenderableFlags.IsCompletelyTransparent())) {
+                QDemonRenderableObject &theObject(*theTransparentObjects[idx]);
+                if (!(theObject.renderableFlags.isCompletelyTransparent())) {
 #ifdef ADVANCED_BLEND_SW_FALLBACK
                     // SW fallback for advanced blend modes.
                     // Renders transparent objects to a separate FBO and blends them in shader
                     // with the opaque items and background.
                     DefaultMaterialBlendMode::Enum blendMode
                             = DefaultMaterialBlendMode::Enum::Normal;
-                    if (theObject.m_RenderableFlags.IsDefaultMaterialMeshSubset())
-                        blendMode = static_cast<SSubsetRenderable &>(theObject).getBlendingMode();
+                    if (theObject.renderableFlags.isDefaultMaterialMeshSubset())
+                        blendMode = static_cast<QDemonSubsetRenderable &>(theObject).getBlendingMode();
                     bool useBlendFallback = (blendMode == DefaultMaterialBlendMode::Overlay ||
                                              blendMode == DefaultMaterialBlendMode::ColorBurn ||
                                              blendMode == DefaultMaterialBlendMode::ColorDodge) &&
-                            !theRenderContext.IsAdvancedBlendHwSupported() &&
-                            !theRenderContext.IsAdvancedBlendHwSupportedKHR() &&
-                            m_LayerPrepassDepthTexture.GetTexture();
+                            !theRenderContext.isAdvancedBlendHwSupported() &&
+                            !theRenderContext.isAdvancedBlendHwSupportedKHR() &&
+                            m_layerPrepassDepthTexture.getTexture();
                     if (useBlendFallback)
-                        SetupDrawFB(true);
+                        setupDrawFB(true);
 #endif
-                    SScopedLightsListScope lightsScope(m_Lights, m_LightDirections,
-                                                       m_SourceLightDirections,
-                                                       theObject.m_ScopedLights);
-                    SetShaderFeature(m_CGLightingFeatureName, m_Lights.empty() == false);
+                    QDemonScopedLightsListScope lightsScope(lights, lightDirections,
+                                                       sourceLightDirections,
+                                                       theObject.scopedLights);
+                    setShaderFeature(cgLightingFeatureName, lights.empty() == false);
 
-                    inRenderFn(*this, theObject, theCameraProps, GetShaderFeatureSet(),
+                    inRenderFn(*this, theObject, theCameraProps, getShaderFeatureSet(),
                                indexLight, inCamera);
 #ifdef ADVANCED_BLEND_SW_FALLBACK
                     // SW fallback for advanced blend modes.
                     // Continue blending after transparent objects have been rendered to a FBO
                     if (useBlendFallback) {
-                        BlendAdvancedToFB(blendMode, true, theFB);
+                        blendAdvancedToFB(blendMode, true, theFB);
                         // restore blending status
-                        theRenderContext.SetBlendingEnabled(inEnableBlending);
+                        theRenderContext.setBlendingEnabled(inEnableBlending);
                         // restore depth test status
-                        theRenderContext.SetDepthTestEnabled(usingDepthBuffer);
-                        theRenderContext.SetDepthWriteEnabled(inEnableTransparentDepthWrite);
+                        theRenderContext.setDepthTestEnabled(usingDepthBuffer);
+                        theRenderContext.setDepthWriteEnabled(inEnableTransparentDepthWrite);
                     }
 #endif
                 }
@@ -934,39 +934,39 @@ void SLayerRenderData::RunRenderPass(TRenderRenderableFunction inRenderFn,
         // where the transparent objects vector could have both opaque and transparent objects.
         else {
             for (quint32 idx = 0, end = theTransparentObjects.size(); idx < end; ++idx) {
-                SRenderableObject &theObject(*theTransparentObjects[idx]);
-                if (!(theObject.m_RenderableFlags.IsCompletelyTransparent())) {
+                QDemonRenderableObject &theObject(*theTransparentObjects[idx]);
+                if (!(theObject.renderableFlags.isCompletelyTransparent())) {
 #ifdef ADVANCED_BLEND_SW_FALLBACK
                     DefaultMaterialBlendMode::Enum blendMode
                             = DefaultMaterialBlendMode::Enum::Normal;
-                    if (theObject.m_RenderableFlags.IsDefaultMaterialMeshSubset())
-                        blendMode = static_cast<SSubsetRenderable &>(theObject).getBlendingMode();
+                    if (theObject.renderableFlags.isDefaultMaterialMeshSubset())
+                        blendMode = static_cast<QDemonSubsetRenderable &>(theObject).getBlendingMode();
                     bool useBlendFallback = (blendMode == DefaultMaterialBlendMode::Overlay ||
                                              blendMode == DefaultMaterialBlendMode::ColorBurn ||
                                              blendMode == DefaultMaterialBlendMode::ColorDodge) &&
-                            !theRenderContext.IsAdvancedBlendHwSupported() &&
-                            !theRenderContext.IsAdvancedBlendHwSupportedKHR();
+                            !theRenderContext.isAdvancedBlendHwSupported() &&
+                            !theRenderContext.isAdvancedBlendHwSupportedKHR();
 
-                    if (theObject.m_RenderableFlags.HasTransparency()) {
-                        theRenderContext.SetBlendingEnabled(true && inEnableBlending);
+                    if (theObject.renderableFlags.hasTransparency()) {
+                        theRenderContext.setBlendingEnabled(true && inEnableBlending);
                         // If we have SW fallback for blend mode, render to a FBO and blend back.
                         // Slow as this must be done per-object (transparent and opaque items
                         // are mixed, not batched)
                         if (useBlendFallback)
-                            SetupDrawFB(false);
+                            setupDrawFB(false);
                     }
 #endif
-                    SScopedLightsListScope lightsScope(m_Lights, m_LightDirections,
-                                                       m_SourceLightDirections,
-                                                       theObject.m_ScopedLights);
-                    SetShaderFeature(m_CGLightingFeatureName, m_Lights.empty() == false);
-                    inRenderFn(*this, theObject, theCameraProps, GetShaderFeatureSet(),
+                    QDemonScopedLightsListScope lightsScope(lights, lightDirections,
+                                                       sourceLightDirections,
+                                                       theObject.scopedLights);
+                    setShaderFeature(cgLightingFeatureName, lights.empty() == false);
+                    inRenderFn(*this, theObject, theCameraProps, getShaderFeatureSet(),
                                indexLight, inCamera);
 #ifdef ADVANCED_BLEND_SW_FALLBACK
                     if (useBlendFallback) {
-                        BlendAdvancedToFB(blendMode, false, theFB);
+                        blendAdvancedToFB(blendMode, false, theFB);
                         // restore blending status
-                        theRenderContext.SetBlendingEnabled(inEnableBlending);
+                        theRenderContext.setBlendingEnabled(inEnableBlending);
 
                     }
 #endif
@@ -976,131 +976,131 @@ void SLayerRenderData::RunRenderPass(TRenderRenderableFunction inRenderFn,
     }
 }
 
-void SLayerRenderData::Render(CResourceFrameBuffer *theFB)
+void QDemonLayerRenderData::render(QDemonResourceFrameBuffer *theFB)
 {
-    SStackPerfTimer ___timer(*m_Renderer->GetDemonContext()->GetPerfTimer(),
+    QDemonStackPerfTimer ___timer(*renderer->getDemonContext()->getPerfTimer(),
                              "SLayerRenderData::Render");
-    if (m_Camera == nullptr)
+    if (camera == nullptr)
         return;
 
-    m_Renderer->BeginLayerRender(*this);
-    RunRenderPass(RenderRenderable, true, !m_Layer.m_Flags.IsLayerEnableDepthPrepass(), false,
-                  0, *m_Camera, theFB);
-    m_Renderer->EndLayerRender();
+    renderer->beginLayerRender(*this);
+    runRenderPass(RenderRenderable, true, !layer.flags.isLayerEnableDepthPrepass(), false,
+                  0, *camera, theFB);
+    renderer->endLayerRender();
 }
 
-void SLayerRenderData::CreateGpuProfiler()
+void QDemonLayerRenderData::createGpuProfiler()
 {
-    //    if (m_Renderer->GetContext().IsTimerQuerySupported()) {
-    //        m_LayerProfilerGpu = IRenderProfiler::CreateGpuProfiler(
-    //                    m_Renderer->GetContext().GetFoundation(), m_Renderer.GetDemonContext(),
-    //                    m_Renderer->GetContext());
-    //    }
+//        if (renderer->getContext().isTimerQuerySupported()) {
+//            m_layerProfilerGpu = QDemonRenderProfilerInterface::createGpuProfiler(
+//                        renderer->getContext().getFoundation(), renderer.getDemonContext(),
+//                        renderer->getContext());
+//        }
 }
 
-void SLayerRenderData::StartProfiling(QString &nameID, bool sync)
+void QDemonLayerRenderData::startProfiling(QString &nameID, bool sync)
 {
-    if (m_LayerProfilerGpu) {
-        m_LayerProfilerGpu->StartTimer(nameID, false, sync);
+    if (m_layerProfilerGpu) {
+        m_layerProfilerGpu->startTimer(nameID, false, sync);
     }
 }
 
-void SLayerRenderData::EndProfiling(QString &nameID)
+void QDemonLayerRenderData::endProfiling(QString &nameID)
 {
-    if (m_LayerProfilerGpu) {
-        m_LayerProfilerGpu->EndTimer(nameID);
+    if (m_layerProfilerGpu) {
+        m_layerProfilerGpu->endTimer(nameID);
     }
 }
 
-void SLayerRenderData::StartProfiling(const char *nameID, bool sync)
+void QDemonLayerRenderData::startProfiling(const char *nameID, bool sync)
 {
-    if (m_LayerProfilerGpu) {
+    if (m_layerProfilerGpu) {
         QString theStr(QString::fromLocal8Bit(nameID));
-        m_LayerProfilerGpu->StartTimer(theStr, false, sync);
+        m_layerProfilerGpu->startTimer(theStr, false, sync);
     }
 }
 
-void SLayerRenderData::EndProfiling(const char *nameID)
+void QDemonLayerRenderData::endProfiling(const char *nameID)
 {
-    if (m_LayerProfilerGpu) {
+    if (m_layerProfilerGpu) {
         QString theStr(QString::fromLocal8Bit(nameID));
-        m_LayerProfilerGpu->EndTimer(theStr);
+        m_layerProfilerGpu->endTimer(theStr);
     }
 }
 
-void SLayerRenderData::AddVertexCount(quint32 count)
+void QDemonLayerRenderData::addVertexCount(quint32 count)
 {
-    if (m_LayerProfilerGpu) {
-        m_LayerProfilerGpu->AddVertexCount(count);
+    if (m_layerProfilerGpu) {
+        m_layerProfilerGpu->addVertexCount(count);
     }
 }
 
 // Assumes the viewport is setup appropriately to render the widget.
-void SLayerRenderData::RenderRenderWidgets()
+void QDemonLayerRenderData::renderRenderWidgets()
 {
-    if (m_Camera) {
-        QDemonRenderContext &theContext(*m_Renderer->GetContext());
-        for (quint32 idx = 0, end = m_IRenderWidgets.size(); idx < end; ++idx) {
-            IRenderWidget &theWidget = *m_IRenderWidgets[idx];
-            theWidget.Render(*m_Renderer, theContext);
+    if (camera) {
+        QDemonRenderContext &theContext(*renderer->getContext());
+        for (quint32 idx = 0, end = iRenderWidgets.size(); idx < end; ++idx) {
+            QDemonRenderWidgetInterface &theWidget = *iRenderWidgets[idx];
+            theWidget.render(*renderer, theContext);
         }
     }
 }
 
 #ifdef ADVANCED_BLEND_SW_FALLBACK
-void SLayerRenderData::BlendAdvancedEquationSwFallback(QSharedPointer<QDemonRenderTexture2D> drawTexture,
+void QDemonLayerRenderData::blendAdvancedEquationSwFallback(QSharedPointer<QDemonRenderTexture2D> drawTexture,
                                                        QSharedPointer<QDemonRenderTexture2D> layerTexture,
                                                        AdvancedBlendModes::Enum blendMode)
 {
-    QDemonRenderContext &theContext(*m_Renderer->GetContext());
-    QSharedPointer<SAdvancedModeBlendShader> shader = m_Renderer->GetAdvancedBlendModeShader(blendMode);
+    QDemonRenderContext &theContext(*renderer->getContext());
+    QSharedPointer<QDemonAdvancedModeBlendShader> shader = renderer->getAdvancedBlendModeShader(blendMode);
     if (shader == nullptr)
         return;
 
-    theContext.SetActiveShader((shader->m_Shader));
+    theContext.setActiveShader((shader->shader));
 
-    shader->m_baseLayer.Set(layerTexture.data());
-    shader->m_blendLayer.Set(drawTexture.data());
+    shader->baseLayer.set(layerTexture.data());
+    shader->blendLayer.set(drawTexture.data());
     // Draw a fullscreen quad
-    m_Renderer->RenderQuad();
+    renderer->renderQuad();
 }
 
-void SLayerRenderData::SetupDrawFB(bool depthEnabled)
+void QDemonLayerRenderData::setupDrawFB(bool depthEnabled)
 {
-    QDemonRenderContext &theRenderContext(*m_Renderer->GetContext());
+    QDemonRenderContext &theRenderContext(*renderer->getContext());
     // create drawing FBO and texture, if not existing
-    if (!m_AdvancedModeDrawFB)
-        m_AdvancedModeDrawFB = theRenderContext.CreateFrameBuffer();
-    if (!m_AdvancedBlendDrawTexture) {
-        m_AdvancedBlendDrawTexture = theRenderContext.CreateTexture2D();
-        QDemonRenderRect theViewport = m_Renderer->GetDemonContext()->GetRenderList()->GetViewport();
-        m_AdvancedBlendDrawTexture->SetTextureData(QDemonDataRef<quint8>(), 0,
-                                                   theViewport.m_Width,
-                                                   theViewport.m_Height,
+    if (!m_advancedModeDrawFB)
+        m_advancedModeDrawFB = theRenderContext.createFrameBuffer();
+    if (!m_advancedBlendDrawTexture) {
+        m_advancedBlendDrawTexture = theRenderContext.createTexture2D();
+        QDemonRenderRect theViewport = renderer->getDemonContext()->getRenderList()->getViewport();
+        m_advancedBlendDrawTexture->setTextureData(QDemonDataRef<quint8>(), 0,
+                                                   theViewport.m_width,
+                                                   theViewport.m_height,
                                                    QDemonRenderTextureFormats::RGBA8);
-        m_AdvancedModeDrawFB->Attach(QDemonRenderFrameBufferAttachments::Color0, m_AdvancedBlendDrawTexture);
+        m_advancedModeDrawFB->attach(QDemonRenderFrameBufferAttachments::Color0, m_advancedBlendDrawTexture);
         // Use existing depth prepass information when rendering transparent objects to a FBO
         if (depthEnabled)
-            m_AdvancedModeDrawFB->Attach(QDemonRenderFrameBufferAttachments::Depth, m_LayerPrepassDepthTexture.GetTexture());
+            m_advancedModeDrawFB->attach(QDemonRenderFrameBufferAttachments::Depth, m_layerPrepassDepthTexture.getTexture());
     }
-    theRenderContext.SetRenderTarget(m_AdvancedModeDrawFB);
+    theRenderContext.setRenderTarget(m_advancedModeDrawFB);
     // make sure that depth testing is on in order to render just the
     // depth-passed objects (=transparent objects) and leave background intact
     if (depthEnabled)
-        theRenderContext.SetDepthTestEnabled(true);
-    theRenderContext.SetBlendingEnabled(false);
+        theRenderContext.setDepthTestEnabled(true);
+    theRenderContext.setBlendingEnabled(false);
     // clear color commonly is the layer background, make sure that it is all-zero here
-    QVector4D originalClrColor = theRenderContext.GetClearColor();
-    theRenderContext.SetClearColor(QVector4D(0.0, 0.0, 0.0, 0.0));
-    theRenderContext.Clear(QDemonRenderClearValues::Color);
-    theRenderContext.SetClearColor(originalClrColor);
+    QVector4D originalClrColor = theRenderContext.getClearColor();
+    theRenderContext.setClearColor(QVector4D(0.0, 0.0, 0.0, 0.0));
+    theRenderContext.clear(QDemonRenderClearValues::Color);
+    theRenderContext.setClearColor(originalClrColor);
 
 }
-void SLayerRenderData::BlendAdvancedToFB(DefaultMaterialBlendMode::Enum blendMode,
-                                         bool depthEnabled, CResourceFrameBuffer *theFB)
+void QDemonLayerRenderData::blendAdvancedToFB(DefaultMaterialBlendMode::Enum blendMode,
+                                         bool depthEnabled, QDemonResourceFrameBuffer *theFB)
 {
-    QDemonRenderContext &theRenderContext(*m_Renderer->GetContext());
-    QDemonRenderRect theViewport = m_Renderer->GetDemonContext()->GetRenderList()->GetViewport();
+    QDemonRenderContext &theRenderContext(*renderer->getContext());
+    QDemonRenderRect theViewport = renderer->getDemonContext()->getRenderList()->getViewport();
     AdvancedBlendModes::Enum advancedMode;
 
     switch (blendMode) {
@@ -1117,63 +1117,63 @@ void SLayerRenderData::BlendAdvancedToFB(DefaultMaterialBlendMode::Enum blendMod
         Q_UNREACHABLE();
     }
     // create blending FBO and texture if not existing
-    if (!m_AdvancedModeBlendFB)
-        m_AdvancedModeBlendFB = theRenderContext.CreateFrameBuffer();
-    if (!m_AdvancedBlendBlendTexture) {
-        m_AdvancedBlendBlendTexture = theRenderContext.CreateTexture2D();
-        m_AdvancedBlendBlendTexture->SetTextureData(QDemonDataRef<quint8>(), 0,
-                                                    theViewport.m_Width,
-                                                    theViewport.m_Height,
+    if (!m_advancedModeBlendFB)
+        m_advancedModeBlendFB = theRenderContext.createFrameBuffer();
+    if (!m_advancedBlendBlendTexture) {
+        m_advancedBlendBlendTexture = theRenderContext.createTexture2D();
+        m_advancedBlendBlendTexture->setTextureData(QDemonDataRef<quint8>(), 0,
+                                                    theViewport.m_width,
+                                                    theViewport.m_height,
                                                     QDemonRenderTextureFormats::RGBA8);
-        m_AdvancedModeBlendFB->Attach(QDemonRenderFrameBufferAttachments::Color0, m_AdvancedBlendBlendTexture);
+        m_advancedModeBlendFB->attach(QDemonRenderFrameBufferAttachments::Color0, m_advancedBlendBlendTexture);
     }
-    theRenderContext.SetRenderTarget(m_AdvancedModeBlendFB);
+    theRenderContext.setRenderTarget(m_advancedModeBlendFB);
 
     // Blend transparent objects with SW fallback shaders.
     // Disable depth testing as transparent objects have already been
     // depth-checked; here we want to run shader for all layer pixels
     if (depthEnabled)
     {
-        theRenderContext.SetDepthTestEnabled(false);
-        theRenderContext.SetDepthWriteEnabled(false);
+        theRenderContext.setDepthTestEnabled(false);
+        theRenderContext.setDepthWriteEnabled(false);
     }
-    BlendAdvancedEquationSwFallback(m_AdvancedBlendDrawTexture, m_LayerTexture, advancedMode);
-    theRenderContext.SetRenderTarget(*theFB);
+    blendAdvancedEquationSwFallback(m_advancedBlendDrawTexture, m_layerTexture, advancedMode);
+    theRenderContext.setRenderTarget(*theFB);
     // setup read target
-    theRenderContext.SetReadTarget(m_AdvancedModeBlendFB);
-    theRenderContext.SetReadBuffer(QDemonReadFaces::Color0);
-    theRenderContext.BlitFramebuffer(0, 0, theViewport.m_Width, theViewport.m_Height,
-                                     0, 0, theViewport.m_Width, theViewport.m_Height,
+    theRenderContext.setReadTarget(m_advancedModeBlendFB);
+    theRenderContext.setReadBuffer(QDemonReadFaces::Color0);
+    theRenderContext.blitFramebuffer(0, 0, theViewport.m_width, theViewport.m_height,
+                                     0, 0, theViewport.m_width, theViewport.m_height,
                                      QDemonRenderClearValues::Color,
                                      QDemonRenderTextureMagnifyingOp::Nearest);
 }
 #endif
 
-void SLayerRenderData::RenderToViewport()
+void QDemonLayerRenderData::renderToViewport()
 {
-    if (m_LayerPrepResult->IsLayerVisible()) {
-        if (GetOffscreenRenderer()) {
-            if (m_Layer.m_Background == LayerBackground::Color) {
-                m_LastFrameOffscreenRenderer->RenderWithClear(
-                            CreateOffscreenRenderEnvironment(), *m_Renderer->GetContext(),
-                            m_Renderer->GetDemonContext()->GetPresentationScaleFactor(),
-                            SScene::AlwaysClear, m_Layer.m_ClearColor, &m_Layer);
+    if (layerPrepResult->isLayerVisible()) {
+        if (getOffscreenRenderer()) {
+            if (layer.background == LayerBackground::Color) {
+                lastFrameOffscreenRenderer->renderWithClear(
+                            createOffscreenRenderEnvironment(), *renderer->getContext(),
+                            renderer->getDemonContext()->getPresentationScaleFactor(),
+                            QDemonRenderScene::AlwaysClear, layer.clearColor, &layer);
             } else {
-                m_LastFrameOffscreenRenderer->Render(
-                            CreateOffscreenRenderEnvironment(), *m_Renderer->GetContext(),
-                            m_Renderer->GetDemonContext()->GetPresentationScaleFactor(),
-                            SScene::ClearIsOptional, &m_Layer);
+                lastFrameOffscreenRenderer->render(
+                            createOffscreenRenderEnvironment(), *renderer->getContext(),
+                            renderer->getDemonContext()->getPresentationScaleFactor(),
+                            QDemonRenderScene::ClearIsOptional, &layer);
             }
         } else {
-            RenderDepthPass(false);
-            Render();
-            RenderRenderWidgets();
+            renderDepthPass(false);
+            render();
+            renderRenderWidgets();
         }
     }
 }
 // These are meant to be pixel offsets, so you need to divide them by the width/height
 // of the layer respectively.
-const QVector2D s_VertexOffsets[SLayerRenderPreparationData::MAX_AA_LEVELS] = {
+const QVector2D s_VertexOffsets[QDemonLayerRenderPreparationData::MAX_AA_LEVELS] = {
     QVector2D(-0.170840f, -0.553840f), // 1x
     QVector2D(0.162960f, -0.319340f), // 2x
     QVector2D(0.360260f, -0.245840f), // 3x
@@ -1185,7 +1185,7 @@ const QVector2D s_VertexOffsets[SLayerRenderPreparationData::MAX_AA_LEVELS] = {
 };
 
 // Blend factors are in the form of (frame blend factor, accumulator blend factor)
-const QVector2D s_BlendFactors[SLayerRenderPreparationData::MAX_AA_LEVELS] = {
+const QVector2D s_BlendFactors[QDemonLayerRenderPreparationData::MAX_AA_LEVELS] = {
     QVector2D(0.500000f, 0.500000f), // 1x
     QVector2D(0.333333f, 0.666667f), // 2x
     QVector2D(0.250000f, 0.750000f), // 3x
@@ -1196,11 +1196,11 @@ const QVector2D s_BlendFactors[SLayerRenderPreparationData::MAX_AA_LEVELS] = {
     QVector2D(0.111111f, 0.888889f), // 8x
 };
 
-const QVector2D s_TemporalVertexOffsets[SLayerRenderPreparationData::MAX_TEMPORAL_AA_LEVELS] = {
+const QVector2D s_TemporalVertexOffsets[QDemonLayerRenderPreparationData::MAX_TEMPORAL_AA_LEVELS] = {
     QVector2D(.3f, .3f), QVector2D(-.3f, -.3f)
 };
 
-static inline void OffsetProjectionMatrix(QMatrix4x4 &inProjectionMatrix, QVector2D inVertexOffsets)
+static inline void offsetProjectionMatrix(QMatrix4x4 &inProjectionMatrix, QVector2D inVertexOffsets)
 {
     inProjectionMatrix(3, 0) = inProjectionMatrix(3, 0) + inProjectionMatrix(3, 3) * inVertexOffsets.x();
     inProjectionMatrix(3, 1) = inProjectionMatrix(3, 1) + inProjectionMatrix(3, 3) * inVertexOffsets.y();
@@ -1210,18 +1210,18 @@ QString depthPassStr;
 
 // Render this layer's data to a texture.  Required if we have any effects,
 // prog AA, or if forced.
-void SLayerRenderData::RenderToTexture()
+void QDemonLayerRenderData::renderToTexture()
 {
-    Q_ASSERT(m_LayerPrepResult->m_Flags.ShouldRenderToTexture());
-    SLayerRenderPreparationResult &thePrepResult(*m_LayerPrepResult);
-    QDemonRenderContext &theRenderContext(*m_Renderer->GetContext());
-    QSize theLayerTextureDimensions = thePrepResult.GetTextureDimensions();
+    Q_ASSERT(layerPrepResult->flags.shouldRenderToTexture());
+    QDemonLayerRenderPreparationResult &thePrepResult(*layerPrepResult);
+    QDemonRenderContext &theRenderContext(*renderer->getContext());
+    QSize theLayerTextureDimensions = thePrepResult.getTextureDimensions();
     QSize theLayerOriginalTextureDimensions = theLayerTextureDimensions;
     QDemonRenderTextureFormats::Enum DepthTextureFormat = QDemonRenderTextureFormats::Depth24Stencil8;
     QDemonRenderTextureFormats::Enum ColorTextureFormat = QDemonRenderTextureFormats::RGBA8;
-    if (thePrepResult.m_LastEffect
-            && theRenderContext.GetRenderContextType() != QDemonRenderContextValues::GLES2) {
-        if (m_Layer.m_Background != LayerBackground::Transparent)
+    if (thePrepResult.lastEffect
+            && theRenderContext.getRenderContextType() != QDemonRenderContextValues::GLES2) {
+        if (layer.background != LayerBackground::Transparent)
             ColorTextureFormat = QDemonRenderTextureFormats::R11G11B10;
         else
             ColorTextureFormat = QDemonRenderTextureFormats::RGBA16F;
@@ -1231,62 +1231,62 @@ void SLayerRenderData::RenderToTexture()
     bool needsRender = false;
     quint32 sampleCount = 1;
     // check multsample mode and MSAA texture support
-    if (m_Layer.m_MultisampleAAMode != AAModeValues::NoAA
-            && theRenderContext.AreMultisampleTexturesSupported())
-        sampleCount = (quint32)m_Layer.m_MultisampleAAMode;
+    if (layer.multisampleAAMode != AAModeValues::NoAA
+            && theRenderContext.areMultisampleTexturesSupported())
+        sampleCount = (quint32)layer.multisampleAAMode;
 
     bool isMultisamplePass = false;
-    if (theRenderContext.GetRenderContextType() != QDemonRenderContextValues::GLES2)
+    if (theRenderContext.getRenderContextType() != QDemonRenderContextValues::GLES2)
         isMultisamplePass =
-                (sampleCount > 1) || (m_Layer.m_MultisampleAAMode == AAModeValues::SSAA);
+                (sampleCount > 1) || (layer.multisampleAAMode == AAModeValues::SSAA);
 
     QDemonRenderTextureTargetType::Enum thFboAttachTarget =
             QDemonRenderTextureTargetType::Texture2D;
 
     // If the user has disabled all layer caching this has the side effect of disabling the
     // progressive AA algorithm.
-    if (thePrepResult.m_Flags.WasLayerDataDirty()
-            || thePrepResult.m_Flags.WasDirty()
-            || m_Renderer->IsLayerCachingEnabled() == false
-            || thePrepResult.m_Flags.ShouldRenderToTexture()) {
-        m_ProgressiveAAPassIndex = 0;
-        m_NonDirtyTemporalAAPassIndex = 0;
+    if (thePrepResult.flags.wasLayerDataDirty()
+            || thePrepResult.flags.wasDirty()
+            || renderer->isLayerCachingEnabled() == false
+            || thePrepResult.flags.shouldRenderToTexture()) {
+        m_progressiveAAPassIndex = 0;
+        m_nonDirtyTemporalAAPassIndex = 0;
         needsRender = true;
     }
 
-    CResourceTexture2D *renderColorTexture = &m_LayerTexture;
-    CResourceTexture2D *renderPrepassDepthTexture = &m_LayerPrepassDepthTexture;
-    CResourceTexture2D *renderWidgetTexture = &m_LayerWidgetTexture;
+    QDemonResourceTexture2D *renderColorTexture = &m_layerTexture;
+    QDemonResourceTexture2D *renderPrepassDepthTexture = &m_layerPrepassDepthTexture;
+    QDemonResourceTexture2D *renderWidgetTexture = &m_layerWidgetTexture;
     QDemonRenderContextScopedProperty<bool> __multisampleEnabled(
-                theRenderContext, &QDemonRenderContext::IsMultisampleEnabled,
-                &QDemonRenderContext::SetMultisampleEnabled);
-    theRenderContext.SetMultisampleEnabled(false);
+                theRenderContext, &QDemonRenderContext::isMultisampleEnabled,
+                &QDemonRenderContext::setMultisampleEnabled);
+    theRenderContext.setMultisampleEnabled(false);
     if (isMultisamplePass) {
-        renderColorTexture = &m_LayerMultisampleTexture;
-        renderPrepassDepthTexture = &m_LayerMultisamplePrepassDepthTexture;
-        renderWidgetTexture = &m_LayerMultisampleWidgetTexture;
+        renderColorTexture = &m_layerMultisampleTexture;
+        renderPrepassDepthTexture = &m_layerMultisamplePrepassDepthTexture;
+        renderWidgetTexture = &m_layerMultisampleWidgetTexture;
         // for SSAA we don't use MS textures
-        if (m_Layer.m_MultisampleAAMode != AAModeValues::SSAA)
+        if (layer.multisampleAAMode != AAModeValues::SSAA)
             thFboAttachTarget = QDemonRenderTextureTargetType::Texture2D_MS;
     }
-    quint32 maxTemporalPassIndex = m_Layer.m_TemporalAAEnabled ? 2 : 0;
+    quint32 maxTemporalPassIndex = layer.temporalAAEnabled ? 2 : 0;
 
     // If all the dimensions match then we do not have to re-render the layer.
-    if (m_LayerTexture.TextureMatches(theLayerTextureDimensions.width(),
+    if (m_layerTexture.textureMatches(theLayerTextureDimensions.width(),
                                       theLayerTextureDimensions.height(), ColorTextureFormat)
-            && (!thePrepResult.m_Flags.RequiresDepthTexture()
-                || m_LayerDepthTexture.TextureMatches(theLayerTextureDimensions.width(),
+            && (!thePrepResult.flags.requiresDepthTexture()
+                || m_layerDepthTexture.textureMatches(theLayerTextureDimensions.width(),
                                                       theLayerTextureDimensions.height(),
                                                       DepthTextureFormat))
-            && m_ProgressiveAAPassIndex >= thePrepResult.m_MaxAAPassIndex
-            && m_NonDirtyTemporalAAPassIndex >= maxTemporalPassIndex && needsRender == false) {
+            && m_progressiveAAPassIndex >= thePrepResult.maxAAPassIndex
+            && m_nonDirtyTemporalAAPassIndex >= maxTemporalPassIndex && needsRender == false) {
         return;
     }
 
     // adjust render size for SSAA
-    if (m_Layer.m_MultisampleAAMode == AAModeValues::SSAA) {
+    if (layer.multisampleAAMode == AAModeValues::SSAA) {
         quint32 ow, oh;
-        CRendererUtil::GetSSAARenderSize(theLayerOriginalTextureDimensions.width(),
+        QDemonRendererUtil::getSSAARenderSize(theLayerOriginalTextureDimensions.width(),
                                          theLayerOriginalTextureDimensions.height(),
                                          ow, oh);
         theLayerTextureDimensions = QSize(ow, oh);
@@ -1295,76 +1295,76 @@ void SLayerRenderData::RenderToTexture()
     // If our pass index == thePreResult.m_MaxAAPassIndex then
     // we shouldn't get into here.
 
-    QSharedPointer<IResourceManager> theResourceManager = m_Renderer->GetDemonContext()->GetResourceManager();
+    QSharedPointer<QDemonResourceManagerInterface> theResourceManager = renderer->getDemonContext()->getResourceManager();
     bool hadLayerTexture = true;
 
-    if (renderColorTexture->EnsureTexture(theLayerTextureDimensions.width(),
+    if (renderColorTexture->ensureTexture(theLayerTextureDimensions.width(),
                                           theLayerTextureDimensions.height(),
                                           ColorTextureFormat, sampleCount)) {
-        m_ProgressiveAAPassIndex = 0;
-        m_NonDirtyTemporalAAPassIndex = 0;
+        m_progressiveAAPassIndex = 0;
+        m_nonDirtyTemporalAAPassIndex = 0;
         hadLayerTexture = false;
     }
 
-    if (thePrepResult.m_Flags.RequiresDepthTexture()) {
+    if (thePrepResult.flags.requiresDepthTexture()) {
         // The depth texture doesn't need to be multisample, the prepass depth does.
-        if (m_LayerDepthTexture.EnsureTexture(theLayerTextureDimensions.width(),
+        if (m_layerDepthTexture.ensureTexture(theLayerTextureDimensions.width(),
                                               theLayerTextureDimensions.height(),
                                               DepthTextureFormat)) {
             // Depth textures are generally not bilinear filtered.
-            m_LayerDepthTexture->SetMinFilter(QDemonRenderTextureMinifyingOp::Nearest);
-            m_LayerDepthTexture->SetMagFilter(QDemonRenderTextureMagnifyingOp::Nearest);
-            m_ProgressiveAAPassIndex = 0;
-            m_NonDirtyTemporalAAPassIndex = 0;
+            m_layerDepthTexture->setMinFilter(QDemonRenderTextureMinifyingOp::Nearest);
+            m_layerDepthTexture->setMagFilter(QDemonRenderTextureMagnifyingOp::Nearest);
+            m_progressiveAAPassIndex = 0;
+            m_nonDirtyTemporalAAPassIndex = 0;
         }
     }
 
-    if (thePrepResult.m_Flags.RequiresSsaoPass()) {
-        if (m_LayerSsaoTexture.EnsureTexture(theLayerTextureDimensions.width(),
+    if (thePrepResult.flags.requiresSsaoPass()) {
+        if (m_layerSsaoTexture.ensureTexture(theLayerTextureDimensions.width(),
                                              theLayerTextureDimensions.height(),
                                              ColorSSAOTextureFormat)) {
-            m_LayerSsaoTexture->SetMinFilter(QDemonRenderTextureMinifyingOp::Linear);
-            m_LayerSsaoTexture->SetMagFilter(QDemonRenderTextureMagnifyingOp::Linear);
-            m_ProgressiveAAPassIndex = 0;
-            m_NonDirtyTemporalAAPassIndex = 0;
+            m_layerSsaoTexture->setMinFilter(QDemonRenderTextureMinifyingOp::Linear);
+            m_layerSsaoTexture->setMagFilter(QDemonRenderTextureMagnifyingOp::Linear);
+            m_progressiveAAPassIndex = 0;
+            m_nonDirtyTemporalAAPassIndex = 0;
         }
     }
 
-    Q_ASSERT(!thePrepResult.m_Flags.RequiresDepthTexture() || m_LayerDepthTexture.GetTexture());
-    Q_ASSERT(!thePrepResult.m_Flags.RequiresSsaoPass() || m_LayerSsaoTexture.GetTexture());
+    Q_ASSERT(!thePrepResult.flags.requiresDepthTexture() || m_layerDepthTexture.getTexture());
+    Q_ASSERT(!thePrepResult.flags.requiresSsaoPass() || m_layerSsaoTexture.getTexture());
 
-    CResourceTexture2D theLastLayerTexture(theResourceManager);
-    QSharedPointer<SLayerProgAABlendShader> theBlendShader = nullptr;
+    QDemonResourceTexture2D theLastLayerTexture(theResourceManager);
+    QSharedPointer<QDemonLayerProgAABlendShader> theBlendShader = nullptr;
     quint32 aaFactorIndex = 0;
     bool isProgressiveAABlendPass =
-            m_ProgressiveAAPassIndex && m_ProgressiveAAPassIndex < thePrepResult.m_MaxAAPassIndex;
-    bool isTemporalAABlendPass = m_Layer.m_TemporalAAEnabled && m_ProgressiveAAPassIndex == 0;
+            m_progressiveAAPassIndex && m_progressiveAAPassIndex < thePrepResult.maxAAPassIndex;
+    bool isTemporalAABlendPass = layer.temporalAAEnabled && m_progressiveAAPassIndex == 0;
 
     if (isProgressiveAABlendPass || isTemporalAABlendPass) {
-        theBlendShader = m_Renderer->GetLayerProgAABlendShader();
+        theBlendShader = renderer->getLayerProgAABlendShader();
         if (theBlendShader) {
-            m_LayerTexture.EnsureTexture(theLayerOriginalTextureDimensions.width(),
+            m_layerTexture.ensureTexture(theLayerOriginalTextureDimensions.width(),
                                          theLayerOriginalTextureDimensions.height(),
                                          ColorTextureFormat);
             QVector2D theVertexOffsets;
             if (isProgressiveAABlendPass) {
-                theLastLayerTexture.StealTexture(m_LayerTexture);
-                aaFactorIndex = (m_ProgressiveAAPassIndex - 1);
+                theLastLayerTexture.stealTexture(m_layerTexture);
+                aaFactorIndex = (m_progressiveAAPassIndex - 1);
                 theVertexOffsets = s_VertexOffsets[aaFactorIndex];
             } else {
-                if (m_TemporalAATexture.GetTexture())
-                    theLastLayerTexture.StealTexture(m_TemporalAATexture);
+                if (m_temporalAATexture.getTexture())
+                    theLastLayerTexture.stealTexture(m_temporalAATexture);
                 else {
                     if (hadLayerTexture) {
-                        theLastLayerTexture.StealTexture(m_LayerTexture);
+                        theLastLayerTexture.stealTexture(m_layerTexture);
                     }
                 }
-                theVertexOffsets = s_TemporalVertexOffsets[m_TemporalAAPassIndex];
-                ++m_TemporalAAPassIndex;
-                ++m_NonDirtyTemporalAAPassIndex;
-                m_TemporalAAPassIndex = m_TemporalAAPassIndex % MAX_TEMPORAL_AA_LEVELS;
+                theVertexOffsets = s_TemporalVertexOffsets[m_temporalAAPassIndex];
+                ++m_temporalAAPassIndex;
+                ++m_nonDirtyTemporalAAPassIndex;
+                m_temporalAAPassIndex = m_temporalAAPassIndex % MAX_TEMPORAL_AA_LEVELS;
             }
-            if (theLastLayerTexture.GetTexture()) {
+            if (theLastLayerTexture.getTexture()) {
                 theVertexOffsets.setX(theVertexOffsets.x() / (theLayerOriginalTextureDimensions.width() / 2.0f));
                 theVertexOffsets.setY(theVertexOffsets.y() / (theLayerOriginalTextureDimensions.height() / 2.0f));
                 // Run through all models and update MVP.
@@ -1372,181 +1372,180 @@ void SLayerRenderData::RenderToTexture()
                 // run through all path and update MVP.
 
                 // TODO - optimize this exact matrix operation.
-                for (quint32 idx = 0, end = m_ModelContexts.size(); idx < end; ++idx) {
-                    QMatrix4x4 &originalProjection(m_ModelContexts[idx]->m_ModelViewProjection);
-                    OffsetProjectionMatrix(originalProjection, theVertexOffsets);
+                for (quint32 idx = 0, end = modelContexts.size(); idx < end; ++idx) {
+                    QMatrix4x4 &originalProjection(modelContexts[idx]->modelViewProjection);
+                    offsetProjectionMatrix(originalProjection, theVertexOffsets);
                 }
-                for (quint32 idx = 0, end = m_OpaqueObjects.size(); idx < end; ++idx) {
-                    if (m_OpaqueObjects[idx]->m_RenderableFlags.IsPath()) {
-                        SPathRenderable &theRenderable =
-                                static_cast<SPathRenderable &>(*m_OpaqueObjects[idx]);
-                        OffsetProjectionMatrix(theRenderable.m_ModelViewProjection,
+                for (quint32 idx = 0, end = opaqueObjects.size(); idx < end; ++idx) {
+                    if (opaqueObjects[idx]->renderableFlags.isPath()) {
+                        QDemonPathRenderable &theRenderable =
+                                static_cast<QDemonPathRenderable &>(*opaqueObjects[idx]);
+                        offsetProjectionMatrix(theRenderable.m_mvp,
                                                theVertexOffsets);
                     }
                 }
-                for (quint32 idx = 0, end = m_TransparentObjects.size(); idx < end; ++idx) {
-                    if (m_TransparentObjects[idx]->m_RenderableFlags.IsText()) {
-                        STextRenderable &theRenderable =
-                                static_cast<STextRenderable &>(*m_TransparentObjects[idx]);
-                        OffsetProjectionMatrix(theRenderable.m_ModelViewProjection,
+                for (quint32 idx = 0, end = transparentObjects.size(); idx < end; ++idx) {
+                    if (transparentObjects[idx]->renderableFlags.IsText()) {
+                        QDemonTextRenderable &theRenderable =
+                                static_cast<QDemonTextRenderable &>(*transparentObjects[idx]);
+                        offsetProjectionMatrix(theRenderable.modelViewProjection,
                                                theVertexOffsets);
-                    } else if (m_TransparentObjects[idx]->m_RenderableFlags.IsPath()) {
-                        SPathRenderable &theRenderable =
-                                static_cast<SPathRenderable &>(*m_TransparentObjects[idx]);
-                        OffsetProjectionMatrix(theRenderable.m_ModelViewProjection,
+                    } else if (transparentObjects[idx]->renderableFlags.isPath()) {
+                        QDemonPathRenderable &theRenderable =
+                                static_cast<QDemonPathRenderable &>(*transparentObjects[idx]);
+                        offsetProjectionMatrix(theRenderable.m_mvp,
                                                theVertexOffsets);
                     }
                 }
             }
         }
     }
-    if (theLastLayerTexture.GetTexture() == nullptr) {
+    if (theLastLayerTexture.getTexture() == nullptr) {
         isProgressiveAABlendPass = false;
         isTemporalAABlendPass = false;
     }
     // Sometimes we will have stolen the render texture.
-    renderColorTexture->EnsureTexture(theLayerTextureDimensions.width(),
+    renderColorTexture->ensureTexture(theLayerTextureDimensions.width(),
                                       theLayerTextureDimensions.height(), ColorTextureFormat,
                                       sampleCount);
 
     if (!isTemporalAABlendPass)
-        m_TemporalAATexture.ReleaseTexture();
+        m_temporalAATexture.releaseTexture();
 
     // Allocating a frame buffer can cause it to be bound, so we need to save state before this
     // happens.
     QDemonRenderContextScopedProperty<QSharedPointer<QDemonRenderFrameBuffer>> __framebuf(
-                theRenderContext, &QDemonRenderContext::GetRenderTarget, &QDemonRenderContext::SetRenderTarget);
+                theRenderContext, &QDemonRenderContext::getRenderTarget, &QDemonRenderContext::setRenderTarget);
     // Match the bit depth of the current render target to avoid popping when we switch from aa
     // to non aa layers
     // We have to all this here in because once we change the FB by allocating an FB we are
     // screwed.
-    QDemonRenderTextureFormats::Enum theDepthFormat(GetDepthBufferFormat());
+    QDemonRenderTextureFormats::Enum theDepthFormat(getDepthBufferFormat());
     QDemonRenderFrameBufferAttachments::Enum theDepthAttachmentFormat(
-                GetFramebufferDepthAttachmentFormat(theDepthFormat));
+                getFramebufferDepthAttachmentFormat(theDepthFormat));
 
     // Definitely disable the scissor rect if it is running right now.
     QDemonRenderContextScopedProperty<bool> __scissorEnabled(
-                theRenderContext, &QDemonRenderContext::IsScissorTestEnabled,
-                &QDemonRenderContext::SetScissorTestEnabled, false);
-    CResourceFrameBuffer theFB(theResourceManager);
+                theRenderContext, &QDemonRenderContext::isScissorTestEnabled,
+                &QDemonRenderContext::setScissorTestEnabled, false);
+    QDemonResourceFrameBuffer theFB(theResourceManager);
     // Allocates the frame buffer which has the side effect of setting the current render target
     // to that frame buffer.
-    theFB.EnsureFrameBuffer();
+    theFB.ensureFrameBuffer();
 
-    bool hasDepthObjects = m_OpaqueObjects.size() > 0;
+    bool hasDepthObjects = opaqueObjects.size() > 0;
     bool requiresDepthStencilBuffer =
-            hasDepthObjects || thePrepResult.m_Flags.RequiresStencilBuffer();
+            hasDepthObjects || thePrepResult.flags.requiresStencilBuffer();
     QDemonRenderRect theNewViewport(0, 0, theLayerTextureDimensions.width(),
                                     theLayerTextureDimensions.height());
     {
-        theRenderContext.SetRenderTarget(theFB);
+        theRenderContext.setRenderTarget(theFB);
         QDemonRenderContextScopedProperty<QDemonRenderRect> __viewport(
-                    theRenderContext, &QDemonRenderContext::GetViewport, &QDemonRenderContext::SetViewport,
+                    theRenderContext, &QDemonRenderContext::getViewport, &QDemonRenderContext::setViewport,
                     theNewViewport);
         QVector4D clearColor(0.0, 0.0, 0.0, 0.0);
-        if (m_Layer.m_Background == LayerBackground::Color)
-            clearColor = QVector4D(m_Layer.m_ClearColor, 1.0);
+        if (layer.background == LayerBackground::Color)
+            clearColor = QVector4D(layer.clearColor, 1.0);
 
         QDemonRenderContextScopedProperty<QVector4D> __clearColor(
-                    theRenderContext, &QDemonRenderContext::GetClearColor, &QDemonRenderContext::SetClearColor,
+                    theRenderContext, &QDemonRenderContext::getClearColor, &QDemonRenderContext::setClearColor,
                     clearColor);
         if (requiresDepthStencilBuffer) {
-            if (renderPrepassDepthTexture->EnsureTexture(theLayerTextureDimensions.width(),
+            if (renderPrepassDepthTexture->ensureTexture(theLayerTextureDimensions.width(),
                                                          theLayerTextureDimensions.height(),
                                                          theDepthFormat, sampleCount)) {
-                (*renderPrepassDepthTexture)->SetMinFilter(QDemonRenderTextureMinifyingOp::Nearest);
-                (*renderPrepassDepthTexture)
-                        ->SetMagFilter(QDemonRenderTextureMagnifyingOp::Nearest);
+                (*renderPrepassDepthTexture)->setMinFilter(QDemonRenderTextureMinifyingOp::Nearest);
+                (*renderPrepassDepthTexture)->setMagFilter(QDemonRenderTextureMagnifyingOp::Nearest);
             }
         }
 
-        if (thePrepResult.m_Flags.RequiresDepthTexture() && m_ProgressiveAAPassIndex == 0) {
+        if (thePrepResult.flags.requiresDepthTexture() && m_progressiveAAPassIndex == 0) {
             // Setup FBO with single depth buffer target.
             // Note this does not use multisample.
             QDemonRenderFrameBufferAttachments::Enum theAttachment =
-                    GetFramebufferDepthAttachmentFormat(DepthTextureFormat);
-            theFB->Attach(theAttachment, m_LayerDepthTexture.GetTexture());
+                    getFramebufferDepthAttachmentFormat(DepthTextureFormat);
+            theFB->attach(theAttachment, m_layerDepthTexture.getTexture());
 
             // In this case transparent objects also may write their depth.
-            RenderDepthPass(true);
-            theFB->Attach(theAttachment, QDemonRenderTextureOrRenderBuffer());
+            renderDepthPass(true);
+            theFB->attach(theAttachment, QDemonRenderTextureOrRenderBuffer());
         }
 
-        if (thePrepResult.m_Flags.RequiresSsaoPass() && m_ProgressiveAAPassIndex == 0
-                && m_Camera != nullptr) {
-            StartProfiling("AO pass", false);
+        if (thePrepResult.flags.requiresSsaoPass() && m_progressiveAAPassIndex == 0
+                && camera != nullptr) {
+            startProfiling("AO pass", false);
             // Setup FBO with single color buffer target
-            theFB->Attach(QDemonRenderFrameBufferAttachments::Color0, m_LayerSsaoTexture.GetTexture());
-            theRenderContext.Clear(QDemonRenderClearValues::Color);
-            RenderAoPass();
-            theFB->Attach(QDemonRenderFrameBufferAttachments::Color0,
+            theFB->attach(QDemonRenderFrameBufferAttachments::Color0, m_layerSsaoTexture.getTexture());
+            theRenderContext.clear(QDemonRenderClearValues::Color);
+            renderAoPass();
+            theFB->attach(QDemonRenderFrameBufferAttachments::Color0,
                           QDemonRenderTextureOrRenderBuffer());
-            EndProfiling("AO pass");
+            endProfiling("AO pass");
         }
 
-        if (thePrepResult.m_Flags.RequiresShadowMapPass() && m_ProgressiveAAPassIndex == 0) {
+        if (thePrepResult.flags.requiresShadowMapPass() && m_progressiveAAPassIndex == 0) {
             // shadow map path
-            RenderShadowMapPass(&theFB);
+            renderShadowMapPass(&theFB);
         }
 
         if (sampleCount > 1) {
-            theRenderContext.SetMultisampleEnabled(true);
+            theRenderContext.setMultisampleEnabled(true);
         }
 
         QDemonRenderClearFlags clearFlags = QDemonRenderClearValues::Color;
 
         // render depth prepass
-        if (renderPrepassDepthTexture->GetTexture()) {
-            theFB->Attach(theDepthAttachmentFormat, renderPrepassDepthTexture->GetTexture(),
+        if (renderPrepassDepthTexture->getTexture()) {
+            theFB->attach(theDepthAttachmentFormat, renderPrepassDepthTexture->getTexture(),
                           thFboAttachTarget);
 
-            if (m_Layer.m_Flags.IsLayerEnableDepthPrepass()) {
-                StartProfiling("Depth pass", false);
-                RenderDepthPass(false);
-                EndProfiling("Depth pass");
+            if (layer.flags.isLayerEnableDepthPrepass()) {
+                startProfiling("Depth pass", false);
+                renderDepthPass(false);
+                endProfiling("Depth pass");
             } else {
                 clearFlags |= (QDemonRenderClearValues::Depth);
                 clearFlags |= (QDemonRenderClearValues::Stencil);
                 // enable depth write for the clear below
-                theRenderContext.SetDepthWriteEnabled(true);
+                theRenderContext.setDepthWriteEnabled(true);
             }
         }
 
-        theFB->Attach(QDemonRenderFrameBufferAttachments::Color0, renderColorTexture->GetTexture(),
+        theFB->attach(QDemonRenderFrameBufferAttachments::Color0, renderColorTexture->getTexture(),
                       thFboAttachTarget);
-        if (m_Layer.m_Background != LayerBackground::Unspecified)
-            theRenderContext.Clear(clearFlags);
+        if (layer.background != LayerBackground::Unspecified)
+            theRenderContext.clear(clearFlags);
 
         // We don't clear the depth buffer because the layer render code we are about to call
         // will do this.
-        StartProfiling("Render pass", false);
-        Render(&theFB);
+        startProfiling("Render pass", false);
+        render(&theFB);
         // Debug measure to view the depth map to ensure we're rendering it correctly.
         //if (m_Layer.m_TemporalAAEnabled) {
         //    RenderFakeDepthMapPass(m_ShadowMapManager->GetShadowMapEntry(0)->m_DepthMap,
         //                           m_ShadowMapManager->GetShadowMapEntry(0)->m_DepthCube);
         //}
-        EndProfiling("Render pass");
+        endProfiling("Render pass");
 
         // Now before going further, we downsample and resolve the multisample information.
         // This allows all algorithms running after
         // this point to run unchanged.
         if (isMultisamplePass) {
-            if (m_Layer.m_MultisampleAAMode != AAModeValues::SSAA) {
+            if (layer.multisampleAAMode != AAModeValues::SSAA) {
                 // Resolve the FBO to the layer texture
-                CRendererUtil::ResolveMutisampleFBOColorOnly(theResourceManager,
-                                                             m_LayerTexture,
+                QDemonRendererUtil::resolveMutisampleFBOColorOnly(theResourceManager,
+                                                             m_layerTexture,
                                                              theRenderContext,
                                                              theLayerTextureDimensions.width(),
                                                              theLayerTextureDimensions.height(),
                                                              ColorTextureFormat,
-                                                             theFB.GetFrameBuffer());
+                                                             theFB.getFrameBuffer());
 
-                theRenderContext.SetMultisampleEnabled(false);
+                theRenderContext.setMultisampleEnabled(false);
             } else {
                 // Resolve the FBO to the layer texture
-                CRendererUtil::ResolveSSAAFBOColorOnly(
-                            theResourceManager, m_LayerTexture,
+                QDemonRendererUtil::resolveSSAAFBOColorOnly(
+                            theResourceManager, m_layerTexture,
                             theLayerOriginalTextureDimensions.width(),
                             theLayerOriginalTextureDimensions.height(), theRenderContext,
                             theLayerTextureDimensions.width(), theLayerTextureDimensions.height(),
@@ -1558,192 +1557,192 @@ void SLayerRenderData::RenderToTexture()
         // layer which made it overwrite the object you were
         // manipulating.  When I tried to use parallel nsight on it the entire studio
         // application crashed on startup.
-        if (NeedsWidgetTexture()) {
-            m_LayerWidgetTexture.EnsureTexture(theLayerTextureDimensions.width(),
+        if (needsWidgetTexture()) {
+            m_layerWidgetTexture.ensureTexture(theLayerTextureDimensions.width(),
                                                theLayerTextureDimensions.height(),
                                                QDemonRenderTextureFormats::RGBA8);
-            theRenderContext.SetRenderTarget(theFB);
-            theFB->Attach(QDemonRenderFrameBufferAttachments::Color0, m_LayerWidgetTexture.GetTexture());
-            theFB->Attach(GetFramebufferDepthAttachmentFormat(DepthTextureFormat), m_LayerDepthTexture.GetTexture());
-            theRenderContext.SetClearColor(QVector4D(0.0, 0.0, 0.0, 0.0));
-            theRenderContext.Clear(QDemonRenderClearValues::Color);
+            theRenderContext.setRenderTarget(theFB);
+            theFB->attach(QDemonRenderFrameBufferAttachments::Color0, m_layerWidgetTexture.getTexture());
+            theFB->attach(getFramebufferDepthAttachmentFormat(DepthTextureFormat), m_layerDepthTexture.getTexture());
+            theRenderContext.setClearColor(QVector4D(0.0, 0.0, 0.0, 0.0));
+            theRenderContext.clear(QDemonRenderClearValues::Color);
             // We should already have the viewport and everything setup for this.
-            RenderRenderWidgets();
+            renderRenderWidgets();
         }
 
-        if (theLastLayerTexture.GetTexture() != nullptr
+        if (theLastLayerTexture.getTexture() != nullptr
                 && (isProgressiveAABlendPass || isTemporalAABlendPass)) {
-            theRenderContext.SetViewport(
+            theRenderContext.setViewport(
                         QDemonRenderRect(0, 0, theLayerOriginalTextureDimensions.width(),
                                          theLayerOriginalTextureDimensions.height()));
-            CResourceTexture2D targetTexture(
+            QDemonResourceTexture2D targetTexture(
                         theResourceManager, theLayerOriginalTextureDimensions.width(),
                         theLayerOriginalTextureDimensions.height(), ColorTextureFormat);
-            theFB->Attach(theDepthAttachmentFormat,
+            theFB->attach(theDepthAttachmentFormat,
                           QDemonRenderTextureOrRenderBuffer());
-            theFB->Attach(QDemonRenderFrameBufferAttachments::Color0, targetTexture.GetTexture());
+            theFB->attach(QDemonRenderFrameBufferAttachments::Color0, targetTexture.getTexture());
             QVector2D theBlendFactors;
             if (isProgressiveAABlendPass)
                 theBlendFactors = s_BlendFactors[aaFactorIndex];
             else
                 theBlendFactors = QVector2D(.5f, .5f);
 
-            theRenderContext.SetDepthTestEnabled(false);
-            theRenderContext.SetBlendingEnabled(false);
-            theRenderContext.SetCullingEnabled(false);
-            theRenderContext.SetActiveShader(theBlendShader->m_Shader);
-            theBlendShader->m_AccumSampler.Set(theLastLayerTexture.GetTexture().data());
-            theBlendShader->m_LastFrame.Set(m_LayerTexture.GetTexture().data());
-            theBlendShader->m_BlendFactors.Set(theBlendFactors);
-            m_Renderer->RenderQuad();
-            theFB->Attach(QDemonRenderFrameBufferAttachments::Color0,
+            theRenderContext.setDepthTestEnabled(false);
+            theRenderContext.setBlendingEnabled(false);
+            theRenderContext.setCullingEnabled(false);
+            theRenderContext.setActiveShader(theBlendShader->shader);
+            theBlendShader->accumSampler.set(theLastLayerTexture.getTexture().data());
+            theBlendShader->lastFrame.set(m_layerTexture.getTexture().data());
+            theBlendShader->blendFactors.set(theBlendFactors);
+            renderer->renderQuad();
+            theFB->attach(QDemonRenderFrameBufferAttachments::Color0,
                           QDemonRenderTextureOrRenderBuffer());
             if (isTemporalAABlendPass)
-                m_TemporalAATexture.StealTexture(m_LayerTexture);
-            m_LayerTexture.StealTexture(targetTexture);
+                m_temporalAATexture.stealTexture(m_layerTexture);
+            m_layerTexture.stealTexture(targetTexture);
         }
 
-        m_LayerTexture->SetMinFilter(QDemonRenderTextureMinifyingOp::Linear);
-        m_LayerTexture->SetMagFilter(QDemonRenderTextureMagnifyingOp::Linear);
+        m_layerTexture->setMinFilter(QDemonRenderTextureMinifyingOp::Linear);
+        m_layerTexture->setMagFilter(QDemonRenderTextureMagnifyingOp::Linear);
 
         // Don't remember why needs widget texture is false here.
         // Should have commented why progAA plus widgets is a fail.
-        if (m_ProgressiveAAPassIndex < thePrepResult.m_MaxAAPassIndex
-                && NeedsWidgetTexture() == false)
-            ++m_ProgressiveAAPassIndex;
+        if (m_progressiveAAPassIndex < thePrepResult.maxAAPassIndex
+                && needsWidgetTexture() == false)
+            ++m_progressiveAAPassIndex;
 
         // now we render all post effects
 #ifdef QDEMON_CACHED_POST_EFFECT
-        ApplyLayerPostEffects();
+        applyLayerPostEffects();
 #endif
 
-        if (m_LayerPrepassDepthTexture.GetTexture()) {
+        if (m_layerPrepassDepthTexture.getTexture()) {
             // Detach any depth buffers.
-            theFB->Attach(theDepthAttachmentFormat, QDemonRenderTextureOrRenderBuffer(),
+            theFB->attach(theDepthAttachmentFormat, QDemonRenderTextureOrRenderBuffer(),
                           thFboAttachTarget);
         }
 
-        theFB->Attach(QDemonRenderFrameBufferAttachments::Color0,
+        theFB->attach(QDemonRenderFrameBufferAttachments::Color0,
                       QDemonRenderTextureOrRenderBuffer(), thFboAttachTarget);
         // Let natural scoping rules destroy the other stuff.
     }
 }
 
-void SLayerRenderData::ApplyLayerPostEffects()
+void QDemonLayerRenderData::applyLayerPostEffects()
 {
-    if (m_Layer.m_FirstEffect == nullptr) {
-        if (m_LayerCachedTexture) {
-            QSharedPointer<IResourceManager> theResourceManager(m_Renderer->GetDemonContext()->GetResourceManager());
-            theResourceManager->Release(m_LayerCachedTexture);
-            m_LayerCachedTexture = nullptr;
+    if (layer.firstEffect == nullptr) {
+        if (m_layerCachedTexture) {
+            QSharedPointer<QDemonResourceManagerInterface> theResourceManager(renderer->getDemonContext()->getResourceManager());
+            theResourceManager->release(m_layerCachedTexture);
+            m_layerCachedTexture = nullptr;
         }
         return;
     }
 
-    QSharedPointer<IEffectSystem> theEffectSystem(m_Renderer->GetDemonContext()->GetEffectSystem());
-    QSharedPointer<IResourceManager> theResourceManager(m_Renderer->GetDemonContext()->GetResourceManager());
+    QSharedPointer<QDemonEffectSystemInterface> theEffectSystem(renderer->getDemonContext()->getEffectSystem());
+    QSharedPointer<QDemonResourceManagerInterface> theResourceManager(renderer->getDemonContext()->getResourceManager());
     // we use the non MSAA buffer for the effect
-    QSharedPointer<QDemonRenderTexture2D> theLayerColorTexture = m_LayerTexture.GetTexture();
-    QSharedPointer<QDemonRenderTexture2D> theLayerDepthTexture = m_LayerDepthTexture.GetTexture();
+    QSharedPointer<QDemonRenderTexture2D> theLayerColorTexture = m_layerTexture.getTexture();
+    QSharedPointer<QDemonRenderTexture2D> theLayerDepthTexture = m_layerDepthTexture.getTexture();
 
     QSharedPointer<QDemonRenderTexture2D> theCurrentTexture = theLayerColorTexture;
-    for (SEffect *theEffect = m_Layer.m_FirstEffect; theEffect;
-         theEffect = theEffect->m_NextEffect) {
-        if (theEffect->m_Flags.IsActive() && m_Camera) {
-            StartProfiling(theEffect->m_ClassName, false);
+    for (QDemonEffect *theEffect = layer.firstEffect; theEffect;
+         theEffect = theEffect->m_nextEffect) {
+        if (theEffect->flags.isActive() && camera) {
+            startProfiling(theEffect->className, false);
 
-            QSharedPointer<QDemonRenderTexture2D> theRenderedEffect = theEffectSystem->RenderEffect(
-                        SEffectRenderArgument(theEffect, theCurrentTexture,
-                                              QVector2D(m_Camera->m_ClipNear, m_Camera->m_ClipFar),
-                                              theLayerDepthTexture, m_LayerPrepassDepthTexture));
+            QSharedPointer<QDemonRenderTexture2D> theRenderedEffect = theEffectSystem->renderEffect(
+                        QDemonEffectRenderArgument(theEffect, theCurrentTexture,
+                                              QVector2D(camera->clipNear, camera->clipFar),
+                                              theLayerDepthTexture, m_layerPrepassDepthTexture));
 
-            EndProfiling(theEffect->m_ClassName);
+            endProfiling(theEffect->className);
 
             // If the texture came from rendering a chain of effects, then we don't need it
             // after this.
             if (theCurrentTexture != theLayerColorTexture)
-                theResourceManager->Release(theCurrentTexture);
+                theResourceManager->release(theCurrentTexture);
 
             theCurrentTexture = theRenderedEffect;
 
             if (!theRenderedEffect) {
                 QString errorMsg = QObject::tr("Failed to compile \"%1\" effect.\nConsider"
                                                " removing it from the presentation.")
-                        .arg(theEffect->m_ClassName);
+                        .arg(theEffect->className);
                 qFatal(errorMsg.toUtf8());
                 break;
             }
         }
     }
 
-    if (m_LayerCachedTexture && m_LayerCachedTexture != m_LayerTexture.GetTexture()) {
-        theResourceManager->Release(m_LayerCachedTexture);
-        m_LayerCachedTexture = nullptr;
+    if (m_layerCachedTexture && m_layerCachedTexture != m_layerTexture.getTexture()) {
+        theResourceManager->release(m_layerCachedTexture);
+        m_layerCachedTexture = nullptr;
     }
 
-    if (theCurrentTexture != m_LayerTexture.GetTexture())
-        m_LayerCachedTexture = theCurrentTexture;
+    if (theCurrentTexture != m_layerTexture.getTexture())
+        m_layerCachedTexture = theCurrentTexture;
 }
 
 inline bool AnyCompletelyNonTransparentObjects(TRenderableObjectList &inObjects)
 {
     for (quint32 idx = 0, end = inObjects.size(); idx < end; ++idx) {
-        if (inObjects[idx]->m_RenderableFlags.IsCompletelyTransparent() == false)
+        if (inObjects[idx]->renderableFlags.isCompletelyTransparent() == false)
             return true;
     }
     return false;
 }
 
-void SLayerRenderData::RunnableRenderToViewport(QSharedPointer<QDemonRenderFrameBuffer> theFB)
+void QDemonLayerRenderData::runnableRenderToViewport(QSharedPointer<QDemonRenderFrameBuffer> theFB)
 {
     // If we have an effect, an opaque object, or any transparent objects that aren't completely
     // transparent
     // or an offscreen renderer or a layer widget texture
     // Then we can't possible affect the resulting render target.
-    bool needsToRender = m_Layer.m_FirstEffect != nullptr || m_OpaqueObjects.empty() == false
-            || AnyCompletelyNonTransparentObjects(m_TransparentObjects) || GetOffscreenRenderer()
-            || m_LayerWidgetTexture.GetTexture() || m_BoundingRectColor.hasValue()
-            || m_Layer.m_Background == LayerBackground::Color;
+    bool needsToRender = layer.firstEffect != nullptr || opaqueObjects.empty() == false
+            || AnyCompletelyNonTransparentObjects(transparentObjects) || getOffscreenRenderer()
+            || m_layerWidgetTexture.getTexture() || m_boundingRectColor.hasValue()
+            || layer.background == LayerBackground::Color;
 
     if (needsToRender == false)
         return;
 
-    QDemonRenderContext &theContext(*m_Renderer->GetContext());
+    QDemonRenderContext &theContext(*renderer->getContext());
     theContext.resetStates();
 
     QDemonRenderContextScopedProperty<QSharedPointer<QDemonRenderFrameBuffer>> __fbo(
-                theContext, &QDemonRenderContext::GetRenderTarget, &QDemonRenderContext::SetRenderTarget);
-    QDemonRenderRect theCurrentViewport = theContext.GetViewport();
+                theContext, &QDemonRenderContext::getRenderTarget, &QDemonRenderContext::setRenderTarget);
+    QDemonRenderRect theCurrentViewport = theContext.getViewport();
     QDemonRenderContextScopedProperty<QDemonRenderRect> __viewport(
-                theContext, &QDemonRenderContext::GetViewport, &QDemonRenderContext::SetViewport);
+                theContext, &QDemonRenderContext::getViewport, &QDemonRenderContext::setViewport);
     QDemonRenderContextScopedProperty<bool> theScissorEnabled(
-                theContext, &QDemonRenderContext::IsScissorTestEnabled,
-                &QDemonRenderContext::SetScissorTestEnabled);
+                theContext, &QDemonRenderContext::isScissorTestEnabled,
+                &QDemonRenderContext::setScissorTestEnabled);
     QDemonRenderContextScopedProperty<QDemonRenderRect> theScissorRect(
-                theContext, &QDemonRenderContext::GetScissorRect, &QDemonRenderContext::SetScissorRect);
-    SLayerRenderPreparationResult &thePrepResult(*m_LayerPrepResult);
-    QDemonRenderRectF theScreenRect(thePrepResult.GetLayerToPresentationViewport());
+                theContext, &QDemonRenderContext::getScissorRect, &QDemonRenderContext::setScissorRect);
+    QDemonLayerRenderPreparationResult &thePrepResult(*layerPrepResult);
+    QDemonRenderRectF theScreenRect(thePrepResult.getLayerToPresentationViewport());
 
-    bool blendingEnabled = m_Layer.m_Background == LayerBackground::Transparent;
-    if (!thePrepResult.m_Flags.ShouldRenderToTexture()) {
-        theContext.SetViewport(
-                    m_LayerPrepResult->GetLayerToPresentationViewport().ToIntegerRect());
-        theContext.SetScissorTestEnabled(true);
-        theContext.SetScissorRect(
-                    m_LayerPrepResult->GetLayerToPresentationScissorRect().ToIntegerRect());
-        if (m_Layer.m_Background == LayerBackground::Color) {
+    bool blendingEnabled = layer.background == LayerBackground::Transparent;
+    if (!thePrepResult.flags.shouldRenderToTexture()) {
+        theContext.setViewport(
+                    layerPrepResult->getLayerToPresentationViewport().toIntegerRect());
+        theContext.setScissorTestEnabled(true);
+        theContext.setScissorRect(
+                    layerPrepResult->getLayerToPresentationScissorRect().toIntegerRect());
+        if (layer.background == LayerBackground::Color) {
             QDemonRenderContextScopedProperty<QVector4D> __clearColor(
-                        theContext, &QDemonRenderContext::GetClearColor, &QDemonRenderContext::SetClearColor,
-                        QVector4D(m_Layer.m_ClearColor, 0.0f));
-            theContext.Clear(QDemonRenderClearValues::Color);
+                        theContext, &QDemonRenderContext::getClearColor, &QDemonRenderContext::setClearColor,
+                        QVector4D(layer.clearColor, 0.0f));
+            theContext.clear(QDemonRenderClearValues::Color);
         }
-        RenderToViewport();
+        renderToViewport();
     } else {
         // First, render the layer along with whatever progressive AA is appropriate.
         // The render graph should have taken care of the render to texture step.
 #ifdef QDEMON_CACHED_POST_EFFECT
         QSharedPointer<QDemonRenderTexture2D> theLayerColorTexture =
-                (m_LayerCachedTexture) ? m_LayerCachedTexture : m_LayerTexture;
+                (m_layerCachedTexture) ? m_layerCachedTexture : m_layerTexture;
 #else
         // Then render all but the last effect
         IEffectSystem &theEffectSystem(m_Renderer.GetDemonContext().GetEffectSystem());
@@ -1783,34 +1782,34 @@ void SLayerRenderData::RunnableRenderToViewport(QSharedPointer<QDemonRenderFrame
         // The second is when we are expected to render to the scene using some global
         // transform.
         QMatrix4x4 theFinalMVP;
-        SCamera theTempCamera;
+        QDemonRenderCamera theTempCamera;
         QDemonRenderRect theLayerViewport(
-                    thePrepResult.GetLayerToPresentationViewport().ToIntegerRect());
+                    thePrepResult.getLayerToPresentationViewport().toIntegerRect());
         QDemonRenderRect theLayerClip(
-                    thePrepResult.GetLayerToPresentationScissorRect().ToIntegerRect());
+                    thePrepResult.getLayerToPresentationScissorRect().toIntegerRect());
 
         {
             QMatrix3x3 ignored;
             QMatrix4x4 theViewProjection;
             // We could cache these variables
-            theTempCamera.m_Flags.SetOrthographic(true);
-            theTempCamera.MarkDirty(NodeTransformDirtyFlag::TransformIsDirty);
+            theTempCamera.flags.setOrthographic(true);
+            theTempCamera.markDirty(NodeTransformDirtyFlag::TransformIsDirty);
             // Move the camera back far enough that we can see everything
             float theCameraSetback(10);
             // Attempt to ensure the layer can never be clipped.
-            theTempCamera.m_Position.setZ(-theCameraSetback);
-            theTempCamera.m_ClipFar = 2.0f * theCameraSetback;
+            theTempCamera.position.setZ(-theCameraSetback);
+            theTempCamera.clipFar = 2.0f * theCameraSetback;
             // Render the layer texture to the entire viewport.
-            SCameraGlobalCalculationResult theResult = theTempCamera.CalculateGlobalVariables(
-                        theLayerViewport,
-                        QVector2D((float)theLayerViewport.m_Width, (float)theLayerViewport.m_Height));
-            theTempCamera.CalculateViewProjectionMatrix(theViewProjection);
-            SNode theTempNode;
+            QDemonCameraGlobalCalculationResult theResult = theTempCamera.calculateGlobalVariables(theLayerViewport,
+                                                                                                   QVector2D((float)theLayerViewport.m_width,
+                                                                                                             (float)theLayerViewport.m_height));
+            theTempCamera.calculateViewProjectionMatrix(theViewProjection);
+            QDemonGraphNode theTempNode;
             theFinalMVP = theViewProjection;
             QDemonRenderBlendFunctionArgument blendFunc;
             QDemonRenderBlendEquationArgument blendEqu;
 
-            switch (m_Layer.m_BlendType) {
+            switch (layer.blendType) {
             case LayerBlendTypes::Screen:
                 blendFunc = QDemonRenderBlendFunctionArgument(
                             QDemonRenderSrcBlendFunc::SrcAlpha, QDemonRenderDstBlendFunc::One,
@@ -1843,24 +1842,24 @@ void SLayerRenderData::RunnableRenderToViewport(QSharedPointer<QDemonRenderFrame
             case LayerBlendTypes::Overlay:
                 // SW fallback doesn't use blend equation
                 // note blend func is not used here anymore
-                if (theContext.IsAdvancedBlendHwSupported() ||
-                        theContext.IsAdvancedBlendHwSupportedKHR())
+                if (theContext.isAdvancedBlendHwSupported() ||
+                        theContext.isAdvancedBlendHwSupportedKHR())
                     blendEqu = QDemonRenderBlendEquationArgument(
                                 QDemonRenderBlendEquation::Overlay, QDemonRenderBlendEquation::Overlay);
                 break;
             case LayerBlendTypes::ColorBurn:
                 // SW fallback doesn't use blend equation
                 // note blend func is not used here anymore
-                if (theContext.IsAdvancedBlendHwSupported() ||
-                        theContext.IsAdvancedBlendHwSupportedKHR())
+                if (theContext.isAdvancedBlendHwSupported() ||
+                        theContext.isAdvancedBlendHwSupportedKHR())
                     blendEqu = QDemonRenderBlendEquationArgument(
                                 QDemonRenderBlendEquation::ColorBurn, QDemonRenderBlendEquation::ColorBurn);
                 break;
             case LayerBlendTypes::ColorDodge:
                 // SW fallback doesn't use blend equation
                 // note blend func is not used here anymore
-                if (theContext.IsAdvancedBlendHwSupported() ||
-                        theContext.IsAdvancedBlendHwSupportedKHR())
+                if (theContext.isAdvancedBlendHwSupported() ||
+                        theContext.isAdvancedBlendHwSupportedKHR())
                     blendEqu = QDemonRenderBlendEquationArgument(
                                 QDemonRenderBlendEquation::ColorDodge, QDemonRenderBlendEquation::ColorDodge);
                 break;
@@ -1872,20 +1871,20 @@ void SLayerRenderData::RunnableRenderToViewport(QSharedPointer<QDemonRenderFrame
                             QDemonRenderBlendEquation::Add, QDemonRenderBlendEquation::Add);
                 break;
             }
-            theContext.SetBlendFunction(blendFunc);
-            theContext.SetBlendEquation(blendEqu);
-            theContext.SetBlendingEnabled(blendingEnabled);
-            theContext.SetDepthTestEnabled(false);
+            theContext.setBlendFunction(blendFunc);
+            theContext.setBlendEquation(blendEqu);
+            theContext.setBlendingEnabled(blendingEnabled);
+            theContext.setDepthTestEnabled(false);
         }
 
         {
-            theContext.SetScissorTestEnabled(true);
-            theContext.SetViewport(theLayerViewport);
-            theContext.SetScissorRect(theLayerClip);
+            theContext.setScissorTestEnabled(true);
+            theContext.setViewport(theLayerViewport);
+            theContext.setScissorRect(theLayerClip);
 
             // Remember the camera we used so we can get a valid pick ray
-            m_SceneCamera = theTempCamera;
-            theContext.SetDepthTestEnabled(false);
+            m_sceneCamera = theTempCamera;
+            theContext.setDepthTestEnabled(false);
 #ifndef QDEMON_CACHED_POST_EFFECT
             if (thePrepResult.m_LastEffect && m_Camera) {
                 StartProfiling(thePrepResult.m_LastEffect->m_ClassName, false);
@@ -1905,67 +1904,67 @@ void SLayerRenderData::RunnableRenderToViewport(QSharedPointer<QDemonRenderFrame
             } else
 #endif
             {
-                theContext.SetCullingEnabled(false);
-                theContext.SetBlendingEnabled(blendingEnabled);
-                theContext.SetDepthTestEnabled(false);
+                theContext.setCullingEnabled(false);
+                theContext.setBlendingEnabled(blendingEnabled);
+                theContext.setDepthTestEnabled(false);
 #ifdef ADVANCED_BLEND_SW_FALLBACK
                 QSharedPointer<QDemonRenderTexture2D> screenTexture =
-                        m_Renderer->GetLayerBlendTexture();
-                QSharedPointer<QDemonRenderFrameBuffer> blendFB = m_Renderer->GetBlendFB();
+                        renderer->getLayerBlendTexture();
+                QSharedPointer<QDemonRenderFrameBuffer> blendFB = renderer->getBlendFB();
 
                 // Layer blending for advanced blending modes if SW fallback is needed
                 // rendering to FBO and blending with separate shader
                 if (screenTexture) {
                     // Blending is enabled only if layer background has been chosen transparent
                     // Layers with advanced blending modes
-                    if (blendingEnabled && (m_Layer.m_BlendType == LayerBlendTypes::Overlay ||
-                                            m_Layer.m_BlendType == LayerBlendTypes::ColorBurn ||
-                                            m_Layer.m_BlendType == LayerBlendTypes::ColorDodge)) {
-                        theContext.SetScissorTestEnabled(false);
-                        theContext.SetBlendingEnabled(false);
+                    if (blendingEnabled && (layer.blendType == LayerBlendTypes::Overlay ||
+                                            layer.blendType == LayerBlendTypes::ColorBurn ||
+                                            layer.blendType == LayerBlendTypes::ColorDodge)) {
+                        theContext.setScissorTestEnabled(false);
+                        theContext.setBlendingEnabled(false);
 
                         // Get part matching to layer from screen texture and
                         // use that for blending
                         QSharedPointer<QDemonRenderTexture2D> blendBlitTexture;
-                        blendBlitTexture = theContext.CreateTexture2D();
-                        blendBlitTexture->SetTextureData(QDemonDataRef<quint8>(), 0,
-                                                         theLayerViewport.m_Width,
-                                                         theLayerViewport.m_Height,
+                        blendBlitTexture = theContext.createTexture2D();
+                        blendBlitTexture->setTextureData(QDemonDataRef<quint8>(), 0,
+                                                         theLayerViewport.m_width,
+                                                         theLayerViewport.m_height,
                                                          QDemonRenderTextureFormats::RGBA8);
                         QSharedPointer<QDemonRenderFrameBuffer> blitFB;
-                        blitFB = theContext.CreateFrameBuffer();
-                        blitFB->Attach(QDemonRenderFrameBufferAttachments::Color0,
+                        blitFB = theContext.createFrameBuffer();
+                        blitFB->attach(QDemonRenderFrameBufferAttachments::Color0,
                                        QDemonRenderTextureOrRenderBuffer(blendBlitTexture));
-                        blendFB->Attach(QDemonRenderFrameBufferAttachments::Color0,
+                        blendFB->attach(QDemonRenderFrameBufferAttachments::Color0,
                                         QDemonRenderTextureOrRenderBuffer(screenTexture));
-                        theContext.SetRenderTarget(blitFB);
-                        theContext.SetReadTarget(blendFB);
-                        theContext.SetReadBuffer(QDemonReadFaces::Color0);
-                        theContext.BlitFramebuffer(theLayerViewport.m_X, theLayerViewport.m_Y,
-                                                   theLayerViewport.m_Width +
-                                                   theLayerViewport.m_X,
-                                                   theLayerViewport.m_Height +
-                                                   theLayerViewport.m_Y,
+                        theContext.setRenderTarget(blitFB);
+                        theContext.setReadTarget(blendFB);
+                        theContext.setReadBuffer(QDemonReadFaces::Color0);
+                        theContext.blitFramebuffer(theLayerViewport.m_x, theLayerViewport.m_y,
+                                                   theLayerViewport.m_width +
+                                                   theLayerViewport.m_x,
+                                                   theLayerViewport.m_height +
+                                                   theLayerViewport.m_y,
                                                    0, 0,
-                                                   theLayerViewport.m_Width,
-                                                   theLayerViewport.m_Height,
+                                                   theLayerViewport.m_width,
+                                                   theLayerViewport.m_height,
                                                    QDemonRenderClearValues::Color,
                                                    QDemonRenderTextureMagnifyingOp::Nearest);
 
                         QSharedPointer<QDemonRenderTexture2D> blendResultTexture;
-                        blendResultTexture = theContext.CreateTexture2D();
-                        blendResultTexture->SetTextureData(QDemonDataRef<quint8>(), 0,
-                                                           theLayerViewport.m_Width,
-                                                           theLayerViewport.m_Height,
+                        blendResultTexture = theContext.createTexture2D();
+                        blendResultTexture->setTextureData(QDemonDataRef<quint8>(), 0,
+                                                           theLayerViewport.m_width,
+                                                           theLayerViewport.m_height,
                                                            QDemonRenderTextureFormats::RGBA8);
                         QSharedPointer<QDemonRenderFrameBuffer> resultFB;
-                        resultFB = theContext.CreateFrameBuffer();
-                        resultFB->Attach(QDemonRenderFrameBufferAttachments::Color0,
+                        resultFB = theContext.createFrameBuffer();
+                        resultFB->attach(QDemonRenderFrameBufferAttachments::Color0,
                                          QDemonRenderTextureOrRenderBuffer(blendResultTexture));
-                        theContext.SetRenderTarget(resultFB);
+                        theContext.setRenderTarget(resultFB);
 
                         AdvancedBlendModes::Enum advancedMode;
-                        switch (m_Layer.m_BlendType) {
+                        switch (layer.blendType) {
                         case LayerBlendTypes::Overlay:
                             advancedMode = AdvancedBlendModes::Overlay;
                             break;
@@ -1980,45 +1979,45 @@ void SLayerRenderData::RunnableRenderToViewport(QSharedPointer<QDemonRenderFrame
                             break;
                         }
 
-                        theContext.SetViewport(QDemonRenderRect(0, 0, theLayerViewport.m_Width,
-                                                                theLayerViewport.m_Height));
-                        BlendAdvancedEquationSwFallback(theLayerColorTexture, blendBlitTexture,
+                        theContext.setViewport(QDemonRenderRect(0, 0, theLayerViewport.m_width,
+                                                                theLayerViewport.m_height));
+                        blendAdvancedEquationSwFallback(theLayerColorTexture, blendBlitTexture,
                                                         advancedMode);
                         //blitFB->release();
                         // save blending result to screen texture for use with other layers
-                        theContext.SetViewport(theLayerViewport);
-                        theContext.SetRenderTarget(blendFB);
-                        m_Renderer->RenderQuad(QVector2D((float)theLayerViewport.m_Width,
-                                                         (float)theLayerViewport.m_Height),
+                        theContext.setViewport(theLayerViewport);
+                        theContext.setRenderTarget(blendFB);
+                        renderer->renderQuad(QVector2D((float)theLayerViewport.m_width,
+                                                         (float)theLayerViewport.m_height),
                                                theFinalMVP, *blendResultTexture);
                         // render the blended result
-                        theContext.SetRenderTarget(theFB);
-                        theContext.SetScissorTestEnabled(true);
-                        m_Renderer->RenderQuad(QVector2D((float)theLayerViewport.m_Width,
-                                                         (float)theLayerViewport.m_Height),
+                        theContext.setRenderTarget(theFB);
+                        theContext.setScissorTestEnabled(true);
+                        renderer->renderQuad(QVector2D((float)theLayerViewport.m_width,
+                                                         (float)theLayerViewport.m_height),
                                                theFinalMVP, *blendResultTexture);
                         //resultFB->release();
                     } else {
                         // Layers with normal blending modes
                         // save result for future use
-                        theContext.SetViewport(theLayerViewport);
-                        theContext.SetScissorTestEnabled(false);
-                        theContext.SetBlendingEnabled(true);
-                        theContext.SetRenderTarget(blendFB);
-                        m_Renderer->RenderQuad(QVector2D((float)theLayerViewport.m_Width,
-                                                         (float)theLayerViewport.m_Height),
+                        theContext.setViewport(theLayerViewport);
+                        theContext.setScissorTestEnabled(false);
+                        theContext.setBlendingEnabled(true);
+                        theContext.setRenderTarget(blendFB);
+                        renderer->renderQuad(QVector2D((float)theLayerViewport.m_width,
+                                                         (float)theLayerViewport.m_height),
                                                theFinalMVP, *theLayerColorTexture);
-                        theContext.SetRenderTarget(theFB);
-                        theContext.SetScissorTestEnabled(true);
-                        theContext.SetViewport(theCurrentViewport);
-                        m_Renderer->RenderQuad(QVector2D((float)theLayerViewport.m_Width,
-                                                         (float)theLayerViewport.m_Height),
+                        theContext.setRenderTarget(theFB);
+                        theContext.setScissorTestEnabled(true);
+                        theContext.setViewport(theCurrentViewport);
+                        renderer->renderQuad(QVector2D((float)theLayerViewport.m_width,
+                                                         (float)theLayerViewport.m_height),
                                                theFinalMVP, *theLayerColorTexture);
                     }
                 } else {
                     // No advanced blending SW fallback needed
-                    m_Renderer->RenderQuad(QVector2D((float)theLayerViewport.m_Width,
-                                                     (float)theLayerViewport.m_Height),
+                    renderer->renderQuad(QVector2D((float)theLayerViewport.m_width,
+                                                     (float)theLayerViewport.m_height),
                                            theFinalMVP, *theLayerColorTexture);
                 }
 #else
@@ -2027,142 +2026,142 @@ void SLayerRenderData::RunnableRenderToViewport(QSharedPointer<QDemonRenderFrame
                                       theFinalMVP, *theLayerColorTexture);
 #endif
             }
-            if (m_LayerWidgetTexture.GetTexture()) {
-                theContext.SetBlendingEnabled(false);
-                m_Renderer->SetupWidgetLayer();
-                SLayerRenderPreparationResult &thePrepResult(*m_LayerPrepResult);
-                QDemonRenderRectF thePresRect(thePrepResult.GetPresentationViewport());
-                QDemonRenderRectF theLayerRect(thePrepResult.GetLayerToPresentationViewport());
+            if (m_layerWidgetTexture.getTexture()) {
+                theContext.setBlendingEnabled(false);
+                renderer->setupWidgetLayer();
+                QDemonLayerRenderPreparationResult &thePrepResult(*layerPrepResult);
+                QDemonRenderRectF thePresRect(thePrepResult.getPresentationViewport());
+                QDemonRenderRectF theLayerRect(thePrepResult.getLayerToPresentationViewport());
 
                 // Ensure we remove any offsetting in the layer rect that was caused simply by
                 // the
                 // presentation rect offsetting but then use a new rect.
-                QDemonRenderRectF theWidgetLayerRect(theLayerRect.m_X - thePresRect.m_X,
-                                                     theLayerRect.m_Y - thePresRect.m_Y,
-                                                     theLayerRect.m_Width, theLayerRect.m_Height);
-                theContext.SetScissorTestEnabled(false);
-                theContext.SetViewport(theWidgetLayerRect.ToIntegerRect());
-                m_Renderer->RenderQuad(
-                            QVector2D((float)theLayerViewport.m_Width, (float)theLayerViewport.m_Height),
-                            theFinalMVP, *m_LayerWidgetTexture);
+                QDemonRenderRectF theWidgetLayerRect(theLayerRect.m_x - thePresRect.m_x,
+                                                     theLayerRect.m_y - thePresRect.m_y,
+                                                     theLayerRect.m_width, theLayerRect.m_height);
+                theContext.setScissorTestEnabled(false);
+                theContext.setViewport(theWidgetLayerRect.toIntegerRect());
+                renderer->renderQuad(
+                            QVector2D((float)theLayerViewport.m_width, (float)theLayerViewport.m_height),
+                            theFinalMVP, *m_layerWidgetTexture);
             }
         }
     } // End offscreen render code.
 
-    if (m_BoundingRectColor.hasValue()) {
+    if (m_boundingRectColor.hasValue()) {
         QDemonRenderContextScopedProperty<QDemonRenderRect> __viewport(
-                    theContext, &QDemonRenderContext::GetViewport, &QDemonRenderContext::SetViewport);
+                    theContext, &QDemonRenderContext::getViewport, &QDemonRenderContext::setViewport);
         QDemonRenderContextScopedProperty<bool> theScissorEnabled(
-                    theContext, &QDemonRenderContext::IsScissorTestEnabled,
-                    &QDemonRenderContext::SetScissorTestEnabled);
+                    theContext, &QDemonRenderContext::isScissorTestEnabled,
+                    &QDemonRenderContext::setScissorTestEnabled);
         QDemonRenderContextScopedProperty<QDemonRenderRect> theScissorRect(
-                    theContext, &QDemonRenderContext::GetScissorRect, &QDemonRenderContext::SetScissorRect);
-        m_Renderer->SetupWidgetLayer();
+                    theContext, &QDemonRenderContext::getScissorRect, &QDemonRenderContext::setScissorRect);
+        renderer->setupWidgetLayer();
         // Setup a simple viewport to render to the entire presentation viewport.
-        theContext.SetViewport(
-                    QDemonRenderRect(0, 0, (quint32)thePrepResult.GetPresentationViewport().m_Width,
-                                     (quint32)thePrepResult.GetPresentationViewport().m_Height));
+        theContext.setViewport(
+                    QDemonRenderRect(0, 0, (quint32)thePrepResult.getPresentationViewport().m_width,
+                                     (quint32)thePrepResult.getPresentationViewport().m_height));
 
-        QDemonRenderRectF thePresRect(thePrepResult.GetPresentationViewport());
+        QDemonRenderRectF thePresRect(thePrepResult.getPresentationViewport());
 
         // Remove any offsetting from the presentation rect since the widget layer is a
         // stand-alone fbo.
-        QDemonRenderRectF theWidgetScreenRect(theScreenRect.m_X - thePresRect.m_X,
-                                              theScreenRect.m_Y - thePresRect.m_Y,
-                                              theScreenRect.m_Width, theScreenRect.m_Height);
-        theContext.SetScissorTestEnabled(false);
-        m_Renderer->DrawScreenRect(theWidgetScreenRect, *m_BoundingRectColor);
+        QDemonRenderRectF theWidgetScreenRect(theScreenRect.m_x - thePresRect.m_x,
+                                              theScreenRect.m_y - thePresRect.m_y,
+                                              theScreenRect.m_width, theScreenRect.m_height);
+        theContext.setScissorTestEnabled(false);
+        renderer->drawScreenRect(theWidgetScreenRect, *m_boundingRectColor);
     }
-    theContext.SetBlendFunction(QDemonRenderBlendFunctionArgument(
+    theContext.setBlendFunction(QDemonRenderBlendFunctionArgument(
                                     QDemonRenderSrcBlendFunc::One, QDemonRenderDstBlendFunc::OneMinusSrcAlpha,
                                     QDemonRenderSrcBlendFunc::One, QDemonRenderDstBlendFunc::OneMinusSrcAlpha));
-    theContext.SetBlendEquation(QDemonRenderBlendEquationArgument(
+    theContext.setBlendEquation(QDemonRenderBlendEquationArgument(
                                     QDemonRenderBlendEquation::Add, QDemonRenderBlendEquation::Add));
 }
 
-void SLayerRenderData::AddLayerRenderStep()
+void QDemonLayerRenderData::addLayerRenderStep()
 {
-    SStackPerfTimer __perfTimer(*m_Renderer->GetDemonContext()->GetPerfTimer(),
+    QDemonStackPerfTimer __perfTimer(*renderer->getDemonContext()->getPerfTimer(),
                                 "SLayerRenderData::AddLayerRenderStep");
-    Q_ASSERT(m_Camera);
-    if (!m_Camera)
+    Q_ASSERT(camera);
+    if (!camera)
         return;
 
-    QSharedPointer<IRenderList> theGraph(m_Renderer->GetDemonContext()->GetRenderList());
+    QSharedPointer<QDemonRenderListInterface> theGraph(renderer->getDemonContext()->getRenderList());
 
-    QDemonRenderRect theCurrentViewport = theGraph->GetViewport();
-    if (!m_LayerPrepResult.hasValue())
-        PrepareForRender(QSize(theCurrentViewport.m_Width, theCurrentViewport.m_Height));
+    QDemonRenderRect theCurrentViewport = theGraph->getViewport();
+    if (!layerPrepResult.hasValue())
+        prepareForRender(QSize(theCurrentViewport.m_width, theCurrentViewport.m_height));
 }
 
-void SLayerRenderData::PrepareForRender()
+void QDemonLayerRenderData::prepareForRender()
 {
     // When we render to the scene itself (as opposed to an offscreen buffer somewhere)
     // then we use the MVP of the layer somewhat.
-    QDemonRenderRect theViewport = m_Renderer->GetDemonContext()->GetRenderList()->GetViewport();
-    PrepareForRender(QSize((quint32)theViewport.m_Width, (quint32)theViewport.m_Height));
+    QDemonRenderRect theViewport = renderer->getDemonContext()->getRenderList()->getViewport();
+    prepareForRender(QSize((quint32)theViewport.m_width, (quint32)theViewport.m_height));
 }
 
-void SLayerRenderData::ResetForFrame()
+void QDemonLayerRenderData::resetForFrame()
 {
-    SLayerRenderPreparationData::ResetForFrame();
-    m_BoundingRectColor.setEmpty();
+    QDemonLayerRenderPreparationData::resetForFrame();
+    m_boundingRectColor.setEmpty();
 }
 
-void SLayerRenderData::PrepareAndRender(const QMatrix4x4 &inViewProjection)
+void QDemonLayerRenderData::prepareAndRender(const QMatrix4x4 &inViewProjection)
 {
-    TRenderableObjectList theTransparentObjects(m_TransparentObjects);
-    TRenderableObjectList theOpaqueObjects(m_OpaqueObjects);
+    TRenderableObjectList theTransparentObjects(transparentObjects);
+    TRenderableObjectList theOpaqueObjects(opaqueObjects);
     theTransparentObjects.clear();
     theOpaqueObjects.clear();
-    m_ModelContexts.clear();
-    SLayerRenderPreparationResultFlags theFlags;
-    PrepareRenderablesForRender(inViewProjection, QDemonEmpty(), 1.0, theFlags);
-    RenderDepthPass(false);
-    Render();
+    modelContexts.clear();
+    QDemonLayerRenderPreparationResultFlags theFlags;
+    prepareRenderablesForRender(inViewProjection, QDemonEmpty(), 1.0, theFlags);
+    renderDepthPass(false);
+    render();
 }
 
-struct SLayerRenderToTextureRunnable : public IRenderTask
+struct QDemonLayerRenderToTextureRunnable : public QDemonRenderTask
 {
-    SLayerRenderData &m_Data;
-    SLayerRenderToTextureRunnable(SLayerRenderData &d)
-        : m_Data(d)
+    QDemonLayerRenderData &m_data;
+    QDemonLayerRenderToTextureRunnable(QDemonLayerRenderData &d)
+        : m_data(d)
     {
     }
 
-    void Run() override { m_Data.RenderToTexture(); }
+    void run() override { m_data.renderToTexture(); }
 };
 
-static inline OffscreenRendererDepthValues::Enum
+static inline QDemonOffscreenRendererDepthValues::Enum
 GetOffscreenRendererDepthValue(QDemonRenderTextureFormats::Enum inBufferFormat)
 {
     switch (inBufferFormat) {
     case QDemonRenderTextureFormats::Depth32:
-        return OffscreenRendererDepthValues::Depth32;
+        return QDemonOffscreenRendererDepthValues::Depth32;
     case QDemonRenderTextureFormats::Depth24:
-        return OffscreenRendererDepthValues::Depth24;
+        return QDemonOffscreenRendererDepthValues::Depth24;
     case QDemonRenderTextureFormats::Depth24Stencil8:
-        return OffscreenRendererDepthValues::Depth24;
+        return QDemonOffscreenRendererDepthValues::Depth24;
     default:
         Q_ASSERT(false); // fallthrough intentional
     case QDemonRenderTextureFormats::Depth16:
-        return OffscreenRendererDepthValues::Depth16;
+        return QDemonOffscreenRendererDepthValues::Depth16;
     }
 }
 
-SOffscreenRendererEnvironment SLayerRenderData::CreateOffscreenRenderEnvironment()
+QDemonOffscreenRendererEnvironment QDemonLayerRenderData::createOffscreenRenderEnvironment()
 {
-    OffscreenRendererDepthValues::Enum theOffscreenDepth(
-                GetOffscreenRendererDepthValue(GetDepthBufferFormat()));
-    QDemonRenderRect theViewport = m_Renderer->GetDemonContext()->GetRenderList()->GetViewport();
-    return SOffscreenRendererEnvironment(theViewport.m_Width, theViewport.m_Height,
+    QDemonOffscreenRendererDepthValues::Enum theOffscreenDepth(
+                GetOffscreenRendererDepthValue(getDepthBufferFormat()));
+    QDemonRenderRect theViewport = renderer->getDemonContext()->getRenderList()->getViewport();
+    return QDemonOffscreenRendererEnvironment(theViewport.m_width, theViewport.m_height,
                                          QDemonRenderTextureFormats::RGBA8, theOffscreenDepth,
                                          false, AAModeValues::NoAA);
 }
 
-QSharedPointer<IRenderTask> SLayerRenderData::CreateRenderToTextureRunnable()
+QSharedPointer<QDemonRenderTask> QDemonLayerRenderData::createRenderToTextureRunnable()
 {
-    return QSharedPointer<IRenderTask>(new SLayerRenderToTextureRunnable(*this));
+    return QSharedPointer<QDemonRenderTask>(new QDemonLayerRenderToTextureRunnable(*this));
 }
 
 QT_END_NAMESPACE

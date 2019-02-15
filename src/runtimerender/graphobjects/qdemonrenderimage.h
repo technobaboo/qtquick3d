@@ -39,9 +39,9 @@
 #include <QtGui/QVector2D>
 
 QT_BEGIN_NAMESPACE
-class IQDemonRenderContext;
-class IOffscreenRenderManager;
-class IOffscreenRenderer;
+class QDemonRenderContextInterface;
+class QDemonOffscreenRenderManagerInterface;
+class QDemonOffscreenRendererInterface;
 struct ImageMappingModes
 {
     enum Enum {
@@ -51,56 +51,58 @@ struct ImageMappingModes
     };
 };
 
-struct Q_DEMONRUNTIMERENDER_EXPORT SImage : public SGraphObject
+struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderImage : public QDemonGraphObject
 {
     // Complete path to the file;
     //*not* relative to the presentation directory
-    QString m_ImagePath;
-    QString m_ImageShaderName; ///< for custom materials we don't generate the name
+    QString m_imagePath;
+    QString m_imageShaderName; ///< for custom materials we don't generate the name
 
     // Presentation id.
-    QString m_OffscreenRendererId; // overrides source path if available
-    QSharedPointer<IOffscreenRenderer> m_LastFrameOffscreenRenderer;
-    SGraphObject *m_Parent;
+    QString m_offscreenRendererId; // overrides source path if available
+    QSharedPointer<QDemonOffscreenRendererInterface> m_lastFrameOffscreenRenderer;
+    QDemonGraphObject *m_parent;
 
-    SImageTextureData m_TextureData;
+    QDemonRenderImageTextureData m_textureData;
 
-    NodeFlags m_Flags; // only dirty, transform dirty, and active apply
+    QDemonNodeFlags m_flags; // only dirty, transform dirty, and active apply
 
-    QVector2D m_Scale;
-    QVector2D m_Pivot;
-    float m_Rotation; // Radians.
-    QVector2D m_Position;
-    ImageMappingModes::Enum m_MappingMode;
-    QDemonRenderTextureCoordOp::Enum m_HorizontalTilingMode;
-    QDemonRenderTextureCoordOp::Enum m_VerticalTilingMode;
+    QVector2D m_scale;
+    QVector2D m_pivot;
+    float m_rotation; // Radians.
+    QVector2D m_position;
+    ImageMappingModes::Enum m_mappingMode;
+    QDemonRenderTextureCoordOp::Enum m_horizontalTilingMode;
+    QDemonRenderTextureCoordOp::Enum m_verticalTilingMode;
 
     // Setting any of the above variables means this object is dirty.
     // Setting any of the vec2 properties means this object's transform is dirty
 
-    QMatrix4x4 m_TextureTransform;
+    QMatrix4x4 m_textureTransform;
 
-    SImage();
+    QDemonRenderImage();
     // Renders the sub presentation
     // Or finds the image.
     // and sets up the texture transform
-    bool ClearDirty(IBufferManager &inBufferManager, IOffscreenRenderManager &inRenderManager,
-                    /*IRenderPluginManager &pluginManager,*/ bool forIbl = false);
+    bool clearDirty(QDemonBufferManagerInterface &inBufferManager,
+                    QDemonOffscreenRenderManagerInterface &inRenderManager,
+                    /*IRenderPluginManager &pluginManager,*/
+                    bool forIbl = false);
 
-    void CalculateTextureTransform();
+    void calculateTextureTransform();
 
     // Generic method used during serialization
     // to remap string and object pointers
     template <typename TRemapperType>
-    void Remap(TRemapperType &inRemapper)
+    void remap(TRemapperType &inRemapper)
     {
-        SGraphObject::Remap(inRemapper);
-        inRemapper.Remap(m_ImagePath);
-        inRemapper.Remap(m_OffscreenRendererId);
+        QDemonGraphObject::remap(inRemapper);
+        inRemapper.remap(m_imagePath);
+        inRemapper.remap(m_offscreenRendererId);
         // Null out objects that should be null when loading from file.
-        inRemapper.NullPtr(m_LastFrameOffscreenRenderer);
-        inRemapper.NullPtr(m_TextureData.m_Texture);
-        inRemapper.Remap(m_Parent);
+        inRemapper.NullPtr(m_lastFrameOffscreenRenderer);
+        inRemapper.NullPtr(m_textureData.m_texture);
+        inRemapper.remap(m_parent);
     }
 };
 QT_END_NAMESPACE

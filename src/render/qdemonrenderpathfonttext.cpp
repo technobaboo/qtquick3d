@@ -90,41 +90,41 @@ static QMatrix4x4 mapBoxToQuad(QVector4D inBox, QVector2D inSquare[4])
 }
 
 QDemonRenderPathFontItem::QDemonRenderPathFontItem()
-    : m_NumGlyphs(0)
-    , m_GlyphIDs(nullptr)
-    , m_TranslateXY(nullptr)
+    : m_numGlyphs(0)
+    , m_glyphIDs(nullptr)
+    , m_translateXY(nullptr)
 {
 }
 
 QDemonRenderPathFontItem::~QDemonRenderPathFontItem()
 {
-    if (m_TranslateXY)
-        ::free(m_TranslateXY);
-    if (m_GlyphIDs)
-        ::free(m_GlyphIDs);
+    if (m_translateXY)
+        ::free(m_translateXY);
+    if (m_glyphIDs)
+        ::free(m_glyphIDs);
 }
 
-void QDemonRenderPathFontItem::InitTextItem(size_t glyphCount, const quint32 *glyphIDs,
+void QDemonRenderPathFontItem::initTextItem(size_t glyphCount, const quint32 *glyphIDs,
                                             QDemonRenderPathFormatType::Enum type, float *posArray,
                                             QVector2D pixelBound, QVector2D logicalBound, float emScale)
 {
-    m_NumGlyphs = glyphCount;
+    m_numGlyphs = glyphCount;
 
     // allocate glyphs array
-    if (m_GlyphIDs)
-        ::free(m_GlyphIDs);
+    if (m_glyphIDs)
+        ::free(m_glyphIDs);
 
     // allocate position array
-    if (m_TranslateXY)
-        ::free(m_TranslateXY);
+    if (m_translateXY)
+        ::free(m_translateXY);
 
-    m_GlyphIDs = static_cast<quint32 *>(::malloc(glyphCount * getSizeOfType(type)));
-    m_TranslateXY = static_cast<float *>(::malloc(2 * (glyphCount + 1) * sizeof(float)));
+    m_glyphIDs = static_cast<quint32 *>(::malloc(glyphCount * getSizeOfType(type)));
+    m_translateXY = static_cast<float *>(::malloc(2 * (glyphCount + 1) * sizeof(float)));
 
-    if (!m_GlyphIDs || !m_TranslateXY)
+    if (!m_glyphIDs || !m_translateXY)
         return;
 
-    quint32 *pTheGlyphIDs = (quint32 *)m_GlyphIDs;
+    quint32 *pTheGlyphIDs = (quint32 *)m_glyphIDs;
     quint32 *pInGlyphs = (quint32 *)glyphIDs;
 
     /// copy glyphs array
@@ -136,8 +136,8 @@ void QDemonRenderPathFontItem::InitTextItem(size_t glyphCount, const quint32 *gl
     // we copy what we got from our layout system
     if (posArray != nullptr) {
         for (size_t i = 0, k = 0; i < glyphCount * 2; i += 2, k++) {
-            m_TranslateXY[i] = posArray[i] * emScale;
-            m_TranslateXY[i + 1] = posArray[i + 1] * emScale;
+            m_translateXY[i] = posArray[i] * emScale;
+            m_translateXY[i + 1] = posArray[i + 1] * emScale;
         }
     }
 
@@ -146,15 +146,15 @@ void QDemonRenderPathFontItem::InitTextItem(size_t glyphCount, const quint32 *gl
                             QVector2D(pixelBound.x(), pixelBound.y()), QVector2D(0.0, pixelBound.y()) };
     QVector4D box(0.0, 0.0, logicalBound.x() * emScale, logicalBound.y() * emScale);
 
-    m_ModelMatrix = mapBoxToQuad(box, square);
+    m_modelMatrix = mapBoxToQuad(box, square);
 }
 
-const QMatrix4x4 QDemonRenderPathFontItem::GetTransform()
+const QMatrix4x4 QDemonRenderPathFontItem::getTransform()
 {
-    return QMatrix4x4(m_ModelMatrix(0, 0), m_ModelMatrix(1, 0), 0.0, m_ModelMatrix(2, 0),
-                      m_ModelMatrix(0, 1), m_ModelMatrix(1, 1), 0.0, m_ModelMatrix(2, 1),
+    return QMatrix4x4(m_modelMatrix(0, 0), m_modelMatrix(1, 0), 0.0, m_modelMatrix(2, 0),
+                      m_modelMatrix(0, 1), m_modelMatrix(1, 1), 0.0, m_modelMatrix(2, 1),
                       0.0, 0.0, 1.0, 0.0,
-                      m_ModelMatrix(0, 2), m_ModelMatrix(1, 2), 0.0, m_ModelMatrix(2, 2));
+                      m_modelMatrix(0, 2), m_modelMatrix(1, 2), 0.0, m_modelMatrix(2, 2));
 }
 
 quint32
@@ -177,9 +177,9 @@ QDemonRenderPathFontItem::getSizeOfType(QDemonRenderPathFormatType::Enum type)
     }
 }
 
-QSharedPointer<QDemonRenderPathFontItem> QDemonRenderPathFontItem::CreatePathFontItem(QSharedPointer<QDemonRenderContextImpl> context)
+QSharedPointer<QDemonRenderPathFontItem> QDemonRenderPathFontItem::createPathFontItem(QSharedPointer<QDemonRenderContextImpl> context)
 {
-    Q_ASSERT(context->IsPathRenderingSupported());
+    Q_ASSERT(context->isPathRenderingSupported());
 
     return QSharedPointer<QDemonRenderPathFontItem>(new QDemonRenderPathFontItem());
 }

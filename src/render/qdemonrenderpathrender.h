@@ -43,8 +43,8 @@ class QDemonRenderPathFontSpecification;
 class Q_DEMONRENDER_EXPORT QDemonRenderPathRender
 {
 protected:
-    QSharedPointer<QDemonRenderContextImpl> m_Context; ///< pointer to context
-    QSharedPointer<QDemonRenderBackend> m_Backend; ///< pointer to backend
+    QSharedPointer<QDemonRenderContextImpl> m_context; ///< pointer to context
+    QSharedPointer<QDemonRenderBackend> m_backend; ///< pointer to backend
 
 public:
     /**
@@ -66,20 +66,20 @@ public:
          *
          * @return the backend object handle.
          */
-    QDemonRenderBackend::QDemonRenderBackendPathObject GetPathHandle() { return m_PathRenderHandle; }
+    QDemonRenderBackend::QDemonRenderBackendPathObject getPathHandle() { return m_pathRenderHandle; }
 
     // The render context can create a path specification object.
-    void SetPathSpecification(QSharedPointer<QDemonRenderPathSpecification> inCommandBuffer);
+    void setPathSpecification(QSharedPointer<QDemonRenderPathSpecification> inCommandBuffer);
 
-    QDemonBounds3 GetPathObjectBoundingBox();
-    QDemonBounds3 GetPathObjectFillBox();
-    QDemonBounds3 GetPathObjectStrokeBox();
+    QDemonBounds3 getPathObjectBoundingBox();
+    QDemonBounds3 getPathObjectFillBox();
+    QDemonBounds3 getPathObjectStrokeBox();
 
-    void SetStrokeWidth(float inStrokeWidth);
-    float GetStrokeWidth() const;
+    void setStrokeWidth(float inStrokeWidth);
+    float getStrokeWidth() const;
 
-    void StencilStroke();
-    void StencilFill();
+    void stencilStroke();
+    void stencilFill();
 
     /**
          * @brief static create function
@@ -89,12 +89,12 @@ public:
          *
          * @return the backend object handle.
          */
-    static QSharedPointer<QDemonRenderPathRender> Create(QSharedPointer<QDemonRenderContextImpl> context, size_t range);
+    static QSharedPointer<QDemonRenderPathRender> create(QSharedPointer<QDemonRenderContextImpl> context, size_t range);
 
 private:
-    QDemonRenderBackend::QDemonRenderBackendPathObject m_PathRenderHandle; ///< opaque backend handle
-    size_t m_Range; ///< range of internal objects
-    float m_StrokeWidth;
+    QDemonRenderBackend::QDemonRenderBackendPathObject m_pathRenderHandle; ///< opaque backend handle
+    size_t m_range; ///< range of internal objects
+    float m_strokeWidth;
 };
 
 QT_END_NAMESPACE

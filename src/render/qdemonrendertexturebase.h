@@ -38,50 +38,43 @@ QT_BEGIN_NAMESPACE
 class QDemonRenderContextImpl;
 class QDemonRenderTextureSampler;
 
-struct STextureDetails
+struct QDemonTextureDetails
 {
-    quint32 m_Width;
-    quint32 m_Height;
-    quint32 m_Depth;
-    quint32 m_SampleCount;
-    QDemonRenderTextureFormats::Enum m_Format;
+    quint32 width = 0;
+    quint32 height = 0;
+    quint32 depth = 0;
+    quint32 sampleCount = 1;
+    QDemonRenderTextureFormats::Enum format = QDemonRenderTextureFormats::Unknown;
 
-    STextureDetails(quint32 w, quint32 h, quint32 d, quint32 samples, QDemonRenderTextureFormats::Enum f)
-        : m_Width(w)
-        , m_Height(h)
-        , m_Depth(d)
-        , m_SampleCount(samples)
-        , m_Format(f)
+    QDemonTextureDetails(quint32 w, quint32 h, quint32 d, quint32 samples, QDemonRenderTextureFormats::Enum f)
+        : width(w)
+        , height(h)
+        , depth(d)
+        , sampleCount(samples)
+        , format(f)
     {
     }
-    STextureDetails()
-        : m_Width(0)
-        , m_Height(0)
-        , m_Depth(0)
-        , m_SampleCount(1)
-        , m_Format(QDemonRenderTextureFormats::Unknown)
-    {
-    }
+    QDemonTextureDetails() = default;
 };
 
 class QDemonRenderTextureBase
 {
 
 protected:
-    QSharedPointer<QDemonRenderContextImpl> m_Context; ///< pointer to context
-    QSharedPointer<QDemonRenderBackend> m_Backend; ///< pointer to backend
-    QDemonRenderBackend::QDemonRenderBackendTextureObject m_TextureHandle; ///< opaque backend handle
-    quint32 m_TextureUnit; ///< texture unit this texture should use
-    bool m_SamplerParamsDirty; ///< true if sampler state is dirty
-    bool m_TexStateDirty; ///< true if texture object state is dirty
-    quint32 m_SampleCount; ///< texture height
-    QDemonRenderTextureFormats::Enum m_Format; ///< texture format
-    QDemonRenderTextureTargetType::Enum m_TexTarget; ///< texture target
-    QDemonRenderTextureSampler *m_Sampler; ///< current texture sampler state
-    qint32 m_BaseLevel; ///< minimum lod specified
-    qint32 m_MaxLevel; ///< maximum lod specified
-    quint32 m_MaxMipLevel; ///< highest mip level
-    bool m_Immutable; ///< true if this is a immutable texture ( size and format )
+    QSharedPointer<QDemonRenderContextImpl> m_context; ///< pointer to context
+    QSharedPointer<QDemonRenderBackend> m_backend; ///< pointer to backend
+    QDemonRenderBackend::QDemonRenderBackendTextureObject m_textureHandle; ///< opaque backend handle
+    quint32 m_textureUnit; ///< texture unit this texture should use
+    bool m_samplerParamsDirty; ///< true if sampler state is dirty
+    bool m_texStateDirty; ///< true if texture object state is dirty
+    quint32 m_sampleCount; ///< texture height
+    QDemonRenderTextureFormats::Enum m_format; ///< texture format
+    QDemonRenderTextureTargetType::Enum m_texTarget; ///< texture target
+    QDemonRenderTextureSampler *m_sampler; ///< current texture sampler state
+    qint32 m_baseLevel; ///< minimum lod specified
+    qint32 m_maxLevel; ///< maximum lod specified
+    quint32 m_maxMipLevel; ///< highest mip level
+    bool m_immutable; ///< true if this is a immutable texture ( size and format )
 
 public:
     /**
@@ -98,30 +91,30 @@ public:
 
     virtual ~QDemonRenderTextureBase();
 
-    virtual void SetMinFilter(QDemonRenderTextureMinifyingOp::Enum value);
-    virtual void SetMagFilter(QDemonRenderTextureMagnifyingOp::Enum value);
+    virtual void setMinFilter(QDemonRenderTextureMinifyingOp::Enum value);
+    virtual void setMagFilter(QDemonRenderTextureMagnifyingOp::Enum value);
 
-    virtual void SetBaseLevel(qint32 value);
-    virtual void SetMaxLevel(qint32 value);
+    virtual void setBaseLevel(qint32 value);
+    virtual void setMaxLevel(qint32 value);
 
-    virtual void SetTextureWrapS(QDemonRenderTextureCoordOp::Enum value);
-    virtual void SetTextureWrapT(QDemonRenderTextureCoordOp::Enum value);
+    virtual void setTextureWrapS(QDemonRenderTextureCoordOp::Enum value);
+    virtual void setTextureWrapT(QDemonRenderTextureCoordOp::Enum value);
 
-    virtual void SetTextureCompareMode(QDemonRenderTextureCompareMode::Enum value);
-    virtual void SetTextureCompareFunc(QDemonRenderTextureCompareOp::Enum value);
+    virtual void setTextureCompareMode(QDemonRenderTextureCompareMode::Enum value);
+    virtual void setTextureCompareFunc(QDemonRenderTextureCompareOp::Enum value);
 
-    virtual void SetTextureUnit(quint32 unit) { m_TextureUnit = unit; }
-    virtual quint32 GetTextureUnit() const { return m_TextureUnit; }
+    virtual void setTextureUnit(quint32 unit) { m_textureUnit = unit; }
+    virtual quint32 getTextureUnit() const { return m_textureUnit; }
 
     // Get the texture details for mipmap level 0 if it was set.
-    virtual STextureDetails GetTextureDetails() const = 0;
+    virtual QDemonTextureDetails getTextureDetails() const = 0;
 
-    virtual bool IsMultisampleTexture() const
+    virtual bool isMultisampleTexture() const
     {
-        return (m_TexTarget == QDemonRenderTextureTargetType::Texture2D_MS);
+        return (m_texTarget == QDemonRenderTextureTargetType::Texture2D_MS);
     }
-    virtual quint32 GetSampleCount() const { return m_SampleCount; }
-    virtual bool IsImmutableTexture() const { return m_Immutable; }
+    virtual quint32 getSampleCount() const { return m_sampleCount; }
+    virtual bool isImmutableTexture() const { return m_immutable; }
 
     /**
          * @brief Bind a texture for shader access
@@ -129,23 +122,22 @@ public:
          *
          * @return No return.
          */
-    virtual void Bind() = 0;
+    virtual void bind() = 0;
 
-    virtual quint32 GetNumMipmaps() { return m_MaxMipLevel; }
+    virtual quint32 getNumMipmaps() { return m_maxMipLevel; }
 
     /**
          * @brief Query if texture needs coordinate swizzle
          *
          * @return texture swizzle mode
          */
-    virtual QDemonRenderTextureSwizzleMode::Enum GetTextureSwizzleMode()
+    virtual QDemonRenderTextureSwizzleMode::Enum getTextureSwizzleMode()
     {
         // if our backend supports hardware texture swizzle then there is no need for a shader
         // swizzle
-        return (m_Backend->GetRenderBackendCap(
-                    QDemonRenderBackend::QDemonRenderBackendCaps::TexSwizzle))
+        return (m_backend->getRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::TexSwizzle))
                 ? QDemonRenderTextureSwizzleMode::NoSwizzle
-                : m_Backend->GetTextureSwizzleMode(m_Format);
+                : m_backend->getTextureSwizzleMode(m_format);
     }
 
     /**
@@ -153,9 +145,9 @@ public:
          *
          * @return the backend object handle.
          */
-    virtual QDemonRenderBackend::QDemonRenderBackendTextureObject GetTextureObjectHandle()
+    virtual QDemonRenderBackend::QDemonRenderBackendTextureObject getTextureObjectHandle()
     {
-        return m_TextureHandle;
+        return m_textureHandle;
     }
 
 protected:

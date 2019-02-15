@@ -84,20 +84,20 @@ struct CommandTypes
 // setup all their member variables and one for when we are copying commands from an outside
 // entity into the effect system.  We have to re-register strings in that case because we
 // can't assume the outside entity was using the same string table we are...
-struct SCommand
+struct QDemonCommand
 {
-    CommandTypes::Enum m_Type;
-    SCommand(CommandTypes::Enum inType)
-        : m_Type(inType)
+    CommandTypes::Enum m_type;
+    QDemonCommand(CommandTypes::Enum inType)
+        : m_type(inType)
     {
     }
-    SCommand()
-        : m_Type(CommandTypes::Unknown)
+    QDemonCommand()
+        : m_type(CommandTypes::Unknown)
     {
     }
     // Implemented in UICRenderEffectSystem.cpp
-    static quint32 GetSizeofCommand(const SCommand &inCommand);
-    static void CopyConstructCommand(quint8 *inDataBuffer, const SCommand &inCommand);
+    static quint32 getSizeofCommand(const QDemonCommand &inCommand);
+    static void copyConstructCommand(quint8 *inDataBuffer, const QDemonCommand &inCommand);
 };
 
 struct AllocateBufferFlagValues
@@ -107,194 +107,191 @@ struct AllocateBufferFlagValues
     };
 };
 
-struct SAllocateBufferFlags : public QDemonFlags<AllocateBufferFlagValues::Enum, quint32>
+struct QDemonAllocateBufferFlags : public QDemonFlags<AllocateBufferFlagValues::Enum, quint32>
 {
-    SAllocateBufferFlags(quint32 inValues)
+    QDemonAllocateBufferFlags(quint32 inValues)
         : QDemonFlags<AllocateBufferFlagValues::Enum, quint32>(inValues)
     {
     }
-    SAllocateBufferFlags() {}
-    void SetSceneLifetime(bool inValue)
+    QDemonAllocateBufferFlags() {}
+    void setSceneLifetime(bool inValue)
     {
         clearOrSet(inValue, AllocateBufferFlagValues::SceneLifetime);
     }
     // If isSceneLifetime is unset the buffer is assumed to be frame lifetime and will be
     // released after this render operation.
-    bool IsSceneLifetime() const
+    bool isSceneLifetime() const
     {
         return this->operator&(AllocateBufferFlagValues::SceneLifetime);
     }
 };
 
-struct SAllocateBuffer : public SCommand
+struct QDemonAllocateBuffer : public QDemonCommand
 {
-    QString m_Name;
-    QDemonRenderTextureFormats::Enum m_Format;
-    QDemonRenderTextureMagnifyingOp::Enum m_FilterOp;
-    QDemonRenderTextureCoordOp::Enum m_TexCoordOp;
-    float m_SizeMultiplier;
-    SAllocateBufferFlags m_BufferFlags;
-    SAllocateBuffer()
-        : SCommand(CommandTypes::AllocateBuffer)
-        , m_Format(QDemonRenderTextureFormats::RGBA8)
-        , m_FilterOp(QDemonRenderTextureMagnifyingOp::Linear)
-        , m_TexCoordOp(QDemonRenderTextureCoordOp::ClampToEdge)
-        , m_SizeMultiplier(1.0f)
+    QString m_name;
+    QDemonRenderTextureFormats::Enum m_format = QDemonRenderTextureFormats::RGBA8;
+    QDemonRenderTextureMagnifyingOp::Enum m_filterOp = QDemonRenderTextureMagnifyingOp::Linear;
+    QDemonRenderTextureCoordOp::Enum m_texCoordOp = QDemonRenderTextureCoordOp::ClampToEdge;
+    float m_sizeMultiplier = 1.0f;
+    QDemonAllocateBufferFlags m_bufferFlags;
+    QDemonAllocateBuffer()
+        : QDemonCommand(CommandTypes::AllocateBuffer)
     {
     }
-    SAllocateBuffer(QString inName, QDemonRenderTextureFormats::Enum inFormat,
-                    QDemonRenderTextureMagnifyingOp::Enum inFilterOp,
-                    QDemonRenderTextureCoordOp::Enum inCoordOp, float inMultiplier,
-                    SAllocateBufferFlags inFlags)
-        : SCommand(CommandTypes::AllocateBuffer)
-        , m_Name(inName)
-        , m_Format(inFormat)
-        , m_FilterOp(inFilterOp)
-        , m_TexCoordOp(inCoordOp)
-        , m_SizeMultiplier(inMultiplier)
-        , m_BufferFlags(inFlags)
+    QDemonAllocateBuffer(QString inName,
+                         QDemonRenderTextureFormats::Enum inFormat,
+                         QDemonRenderTextureMagnifyingOp::Enum inFilterOp,
+                         QDemonRenderTextureCoordOp::Enum inCoordOp,
+                         float inMultiplier,
+                         QDemonAllocateBufferFlags inFlags)
+        : QDemonCommand(CommandTypes::AllocateBuffer)
+        , m_name(inName)
+        , m_format(inFormat)
+        , m_filterOp(inFilterOp)
+        , m_texCoordOp(inCoordOp)
+        , m_sizeMultiplier(inMultiplier)
+        , m_bufferFlags(inFlags)
     {
     }
-    SAllocateBuffer(const SAllocateBuffer &inOther)
-        : SCommand(CommandTypes::AllocateBuffer)
-        , m_Name(inOther.m_Name)
-        , m_Format(inOther.m_Format)
-        , m_FilterOp(inOther.m_FilterOp)
-        , m_TexCoordOp(inOther.m_TexCoordOp)
-        , m_SizeMultiplier(inOther.m_SizeMultiplier)
-        , m_BufferFlags(inOther.m_BufferFlags)
+    QDemonAllocateBuffer(const QDemonAllocateBuffer &inOther)
+        : QDemonCommand(CommandTypes::AllocateBuffer)
+        , m_name(inOther.m_name)
+        , m_format(inOther.m_format)
+        , m_filterOp(inOther.m_filterOp)
+        , m_texCoordOp(inOther.m_texCoordOp)
+        , m_sizeMultiplier(inOther.m_sizeMultiplier)
+        , m_bufferFlags(inOther.m_bufferFlags)
     {
     }
 };
 
-struct SAllocateImage : public SAllocateBuffer
+struct QDemonAllocateImage : public QDemonAllocateBuffer
 {
-    QDemonRenderImageAccessType::Enum m_Access;
+    QDemonRenderImageAccessType::Enum m_access = QDemonRenderImageAccessType::ReadWrite;
 
-    SAllocateImage()
-        : SAllocateBuffer()
-        , m_Access(QDemonRenderImageAccessType::ReadWrite)
+    QDemonAllocateImage()
+        : QDemonAllocateBuffer()
     {
-        m_Type = CommandTypes::AllocateImage;
+        m_type = CommandTypes::AllocateImage;
     }
-    SAllocateImage(QString inName, QDemonRenderTextureFormats::Enum inFormat,
+    QDemonAllocateImage(QString inName, QDemonRenderTextureFormats::Enum inFormat,
                    QDemonRenderTextureMagnifyingOp::Enum inFilterOp,
                    QDemonRenderTextureCoordOp::Enum inCoordOp, float inMultiplier,
-                   SAllocateBufferFlags inFlags, QDemonRenderImageAccessType::Enum inAccess)
-        : SAllocateBuffer(inName, inFormat, inFilterOp, inCoordOp, inMultiplier, inFlags)
-        , m_Access(inAccess)
+                   QDemonAllocateBufferFlags inFlags, QDemonRenderImageAccessType::Enum inAccess)
+        : QDemonAllocateBuffer(inName, inFormat, inFilterOp, inCoordOp, inMultiplier, inFlags)
+        , m_access(inAccess)
     {
-        m_Type = CommandTypes::AllocateImage;
+        m_type = CommandTypes::AllocateImage;
     }
 
-    SAllocateImage(const SAllocateImage &inOther)
-        : SAllocateBuffer(inOther.m_Name, inOther.m_Format,
-                          inOther.m_FilterOp, inOther.m_TexCoordOp,
-                          inOther.m_SizeMultiplier, inOther.m_BufferFlags)
-        , m_Access(inOther.m_Access)
+    QDemonAllocateImage(const QDemonAllocateImage &inOther)
+        : QDemonAllocateBuffer(inOther.m_name, inOther.m_format,
+                          inOther.m_filterOp, inOther.m_texCoordOp,
+                          inOther.m_sizeMultiplier, inOther.m_bufferFlags)
+        , m_access(inOther.m_access)
     {
-        m_Type = CommandTypes::AllocateImage;
+        m_type = CommandTypes::AllocateImage;
     }
 };
 
-struct SAllocateDataBuffer : public SCommand
+struct QDemonAllocateDataBuffer : public QDemonCommand
 {
-    QString m_Name;
-    QDemonRenderBufferBindValues::Enum m_DataBufferType;
-    QString m_WrapName;
-    QDemonRenderBufferBindValues::Enum m_DataBufferWrapType;
-    float m_Size;
-    SAllocateBufferFlags m_BufferFlags;
+    QString m_name;
+    QDemonRenderBufferBindValues::Enum m_dataBufferType;
+    QString m_wrapName;
+    QDemonRenderBufferBindValues::Enum m_dataBufferWrapType;
+    float m_size;
+    QDemonAllocateBufferFlags m_bufferFlags;
 
-    SAllocateDataBuffer()
-        : SCommand(CommandTypes::AllocateDataBuffer)
+    QDemonAllocateDataBuffer()
+        : QDemonCommand(CommandTypes::AllocateDataBuffer)
     {
     }
 
-    SAllocateDataBuffer(QString inName,
+    QDemonAllocateDataBuffer(QString inName,
                         QDemonRenderBufferBindValues::Enum inBufferType,
                         QString inWrapName,
                         QDemonRenderBufferBindValues::Enum inBufferWrapType, float inSize,
-                        SAllocateBufferFlags inFlags)
-        : SCommand(CommandTypes::AllocateDataBuffer)
-        , m_Name(inName)
-        , m_DataBufferType(inBufferType)
-        , m_WrapName(inWrapName)
-        , m_DataBufferWrapType(inBufferWrapType)
-        , m_Size(inSize)
-        , m_BufferFlags(inFlags)
+                        QDemonAllocateBufferFlags inFlags)
+        : QDemonCommand(CommandTypes::AllocateDataBuffer)
+        , m_name(inName)
+        , m_dataBufferType(inBufferType)
+        , m_wrapName(inWrapName)
+        , m_dataBufferWrapType(inBufferWrapType)
+        , m_size(inSize)
+        , m_bufferFlags(inFlags)
     {
     }
 
-    SAllocateDataBuffer(const SAllocateDataBuffer &inOther)
-        : SCommand(CommandTypes::AllocateDataBuffer)
-        , m_Name(inOther.m_Name)
-        , m_DataBufferType(inOther.m_DataBufferType)
-        , m_WrapName(inOther.m_WrapName)
-        , m_DataBufferWrapType(inOther.m_DataBufferWrapType)
-        , m_Size(inOther.m_Size)
-        , m_BufferFlags(inOther.m_BufferFlags)
+    QDemonAllocateDataBuffer(const QDemonAllocateDataBuffer &inOther)
+        : QDemonCommand(CommandTypes::AllocateDataBuffer)
+        , m_name(inOther.m_name)
+        , m_dataBufferType(inOther.m_dataBufferType)
+        , m_wrapName(inOther.m_wrapName)
+        , m_dataBufferWrapType(inOther.m_dataBufferWrapType)
+        , m_size(inOther.m_size)
+        , m_bufferFlags(inOther.m_bufferFlags)
     {
     }
 };
 
-struct SBindTarget : public SCommand
+struct QDemonBindTarget : public QDemonCommand
 {
-    QDemonRenderTextureFormats::Enum m_OutputFormat;
+    QDemonRenderTextureFormats::Enum m_outputFormat;
 
-    SBindTarget(QDemonRenderTextureFormats::Enum inFormat = QDemonRenderTextureFormats::RGBA8)
-        : SCommand(CommandTypes::BindTarget)
-        , m_OutputFormat(inFormat)
+    explicit QDemonBindTarget(QDemonRenderTextureFormats::Enum inFormat = QDemonRenderTextureFormats::RGBA8)
+        : QDemonCommand(CommandTypes::BindTarget)
+        , m_outputFormat(inFormat)
     {
     }
-    SBindTarget(const SBindTarget &inOther)
-        : SCommand(CommandTypes::BindTarget)
-        , m_OutputFormat(inOther.m_OutputFormat)
+    QDemonBindTarget(const QDemonBindTarget &inOther)
+        : QDemonCommand(CommandTypes::BindTarget)
+        , m_outputFormat(inOther.m_outputFormat)
     {
     }
 };
 
-struct SBindBuffer : public SCommand
+struct QDemonBindBuffer : public QDemonCommand
 {
-    QString m_BufferName;
-    bool m_NeedsClear;
-    SBindBuffer(QString inBufName, bool inNeedsClear)
-        : SCommand(CommandTypes::BindBuffer)
-        , m_BufferName(inBufName)
-        , m_NeedsClear(inNeedsClear)
+    QString m_bufferName;
+    bool m_needsClear;
+    QDemonBindBuffer(QString inBufName, bool inNeedsClear)
+        : QDemonCommand(CommandTypes::BindBuffer)
+        , m_bufferName(inBufName)
+        , m_needsClear(inNeedsClear)
     {
     }
-    SBindBuffer(const SBindBuffer &inOther)
-        : SCommand(CommandTypes::BindBuffer)
-        , m_BufferName(inOther.m_BufferName)
-        , m_NeedsClear(inOther.m_NeedsClear)
+    QDemonBindBuffer(const QDemonBindBuffer &inOther)
+        : QDemonCommand(CommandTypes::BindBuffer)
+        , m_bufferName(inOther.m_bufferName)
+        , m_needsClear(inOther.m_needsClear)
     {
     }
 };
 
-struct SBindShader : public SCommand
+struct QDemonBindShader : public QDemonCommand
 {
-    QString m_ShaderPath;
+    QString m_shaderPath;
     // One GLSL file can hold multiple shaders in the case of multipass effects.
     // This makes it significantly easier for authors to reason about the shader
     // but it means we need to #define a preprocessor token to indicate which
     // effect we intend to compile at this point.
-    QString m_ShaderDefine;
-    SBindShader(QString inShaderPath,
-                QString inShaderDefine = QString())
-        : SCommand(CommandTypes::BindShader)
-        , m_ShaderPath(inShaderPath)
-        , m_ShaderDefine(inShaderDefine)
+    QString m_shaderDefine;
+    QDemonBindShader(QString inShaderPath,
+                     QString inShaderDefine = QString())
+        : QDemonCommand(CommandTypes::BindShader)
+        , m_shaderPath(inShaderPath)
+        , m_shaderDefine(inShaderDefine)
     {
     }
-    SBindShader()
-        : SCommand(CommandTypes::BindShader)
+    QDemonBindShader()
+        : QDemonCommand(CommandTypes::BindShader)
     {
     }
-    SBindShader(const SBindShader &inOther)
-        : SCommand(CommandTypes::BindShader)
-        , m_ShaderPath(inOther.m_ShaderPath)
-        , m_ShaderDefine(inOther.m_ShaderDefine)
+    QDemonBindShader(const QDemonBindShader &inOther)
+        : QDemonCommand(CommandTypes::BindShader)
+        , m_shaderPath(inOther.m_shaderPath)
+        , m_shaderDefine(inOther.m_shaderDefine)
     {
     }
 };
@@ -303,232 +300,235 @@ struct SBindShader : public SCommand
 // in memory.
 // If propertyName is not valid then we attempt to apply all of the effect property values
 // to the shader, ignoring ones that don't match up.
-struct SApplyInstanceValue : public SCommand
+struct QDemonApplyInstanceValue : public QDemonCommand
 {
     // Name of value to apply in shader
-    QString m_PropertyName;
+    QString m_propertyName;
     // type of value
-    QDemonRenderShaderDataTypes::Enum m_ValueType;
+    QDemonRenderShaderDataTypes::Enum m_valueType;
     // offset in the effect data section of value.
-    quint32 m_ValueOffset;
-    SApplyInstanceValue(QString inName, QDemonRenderShaderDataTypes::Enum inValueType,
-                        quint32 inValueOffset)
-        : SCommand(CommandTypes::ApplyInstanceValue)
-        , m_PropertyName(inName)
-        , m_ValueType(inValueType)
-        , m_ValueOffset(inValueOffset)
+    quint32 m_valueOffset;
+    QDemonApplyInstanceValue(QString inName,
+                             QDemonRenderShaderDataTypes::Enum inValueType,
+                             quint32 inValueOffset)
+        : QDemonCommand(CommandTypes::ApplyInstanceValue)
+        , m_propertyName(inName)
+        , m_valueType(inValueType)
+        , m_valueOffset(inValueOffset)
     {
     }
     // Default will attempt to apply all effect values to the currently bound shader
-    SApplyInstanceValue()
-        : SCommand(CommandTypes::ApplyInstanceValue)
-        , m_ValueType(QDemonRenderShaderDataTypes::Unknown)
-        , m_ValueOffset(0)
+    QDemonApplyInstanceValue()
+        : QDemonCommand(CommandTypes::ApplyInstanceValue)
+        , m_valueType(QDemonRenderShaderDataTypes::Unknown)
+        , m_valueOffset(0)
     {
     }
-    SApplyInstanceValue(const SApplyInstanceValue &inOther)
-        : SCommand(CommandTypes::ApplyInstanceValue)
-        , m_PropertyName(inOther.m_PropertyName)
-        , m_ValueType(inOther.m_ValueType)
-        , m_ValueOffset(inOther.m_ValueOffset)
+    QDemonApplyInstanceValue(const QDemonApplyInstanceValue &inOther)
+        : QDemonCommand(CommandTypes::ApplyInstanceValue)
+        , m_propertyName(inOther.m_propertyName)
+        , m_valueType(inOther.m_valueType)
+        , m_valueOffset(inOther.m_valueOffset)
     {
     }
 };
 
-struct SApplyValue : public SCommand
+struct QDemonApplyValue : public QDemonCommand
 {
-    QString m_PropertyName;
-    QDemonRenderShaderDataTypes::Enum m_ValueType;
-    QDemonDataRef<quint8> m_Value;
-    SApplyValue(QString inName, QDemonRenderShaderDataTypes::Enum inValueType)
-        : SCommand(CommandTypes::ApplyValue)
-        , m_PropertyName(inName)
-        , m_ValueType(inValueType)
+    QString m_propertyName;
+    QDemonRenderShaderDataTypes::Enum m_valueType;
+    QDemonDataRef<quint8> m_value;
+    QDemonApplyValue(QString inName, QDemonRenderShaderDataTypes::Enum inValueType)
+        : QDemonCommand(CommandTypes::ApplyValue)
+        , m_propertyName(inName)
+        , m_valueType(inValueType)
     {
     }
     // Default will attempt to apply all effect values to the currently bound shader
-    SApplyValue()
-        : SCommand(CommandTypes::ApplyValue)
-        , m_ValueType(QDemonRenderShaderDataTypes::Unknown)
+    QDemonApplyValue()
+        : QDemonCommand(CommandTypes::ApplyValue)
+        , m_valueType(QDemonRenderShaderDataTypes::Unknown)
     {
     }
 
-    SApplyValue(const SApplyValue &inOther)
-        : SCommand(CommandTypes::ApplyValue)
-        , m_PropertyName(inOther.m_PropertyName)
-        , m_ValueType(inOther.m_ValueType)
-        , m_Value(inOther.m_Value)
+    QDemonApplyValue(const QDemonApplyValue &inOther)
+        : QDemonCommand(CommandTypes::ApplyValue)
+        , m_propertyName(inOther.m_propertyName)
+        , m_valueType(inOther.m_valueType)
+        , m_value(inOther.m_value)
     {
     }
 };
 
 // bind a buffer to a given shader parameter.
-struct SApplyBufferValue : public SCommand
+struct QDemonApplyBufferValue : public QDemonCommand
 {
     // If no buffer name is given then the special buffer [source]
     // is assumed.
-    QString m_BufferName;
+    QString m_bufferName;
     // If no param name is given, the buffer is bound to the
     // input texture parameter (texture0).
-    QString m_ParamName;
+    QString m_paramName;
 
-    SApplyBufferValue(QString bufferName, QString shaderParam)
-        : SCommand(CommandTypes::ApplyBufferValue)
-        , m_BufferName(bufferName)
-        , m_ParamName(shaderParam)
+    QDemonApplyBufferValue(QString bufferName, QString shaderParam)
+        : QDemonCommand(CommandTypes::ApplyBufferValue)
+        , m_bufferName(bufferName)
+        , m_paramName(shaderParam)
     {
     }
-    SApplyBufferValue(const SApplyBufferValue &inOther)
-        : SCommand(CommandTypes::ApplyBufferValue)
-        , m_BufferName(inOther.m_BufferName)
-        , m_ParamName(inOther.m_ParamName)
+    QDemonApplyBufferValue(const QDemonApplyBufferValue &inOther)
+        : QDemonCommand(CommandTypes::ApplyBufferValue)
+        , m_bufferName(inOther.m_bufferName)
+        , m_paramName(inOther.m_paramName)
     {
     }
 };
 
 // bind a buffer to a given shader parameter.
-struct SApplyImageValue : public SCommand
+struct QDemonApplyImageValue : public QDemonCommand
 {
-    QString m_ImageName; ///< name which the image was allocated
-    QString m_ParamName; ///< must match the name in the shader
-    bool m_BindAsTexture; ///< bind image as texture
-    bool m_NeedSync; ///< if true we add a memory barrier before usage
+    QString m_imageName; ///< name which the image was allocated
+    QString m_paramName; ///< must match the name in the shader
+    bool m_bindAsTexture; ///< bind image as texture
+    bool m_needSync; ///< if true we add a memory barrier before usage
 
-    SApplyImageValue(QString bufferName, QString shaderParam,
-                     bool inBindAsTexture, bool inNeedSync)
-        : SCommand(CommandTypes::ApplyImageValue)
-        , m_ImageName(bufferName)
-        , m_ParamName(shaderParam)
-        , m_BindAsTexture(inBindAsTexture)
-        , m_NeedSync(inNeedSync)
+    QDemonApplyImageValue(QString bufferName,
+                          QString shaderParam,
+                          bool inBindAsTexture,
+                          bool inNeedSync)
+        : QDemonCommand(CommandTypes::ApplyImageValue)
+        , m_imageName(bufferName)
+        , m_paramName(shaderParam)
+        , m_bindAsTexture(inBindAsTexture)
+        , m_needSync(inNeedSync)
     {
     }
-    SApplyImageValue(const SApplyImageValue &inOther)
-        : SCommand(CommandTypes::ApplyImageValue)
-        , m_ImageName(inOther.m_ImageName)
-        , m_ParamName(inOther.m_ParamName)
-        , m_BindAsTexture(inOther.m_BindAsTexture)
-        , m_NeedSync(inOther.m_NeedSync)
+    QDemonApplyImageValue(const QDemonApplyImageValue &inOther)
+        : QDemonCommand(CommandTypes::ApplyImageValue)
+        , m_imageName(inOther.m_imageName)
+        , m_paramName(inOther.m_paramName)
+        , m_bindAsTexture(inOther.m_bindAsTexture)
+        , m_needSync(inOther.m_needSync)
     {
     }
 };
 
 // bind a buffer to a given shader parameter.
-struct SApplyDataBufferValue : public SCommand
+struct QDemonApplyDataBufferValue : public QDemonCommand
 {
-    QString m_ParamName; ///< must match the name in the shader
-    QDemonRenderBufferBindValues::Enum m_BindAs; ///< to which target we bind this buffer
+    QString m_paramName; ///< must match the name in the shader
+    QDemonRenderBufferBindValues::Enum m_bindAs; ///< to which target we bind this buffer
 
-    SApplyDataBufferValue(QString inShaderParam,
-                          QDemonRenderBufferBindValues::Enum inBufferType)
-        : SCommand(CommandTypes::ApplyDataBufferValue)
-        , m_ParamName(inShaderParam)
-        , m_BindAs(inBufferType)
+    QDemonApplyDataBufferValue(QString inShaderParam,
+                               QDemonRenderBufferBindValues::Enum inBufferType)
+        : QDemonCommand(CommandTypes::ApplyDataBufferValue)
+        , m_paramName(inShaderParam)
+        , m_bindAs(inBufferType)
     {
     }
-    SApplyDataBufferValue(const SApplyDataBufferValue &inOther)
-        : SCommand(CommandTypes::ApplyDataBufferValue)
-        , m_ParamName(inOther.m_ParamName)
-        , m_BindAs(inOther.m_BindAs)
+    QDemonApplyDataBufferValue(const QDemonApplyDataBufferValue &inOther)
+        : QDemonCommand(CommandTypes::ApplyDataBufferValue)
+        , m_paramName(inOther.m_paramName)
+        , m_bindAs(inOther.m_bindAs)
     {
     }
 };
 
-struct SApplyDepthValue : public SCommand
+struct QDemonApplyDepthValue : public QDemonCommand
 {
     // If no param name is given, the buffer is bound to the
     // input texture parameter (texture0).
-    QString m_ParamName;
-    SApplyDepthValue(QString param)
-        : SCommand(CommandTypes::ApplyDepthValue)
-        , m_ParamName(param)
+    QString m_paramName;
+    QDemonApplyDepthValue(QString param)
+        : QDemonCommand(CommandTypes::ApplyDepthValue)
+        , m_paramName(param)
     {
     }
-    SApplyDepthValue(const SApplyDepthValue &inOther)
-        : SCommand(CommandTypes::ApplyDepthValue)
-        , m_ParamName(inOther.m_ParamName)
+    QDemonApplyDepthValue(const QDemonApplyDepthValue &inOther)
+        : QDemonCommand(CommandTypes::ApplyDepthValue)
+        , m_paramName(inOther.m_paramName)
     {
     }
 };
 
-struct SRender : public SCommand
+struct QDemonRender : public QDemonCommand
 {
-    bool m_DrawIndirect;
-    SRender(bool inDrawIndirect)
-        : SCommand(CommandTypes::Render)
-        , m_DrawIndirect(inDrawIndirect)
+    bool m_drawIndirect;
+    explicit QDemonRender(bool inDrawIndirect)
+        : QDemonCommand(CommandTypes::Render)
+        , m_drawIndirect(inDrawIndirect)
     {
     }
 
-    SRender(const SRender &inOther)
-        : SCommand(CommandTypes::Render)
-        , m_DrawIndirect(inOther.m_DrawIndirect)
+    QDemonRender(const QDemonRender &inOther)
+        : QDemonCommand(CommandTypes::Render)
+        , m_drawIndirect(inOther.m_drawIndirect)
     {
     }
 };
 
-struct SApplyBlending : public SCommand
+struct QDemonApplyBlending : public QDemonCommand
 {
-    QDemonRenderSrcBlendFunc::Enum m_SrcBlendFunc;
-    QDemonRenderDstBlendFunc::Enum m_DstBlendFunc;
+    QDemonRenderSrcBlendFunc::Enum m_srcBlendFunc;
+    QDemonRenderDstBlendFunc::Enum m_dstBlendFunc;
 
-    SApplyBlending(QDemonRenderSrcBlendFunc::Enum inSrcBlendFunc,
-                   QDemonRenderDstBlendFunc::Enum inDstBlendFunc)
-        : SCommand(CommandTypes::ApplyBlending)
-        , m_SrcBlendFunc(inSrcBlendFunc)
-        , m_DstBlendFunc(inDstBlendFunc)
+    QDemonApplyBlending(QDemonRenderSrcBlendFunc::Enum inSrcBlendFunc,
+                        QDemonRenderDstBlendFunc::Enum inDstBlendFunc)
+        : QDemonCommand(CommandTypes::ApplyBlending)
+        , m_srcBlendFunc(inSrcBlendFunc)
+        , m_dstBlendFunc(inDstBlendFunc)
     {
     }
 
-    SApplyBlending(const SApplyBlending &inOther)
-        : SCommand(CommandTypes::ApplyBlending)
-        , m_SrcBlendFunc(inOther.m_SrcBlendFunc)
-        , m_DstBlendFunc(inOther.m_DstBlendFunc)
+    QDemonApplyBlending(const QDemonApplyBlending &inOther)
+        : QDemonCommand(CommandTypes::ApplyBlending)
+        , m_srcBlendFunc(inOther.m_srcBlendFunc)
+        , m_dstBlendFunc(inOther.m_dstBlendFunc)
     {
     }
 };
 
-struct SApplyRenderState : public SCommand
+struct QDemonApplyRenderState : public QDemonCommand
 {
-    QDemonRenderState::Enum m_RenderState;
-    bool m_Enabled;
+    QDemonRenderState::Enum m_renderState;
+    bool m_enabled;
 
-    SApplyRenderState(QDemonRenderState::Enum inRenderStateValue, bool inEnabled)
-        : SCommand(CommandTypes::ApplyRenderState)
-        , m_RenderState(inRenderStateValue)
-        , m_Enabled(inEnabled)
+    QDemonApplyRenderState(QDemonRenderState::Enum inRenderStateValue, bool inEnabled)
+        : QDemonCommand(CommandTypes::ApplyRenderState)
+        , m_renderState(inRenderStateValue)
+        , m_enabled(inEnabled)
     {
     }
 
-    SApplyRenderState(const SApplyRenderState &inOther)
-        : SCommand(CommandTypes::ApplyRenderState)
-        , m_RenderState(inOther.m_RenderState)
-        , m_Enabled(inOther.m_Enabled)
+    QDemonApplyRenderState(const QDemonApplyRenderState &inOther)
+        : QDemonCommand(CommandTypes::ApplyRenderState)
+        , m_renderState(inOther.m_renderState)
+        , m_enabled(inOther.m_enabled)
     {
     }
 };
 
-struct SApplyBlitFramebuffer : public SCommand
+struct QDemonApplyBlitFramebuffer : public QDemonCommand
 {
     // If no buffer name is given then the special buffer [source]
     // is assumed. Which is the default render target
-    QString m_SourceBufferName;
+    QString m_sourceBufferName;
     // If no buffer name is given then the special buffer [dest]
     // is assumed. Which is the default render target
-    QString m_DestBufferName;
+    QString m_destBufferName;
 
-    SApplyBlitFramebuffer(QString inSourceBufferName,
-                          QString inDestBufferName)
-        : SCommand(CommandTypes::ApplyBlitFramebuffer)
-        , m_SourceBufferName(inSourceBufferName)
-        , m_DestBufferName(inDestBufferName)
+    QDemonApplyBlitFramebuffer(QString inSourceBufferName,
+                               QString inDestBufferName)
+        : QDemonCommand(CommandTypes::ApplyBlitFramebuffer)
+        , m_sourceBufferName(inSourceBufferName)
+        , m_destBufferName(inDestBufferName)
     {
     }
 
-    SApplyBlitFramebuffer(const SApplyBlitFramebuffer &inOther)
-        : SCommand(CommandTypes::ApplyBlitFramebuffer)
-        , m_SourceBufferName(inOther.m_SourceBufferName)
-        , m_DestBufferName(inOther.m_DestBufferName)
+    QDemonApplyBlitFramebuffer(const QDemonApplyBlitFramebuffer &inOther)
+        : QDemonCommand(CommandTypes::ApplyBlitFramebuffer)
+        , m_sourceBufferName(inOther.m_sourceBufferName)
+        , m_destBufferName(inOther.m_destBufferName)
     {
     }
 };
@@ -542,70 +542,67 @@ struct DepthStencilFlagValues
     };
 };
 
-struct SDepthStencilFlags : public QDemonFlags<DepthStencilFlagValues::Enum>
+struct QDemonDepthStencilFlags : public QDemonFlags<DepthStencilFlagValues::Enum>
 {
-    bool HasClearStencil() const { return operator&(DepthStencilFlagValues::ClearStencil); }
-    void SetClearStencil(bool value)
+    bool hasClearStencil() const { return operator&(DepthStencilFlagValues::ClearStencil); }
+    void setClearStencil(bool value)
     {
         clearOrSet(value, DepthStencilFlagValues::ClearStencil);
     }
 
-    bool HasClearDepth() const { return operator&(DepthStencilFlagValues::ClearDepth); }
-    void SetClearDepth(bool value)
+    bool hasClearDepth() const { return operator&(DepthStencilFlagValues::ClearDepth); }
+    void setClearDepth(bool value)
     {
         clearOrSet(value, DepthStencilFlagValues::ClearDepth);
     }
 };
 
-struct SDepthStencil : public SCommand
+struct QDemonDepthStencil : public QDemonCommand
 {
-    QString m_BufferName;
-    SDepthStencilFlags m_Flags;
-    QDemonRenderStencilOp::Enum m_StencilFailOperation;
-    QDemonRenderStencilOp::Enum m_DepthPassOperation;
-    QDemonRenderStencilOp::Enum m_DepthFailOperation;
-    QDemonRenderBoolOp::Enum m_StencilFunction;
-    quint32 m_Reference;
-    quint32 m_Mask;
+    QString m_bufferName;
+    QDemonDepthStencilFlags m_glags;
+    QDemonRenderStencilOp::Enum m_stencilFailOperation = QDemonRenderStencilOp::Keep;
+    QDemonRenderStencilOp::Enum m_depthPassOperation= QDemonRenderStencilOp::Keep;
+    QDemonRenderStencilOp::Enum m_depthFailOperation = QDemonRenderStencilOp::Keep;
+    QDemonRenderBoolOp::Enum m_stencilFunction = QDemonRenderBoolOp::Equal;
+    quint32 m_reference = 0;
+    quint32 m_mask = std::numeric_limits<quint32>::max();
 
-    SDepthStencil()
-        : SCommand(CommandTypes::DepthStencil)
-        , m_StencilFailOperation(QDemonRenderStencilOp::Keep)
-        , m_DepthPassOperation(QDemonRenderStencilOp::Keep)
-        , m_DepthFailOperation(QDemonRenderStencilOp::Keep)
-        , m_StencilFunction(QDemonRenderBoolOp::Equal)
-        , m_Reference(0)
-        , m_Mask(std::numeric_limits<quint32>::max())
+    QDemonDepthStencil()
+        : QDemonCommand(CommandTypes::DepthStencil)
     {
     }
 
-    SDepthStencil(QString bufName, SDepthStencilFlags flags,
-                  QDemonRenderStencilOp::Enum inStencilOp,
-                  QDemonRenderStencilOp::Enum inDepthPassOp,
-                  QDemonRenderStencilOp::Enum inDepthFailOp,
-                  QDemonRenderBoolOp::Enum inStencilFunc, quint32 value, quint32 mask)
-        : SCommand(CommandTypes::DepthStencil)
-        , m_BufferName(bufName)
-        , m_Flags(flags)
-        , m_StencilFailOperation(inStencilOp)
-        , m_DepthPassOperation(inDepthPassOp)
-        , m_DepthFailOperation(inDepthFailOp)
-        , m_StencilFunction(inStencilFunc)
-        , m_Reference(value)
-        , m_Mask(mask)
+    QDemonDepthStencil(QString bufName,
+                       QDemonDepthStencilFlags flags,
+                       QDemonRenderStencilOp::Enum inStencilOp,
+                       QDemonRenderStencilOp::Enum inDepthPassOp,
+                       QDemonRenderStencilOp::Enum inDepthFailOp,
+                       QDemonRenderBoolOp::Enum inStencilFunc,
+                       quint32 value,
+                       quint32 mask)
+        : QDemonCommand(CommandTypes::DepthStencil)
+        , m_bufferName(bufName)
+        , m_glags(flags)
+        , m_stencilFailOperation(inStencilOp)
+        , m_depthPassOperation(inDepthPassOp)
+        , m_depthFailOperation(inDepthFailOp)
+        , m_stencilFunction(inStencilFunc)
+        , m_reference(value)
+        , m_mask(mask)
     {
     }
 
-    SDepthStencil(const SDepthStencil &inOther)
-        : SCommand(CommandTypes::DepthStencil)
-        , m_BufferName(inOther.m_BufferName)
-        , m_Flags(inOther.m_Flags)
-        , m_StencilFailOperation(inOther.m_StencilFailOperation)
-        , m_DepthPassOperation(inOther.m_DepthPassOperation)
-        , m_DepthFailOperation(inOther.m_DepthFailOperation)
-        , m_StencilFunction(inOther.m_StencilFunction)
-        , m_Reference(inOther.m_Reference)
-        , m_Mask(inOther.m_Mask)
+    QDemonDepthStencil(const QDemonDepthStencil &inOther)
+        : QDemonCommand(CommandTypes::DepthStencil)
+        , m_bufferName(inOther.m_bufferName)
+        , m_glags(inOther.m_glags)
+        , m_stencilFailOperation(inOther.m_stencilFailOperation)
+        , m_depthPassOperation(inOther.m_depthPassOperation)
+        , m_depthFailOperation(inOther.m_depthFailOperation)
+        , m_stencilFunction(inOther.m_stencilFunction)
+        , m_reference(inOther.m_reference)
+        , m_mask(inOther.m_mask)
     {
     }
 };

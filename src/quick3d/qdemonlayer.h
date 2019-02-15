@@ -237,7 +237,7 @@ Q_SIGNALS:
     void temporalAAEnabledChanged(bool temporalAAEnabled);
 
 protected:
-    SGraphObject *updateSpatialNode(SGraphObject *node) override;
+    QDemonGraphObject *updateSpatialNode(QDemonGraphObject *node) override;
 private:
 
     QString m_texturePath;

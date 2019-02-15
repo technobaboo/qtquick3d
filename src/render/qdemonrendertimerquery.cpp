@@ -40,28 +40,28 @@ QDemonRenderTimerQuery::QDemonRenderTimerQuery(QSharedPointer<QDemonRenderContex
 
 QDemonRenderTimerQuery::~QDemonRenderTimerQuery() {}
 
-void QDemonRenderTimerQuery::Begin()
+void QDemonRenderTimerQuery::begin()
 {
-    m_Backend->BeginQuery(m_QueryHandle, QDemonRenderQueryType::Timer);
+    m_backend->beginQuery(m_queryHandle, QDemonRenderQueryType::Timer);
 }
 
-void QDemonRenderTimerQuery::End() { m_Backend->EndQuery(m_QueryHandle, QDemonRenderQueryType::Timer); }
+void QDemonRenderTimerQuery::end() { m_backend->endQuery(m_queryHandle, QDemonRenderQueryType::Timer); }
 
-void QDemonRenderTimerQuery::GetResult(quint32 *params)
+void QDemonRenderTimerQuery::getResult(quint32 *params)
 {
-    m_Backend->GetQueryResult(m_QueryHandle, QDemonRenderQueryResultType::Result, params);
+    m_backend->getQueryResult(m_queryHandle, QDemonRenderQueryResultType::Result, params);
 }
 
-void QDemonRenderTimerQuery::GetResult(quint64 *params)
+void QDemonRenderTimerQuery::getResult(quint64 *params)
 {
-    m_Backend->GetQueryResult(m_QueryHandle, QDemonRenderQueryResultType::Result, params);
+    m_backend->getQueryResult(m_queryHandle, QDemonRenderQueryResultType::Result, params);
 }
 
-void QDemonRenderTimerQuery::SetTimerQuery() { m_Backend->SetQueryTimer(m_QueryHandle); }
+void QDemonRenderTimerQuery::SetTimerQuery() { m_backend->setQueryTimer(m_queryHandle); }
 
-QSharedPointer<QDemonRenderTimerQuery> QDemonRenderTimerQuery::Create(QSharedPointer<QDemonRenderContextImpl> context)
+QSharedPointer<QDemonRenderTimerQuery> QDemonRenderTimerQuery::create(QSharedPointer<QDemonRenderContextImpl> context)
 {
-    if (!context->IsTimerQuerySupported())
+    if (!context->isTimerQuerySupported())
         return nullptr;
 
     return QSharedPointer<QDemonRenderTimerQuery>(new QDemonRenderTimerQuery(context));

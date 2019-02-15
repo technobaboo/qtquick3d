@@ -37,31 +37,31 @@
 
 QT_BEGIN_NAMESPACE
 
-struct SRenderMesh;
-struct SLoadedTexture;
+struct QDemonRenderMesh;
+struct QDemonLoadedTexture;
 class QDemonRenderContext;
-class IInputStreamFactory;
-class IPerfTimer;
+class QDemonInputStreamFactoryInterface;
+class QDemonPerfTimerInterface;
 
-class Q_DEMONRUNTIMERENDER_EXPORT IBufferManager
+class Q_DEMONRUNTIMERENDER_EXPORT QDemonBufferManagerInterface
 {
 protected:
-    virtual ~IBufferManager() {}
+    virtual ~QDemonBufferManagerInterface() {}
 
 public:
     // Path manipulation used to get the final path form a base path plus relative extension
-    virtual QString CombineBaseAndRelative(const char *inBase,
+    virtual QString combineBaseAndRelative(const char *inBase,
                                            const char *inRelative) = 0;
-    virtual void SetImageHasTransparency(QString inSourcePath,
+    virtual void setImageHasTransparency(QString inSourcePath,
                                          bool inHasTransparency) = 0;
-    virtual bool GetImageHasTransparency(QString inSourcePath) const = 0;
-    virtual void SetImageTransparencyToFalseIfNotSet(QString inSourcePath) = 0;
-    virtual void SetInvertImageUVCoords(QString inSourcePath,
+    virtual bool getImageHasTransparency(QString inSourcePath) const = 0;
+    virtual void setImageTransparencyToFalseIfNotSet(QString inSourcePath) = 0;
+    virtual void setInvertImageUVCoords(QString inSourcePath,
                                         bool inShouldInvertCoords) = 0;
 
     // Returns true if this image has been loaded into memory
     // This call is threadsafe.  Nothing else on this object is guaranteed to be.
-    virtual bool IsImageLoaded(QString inSourcePath) = 0;
+    virtual bool isImageLoaded(QString inSourcePath) = 0;
 
     // Alias one image path with another image path.  Optionally this object will ignore the
     // call if
@@ -69,26 +69,26 @@ public:
     // to be shown
     // in place of an image that is loading offline.
     // Returns true if the image was aliased, false otherwise.
-    virtual bool AliasImagePath(QString inSourcePath, QString inAliasPath,
+    virtual bool aliasImagePath(QString inSourcePath, QString inAliasPath,
                                 bool inIgnoreIfLoaded) = 0;
-    virtual void UnaliasImagePath(QString inSourcePath) = 0;
+    virtual void unaliasImagePath(QString inSourcePath) = 0;
 
     // Returns the given source path unless the source path is aliased; in which case returns
     // the aliased path.
-    virtual QString GetImagePath(QString inSourcePath) = 0;
+    virtual QString getImagePath(QString inSourcePath) = 0;
     // Returns a texture and a boolean indicating if this texture has transparency in it or not.
     // Can't name this LoadImage because that gets mangled by windows to LoadImageA (uggh)
     // In some cases we need to only scan particular images for transparency.
-    virtual SImageTextureData LoadRenderImage(QString inImagePath,
-                                              QSharedPointer<SLoadedTexture> inTexture,
+    virtual QDemonRenderImageTextureData loadRenderImage(QString inImagePath,
+                                              QSharedPointer<QDemonLoadedTexture> inTexture,
                                               bool inForceScanForTransparency = false,
                                               bool inBsdfMipmaps = false) = 0;
-    virtual SImageTextureData LoadRenderImage(QString inSourcePath,
+    virtual QDemonRenderImageTextureData loadRenderImage(QString inSourcePath,
                                               bool inForceScanForTransparency = false,
                                               bool inBsdfMipmaps = false) = 0;
-    virtual SRenderMesh *LoadMesh(const QString &inSourcePath) = 0;
+    virtual QDemonRenderMesh *loadMesh(const QString &inSourcePath) = 0;
 
-    virtual SRenderMesh *CreateMesh(const QString &inSourcePath,
+    virtual QDemonRenderMesh *createMesh(const QString &inSourcePath,
                                     quint8 *inVertData,
                                     quint32 inNumVerts,
                                     quint32 inVertStride,
@@ -97,12 +97,12 @@ public:
                                     QDemonBounds3 inBounds) = 0;
 
     // Remove *all* buffers from the buffer manager;
-    virtual void Clear() = 0;
-    virtual void InvalidateBuffer(QString inSourcePath) = 0;
+    virtual void clear() = 0;
+    virtual void invalidateBuffer(QString inSourcePath) = 0;
 
-    static QSharedPointer<IBufferManager> Create(QSharedPointer<QDemonRenderContext> inRenderContext,
-                                                 QSharedPointer<IInputStreamFactory> inInputStreamFactory,
-                                                 QSharedPointer<IPerfTimer> inTimer);
+    static QSharedPointer<QDemonBufferManagerInterface> create(QSharedPointer<QDemonRenderContext> inRenderContext,
+                                                               QSharedPointer<QDemonInputStreamFactoryInterface> inInputStreamFactory,
+                                                               QSharedPointer<QDemonPerfTimerInterface> inTimer);
 };
 QT_END_NAMESPACE
 

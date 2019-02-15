@@ -38,7 +38,7 @@
 
 QT_BEGIN_NAMESPACE
 
-QSharedPointer<QDemonRenderContext> QDemonRenderContext::CreateGL(const QSurfaceFormat &format)
+QSharedPointer<QDemonRenderContext> QDemonRenderContext::createGl(const QSurfaceFormat &format)
 {
     QSharedPointer<QDemonRenderContext> retval;
 

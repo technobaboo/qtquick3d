@@ -37,21 +37,15 @@
 #include <QtGui/QImage>
 
 QT_BEGIN_NAMESPACE
-class IInputStreamFactory;
+class QDemonInputStreamFactoryInterface;
 
-struct STextureData
+struct QDemonTextureData
 {
-    void *data;
-    quint32 dataSizeInBytes;
-    QDemonRenderTextureFormats::Enum format;
-    STextureData()
-        : data(nullptr)
-        , dataSizeInBytes(0)
-        , format(QDemonRenderTextureFormats::Unknown)
-    {
-    }
+    void *data = nullptr;
+    quint32 dataSizeInBytes = 0;
+    QDemonRenderTextureFormats::Enum format = QDemonRenderTextureFormats::Unknown;
 };
-struct ExtendedTextureFormats
+struct QDemonExtendedTextureFormats
 {
     enum Enum {
         NoExtendedFormat = 0,
@@ -61,48 +55,26 @@ struct ExtendedTextureFormats
 };
 // Utility class used for loading image data from disk.
 // Supports jpg, png, and dds.
-struct SLoadedTexture
+struct QDemonLoadedTexture
 {
 public:
-    qint32 width;
-    qint32 height;
-    qint32 components;
-    void *data;
+    qint32 width = 0;
+    qint32 height = 0;
+    qint32 components = 0;
+    void *data = nullptr;
     QImage image;
-    quint32 dataSizeInBytes;
-    QDemonRenderTextureFormats::Enum format;
-    ExtendedTextureFormats::Enum m_ExtendedFormat;
+    quint32 dataSizeInBytes = 0;
+    QDemonRenderTextureFormats::Enum format = QDemonRenderTextureFormats::RGBA8;
+    QDemonExtendedTextureFormats::Enum m_ExtendedFormat = QDemonExtendedTextureFormats::NoExtendedFormat;
     // Used for palettized images.
-    void *m_Palette;
-    qint32 m_CustomMasks[3];
-    int m_BitCount;
-    char m_BackgroundColor[3];
-    uint8_t *m_TransparencyTable;
-    int32_t m_TransparentPaletteIndex;
+    void *m_palette = nullptr;
+    qint32 m_customMasks[3] { 0, 0, 0 };
+    int m_bitCount = 0;
+    char m_backgroundColor[3] { 0, 0, 0 };
+    quint8 *m_transparencyTable = nullptr;
+    qint32 m_transparentPaletteIndex = -1;
 
-    SLoadedTexture()
-        : width(0)
-        , height(0)
-        , components(0)
-        , data(nullptr)
-        , image(nullptr)
-        , dataSizeInBytes(0)
-        , format(QDemonRenderTextureFormats::RGBA8)
-        , m_ExtendedFormat(ExtendedTextureFormats::NoExtendedFormat)
-        , m_Palette(nullptr)
-        , m_BitCount(0)
-        , m_TransparencyTable(nullptr)
-        , m_TransparentPaletteIndex(-1)
-    {
-        m_CustomMasks[0] = 0;
-        m_CustomMasks[1] = 0;
-        m_CustomMasks[2] = 0;
-        m_BackgroundColor[0] = 0;
-        m_BackgroundColor[1] = 0;
-        m_BackgroundColor[2] = 0;
-    }
-
-    ~SLoadedTexture();
+    ~QDemonLoadedTexture();
     void setFormatFromComponents()
     {
         switch (components) {
@@ -124,25 +96,26 @@ public:
         }
     }
 
-    void EnsureMultiplerOfFour(const char *inPath);
+    void ensureMultiplerOfFour(const char *inPath);
     // Returns true if this image has a pixel less than 255.
-    bool ScanForTransparency();
+    bool scanForTransparency();
 
     // Not all video cards support dxt compression.  Giving the last image allows
     // this object to potentially reuse the memory
-    STextureData DecompressDXTImage(int inMipMapIdx, STextureData *inOptLastImage = nullptr);
-    void ReleaseDecompressedTexture(STextureData inImage);
+    QDemonTextureData decompressDXTImage(int inMipMapIdx, QDemonTextureData *inOptLastImage = nullptr);
+    void releaseDecompressedTexture(QDemonTextureData inImage);
 
-    static QSharedPointer<SLoadedTexture> Load(const QString &inPath,
-                                               IInputStreamFactory &inFactory, bool inFlipY = true,
-                                               QDemonRenderContextType renderContextType
-                                               = QDemonRenderContextValues::NullContext);
-    static QSharedPointer<SLoadedTexture> LoadQImage(const QString &inPath, qint32 flipVertical,
-                                                     QDemonRenderContextType renderContextType);
+    static QSharedPointer<QDemonLoadedTexture> load(const QString &inPath,
+                                                    QDemonInputStreamFactoryInterface &inFactory,
+                                                    bool inFlipY = true,
+                                                    QDemonRenderContextType renderContextType = QDemonRenderContextValues::NullContext);
+    static QSharedPointer<QDemonLoadedTexture> loadQImage(const QString &inPath,
+                                                          qint32 flipVertical,
+                                                          QDemonRenderContextType renderContextType);
 
 private:
     // Implemented in the bmp loader.
-    void FreeImagePostProcess(bool inFlipY);
+    void freeImagePostProcess(bool inFlipY);
 };
 QT_END_NAMESPACE
 

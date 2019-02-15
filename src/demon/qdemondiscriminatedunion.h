@@ -16,49 +16,49 @@ public:
     typedef typename TTraits::TIdType TIdType;
 
 protected:
-    char m_Data[TBufferSize];
+    char m_data[TBufferSize];
     // Id type must include a no-data type.
-    TIdType m_DataType;
+    TIdType m_dataType;
 
 public:
-    DiscriminatedUnion() { TTraits::defaultConstruct(m_Data, m_DataType); }
+    DiscriminatedUnion() { TTraits::defaultConstruct(m_data, m_dataType); }
 
     DiscriminatedUnion(const TThisType &inOther)
-        : m_DataType(inOther.m_DataType)
+        : m_dataType(inOther.m_dataType)
     {
-        TTraits::copyConstruct(m_Data, inOther.m_Data, m_DataType);
+        TTraits::copyConstruct(m_data, inOther.m_data, m_dataType);
     }
 
     template <typename TDataType>
     DiscriminatedUnion(const TDataType &inType)
     {
-        TTraits::copyConstruct(m_Data, m_DataType, inType);
+        TTraits::copyConstruct(m_data, m_dataType, inType);
     }
 
-    ~DiscriminatedUnion() { TTraits::destruct(m_Data, m_DataType); }
+    ~DiscriminatedUnion() { TTraits::destruct(m_data, m_dataType); }
 
     TThisType &operator=(const TThisType &inType)
     {
         if (this != &inType) {
-            TTraits::destruct(m_Data, m_DataType);
-            m_DataType = inType.m_DataType;
-            TTraits::copyConstruct(m_Data, inType.m_Data, inType.m_DataType);
+            TTraits::destruct(m_data, m_dataType);
+            m_dataType = inType.m_dataType;
+            TTraits::copyConstruct(m_data, inType.m_data, inType.m_dataType);
         }
         return *this;
     }
 
-    typename TTraits::TIdType getType() const { return m_DataType; }
+    typename TTraits::TIdType getType() const { return m_dataType; }
 
     template <typename TDataType>
     const TDataType *getDataPtr() const
     {
-        return TTraits::template getDataPtr<TDataType>(m_Data, m_DataType);
+        return TTraits::template getDataPtr<TDataType>(m_data, m_dataType);
     }
 
     template <typename TDataType>
     TDataType *getDataPtr()
     {
-        return TTraits::template getDataPtr<TDataType>(m_Data, m_DataType);
+        return TTraits::template getDataPtr<TDataType>(m_data, m_dataType);
     }
 
     template <typename TDataType>
@@ -73,26 +73,26 @@ public:
 
     bool operator==(const TThisType &inOther) const
     {
-        return m_DataType == inOther.m_DataType
-            && TTraits::areEqual(m_Data, inOther.m_Data, m_DataType);
+        return m_dataType == inOther.m_dataType
+            && TTraits::areEqual(m_data, inOther.m_data, m_dataType);
     }
 
     bool operator!=(const TThisType &inOther) const
     {
-        return m_DataType != inOther.m_DataType
-            || TTraits::areEqual(m_Data, inOther.m_Data, m_DataType) == false;
+        return m_dataType != inOther.m_dataType
+            || TTraits::areEqual(m_data, inOther.m_data, m_dataType) == false;
     }
 
     template <typename TRetType, typename TVisitorType>
     TRetType visit(TVisitorType inVisitor)
     {
-        return TTraits::template visit<TRetType>(m_Data, m_DataType, inVisitor);
+        return TTraits::template visit<TRetType>(m_data, m_dataType, inVisitor);
     }
 
     template <typename TRetType, typename TVisitorType>
     TRetType visit(TVisitorType inVisitor) const
     {
-        return TTraits::template visit<TRetType>(m_Data, m_DataType, inVisitor);
+        return TTraits::template visit<TRetType>(m_data, m_dataType, inVisitor);
     }
 };
 
@@ -100,16 +100,16 @@ public:
 
 struct CopyConstructVisitor
 {
-    const char *m_Src;
+    const char *m_src;
     CopyConstructVisitor(const char *inSrc)
-        : m_Src(inSrc)
+        : m_src(inSrc)
     {
     }
 
     template <typename TDataType>
     void operator()(TDataType &inDst)
     {
-        new (&inDst) TDataType(*QDemonUnionCast<const TDataType *>(m_Src));
+        new (&inDst) TDataType(*QDemonUnionCast<const TDataType *>(m_src));
     }
     void operator()() { Q_ASSERT(false); }
 };
@@ -213,15 +213,15 @@ struct EqualVisitorTraits
 
 struct EqualVisitor
 {
-    const char *m_Rhs;
+    const char *m_rhs;
     EqualVisitor(const char *rhs)
-        : m_Rhs(rhs)
+        : m_rhs(rhs)
     {
     }
     template <typename TDataType>
     bool operator()(const TDataType &lhs)
     {
-        const TDataType &rhs(*QDemonUnionCast<const TDataType *>(m_Rhs));
+        const TDataType &rhs(*QDemonUnionCast<const TDataType *>(m_rhs));
         return EqualVisitorTraits<TDataType>()(lhs, rhs);
     }
     bool operator()()

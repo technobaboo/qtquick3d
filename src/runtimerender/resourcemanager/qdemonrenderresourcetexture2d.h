@@ -36,75 +36,76 @@
 #include <QtDemonRuntimeRender/qdemonrenderresourcemanager.h>
 
 QT_BEGIN_NAMESPACE
-class CResourceTexture2D
+class QDemonResourceTexture2D
 {
 protected:
-    QSharedPointer<IResourceManager> m_ResourceManager;
-    QSharedPointer<QDemonRenderTexture2D> m_Texture;
-    STextureDetails m_TextureDetails;
+    QSharedPointer<QDemonResourceManagerInterface> m_resourceManager;
+    QSharedPointer<QDemonRenderTexture2D> m_texture;
+    QDemonTextureDetails m_textureDetails;
 
 public:
-    CResourceTexture2D(QSharedPointer<IResourceManager> mgr, QSharedPointer<QDemonRenderTexture2D> inTexture = nullptr);
+    QDemonResourceTexture2D(QSharedPointer<QDemonResourceManagerInterface> mgr,
+                            QSharedPointer<QDemonRenderTexture2D> inTexture = nullptr);
     // create and allocate the texture right away.
-    CResourceTexture2D(QSharedPointer<IResourceManager> mgr,
-                       quint32 width,
-                       quint32 height,
-                       QDemonRenderTextureFormats::Enum inFormat,
-                       quint32 inSamples = 1);
-    ~CResourceTexture2D();
+    QDemonResourceTexture2D(QSharedPointer<QDemonResourceManagerInterface> mgr,
+                            quint32 width,
+                            quint32 height,
+                            QDemonRenderTextureFormats::Enum inFormat,
+                            quint32 inSamples = 1);
+    ~QDemonResourceTexture2D();
     // Returns true if the texture matches the specs, false if the texture needs to be
     // reallocated
-    bool TextureMatches(quint32 width,
+    bool textureMatches(quint32 width,
                         quint32 height,
                         QDemonRenderTextureFormats::Enum inFormat,
                         quint32 inSamples = 1);
 
     // Returns true if the texture was allocated, false if nothing changed (no allocation).
     // Note this is the exact opposite of TextureMatches.
-    bool EnsureTexture(quint32 width,
+    bool ensureTexture(quint32 width,
                        quint32 height,
                        QDemonRenderTextureFormats::Enum inFormat,
                        quint32 inSamples = 1);
 
     // Force release the texture.
-    void ReleaseTexture();
+    void releaseTexture();
     QDemonRenderTexture2D &operator*()
     {
-        Q_ASSERT(m_Texture);
-        return *m_Texture;
+        Q_ASSERT(m_texture);
+        return *m_texture;
     }
     QSharedPointer<QDemonRenderTexture2D> operator->()
     {
-        Q_ASSERT(m_Texture);
-        return m_Texture;
+        Q_ASSERT(m_texture);
+        return m_texture;
     }
-    operator QSharedPointer<QDemonRenderTexture2D> () { return m_Texture; }
-    QSharedPointer<QDemonRenderTexture2D> GetTexture() { return m_Texture; }
-    void ForgetTexture();
+    operator QSharedPointer<QDemonRenderTexture2D> () { return m_texture; }
+    QSharedPointer<QDemonRenderTexture2D> getTexture() { return m_texture; }
+    void forgetTexture();
     // Enforces single ownership rules.
-    void StealTexture(CResourceTexture2D &inOther);
+    void stealTexture(QDemonResourceTexture2D &inOther);
 };
 
-class CResourceTexture2DArray
+class QDemonResourceTexture2DArray
 {
 protected:
-    QSharedPointer<IResourceManager> m_ResourceManager;
-    QSharedPointer<QDemonRenderTexture2DArray> m_Texture;
-    STextureDetails m_TextureDetails;
+    QSharedPointer<QDemonResourceManagerInterface> m_resourceManager;
+    QSharedPointer<QDemonRenderTexture2DArray> m_texture;
+    QDemonTextureDetails m_textureDetails;
 
 public:
-    CResourceTexture2DArray(QSharedPointer<IResourceManager> mgr);
+    QDemonResourceTexture2DArray(QSharedPointer<QDemonResourceManagerInterface> mgr);
     // create and allocate the texture right away.
-    CResourceTexture2DArray(QSharedPointer<IResourceManager> mgr,
-                            quint32 width,
-                            quint32 height,
-                            quint32 slices,
-                            QDemonRenderTextureFormats::Enum inFormat,
-                            quint32 inSamples = 1);
-    ~CResourceTexture2DArray();
+    QDemonResourceTexture2DArray(QSharedPointer<QDemonResourceManagerInterface> mgr,
+                                 quint32 width,
+                                 quint32 height,
+                                 quint32 slices,
+                                 QDemonRenderTextureFormats::Enum inFormat,
+                                 quint32 inSamples = 1);
+    ~QDemonResourceTexture2DArray();
     // Returns true if the texture matches the specs, false if the texture needs to be
     // reallocated
-    bool TextureMatches(quint32 width,
+    bool textureMatches(quint32 width,
                         quint32 height,
                         quint32 slices,
                         QDemonRenderTextureFormats::Enum inFormat,
@@ -112,28 +113,28 @@ public:
 
     // Returns true if the texture was allocated, false if nothing changed (no allocation).
     // Note this is the exact opposite of TextureMatches.
-    bool EnsureTexture(quint32 width,
+    bool ensureTexture(quint32 width,
                        quint32 height,
                        quint32 slices,
                        QDemonRenderTextureFormats::Enum inFormat,
                        quint32 inSamples = 1);
 
     // Force release the texture.
-    void ReleaseTexture();
+    void releaseTexture();
     QDemonRenderTexture2DArray &operator*()
     {
-        Q_ASSERT(m_Texture);
-        return *m_Texture;
+        Q_ASSERT(m_texture);
+        return *m_texture;
     }
     QSharedPointer<QDemonRenderTexture2DArray> operator->()
     {
-        Q_ASSERT(m_Texture);
-        return m_Texture;
+        Q_ASSERT(m_texture);
+        return m_texture;
     }
-    operator QSharedPointer<QDemonRenderTexture2DArray> () { return m_Texture; }
-    QSharedPointer<QDemonRenderTexture2DArray> GetTexture() { return m_Texture; }
+    operator QSharedPointer<QDemonRenderTexture2DArray> () { return m_texture; }
+    QSharedPointer<QDemonRenderTexture2DArray> getTexture() { return m_texture; }
     // Enforces single ownership rules.
-    void StealTexture(CResourceTexture2DArray &inOther);
+    void stealTexture(QDemonResourceTexture2DArray &inOther);
 };
 QT_END_NAMESPACE
 

@@ -78,7 +78,7 @@ QSharedPointer<QDemonRenderInputAssembler> QDemonRenderExampleTools::createBox(Q
         QDemonRenderVertexBufferEntry("attr_uv", QDemonRenderComponentTypes::Float32, 2, 6 * sizeof(float)),
     };
 
-    QSharedPointer<QDemonRenderAttribLayout> attribLayout = context->CreateAttributeLayout(toConstDataRef(entries, 3));
+    QSharedPointer<QDemonRenderAttribLayout> attribLayout = context->createAttributeLayout(toConstDataRef(entries, 3));
 
     // Vertex Buffer
     quint32 bufStride = 8 * sizeof(float);
@@ -105,11 +105,11 @@ QSharedPointer<QDemonRenderInputAssembler> QDemonRenderExampleTools::createBox(Q
         }
     }
 
-    outVertexBuffer= context->CreateVertexBuffer(QDemonRenderBufferUsageType::Static,
+    outVertexBuffer= context->createVertexBuffer(QDemonRenderBufferUsageType::Static,
                                                  bufSize,
                                                  bufStride,
                                                  vertData);
-    Q_ASSERT(bufStride == outVertexBuffer->GetStride());
+    Q_ASSERT(bufStride == outVertexBuffer->getStride());
     // Clean up data
     ::free(vertData.begin());
 
@@ -129,16 +129,16 @@ QSharedPointer<QDemonRenderInputAssembler> QDemonRenderExampleTools::createBox(Q
         *(indices++) = base + 2;
         *(indices++) = base + 3;
     }
-    outIndexBuffer= context->CreateIndexBuffer(QDemonRenderBufferUsageType::Static,
+    outIndexBuffer= context->createIndexBuffer(QDemonRenderBufferUsageType::Static,
                                                QDemonRenderComponentTypes::UnsignedInteger16,
                                                bufSize,
                                                indexData);
     ::free(indexData.begin());
 
-    quint32 strides = outVertexBuffer->GetStride();
+    quint32 strides = outVertexBuffer->getStride();
     quint32 offsets = 0;
 
-    QSharedPointer<QDemonRenderInputAssembler> inputAssembler = context->CreateInputAssembler(attribLayout,
+    QSharedPointer<QDemonRenderInputAssembler> inputAssembler = context->createInputAssembler(attribLayout,
                                                                                               toConstDataRef(&outVertexBuffer, 1),
                                                                                               outIndexBuffer,
                                                                                               toConstDataRef(&strides, 1),
@@ -171,9 +171,9 @@ static void dumpShaderOutput(QSharedPointer<QDemonRenderContext> ctx, const QDem
 QSharedPointer<QDemonRenderShaderProgram> compileAndDump(QSharedPointer<QDemonRenderContext> ctx, const char *name, const char *vertShader, const char *fragShader)
 {
     QDemonRenderVertFragCompilationResult compResult =
-            ctx->CompileSource(name, toRef(vertShader), toRef(fragShader));
+            ctx->compileSource(name, toRef(vertShader), toRef(fragShader));
     dumpShaderOutput(ctx, compResult);
-    return compResult.mShader;
+    return compResult.m_shader;
 }
 }
 

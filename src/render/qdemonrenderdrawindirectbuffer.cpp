@@ -39,48 +39,47 @@ QDemonRenderDrawIndirectBuffer::QDemonRenderDrawIndirectBuffer(QSharedPointer<QD
                                                                size_t size,
                                                                QDemonRenderBufferUsageType::Enum usageType,
                                                                QDemonDataRef<quint8> data)
-    : QDemonRenderDataBuffer(context, size,
-                             QDemonRenderBufferBindValues::Draw_Indirect, usageType, data)
-    , m_Dirty(true)
+    : QDemonRenderDataBuffer(context, size,QDemonRenderBufferBindValues::Draw_Indirect, usageType, data)
+    , m_dirty(true)
 {
 }
 
 QDemonRenderDrawIndirectBuffer::~QDemonRenderDrawIndirectBuffer()
 {
-    m_Context->BufferDestroyed(this);
+    m_context->bufferDestroyed(this);
 }
 
-void QDemonRenderDrawIndirectBuffer::Bind()
+void QDemonRenderDrawIndirectBuffer::bind()
 {
-    if (m_Mapped) {
+    if (m_mapped) {
         qCCritical(INVALID_OPERATION, "Attempting to Bind a locked buffer");
         Q_ASSERT(false);
     }
 
-    m_Backend->BindBuffer(m_BufferHandle, m_BindFlags);
+    m_backend->bindBuffer(m_bufferHandle, m_bindFlags);
 }
 
-void QDemonRenderDrawIndirectBuffer::Update()
+void QDemonRenderDrawIndirectBuffer::update()
 {
     // we only update the buffer if it is dirty and we actually have some data
-    if (m_Dirty && m_BufferData.size()) {
-        m_Backend->UpdateBuffer(m_BufferHandle, m_BindFlags, m_BufferData.size(), m_UsageType,
-                                m_BufferData.begin());
-        m_Dirty = false;
+    if (m_dirty && m_bufferData.size()) {
+        m_backend->updateBuffer(m_bufferHandle, m_bindFlags, m_bufferData.size(), m_usageType, m_bufferData.begin());
+        m_dirty = false;
     }
 }
 
-void QDemonRenderDrawIndirectBuffer::UpdateData(qint32 offset, QDemonDataRef<quint8> data)
+void QDemonRenderDrawIndirectBuffer::updateData(qint32 offset, QDemonDataRef<quint8> data)
 {
     // we only update the buffer if we something
     if (data.size())
-        m_Backend->UpdateBuffer(m_BufferHandle, m_BindFlags, data.size(), m_UsageType,
+        m_backend->updateBuffer(m_bufferHandle, m_bindFlags, data.size(), m_usageType,
                                 data.begin() + offset);
 }
 
-QSharedPointer<QDemonRenderDrawIndirectBuffer> QDemonRenderDrawIndirectBuffer::Create(QSharedPointer<QDemonRenderContextImpl> context,
-                                       QDemonRenderBufferUsageType::Enum usageType, size_t size,
-                                       QDemonConstDataRef<quint8> bufferData)
+QSharedPointer<QDemonRenderDrawIndirectBuffer> QDemonRenderDrawIndirectBuffer::create(QSharedPointer<QDemonRenderContextImpl> context,
+                                                                                      QDemonRenderBufferUsageType::Enum usageType,
+                                                                                      size_t size,
+                                                                                      QDemonConstDataRef<quint8> bufferData)
 {
     QSharedPointer<QDemonRenderDrawIndirectBuffer> retval = nullptr;
 
@@ -88,7 +87,7 @@ QSharedPointer<QDemonRenderDrawIndirectBuffer> QDemonRenderDrawIndirectBuffer::C
     QDemonRenderContextType noDrawIndirectSupported(
                 QDemonRenderContextValues::GL2 | QDemonRenderContextValues::GLES2 | QDemonRenderContextValues::GL3
                 | QDemonRenderContextValues::GLES3);
-    QDemonRenderContextType ctxType = context->GetRenderContextType();
+    QDemonRenderContextType ctxType = context->getRenderContextType();
 
     if (!(ctxType & noDrawIndirectSupported)) {
         quint32 bufSize = sizeof(QDemonRenderDrawIndirectBuffer);

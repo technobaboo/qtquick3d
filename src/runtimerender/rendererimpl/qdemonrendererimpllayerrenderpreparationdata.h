@@ -42,9 +42,9 @@
 #include <QtDemonRuntimeRender/qdemonrenderableobjects.h>
 
 QT_BEGIN_NAMESPACE
-struct SLayerRenderData;
+struct QDemonLayerRenderData;
 class QDemonRendererImpl;
-struct SRenderableObject;
+struct QDemonRenderableObject;
 
 struct LayerRenderPreparationResultFlagValues
 {
@@ -79,162 +79,155 @@ struct LayerRenderPreparationResultFlagValues
     };
 };
 
-struct SLayerRenderPreparationResultFlags
-        : public QDemonFlags<LayerRenderPreparationResultFlagValues::Enum, quint32>
+struct QDemonLayerRenderPreparationResultFlags : public QDemonFlags<LayerRenderPreparationResultFlagValues::Enum, quint32>
 {
-    bool WasLayerDataDirty() const
+    bool wasLayerDataDirty() const
     {
         return this->operator&(LayerRenderPreparationResultFlagValues::WasLayerDataDirty);
     }
-    void SetLayerDataDirty(bool inValue)
+    void setLayerDataDirty(bool inValue)
     {
         clearOrSet(inValue, LayerRenderPreparationResultFlagValues::WasLayerDataDirty);
     }
 
-    bool WasDirty() const
+    bool wasDirty() const
     {
         return this->operator&(LayerRenderPreparationResultFlagValues::WasDirty);
     }
-    void SetWasDirty(bool inValue)
+    void setWasDirty(bool inValue)
     {
         clearOrSet(inValue, LayerRenderPreparationResultFlagValues::WasDirty);
     }
 
-    bool ShouldRenderToTexture() const
+    bool shouldRenderToTexture() const
     {
         return this->operator&(LayerRenderPreparationResultFlagValues::ShouldRenderToTexture);
     }
-    void SetShouldRenderToTexture(bool inValue)
+    void setShouldRenderToTexture(bool inValue)
     {
         clearOrSet(inValue, LayerRenderPreparationResultFlagValues::ShouldRenderToTexture);
     }
 
-    bool RequiresDepthTexture() const
+    bool requiresDepthTexture() const
     {
         return this->operator&(LayerRenderPreparationResultFlagValues::RequiresDepthTexture);
     }
-    void SetRequiresDepthTexture(bool inValue)
+    void setRequiresDepthTexture(bool inValue)
     {
         clearOrSet(inValue, LayerRenderPreparationResultFlagValues::RequiresDepthTexture);
     }
 
-    bool ShouldCreateIndependentViewport() const
+    bool shouldCreateIndependentViewport() const
     {
-        return this->operator&(
-                    LayerRenderPreparationResultFlagValues::ShouldCreateIndependentViewport);
+        return this->operator&(LayerRenderPreparationResultFlagValues::ShouldCreateIndependentViewport);
     }
-    void SetShouldCreateIndependentViewport(bool inValue)
+    void setShouldCreateIndependentViewport(bool inValue)
     {
-        clearOrSet(inValue,
-                   LayerRenderPreparationResultFlagValues::ShouldCreateIndependentViewport);
+        clearOrSet(inValue, LayerRenderPreparationResultFlagValues::ShouldCreateIndependentViewport);
     }
 
-    bool RequiresSsaoPass() const
+    bool requiresSsaoPass() const
     {
         return this->operator&(LayerRenderPreparationResultFlagValues::RequiresSsaoPass);
     }
-    void SetRequiresSsaoPass(bool inValue)
+    void setRequiresSsaoPass(bool inValue)
     {
         clearOrSet(inValue, LayerRenderPreparationResultFlagValues::RequiresSsaoPass);
     }
 
-    bool RequiresShadowMapPass() const
+    bool requiresShadowMapPass() const
     {
         return this->operator&(LayerRenderPreparationResultFlagValues::RequiresShadowMapPass);
     }
-    void SetRequiresShadowMapPass(bool inValue)
+    void setRequiresShadowMapPass(bool inValue)
     {
         clearOrSet(inValue, LayerRenderPreparationResultFlagValues::RequiresShadowMapPass);
     }
 
-    bool RequiresStencilBuffer() const
+    bool requiresStencilBuffer() const
     {
         return this->operator&(LayerRenderPreparationResultFlagValues::RequiresStencilBuffer);
     }
-    void SetRequiresStencilBuffer(bool inValue)
+    void setRequiresStencilBuffer(bool inValue)
     {
         clearOrSet(inValue, LayerRenderPreparationResultFlagValues::RequiresStencilBuffer);
     }
 };
 
-struct SLayerRenderPreparationResult : public SLayerRenderHelper
+struct QDemonLayerRenderPreparationResult : public QDemonLayerRenderHelper
 {
-    SEffect *m_LastEffect;
-    SLayerRenderPreparationResultFlags m_Flags;
-    quint32 m_MaxAAPassIndex;
-    SLayerRenderPreparationResult()
-        : m_LastEffect(nullptr)
-        , m_MaxAAPassIndex(0)
-    {
-    }
-    SLayerRenderPreparationResult(const SLayerRenderHelper &inHelper)
-        : SLayerRenderHelper(inHelper)
-        , m_LastEffect(nullptr)
-        , m_MaxAAPassIndex(0)
+    QDemonEffect *lastEffect = nullptr;
+    QDemonLayerRenderPreparationResultFlags flags;
+    quint32 maxAAPassIndex = 0;
+    QDemonLayerRenderPreparationResult() = default;
+    QDemonLayerRenderPreparationResult(const QDemonLayerRenderHelper &inHelper)
+        : QDemonLayerRenderHelper(inHelper)
+        , lastEffect(nullptr)
+        , maxAAPassIndex(0)
     {
     }
 };
 
-struct SRenderableNodeEntry
+struct QDemonRenderableNodeEntry
 {
-    SNode *m_Node;
-    TNodeLightEntryList m_Lights;
-    SRenderableNodeEntry()
-        : m_Node(nullptr)
-    {
-    }
-    SRenderableNodeEntry(SNode &inNode)
-        : m_Node(&inNode)
+    QDemonGraphNode *node = nullptr;
+    QDemonNodeLightEntryList lights;
+    QDemonRenderableNodeEntry() = default;
+    QDemonRenderableNodeEntry(QDemonGraphNode &inNode)
+        : node(&inNode)
     {
     }
 };
 
-struct SScopedLightsListScope
+struct QDemonScopedLightsListScope
 {
-    QVector<SLight *> &m_LightsList;
-    QVector<QVector3D> &m_LightDirList;
-    quint32 m_ListOriginalSize;
-    SScopedLightsListScope(QVector<SLight *> &inLights, QVector<QVector3D> &inDestLightDirList,
-                           QVector<QVector3D> &inSrcLightDirList,
-                           TNodeLightEntryList &inScopedLights)
-        : m_LightsList(inLights)
-        , m_LightDirList(inDestLightDirList)
-        , m_ListOriginalSize(m_LightsList.size())
+    QVector<QDemonRenderLight *> &lightsList;
+    QVector<QVector3D> &lightDirList;
+    quint32 listOriginalSize;
+    QDemonScopedLightsListScope(QVector<QDemonRenderLight *> &inLights,
+                                QVector<QVector3D> &inDestLightDirList,
+                                QVector<QVector3D> &inSrcLightDirList,
+                                QDemonNodeLightEntryList &inScopedLights)
+        : lightsList(inLights)
+        , lightDirList(inDestLightDirList)
+        , listOriginalSize(lightsList.size())
     {
-        for (TNodeLightEntryList::iterator iter = inScopedLights.begin(),
-             end = inScopedLights.end();
-             iter != end; ++iter) {
-            m_LightsList.push_back(iter->m_Light);
-            m_LightDirList.push_back(inSrcLightDirList[iter->m_LightIndex]);
+        auto iter = inScopedLights.begin();
+        const auto end = inScopedLights.end();
+        while (iter != end) {
+            lightsList.push_back(iter->light);
+            lightDirList.push_back(inSrcLightDirList[iter->lightIndex]);
+            ++iter;
         }
     }
-    ~SScopedLightsListScope()
+    ~QDemonScopedLightsListScope()
     {
-        m_LightsList.resize(m_ListOriginalSize);
-        m_LightDirList.resize(m_ListOriginalSize);
+        lightsList.resize(listOriginalSize);
+        lightDirList.resize(listOriginalSize);
     }
 };
 
-struct SDefaultMaterialPreparationResult
+struct QDemonDefaultMaterialPreparationResult
 {
-    SRenderableImage *m_FirstImage;
-    float m_Opacity;
-    SRenderableObjectFlags m_RenderableFlags;
-    SShaderDefaultMaterialKey m_MaterialKey;
-    bool m_Dirty;
+    QDemonRenderableImage *firstImage;
+    float opacity;
+    QDemonRenderableObjectFlags renderableFlags;
+    QDemonShaderDefaultMaterialKey materialKey;
+    bool dirty;
 
-    SDefaultMaterialPreparationResult(SShaderDefaultMaterialKey inMaterialKey);
+    QDemonDefaultMaterialPreparationResult(QDemonShaderDefaultMaterialKey inMaterialKey);
 };
 
 // Data used strictly in the render preparation step.
-struct SLayerRenderPreparationData
+struct QDemonLayerRenderPreparationData
 {
-    typedef void (*TRenderRenderableFunction)(SLayerRenderData &inData,
-                                              SRenderableObject &inObject,
+    typedef void (*TRenderRenderableFunction)(QDemonLayerRenderData &inData,
+                                              QDemonRenderableObject &inObject,
                                               const QVector2D &inCameraProps,
                                               TShaderFeatureSet inShaderFeatures,
-                                              quint32 lightIndex, const SCamera &inCamera);
-    typedef QHash<SLight *, SNode *> TLightToNodeMap;
+                                              quint32 lightIndex,
+                                              const QDemonRenderCamera &inCamera);
+    typedef QHash<QDemonRenderLight *, QDemonGraphNode *> TLightToNodeMap;
     //typedef Pool<SNodeLightEntry, ForwardingAllocator> TNodeLightEntryPoolType;
 
     enum Enum {
@@ -242,35 +235,35 @@ struct SLayerRenderPreparationData
         MAX_TEMPORAL_AA_LEVELS = 2,
     };
 
-    SLayer &m_Layer;
-    QSharedPointer<QDemonRendererImpl> m_Renderer;
+    QDemonLayer &layer;
+    QSharedPointer<QDemonRendererImpl> renderer;
     // List of nodes we can render, not all may be active.  Found by doing a depth-first
     // search through m_FirstChild if length is zero.
 
     //TNodeLightEntryPoolType m_RenderableNodeLightEntryPool;
-    QVector<SRenderableNodeEntry> m_RenderableNodes;
-    TLightToNodeMap m_LightToNodeMap; // map of lights to nodes to cache if we have looked up a
+    QVector<QDemonRenderableNodeEntry> renderableNodes;
+    TLightToNodeMap lightToNodeMap; // map of lights to nodes to cache if we have looked up a
     // given scoped light yet.
     // Built at the same time as the renderable nodes map.
     // these are processed so they are available when the shaders for the models
     // are being generated.
-    QVector<SNode *> m_CamerasAndLights;
+    QVector<QDemonGraphNode *> camerasAndLights;
 
     // Results of prepare for render.
-    SCamera *m_Camera;
-    QVector<SLight *> m_Lights; // Only contains lights that are global.
-    TRenderableObjectList m_OpaqueObjects;
-    TRenderableObjectList m_TransparentObjects;
+    QDemonRenderCamera *camera;
+    QVector<QDemonRenderLight *> lights; // Only contains lights that are global.
+    TRenderableObjectList opaqueObjects;
+    TRenderableObjectList transparentObjects;
     // Sorted lists of the rendered objects.  There may be other transforms applied so
     // it is simplest to duplicate the lists.
-    TRenderableObjectList m_RenderedOpaqueObjects;
-    TRenderableObjectList m_RenderedTransparentObjects;
-    QMatrix4x4 m_ViewProjection;
-    SClippingFrustum m_ClippingFrustum;
-    QDemonOption<SLayerRenderPreparationResult> m_LayerPrepResult;
+    TRenderableObjectList renderedOpaqueObjects;
+    TRenderableObjectList renderedTransparentObjects;
+    QMatrix4x4 viewProjection;
+    QDemonClippingFrustum clippingFrustum;
+    QDemonOption<QDemonLayerRenderPreparationResult> layerPrepResult;
     // Widgets drawn at particular times during the rendering process
-    QVector<IRenderWidget *> m_IRenderWidgets;
-    QDemonOption<QVector3D> m_CameraDirection;
+    QVector<QDemonRenderWidgetInterface *> iRenderWidgets;
+    QDemonOption<QVector3D> cameraDirection;
     // Scoped lights need a level of indirection into a light direction list.  The source light
     // directions list is as long as there are lights on the layer.  It holds invalid
     // information for
@@ -279,84 +272,89 @@ struct SLayerRenderPreparationData
     // in this list is completely constant and immutable; this relative position is saved on a
     // structure
     // and used when looking up the light direction for a given light.
-    QVector<QVector3D> m_SourceLightDirections;
-    QVector<QVector3D> m_LightDirections;
-    TModelContextPtrList m_ModelContexts;
-    QSharedPointer<IOffscreenRenderer> m_LastFrameOffscreenRenderer;
+    QVector<QVector3D> sourceLightDirections;
+    QVector<QVector3D> lightDirections;
+    TModelContextPtrList modelContexts;
+    QSharedPointer<QDemonOffscreenRendererInterface> lastFrameOffscreenRenderer;
 
-    QVector<SShaderPreprocessorFeature> m_Features;
-    QString m_CGLightingFeatureName;
-    bool m_FeaturesDirty;
-    size_t m_FeatureSetHash;
-    bool m_TooManyLightsError;
+    QVector<QDemonShaderPreprocessorFeature> features;
+    QString cgLightingFeatureName;
+    bool featuresDirty;
+    size_t featureSetHash;
+    bool tooManyLightsError;
 
     // shadow mapps
-    QSharedPointer<QDemonRenderShadowMap> m_ShadowMapManager;
+    QSharedPointer<QDemonRenderShadowMap> shadowMapManager;
 
-    SLayerRenderPreparationData(SLayer &inLayer, QSharedPointer<QDemonRendererImpl> inRenderer);
-    virtual ~SLayerRenderPreparationData();
-    bool GetOffscreenRenderer();
-    bool GetShadowMapManager();
-    bool NeedsWidgetTexture() const;
+    QDemonLayerRenderPreparationData(QDemonLayer &inLayer, QSharedPointer<QDemonRendererImpl> inRenderer);
+    virtual ~QDemonLayerRenderPreparationData();
+    bool getOffscreenRenderer();
+    bool getShadowMapManager();
+    bool needsWidgetTexture() const;
 
-    SShaderDefaultMaterialKey GenerateLightingKey(DefaultMaterialLighting::Enum inLightingType);
+    QDemonShaderDefaultMaterialKey generateLightingKey(DefaultMaterialLighting::Enum inLightingType);
 
-    void PrepareImageForRender(SImage &inImage, ImageMapTypes::Enum inMapType,
-                               SRenderableImage *&ioFirstImage, SRenderableImage *&ioNextImage,
-                               SRenderableObjectFlags &ioFlags,
-                               SShaderDefaultMaterialKey &ioGeneratedShaderKey,
+    void prepareImageForRender(QDemonRenderImage &inImage,
+                               QDemonImageMapTypes::Enum inMapType,
+                               QDemonRenderableImage *&ioFirstImage,
+                               QDemonRenderableImage *&ioNextImage,
+                               QDemonRenderableObjectFlags &ioFlags,
+                               QDemonShaderDefaultMaterialKey &ioGeneratedShaderKey,
                                quint32 inImageIndex);
 
-    SDefaultMaterialPreparationResult
-    PrepareDefaultMaterialForRender(SDefaultMaterial &inMaterial,
-                                    SRenderableObjectFlags &inExistingFlags, float inOpacity,
-                                    bool inClearMaterialFlags);
+    QDemonDefaultMaterialPreparationResult prepareDefaultMaterialForRender(QDemonRenderDefaultMaterial &inMaterial,
+                                                                           QDemonRenderableObjectFlags &inExistingFlags,
+                                                                           float inOpacity,
+                                                                           bool inClearMaterialFlags);
 
-    SDefaultMaterialPreparationResult
-    PrepareCustomMaterialForRender(SCustomMaterial &inMaterial,
-                                   SRenderableObjectFlags &inExistingFlags, float inOpacity);
+    QDemonDefaultMaterialPreparationResult prepareCustomMaterialForRender(QDemonCustomMaterial &inMaterial,
+                                                                          QDemonRenderableObjectFlags &inExistingFlags,
+                                                                          float inOpacity);
 
-    bool PrepareModelForRender(SModel &inModel, const QMatrix4x4 &inViewProjection,
-                               const QDemonOption<SClippingFrustum> &inClipFrustum,
-                               TNodeLightEntryList &inScopedLights);
+    bool prepareModelForRender(QDemonRenderModel &inModel,
+                               const QMatrix4x4 &inViewProjection,
+                               const QDemonOption<QDemonClippingFrustum> &inClipFrustum,
+                               QDemonNodeLightEntryList &inScopedLights);
 
-    bool PrepareTextForRender(SText &inText, const QMatrix4x4 &inViewProjection,
+    bool prepareTextForRender(QDemonText &inText,
+                              const QMatrix4x4 &inViewProjection,
                               float inTextScaleFactor,
-                              SLayerRenderPreparationResultFlags &ioFlags);
-    bool PreparePathForRender(SPath &inPath, const QMatrix4x4 &inViewProjection,
-                              const QDemonOption<SClippingFrustum> &inClipFrustum,
-                              SLayerRenderPreparationResultFlags &ioFlags);
+                              QDemonLayerRenderPreparationResultFlags &ioFlags);
+    bool preparePathForRender(QDemonPath &inPath,
+                              const QMatrix4x4 &inViewProjection,
+                              const QDemonOption<QDemonClippingFrustum> &inClipFrustum,
+                              QDemonLayerRenderPreparationResultFlags &ioFlags);
     // Helper function used during PRepareForRender and PrepareAndRender
-    bool PrepareRenderablesForRender(const QMatrix4x4 &inViewProjection,
-                                     const QDemonOption<SClippingFrustum> &inClipFrustum,
+    bool prepareRenderablesForRender(const QMatrix4x4 &inViewProjection,
+                                     const QDemonOption<QDemonClippingFrustum> &inClipFrustum,
                                      float inTextScaleFactor,
-                                     SLayerRenderPreparationResultFlags &ioFlags);
+                                     QDemonLayerRenderPreparationResultFlags &ioFlags);
 
     // returns true if this object will render something different than it rendered the last
     // time.
-    virtual void PrepareForRender(const QSize &inViewportDimensions);
-    bool CheckLightProbeDirty(SImage &inLightProbe);
-    void AddRenderWidget(IRenderWidget &inWidget);
-    void SetShaderFeature(const char *inName, bool inValue);
-    void SetShaderFeature(QString inName, bool inValue);
-    QVector<SShaderPreprocessorFeature> GetShaderFeatureSet();
-    size_t GetShaderFeatureSetHash();
+    virtual void prepareForRender(const QSize &inViewportDimensions);
+    bool checkLightProbeDirty(QDemonRenderImage &inLightProbe);
+    void addRenderWidget(QDemonRenderWidgetInterface &inWidget);
+    void setShaderFeature(const char *inName, bool inValue);
+    void setShaderFeature(QString inName, bool inValue);
+    QVector<QDemonShaderPreprocessorFeature> getShaderFeatureSet();
+    size_t getShaderFeatureSetHash();
     // The graph object is not const because this traversal updates dirty state on the objects.
-    QPair<bool, SGraphObject *> ResolveReferenceMaterial(SGraphObject *inMaterial);
+    QPair<bool, QDemonGraphObject *> resolveReferenceMaterial(QDemonGraphObject *inMaterial);
 
-    QVector3D GetCameraDirection();
+    QVector3D getCameraDirection();
     // Per-frame cache of renderable objects post-sort.
-    QVector<SRenderableObject *> GetOpaqueRenderableObjects();
+    QVector<QDemonRenderableObject *> getOpaqueRenderableObjects();
     // If layer depth test is false, this may also contain opaque objects.
-    QVector<SRenderableObject *> GetTransparentRenderableObjects();
+    QVector<QDemonRenderableObject *> getTransparentRenderableObjects();
 
-    virtual void ResetForFrame();
+    virtual void resetForFrame();
 
     // The render list and gl context are setup for what the embedded item will
     // need.
-    virtual SOffscreenRendererEnvironment CreateOffscreenRenderEnvironment() = 0;
+    virtual QDemonOffscreenRendererEnvironment createOffscreenRenderEnvironment() = 0;
 
-    virtual QSharedPointer<IRenderTask> CreateRenderToTextureRunnable() = 0;
+    virtual QSharedPointer<QDemonRenderTask> createRenderToTextureRunnable() = 0;
 };
 QT_END_NAMESPACE
 #endif

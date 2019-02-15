@@ -67,7 +67,7 @@ public:
              *
              * @return No return.
              */
-    void InitTextItem(size_t glyphCount, const quint32 *glyphIDs,
+    void initTextItem(size_t glyphCount, const quint32 *glyphIDs,
                       QDemonRenderPathFormatType::Enum type, float *posArray, QVector2D pixelBound,
                       QVector2D logicalBound, float emScale);
 
@@ -76,28 +76,28 @@ public:
              *
              * @return get glyph count
              */
-    size_t GetGlyphsCount() { return m_NumGlyphs; }
+    size_t getGlyphsCount() { return m_numGlyphs; }
 
     /**
              * @brief get spacing for char set
              *
              * @return spacing array
              */
-    const float *GetSpacing() { return m_TranslateXY; }
+    const float *getSpacing() { return m_translateXY; }
 
     /**
              * @brief get name set
              *
              * @return name set
              */
-    const void *GetGlyphIDs() { return reinterpret_cast<void *>(m_GlyphIDs); }
+    const void *getGlyphIDs() { return reinterpret_cast<void *>(m_glyphIDs); }
 
     /**
              * @brief Get Y bound of font metric
              *
              * @return transform matrix
              */
-    const QMatrix4x4 GetTransform();
+    const QMatrix4x4 getTransform();
 
 private:
     /**
@@ -110,13 +110,13 @@ private:
     quint32 getSizeOfType(QDemonRenderPathFormatType::Enum type);
 
 private:
-    size_t m_NumGlyphs; ///< glyph count
-    quint32 *m_GlyphIDs; ///< array glyph ID's
-    float *m_TranslateXY; ///< pointer to arrray for character advance information like kerning
-    QMatrix4x4 m_ModelMatrix; ///< Matrix which converts from font space to box space
+    size_t m_numGlyphs; ///< glyph count
+    quint32 *m_glyphIDs; ///< array glyph ID's
+    float *m_translateXY; ///< pointer to arrray for character advance information like kerning
+    QMatrix4x4 m_modelMatrix; ///< Matrix which converts from font space to box space
 
 public:
-    static QSharedPointer<QDemonRenderPathFontItem> CreatePathFontItem(QSharedPointer<QDemonRenderContextImpl> context);
+    static QSharedPointer<QDemonRenderPathFontItem> createPathFontItem(QSharedPointer<QDemonRenderContextImpl> context);
 };
 
 QT_END_NAMESPACE

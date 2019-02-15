@@ -91,7 +91,6 @@ SOURCES += \
     qdemonrenderinputstreamfactory.cpp \
     qdemonrenderpathmanager.cpp \
     qdemonrenderpixelgraphicsrenderer.cpp \
-    qdemonrenderpixelgraphicstypes.cpp \
 #    qdemonrenderplugin.cpp \
     qdemonrenderray.cpp \
     qdemonrenderrenderlist.cpp \

@@ -36,15 +36,15 @@ QT_BEGIN_NAMESPACE
 QDemonRenderVertexShader::QDemonRenderVertexShader(QSharedPointer<QDemonRenderContextImpl> context,
                                                    QDemonConstDataRef<qint8> source, bool binaryProgram)
     : QDemonRenderShader(context, source, binaryProgram)
-    , m_ShaderHandle(nullptr)
+    , m_shaderHandle(nullptr)
 {
-    m_ShaderHandle = m_Backend->CreateVertexShader(source, m_ErrorMessage, binaryProgram);
+    m_shaderHandle = m_backend->createVertexShader(source, m_errorMessage, binaryProgram);
 }
 
 QDemonRenderVertexShader::~QDemonRenderVertexShader()
 {
-    if (m_ShaderHandle) {
-        m_Backend->ReleaseVertexShader(m_ShaderHandle);
+    if (m_shaderHandle) {
+        m_backend->releaseVertexShader(m_shaderHandle);
     }
 }
 QT_END_NAMESPACE

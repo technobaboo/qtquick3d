@@ -81,14 +81,14 @@ public:
          *
          * @return no return.
          */
-    void Bind() override;
+    void bind() override;
 
     /**
          * @brief update the buffer to hardware
          *
          * @return no return.
          */
-    virtual void Update();
+    virtual void update();
 
     /**
          * @brief update a piece of memory directly within the storage buffer
@@ -105,22 +105,22 @@ public:
          *
          * @return no return
          */
-    void UpdateData(qint32 offset, QDemonDataRef<quint8> data);
+    void updateData(qint32 offset, QDemonDataRef<quint8> data);
 
     /**
          * @brief get the backend object handle
          *
          * @return the backend object handle.
          */
-    QDemonRenderBackend::QDemonRenderBackendBufferObject GetBuffertHandle() const override
+    QDemonRenderBackend::QDemonRenderBackendBufferObject getBuffertHandle() const override
     {
-        return m_BufferHandle;
+        return m_bufferHandle;
     }
 
     // this will be obsolete
-    const void *GetImplementationHandle() const override
+    const void *getImplementationHandle() const override
     {
-        return reinterpret_cast<void *>(m_BufferHandle);
+        return reinterpret_cast<void *>(m_bufferHandle);
     }
 
     /**
@@ -134,12 +134,12 @@ public:
          *
          * @return the buffer object or nullptr
          */
-    static QSharedPointer<QDemonRenderDrawIndirectBuffer> Create(QSharedPointer<QDemonRenderContextImpl> context,
+    static QSharedPointer<QDemonRenderDrawIndirectBuffer> create(QSharedPointer<QDemonRenderContextImpl> context,
                                                   QDemonRenderBufferUsageType::Enum usageType,
                                                   size_t size, QDemonConstDataRef<quint8> bufferData);
 
 private:
-    bool m_Dirty; ///< true if buffer is dirty
+    bool m_dirty; ///< true if buffer is dirty
 };
 
 QT_END_NAMESPACE

@@ -60,52 +60,52 @@ QT_BEGIN_NAMESPACE
 
 namespace {
 
-struct SRenderContextCore : public IQDemonRenderContextCore
+struct QDemonRenderContextCore : public QDemonRenderContextCoreInterface
 {
-    QSharedPointer<IPerfTimer> m_PerfTimer;
-    QSharedPointer<IInputStreamFactory> m_InputStreamFactory;
-    QSharedPointer<IThreadPool> m_ThreadPool;
-    QSharedPointer<IDynamicObjectSystemCore> m_DynamicObjectSystem;
-    QSharedPointer<ICustomMaterialSystemCore> m_MaterialSystem;
-    QSharedPointer<IEffectSystemCore> m_EffectSystem;
-    QSharedPointer<IBufferLoader> m_BufferLoader;
-    QSharedPointer<ITextRendererCore> m_TextRenderer;
-    QSharedPointer<ITextRendererCore> m_OnscreenTexRenderer;
-    QSharedPointer<IPathManagerCore> m_PathManagerCore;
+    QSharedPointer<QDemonPerfTimerInterface> m_perfTimer;
+    QSharedPointer<QDemonInputStreamFactoryInterface> m_inputStreamFactory;
+    QSharedPointer<QDemonAbstractThreadPool> m_threadPool;
+    QSharedPointer<QDemonDynamicObjectSystemCoreInterface> m_dynamicObjectSystem;
+    QSharedPointer<QDemonCustomMaterialSystemCoreInterface> m_materialSystem;
+    QSharedPointer<QDemonEffectSystemCoreInterface> m_effectSystem;
+    QSharedPointer<QDemonBufferLoaderInterface> m_bufferLoader;
+    QSharedPointer<QDemonTextRendererCoreInterface> m_textRenderer;
+    QSharedPointer<QDemonTextRendererCoreInterface> m_onscreenTexRenderer;
+    QSharedPointer<QDemonPathManagerCoreInterface> m_pathManagerCore;
 
-    SRenderContextCore()
-        : m_PerfTimer(IPerfTimer::CreatePerfTimer())
-        , m_InputStreamFactory(IInputStreamFactory::Create())
-        , m_ThreadPool(IThreadPool::CreateThreadPool(4))
+    QDemonRenderContextCore()
+        : m_perfTimer(QDemonPerfTimerInterface::createPerfTimer())
+        , m_inputStreamFactory(QDemonInputStreamFactoryInterface::create())
+        , m_threadPool(QDemonAbstractThreadPool::createThreadPool(4))
     {
-        m_DynamicObjectSystem = IDynamicObjectSystemCore::CreateDynamicSystemCore(this);
-        m_MaterialSystem = ICustomMaterialSystemCore::CreateCustomMaterialSystemCore(this);
-        m_EffectSystem = IEffectSystemCore::CreateEffectSystemCore(this);
-        m_BufferLoader = IBufferLoader::Create(m_InputStreamFactory, m_ThreadPool);
-        m_PathManagerCore = IPathManagerCore::CreatePathManagerCore(this);
+        m_dynamicObjectSystem = QDemonDynamicObjectSystemCoreInterface::createDynamicSystemCore(this);
+        m_materialSystem = QDemonCustomMaterialSystemCoreInterface::createCustomMaterialSystemCore(this);
+        m_effectSystem = QDemonEffectSystemCoreInterface::createEffectSystemCore(this);
+        m_bufferLoader = QDemonBufferLoaderInterface::create(m_inputStreamFactory, m_threadPool);
+        m_pathManagerCore = QDemonPathManagerCoreInterface::createPathManagerCore(this);
     }
 
-    ~SRenderContextCore() override {}
+    ~QDemonRenderContextCore() override {}
 
-    QSharedPointer<IInputStreamFactory> GetInputStreamFactory() override { return m_InputStreamFactory; }
-    QSharedPointer<IThreadPool> GetThreadPool() override { return m_ThreadPool; }
-    QSharedPointer<IDynamicObjectSystemCore> GetDynamicObjectSystemCore() override
+    QSharedPointer<QDemonInputStreamFactoryInterface> getInputStreamFactory() override { return m_inputStreamFactory; }
+    QSharedPointer<QDemonAbstractThreadPool> getThreadPool() override { return m_threadPool; }
+    QSharedPointer<QDemonDynamicObjectSystemCoreInterface> getDynamicObjectSystemCore() override
     {
-        return m_DynamicObjectSystem;
+        return m_dynamicObjectSystem;
     }
-    QSharedPointer<ICustomMaterialSystemCore> GetMaterialSystemCore() override { return m_MaterialSystem; }
-    QSharedPointer<IEffectSystemCore> GetEffectSystemCore() override { return m_EffectSystem; }
-    QSharedPointer<IPerfTimer> GetPerfTimer() override { return m_PerfTimer; }
-    QSharedPointer<IBufferLoader> GetBufferLoader() override { return m_BufferLoader; }
-    QSharedPointer<IPathManagerCore> GetPathManagerCore() override { return m_PathManagerCore; }
-    QSharedPointer<IQDemonRenderContext> CreateRenderContext(QSharedPointer<QDemonRenderContext> inContext, const char *inPrimitivesDirectory) override;
-    void SetTextRendererCore(QSharedPointer<ITextRendererCore> inRenderer) override { m_TextRenderer = inRenderer; }
-    QSharedPointer<ITextRendererCore> GetTextRendererCore() override { return m_TextRenderer; }
-    void SetOnscreenTextRendererCore(QSharedPointer<ITextRendererCore> inRenderer) override
+    QSharedPointer<QDemonCustomMaterialSystemCoreInterface> getMaterialSystemCore() override { return m_materialSystem; }
+    QSharedPointer<QDemonEffectSystemCoreInterface> getEffectSystemCore() override { return m_effectSystem; }
+    QSharedPointer<QDemonPerfTimerInterface> getPerfTimer() override { return m_perfTimer; }
+    QSharedPointer<QDemonBufferLoaderInterface> getBufferLoader() override { return m_bufferLoader; }
+    QSharedPointer<QDemonPathManagerCoreInterface> getPathManagerCore() override { return m_pathManagerCore; }
+    QSharedPointer<QDemonRenderContextInterface> createRenderContext(QSharedPointer<QDemonRenderContext> inContext, const char *inPrimitivesDirectory) override;
+    void setTextRendererCore(QSharedPointer<QDemonTextRendererCoreInterface> inRenderer) override { m_textRenderer = inRenderer; }
+    QSharedPointer<QDemonTextRendererCoreInterface> getTextRendererCore() override { return m_textRenderer; }
+    void setOnscreenTextRendererCore(QSharedPointer<QDemonTextRendererCoreInterface> inRenderer) override
     {
-        m_OnscreenTexRenderer = inRenderer;
+        m_onscreenTexRenderer = inRenderer;
     }
-    QSharedPointer<ITextRendererCore> GetOnscreenTextRendererCore() override { return m_OnscreenTexRenderer; }
+    QSharedPointer<QDemonTextRendererCoreInterface> getOnscreenTextRendererCore() override { return m_onscreenTexRenderer; }
 };
 
 inline float Clamp(float val, float inMin = 0.0f, float inMax = 1.0f)
@@ -125,105 +125,105 @@ void swapXY(QVector2D &v) {
 }
 }
 
-struct SRenderContext : public IQDemonRenderContext
+struct QDemonRenderContextData : public QDemonRenderContextInterface
 {
-    QSharedPointer<QDemonRenderContext> m_RenderContext;
-    IQDemonRenderContextCore *m_CoreContext;
-    QSharedPointer<IPerfTimer> m_PerfTimer;
-    QSharedPointer<IInputStreamFactory> m_InputStreamFactory;
-    QSharedPointer<IBufferManager> m_BufferManager;
-    QSharedPointer<IResourceManager> m_ResourceManager;
-    QSharedPointer<IOffscreenRenderManager> m_OffscreenRenderManager;
-    QSharedPointer<IQDemonRenderer> m_Renderer;
-    QSharedPointer<ITextRenderer> m_TextRenderer;
-    QSharedPointer<ITextRenderer> m_OnscreenTextRenderer;
-    QSharedPointer<ITextTextureCache> m_TextTextureCache;
-    QSharedPointer<ITextTextureAtlas> m_TextTextureAtlas;
-    QSharedPointer<IDynamicObjectSystem> m_DynamicObjectSystem;
-    QSharedPointer<IEffectSystem> m_EffectSystem;
-    QSharedPointer<IShaderCache> m_ShaderCache;
-    QSharedPointer<IThreadPool> m_ThreadPool;
-    QSharedPointer<IImageBatchLoader> m_ImageBatchLoader;
-    QSharedPointer<ICustomMaterialSystem> m_CustomMaterialSystem;
-    QSharedPointer<IPixelGraphicsRenderer> m_PixelGraphicsRenderer;
-    QSharedPointer<IPathManager> m_PathManager;
-    QSharedPointer<IShaderProgramGenerator> m_ShaderProgramGenerator;
-    QSharedPointer<IDefaultMaterialShaderGenerator> m_DefaultMaterialShaderGenerator;
-    QSharedPointer<ICustomMaterialShaderGenerator> m_CustomMaterialShaderGenerator;
-    QSharedPointer<IRenderList> m_RenderList;
-    quint32 m_FrameCount;
+    QSharedPointer<QDemonRenderContext> m_renderContext;
+    QDemonRenderContextCoreInterface *m_coreContext;
+    QSharedPointer<QDemonPerfTimerInterface> m_perfTimer;
+    QSharedPointer<QDemonInputStreamFactoryInterface> m_inputStreamFactory;
+    QSharedPointer<QDemonBufferManagerInterface> m_bufferManager;
+    QSharedPointer<QDemonResourceManagerInterface> m_resourceManager;
+    QSharedPointer<QDemonOffscreenRenderManagerInterface> m_offscreenRenderManager;
+    QSharedPointer<QDemonRendererInterface> m_renderer;
+    QSharedPointer<QDemonTextRendererInterface> m_textRenderer;
+    QSharedPointer<QDemonTextRendererInterface> m_onscreenTextRenderer;
+    QSharedPointer<QDemonTextTextureCacheInterface> m_textTextureCache;
+    QSharedPointer<QDemonTextTextureAtlasInterface> m_textTextureAtlas;
+    QSharedPointer<QDemonDynamicObjectSystemInterface> m_dynamicObjectSystem;
+    QSharedPointer<QDemonEffectSystemInterface> m_effectSystem;
+    QSharedPointer<QDemonShaderCacheInterface> m_shaderCache;
+    QSharedPointer<QDemonAbstractThreadPool> m_threadPool;
+    QSharedPointer<IImageBatchLoader> m_imageBatchLoader;
+    QSharedPointer<QDemonCustomMaterialSystemInterface> m_customMaterialSystem;
+    QSharedPointer<QDemonPixelGraphicsRendererInterface> m_pixelGraphicsRenderer;
+    QSharedPointer<QDemonPathManagerInterface> m_pathManager;
+    QSharedPointer<QDemonShaderProgramGeneratorInterface> m_shaderProgramGenerator;
+    QSharedPointer<QDemonDefaultMaterialShaderGeneratorInterface> m_defaultMaterialShaderGenerator;
+    QSharedPointer<ICustomMaterialShaderGenerator> m_customMaterialShaderGenerator;
+    QSharedPointer<QDemonRenderListInterface> m_renderList;
+    quint32 m_frameCount;
     // Viewport that this render context should use
-    QDemonOption<QDemonRenderRect> m_Viewport;
-    QSize m_WindowDimensions;
-    ScaleModes::Enum m_ScaleMode;
-    bool m_WireframeMode;
-    bool m_IsInSubPresentation;
-    QDemonOption<QVector4D> m_SceneColor;
-    QDemonOption<QVector4D> m_MatteColor;
-    RenderRotationValues::Enum m_Rotation;
-    QSharedPointer<QDemonRenderFrameBuffer> m_RotationFBO;
-    QSharedPointer<QDemonRenderTexture2D> m_RotationTexture;
-    QSharedPointer<QDemonRenderRenderBuffer> m_RotationDepthBuffer;
-    QSharedPointer<QDemonRenderFrameBuffer> m_ContextRenderTarget;
-    QDemonRenderRect m_PresentationViewport;
-    QSize m_PresentationDimensions;
-    QSize m_RenderPresentationDimensions;
-    QSize m_PreRenderPresentationDimensions;
-    QVector2D m_PresentationScale;
-    QDemonRenderRect m_VirtualViewport;
-    QPair<float, int> m_FPS;
-    bool m_AuthoringMode;
+    QDemonOption<QDemonRenderRect> m_viewport;
+    QSize m_windowDimensions;
+    ScaleModes::Enum m_scaleMode;
+    bool m_wireframeMode;
+    bool m_isInSubPresentation;
+    QDemonOption<QVector4D> m_sceneColor;
+    QDemonOption<QVector4D> m_matteColor;
+    RenderRotationValues::Enum m_rotation;
+    QSharedPointer<QDemonRenderFrameBuffer> m_rotationFbo;
+    QSharedPointer<QDemonRenderTexture2D> m_rotationTexture;
+    QSharedPointer<QDemonRenderRenderBuffer> m_rotationDepthBuffer;
+    QSharedPointer<QDemonRenderFrameBuffer> m_contextRenderTarget;
+    QDemonRenderRect m_presentationViewport;
+    QSize m_presentationDimensions;
+    QSize m_renderPresentationDimensions;
+    QSize m_preRenderPresentationDimensions;
+    QVector2D m_presentationScale;
+    QDemonRenderRect m_virtualViewport;
+    QPair<float, int> m_fps;
+    bool m_authoringMode;
 
-    SRenderContext(QSharedPointer<QDemonRenderContext> ctx, IQDemonRenderContextCore *inCore, const char *inApplicationDirectory)
-        : m_RenderContext(ctx)
-        , m_CoreContext(inCore)
-        , m_PerfTimer(inCore->GetPerfTimer())
-        , m_InputStreamFactory(inCore->GetInputStreamFactory())
-        , m_ResourceManager(IResourceManager::CreateResourceManager(ctx))
-        , m_ShaderCache(IShaderCache::CreateShaderCache(ctx, m_InputStreamFactory, m_PerfTimer))
-        , m_ThreadPool(inCore->GetThreadPool())
-        , m_FrameCount(0)
-        , m_WindowDimensions(800, 480)
-        , m_ScaleMode(ScaleModes::ExactSize)
-        , m_WireframeMode(false)
-        , m_IsInSubPresentation(false)
-        , m_Rotation(RenderRotationValues::NoRotation)
-        , m_ContextRenderTarget(nullptr)
-        , m_PresentationScale(0, 0)
-        , m_FPS(qMakePair(0.0, 0))
-        , m_AuthoringMode(false)
+    QDemonRenderContextData(QSharedPointer<QDemonRenderContext> ctx, QDemonRenderContextCoreInterface *inCore, const char *inApplicationDirectory)
+        : m_renderContext(ctx)
+        , m_coreContext(inCore)
+        , m_perfTimer(inCore->getPerfTimer())
+        , m_inputStreamFactory(inCore->getInputStreamFactory())
+        , m_resourceManager(QDemonResourceManagerInterface::createResourceManager(ctx))
+        , m_shaderCache(QDemonShaderCacheInterface::createShaderCache(ctx, m_inputStreamFactory, m_perfTimer))
+        , m_threadPool(inCore->getThreadPool())
+        , m_frameCount(0)
+        , m_windowDimensions(800, 480)
+        , m_scaleMode(ScaleModes::ExactSize)
+        , m_wireframeMode(false)
+        , m_isInSubPresentation(false)
+        , m_rotation(RenderRotationValues::NoRotation)
+        , m_contextRenderTarget(nullptr)
+        , m_presentationScale(0, 0)
+        , m_fps(qMakePair(0.0, 0))
+        , m_authoringMode(false)
     {
-        m_BufferManager = IBufferManager::Create(ctx, m_InputStreamFactory, m_PerfTimer);
-        m_RenderList = IRenderList::CreateRenderList();
-        m_OffscreenRenderManager = IOffscreenRenderManager::CreateOffscreenRenderManager(m_ResourceManager, this);
-        m_Renderer = IQDemonRenderer::CreateRenderer(this);
+        m_bufferManager = QDemonBufferManagerInterface::create(ctx, m_inputStreamFactory, m_perfTimer);
+        m_renderList = QDemonRenderListInterface::createRenderList();
+        m_offscreenRenderManager = QDemonOffscreenRenderManagerInterface::createOffscreenRenderManager(m_resourceManager, this);
+        m_renderer = QDemonRendererInterface::createRenderer(this);
         if (inApplicationDirectory && *inApplicationDirectory)
-            m_InputStreamFactory->AddSearchDirectory(inApplicationDirectory);
+            m_inputStreamFactory->addSearchDirectory(inApplicationDirectory);
 
-        m_ImageBatchLoader = IImageBatchLoader::CreateBatchLoader(m_InputStreamFactory, m_BufferManager, m_ThreadPool, m_PerfTimer);
-        m_DynamicObjectSystem = inCore->GetDynamicObjectSystemCore()->CreateDynamicSystem(this);
-        m_EffectSystem = inCore->GetEffectSystemCore()->GetEffectSystem(this);
-        m_CustomMaterialSystem = inCore->GetMaterialSystemCore()->GetCustomMaterialSystem(this);
+        m_imageBatchLoader = IImageBatchLoader::createBatchLoader(m_inputStreamFactory, m_bufferManager, m_threadPool, m_perfTimer);
+        m_dynamicObjectSystem = inCore->getDynamicObjectSystemCore()->createDynamicSystem(this);
+        m_effectSystem = inCore->getEffectSystemCore()->getEffectSystem(this);
+        m_customMaterialSystem = inCore->getMaterialSystemCore()->getCustomMaterialSystem(this);
         // as does the custom material system
-        m_PixelGraphicsRenderer = IPixelGraphicsRenderer::CreateRenderer(this);
-        QSharedPointer<ITextRendererCore> theTextCore = inCore->GetTextRendererCore();
-        m_ShaderProgramGenerator = IShaderProgramGenerator::CreateProgramGenerator(this);
-        m_DefaultMaterialShaderGenerator = IDefaultMaterialShaderGenerator::CreateDefaultMaterialShaderGenerator(this);
-        m_CustomMaterialShaderGenerator = ICustomMaterialShaderGenerator::CreateCustomMaterialShaderGenerator(this);
+        m_pixelGraphicsRenderer = QDemonPixelGraphicsRendererInterface::createRenderer(this);
+        QSharedPointer<QDemonTextRendererCoreInterface> theTextCore = inCore->getTextRendererCore();
+        m_shaderProgramGenerator = QDemonShaderProgramGeneratorInterface::createProgramGenerator(this);
+        m_defaultMaterialShaderGenerator = QDemonDefaultMaterialShaderGeneratorInterface::createDefaultMaterialShaderGenerator(this);
+        m_customMaterialShaderGenerator = ICustomMaterialShaderGenerator::createCustomMaterialShaderGenerator(this);
         if (theTextCore) {
-            m_TextRenderer = theTextCore->GetTextRenderer(ctx);
-            m_TextTextureCache = ITextTextureCache::CreateTextureCache(m_TextRenderer, m_RenderContext);
+            m_textRenderer = theTextCore->getTextRenderer(ctx);
+            m_textTextureCache = QDemonTextTextureCacheInterface::createTextureCache(m_textRenderer, m_renderContext);
         }
 
-        QSharedPointer<ITextRendererCore> theOnscreenTextCore = inCore->GetOnscreenTextRendererCore();
+        QSharedPointer<QDemonTextRendererCoreInterface> theOnscreenTextCore = inCore->getOnscreenTextRendererCore();
         if (theOnscreenTextCore) {
-            m_OnscreenTextRenderer = theOnscreenTextCore->GetTextRenderer(ctx);
-            m_TextTextureAtlas = ITextTextureAtlas::CreateTextureAtlas(m_OnscreenTextRenderer, m_RenderContext);
+            m_onscreenTextRenderer = theOnscreenTextCore->getTextRenderer(ctx);
+            m_textTextureAtlas = QDemonTextTextureAtlasInterface::createTextureAtlas(m_onscreenTextRenderer, m_renderContext);
         }
-        m_PathManager = inCore->GetPathManagerCore()->OnRenderSystemInitialize(this);
+        m_pathManager = inCore->getPathManagerCore()->onRenderSystemInitialize(this);
 
         QString versionString;
-        switch ((quint32)ctx->GetRenderContextType()) {
+        switch ((quint32)ctx->getRenderContextType()) {
         case QDemonRenderContextValues::GLES2:
             versionString = QLatin1Literal("gles2");
             break;
@@ -246,7 +246,7 @@ struct SRenderContext : public IQDemonRenderContext
             break;
         }
 
-        GetDynamicObjectSystem()->setShaderCodeLibraryVersion(versionString);
+        getDynamicObjectSystem()->setShaderCodeLibraryVersion(versionString);
 #if defined (QDEMON_SHADER_PLATFORM_LIBRARY_DIR)
         const QString platformDirectory;
 #if defined(_WIN32)
@@ -260,166 +260,166 @@ struct SRenderContext : public IQDemonRenderContext
 #endif
     }
 
-    QSharedPointer<IQDemonRenderer> GetRenderer() override { return m_Renderer; }
-    QSharedPointer<IBufferManager> GetBufferManager() override { return m_BufferManager; }
-    QSharedPointer<IResourceManager> GetResourceManager() override { return m_ResourceManager; }
-    QSharedPointer<QDemonRenderContext> GetRenderContext() override { return m_RenderContext; }
-    QSharedPointer<IOffscreenRenderManager> GetOffscreenRenderManager() override
+    QSharedPointer<QDemonRendererInterface> getRenderer() override { return m_renderer; }
+    QSharedPointer<QDemonBufferManagerInterface> getBufferManager() override { return m_bufferManager; }
+    QSharedPointer<QDemonResourceManagerInterface> getResourceManager() override { return m_resourceManager; }
+    QSharedPointer<QDemonRenderContext> getRenderContext() override { return m_renderContext; }
+    QSharedPointer<QDemonOffscreenRenderManagerInterface> getOffscreenRenderManager() override
     {
-        return m_OffscreenRenderManager;
+        return m_offscreenRenderManager;
     }
-    QSharedPointer<IInputStreamFactory> GetInputStreamFactory() override { return m_InputStreamFactory; }
-    QSharedPointer<IEffectSystem> GetEffectSystem() override { return m_EffectSystem; }
-    QSharedPointer<IShaderCache> GetShaderCache() override { return m_ShaderCache; }
-    QSharedPointer<IThreadPool> GetThreadPool() override { return m_ThreadPool; }
-    QSharedPointer<IImageBatchLoader> GetImageBatchLoader() override { return m_ImageBatchLoader; }
-    QSharedPointer<ITextTextureCache> GetTextureCache() override { return m_TextTextureCache; }
-    QSharedPointer<ITextTextureAtlas> GetTextureAtlas() override { return m_TextTextureAtlas; }
-    QSharedPointer<IDynamicObjectSystem> GetDynamicObjectSystem() override { return m_DynamicObjectSystem; }
-    QSharedPointer<ICustomMaterialSystem> GetCustomMaterialSystem() override { return m_CustomMaterialSystem; }
-    QSharedPointer<IPixelGraphicsRenderer> GetPixelGraphicsRenderer() override { return m_PixelGraphicsRenderer; }
-    QSharedPointer<IPerfTimer> GetPerfTimer() override { return m_PerfTimer; }
-    QSharedPointer<IRenderList> GetRenderList() override { return m_RenderList; }
-    QSharedPointer<IPathManager> GetPathManager() override { return m_PathManager; }
-    QSharedPointer<IShaderProgramGenerator> GetShaderProgramGenerator() override
+    QSharedPointer<QDemonInputStreamFactoryInterface> getInputStreamFactory() override { return m_inputStreamFactory; }
+    QSharedPointer<QDemonEffectSystemInterface> getEffectSystem() override { return m_effectSystem; }
+    QSharedPointer<QDemonShaderCacheInterface> getShaderCache() override { return m_shaderCache; }
+    QSharedPointer<QDemonAbstractThreadPool> getThreadPool() override { return m_threadPool; }
+    QSharedPointer<IImageBatchLoader> getImageBatchLoader() override { return m_imageBatchLoader; }
+    QSharedPointer<QDemonTextTextureCacheInterface> getTextureCache() override { return m_textTextureCache; }
+    QSharedPointer<QDemonTextTextureAtlasInterface> getTextureAtlas() override { return m_textTextureAtlas; }
+    QSharedPointer<QDemonDynamicObjectSystemInterface> getDynamicObjectSystem() override { return m_dynamicObjectSystem; }
+    QSharedPointer<QDemonCustomMaterialSystemInterface> getCustomMaterialSystem() override { return m_customMaterialSystem; }
+    QSharedPointer<QDemonPixelGraphicsRendererInterface> getPixelGraphicsRenderer() override { return m_pixelGraphicsRenderer; }
+    QSharedPointer<QDemonPerfTimerInterface> getPerfTimer() override { return m_perfTimer; }
+    QSharedPointer<QDemonRenderListInterface> getRenderList() override { return m_renderList; }
+    QSharedPointer<QDemonPathManagerInterface> getPathManager() override { return m_pathManager; }
+    QSharedPointer<QDemonShaderProgramGeneratorInterface> getShaderProgramGenerator() override
     {
-        return m_ShaderProgramGenerator;
+        return m_shaderProgramGenerator;
     }
-    QSharedPointer<IDefaultMaterialShaderGenerator> GetDefaultMaterialShaderGenerator() override
+    QSharedPointer<QDemonDefaultMaterialShaderGeneratorInterface> getDefaultMaterialShaderGenerator() override
     {
-        return m_DefaultMaterialShaderGenerator;
+        return m_defaultMaterialShaderGenerator;
     }
-    QSharedPointer<ICustomMaterialShaderGenerator> GetCustomMaterialShaderGenerator() override
+    QSharedPointer<ICustomMaterialShaderGenerator> getCustomMaterialShaderGenerator() override
     {
-        return m_CustomMaterialShaderGenerator;
-    }
-
-    quint32 GetFrameCount() override { return m_FrameCount; }
-    void SetFPS(QPair<float, int> inFPS) override { m_FPS = inFPS; }
-    QPair<float, int> GetFPS(void) override { return m_FPS; }
-
-    bool IsAuthoringMode() override { return m_AuthoringMode; }
-    void SetAuthoringMode(bool inMode) override { m_AuthoringMode = inMode; }
-
-    bool IsInSubPresentation() override { return m_IsInSubPresentation; }
-    void SetInSubPresentation(bool inValue) override { m_IsInSubPresentation = inValue; }
-
-    QSharedPointer<ITextRenderer> GetTextRenderer() override { return m_TextRenderer; }
-
-    QSharedPointer<ITextRenderer> GetOnscreenTextRenderer() override { return m_OnscreenTextRenderer; }
-
-    void SetSceneColor(QDemonOption<QVector4D> inSceneColor) override { m_SceneColor = inSceneColor; }
-    void SetMatteColor(QDemonOption<QVector4D> inMatteColor) override { m_MatteColor = inMatteColor; }
-
-    void SetWindowDimensions(const QSize &inWindowDimensions) override
-    {
-        m_WindowDimensions = inWindowDimensions;
+        return m_customMaterialShaderGenerator;
     }
 
-    QSize GetWindowDimensions() override { return m_WindowDimensions; }
+    quint32 getFrameCount() override { return m_frameCount; }
+    void setFPS(QPair<float, int> inFPS) override { m_fps = inFPS; }
+    QPair<float, int> getFPS(void) override { return m_fps; }
 
-    void SetScaleMode(ScaleModes::Enum inMode) override { m_ScaleMode = inMode; }
+    bool isAuthoringMode() override { return m_authoringMode; }
+    void setAuthoringMode(bool inMode) override { m_authoringMode = inMode; }
 
-    ScaleModes::Enum GetScaleMode() override { return m_ScaleMode; }
+    bool isInSubPresentation() override { return m_isInSubPresentation; }
+    void setInSubPresentation(bool inValue) override { m_isInSubPresentation = inValue; }
 
-    void SetWireframeMode(bool inEnable) override { m_WireframeMode = inEnable; }
+    QSharedPointer<QDemonTextRendererInterface> getTextRenderer() override { return m_textRenderer; }
 
-    bool GetWireframeMode() override { return m_WireframeMode; }
+    QSharedPointer<QDemonTextRendererInterface> getOnscreenTextRenderer() override { return m_onscreenTextRenderer; }
 
-    void SetViewport(QDemonOption<QDemonRenderRect> inViewport) override { m_Viewport = inViewport; }
-    QDemonOption<QDemonRenderRect> GetViewport() const override { return m_Viewport; }
+    void setSceneColor(QDemonOption<QVector4D> inSceneColor) override { m_sceneColor = inSceneColor; }
+    void setMatteColor(QDemonOption<QVector4D> inMatteColor) override { m_matteColor = inMatteColor; }
 
-    QSharedPointer<IRenderWidgetContext> GetRenderWidgetContext() override
+    void setWindowDimensions(const QSize &inWindowDimensions) override
     {
-        return m_Renderer->GetRenderWidgetContext();
+        m_windowDimensions = inWindowDimensions;
     }
 
-    QPair<QDemonRenderRect, QDemonRenderRect> GetPresentationViewportAndOuterViewport() const
+    QSize getWindowDimensions() override { return m_windowDimensions; }
+
+    void setScaleMode(ScaleModes::Enum inMode) override { m_scaleMode = inMode; }
+
+    ScaleModes::Enum getScaleMode() override { return m_scaleMode; }
+
+    void setWireframeMode(bool inEnable) override { m_wireframeMode = inEnable; }
+
+    bool getWireframeMode() override { return m_wireframeMode; }
+
+    void setViewport(QDemonOption<QDemonRenderRect> inViewport) override { m_viewport = inViewport; }
+    QDemonOption<QDemonRenderRect> getViewport() const override { return m_viewport; }
+
+    QSharedPointer<QDemonRenderWidgetContextInterface> getRenderWidgetContext() override
     {
-        QSize thePresentationDimensions(m_PresentationDimensions);
-        QDemonRenderRect theOuterViewport(GetContextViewport());
-        if (m_Rotation == RenderRotationValues::Clockwise90
-                || m_Rotation == RenderRotationValues::Clockwise270) {
-            std::swap(theOuterViewport.m_Width, theOuterViewport.m_Height);
-            std::swap(theOuterViewport.m_X, theOuterViewport.m_Y);
+        return m_renderer->getRenderWidgetContext();
+    }
+
+    QPair<QDemonRenderRect, QDemonRenderRect> getPresentationViewportAndOuterViewport() const
+    {
+        QSize thePresentationDimensions(m_presentationDimensions);
+        QDemonRenderRect theOuterViewport(getContextViewport());
+        if (m_rotation == RenderRotationValues::Clockwise90
+                || m_rotation == RenderRotationValues::Clockwise270) {
+            std::swap(theOuterViewport.m_width, theOuterViewport.m_height);
+            std::swap(theOuterViewport.m_x, theOuterViewport.m_y);
         }
         // Calculate the presentation viewport perhaps with the window width and height swapped.
         return QPair<QDemonRenderRect, QDemonRenderRect>(
-                    GetPresentationViewport(theOuterViewport, m_ScaleMode, thePresentationDimensions),
+                    getPresentationViewport(theOuterViewport, m_scaleMode, thePresentationDimensions),
                     theOuterViewport);
     }
 
-    QDemonRenderRectF GetDisplayViewport() const override
+    QDemonRenderRectF getDisplayViewport() const override
     {
-        return GetPresentationViewportAndOuterViewport().first;
+        return getPresentationViewportAndOuterViewport().first;
     }
 
-    void SetPresentationDimensions(const QSize &inPresentationDimensions) override
+    void setPresentationDimensions(const QSize &inPresentationDimensions) override
     {
-        m_PresentationDimensions = inPresentationDimensions;
+        m_presentationDimensions = inPresentationDimensions;
     }
-    QSize GetCurrentPresentationDimensions() const override
+    QSize getCurrentPresentationDimensions() const override
     {
-        return m_PresentationDimensions;
-    }
-
-    void SetRenderRotation(RenderRotationValues::Enum inRotation) override
-    {
-        m_Rotation = inRotation;
+        return m_presentationDimensions;
     }
 
-    RenderRotationValues::Enum GetRenderRotation() const override { return m_Rotation; }
-    QVector2D GetMousePickViewport() const override
+    void setRenderRotation(RenderRotationValues::Enum inRotation) override
     {
-        bool renderOffscreen = m_Rotation != RenderRotationValues::NoRotation;
+        m_rotation = inRotation;
+    }
+
+    RenderRotationValues::Enum getRenderRotation() const override { return m_rotation; }
+    QVector2D getMousePickViewport() const override
+    {
+        bool renderOffscreen = m_rotation != RenderRotationValues::NoRotation;
         if (renderOffscreen)
-            return QVector2D((float)m_PresentationViewport.m_Width,
-                             (float)m_PresentationViewport.m_Height);
+            return QVector2D((float)m_presentationViewport.m_width,
+                             (float)m_presentationViewport.m_height);
         else
-            return QVector2D((float)m_WindowDimensions.width(), (float)m_WindowDimensions.height());
+            return QVector2D((float)m_windowDimensions.width(), (float)m_windowDimensions.height());
     }
-    QDemonRenderRect GetContextViewport() const override
+    QDemonRenderRect getContextViewport() const override
     {
         QDemonRenderRect retval;
-        if (m_Viewport.hasValue())
-            retval = *m_Viewport;
+        if (m_viewport.hasValue())
+            retval = *m_viewport;
         else
-            retval = QDemonRenderRect(0, 0, m_WindowDimensions.width(), m_WindowDimensions.height());
+            retval = QDemonRenderRect(0, 0, m_windowDimensions.width(), m_windowDimensions.height());
 
         return retval;
     }
 
-    QVector2D GetMousePickMouseCoords(const QVector2D &inMouseCoords) const override
+    QVector2D getMousePickMouseCoords(const QVector2D &inMouseCoords) const override
     {
-        bool renderOffscreen = m_Rotation != RenderRotationValues::NoRotation;
+        bool renderOffscreen = m_rotation != RenderRotationValues::NoRotation;
         if (renderOffscreen) {
-            QSize thePresentationDimensions(m_RenderPresentationDimensions);
-            QDemonRenderRect theViewport(GetContextViewport());
+            QSize thePresentationDimensions(m_renderPresentationDimensions);
+            QDemonRenderRect theViewport(getContextViewport());
             // Calculate the presentation viewport perhaps with the presentation width and height
             // swapped.
             QDemonRenderRect thePresentationViewport =
-                    GetPresentationViewport(theViewport, m_ScaleMode, thePresentationDimensions);
+                    getPresentationViewport(theViewport, m_scaleMode, thePresentationDimensions);
             // Translate pick into presentation space without rotations or anything else.
-            float YHeightDiff = (float)((float)m_WindowDimensions.height()
-                                        - (float)thePresentationViewport.m_Height);
-            QVector2D theLocalMouse((inMouseCoords.x() - thePresentationViewport.m_X),
-                                    (inMouseCoords.y() - YHeightDiff + thePresentationViewport.m_Y));
-            switch (m_Rotation) {
+            float YHeightDiff = (float)((float)m_windowDimensions.height()
+                                        - (float)thePresentationViewport.m_height);
+            QVector2D theLocalMouse((inMouseCoords.x() - thePresentationViewport.m_x),
+                                    (inMouseCoords.y() - YHeightDiff + thePresentationViewport.m_y));
+            switch (m_rotation) {
             default:
             case RenderRotationValues::NoRotation:
                 Q_ASSERT(false);
                 break;
             case RenderRotationValues::Clockwise90:
                 swapXY(theLocalMouse);
-                theLocalMouse.setY(thePresentationViewport.m_Width - theLocalMouse.y());
+                theLocalMouse.setY(thePresentationViewport.m_width - theLocalMouse.y());
                 break;
             case RenderRotationValues::Clockwise180:
-                theLocalMouse.setY(thePresentationViewport.m_Height - theLocalMouse.y());
-                theLocalMouse.setX(thePresentationViewport.m_Width - theLocalMouse.x());
+                theLocalMouse.setY(thePresentationViewport.m_height - theLocalMouse.y());
+                theLocalMouse.setX(thePresentationViewport.m_width - theLocalMouse.x());
                 break;
             case RenderRotationValues::Clockwise270:
                 swapXY(theLocalMouse);
-                theLocalMouse.setX(thePresentationViewport.m_Height - theLocalMouse.x());
+                theLocalMouse.setX(thePresentationViewport.m_height - theLocalMouse.x());
                 break;
             }
             return theLocalMouse;
@@ -427,23 +427,23 @@ struct SRenderContext : public IQDemonRenderContext
         return inMouseCoords;
     }
 
-    QDemonRenderRect GetPresentationViewport(const QDemonRenderRect &inViewerViewport,
+    QDemonRenderRect getPresentationViewport(const QDemonRenderRect &inViewerViewport,
                                              ScaleModes::Enum inScaleToFit,
                                              const QSize &inPresDimensions) const
     {
         QDemonRenderRect retval;
-        qint32 theWidth = inViewerViewport.m_Width;
-        qint32 theHeight = inViewerViewport.m_Height;
+        qint32 theWidth = inViewerViewport.m_width;
+        qint32 theHeight = inViewerViewport.m_height;
         if (inPresDimensions.width() == 0 || inPresDimensions.height() == 0)
             return QDemonRenderRect(0, 0, 0, 0);
         // Setup presentation viewport.  This may or may not match the physical viewport that we
         // want to setup.
         // Avoiding scaling keeps things as sharp as possible.
         if (inScaleToFit == ScaleModes::ExactSize) {
-            retval.m_Width = inPresDimensions.width();
-            retval.m_Height = inPresDimensions.height();
-            retval.m_X = (theWidth - (qint32)inPresDimensions.width()) / 2;
-            retval.m_Y = (theHeight - (qint32)inPresDimensions.height()) / 2;
+            retval.m_width = inPresDimensions.width();
+            retval.m_height = inPresDimensions.height();
+            retval.m_x = (theWidth - (qint32)inPresDimensions.width()) / 2;
+            retval.m_y = (theHeight - (qint32)inPresDimensions.height()) / 2;
         } else if (inScaleToFit == ScaleModes::ScaleToFit
                    || inScaleToFit == ScaleModes::FitSelected) {
             // Scale down in such a way to preserve aspect ratio.
@@ -452,298 +452,303 @@ struct SRenderContext : public IQDemonRenderContext
                     (float)inPresDimensions.width() / (float)inPresDimensions.height();
             if (screenAspect >= thePresentationAspect) {
                 // if the screen height is the limiting factor
-                retval.m_Y = 0;
-                retval.m_Height = theHeight;
-                retval.m_Width = (qint32)(thePresentationAspect * retval.m_Height);
-                retval.m_X = (theWidth - retval.m_Width) / 2;
+                retval.m_y = 0;
+                retval.m_height = theHeight;
+                retval.m_width = (qint32)(thePresentationAspect * retval.m_height);
+                retval.m_x = (theWidth - retval.m_width) / 2;
             } else {
-                retval.m_X = 0;
-                retval.m_Width = theWidth;
-                retval.m_Height = (qint32)(retval.m_Width / thePresentationAspect);
-                retval.m_Y = (theHeight - retval.m_Height) / 2;
+                retval.m_x = 0;
+                retval.m_width = theWidth;
+                retval.m_height = (qint32)(retval.m_width / thePresentationAspect);
+                retval.m_y = (theHeight - retval.m_height) / 2;
             }
         } else {
             // Setup the viewport for everything and let the presentations figure it out.
-            retval.m_X = 0;
-            retval.m_Y = 0;
-            retval.m_Width = theWidth;
-            retval.m_Height = theHeight;
+            retval.m_x = 0;
+            retval.m_y = 0;
+            retval.m_width = theWidth;
+            retval.m_height = theHeight;
         }
-        retval.m_X += inViewerViewport.m_X;
-        retval.m_Y += inViewerViewport.m_Y;
+        retval.m_x += inViewerViewport.m_x;
+        retval.m_y += inViewerViewport.m_y;
         return retval;
     }
 
-    void RenderText2D(float x, float y, QDemonOption<QVector3D> inColor,
-                      const char *text) override
+    void renderText2D(float x, float y, QDemonOption<QVector3D> inColor, const char *text) override
     {
-        m_Renderer->RenderText2D(x, y, inColor, text);
+        m_renderer->renderText2D(x, y, inColor, text);
     }
 
-    void RenderGpuProfilerStats(float x, float y,
-                                QDemonOption<QVector3D> inColor) override
+    void renderGpuProfilerStats(float x, float y, QDemonOption<QVector3D> inColor) override
     {
-        m_Renderer->RenderGpuProfilerStats(x, y, inColor);
+        m_renderer->renderGpuProfilerStats(x, y, inColor);
     }
 
-    QDemonRenderRect GetPresentationViewport() const override { return m_PresentationViewport; }
-    struct SBeginFrameResult
+    QDemonRenderRect getPresentationViewport() const override { return m_presentationViewport; }
+    struct BeginFrameResult
     {
-        bool m_RenderOffscreen;
-        QSize m_PresentationDimensions;
-        bool m_ScissorTestEnabled;
-        QDemonRenderRect m_ScissorRect;
-        QDemonRenderRect m_Viewport;
-        QSize m_FBODimensions;
-        SBeginFrameResult(bool ro, QSize presDims, bool scissorEnabled,
-                          QDemonRenderRect scissorRect, QDemonRenderRect viewport,
-                          QSize fboDims)
-            : m_RenderOffscreen(ro)
-            , m_PresentationDimensions(presDims)
-            , m_ScissorTestEnabled(scissorEnabled)
-            , m_ScissorRect(scissorRect)
-            , m_Viewport(viewport)
-            , m_FBODimensions(fboDims)
+        bool renderOffscreen;
+        QSize presentationDimensions;
+        bool scissorTestEnabled;
+        QDemonRenderRect scissorRect;
+        QDemonRenderRect viewport;
+        QSize fboDimensions;
+        BeginFrameResult(bool ro,
+                         QSize presDims,
+                         bool scissorEnabled,
+                         QDemonRenderRect inScissorRect,
+                         QDemonRenderRect inViewport,
+                         QSize fboDims)
+            : renderOffscreen(ro)
+            , presentationDimensions(presDims)
+            , scissorTestEnabled(scissorEnabled)
+            , scissorRect(inScissorRect)
+            , viewport(inViewport)
+            , fboDimensions(fboDims)
         {
         }
-        SBeginFrameResult() {}
+        BeginFrameResult() = default;
     };
 
     // Calculated values passed from beginframe to setupRenderTarget.
     // Trying to avoid duplicate code as much as possible.
-    SBeginFrameResult m_BeginFrameResult;
+    BeginFrameResult m_beginFrameResult;
 
-    void BeginFrame() override
+    void beginFrame() override
     {
-        m_PreRenderPresentationDimensions = m_PresentationDimensions;
-        QSize thePresentationDimensions(m_PreRenderPresentationDimensions);
-        QDemonRenderRect theContextViewport(GetContextViewport());
-        IRenderList &theRenderList(*m_RenderList);
-        theRenderList.BeginFrame();
-        if (m_Viewport.hasValue()) {
-            theRenderList.SetScissorTestEnabled(true);
-            theRenderList.SetScissorRect(theContextViewport);
+        m_preRenderPresentationDimensions = m_presentationDimensions;
+        QSize thePresentationDimensions(m_preRenderPresentationDimensions);
+        QDemonRenderRect theContextViewport(getContextViewport());
+        QDemonRenderListInterface &theRenderList(*m_renderList);
+        theRenderList.beginFrame();
+        if (m_viewport.hasValue()) {
+            theRenderList.setScissorTestEnabled(true);
+            theRenderList.setScissorRect(theContextViewport);
         } else {
-            theRenderList.SetScissorTestEnabled(false);
+            theRenderList.setScissorTestEnabled(false);
         }
-        bool renderOffscreen = m_Rotation != RenderRotationValues::NoRotation;
+        bool renderOffscreen = m_rotation != RenderRotationValues::NoRotation;
         QPair<QDemonRenderRect, QDemonRenderRect> thePresViewportAndOuterViewport =
-                GetPresentationViewportAndOuterViewport();
+                getPresentationViewportAndOuterViewport();
         QDemonRenderRect theOuterViewport = thePresViewportAndOuterViewport.second;
         // Calculate the presentation viewport perhaps with the window width and height swapped.
         QDemonRenderRect thePresentationViewport = thePresViewportAndOuterViewport.first;
-        m_PresentationViewport = thePresentationViewport;
-        m_PresentationScale = QVector2D(
-                    (float)thePresentationViewport.m_Width / (float)thePresentationDimensions.width(),
-                    (float)thePresentationViewport.m_Height / (float)thePresentationDimensions.height());
+        m_presentationViewport = thePresentationViewport;
+        m_presentationScale = QVector2D(
+                    (float)thePresentationViewport.m_width / (float)thePresentationDimensions.width(),
+                    (float)thePresentationViewport.m_height / (float)thePresentationDimensions.height());
         QSize fboDimensions;
-        if (thePresentationViewport.m_Width > 0 && thePresentationViewport.m_Height > 0) {
+        if (thePresentationViewport.m_width > 0 && thePresentationViewport.m_height > 0) {
             if (renderOffscreen == false) {
-                m_PresentationDimensions = QSize(thePresentationViewport.m_Width,
-                                                 thePresentationViewport.m_Height);
-                m_RenderList->SetViewport(thePresentationViewport);
-                if (thePresentationViewport.m_X || thePresentationViewport.m_Y
-                        || thePresentationViewport.m_Width != (qint32)theOuterViewport.m_Width
-                        || thePresentationViewport.m_Height != (qint32)theOuterViewport.m_Height) {
-                    m_RenderList->SetScissorRect(thePresentationViewport);
-                    m_RenderList->SetScissorTestEnabled(true);
+                m_presentationDimensions = QSize(thePresentationViewport.m_width,
+                                                 thePresentationViewport.m_height);
+                m_renderList->setViewport(thePresentationViewport);
+                if (thePresentationViewport.m_x || thePresentationViewport.m_y
+                        || thePresentationViewport.m_width != (qint32)theOuterViewport.m_width
+                        || thePresentationViewport.m_height != (qint32)theOuterViewport.m_height) {
+                    m_renderList->setScissorRect(thePresentationViewport);
+                    m_renderList->setScissorTestEnabled(true);
                 }
             } else {
-                quint32 imageWidth = ITextRenderer::NextMultipleOf4(thePresentationViewport.m_Width);
+                quint32 imageWidth = QDemonTextRendererInterface::nextMultipleOf4(thePresentationViewport.m_width);
                 quint32 imageHeight =
-                        ITextRenderer::NextMultipleOf4(thePresentationViewport.m_Height);
+                        QDemonTextRendererInterface::nextMultipleOf4(thePresentationViewport.m_height);
                 fboDimensions = QSize(imageWidth, imageHeight);
-                m_PresentationDimensions = QSize(thePresentationViewport.m_Width,
-                                                 thePresentationViewport.m_Height);
+                m_presentationDimensions = QSize(thePresentationViewport.m_width,
+                                                 thePresentationViewport.m_height);
                 QDemonRenderRect theSceneViewport = QDemonRenderRect(0, 0, imageWidth, imageHeight);
-                m_RenderList->SetScissorTestEnabled(false);
-                m_RenderList->SetViewport(theSceneViewport);
+                m_renderList->setScissorTestEnabled(false);
+                m_renderList->setViewport(theSceneViewport);
             }
         }
 
-        m_BeginFrameResult = SBeginFrameResult(
-                    renderOffscreen, m_PresentationDimensions, m_RenderList->IsScissorTestEnabled(),
-                    m_RenderList->GetScissor(), m_RenderList->GetViewport(), fboDimensions);
+        m_beginFrameResult = BeginFrameResult(renderOffscreen, m_presentationDimensions, m_renderList->isScissorTestEnabled(),
+                                              m_renderList->getScissor(), m_renderList->getViewport(), fboDimensions);
 
-        m_Renderer->BeginFrame();
-        m_OffscreenRenderManager->BeginFrame();
-        if (m_TextRenderer)
-            m_TextRenderer->BeginFrame();
-        if (m_TextTextureCache)
-            m_TextTextureCache->BeginFrame();
-        m_ImageBatchLoader->BeginFrame();
+        m_renderer->beginFrame();
+        m_offscreenRenderManager->beginFrame();
+        if (m_textRenderer)
+            m_textRenderer->beginFrame();
+        if (m_textTextureCache)
+            m_textTextureCache->beginFrame();
+        m_imageBatchLoader->beginFrame();
     }
 
-    QVector2D GetPresentationScaleFactor() const override { return m_PresentationScale; }
+    QVector2D getPresentationScaleFactor() const override { return m_presentationScale; }
 
-    virtual void SetupRenderTarget()
+    virtual void setupRenderTarget()
     {
-        QDemonRenderRect theContextViewport(GetContextViewport());
-        if (m_Viewport.hasValue()) {
-            m_RenderContext->SetScissorTestEnabled(true);
-            m_RenderContext->SetScissorRect(theContextViewport);
+        QDemonRenderRect theContextViewport(getContextViewport());
+        if (m_viewport.hasValue()) {
+            m_renderContext->setScissorTestEnabled(true);
+            m_renderContext->setScissorRect(theContextViewport);
         } else {
-            m_RenderContext->SetScissorTestEnabled(false);
+            m_renderContext->setScissorTestEnabled(false);
         }
         {
             QVector4D theClearColor;
-            if (m_MatteColor.hasValue())
-                theClearColor = m_MatteColor;
+            if (m_matteColor.hasValue())
+                theClearColor = m_matteColor;
             else
-                theClearColor = m_SceneColor;
-            m_RenderContext->SetClearColor(theClearColor);
-            m_RenderContext->Clear(QDemonRenderClearValues::Color);
+                theClearColor = m_sceneColor;
+            m_renderContext->setClearColor(theClearColor);
+            m_renderContext->clear(QDemonRenderClearValues::Color);
         }
-        bool renderOffscreen = m_BeginFrameResult.m_RenderOffscreen;
-        m_RenderContext->SetViewport(m_BeginFrameResult.m_Viewport);
-        m_RenderContext->SetScissorRect(m_BeginFrameResult.m_ScissorRect);
-        m_RenderContext->SetScissorTestEnabled(m_BeginFrameResult.m_ScissorTestEnabled);
+        bool renderOffscreen = m_beginFrameResult.renderOffscreen;
+        m_renderContext->setViewport(m_beginFrameResult.viewport);
+        m_renderContext->setScissorRect(m_beginFrameResult.scissorRect);
+        m_renderContext->setScissorTestEnabled(m_beginFrameResult.scissorTestEnabled);
 
-        if (m_PresentationViewport.m_Width > 0 && m_PresentationViewport.m_Height > 0) {
+        if (m_presentationViewport.m_width > 0 && m_presentationViewport.m_height > 0) {
             if (renderOffscreen == false) {
-                if (m_RotationFBO != nullptr) {
-                    m_ResourceManager->Release(m_RotationFBO);
-                    m_ResourceManager->Release(m_RotationTexture);
-                    m_ResourceManager->Release(m_RotationDepthBuffer);
-                    m_RotationFBO = nullptr;
-                    m_RotationTexture = nullptr;
-                    m_RotationDepthBuffer = nullptr;
+                if (m_rotationFbo != nullptr) {
+                    m_resourceManager->release(m_rotationFbo);
+                    m_resourceManager->release(m_rotationTexture);
+                    m_resourceManager->release(m_rotationDepthBuffer);
+                    m_rotationFbo = nullptr;
+                    m_rotationTexture = nullptr;
+                    m_rotationDepthBuffer = nullptr;
                 }
-                if (m_SceneColor.hasValue() && m_SceneColor.getValue().w() != 0.0f) {
-                    m_RenderContext->SetClearColor(m_SceneColor);
-                    m_RenderContext->Clear(QDemonRenderClearValues::Color);
+                if (m_sceneColor.hasValue() && m_sceneColor.getValue().w() != 0.0f) {
+                    m_renderContext->setClearColor(m_sceneColor);
+                    m_renderContext->clear(QDemonRenderClearValues::Color);
                 }
             } else {
-                quint32 imageWidth = m_BeginFrameResult.m_FBODimensions.width();
-                quint32 imageHeight = m_BeginFrameResult.m_FBODimensions.height();
+                quint32 imageWidth = m_beginFrameResult.fboDimensions.width();
+                quint32 imageHeight = m_beginFrameResult.fboDimensions.height();
                 QDemonRenderTextureFormats::Enum theColorBufferFormat = QDemonRenderTextureFormats::RGBA8;
                 QDemonRenderRenderBufferFormats::Enum theDepthBufferFormat = QDemonRenderRenderBufferFormats::Depth16;
-                m_ContextRenderTarget = m_RenderContext->GetRenderTarget();
-                if (m_RotationFBO == nullptr) {
-                    m_RotationFBO = m_ResourceManager->AllocateFrameBuffer();
-                    m_RotationTexture = m_ResourceManager->AllocateTexture2D(
+                m_contextRenderTarget = m_renderContext->getRenderTarget();
+                if (m_rotationFbo == nullptr) {
+                    m_rotationFbo = m_resourceManager->allocateFrameBuffer();
+                    m_rotationTexture = m_resourceManager->allocateTexture2D(
                                 imageWidth, imageHeight, theColorBufferFormat);
-                    m_RotationDepthBuffer = m_ResourceManager->AllocateRenderBuffer(
+                    m_rotationDepthBuffer = m_resourceManager->allocateRenderBuffer(
                                 imageWidth, imageHeight, theDepthBufferFormat);
-                    m_RotationFBO->Attach(QDemonRenderFrameBufferAttachments::Color0,
-                                          m_RotationTexture);
-                    m_RotationFBO->Attach(QDemonRenderFrameBufferAttachments::Depth,
-                                          m_RotationDepthBuffer);
+                    m_rotationFbo->attach(QDemonRenderFrameBufferAttachments::Color0,
+                                          m_rotationTexture);
+                    m_rotationFbo->attach(QDemonRenderFrameBufferAttachments::Depth,
+                                          m_rotationDepthBuffer);
                 } else {
-                    STextureDetails theDetails = m_RotationTexture->GetTextureDetails();
-                    if (theDetails.m_Width != imageWidth || theDetails.m_Height != imageHeight) {
-                        m_RotationTexture->SetTextureData(QDemonDataRef<quint8>(), 0, imageWidth,
+                    QDemonTextureDetails theDetails = m_rotationTexture->getTextureDetails();
+                    if (theDetails.width != imageWidth || theDetails.height != imageHeight) {
+                        m_rotationTexture->setTextureData(QDemonDataRef<quint8>(), 0, imageWidth,
                                                           imageHeight, theColorBufferFormat);
-                        m_RotationDepthBuffer->SetDimensions(
+                        m_rotationDepthBuffer->setDimensions(
                                     QDemonRenderRenderBufferDimensions(imageWidth, imageHeight));
                     }
                 }
-                m_RenderContext->SetRenderTarget(m_RotationFBO);
-                if (m_SceneColor.hasValue()) {
-                    m_RenderContext->SetClearColor(m_SceneColor);
-                    m_RenderContext->Clear(QDemonRenderClearValues::Color);
+                m_renderContext->setRenderTarget(m_rotationFbo);
+                if (m_sceneColor.hasValue()) {
+                    m_renderContext->setClearColor(m_sceneColor);
+                    m_renderContext->clear(QDemonRenderClearValues::Color);
                 }
             }
         }
     }
 
-    void RunRenderTasks() override
+    void runRenderTasks() override
     {
-        m_RenderList->RunRenderTasks();
-        SetupRenderTarget();
+        m_renderList->runRenderTasks();
+        setupRenderTarget();
     }
 
     // Note this runs before EndFrame
-    virtual void TeardownRenderTarget()
+    virtual void teardownRenderTarget()
     {
-        if (m_RotationFBO) {
-            ScaleModes::Enum theScaleToFit = m_ScaleMode;
-            QDemonRenderRect theOuterViewport(GetContextViewport());
-            m_RenderContext->SetRenderTarget(m_ContextRenderTarget);
-            QSize thePresentationDimensions = GetCurrentPresentationDimensions();
-            if (m_Rotation == RenderRotationValues::Clockwise90
-                    || m_Rotation == RenderRotationValues::Clockwise270) {
+        if (m_rotationFbo) {
+            ScaleModes::Enum theScaleToFit = m_scaleMode;
+            QDemonRenderRect theOuterViewport(getContextViewport());
+            m_renderContext->setRenderTarget(m_contextRenderTarget);
+            QSize thePresentationDimensions = getCurrentPresentationDimensions();
+            if (m_rotation == RenderRotationValues::Clockwise90
+                    || m_rotation == RenderRotationValues::Clockwise270) {
                 thePresentationDimensions = QSize(thePresentationDimensions.height(),
                                                   thePresentationDimensions.width());
             }
-            m_RenderPresentationDimensions = thePresentationDimensions;
+            m_renderPresentationDimensions = thePresentationDimensions;
             // Calculate the presentation viewport perhaps with the presentation width and height
             // swapped.
-            QDemonRenderRect thePresentationViewport =
-                    GetPresentationViewport(theOuterViewport, theScaleToFit, thePresentationDimensions);
-            SCamera theCamera;
-            switch (m_Rotation) {
+            QDemonRenderRect thePresentationViewport = getPresentationViewport(theOuterViewport, theScaleToFit, thePresentationDimensions);
+            QDemonRenderCamera theCamera;
+            switch (m_rotation) {
             default:
                 Q_ASSERT(false);
                 break;
             case RenderRotationValues::Clockwise90:
-                theCamera.m_Rotation.setZ(90);
+                theCamera.rotation.setZ(90);
                 break;
             case RenderRotationValues::Clockwise180:
-                theCamera.m_Rotation.setZ(180);
+                theCamera.rotation.setZ(180);
                 break;
             case RenderRotationValues::Clockwise270:
-                theCamera.m_Rotation.setZ(270);
+                theCamera.rotation.setZ(270);
                 break;
             }
-            float z = theCamera.m_Rotation.z();
+            float z = theCamera.rotation.z();
             TORAD(z);
-            theCamera.m_Rotation.setZ(z);
-            theCamera.MarkDirty(NodeTransformDirtyFlag::TransformIsDirty);
-            theCamera.m_Flags.SetOrthographic(true);
-            m_RenderContext->SetViewport(thePresentationViewport);
-            QVector2D theCameraDimensions((float)thePresentationViewport.m_Width,
-                                          (float)thePresentationViewport.m_Height);
-            theCamera.CalculateGlobalVariables(
-                        QDemonRenderRect(0, 0, (quint32)thePresentationViewport.m_Width,
-                                         (quint32)thePresentationViewport.m_Height),
+            theCamera.rotation.setZ(z);
+            theCamera.markDirty(NodeTransformDirtyFlag::TransformIsDirty);
+            theCamera.flags.setOrthographic(true);
+            m_renderContext->setViewport(thePresentationViewport);
+            QVector2D theCameraDimensions((float)thePresentationViewport.m_width,
+                                          (float)thePresentationViewport.m_height);
+            theCamera.calculateGlobalVariables(
+                        QDemonRenderRect(0, 0, (quint32)thePresentationViewport.m_width,
+                                         (quint32)thePresentationViewport.m_height),
                         theCameraDimensions);
             QMatrix4x4 theVP;
-            theCamera.CalculateViewProjectionMatrix(theVP);
-            SNode theTempNode;
-            theTempNode.CalculateGlobalVariables();
+            theCamera.calculateViewProjectionMatrix(theVP);
+            QDemonGraphNode theTempNode;
+            theTempNode.calculateGlobalVariables();
             QMatrix4x4 theMVP;
             QMatrix3x3 theNormalMat;
-            theTempNode.CalculateMVPAndNormalMatrix(theVP, theMVP, theNormalMat);
-            m_RenderContext->SetCullingEnabled(false);
-            m_RenderContext->SetBlendingEnabled(false);
-            m_RenderContext->SetDepthTestEnabled(false);
-            m_Renderer->RenderQuad(QVector2D((float)m_PresentationViewport.m_Width,
-                                             (float)m_PresentationViewport.m_Height),
-                                   theMVP, *m_RotationTexture);
+            theTempNode.calculateMVPAndNormalMatrix(theVP, theMVP, theNormalMat);
+            m_renderContext->setCullingEnabled(false);
+            m_renderContext->setBlendingEnabled(false);
+            m_renderContext->setDepthTestEnabled(false);
+            m_renderer->renderQuad(QVector2D((float)m_presentationViewport.m_width,
+                                             (float)m_presentationViewport.m_height),
+                                   theMVP, *m_rotationTexture);
         }
     }
 
-    void EndFrame() override
+    void endFrame() override
     {
-        TeardownRenderTarget();
-        m_ImageBatchLoader->EndFrame();
-        if (m_TextTextureCache)
-            m_TextTextureCache->EndFrame();
-        if (m_TextRenderer)
-            m_TextRenderer->EndFrame();
-        m_OffscreenRenderManager->EndFrame();
-        m_Renderer->EndFrame();
-        m_CustomMaterialSystem->EndFrame();
-        m_PresentationDimensions = m_PreRenderPresentationDimensions;
-        ++m_FrameCount;
+        teardownRenderTarget();
+        m_imageBatchLoader->endFrame();
+        if (m_textTextureCache)
+            m_textTextureCache->endFrame();
+        if (m_textRenderer)
+            m_textRenderer->endFrame();
+        m_offscreenRenderManager->endFrame();
+        m_renderer->endFrame();
+        m_customMaterialSystem->endFrame();
+        m_presentationDimensions = m_preRenderPresentationDimensions;
+        ++m_frameCount;
     }
 };
 
-QSharedPointer<IQDemonRenderContext> SRenderContextCore::CreateRenderContext(QSharedPointer<QDemonRenderContext> inContext, const char *inPrimitivesDirectory)
+QSharedPointer<QDemonRenderContextInterface> QDemonRenderContextCore::createRenderContext(QSharedPointer<QDemonRenderContext> inContext,
+                                                                                          const char *inPrimitivesDirectory)
 {
-    return QSharedPointer<SRenderContext>(new SRenderContext(inContext, this, inPrimitivesDirectory));
+    return QSharedPointer<QDemonRenderContextData>(new QDemonRenderContextData(inContext, this, inPrimitivesDirectory));
 }
 }
 
-IQDemonRenderContextCore::~IQDemonRenderContextCore()
+QDemonRenderContextCoreInterface::~QDemonRenderContextCoreInterface()
 {
 
 }
 
-QSharedPointer<IQDemonRenderContextCore> IQDemonRenderContextCore::Create()
+QSharedPointer<QDemonRenderContextCoreInterface> QDemonRenderContextCoreInterface::create()
 {
-    return QSharedPointer<SRenderContextCore>(new SRenderContextCore());
+    return QSharedPointer<QDemonRenderContextCore>(new QDemonRenderContextCore());
+}
+
+QDemonRenderContextInterface::~QDemonRenderContextInterface()
+{
+
 }
 
 QT_END_NAMESPACE

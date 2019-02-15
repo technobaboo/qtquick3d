@@ -38,37 +38,37 @@ QT_BEGIN_NAMESPACE
 QDemonRenderTextureCube::QDemonRenderTextureCube(QSharedPointer<QDemonRenderContextImpl> context,
                                                  QDemonRenderTextureTargetType::Enum texTarget)
     : QDemonRenderTextureBase(context, texTarget)
-    , m_Width(0)
-    , m_Height(0)
+    , m_width(0)
+    , m_height(0)
 {
 }
 
 QDemonRenderTextureCube::~QDemonRenderTextureCube()
 {
-    m_Context->TextureDestroyed(this);
+    m_context->textureDestroyed(this);
 }
 
-void QDemonRenderTextureCube::SetTextureData(QDemonDataRef<quint8> newBuffer, quint8 inMipLevel,
+void QDemonRenderTextureCube::setTextureData(QDemonDataRef<quint8> newBuffer, quint8 inMipLevel,
                                              QDemonRenderTextureCubeFaces::Enum inFace, quint32 width,
                                              quint32 height, QDemonRenderTextureFormats::Enum format)
 {
-    Q_ASSERT(m_TextureHandle);
+    Q_ASSERT(m_textureHandle);
     Q_ASSERT(inFace != QDemonRenderTextureCubeFaces::InvalidFace);
 
     if (inMipLevel == 0) {
-        m_Width = width;
-        m_Height = height;
-        m_Format = format;
-        m_MaxMipLevel = inMipLevel;
+        m_width = width;
+        m_height = height;
+        m_format = format;
+        m_maxMipLevel = inMipLevel;
     }
 
-    if (m_MaxMipLevel < inMipLevel) {
-        m_MaxMipLevel = inMipLevel;
+    if (m_maxMipLevel < inMipLevel) {
+        m_maxMipLevel = inMipLevel;
     }
 
     // get max size and check value
     qint32 theMaxSize;
-    m_Backend->GetRenderBackendValue(QDemonRenderBackend::QDemonRenderBackendQuery::MaxTextureSize,
+    m_backend->getRenderBackendValue(QDemonRenderBackend::QDemonRenderBackendQuery::MaxTextureSize,
                                      &theMaxSize);
     if (width > (quint32)theMaxSize || height > (quint32)theMaxSize) {
         qCCritical(INVALID_OPERATION, "Width or height is greater than max texture size (%d, %d)",
@@ -76,38 +76,38 @@ void QDemonRenderTextureCube::SetTextureData(QDemonDataRef<quint8> newBuffer, qu
     }
 
     QDemonRenderTextureTargetType::Enum outTarget =
-            static_cast<QDemonRenderTextureTargetType::Enum>((int)m_TexTarget + (int)inFace);
+            static_cast<QDemonRenderTextureTargetType::Enum>((int)m_texTarget + (int)inFace);
     if (QDemonRenderTextureFormats::isUncompressedTextureFormat(format)
             || QDemonRenderTextureFormats::isDepthTextureFormat(format)) {
-        m_Backend->SetTextureDataCubeFace(m_TextureHandle, outTarget, inMipLevel, format, width,
+        m_backend->setTextureDataCubeFace(m_textureHandle, outTarget, inMipLevel, format, width,
                                           height, 0, format, newBuffer.begin());
     } else if (QDemonRenderTextureFormats::isCompressedTextureFormat(format)) {
-        m_Backend->SetCompressedTextureDataCubeFace(m_TextureHandle, outTarget, inMipLevel,
+        m_backend->setCompressedTextureDataCubeFace(m_textureHandle, outTarget, inMipLevel,
                                                     format, width, height, 0, newBuffer.size(),
                                                     newBuffer.begin());
     }
 
     // Set our texture parameters to a default that will look the best
     if (inMipLevel > 0)
-        SetMinFilter(QDemonRenderTextureMinifyingOp::LinearMipmapLinear);
+        setMinFilter(QDemonRenderTextureMinifyingOp::LinearMipmapLinear);
 }
 
-STextureDetails QDemonRenderTextureCube::GetTextureDetails() const
+QDemonTextureDetails QDemonRenderTextureCube::getTextureDetails() const
 {
-    return STextureDetails(m_Width, m_Height, 6, m_SampleCount, m_Format);
+    return QDemonTextureDetails(m_width, m_height, 6, m_sampleCount, m_format);
 }
 
-void QDemonRenderTextureCube::Bind()
+void QDemonRenderTextureCube::bind()
 {
-    m_TextureUnit = m_Context->GetNextTextureUnit();
+    m_textureUnit = m_context->getNextTextureUnit();
 
-    m_Backend->BindTexture(m_TextureHandle, m_TexTarget, m_TextureUnit);
+    m_backend->bindTexture(m_textureHandle, m_texTarget, m_textureUnit);
 
     applyTexParams();
     applyTexSwizzle();
 }
 
-QSharedPointer<QDemonRenderTextureCube> QDemonRenderTextureCube::Create(QSharedPointer<QDemonRenderContextImpl> context)
+QSharedPointer<QDemonRenderTextureCube> QDemonRenderTextureCube::create(QSharedPointer<QDemonRenderContextImpl> context)
 {
     return QSharedPointer<QDemonRenderTextureCube>(new QDemonRenderTextureCube(context));
 }

@@ -175,7 +175,7 @@ Q_SIGNALS:
     void vertexColorsChanged(bool vertexColors);
 
 protected:
-    SGraphObject *updateSpatialNode(SGraphObject *node) override;
+    QDemonGraphObject *updateSpatialNode(QDemonGraphObject *node) override;
 
 private:
 

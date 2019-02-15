@@ -54,7 +54,7 @@ QT_BEGIN_NAMESPACE
     QDEMON_RENDER_HANDL_GRAPH_OBJECT_TYPE(Path)                                                       \
     QDEMON_RENDER_HANDL_GRAPH_OBJECT_TYPE(PathSubPath)
 
-struct GraphObjectTypes
+struct QDemonGraphObjectTypes
 {
     enum Enum {
         Unknown = 0,

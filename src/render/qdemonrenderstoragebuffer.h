@@ -69,7 +69,7 @@ public:
          *
          * @return no return.
          */
-    void Bind() override;
+    void bind() override;
 
     /**
          * @brief bind the buffer to a shader program
@@ -78,14 +78,14 @@ public:
          *
          * @return no return.
          */
-    virtual void BindToShaderProgram(quint32 index);
+    virtual void bindToShaderProgram(quint32 index);
 
     /**
          * @brief update the buffer to hardware
          *
          * @return no return.
          */
-    virtual void Update();
+    virtual void update();
 
     /**
          * @brief update a piece of memory directly within the storage buffer
@@ -102,29 +102,29 @@ public:
          *
          * @return no return
          */
-    void UpdateData(qint32 offset, QDemonDataRef<quint8> data);
+    void updateData(qint32 offset, QDemonDataRef<quint8> data);
 
     /**
          * @brief get the buffer name
          *
          * @return the buffer name
          */
-    QString GetBufferName() const { return m_Name; }
+    QString getBufferName() const { return m_name; }
 
     /**
          * @brief get the backend object handle
          *
          * @return the backend object handle.
          */
-    QDemonRenderBackend::QDemonRenderBackendBufferObject GetBuffertHandle() const override
+    QDemonRenderBackend::QDemonRenderBackendBufferObject getBuffertHandle() const override
     {
-        return m_BufferHandle;
+        return m_bufferHandle;
     }
 
     // this will be obsolete
-    const void *GetImplementationHandle() const override
+    const void *getImplementationHandle() const override
     {
-        return reinterpret_cast<void *>(m_BufferHandle);
+        return reinterpret_cast<void *>(m_bufferHandle);
     }
 
     /**
@@ -138,15 +138,15 @@ public:
          *
          * @return the buffer object or nullptr
          */
-    static QSharedPointer<QDemonRenderStorageBuffer> Create(QSharedPointer<QDemonRenderContextImpl> context, const char *bufferName,
+    static QSharedPointer<QDemonRenderStorageBuffer> create(QSharedPointer<QDemonRenderContextImpl> context, const char *bufferName,
                                              QDemonRenderBufferUsageType::Enum usageType, size_t size,
                                              QDemonConstDataRef<quint8> bufferData,
                                              QDemonRenderDataBuffer *pBuffer);
 
 private:
-    QString m_Name; ///< buffer name
-    QDemonRenderDataBuffer *m_WrappedBuffer; ///< pointer to wrapped buffer
-    bool m_Dirty; ///< true if buffer is dirty
+    QString m_name; ///< buffer name
+    QDemonRenderDataBuffer *m_wrappedBuffer; ///< pointer to wrapped buffer
+    bool m_dirty; ///< true if buffer is dirty
 };
 
 QT_END_NAMESPACE

@@ -44,73 +44,74 @@
 
 QT_BEGIN_NAMESPACE
 
-class IOffscreenRenderer;
+class QDemonOffscreenRendererInterface;
 
 struct QDemonRenderPickSubResult
 {
-    QSharedPointer<IOffscreenRenderer> m_SubRenderer;
-    QMatrix4x4 m_TextureMatrix;
-    QDemonRenderTextureCoordOp::Enum m_HorizontalTilingMode;
-    QDemonRenderTextureCoordOp::Enum m_VerticalTilingMode;
-    quint32 m_ViewportWidth;
-    quint32 m_ViewportHeight;
-    QDemonRenderPickSubResult *m_NextSibling;
+    QSharedPointer<QDemonOffscreenRendererInterface> m_subRenderer;
+    QMatrix4x4 m_textureMatrix;
+    QDemonRenderTextureCoordOp::Enum m_horizontalTilingMode;
+    QDemonRenderTextureCoordOp::Enum m_verticalTilingMode;
+    quint32 m_viewportWidth;
+    quint32 m_viewportHeight;
+    QDemonRenderPickSubResult *m_nextSibling;
 
     QDemonRenderPickSubResult()
-        : m_SubRenderer(nullptr)
-        , m_NextSibling(nullptr)
+        : m_subRenderer(nullptr)
+        , m_nextSibling(nullptr)
     {
     }
-    QDemonRenderPickSubResult(QSharedPointer<IOffscreenRenderer> inSubRenderer, QMatrix4x4 inTextureMatrix,
+    QDemonRenderPickSubResult(QSharedPointer<QDemonOffscreenRendererInterface> inSubRenderer, QMatrix4x4 inTextureMatrix,
                              QDemonRenderTextureCoordOp::Enum inHorizontalTilingMode,
                              QDemonRenderTextureCoordOp::Enum inVerticalTilingMode, quint32 width,
                              quint32 height)
-        : m_SubRenderer(inSubRenderer)
-        , m_TextureMatrix(inTextureMatrix)
-        , m_HorizontalTilingMode(inHorizontalTilingMode)
-        , m_VerticalTilingMode(inVerticalTilingMode)
-        , m_ViewportWidth(width)
-        , m_ViewportHeight(height)
-        , m_NextSibling(nullptr)
+        : m_subRenderer(inSubRenderer)
+        , m_textureMatrix(inTextureMatrix)
+        , m_horizontalTilingMode(inHorizontalTilingMode)
+        , m_verticalTilingMode(inVerticalTilingMode)
+        , m_viewportWidth(width)
+        , m_viewportHeight(height)
+        , m_nextSibling(nullptr)
     {
     }
 };
 
 struct QDemonRenderPickResult
 {
-    const SGraphObject *m_HitObject;
-    float m_CameraDistanceSq;
+    const QDemonGraphObject *m_hitObject;
+    float m_cameraDistanceSq;
     // The local coordinates in X,Y UV space where the hit occured
-    QVector2D m_LocalUVCoords;
+    QVector2D m_localUVCoords;
     // The local mouse coordinates will be the same on all of the sub objects.
-    QDemonRenderPickSubResult *m_FirstSubObject;
+    QDemonRenderPickSubResult *m_firstSubObject;
     // The offscreen renderer that was used to render the scene graph this result was produced
     // from.
-    QSharedPointer<IOffscreenRenderer> m_OffscreenRenderer;
+    QSharedPointer<QDemonOffscreenRendererInterface> m_offscreenRenderer;
 
-    QDemonRenderPickResult(const SGraphObject &inHitObject, float inCameraDistance,
-                          const QVector2D &inLocalUVCoords)
-        : m_HitObject(&inHitObject)
-        , m_CameraDistanceSq(inCameraDistance)
-        , m_LocalUVCoords(inLocalUVCoords)
-        , m_FirstSubObject(nullptr)
-        , m_OffscreenRenderer(nullptr)
+    QDemonRenderPickResult(const QDemonGraphObject &inHitObject,
+                           float inCameraDistance,
+                           const QVector2D &inLocalUVCoords)
+        : m_hitObject(&inHitObject)
+        , m_cameraDistanceSq(inCameraDistance)
+        , m_localUVCoords(inLocalUVCoords)
+        , m_firstSubObject(nullptr)
+        , m_offscreenRenderer(nullptr)
     {
     }
     QDemonRenderPickResult()
-        : m_HitObject(nullptr)
-        , m_CameraDistanceSq(std::numeric_limits<float>::max())
-        , m_LocalUVCoords(0, 0)
-        , m_FirstSubObject(nullptr)
-        , m_OffscreenRenderer(nullptr)
+        : m_hitObject(nullptr)
+        , m_cameraDistanceSq(std::numeric_limits<float>::max())
+        , m_localUVCoords(0, 0)
+        , m_firstSubObject(nullptr)
+        , m_offscreenRenderer(nullptr)
     {
     }
 };
 
-class IGraphObjectPickQuery
+class QDemonGraphObjectPickQueryInterface
 {
 protected:
-    virtual ~IGraphObjectPickQuery() {}
+    virtual ~QDemonGraphObjectPickQueryInterface() {}
 
 public:
     // Implementors have the option of batching the results to allow fewer virtual calls
@@ -119,9 +120,9 @@ public:
     // If the return value has size of zero then we assume nothing more can be picked and the
     // pick
     // is finished.
-    virtual QDemonRenderPickResult Pick(const QVector2D &inMouseCoords,
-                                       const QVector2D &inViewportDimensions,
-                                       bool inPickEverything) = 0;
+    virtual QDemonRenderPickResult pick(const QVector2D &inMouseCoords,
+                                        const QVector2D &inViewportDimensions,
+                                        bool inPickEverything) = 0;
 };
 QT_END_NAMESPACE
 #endif

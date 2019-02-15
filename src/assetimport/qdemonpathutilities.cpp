@@ -7,24 +7,24 @@ QT_BEGIN_NAMESPACE
 
 using namespace QDemonPathUtilities;
 
-SPathBuffer::SPathBuffer()
+QDemonPathBuffer::QDemonPathBuffer()
 {
 
 }
 
-void SPathBuffer::Save(QIODevice &outStream) const
+void QDemonPathBuffer::save(QIODevice &outStream) const
 {
     QDataStream out(&outStream);
 
-    out << GetFileTag();
-    out << GetFileVersion();
-    out << quint32(m_Commands.size());
-    out << quint32(m_Data.size());
-    out.writeRawData(reinterpret_cast<const char *>(m_Commands.begin()), m_Commands.size());
-    out.writeRawData(reinterpret_cast<const char *>(m_Data.begin()), m_Data.size());
+    out << getFileTag();
+    out << getFileVersion();
+    out << quint32(commands.size());
+    out << quint32(data.size());
+    out.writeRawData(reinterpret_cast<const char *>(commands.begin()), commands.size());
+    out.writeRawData(reinterpret_cast<const char *>(data.begin()), data.size());
 }
 
-SPathBuffer *SPathBuffer::Load(QIODevice &inStream)
+QDemonPathBuffer *QDemonPathBuffer::load(QIODevice &inStream)
 {
     QDataStream in(&inStream);
 
@@ -36,81 +36,82 @@ SPathBuffer *SPathBuffer::Load(QIODevice &inStream)
     in >> version;
     in >> numCommands;
     in >> numData;
-    if (fileTag != GetFileTag()) {
+    if (fileTag != getFileTag()) {
         qCritical("Invalid file, not a path file");
         return nullptr;
     }
-    if (version > GetFileVersion()) {
+    if (version > getFileVersion()) {
         qCritical("Version number out of range.");
         return nullptr;
     }
     quint32 commandSize = numCommands * sizeof(quint32);
     quint32 dataSize = numData * sizeof(float);
-    quint32 objectSize = sizeof(SPathBuffer);
+    quint32 objectSize = sizeof(QDemonPathBuffer);
     quint32 allocSize = objectSize + commandSize + dataSize;
     char *rawData = reinterpret_cast<char*>(::malloc(allocSize));
-    SPathBuffer *retval = new (rawData) SPathBuffer();
-    char *commandBuffer = rawData + sizeof(SPathBuffer);
+    QDemonPathBuffer *retval = new (rawData) QDemonPathBuffer();
+    char *commandBuffer = rawData + sizeof(QDemonPathBuffer);
     char *dataBuffer = commandBuffer + commandSize;
     in.readRawData(commandBuffer, commandSize);
     in.readRawData(dataBuffer, dataSize);
-    retval->m_Commands = toDataRef((PathCommand::Enum *)commandBuffer, numCommands);
-    retval->m_Data = toDataRef((float *)dataBuffer, numData);
+    retval->commands = toDataRef((PathCommand::Enum *)commandBuffer, numCommands);
+    retval->data = toDataRef((float *)dataBuffer, numData);
     return retval;
 }
 
 namespace {
-struct SBuilder : public IPathBufferBuilder
+struct QDemonPathBufferBuilder : public QDemonPathBufferBuilderInterface
 {
-    QVector<PathCommand::Enum> m_Commands;
-    QVector<float> m_Data;
+    QVector<PathCommand::Enum> m_commands;
+    QVector<float> m_data;
 
-    SBuilder()
+    void clear() override
     {
+        m_commands.clear();
+        m_data.clear();
     }
 
-    void Clear() override
+    void push(const QVector2D &inPos)
     {
-        m_Commands.clear();
-        m_Data.clear();
+        m_data.push_back(inPos.x());
+        m_data.push_back(inPos.y());
     }
 
-    void Push(const QVector2D &inPos)
+    void moveTo(const QVector2D &inPos) override
     {
-        m_Data.push_back(inPos.x());
-        m_Data.push_back(inPos.y());
+        m_commands.push_back(PathCommand::MoveTo);
+        push(inPos);
     }
 
-    void MoveTo(const QVector2D &inPos) override
+    void cubicCurveTo(const QVector2D &inC1, const QVector2D &inC2, const QVector2D &inP2) override
     {
-        m_Commands.push_back(PathCommand::MoveTo);
-        Push(inPos);
+        m_commands.push_back(PathCommand::CubicCurveTo);
+        push(inC1);
+        push(inC2);
+        push(inP2);
     }
 
-    void CubicCurveTo(const QVector2D &inC1, const QVector2D &inC2, const QVector2D &inP2) override
-    {
-        m_Commands.push_back(PathCommand::CubicCurveTo);
-        Push(inC1);
-        Push(inC2);
-        Push(inP2);
-    }
-
-    void Close() override { m_Commands.push_back(PathCommand::Close); }
+    void close() override { m_commands.push_back(PathCommand::Close); }
 
     // Points back to internal data structures, must use or copy.
-    SPathBuffer GetPathBuffer() override
+    QDemonPathBuffer getPathBuffer() override
     {
-        SPathBuffer retval;
-        retval.m_Data = toConstDataRef(static_cast<const float *>(m_Data.constData()), m_Data.size());
-        retval.m_Commands = toConstDataRef(static_cast<const PathCommand::Enum *>(m_Commands.constData()), m_Commands.size());;
+        QDemonPathBuffer retval;
+        retval.data = toConstDataRef(static_cast<const float *>(m_data.constData()), m_data.size());
+        retval.commands = toConstDataRef(static_cast<const PathCommand::Enum *>(m_commands.constData()), m_commands.size());;
         return retval;
     }
 };
 }
 
-QSharedPointer<IPathBufferBuilder> IPathBufferBuilder::CreateBuilder()
+QDemonPathBufferBuilderInterface::~QDemonPathBufferBuilderInterface()
 {
-    return QSharedPointer<IPathBufferBuilder>(new SBuilder());
+
+}
+
+QSharedPointer<QDemonPathBufferBuilderInterface> QDemonPathBufferBuilderInterface::createBuilder()
+{
+    return QSharedPointer<QDemonPathBufferBuilderInterface>(new QDemonPathBufferBuilder());
 }
 
 QT_END_NAMESPACE

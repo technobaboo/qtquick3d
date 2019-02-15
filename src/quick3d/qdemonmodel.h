@@ -55,7 +55,7 @@ Q_SIGNALS:
     void isWireframeModeChanged(bool isWireframeMode);
 
 protected:
-    SGraphObject *updateSpatialNode(SGraphObject *node) override;
+    QDemonGraphObject *updateSpatialNode(QDemonGraphObject *node) override;
 
 private:
 

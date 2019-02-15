@@ -152,18 +152,18 @@ template <>
 struct QDemonRenderComponentTraits<QDemonRenderComponentTypes::UnsignedInteger8>
 {
     typedef quint8 TComponentType;
-    quint8 mComponentSize;
+    quint8 m_componentSize;
     QDemonRenderComponentTraits<QDemonRenderComponentTypes::UnsignedInteger8>()
-        : mComponentSize(sizeof(quint8))
+        : m_componentSize(sizeof(quint8))
     { }
 };
 
 template <>
 struct QDemonRenderComponentTypeToTypeMap<quint8>
 {
-    QDemonRenderComponentTypes::Enum m_ComponentType;
+    QDemonRenderComponentTypes::Enum m_componentType;
     QDemonRenderComponentTypeToTypeMap<quint8>()
-        : m_ComponentType(QDemonRenderComponentTypes::UnsignedInteger8)
+        : m_componentType(QDemonRenderComponentTypes::UnsignedInteger8)
     { }
 };
 
@@ -171,18 +171,18 @@ template <>
 struct QDemonRenderComponentTraits<QDemonRenderComponentTypes::Integer8>
 {
     typedef qint8 TComponentType;
-    quint8 mComponentSize;
+    quint8 m_componentSize;
     QDemonRenderComponentTraits<QDemonRenderComponentTypes::Integer8>()
-        : mComponentSize(sizeof(qint8))
+        : m_componentSize(sizeof(qint8))
     { }
 };
 
 template <>
 struct QDemonRenderComponentTypeToTypeMap<qint8>
 {
-    QDemonRenderComponentTypes::Enum m_ComponentType;
+    QDemonRenderComponentTypes::Enum m_componentType;
     QDemonRenderComponentTypeToTypeMap<qint8>()
-        : m_ComponentType(QDemonRenderComponentTypes::Integer8)
+        : m_componentType(QDemonRenderComponentTypes::Integer8)
     { }
 };
 
@@ -190,18 +190,18 @@ template <>
 struct QDemonRenderComponentTraits<QDemonRenderComponentTypes::UnsignedInteger16>
 {
     typedef quint16 TComponentType;
-    quint8 mComponentSize;
+    quint8 m_componentSize;
     QDemonRenderComponentTraits<QDemonRenderComponentTypes::UnsignedInteger16>()
-        : mComponentSize(sizeof(quint16))
+        : m_componentSize(sizeof(quint16))
     { }
 };
 
 template <>
 struct QDemonRenderComponentTypeToTypeMap<quint16>
 {
-    QDemonRenderComponentTypes::Enum m_ComponentType;
+    QDemonRenderComponentTypes::Enum m_componentType;
     QDemonRenderComponentTypeToTypeMap<quint16>()
-        : m_ComponentType(QDemonRenderComponentTypes::UnsignedInteger16)
+        : m_componentType(QDemonRenderComponentTypes::UnsignedInteger16)
     { }
 };
 
@@ -209,18 +209,18 @@ template <>
 struct QDemonRenderComponentTraits<QDemonRenderComponentTypes::Integer16>
 {
     typedef qint16 TComponentType;
-    quint8 mComponentSize;
+    quint8 m_componentSize;
     QDemonRenderComponentTraits<QDemonRenderComponentTypes::Integer16>()
-        : mComponentSize(sizeof(qint16))
+        : m_componentSize(sizeof(qint16))
     { }
 };
 
 template <>
 struct QDemonRenderComponentTypeToTypeMap<qint16>
 {
-    QDemonRenderComponentTypes::Enum m_ComponentType;
+    QDemonRenderComponentTypes::Enum m_componentType;
     QDemonRenderComponentTypeToTypeMap<qint16>()
-        : m_ComponentType(QDemonRenderComponentTypes::Integer16)
+        : m_componentType(QDemonRenderComponentTypes::Integer16)
     { }
 };
 
@@ -228,36 +228,36 @@ template <>
 struct QDemonRenderComponentTraits<QDemonRenderComponentTypes::UnsignedInteger32>
 {
     typedef quint32 TComponentType;
-    quint8 mComponentSize;
+    quint8 m_componentSize;
     QDemonRenderComponentTraits<QDemonRenderComponentTypes::UnsignedInteger32>()
-        : mComponentSize(sizeof(quint32))
+        : m_componentSize(sizeof(quint32))
     { }
 };
 
 template <>
 struct QDemonRenderComponentTypeToTypeMap<quint32>
 {
-    QDemonRenderComponentTypes::Enum m_ComponentType;
+    QDemonRenderComponentTypes::Enum m_componentType;
     QDemonRenderComponentTypeToTypeMap<quint32>()
-        : m_ComponentType(QDemonRenderComponentTypes::UnsignedInteger32)
+        : m_componentType(QDemonRenderComponentTypes::UnsignedInteger32)
     { }
 };
 template <>
 struct QDemonRenderComponentTraits<QDemonRenderComponentTypes::Integer32>
 {
     typedef qint32 TComponentType;
-    quint8 mComponentSize;
+    quint8 m_componentSize;
     QDemonRenderComponentTraits<QDemonRenderComponentTypes::Integer32>()
-        : mComponentSize(sizeof(qint32))
+        : m_componentSize(sizeof(qint32))
     { }
 };
 
 template <>
 struct QDemonRenderComponentTypeToTypeMap<qint32>
 {
-    QDemonRenderComponentTypes::Enum m_ComponentType;
+    QDemonRenderComponentTypes::Enum m_componentType;
     QDemonRenderComponentTypeToTypeMap<qint32>()
-        : m_ComponentType(QDemonRenderComponentTypes::Integer32)
+        : m_componentType(QDemonRenderComponentTypes::Integer32)
     { }
 };
 
@@ -265,18 +265,18 @@ template <>
 struct QDemonRenderComponentTraits<QDemonRenderComponentTypes::UnsignedInteger64>
 {
     typedef quint64 TComponentType;
-    quint8 mComponentSize;
+    quint8 m_componentSize;
     QDemonRenderComponentTraits<QDemonRenderComponentTypes::UnsignedInteger64>()
-        : mComponentSize(sizeof(quint64))
+        : m_componentSize(sizeof(quint64))
     { }
 };
 
 template <>
 struct QDemonRenderComponentTypeToTypeMap<quint64>
 {
-    QDemonRenderComponentTypes::Enum m_ComponentType;
+    QDemonRenderComponentTypes::Enum m_componentType;
     QDemonRenderComponentTypeToTypeMap<quint64>()
-        : m_ComponentType(QDemonRenderComponentTypes::UnsignedInteger64)
+        : m_componentType(QDemonRenderComponentTypes::UnsignedInteger64)
     { }
 };
 
@@ -284,18 +284,18 @@ template <>
 struct QDemonRenderComponentTraits<QDemonRenderComponentTypes::Integer64>
 {
     typedef qint64 TComponentType;
-    quint8 mComponentSize;
+    quint8 m_componentSize;
     QDemonRenderComponentTraits<QDemonRenderComponentTypes::Integer64>()
-        : mComponentSize(sizeof(qint64))
+        : m_componentSize(sizeof(qint64))
     { }
 };
 
 template <>
 struct QDemonRenderComponentTypeToTypeMap<qint64>
 {
-    QDemonRenderComponentTypes::Enum m_ComponentType;
+    QDemonRenderComponentTypes::Enum m_componentType;
     QDemonRenderComponentTypeToTypeMap<qint64>()
-        : m_ComponentType(QDemonRenderComponentTypes::Integer64)
+        : m_componentType(QDemonRenderComponentTypes::Integer64)
     { }
 };
 
@@ -303,18 +303,18 @@ template <>
 struct QDemonRenderComponentTraits<QDemonRenderComponentTypes::Float16>
 {
     typedef qfloat16 TComponentType;
-    quint8 mComponentSize;
+    quint8 m_componentSize;
     QDemonRenderComponentTraits<QDemonRenderComponentTypes::Float16>()
-        : mComponentSize(sizeof(qfloat16))
+        : m_componentSize(sizeof(qfloat16))
     { }
 };
 
 template <>
 struct QDemonRenderComponentTypeToTypeMap<qfloat16>
 {
-    QDemonRenderComponentTypes::Enum m_ComponentType;
+    QDemonRenderComponentTypes::Enum m_componentType;
     QDemonRenderComponentTypeToTypeMap<qfloat16>()
-        : m_ComponentType(QDemonRenderComponentTypes::Float16)
+        : m_componentType(QDemonRenderComponentTypes::Float16)
     { }
 };
 
@@ -322,18 +322,18 @@ template <>
 struct QDemonRenderComponentTraits<QDemonRenderComponentTypes::Float32>
 {
     typedef float TComponentType;
-    quint8 mComponentSize;
+    quint8 m_componentSize;
     QDemonRenderComponentTraits<QDemonRenderComponentTypes::Float32>()
-        : mComponentSize(sizeof(float))
+        : m_componentSize(sizeof(float))
     { }
 };
 
 template <>
 struct QDemonRenderComponentTypeToTypeMap<float>
 {
-    QDemonRenderComponentTypes::Enum m_ComponentType;
+    QDemonRenderComponentTypes::Enum m_componentType;
     QDemonRenderComponentTypeToTypeMap<float>()
-        : m_ComponentType(QDemonRenderComponentTypes::Float32)
+        : m_componentType(QDemonRenderComponentTypes::Float32)
     { }
 };
 
@@ -341,18 +341,18 @@ template <>
 struct QDemonRenderComponentTraits<QDemonRenderComponentTypes::Float64>
 {
     typedef double TComponentType;
-    quint8 mComponentSize;
+    quint8 m_componentSize;
     QDemonRenderComponentTraits<QDemonRenderComponentTypes::Float64>()
-        : mComponentSize(sizeof(double))
+        : m_componentSize(sizeof(double))
     { }
 };
 
 template <>
 struct QDemonRenderComponentTypeToTypeMap<double>
 {
-    QDemonRenderComponentTypes::Enum m_ComponentType;
+    QDemonRenderComponentTypes::Enum m_componentType;
     QDemonRenderComponentTypeToTypeMap<double>()
-        : m_ComponentType(QDemonRenderComponentTypes::Float64)
+        : m_componentType(QDemonRenderComponentTypes::Float64)
     { }
 };
 
@@ -361,7 +361,7 @@ struct QDemonRenderComponentTypeToTypeMap<double>
 template <typename TDataType>
 inline QDemonRenderComponentTypes::Enum getComponentTypeForType()
 {
-    return QDemonRenderComponentTypeToTypeMap<TDataType>().m_ComponentType;
+    return QDemonRenderComponentTypeToTypeMap<TDataType>().m_componentType;
 }
 
 struct QDemonRenderContextValues
@@ -1249,58 +1249,58 @@ public:
     // Get the handle that binds us to the implementation.
     // For instance, return the GLuint that came back from
     // glGenTextures.
-    virtual const void *GetImplementationHandle() const = 0;
+    virtual const void *getImplementationHandle() const = 0;
 };
 
 struct QDemonRenderVertexBufferEntry
 {
-    const char *m_Name;
+    const char *m_name;
     /** Datatype of the this entry points to in the buffer */
-    QDemonRenderComponentTypes::Enum m_ComponentType;
+    QDemonRenderComponentTypes::Enum m_componentType;
     /** Number of components of each data member. 1,2,3, or 4.  Don't be stupid.*/
-    quint32 m_NumComponents;
+    quint32 m_numComponents;
     /** Offset from the beginning of the buffer of the first item */
-    quint32 m_FirstItemOffset;
+    quint32 m_firstItemOffset;
     /** Attribute input slot used for this entry*/
-    quint32 m_InputSlot;
+    quint32 m_inputSlot;
 
     QDemonRenderVertexBufferEntry(const char *nm, QDemonRenderComponentTypes::Enum type,
                                   quint32 numComponents, quint32 firstItemOffset = 0,
                                   quint32 inputSlot = 0)
-        : m_Name(nm)
-        , m_ComponentType(type)
-        , m_NumComponents(numComponents)
-        , m_FirstItemOffset(firstItemOffset)
-        , m_InputSlot(inputSlot)
+        : m_name(nm)
+        , m_componentType(type)
+        , m_numComponents(numComponents)
+        , m_firstItemOffset(firstItemOffset)
+        , m_inputSlot(inputSlot)
     {
     }
 
     QDemonRenderVertexBufferEntry()
-        : m_Name(nullptr)
-        , m_ComponentType(QDemonRenderComponentTypes::Unknown)
-        , m_NumComponents(0)
-        , m_FirstItemOffset(0)
-        , m_InputSlot(0)
+        : m_name(nullptr)
+        , m_componentType(QDemonRenderComponentTypes::Unknown)
+        , m_numComponents(0)
+        , m_firstItemOffset(0)
+        , m_inputSlot(0)
     {
     }
 
     QDemonRenderVertexBufferEntry(const QDemonRenderVertexBufferEntry &inOther)
-        : m_Name(inOther.m_Name)
-        , m_ComponentType(inOther.m_ComponentType)
-        , m_NumComponents(inOther.m_NumComponents)
-        , m_FirstItemOffset(inOther.m_FirstItemOffset)
-        , m_InputSlot(inOther.m_InputSlot)
+        : m_name(inOther.m_name)
+        , m_componentType(inOther.m_componentType)
+        , m_numComponents(inOther.m_numComponents)
+        , m_firstItemOffset(inOther.m_firstItemOffset)
+        , m_inputSlot(inOther.m_inputSlot)
     {
     }
 
     QDemonRenderVertexBufferEntry &operator=(const QDemonRenderVertexBufferEntry &inOther)
     {
         if (this != &inOther) {
-            m_Name = inOther.m_Name;
-            m_ComponentType = inOther.m_ComponentType;
-            m_NumComponents = inOther.m_NumComponents;
-            m_FirstItemOffset = inOther.m_FirstItemOffset;
-            m_InputSlot = inOther.m_InputSlot;
+            m_name = inOther.m_name;
+            m_componentType = inOther.m_componentType;
+            m_numComponents = inOther.m_numComponents;
+            m_firstItemOffset = inOther.m_firstItemOffset;
+            m_inputSlot = inOther.m_inputSlot;
         }
         return *this;
     }
@@ -1312,13 +1312,13 @@ class QDemonRenderShaderProgram;
 
 struct QDemonRenderVertFragCompilationResult
 {
-    const char *mShaderName;
+    const char *m_shaderName;
 
-    QSharedPointer<QDemonRenderShaderProgram> mShader; ///< contains the program
+    QSharedPointer<QDemonRenderShaderProgram> m_shader; ///< contains the program
 
     QDemonRenderVertFragCompilationResult()
-        : mShaderName("")
-        , mShader(nullptr)
+        : m_shaderName("")
+        , m_shader(nullptr)
     {
     }
 };
@@ -1853,76 +1853,77 @@ struct QDemonRenderStencilOp
 
 struct QDemonRenderBlendFunctionArgument
 {
-    QDemonRenderSrcBlendFunc::Enum m_SrcRGB;
-    QDemonRenderDstBlendFunc::Enum m_DstRGB;
-    QDemonRenderSrcBlendFunc::Enum m_SrcAlpha;
-    QDemonRenderDstBlendFunc::Enum m_DstAlpha;
+    QDemonRenderSrcBlendFunc::Enum m_srcRgb;
+    QDemonRenderDstBlendFunc::Enum m_dstRgb;
+    QDemonRenderSrcBlendFunc::Enum m_srcAlpha;
+    QDemonRenderDstBlendFunc::Enum m_dstAlpha;
 
     QDemonRenderBlendFunctionArgument(QDemonRenderSrcBlendFunc::Enum srcRGB,
                                       QDemonRenderDstBlendFunc::Enum dstRGB,
                                       QDemonRenderSrcBlendFunc::Enum srcAlpha,
                                       QDemonRenderDstBlendFunc::Enum dstAlpha)
-        : m_SrcRGB(srcRGB)
-        , m_DstRGB(dstRGB)
-        , m_SrcAlpha(srcAlpha)
-        , m_DstAlpha(dstAlpha)
+        : m_srcRgb(srcRGB)
+        , m_dstRgb(dstRGB)
+        , m_srcAlpha(srcAlpha)
+        , m_dstAlpha(dstAlpha)
     {
     }
 
     // Default blend system premultiplies values.
     QDemonRenderBlendFunctionArgument()
-        : m_SrcRGB(QDemonRenderSrcBlendFunc::SrcAlpha)
-        , m_DstRGB(QDemonRenderDstBlendFunc::OneMinusSrcAlpha)
-        , m_SrcAlpha(QDemonRenderSrcBlendFunc::One)
-        , m_DstAlpha(QDemonRenderDstBlendFunc::OneMinusSrcAlpha)
+        : m_srcRgb(QDemonRenderSrcBlendFunc::SrcAlpha)
+        , m_dstRgb(QDemonRenderDstBlendFunc::OneMinusSrcAlpha)
+        , m_srcAlpha(QDemonRenderSrcBlendFunc::One)
+        , m_dstAlpha(QDemonRenderDstBlendFunc::OneMinusSrcAlpha)
     {
     }
 };
 
 struct QDemonRenderBlendEquationArgument
 {
-    QDemonRenderBlendEquation::Enum m_RGBEquation;
-    QDemonRenderBlendEquation::Enum m_AlphaEquation;
+    QDemonRenderBlendEquation::Enum m_rgbEquation;
+    QDemonRenderBlendEquation::Enum m_alphaEquation;
 
     QDemonRenderBlendEquationArgument(QDemonRenderBlendEquation::Enum rgb,
                                       QDemonRenderBlendEquation::Enum alpha)
-        : m_RGBEquation(rgb)
-        , m_AlphaEquation(alpha)
+        : m_rgbEquation(rgb)
+        , m_alphaEquation(alpha)
     {
     }
     QDemonRenderBlendEquationArgument()
-        : m_RGBEquation(QDemonRenderBlendEquation::Add)
-        , m_AlphaEquation(QDemonRenderBlendEquation::Add)
+        : m_rgbEquation(QDemonRenderBlendEquation::Add)
+        , m_alphaEquation(QDemonRenderBlendEquation::Add)
     {
     }
 };
 
 struct QDemonRenderStencilOperationArgument
 {
-    QDemonRenderStencilOp::Enum m_StencilFail; // What happens when stencil test fails.
+    QDemonRenderStencilOp::Enum m_stencilFail; // What happens when stencil test fails.
     // These values assume the stencil passed
-    QDemonRenderStencilOp::Enum
-    m_DepthFail; // What happens when the stencil passes but depth test fail.
-    QDemonRenderStencilOp::Enum m_DepthPass; // What happens when the stencil and depth tests pass.
+
+    // What happens when the stencil passes but depth test fail.
+    QDemonRenderStencilOp::Enum m_depthFail;
+    QDemonRenderStencilOp::Enum m_depthPass; // What happens when the stencil and depth tests pass.
 
     QDemonRenderStencilOperationArgument(QDemonRenderStencilOp::Enum fail,
                                          QDemonRenderStencilOp::Enum depthFail,
                                          QDemonRenderStencilOp::Enum depthPass)
-        : m_StencilFail(fail)
-        , m_DepthFail(depthFail)
-        , m_DepthPass(depthPass)
+        : m_stencilFail(fail)
+        , m_depthFail(depthFail)
+        , m_depthPass(depthPass)
     {
     }
     QDemonRenderStencilOperationArgument()
-        : m_StencilFail(QDemonRenderStencilOp::Keep)
-        , m_DepthFail(QDemonRenderStencilOp::Keep)
-        , m_DepthPass(QDemonRenderStencilOp::Keep)
+        : m_stencilFail(QDemonRenderStencilOp::Keep)
+        , m_depthFail(QDemonRenderStencilOp::Keep)
+        , m_depthPass(QDemonRenderStencilOp::Keep)
     {
     }
     QDemonRenderStencilOperationArgument(const QDemonRenderStencilOperationArgument &StencilOp)
-        : m_StencilFail(StencilOp.m_StencilFail)
-        , m_DepthFail(StencilOp.m_DepthFail)
-        , m_DepthPass(StencilOp.m_DepthPass)
+        : m_stencilFail(StencilOp.m_stencilFail)
+        , m_depthFail(StencilOp.m_depthFail)
+        , m_depthPass(StencilOp.m_depthPass)
     {
     }
 
@@ -1932,44 +1933,44 @@ struct QDemonRenderStencilOperationArgument
         if (this == &rhs)
             return *this;
 
-        m_StencilFail = rhs.m_StencilFail;
-        m_DepthFail = rhs.m_DepthFail;
-        m_DepthPass = rhs.m_DepthPass;
+        m_stencilFail = rhs.m_stencilFail;
+        m_depthFail = rhs.m_depthFail;
+        m_depthPass = rhs.m_depthPass;
 
         return *this;
     }
 
     bool operator==(const QDemonRenderStencilOperationArgument &other) const
     {
-        return (m_StencilFail == other.m_StencilFail && m_DepthFail == other.m_DepthFail
-                && m_DepthPass == other.m_DepthPass);
+        return (m_stencilFail == other.m_stencilFail && m_depthFail == other.m_depthFail
+                && m_depthPass == other.m_depthPass);
     }
 };
 
 // see glStencilFuncSeparate
 struct QDemonRenderStencilFunctionArgument
 {
-    QDemonRenderBoolOp::Enum m_Function;
-    quint32 m_ReferenceValue;
-    quint32 m_Mask;
+    QDemonRenderBoolOp::Enum m_function;
+    quint32 m_referenceValue;
+    quint32 m_mask;
 
     QDemonRenderStencilFunctionArgument(QDemonRenderBoolOp::Enum function, quint32 referenceValue,
                                         quint32 mask)
-        : m_Function(function)
-        , m_ReferenceValue(referenceValue)
-        , m_Mask(mask)
+        : m_function(function)
+        , m_referenceValue(referenceValue)
+        , m_mask(mask)
     {
     }
     QDemonRenderStencilFunctionArgument()
-        : m_Function(QDemonRenderBoolOp::AlwaysTrue)
-        , m_ReferenceValue(0)
-        , m_Mask(quint32(-1))
+        : m_function(QDemonRenderBoolOp::AlwaysTrue)
+        , m_referenceValue(0)
+        , m_mask(quint32(-1)) // TODO:
     {
     }
     QDemonRenderStencilFunctionArgument(const QDemonRenderStencilFunctionArgument &StencilFunc)
-        : m_Function(StencilFunc.m_Function)
-        , m_ReferenceValue(StencilFunc.m_ReferenceValue)
-        , m_Mask(StencilFunc.m_Mask)
+        : m_function(StencilFunc.m_function)
+        , m_referenceValue(StencilFunc.m_referenceValue)
+        , m_mask(StencilFunc.m_mask)
     {
     }
 
@@ -1979,17 +1980,17 @@ struct QDemonRenderStencilFunctionArgument
         if (this == &rhs)
             return *this;
 
-        m_Function = rhs.m_Function;
-        m_ReferenceValue = rhs.m_ReferenceValue;
-        m_Mask = rhs.m_Mask;
+        m_function = rhs.m_function;
+        m_referenceValue = rhs.m_referenceValue;
+        m_mask = rhs.m_mask;
 
         return *this;
     }
 
     bool operator==(const QDemonRenderStencilFunctionArgument &other) const
     {
-        return (m_Function == other.m_Function && m_ReferenceValue == other.m_ReferenceValue
-                && m_Mask == other.m_Mask);
+        return (m_function == other.m_function && m_referenceValue == other.m_referenceValue
+                && m_mask == other.m_mask);
     }
 };
 
@@ -2026,44 +2027,44 @@ template <typename TDataType>
 struct QDemonRenderRectT
 {
     typedef TDataType TRectType;
-    TDataType m_X;
-    TDataType m_Y;
-    TDataType m_Width;
-    TDataType m_Height;
+    TDataType m_x;
+    TDataType m_y;
+    TDataType m_width;
+    TDataType m_height;
     QDemonRenderRectT(TDataType x, TDataType y, TDataType w, TDataType h)
-        : m_X(x)
-        , m_Y(y)
-        , m_Width(w)
-        , m_Height(h)
+        : m_x(x)
+        , m_y(y)
+        , m_width(w)
+        , m_height(h)
     {
     }
     QDemonRenderRectT()
-        : m_X(0)
-        , m_Y(0)
-        , m_Width(0)
-        , m_Height(0)
+        : m_x(0)
+        , m_y(0)
+        , m_width(0)
+        , m_height(0)
     {
     }
     bool operator==(const QDemonRenderRectT<TDataType> &inOther) const
     {
-        return m_X == inOther.m_X && m_Y == inOther.m_Y && m_Width == inOther.m_Width
-                && m_Height == inOther.m_Height;
+        return m_x == inOther.m_x && m_y == inOther.m_y && m_width == inOther.m_width
+                && m_height == inOther.m_height;
     }
     bool operator!=(const QDemonRenderRectT<TDataType> &inOther) const
     {
         return !(*this == inOther);
     }
-    TDataType GetRightExtent() const { return m_X + m_Width; }
-    TDataType GetBottomExtent() const { return m_Y + m_Height; }
+    TDataType getRightExtent() const { return m_x + m_width; }
+    TDataType getBottomExtent() const { return m_y + m_height; }
     // Ensure this rect is inside the bounds of the other rect
-    void EnsureInBounds(const QDemonRenderRectT<TDataType> &inOther)
+    void ensureInBounds(const QDemonRenderRectT<TDataType> &inOther)
     {
-        TDataType rightExtent = qMin(GetRightExtent(), inOther.GetRightExtent());
-        TDataType bottomExtent = qMin(GetBottomExtent(), inOther.GetBottomExtent());
-        m_X = qMax(m_X, inOther.m_X);
-        m_Y = qMax(m_Y, inOther.m_Y);
-        m_Width = qMax(static_cast<TDataType>(0), rightExtent - m_X);
-        m_Height = qMax(static_cast<TDataType>(0), bottomExtent - m_Y);
+        TDataType rightExtent = qMin(getRightExtent(), inOther.getRightExtent());
+        TDataType bottomExtent = qMin(getBottomExtent(), inOther.getBottomExtent());
+        m_x = qMax(m_x, inOther.m_x);
+        m_y = qMax(m_y, inOther.m_y);
+        m_width = qMax(static_cast<TDataType>(0), rightExtent - m_x);
+        m_height = qMax(static_cast<TDataType>(0), bottomExtent - m_y);
     }
 };
 
@@ -2095,59 +2096,59 @@ struct QDemonRenderRectF : public QDemonRenderRectT<float>
     {
     }
     QDemonRenderRectF(const QDemonRenderRect &inRect)
-        : TBase(float(inRect.m_X), float(inRect.m_Y), float(inRect.m_Width),
-                float(inRect.m_Height))
+        : TBase(float(inRect.m_x), float(inRect.m_y), float(inRect.m_width),
+                float(inRect.m_height))
     {
     }
-    QDemonRenderRect ToIntegerRect() const
+    QDemonRenderRect toIntegerRect() const
     {
-        return QDemonRenderRect(qint32(m_X), qint32(m_Y), qint32(m_Width + .5f),
-                                qint32(m_Height + .5f));
+        return QDemonRenderRect(qint32(m_x), qint32(m_y), qint32(m_width + .5f),
+                                qint32(m_height + .5f));
     }
-    QVector2D BottomLeft() const { return QVector2D(m_X, m_Y); }
-    QVector2D Center() const
+    QVector2D bottomLeft() const { return QVector2D(m_x, m_y); }
+    QVector2D center() const
     {
-        QVector2D halfDims = HalfDims();
-        return QVector2D(m_X + halfDims.x(), m_Y + halfDims.y());
+        QVector2D halfD = halfDims();
+        return QVector2D(m_x + halfD.x(), m_y + halfD.y());
     }
-    QVector2D HalfDims() const { return QVector2D(m_Width / 2.0f, m_Height / 2.0f); }
+    QVector2D halfDims() const { return QVector2D(m_width / 2.0f, m_height / 2.0f); }
     // Normalized coordinates are in the range of -1,1 where -1 is the left, bottom edges
     // and 1 is the top,right edges.
-    QVector2D AbsoluteToNormalizedCoordinates(QVector2D absoluteCoordinates) const
+    QVector2D absoluteToNormalizedCoordinates(QVector2D absoluteCoordinates) const
     {
-        QVector2D relativeCoords(ToRectRelative(absoluteCoordinates));
-        return RelativeToNormalizedCoordinates(relativeCoords);
+        QVector2D relativeCoords(toRectRelative(absoluteCoordinates));
+        return relativeToNormalizedCoordinates(relativeCoords);
     }
 
-    QVector2D RelativeToNormalizedCoordinates(QVector2D rectRelativeCoords) const
+    QVector2D relativeToNormalizedCoordinates(QVector2D rectRelativeCoords) const
     {
-        QVector2D halfDims(HalfDims());
-        QVector2D retval((rectRelativeCoords.x() / halfDims.x()) - 1.0f,
-                         (rectRelativeCoords.y() / halfDims.y()) - 1.0f);
+        QVector2D halfD(halfDims());
+        QVector2D retval((rectRelativeCoords.x() / halfD.x()) - 1.0f,
+                         (rectRelativeCoords.y() / halfD.y()) - 1.0f);
         return retval;
     }
 
     // Take coordinates in global space and move local space where 0,0 is the center
     // of the rect but return value in pixels, not in normalized -1,1 range
-    QVector2D ToNormalizedRectRelative(QVector2D absoluteCoordinates) const
+    QVector2D toNormalizedRectRelative(QVector2D absoluteCoordinates) const
     {
         // normalize them
-        QVector2D relativeCoords(ToRectRelative(absoluteCoordinates));
-        QVector2D halfDims(HalfDims());
-        QVector2D normalized((relativeCoords.x() / halfDims.x()) - 1.0f,
-                             (relativeCoords.y() / halfDims.y()) - 1.0f);
-        return QVector2D(normalized.x() * halfDims.x(), normalized.y() * halfDims.y());
+        QVector2D relativeCoords(toRectRelative(absoluteCoordinates));
+        QVector2D halfD(halfDims());
+        QVector2D normalized((relativeCoords.x() / halfD.x()) - 1.0f,
+                             (relativeCoords.y() / halfD.y()) - 1.0f);
+        return QVector2D(normalized.x() * halfD.x(), normalized.y() * halfD.y());
     }
 
     // Return coordinates in pixels but relative to this rect.
-    QVector2D ToRectRelative(QVector2D absoluteCoordinates) const
+    QVector2D toRectRelative(QVector2D absoluteCoordinates) const
     {
-        return QVector2D(absoluteCoordinates.x() - m_X, absoluteCoordinates.y() - m_Y);
+        return QVector2D(absoluteCoordinates.x() - m_x, absoluteCoordinates.y() - m_y);
     }
 
-    QVector2D ToAbsoluteCoords(QVector2D inRelativeCoords) const
+    QVector2D toAbsoluteCoords(QVector2D inRelativeCoords) const
     {
-        return QVector2D(inRelativeCoords.x() + m_X, inRelativeCoords.y() + m_Y);
+        return QVector2D(inRelativeCoords.x() + m_x, inRelativeCoords.y() + m_y);
     }
 };
 
@@ -2576,24 +2577,23 @@ struct QDemonRenderGenericScopedProperty
     typedef void (TBaseType::*TSetter)(TDataType inType);
     typedef TDataType (TBaseType::*TGetter)() const;
 
-    TBaseType &m_Context;
-    TSetter m_Setter;
-    TDataType m_InitialValue;
+    TBaseType &m_context;
+    TSetter m_setter;
+    TDataType m_initialValue;
     QDemonRenderGenericScopedProperty(TBaseType &ctx, TGetter getter, TSetter setter)
-        : m_Context(ctx)
-        , m_Setter(setter)
-        , m_InitialValue(((ctx).*getter)())
+        : m_context(ctx)
+        , m_setter(setter)
+        , m_initialValue(((ctx).*getter)())
     {
     }
-    QDemonRenderGenericScopedProperty(TBaseType &ctx, TGetter getter, TSetter setter,
-                                      const TDataType &inNewValue)
-        : m_Context(ctx)
-        , m_Setter(setter)
-        , m_InitialValue(((ctx).*getter)())
+    QDemonRenderGenericScopedProperty(TBaseType &ctx, TGetter getter, TSetter setter, const TDataType &inNewValue)
+        : m_context(ctx)
+        , m_setter(setter)
+        , m_initialValue(((ctx).*getter)())
     {
-        ((m_Context).*m_Setter)(inNewValue);
+        ((m_context).*m_setter)(inNewValue);
     }
-    ~QDemonRenderGenericScopedProperty() { ((m_Context).*m_Setter)(m_InitialValue); }
+    ~QDemonRenderGenericScopedProperty() { ((m_context).*m_setter)(m_initialValue); }
 };
 
 QT_END_NAMESPACE

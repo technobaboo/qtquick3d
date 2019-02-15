@@ -40,33 +40,33 @@ QDemonRenderDepthStencilState::QDemonRenderDepthStencilState(
         QDemonRenderStencilFunctionArgument &stencilFuncBack,
         QDemonRenderStencilOperationArgument &depthStencilOpFront,
         QDemonRenderStencilOperationArgument &depthStencilOpBack)
-    : m_Context(context)
-    , m_Backend(context->GetBackend())
-    , m_DepthEnabled(enableDepth)
-    , m_DepthMask(depthMask)
-    , m_DepthFunc(depthFunc)
-    , m_StencilEnabled(enableStencil)
-    , m_StencilFuncFront(stencilFuncFront)
-    , m_StencilFuncBack(stencilFuncBack)
-    , m_DepthStencilOpFront(depthStencilOpFront)
-    , m_DepthStencilOpBack(depthStencilOpBack)
+    : m_context(context)
+    , m_backend(context->getBackend())
+    , m_depthEnabled(enableDepth)
+    , m_depthMask(depthMask)
+    , m_depthFunc(depthFunc)
+    , m_stencilEnabled(enableStencil)
+    , m_stencilFuncFront(stencilFuncFront)
+    , m_stencilFuncBack(stencilFuncBack)
+    , m_depthStencilOpFront(depthStencilOpFront)
+    , m_depthStencilOpBack(depthStencilOpBack)
 {
     // create backend handle
-    m_StateHandle = m_Backend->CreateDepthStencilState(
+    m_stateHandle = m_backend->createDepthStencilState(
                 enableDepth, depthMask, depthFunc, enableStencil, stencilFuncFront, stencilFuncBack,
                 depthStencilOpFront, depthStencilOpBack);
 }
 
 QDemonRenderDepthStencilState::~QDemonRenderDepthStencilState()
 {
-    if (m_StateHandle) {
-        m_Context->StateDestroyed(this);
-        m_Backend->ReleaseDepthStencilState(m_StateHandle);
+    if (m_stateHandle) {
+        m_context->stateDestroyed(this);
+        m_backend->releaseDepthStencilState(m_stateHandle);
     }
 }
 
 QSharedPointer<QDemonRenderDepthStencilState>
-QDemonRenderDepthStencilState::Create(QSharedPointer<QDemonRenderContextImpl> context, bool enableDepth,
+QDemonRenderDepthStencilState::create(QSharedPointer<QDemonRenderContextImpl> context, bool enableDepth,
                                       bool depthMask, QDemonRenderBoolOp::Enum depthFunc,
                                       bool enableStencil,
                                       QDemonRenderStencilFunctionArgument &stencilFuncFront,

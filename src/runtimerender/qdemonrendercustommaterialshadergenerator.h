@@ -34,44 +34,44 @@
 QT_BEGIN_NAMESPACE
 
 class QDemonRenderShadowMap;
-class IQDemonRenderContext;
+class QDemonRenderContextInterface;
 
-uint qHash(const SShaderDefaultMaterialKey &key);
+uint qHash(const QDemonShaderDefaultMaterialKey &key);
 
-class Q_DEMONRUNTIMERENDER_EXPORT ICustomMaterialShaderGenerator : public IMaterialShaderGenerator
+class Q_DEMONRUNTIMERENDER_EXPORT ICustomMaterialShaderGenerator : public QDemonMaterialShaderGeneratorInterface
 {
 public:
-    SImageVariableNames GetImageVariableNames(quint32 inIdx) override = 0;
-    void GenerateImageUVCoordinates(IShaderStageGenerator &inVertexPipeline,
+    ImageVariableNames getImageVariableNames(quint32 inIdx) override = 0;
+    void generateImageUVCoordinates(QDemonShaderStageGeneratorInterface &inVertexPipeline,
                                     quint32 idx,
                                     quint32 uvSet,
-                                    SRenderableImage &image) override = 0;
+                                    QDemonRenderableImage &image) override = 0;
 
     // inPipelineName needs to be unique else the shader cache will just return shaders from
     // different pipelines.
-    QSharedPointer<QDemonRenderShaderProgram> GenerateShader(const SGraphObject &inMaterial,
-                                                             SShaderDefaultMaterialKey inShaderDescription,
-                                                             IShaderStageGenerator &inVertexPipeline,
+    QSharedPointer<QDemonRenderShaderProgram> generateShader(const QDemonGraphObject &inMaterial,
+                                                             QDemonShaderDefaultMaterialKey inShaderDescription,
+                                                             QDemonShaderStageGeneratorInterface &inVertexPipeline,
                                                              TShaderFeatureSet inFeatureSet,
-                                                             const QVector<SLight *> &inLights,
-                                                             SRenderableImage *inFirstImage,
+                                                             const QVector<QDemonRenderLight *> &inLights,
+                                                             QDemonRenderableImage *inFirstImage,
                                                              bool inHasTransparency,
                                                              const QString &inVertexPipelineName,
                                                              const QString &inCustomMaterialName) override = 0;
 
     // Also sets the blend function on the render context.
     virtual void
-    SetMaterialProperties(QSharedPointer<QDemonRenderShaderProgram> inProgram,
-                          const SGraphObject &inMaterial,
+    setMaterialProperties(QSharedPointer<QDemonRenderShaderProgram> inProgram,
+                          const QDemonGraphObject &inMaterial,
                           const QVector2D &inCameraVec,
                           const QMatrix4x4 &inModelViewProjection,
                           const QMatrix3x3 &inNormalMatrix,
                           const QMatrix4x4 &inGlobalTransform,
-                          SRenderableImage *inFirstImage,
+                          QDemonRenderableImage *inFirstImage,
                           float inOpacity,
-                          SLayerGlobalRenderProperties inRenderProperties) override = 0;
+                          QDemonLayerGlobalRenderProperties inRenderProperties) override = 0;
 
-    static QSharedPointer<ICustomMaterialShaderGenerator> CreateCustomMaterialShaderGenerator(IQDemonRenderContext *inRenderContext);
+    static QSharedPointer<ICustomMaterialShaderGenerator> createCustomMaterialShaderGenerator(QDemonRenderContextInterface *inRenderContext);
 };
 QT_END_NAMESPACE
 

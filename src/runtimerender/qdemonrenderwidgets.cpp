@@ -41,59 +41,57 @@ QT_BEGIN_NAMESPACE
 
 namespace {
 
-struct SWidgetBBox : public IRenderWidget
+struct QDemonWidgetBBox : public QDemonRenderWidgetInterface
 {
-    QDemonBounds3 m_Bounds;
-    QVector3D m_Color;
-    QSharedPointer<QDemonRenderVertexBuffer> m_BoxVertexBuffer;
-    QSharedPointer<QDemonRenderIndexBuffer> m_BoxIndexBuffer;
-    QSharedPointer<QDemonRenderInputAssembler> m_BoxInputAssembler;
-    QSharedPointer<QDemonRenderShaderProgram> m_BoxShader;
-    QString m_ItemName;
-    SWidgetBBox(SNode &inNode, const QDemonBounds3 &inBounds, const QVector3D &inColor)
-        : IRenderWidget(inNode)
-        , m_Bounds(inBounds)
-        , m_Color(inColor)
-        , m_BoxVertexBuffer(nullptr)
-        , m_BoxIndexBuffer(nullptr)
-        , m_BoxInputAssembler(nullptr)
-        , m_BoxShader(nullptr)
+    QDemonBounds3 m_bounds;
+    QVector3D m_color;
+    QSharedPointer<QDemonRenderVertexBuffer> m_boxVertexBuffer;
+    QSharedPointer<QDemonRenderIndexBuffer> m_boxIndexBuffer;
+    QSharedPointer<QDemonRenderInputAssembler> m_boxInputAssembler;
+    QSharedPointer<QDemonRenderShaderProgram> m_boxShader;
+    QString m_itemName;
+    QDemonWidgetBBox(QDemonGraphNode &inNode,
+                     const QDemonBounds3 &inBounds,
+                     const QVector3D &inColor)
+        : QDemonRenderWidgetInterface(inNode)
+        , m_bounds(inBounds)
+        , m_color(inColor)
     {
     }
 
-    void SetupBoxShader(IRenderWidgetContext &inContext)
+    void setupBoxShader(QDemonRenderWidgetContextInterface &inContext)
     {
-        m_BoxShader = inContext.GetShader(m_ItemName);
-        if (!m_BoxShader) {
-            QSharedPointer<IShaderProgramGenerator> theGenerator(inContext.GetProgramGenerator());
-            theGenerator->BeginProgram();
-            IShaderStageGenerator &theVertexGenerator(
-                        *theGenerator->GetStage(ShaderGeneratorStages::Vertex));
-            IShaderStageGenerator &theFragmentGenerator(
-                        *theGenerator->GetStage(ShaderGeneratorStages::Fragment));
+        m_boxShader = inContext.getShader(m_itemName);
+        if (!m_boxShader) {
+            QSharedPointer<QDemonShaderProgramGeneratorInterface> theGenerator(inContext.getProgramGenerator());
+            theGenerator->beginProgram();
+            QDemonShaderStageGeneratorInterface &theVertexGenerator(
+                        *theGenerator->getStage(ShaderGeneratorStages::Vertex));
+            QDemonShaderStageGeneratorInterface &theFragmentGenerator(
+                        *theGenerator->getStage(ShaderGeneratorStages::Fragment));
 
-            theVertexGenerator.AddIncoming("attr_pos", "vec3");
-            theVertexGenerator.AddUniform("model_view_projection", "mat4");
-            theVertexGenerator.Append("void main() {");
-            theVertexGenerator.Append(
+            theVertexGenerator.addIncoming("attr_pos", "vec3");
+            theVertexGenerator.addUniform("model_view_projection", "mat4");
+            theVertexGenerator.append("void main() {");
+            theVertexGenerator.append(
                         "\tgl_Position = model_view_projection * vec4(attr_pos, 1.0);");
-            theVertexGenerator.Append("}");
-            theFragmentGenerator.AddUniform("output_color", "vec3");
-            theFragmentGenerator.Append("void main() {");
-            theFragmentGenerator.Append("\tgl_FragColor.rgb = output_color;");
-            theFragmentGenerator.Append("\tgl_FragColor.a = 1.0;");
-            theFragmentGenerator.Append("}");
-            m_BoxShader = inContext.CompileAndStoreShader(m_ItemName);
+            theVertexGenerator.append("}");
+            theFragmentGenerator.addUniform("output_color", "vec3");
+            theFragmentGenerator.append("void main() {");
+            theFragmentGenerator.append("\tgl_FragColor.rgb = output_color;");
+            theFragmentGenerator.append("\tgl_FragColor.a = 1.0;");
+            theFragmentGenerator.append("}");
+            m_boxShader = inContext.compileAndStoreShader(m_itemName);
         }
     }
 
-    void SetupBoundingBoxGraphicsObjects(IRenderWidgetContext &inContext,
+    void setupBoundingBoxGraphicsObjects(QDemonRenderWidgetContextInterface &inContext,
                                          QDemonDataRef<QVector3D> thePoints)
     {
         QDemonRenderVertexBufferEntry theEntry("attr_pos", QDemonRenderComponentTypes::Float16, 3);
-        m_BoxVertexBuffer = inContext.GetOrCreateVertexBuffer(m_ItemName, 3 * sizeof(float), toU8DataRef(thePoints.begin(), thePoints.size()));
-        m_BoxIndexBuffer = inContext.GetIndexBuffer(m_ItemName);
-        if (!m_BoxIndexBuffer) {
+        m_boxVertexBuffer = inContext.getOrCreateVertexBuffer(m_itemName, 3 * sizeof(float), toU8DataRef(thePoints.begin(), thePoints.size()));
+        m_boxIndexBuffer = inContext.getIndexBuffer(m_itemName);
+        if (!m_boxIndexBuffer) {
             // The way the bounds lays out the bounds for the box
             // capitalization indicates whether this was a max or min value.
             enum _Indexes {
@@ -125,155 +123,155 @@ struct SWidgetBBox : public IRenderWidget
 
                 xyZ, XyZ, xyZ, xYZ,
             };
-            m_BoxIndexBuffer = inContext.GetOrCreateIndexBuffer(
-                        m_ItemName, QDemonRenderComponentTypes::UnsignedInteger8, sizeof(indexes),
+            m_boxIndexBuffer = inContext.getOrCreateIndexBuffer(
+                        m_itemName, QDemonRenderComponentTypes::UnsignedInteger8, sizeof(indexes),
                         toU8DataRef(indexes, sizeof(indexes)));
         }
 
-        m_BoxInputAssembler = inContext.GetInputAssembler(m_ItemName);
-        if (!m_BoxInputAssembler && m_BoxIndexBuffer && m_BoxVertexBuffer) {
+        m_boxInputAssembler = inContext.getInputAssembler(m_itemName);
+        if (!m_boxInputAssembler && m_boxIndexBuffer && m_boxVertexBuffer) {
             // create our attribute layout
-            QSharedPointer<QDemonRenderAttribLayout> theAttribLayout = inContext.CreateAttributeLayout(toConstDataRef(&theEntry, 1));
+            QSharedPointer<QDemonRenderAttribLayout> theAttribLayout = inContext.createAttributeLayout(toConstDataRef(&theEntry, 1));
 
-            quint32 strides = m_BoxVertexBuffer->GetStride();
+            quint32 strides = m_boxVertexBuffer->getStride();
             quint32 offsets = 0;
-            m_BoxInputAssembler = (inContext.GetOrCreateInputAssembler(
-                        m_ItemName, theAttribLayout, toConstDataRef(&m_BoxVertexBuffer, 1),
-                        m_BoxIndexBuffer, toConstDataRef(&strides, 1), toConstDataRef(&offsets, 1)));
+            m_boxInputAssembler = (inContext.getOrCreateInputAssembler(
+                        m_itemName, theAttribLayout, toConstDataRef(&m_boxVertexBuffer, 1),
+                        m_boxIndexBuffer, toConstDataRef(&strides, 1), toConstDataRef(&offsets, 1)));
         }
-        SetupBoxShader(inContext);
+        setupBoxShader(inContext);
     }
 
-    void Render(IRenderWidgetContext &inWidgetContext, QDemonRenderContext &inRenderContext) override
+    void render(QDemonRenderWidgetContextInterface &inWidgetContext, QDemonRenderContext &inRenderContext) override
     {
-        m_ItemName = QString::fromLocal8Bit("SWidgetBBox");
-        SWidgetRenderInformation theInfo(inWidgetContext.GetWidgetRenderInformation(
-                                             *m_Node, m_Node->m_Position, RenderWidgetModes::Local));
+        m_itemName = QString::fromLocal8Bit("SWidgetBBox");
+        QDemonWidgetRenderInformation theInfo(inWidgetContext.getWidgetRenderInformation(
+                                             *m_node, m_node->position, RenderWidgetModes::Local));
         QDemonBounds2BoxPoints thePoints;
-        m_Bounds.expand(thePoints);
+        m_bounds.expand(thePoints);
         QMatrix4x4 theNodeRotation;
-        QMatrix4x4 theNodeToCamera = theInfo.m_NodeParentToCamera * m_Node->m_LocalTransform;
+        QMatrix4x4 theNodeToCamera = theInfo.m_nodeParentToCamera * m_node->localTransform;
         for (quint32 idx = 0; idx < 8; ++idx)
             thePoints[idx] = mat44::transform(theNodeToCamera, thePoints[idx]);
-        SetupBoundingBoxGraphicsObjects(inWidgetContext, toDataRef(thePoints, 8));
-        if (m_BoxShader && m_BoxInputAssembler) {
-            inRenderContext.SetBlendingEnabled(false);
-            inRenderContext.SetDepthWriteEnabled(true);
-            inRenderContext.SetDepthTestEnabled(true);
-            inRenderContext.SetCullingEnabled(false);
-            inRenderContext.SetActiveShader(m_BoxShader);
-            m_BoxShader->SetPropertyValue("model_view_projection", theInfo.m_LayerProjection);
-            m_BoxShader->SetPropertyValue("output_color", m_Color);
-            inRenderContext.SetInputAssembler(m_BoxInputAssembler);
-            inRenderContext.Draw(QDemonRenderDrawMode::Lines,
-                                 m_BoxInputAssembler->GetIndexCount(), 0);
+        setupBoundingBoxGraphicsObjects(inWidgetContext, toDataRef(thePoints, 8));
+        if (m_boxShader && m_boxInputAssembler) {
+            inRenderContext.setBlendingEnabled(false);
+            inRenderContext.setDepthWriteEnabled(true);
+            inRenderContext.setDepthTestEnabled(true);
+            inRenderContext.setCullingEnabled(false);
+            inRenderContext.setActiveShader(m_boxShader);
+            m_boxShader->setPropertyValue("model_view_projection", theInfo.m_layerProjection);
+            m_boxShader->setPropertyValue("output_color", m_color);
+            inRenderContext.setInputAssembler(m_boxInputAssembler);
+            inRenderContext.draw(QDemonRenderDrawMode::Lines,
+                                 m_boxInputAssembler->getIndexCount(), 0);
         }
     }
 };
 
-struct SWidgetAxis : public IRenderWidget
+struct QDemonWidgetAxis : public QDemonRenderWidgetInterface
 {
-    QSharedPointer<QDemonRenderVertexBuffer> m_AxisVertexBuffer;
-    QSharedPointer<QDemonRenderInputAssembler> m_AxisInputAssembler;
-    QSharedPointer<QDemonRenderShaderProgram> m_AxisShader;
-    QString m_ItemName;
+    QSharedPointer<QDemonRenderVertexBuffer> m_axisVertexBuffer;
+    QSharedPointer<QDemonRenderInputAssembler> m_axisInputAssembler;
+    QSharedPointer<QDemonRenderShaderProgram> m_axisShader;
+    QString m_itemName;
 
-    SWidgetAxis(SNode &inNode)
-        : IRenderWidget(inNode)
-        , m_AxisVertexBuffer(nullptr)
-        , m_AxisInputAssembler(nullptr)
-        , m_AxisShader(nullptr)
+    QDemonWidgetAxis(QDemonGraphNode &inNode)
+        : QDemonRenderWidgetInterface(inNode)
+        , m_axisVertexBuffer(nullptr)
+        , m_axisInputAssembler(nullptr)
+        , m_axisShader(nullptr)
     {
     }
 
-    void SetupAxisShader(IRenderWidgetContext &inContext)
+    void setupAxisShader(QDemonRenderWidgetContextInterface &inContext)
     {
-        m_AxisShader = inContext.GetShader(m_ItemName);
-        if (!m_AxisShader) {
-            QSharedPointer<IShaderProgramGenerator> theGenerator(inContext.GetProgramGenerator());
-            theGenerator->BeginProgram();
-            IShaderStageGenerator &theVertexGenerator(*theGenerator->GetStage(ShaderGeneratorStages::Vertex));
-            IShaderStageGenerator &theFragmentGenerator(*theGenerator->GetStage(ShaderGeneratorStages::Fragment));
-            theVertexGenerator.AddIncoming("attr_pos", "vec3");
-            theVertexGenerator.AddIncoming("attr_color", "vec3");
-            theVertexGenerator.AddOutgoing("output_color", "vec3");
-            theVertexGenerator.AddUniform("model_view_projection", "mat4");
-            theVertexGenerator.Append("void main() {");
-            theVertexGenerator.Append(
+        m_axisShader = inContext.getShader(m_itemName);
+        if (!m_axisShader) {
+            QSharedPointer<QDemonShaderProgramGeneratorInterface> theGenerator(inContext.getProgramGenerator());
+            theGenerator->beginProgram();
+            QDemonShaderStageGeneratorInterface &theVertexGenerator(*theGenerator->getStage(ShaderGeneratorStages::Vertex));
+            QDemonShaderStageGeneratorInterface &theFragmentGenerator(*theGenerator->getStage(ShaderGeneratorStages::Fragment));
+            theVertexGenerator.addIncoming("attr_pos", "vec3");
+            theVertexGenerator.addIncoming("attr_color", "vec3");
+            theVertexGenerator.addOutgoing("output_color", "vec3");
+            theVertexGenerator.addUniform("model_view_projection", "mat4");
+            theVertexGenerator.append("void main() {");
+            theVertexGenerator.append(
                         "\tgl_Position = model_view_projection * vec4(attr_pos, 1.0);");
-            theVertexGenerator.Append("\toutput_color = attr_color;");
-            theVertexGenerator.Append("}");
-            theFragmentGenerator.Append("void main() {");
-            theFragmentGenerator.Append("\tgl_FragColor.rgb = output_color;");
-            theFragmentGenerator.Append("\tgl_FragColor.a = 1.0;");
-            theFragmentGenerator.Append("}");
-            m_AxisShader = inContext.CompileAndStoreShader(m_ItemName);
+            theVertexGenerator.append("\toutput_color = attr_color;");
+            theVertexGenerator.append("}");
+            theFragmentGenerator.append("void main() {");
+            theFragmentGenerator.append("\tgl_FragColor.rgb = output_color;");
+            theFragmentGenerator.append("\tgl_FragColor.a = 1.0;");
+            theFragmentGenerator.append("}");
+            m_axisShader = inContext.compileAndStoreShader(m_itemName);
         }
     }
 
-    void SetupAxesGraphicsObjects(IRenderWidgetContext &inContext, QDemonDataRef<QVector3D> theAxes)
+    void setupAxesGraphicsObjects(QDemonRenderWidgetContextInterface &inContext, QDemonDataRef<QVector3D> theAxes)
     {
         QDemonRenderVertexBufferEntry theEntries[] = {
             QDemonRenderVertexBufferEntry("attr_pos", QDemonRenderComponentTypes::Float16, 3),
             QDemonRenderVertexBufferEntry("attr_color", QDemonRenderComponentTypes::Float16, 3, 12),
         };
 
-        m_AxisVertexBuffer = inContext.GetOrCreateVertexBuffer(m_ItemName, 6 * sizeof(float), toU8DataRef(theAxes.begin(), theAxes.size()));
+        m_axisVertexBuffer = inContext.getOrCreateVertexBuffer(m_itemName, 6 * sizeof(float), toU8DataRef(theAxes.begin(), theAxes.size()));
 
-        if (!m_AxisInputAssembler && m_AxisVertexBuffer) {
+        if (!m_axisInputAssembler && m_axisVertexBuffer) {
             // create our attribute layout
-            QSharedPointer<QDemonRenderAttribLayout> theAttribLAyout = inContext.CreateAttributeLayout(toConstDataRef(theEntries, 2));
+            QSharedPointer<QDemonRenderAttribLayout> theAttribLAyout = inContext.createAttributeLayout(toConstDataRef(theEntries, 2));
 
-            quint32 strides = m_AxisVertexBuffer->GetStride();
+            quint32 strides = m_axisVertexBuffer->getStride();
             quint32 offsets = 0;
-            m_AxisInputAssembler = (inContext.GetOrCreateInputAssembler(
-                        m_ItemName, theAttribLAyout, toConstDataRef(&m_AxisVertexBuffer, 1), nullptr,
+            m_axisInputAssembler = (inContext.getOrCreateInputAssembler(
+                        m_itemName, theAttribLAyout, toConstDataRef(&m_axisVertexBuffer, 1), nullptr,
                         toConstDataRef(&strides, 1), toConstDataRef(&offsets, 1)));
         }
     }
 
-    inline QVector3D TransformDirection(const QMatrix3x3 &inMatrix, const QVector3D &inDir)
+    inline QVector3D transformDirection(const QMatrix3x3 &inMatrix, const QVector3D &inDir)
     {
         QVector3D retval = mat33::transform(inMatrix, inDir);
         retval.normalize();
         return retval;
     }
-    void Render(IRenderWidgetContext &inWidgetContext, QDemonRenderContext &inRenderContext) override
+    void render(QDemonRenderWidgetContextInterface &inWidgetContext, QDemonRenderContext &inRenderContext) override
     {
-        m_ItemName = QString::fromLocal8Bit("SWidgetAxis");
+        m_itemName = QString::fromLocal8Bit("SWidgetAxis");
 
-        SetupAxisShader(inWidgetContext);
+        setupAxisShader(inWidgetContext);
 
-        if (m_AxisShader) {
+        if (m_axisShader) {
             QVector3D Red = QVector3D(1, 0, 0);
             QVector3D Green = QVector3D(0, 1, 0);
             QVector3D Blue = QVector3D(0, 0, 1);
-            if (m_Node->m_Parent && m_Node->m_Parent->m_Type != GraphObjectTypes::Layer) {
-                m_Node->m_Parent->CalculateGlobalVariables();
+            if (m_node->parent && m_node->parent->type != QDemonGraphObjectTypes::Layer) {
+                m_node->parent->calculateGlobalVariables();
             }
-            QVector3D thePivot(m_Node->m_Pivot);
-            if (m_Node->m_Flags.IsLeftHanded())
+            QVector3D thePivot(m_node->pivot);
+            if (m_node->flags.isLeftHanded())
                 thePivot[2] /* .z */ *= -1;
-            SWidgetRenderInformation theInfo(inWidgetContext.GetWidgetRenderInformation(
-                                                 *m_Node, thePivot, RenderWidgetModes::Local));
+            QDemonWidgetRenderInformation theInfo(inWidgetContext.getWidgetRenderInformation(
+                                                 *m_node, thePivot, RenderWidgetModes::Local));
 
             QMatrix4x4 theNodeRotation;
-            m_Node->CalculateRotationMatrix(theNodeRotation);
-            if (m_Node->m_Flags.IsLeftHanded())
-                SNode::FlipCoordinateSystem(theNodeRotation);
+            m_node->calculateRotationMatrix(theNodeRotation);
+            if (m_node->flags.isLeftHanded())
+                QDemonGraphNode::flipCoordinateSystem(theNodeRotation);
             QMatrix3x3 theRotationMatrix(theNodeRotation.constData());
             // Move the camera position into camera space.  This is so that when we render we don't
             // have to account
             // for scaling done in the camera's MVP.
-            QVector3D theItemPosition = theInfo.m_Position;
-            QMatrix3x3 theAxisTransform = theInfo.m_NormalMatrix * theRotationMatrix;
-            QVector3D xAxis = TransformDirection(theAxisTransform, QVector3D(1, 0, 0));
-            QVector3D yAxis = TransformDirection(theAxisTransform, QVector3D(0, 1, 0));
-            QVector3D zAxis = TransformDirection(theAxisTransform, QVector3D(0, 0, -1));
+            QVector3D theItemPosition = theInfo.m_position;
+            QMatrix3x3 theAxisTransform = theInfo.m_normalMatrix * theRotationMatrix;
+            QVector3D xAxis = transformDirection(theAxisTransform, QVector3D(1, 0, 0));
+            QVector3D yAxis = transformDirection(theAxisTransform, QVector3D(0, 1, 0));
+            QVector3D zAxis = transformDirection(theAxisTransform, QVector3D(0, 0, -1));
 
             // This world to pixel scale factor function
-            float theScaleFactor = theInfo.m_Scale;
-            theItemPosition = theInfo.m_Position;
+            float theScaleFactor = theInfo.m_scale;
+            theItemPosition = theInfo.m_position;
 
             float overshootFactor = 10.0f * theScaleFactor; // amount to scale past the origin in
             // the opposite direction as the axis
@@ -287,40 +285,40 @@ struct SWidgetAxis : public IRenderWidget
                 theItemPosition + (zAxis * scaleFactor),     Blue, // Z axis
             };
 
-            SetupAxesGraphicsObjects(inWidgetContext, toDataRef(theAxis, 3));
+            setupAxesGraphicsObjects(inWidgetContext, toDataRef(theAxis, 3));
 
-            if (m_AxisInputAssembler) {
-                inRenderContext.SetBlendingEnabled(false);
-                inRenderContext.SetDepthWriteEnabled(false);
-                inRenderContext.SetDepthTestEnabled(false);
-                inRenderContext.SetCullingEnabled(false);
-                inRenderContext.SetActiveShader(m_AxisShader);
-                m_AxisShader->SetPropertyValue("model_view_projection", theInfo.m_LayerProjection);
-                inRenderContext.SetInputAssembler(m_AxisInputAssembler);
+            if (m_axisInputAssembler) {
+                inRenderContext.setBlendingEnabled(false);
+                inRenderContext.setDepthWriteEnabled(false);
+                inRenderContext.setDepthTestEnabled(false);
+                inRenderContext.setCullingEnabled(false);
+                inRenderContext.setActiveShader(m_axisShader);
+                m_axisShader->setPropertyValue("model_view_projection", theInfo.m_layerProjection);
+                inRenderContext.setInputAssembler(m_axisInputAssembler);
                 // Draw six points.
-                inRenderContext.Draw(QDemonRenderDrawMode::Lines, 6, 0);
+                inRenderContext.draw(QDemonRenderDrawMode::Lines, 6, 0);
             }
         }
     }
 };
 }
 
-IRenderWidget::~IRenderWidget()
+QDemonRenderWidgetInterface::~QDemonRenderWidgetInterface()
 {
 
 }
 
-QSharedPointer<IRenderWidget> IRenderWidget::CreateBoundingBoxWidget(SNode &inNode, const QDemonBounds3 &inBounds, const QVector3D &inColor)
+QSharedPointer<QDemonRenderWidgetInterface> QDemonRenderWidgetInterface::createBoundingBoxWidget(QDemonGraphNode &inNode, const QDemonBounds3 &inBounds, const QVector3D &inColor)
 {
-    return QSharedPointer<IRenderWidget>(new SWidgetBBox(inNode, inBounds, inColor));
+    return QSharedPointer<QDemonRenderWidgetInterface>(new QDemonWidgetBBox(inNode, inBounds, inColor));
 }
 
-QSharedPointer<IRenderWidget> IRenderWidget::CreateAxisWidget(SNode &inNode)
+QSharedPointer<QDemonRenderWidgetInterface> QDemonRenderWidgetInterface::createAxisWidget(QDemonGraphNode &inNode)
 {
-    return QSharedPointer<IRenderWidget>(new SWidgetAxis(inNode));
+    return QSharedPointer<QDemonRenderWidgetInterface>(new QDemonWidgetAxis(inNode));
 }
 
-IRenderWidgetContext::~IRenderWidgetContext()
+QDemonRenderWidgetContextInterface::~QDemonRenderWidgetContextInterface()
 {
 
 }

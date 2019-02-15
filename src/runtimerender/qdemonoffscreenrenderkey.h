@@ -51,21 +51,21 @@ struct OffscreenRendererKeyTypes
 };
 
 template <typename TDType>
-struct SOffscreenRendererKeyTypeMap
+struct QDemonOffscreenRendererKeyTypeMap
 {
 };
 template <>
-struct SOffscreenRendererKeyTypeMap<QString>
+struct QDemonOffscreenRendererKeyTypeMap<QString>
 {
     enum { KeyType = OffscreenRendererKeyTypes::RegisteredString };
 };
 template <>
-struct SOffscreenRendererKeyTypeMap<void *>
+struct QDemonOffscreenRendererKeyTypeMap<void *>
 {
     enum { KeyType = OffscreenRendererKeyTypes::VoidPtr };
 };
 
-struct SOffscreenRendererKeyUnionTraits
+struct QDemonOffscreenRendererKeyUnionTraits
 {
     typedef OffscreenRendererKeyTypes::Enum TIdType;
     enum {
@@ -77,7 +77,7 @@ struct SOffscreenRendererKeyUnionTraits
     template <typename TDataType>
     static TIdType getType()
     {
-        return static_cast<TIdType>(SOffscreenRendererKeyTypeMap<TDataType>::KeyType);
+        return static_cast<TIdType>(QDemonOffscreenRendererKeyTypeMap<TDataType>::KeyType);
     }
 
     template <typename TRetType, typename TVisitorType>
@@ -111,31 +111,27 @@ struct SOffscreenRendererKeyUnionTraits
     }
 };
 
-typedef
-DiscriminatedUnion<
-DiscriminatedUnionGenericBase<SOffscreenRendererKeyUnionTraits,
-SOffscreenRendererKeyUnionTraits::
-TBufferSize>,
-SOffscreenRendererKeyUnionTraits::TBufferSize>
-TOffscreenRendererKeyUnionType;
+using QDemonOffscreenRendererKeyUnionType = DiscriminatedUnion<DiscriminatedUnionGenericBase<QDemonOffscreenRendererKeyUnionTraits,
+                                                                                             QDemonOffscreenRendererKeyUnionTraits::TBufferSize>,
+                                                               QDemonOffscreenRendererKeyUnionTraits::TBufferSize>;
 
-struct SOffscreenRendererKey : public TOffscreenRendererKeyUnionType
+struct QDemonOffscreenRendererKey : public QDemonOffscreenRendererKeyUnionType
 {
-    typedef TOffscreenRendererKeyUnionType TBase;
-    SOffscreenRendererKey() {}
-    SOffscreenRendererKey(const QString &str)
+    typedef QDemonOffscreenRendererKeyUnionType TBase;
+    QDemonOffscreenRendererKey() {}
+    QDemonOffscreenRendererKey(const QString &str)
         : TBase(str)
     {
     }
-    SOffscreenRendererKey(void *key)
+    QDemonOffscreenRendererKey(void *key)
         : TBase(key)
     {
     }
-    SOffscreenRendererKey(const SOffscreenRendererKey &other)
+    QDemonOffscreenRendererKey(const QDemonOffscreenRendererKey &other)
         : TBase(static_cast<const TBase &>(other))
     {
     }
-    SOffscreenRendererKey &operator=(const SOffscreenRendererKey &other)
+    QDemonOffscreenRendererKey &operator=(const QDemonOffscreenRendererKey &other)
     {
         TBase::operator=(other);
         return *this;

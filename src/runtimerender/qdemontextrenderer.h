@@ -40,68 +40,69 @@
 
 QT_BEGIN_NAMESPACE
 
-struct SRendererFontEntry
+struct QDemonRendererFontEntry
 {
-    QString m_FontName;
-    QString m_FontFile;
-    SRendererFontEntry() {}
-    SRendererFontEntry(QString nm, QString file)
-        : m_FontName(nm)
-        , m_FontFile(file)
+    QString m_fontName;
+    QString m_fontFile;
+    QDemonRendererFontEntry() = default;
+    QDemonRendererFontEntry(QString nm, QString file)
+        : m_fontName(nm)
+        , m_fontFile(file)
     {
     }
 };
 
-class ITextRenderer;
+class QDemonTextRendererInterface;
 class QDemonRenderPathFontItem;
-class IThreadPool;
-class IPerfTimer;
+class QDemonAbstractThreadPool;
+class QDemonPerfTimerInterface;
 class QDemonRenderContext;
 class QDemonRenderPathFontSpecification;
 
-class Q_DEMONRUNTIMERENDER_EXPORT ITextRendererCore
+class Q_DEMONRUNTIMERENDER_EXPORT QDemonTextRendererCoreInterface
 {
 public:
-    virtual ~ITextRendererCore() {}
+    virtual ~QDemonTextRendererCoreInterface() {}
     // You can have several standard font directories and these will be persistent
-    virtual void AddSystemFontDirectory(const char *inDirectory) = 0;
+    virtual void addSystemFontDirectory(const char *inDirectory) = 0;
     // Should be called to clear the current context.
-    virtual void AddProjectFontDirectory(const char *inProjectDirectory) = 0;
-    virtual void ClearProjectFontDirectories() = 0;
+    virtual void addProjectFontDirectory(const char *inProjectDirectory) = 0;
+    virtual void clearProjectFontDirectories() = 0;
     // Force font loading *right now*
-    virtual void PreloadFonts() = 0;
+    virtual void preloadFonts() = 0;
     // Do not access object in between begin/end preload pairs.
-    virtual void BeginPreloadFonts(IThreadPool &inThreadPool, QSharedPointer<IPerfTimer> inTimer) = 0;
-    virtual void EndPreloadFonts() = 0;
+    virtual void beginPreloadFonts(QDemonAbstractThreadPool &inThreadPool, QSharedPointer<QDemonPerfTimerInterface> inTimer) = 0;
+    virtual void endPreloadFonts() = 0;
     // Force a clear and reload of all of the fonts.
-    virtual void ReloadFonts() = 0;
+    virtual void reloadFonts() = 0;
     // Get the list of project fonts.  These are the only fonts that can be displayed.
-    virtual QDemonConstDataRef<SRendererFontEntry> GetProjectFontList() = 0;
+    virtual QDemonConstDataRef<QDemonRendererFontEntry> getProjectFontList() = 0;
     // The name stored in the ttf file isn't the actual name we use; we use the file stems.
     // But we used to use the name.  So this provides a sort of first-come-first-serve remapping
     // from ttf-name to file-stem.
-    virtual QDemonOption<QString> GetFontNameForFont(QString inFontname) = 0;
-    virtual QDemonOption<QString> GetFontNameForFont(const char *inFontname) = 0;
+    virtual QDemonOption<QString> getFontNameForFont(QString inFontname) = 0;
+    virtual QDemonOption<QString> getFontNameForFont(const char *inFontname) = 0;
 
-    virtual QSharedPointer<ITextRenderer> GetTextRenderer(QSharedPointer<QDemonRenderContext> inContext) = 0;
+    virtual QSharedPointer<QDemonTextRendererInterface> getTextRenderer(QSharedPointer<QDemonRenderContext> inContext) = 0;
 
-    static QSharedPointer<ITextRendererCore> CreateQtTextRenderer();
+    static QSharedPointer<QDemonTextRendererCoreInterface> createQtTextRenderer();
 
     // call this to create onscreen text renderer
     // it needs true type fonts
-    static QSharedPointer<ITextRendererCore> CreateOnscreenTextRenderer();
+    static QSharedPointer<QDemonTextRendererCoreInterface> createOnscreenTextRenderer();
 };
 /**
      *	Opaque text rendering system.  Must be able to render text to an opengl texture object.
      */
-class Q_DEMONRUNTIMERENDER_EXPORT ITextRenderer : public ITextRendererCore
+class Q_DEMONRUNTIMERENDER_EXPORT QDemonTextRendererInterface : public QDemonTextRendererCoreInterface
 {
 protected:
-    virtual ~ITextRenderer() {}
+    virtual ~QDemonTextRendererInterface() {}
 
 public:
     // Measure text will inText if it isn't null or the text on the info if inText is null
-    virtual STextDimensions MeasureText(const STextRenderInfo &inText, float inTextScaleFactor,
+    virtual QDemonTextDimensions measureText(const QDemonTextRenderInfo &inText,
+                                        float inTextScaleFactor,
                                         const char *inTextOverride = nullptr) = 0;
     // The system will use the 'r' channel as an alpha mask in order to render the
     // text.  You can assume GetTextDimensions was called *just* prior to this.
@@ -111,22 +112,22 @@ public:
     // assuming it is located toward the upper-left of the image and we are also capable of
     // flipping
     // the image.
-    virtual STextTextureDetails RenderText(const STextRenderInfo &inText,
+    virtual QDemonTextTextureDetails renderText(const QDemonTextRenderInfo &inText,
                                            QDemonRenderTexture2D &inTexture) = 0;
     // this is for rendering text with NV path rendering
-    virtual STextTextureDetails
-    RenderText(const STextRenderInfo &inText, QDemonRenderPathFontItem &inPathFontItem,
-               QDemonRenderPathFontSpecification &inPathFontSpecicification) = 0;
+    virtual QDemonTextTextureDetails renderText(const QDemonTextRenderInfo &inText,
+                                           QDemonRenderPathFontItem &inPathFontItem,
+                                           QDemonRenderPathFontSpecification &inPathFontSpecicification) = 0;
     // this is for rednering text using a texture atlas
-    virtual SRenderTextureAtlasDetails RenderText(const STextRenderInfo &inText) = 0;
+    virtual QDemonRenderTextureAtlasDetails renderText(const QDemonTextRenderInfo &inText) = 0;
 
-    virtual void BeginFrame() = 0;
-    virtual void EndFrame() = 0;
+    virtual void beginFrame() = 0;
+    virtual void endFrame() = 0;
 
     // these two function are for texture atlas usage only
     // returns the atlas entries count
-    virtual qint32 CreateTextureAtlas() = 0;
-    virtual STextTextureAtlasEntryDetails RenderAtlasEntry(quint32 index,
+    virtual qint32 createTextureAtlas() = 0;
+    virtual QDemonTextTextureAtlasEntryDetails renderAtlasEntry(quint32 index,
                                                            QDemonRenderTexture2D &inTexture) = 0;
 
     // Helper function to upload the texture data to the texture
@@ -136,17 +137,21 @@ public:
     // that the total data height is larger then inTextHeight *and* divisible by four.
     // and that textWidth and textHeight are less than or equal to dataWidth,dataHeight
     //,can be zero, and don't need to be divisible by four (or 2).
-    static STextTextureDetails
-    UploadData(QDemonDataRef<quint8> inTextureData, QDemonRenderTexture2D &inTexture, quint32 inDataWidth,
-               quint32 inDataHeight, quint32 inTextWidth, quint32 inTextHeight,
-               QDemonRenderTextureFormats::Enum inFormat, bool inFlipYAxis);
+    static QDemonTextTextureDetails uploadData(QDemonDataRef<quint8> inTextureData,
+                                               QDemonRenderTexture2D &inTexture,
+                                               quint32 inDataWidth,
+                                               quint32 inDataHeight,
+                                               quint32 inTextWidth,
+                                               quint32 inTextHeight,
+                                               QDemonRenderTextureFormats::Enum inFormat,
+                                               bool inFlipYAxis);
 
     // Helper function to return the next power of two.
     // Fails for values of 0 or std::numeric_limits<quint32>::max()
-    static quint32 NextPowerOf2(quint32 inValue);
+    static quint32 nextPowerOf2(quint32 inValue);
     // If inValue is divisible by four, then return inValue
     // else next largest number that is divisible by four.
-    static quint32 NextMultipleOf4(quint32 inValue);
+    static quint32 nextMultipleOf4(quint32 inValue);
 };
 QT_END_NAMESPACE
 

@@ -45,12 +45,12 @@ class QDemonRenderImage2D
 {
 
 private:
-    QSharedPointer<QDemonRenderContextImpl> m_Context; ///< pointer to context
-    QSharedPointer<QDemonRenderBackend> m_Backend; ///< pointer to backend
-    QSharedPointer<QDemonRenderTexture2D> m_Texture2D; ///< pointer to texture
-    qint32 m_TextureUnit; ///< texture unit this texture should use
-    QDemonRenderImageAccessType::Enum m_AccessType; ///< texture / image access type ( read, write, read_write )
-    quint32 m_TextureLevel; ///< texture level we use for this image
+    QSharedPointer<QDemonRenderContextImpl> m_context; ///< pointer to context
+    QSharedPointer<QDemonRenderBackend> m_backend; ///< pointer to backend
+    QSharedPointer<QDemonRenderTexture2D> m_texture2D; ///< pointer to texture
+    qint32 m_textureUnit; ///< texture unit this texture should use
+    QDemonRenderImageAccessType::Enum m_accessType; ///< texture / image access type ( read, write, read_write )
+    quint32 m_textureLevel; ///< texture level we use for this image
 
 public:
     /**
@@ -64,7 +64,8 @@ public:
          * @return No return.
          */
     QDemonRenderImage2D(QSharedPointer<QDemonRenderContextImpl> context,
-                        QSharedPointer<QDemonRenderTexture2D> inTexture, QDemonRenderImageAccessType::Enum inAccess);
+                        QSharedPointer<QDemonRenderTexture2D> inTexture,
+                        QDemonRenderImageAccessType::Enum inAccess);
 
     virtual ~QDemonRenderImage2D();
 
@@ -76,9 +77,9 @@ public:
          *
          * @return No return.
          */
-    virtual void SetAccessType(QDemonRenderImageAccessType::Enum inAccess)
+    virtual void setAccessType(QDemonRenderImageAccessType::Enum inAccess)
     {
-        m_AccessType = inAccess;
+        m_accessType = inAccess;
     }
 
     /**
@@ -88,7 +89,7 @@ public:
          *
          * @return No return.
          */
-    virtual void SetTextureLevel(qint32 inLevel);
+    virtual void setTextureLevel(qint32 inLevel);
 
     /**
          * @brief	Get texture unit used
@@ -96,7 +97,7 @@ public:
          *
          * @return texture unit bound to.
          */
-    virtual quint32 GetTextureUnit() const { return m_TextureUnit; }
+    virtual quint32 getTextureUnit() const { return m_textureUnit; }
 
     /**
          * @brief Bind a texture for shader access
@@ -105,7 +106,7 @@ public:
          *
          * @return No return.
          */
-    virtual void Bind(quint32 unit);
+    virtual void bind(quint32 unit);
 
     /**
          * @brief get the backend object handle
@@ -113,7 +114,7 @@ public:
          *
          * @return the backend object handle.
          */
-    virtual QDemonRenderBackend::QDemonRenderBackendTextureObject GetTextureObjectHandle();
+    virtual QDemonRenderBackend::QDemonRenderBackendTextureObject getTextureObjectHandle();
 
     /**
          * @brief static creation function
@@ -124,8 +125,9 @@ public:
          *
          * @return No return.
          */
-    static QSharedPointer<QDemonRenderImage2D> Create(QSharedPointer<QDemonRenderContextImpl> context, QSharedPointer<QDemonRenderTexture2D> inTexture,
-                                       QDemonRenderImageAccessType::Enum inAccess);
+    static QSharedPointer<QDemonRenderImage2D> create(QSharedPointer<QDemonRenderContextImpl> context,
+                                                      QSharedPointer<QDemonRenderTexture2D> inTexture,
+                                                      QDemonRenderImageAccessType::Enum inAccess);
 };
 
 QT_END_NAMESPACE

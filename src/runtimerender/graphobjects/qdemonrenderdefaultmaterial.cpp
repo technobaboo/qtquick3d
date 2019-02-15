@@ -31,46 +31,46 @@
 
 QT_BEGIN_NAMESPACE
 
-SDefaultMaterial::SDefaultMaterial()
-    : SGraphObject(GraphObjectTypes::DefaultMaterial)
-    , m_IblProbe(nullptr)
-    , m_Lighting(DefaultMaterialLighting::VertexLighting)
-    , m_BlendMode(DefaultMaterialBlendMode::Normal)
-    , m_DiffuseColor(1, 1, 1)
-    , m_EmissivePower(0)
-    , m_EmissiveMap(nullptr)
-    , m_EmissiveMap2(nullptr)
-    , m_EmissiveColor(1, 1, 1)
-    , m_SpecularReflection(nullptr)
-    , m_SpecularMap(nullptr)
-    , m_SpecularModel(DefaultMaterialSpecularModel::Default)
-    , m_SpecularTint(1, 1, 1)
-    , m_IOR(.2f)
-    , m_FresnelPower(0.0f)
-    , m_SpecularAmount(0)
-    , m_SpecularRoughness(50)
-    , m_RoughnessMap(nullptr)
-    , m_Opacity(1)
-    , m_OpacityMap(nullptr)
-    , m_BumpMap(nullptr)
-    , m_BumpAmount(0.f)
-    , m_NormalMap(nullptr)
-    , m_DisplacementMap(nullptr)
-    , m_DisplaceAmount(0.f)
-    , m_TranslucencyMap(nullptr)
-    , m_TranslucentFalloff(0.f)
-    , m_DiffuseLightWrap(0.f)
-    , m_VertexColors(false)
-    , m_NextSibling(nullptr)
-    , m_Parent(nullptr)
+QDemonRenderDefaultMaterial::QDemonRenderDefaultMaterial()
+    : QDemonGraphObject(QDemonGraphObjectTypes::DefaultMaterial)
+    , iblProbe(nullptr)
+    , lighting(DefaultMaterialLighting::VertexLighting)
+    , blendMode(DefaultMaterialBlendMode::Normal)
+    , diffuseColor(1, 1, 1)
+    , emissivePower(0)
+    , emissiveMap(nullptr)
+    , emissiveMap2(nullptr)
+    , emissiveColor(1, 1, 1)
+    , specularReflection(nullptr)
+    , specularMap(nullptr)
+    , specularModel(DefaultMaterialSpecularModel::Default)
+    , specularTint(1, 1, 1)
+    , ior(.2f)
+    , fresnelPower(0.0f)
+    , specularAmount(0)
+    , specularRoughness(50)
+    , roughnessMap(nullptr)
+    , opacity(1)
+    , opacityMap(nullptr)
+    , bumpMap(nullptr)
+    , bumpAmount(0.f)
+    , normalMap(nullptr)
+    , displacementMap(nullptr)
+    , displaceAmount(0.f)
+    , translucencyMap(nullptr)
+    , translucentFalloff(0.f)
+    , diffuseLightWrap(0.f)
+    , vertexColors(false)
+    , nextSibling(nullptr)
+    , parent(nullptr)
 {
-    m_Lightmaps.m_LightmapIndirect = nullptr;
-    m_Lightmaps.m_LightmapRadiosity = nullptr;
-    m_Lightmaps.m_LightmapShadow = nullptr;
+    lightmaps.m_lightmapIndirect = nullptr;
+    lightmaps.m_lightmapRadiosity = nullptr;
+    lightmaps.m_lightmapShadow = nullptr;
 
-    m_DiffuseMaps[0] = nullptr;
-    m_DiffuseMaps[2] = nullptr;
-    m_DiffuseMaps[1] = nullptr;
+    diffuseMaps[0] = nullptr;
+    diffuseMaps[2] = nullptr;
+    diffuseMaps[1] = nullptr;
 }
 
 QT_END_NAMESPACE

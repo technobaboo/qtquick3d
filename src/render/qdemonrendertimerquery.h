@@ -58,7 +58,7 @@ public:
          *
          * @return Return query type
          */
-    QDemonRenderQueryType::Enum GetQueryType() const override
+    QDemonRenderQueryType::Enum getQueryType() const override
     {
         return QDemonRenderQueryType::Timer;
     }
@@ -68,14 +68,14 @@ public:
          *
          * @return no return.
          */
-    void Begin() override;
+    void begin() override;
 
     /**
          * @brief end a query
          *
          * @return no return.
          */
-    void End() override;
+    void end() override;
 
     /**
          * @brief Get the result of a query
@@ -84,7 +84,7 @@ public:
          *
          * @return no return.
          */
-    void GetResult(quint32 *params) override;
+    void getResult(quint32 *params) override;
 
     /**
          * @brief Get the result of a query
@@ -93,7 +93,7 @@ public:
          *
          * @return no return.
          */
-    virtual void GetResult(quint64 *params);
+    virtual void getResult(quint64 *params);
 
     /**
          * @brief Places an absolute timer query into the render queue
@@ -108,7 +108,7 @@ public:
          *
          * * @return a timer query object on success
          */
-    static QSharedPointer<QDemonRenderTimerQuery> Create(QSharedPointer<QDemonRenderContextImpl> context);
+    static QSharedPointer<QDemonRenderTimerQuery> create(QSharedPointer<QDemonRenderContextImpl> context);
 };
 
 QT_END_NAMESPACE

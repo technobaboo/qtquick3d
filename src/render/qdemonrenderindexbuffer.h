@@ -64,21 +64,21 @@ public:
          *
          * @return the component type
          */
-    virtual QDemonRenderComponentTypes::Enum GetComponentType() const { return m_ComponentType; }
+    virtual QDemonRenderComponentTypes::Enum getComponentType() const { return m_componentType; }
 
     /**
          * @brief get the index count
          *
          * @return actual index count
          */
-    virtual quint32 GetNumIndices() const;
+    virtual quint32 getNumIndices() const;
 
     /**
          * @brief bind the buffer bypasses the context state
          *
          * @return no return.
          */
-    void Bind() override;
+    void bind() override;
 
     /**
          * @brief draw the buffer
@@ -89,7 +89,7 @@ public:
          *
          * @return no return.
          */
-    void Draw(QDemonRenderDrawMode::Enum drawMode, quint32 count, quint32 offset) override;
+    void draw(QDemonRenderDrawMode::Enum drawMode, quint32 count, quint32 offset) override;
 
     /**
          * @brief draw the buffer via indirec draw buffer setup
@@ -100,31 +100,31 @@ public:
          *
          * @return no return.
          */
-    virtual void DrawIndirect(QDemonRenderDrawMode::Enum drawMode, quint32 offset);
+    virtual void drawIndirect(QDemonRenderDrawMode::Enum drawMode, quint32 offset);
 
     /**
          * @brief get the backend object handle
          *
          * @return the backend object handle.
          */
-    QDemonRenderBackend::QDemonRenderBackendBufferObject GetBuffertHandle() const override
+    QDemonRenderBackend::QDemonRenderBackendBufferObject getBuffertHandle() const override
     {
-        return m_BufferHandle;
+        return m_bufferHandle;
     }
 
     // this will be obsolete
-    const void *GetImplementationHandle() const override
+    const void *getImplementationHandle() const override
     {
-        return reinterpret_cast<void *>(m_BufferHandle);
+        return reinterpret_cast<void *>(m_bufferHandle);
     }
 
-    static QSharedPointer<QDemonRenderIndexBuffer> Create(QSharedPointer<QDemonRenderContextImpl> context,
+    static QSharedPointer<QDemonRenderIndexBuffer> create(QSharedPointer<QDemonRenderContextImpl> context,
                                            QDemonRenderBufferUsageType::Enum usageType,
                                            QDemonRenderComponentTypes::Enum componentType, size_t size,
                                            QDemonConstDataRef<quint8> bufferData);
 
 private:
-    QDemonRenderComponentTypes::Enum m_ComponentType; ///< component type (quint8, quint16)
+    QDemonRenderComponentTypes::Enum m_componentType; ///< component type (quint8, quint16)
 };
 
 QT_END_NAMESPACE

@@ -7,7 +7,7 @@ QT_BEGIN_NAMESPACE
 
 // Base linked list without an included head or tail member.
 template <typename TObjType, typename TObjHeadOp, typename TObjTailOp>
-struct SInvasiveLinkListBase
+struct QDemonInvasiveLinkListBase
 {
     TObjType *tail(TObjType *inObj)
     {
@@ -81,22 +81,22 @@ struct SInvasiveLinkListBase
 };
 
 template <typename TObjType, typename TObjTailOp>
-struct SLinkedListIterator
+struct QDemonLinkedListIterator
 {
-    typedef SLinkedListIterator<TObjType, TObjTailOp> TMyType;
-    TObjType *m_Obj;
-    SLinkedListIterator(TObjType *inObj = nullptr)
-        : m_Obj(inObj)
+    typedef QDemonLinkedListIterator<TObjType, TObjTailOp> TMyType;
+    TObjType *m_obj;
+    QDemonLinkedListIterator(TObjType *inObj = nullptr)
+        : m_obj(inObj)
     {
     }
 
-    bool operator!=(const TMyType &inIter) const { return m_Obj != inIter.m_Obj; }
-    bool operator==(const TMyType &inIter) const { return m_Obj == inIter.m_Obj; }
+    bool operator!=(const TMyType &inIter) const { return m_obj != inIter.m_obj; }
+    bool operator==(const TMyType &inIter) const { return m_obj == inIter.m_obj; }
 
     TMyType &operator++()
     {
-        if (m_Obj)
-            m_Obj = TObjTailOp().get(*m_Obj);
+        if (m_obj)
+            m_obj = TObjTailOp().get(*m_obj);
         return *this;
     }
 
@@ -107,55 +107,52 @@ struct SLinkedListIterator
         return retval;
     }
 
-    TObjType &operator*() { return *m_Obj; }
-    TObjType *operator->() { return m_Obj; }
+    TObjType &operator*() { return *m_obj; }
+    TObjType *operator->() { return m_obj; }
 };
 
 // Used for singly linked list where
 // items have either no head or tail ptr.
 template <typename TObjType>
-struct SNullOp
+struct QDemonNullOp
 {
     void set(TObjType &, TObjType *) {}
     TObjType *get(const TObjType &) { return nullptr; }
 };
 
 template <typename TObjType, typename TObjTailOp>
-struct InvasiveSingleLinkedList
-        : public SInvasiveLinkListBase<TObjType, SNullOp<TObjType>, TObjTailOp>
+struct QDemonInvasiveSingleLinkedList
+        : public QDemonInvasiveLinkListBase<TObjType, QDemonNullOp<TObjType>, TObjTailOp>
 {
-    typedef InvasiveSingleLinkedList<TObjType, TObjTailOp> TMyType;
-    typedef SInvasiveLinkListBase<TObjType, SNullOp<TObjType>, TObjTailOp> TBaseType;
-    typedef SLinkedListIterator<TObjType, TObjTailOp> iterator;
+    typedef QDemonInvasiveSingleLinkedList<TObjType, TObjTailOp> TMyType;
+    typedef QDemonInvasiveLinkListBase<TObjType, QDemonNullOp<TObjType>, TObjTailOp> TBaseType;
+    typedef QDemonLinkedListIterator<TObjType, TObjTailOp> iterator;
     typedef iterator const_iterator;
-    TObjType *m_Head;
-    InvasiveSingleLinkedList()
-        : m_Head(nullptr)
-    {
-    }
-    InvasiveSingleLinkedList(const TMyType &inOther)
-        : m_Head(inOther.m_Head)
+    TObjType *m_head = nullptr;
+    QDemonInvasiveSingleLinkedList() = default;
+    QDemonInvasiveSingleLinkedList(const TMyType &inOther)
+        : m_head(inOther.m_head)
     {
     }
     TMyType &operator=(const TMyType &inOther)
     {
-        m_Head = inOther.m_Head;
+        m_head = inOther.m_head;
         return *this;
     }
 
-    TObjType &front() const { return *m_Head; }
+    TObjType &front() const { return *m_head; }
 
     void push_front(TObjType &inObj)
     {
-        if (m_Head != nullptr)
-            TBaseType::insert_before(*m_Head, inObj);
-        m_Head = &inObj;
+        if (m_head != nullptr)
+            TBaseType::insert_before(*m_head, inObj);
+        m_head = &inObj;
     }
 
     void push_back(TObjType &inObj)
     {
-        if (m_Head == nullptr)
-            m_Head = &inObj;
+        if (m_head == nullptr)
+            m_head = &inObj;
         else {
             TObjType *lastObj = nullptr;
             for (iterator iter = begin(), endIter = end(); iter != endIter; ++iter)
@@ -169,157 +166,153 @@ struct InvasiveSingleLinkedList
 
     void remove(TObjType &inObj)
     {
-        if (m_Head == &inObj)
-            m_Head = TObjTailOp().get(inObj);
+        if (m_head == &inObj)
+            m_head = TObjTailOp().get(inObj);
         TBaseType::remove(inObj);
     }
 
-    bool empty() const { return m_Head == nullptr; }
+    bool empty() const { return m_head == nullptr; }
 
-    iterator begin() { return iterator(m_Head); }
+    iterator begin() { return iterator(m_head); }
     iterator end() { return iterator(nullptr); }
 
-    const_iterator begin() const { return iterator(m_Head); }
+    const_iterator begin() const { return iterator(m_head); }
     const_iterator end() const { return iterator(nullptr); }
 };
 
 template <typename TObjType, typename TObjHeadOp, typename TObjTailOp>
-struct InvasiveLinkedList : public SInvasiveLinkListBase<TObjType, TObjHeadOp, TObjTailOp>
+struct QDemonInvasiveLinkedList : public QDemonInvasiveLinkListBase<TObjType, TObjHeadOp, TObjTailOp>
 {
-    typedef InvasiveLinkedList<TObjType, TObjHeadOp, TObjTailOp> TMyType;
-    typedef SInvasiveLinkListBase<TObjType, TObjHeadOp, TObjTailOp> TBaseType;
-    typedef SLinkedListIterator<TObjType, TObjTailOp> iterator;
+    typedef QDemonInvasiveLinkedList<TObjType, TObjHeadOp, TObjTailOp> TMyType;
+    typedef QDemonInvasiveLinkListBase<TObjType, TObjHeadOp, TObjTailOp> TBaseType;
+    typedef QDemonLinkedListIterator<TObjType, TObjTailOp> iterator;
     typedef iterator const_iterator;
-    typedef SLinkedListIterator<TObjType, TObjHeadOp> reverse_iterator;
+    typedef QDemonLinkedListIterator<TObjType, TObjHeadOp> reverse_iterator;
     typedef reverse_iterator const_reverse_iterator;
 
-    TObjType *m_Head;
-    TObjType *m_Tail;
+    TObjType *m_head = nullptr;
+    TObjType *m_tail = nullptr;
 
-    InvasiveLinkedList()
-        : m_Head(nullptr)
-        , m_Tail(nullptr)
-    {
-    }
-    InvasiveLinkedList(const TMyType &inOther)
-        : m_Head(inOther.m_Head)
-        , m_Tail(inOther.m_Tail)
+    QDemonInvasiveLinkedList() = default;
+    QDemonInvasiveLinkedList(const TMyType &inOther)
+        : m_head(inOther.m_head)
+        , m_tail(inOther.m_tail)
     {
     }
     TMyType &operator=(const TMyType &inOther)
     {
-        m_Head = inOther.m_Head;
-        m_Tail = inOther.m_Tail;
+        m_head = inOther.m_head;
+        m_tail = inOther.m_tail;
         return *this;
     }
 
     TObjType &front() const
     {
-        Q_ASSERT(m_Head);
-        return *m_Head;
+        Q_ASSERT(m_head);
+        return *m_head;
     }
     TObjType &back() const
     {
-        Q_ASSERT(m_Tail);
-        return *m_Tail;
+        Q_ASSERT(m_tail);
+        return *m_tail;
     }
 
-    TObjType *front_ptr() const { return m_Head; }
-    TObjType *back_ptr() const { return m_Tail; }
+    TObjType *front_ptr() const { return m_head; }
+    TObjType *back_ptr() const { return m_tail; }
 
     void push_front(TObjType &inObj)
     {
-        if (m_Head != nullptr)
-            TBaseType::insert_before(*m_Head, inObj);
-        m_Head = &inObj;
+        if (m_head != nullptr)
+            TBaseType::insert_before(*m_head, inObj);
+        m_head = &inObj;
 
-        if (m_Tail == nullptr)
-            m_Tail = &inObj;
+        if (m_tail == nullptr)
+            m_tail = &inObj;
     }
 
     void push_back(TObjType &inObj)
     {
-        if (m_Tail != nullptr)
-            TBaseType::insert_after(*m_Tail, inObj);
-        m_Tail = &inObj;
+        if (m_tail != nullptr)
+            TBaseType::insert_after(*m_tail, inObj);
+        m_tail = &inObj;
 
-        if (m_Head == nullptr)
-            m_Head = &inObj;
+        if (m_head == nullptr)
+            m_head = &inObj;
     }
 
     void remove(TObjType &inObj)
     {
-        if (m_Head == &inObj)
-            m_Head = TObjTailOp().get(inObj);
-        if (m_Tail == &inObj)
-            m_Tail = TObjHeadOp().get(inObj);
+        if (m_head == &inObj)
+            m_head = TObjTailOp().get(inObj);
+        if (m_tail == &inObj)
+            m_tail = TObjHeadOp().get(inObj);
 
         TBaseType::remove(inObj);
     }
 
-    bool empty() const { return m_Head == nullptr; }
+    bool empty() const { return m_head == nullptr; }
 
-    iterator begin() { return iterator(m_Head); }
+    iterator begin() { return iterator(m_head); }
     iterator end() { return iterator(nullptr); }
 
-    const_iterator begin() const { return iterator(m_Head); }
+    const_iterator begin() const { return iterator(m_head); }
     const_iterator end() const { return iterator(nullptr); }
 
-    reverse_iterator rbegin() { return reverse_iterator(m_Tail); }
+    reverse_iterator rbegin() { return reverse_iterator(m_tail); }
     reverse_iterator rend() { return reverse_iterator(nullptr); }
 
-    const_reverse_iterator rbegin() const { return reverse_iterator(m_Tail); }
+    const_reverse_iterator rbegin() const { return reverse_iterator(m_tail); }
     const_reverse_iterator rend() const { return reverse_iterator(nullptr); }
 };
 
 // Macros to speed up the definitely of invasive linked lists.
 #define DEFINE_INVASIVE_SINGLE_LIST(type)                                                          \
-    struct S##type;                                                                                \
-    struct S##type##NextOp                                                                         \
+    struct type;                                                                                \
+    struct type##NextOp                                                                         \
 {                                                                                              \
-    S##type *get(S##type &s);                                                                  \
-    const S##type *get(const S##type &s) const;                                                \
-    void set(S##type &inItem, S##type *inNext);                                                \
+    type *get(type &s);                                                                  \
+    const type *get(const type &s) const;                                                \
+    void set(type &inItem, type *inNext);                                                \
     };                                                                                             \
-    typedef InvasiveSingleLinkedList<S##type, S##type##NextOp> T##type##List;
+    typedef QDemonInvasiveSingleLinkedList<type, type##NextOp> type##List;
 
 #define DEFINE_INVASIVE_LIST(type)                                                                 \
-    struct S##type;                                                                                \
-    struct S##type##NextOp                                                                         \
+    struct type;                                                                                \
+    struct type##NextOp                                                                         \
 {                                                                                              \
-    S##type *get(S##type &s);                                                                  \
-    const S##type *get(const S##type &s) const;                                                \
-    void set(S##type &inItem, S##type *inNext);                                                \
+    type *get(type &s);                                                                  \
+    const type *get(const type &s) const;                                                \
+    void set(type &inItem, type *inNext);                                                \
     };                                                                                             \
-    struct S##type##PreviousOp                                                                     \
+    struct type##PreviousOp                                                                     \
 {                                                                                              \
-    S##type *get(S##type &s);                                                                  \
-    const S##type *get(const S##type &s) const;                                                \
-    void set(S##type &inItem, S##type *inNext);                                                \
+    type *get(type &s);                                                                  \
+    const type *get(const type &s) const;                                                \
+    void set(type &inItem, type *inNext);                                                \
     };                                                                                             \
-    typedef InvasiveLinkedList<S##type, S##type##PreviousOp, S##type##NextOp> T##type##List;
+    typedef QDemonInvasiveLinkedList<type, type##PreviousOp, type##NextOp> type##List;
 
 #define IMPLEMENT_INVASIVE_LIST(type, prevMember, nextMember)                                      \
-    inline S##type *S##type##NextOp::get(S##type &s) { return s.nextMember; }                      \
-    inline const S##type *S##type##NextOp::get(const S##type &s) const { return s.nextMember; }    \
-    inline void S##type##NextOp::set(S##type &inItem, S##type *inNext)                             \
+    inline type *type##NextOp::get(type &s) { return s.nextMember; }                      \
+    inline const type *type##NextOp::get(const type &s) const { return s.nextMember; }    \
+    inline void type##NextOp::set(type &inItem, type *inNext)                             \
 {                                                                                              \
     inItem.nextMember = inNext;                                                                \
     }                                                                                              \
-    inline S##type *S##type##PreviousOp::get(S##type &s) { return s.prevMember; }                  \
-    inline const S##type *S##type##PreviousOp::get(const S##type &s) const                         \
+    inline type *type##PreviousOp::get(type &s) { return s.prevMember; }                  \
+    inline const type *type##PreviousOp::get(const type &s) const                         \
 {                                                                                              \
     return s.prevMember;                                                                       \
     }                                                                                              \
-    inline void S##type##PreviousOp::set(S##type &inItem, S##type *inNext)                         \
+    inline void type##PreviousOp::set(type &inItem, type *inNext)                         \
 {                                                                                              \
     inItem.prevMember = inNext;                                                                \
     }
 
 #define IMPLEMENT_INVASIVE_SINGLE_LIST(type, nextMember)                                           \
-    inline S##type *S##type##NextOp::get(S##type &s) { return s.nextMember; }                      \
-    inline const S##type *S##type##NextOp::get(const S##type &s) const { return s.nextMember; }    \
-    inline void S##type##NextOp::set(S##type &inItem, S##type *inNext)                             \
+    inline type *type##NextOp::get(type &s) { return s.nextMember; }                      \
+    inline const type *type##NextOp::get(const type &s) const { return s.nextMember; }    \
+    inline void type##NextOp::set(type &inItem, type *inNext)                             \
 {                                                                                              \
     inItem.nextMember = inNext;                                                                \
     }

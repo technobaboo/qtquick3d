@@ -27,8 +27,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QDEMON_RENDER__RENDER_ATOMIC_COUNTER_BUFFER_H
-#define QDEMON_RENDER__RENDER_ATOMIC_COUNTER_BUFFER_H
+#ifndef QDEMON_RENDER_RENDER_ATOMIC_COUNTER_BUFFER_H
+#define QDEMON_RENDER_RENDER_ATOMIC_COUNTER_BUFFER_H
 
 #include <QtDemonRender/qtdemonrenderglobal.h>
 #include <QtDemonRender/qdemonrenderdatabuffer.h>
@@ -59,19 +59,21 @@ public:
          *
          * @return No return.
          */
-    QDemonRenderAtomicCounterBuffer(QSharedPointer<QDemonRenderContextImpl> context, const QString &bufferName,
-                                    size_t size, QDemonRenderBufferUsageType::Enum usageType,
+    QDemonRenderAtomicCounterBuffer(QSharedPointer<QDemonRenderContextImpl> context,
+                                    const QString &bufferName,
+                                    size_t size,
+                                    QDemonRenderBufferUsageType::Enum usageType,
                                     QDemonDataRef<quint8> data);
 
     ///< destructor
-    virtual ~QDemonRenderAtomicCounterBuffer();
+    virtual ~QDemonRenderAtomicCounterBuffer() override;
 
     /**
          * @brief bind the buffer bypasses the context state
          *
          * @return no return.
          */
-    void Bind() override;
+    void bind() override;
 
     /**
          * @brief bind the buffer to a shader program
@@ -80,14 +82,14 @@ public:
          *
          * @return no return.
          */
-    virtual void BindToShaderProgram(quint32 index);
+    virtual void bindToShaderProgram(quint32 index);
 
     /**
          * @brief update the buffer to hardware
          *
          * @return no return.
          */
-    virtual void Update();
+    virtual void update();
 
     /**
          * @brief update a piece of memory directly within the storage buffer
@@ -104,7 +106,7 @@ public:
          *
          * @return no return
          */
-    void UpdateData(qint32 offset, QDemonDataRef<quint8> data);
+    void updateData(qint32 offset, QDemonDataRef<quint8> data);
 
     /**
          * @brief add a parameter to the atomic counter buffer
@@ -115,7 +117,7 @@ public:
          *
          * @return no return
          */
-    void AddParam(const QString &name, quint32 offset);
+    void addParam(const QString &name, quint32 offset);
 
     /**
          * @brief Check if the buffer contains this param
@@ -125,29 +127,29 @@ public:
          *
          * @return no return
          */
-    bool ContainsParam(const QString &name);
+    bool containsParam(const QString &name);
 
     /**
          * @brief get the buffer name
          *
          * @return the buffer name
          */
-    QString GetBufferName() const { return m_Name; }
+    QString getBufferName() const { return m_name; }
 
     /**
          * @brief get the backend object handle
          *
          * @return the backend object handle.
          */
-    QDemonRenderBackend::QDemonRenderBackendBufferObject GetBuffertHandle() const override
+    QDemonRenderBackend::QDemonRenderBackendBufferObject getBuffertHandle() const override
     {
-        return m_BufferHandle;
+        return m_bufferHandle;
     }
 
     // this will be obsolete
-    const void *GetImplementationHandle() const override
+    const void *getImplementationHandle() const override
     {
-        return reinterpret_cast<void *>(m_BufferHandle);
+        return reinterpret_cast<void *>(m_bufferHandle);
     }
 
     /**
@@ -161,15 +163,16 @@ public:
          *
          * @return the buffer object or nullptr
          */
-    static QSharedPointer<QDemonRenderAtomicCounterBuffer> Create(QSharedPointer<QDemonRenderContextImpl> context,
-                                                   const char *bufferName,
-                                                   QDemonRenderBufferUsageType::Enum usageType,
-                                                   size_t size, QDemonConstDataRef<quint8> bufferData);
+    static QSharedPointer<QDemonRenderAtomicCounterBuffer> create(QSharedPointer<QDemonRenderContextImpl> context,
+                                                                  const char *bufferName,
+                                                                  QDemonRenderBufferUsageType::Enum usageType,
+                                                                  size_t size,
+                                                                  QDemonConstDataRef<quint8> bufferData);
 
 private:
-    QString m_Name; ///< buffer name
-    TRenderAtomiCounterBufferEntryMap m_AtomicCounterBufferEntryMap; ///< holds the entries of a atomic counter buffer
-    bool m_Dirty; ///< true if buffer is dirty
+    QString m_name; ///< buffer name
+    TRenderAtomiCounterBufferEntryMap m_atomicCounterBufferEntryMap; ///< holds the entries of a atomic counter buffer
+    bool m_dirty; ///< true if buffer is dirty
 };
 
 QT_END_NAMESPACE

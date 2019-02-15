@@ -36,7 +36,7 @@ QT_BEGIN_NAMESPACE
 class QDemonRenderBackendNULL : public QDemonRenderBackend
 {
 public:
-    static QSharedPointer<QDemonRenderBackend> CreateBackend();
+    static QSharedPointer<QDemonRenderBackend> createBackend();
 };
 
 QT_END_NAMESPACE

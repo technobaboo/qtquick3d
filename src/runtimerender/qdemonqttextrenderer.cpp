@@ -55,7 +55,7 @@ QT_BEGIN_NAMESPACE
 
 namespace {
 
-struct QDemonQtTextRenderer : public ITextRenderer, public QEnableSharedFromThis<QDemonQtTextRenderer>
+struct QDemonQtTextRenderer : public QDemonTextRendererInterface, public QEnableSharedFromThis<QDemonQtTextRenderer>
 {
     struct FontInfo
     {
@@ -102,10 +102,10 @@ struct QDemonQtTextRenderer : public ITextRenderer, public QEnableSharedFromThis
     typedef QHash<QString, FontInfo> TFontInfoHash;
 
     QSharedPointer<QDemonRenderContext> m_renderContext;
-    QSharedPointer<IPerfTimer> m_perfTimer;
-    QVector<SRendererFontEntry> m_installedFonts;
+    QSharedPointer<QDemonPerfTimerInterface> m_perfTimer;
+    QVector<QDemonRendererFontEntry> m_installedFonts;
 
-    QWaitCondition m_PreloadSync;
+    QWaitCondition m_preloadSync;
     QMutex m_mutex;
 
     TStringSet m_systemFontDirs;
@@ -116,7 +116,7 @@ struct QDemonQtTextRenderer : public ITextRenderer, public QEnableSharedFromThis
 
     bool m_systemFontsInitialized;
     bool m_projectFontsInitialized;
-    bool m_PreloadingFonts;
+    bool m_preloadingFonts;
 
     QStringList m_nameFilters;
     qreal m_pixelRatio;
@@ -124,7 +124,7 @@ struct QDemonQtTextRenderer : public ITextRenderer, public QEnableSharedFromThis
     QDemonQtTextRenderer()
         : m_systemFontsInitialized(false)
         , m_projectFontsInitialized(false)
-        , m_PreloadingFonts(false)
+        , m_preloadingFonts(false)
         , m_pixelRatio(1.0)
     {
         const QWindowList list = QGuiApplication::topLevelWindows();
@@ -165,7 +165,7 @@ struct QDemonQtTextRenderer : public ITextRenderer, public QEnableSharedFromThis
         for (TStringSet::const_iterator theIter = dirSet.begin(),
              theEnd = dirSet.end();
              theIter != theEnd; ++theIter) {
-            QString localDir = CFileTools::NormalizePathForQtUsage(*theIter);
+            QString localDir = CFileTools::normalizePathForQtUsage(*theIter);
             QDir dir(localDir);
             if (!dir.exists()) {
                 qCCritical(INTERNAL_ERROR) << "Adding font directory:" << localDir;
@@ -238,25 +238,25 @@ struct QDemonQtTextRenderer : public ITextRenderer, public QEnableSharedFromThis
     }
 
     // You can have several standard font directories and these will be persistent
-    void AddSystemFontDirectory(const char *inDirectory) override
+    void addSystemFontDirectory(const char *inDirectory) override
     {
         AddFontDirectory(QString::fromLocal8Bit(inDirectory), m_systemFontDirs);
     }
 
-    void AddProjectFontDirectory(const char *inProjectDirectory) override
+    void addProjectFontDirectory(const char *inProjectDirectory) override
     {
         bool theAddResult = AddFontDirectory(QString::fromLocal8Bit(inProjectDirectory), m_projectFontDirs);
         if (theAddResult && m_projectFontsInitialized)
-            ReloadFonts();
+            reloadFonts();
     }
 
-    void ReloadFonts() override
+    void reloadFonts() override
     {
         unregisterProjectFonts();
-        PreloadFonts();
+        preloadFonts();
     }
 
-    void PreloadFonts() override
+    void preloadFonts() override
     {
         if (!m_systemFontsInitialized) {
             m_systemFontsInitialized = true;
@@ -269,7 +269,7 @@ struct QDemonQtTextRenderer : public ITextRenderer, public QEnableSharedFromThis
         }
     }
 
-    void ClearProjectFontDirectories() override
+    void clearProjectFontDirectories() override
     {
         projectCleanup();
     }
@@ -277,47 +277,47 @@ struct QDemonQtTextRenderer : public ITextRenderer, public QEnableSharedFromThis
     static void PreloadThreadCallback(void *inData)
     {
         QDemonQtTextRenderer *theRenderer(reinterpret_cast<QDemonQtTextRenderer *>(inData));
-        theRenderer->PreloadFonts();
-        theRenderer->m_PreloadSync.wakeAll();
+        theRenderer->preloadFonts();
+        theRenderer->m_preloadSync.wakeAll();
     }
 
-    void BeginPreloadFonts(IThreadPool &inThreadPool, QSharedPointer<IPerfTimer> inTimer) override
+    void beginPreloadFonts(QDemonAbstractThreadPool &inThreadPool, QSharedPointer<QDemonPerfTimerInterface> inTimer) override
     {
-        m_PreloadingFonts = true;
+        m_preloadingFonts = true;
 
-        m_PreloadSync.wakeAll();
+        m_preloadSync.wakeAll();
         m_perfTimer = inTimer;
 
-        inThreadPool.AddTask(this, PreloadThreadCallback, nullptr);
+        inThreadPool.addTask(this, PreloadThreadCallback, nullptr);
     }
 
-    void EndPreloadFonts() override
+    void endPreloadFonts() override
     {
         m_mutex.lock();
-        if (m_PreloadingFonts) {
+        if (m_preloadingFonts) {
             {
                 //SStackPerfTimer __perfTimer(*m_perfTimer, "QtText: Wait till font preloading completed");
-                m_PreloadSync.wait(&m_mutex);
+                m_preloadSync.wait(&m_mutex);
             }
         }
-        m_PreloadingFonts = false;
+        m_preloadingFonts = false;
         m_mutex.unlock();
     }
 
     // Get the list of project fonts. These are the only fonts that can be displayed.
-    QDemonConstDataRef<SRendererFontEntry> GetProjectFontList() override
+    QDemonConstDataRef<QDemonRendererFontEntry> getProjectFontList() override
     {
-        PreloadFonts();
+        preloadFonts();
         if (m_installedFonts.empty()) {
             m_installedFonts.reserve(m_projectFontInfos.size());
             for (FontInfo &fi : m_projectFontInfos.values()) {
-                m_installedFonts.push_back(SRendererFontEntry(fi.fontName, fi.fontFileName));
+                m_installedFonts.push_back(QDemonRendererFontEntry(fi.fontName, fi.fontFileName));
             }
         }
         return toConstDataRef(m_installedFonts.constData(), m_installedFonts.count());
     }
 
-    QDemonOption<QString> GetFontNameForFont(QString inFontname) override
+    QDemonOption<QString> getFontNameForFont(QString inFontname) override
     {
         // This function is there to support legacy font names.
 
@@ -334,12 +334,12 @@ struct QDemonQtTextRenderer : public ITextRenderer, public QEnableSharedFromThis
         return QDemonEmpty();
     }
 
-    QDemonOption<QString> GetFontNameForFont(const char *inFontname) override
+    QDemonOption<QString> getFontNameForFont(const char *inFontname) override
     {
-        return GetFontNameForFont(QString::fromLocal8Bit(inFontname));
+        return getFontNameForFont(QString::fromLocal8Bit(inFontname));
     }
 
-    QSharedPointer<ITextRenderer> GetTextRenderer(QSharedPointer<QDemonRenderContext> inRenderContext) override
+    QSharedPointer<QDemonTextRendererInterface> getTextRenderer(QSharedPointer<QDemonRenderContext> inRenderContext) override
     {
         m_renderContext = inRenderContext;
         return this->sharedFromThis();
@@ -347,7 +347,7 @@ struct QDemonQtTextRenderer : public ITextRenderer, public QEnableSharedFromThis
 
     FontInfo &fontInfoForName(const QString &fontName)
     {
-        PreloadFonts();
+        preloadFonts();
         QString qtFontName = fontName;
         if (m_projectFontInfos.contains(qtFontName))
             return m_projectFontInfos[qtFontName];
@@ -362,12 +362,12 @@ struct QDemonQtTextRenderer : public ITextRenderer, public QEnableSharedFromThis
         return m_systemFontInfos[qtFontName];
     }
 
-    void updateFontInfo(FontInfo &fi, const STextRenderInfo &inText,
+    void updateFontInfo(FontInfo &fi, const QDemonTextRenderInfo &inText,
                         float inTextScaleFactor = 1.0f)
     {
-        qreal pixelSize = inText.m_FontSize;
+        qreal pixelSize = inText.fontSize;
         fi.font.setPixelSize(pixelSize * inTextScaleFactor);
-        fi.font.setLetterSpacing(QFont::AbsoluteSpacing, qreal(inText.m_Tracking));
+        fi.font.setLetterSpacing(QFont::AbsoluteSpacing, qreal(inText.tracking));
     }
 
     QStringList splitText(const char *theText)
@@ -397,15 +397,15 @@ struct QDemonQtTextRenderer : public ITextRenderer, public QEnableSharedFromThis
         return lineList;
     }
 
-    QRectF textBoundingBox(const STextRenderInfo &inText,
+    QRectF textBoundingBox(const QDemonTextRenderInfo &inText,
                            const QFontMetricsF &fm, QStringList &lineList,
                            QVector<qreal> &lineWidths, const char *inTextOverride = nullptr)
     {
-        const char *theText = inTextOverride ? inTextOverride : inText.m_Text.toLocal8Bit().constData();
+        const char *theText = inTextOverride ? inTextOverride : inText.text.toLocal8Bit().constData();
         lineList = splitText(theText);
 
         QRectF boundingBox;
-        boundingBox.setHeight(lineList.size() * fm.height() + qCeil(qreal(lineList.size() - 1) * qreal(inText.m_Leading)));
+        boundingBox.setHeight(lineList.size() * fm.height() + qCeil(qreal(lineList.size() - 1) * qreal(inText.leading)));
 
         lineWidths.resize(lineList.size());
 
@@ -426,21 +426,21 @@ struct QDemonQtTextRenderer : public ITextRenderer, public QEnableSharedFromThis
         }
 
         // We don't want extra letter spacing on the last glyph, so let's remove it
-        boundingBox.setRight(qMax(boundingBox.left(), boundingBox.right() - qFloor(inText.m_Tracking)));
+        boundingBox.setRight(qMax(boundingBox.left(), boundingBox.right() - qFloor(inText.tracking)));
 
         return boundingBox;
     }
 
-    STextDimensions MeasureText(const STextRenderInfo &inText, float inTextScaleFactor,
+    QDemonTextDimensions measureText(const QDemonTextRenderInfo &inText, float inTextScaleFactor,
                                 const char *inTextOverride) override
     {
-        FontInfo &fi = fontInfoForName(inText.m_Font);
+        FontInfo &fi = fontInfoForName(inText.font);
         updateFontInfo(fi, inText, inTextScaleFactor);
         QFontMetricsF fm(fi.font);
         QStringList dummyList;
         QVector<qreal> dummyWidth;
         QRectF boundingBox = textBoundingBox(inText, fm, dummyList, dummyWidth, inTextOverride);
-        return STextDimensions(boundingBox.width(), boundingBox.height());
+        return QDemonTextDimensions(boundingBox.width(), boundingBox.height());
     }
 
     int alignToQtAlign(TextVerticalAlignment::Enum va)
@@ -460,26 +460,26 @@ struct QDemonQtTextRenderer : public ITextRenderer, public QEnableSharedFromThis
         return qtAlign;
     }
 
-    STextTextureDetails RenderText(const STextRenderInfo &inSrcText,
+    QDemonTextTextureDetails renderText(const QDemonTextRenderInfo &inSrcText,
                                    QDemonRenderTexture2D &inTexture) override
     {
-        FontInfo &fi = fontInfoForName(inSrcText.m_Font);
+        FontInfo &fi = fontInfoForName(inSrcText.font);
         updateFontInfo(fi, inSrcText);
         QFontMetricsF fm(fi.font);
 
-        int shadowRgb = int(2.55f * (100 - int(inSrcText.m_DropShadowStrength)));
+        int shadowRgb = int(2.55f * (100 - int(inSrcText.dropShadowStrength)));
         QStringList lineList;
         QVector<qreal> lineWidths;
         QRectF boundingBox = textBoundingBox(inSrcText, fm, lineList, lineWidths);
 
         if (boundingBox.width() <= 0 || boundingBox.height() <= 0) {
-            return ITextRenderer::UploadData(toU8DataRef((char *)nullptr, 0), inTexture, 4, 4,
+            return QDemonTextRendererInterface::uploadData(toU8DataRef((char *)nullptr, 0), inTexture, 4, 4,
                                              0, 0,
                                              QDemonRenderTextureFormats::RGBA8, true);
         }
 
-        int finalWidth = NextMultipleOf4(boundingBox.width());
-        int finalHeight = NextMultipleOf4(boundingBox.height());
+        int finalWidth = nextMultipleOf4(boundingBox.width());
+        int finalHeight = nextMultipleOf4(boundingBox.height());
 
         QImage image(finalWidth, finalHeight, QImage::Format_ARGB32);
         image.fill(0);
@@ -489,12 +489,12 @@ struct QDemonQtTextRenderer : public ITextRenderer, public QEnableSharedFromThis
 
         // Translate painter to remove the extra spacing of the last letter
         qreal tracking = 0.0;
-        switch (inSrcText.m_HorizontalAlignment) {
+        switch (inSrcText.horizontalAlignment) {
         case TextHorizontalAlignment::Center:
-            tracking += qreal(inSrcText.m_Tracking / 2.0f);
+            tracking += qreal(inSrcText.tracking / 2.0f);
             break;
         case TextHorizontalAlignment::Right:
-            tracking += qreal(inSrcText.m_Tracking);
+            tracking += qreal(inSrcText.tracking);
             break;
         default:
             break; // Do nothing
@@ -502,9 +502,9 @@ struct QDemonQtTextRenderer : public ITextRenderer, public QEnableSharedFromThis
 
         qreal shadowOffsetX = 0.;
         qreal shadowOffsetY = 0.;
-        if (inSrcText.m_DropShadow) {
-            const qreal offset = qreal(inSrcText.m_DropShadowOffset) / 10.;
-            switch (inSrcText.m_DropShadowHorizontalAlignment) {
+        if (inSrcText.dropShadow) {
+            const qreal offset = qreal(inSrcText.dropShadowOffset) / 10.;
+            switch (inSrcText.dropShadowHorizontalAlignment) {
             case TextHorizontalAlignment::Left:
                 shadowOffsetX = -offset;
                 break;
@@ -514,7 +514,7 @@ struct QDemonQtTextRenderer : public ITextRenderer, public QEnableSharedFromThis
             default:
                 break;
             }
-            switch (inSrcText.m_DropShadowVerticalAlignment) {
+            switch (inSrcText.dropShadowVerticalAlignment) {
             case TextVerticalAlignment::Top:
                 shadowOffsetY = -offset;
                 break;
@@ -531,7 +531,7 @@ struct QDemonQtTextRenderer : public ITextRenderer, public QEnableSharedFromThis
         for (int i = 0; i < lineList.size(); ++i) {
             const QString &line = lineList.at(i);
             qreal xTranslation = tracking;
-            switch (inSrcText.m_HorizontalAlignment) {
+            switch (inSrcText.horizontalAlignment) {
             case TextHorizontalAlignment::Center:
                 xTranslation += qreal(boundingBox.width() - lineWidths.at(i)) / 2.0;
                 break;
@@ -543,71 +543,71 @@ struct QDemonQtTextRenderer : public ITextRenderer, public QEnableSharedFromThis
             }
             QRectF bound(xTranslation, qreal(nextHeight), lineWidths.at(i), lineHeight);
             QRectF actualBound;
-            if (inSrcText.m_DropShadow) {
+            if (inSrcText.dropShadow) {
                 QRectF boundShadow(xTranslation + shadowOffsetX, nextHeight + shadowOffsetY,
                                    qreal(lineWidths.at(i)), lineHeight);
                 // shadow is a darker shade of the given font color
                 painter.setPen(QColor(shadowRgb, shadowRgb, shadowRgb));
                 painter.drawText(boundShadow,
-                                 alignToQtAlign(inSrcText.m_VerticalAlignment) |
+                                 alignToQtAlign(inSrcText.verticalAlignment) |
                                  Qt::TextDontClip | Qt::AlignLeft, line, &actualBound);
                 painter.setPen(Qt::white); // coloring is done in the shader
             }
             painter.drawText(bound,
-                             alignToQtAlign(inSrcText.m_VerticalAlignment) |
+                             alignToQtAlign(inSrcText.verticalAlignment) |
                              Qt::TextDontClip | Qt::AlignLeft, line, &actualBound);
 
-            nextHeight += float(lineHeight) + inSrcText.m_Leading;
+            nextHeight += float(lineHeight) + inSrcText.leading;
         }
 
-        return ITextRenderer::UploadData(toU8DataRef(image.bits(), image.byteCount()), inTexture,
+        return QDemonTextRendererInterface::uploadData(toU8DataRef(image.bits(), image.byteCount()), inTexture,
                                          image.width(), image.height(),
                                          image.width(), image.height(),
                                          QDemonRenderTextureFormats::RGBA8, true);
     }
 
-    STextTextureDetails RenderText(const STextRenderInfo &inText,
+    QDemonTextTextureDetails renderText(const QDemonTextRenderInfo &inText,
                                    QDemonRenderPathFontItem &inPathFontItem,
                                    QDemonRenderPathFontSpecification &inFontPathSpec) override
     {
         Q_UNUSED(inText);
         Q_UNUSED(inPathFontItem);
         Q_UNUSED(inFontPathSpec);
-        Q_ASSERT(m_renderContext->IsPathRenderingSupported());
+        Q_ASSERT(m_renderContext->isPathRenderingSupported());
 
         // We do not support HW accelerated fonts (yet?)
         Q_ASSERT(false);
 
-        return STextTextureDetails();
+        return QDemonTextTextureDetails();
     }
 
-    void BeginFrame() override
+    void beginFrame() override
     {
         // Nothing to do
     }
 
-    void EndFrame() override
+    void endFrame() override
     {
         // Nothing to do
     }
 
     // unused for text rendering via texture atlas
-    STextTextureAtlasEntryDetails RenderAtlasEntry(quint32, QDemonRenderTexture2D &) override
+    QDemonTextTextureAtlasEntryDetails renderAtlasEntry(quint32, QDemonRenderTexture2D &) override
     {
-        return STextTextureAtlasEntryDetails();
+        return QDemonTextTextureAtlasEntryDetails();
     }
-    qint32 CreateTextureAtlas() override
+    qint32 createTextureAtlas() override
     {
         return 0;
     }
-    SRenderTextureAtlasDetails RenderText(const STextRenderInfo &) override
+    QDemonRenderTextureAtlasDetails renderText(const QDemonTextRenderInfo &) override
     {
-        return SRenderTextureAtlasDetails();
+        return QDemonRenderTextureAtlasDetails();
     }
 };
 }
 
-QSharedPointer<ITextRendererCore> ITextRendererCore::CreateQtTextRenderer()
+QSharedPointer<QDemonTextRendererCoreInterface> QDemonTextRendererCoreInterface::createQtTextRenderer()
 {
     return QSharedPointer<QDemonQtTextRenderer>(new QDemonQtTextRenderer());
 }

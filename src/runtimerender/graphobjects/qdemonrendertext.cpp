@@ -31,41 +31,24 @@
 
 QT_BEGIN_NAMESPACE
 
-STextRenderInfo::STextRenderInfo()
-    : m_FontSize(24)
-    , m_HorizontalAlignment(TextHorizontalAlignment::Center)
-    , m_VerticalAlignment(TextVerticalAlignment::Middle)
-    , m_Leading(0)
-    , m_Tracking(0)
-    , m_DropShadow(false)
-    , m_DropShadowStrength(80)
-    , m_DropShadowOffset(10)
-    , m_DropShadowHorizontalAlignment(TextHorizontalAlignment::Right)
-    , m_DropShadowVerticalAlignment(TextVerticalAlignment::Bottom)
-    , m_ScaleX(0)
-    , m_ScaleY(0)
-    , m_EnableAcceleratedFont(false)
+QDemonTextRenderInfo::~QDemonTextRenderInfo()
 {
 }
 
-STextRenderInfo::~STextRenderInfo()
+QDemonText::QDemonText()
+    : QDemonGraphNode(QDemonGraphObjectTypes::Text)
+    , m_textColor(1, 1, 1)
+    , m_textTexture(nullptr)
 {
+    m_bounds.setEmpty();
 }
 
-SText::SText()
-    : SNode(GraphObjectTypes::Text)
-    , m_TextColor(1, 1, 1)
-    , m_TextTexture(nullptr)
-{
-    m_Bounds.setEmpty();
-}
-
-QDemonBounds3 SText::GetTextBounds() const
+QDemonBounds3 QDemonText::getTextBounds() const
 {
     QDemonBounds3 retval;
     retval.setEmpty();
-    if (m_TextTexture != nullptr) {
-        retval.include(m_Bounds);
+    if (m_textTexture != nullptr) {
+        retval.include(m_bounds);
     }
     return retval;
 }

@@ -34,26 +34,26 @@
 
 QT_BEGIN_NAMESPACE
 
-class CMaterialDirty
+class QDemonMaterialDirty
 {
 private:
-    bool m_Dirty;
-    bool m_DirtyFlagWithInFrame;
+    bool m_dirty;
+    bool m_dirtyFlagWithInFrame;
 
 public:
-    CMaterialDirty()
-        : m_Dirty(true)
-        , m_DirtyFlagWithInFrame(m_Dirty)
+    QDemonMaterialDirty()
+        : m_dirty(true)
+        , m_dirtyFlagWithInFrame(m_dirty)
     {
     }
 
-    void SetDirty() { m_Dirty = m_DirtyFlagWithInFrame = true; }
-    bool IsDirty() const { return m_Dirty || m_DirtyFlagWithInFrame; }
-    void ClearDirty() { m_DirtyFlagWithInFrame = m_Dirty = false; }
-    void UpdateDirtyForFrame()
+    void setDirty() { m_dirty = m_dirtyFlagWithInFrame = true; }
+    bool isDirty() const { return m_dirty || m_dirtyFlagWithInFrame; }
+    void clearDirty() { m_dirtyFlagWithInFrame = m_dirty = false; }
+    void updateDirtyForFrame()
     {
-        m_DirtyFlagWithInFrame = m_Dirty;
-        m_Dirty = false;
+        m_dirtyFlagWithInFrame = m_dirty;
+        m_dirty = false;
     }
 };
 

@@ -37,35 +37,35 @@
 
 QT_BEGIN_NAMESPACE
 
-struct SDefaultMaterial;
-class IBufferManager;
+struct QDemonRenderDefaultMaterial;
+class QDemonBufferManagerInterface;
 
-struct Q_DEMONRUNTIMERENDER_EXPORT SModel : public SNode
+struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderModel : public QDemonGraphNode
 {
     // Complete path to the file;
     //*not* relative to the presentation directory
-    QString m_MeshPath;
-    SGraphObject *m_FirstMaterial;
-    qint32 m_SkeletonRoot;
-    TessModeValues::Enum m_TessellationMode;
-    float m_EdgeTess;
-    float m_InnerTess;
-    bool m_WireframeMode;
+    QString meshPath;
+    QDemonGraphObject *firstMaterial;
+    qint32 skeletonRoot;
+    TessModeValues::Enum tessellationMode;
+    float edgeTess;
+    float innerTess;
+    bool wireframeMode;
 
-    SModel();
+    QDemonRenderModel();
 
-    void AddMaterial(SGraphObject &inMaterial);
+    void addMaterial(QDemonGraphObject &inMaterial);
 
-    QDemonBounds3 GetModelBounds(QSharedPointer<IBufferManager> inManager) const;
+    QDemonBounds3 getModelBounds(QSharedPointer<QDemonBufferManagerInterface> inManager) const;
 
     // Generic method used during serialization
     // to remap string and object pointers
     template <typename TRemapperType>
-    void Remap(TRemapperType &inRemapper)
+    void remap(TRemapperType &inRemapper)
     {
-        SNode::Remap(inRemapper);
-        inRemapper.RemapMaterial(m_FirstMaterial);
-        inRemapper.Remap(m_MeshPath);
+        QDemonGraphNode::remap(inRemapper);
+        inRemapper.remapMaterial(firstMaterial);
+        inRemapper.remap(meshPath);
     }
 };
 QT_END_NAMESPACE

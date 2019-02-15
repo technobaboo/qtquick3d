@@ -39,32 +39,27 @@ class QDemonRenderContextImpl;
 
 struct QDemonRenderRenderBufferDimensions
 {
-    quint32 m_Width; ///< buffer width
-    quint32 m_Height; ///< buffer height
+    quint32 m_width = 0; ///< buffer width
+    quint32 m_height = 0; ///< buffer height
 
     QDemonRenderRenderBufferDimensions(quint32 w, quint32 h)
-        : m_Width(w)
-        , m_Height(h)
+        : m_width(w)
+        , m_height(h)
     {
     }
-    QDemonRenderRenderBufferDimensions()
-        : m_Width(0)
-        , m_Height(0)
-    {
-    }
+    QDemonRenderRenderBufferDimensions() = default;
 };
 
 class QDemonRenderRenderBuffer : public QDemonRenderImplemented, public QEnableSharedFromThis<QDemonRenderRenderBuffer>
 {
 private:
-    QSharedPointer<QDemonRenderContextImpl> m_Context; ///< pointer to context
-    QSharedPointer<QDemonRenderBackend> m_Backend; ///< pointer to backend
-    quint32 m_Width; ///< buffer width
-    quint32 m_Height; ///< buffer height
-    QDemonRenderRenderBufferFormats::Enum m_StorageFormat; ///< buffer storage format
+    QSharedPointer<QDemonRenderContextImpl> m_context; ///< pointer to context
+    QSharedPointer<QDemonRenderBackend> m_backend; ///< pointer to backend
+    quint32 m_width; ///< buffer width
+    quint32 m_height; ///< buffer height
+    QDemonRenderRenderBufferFormats::Enum m_storageFormat; ///< buffer storage format
 
-    QDemonRenderBackend::QDemonRenderBackendRenderbufferObject
-    m_BufferHandle; ///< opaque backend handle
+    QDemonRenderBackend::QDemonRenderBackendRenderbufferObject m_bufferHandle; ///< opaque backend handle
 
 public:
     /**
@@ -79,7 +74,9 @@ public:
          * @return No return.
          */
     QDemonRenderRenderBuffer(QSharedPointer<QDemonRenderContextImpl> context,
-                             QDemonRenderRenderBufferFormats::Enum format, quint32 width, quint32 height);
+                             QDemonRenderRenderBufferFormats::Enum format,
+                             quint32 width,
+                             quint32 height);
 
     /// destructor
     virtual ~QDemonRenderRenderBuffer();
@@ -90,9 +87,9 @@ public:
          *
          * @return buffer format
          */
-    virtual QDemonRenderRenderBufferFormats::Enum GetStorageFormat() const
+    virtual QDemonRenderRenderBufferFormats::Enum getStorageFormat() const
     {
-        return m_StorageFormat;
+        return m_storageFormat;
     }
 
     /**
@@ -101,9 +98,9 @@ public:
          *
          * @return QDemonRenderRenderBufferDimensions object
          */
-    virtual QDemonRenderRenderBufferDimensions GetDimensions() const
+    virtual QDemonRenderRenderBufferDimensions getDimensions() const
     {
-        return QDemonRenderRenderBufferDimensions(m_Width, m_Height);
+        return QDemonRenderRenderBufferDimensions(m_width, m_height);
     }
 
     /**
@@ -113,7 +110,7 @@ public:
          *
          * @return buffer format
          */
-    virtual void SetDimensions(const QDemonRenderRenderBufferDimensions &inDimensions);
+    virtual void setDimensions(const QDemonRenderRenderBufferDimensions &inDimensions);
 
     /**
          * @brief static creator function
@@ -125,24 +122,24 @@ public:
          *
          * @return No return.
          */
-    static QSharedPointer<QDemonRenderRenderBuffer> Create(QSharedPointer<QDemonRenderContextImpl> context,
-                                            QDemonRenderRenderBufferFormats::Enum format, quint32 width,
-                                            quint32 height);
+    static QSharedPointer<QDemonRenderRenderBuffer> create(QSharedPointer<QDemonRenderContextImpl> context,
+                                                           QDemonRenderRenderBufferFormats::Enum format, quint32 width,
+                                                           quint32 height);
 
     /**
          * @brief get the backend object handle
          *
          * @return the backend object handle.
          */
-    virtual QDemonRenderBackend::QDemonRenderBackendRenderbufferObject GetRenderBuffertHandle()
+    virtual QDemonRenderBackend::QDemonRenderBackendRenderbufferObject getRenderBuffertHandle()
     {
-        return m_BufferHandle;
+        return m_bufferHandle;
     }
 
     // this will be obsolete
-    const void *GetImplementationHandle() const override
+    const void *getImplementationHandle() const override
     {
-        return reinterpret_cast<void *>(m_BufferHandle);
+        return reinterpret_cast<void *>(m_bufferHandle);
     }
 };
 

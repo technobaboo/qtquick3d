@@ -46,140 +46,140 @@ public:
     virtual ~QDemonRenderBackendGL4Impl();
 
     public:
-        void DrawIndirect(QDemonRenderDrawMode::Enum drawMode, const void *indirect) override;
-    void DrawIndexedIndirect(QDemonRenderDrawMode::Enum drawMode,
+        void drawIndirect(QDemonRenderDrawMode::Enum drawMode, const void *indirect) override;
+    void drawIndexedIndirect(QDemonRenderDrawMode::Enum drawMode,
                              QDemonRenderComponentTypes::Enum type, const void *indirect) override;
 
-    void CreateTextureStorage2D(QDemonRenderBackendTextureObject to,
+    void createTextureStorage2D(QDemonRenderBackendTextureObject to,
                                 QDemonRenderTextureTargetType::Enum target, quint32 levels,
                                 QDemonRenderTextureFormats::Enum internalFormat,
                                 size_t width, size_t height) override;
 
-    void SetMultisampledTextureData2D(QDemonRenderBackendTextureObject to,
+    void setMultisampledTextureData2D(QDemonRenderBackendTextureObject to,
                                       QDemonRenderTextureTargetType::Enum target,
                                       size_t samples,
                                       QDemonRenderTextureFormats::Enum internalFormat,
                                       size_t width, size_t height,
                                       bool fixedsamplelocations) override;
 
-    void SetConstantValue(QDemonRenderBackendShaderProgramObject po, quint32 id,
+    void setConstantValue(QDemonRenderBackendShaderProgramObject po, quint32 id,
                           QDemonRenderShaderDataTypes::Enum type, qint32 count, const void *value,
                           bool transpose) override;
 
-    void SetPatchVertexCount(QDemonRenderBackendInputAssemblerObject iao, quint32 count) override;
+    void setPatchVertexCount(QDemonRenderBackendInputAssemblerObject iao, quint32 count) override;
     virtual QDemonRenderBackendTessControlShaderObject
-    CreateTessControlShader(QDemonConstDataRef<qint8> source, QByteArray &errorMessage,
+    createTessControlShader(QDemonConstDataRef<qint8> source, QByteArray &errorMessage,
                             bool binary) override;
     virtual QDemonRenderBackendTessEvaluationShaderObject
-    CreateTessEvaluationShader(QDemonConstDataRef<qint8> source, QByteArray &errorMessage,
+    createTessEvaluationShader(QDemonConstDataRef<qint8> source, QByteArray &errorMessage,
                                bool binary) override;
     virtual QDemonRenderBackendGeometryShaderObject
-    CreateGeometryShader(QDemonConstDataRef<qint8> source, QByteArray &errorMessage, bool binary) override;
+    createGeometryShader(QDemonConstDataRef<qint8> source, QByteArray &errorMessage, bool binary) override;
 
-    qint32 GetStorageBufferCount(QDemonRenderBackendShaderProgramObject po) override;
-    qint32 GetStorageBufferInfoByID(QDemonRenderBackendShaderProgramObject po, quint32 id,
+    qint32 getStorageBufferCount(QDemonRenderBackendShaderProgramObject po) override;
+    qint32 getStorageBufferInfoByID(QDemonRenderBackendShaderProgramObject po, quint32 id,
                                     quint32 nameBufSize, qint32 *paramCount,
                                     qint32 *bufferSize, qint32 *length, char *nameBuf) override;
-    void ProgramSetStorageBuffer(quint32 index, QDemonRenderBackendBufferObject bo) override;
+    void programSetStorageBuffer(quint32 index, QDemonRenderBackendBufferObject bo) override;
 
-    qint32 GetAtomicCounterBufferCount(QDemonRenderBackendShaderProgramObject po) override;
-    qint32 GetAtomicCounterBufferInfoByID(QDemonRenderBackendShaderProgramObject po,
+    qint32 getAtomicCounterBufferCount(QDemonRenderBackendShaderProgramObject po) override;
+    qint32 getAtomicCounterBufferInfoByID(QDemonRenderBackendShaderProgramObject po,
                                           quint32 id, quint32 nameBufSize, qint32 *paramCount,
                                           qint32 *bufferSize, qint32 *length,
                                           char *nameBuf) override;
-    void ProgramSetAtomicCounterBuffer(quint32 index, QDemonRenderBackendBufferObject bo) override;
+    void programSetAtomicCounterBuffer(quint32 index, QDemonRenderBackendBufferObject bo) override;
 
-    void SetMemoryBarrier(QDemonRenderBufferBarrierFlags barriers) override;
-    void BindImageTexture(QDemonRenderBackendTextureObject to, quint32 unit, qint32 level,
+    void setMemoryBarrier(QDemonRenderBufferBarrierFlags barriers) override;
+    void bindImageTexture(QDemonRenderBackendTextureObject to, quint32 unit, qint32 level,
                           bool layered, qint32 layer,
                           QDemonRenderImageAccessType::Enum access,
                           QDemonRenderTextureFormats::Enum format) override;
 
     virtual QDemonRenderBackendComputeShaderObject
-    CreateComputeShader(QDemonConstDataRef<qint8> source, QByteArray &errorMessage, bool binary) override;
-    void DispatchCompute(QDemonRenderBackendShaderProgramObject po, quint32 numGroupsX,
+    createComputeShader(QDemonConstDataRef<qint8> source, QByteArray &errorMessage, bool binary) override;
+    void dispatchCompute(QDemonRenderBackendShaderProgramObject po, quint32 numGroupsX,
                          quint32 numGroupsY, quint32 numGroupsZ) override;
 
-    QDemonRenderBackendProgramPipeline CreateProgramPipeline() override;
-    void ReleaseProgramPipeline(QDemonRenderBackendProgramPipeline ppo) override;
-    void SetActiveProgramPipeline(QDemonRenderBackendProgramPipeline ppo) override;
-    void SetProgramStages(QDemonRenderBackendProgramPipeline ppo,
+    QDemonRenderBackendProgramPipeline createProgramPipeline() override;
+    void releaseProgramPipeline(QDemonRenderBackendProgramPipeline ppo) override;
+    void setActiveProgramPipeline(QDemonRenderBackendProgramPipeline ppo) override;
+    void setProgramStages(QDemonRenderBackendProgramPipeline ppo,
                           QDemonRenderShaderTypeFlags flags,
                           QDemonRenderBackendShaderProgramObject po) override;
 
-    void SetBlendEquation(const QDemonRenderBlendEquationArgument &pBlendEquArg) override;
-    void SetBlendBarrier(void) override;
+    void setBlendEquation(const QDemonRenderBlendEquationArgument &pBlendEquArg) override;
+    void setBlendBarrier(void) override;
 
-    QDemonRenderBackendPathObject CreatePathNVObject(size_t range) override;
-    void SetPathSpecification(QDemonRenderBackendPathObject inPathObject,
+    QDemonRenderBackendPathObject createPathNVObject(size_t range) override;
+    void setPathSpecification(QDemonRenderBackendPathObject inPathObject,
                               QDemonConstDataRef<quint8> inPathCommands,
                               QDemonConstDataRef<float> inPathCoords) override;
-    QDemonBounds3 GetPathObjectBoundingBox(QDemonRenderBackendPathObject inPathObject) override;
-    QDemonBounds3 GetPathObjectFillBox(QDemonRenderBackendPathObject inPathObject) override;
-    QDemonBounds3 GetPathObjectStrokeBox(QDemonRenderBackendPathObject inPathObject) override;
-    void SetStrokeWidth(QDemonRenderBackendPathObject inPathObject, float inStrokeWidth) override;
+    QDemonBounds3 getPathObjectBoundingBox(QDemonRenderBackendPathObject inPathObject) override;
+    QDemonBounds3 getPathObjectFillBox(QDemonRenderBackendPathObject inPathObject) override;
+    QDemonBounds3 getPathObjectStrokeBox(QDemonRenderBackendPathObject inPathObject) override;
+    void setStrokeWidth(QDemonRenderBackendPathObject inPathObject, float inStrokeWidth) override;
 
-    void SetPathProjectionMatrix(const QMatrix4x4 inPathProjection) override;
-    void SetPathModelViewMatrix(const QMatrix4x4 inPathModelview) override;
-    void SetPathStencilDepthOffset(float inSlope, float inBias) override;
-    void SetPathCoverDepthFunc(QDemonRenderBoolOp::Enum inDepthFunction) override;
-    void StencilStrokePath(QDemonRenderBackendPathObject inPathObject) override;
-    void StencilFillPath(QDemonRenderBackendPathObject inPathObject) override;
-    void ReleasePathNVObject(QDemonRenderBackendPathObject po, size_t range) override;
+    void setPathProjectionMatrix(const QMatrix4x4 inPathProjection) override;
+    void setPathModelViewMatrix(const QMatrix4x4 inPathModelview) override;
+    void setPathStencilDepthOffset(float inSlope, float inBias) override;
+    void setPathCoverDepthFunc(QDemonRenderBoolOp::Enum inDepthFunction) override;
+    void stencilStrokePath(QDemonRenderBackendPathObject inPathObject) override;
+    void stencilFillPath(QDemonRenderBackendPathObject inPathObject) override;
+    void releasePathNVObject(QDemonRenderBackendPathObject po, size_t range) override;
 
-    void StencilFillPathInstanced(
+    void stencilFillPathInstanced(
             QDemonRenderBackendPathObject po, size_t numPaths, QDemonRenderPathFormatType::Enum type,
             const void *charCodes, QDemonRenderPathFillMode::Enum fillMode, quint32 stencilMask,
             QDemonRenderPathTransformType::Enum transformType, const float *transformValues) override;
-    void StencilStrokePathInstancedN(QDemonRenderBackendPathObject po, size_t numPaths,
+    void stencilStrokePathInstancedN(QDemonRenderBackendPathObject po, size_t numPaths,
                                      QDemonRenderPathFormatType::Enum type,
                                      const void *charCodes, qint32 stencilRef,
                                      quint32 stencilMask,
                                      QDemonRenderPathTransformType::Enum transformType,
                                      const float *transformValues) override;
-    void CoverFillPathInstanced(QDemonRenderBackendPathObject po, size_t numPaths,
+    void coverFillPathInstanced(QDemonRenderBackendPathObject po, size_t numPaths,
                                 QDemonRenderPathFormatType::Enum type,
                                 const void *charCodes,
                                 QDemonRenderPathCoverMode::Enum coverMode,
                                 QDemonRenderPathTransformType::Enum transformType,
                                 const float *transformValues) override;
-    void CoverStrokePathInstanced(QDemonRenderBackendPathObject po, size_t numPaths,
+    void coverStrokePathInstanced(QDemonRenderBackendPathObject po, size_t numPaths,
                                   QDemonRenderPathFormatType::Enum type,
                                   const void *charCodes,
                                   QDemonRenderPathCoverMode::Enum coverMode,
                                   QDemonRenderPathTransformType::Enum transformType,
                                   const float *transformValues) override;
-    void LoadPathGlyphs(QDemonRenderBackendPathObject po,
+    void loadPathGlyphs(QDemonRenderBackendPathObject po,
                         QDemonRenderPathFontTarget::Enum fontTarget, const void *fontName,
                         QDemonRenderPathFontStyleFlags fontStyle, size_t numGlyphs,
                         QDemonRenderPathFormatType::Enum type, const void *charCodes,
                         QDemonRenderPathMissingGlyphs::Enum handleMissingGlyphs,
                         QDemonRenderBackendPathObject pathParameterTemplate, float emScale) override;
     virtual QDemonRenderPathReturnValues::Enum
-    LoadPathGlyphsIndexed(QDemonRenderBackendPathObject po, QDemonRenderPathFontTarget::Enum fontTarget,
+    loadPathGlyphsIndexed(QDemonRenderBackendPathObject po, QDemonRenderPathFontTarget::Enum fontTarget,
                           const void *fontName, QDemonRenderPathFontStyleFlags fontStyle,
                           quint32 firstGlyphIndex, size_t numGlyphs,
                           QDemonRenderBackendPathObject pathParameterTemplate, float emScale) override;
     virtual QDemonRenderBackendPathObject
-    LoadPathGlyphsIndexedRange(QDemonRenderPathFontTarget::Enum fontTarget, const void *fontName,
+    loadPathGlyphsIndexedRange(QDemonRenderPathFontTarget::Enum fontTarget, const void *fontName,
                                QDemonRenderPathFontStyleFlags fontStyle,
                                QDemonRenderBackendPathObject pathParameterTemplate, float emScale,
                                quint32 *count) override;
-    void LoadPathGlyphRange(QDemonRenderBackendPathObject po,
+    void loadPathGlyphRange(QDemonRenderBackendPathObject po,
                             QDemonRenderPathFontTarget::Enum fontTarget,
                             const void *fontName, QDemonRenderPathFontStyleFlags fontStyle,
                             quint32 firstGlyph, size_t numGlyphs,
                             QDemonRenderPathMissingGlyphs::Enum handleMissingGlyphs,
                             QDemonRenderBackendPathObject pathParameterTemplate,
                             float emScale) override;
-    void GetPathMetrics(QDemonRenderBackendPathObject po, size_t numPaths,
+    void getPathMetrics(QDemonRenderBackendPathObject po, size_t numPaths,
                         QDemonRenderPathGlyphFontMetricFlags metricQueryMask,
                         QDemonRenderPathFormatType::Enum type, const void *charCodes,
                         size_t stride, float *metrics) override;
-    void GetPathMetricsRange(QDemonRenderBackendPathObject po, size_t numPaths,
+    void getPathMetricsRange(QDemonRenderBackendPathObject po, size_t numPaths,
                              QDemonRenderPathGlyphFontMetricFlags metricQueryMask,
                              size_t stride, float *metrics) override;
-    void GetPathSpacing(QDemonRenderBackendPathObject po, size_t numPaths,
+    void getPathSpacing(QDemonRenderBackendPathObject po, size_t numPaths,
                         QDemonRenderPathListMode::Enum pathListMode,
                         QDemonRenderPathFormatType::Enum type, const void *charCodes,
                         float advanceScale, float kerningScale,

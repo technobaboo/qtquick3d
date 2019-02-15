@@ -42,10 +42,10 @@ QT_BEGIN_NAMESPACE
 //==============================================================================
 //==============================================================================
 /**
-     *	@class	CImageScaler
+     *	@class	QDemonImageScaler
      */
 //==============================================================================
-class CImageScaler
+class QDemonImageScaler
 {
 public:
     //==============================================================================
@@ -64,39 +64,39 @@ public:
     // Access
 
 public:
-    CImageScaler();
+    QDemonImageScaler();
 
-    void Scale(EScaleMethod inScaleMethod, unsigned char *inOldBuffer, unsigned long inOldWidth,
+    void scale(EScaleMethod inScaleMethod, unsigned char *inOldBuffer, unsigned long inOldWidth,
                unsigned long inOldHeight, unsigned char *&outNewBuffer,
                unsigned long inNewWidth, unsigned long inNewHeight, unsigned long inChannels);
 
-    void FastScale(EScaleMethod inScaleMethod, unsigned char *inOldBuffer,
+    void fastScale(EScaleMethod inScaleMethod, unsigned char *inOldBuffer,
                    unsigned long inOldWidth, unsigned long inOldHeight,
                    unsigned char *&outNewBuffer, unsigned long inNewWidth,
                    unsigned long inNewHeight, unsigned long inChannels);
 
-    void Crop(unsigned char *inOldBuffer, unsigned long inOldWidth, unsigned long inOldHeight,
+    void crop(unsigned char *inOldBuffer, unsigned long inOldWidth, unsigned long inOldHeight,
               unsigned char *&outNewBuffer, unsigned long inNewWidth, unsigned long inNewHeight,
               unsigned long inPlanes);
 
-    void Bilinear(unsigned char *inOldBuffer, unsigned long inOldWidth,
+    void bilinear(unsigned char *inOldBuffer, unsigned long inOldWidth,
                   unsigned long inOldHeight, unsigned char *&outNewBuffer,
                   unsigned long inNewWidth, unsigned long inNewHeight, unsigned long inPlanes);
 
-    void FastPointSample(unsigned char *inOldBuffer, unsigned long inOldWidth,
+    void fastPointSample(unsigned char *inOldBuffer, unsigned long inOldWidth,
                          unsigned long inOldHeight, unsigned char *&outNewBuffer,
                          unsigned long inNewWidth, unsigned long inNewHeight,
                          unsigned long inPlanes);
 
-    unsigned char *AllocateBuffer(long inWidth, long inHeight);
-    void ReleaseBuffer(unsigned char *&ioBuffer);
-    void Resize(unsigned char *inOldBuffer, unsigned long inOldWidth, unsigned long inOldHeight,
+    unsigned char *allocateBuffer(long inWidth, long inHeight);
+    void releaseBuffer(unsigned char *&ioBuffer);
+    void resize(unsigned char *inOldBuffer, unsigned long inOldWidth, unsigned long inOldHeight,
                 unsigned char *&outNewBuffer, unsigned long inNewWidth,
                 unsigned long inNewHeight, unsigned long inPlanes);
 
     // variable numbers of planes, i.e. greyscale, rb, rbg, and rgba or argb
     // Bilinear algorithms, good for quality
-    void ExpandRowsAndColumns(unsigned char *inBuffer, unsigned long inWidth,
+    void expandRowsAndColumns(unsigned char *inBuffer, unsigned long inWidth,
                               unsigned long inHeight, unsigned char *outBuffer,
                               unsigned long inDstWidth, unsigned long inDstHeight,
                               unsigned long inPlanes);
@@ -104,15 +104,15 @@ public:
     // The method implemented above, but with some optimizations
     // specifically, fixed the number of planes at 4
     // eliminated the new/delete allocations
-    void FastExpandRowsAndColumns(unsigned char *inBuffer, unsigned long inWidth,
+    void fastExpandRowsAndColumns(unsigned char *inBuffer, unsigned long inWidth,
                                   unsigned long inHeight, unsigned char *outBuffer,
                                   unsigned long inDstWidth, unsigned long inDstHeight);
 
-    void ReduceCols(unsigned char *inSrcBuffer, long inSrcWidth, long inSrcHeight,
+    void reduceCols(unsigned char *inSrcBuffer, long inSrcWidth, long inSrcHeight,
                     unsigned char *&outDstBuffer, long inDstWidth);
-    void ReduceRows(unsigned char *inSrcBuffer, long inSrcWidth, long inSrcHeight,
+    void reduceRows(unsigned char *inSrcBuffer, long inSrcWidth, long inSrcHeight,
                     unsigned char *&outDstBuffer, long inDstHeight);
 };
 QT_END_NAMESPACE
 
-#endif // !defined(QDEMONRENDERIMAGESCALER_H_)
+#endif // QDEMONRENDERIMAGESCALER_H_

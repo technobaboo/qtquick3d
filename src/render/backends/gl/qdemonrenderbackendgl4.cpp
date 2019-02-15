@@ -57,70 +57,74 @@ QT_BEGIN_NAMESPACE
 #define GL_GEOMETRY_SHADER_EXT 0x8DD9
 #endif
 
+namespace QDemonGlExtStrings
+{
+QByteArray extTess() { return QByteArrayLiteral("GL_ARB_tessellation_shader"); }
+QByteArray extGeometry() { return QByteArrayLiteral("GL_EXT_geometry_shader4"); }
+QByteArray arbCompute() { return QByteArrayLiteral("GL_ARB_compute_shader"); }
+QByteArray arbStorageBuffer() { return QByteArrayLiteral("GL_ARB_shader_storage_buffer_object"); }
+QByteArray arbAtomicCounterBuffer() { return QByteArrayLiteral("GL_ARB_shader_atomic_counters"); }
+QByteArray arbProgInterface() { return QByteArrayLiteral("GL_ARB_program_interface_query"); }
+QByteArray arbShaderImageLoadStore() { return QByteArrayLiteral("GL_ARB_shader_image_load_store"); }
+QByteArray nvPathRendering() { return QByteArrayLiteral("GL_NV_path_rendering"); }
+QByteArray nvBlendAdvanced() { return QByteArrayLiteral("GL_NV_blend_equation_advanced"); }
+QByteArray khrBlendAdvanced() { return QByteArrayLiteral("GL_KHR_blend_equation_advanced"); }
+QByteArray nvBlendAdvancedCoherent() { return QByteArrayLiteral("GL_NV_blend_equation_advanced_coherent"); }
+QByteArray khrBlendAdvancedCoherent() { return QByteArrayLiteral("GL_KHR_blend_equation_advanced_coherent"); }
+}
+
 
 /// constructor
 QDemonRenderBackendGL4Impl::QDemonRenderBackendGL4Impl(const QSurfaceFormat &format)
     : QDemonRenderBackendGL3Impl(format)
 {
-    QString extTess("GL_ARB_tessellation_shader");
-    QString extGeometry("GL_EXT_geometry_shader4");
-    QString arbCompute("GL_ARB_compute_shader");
-    QString arbStorageBuffer("GL_ARB_shader_storage_buffer_object");
-    QString arbAtomicCounterBuffer("GL_ARB_shader_atomic_counters");
-    QString arbProgInterface("GL_ARB_program_interface_query");
-    QString arbShaderImageLoadStore("GL_ARB_shader_image_load_store");
-    QString nvPathRendering("GL_NV_path_rendering");
-    QString nvBlendAdvanced("GL_NV_blend_equation_advanced");
-    QString khrBlendAdvanced("GL_KHR_blend_equation_advanced");
-    QString nvBlendAdvancedCoherent("GL_NV_blend_equation_advanced_coherent");
-    QString khrBlendAdvancedCoherent("GL_KHR_blend_equation_advanced_coherent");
-
-    QString apiVersion(getVersionString());
-    qCInfo(TRACE_INFO, "GL version: %s", qPrintable(apiVersion));
+    const QByteArray apiVersion(getVersionString());
+    qCInfo(TRACE_INFO, "GL version: %s", apiVersion.constData());
 
     // get extension count
     GLint numExtensions = 0;
     GL_CALL_EXTRA_FUNCTION(glGetIntegerv(GL_NUM_EXTENSIONS, &numExtensions));
 
     for (qint32 i = 0; i < numExtensions; i++) {
-        char *extensionString = (char *)GL_CALL_EXTRA_FUNCTION(glGetStringi(GL_EXTENSIONS, i));
+        const GLubyte *glExt = GL_CALL_EXTRA_FUNCTION(glGetStringi(GL_EXTENSIONS, GLuint(i)));
+        const QByteArray extensionString(reinterpret_cast<const char *>(glExt));
 
         // search for extension
         if (!m_backendSupport.caps.bits.bTessellationSupported
-                && extTess.compare(extensionString) == 0) {
+                && QDemonGlExtStrings::extTess().compare(extensionString) == 0) {
             m_backendSupport.caps.bits.bTessellationSupported = true;
         } else if (!m_backendSupport.caps.bits.bComputeSupported
-                   && arbCompute.compare(extensionString) == 0) {
+                   && QDemonGlExtStrings::arbCompute().compare(extensionString) == 0) {
             m_backendSupport.caps.bits.bComputeSupported = true;
         } else if (!m_backendSupport.caps.bits.bGeometrySupported
-                   && extGeometry.compare(extensionString) == 0) {
+                   && QDemonGlExtStrings::extGeometry().compare(extensionString) == 0) {
             m_backendSupport.caps.bits.bGeometrySupported = true;
         } else if (!m_backendSupport.caps.bits.bStorageBufferSupported
-                   && arbStorageBuffer.compare(extensionString) == 0) {
+                   && QDemonGlExtStrings::arbStorageBuffer().compare(extensionString) == 0) {
             m_backendSupport.caps.bits.bStorageBufferSupported = true;
         } else if (!m_backendSupport.caps.bits.bAtomicCounterBufferSupported
-                   && arbAtomicCounterBuffer.compare(extensionString) == 0) {
+                   && QDemonGlExtStrings::arbAtomicCounterBuffer().compare(extensionString) == 0) {
             m_backendSupport.caps.bits.bAtomicCounterBufferSupported = true;
         } else if (!m_backendSupport.caps.bits.bProgramInterfaceSupported
-                   && arbProgInterface.compare(extensionString) == 0) {
+                   && QDemonGlExtStrings::arbProgInterface().compare(extensionString) == 0) {
             m_backendSupport.caps.bits.bProgramInterfaceSupported = true;
         } else if (!m_backendSupport.caps.bits.bShaderImageLoadStoreSupported
-                   && arbShaderImageLoadStore.compare(extensionString) == 0) {
+                   && QDemonGlExtStrings::arbShaderImageLoadStore().compare(extensionString) == 0) {
             m_backendSupport.caps.bits.bShaderImageLoadStoreSupported = true;
         } else if (!m_backendSupport.caps.bits.bNVPathRenderingSupported
-                   && nvPathRendering.compare(extensionString) == 0) {
+                   && QDemonGlExtStrings::nvPathRendering().compare(extensionString) == 0) {
             m_backendSupport.caps.bits.bNVPathRenderingSupported = true;
         } else if (!m_backendSupport.caps.bits.bNVAdvancedBlendSupported
-                   && nvBlendAdvanced.compare(extensionString) == 0) {
+                   && QDemonGlExtStrings::nvBlendAdvanced().compare(extensionString) == 0) {
             m_backendSupport.caps.bits.bNVAdvancedBlendSupported = true;
         } else if (!m_backendSupport.caps.bits.bNVBlendCoherenceSupported
-                   && nvBlendAdvancedCoherent.compare(extensionString) == 0) {
+                   && QDemonGlExtStrings::nvBlendAdvancedCoherent().compare(extensionString) == 0) {
             m_backendSupport.caps.bits.bNVBlendCoherenceSupported = true;
         } else if (!m_backendSupport.caps.bits.bKHRAdvancedBlendSupported
-                   && khrBlendAdvanced.compare(extensionString) == 0) {
+                   && QDemonGlExtStrings::khrBlendAdvanced().compare(extensionString) == 0) {
             m_backendSupport.caps.bits.bKHRAdvancedBlendSupported = true;
         } else if (!m_backendSupport.caps.bits.bKHRBlendCoherenceSupported
-                   && khrBlendAdvancedCoherent.compare(extensionString) == 0) {
+                   && QDemonGlExtStrings::khrBlendAdvancedCoherent().compare(extensionString) == 0) {
             m_backendSupport.caps.bits.bKHRBlendCoherenceSupported = true;
         }
     }
@@ -166,32 +170,32 @@ QDemonRenderBackendGL4Impl::~QDemonRenderBackendGL4Impl()
 #endif
 }
 
-void QDemonRenderBackendGL4Impl::DrawIndirect(QDemonRenderDrawMode::Enum drawMode, const void *indirect)
+void QDemonRenderBackendGL4Impl::drawIndirect(QDemonRenderDrawMode::Enum drawMode, const void *indirect)
 {
     GL_CALL_EXTRA_FUNCTION(
-                glDrawArraysIndirect(m_Conversion.fromDrawModeToGL(
+                glDrawArraysIndirect(m_conversion.fromDrawModeToGL(
                                          drawMode, m_backendSupport.caps.bits.bTessellationSupported),
                                      indirect));
 }
 
-void QDemonRenderBackendGL4Impl::DrawIndexedIndirect(QDemonRenderDrawMode::Enum drawMode,
+void QDemonRenderBackendGL4Impl::drawIndexedIndirect(QDemonRenderDrawMode::Enum drawMode,
                                                      QDemonRenderComponentTypes::Enum type,
                                                      const void *indirect)
 {
     GL_CALL_EXTRA_FUNCTION(glDrawElementsIndirect(
-                               m_Conversion.fromDrawModeToGL(drawMode,
+                               m_conversion.fromDrawModeToGL(drawMode,
                                                              m_backendSupport.caps.bits.bTessellationSupported),
-                               m_Conversion.fromIndexBufferComponentsTypesToGL(type), indirect));
+                               m_conversion.fromIndexBufferComponentsTypesToGL(type), indirect));
 }
 
-void QDemonRenderBackendGL4Impl::CreateTextureStorage2D(QDemonRenderBackendTextureObject to,
+void QDemonRenderBackendGL4Impl::createTextureStorage2D(QDemonRenderBackendTextureObject to,
                                                         QDemonRenderTextureTargetType::Enum target,
                                                         quint32 levels,
                                                         QDemonRenderTextureFormats::Enum internalFormat,
                                                         size_t width, size_t height)
 {
     GLuint texID = HandleToID_cast(GLuint, size_t, to);
-    GLenum glTarget = m_Conversion.fromTextureTargetToGL(target);
+    GLenum glTarget = m_conversion.fromTextureTargetToGL(target);
     GL_CALL_EXTRA_FUNCTION(glActiveTexture(GL_TEXTURE0));
     GL_CALL_EXTRA_FUNCTION(glBindTexture(glTarget, texID));
 
@@ -199,46 +203,45 @@ void QDemonRenderBackendGL4Impl::CreateTextureStorage2D(QDemonRenderBackendTextu
     Q_ASSERT(QDemonRenderTextureFormats::isUncompressedTextureFormat(internalFormat));
 
     GLenum glformat = 0, glInternalFormat = 0, gltype = GL_UNSIGNED_BYTE;
-    GLConversion::fromUncompressedTextureFormatToGL(GetRenderContextType(), internalFormat,
+    GLConversion::fromUncompressedTextureFormatToGL(getRenderContextType(), internalFormat,
                                                     glformat, gltype, glInternalFormat);
 
-    GL_CALL_EXTRA_FUNCTION(
-                glTexStorage2D(glTarget, levels, glInternalFormat, (GLsizei)width, (GLsizei)height));
+    GL_CALL_EXTRA_FUNCTION(glTexStorage2D(glTarget, levels, glInternalFormat, GLsizei(width), GLsizei(height)));
 
     GL_CALL_EXTRA_FUNCTION(glBindTexture(glTarget, 0));
 }
 
-void QDemonRenderBackendGL4Impl::SetMultisampledTextureData2D(
+void QDemonRenderBackendGL4Impl::setMultisampledTextureData2D(
         QDemonRenderBackendTextureObject to, QDemonRenderTextureTargetType::Enum target, size_t samples,
         QDemonRenderTextureFormats::Enum internalFormat, size_t width, size_t height,
         bool fixedsamplelocations)
 {
     GLuint texID = HandleToID_cast(GLuint, size_t, to);
-    GLenum glTarget = m_Conversion.fromTextureTargetToGL(target);
+    GLenum glTarget = m_conversion.fromTextureTargetToGL(target);
     GL_CALL_EXTRA_FUNCTION(glActiveTexture(GL_TEXTURE0));
     GL_CALL_EXTRA_FUNCTION(glBindTexture(glTarget, texID));
 
     QDemonRenderTextureSwizzleMode::Enum swizzleMode = QDemonRenderTextureSwizzleMode::NoSwizzle;
-    internalFormat = m_Conversion.replaceDeprecatedTextureFormat(GetRenderContextType(),
+    internalFormat = m_conversion.replaceDeprecatedTextureFormat(getRenderContextType(),
                                                                  internalFormat, swizzleMode);
 
     GLenum glformat = 0, glInternalFormat = 0, gltype = GL_UNSIGNED_BYTE;
 
     if (QDemonRenderTextureFormats::isUncompressedTextureFormat(internalFormat))
-        GLConversion::fromUncompressedTextureFormatToGL(GetRenderContextType(), internalFormat,
+        GLConversion::fromUncompressedTextureFormatToGL(getRenderContextType(), internalFormat,
                                                         glformat, gltype, glInternalFormat);
     else if (QDemonRenderTextureFormats::isDepthTextureFormat(internalFormat))
-        m_Conversion.fromDepthTextureFormatToGL(GetRenderContextType(), internalFormat,
+        m_conversion.fromDepthTextureFormatToGL(getRenderContextType(), internalFormat,
                                                 glformat, gltype, glInternalFormat);
-    GL_CALL_EXTRA_FUNCTION(glTexStorage2DMultisample(glTarget, (GLsizei)samples, glInternalFormat,
-                                                     (GLsizei)width, (GLsizei)height,
+    GL_CALL_EXTRA_FUNCTION(glTexStorage2DMultisample(glTarget, GLsizei(samples), glInternalFormat,
+                                                     GLsizei(width), GLsizei(height),
                                                      fixedsamplelocations));
 
     GL_CALL_EXTRA_FUNCTION(glBindTexture(glTarget, 0));
 }
 
 QDemonRenderBackend::QDemonRenderBackendTessControlShaderObject
-QDemonRenderBackendGL4Impl::CreateTessControlShader(QDemonConstDataRef<qint8> source,
+QDemonRenderBackendGL4Impl::createTessControlShader(QDemonConstDataRef<qint8> source,
                                                     QByteArray &errorMessage, bool binary)
 {
 #if !defined(QT_OPENGL_ES)
@@ -251,11 +254,11 @@ QDemonRenderBackendGL4Impl::CreateTessControlShader(QDemonConstDataRef<qint8> so
         shaderID = 0;
     }
 
-    return (QDemonRenderBackend::QDemonRenderBackendTessControlShaderObject)shaderID;
+    return reinterpret_cast<QDemonRenderBackend::QDemonRenderBackendTessControlShaderObject>(shaderID);
 }
 
 QDemonRenderBackend::QDemonRenderBackendTessEvaluationShaderObject
-QDemonRenderBackendGL4Impl::CreateTessEvaluationShader(QDemonConstDataRef<qint8> source,
+QDemonRenderBackendGL4Impl::createTessEvaluationShader(QDemonConstDataRef<qint8> source,
                                                        QByteArray &errorMessage, bool binary)
 {
 #if !defined(QT_OPENGL_ES)
@@ -269,12 +272,12 @@ QDemonRenderBackendGL4Impl::CreateTessEvaluationShader(QDemonConstDataRef<qint8>
         shaderID = 0;
     }
 
-    return (QDemonRenderBackend::QDemonRenderBackendTessEvaluationShaderObject)shaderID;
+    return reinterpret_cast<QDemonRenderBackend::QDemonRenderBackendTessEvaluationShaderObject>(shaderID);
 }
 
-QDemonRenderBackend::QDemonRenderBackendGeometryShaderObject
-QDemonRenderBackendGL4Impl::CreateGeometryShader(QDemonConstDataRef<qint8> source,
-                                                 QByteArray &errorMessage, bool binary)
+QDemonRenderBackend::QDemonRenderBackendGeometryShaderObject QDemonRenderBackendGL4Impl::createGeometryShader(QDemonConstDataRef<qint8> source,
+                                                                                                              QByteArray &errorMessage,
+                                                                                                              bool binary)
 {
 #if defined(QT_OPENGL_ES)
     GLuint shaderID = GL_CALL_EXTRA_FUNCTION(glCreateShader(GL_GEOMETRY_SHADER_EXT));
@@ -286,24 +289,24 @@ QDemonRenderBackendGL4Impl::CreateGeometryShader(QDemonConstDataRef<qint8> sourc
         shaderID = 0;
     }
 
-    return (QDemonRenderBackend::QDemonRenderBackendGeometryShaderObject)shaderID;
+    return reinterpret_cast<QDemonRenderBackend::QDemonRenderBackendGeometryShaderObject>(shaderID);
 }
 
-void QDemonRenderBackendGL4Impl::SetPatchVertexCount(QDemonRenderBackendInputAssemblerObject iao,
+void QDemonRenderBackendGL4Impl::setPatchVertexCount(QDemonRenderBackendInputAssemblerObject iao,
                                                      quint32 count)
 {
     Q_ASSERT(iao);
     Q_ASSERT(count);
-    QDemonRenderBackendInputAssemblerGL *inputAssembler = (QDemonRenderBackendInputAssemblerGL *)iao;
-    inputAssembler->m_PatchVertexCount = count;
+    QDemonRenderBackendInputAssemblerGL *inputAssembler = reinterpret_cast<QDemonRenderBackendInputAssemblerGL *>(iao);
+    inputAssembler->m_patchVertexCount = count;
 }
 
-void QDemonRenderBackendGL4Impl::SetMemoryBarrier(QDemonRenderBufferBarrierFlags barriers)
+void QDemonRenderBackendGL4Impl::setMemoryBarrier(QDemonRenderBufferBarrierFlags barriers)
 {
-    GL_CALL_EXTRA_FUNCTION(glMemoryBarrier(m_Conversion.fromMemoryBarrierFlagsToGL(barriers)));
+    GL_CALL_EXTRA_FUNCTION(glMemoryBarrier(m_conversion.fromMemoryBarrierFlagsToGL(barriers)));
 }
 
-void QDemonRenderBackendGL4Impl::BindImageTexture(QDemonRenderBackendTextureObject to, quint32 unit,
+void QDemonRenderBackendGL4Impl::bindImageTexture(QDemonRenderBackendTextureObject to, quint32 unit,
                                                   qint32 level, bool layered, qint32 layer,
                                                   QDemonRenderImageAccessType::Enum access,
                                                   QDemonRenderTextureFormats::Enum format)
@@ -311,16 +314,16 @@ void QDemonRenderBackendGL4Impl::BindImageTexture(QDemonRenderBackendTextureObje
     GLuint texID = HandleToID_cast(GLuint, size_t, to);
 
     GL_CALL_EXTRA_FUNCTION(glBindImageTexture(unit, texID, level, layered, layer,
-                                              m_Conversion.fromImageAccessToGL(access),
-                                              m_Conversion.fromImageFormatToGL(format)));
+                                              m_conversion.fromImageAccessToGL(access),
+                                              m_conversion.fromImageFormatToGL(format)));
 }
 
-qint32 QDemonRenderBackendGL4Impl::GetStorageBufferCount(QDemonRenderBackendShaderProgramObject po)
+qint32 QDemonRenderBackendGL4Impl::getStorageBufferCount(QDemonRenderBackendShaderProgramObject po)
 {
     GLint numStorageBuffers = 0;
     Q_ASSERT(po);
     QDemonRenderBackendShaderProgramGL *pProgram = (QDemonRenderBackendShaderProgramGL *)po;
-    GLuint programID = static_cast<GLuint>(pProgram->m_ProgramID);
+    GLuint programID = static_cast<GLuint>(pProgram->m_programID);
 
 #if defined(GL_VERSION_4_3) || defined (QT_OPENGL_ES_3_1)
     if (m_backendSupport.caps.bits.bProgramInterfaceSupported)
@@ -331,9 +334,12 @@ qint32 QDemonRenderBackendGL4Impl::GetStorageBufferCount(QDemonRenderBackendShad
 }
 
 qint32
-QDemonRenderBackendGL4Impl::GetStorageBufferInfoByID(QDemonRenderBackendShaderProgramObject po,
-                                                     quint32 id, quint32 nameBufSize, qint32 *paramCount,
-                                                     qint32 *bufferSize, qint32 *length,
+QDemonRenderBackendGL4Impl::getStorageBufferInfoByID(QDemonRenderBackendShaderProgramObject po,
+                                                     quint32 id,
+                                                     quint32 nameBufSize,
+                                                     qint32 *paramCount,
+                                                     qint32 *bufferSize,
+                                                     qint32 *length,
                                                      char *nameBuf)
 {
     GLint bufferIndex = GL_INVALID_INDEX;
@@ -344,8 +350,8 @@ QDemonRenderBackendGL4Impl::GetStorageBufferInfoByID(QDemonRenderBackendShaderPr
     Q_ASSERT(bufferSize);
     Q_ASSERT(paramCount);
 
-    QDemonRenderBackendShaderProgramGL *pProgram = (QDemonRenderBackendShaderProgramGL *)po;
-    GLuint programID = static_cast<GLuint>(pProgram->m_ProgramID);
+    QDemonRenderBackendShaderProgramGL *pProgram = reinterpret_cast<QDemonRenderBackendShaderProgramGL *>(po);
+    GLuint programID = static_cast<GLuint>(pProgram->m_programID);
 #if defined(GL_VERSION_4_3) || defined (QT_OPENGL_ES_3_1)
     if (m_backendSupport.caps.bits.bProgramInterfaceSupported) {
         GL_CALL_EXTRA_FUNCTION(glGetProgramResourceName(programID, GL_SHADER_STORAGE_BLOCK, id, nameBufSize,
@@ -372,7 +378,7 @@ QDemonRenderBackendGL4Impl::GetStorageBufferInfoByID(QDemonRenderBackendShaderPr
     return bufferIndex;
 }
 
-void QDemonRenderBackendGL4Impl::ProgramSetStorageBuffer(quint32 index,
+void QDemonRenderBackendGL4Impl::programSetStorageBuffer(quint32 index,
                                                          QDemonRenderBackendBufferObject bo)
 {
 #if defined(GL_VERSION_4_3) || defined (QT_OPENGL_ES_3_1)
@@ -381,12 +387,12 @@ void QDemonRenderBackendGL4Impl::ProgramSetStorageBuffer(quint32 index,
 #endif
 }
 
-qint32 QDemonRenderBackendGL4Impl::GetAtomicCounterBufferCount(QDemonRenderBackendShaderProgramObject po)
+qint32 QDemonRenderBackendGL4Impl::getAtomicCounterBufferCount(QDemonRenderBackendShaderProgramObject po)
 {
     GLint numAtomicCounterBuffers = 0;
     Q_ASSERT(po);
-    QDemonRenderBackendShaderProgramGL *pProgram = (QDemonRenderBackendShaderProgramGL *)po;
-    GLuint programID = static_cast<GLuint>(pProgram->m_ProgramID);
+    QDemonRenderBackendShaderProgramGL *pProgram = reinterpret_cast<QDemonRenderBackendShaderProgramGL *>(po);
+    GLuint programID = static_cast<GLuint>(pProgram->m_programID);
 #if defined(GL_VERSION_4_3) || defined (QT_OPENGL_ES_3_1)
     if (m_backendSupport.caps.bits.bProgramInterfaceSupported)
         GL_CALL_EXTRA_FUNCTION(glGetProgramInterfaceiv(programID, GL_ATOMIC_COUNTER_BUFFER,
@@ -396,10 +402,13 @@ qint32 QDemonRenderBackendGL4Impl::GetAtomicCounterBufferCount(QDemonRenderBacke
 }
 
 qint32
-QDemonRenderBackendGL4Impl::GetAtomicCounterBufferInfoByID(QDemonRenderBackendShaderProgramObject po,
-                                                           quint32 id, quint32 nameBufSize,
-                                                           qint32 *paramCount, qint32 *bufferSize,
-                                                           qint32 *length, char *nameBuf)
+QDemonRenderBackendGL4Impl::getAtomicCounterBufferInfoByID(QDemonRenderBackendShaderProgramObject po,
+                                                           quint32 id,
+                                                           quint32 nameBufSize,
+                                                           qint32 *paramCount,
+                                                           qint32 *bufferSize,
+                                                           qint32 *length,
+                                                           char *nameBuf)
 {
     GLint bufferIndex = GL_INVALID_INDEX;
 
@@ -409,8 +418,8 @@ QDemonRenderBackendGL4Impl::GetAtomicCounterBufferInfoByID(QDemonRenderBackendSh
     Q_ASSERT(bufferSize);
     Q_ASSERT(paramCount);
 
-    QDemonRenderBackendShaderProgramGL *pProgram = (QDemonRenderBackendShaderProgramGL *)po;
-    GLuint programID = static_cast<GLuint>(pProgram->m_ProgramID);
+    QDemonRenderBackendShaderProgramGL *pProgram = reinterpret_cast<QDemonRenderBackendShaderProgramGL *>(po);
+    GLuint programID = static_cast<GLuint>(pProgram->m_programID);
 #if defined(GL_VERSION_4_3) || defined (QT_OPENGL_ES_3_1)
     if (m_backendSupport.caps.bits.bProgramInterfaceSupported) {
         {
@@ -444,7 +453,7 @@ QDemonRenderBackendGL4Impl::GetAtomicCounterBufferInfoByID(QDemonRenderBackendSh
     return bufferIndex;
 }
 
-void QDemonRenderBackendGL4Impl::ProgramSetAtomicCounterBuffer(quint32 index,
+void QDemonRenderBackendGL4Impl::programSetAtomicCounterBuffer(quint32 index,
                                                                QDemonRenderBackendBufferObject bo)
 {
 #if defined(GL_VERSION_4_3) || defined (QT_OPENGL_ES_3_1)
@@ -453,14 +462,17 @@ void QDemonRenderBackendGL4Impl::ProgramSetAtomicCounterBuffer(quint32 index,
 #endif
 }
 
-void QDemonRenderBackendGL4Impl::SetConstantValue(QDemonRenderBackendShaderProgramObject po, quint32 id,
-                                                  QDemonRenderShaderDataTypes::Enum type, qint32 count,
-                                                  const void *value, bool transpose)
+void QDemonRenderBackendGL4Impl::setConstantValue(QDemonRenderBackendShaderProgramObject po,
+                                                  quint32 id,
+                                                  QDemonRenderShaderDataTypes::Enum type,
+                                                  qint32 count,
+                                                  const void *value,
+                                                  bool transpose)
 {
-    QDemonRenderBackendShaderProgramGL *pProgram = (QDemonRenderBackendShaderProgramGL *)po;
-    GLuint programID = static_cast<GLuint>(pProgram->m_ProgramID);
+    QDemonRenderBackendShaderProgramGL *pProgram = reinterpret_cast<QDemonRenderBackendShaderProgramGL *>(po);
+    GLuint programID = static_cast<GLuint>(pProgram->m_programID);
 
-    GLenum glType = m_Conversion.fromPropertyDataTypesToShaderGL(type);
+    GLenum glType = m_conversion.fromPropertyDataTypesToShaderGL(type);
 
     switch (glType) {
     case GL_FLOAT:
@@ -527,7 +539,7 @@ void QDemonRenderBackendGL4Impl::SetConstantValue(QDemonRenderBackendShaderProgr
 }
 
 QDemonRenderBackend::QDemonRenderBackendComputeShaderObject
-QDemonRenderBackendGL4Impl::CreateComputeShader(QDemonConstDataRef<qint8> source,
+QDemonRenderBackendGL4Impl::createComputeShader(QDemonConstDataRef<qint8> source,
                                                 QByteArray &errorMessage, bool binary)
 {
     GLuint shaderID = 0;
@@ -539,38 +551,39 @@ QDemonRenderBackendGL4Impl::CreateComputeShader(QDemonConstDataRef<qint8> source
         shaderID = 0;
     }
 #endif
-    return (QDemonRenderBackend::QDemonRenderBackendComputeShaderObject)shaderID;
+    return reinterpret_cast<QDemonRenderBackend::QDemonRenderBackendComputeShaderObject>(shaderID);
 }
 
-void QDemonRenderBackendGL4Impl::DispatchCompute(QDemonRenderBackendShaderProgramObject,
-                                                 quint32 numGroupsX, quint32 numGroupsY,
+void QDemonRenderBackendGL4Impl::dispatchCompute(QDemonRenderBackendShaderProgramObject,
+                                                 quint32 numGroupsX,
+                                                 quint32 numGroupsY,
                                                  quint32 numGroupsZ)
 {
     GL_CALL_EXTRA_FUNCTION(glDispatchCompute(numGroupsX, numGroupsY, numGroupsZ));
 }
 
-QDemonRenderBackend::QDemonRenderBackendProgramPipeline QDemonRenderBackendGL4Impl::CreateProgramPipeline()
+QDemonRenderBackend::QDemonRenderBackendProgramPipeline QDemonRenderBackendGL4Impl::createProgramPipeline()
 {
     GLuint pipeline;
     GL_CALL_EXTRA_FUNCTION(glGenProgramPipelines(1, &pipeline));
 
-    return QDemonRenderBackend::QDemonRenderBackendProgramPipeline(pipeline);
+    return reinterpret_cast<QDemonRenderBackend::QDemonRenderBackendProgramPipeline>(pipeline);
 }
 
-void QDemonRenderBackendGL4Impl::ReleaseProgramPipeline(QDemonRenderBackendProgramPipeline ppo)
+void QDemonRenderBackendGL4Impl::releaseProgramPipeline(QDemonRenderBackendProgramPipeline ppo)
 {
     GLuint pipeline = HandleToID_cast(GLuint, size_t, ppo);
     GL_CALL_EXTRA_FUNCTION(glDeleteProgramPipelines(1, &pipeline));
 }
 
-void QDemonRenderBackendGL4Impl::SetActiveProgramPipeline(QDemonRenderBackendProgramPipeline ppo)
+void QDemonRenderBackendGL4Impl::setActiveProgramPipeline(QDemonRenderBackendProgramPipeline ppo)
 {
     GLuint pipeline = HandleToID_cast(GLuint, size_t, ppo);
 
     GL_CALL_EXTRA_FUNCTION(glBindProgramPipeline(pipeline));
 }
 
-void QDemonRenderBackendGL4Impl::SetProgramStages(QDemonRenderBackendProgramPipeline ppo,
+void QDemonRenderBackendGL4Impl::setProgramStages(QDemonRenderBackendProgramPipeline ppo,
                                                   QDemonRenderShaderTypeFlags flags,
                                                   QDemonRenderBackendShaderProgramObject po)
 {
@@ -579,36 +592,36 @@ void QDemonRenderBackendGL4Impl::SetProgramStages(QDemonRenderBackendProgramPipe
 
     if (po) {
         QDemonRenderBackendShaderProgramGL *pProgram = (QDemonRenderBackendShaderProgramGL *)po;
-        programID = static_cast<GLuint>(pProgram->m_ProgramID);
+        programID = static_cast<GLuint>(pProgram->m_programID);
     }
 
     GL_CALL_EXTRA_FUNCTION(
-                glUseProgramStages(pipeline, m_Conversion.fromShaderTypeFlagsToGL(flags), programID));
+                glUseProgramStages(pipeline, m_conversion.fromShaderTypeFlagsToGL(flags), programID));
 }
 
-void QDemonRenderBackendGL4Impl::SetBlendEquation(const QDemonRenderBlendEquationArgument &pBlendEquArg)
+void QDemonRenderBackendGL4Impl::setBlendEquation(const QDemonRenderBlendEquationArgument &pBlendEquArg)
 {
     if (m_backendSupport.caps.bits.bNVAdvancedBlendSupported ||
             m_backendSupport.caps.bits.bKHRAdvancedBlendSupported)
-        GL_CALL_EXTRA_FUNCTION(glBlendEquation(m_Conversion.fromBlendEquationToGL(
-                                                   pBlendEquArg.m_RGBEquation, m_backendSupport.caps.bits.bNVAdvancedBlendSupported,
+        GL_CALL_EXTRA_FUNCTION(glBlendEquation(m_conversion.fromBlendEquationToGL(
+                                                   pBlendEquArg.m_rgbEquation, m_backendSupport.caps.bits.bNVAdvancedBlendSupported,
                                                    m_backendSupport.caps.bits.bKHRAdvancedBlendSupported)));
 }
 
-void QDemonRenderBackendGL4Impl::SetBlendBarrier(void)
+void QDemonRenderBackendGL4Impl::setBlendBarrier(void)
 {
     if (m_backendSupport.caps.bits.bNVAdvancedBlendSupported)
         GL_CALL_QDEMON_EXT(glBlendBarrierNV());
 }
 
 QDemonRenderBackend::QDemonRenderBackendPathObject
-QDemonRenderBackendGL4Impl::CreatePathNVObject(size_t range)
+QDemonRenderBackendGL4Impl::createPathNVObject(size_t range)
 {
-    GLuint pathID = GL_CALL_NVPATH_EXT(glGenPathsNV((GLsizei)range));
+    GLuint pathID = GL_CALL_NVPATH_EXT(glGenPathsNV(GLsizei(range)));
 
     return QDemonRenderBackend::QDemonRenderBackendPathObject(pathID);
 }
-void QDemonRenderBackendGL4Impl::SetPathSpecification(QDemonRenderBackendPathObject inPathObject,
+void QDemonRenderBackendGL4Impl::setPathSpecification(QDemonRenderBackendPathObject inPathObject,
                                                       QDemonConstDataRef<quint8> inPathCommands,
                                                       QDemonConstDataRef<float> inPathCoords)
 {
@@ -618,7 +631,7 @@ void QDemonRenderBackendGL4Impl::SetPathSpecification(QDemonRenderBackendPathObj
 }
 
 QDemonBounds3
-QDemonRenderBackendGL4Impl::GetPathObjectBoundingBox(QDemonRenderBackendPathObject inPathObject)
+QDemonRenderBackendGL4Impl::getPathObjectBoundingBox(QDemonRenderBackendPathObject inPathObject)
 {
     float data[4];
 #if defined(GL_NV_path_rendering)
@@ -629,7 +642,7 @@ QDemonRenderBackendGL4Impl::GetPathObjectBoundingBox(QDemonRenderBackendPathObje
     return QDemonBounds3(QVector3D(data[0], data[1], 0.0f), QVector3D(data[2], data[3], 0.0f));
 }
 
-QDemonBounds3 QDemonRenderBackendGL4Impl::GetPathObjectFillBox(QDemonRenderBackendPathObject inPathObject)
+QDemonBounds3 QDemonRenderBackendGL4Impl::getPathObjectFillBox(QDemonRenderBackendPathObject inPathObject)
 {
     float data[4];
 #if defined(GL_NV_path_rendering)
@@ -640,7 +653,7 @@ QDemonBounds3 QDemonRenderBackendGL4Impl::GetPathObjectFillBox(QDemonRenderBacke
     return QDemonBounds3(QVector3D(data[0], data[1], 0.0f), QVector3D(data[2], data[3], 0.0f));
 }
 
-QDemonBounds3 QDemonRenderBackendGL4Impl::GetPathObjectStrokeBox(QDemonRenderBackendPathObject inPathObject)
+QDemonBounds3 QDemonRenderBackendGL4Impl::getPathObjectStrokeBox(QDemonRenderBackendPathObject inPathObject)
 {
     float data[4];
 #if defined(GL_NV_path_rendering)
@@ -651,7 +664,7 @@ QDemonBounds3 QDemonRenderBackendGL4Impl::GetPathObjectStrokeBox(QDemonRenderBac
     return QDemonBounds3(QVector3D(data[0], data[1], 0.0f), QVector3D(data[2], data[3], 0.0f));
 }
 
-void QDemonRenderBackendGL4Impl::SetStrokeWidth(QDemonRenderBackendPathObject inPathObject,
+void QDemonRenderBackendGL4Impl::setStrokeWidth(QDemonRenderBackendPathObject inPathObject,
                                                 float inStrokeWidth)
 {
 #if defined(GL_NV_path_rendering)
@@ -660,7 +673,7 @@ void QDemonRenderBackendGL4Impl::SetStrokeWidth(QDemonRenderBackendPathObject in
 #endif
 }
 
-void QDemonRenderBackendGL4Impl::SetPathProjectionMatrix(const QMatrix4x4 inPathProjection)
+void QDemonRenderBackendGL4Impl::setPathProjectionMatrix(const QMatrix4x4 inPathProjection)
 {
 #if defined(QT_OPENGL_ES)
     NVRENDER_BACKEND_UNUSED(inPathProjection);
@@ -669,7 +682,7 @@ void QDemonRenderBackendGL4Impl::SetPathProjectionMatrix(const QMatrix4x4 inPath
 #endif
 }
 
-void QDemonRenderBackendGL4Impl::SetPathModelViewMatrix(const QMatrix4x4 inPathModelview)
+void QDemonRenderBackendGL4Impl::setPathModelViewMatrix(const QMatrix4x4 inPathModelview)
 {
 #if defined(QT_OPENGL_ES)
     NVRENDER_BACKEND_UNUSED(inPathModelview);
@@ -678,22 +691,22 @@ void QDemonRenderBackendGL4Impl::SetPathModelViewMatrix(const QMatrix4x4 inPathM
 #endif
 }
 
-void QDemonRenderBackendGL4Impl::SetPathStencilDepthOffset(float inSlope, float inBias)
+void QDemonRenderBackendGL4Impl::setPathStencilDepthOffset(float inSlope, float inBias)
 {
     GL_CALL_NVPATH_EXT(glPathStencilDepthOffsetNV(inSlope, inBias));
 }
 
-void QDemonRenderBackendGL4Impl::SetPathCoverDepthFunc(QDemonRenderBoolOp::Enum inDepthFunction)
+void QDemonRenderBackendGL4Impl::setPathCoverDepthFunc(QDemonRenderBoolOp::Enum inDepthFunction)
 {
-    GL_CALL_NVPATH_EXT(glPathCoverDepthFuncNV(m_Conversion.fromBoolOpToGL(inDepthFunction)));
+    GL_CALL_NVPATH_EXT(glPathCoverDepthFuncNV(m_conversion.fromBoolOpToGL(inDepthFunction)));
 }
 
-void QDemonRenderBackendGL4Impl::StencilStrokePath(QDemonRenderBackendPathObject inPathObject)
+void QDemonRenderBackendGL4Impl::stencilStrokePath(QDemonRenderBackendPathObject inPathObject)
 {
     GL_CALL_NVPATH_EXT(glStencilStrokePathNV(HandleToID_cast(GLuint, size_t, inPathObject), 0x1, (GLuint)~0));
 }
 
-void QDemonRenderBackendGL4Impl::StencilFillPath(QDemonRenderBackendPathObject inPathObject)
+void QDemonRenderBackendGL4Impl::stencilFillPath(QDemonRenderBackendPathObject inPathObject)
 {
 #if defined(GL_NV_path_rendering)
     GL_CALL_NVPATH_EXT(glStencilFillPathNV(HandleToID_cast(GLuint, size_t, inPathObject),
@@ -701,14 +714,14 @@ void QDemonRenderBackendGL4Impl::StencilFillPath(QDemonRenderBackendPathObject i
 #endif
 }
 
-void QDemonRenderBackendGL4Impl::ReleasePathNVObject(QDemonRenderBackendPathObject po, size_t range)
+void QDemonRenderBackendGL4Impl::releasePathNVObject(QDemonRenderBackendPathObject po, size_t range)
 {
     GLuint pathID = HandleToID_cast(GLuint, size_t, po);
 
     GL_CALL_NVPATH_EXT(glDeletePathsNV(pathID, (GLsizei)range));
 }
 
-void QDemonRenderBackendGL4Impl::StencilFillPathInstanced(
+void QDemonRenderBackendGL4Impl::stencilFillPathInstanced(
         QDemonRenderBackendPathObject po, size_t numPaths, QDemonRenderPathFormatType::Enum type,
         const void *charCodes, QDemonRenderPathFillMode::Enum fillMode, quint32 stencilMask,
         QDemonRenderPathTransformType::Enum transformType, const float *transformValues)
@@ -716,12 +729,12 @@ void QDemonRenderBackendGL4Impl::StencilFillPathInstanced(
     GLuint pathID = HandleToID_cast(GLuint, size_t, po);
 
     GL_CALL_NVPATH_EXT(glStencilFillPathInstancedNV(
-                           (GLsizei)numPaths, m_Conversion.fromPathTypeToGL(type), charCodes, pathID,
-                           m_Conversion.fromPathFillModeToGL(fillMode), stencilMask,
-                           m_Conversion.fromPathTransformToGL(transformType), transformValues));
+                           (GLsizei)numPaths, m_conversion.fromPathTypeToGL(type), charCodes, pathID,
+                           m_conversion.fromPathFillModeToGL(fillMode), stencilMask,
+                           m_conversion.fromPathTransformToGL(transformType), transformValues));
 }
 
-void QDemonRenderBackendGL4Impl::StencilStrokePathInstancedN(
+void QDemonRenderBackendGL4Impl::stencilStrokePathInstancedN(
         QDemonRenderBackendPathObject po, size_t numPaths, QDemonRenderPathFormatType::Enum type,
         const void *charCodes, qint32 stencilRef, quint32 stencilMask,
         QDemonRenderPathTransformType::Enum transformType, const float *transformValues)
@@ -729,11 +742,11 @@ void QDemonRenderBackendGL4Impl::StencilStrokePathInstancedN(
     GLuint pathID = HandleToID_cast(GLuint, size_t, po);
 
     GL_CALL_NVPATH_EXT(glStencilStrokePathInstancedNV(
-                           (GLsizei)numPaths, m_Conversion.fromPathTypeToGL(type), charCodes, pathID, stencilRef,
-                           stencilMask, m_Conversion.fromPathTransformToGL(transformType), transformValues));
+                           (GLsizei)numPaths, m_conversion.fromPathTypeToGL(type), charCodes, pathID, stencilRef,
+                           stencilMask, m_conversion.fromPathTransformToGL(transformType), transformValues));
 }
 
-void QDemonRenderBackendGL4Impl::CoverFillPathInstanced(
+void QDemonRenderBackendGL4Impl::coverFillPathInstanced(
         QDemonRenderBackendPathObject po, size_t numPaths, QDemonRenderPathFormatType::Enum type,
         const void *charCodes, QDemonRenderPathCoverMode::Enum coverMode,
         QDemonRenderPathTransformType::Enum transformType, const float *transformValues)
@@ -741,12 +754,12 @@ void QDemonRenderBackendGL4Impl::CoverFillPathInstanced(
     GLuint pathID = HandleToID_cast(GLuint, size_t, po);
 
     GL_CALL_NVPATH_EXT(glCoverFillPathInstancedNV(
-                           (GLsizei)numPaths, m_Conversion.fromPathTypeToGL(type), charCodes, pathID,
-                           m_Conversion.fromPathCoverModeToGL(coverMode),
-                           m_Conversion.fromPathTransformToGL(transformType), transformValues));
+                           (GLsizei)numPaths, m_conversion.fromPathTypeToGL(type), charCodes, pathID,
+                           m_conversion.fromPathCoverModeToGL(coverMode),
+                           m_conversion.fromPathTransformToGL(transformType), transformValues));
 }
 
-void QDemonRenderBackendGL4Impl::CoverStrokePathInstanced(
+void QDemonRenderBackendGL4Impl::coverStrokePathInstanced(
         QDemonRenderBackendPathObject po, size_t numPaths, QDemonRenderPathFormatType::Enum type,
         const void *charCodes, QDemonRenderPathCoverMode::Enum coverMode,
         QDemonRenderPathTransformType::Enum transformType, const float *transformValues)
@@ -754,12 +767,12 @@ void QDemonRenderBackendGL4Impl::CoverStrokePathInstanced(
     GLuint pathID = HandleToID_cast(GLuint, size_t, po);
 
     GL_CALL_NVPATH_EXT(glCoverStrokePathInstancedNV(
-                           (GLsizei)numPaths, m_Conversion.fromPathTypeToGL(type), charCodes, pathID,
-                           m_Conversion.fromPathCoverModeToGL(coverMode),
-                           m_Conversion.fromPathTransformToGL(transformType), transformValues));
+                           (GLsizei)numPaths, m_conversion.fromPathTypeToGL(type), charCodes, pathID,
+                           m_conversion.fromPathCoverModeToGL(coverMode),
+                           m_conversion.fromPathTransformToGL(transformType), transformValues));
 }
 
-void QDemonRenderBackendGL4Impl::LoadPathGlyphs(
+void QDemonRenderBackendGL4Impl::loadPathGlyphs(
         QDemonRenderBackendPathObject po, QDemonRenderPathFontTarget::Enum fontTarget, const void *fontName,
         QDemonRenderPathFontStyleFlags fontStyle, size_t numGlyphs, QDemonRenderPathFormatType::Enum type,
         const void *charCodes, QDemonRenderPathMissingGlyphs::Enum handleMissingGlyphs,
@@ -770,14 +783,14 @@ void QDemonRenderBackendGL4Impl::LoadPathGlyphs(
             ? ~0
             : HandleToID_cast(GLuint, size_t, pathParameterTemplate);
 
-    GL_CALL_NVPATH_EXT(glPathGlyphsNV(pathID, m_Conversion.fromPathFontTargetToGL(fontTarget), fontName,
-                                      m_Conversion.fromPathFontStyleToGL(fontStyle), (GLsizei)numGlyphs,
-                                      m_Conversion.fromPathTypeToGL(type), charCodes,
-                                      m_Conversion.fromPathMissingGlyphsToGL(handleMissingGlyphs),
+    GL_CALL_NVPATH_EXT(glPathGlyphsNV(pathID, m_conversion.fromPathFontTargetToGL(fontTarget), fontName,
+                                      m_conversion.fromPathFontStyleToGL(fontStyle), (GLsizei)numGlyphs,
+                                      m_conversion.fromPathTypeToGL(type), charCodes,
+                                      m_conversion.fromPathMissingGlyphsToGL(handleMissingGlyphs),
                                       pathTemplateID, emScale));
 }
 
-QDemonRenderPathReturnValues::Enum QDemonRenderBackendGL4Impl::LoadPathGlyphsIndexed(
+QDemonRenderPathReturnValues::Enum QDemonRenderBackendGL4Impl::loadPathGlyphsIndexed(
         QDemonRenderBackendPathObject po, QDemonRenderPathFontTarget::Enum fontTarget, const void *fontName,
         QDemonRenderPathFontStyleFlags fontStyle, quint32 firstGlyphIndex, size_t numGlyphs,
         QDemonRenderBackendPathObject pathParameterTemplate, float emScale)
@@ -789,14 +802,14 @@ QDemonRenderPathReturnValues::Enum QDemonRenderBackendGL4Impl::LoadPathGlyphsInd
     GLenum glRet = 0;
 
     glRet = GL_CALL_QDEMON_EXT(glPathGlyphIndexArrayNV(
-                                   pathID, m_Conversion.fromPathFontTargetToGL(fontTarget), fontName,
-                                   m_Conversion.fromPathFontStyleToGL(fontStyle), firstGlyphIndex,
+                                   pathID, m_conversion.fromPathFontTargetToGL(fontTarget), fontName,
+                                   m_conversion.fromPathFontStyleToGL(fontStyle), firstGlyphIndex,
                                    (GLsizei)numGlyphs, pathTemplateID, emScale));
 
-    return m_Conversion.fromGLToPathFontReturn(glRet);
+    return m_conversion.fromGLToPathFontReturn(glRet);
 }
 
-QDemonRenderBackend::QDemonRenderBackendPathObject QDemonRenderBackendGL4Impl::LoadPathGlyphsIndexedRange(
+QDemonRenderBackend::QDemonRenderBackendPathObject QDemonRenderBackendGL4Impl::loadPathGlyphsIndexedRange(
         QDemonRenderPathFontTarget::Enum fontTarget, const void *fontName,
         QDemonRenderPathFontStyleFlags fontStyle, QDemonRenderBackendPathObject pathParameterTemplate,
         float emScale, quint32 *count)
@@ -807,9 +820,9 @@ QDemonRenderBackend::QDemonRenderBackendPathObject QDemonRenderBackendGL4Impl::L
     GLenum glRet = 0;
     GLuint baseAndCount[2] = { 0, 0 };
 
-    glRet = GL_CALL_QDEMON_EXT(glPathGlyphIndexRangeNV(m_Conversion.fromPathFontTargetToGL(fontTarget),
+    glRet = GL_CALL_QDEMON_EXT(glPathGlyphIndexRangeNV(m_conversion.fromPathFontTargetToGL(fontTarget),
                                                        fontName,
-                                                       m_Conversion.fromPathFontStyleToGL(fontStyle),
+                                                       m_conversion.fromPathFontStyleToGL(fontStyle),
                                                        pathTemplateID, emScale, baseAndCount));
 
     if (count)
@@ -818,7 +831,7 @@ QDemonRenderBackend::QDemonRenderBackendPathObject QDemonRenderBackendGL4Impl::L
     return QDemonRenderBackend::QDemonRenderBackendPathObject(baseAndCount[0]);
 }
 
-void QDemonRenderBackendGL4Impl::LoadPathGlyphRange(
+void QDemonRenderBackendGL4Impl::loadPathGlyphRange(
         QDemonRenderBackendPathObject po, QDemonRenderPathFontTarget::Enum fontTarget, const void *fontName,
         QDemonRenderPathFontStyleFlags fontStyle, quint32 firstGlyph, size_t numGlyphs,
         QDemonRenderPathMissingGlyphs::Enum handleMissingGlyphs,
@@ -826,16 +839,16 @@ void QDemonRenderBackendGL4Impl::LoadPathGlyphRange(
 {
     GLuint pathID = HandleToID_cast(GLuint, size_t, po);
     GLuint pathTemplateID = (pathParameterTemplate == nullptr)
-            ? ~0
+            ? ~GLuint(0)
             : HandleToID_cast(GLuint, size_t, pathParameterTemplate);
 
     GL_CALL_NVPATH_EXT(glPathGlyphRangeNV(
-                           pathID, m_Conversion.fromPathFontTargetToGL(fontTarget), fontName,
-                           m_Conversion.fromPathFontStyleToGL(fontStyle), firstGlyph, (GLsizei)numGlyphs,
-                           m_Conversion.fromPathMissingGlyphsToGL(handleMissingGlyphs), pathTemplateID, emScale));
+                           pathID, m_conversion.fromPathFontTargetToGL(fontTarget), fontName,
+                           m_conversion.fromPathFontStyleToGL(fontStyle), firstGlyph, (GLsizei)numGlyphs,
+                           m_conversion.fromPathMissingGlyphsToGL(handleMissingGlyphs), pathTemplateID, emScale));
 }
 
-void QDemonRenderBackendGL4Impl::GetPathMetrics(QDemonRenderBackendPathObject po, size_t numPaths,
+void QDemonRenderBackendGL4Impl::getPathMetrics(QDemonRenderBackendPathObject po, size_t numPaths,
                                                 QDemonRenderPathGlyphFontMetricFlags metricQueryMask,
                                                 QDemonRenderPathFormatType::Enum type,
                                                 const void *charCodes, size_t stride,
@@ -843,33 +856,38 @@ void QDemonRenderBackendGL4Impl::GetPathMetrics(QDemonRenderBackendPathObject po
 {
     GLuint pathID = HandleToID_cast(GLuint, size_t, po);
 
-    GL_CALL_NVPATH_EXT(glGetPathMetricsNV(m_Conversion.fromPathMetricQueryFlagsToGL(metricQueryMask),
-                                          (GLsizei)numPaths, m_Conversion.fromPathTypeToGL(type),
+    GL_CALL_NVPATH_EXT(glGetPathMetricsNV(m_conversion.fromPathMetricQueryFlagsToGL(metricQueryMask),
+                                          (GLsizei)numPaths, m_conversion.fromPathTypeToGL(type),
                                           charCodes, pathID, (GLsizei)stride, metrics));
 }
 
 void
-QDemonRenderBackendGL4Impl::GetPathMetricsRange(QDemonRenderBackendPathObject po, size_t numPaths,
+QDemonRenderBackendGL4Impl::getPathMetricsRange(QDemonRenderBackendPathObject po, size_t numPaths,
                                                 QDemonRenderPathGlyphFontMetricFlags metricQueryMask,
                                                 size_t stride, float *metrics)
 {
     GLuint pathID = HandleToID_cast(GLuint, size_t, po);
 
-    GL_CALL_NVPATH_EXT(glGetPathMetricRangeNV(m_Conversion.fromPathMetricQueryFlagsToGL(metricQueryMask),
+    GL_CALL_NVPATH_EXT(glGetPathMetricRangeNV(m_conversion.fromPathMetricQueryFlagsToGL(metricQueryMask),
                                               pathID, (GLsizei)numPaths, (GLsizei)stride, metrics));
 }
 
-void QDemonRenderBackendGL4Impl::GetPathSpacing(
-        QDemonRenderBackendPathObject po, size_t numPaths, QDemonRenderPathListMode::Enum pathListMode,
-        QDemonRenderPathFormatType::Enum type, const void *charCodes, float advanceScale,
-        float kerningScale, QDemonRenderPathTransformType::Enum transformType, float *spacing)
+void QDemonRenderBackendGL4Impl::getPathSpacing(QDemonRenderBackendPathObject po,
+                                                size_t numPaths,
+                                                QDemonRenderPathListMode::Enum pathListMode,
+                                                QDemonRenderPathFormatType::Enum type,
+                                                const void *charCodes,
+                                                float advanceScale,
+                                                float kerningScale,
+                                                QDemonRenderPathTransformType::Enum transformType,
+                                                float *spacing)
 {
     GLuint pathID = HandleToID_cast(GLuint, size_t, po);
 
-    GL_CALL_NVPATH_EXT(glGetPathSpacingNV(m_Conversion.fromPathListModeToGL(pathListMode),
-                                          (GLsizei)numPaths, m_Conversion.fromPathTypeToGL(type),
+    GL_CALL_NVPATH_EXT(glGetPathSpacingNV(m_conversion.fromPathListModeToGL(pathListMode),
+                                          (GLsizei)numPaths, m_conversion.fromPathTypeToGL(type),
                                           charCodes, pathID, advanceScale, kerningScale,
-                                          m_Conversion.fromPathTransformToGL(transformType), spacing));
+                                          m_conversion.fromPathTransformToGL(transformType), spacing));
 }
 
 QT_END_NAMESPACE

@@ -574,7 +574,7 @@ void QDemonLayer::setTemporalAAEnabled(bool temporalAAEnabled)
     emit temporalAAEnabledChanged(m_temporalAAEnabled);
 }
 
-SGraphObject *QDemonLayer::updateSpatialNode(SGraphObject *node)
+QDemonGraphObject *QDemonLayer::updateSpatialNode(QDemonGraphObject *node)
 {
     if (!node)
         node = new SLayer();

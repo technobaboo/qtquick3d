@@ -40,10 +40,10 @@ QT_BEGIN_NAMESPACE
 
 struct QDemonRenderBackendShaderInputEntryGL
 {
-    QString m_AttribName; ///< must be the same name as used in the vertex shader
-    quint32 m_AttribLocation; ///< attribute index
-    quint32 m_Type; ///< GL vertex format type @sa GL_FLOAT, GL_INT
-    quint32 m_NumComponents; ///< component count. max 4
+    QString m_attribName; ///< must be the same name as used in the vertex shader
+    quint32 m_attribLocation; ///< attribute index
+    quint32 m_type; ///< GL vertex format type @sa GL_FLOAT, GL_INT
+    quint32 m_numComponents; ///< component count. max 4
 };
 
 ///< this class handles the shader input variables
@@ -52,7 +52,7 @@ class QDemonRenderBackendShaderInputGL
 public:
     ///< constructor
     QDemonRenderBackendShaderInputGL(QDemonDataRef<QDemonRenderBackendShaderInputEntryGL> entries)
-        : m_ShaderInputEntries(entries)
+        : m_shaderInputEntries(entries)
     {
     }
     ///< destructor
@@ -60,26 +60,25 @@ public:
 
     QDemonRenderBackendShaderInputEntryGL *getEntryByName(const QString &entryName) const
     {
-       QDEMON_FOREACH (idx , m_ShaderInputEntries.size())
+       QDEMON_FOREACH (idx , m_shaderInputEntries.size())
         {
-            if (m_ShaderInputEntries[idx].m_AttribName == entryName)
-                return &m_ShaderInputEntries.mData[idx];
+            if (m_shaderInputEntries[idx].m_attribName == entryName)
+                return &m_shaderInputEntries.mData[idx];
         }
         return nullptr;
     }
 
-    QDemonOption<QDemonRenderBackendShaderInputEntryGL>
-    getEntryByAttribLocation(quint32 attribLocation) const
+    QDemonOption<QDemonRenderBackendShaderInputEntryGL> getEntryByAttribLocation(quint32 attribLocation) const
     {
-        QDEMON_FOREACH(idx, m_ShaderInputEntries.size())
+        QDEMON_FOREACH(idx, m_shaderInputEntries.size())
         {
-            if (m_ShaderInputEntries[idx].m_AttribLocation == attribLocation)
-                return m_ShaderInputEntries[idx];
+            if (m_shaderInputEntries[idx].m_attribLocation == attribLocation)
+                return m_shaderInputEntries[idx];
         }
         return QDemonEmpty();
     }
 
-    QDemonDataRef<QDemonRenderBackendShaderInputEntryGL> m_ShaderInputEntries; ///< shader input entries
+    QDemonDataRef<QDemonRenderBackendShaderInputEntryGL> m_shaderInputEntries; ///< shader input entries
 };
 
 ///< this class represents the internals of a GL program
@@ -88,7 +87,7 @@ class QDemonRenderBackendShaderProgramGL
 public:
     ///< constructor
     QDemonRenderBackendShaderProgramGL(quint32 programID)
-        : m_ProgramID(programID)
+        : m_programID(programID)
         , m_shaderInput(nullptr)
     {
     }
@@ -96,7 +95,7 @@ public:
     ///< destructor
     ~QDemonRenderBackendShaderProgramGL(){}
 
-    quint32 m_ProgramID; ///< this is the OpenGL object ID
+    quint32 m_programID; ///< this is the OpenGL object ID
     QDemonRenderBackendShaderInputGL *m_shaderInput; ///< pointer to shader input object
 };
 

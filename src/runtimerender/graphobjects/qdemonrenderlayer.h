@@ -35,11 +35,11 @@
 #include <QtDemonRuntimeRender/qdemonrenderer.h>
 
 QT_BEGIN_NAMESPACE
-class IQDemonRenderContext;
-struct SPresentation;
-struct SEffect;
-struct SRenderPlugin;
-struct SImage;
+class QDemonRenderContextInterface;
+struct QDemonPresentation;
+struct QDemonEffect;
+struct SRenderPlugin; // TODO: ???
+struct QDemonRenderImage;
 
 struct AAModeValues
 {
@@ -105,95 +105,95 @@ struct LayerBlendTypes
 // to children as the identity.  It also can optionally have a width or height
 // different than the overlying context.  You can think of layers as the transformation
 // between a 3d scene graph and a 2D texture.
-struct Q_DEMONRUNTIMERENDER_EXPORT SLayer : public SNode
+struct Q_DEMONRUNTIMERENDER_EXPORT QDemonLayer : public QDemonGraphNode
 {
-    SScene *m_Scene;
+    QDemonRenderScene *scene;
 
     // First effect in a list of effects.
-    SEffect *m_FirstEffect;
+    QDemonEffect *firstEffect;
 
     // If a layer has a valid texture path (one that resolves to either a
     // an on-disk image or a offscreen renderer), then it does not render its
     // own source path.  Instead, it renders the offscreen renderer.  Used in this manner,
     // offscreen renderer's also have the option (if they support it) to render directly to the
     // render target given a specific viewport (that is also scissored if necessary).
-    QString m_TexturePath;
+    QString texturePath;
 
-    SRenderPlugin *m_RenderPlugin; // Overrides texture path if available.
+    SRenderPlugin *renderPlugin; // Overrides texture path if available.
 
-    AAModeValues::Enum m_ProgressiveAAMode;
-    AAModeValues::Enum m_MultisampleAAMode;
-    LayerBackground::Enum m_Background;
-    QVector3D m_ClearColor;
+    AAModeValues::Enum progressiveAAMode;
+    AAModeValues::Enum multisampleAAMode;
+    LayerBackground::Enum background;
+    QVector3D clearColor;
 
-    LayerBlendTypes::Enum m_BlendType;
+    LayerBlendTypes::Enum blendType;
 
-    HorizontalFieldValues::Enum m_HorizontalFieldValues;
-    float m_Left;
-    LayerUnitTypes::Enum m_LeftUnits;
-    float m_Width;
-    LayerUnitTypes::Enum m_WidthUnits;
-    float m_Right;
-    LayerUnitTypes::Enum m_RightUnits;
+    HorizontalFieldValues::Enum horizontalFieldValues;
+    float m_left;
+    LayerUnitTypes::Enum leftUnits;
+    float m_width;
+    LayerUnitTypes::Enum widthUnits;
+    float m_right;
+    LayerUnitTypes::Enum rightUnits;
 
-    VerticalFieldValues::Enum m_VerticalFieldValues;
-    float m_Top;
-    LayerUnitTypes::Enum m_TopUnits;
-    float m_Height;
-    LayerUnitTypes::Enum m_HeightUnits;
-    float m_Bottom;
-    LayerUnitTypes::Enum m_BottomUnits;
+    VerticalFieldValues::Enum verticalFieldValues;
+    float m_top;
+    LayerUnitTypes::Enum topUnits;
+    float m_height;
+    LayerUnitTypes::Enum heightUnits;
+    float m_bottom;
+    LayerUnitTypes::Enum bottomUnits;
 
     // Ambient occlusion
-    float m_AoStrength;
-    float m_AoDistance;
-    float m_AoSoftness;
-    float m_AoBias;
-    qint32 m_AoSamplerate;
-    bool m_AoDither;
+    float aoStrength;
+    float aoDistance;
+    float aoSoftness;
+    float aoBias;
+    qint32 aoSamplerate;
+    bool aoDither;
 
     // Direct occlusion
-    float m_ShadowStrength;
-    float m_ShadowDist;
-    float m_ShadowSoftness;
-    float m_ShadowBias;
+    float shadowStrength;
+    float shadowDist;
+    float shadowSoftness;
+    float shadowBias;
 
     // IBL
-    SImage *m_LightProbe;
-    float m_ProbeBright;
-    bool m_FastIbl;
-    float m_ProbeHorizon;
-    float m_ProbeFov;
-    SImage *m_LightProbe2;
-    float m_Probe2Fade;
-    float m_Probe2Window;
-    float m_Probe2Pos;
+    QDemonRenderImage *lightProbe;
+    float probeBright;
+    bool fastIbl;
+    float probeHorizon;
+    float probeFov;
+    QDemonRenderImage *lightProbe2;
+    float probe2Fade;
+    float probe2Window;
+    float probe2Pos;
 
-    bool m_TemporalAAEnabled;
+    bool temporalAAEnabled;
 
-    SLayer();
+    QDemonLayer();
 
-    void AddEffect(SEffect &inEffect);
+    void addEffect(QDemonEffect &inEffect);
 
-    SEffect *GetLastEffect();
+    QDemonEffect *getLastEffect();
 
-    LayerBlendTypes::Enum GetLayerBlend()
+    LayerBlendTypes::Enum getLayerBlend()
     {
-        return m_BlendType;
+        return blendType;
     }
 
     // Generic method used during serialization
     // to remap string and object pointers
     template <typename TRemapperType>
-    void Remap(TRemapperType &inRemapper)
+    void remap(TRemapperType &inRemapper)
     {
-        SNode::Remap(inRemapper);
-        inRemapper.Remap(m_Scene);
-        inRemapper.Remap(m_FirstEffect);
-        inRemapper.Remap(m_TexturePath);
-        inRemapper.Remap(m_RenderPlugin);
-        inRemapper.Remap(m_LightProbe);
-        inRemapper.Remap(m_LightProbe2);
+        QDemonGraphNode::remap(inRemapper);
+        inRemapper.remap(scene);
+        inRemapper.remap(firstEffect);
+        inRemapper.remap(texturePath);
+        inRemapper.remap(renderPlugin);
+        inRemapper.remap(lightProbe);
+        inRemapper.remap(lightProbe2);
     }
 };
 QT_END_NAMESPACE

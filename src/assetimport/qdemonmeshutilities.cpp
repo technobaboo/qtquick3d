@@ -40,114 +40,114 @@ namespace QDemonMeshUtilities {
 struct MeshSubsetV1
 {
     // See description of a logical vertex buffer below
-    quint32 m_LogicalVbufIndex;
+    quint32 m_logicalVbufIndex;
     // QDEMON_MAX_U32 means use all available items
-    quint32 m_Count;
+    quint32 m_count;
     // Offset is in item size, not bytes.
-    quint32 m_Offset;
+    quint32 m_offset;
     // Bounds of this subset.  This is filled in by the builder
     // see AddMeshSubset
-    QDemonBounds3 m_Bounds;
+    QDemonBounds3 m_bounds;
 };
 
 struct LogicalVertexBuffer
 {
-    quint32 m_ByteOffset;
-    quint32 m_ByteSize;
+    quint32 m_byteOffset;
+    quint32 m_byteSize;
     LogicalVertexBuffer(quint32 byteOff, quint32 byteSize)
-        : m_ByteOffset(byteOff)
-        , m_ByteSize(byteSize)
+        : m_byteOffset(byteOff)
+        , m_byteSize(byteSize)
     {
     }
     LogicalVertexBuffer()
-        : m_ByteOffset(0)
-        , m_ByteSize(0)
+        : m_byteOffset(0)
+        , m_byteSize(0)
     {
     }
 };
 
 struct MeshV1
 {
-    VertexBuffer m_VertexBuffer;
-    IndexBuffer m_IndexBuffer;
-    OffsetDataRef<LogicalVertexBuffer> m_LogicalVertexBuffers; // may be empty
-    OffsetDataRef<MeshSubsetV1> m_Subsets;
-    QDemonRenderDrawMode::Enum m_DrawMode;
-    QDemonRenderWinding::Enum m_Winding;
+    VertexBuffer m_vertexBuffer;
+    IndexBuffer m_indexBuffer;
+    OffsetDataRef<LogicalVertexBuffer> m_logicalVertexBuffers; // may be empty
+    OffsetDataRef<MeshSubsetV1> m_subsets;
+    QDemonRenderDrawMode::Enum m_drawMode;
+    QDemonRenderWinding::Enum m_winding;
     typedef MeshSubsetV1 TSubsetType;
 };
 
 
 template <typename TSerializer>
-void Serialize(TSerializer &serializer, MeshV1 &mesh)
+void serialize(TSerializer &serializer, MeshV1 &mesh)
 {
     quint8 *baseAddr = reinterpret_cast<quint8 *>(&mesh);
-    serializer.streamify(mesh.m_VertexBuffer.m_Entries);
+    serializer.streamify(mesh.m_vertexBuffer.m_entries);
     serializer.align();
-    for (quint32 entry = 0, __numItems = (quint32)mesh.m_VertexBuffer.m_Entries.size(); entry < __numItems; ++entry)
+    for (quint32 entry = 0, __numItems = (quint32)mesh.m_vertexBuffer.m_entries.size(); entry < __numItems; ++entry)
     {
         MeshVertexBufferEntry &entryData = const_cast<MeshVertexBufferEntry &>(
-            mesh.m_VertexBuffer.m_Entries.index(baseAddr, entry));
-        serializer.streamifyCharPointerOffset(entryData.m_NameOffset);
+            mesh.m_vertexBuffer.m_entries.index(baseAddr, entry));
+        serializer.streamifyCharPointerOffset(entryData.m_nameOffset);
         serializer.align();
     }
-    serializer.streamify(mesh.m_VertexBuffer.m_Data);
+    serializer.streamify(mesh.m_vertexBuffer.m_data);
     serializer.align();
-    serializer.streamify(mesh.m_IndexBuffer.m_Data);
+    serializer.streamify(mesh.m_indexBuffer.m_data);
     serializer.align();
-    serializer.streamify(mesh.m_LogicalVertexBuffers);
+    serializer.streamify(mesh.m_logicalVertexBuffers);
     serializer.align();
-    serializer.streamify(mesh.m_Subsets);
+    serializer.streamify(mesh.m_subsets);
     serializer.align();
 }
 
 struct MeshSubsetV2
 {
-    quint32 m_LogicalVbufIndex;
-    quint32 m_Count;
-    quint32 m_Offset;
-    QDemonBounds3 m_Bounds;
-    OffsetDataRef<char16_t> m_Name;
+    quint32 m_logicalVbufIndex;
+    quint32 m_count;
+    quint32 m_offset;
+    QDemonBounds3 m_bounds;
+    OffsetDataRef<char16_t> m_name;
 };
 
 struct MeshV2
 {
-    static const char16_t *s_DefaultName;
+    static const char16_t *m_defaultName;
 
-    VertexBuffer m_VertexBuffer;
-    IndexBuffer m_IndexBuffer;
-    OffsetDataRef<LogicalVertexBuffer> m_LogicalVertexBuffers; // may be empty
-    OffsetDataRef<MeshSubsetV2> m_Subsets;
-    QDemonRenderDrawMode::Enum m_DrawMode;
-    QDemonRenderWinding::Enum m_Winding;
+    VertexBuffer m_vertexBuffer;
+    IndexBuffer m_indexBuffer;
+    OffsetDataRef<LogicalVertexBuffer> m_logicalVertexBuffers; // may be empty
+    OffsetDataRef<MeshSubsetV2> m_subsets;
+    QDemonRenderDrawMode::Enum m_drawMode;
+    QDemonRenderWinding::Enum m_winding;
     typedef MeshSubsetV2 TSubsetType;
 };
 
 template <typename TSerializer>
-void Serialize(TSerializer &serializer, MeshV2 &mesh)
+void serialize(TSerializer &serializer, MeshV2 &mesh)
 {
     quint8 *baseAddr = reinterpret_cast<quint8 *>(&mesh);
-    serializer.streamify(mesh.m_VertexBuffer.m_Entries);
+    serializer.streamify(mesh.m_vertexBuffer.m_entries);
     serializer.align();
-    for (quint32 entry = 0, __numItems = (quint32)mesh.m_VertexBuffer.m_Entries.size(); entry < __numItems; ++entry)
+    for (quint32 entry = 0, __numItems = (quint32)mesh.m_vertexBuffer.m_entries.size(); entry < __numItems; ++entry)
     {
         MeshVertexBufferEntry &entryData = const_cast<MeshVertexBufferEntry &>(
-            mesh.m_VertexBuffer.m_Entries.index(baseAddr, entry));
-        serializer.streamifyCharPointerOffset(entryData.m_NameOffset);
+            mesh.m_vertexBuffer.m_entries.index(baseAddr, entry));
+        serializer.streamifyCharPointerOffset(entryData.m_nameOffset);
         serializer.align();
     }
-    serializer.streamify(mesh.m_VertexBuffer.m_Data);
+    serializer.streamify(mesh.m_vertexBuffer.m_data);
     serializer.align();
-    serializer.streamify(mesh.m_IndexBuffer.m_Data);
+    serializer.streamify(mesh.m_indexBuffer.m_data);
     serializer.align();
-    serializer.streamify(mesh.m_LogicalVertexBuffers);
+    serializer.streamify(mesh.m_logicalVertexBuffers);
     serializer.align();
-    serializer.streamify(mesh.m_Subsets);
+    serializer.streamify(mesh.m_subsets);
     serializer.align();
-    for (quint32 entry = 0, __numItems = (quint32)mesh.m_Subsets.size(); entry < __numItems; ++entry)
+    for (quint32 entry = 0, __numItems = (quint32)mesh.m_subsets.size(); entry < __numItems; ++entry)
     {
-        MeshSubsetV2 &theSubset = const_cast<MeshSubsetV2 &>(mesh.m_Subsets.index(baseAddr, entry));
-        serializer.streamify(theSubset.m_Name);
+        MeshSubsetV2 &theSubset = const_cast<MeshSubsetV2 &>(mesh.m_subsets.index(baseAddr, entry));
+        serializer.streamify(theSubset.m_name);
         serializer.align();
     }
 }
@@ -160,113 +160,113 @@ void Serialize(TSerializer &serializer, MeshV2 &mesh)
 // alignment a lot.  The hardest way is to use knowledge of the datatypes and
 // only request alignment when necessary.
 template <typename TSerializer>
-void Serialize(TSerializer &serializer, Mesh &mesh)
+void serialize(TSerializer &serializer, Mesh &mesh)
 {
     quint8 *baseAddr = reinterpret_cast<quint8 *>(&mesh);
-    serializer.streamify(mesh.m_VertexBuffer.m_Entries);
+    serializer.streamify(mesh.m_vertexBuffer.m_entries);
     serializer.align();
 
-    for (quint32 entry = 0, numItems = mesh.m_VertexBuffer.m_Entries.size(); entry < numItems; ++entry)
+    for (quint32 entry = 0, numItems = mesh.m_vertexBuffer.m_entries.size(); entry < numItems; ++entry)
     {
-        MeshVertexBufferEntry &entryData = mesh.m_VertexBuffer.m_Entries.index(baseAddr, entry);
-        serializer.streamifyCharPointerOffset(entryData.m_NameOffset);
+        MeshVertexBufferEntry &entryData = mesh.m_vertexBuffer.m_entries.index(baseAddr, entry);
+        serializer.streamifyCharPointerOffset(entryData.m_nameOffset);
         serializer.align();
     }
-    serializer.streamify(mesh.m_VertexBuffer.m_Data);
+    serializer.streamify(mesh.m_vertexBuffer.m_data);
     serializer.align();
-    serializer.streamify(mesh.m_IndexBuffer.m_Data);
+    serializer.streamify(mesh.m_indexBuffer.m_data);
     serializer.align();
-    serializer.streamify(mesh.m_Subsets);
+    serializer.streamify(mesh.m_subsets);
     serializer.align();
 
-    for (quint32 entry = 0, numItems = mesh.m_Subsets.size(); entry < numItems; ++entry)
+    for (quint32 entry = 0, numItems = mesh.m_subsets.size(); entry < numItems; ++entry)
     {
-        MeshSubset &theSubset = const_cast<MeshSubset &>(mesh.m_Subsets.index(baseAddr, entry));
-        serializer.streamify(theSubset.m_Name);
+        MeshSubset &theSubset = const_cast<MeshSubset &>(mesh.m_subsets.index(baseAddr, entry));
+        serializer.streamify(theSubset.m_name);
         serializer.align();
     }
-    serializer.streamify(mesh.m_Joints);
+    serializer.streamify(mesh.m_joints);
     serializer.align();
 }
 
 struct TotallingSerializer
 {
-    quint32 m_NumBytes;
-    quint8 *m_BaseAddress;
+    quint32 m_numBytes;
+    quint8 *m_baseAddress;
     TotallingSerializer(quint8 *inBaseAddr)
-        : m_NumBytes(0)
-        , m_BaseAddress(inBaseAddr)
+        : m_numBytes(0)
+        , m_baseAddress(inBaseAddr)
     {
     }
     template <typename TDataType>
     void streamify(const OffsetDataRef<TDataType> &data)
     {
-        m_NumBytes += data.size() * sizeof(TDataType);
+        m_numBytes += data.size() * sizeof(TDataType);
     }
     void streamify(const char *data)
     {
         if (data == nullptr)
             data = "";
         quint32 len = (quint32)strlen(data) + 1;
-        m_NumBytes += 4;
-        m_NumBytes += len;
+        m_numBytes += 4;
+        m_numBytes += len;
     }
     void streamifyCharPointerOffset(quint32 inOffset)
     {
         if (inOffset) {
-            const char *dataPtr = (const char *)(inOffset + m_BaseAddress);
+            const char *dataPtr = (const char *)(inOffset + m_baseAddress);
             streamify(dataPtr);
         } else
             streamify("");
     }
     bool needsAlignment() const { return getAlignmentAmount() > 0; }
-    quint32 getAlignmentAmount() const { return 4 - (m_NumBytes % 4); }
+    quint32 getAlignmentAmount() const { return 4 - (m_numBytes % 4); }
     void align()
     {
         if (needsAlignment())
-            m_NumBytes += getAlignmentAmount();
+            m_numBytes += getAlignmentAmount();
     }
 };
 
 struct ByteWritingSerializer
 {
-    QIODevice &m_Stream;
-    TotallingSerializer m_ByteCounter;
-    quint8 *m_BaseAddress;
+    QIODevice &m_stream;
+    TotallingSerializer m_byteCounter;
+    quint8 *m_baseAddress;
     ByteWritingSerializer(QIODevice &str, quint8 *inBaseAddress)
-        : m_Stream(str)
-        , m_ByteCounter(inBaseAddress)
-        , m_BaseAddress(inBaseAddress)
+        : m_stream(str)
+        , m_byteCounter(inBaseAddress)
+        , m_baseAddress(inBaseAddress)
     {
     }
 
     template <typename TDataType>
     void streamify(const OffsetDataRef<TDataType> &data)
     {
-        m_ByteCounter.streamify(data);
-        m_Stream.write(reinterpret_cast<const char *>(data.begin(m_BaseAddress)), data.size());
+        m_byteCounter.streamify(data);
+        m_stream.write(reinterpret_cast<const char *>(data.begin(m_baseAddress)), data.size());
     }
     void streamify(const char *data)
     {
-        m_ByteCounter.streamify(data);
+        m_byteCounter.streamify(data);
         if (data == nullptr)
             data = "";
         quint32 len = (quint32)strlen(data) + 1;
-        m_Stream.write(reinterpret_cast<const char *>(&len), sizeof(quint32));
-        m_Stream.write(data, len);
+        m_stream.write(reinterpret_cast<const char *>(&len), sizeof(quint32));
+        m_stream.write(data, len);
     }
     void streamifyCharPointerOffset(quint32 inOffset)
     {
-        const char *dataPtr = (const char *)(inOffset + m_BaseAddress);
+        const char *dataPtr = (const char *)(inOffset + m_baseAddress);
         streamify(dataPtr);
     }
 
     void align()
     {
-        if (m_ByteCounter.needsAlignment()) {
+        if (m_byteCounter.needsAlignment()) {
             quint8 buffer[] = { 0, 0, 0, 0 };
-            m_Stream.write(reinterpret_cast<const char *>(buffer), m_ByteCounter.getAlignmentAmount());
-            m_ByteCounter.align();
+            m_stream.write(reinterpret_cast<const char *>(buffer), m_byteCounter.getAlignmentAmount());
+            m_byteCounter.align();
         }
     }
 };
@@ -274,94 +274,94 @@ struct ByteWritingSerializer
 
 struct MemoryAssigningSerializer
 {
-    quint8 *m_Memory;
-    quint8 *m_BaseAddress;
-    quint32 m_Size;
-    TotallingSerializer m_ByteCounter;
-    bool m_Failure;
+    quint8 *m_memory;
+    quint8 *m_baseAddress;
+    quint32 m_size;
+    TotallingSerializer m_byteCounter;
+    bool m_failure;
     MemoryAssigningSerializer(quint8 *data, quint32 size, quint32 startOffset)
-        : m_Memory(data + startOffset)
-        , m_BaseAddress(data)
-        , m_Size(size)
-        , m_ByteCounter(data)
-        , m_Failure(false)
+        : m_memory(data + startOffset)
+        , m_baseAddress(data)
+        , m_size(size)
+        , m_byteCounter(data)
+        , m_failure(false)
     {
         // We expect 4 byte aligned memory to begin with
-        Q_ASSERT((((size_t)m_Memory) % 4) == 0);
+        Q_ASSERT((((size_t)m_memory) % 4) == 0);
     }
 
     template <typename TDataType>
     void streamify(const OffsetDataRef<TDataType> &_data)
     {
         OffsetDataRef<TDataType> &data = const_cast<OffsetDataRef<TDataType> &>(_data);
-        if (m_Failure) {
-            data.m_Size = 0;
-            data.m_Offset = 0;
+        if (m_failure) {
+            data.m_size = 0;
+            data.m_offset = 0;
             return;
         }
-        quint32 current = m_ByteCounter.m_NumBytes;
-        m_ByteCounter.streamify(_data);
-        if (m_ByteCounter.m_NumBytes > m_Size) {
-            data.m_Size = 0;
-            data.m_Offset = 0;
-            m_Failure = true;
+        quint32 current = m_byteCounter.m_numBytes;
+        m_byteCounter.streamify(_data);
+        if (m_byteCounter.m_numBytes > m_size) {
+            data.m_size = 0;
+            data.m_offset = 0;
+            m_failure = true;
             return;
         }
-        quint32 numBytes = m_ByteCounter.m_NumBytes - current;
+        quint32 numBytes = m_byteCounter.m_numBytes - current;
         if (numBytes) {
-            data.m_Offset = (quint32)(m_Memory - m_BaseAddress);
+            data.m_offset = (quint32)(m_memory - m_baseAddress);
             updateMemoryBuffer(numBytes);
         } else {
-            data.m_Offset = 0;
-            data.m_Size = 0;
+            data.m_offset = 0;
+            data.m_size = 0;
         }
     }
     void streamify(const char *&_data)
     {
         quint32 len;
-        m_ByteCounter.m_NumBytes += 4;
-        if (m_ByteCounter.m_NumBytes > m_Size) {
+        m_byteCounter.m_numBytes += 4;
+        if (m_byteCounter.m_numBytes > m_size) {
             _data = "";
-            m_Failure = true;
+            m_failure = true;
             return;
         }
-        memcpy(&len, m_Memory, 4);
+        memcpy(&len, m_memory, 4);
         updateMemoryBuffer(4);
-        m_ByteCounter.m_NumBytes += len;
-        if (m_ByteCounter.m_NumBytes > m_Size) {
+        m_byteCounter.m_numBytes += len;
+        if (m_byteCounter.m_numBytes > m_size) {
             _data = "";
-            m_Failure = true;
+            m_failure = true;
             return;
         }
-        _data = (const char *)m_Memory;
+        _data = (const char *)m_memory;
         updateMemoryBuffer(len);
     }
     void streamifyCharPointerOffset(quint32 &inOffset)
     {
         const char *dataPtr;
         streamify(dataPtr);
-        inOffset = (quint32)(dataPtr - (const char *)m_BaseAddress);
+        inOffset = (quint32)(dataPtr - (const char *)m_baseAddress);
     }
     void align()
     {
-        if (m_ByteCounter.needsAlignment()) {
-            quint32 numBytes = m_ByteCounter.getAlignmentAmount();
-            m_ByteCounter.align();
+        if (m_byteCounter.needsAlignment()) {
+            quint32 numBytes = m_byteCounter.getAlignmentAmount();
+            m_byteCounter.align();
             updateMemoryBuffer(numBytes);
         }
     }
-    void updateMemoryBuffer(quint32 numBytes) { m_Memory += numBytes; }
+    void updateMemoryBuffer(quint32 numBytes) { m_memory += numBytes; }
 };
 
-inline quint32 GetMeshDataSize(Mesh &mesh)
+inline quint32 getMeshDataSize(Mesh &mesh)
 {
     TotallingSerializer s(reinterpret_cast<quint8 *>(&mesh));
-    Serialize(s, mesh);
-    return s.m_NumBytes;
+    serialize(s, mesh);
+    return s.m_numBytes;
 }
 
 template <typename TDataType>
-quint32 NextIndex(const quint8 *inBaseAddress, const OffsetDataRef<quint8> data, quint32 idx)
+quint32 nextIndex(const quint8 *inBaseAddress, const OffsetDataRef<quint8> data, quint32 idx)
 {
     quint32 numItems = data.size() / sizeof(TDataType);
     if (idx < numItems) {
@@ -374,7 +374,7 @@ quint32 NextIndex(const quint8 *inBaseAddress, const OffsetDataRef<quint8> data,
 }
 
 template <typename TDataType>
-quint32 NextIndex(const QByteArray &data, quint32 idx)
+quint32 nextIndex(const QByteArray &data, quint32 idx)
 {
     quint32 numItems = data.size() / sizeof(TDataType);
     if (idx < numItems) {
@@ -386,23 +386,23 @@ quint32 NextIndex(const QByteArray &data, quint32 idx)
     }
 }
 
-inline quint32 NextIndex(const QByteArray &inData, QDemonRenderComponentTypes::Enum inCompType, quint32 idx)
+inline quint32 nextIndex(const QByteArray &inData, QDemonRenderComponentTypes::Enum inCompType, quint32 idx)
 {
     if (inData.size() == 0)
         return idx;
     switch (inCompType) {
     case QDemonRenderComponentTypes::UnsignedInteger8:
-        return NextIndex<quint8>(inData, idx);
+        return nextIndex<quint8>(inData, idx);
     case QDemonRenderComponentTypes::Integer8:
-        return NextIndex<quint8>(inData, idx);
+        return nextIndex<quint8>(inData, idx);
     case QDemonRenderComponentTypes::UnsignedInteger16:
-        return NextIndex<quint16>(inData, idx);
+        return nextIndex<quint16>(inData, idx);
     case QDemonRenderComponentTypes::Integer16:
-        return NextIndex<qint16>(inData, idx);
+        return nextIndex<qint16>(inData, idx);
     case QDemonRenderComponentTypes::UnsignedInteger32:
-        return NextIndex<quint32>(inData, idx);
+        return nextIndex<quint32>(inData, idx);
     case QDemonRenderComponentTypes::Integer32:
-        return NextIndex<qint32>(inData, idx);
+        return nextIndex<qint32>(inData, idx);
     default:
         // Invalid index buffer index type.
         Q_ASSERT(false);
@@ -413,21 +413,21 @@ inline quint32 NextIndex(const QByteArray &inData, QDemonRenderComponentTypes::E
 
 template <typename TMeshType>
 // Not exposed to the outside world
-TMeshType *DoInitialize(quint16 /*meshFlags*/, QDemonDataRef<char> data)
+TMeshType *doInitialize(quint16 /*meshFlags*/, QDemonDataRef<char> data)
 {
     quint8 *newMem = reinterpret_cast<quint8*>(data.begin());
     quint32 amountLeft = data.size() - sizeof(TMeshType);
     MemoryAssigningSerializer s(newMem, amountLeft, sizeof(TMeshType));
     TMeshType *retval = (TMeshType *)newMem;
-    Serialize(s, *retval);
-    if (s.m_Failure)
+    serialize(s, *retval);
+    if (s.m_failure)
         return nullptr;
     return retval;
 }
 
 static char16_t g_DefaultName[] = { 0 };
 
-const char16_t *Mesh::s_DefaultName = g_DefaultName;
+const char16_t *Mesh::m_defaultName = g_DefaultName;
 
 template <typename TMeshType>
 struct SubsetNameHandler
@@ -437,30 +437,30 @@ struct SubsetNameHandler
 template <>
 struct SubsetNameHandler<MeshV1>
 {
-    void AssignName(const quint8 * /*v1BaseAddress*/, const MeshSubsetV1 & /*mesh*/,
+    void assignName(const quint8 * /*v1BaseAddress*/, const MeshSubsetV1 & /*mesh*/,
                     quint8 * /*baseAddress*/, quint8 *& /*nameBuffer*/, MeshSubset &outDest)
     {
-        outDest.m_Name = OffsetDataRef<char16_t>();
+        outDest.m_name = OffsetDataRef<char16_t>();
     }
-    quint32 NameLength(const MeshSubsetV1 &) { return 0; }
+    quint32 nameLength(const MeshSubsetV1 &) { return 0; }
 };
 
 template <>
 struct SubsetNameHandler<MeshV2>
 {
-    void AssignName(const quint8 *v2BaseAddress, const MeshSubsetV2 &mesh, quint8 *baseAddress,
+    void assignName(const quint8 *v2BaseAddress, const MeshSubsetV2 &mesh, quint8 *baseAddress,
                     quint8 *&nameBuffer, MeshSubset &outDest)
     {
-        outDest.m_Name.m_Size = mesh.m_Name.m_Size;
-        outDest.m_Name.m_Offset = (quint32)(nameBuffer - baseAddress);
-        quint32 dtypeSize = mesh.m_Name.m_Size * 2;
-        memcpy(nameBuffer, mesh.m_Name.begin(v2BaseAddress), dtypeSize);
+        outDest.m_name.m_size = mesh.m_name.m_size;
+        outDest.m_name.m_offset = (quint32)(nameBuffer - baseAddress);
+        quint32 dtypeSize = mesh.m_name.m_size * 2;
+        memcpy(nameBuffer, mesh.m_name.begin(v2BaseAddress), dtypeSize);
         nameBuffer += dtypeSize;
     }
-    quint32 NameLength(const MeshSubsetV2 &mesh) { return (mesh.m_Name.size() + 1) * 2; }
+    quint32 nameLength(const MeshSubsetV2 &mesh) { return (mesh.m_name.size() + 1) * 2; }
 };
 
-quint32 GetAlignedOffset(quint32 offset, quint32 align)
+quint32 getAlignedOffset(quint32 offset, quint32 align)
 {
     quint32 leftover = offset % align;
     if (leftover)
@@ -469,41 +469,40 @@ quint32 GetAlignedOffset(quint32 offset, quint32 align)
 }
 
 template <typename TPreviousMeshType>
-Mesh *CreateMeshFromPreviousMesh(TPreviousMeshType *temp)
+Mesh *createMeshFromPreviousMesh(TPreviousMeshType *temp)
 {
     quint32 newMeshSize = sizeof(Mesh);
     quint8 *tempBaseAddress = reinterpret_cast<quint8 *>(temp);
     quint32 alignment = sizeof(void *);
 
-    quint32 vertBufferSize = GetAlignedOffset(temp->m_VertexBuffer.m_Data.size(), alignment);
+    quint32 vertBufferSize = getAlignedOffset(temp->m_vertexBuffer.m_data.size(), alignment);
     newMeshSize += vertBufferSize;
-    quint32 entryDataSize = temp->m_VertexBuffer.m_Entries.size() * sizeof(MeshVertexBufferEntry);
+    quint32 entryDataSize = temp->m_vertexBuffer.m_entries.size() * sizeof(MeshVertexBufferEntry);
     newMeshSize += entryDataSize;
-    quint32 indexBufferSize = GetAlignedOffset(temp->m_IndexBuffer.m_Data.size(), alignment);
+    quint32 indexBufferSize = getAlignedOffset(temp->m_indexBuffer.m_data.size(), alignment);
     newMeshSize += indexBufferSize;
     quint32 entryNameSize = 0;
-    for (quint32 entryIdx = 0, entryEnd = temp->m_VertexBuffer.m_Entries.size(); entryIdx < entryEnd;
+    for (quint32 entryIdx = 0, entryEnd = temp->m_vertexBuffer.m_entries.size(); entryIdx < entryEnd;
          ++entryIdx) {
         const QDemonRenderVertexBufferEntry theEntry =
-            temp->m_VertexBuffer.m_Entries.index(tempBaseAddress, entryIdx).ToVertexBufferEntry(tempBaseAddress);
-        const char *namePtr = theEntry.m_Name;
+            temp->m_vertexBuffer.m_entries.index(tempBaseAddress, entryIdx).toVertexBufferEntry(tempBaseAddress);
+        const char *namePtr = theEntry.m_name;
         if (namePtr == nullptr)
             namePtr = "";
 
-        entryNameSize += (quint32)strlen(theEntry.m_Name) + 1;
+        entryNameSize += (quint32)strlen(theEntry.m_name) + 1;
     }
-    entryNameSize = GetAlignedOffset(entryNameSize, alignment);
+    entryNameSize = getAlignedOffset(entryNameSize, alignment);
 
     newMeshSize += entryNameSize;
-    quint32 subsetBufferSize = temp->m_Subsets.size() * sizeof(MeshSubset);
+    quint32 subsetBufferSize = temp->m_subsets.size() * sizeof(MeshSubset);
     newMeshSize += subsetBufferSize;
     quint32 nameLength = 0;
-    for (quint32 subsetIdx = 0, subsetEnd = temp->m_Subsets.size(); subsetIdx < subsetEnd;
+    for (quint32 subsetIdx = 0, subsetEnd = temp->m_subsets.size(); subsetIdx < subsetEnd;
          ++subsetIdx) {
-        nameLength += SubsetNameHandler<TPreviousMeshType>().NameLength(
-            temp->m_Subsets.index(tempBaseAddress, subsetIdx));
+        nameLength += SubsetNameHandler<TPreviousMeshType>().nameLength(temp->m_subsets.index(tempBaseAddress, subsetIdx));
     }
-    nameLength = GetAlignedOffset(nameLength, alignment);
+    nameLength = getAlignedOffset(nameLength, alignment);
 
     newMeshSize += nameLength;
 
@@ -516,56 +515,54 @@ Mesh *CreateMeshFromPreviousMesh(TPreviousMeshType *temp)
     quint8 *subsetBufferData = indexBufferData + indexBufferSize;
     quint8 *nameData = subsetBufferData + subsetBufferSize;
 
-    retval->m_DrawMode = temp->m_DrawMode;
-    retval->m_Winding = temp->m_Winding;
-    retval->m_VertexBuffer = temp->m_VertexBuffer;
-    retval->m_VertexBuffer.m_Data.m_Offset = (quint32)(vertBufferData - baseOffset);
-    retval->m_VertexBuffer.m_Entries.m_Offset = (quint32)(entryBufferData - baseOffset);
-    memcpy(vertBufferData, temp->m_VertexBuffer.m_Data.begin(tempBaseAddress),
-            temp->m_VertexBuffer.m_Data.size());
-    memcpy(entryBufferData, temp->m_VertexBuffer.m_Entries.begin(tempBaseAddress), entryDataSize);
-    for (quint32 idx = 0, __numItems = (quint32)temp->m_VertexBuffer.m_Entries.size(); idx < __numItems; ++idx)
+    retval->m_drawMode = temp->m_drawMode;
+    retval->m_winding = temp->m_winding;
+    retval->m_vertexBuffer = temp->m_vertexBuffer;
+    retval->m_vertexBuffer.m_data.m_offset = (quint32)(vertBufferData - baseOffset);
+    retval->m_vertexBuffer.m_entries.m_offset = (quint32)(entryBufferData - baseOffset);
+    memcpy(vertBufferData, temp->m_vertexBuffer.m_data.begin(tempBaseAddress),
+            temp->m_vertexBuffer.m_data.size());
+    memcpy(entryBufferData, temp->m_vertexBuffer.m_entries.begin(tempBaseAddress), entryDataSize);
+    for (quint32 idx = 0, __numItems = (quint32)temp->m_vertexBuffer.m_entries.size(); idx < __numItems; ++idx)
     {
-        const MeshVertexBufferEntry &src =
-            temp->m_VertexBuffer.m_Entries.index(tempBaseAddress, idx);
-        MeshVertexBufferEntry &dest = retval->m_VertexBuffer.m_Entries.index(baseOffset, idx);
+        const MeshVertexBufferEntry &src = temp->m_vertexBuffer.m_entries.index(tempBaseAddress, idx);
+        MeshVertexBufferEntry &dest = retval->m_vertexBuffer.m_entries.index(baseOffset, idx);
 
-        const char *targetName = reinterpret_cast<const char *>(src.m_NameOffset + tempBaseAddress);
-        if (src.m_NameOffset == 0)
+        const char *targetName = reinterpret_cast<const char *>(src.m_nameOffset + tempBaseAddress);
+        if (src.m_nameOffset == 0)
             targetName = "";
         quint32 nameLen = (quint32)strlen(targetName) + 1;
-        dest.m_NameOffset = (quint32)(entryNameBuffer - baseOffset);
+        dest.m_nameOffset = (quint32)(entryNameBuffer - baseOffset);
         memcpy(entryNameBuffer, targetName, nameLen);
         entryNameBuffer += nameLen;
     }
 
-    retval->m_IndexBuffer = temp->m_IndexBuffer;
-    retval->m_IndexBuffer.m_Data.m_Offset = (quint32)(indexBufferData - baseOffset);
-    memcpy(indexBufferData, temp->m_IndexBuffer.m_Data.begin(tempBaseAddress),
-            temp->m_IndexBuffer.m_Data.size());
+    retval->m_indexBuffer = temp->m_indexBuffer;
+    retval->m_indexBuffer.m_data.m_offset = (quint32)(indexBufferData - baseOffset);
+    memcpy(indexBufferData, temp->m_indexBuffer.m_data.begin(tempBaseAddress),
+            temp->m_indexBuffer.m_data.size());
 
-    retval->m_Subsets.m_Size = temp->m_Subsets.m_Size;
-    retval->m_Subsets.m_Offset = (quint32)(subsetBufferData - baseOffset);
+    retval->m_subsets.m_size = temp->m_subsets.m_size;
+    retval->m_subsets.m_offset = (quint32)(subsetBufferData - baseOffset);
 
-    for (quint32 idx = 0, __numItems = (quint32)temp->m_Subsets.size(); idx < __numItems; ++idx)
+    for (quint32 idx = 0, numItems = (quint32)temp->m_subsets.size(); idx < numItems; ++idx)
     {
-        MeshSubset &dest = const_cast<MeshSubset &>(retval->m_Subsets.index(baseOffset, idx));
+        MeshSubset &dest = const_cast<MeshSubset &>(retval->m_subsets.index(baseOffset, idx));
         const typename TPreviousMeshType::TSubsetType &src =
-            temp->m_Subsets.index(tempBaseAddress, idx);
-        dest.m_Count = src.m_Count;
-        dest.m_Offset = src.m_Offset;
-        dest.m_Bounds = src.m_Bounds;
-        SubsetNameHandler<TPreviousMeshType>().AssignName(tempBaseAddress, src, baseOffset,
-                                                          nameData, dest);
+            temp->m_subsets.index(tempBaseAddress, idx);
+        dest.m_count = src.m_count;
+        dest.m_offset = src.m_offset;
+        dest.m_bounds = src.m_bounds;
+        SubsetNameHandler<TPreviousMeshType>().assignName(tempBaseAddress, src, baseOffset, nameData, dest);
     }
     return retval;
 }
 
-QDemonBounds3 Mesh::CalculateSubsetBounds(const QDemonRenderVertexBufferEntry &inEntry, const QByteArray &inVertxData, quint32 inStride, const QByteArray &inIndexData, QDemonRenderComponentTypes::Enum inIndexCompType, quint32 inSubsetCount, quint32 inSubsetOffset)
+QDemonBounds3 Mesh::calculateSubsetBounds(const QDemonRenderVertexBufferEntry &inEntry, const QByteArray &inVertxData, quint32 inStride, const QByteArray &inIndexData, QDemonRenderComponentTypes::Enum inIndexCompType, quint32 inSubsetCount, quint32 inSubsetOffset)
 {
     QDemonBounds3 retval = QDemonBounds3();
     const QDemonRenderVertexBufferEntry &entry(inEntry);
-    if (entry.m_ComponentType != QDemonRenderComponentTypes::Float32 || entry.m_NumComponents != 3) {
+    if (entry.m_componentType != QDemonRenderComponentTypes::Float32 || entry.m_numComponents != 3) {
         Q_ASSERT(false);
         return retval;
     }
@@ -573,13 +570,13 @@ QDemonBounds3 Mesh::CalculateSubsetBounds(const QDemonRenderVertexBufferEntry &i
     const quint8 *beginPtr = reinterpret_cast<const quint8*>(inVertxData.constData());
     quint32 numBytes = inVertxData.size();
     quint32 dataStride = inStride;
-    quint32 posOffset = entry.m_FirstItemOffset;
+    quint32 posOffset = entry.m_firstItemOffset;
     // The loop below could be template specialized *if* we wanted to do this.
     // and the perf of the existing loop was determined to be a problem.
     // Else I would rather stay way from the template specialization.
     for (quint32 idx = 0, __numItems = (quint32)inSubsetCount; idx < __numItems; ++idx)
     {
-        quint32 dataIdx = NextIndex(inIndexData, inIndexCompType, idx + inSubsetOffset);
+        quint32 dataIdx = nextIndex(inIndexData, inIndexCompType, idx + inSubsetOffset);
         quint32 finalOffset = (dataIdx * dataStride) + posOffset;
         if (finalOffset + sizeof(Vec3) <= numBytes) {
             const quint8 *dataPtr = beginPtr + finalOffset;
@@ -593,19 +590,19 @@ QDemonBounds3 Mesh::CalculateSubsetBounds(const QDemonRenderVertexBufferEntry &i
     return retval;
 }
 
-void Mesh::Save(QIODevice &outStream) const
+void Mesh::save(QIODevice &outStream) const
 {
     Mesh &mesh(const_cast<Mesh &>(*this));
     quint8 *baseAddress = reinterpret_cast<quint8 *>(&mesh);
-    quint32 numBytes = sizeof(Mesh) + GetMeshDataSize(mesh);
+    quint32 numBytes = sizeof(Mesh) + getMeshDataSize(mesh);
     MeshDataHeader header(numBytes);
     outStream.write(reinterpret_cast<const char *>(&header), sizeof(MeshDataHeader));
     outStream.write(reinterpret_cast<const char *>(this), sizeof(Mesh));
     ByteWritingSerializer writer(outStream, baseAddress);
-    Serialize(writer, mesh);
+    serialize(writer, mesh);
 }
 
-bool Mesh::Save(const char *inFilePath) const
+bool Mesh::save(const char *inFilePath) const
 {
     QFile file(QString::fromLocal8Bit(inFilePath));
     if (!file.open(QIODevice::ReadWrite)) {
@@ -613,40 +610,40 @@ bool Mesh::Save(const char *inFilePath) const
         return false;
     }
 
-    Save(file);
+    save(file);
     file.close();
     return true;
 }
 
-Mesh *Mesh::Load(QIODevice &inStream)
+Mesh *Mesh::load(QIODevice &inStream)
 {
     MeshDataHeader header;
     inStream.read(reinterpret_cast<char *>(&header), sizeof(MeshDataHeader));
-    Q_ASSERT(header.m_FileId == MeshDataHeader::GetFileId());
-    if (header.m_FileId != MeshDataHeader::GetFileId())
+    Q_ASSERT(header.m_fileId == MeshDataHeader::getFileId());
+    if (header.m_fileId != MeshDataHeader::getFileId())
         return nullptr;
-    if (header.m_FileVersion < 1 || header.m_FileVersion > MeshDataHeader::GetCurrentFileVersion())
+    if (header.m_fileVersion < 1 || header.m_fileVersion > MeshDataHeader::getCurrentFileVersion())
         return nullptr;
-    if (header.m_SizeInBytes < sizeof(Mesh))
+    if (header.m_sizeInBytes < sizeof(Mesh))
         return nullptr;
-    char *meshBufferData = reinterpret_cast<char *>(::malloc(header.m_SizeInBytes));
-    qint64 sizeRead = inStream.read(meshBufferData, header.m_SizeInBytes);
-//    QByteArray meshBuffer = inStream.read(header.m_SizeInBytes);
-    if (sizeRead == header.m_SizeInBytes) {
-        QDemonDataRef<char> meshBuffer = toDataRef(meshBufferData, header.m_SizeInBytes);
-        if (header.m_FileVersion == 1) {
-            MeshV1 *temp = DoInitialize<MeshV1>(header.m_HeaderFlags, meshBuffer);
+    char *meshBufferData = reinterpret_cast<char *>(::malloc(header.m_sizeInBytes));
+    qint64 sizeRead = inStream.read(meshBufferData, header.m_sizeInBytes);
+//    QByteArray meshBuffer = inStream.read(header.m_sizeInBytes);
+    if (sizeRead == header.m_sizeInBytes) {
+        QDemonDataRef<char> meshBuffer = toDataRef(meshBufferData, header.m_sizeInBytes);
+        if (header.m_fileVersion == 1) {
+            MeshV1 *temp = doInitialize<MeshV1>(header.m_headerFlags, meshBuffer);
             if (temp == nullptr)
                 goto failure;
-            return CreateMeshFromPreviousMesh(temp);
+            return createMeshFromPreviousMesh(temp);
 
-        } else if (header.m_FileVersion == 2) {
-            MeshV2 *temp = DoInitialize<MeshV2>(header.m_HeaderFlags, meshBuffer);
+        } else if (header.m_fileVersion == 2) {
+            MeshV2 *temp = doInitialize<MeshV2>(header.m_headerFlags, meshBuffer);
             if (temp == nullptr)
                 goto failure;
-            return CreateMeshFromPreviousMesh(temp);
+            return createMeshFromPreviousMesh(temp);
         } else {
-            Mesh *retval = Initialize(header.m_FileVersion, header.m_HeaderFlags, meshBuffer);
+            Mesh *retval = initialize(header.m_fileVersion, header.m_headerFlags, meshBuffer);
             if (retval == nullptr)
                 goto failure;
             return retval;
@@ -659,7 +656,7 @@ failure:
     return nullptr;
 }
 
-Mesh *Mesh::Load(const char *inFilePath)
+Mesh *Mesh::load(const char *inFilePath)
 {
     QFile file(QString::fromLocal8Bit(inFilePath));
     if (!file.open(QIODevice::ReadOnly)) {
@@ -667,19 +664,19 @@ Mesh *Mesh::Load(const char *inFilePath)
         return nullptr;
     }
 
-    auto mesh = Load(file);
+    auto mesh = load(file);
     file.close();
     return mesh;
 }
 
-Mesh *Mesh::Initialize(quint16 meshVersion, quint16 meshFlags, QDemonDataRef<char> data)
+Mesh *Mesh::initialize(quint16 meshVersion, quint16 meshFlags, QDemonDataRef<char> data)
 {
-    if (meshVersion != MeshDataHeader::GetCurrentFileVersion())
+    if (meshVersion != MeshDataHeader::getCurrentFileVersion())
         return nullptr;
-    return DoInitialize<Mesh>(meshFlags, data);
+    return doInitialize<Mesh>(meshFlags, data);
 }
 
-quint32 Mesh::SaveMulti(QIODevice &inStream, quint32 inId) const
+quint32 Mesh::saveMulti(QIODevice &inStream, quint32 inId) const
 {
     quint32 nextId = 1;
     MeshMultiHeader tempHeader;
@@ -688,20 +685,20 @@ quint32 Mesh::SaveMulti(QIODevice &inStream, quint32 inId) const
 
     qint64 newMeshStartPos = 0;
     if (inStream.size() != 0) {
-        theHeader = LoadMultiHeader(inStream);
+        theHeader = loadMultiHeader(inStream);
         if (theHeader == nullptr) {
             Q_ASSERT(false);
             return 0;
         }
         quint8 *headerBaseAddr = reinterpret_cast<quint8 *>(theHeader);
-        for (quint32 idx = 0, end = theHeader->m_Entries.size(); idx < end; ++idx) {
+        for (quint32 idx = 0, end = theHeader->m_entries.size(); idx < end; ++idx) {
             if (inId != 0) {
-                Q_ASSERT(inId != theHeader->m_Entries.index(headerBaseAddr, idx).m_MeshId);
+                Q_ASSERT(inId != theHeader->m_entries.index(headerBaseAddr, idx).m_meshId);
             }
-            nextId = qMax(nextId, theHeader->m_Entries.index(headerBaseAddr, idx).m_MeshId + 1);
+            nextId = qMax(nextId, theHeader->m_entries.index(headerBaseAddr, idx).m_meshId + 1);
         }
         newMeshStartPos =
-            sizeof(MeshMultiHeader) + theHeader->m_Entries.size() * sizeof(MeshMultiEntry);
+            sizeof(MeshMultiHeader) + theHeader->m_entries.size() * sizeof(MeshMultiEntry);
         theWriteHeader = theHeader;
     } else {
         theWriteHeader = &tempHeader;
@@ -711,23 +708,23 @@ quint32 Mesh::SaveMulti(QIODevice &inStream, quint32 inId) const
     inStream.seek(inStream.size() - newMeshStartPos); // ### not sure about this one
     qint64 meshOffset = inStream.pos();
 
-    Save(inStream);
+    save(inStream);
 
     if (inId != 0)
         nextId = inId;
     quint8 *theWriteBaseAddr = reinterpret_cast<quint8 *>(theWriteHeader);
     // Now write a new header out.
-    inStream.write(reinterpret_cast<char *>(theWriteHeader->m_Entries.begin(theWriteBaseAddr)),
-                   theWriteHeader->m_Entries.size());
+    inStream.write(reinterpret_cast<char *>(theWriteHeader->m_entries.begin(theWriteBaseAddr)),
+                   theWriteHeader->m_entries.size());
     MeshMultiEntry newEntry(static_cast<qint64>(meshOffset), nextId);
     inStream.write(reinterpret_cast<char *>(&newEntry), sizeof(MeshMultiEntry));
-    theWriteHeader->m_Entries.m_Size++;
+    theWriteHeader->m_entries.m_size++;
     inStream.write(reinterpret_cast<char *>(theWriteHeader), sizeof(MeshMultiHeader));
 
     return static_cast<quint32>(nextId);
 }
 
-quint32 Mesh::SaveMulti(const char *inFilePath) const
+quint32 Mesh::saveMulti(const char *inFilePath) const
 {
     QFile file(QString::fromLocal8Bit(inFilePath));
     if (!file.open(QIODevice::ReadWrite)) {
@@ -735,14 +732,14 @@ quint32 Mesh::SaveMulti(const char *inFilePath) const
         return (quint32)-1;
     }
 
-    quint32 id = SaveMulti(file);
+    quint32 id = saveMulti(file);
     file.close();
     return id;
 }
 
-MultiLoadResult Mesh::LoadMulti(QIODevice &inStream, quint32 inId)
+MultiLoadResult Mesh::loadMulti(QIODevice &inStream, quint32 inId)
 {
-    MeshMultiHeader *theHeader(LoadMultiHeader(inStream));
+    MeshMultiHeader *theHeader(loadMultiHeader(inStream));
     if (theHeader == nullptr) {
         return MultiLoadResult();
     }
@@ -750,13 +747,13 @@ MultiLoadResult Mesh::LoadMulti(QIODevice &inStream, quint32 inId)
     quint32 theId = inId;
     quint8 *theHeaderBaseAddr = reinterpret_cast<quint8 *>(theHeader);
     bool foundMesh = false;
-    for (quint32 idx = 0, end = theHeader->m_Entries.size(); idx < end && !foundMesh; ++idx) {
-        const MeshMultiEntry &theEntry(theHeader->m_Entries.index(theHeaderBaseAddr, idx));
-        if (theEntry.m_MeshId == inId || (inId == 0 && theEntry.m_MeshId > theId)) {
-            if (theEntry.m_MeshId == inId)
+    for (quint32 idx = 0, end = theHeader->m_entries.size(); idx < end && !foundMesh; ++idx) {
+        const MeshMultiEntry &theEntry(theHeader->m_entries.index(theHeaderBaseAddr, idx));
+        if (theEntry.m_meshId == inId || (inId == 0 && theEntry.m_meshId > theId)) {
+            if (theEntry.m_meshId == inId)
                 foundMesh = true;
-            theId = qMax(theId, (quint32)theEntry.m_MeshId);
-            fileOffset = theEntry.m_MeshOffset;
+            theId = qMax(theId, (quint32)theEntry.m_meshId);
+            fileOffset = theEntry.m_meshOffset;
         }
     }
     Mesh *retval = nullptr;
@@ -765,12 +762,12 @@ MultiLoadResult Mesh::LoadMulti(QIODevice &inStream, quint32 inId)
     }
 
     inStream.seek(static_cast<qint64>(fileOffset));
-    retval = Load(inStream);
+    retval = load(inStream);
 endFunction:
     return MultiLoadResult(retval, theId);
 }
 
-MultiLoadResult Mesh::LoadMulti(const char *inFilePath, quint32 inId)
+MultiLoadResult Mesh::loadMulti(const char *inFilePath, quint32 inId)
 {
     QFile file(QString::fromLocal8Bit(inFilePath));
     if (!file.open(QIODevice::ReadOnly)) {
@@ -778,33 +775,33 @@ MultiLoadResult Mesh::LoadMulti(const char *inFilePath, quint32 inId)
         return MultiLoadResult();
     }
 
-    auto result = LoadMulti(file, inId);
+    auto result = loadMulti(file, inId);
     file.close();
     return result;
 }
 
-bool Mesh::IsMulti(QIODevice &inStream)
+bool Mesh::isMulti(QIODevice &inStream)
 {
     MeshMultiHeader theHeader;
     inStream.seek(inStream.size() -((qint64)(sizeof(MeshMultiHeader))));
     quint32 numBytes = inStream.read(reinterpret_cast<char *>(&theHeader), sizeof(MeshMultiHeader));
     if (numBytes != sizeof(MeshMultiHeader))
         return false;
-    return theHeader.m_Version == MeshMultiHeader::GetMultiStaticVersion();
+    return theHeader.m_version == MeshMultiHeader::getMultiStaticVersion();
 }
 
-MeshMultiHeader *Mesh::LoadMultiHeader(QIODevice &inStream)
+MeshMultiHeader *Mesh::loadMultiHeader(QIODevice &inStream)
 {
     MeshMultiHeader theHeader;
     inStream.seek(inStream.size() -((qint64)sizeof(MeshMultiHeader)));
     quint32 numBytes = inStream.read(reinterpret_cast<char *>(&theHeader), sizeof(MeshMultiHeader));
     if (numBytes != sizeof(MeshMultiHeader)
-        || theHeader.m_FileId != MeshMultiHeader::GetMultiStaticFileId()
-        || theHeader.m_Version > MeshMultiHeader::GetMultiStaticVersion()) {
+        || theHeader.m_fileId != MeshMultiHeader::getMultiStaticFileId()
+        || theHeader.m_version > MeshMultiHeader::getMultiStaticVersion()) {
         return nullptr;
     }
     size_t allocSize =
-        sizeof(MeshMultiHeader) + theHeader.m_Entries.m_Size * sizeof(MeshMultiEntry);
+        sizeof(MeshMultiHeader) + theHeader.m_entries.m_size * sizeof(MeshMultiEntry);
     MeshMultiHeader *retval = new MeshMultiHeader;
     if (retval == nullptr) {
         Q_ASSERT(false);
@@ -813,12 +810,12 @@ MeshMultiHeader *Mesh::LoadMultiHeader(QIODevice &inStream)
     quint8 *baseAddr = reinterpret_cast<quint8 *>(retval);
     quint8 *entryData = baseAddr + sizeof(MeshMultiHeader);
     *retval = theHeader;
-    retval->m_Entries.m_Offset = (quint32)(entryData - baseAddr);
+    retval->m_entries.m_offset = (quint32)(entryData - baseAddr);
     inStream.seek(inStream.size() -((qint64)allocSize));
 
     numBytes = inStream.read(reinterpret_cast<char *>(entryData),
-                             retval->m_Entries.m_Size * sizeof(MeshMultiEntry));
-    if (numBytes != retval->m_Entries.m_Size * sizeof(MeshMultiEntry)) {
+                             retval->m_entries.m_size * sizeof(MeshMultiEntry));
+    if (numBytes != retval->m_entries.m_size * sizeof(MeshMultiEntry)) {
         Q_ASSERT(false);
         delete retval;
         retval = nullptr;
@@ -826,7 +823,7 @@ MeshMultiHeader *Mesh::LoadMultiHeader(QIODevice &inStream)
     return retval;
 }
 
-MeshMultiHeader *Mesh::LoadMultiHeader(const char *inFilePath)
+MeshMultiHeader *Mesh::loadMultiHeader(const char *inFilePath)
 {
     QFile file(QString::fromLocal8Bit(inFilePath));
     if (!file.open(QIODevice::ReadOnly)) {
@@ -834,7 +831,7 @@ MeshMultiHeader *Mesh::LoadMultiHeader(const char *inFilePath)
         return nullptr;
     }
 
-    auto result = LoadMultiHeader(file);
+    auto result = loadMultiHeader(file);
     file.close();
     return result;
 }
@@ -847,17 +844,17 @@ quint32 GetHighestId(MeshMultiHeader *inHeader)
     }
     quint8 *baseHeaderAddr = reinterpret_cast<quint8 *>(inHeader);
     quint32 highestId = 0;
-    for (quint32 idx = 0, end = inHeader->m_Entries.size(); idx < end; ++idx)
-        highestId = qMax(highestId, inHeader->m_Entries.index(baseHeaderAddr, idx).m_MeshId);
+    for (quint32 idx = 0, end = inHeader->m_entries.size(); idx < end; ++idx)
+        highestId = qMax(highestId, inHeader->m_entries.index(baseHeaderAddr, idx).m_meshId);
     return highestId;
 }
 
-quint32 Mesh::GetHighestMultiVersion(QIODevice &inStream)
+quint32 Mesh::getHighestMultiVersion(QIODevice &inStream)
 {
-    return GetHighestId(LoadMultiHeader(inStream));
+    return GetHighestId(loadMultiHeader(inStream));
 }
 
-quint32 Mesh::GetHighestMultiVersion(const char *inFilePath)
+quint32 Mesh::getHighestMultiVersion(const char *inFilePath)
 {
     QFile file(QString::fromLocal8Bit(inFilePath));
     if (!file.open(QIODevice::ReadOnly)) {
@@ -865,7 +862,7 @@ quint32 Mesh::GetHighestMultiVersion(const char *inFilePath)
         return (quint32)-1;
     }
 
-    auto result = GetHighestMultiVersion(file);
+    auto result = getHighestMultiVersion(file);
     file.close();
     return result;
 }
@@ -879,81 +876,81 @@ MeshBuilderVBufEntry ToEntry(const QVector<float> &data, const char *name, quint
 
 struct DynamicVBuf
 {
-    quint32 m_Stride;
-    QVector<QDemonRenderVertexBufferEntry> m_VertexBufferEntries;
-    QByteArray m_VertexData;
+    quint32 m_stride;
+    QVector<QDemonRenderVertexBufferEntry> m_vertexBufferEntries;
+    QByteArray m_vertexData;
 
     void clear()
     {
-        m_Stride = 0;
-        m_VertexBufferEntries.clear();
-        m_VertexData.clear();
+        m_stride = 0;
+        m_vertexBufferEntries.clear();
+        m_vertexData.clear();
     }
 };
 struct DynamicIndexBuf
 {
-    QDemonRenderComponentTypes::Enum m_CompType;
-    QByteArray m_IndexData;
+    QDemonRenderComponentTypes::Enum m_compType;
+    QByteArray m_indexData;
     DynamicIndexBuf() {}
 
-    void clear() { m_IndexData.clear(); }
+    void clear() { m_indexData.clear(); }
 };
 
 struct SubsetDesc
 {
-    quint32 m_Count;
-    quint32 m_Offset;
+    quint32 m_count;
+    quint32 m_offset;
 
-    QDemonBounds3 m_Bounds;
-    QString m_Name;
+    QDemonBounds3 m_bounds;
+    QString m_name;
     SubsetDesc(quint32 c, quint32 off)
-        : m_Count(c)
-        , m_Offset(off)
+        : m_count(c)
+        , m_offset(off)
     {
     }
     SubsetDesc()
-        : m_Count(0)
-        , m_Offset(0)
+        : m_count(0)
+        , m_offset(0)
     {
     }
 };
 
-class MeshBuilderImpl : public MeshBuilder
+class MeshBuilderImpl : public QDemonMeshBuilder
 {
-    DynamicVBuf m_VertexBuffer;
-    DynamicIndexBuf m_IndexBuffer;
-    QVector<Joint> m_Joints;
-    QVector<SubsetDesc> m_MeshSubsetDescs;
-    QDemonRenderDrawMode::Enum m_DrawMode;
-    QDemonRenderWinding::Enum m_Winding;
-    QByteArray m_RemappedVertexData;
-    QByteArray m_NewIndexBuffer;
-    QVector<quint8> m_MeshBuffer;
+    DynamicVBuf m_vertexBuffer;
+    DynamicIndexBuf m_indexBuffer;
+    QVector<Joint> m_joints;
+    QVector<SubsetDesc> m_meshSubsetDescs;
+    QDemonRenderDrawMode::Enum m_drawMode;
+    QDemonRenderWinding::Enum m_winding;
+    QByteArray m_remappedVertexData;
+    QByteArray m_newIndexBuffer;
+    QVector<quint8> m_meshBuffer;
 
 public:
-    MeshBuilderImpl() { Reset(); }
-    ~MeshBuilderImpl() override { Reset(); }
-    void Release() override { delete this; }
-    void Reset() override
+    MeshBuilderImpl() { reset(); }
+    ~MeshBuilderImpl() override { reset(); }
+    void release() override { delete this; }
+    void reset() override
     {
-        m_VertexBuffer.clear();
-        m_IndexBuffer.clear();
-        m_Joints.clear();
-        m_MeshSubsetDescs.clear();
-        m_DrawMode = QDemonRenderDrawMode::Triangles;
-        m_Winding = QDemonRenderWinding::CounterClockwise;
-        m_MeshBuffer.clear();
+        m_vertexBuffer.clear();
+        m_indexBuffer.clear();
+        m_joints.clear();
+        m_meshSubsetDescs.clear();
+        m_drawMode = QDemonRenderDrawMode::Triangles;
+        m_winding = QDemonRenderWinding::CounterClockwise;
+        m_meshBuffer.clear();
     }
 
-    void SetDrawParameters(QDemonRenderDrawMode::Enum drawMode, QDemonRenderWinding::Enum winding) override
+    void setDrawParameters(QDemonRenderDrawMode::Enum drawMode, QDemonRenderWinding::Enum winding) override
     {
-        m_DrawMode = drawMode;
-        m_Winding = winding;
+        m_drawMode = drawMode;
+        m_winding = winding;
     }
 
     // Somewhat burly method to interleave the data as tightly as possible
     // while taking alignment into account.
-    bool SetVertexBuffer(const QVector<MeshBuilderVBufEntry> &entries) override
+    bool setVertexBuffer(const QVector<MeshBuilderVBufEntry> &entries) override
     {
         quint32 currentOffset = 0;
         quint32 bufferAlignment = 0;
@@ -963,19 +960,19 @@ public:
         {
             const MeshBuilderVBufEntry &entry(entries[idx]);
             // Ignore entries with no data.
-            if (entry.m_Data.begin() == nullptr || entry.m_Data.size() == 0)
+            if (entry.m_data.begin() == nullptr || entry.m_data.size() == 0)
                 continue;
 
-            quint32 alignment = (quint32)QDemonRenderComponentTypes::getSizeOfType(entry.m_ComponentType);
+            quint32 alignment = (quint32)QDemonRenderComponentTypes::getSizeOfType(entry.m_componentType);
             bufferAlignment = qMax(bufferAlignment, alignment);
-            quint32 byteSize = alignment * entry.m_NumComponents;
+            quint32 byteSize = alignment * entry.m_numComponents;
 
-            if (entry.m_Data.size() % alignment != 0) {
+            if (entry.m_data.size() % alignment != 0) {
                 Q_ASSERT(false);
                 retval = false;
             }
 
-            quint32 localNumItems = entry.m_Data.size() / byteSize;
+            quint32 localNumItems = entry.m_data.size() / byteSize;
             if (numItems == 0) {
                 numItems = localNumItems;
             } else if (numItems != localNumItems) {
@@ -985,13 +982,13 @@ public:
             }
             // Lots of platforms can't handle non-aligned data.
             // so ensure we are aligned.
-            currentOffset = GetAlignedOffset(currentOffset, alignment);
-            QDemonRenderVertexBufferEntry vbufEntry(entry.m_Name, entry.m_ComponentType,
-                                                entry.m_NumComponents, currentOffset);
-            m_VertexBuffer.m_VertexBufferEntries.push_back(vbufEntry);
+            currentOffset = getAlignedOffset(currentOffset, alignment);
+            QDemonRenderVertexBufferEntry vbufEntry(entry.m_name, entry.m_componentType,
+                                                entry.m_numComponents, currentOffset);
+            m_vertexBuffer.m_vertexBufferEntries.push_back(vbufEntry);
             currentOffset += byteSize;
         }
-        m_VertexBuffer.m_Stride = GetAlignedOffset(currentOffset, bufferAlignment);
+        m_vertexBuffer.m_stride = getAlignedOffset(currentOffset, bufferAlignment);
 
         // Packed interleave the data
         for (quint32 idx = 0, __numItems = (quint32)numItems; idx < __numItems; ++idx)
@@ -1001,95 +998,95 @@ public:
             {
                 const MeshBuilderVBufEntry &entry(entries[entryIdx]);
                 // Ignore entries with no data.
-                if (entry.m_Data.begin() == NULL || entry.m_Data.size() == 0)
+                if (entry.m_data.begin() == NULL || entry.m_data.size() == 0)
                     continue;
 
-                quint32 alignment = (quint32)QDemonRenderComponentTypes::getSizeOfType(entry.m_ComponentType);
-                quint32 byteSize = alignment * entry.m_NumComponents;
+                quint32 alignment = (quint32)QDemonRenderComponentTypes::getSizeOfType(entry.m_componentType);
+                quint32 byteSize = alignment * entry.m_numComponents;
                 quint32 offset = byteSize * idx;
-                quint32 newOffset = GetAlignedOffset(dataOffset, alignment);
-                QBuffer vertexDataBuffer(&m_VertexBuffer.m_VertexData);
+                quint32 newOffset = getAlignedOffset(dataOffset, alignment);
+                QBuffer vertexDataBuffer(&m_vertexBuffer.m_vertexData);
                 if (newOffset != dataOffset) {
                     QByteArray filler(newOffset - dataOffset, '\0');
                     vertexDataBuffer.write(filler);
                 }
-                vertexDataBuffer.write(entry.m_Data.begin() + offset, byteSize);
+                vertexDataBuffer.write(entry.m_data.begin() + offset, byteSize);
                 dataOffset = newOffset + byteSize;
             }
-            Q_ASSERT(dataOffset == m_VertexBuffer.m_Stride);
+            Q_ASSERT(dataOffset == m_vertexBuffer.m_stride);
         }
         return retval;
     }
 
-    void SetVertexBuffer(const QVector<QDemonRenderVertexBufferEntry> &entries, quint32 stride,
+    void setVertexBuffer(const QVector<QDemonRenderVertexBufferEntry> &entries, quint32 stride,
                                  QByteArray data) override
     {
         for (quint32 idx = 0, __numItems = (quint32)entries.size(); idx < __numItems; ++idx)
         {
-            m_VertexBuffer.m_VertexBufferEntries.push_back(entries[idx]);
+            m_vertexBuffer.m_vertexBufferEntries.push_back(entries[idx]);
         }
-        QBuffer vertexDataBuffer(&m_VertexBuffer.m_VertexData);
+        QBuffer vertexDataBuffer(&m_vertexBuffer.m_vertexData);
         vertexDataBuffer.write(data);
         if (stride == 0) {
             // Calculate the stride of the buffer using the vbuf entries
             for (quint32 idx = 0, __numItems = (quint32)entries.size(); idx < __numItems; ++idx)
             {
                 const QDemonRenderVertexBufferEntry &entry(entries[idx]);
-                stride = qMax(stride, (quint32)(entry.m_FirstItemOffset + (entry.m_NumComponents * QDemonRenderComponentTypes::getSizeOfType(entry.m_ComponentType))));
+                stride = qMax(stride, (quint32)(entry.m_firstItemOffset + (entry.m_numComponents * QDemonRenderComponentTypes::getSizeOfType(entry.m_componentType))));
             }
         }
-        m_VertexBuffer.m_Stride = stride;
+        m_vertexBuffer.m_stride = stride;
     }
 
-    void SetIndexBuffer(const QByteArray &data, QDemonRenderComponentTypes::Enum comp) override
+    void setIndexBuffer(const QByteArray &data, QDemonRenderComponentTypes::Enum comp) override
     {
-        m_IndexBuffer.m_CompType = comp;
-        QBuffer indexBuffer(&m_IndexBuffer.m_IndexData);
+        m_indexBuffer.m_compType = comp;
+        QBuffer indexBuffer(&m_indexBuffer.m_indexData);
         indexBuffer.write(data);
     }
 
-    void AddJoint(qint32 jointID, qint32 parentID, const float *invBindPose,
+    void addJoint(qint32 jointID, qint32 parentID, const float *invBindPose,
                           const float *localToGlobalBoneSpace) override
     {
-        m_Joints.push_back(Joint(jointID, parentID, invBindPose, localToGlobalBoneSpace));
+        m_joints.push_back(Joint(jointID, parentID, invBindPose, localToGlobalBoneSpace));
     }
 
-    SubsetDesc CreateSubset(const char16_t *inName, quint32 count, quint32 offset)
+    SubsetDesc createSubset(const char16_t *inName, quint32 count, quint32 offset)
     {
         if (inName == nullptr)
             inName = u"";
         SubsetDesc retval(count, offset);
-        retval.m_Name = QString::fromUtf16(inName);
+        retval.m_name = QString::fromUtf16(inName);
         return retval;
     }
 
     // indexBuffer QDEMON_MAX_U32 means no index buffer.
     // count of QDEMON_MAX_U32 means use all available items
     // offset means exactly what you would think.  Offset is in item size, not bytes.
-    void AddMeshSubset(const char16_t *inName, quint32 count, quint32 offset,
+    void addMeshSubset(const char16_t *inName, quint32 count, quint32 offset,
                                quint32 boundsPositionEntryIndex) override
     {
-        SubsetDesc retval = CreateSubset(inName, count, offset);
+        SubsetDesc retval = createSubset(inName, count, offset);
         if (boundsPositionEntryIndex != QDEMON_MAX_U32) {
-            retval.m_Bounds = Mesh::CalculateSubsetBounds(
-                        m_VertexBuffer.m_VertexBufferEntries[boundsPositionEntryIndex],
-                        m_VertexBuffer.m_VertexData, m_VertexBuffer.m_Stride, m_IndexBuffer.m_IndexData,
-                        m_IndexBuffer.m_CompType, count, offset);
+            retval.m_bounds = Mesh::calculateSubsetBounds(
+                        m_vertexBuffer.m_vertexBufferEntries[boundsPositionEntryIndex],
+                        m_vertexBuffer.m_vertexData, m_vertexBuffer.m_stride, m_indexBuffer.m_indexData,
+                        m_indexBuffer.m_compType, count, offset);
         }
-        m_MeshSubsetDescs.push_back(retval);
+        m_meshSubsetDescs.push_back(retval);
     }
 
-    void AddMeshSubset(const char16_t *inName, quint32 count, quint32 offset, const QDemonBounds3 &inBounds) override
+    void addMeshSubset(const char16_t *inName, quint32 count, quint32 offset, const QDemonBounds3 &inBounds) override
     {
-        SubsetDesc retval = CreateSubset(inName, count, offset);
-        retval.m_Bounds = inBounds;
-        m_MeshSubsetDescs.push_back(retval);
+        SubsetDesc retval = createSubset(inName, count, offset);
+        retval.m_bounds = inBounds;
+        m_meshSubsetDescs.push_back(retval);
     }
 
     // We connect sub meshes which habe the same material
-    void ConnectSubMeshes() override
+    void connectSubMeshes() override
     {
-        if (m_MeshSubsetDescs.size() < 2) {
+        if (m_meshSubsetDescs.size() < 2) {
             // nothing to do
             return;
         }
@@ -1097,17 +1094,17 @@ public:
         quint32 matDuplicates = 0;
 
         // as a pre-step we check if we have duplicate material at all
-        for (quint32 i = 0, subsetEnd = m_MeshSubsetDescs.size(); i < subsetEnd && !matDuplicates;
+        for (quint32 i = 0, subsetEnd = m_meshSubsetDescs.size(); i < subsetEnd && !matDuplicates;
              ++i) {
-            SubsetDesc &currentSubset = m_MeshSubsetDescs[i];
+            SubsetDesc &currentSubset = m_meshSubsetDescs[i];
 
-            for (quint32 j = 0, subsetEnd = m_MeshSubsetDescs.size(); j < subsetEnd; ++j) {
-                SubsetDesc &theSubset = m_MeshSubsetDescs[j];
+            for (quint32 j = 0, subsetEnd = m_meshSubsetDescs.size(); j < subsetEnd; ++j) {
+                SubsetDesc &theSubset = m_meshSubsetDescs[j];
 
                 if (i == j)
                     continue;
 
-                if (currentSubset.m_Name == theSubset.m_Name) {
+                if (currentSubset.m_name == theSubset.m_name) {
                     matDuplicates++;
                     break; // found a duplicate bail out
                 }
@@ -1119,15 +1116,15 @@ public:
             QVector<SubsetDesc> newMeshSubsetDescs;
             QVector<SubsetDesc>::iterator theIter;
             QString curMatName;
-            m_NewIndexBuffer.clear();
+            m_newIndexBuffer.clear();
 
-            for (theIter = m_MeshSubsetDescs.begin(); theIter != m_MeshSubsetDescs.end();
+            for (theIter = m_meshSubsetDescs.begin(); theIter != m_meshSubsetDescs.end();
                  ++theIter) {
                 bool bProcessed = false;
 
                 for (QVector<SubsetDesc>::iterator iter = newMeshSubsetDescs.begin();
                      iter != newMeshSubsetDescs.end(); ++iter) {
-                    if (theIter->m_Name == iter->m_Name) {
+                    if (theIter->m_name == iter->m_name) {
                         bProcessed = true;
                         break;
                     }
@@ -1136,128 +1133,128 @@ public:
                 if (bProcessed)
                     continue;
 
-                curMatName = theIter->m_Name;
+                curMatName = theIter->m_name;
 
-                quint32 theIndexCompSize = (quint32)QDemonRenderComponentTypes::getSizeOfType(m_IndexBuffer.m_CompType);
+                quint32 theIndexCompSize = (quint32)QDemonRenderComponentTypes::getSizeOfType(m_indexBuffer.m_compType);
                 // get pointer to indices
-                char *theIndices = (m_IndexBuffer.m_IndexData.begin()) + (theIter->m_Offset * theIndexCompSize);
+                char *theIndices = (m_indexBuffer.m_indexData.begin()) + (theIter->m_offset * theIndexCompSize);
                 // write new offset
-                theIter->m_Offset = m_NewIndexBuffer.size() / theIndexCompSize;
+                theIter->m_offset = m_newIndexBuffer.size() / theIndexCompSize;
                 // store indices
-                QBuffer newIndexBuffer(&m_NewIndexBuffer);
-                newIndexBuffer.write(theIndices, theIter->m_Count * theIndexCompSize);
+                QBuffer newIndexBuffer(&m_newIndexBuffer);
+                newIndexBuffer.write(theIndices, theIter->m_count * theIndexCompSize);
 
-                for (quint32 j = 0, subsetEnd = m_MeshSubsetDescs.size(); j < subsetEnd; ++j) {
-                    if (theIter == &m_MeshSubsetDescs[j])
+                for (quint32 j = 0, subsetEnd = m_meshSubsetDescs.size(); j < subsetEnd; ++j) {
+                    if (theIter == &m_meshSubsetDescs[j])
                         continue;
 
-                    SubsetDesc &theSubset = m_MeshSubsetDescs[j];
+                    SubsetDesc &theSubset = m_meshSubsetDescs[j];
 
-                    if (curMatName == theSubset.m_Name) {
+                    if (curMatName == theSubset.m_name) {
                         // get pointer to indices
-                        char *theIndices = (m_IndexBuffer.m_IndexData.data()) + (theSubset.m_Offset * theIndexCompSize);
+                        char *theIndices = (m_indexBuffer.m_indexData.data()) + (theSubset.m_offset * theIndexCompSize);
                         // store indices
-                        newIndexBuffer.write(theIndices, theSubset.m_Count * theIndexCompSize);
+                        newIndexBuffer.write(theIndices, theSubset.m_count * theIndexCompSize);
                         // increment indices count
-                        theIter->m_Count += theSubset.m_Count;
+                        theIter->m_count += theSubset.m_count;
                     }
                 }
 
                 newMeshSubsetDescs.push_back(*theIter);
             }
 
-            m_MeshSubsetDescs.clear();
-            m_MeshSubsetDescs = newMeshSubsetDescs;
-            m_IndexBuffer.m_IndexData.clear();
-            QBuffer indexBuffer(&m_IndexBuffer.m_IndexData);
-            indexBuffer.write(m_NewIndexBuffer);
+            m_meshSubsetDescs.clear();
+            m_meshSubsetDescs = newMeshSubsetDescs;
+            m_indexBuffer.m_indexData.clear();
+            QBuffer indexBuffer(&m_indexBuffer.m_indexData);
+            indexBuffer.write(m_newIndexBuffer);
 
             // compute new bounding box
-            for (theIter = m_MeshSubsetDescs.begin(); theIter != m_MeshSubsetDescs.end();
+            for (theIter = m_meshSubsetDescs.begin(); theIter != m_meshSubsetDescs.end();
                  ++theIter) {
-                theIter->m_Bounds = Mesh::CalculateSubsetBounds(
-                            m_VertexBuffer.m_VertexBufferEntries[0], m_VertexBuffer.m_VertexData,
-                        m_VertexBuffer.m_Stride, m_IndexBuffer.m_IndexData, m_IndexBuffer.m_CompType,
-                        theIter->m_Count, theIter->m_Offset);
+                theIter->m_bounds = Mesh::calculateSubsetBounds(
+                            m_vertexBuffer.m_vertexBufferEntries[0], m_vertexBuffer.m_vertexData,
+                        m_vertexBuffer.m_stride, m_indexBuffer.m_indexData, m_indexBuffer.m_compType,
+                        theIter->m_count, theIter->m_offset);
             }
         }
     }
 
     // Here is the NVTriStrip magic.
-    void OptimizeMesh() override
+    void optimizeMesh() override
     {
-        if (QDemonRenderComponentTypes::getSizeOfType(m_IndexBuffer.m_CompType) != 2) {
+        if (QDemonRenderComponentTypes::getSizeOfType(m_indexBuffer.m_compType) != 2) {
             // we currently re-arrange unsigned int indices.
             // this is because NvTriStrip only supports short indices
-            Q_ASSERT(QDemonRenderComponentTypes::getSizeOfType(m_IndexBuffer.m_CompType) == 4);
+            Q_ASSERT(QDemonRenderComponentTypes::getSizeOfType(m_indexBuffer.m_compType) == 4);
             return;
         }
     }
 
     template <typename TDataType>
-    static void Assign(quint8 *inBaseAddress, quint8 *inDataAddress,
+    static void assign(quint8 *inBaseAddress, quint8 *inDataAddress,
                        OffsetDataRef<TDataType> &inBuffer, const QByteArray &inDestData)
     {
-        inBuffer.m_Offset = (quint32)(inDataAddress - inBaseAddress);
-        inBuffer.m_Size = inDestData.size();
+        inBuffer.m_offset = (quint32)(inDataAddress - inBaseAddress);
+        inBuffer.m_size = inDestData.size();
         memcpy(inDataAddress, inDestData.data(), inDestData.size());
     }
     template <typename TDataType>
-    static void Assign(quint8 *inBaseAddress, quint8 *inDataAddress,
+    static void assign(quint8 *inBaseAddress, quint8 *inDataAddress,
                        OffsetDataRef<TDataType> &inBuffer, const QVector<TDataType> &inDestData)
     {
-        inBuffer.m_Offset = (quint32)(inDataAddress - inBaseAddress);
-        inBuffer.m_Size = inDestData.size();
+        inBuffer.m_offset = (quint32)(inDataAddress - inBaseAddress);
+        inBuffer.m_size = inDestData.size();
         memcpy(inDataAddress, inDestData.data(), inDestData.size());
     }
     template <typename TDataType>
-    static void Assign(quint8 *inBaseAddress, quint8 *inDataAddress,
+    static void assign(quint8 *inBaseAddress, quint8 *inDataAddress,
                        OffsetDataRef<TDataType> &inBuffer, quint32 inDestSize)
     {
-        inBuffer.m_Offset = (quint32)(inDataAddress - inBaseAddress);
-        inBuffer.m_Size = inDestSize;
+        inBuffer.m_offset = (quint32)(inDataAddress - inBaseAddress);
+        inBuffer.m_size = inDestSize;
     }
     // Return the current mesh.  This is only good for this function call, item may change or be
     // released
     // due to any further function calls.
-    Mesh &GetMesh() override
+    Mesh &getMesh() override
     {
         quint32 meshSize = sizeof(Mesh);
         quint32 alignment = sizeof(void *);
-        quint32 vertDataSize = GetAlignedOffset(m_VertexBuffer.m_VertexData.size(), alignment);
+        quint32 vertDataSize = getAlignedOffset(m_vertexBuffer.m_vertexData.size(), alignment);
         meshSize += vertDataSize;
-        quint32 entrySize = m_VertexBuffer.m_VertexBufferEntries.size()
+        quint32 entrySize = m_vertexBuffer.m_vertexBufferEntries.size()
                 * sizeof(QDemonRenderVertexBufferEntry);
         meshSize += entrySize;
         quint32 entryNameSize = 0;
-        for (quint32 idx = 0, end = m_VertexBuffer.m_VertexBufferEntries.size(); idx < end; ++idx) {
-            const QDemonRenderVertexBufferEntry &theEntry(m_VertexBuffer.m_VertexBufferEntries[idx]);
-            const char *entryName = theEntry.m_Name;
+        for (quint32 idx = 0, end = m_vertexBuffer.m_vertexBufferEntries.size(); idx < end; ++idx) {
+            const QDemonRenderVertexBufferEntry &theEntry(m_vertexBuffer.m_vertexBufferEntries[idx]);
+            const char *entryName = theEntry.m_name;
             if (entryName == nullptr)
                 entryName = "";
-            entryNameSize += (quint32)(strlen(theEntry.m_Name)) + 1;
+            entryNameSize += (quint32)(strlen(theEntry.m_name)) + 1;
         }
-        entryNameSize = GetAlignedOffset(entryNameSize, alignment);
+        entryNameSize = getAlignedOffset(entryNameSize, alignment);
         meshSize += entryNameSize;
-        quint32 indexBufferSize = GetAlignedOffset(m_IndexBuffer.m_IndexData.size(), alignment);
+        quint32 indexBufferSize = getAlignedOffset(m_indexBuffer.m_indexData.size(), alignment);
         meshSize += indexBufferSize;
-        quint32 subsetSize = m_MeshSubsetDescs.size() * sizeof(MeshSubset);
+        quint32 subsetSize = m_meshSubsetDescs.size() * sizeof(MeshSubset);
         quint32 nameSize = 0;
-        for (quint32 idx = 0, end = m_MeshSubsetDescs.size(); idx < end; ++idx) {
-            if (!m_MeshSubsetDescs[idx].m_Name.isEmpty())
-                nameSize += m_MeshSubsetDescs[idx].m_Name.size() + 1;
+        for (quint32 idx = 0, end = m_meshSubsetDescs.size(); idx < end; ++idx) {
+            if (!m_meshSubsetDescs[idx].m_name.isEmpty())
+                nameSize += m_meshSubsetDescs[idx].m_name.size() + 1;
         }
         nameSize *= sizeof(char16_t);
-        nameSize = GetAlignedOffset(nameSize, alignment);
+        nameSize = getAlignedOffset(nameSize, alignment);
 
         meshSize += subsetSize + nameSize;
-        quint32 jointsSize = m_Joints.size() * sizeof(Joint);
+        quint32 jointsSize = m_joints.size() * sizeof(Joint);
         meshSize += jointsSize;
-        m_MeshBuffer.resize(meshSize);
-        quint8 *baseAddress = m_MeshBuffer.data();
+        m_meshBuffer.resize(meshSize);
+        quint8 *baseAddress = m_meshBuffer.data();
         Mesh *retval = reinterpret_cast<Mesh *>(baseAddress);
-        retval->m_DrawMode = m_DrawMode;
-        retval->m_Winding = m_Winding;
+        retval->m_drawMode = m_drawMode;
+        retval->m_winding = m_winding;
         quint8 *vertBufferData = baseAddress + sizeof(Mesh);
         quint8 *vertEntryData = vertBufferData + vertDataSize;
         quint8 *vertEntryNameData = vertEntryData + entrySize;
@@ -1266,64 +1263,69 @@ public:
         quint8 *nameBufferData = subsetBufferData + subsetSize;
         quint8 *jointBufferData = nameBufferData + nameSize;
 
-        retval->m_VertexBuffer.m_Stride = m_VertexBuffer.m_Stride;
-        Assign(baseAddress,
+        retval->m_vertexBuffer.m_stride = m_vertexBuffer.m_stride;
+        assign(baseAddress,
                vertBufferData,
-               retval->m_VertexBuffer.m_Data,
-               m_VertexBuffer.m_VertexData);
-        retval->m_VertexBuffer.m_Entries.m_Size = m_VertexBuffer.m_VertexBufferEntries.size();
-        retval->m_VertexBuffer.m_Entries.m_Offset = (quint32)(vertEntryData - baseAddress);
-        for (quint32 idx = 0, end = m_VertexBuffer.m_VertexBufferEntries.size(); idx < end; ++idx) {
-            const QDemonRenderVertexBufferEntry &theEntry(m_VertexBuffer.m_VertexBufferEntries[idx]);
+               retval->m_vertexBuffer.m_data,
+               m_vertexBuffer.m_vertexData);
+        retval->m_vertexBuffer.m_entries.m_size = m_vertexBuffer.m_vertexBufferEntries.size();
+        retval->m_vertexBuffer.m_entries.m_offset = (quint32)(vertEntryData - baseAddress);
+        for (quint32 idx = 0, end = m_vertexBuffer.m_vertexBufferEntries.size(); idx < end; ++idx) {
+            const QDemonRenderVertexBufferEntry &theEntry(m_vertexBuffer.m_vertexBufferEntries[idx]);
             MeshVertexBufferEntry &theDestEntry(
-                        retval->m_VertexBuffer.m_Entries.index(baseAddress, idx));
-            theDestEntry.m_ComponentType = theEntry.m_ComponentType;
-            theDestEntry.m_FirstItemOffset = theEntry.m_FirstItemOffset;
-            theDestEntry.m_NumComponents = theEntry.m_NumComponents;
-            const char *targetName = theEntry.m_Name;
+                        retval->m_vertexBuffer.m_entries.index(baseAddress, idx));
+            theDestEntry.m_componentType = theEntry.m_componentType;
+            theDestEntry.m_firstItemOffset = theEntry.m_firstItemOffset;
+            theDestEntry.m_numComponents = theEntry.m_numComponents;
+            const char *targetName = theEntry.m_name;
             if (targetName == nullptr)
                 targetName = "";
 
             quint32 entryNameLen = (quint32)(strlen(targetName)) + 1;
-            theDestEntry.m_NameOffset = (quint32)(vertEntryNameData - baseAddress);
-            memcpy(vertEntryNameData, theEntry.m_Name, entryNameLen);
+            theDestEntry.m_nameOffset = (quint32)(vertEntryNameData - baseAddress);
+            memcpy(vertEntryNameData, theEntry.m_name, entryNameLen);
             vertEntryNameData += entryNameLen;
         }
 
-        retval->m_IndexBuffer.m_ComponentType = m_IndexBuffer.m_CompType;
-        Assign(baseAddress,
+        retval->m_indexBuffer.m_componentType = m_indexBuffer.m_compType;
+        assign(baseAddress,
                indexBufferData,
-               retval->m_IndexBuffer.m_Data,
-               m_IndexBuffer.m_IndexData);
-        Assign(baseAddress, subsetBufferData, retval->m_Subsets, m_MeshSubsetDescs.size());
-        for (quint32 idx = 0, end = m_MeshSubsetDescs.size(); idx < end; ++idx) {
-            SubsetDesc &theDesc = m_MeshSubsetDescs[idx];
+               retval->m_indexBuffer.m_data,
+               m_indexBuffer.m_indexData);
+        assign(baseAddress, subsetBufferData, retval->m_subsets, m_meshSubsetDescs.size());
+        for (quint32 idx = 0, end = m_meshSubsetDescs.size(); idx < end; ++idx) {
+            SubsetDesc &theDesc = m_meshSubsetDescs[idx];
             MeshSubset &theSubset = reinterpret_cast<MeshSubset *>(subsetBufferData)[idx];
-            theSubset.m_Bounds = theDesc.m_Bounds;
-            theSubset.m_Count = theDesc.m_Count;
-            theSubset.m_Offset = theDesc.m_Offset;
-            if (!theDesc.m_Name.isEmpty()) {
-                theSubset.m_Name.m_Size = theDesc.m_Name.size() + 1;
-                theSubset.m_Name.m_Offset = (quint32)(nameBufferData - baseAddress);
-                std::transform(theDesc.m_Name.begin(), theDesc.m_Name.end(),
+            theSubset.m_bounds = theDesc.m_bounds;
+            theSubset.m_count = theDesc.m_count;
+            theSubset.m_offset = theDesc.m_offset;
+            if (!theDesc.m_name.isEmpty()) {
+                theSubset.m_name.m_size = theDesc.m_name.size() + 1;
+                theSubset.m_name.m_offset = (quint32)(nameBufferData - baseAddress);
+                std::transform(theDesc.m_name.begin(), theDesc.m_name.end(),
                                reinterpret_cast<char16_t *>(nameBufferData),
                                [](QChar c) { return static_cast<char16_t>(c.unicode()); });
-                reinterpret_cast<char16_t *>(nameBufferData)[theDesc.m_Name.size()] = 0;
-                nameBufferData += (theDesc.m_Name.size() + 1) * sizeof(char16_t);
+                reinterpret_cast<char16_t *>(nameBufferData)[theDesc.m_name.size()] = 0;
+                nameBufferData += (theDesc.m_name.size() + 1) * sizeof(char16_t);
             } else {
-                theSubset.m_Name.m_Size = 0;
-                theSubset.m_Name.m_Offset = 0;
+                theSubset.m_name.m_size = 0;
+                theSubset.m_name.m_offset = 0;
             }
         }
-        Assign(baseAddress, jointBufferData, retval->m_Joints, m_Joints);
+        assign(baseAddress, jointBufferData, retval->m_joints, m_joints);
         return *retval;
     }
 };
 }
 
-QSharedPointer<MeshBuilder> MeshBuilder::CreateMeshBuilder()
+QDemonMeshBuilder::~QDemonMeshBuilder()
 {
-    return QSharedPointer<MeshBuilder>(new MeshBuilderImpl());
+
+}
+
+QSharedPointer<QDemonMeshBuilder> QDemonMeshBuilder::createMeshBuilder()
+{
+    return QSharedPointer<QDemonMeshBuilder>(new MeshBuilderImpl());
 }
 
 }

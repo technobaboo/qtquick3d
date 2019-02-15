@@ -42,210 +42,208 @@ QT_BEGIN_NAMESPACE
 
 namespace {
 
-struct SGpuTimerInfo
+struct QDemonGpuTimerInfo
 {
-    bool m_AbsoluteTime;
-    quint16 m_WriteID;
-    quint16 m_ReadID;
-    quint16 m_AverageTimeWriteID;
-    quint64 m_AverageTime[10];
-    quint32 m_FrameID[RECORDED_FRAME_DELAY];
-    QSharedPointer<QDemonRenderTimerQuery> m_TimerStartQueryObjects[RECORDED_FRAME_DELAY];
-    QSharedPointer<QDemonRenderTimerQuery> m_TimerEndQueryObjects[RECORDED_FRAME_DELAY];
-    QSharedPointer<QDemonRenderSync> m_TimerSyncObjects[RECORDED_FRAME_DELAY];
+    bool m_absoluteTime;
+    quint16 m_writeID;
+    quint16 m_readID;
+    quint16 m_averageTimeWriteID;
+    quint64 m_averageTime[10];
+    quint32 m_frameID[RECORDED_FRAME_DELAY];
+    QSharedPointer<QDemonRenderTimerQuery> m_timerStartQueryObjects[RECORDED_FRAME_DELAY];
+    QSharedPointer<QDemonRenderTimerQuery> m_timerEndQueryObjects[RECORDED_FRAME_DELAY];
+    QSharedPointer<QDemonRenderSync> m_timerSyncObjects[RECORDED_FRAME_DELAY];
 
-    SGpuTimerInfo()
-        : m_AbsoluteTime(false)
-        , m_WriteID(0)
-        , m_ReadID(0)
-        , m_AverageTimeWriteID(0)
+    QDemonGpuTimerInfo()
+        : m_absoluteTime(false)
+        , m_writeID(0)
+        , m_readID(0)
+        , m_averageTimeWriteID(0)
     {
-        memset(m_AverageTime, 0x0, 10 * sizeof(quint64));
+        memset(m_averageTime, 0x0, 10 * sizeof(quint64));
     }
 
-    ~SGpuTimerInfo() {}
-
-    void IncrementWriteCounter()
+    void incrementWriteCounter()
     {
-        m_WriteID++;
-        m_WriteID %= RECORDED_FRAME_DELAY_MASK;
+        m_writeID++;
+        m_writeID %= RECORDED_FRAME_DELAY_MASK;
     }
 
-    void IncrementReadCounter()
+    void incrementReadCounter()
     {
-        m_ReadID++;
-        m_ReadID %= RECORDED_FRAME_DELAY_MASK;
+        m_readID++;
+        m_readID %= RECORDED_FRAME_DELAY_MASK;
     }
 
-    void IncrementAveragedWriteCounter()
+    void incrementAveragedWriteCounter()
     {
-        m_AverageTimeWriteID++;
-        m_AverageTimeWriteID %= 10;
+        m_averageTimeWriteID++;
+        m_averageTimeWriteID %= 10;
     }
 
-    void StartTimerQuery(quint32 frameID)
+    void startTimerQuery(quint32 frameID)
     {
-        m_FrameID[m_WriteID] = frameID;
+        m_frameID[m_writeID] = frameID;
 
-        if (m_AbsoluteTime)
-            m_TimerStartQueryObjects[m_WriteID]->SetTimerQuery();
+        if (m_absoluteTime)
+            m_timerStartQueryObjects[m_writeID]->SetTimerQuery();
         else
-            m_TimerStartQueryObjects[m_WriteID]->Begin();
+            m_timerStartQueryObjects[m_writeID]->begin();
     }
 
-    void EndTimerQuery()
+    void endTimerQuery()
     {
-        if (m_AbsoluteTime)
-            m_TimerEndQueryObjects[m_WriteID]->SetTimerQuery();
+        if (m_absoluteTime)
+            m_timerEndQueryObjects[m_writeID]->SetTimerQuery();
         else
-            m_TimerStartQueryObjects[m_WriteID]->End();
+            m_timerStartQueryObjects[m_writeID]->end();
 
-        IncrementWriteCounter();
+        incrementWriteCounter();
     }
 
-    void AddSync()
+    void addSync()
     {
-        m_TimerSyncObjects[m_WriteID]->Sync();
-        m_TimerSyncObjects[m_WriteID]->Wait();
+        m_timerSyncObjects[m_writeID]->sync();
+        m_timerSyncObjects[m_writeID]->wait();
     }
 
     double GetAveragedElapsedTimeInMs()
     {
         double time =
-                double(((m_AverageTime[0] + m_AverageTime[1] + m_AverageTime[2] + m_AverageTime[3]
-                + m_AverageTime[4] + m_AverageTime[5] + m_AverageTime[6] + m_AverageTime[7]
-                + m_AverageTime[8] + m_AverageTime[9])
+                double(((m_averageTime[0] + m_averageTime[1] + m_averageTime[2] + m_averageTime[3]
+                + m_averageTime[4] + m_averageTime[5] + m_averageTime[6] + m_averageTime[7]
+                + m_averageTime[8] + m_averageTime[9])
                 / 10)
                 / 1e06);
 
         return time;
     }
 
-    double GetElapsedTimeInMs(quint32 frameID)
+    double getElapsedTimeInMs(quint32 frameID)
     {
         double time = 0;
 
-        if (((frameID - m_FrameID[m_ReadID]) < 2) || (m_ReadID == m_WriteID))
+        if (((frameID - m_frameID[m_readID]) < 2) || (m_readID == m_writeID))
             return time;
 
-        if (m_AbsoluteTime) {
+        if (m_absoluteTime) {
             quint64 startTime, endTime;
 
-            m_TimerStartQueryObjects[m_ReadID]->GetResult(&startTime);
-            m_TimerEndQueryObjects[m_ReadID]->GetResult(&endTime);
+            m_timerStartQueryObjects[m_readID]->getResult(&startTime);
+            m_timerEndQueryObjects[m_readID]->getResult(&endTime);
 
-            m_AverageTime[m_AverageTimeWriteID] = endTime - startTime;
+            m_averageTime[m_averageTimeWriteID] = endTime - startTime;
         } else {
             quint64 elapsedTime;
 
-            m_TimerStartQueryObjects[m_ReadID]->GetResult(&elapsedTime);
+            m_timerStartQueryObjects[m_readID]->getResult(&elapsedTime);
 
-            m_AverageTime[m_AverageTimeWriteID] = elapsedTime;
+            m_averageTime[m_averageTimeWriteID] = elapsedTime;
         }
 
-        IncrementReadCounter();
-        IncrementAveragedWriteCounter();
+        incrementReadCounter();
+        incrementAveragedWriteCounter();
 
         return GetAveragedElapsedTimeInMs();
     }
 };
 
-class QDemonRenderGpuProfiler : public IRenderProfiler
+class QDemonRenderGpuProfiler : public QDemonRenderProfilerInterface
 {
-    typedef QHash<QString, QSharedPointer<SGpuTimerInfo>> TStrGpuTimerInfoMap;
+    typedef QHash<QString, QSharedPointer<QDemonGpuTimerInfo>> TStrGpuTimerInfoMap;
 
 private:
-    QSharedPointer<QDemonRenderContext> m_RenderContext;
-    IQDemonRenderContext *m_Context;
+    QSharedPointer<QDemonRenderContext> m_renderContext;
+    QDemonRenderContextInterface *m_context;
 
-    TStrGpuTimerInfoMap m_StrToGpuTimerMap;
-    IRenderProfiler::TStrIDVec m_StrToIDVec;
-    mutable quint32 m_VertexCount;
+    TStrGpuTimerInfoMap m_strToGpuTimerMap;
+    QDemonRenderProfilerInterface::TStrIDVec m_strToIDVec;
+    mutable quint32 m_vertexCount;
 
 public:
-    QDemonRenderGpuProfiler(IQDemonRenderContext *inContext,
+    QDemonRenderGpuProfiler(QDemonRenderContextInterface *inContext,
                             QSharedPointer<QDemonRenderContext> inRenderContext)
-        : m_RenderContext(inRenderContext)
-        , m_Context(inContext)
-        , m_VertexCount(0)
+        : m_renderContext(inRenderContext)
+        , m_context(inContext)
+        , m_vertexCount(0)
     {
     }
 
-    virtual ~QDemonRenderGpuProfiler() { m_StrToGpuTimerMap.clear(); }
+    virtual ~QDemonRenderGpuProfiler() { m_strToGpuTimerMap.clear(); }
 
-    void StartTimer(QString &nameID, bool absoluteTime, bool sync) override
+    void startTimer(QString &nameID, bool absoluteTime, bool sync) override
     {
-        QSharedPointer<SGpuTimerInfo> theGpuTimerData = GetOrCreateGpuTimerInfo(nameID);
+        QSharedPointer<QDemonGpuTimerInfo> theGpuTimerData = getOrCreateGpuTimerInfo(nameID);
 
         if (theGpuTimerData) {
             if (sync)
-                theGpuTimerData->AddSync();
+                theGpuTimerData->addSync();
 
-            theGpuTimerData->m_AbsoluteTime = absoluteTime;
-            theGpuTimerData->StartTimerQuery(m_Context->GetFrameCount());
+            theGpuTimerData->m_absoluteTime = absoluteTime;
+            theGpuTimerData->startTimerQuery(m_context->getFrameCount());
         }
     }
 
-    void EndTimer(QString &nameID) override
+    void endTimer(QString &nameID) override
     {
-        QSharedPointer<SGpuTimerInfo> theGpuTimerData = GetOrCreateGpuTimerInfo(nameID);
+        QSharedPointer<QDemonGpuTimerInfo> theGpuTimerData = getOrCreateGpuTimerInfo(nameID);
 
         if (theGpuTimerData) {
-            theGpuTimerData->EndTimerQuery();
+            theGpuTimerData->endTimerQuery();
         }
     }
 
-    double GetElapsedTime(const QString &nameID) const override
+    double getElapsedTime(const QString &nameID) const override
     {
         double time = 0;
-        QSharedPointer<SGpuTimerInfo> theGpuTimerData = GetGpuTimerInfo(nameID);
+        QSharedPointer<QDemonGpuTimerInfo> theGpuTimerData = getGpuTimerInfo(nameID);
 
         if (theGpuTimerData) {
-            time = theGpuTimerData->GetElapsedTimeInMs(m_Context->GetFrameCount());
+            time = theGpuTimerData->getElapsedTimeInMs(m_context->getFrameCount());
         }
 
         return time;
     }
 
-    const TStrIDVec &GetTimerIDs() const override { return m_StrToIDVec; }
+    const TStrIDVec &getTimerIDs() const override { return m_strToIDVec; }
 
-    void AddVertexCount(quint32 count) override { m_VertexCount += count; }
+    void addVertexCount(quint32 count) override { m_vertexCount += count; }
 
-    quint32 GetAndResetTriangleCount() const override
+    quint32 getAndResetTriangleCount() const override
     {
-        quint32 tris = m_VertexCount / 3;
-        m_VertexCount = 0;
+        quint32 tris = m_vertexCount / 3;
+        m_vertexCount = 0;
         return tris;
     }
 
 private:
-    QSharedPointer<SGpuTimerInfo> GetOrCreateGpuTimerInfo(QString &nameID)
+    QSharedPointer<QDemonGpuTimerInfo> getOrCreateGpuTimerInfo(QString &nameID)
     {
-        TStrGpuTimerInfoMap::const_iterator theIter = m_StrToGpuTimerMap.find(nameID);
-        if (theIter != m_StrToGpuTimerMap.end())
+        TStrGpuTimerInfoMap::const_iterator theIter = m_strToGpuTimerMap.find(nameID);
+        if (theIter != m_strToGpuTimerMap.end())
             return theIter.value();
 
-        QSharedPointer<SGpuTimerInfo> theGpuTimerData = QSharedPointer<SGpuTimerInfo>(new SGpuTimerInfo());
+        QSharedPointer<QDemonGpuTimerInfo> theGpuTimerData = QSharedPointer<QDemonGpuTimerInfo>(new QDemonGpuTimerInfo());
 
         if (theGpuTimerData) {
             // create queries
             for (quint32 i = 0; i < RECORDED_FRAME_DELAY; i++) {
-                theGpuTimerData->m_TimerStartQueryObjects[i] = m_RenderContext->CreateTimerQuery();
-                theGpuTimerData->m_TimerEndQueryObjects[i] = m_RenderContext->CreateTimerQuery();
-                theGpuTimerData->m_TimerSyncObjects[i] = m_RenderContext->CreateSync();
-                theGpuTimerData->m_FrameID[i] = 0;
+                theGpuTimerData->m_timerStartQueryObjects[i] = m_renderContext->createTimerQuery();
+                theGpuTimerData->m_timerEndQueryObjects[i] = m_renderContext->createTimerQuery();
+                theGpuTimerData->m_timerSyncObjects[i] = m_renderContext->createSync();
+                theGpuTimerData->m_frameID[i] = 0;
             }
-            m_StrToGpuTimerMap.insert(nameID, theGpuTimerData);
-            m_StrToIDVec.push_back(nameID);
+            m_strToGpuTimerMap.insert(nameID, theGpuTimerData);
+            m_strToIDVec.push_back(nameID);
         }
 
         return theGpuTimerData;
     }
 
-    QSharedPointer<SGpuTimerInfo> GetGpuTimerInfo(const QString &nameID) const
+    QSharedPointer<QDemonGpuTimerInfo> getGpuTimerInfo(const QString &nameID) const
     {
-        TStrGpuTimerInfoMap::const_iterator theIter = m_StrToGpuTimerMap.find(nameID);
-        if (theIter != m_StrToGpuTimerMap.end())
+        TStrGpuTimerInfoMap::const_iterator theIter = m_strToGpuTimerMap.find(nameID);
+        if (theIter != m_strToGpuTimerMap.end())
             return theIter.value();
 
         return nullptr;
@@ -253,10 +251,10 @@ private:
 };
 }
 
-QSharedPointer<IRenderProfiler> IRenderProfiler::CreateGpuProfiler(IQDemonRenderContext *inContext,
-                                                                   QSharedPointer<QDemonRenderContext> inRenderContext)
+QSharedPointer<QDemonRenderProfilerInterface> QDemonRenderProfilerInterface::createGpuProfiler(QDemonRenderContextInterface *inContext,
+                                                                                               QSharedPointer<QDemonRenderContext> inRenderContext)
 {
-    return QSharedPointer<IRenderProfiler>(new QDemonRenderGpuProfiler(inContext, inRenderContext));
+    return QSharedPointer<QDemonRenderProfilerInterface>(new QDemonRenderGpuProfiler(inContext, inRenderContext));
 }
 
 QT_END_NAMESPACE

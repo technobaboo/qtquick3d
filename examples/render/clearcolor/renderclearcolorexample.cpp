@@ -45,7 +45,7 @@ public:
 
     void initialize() override
     {
-        m_context = QDemonRenderContext::CreateGL(format());
+        m_context = QDemonRenderContext::createGl(format());
     }
 
     virtual void drawFrame(qint64 delta) override
@@ -54,14 +54,14 @@ public:
         // Apply this value immediately but track it so that a later pop will in fact
         // restore this value.
         if (m_elapsedTime < 1000) {
-            m_context->SetClearColor(QVector4D(.8f, .0f, .0f, 1.f));
+            m_context->setClearColor(QVector4D(.8f, .0f, .0f, 1.f));
         } else if (m_elapsedTime < 2000) {
-            m_context->SetClearColor(QVector4D(0.f, .0f, 1.f, 1.f));
+            m_context->setClearColor(QVector4D(0.f, .0f, 1.f, 1.f));
         } else {
-            m_context->SetClearColor(QVector4D(0.f, 1.0f, 1.f, 1.f));
+            m_context->setClearColor(QVector4D(0.f, 1.0f, 1.f, 1.f));
             m_elapsedTime = 0;
         }
-        m_context->Clear(QDemonRenderClearFlags(QDemonRenderClearValues::Color));
+        m_context->clear(QDemonRenderClearFlags(QDemonRenderClearValues::Color));
     }
 };
 }

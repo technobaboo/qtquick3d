@@ -69,77 +69,77 @@ struct DefaultMaterialSpecularModel
     };
 };
 
-struct SImage;
+struct QDemonRenderImage;
 
-struct Q_DEMONRUNTIMERENDER_EXPORT SDefaultMaterial : SGraphObject
+struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderDefaultMaterial : QDemonGraphObject
 {
-    CMaterialDirty m_Dirty;
+    QDemonMaterialDirty dirty;
     // lightmap section
-    SLightmaps m_Lightmaps;
+    QDemonRenderLightmaps lightmaps;
     // material section
-    SImage *m_IblProbe;
-    DefaultMaterialLighting::Enum m_Lighting; // defaults to vertex
-    DefaultMaterialBlendMode::Enum m_BlendMode; // defaults to normal
-    QVector3D m_DiffuseColor; // colors are 0-1 normalized
-    SImage *m_DiffuseMaps[3];
-    float m_EmissivePower; // 0-100, defaults to 0
-    SImage *m_EmissiveMap;
-    SImage *m_EmissiveMap2;
-    QVector3D m_EmissiveColor;
-    SImage *m_SpecularReflection;
-    SImage *m_SpecularMap;
-    DefaultMaterialSpecularModel::Enum m_SpecularModel;
-    QVector3D m_SpecularTint;
-    float m_IOR;
-    float m_FresnelPower;
-    float m_SpecularAmount; // 0-??, defaults to 0
-    float m_SpecularRoughness; // 0-??, defaults to 50
-    SImage *m_RoughnessMap;
-    float m_Opacity; // 0-1
-    SImage *m_OpacityMap;
-    SImage *m_BumpMap;
-    float m_BumpAmount; // 0-??
-    SImage *m_NormalMap;
-    SImage *m_DisplacementMap;
-    float m_DisplaceAmount; // 0-??
-    SImage *m_TranslucencyMap;
-    float m_TranslucentFalloff; // 0 - ??
-    float m_DiffuseLightWrap; // 0 - 1
-    bool m_VertexColors;
+    QDemonRenderImage *iblProbe;
+    DefaultMaterialLighting::Enum lighting; // defaults to vertex
+    DefaultMaterialBlendMode::Enum blendMode; // defaults to normal
+    QVector3D diffuseColor; // colors are 0-1 normalized
+    QDemonRenderImage *diffuseMaps[3];
+    float emissivePower; // 0-100, defaults to 0
+    QDemonRenderImage *emissiveMap;
+    QDemonRenderImage *emissiveMap2;
+    QVector3D emissiveColor;
+    QDemonRenderImage *specularReflection;
+    QDemonRenderImage *specularMap;
+    DefaultMaterialSpecularModel::Enum specularModel;
+    QVector3D specularTint;
+    float ior;
+    float fresnelPower;
+    float specularAmount; // 0-??, defaults to 0
+    float specularRoughness; // 0-??, defaults to 50
+    QDemonRenderImage *roughnessMap;
+    float opacity; // 0-1
+    QDemonRenderImage *opacityMap;
+    QDemonRenderImage *bumpMap;
+    float bumpAmount; // 0-??
+    QDemonRenderImage *normalMap;
+    QDemonRenderImage *displacementMap;
+    float displaceAmount; // 0-??
+    QDemonRenderImage *translucencyMap;
+    float translucentFalloff; // 0 - ??
+    float diffuseLightWrap; // 0 - 1
+    bool vertexColors;
     // Materials are stored as a linked list on models.
-    SGraphObject *m_NextSibling;
-    SModel *m_Parent;
+    QDemonGraphObject *nextSibling;
+    QDemonRenderModel *parent;
 
-    SDefaultMaterial();
+    QDemonRenderDefaultMaterial();
 
-    bool IsSpecularEnabled() const { return m_SpecularAmount > .01f; }
-    bool IsFresnelEnabled() const { return m_FresnelPower > 0.0f; }
-    bool IsVertexColorsEnabled() const { return m_VertexColors; }
-    bool HasLighting() const { return m_Lighting != DefaultMaterialLighting::NoLighting; }
+    bool isSpecularEnabled() const { return specularAmount > .01f; }
+    bool isFresnelEnabled() const { return fresnelPower > 0.0f; }
+    bool isVertexColorsEnabled() const { return vertexColors; }
+    bool hasLighting() const { return lighting != DefaultMaterialLighting::NoLighting; }
 
     // Generic method used during serialization
     // to remap string and object pointers
     template <typename TRemapperType>
-    void Remap(TRemapperType &inRemapper)
+    void remap(TRemapperType &inRemapper)
     {
-        SGraphObject::Remap(inRemapper);
-        m_Lightmaps.Remap(inRemapper);
-        inRemapper.Remap(m_IblProbe);
-        inRemapper.Remap(m_DiffuseMaps[0]);
-        inRemapper.Remap(m_DiffuseMaps[1]);
-        inRemapper.Remap(m_DiffuseMaps[2]);
-        inRemapper.Remap(m_EmissiveMap);
-        inRemapper.Remap(m_EmissiveMap2);
-        inRemapper.Remap(m_SpecularReflection);
-        inRemapper.Remap(m_SpecularMap);
-        inRemapper.Remap(m_RoughnessMap);
-        inRemapper.Remap(m_OpacityMap);
-        inRemapper.Remap(m_BumpMap);
-        inRemapper.Remap(m_NormalMap);
-        inRemapper.Remap(m_DisplacementMap);
-        inRemapper.Remap(m_TranslucencyMap);
-        inRemapper.RemapMaterial(m_NextSibling);
-        inRemapper.Remap(m_Parent);
+        QDemonGraphObject::remap(inRemapper);
+        lightmaps.remap(inRemapper);
+        inRemapper.remap(iblProbe);
+        inRemapper.remap(diffuseMaps[0]);
+        inRemapper.remap(diffuseMaps[1]);
+        inRemapper.remap(diffuseMaps[2]);
+        inRemapper.remap(emissiveMap);
+        inRemapper.remap(emissiveMap2);
+        inRemapper.remap(specularReflection);
+        inRemapper.remap(specularMap);
+        inRemapper.remap(roughnessMap);
+        inRemapper.remap(opacityMap);
+        inRemapper.remap(bumpMap);
+        inRemapper.remap(normalMap);
+        inRemapper.remap(displacementMap);
+        inRemapper.remap(translucencyMap);
+        inRemapper.remapMaterial(nextSibling);
+        inRemapper.remap(parent);
     }
 };
 

@@ -48,134 +48,99 @@ QT_BEGIN_NAMESPACE
 // note this struct must exactly match the memory layout of the
 // struct sampleLight.glsllib and sampleArea.glsllib. If you make changes here you need
 // to adjust the code in sampleLight.glsllib and sampleArea.glsllib as well
-struct SLightSourceShader
+struct QDemonLightSourceShader
 {
-    QVector4D m_position;
-    QVector4D m_direction; // Specifies the light direction in world coordinates.
-    QVector4D m_up;
-    QVector4D m_right;
-    QVector4D m_diffuse;
-    QVector4D m_ambient;
-    QVector4D m_specular;
-    float m_spotExponent; // Specifies the intensity distribution of the light.
-    float m_spotCutoff; // Specifies the maximum spread angle of the light.
-    float m_constantAttenuation; // Specifies the constant light attenuation factor.
-    float m_linearAttenuation; // Specifies the linear light attenuation factor.
-    float m_quadraticAttenuation; // Specifies the quadratic light attenuation factor.
-    float m_range; // Specifies the maximum distance of the light influence
-    float m_width; // Specifies the width of the area light surface.
-    float m_height; // Specifies the height of the area light surface;
-    QVector4D m_shadowControls;
-    QMatrix4x4 m_shadowView;
-    qint32 m_shadowIdx;
-    float m_padding1[3];
+    QVector4D position;
+    QVector4D direction; // Specifies the light direction in world coordinates.
+    QVector4D up;
+    QVector4D right;
+    QVector4D diffuse;
+    QVector4D ambient;
+    QVector4D specular;
+    float spotExponent; // Specifies the intensity distribution of the light.
+    float spotCutoff; // Specifies the maximum spread angle of the light.
+    float constantAttenuation; // Specifies the constant light attenuation factor.
+    float linearAttenuation; // Specifies the linear light attenuation factor.
+    float quadraticAttenuation; // Specifies the quadratic light attenuation factor.
+    float range; // Specifies the maximum distance of the light influence
+    float width; // Specifies the width of the area light surface.
+    float height; // Specifies the height of the area light surface;
+    QVector4D shadowControls;
+    QMatrix4x4 shadowView;
+    qint32 shadowIdx;
+    float padding1[3];
 };
 
-struct SLayer;
-struct SCamera;
-struct SLight;
+struct QDemonLayer;
+struct QDemonRenderCamera;
+struct QDemonRenderLight;
 class QDemonRenderShadowMap;
 class QDemonRenderTexture2D;
-struct SImage;
-class IShaderStageGenerator;
-struct SRenderableImage;
+struct QDemonRenderImage;
+class QDemonShaderStageGeneratorInterface;
+struct QDemonRenderableImage;
 class QDemonRenderShaderProgram;
-struct SGraphObject;
-struct SShaderDefaultMaterialKey;
+struct QDemonGraphObject;
+struct QDemonShaderDefaultMaterialKey;
 
-struct SLayerGlobalRenderProperties
+struct QDemonLayerGlobalRenderProperties
 {
-    const SLayer &m_Layer;
-    SCamera &m_Camera;
-    QVector3D m_CameraDirection;
-    QVector<SLight *> &m_Lights;
-    QVector<QVector3D> m_LightDirections;
-    QSharedPointer<QDemonRenderShadowMap> m_ShadowMapManager;
-    QSharedPointer<QDemonRenderTexture2D> m_DepthTexture;
-    QSharedPointer<QDemonRenderTexture2D> m_SSaoTexture;
-    SImage *m_LightProbe;
-    SImage *m_LightProbe2;
-    float m_ProbeHorizon;
-    float m_ProbeBright;
-    float m_Probe2Window;
-    float m_Probe2Pos;
-    float m_Probe2Fade;
-    float m_ProbeFOV;
-
-    SLayerGlobalRenderProperties(const SLayer &inLayer,
-                                 SCamera &inCamera,
-                                 QVector3D inCameraDirection,
-                                 QVector<SLight *> &inLights,
-                                 QVector<QVector3D> &inLightDirections,
-                                 QSharedPointer<QDemonRenderShadowMap> inShadowMapManager,
-                                 QSharedPointer<QDemonRenderTexture2D> inDepthTexture,
-                                 QSharedPointer<QDemonRenderTexture2D> inSSaoTexture,
-                                 SImage *inLightProbe,
-                                 SImage *inLightProbe2,
-                                 float inProbeHorizon,
-                                 float inProbeBright,
-                                 float inProbe2Window,
-                                 float inProbe2Pos,
-                                 float inProbe2Fade,
-                                 float inProbeFOV)
-        : m_Layer(inLayer)
-        , m_Camera(inCamera)
-        , m_CameraDirection(inCameraDirection)
-        , m_Lights(inLights)
-        , m_LightDirections(inLightDirections)
-        , m_ShadowMapManager(inShadowMapManager)
-        , m_DepthTexture(inDepthTexture)
-        , m_SSaoTexture(inSSaoTexture)
-        , m_LightProbe(inLightProbe)
-        , m_LightProbe2(inLightProbe2)
-        , m_ProbeHorizon(inProbeHorizon)
-        , m_ProbeBright(inProbeBright)
-        , m_Probe2Window(inProbe2Window)
-        , m_Probe2Pos(inProbe2Pos)
-        , m_Probe2Fade(inProbe2Fade)
-        , m_ProbeFOV(inProbeFOV)
-    {
-    }
+    const QDemonLayer &layer;
+    QDemonRenderCamera &camera;
+    QVector3D cameraDirection;
+    QVector<QDemonRenderLight *> &lights;
+    QVector<QVector3D> lightDirections;
+    QSharedPointer<QDemonRenderShadowMap> shadowMapManager;
+    QSharedPointer<QDemonRenderTexture2D> depthTexture;
+    QSharedPointer<QDemonRenderTexture2D> ssaoTexture;
+    QDemonRenderImage *lightProbe;
+    QDemonRenderImage *lightProbe2;
+    float probeHorizon;
+    float probeBright;
+    float probe2Window;
+    float probe2Pos;
+    float probe2Fade;
+    float probeFOV;
 };
 
-class IMaterialShaderGenerator
+class QDemonMaterialShaderGeneratorInterface
 {
 public:
-    virtual ~IMaterialShaderGenerator() {}
-    struct SImageVariableNames
+    virtual ~QDemonMaterialShaderGeneratorInterface() {}
+    struct ImageVariableNames
     {
-        QString m_ImageSampler;
-        QString m_ImageFragCoords;
+        QString m_imageSampler;
+        QString m_imageFragCoords;
     };
 
-    virtual SImageVariableNames GetImageVariableNames(quint32 inIdx) = 0;
-    virtual void GenerateImageUVCoordinates(IShaderStageGenerator &inVertexPipeline,
+    virtual ImageVariableNames getImageVariableNames(quint32 inIdx) = 0;
+    virtual void generateImageUVCoordinates(QDemonShaderStageGeneratorInterface &inVertexPipeline,
                                             quint32 idx,
                                             quint32 uvSet,
-                                            SRenderableImage &image) = 0;
+                                            QDemonRenderableImage &image) = 0;
 
     // inPipelineName needs to be unique else the shader cache will just return shaders from
     // different pipelines.
-    virtual QSharedPointer<QDemonRenderShaderProgram> GenerateShader(const SGraphObject &inMaterial,
-                                                                     SShaderDefaultMaterialKey inShaderDescription,
-                                                                     IShaderStageGenerator &inVertexPipeline,
+    virtual QSharedPointer<QDemonRenderShaderProgram> generateShader(const QDemonGraphObject &inMaterial,
+                                                                     QDemonShaderDefaultMaterialKey inShaderDescription,
+                                                                     QDemonShaderStageGeneratorInterface &inVertexPipeline,
                                                                      TShaderFeatureSet inFeatureSet,
-                                                                     const QVector<SLight *> &inLights,
-                                                                     SRenderableImage *inFirstImage,
+                                                                     const QVector<QDemonRenderLight *> &inLights,
+                                                                     QDemonRenderableImage *inFirstImage,
                                                                      bool inHasTransparency,
                                                                      const QString &inVertexPipelineName,
                                                                      const QString &inCustomMaterialName = QString()) = 0;
 
     // Also sets the blend function on the render context.
-    virtual void SetMaterialProperties(QSharedPointer<QDemonRenderShaderProgram> inProgram,
-                                       const SGraphObject &inMaterial,
+    virtual void setMaterialProperties(QSharedPointer<QDemonRenderShaderProgram> inProgram,
+                                       const QDemonGraphObject &inMaterial,
                                        const QVector2D &inCameraVec,
                                        const QMatrix4x4 &inModelViewProjection,
                                        const QMatrix3x3 &inNormalMatrix,
                                        const QMatrix4x4 &inGlobalTransform,
-                                       SRenderableImage *inFirstImage,
+                                       QDemonRenderableImage *inFirstImage,
                                        float inOpacity,
-                                       SLayerGlobalRenderProperties inRenderProperties) = 0;
+                                       QDemonLayerGlobalRenderProperties inRenderProperties) = 0;
 };
 QT_END_NAMESPACE
 

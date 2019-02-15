@@ -42,8 +42,8 @@ class QDemonRenderTextureSampler;
 class Q_DEMONRENDER_EXPORT QDemonRenderTextureCube : public QDemonRenderTextureBase, public QEnableSharedFromThis<QDemonRenderTextureCube>
 {
 private:
-    quint32 m_Width; ///< texture width (per face)
-    quint32 m_Height; ///< texture height (per face)
+    quint32 m_width; ///< texture width (per face)
+    quint32 m_height; ///< texture height (per face)
 
 public:
     /**
@@ -55,11 +55,10 @@ public:
          *
          * @return No return.
          */
-    QDemonRenderTextureCube(
-            QSharedPointer<QDemonRenderContextImpl> context,
-            QDemonRenderTextureTargetType::Enum texTarget = QDemonRenderTextureTargetType::TextureCube);
+    QDemonRenderTextureCube(QSharedPointer<QDemonRenderContextImpl> context,
+                            QDemonRenderTextureTargetType::Enum texTarget = QDemonRenderTextureTargetType::TextureCube);
 
-    virtual ~QDemonRenderTextureCube();
+    virtual ~QDemonRenderTextureCube() override;
 
     /**
          * @brief constructor
@@ -73,12 +72,15 @@ public:
          *
          * @return No return.
          */
-    void SetTextureData(QDemonDataRef<quint8> newBuffer, quint8 inMipLevel,
-                        QDemonRenderTextureCubeFaces::Enum inFace, quint32 width, quint32 height,
+    void setTextureData(QDemonDataRef<quint8> newBuffer,
+                        quint8 inMipLevel,
+                        QDemonRenderTextureCubeFaces::Enum inFace,
+                        quint32 width,
+                        quint32 height,
                         QDemonRenderTextureFormats::Enum format);
 
     // Get the texture details for mipmap level 0 if it was set.
-    STextureDetails GetTextureDetails() const override;
+    QDemonTextureDetails getTextureDetails() const override;
 
     /**
          * @brief Bind a texture for shader access
@@ -86,7 +88,7 @@ public:
          *
          * @return No return.
          */
-    void Bind() override;
+    void bind() override;
 
     /**
          * @brief create a texture array object
@@ -94,7 +96,7 @@ public:
          *
          * @ return a texture array object
          */
-    static QSharedPointer<QDemonRenderTextureCube> Create(QSharedPointer<QDemonRenderContextImpl> context);
+    static QSharedPointer<QDemonRenderTextureCube> create(QSharedPointer<QDemonRenderContextImpl> context);
 };
 
 QT_END_NAMESPACE

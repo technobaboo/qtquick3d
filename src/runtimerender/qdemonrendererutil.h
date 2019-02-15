@@ -34,25 +34,25 @@
 
 QT_BEGIN_NAMESPACE
 
-class IResourceManager;
-class CResourceTexture2D;
+class QDemonResourceManagerInterface;
+class QDemonResourceTexture2D;
 class QDemonRenderContext;
 
-class CRendererUtil
+class QDemonRendererUtil
 {
     static const quint32 MAX_SSAA_DIM = 8192; // max render traget size for SSAA mode
 
 public:
-    static void ResolveMutisampleFBOColorOnly(QSharedPointer<IResourceManager> inManager,
-                                              CResourceTexture2D &ioResult,
+    static void resolveMutisampleFBOColorOnly(QSharedPointer<QDemonResourceManagerInterface> inManager,
+                                              QDemonResourceTexture2D &ioResult,
                                               QDemonRenderContext &inRenderContext,
                                               quint32 inWidth,
                                               quint32 inHeight,
                                               QDemonRenderTextureFormats::Enum inColorFormat,
                                               QSharedPointer<QDemonRenderFrameBuffer> inSourceFBO);
 
-    static void ResolveSSAAFBOColorOnly(QSharedPointer<IResourceManager> inManager,
-                                        CResourceTexture2D &ioResult,
+    static void resolveSSAAFBOColorOnly(QSharedPointer<QDemonResourceManagerInterface> inManager,
+                                        QDemonResourceTexture2D &ioResult,
                                         quint32 outWidth,
                                         quint32 outHeight,
                                         QDemonRenderContext &inRenderContext,
@@ -61,7 +61,7 @@ public:
                                         QDemonRenderTextureFormats::Enum inColorFormat,
                                         QSharedPointer<QDemonRenderFrameBuffer> inSourceFBO);
 
-    static void GetSSAARenderSize(quint32 inWidth,
+    static void getSSAARenderSize(quint32 inWidth,
                                   quint32 inHeight,
                                   quint32 &outWidth,
                                   quint32 &outHeight);

@@ -42,7 +42,7 @@
 #include <QtQuick3d/qdemonnode.h>
 #include <QtQuick3d/qdemonobject.h>
 #include <QtQuick3d/qdemonscene.h>
-#include <QtQuick3d/qdemonwindow.h>s
+#include <QtQuick3d/qdemonwindow.h>
 
 static void initResources()
 {

@@ -36,15 +36,15 @@ QT_BEGIN_NAMESPACE
 QDemonRenderGeometryShader::QDemonRenderGeometryShader(QSharedPointer<QDemonRenderContextImpl> context,
                                                        QDemonConstDataRef<qint8> source, bool binaryProgram)
     : QDemonRenderShader(context, source, binaryProgram)
-    , m_ShaderHandle(nullptr)
+    , m_shaderHandle(nullptr)
 {
-    m_ShaderHandle = m_Backend->CreateGeometryShader(source, m_ErrorMessage, binaryProgram);
+    m_shaderHandle = m_backend->createGeometryShader(source, m_errorMessage, binaryProgram);
 }
 
 QDemonRenderGeometryShader::~QDemonRenderGeometryShader()
 {
-    if (m_ShaderHandle) {
-        m_Backend->ReleaseGeometryShader(m_ShaderHandle);
+    if (m_shaderHandle) {
+        m_backend->releaseGeometryShader(m_shaderHandle);
     }
 }
 

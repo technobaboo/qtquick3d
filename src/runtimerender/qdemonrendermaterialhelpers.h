@@ -35,30 +35,30 @@
 
 QT_BEGIN_NAMESPACE
 
-inline bool IsMaterial(SGraphObject &obj)
+inline bool IsMaterial(QDemonGraphObject &obj)
 {
-    return obj.m_Type == GraphObjectTypes::CustomMaterial
-            || obj.m_Type == GraphObjectTypes::DefaultMaterial
-            || obj.m_Type == GraphObjectTypes::ReferencedMaterial;
+    return obj.type == QDemonGraphObjectTypes::CustomMaterial
+            || obj.type == QDemonGraphObjectTypes::DefaultMaterial
+            || obj.type == QDemonGraphObjectTypes::ReferencedMaterial;
 }
 
-inline bool IsMaterial(SGraphObject *obj)
+inline bool IsMaterial(QDemonGraphObject *obj)
 {
     if (obj)
         return IsMaterial(*obj);
     return false;
 }
 
-inline bool IsImage(SGraphObject &obj) { return obj.m_Type == GraphObjectTypes::Image; }
+inline bool IsImage(QDemonGraphObject &obj) { return obj.type == QDemonGraphObjectTypes::Image; }
 
-inline bool IsImage(SGraphObject *obj)
+inline bool IsImage(QDemonGraphObject *obj)
 {
     if (obj)
         return IsImage(*obj);
     return false;
 }
 
-inline SGraphObject *GetNextMaterialSibling(SGraphObject *obj)
+inline QDemonGraphObject *GetNextMaterialSibling(QDemonGraphObject *obj)
 {
     if (obj == nullptr)
         return nullptr;
@@ -66,26 +66,26 @@ inline SGraphObject *GetNextMaterialSibling(SGraphObject *obj)
         Q_ASSERT(false);
         return nullptr;
     }
-    if (obj->m_Type == GraphObjectTypes::CustomMaterial)
-        return static_cast<SCustomMaterial *>(obj)->m_NextSibling;
-    else if (obj->m_Type == GraphObjectTypes::DefaultMaterial)
-        return static_cast<SDefaultMaterial *>(obj)->m_NextSibling;
+    if (obj->type == QDemonGraphObjectTypes::CustomMaterial)
+        return static_cast<QDemonCustomMaterial *>(obj)->m_nextSibling;
+    else if (obj->type == QDemonGraphObjectTypes::DefaultMaterial)
+        return static_cast<QDemonRenderDefaultMaterial *>(obj)->nextSibling;
     else
-        return static_cast<SReferencedMaterial *>(obj)->m_NextSibling;
+        return static_cast<QDemonReferencedMaterial *>(obj)->m_nextSibling;
 }
 
-inline void SetNextMaterialSibling(SGraphObject &obj, SGraphObject *sibling)
+inline void SetNextMaterialSibling(QDemonGraphObject &obj, QDemonGraphObject *sibling)
 {
     if (IsMaterial(obj) == false) {
         Q_ASSERT(false);
         return;
     }
-    if (obj.m_Type == GraphObjectTypes::CustomMaterial)
-        static_cast<SCustomMaterial *>(&obj)->m_NextSibling = sibling;
-    else if (obj.m_Type == GraphObjectTypes::DefaultMaterial)
-        static_cast<SDefaultMaterial *>(&obj)->m_NextSibling = sibling;
+    if (obj.type == QDemonGraphObjectTypes::CustomMaterial)
+        static_cast<QDemonCustomMaterial *>(&obj)->m_nextSibling = sibling;
+    else if (obj.type == QDemonGraphObjectTypes::DefaultMaterial)
+        static_cast<QDemonRenderDefaultMaterial *>(&obj)->nextSibling = sibling;
     else
-        static_cast<SReferencedMaterial *>(&obj)->m_NextSibling = sibling;
+        static_cast<QDemonReferencedMaterial *>(&obj)->m_nextSibling = sibling;
 }
 
 QT_END_NAMESPACE

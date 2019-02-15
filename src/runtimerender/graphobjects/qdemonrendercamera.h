@@ -39,15 +39,10 @@
 
 QT_BEGIN_NAMESPACE
 
-struct SCameraGlobalCalculationResult
+struct QDemonCameraGlobalCalculationResult
 {
-    bool m_WasDirty;
-    bool m_ComputeFrustumSucceeded;
-    SCameraGlobalCalculationResult(bool inWasDirty, bool inComputeSucceeded = true)
-        : m_WasDirty(inWasDirty)
-        , m_ComputeFrustumSucceeded(inComputeSucceeded)
-    {
-    }
+    bool m_wasDirty;
+    bool m_computeFrustumSucceeded /* = true */;
 };
 
 struct CameraScaleModes
@@ -75,73 +70,73 @@ struct CameraScaleAnchors
     };
 };
 
-struct SCuboidRect
+struct QDemonCuboidRect
 {
-    float m_Left;
-    float m_Top;
-    float m_Right;
-    float m_Bottom;
-    SCuboidRect(float l = 0.0f, float t = 0.0f, float r = 0.0f, float b = 0.0f)
-        : m_Left(l)
-        , m_Top(t)
-        , m_Right(r)
-        , m_Bottom(b)
+    float left;
+    float top;
+    float right;
+    float bottom;
+    constexpr QDemonCuboidRect(float l = 0.0f, float t = 0.0f, float r = 0.0f, float b = 0.0f)
+        : left(l)
+        , top(t)
+        , right(r)
+        , bottom(b)
     {
     }
-    void Translate(QVector2D inTranslation)
+    void translate(QVector2D inTranslation)
     {
-        m_Left += inTranslation.x();
-        m_Right += inTranslation.x();
-        m_Top += inTranslation.y();
-        m_Bottom += inTranslation.y();
+        left += inTranslation.x();
+        right += inTranslation.x();
+        top += inTranslation.y();
+        bottom += inTranslation.y();
     }
 };
 
-struct Q_DEMONRUNTIMERENDER_EXPORT SCamera : public SNode
+struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderCamera : public QDemonGraphNode
 {
 
     // Setting these variables should set dirty on the camera.
-    float m_ClipNear;
-    float m_ClipFar;
+    float clipNear;
+    float clipFar;
 
-    float m_FOV; // Radians
-    bool m_FOVHorizontal;
+    float fov; // Radians
+    bool fovHorizontal;
 
-    QMatrix4x4 m_Projection;
-    CameraScaleModes::Enum m_ScaleMode;
-    CameraScaleAnchors::Enum m_ScaleAnchor;
+    QMatrix4x4 projection;
+    CameraScaleModes::Enum scaleMode;
+    CameraScaleAnchors::Enum scaleAnchor;
     // Record some values from creating the projection matrix
     // to use during mouse picking.
-    QVector2D m_FrustumScale;
+    QVector2D frustumScale;
 
-    SCamera();
+    QDemonRenderCamera();
 
-    QMatrix3x3 GetLookAtMatrix(const QVector3D &inUpDir, const QVector3D &inDirection) const;
+    QMatrix3x3 getLookAtMatrix(const QVector3D &inUpDir, const QVector3D &inDirection) const;
     // Set our position, rotation member variables based on the lookat target
     // Marks this object as dirty.
     // Need to test this when the camera's local transform is null.
     // Assumes parent's local transform is the identity, meaning our local transform is
     // our global transform.
-    void LookAt(const QVector3D &inCameraPos, const QVector3D &inUpDir, const QVector3D &inTargetPos);
+    void lookAt(const QVector3D &inCameraPos, const QVector3D &inUpDir, const QVector3D &inTargetPos);
 
-    SCameraGlobalCalculationResult CalculateGlobalVariables(const QDemonRenderRectF &inViewport,
+    QDemonCameraGlobalCalculationResult calculateGlobalVariables(const QDemonRenderRectF &inViewport,
                                                             const QVector2D &inDesignDimensions);
-    bool CalculateProjection(const QDemonRenderRectF &inViewport, const QVector2D &inDesignDimensions);
-    bool ComputeFrustumOrtho(const QDemonRenderRectF &inViewport, const QVector2D &inDesignDimensions);
+    bool calculateProjection(const QDemonRenderRectF &inViewport, const QVector2D &inDesignDimensions);
+    bool computeFrustumOrtho(const QDemonRenderRectF &inViewport, const QVector2D &inDesignDimensions);
     // Used when rendering the widgets in studio.  This scales the widget when in orthographic
     // mode in order to have
     // constant size on screen regardless.
     // Number is always greater than one
-    float GetOrthographicScaleFactor(const QDemonRenderRectF &inViewport,
+    float getOrthographicScaleFactor(const QDemonRenderRectF &inViewport,
                                      const QVector2D &inDesignDimensions) const;
-    bool ComputeFrustumPerspective(const QDemonRenderRectF &inViewport,
+    bool computeFrustumPerspective(const QDemonRenderRectF &inViewport,
                                    const QVector2D &inDesignDimensions);
     // Text may be scaled so that it doesn't appear pixellated when the camera itself is doing
     // the scaling.
-    float GetTextScaleFactor(const QDemonRenderRectF &inViewport,
+    float getTextScaleFactor(const QDemonRenderRectF &inViewport,
                              const QVector2D &inDesignDimensions) const;
 
-    void CalculateViewProjectionMatrix(QMatrix4x4 &outMatrix) const;
+    void calculateViewProjectionMatrix(QMatrix4x4 &outMatrix) const;
 
     // If this is an orthographic camera, the cuboid properties are the distance from the center
     // point
@@ -152,24 +147,25 @@ struct Q_DEMONRUNTIMERENDER_EXPORT SCamera : public SNode
 
     // Return a normalized rect that describes the area the camera is rendering to.
     // This takes into account the various camera properties (scale mode, scale anchor).
-    SCuboidRect GetCameraBounds(const QDemonRenderRectF &inViewport,
+    QDemonCuboidRect getCameraBounds(const QDemonRenderRectF &inViewport,
                                 const QVector2D &inDesignDimensions) const;
 
     // Setup a camera VP projection for rendering offscreen.
-    static void SetupOrthographicCameraForOffscreenRender(QDemonRenderTexture2D &inTexture,
+    static void setupOrthographicCameraForOffscreenRender(QDemonRenderTexture2D &inTexture,
                                                           QMatrix4x4 &outVP);
-    static void SetupOrthographicCameraForOffscreenRender(QDemonRenderTexture2D &inTexture,
-                                                          QMatrix4x4 &outVP, SCamera &outCamera);
+    static void setupOrthographicCameraForOffscreenRender(QDemonRenderTexture2D &inTexture,
+                                                          QMatrix4x4 &outVP, QDemonRenderCamera &outCamera);
 
     // Unproject a point (x,y) in viewport relative coordinates meaning
     // left, bottom is 0,0 and values are increasing right,up respectively.
-    SRay Unproject(const QVector2D &inLayerRelativeMouseCoords, const QDemonRenderRectF &inViewport,
-                   const QVector2D &inDesignDimensions) const;
+    QDemonRenderRay unproject(const QVector2D &inLayerRelativeMouseCoords,
+                              const QDemonRenderRectF &inViewport,
+                              const QVector2D &inDesignDimensions) const;
 
     // Unproject a given coordinate to a 3d position that lies on the same camera
     // plane as inGlobalPos.
     // Expects CalculateGlobalVariables has been called or doesn't need to be.
-    QVector3D UnprojectToPosition(const QVector3D &inGlobalPos, const SRay &inRay) const;
+    QVector3D unprojectToPosition(const QVector3D &inGlobalPos, const QDemonRenderRay &inRay) const;
 
     float verticalFov(float aspectRatio) const;
     float verticalFov(const QDemonRenderRectF &inViewport) const;

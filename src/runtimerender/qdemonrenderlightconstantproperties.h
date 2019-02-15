@@ -59,50 +59,50 @@ static const QStringList lconstantnames = {
 #define LCSEED QStringLiteral("%1%2")
 
 template <typename GeneratedShader>
-struct SLightConstantProperties
+struct QDemonLightConstantProperties
 {
     struct LightConstants
     {
-        QDemonRenderCachedShaderProperty<QVector4D> m_position;
-        QDemonRenderCachedShaderProperty<QVector4D> m_direction;
-        QDemonRenderCachedShaderProperty<QVector4D> m_up;
-        QDemonRenderCachedShaderProperty<QVector4D> m_right;
-        QDemonRenderCachedShaderProperty<QVector4D> m_diffuse;
-        QDemonRenderCachedShaderProperty<QVector4D> m_ambient;
-        QDemonRenderCachedShaderProperty<QVector4D> m_specular;
-        QDemonRenderCachedShaderProperty<float> m_spotExponent;
-        QDemonRenderCachedShaderProperty<float> m_spotCutoff;
-        QDemonRenderCachedShaderProperty<float> m_constantAttenuation;
-        QDemonRenderCachedShaderProperty<float> m_linearAttenuation;
-        QDemonRenderCachedShaderProperty<float> m_quadraticAttenuation;
-        QDemonRenderCachedShaderProperty<float> m_range;
-        QDemonRenderCachedShaderProperty<float> m_width;
-        QDemonRenderCachedShaderProperty<float> m_height;
-        QDemonRenderCachedShaderProperty<QVector4D> m_shadowControls;
-        QDemonRenderCachedShaderProperty<QMatrix4x4> m_shadowView;
-        QDemonRenderCachedShaderProperty<qint32> m_shadowIdx;
-        QDemonRenderCachedShaderProperty<QVector3D> m_attenuation;
+        QDemonRenderCachedShaderProperty<QVector4D> position;
+        QDemonRenderCachedShaderProperty<QVector4D> direction;
+        QDemonRenderCachedShaderProperty<QVector4D> up;
+        QDemonRenderCachedShaderProperty<QVector4D> right;
+        QDemonRenderCachedShaderProperty<QVector4D> diffuse;
+        QDemonRenderCachedShaderProperty<QVector4D> ambient;
+        QDemonRenderCachedShaderProperty<QVector4D> specular;
+        QDemonRenderCachedShaderProperty<float> spotExponent;
+        QDemonRenderCachedShaderProperty<float> spotCutoff;
+        QDemonRenderCachedShaderProperty<float> constantAttenuation;
+        QDemonRenderCachedShaderProperty<float> linearAttenuation;
+        QDemonRenderCachedShaderProperty<float> quadraticAttenuation;
+        QDemonRenderCachedShaderProperty<float> range;
+        QDemonRenderCachedShaderProperty<float> width;
+        QDemonRenderCachedShaderProperty<float> height;
+        QDemonRenderCachedShaderProperty<QVector4D> shadowControls;
+        QDemonRenderCachedShaderProperty<QMatrix4x4> shadowView;
+        QDemonRenderCachedShaderProperty<qint32> shadowIdx;
+        QDemonRenderCachedShaderProperty<QVector3D> attenuation;
 
         LightConstants(const QString &lightRef, QSharedPointer<QDemonRenderShaderProgram> shader)
-            : m_position(LCSEED.arg(lightRef, lconstantnames[0]), shader)
-            , m_direction(LCSEED.arg(lightRef).arg(lconstantnames[1]), shader)
-            , m_up(LCSEED.arg(lightRef, lconstantnames[2]), shader)
-            , m_right(LCSEED.arg(lightRef, lconstantnames[3]), shader)
-            , m_diffuse(LCSEED.arg(lightRef, lconstantnames[4]), shader)
-            , m_ambient(LCSEED.arg(lightRef, lconstantnames[5]), shader)
-            , m_specular(LCSEED.arg(lightRef, lconstantnames[6]), shader)
-            , m_spotExponent(LCSEED.arg(lightRef, lconstantnames[7]), shader)
-            , m_spotCutoff(LCSEED.arg(lightRef, lconstantnames[8]), shader)
-            , m_constantAttenuation(LCSEED.arg(lightRef, lconstantnames[9]), shader)
-            , m_linearAttenuation(LCSEED.arg(lightRef, lconstantnames[10]), shader)
-            , m_quadraticAttenuation(LCSEED.arg(lightRef, lconstantnames[11]), shader)
-            , m_range(LCSEED.arg(lightRef, lconstantnames[12]), shader)
-            , m_width(LCSEED.arg(lightRef, lconstantnames[13]), shader)
-            , m_height(LCSEED.arg(lightRef, lconstantnames[14]), shader)
-            , m_shadowControls(LCSEED.arg(lightRef, lconstantnames[15]), shader)
-            , m_shadowView(LCSEED.arg(lightRef, lconstantnames[16]), shader)
-            , m_shadowIdx(LCSEED.arg(lightRef, lconstantnames[17]), shader)
-            , m_attenuation(LCSEED.arg(lightRef, lconstantnames[18]), shader)
+            : position(LCSEED.arg(lightRef, lconstantnames[0]), shader)
+            , direction(LCSEED.arg(lightRef).arg(lconstantnames[1]), shader)
+            , up(LCSEED.arg(lightRef, lconstantnames[2]), shader)
+            , right(LCSEED.arg(lightRef, lconstantnames[3]), shader)
+            , diffuse(LCSEED.arg(lightRef, lconstantnames[4]), shader)
+            , ambient(LCSEED.arg(lightRef, lconstantnames[5]), shader)
+            , specular(LCSEED.arg(lightRef, lconstantnames[6]), shader)
+            , spotExponent(LCSEED.arg(lightRef, lconstantnames[7]), shader)
+            , spotCutoff(LCSEED.arg(lightRef, lconstantnames[8]), shader)
+            , constantAttenuation(LCSEED.arg(lightRef, lconstantnames[9]), shader)
+            , linearAttenuation(LCSEED.arg(lightRef, lconstantnames[10]), shader)
+            , quadraticAttenuation(LCSEED.arg(lightRef, lconstantnames[11]), shader)
+            , range(LCSEED.arg(lightRef, lconstantnames[12]), shader)
+            , width(LCSEED.arg(lightRef, lconstantnames[13]), shader)
+            , height(LCSEED.arg(lightRef, lconstantnames[14]), shader)
+            , shadowControls(LCSEED.arg(lightRef, lconstantnames[15]), shader)
+            , shadowView(LCSEED.arg(lightRef, lconstantnames[16]), shader)
+            , shadowIdx(LCSEED.arg(lightRef, lconstantnames[17]), shader)
+            , attenuation(LCSEED.arg(lightRef, lconstantnames[18]), shader)
         {
 
         }
@@ -110,50 +110,53 @@ struct SLightConstantProperties
         template <typename LightProps>
         void updateLights(LightProps &props)
         {
-            m_position.Set(props.m_position);
-            m_direction.Set(props.m_direction);
-            m_up.Set(props.m_up);
-            m_right.Set(props.m_right);
-            m_diffuse.Set(props.m_diffuse);
-            m_ambient.Set(props.m_ambient);
-            m_specular.Set(props.m_specular);
-            m_spotExponent.Set(props.m_spotExponent);
-            m_spotCutoff.Set(props.m_spotCutoff);
-            m_constantAttenuation.Set(props.m_constantAttenuation);
-            m_linearAttenuation.Set(props.m_linearAttenuation);
-            m_quadraticAttenuation.Set(props.m_quadraticAttenuation);
-            m_range.Set(props.m_range);
-            m_width.Set(props.m_width);
-            m_height.Set(props.m_height);
-            m_shadowControls.Set(props.m_shadowControls);
-            m_shadowView.Set(props.m_shadowView);
-            m_shadowIdx.Set(props.m_shadowIdx);
-            m_attenuation.Set(QVector3D(props.m_constantAttenuation,
-                                        props.m_linearAttenuation,
-                                        props.m_quadraticAttenuation));
+            position.set(props.position);
+            direction.set(props.direction);
+            up.set(props.up);
+            right.set(props.right);
+            diffuse.set(props.diffuse);
+            ambient.set(props.ambient);
+            specular.set(props.specular);
+            spotExponent.set(props.spotExponent);
+            spotCutoff.set(props.spotCutoff);
+            constantAttenuation.set(props.constantAttenuation);
+            linearAttenuation.set(props.linearAttenuation);
+            quadraticAttenuation.set(props.quadraticAttenuation);
+            range.set(props.range);
+            width.set(props.width);
+            height.set(props.height);
+            shadowControls.set(props.shadowControls);
+            shadowView.set(props.shadowView);
+            shadowIdx.set(props.shadowIdx);
+            attenuation.set(QVector3D(props.constantAttenuation,
+                                        props.linearAttenuation,
+                                        props.quadraticAttenuation));
         }
     };
 
-    SLightConstantProperties(GeneratedShader *shader, bool packed)
-        : m_lightCount("uNumLights", shader->m_Shader)
+    QDemonLightConstantProperties(GeneratedShader *shader, bool packed)
+        : m_lightCount("uNumLights", shader->m_shader)
     {
-        m_constants.resize(shader->m_Lights.size());
-        for (unsigned int i = 0; i < shader->m_Lights.size(); ++i) {
+        m_constants.resize(shader->m_lights.size());
+        for (int i = 0; i < shader->m_lights.size(); ++i) {
             QString lref;
             if (packed)
                 lref = QStringLiteral("light_%1_");
             else
                 lref = QStringLiteral("lights[%1].");
             lref = lref.arg(i);
-            m_constants[i] = new LightConstants(lref, shader->m_Shader);
+            m_constants[i] = new LightConstants(lref, shader->m_shader);
         }
-        m_lightCount.Set(shader->m_Lights.size());
-        m_lightCountInt = shader->m_Lights.size();
+        m_lightCount.set(shader->m_lights.size());
+        m_lightCountInt = shader->m_lights.size();
     }
 
-    SLightConstantProperties(const QString &lseed, const QString &lcount,
-                             GeneratedShader *shader, bool packed, int count)
-        : m_lightCount(lcount, shader->m_Shader)
+    QDemonLightConstantProperties(const QString &lseed,
+                                  const QString &lcount,
+                                  GeneratedShader *shader,
+                                  bool packed,
+                                  int count)
+        : m_lightCount(lcount, shader->m_shader)
     {
         m_constants.resize(count);
         for (int i = 0; i < count; ++i) {
@@ -163,13 +166,13 @@ struct SLightConstantProperties
             else
                 lref = lseed + QStringLiteral("[%1].");
             lref = lref.arg(i);
-            m_constants[i] = new LightConstants(lref, shader->m_Shader);
+            m_constants[i] = new LightConstants(lref, shader->m_shader);
         }
-        m_lightCount.Set(count);
+        m_lightCount.set(count);
         m_lightCountInt = count;
     }
 
-    ~SLightConstantProperties()
+    ~QDemonLightConstantProperties()
     {
         qDeleteAll(m_constants);
     }
@@ -177,13 +180,13 @@ struct SLightConstantProperties
     void updateLights(QSharedPointer<GeneratedShader> shader)
     {
         for (int i = 0; i < m_constants.size(); ++i)
-            m_constants[i]->updateLights(shader->m_Lights[i].m_LightData);
+            m_constants[i]->updateLights(shader->m_lights[i].lightData);
     }
     template <typename LightProps>
     void updateLights(const QVector<QSharedPointer<LightProps>> &props)
     {
         for (int i = 0; i < m_constants.size(); ++i)
-            m_constants[i]->updateLights(props[i]->m_LightData);
+            m_constants[i]->updateLights(props[i]->m_lightData);
     }
 
     QVector<LightConstants *> m_constants;

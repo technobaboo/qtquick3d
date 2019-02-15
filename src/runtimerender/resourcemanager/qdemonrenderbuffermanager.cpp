@@ -55,123 +55,114 @@ QT_BEGIN_NAMESPACE
 
 namespace {
 
-struct SImageEntry : public SImageTextureData
+struct QDemonImageEntry : public QDemonRenderImageTextureData
 {
-    bool m_Loaded;
-    SImageEntry()
-        : m_Loaded(false)
-    {
-    }
-    ~SImageEntry()
-    {
-    }
+    bool loaded = false;
 };
 
-struct SPrimitiveEntry
+struct QDemonPrimitiveEntry
 {
     // Name of the primitive as it will be in the UIP file
-    QString m_PrimitiveName;
+    QString primitiveName;
     // Name of the primitive file on the filesystem
-    QString m_FileName;
+    QString fileName;
 };
 
-struct SBufferManager : public IBufferManager
+struct QDemonBufferManager : public QDemonBufferManagerInterface
 {
     typedef QSet<QString> TStringSet;
-    typedef QHash<QString, SImageEntry> TImageMap;
-    typedef QHash<QString, SRenderMesh *> TMeshMap;
+    typedef QHash<QString, QDemonImageEntry> TImageMap;
+    typedef QHash<QString, QDemonRenderMesh *> TMeshMap;
     typedef QHash<QString, QString> TAliasImageMap;
 
-    QSharedPointer<QDemonRenderContext> m_Context;
-    QSharedPointer<IInputStreamFactory> m_InputStreamFactory;
-    QSharedPointer<IPerfTimer> m_PerfTimer;
-    QString m_PathBuilder;
-    TImageMap m_ImageMap;
-    QMutex m_LoadedImageSetMutex;
-    TStringSet m_LoadedImageSet;
-    TAliasImageMap m_AliasImageMap;
-    TMeshMap m_MeshMap;
-    SPrimitiveEntry m_PrimitiveNames[5];
-    QVector<QDemonRenderVertexBufferEntry> m_EntryBuffer;
-    bool m_GPUSupportsDXT;
-    static const char *GetPrimitivesDirectory() { return "res//primitives"; }
-    // ### Temp test directory
-    //static const char *GetPrimitivesDirectory() { return "C:\\Code\\qt3d-runtime\\res\\primitives"; }
+    QSharedPointer<QDemonRenderContext> m_context;
+    QSharedPointer<QDemonInputStreamFactoryInterface> m_inputStreamFactory;
+    QSharedPointer<QDemonPerfTimerInterface> m_perfTimer;
+    QString m_pathBuilder;
+    TImageMap m_imageMap;
+    QMutex m_loadedImageSetMutex;
+    TStringSet m_loadedImageSet;
+    TAliasImageMap m_aliasImageMap;
+    TMeshMap m_meshMap;
+    QDemonPrimitiveEntry m_primitiveNames[5];
+    QVector<QDemonRenderVertexBufferEntry> m_entryBuffer;
+    bool m_gpuSupportsDXT;
+    static const char *getPrimitivesDirectory() { return "res//primitives"; }
 
-    SBufferManager(QSharedPointer<QDemonRenderContext> ctx,
-                   QSharedPointer<IInputStreamFactory> inInputStreamFactory,
-                   QSharedPointer<IPerfTimer> inTimer)
-        : m_Context(ctx)
-        , m_InputStreamFactory(inInputStreamFactory)
-        , m_PerfTimer(inTimer)
-        , m_GPUSupportsDXT(ctx->AreDXTImagesSupported())
+    QDemonBufferManager(QSharedPointer<QDemonRenderContext> ctx,
+                   QSharedPointer<QDemonInputStreamFactoryInterface> inInputStreamFactory,
+                   QSharedPointer<QDemonPerfTimerInterface> inTimer)
+        : m_context(ctx)
+        , m_inputStreamFactory(inInputStreamFactory)
+        , m_perfTimer(inTimer)
+        , m_gpuSupportsDXT(ctx->areDXTImagesSupported())
     {
     }
-    virtual ~SBufferManager() override { Clear(); }
+    virtual ~QDemonBufferManager() override { clear(); }
 
-    QString CombineBaseAndRelative(const char *inBase, const char *inRelative) override
+    QString combineBaseAndRelative(const char *inBase, const char *inRelative) override
     {
-        CFileTools::CombineBaseAndRelative(inBase, inRelative, m_PathBuilder);
-        return m_PathBuilder;
+        CFileTools::combineBaseAndRelative(inBase, inRelative, m_pathBuilder);
+        return m_pathBuilder;
     }
 
-    void SetImageHasTransparency(QString inImagePath, bool inHasTransparency) override
+    void setImageHasTransparency(QString inImagePath, bool inHasTransparency) override
     {
-        TImageMap::iterator theImage = m_ImageMap.insert(inImagePath, SImageEntry());
-        theImage.value().m_TextureFlags.SetHasTransparency(inHasTransparency);
+        TImageMap::iterator theImage = m_imageMap.insert(inImagePath, QDemonImageEntry());
+        theImage.value().m_textureFlags.setHasTransparency(inHasTransparency);
     }
 
-    bool GetImageHasTransparency(QString inSourcePath) const override
+    bool getImageHasTransparency(QString inSourcePath) const override
     {
-        TImageMap::const_iterator theIter = m_ImageMap.find(inSourcePath);
-        if (theIter != m_ImageMap.end())
-            return theIter.value().m_TextureFlags.HasTransparency();
+        TImageMap::const_iterator theIter = m_imageMap.find(inSourcePath);
+        if (theIter != m_imageMap.end())
+            return theIter.value().m_textureFlags.hasTransparency();
         return false;
     }
 
-    void SetImageTransparencyToFalseIfNotSet(QString inSourcePath) override
+    void setImageTransparencyToFalseIfNotSet(QString inSourcePath) override
     {
-        TImageMap::iterator theImage = m_ImageMap.find(inSourcePath);
+        TImageMap::iterator theImage = m_imageMap.find(inSourcePath);
 
         // If we did actually insert something
-        if (theImage != m_ImageMap.end())
-            theImage.value().m_TextureFlags.SetHasTransparency(false);
+        if (theImage != m_imageMap.end())
+            theImage.value().m_textureFlags.setHasTransparency(false);
     }
 
-    void SetInvertImageUVCoords(QString inImagePath, bool inShouldInvertCoords) override
+    void setInvertImageUVCoords(QString inImagePath, bool inShouldInvertCoords) override
     {
-        TImageMap::iterator theImage = m_ImageMap.find(inImagePath);
-        if (theImage != m_ImageMap.end())
-            theImage.value().m_TextureFlags.SetInvertUVCoords(inShouldInvertCoords);
+        TImageMap::iterator theImage = m_imageMap.find(inImagePath);
+        if (theImage != m_imageMap.end())
+            theImage.value().m_textureFlags.setInvertUVCoords(inShouldInvertCoords);
     }
 
-    bool IsImageLoaded(QString inSourcePath) override
+    bool isImageLoaded(QString inSourcePath) override
     {
-        QMutexLocker __locker(&m_LoadedImageSetMutex);
-        return m_LoadedImageSet.find(inSourcePath) != m_LoadedImageSet.end();
+        QMutexLocker __locker(&m_loadedImageSetMutex);
+        return m_loadedImageSet.find(inSourcePath) != m_loadedImageSet.end();
     }
 
-    bool AliasImagePath(QString inSourcePath, QString inAliasPath,
+    bool aliasImagePath(QString inSourcePath, QString inAliasPath,
                         bool inIgnoreIfLoaded) override
     {
         if (inSourcePath.isEmpty() || inAliasPath.isEmpty())
             return false;
         // If the image is loaded then we ignore this call in some cases.
-        if (inIgnoreIfLoaded && IsImageLoaded(inSourcePath))
+        if (inIgnoreIfLoaded && isImageLoaded(inSourcePath))
             return false;
-        m_AliasImageMap.insert(inSourcePath, inAliasPath);
+        m_aliasImageMap.insert(inSourcePath, inAliasPath);
         return true;
     }
 
-    void UnaliasImagePath(QString inSourcePath) override
+    void unaliasImagePath(QString inSourcePath) override
     {
-        m_AliasImageMap.remove(inSourcePath);
+        m_aliasImageMap.remove(inSourcePath);
     }
 
-    QString GetImagePath(QString inSourcePath) override
+    QString getImagePath(QString inSourcePath) override
     {
-        TAliasImageMap::iterator theAliasIter = m_AliasImageMap.find(inSourcePath);
-        if (theAliasIter != m_AliasImageMap.end())
+        TAliasImageMap::iterator theAliasIter = m_aliasImageMap.find(inSourcePath);
+        if (theAliasIter != m_aliasImageMap.end())
             return theAliasIter.value();
         return inSourcePath;
     }
@@ -198,52 +189,49 @@ struct SBufferManager : public IBufferManager
         sY = wrapMod(sY, height);
     }
 
-    SImageTextureData LoadRenderImage(QString inImagePath,
-                                      QSharedPointer<SLoadedTexture> inLoadedImage,
-                                      bool inForceScanForTransparency,
-                                      bool inBsdfMipmaps) override
+    QDemonRenderImageTextureData loadRenderImage(QString inImagePath,
+                                                 QSharedPointer<QDemonLoadedTexture> inLoadedImage,
+                                                 bool inForceScanForTransparency,
+                                                 bool inBsdfMipmaps) override
     {
         //        SStackPerfTimer __perfTimer(m_PerfTimer, "Image Upload");
         {
-            QMutexLocker mapLocker(&m_LoadedImageSetMutex);
-            m_LoadedImageSet.insert(inImagePath);
+            QMutexLocker mapLocker(&m_loadedImageSetMutex);
+            m_loadedImageSet.insert(inImagePath);
         }
-        TImageMap::iterator theImage = m_ImageMap.find(inImagePath);
-        bool wasInserted = theImage == m_ImageMap.end();
+        TImageMap::iterator theImage = m_imageMap.find(inImagePath);
+        bool wasInserted = theImage == m_imageMap.end();
         if (wasInserted)
-            theImage = m_ImageMap.insert(inImagePath, SImageEntry());
+            theImage = m_imageMap.insert(inImagePath, QDemonImageEntry());
 
-        theImage.value().m_Loaded = true;
+        theImage.value().loaded = true;
         // inLoadedImage.EnsureMultiplerOfFour( m_Context->GetFoundation(), inImagePath.c_str() );
 
-        QSharedPointer<QDemonRenderTexture2D> theTexture = m_Context->CreateTexture2D();
+        QSharedPointer<QDemonRenderTexture2D> theTexture = m_context->createTexture2D();
         if (inLoadedImage->data) {
             QDemonRenderTextureFormats::Enum destFormat = inLoadedImage->format;
             if (inBsdfMipmaps) {
-                if (m_Context->GetRenderContextType() == QDemonRenderContextValues::GLES2)
+                if (m_context->getRenderContextType() == QDemonRenderContextValues::GLES2)
                     destFormat = QDemonRenderTextureFormats::RGBA8;
                 else
                     destFormat = QDemonRenderTextureFormats::RGBA16F;
             }
             else {
-                theTexture->SetTextureData(
-                            QDemonDataRef<quint8>((quint8 *)inLoadedImage->data, inLoadedImage->dataSizeInBytes), 0,
+                theTexture->setTextureData(QDemonDataRef<quint8>((quint8 *)inLoadedImage->data, inLoadedImage->dataSizeInBytes), 0,
                             inLoadedImage->width, inLoadedImage->height, inLoadedImage->format, destFormat);
             }
 
             if (inBsdfMipmaps
                     && QDemonRenderTextureFormats::isUncompressedTextureFormat(inLoadedImage->format)) {
-                theTexture->SetMinFilter(QDemonRenderTextureMinifyingOp::LinearMipmapLinear);
-                QSharedPointer<QDemonRenderPrefilterTexture> theBSDFMipMap = theImage.value().m_BSDFMipMap;
+                theTexture->setMinFilter(QDemonRenderTextureMinifyingOp::LinearMipmapLinear);
+                QSharedPointer<QDemonRenderPrefilterTexture> theBSDFMipMap = theImage.value().m_bsdfMipMap;
                 if (theBSDFMipMap == nullptr) {
-                    theBSDFMipMap = QDemonRenderPrefilterTexture::Create(
-                                m_Context, inLoadedImage->width, inLoadedImage->height, theTexture,
-                                destFormat);
-                    theImage.value().m_BSDFMipMap = theBSDFMipMap;
+                    theBSDFMipMap = QDemonRenderPrefilterTexture::create(m_context, inLoadedImage->width, inLoadedImage->height, theTexture, destFormat);
+                    theImage.value().m_bsdfMipMap = theBSDFMipMap;
                 }
 
                 if (theBSDFMipMap) {
-                    theBSDFMipMap->Build(inLoadedImage->data, inLoadedImage->dataSizeInBytes,
+                    theBSDFMipMap->build(inLoadedImage->data, inLoadedImage->dataSizeInBytes,
                                          inLoadedImage->format);
                 }
             }
@@ -288,26 +276,26 @@ struct SBufferManager : public IBufferManager
                 inLoadedImage.ReleaseDecompressedTexture(theDecompressedImage);
         }*/
         if (wasInserted == true || inForceScanForTransparency)
-            theImage.value().m_TextureFlags.SetHasTransparency(inLoadedImage->ScanForTransparency());
-        theImage.value().m_Texture = theTexture;
+            theImage.value().m_textureFlags.setHasTransparency(inLoadedImage->scanForTransparency());
+        theImage.value().m_texture = theTexture;
         return theImage.value();
     }
 
-    SImageTextureData LoadRenderImage(QString inImagePath, bool inForceScanForTransparency, bool inBsdfMipmaps) override
+    QDemonRenderImageTextureData loadRenderImage(QString inImagePath, bool inForceScanForTransparency, bool inBsdfMipmaps) override
     {
-        inImagePath = GetImagePath(inImagePath);
+        inImagePath = getImagePath(inImagePath);
 
         if (inImagePath.isNull())
-            return SImageEntry();
+            return QDemonImageEntry();
 
-        TImageMap::iterator theIter = m_ImageMap.find(inImagePath);
-        if (theIter == m_ImageMap.end() && !inImagePath.isNull()) {
-            QSharedPointer<SLoadedTexture> theLoadedImage;
+        TImageMap::iterator theIter = m_imageMap.find(inImagePath);
+        if (theIter == m_imageMap.end() && !inImagePath.isNull()) {
+            QSharedPointer<QDemonLoadedTexture> theLoadedImage;
             {
                 //                SStackPerfTimer __perfTimer(m_PerfTimer, "Image Decompression");
-                theLoadedImage = SLoadedTexture::Load(
-                            inImagePath, *m_InputStreamFactory,
-                            true, m_Context->GetRenderContextType());
+                theLoadedImage = QDemonLoadedTexture::load(
+                            inImagePath, *m_inputStreamFactory,
+                            true, m_context->getRenderContextType());
                 // Hackish solution to custom materials not finding their textures if they are used
                 // in sub-presentations. Note: Runtime 1 is going to be removed in Qt 3D Studio 2.x,
                 // so this should be ok.
@@ -318,11 +306,11 @@ struct SBufferManager : public IBufferManager
                             searchPath.prepend(QLatin1String("."));
                         int loops = 0;
                         while (!theLoadedImage && ++loops <= 3) {
-                            theLoadedImage = SLoadedTexture::Load(
+                            theLoadedImage = QDemonLoadedTexture::load(
                                         searchPath.toUtf8(),
-                                        *m_InputStreamFactory,
+                                        *m_inputStreamFactory,
                                         true,
-                                        m_Context->GetRenderContextType());
+                                        m_context->getRenderContextType());
                             searchPath.prepend(QLatin1String("../"));
                         }
                     } else {
@@ -336,10 +324,10 @@ struct SBufferManager : public IBufferManager
                             QString searchPath = splitPath.at(0) + splitPath.at(1);
                             int loops = 0;
                             while (!theLoadedImage && ++loops <= 3) {
-                                theLoadedImage = SLoadedTexture::Load(
+                                theLoadedImage = QDemonLoadedTexture::load(
                                             searchPath.toUtf8(),
-                                            *m_InputStreamFactory, true,
-                                            m_Context->GetRenderContextType());
+                                            *m_inputStreamFactory, true,
+                                            m_context->getRenderContextType());
                                 searchPath = splitPath.at(0);
                                 for (int i = 0; i < loops; i++)
                                     searchPath.append(QLatin1String("../"));
@@ -351,13 +339,13 @@ struct SBufferManager : public IBufferManager
             }
 
             if (theLoadedImage) {
-                return LoadRenderImage(inImagePath, theLoadedImage, inForceScanForTransparency, inBsdfMipmaps);
+                return loadRenderImage(inImagePath, theLoadedImage, inForceScanForTransparency, inBsdfMipmaps);
             } else {
                 // We want to make sure that bad path fails once and doesn't fail over and over
                 // again
                 // which could slow down the system quite a bit.
-                TImageMap::iterator theImage = m_ImageMap.insert(inImagePath, SImageEntry());
-                theImage.value().m_Loaded = true;
+                TImageMap::iterator theImage = m_imageMap.insert(inImagePath, QDemonImageEntry());
+                theImage.value().loaded = true;
                 qCWarning(WARNING, "Failed to load image: %s", qPrintable(inImagePath));
                 theIter = theImage;
             }
@@ -365,30 +353,30 @@ struct SBufferManager : public IBufferManager
         return theIter.value();
     }
 
-    QDemonMeshUtilities::MultiLoadResult LoadPrimitive(const QString &inRelativePath)
+    QDemonMeshUtilities::MultiLoadResult loadPrimitive(const QString &inRelativePath)
     {
         QString theName = inRelativePath;
-        if (m_PrimitiveNames[0].m_PrimitiveName.isNull()) {
-            m_PrimitiveNames[0].m_PrimitiveName = QStringLiteral("#Rectangle");
-            m_PrimitiveNames[0].m_FileName = QStringLiteral("Rectangle.mesh");
-            m_PrimitiveNames[1].m_PrimitiveName = QStringLiteral("#Sphere");
-            m_PrimitiveNames[1].m_FileName = QStringLiteral("Sphere.mesh");
-            m_PrimitiveNames[2].m_PrimitiveName = QStringLiteral("#Cube");
-            m_PrimitiveNames[2].m_FileName = QStringLiteral("Cube.mesh");
-            m_PrimitiveNames[3].m_PrimitiveName = QStringLiteral("#Cone");
-            m_PrimitiveNames[3].m_FileName = QStringLiteral("Cone.mesh");
-            m_PrimitiveNames[4].m_PrimitiveName = QStringLiteral("#Cylinder");
-            m_PrimitiveNames[4].m_FileName = QStringLiteral("Cylinder.mesh");
+        if (m_primitiveNames[0].primitiveName.isNull()) {
+            m_primitiveNames[0].primitiveName = QStringLiteral("#Rectangle");
+            m_primitiveNames[0].fileName = QStringLiteral("Rectangle.mesh");
+            m_primitiveNames[1].primitiveName = QStringLiteral("#Sphere");
+            m_primitiveNames[1].fileName = QStringLiteral("Sphere.mesh");
+            m_primitiveNames[2].primitiveName = QStringLiteral("#Cube");
+            m_primitiveNames[2].fileName = QStringLiteral("Cube.mesh");
+            m_primitiveNames[3].primitiveName = QStringLiteral("#Cone");
+            m_primitiveNames[3].fileName = QStringLiteral("Cone.mesh");
+            m_primitiveNames[4].primitiveName = QStringLiteral("#Cylinder");
+            m_primitiveNames[4].fileName = QStringLiteral("Cylinder.mesh");
         }
         for (size_t idx = 0; idx < 5; ++idx) {
-            if (m_PrimitiveNames[idx].m_PrimitiveName == theName) {
-                CFileTools::CombineBaseAndRelative(GetPrimitivesDirectory(), m_PrimitiveNames[idx].m_FileName, m_PathBuilder);
+            if (m_primitiveNames[idx].primitiveName == theName) {
+                CFileTools::combineBaseAndRelative(getPrimitivesDirectory(), m_primitiveNames[idx].fileName, m_pathBuilder);
                 quint32 id = 1;
-                QSharedPointer<QIODevice> theInStream(m_InputStreamFactory->GetStreamForFile(m_PathBuilder));
+                QSharedPointer<QIODevice> theInStream(m_inputStreamFactory->getStreamForFile(m_pathBuilder));
                 if (theInStream)
-                    return QDemonMeshUtilities::Mesh::LoadMulti(*theInStream, id);
+                    return QDemonMeshUtilities::Mesh::loadMulti(*theInStream, id);
                 else {
-                    qCCritical(INTERNAL_ERROR, "Unable to find mesh primitive %s", qPrintable(m_PathBuilder));
+                    qCCritical(INTERNAL_ERROR, "Unable to find mesh primitive %s", qPrintable(m_pathBuilder));
                     return QDemonMeshUtilities::MultiLoadResult();
                 }
             }
@@ -396,18 +384,18 @@ struct SBufferManager : public IBufferManager
         return QDemonMeshUtilities::MultiLoadResult();
     }
 
-    virtual QDemonConstDataRef<quint8> CreatePackedPositionDataArray(QDemonMeshUtilities::MultiLoadResult *inResult)
+    virtual QDemonConstDataRef<quint8> createPackedPositionDataArray(QDemonMeshUtilities::MultiLoadResult *inResult)
     {
         // we assume a position consists of 3 floats
-        quint32 vertexCount = inResult->m_Mesh->m_VertexBuffer.m_Data.size()
-                / inResult->m_Mesh->m_VertexBuffer.m_Stride;
+        quint32 vertexCount = inResult->m_mesh->m_vertexBuffer.m_data.size()
+                / inResult->m_mesh->m_vertexBuffer.m_stride;
         quint32 dataSize = vertexCount * 3 * sizeof(float);
         float *posData = reinterpret_cast<float *>(::malloc(dataSize));
-        quint8 *baseOffset = reinterpret_cast<quint8 *>(inResult->m_Mesh);
+        quint8 *baseOffset = reinterpret_cast<quint8 *>(inResult->m_mesh);
         // copy position data
         if (posData) {
-            float *srcData = (float *)inResult->m_Mesh->m_VertexBuffer.m_Data.begin(baseOffset);
-            quint32 srcStride = inResult->m_Mesh->m_VertexBuffer.m_Stride / sizeof(float);
+            float *srcData = (float *)inResult->m_mesh->m_vertexBuffer.m_data.begin(baseOffset);
+            quint32 srcStride = inResult->m_mesh->m_vertexBuffer.m_stride / sizeof(float);
             float *dstData = posData;
             quint32 dstStride = 3;
 
@@ -420,71 +408,69 @@ struct SBufferManager : public IBufferManager
                 srcData += srcStride;
             }
 
-            return toConstDataRef((const quint8 *)posData, dataSize);
+            return toConstDataRef(reinterpret_cast<const quint8 *>(posData), dataSize);
         }
 
         return QDemonConstDataRef<quint8>();
     }
 
-    SRenderMesh *LoadMesh(const QString &inMeshPath) override
+    QDemonRenderMesh *loadMesh(const QString &inMeshPath) override
     {
         if (inMeshPath.isNull())
             return nullptr;
 
-        TMeshMap::iterator theMesh = m_MeshMap.find(inMeshPath);
+        TMeshMap::iterator theMesh = m_meshMap.find(inMeshPath);
 
-        if (theMesh == m_MeshMap.end()) {
+        if (theMesh == m_meshMap.end()) {
             // check to see if this is primitive
 
-            QDemonMeshUtilities::MultiLoadResult theResult = LoadPrimitive(inMeshPath);
+            QDemonMeshUtilities::MultiLoadResult theResult = loadPrimitive(inMeshPath);
 
             // Attempt a load from the filesystem if this mesh isn't a primitive.
-            if (theResult.m_Mesh == nullptr) {
-                m_PathBuilder = inMeshPath;
-                int poundIndex = m_PathBuilder.lastIndexOf('#');
+            if (theResult.m_mesh == nullptr) {
+                m_pathBuilder = inMeshPath;
+                int poundIndex = m_pathBuilder.lastIndexOf('#');
                 int id = 0;
                 if (poundIndex != -1) {
-                    id = m_PathBuilder.mid(poundIndex + 1).toInt();
-                    m_PathBuilder = m_PathBuilder.left(poundIndex); //### double check this isn't off-by-one
+                    id = m_pathBuilder.mid(poundIndex + 1).toInt();
+                    m_pathBuilder = m_pathBuilder.left(poundIndex); //### double check this isn't off-by-one
                 }
-                QSharedPointer<QIODevice> theStream(
-                            m_InputStreamFactory->GetStreamForFile(m_PathBuilder));
-                if (theStream) {
-                    theResult = QDemonMeshUtilities::Mesh::LoadMulti(*theStream, id);
-                }
-                if (theResult.m_Mesh == nullptr)
-                    qCWarning(WARNING, "Failed to load mesh: %s", qPrintable(m_PathBuilder));
+                QSharedPointer<QIODevice> theStream(m_inputStreamFactory->getStreamForFile(m_pathBuilder));
+                if (theStream)
+                    theResult = QDemonMeshUtilities::Mesh::loadMulti(*theStream, id);
+                if (theResult.m_mesh == nullptr)
+                    qCWarning(WARNING, "Failed to load mesh: %s", qPrintable(m_pathBuilder));
             }
 
-            if (theResult.m_Mesh) {
-                SRenderMesh *theNewMesh = new SRenderMesh(
+            if (theResult.m_mesh) {
+                QDemonRenderMesh *theNewMesh = new QDemonRenderMesh(
                             QDemonRenderDrawMode::Triangles,
                             QDemonRenderWinding::CounterClockwise,
-                            theResult.m_Id);
-                quint8 *baseAddress = reinterpret_cast<quint8 *>(theResult.m_Mesh);
-                theMesh = m_MeshMap.insert(inMeshPath, theNewMesh);
+                            theResult.m_id);
+                quint8 *baseAddress = reinterpret_cast<quint8 *>(theResult.m_mesh);
+                theMesh = m_meshMap.insert(inMeshPath, theNewMesh);
                 QDemonConstDataRef<quint8> theVBufData(
-                            theResult.m_Mesh->m_VertexBuffer.m_Data.begin(baseAddress),
-                            theResult.m_Mesh->m_VertexBuffer.m_Data.size());
+                            theResult.m_mesh->m_vertexBuffer.m_data.begin(baseAddress),
+                            theResult.m_mesh->m_vertexBuffer.m_data.size());
 
-                QSharedPointer<QDemonRenderVertexBuffer> theVertexBuffer = m_Context->CreateVertexBuffer(QDemonRenderBufferUsageType::Static,
-                                                                                                         theResult.m_Mesh->m_VertexBuffer.m_Data.m_Size,
-                                                                                                         theResult.m_Mesh->m_VertexBuffer.m_Stride,
+                QSharedPointer<QDemonRenderVertexBuffer> theVertexBuffer = m_context->createVertexBuffer(QDemonRenderBufferUsageType::Static,
+                                                                                                         theResult.m_mesh->m_vertexBuffer.m_data.m_size,
+                                                                                                         theResult.m_mesh->m_vertexBuffer.m_stride,
                                                                                                          theVBufData);
 
                 // create a tight packed position data VBO
                 // this should improve our depth pre pass rendering
                 QSharedPointer<QDemonRenderVertexBuffer> thePosVertexBuffer = nullptr;
-                QDemonConstDataRef<quint8> posData = CreatePackedPositionDataArray(&theResult);
+                QDemonConstDataRef<quint8> posData = createPackedPositionDataArray(&theResult);
                 if (posData.size()) {
-                    thePosVertexBuffer = m_Context->CreateVertexBuffer(QDemonRenderBufferUsageType::Static, posData.size(), 3 * sizeof(float), posData);
+                    thePosVertexBuffer = m_context->createVertexBuffer(QDemonRenderBufferUsageType::Static, posData.size(), 3 * sizeof(float), posData);
                 }
 
                 QSharedPointer<QDemonRenderIndexBuffer> theIndexBuffer = nullptr;
-                if (theResult.m_Mesh->m_IndexBuffer.m_Data.size()) {
-                    quint32 theIndexBufferSize = theResult.m_Mesh->m_IndexBuffer.m_Data.size();
+                if (theResult.m_mesh->m_indexBuffer.m_data.size()) {
+                    quint32 theIndexBufferSize = theResult.m_mesh->m_indexBuffer.m_data.size();
                     QDemonRenderComponentTypes::Enum bufComponentType =
-                            theResult.m_Mesh->m_IndexBuffer.m_ComponentType;
+                            theResult.m_mesh->m_indexBuffer.m_componentType;
                     quint32 sizeofType =
                             QDemonRenderComponentTypes::getSizeOfType(bufComponentType);
 
@@ -496,54 +482,54 @@ struct SBufferManager : public IBufferManager
                             bufComponentType = QDemonRenderComponentTypes::UnsignedInteger32;
 
                         QDemonConstDataRef<quint8> theIBufData(
-                                    theResult.m_Mesh->m_IndexBuffer.m_Data.begin(baseAddress),
-                                    theResult.m_Mesh->m_IndexBuffer.m_Data.size());
-                        theIndexBuffer = m_Context->CreateIndexBuffer(
+                                    theResult.m_mesh->m_indexBuffer.m_data.begin(baseAddress),
+                                    theResult.m_mesh->m_indexBuffer.m_data.size());
+                        theIndexBuffer = m_context->createIndexBuffer(
                                     QDemonRenderBufferUsageType::Static, bufComponentType,
                                     theIndexBufferSize, theIBufData);
                     } else {
                         Q_ASSERT(false);
                     }
                 }
-                QVector<QDemonRenderVertexBufferEntry> &theEntryBuffer(m_EntryBuffer);
-                theEntryBuffer.resize(theResult.m_Mesh->m_VertexBuffer.m_Entries.size());
+                QVector<QDemonRenderVertexBufferEntry> &theEntryBuffer(m_entryBuffer);
+                theEntryBuffer.resize(theResult.m_mesh->m_vertexBuffer.m_entries.size());
                 for (quint32 entryIdx = 0,
-                     entryEnd = theResult.m_Mesh->m_VertexBuffer.m_Entries.size();
+                     entryEnd = theResult.m_mesh->m_vertexBuffer.m_entries.size();
                      entryIdx < entryEnd; ++entryIdx) {
                     theEntryBuffer[entryIdx] =
-                            theResult.m_Mesh->m_VertexBuffer.m_Entries.index(baseAddress, entryIdx)
-                            .ToVertexBufferEntry(baseAddress);
+                            theResult.m_mesh->m_vertexBuffer.m_entries.index(baseAddress, entryIdx)
+                            .toVertexBufferEntry(baseAddress);
                 }
                 // create our attribute layout
-                QSharedPointer<QDemonRenderAttribLayout> theAttribLayout = m_Context->CreateAttributeLayout(toConstDataRef(theEntryBuffer.constData(),
+                QSharedPointer<QDemonRenderAttribLayout> theAttribLayout = m_context->createAttributeLayout(toConstDataRef(theEntryBuffer.constData(),
                                                                                                                            theEntryBuffer.count()));
                         // create our attribute layout for depth pass
                         QDemonRenderVertexBufferEntry theEntries[] = {
                         QDemonRenderVertexBufferEntry(
                             "attr_pos", QDemonRenderComponentTypes::Float32, 3),
             };
-                QSharedPointer<QDemonRenderAttribLayout> theAttribLayoutDepth = m_Context->CreateAttributeLayout(toConstDataRef(theEntries, 1));
+                QSharedPointer<QDemonRenderAttribLayout> theAttribLayoutDepth = m_context->createAttributeLayout(toConstDataRef(theEntries, 1));
 
                 // create input assembler object
-                quint32 strides = theResult.m_Mesh->m_VertexBuffer.m_Stride;
+                quint32 strides = theResult.m_mesh->m_vertexBuffer.m_stride;
                 quint32 offsets = 0;
-                QSharedPointer<QDemonRenderInputAssembler> theInputAssembler = m_Context->CreateInputAssembler(theAttribLayout,
+                QSharedPointer<QDemonRenderInputAssembler> theInputAssembler = m_context->createInputAssembler(theAttribLayout,
                                                                                                                toConstDataRef(&theVertexBuffer, 1),
                                                                                                                theIndexBuffer,
                                                                                                                toConstDataRef(&strides, 1),
                                                                                                                toConstDataRef(&offsets, 1),
-                                                                                                               theResult.m_Mesh->m_DrawMode);
+                                                                                                               theResult.m_mesh->m_drawMode);
 
                 // create depth input assembler object
                 quint32 posStrides = (thePosVertexBuffer) ? 3 * sizeof(float) : strides;
-                QSharedPointer<QDemonRenderInputAssembler> theInputAssemblerDepth = m_Context->CreateInputAssembler(
+                QSharedPointer<QDemonRenderInputAssembler> theInputAssemblerDepth = m_context->createInputAssembler(
                             theAttribLayoutDepth,
                             toConstDataRef((thePosVertexBuffer) ? &thePosVertexBuffer : &theVertexBuffer,
                                            1),
                             theIndexBuffer, toConstDataRef(&posStrides, 1), toConstDataRef(&offsets, 1),
-                            theResult.m_Mesh->m_DrawMode);
+                            theResult.m_mesh->m_drawMode);
 
-                QSharedPointer<QDemonRenderInputAssembler> theInputAssemblerPoints = m_Context->CreateInputAssembler(
+                QSharedPointer<QDemonRenderInputAssembler> theInputAssemblerPoints = m_context->createInputAssembler(
                             theAttribLayoutDepth,
                             toConstDataRef((thePosVertexBuffer) ? &thePosVertexBuffer : &theVertexBuffer,
                                            1),
@@ -554,41 +540,41 @@ struct SBufferManager : public IBufferManager
                     Q_ASSERT(false);
                     return nullptr;
                 }
-                theNewMesh->m_Joints.resize(theResult.m_Mesh->m_Joints.size());
-                for (quint32 jointIdx = 0, jointEnd = theResult.m_Mesh->m_Joints.size();
+                theNewMesh->joints.resize(theResult.m_mesh->m_joints.size());
+                for (quint32 jointIdx = 0, jointEnd = theResult.m_mesh->m_joints.size();
                      jointIdx < jointEnd; ++jointIdx) {
                     const QDemonMeshUtilities::Joint &theImportJoint(
-                                theResult.m_Mesh->m_Joints.index(baseAddress, jointIdx));
-                    SRenderJoint &theNewJoint(theNewMesh->m_Joints[jointIdx]);
-                    theNewJoint.m_JointID = theImportJoint.m_JointID;
-                    theNewJoint.m_ParentID = theImportJoint.m_ParentID;
-                    ::memcpy(theNewJoint.m_invBindPose, theImportJoint.m_invBindPose,
+                                theResult.m_mesh->m_joints.index(baseAddress, jointIdx));
+                    QDemonRenderJoint &theNewJoint(theNewMesh->joints[jointIdx]);
+                    theNewJoint.jointID = theImportJoint.m_jointID;
+                    theNewJoint.parentID = theImportJoint.m_parentID;
+                    ::memcpy(theNewJoint.invBindPose, theImportJoint.m_invBindPose,
                              16 * sizeof(float));
-                    ::memcpy(theNewJoint.m_localToGlobalBoneSpace,
+                    ::memcpy(theNewJoint.localToGlobalBoneSpace,
                              theImportJoint.m_localToGlobalBoneSpace, 16 * sizeof(float));
                 }
 
-                for (quint32 subsetIdx = 0, subsetEnd = theResult.m_Mesh->m_Subsets.size();
+                for (quint32 subsetIdx = 0, subsetEnd = theResult.m_mesh->m_subsets.size();
                      subsetIdx < subsetEnd; ++subsetIdx) {
-                    SRenderSubset theSubset;
-                    const QDemonMeshUtilities::MeshSubset &source(theResult.m_Mesh->m_Subsets.index(baseAddress, subsetIdx));
-                    theSubset.m_Bounds = source.m_Bounds;
-                    theSubset.m_Count = source.m_Count;
-                    theSubset.m_Offset = source.m_Offset;
-                    theSubset.m_Joints = theNewMesh->m_Joints;
-                    theSubset.m_Name = QString::fromUtf16(reinterpret_cast<const char16_t*>(source.m_Name.begin(baseAddress)));
-                    theSubset.m_VertexBuffer = theVertexBuffer;
+                    QDemonRenderSubset theSubset;
+                    const QDemonMeshUtilities::MeshSubset &source(theResult.m_mesh->m_subsets.index(baseAddress, subsetIdx));
+                    theSubset.bounds = source.m_bounds;
+                    theSubset.count = source.m_count;
+                    theSubset.offset = source.m_offset;
+                    theSubset.joints = theNewMesh->joints;
+                    theSubset.name = QString::fromUtf16(reinterpret_cast<const char16_t*>(source.m_name.begin(baseAddress)));
+                    theSubset.vertexBuffer = theVertexBuffer;
                     if (thePosVertexBuffer) {
-                        theSubset.m_PosVertexBuffer = thePosVertexBuffer;
+                        theSubset.posVertexBuffer = thePosVertexBuffer;
                     }
                     if (theIndexBuffer) {
-                        theSubset.m_IndexBuffer = theIndexBuffer;
+                        theSubset.indexBuffer = theIndexBuffer;
                     }
-                    theSubset.m_InputAssembler = theInputAssembler;
-                    theSubset.m_InputAssemblerDepth = theInputAssemblerDepth;
-                    theSubset.m_InputAssemblerPoints = theInputAssemblerPoints;
-                    theSubset.m_PrimitiveType = theResult.m_Mesh->m_DrawMode;
-                    theNewMesh->m_Subsets.push_back(theSubset);
+                    theSubset.inputAssembler = theInputAssembler;
+                    theSubset.inputAssemblerDepth = theInputAssemblerDepth;
+                    theSubset.inputAssemblerPoints = theInputAssemblerPoints;
+                    theSubset.primitiveType = theResult.m_mesh->m_drawMode;
+                    theNewMesh->subsets.push_back(theSubset);
                 }
                 // If we want to, we can an in a quite stupid way break up modes into sub-subsets.
                 // These are assumed to use the same material as the outer subset but have fewer tris
@@ -606,37 +592,36 @@ struct SBufferManager : public IBufferManager
                 // is a working
                 // example of using the technique.
 #ifdef QDEMON_RENDER_GENERATE_SUB_SUBSETS
-                QDemonOption<QDemonRenderVertexBufferEntry> thePosAttrOpt =
-                        theVertexBuffer->GetEntryByName("attr_pos");
+                QDemonOption<QDemonRenderVertexBufferEntry> thePosAttrOpt = theVertexBuffer->getEntryByName("attr_pos");
                 bool hasPosAttr = thePosAttrOpt.hasValue()
-                        && thePosAttrOpt->m_ComponentType == QDemonRenderComponentTypes::float
-                        && thePosAttrOpt->m_NumComponents == 3;
+                        && thePosAttrOpt->m_componentType == QDemonRenderComponentTypes::Float32
+                        && thePosAttrOpt->m_numComponents == 3;
 
-                for (size_t subsetIdx = 0, subsetEnd = theNewMesh->m_Subsets.size();
+                for (size_t subsetIdx = 0, subsetEnd = theNewMesh->subsets.size();
                      subsetIdx < subsetEnd; ++subsetIdx) {
-                    SRenderSubset &theOuterSubset = theNewMesh->m_Subsets[subsetIdx];
-                    if (theOuterSubset.m_Count && theIndexBuffer
-                            && theIndexBuffer->GetComponentType()
-                            == QDemonRenderComponentTypes::quint16
-                            && theNewMesh->m_DrawMode == QDemonRenderDrawMode::Triangles && hasPosAttr) {
+                    QDemonRenderSubset &theOuterSubset = theNewMesh->subsets[subsetIdx];
+                    if (theOuterSubset.count && theIndexBuffer
+                            && theIndexBuffer->getComponentType()
+                            == QDemonRenderComponentTypes::UnsignedInteger16
+                            && theNewMesh->drawMode == QDemonRenderDrawMode::Triangles && hasPosAttr) {
                         // Num tris in a sub subset.
                         quint32 theSubsetSize = 3334 * 3; // divisible by three.
                         size_t theNumSubSubsets =
-                                ((theOuterSubset.m_Count - 1) / theSubsetSize) + 1;
-                        quint32 thePosAttrOffset = thePosAttrOpt->m_FirstItemOffset;
-                        const quint8 *theVertData = theResult.m_Mesh->m_VertexBuffer.m_Data.begin();
-                        const quint8 *theIdxData = theResult.m_Mesh->m_IndexBuffer.m_Data.begin();
-                        quint32 theVertStride = theResult.m_Mesh->m_VertexBuffer.m_Stride;
-                        quint32 theOffset = theOuterSubset.m_Offset;
-                        quint32 theCount = theOuterSubset.m_Count;
+                                ((theOuterSubset.count - 1) / theSubsetSize) + 1;
+                        quint32 thePosAttrOffset = thePosAttrOpt->m_firstItemOffset;
+                        const quint8 *theVertData = theResult.m_mesh->m_vertexBuffer.m_data.begin();
+                        const quint8 *theIdxData = theResult.m_mesh->m_indexBuffer.m_data.begin();
+                        quint32 theVertStride = theResult.m_mesh->m_vertexBuffer.m_stride;
+                        quint32 theOffset = theOuterSubset.offset;
+                        quint32 theCount = theOuterSubset.count;
                         for (size_t subSubsetIdx = 0, subSubsetEnd = theNumSubSubsets;
                              subSubsetIdx < subSubsetEnd; ++subSubsetIdx) {
-                            SRenderSubsetBase theBase;
-                            theBase.m_Offset = theOffset;
-                            theBase.m_Count = NVMin(theSubsetSize, theCount);
-                            theBase.m_Bounds.setEmpty();
-                            theCount -= theBase.m_Count;
-                            theOffset += theBase.m_Count;
+                            QDemonRenderSubsetBase theBase;
+                            theBase.offset = theOffset;
+                            theBase.count = NVMin(theSubsetSize, theCount);
+                            theBase.bounds.setEmpty();
+                            theCount -= theBase.count;
+                            theOffset += theBase.count;
                             // Create new bounds.
                             // Offset is in item size, not bytes.
                             const quint16 *theSubsetIdxData =
@@ -647,45 +632,49 @@ struct SBufferManager : public IBufferManager
                                 theVertOffset += thePosAttrOffset;
                                 QVector3D thePos = *(
                                             reinterpret_cast<const QVector3D *>(theVertData + theVertOffset));
-                                theBase.m_Bounds.include(thePos);
+                                theBase.bounds.include(thePos);
                             }
-                            theOuterSubset.m_SubSubsets.push_back(theBase);
+                            theOuterSubset.subSubsets.push_back(theBase);
                         }
                     } else {
-                        SRenderSubsetBase theBase;
-                        theBase.m_Bounds = theOuterSubset.m_Bounds;
-                        theBase.m_Count = theOuterSubset.m_Count;
-                        theBase.m_Offset = theOuterSubset.m_Offset;
-                        theOuterSubset.m_SubSubsets.push_back(theBase);
+                        QDemonRenderSubsetBase theBase;
+                        theBase.bounds = theOuterSubset.bounds;
+                        theBase.count = theOuterSubset.count;
+                        theBase.offset = theOuterSubset.offset;
+                        theOuterSubset.subSubsets.push_back(theBase);
                     }
                 }
 #endif
                 if (posData.size())
-                    ::free((void *)posData.begin());
+                    ::free(reinterpret_cast<void *>(const_cast<unsigned char *>(posData.begin())));
 
-                ::free(theResult.m_Mesh);
+                ::free(theResult.m_mesh);
             }
         }
         return theMesh.value();
     }
 
-    SRenderMesh *CreateMesh(const QString &inSourcePath, quint8 *inVertData, quint32 inNumVerts,
-                            quint32 inVertStride, quint32 *inIndexData, quint32 inIndexCount,
-                            QDemonBounds3 inBounds) override
+    QDemonRenderMesh *createMesh(const QString &inSourcePath,
+                                 quint8 *inVertData,
+                                 quint32 inNumVerts,
+                                 quint32 inVertStride,
+                                 quint32 *inIndexData,
+                                 quint32 inIndexCount,
+                                 QDemonBounds3 inBounds) override
     {
         QString sourcePath = inSourcePath;
 
         // QPair<QString, SRenderMesh*> thePair(sourcePath, (SRenderMesh*)nullptr);
         QPair<TMeshMap::iterator, bool> theMesh;
         // Make sure there isn't already a buffer entry for this mesh.
-        if (m_MeshMap.contains(sourcePath)) {
-            theMesh = QPair<TMeshMap::iterator, bool>(m_MeshMap.find(sourcePath), true);
+        if (m_meshMap.contains(sourcePath)) {
+            theMesh = QPair<TMeshMap::iterator, bool>(m_meshMap.find(sourcePath), true);
         } else {
-            theMesh = QPair<TMeshMap::iterator, bool>(m_MeshMap.insert(sourcePath, nullptr), false);
+            theMesh = QPair<TMeshMap::iterator, bool>(m_meshMap.insert(sourcePath, nullptr), false);
         }
 
         if (theMesh.second == true) {
-            SRenderMesh *theNewMesh = new SRenderMesh(
+            QDemonRenderMesh *theNewMesh = new QDemonRenderMesh(
                         QDemonRenderDrawMode::Triangles,
                         QDemonRenderWinding::CounterClockwise, 0);
 
@@ -707,19 +696,23 @@ struct SBufferManager : public IBufferManager
 
             theMesh.first.value() = theNewMesh;
             quint32 vertDataSize = inNumVerts * inVertStride;
-            QDemonConstDataRef<quint8> theVBufData(inVertData, vertDataSize);
+            Q_ASSERT(vertDataSize <= INT32_MAX); // TODO:
+            QDemonConstDataRef<quint8> theVBufData(inVertData, qint32(vertDataSize));
             // QDemonConstDataRef<quint8> theVBufData( theResult.m_Mesh->m_VertexBuffer.m_Data.begin(
             // baseAddress )
             //		, theResult.m_Mesh->m_VertexBuffer.m_Data.size() );
 
             QSharedPointer<QDemonRenderVertexBuffer> theVertexBuffer =
-                    m_Context->CreateVertexBuffer(QDemonRenderBufferUsageType::Static,
+                    m_context->createVertexBuffer(QDemonRenderBufferUsageType::Static,
                                                   vertDataSize, inVertStride, theVBufData);
             QSharedPointer<QDemonRenderIndexBuffer> theIndexBuffer = nullptr;
             if (inIndexData != nullptr && inIndexCount > 3) {
-                QDemonConstDataRef<quint8> theIBufData((quint8 *)inIndexData, inIndexCount * sizeof(quint32));
+                const quint32 inSize = inIndexCount * sizeof(quint32);
+                Q_ASSERT(inSize <= INT32_MAX);
+                Q_ASSERT(*inIndexData <= INT8_MAX);
+                QDemonConstDataRef<quint8> theIBufData(reinterpret_cast<quint8 *>(inIndexData), qint32(inSize));
                 theIndexBuffer =
-                        m_Context->CreateIndexBuffer(QDemonRenderBufferUsageType::Static,
+                        m_context->createIndexBuffer(QDemonRenderBufferUsageType::Static,
                                                      QDemonRenderComponentTypes::UnsignedInteger32,
                                                      inIndexCount * sizeof(quint32), theIBufData);
             }
@@ -738,7 +731,7 @@ struct SBufferManager : public IBufferManager
 
             // create our attribute layout
             QSharedPointer<QDemonRenderAttribLayout> theAttribLayout =
-                    m_Context->CreateAttributeLayout(toConstDataRef(theEntries, 3));
+                    m_context->createAttributeLayout(toConstDataRef(theEntries, 3));
             /*
             // create our attribute layout for depth pass
             QDemonRenderVertexBufferEntry theEntriesDepth[] = {
@@ -751,7 +744,7 @@ struct SBufferManager : public IBufferManager
             // create input assembler object
             quint32 strides = inVertStride;
             quint32 offsets = 0;
-            QSharedPointer<QDemonRenderInputAssembler> theInputAssembler = m_Context->CreateInputAssembler(
+            QSharedPointer<QDemonRenderInputAssembler> theInputAssembler = m_context->createInputAssembler(
                         theAttribLayout, toConstDataRef(&theVertexBuffer, 1), theIndexBuffer,
                         toConstDataRef(&strides, 1), toConstDataRef(&offsets, 1),
                         QDemonRenderDrawMode::Triangles);
@@ -770,76 +763,78 @@ struct SBufferManager : public IBufferManager
                 subName = fullName.right(indexOfSub + 1);
             }
 
-            theNewMesh->m_Joints.clear();
-            SRenderSubset theSubset;
-            theSubset.m_Bounds = inBounds;
-            theSubset.m_Count = inIndexCount;
-            theSubset.m_Offset = 0;
-            theSubset.m_Joints = theNewMesh->m_Joints;
-            theSubset.m_Name = subName;
-            theSubset.m_VertexBuffer = theVertexBuffer;
-            theSubset.m_PosVertexBuffer = nullptr;
-            theSubset.m_IndexBuffer = theIndexBuffer;
-            theSubset.m_InputAssembler = theInputAssembler;
-            theSubset.m_InputAssemblerDepth = theInputAssembler;
-            theSubset.m_InputAssemblerPoints = theInputAssembler;
-            theSubset.m_PrimitiveType = QDemonRenderDrawMode::Triangles;
-            theNewMesh->m_Subsets.push_back(theSubset);
+            theNewMesh->joints.clear();
+            QDemonRenderSubset theSubset;
+            theSubset.bounds = inBounds;
+            theSubset.count = inIndexCount;
+            theSubset.offset = 0;
+            theSubset.joints = theNewMesh->joints;
+            theSubset.name = subName;
+            theSubset.vertexBuffer = theVertexBuffer;
+            theSubset.posVertexBuffer = nullptr;
+            theSubset.indexBuffer = theIndexBuffer;
+            theSubset.inputAssembler = theInputAssembler;
+            theSubset.inputAssemblerDepth = theInputAssembler;
+            theSubset.inputAssemblerPoints = theInputAssembler;
+            theSubset.primitiveType = QDemonRenderDrawMode::Triangles;
+            theNewMesh->subsets.push_back(theSubset);
         }
 
         return theMesh.first.value();
     }
 
-    void ReleaseMesh(SRenderMesh &inMesh)
+    void releaseMesh(QDemonRenderMesh &inMesh)
     {
         delete &inMesh;
     }
-    void ReleaseTexture(SImageEntry &inEntry)
+    void releaseTexture(QDemonImageEntry &inEntry)
     {
+        // TODO:
+        Q_UNUSED(inEntry);
         // if (inEntry.m_Texture)
         //     inEntry.m_Texture->release();
     }
-    void Clear() override
+    void clear() override
     {
-        for (TMeshMap::iterator iter = m_MeshMap.begin(), end = m_MeshMap.end(); iter != end;
+        for (TMeshMap::iterator iter = m_meshMap.begin(), end = m_meshMap.end(); iter != end;
              ++iter) {
-            SRenderMesh *theMesh = iter.value();
+            QDemonRenderMesh *theMesh = iter.value();
             if (theMesh)
-                ReleaseMesh(*theMesh);
+                releaseMesh(*theMesh);
         }
-        m_MeshMap.clear();
-        for (TImageMap::iterator iter = m_ImageMap.begin(), end = m_ImageMap.end(); iter != end;
+        m_meshMap.clear();
+        for (TImageMap::iterator iter = m_imageMap.begin(), end = m_imageMap.end(); iter != end;
              ++iter) {
-            SImageEntry &theEntry = iter.value();
-            ReleaseTexture(theEntry);
+            QDemonImageEntry &theEntry = iter.value();
+            releaseTexture(theEntry);
         }
-        m_ImageMap.clear();
-        m_AliasImageMap.clear();
+        m_imageMap.clear();
+        m_aliasImageMap.clear();
         {
-            QMutexLocker __locker(&m_LoadedImageSetMutex);
-            m_LoadedImageSet.clear();
+            QMutexLocker __locker(&m_loadedImageSetMutex);
+            m_loadedImageSet.clear();
         }
     }
-    void InvalidateBuffer(QString inSourcePath) override
+    void invalidateBuffer(QString inSourcePath) override
     {
         {
-            TMeshMap::iterator iter = m_MeshMap.find(inSourcePath);
-            if (iter != m_MeshMap.end()) {
+            TMeshMap::iterator iter = m_meshMap.find(inSourcePath);
+            if (iter != m_meshMap.end()) {
                 if (iter.value())
-                    ReleaseMesh(*iter.value());
-                m_MeshMap.erase(iter);
+                    releaseMesh(*iter.value());
+                m_meshMap.erase(iter);
                 return;
             }
         }
         {
-            TImageMap::iterator iter = m_ImageMap.find(inSourcePath);
-            if (iter != m_ImageMap.end()) {
-                SImageEntry &theEntry = iter.value();
-                ReleaseTexture(theEntry);
-                m_ImageMap.remove(inSourcePath);
+            TImageMap::iterator iter = m_imageMap.find(inSourcePath);
+            if (iter != m_imageMap.end()) {
+                QDemonImageEntry &theEntry = iter.value();
+                releaseTexture(theEntry);
+                m_imageMap.remove(inSourcePath);
                 {
-                    QMutexLocker __locker(&m_LoadedImageSetMutex);
-                    m_LoadedImageSet.remove(inSourcePath);
+                    QMutexLocker locker(&m_loadedImageSetMutex);
+                    m_loadedImageSet.remove(inSourcePath);
                 }
             }
         }
@@ -847,11 +842,11 @@ struct SBufferManager : public IBufferManager
 };
 }
 
-QSharedPointer<IBufferManager> IBufferManager::Create(QSharedPointer<QDemonRenderContext> inRenderContext,
-                                                      QSharedPointer<IInputStreamFactory> inInputStreamFactory,
-                                                      QSharedPointer<IPerfTimer> inTimer)
+QSharedPointer<QDemonBufferManagerInterface> QDemonBufferManagerInterface::create(QSharedPointer<QDemonRenderContext> inRenderContext,
+                                                      QSharedPointer<QDemonInputStreamFactoryInterface> inInputStreamFactory,
+                                                      QSharedPointer<QDemonPerfTimerInterface> inTimer)
 {
-    return QSharedPointer<IBufferManager>(new SBufferManager(inRenderContext, inInputStreamFactory, inTimer));
+    return QSharedPointer<QDemonBufferManagerInterface>(new QDemonBufferManager(inRenderContext, inInputStreamFactory, inTimer));
 }
 
 QT_END_NAMESPACE

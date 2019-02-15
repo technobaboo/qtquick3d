@@ -42,7 +42,7 @@ QT_BEGIN_NAMESPACE
 // screen
 // with coordinates increasing to the right and up.  This is opposite most window systems but it
 // preserves the normal openGL assumptions about viewports and positive Y going up in general.
-struct SGTypes
+struct QDemonGTypes
 {
     enum Enum {
         UnknownVGType = 0,
@@ -53,48 +53,47 @@ struct SGTypes
     };
 };
 
-struct SPGGraphObject
+struct QDemonPGGraphObject
 {
-    SGTypes::Enum m_Type;
-    SPGGraphObject(SGTypes::Enum inType);
+    QDemonGTypes::Enum type;
+    constexpr QDemonPGGraphObject(QDemonGTypes::Enum inType) : type(inType) {}
 };
 
-struct SPGRect : public SPGGraphObject
+struct QDemonPGRect : public QDemonPGGraphObject
 {
-    float m_Left;
-    float m_Top;
-    float m_Right;
-    float m_Bottom;
+    float left = 0.0f;
+    float top = 0.0f;
+    float right = 0.0f;
+    float bottom = 0.0f;
+    QVector4D fillColor;
 
-    QVector4D m_FillColor;
-
-    SPGRect();
+    constexpr QDemonPGRect() : QDemonPGGraphObject(QDemonGTypes::Rect) {}
 };
 
-struct SPGVertLine : public SPGGraphObject
+struct QDemonPGVertLine : public QDemonPGGraphObject
 {
-    float m_X;
-    float m_Top;
-    float m_Bottom;
-    QVector4D m_LineColor;
-    void SetPosition(float val) { m_X = val; }
-    void SetStart(float val) { m_Bottom = val; }
-    void SetStop(float val) { m_Top = val; }
+    float x = 0.0f;
+    float top = 0.0f;
+    float bottom = 0.0f;
+    QVector4D lineColor;
+    void setPosition(float val) { x = val; }
+    void setStart(float val) { bottom = val; }
+    void setStop(float val) { top = val; }
 
-    SPGVertLine();
+    constexpr QDemonPGVertLine() : QDemonPGGraphObject(QDemonGTypes::VertLine) {}
 };
 
-struct SPGHorzLine : public SPGGraphObject
+struct QDemonPGHorzLine : public QDemonPGGraphObject
 {
-    float m_Y;
-    float m_Left;
-    float m_Right;
-    QVector4D m_LineColor;
-    void SetPosition(float val) { m_Y = val; }
-    void SetStart(float val) { m_Left = val; }
-    void SetStop(float val) { m_Right = val; }
+    float y = 0.0f;
+    float left = 0.0f;
+    float right = 0.0f;
+    QVector4D lineColor;
+    void setPosition(float val) { y = val; }
+    void setStart(float val) { left = val; }
+    void setStop(float val) { right = val; }
 
-    SPGHorzLine();
+    constexpr QDemonPGHorzLine() : QDemonPGGraphObject(QDemonGTypes::HorzLine) {}
 };
 QT_END_NAMESPACE
 

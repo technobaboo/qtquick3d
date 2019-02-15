@@ -34,24 +34,22 @@
 #include <QtDemonRuntimeRender/qdemonrendermaterialdirty.h>
 
 QT_BEGIN_NAMESPACE
-struct SReferencedMaterial : SGraphObject
+struct QDemonReferencedMaterial : QDemonGraphObject
 {
-    CMaterialDirty m_Dirty;
-    SGraphObject *m_ReferencedMaterial;
-    SGraphObject *m_NextSibling;
-    SReferencedMaterial()
-        : SGraphObject(GraphObjectTypes::ReferencedMaterial)
-        , m_ReferencedMaterial(nullptr)
-        , m_NextSibling(nullptr)
+    QDemonMaterialDirty m_dirty;
+    QDemonGraphObject *m_referencedMaterial = nullptr;
+    QDemonGraphObject *m_nextSibling = nullptr;
+    QDemonReferencedMaterial()
+        : QDemonGraphObject(QDemonGraphObjectTypes::ReferencedMaterial)
     {
     }
 
     template <typename TRemapperType>
-    void Remap(TRemapperType &inRemapper)
+    void remap(TRemapperType &inRemapper)
     {
-        SGraphObject::Remap(inRemapper);
-        inRemapper.RemapMaterial(m_ReferencedMaterial);
-        inRemapper.RemapMaterial(m_NextSibling);
+        QDemonGraphObject::remap(inRemapper);
+        inRemapper.remapMaterial(m_referencedMaterial);
+        inRemapper.remapMaterial(m_nextSibling);
     }
 };
 QT_END_NAMESPACE

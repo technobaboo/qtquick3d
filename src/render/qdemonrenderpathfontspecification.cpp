@@ -36,75 +36,75 @@
 QT_BEGIN_NAMESPACE
 
 QDemonRenderPathFontSpecification::QDemonRenderPathFontSpecification(QSharedPointer<QDemonRenderContextImpl> context, const QString &fontName)
-    : m_Context(context)
-    , m_Backend(context->GetBackend())
-    , m_NumFontGlyphs(0)
-    , m_EmScale(2048) // 2048 is default true type scale
-    , m_Type(QDemonRenderPathFormatType::UByte)
-    , m_TransformType(QDemonRenderPathTransformType::Translate2D)
-    , m_FontName(fontName)
+    : m_context(context)
+    , m_backend(context->getBackend())
+    , m_numFontGlyphs(0)
+    , m_emScale(2048) // 2048 is default true type scale
+    , m_type(QDemonRenderPathFormatType::UByte)
+    , m_transformType(QDemonRenderPathTransformType::Translate2D)
+    , m_fontName(fontName)
 {
 }
 
 QDemonRenderPathFontSpecification::~QDemonRenderPathFontSpecification()
 {
-    m_Context->ReleasePathFontSpecification(this);
+    m_context->releasePathFontSpecification(this);
 }
 
-void QDemonRenderPathFontSpecification::LoadPathGlyphs(const char *fontName,
+void QDemonRenderPathFontSpecification::loadPathGlyphs(const char *fontName,
                                                        QDemonRenderPathFormatType::Enum type)
 {
     // check if we already created it
-    if (m_NumFontGlyphs)
+    if (m_numFontGlyphs)
         return;
 
-    m_Type = type;
+    m_type = type;
 
     // create fonts based on the input
-    m_PathRenderHandle = m_Backend->LoadPathGlyphsIndexedRange(
-                QDemonRenderPathFontTarget::FileFont, fontName, QDemonRenderPathFontStyleFlags(), 0, m_EmScale,
-                &m_NumFontGlyphs);
+    m_pathRenderHandle = m_backend->loadPathGlyphsIndexedRange(
+                QDemonRenderPathFontTarget::FileFont, fontName, QDemonRenderPathFontStyleFlags(), 0, m_emScale,
+                &m_numFontGlyphs);
 
     // Fallback in case the previuos call fails
     // This is a no-op if the previous call succeeds
     // Note that sans is an inbuild driver font
-    if (!m_PathRenderHandle) {
-        m_PathRenderHandle = m_Backend->LoadPathGlyphsIndexedRange(
+    if (!m_pathRenderHandle) {
+        m_pathRenderHandle = m_backend->loadPathGlyphsIndexedRange(
                     QDemonRenderPathFontTarget::SystemFont, "Arial", QDemonRenderPathFontStyleFlags(), 0,
-                    m_EmScale, &m_NumFontGlyphs);
+                    m_emScale, &m_numFontGlyphs);
     }
 
     // we should have some glyphs
-    Q_ASSERT(m_NumFontGlyphs);
+    Q_ASSERT(m_numFontGlyphs);
 }
 
 void
-QDemonRenderPathFontSpecification::StencilFillPathInstanced(QSharedPointer<QDemonRenderPathFontItem> inPathFontItem)
+QDemonRenderPathFontSpecification::stencilFillPathInstanced(QSharedPointer<QDemonRenderPathFontItem> inPathFontItem)
 {
-    const void *glyphIDs = inPathFontItem->GetGlyphIDs();
-    const float *spacing = inPathFontItem->GetSpacing();
-    if (!glyphIDs || !spacing || !inPathFontItem->GetGlyphsCount()) {
-        Q_ASSERT(false || !inPathFontItem->GetGlyphsCount());
+    const void *glyphIDs = inPathFontItem->getGlyphIDs();
+    const float *spacing = inPathFontItem->getSpacing();
+    if (!glyphIDs || !spacing || !inPathFontItem->getGlyphsCount()) {
+        Q_ASSERT(false || !inPathFontItem->getGlyphsCount());
         return;
     }
 
-    m_Backend->StencilFillPathInstanced(m_PathRenderHandle, inPathFontItem->GetGlyphsCount(),
-                                        m_Type, glyphIDs, QDemonRenderPathFillMode::Fill, 0xFF,
-                                        m_TransformType, spacing);
+    m_backend->stencilFillPathInstanced(m_pathRenderHandle, inPathFontItem->getGlyphsCount(),
+                                        m_type, glyphIDs, QDemonRenderPathFillMode::Fill, 0xFF,
+                                        m_transformType, spacing);
 }
 
-void QDemonRenderPathFontSpecification::CoverFillPathInstanced(QSharedPointer<QDemonRenderPathFontItem> inPathFontItem)
+void QDemonRenderPathFontSpecification::coverFillPathInstanced(QSharedPointer<QDemonRenderPathFontItem> inPathFontItem)
 {
-    const void *glyphIDs = inPathFontItem->GetGlyphIDs();
-    const float *spacing = inPathFontItem->GetSpacing();
-    if (!glyphIDs || !spacing || !inPathFontItem->GetGlyphsCount()) {
-        Q_ASSERT(false || !inPathFontItem->GetGlyphsCount());
+    const void *glyphIDs = inPathFontItem->getGlyphIDs();
+    const float *spacing = inPathFontItem->getSpacing();
+    if (!glyphIDs || !spacing || !inPathFontItem->getGlyphsCount()) {
+        Q_ASSERT(false || !inPathFontItem->getGlyphsCount());
         return;
     }
 
-    m_Backend->CoverFillPathInstanced(
-                m_PathRenderHandle, inPathFontItem->GetGlyphsCount(), m_Type, glyphIDs,
-                QDemonRenderPathCoverMode::BoundingBoxOfBoundingBox, m_TransformType, spacing);
+    m_backend->coverFillPathInstanced(
+                m_pathRenderHandle, inPathFontItem->getGlyphsCount(), m_type, glyphIDs,
+                QDemonRenderPathCoverMode::BoundingBoxOfBoundingBox, m_transformType, spacing);
 }
 
 quint32
@@ -127,11 +127,10 @@ QDemonRenderPathFontSpecification::getSizeOfType(QDemonRenderPathFormatType::Enu
     }
 }
 
-QSharedPointer<QDemonRenderPathFontSpecification>
-QDemonRenderPathFontSpecification::CreatePathFontSpecification(QSharedPointer<QDemonRenderContextImpl> context,
-                                                               const QString &fontName)
+QSharedPointer<QDemonRenderPathFontSpecification> QDemonRenderPathFontSpecification::createPathFontSpecification(QSharedPointer<QDemonRenderContextImpl> context,
+                                                                                                                 const QString &fontName)
 {
-    Q_ASSERT(context->IsPathRenderingSupported());
+    Q_ASSERT(context->isPathRenderingSupported());
 
     return QSharedPointer<QDemonRenderPathFontSpecification>(new QDemonRenderPathFontSpecification(context, fontName));
 }

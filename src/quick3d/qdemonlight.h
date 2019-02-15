@@ -93,7 +93,7 @@ Q_SIGNALS:
     void shadowFilterChanged(float shadowFilter);
 
 protected:
-    SGraphObject *updateSpatialNode(SGraphObject *node) override;
+    QDemonGraphObject *updateSpatialNode(QDemonGraphObject *node) override;
 
 private:
 

@@ -38,49 +38,49 @@
 QT_BEGIN_NAMESPACE
 
 namespace dynamic {
-struct SCommand;
+struct QDemonCommand;
 }
 
-struct SCustomMaterialRenderContext;
-struct SCustomMaterial;
-class ICustomMaterialSystem;
-struct SRenderSubset;
+struct QDemonCustomMaterialRenderContext;
+struct QDemonCustomMaterial;
+class QDemonCustomMaterialSystemInterface;
+struct QDemonRenderSubset;
 
-class Q_DEMONRUNTIMERENDER_EXPORT ICustomMaterialSystemCore
+class Q_DEMONRUNTIMERENDER_EXPORT QDemonCustomMaterialSystemCoreInterface
 {
 public:
-    virtual ~ICustomMaterialSystemCore() {}
-    virtual bool IsMaterialRegistered(QString inStr) = 0;
+    virtual ~QDemonCustomMaterialSystemCoreInterface() {}
+    virtual bool isMaterialRegistered(QString inStr) = 0;
 
-    virtual bool RegisterMaterialClass(QString inName, QDemonConstDataRef<dynamic::SPropertyDeclaration> inProperties) = 0;
+    virtual bool registerMaterialClass(QString inName, QDemonConstDataRef<dynamic::QDemonPropertyDeclaration> inProperties) = 0;
 
-    virtual QDemonConstDataRef<dynamic::SPropertyDefinition> GetCustomMaterialProperties(QString inCustomMaterialName) const = 0;
+    virtual QDemonConstDataRef<dynamic::QDemonPropertyDefinition> getCustomMaterialProperties(QString inCustomMaterialName) const = 0;
 
-    virtual void SetCustomMaterialRefraction(QString inName, bool inHasRefraction) = 0;
-    virtual void SetCustomMaterialTransparency(QString inName, bool inHasTransparency) = 0;
-    virtual void SetCustomMaterialAlwaysDirty(QString inName, bool inIsAlwaysDirty) = 0;
-    virtual void SetCustomMaterialShaderKey(QString inName, quint32 inShaderKey) = 0;
-    virtual void SetCustomMaterialLayerCount(QString inName, quint32 inLayerCount) = 0;
+    virtual void setCustomMaterialRefraction(QString inName, bool inHasRefraction) = 0;
+    virtual void setCustomMaterialTransparency(QString inName, bool inHasTransparency) = 0;
+    virtual void setCustomMaterialAlwaysDirty(QString inName, bool inIsAlwaysDirty) = 0;
+    virtual void setCustomMaterialShaderKey(QString inName, quint32 inShaderKey) = 0;
+    virtual void setCustomMaterialLayerCount(QString inName, quint32 inLayerCount) = 0;
     // The custom material commands are the actual commands that run for a given material
     // effect.  The tell the system exactly
     // explicitly things like bind this shader, bind this render target, apply this property,
     // run this shader
     // See UICRenderEffectCommands.h for the list of commands.
     // These commands are copied into the effect.
-    virtual void SetCustomMaterialCommands(QString inName, QDemonConstDataRef<dynamic::SCommand *> inCommands) = 0;
+    virtual void setCustomMaterialCommands(QString inName, QDemonConstDataRef<dynamic::QDemonCommand *> inCommands) = 0;
 
-    virtual void SetMaterialClassShader(QString inName,
+    virtual void setMaterialClassShader(QString inName,
                                         const char *inShaderType,
                                         const char *inShaderVersion,
                                         const char *inShaderData,
                                         bool inHasGeomShader,
                                         bool inIsComputeShader) = 0;
 
-    virtual SCustomMaterial *CreateCustomMaterial(QString inName) = 0;
+    virtual QDemonCustomMaterial *createCustomMaterial(QString inName) = 0;
 
-    virtual void SetPropertyEnumNames(QString inName, QString inPropName, QDemonConstDataRef<QString> inNames) = 0;
+    virtual void setPropertyEnumNames(QString inName, QString inPropName, QDemonConstDataRef<QString> inNames) = 0;
 
-    virtual void SetPropertyTextureSettings(QString inEffectName,
+    virtual void setPropertyTextureSettings(QString inEffectName,
                                             QString inPropName,
                                             QString inPropPath,
                                             QDemonRenderTextureTypeValue::Enum inTexType,
@@ -94,74 +94,74 @@ public:
     //    virtual void Load(QDemonDataRef<quint8> inData, CStrTableOrDataRef inStrDataBlock,
     //                      const char *inProjectDir) = 0;
 
-    virtual QSharedPointer<ICustomMaterialSystem> GetCustomMaterialSystem(IQDemonRenderContext *inContext) = 0;
+    virtual QSharedPointer<QDemonCustomMaterialSystemInterface> getCustomMaterialSystem(QDemonRenderContextInterface *inContext) = 0;
 
-    static QSharedPointer<ICustomMaterialSystemCore> CreateCustomMaterialSystemCore(IQDemonRenderContextCore * inContext);
+    static QSharedPointer<QDemonCustomMaterialSystemCoreInterface> createCustomMaterialSystemCore(QDemonRenderContextCoreInterface * inContext);
 };
 // How to handle blend modes?
-struct SModel;
-class Q_DEMONRUNTIMERENDER_EXPORT ICustomMaterialSystem : public ICustomMaterialSystemCore
+struct QDemonRenderModel;
+class Q_DEMONRUNTIMERENDER_EXPORT QDemonCustomMaterialSystemInterface : public QDemonCustomMaterialSystemCoreInterface
 {
 public:
-    virtual ~ICustomMaterialSystem() override {}
+    virtual ~QDemonCustomMaterialSystemInterface() override {}
     // Returns true if the material is dirty and thus will produce a different render result
     // than previously.  This effects things like progressive AA.
-    virtual bool PrepareForRender(const SModel &inModel,
-                                  const SRenderSubset &inSubset,
-                                  SCustomMaterial &inMaterial,
+    virtual bool prepareForRender(const QDemonRenderModel &inModel,
+                                  const QDemonRenderSubset &inSubset,
+                                  QDemonCustomMaterial &inMaterial,
                                   bool inClearDirty) = 0;
 
-    virtual bool RenderDepthPrepass(const QMatrix4x4 &inMVP, const SCustomMaterial &inMaterial, const SRenderSubset &inSubset) = 0;
-    virtual void RenderSubset(SCustomMaterialRenderContext &inRenderContext, TShaderFeatureSet inFeatureSet) = 0;
-    virtual void OnMaterialActivationChange(const SCustomMaterial &inMaterial, bool inActive) = 0;
+    virtual bool renderDepthPrepass(const QMatrix4x4 &inMVP, const QDemonCustomMaterial &inMaterial, const QDemonRenderSubset &inSubset) = 0;
+    virtual void renderSubset(QDemonCustomMaterialRenderContext &inRenderContext, TShaderFeatureSet inFeatureSet) = 0;
+    virtual void onMaterialActivationChange(const QDemonCustomMaterial &inMaterial, bool inActive) = 0;
 
     // get shader name
-    virtual QString GetShaderName(const SCustomMaterial &inMaterial) = 0;
+    virtual QString getShaderName(const QDemonCustomMaterial &inMaterial) = 0;
     // apply property values
-    virtual void ApplyShaderPropertyValues(const SCustomMaterial &inMaterial,
+    virtual void applyShaderPropertyValues(const QDemonCustomMaterial &inMaterial,
                                            QSharedPointer<QDemonRenderShaderProgram> inProgram) = 0;
     // Called by the uiccontext so this system can clear any per-frame render information.
-    virtual void EndFrame() = 0;
+    virtual void endFrame() = 0;
 };
 
-struct Q_DEMONRUNTIMERENDER_EXPORT SCustomMaterialVertexPipeline : public SVertexPipelineImpl
+struct Q_DEMONRUNTIMERENDER_EXPORT QDemonCustomMaterialVertexPipeline : public QDemonVertexPipelineImpl
 {
-    IQDemonRenderContext *m_Context;
-    TessModeValues::Enum m_TessMode;
+    QDemonRenderContextInterface *m_context;
+    TessModeValues::Enum m_tessMode;
 
-    SCustomMaterialVertexPipeline(IQDemonRenderContext *inContext, TessModeValues::Enum inTessMode);
-    void InitializeTessControlShader();
-    void InitializeTessEvaluationShader();
-    void FinalizeTessControlShader();
-    void FinalizeTessEvaluationShader();
+    QDemonCustomMaterialVertexPipeline(QDemonRenderContextInterface *inContext, TessModeValues::Enum inTessMode);
+    void initializeTessControlShader();
+    void initializeTessEvaluationShader();
+    void finalizeTessControlShader();
+    void finalizeTessEvaluationShader();
 
     // Responsible for beginning all vertex and fragment generation (void main() { etc).
-    virtual void BeginVertexGeneration(quint32 displacementImageIdx,
-                                       SRenderableImage *displacementImage) override;
+    virtual void beginVertexGeneration(quint32 displacementImageIdx,
+                                       QDemonRenderableImage *displacementImage) override;
     // The fragment shader expects a floating point constant, object_opacity to be defined
     // post this method.
-    virtual void BeginFragmentGeneration() override;
+    virtual void beginFragmentGeneration() override;
     // Output variables may be mangled in some circumstances so the shader generation
     // system needs an abstraction mechanism around this.
-    virtual void AssignOutput(const QString &inVarName, const QString &inVarValue) override;
-    virtual void GenerateEnvMapReflection() override {}
-    virtual void GenerateViewVector() override {}
-    virtual void GenerateUVCoords(quint32 inUVSet) override;
-    virtual void GenerateWorldNormal() override;
-    virtual void GenerateObjectNormal() override;
-    virtual void GenerateVarTangentAndBinormal() override;
-    virtual void GenerateWorldPosition() override;
+    virtual void assignOutput(const QString &inVarName, const QString &inVarValue) override;
+    virtual void generateEnvMapReflection() override {}
+    virtual void generateViewVector() override {}
+    virtual void generateUVCoords(quint32 inUVSet) override;
+    virtual void generateWorldNormal() override;
+    virtual void generateObjectNormal() override;
+    virtual void generateVarTangentAndBinormal() override;
+    virtual void generateWorldPosition() override;
     // responsible for closing all vertex and fragment generation
-    virtual void EndVertexGeneration() override;
-    virtual void EndFragmentGeneration() override;
-    virtual IShaderStageGenerator &ActiveStage() override;
-    virtual void AddInterpolationParameter(const QString &inName, const QString &inType) override;
-    virtual void DoGenerateUVCoords(quint32 inUVSet) override;
-    virtual void DoGenerateWorldNormal() override;
-    virtual void DoGenerateObjectNormal() override;
-    virtual void DoGenerateWorldPosition() override;
-    virtual void DoGenerateVarTangentAndBinormal() override;
-    virtual void DoGenerateVertexColor() override;
+    virtual void endVertexGeneration() override;
+    virtual void endFragmentGeneration() override;
+    virtual QDemonShaderStageGeneratorInterface &activeStage() override;
+    virtual void addInterpolationParameter(const QString &inName, const QString &inType) override;
+    virtual void doGenerateUVCoords(quint32 inUVSet) override;
+    virtual void doGenerateWorldNormal() override;
+    virtual void doGenerateObjectNormal() override;
+    virtual void doGenerateWorldPosition() override;
+    virtual void doGenerateVarTangentAndBinormal() override;
+    virtual void doGenerateVertexColor() override;
 };
 QT_END_NAMESPACE
 #endif

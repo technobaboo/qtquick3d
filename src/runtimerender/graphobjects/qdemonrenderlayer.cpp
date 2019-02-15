@@ -33,71 +33,71 @@
 
 QT_BEGIN_NAMESPACE
 
-SLayer::SLayer()
-    : SNode(GraphObjectTypes::Layer)
-    , m_Scene(nullptr)
-    , m_FirstEffect(nullptr)
-    , m_RenderPlugin(nullptr)
-    , m_ProgressiveAAMode(AAModeValues::NoAA)
-    , m_MultisampleAAMode(AAModeValues::NoAA)
-    , m_Background(LayerBackground::Transparent)
-    , m_BlendType(LayerBlendTypes::Normal)
-    , m_HorizontalFieldValues(HorizontalFieldValues::LeftWidth)
-    , m_Left(0)
-    , m_LeftUnits(LayerUnitTypes::Percent)
-    , m_Width(100.0f)
-    , m_WidthUnits(LayerUnitTypes::Percent)
-    , m_Right(0)
-    , m_RightUnits(LayerUnitTypes::Percent)
-    , m_VerticalFieldValues(VerticalFieldValues::TopHeight)
-    , m_Top(0)
-    , m_TopUnits(LayerUnitTypes::Percent)
-    , m_Height(100.0f)
-    , m_HeightUnits(LayerUnitTypes::Percent)
-    , m_Bottom(0)
-    , m_BottomUnits(LayerUnitTypes::Percent)
-    , m_AoStrength(0)
-    , m_AoDistance(5.0f)
-    , m_AoSoftness(50.0f)
-    , m_AoBias(0)
-    , m_AoSamplerate(2)
-    , m_AoDither(false)
-    , m_ShadowStrength(0)
-    , m_ShadowDist(10)
-    , m_ShadowSoftness(100.0f)
-    , m_ShadowBias(0)
-    , m_LightProbe(nullptr)
-    , m_ProbeBright(100.0f)
-    , m_FastIbl(false)
-    , m_ProbeHorizon(-1.0f)
-    , m_ProbeFov(180.0f)
-    , m_LightProbe2(nullptr)
-    , m_Probe2Fade(1.0f)
-    , m_Probe2Window(1.0f)
-    , m_Probe2Pos(0.5f)
-    , m_TemporalAAEnabled(false)
+QDemonLayer::QDemonLayer()
+    : QDemonGraphNode(QDemonGraphObjectTypes::Layer)
+    , scene(nullptr)
+    , firstEffect(nullptr)
+    , renderPlugin(nullptr)
+    , progressiveAAMode(AAModeValues::NoAA)
+    , multisampleAAMode(AAModeValues::NoAA)
+    , background(LayerBackground::Transparent)
+    , blendType(LayerBlendTypes::Normal)
+    , horizontalFieldValues(HorizontalFieldValues::LeftWidth)
+    , m_left(0)
+    , leftUnits(LayerUnitTypes::Percent)
+    , m_width(100.0f)
+    , widthUnits(LayerUnitTypes::Percent)
+    , m_right(0)
+    , rightUnits(LayerUnitTypes::Percent)
+    , verticalFieldValues(VerticalFieldValues::TopHeight)
+    , m_top(0)
+    , topUnits(LayerUnitTypes::Percent)
+    , m_height(100.0f)
+    , heightUnits(LayerUnitTypes::Percent)
+    , m_bottom(0)
+    , bottomUnits(LayerUnitTypes::Percent)
+    , aoStrength(0)
+    , aoDistance(5.0f)
+    , aoSoftness(50.0f)
+    , aoBias(0)
+    , aoSamplerate(2)
+    , aoDither(false)
+    , shadowStrength(0)
+    , shadowDist(10)
+    , shadowSoftness(100.0f)
+    , shadowBias(0)
+    , lightProbe(nullptr)
+    , probeBright(100.0f)
+    , fastIbl(false)
+    , probeHorizon(-1.0f)
+    , probeFov(180.0f)
+    , lightProbe2(nullptr)
+    , probe2Fade(1.0f)
+    , probe2Window(1.0f)
+    , probe2Pos(0.5f)
+    , temporalAAEnabled(false)
 {
-    m_Flags.SetLayerRenderToTarget(true);
-    m_Flags.SetLayerEnableDepthTest(true);
-    m_Flags.SetLayerEnableDepthPrepass(true);
+    flags.setLayerRenderToTarget(true);
+    flags.setLayerEnableDepthTest(true);
+    flags.setLayerEnableDepthPrepass(true);
 }
 
-void SLayer::AddEffect(SEffect &inEffect)
+void QDemonLayer::addEffect(QDemonEffect &inEffect)
 {
     // Effects need to be rendered in reverse order as described in the file.
-    inEffect.m_NextEffect = m_FirstEffect;
-    m_FirstEffect = &inEffect;
-    inEffect.m_Layer = this;
+    inEffect.m_nextEffect = firstEffect;
+    firstEffect = &inEffect;
+    inEffect.m_layer = this;
 }
 
-SEffect *SLayer::GetLastEffect()
+QDemonEffect *QDemonLayer::getLastEffect()
 {
-    if (m_FirstEffect) {
-        SEffect *theEffect = m_FirstEffect;
+    if (firstEffect) {
+        QDemonEffect *theEffect = firstEffect;
         // Empty loop intentional
-        for (; theEffect->m_NextEffect; theEffect = theEffect->m_NextEffect) {
+        for (; theEffect->m_nextEffect; theEffect = theEffect->m_nextEffect) {
         }
-        Q_ASSERT(theEffect->m_NextEffect == nullptr);
+        Q_ASSERT(theEffect->m_nextEffect == nullptr);
         return theEffect;
     }
     return nullptr;

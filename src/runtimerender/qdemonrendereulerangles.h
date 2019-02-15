@@ -118,24 +118,24 @@ typedef Quat EulerAngles; /* (x,y,z)=ang 1,2,3, w=order code  */
 #define TODEG(x) x = (float)(x * 180 / M_PI);
 #define TORAD(x) x = (float)(x / 180 * M_PI);
 
-class CEulerAngleConverter
+class QDemonEulerAngleConverter
 {
 private:
-    char m_OrderInfoBuffer[1024];
+    char m_orderInfoBuffer[1024];
 
 public:
-    CEulerAngleConverter();
-    virtual ~CEulerAngleConverter();
+    QDemonEulerAngleConverter();
+    virtual ~QDemonEulerAngleConverter();
 
 public:
-    EulerAngles Eul_(float ai, float aj, float ah, int order);
-    Quat Eul_ToQuat(EulerAngles ea);
-    void Eul_ToHMatrix(EulerAngles ea, HMatrix M);
-    EulerAngles Eul_FromHMatrix(HMatrix M, int order);
-    EulerAngles Eul_FromQuat(Quat q, int order);
+    EulerAngles euler(float ai, float aj, float ah, int order);
+    Quat eulerToQuat(EulerAngles ea);
+    void eulerToHMatrix(EulerAngles ea, HMatrix M);
+    EulerAngles eulerFromHMatrix(HMatrix M, int order);
+    EulerAngles eulerFromQuat(Quat q, int order);
 
     // Debug Stuff
-    const char *DumpOrderInfo();
+    const char *dumpOrderInfo();
 };
 QT_END_NAMESPACE
 

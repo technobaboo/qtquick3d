@@ -45,8 +45,8 @@ class QDemonRenderPathFontItem;
 
 class Q_DEMONRENDER_EXPORT QDemonRenderPathFontSpecification : public QEnableSharedFromThis<QDemonRenderPathFontSpecification>
 {
-    QSharedPointer<QDemonRenderContextImpl> m_Context; ///< pointer to context
-    QSharedPointer<QDemonRenderBackend> m_Backend; ///< pointer to backend
+    QSharedPointer<QDemonRenderContextImpl> m_context; ///< pointer to context
+    QSharedPointer<QDemonRenderBackend> m_backend; ///< pointer to backend
 
 public:
     /**
@@ -76,7 +76,7 @@ public:
              *
              * @return No return
              */
-    virtual void LoadPathGlyphs(const char *fontName, QDemonRenderPathFormatType::Enum type);
+    virtual void loadPathGlyphs(const char *fontName, QDemonRenderPathFormatType::Enum type);
 
     /**
              * @brief Render a stencil fill pass for fonts
@@ -85,7 +85,7 @@ public:
              *
              * @return no return
              */
-    void StencilFillPathInstanced(QSharedPointer<QDemonRenderPathFontItem> inPathFontItem);
+    void stencilFillPathInstanced(QSharedPointer<QDemonRenderPathFontItem> inPathFontItem);
 
     /**
              * @brief Render a cover fill pass for fonts
@@ -94,43 +94,43 @@ public:
              *
              * @return no return
              */
-    void CoverFillPathInstanced(QSharedPointer<QDemonRenderPathFontItem> inPathFontItem);
+    void coverFillPathInstanced(QSharedPointer<QDemonRenderPathFontItem> inPathFontItem);
 
     /**
              * @brief get type for font path set
              *
              * @return path font type
              */
-    QDemonRenderPathFormatType::Enum GetPathFontType() { return m_Type; }
+    QDemonRenderPathFormatType::Enum getPathFontType() { return m_type; }
 
     /**
              * @brief get font glyph count
              *
              * @return get glyph count
              */
-    quint32 GetFontGlyphsCount() { return m_NumFontGlyphs; }
+    quint32 getFontGlyphsCount() { return m_numFontGlyphs; }
 
     /**
              * @brief get spacing for char set
              *
              * @return spacing array
              */
-    float GetEmScale() const { return m_EmScale; }
+    float getEmScale() const { return m_emScale; }
 
     /**
              * @brief Get font name
              *
              * @return name set
              */
-    QString GetFontName() const { return m_FontName; }
+    QString getFontName() const { return m_fontName; }
 
 private:
-    quint32 m_NumFontGlyphs; ///< glyph count of the entire font set
-    float m_EmScale; ///< true type scale
-    QDemonRenderPathFormatType::Enum m_Type; ///< type ( byte, int,... )
-    QDemonRenderPathTransformType::Enum m_TransformType; ///< transform type default 2D
-    QString m_FontName; ///< Name of Font
-    QDemonRenderBackend::QDemonRenderBackendPathObject m_PathRenderHandle; ///< opaque backend handle
+    quint32 m_numFontGlyphs; ///< glyph count of the entire font set
+    float m_emScale; ///< true type scale
+    QDemonRenderPathFormatType::Enum m_type; ///< type ( byte, int,... )
+    QDemonRenderPathTransformType::Enum m_transformType; ///< transform type default 2D
+    QString m_fontName; ///< Name of Font
+    QDemonRenderBackend::QDemonRenderBackendPathObject m_pathRenderHandle; ///< opaque backend handle
 
 private:
     /**
@@ -143,8 +143,8 @@ private:
     quint32 getSizeOfType(QDemonRenderPathFormatType::Enum type);
 
 public:
-    static QSharedPointer<QDemonRenderPathFontSpecification>
-    CreatePathFontSpecification(QSharedPointer<QDemonRenderContextImpl> context, const QString &fontName);
+    static QSharedPointer<QDemonRenderPathFontSpecification> createPathFontSpecification(QSharedPointer<QDemonRenderContextImpl> context,
+                                                                                         const QString &fontName);
 };
 
 QT_END_NAMESPACE

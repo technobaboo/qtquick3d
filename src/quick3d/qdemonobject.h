@@ -50,7 +50,7 @@ public Q_SLOTS:
     void setName(QString name);
 
 protected:
-    virtual SGraphObject *updateSpatialNode(SGraphObject *node) = 0;
+    virtual QDemonGraphObject *updateSpatialNode(QDemonGraphObject *node) = 0;
 
 private:
     void markDirty();

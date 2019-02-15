@@ -40,25 +40,25 @@ QT_BEGIN_NAMESPACE
 // then need to be rendered with pre multiple alpha disabled.  If they don't,
 // then they need to be rendered with pre-multiply alpha enabled (and have the alpha channel
 // set to 1
-struct SSubPresentationHelper
+struct QDemonSubPresentationHelper
 {
-    IQDemonRenderContext *m_RenderContext;
-    QSize m_PreviousPresentationDimensions;
+    QDemonRenderContextInterface *m_renderContext;
+    QSize m_previousPresentationDimensions;
 
-    bool m_WasInSubPresentation;
+    bool m_wasInSubPresentation;
 
-    SSubPresentationHelper(IQDemonRenderContext *inContext, const QSize &inPresDimensions)
-        : m_RenderContext(inContext)
-        , m_PreviousPresentationDimensions(inContext->GetCurrentPresentationDimensions())
-        , m_WasInSubPresentation(inContext->IsInSubPresentation())
+    QDemonSubPresentationHelper(QDemonRenderContextInterface *inContext, const QSize &inPresDimensions)
+        : m_renderContext(inContext)
+        , m_previousPresentationDimensions(inContext->getCurrentPresentationDimensions())
+        , m_wasInSubPresentation(inContext->isInSubPresentation())
     {
-        m_RenderContext->SetInSubPresentation(true);
-        m_RenderContext->SetPresentationDimensions(inPresDimensions);
+        m_renderContext->setInSubPresentation(true);
+        m_renderContext->setPresentationDimensions(inPresDimensions);
     }
-    ~SSubPresentationHelper()
+    ~QDemonSubPresentationHelper()
     {
-        m_RenderContext->SetInSubPresentation(m_WasInSubPresentation);
-        m_RenderContext->SetPresentationDimensions(m_PreviousPresentationDimensions);
+        m_renderContext->setInSubPresentation(m_wasInSubPresentation);
+        m_renderContext->setPresentationDimensions(m_previousPresentationDimensions);
     }
 };
 QT_END_NAMESPACE

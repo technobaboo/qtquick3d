@@ -32,30 +32,30 @@
 
 QT_BEGIN_NAMESPACE
 
-void SPath::AddSubPath(SPathSubPath &inSegment)
+void QDemonPath::addSubPath(QDemonPathSubPath &inSegment)
 {
-    SPathSubPath *lastSegment = nullptr;
-    inSegment.m_Path = this;
-    inSegment.m_NextSubPath = nullptr;
-    if (m_FirstSubPath) {
+    QDemonPathSubPath *lastSegment = nullptr;
+    inSegment.m_path = this;
+    inSegment.m_nextSubPath = nullptr;
+    if (m_firstSubPath) {
         // find last segment
-        for (lastSegment = m_FirstSubPath; lastSegment && lastSegment->m_NextSubPath;
-             lastSegment = lastSegment->m_NextSubPath)
+        for (lastSegment = m_firstSubPath; lastSegment && lastSegment->m_nextSubPath;
+             lastSegment = lastSegment->m_nextSubPath)
             ;
-        lastSegment->m_NextSubPath = &inSegment;
+        lastSegment->m_nextSubPath = &inSegment;
     } else
-        m_FirstSubPath = &inSegment;
+        m_firstSubPath = &inSegment;
 }
 
-void SPath::ClearSubPaths()
+void QDemonPath::clearSubPaths()
 {
-    SPathSubPath *nextSegment = nullptr;
-    for (SPathSubPath *theSegment = m_FirstSubPath; theSegment; theSegment = nextSegment) {
-        nextSegment = theSegment->m_NextSubPath;
-        theSegment->m_Path = nullptr;
-        theSegment->m_NextSubPath = nullptr;
+    QDemonPathSubPath *nextSegment = nullptr;
+    for (QDemonPathSubPath *theSegment = m_firstSubPath; theSegment; theSegment = nextSegment) {
+        nextSegment = theSegment->m_nextSubPath;
+        theSegment->m_path = nullptr;
+        theSegment->m_nextSubPath = nullptr;
     }
-    m_FirstSubPath = nullptr;
+    m_firstSubPath = nullptr;
 }
 
 QT_END_NAMESPACE

@@ -35,47 +35,47 @@
 QT_BEGIN_NAMESPACE
 
 QDemonRenderPathSpecification::QDemonRenderPathSpecification(QSharedPointer<QDemonRenderContextImpl> context)
-    : m_Context(context)
-    , m_Backend(context->GetBackend())
+    : m_context(context)
+    , m_backend(context->getBackend())
 {
 }
 
 QDemonRenderPathSpecification::~QDemonRenderPathSpecification() {}
 
-void QDemonRenderPathSpecification::Reset()
+void QDemonRenderPathSpecification::reset()
 {
-    m_PathCommands.clear();
-    m_PathCoords.clear();
+    m_pathCommands.clear();
+    m_pathCoords.clear();
 }
 
-void QDemonRenderPathSpecification::P(QVector2D inData)
+void QDemonRenderPathSpecification::addPoint(QVector2D inData)
 {
-    m_PathCoords.push_back(inData.x());
-    m_PathCoords.push_back(inData.y());
+    m_pathCoords.push_back(inData.x());
+    m_pathCoords.push_back(inData.y());
 }
 
-void QDemonRenderPathSpecification::MoveTo(QVector2D inPoint)
+void QDemonRenderPathSpecification::moveTo(QVector2D inPoint)
 {
-    m_PathCommands.push_back(QDemonRenderPathCommands::MoveTo);
-    P(inPoint);
+    m_pathCommands.push_back(QDemonRenderPathCommands::MoveTo);
+    addPoint(inPoint);
 }
 
-void QDemonRenderPathSpecification::CubicCurveTo(QVector2D inC1, QVector2D inC2, QVector2D inDest)
+void QDemonRenderPathSpecification::cubicCurveTo(QVector2D inC1, QVector2D inC2, QVector2D inDest)
 {
-    m_PathCommands.push_back(QDemonRenderPathCommands::CubicCurveTo);
-    P(inC1);
-    P(inC2);
-    P(inDest);
+    m_pathCommands.push_back(QDemonRenderPathCommands::CubicCurveTo);
+    addPoint(inC1);
+    addPoint(inC2);
+    addPoint(inDest);
 }
 
-void QDemonRenderPathSpecification::ClosePath()
+void QDemonRenderPathSpecification::closePath()
 {
-    m_PathCommands.push_back(QDemonRenderPathCommands::Close);
+    m_pathCommands.push_back(QDemonRenderPathCommands::Close);
 }
 
-QSharedPointer<QDemonRenderPathSpecification> QDemonRenderPathSpecification::CreatePathSpecification(QSharedPointer<QDemonRenderContextImpl> context)
+QSharedPointer<QDemonRenderPathSpecification> QDemonRenderPathSpecification::createPathSpecification(QSharedPointer<QDemonRenderContextImpl> context)
 {
-    Q_ASSERT(context->IsPathRenderingSupported());
+    Q_ASSERT(context->isPathRenderingSupported());
 
     return QSharedPointer<QDemonRenderPathSpecification>(new QDemonRenderPathSpecification(context));
 }

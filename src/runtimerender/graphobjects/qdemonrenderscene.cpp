@@ -35,87 +35,88 @@
 
 QT_BEGIN_NAMESPACE
 
-SScene::SScene()
-    : SGraphObject(GraphObjectTypes::Scene)
-    , m_Presentation(nullptr)
-    , m_FirstChild(nullptr)
-    , m_ClearColor(0, 0, 0)
-    , m_UseClearColor(true)
-    , m_Dirty(true)
+QDemonRenderScene::QDemonRenderScene()
+    : QDemonGraphObject(QDemonGraphObjectTypes::Scene)
+    , presentation(nullptr)
+    , firstChild(nullptr)
+    , clearColor(0, 0, 0)
+    , useClearColor(true)
+    , dirty(true)
 {
 }
 
-void SScene::AddChild(SLayer &inLayer)
+void QDemonRenderScene::addChild(QDemonLayer &inLayer)
 {
-    if (m_FirstChild == nullptr)
-        m_FirstChild = &inLayer;
+    if (firstChild == nullptr)
+        firstChild = &inLayer;
     else
-        GetLastChild()->m_NextSibling = &inLayer;
-    inLayer.m_Scene = this;
+        getLastChild()->nextSibling = &inLayer;
+    inLayer.scene = this;
 }
 
-SLayer *SScene::GetLastChild()
+QDemonLayer *QDemonRenderScene::getLastChild()
 {
     // empty loop intentional
-    SLayer *child;
-    for (child = m_FirstChild; child && child->m_NextSibling;
-         child = (SLayer *)child->m_NextSibling) {
+    QDemonLayer *child;
+    for (child = firstChild; child && child->nextSibling;
+         child = static_cast<QDemonLayer *>(child->nextSibling)) {
     }
 
     return child;
 }
 
-bool SScene::PrepareForRender(const QVector2D &inViewportDimensions, IQDemonRenderContext *inContext,
-                              const SRenderInstanceId id)
+bool QDemonRenderScene::prepareForRender(const QVector2D &inViewportDimensions,
+                                         QDemonRenderContextInterface *inContext,
+                                         const SRenderInstanceId id)
 {
     // We need to iterate through the layers in reverse order and ask them to render.
-    bool wasDirty = m_Dirty;
-    m_Dirty = false;
-    if (m_FirstChild) {
+    bool wasDirty = dirty;
+    dirty = false;
+    if (firstChild) {
         wasDirty |=
-            inContext->GetRenderer()->PrepareLayerForRender(*m_FirstChild, inViewportDimensions, true, id);
+            inContext->getRenderer()->prepareLayerForRender(*firstChild, inViewportDimensions, true, id);
     }
     return wasDirty;
 }
 
-void SScene::Render(const QVector2D &inViewportDimensions,
-                    IQDemonRenderContext *inContext,
-                    RenderClearCommand inClearColorBuffer,
-                    const SRenderInstanceId id)
+void QDemonRenderScene::render(const QVector2D &inViewportDimensions,
+                               QDemonRenderContextInterface *inContext,
+                               RenderClearCommand inClearColorBuffer,
+                               const SRenderInstanceId id)
 {
-    if ((inClearColorBuffer == SScene::ClearIsOptional && m_UseClearColor)
-        || inClearColorBuffer == SScene::AlwaysClear) {
-        float clearColorAlpha = inContext->IsInSubPresentation() && !m_UseClearColor ? 0.0f : 1.0f;
+    if ((inClearColorBuffer == QDemonRenderScene::ClearIsOptional && useClearColor)
+        || inClearColorBuffer == QDemonRenderScene::AlwaysClear) {
+        float clearColorAlpha = inContext->isInSubPresentation() && !useClearColor ? 0.0f : 1.0f;
         QVector4D clearColor(0.0f, 0.0f, 0.0f, clearColorAlpha);
-        if (m_UseClearColor) {
-            clearColor.setX(m_ClearColor.x());
-            clearColor.setY(m_ClearColor.y());
-            clearColor.setZ(m_ClearColor.z());
+        if (useClearColor) {
+            clearColor.setX(clearColor.x());
+            clearColor.setY(clearColor.y());
+            clearColor.setZ(clearColor.z());
         }
         // Maybe clear and reset to previous clear color after we leave.
         QDemonRenderContextScopedProperty<QVector4D> __clearColor(
-            *inContext->GetRenderContext(), &QDemonRenderContext::GetClearColor,
-                    &QDemonRenderContext::SetClearColor, clearColor);
-        inContext->GetRenderContext()->Clear(QDemonRenderClearValues::Color);
+            *inContext->getRenderContext(), &QDemonRenderContext::getClearColor,
+                    &QDemonRenderContext::setClearColor, clearColor);
+        inContext->getRenderContext()->clear(QDemonRenderClearValues::Color);
     }
-    if (m_FirstChild)
-        inContext->GetRenderer()->RenderLayer(*m_FirstChild, inViewportDimensions, m_UseClearColor, m_ClearColor, true, id);
+    if (firstChild)
+        inContext->getRenderer()->renderLayer(*firstChild, inViewportDimensions, useClearColor, clearColor, true, id);
 }
-void SScene::RenderWithClear(const QVector2D &inViewportDimensions,
-                             IQDemonRenderContext *inContext,
-                             RenderClearCommand inClearColorBuffer,
-                             QVector3D inClearColor,
-                             const SRenderInstanceId id)
+void QDemonRenderScene::renderWithClear(const QVector2D &inViewportDimensions,
+                                        QDemonRenderContextInterface *inContext,
+                                        RenderClearCommand inClearColorBuffer,
+                                        QVector3D inClearColor,
+                                        const SRenderInstanceId id)
 {
     // If this scene is not using clear color, we set the color
     // to background color from parent layer. This allows
     // fully transparent subpresentations (both scene and layer(s) transparent)
     // to inherit color from the layer that contains them.
-    if (!m_UseClearColor) {
-        m_ClearColor = inClearColor;
-        m_UseClearColor = true;
+    if (!useClearColor) {
+        clearColor = inClearColor;
+        useClearColor = true;
     }
-    Render(inViewportDimensions, inContext, inClearColorBuffer, id);
+    render(inViewportDimensions, inContext, inClearColorBuffer, id);
 }
 
 QT_END_NAMESPACE

@@ -49,58 +49,63 @@
 
 QT_BEGIN_NAMESPACE
 
-struct SWidgetRenderInformation
+struct QDemonWidgetRenderInformation
 {
     // Just the rotation component of the nodeparenttocamera.
-    QMatrix3x3 m_NormalMatrix;
+    QMatrix3x3 m_normalMatrix;
     // The node parent's global transform multiplied by the inverse camera global transfrom;
     // basically the MV from model-view-projection
-    QMatrix4x4 m_NodeParentToCamera;
+    QMatrix4x4 m_nodeParentToCamera;
     // Projection that accounts for layer scaling
-    QMatrix4x4 m_LayerProjection;
+    QMatrix4x4 m_layerProjection;
     // Pure camera projection without layer scaling
-    QMatrix4x4 m_PureProjection;
+    QMatrix4x4 m_pureProjection;
     // A look at matrix that will rotate objects facing directly up
     // the Z axis such that the point to the camera.
-    QMatrix3x3 m_LookAtMatrix;
+    QMatrix3x3 m_lookAtMatrix;
     // Conversion from world to camera position so world points not in object
     // local space can be converted to camera space without going through the node's
     // inverse global transform
-    QMatrix4x4 m_CameraGlobalInverse;
+    QMatrix4x4 m_cameraGlobalInverse;
     // Offset to add to the node's world position in camera space to move to the ideal camera
     // location so that scale will work.  This offset should be added *after* translation into
     // camera space
-    QVector3D m_WorldPosOffset;
+    QVector3D m_worldPosOffset;
     // Position in camera space to center the widget around
-    QVector3D m_Position;
+    QVector3D m_position;
     // Scale factor to scale the widget by.
-    float m_Scale;
+    float m_scale;
 
     // The camera used to render this object.
-    SCamera *m_Camera;
-    SWidgetRenderInformation(const QMatrix3x3 &inNormal, const QMatrix4x4 &inNodeParentToCamera,
-                             const QMatrix4x4 &inLayerProjection, const QMatrix4x4 &inProjection,
-                             const QMatrix3x3 &inLookAt, const QMatrix4x4 &inCameraGlobalInverse,
-                             const QVector3D &inWorldPosOffset, const QVector3D &inPos, float inScale,
-                             SCamera &inCamera)
-        : m_NormalMatrix(inNormal)
-        , m_NodeParentToCamera(inNodeParentToCamera)
-        , m_LayerProjection(inLayerProjection)
-        , m_PureProjection(inProjection)
-        , m_LookAtMatrix(inLookAt)
-        , m_CameraGlobalInverse(inCameraGlobalInverse)
-        , m_WorldPosOffset(inWorldPosOffset)
-        , m_Position(inPos)
-        , m_Scale(inScale)
-        , m_Camera(&inCamera)
+    QDemonRenderCamera *m_camera;
+    QDemonWidgetRenderInformation(const QMatrix3x3 &inNormal,
+                                  const QMatrix4x4 &inNodeParentToCamera,
+                                  const QMatrix4x4 &inLayerProjection,
+                                  const QMatrix4x4 &inProjection,
+                                  const QMatrix3x3 &inLookAt,
+                                  const QMatrix4x4 &inCameraGlobalInverse,
+                                  const QVector3D &inWorldPosOffset,
+                                  const QVector3D &inPos,
+                                  float inScale,
+                                  QDemonRenderCamera &inCamera)
+        : m_normalMatrix(inNormal)
+        , m_nodeParentToCamera(inNodeParentToCamera)
+        , m_layerProjection(inLayerProjection)
+        , m_pureProjection(inProjection)
+        , m_lookAtMatrix(inLookAt)
+        , m_cameraGlobalInverse(inCameraGlobalInverse)
+        , m_worldPosOffset(inWorldPosOffset)
+        , m_position(inPos)
+        , m_scale(inScale)
+        , m_camera(&inCamera)
     {
     }
-    SWidgetRenderInformation()
-        : m_Camera(nullptr)
+    QDemonWidgetRenderInformation()
+        : m_camera(nullptr)
     {
     }
 };
-typedef QPair<SShaderVertexCodeGenerator &, SShaderFragmentCodeGenerator &> TShaderGeneratorPair;
+typedef QPair<QDemonShaderVertexCodeGenerator &, QDemonShaderFragmentCodeGenerator &> TShaderGeneratorPair;
 
 struct RenderWidgetModes
 {
@@ -111,39 +116,39 @@ struct RenderWidgetModes
 };
 
 class QDemonRenderContext;
-class IShaderProgramGenerator;
+class QDemonShaderProgramGeneratorInterface;
 // Context used to get render data for the widget.
-class Q_DEMONRUNTIMERENDER_EXPORT IRenderWidgetContext
+class Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderWidgetContextInterface
 {
 protected:
-    virtual ~IRenderWidgetContext();
+    virtual ~QDemonRenderWidgetContextInterface();
 public:
-    virtual QSharedPointer<QDemonRenderVertexBuffer> GetOrCreateVertexBuffer(QString &inStr,
+    virtual QSharedPointer<QDemonRenderVertexBuffer> getOrCreateVertexBuffer(QString &inStr,
                                                                              quint32 stride,
                                                                              QDemonConstDataRef<quint8> bufferData = QDemonConstDataRef<quint8>()) = 0;
-    virtual QSharedPointer<QDemonRenderIndexBuffer> GetOrCreateIndexBuffer(QString &inStr,
+    virtual QSharedPointer<QDemonRenderIndexBuffer> getOrCreateIndexBuffer(QString &inStr,
                                                                            QDemonRenderComponentTypes::Enum componentType,
                                                                            size_t size,
                                                                            QDemonConstDataRef<quint8> bufferData = QDemonConstDataRef<quint8>()) = 0;
-    virtual QSharedPointer<QDemonRenderAttribLayout> CreateAttributeLayout(QDemonConstDataRef<QDemonRenderVertexBufferEntry> attribs) = 0;
-    virtual QSharedPointer<QDemonRenderInputAssembler> GetOrCreateInputAssembler(QString &inStr,
+    virtual QSharedPointer<QDemonRenderAttribLayout> createAttributeLayout(QDemonConstDataRef<QDemonRenderVertexBufferEntry> attribs) = 0;
+    virtual QSharedPointer<QDemonRenderInputAssembler> getOrCreateInputAssembler(QString &inStr,
                                                                                  QSharedPointer<QDemonRenderAttribLayout> attribLayout,
                                                                                  QDemonConstDataRef<QSharedPointer<QDemonRenderVertexBuffer>> buffers,
                                                                                  const QSharedPointer<QDemonRenderIndexBuffer> indexBuffer,
                                                                                  QDemonConstDataRef<quint32> strides,
                                                                                  QDemonConstDataRef<quint32> offsets) = 0;
 
-    virtual QSharedPointer<QDemonRenderVertexBuffer> GetVertexBuffer(const QString &inStr) = 0;
-    virtual QSharedPointer<QDemonRenderIndexBuffer> GetIndexBuffer(const QString &inStr) = 0;
-    virtual QSharedPointer<QDemonRenderInputAssembler> GetInputAssembler(const QString &inStr) = 0;
+    virtual QSharedPointer<QDemonRenderVertexBuffer> getVertexBuffer(const QString &inStr) = 0;
+    virtual QSharedPointer<QDemonRenderIndexBuffer> getIndexBuffer(const QString &inStr) = 0;
+    virtual QSharedPointer<QDemonRenderInputAssembler> getInputAssembler(const QString &inStr) = 0;
 
-    virtual QSharedPointer<QDemonRenderShaderProgram> GetShader(const QString &inStr) = 0;
-    virtual QSharedPointer<IShaderProgramGenerator> GetProgramGenerator() = 0;
+    virtual QSharedPointer<QDemonRenderShaderProgram> getShader(const QString &inStr) = 0;
+    virtual QSharedPointer<QDemonShaderProgramGeneratorInterface> getProgramGenerator() = 0;
     // calls compile on the program generator and stores result under this name.
-    virtual QSharedPointer<QDemonRenderShaderProgram> CompileAndStoreShader(const QString &inStr) = 0;
-    virtual STextDimensions MeasureText(const STextRenderInfo &inText) = 0;
+    virtual QSharedPointer<QDemonRenderShaderProgram> compileAndStoreShader(const QString &inStr) = 0;
+    virtual QDemonTextDimensions measureText(const QDemonTextRenderInfo &inText) = 0;
     // Render text using a specific MVP
-    virtual void RenderText(const STextRenderInfo &inText,
+    virtual void renderText(const QDemonTextRenderInfo &inText,
                             const QVector3D &inTextColor,
                             const QVector3D &inBackgroundColor,
                             const QMatrix4x4 &inMVP) = 0;
@@ -153,35 +158,32 @@ public:
     // a new position and a floating point scale factor so you can render in 1/2 perspective
     // mode
     // or orthographic mode if you would like to.
-    virtual SWidgetRenderInformation GetWidgetRenderInformation(SNode &inNode,
-                                                                const QVector3D &inPos,
-                                                                RenderWidgetModes::Enum inWidgetMode) = 0;
+    virtual QDemonWidgetRenderInformation getWidgetRenderInformation(QDemonGraphNode &inNode,
+                                                                     const QVector3D &inPos,
+                                                                     RenderWidgetModes::Enum inWidgetMode) = 0;
 };
 
-class IRenderWidget
+class QDemonRenderWidgetInterface
 {
 protected:
-    virtual ~IRenderWidget();
-    SNode *m_Node;
+    virtual ~QDemonRenderWidgetInterface();
+    QDemonGraphNode *m_node = nullptr;
 
 public:
-    IRenderWidget(SNode &inNode)
-        : m_Node(&inNode)
+    QDemonRenderWidgetInterface(QDemonGraphNode &inNode)
+        : m_node(&inNode)
     {
     }
-    IRenderWidget()
-        : m_Node(nullptr)
-    {
-    }
-    virtual void Render(IRenderWidgetContext &inWidgetContext,
+    QDemonRenderWidgetInterface() = default;
+    virtual void render(QDemonRenderWidgetContextInterface &inWidgetContext,
                         QDemonRenderContext &inRenderContext) = 0;
-    SNode &GetNode() { return *m_Node; }
+    QDemonGraphNode &getNode() { return *m_node; }
 
     // Pure widgets.
-    static QSharedPointer<IRenderWidget> CreateBoundingBoxWidget(SNode &inNode,
-                                                                 const QDemonBounds3 &inBounds,
-                                                                 const QVector3D &inColor);
-    static QSharedPointer<IRenderWidget> CreateAxisWidget(SNode &inNode);
+    static QSharedPointer<QDemonRenderWidgetInterface> createBoundingBoxWidget(QDemonGraphNode &inNode,
+                                                                               const QDemonBounds3 &inBounds,
+                                                                               const QVector3D &inColor);
+    static QSharedPointer<QDemonRenderWidgetInterface> createAxisWidget(QDemonGraphNode &inNode);
 };
 QT_END_NAMESPACE
 

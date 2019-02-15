@@ -37,17 +37,17 @@ QT_BEGIN_NAMESPACE
 
 // http://www.siggraph.org/education/materials/HyperGraph/raytrace/rayplane_intersection.htm
 
-QDemonOption<QVector3D> SRay::Intersect(const QDemonPlane &inPlane) const
+QDemonOption<QVector3D> QDemonRenderRay::intersect(const QDemonPlane &inPlane) const
 {
-    float Vd = QVector3D::dotProduct(inPlane.n, m_Direction);
+    float Vd = QVector3D::dotProduct(inPlane.n, m_direction);
     if (fabs(Vd) < .0001f)
         return QDemonEmpty();
-    float V0 = -1.0f * (QVector3D::dotProduct(inPlane.n, m_Origin) + inPlane.d);
+    float V0 = -1.0f * (QVector3D::dotProduct(inPlane.n, m_origin) + inPlane.d);
     float t = V0 / Vd;
-    return m_Origin + (m_Direction * t);
+    return m_origin + (m_direction * t);
 }
 
-QDemonOption<SRayIntersectionResult> SRay::IntersectWithAABB(const QMatrix4x4 &inGlobalTransform,
+QDemonOption<QDemonRenderRayIntersectionResult> QDemonRenderRay::intersectWithAABB(const QMatrix4x4 &inGlobalTransform,
                                                        const QDemonBounds3 &inBounds,
                                                        bool inForceIntersect) const
 {
@@ -64,11 +64,11 @@ QDemonOption<SRayIntersectionResult> SRay::IntersectWithAABB(const QMatrix4x4 &i
     // Transform pick origin and direction into the subset's space.
     QMatrix4x4 theOriginTransform = mat44::getInverse(inGlobalTransform);
 
-    QVector3D theTransformedOrigin = mat44::transform(theOriginTransform, m_Origin);
+    QVector3D theTransformedOrigin = mat44::transform(theOriginTransform, m_origin);
     float *outOriginTransformPtr(theOriginTransform.data());
     outOriginTransformPtr[12] = outOriginTransformPtr[13] = outOriginTransformPtr[14] = 0.0f;
 
-    QVector3D theTransformedDirection = mat44::rotate(theOriginTransform, m_Direction);
+    QVector3D theTransformedDirection = mat44::rotate(theOriginTransform, m_direction);
 
     static const float KD_FLT_MAX = 3.40282346638528860e+38;
     static const float kEpsilon = 1e-5f;
@@ -109,7 +109,7 @@ QDemonOption<SRayIntersectionResult> SRay::IntersectWithAABB(const QMatrix4x4 &i
     QVector3D scaledDir = theTransformedDirection * theMinWinner;
     QVector3D newPosInLocal = theTransformedOrigin + scaledDir;
     QVector3D newPosInGlobal = mat44::transform(inGlobalTransform, newPosInLocal);
-    QVector3D cameraToLocal = m_Origin - newPosInGlobal;
+    QVector3D cameraToLocal = m_origin - newPosInGlobal;
 
     float rayLengthSquared = vec3::magnitudeSquared(cameraToLocal);
 
@@ -120,18 +120,18 @@ QDemonOption<SRayIntersectionResult> SRay::IntersectWithAABB(const QMatrix4x4 &i
     relXY.setX((newPosInLocal[0] - inBounds.minimum.x()) / xRange);
     relXY.setY((newPosInLocal[1] - inBounds.minimum.y()) / yRange);
 
-    return SRayIntersectionResult(rayLengthSquared, relXY);
+    return QDemonRenderRayIntersectionResult(rayLengthSquared, relXY);
 }
 
-QDemonOption<QVector2D> SRay::GetRelative(const QMatrix4x4 &inGlobalTransform, const QDemonBounds3 &inBounds,
-                                    SBasisPlanes::Enum inPlane) const
+QDemonOption<QVector2D> QDemonRenderRay::getRelative(const QMatrix4x4 &inGlobalTransform, const QDemonBounds3 &inBounds,
+                                    QDemonRenderBasisPlanes::Enum inPlane) const
 {
     QMatrix4x4 theOriginTransform = mat44::getInverse(inGlobalTransform);
 
-    QVector3D theTransformedOrigin = mat44::transform(theOriginTransform, m_Origin);
+    QVector3D theTransformedOrigin = mat44::transform(theOriginTransform, m_origin);
     float *outOriginTransformPtr(theOriginTransform.data());
     outOriginTransformPtr[12] = outOriginTransformPtr[13] = outOriginTransformPtr[14] = 0.0f;
-    QVector3D theTransformedDirection = mat44::rotate(theOriginTransform, m_Direction);
+    QVector3D theTransformedDirection = mat44::rotate(theOriginTransform, m_direction);
 
     // The XY plane is going to be a plane with either positive or negative Z direction that runs
     // through
@@ -139,13 +139,13 @@ QDemonOption<QVector2D> SRay::GetRelative(const QMatrix4x4 &inGlobalTransform, c
     QVector3D theRight(1, 0, 0);
     QVector3D theUp(0, 1, 0);
     switch (inPlane) {
-    case SBasisPlanes::XY:
+    case QDemonRenderBasisPlanes::XY:
         break;
-    case SBasisPlanes::XZ:
+    case QDemonRenderBasisPlanes::XZ:
         theDirection = QVector3D(0, 1, 0);
         theUp = QVector3D(0, 0, 1);
         break;
-    case SBasisPlanes::YZ:
+    case QDemonRenderBasisPlanes::YZ:
         theDirection = QVector3D(1, 0, 0);
         theRight = QVector3D(0, 0, 1);
         break;
@@ -154,8 +154,8 @@ QDemonOption<QVector2D> SRay::GetRelative(const QMatrix4x4 &inGlobalTransform, c
                      ? QVector3D::dotProduct(theDirection, inBounds.maximum)
                      : QVector3D::dotProduct(theDirection, inBounds.minimum));
 
-    SRay relativeRay(theTransformedOrigin, theTransformedDirection);
-    QDemonOption<QVector3D> localIsect = relativeRay.Intersect(thePlane);
+    QDemonRenderRay relativeRay(theTransformedOrigin, theTransformedDirection);
+    QDemonOption<QVector3D> localIsect = relativeRay.intersect(thePlane);
     if (localIsect.hasValue()) {
         float xRange = QVector3D::dotProduct(theRight, inBounds.maximum) - QVector3D::dotProduct(theRight, inBounds.minimum);
         float yRange = QVector3D::dotProduct(theUp, inBounds.maximum) - QVector3D::dotProduct(theUp, inBounds.minimum);

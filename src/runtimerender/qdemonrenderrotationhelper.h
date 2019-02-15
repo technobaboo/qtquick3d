@@ -41,12 +41,12 @@ QT_BEGIN_NAMESPACE
      *	from two different xyz tuples.
      */
 
-struct SRotationHelper
+struct QDemonRotationHelper
 {
 
     // Attempt to go for negative values intead of large positive ones
     // Goal is to keep the fabs of the angle low.
-    static float ToMinimalAngle(float value)
+    static float toMinimalAngle(float value)
     {
         float epsilon = float(M_PI) + .001f;
         while (std::abs(value) > epsilon) {
@@ -74,13 +74,13 @@ struct SRotationHelper
          *
          *	Note that this function works in radian space.
          */
-    static QVector3D ToCanonicalFormStaticAxis(const QVector3D &inSrcAngle, quint32 inRotOrder)
+    static QVector3D toCanonicalFormStaticAxis(const QVector3D &inSrcAngle, quint32 inRotOrder)
     {
         // step 1 - reduce all components to less than 2*pi but greater than 0
         QVector3D retval(inSrcAngle);
-        retval.setX(ToMinimalAngle(retval.x()));
-        retval.setY(ToMinimalAngle(retval.y()));
-        retval.setZ(ToMinimalAngle(retval.z()));
+        retval.setX(toMinimalAngle(retval.x()));
+        retval.setY(toMinimalAngle(retval.y()));
+        retval.setZ(toMinimalAngle(retval.z()));
 
         // step 2 - if any two components are equal to or greater than pi
         // then subtract pi from all three, then run two pi reduce again.
@@ -147,11 +147,11 @@ struct SRotationHelper
         return retval;
     }
 
-    static QVector3D ToMinimalAngleDiff(const QVector3D inDiff)
+    static QVector3D toMinimalAngleDiff(const QVector3D inDiff)
     {
-        return QVector3D(ToMinimalAngle(inDiff.x()),
-                         ToMinimalAngle(inDiff.y()),
-                         ToMinimalAngle(inDiff.z()));
+        return QVector3D(toMinimalAngle(inDiff.x()),
+                         toMinimalAngle(inDiff.y()),
+                         toMinimalAngle(inDiff.z()));
     }
 
     /**
@@ -160,7 +160,8 @@ struct SRotationHelper
          *	Works in radian space.  This function doesn't currently work for euler angles or
          *	with Euler angles with repeating axis.
          */
-    static QVector3D ToNearestAngle(const QVector3D &inOldAngle, const QVector3D &inNewAngle,
+    static QVector3D toNearestAngle(const QVector3D &inOldAngle,
+                                    const QVector3D &inNewAngle,
                                     quint32 inRotOrder)
     {
         switch (inRotOrder) {
@@ -176,10 +177,10 @@ struct SRotationHelper
         case EulOrdYZXr:
         case EulOrdZYXr:
         case EulOrdZXYr: {
-            QVector3D oldA = ToCanonicalFormStaticAxis(inOldAngle, inRotOrder);
-            QVector3D newA = ToCanonicalFormStaticAxis(inNewAngle, inRotOrder);
+            QVector3D oldA = toCanonicalFormStaticAxis(inOldAngle, inRotOrder);
+            QVector3D newA = toCanonicalFormStaticAxis(inNewAngle, inRotOrder);
             QVector3D diff = newA - oldA;
-            return inOldAngle + ToMinimalAngleDiff(diff);
+            return inOldAngle + toMinimalAngleDiff(diff);
         }
         default:
             return inNewAngle;

@@ -37,28 +37,28 @@
 
 QT_BEGIN_NAMESPACE
 
-void SEffect::Initialize()
+void QDemonEffect::initialize()
 {
-    m_Layer = nullptr;
-    m_NextEffect = nullptr;
-    m_Context = nullptr;
+    m_layer = nullptr;
+    m_nextEffect = nullptr;
+    m_context = nullptr;
 }
 
-void SEffect::SetActive(bool inActive, IEffectSystem &inManager)
+void QDemonEffect::setActive(bool inActive, QDemonEffectSystemInterface &inManager)
 {
-    if (m_Flags.IsActive() != inActive) {
-        m_Flags.SetActive(inActive);
-        if (m_Context)
-            inManager.ResetEffectFrameData(*m_Context);
-        m_Flags.SetDirty(true);
+    if (flags.isActive() != inActive) {
+        flags.setActive(inActive);
+        if (m_context)
+            inManager.resetEffectFrameData(*m_context);
+        flags.setDirty(true);
     }
 }
 
-void SEffect::Reset(IEffectSystem &inSystem)
+void QDemonEffect::reset(QDemonEffectSystemInterface &inSystem)
 {
-    if (m_Context)
-        inSystem.ResetEffectFrameData(*m_Context);
-    m_Flags.SetDirty(true);
+    if (m_context)
+        inSystem.resetEffectFrameData(*m_context);
+    flags.setDirty(true);
 }
 
 QT_END_NAMESPACE

@@ -35,19 +35,19 @@
 QT_BEGIN_NAMESPACE
 
 QDemonRenderSync::QDemonRenderSync(QSharedPointer<QDemonRenderContextImpl> context)
-    : m_Context(context)
-    , m_Backend(context->GetBackend())
-    , m_SyncHandle(nullptr)
+    : m_context(context)
+    , m_backend(context->getBackend())
+    , m_syncHandle(nullptr)
 {
 }
 
 QDemonRenderSync::~QDemonRenderSync()
 {
-    if (m_SyncHandle)
-        m_Backend->ReleaseSync(m_SyncHandle);
+    if (m_syncHandle)
+        m_backend->releaseSync(m_syncHandle);
 }
 
-void QDemonRenderSync::Sync()
+void QDemonRenderSync::sync()
 {
     // On every sync call we need to create a new sync object
     // A sync object can only be used once
@@ -55,23 +55,23 @@ void QDemonRenderSync::Sync()
     // First delete the old object
     // We can safely do this because it is actually not deleted until
     // it is unused
-    if (m_SyncHandle)
-        m_Backend->ReleaseSync(m_SyncHandle);
+    if (m_syncHandle)
+        m_backend->releaseSync(m_syncHandle);
 
-    m_SyncHandle =
-            m_Backend->CreateSync(QDemonRenderSyncType::GpuCommandsComplete, QDemonRenderSyncFlags());
+    m_syncHandle =
+            m_backend->createSync(QDemonRenderSyncType::GpuCommandsComplete, QDemonRenderSyncFlags());
 }
 
-void QDemonRenderSync::Wait()
+void QDemonRenderSync::wait()
 {
     // wait until the sync object is signaled or a timeout happens
-    if (m_SyncHandle)
-        m_Backend->WaitSync(m_SyncHandle, QDemonRenderCommandFlushFlags(), 0);
+    if (m_syncHandle)
+        m_backend->waitSync(m_syncHandle, QDemonRenderCommandFlushFlags(), 0);
 }
 
-QSharedPointer<QDemonRenderSync> QDemonRenderSync::Create(QSharedPointer<QDemonRenderContextImpl> context)
+QSharedPointer<QDemonRenderSync> QDemonRenderSync::create(QSharedPointer<QDemonRenderContextImpl> context)
 {
-    if (!context->IsCommandSyncSupported())
+    if (!context->isCommandSyncSupported())
         return nullptr;
 
     return QSharedPointer<QDemonRenderSync>(new QDemonRenderSync(context));

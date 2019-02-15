@@ -34,31 +34,31 @@ struct PathCommand
     };
 };
 
-struct Q_DEMONASSETIMPORT_EXPORT SPathBuffer
+struct Q_DEMONASSETIMPORT_EXPORT QDemonPathBuffer
 {
     // 64 bit random number to uniquely identify this file type.
-    static quint64 GetFileTag() { return 0x7b1a41633c43a6afULL; }
-    static quint32 GetFileVersion() { return 1; }
-    QDemonConstDataRef<PathCommand::Enum> m_Commands;
-    QDemonConstDataRef<float> m_Data;
-    SPathBuffer();
-    void Save(QIODevice &outStream) const;
-    static SPathBuffer *Load(QIODevice &inStream);
+    static quint64 getFileTag() { return 0x7b1a41633c43a6afULL; }
+    static quint32 getFileVersion() { return 1; }
+    QDemonConstDataRef<PathCommand::Enum> commands;
+    QDemonConstDataRef<float> data;
+    QDemonPathBuffer();
+    void save(QIODevice &outStream) const;
+    static QDemonPathBuffer *load(QIODevice &inStream);
 };
 
-class Q_DEMONASSETIMPORT_EXPORT IPathBufferBuilder
+class Q_DEMONASSETIMPORT_EXPORT QDemonPathBufferBuilderInterface
 {
 public:
-    virtual ~IPathBufferBuilder() {}
-    virtual void Clear() = 0;
+    virtual ~QDemonPathBufferBuilderInterface();
+    virtual void clear() = 0;
 
-    virtual void MoveTo(const QVector2D &inPos) = 0;
-    virtual void CubicCurveTo(const QVector2D &inC1, const QVector2D &inC2, const QVector2D &inP2) = 0;
-    virtual void Close() = 0;
+    virtual void moveTo(const QVector2D &inPos) = 0;
+    virtual void cubicCurveTo(const QVector2D &inC1, const QVector2D &inC2, const QVector2D &inP2) = 0;
+    virtual void close() = 0;
     // Points back to internal data structures, must use or copy.
-    virtual SPathBuffer GetPathBuffer() = 0;
+    virtual QDemonPathBuffer getPathBuffer() = 0;
 
-    static QSharedPointer<IPathBufferBuilder> CreateBuilder();
+    static QSharedPointer<QDemonPathBufferBuilderInterface> createBuilder();
 };
 } // end namespace
 

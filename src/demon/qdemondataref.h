@@ -9,12 +9,13 @@ template <typename TDataType>
 struct QDemonConstDataRef
 {
     const TDataType *mData;
-    quint32 mSize;
+    int mSize;
 
-    QDemonConstDataRef(const TDataType *inData, quint32 inSize)
+    QDemonConstDataRef(const TDataType *inData, qint32 inSize)
         : mData(inData)
         , mSize(inSize)
     {
+        Q_ASSERT(mSize > -1);
     }
     QDemonConstDataRef()
         : mData(nullptr)
@@ -22,13 +23,14 @@ struct QDemonConstDataRef
     {
     }
 
-    quint32 size() const { return mSize; }
+    qint32 size() const { return mSize; }
 
     const TDataType *begin() const { return mData; }
     const TDataType *end() const { return mData + mSize; }
 
-    const TDataType &operator[](quint32 index) const
+    const TDataType &operator[](int index) const
     {
+        Q_ASSERT(index > -1);
         Q_ASSERT(index < mSize);
         return mData[index];
     }

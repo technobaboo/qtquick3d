@@ -82,7 +82,7 @@ Q_SIGNALS:
     void frustumScaleYChanged(float frustumScaleY);
 
 protected:
-    SGraphObject *updateSpatialNode(SGraphObject *node) override;
+    QDemonGraphObject *updateSpatialNode(QDemonGraphObject *node) override;
 
 private:
 

@@ -32,11 +32,11 @@
 
 QT_BEGIN_NAMESPACE
 
-SLightmaps::SLightmaps()
-    : SGraphObject(GraphObjectTypes::Lightmaps)
-    , m_LightmapIndirect(nullptr)
-    , m_LightmapRadiosity(nullptr)
-    , m_LightmapShadow(nullptr)
+QDemonRenderLightmaps::QDemonRenderLightmaps()
+    : QDemonGraphObject(QDemonGraphObjectTypes::Lightmaps)
+    , m_lightmapIndirect(nullptr)
+    , m_lightmapRadiosity(nullptr)
+    , m_lightmapShadow(nullptr)
 {
 }
 

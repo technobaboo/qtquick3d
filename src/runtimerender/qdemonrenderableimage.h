@@ -35,7 +35,7 @@
 
 QT_BEGIN_NAMESPACE
 
-struct ImageMapTypes
+struct QDemonImageMapTypes
 {
     enum Enum {
         Unknown = 0,
@@ -60,15 +60,15 @@ struct ImageMapTypes
      *	generator goes through all the possible images on a material and for each valid image
      *	computes this renderable image and attaches it to the renderable.
      */
-struct SRenderableImage
+struct QDemonRenderableImage
 {
-    ImageMapTypes::Enum m_MapType;
-    SImage &m_Image;
-    SRenderableImage *m_NextImage;
-    SRenderableImage(ImageMapTypes::Enum inMapType, SImage &inImage)
-        : m_MapType(inMapType)
-        , m_Image(inImage)
-        , m_NextImage(nullptr)
+    QDemonImageMapTypes::Enum m_mapType;
+    QDemonRenderImage &m_image;
+    QDemonRenderableImage *m_nextImage;
+    QDemonRenderableImage(QDemonImageMapTypes::Enum inMapType, QDemonRenderImage &inImage)
+        : m_mapType(inMapType)
+        , m_image(inImage)
+        , m_nextImage(nullptr)
     {
     }
 };

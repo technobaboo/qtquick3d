@@ -40,23 +40,23 @@
 
 QT_BEGIN_NAMESPACE
 // This class is threadsafe.
-class Q_DEMONRUNTIMERENDER_EXPORT IInputStreamFactory
+class Q_DEMONRUNTIMERENDER_EXPORT QDemonInputStreamFactoryInterface
 {
 protected:
-    virtual ~IInputStreamFactory() {}
+    virtual ~QDemonInputStreamFactoryInterface() {}
 public:
     // These directories must have a '/' on them
-    virtual void AddSearchDirectory(const char *inDirectory) = 0;
-    virtual QSharedPointer<QIODevice> GetStreamForFile(const QString &inFilename, bool inQuiet = false) = 0;
+    virtual void addSearchDirectory(const char *inDirectory) = 0;
+    virtual QSharedPointer<QIODevice> getStreamForFile(const QString &inFilename, bool inQuiet = false) = 0;
     // Return a path for this file.  Returns true if GetStreamForFile would return a valid
     // stream.
     // else returns false
-    virtual bool GetPathForFile(const QString &inFilename, QString &outFile, bool inQuiet = false) = 0;
+    virtual bool getPathForFile(const QString &inFilename, QString &outFile, bool inQuiet = false) = 0;
 
     // Create an input stream factory using this foundation and an platform-optional app
     // directory
     // on android the app directory has no effect; use use the assets bundled with the APK file.
-    static QSharedPointer<IInputStreamFactory> Create();
+    static QSharedPointer<QDemonInputStreamFactoryInterface> create();
 };
 QT_END_NAMESPACE
 

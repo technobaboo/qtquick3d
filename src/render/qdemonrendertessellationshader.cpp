@@ -37,15 +37,15 @@ QDemonRenderTessControlShader::QDemonRenderTessControlShader(QSharedPointer<QDem
                                                              QDemonConstDataRef<qint8> source,
                                                              bool binaryProgram)
     : QDemonRenderShader(context, source, binaryProgram)
-    , m_ShaderHandle(nullptr)
+    , m_shaderHandle(nullptr)
 {
-    m_ShaderHandle = m_Backend->CreateTessControlShader(source, m_ErrorMessage, binaryProgram);
+    m_shaderHandle = m_backend->createTessControlShader(source, m_errorMessage, binaryProgram);
 }
 
 QDemonRenderTessControlShader::~QDemonRenderTessControlShader()
 {
-    if (m_ShaderHandle) {
-        m_Backend->ReleaseTessControlShader(m_ShaderHandle);
+    if (m_shaderHandle) {
+        m_backend->releaseTessControlShader(m_shaderHandle);
     }
 }
 
@@ -53,16 +53,15 @@ QDemonRenderTessEvaluationShader::QDemonRenderTessEvaluationShader(QSharedPointe
                                                                    QDemonConstDataRef<qint8> source,
                                                                    bool binaryProgram)
     : QDemonRenderShader(context, source, binaryProgram)
-    , m_ShaderHandle(nullptr)
+    , m_shaderHandle(nullptr)
 {
-    m_ShaderHandle =
-            m_Backend->CreateTessEvaluationShader(source, m_ErrorMessage, binaryProgram);
+    m_shaderHandle = m_backend->createTessEvaluationShader(source, m_errorMessage, binaryProgram);
 }
 
 QDemonRenderTessEvaluationShader::~QDemonRenderTessEvaluationShader()
 {
-    if (m_ShaderHandle) {
-        m_Backend->ReleaseTessEvaluationShader(m_ShaderHandle);
+    if (m_shaderHandle) {
+        m_backend->releaseTessEvaluationShader(m_shaderHandle);
     }
 }
 QT_END_NAMESPACE

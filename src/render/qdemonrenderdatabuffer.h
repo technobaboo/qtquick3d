@@ -43,16 +43,16 @@ class QDemonRenderBackend;
 class QDemonRenderDataBuffer : public QDemonRenderImplemented
 {
 protected:
-    QSharedPointer<QDemonRenderContextImpl> m_Context; ///< pointer to context
-    QSharedPointer<QDemonRenderBackend> m_Backend; ///< pointer to backend
-    QDemonRenderBufferUsageType::Enum m_UsageType; ///< usage type
-    QDemonRenderBufferBindFlags m_BindFlags; ///< bind flags
-    QDemonDataRef<quint8> m_BufferData; ///< buffer data pointer
-    quint32 m_BufferCapacity; ///< size of internal backup buffer (m_BufferData)
-    size_t m_BufferSize; ///< size of buffer
-    bool m_OwnsData; ///< true when we own m_BufferData
-    bool m_Mapped; ///< true when locked for reading or writing to m_BufferData
-    QDemonRenderBackend::QDemonRenderBackendBufferObject m_BufferHandle; ///< opaque backend handle
+    QSharedPointer<QDemonRenderContextImpl> m_context; ///< pointer to context
+    QSharedPointer<QDemonRenderBackend> m_backend; ///< pointer to backend
+    QDemonRenderBufferUsageType::Enum m_usageType; ///< usage type
+    QDemonRenderBufferBindFlags m_bindFlags; ///< bind flags
+    QDemonDataRef<quint8> m_bufferData; ///< buffer data pointer
+    quint32 m_bufferCapacity; ///< size of internal backup buffer (m_bufferData)
+    size_t m_bufferSize; ///< size of buffer
+    bool m_ownsData; ///< true when we own m_bufferData
+    bool m_mapped; ///< true when locked for reading or writing to m_bufferData
+    QDemonRenderBackend::QDemonRenderBackendBufferObject m_bufferHandle; ///< opaque backend handle
 
 public:
     /**
@@ -80,9 +80,9 @@ public:
          *
          * @return Return usage tyoe
          */
-    virtual QDemonRenderBufferUsageType::Enum GetBufferUsageType() const
+    virtual QDemonRenderBufferUsageType::Enum getBufferUsageType() const
     {
-        return m_UsageType;
+        return m_usageType;
     }
 
     /**
@@ -91,14 +91,14 @@ public:
          *
          * @return Return usage tyoe
          */
-    virtual QDemonRenderBufferBindFlags GetBufferBindings() const { return m_BindFlags; }
+    virtual QDemonRenderBufferBindFlags getBufferBindings() const { return m_bindFlags; }
 
     /**
          * @brief Return buffer size in byte
          *
          * @return Return size
          */
-    virtual quint32 Size() { return quint32(m_BufferSize); }
+    virtual quint32 size() { return quint32(m_bufferSize); }
 
     /**
          * @brief Get a pointer to the foundation
@@ -111,7 +111,7 @@ public:
          *
          * @return no return.
          */
-    virtual void Bind() = 0;
+    virtual void bind() = 0;
 
     /**
          * @brief Map the buffer
@@ -119,7 +119,7 @@ public:
          *
          * @return Return mapped pointer to data
          */
-    virtual QDemonDataRef<quint8> MapBuffer();
+    virtual QDemonDataRef<quint8> mapBuffer();
 
     /**
          * @brief Map a range of a  buffer
@@ -131,8 +131,7 @@ public:
          *
          * @return Return mapped pointer to data
          */
-    virtual QDemonDataRef<quint8> MapBufferRange(size_t offset, size_t size,
-                                                 QDemonRenderBufferAccessFlags flags);
+    virtual QDemonDataRef<quint8> mapBufferRange(size_t offset, size_t size, QDemonRenderBufferAccessFlags flags);
 
     /**
          * @brief Unmap the buffer
@@ -140,7 +139,7 @@ public:
          *
          * @return no return
          */
-    virtual void UnmapBuffer();
+    virtual void unmapBuffer();
 
     /**
          * @brief constructor
@@ -152,17 +151,17 @@ public:
          *
          * @return No return.
          */
-    virtual void UpdateBuffer(QDemonConstDataRef<quint8> data, bool ownsMemory = false);
+    virtual void updateBuffer(QDemonConstDataRef<quint8> data, bool ownsMemory = false);
 
     /**
          * @brief get the backend object handle
          *
          * @return the backend object handle.
          */
-    virtual QDemonRenderBackend::QDemonRenderBackendBufferObject GetBuffertHandle() const = 0;
+    virtual QDemonRenderBackend::QDemonRenderBackendBufferObject getBuffertHandle() const = 0;
 
     // this will be obsolete
-    const void *GetImplementationHandle() const override = 0;
+    const void *getImplementationHandle() const override = 0;
 
 private:
     void releaseMemory();

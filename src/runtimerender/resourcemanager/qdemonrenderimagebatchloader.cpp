@@ -44,197 +44,179 @@ QT_BEGIN_NAMESPACE
 
 namespace {
 
-struct SImageLoaderBatch;
+struct QDemonImageLoaderBatch;
 
-struct SLoadingImage
+struct QDemonLoadingImage
 {
-    SImageLoaderBatch *m_Batch;
-    QString m_SourcePath;
-    quint64 m_TaskId;
-    SLoadingImage *m_Tail;
+    QDemonImageLoaderBatch *batch = nullptr;
+    QString sourcePath;
+    quint64 taskId = 0;
+    QDemonLoadingImage *tail = nullptr;
 
     // Called from main thread
-    SLoadingImage(QString inSourcePath)
-        : m_Batch(nullptr)
-        , m_SourcePath(inSourcePath)
-        , m_TaskId(0)
-        , m_Tail(nullptr)
+    QDemonLoadingImage(QString inSourcePath)
+        : batch(nullptr)
+        , sourcePath(inSourcePath)
+        , taskId(0)
+        , tail(nullptr)
     {
     }
-    SLoadingImage()
-        : m_Batch(nullptr)
-        , m_TaskId(0)
-        , m_Tail(nullptr)
-    {
-    }
+
+    QDemonLoadingImage() = default;
+
     // Called from main thread
-    void Setup(SImageLoaderBatch &inBatch);
+    void setup(QDemonImageLoaderBatch &inBatch);
 
     // Called from loader thread
-    static void LoadImage(void *inImg);
+    static void loadImage(void *inImg);
 
     // Potentially called from loader thread
-    static void TaskCancelled(void *inImg);
+    static void taskCancelled(void *inImg);
 };
 
-struct SLoadingImageTailOp
+struct QDemonLoadingImageTailOp
 {
-    SLoadingImage *get(SLoadingImage &inImg) { return inImg.m_Tail; }
-    void set(SLoadingImage &inImg, SLoadingImage *inItem) { inImg.m_Tail = inItem; }
+    QDemonLoadingImage *get(QDemonLoadingImage &inImg) { return inImg.tail; }
+    void set(QDemonLoadingImage &inImg, QDemonLoadingImage *inItem) { inImg.tail = inItem; }
 };
 
-typedef InvasiveSingleLinkedList<SLoadingImage, SLoadingImageTailOp> TLoadingImageList;
+typedef QDemonInvasiveSingleLinkedList<QDemonLoadingImage, QDemonLoadingImageTailOp> TLoadingImageList;
 
-struct SBatchLoader;
+struct QDemonBatchLoader;
 
-struct SImageLoaderBatch
+struct QDemonImageLoaderBatch
 {
     // All variables setup in main thread and constant from then on except
     // loaded image count.
-    SBatchLoader &m_Loader;
-    QSharedPointer<IImageLoadListener> m_LoadListener;
-    QWaitCondition m_LoadEvent;
-    QMutex m_LoadMutex;
-    TLoadingImageList m_Images;
+    QDemonBatchLoader &loader;
+    QSharedPointer<IImageLoadListener> loadListener;
+    QWaitCondition loadEvent;
+    QMutex loadMutex;
+    TLoadingImageList images;
 
-    TImageBatchId m_BatchId;
+    TImageBatchId batchId;
     // Incremented in main thread
-    quint32 m_LoadedOrCanceledImageCount;
-    quint32 m_FinalizedImageCount;
-    quint32 m_NumImages;
-    QDemonRenderContextType m_contextType;
+    quint32 loadedOrCanceledImageCount;
+    quint32 finalizedImageCount;
+    quint32 numImages;
+    QDemonRenderContextType contextType;
 
     // Called from main thread
-    static SImageLoaderBatch *CreateLoaderBatch(SBatchLoader &inLoader, TImageBatchId inBatchId,
-                                                QDemonConstDataRef<QString> inSourcePaths,
-                                                QString inImageTillLoaded,
-                                                IImageLoadListener *inListener,
-                                                QDemonRenderContextType contextType);
+    static QDemonImageLoaderBatch *createLoaderBatch(QDemonBatchLoader &inLoader, TImageBatchId inBatchId,
+                                                     QDemonConstDataRef<QString> inSourcePaths,
+                                                     QString inImageTillLoaded,
+                                                     IImageLoadListener *inListener,
+                                                     QDemonRenderContextType contextType);
 
     // Called from main thread
-    SImageLoaderBatch(SBatchLoader &inLoader,
-                      IImageLoadListener *inLoadListener,
-                      const TLoadingImageList &inImageList,
-                      TImageBatchId inBatchId,
-                      quint32 inImageCount,
-                      QDemonRenderContextType contextType);
+    QDemonImageLoaderBatch(QDemonBatchLoader &inLoader,
+                           IImageLoadListener *inLoadListener,
+                           const TLoadingImageList &inImageList,
+                           TImageBatchId inBatchId,
+                           quint32 inImageCount,
+                           QDemonRenderContextType contextType);
 
     // Called from main thread
-    ~SImageLoaderBatch();
+    ~QDemonImageLoaderBatch();
 
     // Called from main thread
-    bool IsLoadingFinished()
+    bool isLoadingFinished()
     {
-        QMutexLocker locker(&m_LoadMutex);
-        return m_LoadedOrCanceledImageCount >= m_NumImages;
+        QMutexLocker locker(&loadMutex);
+        return loadedOrCanceledImageCount >= numImages;
     }
 
-    bool IsFinalizedFinished()
+    bool isFinalizedFinished()
     {
-        QMutexLocker locker(&m_LoadMutex);
-        return m_FinalizedImageCount >= m_NumImages;
+        QMutexLocker locker(&loadMutex);
+        return finalizedImageCount >= numImages;
     }
 
-    void IncrementLoadedImageCount()
+    void incrementLoadedImageCount()
     {
-        QMutexLocker locker(&m_LoadMutex);
-        ++m_LoadedOrCanceledImageCount;
+        QMutexLocker locker(&loadMutex);
+        ++loadedOrCanceledImageCount;
     }
-    void IncrementFinalizedImageCount()
+    void incrementFinalizedImageCount()
     {
-        QMutexLocker locker(&m_LoadMutex);
-        ++m_FinalizedImageCount;
+        QMutexLocker locker(&loadMutex);
+        ++finalizedImageCount;
     }
     // Called from main thread
-    void Cancel();
-    void Cancel(QString inSourcePath);
+    void cancel();
+    void cancel(QString inSourcePath);
 };
 
-struct SBatchLoadedImage
+struct QDemonBatchLoadedImage
 {
-    QString m_SourcePath;
-    QSharedPointer<SLoadedTexture> m_Texture;
-    SImageLoaderBatch *m_Batch;
-    SBatchLoadedImage()
-        : m_Texture(nullptr)
-        , m_Batch(nullptr)
-    {
-    }
+    QString sourcePath;
+    QSharedPointer<QDemonLoadedTexture> texture;
+    QDemonImageLoaderBatch *batch = nullptr;
+    QDemonBatchLoadedImage() = default;
 
     // Called from loading thread
-    SBatchLoadedImage(QString inSourcePath, SLoadedTexture *inTexture,
-                      SImageLoaderBatch &inBatch)
-        : m_SourcePath(inSourcePath)
-        , m_Texture(inTexture)
-        , m_Batch(&inBatch)
+    QDemonBatchLoadedImage(QString inSourcePath,
+                           QDemonLoadedTexture *inTexture,
+                           QDemonImageLoaderBatch &inBatch)
+        : sourcePath(inSourcePath)
+        , texture(inTexture)
+        , batch(&inBatch)
     {
     }
 
     // Called from main thread
-    bool Finalize(IBufferManager &inMgr);
+    bool finalize(QDemonBufferManagerInterface &inMgr);
 };
 
-struct SBatchLoader : public IImageBatchLoader
+struct QDemonBatchLoader : public IImageBatchLoader
 {
-    typedef QHash<TImageBatchId, SImageLoaderBatch *> TImageLoaderBatchMap;
+    typedef QHash<TImageBatchId, QDemonImageLoaderBatch *> TImageLoaderBatchMap;
     typedef QHash<QString, TImageBatchId> TSourcePathToBatchMap;
 
     // Accessed from loader thread
-    QSharedPointer<IInputStreamFactory> m_InputStreamFactory;
+    QSharedPointer<QDemonInputStreamFactoryInterface> inputStreamFactory;
     //!!Not threadsafe!  accessed only from main thread
-    QSharedPointer<IBufferManager> m_BufferManager;
+    QSharedPointer<QDemonBufferManagerInterface> bufferManager;
     // Accessed from main thread
-    QSharedPointer<IThreadPool> m_ThreadPool;
+    QSharedPointer<QDemonAbstractThreadPool> threadPool;
     // Accessed from both threads
-    QSharedPointer<IPerfTimer> m_PerfTimer;
+    QSharedPointer<QDemonPerfTimerInterface> perfTimer;
     // main thread
-    TImageBatchId m_NextBatchId;
+    TImageBatchId nextBatchId;
     // main thread
-    TImageLoaderBatchMap m_Batches;
+    TImageLoaderBatchMap batches;
     // main thread
-    QMutex m_LoaderMutex;
+    QMutex loaderMutex;
 
     // Both loader and main threads
-    QVector<SBatchLoadedImage> m_LoadedImages;
+    QVector<QDemonBatchLoadedImage> loadedImages;
     // main thread
-    QVector<TImageBatchId> m_FinishedBatches;
+    QVector<TImageBatchId> finishedBatches;
     // main thread
-    TSourcePathToBatchMap m_SourcePathToBatches;
+    TSourcePathToBatchMap sourcePathToBatches;
     // main thread
-    QVector<SLoadingImage> m_LoaderBuilderWorkspace;
+    QVector<QDemonLoadingImage> loaderBuilderWorkspace;
 
-    SBatchLoader(QSharedPointer<IInputStreamFactory> inFactory,
-                 QSharedPointer<IBufferManager> inBufferManager,
-                 QSharedPointer<IThreadPool> inThreadPool,
-                 QSharedPointer<IPerfTimer> inTimer)
-        : m_InputStreamFactory(inFactory)
-        , m_BufferManager(inBufferManager)
-        , m_ThreadPool(inThreadPool)
-        , m_PerfTimer(inTimer)
-        , m_NextBatchId(1)
+    QDemonBatchLoader(QSharedPointer<QDemonInputStreamFactoryInterface> inFactory,
+                      QSharedPointer<QDemonBufferManagerInterface> inBufferManager,
+                      QSharedPointer<QDemonAbstractThreadPool> inThreadPool,
+                      QSharedPointer<QDemonPerfTimerInterface> inTimer)
+        : inputStreamFactory(inFactory)
+        , bufferManager(inBufferManager)
+        , threadPool(inThreadPool)
+        , perfTimer(inTimer)
+        , nextBatchId(1)
     {
     }
 
-    virtual ~SBatchLoader()
-    {
-        QVector<TImageBatchId> theCancelledBatches;
-        for (TImageLoaderBatchMap::iterator theIter = m_Batches.begin(), theEnd = m_Batches.end();
-             theIter != theEnd; ++theIter) {
-            theIter.value()->Cancel();
-            theCancelledBatches.push_back(theIter.value()->m_BatchId);
-        }
-        for (quint32 idx = 0, end = theCancelledBatches.size(); idx < end; ++idx)
-            BlockUntilLoaded(theCancelledBatches[idx]);
-
-        Q_ASSERT(m_Batches.size() == 0);
-    }
+    virtual ~QDemonBatchLoader() override;
 
     // Returns an ID to the load request.  Request a block of images to be loaded.
     // Also takes an image that the buffer system will return when requested for the given source
     // paths
     // until said path is loaded.
     // An optional listener can be passed in to get callbacks about the batch.
-    TImageBatchId LoadImageBatch(QDemonConstDataRef<QString> inSourcePaths,
+    TImageBatchId loadImageBatch(QDemonConstDataRef<QString> inSourcePaths,
                                  QString inImageTillLoaded,
                                  IImageLoadListener *inListener,
                                  QDemonRenderContextType contextType) override
@@ -242,156 +224,157 @@ struct SBatchLoader : public IImageBatchLoader
         if (inSourcePaths.size() == 0)
             return 0;
 
-        QMutexLocker loaderLock(&m_LoaderMutex);
+        QMutexLocker loaderLock(&loaderMutex);
 
         TImageBatchId theBatchId = 0;
 
         // Empty loop intentional to find an unused batch id.
-        for (theBatchId = m_NextBatchId; m_Batches.find(theBatchId) != m_Batches.end();
-             ++m_NextBatchId, theBatchId = m_NextBatchId) {
+        for (theBatchId = nextBatchId; batches.find(theBatchId) != batches.end();
+             ++nextBatchId, theBatchId = nextBatchId) {
         }
 
-        SImageLoaderBatch *theBatch(SImageLoaderBatch::CreateLoaderBatch(
+        QDemonImageLoaderBatch *theBatch(QDemonImageLoaderBatch::createLoaderBatch(
                                         *this, theBatchId, inSourcePaths, inImageTillLoaded, inListener, contextType));
         if (theBatch) {
-            m_Batches.insert(theBatchId, theBatch);
+            batches.insert(theBatchId, theBatch);
             return theBatchId;
         }
         return 0;
     }
 
-    void CancelImageBatchLoading(TImageBatchId inBatchId) override
+    void cancelImageBatchLoading(TImageBatchId inBatchId) override
     {
-        SImageLoaderBatch *theBatch(GetBatch(inBatchId));
+        QDemonImageLoaderBatch *theBatch(GetBatch(inBatchId));
         if (theBatch)
-            theBatch->Cancel();
+            theBatch->cancel();
     }
 
     // Blocks if the image is currently in-flight
-    void CancelImageLoading(QString inSourcePath) override
+    void cancelImageLoading(QString inSourcePath) override
     {
-        QMutexLocker loaderLock(&m_LoaderMutex);
-        TSourcePathToBatchMap::iterator theIter = m_SourcePathToBatches.find(inSourcePath);
-        if (theIter != m_SourcePathToBatches.end()) {
+        QMutexLocker loaderLock(&loaderMutex);
+        TSourcePathToBatchMap::iterator theIter = sourcePathToBatches.find(inSourcePath);
+        if (theIter != sourcePathToBatches.end()) {
             TImageBatchId theBatchId = theIter.value();
-            TImageLoaderBatchMap::iterator theBatchIter = m_Batches.find(theBatchId);
-            if (theBatchIter != m_Batches.end())
-                theBatchIter.value()->Cancel(inSourcePath);
+            TImageLoaderBatchMap::iterator theBatchIter = batches.find(theBatchId);
+            if (theBatchIter != batches.end())
+                theBatchIter.value()->cancel(inSourcePath);
         }
     }
 
-    SImageLoaderBatch *GetBatch(TImageBatchId inId)
+    QDemonImageLoaderBatch *GetBatch(TImageBatchId inId)
     {
-        QMutexLocker loaderLock(&m_LoaderMutex);
-        TImageLoaderBatchMap::iterator theIter = m_Batches.find(inId);
-        if (theIter != m_Batches.end())
+        QMutexLocker loaderLock(&loaderMutex);
+        TImageLoaderBatchMap::iterator theIter = batches.find(inId);
+        if (theIter != batches.end())
             return theIter.value();
         return nullptr;
     }
 
-    void BlockUntilLoaded(TImageBatchId inId) override
+    void blockUntilLoaded(TImageBatchId inId) override
     {
         // TODO: This is not sane
-        QMutexLocker locker(&m_LoaderMutex);
-        for (SImageLoaderBatch *theBatch = GetBatch(inId); theBatch; theBatch = GetBatch(inId)) {
+        QMutexLocker locker(&loaderMutex);
+        for (QDemonImageLoaderBatch *theBatch = GetBatch(inId); theBatch; theBatch = GetBatch(inId)) {
             // Only need to block if images aren't loaded.  Don't need to block if they aren't
             // finalized.
-            if (!theBatch->IsLoadingFinished()) {
-                theBatch->m_LoadEvent.wait(&m_LoaderMutex, 200);
+            if (!theBatch->isLoadingFinished()) {
+                theBatch->loadEvent.wait(&loaderMutex, 200);
 //                theBatch->m_LoadEvent.reset(); ???
             }
-            BeginFrame();
+            beginFrame();
         }
     }
-    void ImageLoaded(SLoadingImage &inImage, SLoadedTexture *inTexture)
+    void imageLoaded(QDemonLoadingImage &inImage, QDemonLoadedTexture *inTexture)
     {
-        QMutexLocker loaderLock(&m_LoaderMutex);
-        m_LoadedImages.push_back(
-                    SBatchLoadedImage(inImage.m_SourcePath, inTexture, *inImage.m_Batch));
-        inImage.m_Batch->IncrementLoadedImageCount();
-        inImage.m_Batch->m_LoadEvent.wakeAll();
+        QMutexLocker loaderLock(&loaderMutex);
+        loadedImages.push_back(
+                    QDemonBatchLoadedImage(inImage.sourcePath, inTexture, *inImage.batch));
+        inImage.batch->incrementLoadedImageCount();
+        inImage.batch->loadEvent.wakeAll();
     }
     // These are called by the render context, users don't need to call this.
-    void BeginFrame() override
+    void beginFrame() override
     {
-        QMutexLocker loaderLock(&m_LoaderMutex);
+        QMutexLocker loaderLock(&loaderMutex);
         // Pass 1 - send out all image loaded signals
-        for (quint32 idx = 0, end = m_LoadedImages.size(); idx < end; ++idx) {
+        for (int idx = 0, end = loadedImages.size(); idx < end; ++idx) {
 
-            m_SourcePathToBatches.remove(m_LoadedImages[idx].m_SourcePath);
-            m_LoadedImages[idx].Finalize(*m_BufferManager);
-            m_LoadedImages[idx].m_Batch->IncrementFinalizedImageCount();
-            if (m_LoadedImages[idx].m_Batch->IsFinalizedFinished())
-                m_FinishedBatches.push_back(m_LoadedImages[idx].m_Batch->m_BatchId);
+            sourcePathToBatches.remove(loadedImages[idx].sourcePath);
+            loadedImages[idx].finalize(*bufferManager);
+            loadedImages[idx].batch->incrementFinalizedImageCount();
+            if (loadedImages[idx].batch->isFinalizedFinished())
+                finishedBatches.push_back(loadedImages[idx].batch->batchId);
         }
-        m_LoadedImages.clear();
+        loadedImages.clear();
         // pass 2 - clean up any existing batches.
-        for (quint32 idx = 0, end = m_FinishedBatches.size(); idx < end; ++idx) {
-            TImageLoaderBatchMap::iterator theIter = m_Batches.find(m_FinishedBatches[idx]);
-            if (theIter != m_Batches.end()) {
-                SImageLoaderBatch *theBatch = theIter.value();
-                if (theBatch->m_LoadListener)
-                    theBatch->m_LoadListener->OnImageBatchComplete(theBatch->m_BatchId);
-                m_Batches.remove(m_FinishedBatches[idx]);
-                theBatch->~SImageLoaderBatch();
+        for (int idx = 0, end = finishedBatches.size(); idx < end; ++idx) {
+            TImageLoaderBatchMap::iterator theIter = batches.find(finishedBatches[idx]);
+            if (theIter != batches.end()) {
+                QDemonImageLoaderBatch *theBatch = theIter.value();
+                if (theBatch->loadListener)
+                    theBatch->loadListener->OnImageBatchComplete(theBatch->batchId);
+                batches.remove(finishedBatches[idx]);
+                // TODO:
+                theBatch->~QDemonImageLoaderBatch();
             }
         }
-        m_FinishedBatches.clear();
+        finishedBatches.clear();
     }
 
-    void EndFrame() override {}
+    void endFrame() override {}
 };
 
-void SLoadingImage::Setup(SImageLoaderBatch &inBatch)
+void QDemonLoadingImage::setup(QDemonImageLoaderBatch &inBatch)
 {
-    m_Batch = &inBatch;
-    m_TaskId = inBatch.m_Loader.m_ThreadPool->AddTask(this, LoadImage, TaskCancelled);
+    batch = &inBatch;
+    taskId = inBatch.loader.threadPool->addTask(this, loadImage, taskCancelled);
 }
 
-void SLoadingImage::LoadImage(void *inImg)
+void QDemonLoadingImage::loadImage(void *inImg)
 {
-    SLoadingImage *theThis = reinterpret_cast<SLoadingImage *>(inImg);
+    QDemonLoadingImage *theThis = reinterpret_cast<QDemonLoadingImage *>(inImg);
 //    SStackPerfTimer theTimer(theThis->m_Batch->m_Loader.m_PerfTimer, "Image Decompression");
-    if (theThis->m_Batch->m_Loader.m_BufferManager->IsImageLoaded(theThis->m_SourcePath) == false) {
-        QSharedPointer<SLoadedTexture> theTexture = SLoadedTexture::Load(theThis->m_SourcePath,
-                                                                         *theThis->m_Batch->m_Loader.m_InputStreamFactory,
+    if (theThis->batch->loader.bufferManager->isImageLoaded(theThis->sourcePath) == false) {
+        QSharedPointer<QDemonLoadedTexture> theTexture = QDemonLoadedTexture::load(theThis->sourcePath,
+                                                                         *theThis->batch->loader.inputStreamFactory,
                                                                          true,
-                                                                         theThis->m_Batch->m_contextType);
+                                                                         theThis->batch->contextType);
         // if ( theTexture )
         //	theTexture->EnsureMultiplerOfFour( theThis->m_Batch->m_Loader.m_Foundation,
         //theThis->m_SourcePath.c_str() );
 
-        theThis->m_Batch->m_Loader.ImageLoaded(*theThis, theTexture.data());
+        theThis->batch->loader.imageLoaded(*theThis, theTexture.data());
     } else {
-        theThis->m_Batch->m_Loader.ImageLoaded(*theThis, nullptr);
+        theThis->batch->loader.imageLoaded(*theThis, nullptr);
     }
 }
 
-void SLoadingImage::TaskCancelled(void *inImg)
+void QDemonLoadingImage::taskCancelled(void *inImg)
 {
-    SLoadingImage *theThis = reinterpret_cast<SLoadingImage *>(inImg);
-    theThis->m_Batch->m_Loader.ImageLoaded(*theThis, nullptr);
+    QDemonLoadingImage *theThis = reinterpret_cast<QDemonLoadingImage *>(inImg);
+    theThis->batch->loader.imageLoaded(*theThis, nullptr);
 }
 
-bool SBatchLoadedImage::Finalize(IBufferManager &inMgr)
+bool QDemonBatchLoadedImage::finalize(QDemonBufferManagerInterface &inMgr)
 {
-    if (m_Texture) {
+    if (texture) {
         // PKC : We'll look at the path location to see if the image is in the standard
         // location for IBL light probes or a standard hdr format and decide to generate BSDF
         // miplevels (if the image doesn't have
         // mipmaps of its own that is).
-        QString thepath(m_SourcePath);
+        QString thepath(sourcePath);
         bool isIBL = (thepath.contains(".hdr"))
                 || (thepath.contains("\\IBL\\"))
                 || (thepath.contains("/IBL/"));
-        inMgr.LoadRenderImage(m_SourcePath, m_Texture, false, isIBL);
-        inMgr.UnaliasImagePath(m_SourcePath);
+        inMgr.loadRenderImage(sourcePath, texture, false, isIBL);
+        inMgr.unaliasImagePath(sourcePath);
     }
-    if (m_Batch->m_LoadListener)
-        m_Batch->m_LoadListener->OnImageLoadComplete(
-                    m_SourcePath, m_Texture ? ImageLoadResult::Succeeded : ImageLoadResult::Failed);
+    if (batch->loadListener)
+        batch->loadListener->OnImageLoadComplete(
+                    sourcePath, texture ? ImageLoadResult::Succeeded : ImageLoadResult::Failed);
 
-    if (m_Texture) {
+    if (texture) {
         //m_Texture->release();
         return true;
     }
@@ -399,108 +382,125 @@ bool SBatchLoadedImage::Finalize(IBufferManager &inMgr)
     return false;
 }
 
-SImageLoaderBatch *
-SImageLoaderBatch::CreateLoaderBatch(SBatchLoader &inLoader, TImageBatchId inBatchId,
-                                     QDemonConstDataRef<QString> inSourcePaths,
-                                     QString inImageTillLoaded,
-                                     IImageLoadListener *inListener,
-                                     QDemonRenderContextType contextType)
+QDemonImageLoaderBatch *QDemonImageLoaderBatch::createLoaderBatch(QDemonBatchLoader &inLoader,
+                                                                  TImageBatchId inBatchId,
+                                                                  QDemonConstDataRef<QString> inSourcePaths,
+                                                                  QString inImageTillLoaded,
+                                                                  IImageLoadListener *inListener,
+                                                                  QDemonRenderContextType contextType)
 {
     TLoadingImageList theImages;
     quint32 theLoadingImageCount = 0;
-    for (quint32 idx = 0, end = inSourcePaths.size(); idx < end; ++idx) {
+    for (int idx = 0, end = inSourcePaths.size(); idx < end; ++idx) {
         QString theSourcePath(inSourcePaths[idx]);
 
         // TODO: What was the meaning of isValid() (now isEmpty())??
         if (theSourcePath.isEmpty() == false)
             continue;
 
-        if (inLoader.m_BufferManager->IsImageLoaded(theSourcePath))
+        if (inLoader.bufferManager->isImageLoaded(theSourcePath))
             continue;
 
-        const auto foundIt = inLoader.m_SourcePathToBatches.find(inSourcePaths[idx]);
+        const auto foundIt = inLoader.sourcePathToBatches.find(inSourcePaths[idx]);
 
         // TODO: This is a bit funky, check if we really need to update the inBatchId...
-        inLoader.m_SourcePathToBatches.insert(inSourcePaths[idx], inBatchId);
+        inLoader.sourcePathToBatches.insert(inSourcePaths[idx], inBatchId);
 
         // If the loader has already seen this image.
-        if (foundIt != inLoader.m_SourcePathToBatches.constEnd())
+        if (foundIt != inLoader.sourcePathToBatches.constEnd())
             continue;
 
         if (inImageTillLoaded.isEmpty()) {
             // Alias the image so any further requests for this source path will result in
             // the default images (image till loaded).
             bool aliasSuccess =
-                    inLoader.m_BufferManager->AliasImagePath(theSourcePath, inImageTillLoaded, true);
+                    inLoader.bufferManager->aliasImagePath(theSourcePath, inImageTillLoaded, true);
             (void)aliasSuccess;
             Q_ASSERT(aliasSuccess);
         }
 
         // TODO: Yeah... make sure this is cleaned up correctly.
-        SLoadingImage *sli = new SLoadingImage(theSourcePath);
+        QDemonLoadingImage *sli = new QDemonLoadingImage(theSourcePath);
         theImages.push_front(*sli);
         ++theLoadingImageCount;
     }
     if (theImages.empty() == false) {
-        SImageLoaderBatch *theBatch = new SImageLoaderBatch(inLoader, inListener, theImages, inBatchId, theLoadingImageCount, contextType);
+        QDemonImageLoaderBatch *theBatch = new QDemonImageLoaderBatch(inLoader, inListener, theImages, inBatchId, theLoadingImageCount, contextType);
         return theBatch;
     }
     return nullptr;
 }
 
-SImageLoaderBatch::SImageLoaderBatch(SBatchLoader &inLoader, IImageLoadListener *inLoadListener,
+QDemonImageLoaderBatch::QDemonImageLoaderBatch(QDemonBatchLoader &inLoader, IImageLoadListener *inLoadListener,
                                      const TLoadingImageList &inImageList, TImageBatchId inBatchId,
                                      quint32 inImageCount, QDemonRenderContextType contextType)
-    : m_Loader(inLoader)
-    , m_LoadListener(inLoadListener)
-    , m_Images(inImageList)
-    , m_BatchId(inBatchId)
-    , m_LoadedOrCanceledImageCount(0)
-    , m_FinalizedImageCount(0)
-    , m_NumImages(inImageCount)
-    , m_contextType(contextType)
+    : loader(inLoader)
+    , loadListener(inLoadListener)
+    , images(inImageList)
+    , batchId(inBatchId)
+    , loadedOrCanceledImageCount(0)
+    , finalizedImageCount(0)
+    , numImages(inImageCount)
+    , contextType(contextType)
 {
-    for (TLoadingImageList::iterator iter = m_Images.begin(), end = m_Images.end(); iter != end;
+    for (TLoadingImageList::iterator iter = images.begin(), end = images.end(); iter != end;
          ++iter) {
-        iter->Setup(*this);
+        iter->setup(*this);
     }
 }
 
-SImageLoaderBatch::~SImageLoaderBatch()
+QDemonImageLoaderBatch::~QDemonImageLoaderBatch()
 {
-    for (TLoadingImageList::iterator iter = m_Images.begin(), end = m_Images.end(); iter != end;
-         ++iter) {
-        TLoadingImageList::iterator temp(iter);
+    auto iter = images.begin();
+    const auto end = images.end();
+    while (iter != end) {
+        auto temp(iter);
         ++iter;
-        delete temp.m_Obj;
+        delete temp.m_obj;
     }
 }
 
-void SImageLoaderBatch::Cancel()
+void QDemonImageLoaderBatch::cancel()
 {
-    for (TLoadingImageList::iterator iter = m_Images.begin(), end = m_Images.end(); iter != end;
+    for (TLoadingImageList::iterator iter = images.begin(), end = images.end(); iter != end;
          ++iter)
-        m_Loader.m_ThreadPool->CancelTask(iter->m_TaskId);
+        loader.threadPool->cancelTask(iter->taskId);
 }
 
-void SImageLoaderBatch::Cancel(QString inSourcePath)
+void QDemonImageLoaderBatch::cancel(QString inSourcePath)
 {
-    for (TLoadingImageList::iterator iter = m_Images.begin(), end = m_Images.end(); iter != end;
+    for (TLoadingImageList::iterator iter = images.begin(), end = images.end(); iter != end;
          ++iter) {
-        if (iter->m_SourcePath == inSourcePath) {
-            m_Loader.m_ThreadPool->CancelTask(iter->m_TaskId);
+        if (iter->sourcePath == inSourcePath) {
+            loader.threadPool->cancelTask(iter->taskId);
             break;
         }
     }
 }
 }
 
-QSharedPointer<IImageBatchLoader> IImageBatchLoader::CreateBatchLoader(QSharedPointer<IInputStreamFactory> inFactory,
-                                                        QSharedPointer<IBufferManager> inBufferManager,
-                                                        QSharedPointer<IThreadPool> inThreadPool,
-                                                        QSharedPointer<IPerfTimer> inTimer)
+QSharedPointer<IImageBatchLoader> IImageBatchLoader::createBatchLoader(QSharedPointer<QDemonInputStreamFactoryInterface> inFactory,
+                                                                       QSharedPointer<QDemonBufferManagerInterface> inBufferManager,
+                                                                       QSharedPointer<QDemonAbstractThreadPool> inThreadPool,
+                                                                       QSharedPointer<QDemonPerfTimerInterface> inTimer)
 {
-    return QSharedPointer<IImageBatchLoader>(new SBatchLoader(inFactory, inBufferManager, inThreadPool, inTimer));
+    return QSharedPointer<IImageBatchLoader>(new QDemonBatchLoader(inFactory, inBufferManager, inThreadPool, inTimer));
+}
+
+QDemonBatchLoader::~QDemonBatchLoader()
+{
+    QVector<TImageBatchId> theCancelledBatches;
+    auto theIter = batches.begin();
+    const auto theEnd = batches.end();
+    while (theIter != theEnd) {
+        theIter.value()->cancel();
+        theCancelledBatches.push_back(theIter.value()->batchId);
+        ++theIter;
+    }
+    for (int idx = 0, end = theCancelledBatches.size(); idx < end; ++idx)
+        blockUntilLoaded(theCancelledBatches[idx]);
+
+    Q_ASSERT(batches.size() == 0);
 }
 
 QT_END_NAMESPACE

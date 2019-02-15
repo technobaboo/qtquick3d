@@ -33,9 +33,9 @@
 
 QT_BEGIN_NAMESPACE
 
-SClippingFrustum::SClippingFrustum(const QMatrix4x4 &modelviewprojection, SClipPlane nearPlane)
+QDemonClippingFrustum::QDemonClippingFrustum(const QMatrix4x4 &modelviewprojection, QDemonClipPlane nearPlane)
 {
-    SClipPlane *_cullingPlanes = mPlanes;
+    QDemonClipPlane *_cullingPlanes = mPlanes;
     const QMatrix4x4 &modelViewProjectionMat(modelviewprojection);
     const float *modelviewProjection = modelViewProjectionMat.data();
 

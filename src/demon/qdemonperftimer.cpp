@@ -10,132 +10,113 @@
 QT_BEGIN_NAMESPACE
 
 namespace {
-struct STimerEntry
+struct QDemonTimerEntry
 {
-    quint64 m_Total;
-    quint64 m_Max;
-    quint32 m_UpdateCount;
-    QString m_Tag;
-    size_t m_Order;
+    quint64 m_total = 0;
+    quint64 m_max = 0;
+    quint32 m_updateCount = 0;
+    QString m_tag;
+    size_t m_order = 0;
 
-    STimerEntry(const QString &tag, size_t order)
-        : m_Total(0)
-        , m_Max(0)
-        , m_UpdateCount(0)
-        , m_Tag(tag)
-        , m_Order(order)
+    QDemonTimerEntry(const QString &tag, size_t order)
+        : m_total(0)
+        , m_max(0)
+        , m_updateCount(0)
+        , m_tag(tag)
+        , m_order(order)
     {
     }
 
-    STimerEntry(const STimerEntry &e)
-        : m_Total(e.m_Total)
-        , m_Max(e.m_Max)
-        , m_UpdateCount(e.m_UpdateCount)
-        , m_Tag(e.m_Tag)
-        , m_Order(e.m_Order)
+    QDemonTimerEntry() = default;
+
+    void update(quint64 increment)
     {
+        m_total += increment;
+        m_max = increment > m_max ? increment : m_max;
+        ++m_updateCount;
     }
 
-    STimerEntry()
-        : m_Total(0)
-        , m_Max(0)
-        , m_UpdateCount(0)
-        , m_Order(0)
+    void output(quint32 inFramesPassed)
     {
-    }
-
-    void Update(quint64 increment)
-    {
-        m_Total += increment;
-        m_Max = increment > m_Max ? increment : m_Max;
-        ++m_UpdateCount;
-    }
-
-    void Output(quint32 inFramesPassed)
-    {
-        if (m_Total) {
-            quint64 tensNanos = QDemonTime::sCounterFreq.toTensOfNanos(m_Total);
-            quint64 maxNanos = QDemonTime::sCounterFreq.toTensOfNanos(m_Max);
+        if (m_total) {
+            quint64 tensNanos = QDemonTime::sCounterFreq.toTensOfNanos(m_total);
+            quint64 maxNanos = QDemonTime::sCounterFreq.toTensOfNanos(m_max);
 
             double milliseconds = tensNanos / 100000.0;
             double maxMilliseconds = maxNanos / 100000.0;
-            if (inFramesPassed == 0)
-                qWarning("%s - %fms", qPrintable(m_Tag), milliseconds);
-            else {
+            if (inFramesPassed == 0) {
+                qWarning("%s - %fms", qPrintable(m_tag), milliseconds);
+            } else {
                 milliseconds /= inFramesPassed;
                 qWarning("%s - %fms/frame-total %fms-max %u hits",
-                         qPrintable(m_Tag), milliseconds, maxMilliseconds, m_UpdateCount);
+                         qPrintable(m_tag), milliseconds, maxMilliseconds, m_updateCount);
             }
         }
     }
 
-    void Reset()
+    void reset()
     {
-        m_Total = 0;
-        m_Max = 0;
-        m_UpdateCount = 0;
+        m_total = 0;
+        m_max = 0;
+        m_updateCount = 0;
     }
 
-    bool operator<(const STimerEntry &other) const { return m_Order < other.m_Order; }
+    bool operator<(const QDemonTimerEntry &other) const { return m_order < other.m_order; }
 };
-struct SPerfTimer : public IPerfTimer
+struct QDemonPerfTimer : public QDemonPerfTimerInterface
 {
-    typedef QHash<QString, STimerEntry> THashMapType;
+    typedef QHash<QString, QDemonTimerEntry> THashMapType;
     // This object needs its own string table because it is used during the binary load process with
     // the application string table gets booted up.
-    THashMapType m_Entries;
-    QVector<STimerEntry> m_PrintEntries;
-    QMutex m_Mutex;
+    THashMapType m_entries;
+    QVector<QDemonTimerEntry> m_printEntries;
+    QMutex m_mutex;
 
-    SPerfTimer()
+    void update(const char *inId, quint64 inAmount) override
     {
-    }
-
-    void Update(const char *inId, quint64 inAmount) override
-    {
-        QMutexLocker locker(&m_Mutex);
+        QMutexLocker locker(&m_mutex);
         QString theStr = QString::fromLocal8Bit(inId);
-        THashMapType::iterator theFind = m_Entries.insert(theStr, STimerEntry(theStr, m_Entries.size()));
-        theFind.value().Update(inAmount);
+        THashMapType::iterator theFind = m_entries.insert(theStr, QDemonTimerEntry(theStr, m_entries.size()));
+        theFind.value().update(inAmount);
     }
 
     // Dump current summation of timer data.
-    void OutputTimerData(quint32 inFramesPassed = 0) override
+    void outputTimerData(quint32 inFramesPassed = 0) override
     {
-        QMutexLocker locker(&m_Mutex);
-        m_PrintEntries.clear();
-        for (THashMapType::iterator iter = m_Entries.begin(), end = m_Entries.end(); iter != end; ++iter) {
-            m_PrintEntries.push_back(iter.value());
-            iter.value().Reset();
+        QMutexLocker locker(&m_mutex);
+        m_printEntries.clear();
+        for (THashMapType::iterator iter = m_entries.begin(), end = m_entries.end(); iter != end; ++iter) {
+            m_printEntries.push_back(iter.value());
+            iter.value().reset();
         }
 
-        std::sort(m_PrintEntries.begin(), m_PrintEntries.end());
+        std::sort(m_printEntries.begin(), m_printEntries.end());
 
-        for (quint32 idx = 0, end = (quint32)m_PrintEntries.size(); idx < end; ++idx) {
-            m_PrintEntries[idx].Output(inFramesPassed);
+        for (quint32 idx = 0, end = (quint32)m_printEntries.size(); idx < end; ++idx) {
+            m_printEntries[idx].output(inFramesPassed);
         }
     }
 
-    void ResetTimerData() override
+    void resetTimerData() override
     {
-        QMutexLocker locker(&m_Mutex);
-        for (THashMapType::iterator iter = m_Entries.begin(), end = m_Entries.end(); iter != end;
+        QMutexLocker locker(&m_mutex);
+        for (THashMapType::iterator iter = m_entries.begin(), end = m_entries.end(); iter != end;
              ++iter) {
-            iter.value().Reset();
+            iter.value().reset();
         }
     }
 
-    virtual void ClearPerfKeys()
+    virtual void clearPerfKeys()
     {
-        QMutexLocker locker(&m_Mutex);
-        m_Entries.clear();
+        QMutexLocker locker(&m_mutex);
+        m_entries.clear();
     }
 };
 }
 
-QSharedPointer<IPerfTimer> IPerfTimer::CreatePerfTimer()
+QSharedPointer<QDemonPerfTimerInterface> QDemonPerfTimerInterface::createPerfTimer()
 {
-    return QSharedPointer<IPerfTimer>(new SPerfTimer());
+    return QSharedPointer<QDemonPerfTimerInterface>(new QDemonPerfTimer());
 }
 
 QT_END_NAMESPACE

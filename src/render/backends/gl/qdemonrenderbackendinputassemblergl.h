@@ -42,13 +42,13 @@ QT_BEGIN_NAMESPACE
 
 struct QDemonRenderBackendLayoutEntryGL
 {
-    QString m_AttribName; ///< must be the same name as used in the vertex shader
-    quint8 m_Normalize; ///< normalize parameter
-    quint32 m_AttribIndex; ///< attribute index
-    quint32 m_Type; ///< GL vertex format type @sa GL_FLOAT, GL_INT
-    quint32 m_NumComponents; ///< component count. max 4
-    quint32 m_InputSlot; ///< Input slot where to fetch the data from
-    quint32 m_Offset; ///< offset in byte
+    QString m_attribName; ///< must be the same name as used in the vertex shader
+    quint8 m_normalize; ///< normalize parameter
+    quint32 m_attribIndex; ///< attribute index
+    quint32 m_type; ///< GL vertex format type @sa GL_FLOAT, GL_INT
+    quint32 m_numComponents; ///< component count. max 4
+    quint32 m_inputSlot; ///< Input slot where to fetch the data from
+    quint32 m_offset; ///< offset in byte
 };
 
 ///< this class handles the vertex attribute layout setup
@@ -58,8 +58,8 @@ public:
     ///< constructor
     QDemonRenderBackendAttributeLayoutGL(QDemonDataRef<QDemonRenderBackendLayoutEntryGL> entries,
                                          quint32 maxInputSlot)
-        : m_LayoutAttribEntries(entries)
-        , m_MaxInputSlot(maxInputSlot)
+        : m_layoutAttribEntries(entries)
+        , m_maxInputSlot(maxInputSlot)
     {
     }
     ///< destructor
@@ -67,26 +67,26 @@ public:
 
     QDemonRenderBackendLayoutEntryGL *getEntryByName(const QString &entryName) const
     {
-        QDEMON_FOREACH(idx, m_LayoutAttribEntries.size())
+        QDEMON_FOREACH(idx, m_layoutAttribEntries.size())
         {
-            if (m_LayoutAttribEntries[idx].m_AttribName == entryName)
-                return &m_LayoutAttribEntries.mData[idx];
+            if (m_layoutAttribEntries[idx].m_attribName == entryName)
+                return &m_layoutAttribEntries.mData[idx];
         }
         return nullptr;
     }
 
     QDemonOption<QDemonRenderBackendLayoutEntryGL> getEntryByAttribIndex(quint32 attribIndex) const
     {
-        QDEMON_FOREACH(idx, m_LayoutAttribEntries.size())
+        QDEMON_FOREACH(idx, m_layoutAttribEntries.size())
         {
-            if (m_LayoutAttribEntries[idx].m_AttribIndex == attribIndex)
-                return m_LayoutAttribEntries[idx];
+            if (m_layoutAttribEntries[idx].m_attribIndex == attribIndex)
+                return m_layoutAttribEntries[idx];
         }
         return QDemonEmpty();
     }
 
-    QDemonDataRef<QDemonRenderBackendLayoutEntryGL> m_LayoutAttribEntries; ///< vertex attribute layout entries
-    quint32 m_MaxInputSlot; ///< max used input slot
+    QDemonDataRef<QDemonRenderBackendLayoutEntryGL> m_layoutAttribEntries; ///< vertex attribute layout entries
+    qint32 m_maxInputSlot; ///< max used input slot
 };
 
 ///< this class handles the input assembler setup
@@ -100,11 +100,11 @@ public:
             const QDemonRenderBackend::QDemonRenderBackendBufferObject indexBuffer,
             QDemonConstDataRef<quint32> strides, QDemonConstDataRef<quint32> offsets, quint32 patchVertexCount)
         : m_attribLayout(attribLayout)
-        , m_VertexbufferHandles(buffers)
-        , m_IndexbufferHandle(indexBuffer)
-        , m_VaoID(0)
+        , m_vertexbufferHandles(buffers)
+        , m_indexbufferHandle(indexBuffer)
+        , m_vaoID(0)
         , m_cachedShaderHandle(0)
-        , m_PatchVertexCount(patchVertexCount)
+        , m_patchVertexCount(patchVertexCount)
     {
         quint32 *strideMem = static_cast<quint32 *>(::malloc(strides.mSize * sizeof(quint32)));
         quint32 *offsetMem = static_cast<quint32 *>(::malloc(strides.mSize * sizeof(quint32)));
@@ -126,13 +126,11 @@ public:
     };
 
     QDemonRenderBackendAttributeLayoutGL *m_attribLayout; ///< pointer to attribute layout
-    QDemonConstDataRef<QDemonRenderBackend::QDemonRenderBackendBufferObject>
-    m_VertexbufferHandles; ///< opaque vertex buffer backend handles
-    QDemonRenderBackend::QDemonRenderBackendBufferObject
-    m_IndexbufferHandle; ///< opaque index buffer backend handles
-    quint32 m_VaoID; ///< this is only used if GL version is greater or equal 3
+    QDemonConstDataRef<QDemonRenderBackend::QDemonRenderBackendBufferObject> m_vertexbufferHandles; ///< opaque vertex buffer backend handles
+    QDemonRenderBackend::QDemonRenderBackendBufferObject m_indexbufferHandle; ///< opaque index buffer backend handles
+    quint32 m_vaoID; ///< this is only used if GL version is greater or equal 3
     quint32 m_cachedShaderHandle; ///< this is the shader id which was last used with this object
-    quint32 m_PatchVertexCount; ///< vertex count for a single patch primitive
+    quint32 m_patchVertexCount; ///< vertex count for a single patch primitive
     QDemonDataRef<quint32> m_strides; ///< buffer strides
     QDemonDataRef<quint32> m_offsets; ///< buffer offsets
 };

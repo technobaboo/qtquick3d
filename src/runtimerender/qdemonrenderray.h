@@ -39,7 +39,7 @@
 
 
 QT_BEGIN_NAMESPACE
-struct SBasisPlanes
+struct QDemonRenderBasisPlanes
 {
     enum Enum {
         XY = 0,
@@ -48,50 +48,51 @@ struct SBasisPlanes
     };
 };
 
-struct SRayIntersectionResult
+struct QDemonRenderRayIntersectionResult
 {
-    float m_RayLengthSquared; // Length of the ray in world coordinates for the hit.
-    QVector2D m_RelXY; // UV coords for further mouse picking against a offscreen-rendered object.
-    SRayIntersectionResult()
-        : m_RayLengthSquared(0)
-        , m_RelXY(0, 0)
+    float m_rayLengthSquared; // Length of the ray in world coordinates for the hit.
+    QVector2D m_relXY; // UV coords for further mouse picking against a offscreen-rendered object.
+    QDemonRenderRayIntersectionResult()
+        : m_rayLengthSquared(0)
+        , m_relXY(0, 0)
     {
     }
-    SRayIntersectionResult(float rl, QVector2D relxy)
-        : m_RayLengthSquared(rl)
-        , m_RelXY(relxy)
+    QDemonRenderRayIntersectionResult(float rl, QVector2D relxy)
+        : m_rayLengthSquared(rl)
+        , m_relXY(relxy)
     {
     }
 };
 
-struct SRay
+struct QDemonRenderRay
 {
-    QVector3D m_Origin;
-    QVector3D m_Direction;
-    SRay()
-        : m_Origin(0, 0, 0)
-        , m_Direction(0, 0, 0)
+    QVector3D m_origin;
+    QVector3D m_direction;
+    QDemonRenderRay()
+        : m_origin(0, 0, 0)
+        , m_direction(0, 0, 0)
     {
     }
-    SRay(const QVector3D &inOrigin, const QVector3D &inDirection)
-        : m_Origin(inOrigin)
-        , m_Direction(inDirection)
+    QDemonRenderRay(const QVector3D &inOrigin, const QVector3D &inDirection)
+        : m_origin(inOrigin)
+        , m_direction(inDirection)
     {
     }
     // If we are parallel, then no intersection of course.
-    QDemonOption<QVector3D> Intersect(const QDemonPlane &inPlane) const;
+    QDemonOption<QVector3D> intersect(const QDemonPlane &inPlane) const;
 
-    QDemonOption<SRayIntersectionResult> IntersectWithAABB(const QMatrix4x4 &inGlobalTransform,
-                                                     const QDemonBounds3 &inBounds,
-                                                     bool inForceIntersect = false) const;
+    QDemonOption<QDemonRenderRayIntersectionResult> intersectWithAABB(const QMatrix4x4 &inGlobalTransform,
+                                                                      const QDemonBounds3 &inBounds,
+                                                                      bool inForceIntersect = false) const;
 
-    QDemonOption<QVector2D> GetRelative(const QMatrix4x4 &inGlobalTransform, const QDemonBounds3 &inBounds,
-                                  SBasisPlanes::Enum inPlane) const;
+    QDemonOption<QVector2D> getRelative(const QMatrix4x4 &inGlobalTransform,
+                                        const QDemonBounds3 &inBounds,
+                                        QDemonRenderBasisPlanes::Enum inPlane) const;
 
-    QDemonOption<QVector2D> GetRelativeXY(const QMatrix4x4 &inGlobalTransform,
-                                    const QDemonBounds3 &inBounds) const
+    QDemonOption<QVector2D> getRelativeXY(const QMatrix4x4 &inGlobalTransform,
+                                          const QDemonBounds3 &inBounds) const
     {
-        return GetRelative(inGlobalTransform, inBounds, SBasisPlanes::XY);
+        return getRelative(inGlobalTransform, inBounds, QDemonRenderBasisPlanes::XY);
     }
 };
 QT_END_NAMESPACE

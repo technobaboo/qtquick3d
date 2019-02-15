@@ -35,15 +35,15 @@
 QT_BEGIN_NAMESPACE
 
 QDemonRenderQueryBase::QDemonRenderQueryBase(QSharedPointer<QDemonRenderContextImpl> context)
-    : m_Context(context)
-    , m_Backend(context->GetBackend())
+    : m_context(context)
+    , m_backend(context->getBackend())
 {
-    m_QueryHandle = m_Backend->CreateQuery();
+    m_queryHandle = m_backend->createQuery();
 }
 
 QDemonRenderQueryBase::~QDemonRenderQueryBase()
 {
-    if (m_QueryHandle)
-        m_Backend->ReleaseQuery(m_QueryHandle);
+    if (m_queryHandle)
+        m_backend->releaseQuery(m_queryHandle);
 }
 QT_END_NAMESPACE

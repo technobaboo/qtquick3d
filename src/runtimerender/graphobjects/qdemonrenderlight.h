@@ -43,43 +43,43 @@ struct RenderLightTypes
     };
 };
 
-struct SImage;
+struct QDemonRenderImage;
 
-struct Q_DEMONRUNTIMERENDER_EXPORT SLight : public SNode
+struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderLight : public QDemonGraphNode
 {
-    RenderLightTypes::Enum m_LightType; // Directional
-    SNode *m_Scope;
-    QVector3D m_DiffuseColor; // colors are 0-1 normalized
-    QVector3D m_SpecularColor; // colors are 0-1 normalized
-    QVector3D m_AmbientColor; // colors are 0-1 normalized
+    RenderLightTypes::Enum m_lightType; // Directional
+    QDemonGraphNode *m_scope;
+    QVector3D m_diffuseColor; // colors are 0-1 normalized
+    QVector3D m_specularColor; // colors are 0-1 normalized
+    QVector3D m_ambientColor; // colors are 0-1 normalized
 
     // The variables below are in the same range as Studio
     // Only valid if node is a point light
-    float m_Brightness; // 0-200
-    float m_LinearFade; // 0-200
-    float m_ExponentialFade; // 0-200
+    float m_brightness; // 0-200
+    float m_linearFade; // 0-200
+    float m_exponentialFade; // 0-200
 
-    float m_AreaWidth; // 0.01-inf
-    float m_AreaHeight; // 0.01-inf
+    float m_areaWidth; // 0.01-inf
+    float m_areaHeight; // 0.01-inf
 
-    bool m_CastShadow; // true if this light produce shadows
-    float m_ShadowBias; // depth shift to avoid self-shadowing artifacts
-    float m_ShadowFactor; // Darkening factor for ESMs
-    quint32 m_ShadowMapRes; // Resolution of shadow map
-    float m_ShadowMapFar; // Far clip plane for the shadow map
-    float m_ShadowMapFov; // Field of View for the shadow map
-    float m_ShadowFilter; // Shadow map filter step size
+    bool m_castShadow; // true if this light produce shadows
+    float m_shadowBias; // depth shift to avoid self-shadowing artifacts
+    float m_shadowFactor; // Darkening factor for ESMs
+    quint32 m_shadowMapRes; // Resolution of shadow map
+    float m_shadowMapFar; // Far clip plane for the shadow map
+    float m_shadowMapFov; // Field of View for the shadow map
+    float m_shadowFilter; // Shadow map filter step size
 
     // Defaults to directional light
-    SLight();
+    QDemonRenderLight();
 
     // Generic method used during serialization
     // to remap string and object pointers
     template <typename TRemapperType>
-    void Remap(TRemapperType &inRemapper)
+    void remap(TRemapperType &inRemapper)
     {
-        SNode::Remap(inRemapper);
-        inRemapper.Remap(m_Scope);
+        QDemonGraphNode::remap(inRemapper);
+        inRemapper.remap(m_scope);
     }
 };
 QT_END_NAMESPACE

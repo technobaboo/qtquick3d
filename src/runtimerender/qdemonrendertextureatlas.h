@@ -34,62 +34,57 @@
 
 QT_BEGIN_NAMESPACE
 
-class ITextRenderer;
+class QDemonTextRendererInterface;
 class QDemonRenderContext;
 
-struct STextureAtlasRect
+struct QDemonTextureAtlasRect
 {
 
-    STextureAtlasRect()
-        : m_X(0)
-        , m_Y(0)
-        , m_Width(0)
-        , m_Height(0)
+    QDemonTextureAtlasRect() = default;
+    QDemonTextureAtlasRect(qint32 inX, qint32 inY, qint32 inW, qint32 inH)
+        : x(inX)
+        , y(inY)
+        , width(inW)
+        , height(inH)
     {
     }
 
-    STextureAtlasRect(qint32 x, qint32 y, qint32 w, qint32 h)
-        : m_X(x)
-        , m_Y(y)
-        , m_Width(w)
-        , m_Height(h)
-    {
-    }
-
-    qint32 m_X;
-    qint32 m_Y;
-    qint32 m_Width;
-    qint32 m_Height;
+    qint32 x = 0;
+    qint32 y = 0;
+    qint32 width = 0;
+    qint32 height = 0;
 
     // normalized coordinates
-    float m_NormX;
-    float m_NormY;
-    float m_NormWidth;
-    float m_NormHeight;
+    float normX;
+    float normY;
+    float normWidth;
+    float normHeight;
 };
 
-typedef QPair<STextureAtlasRect, QDemonDataRef<quint8>> TTextureAtlasEntryAndBuffer;
+typedef QPair<QDemonTextureAtlasRect, QDemonDataRef<quint8>> TTextureAtlasEntryAndBuffer;
 
 /**
      *	Abstract class of a texture atlas representation
     */
-class ITextureAtlas
+class QDemonTextureAtlasInterface
 {
 protected:
-    virtual ~ITextureAtlas() {}
+    virtual ~QDemonTextureAtlasInterface() {}
 
 public:
-    virtual qint32 GetWidth() const = 0;
-    virtual qint32 GetHeight() const = 0;
-    virtual qint32 GetAtlasEntryCount() const = 0;
-    virtual TTextureAtlasEntryAndBuffer GetAtlasEntryByIndex(quint32 index) = 0;
+    virtual qint32 getWidth() const = 0;
+    virtual qint32 getHeight() const = 0;
+    virtual qint32 getAtlasEntryCount() const = 0;
+    virtual TTextureAtlasEntryAndBuffer getAtlasEntryByIndex(quint32 index) = 0;
 
-    virtual STextureAtlasRect AddAtlasEntry(qint32 width, qint32 height, qint32 pitch,
+    virtual QDemonTextureAtlasRect addAtlasEntry(qint32 width,
+                                            qint32 height,
+                                            qint32 pitch,
                                             qint32 dataWidth,
                                             QDemonConstDataRef<quint8> bufferData) = 0;
-    virtual void RelaseEntries() = 0;
+    virtual void relaseEntries() = 0;
 
-    static QSharedPointer<ITextureAtlas> CreateTextureAtlas(QSharedPointer<QDemonRenderContext> inRenderContext, qint32 width, qint32 height);
+    static QSharedPointer<QDemonTextureAtlasInterface> createTextureAtlas(QSharedPointer<QDemonRenderContext> inRenderContext, qint32 width, qint32 height);
 };
 QT_END_NAMESPACE
 

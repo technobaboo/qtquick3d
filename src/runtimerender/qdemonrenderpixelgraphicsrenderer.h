@@ -39,17 +39,17 @@ QT_BEGIN_NAMESPACE
 // Colors are expected to be non-premultiplied, we use ROP
 // hardware to do the alpha multiply into the color.
 
-struct SPGGraphObject;
-class IQDemonRenderContext;
-class Q_DEMONRUNTIMERENDER_EXPORT IPixelGraphicsRenderer
+struct QDemonPGGraphObject;
+class QDemonRenderContextInterface;
+class Q_DEMONRUNTIMERENDER_EXPORT QDemonPixelGraphicsRendererInterface
 {
 public:
-    virtual ~IPixelGraphicsRenderer() {}
+    virtual ~QDemonPixelGraphicsRendererInterface();
 
     // Renders the node to the current viewport.
-    virtual void Render(const QVector<SPGGraphObject *> &inObjects) = 0;
+    virtual void render(const QVector<QDemonPGGraphObject *> &inObjects) = 0;
 
-    static QSharedPointer<IPixelGraphicsRenderer> CreateRenderer(IQDemonRenderContext *ctx);
+    static QSharedPointer<QDemonPixelGraphicsRendererInterface> createRenderer(QDemonRenderContextInterface *ctx);
 };
 QT_END_NAMESPACE
 

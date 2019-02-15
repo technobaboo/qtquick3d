@@ -57,7 +57,9 @@ public:
          *
          * @return No return.
          */
-    QDemonRenderVertexBuffer(QSharedPointer<QDemonRenderContextImpl> context, size_t size, quint32 stride,
+    QDemonRenderVertexBuffer(QSharedPointer<QDemonRenderContextImpl> context,
+                             size_t size,
+                             quint32 stride,
                              QDemonRenderBufferBindFlags bindFlags,
                              QDemonRenderBufferUsageType::Enum usageType, QDemonDataRef<quint8> data);
 
@@ -69,17 +71,17 @@ public:
          *
          * @return data stride.
          */
-    virtual quint32 GetStride() const { return m_Stride; }
+    virtual quint32 getStride() const { return m_stride; }
 
     /**
          * @brief get vertex count
          *
          * @return vertex count
          */
-    virtual quint32 GetNumVertexes() const
+    virtual quint32 getNumVertexes() const
     {
-        Q_ASSERT((m_BufferCapacity % m_Stride) == 0);
-        return m_BufferCapacity / m_Stride;
+        Q_ASSERT((m_bufferCapacity % m_stride) == 0);
+        return m_bufferCapacity / m_stride;
     }
 
     /**
@@ -87,33 +89,35 @@ public:
          *
          * @return no return.
          */
-    void Bind() override;
+    void bind() override;
 
     /**
          * @brief get the backend object handle
          *
          * @return the backend object handle.
          */
-    QDemonRenderBackend::QDemonRenderBackendBufferObject GetBuffertHandle() const override
+    QDemonRenderBackend::QDemonRenderBackendBufferObject getBuffertHandle() const override
     {
-        return m_BufferHandle;
+        return m_bufferHandle;
     }
 
     // this will be obsolete
-    const void *GetImplementationHandle() const override
+    const void *getImplementationHandle() const override
     {
-        return reinterpret_cast<void *>(m_BufferHandle);
+        return reinterpret_cast<void *>(m_bufferHandle);
     }
 
     // No stride means that stride is calculated from the size of last entry found via entry
     // offset
     // Leaves this buffer temporarily bound.
-    static QSharedPointer<QDemonRenderVertexBuffer> Create(QSharedPointer<QDemonRenderContextImpl> context,
-                                            QDemonRenderBufferUsageType::Enum usageType, size_t size,
-                                            quint32 stride, QDemonConstDataRef<quint8> bufferData);
+    static QSharedPointer<QDemonRenderVertexBuffer> create(QSharedPointer<QDemonRenderContextImpl> context,
+                                                           QDemonRenderBufferUsageType::Enum usageType,
+                                                           size_t size,
+                                                           quint32 stride,
+                                                           QDemonConstDataRef<quint8> bufferData);
 
 private:
-    quint32 m_Stride; ///< veretex data stride
+    quint32 m_stride; ///< veretex data stride
 };
 
 QT_END_NAMESPACE

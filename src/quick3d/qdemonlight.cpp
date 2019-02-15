@@ -269,7 +269,7 @@ void QDemonLight::setShadowFilter(float shadowFilter)
     update();
 }
 
-SGraphObject *QDemonLight::updateSpatialNode(SGraphObject *node)
+QDemonGraphObject *QDemonLight::updateSpatialNode(QDemonGraphObject *node)
 {
     if (!node)
         node = new SLight();

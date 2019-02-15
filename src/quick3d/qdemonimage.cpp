@@ -190,7 +190,7 @@ void QDemonImage::setPivotV(float pivotv)
     update();
 }
 
-SGraphObject *QDemonImage::updateSpatialNode(SGraphObject *node)
+QDemonGraphObject *QDemonImage::updateSpatialNode(QDemonGraphObject *node)
 {
     if (!node)
         node = new SImage();

@@ -89,18 +89,18 @@ public:
     void DrawIndexedArrays(const QVector3D &translation)
     {
         setupMVP(translation);
-        m_Context->SetActiveShader(mShaderArgs.shader);
-        mShaderArgs.shader->SetPropertyValue("mat_mvp",
+        m_Context->setActiveShader(mShaderArgs.shader);
+        mShaderArgs.shader->setPropertyValue("mat_mvp",
                                              *reinterpret_cast<QMatrix4x4 *>(mShaderArgs.mvp));
-        mShaderArgs.shader->SetPropertyValue("image0", mShaderArgs.texture.data());
-        m_Context->Draw(QDemonRenderDrawMode::Triangles, mIndexBuffer->GetNumIndices(), 0);
+        mShaderArgs.shader->setPropertyValue("image0", mShaderArgs.texture.data());
+        m_Context->draw(QDemonRenderDrawMode::Triangles, mIndexBuffer->getNumIndices(), 0);
     }
 
     // QDemonRenderExample interface
 public:
     void initialize() override
     {
-        m_Context = QDemonRenderContext::CreateGL(format());
+        m_Context = QDemonRenderContext::createGl(format());
         mInputAssembler = QDemonRenderExampleTools::createBox(m_Context, mVertexBuffer, mIndexBuffer);
         mSimpleShader = QDemonRenderExampleTools::createSimpleShader(m_Context);
         mSimpleShaderTex = QDemonRenderExampleTools::createSimpleShaderTex(m_Context);
@@ -109,13 +109,13 @@ public:
         // mDepthBuffer = m_Context.CreateRenderBuffer( QDemonRenderRenderBufferFormats::Depth16,
         // mFBWidth, mFBHeight );
 
-        m_Context->SetInputAssembler(mInputAssembler);
+        m_Context->setInputAssembler(mInputAssembler);
 
-        mDepthBuffer = m_Context->CreateTexture2D();
-        mDepthBuffer->SetTextureData(QDemonDataRef<quint8>(), 0, mFBWidth, mFBHeight,
+        mDepthBuffer = m_Context->createTexture2D();
+        mDepthBuffer->setTextureData(QDemonDataRef<quint8>(), 0, mFBWidth, mFBHeight,
                                      QDemonRenderTextureFormats::Depth16);
-        mColorBuffer = m_Context->CreateTexture2D();
-        mColorBuffer->SetTextureData(QDemonDataRef<quint8>(), 0, mFBWidth, mFBHeight,
+        mColorBuffer = m_Context->createTexture2D();
+        mColorBuffer->setTextureData(QDemonDataRef<quint8>(), 0, mFBWidth, mFBHeight,
                                      QDemonRenderTextureFormats::RGBA8);
         if (mDepthBuffer && mColorBuffer) {
             // Creating objects tends to Bind them to their active state hooks.
@@ -123,18 +123,18 @@ public:
             // need
             // to push the current state
             // Auto-binds the framebuffer.
-            mFrameBuffer = m_Context->CreateFrameBuffer();
-            mFrameBuffer->Attach(QDemonRenderFrameBufferAttachments::Color0, mColorBuffer);
-            mFrameBuffer->Attach(QDemonRenderFrameBufferAttachments::Depth, mDepthBuffer);
-            Q_ASSERT(mFrameBuffer->IsComplete());
+            mFrameBuffer = m_Context->createFrameBuffer();
+            mFrameBuffer->attach(QDemonRenderFrameBufferAttachments::Color0, mColorBuffer);
+            mFrameBuffer->attach(QDemonRenderFrameBufferAttachments::Depth, mDepthBuffer);
+            Q_ASSERT(mFrameBuffer->isComplete());
 
-            m_Context->SetRenderTarget(nullptr);
+            m_Context->setRenderTarget(nullptr);
         }
-        mColorBuffer->SetMinFilter(QDemonRenderTextureMinifyingOp::Linear);
-        mColorBuffer->SetMagFilter(QDemonRenderTextureMagnifyingOp::Linear);
-        m_Context->SetDepthTestEnabled(true);
-        m_Context->SetDepthWriteEnabled(true);
-        m_Context->SetClearColor(QVector4D(.3f, .3f, .3f, .3f));
+        mColorBuffer->setMinFilter(QDemonRenderTextureMinifyingOp::Linear);
+        mColorBuffer->setMagFilter(QDemonRenderTextureMagnifyingOp::Linear);
+        m_Context->setDepthTestEnabled(true);
+        m_Context->setDepthWriteEnabled(true);
+        m_Context->setClearColor(QVector4D(.3f, .3f, .3f, .3f));
         // Setup various matrici
         QDemonGl2DemoMatrixIdentity(model);
         QDemonGl2DemoMatrixIdentity(frus);
@@ -150,25 +150,25 @@ public:
         {
             QDemonRenderContextScopedProperty<QSharedPointer<QDemonRenderFrameBuffer>> framebuffer(
                 *m_Context.data(),
-                &QDemonRenderContext::GetRenderTarget,
-                &QDemonRenderContext::SetRenderTarget,
+                &QDemonRenderContext::getRenderTarget,
+                &QDemonRenderContext::setRenderTarget,
                 mFrameBuffer);
             QDemonRenderContextScopedProperty<QDemonRenderRect> viewport(
-                *m_Context.data(), &QDemonRenderContext::GetViewport, &QDemonRenderContext::SetViewport,
+                *m_Context.data(), &QDemonRenderContext::getViewport, &QDemonRenderContext::setViewport,
                 QDemonRenderRect(0, 0, mFBWidth, mFBHeight));
             QDemonRenderContextScopedProperty<QVector4D> clearColor(
-                *m_Context.data(), &QDemonRenderContext::GetClearColor, &QDemonRenderContext::SetClearColor,
+                *m_Context.data(), &QDemonRenderContext::getClearColor, &QDemonRenderContext::setClearColor,
                 QVector4D(1.0f, .6f, .6f, 1.6f));
-            m_Context->Clear(clearFlags);
+            m_Context->clear(clearFlags);
             mShaderArgs.shader = mSimpleShader;
             DrawIndexedArrays(QVector3D());
         }
         if (m_viewportDirty) {
-            m_Context->SetViewport(QDemonRenderRect(0, 0, this->width(), this->height()));
+            m_Context->setViewport(QDemonRenderRect(0, 0, this->width(), this->height()));
             m_viewportDirty = false;
         }
 
-        m_Context->Clear(clearFlags);
+        m_Context->clear(clearFlags);
         mShaderArgs.texture = mColorBuffer;
         mShaderArgs.shader = mSimpleShaderTex;
 

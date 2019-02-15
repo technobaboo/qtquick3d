@@ -45,141 +45,142 @@ void replaceWithLast(QVector<T> &vector, int index) {
     vector.pop_back();
 }
 
-struct SResourceManager : public IResourceManager
+struct QDemonResourceManager : public QDemonResourceManagerInterface
 {
-    QSharedPointer<QDemonRenderContext> m_RenderContext;
+    QSharedPointer<QDemonRenderContext> renderContext;
     // Complete list of all allocated objects
-    //    QVector<QSharedPointer<QDemonRefCounted>> m_AllocatedObjects;
+    //    QVector<QSharedPointer<QDemonRefCounted>> m_allocatedObjects;
 
-    QVector<QSharedPointer<QDemonRenderFrameBuffer>> m_FreeFrameBuffers;
-    QVector<QSharedPointer<QDemonRenderRenderBuffer>> m_FreeRenderBuffers;
-    QVector<QSharedPointer<QDemonRenderTexture2D>> m_FreeTextures;
-    QVector<QSharedPointer<QDemonRenderTexture2DArray>> m_FreeTexArrays;
-    QVector<QSharedPointer<QDemonRenderTextureCube>> m_FreeTexCubes;
-    QVector<QSharedPointer<QDemonRenderImage2D>> m_FreeImages;
+    QVector<QSharedPointer<QDemonRenderFrameBuffer>> freeFrameBuffers;
+    QVector<QSharedPointer<QDemonRenderRenderBuffer>> freeRenderBuffers;
+    QVector<QSharedPointer<QDemonRenderTexture2D>> freeTextures;
+    QVector<QSharedPointer<QDemonRenderTexture2DArray>> freeTexArrays;
+    QVector<QSharedPointer<QDemonRenderTextureCube>> freeTexCubes;
+    QVector<QSharedPointer<QDemonRenderImage2D>> freeImages;
 
-    SResourceManager(QSharedPointer<QDemonRenderContext> ctx)
-        : m_RenderContext(ctx)
+    QDemonResourceManager(QSharedPointer<QDemonRenderContext> ctx)
+        : renderContext(ctx)
     {
 
     }
 
-    virtual ~SResourceManager() override
+    virtual ~QDemonResourceManager() override
     {
 
     }
 
-    QSharedPointer<QDemonRenderFrameBuffer> AllocateFrameBuffer() override
+    QSharedPointer<QDemonRenderFrameBuffer> allocateFrameBuffer() override
     {
-        if (m_FreeFrameBuffers.empty() == true) {
-            auto newBuffer = m_RenderContext->CreateFrameBuffer();
-            m_FreeFrameBuffers.push_back(newBuffer);
+        if (freeFrameBuffers.empty() == true) {
+            auto newBuffer = renderContext->createFrameBuffer();
+            freeFrameBuffers.push_back(newBuffer);
         }
-        auto retval = m_FreeFrameBuffers.back();
-        m_FreeFrameBuffers.pop_back();
+        auto retval = freeFrameBuffers.back();
+        freeFrameBuffers.pop_back();
         return retval;
     }
-    void Release(QSharedPointer<QDemonRenderFrameBuffer> inBuffer) override
+    void release(QSharedPointer<QDemonRenderFrameBuffer> inBuffer) override
     {
-        if (inBuffer->HasAnyAttachment()) {
+        if (inBuffer->hasAnyAttachment()) {
             // Ensure the framebuffer has no attachments.
-            inBuffer->Attach(QDemonRenderFrameBufferAttachments::Color0,
+            inBuffer->attach(QDemonRenderFrameBufferAttachments::Color0,
                              QDemonRenderTextureOrRenderBuffer());
-            inBuffer->Attach(QDemonRenderFrameBufferAttachments::Color1,
+            inBuffer->attach(QDemonRenderFrameBufferAttachments::Color1,
                              QDemonRenderTextureOrRenderBuffer());
-            inBuffer->Attach(QDemonRenderFrameBufferAttachments::Color2,
+            inBuffer->attach(QDemonRenderFrameBufferAttachments::Color2,
                              QDemonRenderTextureOrRenderBuffer());
-            inBuffer->Attach(QDemonRenderFrameBufferAttachments::Color3,
+            inBuffer->attach(QDemonRenderFrameBufferAttachments::Color3,
                              QDemonRenderTextureOrRenderBuffer());
-            inBuffer->Attach(QDemonRenderFrameBufferAttachments::Color4,
+            inBuffer->attach(QDemonRenderFrameBufferAttachments::Color4,
                              QDemonRenderTextureOrRenderBuffer());
-            inBuffer->Attach(QDemonRenderFrameBufferAttachments::Color5,
+            inBuffer->attach(QDemonRenderFrameBufferAttachments::Color5,
                              QDemonRenderTextureOrRenderBuffer());
-            inBuffer->Attach(QDemonRenderFrameBufferAttachments::Color6,
+            inBuffer->attach(QDemonRenderFrameBufferAttachments::Color6,
                              QDemonRenderTextureOrRenderBuffer());
-            inBuffer->Attach(QDemonRenderFrameBufferAttachments::Color7,
+            inBuffer->attach(QDemonRenderFrameBufferAttachments::Color7,
                              QDemonRenderTextureOrRenderBuffer());
-            inBuffer->Attach(QDemonRenderFrameBufferAttachments::Depth,
+            inBuffer->attach(QDemonRenderFrameBufferAttachments::Depth,
                              QDemonRenderTextureOrRenderBuffer());
-            inBuffer->Attach(QDemonRenderFrameBufferAttachments::Stencil,
+            inBuffer->attach(QDemonRenderFrameBufferAttachments::Stencil,
                              QDemonRenderTextureOrRenderBuffer());
-            if (m_RenderContext->IsDepthStencilSupported())
-                inBuffer->Attach(QDemonRenderFrameBufferAttachments::DepthStencil,
+            if (renderContext->isDepthStencilSupported())
+                inBuffer->attach(QDemonRenderFrameBufferAttachments::DepthStencil,
                                  QDemonRenderTextureOrRenderBuffer());
         }
 #ifdef _DEBUG
-        auto theFind = std::find(m_FreeFrameBuffers.begin(), m_FreeFrameBuffers.end(), inBuffer);
-        Q_ASSERT(theFind == m_FreeFrameBuffers.end());
+        auto theFind = std::find(freeFrameBuffers.begin(), freeFrameBuffers.end(), inBuffer);
+        Q_ASSERT(theFind == freeFrameBuffers.end());
 #endif
-        m_FreeFrameBuffers.push_back(inBuffer);
+        freeFrameBuffers.push_back(inBuffer);
     }
 
-    virtual QSharedPointer<QDemonRenderRenderBuffer>
-    AllocateRenderBuffer(quint32 inWidth, quint32 inHeight, QDemonRenderRenderBufferFormats::Enum inBufferFormat) override
+    virtual QSharedPointer<QDemonRenderRenderBuffer> allocateRenderBuffer(quint32 inWidth,
+                                                                          quint32 inHeight,
+                                                                          QDemonRenderRenderBufferFormats::Enum inBufferFormat) override
     {
         // Look for one of this specific size and format.
-        int existingMatchIdx = m_FreeRenderBuffers.size();
+        int existingMatchIdx = freeRenderBuffers.size();
         for (int idx = 0, end = existingMatchIdx; idx < end; ++idx) {
-            auto theBuffer = m_FreeRenderBuffers[idx];
-            QDemonRenderRenderBufferDimensions theDims = theBuffer->GetDimensions();
-            QDemonRenderRenderBufferFormats::Enum theFormat = theBuffer->GetStorageFormat();
-            if (theDims.m_Width == inWidth && theDims.m_Height == inHeight
+            auto theBuffer = freeRenderBuffers[idx];
+            QDemonRenderRenderBufferDimensions theDims = theBuffer->getDimensions();
+            QDemonRenderRenderBufferFormats::Enum theFormat = theBuffer->getStorageFormat();
+            if (theDims.m_width == inWidth && theDims.m_height == inHeight
                     && theFormat == inBufferFormat) {
                 // Replace idx with last for efficient erasure (that reorders the vector).
-                replaceWithLast(m_FreeRenderBuffers, idx);
+                replaceWithLast(freeRenderBuffers, idx);
                 return theBuffer;
             } else if (theFormat == inBufferFormat)
                 existingMatchIdx = idx;
         }
         // If a specific exact match couldn't be found, just use the buffer with
         // the same format and resize it.
-        if (existingMatchIdx < m_FreeRenderBuffers.size()) {
-            auto theBuffer = m_FreeRenderBuffers[existingMatchIdx];
-            replaceWithLast(m_FreeRenderBuffers, existingMatchIdx);
-            theBuffer->SetDimensions(QDemonRenderRenderBufferDimensions(inWidth, inHeight));
+        if (existingMatchIdx < freeRenderBuffers.size()) {
+            auto theBuffer = freeRenderBuffers[existingMatchIdx];
+            replaceWithLast(freeRenderBuffers, existingMatchIdx);
+            theBuffer->setDimensions(QDemonRenderRenderBufferDimensions(inWidth, inHeight));
             return theBuffer;
         }
 
-        auto theBuffer = m_RenderContext->CreateRenderBuffer(inBufferFormat, inWidth, inHeight);
+        auto theBuffer = renderContext->createRenderBuffer(inBufferFormat, inWidth, inHeight);
         return theBuffer;
     }
-    void Release(QSharedPointer<QDemonRenderRenderBuffer> inBuffer) override
+    void release(QSharedPointer<QDemonRenderRenderBuffer> inBuffer) override
     {
 #ifdef _DEBUG
-        auto theFind = std::find(m_FreeRenderBuffers.begin(), m_FreeRenderBuffers.end(), inBuffer);
-        Q_ASSERT(theFind == m_FreeRenderBuffers.end());
+        auto theFind = std::find(freeRenderBuffers.begin(), freeRenderBuffers.end(), inBuffer);
+        Q_ASSERT(theFind == freeRenderBuffers.end());
 #endif
-        m_FreeRenderBuffers.push_back(inBuffer);
+        freeRenderBuffers.push_back(inBuffer);
     }
-    QSharedPointer<QDemonRenderTexture2D> SetupAllocatedTexture(QSharedPointer<QDemonRenderTexture2D> inTexture)
+    QSharedPointer<QDemonRenderTexture2D> setupAllocatedTexture(QSharedPointer<QDemonRenderTexture2D> inTexture)
     {
-        inTexture->SetMinFilter(QDemonRenderTextureMinifyingOp::Linear);
-        inTexture->SetMagFilter(QDemonRenderTextureMagnifyingOp::Linear);
+        inTexture->setMinFilter(QDemonRenderTextureMinifyingOp::Linear);
+        inTexture->setMagFilter(QDemonRenderTextureMagnifyingOp::Linear);
         return inTexture;
     }
-    QSharedPointer<QDemonRenderTexture2D> AllocateTexture2D(quint32 inWidth, quint32 inHeight,
+    QSharedPointer<QDemonRenderTexture2D> allocateTexture2D(quint32 inWidth, quint32 inHeight,
                                                             QDemonRenderTextureFormats::Enum inTextureFormat,
                                                             quint32 inSampleCount, bool immutable) override
     {
         bool inMultisample =
-                inSampleCount > 1 && m_RenderContext->AreMultisampleTexturesSupported();
-        for (quint32 idx = 0, end = m_FreeTextures.size(); idx < end; ++idx) {
-            auto theTexture = m_FreeTextures[idx];
-            STextureDetails theDetails = theTexture->GetTextureDetails();
-            if (theDetails.m_Width == inWidth && theDetails.m_Height == inHeight
-                    && inTextureFormat == theDetails.m_Format
-                    && theTexture->GetSampleCount() == inSampleCount) {
-                replaceWithLast(m_FreeTextures, idx);
-                return SetupAllocatedTexture(theTexture);
+                inSampleCount > 1 && renderContext->areMultisampleTexturesSupported();
+        for (quint32 idx = 0, end = freeTextures.size(); idx < end; ++idx) {
+            auto theTexture = freeTextures[idx];
+            QDemonTextureDetails theDetails = theTexture->getTextureDetails();
+            if (theDetails.width == inWidth && theDetails.height == inHeight
+                    && inTextureFormat == theDetails.format
+                    && theTexture->getSampleCount() == inSampleCount) {
+                replaceWithLast(freeTextures, idx);
+                return setupAllocatedTexture(theTexture);
             }
         }
         // else resize an existing texture.  This is very expensive
         // note that MSAA textures are not resizable ( in GLES )
         /*
-        if ( !m_FreeTextures.empty() && !inMultisample )
+        if ( !freeTextures.empty() && !inMultisample )
         {
-                QDemonRenderTexture2D* theTexture = m_FreeTextures.back();
-                m_FreeTextures.pop_back();
+                QDemonRenderTexture2D* theTexture = freeTextures.back();
+                freeTextures.pop_back();
 
                 // note we could re-use a former MSAA texture
                 // this causes a entiere destroy of the previous texture object
@@ -189,58 +190,58 @@ struct SResourceManager : public IResourceManager
                 return SetupAllocatedTexture( *theTexture );
         }*/
         // else create a new texture.
-        auto theTexture = m_RenderContext->CreateTexture2D();
+        auto theTexture = renderContext->createTexture2D();
 
         if (inMultisample)
-            theTexture->SetTextureDataMultisample(inSampleCount, inWidth, inHeight,
+            theTexture->setTextureDataMultisample(inSampleCount, inWidth, inHeight,
                                                   inTextureFormat);
         else if (immutable)
-            theTexture->SetTextureStorage(1, inWidth, inHeight, inTextureFormat);
+            theTexture->setTextureStorage(1, inWidth, inHeight, inTextureFormat);
         else
-            theTexture->SetTextureData(QDemonDataRef<quint8>(), 0, inWidth, inHeight, inTextureFormat);
+            theTexture->setTextureData(QDemonDataRef<quint8>(), 0, inWidth, inHeight, inTextureFormat);
 
-        return SetupAllocatedTexture(theTexture);
+        return setupAllocatedTexture(theTexture);
     }
 
-    void Release(QSharedPointer<QDemonRenderTexture2D> inBuffer) override
+    void release(QSharedPointer<QDemonRenderTexture2D> inBuffer) override
     {
 #ifdef _DEBUG
-        auto theFind = std::find(m_FreeTextures.begin(), m_FreeTextures.end(), inBuffer);
-        Q_ASSERT(theFind == m_FreeTextures.end());
+        auto theFind = std::find(freeTextures.begin(), freeTextures.end(), inBuffer);
+        Q_ASSERT(theFind == freeTextures.end());
 #endif
-        m_FreeTextures.push_back(inBuffer);
+        freeTextures.push_back(inBuffer);
     }
 
-    QSharedPointer<QDemonRenderTexture2DArray> AllocateTexture2DArray(quint32 inWidth, quint32 inHeight, quint32 inSlices,
+    QSharedPointer<QDemonRenderTexture2DArray> allocateTexture2DArray(quint32 inWidth, quint32 inHeight, quint32 inSlices,
                                                                       QDemonRenderTextureFormats::Enum inTextureFormat,
                                                                       quint32 inSampleCount) override
     {
-        bool inMultisample = inSampleCount > 1 && m_RenderContext->AreMultisampleTexturesSupported();
-        for (int idx = 0, end = m_FreeTexArrays.size(); idx < end; ++idx) {
-            auto theTexture = m_FreeTexArrays[idx];
-            STextureDetails theDetails = theTexture->GetTextureDetails();
-            if (theDetails.m_Width == inWidth && theDetails.m_Height == inHeight
-                    && theDetails.m_Depth == inSlices && inTextureFormat == theDetails.m_Format
-                    && theTexture->GetSampleCount() == inSampleCount) {
-                replaceWithLast(m_FreeTexArrays, idx);
-                theTexture->SetMinFilter(QDemonRenderTextureMinifyingOp::Linear);
-                theTexture->SetMagFilter(QDemonRenderTextureMagnifyingOp::Linear);
+        bool inMultisample = inSampleCount > 1 && renderContext->areMultisampleTexturesSupported();
+        for (int idx = 0, end = freeTexArrays.size(); idx < end; ++idx) {
+            auto theTexture = freeTexArrays[idx];
+            QDemonTextureDetails theDetails = theTexture->getTextureDetails();
+            if (theDetails.width == inWidth && theDetails.height == inHeight
+                    && theDetails.depth == inSlices && inTextureFormat == theDetails.format
+                    && theTexture->getSampleCount() == inSampleCount) {
+                replaceWithLast(freeTexArrays, idx);
+                theTexture->setMinFilter(QDemonRenderTextureMinifyingOp::Linear);
+                theTexture->setMagFilter(QDemonRenderTextureMagnifyingOp::Linear);
                 return theTexture;
             }
         }
 
         // else resize an existing texture.  This should be fairly quick at the driver level.
         // note that MSAA textures are not resizable ( in GLES )
-        if (!m_FreeTexArrays.empty() && !inMultisample) {
-            auto theTexture = m_FreeTexArrays.back();
-            m_FreeTexArrays.pop_back();
+        if (!freeTexArrays.empty() && !inMultisample) {
+            auto theTexture = freeTexArrays.back();
+            freeTexArrays.pop_back();
 
             // note we could re-use a former MSAA texture
             // this causes a entiere destroy of the previous texture object
-            theTexture->SetTextureData(QDemonDataRef<quint8>(), 0, inWidth, inHeight, inSlices,
+            theTexture->setTextureData(QDemonDataRef<quint8>(), 0, inWidth, inHeight, inSlices,
                                        inTextureFormat);
-            theTexture->SetMinFilter(QDemonRenderTextureMinifyingOp::Linear);
-            theTexture->SetMagFilter(QDemonRenderTextureMagnifyingOp::Linear);
+            theTexture->setMinFilter(QDemonRenderTextureMinifyingOp::Linear);
+            theTexture->setMagFilter(QDemonRenderTextureMagnifyingOp::Linear);
             return theTexture;
         }
 
@@ -248,70 +249,70 @@ struct SResourceManager : public IResourceManager
         QSharedPointer<QDemonRenderTexture2DArray> theTexture = nullptr;
 
         if (!inMultisample) {
-            theTexture = m_RenderContext->CreateTexture2DArray();
-            theTexture->SetTextureData(QDemonDataRef<quint8>(), 0, inWidth, inHeight, inSlices,
+            theTexture = renderContext->createTexture2DArray();
+            theTexture->setTextureData(QDemonDataRef<quint8>(), 0, inWidth, inHeight, inSlices,
                                        inTextureFormat);
         } else {
             // Not supported yet
             return nullptr;
         }
 
-        theTexture->SetMinFilter(QDemonRenderTextureMinifyingOp::Linear);
-        theTexture->SetMagFilter(QDemonRenderTextureMagnifyingOp::Linear);
+        theTexture->setMinFilter(QDemonRenderTextureMinifyingOp::Linear);
+        theTexture->setMagFilter(QDemonRenderTextureMagnifyingOp::Linear);
         return theTexture;
     }
 
-    void Release(QSharedPointer<QDemonRenderTexture2DArray> inBuffer) override
+    void release(QSharedPointer<QDemonRenderTexture2DArray> inBuffer) override
     {
 #ifdef _DEBUG
-        auto theFind = std::find(m_FreeTexArrays.begin(), m_FreeTexArrays.end(), inBuffer);
-        Q_ASSERT(theFind == m_FreeTexArrays.end());
+        auto theFind = std::find(freeTexArrays.begin(), freeTexArrays.end(), inBuffer);
+        Q_ASSERT(theFind == freeTexArrays.end());
 #endif
-        m_FreeTexArrays.push_back(inBuffer);
+        freeTexArrays.push_back(inBuffer);
     }
 
-    QSharedPointer<QDemonRenderTextureCube> AllocateTextureCube(quint32 inWidth, quint32 inHeight,
+    QSharedPointer<QDemonRenderTextureCube> allocateTextureCube(quint32 inWidth, quint32 inHeight,
                                                                 QDemonRenderTextureFormats::Enum inTextureFormat,
                                                                 quint32 inSampleCount) override
     {
         bool inMultisample =
-                inSampleCount > 1 && m_RenderContext->AreMultisampleTexturesSupported();
-        for (int idx = 0, end = m_FreeTexCubes.size(); idx < end; ++idx) {
-            auto theTexture = m_FreeTexCubes[idx];
-            STextureDetails theDetails = theTexture->GetTextureDetails();
-            if (theDetails.m_Width == inWidth && theDetails.m_Height == inHeight
-                    && inTextureFormat == theDetails.m_Format
-                    && theTexture->GetSampleCount() == inSampleCount) {
-                replaceWithLast(m_FreeTexCubes, idx);
+                inSampleCount > 1 && renderContext->areMultisampleTexturesSupported();
+        for (int idx = 0, end = freeTexCubes.size(); idx < end; ++idx) {
+            auto theTexture = freeTexCubes[idx];
+            QDemonTextureDetails theDetails = theTexture->getTextureDetails();
+            if (theDetails.width == inWidth && theDetails.height == inHeight
+                    && inTextureFormat == theDetails.format
+                    && theTexture->getSampleCount() == inSampleCount) {
+                replaceWithLast(freeTexCubes, idx);
 
-                theTexture->SetMinFilter(QDemonRenderTextureMinifyingOp::Linear);
-                theTexture->SetMagFilter(QDemonRenderTextureMagnifyingOp::Linear);
+                theTexture->setMinFilter(QDemonRenderTextureMinifyingOp::Linear);
+                theTexture->setMagFilter(QDemonRenderTextureMagnifyingOp::Linear);
                 return theTexture;
             }
         }
 
         // else resize an existing texture.  This should be fairly quick at the driver level.
         // note that MSAA textures are not resizable ( in GLES )
-        if (!m_FreeTexCubes.empty() && !inMultisample) {
-            auto theTexture = m_FreeTexCubes.back();
-            m_FreeTexCubes.pop_back();
+        if (!freeTexCubes.empty() && !inMultisample) {
+            auto theTexture = freeTexCubes.back();
+            freeTexCubes.pop_back();
 
             // note we could re-use a former MSAA texture
             // this causes a entire destroy of the previous texture object
-            theTexture->SetTextureData(QDemonDataRef<quint8>(), 0, QDemonRenderTextureCubeFaces::CubePosX,
+            theTexture->setTextureData(QDemonDataRef<quint8>(), 0, QDemonRenderTextureCubeFaces::CubePosX,
                                        inWidth, inHeight, inTextureFormat);
-            theTexture->SetTextureData(QDemonDataRef<quint8>(), 0, QDemonRenderTextureCubeFaces::CubeNegX,
+            theTexture->setTextureData(QDemonDataRef<quint8>(), 0, QDemonRenderTextureCubeFaces::CubeNegX,
                                        inWidth, inHeight, inTextureFormat);
-            theTexture->SetTextureData(QDemonDataRef<quint8>(), 0, QDemonRenderTextureCubeFaces::CubePosY,
+            theTexture->setTextureData(QDemonDataRef<quint8>(), 0, QDemonRenderTextureCubeFaces::CubePosY,
                                        inWidth, inHeight, inTextureFormat);
-            theTexture->SetTextureData(QDemonDataRef<quint8>(), 0, QDemonRenderTextureCubeFaces::CubeNegY,
+            theTexture->setTextureData(QDemonDataRef<quint8>(), 0, QDemonRenderTextureCubeFaces::CubeNegY,
                                        inWidth, inHeight, inTextureFormat);
-            theTexture->SetTextureData(QDemonDataRef<quint8>(), 0, QDemonRenderTextureCubeFaces::CubePosZ,
+            theTexture->setTextureData(QDemonDataRef<quint8>(), 0, QDemonRenderTextureCubeFaces::CubePosZ,
                                        inWidth, inHeight, inTextureFormat);
-            theTexture->SetTextureData(QDemonDataRef<quint8>(), 0, QDemonRenderTextureCubeFaces::CubeNegZ,
+            theTexture->setTextureData(QDemonDataRef<quint8>(), 0, QDemonRenderTextureCubeFaces::CubeNegZ,
                                        inWidth, inHeight, inTextureFormat);
-            theTexture->SetMinFilter(QDemonRenderTextureMinifyingOp::Linear);
-            theTexture->SetMagFilter(QDemonRenderTextureMagnifyingOp::Linear);
+            theTexture->setMinFilter(QDemonRenderTextureMinifyingOp::Linear);
+            theTexture->setMagFilter(QDemonRenderTextureMagnifyingOp::Linear);
             return theTexture;
         }
 
@@ -319,90 +320,90 @@ struct SResourceManager : public IResourceManager
         QSharedPointer<QDemonRenderTextureCube> theTexture = nullptr;
 
         if (!inMultisample) {
-            theTexture = m_RenderContext->CreateTextureCube();
-            theTexture->SetTextureData(QDemonDataRef<quint8>(), 0, QDemonRenderTextureCubeFaces::CubePosX,
+            theTexture = renderContext->createTextureCube();
+            theTexture->setTextureData(QDemonDataRef<quint8>(), 0, QDemonRenderTextureCubeFaces::CubePosX,
                                        inWidth, inHeight, inTextureFormat);
-            theTexture->SetTextureData(QDemonDataRef<quint8>(), 0, QDemonRenderTextureCubeFaces::CubeNegX,
+            theTexture->setTextureData(QDemonDataRef<quint8>(), 0, QDemonRenderTextureCubeFaces::CubeNegX,
                                        inWidth, inHeight, inTextureFormat);
-            theTexture->SetTextureData(QDemonDataRef<quint8>(), 0, QDemonRenderTextureCubeFaces::CubePosY,
+            theTexture->setTextureData(QDemonDataRef<quint8>(), 0, QDemonRenderTextureCubeFaces::CubePosY,
                                        inWidth, inHeight, inTextureFormat);
-            theTexture->SetTextureData(QDemonDataRef<quint8>(), 0, QDemonRenderTextureCubeFaces::CubeNegY,
+            theTexture->setTextureData(QDemonDataRef<quint8>(), 0, QDemonRenderTextureCubeFaces::CubeNegY,
                                        inWidth, inHeight, inTextureFormat);
-            theTexture->SetTextureData(QDemonDataRef<quint8>(), 0, QDemonRenderTextureCubeFaces::CubePosZ,
+            theTexture->setTextureData(QDemonDataRef<quint8>(), 0, QDemonRenderTextureCubeFaces::CubePosZ,
                                        inWidth, inHeight, inTextureFormat);
-            theTexture->SetTextureData(QDemonDataRef<quint8>(), 0, QDemonRenderTextureCubeFaces::CubeNegZ,
+            theTexture->setTextureData(QDemonDataRef<quint8>(), 0, QDemonRenderTextureCubeFaces::CubeNegZ,
                                        inWidth, inHeight, inTextureFormat);
         } else {
             // Not supported yet
             return nullptr;
         }
 
-        theTexture->SetMinFilter(QDemonRenderTextureMinifyingOp::Linear);
-        theTexture->SetMagFilter(QDemonRenderTextureMagnifyingOp::Linear);
+        theTexture->setMinFilter(QDemonRenderTextureMinifyingOp::Linear);
+        theTexture->setMagFilter(QDemonRenderTextureMagnifyingOp::Linear);
         return theTexture;
     }
 
-    void Release(QSharedPointer<QDemonRenderTextureCube> inBuffer) override
+    void release(QSharedPointer<QDemonRenderTextureCube> inBuffer) override
     {
 #ifdef _DEBUG
-        auto theFind = std::find(m_FreeTexCubes.begin(), m_FreeTexCubes.end(), inBuffer);
-        Q_ASSERT(theFind == m_FreeTexCubes.end());
+        auto theFind = std::find(freeTexCubes.begin(), freeTexCubes.end(), inBuffer);
+        Q_ASSERT(theFind == freeTexCubes.end());
 #endif
-        m_FreeTexCubes.push_back(inBuffer);
+        freeTexCubes.push_back(inBuffer);
     }
 
-    QSharedPointer<QDemonRenderImage2D> AllocateImage2D(QSharedPointer<QDemonRenderTexture2D> inTexture,
+    QSharedPointer<QDemonRenderImage2D> allocateImage2D(QSharedPointer<QDemonRenderTexture2D> inTexture,
                                                         QDemonRenderImageAccessType::Enum inAccess) override
     {
-        if (m_FreeImages.empty() == true) {
-            auto newImage = m_RenderContext->CreateImage2D(inTexture, inAccess);
+        if (freeImages.empty() == true) {
+            auto newImage = renderContext->createImage2D(inTexture, inAccess);
             if (newImage) {
-                m_FreeImages.push_back(newImage);
+                freeImages.push_back(newImage);
             }
         }
 
-        auto retval = m_FreeImages.back();
-        m_FreeImages.pop_back();
+        auto retval = freeImages.back();
+        freeImages.pop_back();
 
         return retval;
     }
 
-    void Release(QSharedPointer<QDemonRenderImage2D> inBuffer) override
+    void release(QSharedPointer<QDemonRenderImage2D> inBuffer) override
     {
 #ifdef _DEBUG
-        auto theFind = std::find(m_FreeImages.begin(), m_FreeImages.end(), inBuffer);
-        Q_ASSERT(theFind == m_FreeImages.end());
+        auto theFind = std::find(freeImages.begin(), freeImages.end(), inBuffer);
+        Q_ASSERT(theFind == freeImages.end());
 #endif
-        m_FreeImages.push_back(inBuffer);
+        freeImages.push_back(inBuffer);
     }
 
-    QSharedPointer<QDemonRenderContext> GetRenderContext() override { return m_RenderContext; }
+    QSharedPointer<QDemonRenderContext> getRenderContext() override { return renderContext; }
 
-    void DestroyFreeSizedResources()
+    void destroyFreeSizedResources()
     {
-        for (int idx = m_FreeRenderBuffers.size() - 1; idx >= 0; --idx) {
-            auto obj = m_FreeRenderBuffers[idx];
-            replaceWithLast(m_FreeRenderBuffers, idx);
+        for (int idx = freeRenderBuffers.size() - 1; idx >= 0; --idx) {
+            auto obj = freeRenderBuffers[idx];
+            replaceWithLast(freeRenderBuffers, idx);
         }
-        for (int idx = m_FreeTextures.size() - 1; idx >= 0; --idx) {
-            auto obj = m_FreeTextures[idx];
-            replaceWithLast(m_FreeTextures, idx);
+        for (int idx = freeTextures.size() - 1; idx >= 0; --idx) {
+            auto obj = freeTextures[idx];
+            replaceWithLast(freeTextures, idx);
         }
-        for (int idx = m_FreeTexArrays.size() - 1; idx >= 0; --idx) {
-            auto obj = m_FreeTexArrays[idx];
-            replaceWithLast(m_FreeTexArrays, idx);
+        for (int idx = freeTexArrays.size() - 1; idx >= 0; --idx) {
+            auto obj = freeTexArrays[idx];
+            replaceWithLast(freeTexArrays, idx);
         }
-        for (int idx = m_FreeTexCubes.size() - 1; idx >= 0; --idx) {
-            auto obj = m_FreeTexCubes[idx];
-            replaceWithLast(m_FreeTexCubes, idx);
+        for (int idx = freeTexCubes.size() - 1; idx >= 0; --idx) {
+            auto obj = freeTexCubes[idx];
+            replaceWithLast(freeTexCubes, idx);
         }
     }
 };
 }
 
-QSharedPointer<IResourceManager> IResourceManager::CreateResourceManager(QSharedPointer<QDemonRenderContext> inContext)
+QSharedPointer<QDemonResourceManagerInterface> QDemonResourceManagerInterface::createResourceManager(QSharedPointer<QDemonRenderContext> inContext)
 {
-    return QSharedPointer<IResourceManager>(new SResourceManager(inContext));
+    return QSharedPointer<QDemonResourceManagerInterface>(new QDemonResourceManager(inContext));
 }
 
 QT_END_NAMESPACE

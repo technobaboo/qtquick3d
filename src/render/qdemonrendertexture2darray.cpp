@@ -38,40 +38,43 @@ QT_BEGIN_NAMESPACE
 QDemonRenderTexture2DArray::QDemonRenderTexture2DArray(QSharedPointer<QDemonRenderContextImpl> context,
                                                        QDemonRenderTextureTargetType::Enum texTarget)
     : QDemonRenderTextureBase(context, texTarget)
-    , m_Width(0)
-    , m_Height(0)
-    , m_Slices(0)
+    , m_width(0)
+    , m_height(0)
+    , m_slices(0)
 {
 }
 
 QDemonRenderTexture2DArray::~QDemonRenderTexture2DArray()
 {
-    m_Context->TextureDestroyed(this);
+    m_context->textureDestroyed(this);
 }
 
-void QDemonRenderTexture2DArray::SetTextureData(QDemonDataRef<quint8> newBuffer, quint8 inMipLevel,
-                                                quint32 width, quint32 height, quint32 slices,
+void QDemonRenderTexture2DArray::setTextureData(QDemonDataRef<quint8> newBuffer,
+                                                quint8 inMipLevel,
+                                                quint32 width,
+                                                quint32 height,
+                                                quint32 slices,
                                                 QDemonRenderTextureFormats::Enum format)
 {
-    Q_ASSERT(m_TextureHandle);
+    Q_ASSERT(m_textureHandle);
 
     if (inMipLevel == 0) {
-        m_Width = width;
-        m_Height = height;
-        m_Slices = slices;
-        m_Format = format;
-        m_MaxMipLevel = inMipLevel;
+        m_width = width;
+        m_height = height;
+        m_slices = slices;
+        m_format = format;
+        m_maxMipLevel = inMipLevel;
     }
 
-    if (m_MaxMipLevel < inMipLevel) {
-        m_MaxMipLevel = inMipLevel;
+    if (m_maxMipLevel < inMipLevel) {
+        m_maxMipLevel = inMipLevel;
     }
 
     // get max size and check value
     qint32 theMaxLayerSize, theMaxSize;
-    m_Backend->GetRenderBackendValue(QDemonRenderBackend::QDemonRenderBackendQuery::MaxTextureSize,
+    m_backend->getRenderBackendValue(QDemonRenderBackend::QDemonRenderBackendQuery::MaxTextureSize,
                                      &theMaxSize);
-    m_Backend->GetRenderBackendValue(
+    m_backend->getRenderBackendValue(
                 QDemonRenderBackend::QDemonRenderBackendQuery::MaxTextureArrayLayers, &theMaxLayerSize);
     if (width > (quint32)theMaxSize || height > (quint32)theMaxSize
             || slices > (quint32)theMaxLayerSize) {
@@ -86,31 +89,31 @@ void QDemonRenderTexture2DArray::SetTextureData(QDemonDataRef<quint8> newBuffer,
 
     if (QDemonRenderTextureFormats::isUncompressedTextureFormat(format)
             || QDemonRenderTextureFormats::isDepthTextureFormat(format)) {
-        m_Backend->SetTextureData3D(m_TextureHandle, m_TexTarget, inMipLevel, m_Format, width,
+        m_backend->setTextureData3D(m_textureHandle, m_texTarget, inMipLevel, m_format, width,
                                     height, slices, 0, format, newBuffer.begin());
     }
 
     // Set our texture parameters to a default that will look the best
     if (inMipLevel > 0)
-        SetMinFilter(QDemonRenderTextureMinifyingOp::LinearMipmapLinear);
+        setMinFilter(QDemonRenderTextureMinifyingOp::LinearMipmapLinear);
 }
 
-STextureDetails QDemonRenderTexture2DArray::GetTextureDetails() const
+QDemonTextureDetails QDemonRenderTexture2DArray::getTextureDetails() const
 {
-    return STextureDetails(m_Width, m_Height, m_Slices, m_SampleCount, m_Format);
+    return QDemonTextureDetails(m_width, m_height, m_slices, m_sampleCount, m_format);
 }
 
-void QDemonRenderTexture2DArray::Bind()
+void QDemonRenderTexture2DArray::bind()
 {
-    m_TextureUnit = m_Context->GetNextTextureUnit();
+    m_textureUnit = m_context->getNextTextureUnit();
 
-    m_Backend->BindTexture(m_TextureHandle, m_TexTarget, m_TextureUnit);
+    m_backend->bindTexture(m_textureHandle, m_texTarget, m_textureUnit);
 
     applyTexParams();
     applyTexSwizzle();
 }
 
-QSharedPointer<QDemonRenderTexture2DArray> QDemonRenderTexture2DArray::Create(QSharedPointer<QDemonRenderContextImpl> context)
+QSharedPointer<QDemonRenderTexture2DArray> QDemonRenderTexture2DArray::create(QSharedPointer<QDemonRenderContextImpl> context)
 {
     return QSharedPointer<QDemonRenderTexture2DArray>(new QDemonRenderTexture2DArray(context));
 }

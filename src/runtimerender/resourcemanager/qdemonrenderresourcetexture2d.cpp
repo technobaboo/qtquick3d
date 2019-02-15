@@ -32,145 +32,149 @@
 
 QT_BEGIN_NAMESPACE
 
-CResourceTexture2D::CResourceTexture2D(QSharedPointer<IResourceManager> mgr, QSharedPointer<QDemonRenderTexture2D> inTexture)
-    : m_ResourceManager(mgr)
-    , m_Texture(inTexture)
+QDemonResourceTexture2D::QDemonResourceTexture2D(QSharedPointer<QDemonResourceManagerInterface> mgr, QSharedPointer<QDemonRenderTexture2D> inTexture)
+    : m_resourceManager(mgr)
+    , m_texture(inTexture)
 {
     if (inTexture)
-        m_TextureDetails = inTexture->GetTextureDetails();
+        m_textureDetails = inTexture->getTextureDetails();
 }
 
-CResourceTexture2D::CResourceTexture2D(QSharedPointer<IResourceManager> mgr, quint32 width, quint32 height,
+QDemonResourceTexture2D::QDemonResourceTexture2D(QSharedPointer<QDemonResourceManagerInterface> mgr, quint32 width, quint32 height,
                                        QDemonRenderTextureFormats::Enum inFormat, quint32 inSamples)
-    : m_ResourceManager(mgr)
-    , m_Texture(nullptr)
+    : m_resourceManager(mgr)
+    , m_texture(nullptr)
 {
-    EnsureTexture(width, height, inFormat, inSamples);
+    ensureTexture(width, height, inFormat, inSamples);
 }
 
-CResourceTexture2D::~CResourceTexture2D()
+QDemonResourceTexture2D::~QDemonResourceTexture2D()
 {
-    ReleaseTexture();
+    releaseTexture();
 }
 
 // Returns true if the texture was allocated, false if nothing changed (no allocation).
-bool CResourceTexture2D::TextureMatches(quint32 width, quint32 height,
-                                        QDemonRenderTextureFormats::Enum inFormat, quint32 inSamples)
+bool QDemonResourceTexture2D::textureMatches(quint32 width,
+                                             quint32 height,
+                                             QDemonRenderTextureFormats::Enum inFormat,
+                                             quint32 inSamples)
 {
-    return m_Texture && m_TextureDetails.m_Width == width && m_TextureDetails.m_Height == height
-            && m_TextureDetails.m_Format == inFormat && m_TextureDetails.m_SampleCount == inSamples;
+    return m_texture && m_textureDetails.width == width && m_textureDetails.height == height
+            && m_textureDetails.format == inFormat && m_textureDetails.sampleCount == inSamples;
 }
 
-bool CResourceTexture2D::EnsureTexture(quint32 width, quint32 height,
-                                       QDemonRenderTextureFormats::Enum inFormat, quint32 inSamples)
+bool QDemonResourceTexture2D::ensureTexture(quint32 width,
+                                            quint32 height,
+                                            QDemonRenderTextureFormats::Enum inFormat,
+                                            quint32 inSamples)
 {
-    if (TextureMatches(width, height, inFormat, inSamples))
+    if (textureMatches(width, height, inFormat, inSamples))
         return false;
 
-    if (m_Texture && inSamples > 1) {
+    if (m_texture && inSamples > 1) {
         // we cannot resize MSAA textures though release first
-        ReleaseTexture();
+        releaseTexture();
     }
 
-    if (!m_Texture)
-        m_Texture = m_ResourceManager->AllocateTexture2D(width, height, inFormat, inSamples);
+    if (!m_texture)
+        m_texture = m_resourceManager->allocateTexture2D(width, height, inFormat, inSamples);
     else {
         // multisampled textures are immuteable
         Q_ASSERT(inSamples == 1);
-        m_Texture->SetTextureData(QDemonDataRef<quint8>(), 0, width, height, inFormat);
+        m_texture->setTextureData(QDemonDataRef<quint8>(), 0, width, height, inFormat);
     }
 
-    m_TextureDetails = m_Texture->GetTextureDetails();
+    m_textureDetails = m_texture->getTextureDetails();
     return true;
 }
 
-void CResourceTexture2D::ReleaseTexture()
+void QDemonResourceTexture2D::releaseTexture()
 {
-    if (m_Texture) {
-        m_ResourceManager->Release(m_Texture);
-        ForgetTexture();
+    if (m_texture) {
+        m_resourceManager->release(m_texture);
+        forgetTexture();
     }
 }
 
-void CResourceTexture2D::ForgetTexture()
+void QDemonResourceTexture2D::forgetTexture()
 {
-    m_Texture = nullptr;
+    m_texture = nullptr;
 }
 
-void CResourceTexture2D::StealTexture(CResourceTexture2D &inOther)
+void QDemonResourceTexture2D::stealTexture(QDemonResourceTexture2D &inOther)
 {
-    ReleaseTexture();
-    m_Texture = inOther.m_Texture;
-    m_TextureDetails = inOther.m_TextureDetails;
-    inOther.m_Texture = nullptr;
+    releaseTexture();
+    m_texture = inOther.m_texture;
+    m_textureDetails = inOther.m_textureDetails;
+    inOther.m_texture = nullptr;
 }
 
-CResourceTexture2DArray::CResourceTexture2DArray(QSharedPointer<IResourceManager> mgr)
-    : m_ResourceManager(mgr)
-    , m_Texture(nullptr)
+QDemonResourceTexture2DArray::QDemonResourceTexture2DArray(QSharedPointer<QDemonResourceManagerInterface> mgr)
+    : m_resourceManager(mgr)
+    , m_texture(nullptr)
 {
 }
 
-CResourceTexture2DArray::CResourceTexture2DArray(QSharedPointer<IResourceManager> mgr, quint32 width, quint32 height,
+QDemonResourceTexture2DArray::QDemonResourceTexture2DArray(QSharedPointer<QDemonResourceManagerInterface> mgr, quint32 width, quint32 height,
                                                  quint32 slices,
                                                  QDemonRenderTextureFormats::Enum inFormat,
                                                  quint32 inSamples)
-    : m_ResourceManager(mgr)
-    , m_Texture(nullptr)
+    : m_resourceManager(mgr)
+    , m_texture(nullptr)
 {
-    EnsureTexture(width, height, slices, inFormat, inSamples);
+    ensureTexture(width, height, slices, inFormat, inSamples);
 }
 
-CResourceTexture2DArray::~CResourceTexture2DArray()
+QDemonResourceTexture2DArray::~QDemonResourceTexture2DArray()
 {
-    ReleaseTexture();
+    releaseTexture();
 }
 
-bool CResourceTexture2DArray::TextureMatches(quint32 width, quint32 height, quint32 slices,
+bool QDemonResourceTexture2DArray::textureMatches(quint32 width, quint32 height, quint32 slices,
                                              QDemonRenderTextureFormats::Enum inFormat, quint32 inSamples)
 {
-    return m_Texture && m_TextureDetails.m_Depth == slices && m_TextureDetails.m_Width == width
-            && m_TextureDetails.m_Height == height && m_TextureDetails.m_Format == inFormat
-            && m_TextureDetails.m_SampleCount == inSamples;
+    return m_texture && m_textureDetails.depth == slices && m_textureDetails.width == width
+            && m_textureDetails.height == height && m_textureDetails.format == inFormat
+            && m_textureDetails.sampleCount == inSamples;
 }
 
-bool CResourceTexture2DArray::EnsureTexture(quint32 width, quint32 height, quint32 slices,
+bool QDemonResourceTexture2DArray::ensureTexture(quint32 width, quint32 height, quint32 slices,
                                             QDemonRenderTextureFormats::Enum inFormat, quint32 inSamples)
 {
-    if (TextureMatches(width, height, slices, inFormat, inSamples))
+    if (textureMatches(width, height, slices, inFormat, inSamples))
         return false;
 
-    if (m_Texture && inSamples > 1) {
+    if (m_texture && inSamples > 1) {
         // we cannot resize MSAA textures though release first
-        ReleaseTexture();
+        releaseTexture();
     }
 
-    if (!m_Texture)
-        m_Texture = m_ResourceManager->AllocateTexture2DArray(width, height, slices, inFormat, inSamples);
+    if (!m_texture)
+        m_texture = m_resourceManager->allocateTexture2DArray(width, height, slices, inFormat, inSamples);
     else {
         // multisampled textures are immuteable
         Q_ASSERT(inSamples == 1);
-        m_Texture->SetTextureData(QDemonDataRef<quint8>(), 0, width, height, slices, inFormat);
+        m_texture->setTextureData(QDemonDataRef<quint8>(), 0, width, height, slices, inFormat);
     }
 
-    m_TextureDetails = m_Texture->GetTextureDetails();
+    m_textureDetails = m_texture->getTextureDetails();
     return true;
 }
 
-void CResourceTexture2DArray::ReleaseTexture()
+void QDemonResourceTexture2DArray::releaseTexture()
 {
-    if (m_Texture) {
-        m_ResourceManager->Release(m_Texture);
-        m_Texture = nullptr;
+    if (m_texture) {
+        m_resourceManager->release(m_texture);
+        m_texture = nullptr;
     }
 }
 
-void CResourceTexture2DArray::StealTexture(CResourceTexture2DArray &inOther)
+void QDemonResourceTexture2DArray::stealTexture(QDemonResourceTexture2DArray &inOther)
 {
-    ReleaseTexture();
-    m_Texture = inOther.m_Texture;
-    m_TextureDetails = inOther.m_TextureDetails;
-    inOther.m_Texture = nullptr;
+    releaseTexture();
+    m_texture = inOther.m_texture;
+    m_textureDetails = inOther.m_textureDetails;
+    inOther.m_texture = nullptr;
 }
 
 QT_END_NAMESPACE

@@ -39,26 +39,26 @@ QDemonRenderDataBuffer::QDemonRenderDataBuffer(QSharedPointer<QDemonRenderContex
                                                size_t size, QDemonRenderBufferBindFlags bindFlags,
                                                QDemonRenderBufferUsageType::Enum usageType,
                                                QDemonDataRef<quint8> data)
-    : m_Context(context)
-    , m_Backend(context->GetBackend())
-    , m_UsageType(usageType)
-    , m_BindFlags(bindFlags)
-    , m_BufferData(data)
-    , m_BufferCapacity(data.size())
-    , m_BufferSize(size)
-    , m_OwnsData(false)
-    , m_Mapped(false)
+    : m_context(context)
+    , m_backend(context->getBackend())
+    , m_usageType(usageType)
+    , m_bindFlags(bindFlags)
+    , m_bufferData(data)
+    , m_bufferCapacity(data.size())
+    , m_bufferSize(size)
+    , m_ownsData(false)
+    , m_mapped(false)
 {
-    m_BufferHandle =
-            m_Backend->CreateBuffer(size, bindFlags, usageType, (const void *)m_BufferData.begin());
+    m_bufferHandle =
+            m_backend->createBuffer(size, bindFlags, usageType, (const void *)m_bufferData.begin());
 }
 
 QDemonRenderDataBuffer::~QDemonRenderDataBuffer()
 {
-    if (m_BufferHandle) {
-        m_Backend->ReleaseBuffer(m_BufferHandle);
+    if (m_bufferHandle) {
+        m_backend->releaseBuffer(m_bufferHandle);
     }
-    m_BufferHandle = 0;
+    m_bufferHandle = 0;
 
     releaseMemory();
 }
@@ -66,89 +66,89 @@ QDemonRenderDataBuffer::~QDemonRenderDataBuffer()
 void QDemonRenderDataBuffer::releaseMemory()
 {
     // chekc if we should release memory
-    if (m_BufferData.size() && m_OwnsData) {
-        ::free(m_BufferData.begin());
+    if (m_bufferData.size() && m_ownsData) {
+        ::free(m_bufferData.begin());
     }
 
-    m_BufferData = QDemonDataRef<quint8>();
-    m_OwnsData = false;
+    m_bufferData = QDemonDataRef<quint8>();
+    m_ownsData = false;
 }
 
-QDemonDataRef<quint8> QDemonRenderDataBuffer::MapBuffer()
+QDemonDataRef<quint8> QDemonRenderDataBuffer::mapBuffer()
 {
     // don't map twice
-    if (m_Mapped) {
+    if (m_mapped) {
         qCCritical(INVALID_OPERATION, "Attempting to map a mapped buffer");
         Q_ASSERT(false);
     }
 
-    quint8 *pData = (quint8 *)m_Backend->MapBuffer(
-                m_BufferHandle, m_BindFlags, 0, m_BufferSize,
+    quint8 *pData = (quint8 *)m_backend->mapBuffer(
+                m_bufferHandle, m_bindFlags, 0, m_bufferSize,
                 QDemonRenderBufferAccessFlags(QDemonRenderBufferAccessTypeValues::Read
                                               | QDemonRenderBufferAccessTypeValues::Write));
 
     releaseMemory();
-    m_BufferData = toDataRef(const_cast<quint8 *>(pData), (quint32)m_BufferSize);
-    m_BufferCapacity = (quint32)m_BufferSize;
-    m_OwnsData = false;
+    m_bufferData = toDataRef(const_cast<quint8 *>(pData), (quint32)m_bufferSize);
+    m_bufferCapacity = (quint32)m_bufferSize;
+    m_ownsData = false;
 
     // currently we return a reference to the system memory
-    m_Mapped = true;
-    return m_BufferData;
+    m_mapped = true;
+    return m_bufferData;
 }
 
-QDemonDataRef<quint8> QDemonRenderDataBuffer::MapBufferRange(size_t offset, size_t size,
+QDemonDataRef<quint8> QDemonRenderDataBuffer::mapBufferRange(size_t offset, size_t size,
                                                              QDemonRenderBufferAccessFlags flags)
 {
     // don't map twice
-    if (m_Mapped) {
+    if (m_mapped) {
         qCCritical(INVALID_OPERATION, "Attempting to map a mapped buffer");
         Q_ASSERT(false);
     }
     // don't map out of range
-    if ((m_BufferSize < (offset + size)) || (size == 0)) {
+    if ((m_bufferSize < (offset + size)) || (size == 0)) {
         qCCritical(INVALID_OPERATION, "Attempting to map out of buffer range");
         Q_ASSERT(false);
     }
 
     quint8 *pData =
-            (quint8 *)m_Backend->MapBuffer(m_BufferHandle, m_BindFlags, offset, size, flags);
+            (quint8 *)m_backend->mapBuffer(m_bufferHandle, m_bindFlags, offset, size, flags);
 
     releaseMemory();
-    m_BufferData = toDataRef(const_cast<quint8 *>(pData), (quint32)size);
-    m_BufferCapacity = (quint32)size;
-    m_OwnsData = false;
+    m_bufferData = toDataRef(const_cast<quint8 *>(pData), (quint32)size);
+    m_bufferCapacity = (quint32)size;
+    m_ownsData = false;
 
     // currently we return a reference to the system memory
-    m_Mapped = true;
-    return m_BufferData;
+    m_mapped = true;
+    return m_bufferData;
 }
 
-void QDemonRenderDataBuffer::UnmapBuffer()
+void QDemonRenderDataBuffer::unmapBuffer()
 {
-    if (m_Mapped) {
+    if (m_mapped) {
         // update hardware
-        m_Backend->UnmapBuffer(m_BufferHandle, m_BindFlags);
-        m_Mapped = false;
+        m_backend->unmapBuffer(m_bufferHandle, m_bindFlags);
+        m_mapped = false;
         releaseMemory();
     }
 }
 
-void QDemonRenderDataBuffer::UpdateBuffer(QDemonConstDataRef<quint8> data, bool ownsMemory)
+void QDemonRenderDataBuffer::updateBuffer(QDemonConstDataRef<quint8> data, bool ownsMemory)
 {
     // don't update a mapped buffer
-    if (m_Mapped) {
+    if (m_mapped) {
         qCCritical(INVALID_OPERATION, "Attempting to update a mapped buffer");
         Q_ASSERT(false);
     }
 
     releaseMemory();
 
-    m_BufferData = toDataRef(const_cast<quint8 *>(data.begin()), data.size());
-    m_BufferCapacity = data.mSize;
-    m_OwnsData = ownsMemory;
+    m_bufferData = toDataRef(const_cast<quint8 *>(data.begin()), data.size());
+    m_bufferCapacity = data.mSize;
+    m_ownsData = ownsMemory;
     // update hardware
-    m_Backend->UpdateBuffer(m_BufferHandle, m_BindFlags, m_BufferCapacity, m_UsageType,
-                            (const void *)m_BufferData.begin());
+    m_backend->updateBuffer(m_bufferHandle, m_bindFlags, m_bufferCapacity, m_usageType,
+                            (const void *)m_bufferData.begin());
 }
 QT_END_NAMESPACE

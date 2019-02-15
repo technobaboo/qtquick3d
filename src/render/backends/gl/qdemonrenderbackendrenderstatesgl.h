@@ -45,23 +45,23 @@ public:
                                            QDemonRenderStencilFunctionArgument &stencilFuncBack,
                                            QDemonRenderStencilOperationArgument &depthStencilOpFront,
                                            QDemonRenderStencilOperationArgument &depthStencilOpBack)
-        : m_DepthEnable(enableDepth)
-        , m_DepthMask(depthMask)
-        , m_DepthFunc(depthFunc)
-        , m_StencilEnable(enableStencil)
-        , m_StencilFuncFront(stencilFuncFront)
-        , m_StencilFuncBack(stencilFuncBack)
-        , m_DepthStencilOpFront(depthStencilOpFront)
-        , m_DepthStencilOpBack(depthStencilOpBack)
+        : m_depthEnable(enableDepth)
+        , m_depthMask(depthMask)
+        , m_depthFunc(depthFunc)
+        , m_stencilEnable(enableStencil)
+        , m_stencilFuncFront(stencilFuncFront)
+        , m_stencilFuncBack(stencilFuncBack)
+        , m_depthStencilOpFront(depthStencilOpFront)
+        , m_depthStencilOpBack(depthStencilOpBack)
     {
     }
 
     ///< constructor
     QDemonRenderBackendDepthStencilStateGL()
-        : m_DepthEnable(true)
-        , m_DepthMask(true)
-        , m_DepthFunc(QDemonRenderBoolOp::LessThanOrEqual)
-        , m_StencilEnable(false)
+        : m_depthEnable(true)
+        , m_depthMask(true)
+        , m_depthFunc(QDemonRenderBoolOp::LessThanOrEqual)
+        , m_stencilEnable(false)
     {
     }
 
@@ -75,38 +75,36 @@ public:
         if (this == &rhs)
             return *this;
 
-        m_DepthEnable = rhs.m_DepthEnable;
-        m_DepthMask = rhs.m_DepthMask;
-        m_DepthFunc = rhs.m_DepthFunc;
-        m_StencilEnable = rhs.m_StencilEnable;
-        m_StencilFuncFront = rhs.m_StencilFuncFront;
-        m_StencilFuncBack = rhs.m_StencilFuncBack;
-        m_DepthStencilOpFront = rhs.m_DepthStencilOpFront;
-        m_DepthStencilOpBack = rhs.m_DepthStencilOpBack;
+        m_depthEnable = rhs.m_depthEnable;
+        m_depthMask = rhs.m_depthMask;
+        m_depthFunc = rhs.m_depthFunc;
+        m_stencilEnable = rhs.m_stencilEnable;
+        m_stencilFuncFront = rhs.m_stencilFuncFront;
+        m_stencilFuncBack = rhs.m_stencilFuncBack;
+        m_depthStencilOpFront = rhs.m_depthStencilOpFront;
+        m_depthStencilOpBack = rhs.m_depthStencilOpBack;
 
         return *this;
     }
 
     bool operator==(const QDemonRenderBackendDepthStencilStateGL &other) const
     {
-        return (m_DepthEnable == other.m_DepthEnable && m_DepthMask == other.m_DepthMask
-                && m_DepthFunc == other.m_DepthFunc && m_StencilEnable == other.m_StencilEnable
-                && m_StencilFuncFront == other.m_StencilFuncFront
-                && m_StencilFuncBack == other.m_StencilFuncBack
-                && m_DepthStencilOpFront == other.m_DepthStencilOpFront
-                && m_DepthStencilOpBack == other.m_DepthStencilOpBack);
+        return (m_depthEnable == other.m_depthEnable && m_depthMask == other.m_depthMask
+                && m_depthFunc == other.m_depthFunc && m_stencilEnable == other.m_stencilEnable
+                && m_stencilFuncFront == other.m_stencilFuncFront
+                && m_stencilFuncBack == other.m_stencilFuncBack
+                && m_depthStencilOpFront == other.m_depthStencilOpFront
+                && m_depthStencilOpBack == other.m_depthStencilOpBack);
     }
 
-    bool m_DepthEnable; ///< depth test enabled
-    bool m_DepthMask; ///< enable / disable depth writes
-    QDemonRenderBoolOp::Enum m_DepthFunc; ///< depth comparison func
-    bool m_StencilEnable; ///< enable disable stencil test
-    QDemonRenderStencilFunctionArgument m_StencilFuncFront; ///< stencil setup for front faces
-    QDemonRenderStencilFunctionArgument m_StencilFuncBack; ///< stencil setup for back faces
-    QDemonRenderStencilOperationArgument
-    m_DepthStencilOpFront; ///< depth stencil operation for front faces
-    QDemonRenderStencilOperationArgument
-    m_DepthStencilOpBack; ///< depth stencil operation for back faces
+    bool m_depthEnable; ///< depth test enabled
+    bool m_depthMask; ///< enable / disable depth writes
+    QDemonRenderBoolOp::Enum m_depthFunc; ///< depth comparison func
+    bool m_stencilEnable; ///< enable disable stencil test
+    QDemonRenderStencilFunctionArgument m_stencilFuncFront; ///< stencil setup for front faces
+    QDemonRenderStencilFunctionArgument m_stencilFuncBack; ///< stencil setup for back faces
+    QDemonRenderStencilOperationArgument m_depthStencilOpFront; ///< depth stencil operation for front faces
+    QDemonRenderStencilOperationArgument m_depthStencilOpBack; ///< depth stencil operation for back faces
 };
 
 class QDemonRenderBackendMiscStateGL
@@ -114,11 +112,11 @@ class QDemonRenderBackendMiscStateGL
 public:
     ///< constructor
     QDemonRenderBackendMiscStateGL()
-        : m_PatchVertexCount(1)
+        : m_patchVertexCount(1)
     {
     }
 
-    quint32 m_PatchVertexCount; ///< vertex count for a single patch primitive
+    quint32 m_patchVertexCount; ///< vertex count for a single patch primitive
 };
 
 class QDemonRenderBackendRasterizerStateGL
@@ -127,16 +125,16 @@ public:
     ///< constructor
     QDemonRenderBackendRasterizerStateGL(float depthBias, float depthScale,
                                          QDemonRenderFaces::Enum cullFace)
-        : m_DepthBias(depthBias)
-        , m_DepthScale(depthScale)
-        , m_CullFace(cullFace)
+        : m_depthBias(depthBias)
+        , m_depthScale(depthScale)
+        , m_cullFace(cullFace)
     {
     }
     ///< constructor
     QDemonRenderBackendRasterizerStateGL()
-        : m_DepthBias(0.0)
-        , m_DepthScale(0.0)
-        , m_CullFace(QDemonRenderFaces::Back)
+        : m_depthBias(0.0)
+        , m_depthScale(0.0)
+        , m_cullFace(QDemonRenderFaces::Back)
     {
     }
 
@@ -146,9 +144,9 @@ public:
         if (this == &rhs)
             return *this;
 
-        m_DepthBias = rhs.m_DepthBias;
-        m_DepthScale = rhs.m_DepthScale;
-        m_CullFace = rhs.m_CullFace;
+        m_depthBias = rhs.m_depthBias;
+        m_depthScale = rhs.m_depthScale;
+        m_cullFace = rhs.m_cullFace;
 
         return *this;
     }
@@ -157,13 +155,13 @@ public:
     {
         // TODO: Added fuzzy compare to hide warning, but we should make sure if we actuall want this behavior
         // and disable the warning instead.
-        return (qFuzzyCompare(m_DepthBias, other.m_DepthBias) && qFuzzyCompare(m_DepthScale, other.m_DepthScale)
-                && m_CullFace == other.m_CullFace);
+        return (qFuzzyCompare(m_depthBias, other.m_depthBias) && qFuzzyCompare(m_depthScale, other.m_depthScale)
+                && m_cullFace == other.m_cullFace);
     }
 
-    float m_DepthBias; ///< depth bias
-    float m_DepthScale; ///< mulitply constant
-    QDemonRenderFaces::Enum m_CullFace; ///< cull face front or back
+    float m_depthBias; ///< depth bias
+    float m_depthScale; ///< mulitply constant
+    QDemonRenderFaces::Enum m_cullFace; ///< cull face front or back
 };
 
 QT_END_NAMESPACE

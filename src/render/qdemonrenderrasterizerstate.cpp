@@ -36,24 +36,24 @@ QT_BEGIN_NAMESPACE
 QDemonRenderRasterizerState::QDemonRenderRasterizerState(QSharedPointer<QDemonRenderContextImpl> context,
                                                          float depthBias,
                                                          float depthScale, QDemonRenderFaces::Enum cullFace)
-    : m_Context(context)
-    , m_Backend(context->GetBackend())
+    : m_context(context)
+    , m_backend(context->getBackend())
 {
     // create backend handle
-    m_StateHandle = m_Backend->CreateRasterizerState(depthBias, depthScale, cullFace);
+    m_stateHandle = m_backend->createRasterizerState(depthBias, depthScale, cullFace);
 }
 
 QDemonRenderRasterizerState::~QDemonRenderRasterizerState()
 {
-    if (m_StateHandle) {
-        m_Backend->ReleaseRasterizerState(m_StateHandle);
-        m_Context->StateDestroyed(this);
+    if (m_stateHandle) {
+        m_backend->releaseRasterizerState(m_stateHandle);
+        m_context->stateDestroyed(this);
     }
 }
 
-QSharedPointer<QDemonRenderRasterizerState> QDemonRenderRasterizerState::Create(QSharedPointer<QDemonRenderContextImpl> context,
-                                                                 float depthBias, float depthScale,
-                                                                 QDemonRenderFaces::Enum cullFace)
+QSharedPointer<QDemonRenderRasterizerState> QDemonRenderRasterizerState::create(QSharedPointer<QDemonRenderContextImpl> context,
+                                                                                float depthBias, float depthScale,
+                                                                                QDemonRenderFaces::Enum cullFace)
 {
     return QSharedPointer<QDemonRenderRasterizerState>(new QDemonRenderRasterizerState(context, depthBias, depthScale, cullFace));
 }

@@ -47,26 +47,26 @@ struct MaterialLightmapsUsage
     };
 };
 
-struct SImage;
-struct Q_DEMONRUNTIMERENDER_EXPORT SLightmaps : public SGraphObject
+struct QDemonRenderImage;
+struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderLightmaps : public QDemonGraphObject
 {
-    CMaterialDirty m_Dirty;
+    QDemonMaterialDirty m_dirty;
 
-    SImage *m_LightmapIndirect;
-    SImage *m_LightmapRadiosity;
-    SImage *m_LightmapShadow;
+    QDemonRenderImage *m_lightmapIndirect;
+    QDemonRenderImage *m_lightmapRadiosity;
+    QDemonRenderImage *m_lightmapShadow;
 
-    SLightmaps();
+    QDemonRenderLightmaps();
 
     // Generic method used during serialization
     // to remap string and object pointers
     template <typename TRemapperType>
-    void Remap(TRemapperType &inRemapper)
+    void remap(TRemapperType &inRemapper)
     {
-        SGraphObject::Remap(inRemapper);
-        inRemapper.Remap(m_LightmapIndirect);
-        inRemapper.Remap(m_LightmapRadiosity);
-        inRemapper.Remap(m_LightmapShadow);
+        QDemonGraphObject::remap(inRemapper);
+        inRemapper.remap(m_lightmapIndirect);
+        inRemapper.remap(m_lightmapRadiosity);
+        inRemapper.remap(m_lightmapShadow);
     }
 };
 QT_END_NAMESPACE

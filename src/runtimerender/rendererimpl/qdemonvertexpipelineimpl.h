@@ -37,7 +37,7 @@
 
 QT_BEGIN_NAMESPACE
 // Baseclass for the vertex pipelines to be sure we have consistent implementations.
-struct SVertexPipelineImpl : public IDefaultMaterialVertexPipeline
+struct QDemonVertexPipelineImpl : public QDemonDefaultMaterialVertexPipelineInterface
 {
     struct GenerationFlagValues
     {
@@ -57,101 +57,100 @@ struct SVertexPipelineImpl : public IDefaultMaterialVertexPipeline
     typedef TStrTableStrMap::const_iterator TParamIter;
     typedef QDemonFlags<GenerationFlagValues::Enum> TGenerationFlags;
 
-    QSharedPointer<IMaterialShaderGenerator> m_MaterialGenerator;
-    QSharedPointer<IShaderProgramGenerator> m_ProgramGenerator;
-    QString m_TempString;
+    QSharedPointer<QDemonMaterialShaderGeneratorInterface> m_materialGenerator;
+    QSharedPointer<QDemonShaderProgramGeneratorInterface> m_programGenerator;
+    QString m_tempString;
 
-    TGenerationFlags m_GenerationFlags;
-    bool m_Wireframe;
-    TStrTableStrMap m_InterpolationParameters;
-    quint32 m_DisplacementIdx;
-    SRenderableImage *m_DisplacementImage;
+    TGenerationFlags m_generationFlags;
+    bool m_wireframe;
+    TStrTableStrMap m_interpolationParameters;
+    quint32 m_displacementIdx;
+    QDemonRenderableImage *m_displacementImage;
     QStringList m_addedFunctions;
 
-    SVertexPipelineImpl(QSharedPointer<IMaterialShaderGenerator> inMaterial,
-                        QSharedPointer<IShaderProgramGenerator> inProgram,
-                        bool inWireframe // only works if tessellation is true
-                        )
+    QDemonVertexPipelineImpl(QSharedPointer<QDemonMaterialShaderGeneratorInterface> inMaterial,
+                             QSharedPointer<QDemonShaderProgramGeneratorInterface> inProgram,
+                             bool inWireframe /* only works if tessellation is true */)
 
-        : m_MaterialGenerator(inMaterial)
-        , m_ProgramGenerator(inProgram)
-        , m_Wireframe(inWireframe)
-        , m_DisplacementIdx(0)
-        , m_DisplacementImage(nullptr)
+        : m_materialGenerator(inMaterial)
+        , m_programGenerator(inProgram)
+        , m_wireframe(inWireframe)
+        , m_displacementIdx(0)
+        , m_displacementImage(nullptr)
     {
     }
 
     // Trues true if the code was *not* set.
-    bool SetCode(GenerationFlagValues::Enum inCode)
+    bool setCode(GenerationFlagValues::Enum inCode)
     {
-        if ((quint32(m_GenerationFlags) & inCode) != 0)
+        if ((quint32(m_generationFlags) & inCode) != 0)
             return true;
-        m_GenerationFlags |= inCode;
+        m_generationFlags |= inCode;
         return false;
     }
-    bool HasCode(GenerationFlagValues::Enum inCode)
+    bool hasCode(GenerationFlagValues::Enum inCode)
     {
-        return ((quint32(m_GenerationFlags) & inCode)) != 0;
+        return ((quint32(m_generationFlags) & inCode)) != 0;
     }
-    QSharedPointer<IShaderProgramGenerator> ProgramGenerator() { return m_ProgramGenerator; }
+    QSharedPointer<QDemonShaderProgramGeneratorInterface> programGenerator() { return m_programGenerator; }
 
-    IShaderStageGenerator &Vertex()
+    QDemonShaderStageGeneratorInterface &vertex()
     {
-        return *ProgramGenerator()->GetStage(ShaderGeneratorStages::Vertex);
+        return *programGenerator()->getStage(ShaderGeneratorStages::Vertex);
     }
-    IShaderStageGenerator &TessControl()
+    QDemonShaderStageGeneratorInterface &tessControl()
     {
-        return *ProgramGenerator()->GetStage(ShaderGeneratorStages::TessControl);
+        return *programGenerator()->getStage(ShaderGeneratorStages::TessControl);
     }
-    IShaderStageGenerator &TessEval()
+    QDemonShaderStageGeneratorInterface &tessEval()
     {
-        return *ProgramGenerator()->GetStage(ShaderGeneratorStages::TessEval);
+        return *programGenerator()->getStage(ShaderGeneratorStages::TessEval);
     }
-    IShaderStageGenerator &Geometry()
+    QDemonShaderStageGeneratorInterface &geometry()
     {
-        return *ProgramGenerator()->GetStage(ShaderGeneratorStages::Geometry);
+        return *programGenerator()->getStage(ShaderGeneratorStages::Geometry);
     }
-    IShaderStageGenerator &Fragment()
+    QDemonShaderStageGeneratorInterface &fragment()
     {
-        return *ProgramGenerator()->GetStage(ShaderGeneratorStages::Fragment);
+        return *programGenerator()->getStage(ShaderGeneratorStages::Fragment);
     }
-    QSharedPointer<IMaterialShaderGenerator> MaterialGenerator() { return m_MaterialGenerator; }
+    QSharedPointer<QDemonMaterialShaderGeneratorInterface> materialGenerator() { return m_materialGenerator; }
 
-    void SetupDisplacement(quint32 displacementImageIdx, SRenderableImage *displacementImage)
+    void setupDisplacement(quint32 displacementImageIdx, QDemonRenderableImage *displacementImage)
     {
-        m_DisplacementIdx = displacementImageIdx;
-        m_DisplacementImage = displacementImage;
+        m_displacementIdx = displacementImageIdx;
+        m_displacementImage = displacementImage;
     }
 
-    QString Str(const char *inItem) { return QString::fromLocal8Bit(inItem); }
+    QString toQString(const char *inItem) { return QString::fromLocal8Bit(inItem); }
 
-    bool HasTessellation() const
+    bool hasTessellation() const
     {
-        return m_ProgramGenerator->GetEnabledStages() & ShaderGeneratorStages::TessEval;
+        return m_programGenerator->getEnabledStages() & ShaderGeneratorStages::TessEval;
     }
-    bool HasGeometryStage() const
+    bool hasGeometryStage() const
     {
-        return m_ProgramGenerator->GetEnabledStages() & ShaderGeneratorStages::Geometry;
+        return m_programGenerator->getEnabledStages() & ShaderGeneratorStages::Geometry;
     }
-    bool HasDisplacment() const { return m_DisplacementImage != nullptr; }
+    bool hasDisplacment() const { return m_displacementImage != nullptr; }
 
-    void InitializeWireframeGeometryShader()
+    void initializeWireframeGeometryShader()
     {
-        if (m_Wireframe && ProgramGenerator()->GetStage(ShaderGeneratorStages::Geometry)
-                && ProgramGenerator()->GetStage(ShaderGeneratorStages::TessEval)) {
-            IShaderStageGenerator &geometryShader(*ProgramGenerator()->GetStage(ShaderGeneratorStages::Geometry));
+        if (m_wireframe && programGenerator()->getStage(ShaderGeneratorStages::Geometry)
+                && programGenerator()->getStage(ShaderGeneratorStages::TessEval)) {
+            QDemonShaderStageGeneratorInterface &geometryShader(*programGenerator()->getStage(ShaderGeneratorStages::Geometry));
             // currently geometry shader is only used for drawing wireframe
-            if (m_Wireframe) {
-                geometryShader.AddUniform(QStringLiteral("viewport_matrix"), QStringLiteral("mat4"));
-                geometryShader.AddOutgoing(QStringLiteral("varEdgeDistance"), QStringLiteral("vec3"));
-                geometryShader.Append(QStringLiteral("layout (triangles) in;"));
-                geometryShader.Append(QStringLiteral("layout (triangle_strip, max_vertices = 3) out;"));
-                geometryShader.Append(QStringLiteral("void main() {"));
+            if (m_wireframe) {
+                geometryShader.addUniform(QStringLiteral("viewport_matrix"), QStringLiteral("mat4"));
+                geometryShader.addOutgoing(QStringLiteral("varEdgeDistance"), QStringLiteral("vec3"));
+                geometryShader.append(QStringLiteral("layout (triangles) in;"));
+                geometryShader.append(QStringLiteral("layout (triangle_strip, max_vertices = 3) out;"));
+                geometryShader.append(QStringLiteral("void main() {"));
 
                 // how this all work see
                 // http://developer.download.nvidia.com/SDK/10.5/direct3d/Source/SolidWireframe/Doc/SolidWireframe.pdf
 
-                geometryShader.Append(QStringLiteral(
+                geometryShader.append(QStringLiteral(
                             "// project points to screen space\n"
                             "\tvec3 p0 = vec3(viewport_matrix * (gl_in[0].gl_Position / "
                             "gl_in[0].gl_Position.w));\n"
@@ -172,18 +171,18 @@ struct SVertexPipelineImpl : public IDefaultMaterialVertexPipeline
         }
     }
 
-    void FinalizeWireframeGeometryShader()
+    void finalizeWireframeGeometryShader()
     {
-        IShaderStageGenerator &geometryShader(*ProgramGenerator()->GetStage(ShaderGeneratorStages::Geometry));
+        QDemonShaderStageGeneratorInterface &geometryShader(*programGenerator()->getStage(ShaderGeneratorStages::Geometry));
 
-        if (m_Wireframe == true && ProgramGenerator()->GetStage(ShaderGeneratorStages::Geometry)
-                && ProgramGenerator()->GetStage(ShaderGeneratorStages::TessEval)) {
+        if (m_wireframe == true && programGenerator()->getStage(ShaderGeneratorStages::Geometry)
+                && programGenerator()->getStage(ShaderGeneratorStages::TessEval)) {
             const char *theExtension("TE[");
             // we always assume triangles
             for (int i = 0; i < 3; i++) {
                 char buf[10];
                 sprintf(buf, "%d", i);
-                for (TStrTableStrMap::iterator iter = m_InterpolationParameters.begin(), end = m_InterpolationParameters.end(); iter != end; ++iter) {
+                for (TStrTableStrMap::iterator iter = m_interpolationParameters.begin(), end = m_interpolationParameters.end(); iter != end; ++iter) {
                     geometryShader << QStringLiteral("\t")
                                    << iter.key()
                                    << QStringLiteral(" = ")
@@ -195,15 +194,16 @@ struct SVertexPipelineImpl : public IDefaultMaterialVertexPipeline
 
                 geometryShader << QStringLiteral("\tgl_Position = gl_in[") << QString::fromLocal8Bit(buf) << QStringLiteral("].gl_Position;\n");
                 // the triangle distance is interpolated through the shader stage
-                if (i == 0)
+                if (i == 0) {
                     geometryShader << QStringLiteral("\n\tvarEdgeDistance = vec3(ha*")
                                    << QStringLiteral("gl_in[") << QString::fromLocal8Bit(buf) << QStringLiteral("].gl_Position.w, 0.0, 0.0);\n");
-                else if (i == 1)
+                } else if (i == 1) {
                     geometryShader << QStringLiteral("\n\tvarEdgeDistance = vec3(0.0, hb*")
                                    << QStringLiteral("gl_in[") << QString::fromLocal8Bit(buf) << QStringLiteral("].gl_Position.w, 0.0);\n");
-                else if (i == 2)
+                } else if (i == 2) {
                     geometryShader << QStringLiteral("\n\tvarEdgeDistance = vec3(0.0, 0.0, hc*")
                                    << QStringLiteral("gl_in[") << QString::fromLocal8Bit(buf) << QStringLiteral("].gl_Position.w);\n");
+                }
 
                 // submit vertex
                 geometryShader << QStringLiteral("\tEmitVertex();\n");
@@ -213,189 +213,189 @@ struct SVertexPipelineImpl : public IDefaultMaterialVertexPipeline
         }
     }
 
-    virtual void SetupTessIncludes(ShaderGeneratorStages::Enum inStage, TessModeValues::Enum inTessMode)
+    virtual void setupTessIncludes(ShaderGeneratorStages::Enum inStage, TessModeValues::Enum inTessMode)
     {
-        IShaderStageGenerator &tessShader(*ProgramGenerator()->GetStage(inStage));
+        QDemonShaderStageGeneratorInterface &tessShader(*programGenerator()->getStage(inStage));
 
         // depending on the selected tessellation mode chose program
         switch (inTessMode) {
         case TessModeValues::TessPhong:
-            tessShader.AddInclude(QStringLiteral("tessellationPhong.glsllib"));
+            tessShader.addInclude(QStringLiteral("tessellationPhong.glsllib"));
             break;
         case TessModeValues::TessNPatch:
-            tessShader.AddInclude(QStringLiteral("tessellationNPatch.glsllib"));
+            tessShader.addInclude(QStringLiteral("tessellationNPatch.glsllib"));
             break;
         default:
             Q_ASSERT(false); // fallthrough intentional
         case TessModeValues::TessLinear:
-            tessShader.AddInclude(QStringLiteral("tessellationLinear.glsllib"));
+            tessShader.addInclude(QStringLiteral("tessellationLinear.glsllib"));
             break;
         }
     }
 
-    void GenerateUVCoords(quint32 inUVSet = 0) override
+    void generateUVCoords(quint32 inUVSet = 0) override
     {
-        if (inUVSet == 0 && SetCode(GenerationFlagValues::UVCoords))
+        if (inUVSet == 0 && setCode(GenerationFlagValues::UVCoords))
             return;
-        if (inUVSet == 1 && SetCode(GenerationFlagValues::UVCoords1))
+        if (inUVSet == 1 && setCode(GenerationFlagValues::UVCoords1))
             return;
 
         Q_ASSERT(inUVSet == 0 || inUVSet == 1);
 
         if (inUVSet == 0)
-            AddInterpolationParameter(QStringLiteral("varTexCoord0"), QStringLiteral("vec2"));
+            addInterpolationParameter(QStringLiteral("varTexCoord0"), QStringLiteral("vec2"));
         else if (inUVSet == 1)
-            AddInterpolationParameter(QStringLiteral("varTexCoord1"), QStringLiteral("vec2"));
+            addInterpolationParameter(QStringLiteral("varTexCoord1"), QStringLiteral("vec2"));
 
-        DoGenerateUVCoords(inUVSet);
+        doGenerateUVCoords(inUVSet);
     }
-    void GenerateEnvMapReflection() override
+    void generateEnvMapReflection() override
     {
-        if (SetCode(GenerationFlagValues::EnvMapReflection))
+        if (setCode(GenerationFlagValues::EnvMapReflection))
             return;
 
-        GenerateWorldPosition();
-        GenerateWorldNormal();
-        IShaderStageGenerator &activeGenerator(ActiveStage());
-        activeGenerator.AddInclude(QStringLiteral("viewProperties.glsllib"));
-        AddInterpolationParameter(QStringLiteral("var_object_to_camera"), QStringLiteral("vec3"));
-        activeGenerator.Append(QStringLiteral("\tvar_object_to_camera = normalize( local_model_world_position "
+        generateWorldPosition();
+        generateWorldNormal();
+        QDemonShaderStageGeneratorInterface &activeGenerator(activeStage());
+        activeGenerator.addInclude(QStringLiteral("viewProperties.glsllib"));
+        addInterpolationParameter(QStringLiteral("var_object_to_camera"), QStringLiteral("vec3"));
+        activeGenerator.append(QStringLiteral("\tvar_object_to_camera = normalize( local_model_world_position "
                                "- camera_position );"));
         // World normal cannot be relied upon in the vertex shader because of bump maps.
-        Fragment().Append(QStringLiteral("\tvec3 environment_map_reflection = reflect( "
+        fragment().append(QStringLiteral("\tvec3 environment_map_reflection = reflect( "
                           "normalize(var_object_to_camera), world_normal.xyz );"));
-        Fragment().Append(QStringLiteral("\tenvironment_map_reflection *= vec3( 0.5, 0.5, 0 );"));
-        Fragment().Append(QStringLiteral("\tenvironment_map_reflection += vec3( 0.5, 0.5, 1.0 );"));
+        fragment().append(QStringLiteral("\tenvironment_map_reflection *= vec3( 0.5, 0.5, 0 );"));
+        fragment().append(QStringLiteral("\tenvironment_map_reflection += vec3( 0.5, 0.5, 1.0 );"));
     }
-    void GenerateViewVector() override
+    void generateViewVector() override
     {
-        if (SetCode(GenerationFlagValues::ViewVector))
+        if (setCode(GenerationFlagValues::ViewVector))
             return;
-        GenerateWorldPosition();
-        IShaderStageGenerator &activeGenerator(ActiveStage());
-        activeGenerator.AddInclude(QStringLiteral("viewProperties.glsllib"));
-        AddInterpolationParameter(QStringLiteral("varViewVector"), QStringLiteral("vec3"));
-        activeGenerator.Append(QStringLiteral("\tvec3 local_view_vector = normalize(camera_position - "
+        generateWorldPosition();
+        QDemonShaderStageGeneratorInterface &activeGenerator(activeStage());
+        activeGenerator.addInclude(QStringLiteral("viewProperties.glsllib"));
+        addInterpolationParameter(QStringLiteral("varViewVector"), QStringLiteral("vec3"));
+        activeGenerator.append(QStringLiteral("\tvec3 local_view_vector = normalize(camera_position - "
                                "local_model_world_position);"));
-        AssignOutput(QStringLiteral("varViewVector"), QStringLiteral("local_view_vector"));
-        Fragment() << QStringLiteral("\tvec3 view_vector = normalize(varViewVector);\n");
+        assignOutput(QStringLiteral("varViewVector"), QStringLiteral("local_view_vector"));
+        fragment() << QStringLiteral("\tvec3 view_vector = normalize(varViewVector);\n");
     }
 
     // fragment shader expects varying vertex normal
     // lighting in vertex pipeline expects world_normal
-    void GenerateWorldNormal() override
+    void generateWorldNormal() override
     {
-        if (SetCode(GenerationFlagValues::WorldNormal))
+        if (setCode(GenerationFlagValues::WorldNormal))
             return;
-        AddInterpolationParameter(QStringLiteral("varNormal"), QStringLiteral("vec3"));
-        DoGenerateWorldNormal();
-        Fragment().Append(QStringLiteral("\tvec3 world_normal = normalize( varNormal );"));
+        addInterpolationParameter(QStringLiteral("varNormal"), QStringLiteral("vec3"));
+        doGenerateWorldNormal();
+        fragment().append(QStringLiteral("\tvec3 world_normal = normalize( varNormal );"));
     }
-    void GenerateObjectNormal() override
+    void generateObjectNormal() override
     {
-        if (SetCode(GenerationFlagValues::ObjectNormal))
+        if (setCode(GenerationFlagValues::ObjectNormal))
             return;
-        DoGenerateObjectNormal();
-        Fragment().Append(QStringLiteral("\tvec3 object_normal = normalize(varObjectNormal);"));
+        doGenerateObjectNormal();
+        fragment().append(QStringLiteral("\tvec3 object_normal = normalize(varObjectNormal);"));
     }
-    void GenerateWorldPosition() override
+    void generateWorldPosition() override
     {
-        if (SetCode(GenerationFlagValues::WorldPosition))
+        if (setCode(GenerationFlagValues::WorldPosition))
             return;
 
-        ActiveStage().AddUniform(QStringLiteral("model_matrix"), QStringLiteral("mat4"));
-        AddInterpolationParameter(QStringLiteral("varWorldPos"), QStringLiteral("vec3"));
-        DoGenerateWorldPosition();
+        activeStage().addUniform(QStringLiteral("model_matrix"), QStringLiteral("mat4"));
+        addInterpolationParameter(QStringLiteral("varWorldPos"), QStringLiteral("vec3"));
+        doGenerateWorldPosition();
 
-        AssignOutput(QStringLiteral("varWorldPos"), QStringLiteral("local_model_world_position"));
+        assignOutput(QStringLiteral("varWorldPos"), QStringLiteral("local_model_world_position"));
     }
-    void GenerateVarTangentAndBinormal() override
+    void generateVarTangentAndBinormal() override
     {
-        if (SetCode(GenerationFlagValues::TangentBinormal))
+        if (setCode(GenerationFlagValues::TangentBinormal))
             return;
-        AddInterpolationParameter(QStringLiteral("varTangent"), QStringLiteral("vec3"));
-        AddInterpolationParameter(QStringLiteral("varBinormal"), QStringLiteral("vec3"));
-        DoGenerateVarTangentAndBinormal();
-        Fragment() << QStringLiteral("\tvec3 tangent = normalize(varTangent);\n")
+        addInterpolationParameter(QStringLiteral("varTangent"), QStringLiteral("vec3"));
+        addInterpolationParameter(QStringLiteral("varBinormal"), QStringLiteral("vec3"));
+        doGenerateVarTangentAndBinormal();
+        fragment() << QStringLiteral("\tvec3 tangent = normalize(varTangent);\n")
                    << QStringLiteral("\tvec3 binormal = normalize(varBinormal);\n");
     }
-    void GenerateVertexColor() override
+    void generateVertexColor() override
     {
-        if (SetCode(GenerationFlagValues::VertexColor))
+        if (setCode(GenerationFlagValues::VertexColor))
             return;
-        AddInterpolationParameter(QStringLiteral("varColor"), QStringLiteral("vec3"));
-        DoGenerateVertexColor();
-        Fragment().Append(QStringLiteral("\tvec3 vertColor = varColor;"));
+        addInterpolationParameter(QStringLiteral("varColor"), QStringLiteral("vec3"));
+        doGenerateVertexColor();
+        fragment().append(QStringLiteral("\tvec3 vertColor = varColor;"));
     }
 
-    bool HasActiveWireframe() override { return m_Wireframe; }
+    bool hasActiveWireframe() override { return m_wireframe; }
 
-    void AddIncoming(const QString &name, const QString &type) override
+    void addIncoming(const QString &name, const QString &type) override
     {
-        ActiveStage().AddIncoming(name, type);
+        activeStage().addIncoming(name, type);
     }
 
-    void AddOutgoing(const QString &name, const QString &type) override
+    void addOutgoing(const QString &name, const QString &type) override
     {
-        AddInterpolationParameter(name, type);
+        addInterpolationParameter(name, type);
     }
 
-    void AddUniform(const QString &name, const QString &type) override
+    void addUniform(const QString &name, const QString &type) override
     {
-        ActiveStage().AddUniform(name, type);
+        activeStage().addUniform(name, type);
     }
 
-    void AddInclude(const QString &name) override { ActiveStage().AddInclude(name); }
+    void addInclude(const QString &name) override { activeStage().addInclude(name); }
 
-    void AddFunction(const QString &functionName) override
+    void addFunction(const QString &functionName) override
     {
         if (!m_addedFunctions.contains(functionName)) {
             m_addedFunctions.push_back(functionName);
             QString includeName = QStringLiteral("func") + functionName + QStringLiteral(".glsllib");
-            AddInclude(includeName);
+            addInclude(includeName);
         }
     }
 
-    void AddConstantBuffer(const QString &name, const QString &layout) override
+    void addConstantBuffer(const QString &name, const QString &layout) override
     {
-        ActiveStage().AddConstantBuffer(name, layout);
+        activeStage().addConstantBuffer(name, layout);
     }
-    void AddConstantBufferParam(const QString &cbName, const QString &paramName,
+    void addConstantBufferParam(const QString &cbName, const QString &paramName,
                                 const QString &type) override
     {
-        ActiveStage().AddConstantBufferParam(cbName, paramName, type);
+        activeStage().addConstantBufferParam(cbName, paramName, type);
     }
 
-    IShaderStageGenerator &operator<<(const QString &data) override
+    QDemonShaderStageGeneratorInterface &operator<<(const QString &data) override
     {
-        ActiveStage() << data;
+        activeStage() << data;
         return *this;
     }
 
-    void Append(const QString &data) override { ActiveStage().Append(data); }
-    void AppendPartial(const QString &data) override { ActiveStage().Append(data); }
+    void append(const QString &data) override { activeStage().append(data); }
+    void appendPartial(const QString &data) override { activeStage().append(data); }
 
-    ShaderGeneratorStages::Enum Stage() const override
+    ShaderGeneratorStages::Enum stage() const override
     {
-        return const_cast<SVertexPipelineImpl *>(this)->ActiveStage().Stage();
+        return const_cast<QDemonVertexPipelineImpl *>(this)->activeStage().stage();
     }
 
-    void BeginVertexGeneration(quint32 displacementImageIdx, SRenderableImage *displacementImage) override = 0;
-    void AssignOutput(const QString &inVarName, const QString &inVarValueExpr) override = 0;
-    void EndVertexGeneration() override = 0;
+    void beginVertexGeneration(quint32 displacementImageIdx, QDemonRenderableImage *displacementImage) override = 0;
+    void assignOutput(const QString &inVarName, const QString &inVarValueExpr) override = 0;
+    void endVertexGeneration() override = 0;
 
-    void BeginFragmentGeneration() override = 0;
-    void EndFragmentGeneration() override = 0;
+    void beginFragmentGeneration() override = 0;
+    void endFragmentGeneration() override = 0;
 
-    virtual IShaderStageGenerator &ActiveStage() = 0;
-    virtual void AddInterpolationParameter(const QString &inParamName, const QString &inParamType) = 0;
+    virtual QDemonShaderStageGeneratorInterface &activeStage() = 0;
+    virtual void addInterpolationParameter(const QString &inParamName, const QString &inParamType) = 0;
 
-    virtual void DoGenerateUVCoords(quint32 inUVSet) = 0;
-    virtual void DoGenerateWorldNormal() = 0;
-    virtual void DoGenerateObjectNormal() = 0;
-    virtual void DoGenerateWorldPosition() = 0;
-    virtual void DoGenerateVarTangentAndBinormal() = 0;
-    virtual void DoGenerateVertexColor() = 0;
+    virtual void doGenerateUVCoords(quint32 inUVSet) = 0;
+    virtual void doGenerateWorldNormal() = 0;
+    virtual void doGenerateObjectNormal() = 0;
+    virtual void doGenerateWorldPosition() = 0;
+    virtual void doGenerateVarTangentAndBinormal() = 0;
+    virtual void doGenerateVertexColor() = 0;
 };
 QT_END_NAMESPACE
 

@@ -62,137 +62,135 @@ struct ScaleModes
     };
 };
 
-class IPathManagerCore;
-class ICustomMaterialSystemCore;
+class QDemonPathManagerCoreInterface;
+class QDemonCustomMaterialSystemCoreInterface;
 
 // Part of render context that does not require the render system.
-class Q_DEMONRUNTIMERENDER_EXPORT IQDemonRenderContextCore
+class Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderContextCoreInterface
 {
 public:
-    virtual ~IQDemonRenderContextCore();
-    virtual QSharedPointer<IInputStreamFactory> GetInputStreamFactory() = 0;
-    virtual QSharedPointer<IThreadPool> GetThreadPool() = 0;
-    virtual QSharedPointer<IDynamicObjectSystemCore> GetDynamicObjectSystemCore() = 0;
-    virtual QSharedPointer<ICustomMaterialSystemCore> GetMaterialSystemCore() = 0;
-    virtual QSharedPointer<IEffectSystemCore> GetEffectSystemCore() = 0;
-    virtual QSharedPointer<IPerfTimer> GetPerfTimer() = 0;
-    virtual QSharedPointer<IBufferLoader> GetBufferLoader() = 0;
-    virtual QSharedPointer<IPathManagerCore> GetPathManagerCore() = 0;
+    virtual ~QDemonRenderContextCoreInterface();
+    virtual QSharedPointer<QDemonInputStreamFactoryInterface> getInputStreamFactory() = 0;
+    virtual QSharedPointer<QDemonAbstractThreadPool> getThreadPool() = 0;
+    virtual QSharedPointer<QDemonDynamicObjectSystemCoreInterface> getDynamicObjectSystemCore() = 0;
+    virtual QSharedPointer<QDemonCustomMaterialSystemCoreInterface> getMaterialSystemCore() = 0;
+    virtual QSharedPointer<QDemonEffectSystemCoreInterface> getEffectSystemCore() = 0;
+    virtual QSharedPointer<QDemonPerfTimerInterface> getPerfTimer() = 0;
+    virtual QSharedPointer<QDemonBufferLoaderInterface> getBufferLoader() = 0;
+    virtual QSharedPointer<QDemonPathManagerCoreInterface> getPathManagerCore() = 0;
     // Text renderers may be provided by clients at runtime.
-    virtual void SetTextRendererCore(QSharedPointer<ITextRendererCore> inRenderer) = 0;
-    virtual QSharedPointer<ITextRendererCore> GetTextRendererCore() = 0;
+    virtual void setTextRendererCore(QSharedPointer<QDemonTextRendererCoreInterface> inRenderer) = 0;
+    virtual QSharedPointer<QDemonTextRendererCoreInterface> getTextRendererCore() = 0;
     // this is our default 2D text onscreen renderer
-    virtual void SetOnscreenTextRendererCore(QSharedPointer<ITextRendererCore> inRenderer) = 0;
-    virtual QSharedPointer<ITextRendererCore> GetOnscreenTextRendererCore() = 0;
+    virtual void setOnscreenTextRendererCore(QSharedPointer<QDemonTextRendererCoreInterface> inRenderer) = 0;
+    virtual QSharedPointer<QDemonTextRendererCoreInterface> getOnscreenTextRendererCore() = 0;
     // The render context maintains a reference to this object.
-    virtual QSharedPointer<IQDemonRenderContext> CreateRenderContext(QSharedPointer<QDemonRenderContext> inContext, const char *inPrimitivesDirectory) = 0;
+    virtual QSharedPointer<QDemonRenderContextInterface> createRenderContext(QSharedPointer<QDemonRenderContext> inContext, const char *inPrimitivesDirectory) = 0;
 
-    static QSharedPointer<IQDemonRenderContextCore> Create();
+    static QSharedPointer<QDemonRenderContextCoreInterface> create();
 };
 
-class ITextTextureAtlas;
-class IQDemonRenderer;
-class IShaderCache;
-class IOffscreenRenderManager;
+class QDemonTextTextureAtlasInterface;
+class QDemonRendererInterface;
+class QDemonShaderCacheInterface;
+class QDemonOffscreenRenderManagerInterface;
 
-class Q_DEMONRUNTIMERENDER_EXPORT IQDemonRenderContext
+class Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderContextInterface
 {
 public:
-    virtual ~IQDemonRenderContext() {}
-    virtual QSharedPointer<IQDemonRenderer> GetRenderer() = 0;
-    virtual QSharedPointer<IRenderWidgetContext> GetRenderWidgetContext() = 0;
-    virtual QSharedPointer<IBufferManager> GetBufferManager() = 0;
-    virtual QSharedPointer<IResourceManager> GetResourceManager() = 0;
-    virtual QSharedPointer<QDemonRenderContext> GetRenderContext() = 0;
-    virtual QSharedPointer<IOffscreenRenderManager> GetOffscreenRenderManager() = 0;
-    virtual QSharedPointer<IInputStreamFactory> GetInputStreamFactory() = 0;
-    virtual QSharedPointer<IEffectSystem> GetEffectSystem() = 0;
-    virtual QSharedPointer<IShaderCache> GetShaderCache() = 0;
-    virtual QSharedPointer<IThreadPool> GetThreadPool() = 0;
-    virtual QSharedPointer<IImageBatchLoader> GetImageBatchLoader() = 0;
-    virtual QSharedPointer<IDynamicObjectSystem> GetDynamicObjectSystem() = 0;
-    virtual QSharedPointer<ICustomMaterialSystem> GetCustomMaterialSystem() = 0;
-    virtual QSharedPointer<IPixelGraphicsRenderer> GetPixelGraphicsRenderer() = 0;
-    virtual QSharedPointer<IPerfTimer> GetPerfTimer() = 0;
-    virtual QSharedPointer<ITextTextureCache> GetTextureCache() = 0;
-    virtual QSharedPointer<ITextRenderer> GetTextRenderer() = 0;
-    virtual QSharedPointer<IRenderList> GetRenderList() = 0;
-    virtual QSharedPointer<IPathManager> GetPathManager() = 0;
-    virtual QSharedPointer<IShaderProgramGenerator> GetShaderProgramGenerator() = 0;
-    virtual QSharedPointer<IDefaultMaterialShaderGenerator> GetDefaultMaterialShaderGenerator() = 0;
-    virtual QSharedPointer<ICustomMaterialShaderGenerator> GetCustomMaterialShaderGenerator() = 0;
+    virtual ~QDemonRenderContextInterface();
+    virtual QSharedPointer<QDemonRendererInterface> getRenderer() = 0;
+    virtual QSharedPointer<QDemonRenderWidgetContextInterface> getRenderWidgetContext() = 0;
+    virtual QSharedPointer<QDemonBufferManagerInterface> getBufferManager() = 0;
+    virtual QSharedPointer<QDemonResourceManagerInterface> getResourceManager() = 0;
+    virtual QSharedPointer<QDemonRenderContext> getRenderContext() = 0;
+    virtual QSharedPointer<QDemonOffscreenRenderManagerInterface> getOffscreenRenderManager() = 0;
+    virtual QSharedPointer<QDemonInputStreamFactoryInterface> getInputStreamFactory() = 0;
+    virtual QSharedPointer<QDemonEffectSystemInterface> getEffectSystem() = 0;
+    virtual QSharedPointer<QDemonShaderCacheInterface> getShaderCache() = 0;
+    virtual QSharedPointer<QDemonAbstractThreadPool> getThreadPool() = 0;
+    virtual QSharedPointer<IImageBatchLoader> getImageBatchLoader() = 0;
+    virtual QSharedPointer<QDemonDynamicObjectSystemInterface> getDynamicObjectSystem() = 0;
+    virtual QSharedPointer<QDemonCustomMaterialSystemInterface> getCustomMaterialSystem() = 0;
+    virtual QSharedPointer<QDemonPixelGraphicsRendererInterface> getPixelGraphicsRenderer() = 0;
+    virtual QSharedPointer<QDemonPerfTimerInterface> getPerfTimer() = 0;
+    virtual QSharedPointer<QDemonTextTextureCacheInterface> getTextureCache() = 0;
+    virtual QSharedPointer<QDemonTextRendererInterface> getTextRenderer() = 0;
+    virtual QSharedPointer<QDemonRenderListInterface> getRenderList() = 0;
+    virtual QSharedPointer<QDemonPathManagerInterface> getPathManager() = 0;
+    virtual QSharedPointer<QDemonShaderProgramGeneratorInterface> getShaderProgramGenerator() = 0;
+    virtual QSharedPointer<QDemonDefaultMaterialShaderGeneratorInterface> getDefaultMaterialShaderGenerator() = 0;
+    virtual QSharedPointer<ICustomMaterialShaderGenerator> getCustomMaterialShaderGenerator() = 0;
     // Get the number of times EndFrame has been called
-    virtual quint32 GetFrameCount() = 0;
+    virtual quint32 getFrameCount() = 0;
 
     // Get fps
-    virtual QPair<float, int> GetFPS() = 0;
+    virtual QPair<float, int> getFPS() = 0;
     // Set fps by higher level, etc application
-    virtual void SetFPS(QPair<float, int> inFPS) = 0;
+    virtual void setFPS(QPair<float, int> inFPS) = 0;
 
     // Currently there are a few things that need to work differently
     // in authoring mode vs. runtime.  The particle effects, for instance
     // need to be framerate-independent at runtime but framerate-dependent during
     // authoring time assuming virtual 16 ms frames.
     // Defaults to falst.
-    virtual bool IsAuthoringMode() = 0;
-    virtual void SetAuthoringMode(bool inMode) = 0;
+    virtual bool isAuthoringMode() = 0;
+    virtual void setAuthoringMode(bool inMode) = 0;
 
     // This one is setup by the runtime binding
-    virtual QSharedPointer<ITextRenderer> GetOnscreenTextRenderer() = 0;
-    virtual QSharedPointer<ITextTextureAtlas> GetTextureAtlas() = 0;
+    virtual QSharedPointer<QDemonTextRendererInterface> getOnscreenTextRenderer() = 0;
+    virtual QSharedPointer<QDemonTextTextureAtlasInterface> getTextureAtlas() = 0;
 
     // Sub presentations change the rendering somewhat.
-    virtual bool IsInSubPresentation() = 0;
-    virtual void SetInSubPresentation(bool inValue) = 0;
-    virtual void SetSceneColor(QDemonOption<QVector4D> inSceneColor) = 0;
-    virtual void SetMatteColor(QDemonOption<QVector4D> inMatteColor) = 0;
+    virtual bool isInSubPresentation() = 0;
+    virtual void setInSubPresentation(bool inValue) = 0;
+    virtual void setSceneColor(QDemonOption<QVector4D> inSceneColor) = 0;
+    virtual void setMatteColor(QDemonOption<QVector4D> inMatteColor) = 0;
 
     // Render screen aligned 2D text at x,y
-    virtual void RenderText2D(float x, float y, QDemonOption<QVector3D> inColor,
+    virtual void renderText2D(float x, float y, QDemonOption<QVector3D> inColor,
                               const char *text) = 0;
     // render Gpu profiler values
-    virtual void RenderGpuProfilerStats(float x, float y,
-                                        QDemonOption<QVector3D> inColor) = 0;
+    virtual void renderGpuProfilerStats(float x, float y, QDemonOption<QVector3D> inColor) = 0;
 
     // The reason you can set both window dimensions and an overall viewport is that the mouse
     // needs to be inverted
     // which requires the window height, and then the rest of the system really requires the
     // viewport.
-    virtual void SetWindowDimensions(const QSize &inWindowDimensions) = 0;
-    virtual QSize GetWindowDimensions() = 0;
+    virtual void setWindowDimensions(const QSize &inWindowDimensions) = 0;
+    virtual QSize getWindowDimensions() = 0;
 
     // In addition to the window dimensions which really have to be set, you can optionally
     // set the viewport which will force the entire viewer to render specifically to this
     // viewport.
-    virtual void SetViewport(QDemonOption<QDemonRenderRect> inViewport) = 0;
-    virtual QDemonOption<QDemonRenderRect> GetViewport() const = 0;
-    virtual QDemonRenderRect GetContextViewport() const = 0;
+    virtual void setViewport(QDemonOption<QDemonRenderRect> inViewport) = 0;
+    virtual QDemonOption<QDemonRenderRect> getViewport() const = 0;
+    virtual QDemonRenderRect getContextViewport() const = 0;
     // Only valid between calls to Begin,End.
-    virtual QDemonRenderRect GetPresentationViewport() const = 0;
+    virtual QDemonRenderRect getPresentationViewport() const = 0;
 
-    virtual void SetScaleMode(ScaleModes::Enum inMode) = 0;
-    virtual ScaleModes::Enum GetScaleMode() = 0;
+    virtual void setScaleMode(ScaleModes::Enum inMode) = 0;
+    virtual ScaleModes::Enum getScaleMode() = 0;
 
-    virtual void SetWireframeMode(bool inEnable) = 0;
-    virtual bool GetWireframeMode() = 0;
+    virtual void setWireframeMode(bool inEnable) = 0;
+    virtual bool getWireframeMode() = 0;
 
     // Return the viewport the system is using to render data to.  This gives the the dimensions
     // of the rendered system.  It is dependent on but not equal to the viewport.
-    virtual QDemonRenderRectF GetDisplayViewport() const = 0;
+    virtual QDemonRenderRectF getDisplayViewport() const = 0;
 
     // Layers require the current presentation dimensions in order to render.
-    virtual void
-    SetPresentationDimensions(const QSize &inPresentationDimensions) = 0;
-    virtual QSize GetCurrentPresentationDimensions() const = 0;
+    virtual void setPresentationDimensions(const QSize &inPresentationDimensions) = 0;
+    virtual QSize getCurrentPresentationDimensions() const = 0;
 
-    virtual void SetRenderRotation(RenderRotationValues::Enum inRotation) = 0;
-    virtual RenderRotationValues::Enum GetRenderRotation() const = 0;
+    virtual void setRenderRotation(RenderRotationValues::Enum inRotation) = 0;
+    virtual RenderRotationValues::Enum getRenderRotation() const = 0;
 
-    virtual QVector2D GetMousePickViewport() const = 0;
-    virtual QVector2D GetMousePickMouseCoords(const QVector2D &inMouseCoords) const = 0;
+    virtual QVector2D getMousePickViewport() const = 0;
+    virtual QVector2D getMousePickMouseCoords(const QVector2D &inMouseCoords) const = 0;
 
     // Valid during and just after prepare for render.
-    virtual QVector2D GetPresentationScaleFactor() const = 0;
+    virtual QVector2D getPresentationScaleFactor() const = 0;
 
     // Steps needed to render:
     // 1.  BeginFrame - sets up new target in render graph
@@ -208,15 +206,15 @@ public:
     // and the topmost presentation dimensions.  Expects there to be exactly one presentation
     // dimension pushed at this point.
     // This also starts a render target in the render graph.
-    virtual void BeginFrame() = 0;
+    virtual void beginFrame() = 0;
 
     // This runs through the added tasks in reverse order.  This is used to render dependencies
     // before rendering to the main render target.
-    virtual void RunRenderTasks() = 0;
+    virtual void runRenderTasks() = 0;
     // Now you can render to the main render target if you want to render over the top
     // of everything.
     // Next call end frame.
-    virtual void EndFrame() = 0;
+    virtual void endFrame() = 0;
 };
 QT_END_NAMESPACE
 

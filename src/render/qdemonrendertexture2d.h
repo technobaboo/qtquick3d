@@ -45,8 +45,8 @@ class Q_DEMONRENDER_EXPORT QDemonRenderTexture2D : public QDemonRenderTextureBas
 {
 
 private:
-    quint32 m_Width; ///< texture width
-    quint32 m_Height; ///< texture height
+    quint32 m_width; ///< texture width
+    quint32 m_height; ///< texture height
 
 public:
     /**
@@ -58,14 +58,13 @@ public:
          *
          * @return No return.
          */
-    QDemonRenderTexture2D(
-            QSharedPointer<QDemonRenderContextImpl> context,
-            QDemonRenderTextureTargetType::Enum texTarget = QDemonRenderTextureTargetType::Texture2D);
+    QDemonRenderTexture2D(QSharedPointer<QDemonRenderContextImpl> context,
+                          QDemonRenderTextureTargetType::Enum texTarget = QDemonRenderTextureTargetType::Texture2D);
 
     virtual ~QDemonRenderTexture2D() override;
 
     // Get the texture details for mipmap level 0 if it was set.
-    STextureDetails GetTextureDetails() const override;
+    QDemonTextureDetails getTextureDetails() const override;
 
     /**
          * @brief Create GL texture object and upload data
@@ -79,10 +78,12 @@ public:
          *
          * @return No return.
          */
-    virtual void SetTextureData(
-            QDemonDataRef<quint8> newBuffer, quint8 inMipLevel, quint32 width, quint32 height,
-            QDemonRenderTextureFormats::Enum format,
-            QDemonRenderTextureFormats::Enum formaInternal = QDemonRenderTextureFormats::Unknown);
+    virtual void setTextureData(QDemonDataRef<quint8> newBuffer,
+                                quint8 inMipLevel,
+                                quint32 width,
+                                quint32 height,
+                                QDemonRenderTextureFormats::Enum format,
+                                QDemonRenderTextureFormats::Enum formaInternal = QDemonRenderTextureFormats::Unknown);
 
     /**
          * @brief Create memory storage for a texture object
@@ -98,31 +99,34 @@ public:
          *
          * @return No return.
          */
-    virtual void
-    SetTextureStorage(quint32 inLevels, quint32 width, quint32 height,
-                      QDemonRenderTextureFormats::Enum formaInternal,
-                      QDemonRenderTextureFormats::Enum format = QDemonRenderTextureFormats::Unknown,
-                      QDemonDataRef<quint8> dataBuffer = QDemonDataRef<quint8>());
+    virtual void setTextureStorage(quint32 inLevels,
+                                   quint32 width,
+                                   quint32 height,
+                                   QDemonRenderTextureFormats::Enum formaInternal,
+                                   QDemonRenderTextureFormats::Enum format = QDemonRenderTextureFormats::Unknown,
+                                   QDemonDataRef<quint8> dataBuffer = QDemonDataRef<quint8>());
 
-    virtual void SetTextureDataMultisample(quint32 sampleCount, quint32 width, quint32 height,
+    virtual void setTextureDataMultisample(quint32 sampleCount,
+                                           quint32 width,
+                                           quint32 height,
                                            QDemonRenderTextureFormats::Enum format);
 
-    bool IsMultisampleTexture() const override
+    bool isMultisampleTexture() const override
     {
-        return (m_TexTarget == QDemonRenderTextureTargetType::Texture2D_MS);
+        return (m_texTarget == QDemonRenderTextureTargetType::Texture2D_MS);
     }
-    quint32 GetSampleCount() const override { return m_SampleCount; }
-    bool IsImmutableTexture() const override { return m_Immutable; }
+    quint32 getSampleCount() const override { return m_sampleCount; }
+    bool isImmutableTexture() const override { return m_immutable; }
 
     // Update a sub-rect of the image.  newBuffer is expected to be a continguous subrect of the
     // image.
-    virtual void SetTextureSubData(QDemonDataRef<quint8> newBuffer, quint8 inMipLevel, quint32 inXOffset,
+    virtual void setTextureSubData(QDemonDataRef<quint8> newBuffer, quint8 inMipLevel, quint32 inXOffset,
                                    quint32 inYOffset, quint32 inSubImageWidth,
                                    quint32 inSubImageHeight, QDemonRenderTextureFormats::Enum format);
     // Generate a set of mipmaps from mipLevel( 0 ).  Uses the graphis layer to do this if
     // possible
     // glGenerateMipmap
-    virtual void GenerateMipmaps(QDemonRenderHint::Enum genType = QDemonRenderHint::Nicest);
+    virtual void generateMipmaps(QDemonRenderHint::Enum genType = QDemonRenderHint::Nicest);
 
     /**
          * @brief Bind a texture for shader access
@@ -130,32 +134,32 @@ public:
          *
          * @return No return.
          */
-    void Bind() override;
+    void bind() override;
 
-    quint32 GetNumMipmaps() override { return m_MaxMipLevel; }
+    quint32 getNumMipmaps() override { return m_maxMipLevel; }
 
     /**
          * @brief Query if texture needs coordinate swizzle
          *
          * @return texture swizzle mode
          */
-    QDemonRenderTextureSwizzleMode::Enum GetTextureSwizzleMode() override
+    QDemonRenderTextureSwizzleMode::Enum getTextureSwizzleMode() override
     {
         // if our backend supports hardware texture swizzle then there is no need for a shader
         // swizzle
-        return (m_Backend->GetRenderBackendCap(
+        return (m_backend->getRenderBackendCap(
                     QDemonRenderBackend::QDemonRenderBackendCaps::TexSwizzle))
                 ? QDemonRenderTextureSwizzleMode::NoSwizzle
-                : m_Backend->GetTextureSwizzleMode(m_Format);
+                : m_backend->getTextureSwizzleMode(m_format);
     }
 
     // this will be obsolete
-    const void *GetImplementationHandle() const override
+    const void *getImplementationHandle() const override
     {
-        return reinterpret_cast<void *>(m_TextureHandle);
+        return reinterpret_cast<void *>(m_textureHandle);
     }
 
-    static QSharedPointer<QDemonRenderTexture2D> Create(QSharedPointer<QDemonRenderContextImpl> context);
+    static QSharedPointer<QDemonRenderTexture2D> create(QSharedPointer<QDemonRenderContextImpl> context);
 };
 
 QT_END_NAMESPACE

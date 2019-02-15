@@ -33,66 +33,66 @@
 QT_BEGIN_NAMESPACE
 
 
-CResourceFrameBuffer::CResourceFrameBuffer(QSharedPointer<IResourceManager> mgr)
-    : m_ResourceManager(mgr)
-    , m_FrameBuffer(nullptr)
+QDemonResourceFrameBuffer::QDemonResourceFrameBuffer(QSharedPointer<QDemonResourceManagerInterface> mgr)
+    : m_resourceManager(mgr)
+    , m_frameBuffer(nullptr)
 {
 }
 
-CResourceFrameBuffer::~CResourceFrameBuffer()
+QDemonResourceFrameBuffer::~QDemonResourceFrameBuffer()
 {
-    ReleaseFrameBuffer();
+    releaseFrameBuffer();
 }
 
-bool CResourceFrameBuffer::EnsureFrameBuffer()
+bool QDemonResourceFrameBuffer::ensureFrameBuffer()
 {
-    if (!m_FrameBuffer) {
-        m_FrameBuffer = m_ResourceManager->AllocateFrameBuffer();
+    if (!m_frameBuffer) {
+        m_frameBuffer = m_resourceManager->allocateFrameBuffer();
         return true;
     }
     return false;
 }
 
-void CResourceFrameBuffer::ReleaseFrameBuffer()
+void QDemonResourceFrameBuffer::releaseFrameBuffer()
 {
-    if (m_FrameBuffer) {
-        m_ResourceManager->Release(m_FrameBuffer);
+    if (m_frameBuffer) {
+        m_resourceManager->release(m_frameBuffer);
     }
 }
 
-CResourceRenderBuffer::CResourceRenderBuffer(QSharedPointer<IResourceManager> mgr)
-    : m_ResourceManager(mgr)
-    , m_RenderBuffer(nullptr)
+QDemonResourceRenderBuffer::QDemonResourceRenderBuffer(QSharedPointer<QDemonResourceManagerInterface> mgr)
+    : m_resourceManager(mgr)
+    , m_renderBuffer(nullptr)
 {
 }
 
-CResourceRenderBuffer::~CResourceRenderBuffer()
+QDemonResourceRenderBuffer::~QDemonResourceRenderBuffer()
 {
-    ReleaseRenderBuffer();
+    releaseRenderBuffer();
 }
 
-bool CResourceRenderBuffer::EnsureRenderBuffer(quint32 width, quint32 height,
+bool QDemonResourceRenderBuffer::ensureRenderBuffer(quint32 width, quint32 height,
                                                QDemonRenderRenderBufferFormats::Enum storageFormat)
 {
-    if (m_RenderBuffer == nullptr || m_Dimensions.m_Width != width || m_Dimensions.m_Height != height
-            || m_StorageFormat != storageFormat) {
-        if (m_RenderBuffer == nullptr || m_StorageFormat != storageFormat) {
-            ReleaseRenderBuffer();
-            m_RenderBuffer = m_ResourceManager->AllocateRenderBuffer(width, height, storageFormat);
+    if (m_renderBuffer == nullptr || m_dimensions.m_width != width || m_dimensions.m_height != height
+            || m_storageFormat != storageFormat) {
+        if (m_renderBuffer == nullptr || m_storageFormat != storageFormat) {
+            releaseRenderBuffer();
+            m_renderBuffer = m_resourceManager->allocateRenderBuffer(width, height, storageFormat);
         } else
-            m_RenderBuffer->SetDimensions(QDemonRenderRenderBufferDimensions(width, height));
-        m_Dimensions = m_RenderBuffer->GetDimensions();
-        m_StorageFormat = m_RenderBuffer->GetStorageFormat();
+            m_renderBuffer->setDimensions(QDemonRenderRenderBufferDimensions(width, height));
+        m_dimensions = m_renderBuffer->getDimensions();
+        m_storageFormat = m_renderBuffer->getStorageFormat();
         return true;
     }
     return false;
 }
 
-void CResourceRenderBuffer::ReleaseRenderBuffer()
+void QDemonResourceRenderBuffer::releaseRenderBuffer()
 {
-    if (m_RenderBuffer) {
-        m_ResourceManager->Release(m_RenderBuffer);
-        m_RenderBuffer = nullptr;
+    if (m_renderBuffer) {
+        m_resourceManager->release(m_renderBuffer);
+        m_renderBuffer = nullptr;
     }
 }
 

@@ -112,7 +112,7 @@ void QDemonMaterial::setDisplacementAmount(float displacementAmount)
     emit displacementAmountChanged(m_displacementAmount);
 }
 
-SGraphObject *QDemonMaterial::updateSpatialNode(SGraphObject *node)
+QDemonGraphObject *QDemonMaterial::updateSpatialNode(QDemonGraphObject *node)
 {
     // TODO update material node properties
 

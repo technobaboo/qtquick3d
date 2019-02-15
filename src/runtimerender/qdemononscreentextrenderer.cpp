@@ -44,25 +44,24 @@ QT_BEGIN_NAMESPACE
 
 namespace {
 
-struct STextureAtlasFontEntry
+struct QDemonTextureAtlasFontEntry
 {
-    STextureAtlasFontEntry()
-        : m_x(0)
-        , m_y(0)
-        , m_width(0)
-        , m_height(0)
-        , m_xOffset(0)
-        , m_yOffset(0)
-        , m_advance(0)
-        , m_s(0)
-        , m_t(0)
-        , m_s1(0)
-        , m_t1(0)
-    {
-    }
+    float m_x = 0.0f;
+    float m_y = 0.0f;
+    float m_width = 0.0f;
+    float m_height = 0.0f;
+    float m_xOffset = 0.0f;
+    float m_yOffset = 0.0f;
+    float m_advance = 0.0f;
 
-    STextureAtlasFontEntry(float x, float y, float width, float height, float xoffset,
-                           float yoffset, float advance, float s, float t, float s1, float t1)
+    float m_s = 0.0f;
+    float m_t = 0.0f;
+    float m_s1 = 0.0f;
+    float m_t1 = 0.0f;
+
+    QDemonTextureAtlasFontEntry() = default;
+    QDemonTextureAtlasFontEntry(float x, float y, float width, float height, float xoffset,
+                                float yoffset, float advance, float s, float t, float s1, float t1)
         : m_x(x)
         , m_y(y)
         , m_width(width)
@@ -77,78 +76,58 @@ struct STextureAtlasFontEntry
     {
     }
 
-    float m_x;
-    float m_y;
-    float m_width;
-    float m_height;
-    float m_xOffset;
-    float m_yOffset;
-    float m_advance;
 
-    float m_s;
-    float m_t;
-    float m_s1;
-    float m_t1;
 };
 
 typedef QString TStrType;
-typedef QHash<wchar_t, STextureAtlasFontEntry> TTextureAtlasMap;
+typedef QHash<wchar_t, QDemonTextureAtlasFontEntry> TTextureAtlasMap;
 
-struct STextAtlasFont
+struct QDemonTextAtlasFont
 {
-    quint32 m_FontSize;
-    TTextureAtlasMap m_AtlasEntries; ///< our entries in the atlas
+    quint32 m_fontSize;
+    TTextureAtlasMap m_atlasEntries; ///< our entries in the atlas
 
-    STextAtlasFont(quint32 fontSize)
-        : m_FontSize(fontSize)
+    QDemonTextAtlasFont(quint32 fontSize)
+        : m_fontSize(fontSize)
     {
     }
 
-    ~STextAtlasFont() { m_AtlasEntries.clear(); }
-
-    static QSharedPointer<STextAtlasFont> CreateTextureAtlasFont(quint32 fontSize)
+    static QSharedPointer<QDemonTextAtlasFont> createTextureAtlasFont(quint32 fontSize)
     {
-        return QSharedPointer<STextAtlasFont>(new STextAtlasFont(fontSize));
+        return QSharedPointer<QDemonTextAtlasFont>(new QDemonTextAtlasFont(fontSize));
     }
 };
 
 // This class is only for rendering 2D screen aligned text
 // it uses a predefined true type font and character set with various sizes
-struct QDemonOnscreenTextRenderer : public ITextRenderer, public QEnableSharedFromThis<QDemonOnscreenTextRenderer>
+struct QDemonOnscreenTextRenderer : public QDemonTextRendererInterface, public QEnableSharedFromThis<QDemonOnscreenTextRenderer>
 {
-
-    static const qint32 TEXTURE_ATLAS_DIM =
-            256; // if you change this you need to adjust STextTextureAtlas size as well
+    // if you change this you need to adjust STextTextureAtlas size as well
+    static constexpr qint32 TEXTURE_ATLAS_DIM = 256;
 
 private:
-    QSharedPointer<QDemonRenderContext> m_RenderContext;
-    bool m_TextureAtlasInitialized; ///< true if atlas is setup
-    QSharedPointer<ITextureAtlas> m_TextTextureAtlas;
-    QSharedPointer<STextAtlasFont> m_TextFont;
-    QRawFont *m_font;
+    QSharedPointer<QDemonRenderContext> m_renderContext;
+    bool m_textureAtlasInitialized = false; ///< true if atlas is setup
+    QSharedPointer<QDemonTextureAtlasInterface> m_textTextureAtlas;
+    QSharedPointer<QDemonTextAtlasFont> m_textFont;
+    QRawFont *m_font = nullptr;
 public:
-    QDemonOnscreenTextRenderer()
-        : m_TextureAtlasInitialized(false)
-        , m_font(nullptr)
-    {
-    }
-
     virtual ~QDemonOnscreenTextRenderer() override
     {
     }
 
-    void AddSystemFontDirectory(const char *) override {}
+    void addSystemFontDirectory(const char *) override {}
 
-    virtual void AddProjectFontDirectory(QString)
+    virtual void addProjectFontDirectory(QString)
     {
         // We always render using the default font with on-screen renderer,
         // so no need to care about font directories
     }
 
-    void AddProjectFontDirectory(const char *inProjectDirectory) override
+    void addProjectFontDirectory(const char *inProjectDirectory) override
     {
-        if (m_RenderContext)
-            AddProjectFontDirectory(QString::fromLocal8Bit(inProjectDirectory));
+        if (m_renderContext)
+            addProjectFontDirectory(QString::fromLocal8Bit(inProjectDirectory));
     }
 
     void loadFont()
@@ -159,24 +138,24 @@ public:
             m_font = new QRawFont(QStringLiteral(":res/Font/TitilliumWeb-Regular.ttf"), 20.0);
 
         // setup texture atlas
-        m_TextTextureAtlas = ITextureAtlas::CreateTextureAtlas(m_RenderContext, TEXTURE_ATLAS_DIM, TEXTURE_ATLAS_DIM);
+        m_textTextureAtlas = QDemonTextureAtlasInterface::createTextureAtlas(m_renderContext, TEXTURE_ATLAS_DIM, TEXTURE_ATLAS_DIM);
 
         // our list of predefined cached characters
         QString cache = QStringLiteral(" !\"#$%&'()*+,-./0123456789:;<=>?"
                                        "@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_"
                                        "`abcdefghijklmnopqrstuvwxyz{|}~");
 
-        m_TextFont = STextAtlasFont::CreateTextureAtlasFont(20);
-        CreateTextureAtlasEntries(m_font, *m_TextFont, cache);
-        m_TextureAtlasInitialized = true;
+        m_textFont = QDemonTextAtlasFont::createTextureAtlasFont(20);
+        createTextureAtlasEntries(m_font, *m_textFont, cache);
+        m_textureAtlasInitialized = true;
     }
 
-    void CreateTextureAtlasEntries(QRawFont *rawFont, STextAtlasFont &font, const QString &cache)
+    void createTextureAtlasEntries(QRawFont *rawFont, QDemonTextAtlasFont &font, const QString &cache)
     {
-        if (m_TextureAtlasInitialized || !m_TextTextureAtlas || !rawFont)
+        if (m_textureAtlasInitialized || !m_textTextureAtlas || !rawFont)
             return;
 
-        STextureAtlasRect theAtlasRect;
+        QDemonTextureAtlasRect theAtlasRect;
 
         QVector<quint32> glyphIndices = rawFont->glyphIndexesForString(cache);
         QVector<QPointF> glyphAdvances = rawFont->advancesForGlyphIndexes(glyphIndices);
@@ -193,88 +172,88 @@ public:
             QDemonConstDataRef<quint8> bufferData(static_cast<const quint8 *>(glyphImage.bits()),
                                                   glyphImage.byteCount());
 
-            theAtlasRect = m_TextTextureAtlas->AddAtlasEntry(
+            theAtlasRect = m_textTextureAtlas->addAtlasEntry(
                         glyphImage.width(), glyphImage.height(),
                         glyphImage.bytesPerLine(), glyphImage.width(), bufferData);
 
-            if (theAtlasRect.m_Width != 0) {
-                font.m_AtlasEntries.insert(
-                                cache.at(i).unicode(), STextureAtlasFontEntry(
-                                    (float)theAtlasRect.m_X, (float)theAtlasRect.m_Y,
-                                    (float)theAtlasRect.m_Width, (float)theAtlasRect.m_Height,
+            if (theAtlasRect.width != 0) {
+                font.m_atlasEntries.insert(
+                                cache.at(i).unicode(), QDemonTextureAtlasFontEntry(
+                                    (float)theAtlasRect.x, (float)theAtlasRect.y,
+                                    (float)theAtlasRect.width, (float)theAtlasRect.height,
                                     (float)rect.x(), (float)(0.0 - rect.height() - rect.y()),
                                     glyphAdvances[i].x(),
-                                    theAtlasRect.m_NormX, theAtlasRect.m_NormY,
-                                    theAtlasRect.m_NormX + theAtlasRect.m_NormWidth,
-                                    theAtlasRect.m_NormY + theAtlasRect.m_NormHeight));
+                                    theAtlasRect.normX, theAtlasRect.normY,
+                                    theAtlasRect.normX + theAtlasRect.normWidth,
+                                    theAtlasRect.normY + theAtlasRect.normHeight));
             }
         }
     }
 
-    void ClearProjectFontDirectories() override {}
+    void clearProjectFontDirectories() override {}
 
-    QSharedPointer<ITextRenderer> GetTextRenderer(QSharedPointer<QDemonRenderContext> inRenderContext) override
+    QSharedPointer<QDemonTextRendererInterface> getTextRenderer(QSharedPointer<QDemonRenderContext> inRenderContext) override
     {
-        m_RenderContext = inRenderContext;
+        m_renderContext = inRenderContext;
         return this->sharedFromThis();
     }
 
-    void PreloadFonts() override {}
-    void ReloadFonts() override {}
+    void preloadFonts() override {}
+    void reloadFonts() override {}
 
     // unused
-    QDemonConstDataRef<SRendererFontEntry> GetProjectFontList() override
+    QDemonConstDataRef<QDemonRendererFontEntry> getProjectFontList() override
     {
         Q_ASSERT(false);
-        return QDemonConstDataRef<SRendererFontEntry>();
+        return QDemonConstDataRef<QDemonRendererFontEntry>();
     }
 
     // unused
-    QDemonOption<QString> GetFontNameForFont(QString) override
-    {
-        Q_ASSERT(false);
-        return QDemonEmpty();
-    }
-
-    // unused
-    QDemonOption<QString> GetFontNameForFont(const char *) override
+    QDemonOption<QString> getFontNameForFont(QString) override
     {
         Q_ASSERT(false);
         return QDemonEmpty();
     }
 
     // unused
-    STextDimensions MeasureText(const STextRenderInfo &, float, const char *) override
+    QDemonOption<QString> getFontNameForFont(const char *) override
     {
         Q_ASSERT(false);
-        return STextDimensions(0, 0);
+        return QDemonEmpty();
     }
 
     // unused
-    STextTextureDetails RenderText(const STextRenderInfo &, QDemonRenderTexture2D &) override
+    QDemonTextDimensions measureText(const QDemonTextRenderInfo &, float, const char *) override
     {
         Q_ASSERT(false);
-        return STextTextureDetails();
+        return QDemonTextDimensions(0, 0);
     }
 
     // unused
-    STextTextureDetails RenderText(const STextRenderInfo &, QDemonRenderPathFontItem &,
+    QDemonTextTextureDetails renderText(const QDemonTextRenderInfo &, QDemonRenderTexture2D &) override
+    {
+        Q_ASSERT(false);
+        return QDemonTextTextureDetails();
+    }
+
+    // unused
+    QDemonTextTextureDetails renderText(const QDemonTextRenderInfo &, QDemonRenderPathFontItem &,
                                    QDemonRenderPathFontSpecification &) override
     {
         Q_ASSERT(false);
-        return STextTextureDetails();
+        return QDemonTextTextureDetails();
     }
 
-    SRenderTextureAtlasDetails RenderText(const STextRenderInfo &inText) override
+    QDemonRenderTextureAtlasDetails renderText(const QDemonTextRenderInfo &inText) override
     {
 //        const wchar_t *wText = theStringTable.GetWideStr(inText.m_Text);
 //        quint32 length = (quint32)wcslen(wText);
         // ### Fix this to not use w_char's and instead use 8bit values
-        QByteArray wText = inText.m_Text.toLocal8Bit();
+        QByteArray wText = inText.text.toLocal8Bit();
         const int length = wText.size();
 
         if (length) {
-            QSharedPointer<STextAtlasFont> pFont = m_TextFont;
+            QSharedPointer<QDemonTextAtlasFont> pFont = m_textFont;
 
             float x1, y1, x2, y2;
             float s, t, s1, t1;
@@ -286,14 +265,14 @@ public:
             float *bufPtr = vertexData;
             if (vertexData) {
                 for (int i = 0; i < length; ++i) {
-                    if (!pFont->m_AtlasEntries.contains(wText[i]))
+                    if (!pFont->m_atlasEntries.contains(wText[i]))
                         continue;
-                    const STextureAtlasFontEntry pEntry = pFont->m_AtlasEntries.value(wText[i]);
+                    const QDemonTextureAtlasFontEntry pEntry = pFont->m_atlasEntries.value(wText[i]);
 
                     x1 = advance + pEntry.m_xOffset;
-                    x2 = x1 + pEntry.m_width * inText.m_ScaleX;
+                    x2 = x1 + pEntry.m_width * inText.scaleX;
                     y1 = pEntry.m_yOffset;
-                    y2 = y1 + pEntry.m_height * inText.m_ScaleY;
+                    y2 = y1 + pEntry.m_height * inText.scaleY;
 
                     s = pEntry.m_s;
                     s1 = pEntry.m_s1;
@@ -332,60 +311,60 @@ public:
                     bufPtr[28] = s;
                     bufPtr[29] = t1;
 
-                    advance += pEntry.m_advance * inText.m_ScaleX;
+                    advance += pEntry.m_advance * inText.scaleX;
 
                     bufPtr += 30;
                 }
 
-                m_TextTextureAtlas->RelaseEntries();
+                m_textTextureAtlas->relaseEntries();
 
-                return SRenderTextureAtlasDetails(length * 6, toU8DataRef(vertexData, length * 6 * 5));
+                return QDemonRenderTextureAtlasDetails(length * 6, toU8DataRef(vertexData, length * 6 * 5));
             }
         }
 
-        return SRenderTextureAtlasDetails();
+        return QDemonRenderTextureAtlasDetails();
     }
 
-    STextTextureAtlasEntryDetails RenderAtlasEntry(quint32 index,
+    QDemonTextTextureAtlasEntryDetails renderAtlasEntry(quint32 index,
                                                    QDemonRenderTexture2D &inTexture) override
     {
-        if (m_TextTextureAtlas) {
-            TTextureAtlasEntryAndBuffer theEntry = m_TextTextureAtlas->GetAtlasEntryByIndex(index);
-            if (theEntry.first.m_Width) {
-                inTexture.SetTextureData(theEntry.second, 0, theEntry.first.m_Width,
-                                         theEntry.first.m_Height, QDemonRenderTextureFormats::Alpha8);
-                inTexture.SetMagFilter(QDemonRenderTextureMagnifyingOp::Linear);
-                inTexture.SetMinFilter(QDemonRenderTextureMinifyingOp::Linear);
-                inTexture.SetTextureWrapS(QDemonRenderTextureCoordOp::ClampToEdge);
-                inTexture.SetTextureWrapT(QDemonRenderTextureCoordOp::ClampToEdge);
-                STextureDetails theTextureDetails = inTexture.GetTextureDetails();
-                return STextTextureAtlasEntryDetails(theTextureDetails.m_Width,
-                                                     theTextureDetails.m_Height, theEntry.first.m_X,
-                                                     theEntry.first.m_Y);
+        if (m_textTextureAtlas) {
+            TTextureAtlasEntryAndBuffer theEntry = m_textTextureAtlas->getAtlasEntryByIndex(index);
+            if (theEntry.first.width) {
+                inTexture.setTextureData(theEntry.second, 0, theEntry.first.width,
+                                         theEntry.first.height, QDemonRenderTextureFormats::Alpha8);
+                inTexture.setMagFilter(QDemonRenderTextureMagnifyingOp::Linear);
+                inTexture.setMinFilter(QDemonRenderTextureMinifyingOp::Linear);
+                inTexture.setTextureWrapS(QDemonRenderTextureCoordOp::ClampToEdge);
+                inTexture.setTextureWrapT(QDemonRenderTextureCoordOp::ClampToEdge);
+                QDemonTextureDetails theTextureDetails = inTexture.getTextureDetails();
+                return QDemonTextTextureAtlasEntryDetails(theTextureDetails.width,
+                                                     theTextureDetails.height, theEntry.first.x,
+                                                     theEntry.first.y);
             }
         }
 
-        return STextTextureAtlasEntryDetails();
+        return QDemonTextTextureAtlasEntryDetails();
     }
-    qint32 CreateTextureAtlas() override
+    qint32 createTextureAtlas() override
     {
         loadFont();
 
         qint32 count = 0;
-        if (m_TextTextureAtlas)
-            count = m_TextTextureAtlas->GetAtlasEntryCount();
+        if (m_textTextureAtlas)
+            count = m_textTextureAtlas->getAtlasEntryCount();
 
         return count;
     }
 
-    void BeginFrame() override {}
-    void EndFrame() override {}
-    void BeginPreloadFonts(IThreadPool &, QSharedPointer<IPerfTimer>) override {}
-    void EndPreloadFonts() override {}
+    void beginFrame() override {}
+    void endFrame() override {}
+    void beginPreloadFonts(QDemonAbstractThreadPool &, QSharedPointer<QDemonPerfTimerInterface>) override {}
+    void endPreloadFonts() override {}
 };
 }
 
-QSharedPointer<ITextRendererCore> ITextRendererCore::CreateOnscreenTextRenderer()
+QSharedPointer<QDemonTextRendererCoreInterface> QDemonTextRendererCoreInterface::createOnscreenTextRenderer()
 {
     return QSharedPointer<QDemonOnscreenTextRenderer>(new QDemonOnscreenTextRenderer());
 }

@@ -33,30 +33,30 @@
 #include <QtDemonRuntimeRender/qdemonrendergraphobject.h>
 
 QT_BEGIN_NAMESPACE
-struct SPath;
+struct QDemonPath;
 
-struct SPathSubPath : public SGraphObject
+struct QDemonPathSubPath : public QDemonGraphObject
 {
-    SPath *m_Path;
-    SPathSubPath *m_NextSubPath;
-    bool m_Closed;
+    QDemonPath *m_path;
+    QDemonPathSubPath *m_nextSubPath;
+    bool m_closed;
 
-    SPathSubPath()
-        : SGraphObject(GraphObjectTypes::PathSubPath)
-        , m_Path(nullptr)
-        , m_NextSubPath(nullptr)
-        , m_Closed(false)
+    QDemonPathSubPath()
+        : QDemonGraphObject(QDemonGraphObjectTypes::PathSubPath)
+        , m_path(nullptr)
+        , m_nextSubPath(nullptr)
+        , m_closed(false)
     {
     }
 
     // Generic method used during serialization
     // to remap string and object pointers
     template <typename TRemapperType>
-    void Remap(TRemapperType &inRemapper)
+    void remap(TRemapperType &inRemapper)
     {
-        SGraphObject::Remap(inRemapper);
-        inRemapper.Remap(m_Path);
-        inRemapper.Remap(m_NextSubPath);
+        QDemonGraphObject::remap(inRemapper);
+        inRemapper.remap(m_path);
+        inRemapper.remap(m_nextSubPath);
     }
 };
 QT_END_NAMESPACE

@@ -31,27 +31,27 @@
 
 QT_BEGIN_NAMESPACE
 
-SLight::SLight()
-    : SNode(GraphObjectTypes::Light)
-    , m_LightType(RenderLightTypes::Directional)
-    , m_Scope(nullptr)
-    , m_DiffuseColor(1, 1, 1)
-    , m_SpecularColor(1, 1, 1)
-    , m_AmbientColor(0, 0, 0)
-    , m_Brightness(100)
-    , m_LinearFade(0)
-    , m_ExponentialFade(0)
-    , m_AreaWidth(0)
-    , m_AreaHeight(0)
-    , m_CastShadow(false)
-    , m_ShadowBias(0.0f)
-    , m_ShadowFactor(5.0f)
-    , m_ShadowMapRes(9)
-    , m_ShadowMapFar(5000.0f)
-    , m_ShadowMapFov(90.0f)
-    , m_ShadowFilter(35.0f)
+QDemonRenderLight::QDemonRenderLight()
+    : QDemonGraphNode(QDemonGraphObjectTypes::Light)
+    , m_lightType(RenderLightTypes::Directional)
+    , m_scope(nullptr)
+    , m_diffuseColor(1, 1, 1)
+    , m_specularColor(1, 1, 1)
+    , m_ambientColor(0, 0, 0)
+    , m_brightness(100)
+    , m_linearFade(0)
+    , m_exponentialFade(0)
+    , m_areaWidth(0)
+    , m_areaHeight(0)
+    , m_castShadow(false)
+    , m_shadowBias(0.0f)
+    , m_shadowFactor(5.0f)
+    , m_shadowMapRes(9)
+    , m_shadowMapFar(5000.0f)
+    , m_shadowMapFov(90.0f)
+    , m_shadowFilter(35.0f)
 {
-    m_Flags.SetPointLight(0);
+    flags.setPointLight(0);
 }
 
 QT_END_NAMESPACE

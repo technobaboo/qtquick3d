@@ -41,50 +41,58 @@
 
 QT_BEGIN_NAMESPACE
 
-struct SPathRenderContext
+struct QDemonPathRenderContext
 {
     // The lights and camera will not change per layer,
     // so that information can be set once for all the shaders.
-    const QVector<SLight *> &m_Lights;
-    const SCamera &m_Camera;
+    const QVector<QDemonRenderLight *> &lights;
+    const QDemonRenderCamera &camera;
 
     // Per-object information.
-    const SPath &m_Path;
-    const QMatrix4x4 &m_ModelViewProjection;
-    const QMatrix4x4 &m_ModelMatrix; ///< model to world transformation
-    const QMatrix3x3 &m_NormalMatrix;
+    const QDemonPath &path;
+    const QMatrix4x4 &mvp;
+    const QMatrix4x4 &modelMatrix; ///< model to world transformation
+    const QMatrix3x3 &normalMatrix;
 
-    float m_Opacity;
-    const SGraphObject &m_Material;
-    SShaderDefaultMaterialKey m_MaterialKey;
-    SRenderableImage *m_FirstImage;
-    QVector2D m_CameraVec;
+    float opacity;
+    const QDemonGraphObject &material;
+    QDemonShaderDefaultMaterialKey materialKey;
+    QDemonRenderableImage *firstImage;
+    QVector2D cameraVec;
 
-    bool m_EnableWireframe;
-    bool m_HasTransparency;
-    bool m_IsStroke;
+    bool enableWireframe;
+    bool hasTransparency;
+    bool isStroke;
 
-    SPathRenderContext(const QVector<SLight *> &lights, const SCamera &cam, const SPath &p,
-                       const QMatrix4x4 &mvp, const QMatrix4x4 &world, const QMatrix3x3 &nm,
-                       float inOpacity, const SGraphObject &inMaterial,
-                       SShaderDefaultMaterialKey inMaterialKey, SRenderableImage *inFirstImage,
-                       bool inWireframe, QVector2D inCameraVec, bool inHasTransparency,
-                       bool inIsStroke)
+    QDemonPathRenderContext(const QVector<QDemonRenderLight *> &inLights,
+                            const QDemonRenderCamera &inCamera,
+                            const QDemonPath &inPath,
+                            const QMatrix4x4 &inMvp,
+                            const QMatrix4x4 &inWorld,
+                            const QMatrix3x3 &inNormal,
+                            float inOpacity,
+                            const QDemonGraphObject &inMaterial,
+                            QDemonShaderDefaultMaterialKey inMaterialKey,
+                            QDemonRenderableImage *inFirstImage,
+                            bool inWireframe,
+                            QVector2D inCameraVec,
+                            bool inHasTransparency,
+                            bool inIsStroke)
 
-        : m_Lights(lights)
-        , m_Camera(cam)
-        , m_Path(p)
-        , m_ModelViewProjection(mvp)
-        , m_ModelMatrix(world)
-        , m_NormalMatrix(nm)
-        , m_Opacity(inOpacity)
-        , m_Material(inMaterial)
-        , m_MaterialKey(inMaterialKey)
-        , m_FirstImage(inFirstImage)
-        , m_CameraVec(inCameraVec)
-        , m_EnableWireframe(inWireframe)
-        , m_HasTransparency(inHasTransparency)
-        , m_IsStroke(inIsStroke)
+        : lights(inLights)
+        , camera(inCamera)
+        , path(inPath)
+        , mvp(inMvp)
+        , modelMatrix(inWorld)
+        , normalMatrix(inNormal)
+        , opacity(inOpacity)
+        , material(inMaterial)
+        , materialKey(inMaterialKey)
+        , firstImage(inFirstImage)
+        , cameraVec(inCameraVec)
+        , enableWireframe(inWireframe)
+        , hasTransparency(inHasTransparency)
+        , isStroke(inIsStroke)
     {
     }
 };

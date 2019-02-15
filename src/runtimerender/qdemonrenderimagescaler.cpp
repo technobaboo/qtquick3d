@@ -40,7 +40,7 @@ QT_BEGIN_NAMESPACE
 //==============================================================================
 //	Namespace
 //==============================================================================
-CImageScaler::CImageScaler()
+QDemonImageScaler::QDemonImageScaler()
 {
 }
 //==============================================================================
@@ -59,19 +59,19 @@ CImageScaler::CImageScaler()
  *	@param  inPlanes		number of planes (1 for greyscale, 3 for rgb, etc)
  *  also equivalent to the return value of the CTextureType::PixelSize method.
  */
-void CImageScaler::Scale(EScaleMethod inScaleMethod, unsigned char *inOldBuffer,
+void QDemonImageScaler::scale(EScaleMethod inScaleMethod, unsigned char *inOldBuffer,
                          unsigned long inOldWidth, unsigned long inOldHeight,
                          unsigned char *&outNewBuffer, unsigned long inNewWidth,
                          unsigned long inNewHeight, unsigned long inPlanes)
 {
     switch (inScaleMethod) {
     case SCALEMETHOD_CROP:
-        CImageScaler::Crop(inOldBuffer, inOldWidth, inOldHeight, outNewBuffer, inNewWidth,
+        QDemonImageScaler::crop(inOldBuffer, inOldWidth, inOldHeight, outNewBuffer, inNewWidth,
                            inNewHeight, inPlanes);
         break;
 
     case SCALEMETHOD_BILINEAR:
-        CImageScaler::Bilinear(inOldBuffer, inOldWidth, inOldHeight, outNewBuffer, inNewWidth,
+        QDemonImageScaler::bilinear(inOldBuffer, inOldWidth, inOldHeight, outNewBuffer, inNewWidth,
                                inNewHeight, inPlanes);
         break;
 
@@ -97,19 +97,19 @@ void CImageScaler::Scale(EScaleMethod inScaleMethod, unsigned char *inOldBuffer,
  *	@param  inPlanes		number of planes (1 for greyscale, 3 for rgb, etc)
  *  also equivalent to the return value of the CTextureType::PixelSize method.
  */
-void CImageScaler::FastScale(EScaleMethod inScaleMethod, unsigned char *inOldBuffer,
+void QDemonImageScaler::fastScale(EScaleMethod inScaleMethod, unsigned char *inOldBuffer,
                              unsigned long inOldWidth, unsigned long inOldHeight,
                              unsigned char *&outNewBuffer, unsigned long inNewWidth,
                              unsigned long inNewHeight, unsigned long inPlanes)
 {
     switch (inScaleMethod) {
     case SCALEMETHOD_CROP:
-        CImageScaler::Crop(inOldBuffer, inOldWidth, inOldHeight, outNewBuffer, inNewWidth,
+        QDemonImageScaler::crop(inOldBuffer, inOldWidth, inOldHeight, outNewBuffer, inNewWidth,
                            inNewHeight, inPlanes);
         break;
 
     case SCALEMETHOD_POINTSAMPLE:
-        CImageScaler::FastPointSample(inOldBuffer, inOldWidth, inOldHeight, outNewBuffer,
+        QDemonImageScaler::fastPointSample(inOldBuffer, inOldWidth, inOldHeight, outNewBuffer,
                                       inNewWidth, inNewHeight, inPlanes);
         break;
 
@@ -134,7 +134,7 @@ void CImageScaler::FastScale(EScaleMethod inScaleMethod, unsigned char *inOldBuf
  *	@param  inPlanes		number of planes (1 for greyscale, 3 for rgb, etc)
  *  also equivalent to the return value of the CTextureType::PixelSize method.
 */
-void CImageScaler::Crop(unsigned char *inOldBuffer, unsigned long inOldWidth,
+void QDemonImageScaler::crop(unsigned char *inOldBuffer, unsigned long inOldWidth,
                         unsigned long inOldHeight, unsigned char *&outNewBuffer,
                         unsigned long inNewWidth, unsigned long inNewHeight, unsigned long inPlanes)
 {
@@ -170,7 +170,7 @@ void CImageScaler::Crop(unsigned char *inOldBuffer, unsigned long inOldWidth,
  *	@param  inPlanes		number of planes (1 for greyscale, 3 for rgb, etc)
  *  also equivalent to the return value of the CTextureType::PixelSize method.
 */
-void CImageScaler::Bilinear(unsigned char *inOldBuffer, unsigned long inOldWidth,
+void QDemonImageScaler::bilinear(unsigned char *inOldBuffer, unsigned long inOldWidth,
                             unsigned long inOldHeight, unsigned char *&outNewBuffer,
                             unsigned long inNewWidth, unsigned long inNewHeight,
                             unsigned long inPlanes)
@@ -178,7 +178,7 @@ void CImageScaler::Bilinear(unsigned char *inOldBuffer, unsigned long inOldWidth
     Q_ASSERT(inPlanes > 0);
 
     outNewBuffer = new unsigned char[inNewWidth * inNewHeight * inPlanes];
-    CImageScaler::Resize(inOldBuffer, inOldWidth, inOldHeight, outNewBuffer, inNewWidth,
+    QDemonImageScaler::resize(inOldBuffer, inOldWidth, inOldHeight, outNewBuffer, inNewWidth,
                          inNewHeight, inPlanes);
 }
 
@@ -199,7 +199,7 @@ void CImageScaler::Bilinear(unsigned char *inOldBuffer, unsigned long inOldWidth
  *	@param  inPlanes		number of planes (1 for greyscale, 3 for rgb, etc)
  *  also equivalent to the return value of the CTextureType::PixelSize method.
 */
-void CImageScaler::FastPointSample(unsigned char *inOldBuffer, unsigned long inOldWidth,
+void QDemonImageScaler::fastPointSample(unsigned char *inOldBuffer, unsigned long inOldWidth,
                                    unsigned long inOldHeight, unsigned char *&outNewBuffer,
                                    unsigned long inNewWidth, unsigned long inNewHeight,
                                    unsigned long inPlanes)
@@ -339,7 +339,7 @@ void CImageScaler::FastPointSample(unsigned char *inOldBuffer, unsigned long inO
  *	@param	inHeight
  *	@return	unsigned char*
  */
-unsigned char *CImageScaler::AllocateBuffer(long inWidth, long inHeight)
+unsigned char *QDemonImageScaler::allocateBuffer(long inWidth, long inHeight)
 {
     unsigned char *theBuffer = new unsigned char[inHeight * inWidth * 4];
     return theBuffer;
@@ -349,7 +349,7 @@ unsigned char *CImageScaler::AllocateBuffer(long inWidth, long inHeight)
 /**
  *	@param	ioBuffer the buffer to release
  */
-void CImageScaler::ReleaseBuffer(unsigned char *&ioBuffer)
+void QDemonImageScaler::releaseBuffer(unsigned char *&ioBuffer)
 {
     delete[] ioBuffer;
     ioBuffer = nullptr;
@@ -366,7 +366,7 @@ void CImageScaler::ReleaseBuffer(unsigned char *&ioBuffer)
  *	@param  inPlanes		number of planes (1 for greyscale, 3 for rgb, etc)
  *  also equivalent to the return value of the CTextureType::PixelSize method.
  */
-void CImageScaler::Resize(unsigned char *inOldBuffer, unsigned long inOldWidth,
+void QDemonImageScaler::resize(unsigned char *inOldBuffer, unsigned long inOldWidth,
                           unsigned long inOldHeight, unsigned char *&outNewBuffer,
                           unsigned long inNewWidth, unsigned long inNewHeight,
                           unsigned long inPlanes)
@@ -375,7 +375,7 @@ void CImageScaler::Resize(unsigned char *inOldBuffer, unsigned long inOldWidth,
 
     // only do the temporary allocation if necessary
     if (inOldWidth < inNewWidth || inOldHeight < inNewHeight) {
-        CImageScaler::ExpandRowsAndColumns(inOldBuffer, inOldWidth, inOldHeight, outNewBuffer,
+        QDemonImageScaler::expandRowsAndColumns(inOldBuffer, inOldWidth, inOldHeight, outNewBuffer,
                                            inNewWidth, inNewHeight, inPlanes);
         return;
     } else {
@@ -384,21 +384,21 @@ void CImageScaler::Resize(unsigned char *inOldBuffer, unsigned long inOldWidth,
             QByteArray theBuffer;
             theBuffer.resize(inNewWidth * inOldHeight * 4);
             unsigned char *theTempBuffer = reinterpret_cast<unsigned char *>(theBuffer.data());
-            CImageScaler::ReduceCols(inOldBuffer, inOldWidth, inOldHeight, theTempBuffer,
+            QDemonImageScaler::reduceCols(inOldBuffer, inOldWidth, inOldHeight, theTempBuffer,
                                      inNewWidth);
-            CImageScaler::ReduceRows(theTempBuffer, inNewWidth, inOldHeight, outNewBuffer,
+            QDemonImageScaler::reduceRows(theTempBuffer, inNewWidth, inOldHeight, outNewBuffer,
                                      inNewHeight);
         } else if (inOldWidth > inNewWidth) {
-            CImageScaler::ReduceCols(inOldBuffer, inOldWidth, inOldHeight, outNewBuffer,
+            QDemonImageScaler::reduceCols(inOldBuffer, inOldWidth, inOldHeight, outNewBuffer,
                                      inNewWidth);
         } else if (inOldHeight > inNewHeight) {
-            CImageScaler::ReduceRows(inOldBuffer, inNewWidth, inOldHeight, outNewBuffer,
+            QDemonImageScaler::reduceRows(inOldBuffer, inNewWidth, inOldHeight, outNewBuffer,
                                      inNewHeight);
         }
     }
 }
 
-void CImageScaler::ExpandRowsAndColumns(unsigned char *inBuffer, unsigned long inWidth,
+void QDemonImageScaler::expandRowsAndColumns(unsigned char *inBuffer, unsigned long inWidth,
                                         unsigned long inHeight, unsigned char *outBuffer,
                                         unsigned long inDstWidth, unsigned long inDstHeight,
                                         unsigned long inPlanes)
@@ -526,7 +526,7 @@ void CImageScaler::ExpandRowsAndColumns(unsigned char *inBuffer, unsigned long i
 
 // Assuming the number of planes is four
 
-void CImageScaler::FastExpandRowsAndColumns(unsigned char *inBuffer, unsigned long inWidth,
+void QDemonImageScaler::fastExpandRowsAndColumns(unsigned char *inBuffer, unsigned long inWidth,
                                             unsigned long inHeight, unsigned char *outBuffer,
                                             unsigned long inDstWidth, unsigned long inDstHeight)
 {
@@ -695,7 +695,7 @@ void CImageScaler::FastExpandRowsAndColumns(unsigned char *inBuffer, unsigned lo
 /**
  *	@param	inSrcBuffer
  */
-void CImageScaler::ReduceCols(unsigned char *inSrcBuffer, long inSrcWidth, long inSrcHeight,
+void QDemonImageScaler::reduceCols(unsigned char *inSrcBuffer, long inSrcWidth, long inSrcHeight,
                               unsigned char *&outDstBuffer, long inDstWidth)
 {
     long theDDAConst = static_cast<long>(1024.0 * inDstWidth / inSrcWidth);
@@ -789,7 +789,7 @@ void CImageScaler::ReduceCols(unsigned char *inSrcBuffer, long inSrcWidth, long 
 /**
  *	@param	inSrcBuffer
  */
-void CImageScaler::ReduceRows(unsigned char *inSrcBuffer, long inSrcWidth, long inSrcHeight,
+void QDemonImageScaler::reduceRows(unsigned char *inSrcBuffer, long inSrcWidth, long inSrcHeight,
                               unsigned char *&outDstBuffer, long inDstHeight)
 {
     long theDDAConst = static_cast<long>(1024.0 * inDstHeight / inSrcHeight);

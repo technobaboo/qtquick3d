@@ -6,12 +6,12 @@
 #include <QtGui/QOpenGLContext>
 
 
-class IQDemonRenderContextCore;
-class IQDemonRenderContext;
+class QDemonRenderContextCoreInterface;
+class QDemonRenderContextInterface;
 class QDemonRenderContext;
-struct SPresentation;
-struct SScene;
-struct SModel;
+struct QDemonPresentation;
+struct QDemonRenderScene;
+struct QDemonRenderModel;
 
 class RenderWindow : public QWindow
 {
@@ -42,12 +42,12 @@ private:
     bool m_autoUpdate = true;
     bool m_isIntialized = false;
     QOpenGLContext *m_glContext;
-    QSharedPointer<IQDemonRenderContextCore> m_contextCore;
-    QSharedPointer<IQDemonRenderContext> m_context;
+    QSharedPointer<QDemonRenderContextCoreInterface> m_contextCore;
+    QSharedPointer<QDemonRenderContextInterface> m_context;
     QSharedPointer<QDemonRenderContext> m_renderContext;
-    QSharedPointer<SPresentation> m_presentation;
-    QSharedPointer<SScene> m_scene;
-    SModel *m_cube;
+    QSharedPointer<QDemonPresentation> m_presentation;
+    QSharedPointer<QDemonRenderScene> m_scene;
+    QDemonRenderModel *m_cube;
 
 };
 

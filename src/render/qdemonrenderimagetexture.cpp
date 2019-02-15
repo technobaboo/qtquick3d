@@ -39,48 +39,48 @@ QT_BEGIN_NAMESPACE
 QDemonRenderImage2D::QDemonRenderImage2D(QSharedPointer<QDemonRenderContextImpl> context,
                                          QSharedPointer<QDemonRenderTexture2D> inTexture,
                                          QDemonRenderImageAccessType::Enum inAccess)
-    : m_Context(context)
-    , m_Backend(context->GetBackend())
-    , m_Texture2D(inTexture)
-    , m_TextureUnit(std::numeric_limits<int>::max())
-    , m_AccessType(inAccess)
-    , m_TextureLevel(0)
+    : m_context(context)
+    , m_backend(context->getBackend())
+    , m_texture2D(inTexture)
+    , m_textureUnit(std::numeric_limits<int>::max())
+    , m_accessType(inAccess)
+    , m_textureLevel(0)
 {
 }
 
 QDemonRenderImage2D::~QDemonRenderImage2D()
 {
-    m_Context->ImageDestroyed(this);
+    m_context->imageDestroyed(this);
 }
 
-void QDemonRenderImage2D::SetTextureLevel(qint32 inLevel)
+void QDemonRenderImage2D::setTextureLevel(qint32 inLevel)
 {
-    if (m_Texture2D && m_Texture2D->GetNumMipmaps() >= (quint32)inLevel) {
-        m_TextureLevel = inLevel;
+    if (m_texture2D && m_texture2D->getNumMipmaps() >= (quint32)inLevel) {
+        m_textureLevel = inLevel;
     }
 }
 
-void QDemonRenderImage2D::Bind(quint32 unit)
+void QDemonRenderImage2D::bind(quint32 unit)
 {
     if (unit == -1)
-        m_TextureUnit = m_Context->GetNextTextureUnit();
+        m_textureUnit = m_context->getNextTextureUnit();
     else
-        m_TextureUnit = unit;
+        m_textureUnit = unit;
 
-    STextureDetails theDetails(m_Texture2D->GetTextureDetails());
+    QDemonTextureDetails theDetails(m_texture2D->getTextureDetails());
 
     // note it is the callers responsibility that the texture format is supported by the compute
     // shader
-    m_Backend->BindImageTexture(m_Texture2D->GetTextureObjectHandle(), m_TextureUnit,
-                                m_TextureLevel, false, 0, m_AccessType, theDetails.m_Format);
+    m_backend->bindImageTexture(m_texture2D->getTextureObjectHandle(), m_textureUnit,
+                                m_textureLevel, false, 0, m_accessType, theDetails.format);
 }
 
-QDemonRenderBackend::QDemonRenderBackendTextureObject QDemonRenderImage2D::GetTextureObjectHandle()
+QDemonRenderBackend::QDemonRenderBackendTextureObject QDemonRenderImage2D::getTextureObjectHandle()
 {
-    return m_Texture2D->GetTextureObjectHandle();
+    return m_texture2D->getTextureObjectHandle();
 }
 
-QSharedPointer<QDemonRenderImage2D> QDemonRenderImage2D::Create(QSharedPointer<QDemonRenderContextImpl> context,
+QSharedPointer<QDemonRenderImage2D> QDemonRenderImage2D::create(QSharedPointer<QDemonRenderContextImpl> context,
                                                  QSharedPointer<QDemonRenderTexture2D> inTexture,
                                                  QDemonRenderImageAccessType::Enum inAccess)
 {

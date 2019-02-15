@@ -36,11 +36,11 @@
 
 QT_BEGIN_NAMESPACE
 
-void SPresentation::Render(IQDemonRenderContext *inContext)
+void QDemonPresentation::render(QDemonRenderContextInterface *inContext)
 {
-    if (m_Scene) {
-        QDemonRenderRect theViewportSize(inContext->GetRenderContext()->GetViewport());
-        m_Scene->Render(QVector2D(float(theViewportSize.m_Width), float(theViewportSize.m_Height)), inContext);
+    if (scene) {
+        QDemonRenderRect theViewportSize(inContext->getRenderContext()->getViewport());
+        scene->render(QVector2D(float(theViewportSize.m_width), float(theViewportSize.m_height)), inContext);
     }
 }
 

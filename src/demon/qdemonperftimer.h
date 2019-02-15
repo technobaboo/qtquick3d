@@ -8,62 +8,62 @@
 
 QT_BEGIN_NAMESPACE
 
-class Q_DEMON_EXPORT IPerfTimer
+class Q_DEMON_EXPORT QDemonPerfTimerInterface
 {
 protected:
-    virtual ~IPerfTimer() {}
+    virtual ~QDemonPerfTimerInterface() {}
 public:
     // amount is in counter frequency units
-    virtual void Update(const char *inTag, quint64 inAmount) = 0;
+    virtual void update(const char *inTag, quint64 inAmount) = 0;
     // Dump current summation of timer data.
-    virtual void OutputTimerData(quint32 inFrameCount = 0) = 0;
-    virtual void ResetTimerData() = 0;
+    virtual void outputTimerData(quint32 inFrameCount = 0) = 0;
+    virtual void resetTimerData() = 0;
 
-    static QSharedPointer<IPerfTimer> CreatePerfTimer();
+    static QSharedPointer<QDemonPerfTimerInterface> createPerfTimer();
 };
 
 // Specialize this struct to get the perf timer in different contexts.
 template <typename TTimerProvider>
-struct STimerProvider
+struct QDemonTimerProvider
 {
-    static IPerfTimer &getPerfTimer(TTimerProvider &inProvider)
+    static QDemonPerfTimerInterface &getPerfTimer(TTimerProvider &inProvider)
     {
         return inProvider.getPerfTimer();
     }
 };
 
 template <typename TTimerProvider>
-IPerfTimer &getPerfTimer(TTimerProvider &inProvider)
+QDemonPerfTimerInterface &getPerfTimer(TTimerProvider &inProvider)
 {
-    return STimerProvider<TTimerProvider>::getPerfTimer(inProvider);
+    return QDemonTimerProvider<TTimerProvider>::getPerfTimer(inProvider);
 }
 
-struct SStackPerfTimer
+struct QDemonStackPerfTimer
 {
-    IPerfTimer *m_Timer;
-    quint64 m_Start;
-    const char *m_Id;
+    QDemonPerfTimerInterface *m_timer;
+    quint64 m_start;
+    const char *m_id;
 
-    SStackPerfTimer(IPerfTimer &destination, const char *inId)
-        : m_Timer(&destination)
-        , m_Start(QDemonTime::getCurrentCounterValue())
-        , m_Id(inId)
+    QDemonStackPerfTimer(QDemonPerfTimerInterface &destination, const char *inId)
+        : m_timer(&destination)
+        , m_start(QDemonTime::getCurrentCounterValue())
+        , m_id(inId)
     {
     }
 
-    SStackPerfTimer(IPerfTimer *destination, const char *inId)
-        : m_Timer(destination)
-        , m_Start(QDemonTime::getCurrentCounterValue())
-        , m_Id(inId)
+    QDemonStackPerfTimer(QDemonPerfTimerInterface *destination, const char *inId)
+        : m_timer(destination)
+        , m_start(QDemonTime::getCurrentCounterValue())
+        , m_id(inId)
     {
     }
 
-    ~SStackPerfTimer()
+    ~QDemonStackPerfTimer()
     {
-        if (m_Timer) {
+        if (m_timer) {
             quint64 theStop = QDemonTime::getCurrentCounterValue();
-            quint64 theAmount = theStop - m_Start;
-            m_Timer->Update(m_Id, theAmount);
+            quint64 theAmount = theStop - m_start;
+            m_timer->update(m_id, theAmount);
         }
     }
 };

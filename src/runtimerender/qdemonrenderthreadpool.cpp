@@ -42,7 +42,7 @@ class QDemonThreadPool;
 class QDemonTask : public QRunnable
 {
 public:
-    QDemonTask(void *inUserData, TTaskFunction inFunction, TTaskFunction inCancelFunction, quint64 id, QDemonThreadPool *threadPool)
+    QDemonTask(void *inUserData, QDemonTaskCallback inFunction, QDemonTaskCallback inCancelFunction, quint64 id, QDemonThreadPool *threadPool)
         : m_userData(inUserData)
         , m_function(inFunction)
         , m_cancelFunction(inCancelFunction)
@@ -82,8 +82,8 @@ public:
 
 private:
     void *m_userData;
-    TTaskFunction m_function;
-    TTaskFunction m_cancelFunction;
+    QDemonTaskCallback m_function;
+    QDemonTaskCallback m_cancelFunction;
     quint64 m_id;
     TaskStates::Enum m_taskState;
     QMutex m_mutex;
@@ -91,18 +91,18 @@ private:
 };
 
 
-class QDemonThreadPool : public IThreadPool
+class QDemonThreadPool : public QDemonAbstractThreadPool
 {
 public:
     QDemonThreadPool(quint32 numThreads);
 
     ~QDemonThreadPool() override;
 
-    quint64 AddTask(void *inUserData, TTaskFunction inFunction, TTaskFunction inCancelFunction) override;
+    quint64 addTask(void *inUserData, QDemonTaskCallback inFunction, QDemonTaskCallback inCancelFunction) override;
 
-    TaskStates::Enum GetTaskState(quint64 inTaskId) override;
+    TaskStates::Enum getTaskState(quint64 inTaskId) override;
 
-    CancelReturnValues::Enum CancelTask(quint64 inTaskId) override;
+    CancelReturnValues::Enum cancelTask(quint64 inTaskId) override;
 
     // Called from another thread!
     void taskFinished(quint64 inTaskId);
@@ -146,7 +146,7 @@ QDemonThreadPool::~QDemonThreadPool()
     }
 }
 
-quint64 QDemonThreadPool::AddTask(void *inUserData, TTaskFunction inFunction, TTaskFunction inCancelFunction)
+quint64 QDemonThreadPool::addTask(void *inUserData, QDemonTaskCallback inFunction, QDemonTaskCallback inCancelFunction)
 {
     QMutexLocker locker(&m_mutex);
     const quint64 taskID = generateTaskID();
@@ -156,7 +156,7 @@ quint64 QDemonThreadPool::AddTask(void *inUserData, TTaskFunction inFunction, TT
     return taskID;
 }
 
-TaskStates::Enum QDemonThreadPool::GetTaskState(quint64 inTaskId)
+TaskStates::Enum QDemonThreadPool::getTaskState(quint64 inTaskId)
 {
     QMutexLocker locker(&m_mutex);
     auto task = m_taskMap.value(inTaskId, nullptr);
@@ -165,7 +165,7 @@ TaskStates::Enum QDemonThreadPool::GetTaskState(quint64 inTaskId)
     return task->taskState();
 }
 
-CancelReturnValues::Enum QDemonThreadPool::CancelTask(quint64 inTaskId)
+CancelReturnValues::Enum QDemonThreadPool::cancelTask(quint64 inTaskId)
 {
     QMutexLocker locker(&m_mutex);
     auto task = m_taskMap.value(inTaskId, nullptr);
@@ -193,9 +193,14 @@ void QDemonThreadPool::taskFinished(quint64 inTaskId)
 
 }
 
-QSharedPointer<IThreadPool> IThreadPool::CreateThreadPool(quint32 inNumThreads)
+QDemonAbstractThreadPool::~QDemonAbstractThreadPool()
 {
-    return QSharedPointer<IThreadPool>(new QDemonThreadPool(inNumThreads));
+
+}
+
+QSharedPointer<QDemonAbstractThreadPool> QDemonAbstractThreadPool::createThreadPool(quint32 inNumThreads)
+{
+    return QSharedPointer<QDemonAbstractThreadPool>(new QDemonThreadPool(inNumThreads));
 }
 
 QT_END_NAMESPACE

@@ -38,48 +38,48 @@
 
 QT_BEGIN_NAMESPACE
 
-class IBufferLoaderCallback;
+class QDemonBufferLoaderCallbackInterface;
 
-class ILoadedBuffer
+class QDemonLoadedBufferInterface
 {
 public:
-    virtual ~ILoadedBuffer() {}
-    virtual QString Path() = 0;
+    virtual ~QDemonLoadedBufferInterface();
+    virtual QString path() = 0;
     // Data is released when the buffer itself is released.
-    virtual QDemonDataRef<quint8> Data() = 0;
-    virtual QSharedPointer<IBufferLoaderCallback> UserData() = 0;
+    virtual QDemonDataRef<quint8> data() = 0;
+    virtual QSharedPointer<QDemonBufferLoaderCallbackInterface> userData() = 0;
 };
 
-class IBufferLoaderCallback
+class QDemonBufferLoaderCallbackInterface
 {
 public:
-    virtual ~IBufferLoaderCallback() {}
-    virtual void OnBufferLoaded(ILoadedBuffer &inBuffer) = 0;
-    virtual void OnBufferLoadFailed(QString inPath) = 0;
-    virtual void OnBufferLoadCancelled(QString inPath) = 0;
+    virtual ~QDemonBufferLoaderCallbackInterface();
+    virtual void onBufferLoaded(QDemonLoadedBufferInterface &inBuffer) = 0;
+    virtual void onBufferLoadFailed(QString inPath) = 0;
+    virtual void onBufferLoadCancelled(QString inPath) = 0;
 };
 
 // Job of this object is to load buffers all the way to memory as fast as possible.
-class Q_DEMONRUNTIMERENDER_EXPORT IBufferLoader
+class Q_DEMONRUNTIMERENDER_EXPORT QDemonBufferLoaderInterface
 {
 public:
-    virtual ~IBufferLoader() {}
+    virtual ~QDemonBufferLoaderInterface();
     // nonblocking.  Quiet failure is passed to the input stream factory.
     // Returns handle to loading buffer
-    virtual quint64 QueueForLoading(QString inPath,
-                                    QSharedPointer<IBufferLoaderCallback> inUserData = nullptr,
+    virtual quint64 queueForLoading(QString inPath,
+                                    QSharedPointer<QDemonBufferLoaderCallbackInterface> inUserData = nullptr,
                                     bool inQuietFailure = false) = 0;
     // Cancel a buffer that has not made it to the loaded buffers list.
-    virtual void CancelBufferLoad(quint64 inBufferId) = 0;
+    virtual void cancelBufferLoad(quint64 inBufferId) = 0;
     // If we were will to wait, will we ever get another buffer
-    virtual bool WillLoadedBuffersBeAvailable() = 0;
+    virtual bool willLoadedBuffersBeAvailable() = 0;
     // Will nextLoadedBuffer block or not?
-    virtual bool AreLoadedBuffersAvailable() = 0;
+    virtual bool areLoadedBuffersAvailable() = 0;
 
     // blocking, be careful with this.  No guarantees about timely return here.
-    virtual QSharedPointer<ILoadedBuffer> NextLoadedBuffer() = 0;
+    virtual QSharedPointer<QDemonLoadedBufferInterface> nextLoadedBuffer() = 0;
 
-    static QSharedPointer<IBufferLoader> Create(QSharedPointer<IInputStreamFactory> &inFactory, QSharedPointer<IThreadPool> inThreadPool);
+    static QSharedPointer<QDemonBufferLoaderInterface> create(QSharedPointer<QDemonInputStreamFactoryInterface> &inFactory, QSharedPointer<QDemonAbstractThreadPool> inThreadPool);
 };
 QT_END_NAMESPACE
 

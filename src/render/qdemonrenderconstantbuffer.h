@@ -74,7 +74,7 @@ public:
          *
          * @return no return.
          */
-    void Bind() override;
+    void bind() override;
 
     /**
          * @brief bind the buffer to a shader program
@@ -85,7 +85,7 @@ public:
          *
          * @return no return.
          */
-    virtual void BindToShaderProgram(QSharedPointer<QDemonRenderShaderProgram> inShader, quint32 blockIndex,
+    virtual void bindToShaderProgram(QSharedPointer<QDemonRenderShaderProgram> inShader, quint32 blockIndex,
                                      quint32 binding);
 
     /**
@@ -93,7 +93,7 @@ public:
          *
          * @return no return.
          */
-    virtual void Update();
+    virtual void update();
 
     /**
          * @brief setup constant buffer
@@ -105,7 +105,7 @@ public:
          *
          * @return return if successful
          */
-    bool SetupBuffer(const QDemonRenderShaderProgram *program, qint32 index, qint32 bufSize,
+    bool setupBuffer(const QDemonRenderShaderProgram *program, qint32 index, qint32 bufSize,
                      qint32 paramCount);
 
     /**
@@ -118,7 +118,7 @@ public:
          *
          * @return no return
          */
-    void AddParam(const QString &name, QDemonRenderShaderDataTypes::Enum type, qint32 count);
+    void addParam(const QString &name, QDemonRenderShaderDataTypes::Enum type, qint32 count);
 
     /**
          * @brief update a parameter in the constant buffer
@@ -129,7 +129,7 @@ public:
          *
          * @return no return
          */
-    void UpdateParam(const char *name, QDemonDataRef<quint8> value);
+    void updateParam(const char *name, QDemonDataRef<quint8> value);
 
     /**
          * @brief update a piece of memory directly within the constant buffer
@@ -146,22 +146,22 @@ public:
          *
          * @return no return
          */
-    void UpdateRaw(qint32 offset, QDemonDataRef<quint8> data);
+    void updateRaw(qint32 offset, QDemonDataRef<quint8> data);
 
     /**
          * @brief get the backend object handle
          *
          * @return the backend object handle.
          */
-    QDemonRenderBackend::QDemonRenderBackendBufferObject GetBuffertHandle() const override
+    QDemonRenderBackend::QDemonRenderBackendBufferObject getBuffertHandle() const override
     {
-        return m_BufferHandle;
+        return m_bufferHandle;
     }
 
     // this will be obsolete
-    const void *GetImplementationHandle() const override
+    const void *getImplementationHandle() const override
     {
-        return reinterpret_cast<void *>(m_BufferHandle);
+        return reinterpret_cast<void *>(m_bufferHandle);
     }
 
     /**
@@ -175,7 +175,7 @@ public:
          *
          * @return the backend object handle.
          */
-    static QSharedPointer<QDemonRenderConstantBuffer> Create(QSharedPointer<QDemonRenderContextImpl> context, const char *bufferName,
+    static QSharedPointer<QDemonRenderConstantBuffer> create(QSharedPointer<QDemonRenderContextImpl> context, const char *bufferName,
                                               QDemonRenderBufferUsageType::Enum usageType, size_t size,
                                               QDemonConstDataRef<quint8> bufferData);
 
@@ -184,7 +184,7 @@ public:
          *
          * @return the buffer name
          */
-    QString GetBufferName() const { return m_Name; }
+    QString GetBufferName() const { return m_name; }
 
 private:
     /**
@@ -226,19 +226,19 @@ private:
          *
          * @return no return.
          */
-    virtual void UpdateRange();
+    virtual void updateRange();
 
 private:
-    QString m_Name; ///< buffer name
-    TRenderConstantBufferEntryMap m_ConstantBufferEntryMap; ///< holds the entries of a constant buffer
-    quint32 m_CurrentOffset; ///< holds the current offset
-    quint32 m_CurrentSize; ///< holds the current size
-    bool m_HWBufferInitialized; ///< true if the hardware version of the buffer is initialized
-    bool m_Dirty; ///< true if buffer is dirty
-    quint32 m_RangeStart; ///< start offset of the range to update
-    quint32 m_RangeEnd; ///< size of the range to update
-    qint32 m_MaxBlockSize; ///< maximum size for a single constant buffer
-    QDemonDataRef<quint8> m_ShadowCopy; ///< host copy of the data in the GPU
+    QString m_name; ///< buffer name
+    TRenderConstantBufferEntryMap m_constantBufferEntryMap; ///< holds the entries of a constant buffer
+    quint32 m_currentOffset; ///< holds the current offset
+    quint32 m_currentSize; ///< holds the current size
+    bool m_hwBufferInitialized; ///< true if the hardware version of the buffer is initialized
+    bool m_dirty; ///< true if buffer is dirty
+    quint32 m_rangeStart; ///< start offset of the range to update
+    quint32 m_rangeEnd; ///< size of the range to update
+    qint32 m_maxBlockSize; ///< maximum size for a single constant buffer
+    QDemonDataRef<quint8> m_shadowCopy; ///< host copy of the data in the GPU
 };
 
 QT_END_NAMESPACE

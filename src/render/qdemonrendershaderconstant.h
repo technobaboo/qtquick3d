@@ -49,31 +49,31 @@ class QDemonRenderConstantBuffer;
 class Q_DEMONRENDER_EXPORT QDemonRenderShaderConstantBase
 {
 public:
-    QSharedPointer<QDemonRenderBackend> m_Backend; ///< pointer to backend
-    QString m_Name; ///< register constant name
-    qint32 m_Location; ///< constant index
-    qint32 m_ElementCount; ///< constant element count for arrays
-    QDemonRenderShaderDataTypes::Enum m_Type; ///< constant type
-    qint32 m_Binding; ///< sampler/imnage binding point
+    QSharedPointer<QDemonRenderBackend> m_backend; ///< pointer to backend
+    QString m_name; ///< register constant name
+    qint32 m_location; ///< constant index
+    qint32 m_elementCount; ///< constant element count for arrays
+    QDemonRenderShaderDataTypes::Enum m_type; ///< constant type
+    qint32 m_binding; ///< sampler/imnage binding point
 
 public:
     QDemonRenderShaderConstantBase(QSharedPointer<QDemonRenderBackend> backend, const QString &name, qint32 location,
                                    qint32 elementCount, QDemonRenderShaderDataTypes::Enum type,
                                    qint32 binding)
-        : m_Backend(backend)
-        , m_Name(name)
-        , m_Location(location)
-        , m_ElementCount(elementCount)
-        , m_Type(type)
-        , m_Binding(binding)
+        : m_backend(backend)
+        , m_name(name)
+        , m_location(location)
+        , m_elementCount(elementCount)
+        , m_type(type)
+        , m_binding(binding)
     {
     }
 
     virtual ~QDemonRenderShaderConstantBase() {}
 
-    QDemonRenderShaderDataTypes::Enum GetShaderConstantType() const { return m_Type; }
+    QDemonRenderShaderDataTypes::Enum getShaderConstantType() const { return m_type; }
 
-    virtual void Release() = 0;
+    virtual void release() = 0;
 };
 
 ///< A general class for shader types
@@ -81,7 +81,7 @@ template <typename TDataType>
 class QDemonRenderShaderConstant : public QDemonRenderShaderConstantBase
 {
 public:
-    TDataType m_Value; ///< constant value
+    TDataType m_value; ///< constant value
 
 public:
     QDemonRenderShaderConstant(QSharedPointer<QDemonRenderBackend> backend, const QString &name, qint32 location,
@@ -89,10 +89,10 @@ public:
                                qint32 binding)
         : QDemonRenderShaderConstantBase(backend, name, location, elementCount, type, binding)
     {
-        memset(&m_Value, 0, sizeof(TDataType));
+        memset(&m_value, 0, sizeof(TDataType));
     }
 
-    void Release() override {  }
+    void release() override {  }
 };
 
 ///< A specialized class for textures
@@ -100,7 +100,7 @@ template <>
 class QDemonRenderShaderConstant<QDemonRenderTexture2DPtr> : public QDemonRenderShaderConstantBase
 {
 public:
-    quint32 m_Value; ///< constant value
+    quint32 m_value; ///< constant value
 
 public:
     QDemonRenderShaderConstant(QSharedPointer<QDemonRenderBackend> backend, const QString &name, qint32 location,
@@ -108,10 +108,10 @@ public:
                                qint32 binding)
         : QDemonRenderShaderConstantBase(backend, name, location, elementCount, type, binding)
     {
-        m_Value = std::numeric_limits<quint32>::max();
+        m_value = std::numeric_limits<quint32>::max();
     }
 
-    void Release() override { }
+    void release() override { }
 };
 
 ///< A specialized class for textures
@@ -119,7 +119,7 @@ template <>
 class QDemonRenderShaderConstant<QDemonRenderTexture2DHandle> : public QDemonRenderShaderConstantBase
 {
 public:
-    QVector<quint32> m_Value; ///< constant value
+    QVector<quint32> m_value; ///< constant value
 
 public:
     QDemonRenderShaderConstant(QSharedPointer<QDemonRenderBackend> backend, const QString &name, qint32 location,
@@ -127,11 +127,11 @@ public:
                                qint32 binding)
         : QDemonRenderShaderConstantBase(backend, name, location, elementCount, type, binding)
     {
-        m_Value.resize(elementCount);
-        m_Value.fill(std::numeric_limits<quint32>::max());
+        m_value.resize(elementCount);
+        m_value.fill(std::numeric_limits<quint32>::max());
     }
 
-    void Release() override {  }
+    void release() override {  }
 };
 
 ///< A specialized class for texture arrays
@@ -139,7 +139,7 @@ template <>
 class QDemonRenderShaderConstant<QDemonRenderTexture2DArrayPtr> : public QDemonRenderShaderConstantBase
 {
 public:
-    quint32 m_Value; ///< constant value
+    quint32 m_value; ///< constant value
 
 public:
     QDemonRenderShaderConstant(QSharedPointer<QDemonRenderBackend> backend, const QString &name, qint32 location,
@@ -147,10 +147,10 @@ public:
                                qint32 binding)
         : QDemonRenderShaderConstantBase(backend, name, location, elementCount, type, binding)
     {
-        m_Value = std::numeric_limits<quint32>::max();
+        m_value = std::numeric_limits<quint32>::max();
     }
 
-    void Release() override {  }
+    void release() override {  }
 };
 
 ///< A specialized class for cubemap textures
@@ -158,7 +158,7 @@ template <>
 class QDemonRenderShaderConstant<QDemonRenderTextureCubePtr> : public QDemonRenderShaderConstantBase
 {
 public:
-    quint32 m_Value; ///< constant value
+    quint32 m_value; ///< constant value
 
 public:
     QDemonRenderShaderConstant(QSharedPointer<QDemonRenderBackend> backend, const QString &name, qint32 location,
@@ -166,10 +166,10 @@ public:
                                qint32 binding)
         : QDemonRenderShaderConstantBase(backend, name, location, elementCount, type, binding)
     {
-        m_Value = std::numeric_limits<quint32>::max();
+        m_value = std::numeric_limits<quint32>::max();
     }
 
-    void Release() override {  }
+    void release() override {  }
 };
 
 ///< A specialized class for cubemap textures
@@ -177,7 +177,7 @@ template <>
 class QDemonRenderShaderConstant<QDemonRenderTextureCubeHandle> : public QDemonRenderShaderConstantBase
 {
 public:
-    QVector<quint32> m_Value; ///< constant value
+    QVector<quint32> m_value; ///< constant value
 
 public:
     QDemonRenderShaderConstant(QSharedPointer<QDemonRenderBackend> backend, const QString &name, qint32 location,
@@ -185,11 +185,11 @@ public:
                                qint32 binding)
         : QDemonRenderShaderConstantBase(backend, name, location, elementCount, type, binding)
     {
-        m_Value.resize(elementCount);
-        m_Value.fill(std::numeric_limits<quint32>::max());
+        m_value.resize(elementCount);
+        m_value.fill(std::numeric_limits<quint32>::max());
     }
 
-    void Release() override {  }
+    void release() override {  }
 };
 
 ///< A specialized class for texture image buffer
@@ -197,7 +197,7 @@ template <>
 class QDemonRenderShaderConstant<QDemonRenderImage2DPtr> : public QDemonRenderShaderConstantBase
 {
 public:
-    quint32 m_Value; ///< constant value
+    quint32 m_value; ///< constant value
 
 public:
     QDemonRenderShaderConstant(QSharedPointer<QDemonRenderBackend> backend, const QString &name, qint32 location,
@@ -205,188 +205,200 @@ public:
                                qint32 binding)
         : QDemonRenderShaderConstantBase(backend, name, location, elementCount, type, binding)
     {
-        m_Value = std::numeric_limits<quint32>::max();
+        m_value = std::numeric_limits<quint32>::max();
     }
 
-    void Release() override {  }
+    void release() override {  }
 };
 
 ///< Base for any buffer ( constant, texture, ... ) which is used by this program
 class QDemonRenderShaderBufferBase
 {
 public:
-    QSharedPointer<QDemonRenderContextImpl> m_Context; ///< pointer to context
-    QString m_Name; ///< buffer name
-    quint32 m_Location; ///< program buffer block location
-    quint32 m_Binding; ///< program buffer binding
-    qint32 m_Size; ///< buffer size
+    QSharedPointer<QDemonRenderContextImpl> m_context; ///< pointer to context
+    QString m_name; ///< buffer name
+    quint32 m_location; ///< program buffer block location
+    quint32 m_binding; ///< program buffer binding
+    qint32 m_size; ///< buffer size
 
 public:
     QDemonRenderShaderBufferBase(QSharedPointer<QDemonRenderContextImpl> context, const QString &name,
                                  qint32 location, qint32 binding, qint32 size)
-        : m_Context(context)
-        , m_Name(name)
-        , m_Location(location)
-        , m_Binding(binding)
-        , m_Size(size)
+        : m_context(context)
+        , m_name(name)
+        , m_location(location)
+        , m_binding(binding)
+        , m_size(size)
     {
     }
 
     virtual ~QDemonRenderShaderBufferBase() {}
 
-    virtual void Release() = 0;
+    virtual void release() = 0;
 
-    virtual void Validate(QSharedPointer<QDemonRenderShaderProgram> inShader) = 0;
-    virtual void BindToProgram(QSharedPointer<QDemonRenderShaderProgram> inShader) = 0;
-    virtual void Update() = 0;
+    virtual void validate(QSharedPointer<QDemonRenderShaderProgram> inShader) = 0;
+    virtual void bindToProgram(QSharedPointer<QDemonRenderShaderProgram> inShader) = 0;
+    virtual void update() = 0;
 };
 
 class QDemonRenderShaderConstantBuffer : public QDemonRenderShaderBufferBase
 {
 public:
-    qint32 m_ParamCount; ///< count of parameters contained in the constant buffer
-    QSharedPointer<QDemonRenderConstantBuffer> m_pCB; ///< pointer to constant buffer
+    qint32 m_paramCount; ///< count of parameters contained in the constant buffer
+    QSharedPointer<QDemonRenderConstantBuffer> m_constBuffer; ///< pointer to constant buffer
 
 public:
-    QDemonRenderShaderConstantBuffer(QSharedPointer<QDemonRenderContextImpl> context, const QString &name,
-                                     quint32 location, qint32 binding, qint32 size, qint32 count,
+    QDemonRenderShaderConstantBuffer(QSharedPointer<QDemonRenderContextImpl> context,
+                                     const QString &name,
+                                     quint32 location,
+                                     qint32 binding,
+                                     qint32 size,
+                                     qint32 count,
                                      QSharedPointer<QDemonRenderConstantBuffer> pCB)
         : QDemonRenderShaderBufferBase(context, name, location, binding, size)
-        , m_ParamCount(count)
-        , m_pCB(pCB)
+        , m_paramCount(count)
+        , m_constBuffer(pCB)
     {
     }
 
-    void Release() override
+    void release() override
     {
     }
 
-    void Validate(QSharedPointer<QDemonRenderShaderProgram> inShader) override
+    void validate(QSharedPointer<QDemonRenderShaderProgram> inShader) override
     {
         // A constant buffer might not be set at first call
         // due to the fact that they are compiled from a cache file
         // Now it must exists.
-        if (m_pCB)
+        if (m_constBuffer)
             return;
 
-        QSharedPointer<QDemonRenderConstantBuffer> cb = m_Context->GetConstantBuffer(m_Name);
+        QSharedPointer<QDemonRenderConstantBuffer> cb = m_context->getConstantBuffer(m_name);
         if (cb) {
-            cb->SetupBuffer(inShader.data(), m_Location, m_Size, m_ParamCount);
+            cb->setupBuffer(inShader.data(), m_location, m_size, m_paramCount);
             //cb->addRef();
-            m_pCB = cb;
+            m_constBuffer = cb;
         } else {
             Q_ASSERT(false);
         }
     }
 
-    void Update() override
+    void update() override
     {
-        if (m_pCB)
-            m_pCB->Update();
+        if (m_constBuffer)
+            m_constBuffer->update();
     }
 
-    void BindToProgram(QSharedPointer<QDemonRenderShaderProgram> inShader) override
+    void bindToProgram(QSharedPointer<QDemonRenderShaderProgram> inShader) override
     {
-        if (m_pCB)
-            m_pCB->BindToShaderProgram(inShader, m_Location, m_Binding);
+        if (m_constBuffer)
+            m_constBuffer->bindToShaderProgram(inShader, m_location, m_binding);
     }
 };
 
 class QDemonRenderShaderStorageBuffer : public QDemonRenderShaderBufferBase
 {
 public:
-    qint32 m_ParamCount; ///< count of parameters contained in the constant buffer
-    QSharedPointer<QDemonRenderStorageBuffer> m_pSB; ///< pointer to storage buffer
+    qint32 m_paramCount; ///< count of parameters contained in the constant buffer
+    QSharedPointer<QDemonRenderStorageBuffer> m_storageBuffer; ///< pointer to storage buffer
 
 public:
-    QDemonRenderShaderStorageBuffer(QSharedPointer<QDemonRenderContextImpl> context, const QString &name,
-                                    quint32 location, qint32 binding, qint32 size, qint32 count,
+    QDemonRenderShaderStorageBuffer(QSharedPointer<QDemonRenderContextImpl> context,
+                                    const QString &name,
+                                    quint32 location,
+                                    qint32 binding,
+                                    qint32 size,
+                                    qint32 count,
                                     QSharedPointer<QDemonRenderStorageBuffer> pSB)
         : QDemonRenderShaderBufferBase(context, name, location, binding, size)
-        , m_ParamCount(count)
-        , m_pSB(pSB)
+        , m_paramCount(count)
+        , m_storageBuffer(pSB)
     {
     }
 
-    void Release() override
+    void release() override
     {
     }
 
-    void Validate(QSharedPointer<QDemonRenderShaderProgram> /*inShader*/) override
+    void validate(QSharedPointer<QDemonRenderShaderProgram> /*inShader*/) override
     {
         // A constant buffer might not be set at first call
         // due to the fact that they are compile from a cache file
         // Now it must exists.
-        if (m_pSB)
+        if (m_storageBuffer)
             return;
 
-        QSharedPointer<QDemonRenderStorageBuffer> sb = m_Context->GetStorageBuffer(m_Name);
+        QSharedPointer<QDemonRenderStorageBuffer> sb = m_context->getStorageBuffer(m_name);
         if (sb) {
-            m_pSB = sb;
+            m_storageBuffer = sb;
         } else {
             Q_ASSERT(false);
         }
     }
 
-    void Update() override
+    void update() override
     {
-        if (m_pSB)
-            m_pSB->Update();
+        if (m_storageBuffer)
+            m_storageBuffer->update();
     }
 
-    void BindToProgram(QSharedPointer<QDemonRenderShaderProgram> /*inShader*/) override
+    void bindToProgram(QSharedPointer<QDemonRenderShaderProgram> /*inShader*/) override
     {
-        if (m_pSB)
-            m_pSB->BindToShaderProgram(m_Location);
+        if (m_storageBuffer)
+            m_storageBuffer->bindToShaderProgram(m_location);
     }
 };
 
 class QDemonRenderShaderAtomicCounterBuffer : public QDemonRenderShaderBufferBase
 {
 public:
-    qint32 m_ParamCount; ///< count of parameters contained in the constant buffer
-    QSharedPointer<QDemonRenderAtomicCounterBuffer> m_pAcB; ///< pointer to atomic counter buffer
+    qint32 m_paramCount; ///< count of parameters contained in the constant buffer
+    QSharedPointer<QDemonRenderAtomicCounterBuffer> m_atomicCounterBuffer; ///< pointer to atomic counter buffer
 
 public:
-    QDemonRenderShaderAtomicCounterBuffer(QSharedPointer<QDemonRenderContextImpl> context, const QString &name,
-                                          quint32 location, qint32 binding, qint32 size, qint32 count,
+    QDemonRenderShaderAtomicCounterBuffer(QSharedPointer<QDemonRenderContextImpl> context,
+                                          const QString &name,
+                                          quint32 location,
+                                          qint32 binding,
+                                          qint32 size,
+                                          qint32 count,
                                           QSharedPointer<QDemonRenderAtomicCounterBuffer> pAcB)
         : QDemonRenderShaderBufferBase(context, name, location, binding, size)
-        , m_ParamCount(count)
-        , m_pAcB(pAcB)
+        , m_paramCount(count)
+        , m_atomicCounterBuffer(pAcB)
     {
     }
 
-    void Release() override
+    void release() override
     {
     }
 
-    void Validate(QSharedPointer<QDemonRenderShaderProgram> /*inShader*/) override
+    void validate(QSharedPointer<QDemonRenderShaderProgram> /*inShader*/) override
     {
         // A constant buffer might not be set at first call
         // due to the fact that they are compile from a cache file
         // Now it must exists.
-        if (m_pAcB)
+        if (m_atomicCounterBuffer)
             return;
 
-        QSharedPointer<QDemonRenderAtomicCounterBuffer> acb = m_Context->GetAtomicCounterBuffer(m_Name);
+        QSharedPointer<QDemonRenderAtomicCounterBuffer> acb = m_context->getAtomicCounterBuffer(m_name);
         if (acb) {
-            m_pAcB = acb;
+            m_atomicCounterBuffer = acb;
         } else {
             Q_ASSERT(false);
         }
     }
 
-    void Update() override
+    void update() override
     {
-        if (m_pAcB)
-            m_pAcB->Update();
+        if (m_atomicCounterBuffer)
+            m_atomicCounterBuffer->update();
     }
 
-    void BindToProgram(QSharedPointer<QDemonRenderShaderProgram> /*inShader*/) override
+    void bindToProgram(QSharedPointer<QDemonRenderShaderProgram> /*inShader*/) override
     {
-        if (m_pAcB)
-            m_pAcB->BindToShaderProgram(m_Location);
+        if (m_atomicCounterBuffer)
+            m_atomicCounterBuffer->bindToShaderProgram(m_location);
     }
 };
 

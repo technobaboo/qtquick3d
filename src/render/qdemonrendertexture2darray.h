@@ -42,9 +42,9 @@ class QDemonRenderTextureSampler;
 class Q_DEMONRENDER_EXPORT QDemonRenderTexture2DArray : public QDemonRenderTextureBase, public QEnableSharedFromThis<QDemonRenderTexture2DArray>
 {
 private:
-    quint32 m_Width; ///< texture width
-    quint32 m_Height; ///< texture height
-    quint32 m_Slices; ///< texture slices
+    quint32 m_width; ///< texture width
+    quint32 m_height; ///< texture height
+    quint32 m_slices; ///< texture slices
 
 public:
     /**
@@ -74,11 +74,11 @@ public:
          *
          * @return No return.
          */
-    void SetTextureData(QDemonDataRef<quint8> newBuffer, quint8 inMipLevel, quint32 width, quint32 height,
+    void setTextureData(QDemonDataRef<quint8> newBuffer, quint8 inMipLevel, quint32 width, quint32 height,
                         quint32 slices, QDemonRenderTextureFormats::Enum format);
 
     // Get the texture details for mipmap level 0 if it was set.
-    STextureDetails GetTextureDetails() const override;
+    QDemonTextureDetails getTextureDetails() const override;
 
     /**
          * @brief Bind a texture for shader access
@@ -86,7 +86,7 @@ public:
          *
          * @return No return.
          */
-    void Bind() override;
+    void bind() override;
 
     /**
          * @brief create a texture array object
@@ -94,7 +94,7 @@ public:
          *
          * @ return a texture array object
          */
-    static QSharedPointer<QDemonRenderTexture2DArray> Create(QSharedPointer<QDemonRenderContextImpl> context);
+    static QSharedPointer<QDemonRenderTexture2DArray> create(QSharedPointer<QDemonRenderContextImpl> context);
 };
 
 QT_END_NAMESPACE

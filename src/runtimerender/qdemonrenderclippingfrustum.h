@@ -50,17 +50,17 @@ typedef QDemonFlags<BoxEdgeFlagValues::Enum, quint8> TRenderBoxEdge;
 // For an intesection test, we only need two points of the bounding box.
 // There will be a point nearest to the plane, and a point furthest from the plane.
 // We can derive these points from the plane normal equation.
-struct SPlaneBoxEdge
+struct QDemonPlaneBoxEdge
 {
     TRenderBoxEdge lowerEdge;
     TRenderBoxEdge upperEdge;
 };
 
-struct SClipPlane
+struct QDemonClipPlane
 {
     QVector3D normal;
     float d;
-    SPlaneBoxEdge mEdges;
+    QDemonPlaneBoxEdge mEdges;
 
     // For intersection tests, we only need to know if the numerator is greater than, equal to,
     // or less than zero.
@@ -129,27 +129,29 @@ struct SClipPlane
     }
 };
 
-struct SClippingFrustum
+struct QDemonClippingFrustum
 {
-    SClipPlane mPlanes[6];
+    QDemonClipPlane mPlanes[6];
 
-    SClippingFrustum() {}
+    QDemonClippingFrustum() = default;
 
-    SClippingFrustum(const QMatrix4x4 &modelviewprojection, SClipPlane nearPlane);
+    QDemonClippingFrustum(const QMatrix4x4 &modelviewprojection, QDemonClipPlane nearPlane);
 
     bool intersectsWith(const QDemonBounds3 &bounds) const
     {
-        for (quint32 idx = 0; idx < 6; ++idx)
+        for (quint32 idx = 0; idx < 6; ++idx) {
             if (mPlanes[idx].intersect(bounds) < 0)
                 return false;
+        }
         return true;
     }
 
     bool intersectsWith(const QVector3D &point, float radius = 0.0f) const
     {
-        for (quint32 idx = 0; idx < 6; ++idx)
+        for (quint32 idx = 0; idx < 6; ++idx) {
             if (mPlanes[idx].distance(point) < radius)
                 return false;
+        }
         return true;
     }
 };

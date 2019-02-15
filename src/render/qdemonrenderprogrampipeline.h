@@ -42,8 +42,8 @@ class QDemonRenderShaderProgram;
 class Q_DEMONRENDER_EXPORT QDemonRenderProgramPipeline
 {
 protected:
-    QSharedPointer<QDemonRenderContextImpl> m_Context; ///< pointer to context
-    QSharedPointer<QDemonRenderBackend> m_Backend; ///< pointer to backend
+    QSharedPointer<QDemonRenderContextImpl> m_context; ///< pointer to context
+    QSharedPointer<QDemonRenderBackend> m_backend; ///< pointer to backend
 
 public:
     /**
@@ -64,7 +64,7 @@ public:
          *
          * @return True if valid.
          */
-    bool IsValid();
+    bool isValid();
 
     /**
          * @brief enable / disable a program stage in the pipeline
@@ -75,23 +75,23 @@ public:
          *
          * @return no return.
          */
-    void SetProgramStages(QSharedPointer<QDemonRenderShaderProgram> pProgram, QDemonRenderShaderTypeFlags flags);
+    void setProgramStages(QSharedPointer<QDemonRenderShaderProgram> pProgram, QDemonRenderShaderTypeFlags flags);
 
     /**
          * @brief Make the program pipeline active
          *
          * @return True if valid.
          */
-    void Bind();
+    void bind();
 
     /**
          * @brief get the backend object handle
          *
          * @return the backend object handle.
          */
-    QDemonRenderBackend::QDemonRenderBackendProgramPipeline GetShaderHandle()
+    QDemonRenderBackend::QDemonRenderBackendProgramPipeline getShaderHandle()
     {
-        return m_ProgramPipelineHandle;
+        return m_programPipelineHandle;
     }
 
     /**
@@ -99,21 +99,20 @@ public:
          *
          * @return the backend object handle.
          */
-    QSharedPointer<QDemonRenderShaderProgram> GetVertexStage() { return m_VertexProgram; }
+    QSharedPointer<QDemonRenderShaderProgram> getVertexStage() { return m_vertexProgram; }
 
 private:
-    QDemonRenderBackend::QDemonRenderBackendProgramPipeline
-    m_ProgramPipelineHandle; ///< opaque backend handle
+    QDemonRenderBackend::QDemonRenderBackendProgramPipeline m_programPipelineHandle; ///< opaque backend handle
 
-    QSharedPointer<QDemonRenderShaderProgram> m_Program; ///< for non separable programs this contains the entire program
-    QSharedPointer<QDemonRenderShaderProgram> m_VertexProgram; ///< for separable programs this contains the vertex program
-    QSharedPointer<QDemonRenderShaderProgram> m_FragmentProgram; ///< for separable programs this contains the fragment program
-    QSharedPointer<QDemonRenderShaderProgram> m_TessControlProgram; ///< for separable programs this contains the
+    QSharedPointer<QDemonRenderShaderProgram> m_program; ///< for non separable programs this contains the entire program
+    QSharedPointer<QDemonRenderShaderProgram> m_vertexProgram; ///< for separable programs this contains the vertex program
+    QSharedPointer<QDemonRenderShaderProgram> m_fragmentProgram; ///< for separable programs this contains the fragment program
+    QSharedPointer<QDemonRenderShaderProgram> m_tessControlProgram; ///< for separable programs this contains the
     ///tessellation control program
-    QSharedPointer<QDemonRenderShaderProgram> m_TessEvalProgram; ///< for separable programs this contains the
+    QSharedPointer<QDemonRenderShaderProgram> m_tessEvalProgram; ///< for separable programs this contains the
     ///tessellation evaluation program
-    QSharedPointer<QDemonRenderShaderProgram> m_GeometryProgram; ///< for separable programs this contains the geometry program
-    QSharedPointer<QDemonRenderShaderProgram> m_ComputProgram; ///< for separable programs this contains the compute program
+    QSharedPointer<QDemonRenderShaderProgram> m_geometryProgram; ///< for separable programs this contains the geometry program
+    QSharedPointer<QDemonRenderShaderProgram> m_computProgram; ///< for separable programs this contains the compute program
 };
 
 QT_END_NAMESPACE

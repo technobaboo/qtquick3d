@@ -37,60 +37,60 @@
 QT_BEGIN_NAMESPACE
 
 QDemonRenderPathRender::QDemonRenderPathRender(QSharedPointer<QDemonRenderContextImpl> context, size_t range)
-    : m_Context(context)
-    , m_Backend(context->GetBackend())
-    , m_StrokeWidth(0.0f)
+    : m_context(context)
+    , m_backend(context->getBackend())
+    , m_strokeWidth(0.0f)
 {
-    m_Range = range;
-    m_PathRenderHandle = m_Backend->CreatePathNVObject(range);
+    m_range = range;
+    m_pathRenderHandle = m_backend->createPathNVObject(range);
 }
 
 QDemonRenderPathRender::~QDemonRenderPathRender()
 {
-    if (m_PathRenderHandle) {
-        m_Backend->ReleasePathNVObject(m_PathRenderHandle, m_Range);
+    if (m_pathRenderHandle) {
+        m_backend->releasePathNVObject(m_pathRenderHandle, m_range);
     }
 }
 
-void QDemonRenderPathRender::SetPathSpecification(QSharedPointer<QDemonRenderPathSpecification> inCommandBuffer)
+void QDemonRenderPathRender::setPathSpecification(QSharedPointer<QDemonRenderPathSpecification> inCommandBuffer)
 {
-    m_Backend->SetPathSpecification(m_PathRenderHandle,
-                                    toConstDataRef(inCommandBuffer->GetPathCommands().constData(), inCommandBuffer->GetPathCommands().size()),
-                                    toConstDataRef(inCommandBuffer->GetPathCoords().constData(), inCommandBuffer->GetPathCoords().size()));
+    m_backend->setPathSpecification(m_pathRenderHandle,
+                                    toConstDataRef(inCommandBuffer->getPathCommands().constData(), inCommandBuffer->getPathCommands().size()),
+                                    toConstDataRef(inCommandBuffer->getPathCoords().constData(), inCommandBuffer->getPathCoords().size()));
 }
 
-QDemonBounds3 QDemonRenderPathRender::GetPathObjectBoundingBox()
+QDemonBounds3 QDemonRenderPathRender::getPathObjectBoundingBox()
 {
-    return m_Backend->GetPathObjectBoundingBox(m_PathRenderHandle);
+    return m_backend->getPathObjectBoundingBox(m_pathRenderHandle);
 }
 
-QDemonBounds3 QDemonRenderPathRender::GetPathObjectFillBox()
+QDemonBounds3 QDemonRenderPathRender::getPathObjectFillBox()
 {
-    return m_Backend->GetPathObjectFillBox(m_PathRenderHandle);
+    return m_backend->getPathObjectFillBox(m_pathRenderHandle);
 }
 
-QDemonBounds3 QDemonRenderPathRender::GetPathObjectStrokeBox()
+QDemonBounds3 QDemonRenderPathRender::getPathObjectStrokeBox()
 {
-    return m_Backend->GetPathObjectStrokeBox(m_PathRenderHandle);
+    return m_backend->getPathObjectStrokeBox(m_pathRenderHandle);
 }
 
-void QDemonRenderPathRender::SetStrokeWidth(float inStrokeWidth)
+void QDemonRenderPathRender::setStrokeWidth(float inStrokeWidth)
 {
-    if (inStrokeWidth != m_StrokeWidth) {
-        m_StrokeWidth = inStrokeWidth;
-        m_Backend->SetStrokeWidth(m_PathRenderHandle, inStrokeWidth);
+    if (inStrokeWidth != m_strokeWidth) {
+        m_strokeWidth = inStrokeWidth;
+        m_backend->setStrokeWidth(m_pathRenderHandle, inStrokeWidth);
     }
 }
 
-float QDemonRenderPathRender::GetStrokeWidth() const { return m_StrokeWidth; }
+float QDemonRenderPathRender::getStrokeWidth() const { return m_strokeWidth; }
 
-void QDemonRenderPathRender::StencilStroke() { m_Backend->StencilStrokePath(m_PathRenderHandle); }
+void QDemonRenderPathRender::stencilStroke() { m_backend->stencilStrokePath(m_pathRenderHandle); }
 
-void QDemonRenderPathRender::StencilFill() { m_Backend->StencilFillPath(m_PathRenderHandle); }
+void QDemonRenderPathRender::stencilFill() { m_backend->stencilFillPath(m_pathRenderHandle); }
 
-QSharedPointer<QDemonRenderPathRender> QDemonRenderPathRender::Create(QSharedPointer<QDemonRenderContextImpl> context, size_t range)
+QSharedPointer<QDemonRenderPathRender> QDemonRenderPathRender::create(QSharedPointer<QDemonRenderContextImpl> context, size_t range)
 {
-    if (!context->IsPathRenderingSupported())
+    if (!context->isPathRenderingSupported())
         return nullptr;
 
     return QSharedPointer<QDemonRenderPathRender>(new QDemonRenderPathRender(context, range));

@@ -39,27 +39,27 @@ QDemonRenderVertexBuffer::QDemonRenderVertexBuffer(QSharedPointer<QDemonRenderCo
                                                    QDemonRenderBufferUsageType::Enum usageType,
                                                    QDemonDataRef<quint8> data)
     : QDemonRenderDataBuffer(context, size, bindFlags, usageType, data)
-    , m_Stride(stride)
+    , m_stride(stride)
 {
-    Q_ASSERT(m_Stride);
+    Q_ASSERT(m_stride);
 }
 
 QDemonRenderVertexBuffer::~QDemonRenderVertexBuffer()
 {
-    m_Context->BufferDestroyed(this);
+    m_context->bufferDestroyed(this);
 }
 
-void QDemonRenderVertexBuffer::Bind()
+void QDemonRenderVertexBuffer::bind()
 {
-    if (m_Mapped) {
+    if (m_mapped) {
         qCCritical(INVALID_OPERATION, "Attempting to Bind a locked buffer");
         Q_ASSERT(false);
     }
 
-    m_Backend->BindBuffer(m_BufferHandle, m_BindFlags);
+    m_backend->bindBuffer(m_bufferHandle, m_bindFlags);
 }
 
-QSharedPointer<QDemonRenderVertexBuffer> QDemonRenderVertexBuffer::Create(QSharedPointer<QDemonRenderContextImpl> context,
+QSharedPointer<QDemonRenderVertexBuffer> QDemonRenderVertexBuffer::create(QSharedPointer<QDemonRenderContextImpl> context,
                                                                           QDemonRenderBufferUsageType::Enum usageType,
                                                                           size_t size, quint32 stride,
                                                                           QDemonConstDataRef<quint8> bufferData)

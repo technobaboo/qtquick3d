@@ -42,9 +42,9 @@ class QDemonRenderDepthStencilState
 {
 
 private:
-    QSharedPointer<QDemonRenderContextImpl> m_Context; ///< pointer to context
-    QSharedPointer<QDemonRenderBackend> m_Backend; ///< pointer to backend
-    QDemonRenderBackend::QDemonRenderBackendDepthStencilStateObject m_StateHandle; ///< opaque backend handle
+    QSharedPointer<QDemonRenderContextImpl> m_context; ///< pointer to context
+    QSharedPointer<QDemonRenderBackend> m_backend; ///< pointer to backend
+    QDemonRenderBackend::QDemonRenderBackendDepthStencilStateObject m_stateHandle; ///< opaque backend handle
 
 public:
     /**
@@ -64,7 +64,9 @@ public:
          * @return No return.
          */
     QDemonRenderDepthStencilState(QSharedPointer<QDemonRenderContextImpl> context,
-                                  bool enableDepth, bool depthMask, QDemonRenderBoolOp::Enum depthFunc,
+                                  bool enableDepth,
+                                  bool depthMask,
+                                  QDemonRenderBoolOp::Enum depthFunc,
                                   bool enableStencil,
                                   QDemonRenderStencilFunctionArgument &stencilFuncFront,
                                   QDemonRenderStencilFunctionArgument &stencilFuncBack,
@@ -74,47 +76,48 @@ public:
     virtual ~QDemonRenderDepthStencilState();
 
     ///< various get functions
-    const QDemonRenderStencilFunctionArgument GetStencilFunc(QDemonRenderFaces::Enum face) const
+    const QDemonRenderStencilFunctionArgument getStencilFunc(QDemonRenderFaces::Enum face) const
     {
-        return (face == QDemonRenderFaces::Back) ? m_StencilFuncBack : m_StencilFuncFront;
+        return (face == QDemonRenderFaces::Back) ? m_stencilFuncBack : m_stencilFuncFront;
     }
-    const QDemonRenderStencilOperationArgument GetStencilOp(QDemonRenderFaces::Enum face) const
+    const QDemonRenderStencilOperationArgument getStencilOp(QDemonRenderFaces::Enum face) const
     {
-        return (face == QDemonRenderFaces::Back) ? m_DepthStencilOpBack : m_DepthStencilOpFront;
+        return (face == QDemonRenderFaces::Back) ? m_depthStencilOpBack : m_depthStencilOpFront;
     }
-    QDemonRenderBoolOp::Enum GetDepthFunc() const { return m_DepthFunc; }
-    bool GetDepthEnabled() const { return m_DepthEnabled; }
-    bool GetStencilEnabled() const { return m_StencilEnabled; }
-    bool GetDepthMask() const { return m_DepthMask; }
+    QDemonRenderBoolOp::Enum getDepthFunc() const { return m_depthFunc; }
+    bool getDepthEnabled() const { return m_depthEnabled; }
+    bool getStencilEnabled() const { return m_stencilEnabled; }
+    bool getDepthMask() const { return m_depthMask; }
 
     /**
          * @brief get the backend object handle
          *
          * @return the backend object handle.
          */
-    virtual QDemonRenderBackend::QDemonRenderBackendDepthStencilStateObject
-    GetDepthStencilObjectHandle()
+    virtual QDemonRenderBackend::QDemonRenderBackendDepthStencilStateObject getDepthStencilObjectHandle()
     {
-        return m_StateHandle;
+        return m_stateHandle;
     }
 
-    static QSharedPointer<QDemonRenderDepthStencilState>
-    Create(QSharedPointer<QDemonRenderContextImpl> context, bool enableDepth, bool depthMask,
-           QDemonRenderBoolOp::Enum depthFunc, bool enableStencil,
-           QDemonRenderStencilFunctionArgument &stencilFuncFront,
-           QDemonRenderStencilFunctionArgument &stencilFuncBack,
-           QDemonRenderStencilOperationArgument &depthStencilOpFront,
-           QDemonRenderStencilOperationArgument &depthStencilOpBack);
+    static QSharedPointer<QDemonRenderDepthStencilState> create(QSharedPointer<QDemonRenderContextImpl> context,
+                                                                bool enableDepth,
+                                                                bool depthMask,
+                                                                QDemonRenderBoolOp::Enum depthFunc,
+                                                                bool enableStencil,
+                                                                QDemonRenderStencilFunctionArgument &stencilFuncFront,
+                                                                QDemonRenderStencilFunctionArgument &stencilFuncBack,
+                                                                QDemonRenderStencilOperationArgument &depthStencilOpFront,
+                                                                QDemonRenderStencilOperationArgument &depthStencilOpBack);
 
 private:
-    bool m_DepthEnabled; ///< depth test enabled
-    bool m_DepthMask; ///< depth writes enabled
-    QDemonRenderBoolOp::Enum m_DepthFunc; ///< depth comparison func
-    bool m_StencilEnabled; ///< stencil test enabled
-    QDemonRenderStencilFunctionArgument m_StencilFuncFront; ///< stencil setup front faces
-    QDemonRenderStencilFunctionArgument m_StencilFuncBack; ///< stencil setup back faces
-    QDemonRenderStencilOperationArgument m_DepthStencilOpFront; ///< depth stencil operation front faces
-    QDemonRenderStencilOperationArgument m_DepthStencilOpBack; ///< depth stencil operation back faces
+    bool m_depthEnabled; ///< depth test enabled
+    bool m_depthMask; ///< depth writes enabled
+    QDemonRenderBoolOp::Enum m_depthFunc; ///< depth comparison func
+    bool m_stencilEnabled; ///< stencil test enabled
+    QDemonRenderStencilFunctionArgument m_stencilFuncFront; ///< stencil setup front faces
+    QDemonRenderStencilFunctionArgument m_stencilFuncBack; ///< stencil setup back faces
+    QDemonRenderStencilOperationArgument m_depthStencilOpFront; ///< depth stencil operation front faces
+    QDemonRenderStencilOperationArgument m_depthStencilOpBack; ///< depth stencil operation back faces
 };
 
 QT_END_NAMESPACE

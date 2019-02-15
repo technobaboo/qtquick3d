@@ -35,15 +35,15 @@ QT_BEGIN_NAMESPACE
 QDemonRenderFragmentShader::QDemonRenderFragmentShader(QSharedPointer<QDemonRenderContextImpl> context,
                                                        QDemonConstDataRef<qint8> source, bool binaryProgram)
     : QDemonRenderShader(context, source, binaryProgram)
-    , m_ShaderHandle(nullptr)
+    , m_shaderHandle(nullptr)
 {
-    m_ShaderHandle = m_Backend->CreateFragmentShader(source, m_ErrorMessage, binaryProgram);
+    m_shaderHandle = m_backend->createFragmentShader(source, m_errorMessage, binaryProgram);
 }
 
 QDemonRenderFragmentShader::~QDemonRenderFragmentShader()
 {
-    if (m_ShaderHandle) {
-        m_Backend->ReleaseFragmentShader(m_ShaderHandle);
+    if (m_shaderHandle) {
+        m_backend->releaseFragmentShader(m_shaderHandle);
     }
 }
 QT_END_NAMESPACE

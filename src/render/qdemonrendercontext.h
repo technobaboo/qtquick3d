@@ -108,126 +108,126 @@ typedef QHash<QString, QDemonRenderPathFontSpecification *> TContextPathFontSpec
 class Q_DEMONRENDER_EXPORT QDemonRenderContext : public QDemonRenderDrawable
 {
 public:
-    virtual QDemonRenderContextType GetRenderContextType() const = 0;
-    virtual bool AreMultisampleTexturesSupported() const = 0;
-    virtual bool GetConstantBufferSupport() const = 0;
+    virtual QDemonRenderContextType getRenderContextType() const = 0;
+    virtual bool areMultisampleTexturesSupported() const = 0;
+    virtual bool getConstantBufferSupport() const = 0;
     virtual void getMaxTextureSize(quint32 &oWidth, quint32 &oHeight) = 0;
-    virtual const char *GetShadingLanguageVersion() = 0;
+    virtual const char *getShadingLanguageVersion() = 0;
     // Get the bit depth of the currently bound depth buffer.
-    virtual quint32 GetDepthBits() const = 0;
-    virtual quint32 GetStencilBits() const = 0;
+    virtual quint32 getDepthBits() const = 0;
+    virtual quint32 getStencilBits() const = 0;
     virtual bool
-    GetRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::Enum inCap) const = 0;
-    virtual bool AreDXTImagesSupported() const = 0;
-    virtual bool IsDepthStencilSupported() const = 0;
-    virtual bool IsFpRenderTargetSupported() const = 0;
-    virtual bool IsTessellationSupported() const = 0;
-    virtual bool IsGeometryStageSupported() const = 0;
-    virtual bool IsComputeSupported() const = 0;
-    virtual bool IsSampleQuerySupported() const = 0;
-    virtual bool IsTimerQuerySupported() const = 0;
-    virtual bool IsCommandSyncSupported() const = 0;
-    virtual bool IsTextureArraySupported() const = 0;
-    virtual bool IsStorageBufferSupported() const = 0;
-    virtual bool IsAtomicCounterBufferSupported() const = 0;
-    virtual bool IsShaderImageLoadStoreSupported() const = 0;
-    virtual bool IsProgramPipelineSupported() const = 0;
-    virtual bool IsPathRenderingSupported() const = 0;
-    virtual bool IsBlendCoherencySupported() const = 0;
-    virtual bool IsAdvancedBlendHwSupported() const = 0;
-    virtual bool IsAdvancedBlendHwSupportedKHR() const = 0;
-    virtual bool IsStandardDerivativesSupported() const = 0;
-    virtual bool IsTextureLodSupported() const = 0;
+    getRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::Enum inCap) const = 0;
+    virtual bool areDXTImagesSupported() const = 0;
+    virtual bool isDepthStencilSupported() const = 0;
+    virtual bool isFpRenderTargetSupported() const = 0;
+    virtual bool isTessellationSupported() const = 0;
+    virtual bool isGeometryStageSupported() const = 0;
+    virtual bool isComputeSupported() const = 0;
+    virtual bool isSampleQuerySupported() const = 0;
+    virtual bool isTimerQuerySupported() const = 0;
+    virtual bool isCommandSyncSupported() const = 0;
+    virtual bool isTextureArraySupported() const = 0;
+    virtual bool isStorageBufferSupported() const = 0;
+    virtual bool isAtomicCounterBufferSupported() const = 0;
+    virtual bool isShaderImageLoadStoreSupported() const = 0;
+    virtual bool isProgramPipelineSupported() const = 0;
+    virtual bool isPathRenderingSupported() const = 0;
+    virtual bool isBlendCoherencySupported() const = 0;
+    virtual bool isAdvancedBlendHwSupported() const = 0;
+    virtual bool isAdvancedBlendHwSupportedKHR() const = 0;
+    virtual bool isStandardDerivativesSupported() const = 0;
+    virtual bool isTextureLodSupported() const = 0;
 
-    virtual void SetDefaultRenderTarget(quint64 targetID) = 0;
-    virtual void SetDefaultDepthBufferBitCount(qint32 depthBits) = 0;
+    virtual void setDefaultRenderTarget(quint64 targetID) = 0;
+    virtual void setDefaultDepthBufferBitCount(qint32 depthBits) = 0;
 
     virtual QSharedPointer<QDemonRenderDepthStencilState>
-    CreateDepthStencilState(bool enableDepth, bool depthMask, QDemonRenderBoolOp::Enum depthFunc,
+    createDepthStencilState(bool enableDepth, bool depthMask, QDemonRenderBoolOp::Enum depthFunc,
                             bool enableStencil,
                             QDemonRenderStencilFunctionArgument &stencilFuncFront,
                             QDemonRenderStencilFunctionArgument &stencilFuncBack,
                             QDemonRenderStencilOperationArgument &depthStencilOpFront,
                             QDemonRenderStencilOperationArgument &depthStencilOpBack) = 0;
 
-    virtual QSharedPointer<QDemonRenderRasterizerState> CreateRasterizerState(float depthBias, float depthScale,
+    virtual QSharedPointer<QDemonRenderRasterizerState> createRasterizerState(float depthBias, float depthScale,
                                                                QDemonRenderFaces::Enum cullFace) = 0;
 
     virtual QSharedPointer<QDemonRenderVertexBuffer>
-    CreateVertexBuffer(QDemonRenderBufferUsageType::Enum usageType, size_t size, quint32 stride = 0,
+    createVertexBuffer(QDemonRenderBufferUsageType::Enum usageType, size_t size, quint32 stride = 0,
                        QDemonConstDataRef<quint8> bufferData = QDemonConstDataRef<quint8>()) = 0;
-    virtual QSharedPointer<QDemonRenderVertexBuffer> GetVertexBuffer(const void *implementationHandle) = 0;
+    virtual QSharedPointer<QDemonRenderVertexBuffer> getVertexBuffer(const void *implementationHandle) = 0;
 
     virtual QSharedPointer<QDemonRenderIndexBuffer>
-    CreateIndexBuffer(QDemonRenderBufferUsageType::Enum usageType,
+    createIndexBuffer(QDemonRenderBufferUsageType::Enum usageType,
                       QDemonRenderComponentTypes::Enum componentType, size_t size,
                       QDemonConstDataRef<quint8> bufferData = QDemonConstDataRef<quint8>()) = 0;
-    virtual QSharedPointer<QDemonRenderIndexBuffer> GetIndexBuffer(const void *implementationHandle) = 0;
+    virtual QSharedPointer<QDemonRenderIndexBuffer> getIndexBuffer(const void *implementationHandle) = 0;
 
     virtual QSharedPointer<QDemonRenderConstantBuffer>
-    CreateConstantBuffer(const char *bufferName,
+    createConstantBuffer(const char *bufferName,
                          QDemonRenderBufferUsageType::Enum usageType, size_t size,
                          QDemonConstDataRef<quint8> bufferData) = 0;
-    virtual QSharedPointer<QDemonRenderConstantBuffer> GetConstantBuffer(const QString &bufferName) = 0;
+    virtual QSharedPointer<QDemonRenderConstantBuffer> getConstantBuffer(const QString &bufferName) = 0;
 
     virtual QSharedPointer<QDemonRenderStorageBuffer>
-    CreateStorageBuffer(const char *bufferName,
+    createStorageBuffer(const char *bufferName,
                         QDemonRenderBufferUsageType::Enum usageType, size_t size,
                         QDemonConstDataRef<quint8> bufferData, QDemonRenderDataBuffer *pBuffer) = 0;
-    virtual QSharedPointer<QDemonRenderStorageBuffer> GetStorageBuffer(const QString &bufferName) = 0;
+    virtual QSharedPointer<QDemonRenderStorageBuffer> getStorageBuffer(const QString &bufferName) = 0;
 
     virtual QSharedPointer<QDemonRenderAtomicCounterBuffer>
-    CreateAtomicCounterBuffer(const char *bufferName,
+    createAtomicCounterBuffer(const char *bufferName,
                               QDemonRenderBufferUsageType::Enum usageType, size_t size,
                               QDemonConstDataRef<quint8> bufferData) = 0;
     virtual QSharedPointer<QDemonRenderAtomicCounterBuffer>
-    GetAtomicCounterBuffer(const QString &bufferName) = 0;
+    getAtomicCounterBuffer(const QString &bufferName) = 0;
     virtual QSharedPointer<QDemonRenderAtomicCounterBuffer>
-    GetAtomicCounterBufferByParam(const QString &paramName) = 0;
+    getAtomicCounterBufferByParam(const QString &paramName) = 0;
 
     virtual QSharedPointer<QDemonRenderDrawIndirectBuffer>
-    CreateDrawIndirectBuffer(QDemonRenderBufferUsageType::Enum usageType, size_t size,
+    createDrawIndirectBuffer(QDemonRenderBufferUsageType::Enum usageType, size_t size,
                              QDemonConstDataRef<quint8> bufferData) = 0;
-    virtual QSharedPointer<QDemonRenderDrawIndirectBuffer> GetDrawIndirectBuffer(
+    virtual QSharedPointer<QDemonRenderDrawIndirectBuffer> getDrawIndirectBuffer(
             QDemonRenderBackend::QDemonRenderBackendBufferObject implementationHandle) = 0;
 
-    virtual void SetMemoryBarrier(QDemonRenderBufferBarrierFlags barriers) = 0;
+    virtual void setMemoryBarrier(QDemonRenderBufferBarrierFlags barriers) = 0;
 
-    virtual QSharedPointer<QDemonRenderOcclusionQuery> CreateOcclusionQuery() = 0;
-    virtual QSharedPointer<QDemonRenderTimerQuery> CreateTimerQuery() = 0;
-    virtual QSharedPointer<QDemonRenderSync> CreateSync() = 0;
+    virtual QSharedPointer<QDemonRenderOcclusionQuery> createOcclusionQuery() = 0;
+    virtual QSharedPointer<QDemonRenderTimerQuery> createTimerQuery() = 0;
+    virtual QSharedPointer<QDemonRenderSync> createSync() = 0;
 
-    virtual QSharedPointer<QDemonRenderTexture2D> CreateTexture2D() = 0;
-    virtual QSharedPointer<QDemonRenderTexture2D> GetTexture2D(const void *implementationHandle) = 0;
-    virtual QSharedPointer<QDemonRenderBackend> GetBackend() = 0;
+    virtual QSharedPointer<QDemonRenderTexture2D> createTexture2D() = 0;
+    virtual QSharedPointer<QDemonRenderTexture2D> getTexture2D(const void *implementationHandle) = 0;
+    virtual QSharedPointer<QDemonRenderBackend> getBackend() = 0;
 
-    virtual QSharedPointer<QDemonRenderTexture2DArray> CreateTexture2DArray() = 0;
+    virtual QSharedPointer<QDemonRenderTexture2DArray> createTexture2DArray() = 0;
 
-    virtual QSharedPointer<QDemonRenderTextureCube> CreateTextureCube() = 0;
+    virtual QSharedPointer<QDemonRenderTextureCube> createTextureCube() = 0;
 
-    virtual QSharedPointer<QDemonRenderImage2D> CreateImage2D(QSharedPointer<QDemonRenderTexture2D> inTexture,
+    virtual QSharedPointer<QDemonRenderImage2D> createImage2D(QSharedPointer<QDemonRenderTexture2D> inTexture,
                                                               QDemonRenderImageAccessType::Enum inAccess) = 0;
 
     virtual QSharedPointer<QDemonRenderRenderBuffer>
-    CreateRenderBuffer(QDemonRenderRenderBufferFormats::Enum bufferFormat, quint32 width,
+    createRenderBuffer(QDemonRenderRenderBufferFormats::Enum bufferFormat, quint32 width,
                        quint32 height) = 0;
-    virtual QSharedPointer<QDemonRenderRenderBuffer> GetRenderBuffer(const void *implementationHandle) = 0;
+    virtual QSharedPointer<QDemonRenderRenderBuffer> getRenderBuffer(const void *implementationHandle) = 0;
     // Create a new frame buffer and set the current render target to that frame buffer.
-    virtual QSharedPointer<QDemonRenderFrameBuffer> CreateFrameBuffer() = 0;
-    virtual QSharedPointer<QDemonRenderFrameBuffer> GetFrameBuffer(const void *implementationHandle) = 0;
+    virtual QSharedPointer<QDemonRenderFrameBuffer> createFrameBuffer() = 0;
+    virtual QSharedPointer<QDemonRenderFrameBuffer> getFrameBuffer(const void *implementationHandle) = 0;
 
-    virtual QSharedPointer<QDemonRenderAttribLayout> CreateAttributeLayout(QDemonConstDataRef<QDemonRenderVertexBufferEntry> attribs) = 0;
+    virtual QSharedPointer<QDemonRenderAttribLayout> createAttributeLayout(QDemonConstDataRef<QDemonRenderVertexBufferEntry> attribs) = 0;
 
     virtual QSharedPointer<QDemonRenderInputAssembler>
-    CreateInputAssembler(QSharedPointer<QDemonRenderAttribLayout> attribLayout,
+    createInputAssembler(QSharedPointer<QDemonRenderAttribLayout> attribLayout,
                          QDemonConstDataRef<QSharedPointer<QDemonRenderVertexBuffer>> buffers,
                          const QSharedPointer<QDemonRenderIndexBuffer> indexBuffer, QDemonConstDataRef<quint32> strides,
                          QDemonConstDataRef<quint32> offsets,
                          QDemonRenderDrawMode::Enum primType = QDemonRenderDrawMode::Triangles,
                          quint32 patchVertexCount = 1) = 0;
-    virtual void SetInputAssembler(QSharedPointer<QDemonRenderInputAssembler> inputAssembler) = 0;
+    virtual void setInputAssembler(QSharedPointer<QDemonRenderInputAssembler> inputAssembler) = 0;
 
-    virtual QDemonRenderVertFragCompilationResult CompileSource(
+    virtual QDemonRenderVertFragCompilationResult compileSource(
             const char *shaderName, QDemonConstDataRef<qint8> vertShader,
             QDemonConstDataRef<qint8> fragShader,
             QDemonConstDataRef<qint8> tessControlShaderSource = QDemonConstDataRef<qint8>(),
@@ -239,86 +239,86 @@ public:
 
     // You must figure out inVertLen and inFragLen yourself, this object doesn't do that.
     QDemonRenderVertFragCompilationResult
-    CompileSource(const char *shaderName, const char *vertShader, quint32 inVertLen,
+    compileSource(const char *shaderName, const char *vertShader, quint32 inVertLen,
                   const char *fragShader, quint32 inFragLen, const char * = nullptr,
                   quint32 inTCLen = 0, const char *tessEvaluationShaderSource = nullptr,
                   quint32 inTELen = 0, const char *geometryShaderSource = nullptr, quint32 inGSLen = 0,
                   bool separableProgram = false);
 
     virtual QDemonRenderVertFragCompilationResult
-    CompileBinary(const char *shaderName, QDemonRenderShaderProgramBinaryType::Enum type,
+    compileBinary(const char *shaderName, QDemonRenderShaderProgramBinaryType::Enum type,
                   QDemonDataRef<qint8> vertShader, QDemonDataRef<qint8> fragShader,
                   QDemonDataRef<qint8> tessControlShaderSource = QDemonDataRef<qint8>(),
                   QDemonDataRef<qint8> tessEvaluationShaderSource = QDemonDataRef<qint8>(),
                   QDemonConstDataRef<qint8> geometryShaderSource = QDemonConstDataRef<qint8>()) = 0;
 
     virtual QDemonRenderVertFragCompilationResult
-    CompileComputeSource(const char *shaderName, QDemonConstDataRef<qint8> computeShaderSource) = 0;
+    compileComputeSource(const char *shaderName, QDemonConstDataRef<qint8> computeShaderSource) = 0;
 
-    virtual QSharedPointer<QDemonRenderShaderProgram> GetShaderProgram(const void *implementationHandle) = 0;
+    virtual QSharedPointer<QDemonRenderShaderProgram> getShaderProgram(const void *implementationHandle) = 0;
 
-    virtual QSharedPointer<QDemonRenderProgramPipeline> CreateProgramPipeline() = 0;
+    virtual QSharedPointer<QDemonRenderProgramPipeline> createProgramPipeline() = 0;
 
-    virtual QSharedPointer<QDemonRenderPathSpecification> CreatePathSpecification() = 0;
-    virtual QSharedPointer<QDemonRenderPathRender> CreatePathRender(size_t range = 1) = 0;
-    virtual void SetPathProjectionMatrix(const QMatrix4x4 inPathProjection) = 0;
-    virtual void SetPathModelViewMatrix(const QMatrix4x4 inPathModelview) = 0;
-    virtual void SetPathStencilDepthOffset(float inSlope, float inBias) = 0;
-    virtual void SetPathCoverDepthFunc(QDemonRenderBoolOp::Enum inFunc) = 0;
+    virtual QSharedPointer<QDemonRenderPathSpecification> createPathSpecification() = 0;
+    virtual QSharedPointer<QDemonRenderPathRender> createPathRender(size_t range = 1) = 0;
+    virtual void setPathProjectionMatrix(const QMatrix4x4 inPathProjection) = 0;
+    virtual void setPathModelViewMatrix(const QMatrix4x4 inPathModelview) = 0;
+    virtual void setPathStencilDepthOffset(float inSlope, float inBias) = 0;
+    virtual void setPathCoverDepthFunc(QDemonRenderBoolOp::Enum inFunc) = 0;
 
     virtual QSharedPointer<QDemonRenderPathFontSpecification>
-    CreatePathFontSpecification(const QString &fontName) = 0;
-    virtual QSharedPointer<QDemonRenderPathFontItem> CreatePathFontItem() = 0;
+    createPathFontSpecification(const QString &fontName) = 0;
+    virtual QSharedPointer<QDemonRenderPathFontItem> createPathFontItem() = 0;
 
     // Specific setters for the guaranteed-to-exist context properties to set them as fast as
     // possible.
     // Note that this bypasses the property manage so push/pop will have no effect (unless you
     // set these already
     // once after a push using the property manager.
-    virtual void SetClearColor(QVector4D inClearColor) = 0;
-    virtual QVector4D GetClearColor() const = 0;
+    virtual void setClearColor(QVector4D inClearColor) = 0;
+    virtual QVector4D getClearColor() const = 0;
 
-    virtual void SetBlendFunction(QDemonRenderBlendFunctionArgument inFunctions) = 0;
-    virtual QDemonRenderBlendFunctionArgument GetBlendFunction() const = 0;
+    virtual void setBlendFunction(QDemonRenderBlendFunctionArgument inFunctions) = 0;
+    virtual QDemonRenderBlendFunctionArgument getBlendFunction() const = 0;
 
-    virtual void SetBlendEquation(QDemonRenderBlendEquationArgument inEquations) = 0;
+    virtual void setBlendEquation(QDemonRenderBlendEquationArgument inEquations) = 0;
     virtual QDemonRenderBlendEquationArgument GetBlendEquation() const = 0;
 
-    virtual void SetCullingEnabled(bool inEnabled) = 0;
-    virtual bool IsCullingEnabled() const = 0;
+    virtual void setCullingEnabled(bool inEnabled) = 0;
+    virtual bool isCullingEnabled() const = 0;
 
-    virtual void SetDepthFunction(QDemonRenderBoolOp::Enum inFunction) = 0;
-    virtual QDemonRenderBoolOp::Enum GetDepthFunction() const = 0;
+    virtual void setDepthFunction(QDemonRenderBoolOp::Enum inFunction) = 0;
+    virtual QDemonRenderBoolOp::Enum getDepthFunction() const = 0;
 
-    virtual void SetBlendingEnabled(bool inEnabled) = 0;
-    virtual bool IsBlendingEnabled() const = 0;
+    virtual void setBlendingEnabled(bool inEnabled) = 0;
+    virtual bool isBlendingEnabled() const = 0;
 
-    virtual void SetDepthWriteEnabled(bool inEnabled) = 0;
-    virtual bool IsDepthWriteEnabled() const = 0;
+    virtual void setDepthWriteEnabled(bool inEnabled) = 0;
+    virtual bool isDepthWriteEnabled() const = 0;
 
-    virtual void SetDepthTestEnabled(bool inEnabled) = 0;
-    virtual bool IsDepthTestEnabled() const = 0;
+    virtual void setDepthTestEnabled(bool inEnabled) = 0;
+    virtual bool isDepthTestEnabled() const = 0;
 
-    virtual void SetDepthStencilState(QSharedPointer<QDemonRenderDepthStencilState> inDepthStencilState) = 0;
-    virtual void SetStencilTestEnabled(bool inEnabled) = 0;
-    virtual bool IsStencilTestEnabled() const = 0;
+    virtual void setDepthStencilState(QSharedPointer<QDemonRenderDepthStencilState> inDepthStencilState) = 0;
+    virtual void setStencilTestEnabled(bool inEnabled) = 0;
+    virtual bool isStencilTestEnabled() const = 0;
 
-    virtual void SetRasterizerState(QSharedPointer<QDemonRenderRasterizerState> inRasterizerState) = 0;
+    virtual void setRasterizerState(QSharedPointer<QDemonRenderRasterizerState> inRasterizerState) = 0;
 
-    virtual void SetScissorTestEnabled(bool inEnabled) = 0;
-    virtual bool IsScissorTestEnabled() const = 0;
+    virtual void setScissorTestEnabled(bool inEnabled) = 0;
+    virtual bool isScissorTestEnabled() const = 0;
 
-    virtual void SetScissorRect(QDemonRenderRect inRect) = 0;
-    virtual QDemonRenderRect GetScissorRect() const = 0;
+    virtual void setScissorRect(QDemonRenderRect inRect) = 0;
+    virtual QDemonRenderRect getScissorRect() const = 0;
 
-    virtual void SetViewport(QDemonRenderRect inViewport) = 0;
-    virtual QDemonRenderRect GetViewport() const = 0;
+    virtual void setViewport(QDemonRenderRect inViewport) = 0;
+    virtual QDemonRenderRect getViewport() const = 0;
 
-    virtual void SetColorWritesEnabled(bool inEnabled) = 0;
-    virtual bool IsColorWritesEnabled() const = 0;
+    virtual void setColorWritesEnabled(bool inEnabled) = 0;
+    virtual bool isColorWritesEnabled() const = 0;
 
-    virtual void SetMultisampleEnabled(bool inEnabled) = 0;
-    virtual bool IsMultisampleEnabled() const = 0;
+    virtual void setMultisampleEnabled(bool inEnabled) = 0;
+    virtual bool isMultisampleEnabled() const = 0;
 
     // Used during layer rendering because we can't set the *actual* viewport to what it should
     // be due to hardware problems.
@@ -328,45 +328,45 @@ public:
                                            const QDemonRenderRectF &inViewport,
                                            const QDemonRenderRectF &inVirtualViewport);
 
-    virtual void SetRenderTarget(QSharedPointer<QDemonRenderFrameBuffer> inBuffer) = 0;
-    virtual void SetReadTarget(QSharedPointer<QDemonRenderFrameBuffer> inBuffer) = 0;
-    virtual QSharedPointer<QDemonRenderFrameBuffer> GetRenderTarget() const = 0;
+    virtual void setRenderTarget(QSharedPointer<QDemonRenderFrameBuffer> inBuffer) = 0;
+    virtual void setReadTarget(QSharedPointer<QDemonRenderFrameBuffer> inBuffer) = 0;
+    virtual QSharedPointer<QDemonRenderFrameBuffer> getRenderTarget() const = 0;
 
-    virtual void SetActiveShader(QSharedPointer<QDemonRenderShaderProgram> inShader) = 0;
-    virtual QSharedPointer<QDemonRenderShaderProgram> GetActiveShader() const = 0;
+    virtual void setActiveShader(QSharedPointer<QDemonRenderShaderProgram> inShader) = 0;
+    virtual QSharedPointer<QDemonRenderShaderProgram> getActiveShader() const = 0;
 
-    virtual void SetActiveProgramPipeline(QSharedPointer<QDemonRenderProgramPipeline> inProgramPipeline) = 0;
-    virtual QSharedPointer<QDemonRenderProgramPipeline> GetActiveProgramPipeline() const = 0;
+    virtual void setActiveProgramPipeline(QSharedPointer<QDemonRenderProgramPipeline> inProgramPipeline) = 0;
+    virtual QSharedPointer<QDemonRenderProgramPipeline> getActiveProgramPipeline() const = 0;
 
-    virtual void DispatchCompute(QSharedPointer<QDemonRenderShaderProgram> inShader, quint32 numGroupsX,
+    virtual void dispatchCompute(QSharedPointer<QDemonRenderShaderProgram> inShader, quint32 numGroupsX,
                                  quint32 numGroupsY, quint32 numGroupsZ) = 0;
 
     // Push the entire set of properties.
-    virtual void PushPropertySet() = 0;
+    virtual void pushPropertySet() = 0;
     // Pop the entire set of properties, potentially forcing the values
     // to opengl.  Will set the hardware state to whatever at the time of push.
-    virtual void PopPropertySet(bool inForceSetProperties) = 0;
+    virtual void popPropertySet(bool inForceSetProperties) = 0;
 
     // Ensure the hardware state matches the state we expect.
-    virtual void ResetBlendState() = 0;
+    virtual void resetBlendState() = 0;
 
     // Draw buffers are what the system will render to.. Applies to the current render context.
     //-1 means none, else the integer is assumed to be an index past the draw buffer index.
     // This applies only to the currently bound framebuffer.
-    virtual void SetDrawBuffers(QDemonConstDataRef<qint32> inDrawBufferSet) = 0;
-    virtual void SetReadBuffer(QDemonReadFaces::Enum inReadFace) = 0;
+    virtual void setDrawBuffers(QDemonConstDataRef<qint32> inDrawBufferSet) = 0;
+    virtual void setReadBuffer(QDemonReadFaces::Enum inReadFace) = 0;
 
-    virtual void ReadPixels(QDemonRenderRect inRect, QDemonRenderReadPixelFormats::Enum inFormat,
+    virtual void readPixels(QDemonRenderRect inRect, QDemonRenderReadPixelFormats::Enum inFormat,
                             QDemonDataRef<quint8> inWriteBuffer) = 0;
 
     // Return the property manager for this render context
     // virtual NVRenderPropertyManager& GetPropertyManager() = 0;
     // Clear the current render target
-    virtual void Clear(QDemonRenderClearFlags flags) = 0;
+    virtual void clear(QDemonRenderClearFlags flags) = 0;
     // Clear this framebuffer without changing the active frame buffer
-    virtual void Clear(QSharedPointer<QDemonRenderFrameBuffer> framebuffer, QDemonRenderClearFlags flags) = 0;
+    virtual void clear(QSharedPointer<QDemonRenderFrameBuffer> framebuffer, QDemonRenderClearFlags flags) = 0;
     // copy framebuffer content between read target and render target
-    virtual void BlitFramebuffer(qint32 srcX0, qint32 srcY0, qint32 srcX1, qint32 srcY1,
+    virtual void blitFramebuffer(qint32 srcX0, qint32 srcY0, qint32 srcX1, qint32 srcY1,
                                  qint32 dstX0, qint32 dstY0, qint32 dstX1, qint32 dstY1,
                                  QDemonRenderClearFlags flags,
                                  QDemonRenderTextureMagnifyingOp::Enum filter) = 0;
@@ -379,7 +379,7 @@ public:
     // before the draw operation.  Note that there isn't another way to set the immedate
     // property values for a given shader because it isn't clear which shader is active
     // when the properties are getting set.
-    void Draw(QDemonRenderDrawMode::Enum drawMode, quint32 count, quint32 offset) override = 0;
+    void draw(QDemonRenderDrawMode::Enum drawMode, quint32 count, quint32 offset) override = 0;
 
     /**
          * @brief Draw the current active vertex buffer using an indirect buffer
@@ -391,15 +391,15 @@ public:
          *
          * @return no return.
          */
-    virtual void DrawIndirect(QDemonRenderDrawMode::Enum drawMode, quint32 offset) = 0;
+    virtual void drawIndirect(QDemonRenderDrawMode::Enum drawMode, quint32 offset) = 0;
 
     virtual QSurfaceFormat format() const = 0;
 
     virtual void resetStates() = 0;
 
-    static QSharedPointer<QDemonRenderContext> CreateGL(const QSurfaceFormat &format);
+    static QSharedPointer<QDemonRenderContext> createGl(const QSurfaceFormat &format);
 
-    static QSharedPointer<QDemonRenderContext> CreateNULL();
+    static QSharedPointer<QDemonRenderContext> createNull();
 };
 
 // Now for scoped property access.
@@ -425,23 +425,23 @@ struct QDemonRenderContextScopedProperty
  * A Render Context implementation class
  *
  */
-
+// TODO: Get rid of this, or at least make it more explicit, i.e, don't assume any patterns.
 #define ITERATE_HARDWARE_CONTEXT_PROPERTIES                                                        \
-    HANDLE_CONTEXT_HARDWARE_PROPERTY(RenderTarget, FrameBuffer)                                    \
-    HANDLE_CONTEXT_HARDWARE_PROPERTY(ActiveShader, ActiveShader)                                   \
-    HANDLE_CONTEXT_HARDWARE_PROPERTY(ActiveProgramPipeline, ActiveProgramPipeline)                 \
-    HANDLE_CONTEXT_HARDWARE_PROPERTY(InputAssembler, InputAssembler)                               \
-    HANDLE_CONTEXT_HARDWARE_PROPERTY(BlendFunction, BlendFunction)                                 \
-    HANDLE_CONTEXT_HARDWARE_PROPERTY(CullingEnabled, CullingEnabled)                               \
-    HANDLE_CONTEXT_HARDWARE_PROPERTY(DepthFunction, DepthFunction)                                 \
-    HANDLE_CONTEXT_HARDWARE_PROPERTY(BlendingEnabled, BlendingEnabled)                             \
-    HANDLE_CONTEXT_HARDWARE_PROPERTY(DepthWriteEnabled, DepthWriteEnabled)                         \
-    HANDLE_CONTEXT_HARDWARE_PROPERTY(DepthTestEnabled, DepthTestEnabled)                           \
-    HANDLE_CONTEXT_HARDWARE_PROPERTY(StencilTestEnabled, StencilTestEnabled)                       \
-    HANDLE_CONTEXT_HARDWARE_PROPERTY(ScissorTestEnabled, ScissorTestEnabled)                       \
-    HANDLE_CONTEXT_HARDWARE_PROPERTY(ScissorRect, ScissorRect)                                     \
-    HANDLE_CONTEXT_HARDWARE_PROPERTY(Viewport, Viewport)                                           \
-    HANDLE_CONTEXT_HARDWARE_PROPERTY(ClearColor, ClearColor)
+    HANDLE_CONTEXT_HARDWARE_PROPERTY(RenderTarget, frameBuffer)                                    \
+    HANDLE_CONTEXT_HARDWARE_PROPERTY(ActiveShader, activeShader)                                   \
+    HANDLE_CONTEXT_HARDWARE_PROPERTY(ActiveProgramPipeline, activeProgramPipeline)                 \
+    HANDLE_CONTEXT_HARDWARE_PROPERTY(InputAssembler, inputAssembler)                               \
+    HANDLE_CONTEXT_HARDWARE_PROPERTY(BlendFunction, blendFunction)                                 \
+    HANDLE_CONTEXT_HARDWARE_PROPERTY(CullingEnabled, cullingEnabled)                               \
+    HANDLE_CONTEXT_HARDWARE_PROPERTY(DepthFunction, depthFunction)                                 \
+    HANDLE_CONTEXT_HARDWARE_PROPERTY(BlendingEnabled, blendingEnabled)                             \
+    HANDLE_CONTEXT_HARDWARE_PROPERTY(DepthWriteEnabled, depthWriteEnabled)                         \
+    HANDLE_CONTEXT_HARDWARE_PROPERTY(DepthTestEnabled, depthTestEnabled)                           \
+    HANDLE_CONTEXT_HARDWARE_PROPERTY(StencilTestEnabled, stencilTestEnabled)                       \
+    HANDLE_CONTEXT_HARDWARE_PROPERTY(ScissorTestEnabled, scissorTestEnabled)                       \
+    HANDLE_CONTEXT_HARDWARE_PROPERTY(ScissorRect, scissorRect)                                     \
+    HANDLE_CONTEXT_HARDWARE_PROPERTY(Viewport, viewport)                                           \
+    HANDLE_CONTEXT_HARDWARE_PROPERTY(ClearColor, clearColor)
 
 // forward declarations
 
@@ -449,570 +449,578 @@ class QDemonRenderContextImpl : public QDemonRenderContext, public QDemonNoCopy,
 {
 public:
     // these variables represent the current hardware state of the render context.
-    QDemonGLHardPropertyContext m_HardwarePropertyContext;
+    QDemonGLHardPropertyContext m_hardwarePropertyContext;
 
 private:
     QSharedPointer<QDemonRenderBackend> m_backend; ///< pointer to our render backend
-    QDemonRenderContextDirtyFlags m_DirtyFlags; ///< context dirty flags
+    QDemonRenderContextDirtyFlags m_dirtyFlags; ///< context dirty flags
 
     QDemonRenderBackend::QDemonRenderBackendRenderTargetObject
-    m_DefaultOffscreenRenderTarget; ///< this is a special target set from outside if we
+    m_defaultOffscreenRenderTarget; ///< this is a special target set from outside if we
     ///never render to a window directly (GL only)
-    qint32 m_DephBits; ///< this is the depth bits count of the default window render target
-    qint32 m_StencilBits; ///< this is the stencil bits count of the default window render target
+    qint32 m_dephBits; ///< this is the depth bits count of the default window render target
+    qint32 m_stencilBits; ///< this is the stencil bits count of the default window render target
 
 protected:
-    QHash<const void *, QDemonRenderVertexBuffer *> m_VertToImpMap;
-    QHash<const void *, QDemonRenderIndexBuffer *> m_IndexToImpMap;
-    TContextConstantBufferMap m_ConstantToImpMap;
-    TContextStorageBufferMap m_StorageToImpMap;
-    TContextAtomicCounterBufferMap m_AtomicCounterToImpMap;
-    TContextDrawIndirectBufferMap m_DrawIndirectToImpMap;
-    TContextDepthStencilStateMap m_DepthStencilStateToImpMap;
-    TContextRasterizerStateMap m_RasterizerStateToImpMap;
-    TContextPathFontSpecificationMap m_PathFontSpecToImpMap;
+    QHash<const void *, QDemonRenderVertexBuffer *> m_vertToImpMap;
+    QHash<const void *, QDemonRenderIndexBuffer *> m_indexToImpMap;
+    TContextConstantBufferMap m_constantToImpMap;
+    TContextStorageBufferMap m_storageToImpMap;
+    TContextAtomicCounterBufferMap m_atomicCounterToImpMap;
+    TContextDrawIndirectBufferMap m_drawIndirectToImpMap;
+    TContextDepthStencilStateMap m_depthStencilStateToImpMap;
+    TContextRasterizerStateMap m_rasterizerStateToImpMap;
+    TContextPathFontSpecificationMap m_pathFontSpecToImpMap;
 
-    QHash<const void *, QDemonRenderTexture2D *> m_Tex2DToImpMap;
-    TContextTex2DArrayToImpMap m_Tex2DArrayToImpMap;
-    TContextTexCubeToImpMap m_TexCubeToImpMap;
-    TContextImage2DToImpMap m_Image2DtoImpMap;
-    QHash<const void *, QDemonRenderShaderProgram *> m_ShaderToImpMap;
-    QHash<const void *, QDemonRenderRenderBuffer *> m_RenderBufferToImpMap;
-    QHash<const void *, QDemonRenderFrameBuffer *> m_FrameBufferToImpMap;
-    quint32 m_MaxTextureUnits;
-    quint32 m_NextTextureUnit;
-    quint32 m_MaxConstantBufferUnits;
-    quint32 m_NextConstantBufferUnit;
+    QHash<const void *, QDemonRenderTexture2D *> m_tex2DToImpMap;
+    TContextTex2DArrayToImpMap m_tex2DArrayToImpMap;
+    TContextTexCubeToImpMap m_texCubeToImpMap;
+    TContextImage2DToImpMap m_image2DtoImpMap;
+    QHash<const void *, QDemonRenderShaderProgram *> m_shaderToImpMap;
+    QHash<const void *, QDemonRenderRenderBuffer *> m_renderBufferToImpMap;
+    QHash<const void *, QDemonRenderFrameBuffer *> m_frameBufferToImpMap;
+    quint32 m_maxTextureUnits;
+    quint32 m_nextTextureUnit;
+    quint32 m_maxConstantBufferUnits;
+    quint32 m_nextConstantBufferUnit;
 
-    QVector<QDemonGLHardPropertyContext> m_PropertyStack;
+    QVector<QDemonGLHardPropertyContext> m_propertyStack;
 
-    void DoSetClearColor(QVector4D inClearColor)
+    void doSetClearColor(QVector4D inClearColor)
     {
-        m_HardwarePropertyContext.m_ClearColor = inClearColor;
-        m_backend->SetClearColor(&inClearColor);
+        m_hardwarePropertyContext.m_clearColor = inClearColor;
+        m_backend->setClearColor(&inClearColor);
     }
 
-    void DoSetBlendFunction(QDemonRenderBlendFunctionArgument inFunctions)
+    void doSetBlendFunction(QDemonRenderBlendFunctionArgument inFunctions)
     {
         qint32_4 values;
-        m_HardwarePropertyContext.m_BlendFunction = inFunctions;
+        m_hardwarePropertyContext.m_blendFunction = inFunctions;
 
-        m_backend->SetBlendFunc(inFunctions);
+        m_backend->setBlendFunc(inFunctions);
     }
 
-    void DoSetBlendEquation(QDemonRenderBlendEquationArgument inEquations)
+    void doSetBlendEquation(QDemonRenderBlendEquationArgument inEquations)
     {
         qint32_4 values;
-        m_HardwarePropertyContext.m_BlendEquation = inEquations;
+        m_hardwarePropertyContext.m_blendEquation = inEquations;
 
-        m_backend->SetBlendEquation(inEquations);
+        m_backend->setBlendEquation(inEquations);
     }
 
-    void DoSetCullingEnabled(bool inEnabled)
+    void doSetCullingEnabled(bool inEnabled)
     {
-        m_HardwarePropertyContext.m_CullingEnabled = inEnabled;
-        m_backend->SetRenderState(inEnabled, QDemonRenderState::CullFace);
+        m_hardwarePropertyContext.m_cullingEnabled = inEnabled;
+        m_backend->setRenderState(inEnabled, QDemonRenderState::CullFace);
     }
 
-    void DoSetDepthFunction(QDemonRenderBoolOp::Enum inFunction)
+    void doSetDepthFunction(QDemonRenderBoolOp::Enum inFunction)
     {
-        m_HardwarePropertyContext.m_DepthFunction = inFunction;
-        m_backend->SetDepthFunc(inFunction);
+        m_hardwarePropertyContext.m_depthFunction = inFunction;
+        m_backend->setDepthFunc(inFunction);
     }
 
-    void DoSetBlendingEnabled(bool inEnabled)
+    void doSetBlendingEnabled(bool inEnabled)
     {
-        m_HardwarePropertyContext.m_BlendingEnabled = inEnabled;
-        m_backend->SetRenderState(inEnabled, QDemonRenderState::Blend);
+        m_hardwarePropertyContext.m_blendingEnabled = inEnabled;
+        m_backend->setRenderState(inEnabled, QDemonRenderState::Blend);
     }
 
-    void DoSetColorWritesEnabled(bool inEnabled)
+    void doSetColorWritesEnabled(bool inEnabled)
     {
-        m_HardwarePropertyContext.m_ColorWritesEnabled = inEnabled;
-        m_backend->SetColorWrites(inEnabled, inEnabled, inEnabled, inEnabled);
+        m_hardwarePropertyContext.m_colorWritesEnabled = inEnabled;
+        m_backend->setColorWrites(inEnabled, inEnabled, inEnabled, inEnabled);
     }
 
-    void DoSetMultisampleEnabled(bool inEnabled)
+    void doSetMultisampleEnabled(bool inEnabled)
     {
-        m_HardwarePropertyContext.m_MultisampleEnabled = inEnabled;
-        m_backend->SetMultisample(inEnabled);
+        m_hardwarePropertyContext.m_multisampleEnabled = inEnabled;
+        m_backend->setMultisample(inEnabled);
     }
 
-    void DoSetDepthWriteEnabled(bool inEnabled)
+    void doSetDepthWriteEnabled(bool inEnabled)
     {
-        m_HardwarePropertyContext.m_DepthWriteEnabled = inEnabled;
-        m_backend->SetDepthWrite(inEnabled);
+        m_hardwarePropertyContext.m_depthWriteEnabled = inEnabled;
+        m_backend->setDepthWrite(inEnabled);
     }
 
-    void DoSetDepthTestEnabled(bool inEnabled)
+    void doSetDepthTestEnabled(bool inEnabled)
     {
-        m_HardwarePropertyContext.m_DepthTestEnabled = inEnabled;
-        m_backend->SetRenderState(inEnabled, QDemonRenderState::DepthTest);
+        m_hardwarePropertyContext.m_depthTestEnabled = inEnabled;
+        m_backend->setRenderState(inEnabled, QDemonRenderState::DepthTest);
     }
 
-    void DoSetStencilTestEnabled(bool inEnabled)
+    void doSetStencilTestEnabled(bool inEnabled)
     {
-        m_HardwarePropertyContext.m_StencilTestEnabled = inEnabled;
-        m_backend->SetRenderState(inEnabled, QDemonRenderState::StencilTest);
+        m_hardwarePropertyContext.m_stencilTestEnabled = inEnabled;
+        m_backend->setRenderState(inEnabled, QDemonRenderState::StencilTest);
     }
 
-    void DoSetScissorTestEnabled(bool inEnabled)
+    void doSetScissorTestEnabled(bool inEnabled)
     {
-        m_HardwarePropertyContext.m_ScissorTestEnabled = inEnabled;
-        m_backend->SetRenderState(inEnabled, QDemonRenderState::ScissorTest);
+        m_hardwarePropertyContext.m_scissorTestEnabled = inEnabled;
+        m_backend->setRenderState(inEnabled, QDemonRenderState::ScissorTest);
     }
 
-    void DoSetScissorRect(QDemonRenderRect inRect)
+    void doSetScissorRect(QDemonRenderRect inRect)
     {
-        m_HardwarePropertyContext.m_ScissorRect = inRect;
-        m_backend->SetScissorRect(inRect);
+        m_hardwarePropertyContext.m_scissorRect = inRect;
+        m_backend->setScissorRect(inRect);
     }
 
-    void DoSetViewport(QDemonRenderRect inViewport)
+    void doSetViewport(QDemonRenderRect inViewport)
     {
-        m_HardwarePropertyContext.m_Viewport = inViewport;
-        m_backend->SetViewportRect(inViewport);
+        m_hardwarePropertyContext.m_viewport = inViewport;
+        m_backend->setViewportRect(inViewport);
     }
 
     // Circular dependencies between shader constants and shader programs preclude
     // implementation in header
-    void DoSetActiveShader(QSharedPointer<QDemonRenderShaderProgram> inShader);
-    void DoSetActiveProgramPipeline(QSharedPointer<QDemonRenderProgramPipeline> inProgramPipeline);
+    void doSetActiveShader(QSharedPointer<QDemonRenderShaderProgram> inShader);
+    void doSetActiveProgramPipeline(QSharedPointer<QDemonRenderProgramPipeline> inProgramPipeline);
 
-    void DoSetInputAssembler(QSharedPointer<QDemonRenderInputAssembler> inAssembler)
+    void doSetInputAssembler(QSharedPointer<QDemonRenderInputAssembler> inAssembler)
     {
-        m_HardwarePropertyContext.m_InputAssembler = inAssembler;
-        m_DirtyFlags |= QDemonRenderContextDirtyValues::InputAssembler;
+        m_hardwarePropertyContext.m_inputAssembler = inAssembler;
+        m_dirtyFlags |= QDemonRenderContextDirtyValues::InputAssembler;
     }
 
-    void DoSetRenderTarget(QSharedPointer<QDemonRenderFrameBuffer> inBuffer)
-    {
-        if (inBuffer)
-            m_backend->SetRenderTarget(inBuffer->GetFrameBuffertHandle());
-        else
-            m_backend->SetRenderTarget(m_DefaultOffscreenRenderTarget);
-
-        m_HardwarePropertyContext.m_FrameBuffer = inBuffer;
-    }
-
-    void DoSetReadTarget(QSharedPointer<QDemonRenderFrameBuffer> inBuffer)
+    void doSetRenderTarget(QSharedPointer<QDemonRenderFrameBuffer> inBuffer)
     {
         if (inBuffer)
-            m_backend->SetReadTarget(inBuffer->GetFrameBuffertHandle());
+            m_backend->setRenderTarget(inBuffer->getFrameBuffertHandle());
         else
-            m_backend->SetReadTarget(QDemonRenderBackend::QDemonRenderBackendRenderTargetObject(nullptr));
+            m_backend->setRenderTarget(m_defaultOffscreenRenderTarget);
+
+        m_hardwarePropertyContext.m_frameBuffer = inBuffer;
     }
 
-    bool BindShaderToInputAssembler(const QSharedPointer<QDemonRenderInputAssembler> inputAssembler,
+    void doSetReadTarget(QSharedPointer<QDemonRenderFrameBuffer> inBuffer)
+    {
+        if (inBuffer)
+            m_backend->setReadTarget(inBuffer->getFrameBuffertHandle());
+        else
+            m_backend->setReadTarget(QDemonRenderBackend::QDemonRenderBackendRenderTargetObject(nullptr));
+    }
+
+    bool bindShaderToInputAssembler(const QSharedPointer<QDemonRenderInputAssembler> inputAssembler,
                                     QSharedPointer<QDemonRenderShaderProgram> shader);
-    bool ApplyPreDrawProperties();
-    void OnPostDraw();
+    bool applyPreDrawProperties();
+    void onPostDraw();
 
 public:
     QDemonRenderContextImpl(QSharedPointer<QDemonRenderBackend> inBackend);
     virtual ~QDemonRenderContextImpl();
 
-    QSharedPointer<QDemonRenderBackend> GetBackend() override { return m_backend; }
+    QSharedPointer<QDemonRenderBackend> getBackend() override { return m_backend; }
 
     void getMaxTextureSize(quint32 &oWidth, quint32 &oHeight) override;
 
-    const char *GetShadingLanguageVersion() override
+    const char *getShadingLanguageVersion() override
     {
-        return m_backend->GetShadingLanguageVersion();
+        return m_backend->getShadingLanguageVersion();
     }
 
-    QDemonRenderContextType GetRenderContextType() const override
+    QDemonRenderContextType getRenderContextType() const override
     {
-        return m_backend->GetRenderContextType();
+        return m_backend->getRenderContextType();
     }
 
-    quint32 GetDepthBits() const override
+    quint32 getDepthBits() const override
     {
         // only query this if a framebuffer is bound
-        if (m_HardwarePropertyContext.m_FrameBuffer)
-            return m_backend->GetDepthBits();
+        if (m_hardwarePropertyContext.m_frameBuffer)
+            return m_backend->getDepthBits();
         else
-            return m_DephBits;
+            return m_dephBits;
     }
 
-    quint32 GetStencilBits() const override
+    quint32 getStencilBits() const override
     {
         // only query this if a framebuffer is bound
-        if (m_HardwarePropertyContext.m_FrameBuffer)
-            return m_backend->GetStencilBits();
+        if (m_hardwarePropertyContext.m_frameBuffer)
+            return m_backend->getStencilBits();
         else
-            return m_StencilBits;
+            return m_stencilBits;
     }
 
-    bool GetRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::Enum inCap) const override
+    bool getRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::Enum inCap) const override
     {
-        return m_backend->GetRenderBackendCap(inCap);
+        return m_backend->getRenderBackendCap(inCap);
     }
 
-    bool AreMultisampleTexturesSupported() const override
+    bool areMultisampleTexturesSupported() const override
     {
-        return GetRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::MsTexture);
+        return getRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::MsTexture);
     }
 
-    bool GetConstantBufferSupport() const override
+    bool getConstantBufferSupport() const override
     {
-        return GetRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::ConstantBuffer);
+        return getRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::ConstantBuffer);
     }
 
-    bool AreDXTImagesSupported() const override
+    bool areDXTImagesSupported() const override
     {
-        return GetRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::DxtImages);
+        return getRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::DxtImages);
     }
 
-    bool IsDepthStencilSupported() const override
+    bool isDepthStencilSupported() const override
     {
-        return GetRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::DepthStencilTexture);
+        return getRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::DepthStencilTexture);
     }
 
-    bool IsFpRenderTargetSupported() const override
+    bool isFpRenderTargetSupported() const override
     {
-        return GetRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::FpRenderTarget);
+        return getRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::FpRenderTarget);
     }
 
-    bool IsTessellationSupported() const override
+    bool isTessellationSupported() const override
     {
-        return GetRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::Tessellation);
+        return getRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::Tessellation);
     }
 
-    bool IsGeometryStageSupported() const override
+    bool isGeometryStageSupported() const override
     {
-        return GetRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::Geometry);
+        return getRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::Geometry);
     }
 
-    bool IsComputeSupported() const override
+    bool isComputeSupported() const override
     {
-        return GetRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::Compute);
+        return getRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::Compute);
     }
 
-    bool IsSampleQuerySupported() const override
+    bool isSampleQuerySupported() const override
     {
-        return GetRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::SampleQuery);
+        return getRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::SampleQuery);
     }
 
-    bool IsTimerQuerySupported() const override
+    bool isTimerQuerySupported() const override
     {
-        return GetRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::TimerQuery);
+        return getRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::TimerQuery);
     }
 
-    bool IsCommandSyncSupported() const override
+    bool isCommandSyncSupported() const override
     {
-        return GetRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::CommandSync);
+        return getRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::CommandSync);
     }
-    bool IsTextureArraySupported() const override
+    bool isTextureArraySupported() const override
     {
-        return GetRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::TextureArray);
+        return getRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::TextureArray);
     }
-    bool IsStorageBufferSupported() const override
+    bool isStorageBufferSupported() const override
     {
-        return GetRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::StorageBuffer);
+        return getRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::StorageBuffer);
     }
-    bool IsAtomicCounterBufferSupported() const override
+    bool isAtomicCounterBufferSupported() const override
     {
-        return GetRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::AtomicCounterBuffer);
+        return getRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::AtomicCounterBuffer);
     }
-    bool IsShaderImageLoadStoreSupported() const override
+    bool isShaderImageLoadStoreSupported() const override
     {
-        return GetRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::ShaderImageLoadStore);
+        return getRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::ShaderImageLoadStore);
     }
-    bool IsProgramPipelineSupported() const override
+    bool isProgramPipelineSupported() const override
     {
-        return GetRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::ProgramPipeline);
+        return getRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::ProgramPipeline);
     }
-    bool IsPathRenderingSupported() const override
+    bool isPathRenderingSupported() const override
     {
-        return GetRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::PathRendering);
+        return getRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::PathRendering);
     }
     // Are blend modes really supported in HW?
-    bool IsAdvancedBlendHwSupported() const override
+    bool isAdvancedBlendHwSupported() const override
     {
-        return GetRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::AdvancedBlend);
+        return getRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::AdvancedBlend);
     }
-    bool IsAdvancedBlendHwSupportedKHR() const override
+    bool isAdvancedBlendHwSupportedKHR() const override
     {
-        return GetRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::AdvancedBlendKHR);
+        return getRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::AdvancedBlendKHR);
     }
-    bool IsBlendCoherencySupported() const override
+    bool isBlendCoherencySupported() const override
     {
-        return GetRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::BlendCoherency);
+        return getRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::BlendCoherency);
     }
-    bool IsStandardDerivativesSupported() const override
+    bool isStandardDerivativesSupported() const override
     {
-        return GetRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::StandardDerivatives);
+        return getRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::StandardDerivatives);
     }
-    bool IsTextureLodSupported() const override
+    bool isTextureLodSupported() const override
     {
-        return GetRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::TextureLod);
-    }
-
-    void SetDefaultRenderTarget(quint64 targetID) override
-    {
-        m_DefaultOffscreenRenderTarget = reinterpret_cast<QDemonRenderBackend::QDemonRenderBackendRenderTargetObject>(targetID);
+        return getRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::TextureLod);
     }
 
-    void SetDefaultDepthBufferBitCount(qint32 depthBits) override { m_DephBits = depthBits; }
+    void setDefaultRenderTarget(quint64 targetID) override
+    {
+        m_defaultOffscreenRenderTarget = reinterpret_cast<QDemonRenderBackend::QDemonRenderBackendRenderTargetObject>(targetID);
+    }
 
-    virtual QSharedPointer<QDemonRenderDepthStencilState>
-    CreateDepthStencilState(bool enableDepth, bool depthMask, QDemonRenderBoolOp::Enum depthFunc,
-                            bool enableStencil,
-                            QDemonRenderStencilFunctionArgument &stencilFuncFront,
-                            QDemonRenderStencilFunctionArgument &stencilFuncBack,
-                            QDemonRenderStencilOperationArgument &depthStencilOpFront,
-                            QDemonRenderStencilOperationArgument &depthStencilOpBack) override;
-    void SetDepthStencilState(QSharedPointer<QDemonRenderDepthStencilState> inDepthStencilState) override;
-    virtual void StateDestroyed(QDemonRenderDepthStencilState *state);
+    void setDefaultDepthBufferBitCount(qint32 depthBits) override { m_dephBits = depthBits; }
 
-    QSharedPointer<QDemonRenderRasterizerState> CreateRasterizerState(float depthBias, float depthScale,
-                                                       QDemonRenderFaces::Enum cullFace) override;
-    void SetRasterizerState(QSharedPointer<QDemonRenderRasterizerState> inRasterizerState) override;
-    virtual void StateDestroyed(QDemonRenderRasterizerState *state);
+    virtual QSharedPointer<QDemonRenderDepthStencilState> createDepthStencilState(bool enableDepth,
+                                                                                  bool depthMask,
+                                                                                  QDemonRenderBoolOp::Enum depthFunc,
+                                                                                  bool enableStencil,
+                                                                                  QDemonRenderStencilFunctionArgument &stencilFuncFront,
+                                                                                  QDemonRenderStencilFunctionArgument &stencilFuncBack,
+                                                                                  QDemonRenderStencilOperationArgument &depthStencilOpFront,
+                                                                                  QDemonRenderStencilOperationArgument &depthStencilOpBack) override;
+    void setDepthStencilState(QSharedPointer<QDemonRenderDepthStencilState> inDepthStencilState) override;
+    virtual void stateDestroyed(QDemonRenderDepthStencilState *state);
 
-    QSharedPointer<QDemonRenderVertexBuffer> CreateVertexBuffer(QDemonRenderBufferUsageType::Enum usageType,
-                                                 size_t size, quint32 stride,
-                                                 QDemonConstDataRef<quint8> bufferData) override;
-    QSharedPointer<QDemonRenderVertexBuffer> GetVertexBuffer(const void *implementationHandle) override;
-    virtual void BufferDestroyed(QDemonRenderVertexBuffer *buffer);
+    QSharedPointer<QDemonRenderRasterizerState> createRasterizerState(float depthBias,
+                                                                      float depthScale,
+                                                                      QDemonRenderFaces::Enum cullFace) override;
+    void setRasterizerState(QSharedPointer<QDemonRenderRasterizerState> inRasterizerState) override;
+    virtual void stateDestroyed(QDemonRenderRasterizerState *state);
 
-    virtual QSharedPointer<QDemonRenderIndexBuffer>
-    CreateIndexBuffer(QDemonRenderBufferUsageType::Enum usageType,
-                      QDemonRenderComponentTypes::Enum componentType, size_t size,
-                      QDemonConstDataRef<quint8> bufferData) override;
-    QSharedPointer<QDemonRenderIndexBuffer> GetIndexBuffer(const void *implementationHandle) override;
-    virtual void BufferDestroyed(QDemonRenderIndexBuffer *buffer);
+    QSharedPointer<QDemonRenderVertexBuffer> createVertexBuffer(QDemonRenderBufferUsageType::Enum usageType,
+                                                                size_t size,
+                                                                quint32 stride,
+                                                                QDemonConstDataRef<quint8> bufferData) override;
+    QSharedPointer<QDemonRenderVertexBuffer> getVertexBuffer(const void *implementationHandle) override;
+    virtual void bufferDestroyed(QDemonRenderVertexBuffer *buffer);
 
-    virtual QSharedPointer<QDemonRenderConstantBuffer> CreateConstantBuffer(const char *bufferName,
-                         QDemonRenderBufferUsageType::Enum usageType, size_t size,
-                         QDemonConstDataRef<quint8> bufferData) override;
-    QSharedPointer<QDemonRenderConstantBuffer> GetConstantBuffer(const QString &bufferName) override;
-    virtual void BufferDestroyed(QDemonRenderConstantBuffer *buffer);
+    virtual QSharedPointer<QDemonRenderIndexBuffer> createIndexBuffer(QDemonRenderBufferUsageType::Enum usageType,
+                                                                      QDemonRenderComponentTypes::Enum componentType,
+                                                                      size_t size,
+                                                                      QDemonConstDataRef<quint8> bufferData) override;
+    QSharedPointer<QDemonRenderIndexBuffer> getIndexBuffer(const void *implementationHandle) override;
+    virtual void bufferDestroyed(QDemonRenderIndexBuffer *buffer);
 
-    virtual quint32 GetNextConstantBufferUnit();
+    virtual QSharedPointer<QDemonRenderConstantBuffer> createConstantBuffer(const char *bufferName,
+                                                                            QDemonRenderBufferUsageType::Enum usageType,
+                                                                            size_t size,
+                                                                            QDemonConstDataRef<quint8> bufferData) override;
+    QSharedPointer<QDemonRenderConstantBuffer> getConstantBuffer(const QString &bufferName) override;
+    virtual void bufferDestroyed(QDemonRenderConstantBuffer *buffer);
 
-    virtual QSharedPointer<QDemonRenderStorageBuffer>
-    CreateStorageBuffer(const char *bufferName,
-                        QDemonRenderBufferUsageType::Enum usageType, size_t size,
-                        QDemonConstDataRef<quint8> bufferData, QDemonRenderDataBuffer *pBuffer) override;
-    QSharedPointer<QDemonRenderStorageBuffer> GetStorageBuffer(const QString &bufferName) override;
-    virtual void BufferDestroyed(QDemonRenderStorageBuffer *buffer);
+    virtual quint32 getNextConstantBufferUnit();
 
-    virtual QSharedPointer<QDemonRenderAtomicCounterBuffer>
-    CreateAtomicCounterBuffer(const char *bufferName,
-                              QDemonRenderBufferUsageType::Enum usageType, size_t size,
-                              QDemonConstDataRef<quint8> bufferData) override;
-    QSharedPointer<QDemonRenderAtomicCounterBuffer> GetAtomicCounterBuffer(const QString &bufferName) override;
-    virtual QSharedPointer<QDemonRenderAtomicCounterBuffer>
-    GetAtomicCounterBufferByParam(const QString &paramName) override;
-    virtual void BufferDestroyed(QDemonRenderAtomicCounterBuffer *buffer);
+    virtual QSharedPointer<QDemonRenderStorageBuffer> createStorageBuffer(const char *bufferName,
+                                                                          QDemonRenderBufferUsageType::Enum usageType,
+                                                                          size_t size,
+                                                                          QDemonConstDataRef<quint8> bufferData,
+                                                                          QDemonRenderDataBuffer *pBuffer) override;
+    QSharedPointer<QDemonRenderStorageBuffer> getStorageBuffer(const QString &bufferName) override;
+    virtual void bufferDestroyed(QDemonRenderStorageBuffer *buffer);
 
-    virtual QSharedPointer<QDemonRenderDrawIndirectBuffer>
-    CreateDrawIndirectBuffer(QDemonRenderBufferUsageType::Enum usageType, size_t size,
-                             QDemonConstDataRef<quint8> bufferData) override;
-    virtual QSharedPointer<QDemonRenderDrawIndirectBuffer>
-    GetDrawIndirectBuffer(QDemonRenderBackend::QDemonRenderBackendBufferObject implementationHandle) override;
-    virtual void BufferDestroyed(QDemonRenderDrawIndirectBuffer *buffer);
+    virtual QSharedPointer<QDemonRenderAtomicCounterBuffer> createAtomicCounterBuffer(const char *bufferName,
+                                                                                      QDemonRenderBufferUsageType::Enum usageType,
+                                                                                      size_t size,
+                                                                                      QDemonConstDataRef<quint8> bufferData) override;
+    QSharedPointer<QDemonRenderAtomicCounterBuffer> getAtomicCounterBuffer(const QString &bufferName) override;
+    virtual QSharedPointer<QDemonRenderAtomicCounterBuffer> getAtomicCounterBufferByParam(const QString &paramName) override;
+    virtual void bufferDestroyed(QDemonRenderAtomicCounterBuffer *buffer);
 
-    void SetMemoryBarrier(QDemonRenderBufferBarrierFlags barriers) override;
+    virtual QSharedPointer<QDemonRenderDrawIndirectBuffer> createDrawIndirectBuffer(QDemonRenderBufferUsageType::Enum usageType,
+                                                                                    size_t size,
+                                                                                    QDemonConstDataRef<quint8> bufferData) override;
+    virtual QSharedPointer<QDemonRenderDrawIndirectBuffer> getDrawIndirectBuffer(QDemonRenderBackend::QDemonRenderBackendBufferObject implementationHandle) override;
+    virtual void bufferDestroyed(QDemonRenderDrawIndirectBuffer *buffer);
 
-    QSharedPointer<QDemonRenderOcclusionQuery> CreateOcclusionQuery() override;
-    QSharedPointer<QDemonRenderTimerQuery> CreateTimerQuery() override;
-    QSharedPointer<QDemonRenderSync> CreateSync() override;
+    void setMemoryBarrier(QDemonRenderBufferBarrierFlags barriers) override;
 
-    QSharedPointer<QDemonRenderTexture2D> CreateTexture2D() override;
-    QSharedPointer<QDemonRenderTexture2D> GetTexture2D(const void *implementationHandle) override;
-    virtual void TextureDestroyed(QDemonRenderTexture2D *buffer);
+    QSharedPointer<QDemonRenderOcclusionQuery> createOcclusionQuery() override;
+    QSharedPointer<QDemonRenderTimerQuery> createTimerQuery() override;
+    QSharedPointer<QDemonRenderSync> createSync() override;
 
-    QSharedPointer<QDemonRenderTexture2DArray> CreateTexture2DArray() override;
-    virtual void TextureDestroyed(QDemonRenderTexture2DArray *buffer);
+    QSharedPointer<QDemonRenderTexture2D> createTexture2D() override;
+    QSharedPointer<QDemonRenderTexture2D> getTexture2D(const void *implementationHandle) override;
+    virtual void textureDestroyed(QDemonRenderTexture2D *buffer);
 
-    QSharedPointer<QDemonRenderTextureCube> CreateTextureCube() override;
-    virtual void TextureDestroyed(QDemonRenderTextureCube *buffer);
+    QSharedPointer<QDemonRenderTexture2DArray> createTexture2DArray() override;
+    virtual void textureDestroyed(QDemonRenderTexture2DArray *buffer);
 
-    virtual quint32 GetNextTextureUnit();
+    QSharedPointer<QDemonRenderTextureCube> createTextureCube() override;
+    virtual void textureDestroyed(QDemonRenderTextureCube *buffer);
 
-    QSharedPointer<QDemonRenderImage2D> CreateImage2D(QSharedPointer<QDemonRenderTexture2D> inTexture,
+    virtual quint32 getNextTextureUnit();
+
+    QSharedPointer<QDemonRenderImage2D> createImage2D(QSharedPointer<QDemonRenderTexture2D> inTexture,
                                                       QDemonRenderImageAccessType::Enum inAccess) override;
-    virtual void ImageDestroyed(QDemonRenderImage2D *buffer);
+    virtual void imageDestroyed(QDemonRenderImage2D *buffer);
 
-    virtual QSharedPointer<QDemonRenderRenderBuffer> CreateRenderBuffer(QDemonRenderRenderBufferFormats::Enum bufferFormat, quint32 width,
+    virtual QSharedPointer<QDemonRenderRenderBuffer> createRenderBuffer(QDemonRenderRenderBufferFormats::Enum bufferFormat,
+                                                                        quint32 width,
                                                                         quint32 height) override;
-    QSharedPointer<QDemonRenderRenderBuffer> GetRenderBuffer(const void *implementationHandle) override;
-    virtual void RenderBufferDestroyed(QDemonRenderRenderBuffer *buffer);
+    QSharedPointer<QDemonRenderRenderBuffer> getRenderBuffer(const void *implementationHandle) override;
+    virtual void renderBufferDestroyed(QDemonRenderRenderBuffer *buffer);
 
-    QSharedPointer<QDemonRenderFrameBuffer> CreateFrameBuffer() override;
-    QSharedPointer<QDemonRenderFrameBuffer> GetFrameBuffer(const void *implementationHandle) override;
-    virtual void FrameBufferDestroyed(QDemonRenderFrameBuffer *fb);
+    QSharedPointer<QDemonRenderFrameBuffer> createFrameBuffer() override;
+    QSharedPointer<QDemonRenderFrameBuffer> getFrameBuffer(const void *implementationHandle) override;
+    virtual void frameBufferDestroyed(QDemonRenderFrameBuffer *fb);
 
-    virtual QSharedPointer<QDemonRenderAttribLayout>
-    CreateAttributeLayout(QDemonConstDataRef<QDemonRenderVertexBufferEntry> attribs) override;
-    QSharedPointer<QDemonRenderInputAssembler> CreateInputAssembler(
-            QSharedPointer<QDemonRenderAttribLayout> attribLayout, QDemonConstDataRef<QSharedPointer<QDemonRenderVertexBuffer>> buffers,
-            const QSharedPointer<QDemonRenderIndexBuffer> indexBuffer, QDemonConstDataRef<quint32> strides,
-            QDemonConstDataRef<quint32> offsets, QDemonRenderDrawMode::Enum primType, quint32 patchVertexCount) override;
-    void SetInputAssembler(QSharedPointer<QDemonRenderInputAssembler> inputAssembler) override;
+    virtual QSharedPointer<QDemonRenderAttribLayout> createAttributeLayout(QDemonConstDataRef<QDemonRenderVertexBufferEntry> attribs) override;
+    QSharedPointer<QDemonRenderInputAssembler> createInputAssembler(QSharedPointer<QDemonRenderAttribLayout> attribLayout,
+                                                                    QDemonConstDataRef<QSharedPointer<QDemonRenderVertexBuffer>> buffers,
+                                                                    const QSharedPointer<QDemonRenderIndexBuffer> indexBuffer,
+                                                                    QDemonConstDataRef<quint32> strides,
+                                                                    QDemonConstDataRef<quint32> offsets,
+                                                                    QDemonRenderDrawMode::Enum primType,
+                                                                    quint32 patchVertexCount) override;
+    void setInputAssembler(QSharedPointer<QDemonRenderInputAssembler> inputAssembler) override;
 
-    QDemonRenderVertFragCompilationResult CompileSource(
-            const char *shaderName, QDemonConstDataRef<qint8> vertShader,
-            QDemonConstDataRef<qint8> fragShader,
-            QDemonConstDataRef<qint8> tessControlShaderSource = QDemonConstDataRef<qint8>(),
-            QDemonConstDataRef<qint8> tessEvaluationShaderSource = QDemonConstDataRef<qint8>(),
-            QDemonConstDataRef<qint8> geometryShaderSource = QDemonConstDataRef<qint8>(),
-            bool separateProgram = false,
-            QDemonRenderShaderProgramBinaryType::Enum type = QDemonRenderShaderProgramBinaryType::Unknown,
-            bool binaryProgram = false) override;
+    QDemonRenderVertFragCompilationResult compileSource(const char *shaderName,
+                                                        QDemonConstDataRef<qint8> vertShader,
+                                                        QDemonConstDataRef<qint8> fragShader,
+                                                        QDemonConstDataRef<qint8> tessControlShaderSource = QDemonConstDataRef<qint8>(),
+                                                        QDemonConstDataRef<qint8> tessEvaluationShaderSource = QDemonConstDataRef<qint8>(),
+                                                        QDemonConstDataRef<qint8> geometryShaderSource = QDemonConstDataRef<qint8>(),
+                                                        bool separateProgram = false,
+                                                        QDemonRenderShaderProgramBinaryType::Enum type = QDemonRenderShaderProgramBinaryType::Unknown,
+                                                        bool binaryProgram = false) override;
 
-    virtual QDemonRenderVertFragCompilationResult
-    CompileBinary(const char *shaderName, QDemonRenderShaderProgramBinaryType::Enum type,
-                  QDemonDataRef<qint8> vertShader, QDemonDataRef<qint8> fragShader,
-                  QDemonDataRef<qint8> tessControlShaderSource = QDemonDataRef<qint8>(),
-                  QDemonDataRef<qint8> tessEvaluationShaderSource = QDemonDataRef<qint8>(),
-                  QDemonConstDataRef<qint8> geometryShaderSource = QDemonConstDataRef<qint8>()) override;
+    virtual QDemonRenderVertFragCompilationResult compileBinary(const char *shaderName,
+                                                                QDemonRenderShaderProgramBinaryType::Enum type,
+                                                                QDemonDataRef<qint8> vertShader,
+                                                                QDemonDataRef<qint8> fragShader,
+                                                                QDemonDataRef<qint8> tessControlShaderSource = QDemonDataRef<qint8>(),
+                                                                QDemonDataRef<qint8> tessEvaluationShaderSource = QDemonDataRef<qint8>(),
+                                                                QDemonConstDataRef<qint8> geometryShaderSource = QDemonConstDataRef<qint8>()) override;
 
-    virtual QDemonRenderVertFragCompilationResult
-    CompileComputeSource(const char *shaderName, QDemonConstDataRef<qint8> computeShaderSource) override;
+    virtual QDemonRenderVertFragCompilationResult compileComputeSource(const char *shaderName,
+                                                                       QDemonConstDataRef<qint8> computeShaderSource) override;
 
-    QSharedPointer<QDemonRenderShaderProgram> GetShaderProgram(const void *implementationHandle) override;
-    virtual void ShaderDestroyed(QDemonRenderShaderProgram *shader);
+    QSharedPointer<QDemonRenderShaderProgram> getShaderProgram(const void *implementationHandle) override;
+    virtual void shaderDestroyed(QDemonRenderShaderProgram *shader);
 
-    QSharedPointer<QDemonRenderProgramPipeline> CreateProgramPipeline() override;
-    QSharedPointer<QDemonRenderPathSpecification> CreatePathSpecification() override;
-    QSharedPointer<QDemonRenderPathRender> CreatePathRender(size_t range = 1) override;
-    void SetPathProjectionMatrix(const QMatrix4x4 inPathProjection) override;
-    void SetPathModelViewMatrix(const QMatrix4x4 inPathModelview) override;
-    void SetPathStencilDepthOffset(float inSlope, float inBias) override;
-    void SetPathCoverDepthFunc(QDemonRenderBoolOp::Enum inFunc) override;
+    QSharedPointer<QDemonRenderProgramPipeline> createProgramPipeline() override;
+    QSharedPointer<QDemonRenderPathSpecification> createPathSpecification() override;
+    QSharedPointer<QDemonRenderPathRender> createPathRender(size_t range = 1) override;
+    void setPathProjectionMatrix(const QMatrix4x4 inPathProjection) override;
+    void setPathModelViewMatrix(const QMatrix4x4 inPathModelview) override;
+    void setPathStencilDepthOffset(float inSlope, float inBias) override;
+    void setPathCoverDepthFunc(QDemonRenderBoolOp::Enum inFunc) override;
 
-    virtual QSharedPointer<QDemonRenderPathFontSpecification>
-    CreatePathFontSpecification(const QString &fontName) override;
-    virtual void ReleasePathFontSpecification(QDemonRenderPathFontSpecification *inPathSpec);
-    QSharedPointer<QDemonRenderPathFontItem> CreatePathFontItem() override;
+    virtual QSharedPointer<QDemonRenderPathFontSpecification> createPathFontSpecification(const QString &fontName) override;
+    virtual void releasePathFontSpecification(QDemonRenderPathFontSpecification *inPathSpec);
+    QSharedPointer<QDemonRenderPathFontItem> createPathFontItem() override;
 
-    void SetClearColor(QVector4D inClearColor) override;
-    QVector4D GetClearColor() const override { return m_HardwarePropertyContext.m_ClearColor; }
+    void setClearColor(QVector4D inClearColor) override;
+    QVector4D getClearColor() const override { return m_hardwarePropertyContext.m_clearColor; }
 
-    void SetBlendFunction(QDemonRenderBlendFunctionArgument inFunctions) override;
-    QDemonRenderBlendFunctionArgument GetBlendFunction() const override
+    void setBlendFunction(QDemonRenderBlendFunctionArgument inFunctions) override;
+    QDemonRenderBlendFunctionArgument getBlendFunction() const override
     {
-        return m_HardwarePropertyContext.m_BlendFunction;
+        return m_hardwarePropertyContext.m_blendFunction;
     }
 
-    void SetBlendEquation(QDemonRenderBlendEquationArgument inEquations) override;
+    void setBlendEquation(QDemonRenderBlendEquationArgument inEquations) override;
     QDemonRenderBlendEquationArgument GetBlendEquation() const override
     {
-        return m_HardwarePropertyContext.m_BlendEquation;
+        return m_hardwarePropertyContext.m_blendEquation;
     }
 
-    void SetCullingEnabled(bool inEnabled) override;
-    bool IsCullingEnabled() const override { return m_HardwarePropertyContext.m_CullingEnabled; }
+    void setCullingEnabled(bool inEnabled) override;
+    bool isCullingEnabled() const override { return m_hardwarePropertyContext.m_cullingEnabled; }
 
-    void SetDepthFunction(QDemonRenderBoolOp::Enum inFunction) override;
-    QDemonRenderBoolOp::Enum GetDepthFunction() const override
+    void setDepthFunction(QDemonRenderBoolOp::Enum inFunction) override;
+    QDemonRenderBoolOp::Enum getDepthFunction() const override
     {
-        return m_HardwarePropertyContext.m_DepthFunction;
+        return m_hardwarePropertyContext.m_depthFunction;
     }
 
-    void SetBlendingEnabled(bool inEnabled) override;
-    bool IsBlendingEnabled() const override
+    void setBlendingEnabled(bool inEnabled) override;
+    bool isBlendingEnabled() const override
     {
-        return m_HardwarePropertyContext.m_BlendingEnabled;
+        return m_hardwarePropertyContext.m_blendingEnabled;
     }
 
-    void SetDepthWriteEnabled(bool inEnabled) override;
-    bool IsDepthWriteEnabled() const override
+    void setDepthWriteEnabled(bool inEnabled) override;
+    bool isDepthWriteEnabled() const override
     {
-        return m_HardwarePropertyContext.m_DepthWriteEnabled;
+        return m_hardwarePropertyContext.m_depthWriteEnabled;
     }
-    void SetDepthTestEnabled(bool inEnabled) override;
-    bool IsDepthTestEnabled() const override
+    void setDepthTestEnabled(bool inEnabled) override;
+    bool isDepthTestEnabled() const override
     {
-        return m_HardwarePropertyContext.m_DepthTestEnabled;
+        return m_hardwarePropertyContext.m_depthTestEnabled;
     }
 
-    void SetStencilTestEnabled(bool inEnabled) override;
-    bool IsStencilTestEnabled() const override
+    void setStencilTestEnabled(bool inEnabled) override;
+    bool isStencilTestEnabled() const override
     {
-        return m_HardwarePropertyContext.m_StencilTestEnabled;
+        return m_hardwarePropertyContext.m_stencilTestEnabled;
     }
 
-    void SetScissorTestEnabled(bool inEnabled) override;
-    bool IsScissorTestEnabled() const override
+    void setScissorTestEnabled(bool inEnabled) override;
+    bool isScissorTestEnabled() const override
     {
-        return m_HardwarePropertyContext.m_ScissorTestEnabled;
+        return m_hardwarePropertyContext.m_scissorTestEnabled;
     }
-    void SetScissorRect(QDemonRenderRect inRect) override;
-    QDemonRenderRect GetScissorRect() const override
+    void setScissorRect(QDemonRenderRect inRect) override;
+    QDemonRenderRect getScissorRect() const override
     {
-        return m_HardwarePropertyContext.m_ScissorRect;
+        return m_hardwarePropertyContext.m_scissorRect;
     }
 
-    void SetViewport(QDemonRenderRect inViewport) override;
-    QDemonRenderRect GetViewport() const override { return m_HardwarePropertyContext.m_Viewport; }
+    void setViewport(QDemonRenderRect inViewport) override;
+    QDemonRenderRect getViewport() const override { return m_hardwarePropertyContext.m_viewport; }
 
-    void SetColorWritesEnabled(bool inEnabled) override;
-    bool IsColorWritesEnabled() const override
+    void setColorWritesEnabled(bool inEnabled) override;
+    bool isColorWritesEnabled() const override
     {
-        return m_HardwarePropertyContext.m_ColorWritesEnabled;
+        return m_hardwarePropertyContext.m_colorWritesEnabled;
     }
 
-    void SetMultisampleEnabled(bool inEnabled) override;
-    bool IsMultisampleEnabled() const override
+    void setMultisampleEnabled(bool inEnabled) override;
+    bool isMultisampleEnabled() const override
     {
-        return m_HardwarePropertyContext.m_MultisampleEnabled;
+        return m_hardwarePropertyContext.m_multisampleEnabled;
     }
 
-    void SetActiveShader(QSharedPointer<QDemonRenderShaderProgram> inShader) override;
-    QSharedPointer<QDemonRenderShaderProgram> GetActiveShader() const override
+    void setActiveShader(QSharedPointer<QDemonRenderShaderProgram> inShader) override;
+    QSharedPointer<QDemonRenderShaderProgram> getActiveShader() const override
     {
-        return m_HardwarePropertyContext.m_ActiveShader;
+        return m_hardwarePropertyContext.m_activeShader;
     }
 
-    void SetActiveProgramPipeline(QSharedPointer<QDemonRenderProgramPipeline> inProgramPipeline) override;
-    QSharedPointer<QDemonRenderProgramPipeline> GetActiveProgramPipeline() const override
+    void setActiveProgramPipeline(QSharedPointer<QDemonRenderProgramPipeline> inProgramPipeline) override;
+    QSharedPointer<QDemonRenderProgramPipeline> getActiveProgramPipeline() const override
     {
-        return m_HardwarePropertyContext.m_ActiveProgramPipeline;
+        return m_hardwarePropertyContext.m_activeProgramPipeline;
     }
 
-    void DispatchCompute(QSharedPointer<QDemonRenderShaderProgram> inShader, quint32 numGroupsX,
-                         quint32 numGroupsY, quint32 numGroupsZ) override;
+    void dispatchCompute(QSharedPointer<QDemonRenderShaderProgram> inShader,
+                         quint32 numGroupsX,
+                         quint32 numGroupsY,
+                         quint32 numGroupsZ) override;
 
-    void SetDrawBuffers(QDemonConstDataRef<qint32> inDrawBufferSet) override;
-    void SetReadBuffer(QDemonReadFaces::Enum inReadFace) override;
+    void setDrawBuffers(QDemonConstDataRef<qint32> inDrawBufferSet) override;
+    void setReadBuffer(QDemonReadFaces::Enum inReadFace) override;
 
-    void ReadPixels(QDemonRenderRect inRect, QDemonRenderReadPixelFormats::Enum inFormat,
+    void readPixels(QDemonRenderRect inRect, QDemonRenderReadPixelFormats::Enum inFormat,
                     QDemonDataRef<quint8> inWriteBuffer) override;
 
-    void SetRenderTarget(QSharedPointer<QDemonRenderFrameBuffer> inBuffer) override;
-    void SetReadTarget(QSharedPointer<QDemonRenderFrameBuffer> inBuffer) override;
-    QSharedPointer<QDemonRenderFrameBuffer> GetRenderTarget() const override
+    void setRenderTarget(QSharedPointer<QDemonRenderFrameBuffer> inBuffer) override;
+    void setReadTarget(QSharedPointer<QDemonRenderFrameBuffer> inBuffer) override;
+    QSharedPointer<QDemonRenderFrameBuffer> getRenderTarget() const override
     {
-        return m_HardwarePropertyContext.m_FrameBuffer;
+        return m_hardwarePropertyContext.m_frameBuffer;
     }
 
-    void ResetBlendState() override;
+    void resetBlendState() override;
 
     // Push the entire set of properties.
-    void PushPropertySet() override { m_PropertyStack.push_back(m_HardwarePropertyContext); }
+    void pushPropertySet() override { m_propertyStack.push_back(m_hardwarePropertyContext); }
 
     // Pop the entire set of properties, potentially forcing the values
     // to opengl.
-    void PopPropertySet(bool inForceSetProperties) override;
+    void popPropertySet(bool inForceSetProperties) override;
 
     // clear current bound render target
-    void Clear(QDemonRenderClearFlags flags) override;
+    void clear(QDemonRenderClearFlags flags) override;
     // clear passed in rendertarget
-    void Clear(QSharedPointer<QDemonRenderFrameBuffer> fb, QDemonRenderClearFlags flags) override;
+    void clear(QSharedPointer<QDemonRenderFrameBuffer> fb, QDemonRenderClearFlags flags) override;
 
     // copy framebuffer content between read target and render target
-    void BlitFramebuffer(qint32 srcX0, qint32 srcY0, qint32 srcX1, qint32 srcY1,
+    void blitFramebuffer(qint32 srcX0, qint32 srcY0, qint32 srcX1, qint32 srcY1,
                          qint32 dstX0, qint32 dstY0, qint32 dstX1, qint32 dstY1,
                          QDemonRenderClearFlags flags,
                          QDemonRenderTextureMagnifyingOp::Enum filter) override;
 
-    void Draw(QDemonRenderDrawMode::Enum drawMode, quint32 count, quint32 offset) override;
-    void DrawIndirect(QDemonRenderDrawMode::Enum drawMode, quint32 offset) override;
+    void draw(QDemonRenderDrawMode::Enum drawMode, quint32 count, quint32 offset) override;
+    void drawIndirect(QDemonRenderDrawMode::Enum drawMode, quint32 offset) override;
 
     QSurfaceFormat format() const override
     {
@@ -1020,8 +1028,8 @@ public:
     }
     virtual void resetStates()
     {
-        PushPropertySet();
-        PopPropertySet(true);
+        pushPropertySet();
+        popPropertySet(true);
     }
 };
 

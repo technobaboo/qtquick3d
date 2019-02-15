@@ -58,7 +58,7 @@ public:
          *
          * @return Return query type
          */
-    QDemonRenderQueryType::Enum GetQueryType() const override
+    QDemonRenderQueryType::Enum getQueryType() const override
     {
         return QDemonRenderQueryType::Samples;
     }
@@ -68,14 +68,14 @@ public:
          *
          * @return no return.
          */
-    void Begin() override;
+    void begin() override;
 
     /**
          * @brief end a query
          *
          * @return no return.
          */
-    void End() override;
+    void end() override;
 
     /**
          * @brief Get the result of a query
@@ -84,7 +84,7 @@ public:
          *
          * @return no return.
          */
-    void GetResult(quint32 *params) override;
+    void getResult(quint32 *params) override;
 
     /**
          * @brief query if a result is available
@@ -99,7 +99,7 @@ public:
          *
          * * @return a occlusion query object on success
          */
-    static QSharedPointer<QDemonRenderOcclusionQuery> Create(QSharedPointer<QDemonRenderContextImpl> context);
+    static QSharedPointer<QDemonRenderOcclusionQuery> create(QSharedPointer<QDemonRenderContextImpl> context);
 };
 
 QT_END_NAMESPACE

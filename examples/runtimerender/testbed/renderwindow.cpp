@@ -27,14 +27,14 @@ RenderWindow::~RenderWindow()
 
 void RenderWindow::initialize()
 {
-    m_contextCore = IQDemonRenderContextCore::Create();
-    m_contextCore->SetTextRendererCore(ITextRendererCore::CreateQtTextRenderer());
-    m_contextCore->SetOnscreenTextRendererCore(ITextRendererCore::CreateOnscreenTextRenderer());
+    m_contextCore = QDemonRenderContextCoreInterface::create();
+    m_contextCore->setTextRendererCore(QDemonTextRendererCoreInterface::createQtTextRenderer());
+    m_contextCore->setOnscreenTextRendererCore(QDemonTextRendererCoreInterface::createOnscreenTextRenderer());
 
-    m_renderContext = QDemonRenderContext::CreateGL(format());
+    m_renderContext = QDemonRenderContext::createGl(format());
 
-    m_context = m_contextCore->CreateRenderContext(m_renderContext, "./");
-    m_context->SetSceneColor(QVector4D(1.0, 0.0, 0.0, 1.0));
+    m_context = m_contextCore->createRenderContext(m_renderContext, "./");
+    m_context->setSceneColor(QVector4D(1.0, 0.0, 0.0, 1.0));
 
     buildTestScene();
 }
@@ -116,31 +116,31 @@ void RenderWindow::drawFrame(qint64 delta)
     updateAnimations();
 
     // Set Clear Color
-    if (m_scene && m_scene->m_UseClearColor)
-        m_context->SetSceneColor(QVector4D(m_scene->m_ClearColor, 1.0f));
+    if (m_scene && m_scene->useClearColor)
+        m_context->setSceneColor(QVector4D(m_scene->clearColor, 1.0f));
     else
-        m_context->SetSceneColor(QVector4D(0.0f, 0.0f, 0.0f, 0.0f));
+        m_context->setSceneColor(QVector4D(0.0f, 0.0f, 0.0f, 0.0f));
 
-    m_context->SetPresentationDimensions(QSize(m_presentation->m_PresentationDimensions.x(),
-                                               m_presentation->m_PresentationDimensions.y()));
+    m_context->setPresentationDimensions(QSize(m_presentation->presentationDimensions.x(),
+                                               m_presentation->presentationDimensions.y()));
 
-    m_context->BeginFrame();
-    m_renderContext->ResetBlendState();
+    m_context->beginFrame();
+    m_renderContext->resetBlendState();
 
     // Render the first presentation (QDemonRenderPresentation)
-    auto lastRenderViewport = m_context->GetRenderList()->GetViewport();
-    if (m_presentation && m_presentation->m_Scene) {
+    auto lastRenderViewport = m_context->getRenderList()->getViewport();
+    if (m_presentation && m_presentation->scene) {
         QDemonRenderRect theViewportSize(lastRenderViewport);
-        m_presentation->m_Scene->PrepareForRender(QVector2D(theViewportSize.m_Width, theViewportSize.m_Height), m_context.data());
+        m_presentation->scene->prepareForRender(QVector2D(theViewportSize.m_width, theViewportSize.m_height), m_context.data());
     }
 
-    m_context->RunRenderTasks();
-    if (m_presentation && m_presentation->m_Scene) {
+    m_context->runRenderTasks();
+    if (m_presentation && m_presentation->scene) {
         QDemonRenderRect theViewportSize(lastRenderViewport);
-        m_presentation->m_Scene->Render(QVector2D(theViewportSize.m_Width, theViewportSize.m_Height), m_context.data(), SScene::DoNotClear);
+        m_presentation->scene->render(QVector2D(theViewportSize.m_width, theViewportSize.m_height), m_context.data(), QDemonRenderScene::DoNotClear);
     }
 
-    m_context->EndFrame();
+    m_context->endFrame();
 }
 
 void RenderWindow::renderLater()
@@ -166,8 +166,8 @@ void RenderWindow::renderNow()
 
 void RenderWindow::updateAnimations()
 {
-    m_cube->m_Rotation = QVector3D(0.785398f, m_cube->m_Rotation.y() + 0.01f, 0.785398f);
-    m_cube->MarkDirty(NodeTransformDirtyFlag::TransformIsDirty);
+    m_cube->rotation = QVector3D(0.785398f, m_cube->rotation.y() + 0.01f, 0.785398f);
+    m_cube->markDirty(NodeTransformDirtyFlag::TransformIsDirty);
 }
 
 bool RenderWindow::event(QEvent *event)
@@ -201,35 +201,35 @@ void RenderWindow::preInit()
 
 void RenderWindow::buildTestScene()
 {
-    m_presentation.reset(new SPresentation());
-    m_scene.reset(new SScene());
-    m_scene->m_ClearColor = QVector3D(0.0, 1.0, 0.0);
-    m_presentation->m_Scene = m_scene;
-    m_scene->m_Presentation = m_presentation.data();
+    m_presentation.reset(new QDemonPresentation());
+    m_scene.reset(new QDemonRenderScene());
+    m_scene->clearColor = QVector3D(0.0, 1.0, 0.0);
+    m_presentation->scene = m_scene;
+    m_scene->presentation = m_presentation.data();
 
-    auto layer = new SLayer();
-    layer->m_ClearColor = QVector3D(0.0, 0.0, 1.0);
-    layer->m_Background = LayerBackground::Color;
+    auto layer = new QDemonLayer();
+    layer->clearColor = QVector3D(0.0, 0.0, 1.0);
+    layer->background = LayerBackground::Color;
 
-    m_scene->AddChild(*layer);
+    m_scene->addChild(*layer);
 
     // Camera
-    auto camera = new SCamera();
-    layer->AddChild(*camera);
-    camera->LookAt(QVector3D(0.0, 0.0, -600.0),
+    auto camera = new QDemonRenderCamera();
+    layer->addChild(*camera);
+    camera->lookAt(QVector3D(0.0, 0.0, -600.0),
                    QVector3D(0.0, 1.0, 0.0),
                    QVector3D(0.0, 0.0, 0.0));
 
     // Light
-    auto light = new SLight();
-    layer->AddChild(*light);
+    auto light = new QDemonRenderLight();
+    layer->addChild(*light);
 
     // Mesh (#Cube)
-    m_cube = new SModel();
-    m_cube->m_MeshPath = QStringLiteral("#Cube");
-    layer->AddChild(*m_cube);
+    m_cube = new QDemonRenderModel();
+    m_cube->meshPath = QStringLiteral("#Cube");
+    layer->addChild(*m_cube);
 
     // Default Material
-    auto material = new SDefaultMaterial();
-    m_cube->AddMaterial(*material);
+    auto material = new QDemonRenderDefaultMaterial();
+    m_cube->addMaterial(*material);
 }

@@ -62,21 +62,21 @@ public:
          *
          * @return True if shader is valid.
          */
-    bool IsValid() override { return (m_ShaderHandle != nullptr); }
+    bool isValid() override { return (m_shaderHandle != nullptr); }
 
     /**
          * @brief get the backend object handle
          *
          * @return the backend object handle.
          */
-    virtual QDemonRenderBackend::QDemonRenderBackendTessControlShaderObject GetShaderHandle()
+    virtual QDemonRenderBackend::QDemonRenderBackendTessControlShaderObject getShaderHandle()
     {
-        return m_ShaderHandle;
+        return m_shaderHandle;
     }
 
 private:
     QDemonRenderBackend::QDemonRenderBackendTessControlShaderObject
-    m_ShaderHandle; ///< opaque backend handle
+    m_shaderHandle; ///< opaque backend handle
 };
 
 ///< This class represents a tessellation evaluation shader
@@ -95,7 +95,7 @@ public:
          * @return No return.
          */
     QDemonRenderTessEvaluationShader(QSharedPointer<QDemonRenderContextImpl> context,
-                                 QDemonConstDataRef<qint8> source, bool binaryProgram);
+                                     QDemonConstDataRef<qint8> source, bool binaryProgram);
 
     /// @brief destructor
     ~QDemonRenderTessEvaluationShader();
@@ -105,21 +105,21 @@ public:
          *
          * @return True if shader is valid.
          */
-    bool IsValid() override { return (m_ShaderHandle != nullptr); }
+    bool isValid() override { return (m_shaderHandle != nullptr); }
 
     /**
          * @brief get the backend object handle
          *
          * @return the backend object handle.
          */
-    virtual QDemonRenderBackend::QDemonRenderBackendTessEvaluationShaderObject GetShaderHandle()
+    virtual QDemonRenderBackend::QDemonRenderBackendTessEvaluationShaderObject getShaderHandle()
     {
-        return m_ShaderHandle;
+        return m_shaderHandle;
     }
 
 private:
     QDemonRenderBackend::QDemonRenderBackendTessEvaluationShaderObject
-    m_ShaderHandle; ///< opaque backend handle
+    m_shaderHandle; ///< opaque backend handle
 };
 
 QT_END_NAMESPACE

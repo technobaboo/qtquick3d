@@ -249,7 +249,7 @@ int GetSubPropertyIndex(const char *inSubPropertyName)
 
 QDemonSceneGraphTranslation::QDemonSceneGraphTranslation()
 {
-    m_meshBuilder = QDemonMeshUtilities::MeshBuilder::CreateMeshBuilder();
+    m_meshBuilder = QDemonMeshUtilities::QDemonMeshBuilder::createMeshBuilder();
     m_documentBuffer = new QBuffer(&m_document);
     if (!m_documentBuffer->open(QIODevice::WriteOnly | QIODevice::Text))
     {

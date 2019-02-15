@@ -36,7 +36,7 @@
 
 QT_BEGIN_NAMESPACE
 
-typedef void (*TTaskFunction)(void *inUserData);
+using QDemonTaskCallback = void (*)(void *);
 
 struct TaskStates
 {
@@ -56,10 +56,10 @@ struct CancelReturnValues
     };
 };
 
-class Q_DEMONRUNTIMERENDER_EXPORT IThreadPool
+class Q_DEMONRUNTIMERENDER_EXPORT QDemonAbstractThreadPool
 {
 protected:
-    virtual ~IThreadPool() {}
+    virtual ~QDemonAbstractThreadPool();
 public:
     // Add a task to be run at some point in the future.
     // Tasks will be run roughly in order they are given.
@@ -67,12 +67,11 @@ public:
     // details about the task
     // Cancel function will be called if the thread pool is destroyed or
     // of the task gets canceled.
-    virtual quint64 AddTask(void *inUserData, TTaskFunction inFunction,
-                            TTaskFunction inCancelFunction) = 0;
-    virtual TaskStates::Enum GetTaskState(quint64 inTaskId) = 0;
-    virtual CancelReturnValues::Enum CancelTask(quint64 inTaskId) = 0;
+    virtual quint64 addTask(void *inUserData, QDemonTaskCallback inFunction, QDemonTaskCallback inCancelFunction) = 0;
+    virtual TaskStates::Enum getTaskState(quint64 inTaskId) = 0;
+    virtual CancelReturnValues::Enum cancelTask(quint64 inTaskId) = 0;
 
-    static QSharedPointer<IThreadPool> CreateThreadPool(quint32 inNumThreads = 4);
+    static QSharedPointer<QDemonAbstractThreadPool> createThreadPool(quint32 inNumThreads = 4);
 };
 QT_END_NAMESPACE
 #endif

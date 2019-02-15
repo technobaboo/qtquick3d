@@ -68,7 +68,7 @@ class AbstractNodeTransform
 public:
     virtual ~AbstractNodeTransform() {}
     virtual operator float *() const = 0;
-    virtual TransformType GetType() const = 0;
+    virtual TransformType getType() const = 0;
 };
 
 class NodeTransform : public AbstractNodeTransform
@@ -76,41 +76,41 @@ class NodeTransform : public AbstractNodeTransform
 public:
     NodeTransform(TransformType inType)
     {
-        m_Data = nullptr;
+        m_data = nullptr;
         switch (inType) {
         case TransformType_Matrix4x4:
-            m_Data = new float[16];
+            m_data = new float[16];
             break;
         case TransformType_Rotation3:
-            m_Data = new float[3];
+            m_data = new float[3];
             break;
         case TransformType_Rotation4:
-            m_Data = new float[4];
+            m_data = new float[4];
             break;
         case TransformType_Translate3:
-            m_Data = new float[3];
+            m_data = new float[3];
             break;
         case TransformType_Scale3:
-            m_Data = new float[3];
+            m_data = new float[3];
             break;
         default:
             break;
         }
 
-        m_Type = inType;
+        m_type = inType;
     }
 
-    ~NodeTransform() override { delete[] m_Data; }
+    ~NodeTransform() override { delete[] m_data; }
 
-    operator float *() const override { return m_Data; }
+    operator float *() const override { return m_data; }
 
-    TransformType GetType() const override { return m_Type; }
+    TransformType getType() const override { return m_type; }
 
-    static void Delete(AbstractNodeTransform *inTransform) { delete inTransform; }
+    static void doDelete(AbstractNodeTransform *inTransform) { delete inTransform; }
 
 protected:
-    float *m_Data;
-    TransformType m_Type;
+    float *m_data;
+    TransformType m_type;
 };
 
 enum TextureMapType {
@@ -144,33 +144,33 @@ enum MatOpaqueType // refer to domFx_opaque_enum
 
 struct FloatFlag
 {
-    float m_Value; // the value of this struct
-    bool m_Flag; // to indicate if this value presents in SceneGraph
+    float m_value; // the value of this struct
+    bool m_flag; // to indicate if this value presents in SceneGraph
     FloatFlag()
-        : m_Value(0.0f)
-        , m_Flag(false)
+        : m_value(0.0f)
+        , m_flag(false)
     {
     }
-    void SetValue(float inValue)
+    void setValue(float inValue)
     {
-        m_Value = inValue;
-        m_Flag = true;
+        m_value = inValue;
+        m_flag = true;
     }
 };
 
 struct LongFlag
 {
-    long m_Value; // the value of this struct
-    bool m_Flag; // to indicate if this value presents in SceneGraph
+    long m_value; // the value of this struct
+    bool m_flag; // to indicate if this value presents in SceneGraph
     LongFlag()
-        : m_Value(0)
-        , m_Flag(false)
+        : m_value(0)
+        , m_flag(false)
     {
     }
-    void SetValue(long inValue)
+    void setValue(long inValue)
     {
-        m_Value = inValue;
-        m_Flag = true;
+        m_value = inValue;
+        m_flag = true;
     }
 };
 
@@ -182,30 +182,30 @@ struct ColorOrTexture
         Texture, // Texture type
     };
 
-    Type m_Type;
-    float m_Color[4]; // the color, if present
+    Type m_type;
+    float m_color[4]; // the color, if present
     ColorOrTexture()
-        : m_Type(None)
+        : m_type(None)
     {
-        m_Color[0] = m_Color[1] = m_Color[2] = m_Color[3] = 0.0f;
+        m_color[0] = m_color[1] = m_color[2] = m_color[3] = 0.0f;
     }
-    void SetColor(const float inColor[])
+    void setColor(const float inColor[])
     {
-        m_Color[0] = inColor[0];
-        m_Color[1] = inColor[1];
-        m_Color[2] = inColor[2];
-        m_Color[3] = inColor[3];
-        m_Type = Color;
+        m_color[0] = inColor[0];
+        m_color[1] = inColor[1];
+        m_color[2] = inColor[2];
+        m_color[3] = inColor[3];
+        m_type = Color;
     }
-    void SetColor(float c0, float c1, float c2, float c3)
+    void setColor(float c0, float c1, float c2, float c3)
     {
-        m_Color[0] = c0;
-        m_Color[1] = c1;
-        m_Color[2] = c2;
-        m_Color[3] = c3;
-        m_Type = Color;
+        m_color[0] = c0;
+        m_color[1] = c1;
+        m_color[2] = c2;
+        m_color[3] = c3;
+        m_type = Color;
     }
-    void SetTexture() { m_Type = Texture; }
+    void setTexture() { m_type = Texture; }
 };
 
 //==============================================================================
@@ -224,9 +224,9 @@ struct TextureParameters
     LongFlag m_wrapV;
     LongFlag m_mirrorU;
     LongFlag m_mirrorV;
-    bool m_Flag; // to indicate if dae contains texture parameters information
+    bool m_flag; // to indicate if dae contains texture parameters information
     TextureParameters()
-        : m_Flag(false)
+        : m_flag(false)
     {
     }
 };
@@ -236,11 +236,11 @@ struct TextureParameters
 //==============================================================================
 struct MaterialExtraParameters
 {
-    FloatFlag m_SpecLevel;
-    FloatFlag m_EmissionLevel;
-    bool m_Flag; // to indicate if dae contains profile_COMMON technique extra information
+    FloatFlag m_specLevel;
+    FloatFlag m_emissionLevel;
+    bool m_flag; // to indicate if dae contains profile_COMMON technique extra information
     MaterialExtraParameters()
-        : m_Flag(false)
+        : m_flag(false)
     {
     }
 };
@@ -250,26 +250,26 @@ struct MaterialExtraParameters
 //==============================================================================
 struct MaterialParameters
 {
-    MatCommonProfileTechnique m_TechniqueType;
-    ColorOrTexture m_Emission;
-    ColorOrTexture m_Ambient;
-    ColorOrTexture m_Diffuse;
-    ColorOrTexture m_Specular;
-    FloatFlag m_Shininess;
-    ColorOrTexture m_Reflective;
-    FloatFlag m_Reflectivity;
-    ColorOrTexture m_Transparent;
-    LongFlag m_TransparentOpaqueType;
-    FloatFlag m_Transparency;
-    FloatFlag m_Index_of_refraction;
-    MaterialExtraParameters m_Extra;
+    MatCommonProfileTechnique m_techniqueType;
+    ColorOrTexture m_emission;
+    ColorOrTexture m_ambient;
+    ColorOrTexture m_diffuse;
+    ColorOrTexture m_specular;
+    FloatFlag m_shininess;
+    ColorOrTexture m_reflective;
+    FloatFlag m_reflectivity;
+    ColorOrTexture m_transparent;
+    LongFlag m_transparentOpaqueType;
+    FloatFlag m_transparency;
+    FloatFlag m_indexOfRefraction;
+    MaterialExtraParameters m_extra;
 
     MaterialParameters()
-        : m_TechniqueType(MatCommonProfileTechnique_Count)
+        : m_techniqueType(MatCommonProfileTechnique_Count)
     {
     }
     MaterialParameters(MatCommonProfileTechnique inTechniqueType)
-        : m_TechniqueType(inTechniqueType)
+        : m_techniqueType(inTechniqueType)
     {
     }
 };
@@ -279,21 +279,21 @@ struct MaterialParameters
 //==============================================================================
 struct KeyframeParameters
 {
-    float m_KeyframeTime;
-    float m_Value;
-    float m_INTANGENTX;
-    float m_INTANGENTY;
-    float m_OUTTANGENTX;
-    float m_OUTTANGENTY;
+    float m_keyframeTime;
+    float m_value;
+    float m_inTangentX;
+    float m_inTangentY;
+    float m_outTangentX;
+    float m_outTangentY;
 
     KeyframeParameters(float inKeyframeTime, float inValue, float inINTANGENTX,
                        float inINTANGENTY, float inOUTTANGENTX, float inOUTTANGENTY)
-        : m_KeyframeTime(inKeyframeTime)
-        , m_Value(inValue)
-        , m_INTANGENTX(inINTANGENTX)
-        , m_INTANGENTY(inINTANGENTY)
-        , m_OUTTANGENTX(inOUTTANGENTX)
-        , m_OUTTANGENTY(inOUTTANGENTY)
+        : m_keyframeTime(inKeyframeTime)
+        , m_value(inValue)
+        , m_inTangentX(inINTANGENTX)
+        , m_inTangentY(inINTANGENTY)
+        , m_outTangentX(inOUTTANGENTX)
+        , m_outTangentY(inOUTTANGENTY)
     {
     }
 
@@ -304,14 +304,14 @@ struct KeyframeParameters
 //==============================================================================
 struct JointInfo
 {
-    int m_JointID;
-    int m_ParentID;
+    int m_jointID;
+    int m_parentID;
     float m_invBindPose[16];
     float m_localToGlobalBoneSpace[16];
 
     JointInfo(int jointIndex, int parentID, float *invBindPose, float *localToGlobal)
-        : m_JointID(jointIndex)
-        , m_ParentID(parentID)
+        : m_jointID(jointIndex)
+        , m_parentID(parentID)
     {
         ::memcpy(m_invBindPose, invBindPose, sizeof(float) * 16);
         ::memcpy(m_localToGlobalBoneSpace, localToGlobal, sizeof(float) * 16);
@@ -322,7 +322,7 @@ struct JointInfo
 } // end QDemonAssetImport namespace
 
 namespace QDemonMeshUtilities {
-    class MeshBuilder;
+    class QDemonMeshBuilder;
 }
 
 class Q_DEMONASSETIMPORT_EXPORT QDemonSceneGraphTranslation
@@ -376,7 +376,7 @@ private:
     QTextStream m_stream;
     int m_tabDepth = 0;
 
-    QSharedPointer<QDemonMeshUtilities::MeshBuilder> m_meshBuilder;
+    QSharedPointer<QDemonMeshUtilities::QDemonMeshBuilder> m_meshBuilder;
  };
 
 QT_END_NAMESPACE

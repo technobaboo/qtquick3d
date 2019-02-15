@@ -58,111 +58,96 @@ struct TextVerticalAlignment
     };
 };
 
-struct STextDimensions
+struct QDemonTextDimensions
 {
-    quint32 m_TextWidth;
-    quint32 m_TextHeight;
-    STextDimensions(quint32 w, quint32 h)
-        : m_TextWidth(w)
-        , m_TextHeight(h)
+    quint32 textWidth = 0;
+    quint32 textHeight = 0;
+    QDemonTextDimensions(quint32 w, quint32 h)
+        : textWidth(w)
+        , textHeight(h)
     {
     }
-    STextDimensions()
-        : m_TextWidth(0)
-        , m_TextHeight(0)
+    QDemonTextDimensions() = default;
+};
+
+struct QDemonTextTextureDetails : public QDemonTextDimensions
+{
+    QVector2D scaleFactor;
+    bool flipY;
+    QDemonTextTextureDetails(quint32 w, quint32 h, bool inFlipY, QVector2D scaleF)
+        : QDemonTextDimensions(w, h)
+        , scaleFactor(scaleF)
+        , flipY(inFlipY)
+    {
+    }
+    QDemonTextTextureDetails()
+        : scaleFactor(1.0f, 1.0f)
+        , flipY(false)
     {
     }
 };
 
-struct STextTextureDetails : public STextDimensions
+struct QDemonTextTextureAtlasEntryDetails : public QDemonTextDimensions
 {
-    QVector2D m_ScaleFactor;
-    bool m_FlipY;
-    STextTextureDetails(quint32 w, quint32 h, bool inFlipY, QVector2D scaleF)
-        : STextDimensions(w, h)
-        , m_ScaleFactor(scaleF)
-        , m_FlipY(inFlipY)
+    qint32 x = 0;
+    qint32 y = 0;
+    QDemonTextTextureAtlasEntryDetails(quint32 inW, quint32 inH, qint32 inX, qint32 inY)
+        : QDemonTextDimensions(inW, inH)
+        , x(inX)
+        , y(inY)
     {
     }
-    STextTextureDetails()
-        : m_ScaleFactor(1.0f, 1.0f)
-        , m_FlipY(false)
-    {
-    }
+    QDemonTextTextureAtlasEntryDetails() = default;
 };
 
-struct STextTextureAtlasEntryDetails : public STextDimensions
+struct QDemonRenderTextureAtlasDetails
 {
-    qint32 m_X, m_Y;
-    STextTextureAtlasEntryDetails(quint32 w, quint32 h, qint32 x, qint32 y)
-        : STextDimensions(w, h)
-        , m_X(x)
-        , m_Y(y)
+    quint32 vertexCount = 0;
+    QDemonDataRef<quint8> vertices;
+
+    QDemonRenderTextureAtlasDetails(quint32 count, QDemonDataRef<quint8> inVertices)
+        : vertexCount(count)
+        , vertices(inVertices)
     {
     }
-    STextTextureAtlasEntryDetails()
-        : m_X(0)
-        , m_Y(0)
-    {
-    }
+    QDemonRenderTextureAtlasDetails() = default;
 };
 
-struct SRenderTextureAtlasDetails
+struct QDemonTextTextureAtlasDetails : public QDemonTextTextureDetails
 {
-    quint32 m_VertexCount;
-    QDemonDataRef<quint8> m_Vertices;
-
-    SRenderTextureAtlasDetails(quint32 count, QDemonDataRef<quint8> inVertices)
-        : m_VertexCount(count)
-        , m_Vertices(inVertices)
+    quint32 entryCount = 0;
+    QDemonTextTextureAtlasDetails(quint32 w, quint32 h, bool inFlipY, quint32 count)
+        : QDemonTextTextureDetails(w, h, inFlipY, QVector2D(1.0f, 1.0f))
+        , entryCount(count)
     {
     }
-    SRenderTextureAtlasDetails()
-        : m_VertexCount(0)
-        , m_Vertices(QDemonDataRef<quint8>())
-    {
-    }
-};
-
-struct STextTextureAtlasDetails : public STextTextureDetails
-{
-    quint32 m_EntryCount;
-    STextTextureAtlasDetails(quint32 w, quint32 h, bool inFlipY, quint32 count)
-        : STextTextureDetails(w, h, inFlipY, QVector2D(1.0f, 1.0f))
-        , m_EntryCount(count)
-    {
-    }
-    STextTextureAtlasDetails()
-        : m_EntryCount(0)
-    {
-    }
+    QDemonTextTextureAtlasDetails() = default;
 };
 
 // Adding/removing a member to this object means you need to update the texture cache code
 // - UICRenderTextTextureCache.cpp
 
-struct STextRenderInfo
+struct QDemonTextRenderInfo
 {
-    QString m_Text;
-    QString m_Font;
-    float m_FontSize;
-    TextHorizontalAlignment::Enum m_HorizontalAlignment;
-    TextVerticalAlignment::Enum m_VerticalAlignment;
-    float m_Leading; // space between lines
-    float m_Tracking; // space between letters
-    bool m_DropShadow;
-    float m_DropShadowStrength;
-    float m_DropShadowOffset;
-    TextHorizontalAlignment::Enum m_DropShadowHorizontalAlignment;
-    TextVerticalAlignment::Enum m_DropShadowVerticalAlignment;
+    QString text;
+    QString font;
+    float fontSize = 24.f;
+    TextHorizontalAlignment::Enum horizontalAlignment = TextHorizontalAlignment::Center;
+    TextVerticalAlignment::Enum verticalAlignment = TextVerticalAlignment::Middle;
+    float leading = 0; // space between lines
+    float tracking = 0; // space between letters
+    bool dropShadow = false;
+    float dropShadowStrength = 80;
+    float dropShadowOffset = 10;
+    TextHorizontalAlignment::Enum dropShadowHorizontalAlignment = TextHorizontalAlignment::Right;
+    TextVerticalAlignment::Enum dropShadowVerticalAlignment = TextVerticalAlignment::Bottom;
 
-    float m_ScaleX; // Pixel scale in X
-    float m_ScaleY; // Pixel scale in Y
+    float scaleX = 0; // Pixel scale in X
+    float scaleY = 0; // Pixel scale in Y
 
-    bool m_EnableAcceleratedFont; ///< use NV path rendering
+    bool enableAcceleratedFont = false; ///< use NV path rendering
 
-    STextRenderInfo();
-    ~STextRenderInfo();
+    ~QDemonTextRenderInfo();
 };
 QT_END_NAMESPACE
 

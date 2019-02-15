@@ -38,42 +38,24 @@ QT_BEGIN_NAMESPACE
 // The set of all properties as they are currently set in hardware.
 struct QDemonGLHardPropertyContext
 {
-    QSharedPointer<QDemonRenderFrameBuffer> m_FrameBuffer;
-    QSharedPointer<QDemonRenderShaderProgram> m_ActiveShader;
-    QSharedPointer<QDemonRenderProgramPipeline> m_ActiveProgramPipeline;
-    QSharedPointer<QDemonRenderInputAssembler> m_InputAssembler;
-    QDemonRenderBlendFunctionArgument m_BlendFunction;
-    QDemonRenderBlendEquationArgument m_BlendEquation;
-    bool m_CullingEnabled;
-    QDemonRenderBoolOp::Enum m_DepthFunction;
-    bool m_BlendingEnabled;
-    bool m_DepthWriteEnabled;
-    bool m_DepthTestEnabled;
-    bool m_StencilTestEnabled;
-    bool m_ScissorTestEnabled;
-    bool m_ColorWritesEnabled;
-    bool m_MultisampleEnabled;
-    QDemonRenderRect m_ScissorRect;
-    QDemonRenderRect m_Viewport;
-    QVector4D m_ClearColor;
-
-    QDemonGLHardPropertyContext()
-        : m_FrameBuffer(nullptr)
-        , m_ActiveShader(nullptr)
-        , m_ActiveProgramPipeline(nullptr)
-        , m_InputAssembler(nullptr)
-        , m_CullingEnabled(true)
-        , m_DepthFunction(QDemonRenderBoolOp::Less)
-        , m_BlendingEnabled(true)
-        , m_DepthWriteEnabled(true)
-        , m_DepthTestEnabled(true)
-        , m_StencilTestEnabled(false)
-        , m_ScissorTestEnabled(true)
-        , m_ColorWritesEnabled(true)
-        , m_MultisampleEnabled(false)
-        , m_ClearColor(0, 0, 0, 1)
-    {
-    }
+    QSharedPointer<QDemonRenderFrameBuffer> m_frameBuffer;
+    QSharedPointer<QDemonRenderShaderProgram> m_activeShader;
+    QSharedPointer<QDemonRenderProgramPipeline> m_activeProgramPipeline;
+    QSharedPointer<QDemonRenderInputAssembler> m_inputAssembler;
+    QDemonRenderBlendFunctionArgument m_blendFunction;
+    QDemonRenderBlendEquationArgument m_blendEquation;
+    bool m_cullingEnabled = true;
+    QDemonRenderBoolOp::Enum m_depthFunction = QDemonRenderBoolOp::Less;
+    bool m_blendingEnabled = true;
+    bool m_depthWriteEnabled = true;
+    bool m_depthTestEnabled = true;
+    bool m_stencilTestEnabled = false;
+    bool m_scissorTestEnabled = true;
+    bool m_colorWritesEnabled = true;
+    bool m_multisampleEnabled = false;
+    QDemonRenderRect m_scissorRect;
+    QDemonRenderRect m_viewport;
+    QVector4D m_clearColor { 0.0, 0.0, 0.0, 1.0 };
 };
 QT_END_NAMESPACE
 #endif

@@ -34,68 +34,77 @@ QT_BEGIN_NAMESPACE
 
 namespace {
 
-struct SRenderList : public IRenderList
+struct QDemonRenderList : public QDemonRenderListInterface
 {
-    typedef QPair<quint32, QSharedPointer<IRenderTask>> TTaskIdTaskPair;
+    typedef QPair<quint32, QSharedPointer<QDemonRenderTask>> TTaskIdTaskPair;
     typedef QVector<TTaskIdTaskPair> TTaskList;
 
-    TTaskList m_Tasks;
-    quint32 m_NextTaskId;
-    bool m_ScissorEnabled;
-    QDemonRenderRect m_ScissorRect;
-    QDemonRenderRect m_Viewport;
+    TTaskList m_tasks;
+    quint32 m_nextTaskId;
+    bool m_scissorEnabled;
+    QDemonRenderRect m_scissorRect;
+    QDemonRenderRect m_viewport;
 
-    SRenderList()
-        : m_NextTaskId(1)
-        , m_ScissorEnabled(false)
+    QDemonRenderList()
+        : m_nextTaskId(1)
+        , m_scissorEnabled(false)
     {
     }
 
-    void BeginFrame() override
+    void beginFrame() override
     {
-        m_NextTaskId = 1;
-        m_Tasks.clear();
+        m_nextTaskId = 1;
+        m_tasks.clear();
     }
 
-    quint32 AddRenderTask(QSharedPointer<IRenderTask> inTask) override
+    quint32 addRenderTask(QSharedPointer<QDemonRenderTask> inTask) override
     {
-        quint32 taskId = m_NextTaskId;
-        ++m_NextTaskId;
-        m_Tasks.push_back(QPair<quint32, QSharedPointer<IRenderTask>>(taskId, inTask));
+        quint32 taskId = m_nextTaskId;
+        ++m_nextTaskId;
+        m_tasks.push_back(QPair<quint32, QSharedPointer<QDemonRenderTask>>(taskId, inTask));
         return taskId;
     }
 
-    void DiscardRenderTask(quint32 inTaskId) override
+    void discardRenderTask(quint32 inTaskId) override
     {
-        TTaskList::iterator iter, end;
-        for (iter = m_Tasks.begin(), end = m_Tasks.end(); iter != end && iter->first != inTaskId;
-             ++iter) {
-        }
+        auto iter = m_tasks.begin();
+        const auto end = m_tasks.end();
+        while (iter != end && iter->first != inTaskId)
+            ++iter;
+
         if (iter != end)
-            m_Tasks.erase(iter);
+            m_tasks.erase(iter);
     }
     // This runs through the added tasks in reverse order.  This is used to render dependencies
     // before rendering to the main render target.
-    void RunRenderTasks() override
+    void runRenderTasks() override
     {
-        for (TTaskList::reverse_iterator iter = m_Tasks.rbegin(), end = m_Tasks.rend(); iter != end;
-             ++iter)
-            iter->second->Run();
-        BeginFrame();
+        auto iter = m_tasks.rbegin();
+        const auto end = m_tasks.rend();
+        while (iter != end) {
+            iter->second->run();
+            ++iter;
+        }
+        beginFrame();
     }
 
-    void SetScissorTestEnabled(bool enabled) override { m_ScissorEnabled = enabled; }
-    void SetScissorRect(QDemonRenderRect rect) override { m_ScissorRect = rect; }
-    void SetViewport(QDemonRenderRect rect) override { m_Viewport = rect; }
-    bool IsScissorTestEnabled() const override { return m_ScissorEnabled; }
-    QDemonRenderRect GetScissor() const override { return m_ScissorRect; }
-    QDemonRenderRect GetViewport() const override { return m_Viewport; }
+    void setScissorTestEnabled(bool enabled) override { m_scissorEnabled = enabled; }
+    void setScissorRect(QDemonRenderRect rect) override { m_scissorRect = rect; }
+    void setViewport(QDemonRenderRect rect) override { m_viewport = rect; }
+    bool isScissorTestEnabled() const override { return m_scissorEnabled; }
+    QDemonRenderRect getScissor() const override { return m_scissorRect; }
+    QDemonRenderRect getViewport() const override { return m_viewport; }
 };
 }
 
-QSharedPointer<IRenderList> IRenderList::CreateRenderList()
+QSharedPointer<QDemonRenderListInterface> QDemonRenderListInterface::createRenderList()
 {
-    return QSharedPointer<IRenderList>(new SRenderList());
+    return QSharedPointer<QDemonRenderListInterface>(new QDemonRenderList());
+}
+
+QDemonRenderTask::~QDemonRenderTask()
+{
+
 }
 
 QT_END_NAMESPACE

@@ -41,36 +41,36 @@ QT_BEGIN_NAMESPACE
 
 // Types should be setup on construction.  Change the type
 // at your own risk as the type is used for RTTI purposes.
-struct Q_DEMONRUNTIMERENDER_EXPORT SGraphObject
+struct Q_DEMONRUNTIMERENDER_EXPORT QDemonGraphObject
 {
     // Id's help debugging the object and are optionally set
-    QString m_Id;
+    QString id;
     // Type is used for RTTI purposes down the road.
-    GraphObjectTypes::Enum m_Type;
-    STaggedPointer m_UserData;
+    QDemonGraphObjectTypes::Enum type;
+    QDemonTaggedPointer userData;
 
-    SGraphObject(GraphObjectTypes::Enum inType)
-        : m_Type(inType)
+    QDemonGraphObject(QDemonGraphObjectTypes::Enum inType)
+        : type(inType)
     {
     }
-    SGraphObject(const SGraphObject &inCloningObject)
-        : m_Id(inCloningObject.m_Id)
-        , m_Type(inCloningObject.m_Type)
+    QDemonGraphObject(const QDemonGraphObject &inCloningObject)
+        : id(inCloningObject.id)
+        , type(inCloningObject.type)
     {
     }
 
     // If you change any detail of the scene graph, or even *breath* on a
     // scene graph object, you need to bump this binary version so at least
     // we know if we can load a file or not.
-    static quint32 GetSceneGraphBinaryVersion() { return 1; }
+    static quint32 getSceneGraphBinaryVersion() { return 1; }
 
     // Generic method used during serialization
     // to remap string and object pointers
     template <typename TRemapperType>
-    void Remap(TRemapperType &inRemapper)
+    void remap(TRemapperType &inRemapper)
     {
-        inRemapper.Remap(m_Id);
-        inRemapper.NullPtr(m_UserData.m_UserData);
+        inRemapper.remap(id);
+        inRemapper.NullPtr(userData.m_userData);
     }
 };
 

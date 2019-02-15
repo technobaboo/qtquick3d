@@ -53,25 +53,25 @@ namespace {
 const float MINATTENUATION = 0;
 const float MAXATTENUATION = 1000;
 
-float ClampFloat(float value, float min, float max)
+float clampFloat(float value, float min, float max)
 {
     return value < min ? min : ((value > max) ? max : value);
 }
 
-float TranslateConstantAttenuation(float attenuation)
+float translateConstantAttenuation(float attenuation)
 {
     return attenuation * .01f;
 }
 
-float TranslateLinearAttenuation(float attenuation)
+float translateLinearAttenuation(float attenuation)
 {
-    attenuation = ClampFloat(attenuation, MINATTENUATION, MAXATTENUATION);
+    attenuation = clampFloat(attenuation, MINATTENUATION, MAXATTENUATION);
     return attenuation * 0.0001f;
 }
 
-float TranslateQuadraticAttenuation(float attenuation)
+float translateQuadraticAttenuation(float attenuation)
 {
-    attenuation = ClampFloat(attenuation, MINATTENUATION, MAXATTENUATION);
+    attenuation = clampFloat(attenuation, MINATTENUATION, MAXATTENUATION);
     return attenuation * 0.0000001f;
 }
 
@@ -79,54 +79,54 @@ float TranslateQuadraticAttenuation(float attenuation)
  *	Cached texture property lookups, used one per texture so a shader generator for N
  *	textures will have an array of N of these lookup objects.
  */
-struct SShaderTextureProperties
+struct QDemonShaderTextureProperties
 {
-    QDemonRenderCachedShaderProperty<QDemonRenderTexture2D *> m_Sampler;
-    QDemonRenderCachedShaderProperty<QVector3D> m_Offsets;
-    QDemonRenderCachedShaderProperty<QVector4D> m_Rotations;
-    QDemonRenderCachedShaderProperty<QVector2D> m_Size;
-    SShaderTextureProperties(const QString &sampName,
+    QDemonRenderCachedShaderProperty<QDemonRenderTexture2D *> m_sampler;
+    QDemonRenderCachedShaderProperty<QVector3D> m_offsets;
+    QDemonRenderCachedShaderProperty<QVector4D> m_rotations;
+    QDemonRenderCachedShaderProperty<QVector2D> m_size;
+    QDemonShaderTextureProperties(const QString &sampName,
                              const QString &offName,
                              const QString &rotName,
                              const QString &sizeName,
                              QSharedPointer<QDemonRenderShaderProgram> inShader)
-        : m_Sampler(sampName, inShader)
-        , m_Offsets(offName, inShader)
-        , m_Rotations(rotName, inShader)
-        , m_Size(sizeName, inShader)
+        : m_sampler(sampName, inShader)
+        , m_offsets(offName, inShader)
+        , m_rotations(rotName, inShader)
+        , m_size(sizeName, inShader)
     {
     }
-    SShaderTextureProperties() {}
+    QDemonShaderTextureProperties() {}
 };
 
 /**
  *	Cached light property lookups, used one per light so a shader generator for N
  *	lights will have an array of N of these lookup objects.
  */
-struct SShaderLightProperties
+struct QDemonShaderLightProperties
 {
     // Color of the light
-    QVector3D m_LightColor;
-    SLightSourceShader m_LightData;
-
-    SShaderLightProperties() {}
+    QVector3D lightColor;
+    QDemonLightSourceShader lightData;
 };
 
-struct SShadowMapProperties
+struct QDemonShadowMapProperties
 {
-    QDemonRenderCachedShaderProperty<QDemonRenderTexture2D *> m_ShadowmapTexture; ///< shadow texture
-    QDemonRenderCachedShaderProperty<QDemonRenderTextureCube *> m_ShadowCubeTexture; ///< shadow cubemap
-    QDemonRenderCachedShaderProperty<QMatrix4x4> m_ShadowmapMatrix; ///< world to ligh space transform matrix
-    QDemonRenderCachedShaderProperty<QVector4D> m_ShadowmapSettings; ///< shadow rendering settings
+    QDemonRenderCachedShaderProperty<QDemonRenderTexture2D *> m_shadowmapTexture; ///< shadow texture
+    QDemonRenderCachedShaderProperty<QDemonRenderTextureCube *> m_shadowCubeTexture; ///< shadow cubemap
+    QDemonRenderCachedShaderProperty<QMatrix4x4> m_shadowmapMatrix; ///< world to ligh space transform matrix
+    QDemonRenderCachedShaderProperty<QVector4D> m_shadowmapSettings; ///< shadow rendering settings
 
-    SShadowMapProperties() {}
-    SShadowMapProperties(const QString &shadowmapTextureName, const QString &shadowcubeTextureName,
-                         const QString &shadowmapMatrixName, const QString &shadowmapSettingsName,
-                         QSharedPointer<QDemonRenderShaderProgram> inShader)
-        : m_ShadowmapTexture(shadowmapTextureName, inShader)
-        , m_ShadowCubeTexture(shadowcubeTextureName, inShader)
-        , m_ShadowmapMatrix(shadowmapMatrixName, inShader)
-        , m_ShadowmapSettings(shadowmapSettingsName, inShader)
+    QDemonShadowMapProperties() = default;
+    QDemonShadowMapProperties(const QString &shadowmapTextureName,
+                              const QString &shadowcubeTextureName,
+                              const QString &shadowmapMatrixName,
+                              const QString &shadowmapSettingsName,
+                              QSharedPointer<QDemonRenderShaderProgram> inShader)
+        : m_shadowmapTexture(shadowmapTextureName, inShader)
+        , m_shadowCubeTexture(shadowcubeTextureName, inShader)
+        , m_shadowmapMatrix(shadowmapMatrixName, inShader)
+        , m_shadowmapSettings(shadowmapSettingsName, inShader)
     {
     }
 };
@@ -135,310 +135,310 @@ struct SShadowMapProperties
  *	The results of generating a shader.  Caches all possible variable names into
  *	typesafe objects.
  */
-struct SShaderGeneratorGeneratedShader
+struct QDemonShaderGeneratorGeneratedShader
 {
-    QSharedPointer<QDemonRenderShaderProgram> m_Shader;
+    QSharedPointer<QDemonRenderShaderProgram> m_shader;
     // Specific properties we know the shader has to have.
-    QDemonRenderCachedShaderProperty<QMatrix4x4> m_MVP;
-    QDemonRenderCachedShaderProperty<QMatrix3x3> m_NormalMatrix;
-    QDemonRenderCachedShaderProperty<QMatrix4x4> m_GlobalTransform;
-    QDemonRenderCachedShaderProperty<QMatrix4x4> m_ViewProj;
-    QDemonRenderCachedShaderProperty<QMatrix4x4> m_ViewMatrix;
-    QDemonRenderCachedShaderProperty<QVector4D> m_MaterialDiffuse;
-    QDemonRenderCachedShaderProperty<QVector4D> m_MaterialProperties;
+    QDemonRenderCachedShaderProperty<QMatrix4x4> m_mvp;
+    QDemonRenderCachedShaderProperty<QMatrix3x3> m_normalMatrix;
+    QDemonRenderCachedShaderProperty<QMatrix4x4> m_globalTransform;
+    QDemonRenderCachedShaderProperty<QMatrix4x4> m_viewProj;
+    QDemonRenderCachedShaderProperty<QMatrix4x4> m_viewMatrix;
+    QDemonRenderCachedShaderProperty<QVector4D> m_materialDiffuse;
+    QDemonRenderCachedShaderProperty<QVector4D> m_materialProperties;
     // tint, ior
-    QDemonRenderCachedShaderProperty<QVector4D> m_MaterialSpecular;
-    QDemonRenderCachedShaderProperty<float> m_BumpAmount;
-    QDemonRenderCachedShaderProperty<float> m_DisplaceAmount;
-    QDemonRenderCachedShaderProperty<float> m_TranslucentFalloff;
-    QDemonRenderCachedShaderProperty<float> m_DiffuseLightWrap;
-    QDemonRenderCachedShaderProperty<float> m_FresnelPower;
-    QDemonRenderCachedShaderProperty<QVector3D> m_DiffuseColor;
-    QDemonRenderCachedShaderProperty<QVector3D> m_CameraPosition;
-    QDemonRenderCachedShaderProperty<QVector3D> m_CameraDirection;
-    QVector3D m_LightAmbientTotal;
-    QDemonRenderCachedShaderProperty<QVector3D> m_MaterialDiffuseLightAmbientTotal;
-    QDemonRenderCachedShaderProperty<QVector2D> m_CameraProperties;
+    QDemonRenderCachedShaderProperty<QVector4D> m_materialSpecular;
+    QDemonRenderCachedShaderProperty<float> m_bumpAmount;
+    QDemonRenderCachedShaderProperty<float> m_displaceAmount;
+    QDemonRenderCachedShaderProperty<float> m_translucentFalloff;
+    QDemonRenderCachedShaderProperty<float> m_diffuseLightWrap;
+    QDemonRenderCachedShaderProperty<float> m_fresnelPower;
+    QDemonRenderCachedShaderProperty<QVector3D> m_diffuseColor;
+    QDemonRenderCachedShaderProperty<QVector3D> m_cameraPosition;
+    QDemonRenderCachedShaderProperty<QVector3D> m_cameraDirection;
+    QVector3D m_lightAmbientTotal;
+    QDemonRenderCachedShaderProperty<QVector3D> m_materialDiffuseLightAmbientTotal;
+    QDemonRenderCachedShaderProperty<QVector2D> m_cameraProperties;
 
-    QDemonRenderCachedShaderProperty<QDemonRenderTexture2D *> m_DepthTexture;
-    QDemonRenderCachedShaderProperty<QDemonRenderTexture2D *> m_AOTexture;
-    QDemonRenderCachedShaderProperty<QDemonRenderTexture2D *> m_LightProbe;
-    QDemonRenderCachedShaderProperty<QVector4D> m_LightProbeProps;
-    QDemonRenderCachedShaderProperty<QVector4D> m_LightProbeOpts;
-    QDemonRenderCachedShaderProperty<QVector4D> m_LightProbeRot;
-    QDemonRenderCachedShaderProperty<QVector4D> m_LightProbeOfs;
-    QDemonRenderCachedShaderProperty<QVector2D> m_LightProbeSize;
-    QDemonRenderCachedShaderProperty<QDemonRenderTexture2D *> m_LightProbe2;
-    QDemonRenderCachedShaderProperty<QVector4D> m_LightProbe2Props;
-    QDemonRenderCachedShaderProperty<QVector2D> m_LightProbe2Size;
+    QDemonRenderCachedShaderProperty<QDemonRenderTexture2D *> m_depthTexture;
+    QDemonRenderCachedShaderProperty<QDemonRenderTexture2D *> m_aoTexture;
+    QDemonRenderCachedShaderProperty<QDemonRenderTexture2D *> m_lightProbe;
+    QDemonRenderCachedShaderProperty<QVector4D> m_lightProbeProps;
+    QDemonRenderCachedShaderProperty<QVector4D> m_lightProbeOpts;
+    QDemonRenderCachedShaderProperty<QVector4D> m_lightProbeRot;
+    QDemonRenderCachedShaderProperty<QVector4D> m_lightProbeOfs;
+    QDemonRenderCachedShaderProperty<QVector2D> m_lightProbeSize;
+    QDemonRenderCachedShaderProperty<QDemonRenderTexture2D *> m_lightProbe2;
+    QDemonRenderCachedShaderProperty<QVector4D> m_lightProbe2Props;
+    QDemonRenderCachedShaderProperty<QVector2D> m_lightProbe2Size;
 
-    QDemonRenderCachedShaderBuffer<QDemonRenderShaderConstantBuffer> m_AoShadowParams;
-    QDemonRenderCachedShaderBuffer<QDemonRenderShaderConstantBuffer> m_LightsBuffer;
+    QDemonRenderCachedShaderBuffer<QDemonRenderShaderConstantBuffer> m_aoShadowParams;
+    QDemonRenderCachedShaderBuffer<QDemonRenderShaderConstantBuffer> m_lightsBuffer;
 
-    SLightConstantProperties<SShaderGeneratorGeneratedShader> *m_lightConstantProperties;
+    QDemonLightConstantProperties<QDemonShaderGeneratorGeneratedShader> *m_lightConstantProperties;
 
     // Cache the image property name lookups
-    QVector<SShaderTextureProperties> m_Images;
-    QVector<SShaderLightProperties> m_Lights;
+    QVector<QDemonShaderTextureProperties> m_images;
+    QVector<QDemonShaderLightProperties> m_lights;
     // Cache shadow map properties
-    QVector<SShadowMapProperties> m_ShadowMaps;
+    QVector<QDemonShadowMapProperties> m_shadowMaps;
 
-    SShaderGeneratorGeneratedShader(QSharedPointer<QDemonRenderShaderProgram> inShader, QSharedPointer<QDemonRenderContext> inContext)
-        : m_Shader(inShader)
-        , m_MVP("model_view_projection", inShader)
-        , m_NormalMatrix("normal_matrix", inShader)
-        , m_GlobalTransform("model_matrix", inShader)
-        , m_ViewProj("view_projection_matrix", inShader)
-        , m_ViewMatrix("view_matrix", inShader)
-        , m_MaterialDiffuse("material_diffuse", inShader)
-        , m_MaterialProperties("material_properties", inShader)
-        , m_MaterialSpecular("material_specular", inShader)
-        , m_BumpAmount("bumpAmount", inShader)
-        , m_DisplaceAmount("displaceAmount", inShader)
-        , m_TranslucentFalloff("translucentFalloff", inShader)
-        , m_DiffuseLightWrap("diffuseLightWrap", inShader)
-        , m_FresnelPower("fresnelPower", inShader)
-        , m_DiffuseColor("diffuse_color", inShader)
-        , m_CameraPosition("camera_position", inShader)
-        , m_CameraDirection("camera_direction", inShader)
-        , m_MaterialDiffuseLightAmbientTotal("light_ambient_total", inShader)
-        , m_CameraProperties("camera_properties", inShader)
-        , m_DepthTexture("depth_sampler", inShader)
-        , m_AOTexture("ao_sampler", inShader)
-        , m_LightProbe("light_probe", inShader)
-        , m_LightProbeProps("light_probe_props", inShader)
-        , m_LightProbeOpts("light_probe_opts", inShader)
-        , m_LightProbeRot("light_probe_rotation", inShader)
-        , m_LightProbeOfs("light_probe_offset", inShader)
-        , m_LightProbeSize("light_probe_size", inShader)
-        , m_LightProbe2("light_probe2", inShader)
-        , m_LightProbe2Props("light_probe2_props", inShader)
-        , m_LightProbe2Size("light_probe2_size", inShader)
-        , m_AoShadowParams("cbAoShadow", inShader)
-        , m_LightsBuffer("cbBufferLights", inShader)
+    QDemonShaderGeneratorGeneratedShader(QSharedPointer<QDemonRenderShaderProgram> inShader, QSharedPointer<QDemonRenderContext> inContext)
+        : m_shader(inShader)
+        , m_mvp("model_view_projection", inShader)
+        , m_normalMatrix("normal_matrix", inShader)
+        , m_globalTransform("model_matrix", inShader)
+        , m_viewProj("view_projection_matrix", inShader)
+        , m_viewMatrix("view_matrix", inShader)
+        , m_materialDiffuse("material_diffuse", inShader)
+        , m_materialProperties("material_properties", inShader)
+        , m_materialSpecular("material_specular", inShader)
+        , m_bumpAmount("bumpAmount", inShader)
+        , m_displaceAmount("displaceAmount", inShader)
+        , m_translucentFalloff("translucentFalloff", inShader)
+        , m_diffuseLightWrap("diffuseLightWrap", inShader)
+        , m_fresnelPower("fresnelPower", inShader)
+        , m_diffuseColor("diffuse_color", inShader)
+        , m_cameraPosition("camera_position", inShader)
+        , m_cameraDirection("camera_direction", inShader)
+        , m_materialDiffuseLightAmbientTotal("light_ambient_total", inShader)
+        , m_cameraProperties("camera_properties", inShader)
+        , m_depthTexture("depth_sampler", inShader)
+        , m_aoTexture("ao_sampler", inShader)
+        , m_lightProbe("light_probe", inShader)
+        , m_lightProbeProps("light_probe_props", inShader)
+        , m_lightProbeOpts("light_probe_opts", inShader)
+        , m_lightProbeRot("light_probe_rotation", inShader)
+        , m_lightProbeOfs("light_probe_offset", inShader)
+        , m_lightProbeSize("light_probe_size", inShader)
+        , m_lightProbe2("light_probe2", inShader)
+        , m_lightProbe2Props("light_probe2_props", inShader)
+        , m_lightProbe2Size("light_probe2_size", inShader)
+        , m_aoShadowParams("cbAoShadow", inShader)
+        , m_lightsBuffer("cbBufferLights", inShader)
     {
     }
-    ~SShaderGeneratorGeneratedShader()
+    ~QDemonShaderGeneratorGeneratedShader()
     {
         if (m_lightConstantProperties)
             delete m_lightConstantProperties;
     }
 };
 
-struct SShaderGenerator : public IDefaultMaterialShaderGenerator
+struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterface
 {
-    typedef QHash<QSharedPointer<QDemonRenderShaderProgram>, QSharedPointer<SShaderGeneratorGeneratedShader>> TProgramToShaderMap;
+    typedef QHash<QSharedPointer<QDemonRenderShaderProgram>, QSharedPointer<QDemonShaderGeneratorGeneratedShader>> TProgramToShaderMap;
     typedef QHash<QString, QSharedPointer<QDemonRenderConstantBuffer>> TStrConstanBufMap;
 
-    IQDemonRenderContext *m_RenderContext;
-    QSharedPointer<IShaderProgramGenerator> m_ProgramGenerator;
+    QDemonRenderContextInterface *m_renderContext;
+    QSharedPointer<QDemonShaderProgramGeneratorInterface> m_programGenerator;
 
-    const SDefaultMaterial *m_CurrentMaterial;
-    SShaderDefaultMaterialKey *m_CurrentKey;
-    QSharedPointer<QDemonRenderShadowMap> m_ShadowMapManager;
-    IDefaultMaterialVertexPipeline *m_CurrentPipeline = nullptr;
-    TShaderFeatureSet m_CurrentFeatureSet;
-    QVector<SLight *> m_Lights;
-    SRenderableImage *m_FirstImage;
-    bool m_HasTransparency;
-    bool m_LightsAsSeparateUniforms;
+    const QDemonRenderDefaultMaterial *m_currentMaterial;
+    QDemonShaderDefaultMaterialKey *m_currentKey;
+    QSharedPointer<QDemonRenderShadowMap> m_shadowMapManager;
+    QDemonDefaultMaterialVertexPipelineInterface *m_currentPipeline = nullptr;
+    TShaderFeatureSet m_currentFeatureSet;
+    QVector<QDemonRenderLight *> m_lights;
+    QDemonRenderableImage *m_firstImage;
+    bool m_hasTransparency;
+    bool m_lightsAsSeparateUniforms;
 
-    QString m_ImageStem;
-    QString m_ImageSampler;
-    QString m_ImageOffsets;
-    QString m_ImageRotations;
-    QString m_ImageFragCoords;
-    QString m_ImageTemp;
-    QString m_ImageSamplerSize;
+    QString m_imageStem;
+    QString m_imageSampler;
+    QString m_imageOffsets;
+    QString m_imageRotations;
+    QString m_imageFragCoords;
+    QString m_imageTemp;
+    QString m_imageSamplerSize;
 
-    QString m_TexCoordTemp;
+    QString m_texCoordTemp;
 
-    QString m_LightStem;
-    QString m_LightColor;
-    QString m_LightSpecularColor;
-    QString m_LightAttenuation;
-    QString m_LightConstantAttenuation;
-    QString m_LightLinearAttenuation;
-    QString m_LightQuadraticAttenuation;
-    QString m_NormalizedDirection;
-    QString m_LightDirection;
-    QString m_LightPos;
-    QString m_LightUp;
-    QString m_LightRt;
-    QString m_RelativeDistance;
-    QString m_RelativeDirection;
+    QString m_lightStem;
+    QString m_lightColor;
+    QString m_lightSpecularColor;
+    QString m_lightAttenuation;
+    QString m_lightConstantAttenuation;
+    QString m_lightLinearAttenuation;
+    QString m_lightQuadraticAttenuation;
+    QString m_normalizedDirection;
+    QString m_lightDirection;
+    QString m_lightPos;
+    QString m_lightUp;
+    QString m_lightRt;
+    QString m_relativeDistance;
+    QString m_relativeDirection;
 
-    QString m_ShadowMapStem;
-    QString m_ShadowCubeStem;
-    QString m_ShadowMatrixStem;
-    QString m_ShadowCoordStem;
-    QString m_ShadowControlStem;
+    QString m_shadowMapStem;
+    QString m_shadowCubeStem;
+    QString m_shadowMatrixStem;
+    QString m_shadowCoordStem;
+    QString m_shadowControlStem;
 
-    QString m_TempStr;
+    QString m_tempStr;
 
-    QString m_GeneratedShaderString;
+    QString m_generatedShaderString;
 
-    SShaderDefaultMaterialKeyProperties m_DefaultMaterialShaderKeyProperties;
-    TProgramToShaderMap m_ProgramToShaderMap;
+    QDemonShaderDefaultMaterialKeyProperties m_defaultMaterialShaderKeyProperties;
+    TProgramToShaderMap m_programToShaderMap;
 
-    TStrConstanBufMap m_ConstantBuffers; ///< store all constants buffers
+    TStrConstanBufMap m_constantBuffers; ///< store all constants buffers
 
-    SShaderGenerator(IQDemonRenderContext *inRc)
-        : m_RenderContext(inRc)
-        , m_ProgramGenerator(m_RenderContext->GetShaderProgramGenerator())
-        , m_CurrentMaterial(nullptr)
-        , m_CurrentKey(nullptr)
-        , m_ShadowMapManager(nullptr)
-        , m_CurrentPipeline(nullptr)
-        , m_FirstImage(nullptr)
-        , m_LightsAsSeparateUniforms(false)
+    QDemonShaderGenerator(QDemonRenderContextInterface *inRc)
+        : m_renderContext(inRc)
+        , m_programGenerator(m_renderContext->getShaderProgramGenerator())
+        , m_currentMaterial(nullptr)
+        , m_currentKey(nullptr)
+        , m_shadowMapManager(nullptr)
+        , m_currentPipeline(nullptr)
+        , m_firstImage(nullptr)
+        , m_lightsAsSeparateUniforms(false)
     {
     }
 
-    QSharedPointer<IShaderProgramGenerator> ProgramGenerator() { return m_ProgramGenerator; }
-    IDefaultMaterialVertexPipeline &VertexGenerator() { return *m_CurrentPipeline; }
-    IShaderStageGenerator &FragmentGenerator()
+    QSharedPointer<QDemonShaderProgramGeneratorInterface> programGenerator() { return m_programGenerator; }
+    QDemonDefaultMaterialVertexPipelineInterface &vertexGenerator() { return *m_currentPipeline; }
+    QDemonShaderStageGeneratorInterface &fragmentGenerator()
     {
-        return *m_ProgramGenerator->GetStage(ShaderGeneratorStages::Fragment);
+        return *m_programGenerator->getStage(ShaderGeneratorStages::Fragment);
     }
-    SShaderDefaultMaterialKey &Key() { return *m_CurrentKey; }
-    const SDefaultMaterial *Material() { return m_CurrentMaterial; }
-    TShaderFeatureSet FeatureSet() { return m_CurrentFeatureSet; }
-    bool HasTransparency() { return m_HasTransparency; }
+    QDemonShaderDefaultMaterialKey &key() { return *m_currentKey; }
+    const QDemonRenderDefaultMaterial *material() { return m_currentMaterial; }
+    TShaderFeatureSet featureSet() { return m_currentFeatureSet; }
+    bool hasTransparency() { return m_hasTransparency; }
 
-    void addFunction(IShaderStageGenerator &generator, QString functionName)
+    void addFunction(QDemonShaderStageGeneratorInterface &generator, QString functionName)
     {
-        generator.AddFunction(functionName);
+        generator.addFunction(functionName);
     }
 
-    void SetupImageVariableNames(size_t imageIdx)
+    void setupImageVariableNames(size_t imageIdx)
     {
-        m_ImageStem = "image";
+        m_imageStem = "image";
         char buf[16];
         qsnprintf(buf, 16, "%d", int(imageIdx));
-        m_ImageStem.append(buf);
-        m_ImageStem.append("_");
+        m_imageStem.append(buf);
+        m_imageStem.append("_");
 
-        m_ImageSampler = m_ImageStem;
-        m_ImageSampler.append("sampler");
-        m_ImageOffsets = m_ImageStem;
-        m_ImageOffsets.append("offsets");
-        m_ImageRotations = m_ImageStem;
-        m_ImageRotations.append("rotations");
-        m_ImageFragCoords = m_ImageStem;
-        m_ImageFragCoords.append("uv_coords");
-        m_ImageSamplerSize = m_ImageStem;
-        m_ImageSamplerSize.append("size");
+        m_imageSampler = m_imageStem;
+        m_imageSampler.append("sampler");
+        m_imageOffsets = m_imageStem;
+        m_imageOffsets.append("offsets");
+        m_imageRotations = m_imageStem;
+        m_imageRotations.append("rotations");
+        m_imageFragCoords = m_imageStem;
+        m_imageFragCoords.append("uv_coords");
+        m_imageSamplerSize = m_imageStem;
+        m_imageSamplerSize.append("size");
     }
 
-    void SetupTexCoordVariableName(size_t uvSet)
+    void setupTexCoordVariableName(size_t uvSet)
     {
-        m_TexCoordTemp = "varTexCoord";
+        m_texCoordTemp = "varTexCoord";
         char buf[16];
         qsnprintf(buf, 16, "%d", int(uvSet));
-        m_TexCoordTemp.append(buf);
+        m_texCoordTemp.append(buf);
     }
 
-    SImageVariableNames GetImageVariableNames(quint32 inIdx) override
+    ImageVariableNames getImageVariableNames(quint32 inIdx) override
     {
-        SetupImageVariableNames(inIdx);
-        SImageVariableNames retval;
-        retval.m_ImageSampler = m_ImageSampler.toLocal8Bit();
-        retval.m_ImageFragCoords = m_ImageFragCoords.toLocal8Bit();
+        setupImageVariableNames(inIdx);
+        ImageVariableNames retval;
+        retval.m_imageSampler = m_imageSampler.toLocal8Bit();
+        retval.m_imageFragCoords = m_imageFragCoords.toLocal8Bit();
         return retval;
     }
 
-    void AddLocalVariable(IShaderStageGenerator &inGenerator, const QString &inName, const QString &inType)
+    void addLocalVariable(QDemonShaderStageGeneratorInterface &inGenerator, const QString &inName, const QString &inType)
     {
         inGenerator << "\t" << inType << " " << inName << ";" << "\n";
     }
 
-    void GenerateImageUVCoordinates(IShaderStageGenerator &inVertexPipeline, quint32 idx, quint32 uvSet, SRenderableImage &image) override
+    void generateImageUVCoordinates(QDemonShaderStageGeneratorInterface &inVertexPipeline, quint32 idx, quint32 uvSet, QDemonRenderableImage &image) override
     {
-        IDefaultMaterialVertexPipeline &vertexShader(
-                    static_cast<IDefaultMaterialVertexPipeline &>(inVertexPipeline));
-        IShaderStageGenerator &fragmentShader(FragmentGenerator());
-        SetupImageVariableNames(idx);
-        SetupTexCoordVariableName(uvSet);
-        fragmentShader.AddUniform(m_ImageSampler, "sampler2D");
-        vertexShader.AddUniform(m_ImageOffsets, "vec3");
-        fragmentShader.AddUniform(m_ImageOffsets, "vec3");
-        vertexShader.AddUniform(m_ImageRotations, "vec4");
-        fragmentShader.AddUniform(m_ImageRotations, "vec4");
+        QDemonDefaultMaterialVertexPipelineInterface &vertexShader(
+                    static_cast<QDemonDefaultMaterialVertexPipelineInterface &>(inVertexPipeline));
+        QDemonShaderStageGeneratorInterface &fragmentShader(fragmentGenerator());
+        setupImageVariableNames(idx);
+        setupTexCoordVariableName(uvSet);
+        fragmentShader.addUniform(m_imageSampler, "sampler2D");
+        vertexShader.addUniform(m_imageOffsets, "vec3");
+        fragmentShader.addUniform(m_imageOffsets, "vec3");
+        vertexShader.addUniform(m_imageRotations, "vec4");
+        fragmentShader.addUniform(m_imageRotations, "vec4");
 
-        if (image.m_Image.m_MappingMode == ImageMappingModes::Normal) {
-            vertexShader << "\tuTransform = vec3( " << m_ImageRotations << ".x, "
-                         << m_ImageRotations << ".y, " << m_ImageOffsets << ".x );" << "\n";
-            vertexShader << "\tvTransform = vec3( " << m_ImageRotations << ".z, "
-                         << m_ImageRotations << ".w, " << m_ImageOffsets << ".y );" << "\n";
-            vertexShader.AddOutgoing(m_ImageFragCoords, "vec2");
+        if (image.m_image.m_mappingMode == ImageMappingModes::Normal) {
+            vertexShader << "\tuTransform = vec3( " << m_imageRotations << ".x, "
+                         << m_imageRotations << ".y, " << m_imageOffsets << ".x );" << "\n";
+            vertexShader << "\tvTransform = vec3( " << m_imageRotations << ".z, "
+                         << m_imageRotations << ".w, " << m_imageOffsets << ".y );" << "\n";
+            vertexShader.addOutgoing(m_imageFragCoords, "vec2");
             addFunction(vertexShader, "getTransformedUVCoords");
-            vertexShader.GenerateUVCoords(uvSet);
-            m_ImageTemp = m_ImageFragCoords;
-            m_ImageTemp.append("temp");
-            vertexShader << "\tvec2 " << m_ImageTemp << " = getTransformedUVCoords( vec3( "
-                         << m_TexCoordTemp << ", 1.0), uTransform, vTransform );" << "\n";
-            if (image.m_Image.m_TextureData.m_TextureFlags.IsInvertUVCoords())
-                vertexShader << "\t" << m_ImageTemp << ".y = 1.0 - " << m_ImageFragCoords << ".y;"
+            vertexShader.generateUVCoords(uvSet);
+            m_imageTemp = m_imageFragCoords;
+            m_imageTemp.append("temp");
+            vertexShader << "\tvec2 " << m_imageTemp << " = getTransformedUVCoords( vec3( "
+                         << m_texCoordTemp << ", 1.0), uTransform, vTransform );" << "\n";
+            if (image.m_image.m_textureData.m_textureFlags.isInvertUVCoords())
+                vertexShader << "\t" << m_imageTemp << ".y = 1.0 - " << m_imageFragCoords << ".y;"
                              << "\n";
 
-            vertexShader.AssignOutput(m_ImageFragCoords, m_ImageTemp);
+            vertexShader.assignOutput(m_imageFragCoords, m_imageTemp);
         } else {
-            fragmentShader << "\tuTransform = vec3( " << m_ImageRotations << ".x, "
-                           << m_ImageRotations << ".y, " << m_ImageOffsets << ".x );" << "\n";
-            fragmentShader << "\tvTransform = vec3( " << m_ImageRotations << ".z, "
-                           << m_ImageRotations << ".w, " << m_ImageOffsets << ".y );" << "\n";
-            vertexShader.GenerateEnvMapReflection();
+            fragmentShader << "\tuTransform = vec3( " << m_imageRotations << ".x, "
+                           << m_imageRotations << ".y, " << m_imageOffsets << ".x );" << "\n";
+            fragmentShader << "\tvTransform = vec3( " << m_imageRotations << ".z, "
+                           << m_imageRotations << ".w, " << m_imageOffsets << ".y );" << "\n";
+            vertexShader.generateEnvMapReflection();
             addFunction(fragmentShader, "getTransformedUVCoords");
-            fragmentShader << "\tvec2 " << m_ImageFragCoords
+            fragmentShader << "\tvec2 " << m_imageFragCoords
                            << " = getTransformedUVCoords( environment_map_reflection, uTransform, "
                               "vTransform );"
                            << "\n";
-            if (image.m_Image.m_TextureData.m_TextureFlags.IsInvertUVCoords())
-                fragmentShader << "\t" << m_ImageFragCoords << ".y = 1.0 - " << m_ImageFragCoords
+            if (image.m_image.m_textureData.m_textureFlags.isInvertUVCoords())
+                fragmentShader << "\t" << m_imageFragCoords << ".y = 1.0 - " << m_imageFragCoords
                                << ".y;" << "\n";
         }
     }
 
-    void GenerateImageUVCoordinates(quint32 idx, SRenderableImage &image, quint32 uvSet = 0)
+    void generateImageUVCoordinates(quint32 idx, QDemonRenderableImage &image, quint32 uvSet = 0)
     {
-        GenerateImageUVCoordinates(VertexGenerator(), idx, uvSet, image);
+        generateImageUVCoordinates(vertexGenerator(), idx, uvSet, image);
     }
 
-    void GenerateImageUVCoordinates(quint32 idx, SRenderableImage &image,
-                                    IDefaultMaterialVertexPipeline &inShader)
+    void generateImageUVCoordinates(quint32 idx, QDemonRenderableImage &image,
+                                    QDemonDefaultMaterialVertexPipelineInterface &inShader)
     {
-        if (image.m_Image.m_MappingMode == ImageMappingModes::Normal) {
-            SetupImageVariableNames(idx);
-            inShader.AddUniform(m_ImageSampler, "sampler2D");
-            inShader.AddUniform(m_ImageOffsets, "vec3");
-            inShader.AddUniform(m_ImageRotations, "vec4");
+        if (image.m_image.m_mappingMode == ImageMappingModes::Normal) {
+            setupImageVariableNames(idx);
+            inShader.addUniform(m_imageSampler, "sampler2D");
+            inShader.addUniform(m_imageOffsets, "vec3");
+            inShader.addUniform(m_imageRotations, "vec4");
 
-            inShader << "\tuTransform = vec3( " << m_ImageRotations << ".x, " << m_ImageRotations
-                     << ".y, " << m_ImageOffsets << ".x );" << "\n";
-            inShader << "\tvTransform = vec3( " << m_ImageRotations << ".z, " << m_ImageRotations
-                     << ".w, " << m_ImageOffsets << ".y );" << "\n";
-            inShader << "\tvec2 " << m_ImageFragCoords << ";" << "\n";
+            inShader << "\tuTransform = vec3( " << m_imageRotations << ".x, " << m_imageRotations
+                     << ".y, " << m_imageOffsets << ".x );" << "\n";
+            inShader << "\tvTransform = vec3( " << m_imageRotations << ".z, " << m_imageRotations
+                     << ".w, " << m_imageOffsets << ".y );" << "\n";
+            inShader << "\tvec2 " << m_imageFragCoords << ";" << "\n";
             addFunction(inShader, "getTransformedUVCoords");
-            inShader.GenerateUVCoords();
+            inShader.generateUVCoords();
             inShader
-                    << "\t" << m_ImageFragCoords
+                    << "\t" << m_imageFragCoords
                     << " = getTransformedUVCoords( vec3( varTexCoord0, 1.0), uTransform, vTransform );"
                     << "\n";
-            if (image.m_Image.m_TextureData.m_TextureFlags.IsInvertUVCoords())
-                inShader << "\t" << m_ImageFragCoords << ".y = 1.0 - " << m_ImageFragCoords << ".y;"
+            if (image.m_image.m_textureData.m_textureFlags.isInvertUVCoords())
+                inShader << "\t" << m_imageFragCoords << ".y = 1.0 - " << m_imageFragCoords << ".y;"
                          << "\n";
         }
     }
 
-    void OutputSpecularEquation(DefaultMaterialSpecularModel::Enum inSpecularModel,
-                                IShaderStageGenerator &fragmentShader, const QString &inLightDir,
+    void outputSpecularEquation(DefaultMaterialSpecularModel::Enum inSpecularModel,
+                                QDemonShaderStageGeneratorInterface &fragmentShader, const QString &inLightDir,
                                 const QString &inLightSpecColor)
     {
         switch (inSpecularModel) {
         case DefaultMaterialSpecularModel::KGGX: {
-            fragmentShader.AddInclude("defaultMaterialPhysGlossyBSDF.glsllib");
-            fragmentShader.AddUniform("material_specular", "vec4");
+            fragmentShader.addInclude("defaultMaterialPhysGlossyBSDF.glsllib");
+            fragmentShader.addUniform("material_specular", "vec4");
             fragmentShader << "\tglobal_specular_light.rgb += lightAttenuation * specularAmount * "
                               "specularColor * kggxGlossyDefaultMtl( "
                            << "world_normal, tangent, -" << inLightDir << ".xyz, view_vector, "
@@ -448,8 +448,8 @@ struct SShaderGenerator : public IDefaultMaterialShaderGenerator
                            << "\n";
         } break;
         case DefaultMaterialSpecularModel::KWard: {
-            fragmentShader.AddInclude("defaultMaterialPhysGlossyBSDF.glsllib");
-            fragmentShader.AddUniform("material_specular", "vec4");
+            fragmentShader.addInclude("defaultMaterialPhysGlossyBSDF.glsllib");
+            fragmentShader.addUniform("material_specular", "vec4");
             fragmentShader << "\tglobal_specular_light.rgb += lightAttenuation * specularAmount * "
                               "specularColor * wardGlossyDefaultMtl( "
                            << "world_normal, tangent, -" << inLightDir << ".xyz, view_vector, "
@@ -470,30 +470,30 @@ struct SShaderGenerator : public IDefaultMaterialShaderGenerator
         }
     }
 
-    void OutputDiffuseAreaLighting(IShaderStageGenerator &infragmentShader, const QString &inPos,
+    void OutputDiffuseAreaLighting(QDemonShaderStageGeneratorInterface &infragmentShader, const QString &inPos,
                                    QString inLightPrefix)
     {
-        m_NormalizedDirection = inLightPrefix + "_areaDir";
-        AddLocalVariable(infragmentShader, m_NormalizedDirection, "vec3");
-        infragmentShader << "\tlightAttenuation = calculateDiffuseAreaOld( " << m_LightDirection
-                         << ".xyz, " << m_LightPos << ".xyz, " << m_LightUp << ", " << m_LightRt
-                         << ", " << inPos << ", " << m_NormalizedDirection << " );" << "\n";
+        m_normalizedDirection = inLightPrefix + "_areaDir";
+        addLocalVariable(infragmentShader, m_normalizedDirection, "vec3");
+        infragmentShader << "\tlightAttenuation = calculateDiffuseAreaOld( " << m_lightDirection
+                         << ".xyz, " << m_lightPos << ".xyz, " << m_lightUp << ", " << m_lightRt
+                         << ", " << inPos << ", " << m_normalizedDirection << " );" << "\n";
     }
 
-    void OutputSpecularAreaLighting(IShaderStageGenerator &infragmentShader, const QString &inPos,
+    void OutputSpecularAreaLighting(QDemonShaderStageGeneratorInterface &infragmentShader, const QString &inPos,
                                     const QString &inView, const QString &inLightSpecColor)
     {
         addFunction(infragmentShader, "sampleAreaGlossyDefault");
-        infragmentShader.AddUniform("material_specular", "vec4");
+        infragmentShader.addUniform("material_specular", "vec4");
         infragmentShader << "global_specular_light.rgb += " << inLightSpecColor
                          << ".rgb * lightAttenuation * shadowFac * material_specular.rgb * "
                             "specularAmount * sampleAreaGlossyDefault( tanFrame, "
-                         << inPos << ", " << m_NormalizedDirection << ", " << m_LightPos << ".xyz, "
-                         << m_LightRt << ".w, " << m_LightUp << ".w, " << inView
+                         << inPos << ", " << m_normalizedDirection << ", " << m_lightPos << ".xyz, "
+                         << m_lightRt << ".w, " << m_lightUp << ".w, " << inView
                          << ", roughnessAmount, roughnessAmount ).rgb;" << "\n";
     }
 
-    void AddTranslucencyIrradiance(IShaderStageGenerator &infragmentShader, SRenderableImage *image,
+    void addTranslucencyIrradiance(QDemonShaderStageGeneratorInterface &infragmentShader, QDemonRenderableImage *image,
                                    QString inLightPrefix, bool areaLight)
     {
         if (image == nullptr)
@@ -504,118 +504,118 @@ struct SShaderGenerator : public IDefaultMaterialShaderGenerator
             infragmentShader << "\tglobal_diffuse_light.rgb += lightAttenuation * "
                                 "translucent_thickness_exp * diffuseReflectionWrapBSDF( "
                                 "-world_normal, "
-                             << m_NormalizedDirection << ", " << m_LightColor
+                             << m_normalizedDirection << ", " << m_lightColor
                              << ".rgb, diffuseLightWrap ).rgb;" << "\n";
         } else {
             infragmentShader << "\tglobal_diffuse_light.rgb += lightAttenuation * "
                                 "translucent_thickness_exp * diffuseReflectionWrapBSDF( "
                                 "-world_normal, "
-                             << "-" << m_NormalizedDirection << ", " << m_LightColor
+                             << "-" << m_normalizedDirection << ", " << m_lightColor
                              << ".rgb, diffuseLightWrap ).rgb;" << "\n";
         }
     }
 
-    void SetupShadowMapVariableNames(size_t lightIdx)
+    void setupShadowMapVariableNames(size_t lightIdx)
     {
-        m_ShadowMapStem = "shadowmap";
-        m_ShadowCubeStem = "shadowcube";
+        m_shadowMapStem = "shadowmap";
+        m_shadowCubeStem = "shadowcube";
         char buf[16];
         qsnprintf(buf, 16, "%d", int(lightIdx));
-        m_ShadowMapStem.append(buf);
-        m_ShadowCubeStem.append(buf);
-        m_ShadowMatrixStem = m_ShadowMapStem;
-        m_ShadowMatrixStem.append("_matrix");
-        m_ShadowCoordStem = m_ShadowMapStem;
-        m_ShadowCoordStem.append("_coord");
-        m_ShadowControlStem = m_ShadowMapStem;
-        m_ShadowControlStem.append("_control");
+        m_shadowMapStem.append(buf);
+        m_shadowCubeStem.append(buf);
+        m_shadowMatrixStem = m_shadowMapStem;
+        m_shadowMatrixStem.append("_matrix");
+        m_shadowCoordStem = m_shadowMapStem;
+        m_shadowCoordStem.append("_coord");
+        m_shadowControlStem = m_shadowMapStem;
+        m_shadowControlStem.append("_control");
     }
 
-    void AddShadowMapContribution(IShaderStageGenerator &inLightShader, quint32 lightIndex,
+    void addShadowMapContribution(QDemonShaderStageGeneratorInterface &inLightShader, quint32 lightIndex,
                                   RenderLightTypes::Enum inType)
     {
-        SetupShadowMapVariableNames(lightIndex);
+        setupShadowMapVariableNames(lightIndex);
 
-        inLightShader.AddInclude("shadowMapping.glsllib");
+        inLightShader.addInclude("shadowMapping.glsllib");
         if (inType == RenderLightTypes::Directional) {
-            inLightShader.AddUniform(m_ShadowMapStem, "sampler2D");
+            inLightShader.addUniform(m_shadowMapStem, "sampler2D");
         } else {
-            inLightShader.AddUniform(m_ShadowCubeStem, "samplerCube");
+            inLightShader.addUniform(m_shadowCubeStem, "samplerCube");
         }
-        inLightShader.AddUniform(m_ShadowControlStem, "vec4");
-        inLightShader.AddUniform(m_ShadowMatrixStem, "mat4");
+        inLightShader.addUniform(m_shadowControlStem, "vec4");
+        inLightShader.addUniform(m_shadowMatrixStem, "mat4");
 
         /*
         if ( inType == RenderLightTypes::Area )
         {
-                inLightShader << "vec2 " << m_ShadowCoordStem << ";" << "\n";
-                inLightShader << "\tshadow_map_occl = sampleParaboloid( " << m_ShadowMapStem << ", "
-        << m_ShadowControlStem << ", "
+                inLightShader << "vec2 " << m_shadowCoordStem << ";" << "\n";
+                inLightShader << "\tshadow_map_occl = sampleParaboloid( " << m_shadowMapStem << ", "
+        << m_shadowControlStem << ", "
                                                                                 <<
-        m_ShadowMatrixStem << ", varWorldPos, vec2(1.0, " << m_ShadowControlStem << ".z), "
-                                                                                << m_ShadowCoordStem
+        m_shadowMatrixStem << ", varWorldPos, vec2(1.0, " << m_shadowControlStem << ".z), "
+                                                                                << m_shadowCoordStem
         << " );" << "\n";
         }
         else */
         if (inType != RenderLightTypes::Directional) {
-            inLightShader << "\tshadow_map_occl = sampleCubemap( " << m_ShadowCubeStem << ", "
-                          << m_ShadowControlStem << ", " << m_ShadowMatrixStem << ", " << m_LightPos
-                          << ".xyz, varWorldPos, vec2(1.0, " << m_ShadowControlStem << ".z) );"
+            inLightShader << "\tshadow_map_occl = sampleCubemap( " << m_shadowCubeStem << ", "
+                          << m_shadowControlStem << ", " << m_shadowMatrixStem << ", " << m_lightPos
+                          << ".xyz, varWorldPos, vec2(1.0, " << m_shadowControlStem << ".z) );"
                           << "\n";
         } else
-            inLightShader << "\tshadow_map_occl = sampleOrthographic( " << m_ShadowMapStem << ", "
-                          << m_ShadowControlStem << ", " << m_ShadowMatrixStem
-                          << ", varWorldPos, vec2(1.0, " << m_ShadowControlStem << ".z) );" << "\n";
+            inLightShader << "\tshadow_map_occl = sampleOrthographic( " << m_shadowMapStem << ", "
+                          << m_shadowControlStem << ", " << m_shadowMatrixStem
+                          << ", varWorldPos, vec2(1.0, " << m_shadowControlStem << ".z) );" << "\n";
     }
 
-    void AddDisplacementMappingForDepthPass(IShaderStageGenerator &inShader) override
+    void addDisplacementMappingForDepthPass(QDemonShaderStageGeneratorInterface &inShader) override
     {
-        inShader.AddIncoming("attr_uv0", "vec2");
-        inShader.AddIncoming("attr_norm", "vec3");
-        inShader.AddUniform("displacementSampler", "sampler2D");
-        inShader.AddUniform("displaceAmount", "float");
-        inShader.AddUniform("displacementMap_rot", "vec4");
-        inShader.AddUniform("displacementMap_offset", "vec3");
-        inShader.AddInclude("defaultMaterialFileDisplacementTexture.glsllib");
+        inShader.addIncoming("attr_uv0", "vec2");
+        inShader.addIncoming("attr_norm", "vec3");
+        inShader.addUniform("displacementSampler", "sampler2D");
+        inShader.addUniform("displaceAmount", "float");
+        inShader.addUniform("displacementMap_rot", "vec4");
+        inShader.addUniform("displacementMap_offset", "vec3");
+        inShader.addInclude("defaultMaterialFileDisplacementTexture.glsllib");
 
-        inShader.Append("\tvec3 uTransform = vec3( displacementMap_rot.x, displacementMap_rot.y, "
+        inShader.append("\tvec3 uTransform = vec3( displacementMap_rot.x, displacementMap_rot.y, "
                         "displacementMap_offset.x );");
-        inShader.Append("\tvec3 vTransform = vec3( displacementMap_rot.z, displacementMap_rot.w, "
+        inShader.append("\tvec3 vTransform = vec3( displacementMap_rot.z, displacementMap_rot.w, "
                         "displacementMap_offset.y );");
         addFunction(inShader, "getTransformedUVCoords");
-        inShader.Append("\tvec2 uv_coords = attr_uv0;");
+        inShader.append("\tvec2 uv_coords = attr_uv0;");
         inShader << "\tuv_coords = getTransformedUVCoords( vec3( uv_coords, 1.0), uTransform, "
                     "vTransform );\n";
         inShader << "\tvec3 displacedPos = defaultMaterialFileDisplacementTexture( "
                     "displacementSampler , displaceAmount, uv_coords , attr_norm, attr_pos );"
                  << "\n";
-        inShader.Append("\tgl_Position = model_view_projection * vec4(displacedPos, 1.0);");
+        inShader.append("\tgl_Position = model_view_projection * vec4(displacedPos, 1.0);");
     }
 
-    void AddDisplacementImageUniforms(IShaderStageGenerator &inGenerator,
+    void addDisplacementImageUniforms(QDemonShaderStageGeneratorInterface &inGenerator,
                                       quint32 displacementImageIdx,
-                                      SRenderableImage *displacementImage) override
+                                      QDemonRenderableImage *displacementImage) override
     {
         if (displacementImage) {
-            SetupImageVariableNames(displacementImageIdx);
-            inGenerator.AddInclude("defaultMaterialFileDisplacementTexture.glsllib");
-            inGenerator.AddUniform("model_matrix", "mat4");
-            inGenerator.AddUniform("camera_position", "vec3");
-            inGenerator.AddUniform("displaceAmount", "float");
-            inGenerator.AddUniform(m_ImageSampler, "sampler2D");
+            setupImageVariableNames(displacementImageIdx);
+            inGenerator.addInclude("defaultMaterialFileDisplacementTexture.glsllib");
+            inGenerator.addUniform("model_matrix", "mat4");
+            inGenerator.addUniform("camera_position", "vec3");
+            inGenerator.addUniform("displaceAmount", "float");
+            inGenerator.addUniform(m_imageSampler, "sampler2D");
         }
     }
 
-    bool MaybeAddMaterialFresnel(IShaderStageGenerator &fragmentShader, QDemonConstDataRef<quint32> inKey,
+    bool maybeAddMaterialFresnel(QDemonShaderStageGeneratorInterface &fragmentShader, QDemonConstDataRef<quint32> inKey,
                                  bool inFragmentHasSpecularAmount)
     {
-        if (m_DefaultMaterialShaderKeyProperties.m_FresnelEnabled.GetValue(inKey)) {
+        if (m_defaultMaterialShaderKeyProperties.m_fresnelEnabled.getValue(inKey)) {
             if (inFragmentHasSpecularAmount == false)
                 fragmentShader << "\tfloat specularAmount = 1.0;" << "\n";
             inFragmentHasSpecularAmount = true;
-            fragmentShader.AddInclude("defaultMaterialFresnel.glsllib");
-            fragmentShader.AddUniform("fresnelPower", "float");
-            fragmentShader.AddUniform("material_specular", "vec4");
+            fragmentShader.addInclude("defaultMaterialFresnel.glsllib");
+            fragmentShader.addUniform("fresnelPower", "float");
+            fragmentShader.addUniform("material_specular", "vec4");
             fragmentShader << "\tfloat fresnelRatio = defaultMaterialSimpleFresnel( world_normal, "
                               "view_vector, material_specular.w, fresnelPower );"
                            << "\n";
@@ -623,95 +623,95 @@ struct SShaderGenerator : public IDefaultMaterialShaderGenerator
         }
         return inFragmentHasSpecularAmount;
     }
-    void SetupLightVariableNames(size_t lightIdx, SLight &inLight)
+    void setupLightVariableNames(size_t lightIdx, QDemonRenderLight &inLight)
     {
-        if (m_LightsAsSeparateUniforms) {
+        if (m_lightsAsSeparateUniforms) {
             char buf[16];
             qsnprintf(buf, 16, "light_%d", int(lightIdx));
-            m_LightStem = buf;
-            m_LightColor = m_LightStem;
-            m_LightColor.append("_diffuse");
-            m_LightDirection = m_LightStem;
-            m_LightDirection.append("_direction");
-            m_LightSpecularColor = m_LightStem;
-            m_LightSpecularColor.append("_specular");
-            if (inLight.m_LightType == RenderLightTypes::Point) {
-                m_LightPos = m_LightStem;
-                m_LightPos.append("_position");
-                m_LightAttenuation = m_LightStem;
-                m_LightAttenuation.append("_attenuation");
-            } else if (inLight.m_LightType == RenderLightTypes::Area) {
-                m_LightPos = m_LightStem;
-                m_LightPos.append("_position");
-                m_LightUp = m_LightStem;
-                m_LightUp.append("_up");
-                m_LightRt = m_LightStem;
-                m_LightRt.append("_right");
+            m_lightStem = buf;
+            m_lightColor = m_lightStem;
+            m_lightColor.append("_diffuse");
+            m_lightDirection = m_lightStem;
+            m_lightDirection.append("_direction");
+            m_lightSpecularColor = m_lightStem;
+            m_lightSpecularColor.append("_specular");
+            if (inLight.m_lightType == RenderLightTypes::Point) {
+                m_lightPos = m_lightStem;
+                m_lightPos.append("_position");
+                m_lightAttenuation = m_lightStem;
+                m_lightAttenuation.append("_attenuation");
+            } else if (inLight.m_lightType == RenderLightTypes::Area) {
+                m_lightPos = m_lightStem;
+                m_lightPos.append("_position");
+                m_lightUp = m_lightStem;
+                m_lightUp.append("_up");
+                m_lightRt = m_lightStem;
+                m_lightRt.append("_right");
             }
         } else {
-            m_LightStem = "lights";
+            m_lightStem = "lights";
             char buf[16];
             qsnprintf(buf, 16, "[%d].", int(lightIdx));
-            m_LightStem.append(buf);
+            m_lightStem.append(buf);
 
-            m_LightColor = m_LightStem;
-            m_LightColor.append("diffuse");
-            m_LightDirection = m_LightStem;
-            m_LightDirection.append("direction");
-            m_LightSpecularColor = m_LightStem;
-            m_LightSpecularColor.append("specular");
-            if (inLight.m_LightType == RenderLightTypes::Point) {
-                m_LightPos = m_LightStem;
-                m_LightPos.append("position");
-                m_LightConstantAttenuation = m_LightStem;
-                m_LightConstantAttenuation.append("constantAttenuation");
-                m_LightLinearAttenuation = m_LightStem;
-                m_LightLinearAttenuation.append("linearAttenuation");
-                m_LightQuadraticAttenuation = m_LightStem;
-                m_LightQuadraticAttenuation.append("quadraticAttenuation");
-            } else if (inLight.m_LightType == RenderLightTypes::Area) {
-                m_LightPos = m_LightStem;
-                m_LightPos.append("position");
-                m_LightUp = m_LightStem;
-                m_LightUp.append("up");
-                m_LightRt = m_LightStem;
-                m_LightRt.append("right");
+            m_lightColor = m_lightStem;
+            m_lightColor.append("diffuse");
+            m_lightDirection = m_lightStem;
+            m_lightDirection.append("direction");
+            m_lightSpecularColor = m_lightStem;
+            m_lightSpecularColor.append("specular");
+            if (inLight.m_lightType == RenderLightTypes::Point) {
+                m_lightPos = m_lightStem;
+                m_lightPos.append("position");
+                m_lightConstantAttenuation = m_lightStem;
+                m_lightConstantAttenuation.append("constantAttenuation");
+                m_lightLinearAttenuation = m_lightStem;
+                m_lightLinearAttenuation.append("linearAttenuation");
+                m_lightQuadraticAttenuation = m_lightStem;
+                m_lightQuadraticAttenuation.append("quadraticAttenuation");
+            } else if (inLight.m_lightType == RenderLightTypes::Area) {
+                m_lightPos = m_lightStem;
+                m_lightPos.append("position");
+                m_lightUp = m_lightStem;
+                m_lightUp.append("up");
+                m_lightRt = m_lightStem;
+                m_lightRt.append("right");
             }
         }
     }
 
-    void addDisplacementMapping(IDefaultMaterialVertexPipeline &inShader)
+    void addDisplacementMapping(QDemonDefaultMaterialVertexPipelineInterface &inShader)
     {
-        inShader.AddIncoming("attr_uv0", "vec2");
-        inShader.AddIncoming("attr_norm", "vec3");
-        inShader.AddUniform("displacementSampler", "sampler2D");
-        inShader.AddUniform("displaceAmount", "float");
-        inShader.AddUniform("displacementMap_rot", "vec4");
-        inShader.AddUniform("displacementMap_offset", "vec3");
-        inShader.AddInclude("defaultMaterialFileDisplacementTexture.glsllib");
+        inShader.addIncoming("attr_uv0", "vec2");
+        inShader.addIncoming("attr_norm", "vec3");
+        inShader.addUniform("displacementSampler", "sampler2D");
+        inShader.addUniform("displaceAmount", "float");
+        inShader.addUniform("displacementMap_rot", "vec4");
+        inShader.addUniform("displacementMap_offset", "vec3");
+        inShader.addInclude("defaultMaterialFileDisplacementTexture.glsllib");
 
-        inShader.Append("\tvec3 uTransform = vec3( displacementMap_rot.x, displacementMap_rot.y, "
+        inShader.append("\tvec3 uTransform = vec3( displacementMap_rot.x, displacementMap_rot.y, "
                         "displacementMap_offset.x );");
-        inShader.Append("\tvec3 vTransform = vec3( displacementMap_rot.z, displacementMap_rot.w, "
+        inShader.append("\tvec3 vTransform = vec3( displacementMap_rot.z, displacementMap_rot.w, "
                         "displacementMap_offset.y );");
         addFunction(inShader, "getTransformedUVCoords");
-        inShader.GenerateUVCoords();
+        inShader.generateUVCoords();
         inShader << "\tvarTexCoord0 = getTransformedUVCoords( vec3( varTexCoord0, 1.0), "
                     "uTransform, vTransform );\n";
         inShader << "\tvec3 displacedPos = defaultMaterialFileDisplacementTexture( "
                     "displacementSampler , displaceAmount, varTexCoord0 , attr_norm, attr_pos );"
                  << "\n";
-        inShader.Append("\tgl_Position = model_view_projection * vec4(displacedPos, 1.0);");
+        inShader.append("\tgl_Position = model_view_projection * vec4(displacedPos, 1.0);");
     }
 
-    void GenerateTextureSwizzle(QDemonRenderTextureSwizzleMode::Enum swizzleMode,
+    void generateTextureSwizzle(QDemonRenderTextureSwizzleMode::Enum swizzleMode,
                                 QString &texSwizzle,
                                 QString &lookupSwizzle)
     {
         QDemonRenderContextType deprecatedContextFlags(QDemonRenderContextValues::GL2
                                                        | QDemonRenderContextValues::GLES2);
 
-        if (!(m_RenderContext->GetRenderContext()->GetRenderContextType() & deprecatedContextFlags)) {
+        if (!(m_renderContext->getRenderContext()->getRenderContextType() & deprecatedContextFlags)) {
             switch (swizzleMode) {
             case QDemonRenderTextureSwizzleMode::L8toR8:
             case QDemonRenderTextureSwizzleMode::L16toR16:
@@ -733,58 +733,58 @@ struct SShaderGenerator : public IDefaultMaterialShaderGenerator
     }
 
     ///< get the light constant buffer and generate if necessary
-    QSharedPointer<QDemonRenderConstantBuffer> GetLightConstantBuffer(quint32 inLightCount)
+    QSharedPointer<QDemonRenderConstantBuffer> getLightConstantBuffer(quint32 inLightCount)
     {
-        QSharedPointer<QDemonRenderContext> theContext(m_RenderContext->GetRenderContext());
+        QSharedPointer<QDemonRenderContext> theContext(m_renderContext->getRenderContext());
 
         // we assume constant buffer support
-        Q_ASSERT(theContext->GetConstantBufferSupport());
+        Q_ASSERT(theContext->getConstantBufferSupport());
 
         // we only create if if we have lights
-        if (!inLightCount || !theContext->GetConstantBufferSupport())
+        if (!inLightCount || !theContext->getConstantBufferSupport())
             return nullptr;
 
         QString theName = QStringLiteral("cbBufferLights");
-        QSharedPointer<QDemonRenderConstantBuffer> pCB = theContext->GetConstantBuffer(theName);
+        QSharedPointer<QDemonRenderConstantBuffer> pCB = theContext->getConstantBuffer(theName);
 
         if (!pCB) {
             // create
-            SLightSourceShader s[QDEMON_MAX_NUM_LIGHTS];
-            QDemonDataRef<quint8> cBuffer((quint8 *)&s, (sizeof(SLightSourceShader) * QDEMON_MAX_NUM_LIGHTS)
+            QDemonLightSourceShader s[QDEMON_MAX_NUM_LIGHTS];
+            QDemonDataRef<quint8> cBuffer((quint8 *)&s, (sizeof(QDemonLightSourceShader) * QDEMON_MAX_NUM_LIGHTS)
                                           + (4 * sizeof(qint32)));
-            pCB = theContext->CreateConstantBuffer(
+            pCB = theContext->createConstantBuffer(
                         theName.toLocal8Bit().constData(), QDemonRenderBufferUsageType::Static,
-                        (sizeof(SLightSourceShader) * QDEMON_MAX_NUM_LIGHTS) + (4 * sizeof(qint32)), cBuffer);
+                        (sizeof(QDemonLightSourceShader) * QDEMON_MAX_NUM_LIGHTS) + (4 * sizeof(qint32)), cBuffer);
             if (!pCB) {
                 Q_ASSERT(false);
                 return nullptr;
             }
             // init first set
-            memset(&s[0], 0x0, sizeof(SLightSourceShader));
+            memset(&s[0], 0x0, sizeof(QDemonLightSourceShader));
             qint32 cgLights = 0;
-            pCB->UpdateRaw(0, QDemonDataRef<quint8>((quint8 *)&cgLights, sizeof(qint32)));
-            pCB->UpdateRaw(4 * sizeof(qint32),
-                           QDemonDataRef<quint8>((quint8 *)&s[0], sizeof(SLightSourceShader)));
-            pCB->Update(); // update to hardware
+            pCB->updateRaw(0, QDemonDataRef<quint8>((quint8 *)&cgLights, sizeof(qint32)));
+            pCB->updateRaw(4 * sizeof(qint32),
+                           QDemonDataRef<quint8>((quint8 *)&s[0], sizeof(QDemonLightSourceShader)));
+            pCB->update(); // update to hardware
 
-            m_ConstantBuffers.insert(theName, pCB);
+            m_constantBuffers.insert(theName, pCB);
         }
 
         return pCB;
     }
 
-    void SetImageShaderVariables(QSharedPointer<SShaderGeneratorGeneratedShader> inShader, SRenderableImage &inImage, quint32 idx)
+    void setImageShaderVariables(QSharedPointer<QDemonShaderGeneratorGeneratedShader> inShader, QDemonRenderableImage &inImage, quint32 idx)
     {
-        size_t numImageVariables = inShader->m_Images.size();
+        size_t numImageVariables = inShader->m_images.size();
         for (size_t namesIdx = numImageVariables; namesIdx <= idx; ++namesIdx) {
-            SetupImageVariableNames(idx);
-            inShader->m_Images.push_back(
-                        SShaderTextureProperties(m_ImageSampler, m_ImageOffsets,
-                                                 m_ImageRotations, m_ImageSamplerSize,
-                                                 inShader->m_Shader));
+            setupImageVariableNames(idx);
+            inShader->m_images.push_back(
+                        QDemonShaderTextureProperties(m_imageSampler, m_imageOffsets,
+                                                 m_imageRotations, m_imageSamplerSize,
+                                                 inShader->m_shader));
         }
-        SShaderTextureProperties &theShaderProps = inShader->m_Images[idx];
-        const QMatrix4x4 &textureTransform = inImage.m_Image.m_TextureTransform;
+        QDemonShaderTextureProperties &theShaderProps = inShader->m_images[idx];
+        const QMatrix4x4 &textureTransform = inImage.m_image.m_textureTransform;
         // We separate rotational information from offset information so that just maybe the shader
         // will attempt to push less information to the card.
         const float *dataPtr(textureTransform.constData());
@@ -792,7 +792,7 @@ struct SShaderGenerator : public IDefaultMaterialShaderGenerator
         // premultiplied or not.
         // We use this to mix the texture alpha.
         QVector3D offsets(dataPtr[12], dataPtr[13],
-                inImage.m_Image.m_TextureData.m_TextureFlags.IsPreMultiplied() ? 1.0f
+                inImage.m_image.m_textureData.m_textureFlags.isPreMultiplied() ? 1.0f
                                                                                : 0.0f);
         // Grab just the upper 2x2 rotation matrix from the larger matrix.
         QVector4D rotations(dataPtr[0], dataPtr[4], dataPtr[1], dataPtr[5]);
@@ -801,24 +801,24 @@ struct SShaderGenerator : public IDefaultMaterialShaderGenerator
         // on the shader.
         // because setting the image on the texture forces the textue to bind and immediately apply
         // any tex params.
-        QSharedPointer<QDemonRenderTexture2D> imageTexture = inImage.m_Image.m_TextureData.m_Texture;
-        inImage.m_Image.m_TextureData.m_Texture->SetTextureWrapS(
-                    inImage.m_Image.m_HorizontalTilingMode);
-        inImage.m_Image.m_TextureData.m_Texture->SetTextureWrapT(
-                    inImage.m_Image.m_VerticalTilingMode);
-        theShaderProps.m_Sampler.Set(imageTexture.data());
-        theShaderProps.m_Offsets.Set(offsets);
-        theShaderProps.m_Rotations.Set(rotations);
-        theShaderProps.m_Size.Set(QVector2D(imageTexture->GetTextureDetails().m_Width,
-                                            imageTexture->GetTextureDetails().m_Height));
+        QSharedPointer<QDemonRenderTexture2D> imageTexture = inImage.m_image.m_textureData.m_texture;
+        inImage.m_image.m_textureData.m_texture->setTextureWrapS(
+                    inImage.m_image.m_horizontalTilingMode);
+        inImage.m_image.m_textureData.m_texture->setTextureWrapT(
+                    inImage.m_image.m_verticalTilingMode);
+        theShaderProps.m_sampler.set(imageTexture.data());
+        theShaderProps.m_offsets.set(offsets);
+        theShaderProps.m_rotations.set(rotations);
+        theShaderProps.m_size.set(QVector2D(imageTexture->getTextureDetails().width,
+                                            imageTexture->getTextureDetails().height));
     }
 
-    void GenerateShadowMapOcclusion(quint32 lightIdx, bool inShadowEnabled,
+    void generateShadowMapOcclusion(quint32 lightIdx, bool inShadowEnabled,
                                     RenderLightTypes::Enum inType)
     {
         if (inShadowEnabled) {
-            VertexGenerator().GenerateWorldPosition();
-            AddShadowMapContribution(FragmentGenerator(), lightIdx, inType);
+            vertexGenerator().generateWorldPosition();
+            addShadowMapContribution(fragmentGenerator(), lightIdx, inType);
             /*
             VertexGenerator().AddUniform( m_ShadowMatrixStem, "mat4" );
             VertexGenerator().AddOutgoing( m_ShadowCoordStem, "vec4" );
@@ -829,20 +829,20 @@ struct SShaderGenerator : public IDefaultMaterialShaderGenerator
             VertexGenerator().AssignOutput( m_ShadowCoordStem, m_TempStr );
             */
         } else {
-            FragmentGenerator() << "\tshadow_map_occl = 1.0;" << "\n";
+            fragmentGenerator() << "\tshadow_map_occl = 1.0;" << "\n";
         }
     }
 
-    void GenerateVertexShader()
+    void generateVertexShader()
     {
         // vertex displacement
         quint32 imageIdx = 0;
-        SRenderableImage *displacementImage = nullptr;
+        QDemonRenderableImage *displacementImage = nullptr;
         quint32 displacementImageIdx = 0;
 
-        for (SRenderableImage *img = m_FirstImage; img != nullptr;
-             img = img->m_NextImage, ++imageIdx) {
-            if (img->m_MapType == ImageMapTypes::Displacement) {
+        for (QDemonRenderableImage *img = m_firstImage; img != nullptr;
+             img = img->m_nextImage, ++imageIdx) {
+            if (img->m_mapType == QDemonImageMapTypes::Displacement) {
                 displacementImage = img;
                 displacementImageIdx = imageIdx;
                 break;
@@ -850,129 +850,129 @@ struct SShaderGenerator : public IDefaultMaterialShaderGenerator
         }
 
         // the pipeline opens/closes up the shaders stages
-        VertexGenerator().BeginVertexGeneration(displacementImageIdx, displacementImage);
+        vertexGenerator().beginVertexGeneration(displacementImageIdx, displacementImage);
     }
 
-    void GenerateFragmentShader(SShaderDefaultMaterialKey &inKey)
+    void generateFragmentShader(QDemonShaderDefaultMaterialKey &inKey)
     {
-        bool specularEnabled = Material()->IsSpecularEnabled();
-        bool vertexColorsEnabled = Material()->IsVertexColorsEnabled();
+        bool specularEnabled = material()->isSpecularEnabled();
+        bool vertexColorsEnabled = material()->isVertexColorsEnabled();
 
-        bool hasLighting = Material()->HasLighting();
-        bool hasImage = m_FirstImage != nullptr;
+        bool hasLighting = material()->hasLighting();
+        bool hasImage = m_firstImage != nullptr;
 
-        bool hasIblProbe = m_DefaultMaterialShaderKeyProperties.m_HasIbl.GetValue(inKey);
+        bool hasIblProbe = m_defaultMaterialShaderKeyProperties.m_hasIbl.getValue(inKey);
         bool hasSpecMap = false;
         bool hasEnvMap = false;
         bool hasEmissiveMap = false;
         bool hasLightmaps = false;
         // Pull the bump out as
-        SRenderableImage *bumpImage = nullptr;
+        QDemonRenderableImage *bumpImage = nullptr;
         quint32 imageIdx = 0;
         quint32 bumpImageIdx = 0;
-        SRenderableImage *specularAmountImage = nullptr;
+        QDemonRenderableImage *specularAmountImage = nullptr;
         quint32 specularAmountImageIdx = 0;
-        SRenderableImage *roughnessImage = nullptr;
+        QDemonRenderableImage *roughnessImage = nullptr;
         quint32 roughnessImageIdx = 0;
         // normal mapping
-        SRenderableImage *normalImage = nullptr;
+        QDemonRenderableImage *normalImage = nullptr;
         quint32 normalImageIdx = 0;
         // translucency map
-        SRenderableImage *translucencyImage = nullptr;
+        QDemonRenderableImage *translucencyImage = nullptr;
         quint32 translucencyImageIdx = 0;
         // lightmaps
-        SRenderableImage *lightmapIndirectImage = nullptr;
+        QDemonRenderableImage *lightmapIndirectImage = nullptr;
         quint32 lightmapIndirectImageIdx = 0;
-        SRenderableImage *lightmapRadiosityImage = nullptr;
+        QDemonRenderableImage *lightmapRadiosityImage = nullptr;
         quint32 lightmapRadiosityImageIdx = 0;
-        SRenderableImage *lightmapShadowImage = nullptr;
+        QDemonRenderableImage *lightmapShadowImage = nullptr;
         quint32 lightmapShadowImageIdx = 0;
         const bool supportStandardDerivatives
-                = m_RenderContext->GetRenderContext()->IsStandardDerivativesSupported();
+                = m_renderContext->getRenderContext()->isStandardDerivativesSupported();
 
-        for (SRenderableImage *img = m_FirstImage; img != nullptr;
-             img = img->m_NextImage, ++imageIdx) {
-            hasSpecMap = img->m_MapType == ImageMapTypes::Specular;
-            if (img->m_MapType == ImageMapTypes::Bump) {
+        for (QDemonRenderableImage *img = m_firstImage; img != nullptr;
+             img = img->m_nextImage, ++imageIdx) {
+            hasSpecMap = img->m_mapType == QDemonImageMapTypes::Specular;
+            if (img->m_mapType == QDemonImageMapTypes::Bump) {
                 bumpImage = img;
                 bumpImageIdx = imageIdx;
-            } else if (img->m_MapType == ImageMapTypes::SpecularAmountMap) {
+            } else if (img->m_mapType == QDemonImageMapTypes::SpecularAmountMap) {
                 specularAmountImage = img;
                 specularAmountImageIdx = imageIdx;
-            } else if (img->m_MapType == ImageMapTypes::Roughness) {
+            } else if (img->m_mapType == QDemonImageMapTypes::Roughness) {
                 roughnessImage = img;
                 roughnessImageIdx = imageIdx;
-            } else if (img->m_MapType == ImageMapTypes::Normal) {
+            } else if (img->m_mapType == QDemonImageMapTypes::Normal) {
                 normalImage = img;
                 normalImageIdx = imageIdx;
-            } else if (img->m_Image.m_MappingMode == ImageMappingModes::Environment) {
+            } else if (img->m_image.m_mappingMode == ImageMappingModes::Environment) {
                 hasEnvMap = true;
-            } else if (img->m_MapType == ImageMapTypes::Translucency) {
+            } else if (img->m_mapType == QDemonImageMapTypes::Translucency) {
                 translucencyImage = img;
                 translucencyImageIdx = imageIdx;
-            } else if (img->m_MapType == ImageMapTypes::Emissive) {
+            } else if (img->m_mapType == QDemonImageMapTypes::Emissive) {
                 hasEmissiveMap = true;
-            } else if (img->m_MapType == ImageMapTypes::LightmapIndirect) {
+            } else if (img->m_mapType == QDemonImageMapTypes::LightmapIndirect) {
                 lightmapIndirectImage = img;
                 lightmapIndirectImageIdx = imageIdx;
                 hasLightmaps = true;
-            } else if (img->m_MapType == ImageMapTypes::LightmapRadiosity) {
+            } else if (img->m_mapType == QDemonImageMapTypes::LightmapRadiosity) {
                 lightmapRadiosityImage = img;
                 lightmapRadiosityImageIdx = imageIdx;
                 hasLightmaps = true;
-            } else if (img->m_MapType == ImageMapTypes::LightmapShadow) {
+            } else if (img->m_mapType == QDemonImageMapTypes::LightmapShadow) {
                 lightmapShadowImage = img;
                 lightmapShadowImageIdx = imageIdx;
                 hasLightmaps = true;
             }
         }
 
-        bool enableFresnel = m_DefaultMaterialShaderKeyProperties.m_FresnelEnabled.GetValue(inKey);
+        bool enableFresnel = m_defaultMaterialShaderKeyProperties.m_fresnelEnabled.getValue(inKey);
         bool enableSSAO = false;
         bool enableSSDO = false;
         bool enableShadowMaps = false;
         bool enableBumpNormal = normalImage || bumpImage;
 
-        for (quint32 idx = 0; idx < FeatureSet().size(); ++idx) {
-            QString name(FeatureSet()[idx].m_Name);
+        for (quint32 idx = 0; idx < featureSet().size(); ++idx) {
+            QString name(featureSet()[idx].name);
             if (name == "QDEMON_ENABLE_SSAO")
-                enableSSAO = FeatureSet()[idx].m_Enabled;
+                enableSSAO = featureSet()[idx].enabled;
             else if (name == "QDEMON_ENABLE_SSDO")
-                enableSSDO = FeatureSet()[idx].m_Enabled;
+                enableSSDO = featureSet()[idx].enabled;
             else if (name == "QDEMON_ENABLE_SSM")
-                enableShadowMaps = FeatureSet()[idx].m_Enabled;
+                enableShadowMaps = featureSet()[idx].enabled;
         }
 
         bool includeSSAOSSDOVars = enableSSAO || enableSSDO || enableShadowMaps;
 
-        VertexGenerator().BeginFragmentGeneration();
-        IShaderStageGenerator &fragmentShader(FragmentGenerator());
-        IDefaultMaterialVertexPipeline &vertexShader(VertexGenerator());
+        vertexGenerator().beginFragmentGeneration();
+        QDemonShaderStageGeneratorInterface &fragmentShader(fragmentGenerator());
+        QDemonDefaultMaterialVertexPipelineInterface &vertexShader(vertexGenerator());
 
         // The fragment or vertex shaders may not use the material_properties or diffuse
         // uniforms in all cases but it is simpler to just add them and let the linker strip them.
-        fragmentShader.AddUniform("material_diffuse", "vec4");
-        fragmentShader.AddUniform("diffuse_color", "vec3");
-        fragmentShader.AddUniform("material_properties", "vec4");
+        fragmentShader.addUniform("material_diffuse", "vec4");
+        fragmentShader.addUniform("diffuse_color", "vec3");
+        fragmentShader.addUniform("material_properties", "vec4");
 
         // All these are needed for SSAO
         if (includeSSAOSSDOVars) {
-            fragmentShader.AddInclude("SSAOCustomMaterial.glsllib");
+            fragmentShader.addInclude("SSAOCustomMaterial.glsllib");
             // fragmentShader.AddUniform( "ao_sampler", "sampler2D" );
         }
 
         if (hasIblProbe && hasLighting) {
-            fragmentShader.AddInclude("sampleProbe.glsllib");
+            fragmentShader.addInclude("sampleProbe.glsllib");
         }
 
         if (hasLighting) {
-            if (!m_LightsAsSeparateUniforms)
+            if (!m_lightsAsSeparateUniforms)
                 addFunction(fragmentShader, "sampleLightVars");
             addFunction(fragmentShader, "diffuseReflectionBSDF");
         }
 
         if (hasLighting && hasLightmaps) {
-            fragmentShader.AddInclude("evalLightmaps.glsllib");
+            fragmentShader.addInclude("evalLightmaps.glsllib");
         }
 
         // view_vector, varWorldPos, world_normal are all used if there is a specular map
@@ -981,47 +981,47 @@ struct SShaderGenerator : public IDefaultMaterialShaderGenerator
         // we rely on the linker to strip out what isn't necessary instead of explicitly stripping
         // it for code simplicity.
         if (hasImage) {
-            fragmentShader.Append("\tvec3 uTransform;");
-            fragmentShader.Append("\tvec3 vTransform;");
+            fragmentShader.append("\tvec3 uTransform;");
+            fragmentShader.append("\tvec3 vTransform;");
         }
 
         if (includeSSAOSSDOVars || hasSpecMap || hasLighting || hasEnvMap || enableFresnel
                 || hasIblProbe || enableBumpNormal) {
-            vertexShader.GenerateViewVector();
-            vertexShader.GenerateWorldNormal();
-            vertexShader.GenerateWorldPosition();
+            vertexShader.generateViewVector();
+            vertexShader.generateWorldNormal();
+            vertexShader.generateWorldPosition();
         }
         if (includeSSAOSSDOVars || specularEnabled || hasIblProbe || enableBumpNormal)
-            vertexShader.GenerateVarTangentAndBinormal();
+            vertexShader.generateVarTangentAndBinormal();
 
         if (vertexColorsEnabled)
-            vertexShader.GenerateVertexColor();
+            vertexShader.generateVertexColor();
         else
-            fragmentShader.Append("\tvec3 vertColor = vec3(1.0);");
+            fragmentShader.append("\tvec3 vertColor = vec3(1.0);");
 
         // You do bump or normal mapping but not both
         if (bumpImage != nullptr) {
-            GenerateImageUVCoordinates(bumpImageIdx, *bumpImage);
-            fragmentShader.AddUniform("bumpAmount", "float");
+            generateImageUVCoordinates(bumpImageIdx, *bumpImage);
+            fragmentShader.addUniform("bumpAmount", "float");
 
-            fragmentShader.AddUniform(m_ImageSamplerSize, "vec2");
-            fragmentShader.AddInclude("defaultMaterialBumpNoLod.glsllib");
-            fragmentShader << "\tworld_normal = defaultMaterialBumpNoLod( " << m_ImageSampler
-                           << ", bumpAmount, " << m_ImageFragCoords
+            fragmentShader.addUniform(m_imageSamplerSize, "vec2");
+            fragmentShader.addInclude("defaultMaterialBumpNoLod.glsllib");
+            fragmentShader << "\tworld_normal = defaultMaterialBumpNoLod( " << m_imageSampler
+                           << ", bumpAmount, " << m_imageFragCoords
                            << ", tangent, binormal, world_normal, "
-                           << m_ImageSamplerSize << ");" << "\n";
+                           << m_imageSamplerSize << ");" << "\n";
             // Do gram schmidt
             fragmentShader << "\tbinormal = normalize(cross(world_normal, tangent) );\n";
             fragmentShader << "\ttangent = normalize(cross(binormal, world_normal) );\n";
 
         } else if (normalImage != nullptr) {
-            GenerateImageUVCoordinates(normalImageIdx, *normalImage);
+            generateImageUVCoordinates(normalImageIdx, *normalImage);
 
-            fragmentShader.AddInclude("defaultMaterialFileNormalTexture.glsllib");
-            fragmentShader.AddUniform("bumpAmount", "float");
+            fragmentShader.addInclude("defaultMaterialFileNormalTexture.glsllib");
+            fragmentShader.addUniform("bumpAmount", "float");
 
             fragmentShader << "\tworld_normal = defaultMaterialFileNormalTexture( "
-                           << m_ImageSampler << ", bumpAmount, " << m_ImageFragCoords
+                           << m_imageSampler << ", bumpAmount, " << m_imageFragCoords
                            << ", tangent, binormal );" << "\n";
         }
 
@@ -1030,27 +1030,26 @@ struct SShaderGenerator : public IDefaultMaterialShaderGenerator
 
         bool fragmentHasSpecularAmount = false;
 
-        if (hasEmissiveMap) {
-            fragmentShader.Append("\tvec3 global_emission = material_diffuse.rgb;");
-        }
+        if (hasEmissiveMap)
+            fragmentShader.append("\tvec3 global_emission = material_diffuse.rgb;");
 
         if (hasLighting) {
-            fragmentShader.AddUniform("light_ambient_total", "vec3");
+            fragmentShader.addUniform("light_ambient_total", "vec3");
 
-            fragmentShader.Append(
+            fragmentShader.append(
                         "\tvec4 global_diffuse_light = vec4(light_ambient_total.xyz, 1.0);");
-            fragmentShader.Append("\tvec3 global_specular_light = vec3(0.0, 0.0, 0.0);");
-            fragmentShader.Append("\tfloat shadow_map_occl = 1.0;");
+            fragmentShader.append("\tvec3 global_specular_light = vec3(0.0, 0.0, 0.0);");
+            fragmentShader.append("\tfloat shadow_map_occl = 1.0;");
 
             if (specularEnabled) {
-                vertexShader.GenerateViewVector();
-                fragmentShader.AddUniform("material_properties", "vec4");
+                vertexShader.generateViewVector();
+                fragmentShader.addUniform("material_properties", "vec4");
             }
 
             if (lightmapIndirectImage != nullptr) {
-                GenerateImageUVCoordinates(lightmapIndirectImageIdx, *lightmapIndirectImage, 1);
-                fragmentShader << "\tvec4 indirect_light = texture2D( " << m_ImageSampler << ", "
-                               << m_ImageFragCoords << ");" << "\n";
+                generateImageUVCoordinates(lightmapIndirectImageIdx, *lightmapIndirectImage, 1);
+                fragmentShader << "\tvec4 indirect_light = texture2D( " << m_imageSampler << ", "
+                               << m_imageFragCoords << ");" << "\n";
                 fragmentShader << "\tglobal_diffuse_light += indirect_light;" << "\n";
                 if (specularEnabled) {
                     fragmentShader
@@ -1060,9 +1059,9 @@ struct SShaderGenerator : public IDefaultMaterialShaderGenerator
             }
 
             if (lightmapRadiosityImage != nullptr) {
-                GenerateImageUVCoordinates(lightmapRadiosityImageIdx, *lightmapRadiosityImage, 1);
-                fragmentShader << "\tvec4 direct_light = texture2D( " << m_ImageSampler << ", "
-                               << m_ImageFragCoords << ");" << "\n";
+                generateImageUVCoordinates(lightmapRadiosityImageIdx, *lightmapRadiosityImage, 1);
+                fragmentShader << "\tvec4 direct_light = texture2D( " << m_imageSampler << ", "
+                               << m_imageFragCoords << ");" << "\n";
                 fragmentShader << "\tglobal_diffuse_light += direct_light;" << "\n";
                 if (specularEnabled) {
                     fragmentShader
@@ -1072,13 +1071,13 @@ struct SShaderGenerator : public IDefaultMaterialShaderGenerator
             }
 
             if (translucencyImage != nullptr) {
-                fragmentShader.AddUniform("translucentFalloff", "float");
-                fragmentShader.AddUniform("diffuseLightWrap", "float");
+                fragmentShader.addUniform("translucentFalloff", "float");
+                fragmentShader.addUniform("diffuseLightWrap", "float");
 
-                GenerateImageUVCoordinates(translucencyImageIdx, *translucencyImage);
+                generateImageUVCoordinates(translucencyImageIdx, *translucencyImage);
 
-                fragmentShader << "\tvec4 translucent_depth_range = texture2D( " << m_ImageSampler
-                               << ", " << m_ImageFragCoords << ");" << "\n";
+                fragmentShader << "\tvec4 translucent_depth_range = texture2D( " << m_imageSampler
+                               << ", " << m_imageFragCoords << ");" << "\n";
                 fragmentShader << "\tfloat translucent_thickness = translucent_depth_range.r * "
                                   "translucent_depth_range.r;"
                                << "\n";
@@ -1087,16 +1086,16 @@ struct SShaderGenerator : public IDefaultMaterialShaderGenerator
                                << "\n";
             }
 
-            fragmentShader.Append("\tfloat lightAttenuation = 1.0;");
+            fragmentShader.append("\tfloat lightAttenuation = 1.0;");
 
-            AddLocalVariable(fragmentShader, "aoFactor", "float");
+            addLocalVariable(fragmentShader, "aoFactor", "float");
 
             if (hasLighting && enableSSAO)
-                fragmentShader.Append("\taoFactor = customMaterialAO();");
+                fragmentShader.append("\taoFactor = customMaterialAO();");
             else
-                fragmentShader.Append("\taoFactor = 1.0;");
+                fragmentShader.append("\taoFactor = 1.0;");
 
-            AddLocalVariable(fragmentShader, "shadowFac", "float");
+            addLocalVariable(fragmentShader, "shadowFac", "float");
 
             if (specularEnabled) {
                 fragmentShader << "\tfloat specularAmount = material_properties.x;" << "\n";
@@ -1109,17 +1108,17 @@ struct SShaderGenerator : public IDefaultMaterialShaderGenerator
             if (specularAmountImage) {
                 if (!specularEnabled)
                     fragmentShader << "\tfloat specularAmount = 1.0;" << "\n";
-                GenerateImageUVCoordinates(specularAmountImageIdx, *specularAmountImage);
+                generateImageUVCoordinates(specularAmountImageIdx, *specularAmountImage);
                 fragmentShader << "\tspecularColor = texture2D( "
-                               << m_ImageSampler << ", " << m_ImageFragCoords << " ).xyz;" << "\n";
+                               << m_imageSampler << ", " << m_imageFragCoords << " ).xyz;" << "\n";
                 fragmentHasSpecularAmount = true;
             }
 
             fragmentShader << "\tfloat roughnessAmount = material_properties.y;" << "\n";
             if (roughnessImage) {
-                GenerateImageUVCoordinates(roughnessImageIdx, *roughnessImage);
+                generateImageUVCoordinates(roughnessImageIdx, *roughnessImage);
                 fragmentShader << "\tfloat sampledRoughness = texture2D( "
-                               << m_ImageSampler << ", " << m_ImageFragCoords << " ).x;" << "\n";
+                               << m_imageSampler << ", " << m_imageFragCoords << " ).x;" << "\n";
                 //The roughness sampled from roughness textures is Disney roughness
                 //which has to be squared to get the proper value
                 fragmentShader << "\troughnessAmount = roughnessAmount * "
@@ -1127,176 +1126,176 @@ struct SShaderGenerator : public IDefaultMaterialShaderGenerator
             }
 
             fragmentHasSpecularAmount =
-                    MaybeAddMaterialFresnel(fragmentShader, inKey, fragmentHasSpecularAmount);
+                    maybeAddMaterialFresnel(fragmentShader, inKey, fragmentHasSpecularAmount);
 
             // Iterate through all lights
-            for (quint32 lightIdx = 0; lightIdx < m_Lights.size(); ++lightIdx) {
-                SLight *lightNode = m_Lights[lightIdx];
-                SetupLightVariableNames(lightIdx, *lightNode);
-                bool isDirectional = lightNode->m_LightType == RenderLightTypes::Directional;
-                bool isArea = lightNode->m_LightType == RenderLightTypes::Area;
-                bool isShadow = enableShadowMaps && lightNode->m_CastShadow;
+            for (quint32 lightIdx = 0; lightIdx < m_lights.size(); ++lightIdx) {
+                QDemonRenderLight *lightNode = m_lights[lightIdx];
+                setupLightVariableNames(lightIdx, *lightNode);
+                bool isDirectional = lightNode->m_lightType == RenderLightTypes::Directional;
+                bool isArea = lightNode->m_lightType == RenderLightTypes::Area;
+                bool isShadow = enableShadowMaps && lightNode->m_castShadow;
 
-                fragmentShader.Append("");
+                fragmentShader.append("");
                 char buf[10];
                 sprintf(buf, "%d", lightIdx);
 
-                m_TempStr = QStringLiteral("light");
-                m_TempStr.append(buf);
+                m_tempStr = QStringLiteral("light");
+                m_tempStr.append(buf);
 
                 fragmentShader << "\t//Light " << buf << "\n";
                 fragmentShader << "\tlightAttenuation = 1.0;" << "\n";
                 if (isDirectional) {
 
-                    if (m_LightsAsSeparateUniforms) {
-                        fragmentShader.AddUniform(m_LightDirection, "vec4");
-                        fragmentShader.AddUniform(m_LightColor, "vec4");
+                    if (m_lightsAsSeparateUniforms) {
+                        fragmentShader.addUniform(m_lightDirection, "vec4");
+                        fragmentShader.addUniform(m_lightColor, "vec4");
                     }
 
                     if (enableSSDO) {
-                        fragmentShader << "\tshadowFac = customMaterialShadow( " << m_LightDirection
+                        fragmentShader << "\tshadowFac = customMaterialShadow( " << m_lightDirection
                                        << ".xyz, varWorldPos );" << "\n";
                     } else {
                         fragmentShader << "\tshadowFac = 1.0;" << "\n";
                     }
 
-                    GenerateShadowMapOcclusion(lightIdx, enableShadowMaps && isShadow,
-                                               lightNode->m_LightType);
+                    generateShadowMapOcclusion(lightIdx, enableShadowMaps && isShadow,
+                                               lightNode->m_lightType);
 
                     if (specularEnabled && enableShadowMaps && isShadow)
                         fragmentShader << "\tlightAttenuation *= shadow_map_occl;" << "\n";
 
                     fragmentShader << "\tglobal_diffuse_light.rgb += shadowFac * shadow_map_occl * "
                                       "diffuseReflectionBSDF( world_normal, "
-                                   << "-" << m_LightDirection << ".xyz, view_vector, "
-                                   << m_LightColor << ".rgb, 0.0 ).rgb;" << "\n";
+                                   << "-" << m_lightDirection << ".xyz, view_vector, "
+                                   << m_lightColor << ".rgb, 0.0 ).rgb;" << "\n";
 
                     if (specularEnabled) {
-                        if (m_LightsAsSeparateUniforms)
-                            fragmentShader.AddUniform(m_LightSpecularColor, "vec4");
-                        OutputSpecularEquation(Material()->m_SpecularModel, fragmentShader,
-                                               m_LightDirection,
-                                               m_LightSpecularColor);
+                        if (m_lightsAsSeparateUniforms)
+                            fragmentShader.addUniform(m_lightSpecularColor, "vec4");
+                        outputSpecularEquation(material()->specularModel, fragmentShader,
+                                               m_lightDirection,
+                                               m_lightSpecularColor);
                     }
                 } else if (isArea) {
-                    if (m_LightsAsSeparateUniforms) {
-                        fragmentShader.AddUniform(m_LightColor, "vec4");
-                        fragmentShader.AddUniform(m_LightPos, "vec4");
-                        fragmentShader.AddUniform(m_LightDirection, "vec4");
-                        fragmentShader.AddUniform(m_LightUp, "vec4");
-                        fragmentShader.AddUniform(m_LightRt, "vec4");
+                    if (m_lightsAsSeparateUniforms) {
+                        fragmentShader.addUniform(m_lightColor, "vec4");
+                        fragmentShader.addUniform(m_lightPos, "vec4");
+                        fragmentShader.addUniform(m_lightDirection, "vec4");
+                        fragmentShader.addUniform(m_lightUp, "vec4");
+                        fragmentShader.addUniform(m_lightRt, "vec4");
                     } else {
                         addFunction(fragmentShader, "areaLightVars");
                     }
                     addFunction(fragmentShader, "calculateDiffuseAreaOld");
-                    vertexShader.GenerateWorldPosition();
-                    GenerateShadowMapOcclusion(lightIdx, enableShadowMaps && isShadow,
-                                               lightNode->m_LightType);
+                    vertexShader.generateWorldPosition();
+                    generateShadowMapOcclusion(lightIdx, enableShadowMaps && isShadow,
+                                               lightNode->m_lightType);
 
                     // Debug measure to make sure paraboloid sampling was projecting to the right
                     // location
                     // fragmentShader << "\tglobal_diffuse_light.rg += " << m_ShadowCoordStem << ";"
                     // << "\n";
-                    m_NormalizedDirection = m_TempStr;
-                    m_NormalizedDirection.append("_Frame");
+                    m_normalizedDirection = m_tempStr;
+                    m_normalizedDirection.append("_Frame");
 
-                    AddLocalVariable(fragmentShader, m_NormalizedDirection, "mat3");
-                    fragmentShader << m_NormalizedDirection << " = mat3( " << m_LightRt << ".xyz, "
-                                   << m_LightUp << ".xyz, -" << m_LightDirection << ".xyz );"
+                    addLocalVariable(fragmentShader, m_normalizedDirection, "mat3");
+                    fragmentShader << m_normalizedDirection << " = mat3( " << m_lightRt << ".xyz, "
+                                   << m_lightUp << ".xyz, -" << m_lightDirection << ".xyz );"
                                    << "\n";
 
                     if (enableSSDO) {
                         fragmentShader << "\tshadowFac = shadow_map_occl * customMaterialShadow( "
-                                       << m_LightDirection << ".xyz, varWorldPos );" << "\n";
+                                       << m_lightDirection << ".xyz, varWorldPos );" << "\n";
                     } else {
                         fragmentShader << "\tshadowFac = shadow_map_occl;" << "\n";
                     }
 
                     if (specularEnabled) {
-                        vertexShader.GenerateViewVector();
-                        if (m_LightsAsSeparateUniforms)
-                            fragmentShader.AddUniform(m_LightSpecularColor, "vec4");
+                        vertexShader.generateViewVector();
+                        if (m_lightsAsSeparateUniforms)
+                            fragmentShader.addUniform(m_lightSpecularColor, "vec4");
                         OutputSpecularAreaLighting(fragmentShader, "varWorldPos", "view_vector",
-                                                   m_LightSpecularColor);
+                                                   m_lightSpecularColor);
                     }
 
-                    OutputDiffuseAreaLighting(fragmentShader, "varWorldPos", m_TempStr);
+                    OutputDiffuseAreaLighting(fragmentShader, "varWorldPos", m_tempStr);
                     fragmentShader << "\tlightAttenuation *= shadowFac;" << "\n";
 
-                    AddTranslucencyIrradiance(fragmentShader, translucencyImage, m_TempStr, true);
+                    addTranslucencyIrradiance(fragmentShader, translucencyImage, m_tempStr, true);
 
                     fragmentShader << "\tglobal_diffuse_light.rgb += lightAttenuation * "
                                       "diffuseReflectionBSDF( world_normal, "
-                                   << m_NormalizedDirection << ", view_vector, " << m_LightColor
+                                   << m_normalizedDirection << ", view_vector, " << m_lightColor
                                    << ".rgb, 0.0 ).rgb;" << "\n";
                 } else {
 
-                    vertexShader.GenerateWorldPosition();
-                    GenerateShadowMapOcclusion(lightIdx, enableShadowMaps && isShadow,
-                                               lightNode->m_LightType);
+                    vertexShader.generateWorldPosition();
+                    generateShadowMapOcclusion(lightIdx, enableShadowMaps && isShadow,
+                                               lightNode->m_lightType);
 
-                    if (m_LightsAsSeparateUniforms) {
-                        fragmentShader.AddUniform(m_LightColor, "vec4");
-                        fragmentShader.AddUniform(m_LightPos, "vec4");
+                    if (m_lightsAsSeparateUniforms) {
+                        fragmentShader.addUniform(m_lightColor, "vec4");
+                        fragmentShader.addUniform(m_lightPos, "vec4");
                     }
 
-                    m_RelativeDirection = m_TempStr;
-                    m_RelativeDirection.append("_relativeDirection");
+                    m_relativeDirection = m_tempStr;
+                    m_relativeDirection.append("_relativeDirection");
 
-                    m_NormalizedDirection = m_RelativeDirection;
-                    m_NormalizedDirection.append("_normalized");
+                    m_normalizedDirection = m_relativeDirection;
+                    m_normalizedDirection.append("_normalized");
 
-                    m_RelativeDistance = m_TempStr;
-                    m_RelativeDistance.append("_distance");
+                    m_relativeDistance = m_tempStr;
+                    m_relativeDistance.append("_distance");
 
-                    fragmentShader << "\tvec3 " << m_RelativeDirection << " = varWorldPos - "
-                                   << m_LightPos << ".xyz;" << "\n";
-                    fragmentShader << "\tfloat " << m_RelativeDistance << " = length( "
-                                   << m_RelativeDirection << " );" << "\n";
-                    fragmentShader << "\tvec3 " << m_NormalizedDirection << " = "
-                                   << m_RelativeDirection << " / " << m_RelativeDistance << ";"
+                    fragmentShader << "\tvec3 " << m_relativeDirection << " = varWorldPos - "
+                                   << m_lightPos << ".xyz;" << "\n";
+                    fragmentShader << "\tfloat " << m_relativeDistance << " = length( "
+                                   << m_relativeDirection << " );" << "\n";
+                    fragmentShader << "\tvec3 " << m_normalizedDirection << " = "
+                                   << m_relativeDirection << " / " << m_relativeDistance << ";"
                                    << "\n";
 
                     if (enableSSDO) {
                         fragmentShader << "\tshadowFac = shadow_map_occl * customMaterialShadow( "
-                                       << m_NormalizedDirection << ", varWorldPos );" << "\n";
+                                       << m_normalizedDirection << ", varWorldPos );" << "\n";
                     } else {
                         fragmentShader << "\tshadowFac = shadow_map_occl;" << "\n";
                     }
 
                     addFunction(fragmentShader, "calculatePointLightAttenuation");
 
-                    if (m_LightsAsSeparateUniforms) {
-                        fragmentShader.AddUniform(m_LightAttenuation, "vec3");
+                    if (m_lightsAsSeparateUniforms) {
+                        fragmentShader.addUniform(m_lightAttenuation, "vec3");
                         fragmentShader
                                 << "\tlightAttenuation = shadowFac * calculatePointLightAttenuation("
-                                << "vec3( " << m_LightAttenuation << ".x, " << m_LightAttenuation
-                                << ".y, " << m_LightAttenuation << ".z), " << m_RelativeDistance
+                                << "vec3( " << m_lightAttenuation << ".x, " << m_lightAttenuation
+                                << ".y, " << m_lightAttenuation << ".z), " << m_relativeDistance
                                 << ");" << "\n";
                     } else {
                         fragmentShader
                                 << "\tlightAttenuation = shadowFac * calculatePointLightAttenuation("
-                                << "vec3( " << m_LightConstantAttenuation << ", "
-                                << m_LightLinearAttenuation << ", " << m_LightQuadraticAttenuation
-                                << "), " << m_RelativeDistance << ");"
+                                << "vec3( " << m_lightConstantAttenuation << ", "
+                                << m_lightLinearAttenuation << ", " << m_lightQuadraticAttenuation
+                                << "), " << m_relativeDistance << ");"
                                 << "\n";
                     }
 
 
 
-                    AddTranslucencyIrradiance(fragmentShader, translucencyImage, m_TempStr, false);
+                    addTranslucencyIrradiance(fragmentShader, translucencyImage, m_tempStr, false);
 
                     fragmentShader << "\tglobal_diffuse_light.rgb += lightAttenuation * "
                                       "diffuseReflectionBSDF( world_normal, "
-                                   << "-" << m_NormalizedDirection << ", view_vector, "
-                                   << m_LightColor << ".rgb, 0.0 ).rgb;" << "\n";
+                                   << "-" << m_normalizedDirection << ", view_vector, "
+                                   << m_lightColor << ".rgb, 0.0 ).rgb;" << "\n";
 
                     if (specularEnabled) {
-                        if (m_LightsAsSeparateUniforms)
-                            fragmentShader.AddUniform(m_LightSpecularColor, "vec4");
-                        OutputSpecularEquation(Material()->m_SpecularModel, fragmentShader,
-                                               m_NormalizedDirection,
-                                               m_LightSpecularColor);
+                        if (m_lightsAsSeparateUniforms)
+                            fragmentShader.addUniform(m_lightSpecularColor, "vec4");
+                        outputSpecularEquation(material()->specularModel, fragmentShader,
+                                               m_normalizedDirection,
+                                               m_lightSpecularColor);
                     }
                 }
             }
@@ -1312,29 +1311,29 @@ struct SShaderGenerator : public IDefaultMaterialShaderGenerator
                               "object_opacity);"
                            << "\n" << "\tglobal_specular_light = vec3(global_specular_light.xyz);"
                            << "\n";
-        } else // no lighting.
-        {
+        } else  { // no lighting.
             fragmentShader << "\tvec4 global_diffuse_light = vec4(0.0, 0.0, 0.0, object_opacity);"
                            << "\n" << "\tvec3 global_specular_light = vec3(0.0, 0.0, 0.0);" << "\n";
 
             // We still have specular maps and such that could potentially use the fresnel variable.
             fragmentHasSpecularAmount =
-                    MaybeAddMaterialFresnel(fragmentShader, inKey, fragmentHasSpecularAmount);
+                    maybeAddMaterialFresnel(fragmentShader, inKey, fragmentHasSpecularAmount);
         }
 
-        if (!hasEmissiveMap)
+        if (!hasEmissiveMap) {
             fragmentShader
                     << "\tglobal_diffuse_light.rgb += diffuse_color.rgb * material_diffuse.rgb;"
                     << "\n";
+        }
 
         // since we already modulate our material diffuse color
         // into the light color we will miss it entirely if no IBL
         // or light is used
-        if (hasLightmaps && !(m_Lights.size() || hasIblProbe))
+        if (hasLightmaps && !(m_lights.size() || hasIblProbe))
             fragmentShader << "\tglobal_diffuse_light.rgb *= diffuse_color.rgb;" << "\n";
 
         if (hasLighting && hasIblProbe) {
-            vertexShader.GenerateWorldNormal();
+            vertexShader.generateWorldNormal();
 
             fragmentShader << "\tglobal_diffuse_light.rgb += diffuse_color.rgb * aoFactor * "
                               "sampleDiffuse( tanFrame ).xyz;"
@@ -1342,7 +1341,7 @@ struct SShaderGenerator : public IDefaultMaterialShaderGenerator
 
             if (specularEnabled) {
 
-                fragmentShader.AddUniform("material_specular", "vec4");
+                fragmentShader.addUniform("material_specular", "vec4");
 
                 fragmentShader << "\tglobal_specular_light.xyz += specularAmount * specularColor * "
                                   "vec3(material_specular.xyz) * sampleGlossy( tanFrame, "
@@ -1352,18 +1351,18 @@ struct SShaderGenerator : public IDefaultMaterialShaderGenerator
         }
 
         if (hasImage) {
-            fragmentShader.Append("\tvec4 texture_color;");
+            fragmentShader.append("\tvec4 texture_color;");
             quint32 idx = 0;
-            for (SRenderableImage *image = m_FirstImage; image; image = image->m_NextImage, ++idx) {
+            for (QDemonRenderableImage *image = m_firstImage; image; image = image->m_nextImage, ++idx) {
                 // Various maps are handled on a different locations
-                if (image->m_MapType == ImageMapTypes::Bump
-                        || image->m_MapType == ImageMapTypes::Normal
-                        || image->m_MapType == ImageMapTypes::Displacement
-                        || image->m_MapType == ImageMapTypes::SpecularAmountMap
-                        || image->m_MapType == ImageMapTypes::Roughness
-                        || image->m_MapType == ImageMapTypes::Translucency
-                        || image->m_MapType == ImageMapTypes::LightmapIndirect
-                        || image->m_MapType == ImageMapTypes::LightmapRadiosity) {
+                if (image->m_mapType == QDemonImageMapTypes::Bump
+                        || image->m_mapType == QDemonImageMapTypes::Normal
+                        || image->m_mapType == QDemonImageMapTypes::Displacement
+                        || image->m_mapType == QDemonImageMapTypes::SpecularAmountMap
+                        || image->m_mapType == QDemonImageMapTypes::Roughness
+                        || image->m_mapType == QDemonImageMapTypes::Translucency
+                        || image->m_mapType == QDemonImageMapTypes::LightmapIndirect
+                        || image->m_mapType == QDemonImageMapTypes::LightmapRadiosity) {
                     continue;
                 }
 
@@ -1371,56 +1370,56 @@ struct SShaderGenerator : public IDefaultMaterialShaderGenerator
                 QString lookupSwizzle;
                 QString texLodStr;
 
-                GenerateImageUVCoordinates(idx, *image, 0);
+                generateImageUVCoordinates(idx, *image, 0);
 
-                GenerateTextureSwizzle(
-                            image->m_Image.m_TextureData.m_Texture->GetTextureSwizzleMode(), texSwizzle,
+                generateTextureSwizzle(
+                            image->m_image.m_textureData.m_texture->getTextureSwizzleMode(), texSwizzle,
                             lookupSwizzle);
 
                 if (texLodStr.isEmpty()) {
                     fragmentShader << "\ttexture_color" << texSwizzle << " = texture2D( "
-                                   << m_ImageSampler << ", " << m_ImageFragCoords << ")"
+                                   << m_imageSampler << ", " << m_imageFragCoords << ")"
                                    << lookupSwizzle << ";" << "\n";
                 } else {
                     fragmentShader << "\ttexture_color" << texSwizzle << "= textureLod( "
-                                   << m_ImageSampler << ", " << m_ImageFragCoords << ", "
+                                   << m_imageSampler << ", " << m_imageFragCoords << ", "
                                    << texLodStr << " )" << lookupSwizzle << ";"
                                    << "\n";
                 }
 
-                if (image->m_Image.m_TextureData.m_TextureFlags.IsPreMultiplied() == true)
+                if (image->m_image.m_textureData.m_textureFlags.isPreMultiplied() == true)
                     fragmentShader << "\ttexture_color.rgb = texture_color.a > 0.0 ? "
                                       "texture_color.rgb / texture_color.a : vec3( 0, 0, 0 );"
                                    << "\n";
 
                 // These mapping types honestly don't make a whole ton of sense to me.
-                switch (image->m_MapType) {
-                case ImageMapTypes::Diffuse: // assume images are premultiplied.
-                case ImageMapTypes::LightmapShadow:
+                switch (image->m_mapType) {
+                case QDemonImageMapTypes::Diffuse: // assume images are premultiplied.
+                case QDemonImageMapTypes::LightmapShadow:
                     // We use image offsets.z to switch between incoming premultiplied textures or
                     // not premultiplied textures.
                     // If Z is 1, then we assume the incoming texture is already premultiplied, else
                     // we just read the rgb value.
-                    fragmentShader.Append("\tglobal_diffuse_light *= texture_color;");
+                    fragmentShader.append("\tglobal_diffuse_light *= texture_color;");
                     break;
-                case ImageMapTypes::Specular:
+                case QDemonImageMapTypes::Specular:
 
-                    fragmentShader.AddUniform("material_specular", "vec4");
+                    fragmentShader.addUniform("material_specular", "vec4");
                     if (fragmentHasSpecularAmount) {
-                        fragmentShader.Append("\tglobal_specular_light.xyz += specularAmount * "
+                        fragmentShader.append("\tglobal_specular_light.xyz += specularAmount * "
                                               "specularColor * texture_color.xyz * "
                                               "material_specular.xyz;");
                     } else {
-                        fragmentShader.Append("\tglobal_specular_light.xyz += texture_color.xyz * "
+                        fragmentShader.append("\tglobal_specular_light.xyz += texture_color.xyz * "
                                               "material_specular.xyz;");
                     }
-                    fragmentShader.Append("\tglobal_diffuse_light.a *= texture_color.a;");
+                    fragmentShader.append("\tglobal_diffuse_light.a *= texture_color.a;");
                     break;
-                case ImageMapTypes::Opacity:
-                    fragmentShader.Append("\tglobal_diffuse_light.a *= texture_color.a;");
+                case QDemonImageMapTypes::Opacity:
+                    fragmentShader.append("\tglobal_diffuse_light.a *= texture_color.a;");
                     break;
-                case ImageMapTypes::Emissive:
-                    fragmentShader.Append(
+                case QDemonImageMapTypes::Emissive:
+                    fragmentShader.append(
                                 "\tglobal_emission *= texture_color.xyz * texture_color.a;");
                     break;
                 default:
@@ -1429,147 +1428,145 @@ struct SShaderGenerator : public IDefaultMaterialShaderGenerator
             }
         }
 
-        if (hasEmissiveMap) {
-            fragmentShader.Append("\tglobal_diffuse_light.rgb += global_emission.rgb;");
-        }
+        if (hasEmissiveMap)
+            fragmentShader.append("\tglobal_diffuse_light.rgb += global_emission.rgb;");
 
         // Ensure the rgb colors are in range.
-        fragmentShader.Append("\tfragOutput = vec4( clamp( vertColor * global_diffuse_light.xyz + "
+        fragmentShader.append("\tfragOutput = vec4( clamp( vertColor * global_diffuse_light.xyz + "
                               "global_specular_light.xyz, 0.0, 65519.0 ), global_diffuse_light.a "
                               ");");
 
-        if (VertexGenerator().HasActiveWireframe()) {
-            fragmentShader.Append("vec3 edgeDistance = varEdgeDistance * gl_FragCoord.w;");
-            fragmentShader.Append(
+        if (vertexGenerator().hasActiveWireframe()) {
+            fragmentShader.append("vec3 edgeDistance = varEdgeDistance * gl_FragCoord.w;");
+            fragmentShader.append(
                         "\tfloat d = min(min(edgeDistance.x, edgeDistance.y), edgeDistance.z);");
-            fragmentShader.Append("\tfloat mixVal = smoothstep(0.0, 1.0, d);"); // line width 1.0
+            fragmentShader.append("\tfloat mixVal = smoothstep(0.0, 1.0, d);"); // line width 1.0
 
-            fragmentShader.Append(
+            fragmentShader.append(
                         "\tfragOutput = mix( vec4(0.0, 1.0, 0.0, 1.0), fragOutput, mixVal);");
         }
     }
 
-    QSharedPointer<QDemonRenderShaderProgram> GenerateMaterialShader(const QString &inShaderPrefix)
+    QSharedPointer<QDemonRenderShaderProgram> generateMaterialShader(const QString &inShaderPrefix)
     {
         // build a string that allows us to print out the shader we are generating to the log.
         // This is time consuming but I feel like it doesn't happen all that often and is very
         // useful to users
         // looking at the log file.
 
-        m_GeneratedShaderString.clear();
-        m_GeneratedShaderString = inShaderPrefix;
+        m_generatedShaderString.clear();
+        m_generatedShaderString = inShaderPrefix;
 
-        SShaderDefaultMaterialKey theKey(Key());
-        theKey.ToString(m_GeneratedShaderString, m_DefaultMaterialShaderKeyProperties);
+        QDemonShaderDefaultMaterialKey theKey(key());
+        theKey.toString(m_generatedShaderString, m_defaultMaterialShaderKeyProperties);
 
-        m_LightsAsSeparateUniforms = !m_RenderContext->GetRenderContext()->GetConstantBufferSupport();
+        m_lightsAsSeparateUniforms = !m_renderContext->getRenderContext()->getConstantBufferSupport();
 
-        GenerateVertexShader();
-        GenerateFragmentShader(theKey);
+        generateVertexShader();
+        generateFragmentShader(theKey);
 
-        VertexGenerator().EndVertexGeneration();
-        VertexGenerator().EndFragmentGeneration();
+        vertexGenerator().endVertexGeneration();
+        vertexGenerator().endFragmentGeneration();
 
-        return ProgramGenerator()->CompileGeneratedShader(m_GeneratedShaderString, SShaderCacheProgramFlags(), FeatureSet());
+        return programGenerator()->compileGeneratedShader(m_generatedShaderString, QDemonShaderCacheProgramFlags(), featureSet());
     }
 
-    virtual QSharedPointer<QDemonRenderShaderProgram>
-    GenerateShader(const SGraphObject &inMaterial,
-                   SShaderDefaultMaterialKey inShaderDescription,
-                   IShaderStageGenerator &inVertexPipeline,
-                   TShaderFeatureSet inFeatureSet,
-                   const QVector<SLight *> &inLights,
-                   SRenderableImage *inFirstImage,
-                   bool inHasTransparency,
-                   const QString &inVertexPipelineName,
-                   const QString &) override
+    virtual QSharedPointer<QDemonRenderShaderProgram> generateShader(const QDemonGraphObject &inMaterial,
+                                                                     QDemonShaderDefaultMaterialKey inShaderDescription,
+                                                                     QDemonShaderStageGeneratorInterface &inVertexPipeline,
+                                                                     TShaderFeatureSet inFeatureSet,
+                                                                     const QVector<QDemonRenderLight *> &inLights,
+                                                                     QDemonRenderableImage *inFirstImage,
+                                                                     bool inHasTransparency,
+                                                                     const QString &inVertexPipelineName,
+                                                                     const QString &) override
     {
-        Q_ASSERT(inMaterial.m_Type == GraphObjectTypes::DefaultMaterial);
-        m_CurrentMaterial = static_cast<const SDefaultMaterial *>(&inMaterial);
-        m_CurrentKey = &inShaderDescription;
-        m_CurrentPipeline = static_cast<IDefaultMaterialVertexPipeline *>(&inVertexPipeline);
-        m_CurrentFeatureSet = inFeatureSet;
-        m_Lights = inLights;
-        m_FirstImage = inFirstImage;
-        m_HasTransparency = inHasTransparency;
+        Q_ASSERT(inMaterial.type == QDemonGraphObjectTypes::DefaultMaterial);
+        m_currentMaterial = static_cast<const QDemonRenderDefaultMaterial *>(&inMaterial);
+        m_currentKey = &inShaderDescription;
+        m_currentPipeline = static_cast<QDemonDefaultMaterialVertexPipelineInterface *>(&inVertexPipeline);
+        m_currentFeatureSet = inFeatureSet;
+        m_lights = inLights;
+        m_firstImage = inFirstImage;
+        m_hasTransparency = inHasTransparency;
 
-        return GenerateMaterialShader(inVertexPipelineName);
+        return generateMaterialShader(inVertexPipelineName);
     }
 
-    QSharedPointer<SShaderGeneratorGeneratedShader> GetShaderForProgram(QSharedPointer<QDemonRenderShaderProgram> inProgram)
+    QSharedPointer<QDemonShaderGeneratorGeneratedShader> getShaderForProgram(QSharedPointer<QDemonRenderShaderProgram> inProgram)
     {
-        TProgramToShaderMap::iterator inserter = m_ProgramToShaderMap.find(inProgram);
-        if (inserter == m_ProgramToShaderMap.end())
-            inserter = m_ProgramToShaderMap.insert(inProgram, QSharedPointer<SShaderGeneratorGeneratedShader>(new SShaderGeneratorGeneratedShader(inProgram, m_RenderContext->GetRenderContext())));
+        TProgramToShaderMap::iterator inserter = m_programToShaderMap.find(inProgram);
+        if (inserter == m_programToShaderMap.end())
+            inserter = m_programToShaderMap.insert(inProgram, QSharedPointer<QDemonShaderGeneratorGeneratedShader>(new QDemonShaderGeneratorGeneratedShader(inProgram, m_renderContext->getRenderContext())));
 
         return inserter.value();
     }
 
-    void SetGlobalProperties(QSharedPointer<QDemonRenderShaderProgram> inProgram,
-                             const SLayer & /*inLayer*/,
-                             SCamera &inCamera,
+    void setGlobalProperties(QSharedPointer<QDemonRenderShaderProgram> inProgram,
+                             const QDemonLayer & /*inLayer*/,
+                             QDemonRenderCamera &inCamera,
                              QVector3D inCameraDirection,
-                             QVector<SLight *> &inLights,
+                             QVector<QDemonRenderLight *> &inLights,
                              QVector<QVector3D> &inLightDirections,
                              QSharedPointer<QDemonRenderShadowMap> inShadowMapManager)
     {
-        QSharedPointer<SShaderGeneratorGeneratedShader> shader(GetShaderForProgram(inProgram));
-        m_RenderContext->GetRenderContext()->SetActiveShader(inProgram);
+        QSharedPointer<QDemonShaderGeneratorGeneratedShader> shader(getShaderForProgram(inProgram));
+        m_renderContext->getRenderContext()->setActiveShader(inProgram);
 
-        m_ShadowMapManager = inShadowMapManager;
+        m_shadowMapManager = inShadowMapManager;
 
-        SCamera &theCamera(inCamera);
-        shader->m_CameraPosition.Set(theCamera.GetGlobalPos());
-        shader->m_CameraDirection.Set(inCameraDirection);
+        QDemonRenderCamera &theCamera(inCamera);
+        shader->m_cameraPosition.set(theCamera.getGlobalPos());
+        shader->m_cameraDirection.set(inCameraDirection);
 
         QMatrix4x4 viewProj;
-        if (shader->m_ViewProj.IsValid()) {
-            theCamera.CalculateViewProjectionMatrix(viewProj);
-            shader->m_ViewProj.Set(viewProj);
+        if (shader->m_viewProj.isValid()) {
+            theCamera.calculateViewProjectionMatrix(viewProj);
+            shader->m_viewProj.set(viewProj);
         }
 
-        if (shader->m_ViewMatrix.IsValid()) {
-            viewProj = mat44::getInverse(theCamera.m_GlobalTransform);
-            shader->m_ViewMatrix.Set(viewProj);
+        if (shader->m_viewMatrix.isValid()) {
+            viewProj = mat44::getInverse(theCamera.globalTransform);
+            shader->m_viewMatrix.set(viewProj);
         }
 
         // update the constant buffer
-        shader->m_AoShadowParams.Set();
+        shader->m_aoShadowParams.set();
         // We can't cache light properties because they can change per object.
         QVector3D theLightAmbientTotal = QVector3D(0, 0, 0);
-        size_t numShaderLights = shader->m_Lights.size();
-        size_t numShadowLights = shader->m_ShadowMaps.size();
+        size_t numShaderLights = shader->m_lights.size();
+        size_t numShadowLights = shader->m_shadowMaps.size();
         for (quint32 lightIdx = 0, shadowMapIdx = 0, lightEnd = inLights.size();
              lightIdx < lightEnd && lightIdx < QDEMON_MAX_NUM_LIGHTS; ++lightIdx) {
-            SLight *theLight(inLights[lightIdx]);
+            QDemonRenderLight *theLight(inLights[lightIdx]);
             if (lightIdx >= numShaderLights) {
-                shader->m_Lights.push_back(SShaderLightProperties());
+                shader->m_lights.push_back(QDemonShaderLightProperties());
                 ++numShaderLights;
             }
             if (shadowMapIdx >= numShadowLights && numShadowLights < QDEMON_MAX_NUM_SHADOWS) {
-                if (theLight->m_Scope == nullptr && theLight->m_CastShadow) {
+                if (theLight->m_scope == nullptr && theLight->m_castShadow) {
                     // PKC TODO : Fix multiple shadow issues.
                     // Need to know when the list of lights changes order, and clear shadow maps
                     // when that happens.
-                    SetupShadowMapVariableNames(lightIdx);
-                    shader->m_ShadowMaps.push_back(SShadowMapProperties(m_ShadowMapStem, m_ShadowCubeStem, m_ShadowMatrixStem, m_ShadowControlStem, inProgram));
+                    setupShadowMapVariableNames(lightIdx);
+                    shader->m_shadowMaps.push_back(QDemonShadowMapProperties(m_shadowMapStem, m_shadowCubeStem, m_shadowMatrixStem, m_shadowControlStem, inProgram));
                 }
             }
             Q_ASSERT(lightIdx < numShaderLights);
-            SShaderLightProperties &theLightProperties(shader->m_Lights[lightIdx]);
-            float brightness = TranslateConstantAttenuation(theLight->m_Brightness);
+            QDemonShaderLightProperties &theLightProperties(shader->m_lights[lightIdx]);
+            float brightness = translateConstantAttenuation(theLight->m_brightness);
 
             // setup light data
-            theLightProperties.m_LightColor = theLight->m_DiffuseColor * brightness;
-            theLightProperties.m_LightData.m_specular =
-                    QVector4D(theLight->m_SpecularColor * brightness, 1.0);
-            theLightProperties.m_LightData.m_direction = QVector4D(inLightDirections[lightIdx], 1.0);
+            theLightProperties.lightColor = theLight->m_diffuseColor * brightness;
+            theLightProperties.lightData.specular =
+                    QVector4D(theLight->m_specularColor * brightness, 1.0);
+            theLightProperties.lightData.direction = QVector4D(inLightDirections[lightIdx], 1.0);
 
             // TODO : This does potentially mean that we can create more shadow map entries than
             // we can actually use at once.
-            if ((theLight->m_Scope == nullptr) && (theLight->m_CastShadow && inShadowMapManager)) {
-                SShadowMapProperties &theShadowMapProperties(shader->m_ShadowMaps[shadowMapIdx++]);
-                SShadowMapEntry *pEntry = inShadowMapManager->GetShadowMapEntry(lightIdx);
+            if ((theLight->m_scope == nullptr) && (theLight->m_castShadow && inShadowMapManager)) {
+                QDemonShadowMapProperties &theShadowMapProperties(shader->m_shadowMaps[shadowMapIdx++]);
+                QDemonShadowMapEntry *pEntry = inShadowMapManager->getShadowMapEntry(lightIdx);
                 if (pEntry) {
                     // add fixed scale bias matrix
                     QMatrix4x4 bias = {
@@ -1579,57 +1576,57 @@ struct SShaderGenerator : public IDefaultMaterialShaderGenerator
                         0.5, 0.5, 0.5, 1.0
                     };
 
-                    if (theLight->m_LightType != RenderLightTypes::Directional) {
-                        theShadowMapProperties.m_ShadowCubeTexture.Set(pEntry->m_DepthCube.data());
-                        theShadowMapProperties.m_ShadowmapMatrix.Set(pEntry->m_LightView);
+                    if (theLight->m_lightType != RenderLightTypes::Directional) {
+                        theShadowMapProperties.m_shadowCubeTexture.set(pEntry->m_depthCube.data());
+                        theShadowMapProperties.m_shadowmapMatrix.set(pEntry->m_lightView);
                     } else {
-                        theShadowMapProperties.m_ShadowmapTexture.Set(pEntry->m_DepthMap.data());
-                        theShadowMapProperties.m_ShadowmapMatrix.Set(bias * pEntry->m_LightVP);
+                        theShadowMapProperties.m_shadowmapTexture.set(pEntry->m_depthMap.data());
+                        theShadowMapProperties.m_shadowmapMatrix.set(bias * pEntry->m_lightVP);
                     }
 
-                    theShadowMapProperties.m_ShadowmapSettings.Set(
-                                QVector4D(theLight->m_ShadowBias, theLight->m_ShadowFactor,
-                                          theLight->m_ShadowMapFar, 0.0f));
+                    theShadowMapProperties.m_shadowmapSettings.set(
+                                QVector4D(theLight->m_shadowBias, theLight->m_shadowFactor,
+                                          theLight->m_shadowMapFar, 0.0f));
                 } else {
                     // if we have a light casting shadow we should find an entry
                     Q_ASSERT(false);
                 }
             }
 
-            if (theLight->m_LightType == RenderLightTypes::Point) {
-                theLightProperties.m_LightData.m_position = QVector4D(theLight->GetGlobalPos(), 1.0);
-                theLightProperties.m_LightData.m_constantAttenuation = 1.0;
-                theLightProperties.m_LightData.m_linearAttenuation =
-                        TranslateLinearAttenuation(theLight->m_LinearFade);
-                theLightProperties.m_LightData.m_quadraticAttenuation =
-                        TranslateQuadraticAttenuation(theLight->m_ExponentialFade);
-            } else if (theLight->m_LightType == RenderLightTypes::Area) {
-                theLightProperties.m_LightData.m_position = QVector4D(theLight->GetGlobalPos(), 1.0);
+            if (theLight->m_lightType == RenderLightTypes::Point) {
+                theLightProperties.lightData.position = QVector4D(theLight->getGlobalPos(), 1.0);
+                theLightProperties.lightData.constantAttenuation = 1.0;
+                theLightProperties.lightData.linearAttenuation =
+                        translateLinearAttenuation(theLight->m_linearFade);
+                theLightProperties.lightData.quadraticAttenuation =
+                        translateQuadraticAttenuation(theLight->m_exponentialFade);
+            } else if (theLight->m_lightType == RenderLightTypes::Area) {
+                theLightProperties.lightData.position = QVector4D(theLight->getGlobalPos(), 1.0);
 
-                QVector3D upDir = mat33::transform(mat44::getUpper3x3(theLight->m_GlobalTransform), QVector3D(0, 1, 0));
-                QVector3D rtDir = mat33::transform(mat44::getUpper3x3(theLight->m_GlobalTransform), QVector3D(1, 0, 0));
+                QVector3D upDir = mat33::transform(mat44::getUpper3x3(theLight->globalTransform), QVector3D(0, 1, 0));
+                QVector3D rtDir = mat33::transform(mat44::getUpper3x3(theLight->globalTransform), QVector3D(1, 0, 0));
 
-                theLightProperties.m_LightData.m_up = QVector4D(upDir, theLight->m_AreaHeight);
-                theLightProperties.m_LightData.m_right = QVector4D(rtDir, theLight->m_AreaWidth);
+                theLightProperties.lightData.up = QVector4D(upDir, theLight->m_areaHeight);
+                theLightProperties.lightData.right = QVector4D(rtDir, theLight->m_areaWidth);
             }
-            theLightAmbientTotal += theLight->m_AmbientColor;
+            theLightAmbientTotal += theLight->m_ambientColor;
         }
-        shader->m_LightAmbientTotal = theLightAmbientTotal;
+        shader->m_lightAmbientTotal = theLightAmbientTotal;
     }
 
     // Also sets the blend function on the render context.
-    void SetMaterialProperties(QSharedPointer<QDemonRenderShaderProgram> inProgram,
-                               const SDefaultMaterial &inMaterial,
+    void setMaterialProperties(QSharedPointer<QDemonRenderShaderProgram> inProgram,
+                               const QDemonRenderDefaultMaterial &inMaterial,
                                const QVector2D &inCameraVec,
                                const QMatrix4x4 &inModelViewProjection,
                                const QMatrix3x3 &inNormalMatrix,
                                const QMatrix4x4 &inGlobalTransform,
-                               SRenderableImage *inFirstImage,
+                               QDemonRenderableImage *inFirstImage,
                                float inOpacity,
                                QSharedPointer<QDemonRenderTexture2D> inDepthTexture,
                                QSharedPointer<QDemonRenderTexture2D> inSSaoTexture,
-                               SImage *inLightProbe,
-                               SImage *inLightProbe2,
+                               QDemonRenderImage *inLightProbe,
+                               QDemonRenderImage *inLightProbe2,
                                float inProbeHorizon,
                                float inProbeBright,
                                float inProbe2Window,
@@ -1638,34 +1635,34 @@ struct SShaderGenerator : public IDefaultMaterialShaderGenerator
                                float inProbeFOV)
     {
 
-        QSharedPointer<QDemonRenderContext> context(m_RenderContext->GetRenderContext());
-        QSharedPointer<SShaderGeneratorGeneratedShader> shader(GetShaderForProgram(inProgram));
-        shader->m_MVP.Set(inModelViewProjection);
-        shader->m_NormalMatrix.Set(inNormalMatrix);
-        shader->m_GlobalTransform.Set(inGlobalTransform);
-        shader->m_DepthTexture.Set(inDepthTexture.data());
+        QSharedPointer<QDemonRenderContext> context(m_renderContext->getRenderContext());
+        QSharedPointer<QDemonShaderGeneratorGeneratedShader> shader(getShaderForProgram(inProgram));
+        shader->m_mvp.set(inModelViewProjection);
+        shader->m_normalMatrix.set(inNormalMatrix);
+        shader->m_globalTransform.set(inGlobalTransform);
+        shader->m_depthTexture.set(inDepthTexture.data());
 
-        shader->m_AOTexture.Set(inSSaoTexture.data());
+        shader->m_aoTexture.set(inSSaoTexture.data());
 
-        SImage *theLightProbe = inLightProbe;
-        SImage *theLightProbe2 = inLightProbe2;
+        QDemonRenderImage *theLightProbe = inLightProbe;
+        QDemonRenderImage *theLightProbe2 = inLightProbe2;
 
         // If the material has its own IBL Override, we should use that image instead.
-        if ((inMaterial.m_IblProbe) && (inMaterial.m_IblProbe->m_TextureData.m_Texture)) {
-            theLightProbe = inMaterial.m_IblProbe;
+        if ((inMaterial.iblProbe) && (inMaterial.iblProbe->m_textureData.m_texture)) {
+            theLightProbe = inMaterial.iblProbe;
         }
 
         if (theLightProbe) {
-            if (theLightProbe->m_TextureData.m_Texture) {
+            if (theLightProbe->m_textureData.m_texture) {
                 QDemonRenderTextureCoordOp::Enum theHorzLightProbeTilingMode =
                         QDemonRenderTextureCoordOp::Repeat;
                 QDemonRenderTextureCoordOp::Enum theVertLightProbeTilingMode =
-                        theLightProbe->m_VerticalTilingMode;
-                theLightProbe->m_TextureData.m_Texture->SetTextureWrapS(
+                        theLightProbe->m_verticalTilingMode;
+                theLightProbe->m_textureData.m_texture->setTextureWrapS(
                             theHorzLightProbeTilingMode);
-                theLightProbe->m_TextureData.m_Texture->SetTextureWrapT(
+                theLightProbe->m_textureData.m_texture->setTextureWrapT(
                             theVertLightProbeTilingMode);
-                const QMatrix4x4 &textureTransform = theLightProbe->m_TextureTransform;
+                const QMatrix4x4 &textureTransform = theLightProbe->m_textureTransform;
                 // We separate rotational information from offset information so that just maybe the
                 // shader
                 // will attempt to push less information to the card.
@@ -1674,129 +1671,129 @@ struct SShaderGenerator : public IDefaultMaterialShaderGenerator
                 // premultiplied or not.
                 // We use this to mix the texture alpha.
                 QVector4D offsets(dataPtr[12], dataPtr[13],
-                        theLightProbe->m_TextureData.m_TextureFlags.IsPreMultiplied() ? 1.0f
+                        theLightProbe->m_textureData.m_textureFlags.isPreMultiplied() ? 1.0f
                                                                                       : 0.0f,
-                        (float)theLightProbe->m_TextureData.m_Texture->GetNumMipmaps());
+                        (float)theLightProbe->m_textureData.m_texture->getNumMipmaps());
 
                 // Grab just the upper 2x2 rotation matrix from the larger matrix.
                 QVector4D rotations(dataPtr[0], dataPtr[4], dataPtr[1], dataPtr[5]);
 
-                shader->m_LightProbeRot.Set(rotations);
-                shader->m_LightProbeOfs.Set(offsets);
+                shader->m_lightProbeRot.set(rotations);
+                shader->m_lightProbeOfs.set(offsets);
 
-                if ((!inMaterial.m_IblProbe) && (inProbeFOV < 180.f)) {
-                    shader->m_LightProbeOpts.Set(
+                if ((!inMaterial.iblProbe) && (inProbeFOV < 180.f)) {
+                    shader->m_lightProbeOpts.set(
                                 QVector4D(0.01745329251994329547f * inProbeFOV, 0.0f, 0.0f, 0.0f));
                 }
 
                 // Also make sure to add the secondary texture, but it should only be added if the
                 // primary
                 // (i.e. background) texture is also there.
-                if (theLightProbe2 && theLightProbe2->m_TextureData.m_Texture) {
-                    theLightProbe2->m_TextureData.m_Texture->SetTextureWrapS(
+                if (theLightProbe2 && theLightProbe2->m_textureData.m_texture) {
+                    theLightProbe2->m_textureData.m_texture->setTextureWrapS(
                                 theHorzLightProbeTilingMode);
-                    theLightProbe2->m_TextureData.m_Texture->SetTextureWrapT(
+                    theLightProbe2->m_textureData.m_texture->setTextureWrapT(
                                 theVertLightProbeTilingMode);
-                    shader->m_LightProbe2.Set(theLightProbe2->m_TextureData.m_Texture.data());
-                    shader->m_LightProbe2Props.Set(
+                    shader->m_lightProbe2.set(theLightProbe2->m_textureData.m_texture.data());
+                    shader->m_lightProbe2Props.set(
                                 QVector4D(inProbe2Window, inProbe2Pos, inProbe2Fade, 1.0f));
 
-                    const QMatrix4x4 &xform2 = theLightProbe2->m_TextureTransform;
+                    const QMatrix4x4 &xform2 = theLightProbe2->m_textureTransform;
                     const float *dataPtr(xform2.constData());
-                    shader->m_LightProbeProps.Set(
+                    shader->m_lightProbeProps.set(
                                 QVector4D(dataPtr[12], dataPtr[13], inProbeHorizon, inProbeBright * 0.01f));
                 } else {
-                    shader->m_LightProbe2Props.Set(QVector4D(0.0f, 0.0f, 0.0f, 0.0f));
-                    shader->m_LightProbeProps.Set(
+                    shader->m_lightProbe2Props.set(QVector4D(0.0f, 0.0f, 0.0f, 0.0f));
+                    shader->m_lightProbeProps.set(
                                 QVector4D(0.0f, 0.0f, inProbeHorizon, inProbeBright * 0.01f));
                 }
-                QSharedPointer<QDemonRenderTexture2D> textureImage = theLightProbe->m_TextureData.m_Texture;
-                shader->m_LightProbe.Set(textureImage.data());
-                shader->m_LightProbeSize.Set(QVector2D(textureImage->GetTextureDetails().m_Width,
-                                                      textureImage->GetTextureDetails().m_Height));
+                QSharedPointer<QDemonRenderTexture2D> textureImage = theLightProbe->m_textureData.m_texture;
+                shader->m_lightProbe.set(textureImage.data());
+                shader->m_lightProbeSize.set(QVector2D(textureImage->getTextureDetails().width,
+                                                      textureImage->getTextureDetails().height));
             } else {
-                shader->m_LightProbeProps.Set(QVector4D(0.0f, 0.0f, -1.0f, 0.0f));
-                shader->m_LightProbe2Props.Set(QVector4D(0.0f, 0.0f, 0.0f, 0.0f));
+                shader->m_lightProbeProps.set(QVector4D(0.0f, 0.0f, -1.0f, 0.0f));
+                shader->m_lightProbe2Props.set(QVector4D(0.0f, 0.0f, 0.0f, 0.0f));
             }
         } else {
-            shader->m_LightProbeProps.Set(QVector4D(0.0f, 0.0f, -1.0f, 0.0f));
-            shader->m_LightProbe2Props.Set(QVector4D(0.0f, 0.0f, 0.0f, 0.0f));
+            shader->m_lightProbeProps.set(QVector4D(0.0f, 0.0f, -1.0f, 0.0f));
+            shader->m_lightProbe2Props.set(QVector4D(0.0f, 0.0f, 0.0f, 0.0f));
         }
 
         float emissivePower = 1.0;
 
-        quint32 hasLighting = inMaterial.m_Lighting != DefaultMaterialLighting::NoLighting;
+        quint32 hasLighting = inMaterial.lighting != DefaultMaterialLighting::NoLighting;
         if (hasLighting)
-            emissivePower = inMaterial.m_EmissivePower / 100.0f;
+            emissivePower = inMaterial.emissivePower / 100.0f;
 
-        QVector4D material_diffuse = QVector4D(inMaterial.m_EmissiveColor[0] * emissivePower,
-                inMaterial.m_EmissiveColor[1] * emissivePower,
-                inMaterial.m_EmissiveColor[2] * emissivePower, inOpacity);
-        shader->m_MaterialDiffuse.Set(material_diffuse);
-        shader->m_DiffuseColor.Set(inMaterial.m_DiffuseColor);
+        QVector4D material_diffuse = QVector4D(inMaterial.emissiveColor[0] * emissivePower,
+                inMaterial.emissiveColor[1] * emissivePower,
+                inMaterial.emissiveColor[2] * emissivePower, inOpacity);
+        shader->m_materialDiffuse.set(material_diffuse);
+        shader->m_diffuseColor.set(inMaterial.diffuseColor);
         QVector4D material_specular =
-                QVector4D(inMaterial.m_SpecularTint[0], inMaterial.m_SpecularTint[1],
-                inMaterial.m_SpecularTint[2], inMaterial.m_IOR);
-        shader->m_MaterialSpecular.Set(material_specular);
-        shader->m_CameraProperties.Set(inCameraVec);
-        shader->m_FresnelPower.Set(inMaterial.m_FresnelPower);
+                QVector4D(inMaterial.specularTint[0], inMaterial.specularTint[1],
+                inMaterial.specularTint[2], inMaterial.ior);
+        shader->m_materialSpecular.set(material_specular);
+        shader->m_cameraProperties.set(inCameraVec);
+        shader->m_fresnelPower.set(inMaterial.fresnelPower);
 
-        if (context->GetConstantBufferSupport()) {
-            QSharedPointer<QDemonRenderConstantBuffer> pLightCb = GetLightConstantBuffer(shader->m_Lights.size());
+        if (context->getConstantBufferSupport()) {
+            QSharedPointer<QDemonRenderConstantBuffer> pLightCb = getLightConstantBuffer(shader->m_lights.size());
             // if we have lights we need a light buffer
-            Q_ASSERT(shader->m_Lights.size() == 0 || pLightCb);
+            Q_ASSERT(shader->m_lights.size() == 0 || pLightCb);
 
-            for (quint32 idx = 0, end = shader->m_Lights.size(); idx < end && pLightCb; ++idx) {
-                shader->m_Lights[idx].m_LightData.m_diffuse =
-                        QVector4D(shader->m_Lights[idx].m_LightColor.x() * inMaterial.m_DiffuseColor.x(),
-                                  shader->m_Lights[idx].m_LightColor.y() * inMaterial.m_DiffuseColor.y(),
-                                  shader->m_Lights[idx].m_LightColor.z() * inMaterial.m_DiffuseColor.z(), 1.0);
+            for (quint32 idx = 0, end = shader->m_lights.size(); idx < end && pLightCb; ++idx) {
+                shader->m_lights[idx].lightData.diffuse =
+                        QVector4D(shader->m_lights[idx].lightColor.x() * inMaterial.diffuseColor.x(),
+                                  shader->m_lights[idx].lightColor.y() * inMaterial.diffuseColor.y(),
+                                  shader->m_lights[idx].lightColor.z() * inMaterial.diffuseColor.z(), 1.0);
 
                 // this is our final change update memory
-                pLightCb->UpdateRaw(idx * sizeof(SLightSourceShader) + (4 * sizeof(qint32)),
-                                    QDemonDataRef<quint8>((quint8 *)&shader->m_Lights[idx].m_LightData,
-                                                          sizeof(SLightSourceShader)));
+                pLightCb->updateRaw(idx * sizeof(QDemonLightSourceShader) + (4 * sizeof(qint32)),
+                                    QDemonDataRef<quint8>((quint8 *)&shader->m_lights[idx].lightData,
+                                                          sizeof(QDemonLightSourceShader)));
             }
             // update light buffer to hardware
             if (pLightCb) {
-                qint32 cgLights = shader->m_Lights.size();
-                pLightCb->UpdateRaw(0, QDemonDataRef<quint8>((quint8 *)&cgLights, sizeof(qint32)));
-                shader->m_LightsBuffer.Set();
+                qint32 cgLights = shader->m_lights.size();
+                pLightCb->updateRaw(0, QDemonDataRef<quint8>((quint8 *)&cgLights, sizeof(qint32)));
+                shader->m_lightsBuffer.set();
             }
         } else {
-            SLightConstantProperties<SShaderGeneratorGeneratedShader> *pLightConstants
-                    = GetLightConstantProperties(shader);
+            QDemonLightConstantProperties<QDemonShaderGeneratorGeneratedShader> *pLightConstants
+                    = getLightConstantProperties(shader);
 
             // if we have lights we need a light buffer
-            Q_ASSERT(shader->m_Lights.size() == 0 || pLightConstants);
+            Q_ASSERT(shader->m_lights.size() == 0 || pLightConstants);
 
-            for (quint32 idx = 0, end = shader->m_Lights.size();
+            for (quint32 idx = 0, end = shader->m_lights.size();
                  idx < end && pLightConstants; ++idx) {
-                shader->m_Lights[idx].m_LightData.m_diffuse =
-                        QVector4D(shader->m_Lights[idx].m_LightColor.x() * inMaterial.m_DiffuseColor.x(),
-                                  shader->m_Lights[idx].m_LightColor.y() * inMaterial.m_DiffuseColor.y(),
-                                  shader->m_Lights[idx].m_LightColor.z() * inMaterial.m_DiffuseColor.z(), 1.0);
+                shader->m_lights[idx].lightData.diffuse =
+                        QVector4D(shader->m_lights[idx].lightColor.x() * inMaterial.diffuseColor.x(),
+                                  shader->m_lights[idx].lightColor.y() * inMaterial.diffuseColor.y(),
+                                  shader->m_lights[idx].lightColor.z() * inMaterial.diffuseColor.z(), 1.0);
             }
             // update light buffer to hardware
             if (pLightConstants)
                 pLightConstants->updateLights(shader);
         }
 
-        shader->m_MaterialDiffuseLightAmbientTotal.Set(
-                    QVector3D(shader->m_LightAmbientTotal.x() * inMaterial.m_DiffuseColor[0],
-                    shader->m_LightAmbientTotal.y() * inMaterial.m_DiffuseColor[1],
-                shader->m_LightAmbientTotal.z() * inMaterial.m_DiffuseColor[2]));
+        shader->m_materialDiffuseLightAmbientTotal.set(
+                    QVector3D(shader->m_lightAmbientTotal.x() * inMaterial.diffuseColor[0],
+                    shader->m_lightAmbientTotal.y() * inMaterial.diffuseColor[1],
+                shader->m_lightAmbientTotal.z() * inMaterial.diffuseColor[2]));
 
-        shader->m_MaterialProperties.Set(QVector4D(
-                                            inMaterial.m_SpecularAmount, inMaterial.m_SpecularRoughness, emissivePower, 0.0f));
-        shader->m_BumpAmount.Set(inMaterial.m_BumpAmount);
-        shader->m_DisplaceAmount.Set(inMaterial.m_DisplaceAmount);
-        shader->m_TranslucentFalloff.Set(inMaterial.m_TranslucentFalloff);
-        shader->m_DiffuseLightWrap.Set(inMaterial.m_DiffuseLightWrap);
+        shader->m_materialProperties.set(QVector4D(
+                                            inMaterial.specularAmount, inMaterial.specularRoughness, emissivePower, 0.0f));
+        shader->m_bumpAmount.set(inMaterial.bumpAmount);
+        shader->m_displaceAmount.set(inMaterial.displaceAmount);
+        shader->m_translucentFalloff.set(inMaterial.translucentFalloff);
+        shader->m_diffuseLightWrap.set(inMaterial.diffuseLightWrap);
         quint32 imageIdx = 0;
-        for (SRenderableImage *theImage = inFirstImage; theImage;
-             theImage = theImage->m_NextImage, ++imageIdx)
-            SetImageShaderVariables(shader, *theImage, imageIdx);
+        for (QDemonRenderableImage *theImage = inFirstImage; theImage;
+             theImage = theImage->m_nextImage, ++imageIdx)
+            setImageShaderVariables(shader, *theImage, imageIdx);
 
         QDemonRenderBlendFunctionArgument blendFunc;
         QDemonRenderBlendEquationArgument blendEqua(QDemonRenderBlendEquation::Add,
@@ -1807,7 +1804,7 @@ struct SShaderGenerator : public IDefaultMaterialShaderGenerator
         // src alpha op
         // dst alpha op
         // All of our shaders produce non-premultiplied values.
-        switch (inMaterial.m_BlendMode) {
+        switch (inMaterial.blendMode) {
         case DefaultMaterialBlendMode::Screen:
             blendFunc = QDemonRenderBlendFunctionArgument(
                         QDemonRenderSrcBlendFunc::SrcAlpha, QDemonRenderDstBlendFunc::One,
@@ -1821,21 +1818,21 @@ struct SShaderGenerator : public IDefaultMaterialShaderGenerator
         case DefaultMaterialBlendMode::Overlay:
             // SW fallback is not using blend equation
             // note blend func is not used here anymore
-            if (context->IsAdvancedBlendHwSupported() || context->IsAdvancedBlendHwSupportedKHR())
+            if (context->isAdvancedBlendHwSupported() || context->isAdvancedBlendHwSupportedKHR())
                 blendEqua = QDemonRenderBlendEquationArgument(
                             QDemonRenderBlendEquation::Overlay, QDemonRenderBlendEquation::Overlay);
             break;
         case DefaultMaterialBlendMode::ColorBurn:
             // SW fallback is not using blend equation
             // note blend func is not used here anymore
-            if (context->IsAdvancedBlendHwSupported() || context->IsAdvancedBlendHwSupportedKHR())
+            if (context->isAdvancedBlendHwSupported() || context->isAdvancedBlendHwSupportedKHR())
                 blendEqua = QDemonRenderBlendEquationArgument(
                             QDemonRenderBlendEquation::ColorBurn, QDemonRenderBlendEquation::ColorBurn);
             break;
         case DefaultMaterialBlendMode::ColorDodge:
             // SW fallback is not using blend equation
             // note blend func is not used here anymore
-            if (context->IsAdvancedBlendHwSupported() || context->IsAdvancedBlendHwSupportedKHR())
+            if (context->isAdvancedBlendHwSupported() || context->isAdvancedBlendHwSupportedKHR())
                 blendEqua = QDemonRenderBlendEquationArgument(
                             QDemonRenderBlendEquation::ColorDodge, QDemonRenderBlendEquation::ColorDodge);
             break;
@@ -1845,55 +1842,59 @@ struct SShaderGenerator : public IDefaultMaterialShaderGenerator
                         QDemonRenderSrcBlendFunc::One, QDemonRenderDstBlendFunc::OneMinusSrcAlpha);
             break;
         }
-        context->SetBlendFunction(blendFunc);
-        context->SetBlendEquation(blendEqua);
+        context->setBlendFunction(blendFunc);
+        context->setBlendEquation(blendEqua);
     }
-    void SetMaterialProperties(QSharedPointer<QDemonRenderShaderProgram> inProgram,
-                               const SGraphObject &inMaterial,
+    void setMaterialProperties(QSharedPointer<QDemonRenderShaderProgram> inProgram,
+                               const QDemonGraphObject &inMaterial,
                                const QVector2D &inCameraVec,
                                const QMatrix4x4 &inModelViewProjection,
                                const QMatrix3x3 &inNormalMatrix,
                                const QMatrix4x4 &inGlobalTransform,
-                               SRenderableImage *inFirstImage,
+                               QDemonRenderableImage *inFirstImage,
                                float inOpacity,
-                               SLayerGlobalRenderProperties inRenderProperties) override
+                               QDemonLayerGlobalRenderProperties inRenderProperties) override
     {
-        const SDefaultMaterial &theMaterial(static_cast<const SDefaultMaterial &>(inMaterial));
-        Q_ASSERT(inMaterial.m_Type == GraphObjectTypes::DefaultMaterial);
+        const QDemonRenderDefaultMaterial &theMaterial(static_cast<const QDemonRenderDefaultMaterial &>(inMaterial));
+        Q_ASSERT(inMaterial.type == QDemonGraphObjectTypes::DefaultMaterial);
 
-        SetGlobalProperties(inProgram, inRenderProperties.m_Layer, inRenderProperties.m_Camera,
-                            inRenderProperties.m_CameraDirection, inRenderProperties.m_Lights,
-                            inRenderProperties.m_LightDirections,
-                            inRenderProperties.m_ShadowMapManager);
-        SetMaterialProperties(inProgram, theMaterial, inCameraVec, inModelViewProjection,
+        setGlobalProperties(inProgram, inRenderProperties.layer, inRenderProperties.camera,
+                            inRenderProperties.cameraDirection, inRenderProperties.lights,
+                            inRenderProperties.lightDirections,
+                            inRenderProperties.shadowMapManager);
+        setMaterialProperties(inProgram, theMaterial, inCameraVec, inModelViewProjection,
                               inNormalMatrix, inGlobalTransform, inFirstImage, inOpacity,
-                              inRenderProperties.m_DepthTexture, inRenderProperties.m_SSaoTexture,
-                              inRenderProperties.m_LightProbe, inRenderProperties.m_LightProbe2,
-                              inRenderProperties.m_ProbeHorizon, inRenderProperties.m_ProbeBright,
-                              inRenderProperties.m_Probe2Window, inRenderProperties.m_Probe2Pos,
-                              inRenderProperties.m_Probe2Fade, inRenderProperties.m_ProbeFOV);
+                              inRenderProperties.depthTexture, inRenderProperties.ssaoTexture,
+                              inRenderProperties.lightProbe, inRenderProperties.lightProbe2,
+                              inRenderProperties.probeHorizon, inRenderProperties.probeBright,
+                              inRenderProperties.probe2Window, inRenderProperties.probe2Pos,
+                              inRenderProperties.probe2Fade, inRenderProperties.probeFOV);
     }
 
-    SLightConstantProperties<SShaderGeneratorGeneratedShader> *GetLightConstantProperties(QSharedPointer<SShaderGeneratorGeneratedShader> shader)
+    QDemonLightConstantProperties<QDemonShaderGeneratorGeneratedShader> *getLightConstantProperties(QSharedPointer<QDemonShaderGeneratorGeneratedShader> shader)
     {
         if (!shader->m_lightConstantProperties
-                || int(shader->m_Lights.size())
+                || int(shader->m_lights.size())
                 > shader->m_lightConstantProperties->m_constants.size()) {
             if (shader->m_lightConstantProperties)
                 delete shader->m_lightConstantProperties;
             shader->m_lightConstantProperties
-                    = new SLightConstantProperties<SShaderGeneratorGeneratedShader>(
-                        shader.data(), m_LightsAsSeparateUniforms);
+                    = new QDemonLightConstantProperties<QDemonShaderGeneratorGeneratedShader>(
+                        shader.data(), m_lightsAsSeparateUniforms);
         }
         return shader->m_lightConstantProperties;
     }
 };
 }
 
-QSharedPointer<IDefaultMaterialShaderGenerator>
-IDefaultMaterialShaderGenerator::CreateDefaultMaterialShaderGenerator(IQDemonRenderContext *inRc)
+QSharedPointer<QDemonDefaultMaterialShaderGeneratorInterface> QDemonDefaultMaterialShaderGeneratorInterface::createDefaultMaterialShaderGenerator(QDemonRenderContextInterface *inRc)
 {
-    return QSharedPointer<IDefaultMaterialShaderGenerator>(new SShaderGenerator(inRc));
+    return QSharedPointer<QDemonDefaultMaterialShaderGeneratorInterface>(new QDemonShaderGenerator(inRc));
+}
+
+QDemonDefaultMaterialVertexPipelineInterface::~QDemonDefaultMaterialVertexPipelineInterface()
+{
+
 }
 
 QT_END_NAMESPACE

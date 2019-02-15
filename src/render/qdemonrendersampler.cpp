@@ -33,44 +33,51 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonRenderTextureSampler::QDemonRenderTextureSampler(
-        QSharedPointer<QDemonRenderContextImpl> context,
-        QDemonRenderTextureMinifyingOp::Enum minFilter, QDemonRenderTextureMagnifyingOp::Enum magFilter,
-        QDemonRenderTextureCoordOp::Enum wrapS, QDemonRenderTextureCoordOp::Enum wrapT,
-        QDemonRenderTextureCoordOp::Enum wrapR, QDemonRenderTextureSwizzleMode::Enum swizzleMode,
-        float minLod, float maxLod, float lodBias, QDemonRenderTextureCompareMode::Enum compareMode,
-        QDemonRenderTextureCompareOp::Enum compareFunc, float anisotropy, float *borderColor)
-    : m_MinFilter(minFilter)
-    , m_MagFilter(magFilter)
-    , m_WrapS(wrapS)
-    , m_WrapT(wrapT)
-    , m_WrapR(wrapR)
-    , m_SwizzleMode(swizzleMode)
-    , m_MinLod(minLod)
-    , m_MaxLod(maxLod)
-    , m_LodBias(lodBias)
-    , m_CompareMode(compareMode)
-    , m_CompareOp(compareFunc)
-    , m_Anisotropy(anisotropy)
-    , m_Context(context)
-    , m_Backend(context->GetBackend())
-    , m_SamplerHandle(nullptr)
+QDemonRenderTextureSampler::QDemonRenderTextureSampler(QSharedPointer<QDemonRenderContextImpl> context,
+                                                       QDemonRenderTextureMinifyingOp::Enum minFilter,
+                                                       QDemonRenderTextureMagnifyingOp::Enum magFilter,
+                                                       QDemonRenderTextureCoordOp::Enum wrapS,
+                                                       QDemonRenderTextureCoordOp::Enum wrapT,
+                                                       QDemonRenderTextureCoordOp::Enum wrapR,
+                                                       QDemonRenderTextureSwizzleMode::Enum swizzleMode,
+                                                       float minLod,
+                                                       float maxLod,
+                                                       float lodBias,
+                                                       QDemonRenderTextureCompareMode::Enum compareMode,
+                                                       QDemonRenderTextureCompareOp::Enum compareFunc,
+                                                       float anisotropy,
+                                                       float *borderColor)
+    : m_minFilter(minFilter)
+    , m_magFilter(magFilter)
+    , m_wrapS(wrapS)
+    , m_wrapT(wrapT)
+    , m_wrapR(wrapR)
+    , m_swizzleMode(swizzleMode)
+    , m_minLod(minLod)
+    , m_maxLod(maxLod)
+    , m_lodBias(lodBias)
+    , m_compareMode(compareMode)
+    , m_compareOp(compareFunc)
+    , m_anisotropy(anisotropy)
+    , m_context(context)
+    , m_backend(context->getBackend())
+    , m_samplerHandle(nullptr)
 {
     // create backend handle
-    m_SamplerHandle = m_Backend->CreateSampler();
+    m_samplerHandle = m_backend->createSampler();
 
     if (borderColor) {
-        m_BorderColor[0] = borderColor[0];
-        m_BorderColor[1] = borderColor[1];
-        m_BorderColor[2] = borderColor[2];
-        m_BorderColor[3] = borderColor[3];
+        m_borderColor[0] = borderColor[0];
+        m_borderColor[1] = borderColor[1];
+        m_borderColor[2] = borderColor[2];
+        m_borderColor[3] = borderColor[3];
     }
 }
 
 QDemonRenderTextureSampler::~QDemonRenderTextureSampler()
 {
-    if (m_SamplerHandle)
-        m_Backend->ReleaseSampler(m_SamplerHandle);
+    if (m_samplerHandle)
+        m_backend->releaseSampler(m_samplerHandle);
 }
 
 QT_END_NAMESPACE

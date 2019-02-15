@@ -44,106 +44,100 @@ QT_BEGIN_NAMESPACE
 
 namespace {
 
-struct SPGRectShader
+struct QDemonPGRectShader
 {
-    QSharedPointer<QDemonRenderShaderProgram> m_RectShader;
+    QSharedPointer<QDemonRenderShaderProgram> rectShader;
     QSharedPointer<QDemonRenderShaderConstantBase> mvp;
     QSharedPointer<QDemonRenderShaderConstantBase> rectColor;
     QSharedPointer<QDemonRenderShaderConstantBase> leftright;
     QSharedPointer<QDemonRenderShaderConstantBase> bottomtop;
 
-    SPGRectShader()
-        : mvp(nullptr)
-        , rectColor(nullptr)
-        , leftright(nullptr)
-        , bottomtop(nullptr)
+    QDemonPGRectShader() = default;
+    void setShader(QSharedPointer<QDemonRenderShaderProgram> program)
     {
-    }
-    void SetShader(QSharedPointer<QDemonRenderShaderProgram> program)
-    {
-        m_RectShader = program;
+        rectShader = program;
         if (program) {
-            mvp = program->GetShaderConstant("model_view_projection");
-            rectColor = program->GetShaderConstant("rect_color");
-            leftright = program->GetShaderConstant("leftright[0]");
-            bottomtop = program->GetShaderConstant("bottomtop[0]");
+            mvp = program->getShaderConstant("model_view_projection");
+            rectColor = program->getShaderConstant("rect_color");
+            leftright = program->getShaderConstant("leftright[0]");
+            bottomtop = program->getShaderConstant("bottomtop[0]");
         }
     }
 
-    void Apply(QMatrix4x4 &inVP, const SPGRect &inObject)
+    void apply(QMatrix4x4 &inVP, const QDemonPGRect &inObject)
     {
         if (mvp)
-            m_RectShader->SetConstantValue(mvp.data(), toConstDataRef(inVP), 1);
+            rectShader->setConstantValue(mvp.data(), toConstDataRef(inVP), 1);
         if (rectColor)
-            m_RectShader->SetConstantValue(rectColor.data(), inObject.m_FillColor, 1);
+            rectShader->setConstantValue(rectColor.data(), inObject.fillColor, 1);
         if (leftright) {
-            float theData[] = { inObject.m_Left, inObject.m_Right };
-            m_RectShader->SetConstantValue(leftright.data(), *theData, 2);
+            float theData[] = { inObject.left, inObject.right };
+            rectShader->setConstantValue(leftright.data(), *theData, 2);
         }
         if (bottomtop) {
-            float theData[] = { inObject.m_Bottom, inObject.m_Top };
-            m_RectShader->SetConstantValue(bottomtop.data(), *theData, 2);
+            float theData[] = { inObject.bottom, inObject.top };
+            rectShader->setConstantValue(bottomtop.data(), *theData, 2);
         }
     }
 
-    operator bool() { return m_RectShader != nullptr; }
+    operator bool() { return rectShader != nullptr; }
 };
 
-struct SPGRenderer : public IPixelGraphicsRenderer
+struct QDemonPixelGraphicsRenderer : public QDemonPixelGraphicsRendererInterface
 {
-    IQDemonRenderContext *m_RenderContext;
-    QSharedPointer<QDemonRenderVertexBuffer> m_QuadVertexBuffer;
-    QSharedPointer<QDemonRenderIndexBuffer> m_QuadIndexBuffer;
-    QSharedPointer<QDemonRenderInputAssembler> m_QuadInputAssembler;
-    QSharedPointer<QDemonRenderAttribLayout> m_QuadAttribLayout;
-    SShaderVertexCodeGenerator m_VertexGenerator;
-    SShaderFragmentCodeGenerator m_FragmentGenerator;
-    SPGRectShader m_RectShader;
+    QDemonRenderContextInterface *m_renderContext;
+    QSharedPointer<QDemonRenderVertexBuffer> m_quadVertexBuffer;
+    QSharedPointer<QDemonRenderIndexBuffer> m_quadIndexBuffer;
+    QSharedPointer<QDemonRenderInputAssembler> m_quadInputAssembler;
+    QSharedPointer<QDemonRenderAttribLayout> m_quadAttribLayout;
+    QDemonShaderVertexCodeGenerator m_vertexGenerator;
+    QDemonShaderFragmentCodeGenerator m_fragmentGenerator;
+    QDemonPGRectShader m_rectShader;
 
-    SPGRenderer(IQDemonRenderContext *ctx)
-        : m_RenderContext(ctx)
-        , m_VertexGenerator(m_RenderContext->GetRenderContext()->GetRenderContextType())
-        , m_FragmentGenerator(m_VertexGenerator, m_RenderContext->GetRenderContext()->GetRenderContextType())
+    QDemonPixelGraphicsRenderer(QDemonRenderContextInterface *ctx)
+        : m_renderContext(ctx)
+        , m_vertexGenerator(m_renderContext->getRenderContext()->getRenderContextType())
+        , m_fragmentGenerator(m_vertexGenerator, m_renderContext->getRenderContext()->getRenderContextType())
     {
     }
 
-    void GetRectShaderProgram()
+    void getRectShaderProgram()
     {
-        if (!m_RectShader) {
-            m_VertexGenerator.Begin();
-            m_FragmentGenerator.Begin();
-            m_VertexGenerator.AddAttribute("attr_pos", "vec2");
-            m_VertexGenerator.AddUniform("model_view_projection", "mat4");
-            m_VertexGenerator.AddUniform("leftright[2]", "float");
-            m_VertexGenerator.AddUniform("bottomtop[2]", "float");
-            m_FragmentGenerator.AddVarying("rect_uvs", "vec2");
-            m_FragmentGenerator.AddUniform("rect_color", "vec4");
-            m_VertexGenerator << "void main() {" << "\n"
+        if (!m_rectShader) {
+            m_vertexGenerator.begin();
+            m_fragmentGenerator.begin();
+            m_vertexGenerator.addAttribute("attr_pos", "vec2");
+            m_vertexGenerator.addUniform("model_view_projection", "mat4");
+            m_vertexGenerator.addUniform("leftright[2]", "float");
+            m_vertexGenerator.addUniform("bottomtop[2]", "float");
+            m_fragmentGenerator.addVarying("rect_uvs", "vec2");
+            m_fragmentGenerator.addUniform("rect_color", "vec4");
+            m_vertexGenerator << "void main() {" << "\n"
                               << "\tgl_Position = model_view_projection * vec4( "
                                  "leftright[int(attr_pos.x)], bottomtop[int(attr_pos.y)], 0.0, 1.0 "
                                  ");"
                               << "\n" << "\trect_uvs = attr_pos;" << "\n" << "}" << "\n";
 
-            m_FragmentGenerator << "void main() {" << "\n" << "\tfragOutput = rect_color;" << "\n"
+            m_fragmentGenerator << "void main() {" << "\n" << "\tfragOutput = rect_color;" << "\n"
                                 << "}" << "\n";
 
-            m_VertexGenerator.BuildShaderSource();
-            m_FragmentGenerator.BuildShaderSource();
+            m_vertexGenerator.buildShaderSource();
+            m_fragmentGenerator.buildShaderSource();
 
-            m_RectShader.SetShader(m_RenderContext->GetShaderCache()->CompileProgram(
+            m_rectShader.setShader(m_renderContext->getShaderCache()->compileProgram(
                                        QStringLiteral("PixelRectShader"),
-                                       m_VertexGenerator.m_FinalShaderBuilder.toLocal8Bit().constData(),
-                                       m_FragmentGenerator.m_FinalShaderBuilder.toLocal8Bit().constData(),
+                                       m_vertexGenerator.m_finalShaderBuilder.toLocal8Bit().constData(),
+                                       m_fragmentGenerator.m_finalShaderBuilder.toLocal8Bit().constData(),
                                        nullptr, // no tess control shader
                                        nullptr, // no tess eval shader
                                        nullptr, // no geometry shader
-                                       SShaderCacheProgramFlags(),
-                                       ShaderCacheNoFeatures()));
+                                       QDemonShaderCacheProgramFlags(),
+                                       shaderCacheNoFeatures()));
         }
     }
-    void GenerateXYQuad()
+    void generateXYQuad()
     {
-        QSharedPointer<QDemonRenderContext> theRenderContext(m_RenderContext->GetRenderContext());
+        QSharedPointer<QDemonRenderContext> theRenderContext(m_renderContext->getRenderContext());
 
         QDemonRenderVertexBufferEntry theEntries[] = {
             QDemonRenderVertexBufferEntry("attr_pos", QDemonRenderComponentTypes::Float32, 2),
@@ -151,121 +145,121 @@ struct SPGRenderer : public IPixelGraphicsRenderer
 
         QVector2D pos[] = { QVector2D(0, 0), QVector2D(0, 1), QVector2D(1, 1), QVector2D(1, 0) };
 
-        if (m_QuadVertexBuffer == nullptr) {
+        if (m_quadVertexBuffer == nullptr) {
             size_t bufSize = sizeof(pos);
-            m_QuadVertexBuffer = theRenderContext->CreateVertexBuffer(
+            m_quadVertexBuffer = theRenderContext->createVertexBuffer(
                         QDemonRenderBufferUsageType::Static, bufSize, 2 * sizeof(float),
                         toU8DataRef(pos, 4));
         }
 
-        if (m_QuadIndexBuffer == nullptr) {
+        if (m_quadIndexBuffer == nullptr) {
             quint8 indexData[] = {
                 0, 1, 2, 0, 2, 3,
             };
-            m_QuadIndexBuffer = theRenderContext->CreateIndexBuffer(
+            m_quadIndexBuffer = theRenderContext->createIndexBuffer(
                         QDemonRenderBufferUsageType::Static,
                         QDemonRenderComponentTypes::UnsignedInteger8, sizeof(indexData),
                         toU8DataRef(indexData, sizeof(indexData)));
         }
 
-        if (m_QuadAttribLayout == nullptr) {
+        if (m_quadAttribLayout == nullptr) {
             // create our attribute layout
-            m_QuadAttribLayout =
-                    theRenderContext->CreateAttributeLayout(toConstDataRef(theEntries, 1));
+            m_quadAttribLayout =
+                    theRenderContext->createAttributeLayout(toConstDataRef(theEntries, 1));
         }
 
-        if (m_QuadInputAssembler == nullptr) {
+        if (m_quadInputAssembler == nullptr) {
 
             // create input assembler object
-            quint32 strides = m_QuadVertexBuffer->GetStride();
+            quint32 strides = m_quadVertexBuffer->getStride();
             quint32 offsets = 0;
-            m_QuadInputAssembler = theRenderContext->CreateInputAssembler(
-                        m_QuadAttribLayout, toConstDataRef(&m_QuadVertexBuffer, 1), m_QuadIndexBuffer,
+            m_quadInputAssembler = theRenderContext->createInputAssembler(
+                        m_quadAttribLayout, toConstDataRef(&m_quadVertexBuffer, 1), m_quadIndexBuffer,
                         toConstDataRef(&strides, 1), toConstDataRef(&offsets, 1));
         }
     }
 
-    void RenderPixelObject(QMatrix4x4 &inProjection, const SPGRect &inObject)
+    void renderPixelObject(QMatrix4x4 &inProjection, const QDemonPGRect &inObject)
     {
-        GenerateXYQuad();
-        GetRectShaderProgram();
-        if (m_RectShader) {
-            m_RenderContext->GetRenderContext()->SetActiveShader(m_RectShader.m_RectShader);
-            m_RectShader.Apply(inProjection, inObject);
+        generateXYQuad();
+        getRectShaderProgram();
+        if (m_rectShader) {
+            m_renderContext->getRenderContext()->setActiveShader(m_rectShader.rectShader);
+            m_rectShader.apply(inProjection, inObject);
 
-            m_RenderContext->GetRenderContext()->SetInputAssembler(m_QuadInputAssembler);
-            m_RenderContext->GetRenderContext()->Draw(QDemonRenderDrawMode::Triangles,
-                                                     m_QuadInputAssembler->GetIndexCount(), 0);
+            m_renderContext->getRenderContext()->setInputAssembler(m_quadInputAssembler);
+            m_renderContext->getRenderContext()->draw(QDemonRenderDrawMode::Triangles,
+                                                     m_quadInputAssembler->getIndexCount(), 0);
         }
     }
 
-    void RenderPixelObject(QMatrix4x4 &inProjection, const SPGVertLine &inObject)
+    void renderPixelObject(QMatrix4x4 &inProjection, const QDemonPGVertLine &inObject)
     {
         // lines are really just rects, but they grow in width in a sort of odd way.
         // specifically, they grow the increasing coordinate on even boundaries and centered on odd
         // boundaries.
-        SPGRect theRect;
-        theRect.m_Top = inObject.m_Top;
-        theRect.m_Bottom = inObject.m_Bottom;
-        theRect.m_FillColor = inObject.m_LineColor;
-        theRect.m_Left = inObject.m_X;
-        theRect.m_Right = theRect.m_Left + 1.0f;
-        RenderPixelObject(inProjection, theRect);
+        QDemonPGRect theRect;
+        theRect.top = inObject.top;
+        theRect.bottom = inObject.bottom;
+        theRect.fillColor = inObject.lineColor;
+        theRect.left = inObject.x;
+        theRect.right = theRect.left + 1.0f;
+        renderPixelObject(inProjection, theRect);
     }
 
-    void RenderPixelObject(QMatrix4x4 &inProjection, const SPGHorzLine &inObject)
+    void renderPixelObject(QMatrix4x4 &inProjection, const QDemonPGHorzLine &inObject)
     {
-        SPGRect theRect;
-        theRect.m_Right = inObject.m_Right;
-        theRect.m_Left = inObject.m_Left;
-        theRect.m_FillColor = inObject.m_LineColor;
-        theRect.m_Bottom = inObject.m_Y;
-        theRect.m_Top = theRect.m_Bottom + 1.0f;
-        RenderPixelObject(inProjection, theRect);
+        QDemonPGRect theRect;
+        theRect.right = inObject.right;
+        theRect.left = inObject.left;
+        theRect.fillColor = inObject.lineColor;
+        theRect.bottom = inObject.y;
+        theRect.top = theRect.bottom + 1.0f;
+        renderPixelObject(inProjection, theRect);
     }
 
-    void Render(const QVector<SPGGraphObject *> &inObjects) override
+    void render(const QVector<QDemonPGGraphObject *> &inObjects) override
     {
-        QSharedPointer<QDemonRenderContext> theRenderContext(m_RenderContext->GetRenderContext());
-        theRenderContext->PushPropertySet();
+        QSharedPointer<QDemonRenderContext> theRenderContext(m_renderContext->getRenderContext());
+        theRenderContext->pushPropertySet();
         // Setup an orthographic camera that places the center at the
         // lower left of the viewport.
-        QDemonRenderRectF theViewport = theRenderContext->GetViewport();
+        QDemonRenderRectF theViewport = theRenderContext->getViewport();
         // With no projection at all, we are going to get a square view box
         // with boundaries from -1,1 in all dimensions.  This is close to what we want.
-        theRenderContext->SetDepthTestEnabled(false);
-        theRenderContext->SetDepthWriteEnabled(false);
-        theRenderContext->SetScissorTestEnabled(false);
-        theRenderContext->SetBlendingEnabled(true);
-        theRenderContext->SetCullingEnabled(false);
+        theRenderContext->setDepthTestEnabled(false);
+        theRenderContext->setDepthWriteEnabled(false);
+        theRenderContext->setScissorTestEnabled(false);
+        theRenderContext->setBlendingEnabled(true);
+        theRenderContext->setCullingEnabled(false);
         // Colors are expected to be non-premultiplied, so we premultiply alpha into them at this
         // point.
-        theRenderContext->SetBlendFunction(QDemonRenderBlendFunctionArgument(
+        theRenderContext->setBlendFunction(QDemonRenderBlendFunctionArgument(
                                                QDemonRenderSrcBlendFunc::SrcAlpha, QDemonRenderDstBlendFunc::OneMinusSrcAlpha,
                                                QDemonRenderSrcBlendFunc::One, QDemonRenderDstBlendFunc::OneMinusSrcAlpha));
-        theRenderContext->SetBlendEquation(QDemonRenderBlendEquationArgument(
+        theRenderContext->setBlendEquation(QDemonRenderBlendEquationArgument(
                                                QDemonRenderBlendEquation::Add, QDemonRenderBlendEquation::Add));
 
-        SCamera theCamera;
-        theCamera.m_Position.setZ(-5.f);
-        theCamera.m_ClipNear = 1.0f;
-        theCamera.m_ClipFar = 10.0f;
-        theCamera.m_Flags.SetOrthographic(true);
+        QDemonRenderCamera theCamera;
+        theCamera.position.setZ(-5.f);
+        theCamera.clipNear = 1.0f;
+        theCamera.clipFar = 10.0f;
+        theCamera.flags.setOrthographic(true);
         // Setup camera projection
-        theCamera.ComputeFrustumOrtho(theViewport,
-                                      QVector2D(theViewport.m_Width, theViewport.m_Height));
+        theCamera.computeFrustumOrtho(theViewport,
+                                      QVector2D(theViewport.m_width, theViewport.m_height));
         // Translate such that 0, 0 is lower left of screen.
         QDemonRenderRectF theIdealViewport = theViewport;
-        theIdealViewport.m_X -= theViewport.m_Width / 2.0f;
-        theIdealViewport.m_Y -= theViewport.m_Height / 2.0f;
+        theIdealViewport.m_x -= theViewport.m_width / 2.0f;
+        theIdealViewport.m_y -= theViewport.m_height / 2.0f;
         QMatrix4x4 theProjectionMatrix = QDemonRenderContext::ApplyVirtualViewportToProjectionMatrix(
-                    theCamera.m_Projection, theViewport, theIdealViewport);
-        theCamera.m_Projection = theProjectionMatrix;
+                    theCamera.projection, theViewport, theIdealViewport);
+        theCamera.projection = theProjectionMatrix;
         // Explicitly call the node's calculate global variables so that the camera doesn't attempt
         // to change the projection we setup.
-        static_cast<SNode &>(theCamera).CalculateGlobalVariables();
+        static_cast<QDemonGraphNode &>(theCamera).calculateGlobalVariables();
         QMatrix4x4 theVPMatrix;
-        theCamera.CalculateViewProjectionMatrix(theVPMatrix);
+        theCamera.calculateViewProjectionMatrix(theVPMatrix);
 
         QVector4D theTest(60, 200, 0, 1);
         QVector4D theResult = mat44::transform(theVPMatrix, theTest);
@@ -274,17 +268,17 @@ struct SPGRenderer : public IPixelGraphicsRenderer
         (void)theResult;
 
         for (quint32 idx = 0, end = inObjects.size(); idx < end; ++idx) {
-            const SPGGraphObject &theObject(*inObjects[idx]);
+            const QDemonPGGraphObject &theObject(*inObjects[idx]);
 
-            switch (theObject.m_Type) {
-            case SGTypes::VertLine:
-                RenderPixelObject(theVPMatrix, static_cast<const SPGVertLine &>(theObject));
+            switch (theObject.type) {
+            case QDemonGTypes::VertLine:
+                renderPixelObject(theVPMatrix, static_cast<const QDemonPGVertLine &>(theObject));
                 break;
-            case SGTypes::HorzLine:
-                RenderPixelObject(theVPMatrix, static_cast<const SPGHorzLine &>(theObject));
+            case QDemonGTypes::HorzLine:
+                renderPixelObject(theVPMatrix, static_cast<const QDemonPGHorzLine &>(theObject));
                 break;
-            case SGTypes::Rect:
-                RenderPixelObject(theVPMatrix, static_cast<const SPGRect &>(theObject));
+            case QDemonGTypes::Rect:
+                renderPixelObject(theVPMatrix, static_cast<const QDemonPGRect &>(theObject));
                 break;
             default:
                 Q_ASSERT(false);
@@ -292,14 +286,19 @@ struct SPGRenderer : public IPixelGraphicsRenderer
             }
         }
 
-        theRenderContext->PopPropertySet(false);
+        theRenderContext->popPropertySet(false);
     }
 };
 }
 
-QSharedPointer<IPixelGraphicsRenderer> IPixelGraphicsRenderer::CreateRenderer(IQDemonRenderContext *ctx)
+QDemonPixelGraphicsRendererInterface::~QDemonPixelGraphicsRendererInterface()
 {
-    return QSharedPointer<SPGRenderer>(new SPGRenderer(ctx));
+
+}
+
+QSharedPointer<QDemonPixelGraphicsRendererInterface> QDemonPixelGraphicsRendererInterface::createRenderer(QDemonRenderContextInterface *ctx)
+{
+    return QSharedPointer<QDemonPixelGraphicsRenderer>(new QDemonPixelGraphicsRenderer(ctx));
 }
 
 QT_END_NAMESPACE

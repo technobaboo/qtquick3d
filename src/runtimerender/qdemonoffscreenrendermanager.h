@@ -35,13 +35,13 @@
 #include <QtDemonRuntimeRender/qdemonrenderlayer.h>
 
 QT_BEGIN_NAMESPACE
-class IResourceManager;
+class QDemonResourceManagerInterface;
 struct QDemonRenderPickResult;
-class IGraphObjectPickQuery;
-class IQDemonRenderContext;
+class QDemonGraphObjectPickQueryInterface;
+class QDemonRenderContextInterface;
 class QDemonRenderContext;
 
-struct OffscreenRendererDepthValues
+struct QDemonOffscreenRendererDepthValues
 {
     enum Enum {
         NoDepthBuffer = 0,
@@ -52,106 +52,102 @@ struct OffscreenRendererDepthValues
     };
 };
 
-struct SOffscreenRendererEnvironment
+struct QDemonOffscreenRendererEnvironment
 {
-    quint32 m_Width;
-    quint32 m_Height;
-    QDemonRenderTextureFormats::Enum m_Format;
-    OffscreenRendererDepthValues::Enum m_Depth;
-    bool m_Stencil;
-    AAModeValues::Enum m_MSAAMode;
+    quint32 width;
+    quint32 height;
+    QDemonRenderTextureFormats::Enum format;
+    QDemonOffscreenRendererDepthValues::Enum depth;
+    bool stencil;
+    AAModeValues::Enum msaaMode;
 
-    SOffscreenRendererEnvironment()
-        : m_Width(0)
-        , m_Height(0)
-        , m_Format(QDemonRenderTextureFormats::Unknown)
-        , m_Depth(OffscreenRendererDepthValues::NoDepthBuffer)
-        , m_Stencil(false)
-        , m_MSAAMode(AAModeValues::NoAA)
+    QDemonOffscreenRendererEnvironment()
+        : width(0)
+        , height(0)
+        , format(QDemonRenderTextureFormats::Unknown)
+        , depth(QDemonOffscreenRendererDepthValues::NoDepthBuffer)
+        , stencil(false)
+        , msaaMode(AAModeValues::NoAA)
     {
     }
 
-    SOffscreenRendererEnvironment(quint32 inWidth, quint32 inHeight,
-                                  QDemonRenderTextureFormats::Enum inFormat)
-        : m_Width(inWidth)
-        , m_Height(inHeight)
-        , m_Format(inFormat)
-        , m_Depth(OffscreenRendererDepthValues::Depth16)
-        , m_Stencil(false)
-        , m_MSAAMode(AAModeValues::NoAA)
+    QDemonOffscreenRendererEnvironment(quint32 inWidth,
+                                       quint32 inHeight,
+                                       QDemonRenderTextureFormats::Enum inFormat)
+        : width(inWidth)
+        , height(inHeight)
+        , format(inFormat)
+        , depth(QDemonOffscreenRendererDepthValues::Depth16)
+        , stencil(false)
+        , msaaMode(AAModeValues::NoAA)
     {
     }
 
-    SOffscreenRendererEnvironment(quint32 inWidth, quint32 inHeight,
-                                  QDemonRenderTextureFormats::Enum inFormat,
-                                  OffscreenRendererDepthValues::Enum inDepth, bool inStencil,
-                                  AAModeValues::Enum inAAMode)
-        : m_Width(inWidth)
-        , m_Height(inHeight)
-        , m_Format(inFormat)
-        , m_Depth(inDepth)
-        , m_Stencil(inStencil)
-        , m_MSAAMode(inAAMode)
+    QDemonOffscreenRendererEnvironment(quint32 inWidth,
+                                       quint32 inHeight,
+                                       QDemonRenderTextureFormats::Enum inFormat,
+                                       QDemonOffscreenRendererDepthValues::Enum inDepth,
+                                       bool inStencil,
+                                       AAModeValues::Enum inAAMode)
+        : width(inWidth)
+        , height(inHeight)
+        , format(inFormat)
+        , depth(inDepth)
+        , stencil(inStencil)
+        , msaaMode(inAAMode)
     {
     }
 
-    SOffscreenRendererEnvironment(const SOffscreenRendererEnvironment &inOther)
-        : m_Width(inOther.m_Width)
-        , m_Height(inOther.m_Height)
-        , m_Format(inOther.m_Format)
-        , m_Depth(inOther.m_Depth)
-        , m_Stencil(inOther.m_Stencil)
-        , m_MSAAMode(inOther.m_MSAAMode)
+    QDemonOffscreenRendererEnvironment(const QDemonOffscreenRendererEnvironment &inOther)
+        : width(inOther.width)
+        , height(inOther.height)
+        , format(inOther.format)
+        , depth(inOther.depth)
+        , stencil(inOther.stencil)
+        , msaaMode(inOther.msaaMode)
     {
     }
 };
 
-struct SOffscreenRenderFlags
+struct QDemonOffscreenRenderFlags
 {
-    bool m_HasTransparency;
-    bool m_HasChangedSinceLastFrame;
-    SOffscreenRenderFlags()
-        : m_HasTransparency(false)
-        , m_HasChangedSinceLastFrame(false)
-    {
-    }
-
-    SOffscreenRenderFlags(bool transparency, bool hasChanged)
-        : m_HasTransparency(transparency)
-        , m_HasChangedSinceLastFrame(hasChanged)
+    bool hasTransparency = false;
+    bool hasChangedSinceLastFrame = false;
+    constexpr QDemonOffscreenRenderFlags() = default;
+    constexpr QDemonOffscreenRenderFlags(bool transparency, bool hasChanged)
+        : hasTransparency(transparency)
+        , hasChangedSinceLastFrame(hasChanged)
     {
     }
 };
 
 typedef void *SRenderInstanceId;
 
-class IOffscreenRenderer
+class QDemonOffscreenRendererInterface
 {
 public:
-    class IOffscreenRendererCallback
+    class QDemonOffscreenRendererCallbackInterface
     {
     public:
         virtual void onOffscreenRendererInitialized(const QString &id) = 0;
         virtual void onOffscreenRendererFrame(const QString &id) = 0;
     protected:
-        virtual ~IOffscreenRendererCallback() {}
+        virtual ~QDemonOffscreenRendererCallbackInterface();
     };
 
-    virtual ~IOffscreenRenderer();
+    virtual ~QDemonOffscreenRendererInterface();
 
 public:
-    virtual void addCallback(IOffscreenRendererCallback *cb) = 0;
+    virtual void addCallback(QDemonOffscreenRendererCallbackInterface *cb) = 0;
     // Arbitrary const char* returned to indicate the type of this renderer
     // Can be overloaded to form the basis of an RTTI type system.
     // Not currently used by the rendering system.
-    virtual QString GetOffscreenRendererType() = 0;
-    virtual SOffscreenRendererEnvironment
-    GetDesiredEnvironment(QVector2D inPresentationScaleFactor) = 0;
+    virtual QString getOffscreenRendererType() = 0;
+    virtual QDemonOffscreenRendererEnvironment getDesiredEnvironment(QVector2D inPresentationScaleFactor) = 0;
     // Returns true of this object needs to be rendered, false if this object is not dirty
-    virtual SOffscreenRenderFlags
-    NeedsRender(const SOffscreenRendererEnvironment &inEnvironment,
-                QVector2D inPresentationScaleFactor,
-                const SRenderInstanceId instanceId) = 0;
+    virtual QDemonOffscreenRenderFlags needsRender(const QDemonOffscreenRendererEnvironment &inEnvironment,
+                                                   QVector2D inPresentationScaleFactor,
+                                                   const SRenderInstanceId instanceId) = 0;
     // Returns true if the rendered result image has transparency, or false
     // if it should be treated as a completely opaque image.
     // It is the IOffscreenRenderer's job to clear any buffers (color, depth, stencil) that it
@@ -160,13 +156,13 @@ public:
     // window.
     // If we do so, the scale factor tells the subpresentation renderer how much the system has
     // scaled.
-    virtual void Render(const SOffscreenRendererEnvironment &inEnvironment,
+    virtual void render(const QDemonOffscreenRendererEnvironment &inEnvironment,
                         QDemonRenderContext &inRenderContext, QVector2D inPresentationScaleFactor,
-                        SScene::RenderClearCommand inColorBufferNeedsClear,
+                        QDemonRenderScene::RenderClearCommand inColorBufferNeedsClear,
                         const SRenderInstanceId instanceId) = 0;
-    virtual void RenderWithClear(const SOffscreenRendererEnvironment &inEnvironment,
+    virtual void renderWithClear(const QDemonOffscreenRendererEnvironment &inEnvironment,
                                  QDemonRenderContext &inRenderContext, QVector2D inPresentationScaleFactor,
-                                 SScene::RenderClearCommand inColorBufferNeedsClear,
+                                 QDemonRenderScene::RenderClearCommand inColorBufferNeedsClear,
                                  QVector3D inclearColor,
                                  const SRenderInstanceId instanceId) = 0;
 
@@ -174,7 +170,7 @@ public:
 
     // If this renderer supports picking that can return graph objects
     // then return an interface here.
-    virtual IGraphObjectPickQuery *GetGraphObjectPickQuery(const SRenderInstanceId instanceId) = 0;
+    virtual QDemonGraphObjectPickQueryInterface *getGraphObjectPickQuery(const SRenderInstanceId instanceId) = 0;
 
     // If you *don't* support the GraphObjectPickIterator interface, then you should implement
     // this interface
@@ -182,35 +178,32 @@ public:
     // If you return true, then we will assume that you swallowed the pick and will continue no
     // further.
     // else we will assume you did not and will continue the picking algorithm.
-    virtual bool Pick(const QVector2D &inMouseCoords, const QVector2D &inViewportDimensions,
+    virtual bool pick(const QVector2D &inMouseCoords,
+                      const QVector2D &inViewportDimensions,
                       const SRenderInstanceId instanceId) = 0;
 };
 
-struct SOffscreenRenderResult
+struct QDemonOffscreenRenderResult
 {
-    QSharedPointer<IOffscreenRenderer> m_Renderer;
-    QSharedPointer<QDemonRenderTexture2D> m_Texture;
-    bool m_HasTransparency;
-    bool m_HasChangedSinceLastFrame;
+    QSharedPointer<QDemonOffscreenRendererInterface> renderer;
+    QSharedPointer<QDemonRenderTexture2D> texture;
+    bool hasTransparency = false;
+    bool hasChangedSinceLastFrame = false;
 
-    SOffscreenRenderResult(QSharedPointer<IOffscreenRenderer> inRenderer, QSharedPointer<QDemonRenderTexture2D> inTexture,
-                           bool inTrans, bool inDirty)
-        : m_Renderer(inRenderer)
-        , m_Texture(inTexture)
-        , m_HasTransparency(inTrans)
-        , m_HasChangedSinceLastFrame(inDirty)
+    QDemonOffscreenRenderResult(QSharedPointer<QDemonOffscreenRendererInterface> inRenderer,
+                                QSharedPointer<QDemonRenderTexture2D> inTexture,
+                                bool inTrans,
+                                bool inDirty)
+        : renderer(inRenderer)
+        , texture(inTexture)
+        , hasTransparency(inTrans)
+        , hasChangedSinceLastFrame(inDirty)
     {
     }
-    SOffscreenRenderResult()
-        : m_Renderer(nullptr)
-        , m_Texture(nullptr)
-        , m_HasTransparency(false)
-        , m_HasChangedSinceLastFrame(false)
-    {
-    }
+    QDemonOffscreenRenderResult() = default;
 };
 
-struct SOffscreenRendererKey;
+struct QDemonOffscreenRendererKey;
 
 /**
      *	The offscreen render manager attempts to satisfy requests for a given image under a given
@@ -219,30 +212,30 @@ struct SOffscreenRendererKey;
      *than
      *	that if they don't require a new render.
      */
-class Q_DEMONRUNTIMERENDER_EXPORT IOffscreenRenderManager
+class Q_DEMONRUNTIMERENDER_EXPORT QDemonOffscreenRenderManagerInterface
 {
 public:
-    virtual ~IOffscreenRenderManager();
+    virtual ~QDemonOffscreenRenderManagerInterface();
     // returns true if the renderer has not been registered.
     // No return value means there was an error registering this id.
-    virtual QDemonOption<bool> MaybeRegisterOffscreenRenderer(const SOffscreenRendererKey &inKey,
-                                                              QSharedPointer<IOffscreenRenderer> inRenderer) = 0;
-    virtual void RegisterOffscreenRenderer(const SOffscreenRendererKey &inKey,
-                                           QSharedPointer<IOffscreenRenderer> inRenderer) = 0;
-    virtual bool HasOffscreenRenderer(const SOffscreenRendererKey &inKey) = 0;
-    virtual QSharedPointer<IOffscreenRenderer> GetOffscreenRenderer(const SOffscreenRendererKey &inKey) = 0;
-    virtual void ReleaseOffscreenRenderer(const SOffscreenRendererKey &inKey) = 0;
+    virtual QDemonOption<bool> maybeRegisterOffscreenRenderer(const QDemonOffscreenRendererKey &inKey,
+                                                              QSharedPointer<QDemonOffscreenRendererInterface> inRenderer) = 0;
+    virtual void registerOffscreenRenderer(const QDemonOffscreenRendererKey &inKey,
+                                           QSharedPointer<QDemonOffscreenRendererInterface> inRenderer) = 0;
+    virtual bool hasOffscreenRenderer(const QDemonOffscreenRendererKey &inKey) = 0;
+    virtual QSharedPointer<QDemonOffscreenRendererInterface> getOffscreenRenderer(const QDemonOffscreenRendererKey &inKey) = 0;
+    virtual void releaseOffscreenRenderer(const QDemonOffscreenRendererKey &inKey) = 0;
 
     // This doesn't trigger rendering right away.  A node is added to the render graph that
     // points to this item.
     // Thus rendering is deffered until the graph is run but we promise to render to this
     // resource.
-    virtual SOffscreenRenderResult GetRenderedItem(const SOffscreenRendererKey &inKey) = 0;
+    virtual QDemonOffscreenRenderResult getRenderedItem(const QDemonOffscreenRendererKey &inKey) = 0;
     // Called by the UICRenderContext, clients don't need to call this.
-    virtual void BeginFrame() = 0;
-    virtual void EndFrame() = 0;
+    virtual void beginFrame() = 0;
+    virtual void endFrame() = 0;
 
-    static QSharedPointer<IOffscreenRenderManager> CreateOffscreenRenderManager(QSharedPointer<IResourceManager> inManager, IQDemonRenderContext *inContext);
+    static QSharedPointer<QDemonOffscreenRenderManagerInterface> createOffscreenRenderManager(QSharedPointer<QDemonResourceManagerInterface> inManager, QDemonRenderContextInterface *inContext);
 };
 
 QT_END_NAMESPACE

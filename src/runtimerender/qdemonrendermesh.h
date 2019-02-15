@@ -39,135 +39,123 @@
 
 QT_BEGIN_NAMESPACE
 
-struct SRenderSubsetBase
+struct QDemonRenderSubsetBase
 {
-    quint32 m_Count;
-    quint32 m_Offset;
-    QDemonBounds3 m_Bounds; // Vertex buffer bounds
-    SRenderSubsetBase() {}
-    SRenderSubsetBase(const SRenderSubsetBase &inOther)
-        : m_Count(inOther.m_Count)
-        , m_Offset(inOther.m_Offset)
-        , m_Bounds(inOther.m_Bounds)
+    quint32 count;
+    quint32 offset;
+    QDemonBounds3 bounds; // Vertex buffer bounds
+    QDemonRenderSubsetBase() = default;
+    QDemonRenderSubsetBase(const QDemonRenderSubsetBase &inOther)
+        : count(inOther.count)
+        , offset(inOther.offset)
+        , bounds(inOther.bounds)
     {
     }
 
-    SRenderSubsetBase &operator=(const SRenderSubsetBase &inOther)
+    QDemonRenderSubsetBase &operator=(const QDemonRenderSubsetBase &inOther)
     {
-        m_Count = inOther.m_Count;
-        m_Offset = inOther.m_Offset;
-        m_Bounds = inOther.m_Bounds;
+        count = inOther.count;
+        offset = inOther.offset;
+        bounds = inOther.bounds;
         return *this;
     }
 };
 
-struct SRenderJoint
+struct QDemonRenderJoint
 {
-    qint32 m_JointID;
-    qint32 m_ParentID;
-    float m_invBindPose[16];
-    float m_localToGlobalBoneSpace[16];
+    qint32 jointID;
+    qint32 parentID;
+    float invBindPose[16];
+    float localToGlobalBoneSpace[16];
 };
 
-struct SRenderSubset : public SRenderSubsetBase
+struct QDemonRenderSubset : public QDemonRenderSubsetBase
 {
-    QSharedPointer<QDemonRenderInputAssembler> m_InputAssembler;
-    QSharedPointer<QDemonRenderInputAssembler> m_InputAssemblerDepth;
-    QSharedPointer<QDemonRenderInputAssembler> m_InputAssemblerPoints; ///< similar to depth but ignores index buffer.
-    QSharedPointer<QDemonRenderVertexBuffer> m_VertexBuffer;
-    QSharedPointer<QDemonRenderVertexBuffer> m_PosVertexBuffer; ///< separate position buffer for fast depth path rendering
-    QSharedPointer<QDemonRenderIndexBuffer> m_IndexBuffer;
-    QDemonRenderDrawMode::Enum m_PrimitiveType; ///< primitive type used for drawing
-    float m_EdgeTessFactor; ///< edge tessellation amount used for tessellation shaders
-    float m_InnerTessFactor; ///< inner tessellation amount used for tessellation shaders
-    bool m_WireframeMode; ///< true if we should draw the object as wireframe ( currently ony if
+    QSharedPointer<QDemonRenderInputAssembler> inputAssembler;
+    QSharedPointer<QDemonRenderInputAssembler> inputAssemblerDepth;
+    QSharedPointer<QDemonRenderInputAssembler> inputAssemblerPoints; ///< similar to depth but ignores index buffer.
+    QSharedPointer<QDemonRenderVertexBuffer> vertexBuffer;
+    QSharedPointer<QDemonRenderVertexBuffer> posVertexBuffer; ///< separate position buffer for fast depth path rendering
+    QSharedPointer<QDemonRenderIndexBuffer> indexBuffer;
+    QDemonRenderDrawMode::Enum primitiveType; ///< primitive type used for drawing
+    float edgeTessFactor = 1.0f; ///< edge tessellation amount used for tessellation shaders
+    float innerTessFactor = 1.0f; ///< inner tessellation amount used for tessellation shaders
+    bool wireframeMode; ///< true if we should draw the object as wireframe ( currently ony if
     ///tessellation is enabled )
-    QVector<SRenderJoint> m_Joints;
-    QString m_Name;
-    QVector<SRenderSubsetBase> m_SubSubsets;
+    QVector<QDemonRenderJoint> joints;
+    QString name;
+    QVector<QDemonRenderSubsetBase> subSubsets;
 
-    SRenderSubset()
-        : m_InputAssembler(nullptr)
-        , m_InputAssemblerDepth(nullptr)
-        , m_InputAssemblerPoints(nullptr)
-        , m_VertexBuffer(nullptr)
-        , m_PosVertexBuffer(nullptr)
-        , m_IndexBuffer(nullptr)
-        , m_PrimitiveType(QDemonRenderDrawMode::Triangles)
-        , m_EdgeTessFactor(1.0)
-        , m_InnerTessFactor(1.0)
-        , m_WireframeMode(false)
-    {
-    }
-    SRenderSubset(const SRenderSubset &inOther)
-        : SRenderSubsetBase(inOther)
-        , m_InputAssembler(inOther.m_InputAssembler)
-        , m_InputAssemblerDepth(inOther.m_InputAssemblerDepth)
-        , m_InputAssemblerPoints(inOther.m_InputAssemblerPoints)
-        , m_VertexBuffer(inOther.m_VertexBuffer)
-        , m_PosVertexBuffer(inOther.m_PosVertexBuffer)
-        , m_IndexBuffer(inOther.m_IndexBuffer)
-        , m_PrimitiveType(inOther.m_PrimitiveType)
-        , m_EdgeTessFactor(inOther.m_EdgeTessFactor)
-        , m_InnerTessFactor(inOther.m_InnerTessFactor)
-        , m_WireframeMode(inOther.m_WireframeMode)
-        , m_Joints(inOther.m_Joints)
-        , m_Name(inOther.m_Name)
-        , m_SubSubsets(inOther.m_SubSubsets)
+    QDemonRenderSubset() = default;
+    QDemonRenderSubset(const QDemonRenderSubset &inOther)
+        : QDemonRenderSubsetBase(inOther)
+        , inputAssembler(inOther.inputAssembler)
+        , inputAssemblerDepth(inOther.inputAssemblerDepth)
+        , inputAssemblerPoints(inOther.inputAssemblerPoints)
+        , vertexBuffer(inOther.vertexBuffer)
+        , posVertexBuffer(inOther.posVertexBuffer)
+        , indexBuffer(inOther.indexBuffer)
+        , primitiveType(inOther.primitiveType)
+        , edgeTessFactor(inOther.edgeTessFactor)
+        , innerTessFactor(inOther.innerTessFactor)
+        , wireframeMode(inOther.wireframeMode)
+        , joints(inOther.joints)
+        , name(inOther.name)
+        , subSubsets(inOther.subSubsets)
     {
     }
     // Note that subSubsets is *not* copied.
-    SRenderSubset(const SRenderSubset &inOther,
-                  const SRenderSubsetBase &inBase)
-        : SRenderSubsetBase(inBase)
-        , m_InputAssembler(inOther.m_InputAssembler)
-        , m_InputAssemblerDepth(inOther.m_InputAssemblerDepth)
-        , m_InputAssemblerPoints(inOther.m_InputAssemblerPoints)
-        , m_VertexBuffer(inOther.m_VertexBuffer)
-        , m_PosVertexBuffer(inOther.m_PosVertexBuffer)
-        , m_IndexBuffer(inOther.m_IndexBuffer)
-        , m_PrimitiveType(inOther.m_PrimitiveType)
-        , m_EdgeTessFactor(inOther.m_EdgeTessFactor)
-        , m_InnerTessFactor(inOther.m_InnerTessFactor)
-        , m_WireframeMode(inOther.m_WireframeMode)
-        , m_Name(inOther.m_Name)
+    QDemonRenderSubset(const QDemonRenderSubset &inOther, const QDemonRenderSubsetBase &inBase)
+        : QDemonRenderSubsetBase(inBase)
+        , inputAssembler(inOther.inputAssembler)
+        , inputAssemblerDepth(inOther.inputAssemblerDepth)
+        , inputAssemblerPoints(inOther.inputAssemblerPoints)
+        , vertexBuffer(inOther.vertexBuffer)
+        , posVertexBuffer(inOther.posVertexBuffer)
+        , indexBuffer(inOther.indexBuffer)
+        , primitiveType(inOther.primitiveType)
+        , edgeTessFactor(inOther.edgeTessFactor)
+        , innerTessFactor(inOther.innerTessFactor)
+        , wireframeMode(inOther.wireframeMode)
+        , name(inOther.name)
     {
     }
 
-    SRenderSubset &operator=(const SRenderSubset &inOther)
+    QDemonRenderSubset &operator=(const QDemonRenderSubset &inOther)
     {
         if (this != &inOther) {
-            SRenderSubsetBase::operator=(inOther);
-            m_InputAssembler = inOther.m_InputAssembler;
-            m_InputAssemblerDepth = inOther.m_InputAssemblerDepth;
-            m_VertexBuffer = inOther.m_VertexBuffer;
-            m_PosVertexBuffer = inOther.m_PosVertexBuffer;
-            m_IndexBuffer = inOther.m_IndexBuffer;
-            m_PrimitiveType = inOther.m_PrimitiveType;
-            m_EdgeTessFactor = inOther.m_EdgeTessFactor;
-            m_InnerTessFactor = inOther.m_InnerTessFactor;
-            m_WireframeMode = inOther.m_WireframeMode;
-            m_Joints = inOther.m_Joints;
-            m_Name = inOther.m_Name;
-            m_SubSubsets = inOther.m_SubSubsets;
+            QDemonRenderSubsetBase::operator=(inOther);
+            inputAssembler = inOther.inputAssembler;
+            inputAssemblerDepth = inOther.inputAssemblerDepth;
+            vertexBuffer = inOther.vertexBuffer;
+            posVertexBuffer = inOther.posVertexBuffer;
+            indexBuffer = inOther.indexBuffer;
+            primitiveType = inOther.primitiveType;
+            edgeTessFactor = inOther.edgeTessFactor;
+            innerTessFactor = inOther.innerTessFactor;
+            wireframeMode = inOther.wireframeMode;
+            joints = inOther.joints;
+            name = inOther.name;
+            subSubsets = inOther.subSubsets;
         }
         return *this;
     }
 };
 
-struct SRenderMesh : public QDemonNoCopy
+struct QDemonRenderMesh : public QDemonNoCopy
 {
-    QVector<SRenderSubset> m_Subsets;
-    QVector<SRenderJoint> m_Joints;
-    QDemonRenderDrawMode::Enum m_DrawMode;
-    QDemonRenderWinding::Enum m_Winding; // counterclockwise
-    quint32 m_MeshId; // Id from the file of this mesh.
+    QVector<QDemonRenderSubset> subsets;
+    QVector<QDemonRenderJoint> joints;
+    QDemonRenderDrawMode::Enum drawMode;
+    QDemonRenderWinding::Enum winding; // counterclockwise
+    quint32 meshId; // Id from the file of this mesh.
 
-    SRenderMesh(QDemonRenderDrawMode::Enum inDrawMode, QDemonRenderWinding::Enum inWinding,
-                quint32 inMeshId)
-        : m_DrawMode(inDrawMode)
-        , m_Winding(inWinding)
-        , m_MeshId(inMeshId)
+    QDemonRenderMesh(QDemonRenderDrawMode::Enum inDrawMode,
+                     QDemonRenderWinding::Enum inWinding,
+                     quint32 inMeshId)
+        : drawMode(inDrawMode)
+        , winding(inWinding)
+        , meshId(inMeshId)
     {
     }
 };

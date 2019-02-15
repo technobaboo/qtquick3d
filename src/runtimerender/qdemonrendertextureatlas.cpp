@@ -37,30 +37,30 @@ QT_BEGIN_NAMESPACE
 namespace {
 
 // a algorithm based on http://clb.demon.fi/files/RectangleBinPack/
-struct STextureAtlasBinPackSL
+struct QDemonTextureAtlasBinPackSL
 {
 public:
-    STextureAtlasBinPackSL(QSharedPointer<QDemonRenderContext> inContext, qint32 width, qint32 height)
-        : m_BinWidth(width)
-        , m_BinHeight(height)
+    QDemonTextureAtlasBinPackSL(QSharedPointer<QDemonRenderContext> inContext, qint32 width, qint32 height)
+        : m_binWidth(width)
+        , m_binHeight(height)
     {
+        // TODO:
+        Q_UNUSED(inContext);
         // setup first entry
-        SSkylineNode theNode = { 0, 0, width };
-        m_SkyLine.push_back(theNode);
+        SkylineNode theNode = { 0, 0, width };
+        m_skyLine.push_back(theNode);
     }
-
-    ~STextureAtlasBinPackSL() { m_SkyLine.clear(); }
 
     /*	insert new rect
      *
      */
-    STextureAtlasRect Insert(qint32 width, qint32 height)
+    QDemonTextureAtlasRect insert(qint32 width, qint32 height)
     {
         qint32 binHeight;
         qint32 binWidth;
         qint32 binIndex;
 
-        STextureAtlasRect newNode = findPosition(width, height, &binWidth, &binHeight, &binIndex);
+        QDemonTextureAtlasRect newNode = findPosition(width, height, &binWidth, &binHeight, &binIndex);
 
         if (binIndex != -1) {
             // adjust skyline nodes
@@ -72,7 +72,7 @@ public:
 
 private:
     /// Represents a single level (a horizontal line) of the skyline/horizon/envelope.
-    struct SSkylineNode
+    struct SkylineNode
     {
         int x; ///< The starting x-coordinate (leftmost).
         int y; ///< The y-coordinate of the skyline level line.
@@ -82,27 +82,26 @@ private:
     /*	find position
      *
      */
-    STextureAtlasRect findPosition(qint32 width, qint32 height, qint32 *binWidth, qint32 *binHeight,
+    QDemonTextureAtlasRect findPosition(qint32 width, qint32 height, qint32 *binWidth, qint32 *binHeight,
                                    qint32 *binIndex)
     {
-        *binWidth = m_BinWidth;
-        *binHeight = m_BinHeight;
+        *binWidth = m_binWidth;
+        *binHeight = m_binHeight;
         *binIndex = -1;
-        STextureAtlasRect newRect;
+        QDemonTextureAtlasRect newRect;
 
-        for (quint32 i = 0; i < m_SkyLine.size(); ++i) {
+        for (quint32 i = 0; i < m_skyLine.size(); ++i) {
             qint32 y = getSkylineLevel(i, width, height);
 
             if (y >= 0) {
-                if ((y + height < *binHeight)
-                        || ((y + height == *binHeight) && m_SkyLine[i].width < *binWidth)) {
+                if ((y + height < *binHeight) || ((y + height == *binHeight) && m_skyLine[i].width < *binWidth)) {
                     *binHeight = y + height;
                     *binIndex = i;
-                    *binWidth = m_SkyLine[i].width;
-                    newRect.m_X = m_SkyLine[i].x;
-                    newRect.m_Y = y;
-                    newRect.m_Width = width;
-                    newRect.m_Height = height;
+                    *binWidth = m_skyLine[i].width;
+                    newRect.x = m_skyLine[i].x;
+                    newRect.y = y;
+                    newRect.width = width;
+                    newRect.height = height;
                 }
             }
         }
@@ -117,24 +116,24 @@ private:
     int getSkylineLevel(quint32 binIndex, qint32 width, qint32 height)
     {
         // first check width exceed
-        qint32 x = m_SkyLine[binIndex].x;
-        if (x + width > m_BinWidth)
+        qint32 x = m_skyLine[binIndex].x;
+        if (x + width > m_binWidth)
             return -1;
 
         qint32 leftAlign = width;
         quint32 index = binIndex;
-        qint32 y = m_SkyLine[index].y;
+        qint32 y = m_skyLine[index].y;
 
         while (leftAlign > 0) {
-            y = (y > m_SkyLine[index].y) ? y : m_SkyLine[index].y;
+            y = (y > m_skyLine[index].y) ? y : m_skyLine[index].y;
             // check hight
-            if (y + height > m_BinHeight)
+            if (y + height > m_binHeight)
                 return -1;
 
-            leftAlign -= m_SkyLine[index].width;
+            leftAlign -= m_skyLine[index].width;
             ++index;
 
-            if (index > m_SkyLine.size())
+            if (index > m_skyLine.size())
                 return -1;
         }
 
@@ -145,25 +144,25 @@ private:
      *
      * return no return
      */
-    void addSkylineLevelNode(qint32 binIndex, const STextureAtlasRect &newRect)
+    void addSkylineLevelNode(qint32 binIndex, const QDemonTextureAtlasRect &newRect)
     {
-        SSkylineNode newNode;
+        SkylineNode newNode;
 
-        newNode.x = newRect.m_X;
-        newNode.y = newRect.m_Y + newRect.m_Height;
-        newNode.width = newRect.m_Width;
-        m_SkyLine.insert(m_SkyLine.begin() + binIndex, newNode);
+        newNode.x = newRect.x;
+        newNode.y = newRect.y + newRect.height;
+        newNode.width = newRect.width;
+        m_skyLine.insert(m_skyLine.begin() + binIndex, newNode);
 
         // iterate over follow up nodes and adjust
-        for (quint32 i = binIndex + 1; i < m_SkyLine.size(); ++i) {
-            if (m_SkyLine[i].x < m_SkyLine[i - 1].x + m_SkyLine[i - 1].width) {
-                int shrink = m_SkyLine[i - 1].x + m_SkyLine[i - 1].width - m_SkyLine[i].x;
+        for (quint32 i = binIndex + 1; i < m_skyLine.size(); ++i) {
+            if (m_skyLine[i].x < m_skyLine[i - 1].x + m_skyLine[i - 1].width) {
+                int shrink = m_skyLine[i - 1].x + m_skyLine[i - 1].width - m_skyLine[i].x;
 
-                m_SkyLine[i].x += shrink;
-                m_SkyLine[i].width -= shrink;
+                m_skyLine[i].x += shrink;
+                m_skyLine[i].width -= shrink;
 
-                if (m_SkyLine[i].width <= 0) {
-                    m_SkyLine.erase(m_SkyLine.begin() + i);
+                if (m_skyLine[i].width <= 0) {
+                    m_skyLine.erase(m_skyLine.begin() + i);
                     --i;
                 } else {
                     break;
@@ -183,119 +182,112 @@ private:
     void mergeSkylineLevelNodes()
     {
         // check if we can merge nodes
-        for (quint32 i = 0; i < m_SkyLine.size() - 1; ++i) {
-            if (m_SkyLine[i].y == m_SkyLine[i + 1].y) {
-                m_SkyLine[i].width += m_SkyLine[i + 1].width;
-                m_SkyLine.erase(m_SkyLine.begin() + (i + 1));
+        for (quint32 i = 0; i < m_skyLine.size() - 1; ++i) {
+            if (m_skyLine[i].y == m_skyLine[i + 1].y) {
+                m_skyLine[i].width += m_skyLine[i + 1].width;
+                m_skyLine.erase(m_skyLine.begin() + (i + 1));
                 --i;
             }
         }
     }
 
-    qint32 m_BinWidth;
-    qint32 m_BinHeight;
+    qint32 m_binWidth;
+    qint32 m_binHeight;
 
-    QVector<SSkylineNode> m_SkyLine;
+    QVector<SkylineNode> m_skyLine;
 };
 
-struct STextureAtlasEntry
+struct QDemonTextureAtlasEntry
 {
-    STextureAtlasEntry()
-        : m_X(0)
-        , m_Y(0)
-        , m_Width(0)
-        , m_Height(0)
-        , m_pBuffer(QDemonDataRef<quint8>())
+    QDemonTextureAtlasEntry() = default;
+    QDemonTextureAtlasEntry(float x, float y, float w, float h, QDemonDataRef<quint8> buffer)
+        : m_x(x)
+        , m_y(y)
+        , m_width(w)
+        , m_height(h)
+        , m_buffer(buffer)
     {
     }
-    STextureAtlasEntry(float x, float y, float w, float h, QDemonDataRef<quint8> buffer)
-        : m_X(x)
-        , m_Y(y)
-        , m_Width(w)
-        , m_Height(h)
-        , m_pBuffer(buffer)
+    QDemonTextureAtlasEntry(const QDemonTextureAtlasEntry &entry)
     {
+        m_x = entry.m_x;
+        m_y = entry.m_y;
+        m_width = entry.m_width;
+        m_height = entry.m_height;
+        m_buffer = entry.m_buffer;
     }
-    STextureAtlasEntry(const STextureAtlasEntry &entry)
-    {
-        m_X = entry.m_X;
-        m_Y = entry.m_Y;
-        m_Width = entry.m_Width;
-        m_Height = entry.m_Height;
-        m_pBuffer = entry.m_pBuffer;
-    }
-    ~STextureAtlasEntry() {}
 
-    float m_X, m_Y;
-    float m_Width, m_Height;
-    QDemonDataRef<quint8> m_pBuffer;
+    float m_x = 0.0f;
+    float m_y = 0.0f;
+    float m_width = 0.0f;
+    float m_height = 0.0f;
+    QDemonDataRef<quint8> m_buffer;
 };
 
-struct STextureAtlas : public ITextureAtlas
+struct QDemonTextureAtlas : public QDemonTextureAtlasInterface
 {
-    QSharedPointer<QDemonRenderContext> m_RenderContext;
+    QSharedPointer<QDemonRenderContext> m_renderContext;
 
-    STextureAtlas(QSharedPointer<QDemonRenderContext> inRenderContext, qint32 width,
-                  qint32 height)
-        : m_RenderContext(inRenderContext)
-        , m_Width(width)
-        , m_Height(height)
-        , m_Spacing(1)
+    QDemonTextureAtlas(QSharedPointer<QDemonRenderContext> inRenderContext, qint32 width, qint32 height)
+        : m_renderContext(inRenderContext)
+        , m_width(width)
+        , m_height(height)
+        , m_spacing(1)
     {
-        m_pBinPack = new STextureAtlasBinPackSL(inRenderContext, width, height);
+        m_binPack = new QDemonTextureAtlasBinPackSL(inRenderContext, width, height);
     }
 
-    virtual ~STextureAtlas()
+    virtual ~QDemonTextureAtlas()
     {
-        RelaseEntries();
+        relaseEntries();
 
-        if (m_pBinPack)
-            delete m_pBinPack;
+        if (m_binPack)
+            delete m_binPack;
     }
 
-    void RelaseEntries() override
+    void relaseEntries() override
     {
-        QVector<STextureAtlasEntry>::iterator it;
+        QVector<QDemonTextureAtlasEntry>::iterator it;
 
-        for (it = m_AtlasEntrys.begin(); it != m_AtlasEntrys.end(); it++) {
-            ::free(it->m_pBuffer.begin());
+        for (it = m_atlasEntrys.begin(); it != m_atlasEntrys.end(); it++) {
+            ::free(it->m_buffer.begin());
         }
 
-        m_AtlasEntrys.clear();
+        m_atlasEntrys.clear();
     }
-    qint32 GetWidth() const override { return m_Width; }
-    qint32 GetHeight() const override { return m_Height; }
+    qint32 getWidth() const override { return m_width; }
+    qint32 getHeight() const override { return m_height; }
 
-    qint32 GetAtlasEntryCount() const override { return m_AtlasEntrys.size(); }
+    qint32 getAtlasEntryCount() const override { return m_atlasEntrys.size(); }
 
-    TTextureAtlasEntryAndBuffer GetAtlasEntryByIndex(quint32 index) override
+    TTextureAtlasEntryAndBuffer getAtlasEntryByIndex(quint32 index) override
     {
-        if (index >= m_AtlasEntrys.size())
-            return TTextureAtlasEntryAndBuffer(STextureAtlasRect(), QDemonDataRef<quint8>());
+        if (index >= m_atlasEntrys.size())
+            return TTextureAtlasEntryAndBuffer(QDemonTextureAtlasRect(), QDemonDataRef<quint8>());
 
-        return TTextureAtlasEntryAndBuffer(STextureAtlasRect((qint32)m_AtlasEntrys[index].m_X,
-                                                             (qint32)m_AtlasEntrys[index].m_Y,
-                                                             (qint32)m_AtlasEntrys[index].m_Width,
-                                                             (qint32)m_AtlasEntrys[index].m_Height),
-                                           m_AtlasEntrys[index].m_pBuffer);
+        return TTextureAtlasEntryAndBuffer(QDemonTextureAtlasRect((qint32)m_atlasEntrys[index].m_x,
+                                                             (qint32)m_atlasEntrys[index].m_y,
+                                                             (qint32)m_atlasEntrys[index].m_width,
+                                                             (qint32)m_atlasEntrys[index].m_height),
+                                           m_atlasEntrys[index].m_buffer);
     }
 
-    STextureAtlasRect AddAtlasEntry(qint32 width, qint32 height, qint32 pitch,
+    QDemonTextureAtlasRect addAtlasEntry(qint32 width, qint32 height, qint32 pitch,
                                     qint32 dataWidth, QDemonConstDataRef<quint8> bufferData) override
     {
-        STextureAtlasRect rect;
+        QDemonTextureAtlasRect rect;
 
         // pitch is the number of bytes per line in bufferData
         // dataWidth is the relevant data width in bufferData. Rest is padding that can be ignored.
-        if (m_pBinPack) {
+        if (m_binPack) {
             qint32 paddedWith, paddedPitch, paddedHeight;
             // add spacing around the character
-            paddedWith = width + 2 * m_Spacing;
-            paddedPitch = dataWidth + 2 * m_Spacing;
-            paddedHeight = height + 2 * m_Spacing;
+            paddedWith = width + 2 * m_spacing;
+            paddedPitch = dataWidth + 2 * m_spacing;
+            paddedHeight = height + 2 * m_spacing;
             // first get entry in the texture atlas
-            rect = m_pBinPack->Insert(paddedWith, paddedHeight);
-            if (rect.m_Width == 0)
+            rect = m_binPack->insert(paddedWith, paddedHeight);
+            if (rect.width == 0)
                 return rect;
 
             // we align the data be to 4 byte
@@ -308,7 +300,7 @@ struct STextureAtlas : public ITextureAtlas
             if (glyphBuffer) {
                 memset(glyphBuffer, 0, paddedHeight * paddedPitch);
 
-                quint8 *pDst = glyphBuffer + paddedPitch + m_Spacing;
+                quint8 *pDst = glyphBuffer + paddedPitch + m_spacing;
                 quint8 *pSrc = const_cast<quint8 *>(bufferData.begin());
                 for (qint32 i = 0; i < height; ++i) {
                     memcpy(pDst, pSrc, dataWidth);
@@ -318,15 +310,15 @@ struct STextureAtlas : public ITextureAtlas
                 }
 
                 // add new entry
-                m_AtlasEntrys.push_back(STextureAtlasEntry(
-                                            (float)rect.m_X, (float)rect.m_Y, (float)paddedWith, (float)paddedHeight,
+                m_atlasEntrys.push_back(QDemonTextureAtlasEntry(
+                                            (float)rect.x, (float)rect.y, (float)paddedWith, (float)paddedHeight,
                                             QDemonDataRef<quint8>(glyphBuffer, paddedHeight * paddedPitch * sizeof(quint8))));
 
                 // normalize texture coordinates
-                rect.m_NormX = (float)rect.m_X / (float)m_Width;
-                rect.m_NormY = (float)rect.m_Y / (float)m_Height;
-                rect.m_NormWidth = (float)paddedWith / (float)m_Width;
-                rect.m_NormHeight = (float)paddedHeight / (float)m_Height;
+                rect.normX = (float)rect.x / (float)m_width;
+                rect.normY = (float)rect.y / (float)m_height;
+                rect.normWidth = (float)paddedWith / (float)m_width;
+                rect.normHeight = (float)paddedHeight / (float)m_height;
             }
         }
 
@@ -334,18 +326,18 @@ struct STextureAtlas : public ITextureAtlas
     }
 
 private:
-    qint32 m_Width; ///< texture atlas width
-    qint32 m_Height; ///< texture atlas height
-    qint32 m_Spacing; ///< spacing around the entry
-    QVector<STextureAtlasEntry> m_AtlasEntrys; ///< our entries in the atlas
-    STextureAtlasBinPackSL *m_pBinPack; ///< our bin packer which actually does most of the work
+    qint32 m_width; ///< texture atlas width
+    qint32 m_height; ///< texture atlas height
+    qint32 m_spacing; ///< spacing around the entry
+    QVector<QDemonTextureAtlasEntry> m_atlasEntrys; ///< our entries in the atlas
+    QDemonTextureAtlasBinPackSL *m_binPack; ///< our bin packer which actually does most of the work
 };
 
 } // namespace
 
-QSharedPointer<ITextureAtlas> ITextureAtlas::CreateTextureAtlas(QSharedPointer<QDemonRenderContext> inRenderContext, qint32 width, qint32 height)
+QSharedPointer<QDemonTextureAtlasInterface> QDemonTextureAtlasInterface::createTextureAtlas(QSharedPointer<QDemonRenderContext> inRenderContext, qint32 width, qint32 height)
 {
-    return QSharedPointer<ITextureAtlas>(new STextureAtlas(inRenderContext, width, height));
+    return QSharedPointer<QDemonTextureAtlasInterface>(new QDemonTextureAtlas(inRenderContext, width, height));
 }
 
 QT_END_NAMESPACE

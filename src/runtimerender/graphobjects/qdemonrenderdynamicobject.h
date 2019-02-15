@@ -38,68 +38,73 @@
 QT_BEGIN_NAMESPACE
 
 namespace dynamic {
-struct SPropertyDefinition;
+struct QDemonPropertyDefinition;
 }
 
 // Dynamic objects are objects that have variable number of properties during runtime.
-struct Q_DEMONRUNTIMERENDER_EXPORT SDynamicObject : public SGraphObject
+struct Q_DEMONRUNTIMERENDER_EXPORT QDemonDynamicObject : public QDemonGraphObject
 {
-    QString m_ClassName;
-    NodeFlags m_Flags;
-    quint32 m_DataSectionByteSize;
-    quint32 m_ThisObjectSize;
+    QString className;
+    QDemonNodeFlags flags;
+    quint32 dataSectionByteSize;
+    quint32 thisObjectSize;
 
-    SDynamicObject(GraphObjectTypes::Enum inType, const QString &inClassName,
-                   quint32 inDSByteSize, quint32 thisObjSize);
+    QDemonDynamicObject(QDemonGraphObjectTypes::Enum inType,
+                        const QString &inClassName,
+                        quint32 inDSByteSize,
+                        quint32 thisObjSize);
 
     quint8 *GetDataSectionBegin()
     {
         quint8 *thisObjectStart = reinterpret_cast<quint8 *>(this);
-        quint8 *retval = thisObjectStart + m_ThisObjectSize;
+        quint8 *retval = thisObjectStart + thisObjectSize;
         Q_ASSERT((reinterpret_cast<size_t>(retval) % 4 == 0));
         return retval;
     }
 
     const quint8 *GetDataSectionBegin() const
     {
-        return const_cast<SDynamicObject *>(this)->GetDataSectionBegin();
+        return const_cast<QDemonDynamicObject *>(this)->GetDataSectionBegin();
     }
 
-    quint8 *GetDataSectionEnd() { return GetDataSectionBegin() + m_DataSectionByteSize; }
+    quint8 *GetDataSectionEnd() { return GetDataSectionBegin() + dataSectionByteSize; }
 
     template <typename TDataType>
-    void SetPropertyValueT(const dynamic::SPropertyDefinition &inDefinition,
+    void SetPropertyValueT(const dynamic::QDemonPropertyDefinition &inDefinition,
                            const TDataType &inType);
     template <typename TStrType>
-    void SetStrPropertyValueT(dynamic::SPropertyDefinition &inDefinition,
-                              const char *inValue, const char *inProjectDir,
+    void SetStrPropertyValueT(dynamic::QDemonPropertyDefinition &inDefinition,
+                              const char *inValue,
+                              const char *inProjectDir,
                               TStrType &ioWorkspace);
 
-    void SetPropertyValue(const dynamic::SPropertyDefinition &inDefinition, bool inValue);
-    void SetPropertyValue(const dynamic::SPropertyDefinition &inDefinition, float inValue);
-    void SetPropertyValue(const dynamic::SPropertyDefinition &inDefinition, float inValue,
+    void SetPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition, bool inValue);
+    void SetPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition, float inValue);
+    void SetPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition,
+                          float inValue,
                           quint32 inOffset);
-    void SetPropertyValue(const dynamic::SPropertyDefinition &inDefinition,
+    void SetPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition,
                           const QVector2D &inValue);
-    void SetPropertyValue(const dynamic::SPropertyDefinition &inDefinition,
+    void SetPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition,
                           const QVector3D &inValue);
-    void SetPropertyValue(const dynamic::SPropertyDefinition &inDefinition,
+    void SetPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition,
                           const QVector4D &inValue);
-    void SetPropertyValue(const dynamic::SPropertyDefinition &inDefinition, qint32 inValue);
-    void SetPropertyValue(const dynamic::SPropertyDefinition &inDefinition,
+    void SetPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition, qint32 inValue);
+    void SetPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition,
                           const QString &inValue);
 
-    void SetPropertyValue(const dynamic::SPropertyDefinition &inDefinition,
-                          const char *inValue, const char *inProjectDir,
+    void SetPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition,
+                          const char *inValue,
+                          const char *inProjectDir,
                           QString &ioWorkspace);
 
     // Generic method used during serialization
     // to remap string and object pointers
     template <typename TRemapperType>
-    void Remap(TRemapperType &inRemapper)
+    void remap(TRemapperType &inRemapper)
     {
-        SGraphObject::Remap(inRemapper);
-        inRemapper.Remap(m_ClassName);
+        QDemonGraphObject::remap(inRemapper);
+        inRemapper.remap(className);
     }
 };
 

@@ -36,17 +36,17 @@
 #include <QtGui/QVector3D>
 
 QT_BEGIN_NAMESPACE
-struct SLayer;
-struct SPresentation;
+struct QDemonLayer;
+struct QDemonPresentation;
 typedef void *SRenderInstanceId;
 
-struct Q_DEMONRUNTIMERENDER_EXPORT SScene : public SGraphObject
+struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderScene : public QDemonGraphObject
 {
-    SPresentation *m_Presentation;
-    SLayer *m_FirstChild;
-    QVector3D m_ClearColor;
-    bool m_UseClearColor;
-    bool m_Dirty;
+    QDemonPresentation *presentation;
+    QDemonLayer *firstChild;
+    QVector3D clearColor;
+    bool useClearColor;
+    bool dirty;
 
     enum RenderClearCommand {
         ClearIsOptional = 0,
@@ -54,29 +54,33 @@ struct Q_DEMONRUNTIMERENDER_EXPORT SScene : public SGraphObject
         AlwaysClear = 2,
     };
 
-    SScene();
+    QDemonRenderScene();
 
-    void AddChild(SLayer &inLayer);
-    SLayer *GetLastChild();
+    void addChild(QDemonLayer &inLayer);
+    QDemonLayer *getLastChild();
 
     // Generic method used during serialization
     // to remap string and object pointers
     template <typename TRemapperType>
-    void Remap(TRemapperType &inRemapper)
+    void remap(TRemapperType &inRemapper)
     {
-        SGraphObject::Remap(inRemapper);
-        inRemapper.Remap(m_Presentation);
-        inRemapper.Remap(m_FirstChild);
+        QDemonGraphObject::remap(inRemapper);
+        inRemapper.remap(presentation);
+        inRemapper.remap(firstChild);
     }
     // returns true if any of the layers were dirty or if this object was dirty
-    bool PrepareForRender(const QVector2D &inViewportDimensions, IQDemonRenderContext *inContext,
+    bool prepareForRender(const QVector2D &inViewportDimensions,
+                          QDemonRenderContextInterface *inContext,
                           const SRenderInstanceId id = nullptr);
-    void Render(const QVector2D &inViewportDimensions, IQDemonRenderContext *inContext,
+    void render(const QVector2D &inViewportDimensions,
+                QDemonRenderContextInterface *inContext,
                 RenderClearCommand command = ClearIsOptional,
                 const SRenderInstanceId id = nullptr);
-    void RenderWithClear(const QVector2D &inViewportDimensions, IQDemonRenderContext *inContext,
+    void renderWithClear(const QVector2D &inViewportDimensions,
+                         QDemonRenderContextInterface *inContext,
                          RenderClearCommand inClearColorBuffer,
-                         QVector3D inclearColor, const SRenderInstanceId id = nullptr);
+                         QVector3D inclearColor,
+                         const SRenderInstanceId id = nullptr);
 };
 QT_END_NAMESPACE
 

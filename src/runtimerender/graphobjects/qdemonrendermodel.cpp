@@ -34,41 +34,41 @@
 
 QT_BEGIN_NAMESPACE
 
-SModel::SModel()
-    : SNode(GraphObjectTypes::Model)
-    , m_FirstMaterial(nullptr)
-    , m_SkeletonRoot(-1)
-    , m_TessellationMode(TessModeValues::NoTess)
-    , m_EdgeTess(1.0)
-    , m_InnerTess(1.0)
-    , m_WireframeMode(false)
+QDemonRenderModel::QDemonRenderModel()
+    : QDemonGraphNode(QDemonGraphObjectTypes::Model)
+    , firstMaterial(nullptr)
+    , skeletonRoot(-1)
+    , tessellationMode(TessModeValues::NoTess)
+    , edgeTess(1.0)
+    , innerTess(1.0)
+    , wireframeMode(false)
 {
 }
 
-void SModel::AddMaterial(SGraphObject &inMaterial)
+void QDemonRenderModel::addMaterial(QDemonGraphObject &inMaterial)
 {
-    if (m_FirstMaterial == nullptr)
-        m_FirstMaterial = &inMaterial;
+    if (firstMaterial == nullptr)
+        firstMaterial = &inMaterial;
     else {
-        SGraphObject *lastMaterial;
+        QDemonGraphObject *lastMaterial;
         // empty loop intentional
-        for (lastMaterial = m_FirstMaterial; lastMaterial && GetNextMaterialSibling(lastMaterial);
+        for (lastMaterial = firstMaterial; lastMaterial && GetNextMaterialSibling(lastMaterial);
              lastMaterial = GetNextMaterialSibling(lastMaterial)) {
         }
         SetNextMaterialSibling(*lastMaterial, &inMaterial);
     }
-    if (inMaterial.m_Type == GraphObjectTypes::DefaultMaterial)
-        static_cast<SDefaultMaterial &>(inMaterial).m_Parent = this;
+    if (inMaterial.type == QDemonGraphObjectTypes::DefaultMaterial)
+        static_cast<QDemonRenderDefaultMaterial &>(inMaterial).parent = this;
 }
 
-QDemonBounds3 SModel::GetModelBounds(QSharedPointer<IBufferManager> inManager) const
+QDemonBounds3 QDemonRenderModel::getModelBounds(QSharedPointer<QDemonBufferManagerInterface> inManager) const
 {
     QDemonBounds3 retval;
     retval.setEmpty();
-    SRenderMesh *theMesh = inManager->LoadMesh(m_MeshPath);
+    QDemonRenderMesh *theMesh = inManager->loadMesh(meshPath);
     if (theMesh) {
-        for (quint32 idx = 0, end = theMesh->m_Subsets.size(); idx < end; ++idx)
-            retval.include(theMesh->m_Subsets[idx].m_Bounds);
+        for (quint32 idx = 0, end = theMesh->subsets.size(); idx < end; ++idx)
+            retval.include(theMesh->subsets[idx].bounds);
     }
     return retval;
 }

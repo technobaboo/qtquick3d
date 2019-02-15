@@ -43,52 +43,57 @@
 
 QT_BEGIN_NAMESPACE
 
-SNode::SNode(GraphObjectTypes::Enum inGraphObjectType)
-    : SGraphObject(inGraphObjectType)
-    , m_Rotation(0, 0, 0) // Radians
-    , m_Position(0, 0, 0)
-    , m_Scale(1, 1, 1)
-    , m_Pivot(0, 0, 0)
-    , m_RotationOrder(EulOrdYXZs)
-    , m_LocalOpacity(1.0f)
-    , m_GlobalOpacity(1.0f)
-    , m_SkeletonId(-1)
-    , m_Parent(nullptr)
-    , m_NextSibling(nullptr)
-    , m_PreviousSibling(nullptr)
-    , m_FirstChild(nullptr)
-    , m_DFSIndex(0)
+INodeQueue::~INodeQueue()
 {
-    m_Flags.SetDirty(true);
-    m_Flags.SetTransformDirty(true);
-    m_Flags.SetLeftHanded(true);
-    m_Flags.SetActive(true);
-    m_Flags.SetLocallyPickable(true);
+
 }
 
-SNode::SNode(const SNode &inCloningObject)
-    : SGraphObject(inCloningObject)
-    , m_Rotation(inCloningObject.m_Rotation) // Radians
-    , m_Position(inCloningObject.m_Position)
-    , m_Scale(inCloningObject.m_Scale)
-    , m_Pivot(inCloningObject.m_Pivot)
-    , m_RotationOrder(inCloningObject.m_RotationOrder)
-    , m_LocalOpacity(inCloningObject.m_LocalOpacity)
-    , m_LocalTransform(inCloningObject.m_LocalTransform)
-    , m_GlobalTransform(inCloningObject.m_GlobalTransform)
-    , m_GlobalOpacity(inCloningObject.m_GlobalOpacity)
-    , m_SkeletonId(inCloningObject.m_SkeletonId)
-    , m_Parent(nullptr)
-    , m_NextSibling(nullptr)
-    , m_PreviousSibling(nullptr)
-    , m_FirstChild(nullptr)
-    , m_DFSIndex(0)
+QDemonGraphNode::QDemonGraphNode(QDemonGraphObjectTypes::Enum inGraphObjectType)
+    : QDemonGraphObject(inGraphObjectType)
+    , rotation(0, 0, 0) // Radians
+    , position(0, 0, 0)
+    , scale(1, 1, 1)
+    , pivot(0, 0, 0)
+    , rotationOrder(EulOrdYXZs)
+    , localOpacity(1.0f)
+    , globalOpacity(1.0f)
+    , skeletonId(-1)
+    , parent(nullptr)
+    , nextSibling(nullptr)
+    , previousSibling(nullptr)
+    , firstChild(nullptr)
+    , dfsIndex(0)
 {
-    m_Flags.SetDirty(true);
-    m_Flags.SetTransformDirty(true);
-    m_Flags.SetLeftHanded(true);
-    m_Flags.SetActive(true);
-    m_Flags.SetLocallyPickable(true);
+    flags.setDirty(true);
+    flags.setTransformDirty(true);
+    flags.setLeftHanded(true);
+    flags.setActive(true);
+    flags.setLocallyPickable(true);
+}
+
+QDemonGraphNode::QDemonGraphNode(const QDemonGraphNode &inCloningObject)
+    : QDemonGraphObject(inCloningObject)
+    , rotation(inCloningObject.rotation) // Radians
+    , position(inCloningObject.position)
+    , scale(inCloningObject.scale)
+    , pivot(inCloningObject.pivot)
+    , rotationOrder(inCloningObject.rotationOrder)
+    , localOpacity(inCloningObject.localOpacity)
+    , localTransform(inCloningObject.localTransform)
+    , globalTransform(inCloningObject.globalTransform)
+    , globalOpacity(inCloningObject.globalOpacity)
+    , skeletonId(inCloningObject.skeletonId)
+    , parent(nullptr)
+    , nextSibling(nullptr)
+    , previousSibling(nullptr)
+    , firstChild(nullptr)
+    , dfsIndex(0)
+{
+    flags.setDirty(true);
+    flags.setTransformDirty(true);
+    flags.setLeftHanded(true);
+    flags.setActive(true);
+    flags.setLocallyPickable(true);
 
     // for ( SNode* theChild = m_FirstChild; theChild != nullptr; theChild = theChild->m_NextSibling )
     //{
@@ -100,14 +105,14 @@ SNode::SNode(const SNode &inCloningObject)
 
 // Sets this object dirty and walks down the graph setting all
 // children who are not dirty to be dirty.
-void SNode::MarkDirty(NodeTransformDirtyFlag::Enum inTransformDirty)
+void QDemonGraphNode::markDirty(NodeTransformDirtyFlag::Enum inTransformDirty)
 {
-    if (m_Flags.IsTransformDirty() == false)
-        m_Flags.SetTransformDirty(inTransformDirty != NodeTransformDirtyFlag::TransformNotDirty);
-    if (m_Flags.IsDirty() == false) {
-        m_Flags.SetDirty(true);
-        for (SNode *child = m_FirstChild; child; child = child->m_NextSibling)
-            child->MarkDirty(inTransformDirty);
+    if (flags.isTransformDirty() == false)
+        flags.setTransformDirty(inTransformDirty != NodeTransformDirtyFlag::TransformNotDirty);
+    if (flags.isDirty() == false) {
+        flags.setDirty(true);
+        for (QDemonGraphNode *child = firstChild; child; child = child->nextSibling)
+            child->markDirty(inTransformDirty);
     }
 }
 
@@ -115,39 +120,39 @@ void SNode::MarkDirty(NodeTransformDirtyFlag::Enum inTransformDirty)
 // Walks up the graph ensure all parents are not dirty so they have
 // valid global transforms.
 
-bool SNode::CalculateGlobalVariables()
+bool QDemonGraphNode::calculateGlobalVariables()
 {
-    bool retval = m_Flags.IsDirty();
+    bool retval = flags.isDirty();
     if (retval) {
-        m_Flags.SetDirty(false);
-        if (m_Flags.IsTransformDirty())
-            CalculateLocalTransform();
-        m_GlobalOpacity = m_LocalOpacity;
-        if (m_Parent) {
+        flags.setDirty(false);
+        if (flags.isTransformDirty())
+            calculateLocalTransform();
+        globalOpacity = localOpacity;
+        if (parent) {
             // Layer transforms do not flow down but affect the final layer's rendered
             // representation.
-            retval = m_Parent->CalculateGlobalVariables() || retval;
-            if (m_Parent->m_Type != GraphObjectTypes::Layer) {
-                m_GlobalOpacity *= m_Parent->m_GlobalOpacity;
-                if (m_Flags.IsIgnoreParentTransform() == false)
-                    m_GlobalTransform = m_Parent->m_GlobalTransform * m_LocalTransform;
+            retval = parent->calculateGlobalVariables() || retval;
+            if (parent->type != QDemonGraphObjectTypes::Layer) {
+                globalOpacity *= parent->globalOpacity;
+                if (flags.isIgnoreParentTransform() == false)
+                    globalTransform = parent->globalTransform * localTransform;
                 else
-                    m_GlobalTransform = m_LocalTransform;
+                    globalTransform = localTransform;
             } else
-                m_GlobalTransform = m_LocalTransform;
+                globalTransform = localTransform;
 
-            m_Flags.SetGlobalActive(m_Flags.IsActive() && m_Parent->m_Flags.IsGloballyActive());
-            m_Flags.SetGloballyPickable(m_Flags.IsLocallyPickable()
-                                        || m_Parent->m_Flags.IsGloballyPickable());
+            flags.setGlobalActive(flags.isActive() && parent->flags.isGloballyActive());
+            flags.setGloballyPickable(flags.isLocallyPickable()
+                                        || parent->flags.isGloballyPickable());
         } else {
-            m_GlobalTransform = m_LocalTransform;
-            m_Flags.SetGlobalActive(m_Flags.IsActive());
-            m_Flags.SetGloballyPickable(m_Flags.IsLocallyPickable());
+            globalTransform = localTransform;
+            flags.setGlobalActive(flags.isActive());
+            flags.setGloballyPickable(flags.isLocallyPickable());
         }
     }
     // We always clear dirty in a reasonable manner but if we aren't active
     // there is no reason to tell the universe if we are dirty or not.
-    return retval && m_Flags.IsActive();
+    return retval && flags.isActive();
 }
 
 // Create some mapping of euler angles to their axis mapping.
@@ -204,7 +209,7 @@ inline EulerAngles RotationAndOrderToShoemake(QVector3D inRotation, quint32 inOr
     return retval;
 }
 
-QVector3D SNode::GetRotationVectorFromRotationMatrix(const QMatrix3x3 &inMatrix) const
+QVector3D QDemonGraphNode::getRotationVectorFromRotationMatrix(const QMatrix3x3 &inMatrix) const
 {
     float theConvertMatrixData[16] = {
         inMatrix(0, 0), inMatrix(0, 1), inMatrix(0, 2), 0.0f,
@@ -214,22 +219,22 @@ QVector3D SNode::GetRotationVectorFromRotationMatrix(const QMatrix3x3 &inMatrix)
     };
 
     QMatrix4x4 theConvertMatrix(theConvertMatrixData);
-    if (m_Flags.IsLeftHanded())
-        SNode::FlipCoordinateSystem(theConvertMatrix);
-    CEulerAngleConverter theConverter;
+    if (flags.isLeftHanded())
+        QDemonGraphNode::flipCoordinateSystem(theConvertMatrix);
+    QDemonEulerAngleConverter theConverter;
     HMatrix *theHMatrix =
             reinterpret_cast<HMatrix *>(theConvertMatrix.data());
-    EulerAngles theAngles = theConverter.Eul_FromHMatrix(*theHMatrix, m_RotationOrder);
-    return GetRotationVectorFromEulerAngles(theAngles);
+    EulerAngles theAngles = theConverter.eulerFromHMatrix(*theHMatrix, rotationOrder);
+    return getRotationVectorFromEulerAngles(theAngles);
 }
 
-QVector3D SNode::GetRotationVectorFromEulerAngles(const EulerAngles &inAngles)
+QVector3D QDemonGraphNode::getRotationVectorFromEulerAngles(const EulerAngles &inAngles)
 {
     QVector3D retval(0, 0, 0);
     int X = 0;
     int Y = 1;
     int Z = 2;
-    switch ((int)inAngles.w) {
+    switch (int(inAngles.w)) {
 #define HANDLE_EULER_ANGLE(order, xIdx, yIdx, zIdx)                                                \
     case order:                                                                                    \
     retval[xIdx] = -inAngles.x;                                                                \
@@ -249,15 +254,15 @@ QVector3D SNode::GetRotationVectorFromEulerAngles(const EulerAngles &inAngles)
     return retval;
 }
 
-void SNode::CalculateRotationMatrix(QMatrix4x4 &outMatrix) const
+void QDemonGraphNode::calculateRotationMatrix(QMatrix4x4 &outMatrix) const
 {
-    CEulerAngleConverter theConverter;
-    EulerAngles theAngles(RotationAndOrderToShoemake(m_Rotation, (int)m_RotationOrder));
+    QDemonEulerAngleConverter theConverter;
+    EulerAngles theAngles(RotationAndOrderToShoemake(rotation, int(rotationOrder)));
     HMatrix *theMatrix = reinterpret_cast<HMatrix *>(&outMatrix);
-    theConverter.Eul_ToHMatrix(theAngles, *theMatrix);
+    theConverter.eulerToHMatrix(theAngles, *theMatrix);
 }
 
-void SNode::FlipCoordinateSystem(QMatrix4x4 &inMatrix)
+void QDemonGraphNode::flipCoordinateSystem(QMatrix4x4 &inMatrix)
 {
     float *writePtr(inMatrix.data());
     // rotation conversion
@@ -270,18 +275,18 @@ void SNode::FlipCoordinateSystem(QMatrix4x4 &inMatrix)
     writePtr[3 * 4 + 2] *= -1;
 }
 
-void SNode::CalculateLocalTransform()
+void QDemonGraphNode::calculateLocalTransform()
 {
-    m_Flags.SetTransformDirty(false);
-    bool leftHanded = m_Flags.IsLeftHanded();
-    m_LocalTransform = QMatrix4x4();
-    m_GlobalTransform = m_LocalTransform;
-    float *writePtr = m_LocalTransform.data();
-    QVector3D theScaledPivot(-m_Pivot[0] * m_Scale[0], -m_Pivot[1] * m_Scale[1],
-            -m_Pivot[2] * m_Scale[2]);
-    m_LocalTransform(0, 0) = m_Scale[0];
-    m_LocalTransform(1, 1) = m_Scale[1];
-    m_LocalTransform(2, 2) = m_Scale[2];
+    flags.setTransformDirty(false);
+    bool leftHanded = flags.isLeftHanded();
+    localTransform = QMatrix4x4();
+    globalTransform = localTransform;
+    float *writePtr = localTransform.data();
+    QVector3D theScaledPivot(-pivot[0] * scale[0], -pivot[1] * scale[1],
+            -pivot[2] * scale[2]);
+    localTransform(0, 0) = scale[0];
+    localTransform(1, 1) = scale[1];
+    localTransform(2, 2) = scale[2];
 
     writePtr[12] = theScaledPivot[0];
     writePtr[13] = theScaledPivot[1];
@@ -291,49 +296,49 @@ void SNode::CalculateLocalTransform()
         writePtr[14] = -theScaledPivot[2];
 
     QMatrix4x4 theRotationTransform;
-    CalculateRotationMatrix(theRotationTransform);
+    calculateRotationMatrix(theRotationTransform);
     // may need column conversion in here somewhere.
-    m_LocalTransform = theRotationTransform * m_LocalTransform;
+    localTransform = theRotationTransform * localTransform;
 
-    writePtr[12] += m_Position[0];
-    writePtr[13] += m_Position[1];
+    writePtr[12] += position[0];
+    writePtr[13] += position[1];
     if (leftHanded)
-        writePtr[14] = writePtr[14] + m_Position[2];
+        writePtr[14] = writePtr[14] + position[2];
     else
-        writePtr[14] = writePtr[14] - m_Position[2];
+        writePtr[14] = writePtr[14] - position[2];
 
     if (leftHanded) {
-        FlipCoordinateSystem(m_LocalTransform);
+        flipCoordinateSystem(localTransform);
     }
 }
 
-void SNode::SetLocalTransformFromMatrix(QMatrix4x4 &inTransform)
+void QDemonGraphNode::setLocalTransformFromMatrix(QMatrix4x4 &inTransform)
 {
-    m_Flags.SetTransformDirty(true);
+    flags.setTransformDirty(true);
 
     // clear pivot
-    m_Pivot[0] = m_Pivot[1] = m_Pivot[2] = 0.0f;
+    pivot[0] = pivot[1] = pivot[2] = 0.0f;
 
     // set translation
-    m_Position[0] = inTransform(3, 0);
-    m_Position[1] = inTransform(3, 1);
-    m_Position[2] = inTransform(3, 2);
+    position[0] = inTransform(3, 0);
+    position[1] = inTransform(3, 1);
+    position[2] = inTransform(3, 2);
     // set scale
     const QVector3D column0(inTransform(0,0), inTransform(0,1), inTransform(0,2));
     const QVector3D column1(inTransform(1,0), inTransform(1,1), inTransform(1,2));
     const QVector3D column2(inTransform(2,0), inTransform(2,1), inTransform(2,2));
-    m_Scale[0] = vec3::magnitude(column0);
-    m_Scale[1] = vec3::magnitude(column1);
-    m_Scale[2] = vec3::magnitude(column2);
+    scale[0] = vec3::magnitude(column0);
+    scale[1] = vec3::magnitude(column1);
+    scale[2] = vec3::magnitude(column2);
     // make sure there is no zero value
-    m_Scale[0] = (m_Scale[0] == 0.0f) ? 1.0f : m_Scale[0];
-    m_Scale[1] = (m_Scale[1] == 0.0f) ? 1.0f : m_Scale[1];
-    m_Scale[2] = (m_Scale[2] == 0.0f) ? 1.0f : m_Scale[2];
+    scale[0] = (scale[0] == 0.0f) ? 1.0f : scale[0];
+    scale[1] = (scale[1] == 0.0f) ? 1.0f : scale[1];
+    scale[2] = (scale[2] == 0.0f) ? 1.0f : scale[2];
 
     // extract rotation by first dividing through scale value
-    float invScaleX = 1.0f / m_Scale[0];
-    float invScaleY = 1.0f / m_Scale[1];
-    float invScaleZ = 1.0f / m_Scale[2];
+    float invScaleX = 1.0f / scale[0];
+    float invScaleY = 1.0f / scale[1];
+    float invScaleZ = 1.0f / scale[2];
 
     inTransform(0, 0) *= invScaleX;
     inTransform(0, 1) *= invScaleX;
@@ -352,111 +357,111 @@ void SNode::SetLocalTransformFromMatrix(QMatrix4x4 &inTransform)
     };
 
     QMatrix3x3 theRotationMatrix(rotationMatrixData);
-    m_Rotation = GetRotationVectorFromRotationMatrix(theRotationMatrix);
+    rotation = getRotationVectorFromRotationMatrix(theRotationMatrix);
 }
 
-void SNode::AddChild(SNode &inChild)
+void QDemonGraphNode::addChild(QDemonGraphNode &inChild)
 {
-    if (inChild.m_Parent)
-        inChild.m_Parent->RemoveChild(inChild);
-    inChild.m_Parent = this;
-    if (m_FirstChild == nullptr) {
-        m_FirstChild = &inChild;
-        inChild.m_NextSibling = nullptr;
-        inChild.m_PreviousSibling = nullptr;
+    if (inChild.parent)
+        inChild.parent->removeChild(inChild);
+    inChild.parent = this;
+    if (firstChild == nullptr) {
+        firstChild = &inChild;
+        inChild.nextSibling = nullptr;
+        inChild.previousSibling = nullptr;
     } else {
-        SNode *lastChild = GetLastChild();
+        QDemonGraphNode *lastChild = getLastChild();
         if (lastChild) {
-            lastChild->m_NextSibling = &inChild;
-            inChild.m_PreviousSibling = lastChild;
-            inChild.m_NextSibling = nullptr;
+            lastChild->nextSibling = &inChild;
+            inChild.previousSibling = lastChild;
+            inChild.nextSibling = nullptr;
         } else {
             Q_ASSERT(false); // no last child but first child isn't null?
         }
     }
 }
 
-void SNode::RemoveChild(SNode &inChild)
+void QDemonGraphNode::removeChild(QDemonGraphNode &inChild)
 {
-    if (inChild.m_Parent != this) {
+    if (inChild.parent != this) {
         Q_ASSERT(false);
         return;
     }
-    for (SNode *child = m_FirstChild; child; child = child->m_NextSibling) {
+    for (QDemonGraphNode *child = firstChild; child; child = child->nextSibling) {
         if (child == &inChild) {
-            if (child->m_PreviousSibling)
-                child->m_PreviousSibling->m_NextSibling = child->m_NextSibling;
-            if (child->m_NextSibling)
-                child->m_NextSibling->m_PreviousSibling = child->m_PreviousSibling;
-            child->m_Parent = nullptr;
-            if (m_FirstChild == child)
-                m_FirstChild = child->m_NextSibling;
-            child->m_NextSibling = nullptr;
-            child->m_PreviousSibling = nullptr;
+            if (child->previousSibling)
+                child->previousSibling->nextSibling = child->nextSibling;
+            if (child->nextSibling)
+                child->nextSibling->previousSibling = child->previousSibling;
+            child->parent = nullptr;
+            if (firstChild == child)
+                firstChild = child->nextSibling;
+            child->nextSibling = nullptr;
+            child->previousSibling = nullptr;
             return;
         }
     }
     Q_ASSERT(false);
 }
 
-SNode *SNode::GetLastChild()
+QDemonGraphNode *QDemonGraphNode::getLastChild()
 {
-    SNode *lastChild = nullptr;
+    QDemonGraphNode *lastChild = nullptr;
     // empty loop intentional
-    for (lastChild = m_FirstChild; lastChild && lastChild->m_NextSibling;
-         lastChild = lastChild->m_NextSibling) {
+    for (lastChild = firstChild; lastChild && lastChild->nextSibling;
+         lastChild = lastChild->nextSibling) {
     }
     return lastChild;
 }
 
-void SNode::RemoveFromGraph()
+void QDemonGraphNode::removeFromGraph()
 {
-    if (m_Parent)
-        m_Parent->RemoveChild(*this);
+    if (parent)
+        parent->removeChild(*this);
 
-    m_NextSibling = nullptr;
+    nextSibling = nullptr;
 
     // Orphan all of my children.
-    SNode *nextSibling = nullptr;
-    for (SNode *child = m_FirstChild; child != nullptr; child = nextSibling) {
-        child->m_PreviousSibling = nullptr;
-        child->m_Parent = nullptr;
-        nextSibling = child->m_NextSibling;
-        child->m_NextSibling = nullptr;
+    QDemonGraphNode *nextSibling = nullptr;
+    for (QDemonGraphNode *child = firstChild; child != nullptr; child = nextSibling) {
+        child->previousSibling = nullptr;
+        child->parent = nullptr;
+        nextSibling = child->nextSibling;
+        child->nextSibling = nullptr;
     }
 }
 
-QDemonBounds3 SNode::GetBounds(QSharedPointer<IBufferManager> inManager, QSharedPointer<IPathManager> inPathManager,
-                               bool inIncludeChildren, IQDemonRenderNodeFilter *inChildFilter) const
+QDemonBounds3 QDemonGraphNode::getBounds(QSharedPointer<QDemonBufferManagerInterface> inManager, QSharedPointer<QDemonPathManagerInterface> inPathManager,
+                               bool inIncludeChildren, QDemonRenderNodeFilterInterface *inChildFilter) const
 {
     QDemonBounds3 retval;
     retval.setEmpty();
     if (inIncludeChildren)
-        retval = GetChildBounds(inManager, inPathManager, inChildFilter);
+        retval = getChildBounds(inManager, inPathManager, inChildFilter);
 
-    if (m_Type == GraphObjectTypes::Model)
-        retval.include(static_cast<const SModel *>(this)->GetModelBounds(inManager));
-    else if (m_Type == GraphObjectTypes::Text)
-        retval.include(static_cast<const SText *>(this)->GetTextBounds());
-    else if (m_Type == GraphObjectTypes::Path)
-        retval.include(inPathManager->GetBounds(*static_cast<const SPath *>(this)));
+    if (type == QDemonGraphObjectTypes::Model)
+        retval.include(static_cast<const QDemonRenderModel *>(this)->getModelBounds(inManager));
+    else if (type == QDemonGraphObjectTypes::Text)
+        retval.include(static_cast<const QDemonText *>(this)->getTextBounds());
+    else if (type == QDemonGraphObjectTypes::Path)
+        retval.include(inPathManager->getBounds(*static_cast<const QDemonPath *>(this)));
     return retval;
 }
 
-QDemonBounds3 SNode::GetChildBounds(QSharedPointer<IBufferManager> inManager, QSharedPointer<IPathManager> inPathManager,
-                                    IQDemonRenderNodeFilter *inChildFilter) const
+QDemonBounds3 QDemonGraphNode::getChildBounds(QSharedPointer<QDemonBufferManagerInterface> inManager, QSharedPointer<QDemonPathManagerInterface> inPathManager,
+                                    QDemonRenderNodeFilterInterface *inChildFilter) const
 {
     QDemonBounds3 retval;
     retval.setEmpty();
-    for (SNode *child = m_FirstChild; child != nullptr; child = child->m_NextSibling) {
-        if (inChildFilter == nullptr || inChildFilter->IncludeNode(*child)) {
+    for (QDemonGraphNode *child = firstChild; child != nullptr; child = child->nextSibling) {
+        if (inChildFilter == nullptr || inChildFilter->includeNode(*child)) {
             QDemonBounds3 childBounds;
-            if (child->m_Flags.IsTransformDirty())
-                child->CalculateLocalTransform();
-            childBounds = child->GetBounds(inManager, inPathManager);
+            if (child->flags.isTransformDirty())
+                child->calculateLocalTransform();
+            childBounds = child->getBounds(inManager, inPathManager);
             if (childBounds.isEmpty() == false) {
                 // Transform the bounds into our local space.
-                childBounds.transform(child->m_LocalTransform);
+                childBounds.transform(child->localTransform);
                 retval.include(childBounds);
             }
         }
@@ -464,27 +469,27 @@ QDemonBounds3 SNode::GetChildBounds(QSharedPointer<IBufferManager> inManager, QS
     return retval;
 }
 
-QVector3D SNode::GetGlobalPos() const
+QVector3D QDemonGraphNode::getGlobalPos() const
 {
-    return QVector3D(m_GlobalTransform(3, 0),
-                     m_GlobalTransform(3, 1),
-                     m_GlobalTransform(3, 2));
+    return QVector3D(globalTransform(3, 0),
+                     globalTransform(3, 1),
+                     globalTransform(3, 2));
 }
 
-QVector3D SNode::GetDirection() const
+QVector3D QDemonGraphNode::getDirection() const
 {
-    const float *dataPtr(m_GlobalTransform.data());
+    const float *dataPtr(globalTransform.data());
     QVector3D retval(dataPtr[8], dataPtr[9], dataPtr[10]);
     retval.normalize();
     return retval;
 }
 
-QVector3D SNode::GetScalingCorrectDirection() const
+QVector3D QDemonGraphNode::getScalingCorrectDirection() const
 {
     float theDirMatrixData[9] = {
-        m_GlobalTransform(0,0), m_GlobalTransform(0,1), m_GlobalTransform(0,2),
-        m_GlobalTransform(1,0), m_GlobalTransform(1,1), m_GlobalTransform(1,2),
-        m_GlobalTransform(2,0), m_GlobalTransform(2,1), m_GlobalTransform(2,2)
+        globalTransform(0,0), globalTransform(0,1), globalTransform(0,2),
+        globalTransform(1,0), globalTransform(1,1), globalTransform(1,2),
+        globalTransform(2,0), globalTransform(2,1), globalTransform(2,2)
     };
     QMatrix3x3 theDirMatrix(theDirMatrixData);
     theDirMatrix = mat33::getInverse(theDirMatrix).transposed();
@@ -494,28 +499,28 @@ QVector3D SNode::GetScalingCorrectDirection() const
     return retval;
 }
 
-QVector3D SNode::GetGlobalPivot() const
+QVector3D QDemonGraphNode::getGlobalPivot() const
 {
-    QVector3D retval(m_Position);
+    QVector3D retval(position);
     retval.setZ(retval.z() * -1);
 
-    if (m_Parent && m_Parent->m_Type != GraphObjectTypes::Layer) {
+    if (parent && parent->type != QDemonGraphObjectTypes::Layer) {
         const QVector4D direction(retval.x(), retval.y(), retval.z(), 1.0f);
-        const QVector4D result = m_Parent->m_GlobalTransform * direction;
+        const QVector4D result = parent->globalTransform * direction;
         return QVector3D(result.x(), result.y(), result.z());
     }
 
     return retval;
 }
 
-void SNode::CalculateMVPAndNormalMatrix(const QMatrix4x4 &inViewProjection, QMatrix4x4 &outMVP,
+void QDemonGraphNode::calculateMVPAndNormalMatrix(const QMatrix4x4 &inViewProjection, QMatrix4x4 &outMVP,
                                         QMatrix3x3 &outNormalMatrix) const
 {
-    outMVP = inViewProjection * m_GlobalTransform;
-    CalculateNormalMatrix(outNormalMatrix);
+    outMVP = inViewProjection * globalTransform;
+    calculateNormalMatrix(outNormalMatrix);
 }
 
-void SNode::GetMatrixUpper3x3(QMatrix3x3 &outDest, const QMatrix4x4 &inSrc)
+void QDemonGraphNode::getMatrixUpper3x3(QMatrix3x3 &outDest, const QMatrix4x4 &inSrc)
 {
     float matrixData[9] = {
         inSrc(0,0), inSrc(0,1), inSrc(0,2),
@@ -525,9 +530,9 @@ void SNode::GetMatrixUpper3x3(QMatrix3x3 &outDest, const QMatrix4x4 &inSrc)
     outDest = QMatrix3x3(matrixData);
 }
 
-void SNode::CalculateNormalMatrix(QMatrix3x3 &outNormalMatrix) const
+void QDemonGraphNode::calculateNormalMatrix(QMatrix3x3 &outNormalMatrix) const
 {
-    GetMatrixUpper3x3(outNormalMatrix, m_GlobalTransform);
+    getMatrixUpper3x3(outNormalMatrix, globalTransform);
     outNormalMatrix = mat33::getInverse(outNormalMatrix).transposed();
 }
 

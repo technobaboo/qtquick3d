@@ -45,140 +45,139 @@ struct AdvancedBlendModes
         ColorDodge
     };
 };
-struct SLayerRenderData : public SLayerRenderPreparationData
+struct QDemonLayerRenderData : public QDemonLayerRenderPreparationData
 {
 
     // Layers can be rendered offscreen for many reasons; effects, progressive aa,
     // or just because a flag forces it.  If they are rendered offscreen we can then
     // cache the result so we don't render the layer again if it isn't dirty.
-    CResourceTexture2D m_LayerTexture;
-    CResourceTexture2D m_TemporalAATexture;
+    QDemonResourceTexture2D m_layerTexture;
+    QDemonResourceTexture2D m_temporalAATexture;
     // Sometimes we need to render our depth buffer to a depth texture.
-    CResourceTexture2D m_LayerDepthTexture;
-    CResourceTexture2D m_LayerPrepassDepthTexture;
-    CResourceTexture2D m_LayerWidgetTexture;
-    CResourceTexture2D m_LayerSsaoTexture;
+    QDemonResourceTexture2D m_layerDepthTexture;
+    QDemonResourceTexture2D m_layerPrepassDepthTexture;
+    QDemonResourceTexture2D m_layerWidgetTexture;
+    QDemonResourceTexture2D m_layerSsaoTexture;
     // if we render multisampled we need resolve buffers
-    CResourceTexture2D m_LayerMultisampleTexture;
-    CResourceTexture2D m_LayerMultisamplePrepassDepthTexture;
-    CResourceTexture2D m_LayerMultisampleWidgetTexture;
+    QDemonResourceTexture2D m_layerMultisampleTexture;
+    QDemonResourceTexture2D m_layerMultisamplePrepassDepthTexture;
+    QDemonResourceTexture2D m_layerMultisampleWidgetTexture;
     // the texture contains the render result inclusive post effects
-    QSharedPointer<QDemonRenderTexture2D> m_LayerCachedTexture;
+    QSharedPointer<QDemonRenderTexture2D> m_layerCachedTexture;
 
-    QSharedPointer<QDemonRenderTexture2D> m_AdvancedBlendDrawTexture;
-    QSharedPointer<QDemonRenderTexture2D> m_AdvancedBlendBlendTexture;
-    QSharedPointer<QDemonRenderFrameBuffer> m_AdvancedModeDrawFB;
-    QSharedPointer<QDemonRenderFrameBuffer> m_AdvancedModeBlendFB;
+    QSharedPointer<QDemonRenderTexture2D> m_advancedBlendDrawTexture;
+    QSharedPointer<QDemonRenderTexture2D> m_advancedBlendBlendTexture;
+    QSharedPointer<QDemonRenderFrameBuffer> m_advancedModeDrawFB;
+    QSharedPointer<QDemonRenderFrameBuffer> m_advancedModeBlendFB;
 
     // True if this layer was rendered offscreen.
     // If this object has no value then this layer wasn't rendered at all.
-    SOffscreenRendererEnvironment m_LastOffscreenRenderEnvironment;
+    QDemonOffscreenRendererEnvironment m_lastOffscreenRenderEnvironment;
 
     // GPU profiler per layer
-    QSharedPointer<IRenderProfiler> m_LayerProfilerGpu;
+    QSharedPointer<QDemonRenderProfilerInterface> m_layerProfilerGpu;
 
-    SCamera m_SceneCamera;
-    QVector2D m_SceneDimensions;
+    QDemonRenderCamera m_sceneCamera;
+    QVector2D m_sceneDimensions;
 
     // ProgressiveAA algorithm details.
-    quint32 m_ProgressiveAAPassIndex;
+    quint32 m_progressiveAAPassIndex;
     // Increments every frame regardless to provide appropriate jittering
-    quint32 m_TemporalAAPassIndex;
+    quint32 m_temporalAAPassIndex;
     // Ensures we don't stop on an in-between frame; we will run two frames after the dirty flag
     // is clear.
-    quint32 m_NonDirtyTemporalAAPassIndex;
-    float m_TextScale;
+    quint32 m_nonDirtyTemporalAAPassIndex;
+    float m_textScale;
 
-    QDemonOption<QVector3D> m_BoundingRectColor;
-    QDemonRenderTextureFormats::Enum m_DepthBufferFormat;
+    QDemonOption<QVector3D> m_boundingRectColor;
+    QDemonRenderTextureFormats::Enum m_depthBufferFormat;
 
     QSize m_previousDimensions;
 
-    SLayerRenderData(SLayer &inLayer, QSharedPointer<QDemonRendererImpl> inRenderer);
+    QDemonLayerRenderData(QDemonLayer &inLayer, QSharedPointer<QDemonRendererImpl> inRenderer);
 
-    virtual ~SLayerRenderData();
+    virtual ~QDemonLayerRenderData() override;
 
-    void PrepareForRender();
+    void prepareForRender();
 
     // Internal Call
-    void PrepareForRender(const QSize &inViewportDimensions) override;
+    void prepareForRender(const QSize &inViewportDimensions) override;
 
-    QDemonRenderTextureFormats::Enum GetDepthBufferFormat();
-    QDemonRenderFrameBufferAttachments::Enum
-    GetFramebufferDepthAttachmentFormat(QDemonRenderTextureFormats::Enum depthFormat);
+    QDemonRenderTextureFormats::Enum getDepthBufferFormat();
+    QDemonRenderFrameBufferAttachments::Enum getFramebufferDepthAttachmentFormat(QDemonRenderTextureFormats::Enum depthFormat);
 
     // Render this layer assuming viewport and RT are setup.  Just renders exactly this item
     // no effects.
-    void RenderDepthPass(bool inEnableTransparentDepthWrite = false);
-    void RenderAoPass();
-    void RenderFakeDepthMapPass(QDemonRenderTexture2D *theDepthTex, QDemonRenderTextureCube *theDepthCube);
-    void RenderShadowMapPass(CResourceFrameBuffer *theFB);
-    void RenderShadowCubeBlurPass(CResourceFrameBuffer *theFB,
+    void renderDepthPass(bool inEnableTransparentDepthWrite = false);
+    void renderAoPass();
+    void renderFakeDepthMapPass(QDemonRenderTexture2D *theDepthTex, QDemonRenderTextureCube *theDepthCube);
+    void renderShadowMapPass(QDemonResourceFrameBuffer *theFB);
+    void renderShadowCubeBlurPass(QDemonResourceFrameBuffer *theFB,
                                   QSharedPointer<QDemonRenderTextureCube> target0,
                                   QSharedPointer<QDemonRenderTextureCube> target1,
                                   float filterSz,
                                   float clipFar);
-    void RenderShadowMapBlurPass(CResourceFrameBuffer *theFB,
+    void renderShadowMapBlurPass(QDemonResourceFrameBuffer *theFB,
                                  QSharedPointer<QDemonRenderTexture2D> target0,
                                  QSharedPointer<QDemonRenderTexture2D> target1,
                                  float filterSz,
                                  float clipFar);
 
-    void Render(CResourceFrameBuffer *theFB = nullptr);
-    void ResetForFrame() override;
+    void render(QDemonResourceFrameBuffer *theFB = nullptr);
+    void resetForFrame() override;
 
-    void CreateGpuProfiler();
-    void StartProfiling(QString &nameID, bool sync);
-    void EndProfiling(QString &nameID);
-    void StartProfiling(const char *nameID, bool sync);
-    void EndProfiling(const char *nameID);
-    void AddVertexCount(quint32 count);
+    void createGpuProfiler();
+    void startProfiling(QString &nameID, bool sync);
+    void endProfiling(QString &nameID);
+    void startProfiling(const char *nameID, bool sync);
+    void endProfiling(const char *nameID);
+    void addVertexCount(quint32 count);
 
-    void RenderToViewport();
+    void renderToViewport();
     // Render this layer's data to a texture.  Required if we have any effects,
     // prog AA, or if forced.
-    void RenderToTexture();
+    void renderToTexture();
 
-    void ApplyLayerPostEffects();
+    void applyLayerPostEffects();
 
-    void RunnableRenderToViewport(QSharedPointer<QDemonRenderFrameBuffer> theFB);
+    void runnableRenderToViewport(QSharedPointer<QDemonRenderFrameBuffer> theFB);
 
-    void AddLayerRenderStep();
+    void addLayerRenderStep();
 
-    void RenderRenderWidgets();
+    void renderRenderWidgets();
 
 #ifdef ADVANCED_BLEND_SW_FALLBACK
-    void BlendAdvancedEquationSwFallback(QSharedPointer<QDemonRenderTexture2D> drawTexture,
-                                         QSharedPointer<QDemonRenderTexture2D> m_LayerTexture,
+    void blendAdvancedEquationSwFallback(QSharedPointer<QDemonRenderTexture2D> drawTexture,
+                                         QSharedPointer<QDemonRenderTexture2D> m_layerTexture,
                                          AdvancedBlendModes::Enum blendMode);
 #endif
     // test method to render this layer to a given view projection without running the entire
     // layer setup system.  This assumes the client has setup the viewport, scissor, and render
     // target
     // the way they want them.
-    void PrepareAndRender(const QMatrix4x4 &inViewProjection);
+    void prepareAndRender(const QMatrix4x4 &inViewProjection);
 
-    SOffscreenRendererEnvironment CreateOffscreenRenderEnvironment() override;
-    QSharedPointer<IRenderTask> CreateRenderToTextureRunnable() override;
+    QDemonOffscreenRendererEnvironment createOffscreenRenderEnvironment() override;
+    QSharedPointer<QDemonRenderTask> createRenderToTextureRunnable() override;
 
 protected:
     // Used for both the normal passes and the depth pass.
     // When doing the depth pass, we disable blending completely because it does not really make
     // sense
     // to write blend equations into
-    void RunRenderPass(TRenderRenderableFunction renderFn,
+    void runRenderPass(TRenderRenderableFunction renderFn,
                        bool inEnableBlending,
                        bool inEnableDepthWrite,
                        bool inEnableTransparentDepthWrite,
                        quint32 indexLight,
-                       const SCamera &inCamera,
-                       CResourceFrameBuffer *theFB = nullptr);
+                       const QDemonRenderCamera &inCamera,
+                       QDemonResourceFrameBuffer *theFB = nullptr);
 #ifdef ADVANCED_BLEND_SW_FALLBACK
     //Functions for advanced blending mode fallback
-    void SetupDrawFB(bool depthEnabled);
-    void BlendAdvancedToFB(DefaultMaterialBlendMode::Enum blendMode,
+    void setupDrawFB(bool depthEnabled);
+    void blendAdvancedToFB(DefaultMaterialBlendMode::Enum blendMode,
                            bool depthEnabled,
-                           CResourceFrameBuffer *theFB);
+                           QDemonResourceFrameBuffer *theFB);
 #endif
 };
 QT_END_NAMESPACE

@@ -55,14 +55,14 @@ public:
 
     void initialize() override
     {
-        m_context = QDemonRenderContext::CreateGL(format());
+        m_context = QDemonRenderContext::createGl(format());
         m_inputAssembler = QDemonRenderExampleTools::createBox(m_context, m_vertexBuffer, m_indexBuffer);
         m_shader = QDemonRenderExampleTools::createSimpleShader(m_context);
         if (m_shader) {
-            m_context->SetActiveShader(m_shader);
+            m_context->setActiveShader(m_shader);
         }
-        m_context->SetDepthTestEnabled(true);
-        m_context->SetDepthWriteEnabled(true);
+        m_context->setDepthTestEnabled(true);
+        m_context->setDepthWriteEnabled(true);
         QDemonGl2DemoMatrixIdentity(model);
         QDemonGl2DemoMatrixIdentity(frus);
         QDemonGl2DemoMatrixFrustum(frus, -1, 1, -1, 1, 1, 10);
@@ -80,17 +80,17 @@ public:
         QDemonGl2DemoMatrixMultiply_4x4_3x3(mvp, rot);
 
         if (m_viewportDirty) {
-            m_context->SetViewport(QDemonRenderRect(0, 0, this->width(), this->height()));
+            m_context->setViewport(QDemonRenderRect(0, 0, this->width(), this->height()));
             m_viewportDirty = false;
         }
 
         QDemonConstDataRef<quint8> instance((quint8 *)mvp, 16 * sizeof(float));
-        m_context->Clear(
+        m_context->clear(
             QDemonRenderClearFlags(QDemonRenderClearValues::Color | QDemonRenderClearValues::Depth));
-        m_context->SetInputAssembler(m_inputAssembler);
+        m_context->setInputAssembler(m_inputAssembler);
 
-        m_shader->SetPropertyValue("mat_mvp", *reinterpret_cast<QMatrix4x4 *>(mvp));
-        m_context->Draw(QDemonRenderDrawMode::Triangles, m_indexBuffer->GetNumIndices(), 0);
+        m_shader->setPropertyValue("mat_mvp", *reinterpret_cast<QMatrix4x4 *>(mvp));
+        m_context->draw(QDemonRenderDrawMode::Triangles, m_indexBuffer->getNumIndices(), 0);
     }
 private:
     QSharedPointer<QDemonRenderContext> m_context;

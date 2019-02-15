@@ -47,13 +47,13 @@ QT_BEGIN_NAMESPACE
 /**
      *	Constructor
      */
-CEulerAngleConverter::CEulerAngleConverter() { m_OrderInfoBuffer[0] = '\0'; }
+QDemonEulerAngleConverter::QDemonEulerAngleConverter() { m_orderInfoBuffer[0] = '\0'; }
 
 //==============================================================================
 /**
      *	Destructor
      */
-CEulerAngleConverter::~CEulerAngleConverter() {}
+QDemonEulerAngleConverter::~QDemonEulerAngleConverter() {}
 
 //==============================================================================
 /**
@@ -66,7 +66,7 @@ CEulerAngleConverter::~CEulerAngleConverter() {}
      *						0 to 23 is valid
      *	@return the euler angle
      */
-EulerAngles CEulerAngleConverter::Eul_(float theI, float theJ, float theH, int theOrder)
+EulerAngles QDemonEulerAngleConverter::euler(float theI, float theJ, float theH, int theOrder)
 {
     EulerAngles theEulerAngle;
     theEulerAngle.x = theI;
@@ -82,7 +82,7 @@ EulerAngles CEulerAngleConverter::Eul_(float theI, float theJ, float theH, int t
      *	@param theEulerAngle		incoming angle( radians )
      *	@return the Quaternion
      */
-Quat CEulerAngleConverter::Eul_ToQuat(EulerAngles theEulerAngle)
+Quat QDemonEulerAngleConverter::eulerToQuat(EulerAngles theEulerAngle)
 {
     Quat theQuaternion;
     double a[3], ti, tj, th, ci, cj, ch, si, sj, sh, cc, cs, sc, ss;
@@ -141,7 +141,7 @@ Quat CEulerAngleConverter::Eul_ToQuat(EulerAngles theEulerAngle)
      *	@param theEulerAngle		incoming angle
      *	@param theMatrix			outgoing matrix
      */
-void CEulerAngleConverter::Eul_ToHMatrix(EulerAngles theEulerAngle, HMatrix theMatrix)
+void QDemonEulerAngleConverter::eulerToHMatrix(EulerAngles theEulerAngle, HMatrix theMatrix)
 {
     double ti, tj, th, ci, cj, ch, si, sj, sh, cc, cs, sc, ss;
     int i, j, k, h, n, s, f;
@@ -214,7 +214,7 @@ void CEulerAngleConverter::Eul_ToHMatrix(EulerAngles theEulerAngle, HMatrix theM
      *	@param theOrder				0-23, use EulOrd**** to generate this value
      *	@return a set of angles in radians!!!!
      */
-EulerAngles CEulerAngleConverter::Eul_FromHMatrix(HMatrix theMatrix, int theOrder)
+EulerAngles QDemonEulerAngleConverter::eulerFromHMatrix(HMatrix theMatrix, int theOrder)
 {
     EulerAngles theEulerAngle;
     int i, j, k, h, n, s, f;
@@ -266,7 +266,7 @@ EulerAngles CEulerAngleConverter::Eul_FromHMatrix(HMatrix theMatrix, int theOrde
      *	@param theOrder				0-23, use EulOrd**** to generate this value
      *	@return the generated angles ( radians )
      */
-EulerAngles CEulerAngleConverter::Eul_FromQuat(Quat theQuaternion, int theOrder)
+EulerAngles QDemonEulerAngleConverter::eulerFromQuat(Quat theQuaternion, int theOrder)
 {
     HMatrix theMatrix;
     double Nq = theQuaternion.x * theQuaternion.x + theQuaternion.y * theQuaternion.y
@@ -302,14 +302,14 @@ EulerAngles CEulerAngleConverter::Eul_FromQuat(Quat theQuaternion, int theOrder)
     theMatrix[Z][W] = 0.0;
     theMatrix[W][W] = 1.0;
 
-    return Eul_FromHMatrix(theMatrix, theOrder);
+    return eulerFromHMatrix(theMatrix, theOrder);
 }
 
 //==============================================================================
 /**
      *	Dump the Order information
      */
-const char *CEulerAngleConverter::DumpOrderInfo()
+const char *QDemonEulerAngleConverter::dumpOrderInfo()
 {
     long theCount = 0;
     long theOrder[24];
@@ -368,12 +368,12 @@ const char *CEulerAngleConverter::DumpOrderInfo()
     theOrder[theCount++] = EulOrdZYZr;
 
     char theSubBuf[256];
-    m_OrderInfoBuffer[0] = '\0';
+    m_orderInfoBuffer[0] = '\0';
     for (long theIndex = 0; theIndex < 24; ++theIndex) {
         ::sprintf(theSubBuf, " %16s - %ld\n ", theOrderStr[theIndex], theOrder[theIndex]);
-        ::strcat(m_OrderInfoBuffer, theSubBuf);
+        ::strcat(m_orderInfoBuffer, theSubBuf);
     }
 
-    return m_OrderInfoBuffer;
+    return m_orderInfoBuffer;
 }
 QT_END_NAMESPACE

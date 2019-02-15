@@ -33,7 +33,7 @@
 QT_BEGIN_NAMESPACE
 
 // http://acius2.blogspot.com/2007/11/calculating-next-power-of-2.html
-quint32 ITextRenderer::NextPowerOf2(quint32 input)
+quint32 QDemonTextRendererInterface::nextPowerOf2(quint32 input)
 {
     // Algorithm doesn't work for 0 or std::numeric_limits<quint32>::max()
     Q_ASSERT(input > 0 && input < std::numeric_limits<quint32>::max());
@@ -47,7 +47,7 @@ quint32 ITextRenderer::NextPowerOf2(quint32 input)
     return input;
 }
 
-quint32 ITextRenderer::NextMultipleOf4(quint32 inValue)
+quint32 QDemonTextRendererInterface::nextMultipleOf4(quint32 inValue)
 {
     quint32 remainder(inValue % 4);
     if (remainder != 0)
@@ -56,34 +56,36 @@ quint32 ITextRenderer::NextMultipleOf4(quint32 inValue)
     return inValue;
 }
 
-STextTextureDetails ITextRenderer::UploadData(QDemonDataRef<quint8> inTextureData,
-                                              QDemonRenderTexture2D &inTexture, quint32 inDataWidth,
-                                              quint32 inDataHeight, quint32 inTextWidth,
-                                              quint32 inTextHeight,
-                                              QDemonRenderTextureFormats::Enum inFormat,
-                                              bool inFlipYAxis)
+QDemonTextTextureDetails QDemonTextRendererInterface::uploadData(QDemonDataRef<quint8> inTextureData,
+                                                                 QDemonRenderTexture2D &inTexture,
+                                                                 quint32 inDataWidth,
+                                                                 quint32 inDataHeight,
+                                                                 quint32 inTextWidth,
+                                                                 quint32 inTextHeight,
+                                                                 QDemonRenderTextureFormats::Enum inFormat,
+                                                                 bool inFlipYAxis)
 {
     if (inTextWidth == 0 || inTextHeight == 0) {
         quint32 black[] = { 0, 0, 0, 0 };
-        inTexture.SetTextureData(toU8DataRef(black, 4), 0, 2, 2, QDemonRenderTextureFormats::RGBA8);
-        return STextTextureDetails(2, 2, false, QVector2D(1.0f, 1.0f));
+        inTexture.setTextureData(toU8DataRef(black, 4), 0, 2, 2, QDemonRenderTextureFormats::RGBA8);
+        return QDemonTextTextureDetails(2, 2, false, QVector2D(1.0f, 1.0f));
     }
-    Q_ASSERT(NextMultipleOf4(inDataWidth) == inDataWidth);
-    quint32 theNecessaryHeight = NextMultipleOf4(inTextHeight);
+    Q_ASSERT(nextMultipleOf4(inDataWidth) == inDataWidth);
+    quint32 theNecessaryHeight = nextMultipleOf4(inTextHeight);
     quint32 dataStride = inDataWidth * QDemonRenderTextureFormats::getSizeofFormat(inFormat);
     if (inTextureData.size() < dataStride * inDataHeight) {
         Q_ASSERT(false);
-        return STextTextureDetails();
+        return QDemonTextTextureDetails();
     }
 
-    STextureDetails theTextureDetails = inTexture.GetTextureDetails();
+    QDemonTextureDetails theTextureDetails = inTexture.getTextureDetails();
     quint32 theUploadSize = theNecessaryHeight * dataStride;
 
     QDemonDataRef<quint8> theUploadData = QDemonDataRef<quint8>(inTextureData.begin(), theUploadSize);
-    inTexture.SetTextureData(theUploadData, 0, inDataWidth, theNecessaryHeight, inFormat);
-    inTexture.SetMagFilter(QDemonRenderTextureMagnifyingOp::Linear);
-    inTexture.SetMinFilter(QDemonRenderTextureMinifyingOp::Linear);
-    return STextTextureDetails(inTextWidth, inTextHeight, inFlipYAxis, QVector2D(1.0f, 1.0f));
+    inTexture.setTextureData(theUploadData, 0, inDataWidth, theNecessaryHeight, inFormat);
+    inTexture.setMagFilter(QDemonRenderTextureMagnifyingOp::Linear);
+    inTexture.setMinFilter(QDemonRenderTextureMinifyingOp::Linear);
+    return QDemonTextTextureDetails(inTextWidth, inTextHeight, inFlipYAxis, QVector2D(1.0f, 1.0f));
 }
 
 QT_END_NAMESPACE

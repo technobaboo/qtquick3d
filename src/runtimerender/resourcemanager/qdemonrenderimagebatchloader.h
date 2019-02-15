@@ -53,10 +53,10 @@ public:
 typedef quint32 TImageBatchId;
 
 
-class IInputStreamFactory;
-class IBufferManager;
-class IThreadPool;
-class IPerfTimer;
+class QDemonInputStreamFactoryInterface;
+class QDemonBufferManagerInterface;
+class QDemonAbstractThreadPool;
+class QDemonPerfTimerInterface;
 class IImageBatchLoader
 {
 protected:
@@ -68,25 +68,25 @@ public:
     // source paths
     // until said path is loaded.
     // An optional listener can be passed in to get callbacks about the batch.
-    virtual TImageBatchId LoadImageBatch(QDemonConstDataRef<QString> inSourcePaths,
+    virtual TImageBatchId loadImageBatch(QDemonConstDataRef<QString> inSourcePaths,
                                          QString inImageTillLoaded,
                                          IImageLoadListener *inListener,
                                          QDemonRenderContextType type) = 0;
     // Blocks if any of the images in the batch are in flight
-    virtual void CancelImageBatchLoading(TImageBatchId inBatchId) = 0;
+    virtual void cancelImageBatchLoading(TImageBatchId inBatchId) = 0;
     // Blocks if the image is currently in-flight
-    virtual void CancelImageLoading(QString inSourcePath) = 0;
+    virtual void cancelImageLoading(QString inSourcePath) = 0;
     // Block until every image in the batch is loaded.
-    virtual void BlockUntilLoaded(TImageBatchId inId) = 0;
+    virtual void blockUntilLoaded(TImageBatchId inId) = 0;
 
     // These are called by the render context, users don't need to call this.
-    virtual void BeginFrame() = 0;
-    virtual void EndFrame() = 0;
+    virtual void beginFrame() = 0;
+    virtual void endFrame() = 0;
 
-    static QSharedPointer<IImageBatchLoader> CreateBatchLoader(QSharedPointer<IInputStreamFactory> inFactory,
-                                                               QSharedPointer<IBufferManager> inBufferManager,
-                                                               QSharedPointer<IThreadPool> inThreadPool,
-                                                               QSharedPointer<IPerfTimer> inTimer);
+    static QSharedPointer<IImageBatchLoader> createBatchLoader(QSharedPointer<QDemonInputStreamFactoryInterface> inFactory,
+                                                               QSharedPointer<QDemonBufferManagerInterface> inBufferManager,
+                                                               QSharedPointer<QDemonAbstractThreadPool> inThreadPool,
+                                                               QSharedPointer<QDemonPerfTimerInterface> inTimer);
 };
 QT_END_NAMESPACE
 

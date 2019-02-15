@@ -63,14 +63,14 @@ public:
          */
     QDemonRenderBackend::QDemonRenderBackendAttribLayoutObject GetAttribLayoutHandle() const
     {
-        return m_AttribLayoutHandle;
+        return m_attribLayoutHandle;
     }
 
 private:
-    QSharedPointer<QDemonRenderContextImpl> m_Context; ///< pointer to context
-    QSharedPointer<QDemonRenderBackend> m_Backend; ///< pointer to backend
+    QSharedPointer<QDemonRenderContextImpl> m_context; ///< pointer to context
+    QSharedPointer<QDemonRenderBackend> m_backend; ///< pointer to backend
 
-    QDemonRenderBackend::QDemonRenderBackendAttribLayoutObject m_AttribLayoutHandle; ///< opaque backend handle
+    QDemonRenderBackend::QDemonRenderBackendAttribLayoutObject m_attribLayoutHandle; ///< opaque backend handle
 };
 
 QT_END_NAMESPACE

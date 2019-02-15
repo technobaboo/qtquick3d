@@ -33,25 +33,25 @@
 #include <QtDemonRuntimeRender/qdemonrendertext.h>
 
 QT_BEGIN_NAMESPACE
-class ITextRenderer;
+class QDemonTextRendererInterface;
 class QDemonRenderContext;
 
-typedef QPair<STextTextureAtlasDetails, QSharedPointer<QDemonRenderTexture2D>>
+typedef QPair<QDemonTextTextureAtlasDetails, QSharedPointer<QDemonRenderTexture2D>>
 TTextTextureAtlasDetailsAndTexture;
-typedef QPair<SRenderTextureAtlasDetails, QSharedPointer<QDemonRenderTexture2D>>
+typedef QPair<QDemonRenderTextureAtlasDetails, QSharedPointer<QDemonRenderTexture2D>>
 TTextRenderAtlasDetailsAndTexture;
 
-class ITextTextureAtlas
+class QDemonTextTextureAtlasInterface
 {
 protected:
-    virtual ~ITextTextureAtlas() {}
+    virtual ~QDemonTextTextureAtlasInterface();
 public:
-    virtual TTextRenderAtlasDetailsAndTexture RenderText(const STextRenderInfo &inText) = 0;
-    virtual bool IsInitialized() = 0;
-    virtual TTextTextureAtlasDetailsAndTexture PrepareTextureAtlas() = 0;
+    virtual TTextRenderAtlasDetailsAndTexture renderText(const QDemonTextRenderInfo &inText) = 0;
+    virtual bool isInitialized() = 0;
+    virtual TTextTextureAtlasDetailsAndTexture prepareTextureAtlas() = 0;
 
-    static QSharedPointer<ITextTextureAtlas> CreateTextureAtlas(QSharedPointer<ITextRenderer> inTextRenderer,
-                                                                QSharedPointer<QDemonRenderContext> inRenderContext);
+    static QSharedPointer<QDemonTextTextureAtlasInterface> createTextureAtlas(QSharedPointer<QDemonTextRendererInterface> inTextRenderer,
+                                                                              QSharedPointer<QDemonRenderContext> inRenderContext);
 };
 QT_END_NAMESPACE
 #endif

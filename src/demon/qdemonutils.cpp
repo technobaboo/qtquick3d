@@ -267,7 +267,7 @@ qint64 IOStream::positionHelper(const QIODevice &device, qint64 offset, IOStream
 }
 
 
-QString CFileTools::NormalizePathForQtUsage(const QString &path)
+QString CFileTools::normalizePathForQtUsage(const QString &path)
 {
     // path can be a file path or a qrc URL string.
 
@@ -408,7 +408,7 @@ inline uint StrLen(const char *inType)
 
 }
 // ### Fix to Normalize Path
-void CFileTools::CombineBaseAndRelative(const char *inBase, const char *inRelative, QString &outString)
+void CFileTools::combineBaseAndRelative(const char *inBase, const char *inRelative, QString &outString)
 {
     if (IsAbsolute(inRelative, StrLen(inRelative))) {
         outString = QString::fromLocal8Bit(nonNull(inRelative));
@@ -431,9 +431,9 @@ void CFileTools::CombineBaseAndRelative(const char *inBase, const char *inRelati
     }
 }
 
-void CFileTools::CombineBaseAndRelative(const QString &inBase, const QString &inRelative, QString &outString)
+void CFileTools::combineBaseAndRelative(const QString &inBase, const QString &inRelative, QString &outString)
 {
-    CombineBaseAndRelative(inBase.toLocal8Bit().constData(), inRelative.toLocal8Bit().constData(), outString);
+    combineBaseAndRelative(inBase.toLocal8Bit().constData(), inRelative.toLocal8Bit().constData(), outString);
 }
 
 QT_END_NAMESPACE

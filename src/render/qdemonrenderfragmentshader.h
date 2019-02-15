@@ -61,21 +61,21 @@ public:
          *
          * @return True if shader is valid.
          */
-    bool IsValid() override { return (m_ShaderHandle != nullptr); }
+    bool isValid() override { return (m_shaderHandle != nullptr); }
 
     /**
          * @brief get the backend object handle
          *
          * @return the backend object handle.
          */
-    virtual QDemonRenderBackend::QDemonRenderBackendFragmentShaderObject GetShaderHandle()
+    virtual QDemonRenderBackend::QDemonRenderBackendFragmentShaderObject getShaderHandle()
     {
-        return m_ShaderHandle;
+        return m_shaderHandle;
     }
 
 private:
     QDemonRenderBackend::QDemonRenderBackendFragmentShaderObject
-    m_ShaderHandle; ///< opaque backend handle
+    m_shaderHandle; ///< opaque backend handle
 };
 
 QT_END_NAMESPACE

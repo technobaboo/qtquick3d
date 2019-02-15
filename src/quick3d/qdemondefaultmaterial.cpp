@@ -407,7 +407,7 @@ void QDemonDefaultMaterial::setVertexColors(bool vertexColors)
     emit vertexColorsChanged(m_vertexColors);
 }
 
-SGraphObject *QDemonDefaultMaterial::updateSpatialNode(SGraphObject *node)
+QDemonGraphObject *QDemonDefaultMaterial::updateSpatialNode(QDemonGraphObject *node)
 {
     if (!node)
         node = new SDefaultMaterial();

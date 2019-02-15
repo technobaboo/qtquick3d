@@ -46,27 +46,27 @@ public:
                                  QDemonRenderTextureFormats::Enum inDestFormat);
     virtual ~QDemonRenderPrefilterTexture();
 
-    virtual void Build(void *inTextureData, qint32 inTextureDataSize, QDemonRenderTextureFormats::Enum inFormat) = 0;
+    virtual void build(void *inTextureData, qint32 inTextureDataSize, QDemonRenderTextureFormats::Enum inFormat) = 0;
 
-    static QSharedPointer<QDemonRenderPrefilterTexture> Create(QSharedPointer<QDemonRenderContext> inQDemonRenderContext,
+    static QSharedPointer<QDemonRenderPrefilterTexture> create(QSharedPointer<QDemonRenderContext> inQDemonRenderContext,
                                                                qint32 inWidth,
                                                                qint32 inHeight,
                                                                QSharedPointer<QDemonRenderTexture2D> inTexture,
                                                                QDemonRenderTextureFormats::Enum inDestFormat);
 
 protected:
-    QSharedPointer<QDemonRenderTexture2D> m_Texture2D;
-    QDemonRenderTextureFormats::Enum m_InternalFormat;
-    QDemonRenderTextureFormats::Enum m_DestinationFormat;
+    QSharedPointer<QDemonRenderTexture2D> m_texture2D;
+    QDemonRenderTextureFormats::Enum m_internalFormat;
+    QDemonRenderTextureFormats::Enum m_destinationFormat;
 
-    qint32 m_Width;
-    qint32 m_Height;
-    qint32 m_MaxMipMapLevel;
-    qint32 m_SizeOfFormat;
-    qint32 m_SizeOfInternalFormat;
-    qint32 m_InternalNoOfComponent;
-    qint32 m_NoOfComponent;
-    QSharedPointer<QDemonRenderContext> m_QDemonRenderContext;
+    qint32 m_width;
+    qint32 m_height;
+    qint32 m_maxMipMapLevel;
+    qint32 m_sizeOfFormat;
+    qint32 m_sizeOfInternalFormat;
+    qint32 m_internalNoOfComponent;
+    qint32 m_noOfComponent;
+    QSharedPointer<QDemonRenderContext> m_renderContext;
 };
 
 class QDemonRenderPrefilterTextureCPU : public QDemonRenderPrefilterTexture
@@ -78,9 +78,9 @@ public:
                                     QSharedPointer<QDemonRenderTexture2D> inTexture,
                                     QDemonRenderTextureFormats::Enum inDestFormat);
 
-    void Build(void *inTextureData, qint32 inTextureDataSize, QDemonRenderTextureFormats::Enum inFormat) override;
+    void build(void *inTextureData, qint32 inTextureDataSize, QDemonRenderTextureFormats::Enum inFormat) override;
 
-    STextureData CreateBsdfMipLevel(STextureData &inCurMipLevel, STextureData &inPrevMipLevel, qint32 width, qint32 height);
+    QDemonTextureData createBsdfMipLevel(QDemonTextureData &inCurMipLevel, QDemonTextureData &inPrevMipLevel, qint32 width, qint32 height);
 
     int wrapMod(int a, int base);
     void getWrappedCoords(int &sX, int &sY, int width, int height);
@@ -96,16 +96,16 @@ public:
                                         QDemonRenderTextureFormats::Enum inDestFormat);
     ~QDemonRenderPrefilterTextureCompute() override;
 
-    void Build(void *inTextureData, qint32 inTextureDataSize, QDemonRenderTextureFormats::Enum inFormat) override;
+    void build(void *inTextureData, qint32 inTextureDataSize, QDemonRenderTextureFormats::Enum inFormat) override;
 
 private:
-    void CreateLevel0Tex(void *inTextureData, qint32 inTextureDataSize, QDemonRenderTextureFormats::Enum inFormat);
+    void createLevel0Tex(void *inTextureData, qint32 inTextureDataSize, QDemonRenderTextureFormats::Enum inFormat);
 
-    QSharedPointer<QDemonRenderShaderProgram> m_BSDFProgram;
-    QSharedPointer<QDemonRenderShaderProgram> m_UploadProgram_RGBA8;
-    QSharedPointer<QDemonRenderShaderProgram> m_UploadProgram_RGB8;
-    QSharedPointer<QDemonRenderTexture2D> m_Level0Tex;
-    bool m_TextureCreated;
+    QSharedPointer<QDemonRenderShaderProgram> m_bsdfProgram;
+    QSharedPointer<QDemonRenderShaderProgram> m_uploadProgram_RGBA8;
+    QSharedPointer<QDemonRenderShaderProgram> m_uploadProgram_RGB8;
+    QSharedPointer<QDemonRenderTexture2D> m_level0Tex;
+    bool m_textureCreated;
 
     void createComputeProgram(QSharedPointer<QDemonRenderContext> context);
     QSharedPointer<QDemonRenderShaderProgram> getOrCreateUploadComputeProgram(QSharedPointer<QDemonRenderContext> context, QDemonRenderTextureFormats::Enum inFormat);

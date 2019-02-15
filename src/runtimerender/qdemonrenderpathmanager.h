@@ -41,81 +41,72 @@
 
 QT_BEGIN_NAMESPACE
 
-struct SLayerGlobalRenderProperties;
-class IPathManager;
+struct QDemonLayerGlobalRenderProperties;
+class QDemonPathManagerInterface;
 
-struct SPathAnchorPoint
+struct QDemonPathAnchorPoint
 {
-    QVector2D m_Position;
-    float m_IncomingAngle;
-    float m_OutgoingAngle;
-    float m_IncomingDistance;
-    float m_OutgoingDistance;
-    SPathAnchorPoint() {}
-    SPathAnchorPoint(QVector2D inPos, float inAngle, float outAngle, float inDis, float outDis)
-        : m_Position(inPos)
-        , m_IncomingAngle(inAngle)
-        , m_OutgoingAngle(outAngle)
-        , m_IncomingDistance(inDis)
-        , m_OutgoingDistance(outDis)
-    {
-    }
+    QVector2D position;
+    float incomingAngle;
+    float outgoingAngle;
+    float incomingDistance;
+    float outgoingDistance;
 };
 
-class Q_DEMONRUNTIMERENDER_EXPORT IPathManagerCore
+class Q_DEMONRUNTIMERENDER_EXPORT QDemonPathManagerCoreInterface
 {
 public:
     // returns the path buffer id
     //!! Note this call is made from multiple threads simultaneously during binary load.
     //!! - see UICRenderGraphObjectSerializer.cpp
-    virtual void
-    SetPathSubPathData(const SPathSubPath &inPathSubPath,
-                       QDemonConstDataRef<SPathAnchorPoint> inPathSubPathAnchorPoints) = 0;
+    virtual void setPathSubPathData(const QDemonPathSubPath &inPathSubPath,
+                                    QDemonConstDataRef<QDemonPathAnchorPoint> inPathSubPathAnchorPoints) = 0;
 
-    virtual ~IPathManagerCore();
-    virtual QDemonDataRef<SPathAnchorPoint>
-    GetPathSubPathBuffer(const SPathSubPath &inPathSubPath) = 0;
+    virtual ~QDemonPathManagerCoreInterface();
+    virtual QDemonDataRef<QDemonPathAnchorPoint>
+    getPathSubPathBuffer(const QDemonPathSubPath &inPathSubPath) = 0;
     // Marks the PathSubPath anchor points as dirty.  This will mean rebuilding any PathSubPath
     // context required to render the PathSubPath.
-    virtual QDemonDataRef<SPathAnchorPoint>
-    ResizePathSubPathBuffer(const SPathSubPath &inPathSubPath, quint32 inNumAnchors) = 0;
-    virtual QDemonBounds3 GetBounds(const SPath &inPath) = 0;
+    virtual QDemonDataRef<QDemonPathAnchorPoint> resizePathSubPathBuffer(const QDemonPathSubPath &inPathSubPath,
+                                                                         quint32 inNumAnchors) = 0;
+    virtual QDemonBounds3 getBounds(const QDemonPath &inPath) = 0;
 
     // Helper functions used in various locations
     // Angles here are in degrees because that is how they are represented in the data.
-    static QVector2D GetControlPointFromAngleDistance(QVector2D inPosition, float inAngle,
+    static QVector2D getControlPointFromAngleDistance(QVector2D inPosition,
+                                                      float inAngle,
                                                       float inDistance);
 
     // Returns angle in x, distance in y.
-    static QVector2D GetAngleDistanceFromControlPoint(QVector2D inPosition, QVector2D inControlPoint);
+    static QVector2D getAngleDistanceFromControlPoint(QVector2D inPosition, QVector2D inControlPoint);
 
-    virtual QSharedPointer<IPathManager> OnRenderSystemInitialize(IQDemonRenderContext *context) = 0;
+    virtual QSharedPointer<QDemonPathManagerInterface> onRenderSystemInitialize(QDemonRenderContextInterface *context) = 0;
 
-    static QSharedPointer<IPathManagerCore> CreatePathManagerCore(IQDemonRenderContextCore * inContext);
+    static QSharedPointer<QDemonPathManagerCoreInterface> createPathManagerCore(QDemonRenderContextCoreInterface * inContext);
 };
 
-struct SPathRenderContext; // UICRenderPathRenderContext.h
+struct QDemonPathRenderContext; // UICRenderPathRenderContext.h
 
-class Q_DEMONRUNTIMERENDER_EXPORT IPathManager : public IPathManagerCore
+class Q_DEMONRUNTIMERENDER_EXPORT QDemonPathManagerInterface : public QDemonPathManagerCoreInterface
 {
 public:
     // The path segments are next expected to change after this call; changes will be ignored.
-    virtual bool PrepareForRender(const SPath &inPath) = 0;
+    virtual bool prepareForRender(const QDemonPath &inPath) = 0;
 
-    virtual void RenderDepthPrepass(SPathRenderContext &inRenderContext,
-                                    SLayerGlobalRenderProperties inRenderProperties,
+    virtual void renderDepthPrepass(QDemonPathRenderContext &inRenderContext,
+                                    QDemonLayerGlobalRenderProperties inRenderProperties,
                                     TShaderFeatureSet inFeatureSet) = 0;
 
-    virtual void RenderShadowMapPass(SPathRenderContext &inRenderContext,
-                                     SLayerGlobalRenderProperties inRenderProperties,
+    virtual void renderShadowMapPass(QDemonPathRenderContext &inRenderContext,
+                                     QDemonLayerGlobalRenderProperties inRenderProperties,
                                      TShaderFeatureSet inFeatureSet) = 0;
 
-    virtual void RenderCubeFaceShadowPass(SPathRenderContext &inRenderContext,
-                                          SLayerGlobalRenderProperties inRenderProperties,
+    virtual void renderCubeFaceShadowPass(QDemonPathRenderContext &inRenderContext,
+                                          QDemonLayerGlobalRenderProperties inRenderProperties,
                                           TShaderFeatureSet inFeatureSet) = 0;
 
-    virtual void RenderPath(SPathRenderContext &inRenderContext,
-                            SLayerGlobalRenderProperties inRenderProperties,
+    virtual void renderPath(QDemonPathRenderContext &inRenderContext,
+                            QDemonLayerGlobalRenderProperties inRenderProperties,
                             TShaderFeatureSet inFeatureSet) = 0;
 };
 QT_END_NAMESPACE

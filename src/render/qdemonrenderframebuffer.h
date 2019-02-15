@@ -43,100 +43,82 @@ class QDemonRenderTextureCube;
 
 class QDemonRenderTextureOrRenderBuffer
 {
-    QSharedPointer<QDemonRenderTexture2D> m_Texture2D;
-    QSharedPointer<QDemonRenderTexture2DArray> m_Texture2DArray;
-    QSharedPointer<QDemonRenderTextureCube> m_TextureCube;
-    QSharedPointer<QDemonRenderRenderBuffer> m_RenderBuffer;
+    QSharedPointer<QDemonRenderTexture2D> m_texture2D;
+    QSharedPointer<QDemonRenderTexture2DArray> m_texture2DArray;
+    QSharedPointer<QDemonRenderTextureCube> m_textureCube;
+    QSharedPointer<QDemonRenderRenderBuffer> m_renderBuffer;
 
 public:
     QDemonRenderTextureOrRenderBuffer(QSharedPointer<QDemonRenderTexture2D> texture)
-        : m_Texture2D(texture)
-        , m_Texture2DArray(nullptr)
-        , m_TextureCube(nullptr)
-        , m_RenderBuffer(nullptr)
+        : m_texture2D(texture)
     {
     }
     QDemonRenderTextureOrRenderBuffer(QSharedPointer<QDemonRenderRenderBuffer> render)
-        : m_Texture2D(nullptr)
-        , m_Texture2DArray(nullptr)
-        , m_TextureCube(nullptr)
-        , m_RenderBuffer(render)
+        : m_renderBuffer(render)
     {
     }
     QDemonRenderTextureOrRenderBuffer(QSharedPointer<QDemonRenderTexture2DArray> textureArray)
-        : m_Texture2D(nullptr)
-        , m_Texture2DArray(textureArray)
-        , m_TextureCube(nullptr)
-        , m_RenderBuffer(nullptr)
+        : m_texture2DArray(textureArray)
     {
     }
     QDemonRenderTextureOrRenderBuffer(QSharedPointer<QDemonRenderTextureCube> textureCube)
-        : m_Texture2D(nullptr)
-        , m_Texture2DArray(nullptr)
-        , m_TextureCube(textureCube)
-        , m_RenderBuffer(nullptr)
+        : m_textureCube(textureCube)
     {
     }
-    QDemonRenderTextureOrRenderBuffer()
-        : m_Texture2D(nullptr)
-        , m_Texture2DArray(nullptr)
-        , m_TextureCube(nullptr)
-        , m_RenderBuffer(nullptr)
-    {
-    }
+    QDemonRenderTextureOrRenderBuffer() = default;
     QDemonRenderTextureOrRenderBuffer(const QDemonRenderTextureOrRenderBuffer &other)
-        : m_Texture2D(other.m_Texture2D)
-        , m_Texture2DArray(other.m_Texture2DArray)
-        , m_TextureCube(other.m_TextureCube)
-        , m_RenderBuffer(other.m_RenderBuffer)
+        : m_texture2D(other.m_texture2D)
+        , m_texture2DArray(other.m_texture2DArray)
+        , m_textureCube(other.m_textureCube)
+        , m_renderBuffer(other.m_renderBuffer)
     {
     }
     QDemonRenderTextureOrRenderBuffer &operator=(const QDemonRenderTextureOrRenderBuffer &other)
     {
         if (this != &other) {
-            m_Texture2D = QSharedPointer<QDemonRenderTexture2D>(other.m_Texture2D);
-            m_Texture2DArray = QSharedPointer<QDemonRenderTexture2DArray>(other.m_Texture2DArray);
-            m_RenderBuffer = QSharedPointer<QDemonRenderRenderBuffer>(other.m_RenderBuffer);
-            m_TextureCube = QSharedPointer<QDemonRenderTextureCube>(other.m_TextureCube);
+            m_texture2D = QSharedPointer<QDemonRenderTexture2D>(other.m_texture2D);
+            m_texture2DArray = QSharedPointer<QDemonRenderTexture2DArray>(other.m_texture2DArray);
+            m_renderBuffer = QSharedPointer<QDemonRenderRenderBuffer>(other.m_renderBuffer);
+            m_textureCube = QSharedPointer<QDemonRenderTextureCube>(other.m_textureCube);
         }
         return *this;
     }
 
-    bool HasTexture2D() const { return m_Texture2D != nullptr; }
-    bool HasTexture2DArray() const { return m_Texture2DArray != nullptr; }
-    bool HasTextureCube() const { return m_TextureCube != nullptr; }
-    bool HasRenderBuffer() const { return m_RenderBuffer != nullptr; }
+    bool hasTexture2D() const { return m_texture2D != nullptr; }
+    bool hasTexture2DArray() const { return m_texture2DArray != nullptr; }
+    bool hasTextureCube() const { return m_textureCube != nullptr; }
+    bool hasRenderBuffer() const { return m_renderBuffer != nullptr; }
 
-    QSharedPointer<QDemonRenderTexture2D> GetTexture2D() const
+    QSharedPointer<QDemonRenderTexture2D> getTexture2D() const
     {
-        Q_ASSERT(HasTexture2D());
-        return m_Texture2D;
+        Q_ASSERT(hasTexture2D());
+        return m_texture2D;
     }
-    QSharedPointer<QDemonRenderTexture2DArray> GetTexture2DArray() const
+    QSharedPointer<QDemonRenderTexture2DArray> getTexture2DArray() const
     {
-        Q_ASSERT(HasTexture2DArray());
-        return m_Texture2DArray;
+        Q_ASSERT(hasTexture2DArray());
+        return m_texture2DArray;
     }
-    QSharedPointer<QDemonRenderTextureCube> GetTextureCube() const
+    QSharedPointer<QDemonRenderTextureCube> getTextureCube() const
     {
-        Q_ASSERT(HasTextureCube());
-        return m_TextureCube;
+        Q_ASSERT(hasTextureCube());
+        return m_textureCube;
     }
-    QSharedPointer<QDemonRenderRenderBuffer> GetRenderBuffer() const
+    QSharedPointer<QDemonRenderRenderBuffer> getRenderBuffer() const
     {
-        Q_ASSERT(HasRenderBuffer());
-        return m_RenderBuffer;
+        Q_ASSERT(hasRenderBuffer());
+        return m_renderBuffer;
     }
 };
 
 class QDemonRenderFrameBuffer : public QDemonRenderImplemented, public QEnableSharedFromThis<QDemonRenderFrameBuffer>
 {
 private:
-    QSharedPointer<QDemonRenderContextImpl> m_Context; ///< pointer to context
-    QSharedPointer<QDemonRenderBackend> m_Backend; ///< pointer to backend
+    QSharedPointer<QDemonRenderContextImpl> m_context; ///< pointer to context
+    QSharedPointer<QDemonRenderBackend> m_backend; ///< pointer to backend
 
-    QDemonRenderTextureOrRenderBuffer m_Attachments[QDemonRenderFrameBufferAttachments::LastAttachment]; ///< attachments array
-    QDemonRenderBackend::QDemonRenderBackendRenderTargetObject m_BufferHandle; ///< opaque backend handle
+    QDemonRenderTextureOrRenderBuffer m_attachments[QDemonRenderFrameBufferAttachments::LastAttachment]; ///< attachments array
+    QDemonRenderBackend::QDemonRenderBackendRenderTargetObject m_bufferHandle; ///< opaque backend handle
 
 public:
     /**
@@ -158,8 +140,7 @@ public:
          *
          * @return buffer format
          */
-    virtual QDemonRenderTextureOrRenderBuffer
-    GetAttachment(QDemonRenderFrameBufferAttachments::Enum attachment);
+    virtual QDemonRenderTextureOrRenderBuffer getAttachment(QDemonRenderFrameBufferAttachments::Enum attachment);
 
     /**
          * @brief Attach a render or texture buffer to a render target
@@ -171,10 +152,9 @@ public:
          *
          * @return no return
          */
-    virtual void
-    Attach(QDemonRenderFrameBufferAttachments::Enum attachment,
-           QDemonRenderTextureOrRenderBuffer buffer,
-           QDemonRenderTextureTargetType::Enum target = QDemonRenderTextureTargetType::Texture2D);
+    virtual void attach(QDemonRenderFrameBufferAttachments::Enum attachment,
+                        QDemonRenderTextureOrRenderBuffer buffer,
+                        QDemonRenderTextureTargetType::Enum target = QDemonRenderTextureTargetType::Texture2D);
 
     /**
          * @brief Attach a particular layer of the texture 2D array to a render target
@@ -189,7 +169,7 @@ public:
          *
          * @return no return
          */
-    virtual void AttachLayer(QDemonRenderFrameBufferAttachments::Enum attachment,
+    virtual void attachLayer(QDemonRenderFrameBufferAttachments::Enum attachment,
                              QDemonRenderTextureOrRenderBuffer buffer, qint32 layer,
                              qint32 level = 0);
 
@@ -206,7 +186,7 @@ public:
          *
          * @return no return
          */
-    virtual void AttachFace(QDemonRenderFrameBufferAttachments::Enum attachment,
+    virtual void attachFace(QDemonRenderFrameBufferAttachments::Enum attachment,
                             QDemonRenderTextureOrRenderBuffer buffer,
                             QDemonRenderTextureCubeFaces::Enum face);
 
@@ -216,29 +196,29 @@ public:
          *
          * @return true if complete
          */
-    virtual bool IsComplete();
+    virtual bool isComplete();
 
     /**
          * @brief query if framebuffer has any attachment
          *
          * @return true if any attachment
          */
-    virtual bool HasAnyAttachment() { return (m_AttachmentBits != 0); }
+    virtual bool hasAnyAttachment() { return (m_attachmentBits != 0); }
 
     /**
          * @brief get the backend object handle
          *
          * @return the backend object handle.
          */
-    virtual QDemonRenderBackend::QDemonRenderBackendRenderTargetObject GetFrameBuffertHandle()
+    virtual QDemonRenderBackend::QDemonRenderBackendRenderTargetObject getFrameBuffertHandle()
     {
-        return m_BufferHandle;
+        return m_bufferHandle;
     }
 
     // this will be obsolete
-    const void *GetImplementationHandle() const override
+    const void *getImplementationHandle() const override
     {
-        return reinterpret_cast<const void *>(m_BufferHandle);
+        return reinterpret_cast<const void *>(m_bufferHandle);
     }
 
     /**
@@ -248,7 +228,7 @@ public:
          *
          * @return a pointer to framebuffer object.
          */
-    static QSharedPointer<QDemonRenderFrameBuffer> Create(QSharedPointer<QDemonRenderContextImpl> context);
+    static QSharedPointer<QDemonRenderFrameBuffer> create(QSharedPointer<QDemonRenderContextImpl> context);
 
 private:
     /**
@@ -258,7 +238,7 @@ private:
          */
     QDemonRenderTextureTargetType::Enum releaseAttachment(QDemonRenderFrameBufferAttachments::Enum idx);
 
-    quint32 m_AttachmentBits; ///< holds flags for current attached buffers
+    quint32 m_attachmentBits; ///< holds flags for current attached buffers
 };
 
 QT_END_NAMESPACE

@@ -34,90 +34,90 @@
 
 QT_BEGIN_NAMESPACE
 
-SImage::SImage()
-    : SGraphObject(GraphObjectTypes::Image)
-    , m_LastFrameOffscreenRenderer(nullptr)
-    , m_Parent(nullptr)
-    , m_Scale(1, 1)
-    , m_Pivot(0, 0)
-    , m_Rotation(0)
-    , m_Position(0, 0)
-    , m_MappingMode(ImageMappingModes::Normal)
-    , m_HorizontalTilingMode(QDemonRenderTextureCoordOp::ClampToEdge)
-    , m_VerticalTilingMode(QDemonRenderTextureCoordOp::ClampToEdge)
+QDemonRenderImage::QDemonRenderImage()
+    : QDemonGraphObject(QDemonGraphObjectTypes::Image)
+    , m_lastFrameOffscreenRenderer(nullptr)
+    , m_parent(nullptr)
+    , m_scale(1, 1)
+    , m_pivot(0, 0)
+    , m_rotation(0)
+    , m_position(0, 0)
+    , m_mappingMode(ImageMappingModes::Normal)
+    , m_horizontalTilingMode(QDemonRenderTextureCoordOp::ClampToEdge)
+    , m_verticalTilingMode(QDemonRenderTextureCoordOp::ClampToEdge)
 {
-    m_Flags.SetActive(true);
-    m_Flags.SetDirty(true);
-    m_Flags.SetTransformDirty(true);
+    m_flags.setActive(true);
+    m_flags.setDirty(true);
+    m_flags.setTransformDirty(true);
 }
 
-static void HandleOffscreenResult(SImage &theImage, SImageTextureData &newImage,
-                                  SOffscreenRenderResult &theResult, bool &replaceTexture,
+static void HandleOffscreenResult(QDemonRenderImage &theImage, QDemonRenderImageTextureData &newImage,
+                                  QDemonOffscreenRenderResult &theResult, bool &replaceTexture,
                                   bool &wasDirty)
 {
-    newImage.m_Texture = theResult.m_Texture;
-    newImage.m_TextureFlags.SetHasTransparency(theResult.m_HasTransparency);
-    newImage.m_TextureFlags.SetPreMultiplied(true);
-    wasDirty = wasDirty || theResult.m_HasChangedSinceLastFrame;
-    theImage.m_LastFrameOffscreenRenderer = theResult.m_Renderer;
+    newImage.m_texture = theResult.texture;
+    newImage.m_textureFlags.setHasTransparency(theResult.hasTransparency);
+    newImage.m_textureFlags.setPreMultiplied(true);
+    wasDirty = wasDirty || theResult.hasChangedSinceLastFrame;
+    theImage.m_lastFrameOffscreenRenderer = theResult.renderer;
     replaceTexture = true;
 }
 
-bool SImage::ClearDirty(IBufferManager &inBufferManager, IOffscreenRenderManager &inRenderManager, bool forIbl)
+bool QDemonRenderImage::clearDirty(QDemonBufferManagerInterface &inBufferManager, QDemonOffscreenRenderManagerInterface &inRenderManager, bool forIbl)
 {
 
-    bool wasDirty = m_Flags.IsDirty();
-    m_Flags.SetDirty(false);
-    SImageTextureData newImage;
+    bool wasDirty = m_flags.isDirty();
+    m_flags.setDirty(false);
+    QDemonRenderImageTextureData newImage;
     bool replaceTexture(false);
-    if (newImage.m_Texture == nullptr) {
-        if (!m_OffscreenRendererId.isEmpty()) {
-            SOffscreenRenderResult theResult =
-                inRenderManager.GetRenderedItem(m_OffscreenRendererId);
+    if (newImage.m_texture == nullptr) {
+        if (!m_offscreenRendererId.isEmpty()) {
+            QDemonOffscreenRenderResult theResult =
+                inRenderManager.getRenderedItem(m_offscreenRendererId);
             HandleOffscreenResult(*this, newImage, theResult, replaceTexture, wasDirty);
         }
     }
 
-    if (newImage.m_Texture == nullptr) {
-        m_LastFrameOffscreenRenderer = nullptr;
-        newImage = inBufferManager.LoadRenderImage(m_ImagePath, false, forIbl);
-        replaceTexture = newImage.m_Texture != m_TextureData.m_Texture;
+    if (newImage.m_texture == nullptr) {
+        m_lastFrameOffscreenRenderer = nullptr;
+        newImage = inBufferManager.loadRenderImage(m_imagePath, false, forIbl);
+        replaceTexture = newImage.m_texture != m_textureData.m_texture;
     }
 
     if (replaceTexture) {
         wasDirty = true;
-        m_TextureData = newImage;
+        m_textureData = newImage;
     }
 
-    if (m_Flags.IsTransformDirty()) {
+    if (m_flags.isTransformDirty()) {
         wasDirty = true;
-        CalculateTextureTransform();
+        calculateTextureTransform();
     }
     return wasDirty;
 }
 
-void SImage::CalculateTextureTransform()
+void QDemonRenderImage::calculateTextureTransform()
 {
-    m_Flags.SetTransformDirty(false);
+    m_flags.setTransformDirty(false);
 
-    m_TextureTransform = QMatrix4x4();
+    m_textureTransform = QMatrix4x4();
 
     QMatrix4x4 translation;
     QMatrix4x4 rotation;
     QMatrix4x4 scale;
 
-    translation(3, 0) = m_Position.x();
-    translation(3, 1) = m_Position.y();
-    scale(0, 0) = m_Scale.x();
-    scale(1, 1) = m_Scale.y();
-    rotation.rotate(m_Rotation, QVector3D(0, 0, 1));
+    translation(3, 0) = m_position.x();
+    translation(3, 1) = m_position.y();
+    scale(0, 0) = m_scale.x();
+    scale(1, 1) = m_scale.y();
+    rotation.rotate(m_rotation, QVector3D(0, 0, 1));
 
     // Setup the pivot.
-    m_TextureTransform(3, 0) = m_Pivot.x();
-    m_TextureTransform(3, 1) = m_Pivot.y();
-    m_TextureTransform = m_TextureTransform * rotation;
-    m_TextureTransform = m_TextureTransform * scale;
-    m_TextureTransform = m_TextureTransform * translation;
+    m_textureTransform(3, 0) = m_pivot.x();
+    m_textureTransform(3, 1) = m_pivot.y();
+    m_textureTransform = m_textureTransform * rotation;
+    m_textureTransform = m_textureTransform * scale;
+    m_textureTransform = m_textureTransform * translation;
 }
 
 QT_END_NAMESPACE

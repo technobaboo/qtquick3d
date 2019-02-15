@@ -43,9 +43,9 @@ class QDemonRenderBackend;
 class QDemonRenderQueryBase
 {
 protected:
-    QSharedPointer<QDemonRenderContextImpl> m_Context; ///< pointer to context
-    QSharedPointer<QDemonRenderBackend> m_Backend; ///< pointer to backend
-    QDemonRenderBackend::QDemonRenderBackendQueryObject m_QueryHandle; ///< opaque backend handle
+    QSharedPointer<QDemonRenderContextImpl> m_context; ///< pointer to context
+    QSharedPointer<QDemonRenderBackend> m_backend; ///< pointer to backend
+    QDemonRenderBackend::QDemonRenderBackendQueryObject m_queryHandle; ///< opaque backend handle
 
 public:
     /**
@@ -65,21 +65,21 @@ public:
          *
          * @return Return query type
          */
-    virtual QDemonRenderQueryType::Enum GetQueryType() const = 0;
+    virtual QDemonRenderQueryType::Enum getQueryType() const = 0;
 
     /**
          * @brief begin a query
          *
          * @return no return.
          */
-    virtual void Begin() = 0;
+    virtual void begin() = 0;
 
     /**
          * @brief end a query
          *
          * @return no return.
          */
-    virtual void End() = 0;
+    virtual void end() = 0;
 
     /**
          * @brief Get the result of a query
@@ -88,16 +88,16 @@ public:
          *
          * @return no return.
          */
-    virtual void GetResult(quint32 *params) = 0;
+    virtual void getResult(quint32 *params) = 0;
 
     /**
          * @brief get the backend object handle
          *
          * @return the backend object handle.
          */
-    virtual QDemonRenderBackend::QDemonRenderBackendQueryObject GetQuerytHandle() const
+    virtual QDemonRenderBackend::QDemonRenderBackendQueryObject getQuerytHandle() const
     {
-        return m_QueryHandle;
+        return m_queryHandle;
     }
 };
 

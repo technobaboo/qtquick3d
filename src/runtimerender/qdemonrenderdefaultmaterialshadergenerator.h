@@ -38,23 +38,23 @@
 QT_BEGIN_NAMESPACE
 
 class QDemonRenderShadowMap;
-struct SShaderGeneratorGeneratedShader;
-struct SRenderableImage;
+struct QDemonShaderGeneratorGeneratedShader;
+struct QDemonRenderableImage;
 
-class Q_DEMONRUNTIMERENDER_EXPORT IDefaultMaterialVertexPipeline : public IShaderStageGenerator
+class Q_DEMONRUNTIMERENDER_EXPORT QDemonDefaultMaterialVertexPipelineInterface : public QDemonShaderStageGeneratorInterface
 {
 protected:
-    virtual ~IDefaultMaterialVertexPipeline() {}
+    virtual ~QDemonDefaultMaterialVertexPipelineInterface();
 public:
     // Responsible for beginning all vertex and fragment generation (void main() { etc).
-    virtual void BeginVertexGeneration(quint32 displacementImageIdx, SRenderableImage *displacementImage) = 0;
+    virtual void beginVertexGeneration(quint32 displacementImageIdx, QDemonRenderableImage *displacementImage) = 0;
     // The fragment shader expects a floating point constant, object_opacity to be defined
     // post this method.
-    virtual void BeginFragmentGeneration() = 0;
+    virtual void beginFragmentGeneration() = 0;
     // Output variables may be mangled in some circumstances so the shader generation system
     // needs an abstraction
     // mechanism around this.
-    virtual void AssignOutput(const QString &inVarName, const QString &inVarValueExpr) = 0;
+    virtual void assignOutput(const QString &inVarName, const QString &inVarValueExpr) = 0;
 
     /**
          * @brief Generates UV coordinates in shader code
@@ -63,67 +63,67 @@ public:
          *
          * @return no return
          */
-    virtual void GenerateUVCoords(quint32 inUVSet = 0) = 0;
+    virtual void generateUVCoords(quint32 inUVSet = 0) = 0;
 
-    virtual void GenerateEnvMapReflection() = 0;
-    virtual void GenerateViewVector() = 0;
+    virtual void generateEnvMapReflection() = 0;
+    virtual void generateViewVector() = 0;
 
     // fragment shader expects varying vertex normal
     // lighting in vertex pipeline expects world_normal
-    virtual void GenerateWorldNormal() = 0; // world_normal in both vert and frag shader
-    virtual void GenerateObjectNormal() = 0; // object_normal in both vert and frag shader
-    virtual void GenerateWorldPosition() = 0; // model_world_position in both vert and frag shader
-    virtual void GenerateVarTangentAndBinormal() = 0;
-    virtual void GenerateVertexColor() = 0;
+    virtual void generateWorldNormal() = 0; // world_normal in both vert and frag shader
+    virtual void generateObjectNormal() = 0; // object_normal in both vert and frag shader
+    virtual void generateWorldPosition() = 0; // model_world_position in both vert and frag shader
+    virtual void generateVarTangentAndBinormal() = 0;
+    virtual void generateVertexColor() = 0;
 
-    virtual bool HasActiveWireframe() = 0; // varEdgeDistance is a valid entity
+    virtual bool hasActiveWireframe() = 0; // varEdgeDistance is a valid entity
 
     // responsible for closing all vertex and fragment generation
-    virtual void EndVertexGeneration() = 0;
-    virtual void EndFragmentGeneration() = 0;
+    virtual void endVertexGeneration() = 0;
+    virtual void endFragmentGeneration() = 0;
 };
 
-class Q_DEMONRUNTIMERENDER_EXPORT IDefaultMaterialShaderGenerator : public IMaterialShaderGenerator
+class Q_DEMONRUNTIMERENDER_EXPORT QDemonDefaultMaterialShaderGeneratorInterface : public QDemonMaterialShaderGeneratorInterface
 {
 public:
-    virtual ~IDefaultMaterialShaderGenerator() override {}
-    virtual void AddDisplacementImageUniforms(IShaderStageGenerator &inGenerator,
+    virtual ~QDemonDefaultMaterialShaderGeneratorInterface() override {}
+    virtual void addDisplacementImageUniforms(QDemonShaderStageGeneratorInterface &inGenerator,
                                               quint32 displacementImageIdx,
-                                              SRenderableImage *displacementImage) = 0;
-    SImageVariableNames GetImageVariableNames(quint32 inIdx) override = 0;
-    void GenerateImageUVCoordinates(IShaderStageGenerator &inVertexPipeline,
+                                              QDemonRenderableImage *displacementImage) = 0;
+    ImageVariableNames getImageVariableNames(quint32 inIdx) override = 0;
+    void generateImageUVCoordinates(QDemonShaderStageGeneratorInterface &inVertexPipeline,
                                     quint32 idx,
                                     quint32 uvSet,
-                                    SRenderableImage &image) override = 0;
+                                    QDemonRenderableImage &image) override = 0;
     // Transforms attr_pos, attr_norm, and attr_uv0.
-    virtual void AddDisplacementMappingForDepthPass(IShaderStageGenerator &inShader) = 0;
+    virtual void addDisplacementMappingForDepthPass(QDemonShaderStageGeneratorInterface &inShader) = 0;
 
     // inPipelineName needs to be unique else the shader cache will just return shaders from
     // different pipelines.
-    QSharedPointer<QDemonRenderShaderProgram> GenerateShader(const SGraphObject &inMaterial,
-                                                             SShaderDefaultMaterialKey inShaderDescription,
-                                                             IShaderStageGenerator &inVertexPipeline,
+    QSharedPointer<QDemonRenderShaderProgram> generateShader(const QDemonGraphObject &inMaterial,
+                                                             QDemonShaderDefaultMaterialKey inShaderDescription,
+                                                             QDemonShaderStageGeneratorInterface &inVertexPipeline,
                                                              TShaderFeatureSet inFeatureSet,
-                                                             const QVector<SLight *> &inLights,
-                                                             SRenderableImage *inFirstImage,
+                                                             const QVector<QDemonRenderLight *> &inLights,
+                                                             QDemonRenderableImage *inFirstImage,
                                                              bool inHasTransparency,
                                                              const QString &inVertexPipelineName,
                                                              const QString &inCustomMaterialName = QString()) override = 0;
 
     // Also sets the blend function on the render context.
-    virtual void SetMaterialProperties(QSharedPointer<QDemonRenderShaderProgram> inProgram,
-                                       const SGraphObject &inMaterial,
+    virtual void setMaterialProperties(QSharedPointer<QDemonRenderShaderProgram> inProgram,
+                                       const QDemonGraphObject &inMaterial,
                                        const QVector2D &inCameraVec,
                                        const QMatrix4x4 &inModelViewProjection,
                                        const QMatrix3x3 &inNormalMatrix,
                                        const QMatrix4x4 &inGlobalTransform,
-                                       SRenderableImage *inFirstImage,
+                                       QDemonRenderableImage *inFirstImage,
                                        float inOpacity,
-                                       SLayerGlobalRenderProperties inRenderProperties) override = 0;
+                                       QDemonLayerGlobalRenderProperties inRenderProperties) override = 0;
 
-    static QSharedPointer<IDefaultMaterialShaderGenerator> CreateDefaultMaterialShaderGenerator(IQDemonRenderContext *inRenderContext);
+    static QSharedPointer<QDemonDefaultMaterialShaderGeneratorInterface> createDefaultMaterialShaderGenerator(QDemonRenderContextInterface *inRenderContext);
 
-    SLightConstantProperties<SShaderGeneratorGeneratedShader> *GetLightConstantProperties(SShaderGeneratorGeneratedShader &shader);
+    QDemonLightConstantProperties<QDemonShaderGeneratorGeneratedShader> *getLightConstantProperties(QDemonShaderGeneratorGeneratedShader &shader);
 };
 QT_END_NAMESPACE
 #endif

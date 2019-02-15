@@ -35,73 +35,73 @@
 QT_BEGIN_NAMESPACE
 
 QDemonRenderProgramPipeline::QDemonRenderProgramPipeline(QSharedPointer<QDemonRenderContextImpl> context)
-    : m_Context(context)
-    , m_Backend(context->GetBackend())
-    , m_Program(nullptr)
-    , m_VertexProgram(nullptr)
-    , m_FragmentProgram(nullptr)
-    , m_TessControlProgram(nullptr)
-    , m_TessEvalProgram(nullptr)
-    , m_GeometryProgram(nullptr)
-    , m_ComputProgram(nullptr)
+    : m_context(context)
+    , m_backend(context->getBackend())
+    , m_program(nullptr)
+    , m_vertexProgram(nullptr)
+    , m_fragmentProgram(nullptr)
+    , m_tessControlProgram(nullptr)
+    , m_tessEvalProgram(nullptr)
+    , m_geometryProgram(nullptr)
+    , m_computProgram(nullptr)
 {
-    m_ProgramPipelineHandle = m_Backend->CreateProgramPipeline();
+    m_programPipelineHandle = m_backend->createProgramPipeline();
 }
 
 QDemonRenderProgramPipeline::~QDemonRenderProgramPipeline()
 {
-    if (m_ProgramPipelineHandle) {
-        m_Backend->ReleaseProgramPipeline(m_ProgramPipelineHandle);
+    if (m_programPipelineHandle) {
+        m_backend->releaseProgramPipeline(m_programPipelineHandle);
     }
 
-    if (m_VertexProgram)
-        m_VertexProgram.clear();
-    if (m_FragmentProgram)
-        m_FragmentProgram.clear();
-    if (m_TessControlProgram)
-        m_TessControlProgram.clear();
-    if (m_TessEvalProgram)
-        m_TessEvalProgram.clear();
-    if (m_GeometryProgram)
-        m_GeometryProgram.clear();
+    if (m_vertexProgram)
+        m_vertexProgram.clear();
+    if (m_fragmentProgram)
+        m_fragmentProgram.clear();
+    if (m_tessControlProgram)
+        m_tessControlProgram.clear();
+    if (m_tessEvalProgram)
+        m_tessEvalProgram.clear();
+    if (m_geometryProgram)
+        m_geometryProgram.clear();
 }
 
-bool QDemonRenderProgramPipeline::IsValid() { return (m_ProgramPipelineHandle != nullptr); }
+bool QDemonRenderProgramPipeline::isValid() { return (m_programPipelineHandle != nullptr); }
 
-void QDemonRenderProgramPipeline::SetProgramStages(QSharedPointer<QDemonRenderShaderProgram> inProgram,
+void QDemonRenderProgramPipeline::setProgramStages(QSharedPointer<QDemonRenderShaderProgram> inProgram,
                                                    QDemonRenderShaderTypeFlags flags)
 {
     bool bDirty = false;
 
-    if (flags & QDemonRenderShaderTypeValue::Vertex && inProgram != m_VertexProgram) {
-        m_VertexProgram = inProgram;
+    if (flags & QDemonRenderShaderTypeValue::Vertex && inProgram != m_vertexProgram) {
+        m_vertexProgram = inProgram;
         bDirty = true;
     }
-    if (flags & QDemonRenderShaderTypeValue::Fragment && inProgram != m_FragmentProgram) {
-        m_FragmentProgram = inProgram;
+    if (flags & QDemonRenderShaderTypeValue::Fragment && inProgram != m_fragmentProgram) {
+        m_fragmentProgram = inProgram;
         bDirty = true;
     }
-    if (flags & QDemonRenderShaderTypeValue::TessControl && inProgram != m_TessControlProgram) {
-        m_TessControlProgram = inProgram;
+    if (flags & QDemonRenderShaderTypeValue::TessControl && inProgram != m_tessControlProgram) {
+        m_tessControlProgram = inProgram;
         bDirty = true;
     }
-    if (flags & QDemonRenderShaderTypeValue::TessEvaluation && inProgram != m_TessEvalProgram) {
-        m_TessEvalProgram = inProgram;
+    if (flags & QDemonRenderShaderTypeValue::TessEvaluation && inProgram != m_tessEvalProgram) {
+        m_tessEvalProgram = inProgram;
         bDirty = true;
     }
-    if (flags & QDemonRenderShaderTypeValue::Geometry && inProgram != m_GeometryProgram) {
-        m_GeometryProgram = inProgram;
+    if (flags & QDemonRenderShaderTypeValue::Geometry && inProgram != m_geometryProgram) {
+        m_geometryProgram = inProgram;
         bDirty = true;
     }
 
     if (bDirty) {
-        m_Backend->SetProgramStages(m_ProgramPipelineHandle, flags,
-                                    (inProgram) ? inProgram->GetShaderProgramHandle() : nullptr);
+        m_backend->setProgramStages(m_programPipelineHandle, flags,
+                                    (inProgram) ? inProgram->getShaderProgramHandle() : nullptr);
     }
 }
 
-void QDemonRenderProgramPipeline::Bind()
+void QDemonRenderProgramPipeline::bind()
 {
-    m_Backend->SetActiveProgramPipeline(m_ProgramPipelineHandle);
+    m_backend->setActiveProgramPipeline(m_programPipelineHandle);
 }
 QT_END_NAMESPACE

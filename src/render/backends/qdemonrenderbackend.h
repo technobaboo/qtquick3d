@@ -147,13 +147,13 @@ public:
          *
          * @return true backend type
          */
-    virtual QDemonRenderContextType GetRenderContextType() const = 0;
+    virtual QDemonRenderContextType getRenderContextType() const = 0;
 
     /**
          * @brief get the version of the shading language
          * @return version string, must be copied by clients to be retained.
          */
-    virtual const char *GetShadingLanguageVersion() = 0;
+    virtual const char *getShadingLanguageVersion() = 0;
 
     /**
          * @brief get maximum supported texture image units that
@@ -162,7 +162,7 @@ public:
          *
          * @return max texture size
          */
-    virtual quint32 GetMaxCombinedTextureUnits() = 0;
+    virtual quint32 getMaxCombinedTextureUnits() = 0;
 
     /**
          * @brief query Backend capabilities
@@ -172,7 +172,7 @@ public:
          *
          * @return true if supported
          */
-    virtual bool GetRenderBackendCap(QDemonRenderBackendCaps::Enum inCap) const = 0;
+    virtual bool getRenderBackendCap(QDemonRenderBackendCaps::Enum inCap) const = 0;
 
     /**
          * @brief query Backend values
@@ -184,7 +184,7 @@ public:
          *
          * @return no return
          */
-    virtual void GetRenderBackendValue(QDemonRenderBackendQuery::Enum inQuery,
+    virtual void getRenderBackendValue(QDemonRenderBackendQuery::Enum inQuery,
                                        qint32 *params) const = 0;
 
     /**
@@ -192,14 +192,14 @@ public:
          *
          * @return depth buffer bitplanes
          */
-    virtual quint32 GetDepthBits() const = 0;
+    virtual quint32 getDepthBits() const = 0;
 
     /**
          * @brief query for bit depth of the stencil buffer
          *
          * @return stencil buffer bitplanes
          */
-    virtual quint32 GetStencilBits() const = 0;
+    virtual quint32 getStencilBits() const = 0;
 
     /*
          * @brief set a backend rende state
@@ -209,7 +209,7 @@ public:
          *
          * @return no return
          */
-    virtual void SetRenderState(bool bEnable, const QDemonRenderState::Enum value) = 0;
+    virtual void setRenderState(bool bEnable, const QDemonRenderState::Enum value) = 0;
 
     /**
          * @brief get a backend rende state
@@ -218,14 +218,14 @@ public:
          *
          * @return  true if state enabled otherwise false
          */
-    virtual bool GetRenderState(const QDemonRenderState::Enum value) = 0;
+    virtual bool getRenderState(const QDemonRenderState::Enum value) = 0;
 
     /**
          * @brief get current depth function
          *
          * @return  active depth function
          */
-    virtual QDemonRenderBoolOp::Enum GetDepthFunc() = 0;
+    virtual QDemonRenderBoolOp::Enum getDepthFunc() = 0;
 
     /**
          * @brief create a depth stencil state object
@@ -241,13 +241,14 @@ public:
          *
          * @return  opaque handle to state object
          */
-    virtual QDemonRenderBackendDepthStencilStateObject
-    CreateDepthStencilState(bool enableDepth, bool depthMask, QDemonRenderBoolOp::Enum depthFunc,
-                            bool enableStencil,
-                            QDemonRenderStencilFunctionArgument &stencilFuncFront,
-                            QDemonRenderStencilFunctionArgument &stencilFuncBack,
-                            QDemonRenderStencilOperationArgument &depthStencilOpFront,
-                            QDemonRenderStencilOperationArgument &depthStencilOpBack) = 0;
+    virtual QDemonRenderBackendDepthStencilStateObject createDepthStencilState(bool enableDepth,
+                                                                               bool depthMask,
+                                                                               QDemonRenderBoolOp::Enum depthFunc,
+                                                                               bool enableStencil,
+                                                                               QDemonRenderStencilFunctionArgument &stencilFuncFront,
+                                                                               QDemonRenderStencilFunctionArgument &stencilFuncBack,
+                                                                               QDemonRenderStencilOperationArgument &depthStencilOpFront,
+                                                                               QDemonRenderStencilOperationArgument &depthStencilOpBack) = 0;
 
     /**
          * @brief release a depth stencil state object
@@ -256,8 +257,7 @@ public:
          *
          * @return  none
          */
-    virtual void
-    ReleaseDepthStencilState(QDemonRenderBackendDepthStencilStateObject depthStencilState) = 0;
+    virtual void releaseDepthStencilState(QDemonRenderBackendDepthStencilStateObject depthStencilState) = 0;
 
     /**
          * @brief create a rasterizer state object
@@ -268,8 +268,9 @@ public:
          *
          * @return  opaque handle to state object
          */
-    virtual QDemonRenderBackendRasterizerStateObject
-    CreateRasterizerState(float depthBias, float depthScale, QDemonRenderFaces::Enum cullFace) = 0;
+    virtual QDemonRenderBackendRasterizerStateObject createRasterizerState(float depthBias,
+                                                                           float depthScale,
+                                                                           QDemonRenderFaces::Enum cullFace) = 0;
 
     /**
          * @brief release a rasterizer state object
@@ -278,8 +279,7 @@ public:
          *
          * @return  none
          */
-    virtual void
-    ReleaseRasterizerState(QDemonRenderBackendRasterizerStateObject rasterizerState) = 0;
+    virtual void releaseRasterizerState(QDemonRenderBackendRasterizerStateObject rasterizerState) = 0;
 
     /**
          * @brief set depth stencil state
@@ -288,8 +288,7 @@ public:
          *
          * @return  none
          */
-    virtual void
-    SetDepthStencilState(QDemonRenderBackendDepthStencilStateObject depthStencilState) = 0;
+    virtual void setDepthStencilState(QDemonRenderBackendDepthStencilStateObject depthStencilState) = 0;
 
     /**
          * @brief set rasterizer state
@@ -298,7 +297,7 @@ public:
          *
          * @return  none
          */
-    virtual void SetRasterizerState(QDemonRenderBackendRasterizerStateObject rasterizerState) = 0;
+    virtual void setRasterizerState(QDemonRenderBackendRasterizerStateObject rasterizerState) = 0;
 
     /**
          * @brief set current depth function
@@ -307,14 +306,14 @@ public:
          *
          * @return no return
          */
-    virtual void SetDepthFunc(const QDemonRenderBoolOp::Enum func) = 0;
+    virtual void setDepthFunc(const QDemonRenderBoolOp::Enum func) = 0;
 
     /**
          * @brief query if depth write is enabled
          *
          * @return true if enabled
          */
-    virtual bool GetDepthWrite() = 0;
+    virtual bool getDepthWrite() = 0;
 
     /**
          * @brief enable / disable depth writes
@@ -323,7 +322,7 @@ public:
          *
          * @return no return
          */
-    virtual void SetDepthWrite(bool bEnable) = 0;
+    virtual void setDepthWrite(bool bEnable) = 0;
 
     /**
          * @brief enable / disable color channel writes
@@ -335,7 +334,7 @@ public:
          *
          * @return no return
          */
-    virtual void SetColorWrites(bool bRed, bool bGreen, bool bBlue, bool bAlpha) = 0;
+    virtual void setColorWrites(bool bRed, bool bGreen, bool bBlue, bool bAlpha) = 0;
 
     /**
          * @brief enable / disable multisample rendering
@@ -344,7 +343,7 @@ public:
          *
          * @return no return
          */
-    virtual void SetMultisample(bool bEnable) = 0;
+    virtual void setMultisample(bool bEnable) = 0;
 
     /**
          * @brief query blend functions
@@ -353,7 +352,7 @@ public:
          *
          * @return no return
          */
-    virtual void GetBlendFunc(QDemonRenderBlendFunctionArgument *pBlendFuncArg) = 0;
+    virtual void getBlendFunc(QDemonRenderBlendFunctionArgument *pBlendFuncArg) = 0;
 
     /**
          * @brief set blend functions
@@ -362,7 +361,7 @@ public:
          *
          * @return no return
          */
-    virtual void SetBlendFunc(const QDemonRenderBlendFunctionArgument &blendFuncArg) = 0;
+    virtual void setBlendFunc(const QDemonRenderBlendFunctionArgument &blendFuncArg) = 0;
 
     /**
          * @brief set blend equation
@@ -371,7 +370,7 @@ public:
          *
          * @return no return
          */
-    virtual void SetBlendEquation(const QDemonRenderBlendEquationArgument &pBlendEquArg) = 0;
+    virtual void setBlendEquation(const QDemonRenderBlendEquationArgument &pBlendEquArg) = 0;
 
     /**
          * @brief guarantee blend coherency
@@ -379,7 +378,7 @@ public:
          *
          * @return no return
          */
-    virtual void SetBlendBarrier(void) = 0;
+    virtual void setBlendBarrier(void) = 0;
 
     /**
          * @brief query scissor rectangle
@@ -388,7 +387,7 @@ public:
          *
          * @return no return
          */
-    virtual void GetScissorRect(QDemonRenderRect *pRect) = 0;
+    virtual void getScissorRect(QDemonRenderRect *pRect) = 0;
 
     /**
         * @brief set scissor rectangle
@@ -397,7 +396,7 @@ public:
         *
         * @return no return
         */
-    virtual void SetScissorRect(const QDemonRenderRect &rect) = 0;
+    virtual void setScissorRect(const QDemonRenderRect &rect) = 0;
 
     /**
          * @brief query viewport rectangle
@@ -406,7 +405,7 @@ public:
          *
          * @return no return
          */
-    virtual void GetViewportRect(QDemonRenderRect *pRect) = 0;
+    virtual void getViewportRect(QDemonRenderRect *pRect) = 0;
 
     /**
          * @brief set viewport rectangle
@@ -415,7 +414,7 @@ public:
          *
          * @return no return
          */
-    virtual void SetViewportRect(const QDemonRenderRect &rect) = 0;
+    virtual void setViewportRect(const QDemonRenderRect &rect) = 0;
 
     /**
          * @brief query viewport rectangle
@@ -424,7 +423,7 @@ public:
          *
          * @return no return
          */
-    virtual void SetClearColor(const QVector4D *pClearColor) = 0;
+    virtual void setClearColor(const QVector4D *pClearColor) = 0;
 
     /**
          * @brief query viewport rectangle
@@ -433,7 +432,7 @@ public:
          *
          * @return no return
          */
-    virtual void Clear(QDemonRenderClearFlags flags) = 0;
+    virtual void clear(QDemonRenderClearFlags flags) = 0;
 
     /**
          * @brief create a buffer object
@@ -448,7 +447,7 @@ public:
          *
          * @return The created buffer object or nullptr if the creation failed.
          */
-    virtual QDemonRenderBackendBufferObject CreateBuffer(size_t size,
+    virtual QDemonRenderBackendBufferObject createBuffer(size_t size,
                                                          QDemonRenderBufferBindFlags bindFlags,
                                                          QDemonRenderBufferUsageType::Enum usage,
                                                          const void *hostPtr = nullptr) = 0;
@@ -463,7 +462,7 @@ public:
          *
          * @return no return.
          */
-    virtual void BindBuffer(QDemonRenderBackendBufferObject bo,
+    virtual void bindBuffer(QDemonRenderBackendBufferObject bo,
                             QDemonRenderBufferBindFlags bindFlags) = 0;
 
     /**
@@ -473,7 +472,7 @@ public:
          *
          * @return no return.
          */
-    virtual void ReleaseBuffer(QDemonRenderBackendBufferObject bo) = 0;
+    virtual void releaseBuffer(QDemonRenderBackendBufferObject bo) = 0;
 
     /**
          * @brief update a whole buffer object
@@ -489,8 +488,10 @@ public:
          *
          * @return no return.
          */
-    virtual void UpdateBuffer(QDemonRenderBackendBufferObject bo, QDemonRenderBufferBindFlags bindFlags,
-                              size_t size, QDemonRenderBufferUsageType::Enum usage,
+    virtual void updateBuffer(QDemonRenderBackendBufferObject bo,
+                              QDemonRenderBufferBindFlags bindFlags,
+                              size_t size,
+                              QDemonRenderBufferUsageType::Enum usage,
                               const void *data) = 0;
 
     /**
@@ -507,9 +508,11 @@ public:
          *
          * @return no return.
          */
-    virtual void UpdateBufferRange(QDemonRenderBackendBufferObject bo,
-                                   QDemonRenderBufferBindFlags bindFlags, size_t offset,
-                                   size_t size, const void *data) = 0;
+    virtual void updateBufferRange(QDemonRenderBackendBufferObject bo,
+                                   QDemonRenderBufferBindFlags bindFlags,
+                                   size_t offset,
+                                   size_t size,
+                                   const void *data) = 0;
 
     /**
          * @brief Get a pointer to the buffer data ( GL(ES) >= 3 only )
@@ -524,8 +527,10 @@ public:
          *
          * @return pointer to mapped data or null.
          */
-    virtual void *MapBuffer(QDemonRenderBackendBufferObject bo, QDemonRenderBufferBindFlags bindFlags,
-                            size_t offset, size_t length,
+    virtual void *mapBuffer(QDemonRenderBackendBufferObject bo,
+                            QDemonRenderBufferBindFlags bindFlags,
+                            size_t offset,
+                            size_t length,
                             QDemonRenderBufferAccessFlags accessFlags) = 0;
 
     /**
@@ -539,7 +544,7 @@ public:
          *
          * @return true if successful
          */
-    virtual bool UnmapBuffer(QDemonRenderBackendBufferObject bo,
+    virtual bool unmapBuffer(QDemonRenderBackendBufferObject bo,
                              QDemonRenderBufferBindFlags bindFlags) = 0;
 
     /**
@@ -549,14 +554,14 @@ public:
          *
          * @return no return.
          */
-    virtual void SetMemoryBarrier(QDemonRenderBufferBarrierFlags barriers) = 0;
+    virtual void setMemoryBarrier(QDemonRenderBufferBarrierFlags barriers) = 0;
 
     /**
          * @brief create a query object
          *
          * @return The created query object or nullptr if the creation failed.
          */
-    virtual QDemonRenderBackendQueryObject CreateQuery() = 0;
+    virtual QDemonRenderBackendQueryObject createQuery() = 0;
 
     /**
          * @brief delete query objects
@@ -565,7 +570,7 @@ public:
          *
          * @return  no return
          */
-    virtual void ReleaseQuery(QDemonRenderBackendQueryObject qo) = 0;
+    virtual void releaseQuery(QDemonRenderBackendQueryObject qo) = 0;
 
     /**
          * @brief Start query recording
@@ -575,7 +580,7 @@ public:
          *
          * @return  no return
          */
-    virtual void BeginQuery(QDemonRenderBackendQueryObject qo, QDemonRenderQueryType::Enum type) = 0;
+    virtual void beginQuery(QDemonRenderBackendQueryObject qo, QDemonRenderQueryType::Enum type) = 0;
 
     /**
          * @brief End query recording
@@ -585,7 +590,7 @@ public:
          *
          * @return  no return
          */
-    virtual void EndQuery(QDemonRenderBackendQueryObject qo, QDemonRenderQueryType::Enum type) = 0;
+    virtual void endQuery(QDemonRenderBackendQueryObject qo, QDemonRenderQueryType::Enum type) = 0;
 
     /**
          * @brief Get a query result
@@ -596,8 +601,9 @@ public:
          *
          * @return  no return
          */
-    virtual void GetQueryResult(QDemonRenderBackendQueryObject qo,
-                                QDemonRenderQueryResultType::Enum resultType, quint32 *params) = 0;
+    virtual void getQueryResult(QDemonRenderBackendQueryObject qo,
+                                QDemonRenderQueryResultType::Enum resultType,
+                                quint32 *params) = 0;
 
     /**
          * @brief Get a query result
@@ -608,8 +614,9 @@ public:
          *
          * @return  no return
          */
-    virtual void GetQueryResult(QDemonRenderBackendQueryObject qo,
-                                QDemonRenderQueryResultType::Enum resultType, quint64 *params) = 0;
+    virtual void getQueryResult(QDemonRenderBackendQueryObject qo,
+                                QDemonRenderQueryResultType::Enum resultType,
+                                quint64 *params) = 0;
 
     /**
          * @brief Record the GPU time using the query object
@@ -618,7 +625,7 @@ public:
          *
          * @return  no return
          */
-    virtual void SetQueryTimer(QDemonRenderBackendQueryObject qo) = 0;
+    virtual void setQueryTimer(QDemonRenderBackendQueryObject qo) = 0;
 
     /**
          * @brief create a sync object and place it in the command queue
@@ -628,7 +635,7 @@ public:
          *
          * @return The created sync object or nullptr if the creation failed.
          */
-    virtual QDemonRenderBackendSyncObject CreateSync(QDemonRenderSyncType::Enum tpye,
+    virtual QDemonRenderBackendSyncObject createSync(QDemonRenderSyncType::Enum tpye,
                                                      QDemonRenderSyncFlags syncFlags) = 0;
 
     /**
@@ -638,7 +645,7 @@ public:
          *
          * @return  no return
          */
-    virtual void ReleaseSync(QDemonRenderBackendSyncObject so) = 0;
+    virtual void releaseSync(QDemonRenderBackendSyncObject so) = 0;
 
     /**
          * @brief wait for sync object to be signaled
@@ -649,7 +656,8 @@ public:
          *
          * @return  no return
          */
-    virtual void WaitSync(QDemonRenderBackendSyncObject so, QDemonRenderCommandFlushFlags syncFlags,
+    virtual void waitSync(QDemonRenderBackendSyncObject so,
+                          QDemonRenderCommandFlushFlags syncFlags,
                           quint64 timeout) = 0;
 
     /**
@@ -658,7 +666,7 @@ public:
          *
          * @return The created render target object or nullptr if the creation failed.
          */
-    virtual QDemonRenderBackendRenderTargetObject CreateRenderTarget() = 0;
+    virtual QDemonRenderBackendRenderTargetObject createRenderTarget() = 0;
 
     /**
          * @brief Release a single render target object
@@ -667,7 +675,7 @@ public:
          *
          * @return no return.
          */
-    virtual void ReleaseRenderTarget(QDemonRenderBackendRenderTargetObject rto) = 0;
+    virtual void releaseRenderTarget(QDemonRenderBackendRenderTargetObject rto) = 0;
 
     /**
          * @brief Attach a renderbuffer object to the framebuffer
@@ -678,7 +686,7 @@ public:
          *
          * @return no return.
          */
-    virtual void RenderTargetAttach(QDemonRenderBackendRenderTargetObject rto,
+    virtual void renderTargetAttach(QDemonRenderBackendRenderTargetObject rto,
                                     QDemonRenderFrameBufferAttachments::Enum attachment,
                                     QDemonRenderBackendRenderbufferObject rbo) = 0;
 
@@ -692,10 +700,10 @@ public:
          *
          * @return no return.
          */
-    virtual void RenderTargetAttach(
-            QDemonRenderBackendRenderTargetObject rto, QDemonRenderFrameBufferAttachments::Enum attachment,
-            QDemonRenderBackendTextureObject to,
-            QDemonRenderTextureTargetType::Enum target = QDemonRenderTextureTargetType::Texture2D) = 0;
+    virtual void renderTargetAttach(QDemonRenderBackendRenderTargetObject rto,
+                                    QDemonRenderFrameBufferAttachments::Enum attachment,
+                                    QDemonRenderBackendTextureObject to,
+                                    QDemonRenderTextureTargetType::Enum target = QDemonRenderTextureTargetType::Texture2D) = 0;
 
     /**
          * @brief Attach a texture object to the render target
@@ -708,7 +716,7 @@ public:
          *
          * @return no return.
          */
-    virtual void RenderTargetAttach(QDemonRenderBackendRenderTargetObject rto,
+    virtual void renderTargetAttach(QDemonRenderBackendRenderTargetObject rto,
                                     QDemonRenderFrameBufferAttachments::Enum attachment,
                                     QDemonRenderBackendTextureObject to,
                                     qint32 level,
@@ -721,7 +729,7 @@ public:
          *
          * @return no return.
          */
-    virtual void SetRenderTarget(QDemonRenderBackendRenderTargetObject rto) = 0;
+    virtual void setRenderTarget(QDemonRenderBackendRenderTargetObject rto) = 0;
 
     /**
          * @brief Check if a render target is ready for render
@@ -730,7 +738,7 @@ public:
          *
          * @return true if usable.
          */
-    virtual bool RenderTargetIsValid(QDemonRenderBackendRenderTargetObject rto) = 0;
+    virtual bool renderTargetIsValid(QDemonRenderBackendRenderTargetObject rto) = 0;
 
     /**
          * @brief Make a render target active for reading
@@ -739,7 +747,7 @@ public:
          *
          * @return no return.
          */
-    virtual void SetReadTarget(QDemonRenderBackendRenderTargetObject rto) = 0;
+    virtual void setReadTarget(QDemonRenderBackendRenderTargetObject rto) = 0;
 
     /**
          * @brief Set active buffers for drawing
@@ -749,7 +757,7 @@ public:
          *
          * @return no return.
          */
-    virtual void SetDrawBuffers(QDemonRenderBackendRenderTargetObject rto,
+    virtual void setDrawBuffers(QDemonRenderBackendRenderTargetObject rto,
                                 QDemonConstDataRef<qint32> inDrawBufferSet) = 0;
 
     /**
@@ -760,7 +768,7 @@ public:
          *
          * @return no return.
          */
-    virtual void SetReadBuffer(QDemonRenderBackendRenderTargetObject rto,
+    virtual void setReadBuffer(QDemonRenderBackendRenderTargetObject rto,
                                QDemonReadFaces::Enum inReadFace) = 0;
 
     /**
@@ -780,7 +788,7 @@ public:
          *
          * @return no return.
          */
-    virtual void BlitFramebuffer(qint32 srcX0, qint32 srcY0, qint32 srcX1, qint32 srcY1,
+    virtual void blitFramebuffer(qint32 srcX0, qint32 srcY0, qint32 srcX1, qint32 srcY1,
                                  qint32 dstX0, qint32 dstY0, qint32 dstX1, qint32 dstY1,
                                  QDemonRenderClearFlags flags,
                                  QDemonRenderTextureMagnifyingOp::Enum filter) = 0;
@@ -794,9 +802,9 @@ public:
          *
          * @return The created render buffer object or nullptr if the creation failed.
          */
-    virtual QDemonRenderBackendRenderbufferObject
-    CreateRenderbuffer(QDemonRenderRenderBufferFormats::Enum storageFormat, size_t width,
-                       size_t height) = 0;
+    virtual QDemonRenderBackendRenderbufferObject createRenderbuffer(QDemonRenderRenderBufferFormats::Enum storageFormat,
+                                                                     size_t width,
+                                                                     size_t height) = 0;
 
     /**
          * @brief Release a single renderbuffer object
@@ -805,7 +813,7 @@ public:
          *
          * @return no return.
          */
-    virtual void ReleaseRenderbuffer(QDemonRenderBackendRenderbufferObject rbo) = 0;
+    virtual void releaseRenderbuffer(QDemonRenderBackendRenderbufferObject rbo) = 0;
 
     /**
          * @brief resize a render buffer object
@@ -816,7 +824,7 @@ public:
          *
          * @return True on success
          */
-    virtual bool ResizeRenderbuffer(QDemonRenderBackendRenderbufferObject rbo,
+    virtual bool resizeRenderbuffer(QDemonRenderBackendRenderbufferObject rbo,
                                     QDemonRenderRenderBufferFormats::Enum storageFormat,
                                     size_t width, size_t height) = 0;
 
@@ -825,7 +833,7 @@ public:
          *
          * @return The created texture object or nullptr if the creation failed..
          */
-    virtual QDemonRenderBackendTextureObject CreateTexture() = 0;
+    virtual QDemonRenderBackendTextureObject createTexture() = 0;
 
     /**
          * @brief set texture data for a 2D texture
@@ -843,10 +851,13 @@ public:
          *
          * @return No return
          */
-    virtual void SetTextureData2D(QDemonRenderBackendTextureObject to,
-                                  QDemonRenderTextureTargetType::Enum target, quint32 level,
-                                  QDemonRenderTextureFormats::Enum internalFormat, size_t width,
-                                  size_t height, qint32 border,
+    virtual void setTextureData2D(QDemonRenderBackendTextureObject to,
+                                  QDemonRenderTextureTargetType::Enum target,
+                                  quint32 level,
+                                  QDemonRenderTextureFormats::Enum internalFormat,
+                                  size_t width,
+                                  size_t height,
+                                  qint32 border,
                                   QDemonRenderTextureFormats::Enum format,
                                   const void *hostPtr = nullptr) = 0;
 
@@ -866,10 +877,13 @@ public:
          *
          * @return No return
          */
-    virtual void SetTextureDataCubeFace(QDemonRenderBackendTextureObject to,
-                                        QDemonRenderTextureTargetType::Enum target, quint32 level,
+    virtual void setTextureDataCubeFace(QDemonRenderBackendTextureObject to,
+                                        QDemonRenderTextureTargetType::Enum target,
+                                        quint32 level,
                                         QDemonRenderTextureFormats::Enum internalFormat,
-                                        size_t width, size_t height, qint32 border,
+                                        size_t width,
+                                        size_t height,
+                                        qint32 border,
                                         QDemonRenderTextureFormats::Enum format,
                                         const void *hostPtr = nullptr) = 0;
 
@@ -886,10 +900,12 @@ public:
          *
          * @return No return
          */
-    virtual void CreateTextureStorage2D(QDemonRenderBackendTextureObject to,
-                                        QDemonRenderTextureTargetType::Enum target, quint32 levels,
+    virtual void createTextureStorage2D(QDemonRenderBackendTextureObject to,
+                                        QDemonRenderTextureTargetType::Enum target,
+                                        quint32 levels,
                                         QDemonRenderTextureFormats::Enum internalFormat,
-                                        size_t width, size_t height) = 0;
+                                        size_t width,
+                                        size_t height) = 0;
 
     /**
          * @brief set texture sub data for a 2D texture
@@ -908,9 +924,13 @@ public:
          *
          * @return No return
          */
-    virtual void SetTextureSubData2D(QDemonRenderBackendTextureObject to,
-                                     QDemonRenderTextureTargetType::Enum target, quint32 level,
-                                     qint32 xOffset, qint32 yOffset, size_t width, size_t height,
+    virtual void setTextureSubData2D(QDemonRenderBackendTextureObject to,
+                                     QDemonRenderTextureTargetType::Enum target,
+                                     quint32 level,
+                                     qint32 xOffset,
+                                     qint32 yOffset,
+                                     size_t width,
+                                     size_t height,
                                      QDemonRenderTextureFormats::Enum format,
                                      const void *hostPtr = nullptr) = 0;
 
@@ -930,11 +950,15 @@ public:
          *
          * @return No return
          */
-    virtual void SetCompressedTextureData2D(QDemonRenderBackendTextureObject to,
-                                            QDemonRenderTextureTargetType::Enum target, quint32 level,
+    virtual void setCompressedTextureData2D(QDemonRenderBackendTextureObject to,
+                                            QDemonRenderTextureTargetType::Enum target,
+                                            quint32 level,
                                             QDemonRenderTextureFormats::Enum internalFormat,
-                                            size_t width, size_t height, qint32 border,
-                                            size_t imageSize, const void *hostPtr = nullptr) = 0;
+                                            size_t width,
+                                            size_t height,
+                                            qint32 border,
+                                            size_t imageSize,
+                                            const void *hostPtr = nullptr) = 0;
 
     /**
          * @brief set compressed texture data for a Cubemap face
@@ -952,10 +976,15 @@ public:
          *
          * @return No return
          */
-    virtual void SetCompressedTextureDataCubeFace(
-            QDemonRenderBackendTextureObject to, QDemonRenderTextureTargetType::Enum target, quint32 level,
-            QDemonRenderTextureFormats::Enum internalFormat, size_t width, size_t height, qint32 border,
-            size_t imageSize, const void *hostPtr = nullptr) = 0;
+    virtual void setCompressedTextureDataCubeFace(QDemonRenderBackendTextureObject to,
+                                                  QDemonRenderTextureTargetType::Enum target,
+                                                  quint32 level,
+                                                  QDemonRenderTextureFormats::Enum internalFormat,
+                                                  size_t width,
+                                                  size_t height,
+                                                  qint32 border,
+                                                  size_t imageSize,
+                                                  const void *hostPtr = nullptr) = 0;
 
     /**
          * @brief set compressed texture sub data for a 2D texture
@@ -974,10 +1003,16 @@ public:
          *
          * @return No return
          */
-    virtual void SetCompressedTextureSubData2D(
-            QDemonRenderBackendTextureObject to, QDemonRenderTextureTargetType::Enum target, quint32 level,
-            qint32 xOffset, qint32 yOffset, size_t width, size_t height,
-            QDemonRenderTextureFormats::Enum format, size_t imageSize, const void *hostPtr = nullptr) = 0;
+    virtual void setCompressedTextureSubData2D(QDemonRenderBackendTextureObject to,
+                                               QDemonRenderTextureTargetType::Enum target,
+                                               quint32 level,
+                                               qint32 xOffset,
+                                               qint32 yOffset,
+                                               size_t width,
+                                               size_t height,
+                                               QDemonRenderTextureFormats::Enum format,
+                                               size_t imageSize,
+                                               const void *hostPtr = nullptr) = 0;
 
     /**
          * @brief establish a multisampled 2D texture
@@ -992,11 +1027,12 @@ public:
          *
          * @return No return
          */
-    virtual void SetMultisampledTextureData2D(QDemonRenderBackendTextureObject to,
+    virtual void setMultisampledTextureData2D(QDemonRenderBackendTextureObject to,
                                               QDemonRenderTextureTargetType::Enum target,
                                               size_t samples,
                                               QDemonRenderTextureFormats::Enum internalFormat,
-                                              size_t width, size_t height,
+                                              size_t width,
+                                              size_t height,
                                               bool fixedsamplelocations) = 0;
 
     /**
@@ -1016,10 +1052,14 @@ public:
          *
          * @return No return
          */
-    virtual void SetTextureData3D(QDemonRenderBackendTextureObject to,
-                                  QDemonRenderTextureTargetType::Enum target, quint32 level,
-                                  QDemonRenderTextureFormats::Enum internalFormat, size_t width,
-                                  size_t height, size_t depth, qint32 border,
+    virtual void setTextureData3D(QDemonRenderBackendTextureObject to,
+                                  QDemonRenderTextureTargetType::Enum target,
+                                  quint32 level,
+                                  QDemonRenderTextureFormats::Enum internalFormat,
+                                  size_t width,
+                                  size_t height,
+                                  size_t depth,
+                                  qint32 border,
                                   QDemonRenderTextureFormats::Enum format,
                                   const void *hostPtr = nullptr) = 0;
 
@@ -1032,7 +1072,7 @@ public:
          *
          * @return No return
          */
-    virtual void GenerateMipMaps(QDemonRenderBackendTextureObject to,
+    virtual void generateMipMaps(QDemonRenderBackendTextureObject to,
                                  QDemonRenderTextureTargetType::Enum target,
                                  QDemonRenderHint::Enum genType) = 0;
 
@@ -1045,8 +1085,9 @@ public:
          *
          * @return no return.
          */
-    virtual void BindTexture(QDemonRenderBackendTextureObject to,
-                             QDemonRenderTextureTargetType::Enum target, quint32 unit) = 0;
+    virtual void bindTexture(QDemonRenderBackendTextureObject to,
+                             QDemonRenderTextureTargetType::Enum target,
+                             quint32 unit) = 0;
 
     /**
          * @brief bind a image/texture object
@@ -1061,8 +1102,11 @@ public:
          *
          * @return no return.
          */
-    virtual void BindImageTexture(QDemonRenderBackendTextureObject to, quint32 unit, qint32 level,
-                                  bool layered, qint32 layer,
+    virtual void bindImageTexture(QDemonRenderBackendTextureObject to,
+                                  quint32 unit,
+                                  qint32 level,
+                                  bool layered,
+                                  qint32 layer,
                                   QDemonRenderImageAccessType::Enum accessFlags,
                                   QDemonRenderTextureFormats::Enum format) = 0;
 
@@ -1073,7 +1117,7 @@ public:
          *
          * @return no return.
          */
-    virtual void ReleaseTexture(QDemonRenderBackendTextureObject to) = 0;
+    virtual void releaseTexture(QDemonRenderBackendTextureObject to) = 0;
 
     /**
          * @brief query texture swizzle mode
@@ -1083,8 +1127,7 @@ public:
          *
          * @return texture swizzle mode
          */
-    virtual QDemonRenderTextureSwizzleMode::Enum
-    GetTextureSwizzleMode(const QDemonRenderTextureFormats::Enum inFormat) const = 0;
+    virtual QDemonRenderTextureSwizzleMode::Enum getTextureSwizzleMode(const QDemonRenderTextureFormats::Enum inFormat) const = 0;
 
     /**
          * @ brief create a sampler
@@ -1104,7 +1147,7 @@ public:
          *
          * @return The created sampler object or nullptr if the creation failed.
          */
-    virtual QDemonRenderBackendSamplerObject CreateSampler(
+    virtual QDemonRenderBackendSamplerObject createSampler(
             QDemonRenderTextureMinifyingOp::Enum minFilter = QDemonRenderTextureMinifyingOp::Linear,
             QDemonRenderTextureMagnifyingOp::Enum magFilter = QDemonRenderTextureMagnifyingOp::Linear,
             QDemonRenderTextureCoordOp::Enum wrapS = QDemonRenderTextureCoordOp::ClampToEdge,
@@ -1135,7 +1178,7 @@ public:
          *
          * @return No return
          */
-    virtual void UpdateSampler(
+    virtual void updateSampler(
             QDemonRenderBackendSamplerObject so, QDemonRenderTextureTargetType::Enum target,
             QDemonRenderTextureMinifyingOp::Enum minFilter = QDemonRenderTextureMinifyingOp::Linear,
             QDemonRenderTextureMagnifyingOp::Enum magFilter = QDemonRenderTextureMagnifyingOp::Linear,
@@ -1156,7 +1199,7 @@ public:
          *
          * @return No return
          */
-    virtual void UpdateTextureSwizzle(QDemonRenderBackendTextureObject to,
+    virtual void updateTextureSwizzle(QDemonRenderBackendTextureObject to,
                                       QDemonRenderTextureTargetType::Enum target,
                                       QDemonRenderTextureSwizzleMode::Enum swizzleMode) = 0;
 
@@ -1170,7 +1213,7 @@ public:
          *
          * @return No return
          */
-    virtual void UpdateTextureObject(QDemonRenderBackendTextureObject to,
+    virtual void updateTextureObject(QDemonRenderBackendTextureObject to,
                                      QDemonRenderTextureTargetType::Enum target, qint32 baseLevel,
                                      qint32 maxLevel) = 0;
 
@@ -1181,7 +1224,7 @@ public:
          *
          * @return no return.
          */
-    virtual void ReleaseSampler(QDemonRenderBackendSamplerObject so) = 0;
+    virtual void releaseSampler(QDemonRenderBackendSamplerObject so) = 0;
 
     /**
          * @brief create a attribute layout object
@@ -1190,8 +1233,7 @@ public:
          *
          * @return The created attribute layout object or nullptr if the creation failed.
          */
-    virtual QDemonRenderBackendAttribLayoutObject
-    CreateAttribLayout(QDemonConstDataRef<QDemonRenderVertexBufferEntry> attribs) = 0;
+    virtual QDemonRenderBackendAttribLayoutObject createAttribLayout(QDemonConstDataRef<QDemonRenderVertexBufferEntry> attribs) = 0;
 
     /**
          * @brief Release a attribute layoutr object
@@ -1200,7 +1242,7 @@ public:
          *
          * @return no return.
          */
-    virtual void ReleaseAttribLayout(QDemonRenderBackendAttribLayoutObject ao) = 0;
+    virtual void releaseAttribLayout(QDemonRenderBackendAttribLayoutObject ao) = 0;
 
     /**
          * @brief create a input assembler object
@@ -1214,12 +1256,12 @@ public:
          *
          * @return The created input assembler object or nullptr if the creation failed.
          */
-    virtual QDemonRenderBackendInputAssemblerObject
-    CreateInputAssembler(QDemonRenderBackendAttribLayoutObject attribLayout,
-                         QDemonConstDataRef<QDemonRenderBackendBufferObject> buffers,
-                         const QDemonRenderBackendBufferObject indexBuffer,
-                         QDemonConstDataRef<quint32> strides, QDemonConstDataRef<quint32> offsets,
-                         quint32 patchVertexCount) = 0;
+    virtual QDemonRenderBackendInputAssemblerObject createInputAssembler(QDemonRenderBackendAttribLayoutObject attribLayout,
+                                                                         QDemonConstDataRef<QDemonRenderBackendBufferObject> buffers,
+                                                                         const QDemonRenderBackendBufferObject indexBuffer,
+                                                                         QDemonConstDataRef<quint32> strides,
+                                                                         QDemonConstDataRef<quint32> offsets,
+                                                                         quint32 patchVertexCount) = 0;
 
     /**
          * @brief Release a input assembler object
@@ -1228,7 +1270,7 @@ public:
          *
          * @return no return.
          */
-    virtual void ReleaseInputAssembler(QDemonRenderBackendInputAssemblerObject iao) = 0;
+    virtual void releaseInputAssembler(QDemonRenderBackendInputAssemblerObject iao) = 0;
 
     /**
          * @brief Set a input assembler object.
@@ -1239,7 +1281,7 @@ public:
          *
          * @return false if it fails.
          */
-    virtual bool SetInputAssembler(QDemonRenderBackendInputAssemblerObject iao,
+    virtual bool setInputAssembler(QDemonRenderBackendInputAssemblerObject iao,
                                    QDemonRenderBackendShaderProgramObject po) = 0;
 
     /**
@@ -1250,7 +1292,7 @@ public:
          *
          * @return false if it fails.
          */
-    virtual void SetPatchVertexCount(QDemonRenderBackendInputAssemblerObject iao, quint32 count) = 0;
+    virtual void setPatchVertexCount(QDemonRenderBackendInputAssemblerObject iao, quint32 count) = 0;
 
     /**
          * @brief create a vertex shader object
@@ -1261,7 +1303,7 @@ public:
          *
          * @return The created vertex shader object or nullptr if the creation failed.
          */
-    virtual QDemonRenderBackendVertexShaderObject CreateVertexShader(QDemonConstDataRef<qint8> source,
+    virtual QDemonRenderBackendVertexShaderObject createVertexShader(QDemonConstDataRef<qint8> source,
                                                                      QByteArray &errorMessage,
                                                                      bool binary) = 0;
 
@@ -1272,7 +1314,7 @@ public:
          *
          * @return No Return.
          */
-    virtual void ReleaseVertexShader(QDemonRenderBackendVertexShaderObject vso) = 0;
+    virtual void releaseVertexShader(QDemonRenderBackendVertexShaderObject vso) = 0;
 
     /**
          * @brief create a fragment shader object
@@ -1283,9 +1325,9 @@ public:
          *
          * @return The created vertex shader object or nullptr if the creation failed.
          */
-    virtual QDemonRenderBackendFragmentShaderObject
-    CreateFragmentShader(QDemonConstDataRef<qint8> source, QByteArray &errorMessage,
-                         bool binary) = 0;
+    virtual QDemonRenderBackendFragmentShaderObject createFragmentShader(QDemonConstDataRef<qint8> source,
+                                                                         QByteArray &errorMessage,
+                                                                         bool binary) = 0;
 
     /**
          * @brief release a fragment shader object
@@ -1294,7 +1336,7 @@ public:
          *
          * @return No Return.
          */
-    virtual void ReleaseFragmentShader(QDemonRenderBackendFragmentShaderObject fso) = 0;
+    virtual void releaseFragmentShader(QDemonRenderBackendFragmentShaderObject fso) = 0;
 
     /**
          * @brief create a tessellation control shader object
@@ -1305,9 +1347,9 @@ public:
          *
          * @return The created tessellation control shader object or nullptr if the creation failed.
          */
-    virtual QDemonRenderBackendTessControlShaderObject
-    CreateTessControlShader(QDemonConstDataRef<qint8> source, QByteArray &errorMessage,
-                            bool binary) = 0;
+    virtual QDemonRenderBackendTessControlShaderObject createTessControlShader(QDemonConstDataRef<qint8> source,
+                                                                               QByteArray &errorMessage,
+                                                                               bool binary) = 0;
 
     /**
          * @brief release a tessellation control shader object
@@ -1316,7 +1358,7 @@ public:
          *
          * @return No Return.
          */
-    virtual void ReleaseTessControlShader(QDemonRenderBackendTessControlShaderObject tcso) = 0;
+    virtual void releaseTessControlShader(QDemonRenderBackendTessControlShaderObject tcso) = 0;
 
     /**
          * @brief create a tessellation evaluation shader object
@@ -1327,9 +1369,9 @@ public:
          *
          * @return The created tessellation evaluation shader object or nullptr if the creation failed.
          */
-    virtual QDemonRenderBackendTessEvaluationShaderObject
-    CreateTessEvaluationShader(QDemonConstDataRef<qint8> source, QByteArray &errorMessage,
-                               bool binary) = 0;
+    virtual QDemonRenderBackendTessEvaluationShaderObject createTessEvaluationShader(QDemonConstDataRef<qint8> source,
+                                                                                     QByteArray &errorMessage,
+                                                                                     bool binary) = 0;
 
     /**
          * @brief release a tessellation evaluation shader object
@@ -1338,8 +1380,7 @@ public:
          *
          * @return No Return.
          */
-    virtual void
-    ReleaseTessEvaluationShader(QDemonRenderBackendTessEvaluationShaderObject teso) = 0;
+    virtual void releaseTessEvaluationShader(QDemonRenderBackendTessEvaluationShaderObject teso) = 0;
 
     /**
          * @brief create a geometry shader object
@@ -1350,9 +1391,9 @@ public:
          *
          * @return The created geometry shader object or nullptr if the creation failed.
          */
-    virtual QDemonRenderBackendGeometryShaderObject
-    CreateGeometryShader(QDemonConstDataRef<qint8> source, QByteArray &errorMessage,
-                         bool binary) = 0;
+    virtual QDemonRenderBackendGeometryShaderObject createGeometryShader(QDemonConstDataRef<qint8> source,
+                                                                         QByteArray &errorMessage,
+                                                                         bool binary) = 0;
 
     /**
          * @brief release a geometry shader object
@@ -1361,7 +1402,7 @@ public:
          *
          * @return No Return.
          */
-    virtual void ReleaseGeometryShader(QDemonRenderBackendGeometryShaderObject gso) = 0;
+    virtual void releaseGeometryShader(QDemonRenderBackendGeometryShaderObject gso) = 0;
 
     /**
          * @brief create a compute shader object
@@ -1372,7 +1413,7 @@ public:
          *
          * @return The created compute shader object or nullptr if the creation failed.
          */
-    virtual QDemonRenderBackendComputeShaderObject CreateComputeShader(QDemonConstDataRef<qint8> source,
+    virtual QDemonRenderBackendComputeShaderObject createComputeShader(QDemonConstDataRef<qint8> source,
                                                                        QByteArray &errorMessage,
                                                                        bool binary) = 0;
 
@@ -1383,7 +1424,7 @@ public:
          *
          * @return No Return.
          */
-    virtual void ReleaseComputeShader(QDemonRenderBackendComputeShaderObject cso) = 0;
+    virtual void releaseComputeShader(QDemonRenderBackendComputeShaderObject cso) = 0;
 
     /**
          * @brief attach a vertex shader object to a program object
@@ -1393,7 +1434,7 @@ public:
          *
          * @return No Return.
          */
-    virtual void AttachShader(QDemonRenderBackendShaderProgramObject po,
+    virtual void attachShader(QDemonRenderBackendShaderProgramObject po,
                               QDemonRenderBackendVertexShaderObject vso) = 0;
 
     /**
@@ -1404,7 +1445,7 @@ public:
          *
          * @return No Return.
          */
-    virtual void DetachShader(QDemonRenderBackendShaderProgramObject po,
+    virtual void detachShader(QDemonRenderBackendShaderProgramObject po,
                               QDemonRenderBackendVertexShaderObject vso) = 0;
 
     /**
@@ -1415,7 +1456,7 @@ public:
          *
          * @return No Return.
          */
-    virtual void AttachShader(QDemonRenderBackendShaderProgramObject po,
+    virtual void attachShader(QDemonRenderBackendShaderProgramObject po,
                               QDemonRenderBackendFragmentShaderObject fso) = 0;
 
     /**
@@ -1426,7 +1467,7 @@ public:
          *
          * @return No Return.
          */
-    virtual void DetachShader(QDemonRenderBackendShaderProgramObject po,
+    virtual void detachShader(QDemonRenderBackendShaderProgramObject po,
                               QDemonRenderBackendFragmentShaderObject fso) = 0;
 
     /**
@@ -1437,7 +1478,7 @@ public:
          *
          * @return No Return.
          */
-    virtual void AttachShader(QDemonRenderBackendShaderProgramObject po,
+    virtual void attachShader(QDemonRenderBackendShaderProgramObject po,
                               QDemonRenderBackendTessControlShaderObject tcso) = 0;
 
     /**
@@ -1448,7 +1489,7 @@ public:
          *
          * @return No Return.
          */
-    virtual void DetachShader(QDemonRenderBackendShaderProgramObject po,
+    virtual void detachShader(QDemonRenderBackendShaderProgramObject po,
                               QDemonRenderBackendTessControlShaderObject tcso) = 0;
 
     /**
@@ -1459,7 +1500,7 @@ public:
          *
          * @return No Return.
          */
-    virtual void AttachShader(QDemonRenderBackendShaderProgramObject po,
+    virtual void attachShader(QDemonRenderBackendShaderProgramObject po,
                               QDemonRenderBackendTessEvaluationShaderObject teso) = 0;
 
     /**
@@ -1470,7 +1511,7 @@ public:
          *
          * @return No Return.
          */
-    virtual void DetachShader(QDemonRenderBackendShaderProgramObject po,
+    virtual void detachShader(QDemonRenderBackendShaderProgramObject po,
                               QDemonRenderBackendTessEvaluationShaderObject teso) = 0;
 
     /**
@@ -1481,7 +1522,7 @@ public:
          *
          * @return No Return.
          */
-    virtual void AttachShader(QDemonRenderBackendShaderProgramObject po,
+    virtual void attachShader(QDemonRenderBackendShaderProgramObject po,
                               QDemonRenderBackendGeometryShaderObject gso) = 0;
 
     /**
@@ -1492,7 +1533,7 @@ public:
          *
          * @return No Return.
          */
-    virtual void DetachShader(QDemonRenderBackendShaderProgramObject po,
+    virtual void detachShader(QDemonRenderBackendShaderProgramObject po,
                               QDemonRenderBackendGeometryShaderObject gso) = 0;
 
     /**
@@ -1503,7 +1544,7 @@ public:
          *
          * @return No Return.
          */
-    virtual void AttachShader(QDemonRenderBackendShaderProgramObject po,
+    virtual void attachShader(QDemonRenderBackendShaderProgramObject po,
                               QDemonRenderBackendComputeShaderObject cso) = 0;
 
     /**
@@ -1514,7 +1555,7 @@ public:
          *
          * @return No Return.
          */
-    virtual void DetachShader(QDemonRenderBackendShaderProgramObject po,
+    virtual void detachShader(QDemonRenderBackendShaderProgramObject po,
                               QDemonRenderBackendComputeShaderObject cso) = 0;
 
     /**
@@ -1524,7 +1565,7 @@ public:
          *
          * @return The created shader program object or nullptr if the creation failed.
          */
-    virtual QDemonRenderBackendShaderProgramObject CreateShaderProgram(bool isSeparable) = 0;
+    virtual QDemonRenderBackendShaderProgramObject createShaderProgram(bool isSeparable) = 0;
 
     /**
          * @brief release a shader program object
@@ -1533,7 +1574,7 @@ public:
          *
          * @return No Return.
          */
-    virtual void ReleaseShaderProgram(QDemonRenderBackendShaderProgramObject po) = 0;
+    virtual void releaseShaderProgram(QDemonRenderBackendShaderProgramObject po) = 0;
 
     /**
          * @brief link a shader program object
@@ -1543,7 +1584,7 @@ public:
          *
          * @return True if program is succesful linked.
          */
-    virtual bool LinkProgram(QDemonRenderBackendShaderProgramObject po,
+    virtual bool linkProgram(QDemonRenderBackendShaderProgramObject po,
                              QByteArray &errorMessage) = 0;
 
     /**
@@ -1553,7 +1594,7 @@ public:
          *
          * @return No return
          */
-    virtual void SetActiveProgram(QDemonRenderBackendShaderProgramObject po) = 0;
+    virtual void setActiveProgram(QDemonRenderBackendShaderProgramObject po) = 0;
 
     /**
          * @brief create a program pipeline object
@@ -1561,7 +1602,7 @@ public:
          *
          * @return The created program pipeline object or nullptr if the creation failed.
          */
-    virtual QDemonRenderBackendProgramPipeline CreateProgramPipeline() = 0;
+    virtual QDemonRenderBackendProgramPipeline createProgramPipeline() = 0;
 
     /**
          * @brief release a program pipeline object
@@ -1570,7 +1611,7 @@ public:
          *
          * @return No Return.
          */
-    virtual void ReleaseProgramPipeline(QDemonRenderBackendProgramPipeline ppo) = 0;
+    virtual void releaseProgramPipeline(QDemonRenderBackendProgramPipeline ppo) = 0;
 
     /**
          * @brief Make a program pipeline current
@@ -1579,7 +1620,7 @@ public:
          *
          * @return No return
          */
-    virtual void SetActiveProgramPipeline(QDemonRenderBackendProgramPipeline ppo) = 0;
+    virtual void setActiveProgramPipeline(QDemonRenderBackendProgramPipeline ppo) = 0;
 
     /**
          * @brief Make a program stage active for this pipeline
@@ -1590,7 +1631,7 @@ public:
          *
          * @return No return
          */
-    virtual void SetProgramStages(QDemonRenderBackendProgramPipeline ppo,
+    virtual void setProgramStages(QDemonRenderBackendProgramPipeline ppo,
                                   QDemonRenderShaderTypeFlags flags,
                                   QDemonRenderBackendShaderProgramObject po) = 0;
 
@@ -1607,7 +1648,7 @@ public:
          *
          * @return No return
          */
-    virtual void DispatchCompute(QDemonRenderBackendShaderProgramObject po, quint32 numGroupsX,
+    virtual void dispatchCompute(QDemonRenderBackendShaderProgramObject po, quint32 numGroupsX,
                                  quint32 numGroupsY, quint32 numGroupsZ) = 0;
 
     /**
@@ -1617,7 +1658,7 @@ public:
          *
          * @return Return active constant count
          */
-    virtual qint32 GetConstantCount(QDemonRenderBackendShaderProgramObject po) = 0;
+    virtual qint32 getConstantCount(QDemonRenderBackendShaderProgramObject po) = 0;
 
     /**
          * @brief Query constant buffer count for a program object
@@ -1626,7 +1667,7 @@ public:
          *
          * @return Return active constant buffer count
          */
-    virtual qint32 GetConstantBufferCount(QDemonRenderBackendShaderProgramObject po) = 0;
+    virtual qint32 getConstantBufferCount(QDemonRenderBackendShaderProgramObject po) = 0;
 
     /**
          * @brief Query constant information by ID
@@ -1641,7 +1682,7 @@ public:
          *
          * @return Return current constant location or -1 if not found
          */
-    virtual qint32 GetConstantInfoByID(QDemonRenderBackendShaderProgramObject po, quint32 id,
+    virtual qint32 getConstantInfoByID(QDemonRenderBackendShaderProgramObject po, quint32 id,
                                        quint32 bufSize, qint32 *numElem,
                                        QDemonRenderShaderDataTypes::Enum *type, qint32 *binding,
                                        char *nameBuf) = 0;
@@ -1659,7 +1700,7 @@ public:
          *
          * @return Return current constant buffer location or -1 if not found
          */
-    virtual qint32 GetConstantBufferInfoByID(QDemonRenderBackendShaderProgramObject po, quint32 id,
+    virtual qint32 getConstantBufferInfoByID(QDemonRenderBackendShaderProgramObject po, quint32 id,
                                              quint32 nameBufSize, qint32 *paramCount,
                                              qint32 *bufferSize, qint32 *length,
                                              char *nameBuf) = 0;
@@ -1674,7 +1715,7 @@ public:
          *
          * @return no return value
          */
-    virtual void GetConstantBufferParamIndices(QDemonRenderBackendShaderProgramObject po, quint32 id,
+    virtual void getConstantBufferParamIndices(QDemonRenderBackendShaderProgramObject po, quint32 id,
                                                qint32 *indices) = 0;
 
     /**
@@ -1690,7 +1731,7 @@ public:
          *
          * @return no return value
          */
-    virtual void GetConstantBufferParamInfoByIndices(QDemonRenderBackendShaderProgramObject po,
+    virtual void getConstantBufferParamInfoByIndices(QDemonRenderBackendShaderProgramObject po,
                                                      quint32 count, quint32 *indices, qint32 *type,
                                                      qint32 *size, qint32 *offset) = 0;
 
@@ -1705,7 +1746,7 @@ public:
          *
          * @return No return
          */
-    virtual void ProgramSetConstantBlock(QDemonRenderBackendShaderProgramObject po,
+    virtual void programSetConstantBlock(QDemonRenderBackendShaderProgramObject po,
                                          quint32 blockIndex, quint32 binding) = 0;
 
     /**
@@ -1716,7 +1757,7 @@ public:
          *
          * @return No return
          */
-    virtual void ProgramSetConstantBuffer(quint32 index, QDemonRenderBackendBufferObject bo) = 0;
+    virtual void programSetConstantBuffer(quint32 index, QDemonRenderBackendBufferObject bo) = 0;
 
     /**
          * @brief Query storage buffer count for a program object
@@ -1725,7 +1766,7 @@ public:
          *
          * @return Return active storage buffer count
          */
-    virtual qint32 GetStorageBufferCount(QDemonRenderBackendShaderProgramObject po) = 0;
+    virtual qint32 getStorageBufferCount(QDemonRenderBackendShaderProgramObject po) = 0;
 
     /**
          * @brief Query storage buffer information by ID
@@ -1740,9 +1781,13 @@ public:
          *
          * @return Return current storage buffer binding or -1 if not found
          */
-    virtual qint32 GetStorageBufferInfoByID(QDemonRenderBackendShaderProgramObject po, quint32 id,
-                                            quint32 nameBufSize, qint32 *paramCount,
-                                            qint32 *bufferSize, qint32 *length, char *nameBuf) = 0;
+    virtual qint32 getStorageBufferInfoByID(QDemonRenderBackendShaderProgramObject po,
+                                            quint32 id,
+                                            quint32 nameBufSize,
+                                            qint32 *paramCount,
+                                            qint32 *bufferSize,
+                                            qint32 *length,
+                                            char *nameBuf) = 0;
 
     /**
          * @brief Bind a storage buffer for usage in the current active shader program
@@ -1752,7 +1797,7 @@ public:
          *
          * @return No return
          */
-    virtual void ProgramSetStorageBuffer(quint32 index, QDemonRenderBackendBufferObject bo) = 0;
+    virtual void programSetStorageBuffer(quint32 index, QDemonRenderBackendBufferObject bo) = 0;
 
     /**
          * @brief Query atomic counter buffer count for a program object
@@ -1761,7 +1806,7 @@ public:
          *
          * @return Return active atomic buffer count
          */
-    virtual qint32 GetAtomicCounterBufferCount(QDemonRenderBackendShaderProgramObject po) = 0;
+    virtual qint32 getAtomicCounterBufferCount(QDemonRenderBackendShaderProgramObject po) = 0;
 
     /**
          * @brief Query atomic counter buffer information by ID
@@ -1776,9 +1821,12 @@ public:
          *
          * @return Return current storage buffer binding or -1 if not found
          */
-    virtual qint32 GetAtomicCounterBufferInfoByID(QDemonRenderBackendShaderProgramObject po,
-                                                  quint32 id, quint32 nameBufSize, qint32 *paramCount,
-                                                  qint32 *bufferSize, qint32 *length,
+    virtual qint32 getAtomicCounterBufferInfoByID(QDemonRenderBackendShaderProgramObject po,
+                                                  quint32 id,
+                                                  quint32 nameBufSize,
+                                                  qint32 *paramCount,
+                                                  qint32 *bufferSize,
+                                                  qint32 *length,
                                                   char *nameBuf) = 0;
 
     /**
@@ -1789,7 +1837,7 @@ public:
          *
          * @return No return
          */
-    virtual void ProgramSetAtomicCounterBuffer(quint32 index, QDemonRenderBackendBufferObject bo) = 0;
+    virtual void programSetAtomicCounterBuffer(quint32 index, QDemonRenderBackendBufferObject bo) = 0;
 
     /**
          * @brief Set constant value
@@ -1803,9 +1851,12 @@ public:
          *
          * @return No return
          */
-    virtual void SetConstantValue(QDemonRenderBackendShaderProgramObject po, quint32 id,
-                                  QDemonRenderShaderDataTypes::Enum type, qint32 count,
-                                  const void *value, bool transpose = false) = 0;
+    virtual void setConstantValue(QDemonRenderBackendShaderProgramObject po,
+                                  quint32 id,
+                                  QDemonRenderShaderDataTypes::Enum type,
+                                  qint32 count,
+                                  const void *value,
+                                  bool transpose = false) = 0;
 
     /**
          * @brief Draw the current active vertex buffer
@@ -1816,7 +1867,7 @@ public:
          *
          * @return no return.
          */
-    virtual void Draw(QDemonRenderDrawMode::Enum drawMode, quint32 start, quint32 count) = 0;
+    virtual void draw(QDemonRenderDrawMode::Enum drawMode, quint32 start, quint32 count) = 0;
 
     /**
          * @brief Draw the current active vertex buffer using an indirect buffer
@@ -1828,7 +1879,7 @@ public:
          *
          * @return no return.
          */
-    virtual void DrawIndirect(QDemonRenderDrawMode::Enum drawMode, const void *indirect) = 0;
+    virtual void drawIndirect(QDemonRenderDrawMode::Enum drawMode, const void *indirect) = 0;
 
     /**
          * @brief Draw the current active index buffer
@@ -1842,8 +1893,10 @@ public:
          *
          * @return no return.
          */
-    virtual void DrawIndexed(QDemonRenderDrawMode::Enum drawMode, quint32 count,
-                             QDemonRenderComponentTypes::Enum type, const void *indices) = 0;
+    virtual void drawIndexed(QDemonRenderDrawMode::Enum drawMode,
+                             quint32 count,
+                             QDemonRenderComponentTypes::Enum type,
+                             const void *indices) = 0;
 
     /**
          * @brief Draw the current active index buffer using an indirect buffer
@@ -1856,7 +1909,7 @@ public:
          *
          * @return no return.
          */
-    virtual void DrawIndexedIndirect(QDemonRenderDrawMode::Enum drawMode,
+    virtual void drawIndexedIndirect(QDemonRenderDrawMode::Enum drawMode,
                                      QDemonRenderComponentTypes::Enum type,
                                      const void *indirect) = 0;
 
@@ -1872,7 +1925,7 @@ public:
          *
          * @return No return
          */
-    virtual void ReadPixel(QDemonRenderBackendRenderTargetObject rto, qint32 x, qint32 y, qint32 width,
+    virtual void readPixel(QDemonRenderBackendRenderTargetObject rto, qint32 x, qint32 y, qint32 width,
                            qint32 height, QDemonRenderReadPixelFormats::Enum inFormat,
                            void *pixels) = 0;
 
@@ -1883,7 +1936,7 @@ public:
          *
          * @return return path object on success or nullptr
          */
-    virtual QDemonRenderBackendPathObject CreatePathNVObject(size_t range) = 0;
+    virtual QDemonRenderBackendPathObject createPathNVObject(size_t range) = 0;
 
     /**
          * @brief Relase a NV path render object
@@ -1893,7 +1946,7 @@ public:
          *
          * @return return path object on success or nullptr
          */
-    virtual void ReleasePathNVObject(QDemonRenderBackendPathObject po, size_t range) = 0;
+    virtual void releasePathNVObject(QDemonRenderBackendPathObject po, size_t range) = 0;
 
     /**
          * @brief Set the path commands and data.
@@ -1904,7 +1957,7 @@ public:
          *
          * @return No return
          */
-    virtual void SetPathSpecification(QDemonRenderBackendPathObject inPathObject,
+    virtual void setPathSpecification(QDemonRenderBackendPathObject inPathObject,
                                       QDemonConstDataRef<quint8> inPathCommands,
                                       QDemonConstDataRef<float> inPathCoords) = 0;
 
@@ -1915,9 +1968,9 @@ public:
          *
          * @return return bounds
          */
-    virtual QDemonBounds3 GetPathObjectBoundingBox(QDemonRenderBackendPathObject inPathObject) = 0;
-    virtual QDemonBounds3 GetPathObjectFillBox(QDemonRenderBackendPathObject inPathObject) = 0;
-    virtual QDemonBounds3 GetPathObjectStrokeBox(QDemonRenderBackendPathObject inPathObject) = 0;
+    virtual QDemonBounds3 getPathObjectBoundingBox(QDemonRenderBackendPathObject inPathObject) = 0;
+    virtual QDemonBounds3 getPathObjectFillBox(QDemonRenderBackendPathObject inPathObject) = 0;
+    virtual QDemonBounds3 getPathObjectStrokeBox(QDemonRenderBackendPathObject inPathObject) = 0;
 
     /**
          * @brief Set stroke width. Defaults to 0 if unset.
@@ -1926,7 +1979,7 @@ public:
          *
          * @return No return
          */
-    virtual void SetStrokeWidth(QDemonRenderBackendPathObject inPathObject,
+    virtual void setStrokeWidth(QDemonRenderBackendPathObject inPathObject,
                                 float inStrokeWidth) = 0;
 
     /**
@@ -1936,8 +1989,8 @@ public:
          *
          * @return No return
          */
-    virtual void SetPathProjectionMatrix(const QMatrix4x4 inPathProjection) = 0;
-    virtual void SetPathModelViewMatrix(const QMatrix4x4 inPathModelview) = 0;
+    virtual void setPathProjectionMatrix(const QMatrix4x4 inPathProjection) = 0;
+    virtual void setPathModelViewMatrix(const QMatrix4x4 inPathModelview) = 0;
 
     /**
          * @brief Path stencil pass operations
@@ -1946,8 +1999,8 @@ public:
          *
          * @return No return
          */
-    virtual void StencilStrokePath(QDemonRenderBackendPathObject inPathObject) = 0;
-    virtual void StencilFillPath(QDemonRenderBackendPathObject inPathObject) = 0;
+    virtual void stencilStrokePath(QDemonRenderBackendPathObject inPathObject) = 0;
+    virtual void stencilFillPath(QDemonRenderBackendPathObject inPathObject) = 0;
 
     /**
          * @brief Does a instanced stencil fill pass
@@ -1963,10 +2016,14 @@ public:
          *
          * @return No return
          */
-    virtual void StencilFillPathInstanced(
-            QDemonRenderBackendPathObject po, size_t numPaths, QDemonRenderPathFormatType::Enum type,
-            const void *charCodes, QDemonRenderPathFillMode::Enum fillMode, quint32 stencilMask,
-            QDemonRenderPathTransformType::Enum transformType, const float *transformValues) = 0;
+    virtual void stencilFillPathInstanced(QDemonRenderBackendPathObject po,
+                                          size_t numPaths,
+                                          QDemonRenderPathFormatType::Enum type,
+                                          const void *charCodes,
+                                          QDemonRenderPathFillMode::Enum fillMode,
+                                          quint32 stencilMask,
+                                          QDemonRenderPathTransformType::Enum transformType,
+                                          const float *transformValues) = 0;
 
     /**
          * @brief Does a instanced stencil stroke pass
@@ -1982,9 +2039,11 @@ public:
          *
          * @return No return
          */
-    virtual void StencilStrokePathInstancedN(QDemonRenderBackendPathObject po, size_t numPaths,
+    virtual void stencilStrokePathInstancedN(QDemonRenderBackendPathObject po,
+                                             size_t numPaths,
                                              QDemonRenderPathFormatType::Enum type,
-                                             const void *charCodes, qint32 stencilRef,
+                                             const void *charCodes,
+                                             qint32 stencilRef,
                                              quint32 stencilMask,
                                              QDemonRenderPathTransformType::Enum transformType,
                                              const float *transformValues) = 0;
@@ -2002,7 +2061,8 @@ public:
          *
          * @return No return
          */
-    virtual void CoverFillPathInstanced(QDemonRenderBackendPathObject po, size_t numPaths,
+    virtual void coverFillPathInstanced(QDemonRenderBackendPathObject po,
+                                        size_t numPaths,
                                         QDemonRenderPathFormatType::Enum type,
                                         const void *charCodes,
                                         QDemonRenderPathCoverMode::Enum coverMode,
@@ -2022,7 +2082,8 @@ public:
          *
          * @return No return
          */
-    virtual void CoverStrokePathInstanced(QDemonRenderBackendPathObject po, size_t numPaths,
+    virtual void coverStrokePathInstanced(QDemonRenderBackendPathObject po,
+                                          size_t numPaths,
                                           QDemonRenderPathFormatType::Enum type,
                                           const void *charCodes,
                                           QDemonRenderPathCoverMode::Enum coverMode,
@@ -2037,7 +2098,7 @@ public:
          *
          * @return No return
          */
-    virtual void SetPathStencilDepthOffset(float inSlope, float inBias) = 0;
+    virtual void setPathStencilDepthOffset(float inSlope, float inBias) = 0;
 
     /**
          * @brief Path cover function
@@ -2046,7 +2107,7 @@ public:
          *
          * @return No return
          */
-    virtual void SetPathCoverDepthFunc(QDemonRenderBoolOp::Enum inDepthFunction) = 0;
+    virtual void setPathCoverDepthFunc(QDemonRenderBoolOp::Enum inDepthFunction) = 0;
 
     /**
          * @brief Load glyphs
@@ -2064,10 +2125,13 @@ public:
          *
          * @return No return
          */
-    virtual void LoadPathGlyphs(QDemonRenderBackendPathObject po,
-                                QDemonRenderPathFontTarget::Enum fontTarget, const void *fontName,
-                                QDemonRenderPathFontStyleFlags fontStyle, size_t numGlyphs,
-                                QDemonRenderPathFormatType::Enum type, const void *charCodes,
+    virtual void loadPathGlyphs(QDemonRenderBackendPathObject po,
+                                QDemonRenderPathFontTarget::Enum fontTarget,
+                                const void *fontName,
+                                QDemonRenderPathFontStyleFlags fontStyle,
+                                size_t numGlyphs,
+                                QDemonRenderPathFormatType::Enum type,
+                                const void *charCodes,
                                 QDemonRenderPathMissingGlyphs::Enum handleMissingGlyphs,
                                 QDemonRenderBackendPathObject pathParameterTemplate,
                                 float emScale) = 0;
@@ -2086,11 +2150,14 @@ public:
          *
          * @return return load status
          */
-    virtual QDemonRenderPathReturnValues::Enum
-    LoadPathGlyphsIndexed(QDemonRenderBackendPathObject po, QDemonRenderPathFontTarget::Enum fontTarget,
-                          const void *fontName, QDemonRenderPathFontStyleFlags fontStyle,
-                          quint32 firstGlyphIndex, size_t numGlyphs,
-                          QDemonRenderBackendPathObject pathParameterTemplate, float emScale) = 0;
+    virtual QDemonRenderPathReturnValues::Enum loadPathGlyphsIndexed(QDemonRenderBackendPathObject po,
+                                                                     QDemonRenderPathFontTarget::Enum fontTarget,
+                                                                     const void *fontName,
+                                                                     QDemonRenderPathFontStyleFlags fontStyle,
+                                                                     quint32 firstGlyphIndex,
+                                                                     size_t numGlyphs,
+                                                                     QDemonRenderBackendPathObject pathParameterTemplate,
+                                                                     float emScale) = 0;
 
     /**
          * @brief Load indexed font set
@@ -2104,11 +2171,12 @@ public:
          *
          * @return returnr base path object
          */
-    virtual QDemonRenderBackendPathObject
-    LoadPathGlyphsIndexedRange(QDemonRenderPathFontTarget::Enum fontTarget, const void *fontName,
-                               QDemonRenderPathFontStyleFlags fontStyle,
-                               QDemonRenderBackendPathObject pathParameterTemplate, float emScale,
-                               quint32 *count) = 0;
+    virtual QDemonRenderBackendPathObject loadPathGlyphsIndexedRange(QDemonRenderPathFontTarget::Enum fontTarget,
+                                                                     const void *fontName,
+                                                                     QDemonRenderPathFontStyleFlags fontStyle,
+                                                                     QDemonRenderBackendPathObject pathParameterTemplate,
+                                                                     float emScale,
+                                                                     quint32 *count) = 0;
 
     /**
          * @brief Load font set
@@ -2125,10 +2193,12 @@ public:
          *
          * @return No return
          */
-    virtual void LoadPathGlyphRange(QDemonRenderBackendPathObject po,
+    virtual void loadPathGlyphRange(QDemonRenderBackendPathObject po,
                                     QDemonRenderPathFontTarget::Enum fontTarget,
-                                    const void *fontName, QDemonRenderPathFontStyleFlags fontStyle,
-                                    quint32 firstGlyph, size_t numGlyphs,
+                                    const void *fontName,
+                                    QDemonRenderPathFontStyleFlags fontStyle,
+                                    quint32 firstGlyph,
+                                    size_t numGlyphs,
                                     QDemonRenderPathMissingGlyphs::Enum handleMissingGlyphs,
                                     QDemonRenderBackendPathObject pathParameterTemplate,
                                     float emScale) = 0;
@@ -2146,10 +2216,13 @@ public:
          *
          * @return No return
          */
-    virtual void GetPathMetrics(QDemonRenderBackendPathObject po, size_t numPaths,
+    virtual void getPathMetrics(QDemonRenderBackendPathObject po,
+                                size_t numPaths,
                                 QDemonRenderPathGlyphFontMetricFlags metricQueryMask,
-                                QDemonRenderPathFormatType::Enum type, const void *charCodes,
-                                size_t stride, float *metrics) = 0;
+                                QDemonRenderPathFormatType::Enum type,
+                                const void *charCodes,
+                                size_t stride,
+                                float *metrics) = 0;
 
     /**
          * @brief Query font metrics
@@ -2162,9 +2235,11 @@ public:
          *
          * @return No return
          */
-    virtual void GetPathMetricsRange(QDemonRenderBackendPathObject po, size_t numPaths,
+    virtual void getPathMetricsRange(QDemonRenderBackendPathObject po,
+                                     size_t numPaths,
                                      QDemonRenderPathGlyphFontMetricFlags metricQueryMask,
-                                     size_t stride, float *metrics) = 0;
+                                     size_t stride,
+                                     float *metrics) = 0;
 
     /**
          * @brief Query path spacing
@@ -2181,10 +2256,13 @@ public:
          *
          * @return No return
          */
-    virtual void GetPathSpacing(QDemonRenderBackendPathObject po, size_t numPaths,
+    virtual void getPathSpacing(QDemonRenderBackendPathObject po,
+                                size_t numPaths,
                                 QDemonRenderPathListMode::Enum pathListMode,
-                                QDemonRenderPathFormatType::Enum type, const void *charCodes,
-                                float advanceScale, float kerningScale,
+                                QDemonRenderPathFormatType::Enum type,
+                                const void *charCodes,
+                                float advanceScale,
+                                float kerningScale,
                                 QDemonRenderPathTransformType::Enum transformType,
                                 float *spacing) = 0;
 

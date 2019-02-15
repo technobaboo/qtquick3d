@@ -38,65 +38,64 @@
 
 QT_BEGIN_NAMESPACE
 
-class CSubPresentationRenderer;
+class QDemonSubPresentationRenderer;
 
-struct CSubPresentationPickQuery : public IGraphObjectPickQuery
+struct CSubPresentationPickQuery : public QDemonGraphObjectPickQueryInterface
 {
-    CSubPresentationRenderer &m_Renderer;
+    QDemonSubPresentationRenderer &m_renderer;
 
-    CSubPresentationPickQuery(CSubPresentationRenderer &renderer)
-        : m_Renderer(renderer)
+    CSubPresentationPickQuery(QDemonSubPresentationRenderer &renderer)
+        : m_renderer(renderer)
     {
     }
-    QDemonRenderPickResult Pick(const QVector2D &inMouseCoords,
+    QDemonRenderPickResult pick(const QVector2D &inMouseCoords,
                                 const QVector2D &inViewportDimensions,
                                 bool inPickEverything) override;
 };
 
-class CSubPresentationRenderer : public IOffscreenRenderer
+class QDemonSubPresentationRenderer : public QDemonOffscreenRendererInterface
 {
 public:
-    IQDemonRenderContext *m_RenderContext;
-    QSharedPointer<SPresentation> m_Presentation;
-    SOffscreenRendererEnvironment m_LastRenderedEnvironment;
-    CSubPresentationPickQuery m_PickQuery;
-    QString m_OffscreenRendererType;
+    QDemonRenderContextInterface *m_renderContext;
+    QSharedPointer<QDemonPresentation> m_presentation;
+    QDemonOffscreenRendererEnvironment m_lastRenderedEnvironment;
+    CSubPresentationPickQuery m_pickQuery;
+    QString m_offscreenRendererType;
 
-    CSubPresentationRenderer(IQDemonRenderContext *inRenderContext, QSharedPointer<SPresentation> inPresentation);
+    QDemonSubPresentationRenderer(QDemonRenderContextInterface *inRenderContext, QSharedPointer<QDemonPresentation> inPresentation);
 
-    SOffscreenRendererEnvironment GetDesiredEnvironment(QVector2D inPresScale) override;
-    virtual SOffscreenRenderFlags
-    NeedsRender(const SOffscreenRendererEnvironment &inEnvironment,
-                QVector2D inPresScale,
-                const SRenderInstanceId instanceId) override;
-    void Render(const SOffscreenRendererEnvironment &inEnvironment,
+    QDemonOffscreenRendererEnvironment getDesiredEnvironment(QVector2D inPresScale) override;
+    virtual QDemonOffscreenRenderFlags needsRender(const QDemonOffscreenRendererEnvironment &inEnvironment,
+                                                   QVector2D inPresScale,
+                                                   const SRenderInstanceId instanceId) override;
+    void render(const QDemonOffscreenRendererEnvironment &inEnvironment,
                 QDemonRenderContext & /*inRenderContext*/,
                 QVector2D inPresScale,
-                SScene::RenderClearCommand inClearBuffer,
+                QDemonRenderScene::RenderClearCommand inClearBuffer,
                 const SRenderInstanceId instanceId) override;
-    void RenderWithClear(const SOffscreenRendererEnvironment &inEnvironment,
+    void renderWithClear(const QDemonOffscreenRendererEnvironment &inEnvironment,
                          QDemonRenderContext &inRenderContext,
                          QVector2D inPresScale,
-                         SScene::RenderClearCommand inClearBuffer,
+                         QDemonRenderScene::RenderClearCommand inClearBuffer,
                          QVector3D inClearColor,
                          const SRenderInstanceId instanceId) override;
-    IGraphObjectPickQuery *GetGraphObjectPickQuery(const SRenderInstanceId) override { return &m_PickQuery; }
-    bool Pick(const QVector2D & /*inMouseCoords*/,
+    QDemonGraphObjectPickQueryInterface *getGraphObjectPickQuery(const SRenderInstanceId) override { return &m_pickQuery; }
+    bool pick(const QVector2D & /*inMouseCoords*/,
               const QVector2D & /*inViewportDimensions*/,
               const SRenderInstanceId) override
     {
         return false;
     }
-    void addCallback(IOffscreenRendererCallback *cb) override
+    void addCallback(QDemonOffscreenRendererCallbackInterface *cb) override
     {
         Q_UNUSED(cb)
     }
     // Used for RTTI purposes so we can safely static-cast an offscreen renderer to a
     // CSubPresentationRenderer
-    static const char *GetRendererName() { return "SubPresentation"; }
-    QString GetOffscreenRendererType() override { return m_OffscreenRendererType; }
+    static const char *getRendererName() { return "SubPresentation"; }
+    QString getOffscreenRendererType() override { return m_offscreenRendererType; }
 
-    QDemonRenderPickResult DoGraphQueryPick(const QVector2D &inMouseCoords, const QVector2D &inViewportDimensions, bool inPickEverything);
+    QDemonRenderPickResult doGraphQueryPick(const QVector2D &inMouseCoords, const QVector2D &inViewportDimensions, bool inPickEverything);
 };
 QT_END_NAMESPACE
 #endif

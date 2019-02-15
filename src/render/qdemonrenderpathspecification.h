@@ -39,8 +39,8 @@ class QDemonRenderContextImpl;
 
 class QDemonRenderPathSpecification
 {
-    QSharedPointer<QDemonRenderContextImpl> m_Context; ///< pointer to context
-    QSharedPointer<QDemonRenderBackend> m_Backend; ///< pointer to backend
+    QSharedPointer<QDemonRenderContextImpl> m_context; ///< pointer to context
+    QSharedPointer<QDemonRenderBackend> m_backend; ///< pointer to backend
 
 public:
     /**
@@ -62,7 +62,7 @@ public:
          *
          * @return No return.
          */
-    virtual void Reset();
+    virtual void reset();
 
     /**
          * @brief add new move to command
@@ -71,7 +71,7 @@ public:
          *
          * @return No return.
          */
-    virtual void MoveTo(QVector2D inPoint);
+    virtual void moveTo(QVector2D inPoint);
 
     /**
          * @brief add new cubic curve command
@@ -82,7 +82,7 @@ public:
          *
          * @return No return.
          */
-    virtual void CubicCurveTo(QVector2D inC1, QVector2D inC2, QVector2D inDest);
+    virtual void cubicCurveTo(QVector2D inC1, QVector2D inC2, QVector2D inDest);
 
     /**
          * @brief add new close command
@@ -90,7 +90,7 @@ public:
          *
          * @return No return.
          */
-    virtual void ClosePath();
+    virtual void closePath();
 
     /**
          * @brief Get path command list
@@ -98,7 +98,7 @@ public:
          *
          * @return path commands
          */
-    virtual QVector<quint8> GetPathCommands() { return m_PathCommands; }
+    virtual QVector<quint8> getPathCommands() { return m_pathCommands; }
 
     /**
          * @brief Get path coordinates list
@@ -106,11 +106,11 @@ public:
          *
          * @return path coordinates
          */
-    virtual QVector<float> GetPathCoords() { return m_PathCoords; }
+    virtual QVector<float> getPathCoords() { return m_pathCoords; }
 
 private:
-    QVector<quint8> m_PathCommands;
-    QVector<float> m_PathCoords;
+    QVector<quint8> m_pathCommands;
+    QVector<float> m_pathCoords;
 
     /**
          * @brief add a new point to the coordinates
@@ -119,10 +119,10 @@ private:
          *
          * @return No return.
          */
-    void P(QVector2D inData);
+    void addPoint(QVector2D inData);
 
 public:
-    static QSharedPointer<QDemonRenderPathSpecification> CreatePathSpecification(QSharedPointer<QDemonRenderContextImpl> context);
+    static QSharedPointer<QDemonRenderPathSpecification> createPathSpecification(QSharedPointer<QDemonRenderContextImpl> context);
 };
 
 QT_END_NAMESPACE

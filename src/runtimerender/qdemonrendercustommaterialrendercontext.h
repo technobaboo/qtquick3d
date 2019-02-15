@@ -36,55 +36,63 @@
 
 QT_BEGIN_NAMESPACE
 
-struct SLayerRenderData;
-struct SRenderSubset;
-struct SCustomMaterial;
-struct SRenderableImage;
+struct QDemonLayerRenderData;
+struct QDemonRenderSubset;
+struct QDemonCustomMaterial;
+struct QDemonRenderableImage;
 
-struct SCustomMaterialRenderContext
+struct QDemonCustomMaterialRenderContext
 {
     // The lights and camera will not change per layer,
     // so that information can be set once for all the shaders.
-    const SLayer &m_Layer;
-    const SLayerRenderData &m_LayerData;
-    const QVector<SLight *> &m_Lights;
-    const SCamera &m_Camera;
+    const QDemonLayer &layer;
+    const QDemonLayerRenderData &layerData;
+    const QVector<QDemonRenderLight *> &lights;
+    const QDemonRenderCamera &camera;
 
     // Per-object information.
-    const SModel &m_Model;
-    const SRenderSubset &m_Subset;
-    const QMatrix4x4 &m_ModelViewProjection;
-    const QMatrix4x4 &m_ModelMatrix; ///< model to world transformation
-    const QMatrix3x3 &m_NormalMatrix;
-    const SCustomMaterial &m_Material;
-    const QSharedPointer<QDemonRenderTexture2D> m_DepthTexture;
-    const QSharedPointer<QDemonRenderTexture2D> m_AOTexture;
-    SShaderDefaultMaterialKey m_MaterialKey;
-    SRenderableImage *m_FirstImage;
-    float m_Opacity;
+    const QDemonRenderModel &model;
+    const QDemonRenderSubset &subset;
+    const QMatrix4x4 &modelViewProjection;
+    const QMatrix4x4 &modelMatrix; ///< model to world transformation
+    const QMatrix3x3 &normalMatrix;
+    const QDemonCustomMaterial &material;
+    const QSharedPointer<QDemonRenderTexture2D> depthTexture;
+    const QSharedPointer<QDemonRenderTexture2D> aoTexture;
+    QDemonShaderDefaultMaterialKey materialKey;
+    QDemonRenderableImage *firstImage;
+    float opacity;
 
-    SCustomMaterialRenderContext(
-            const SLayer &layer, const SLayerRenderData &data, const QVector<SLight *> &lights,
-            const SCamera &cam, const SModel &m, const SRenderSubset &subset, const QMatrix4x4 &mvp,
-            const QMatrix4x4 &world, const QMatrix3x3 &nm, const SCustomMaterial &material,
-            const QSharedPointer<QDemonRenderTexture2D> depthTex, const QSharedPointer<QDemonRenderTexture2D> aoTex,
-            SShaderDefaultMaterialKey inMaterialKey, SRenderableImage *inFirstImage = nullptr,
-            float opacity = 1.0)
-        : m_Layer(layer)
-        , m_LayerData(data)
-        , m_Lights(lights)
-        , m_Camera(cam)
-        , m_Model(m)
-        , m_Subset(subset)
-        , m_ModelViewProjection(mvp)
-        , m_ModelMatrix(world)
-        , m_NormalMatrix(nm)
-        , m_Material(material)
-        , m_DepthTexture(depthTex)
-        , m_AOTexture(aoTex)
-        , m_MaterialKey(inMaterialKey)
-        , m_FirstImage(inFirstImage)
-        , m_Opacity(opacity)
+    QDemonCustomMaterialRenderContext(const QDemonLayer &inLayer,
+                                      const QDemonLayerRenderData &inData,
+                                      const QVector<QDemonRenderLight *> &inLights,
+                                      const QDemonRenderCamera &inCamera,
+                                      const QDemonRenderModel &inModel,
+                                      const QDemonRenderSubset &inSubset,
+                                      const QMatrix4x4 &inMvp,
+                                      const QMatrix4x4 &inWorld,
+                                      const QMatrix3x3 &inNormal,
+                                      const QDemonCustomMaterial &inMaterial,
+                                      const QSharedPointer<QDemonRenderTexture2D> inDepthTex,
+                                      const QSharedPointer<QDemonRenderTexture2D> inAoTex,
+                                      QDemonShaderDefaultMaterialKey inMaterialKey,
+                                      QDemonRenderableImage *inFirstImage = nullptr,
+                                      float inOpacity = 1.0)
+        : layer(inLayer)
+        , layerData(inData)
+        , lights(inLights)
+        , camera(inCamera)
+        , model(inModel)
+        , subset(inSubset)
+        , modelViewProjection(inMvp)
+        , modelMatrix(inWorld)
+        , normalMatrix(inNormal)
+        , material(inMaterial)
+        , depthTexture(inDepthTex)
+        , aoTexture(inAoTex)
+        , materialKey(inMaterialKey)
+        , firstImage(inFirstImage)
+        , opacity(inOpacity)
     {
     }
 };

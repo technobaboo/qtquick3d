@@ -44,31 +44,31 @@
 QT_BEGIN_NAMESPACE
 
 namespace {
-class SInputStream : public QFile
+class QDemonInputStream : public QFile
 {
 public:
 
-    SInputStream(const QString &inPath)
+    QDemonInputStream(const QString &inPath)
         : QFile(inPath)
-        , m_Path(inPath)
+        , m_path(inPath)
     {
     }
-    virtual ~SInputStream() override
+    virtual ~QDemonInputStream() override
     {
     }
-    QString path() const { return m_Path; }
+    QString path() const { return m_path; }
 
 private:
-    QString m_Path;
+    QString m_path;
 };
 
-struct SFactory : public IInputStreamFactory
+struct QDemonInputStreamFactory : public QDemonInputStreamFactoryInterface
 {
-    QMutex m_Mutex;
+    QMutex m_mutex;
 
     const QString Q3DSTUDIO_TAG = QStringLiteral("qt3dstudio");
 
-    SFactory()
+    QDemonInputStreamFactory()
     {
         // Add the top-level qrc directory
         if (!QDir::searchPaths(Q3DSTUDIO_TAG).contains(QLatin1String(":/")))
@@ -96,10 +96,10 @@ struct SFactory : public IInputStreamFactory
         return QFileInfo();
     }
 
-    void AddSearchDirectory(const char *inDirectory) override
+    void addSearchDirectory(const char *inDirectory) override
     {
-        QMutexLocker factoryLocker(&m_Mutex);
-        QString localDir = CFileTools::NormalizePathForQtUsage(QString::fromLocal8Bit(inDirectory));
+        QMutexLocker factoryLocker(&m_mutex);
+        QString localDir = CFileTools::normalizePathForQtUsage(QString::fromLocal8Bit(inDirectory));
         QDir directory(localDir);
         if (!directory.exists()) {
             qCritical("Adding search directory: %s", inDirectory);
@@ -111,10 +111,10 @@ struct SFactory : public IInputStreamFactory
     }
 
 
-    QSharedPointer<QIODevice> GetStreamForFile(const QString &inFilename, bool inQuiet) override
+    QSharedPointer<QIODevice> getStreamForFile(const QString &inFilename, bool inQuiet) override
     {
-        QMutexLocker factoryLocker(&m_Mutex);
-        QString localFile = CFileTools::NormalizePathForQtUsage(inFilename);
+        QMutexLocker factoryLocker(&m_mutex);
+        QString localFile = CFileTools::normalizePathForQtUsage(inFilename);
         QFileInfo fileInfo = QFileInfo(localFile);
         QIODevice *inputStream = nullptr;
         // Try to match the file with the search paths
@@ -126,7 +126,7 @@ struct SFactory : public IInputStreamFactory
             fileInfo = matchCaseInsensitiveFile(localFile);
 
         if (fileInfo.exists()) {
-            SInputStream *file = new SInputStream(fileInfo.absoluteFilePath());
+            QDemonInputStream *file = new QDemonInputStream(fileInfo.absoluteFilePath());
             if (file->open(QIODevice::ReadOnly))
                 inputStream = file;
         }
@@ -139,11 +139,11 @@ struct SFactory : public IInputStreamFactory
         return QSharedPointer<QIODevice>(inputStream);
     }
 
-    bool GetPathForFile(const QString &inFilename, QString &outFile, bool inQuiet = false) override
+    bool getPathForFile(const QString &inFilename, QString &outFile, bool inQuiet = false) override
     {
-        QSharedPointer<QIODevice> theStream = GetStreamForFile(inFilename, inQuiet);
+        QSharedPointer<QIODevice> theStream = getStreamForFile(inFilename, inQuiet);
         if (theStream) {
-            SInputStream *theRealStream = static_cast<SInputStream *>(theStream.data());
+            QDemonInputStream *theRealStream = static_cast<QDemonInputStream *>(theStream.data());
             outFile = theRealStream->path();
             return true;
         }
@@ -152,9 +152,9 @@ struct SFactory : public IInputStreamFactory
 };
 }
 
-QSharedPointer<IInputStreamFactory> IInputStreamFactory::Create()
+QSharedPointer<QDemonInputStreamFactoryInterface> QDemonInputStreamFactoryInterface::create()
 {
-    return QSharedPointer<IInputStreamFactory>(new SFactory());
+    return QSharedPointer<QDemonInputStreamFactoryInterface>(new QDemonInputStreamFactory());
 }
 
 QT_END_NAMESPACE

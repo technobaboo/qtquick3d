@@ -39,7 +39,7 @@ typedef QPair<QString, TParamPair> TConstantBufferParamPair;
 typedef QVector<TConstantBufferParamPair> TConstantBufferParamArray;
 typedef QHash<QString, QString> TStrTableStrMap;
 
-struct SShaderCodeGeneratorBase
+struct QDemonShaderCodeGeneratorBase
 {
     enum Enum {
         Unknown = 0,
@@ -50,101 +50,102 @@ struct SShaderCodeGeneratorBase
         EnvMapReflection,
         UVCoords,
     };
-    QSet<quint32> m_Codes; // set of enums we have included.
-    QSet<QString> m_Includes;
-    TStrTableStrMap m_Uniforms;
-    TStrTableStrMap m_ConstantBuffers;
-    TConstantBufferParamArray m_ConstantBufferParams;
-    TStrTableStrMap m_Attributes;
-    QString m_FinalShaderBuilder;
-    QString m_CodeBuilder;
-    QDemonRenderContextType m_RenderContextType;
+    QSet<quint32> m_codes; // set of enums we have included.
+    QSet<QString> m_includes;
+    TStrTableStrMap m_uniforms;
+    TStrTableStrMap m_constantBuffers;
+    TConstantBufferParamArray m_constantBufferParams;
+    TStrTableStrMap m_attributes;
+    QString m_finalShaderBuilder;
+    QString m_codeBuilder;
+    QDemonRenderContextType m_renderContextType;
 
-    SShaderCodeGeneratorBase(QDemonRenderContextType ctxType);
-    virtual ~SShaderCodeGeneratorBase();
-    virtual TStrTableStrMap &GetVaryings() = 0;
-    void Begin();
-    void Append(const QString &data);
+    QDemonShaderCodeGeneratorBase(QDemonRenderContextType ctxType);
+    virtual ~QDemonShaderCodeGeneratorBase();
+    virtual TStrTableStrMap &getVaryings() = 0;
+    void begin();
+    void append(const QString &data);
     // don't add the newline
-    void AppendPartial(const QString &data);
-    void AddConstantBuffer(const QString &name, const QString &layout);
-    void AddConstantBufferParam(const QString &cbName, const QString &paramName, const QString &type);
-    void AddUniform(const QString &name, const QString &type);
-    void AddAttribute(const QString &name, const QString &type);
-    void AddVarying(const QString &name, const QString &type);
-    void AddLocalVariable(const QString &name, const QString &type, int tabCount = 1);
-    void AddInclude(const QString &name);
-    bool HasCode(Enum value);
-    void SetCode(Enum value);
-    void SetupWorldPosition();
-    void GenerateViewVector();
-    void GenerateWorldNormal();
-    void GenerateEnvMapReflection(SShaderCodeGeneratorBase &inFragmentShader);
-    void GenerateUVCoords();
-    void GenerateTextureSwizzle(QDemonRenderTextureSwizzleMode::Enum swizzleMode,
+    void appendPartial(const QString &data);
+    void addConstantBuffer(const QString &name, const QString &layout);
+    void addConstantBufferParam(const QString &cbName, const QString &paramName, const QString &type);
+    void addUniform(const QString &name, const QString &type);
+    void addAttribute(const QString &name, const QString &type);
+    void addVarying(const QString &name, const QString &type);
+    void addLocalVariable(const QString &name, const QString &type, int tabCount = 1);
+    void addInclude(const QString &name);
+    bool hasCode(Enum value);
+    void setCode(Enum value);
+    void setupWorldPosition();
+    void generateViewVector();
+    void generateWorldNormal();
+    void generateEnvMapReflection(QDemonShaderCodeGeneratorBase &inFragmentShader);
+    void generateUVCoords();
+    void generateTextureSwizzle(QDemonRenderTextureSwizzleMode::Enum swizzleMode,
                                 QByteArray &texSwizzle,
                                 QByteArray &lookupSwizzle);
-    void GenerateShadedWireframeBase();
-    void AddLighting();
-    const QString &BuildShaderSource();
-    SShaderCodeGeneratorBase &operator<<(const QString &data);
+    void generateShadedWireframeBase();
+    void addLighting();
+    const QString &buildShaderSource();
+    QDemonShaderCodeGeneratorBase &operator<<(const QString &data);
 
 protected:
-    virtual void AddShaderItemMap(const QString &itemType, const TStrTableStrMap &itemMap);
-    void AddShaderConstantBufferItemMap(const QString &itemType, const TStrTableStrMap &cbMap,
+    virtual void addShaderItemMap(const QString &itemType, const TStrTableStrMap &itemMap);
+    void addShaderConstantBufferItemMap(const QString &itemType,
+                                        const TStrTableStrMap &cbMap,
                                         TConstantBufferParamArray cbParamsArray);
 };
 
-struct SShaderVertexCodeGenerator : public SShaderCodeGeneratorBase
+struct QDemonShaderVertexCodeGenerator : public QDemonShaderCodeGeneratorBase
 {
-    TStrTableStrMap m_Varyings;
-    SShaderVertexCodeGenerator(QDemonRenderContextType ctxType);
-    TStrTableStrMap &GetVaryings() override;
+    TStrTableStrMap m_varyings;
+    QDemonShaderVertexCodeGenerator(QDemonRenderContextType ctxType);
+    TStrTableStrMap &getVaryings() override;
 };
 
-struct SShaderTessControlCodeGenerator : public SShaderCodeGeneratorBase
+struct QDemonShaderTessControlCodeGenerator : public QDemonShaderCodeGeneratorBase
 {
-    SShaderVertexCodeGenerator &m_VertGenerator;
-    TStrTableStrMap m_Varyings;
-    SShaderTessControlCodeGenerator(SShaderVertexCodeGenerator &vert,
-                                    QDemonRenderContextType ctxType);
+    QDemonShaderVertexCodeGenerator &m_vertGenerator;
+    TStrTableStrMap m_varyings;
+    QDemonShaderTessControlCodeGenerator(QDemonShaderVertexCodeGenerator &vert,
+                                         QDemonRenderContextType ctxType);
 
-    void AddShaderItemMap(const QString &itemType, const TStrTableStrMap &itemMap) override;
-    TStrTableStrMap &GetVaryings() override;
+    void addShaderItemMap(const QString &itemType, const TStrTableStrMap &itemMap) override;
+    TStrTableStrMap &getVaryings() override;
 };
 
-struct SShaderTessEvalCodeGenerator : public SShaderCodeGeneratorBase
+struct QDemonShaderTessEvalCodeGenerator : public QDemonShaderCodeGeneratorBase
 {
-    SShaderTessControlCodeGenerator &m_TessControlGenerator;
+    QDemonShaderTessControlCodeGenerator &m_tessControlGenerator;
     bool m_hasGeometryStage;
 
-    SShaderTessEvalCodeGenerator(SShaderTessControlCodeGenerator &tc,
-                                 QDemonRenderContextType ctxType);
+    QDemonShaderTessEvalCodeGenerator(QDemonShaderTessControlCodeGenerator &tc,
+                                      QDemonRenderContextType ctxType);
 
-    void AddShaderItemMap(const QString &itemType, const TStrTableStrMap &itemMap) override;
-    TStrTableStrMap &GetVaryings() override;
-    virtual void SetGeometryStage(bool hasGeometryStage);
+    void addShaderItemMap(const QString &itemType, const TStrTableStrMap &itemMap) override;
+    TStrTableStrMap &getVaryings() override;
+    virtual void setGeometryStage(bool hasGeometryStage);
 };
 
-struct SShaderGeometryCodeGenerator : public SShaderCodeGeneratorBase
+struct QDemonShaderGeometryCodeGenerator : public QDemonShaderCodeGeneratorBase
 {
-    SShaderVertexCodeGenerator &m_VertGenerator;
+    QDemonShaderVertexCodeGenerator &m_vertGenerator;
     bool m_hasTessellationStage;
 
-    SShaderGeometryCodeGenerator(SShaderVertexCodeGenerator &vert,
-                                 QDemonRenderContextType ctxType);
+    QDemonShaderGeometryCodeGenerator(QDemonShaderVertexCodeGenerator &vert,
+                                      QDemonRenderContextType ctxType);
 
-    void AddShaderItemMap(const QString &itemType, const TStrTableStrMap &itemMap) override;
-    TStrTableStrMap &GetVaryings() override;
-    virtual void SetTessellationStage(bool hasTessellationStage);
+    void addShaderItemMap(const QString &itemType, const TStrTableStrMap &itemMap) override;
+    TStrTableStrMap &getVaryings() override;
+    virtual void setTessellationStage(bool hasTessellationStage);
 };
 
-struct SShaderFragmentCodeGenerator : public SShaderCodeGeneratorBase
+struct QDemonShaderFragmentCodeGenerator : public QDemonShaderCodeGeneratorBase
 {
-    SShaderVertexCodeGenerator &m_VertGenerator;
-    SShaderFragmentCodeGenerator(SShaderVertexCodeGenerator &vert,
-                                 QDemonRenderContextType ctxType);
-    TStrTableStrMap &GetVaryings() override;
+    QDemonShaderVertexCodeGenerator &m_vertGenerator;
+    QDemonShaderFragmentCodeGenerator(QDemonShaderVertexCodeGenerator &vert,
+                                      QDemonRenderContextType ctxType);
+    TStrTableStrMap &getVaryings() override;
 };
 QT_END_NAMESPACE
 

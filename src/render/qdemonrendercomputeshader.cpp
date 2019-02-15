@@ -37,15 +37,15 @@ QDemonRenderComputeShader::QDemonRenderComputeShader(QSharedPointer<QDemonRender
                                                      QDemonConstDataRef<qint8> source,
                                                      bool binaryProgram)
     : QDemonRenderShader(context, source, binaryProgram)
-    , m_ShaderHandle(nullptr)
+    , m_shaderHandle(nullptr)
 {
-    m_ShaderHandle = m_Backend->CreateComputeShader(source, m_ErrorMessage, binaryProgram);
+    m_shaderHandle = m_backend->createComputeShader(source, m_errorMessage, binaryProgram);
 }
 
 QDemonRenderComputeShader::~QDemonRenderComputeShader()
 {
-    if (m_ShaderHandle) {
-        m_Backend->ReleaseComputeShader(m_ShaderHandle);
+    if (m_shaderHandle) {
+        m_backend->releaseComputeShader(m_shaderHandle);
     }
 }
 QT_END_NAMESPACE
