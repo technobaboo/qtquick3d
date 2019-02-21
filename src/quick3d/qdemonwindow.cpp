@@ -762,11 +762,11 @@ void QDemonWindowPrivate::updateEffectiveOpacityRoot(QDemonObject *, qreal)
 }
 
 // ### this is where all the magic happens
-void QDemonWindowPrivate::updateDirtyNode(QDemonObject *)
+void QDemonWindowPrivate::updateDirtyNode(QDemonObject *item)
 {
-//    QDemonObjectPrivate *itemPriv = QDemonObjectPrivate::get(item);
-//    quint32 dirty = itemPriv->dirtyAttributes;
-//    itemPriv->dirtyAttributes = 0;
+    QDemonObjectPrivate *itemPriv = QDemonObjectPrivate::get(item);
+    quint32 dirty = itemPriv->dirtyAttributes;
+    itemPriv->dirtyAttributes = 0;
 
 //    if ((dirty & QDemonObjectPrivate::TransformUpdateMask) ||
 //        (dirty & QDemonObjectPrivate::Size && itemPriv->origin() != QQuickItem::TopLeft &&
