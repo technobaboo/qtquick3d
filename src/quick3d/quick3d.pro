@@ -19,7 +19,8 @@ SOURCES += \
     qdemondefaultmaterial.cpp \
     qdemoncustommaterial.cpp \
     qdemonwindow.cpp \
-    qdemonrenderloop.cpp
+    qdemonrenderloop.cpp \
+    qdemonsgcontext.cpp
 
 HEADERS += \
     qdemonobject.h \
@@ -40,6 +41,7 @@ HEADERS += \
     qdemonwindow_p.h \
     qdemonrenderloop_p.h \
     qdemonobject_p.h \
-    qdemonobjectchangelistener_p.h
+    qdemonobjectchangelistener_p.h \
+    qdemonsgcontext_p.h
 
 load(qt_module)

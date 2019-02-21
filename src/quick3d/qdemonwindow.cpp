@@ -497,13 +497,13 @@ void QDemonWindowPrivate::init(QDemonWindow *c)
     if (QScreen *screen = q->screen())
        devicePixelRatio = screen->devicePixelRatio();
 
-//    QSGContext *sg;
-    windowManager->addWindow(q);
-//    sg = windowManager->sceneGraphContext();
-//    context = windowManager->createRenderContext(sg);
 
-//    q->setSurfaceType(windowManager ? windowManager->windowSurfaceType() : QSurface::OpenGLSurface);
-//    q->setFormat(sg->defaultSurfaceFormat());
+    windowManager->addWindow(q);
+    auto sg = windowManager->sceneGraphContext();
+    auto renderContext = windowManager->renderContext();
+
+    q->setSurfaceType(windowManager ? windowManager->windowSurfaceType() : QSurface::OpenGLSurface);
+    q->setFormat(renderContext->format());
 
 //    animationController = new QQuickAnimatorController(q);
 
