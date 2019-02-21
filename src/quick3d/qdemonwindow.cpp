@@ -491,6 +491,7 @@ void QDemonWindowPrivate::init(QDemonWindow *c)
 
 
     windowManager = QDemonRenderLoop::instance();
+    context = windowManager->sceneGraphContext().data();
 
     Q_ASSERT(windowManager);
 
@@ -504,6 +505,10 @@ void QDemonWindowPrivate::init(QDemonWindow *c)
 
     q->setSurfaceType(windowManager ? windowManager->windowSurfaceType() : QSurface::OpenGLSurface);
     q->setFormat(renderContext->format());
+
+    m_presentation.reset(new SPresentation());
+    m_scene.reset(new SScene());
+    m_scene->m_Presentation = m_presentation.data();
 
 //    animationController = new QQuickAnimatorController(q);
 
@@ -607,14 +612,10 @@ void QDemonWindowPrivate::syncSceneGraph()
     //animationController->afterNodeSync();
 
     // Copy the current state of clearing from window into renderer.
-//    renderer->setClearColor(clearColor);
-//    QSGAbstractRenderer::ClearMode mode = QSGAbstractRenderer::ClearStencilBuffer | QSGAbstractRenderer::ClearDepthBuffer;
-//    if (clearBeforeRendering)
-//        mode |= QSGAbstractRenderer::ClearColorBuffer;
-//    renderer->setClearMode(mode);
-
-//    renderer->setCustomRenderMode(customRenderMode);
-
+    context->SetSceneColor(QVector4D(clearColor.redF(),
+                                     clearColor.greenF(),
+                                     clearColor.blueF(),
+                                     clearColor.alphaF()));
     emit q->afterSynchronizing();
     runAndClearJobs(&afterSynchronizingJobs);
 }
@@ -628,6 +629,27 @@ void QDemonWindowPrivate::renderSceneGraph(const QSize &size)
     //animationController->advance();
     emit q->beforeRendering();
     runAndClearJobs(&beforeRenderingJobs);
+
+    context->SetPresentationDimensions(QSize(m_presentation->m_PresentationDimensions.x(),
+                                               m_presentation->m_PresentationDimensions.y()));
+
+    context->BeginFrame();
+    windowManager->renderContext()->ResetBlendState();
+
+    auto lastRenderViewport = context->GetRenderList()->GetViewport();
+    if (m_presentation && m_presentation->m_Scene) {
+        QDemonRenderRect theViewportSize(lastRenderViewport);
+        m_presentation->m_Scene->PrepareForRender(QVector2D(theViewportSize.m_Width, theViewportSize.m_Height), context);
+    }
+
+    context->RunRenderTasks();
+    if (m_presentation && m_presentation->m_Scene) {
+        QDemonRenderRect theViewportSize(lastRenderViewport);
+        m_presentation->m_Scene->Render(QVector2D(theViewportSize.m_Width, theViewportSize.m_Height), context, SScene::DoNotClear);
+    }
+
+    context->EndFrame();
+
 //    if (!customRenderStage || !customRenderStage->render()) {
 //        int fboId = 0;
 //        const qreal devicePixelRatio = q->effectiveDevicePixelRatio();

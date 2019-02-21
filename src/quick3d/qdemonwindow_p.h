@@ -95,7 +95,6 @@ public:
     QSharedPointer<SPresentation> m_presentation;
     QSharedPointer<SScene> m_scene;
 
-
     QDemonRenderLoop *windowManager;
     QQuickAnimatorController *animationController;
 
