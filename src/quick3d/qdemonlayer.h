@@ -2,7 +2,10 @@
 #define QDEMONLAYER_H
 
 #include <QtQuick3d/qdemonnode.h>
+#include <QtQuick3d/qdemoneffect.h>
 #include <QtGui/QColor>
+#include <QtQml/QQmlListProperty>
+#include <QtCore/QVector>
 
 QT_BEGIN_NAMESPACE
 
@@ -11,7 +14,7 @@ class Q_QUICK3D_EXPORT QDemonLayer : public QDemonNode
 {
     Q_OBJECT
     Q_PROPERTY(QString texturePath READ texturePath WRITE setTexturePath NOTIFY texturePathChanged)
-    // TODO: Add Effects Array Property
+    Q_PROPERTY(QQmlListProperty<QDemonEffect> effects READ effectsList)
     Q_PROPERTY(AAModeValues progressiveAAMode READ progressiveAAMode WRITE setProgressiveAAMode NOTIFY progressiveAAModeChanged)
     Q_PROPERTY(AAModeValues multisampleAAMode READ multisampleAAMode WRITE setMultisampleAAMode NOTIFY multisampleAAModeChanged)
     Q_PROPERTY(LayerBackground backgroundMode READ backgroundMode WRITE setBackgroundMode NOTIFY backgroundModeChanged)
@@ -156,6 +159,8 @@ public:
 
     bool temporalAAEnabled() const;
 
+    QQmlListProperty<QDemonEffect> effectsList();
+
 public Q_SLOTS:
     void setTexturePath(QString texturePath);
     void setProgressiveAAMode(AAModeValues progressiveAAMode);
@@ -279,6 +284,13 @@ private:
     float m_probe2Window;
     float m_probe2Postion;
     bool m_temporalAAEnabled;
+
+    static void qmlAppendEffect(QQmlListProperty<QDemonEffect> *list, QDemonEffect *effect);
+    static QDemonEffect *qmlEffectAt(QQmlListProperty<QDemonEffect> *list, int index);
+    static int qmlEffectsCount(QQmlListProperty<QDemonEffect> *list);
+    static void qmlClearEffects(QQmlListProperty<QDemonEffect> *list);
+
+    QVector<QDemonEffect *> m_effects;
 };
 
 QT_END_NAMESPACE

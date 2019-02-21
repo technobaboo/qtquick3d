@@ -7,7 +7,6 @@ DEFINES += QT_BUILD_QUICK3D_LIB
 
 SOURCES += \
     qdemonobject.cpp \
-    qdemonscene.cpp \
     qdemonnode.cpp \
     qdemonimage.cpp \
     qdemoncamera.cpp \
@@ -23,7 +22,6 @@ SOURCES += \
 
 HEADERS += \
     qdemonobject.h \
-    qdemonscene.h \
     qdemonnode.h \
     qdemonimage.h \
     qdemoncamera.h \

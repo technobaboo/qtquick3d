@@ -41,7 +41,6 @@
 #include <QtQuick3d/qdemonmodel.h>
 #include <QtQuick3d/qdemonnode.h>
 #include <QtQuick3d/qdemonobject.h>
-#include <QtQuick3d/qdemonscene.h>
 #include <QtQuick3d/qdemonwindow.h>s
 
 static void initResources()
@@ -73,7 +72,6 @@ public:
         qmlRegisterType<QDemonModel>(uri, 1, 0, "DemonModel");
         qmlRegisterType<QDemonNode>(uri, 1, 0, "DemonNode");
         qmlRegisterUncreatableType<QDemonObject>(uri, 1, 0, "DemonObject", QLatin1String("Object is Abtract"));
-        qmlRegisterType<QDemonScene>(uri, 1, 0, "DemonScene");
         qmlRegisterType<QDemonWindow>(uri, 1, 0, "DemonWindow");
     }
 };

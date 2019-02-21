@@ -211,6 +211,15 @@ bool QDemonLayer::temporalAAEnabled() const
     return m_temporalAAEnabled;
 }
 
+QQmlListProperty<QDemonEffect> QDemonLayer::effectsList()
+{
+    return QQmlListProperty<QDemonEffect>(this, 0,
+                                             QDemonLayer::qmlAppendEffect,
+                                             QDemonLayer::qmlEffectsCount,
+                                             QDemonLayer::qmlEffectAt,
+                                             QDemonLayer::qmlClearEffects);
+}
+
 void QDemonLayer::setTexturePath(QString texturePath)
 {
     if (m_texturePath == texturePath)
@@ -586,6 +595,32 @@ SGraphObject *QDemonLayer::updateSpatialNode(SGraphObject *node)
     // TODO: Update layer properties
 
     return node;
+}
+
+void QDemonLayer::qmlAppendEffect(QQmlListProperty<QDemonEffect> *list, QDemonEffect *effect)
+{
+    if (effect == nullptr)
+        return;
+    QDemonLayer *self = static_cast<QDemonLayer *>(list->object);
+    self->m_effects.push_back(effect);
+}
+
+QDemonEffect *QDemonLayer::qmlEffectAt(QQmlListProperty<QDemonEffect> *list, int index)
+{
+    QDemonLayer *self = static_cast<QDemonLayer *>(list->object);
+    return self->m_effects.at(index);
+}
+
+int QDemonLayer::qmlEffectsCount(QQmlListProperty<QDemonEffect> *list)
+{
+    QDemonLayer *self = static_cast<QDemonLayer *>(list->object);
+    return self->m_effects.count();
+}
+
+void QDemonLayer::qmlClearEffects(QQmlListProperty<QDemonEffect> *list)
+{
+    QDemonLayer *self = static_cast<QDemonLayer *>(list->object);
+    self->m_effects.clear();
 }
 
 QT_END_NAMESPACE
