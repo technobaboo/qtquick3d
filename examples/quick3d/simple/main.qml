@@ -8,4 +8,12 @@ DemonWindow {
     color: "blue"
     visible: true
 
+    DemonWindow {
+        id: secondWindow
+        width: 400
+        height: 400
+        color: "green"
+        visible: true
+    }
+
 }

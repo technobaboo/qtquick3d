@@ -52,7 +52,7 @@ public:
     QHash<QDemonWindow *, WindowData> m_windows;
 
     QOpenGLContext *gl;
-    QOffscreenSurface *m_offscreenSurface;
+    QSharedPointer<QOffscreenSurface> m_offscreenSurface;
     QSharedPointer<IQDemonRenderContextCore> m_contextCore;
     QSharedPointer<IQDemonRenderContext> m_sgContext;
     QSharedPointer<QDemonRenderContext> m_renderContext;
@@ -212,7 +212,7 @@ QDemonGuiThreadRenderLoop::QDemonGuiThreadRenderLoop()
     // to resolve the functions, so do that now (before we have any windows)
     QSurfaceFormat format = idealSurfaceFormat();
 
-    m_offscreenSurface = new QOffscreenSurface;
+    m_offscreenSurface.reset(new QOffscreenSurface);
     m_offscreenSurface->setFormat(format);
     m_offscreenSurface->create();
 
@@ -224,7 +224,7 @@ QDemonGuiThreadRenderLoop::QDemonGuiThreadRenderLoop()
         delete gl;
         gl = nullptr;
     } else {
-        gl->makeCurrent(m_offscreenSurface);
+        gl->makeCurrent(m_offscreenSurface.data());
         m_renderContext = QDemonRenderContext::CreateGL(format);
         m_sgContext = m_contextCore->CreateRenderContext(m_renderContext, "./");
         gl->doneCurrent();
@@ -260,12 +260,11 @@ void QDemonGuiThreadRenderLoop::windowDestroyed(QDemonWindow *window)
     QDemonWindowPrivate *d = QDemonWindowPrivate::get(window);
 
     bool current = false;
-    QScopedPointer<QOffscreenSurface> offscreenSurface;
     if (gl) {
         QSurface *surface = window;
         // There may be no platform window if the window got closed.
         if (!window->handle()) {
-            surface = m_offscreenSurface;
+            surface = m_offscreenSurface.data();
         }
         current = gl->makeCurrent(surface);
     }
@@ -278,7 +277,6 @@ void QDemonGuiThreadRenderLoop::windowDestroyed(QDemonWindow *window)
     } else if (gl && window == gl->surface() && current) {
         gl->doneCurrent();
     }
-    delete m_offscreenSurface;
     //delete d->animationController;
 }
 

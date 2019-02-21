@@ -133,6 +133,9 @@ protected:
     void componentComplete() override;
 
 private:
+    Q_PRIVATE_SLOT(d_func(), void _q_resourceObjectDeleted(QObject *))
+    Q_PRIVATE_SLOT(d_func(), quint64 _q_createJSWrapper(QV4::ExecutionEngine *))
+
     QByteArray m_id;
     QString m_name;
     bool m_enabled;
