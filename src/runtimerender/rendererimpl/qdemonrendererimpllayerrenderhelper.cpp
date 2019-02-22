@@ -70,7 +70,7 @@ QVector2D ToRectRelativeCoords(const QVector2D &inCoords, const QDemonRenderRect
 QDemonLayerRenderHelper::QDemonLayerRenderHelper(const QDemonRenderRectF &inPresentationViewport,
                                                  const QDemonRenderRectF &inPresentationScissor,
                                                  const QVector2D &inPresentationDesignDimensions,
-                                                 QDemonLayer &inLayer,
+                                                 QDemonRenderLayer &inLayer,
                                                  bool inOffscreen,
                                                  ScaleModes::Enum inScaleMode,
                                                  QVector2D inScaleFactor)

@@ -1146,8 +1146,8 @@ struct QDemonPathManager : public QDemonPathManagerInterface, public QEnableShar
 
         if (!isDefaultMaterial) {
             QSharedPointer<QDemonCustomMaterialSystemInterface> theMaterialSystem(m_renderContext->getCustomMaterialSystem());
-            const QDemonCustomMaterial &theCustomMaterial(
-                        reinterpret_cast<const QDemonCustomMaterial &>(inRenderContext.material));
+            const QDemonRenderCustomMaterial &theCustomMaterial(
+                        reinterpret_cast<const QDemonRenderCustomMaterial &>(inRenderContext.material));
 
             return theMaterialSystem->getShaderName(theCustomMaterial);
         }
@@ -1719,8 +1719,8 @@ struct QDemonPathManager : public QDemonPathManagerInterface, public QEnableShar
                 } else {
                     QSharedPointer<QDemonCustomMaterialSystemInterface> theMaterialSystem(
                                 m_renderContext->getCustomMaterialSystem());
-                    const QDemonCustomMaterial &theCustomMaterial(
-                                reinterpret_cast<const QDemonCustomMaterial &>(inRenderContext.material));
+                    const QDemonRenderCustomMaterial &theCustomMaterial(
+                                reinterpret_cast<const QDemonRenderCustomMaterial &>(inRenderContext.material));
 
                     theProgram = theMaterialGenerator->generateShader(
                                 inRenderContext.material, inRenderContext.materialKey, thePipeline,
@@ -1761,8 +1761,8 @@ struct QDemonPathManager : public QDemonPathManagerInterface, public QEnableShar
                 } else {
                     QSharedPointer<QDemonCustomMaterialSystemInterface> theMaterialSystem(
                                 m_renderContext->getCustomMaterialSystem());
-                    const QDemonCustomMaterial &theCustomMaterial(
-                                reinterpret_cast<const QDemonCustomMaterial &>(inRenderContext.material));
+                    const QDemonRenderCustomMaterial &theCustomMaterial(
+                                reinterpret_cast<const QDemonRenderCustomMaterial &>(inRenderContext.material));
 
                     theProgram = theMaterialGenerator->generateShader(
                                 inRenderContext.material, inRenderContext.materialKey, thePipeline,

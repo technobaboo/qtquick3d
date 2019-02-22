@@ -37,7 +37,7 @@
 QT_BEGIN_NAMESPACE
 class QDemonRenderContextInterface;
 struct QDemonPresentation;
-struct QDemonEffect;
+struct QDemonRenderEffect;
 struct SRenderPlugin; // TODO: ???
 struct QDemonRenderImage;
 
@@ -105,12 +105,12 @@ struct LayerBlendTypes
 // to children as the identity.  It also can optionally have a width or height
 // different than the overlying context.  You can think of layers as the transformation
 // between a 3d scene graph and a 2D texture.
-struct Q_DEMONRUNTIMERENDER_EXPORT QDemonLayer : public QDemonGraphNode
+struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderLayer : public QDemonGraphNode
 {
     QDemonRenderScene *scene;
 
     // First effect in a list of effects.
-    QDemonEffect *firstEffect;
+    QDemonRenderEffect *firstEffect;
 
     // If a layer has a valid texture path (one that resolves to either a
     // an on-disk image or a offscreen renderer), then it does not render its
@@ -171,11 +171,11 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonLayer : public QDemonGraphNode
 
     bool temporalAAEnabled;
 
-    QDemonLayer();
+    QDemonRenderLayer();
 
-    void addEffect(QDemonEffect &inEffect);
+    void addEffect(QDemonRenderEffect &inEffect);
 
-    QDemonEffect *getLastEffect();
+    QDemonRenderEffect *getLastEffect();
 
     LayerBlendTypes::Enum getLayerBlend()
     {

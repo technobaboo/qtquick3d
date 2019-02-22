@@ -35,7 +35,7 @@
 #include <QtGui/QVector2D>
 
 QT_BEGIN_NAMESPACE
-struct QDemonEffect;
+struct QDemonRenderEffect;
 struct QDemonEffectContext;
 class QDemonEffectSystemInterface;
 class QDemonResourceManagerInterface;
@@ -45,7 +45,7 @@ struct QDemonCommand; // UICRenderEffectCommands.h
 }
 
 struct QDemonEffectRenderArgument {
-    QDemonEffect *m_effect;
+    QDemonRenderEffect *m_effect;
     QSharedPointer<QDemonRenderTexture2D> m_colorBuffer;
     // Some effects need the camera near and far ranges.
     QVector2D m_cameraClipRange;
@@ -56,7 +56,7 @@ struct QDemonEffectRenderArgument {
     // actually we need the stencil values
     QSharedPointer<QDemonRenderTexture2D> m_depthStencilBuffer;
 
-    QDemonEffectRenderArgument(QDemonEffect *inEffect,
+    QDemonEffectRenderArgument(QDemonRenderEffect *inEffect,
                                QSharedPointer<QDemonRenderTexture2D> inColorBuffer,
                                const QVector2D &inCameraClipRange,
                                QSharedPointer<QDemonRenderTexture2D> inDepthTexture = nullptr,
@@ -148,7 +148,7 @@ public:
 
     // An effect instance is just a property bag along with the name of the effect to run.
     // This instance is what is placed into the object graph.
-    virtual QDemonEffect *createEffectInstance(QString inEffectName) = 0;
+    virtual QDemonRenderEffect *createEffectInstance(QString inEffectName) = 0;
 
     //    virtual void Save(SWriteBuffer &ioBuffer,
     //                      const SStrRemapMap &inRemapMap,

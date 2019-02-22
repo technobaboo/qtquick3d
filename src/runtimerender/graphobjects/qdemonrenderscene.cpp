@@ -45,7 +45,7 @@ QDemonRenderScene::QDemonRenderScene()
 {
 }
 
-void QDemonRenderScene::addChild(QDemonLayer &inLayer)
+void QDemonRenderScene::addChild(QDemonRenderLayer &inLayer)
 {
     if (firstChild == nullptr)
         firstChild = &inLayer;
@@ -54,12 +54,12 @@ void QDemonRenderScene::addChild(QDemonLayer &inLayer)
     inLayer.scene = this;
 }
 
-QDemonLayer *QDemonRenderScene::getLastChild()
+QDemonRenderLayer *QDemonRenderScene::getLastChild()
 {
     // empty loop intentional
-    QDemonLayer *child;
+    QDemonRenderLayer *child;
     for (child = firstChild; child && child->nextSibling;
-         child = static_cast<QDemonLayer *>(child->nextSibling)) {
+         child = static_cast<QDemonRenderLayer *>(child->nextSibling)) {
     }
 
     return child;

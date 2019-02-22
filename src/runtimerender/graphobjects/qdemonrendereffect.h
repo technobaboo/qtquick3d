@@ -35,7 +35,7 @@
 #include <QtDemonRuntimeRender/qdemonrenderdynamicobject.h>
 
 QT_BEGIN_NAMESPACE
-struct QDemonLayer;
+struct QDemonRenderLayer;
 struct QDemonEffectContext;
 class QDemonEffectSystemInterface;
 
@@ -43,17 +43,17 @@ class QDemonEffectSystemInterface;
 // them and they have completely variable properties.
 // see IEffectManager in order to create these effects.
 // The data for the effect immediately follows the effect
-struct Q_DEMONRUNTIMERENDER_EXPORT QDemonEffect : public QDemonDynamicObject
+struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderEffect : public QDemonDynamicObject
 {
 private:
     // These objects are only created via the dynamic object system.
-    QDemonEffect(const QDemonEffect &);
-    QDemonEffect &operator=(const QDemonEffect &);
-    QDemonEffect();
+    QDemonRenderEffect(const QDemonRenderEffect &);
+    QDemonRenderEffect &operator=(const QDemonRenderEffect &);
+    QDemonRenderEffect();
 
 public:
-    QDemonLayer *m_layer;
-    QDemonEffect *m_nextEffect;
+    QDemonRenderLayer *m_layer;
+    QDemonRenderEffect *m_nextEffect;
     // Opaque pointer to context type implemented by the effect system.
     // May be null in which case the effect system will generate a new context
     // the first time it needs to render this effect.

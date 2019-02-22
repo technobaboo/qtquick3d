@@ -1,7 +1,7 @@
 #ifndef QDEMONNODE_H
 #define QDEMONNODE_H
 
-#include <qdemonobject.h>
+#include <QtQuick3d/qdemonobject.h>
 
 #include <QVector3D>
 

@@ -5,7 +5,7 @@ SUBDIRS = \
     render \
     assetimport \
     plugins \
-    runtimerender
-#    quick3d \
-#    imports
+    runtimerender \
+    quick3d \
+    imports
 

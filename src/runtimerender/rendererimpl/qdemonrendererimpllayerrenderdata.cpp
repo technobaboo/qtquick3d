@@ -63,7 +63,7 @@ const float QDEMON_HALFPI = 1.57079632679489661923f;
 
 QT_BEGIN_NAMESPACE
 
-QDemonLayerRenderData::QDemonLayerRenderData(QDemonLayer &inLayer, QSharedPointer<QDemonRendererImpl> inRenderer)
+QDemonLayerRenderData::QDemonLayerRenderData(QDemonRenderLayer &inLayer, QSharedPointer<QDemonRendererImpl> inRenderer)
     : QDemonLayerRenderPreparationData(inLayer, inRenderer)
     , m_layerTexture(inRenderer->getDemonContext()->getResourceManager())
     , m_temporalAATexture(inRenderer->getDemonContext()->getResourceManager())
@@ -1646,7 +1646,7 @@ void QDemonLayerRenderData::applyLayerPostEffects()
     QSharedPointer<QDemonRenderTexture2D> theLayerDepthTexture = m_layerDepthTexture.getTexture();
 
     QSharedPointer<QDemonRenderTexture2D> theCurrentTexture = theLayerColorTexture;
-    for (QDemonEffect *theEffect = layer.firstEffect; theEffect;
+    for (QDemonRenderEffect *theEffect = layer.firstEffect; theEffect;
          theEffect = theEffect->m_nextEffect) {
         if (theEffect->flags.isActive() && camera) {
             startProfiling(theEffect->className, false);

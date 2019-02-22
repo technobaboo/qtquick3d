@@ -207,7 +207,7 @@ void RenderWindow::buildTestScene()
     m_presentation->scene = m_scene;
     m_scene->presentation = m_presentation.data();
 
-    auto layer = new QDemonLayer();
+    auto layer = new QDemonRenderLayer();
     layer->clearColor = QVector3D(0.0, 0.0, 1.0);
     layer->background = LayerBackground::Color;
 

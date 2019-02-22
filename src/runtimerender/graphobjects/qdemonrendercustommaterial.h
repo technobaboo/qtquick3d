@@ -55,13 +55,13 @@ struct QDemonCustomMaterialShaderKeyValues
 
 typedef QDemonFlags<QDemonCustomMaterialShaderKeyValues::Enum, quint32> SCustomMaterialShaderKeyFlags;
 
-struct Q_DEMONRUNTIMERENDER_EXPORT QDemonCustomMaterial : public QDemonDynamicObject
+struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderCustomMaterial : public QDemonDynamicObject
 {
 private:
     // These objects are only created via the dynamic object system.
-    QDemonCustomMaterial(const QDemonCustomMaterial &);
-    QDemonCustomMaterial &operator=(const QDemonCustomMaterial &);
-    QDemonCustomMaterial();
+    QDemonRenderCustomMaterial(const QDemonRenderCustomMaterial &);
+    QDemonRenderCustomMaterial &operator=(const QDemonRenderCustomMaterial &);
+    QDemonRenderCustomMaterial();
 
 public:
     // lightmap section

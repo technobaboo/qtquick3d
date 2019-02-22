@@ -57,7 +57,7 @@ private:
     QDemonRenderRectF m_presentationViewport;
     QDemonRenderRectF m_presentationScissor;
     QVector2D m_presentationDesignDimensions;
-    QDemonLayer *m_layer = nullptr;
+    QDemonRenderLayer *m_layer = nullptr;
     QDemonRenderCamera *m_camera = nullptr;
     bool m_offscreen = false;
 
@@ -73,7 +73,7 @@ public:
     QDemonLayerRenderHelper(const QDemonRenderRectF &inPresentationViewport,
                             const QDemonRenderRectF &inPresentationScissor,
                             const QVector2D &inPresentationDesignDimensions,
-                            QDemonLayer &inLayer,
+                            QDemonRenderLayer &inLayer,
                             bool inOffscreen,
                             ScaleModes::Enum inScaleMode,
                             QVector2D inScaleFactor);
@@ -81,7 +81,7 @@ public:
     QDemonRenderRectF getPresentationViewport() const { return m_presentationViewport; }
     QDemonRenderRectF getPresentationScissor() const { return m_presentationScissor; }
     QVector2D getPresentationDesignDimensions() const { return m_presentationDesignDimensions; }
-    QDemonLayer *getLayer() const { return m_layer; }
+    QDemonRenderLayer *getLayer() const { return m_layer; }
     QDemonRenderCamera *getCamera() const { return m_camera; }
     bool isOffscreen() const { return m_offscreen; }
 

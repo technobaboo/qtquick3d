@@ -156,7 +156,7 @@ struct QDemonLayerRenderPreparationResultFlags : public QDemonFlags<LayerRenderP
 
 struct QDemonLayerRenderPreparationResult : public QDemonLayerRenderHelper
 {
-    QDemonEffect *lastEffect = nullptr;
+    QDemonRenderEffect *lastEffect = nullptr;
     QDemonLayerRenderPreparationResultFlags flags;
     quint32 maxAAPassIndex = 0;
     QDemonLayerRenderPreparationResult() = default;
@@ -235,7 +235,7 @@ struct QDemonLayerRenderPreparationData
         MAX_TEMPORAL_AA_LEVELS = 2,
     };
 
-    QDemonLayer &layer;
+    QDemonRenderLayer &layer;
     QSharedPointer<QDemonRendererImpl> renderer;
     // List of nodes we can render, not all may be active.  Found by doing a depth-first
     // search through m_FirstChild if length is zero.
@@ -286,7 +286,7 @@ struct QDemonLayerRenderPreparationData
     // shadow mapps
     QSharedPointer<QDemonRenderShadowMap> shadowMapManager;
 
-    QDemonLayerRenderPreparationData(QDemonLayer &inLayer, QSharedPointer<QDemonRendererImpl> inRenderer);
+    QDemonLayerRenderPreparationData(QDemonRenderLayer &inLayer, QSharedPointer<QDemonRendererImpl> inRenderer);
     virtual ~QDemonLayerRenderPreparationData();
     bool getOffscreenRenderer();
     bool getShadowMapManager();
@@ -307,7 +307,7 @@ struct QDemonLayerRenderPreparationData
                                                                            float inOpacity,
                                                                            bool inClearMaterialFlags);
 
-    QDemonDefaultMaterialPreparationResult prepareCustomMaterialForRender(QDemonCustomMaterial &inMaterial,
+    QDemonDefaultMaterialPreparationResult prepareCustomMaterialForRender(QDemonRenderCustomMaterial &inMaterial,
                                                                           QDemonRenderableObjectFlags &inExistingFlags,
                                                                           float inOpacity);
 

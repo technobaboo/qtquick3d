@@ -193,16 +193,16 @@ void QDemonImage::setPivotV(float pivotv)
 QDemonGraphObject *QDemonImage::updateSpatialNode(QDemonGraphObject *node)
 {
     if (!node)
-        node = new SImage();
+        node = new QDemonRenderImage();
 
-    auto imageNode = static_cast<SImage*>(node);
+    auto imageNode = static_cast<QDemonRenderImage*>(node);
 
 //    String imagePath
 //    String imageShaderName
 
 //    String offscreenRenderId
 //    IOffscreenRenderer* lastFrameOffscreenRenderer
-//    SGraphObject* parent
+//    QDemonGraphObject* parent
 
 //    SImageTextureData textureData
 

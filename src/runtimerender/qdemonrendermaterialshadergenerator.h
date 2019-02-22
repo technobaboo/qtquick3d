@@ -71,7 +71,7 @@ struct QDemonLightSourceShader
     float padding1[3];
 };
 
-struct QDemonLayer;
+struct QDemonRenderLayer;
 struct QDemonRenderCamera;
 struct QDemonRenderLight;
 class QDemonRenderShadowMap;
@@ -85,7 +85,7 @@ struct QDemonShaderDefaultMaterialKey;
 
 struct QDemonLayerGlobalRenderProperties
 {
-    const QDemonLayer &layer;
+    const QDemonRenderLayer &layer;
     QDemonRenderCamera &camera;
     QVector3D cameraDirection;
     QVector<QDemonRenderLight *> &lights;

@@ -1,7 +1,7 @@
 #ifndef QDEMONLIGHT_H
 #define QDEMONLIGHT_H
 
-#include <qdemonnode.h>
+#include <QtQuick3d/qdemonnode.h>
 #include <QColor>
 
 QT_BEGIN_NAMESPACE
@@ -34,6 +34,7 @@ public:
         Point,
         Area,
     };
+    Q_ENUM(RenderLightTypes)
 
     QDemonLight();
     ~QDemonLight() override;

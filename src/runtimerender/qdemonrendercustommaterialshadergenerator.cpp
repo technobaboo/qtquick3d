@@ -268,7 +268,7 @@ struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
     QDemonRenderContextInterface *m_renderContext;
     QSharedPointer<QDemonShaderProgramGeneratorInterface> m_programGenerator;
 
-    const QDemonCustomMaterial *m_currentMaterial;
+    const QDemonRenderCustomMaterial *m_currentMaterial;
     QDemonShaderDefaultMaterialKey *m_currentKey;
     QDemonDefaultMaterialVertexPipelineInterface *m_currentPipeline;
     TShaderFeatureSet m_currentFeatureSet;
@@ -309,7 +309,7 @@ struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
         return *m_programGenerator->getStage(ShaderGeneratorStages::Fragment);
     }
     QDemonShaderDefaultMaterialKey &key() { return *m_currentKey; }
-    const QDemonCustomMaterial &material() { return *m_currentMaterial; }
+    const QDemonRenderCustomMaterial &material() { return *m_currentMaterial; }
     TShaderFeatureSet featureSet() { return m_currentFeatureSet; }
     bool hasTransparency() { return m_hasTransparency; }
 
@@ -544,7 +544,7 @@ struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
     }
 
     void setGlobalProperties(QSharedPointer<QDemonRenderShaderProgram> inProgram,
-                             const QDemonLayer & /*inLayer*/,
+                             const QDemonRenderLayer & /*inLayer*/,
                              QDemonRenderCamera &inCamera,
                              QVector3D,
                              QVector<QDemonRenderLight *> &inLights,
@@ -681,7 +681,7 @@ struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
     }
 
     void setMaterialProperties(QSharedPointer<QDemonRenderShaderProgram> inProgram,
-                               const QDemonCustomMaterial &inMaterial,
+                               const QDemonRenderCustomMaterial &inMaterial,
                                const QVector2D &,
                                const QMatrix4x4 &inModelViewProjection,
                                const QMatrix3x3 &inNormalMatrix,
@@ -809,8 +809,8 @@ struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
                                float inOpacity,
                                QDemonLayerGlobalRenderProperties inRenderProperties) override
     {
-        const QDemonCustomMaterial &theCustomMaterial(
-                    reinterpret_cast<const QDemonCustomMaterial &>(inMaterial));
+        const QDemonRenderCustomMaterial &theCustomMaterial(
+                    reinterpret_cast<const QDemonRenderCustomMaterial &>(inMaterial));
         Q_ASSERT(inMaterial.type == QDemonGraphObjectTypes::CustomMaterial);
 
         setGlobalProperties(inProgram, inRenderProperties.layer, inRenderProperties.camera,
@@ -1149,7 +1149,7 @@ struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
                                                                      const QString &inCustomMaterialName) override
     {
         Q_ASSERT(inMaterial.type == QDemonGraphObjectTypes::CustomMaterial);
-        m_currentMaterial = reinterpret_cast<const QDemonCustomMaterial *>(&inMaterial);
+        m_currentMaterial = reinterpret_cast<const QDemonRenderCustomMaterial *>(&inMaterial);
         m_currentKey = &inShaderDescription;
         m_currentPipeline = static_cast<QDemonDefaultMaterialVertexPipelineInterface *>(&inVertexPipeline);
         m_currentFeatureSet = inFeatureSet;

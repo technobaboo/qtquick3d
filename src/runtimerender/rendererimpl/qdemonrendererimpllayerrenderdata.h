@@ -94,7 +94,7 @@ struct QDemonLayerRenderData : public QDemonLayerRenderPreparationData
 
     QSize m_previousDimensions;
 
-    QDemonLayerRenderData(QDemonLayer &inLayer, QSharedPointer<QDemonRendererImpl> inRenderer);
+    QDemonLayerRenderData(QDemonRenderLayer &inLayer, QSharedPointer<QDemonRendererImpl> inRenderer);
 
     virtual ~QDemonLayerRenderData() override;
 

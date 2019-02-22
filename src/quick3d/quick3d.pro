@@ -1,13 +1,12 @@
 TARGET = QtQuick3d
 MODULE = quick3d
 
-QT = core gui demonruntimerender-private
+QT = core-private gui-private demonruntimerender-private quick-private
 
 DEFINES += QT_BUILD_QUICK3D_LIB
 
 SOURCES += \
     qdemonobject.cpp \
-    qdemonscene.cpp \
     qdemonnode.cpp \
     qdemonimage.cpp \
     qdemoncamera.cpp \
@@ -18,11 +17,11 @@ SOURCES += \
     qdemonmaterial.cpp \
     qdemondefaultmaterial.cpp \
     qdemoncustommaterial.cpp \
-    qdemonwindow.cpp
+    qdemonwindow.cpp \
+    qdemonrenderloop.cpp
 
 HEADERS += \
     qdemonobject.h \
-    qdemonscene.h \
     qdemonnode.h \
     qdemonimage.h \
     qdemoncamera.h \
@@ -35,6 +34,10 @@ HEADERS += \
     qdemoncustommaterial.h \
     qdemonwindow.h \
     qtquick3dglobal.h \
-    qtquick3dglobal_p.h
+    qtquick3dglobal_p.h \
+    qdemonwindow_p.h \
+    qdemonrenderloop_p.h \
+    qdemonobject_p.h \
+    qdemonobjectchangelistener_p.h
 
 load(qt_module)

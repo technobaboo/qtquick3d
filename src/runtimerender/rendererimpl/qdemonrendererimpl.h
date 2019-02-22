@@ -283,9 +283,9 @@ public:
 
     // Calls prepare layer for render
     // and then do render layer.
-    bool prepareLayerForRender(QDemonLayer &inLayer, const QVector2D &inViewportDimensions,
+    bool prepareLayerForRender(QDemonRenderLayer &inLayer, const QVector2D &inViewportDimensions,
                                bool inRenderSiblings, const SRenderInstanceId id) override;
-    void renderLayer(QDemonLayer &inLayer, const QVector2D &inViewportDimensions,
+    void renderLayer(QDemonRenderLayer &inLayer, const QVector2D &inViewportDimensions,
                      bool clear, QVector3D clearColor, bool inRenderSiblings,
                      const SRenderInstanceId id) override;
     void childrenUpdated(QDemonGraphNode &inParent) override;
@@ -293,7 +293,7 @@ public:
 
     QDemonRenderCamera *getCameraForNode(const QDemonGraphNode &inNode) const override;
     QDemonOption<QDemonCuboidRect> getCameraBounds(const QDemonGraphObject &inObject) override;
-    virtual QDemonLayer *getLayerForNode(const QDemonGraphNode &inNode) const;
+    virtual QDemonRenderLayer *getLayerForNode(const QDemonGraphNode &inNode) const;
     QSharedPointer<QDemonLayerRenderData> getOrCreateLayerRenderDataForNode(const QDemonGraphNode &inNode, const SRenderInstanceId id = nullptr);
 
     QSharedPointer<QDemonRenderWidgetContextInterface> getRenderWidgetContext()
@@ -305,7 +305,7 @@ public:
     void endFrame() override;
 
     void pickRenderPlugins(bool inPick) override { m_pickRenderPlugins = inPick; }
-    QDemonRenderPickResult pick(QDemonLayer &inLayer, const QVector2D &inViewportDimensions,
+    QDemonRenderPickResult pick(QDemonRenderLayer &inLayer, const QVector2D &inViewportDimensions,
                                 const QVector2D &inMouseCoords, bool inPickSiblings,
                                 bool inPickEverything,
                                 const SRenderInstanceId id) override;
@@ -318,7 +318,7 @@ public:
                                                  QDemonDataRef<QDemonGraphObject *> inMapperObjects,
                                                  QDemonRenderBasisPlanes::Enum inPlane) override;
 
-    virtual QDemonRenderPickResult pickOffscreenLayer(QDemonLayer &inLayer,
+    virtual QDemonRenderPickResult pickOffscreenLayer(QDemonRenderLayer &inLayer,
                                                       const QVector2D &inViewportDimensions,
                                                       const QVector2D &inMouseCoords,
                                                       bool inPickEverything);
@@ -329,24 +329,24 @@ public:
                                  const QVector3D &inMouseVec) const override;
     QVector3D projectPosition(QDemonGraphNode &inNode, const QVector3D &inPosition) const override;
 
-    QDemonOption<QDemonLayerPickSetup> getLayerPickSetup(QDemonLayer &inLayer,
+    QDemonOption<QDemonLayerPickSetup> getLayerPickSetup(QDemonRenderLayer &inLayer,
                                                     const QVector2D &inMouseCoords,
                                                     const QSize &inPickDims) override;
 
-    QDemonOption<QDemonRenderRectF> getLayerRect(QDemonLayer &inLayer) override;
+    QDemonOption<QDemonRenderRectF> getLayerRect(QDemonRenderLayer &inLayer) override;
 
-    void runLayerRender(QDemonLayer &inLayer, const QMatrix4x4 &inViewProjection) override;
+    void runLayerRender(QDemonRenderLayer &inLayer, const QMatrix4x4 &inViewProjection) override;
 
-    void renderLayerRect(QDemonLayer &inLayer, const QVector3D &inColor) override;
+    void renderLayerRect(QDemonRenderLayer &inLayer, const QVector3D &inColor) override;
     void addRenderWidget(QDemonRenderWidgetInterface &inWidget) override;
 
-    QDemonScaleAndPosition getWorldToPixelScaleFactor(QDemonLayer &inLayer,
+    QDemonScaleAndPosition getWorldToPixelScaleFactor(QDemonRenderLayer &inLayer,
                                                  const QVector3D &inWorldPoint) override;
     QDemonScaleAndPosition getWorldToPixelScaleFactor(const QDemonRenderCamera &inCamera,
                                                  const QVector3D &inWorldPoint,
                                                  QDemonLayerRenderData &inRenderData);
 
-    void releaseLayerRenderResources(QDemonLayer &inLayer, const SRenderInstanceId id) override;
+    void releaseLayerRenderResources(QDemonRenderLayer &inLayer, const SRenderInstanceId id) override;
 
     void renderQuad(const QVector2D inDimensions, const QMatrix4x4 &inMVP,
                     QDemonRenderTexture2D &inQuadTexture) override;
@@ -430,7 +430,7 @@ public:
 #endif
     QDemonLayerRenderData *getLayerRenderData() { return m_currentLayer; }
     QDemonLayerGlobalRenderProperties getLayerGlobalRenderProperties();
-    void updateCbAoShadow(const QDemonLayer *pLayer,
+    void updateCbAoShadow(const QDemonRenderLayer *pLayer,
                           const QDemonRenderCamera *pCamera,
                           QDemonResourceTexture2D &inDepthTexture);
 
@@ -493,7 +493,7 @@ public:
                                                                 const QVector3D &inPos,
                                                                 RenderWidgetModes::Enum inWidgetMode) override;
 
-    QDemonOption<QVector2D> getLayerMouseCoords(QDemonLayer &inLayer,
+    QDemonOption<QVector2D> getLayerMouseCoords(QDemonRenderLayer &inLayer,
                                                 const QVector2D &inMouseCoords,
                                                 const QVector2D &inViewportDimensions,
                                                 bool forceImageIntersect = false) const override;

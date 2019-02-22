@@ -1,7 +1,7 @@
 #ifndef QDEMONIMAGE_H
 #define QDEMONIMAGE_H
 
-#include <qdemonobject.h>
+#include <QtQuick3d/qdemonobject.h>
 
 QT_BEGIN_NAMESPACE
 

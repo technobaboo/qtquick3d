@@ -410,7 +410,7 @@ void QDemonDefaultMaterial::setVertexColors(bool vertexColors)
 QDemonGraphObject *QDemonDefaultMaterial::updateSpatialNode(QDemonGraphObject *node)
 {
     if (!node)
-        node = new SDefaultMaterial();
+        node = new QDemonRenderDefaultMaterial();
 
     QDemonMaterial::updateSpatialNode(node);
 

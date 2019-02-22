@@ -38,14 +38,14 @@ QT_BEGIN_NAMESPACE
 
 struct QDemonLayerRenderData;
 struct QDemonRenderSubset;
-struct QDemonCustomMaterial;
+struct QDemonRenderCustomMaterial;
 struct QDemonRenderableImage;
 
 struct QDemonCustomMaterialRenderContext
 {
     // The lights and camera will not change per layer,
     // so that information can be set once for all the shaders.
-    const QDemonLayer &layer;
+    const QDemonRenderLayer &layer;
     const QDemonLayerRenderData &layerData;
     const QVector<QDemonRenderLight *> &lights;
     const QDemonRenderCamera &camera;
@@ -56,14 +56,14 @@ struct QDemonCustomMaterialRenderContext
     const QMatrix4x4 &modelViewProjection;
     const QMatrix4x4 &modelMatrix; ///< model to world transformation
     const QMatrix3x3 &normalMatrix;
-    const QDemonCustomMaterial &material;
+    const QDemonRenderCustomMaterial &material;
     const QSharedPointer<QDemonRenderTexture2D> depthTexture;
     const QSharedPointer<QDemonRenderTexture2D> aoTexture;
     QDemonShaderDefaultMaterialKey materialKey;
     QDemonRenderableImage *firstImage;
     float opacity;
 
-    QDemonCustomMaterialRenderContext(const QDemonLayer &inLayer,
+    QDemonCustomMaterialRenderContext(const QDemonRenderLayer &inLayer,
                                       const QDemonLayerRenderData &inData,
                                       const QVector<QDemonRenderLight *> &inLights,
                                       const QDemonRenderCamera &inCamera,
@@ -72,7 +72,7 @@ struct QDemonCustomMaterialRenderContext
                                       const QMatrix4x4 &inMvp,
                                       const QMatrix4x4 &inWorld,
                                       const QMatrix3x3 &inNormal,
-                                      const QDemonCustomMaterial &inMaterial,
+                                      const QDemonRenderCustomMaterial &inMaterial,
                                       const QSharedPointer<QDemonRenderTexture2D> inDepthTex,
                                       const QSharedPointer<QDemonRenderTexture2D> inAoTex,
                                       QDemonShaderDefaultMaterialKey inMaterialKey,

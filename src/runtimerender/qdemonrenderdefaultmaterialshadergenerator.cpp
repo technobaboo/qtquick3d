@@ -1503,7 +1503,7 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
     }
 
     void setGlobalProperties(QSharedPointer<QDemonRenderShaderProgram> inProgram,
-                             const QDemonLayer & /*inLayer*/,
+                             const QDemonRenderLayer & /*inLayer*/,
                              QDemonRenderCamera &inCamera,
                              QVector3D inCameraDirection,
                              QVector<QDemonRenderLight *> &inLights,

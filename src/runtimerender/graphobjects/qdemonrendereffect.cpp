@@ -37,14 +37,14 @@
 
 QT_BEGIN_NAMESPACE
 
-void QDemonEffect::initialize()
+void QDemonRenderEffect::initialize()
 {
     m_layer = nullptr;
     m_nextEffect = nullptr;
     m_context = nullptr;
 }
 
-void QDemonEffect::setActive(bool inActive, QDemonEffectSystemInterface &inManager)
+void QDemonRenderEffect::setActive(bool inActive, QDemonEffectSystemInterface &inManager)
 {
     if (flags.isActive() != inActive) {
         flags.setActive(inActive);
@@ -54,7 +54,7 @@ void QDemonEffect::setActive(bool inActive, QDemonEffectSystemInterface &inManag
     }
 }
 
-void QDemonEffect::reset(QDemonEffectSystemInterface &inSystem)
+void QDemonRenderEffect::reset(QDemonEffectSystemInterface &inSystem)
 {
     if (m_context)
         inSystem.resetEffectFrameData(*m_context);

@@ -158,17 +158,17 @@ void QDemonNode::setVisible(bool visible)
 QDemonGraphObject *QDemonNode::updateSpatialNode(QDemonGraphObject *node)
 {
     if (!node) {
-        node = new SNode();
+        node = new QDemonGraphNode();
     }
 
-    auto spacialNode = static_cast<SNode*>(node);
-    spacialNode->m_Position = m_position;
-    spacialNode->m_Rotation = m_rotation;
-    spacialNode->m_Scale = m_scale;
-    spacialNode->m_Pivot = m_pivot;
-    spacialNode->m_LocalOpacity = m_opacity;
-    spacialNode->m_RotationOrder = quint32(m_rotationorder);
-    spacialNode->m_SkeletonId = m_boneid;
+    auto spacialNode = static_cast<QDemonGraphNode*>(node);
+    spacialNode->position = m_position;
+    spacialNode->rotation = m_rotation;
+    spacialNode->scale = m_scale;
+    spacialNode->pivot = m_pivot;
+    spacialNode->localOpacity = m_opacity;
+    spacialNode->rotationOrder = quint32(m_rotationorder);
+    spacialNode->skeletonId = m_boneid;
 
     return spacialNode;
 

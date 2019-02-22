@@ -67,7 +67,7 @@ inline QDemonGraphObject *GetNextMaterialSibling(QDemonGraphObject *obj)
         return nullptr;
     }
     if (obj->type == QDemonGraphObjectTypes::CustomMaterial)
-        return static_cast<QDemonCustomMaterial *>(obj)->m_nextSibling;
+        return static_cast<QDemonRenderCustomMaterial *>(obj)->m_nextSibling;
     else if (obj->type == QDemonGraphObjectTypes::DefaultMaterial)
         return static_cast<QDemonRenderDefaultMaterial *>(obj)->nextSibling;
     else
@@ -81,7 +81,7 @@ inline void SetNextMaterialSibling(QDemonGraphObject &obj, QDemonGraphObject *si
         return;
     }
     if (obj.type == QDemonGraphObjectTypes::CustomMaterial)
-        static_cast<QDemonCustomMaterial *>(&obj)->m_nextSibling = sibling;
+        static_cast<QDemonRenderCustomMaterial *>(&obj)->m_nextSibling = sibling;
     else if (obj.type == QDemonGraphObjectTypes::DefaultMaterial)
         static_cast<QDemonRenderDefaultMaterial *>(&obj)->nextSibling = sibling;
     else

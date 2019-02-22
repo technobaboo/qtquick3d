@@ -482,7 +482,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface, public QEnableSh
 //        m_Contexts.clear();
 //    }
 
-    QDemonEffectContext &getEffectContext(QDemonEffect &inEffect)
+    QDemonEffectContext &getEffectContext(QDemonRenderEffect &inEffect)
     {
         if (inEffect.m_context == nullptr) {
             inEffect.m_context = QSharedPointer<QDemonEffectContext>(new QDemonEffectContext(inEffect.className, m_context, m_resourceManager));
@@ -526,7 +526,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface, public QEnableSh
 
         m_coreContext->getDynamicObjectSystemCore()->doRegister(inName,
                                                                 inProperties,
-                                                                sizeof(QDemonEffect),
+                                                                sizeof(QDemonRenderEffect),
                                                                 QDemonGraphObjectTypes::Effect);
         QDemonDynamicObjectClassInterface &theClass =
                 *m_coreContext->getDynamicObjectSystemCore()->getDynamicObjectClass(inName);
@@ -614,7 +614,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface, public QEnableSh
             return false;
         m_coreContext->getDynamicObjectSystemCore()->doRegister(inName,
                                                                 inProperties,
-                                                                sizeof(QDemonEffect),
+                                                                sizeof(QDemonRenderEffect),
                                                                 QDemonGraphObjectTypes::Effect);
         auto theClass = m_coreContext->getDynamicObjectSystemCore()->getDynamicObjectClass(inName);
         QSharedPointer<QDemonEffectClass> theEffect(new QDemonEffectClass(*theClass));
@@ -726,19 +726,19 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface, public QEnableSh
         return m_coreContext->getDynamicObjectSystemCore()->getRenderCommands(inEffectName);
     }
 
-    QDemonEffect *createEffectInstance(QString inEffectName) override
+    QDemonRenderEffect *createEffectInstance(QString inEffectName) override
     {
         auto theClass = getEffectClass(inEffectName);
         if (theClass == nullptr)
             return nullptr;
 //        StaticAssert<(sizeof(SEffect) % 4 == 0)>::valid_expression();
 
-        QDemonEffect *theEffect = static_cast<QDemonEffect *>(m_coreContext->getDynamicObjectSystemCore()->createInstance(inEffectName));
+        QDemonRenderEffect *theEffect = static_cast<QDemonRenderEffect *>(m_coreContext->getDynamicObjectSystemCore()->createInstance(inEffectName));
         theEffect->initialize();
         return theEffect;
     }
 
-    void AllocateBuffer(QDemonEffect &inEffect, const QDemonAllocateBuffer &inCommand, quint32 inFinalWidth,
+    void AllocateBuffer(QDemonRenderEffect &inEffect, const QDemonAllocateBuffer &inCommand, quint32 inFinalWidth,
                         quint32 inFinalHeight, QDemonRenderTextureFormats::Enum inSourceTextureFormat)
     {
         // Check to see if it is already allocated and if it is, is it the correct size. If both of
@@ -784,7 +784,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface, public QEnableSh
         }
     }
 
-    void allocateImage(QDemonEffect &inEffect, const QDemonAllocateImage &inCommand, quint32 inFinalWidth,
+    void allocateImage(QDemonRenderEffect &inEffect, const QDemonAllocateImage &inCommand, quint32 inFinalWidth,
                        quint32 inFinalHeight)
     {
         QSharedPointer<QDemonRenderImage2D> theImage;
@@ -826,7 +826,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface, public QEnableSh
         }
     }
 
-    void allocateDataBuffer(QDemonEffect &inEffect, const QDemonAllocateDataBuffer &inCommand)
+    void allocateDataBuffer(QDemonRenderEffect &inEffect, const QDemonAllocateDataBuffer &inCommand)
     {
         quint32 theBufferSize = (quint32)inCommand.m_size;
         Q_ASSERT(theBufferSize);
@@ -888,7 +888,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface, public QEnableSh
         }
     }
 
-    QSharedPointer<QDemonRenderTexture2D> findTexture(QDemonEffect *inEffect, QString inName)
+    QSharedPointer<QDemonRenderTexture2D> findTexture(QDemonRenderEffect *inEffect, QString inName)
     {
         if (inEffect->m_context) {
             QDemonEffectContext &theContext(*inEffect->m_context);
@@ -901,7 +901,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface, public QEnableSh
         return nullptr;
     }
 
-    QSharedPointer<QDemonRenderFrameBuffer> bindBuffer(QDemonEffect &inEffect,
+    QSharedPointer<QDemonRenderFrameBuffer> bindBuffer(QDemonRenderEffect &inEffect,
                                                        const QDemonBindBuffer &inCommand,
                                                        QMatrix4x4 &outMVP,
                                                        QVector2D &outDestSize)
@@ -972,7 +972,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface, public QEnableSh
         return theInsertResult.value();
     }
 
-    void doApplyInstanceValue(QDemonEffect *inEffect,
+    void doApplyInstanceValue(QDemonRenderEffect *inEffect,
                               quint8 *inDataPtr,
                               QString inPropertyName,
                               QDemonRenderShaderDataTypes::Enum inPropertyType,
@@ -1082,7 +1082,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface, public QEnableSh
         }
     }
 
-    void applyInstanceValue(QDemonEffect *inEffect,
+    void applyInstanceValue(QDemonRenderEffect *inEffect,
                             QSharedPointer<QDemonEffectClass> inClass,
                             QSharedPointer<QDemonRenderShaderProgram> inShader,
                             const QDemonApplyInstanceValue &inCommand)
@@ -1116,7 +1116,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface, public QEnableSh
         }
     }
 
-    void applyValue(QDemonEffect *inEffect,
+    void applyValue(QDemonRenderEffect *inEffect,
                     QSharedPointer<QDemonEffectClass> inClass,
                     QSharedPointer<QDemonRenderShaderProgram> inShader,
                     const QDemonApplyValue &inCommand)
@@ -1152,7 +1152,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface, public QEnableSh
     }
 
     // This has the potential to change the source texture for the current render pass
-    QDemonEffectTextureData applyBufferValue(QDemonEffect *inEffect,
+    QDemonEffectTextureData applyBufferValue(QDemonRenderEffect *inEffect,
                                              QSharedPointer<QDemonRenderShaderProgram> inShader,
                                              const QDemonApplyBufferValue &inCommand,
                                              QSharedPointer<QDemonRenderTexture2D> inSourceTexture,
@@ -1224,7 +1224,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface, public QEnableSh
         }
     }
 
-    void applyDepthValue(QDemonEffect *inEffect,
+    void applyDepthValue(QDemonRenderEffect *inEffect,
                          QSharedPointer<QDemonRenderShaderProgram> inShader,
                          const QDemonApplyDepthValue &inCommand,
                          QSharedPointer<QDemonRenderTexture2D> inTexture)
@@ -1246,7 +1246,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface, public QEnableSh
         }
     }
 
-    void applyImageValue(QDemonEffect *inEffect,
+    void applyImageValue(QDemonRenderEffect *inEffect,
                          QSharedPointer<QDemonRenderShaderProgram> inShader,
                          const QDemonApplyImageValue &inCommand)
     {
@@ -1293,7 +1293,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface, public QEnableSh
         }
     }
 
-    void applyDataBufferValue(QDemonEffect *inEffect,
+    void applyDataBufferValue(QDemonRenderEffect *inEffect,
                               QSharedPointer<QDemonRenderShaderProgram> inShader,
                               const QDemonApplyDataBufferValue &inCommand)
     {
@@ -1455,7 +1455,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface, public QEnableSh
         }
     }
 
-    void doRenderEffect(QDemonEffect *inEffect,
+    void doRenderEffect(QDemonRenderEffect *inEffect,
                         QSharedPointer<QDemonEffectClass> inClass,
                         QSharedPointer<QDemonRenderTexture2D> inSourceTexture,
                         QMatrix4x4 &inMVP,

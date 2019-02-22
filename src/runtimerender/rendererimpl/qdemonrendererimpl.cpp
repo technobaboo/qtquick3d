@@ -81,7 +81,7 @@ struct QDemonRenderableImage;
 struct QDemonShaderGeneratorGeneratedShader;
 struct QDemonSubsetRenderable;
 
-static SRenderInstanceId combineLayerAndId(const QDemonLayer *layer, const SRenderInstanceId id)
+static SRenderInstanceId combineLayerAndId(const QDemonRenderLayer *layer, const SRenderInstanceId id)
 {
     uint64_t x = (uint64_t)layer;
     x += 31u * (uint64_t)id;
@@ -131,37 +131,37 @@ float QDemonRendererImpl::getTextScale(const QDemonText &inText)
     return 1.0f;
 }
 
-static inline QDemonLayer *GetNextLayer(QDemonLayer &inLayer)
+static inline QDemonRenderLayer *GetNextLayer(QDemonRenderLayer &inLayer)
 {
     if (inLayer.nextSibling && inLayer.nextSibling->type == QDemonGraphObjectTypes::Layer)
-        return static_cast<QDemonLayer *>(inLayer.nextSibling);
+        return static_cast<QDemonRenderLayer *>(inLayer.nextSibling);
     return nullptr;
 }
 
-static inline void MaybePushLayer(QDemonLayer &inLayer, QVector<QDemonLayer *> &outLayerList)
+static inline void MaybePushLayer(QDemonRenderLayer &inLayer, QVector<QDemonRenderLayer *> &outLayerList)
 {
     inLayer.calculateGlobalVariables();
     if (inLayer.flags.isGloballyActive() && inLayer.flags.isLayerRenderToTarget())
         outLayerList.push_back(&inLayer);
 }
-static void BuildRenderableLayers(QDemonLayer &inLayer, QVector<QDemonLayer *> &renderableLayers,
+static void BuildRenderableLayers(QDemonRenderLayer &inLayer, QVector<QDemonRenderLayer *> &renderableLayers,
                                   bool inRenderSiblings)
 {
     MaybePushLayer(inLayer, renderableLayers);
     if (inRenderSiblings) {
-        for (QDemonLayer *theNextLayer = GetNextLayer(inLayer); theNextLayer;
+        for (QDemonRenderLayer *theNextLayer = GetNextLayer(inLayer); theNextLayer;
              theNextLayer = GetNextLayer(*theNextLayer))
             MaybePushLayer(*theNextLayer, renderableLayers);
     }
 }
 
-bool QDemonRendererImpl::prepareLayerForRender(QDemonLayer &inLayer,
+bool QDemonRendererImpl::prepareLayerForRender(QDemonRenderLayer &inLayer,
                                                const QVector2D &inViewportDimensions,
                                                bool inRenderSiblings,
                                                const SRenderInstanceId id)
 {
     (void)inViewportDimensions;
-    QVector<QDemonLayer *> renderableLayers;
+    QVector<QDemonRenderLayer *> renderableLayers;
     // Found by fair roll of the dice.
     renderableLayers.reserve(4);
 
@@ -169,11 +169,11 @@ bool QDemonRendererImpl::prepareLayerForRender(QDemonLayer &inLayer,
 
     bool retval = false;
 
-    for (QVector<QDemonLayer *>::reverse_iterator iter = renderableLayers.rbegin(),
+    for (QVector<QDemonRenderLayer *>::reverse_iterator iter = renderableLayers.rbegin(),
          end = renderableLayers.rend();
          iter != end; ++iter) {
         // Store the previous state of if we were rendering a layer.
-        QDemonLayer *theLayer = *iter;
+        QDemonRenderLayer *theLayer = *iter;
         QSharedPointer<QDemonLayerRenderData> theRenderData = getOrCreateLayerRenderDataForNode(*theLayer, id);
 
         if (theRenderData) {
@@ -187,12 +187,12 @@ bool QDemonRendererImpl::prepareLayerForRender(QDemonLayer &inLayer,
     return retval;
 }
 
-void QDemonRendererImpl::renderLayer(QDemonLayer &inLayer, const QVector2D &inViewportDimensions,
+void QDemonRendererImpl::renderLayer(QDemonRenderLayer &inLayer, const QVector2D &inViewportDimensions,
                                      bool clear, QVector3D clearColor, bool inRenderSiblings,
                                      const SRenderInstanceId id)
 {
     (void)inViewportDimensions;
-    QVector<QDemonLayer *> renderableLayers;
+    QVector<QDemonRenderLayer *> renderableLayers;
     // Found by fair roll of the dice.
     renderableLayers.reserve(4);
 
@@ -200,10 +200,10 @@ void QDemonRendererImpl::renderLayer(QDemonLayer &inLayer, const QVector2D &inVi
 
     QSharedPointer<QDemonRenderContext> theRenderContext(m_demonContext->getRenderContext());
     QSharedPointer<QDemonRenderFrameBuffer> theFB = theRenderContext->getRenderTarget();
-    for (QVector<QDemonLayer *>::reverse_iterator iter = renderableLayers.rbegin(),
+    for (QVector<QDemonRenderLayer *>::reverse_iterator iter = renderableLayers.rbegin(),
          end = renderableLayers.rend();
          iter != end; ++iter) {
-        QDemonLayer *theLayer = *iter;
+        QDemonRenderLayer *theLayer = *iter;
         QSharedPointer<QDemonLayerRenderData> theRenderData = getOrCreateLayerRenderDataForNode(*theLayer, id);
         QDemonLayerRenderPreparationResult &prepRes(*theRenderData->layerPrepResult);
         LayerBlendTypes::Enum layerBlend = prepRes.getLayer()->getLayerBlend();
@@ -241,11 +241,11 @@ void QDemonRendererImpl::renderLayer(QDemonLayer &inLayer, const QVector2D &inVi
         }
 #endif
     }
-    for (QVector<QDemonLayer *>::reverse_iterator iter = renderableLayers.rbegin(),
+    for (QVector<QDemonRenderLayer *>::reverse_iterator iter = renderableLayers.rbegin(),
          end = renderableLayers.rend();
          iter != end; ++iter) {
         // Store the previous state of if we were rendering a layer.
-        QDemonLayer *theLayer = *iter;
+        QDemonRenderLayer *theLayer = *iter;
         QSharedPointer<QDemonLayerRenderData> theRenderData = getOrCreateLayerRenderDataForNode(*theLayer, id);
 
         if (theRenderData) {
@@ -257,10 +257,10 @@ void QDemonRendererImpl::renderLayer(QDemonLayer &inLayer, const QVector2D &inVi
     }
 }
 
-QDemonLayer *QDemonRendererImpl::getLayerForNode(const QDemonGraphNode &inNode) const
+QDemonRenderLayer *QDemonRendererImpl::getLayerForNode(const QDemonGraphNode &inNode) const
 {
     if (inNode.type == QDemonGraphObjectTypes::Layer) {
-        return &const_cast<QDemonLayer &>(static_cast<const QDemonLayer &>(inNode));
+        return &const_cast<QDemonRenderLayer &>(static_cast<const QDemonRenderLayer &>(inNode));
     }
     if (inNode.parent)
         return getLayerForNode(*inNode.parent);
@@ -269,14 +269,14 @@ QDemonLayer *QDemonRendererImpl::getLayerForNode(const QDemonGraphNode &inNode) 
 
 QSharedPointer<QDemonLayerRenderData> QDemonRendererImpl::getOrCreateLayerRenderDataForNode(const QDemonGraphNode &inNode, const SRenderInstanceId id)
 {
-    const QDemonLayer *theLayer = getLayerForNode(inNode);
+    const QDemonRenderLayer *theLayer = getLayerForNode(inNode);
     if (theLayer) {
         TInstanceRenderMap::const_iterator theIter = m_instanceRenderMap.find(combineLayerAndId(theLayer, id));
         if (theIter != m_instanceRenderMap.end())
             return QSharedPointer<QDemonLayerRenderData>(theIter.value());
 
         QSharedPointer<QDemonLayerRenderData> theRenderData = QSharedPointer<QDemonLayerRenderData>(new QDemonLayerRenderData(
-                                                                                              const_cast<QDemonLayer &>(*theLayer), sharedFromThis()));
+                                                                                              const_cast<QDemonRenderLayer &>(*theLayer), sharedFromThis()));
         m_instanceRenderMap.insert(combineLayerAndId(theLayer, id), theRenderData);
 
         // create a profiler if enabled
@@ -611,13 +611,13 @@ QDemonPickResultProcessResult QDemonRendererImpl::processPickResultList(bool inP
     return thePickResult;
 }
 
-QDemonRenderPickResult QDemonRendererImpl::pick(QDemonLayer &inLayer, const QVector2D &inViewportDimensions,
+QDemonRenderPickResult QDemonRendererImpl::pick(QDemonRenderLayer &inLayer, const QVector2D &inViewportDimensions,
                                                 const QVector2D &inMouseCoords, bool inPickSiblings,
                                                 bool inPickEverything, const SRenderInstanceId id)
 {
     m_lastPickResults.clear();
 
-    QDemonLayer *theLayer = &inLayer;
+    QDemonRenderLayer *theLayer = &inLayer;
     // Stepping through how the original runtime did picking it picked layers in order
     // stopping at the first hit.  So objects on the top layer had first crack at the pick
     // vector itself.
@@ -757,7 +757,7 @@ QDemonOption<QVector2D> QDemonRendererImpl::facePosition(QDemonGraphNode &inNode
     return newValue;
 }
 
-QDemonRenderPickResult QDemonRendererImpl::pickOffscreenLayer(QDemonLayer &/*inLayer*/,
+QDemonRenderPickResult QDemonRendererImpl::pickOffscreenLayer(QDemonRenderLayer &/*inLayer*/,
                                                               const QVector2D & /*inViewportDimensions*/,
                                                               const QVector2D & /*inMouseCoords*/,
                                                               bool /*inPickEverything*/)
@@ -850,7 +850,7 @@ QVector3D QDemonRendererImpl::projectPosition(QDemonGraphNode &inNode, const QVe
     return mouseVec;
 }
 
-QDemonOption<QDemonLayerPickSetup> QDemonRendererImpl::getLayerPickSetup(QDemonLayer &inLayer,
+QDemonOption<QDemonLayerPickSetup> QDemonRendererImpl::getLayerPickSetup(QDemonRenderLayer &inLayer,
                                                                     const QVector2D &inMouseCoords,
                                                                     const QSize &inPickDims)
 {
@@ -906,7 +906,7 @@ QDemonOption<QDemonLayerPickSetup> QDemonRendererImpl::getLayerPickSetup(QDemonL
                                             (quint32)layerToPresentation.m_height));
 }
 
-QDemonOption<QDemonRenderRectF> QDemonRendererImpl::getLayerRect(QDemonLayer &inLayer)
+QDemonOption<QDemonRenderRectF> QDemonRendererImpl::getLayerRect(QDemonRenderLayer &inLayer)
 {
     QSharedPointer<QDemonLayerRenderData> theData = getOrCreateLayerRenderDataForNode(inLayer);
     if (theData == nullptr || theData->camera == nullptr) {
@@ -918,7 +918,7 @@ QDemonOption<QDemonRenderRectF> QDemonRendererImpl::getLayerRect(QDemonLayer &in
 }
 
 // This doesn't have to be cheap.
-void QDemonRendererImpl::runLayerRender(QDemonLayer &inLayer, const QMatrix4x4 &inViewProjection)
+void QDemonRendererImpl::runLayerRender(QDemonRenderLayer &inLayer, const QMatrix4x4 &inViewProjection)
 {
     QSharedPointer<QDemonLayerRenderData> theData = getOrCreateLayerRenderDataForNode(inLayer);
     if (theData == nullptr || theData->camera == nullptr) {
@@ -935,7 +935,7 @@ void QDemonRendererImpl::addRenderWidget(QDemonRenderWidgetInterface &inWidget)
         theData->addRenderWidget(inWidget);
 }
 
-void QDemonRendererImpl::renderLayerRect(QDemonLayer &inLayer, const QVector3D &inColor)
+void QDemonRendererImpl::renderLayerRect(QDemonRenderLayer &inLayer, const QVector3D &inColor)
 {
     QSharedPointer<QDemonLayerRenderData> theData = getOrCreateLayerRenderDataForNode(inLayer);
     if (theData)
@@ -973,7 +973,7 @@ QDemonScaleAndPosition QDemonRendererImpl::getWorldToPixelScaleFactor(const QDem
     }
 }
 
-QDemonScaleAndPosition QDemonRendererImpl::getWorldToPixelScaleFactor(QDemonLayer &inLayer,
+QDemonScaleAndPosition QDemonRendererImpl::getWorldToPixelScaleFactor(QDemonRenderLayer &inLayer,
                                                                  const QVector3D &inWorldPoint)
 {
     QSharedPointer<QDemonLayerRenderData> theData = getOrCreateLayerRenderDataForNode(inLayer);
@@ -984,7 +984,7 @@ QDemonScaleAndPosition QDemonRendererImpl::getWorldToPixelScaleFactor(QDemonLaye
     return getWorldToPixelScaleFactor(*theData->camera, inWorldPoint, *theData);
 }
 
-void QDemonRendererImpl::releaseLayerRenderResources(QDemonLayer &inLayer, const SRenderInstanceId id)
+void QDemonRendererImpl::releaseLayerRenderResources(QDemonRenderLayer &inLayer, const SRenderInstanceId id)
 {
     TInstanceRenderMap::iterator theIter
             = m_instanceRenderMap.find(combineLayerAndId(&inLayer, id));
@@ -1490,7 +1490,7 @@ QPair<QSharedPointer<QDemonRenderVertexBuffer>, QSharedPointer<QDemonRenderIndex
 QDemonLayerGlobalRenderProperties QDemonRendererImpl::getLayerGlobalRenderProperties()
 {
     QDemonLayerRenderData &theData = *m_currentLayer;
-    QDemonLayer &theLayer = theData.layer;
+    QDemonRenderLayer &theLayer = theData.layer;
     if (theData.cameraDirection.hasValue() == false)
         theData.cameraDirection = theData.camera->getScalingCorrectDirection();
 
@@ -1531,7 +1531,7 @@ void QDemonRendererImpl::generateXYQuadStrip()
                 toConstDataRef(&strides, 1), toConstDataRef(&offsets, 1));
 }
 
-void QDemonRendererImpl::updateCbAoShadow(const QDemonLayer *pLayer, const QDemonRenderCamera *pCamera,
+void QDemonRendererImpl::updateCbAoShadow(const QDemonRenderLayer *pLayer, const QDemonRenderCamera *pCamera,
                                           QDemonResourceTexture2D &inDepthTexture)
 {
     if (m_context->getConstantBufferSupport()) {
@@ -1796,7 +1796,7 @@ void QDemonRendererImpl::renderGpuProfilerStats(float x, float y,
     for (theIter = m_instanceRenderMap.begin(); theIter != m_instanceRenderMap.end(); theIter++) {
         float startX = x;
         const QSharedPointer<QDemonLayerRenderData> theLayerRenderData = theIter.value();
-        const QDemonLayer *theLayer = &theLayerRenderData->layer;
+        const QDemonRenderLayer *theLayer = &theLayerRenderData->layer;
 
         if (theLayer->flags.isActive() && theLayerRenderData->m_layerProfilerGpu) {
             const QDemonRenderProfilerInterface::TStrIDVec &idList =
@@ -1902,7 +1902,7 @@ QDemonRendererImpl::getWidgetRenderInformation(QDemonGraphNode &inNode, const QV
                 theScaleAndPos.scale, *theCamera);
 }
 
-QDemonOption<QVector2D> QDemonRendererImpl::getLayerMouseCoords(QDemonLayer &inLayer,
+QDemonOption<QVector2D> QDemonRendererImpl::getLayerMouseCoords(QDemonRenderLayer &inLayer,
                                                                 const QVector2D &inMouseCoords,
                                                                 const QVector2D &inViewportDimensions,
                                                                 bool forceImageIntersect) const

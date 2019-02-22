@@ -1,8 +1,8 @@
 #ifndef QDEMONDEFAULTMATERIAL_H
 #define QDEMONDEFAULTMATERIAL_H
 
-#include <qdemonmaterial.h>
-#include <qdemonimage.h>
+#include <QtQuick3d/qdemonmaterial.h>
+#include <QtQuick3d/qdemonimage.h>
 #include <QColor>
 
 QT_BEGIN_NAMESPACE

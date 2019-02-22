@@ -79,7 +79,7 @@ struct QDemonScaleAndPosition
     QDemonScaleAndPosition() = default;
 };
 
-struct QDemonLayer;
+struct QDemonRenderLayer;
 class QDemonRenderWidgetInterface;
 class QDemonRenderWidgetContextInterface;
 class QDemonRenderContextInterface;
@@ -102,7 +102,7 @@ public:
     virtual void childrenUpdated(QDemonGraphNode &inParent) = 0;
     virtual float getTextScale(const QDemonText &inText) = 0;
 
-    // The IQDemonRenderContext calls these, clients should not.
+    // The QDemonRenderContextInterface calls these, clients should not.
     virtual void beginFrame() = 0;
     virtual void endFrame() = 0;
 
@@ -123,11 +123,11 @@ public:
     virtual void renderPointsIndirect() = 0;
 
     // Returns true if this layer or a sibling was dirty.
-    virtual bool prepareLayerForRender(QDemonLayer &inLayer,
+    virtual bool prepareLayerForRender(QDemonRenderLayer &inLayer,
                                        const QVector2D &inViewportDimensions,
                                        bool inRenderSiblings = true,
                                        const SRenderInstanceId id = nullptr) = 0;
-    virtual void renderLayer(QDemonLayer &inLayer,
+    virtual void renderLayer(QDemonRenderLayer &inLayer,
                              const QVector2D &inViewportDimensions,
                              bool clear,
                              QVector3D clearColor,
@@ -141,7 +141,7 @@ public:
     // that have handlers
     // in some cases and just pick everything in other things.
     virtual void pickRenderPlugins(bool inPick) = 0;
-    virtual QDemonRenderPickResult pick(QDemonLayer &inLayer,
+    virtual QDemonRenderPickResult pick(QDemonRenderLayer &inLayer,
                                         const QVector2D &inViewportDimensions,
                                         const QVector2D &inMouseCoords,
                                         bool inPickSiblings = true,
@@ -174,22 +174,22 @@ public:
     // around the center of the viewport and render just the part of the layer around this area.
     // The return value is optional because if the mouse point is completely outside the layer
     // obviously this method is irrelevant.
-    virtual QDemonOption<QDemonLayerPickSetup> getLayerPickSetup(QDemonLayer &inLayer,
+    virtual QDemonOption<QDemonLayerPickSetup> getLayerPickSetup(QDemonRenderLayer &inLayer,
                                                             const QVector2D &inMouseCoords,
                                                             const QSize &inPickDims) = 0;
 
     // Return the layer's viewport rect after the layer's member variables have been applied.
     // Uses the last rendered viewport rect.
-    virtual QDemonOption<QDemonRenderRectF> getLayerRect(QDemonLayer &inLayer) = 0;
+    virtual QDemonOption<QDemonRenderRectF> getLayerRect(QDemonRenderLayer &inLayer) = 0;
     // Testing function to allow clients to render a layer using a custom view project instead
     // of the one that would be setup
     // using the layer's camera in conjunction with the layer's position,scale.
-    virtual void runLayerRender(QDemonLayer &inLayer, const QMatrix4x4 &inViewProjection) = 0;
+    virtual void runLayerRender(QDemonRenderLayer &inLayer, const QMatrix4x4 &inViewProjection) = 0;
 
     // Render the layer's rect onscreen.  Will only render one frame, you need to call this
     // every frame
     // for this to work and be persistent.
-    virtual void renderLayerRect(QDemonLayer &inLayer, const QVector3D &inColor) = 0;
+    virtual void renderLayerRect(QDemonRenderLayer &inLayer, const QVector3D &inColor) = 0;
     // Render widgets are things that are draw on the layer's widget texture which is then
     // rendered to the
     // scene's widget texture.  You must add them every frame you wish them to be rendered; the
@@ -211,11 +211,11 @@ public:
     // things by to account for
     // the FOV and also where the origin of the object needs to be to ensure the scale factor is
     // relevant.
-    virtual QDemonScaleAndPosition getWorldToPixelScaleFactor(QDemonLayer &inLayer,
+    virtual QDemonScaleAndPosition getWorldToPixelScaleFactor(QDemonRenderLayer &inLayer,
                                                          const QVector3D &inWorldPoint) = 0;
     // Called before a layer goes completely out of scope to release any rendering resources
     // related to the layer.
-    virtual void releaseLayerRenderResources(QDemonLayer &inLayer, const SRenderInstanceId id) = 0;
+    virtual void releaseLayerRenderResources(QDemonRenderLayer &inLayer, const SRenderInstanceId id) = 0;
 
     // render a screen aligned 2D text
     virtual void renderText2D(float x, float y, QDemonOption<QVector3D> inColor, const QString &text) = 0;
@@ -223,7 +223,7 @@ public:
     virtual void renderGpuProfilerStats(float x, float y, QDemonOption<QVector3D> inColor) = 0;
 
     // Get the mouse coordinates as they relate to a given layer
-    virtual QDemonOption<QVector2D> getLayerMouseCoords(QDemonLayer &inLayer,
+    virtual QDemonOption<QVector2D> getLayerMouseCoords(QDemonRenderLayer &inLayer,
                                                         const QVector2D &inMouseCoords,
                                                         const QVector2D &inViewportDimensions,
                                                         bool forceImageIntersect = false) const = 0;

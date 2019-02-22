@@ -427,7 +427,7 @@ void QDemonTextRenderable::renderDepthPass(const QVector2D &inCameraVec)
 
 void QDemonCustomMaterialRenderable::render(const QVector2D & /*inCameraVec*/,
                                        const QDemonLayerRenderData &inLayerData,
-                                       const QDemonLayer &inLayer,
+                                       const QDemonRenderLayer &inLayer,
                                        const QVector<QDemonRenderLight *> &inLights,
                                        const QDemonRenderCamera &inCamera,
                                        const QSharedPointer<QDemonRenderTexture2D> inDepthTexture,
@@ -445,7 +445,7 @@ void QDemonCustomMaterialRenderable::render(const QVector2D & /*inCameraVec*/,
 }
 
 void QDemonCustomMaterialRenderable::renderDepthPass(const QVector2D &inCameraVec,
-                                                const QDemonLayer & /*inLayer*/,
+                                                const QDemonRenderLayer & /*inLayer*/,
                                                 const QVector<QDemonRenderLight *> /*inLights*/
                                                 ,
                                                 const QDemonRenderCamera & /*inCamera*/,
@@ -467,7 +467,7 @@ void QDemonCustomMaterialRenderable::renderDepthPass(const QVector2D &inCameraVe
     }
 }
 
-void QDemonPathRenderable::renderDepthPass(const QVector2D &inCameraVec, const QDemonLayer & /*inLayer*/,
+void QDemonPathRenderable::renderDepthPass(const QVector2D &inCameraVec, const QDemonRenderLayer & /*inLayer*/,
                                       const QVector<QDemonRenderLight *> &inLights,
                                       const QDemonRenderCamera &inCamera,
                                       const QDemonRenderTexture2D * /*inDepthTexture*/)
@@ -482,7 +482,7 @@ void QDemonPathRenderable::renderDepthPass(const QVector2D &inCameraVec, const Q
                 theRenderContext, m_generator->getLayerGlobalRenderProperties(), TShaderFeatureSet());
 }
 
-void QDemonPathRenderable::render(const QVector2D &inCameraVec, const QDemonLayer & /*inLayer*/,
+void QDemonPathRenderable::render(const QVector2D &inCameraVec, const QDemonRenderLayer & /*inLayer*/,
                              const QVector<QDemonRenderLight *> &inLights, const QDemonRenderCamera &inCamera,
                              const QSharedPointer<QDemonRenderTexture2D> /*inDepthTexture*/
                              ,

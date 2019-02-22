@@ -36,14 +36,14 @@
 #include <QtGui/QVector3D>
 
 QT_BEGIN_NAMESPACE
-struct QDemonLayer;
+struct QDemonRenderLayer;
 struct QDemonPresentation;
 typedef void *SRenderInstanceId;
 
 struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderScene : public QDemonGraphObject
 {
     QDemonPresentation *presentation;
-    QDemonLayer *firstChild;
+    QDemonRenderLayer *firstChild;
     QVector3D clearColor;
     bool useClearColor;
     bool dirty;
@@ -56,8 +56,8 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderScene : public QDemonGraphObject
 
     QDemonRenderScene();
 
-    void addChild(QDemonLayer &inLayer);
-    QDemonLayer *getLastChild();
+    void addChild(QDemonRenderLayer &inLayer);
+    QDemonRenderLayer *getLastChild();
 
     // Generic method used during serialization
     // to remap string and object pointers

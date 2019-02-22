@@ -33,7 +33,7 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonLayer::QDemonLayer()
+QDemonRenderLayer::QDemonRenderLayer()
     : QDemonGraphNode(QDemonGraphObjectTypes::Layer)
     , scene(nullptr)
     , firstEffect(nullptr)
@@ -82,7 +82,7 @@ QDemonLayer::QDemonLayer()
     flags.setLayerEnableDepthPrepass(true);
 }
 
-void QDemonLayer::addEffect(QDemonEffect &inEffect)
+void QDemonRenderLayer::addEffect(QDemonRenderEffect &inEffect)
 {
     // Effects need to be rendered in reverse order as described in the file.
     inEffect.m_nextEffect = firstEffect;
@@ -90,10 +90,10 @@ void QDemonLayer::addEffect(QDemonEffect &inEffect)
     inEffect.m_layer = this;
 }
 
-QDemonEffect *QDemonLayer::getLastEffect()
+QDemonRenderEffect *QDemonRenderLayer::getLastEffect()
 {
     if (firstEffect) {
-        QDemonEffect *theEffect = firstEffect;
+        QDemonRenderEffect *theEffect = firstEffect;
         // Empty loop intentional
         for (; theEffect->m_nextEffect; theEffect = theEffect->m_nextEffect) {
         }

@@ -42,7 +42,7 @@ struct QDemonCommand;
 }
 
 struct QDemonCustomMaterialRenderContext;
-struct QDemonCustomMaterial;
+struct QDemonRenderCustomMaterial;
 class QDemonCustomMaterialSystemInterface;
 struct QDemonRenderSubset;
 
@@ -76,7 +76,7 @@ public:
                                         bool inHasGeomShader,
                                         bool inIsComputeShader) = 0;
 
-    virtual QDemonCustomMaterial *createCustomMaterial(QString inName) = 0;
+    virtual QDemonRenderCustomMaterial *createCustomMaterial(QString inName) = 0;
 
     virtual void setPropertyEnumNames(QString inName, QString inPropName, QDemonConstDataRef<QString> inNames) = 0;
 
@@ -108,17 +108,17 @@ public:
     // than previously.  This effects things like progressive AA.
     virtual bool prepareForRender(const QDemonRenderModel &inModel,
                                   const QDemonRenderSubset &inSubset,
-                                  QDemonCustomMaterial &inMaterial,
+                                  QDemonRenderCustomMaterial &inMaterial,
                                   bool inClearDirty) = 0;
 
-    virtual bool renderDepthPrepass(const QMatrix4x4 &inMVP, const QDemonCustomMaterial &inMaterial, const QDemonRenderSubset &inSubset) = 0;
+    virtual bool renderDepthPrepass(const QMatrix4x4 &inMVP, const QDemonRenderCustomMaterial &inMaterial, const QDemonRenderSubset &inSubset) = 0;
     virtual void renderSubset(QDemonCustomMaterialRenderContext &inRenderContext, TShaderFeatureSet inFeatureSet) = 0;
-    virtual void onMaterialActivationChange(const QDemonCustomMaterial &inMaterial, bool inActive) = 0;
+    virtual void onMaterialActivationChange(const QDemonRenderCustomMaterial &inMaterial, bool inActive) = 0;
 
     // get shader name
-    virtual QString getShaderName(const QDemonCustomMaterial &inMaterial) = 0;
+    virtual QString getShaderName(const QDemonRenderCustomMaterial &inMaterial) = 0;
     // apply property values
-    virtual void applyShaderPropertyValues(const QDemonCustomMaterial &inMaterial,
+    virtual void applyShaderPropertyValues(const QDemonRenderCustomMaterial &inMaterial,
                                            QSharedPointer<QDemonRenderShaderProgram> inProgram) = 0;
     // Called by the uiccontext so this system can clear any per-frame render information.
     virtual void endFrame() = 0;

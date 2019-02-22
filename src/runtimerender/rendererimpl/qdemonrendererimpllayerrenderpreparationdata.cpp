@@ -97,7 +97,7 @@ QDemonDefaultMaterialPreparationResult::QDemonDefaultMaterialPreparationResult(
 
 #define MAX_AA_LEVELS 8
 
-QDemonLayerRenderPreparationData::QDemonLayerRenderPreparationData(QDemonLayer &inLayer, QSharedPointer<QDemonRendererImpl> inRenderer)
+QDemonLayerRenderPreparationData::QDemonLayerRenderPreparationData(QDemonRenderLayer &inLayer, QSharedPointer<QDemonRendererImpl> inRenderer)
     : layer(inLayer)
     , renderer(inRenderer)
     , camera(nullptr)
@@ -474,7 +474,7 @@ bool QDemonLayerRenderPreparationData::preparePathForRender(
                 opaqueObjects.push_back(theRenderable);
         } else if (theMaterial != nullptr
                    && theMaterial->type == QDemonGraphObjectTypes::CustomMaterial) {
-            QDemonCustomMaterial *theCustomMaterial = static_cast<QDemonCustomMaterial *>(theMaterial);
+            QDemonRenderCustomMaterial *theCustomMaterial = static_cast<QDemonRenderCustomMaterial *>(theMaterial);
             // Don't clear dirty flags if the material was referenced.
             // bool clearMaterialFlags = theMaterial == inPath.m_Material;
             QDemonDefaultMaterialPreparationResult prepResult(
@@ -717,7 +717,7 @@ QDemonDefaultMaterialPreparationResult QDemonLayerRenderPreparationData::prepare
 }
 
 QDemonDefaultMaterialPreparationResult QDemonLayerRenderPreparationData::prepareCustomMaterialForRender(
-        QDemonCustomMaterial &inMaterial, QDemonRenderableObjectFlags &inExistingFlags, float inOpacity)
+        QDemonRenderCustomMaterial &inMaterial, QDemonRenderableObjectFlags &inExistingFlags, float inOpacity)
 {
     QDemonDefaultMaterialPreparationResult retval(generateLightingKey(
                                                  DefaultMaterialLighting::FragmentLighting)); // always fragment lighting
@@ -889,8 +889,8 @@ bool QDemonLayerRenderPreparationData::prepareModelForRender(QDemonRenderModel &
 
             } // if type == DefaultMaterial
             else if (theMaterialObject->type == QDemonGraphObjectTypes::CustomMaterial) {
-                QDemonCustomMaterial &theMaterial(
-                            static_cast<QDemonCustomMaterial &>(*theMaterialObject));
+                QDemonRenderCustomMaterial &theMaterial(
+                            static_cast<QDemonRenderCustomMaterial &>(*theMaterialObject));
 
                 QSharedPointer<QDemonCustomMaterialSystemInterface> theMaterialSystem(demonContext->getCustomMaterialSystem());
                 subsetDirty |= theMaterialSystem->prepareForRender(theModelContext.model, theSubset, theMaterial, clearMaterialDirtyFlags);
@@ -1063,7 +1063,7 @@ void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportD
             ? (quint32)0
             : (quint32)(layer.progressiveAAMode) + 1;
     maxNumAAPasses = qMin((quint32)(MAX_AA_LEVELS + 1), maxNumAAPasses);
-    QDemonEffect *theLastEffect = nullptr;
+    QDemonRenderEffect *theLastEffect = nullptr;
     // Uncomment the line below to disable all progressive AA.
     // maxNumAAPasses = 0;
 
@@ -1080,7 +1080,7 @@ void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportD
     if (layer.flags.isActive()) {
         // Get the layer's width and height.
         QSharedPointer<QDemonEffectSystemInterface> theEffectSystem(renderer->getDemonContext()->getEffectSystem());
-        for (QDemonEffect *theEffect = layer.firstEffect; theEffect;
+        for (QDemonRenderEffect *theEffect = layer.firstEffect; theEffect;
              theEffect = theEffect->m_nextEffect) {
             if (theEffect->flags.isDirty()) {
                 wasDirty = true;
