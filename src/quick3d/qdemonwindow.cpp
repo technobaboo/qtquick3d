@@ -768,6 +768,34 @@ void QDemonWindowPrivate::updateDirtyNode(QDemonObject *item)
     quint32 dirty = itemPriv->dirtyAttributes;
     itemPriv->dirtyAttributes = 0;
 
+    // Different processing for resource nodes vs hierarchical nodes
+    switch (item->type()) {
+    case QDemonObject::Node:
+    case QDemonObject::Layer:
+    case QDemonObject::Light:
+    case QDemonObject::Camera:
+    case QDemonObject::Model:
+    case QDemonObject::Text:
+    case QDemonObject::Path:
+        // handle hierarchical nodes
+        break;
+    case QDemonObject::Presentation:
+    case QDemonObject::Scene:
+    case QDemonObject::DefaultMaterial:
+    case QDemonObject::Image:
+    case QDemonObject::Effect:
+    case QDemonObject::CustomMaterial:
+    case QDemonObject::ReferencedMaterial:
+    case QDemonObject::PathSubPath:
+    case QDemonObject::Lightmaps:
+        // handle resource nodes
+        break;
+    default:
+        // we dont need to do anything with the other nodes
+        break;
+    }
+
+
 //    if ((dirty & QDemonObjectPrivate::TransformUpdateMask) ||
 //        (dirty & QDemonObjectPrivate::Size && itemPriv->origin() != QQuickItem::TopLeft &&
 //         (itemPriv->scale() != 1. || itemPriv->rotation() != 0.))) {
@@ -964,15 +992,15 @@ void QDemonWindowPrivate::updateDirtyNode(QDemonObject *item)
 
 //    if (dirty & QDemonObjectPrivate::ContentUpdateMask) {
 
-//        if (itemPriv->flags & QQuickItem::ItemHasContents) {
-//            updatePaintNodeData.transformNode = itemPriv->itemNode();
-//            itemPriv->paintNode = item->updatePaintNode(itemPriv->paintNode, &updatePaintNodeData);
+////        if (itemPriv->flags & QQuickItem::ItemHasContents) {
+////            updatePaintNodeData.transformNode = itemPriv->itemNode();
+////            itemPriv->spatialNode = item->updateSpatialNode(itemPriv->spatialNode);
 
-//            Q_ASSERT(itemPriv->paintNode == nullptr ||
-//                     itemPriv->paintNode->parent() == nullptr ||
-//                     itemPriv->paintNode->parent() == itemPriv->childContainerNode());
+////            Q_ASSERT(itemPriv->paintNode == nullptr ||
+////                     itemPriv->paintNode->parent() == nullptr ||
+////                     itemPriv->paintNode->parent() == itemPriv->childContainerNode());
 
-//            if (itemPriv->paintNode && itemPriv->paintNode->parent() == nullptr) {
+//            if (itemPriv->spatialNode && itemPriv->spatialNode->parent() == nullptr) {
 //                QSGNode *before = qquickitem_before_paintNode(itemPriv);
 //                if (before && before->parent()) {
 //                    Q_ASSERT(before->parent() == itemPriv->childContainerNode());
@@ -981,9 +1009,6 @@ void QDemonWindowPrivate::updateDirtyNode(QDemonObject *item)
 //                    itemPriv->childContainerNode()->prependChildNode(itemPriv->paintNode);
 //                }
 //            }
-//        } else if (itemPriv->paintNode) {
-//            delete itemPriv->paintNode;
-//            itemPriv->paintNode = nullptr;
 //        }
 //    }
 

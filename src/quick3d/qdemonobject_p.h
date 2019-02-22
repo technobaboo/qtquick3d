@@ -227,7 +227,7 @@ public:
     void removeChild(QDemonObject *);
     void siblingOrderChanged();
 
-    inline void markSortedChildrenDirty(QDemonObject *child);
+    void markSortedChildrenDirty(QDemonObject *child);
 
     void refWindow(QDemonWindow *);
     void derefWindow();
@@ -238,6 +238,8 @@ public:
     void itemChange(QDemonObject::ItemChange, const QDemonObject::ItemChangeData &);
 
     virtual void updatePolish() { }
+
+    SGraphObject *spatialNode;
 
     bool componentComplete;
     bool culled;
