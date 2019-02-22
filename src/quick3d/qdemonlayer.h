@@ -3,6 +3,7 @@
 
 #include <QtQuick3d/qdemonnode.h>
 #include <QtQuick3d/qdemoneffect.h>
+#include <QtQuick3d/qdemoncamera.h>
 #include <QtGui/QColor>
 #include <QtQml/QQmlListProperty>
 #include <QtCore/QVector>
@@ -57,6 +58,8 @@ class Q_QUICK3D_EXPORT QDemonLayer : public QDemonNode
     Q_PROPERTY(float probe2Postion READ probe2Postion WRITE setProbe2Postion NOTIFY probe2PostionChanged)
 
     Q_PROPERTY(bool temporalAAEnabled READ temporalAAEnabled WRITE setTemporalAAEnabled NOTIFY temporalAAEnabledChanged)
+
+    Q_PROPERTY(QDemonCamera* activeCamera READ activeCamera WRITE setActiveCamera NOTIFY activeCameraChanged)
 
 public:
     enum AAModeValues
@@ -161,6 +164,8 @@ public:
 
     QQmlListProperty<QDemonEffect> effectsList();
 
+    QDemonCamera *activeCamera() const;
+
 public Q_SLOTS:
     void setTexturePath(QString texturePath);
     void setProgressiveAAMode(AAModeValues progressiveAAMode);
@@ -200,6 +205,7 @@ public Q_SLOTS:
     void setProbe2Window(float probe2Window);
     void setProbe2Postion(float probe2Postion);
     void setTemporalAAEnabled(bool temporalAAEnabled);
+    void setActiveCamera(QDemonCamera *camera);
 
 Q_SIGNALS:
     void texturePathChanged(QString texturePath);
@@ -240,6 +246,7 @@ Q_SIGNALS:
     void probe2WindowChanged(float probe2Window);
     void probe2PostionChanged(float probe2Postion);
     void temporalAAEnabledChanged(bool temporalAAEnabled);
+    void activeCameraChanged(QDemonCamera *camera);
 
 protected:
     SGraphObject *updateSpatialNode(SGraphObject *node) override;
@@ -291,6 +298,7 @@ private:
     static void qmlClearEffects(QQmlListProperty<QDemonEffect> *list);
 
     QVector<QDemonEffect *> m_effects;
+    QDemonCamera *m_activeCamera;
 };
 
 QT_END_NAMESPACE

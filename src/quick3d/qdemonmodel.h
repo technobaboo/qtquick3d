@@ -2,6 +2,9 @@
 #define QDEMONMODEL_H
 
 #include <QtQuick3d/qdemonnode.h>
+#include <QtQml/QQmlListProperty>
+#include <QtQuick3d/QDemonMaterial>
+#include <QtCore/QVector>
 
 QT_BEGIN_NAMESPACE
 
@@ -14,7 +17,7 @@ class Q_QUICK3D_EXPORT QDemonModel : public QDemonNode
     Q_PROPERTY(float edgeTess READ edgeTess WRITE setEdgeTess NOTIFY edgeTessChanged)
     Q_PROPERTY(float innerTess READ innerTess WRITE setInnerTess NOTIFY innerTessChanged)
     Q_PROPERTY(bool isWireframeMode READ isWireframeMode WRITE setIsWireframeMode NOTIFY isWireframeModeChanged)
-    // TODO: Also Add an array of materials
+    Q_PROPERTY(QQmlListProperty<QDemonMaterial> materials READ materials)
 
 public:
     enum TessModeValues
@@ -37,6 +40,8 @@ public:
     float edgeTess() const;
     float innerTess() const;
     bool isWireframeMode() const;
+
+    QQmlListProperty<QDemonMaterial> materials();
 
 public Q_SLOTS:
     void setSource(QString source);
@@ -65,6 +70,13 @@ private:
     float m_edgeTess;
     float m_innerTess;
     bool m_isWireframeMode;
+
+    static void qmlAppendMaterial(QQmlListProperty<QDemonMaterial> *list, QDemonMaterial *material);
+    static QDemonMaterial *qmlMaterialAt(QQmlListProperty<QDemonMaterial> *list, int index);
+    static int qmlMaterialsCount(QQmlListProperty<QDemonMaterial> *list);
+    static void qmlClearMaterials(QQmlListProperty<QDemonMaterial> *list);
+
+    QVector<QDemonMaterial *> m_materials;
 };
 
 QT_END_NAMESPACE

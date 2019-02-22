@@ -34,6 +34,7 @@ public:
         Point,
         Area,
     };
+    Q_ENUM(RenderLightTypes)
 
     QDemonLight();
     ~QDemonLight() override;

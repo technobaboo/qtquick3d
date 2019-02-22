@@ -12,7 +12,27 @@ DemonWindow {
         id: layer1
         clearColor: "green"
         backgroundMode: DemonLayer.Color
+        activeCamera: camera
 
+        DemonLight {
+            id: directionalLight
+            lightType: DemonLight.Directional
+        }
+
+        DemonCamera {
+            id: camera
+            position: Qt.vector3d(0, 0, -600)
+        }
+
+        DemonModel {
+            id: cube
+            source: "#Cube"
+            materials: [defaultMaterial]
+        }
+    }
+
+    DemonDefaultMaterial {
+        id: defaultMaterial
     }
 
 }

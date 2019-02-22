@@ -213,11 +213,16 @@ bool QDemonLayer::temporalAAEnabled() const
 
 QQmlListProperty<QDemonEffect> QDemonLayer::effectsList()
 {
-    return QQmlListProperty<QDemonEffect>(this, 0,
-                                             QDemonLayer::qmlAppendEffect,
-                                             QDemonLayer::qmlEffectsCount,
-                                             QDemonLayer::qmlEffectAt,
-                                             QDemonLayer::qmlClearEffects);
+    return QQmlListProperty<QDemonEffect>(this, nullptr,
+                                          QDemonLayer::qmlAppendEffect,
+                                          QDemonLayer::qmlEffectsCount,
+                                          QDemonLayer::qmlEffectAt,
+                                          QDemonLayer::qmlClearEffects);
+}
+
+QDemonCamera *QDemonLayer::activeCamera() const
+{
+    return m_activeCamera;
 }
 
 void QDemonLayer::setTexturePath(QString texturePath)
@@ -621,6 +626,15 @@ void QDemonLayer::setTemporalAAEnabled(bool temporalAAEnabled)
     update();
 }
 
+void QDemonLayer::setActiveCamera(QDemonCamera *camera)
+{
+    if (m_activeCamera == camera)
+        return;
+    m_activeCamera = camera;
+    emit activeCameraChanged(m_activeCamera);
+    update();
+}
+
 SGraphObject *QDemonLayer::updateSpatialNode(SGraphObject *node)
 {
     if (!node)
@@ -630,19 +644,19 @@ SGraphObject *QDemonLayer::updateSpatialNode(SGraphObject *node)
     QDemonNode::updateSpatialNode(node);
 
     SLayer *layerNode = static_cast<SLayer*>(node);
-//    layerNode->m_TexturePath = m_texturePath;
-//    layerNode->m_ProgressiveAAMode = m_progressiveAAMode;
-//    layerNode->m_MultisampleAAMode = m_multisampleAAMode;
-//    layerNode->m_Background = m_backgroundMode;
+    //    layerNode->m_TexturePath = m_texturePath;
+    //    layerNode->m_ProgressiveAAMode = m_progressiveAAMode;
+    //    layerNode->m_MultisampleAAMode = m_multisampleAAMode;
+    //    layerNode->m_Background = m_backgroundMode;
     layerNode->m_ClearColor = QVector3D(m_clearColor.redF(),
                                         m_clearColor.greenF(),
                                         m_clearColor.blueF());
     layerNode->m_Height = m_height;
     layerNode->m_Width = m_width;
-//    layerNode->m_BlendType = m_blendType;
-//    layerNode->m_HorizontalFieldValues = m_horizontalFieldValue;
-//    layerNode->m_Left = m_left;
-//    layerNode->m_LeftUnits =
+    //    layerNode->m_BlendType = m_blendType;
+    //    layerNode->m_HorizontalFieldValues = m_horizontalFieldValue;
+    //    layerNode->m_Left = m_left;
+    //    layerNode->m_LeftUnits =
 
     return layerNode;
 }
