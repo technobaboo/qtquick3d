@@ -5,6 +5,15 @@
 QT_BEGIN_NAMESPACE
 
 QDemonNode::QDemonNode()
+    : m_rotation(0, 0, 0)
+    , m_position(0, 0, 0)
+    , m_scale(1, 1, 1)
+    , m_pivot(0, 0, 0)
+    , m_opacity(1.0f)
+    , m_boneid(-1)
+    , m_rotationorder(YXZ)
+    , m_orientation(LeftHanded)
+    , m_visible(true)
 {
 
 }

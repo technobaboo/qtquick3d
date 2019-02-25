@@ -286,6 +286,11 @@ void QDemonObject::componentComplete()
     d->componentComplete = true;
     if (d->_stateGroup)
         d->_stateGroup->componentComplete();
+
+    if (d->window && d->dirtyAttributes) {
+        d->addToDirtyList();
+        QDemonWindowPrivate::get(d->window)->dirtyItem(this);
+    }
 }
 
 QDemonObjectPrivate::QDemonObjectPrivate()

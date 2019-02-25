@@ -7,6 +7,42 @@ QT_BEGIN_NAMESPACE
 
 
 QDemonLayer::QDemonLayer()
+    : m_progressiveAAMode(NoAA)
+    , m_multisampleAAMode(NoAA)
+    , m_backgroundMode(Transparent)
+    , m_clearColor(Qt::black)
+    , m_blendType(Normal)
+    , m_horizontalFieldValue(LeftWidth)
+    , m_verticalFieldValue(TopHeight)
+    , m_leftUnits(Percent)
+    , m_rightUnits(Percent)
+    , m_topUnits(Percent)
+    , m_bottomUnits(Percent)
+    , m_left(0.0f)
+    , m_right(0.0f)
+    , m_top(0.0f)
+    , m_bottom(0.0f)
+    , m_aoStrength(0.0f)
+    , m_aoDistance(0.0f)
+    , m_aoSoftness(0.0f)
+    , m_aoDither(0.0f)
+    , m_aoSampleRate(0.0f)
+    , m_aoBias(0.0f)
+    , m_shadowStrength(0.0f)
+    , m_shadowDistance(0.0f)
+    , m_shadowSoftness(0.0f)
+    , m_shadowBias(0.0f)
+    , m_lightProbe(nullptr)
+    , m_probeBrightness(0.0f)
+    , m_fastIBL(false)
+    , m_probeHorizon(0.0f)
+    , m_probeFieldOfView(0.0f)
+    , m_lightProbe2(nullptr)
+    , m_probe2Fade(0.0f)
+    , m_probe2Window(0.0f)
+    , m_probe2Postion(0.0f)
+    , m_temporalAAEnabled(false)
+    , m_activeCamera(nullptr)
 {
 
 }
@@ -36,7 +72,7 @@ QDemonLayer::AAModeValues QDemonLayer::multisampleAAMode() const
     return m_multisampleAAMode;
 }
 
-QDemonLayer::LayerBackground QDemonLayer::backgroundMode() const
+QDemonLayer::LayerBackgroundTypes QDemonLayer::backgroundMode() const
 {
     return m_backgroundMode;
 }
@@ -255,7 +291,7 @@ void QDemonLayer::setMultisampleAAMode(QDemonLayer::AAModeValues multisampleAAMo
     update();
 }
 
-void QDemonLayer::setBackgroundMode(QDemonLayer::LayerBackground backgroundMode)
+void QDemonLayer::setBackgroundMode(QDemonLayer::LayerBackgroundTypes backgroundMode)
 {
     if (m_backgroundMode == backgroundMode)
         return;
@@ -648,6 +684,7 @@ QDemonGraphObject *QDemonLayer::updateSpatialNode(QDemonGraphObject *node)
     //    layerNode->m_ProgressiveAAMode = m_progressiveAAMode;
     //    layerNode->m_MultisampleAAMode = m_multisampleAAMode;
     //    layerNode->m_Background = m_backgroundMode;
+    layerNode->background = LayerBackground::Color;
     layerNode->clearColor = QVector3D(m_clearColor.redF(),
                                         m_clearColor.greenF(),
                                         m_clearColor.blueF());

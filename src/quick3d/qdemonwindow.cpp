@@ -511,6 +511,7 @@ void QDemonWindowPrivate::init(QDemonWindow *c)
 
     m_presentation.reset(new QDemonPresentation());
     m_scene.reset(new QDemonRenderScene());
+    m_presentation->scene = m_scene;
     m_scene->presentation = m_presentation.data();
 
 //    animationController = new QQuickAnimatorController(q);

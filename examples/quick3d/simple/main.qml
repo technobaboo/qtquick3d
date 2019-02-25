@@ -12,30 +12,29 @@ DemonWindow {
         id: layer1
         clearColor: "green"
         backgroundMode: DemonLayer.Color
-        activeCamera: camera
-        Component.onCompleted: {
-            update();
-        }
+        width: 100
+        height: 100
+        //activeCamera: camera
 
-        DemonLight {
-            id: directionalLight
-            lightType: DemonLight.Directional
-        }
+//        DemonLight {
+//            id: directionalLight
+//            lightType: DemonLight.Directional
+//        }
 
-        DemonCamera {
-            id: camera
-            position: Qt.vector3d(0, 0, -600)
-        }
+//        DemonCamera {
+//            id: camera
+//            position: Qt.vector3d(0, 0, -600)
+//        }
 
-        DemonModel {
-            id: cube
-            source: "#Cube"
-            materials: [defaultMaterial]
-        }
+//        DemonModel {
+//            id: cube
+//            source: "#Cube"
+//            materials: [defaultMaterial]
+//        }
     }
 
-    DemonDefaultMaterial {
-        id: defaultMaterial
-    }
+//    DemonDefaultMaterial {
+//        id: defaultMaterial
+//    }
 
 }

@@ -18,7 +18,7 @@ class Q_QUICK3D_EXPORT QDemonLayer : public QDemonNode
     Q_PROPERTY(QQmlListProperty<QDemonEffect> effects READ effectsList)
     Q_PROPERTY(AAModeValues progressiveAAMode READ progressiveAAMode WRITE setProgressiveAAMode NOTIFY progressiveAAModeChanged)
     Q_PROPERTY(AAModeValues multisampleAAMode READ multisampleAAMode WRITE setMultisampleAAMode NOTIFY multisampleAAModeChanged)
-    Q_PROPERTY(LayerBackground backgroundMode READ backgroundMode WRITE setBackgroundMode NOTIFY backgroundModeChanged)
+    Q_PROPERTY(LayerBackgroundTypes backgroundMode READ backgroundMode WRITE setBackgroundMode NOTIFY backgroundModeChanged)
     Q_PROPERTY(QColor clearColor READ clearColor WRITE setClearColor NOTIFY clearColorChanged)
     Q_PROPERTY(LayerBlendTypes blendType READ blendType WRITE setBlendType NOTIFY blendTypeChanged)
     Q_PROPERTY(HorizontalFieldValues horizontalFieldValue READ horizontalFieldValue WRITE setHorizontalFieldValue NOTIFY horizontalFieldValueChanged)
@@ -95,13 +95,13 @@ public:
     };
     Q_ENUM(LayerUnitTypes)
 
-    enum LayerBackground
+    enum LayerBackgroundTypes
     {
         Transparent = 0,
         Unspecified,
         Color
     };
-    Q_ENUM(LayerBackground)
+    Q_ENUM(LayerBackgroundTypes)
 
     enum LayerBlendTypes
     {
@@ -124,7 +124,7 @@ public:
     QString texturePath() const;
     AAModeValues progressiveAAMode() const;
     AAModeValues multisampleAAMode() const;
-    LayerBackground backgroundMode() const;
+    LayerBackgroundTypes backgroundMode() const;
     QColor clearColor() const;
     LayerBlendTypes blendType() const;
     HorizontalFieldValues horizontalFieldValue() const;
@@ -170,7 +170,7 @@ public Q_SLOTS:
     void setTexturePath(QString texturePath);
     void setProgressiveAAMode(AAModeValues progressiveAAMode);
     void setMultisampleAAMode(AAModeValues multisampleAAMode);
-    void setBackgroundMode(LayerBackground backgroundMode);
+    void setBackgroundMode(LayerBackgroundTypes backgroundMode);
     void setClearColor(QColor clearColor);
     void setBlendType(LayerBlendTypes blendType);
     void setHorizontalFieldValue(HorizontalFieldValues horizontalFieldValue);
@@ -211,7 +211,7 @@ Q_SIGNALS:
     void texturePathChanged(QString texturePath);
     void progressiveAAModeChanged(AAModeValues progressiveAAMode);
     void multisampleAAModeChanged(AAModeValues multisampleAAMode);
-    void backgroundModeChanged(LayerBackground backgroundMode);
+    void backgroundModeChanged(LayerBackgroundTypes backgroundMode);
     void clearColorChanged(QColor clearColor);
     void blendTypeChanged(LayerBlendTypes blendType);
     void horizontalFieldValueChanged(HorizontalFieldValues horizontalFieldValue);
@@ -255,9 +255,8 @@ private:
     QString m_texturePath;
     AAModeValues m_progressiveAAMode;
     AAModeValues m_multisampleAAMode;
-    LayerBackground m_backgroundMode;
+    LayerBackgroundTypes m_backgroundMode;
     QColor m_clearColor;
-    LayerBackground m_setBackgroundMode;
     LayerBlendTypes m_blendType;
     HorizontalFieldValues m_horizontalFieldValue;
     VerticalFieldValues m_verticalFieldValue;
