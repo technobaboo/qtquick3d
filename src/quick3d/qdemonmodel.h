@@ -65,11 +65,11 @@ protected:
 private:
 
     QString m_source;
-    int m_skeletonRoot;
-    TessModeValues m_tesselationMode;
-    float m_edgeTess;
-    float m_innerTess;
-    bool m_isWireframeMode;
+    int m_skeletonRoot = -1;
+    TessModeValues m_tesselationMode = TessModeValues::NoTess;
+    float m_edgeTess = 1.0f;
+    float m_innerTess = 1.0f;
+    bool m_isWireframeMode = false;
 
     static void qmlAppendMaterial(QQmlListProperty<QDemonMaterial> *list, QDemonMaterial *material);
     static QDemonMaterial *qmlMaterialAt(QQmlListProperty<QDemonMaterial> *list, int index);

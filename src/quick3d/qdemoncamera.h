@@ -86,14 +86,14 @@ protected:
 
 private:
 
-    float m_clipNear;
-    float m_clipFar;
-    float m_fieldOfView;
-    bool m_isFieldOFViewHorizontal;
-    CameraScaleModes m_scaleMode;
-    CameraScaleAnchors m_scaleAnchor;
-    float m_frustumScaleX;
-    float m_frustumScaleY;
+    float m_clipNear = 10.0f;
+    float m_clipFar = 10000.0f;
+    float m_fieldOfView = 60.0f;
+    float m_frustumScaleX = 0.0f;
+    float m_frustumScaleY = 0.0f;
+    CameraScaleModes m_scaleMode = CameraScaleModes::Fit;
+    CameraScaleAnchors m_scaleAnchor = CameraScaleAnchors::Center;
+    bool m_isFieldOFViewHorizontal = false;
 
 
 

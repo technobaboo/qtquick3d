@@ -98,22 +98,22 @@ protected:
 
 private:
 
-    RenderLightTypes m_lightType;
+    RenderLightTypes m_lightType = Directional;
     QColor m_diffuseColor;
     QColor m_specularColor;
     QColor m_ambientColor;
-    float m_brightness;
-    float m_linearFade;
-    float m_exponentialFade;
-    float m_areaWidth;
-    float m_areaHeight;
-    bool m_castShadow;
-    float m_shadowBias;
-    float m_shadowFactor;
-    int m_shadowMapResolution;
-    float m_shadowMapFar;
-    float m_shadowMapFieldOfView;
-    float m_shadowFilter;
+    float m_brightness = 100.0f;
+    float m_linearFade = 0.0f;
+    float m_exponentialFade = 0.0f;
+    float m_areaWidth = 0.0f;
+    float m_areaHeight = 0.0f;
+    bool m_castShadow = false;
+    float m_shadowBias = 0.0f;
+    float m_shadowFactor = 5.0f;
+    int m_shadowMapResolution = 9;
+    float m_shadowMapFar = 5000.0f;
+    float m_shadowMapFieldOfView = 90.0f;
+    float m_shadowFilter = 35.0f;
 };
 
 QT_END_NAMESPACE

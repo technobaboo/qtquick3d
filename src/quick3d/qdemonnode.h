@@ -88,13 +88,13 @@ protected:
 private:
     QVector3D m_rotation;
     QVector3D m_position;
-    QVector3D m_scale;
+    QVector3D m_scale { 1.0f, 1.0f, 1.0f };
     QVector3D m_pivot;
-    float m_opacity;
-    qint32 m_boneid;
-    RotationOrder m_rotationorder;
-    Orientation m_orientation;
-    bool m_visible;
+    float m_opacity = 1.0f;
+    qint32 m_boneid = -1;
+    RotationOrder m_rotationorder = XYZ;
+    Orientation m_orientation = LeftHanded;
+    bool m_visible = true;
     friend QDemonWindow;
     friend QDemonWindowPrivate;
 };
