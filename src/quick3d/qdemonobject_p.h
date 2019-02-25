@@ -239,7 +239,7 @@ public:
 
     virtual void updatePolish() { }
 
-    QDemonGraphObject *spatialNode;
+    QDemonGraphObject *spatialNode = nullptr;
 
     bool componentComplete;
     bool culled;

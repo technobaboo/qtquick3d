@@ -2,12 +2,15 @@
 #include "qdemonwindow_p.h"
 #include "qdemonobject_p.h"
 #include "qdemonnode.h"
+#include "qdemonlayer.h"
 #include <private/qqmlglobal_p.h>
 #include <QtGui/private/qopenglcontext_p.h>
 #include <QtQml/qqmlincubator.h>
 #include "qdemonrenderloop_p.h"
 
 #include <QtGui/QGuiApplication>
+
+#include <QtDemonRuntimeRender/QDemonRenderLayer>
 
 #include <qalgorithms.h>
 
@@ -691,7 +694,8 @@ void QDemonWindowPrivate::updateDirtyNodes()
 
     QDemonObject *updateList = dirtyItemList;
     dirtyItemList = nullptr;
-    if (updateList) QDemonObjectPrivate::get(updateList)->prevDirtyItem = &updateList;
+    if (updateList)
+        QDemonObjectPrivate::get(updateList)->prevDirtyItem = &updateList;
 
     while (updateList) {
         QDemonObject *item = updateList;
@@ -764,20 +768,27 @@ void QDemonWindowPrivate::updateEffectiveOpacityRoot(QDemonObject *, qreal)
 // ### this is where all the magic happens
 void QDemonWindowPrivate::updateDirtyNode(QDemonObject *item)
 {
-    QDemonObjectPrivate *itemPriv = QDemonObjectPrivate::get(item);
-    quint32 dirty = itemPriv->dirtyAttributes;
-    itemPriv->dirtyAttributes = 0;
-
     // Different processing for resource nodes vs hierarchical nodes
     switch (item->type()) {
-    case QDemonObject::Node:
     case QDemonObject::Layer:
+    {
+        QDemonLayer *layerNode = qobject_cast<QDemonLayer *>(item);
+        if (layerNode)
+            updateDirtyLayer(layerNode);
+    }
+       break;
+    case QDemonObject::Node:
     case QDemonObject::Light:
     case QDemonObject::Camera:
     case QDemonObject::Model:
     case QDemonObject::Text:
     case QDemonObject::Path:
+    {
         // handle hierarchical nodes
+        QDemonNode *spatialNode = qobject_cast<QDemonNode *>(item);
+        if (spatialNode)
+            updateDirtySpatialNode(spatialNode);
+    }
         break;
     case QDemonObject::Presentation:
     case QDemonObject::Scene:
@@ -789,6 +800,7 @@ void QDemonWindowPrivate::updateDirtyNode(QDemonObject *item)
     case QDemonObject::PathSubPath:
     case QDemonObject::Lightmaps:
         // handle resource nodes
+        updateDirtyResource(item);
         break;
     default:
         // we dont need to do anything with the other nodes
@@ -1033,6 +1045,49 @@ void QDemonWindowPrivate::updateDirtyNode(QDemonObject *item)
 //    }
 //#endif
 
+}
+
+void QDemonWindowPrivate::updateDirtyResource(QDemonObject *resourceObject)
+{
+
+}
+
+void QDemonWindowPrivate::updateDirtySpatialNode(QDemonNode *spatialNode)
+{
+    QDemonObjectPrivate *itemPriv = QDemonObjectPrivate::get(spatialNode);
+    quint32 dirty = itemPriv->dirtyAttributes;
+    itemPriv->dirtyAttributes = 0;
+
+    qDebug() << spatialNode->type();
+
+    itemPriv->spatialNode = spatialNode->updateSpatialNode(itemPriv->spatialNode);
+
+    QDemonGraphNode *graphNode = static_cast<QDemonGraphNode*>(itemPriv->spatialNode);
+
+    if (graphNode && graphNode->parent == nullptr) {
+        QDemonNode *nodeParent = qobject_cast<QDemonNode*>(spatialNode->parent());
+        if (nodeParent) {
+            QDemonGraphNode *parentGraphNode = static_cast<QDemonGraphNode*>(QDemonObjectPrivate::get(nodeParent)->spatialNode);
+            parentGraphNode->addChild(*graphNode);
+        } else if (graphNode && spatialNode != contentItem) {
+            Q_ASSERT(false);
+        }
+    }
+}
+
+void QDemonWindowPrivate::updateDirtyLayer(QDemonLayer *layerNode)
+{
+    QDemonObjectPrivate *itemPriv = QDemonObjectPrivate::get(layerNode);
+    quint32 dirty = itemPriv->dirtyAttributes;
+    itemPriv->dirtyAttributes = 0;
+
+    itemPriv->spatialNode = layerNode->updateSpatialNode(itemPriv->spatialNode);
+
+    QDemonRenderLayer *layer = static_cast<QDemonRenderLayer *>(itemPriv->spatialNode);
+
+    if (!layer->scene) {
+        m_scene->addChild(*layer);
+    }
 }
 
 void QDemonWindowPrivate::data_append(QQmlListProperty<QObject> *property, QObject *o)

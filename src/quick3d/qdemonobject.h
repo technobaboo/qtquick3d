@@ -11,6 +11,7 @@ QT_BEGIN_NAMESPACE
 
 class QDemonObjectPrivate;
 class QDemonWindow;
+class QDemonWindowPrivate;
 
 class Q_QUICK3D_EXPORT QDemonObject : public QObject, public QQmlParserStatus
 {
@@ -140,6 +141,7 @@ private:
     QString m_name;
     bool m_enabled;
     bool m_visible;
+    friend QDemonWindowPrivate;
 };
 
 QT_END_NAMESPACE

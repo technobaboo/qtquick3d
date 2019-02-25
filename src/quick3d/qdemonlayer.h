@@ -299,6 +299,7 @@ private:
 
     QVector<QDemonEffect *> m_effects;
     QDemonCamera *m_activeCamera;
+    friend QDemonWindowPrivate;
 };
 
 QT_END_NAMESPACE

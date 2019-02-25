@@ -9,6 +9,7 @@
 
 QT_BEGIN_NAMESPACE
 
+class QDemonWindowPrivate;
 class Q_QUICK3D_EXPORT QDemonNode : public QDemonObject
 {
     Q_OBJECT
@@ -94,6 +95,8 @@ private:
     RotationOrder m_rotationorder;
     Orientation m_orientation;
     bool m_visible;
+    friend QDemonWindow;
+    friend QDemonWindowPrivate;
 };
 
 QT_END_NAMESPACE

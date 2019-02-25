@@ -33,6 +33,7 @@ QT_BEGIN_NAMESPACE
 
 class QQuickAnimatorController;
 class QQuickWindowIncubationController;
+class QDemonLayer;
 
 class Q_QUICK3D_PRIVATE_EXPORT QDemonWindowPrivate : public QWindowPrivate
 {
@@ -86,6 +87,10 @@ public:
     bool updateEffectiveOpacity(QDemonObject *);
     void updateEffectiveOpacityRoot(QDemonObject *, qreal);
     void updateDirtyNode(QDemonObject *);
+
+    void updateDirtyResource(QDemonObject *resourceObject);
+    void updateDirtySpatialNode(QDemonNode *spatialNode);
+    void updateDirtyLayer(QDemonLayer *layerNode);
 
     void fireFrameSwapped() { Q_EMIT q_func()->frameSwapped(); }
     void fireAboutToStop() { Q_EMIT q_func()->sceneGraphAboutToStop(); }

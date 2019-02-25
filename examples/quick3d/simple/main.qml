@@ -13,6 +13,9 @@ DemonWindow {
         clearColor: "green"
         backgroundMode: DemonLayer.Color
         activeCamera: camera
+        Component.onCompleted: {
+            update();
+        }
 
         DemonLight {
             id: directionalLight

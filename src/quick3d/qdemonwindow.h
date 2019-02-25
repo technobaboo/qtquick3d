@@ -117,7 +117,6 @@ private Q_SLOTS:
     void handleApplicationStateChanged(Qt::ApplicationState state);
 
 private:
-    friend class QDemonObject;
     Q_DISABLE_COPY(QDemonWindow)
 };
 
