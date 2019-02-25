@@ -115,7 +115,7 @@ void QDemonObject::setParentItem(QDemonObject *parentItem)
         //        }
 
         //        const bool wasVisible = isVisible();
-        //        op->removeChild(this);
+                op->removeChild(this);
         //        if (wasVisible) {
         //            emit oldParentItem->visibleChildrenChanged();
         //        }
