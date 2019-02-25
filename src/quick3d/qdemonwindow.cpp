@@ -283,12 +283,18 @@ void QDemonWindow::exposeEvent(QExposeEvent *)
         d->windowManager->exposureChanged(this);
 }
 
-void QDemonWindow::resizeEvent(QResizeEvent *)
+void QDemonWindow::resizeEvent(QResizeEvent *ev)
 {
     Q_D(QDemonWindow);
     // TODO: Determine if we need to set a new size to the "content" item
 //    if (d->contentItem)
 //        d->contentItem->setSize(ev->size());
+    if (d->m_presentation) {
+        d->m_presentation->presentationDimensions.setX(ev->size().width());
+        d->m_presentation->presentationDimensions.setY(ev->size().height());
+    }
+
+
     if (d->windowManager)
         d->windowManager->resize(this);
 }
@@ -513,6 +519,8 @@ void QDemonWindowPrivate::init(QDemonWindow *c)
     m_scene.reset(new QDemonRenderScene());
     m_presentation->scene = m_scene;
     m_scene->presentation = m_presentation.data();
+    m_presentation->presentationDimensions.setX(q->width());
+    m_presentation->presentationDimensions.setY(q->height());
 
 //    animationController = new QQuickAnimatorController(q);
 
@@ -627,16 +635,12 @@ void QDemonWindowPrivate::syncSceneGraph()
 void QDemonWindowPrivate::renderSceneGraph(const QSize &size)
 {
     Q_Q(QDemonWindow);
-//    if (!renderer)
-//        return;
 
     //animationController->advance();
     emit q->beforeRendering();
     runAndClearJobs(&beforeRenderingJobs);
 
-    context->setPresentationDimensions(QSize(m_presentation->presentationDimensions.x(),
-                                               m_presentation->presentationDimensions.y()));
-
+    context->setPresentationDimensions(size * q->effectiveDevicePixelRatio());
     context->beginFrame();
     windowManager->renderContext()->resetBlendState();
 

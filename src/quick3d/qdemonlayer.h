@@ -37,7 +37,7 @@ class Q_QUICK3D_EXPORT QDemonLayer : public QDemonNode
     Q_PROPERTY(float aoStrength READ aoStrength WRITE setAoStrength NOTIFY aoStrengthChanged)
     Q_PROPERTY(float aoDistance READ aoDistance WRITE setAoDistance NOTIFY aoDistanceChanged)
     Q_PROPERTY(float aoSoftness READ aoSoftness WRITE setAoSoftness NOTIFY aoSoftnessChanged)
-    Q_PROPERTY(float aoDither READ aoDither WRITE setAoDither NOTIFY aoDitherChanged)
+    Q_PROPERTY(bool aoDither READ aoDither WRITE setAoDither NOTIFY aoDitherChanged)
     Q_PROPERTY(int aoSampleRate READ aoSampleRate WRITE setAoSampleRate NOTIFY aoSampleRateChanged)
     Q_PROPERTY(float aoBias READ aoBias WRITE setAoBias NOTIFY aoBiasChanged)
 
@@ -142,7 +142,7 @@ public:
     float aoStrength() const;
     float aoDistance() const;
     float aoSoftness() const;
-    float aoDither() const;
+    bool aoDither() const;
     int aoSampleRate() const;
     float aoBias() const;
     float shadowStrength() const;
@@ -188,7 +188,7 @@ public Q_SLOTS:
     void setAoStrength(float aoStrength);
     void setAoDistance(float aoDistance);
     void setAoSoftness(float aoSoftness);
-    void setAoDither(float aoDither);
+    void setAoDither(bool aoDither);
     void setAoSampleRate(int aoSampleRate);
     void setAoBias(float aoBias);
     void setShadowStrength(float shadowStrength);
@@ -229,7 +229,7 @@ Q_SIGNALS:
     void aoStrengthChanged(float aoStrength);
     void aoDistanceChanged(float aoDistance);
     void aoSoftnessChanged(float aoSoftness);
-    void aoDitherChanged(float aoDither);
+    void aoDitherChanged(bool aoDither);
     void aoSampleRateChanged(int aoSampleRate);
     void aoBiasChanged(float aoBias);
     void shadowStrengthChanged(float shadowStrength);
@@ -273,7 +273,7 @@ private:
     float m_aoStrength;
     float m_aoDistance;
     float m_aoSoftness;
-    float m_aoDither;
+    bool m_aoDither;
     int m_aoSampleRate;
     float m_aoBias;
     float m_shadowStrength;

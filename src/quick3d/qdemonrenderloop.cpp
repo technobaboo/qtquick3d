@@ -285,6 +285,8 @@ void QDemonGuiThreadRenderLoop::renderWindow(QDemonWindow *window)
     if (!m_windows.contains(window))
         return;
 
+    m_sgContext->setWindowDimensions(window->size() * window->effectiveDevicePixelRatio());
+
     WindowData &data = const_cast<WindowData &>(m_windows[window]);
     bool alsoSwap = data.updatePending;
     data.updatePending = false;

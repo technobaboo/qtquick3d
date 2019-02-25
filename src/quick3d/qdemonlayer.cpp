@@ -22,25 +22,27 @@ QDemonLayer::QDemonLayer()
     , m_right(0.0f)
     , m_top(0.0f)
     , m_bottom(0.0f)
+    , m_height(100.0f)
+    , m_width(100.0f)
     , m_aoStrength(0.0f)
-    , m_aoDistance(0.0f)
-    , m_aoSoftness(0.0f)
-    , m_aoDither(0.0f)
-    , m_aoSampleRate(0.0f)
+    , m_aoDistance(5.0f)
+    , m_aoSoftness(50.0f)
+    , m_aoDither(false)
+    , m_aoSampleRate(2)
     , m_aoBias(0.0f)
     , m_shadowStrength(0.0f)
-    , m_shadowDistance(0.0f)
-    , m_shadowSoftness(0.0f)
+    , m_shadowDistance(10.0f)
+    , m_shadowSoftness(100.0f)
     , m_shadowBias(0.0f)
     , m_lightProbe(nullptr)
-    , m_probeBrightness(0.0f)
+    , m_probeBrightness(100.0f)
     , m_fastIBL(false)
-    , m_probeHorizon(0.0f)
-    , m_probeFieldOfView(0.0f)
+    , m_probeHorizon(-1.0f)
+    , m_probeFieldOfView(180.0f)
     , m_lightProbe2(nullptr)
-    , m_probe2Fade(0.0f)
-    , m_probe2Window(0.0f)
-    , m_probe2Postion(0.0f)
+    , m_probe2Fade(1.0f)
+    , m_probe2Window(1.0f)
+    , m_probe2Postion(0.5f)
     , m_temporalAAEnabled(false)
     , m_activeCamera(nullptr)
 {
@@ -162,7 +164,7 @@ float QDemonLayer::aoSoftness() const
     return m_aoSoftness;
 }
 
-float QDemonLayer::aoDither() const
+bool QDemonLayer::aoDither() const
 {
     return m_aoDither;
 }
@@ -480,10 +482,9 @@ void QDemonLayer::setAoSoftness(float aoSoftness)
     update();
 }
 
-void QDemonLayer::setAoDither(float aoDither)
+void QDemonLayer::setAoDither(bool aoDither)
 {
-    qWarning("Floating point comparison needs context sanity check");
-    if (qFuzzyCompare(m_aoDither, aoDither))
+    if (m_aoDither == aoDither)
         return;
 
     m_aoDither = aoDither;

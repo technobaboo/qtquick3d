@@ -37,4 +37,12 @@ DemonWindow {
 //        id: defaultMaterial
 //    }
 
+    DemonLayer {
+        id: layer2
+        clearColor: "pink"
+        backgroundMode: DemonLayer.Color
+        width: 50
+        height: 50
+    }
+
 }
