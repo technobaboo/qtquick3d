@@ -498,7 +498,6 @@ void QDemonWindowPrivate::init(QDemonWindow *c)
     //contentItemPrivate->flags |= QQuickItem::ItemIsFocusScope;
     //contentItem->setSize(q->size());
 
-
     windowManager = QDemonRenderLoop::instance();
     context = windowManager->sceneGraphContext().data();
 
@@ -1090,9 +1089,8 @@ void QDemonWindowPrivate::updateDirtyLayer(QDemonLayer *layerNode)
 
     QDemonRenderLayer *layer = static_cast<QDemonRenderLayer *>(itemPriv->spatialNode);
 
-    if (!layer->scene) {
+    if (!layer->scene)
         m_scene->addChild(*layer);
-    }
 }
 
 void QDemonWindowPrivate::data_append(QQmlListProperty<QObject> *property, QObject *o)

@@ -182,7 +182,7 @@ bool QDemonGraphNode::calculateGlobalVariables()
     HANDLE_EULER_ANGLE(EulOrdXYZr, X, Y, Z)                                                        \
     HANDLE_EULER_ANGLE(EulOrdZYZr, Z, Y, Z)
 
-inline EulerAngles RotationAndOrderToShoemake(QVector3D inRotation, quint32 inOrder)
+inline EulerAngles rotationAndOrderToShoemake(QVector3D inRotation, quint32 inOrder)
 {
     EulerAngles retval;
     retval.w = float(inOrder);
@@ -257,7 +257,7 @@ QVector3D QDemonGraphNode::getRotationVectorFromEulerAngles(const EulerAngles &i
 void QDemonGraphNode::calculateRotationMatrix(QMatrix4x4 &outMatrix) const
 {
     QDemonEulerAngleConverter theConverter;
-    EulerAngles theAngles(RotationAndOrderToShoemake(rotation, int(rotationOrder)));
+    EulerAngles theAngles(rotationAndOrderToShoemake(rotation, int(rotationOrder)));
     HMatrix *theMatrix = reinterpret_cast<HMatrix *>(&outMatrix);
     theConverter.eulerToHMatrix(theAngles, *theMatrix);
 }

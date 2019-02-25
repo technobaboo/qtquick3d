@@ -166,9 +166,8 @@ void QDemonNode::setVisible(bool visible)
 
 QDemonGraphObject *QDemonNode::updateSpatialNode(QDemonGraphObject *node)
 {
-    if (!node) {
+    if (!node)
         node = new QDemonGraphNode();
-    }
 
     auto spacialNode = static_cast<QDemonGraphNode*>(node);
     spacialNode->position = m_position;

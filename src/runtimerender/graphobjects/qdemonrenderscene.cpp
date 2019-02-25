@@ -72,10 +72,8 @@ bool QDemonRenderScene::prepareForRender(const QVector2D &inViewportDimensions,
     // We need to iterate through the layers in reverse order and ask them to render.
     bool wasDirty = dirty;
     dirty = false;
-    if (firstChild) {
-        wasDirty |=
-            inContext->getRenderer()->prepareLayerForRender(*firstChild, inViewportDimensions, true, id);
-    }
+    if (firstChild)
+        wasDirty |= inContext->getRenderer()->prepareLayerForRender(*firstChild, inViewportDimensions, true, id);
     return wasDirty;
 }
 
