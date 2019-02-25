@@ -133,9 +133,8 @@ void QDemonCamera::setFrustumScaleY(float frustumScaleY)
 
 QDemonGraphObject *QDemonCamera::updateSpatialNode(QDemonGraphObject *node)
 {
-    if (!node) {
+    if (!node)
         node = new QDemonRenderCamera();
-    }
 
     // ### TODO:  update camera properties
 

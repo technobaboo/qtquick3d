@@ -89,7 +89,7 @@ public:
     };
 
     explicit QDemonObject(QDemonObject *parent = nullptr);
-    virtual ~QDemonObject();
+    virtual ~QDemonObject() override;
 
 
     QByteArray id() const;
