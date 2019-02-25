@@ -42,7 +42,7 @@
 
 QT_BEGIN_NAMESPACE
 
-typedef void *SRenderInstanceId;
+typedef void *QDemonRenderInstanceId;
 
 class QDemonRenderNodeFilterInterface
 {
@@ -126,13 +126,13 @@ public:
     virtual bool prepareLayerForRender(QDemonRenderLayer &inLayer,
                                        const QVector2D &inViewportDimensions,
                                        bool inRenderSiblings = true,
-                                       const SRenderInstanceId id = nullptr) = 0;
+                                       const QDemonRenderInstanceId id = nullptr) = 0;
     virtual void renderLayer(QDemonRenderLayer &inLayer,
                              const QVector2D &inViewportDimensions,
                              bool clear,
                              QVector3D clearColor,
                              bool inRenderSiblings = true,
-                             const SRenderInstanceId id = nullptr) = 0;
+                             const QDemonRenderInstanceId id = nullptr) = 0;
 
     // Studio option to disable picking against sub renderers.  This allows better interaction
     // in studio.
@@ -146,7 +146,7 @@ public:
                                         const QVector2D &inMouseCoords,
                                         bool inPickSiblings = true,
                                         bool inPickEverything = false,
-                                        const SRenderInstanceId id = nullptr) = 0;
+                                        const QDemonRenderInstanceId id = nullptr) = 0;
 
     // Return the relative hit position, in UV space, of a mouse pick against this object.
     // We need the node in order to figure out which layer rendered this object.
@@ -215,7 +215,7 @@ public:
                                                          const QVector3D &inWorldPoint) = 0;
     // Called before a layer goes completely out of scope to release any rendering resources
     // related to the layer.
-    virtual void releaseLayerRenderResources(QDemonRenderLayer &inLayer, const SRenderInstanceId id) = 0;
+    virtual void releaseLayerRenderResources(QDemonRenderLayer &inLayer, const QDemonRenderInstanceId id) = 0;
 
     // render a screen aligned 2D text
     virtual void renderText2D(float x, float y, QDemonOption<QVector3D> inColor, const QString &text) = 0;

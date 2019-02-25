@@ -38,7 +38,7 @@
 QT_BEGIN_NAMESPACE
 struct QDemonRenderLayer;
 struct QDemonPresentation;
-typedef void *SRenderInstanceId;
+typedef void *QDemonRenderInstanceId;
 
 struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderScene : public QDemonGraphObject
 {
@@ -71,16 +71,16 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderScene : public QDemonGraphObject
     // returns true if any of the layers were dirty or if this object was dirty
     bool prepareForRender(const QVector2D &inViewportDimensions,
                           QDemonRenderContextInterface *inContext,
-                          const SRenderInstanceId id = nullptr);
+                          const QDemonRenderInstanceId id = nullptr);
     void render(const QVector2D &inViewportDimensions,
                 QDemonRenderContextInterface *inContext,
                 RenderClearCommand command = ClearIsOptional,
-                const SRenderInstanceId id = nullptr);
+                const QDemonRenderInstanceId id = nullptr);
     void renderWithClear(const QVector2D &inViewportDimensions,
                          QDemonRenderContextInterface *inContext,
                          RenderClearCommand inClearColorBuffer,
                          QVector3D inclearColor,
-                         const SRenderInstanceId id = nullptr);
+                         const QDemonRenderInstanceId id = nullptr);
 };
 QT_END_NAMESPACE
 

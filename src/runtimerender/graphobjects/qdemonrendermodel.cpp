@@ -47,15 +47,15 @@ QDemonRenderModel::QDemonRenderModel()
 
 void QDemonRenderModel::addMaterial(QDemonGraphObject &inMaterial)
 {
-    if (firstMaterial == nullptr)
+    if (firstMaterial == nullptr) {
         firstMaterial = &inMaterial;
-    else {
+    } else {
         QDemonGraphObject *lastMaterial;
         // empty loop intentional
-        for (lastMaterial = firstMaterial; lastMaterial && GetNextMaterialSibling(lastMaterial);
-             lastMaterial = GetNextMaterialSibling(lastMaterial)) {
+        for (lastMaterial = firstMaterial; lastMaterial && getNextMaterialSibling(lastMaterial);
+             lastMaterial = getNextMaterialSibling(lastMaterial)) {
         }
-        SetNextMaterialSibling(*lastMaterial, &inMaterial);
+        setNextMaterialSibling(*lastMaterial, &inMaterial);
     }
     if (inMaterial.type == QDemonGraphObjectTypes::DefaultMaterial)
         static_cast<QDemonRenderDefaultMaterial &>(inMaterial).parent = this;

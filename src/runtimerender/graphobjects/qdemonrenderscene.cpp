@@ -67,7 +67,7 @@ QDemonRenderLayer *QDemonRenderScene::getLastChild()
 
 bool QDemonRenderScene::prepareForRender(const QVector2D &inViewportDimensions,
                                          QDemonRenderContextInterface *inContext,
-                                         const SRenderInstanceId id)
+                                         const QDemonRenderInstanceId id)
 {
     // We need to iterate through the layers in reverse order and ask them to render.
     bool wasDirty = dirty;
@@ -82,7 +82,7 @@ bool QDemonRenderScene::prepareForRender(const QVector2D &inViewportDimensions,
 void QDemonRenderScene::render(const QVector2D &inViewportDimensions,
                                QDemonRenderContextInterface *inContext,
                                RenderClearCommand inClearColorBuffer,
-                               const SRenderInstanceId id)
+                               const QDemonRenderInstanceId id)
 {
     if ((inClearColorBuffer == QDemonRenderScene::ClearIsOptional && useClearColor)
         || inClearColorBuffer == QDemonRenderScene::AlwaysClear) {
@@ -106,7 +106,7 @@ void QDemonRenderScene::renderWithClear(const QVector2D &inViewportDimensions,
                                         QDemonRenderContextInterface *inContext,
                                         RenderClearCommand inClearColorBuffer,
                                         QVector3D inClearColor,
-                                        const SRenderInstanceId id)
+                                        const QDemonRenderInstanceId id)
 {
     // If this scene is not using clear color, we set the color
     // to background color from parent layer. This allows

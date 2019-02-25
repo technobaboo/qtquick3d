@@ -2027,10 +2027,10 @@ template <typename TDataType>
 struct QDemonRenderRectT
 {
     typedef TDataType TRectType;
-    TDataType m_x;
-    TDataType m_y;
-    TDataType m_width;
-    TDataType m_height;
+    TDataType m_x = 0;
+    TDataType m_y = 0;
+    TDataType m_width = 0;
+    TDataType m_height = 0;
     QDemonRenderRectT(TDataType x, TDataType y, TDataType w, TDataType h)
         : m_x(x)
         , m_y(y)
@@ -2038,13 +2038,7 @@ struct QDemonRenderRectT
         , m_height(h)
     {
     }
-    QDemonRenderRectT()
-        : m_x(0)
-        , m_y(0)
-        , m_width(0)
-        , m_height(0)
-    {
-    }
+    QDemonRenderRectT() = default;
     bool operator==(const QDemonRenderRectT<TDataType> &inOther) const
     {
         return m_x == inOther.m_x && m_y == inOther.m_y && m_width == inOther.m_width

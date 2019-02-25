@@ -121,7 +121,7 @@ struct QDemonOffscreenRenderFlags
     }
 };
 
-typedef void *SRenderInstanceId;
+typedef void *QDemonRenderInstanceId;
 
 class QDemonOffscreenRendererInterface
 {
@@ -147,7 +147,7 @@ public:
     // Returns true of this object needs to be rendered, false if this object is not dirty
     virtual QDemonOffscreenRenderFlags needsRender(const QDemonOffscreenRendererEnvironment &inEnvironment,
                                                    QVector2D inPresentationScaleFactor,
-                                                   const SRenderInstanceId instanceId) = 0;
+                                                   const QDemonRenderInstanceId instanceId) = 0;
     // Returns true if the rendered result image has transparency, or false
     // if it should be treated as a completely opaque image.
     // It is the IOffscreenRenderer's job to clear any buffers (color, depth, stencil) that it
@@ -159,18 +159,18 @@ public:
     virtual void render(const QDemonOffscreenRendererEnvironment &inEnvironment,
                         QDemonRenderContext &inRenderContext, QVector2D inPresentationScaleFactor,
                         QDemonRenderScene::RenderClearCommand inColorBufferNeedsClear,
-                        const SRenderInstanceId instanceId) = 0;
+                        const QDemonRenderInstanceId instanceId) = 0;
     virtual void renderWithClear(const QDemonOffscreenRendererEnvironment &inEnvironment,
                                  QDemonRenderContext &inRenderContext, QVector2D inPresentationScaleFactor,
                                  QDemonRenderScene::RenderClearCommand inColorBufferNeedsClear,
                                  QVector3D inclearColor,
-                                 const SRenderInstanceId instanceId) = 0;
+                                 const QDemonRenderInstanceId instanceId) = 0;
 
     // Implementors should implement one of the two interfaces below.
 
     // If this renderer supports picking that can return graph objects
     // then return an interface here.
-    virtual QDemonGraphObjectPickQueryInterface *getGraphObjectPickQuery(const SRenderInstanceId instanceId) = 0;
+    virtual QDemonGraphObjectPickQueryInterface *getGraphObjectPickQuery(const QDemonRenderInstanceId instanceId) = 0;
 
     // If you *don't* support the GraphObjectPickIterator interface, then you should implement
     // this interface
@@ -180,7 +180,7 @@ public:
     // else we will assume you did not and will continue the picking algorithm.
     virtual bool pick(const QVector2D &inMouseCoords,
                       const QVector2D &inViewportDimensions,
-                      const SRenderInstanceId instanceId) = 0;
+                      const QDemonRenderInstanceId instanceId) = 0;
 };
 
 struct QDemonOffscreenRenderResult

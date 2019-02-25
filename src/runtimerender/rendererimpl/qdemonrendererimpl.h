@@ -138,7 +138,7 @@ class Q_DEMONRUNTIMERENDER_EXPORT QDemonRendererImpl : public QDemonRendererInte
     typedef QHash<QDemonShaderDefaultMaterialKey, QSharedPointer<QDemonShaderGeneratorGeneratedShader>> TShaderMap;
     typedef QHash<QString, QSharedPointer<QDemonRenderConstantBuffer>> TStrConstanBufMap;
     //typedef QHash<SRenderInstanceId, QSharedPointer<SLayerRenderData>, eastl::hash<SRenderInstanceId>> TInstanceRenderMap;
-    typedef QHash<SRenderInstanceId, QSharedPointer<QDemonLayerRenderData>> TInstanceRenderMap;
+    typedef QHash<QDemonRenderInstanceId, QSharedPointer<QDemonLayerRenderData>> TInstanceRenderMap;
     typedef QVector<QDemonLayerRenderData *> TLayerRenderList;
     typedef QVector<QDemonRenderPickResult> TPickResultArray;
 
@@ -284,17 +284,17 @@ public:
     // Calls prepare layer for render
     // and then do render layer.
     bool prepareLayerForRender(QDemonRenderLayer &inLayer, const QVector2D &inViewportDimensions,
-                               bool inRenderSiblings, const SRenderInstanceId id) override;
+                               bool inRenderSiblings, const QDemonRenderInstanceId id) override;
     void renderLayer(QDemonRenderLayer &inLayer, const QVector2D &inViewportDimensions,
                      bool clear, QVector3D clearColor, bool inRenderSiblings,
-                     const SRenderInstanceId id) override;
+                     const QDemonRenderInstanceId id) override;
     void childrenUpdated(QDemonGraphNode &inParent) override;
     float getTextScale(const QDemonText &inText) override;
 
     QDemonRenderCamera *getCameraForNode(const QDemonGraphNode &inNode) const override;
     QDemonOption<QDemonCuboidRect> getCameraBounds(const QDemonGraphObject &inObject) override;
     virtual QDemonRenderLayer *getLayerForNode(const QDemonGraphNode &inNode) const;
-    QSharedPointer<QDemonLayerRenderData> getOrCreateLayerRenderDataForNode(const QDemonGraphNode &inNode, const SRenderInstanceId id = nullptr);
+    QSharedPointer<QDemonLayerRenderData> getOrCreateLayerRenderDataForNode(const QDemonGraphNode &inNode, const QDemonRenderInstanceId id = nullptr);
 
     QSharedPointer<QDemonRenderWidgetContextInterface> getRenderWidgetContext()
     {
@@ -308,7 +308,7 @@ public:
     QDemonRenderPickResult pick(QDemonRenderLayer &inLayer, const QVector2D &inViewportDimensions,
                                 const QVector2D &inMouseCoords, bool inPickSiblings,
                                 bool inPickEverything,
-                                const SRenderInstanceId id) override;
+                                const QDemonRenderInstanceId id) override;
 
     virtual QDemonOption<QVector2D> facePosition(QDemonGraphNode &inNode,
                                                  QDemonBounds3 inBounds,
@@ -346,7 +346,7 @@ public:
                                                  const QVector3D &inWorldPoint,
                                                  QDemonLayerRenderData &inRenderData);
 
-    void releaseLayerRenderResources(QDemonRenderLayer &inLayer, const SRenderInstanceId id) override;
+    void releaseLayerRenderResources(QDemonRenderLayer &inLayer, const QDemonRenderInstanceId id) override;
 
     void renderQuad(const QVector2D inDimensions, const QMatrix4x4 &inMVP,
                     QDemonRenderTexture2D &inQuadTexture) override;

@@ -40,8 +40,11 @@ QDemonResourceTexture2D::QDemonResourceTexture2D(QSharedPointer<QDemonResourceMa
         m_textureDetails = inTexture->getTextureDetails();
 }
 
-QDemonResourceTexture2D::QDemonResourceTexture2D(QSharedPointer<QDemonResourceManagerInterface> mgr, quint32 width, quint32 height,
-                                       QDemonRenderTextureFormats::Enum inFormat, quint32 inSamples)
+QDemonResourceTexture2D::QDemonResourceTexture2D(QSharedPointer<QDemonResourceManagerInterface> mgr,
+                                                 quint32 width,
+                                                 quint32 height,
+                                                 QDemonRenderTextureFormats::Enum inFormat,
+                                                 quint32 inSamples)
     : m_resourceManager(mgr)
     , m_texture(nullptr)
 {

@@ -67,7 +67,7 @@ QDemonSubPresentationRenderer::getDesiredEnvironment(QVector2D /*inPresScale*/)
 QDemonOffscreenRenderFlags
 QDemonSubPresentationRenderer::needsRender(const QDemonOffscreenRendererEnvironment & /*inEnvironment*/,
                                       QVector2D /*inPresScale*/,
-                                      const SRenderInstanceId instanceId)
+                                      const QDemonRenderInstanceId instanceId)
 {
     bool hasTransparency = m_presentation->scene->useClearColor ? false : true;
     QDemonRenderRect theViewportSize(m_renderContext->getRenderList()->getViewport());
@@ -82,7 +82,7 @@ QDemonSubPresentationRenderer::needsRender(const QDemonOffscreenRendererEnvironm
 void QDemonSubPresentationRenderer::render(const QDemonOffscreenRendererEnvironment &inEnvironment,
                                       QDemonRenderContext &inRenderContext, QVector2D,
                                       QDemonRenderScene::RenderClearCommand inClearColorBuffer,
-                                      const SRenderInstanceId instanceId)
+                                      const QDemonRenderInstanceId instanceId)
 {
     QDemonSubPresentationHelper theHelper(m_renderContext, QSize((quint32)inEnvironment.width, (quint32)inEnvironment.height));
     QDemonRenderRect theViewportSize(inRenderContext.getViewport());
@@ -96,7 +96,7 @@ void QDemonSubPresentationRenderer::renderWithClear(
         const QDemonOffscreenRendererEnvironment &inEnvironment,
         QDemonRenderContext &inRenderContext, QVector2D inPresScale,
         QDemonRenderScene::RenderClearCommand inClearBuffer, QVector3D inClearColor,
-        const SRenderInstanceId id)
+        const QDemonRenderInstanceId id)
 {
     Q_UNUSED(inEnvironment);
     Q_UNUSED(inPresScale);

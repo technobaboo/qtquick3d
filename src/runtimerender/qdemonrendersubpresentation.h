@@ -67,22 +67,22 @@ public:
     QDemonOffscreenRendererEnvironment getDesiredEnvironment(QVector2D inPresScale) override;
     virtual QDemonOffscreenRenderFlags needsRender(const QDemonOffscreenRendererEnvironment &inEnvironment,
                                                    QVector2D inPresScale,
-                                                   const SRenderInstanceId instanceId) override;
+                                                   const QDemonRenderInstanceId instanceId) override;
     void render(const QDemonOffscreenRendererEnvironment &inEnvironment,
                 QDemonRenderContext & /*inRenderContext*/,
                 QVector2D inPresScale,
                 QDemonRenderScene::RenderClearCommand inClearBuffer,
-                const SRenderInstanceId instanceId) override;
+                const QDemonRenderInstanceId instanceId) override;
     void renderWithClear(const QDemonOffscreenRendererEnvironment &inEnvironment,
                          QDemonRenderContext &inRenderContext,
                          QVector2D inPresScale,
                          QDemonRenderScene::RenderClearCommand inClearBuffer,
                          QVector3D inClearColor,
-                         const SRenderInstanceId instanceId) override;
-    QDemonGraphObjectPickQueryInterface *getGraphObjectPickQuery(const SRenderInstanceId) override { return &m_pickQuery; }
+                         const QDemonRenderInstanceId instanceId) override;
+    QDemonGraphObjectPickQueryInterface *getGraphObjectPickQuery(const QDemonRenderInstanceId) override { return &m_pickQuery; }
     bool pick(const QVector2D & /*inMouseCoords*/,
               const QVector2D & /*inViewportDimensions*/,
-              const SRenderInstanceId) override
+              const QDemonRenderInstanceId) override
     {
         return false;
     }

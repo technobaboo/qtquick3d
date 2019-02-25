@@ -788,7 +788,7 @@ bool QDemonLayerRenderPreparationData::prepareModelForRender(QDemonRenderModel &
     QDemonScopedLightsListScope lightsScope(lights, lightDirections, sourceLightDirections, inScopedLights);
     setShaderFeature(cgLightingFeatureName, lights.empty() == false);
     for (quint32 idx = 0, end = theMesh->subsets.size(); idx < end && theSourceMaterialObject;
-         ++idx, theSourceMaterialObject = GetNextMaterialSibling(theSourceMaterialObject)) {
+         ++idx, theSourceMaterialObject = getNextMaterialSibling(theSourceMaterialObject)) {
         QDemonRenderSubset &theOuterSubset(theMesh->subsets[idx]);
         {
             QDemonRenderSubset &theSubset(theOuterSubset);
