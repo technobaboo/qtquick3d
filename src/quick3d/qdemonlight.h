@@ -9,7 +9,7 @@ QT_BEGIN_NAMESPACE
 class Q_QUICK3D_EXPORT QDemonLight : public QDemonNode
 {
     Q_OBJECT
-    Q_PROPERTY(RenderLightTypes lightType READ lightType WRITE setLightType NOTIFY lightTypeChanged)
+    Q_PROPERTY(QDemonRenderLightTypes lightType READ lightType WRITE setLightType NOTIFY lightTypeChanged)
     Q_PROPERTY(QColor diffuseColor READ diffuseColor WRITE setDiffuseColor NOTIFY diffuseColorChanged)
     Q_PROPERTY(QColor specularColor READ specularColor WRITE setSpecularColor NOTIFY specularColorChanged)
     Q_PROPERTY(QColor ambientColor READ ambientColor WRITE setAmbientColor NOTIFY ambientColorChanged)
@@ -27,20 +27,20 @@ class Q_QUICK3D_EXPORT QDemonLight : public QDemonNode
     Q_PROPERTY(float shadowFilter READ shadowFilter WRITE setShadowFilter NOTIFY shadowFilterChanged)
 
 public:
-    enum RenderLightTypes
+    enum QDemonRenderLightTypes
     {
         Unknown = 0,
         Directional,
         Point,
         Area,
     };
-    Q_ENUM(RenderLightTypes)
+    Q_ENUM(QDemonRenderLightTypes)
 
     QDemonLight();
     ~QDemonLight() override;
 
     QDemonObject::Type type() const override;
-    RenderLightTypes lightType() const;
+    QDemonRenderLightTypes lightType() const;
     QColor diffuseColor() const;
     QColor specularColor() const;
     QColor ambientColor() const;
@@ -58,7 +58,7 @@ public:
     float shadowFilter() const;
 
 public Q_SLOTS:
-    void setLightType(RenderLightTypes lightType);
+    void setLightType(QDemonRenderLightTypes lightType);
     void setDiffuseColor(QColor diffuseColor);
     void setSpecularColor(QColor specularColor);
     void setAmbientColor(QColor ambientColor);
@@ -76,7 +76,7 @@ public Q_SLOTS:
     void setShadowFilter(float shadowFilter);
 
 Q_SIGNALS:
-    void lightTypeChanged(RenderLightTypes lightType);
+    void lightTypeChanged(QDemonRenderLightTypes lightType);
     void diffuseColorChanged(QColor diffuseColor);
     void specularColorChanged(QColor specularColor);
     void ambientColorChanged(QColor ambientColor);
@@ -98,7 +98,7 @@ protected:
 
 private:
 
-    RenderLightTypes m_lightType = Directional;
+    QDemonRenderLightTypes m_lightType = Directional;
     QColor m_diffuseColor;
     QColor m_specularColor;
     QColor m_ambientColor;

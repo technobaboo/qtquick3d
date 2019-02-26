@@ -24,10 +24,10 @@ DemonWindow {
         height: 100
         //activeCamera: camera
 
-//        DemonLight {
-//            id: directionalLight
-//            lightType: DemonLight.Directional
-//        }
+        DemonLight {
+            id: directionalLight
+            lightType: DemonLight.Directional
+        }
 
 //        DemonCamera {
 //            id: camera

@@ -5,6 +5,9 @@
 QT_BEGIN_NAMESPACE
 
 QDemonLight::QDemonLight()
+    : m_diffuseColor(Qt::white)
+    , m_specularColor(Qt::white)
+    , m_ambientColor(Qt::black)
 {
 
 }
@@ -19,7 +22,7 @@ QDemonObject::Type QDemonLight::type() const
     return QDemonObject::Light;
 }
 
-QDemonLight::RenderLightTypes QDemonLight::lightType() const
+QDemonLight::QDemonRenderLightTypes QDemonLight::lightType() const
 {
     return m_lightType;
 }
@@ -99,7 +102,7 @@ float QDemonLight::shadowFilter() const
     return m_shadowFilter;
 }
 
-void QDemonLight::setLightType(QDemonLight::RenderLightTypes lightType)
+void QDemonLight::setLightType(QDemonLight::QDemonRenderLightTypes lightType)
 {
     if (m_lightType == lightType)
         return;
@@ -274,7 +277,37 @@ QDemonGraphObject *QDemonLight::updateSpatialNode(QDemonGraphObject *node)
     if (!node)
         node = new QDemonRenderLight();
 
-    // ### TODO: update light properties
+    QDemonNode::updateSpatialNode(node);
+
+    QDemonRenderLight *light = static_cast<QDemonRenderLight *>(node);
+
+    light->m_lightType = RenderLightTypes::Enum(m_lightType);
+    light->m_diffuseColor = QVector3D(m_diffuseColor.redF(),
+                                      m_diffuseColor.greenF(),
+                                      m_diffuseColor.blueF());
+    light->m_specularColor = QVector3D(m_specularColor.redF(),
+                                       m_specularColor.greenF(),
+                                       m_specularColor.blueF());
+    light->m_ambientColor = QVector3D(m_ambientColor.redF(),
+                                      m_ambientColor.greenF(),
+                                      m_ambientColor.blueF());
+
+    light->m_brightness = m_brightness;
+    light->m_linearFade = m_linearFade;
+    light->m_exponentialFade = m_exponentialFade;
+
+    light->m_areaWidth = m_areaWidth;
+    light->m_areaHeight = m_areaHeight;
+
+    light->m_castShadow = m_castShadow;
+    light->m_shadowBias = m_shadowBias;
+    light->m_shadowFactor = m_shadowFactor;
+    light->m_shadowMapRes = m_shadowMapResolution;
+    light->m_shadowMapFar = m_shadowMapFar;
+    light->m_shadowMapFov = m_shadowMapFieldOfView;
+    light->m_shadowFilter = m_shadowFilter;
+
+    // ### TODO: Get light Scope Node
 
     return node;
 }
