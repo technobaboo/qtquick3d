@@ -9,6 +9,14 @@ DemonWindow {
     visible: true
 
     DemonLayer {
+        id: layer2
+        clearColor: "pink"
+        backgroundMode: DemonLayer.Color
+        width: 100
+        height: 50
+    }
+
+    DemonLayer {
         id: layer1
         clearColor: "green"
         backgroundMode: DemonLayer.Color
@@ -33,16 +41,9 @@ DemonWindow {
 //        }
     }
 
-//    DemonDefaultMaterial {
-//        id: defaultMaterial
-//    }
-
-    DemonLayer {
-        id: layer2
-        clearColor: "pink"
-        backgroundMode: DemonLayer.Color
-        width: 50
-        height: 50
+    DemonDefaultMaterial {
+        id: defaultMaterial
     }
+
 
 }

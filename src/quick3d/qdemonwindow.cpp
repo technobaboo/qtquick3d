@@ -1061,9 +1061,6 @@ void QDemonWindowPrivate::updateDirtySpatialNode(QDemonNode *spatialNode)
     QDemonObjectPrivate *itemPriv = QDemonObjectPrivate::get(spatialNode);
     quint32 dirty = itemPriv->dirtyAttributes;
     itemPriv->dirtyAttributes = 0;
-
-    qDebug() << spatialNode->type();
-
     itemPriv->spatialNode = spatialNode->updateSpatialNode(itemPriv->spatialNode);
 
     QDemonGraphNode *graphNode = static_cast<QDemonGraphNode*>(itemPriv->spatialNode);

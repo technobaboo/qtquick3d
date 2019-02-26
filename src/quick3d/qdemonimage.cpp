@@ -217,7 +217,14 @@ QDemonGraphObject *QDemonImage::updateSpatialNode(QDemonGraphObject *node)
 //    Enum verticalTilingMode
 
 //    mat44 textureTransform
+
+    m_renderImage = imageNode;
     return imageNode;
+}
+
+QDemonRenderImage *QDemonImage::getRenderImage()
+{
+    return m_renderImage;
 }
 
 QT_END_NAMESPACE

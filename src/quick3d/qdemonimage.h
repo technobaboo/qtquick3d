@@ -5,6 +5,8 @@
 
 QT_BEGIN_NAMESPACE
 
+class QDemonRenderImage;
+class QDemonRenderLayer;
 class Q_QUICK3D_EXPORT QDemonImage : public QDemonObject
 {
     Q_OBJECT
@@ -53,6 +55,9 @@ public:
     float pivotV() const;
     QDemonObject::Type type() const override;
 
+
+    QDemonRenderImage *getRenderImage();
+
 public Q_SLOTS:
     void setSource(QString source);
     void setScaleU(float scaleu);
@@ -94,7 +99,7 @@ private:
     float m_positionv;
     float m_pivotu;
     float m_pivotv;
-
+    QDemonRenderImage *m_renderImage = nullptr;
 };
 
 QT_END_NAMESPACE

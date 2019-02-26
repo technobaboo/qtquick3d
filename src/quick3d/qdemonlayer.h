@@ -16,17 +16,19 @@ class Q_QUICK3D_EXPORT QDemonLayer : public QDemonNode
     Q_OBJECT
     Q_PROPERTY(QString texturePath READ texturePath WRITE setTexturePath NOTIFY texturePathChanged)
     Q_PROPERTY(QQmlListProperty<QDemonEffect> effects READ effectsList)
-    Q_PROPERTY(AAModeValues progressiveAAMode READ progressiveAAMode WRITE setProgressiveAAMode NOTIFY progressiveAAModeChanged)
-    Q_PROPERTY(AAModeValues multisampleAAMode READ multisampleAAMode WRITE setMultisampleAAMode NOTIFY multisampleAAModeChanged)
-    Q_PROPERTY(LayerBackgroundTypes backgroundMode READ backgroundMode WRITE setBackgroundMode NOTIFY backgroundModeChanged)
+    Q_PROPERTY(QDemonAAModeValues progressiveAAMode READ progressiveAAMode WRITE setProgressiveAAMode NOTIFY progressiveAAModeChanged)
+    Q_PROPERTY(QDemonAAModeValues multisampleAAMode READ multisampleAAMode WRITE setMultisampleAAMode NOTIFY multisampleAAModeChanged)
+    Q_PROPERTY(QDemonLayerBackgroundTypes backgroundMode READ backgroundMode WRITE setBackgroundMode NOTIFY backgroundModeChanged)
     Q_PROPERTY(QColor clearColor READ clearColor WRITE setClearColor NOTIFY clearColorChanged)
-    Q_PROPERTY(LayerBlendTypes blendType READ blendType WRITE setBlendType NOTIFY blendTypeChanged)
-    Q_PROPERTY(HorizontalFieldValues horizontalFieldValue READ horizontalFieldValue WRITE setHorizontalFieldValue NOTIFY horizontalFieldValueChanged)
-    Q_PROPERTY(VerticalFieldValues verticalFieldValue READ verticalFieldValue WRITE setVerticalFieldValue NOTIFY verticalFieldValueChanged)
-    Q_PROPERTY(LayerUnitTypes leftUnits READ leftUnits WRITE setLeftUnits NOTIFY leftUnitsChanged)
-    Q_PROPERTY(LayerUnitTypes rightUnits READ rightUnits WRITE setRightUnits NOTIFY rightUnitsChanged)
-    Q_PROPERTY(LayerUnitTypes topUnits READ topUnits WRITE setTopUnits NOTIFY topUnitsChanged)
-    Q_PROPERTY(LayerUnitTypes bottomUnits READ bottomUnits WRITE setBottomUnits NOTIFY bottomUnitsChanged)
+    Q_PROPERTY(QDemonLayerBlendTypes blendType READ blendType WRITE setBlendType NOTIFY blendTypeChanged)
+    Q_PROPERTY(QDemonHorizontalFieldValues horizontalFieldValue READ horizontalFieldValue WRITE setHorizontalFieldValue NOTIFY horizontalFieldValueChanged)
+    Q_PROPERTY(QDemonVerticalFieldValues verticalFieldValue READ verticalFieldValue WRITE setVerticalFieldValue NOTIFY verticalFieldValueChanged)
+    Q_PROPERTY(QDemonLayerUnitTypes leftUnits READ leftUnits WRITE setLeftUnits NOTIFY leftUnitsChanged)
+    Q_PROPERTY(QDemonLayerUnitTypes rightUnits READ rightUnits WRITE setRightUnits NOTIFY rightUnitsChanged)
+    Q_PROPERTY(QDemonLayerUnitTypes topUnits READ topUnits WRITE setTopUnits NOTIFY topUnitsChanged)
+    Q_PROPERTY(QDemonLayerUnitTypes bottomUnits READ bottomUnits WRITE setBottomUnits NOTIFY bottomUnitsChanged)
+    Q_PROPERTY(QDemonLayerUnitTypes widthUnits READ widthUnits WRITE setWidthUnits NOTIFY widthUnitsChanged)
+    Q_PROPERTY(QDemonLayerUnitTypes heightUnits READ heightUnits WRITE setHeightUnits NOTIFY heightUnitsChanged)
     Q_PROPERTY(float left READ left WRITE setLeft NOTIFY leftChanged)
     Q_PROPERTY(float right READ right WRITE setRight NOTIFY rightChanged)
     Q_PROPERTY(float top READ top WRITE setTop NOTIFY topChanged)
@@ -62,7 +64,7 @@ class Q_QUICK3D_EXPORT QDemonLayer : public QDemonNode
     Q_PROPERTY(QDemonCamera* activeCamera READ activeCamera WRITE setActiveCamera NOTIFY activeCameraChanged)
 
 public:
-    enum AAModeValues
+    enum QDemonAAModeValues
     {
         NoAA = 0,
         SSAA = 1,
@@ -70,40 +72,40 @@ public:
         X4 = 4,
         X8 = 8
     };
-    Q_ENUM(AAModeValues)
+    Q_ENUM(QDemonAAModeValues)
 
-    enum HorizontalFieldValues
+    enum QDemonHorizontalFieldValues
     {
         LeftWidth = 0,
         LeftRight,
         WidthRight
     };
-    Q_ENUM(HorizontalFieldValues)
+    Q_ENUM(QDemonHorizontalFieldValues)
 
-    enum VerticalFieldValues
+    enum QDemonVerticalFieldValues
     {
         TopHeight = 0,
         TopBottom,
         HeightBottom
     };
-    Q_ENUM(VerticalFieldValues)
+    Q_ENUM(QDemonVerticalFieldValues)
 
-    enum LayerUnitTypes
+    enum QDemonLayerUnitTypes
     {
         Percent = 0,
         Pixels
     };
-    Q_ENUM(LayerUnitTypes)
+    Q_ENUM(QDemonLayerUnitTypes)
 
-    enum LayerBackgroundTypes
+    enum QDemonLayerBackgroundTypes
     {
         Transparent = 0,
         Unspecified,
         Color
     };
-    Q_ENUM(LayerBackgroundTypes)
+    Q_ENUM(QDemonLayerBackgroundTypes)
 
-    enum LayerBlendTypes
+    enum QDemonLayerBlendTypes
     {
         Normal = 0,
         Screen,
@@ -114,7 +116,22 @@ public:
         ColorBurn,
         ColorDodge
     };
-    Q_ENUM(LayerBlendTypes)
+    Q_ENUM(QDemonLayerBlendTypes)
+
+
+    enum QDemonLayerDirtyType {
+        AntiAliasing        = 0x00000001,
+        Background          = 0x00000002,
+        Blending            = 0x00000004,
+        Layout              = 0x00000008,
+        AmbientOcclusion    = 0x00000010,
+        Shadow              = 0x00000020,
+        LightProbe1         = 0x00000040,
+        LightProbe2         = 0x00000080,
+        Effects             = 0x00000100,
+        Camera              = 0x00000200,
+        RenderTarget        = 0x00000400
+    };
 
     QDemonLayer();
     ~QDemonLayer() override;
@@ -122,17 +139,17 @@ public:
     QDemonObject::Type type() const override;
 
     QString texturePath() const;
-    AAModeValues progressiveAAMode() const;
-    AAModeValues multisampleAAMode() const;
-    LayerBackgroundTypes backgroundMode() const;
+    QDemonAAModeValues progressiveAAMode() const;
+    QDemonAAModeValues multisampleAAMode() const;
+    QDemonLayerBackgroundTypes backgroundMode() const;
     QColor clearColor() const;
-    LayerBlendTypes blendType() const;
-    HorizontalFieldValues horizontalFieldValue() const;
-    VerticalFieldValues verticalFieldValue() const;
-    LayerUnitTypes leftUnits() const;
-    LayerUnitTypes rightUnits() const;
-    LayerUnitTypes topUnits() const;
-    LayerUnitTypes bottomUnits() const;
+    QDemonLayerBlendTypes blendType() const;
+    QDemonHorizontalFieldValues horizontalFieldValue() const;
+    QDemonVerticalFieldValues verticalFieldValue() const;
+    QDemonLayerUnitTypes leftUnits() const;
+    QDemonLayerUnitTypes rightUnits() const;
+    QDemonLayerUnitTypes topUnits() const;
+    QDemonLayerUnitTypes bottomUnits() const;
     float left() const;
     float right() const;
     float top() const;
@@ -166,19 +183,22 @@ public:
 
     QDemonCamera *activeCamera() const;
 
+    QDemonLayerUnitTypes widthUnits() const;
+    QDemonLayerUnitTypes heightUnits() const;
+
 public Q_SLOTS:
     void setTexturePath(QString texturePath);
-    void setProgressiveAAMode(AAModeValues progressiveAAMode);
-    void setMultisampleAAMode(AAModeValues multisampleAAMode);
-    void setBackgroundMode(LayerBackgroundTypes backgroundMode);
+    void setProgressiveAAMode(QDemonAAModeValues progressiveAAMode);
+    void setMultisampleAAMode(QDemonAAModeValues multisampleAAMode);
+    void setBackgroundMode(QDemonLayerBackgroundTypes backgroundMode);
     void setClearColor(QColor clearColor);
-    void setBlendType(LayerBlendTypes blendType);
-    void setHorizontalFieldValue(HorizontalFieldValues horizontalFieldValue);
-    void setVerticalFieldValue(VerticalFieldValues verticalFieldValue);
-    void setLeftUnits(LayerUnitTypes leftUnits);
-    void setRightUnits(LayerUnitTypes rightUnits);
-    void setTopUnits(LayerUnitTypes topUnits);
-    void setBottomUnits(LayerUnitTypes bottomUnits);
+    void setBlendType(QDemonLayerBlendTypes blendType);
+    void setHorizontalFieldValue(QDemonHorizontalFieldValues horizontalFieldValue);
+    void setVerticalFieldValue(QDemonVerticalFieldValues verticalFieldValue);
+    void setLeftUnits(QDemonLayerUnitTypes leftUnits);
+    void setRightUnits(QDemonLayerUnitTypes rightUnits);
+    void setTopUnits(QDemonLayerUnitTypes topUnits);
+    void setBottomUnits(QDemonLayerUnitTypes bottomUnits);
     void setLeft(float left);
     void setRight(float right);
     void setTop(float top);
@@ -206,20 +226,22 @@ public Q_SLOTS:
     void setProbe2Postion(float probe2Postion);
     void setTemporalAAEnabled(bool temporalAAEnabled);
     void setActiveCamera(QDemonCamera *camera);
+    void setWidthUnits(QDemonLayerUnitTypes widthUnits);
+    void setHeightUnits(QDemonLayerUnitTypes heightUnits);
 
 Q_SIGNALS:
     void texturePathChanged(QString texturePath);
-    void progressiveAAModeChanged(AAModeValues progressiveAAMode);
-    void multisampleAAModeChanged(AAModeValues multisampleAAMode);
-    void backgroundModeChanged(LayerBackgroundTypes backgroundMode);
+    void progressiveAAModeChanged(QDemonAAModeValues progressiveAAMode);
+    void multisampleAAModeChanged(QDemonAAModeValues multisampleAAMode);
+    void backgroundModeChanged(QDemonLayerBackgroundTypes backgroundMode);
     void clearColorChanged(QColor clearColor);
-    void blendTypeChanged(LayerBlendTypes blendType);
-    void horizontalFieldValueChanged(HorizontalFieldValues horizontalFieldValue);
-    void verticalFieldValueChanged(VerticalFieldValues verticalFieldValue);
-    void leftUnitsChanged(LayerUnitTypes leftUnits);
-    void rightUnitsChanged(LayerUnitTypes rightUnits);
-    void topUnitsChanged(LayerUnitTypes topUnits);
-    void bottomUnitsChanged(LayerUnitTypes bottomUnits);
+    void blendTypeChanged(QDemonLayerBlendTypes blendType);
+    void horizontalFieldValueChanged(QDemonHorizontalFieldValues horizontalFieldValue);
+    void verticalFieldValueChanged(QDemonVerticalFieldValues verticalFieldValue);
+    void leftUnitsChanged(QDemonLayerUnitTypes leftUnits);
+    void rightUnitsChanged(QDemonLayerUnitTypes rightUnits);
+    void topUnitsChanged(QDemonLayerUnitTypes topUnits);
+    void bottomUnitsChanged(QDemonLayerUnitTypes bottomUnits);
     void leftChanged(float left);
     void rightChanged(float right);
     void topChanged(float top);
@@ -247,6 +269,9 @@ Q_SIGNALS:
     void probe2PostionChanged(float probe2Postion);
     void temporalAAEnabledChanged(bool temporalAAEnabled);
     void activeCameraChanged(QDemonCamera *camera);
+    void widthUnitsChanged(QDemonLayerUnitTypes widthUnits);
+
+    void heightUnitsChanged(QDemonLayerUnitTypes heightUnits);
 
 protected:
     QDemonGraphObject *updateSpatialNode(QDemonGraphObject *node) override;
@@ -254,17 +279,19 @@ private:
     friend QDemonWindowPrivate;
 
     QString m_texturePath;
-    AAModeValues m_progressiveAAMode = NoAA;
-    AAModeValues m_multisampleAAMode = NoAA;
-    LayerBackgroundTypes m_backgroundMode = Transparent;
+    QDemonAAModeValues m_progressiveAAMode = NoAA;
+    QDemonAAModeValues m_multisampleAAMode = NoAA;
+    QDemonLayerBackgroundTypes m_backgroundMode = Transparent;
     QColor m_clearColor = Qt::black;
-    LayerBlendTypes m_blendType = Normal;
-    HorizontalFieldValues m_horizontalFieldValue = LeftWidth;
-    VerticalFieldValues m_verticalFieldValue = TopHeight;
-    LayerUnitTypes m_leftUnits = Percent;
-    LayerUnitTypes m_rightUnits = Percent;
-    LayerUnitTypes m_topUnits = Percent;
-    LayerUnitTypes m_bottomUnits = Percent;
+    QDemonLayerBlendTypes m_blendType = Normal;
+    QDemonHorizontalFieldValues m_horizontalFieldValue = LeftWidth;
+    QDemonVerticalFieldValues m_verticalFieldValue = TopHeight;
+    QDemonLayerUnitTypes m_leftUnits = Percent;
+    QDemonLayerUnitTypes m_rightUnits = Percent;
+    QDemonLayerUnitTypes m_topUnits = Percent;
+    QDemonLayerUnitTypes m_bottomUnits = Percent;
+    QDemonLayerUnitTypes m_widthUnits = Percent;
+    QDemonLayerUnitTypes m_heightUnits = Percent;
     float m_left = 0.0f;
     float m_right = 0.0f;
     float m_top = 0.0f;
@@ -293,6 +320,8 @@ private:
     bool m_temporalAAEnabled = false;
     QVector<QDemonEffect *> m_effects;
     QDemonCamera *m_activeCamera = nullptr;
+    qint32 m_dirtyAttributes = 0x0000ffff; //all dirty by default
+    void markDirty(QDemonLayerDirtyType type);
 
     static void qmlAppendEffect(QQmlListProperty<QDemonEffect> *list, QDemonEffect *effect);
     static QDemonEffect *qmlEffectAt(QQmlListProperty<QDemonEffect> *list, int index);
