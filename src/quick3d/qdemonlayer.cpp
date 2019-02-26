@@ -731,6 +731,11 @@ QDemonGraphObject *QDemonLayer::updateSpatialNode(QDemonGraphObject *node)
 
     }
 
+    // ### Make sure active camera is correct
+    if (m_dirtyAttributes & Camera) {
+
+    }
+
     m_dirtyAttributes = 0;
 
     return layerNode;
