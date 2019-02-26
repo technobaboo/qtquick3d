@@ -9,20 +9,12 @@ DemonWindow {
     visible: true
 
     DemonLayer {
-        id: layer2
-        clearColor: "pink"
-        backgroundMode: DemonLayer.Color
-        width: 100
-        height: 50
-    }
-
-    DemonLayer {
         id: layer1
         clearColor: "green"
         backgroundMode: DemonLayer.Color
         width: 100
         height: 100
-        //activeCamera: camera
+        activeCamera: camera
 
         DemonLight {
             id: directionalLight
@@ -31,13 +23,14 @@ DemonWindow {
 
         DemonCamera {
             id: camera
-            position: Qt.vector3d(0, 0, -600)
+            position: Qt.vector3d(0, 0, -200)
         }
 
         DemonModel {
             id: cube
             source: "#Cube"
             materials: [defaultMaterial]
+            rotation: Qt.vector3d(0.4, 0.4, 0.4)
         }
     }
 

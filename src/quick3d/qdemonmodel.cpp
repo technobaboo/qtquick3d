@@ -1,4 +1,10 @@
 #include "qdemonmodel.h"
+#include "qdemonobject_p.h"
+
+#include <QtDemonRuntimeRender/QDemonGraphObject>
+#include <QtDemonRuntimeRender/QDemonRenderCustomMaterial>
+#include <QtDemonRuntimeRender/qdemonrenderreferencedmaterial.h>
+#include <QtDemonRuntimeRender/qdemonrenderdefaultmaterial.h>
 
 #include <QtDemonRuntimeRender/qdemonrendermodel.h>
 
@@ -118,6 +124,35 @@ void QDemonModel::setIsWireframeMode(bool isWireframeMode)
     update();
 }
 
+static QDemonGraphObject *getMaterialNodeFromQDemonMaterial(QDemonMaterial *material) {
+    QDemonObjectPrivate *p = QDemonObjectPrivate::get(material);
+    return p->spatialNode;
+}
+
+namespace {
+QDemonGraphObject *getNextSibling(QDemonGraphObject *obj)
+{
+
+    if (obj->type == QDemonGraphObjectTypes::CustomMaterial)
+        return static_cast<QDemonRenderCustomMaterial *>(obj)->m_nextSibling;
+    else if (obj->type == QDemonGraphObjectTypes::DefaultMaterial)
+        return static_cast<QDemonRenderDefaultMaterial *>(obj)->nextSibling;
+    else
+        return static_cast<QDemonReferencedMaterial *>(obj)->m_nextSibling;
+}
+
+
+void setNextSibling(QDemonGraphObject *obj, QDemonGraphObject *sibling)
+{
+    if (obj->type == QDemonGraphObjectTypes::Enum::CustomMaterial)
+        static_cast<QDemonRenderCustomMaterial *>(obj)->m_nextSibling = sibling;
+    else if (obj->type == QDemonGraphObjectTypes::Enum::DefaultMaterial)
+        static_cast<QDemonRenderDefaultMaterial *>(obj)->nextSibling = sibling;
+    else
+        static_cast<QDemonReferencedMaterial *>(obj)->m_nextSibling = sibling;
+}
+}
+
 QDemonGraphObject *QDemonModel::updateSpatialNode(QDemonGraphObject *node)
 {
     if (!node)
@@ -135,6 +170,49 @@ QDemonGraphObject *QDemonModel::updateSpatialNode(QDemonGraphObject *node)
     modelNode->wireframeMode = m_isWireframeMode;
 
     // ### TODO: Make sure materials are setup
+    if (!m_materials.isEmpty()) {
+        if (modelNode->firstMaterial == nullptr) {
+            // Easy mode, just add each material
+            for (auto material : m_materials) {
+                QDemonGraphObject *graphObject = getMaterialNodeFromQDemonMaterial(material);
+                if (graphObject)
+                    modelNode->addMaterial(*graphObject);
+            }
+        } else {
+            // Hard mode, go through each material and see if they match
+            QDemonGraphObject *material = modelNode->firstMaterial;
+            QDemonGraphObject *previousMaterial = nullptr;
+            int index = 0;
+            while (material) {
+                if (index > m_materials.count()) {
+                    // Materials have been removed!!
+                    setNextSibling(previousMaterial, nullptr);
+                    break;
+                }
+
+                auto newMaterial = getMaterialNodeFromQDemonMaterial(m_materials.at(index));
+
+                if (material != newMaterial) {
+                    // materials are not the same
+                    if (index == 0) {
+                        //new first
+                        modelNode->firstMaterial = newMaterial;
+                    } else {
+                        setNextSibling(previousMaterial, newMaterial);
+                    }
+                    previousMaterial = newMaterial;
+                } else {
+                    previousMaterial = material;
+                }
+
+                material = getNextSibling(material);
+                index++;
+            }
+        }
+    } else {
+        // No materials
+        modelNode->firstMaterial = nullptr;
+    }
 
     return modelNode;
 }
@@ -145,6 +223,8 @@ void QDemonModel::qmlAppendMaterial(QQmlListProperty<QDemonMaterial> *list, QDem
         return;
     QDemonModel *self = static_cast<QDemonModel *>(list->object);
     self->m_materials.push_back(material);
+    self->update();
+    self->connect(material, &QDemonMaterial::updated, self, &QDemonObject::update);
 }
 
 QDemonMaterial *QDemonModel::qmlMaterialAt(QQmlListProperty<QDemonMaterial> *list, int index)
@@ -163,6 +243,7 @@ void QDemonModel::qmlClearMaterials(QQmlListProperty<QDemonMaterial> *list)
 {
     QDemonModel *self = static_cast<QDemonModel *>(list->object);
     self->m_materials.clear();
+    self->update();
 }
 
 QT_END_NAMESPACE

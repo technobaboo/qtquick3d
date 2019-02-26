@@ -161,13 +161,36 @@ QDemonGraphObject *QDemonNode::updateSpatialNode(QDemonGraphObject *node)
         node = new QDemonGraphNode();
 
     auto spacialNode = static_cast<QDemonGraphNode*>(node);
-    spacialNode->position = m_position;
-    spacialNode->rotation = m_rotation;
-    spacialNode->scale = m_scale;
-    spacialNode->pivot = m_pivot;
+    bool transformIsDirty = false;
+    if (spacialNode->position != m_position) {
+        transformIsDirty = true;
+        spacialNode->position = m_position;
+    }
+    if (spacialNode->rotation != m_rotation) {
+        transformIsDirty = true;
+        spacialNode->rotation = m_rotation;
+    }
+    if (spacialNode->scale != m_scale) {
+        transformIsDirty = true;
+        spacialNode->scale = m_scale;
+    }
+    if (spacialNode->pivot != m_pivot) {
+        transformIsDirty = true;
+        spacialNode->pivot = m_pivot;
+    }
+
+    if (spacialNode->rotationOrder != quint32(m_rotationorder)) {
+        transformIsDirty = true;
+        spacialNode->rotationOrder = quint32(m_rotationorder);
+    }
+
     spacialNode->localOpacity = m_opacity;
-    spacialNode->rotationOrder = quint32(m_rotationorder);
     spacialNode->skeletonId = m_boneid;
+
+    if (transformIsDirty)
+        spacialNode->markDirty(NodeTransformDirtyFlag::TransformIsDirty);
+    else
+        spacialNode->markDirty(NodeTransformDirtyFlag::TransformNotDirty);
 
     return spacialNode;
 
