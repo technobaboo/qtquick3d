@@ -60,15 +60,15 @@ Q_SIGNALS:
 protected:
     QDemonGraphObject *updateSpatialNode(QDemonGraphObject *node);
 private:
-    QDemonImage* m_lightmapIndirect;
-    QDemonImage* m_lightmapRadiosity;
-    QDemonImage* m_lightmapShadow;
-    QDemonImage* m_iblProbe;
+    QDemonImage* m_lightmapIndirect = nullptr;
+    QDemonImage* m_lightmapRadiosity = nullptr;
+    QDemonImage* m_lightmapShadow = nullptr;
+    QDemonImage* m_iblProbe = nullptr;
 
-    QDemonImage* m_emissiveMap2;
+    QDemonImage* m_emissiveMap2 = nullptr;
 
-    QDemonImage* m_displacementMap;
-    float m_displacementAmount;
+    QDemonImage* m_displacementMap = nullptr;
+    float m_displacementAmount = 0.0f;
 };
 
 QT_END_NAMESPACE

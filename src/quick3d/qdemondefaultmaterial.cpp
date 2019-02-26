@@ -4,6 +4,8 @@
 QT_BEGIN_NAMESPACE
 
 QDemonDefaultMaterial::QDemonDefaultMaterial()
+    : m_diffuseColor(Qt::white)
+    , m_specularTint(Qt::white)
 {
 
 }
@@ -20,12 +22,12 @@ QDemonObject::Type QDemonDefaultMaterial::type() const
 
 
 
-QDemonDefaultMaterial::DefaultMaterialLighting QDemonDefaultMaterial::lighting() const
+QDemonDefaultMaterial::QDemonDefaultMaterialLighting QDemonDefaultMaterial::lighting() const
 {
     return m_lighting;
 }
 
-QDemonDefaultMaterial::DefaultMaterialBlendMode QDemonDefaultMaterial::blendMode() const
+QDemonDefaultMaterial::QDemonDefaultMaterialBlendMode QDemonDefaultMaterial::blendMode() const
 {
     return m_blendMode;
 }
@@ -75,7 +77,7 @@ QDemonImage *QDemonDefaultMaterial::specularMap() const
     return m_specularMap;
 }
 
-QDemonDefaultMaterial::DefaultMaterialSpecularModel QDemonDefaultMaterial::specularModel() const
+QDemonDefaultMaterial::QDemonDefaultMaterialSpecularModel QDemonDefaultMaterial::specularModel() const
 {
     return m_specularModel;
 }
@@ -155,22 +157,24 @@ bool QDemonDefaultMaterial::vertexColors() const
     return m_vertexColors;
 }
 
-void QDemonDefaultMaterial::setLighting(QDemonDefaultMaterial::DefaultMaterialLighting lighting)
+void QDemonDefaultMaterial::setLighting(QDemonDefaultMaterial::QDemonDefaultMaterialLighting lighting)
 {
     if (m_lighting == lighting)
         return;
 
     m_lighting = lighting;
     emit lightingChanged(m_lighting);
+    markDirty(LightingModeDirty);
 }
 
-void QDemonDefaultMaterial::setBlendMode(QDemonDefaultMaterial::DefaultMaterialBlendMode blendMode)
+void QDemonDefaultMaterial::setBlendMode(QDemonDefaultMaterial::QDemonDefaultMaterialBlendMode blendMode)
 {
     if (m_blendMode == blendMode)
         return;
 
     m_blendMode = blendMode;
     emit blendModeChanged(m_blendMode);
+    markDirty(BlendModeDirty);
 }
 
 void QDemonDefaultMaterial::setDiffuseColor(QColor diffuseColor)
@@ -180,6 +184,7 @@ void QDemonDefaultMaterial::setDiffuseColor(QColor diffuseColor)
 
     m_diffuseColor = diffuseColor;
     emit diffuseColorChanged(m_diffuseColor);
+    markDirty(DiffuseDirty);
 }
 
 void QDemonDefaultMaterial::setDiffuseMap(QDemonImage *diffuseMap)
@@ -189,6 +194,7 @@ void QDemonDefaultMaterial::setDiffuseMap(QDemonImage *diffuseMap)
 
     m_diffuseMap = diffuseMap;
     emit diffuseMapChanged(m_diffuseMap);
+    markDirty(DiffuseDirty);
 }
 
 void QDemonDefaultMaterial::setDiffuseMap2(QDemonImage *diffuseMap2)
@@ -198,6 +204,7 @@ void QDemonDefaultMaterial::setDiffuseMap2(QDemonImage *diffuseMap2)
 
     m_diffuseMap2 = diffuseMap2;
     emit diffuseMap2Changed(m_diffuseMap2);
+    markDirty(DiffuseDirty);
 }
 
 void QDemonDefaultMaterial::setDiffuseMap3(QDemonImage *diffuseMap3)
@@ -207,16 +214,17 @@ void QDemonDefaultMaterial::setDiffuseMap3(QDemonImage *diffuseMap3)
 
     m_diffuseMap3 = diffuseMap3;
     emit diffuseMap3Changed(m_diffuseMap3);
+    markDirty(DiffuseDirty);
 }
 
 void QDemonDefaultMaterial::setEmissivePower(float emissivePower)
 {
-    qWarning("Floating point comparison needs context sanity check");
     if (qFuzzyCompare(m_emissivePower, emissivePower))
         return;
 
     m_emissivePower = emissivePower;
     emit emissivePowerChanged(m_emissivePower);
+    markDirty(EmissiveDirty);
 }
 
 void QDemonDefaultMaterial::setEmissiveMap(QDemonImage *emissiveMap)
@@ -226,6 +234,7 @@ void QDemonDefaultMaterial::setEmissiveMap(QDemonImage *emissiveMap)
 
     m_emissiveMap = emissiveMap;
     emit emissiveMapChanged(m_emissiveMap);
+    markDirty(EmissiveDirty);
 }
 
 void QDemonDefaultMaterial::setEmissiveColor(QColor emissiveColor)
@@ -235,6 +244,7 @@ void QDemonDefaultMaterial::setEmissiveColor(QColor emissiveColor)
 
     m_emissiveColor = emissiveColor;
     emit emissiveColorChanged(m_emissiveColor);
+    markDirty(EmissiveDirty);
 }
 
 void QDemonDefaultMaterial::setSpecularReflectionMap(QDemonImage *specularReflectionMap)
@@ -244,6 +254,7 @@ void QDemonDefaultMaterial::setSpecularReflectionMap(QDemonImage *specularReflec
 
     m_specularReflectionMap = specularReflectionMap;
     emit specularReflectionMapChanged(m_specularReflectionMap);
+    markDirty(SpecularDirty);
 }
 
 void QDemonDefaultMaterial::setSpecularMap(QDemonImage *specularMap)
@@ -253,15 +264,17 @@ void QDemonDefaultMaterial::setSpecularMap(QDemonImage *specularMap)
 
     m_specularMap = specularMap;
     emit specularMapChanged(m_specularMap);
+    markDirty(SpecularDirty);
 }
 
-void QDemonDefaultMaterial::setSpecularModel(QDemonDefaultMaterial::DefaultMaterialSpecularModel specularModel)
+void QDemonDefaultMaterial::setSpecularModel(QDemonDefaultMaterial::QDemonDefaultMaterialSpecularModel specularModel)
 {
     if (m_specularModel == specularModel)
         return;
 
     m_specularModel = specularModel;
     emit specularModelChanged(m_specularModel);
+    markDirty(SpecularDirty);
 }
 
 void QDemonDefaultMaterial::setSpecularTint(QColor specularTint)
@@ -271,16 +284,17 @@ void QDemonDefaultMaterial::setSpecularTint(QColor specularTint)
 
     m_specularTint = specularTint;
     emit specularTintChanged(m_specularTint);
+    markDirty(SpecularDirty);
 }
 
 void QDemonDefaultMaterial::setIndexOfRefraction(float indexOfRefraction)
 {
-    qWarning("Floating point comparison needs context sanity check");
     if (qFuzzyCompare(m_indexOfRefraction, indexOfRefraction))
         return;
 
     m_indexOfRefraction = indexOfRefraction;
     emit indexOfRefractionChanged(m_indexOfRefraction);
+    markDirty(SpecularDirty);
 }
 
 void QDemonDefaultMaterial::setFresnelPower(float fresnelPower)
@@ -291,6 +305,7 @@ void QDemonDefaultMaterial::setFresnelPower(float fresnelPower)
 
     m_fresnelPower = fresnelPower;
     emit fresnelPowerChanged(m_fresnelPower);
+    markDirty(SpecularDirty);
 }
 
 void QDemonDefaultMaterial::setSpecularAmount(float specularAmount)
@@ -301,6 +316,7 @@ void QDemonDefaultMaterial::setSpecularAmount(float specularAmount)
 
     m_specularAmount = specularAmount;
     emit specularAmountChanged(m_specularAmount);
+    markDirty(SpecularDirty);
 }
 
 void QDemonDefaultMaterial::setSpecularRoughness(float specularRoughness)
@@ -311,6 +327,7 @@ void QDemonDefaultMaterial::setSpecularRoughness(float specularRoughness)
 
     m_specularRoughness = specularRoughness;
     emit specularRoughnessChanged(m_specularRoughness);
+    markDirty(SpecularDirty);
 }
 
 void QDemonDefaultMaterial::setRoughnessMap(QDemonImage *roughnessMap)
@@ -320,6 +337,7 @@ void QDemonDefaultMaterial::setRoughnessMap(QDemonImage *roughnessMap)
 
     m_roughnessMap = roughnessMap;
     emit roughnessMapChanged(m_roughnessMap);
+    markDirty(SpecularDirty);
 }
 
 void QDemonDefaultMaterial::setOpacity(float opacity)
@@ -330,6 +348,7 @@ void QDemonDefaultMaterial::setOpacity(float opacity)
 
     m_opacity = opacity;
     emit opacityChanged(m_opacity);
+    markDirty(OpacityDirty);
 }
 
 void QDemonDefaultMaterial::setOpacityMap(QDemonImage *opacityMap)
@@ -339,6 +358,7 @@ void QDemonDefaultMaterial::setOpacityMap(QDemonImage *opacityMap)
 
     m_opacityMap = opacityMap;
     emit opacityMapChanged(m_opacityMap);
+    markDirty(OpacityDirty);
 }
 
 void QDemonDefaultMaterial::setBumpMap(QDemonImage *bumpMap)
@@ -348,16 +368,17 @@ void QDemonDefaultMaterial::setBumpMap(QDemonImage *bumpMap)
 
     m_bumpMap = bumpMap;
     emit bumpMapChanged(m_bumpMap);
+    markDirty(BumpDirty);
 }
 
 void QDemonDefaultMaterial::setBumpAmount(float bumpAmount)
 {
-    qWarning("Floating point comparison needs context sanity check");
     if (qFuzzyCompare(m_bumpAmount, bumpAmount))
         return;
 
     m_bumpAmount = bumpAmount;
     emit bumpAmountChanged(m_bumpAmount);
+    markDirty(BumpDirty);
 }
 
 void QDemonDefaultMaterial::setNormalMap(QDemonImage *normalMap)
@@ -367,6 +388,7 @@ void QDemonDefaultMaterial::setNormalMap(QDemonImage *normalMap)
 
     m_normalMap = normalMap;
     emit normalMapChanged(m_normalMap);
+    markDirty(NormalDirty);
 }
 
 void QDemonDefaultMaterial::setTranslucencyMap(QDemonImage *translucencyMap)
@@ -376,26 +398,27 @@ void QDemonDefaultMaterial::setTranslucencyMap(QDemonImage *translucencyMap)
 
     m_translucencyMap = translucencyMap;
     emit translucencyMapChanged(m_translucencyMap);
+    markDirty(TranslucencyDirty);
 }
 
 void QDemonDefaultMaterial::setTranslucentFalloff(float translucentFalloff)
 {
-    qWarning("Floating point comparison needs context sanity check");
     if (qFuzzyCompare(m_translucentFalloff, translucentFalloff))
         return;
 
     m_translucentFalloff = translucentFalloff;
     emit translucentFalloffChanged(m_translucentFalloff);
+    markDirty(TranslucencyDirty);
 }
 
 void QDemonDefaultMaterial::setDiffuseLightWrap(float diffuseLightWrap)
 {
-    qWarning("Floating point comparison needs context sanity check");
     if (qFuzzyCompare(m_diffuseLightWrap, diffuseLightWrap))
         return;
 
     m_diffuseLightWrap = diffuseLightWrap;
     emit diffuseLightWrapChanged(m_diffuseLightWrap);
+    markDirty(DiffuseDirty);
 }
 
 void QDemonDefaultMaterial::setVertexColors(bool vertexColors)
@@ -405,6 +428,7 @@ void QDemonDefaultMaterial::setVertexColors(bool vertexColors)
 
     m_vertexColors = vertexColors;
     emit vertexColorsChanged(m_vertexColors);
+    markDirty(VertexColorsDirty);
 }
 
 QDemonGraphObject *QDemonDefaultMaterial::updateSpatialNode(QDemonGraphObject *node)
@@ -412,11 +436,121 @@ QDemonGraphObject *QDemonDefaultMaterial::updateSpatialNode(QDemonGraphObject *n
     if (!node)
         node = new QDemonRenderDefaultMaterial();
 
+    // Set common material properties
     QDemonMaterial::updateSpatialNode(node);
 
-    // TODO: Add Default Material update
+    QDemonRenderDefaultMaterial *material = static_cast<QDemonRenderDefaultMaterial *>(node);
+
+    if (m_dirtyAttributes & LightingModeDirty)
+        material->lighting = DefaultMaterialLighting::Enum(m_lighting);
+
+    if (m_dirtyAttributes & BlendModeDirty)
+        material->blendMode = DefaultMaterialBlendMode::Enum(m_blendMode);
+
+    if (m_dirtyAttributes & DiffuseDirty) {
+        material->diffuseColor = QVector3D(m_diffuseColor.redF(),
+                                           m_diffuseColor.greenF(),
+                                           m_diffuseColor.blueF());
+        if (!m_diffuseMap)
+            material->diffuseMaps[0] = nullptr;
+        else
+            material->diffuseMaps[0] = m_diffuseMap->getRenderImage();
+
+        if (!m_diffuseMap2)
+            material->diffuseMaps[1] = nullptr;
+        else
+            material->diffuseMaps[1] = m_diffuseMap2->getRenderImage();
+
+        if (!m_diffuseMap3)
+            material->diffuseMaps[2] = nullptr;
+        else
+            material->diffuseMaps[2] = m_diffuseMap3->getRenderImage();
+
+        material->diffuseLightWrap = m_diffuseLightWrap;
+    }
+
+    if (m_dirtyAttributes & EmissiveDirty) {
+        material->emissivePower = m_emissivePower;
+        if (!m_emissiveMap)
+            material->emissiveMap = nullptr;
+        else
+            material->emissiveMap = m_emissiveMap->getRenderImage();
+        material->emissiveColor = QVector3D(m_emissiveColor.redF(),
+                                            m_emissiveColor.greenF(),
+                                            m_emissiveColor.blueF());
+    }
+
+    if (m_dirtyAttributes & SpecularDirty) {
+        if (!m_specularReflectionMap)
+            material->specularReflection = nullptr;
+        else
+            material->specularReflection = m_specularReflectionMap->getRenderImage();
+
+        if (!m_specularMap)
+            material->specularMap = nullptr;
+        else
+            material->specularMap = m_specularMap->getRenderImage();
+
+        material->specularModel = DefaultMaterialSpecularModel::Enum(m_specularModel);
+        material->specularTint = QVector3D(m_specularTint.redF(),
+                                           m_specularTint.greenF(),
+                                           m_specularTint.blueF());
+        material->ior = m_indexOfRefraction;
+        material->fresnelPower = m_fresnelPower;
+        material->specularAmount = m_specularAmount;
+        material->specularRoughness = m_specularRoughness;
+
+        if (!m_roughnessMap)
+            material->roughnessMap = nullptr;
+        else
+            material->roughnessMap = m_roughnessMap->getRenderImage();
+    }
+
+    if (m_dirtyAttributes & OpacityDirty) {
+        material->opacity = m_opacity;
+        if (!m_opacityMap)
+            material->opacityMap = nullptr;
+        else
+            material->opacityMap = m_opacityMap->getRenderImage();
+    }
+
+    if (m_dirtyAttributes & BumpDirty) {
+        if (!m_bumpMap)
+            material->bumpMap = nullptr;
+        else
+            material->bumpMap = m_bumpMap->getRenderImage();
+        material->bumpAmount = m_bumpAmount;
+    }
+
+    if (m_dirtyAttributes & NormalDirty) {
+        if (!m_normalMap)
+            material->normalMap = nullptr;
+        else
+            material->normalMap = m_normalMap->getRenderImage();
+    }
+
+    if (m_dirtyAttributes & TranslucencyDirty) {
+        if (!m_translucencyMap)
+            material->translucencyMap = nullptr;
+        else
+            material->translucencyMap = m_translucencyMap->getRenderImage();
+        material->translucentFalloff = m_translucentFalloff;
+    }
+
+    if (m_dirtyAttributes & VertexColorsDirty)
+        material->vertexColors = m_vertexColors;
+
+    m_dirtyAttributes = 0;
 
     return node;
+}
+
+void QDemonDefaultMaterial::markDirty(QDemonDefaultMaterial::QDemonDefaultMaterialDirtyType type)
+{
+    if (!(m_dirtyAttributes & quint32(type))) {
+        m_dirtyAttributes |= quint32(type);
+        update();
+    }
 }
 
 QT_END_NAMESPACE

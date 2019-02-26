@@ -34,11 +34,11 @@ DemonWindow {
             position: Qt.vector3d(0, 0, -600)
         }
 
-//        DemonModel {
-//            id: cube
-//            source: "#Cube"
-//            materials: [defaultMaterial]
-//        }
+        DemonModel {
+            id: cube
+            source: "#Cube"
+            materials: [defaultMaterial]
+        }
     }
 
     DemonDefaultMaterial {

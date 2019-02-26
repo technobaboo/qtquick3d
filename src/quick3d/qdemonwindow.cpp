@@ -1053,6 +1053,12 @@ void QDemonWindowPrivate::updateDirtyNode(QDemonObject *item)
 
 void QDemonWindowPrivate::updateDirtyResource(QDemonObject *resourceObject)
 {
+    QDemonObjectPrivate *itemPriv = QDemonObjectPrivate::get(resourceObject);
+    quint32 dirty = itemPriv->dirtyAttributes;
+    itemPriv->dirtyAttributes = 0;
+    itemPriv->spatialNode = resourceObject->updateSpatialNode(itemPriv->spatialNode);
+
+    // resource nodes dont go in the tree, so we dont need to parent them
 
 }
 

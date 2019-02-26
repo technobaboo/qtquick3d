@@ -10,8 +10,8 @@ QT_BEGIN_NAMESPACE
 class Q_QUICK3D_EXPORT QDemonDefaultMaterial : public QDemonMaterial
 {
     Q_OBJECT
-    Q_PROPERTY(DefaultMaterialLighting lighting READ lighting WRITE setLighting NOTIFY lightingChanged)
-    Q_PROPERTY(DefaultMaterialBlendMode blendMode READ blendMode WRITE setBlendMode NOTIFY blendModeChanged)
+    Q_PROPERTY(QDemonDefaultMaterialLighting lighting READ lighting WRITE setLighting NOTIFY lightingChanged)
+    Q_PROPERTY(QDemonDefaultMaterialBlendMode blendMode READ blendMode WRITE setBlendMode NOTIFY blendModeChanged)
 
     Q_PROPERTY(QColor diffuseColor READ diffuseColor WRITE setDiffuseColor NOTIFY diffuseColorChanged)
     Q_PROPERTY(QDemonImage* diffuseMap READ diffuseMap WRITE setDiffuseMap NOTIFY diffuseMapChanged)
@@ -24,7 +24,7 @@ class Q_QUICK3D_EXPORT QDemonDefaultMaterial : public QDemonMaterial
 
     Q_PROPERTY(QDemonImage* specularReflectionMap READ specularReflectionMap WRITE setSpecularReflectionMap NOTIFY specularReflectionMapChanged)
     Q_PROPERTY(QDemonImage* specularMap READ specularMap WRITE setSpecularMap NOTIFY specularMapChanged)
-    Q_PROPERTY(DefaultMaterialSpecularModel specularModel READ specularModel WRITE setSpecularModel NOTIFY specularModelChanged)
+    Q_PROPERTY(QDemonDefaultMaterialSpecularModel specularModel READ specularModel WRITE setSpecularModel NOTIFY specularModelChanged)
     Q_PROPERTY(QColor specularTint READ specularTint WRITE setSpecularTint NOTIFY specularTintChanged)
 
     Q_PROPERTY(float indexOfRefraction READ indexOfRefraction WRITE setIndexOfRefraction NOTIFY indexOfRefractionChanged)
@@ -51,15 +51,15 @@ class Q_QUICK3D_EXPORT QDemonDefaultMaterial : public QDemonMaterial
 
 
 public:
-    enum DefaultMaterialLighting
+    enum QDemonDefaultMaterialLighting
     {
         NoLighting = 0,
         VertexLighting,
         FragmentLighting
     };
-    Q_ENUM(DefaultMaterialLighting)
+    Q_ENUM(QDemonDefaultMaterialLighting)
 
-    enum DefaultMaterialBlendMode
+    enum QDemonDefaultMaterialBlendMode
     {
         Normal = 0,
         Screen,
@@ -68,15 +68,29 @@ public:
         ColorBurn,
         ColorDodge
     };
-    Q_ENUM(DefaultMaterialBlendMode)
+    Q_ENUM(QDemonDefaultMaterialBlendMode)
 
-    enum DefaultMaterialSpecularModel
+    enum QDemonDefaultMaterialSpecularModel
     {
         Default = 0,
         KGGX,
         KWard
     };
-    Q_ENUM(DefaultMaterialSpecularModel)
+    Q_ENUM(QDemonDefaultMaterialSpecularModel)
+
+    enum QDemonDefaultMaterialDirtyType {
+        LightingModeDirty       = 0x00000001,
+        BlendModeDirty          = 0x00000002,
+        DiffuseDirty            = 0x00000004,
+        EmissiveDirty           = 0x00000008,
+        SpecularDirty           = 0x00000010,
+        OpacityDirty            = 0x00000020,
+        BumpDirty               = 0x00000040,
+        NormalDirty             = 0x00000080,
+        TranslucencyDirty       = 0x00000100,
+        VertexColorsDirty       = 0x00000200
+    };
+
 
     QDemonDefaultMaterial();
     ~QDemonDefaultMaterial() override;
@@ -84,8 +98,8 @@ public:
 
     QDemonObject::Type type() const override;
 
-    DefaultMaterialLighting lighting() const;
-    DefaultMaterialBlendMode blendMode() const;
+    QDemonDefaultMaterialLighting lighting() const;
+    QDemonDefaultMaterialBlendMode blendMode() const;
     QColor diffuseColor() const;
     QDemonImage *diffuseMap() const;
     QDemonImage* diffuseMap2() const;
@@ -95,7 +109,7 @@ public:
     QColor emissiveColor() const;
     QDemonImage* specularReflectionMap() const;
     QDemonImage* specularMap() const;
-    DefaultMaterialSpecularModel specularModel() const;
+    QDemonDefaultMaterialSpecularModel specularModel() const;
     QColor specularTint() const;
     float indexOfRefraction() const;
     float fresnelPower() const;
@@ -115,8 +129,8 @@ public:
 
 public Q_SLOTS:
 
-    void setLighting(DefaultMaterialLighting lighting);
-    void setBlendMode(DefaultMaterialBlendMode blendMode);
+    void setLighting(QDemonDefaultMaterialLighting lighting);
+    void setBlendMode(QDemonDefaultMaterialBlendMode blendMode);
     void setDiffuseColor(QColor diffuseColor);
     void setDiffuseMap(QDemonImage* diffuseMap);
     void setDiffuseMap2(QDemonImage* diffuseMap2);
@@ -127,7 +141,7 @@ public Q_SLOTS:
     void setEmissiveColor(QColor emissiveColor);
     void setSpecularReflectionMap(QDemonImage* specularReflectionMap);
     void setSpecularMap(QDemonImage* specularMap);
-    void setSpecularModel(DefaultMaterialSpecularModel specularModel);
+    void setSpecularModel(QDemonDefaultMaterialSpecularModel specularModel);
     void setSpecularTint(QColor specularTint);
     void setIndexOfRefraction(float indexOfRefraction);
     void setFresnelPower(float fresnelPower);
@@ -146,8 +160,8 @@ public Q_SLOTS:
     void setVertexColors(bool vertexColors);
 
 Q_SIGNALS:
-    void lightingChanged(DefaultMaterialLighting lighting);
-    void blendModeChanged(DefaultMaterialBlendMode blendMode);
+    void lightingChanged(QDemonDefaultMaterialLighting lighting);
+    void blendModeChanged(QDemonDefaultMaterialBlendMode blendMode);
     void diffuseColorChanged(QColor diffuseColor);
     void diffuseMapChanged(QDemonImage* diffuseMap);
     void diffuseMap2Changed(QDemonImage* diffuseMap2);
@@ -157,7 +171,7 @@ Q_SIGNALS:
     void emissiveColorChanged(QColor emissiveColor);
     void specularReflectionMapChanged(QDemonImage* specularReflectionMap);
     void specularMapChanged(QDemonImage* specularMap);
-    void specularModelChanged(DefaultMaterialSpecularModel specularModel);
+    void specularModelChanged(QDemonDefaultMaterialSpecularModel specularModel);
     void specularTintChanged(QColor specularTint);
     void indexOfRefractionChanged(float indexOfRefraction);
     void fresnelPowerChanged(float fresnelPower);
@@ -179,35 +193,38 @@ protected:
 
 private:
 
-    DefaultMaterialLighting m_lighting;
-    DefaultMaterialBlendMode m_blendMode;
+    QDemonDefaultMaterialLighting m_lighting = VertexLighting;
+    QDemonDefaultMaterialBlendMode m_blendMode = Normal;
     QColor m_diffuseColor;
-    QDemonImage* m_diffuseMap;
-    QDemonImage* m_diffuseMap2;
-    QDemonImage* m_diffuseMap3;
-    float m_emissivePower;
-    QDemonImage* m_emissiveMap;
+    QDemonImage* m_diffuseMap = nullptr;
+    QDemonImage* m_diffuseMap2 = nullptr;
+    QDemonImage* m_diffuseMap3 = nullptr;
+    float m_emissivePower = 0;
+    QDemonImage* m_emissiveMap = nullptr;
 
     QColor m_emissiveColor;
-    QDemonImage* m_specularReflectionMap;
-    QDemonImage* m_specularMap;
-    DefaultMaterialSpecularModel m_specularModel;
+    QDemonImage* m_specularReflectionMap = nullptr;
+    QDemonImage* m_specularMap = nullptr;
+    QDemonDefaultMaterialSpecularModel m_specularModel = Default;
     QColor m_specularTint;
-    float m_indexOfRefraction;
-    float m_fresnelPower;
-    float m_specularAmount;
-    float m_specularRoughness;
-    QDemonImage* m_roughnessMap;
-    float m_opacity;
-    QDemonImage* m_opacityMap;
-    QDemonImage* m_bumpMap;
-    float m_bumpAmount;
-    QDemonImage* m_normalMap;
+    float m_indexOfRefraction = 0.2f;
+    float m_fresnelPower = 0.0f;
+    float m_specularAmount = 0.0f;
+    float m_specularRoughness = 50.0f;
+    QDemonImage* m_roughnessMap = nullptr;
+    float m_opacity = 1.0f;
+    QDemonImage* m_opacityMap = nullptr;
+    QDemonImage* m_bumpMap = nullptr;
+    float m_bumpAmount = 0.0f;
+    QDemonImage* m_normalMap = nullptr;
 
-    QDemonImage* m_translucencyMap;
-    float m_translucentFalloff;
-    float m_diffuseLightWrap;
-    bool m_vertexColors;
+    QDemonImage* m_translucencyMap = nullptr;
+    float m_translucentFalloff = 0.0f;
+    float m_diffuseLightWrap = 0.0f;
+    bool m_vertexColors = false;
+
+    quint32 m_dirtyAttributes = 0xffffffff; //all dirty by default
+    void markDirty(QDemonDefaultMaterialDirtyType type);
 };
 
 QT_END_NAMESPACE

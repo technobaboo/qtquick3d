@@ -29,7 +29,7 @@ int QDemonModel::skeletonRoot() const
     return m_skeletonRoot;
 }
 
-QDemonModel::TessModeValues QDemonModel::tesselationMode() const
+QDemonModel::QDemonTessModeValues QDemonModel::tesselationMode() const
 {
     return m_tesselationMode;
 }
@@ -65,6 +65,7 @@ void QDemonModel::setSource(QString source)
 
     m_source = source;
     emit sourceChanged(m_source);
+    update();
 }
 
 void QDemonModel::setSkeletonRoot(int skeletonRoot)
@@ -74,35 +75,37 @@ void QDemonModel::setSkeletonRoot(int skeletonRoot)
 
     m_skeletonRoot = skeletonRoot;
     emit skeletonRootChanged(m_skeletonRoot);
+    update();
 }
 
-void QDemonModel::setTesselationMode(QDemonModel::TessModeValues tesselationMode)
+void QDemonModel::setTesselationMode(QDemonModel::QDemonTessModeValues tesselationMode)
 {
     if (m_tesselationMode == tesselationMode)
         return;
 
     m_tesselationMode = tesselationMode;
     emit tesselationModeChanged(m_tesselationMode);
+    update();
 }
 
 void QDemonModel::setEdgeTess(float edgeTess)
 {
-    qWarning("Floating point comparison needs context sanity check");
     if (qFuzzyCompare(m_edgeTess, edgeTess))
         return;
 
     m_edgeTess = edgeTess;
     emit edgeTessChanged(m_edgeTess);
+    update();
 }
 
 void QDemonModel::setInnerTess(float innerTess)
 {
-    qWarning("Floating point comparison needs context sanity check");
     if (qFuzzyCompare(m_innerTess, innerTess))
         return;
 
     m_innerTess = innerTess;
     emit innerTessChanged(m_innerTess);
+    update();
 }
 
 void QDemonModel::setIsWireframeMode(bool isWireframeMode)
@@ -112,6 +115,7 @@ void QDemonModel::setIsWireframeMode(bool isWireframeMode)
 
     m_isWireframeMode = isWireframeMode;
     emit isWireframeModeChanged(m_isWireframeMode);
+    update();
 }
 
 QDemonGraphObject *QDemonModel::updateSpatialNode(QDemonGraphObject *node)
@@ -119,9 +123,18 @@ QDemonGraphObject *QDemonModel::updateSpatialNode(QDemonGraphObject *node)
     if (!node)
         node = new QDemonRenderModel();
 
+    QDemonNode::updateSpatialNode(node);
+
     auto modelNode = static_cast<QDemonRenderModel *>(node);
 
-    // TODO: Update model properties here
+    modelNode->meshPath = m_source;
+    modelNode->skeletonRoot = m_skeletonRoot;
+    modelNode->tessellationMode = TessModeValues::Enum(m_tesselationMode);
+    modelNode->edgeTess = m_edgeTess;
+    modelNode->innerTess = m_innerTess;
+    modelNode->wireframeMode = m_isWireframeMode;
+
+    // ### TODO: Make sure materials are setup
 
     return modelNode;
 }
