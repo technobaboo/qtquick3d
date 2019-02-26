@@ -962,10 +962,10 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
     {
         auto theInsert = m_expandedFiles.find(inPathToEffect);
         const bool found = (theInsert != m_expandedFiles.end());
-        if (found)
-            *theInsert = QByteArray();
-        else
-            theInsert = m_expandedFiles.insert(inPathToEffect, QByteArray());
+//        if (found)
+//            *theInsert = QByteArray();
+//        else
+//            theInsert = m_expandedFiles.insert(inPathToEffect, QByteArray());
 
         QString theReadBuffer;
         if (!found) {
@@ -1006,7 +1006,7 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
                 qCCritical(INVALID_OPERATION, "Failed to find include file %s", qPrintable(inPathToEffect));
                 Q_ASSERT(false);
             }
-            theInsert.value() = theReadBuffer.toLatin1();
+            theInsert = m_expandedFiles.insert(inPathToEffect, theReadBuffer.toLatin1());
         } else {
             theReadBuffer = QString::fromLatin1(theInsert.value());
         }
