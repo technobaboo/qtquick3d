@@ -5,6 +5,7 @@
 
 QT_BEGIN_NAMESPACE
 
+class QDemonRenderCamera;
 class Q_QUICK3D_EXPORT QDemonCamera : public QDemonNode
 {
     Q_OBJECT
@@ -12,21 +13,22 @@ class Q_QUICK3D_EXPORT QDemonCamera : public QDemonNode
     Q_PROPERTY(float clipFar READ clipFar WRITE setClipFar NOTIFY clipFarChanged)
     Q_PROPERTY(float fieldOfView READ fieldOfView WRITE setFieldOfView NOTIFY fieldOfViewChanged)
     Q_PROPERTY(bool isFieldOFViewHorizontal READ isFieldOFViewHorizontal WRITE setIsFieldOFViewHorizontal NOTIFY isFieldOFViewHorizontalChanged)
-    Q_PROPERTY(CameraScaleModes scaleMode READ scaleMode WRITE setScaleMode NOTIFY scaleModeChanged)
-    Q_PROPERTY(CameraScaleAnchors scaleAnchor READ scaleAnchor WRITE setScaleAnchor NOTIFY scaleAnchorChanged)
+    Q_PROPERTY(QDemonCameraScaleModes scaleMode READ scaleMode WRITE setScaleMode NOTIFY scaleModeChanged)
+    Q_PROPERTY(QDemonCameraScaleAnchors scaleAnchor READ scaleAnchor WRITE setScaleAnchor NOTIFY scaleAnchorChanged)
     Q_PROPERTY(float frustumScaleX READ frustumScaleX WRITE setFrustumScaleX NOTIFY frustumScaleXChanged)
     Q_PROPERTY(float frustumScaleY READ frustumScaleY WRITE setFrustumScaleY NOTIFY frustumScaleYChanged)
 
 public:
 
-    enum CameraScaleModes {
+    enum QDemonCameraScaleModes {
         Fit = 0,
         SameSize,
         FitHorizontal,
         FitVertical,
     };
+    Q_ENUM(QDemonCameraScaleModes)
 
-    enum CameraScaleAnchors {
+    enum QDemonCameraScaleAnchors {
         Center = 0,
         North,
         NorthEast,
@@ -37,17 +39,21 @@ public:
         West,
         NorthWest,
     };
+    Q_ENUM(QDemonCameraScaleAnchors)
+
     QDemonCamera();
 
     float clipNear() const;
     float clipFar() const;
     float fieldOfView() const;
     bool isFieldOFViewHorizontal() const;
-    CameraScaleModes scaleMode() const;
-    CameraScaleAnchors scaleAnchor() const;
+    QDemonCameraScaleModes scaleMode() const;
+    QDemonCameraScaleAnchors scaleAnchor() const;
     float frustumScaleX() const;
     float frustumScaleY() const;
     QDemonObject::Type type() const override;
+
+    QDemonRenderCamera *getCameraNode() const;
 
 public Q_SLOTS:
     void setClipNear(float clipNear);
@@ -56,9 +62,9 @@ public Q_SLOTS:
 
     void setIsFieldOFViewHorizontal(bool isFieldOFViewHorizontal);
 
-    void setScaleMode(CameraScaleModes scaleMode);
+    void setScaleMode(QDemonCameraScaleModes scaleMode);
 
-    void setScaleAnchor(CameraScaleAnchors scaleAnchor);
+    void setScaleAnchor(QDemonCameraScaleAnchors scaleAnchor);
 
     void setFrustumScaleX(float frustumScaleX);
 
@@ -73,9 +79,9 @@ Q_SIGNALS:
 
     void isFieldOFViewHorizontalChanged(bool isFieldOFViewHorizontal);
 
-    void scaleModeChanged(CameraScaleModes scaleMode);
+    void scaleModeChanged(QDemonCameraScaleModes scaleMode);
 
-    void scaleAnchorChanged(CameraScaleAnchors scaleAnchor);
+    void scaleAnchorChanged(QDemonCameraScaleAnchors scaleAnchor);
 
     void frustumScaleXChanged(float frustumScaleX);
 
@@ -91,12 +97,11 @@ private:
     float m_fieldOfView = 60.0f;
     float m_frustumScaleX = 0.0f;
     float m_frustumScaleY = 0.0f;
-    CameraScaleModes m_scaleMode = CameraScaleModes::Fit;
-    CameraScaleAnchors m_scaleAnchor = CameraScaleAnchors::Center;
+    QDemonCameraScaleModes m_scaleMode = QDemonCameraScaleModes::Fit;
+    QDemonCameraScaleAnchors m_scaleAnchor = QDemonCameraScaleAnchors::Center;
     bool m_isFieldOFViewHorizontal = false;
 
-
-
+    QDemonRenderCamera *m_cameraNode = nullptr;
 };
 
 QT_END_NAMESPACE

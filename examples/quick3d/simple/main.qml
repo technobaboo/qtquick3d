@@ -29,10 +29,10 @@ DemonWindow {
             lightType: DemonLight.Directional
         }
 
-//        DemonCamera {
-//            id: camera
-//            position: Qt.vector3d(0, 0, -600)
-//        }
+        DemonCamera {
+            id: camera
+            position: Qt.vector3d(0, 0, -600)
+        }
 
 //        DemonModel {
 //            id: cube

@@ -29,12 +29,12 @@ bool QDemonCamera::isFieldOFViewHorizontal() const
     return m_isFieldOFViewHorizontal;
 }
 
-QDemonCamera::CameraScaleModes QDemonCamera::scaleMode() const
+QDemonCamera::QDemonCameraScaleModes QDemonCamera::scaleMode() const
 {
     return m_scaleMode;
 }
 
-QDemonCamera::CameraScaleAnchors QDemonCamera::scaleAnchor() const
+QDemonCamera::QDemonCameraScaleAnchors QDemonCamera::scaleAnchor() const
 {
     return m_scaleAnchor;
 }
@@ -54,34 +54,39 @@ QDemonObject::Type QDemonCamera::type() const
     return QDemonObject::Camera;
 }
 
+QDemonRenderCamera *QDemonCamera::getCameraNode() const
+{
+    return m_cameraNode;
+}
+
 void QDemonCamera::setClipNear(float clipNear)
 {
-    qWarning("Floating point comparison needs context sanity check");
     if (qFuzzyCompare(m_clipNear, clipNear))
         return;
 
     m_clipNear = clipNear;
     emit clipNearChanged(m_clipNear);
+    update();
 }
 
 void QDemonCamera::setClipFar(float clipFar)
 {
-    qWarning("Floating point comparison needs context sanity check");
     if (qFuzzyCompare(m_clipFar, clipFar))
         return;
 
     m_clipFar = clipFar;
     emit clipFarChanged(m_clipFar);
+    update();
 }
 
 void QDemonCamera::setFieldOfView(float fieldOfView)
 {
-    qWarning("Floating point comparison needs context sanity check");
     if (qFuzzyCompare(m_fieldOfView, fieldOfView))
         return;
 
     m_fieldOfView = fieldOfView;
     emit fieldOfViewChanged(m_fieldOfView);
+    update();
 }
 
 void QDemonCamera::setIsFieldOFViewHorizontal(bool isFieldOFViewHorizontal)
@@ -91,44 +96,47 @@ void QDemonCamera::setIsFieldOFViewHorizontal(bool isFieldOFViewHorizontal)
 
     m_isFieldOFViewHorizontal = isFieldOFViewHorizontal;
     emit isFieldOFViewHorizontalChanged(m_isFieldOFViewHorizontal);
+    update();
 }
 
-void QDemonCamera::setScaleMode(QDemonCamera::CameraScaleModes scaleMode)
+void QDemonCamera::setScaleMode(QDemonCamera::QDemonCameraScaleModes scaleMode)
 {
     if (m_scaleMode == scaleMode)
         return;
 
     m_scaleMode = scaleMode;
     emit scaleModeChanged(m_scaleMode);
+    update();
 }
 
-void QDemonCamera::setScaleAnchor(QDemonCamera::CameraScaleAnchors scaleAnchor)
+void QDemonCamera::setScaleAnchor(QDemonCamera::QDemonCameraScaleAnchors scaleAnchor)
 {
     if (m_scaleAnchor == scaleAnchor)
         return;
 
     m_scaleAnchor = scaleAnchor;
     emit scaleAnchorChanged(m_scaleAnchor);
+    update();
 }
 
 void QDemonCamera::setFrustumScaleX(float frustumScaleX)
 {
-    qWarning("Floating point comparison needs context sanity check");
     if (qFuzzyCompare(m_frustumScaleX, frustumScaleX))
         return;
 
     m_frustumScaleX = frustumScaleX;
     emit frustumScaleXChanged(m_frustumScaleX);
+    update();
 }
 
 void QDemonCamera::setFrustumScaleY(float frustumScaleY)
 {
-    qWarning("Floating point comparison needs context sanity check");
     if (qFuzzyCompare(m_frustumScaleY, frustumScaleY))
         return;
 
     m_frustumScaleY = frustumScaleY;
     emit frustumScaleYChanged(m_frustumScaleY);
+    update();
 }
 
 QDemonGraphObject *QDemonCamera::updateSpatialNode(QDemonGraphObject *node)
@@ -136,7 +144,23 @@ QDemonGraphObject *QDemonCamera::updateSpatialNode(QDemonGraphObject *node)
     if (!node)
         node = new QDemonRenderCamera();
 
-    // ### TODO:  update camera properties
+    QDemonNode::updateSpatialNode(node);
+
+
+    QDemonRenderCamera *camera = static_cast<QDemonRenderCamera *>(node);
+
+    camera->clipNear = m_clipNear;
+    camera->clipFar = m_clipFar;
+    camera->fov = m_fieldOfView; //### Maybe convert to radians (as it is expected)
+    camera->fovHorizontal = m_isFieldOFViewHorizontal;
+
+    camera->scaleMode = CameraScaleModes::Enum(m_scaleMode);
+    camera->scaleAnchor = CameraScaleAnchors::Enum(m_scaleAnchor);
+    camera->frustumScale = QVector2D(m_frustumScaleX, m_frustumScaleY);
+
+    // ## TODO: figure out API to set projection (pretty important)
+
+    m_cameraNode = camera;
 
     return node;
 }
