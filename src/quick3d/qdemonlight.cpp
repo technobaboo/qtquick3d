@@ -144,7 +144,6 @@ void QDemonLight::setAmbientColor(QColor ambientColor)
 
 void QDemonLight::setBrightness(float brightness)
 {
-    qWarning("Floating point comparison needs context sanity check");
     if (qFuzzyCompare(m_brightness, brightness))
         return;
 
@@ -155,7 +154,6 @@ void QDemonLight::setBrightness(float brightness)
 
 void QDemonLight::setLinearFade(float linearFade)
 {
-    qWarning("Floating point comparison needs context sanity check");
     if (qFuzzyCompare(m_linearFade, linearFade))
         return;
 
@@ -166,7 +164,6 @@ void QDemonLight::setLinearFade(float linearFade)
 
 void QDemonLight::setExponentialFade(float exponentialFade)
 {
-    qWarning("Floating point comparison needs context sanity check");
     if (qFuzzyCompare(m_exponentialFade, exponentialFade))
         return;
 
@@ -177,7 +174,6 @@ void QDemonLight::setExponentialFade(float exponentialFade)
 
 void QDemonLight::setAreaWidth(float areaWidth)
 {
-    qWarning("Floating point comparison needs context sanity check");
     if (qFuzzyCompare(m_areaWidth, areaWidth))
         return;
 
@@ -188,7 +184,6 @@ void QDemonLight::setAreaWidth(float areaWidth)
 
 void QDemonLight::setAreaHeight(float areaHeight)
 {
-    qWarning("Floating point comparison needs context sanity check");
     if (qFuzzyCompare(m_areaHeight, areaHeight))
         return;
 
@@ -209,7 +204,6 @@ void QDemonLight::setCastShadow(bool castShadow)
 
 void QDemonLight::setShadowBias(float shadowBias)
 {
-    qWarning("Floating point comparison needs context sanity check");
     if (qFuzzyCompare(m_shadowBias, shadowBias))
         return;
 
@@ -220,7 +214,6 @@ void QDemonLight::setShadowBias(float shadowBias)
 
 void QDemonLight::setShadowFactor(float shadowFactor)
 {
-    qWarning("Floating point comparison needs context sanity check");
     if (qFuzzyCompare(m_shadowFactor, shadowFactor))
         return;
 
@@ -241,7 +234,6 @@ void QDemonLight::setShadowMapResolution(int shadowMapResolution)
 
 void QDemonLight::setShadowMapFar(float shadowMapFar)
 {
-    qWarning("Floating point comparison needs context sanity check");
     if (qFuzzyCompare(m_shadowMapFar, shadowMapFar))
         return;
 
@@ -252,7 +244,6 @@ void QDemonLight::setShadowMapFar(float shadowMapFar)
 
 void QDemonLight::setShadowMapFieldOfView(float shadowMapFieldOfView)
 {
-    qWarning("Floating point comparison needs context sanity check");
     if (qFuzzyCompare(m_shadowMapFieldOfView, shadowMapFieldOfView))
         return;
 
@@ -263,7 +254,6 @@ void QDemonLight::setShadowMapFieldOfView(float shadowMapFieldOfView)
 
 void QDemonLight::setShadowFilter(float shadowFilter)
 {
-    qWarning("Floating point comparison needs context sanity check");
     if (qFuzzyCompare(m_shadowFilter, shadowFilter))
         return;
 
