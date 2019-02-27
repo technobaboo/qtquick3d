@@ -175,7 +175,7 @@ struct QDemonShaderGeneratorGeneratedShader
     QDemonRenderCachedShaderBuffer<QDemonRenderShaderConstantBuffer> m_aoShadowParams;
     QDemonRenderCachedShaderBuffer<QDemonRenderShaderConstantBuffer> m_lightsBuffer;
 
-    QDemonLightConstantProperties<QDemonShaderGeneratorGeneratedShader> *m_lightConstantProperties;
+    QDemonLightConstantProperties<QDemonShaderGeneratorGeneratedShader> *m_lightConstantProperties = nullptr;
 
     // Cache the image property name lookups
     QVector<QDemonShaderTextureProperties> m_images;
