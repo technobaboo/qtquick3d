@@ -2,7 +2,6 @@
 #define QDEMONDISCRIMINATEDUNION_H
 
 #include <QtDemon/qtdemonglobal.h>
-#include <QtDemon/qdemonunioncast.h>
 #include <QtDemon/qdemonutils.h>
 
 QT_BEGIN_NAMESPACE
@@ -109,7 +108,7 @@ struct CopyConstructVisitor
     template <typename TDataType>
     void operator()(TDataType &inDst)
     {
-        new (&inDst) TDataType(*QDemonUnionCast<const TDataType *>(m_src));
+        new (&inDst) TDataType(*reinterpret_cast<const TDataType *>(m_src));
     }
     void operator()() { Q_ASSERT(false); }
 };
@@ -221,7 +220,7 @@ struct EqualVisitor
     template <typename TDataType>
     bool operator()(const TDataType &lhs)
     {
-        const TDataType &rhs(*QDemonUnionCast<const TDataType *>(m_rhs));
+        const TDataType &rhs(*reinterpret_cast<const TDataType *>(m_rhs));
         return EqualVisitorTraits<TDataType>()(lhs, rhs);
     }
     bool operator()()
@@ -271,7 +270,7 @@ struct DiscriminatedUnionGenericBase : public TBase
     static const TDataType *getDataPtr(const char *inData, const TIdType &inType)
     {
         if (TBase::template getType<TDataType>() == inType)
-            return QDemonUnionCast<const TDataType *>(inData);
+            return reinterpret_cast<const TDataType *>(inData);
         Q_ASSERT(false);
         return NULL;
     }
@@ -280,7 +279,7 @@ struct DiscriminatedUnionGenericBase : public TBase
     static TDataType *getDataPtr(char *inData, const TIdType &inType)
     {
         if (TBase::template getType<TDataType>() == inType)
-            return QDemonUnionCast<TDataType *>(inData);
+            return reinterpret_cast<TDataType *>(inData);
         Q_ASSERT(false);
         return NULL;
     }

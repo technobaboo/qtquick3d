@@ -85,9 +85,9 @@ struct QDemonOffscreenRendererKeyUnionTraits
     {
         switch (inType) {
         case OffscreenRendererKeyTypes::RegisteredString:
-            return inVisitor(*QDemonUnionCast<QString *>(inData));
+            return inVisitor(*reinterpret_cast<QString *>(inData));
         case OffscreenRendererKeyTypes::VoidPtr:
-            return inVisitor(*QDemonUnionCast<void **>(inData));
+            return inVisitor(*reinterpret_cast<void **>(inData));
         default:
             Q_ASSERT(false);
         case OffscreenRendererKeyTypes::NoOffscreenRendererKey:
@@ -100,9 +100,9 @@ struct QDemonOffscreenRendererKeyUnionTraits
     {
         switch (inType) {
         case OffscreenRendererKeyTypes::RegisteredString:
-            return inVisitor(*QDemonUnionCast<const QString *>(inData));
+            return inVisitor(*reinterpret_cast<const QString *>(inData));
         case OffscreenRendererKeyTypes::VoidPtr:
-            return inVisitor(*QDemonUnionCast<const void **>(inData));
+            return inVisitor(*reinterpret_cast<const void **>(&inData));
         default:
             Q_ASSERT(false);
         case OffscreenRendererKeyTypes::NoOffscreenRendererKey:

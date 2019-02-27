@@ -61,7 +61,6 @@
 #include <QtDemon/QDemonOption>
 #include <QtDemon/QDemonDataRef>
 #include <QtDemon/qdemoninvasiveset.h>
-#include <QtDemon/qdemonunioncast.h>
 
 QT_BEGIN_NAMESPACE
 inline bool floatLessThan(float lhs, float rhs)

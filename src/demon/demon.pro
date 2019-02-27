@@ -18,7 +18,6 @@ HEADERS += \
     qdemonoption.h \
     qdemoninvasivelinkedlist.h \
     qdemoninvasiveset.h \
-    qdemonunioncast.h \
     qdemondiscriminatedunion.h \
     qdemonperftimer.h \
     qdemontime.h
