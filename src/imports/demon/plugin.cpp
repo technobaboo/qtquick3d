@@ -59,7 +59,7 @@ class QDemonPlugin : public QQmlExtensionPlugin
     Q_PLUGIN_METADATA(IID QQmlExtensionInterface_iid)
 
 public:
-    QDemonPlugin(QObject *parent = 0) : QQmlExtensionPlugin(parent) { initResources(); }
+    QDemonPlugin(QObject *parent = nullptr) : QQmlExtensionPlugin(parent) { initResources(); }
     void registerTypes(const char *uri) override
     {
         qmlRegisterType<QDemonCamera>(uri, 1, 0, "DemonCamera");
@@ -74,6 +74,8 @@ public:
         qmlRegisterType<QDemonNode>(uri, 1, 0, "DemonNode");
         qmlRegisterUncreatableType<QDemonObject>(uri, 1, 0, "DemonObject", QLatin1String("Object is Abtract"));
         qmlRegisterType<QDemonWindow>(uri, 1, 0, "DemonWindow");
+
+        qmlRegisterModule(uri, 1, QT_VERSION_MINOR);
     }
 };
 
