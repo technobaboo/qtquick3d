@@ -1322,13 +1322,13 @@ struct QDemonPathManager : public QDemonPathManagerInterface, public QEnableShar
         inShader->m_endTaperData.set(inPathBuffer->m_endTaperData);
         if (inRenderContext.enableWireframe) {
             // we need the viewport matrix
-            QDemonRenderRect theViewport(theRenderContext->getViewport());
+            QRect theViewport(theRenderContext->getViewport());
             QMatrix4x4 vpMatrix = {
-                (float)theViewport.m_width / 2.0f, 0.0, 0.0, 0.0,
-                0.0, (float)theViewport.m_height / 2.0f, 0.0, 0.0,
+                (float)theViewport.width() / 2.0f, 0.0, 0.0, 0.0,
+                0.0, (float)theViewport.height() / 2.0f, 0.0, 0.0,
                 0.0, 0.0, 1.0, 0.0,
-                (float)theViewport.m_width / 2.0f + (float)theViewport.m_x,
-                (float)theViewport.m_height / 2.0f + (float)theViewport.m_y, 0.0, 1.0
+                (float)theViewport.width() / 2.0f + (float)theViewport.x(),
+                (float)theViewport.height() / 2.0f + (float)theViewport.y(), 0.0, 1.0
             };
             inShader->m_wireframeViewMatrix.set(vpMatrix);
         }

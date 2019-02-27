@@ -95,10 +95,10 @@ struct QDemonNullBackend : public QDemonRenderBackend
     void setBlendFunc(const QDemonRenderBlendFunctionArgument &) override {}
     void setBlendEquation(const QDemonRenderBlendEquationArgument &) override {}
     void setBlendBarrier(void) override {}
-    void getScissorRect(QDemonRenderRect *) override {}
-    void setScissorRect(const QDemonRenderRect &) override {}
-    void getViewportRect(QDemonRenderRect *) override {}
-    void setViewportRect(const QDemonRenderRect &) override {}
+    void getScissorRect(QRect *) override {}
+    void setScissorRect(const QRect &) override {}
+    void getViewportRect(QRect *) override {}
+    void setViewportRect(const QRect &) override {}
     void setClearColor(const QVector4D *) override {}
     void clear(QDemonRenderClearFlags) override {}
     QDemonRenderBackendBufferObject createBuffer(size_t, QDemonRenderBufferBindFlags,

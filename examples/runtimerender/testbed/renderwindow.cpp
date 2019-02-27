@@ -130,14 +130,14 @@ void RenderWindow::drawFrame(qint64 delta)
     // Render the first presentation (QDemonRenderPresentation)
     auto lastRenderViewport = m_context->getRenderList()->getViewport();
     if (m_presentation && m_presentation->scene) {
-        QDemonRenderRect theViewportSize(lastRenderViewport);
-        m_presentation->scene->prepareForRender(QVector2D(theViewportSize.m_width, theViewportSize.m_height), m_context.data());
+        QRect theViewportSize(lastRenderViewport);
+        m_presentation->scene->prepareForRender(QVector2D(theViewportSize.width(), theViewportSize.height()), m_context.data());
     }
 
     m_context->runRenderTasks();
     if (m_presentation && m_presentation->scene) {
-        QDemonRenderRect theViewportSize(lastRenderViewport);
-        m_presentation->scene->render(QVector2D(theViewportSize.m_width, theViewportSize.m_height), m_context.data(), QDemonRenderScene::DoNotClear);
+        QRect theViewportSize(lastRenderViewport);
+        m_presentation->scene->render(QVector2D(theViewportSize.width(), theViewportSize.height()), m_context.data(), QDemonRenderScene::DoNotClear);
     }
 
     m_context->endFrame();

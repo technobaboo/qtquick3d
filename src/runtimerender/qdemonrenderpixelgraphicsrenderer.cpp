@@ -224,7 +224,7 @@ struct QDemonPixelGraphicsRenderer : public QDemonPixelGraphicsRendererInterface
         theRenderContext->pushPropertySet();
         // Setup an orthographic camera that places the center at the
         // lower left of the viewport.
-        QDemonRenderRectF theViewport = theRenderContext->getViewport();
+        QRectF theViewport = theRenderContext->getViewport();
         // With no projection at all, we are going to get a square view box
         // with boundaries from -1,1 in all dimensions.  This is close to what we want.
         theRenderContext->setDepthTestEnabled(false);
@@ -247,13 +247,14 @@ struct QDemonPixelGraphicsRenderer : public QDemonPixelGraphicsRendererInterface
         theCamera.flags.setOrthographic(true);
         // Setup camera projection
         theCamera.computeFrustumOrtho(theViewport,
-                                      QVector2D(theViewport.m_width, theViewport.m_height));
+                                      QVector2D(theViewport.width(), theViewport.height()));
         // Translate such that 0, 0 is lower left of screen.
-        QDemonRenderRectF theIdealViewport = theViewport;
-        theIdealViewport.m_x -= theViewport.m_width / 2.0f;
-        theIdealViewport.m_y -= theViewport.m_height / 2.0f;
-        QMatrix4x4 theProjectionMatrix = QDemonRenderContext::ApplyVirtualViewportToProjectionMatrix(
-                    theCamera.projection, theViewport, theIdealViewport);
+        QRectF theIdealViewport = theViewport;
+        theIdealViewport.setX(theIdealViewport.x() - theViewport.width() / 2.0f);
+        theIdealViewport.setY(theIdealViewport.y() - theViewport.height() / 2.0f);
+        QMatrix4x4 theProjectionMatrix = QDemonRenderContext::applyVirtualViewportToProjectionMatrix(theCamera.projection,
+                                                                                                     theViewport,
+                                                                                                     theIdealViewport);
         theCamera.projection = theProjectionMatrix;
         // Explicitly call the node's calculate global variables so that the camera doesn't attempt
         // to change the projection we setup.

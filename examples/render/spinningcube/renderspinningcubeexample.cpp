@@ -80,7 +80,7 @@ public:
         QDemonGl2DemoMatrixMultiply_4x4_3x3(mvp, rot);
 
         if (m_viewportDirty) {
-            m_context->setViewport(QDemonRenderRect(0, 0, this->width(), this->height()));
+            m_context->setViewport(QRect(0, 0, this->width(), this->height()));
             m_viewportDirty = false;
         }
 

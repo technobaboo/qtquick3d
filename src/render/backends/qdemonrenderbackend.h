@@ -386,7 +386,7 @@ public:
          *
          * @return no return
          */
-    virtual void getScissorRect(QDemonRenderRect *pRect) = 0;
+    virtual void getScissorRect(QRect *pRect) = 0;
 
     /**
         * @brief set scissor rectangle
@@ -395,7 +395,7 @@ public:
         *
         * @return no return
         */
-    virtual void setScissorRect(const QDemonRenderRect &rect) = 0;
+    virtual void setScissorRect(const QRect &rect) = 0;
 
     /**
          * @brief query viewport rectangle
@@ -404,7 +404,7 @@ public:
          *
          * @return no return
          */
-    virtual void getViewportRect(QDemonRenderRect *pRect) = 0;
+    virtual void getViewportRect(QRect *pRect) = 0;
 
     /**
          * @brief set viewport rectangle
@@ -413,7 +413,7 @@ public:
          *
          * @return no return
          */
-    virtual void setViewportRect(const QDemonRenderRect &rect) = 0;
+    virtual void setViewportRect(const QRect &rect) = 0;
 
     /**
          * @brief query viewport rectangle

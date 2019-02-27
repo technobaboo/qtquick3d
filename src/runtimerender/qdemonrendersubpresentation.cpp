@@ -70,9 +70,9 @@ QDemonSubPresentationRenderer::needsRender(const QDemonOffscreenRendererEnvironm
                                       const QDemonRenderInstanceId instanceId)
 {
     bool hasTransparency = m_presentation->scene->useClearColor ? false : true;
-    QDemonRenderRect theViewportSize(m_renderContext->getRenderList()->getViewport());
+    QRect theViewportSize(m_renderContext->getRenderList()->getViewport());
     bool wasDirty = m_presentation->scene->prepareForRender(
-                QVector2D((float)theViewportSize.m_width, (float)theViewportSize.m_height),
+                QVector2D((float)theViewportSize.width(), (float)theViewportSize.height()),
                 m_renderContext, instanceId);
     return QDemonOffscreenRenderFlags(hasTransparency, wasDirty);
 }
@@ -85,9 +85,9 @@ void QDemonSubPresentationRenderer::render(const QDemonOffscreenRendererEnvironm
                                       const QDemonRenderInstanceId instanceId)
 {
     QDemonSubPresentationHelper theHelper(m_renderContext, QSize((quint32)inEnvironment.width, (quint32)inEnvironment.height));
-    QDemonRenderRect theViewportSize(inRenderContext.getViewport());
+    QRect theViewportSize(inRenderContext.getViewport());
     m_presentation->scene->render(
-                QVector2D((float)theViewportSize.m_width, (float)theViewportSize.m_height),
+                QVector2D((float)theViewportSize.width(), (float)theViewportSize.height()),
                 m_renderContext, inClearColorBuffer, instanceId);
     m_lastRenderedEnvironment = inEnvironment;
 }
@@ -100,9 +100,9 @@ void QDemonSubPresentationRenderer::renderWithClear(
 {
     Q_UNUSED(inEnvironment);
     Q_UNUSED(inPresScale);
-    QDemonRenderRect theViewportSize(inRenderContext.getViewport());
+    QRect theViewportSize(inRenderContext.getViewport());
     m_presentation->scene->renderWithClear(
-                QVector2D((float)theViewportSize.m_width, (float)theViewportSize.m_height),
+                QVector2D((float)theViewportSize.width(), (float)theViewportSize.height()),
                 m_renderContext, inClearBuffer, inClearColor, id);
 }
 

@@ -163,11 +163,11 @@ public:
     // In addition to the window dimensions which really have to be set, you can optionally
     // set the viewport which will force the entire viewer to render specifically to this
     // viewport.
-    virtual void setViewport(QDemonOption<QDemonRenderRect> inViewport) = 0;
-    virtual QDemonOption<QDemonRenderRect> getViewport() const = 0;
-    virtual QDemonRenderRect getContextViewport() const = 0;
+    virtual void setViewport(QDemonOption<QRect> inViewport) = 0;
+    virtual QDemonOption<QRect> getViewport() const = 0;
+    virtual QRect getContextViewport() const = 0;
     // Only valid between calls to Begin,End.
-    virtual QDemonRenderRect getPresentationViewport() const = 0;
+    virtual QRect getPresentationViewport() const = 0;
 
     virtual void setScaleMode(ScaleModes::Enum inMode) = 0;
     virtual ScaleModes::Enum getScaleMode() = 0;
@@ -177,7 +177,7 @@ public:
 
     // Return the viewport the system is using to render data to.  This gives the the dimensions
     // of the rendered system.  It is dependent on but not equal to the viewport.
-    virtual QDemonRenderRectF getDisplayViewport() const = 0;
+    virtual QRectF getDisplayViewport() const = 0;
 
     // Layers require the current presentation dimensions in order to render.
     virtual void setPresentationDimensions(const QSize &inPresentationDimensions) = 0;

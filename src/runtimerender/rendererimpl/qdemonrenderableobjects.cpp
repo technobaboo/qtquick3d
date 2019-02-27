@@ -264,13 +264,13 @@ void QDemonSubsetRenderable::render(const QVector2D &inCameraVec, TShaderFeature
 
         if (subset.wireframeMode) {
             // we need the viewport matrix
-            QDemonRenderRect theViewport(context.getViewport());
+            QRect theViewport(context.getViewport());
             float matrixData[16] = {
-                float(theViewport.m_width) / 2.0f, 0.0f, 0.0f, 0.0f,
-                0.0f, float(theViewport.m_width) / 2.0f, 0.0f, 0.0f,
+                float(theViewport.width()) / 2.0f, 0.0f, 0.0f, 0.0f,
+                0.0f, float(theViewport.width()) / 2.0f, 0.0f, 0.0f,
                 0.0f, 0.0f, 1.0f, 0.0f,
-                float(theViewport.m_width) / 2.0f + float(theViewport.m_x),
-                float(theViewport.m_height) / 2.0f + float(theViewport.m_y),
+                float(theViewport.width()) / 2.0f + float(theViewport.x()),
+                float(theViewport.height()) / 2.0f + float(theViewport.y()),
                 0.0f, 1.0f
             };
             QMatrix4x4 vpMatrix(matrixData);

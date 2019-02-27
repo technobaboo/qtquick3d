@@ -187,9 +187,9 @@ struct QDemonOffscreenRenderManager : public QDemonOffscreenRenderManagerInterfa
         QDemonRenderContextScopedProperty<bool> __scissorEnabled(
                     *theContext, &QDemonRenderContext::isScissorTestEnabled,
                     &QDemonRenderContext::setScissorTestEnabled, false);
-        QDemonRenderContextScopedProperty<QDemonRenderRect> __scissorRect(
+        QDemonRenderContextScopedProperty<QRect> __scissorRect(
                     *theContext, &QDemonRenderContext::getScissorRect, &QDemonRenderContext::setScissorRect);
-        QDemonRenderContextScopedProperty<QDemonRenderRect> __viewportRect(
+        QDemonRenderContextScopedProperty<QRect> __viewportRect(
                     *theContext, &QDemonRenderContext::getViewport, &QDemonRenderContext::setViewport);
         QDemonRenderContextScopedProperty<bool> __depthWrite(
                     *theContext, &QDemonRenderContext::isDepthWriteEnabled,
@@ -303,7 +303,7 @@ struct QDemonOffscreenRenderManager : public QDemonOffscreenRenderManagerInterfa
         // IsComplete check takes a really long time so I am not going to worry about it for now.
 
         theContext->setRenderTarget(theFrameBuffer);
-        theContext->setViewport(QDemonRenderRect(0, 0, theDesiredEnvironment.width, theDesiredEnvironment.height));
+        theContext->setViewport(QRect(0, 0, theDesiredEnvironment.width, theDesiredEnvironment.height));
         theContext->setScissorTestEnabled(false);
 
         theContext->setBlendingEnabled(false);
@@ -367,7 +367,7 @@ struct QDemonOffscreenRenderManager : public QDemonOffscreenRenderManagerInterfa
                 return QDemonOffscreenRenderResult();
             }
 
-            QDemonRenderRect theViewport(0, 0, theDesiredEnvironment.width,
+            QRect theViewport(0, 0, theDesiredEnvironment.width,
                                          theDesiredEnvironment.height);
             auto theRenderList = m_context->getRenderList();
             auto theContext = m_context->getRenderContext();
@@ -375,13 +375,13 @@ struct QDemonOffscreenRenderManager : public QDemonOffscreenRenderManagerInterfa
             QDemonRenderListScopedProperty<bool> scissor(*theRenderList,
                                                      &QDemonRenderListInterface::isScissorTestEnabled,
                                                      &QDemonRenderListInterface::setScissorTestEnabled, false);
-            QDemonRenderListScopedProperty<QDemonRenderRect> viewport(
+            QDemonRenderListScopedProperty<QRect> viewport(
                         *theRenderList, &QDemonRenderListInterface::getViewport, &QDemonRenderListInterface::setViewport, theViewport);
             // Some plugins don't use the render list so they need the actual gl context setup.
             QDemonRenderContextScopedProperty<bool> scissorEnabled(
                         *theContext, &QDemonRenderContext::isScissorTestEnabled,
                         &QDemonRenderContext::setScissorTestEnabled, false);
-            QDemonRenderContextScopedProperty<QDemonRenderRect> __viewportRect(
+            QDemonRenderContextScopedProperty<QRect> __viewportRect(
                         *theContext, &QDemonRenderContext::getViewport, &QDemonRenderContext::setViewport,
                         theViewport);
 

@@ -88,11 +88,11 @@ public:
     // I have replaced those calls with this state here because that information
     // controls how layers size themselves (which is quite a complicated process).
     virtual void setScissorTestEnabled(bool enabled) = 0;
-    virtual void setScissorRect(QDemonRenderRect rect) = 0;
-    virtual void setViewport(QDemonRenderRect rect) = 0;
+    virtual void setScissorRect(QRect rect) = 0;
+    virtual void setViewport(QRect rect) = 0;
     virtual bool isScissorTestEnabled() const = 0;
-    virtual QDemonRenderRect getScissor() const = 0;
-    virtual QDemonRenderRect getViewport() const = 0;
+    virtual QRect getScissor() const = 0;
+    virtual QRect getViewport() const = 0;
 
     static QSharedPointer<QDemonRenderListInterface> createRenderList();
 };

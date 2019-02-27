@@ -53,8 +53,8 @@ struct QDemonGLHardPropertyContext
     bool m_scissorTestEnabled = true;
     bool m_colorWritesEnabled = true;
     bool m_multisampleEnabled = false;
-    QDemonRenderRect m_scissorRect;
-    QDemonRenderRect m_viewport;
+    QRect m_scissorRect;
+    QRect m_viewport;
     QVector4D m_clearColor { 0.0, 0.0, 0.0, 1.0 };
 };
 QT_END_NAMESPACE

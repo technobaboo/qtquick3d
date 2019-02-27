@@ -1422,9 +1422,9 @@ struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface, public
         } else {
             QSharedPointer<QDemonRenderContext> theContext = m_context->getRenderContext();
             // if we allocate a buffer based on the default target use viewport to get the dimension
-            QDemonRenderRect theViewport(theContext->getViewport());
-            theSourceTextureDetails.height = theViewport.m_height;
-            theSourceTextureDetails.width = theViewport.m_width;
+            QRect theViewport(theContext->getViewport());
+            theSourceTextureDetails.height = theViewport.height();
+            theSourceTextureDetails.width = theViewport.width();
         }
 
         quint32 theWidth = (quint32)(theSourceTextureDetails.width * inCommand.m_sizeMultiplier);
@@ -1481,7 +1481,7 @@ struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface, public
 
         if (theTexture) {
             QDemonTextureDetails theDetails(theTexture->getTextureDetails());
-            m_context->getRenderContext()->setViewport(QDemonRenderRect(0, 0, (quint32)theDetails.width, (quint32)theDetails.height));
+            m_context->getRenderContext()->setViewport(QRect(0, 0, (quint32)theDetails.width, (quint32)theDetails.height));
             outDestSize = QVector2D((float)theDetails.width, (float)theDetails.height);
             outClearTarget = inCommand.m_needsClear;
         }
@@ -1520,16 +1520,16 @@ struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface, public
                 projMax.setZ(projPoint.z());
         }
 
-        QDemonRenderRect theViewport(theContext->getViewport());
-        qint32 x1 = qint32(projMax.x() * (theViewport.m_width / 2)
-                           + (theViewport.m_x + (theViewport.m_width / 2)));
-        qint32 y1 = qint32(projMax.y() * (theViewport.m_height / 2)
-                           + (theViewport.m_y + (theViewport.m_height / 2)));
+        QRect theViewport(theContext->getViewport());
+        qint32 x1 = qint32(projMax.x() * (theViewport.width() / 2)
+                           + (theViewport.x() + (theViewport.width() / 2)));
+        qint32 y1 = qint32(projMax.y() * (theViewport.height() / 2)
+                           + (theViewport.y() + (theViewport.height() / 2)));
 
-        qint32 x2 = qint32(projMin.x() * (theViewport.m_width / 2)
-                           + (theViewport.m_x + (theViewport.m_width / 2)));
-        qint32 y2 = qint32(projMin.y() * (theViewport.m_height / 2)
-                           + (theViewport.m_y + (theViewport.m_height / 2)));
+        qint32 x2 = qint32(projMin.x() * (theViewport.width() / 2)
+                           + (theViewport.x() + (theViewport.width() / 2)));
+        qint32 y2 = qint32(projMin.y() * (theViewport.height() / 2)
+                           + (theViewport.y() + (theViewport.height() / 2)));
 
         if (x1 > x2) {
             *xMin = x2;
@@ -1596,7 +1596,7 @@ struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface, public
             theContext->setReadBuffer(value);
         }
 
-        QDemonRenderRect theViewport(theContext->getViewport());
+        QRect theViewport(theContext->getViewport());
         theContext->setScissorTestEnabled(false);
 
         if (!m_useFastBlits) {
@@ -1610,9 +1610,9 @@ struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface, public
                                         QDemonRenderTextureMagnifyingOp::Nearest);
         } else {
             // same dimension
-            theContext->blitFramebuffer(theViewport.m_x, theViewport.m_y, theViewport.m_x + theViewport.m_width,
-                                        theViewport.m_y + theViewport.m_height, theViewport.m_x, theViewport.m_y,
-                                        theViewport.m_x + theViewport.m_width, theViewport.m_y + theViewport.m_height,
+            theContext->blitFramebuffer(theViewport.x(), theViewport.y(), theViewport.x() + theViewport.width(),
+                                        theViewport.y() + theViewport.height(), theViewport.x(), theViewport.y(),
+                                        theViewport.x() + theViewport.width(), theViewport.y() + theViewport.height(),
                                         QDemonRenderClearValues::Color, QDemonRenderTextureMagnifyingOp::Nearest);
         }
     }
@@ -1690,13 +1690,13 @@ struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface, public
         }
 
         if (inRenderContext.subset.wireframeMode) {
-            QDemonRenderRect theViewport(theContext->getViewport());
+            QRect theViewport(theContext->getViewport());
             QMatrix4x4 vpMatrix = {
-                (float)theViewport.m_width / 2.0f, 0.0, 0.0, 0.0,
-                0.0, (float)theViewport.m_height / 2.0f, 0.0, 0.0,
+                (float)theViewport.width() / 2.0f, 0.0, 0.0, 0.0,
+                0.0, (float)theViewport.height() / 2.0f, 0.0, 0.0,
                 0.0, 0.0, 1.0, 0.0,
-                (float)theViewport.m_width / 2.0f + (float)theViewport.m_x,
-                (float)theViewport.m_height / 2.0f + (float)theViewport.m_y, 0.0, 1.0
+                (float)theViewport.width() / 2.0f + (float)theViewport.x(),
+                (float)theViewport.height() / 2.0f + (float)theViewport.y(), 0.0, 1.0
             };
 
             inShader->viewportMatrix.set(vpMatrix);
@@ -1721,7 +1721,7 @@ struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface, public
         QSharedPointer<QDemonCustomMaterialShader> theCurrentShader(nullptr);
 
         QSharedPointer<QDemonRenderFrameBuffer> theCurrentRenderTarget(inTarget);
-        QDemonRenderRect theOriginalViewport(theContext->getViewport());
+        QRect theOriginalViewport(theContext->getViewport());
         QSharedPointer<QDemonRenderTexture2D> theCurrentSourceTexture;
 
         // for refrative materials we come from the transparent render path
@@ -1732,7 +1732,7 @@ struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface, public
 
         QDemonRenderContextScopedProperty<QSharedPointer<QDemonRenderFrameBuffer>> __framebuffer(
                     *theContext, &QDemonRenderContext::getRenderTarget, &QDemonRenderContext::setRenderTarget);
-        QDemonRenderContextScopedProperty<QDemonRenderRect> __viewport(
+        QDemonRenderContextScopedProperty<QRect> __viewport(
                     *theContext, &QDemonRenderContext::getViewport, &QDemonRenderContext::setViewport);
 
         QVector2D theDestSize;

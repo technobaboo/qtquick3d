@@ -544,26 +544,26 @@ void QDemonRenderBackendGLBase::setBlendBarrier()
     qCCritical(INVALID_OPERATION) << QObject::tr("Unsupported method: ") << __FUNCTION__;
 }
 
-void QDemonRenderBackendGLBase::getScissorRect(QDemonRenderRect *pRect)
+void QDemonRenderBackendGLBase::getScissorRect(QRect *pRect)
 {
     Q_ASSERT(pRect);
     GL_CALL_FUNCTION(glGetIntegerv(GL_SCISSOR_BOX, (GLint *)pRect));
 }
 
-void QDemonRenderBackendGLBase::setScissorRect(const QDemonRenderRect &rect)
+void QDemonRenderBackendGLBase::setScissorRect(const QRect &rect)
 {
-    GL_CALL_FUNCTION(glScissor(rect.m_x, rect.m_y, rect.m_width, rect.m_height));
+    GL_CALL_FUNCTION(glScissor(rect.x(), rect.y(), rect.width(), rect.height()));
 }
 
-void QDemonRenderBackendGLBase::getViewportRect(QDemonRenderRect *pRect)
+void QDemonRenderBackendGLBase::getViewportRect(QRect *pRect)
 {
     Q_ASSERT(pRect);
     GL_CALL_FUNCTION(glGetIntegerv(GL_VIEWPORT, (GLint *)pRect));
 }
 
-void QDemonRenderBackendGLBase::setViewportRect(const QDemonRenderRect &rect)
+void QDemonRenderBackendGLBase::setViewportRect(const QRect &rect)
 {
-    GL_CALL_FUNCTION(glViewport(rect.m_x, rect.m_y, rect.m_width, rect.m_height););
+    GL_CALL_FUNCTION(glViewport(rect.x(), rect.y(), rect.width(), rect.height()););
 }
 
 void QDemonRenderBackendGLBase::setClearColor(const QVector4D *pClearColor)

@@ -933,7 +933,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface, public QEnableSh
             QDemonRenderCamera::setupOrthographicCameraForOffscreenRender(*theTexture, outMVP);
             QDemonTextureDetails theDetails(theTexture->getTextureDetails());
             m_context->getRenderContext()->setViewport(
-                        QDemonRenderRect(0, 0, (quint32)theDetails.width, (quint32)theDetails.height));
+                        QRect(0, 0, (quint32)theDetails.width, (quint32)theDetails.height));
             outDestSize = QVector2D((float)theDetails.width, (float)theDetails.height);
         }
 
@@ -1474,7 +1474,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface, public QEnableSh
         QSharedPointer<QDemonRenderTexture2D> theCurrentDepthStencilTexture;
         QSharedPointer<QDemonRenderFrameBuffer> theCurrentRenderTarget(inTarget);
         QSharedPointer<QDemonEffectShader> theCurrentShader;
-        QDemonRenderRect theOriginalViewport(theContext->getViewport());
+        QRect theOriginalViewport(theContext->getViewport());
         bool wasScissorEnabled = theContext->isScissorTestEnabled();
         bool wasBlendingEnabled = theContext->isBlendingEnabled();
         // save current blending setup
@@ -1491,7 +1491,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface, public QEnableSh
             // setting.
             QDemonRenderContextScopedProperty<QSharedPointer<QDemonRenderFrameBuffer>> __framebuffer(
                         *theContext, &QDemonRenderContext::getRenderTarget, &QDemonRenderContext::setRenderTarget);
-            QDemonRenderContextScopedProperty<QDemonRenderRect> __viewport(
+            QDemonRenderContextScopedProperty<QRect> __viewport(
                         *theContext, &QDemonRenderContext::getViewport, &QDemonRenderContext::setViewport);
             QDemonRenderContextScopedProperty<bool> __scissorEnabled(
                         *theContext, &QDemonRenderContext::isScissorTestEnabled,
@@ -1691,9 +1691,9 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface, public QEnableSh
                 theManager->allocateTexture2D(theFinalWidth, theFinalHeight, theOutputFormat);
         theBuffer->attach(QDemonRenderFrameBufferAttachments::Color0, theTargetTexture);
         theContext->setRenderTarget(theBuffer);
-        QDemonRenderContextScopedProperty<QDemonRenderRect> __viewport(
+        QDemonRenderContextScopedProperty<QRect> __viewport(
                     *theContext, &QDemonRenderContext::getViewport, &QDemonRenderContext::setViewport,
-                    QDemonRenderRect(0, 0, theFinalWidth, theFinalHeight));
+                    QRect(0, 0, theFinalWidth, theFinalHeight));
 
         QDemonRenderContextScopedProperty<bool> __scissorEnable(
                     *theContext, &QDemonRenderContext::isScissorTestEnabled,

@@ -55,10 +55,10 @@ struct QDemonLayerPickSetup
 {
     QMatrix4x4 projectionPreMultiply;
     QMatrix4x4 viewProjection;
-    QDemonRenderRect scissorRect;
+    QRect scissorRect;
     QDemonLayerPickSetup(const QMatrix4x4 &inProjPreMult,
                          const QMatrix4x4 &inVP,
-                         const QDemonRenderRect &inScissor)
+                         const QRect &inScissor)
         : projectionPreMultiply(inProjPreMult)
         , viewProjection(inVP)
         , scissorRect(inScissor)
@@ -180,7 +180,7 @@ public:
 
     // Return the layer's viewport rect after the layer's member variables have been applied.
     // Uses the last rendered viewport rect.
-    virtual QDemonOption<QDemonRenderRectF> getLayerRect(QDemonRenderLayer &inLayer) = 0;
+    virtual QDemonOption<QRectF> getLayerRect(QDemonRenderLayer &inLayer) = 0;
     // Testing function to allow clients to render a layer using a custom view project instead
     // of the one that would be setup
     // using the layer's camera in conjunction with the layer's position,scale.

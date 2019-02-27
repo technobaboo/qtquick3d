@@ -734,16 +734,16 @@ void QDemonRenderContextImpl::setScissorTestEnabled(bool inEnabled)
     }
 }
 
-void QDemonRenderContextImpl::setScissorRect(QDemonRenderRect inRect)
+void QDemonRenderContextImpl::setScissorRect(QRect inRect)
 {
-    if (memcmp(&inRect, &m_hardwarePropertyContext.m_scissorRect, sizeof(QDemonRenderRect))) {
+    if (memcmp(&inRect, &m_hardwarePropertyContext.m_scissorRect, sizeof(QRect))) {
         doSetScissorRect(inRect);
     }
 }
 
-void QDemonRenderContextImpl::setViewport(QDemonRenderRect inViewport)
+void QDemonRenderContextImpl::setViewport(QRect inViewport)
 {
-    if (memcmp(&inViewport, &m_hardwarePropertyContext.m_viewport, sizeof(QDemonRenderRect))) {
+    if (memcmp(&inViewport, &m_hardwarePropertyContext.m_viewport, sizeof(QRect))) {
         doSetViewport(inViewport);
     }
 }
@@ -787,12 +787,12 @@ void QDemonRenderContextImpl::setReadBuffer(QDemonReadFaces::Enum inReadFace)
     m_backend->setReadBuffer(nullptr, inReadFace);
 }
 
-void QDemonRenderContextImpl::readPixels(QDemonRenderRect inRect,
+void QDemonRenderContextImpl::readPixels(QRect inRect,
                                          QDemonRenderReadPixelFormats::Enum inFormat,
                                          QDemonDataRef<quint8> inWriteBuffer)
 {
     // nullptr means read from current render target
-    m_backend->readPixel(nullptr, inRect.m_x, inRect.m_y, inRect.m_width, inRect.m_height,
+    m_backend->readPixel(nullptr, inRect.x(), inRect.y(), inRect.width(), inRect.height(),
                          inFormat, (void *)inWriteBuffer.begin());
 }
 
@@ -945,32 +945,31 @@ void QDemonRenderContextImpl::drawIndirect(QDemonRenderDrawMode::Enum drawMode, 
     onPostDraw();
 }
 
-QMatrix4x4
-QDemonRenderContext::ApplyVirtualViewportToProjectionMatrix(const QMatrix4x4 &inProjection,
-                                                            const QDemonRenderRectF &inViewport,
-                                                            const QDemonRenderRectF &inVirtualViewport)
+QMatrix4x4 QDemonRenderContext::applyVirtualViewportToProjectionMatrix(const QMatrix4x4 &inProjection,
+                                                                       const QRectF &inViewport,
+                                                                       const QRectF &inVirtualViewport)
 {
     if (inVirtualViewport == inViewport)
         return inProjection;
     // Run conversion to floating point once.
-    QDemonRenderRectF theVirtualViewport(inVirtualViewport);
-    QDemonRenderRectF theViewport(inViewport);
-    if (theVirtualViewport.m_width == 0 || theVirtualViewport.m_height == 0
-            || theViewport.m_width == 0 || theViewport.m_height == 0) {
+    QRectF theVirtualViewport(inVirtualViewport);
+    QRectF theViewport(inViewport);
+    if (theVirtualViewport.width() == 0 || theVirtualViewport.height() == 0
+            || theViewport.width() == 0 || theViewport.height() == 0) {
         Q_ASSERT(false);
         return inProjection;
     }
     QMatrix4x4 theScaleTransMat;
-    float theHeightDiff = theViewport.m_height - theVirtualViewport.m_height;
-    float theViewportOffY = theVirtualViewport.m_y - theViewport.m_y;
-    QVector2D theCameraOffsets = QVector2D(theVirtualViewport.m_width - theViewport.m_width
-                                           + (theVirtualViewport.m_x - theViewport.m_x) * 2.0f,
+    float theHeightDiff = theViewport.height() - theVirtualViewport.height();
+    float theViewportOffY = theVirtualViewport.y() - theViewport.y();
+    QVector2D theCameraOffsets = QVector2D(theVirtualViewport.width() - theViewport.width()
+                                           + (theVirtualViewport.x() - theViewport.x()) * 2.0f,
                                            theHeightDiff + (theViewportOffY - theHeightDiff) * 2.0f);
-    QVector2D theCameraScale = QVector2D(theVirtualViewport.m_width / theViewport.m_width,
-                                         theVirtualViewport.m_height / theViewport.m_height);
+    QVector2D theCameraScale = QVector2D(theVirtualViewport.width() / theViewport.width(),
+                                         theVirtualViewport.height() / theViewport.height());
 
-    QVector3D theTranslation(theCameraOffsets.x() / theViewport.m_width,
-                             theCameraOffsets.y() / theViewport.m_height, 0);
+    QVector3D theTranslation(theCameraOffsets.x() / theViewport.width(),
+                             theCameraOffsets.y() / theViewport.height(), 0);
     QVector4D column3 = theScaleTransMat.column(3);
     column3.setX(theTranslation.x());
     column3.setY(theTranslation.y());

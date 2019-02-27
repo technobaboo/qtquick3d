@@ -230,7 +230,7 @@ class Q_DEMONRUNTIMERENDER_EXPORT QDemonRendererImpl : public QDemonRendererInte
     QDemonTextShaderPtr m_textOnscreenShader;
 
     // Overlay used to render all widgets.
-    QDemonRenderRect m_beginFrameViewport;
+    QRect m_beginFrameViewport;
     QSharedPointer<QDemonRenderTexture2D> m_widgetTexture;
     QSharedPointer<QDemonRenderFrameBuffer> m_widgetFbo;
 
@@ -332,7 +332,7 @@ public:
                                                     const QVector2D &inMouseCoords,
                                                     const QSize &inPickDims) override;
 
-    QDemonOption<QDemonRenderRectF> getLayerRect(QDemonRenderLayer &inLayer) override;
+    QDemonOption<QRectF> getLayerRect(QDemonRenderLayer &inLayer) override;
 
     void runLayerRender(QDemonRenderLayer &inLayer, const QMatrix4x4 &inViewProjection) override;
 
@@ -437,7 +437,7 @@ public:
 
     QDemonRenderContextInterface *getDemonContext() { return m_demonContext; }
 
-    void drawScreenRect(QDemonRenderRectF inRect, const QVector3D &inColor);
+    void drawScreenRect(QRectF inRect, const QVector3D &inColor);
     // Binds an offscreen texture.  Widgets are rendered last.
     void setupWidgetLayer();
 

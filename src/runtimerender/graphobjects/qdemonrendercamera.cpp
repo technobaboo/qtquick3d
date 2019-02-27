@@ -46,9 +46,9 @@ QT_BEGIN_NAMESPACE
 
 namespace {
 
-float getAspectRatio(const QDemonRenderRectF &inViewport)
+float getAspectRatio(const QRectF &inViewport)
 {
-    return inViewport.m_height != 0 ? inViewport.m_width / inViewport.m_height : 0.0f;
+    return inViewport.height() != 0 ? inViewport.width() / inViewport.height() : 0.0f;
 }
 
 float getAspectRatio(const QVector2D &inDimensions)
@@ -78,9 +78,9 @@ bool isFitTypeScaleMode(CameraScaleModes::Enum inMode)
 
 struct QDemonPinCameraResult
 {
-    QDemonRenderRectF m_viewport;
-    QDemonRenderRectF m_virtualViewport;
-    QDemonPinCameraResult(QDemonRenderRectF v, QDemonRenderRectF vv)
+    QRectF m_viewport;
+    QRectF m_virtualViewport;
+    QDemonPinCameraResult(QRectF v, QRectF vv)
         : m_viewport(v)
         , m_virtualViewport(vv)
     {
@@ -88,19 +88,19 @@ struct QDemonPinCameraResult
 };
 // Scale and transform the projection matrix to respect the camera anchor attribute
 // and the scale mode.
-QDemonPinCameraResult pinCamera(const QDemonRenderRectF &inViewport,
+QDemonPinCameraResult pinCamera(const QRectF &inViewport,
                                 QVector2D inDesignDims,
                                 QMatrix4x4 &ioPerspectiveMatrix,
                                 CameraScaleModes::Enum inScaleMode,
                                 CameraScaleAnchors::Enum inPinLocation)
 {
-    QDemonRenderRectF viewport(inViewport);
-    QDemonRenderRectF idealViewport(inViewport.m_x, inViewport.m_y, inDesignDims.x(), inDesignDims.y());
+    QRectF viewport(inViewport);
+    QRectF idealViewport(inViewport.x(), inViewport.y(), inDesignDims.x(), inDesignDims.y());
     float designAspect = getAspectRatio(inDesignDims);
     float actualAspect = getAspectRatio(inViewport);
     if (isFitTypeScaleMode(inScaleMode)) {
-        idealViewport.m_width = viewport.m_width;
-        idealViewport.m_height = viewport.m_height;
+        idealViewport.setWidth(viewport.width());
+        idealViewport.setHeight(viewport.height());
     }
     // We move the viewport such that the left, top of the presentation sits against the left top
     // edge
@@ -126,36 +126,36 @@ QDemonPinCameraResult pinCamera(const QDemonRenderRectF &inViewport,
         float idealWidth = inDesignDims.x();
         float idealHeight = inDesignDims.y();
         if (pinRight)
-            idealViewport.m_x -= ((idealWidth - inViewport.m_width));
+            idealViewport.setX(idealViewport.x() - ((idealWidth - inViewport.width())));
         else if (!pinLeft)
-            idealViewport.m_x -= ((idealWidth - inViewport.m_width) / 2.0f);
+            idealViewport.setX(idealViewport.x() - ((idealWidth - inViewport.width()) / 2.0f));
 
         if (pinTop)
-            idealViewport.m_y -= ((idealHeight - inViewport.m_height));
+            idealViewport.setY(idealViewport.y() - ((idealHeight - inViewport.height())));
         else if (!pinBottom)
-            idealViewport.m_y -= ((idealHeight - inViewport.m_height) / 2.0f);
+            idealViewport.setY(idealViewport.y() - ((idealHeight - inViewport.height()) / 2.0f));
     } else {
         // In this case our perspective matrix will center the view and we need to decenter
         // it as necessary
         // if we are wider than we are high
         if (isCameraVerticalAdjust(inScaleMode, designAspect, actualAspect)) {
             if (pinLeft || pinRight) {
-                float idealWidth = inViewport.m_height * designAspect;
-                qint32 halfOffset = (qint32)((idealWidth - inViewport.m_width) / 2.0f);
+                float idealWidth = inViewport.height() * designAspect;
+                qint32 halfOffset = (qint32)((idealWidth - inViewport.width()) / 2.0f);
                 halfOffset = pinLeft ? halfOffset : -1 * halfOffset;
-                idealViewport.m_x += halfOffset;
+                idealViewport.setX(idealViewport.x() + halfOffset);
             }
         } else {
             if (pinTop || pinBottom) {
-                float idealHeight = inViewport.m_width / designAspect;
-                qint32 halfOffset = (qint32)((idealHeight - inViewport.m_height) / 2.0f);
+                float idealHeight = inViewport.width() / designAspect;
+                qint32 halfOffset = (qint32)((idealHeight - inViewport.height()) / 2.0f);
                 halfOffset = pinBottom ? halfOffset : -1 * halfOffset;
-                idealViewport.m_y += halfOffset;
+                idealViewport.setY(idealViewport.y() + halfOffset);
             }
         }
     }
 
-    ioPerspectiveMatrix = QDemonRenderContext::ApplyVirtualViewportToProjectionMatrix(
+    ioPerspectiveMatrix = QDemonRenderContext::applyVirtualViewportToProjectionMatrix(
         ioPerspectiveMatrix, viewport, idealViewport);
     return QDemonPinCameraResult(viewport, idealViewport);
 }
@@ -176,14 +176,14 @@ QDemonRenderCamera::QDemonRenderCamera()
 }
 
 // Code for testing
-QDemonCameraGlobalCalculationResult QDemonRenderCamera::calculateGlobalVariables(const QDemonRenderRectF &inViewport,
+QDemonCameraGlobalCalculationResult QDemonRenderCamera::calculateGlobalVariables(const QRectF &inViewport,
                                                                                  const QVector2D &inDesignDimensions)
 {
     bool wasDirty = QDemonGraphNode::calculateGlobalVariables();
     return QDemonCameraGlobalCalculationResult {wasDirty, calculateProjection(inViewport, inDesignDimensions) };
 }
 
-bool QDemonRenderCamera::calculateProjection(const QDemonRenderRectF &inViewport,
+bool QDemonRenderCamera::calculateProjection(const QRectF &inViewport,
                                              const QVector2D &inDesignDimensions)
 {
     bool retval = false;
@@ -205,7 +205,7 @@ bool QDemonRenderCamera::calculateProjection(const QDemonRenderRectF &inViewport
  *	Compute the projection matrix for a perspective camera
  *	@return true if the computed projection matrix is valid
  */
-bool QDemonRenderCamera::computeFrustumPerspective(const QDemonRenderRectF &inViewport,
+bool QDemonRenderCamera::computeFrustumPerspective(const QRectF &inViewport,
                                                    const QVector2D &inDesignDimensions)
 {
     projection = QMatrix4x4();
@@ -245,7 +245,7 @@ bool QDemonRenderCamera::computeFrustumPerspective(const QDemonRenderRectF &inVi
  *	Compute the projection matrix for a orthographic camera
  *	@return true if the computed projection matrix is valid
  */
-bool QDemonRenderCamera::computeFrustumOrtho(const QDemonRenderRectF &inViewport, const QVector2D &inDesignDimensions)
+bool QDemonRenderCamera::computeFrustumOrtho(const QRectF &inViewport, const QVector2D &inDesignDimensions)
 {
     projection = QMatrix4x4();
 
@@ -276,7 +276,7 @@ bool QDemonRenderCamera::computeFrustumOrtho(const QDemonRenderRectF &inViewport
     }
 }
 
-float QDemonRenderCamera::getOrthographicScaleFactor(const QDemonRenderRectF &inViewport,
+float QDemonRenderCamera::getOrthographicScaleFactor(const QRectF &inViewport,
                                           const QVector2D &inDesignDimensions) const
 {
     if (scaleMode == CameraScaleModes::SameSize)
@@ -286,20 +286,20 @@ float QDemonRenderCamera::getOrthographicScaleFactor(const QDemonRenderRectF &in
     float theAspectRatio = getAspectRatio(inViewport);
     if (scaleMode == CameraScaleModes::Fit) {
         if (theAspectRatio >= designAspect) {
-            return inViewport.m_width < inDesignDimensions.x() ? theAspectRatio / designAspect : 1.0f;
+            return inViewport.width() < inDesignDimensions.x() ? theAspectRatio / designAspect : 1.0f;
 
         } else {
-            return inViewport.m_height < inDesignDimensions.y() ? designAspect / theAspectRatio
+            return inViewport.height() < inDesignDimensions.y() ? designAspect / theAspectRatio
                                                               : 1.0f;
         }
     } else if (scaleMode == CameraScaleModes::FitVertical) {
-        return (float)inDesignDimensions.y() / (float)inViewport.m_height;
+        return (float)inDesignDimensions.y() / (float)inViewport.height();
     } else {
-        return (float)inDesignDimensions.x() / (float)inViewport.m_width;
+        return (float)inDesignDimensions.x() / (float)inViewport.width();
     }
 }
 
-float QDemonRenderCamera::getTextScaleFactor(const QDemonRenderRectF &inViewport,
+float QDemonRenderCamera::getTextScaleFactor(const QRectF &inViewport,
                                   const QVector2D &inDesignDimensions) const
 {
     return qMax(1.0f, 1.0f / getOrthographicScaleFactor(inViewport, inDesignDimensions));
@@ -347,7 +347,7 @@ void QDemonRenderCamera::calculateViewProjectionMatrix(QMatrix4x4 &outMatrix) co
     outMatrix = projection * globalInverse;
 }
 
-QDemonCuboidRect QDemonRenderCamera::getCameraBounds(const QDemonRenderRectF &inViewport,
+QDemonCuboidRect QDemonRenderCamera::getCameraBounds(const QRectF &inViewport,
                                                      const QVector2D &inDesignDimensions) const
 {
     QMatrix4x4 unused;
@@ -356,15 +356,15 @@ QDemonCuboidRect QDemonRenderCamera::getCameraBounds(const QDemonRenderRectF &in
     // find the normalized edges of the view frustum given the renormalization that happens when
     // pinning the camera.
     QDemonCuboidRect normalizedCuboid(-1, 1, 1, -1);
-    QVector2D translation(theResult.m_viewport.m_x - theResult.m_virtualViewport.m_x,
-                       theResult.m_viewport.m_y - theResult.m_virtualViewport.m_y);
+    QVector2D translation(theResult.m_viewport.x() - theResult.m_virtualViewport.x(),
+                       theResult.m_viewport.y() - theResult.m_virtualViewport.y());
     if (scaleMode == CameraScaleModes::SameSize) {
         // the cuboid ranges are the actual divided by the ideal in this case
-        float xRange = 2.0f * (theResult.m_viewport.m_width / theResult.m_virtualViewport.m_width);
-        float yRange = 2.0f * (theResult.m_viewport.m_height / theResult.m_virtualViewport.m_height);
+        float xRange = 2.0f * (theResult.m_viewport.width() / theResult.m_virtualViewport.width());
+        float yRange = 2.0f * (theResult.m_viewport.height() / theResult.m_virtualViewport.height());
         normalizedCuboid = QDemonCuboidRect(-1, -1 + yRange, -1 + xRange, -1);
-        translation.setX(translation.x() / (theResult.m_virtualViewport.m_width / 2.0f));
-        translation.setY(translation.y() / (theResult.m_virtualViewport.m_height / 2.0f));
+        translation.setX(translation.x() / (theResult.m_virtualViewport.width() / 2.0f));
+        translation.setY(translation.y() / (theResult.m_virtualViewport.height() / 2.0f));
         normalizedCuboid.translate(translation);
     }
     // fit.  This means that two parameters of the normalized cuboid will be -1, 1.
@@ -374,24 +374,24 @@ QDemonCuboidRect QDemonRenderCamera::getCameraBounds(const QDemonRenderRectF &in
         float actualAspect = getAspectRatio(inViewport);
         float designAspect = getAspectRatio(inDesignDimensions);
         // if we are wider than we are high
-        float idealWidth = inViewport.m_width;
-        float idealHeight = inViewport.m_height;
+        float idealWidth = inViewport.width();
+        float idealHeight = inViewport.height();
 
         if (isCameraVerticalAdjust(scaleMode, designAspect, actualAspect)) {
             // then we just need to setup the left, right parameters of the cuboid because we know
             // the top
             // bottom are -1,1 due to how fit works.
             idealWidth = (float)QDemonTextRendererInterface::nextMultipleOf4(
-                (quint32)(inViewport.m_height * designAspect + .5f));
+                (quint32)(inViewport.height() * designAspect + .5f));
             // halfRange should always be greater than 1.0f.
-            float halfRange = inViewport.m_width / idealWidth;
+            float halfRange = inViewport.width() / idealWidth;
             normalizedCuboid.left = -halfRange;
             normalizedCuboid.right = halfRange;
             translation.setX(translation.x() / (idealWidth / 2.0f));
         } else {
             idealHeight = (float)QDemonTextRendererInterface::nextMultipleOf4(
-                (quint32)(inViewport.m_width / designAspect + .5f));
-            float halfRange = inViewport.m_height / idealHeight;
+                (quint32)(inViewport.width() / designAspect + .5f));
+            float halfRange = inViewport.height() / idealHeight;
             normalizedCuboid.bottom = -halfRange;
             normalizedCuboid.top = halfRange;
             translation.setY(translation.y() / (idealHeight / 2.0f));
@@ -422,22 +422,21 @@ void QDemonRenderCamera::setupOrthographicCameraForOffscreenRender(QDemonRenderT
     theTempCamera.markDirty(NodeTransformDirtyFlag::TransformIsDirty);
     QVector2D theDimensions((float)theDetails.width, (float)theDetails.height);
     theTempCamera.calculateGlobalVariables(
-        QDemonRenderRect(0, 0, theDetails.width, theDetails.height), theDimensions);
+        QRect(0, 0, theDetails.width, theDetails.height), theDimensions);
     theTempCamera.calculateViewProjectionMatrix(outVP);
     outCamera = theTempCamera;
 }
 
 QDemonRenderRay QDemonRenderCamera::unproject(const QVector2D &inViewportRelativeCoords,
-                                              const QDemonRenderRectF &inViewport,
+                                              const QRectF &inViewport,
                                               const QVector2D &inDesignDimensions) const
 {
     QDemonRenderRay theRay;
     QMatrix4x4 tempVal;
     QDemonPinCameraResult result =
         pinCamera(inViewport, inDesignDimensions, tempVal, scaleMode, scaleAnchor);
-    QVector2D globalCoords = inViewport.toAbsoluteCoords(inViewportRelativeCoords);
-    QVector2D normalizedCoords =
-        result.m_virtualViewport.absoluteToNormalizedCoordinates(globalCoords);
+    QVector2D globalCoords = toAbsoluteCoords(inViewport, inViewportRelativeCoords);
+    QVector2D normalizedCoords = absoluteToNormalizedCoordinates(result.m_virtualViewport, globalCoords);
     QVector3D &outOrigin(theRay.m_origin);
     QVector3D &outDir(theRay.m_direction);
     QVector2D inverseFrustumScale(1.0f / frustumScale.x(), 1.0f / frustumScale.y());
@@ -495,7 +494,7 @@ float QDemonRenderCamera::verticalFov(float aspectRatio) const
         return fov;
 }
 
-float QDemonRenderCamera::verticalFov(const QDemonRenderRectF &inViewport) const
+float QDemonRenderCamera::verticalFov(const QRectF &inViewport) const
 {
     return verticalFov(getAspectRatio(inViewport));
 }

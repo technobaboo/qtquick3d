@@ -35,7 +35,7 @@ QT_BEGIN_NAMESPACE
 
 namespace {
 // left/top
-float GetMinValue(float start, float width, float value, LayerUnitTypes::Enum units)
+float getMinValue(float start, float width, float value, LayerUnitTypes::Enum units)
 {
     if (units == LayerUnitTypes::Pixels)
         return start + value;
@@ -44,7 +44,7 @@ float GetMinValue(float start, float width, float value, LayerUnitTypes::Enum un
 }
 
 // width/height
-float GetValueLen(float width, float value, LayerUnitTypes::Enum units)
+float getValueLen(float width, float value, LayerUnitTypes::Enum units)
 {
     if (units == LayerUnitTypes::Pixels)
         return value;
@@ -53,7 +53,7 @@ float GetValueLen(float width, float value, LayerUnitTypes::Enum units)
 }
 
 // right/bottom
-float GetMaxValue(float start, float width, float value, LayerUnitTypes::Enum units)
+float getMaxValue(float start, float width, float value, LayerUnitTypes::Enum units)
 {
     if (units == LayerUnitTypes::Pixels)
         return start + width - value;
@@ -61,14 +61,14 @@ float GetMaxValue(float start, float width, float value, LayerUnitTypes::Enum un
     return start + width - (value * width / 100.0f);
 }
 
-QVector2D ToRectRelativeCoords(const QVector2D &inCoords, const QDemonRenderRectF &inRect)
+QVector2D toRectRelativeCoords(const QVector2D &inCoords, const QRectF &inRect)
 {
-    return QVector2D(inCoords.x() - inRect.m_x, inCoords.y() - inRect.m_y);
+    return QVector2D(inCoords.x() - inRect.x(), inCoords.y() - inRect.y());
 }
 }
 
-QDemonLayerRenderHelper::QDemonLayerRenderHelper(const QDemonRenderRectF &inPresentationViewport,
-                                                 const QDemonRenderRectF &inPresentationScissor,
+QDemonLayerRenderHelper::QDemonLayerRenderHelper(const QRectF &inPresentationViewport,
+                                                 const QRectF &inPresentationScissor,
                                                  const QVector2D &inPresentationDesignDimensions,
                                                  QDemonRenderLayer &inLayer,
                                                  bool inOffscreen,
@@ -98,24 +98,24 @@ QDemonLayerRenderHelper::QDemonLayerRenderHelper(const QDemonRenderRectF &inPres
                 width *= m_scaleFactor.x();
         }
 
-        float horzMin = GetMinValue(inPresentationViewport.m_x, inPresentationViewport.m_width,
+        float horzMin = getMinValue(inPresentationViewport.x(), inPresentationViewport.width(),
                                     left, m_layer->leftUnits);
-        float horzWidth = GetValueLen(inPresentationViewport.m_width, width, m_layer->widthUnits);
-        float horzMax = GetMaxValue(inPresentationViewport.m_x, inPresentationViewport.m_width,
+        float horzWidth = getValueLen(inPresentationViewport.width(), width, m_layer->widthUnits);
+        float horzMax = getMaxValue(inPresentationViewport.x(), inPresentationViewport.width(),
                                     right, m_layer->rightUnits);
 
         switch (inLayer.horizontalFieldValues) {
         case HorizontalFieldValues::LeftWidth:
-            m_viewport.m_x = horzMin;
-            m_viewport.m_width = horzWidth;
+            m_viewport.setX(horzMin);
+            m_viewport.setWidth(horzWidth);
             break;
         case HorizontalFieldValues::LeftRight:
-            m_viewport.m_x = horzMin;
-            m_viewport.m_width = horzMax - horzMin;
+            m_viewport.setX(horzMin);
+            m_viewport.setWidth(horzMax - horzMin);
             break;
         case HorizontalFieldValues::WidthRight:
-            m_viewport.m_width = horzWidth;
-            m_viewport.m_x = horzMax - horzWidth;
+            m_viewport.setWidth(horzWidth);
+            m_viewport.setX(horzMax - horzWidth);
             break;
         }
     }
@@ -136,63 +136,62 @@ QDemonLayerRenderHelper::QDemonLayerRenderHelper(const QDemonRenderRectF &inPres
                 height *= m_scaleFactor.y();
         }
 
-        float vertMin = GetMinValue(inPresentationViewport.m_y, inPresentationViewport.m_height,
+        float vertMin = getMinValue(inPresentationViewport.y(), inPresentationViewport.height(),
                                     bottom, m_layer->bottomUnits);
-        float vertWidth =
-                GetValueLen(inPresentationViewport.m_height, height, m_layer->heightUnits);
-        float vertMax = GetMaxValue(inPresentationViewport.m_y, inPresentationViewport.m_height,
+        float vertWidth = getValueLen(inPresentationViewport.height(), height, m_layer->heightUnits);
+        float vertMax = getMaxValue(inPresentationViewport.y(), inPresentationViewport.height(),
                                     top, m_layer->topUnits);
 
         switch (inLayer.verticalFieldValues) {
         case VerticalFieldValues::HeightBottom:
-            m_viewport.m_y = vertMin;
-            m_viewport.m_height = vertWidth;
+            m_viewport.setY(vertMin);
+            m_viewport.setHeight(vertWidth);
             break;
         case VerticalFieldValues::TopBottom:
-            m_viewport.m_y = vertMin;
-            m_viewport.m_height = vertMax - vertMin;
+            m_viewport.setY(vertMin);
+            m_viewport.setHeight(vertMax - vertMin);
             break;
         case VerticalFieldValues::TopHeight:
-            m_viewport.m_height = vertWidth;
-            m_viewport.m_y = vertMax - vertWidth;
+            m_viewport.setHeight(vertWidth);
+            m_viewport.setY(vertMax - vertWidth);
             break;
         }
     }
 
-    m_viewport.m_width = qMax(1.0f, m_viewport.m_width);
-    m_viewport.m_height = qMax(1.0f, m_viewport.m_height);
+    m_viewport.setWidth(qMax<qreal>(1.0f, m_viewport.width()));
+    m_viewport.setHeight(qMax<qreal>(1.0f, m_viewport.height()));
     // Now force the viewport to be a multiple of four in width and height.  This is because
     // when rendering to a texture we have to respect this and not forcing it causes scaling issues
     // that are noticeable especially in situations where customers are using text and such.
-    float originalWidth = m_viewport.m_width;
-    float originalHeight = m_viewport.m_height;
+    float originalWidth = m_viewport.width();
+    float originalHeight = m_viewport.height();
 
-    m_viewport.m_width = (float)QDemonTextRendererInterface::nextMultipleOf4((quint32)m_viewport.m_width);
-    m_viewport.m_height = (float)QDemonTextRendererInterface::nextMultipleOf4((quint32)m_viewport.m_height);
+    m_viewport.setWidth((float)QDemonTextRendererInterface::nextMultipleOf4((quint32)m_viewport.width()));
+    m_viewport.setHeight((float)QDemonTextRendererInterface::nextMultipleOf4((quint32)m_viewport.height()));
 
     // Now fudge the offsets to account for this slight difference
-    m_viewport.m_x += (originalWidth - m_viewport.m_width) / 2.0f;
-    m_viewport.m_y += (originalHeight - m_viewport.m_height) / 2.0f;
+    m_viewport.setX(m_viewport.x() + (originalWidth - m_viewport.width()) / 2.0f);
+    m_viewport.setY(m_viewport.y() + (originalHeight - m_viewport.height()) / 2.0f);
 
     m_scissor = m_viewport;
-    m_scissor.ensureInBounds(inPresentationScissor);
-    Q_ASSERT(m_scissor.m_width >= 0.0f);
-    Q_ASSERT(m_scissor.m_height >= 0.0f);
+    m_scissor &= inPresentationScissor; // ensureInBounds/intersected
+    Q_ASSERT(m_scissor.width() >= 0.0f);
+    Q_ASSERT(m_scissor.height() >= 0.0f);
 }
 
 // This is the viewport the camera will use to setup the projection.
-QDemonRenderRectF QDemonLayerRenderHelper::getLayerRenderViewport() const
+QRectF QDemonLayerRenderHelper::getLayerRenderViewport() const
 {
     if (m_offscreen)
-        return QDemonRenderRectF(0, 0, m_viewport.m_width, (float)m_viewport.m_height);
+        return QRectF(0, 0, m_viewport.width(), (float)m_viewport.height());
     else
         return m_viewport;
 }
 
 QSize QDemonLayerRenderHelper::getTextureDimensions() const
 {
-    quint32 width = (quint32)m_viewport.m_width;
-    quint32 height = (quint32)m_viewport.m_height;
+    quint32 width = (quint32)m_viewport.width();
+    quint32 height = (quint32)m_viewport.height();
     return QSize(QDemonTextRendererInterface::nextMultipleOf4(width),
                  QDemonTextRendererInterface::nextMultipleOf4(height));
 }
@@ -200,27 +199,25 @@ QSize QDemonLayerRenderHelper::getTextureDimensions() const
 QDemonCameraGlobalCalculationResult QDemonLayerRenderHelper::setupCameraForRender(QDemonRenderCamera &inCamera)
 {
     m_camera = &inCamera;
-    QDemonRenderRectF rect = getLayerRenderViewport();
+    QRectF rect = getLayerRenderViewport();
     if (m_scaleMode == ScaleModes::FitSelected) {
-        rect.m_width =
-                (float)(QDemonTextRendererInterface::nextMultipleOf4((quint32)(rect.m_width / m_scaleFactor.x())));
-        rect.m_height =
-                (float)(QDemonTextRendererInterface::nextMultipleOf4((quint32)(rect.m_height / m_scaleFactor.y())));
+        rect.setWidth((float)(QDemonTextRendererInterface::nextMultipleOf4((quint32)(rect.width() / m_scaleFactor.x()))));
+        rect.setHeight((float)(QDemonTextRendererInterface::nextMultipleOf4((quint32)(rect.height() / m_scaleFactor.y()))));
     }
     return m_camera->calculateGlobalVariables(rect, m_presentationDesignDimensions);
 }
 
 QDemonOption<QVector2D> QDemonLayerRenderHelper::getLayerMouseCoords(const QVector2D &inMouseCoords,
-                                                          const QVector2D &inWindowDimensions,
-                                                          bool inForceIntersect) const
+                                                                     const QVector2D &inWindowDimensions,
+                                                                     bool inForceIntersect) const
 {
     // First invert the y so we are dealing with numbers in a normal coordinate space.
     // Second, move into our layer's coordinate space
     QVector2D correctCoords(inMouseCoords.x(), inWindowDimensions.y() - inMouseCoords.y());
-    QVector2D theLocalMouse = m_viewport.toRectRelative(correctCoords);
+    QVector2D theLocalMouse = toRectRelative(m_viewport, correctCoords);
 
-    float theRenderRectWidth = m_viewport.m_width;
-    float theRenderRectHeight = m_viewport.m_height;
+    float theRenderRectWidth = m_viewport.width();
+    float theRenderRectHeight = m_viewport.height();
     // Crop the mouse to the rect.  Apply no further translations.
     if (inForceIntersect == false
             && (theLocalMouse.x() < 0.0f || theLocalMouse.x() >= theRenderRectWidth
@@ -249,7 +246,7 @@ QDemonOption<QDemonRenderRay> QDemonLayerRenderHelper::getPickRay(const QVector2
 
 bool QDemonLayerRenderHelper::isLayerVisible() const
 {
-    return m_scissor.m_height >= 2.0f && m_scissor.m_width >= 2.0f;
+    return m_scissor.height() >= 2.0f && m_scissor.width() >= 2.0f;
 }
 
 QT_END_NAMESPACE

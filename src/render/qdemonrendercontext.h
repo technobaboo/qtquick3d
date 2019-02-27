@@ -308,11 +308,11 @@ public:
     virtual void setScissorTestEnabled(bool inEnabled) = 0;
     virtual bool isScissorTestEnabled() const = 0;
 
-    virtual void setScissorRect(QDemonRenderRect inRect) = 0;
-    virtual QDemonRenderRect getScissorRect() const = 0;
+    virtual void setScissorRect(QRect inRect) = 0;
+    virtual QRect getScissorRect() const = 0;
 
-    virtual void setViewport(QDemonRenderRect inViewport) = 0;
-    virtual QDemonRenderRect getViewport() const = 0;
+    virtual void setViewport(QRect inViewport) = 0;
+    virtual QRect getViewport() const = 0;
 
     virtual void setColorWritesEnabled(bool inEnabled) = 0;
     virtual bool isColorWritesEnabled() const = 0;
@@ -324,9 +324,9 @@ public:
     // be due to hardware problems.
     // Set during begin render.
     static QMatrix4x4
-    ApplyVirtualViewportToProjectionMatrix(const QMatrix4x4 &inProjection,
-                                           const QDemonRenderRectF &inViewport,
-                                           const QDemonRenderRectF &inVirtualViewport);
+    applyVirtualViewportToProjectionMatrix(const QMatrix4x4 &inProjection,
+                                           const QRectF &inViewport,
+                                           const QRectF &inVirtualViewport);
 
     virtual void setRenderTarget(QSharedPointer<QDemonRenderFrameBuffer> inBuffer) = 0;
     virtual void setReadTarget(QSharedPointer<QDemonRenderFrameBuffer> inBuffer) = 0;
@@ -356,7 +356,7 @@ public:
     virtual void setDrawBuffers(QDemonConstDataRef<qint32> inDrawBufferSet) = 0;
     virtual void setReadBuffer(QDemonReadFaces::Enum inReadFace) = 0;
 
-    virtual void readPixels(QDemonRenderRect inRect, QDemonRenderReadPixelFormats::Enum inFormat,
+    virtual void readPixels(QRect inRect, QDemonRenderReadPixelFormats::Enum inFormat,
                             QDemonDataRef<quint8> inWriteBuffer) = 0;
 
     // Return the property manager for this render context
@@ -563,13 +563,13 @@ protected:
         m_backend->setRenderState(inEnabled, QDemonRenderState::ScissorTest);
     }
 
-    void doSetScissorRect(QDemonRenderRect inRect)
+    void doSetScissorRect(QRect inRect)
     {
         m_hardwarePropertyContext.m_scissorRect = inRect;
         m_backend->setScissorRect(inRect);
     }
 
-    void doSetViewport(QDemonRenderRect inViewport)
+    void doSetViewport(QRect inViewport)
     {
         m_hardwarePropertyContext.m_viewport = inViewport;
         m_backend->setViewportRect(inViewport);
@@ -949,14 +949,14 @@ public:
     {
         return m_hardwarePropertyContext.m_scissorTestEnabled;
     }
-    void setScissorRect(QDemonRenderRect inRect) override;
-    QDemonRenderRect getScissorRect() const override
+    void setScissorRect(QRect inRect) override;
+    QRect getScissorRect() const override
     {
         return m_hardwarePropertyContext.m_scissorRect;
     }
 
-    void setViewport(QDemonRenderRect inViewport) override;
-    QDemonRenderRect getViewport() const override { return m_hardwarePropertyContext.m_viewport; }
+    void setViewport(QRect inViewport) override;
+    QRect getViewport() const override { return m_hardwarePropertyContext.m_viewport; }
 
     void setColorWritesEnabled(bool inEnabled) override;
     bool isColorWritesEnabled() const override
@@ -990,7 +990,7 @@ public:
     void setDrawBuffers(QDemonConstDataRef<qint32> inDrawBufferSet) override;
     void setReadBuffer(QDemonReadFaces::Enum inReadFace) override;
 
-    void readPixels(QDemonRenderRect inRect, QDemonRenderReadPixelFormats::Enum inFormat,
+    void readPixels(QRect inRect, QDemonRenderReadPixelFormats::Enum inFormat,
                     QDemonDataRef<quint8> inWriteBuffer) override;
 
     void setRenderTarget(QSharedPointer<QDemonRenderFrameBuffer> inBuffer) override;

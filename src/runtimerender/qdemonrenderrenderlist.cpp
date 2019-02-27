@@ -42,8 +42,8 @@ struct QDemonRenderList : public QDemonRenderListInterface
     TTaskList m_tasks;
     quint32 m_nextTaskId;
     bool m_scissorEnabled;
-    QDemonRenderRect m_scissorRect;
-    QDemonRenderRect m_viewport;
+    QRect m_scissorRect;
+    QRect m_viewport;
 
     QDemonRenderList()
         : m_nextTaskId(1)
@@ -89,11 +89,11 @@ struct QDemonRenderList : public QDemonRenderListInterface
     }
 
     void setScissorTestEnabled(bool enabled) override { m_scissorEnabled = enabled; }
-    void setScissorRect(QDemonRenderRect rect) override { m_scissorRect = rect; }
-    void setViewport(QDemonRenderRect rect) override { m_viewport = rect; }
+    void setScissorRect(QRect rect) override { m_scissorRect = rect; }
+    void setViewport(QRect rect) override { m_viewport = rect; }
     bool isScissorTestEnabled() const override { return m_scissorEnabled; }
-    QDemonRenderRect getScissor() const override { return m_scissorRect; }
-    QDemonRenderRect getViewport() const override { return m_viewport; }
+    QRect getScissor() const override { return m_scissorRect; }
+    QRect getViewport() const override { return m_viewport; }
 };
 }
 

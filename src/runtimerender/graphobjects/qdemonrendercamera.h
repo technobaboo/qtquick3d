@@ -119,21 +119,21 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderCamera : public QDemonGraphNode
     // our global transform.
     void lookAt(const QVector3D &inCameraPos, const QVector3D &inUpDir, const QVector3D &inTargetPos);
 
-    QDemonCameraGlobalCalculationResult calculateGlobalVariables(const QDemonRenderRectF &inViewport,
+    QDemonCameraGlobalCalculationResult calculateGlobalVariables(const QRectF &inViewport,
                                                             const QVector2D &inDesignDimensions);
-    bool calculateProjection(const QDemonRenderRectF &inViewport, const QVector2D &inDesignDimensions);
-    bool computeFrustumOrtho(const QDemonRenderRectF &inViewport, const QVector2D &inDesignDimensions);
+    bool calculateProjection(const QRectF &inViewport, const QVector2D &inDesignDimensions);
+    bool computeFrustumOrtho(const QRectF &inViewport, const QVector2D &inDesignDimensions);
     // Used when rendering the widgets in studio.  This scales the widget when in orthographic
     // mode in order to have
     // constant size on screen regardless.
     // Number is always greater than one
-    float getOrthographicScaleFactor(const QDemonRenderRectF &inViewport,
+    float getOrthographicScaleFactor(const QRectF &inViewport,
                                      const QVector2D &inDesignDimensions) const;
-    bool computeFrustumPerspective(const QDemonRenderRectF &inViewport,
+    bool computeFrustumPerspective(const QRectF &inViewport,
                                    const QVector2D &inDesignDimensions);
     // Text may be scaled so that it doesn't appear pixellated when the camera itself is doing
     // the scaling.
-    float getTextScaleFactor(const QDemonRenderRectF &inViewport,
+    float getTextScaleFactor(const QRectF &inViewport,
                              const QVector2D &inDesignDimensions) const;
 
     void calculateViewProjectionMatrix(QMatrix4x4 &outMatrix) const;
@@ -147,7 +147,7 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderCamera : public QDemonGraphNode
 
     // Return a normalized rect that describes the area the camera is rendering to.
     // This takes into account the various camera properties (scale mode, scale anchor).
-    QDemonCuboidRect getCameraBounds(const QDemonRenderRectF &inViewport,
+    QDemonCuboidRect getCameraBounds(const QRectF &inViewport,
                                 const QVector2D &inDesignDimensions) const;
 
     // Setup a camera VP projection for rendering offscreen.
@@ -159,7 +159,7 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderCamera : public QDemonGraphNode
     // Unproject a point (x,y) in viewport relative coordinates meaning
     // left, bottom is 0,0 and values are increasing right,up respectively.
     QDemonRenderRay unproject(const QVector2D &inLayerRelativeMouseCoords,
-                              const QDemonRenderRectF &inViewport,
+                              const QRectF &inViewport,
                               const QVector2D &inDesignDimensions) const;
 
     // Unproject a given coordinate to a 3d position that lies on the same camera
@@ -168,7 +168,7 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderCamera : public QDemonGraphNode
     QVector3D unprojectToPosition(const QVector3D &inGlobalPos, const QDemonRenderRay &inRay) const;
 
     float verticalFov(float aspectRatio) const;
-    float verticalFov(const QDemonRenderRectF &inViewport) const;
+    float verticalFov(const QRectF &inViewport) const;
 };
 
 QT_END_NAMESPACE

@@ -217,9 +217,9 @@ void QDemonRendererImpl::renderLayer(QDemonRenderLayer &inLayer,
                 !theRenderContext->isAdvancedBlendHwSupported() &&
                 !theRenderContext->isAdvancedBlendHwSupportedKHR()) {
             // Create and set up FBO and texture for advanced blending SW fallback
-            QDemonRenderRect viewport = theRenderContext->getViewport();
-            m_layerBlendTexture.ensureTexture(viewport.m_width + viewport.m_x,
-                                              viewport.m_height + viewport.m_y,
+            QRect viewport = theRenderContext->getViewport();
+            m_layerBlendTexture.ensureTexture(viewport.width() + viewport.x(),
+                                              viewport.height() + viewport.y(),
                                               QDemonRenderTextureFormats::RGBA8);
             if (m_blendFb == nullptr)
                 m_blendFb = theRenderContext->createFrameBuffer();
@@ -316,13 +316,13 @@ QDemonOption<QDemonCuboidRect> QDemonRendererImpl::getCameraBounds(const QDemonG
     return QDemonOption<QDemonCuboidRect>();
 }
 
-void QDemonRendererImpl::drawScreenRect(QDemonRenderRectF inRect, const QVector3D &inColor)
+void QDemonRendererImpl::drawScreenRect(QRectF inRect, const QVector3D &inColor)
 {
     QDemonRenderCamera theScreenCamera;
     theScreenCamera.markDirty(NodeTransformDirtyFlag::TransformIsDirty);
-    QDemonRenderRectF theViewport(m_context->getViewport());
+    QRectF theViewport(m_context->getViewport());
     theScreenCamera.flags.setOrthographic(true);
-    theScreenCamera.calculateGlobalVariables(theViewport, QVector2D(theViewport.m_width, theViewport.m_height));
+    theScreenCamera.calculateGlobalVariables(theViewport, QVector2D(theViewport.width(), theViewport.height()));
     generateXYQuad();
     if (!m_screenRectShader) {
         QSharedPointer<QDemonShaderProgramGeneratorInterface> theGenerator(getProgramGenerator());
@@ -348,17 +348,18 @@ void QDemonRendererImpl::drawScreenRect(QDemonRenderRectF inRect, const QVector3
     }
     if (m_screenRectShader) {
         // Fudge the rect by one pixel to ensure we see all the corners.
-        if (inRect.m_width > 1)
-            inRect.m_width -= 1;
-        if (inRect.m_height > 1)
-            inRect.m_height -= 1;
-        inRect.m_x += 1;
-        inRect.m_y += 1;
+        if (inRect.width() > 1)
+            inRect.setWidth(inRect.width() - 1);
+        if (inRect.height() > 1)
+            inRect.setHeight(inRect.height() - 1);
+        inRect.setX(inRect.x() + 1);
+        inRect.setY(inRect.y() + 1);
         // Figure out the rect center.
         QDemonGraphNode theNode;
 
-        QVector2D rectGlobalCenter = inRect.center();
-        QVector2D rectCenter(theViewport.toNormalizedRectRelative(rectGlobalCenter));
+        const QPointF &center = inRect.center();
+        QVector2D rectGlobalCenter = {float(center.x()), float(center.y())};
+        QVector2D rectCenter(toNormalizedRectRelative(theViewport, rectGlobalCenter));
         theNode.position.setX(rectCenter.x());
         theNode.position.setY(rectCenter.y());
         theNode.markDirty(NodeTransformDirtyFlag::TransformIsDirty);
@@ -375,7 +376,7 @@ void QDemonRendererImpl::drawScreenRect(QDemonRenderRectF inRect, const QVector3
         m_context->setActiveShader(m_screenRectShader);
         m_screenRectShader->setPropertyValue("model_view_projection", theMVP);
         m_screenRectShader->setPropertyValue("output_color", inColor);
-        m_screenRectShader->setPropertyValue("rectangle_dims", QVector3D(inRect.m_width / 2.0f, inRect.m_height / 2.0f, 0.0f));
+        m_screenRectShader->setPropertyValue("rectangle_dims", QVector3D(inRect.width() / 2.0f, inRect.height() / 2.0f, 0.0f));
     }
     if (!m_rectInputAssembler) {
         Q_ASSERT(m_quadVertexBuffer);
@@ -411,8 +412,8 @@ void QDemonRendererImpl::setupWidgetLayer()
 
     if (!m_widgetTexture) {
         QSharedPointer<QDemonResourceManagerInterface> theManager = m_demonContext->getResourceManager();
-        m_widgetTexture = theManager->allocateTexture2D(m_beginFrameViewport.m_width,
-                                                        m_beginFrameViewport.m_height,
+        m_widgetTexture = theManager->allocateTexture2D(m_beginFrameViewport.width(),
+                                                        m_beginFrameViewport.height(),
                                                         QDemonRenderTextureFormats::RGBA8);
         m_widgetFbo = theManager->allocateFrameBuffer();
         m_widgetFbo->attach(QDemonRenderFrameBufferAttachments::Color0,
@@ -463,7 +464,7 @@ void QDemonRendererImpl::endFrame()
         theCamera.markDirty(NodeTransformDirtyFlag::TransformIsDirty);
         theCamera.flags.setOrthographic(true);
         QVector2D theTextureDims((float)theDetails.width, (float)theDetails.height);
-        theCamera.calculateGlobalVariables(QDemonRenderRect(0, 0, theDetails.width, theDetails.height), theTextureDims);
+        theCamera.calculateGlobalVariables(QRect(0, 0, theDetails.width, theDetails.height), theTextureDims);
         QMatrix4x4 theViewProj;
         theCamera.calculateViewProjectionMatrix(theViewProj);
         renderQuad(theTextureDims, theViewProj, *m_widgetTexture);
@@ -817,8 +818,8 @@ QVector3D QDemonRendererImpl::projectPosition(QDemonGraphNode &inNode, const QVe
     projPos.setX(projPos.x() / projPos.w());
     projPos.setY(projPos.y() / projPos.w());
 
-    QDemonRenderRectF theViewport = theData->layerPrepResult->getLayerToPresentationViewport();
-    QVector2D theDims((float)theViewport.m_width, (float)theViewport.m_height);
+    QRectF theViewport = theData->layerPrepResult->getLayerToPresentationViewport();
+    QVector2D theDims((float)theViewport.width(), (float)theViewport.height());
     projPos.setX(projPos.x() + 1.0);
     projPos.setY(projPos.y() + 1.0);
     projPos.setX(projPos.x() * 0.5);
@@ -829,8 +830,8 @@ QVector3D QDemonRendererImpl::projectPosition(QDemonGraphNode &inNode, const QVe
     mouseVec.setX(mouseVec.x() * theDims.x());
     mouseVec.setY(mouseVec.y() * theDims.y());
 
-    mouseVec.setX(mouseVec.x() + theViewport.m_x);
-    mouseVec.setY(mouseVec.y() + theViewport.m_y);
+    mouseVec.setX(mouseVec.x() + theViewport.x());
+    mouseVec.setY(mouseVec.y() + theViewport.y());
 
     // Flip the y into window coordinates so it matches the mouse.
     QSize theWindow = m_demonContext->getWindowDimensions();
@@ -864,11 +865,11 @@ QDemonOption<QDemonLayerPickSetup> QDemonRendererImpl::getLayerPickSetup(QDemonR
     QMatrix4x4 theTransScale;
     QDemonRenderCamera &theCamera(*thePrepResult.getCamera());
 
-    QDemonRenderRectF layerToPresentation = thePrepResult.getLayerToPresentationViewport();
+    QRectF layerToPresentation = thePrepResult.getLayerToPresentationViewport();
     // Offsetting is already taken care of in the camera's projection.
     // All we need to do is to scale and translate the image.
-    layerToPresentation.m_x = 0;
-    layerToPresentation.m_y = 0;
+    layerToPresentation.setX(0);
+    layerToPresentation.setY(0);
     QVector2D theMouse(*theLocalMouse);
     // The viewport will need to center at this location
     QVector2D viewportDims((float)inPickDims.width(), (float)inPickDims.height());
@@ -878,9 +879,9 @@ QDemonOption<QDemonLayerPickSetup> QDemonRendererImpl::getLayerPickSetup(QDemonR
     // bottomLeft.x = layerToPresentation.m_Width - bottomLeft.x;
     // bottomLeft.y = layerToPresentation.m_Height - bottomLeft.y;
     // Virtual rect is relative to the layer.
-    QDemonRenderRectF thePickRect(bottomLeft.x(), bottomLeft.y(), viewportDims.x(), viewportDims.y());
+    QRectF thePickRect(bottomLeft.x(), bottomLeft.y(), viewportDims.x(), viewportDims.y());
     QMatrix4x4 projectionPremult;
-    projectionPremult = QDemonRenderContext::ApplyVirtualViewportToProjectionMatrix(projectionPremult, layerToPresentation, thePickRect);
+    projectionPremult = QDemonRenderContext::applyVirtualViewportToProjectionMatrix(projectionPremult, layerToPresentation, thePickRect);
     projectionPremult = mat44::getInverse(projectionPremult);
 
     QMatrix4x4 globalInverse = mat44::getInverse(theCamera.globalTransform);
@@ -888,11 +889,11 @@ QDemonOption<QDemonLayerPickSetup> QDemonRendererImpl::getLayerPickSetup(QDemonR
     // For now we won't setup the scissor, so we may be off by inPickDims at most because
     // GetLayerMouseCoords will return
     // false if the mouse is too far off the layer.
-    return QDemonLayerPickSetup(projectionPremult, theVP, QDemonRenderRect(0, 0, (quint32)layerToPresentation.m_width,
-                                                                           (quint32)layerToPresentation.m_height));
+    return QDemonLayerPickSetup(projectionPremult, theVP, QRect(0, 0, (quint32)layerToPresentation.width(),
+                                                                           (quint32)layerToPresentation.height()));
 }
 
-QDemonOption<QDemonRenderRectF> QDemonRendererImpl::getLayerRect(QDemonRenderLayer &inLayer)
+QDemonOption<QRectF> QDemonRendererImpl::getLayerRect(QDemonRenderLayer &inLayer)
 {
     QSharedPointer<QDemonLayerRenderData> theData = getOrCreateLayerRenderDataForNode(inLayer);
     if (theData == nullptr || theData->camera == nullptr) {
@@ -1116,7 +1117,7 @@ bool QDemonRendererImpl::prepareTextureAtlasForRender()
         m_context->setScissorTestEnabled(false);
         m_context->setCullingEnabled(false);
         m_context->setBlendingEnabled(false);
-        m_context->setViewport(QDemonRenderRect(0, 0, theResult.first.textWidth, theResult.first.textHeight));
+        m_context->setViewport(QRect(0, 0, theResult.first.textWidth, theResult.first.textHeight));
 
         QDemonRenderCamera theCamera;
         theCamera.clipNear = -1.0;
@@ -1125,7 +1126,7 @@ bool QDemonRendererImpl::prepareTextureAtlasForRender()
         theCamera.flags.setOrthographic(true);
         QVector2D theTextureDims((float)theResult.first.textWidth,
                                  (float)theResult.first.textHeight);
-        theCamera.calculateGlobalVariables(QDemonRenderRect(0, 0, theResult.first.textWidth, theResult.first.textHeight), theTextureDims);
+        theCamera.calculateGlobalVariables(QRect(0, 0, theResult.first.textWidth, theResult.first.textHeight), theTextureDims);
         // We want a 2D lower left projection
         float *writePtr(theCamera.projection.data());
         writePtr[12] = -1;
@@ -1741,7 +1742,7 @@ void QDemonRendererImpl::renderText2D(float x, float y, QDemonOption<QVector3D> 
                     theCamera.markDirty(NodeTransformDirtyFlag::TransformIsDirty);
                     theCamera.flags.setOrthographic(true);
                     QVector2D theWindowDim((float)theWindow.width(), (float)theWindow.height());
-                    theCamera.calculateGlobalVariables(QDemonRenderRect(0, 0, theWindow.width(), theWindow.height()), theWindowDim);
+                    theCamera.calculateGlobalVariables(QRect(0, 0, theWindow.width(), theWindow.height()), theWindowDim);
                     // We want a 2D lower left projection
                     float *writePtr(theCamera.projection.data());
                     writePtr[12] = -1;

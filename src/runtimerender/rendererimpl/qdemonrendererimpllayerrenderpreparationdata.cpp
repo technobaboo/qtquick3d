@@ -1051,8 +1051,8 @@ void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportD
     QVector2D thePresentationDimensions((float)inViewportDimensions.width(),
                                         (float)inViewportDimensions.height());
     QSharedPointer<QDemonRenderListInterface> theGraph(renderer->getDemonContext()->getRenderList());
-    QDemonRenderRect theViewport(theGraph->getViewport());
-    QDemonRenderRect theScissor(theGraph->getViewport());
+    QRect theViewport(theGraph->getViewport());
+    QRect theScissor(theGraph->getViewport());
     if (theGraph->isScissorTestEnabled())
         theScissor = renderer->getContext()->getScissorRect();
     bool wasDirty = false;
@@ -1306,21 +1306,19 @@ void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportD
                 if (thePrepResult.flags.requiresStencilBuffer())
                     thePrepResult.flags.setShouldRenderToTexture(true);
             } else {
-                QDemonRenderRect theViewport =
-                        thePrepResult.getLayerToPresentationViewport().toIntegerRect();
+                QRect theViewport = thePrepResult.getLayerToPresentationViewport().toRect();
                 bool theScissor = true;
-                QDemonRenderRect theScissorRect =
-                        thePrepResult.getLayerToPresentationScissorRect().toIntegerRect();
+                QRect theScissorRect = thePrepResult.getLayerToPresentationScissorRect().toRect();
                 // This happens here because if there are any fancy render steps
                 QSharedPointer<QDemonRenderListInterface> theRenderList(renderer->getDemonContext()->getRenderList());
                 QDemonRenderContext &theContext(*renderer->getContext());
                 QDemonRenderListScopedProperty<bool> _listScissorEnabled(
                             *theRenderList, &QDemonRenderListInterface::isScissorTestEnabled,
                             &QDemonRenderListInterface::setScissorTestEnabled, theScissor);
-                QDemonRenderListScopedProperty<QDemonRenderRect> _listViewport(
+                QDemonRenderListScopedProperty<QRect> _listViewport(
                             *theRenderList, &QDemonRenderListInterface::getViewport, &QDemonRenderListInterface::setViewport,
                             theViewport);
-                QDemonRenderListScopedProperty<QDemonRenderRect> _listScissor(
+                QDemonRenderListScopedProperty<QRect> _listScissor(
                             *theRenderList, &QDemonRenderListInterface::getScissor, &QDemonRenderListInterface::setScissorRect,
                             theScissorRect);
                 // Some plugins don't use the render list so they need the actual gl context
@@ -1328,10 +1326,10 @@ void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportD
                 QDemonRenderContextScopedProperty<bool> __scissorEnabled(
                             theContext, &QDemonRenderContext::isScissorTestEnabled,
                             &QDemonRenderContext::setScissorTestEnabled, true);
-                QDemonRenderContextScopedProperty<QDemonRenderRect> __scissorRect(
+                QDemonRenderContextScopedProperty<QRect> __scissorRect(
                             theContext, &QDemonRenderContext::getScissorRect,
                             &QDemonRenderContext::setScissorRect, theScissorRect);
-                QDemonRenderContextScopedProperty<QDemonRenderRect> __viewportRect(
+                QDemonRenderContextScopedProperty<QRect> __viewportRect(
                             theContext, &QDemonRenderContext::getViewport, &QDemonRenderContext::setViewport,
                             theViewport);
                 QDemonOffscreenRenderFlags theResult = lastFrameOffscreenRenderer->needsRender(

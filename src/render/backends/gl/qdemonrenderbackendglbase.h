@@ -115,10 +115,10 @@ public:
     void setBlendFunc(const QDemonRenderBlendFunctionArgument &blendFuncArg) override;
     void setBlendEquation(const QDemonRenderBlendEquationArgument &pBlendEquArg) override;
     void setBlendBarrier(void) override;
-    void getScissorRect(QDemonRenderRect *pRect) override;
-    void setScissorRect(const QDemonRenderRect &rect) override;
-    void getViewportRect(QDemonRenderRect *pRect) override;
-    void setViewportRect(const QDemonRenderRect &rect) override;
+    void getScissorRect(QRect *pRect) override;
+    void setScissorRect(const QRect &rect) override;
+    void getViewportRect(QRect *pRect) override;
+    void setViewportRect(const QRect &rect) override;
 
     void setClearColor(const QVector4D *pClearColor) override;
     void clear(QDemonRenderClearFlags flags) override;

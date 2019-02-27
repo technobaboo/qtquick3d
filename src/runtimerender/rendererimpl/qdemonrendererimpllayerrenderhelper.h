@@ -54,15 +54,15 @@ QT_BEGIN_NAMESPACE
 struct QDemonLayerRenderHelper
 {
 private:
-    QDemonRenderRectF m_presentationViewport;
-    QDemonRenderRectF m_presentationScissor;
+    QRectF m_presentationViewport;
+    QRectF m_presentationScissor;
     QVector2D m_presentationDesignDimensions;
     QDemonRenderLayer *m_layer = nullptr;
     QDemonRenderCamera *m_camera = nullptr;
     bool m_offscreen = false;
 
-    QDemonRenderRectF m_viewport;
-    QDemonRenderRectF m_scissor;
+    QRectF m_viewport;
+    QRectF m_scissor;
 
     ScaleModes::Enum m_scaleMode;
     QVector2D m_scaleFactor;
@@ -70,16 +70,16 @@ private:
 public:
     QDemonLayerRenderHelper() = default;
 
-    QDemonLayerRenderHelper(const QDemonRenderRectF &inPresentationViewport,
-                            const QDemonRenderRectF &inPresentationScissor,
+    QDemonLayerRenderHelper(const QRectF &inPresentationViewport,
+                            const QRectF &inPresentationScissor,
                             const QVector2D &inPresentationDesignDimensions,
                             QDemonRenderLayer &inLayer,
                             bool inOffscreen,
                             ScaleModes::Enum inScaleMode,
                             QVector2D inScaleFactor);
 
-    QDemonRenderRectF getPresentationViewport() const { return m_presentationViewport; }
-    QDemonRenderRectF getPresentationScissor() const { return m_presentationScissor; }
+    QRectF getPresentationViewport() const { return m_presentationViewport; }
+    QRectF getPresentationScissor() const { return m_presentationScissor; }
     QVector2D getPresentationDesignDimensions() const { return m_presentationDesignDimensions; }
     QDemonRenderLayer *getLayer() const { return m_layer; }
     QDemonRenderCamera *getCamera() const { return m_camera; }
@@ -87,10 +87,10 @@ public:
 
     // Does not differ whether offscreen or not, simply states how this layer maps to the
     // presentation
-    QDemonRenderRectF getLayerToPresentationViewport() const { return m_viewport; }
+    QRectF getLayerToPresentationViewport() const { return m_viewport; }
     // Does not differ whether offscreen or not, scissor rect of how this layer maps to
     // presentation.
-    QDemonRenderRectF getLayerToPresentationScissorRect() const { return m_scissor; }
+    QRectF getLayerToPresentationScissorRect() const { return m_scissor; }
 
     QSize getTextureDimensions() const;
 
@@ -111,7 +111,7 @@ private:
     // Viewport used when actually rendering.  In the case where this is an offscreen item then
     // it may be
     // different than the layer to presentation viewport.
-    QDemonRenderRectF getLayerRenderViewport() const;
+    QRectF getLayerRenderViewport() const;
 };
 QT_END_NAMESPACE
 

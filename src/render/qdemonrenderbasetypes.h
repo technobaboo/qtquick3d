@@ -2023,128 +2023,44 @@ typedef QDemonRenderShaderProgram *QDemonRenderShaderProgramPtr;
 //typedef QDemonDataRef<quint32> QDemonU32List;
 //typedef QDemonDataRef<const char *> QDemonConstCharPtrList;
 
-template <typename TDataType>
-struct QDemonRenderRectT
+// Return coordinates in pixels but relative to this rect.
+static inline constexpr QVector2D toRectRelative(const QRectF &r, const QVector2D &absoluteCoordinates)
 {
-    typedef TDataType TRectType;
-    TDataType m_x = 0;
-    TDataType m_y = 0;
-    TDataType m_width = 0;
-    TDataType m_height = 0;
-    QDemonRenderRectT(TDataType x, TDataType y, TDataType w, TDataType h)
-        : m_x(x)
-        , m_y(y)
-        , m_width(w)
-        , m_height(h)
-    {
-    }
-    QDemonRenderRectT() = default;
-    bool operator==(const QDemonRenderRectT<TDataType> &inOther) const
-    {
-        return m_x == inOther.m_x && m_y == inOther.m_y && m_width == inOther.m_width
-                && m_height == inOther.m_height;
-    }
-    bool operator!=(const QDemonRenderRectT<TDataType> &inOther) const
-    {
-        return !(*this == inOther);
-    }
-    TDataType getRightExtent() const { return m_x + m_width; }
-    TDataType getBottomExtent() const { return m_y + m_height; }
-    // Ensure this rect is inside the bounds of the other rect
-    void ensureInBounds(const QDemonRenderRectT<TDataType> &inOther)
-    {
-        TDataType rightExtent = qMin(getRightExtent(), inOther.getRightExtent());
-        TDataType bottomExtent = qMin(getBottomExtent(), inOther.getBottomExtent());
-        m_x = qMax(m_x, inOther.m_x);
-        m_y = qMax(m_y, inOther.m_y);
-        m_width = qMax(static_cast<TDataType>(0), rightExtent - m_x);
-        m_height = qMax(static_cast<TDataType>(0), bottomExtent - m_y);
-    }
-};
+    return QVector2D(absoluteCoordinates.x() - float(r.x()), absoluteCoordinates.y() - float(r.y()));
+}
 
-// Render rects are setup to be in the coordinate space of the gl viewport,
-// so x, y are left, bottom with increasing units going to the right and
-// up respectively.
-struct QDemonRenderRect : public QDemonRenderRectT<qint32>
+static inline constexpr QVector2D halfDims(const QRectF &r)
 {
-    typedef QDemonRenderRectT<qint32> TBase;
-    QDemonRenderRect(qint32 x, qint32 y, qint32 w, qint32 h)
-        : TBase(x, y, w, h)
-    {
-    }
-    QDemonRenderRect()
-        : TBase()
-    {
-    }
-};
+    return QVector2D(float(r.width() / 2.0), float(r.height() / 2.0));
+}
 
-struct QDemonRenderRectF : public QDemonRenderRectT<float>
+// Take coordinates in global space and move local space where 0,0 is the center
+// of the rect but return value in pixels, not in normalized -1,1 range
+static inline QVector2D toNormalizedRectRelative(const QRectF &r, QVector2D absoluteCoordinates)
 {
-    typedef QDemonRenderRectT<float> TBase;
-    QDemonRenderRectF(float x, float y, float w, float h)
-        : TBase(x, y, w, h)
-    {
-    }
-    QDemonRenderRectF()
-        : TBase()
-    {
-    }
-    QDemonRenderRectF(const QDemonRenderRect &inRect)
-        : TBase(float(inRect.m_x), float(inRect.m_y), float(inRect.m_width),
-                float(inRect.m_height))
-    {
-    }
-    QDemonRenderRect toIntegerRect() const
-    {
-        return QDemonRenderRect(qint32(m_x), qint32(m_y), qint32(m_width + .5f),
-                                qint32(m_height + .5f));
-    }
-    QVector2D bottomLeft() const { return QVector2D(m_x, m_y); }
-    QVector2D center() const
-    {
-        QVector2D halfD = halfDims();
-        return QVector2D(m_x + halfD.x(), m_y + halfD.y());
-    }
-    QVector2D halfDims() const { return QVector2D(m_width / 2.0f, m_height / 2.0f); }
-    // Normalized coordinates are in the range of -1,1 where -1 is the left, bottom edges
-    // and 1 is the top,right edges.
-    QVector2D absoluteToNormalizedCoordinates(QVector2D absoluteCoordinates) const
-    {
-        QVector2D relativeCoords(toRectRelative(absoluteCoordinates));
-        return relativeToNormalizedCoordinates(relativeCoords);
-    }
+    // normalize them
+    const QVector2D relativeCoords(toRectRelative(r, absoluteCoordinates));
+    const QVector2D halfD(halfDims(r));
+    const QVector2D normalized((relativeCoords.x() / halfD.x()) - 1.0f, (relativeCoords.y() / halfD.y()) - 1.0f);
+    return QVector2D(normalized.x() * halfD.x(), normalized.y() * halfD.y());
+}
 
-    QVector2D relativeToNormalizedCoordinates(QVector2D rectRelativeCoords) const
-    {
-        QVector2D halfD(halfDims());
-        QVector2D retval((rectRelativeCoords.x() / halfD.x()) - 1.0f,
-                         (rectRelativeCoords.y() / halfD.y()) - 1.0f);
-        return retval;
-    }
+static inline constexpr QVector2D relativeToNormalizedCoordinates(const QRectF &r, QVector2D rectRelativeCoords)
+{
+    return {(rectRelativeCoords.x() / halfDims(r).x()) - 1.0f, (rectRelativeCoords.y() / halfDims(r).y()) - 1.0f};
+}
 
-    // Take coordinates in global space and move local space where 0,0 is the center
-    // of the rect but return value in pixels, not in normalized -1,1 range
-    QVector2D toNormalizedRectRelative(QVector2D absoluteCoordinates) const
-    {
-        // normalize them
-        QVector2D relativeCoords(toRectRelative(absoluteCoordinates));
-        QVector2D halfD(halfDims());
-        QVector2D normalized((relativeCoords.x() / halfD.x()) - 1.0f,
-                             (relativeCoords.y() / halfD.y()) - 1.0f);
-        return QVector2D(normalized.x() * halfD.x(), normalized.y() * halfD.y());
-    }
+// Normalized coordinates are in the range of -1,1 where -1 is the left, bottom edges
+// and 1 is the top,right edges.
+static inline constexpr QVector2D absoluteToNormalizedCoordinates(const QRectF &r, const QVector2D &absoluteCoordinates)
+{
+    return relativeToNormalizedCoordinates(r, toRectRelative(r, absoluteCoordinates));
+}
 
-    // Return coordinates in pixels but relative to this rect.
-    QVector2D toRectRelative(QVector2D absoluteCoordinates) const
-    {
-        return QVector2D(absoluteCoordinates.x() - m_x, absoluteCoordinates.y() - m_y);
-    }
-
-    QVector2D toAbsoluteCoords(QVector2D inRelativeCoords) const
-    {
-        return QVector2D(inRelativeCoords.x() + m_x, inRelativeCoords.y() + m_y);
-    }
-};
+static inline constexpr QVector2D toAbsoluteCoords(const QRectF &r, const QVector2D &inRelativeCoords)
+{
+    return QVector2D(inRelativeCoords.x() + float(r.x()), inRelativeCoords.y() + float(r.y()));
+}
 
 template <typename TDataType>
 struct QDemonRenderGenericVec2

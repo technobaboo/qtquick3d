@@ -153,9 +153,9 @@ public:
                 &QDemonRenderContext::getRenderTarget,
                 &QDemonRenderContext::setRenderTarget,
                 mFrameBuffer);
-            QDemonRenderContextScopedProperty<QDemonRenderRect> viewport(
+            QDemonRenderContextScopedProperty<QRect> viewport(
                 *m_Context.data(), &QDemonRenderContext::getViewport, &QDemonRenderContext::setViewport,
-                QDemonRenderRect(0, 0, mFBWidth, mFBHeight));
+                QRect(0, 0, mFBWidth, mFBHeight));
             QDemonRenderContextScopedProperty<QVector4D> clearColor(
                 *m_Context.data(), &QDemonRenderContext::getClearColor, &QDemonRenderContext::setClearColor,
                 QVector4D(1.0f, .6f, .6f, 1.6f));
@@ -164,7 +164,7 @@ public:
             DrawIndexedArrays(QVector3D());
         }
         if (m_viewportDirty) {
-            m_Context->setViewport(QDemonRenderRect(0, 0, this->width(), this->height()));
+            m_Context->setViewport(QRect(0, 0, this->width(), this->height()));
             m_viewportDirty = false;
         }
 
