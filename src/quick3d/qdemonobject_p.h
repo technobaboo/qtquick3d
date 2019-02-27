@@ -211,6 +211,9 @@ public:
     QDemonObject *nextDirtyItem;
     QDemonObject**prevDirtyItem;
 
+    bool isResourceNode() const;
+    bool isSpatialNode() const;
+
     void setCulled(bool);
 
     QDemonWindow *window;

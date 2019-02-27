@@ -197,8 +197,6 @@ QDemonGraphObject *QDemonMaterial::updateSpatialNode(QDemonGraphObject *node)
         node = customMaterial;
     }
 
-    Q_EMIT updated();
-
     return node;
 }
 

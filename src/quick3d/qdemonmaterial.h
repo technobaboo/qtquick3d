@@ -57,8 +57,6 @@ Q_SIGNALS:
     void displacementMapChanged(QDemonImage* displacementMap);
     void displacementAmountChanged(float displacementAmount);
 
-    void updated();
-
 protected:
     QDemonGraphObject *updateSpatialNode(QDemonGraphObject *node);
 private:

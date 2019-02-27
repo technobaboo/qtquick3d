@@ -71,7 +71,8 @@ public:
 
     //QDemonNode::UpdatePaintNodeData updatePaintNodeData;
 
-    QDemonObject *dirtyItemList;
+    QDemonObject *dirtySpatialNodeList;
+    QDemonObject *dirtyResourceList;
     QList<QDemonGraphObject *> cleanupNodeList;
 
     QVector<QDemonObject *> itemsToPolish;

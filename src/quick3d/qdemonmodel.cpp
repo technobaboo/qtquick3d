@@ -224,7 +224,6 @@ void QDemonModel::qmlAppendMaterial(QQmlListProperty<QDemonMaterial> *list, QDem
     QDemonModel *self = static_cast<QDemonModel *>(list->object);
     self->m_materials.push_back(material);
     self->update();
-    self->connect(material, &QDemonMaterial::updated, self, &QDemonObject::update);
 }
 
 QDemonMaterial *QDemonModel::qmlMaterialAt(QQmlListProperty<QDemonMaterial> *list, int index)

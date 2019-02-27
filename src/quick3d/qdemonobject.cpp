@@ -666,10 +666,20 @@ void QDemonObjectPrivate::addToDirtyList()
         Q_ASSERT(!nextDirtyItem);
 
         QDemonWindowPrivate *p = QDemonWindowPrivate::get(window);
-        nextDirtyItem = p->dirtyItemList;
-        if (nextDirtyItem) QDemonObjectPrivate::get(nextDirtyItem)->prevDirtyItem = &nextDirtyItem;
-        prevDirtyItem = &p->dirtyItemList;
-        p->dirtyItemList = q;
+        if (isResourceNode()) {
+            nextDirtyItem = p->dirtyResourceList;
+            if (nextDirtyItem)
+                QDemonObjectPrivate::get(nextDirtyItem)->prevDirtyItem = &nextDirtyItem;
+            prevDirtyItem = &p->dirtyResourceList;
+            p->dirtyResourceList = q;
+        } else {
+            nextDirtyItem = p->dirtySpatialNodeList;
+            if (nextDirtyItem)
+                QDemonObjectPrivate::get(nextDirtyItem)->prevDirtyItem = &nextDirtyItem;
+            prevDirtyItem = &p->dirtySpatialNodeList;
+            p->dirtySpatialNodeList = q;
+        }
+
         p->dirtyItem(q);
     }
     Q_ASSERT(prevDirtyItem);
@@ -685,6 +695,59 @@ void QDemonObjectPrivate::removeFromDirtyList()
     }
     Q_ASSERT(!prevDirtyItem);
     Q_ASSERT(!nextDirtyItem);
+}
+
+bool QDemonObjectPrivate::isResourceNode() const
+{
+    Q_Q(const QDemonObject);
+    switch (q->type()) {
+    case QDemonObject::Layer:
+    case QDemonObject::Node:
+    case QDemonObject::Light:
+    case QDemonObject::Camera:
+    case QDemonObject::Model:
+    case QDemonObject::Text:
+    case QDemonObject::Path:
+        return false;
+    case QDemonObject::Presentation:
+    case QDemonObject::Scene:
+    case QDemonObject::DefaultMaterial:
+    case QDemonObject::Image:
+    case QDemonObject::Effect:
+    case QDemonObject::CustomMaterial:
+    case QDemonObject::ReferencedMaterial:
+    case QDemonObject::PathSubPath:
+    case QDemonObject::Lightmaps:
+        return true;
+    default:
+        return false;
+    }
+}
+
+bool QDemonObjectPrivate::isSpatialNode() const
+{
+    Q_Q(const QDemonObject);
+    switch (q->type()) {
+    case QDemonObject::Layer:
+    case QDemonObject::Node:
+    case QDemonObject::Light:
+    case QDemonObject::Camera:
+    case QDemonObject::Model:
+    case QDemonObject::Text:
+    case QDemonObject::Path:
+        return true;
+    case QDemonObject::Presentation:
+    case QDemonObject::Scene:
+    case QDemonObject::DefaultMaterial:
+    case QDemonObject::Image:
+    case QDemonObject::Effect:
+    case QDemonObject::CustomMaterial:
+    case QDemonObject::ReferencedMaterial:
+    case QDemonObject::PathSubPath:
+    case QDemonObject::Lightmaps:
+    default:
+        return false;
+    }
 }
 
 void QDemonObjectPrivate::setCulled(bool cull)

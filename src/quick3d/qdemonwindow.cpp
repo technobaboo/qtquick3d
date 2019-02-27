@@ -463,7 +463,8 @@ void QDemonWindow::handleApplicationStateChanged(Qt::ApplicationState state)
 QDemonWindowPrivate::QDemonWindowPrivate()
     : contentItem(nullptr)
     , activeFocusItem(nullptr)
-    , dirtyItemList(nullptr)
+    , dirtySpatialNodeList(nullptr)
+    , dirtyResourceList(nullptr)
     , devicePixelRatio(0)
     , clearColor(Qt::white)
     , clearBeforeRendering(true)
@@ -696,18 +697,25 @@ void QDemonWindowPrivate::updateDirtyNodes()
 {
     cleanupNodes();
 
-    QDemonObject *updateList = dirtyItemList;
-    dirtyItemList = nullptr;
-    if (updateList)
-        QDemonObjectPrivate::get(updateList)->prevDirtyItem = &updateList;
+    auto updateNodes = [this](QDemonObject *updateList) {
+        if (updateList)
+            QDemonObjectPrivate::get(updateList)->prevDirtyItem = &updateList;
 
-    while (updateList) {
-        QDemonObject *item = updateList;
-        QDemonObjectPrivate *itemPriv = QDemonObjectPrivate::get(item);
-        itemPriv->removeFromDirtyList();
+        while (updateList) {
+            QDemonObject *item = updateList;
+            QDemonObjectPrivate *itemPriv = QDemonObjectPrivate::get(item);
+            itemPriv->removeFromDirtyList();
 
-        updateDirtyNode(item);
-    }
+            updateDirtyNode(item);
+        }
+    };
+
+    updateNodes(dirtyResourceList);
+    updateNodes(dirtySpatialNodeList);
+
+    dirtyResourceList = nullptr;
+    dirtySpatialNodeList = nullptr;
+
 }
 
 void QDemonWindowPrivate::cleanupNodes()
