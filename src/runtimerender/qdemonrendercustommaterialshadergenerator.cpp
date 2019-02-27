@@ -259,11 +259,8 @@ struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
     typedef QHash<QSharedPointer<QDemonRenderShaderProgram>, QSharedPointer<QDemonShaderGeneratorGeneratedShader>> TProgramToShaderMap;
     typedef QPair<size_t, QSharedPointer<QDemonShaderLightProperties>> TCustomMaterialLightEntry;
     typedef QPair<size_t, QDemonRenderCachedShaderProperty<QDemonRenderTexture2D *>> TShadowMapEntry;
-    typedef QPair<size_t, QDemonRenderCachedShaderProperty<QDemonRenderTextureCube *>>
-    TShadowCubeEntry;
-    typedef QHash<QString,
-    QSharedPointer<QDemonRenderConstantBuffer>>
-    TStrConstanBufMap;
+    typedef QPair<size_t, QDemonRenderCachedShaderProperty<QDemonRenderTextureCube *>> TShadowCubeEntry;
+    typedef QHash<QString, QSharedPointer<QDemonRenderConstantBuffer>> TStrConstanBufMap;
 
     QDemonRenderContextInterface *m_renderContext;
     QSharedPointer<QDemonShaderProgramGeneratorInterface> m_programGenerator;

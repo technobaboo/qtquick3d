@@ -978,7 +978,7 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
             if (!platformDir.isEmpty()) {
                 QTextStream stream(&fullPath);
                 stream << platformDir << QLatin1Char('/') << inPathToEffect;
-                theStream = m_coreContext->getInputStreamFactory()->getStreamForFile(fullPath.toLatin1().data());
+                theStream = m_coreContext->getInputStreamFactory()->getStreamForFile(fullPath.toLatin1().data(), true);
             }
 
             if (theStream.isNull()) {
@@ -986,12 +986,12 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
                 QTextStream stream(&fullPath);
                 stream << defaultDir << QLatin1Char('/') << ver << QLatin1Char('/')
                        << inPathToEffect;
-                theStream = m_coreContext->getInputStreamFactory()->getStreamForFile(fullPath.toLatin1().data());
+                theStream = m_coreContext->getInputStreamFactory()->getStreamForFile(fullPath.toLatin1().data(), true);
                 if (theStream.isNull()) {
                     fullPath.clear();
                     QTextStream stream(&fullPath);
                     stream << defaultDir << QLatin1Char('/') << inPathToEffect;
-                    theStream = m_coreContext->getInputStreamFactory()->getStreamForFile(fullPath.toLatin1().data());
+                    theStream = m_coreContext->getInputStreamFactory()->getStreamForFile(fullPath.toLatin1().data(), false);
                 }
             }
             if (!theStream.isNull()) {
