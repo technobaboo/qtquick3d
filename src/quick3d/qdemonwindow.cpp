@@ -332,11 +332,16 @@ void QDemonWindow::focusOutEvent(QFocusEvent *ev)
 
 bool QDemonWindow::event(QEvent *e)
 {
-    //Q_D(QDemonWindow);
+    Q_D(QDemonWindow);
 
     switch (e->type()) {
-    if (e->type() == QEvent::Type(QDemonWindowPrivate::FullUpdateRequest))
+    case QEvent::Type(QDemonWindowPrivate::FullUpdateRequest):
         update();
+        break;
+    case QEvent::UpdateRequest:
+        if (d->windowManager)
+            d->windowManager->handleUpdateRequest(this);
+        break;
     }
     return QWindow::event(e);
 }

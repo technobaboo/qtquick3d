@@ -31,6 +31,12 @@ DemonWindow {
             source: "#Cube"
             materials: [defaultMaterial]
             rotation: Qt.vector3d(0.4, 0.4, 0.4)
+
+
+            SequentialAnimation on rotation {
+                loops: Animation.Infinite
+                PropertyAnimation { duration: 2000; to: Qt.vector3d(0, 2, 2) }
+            }
         }
     }
 
