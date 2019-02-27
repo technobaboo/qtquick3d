@@ -36,7 +36,6 @@
 
 #include <QtDemon/QDemonBounds3>
 #include <QtDemon/QDemonFlags>
-#include <QtDemon/QDemonNoCopy>
 
 #include <QtGui/QMatrix4x4>
 #include <QtGui/QVector3D>

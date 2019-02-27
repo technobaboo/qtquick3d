@@ -35,7 +35,6 @@
 #include <QtDemonRender/qdemonrenderinputassembler.h>
 
 #include <QtDemon/QDemonBounds3>
-#include <QtDemon/QDemonNoCopy>
 
 QT_BEGIN_NAMESPACE
 
@@ -142,8 +141,10 @@ struct QDemonRenderSubset : public QDemonRenderSubsetBase
     }
 };
 
-struct QDemonRenderMesh : public QDemonNoCopy
+struct QDemonRenderMesh
 {
+    Q_DISABLE_COPY(QDemonRenderMesh)
+
     QVector<QDemonRenderSubset> subsets;
     QVector<QDemonRenderJoint> joints;
     QDemonRenderDrawMode::Enum drawMode;

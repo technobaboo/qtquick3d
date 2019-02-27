@@ -1,7 +1,6 @@
 #ifndef QDEMONREFCOUNTED_H
 #define QDEMONREFCOUNTED_H
 
-#include <QtDemon/qdemonnocopy.h>
 #include <QtDemon/qtdemonglobal.h>
 
 QT_BEGIN_NAMESPACE
@@ -26,8 +25,10 @@ inline void QDemonSafeRelease(TObjType *&item)
 /**Scoped pointer that releases its data
         when it is being destroyed*/
 template <typename TObjType>
-struct QDemonScopedReleasable : public QDemonNoCopy
+struct QDemonScopedReleasable
 {
+    Q_DISABLE_COPY(QDemonScopedReleasable)
+
     TObjType *mPtr;
     QDemonScopedReleasable()
         : mPtr(nullptr)

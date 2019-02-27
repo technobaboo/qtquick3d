@@ -8,7 +8,6 @@ DEFINES += QT_BUILD_DEMON_LIB
 HEADERS += \
     qtdemonglobal.h \
     qtdemonglobal_p.h \
-    qdemonnocopy.h \
     qdemonrefcounted.h \
     qdemonflags.h \
     qdemonbounds3.h \
@@ -31,7 +30,6 @@ SOURCES += \
     qdemonplane.cpp \
     qdemonutils.cpp \
     qdemondataref.cpp \
-    qdemonnocopy.cpp \
     qdemonperftimer.cpp \
     qdemontime.cpp
 

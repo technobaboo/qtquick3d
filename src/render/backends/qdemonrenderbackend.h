@@ -31,7 +31,6 @@
 #define QDEMON_RENDER_BACKEND_H
 
 #include <QtDemonRender/qtdemonrenderglobal.h>
-#include <QtDemon/QDemonNoCopy>
 #include <QtDemonRender/qdemonrenderbasetypes.h>
 #include <QtDemon/QDemonBounds3>
 
