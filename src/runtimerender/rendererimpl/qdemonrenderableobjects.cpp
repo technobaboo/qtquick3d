@@ -158,8 +158,8 @@ void QDemonSubsetRenderableBase::renderShadowMapPass(const QVector2D &inCameraVe
 }
 
 void QDemonSubsetRenderableBase::renderDepthPass(const QVector2D &inCameraVec,
-                                            QDemonRenderableImage *inDisplacementImage,
-                                            float inDisplacementAmount)
+                                                 QDemonRenderableImage *inDisplacementImage,
+                                                 float inDisplacementAmount)
 {
     QDemonRenderContext &context(*generator->getContext());
     QSharedPointer<QDemonRenderableDepthPrepassShader> shader = nullptr;

@@ -5,7 +5,6 @@
 
 #include <QtCore/QRunnable>
 #include <QtCore/QCoreApplication>
-#include <QtCore/QScopedPointer>
 #include <QtCore/private/qabstractanimation_p.h>
 
 #include <QtGui/QOffscreenSurface>
@@ -297,9 +296,8 @@ void QDemonGuiThreadRenderLoop::renderWindow(QDemonWindow *window)
 
     bool current = false;
 
-    if (gl) {
+    if (gl)
         current = gl->makeCurrent(window);
-    }
 
     bool lastDirtyWindow = true;
     auto i = m_windows.constBegin();
