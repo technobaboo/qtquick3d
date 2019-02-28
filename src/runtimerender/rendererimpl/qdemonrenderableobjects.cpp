@@ -88,10 +88,11 @@ QDemonTextScaleAndOffset::QDemonTextScaleAndOffset(QDemonRenderTexture2D &inText
 }
 
 void QDemonSubsetRenderableBase::renderShadowMapPass(const QVector2D &inCameraVec,
-                                                const QDemonRenderLight *inLight, const QDemonRenderCamera &inCamera,
-                                                QDemonShadowMapEntry *inShadowMapEntry)
+                                                     const QDemonRenderLight *inLight,
+                                                     const QDemonRenderCamera &inCamera,
+                                                     QDemonShadowMapEntry *inShadowMapEntry)
 {
-    QDemonRenderContext &context(*generator->getContext());
+    auto context = generator->getContext();
     QSharedPointer<QDemonRenderableDepthPrepassShader> shader = nullptr;
     QSharedPointer<QDemonRenderInputAssembler> pIA = nullptr;
 
@@ -123,7 +124,7 @@ void QDemonSubsetRenderableBase::renderShadowMapPass(const QVector2D &inCameraVe
     QMatrix4x4 theModelViewProjection = inShadowMapEntry->m_lightVP * globalTransform;
     // QMatrix4x4 theModelView = inLight->m_GlobalTransform.getInverse() * m_GlobalTransform;
 
-    context.setActiveShader(shader->shader);
+    context->setActiveShader(shader->shader);
     shader->mvp.set(theModelViewProjection);
     shader->cameraPosition.set(inCamera.position);
     shader->globalTransform.set(globalTransform);
@@ -153,15 +154,15 @@ void QDemonSubsetRenderableBase::renderShadowMapPass(const QVector2D &inCameraVe
         shader->tessellation.disableCulling.set(1.0);
     }
 
-    context.setInputAssembler(pIA);
-    context.draw(subset.primitiveType, subset.count, subset.offset);
+    context->setInputAssembler(pIA);
+    context->draw(subset.primitiveType, subset.count, subset.offset);
 }
 
 void QDemonSubsetRenderableBase::renderDepthPass(const QVector2D &inCameraVec,
                                                  QDemonRenderableImage *inDisplacementImage,
                                                  float inDisplacementAmount)
 {
-    QDemonRenderContext &context(*generator->getContext());
+    auto context = generator->getContext();
     QSharedPointer<QDemonRenderableDepthPrepassShader> shader = nullptr;
     QSharedPointer<QDemonRenderInputAssembler> pIA = nullptr;
     QDemonRenderableImage *displacementImage = inDisplacementImage;
@@ -184,8 +185,8 @@ void QDemonSubsetRenderableBase::renderDepthPass(const QVector2D &inCameraVec,
     else
         pIA = subset.inputAssembler;
 
-    context.setActiveShader(shader->shader);
-    context.setCullingEnabled(true);
+    context->setActiveShader(shader->shader);
+    context->setCullingEnabled(true);
 
     shader->mvp.set(modelContext.modelViewProjection);
 
@@ -230,21 +231,21 @@ void QDemonSubsetRenderableBase::renderDepthPass(const QVector2D &inCameraVec,
         shader->tessellation.disableCulling.set(0.0);
     }
 
-    context.setInputAssembler(pIA);
-    context.draw(subset.primitiveType, subset.count, subset.offset);
+    context->setInputAssembler(pIA);
+    context->draw(subset.primitiveType, subset.count, subset.offset);
 }
 
 // An interface to the shader generator that is available to the renderables
 
 void QDemonSubsetRenderable::render(const QVector2D &inCameraVec, TShaderFeatureSet inFeatureSet)
 {
-    QDemonRenderContext &context(*generator->getContext());
+    auto context = generator->getContext();
 
     QSharedPointer<QDemonShaderGeneratorGeneratedShader> shader = generator->getShader(*this, inFeatureSet);
     if (shader == nullptr)
         return;
 
-    context.setActiveShader(shader->shader);
+    context->setActiveShader(shader->shader);
 
     generator->getDemonContext()->getDefaultMaterialShaderGenerator()->setMaterialProperties(
                 shader->shader, material, inCameraVec, modelContext.modelViewProjection,
@@ -264,7 +265,7 @@ void QDemonSubsetRenderable::render(const QVector2D &inCameraVec, TShaderFeature
 
         if (subset.wireframeMode) {
             // we need the viewport matrix
-            QRect theViewport(context.getViewport());
+            QRect theViewport(context->getViewport());
             float matrixData[16] = {
                 float(theViewport.width()) / 2.0f, 0.0f, 0.0f, 0.0f,
                 0.0f, float(theViewport.width()) / 2.0f, 0.0f, 0.0f,
@@ -278,9 +279,9 @@ void QDemonSubsetRenderable::render(const QVector2D &inCameraVec, TShaderFeature
         }
     }
 
-    context.setCullingEnabled(true);
-    context.setInputAssembler(subset.inputAssembler);
-    context.draw(subset.primitiveType, subset.count, subset.offset);
+    context->setCullingEnabled(true);
+    context->setInputAssembler(subset.inputAssembler);
+    context->draw(subset.primitiveType, subset.count, subset.offset);
 }
 
 void QDemonSubsetRenderable::renderDepthPass(const QVector2D &inCameraVec)
@@ -350,20 +351,18 @@ void QDemonTextRenderable::render(const QVector2D &inCameraVec)
 
 void QDemonTextRenderable::renderDepthPass(const QVector2D &inCameraVec)
 {
-    QDemonRenderContext &context(*generator.getContext());
+    auto context = generator.getContext();
     QSharedPointer<QDemonTextDepthShader> theDepthShader = generator.getTextDepthShader();
     if (theDepthShader == nullptr)
         return;
 
     if (!text.m_pathFontDetails) {
         // we may change stencil test state
-        QDemonRenderContextScopedProperty<bool> __stencilTest(
-                    context, &QDemonRenderContext::isStencilTestEnabled,
-                    &QDemonRenderContext::setStencilTestEnabled, true);
+        QDemonRenderContextScopedProperty<bool> __stencilTest(*context, &QDemonRenderContext::isStencilTestEnabled, &QDemonRenderContext::setStencilTestEnabled, true);
 
         QSharedPointer<QDemonRenderShaderProgram> theShader(theDepthShader->shader);
-        context.setCullingEnabled(false);
-        context.setActiveShader(theShader);
+        context->setCullingEnabled(false);
+        context->setActiveShader(theShader);
         theDepthShader->mvp.set(modelViewProjection);
         theDepthShader->sampler.set(text.m_textTexture.data());
         const QDemonTextScaleAndOffset &theScaleAndOffset(*this);
@@ -380,28 +379,27 @@ void QDemonTextRenderable::renderDepthPass(const QVector2D &inCameraVec)
                 (float)theTextTextureDetails.textHeight / (float)theTextureDetails.height;
         theDepthShader->textDimensions.set(
                     QVector3D(theWidthScale, theHeightScale, theTextTextureDetails.flipY ? 1.0f : 0.0f));
-        context.setInputAssembler(theDepthShader->quadInputAssembler);
-        context.draw(QDemonRenderDrawMode::Triangles,
+        context->setInputAssembler(theDepthShader->quadInputAssembler);
+        context->draw(QDemonRenderDrawMode::Triangles,
                      theDepthShader->quadInputAssembler->getIndexCount(), 0);
     } else {
-        QDemonRenderBoolOp::Enum theDepthFunction = context.getDepthFunction();
-        bool isDepthEnabled = context.isDepthTestEnabled();
-        bool isStencilEnabled = context.isStencilTestEnabled();
-        bool isDepthWriteEnabled = context.isDepthWriteEnabled();
-        QDemonRenderStencilFunctionArgument theArg(QDemonRenderBoolOp::NotEqual,
-                                                   0, 0xFF);
-        QDemonRenderStencilOperationArgument theOpArg(
-                    QDemonRenderStencilOp::Keep, QDemonRenderStencilOp::Keep,
-                    QDemonRenderStencilOp::Zero);
+        QDemonRenderBoolOp::Enum theDepthFunction = context->getDepthFunction();
+        bool isDepthEnabled = context->isDepthTestEnabled();
+        bool isStencilEnabled = context->isStencilTestEnabled();
+        bool isDepthWriteEnabled = context->isDepthWriteEnabled();
+        QDemonRenderStencilFunctionArgument theArg(QDemonRenderBoolOp::NotEqual, 0, 0xFF);
+        QDemonRenderStencilOperationArgument theOpArg(QDemonRenderStencilOp::Keep,
+                                                      QDemonRenderStencilOp::Keep,
+                                                      QDemonRenderStencilOp::Zero);
         QSharedPointer<QDemonRenderDepthStencilState> depthStencilState =
-                context.createDepthStencilState(isDepthEnabled, isDepthWriteEnabled,
+                context->createDepthStencilState(isDepthEnabled, isDepthWriteEnabled,
                                                 theDepthFunction, false, theArg, theArg, theOpArg,
                                                 theOpArg);
 
-        context.setActiveShader(nullptr);
-        context.setCullingEnabled(false);
+        context->setActiveShader(nullptr);
+        context->setCullingEnabled(false);
 
-        context.setDepthStencilState(depthStencilState);
+        context->setDepthStencilState(depthStencilState);
 
         // setup transform
         QMatrix4x4 offsetMatrix;
@@ -410,18 +408,18 @@ void QDemonTextRenderable::renderDepthPass(const QVector2D &inCameraVec)
 
         QMatrix4x4 pathMatrix = text.m_pathFontItem->getTransform();
 
-        context.setPathProjectionMatrix(viewProjection);
-        context.setPathModelViewMatrix(globalTransform * offsetMatrix * pathMatrix);
+        context->setPathProjectionMatrix(viewProjection);
+        context->setPathModelViewMatrix(globalTransform * offsetMatrix * pathMatrix);
 
         // first pass
         text.m_pathFontDetails->stencilFillPathInstanced(text.m_pathFontItem);
 
         // second pass
-        context.setStencilTestEnabled(true);
+        context->setStencilTestEnabled(true);
         text.m_pathFontDetails->coverFillPathInstanced(text.m_pathFontItem);
 
-        context.setStencilTestEnabled(isStencilEnabled);
-        context.setDepthFunction(theDepthFunction);
+        context->setStencilTestEnabled(isStencilEnabled);
+        context->setDepthFunction(theDepthFunction);
     }
 }
 

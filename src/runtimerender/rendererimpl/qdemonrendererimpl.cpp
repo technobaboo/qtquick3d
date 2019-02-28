@@ -989,15 +989,14 @@ void QDemonRendererImpl::renderQuad(const QVector2D inDimensions, const QMatrix4
 {
     m_context->setCullingEnabled(false);
     QSharedPointer<QDemonLayerSceneShader> theShader = getSceneLayerShader();
-    QDemonRenderContext &theContext(*m_context);
-    theContext.setActiveShader(theShader->shader);
+    m_context->setActiveShader(theShader->shader);
     theShader->mvp.set(inMVP);
     theShader->dimensions.set(inDimensions);
     theShader->sampler.set(&inQuadTexture);
 
     generateXYQuad();
-    theContext.setInputAssembler(m_quadInputAssembler);
-    theContext.draw(QDemonRenderDrawMode::Triangles, m_quadIndexBuffer->getNumIndices(), 0);
+    m_context->setInputAssembler(m_quadInputAssembler);
+    m_context->draw(QDemonRenderDrawMode::Triangles, m_quadIndexBuffer->getNumIndices(), 0);
 }
 
 void QDemonRendererImpl::renderQuad()
