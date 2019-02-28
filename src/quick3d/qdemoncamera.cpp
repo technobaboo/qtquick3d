@@ -158,11 +158,6 @@ QDemonGraphObject *QDemonCamera::updateSpatialNode(QDemonGraphObject *node)
     camera->scaleAnchor = CameraScaleAnchors::Enum(m_scaleAnchor);
     camera->frustumScale = QVector2D(m_frustumScaleX, m_frustumScaleY);
 
-    // ## TODO: figure out API to set projection (pretty important)
-    // ## DEBUG: fix this
-    camera->lookAt(position(), QVector3D(0, 1, 0), QVector3D(0, 0, 0));
-
-
     m_cameraNode = camera;
 
     return node;

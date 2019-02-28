@@ -21,10 +21,23 @@ DemonWindow {
             lightType: DemonLight.Directional
         }
 
-        DemonCamera {
-            id: camera
-            position: Qt.vector3d(0, 0, -200)
+
+        DemonNode {
+            id: cameraSpinner
+            position: Qt.vector3d(0, 0, 0);
+
+            DemonCamera {
+                id: camera
+                position: Qt.vector3d(0, 0, -200)
+            }
+
+            SequentialAnimation on rotation {
+                loops: Animation.Infinite
+                PropertyAnimation { duration: 5000; to: Qt.vector3d(0, 2, 2); from: Qt.vector3d(0, 0, 0) }
+                PropertyAnimation { duration: 5000; to: Qt.vector3d(0, 0, 0); from: Qt.vector3d(0, 2, 2) }
+            }
         }
+
 
         ColorfulCube {
             id: cube1
