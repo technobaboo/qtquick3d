@@ -2,6 +2,8 @@
 
 #include <QtDemonRuntimeRender/qdemonrendernode.h>
 
+#include <QtMath>
+
 QT_BEGIN_NAMESPACE
 
 QDemonNode::QDemonNode()
@@ -216,7 +218,9 @@ QDemonGraphObject *QDemonNode::updateSpatialNode(QDemonGraphObject *node)
     }
     if (spacialNode->rotation != m_rotation) {
         transformIsDirty = true;
-        spacialNode->rotation = m_rotation;
+        spacialNode->rotation = QVector3D(qDegreesToRadians(m_rotation.x()),
+                                          qDegreesToRadians(m_rotation.y()),
+                                          qDegreesToRadians(m_rotation.z()));
     }
     if (spacialNode->scale != m_scale) {
         transformIsDirty = true;
