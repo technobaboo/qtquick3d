@@ -14,6 +14,21 @@ QDemonNode::~QDemonNode()
 
 }
 
+float QDemonNode::x() const
+{
+    return m_position.x();
+}
+
+float QDemonNode::y() const
+{
+    return m_position.y();
+}
+
+float QDemonNode::z() const
+{
+    return m_position.z();
+}
+
 QVector3D QDemonNode::rotation() const
 {
     return m_rotation;
@@ -62,6 +77,39 @@ bool QDemonNode::visible() const
 QDemonObject::Type QDemonNode::type() const
 {
     return QDemonObject::Node;
+}
+
+void QDemonNode::setX(float x)
+{
+    if (qFuzzyCompare(m_position.x(), x))
+        return;
+
+    m_position.setX(x);
+    emit positionChanged(m_position);
+    emit xChanged(x);
+    update();
+}
+
+void QDemonNode::setY(float y)
+{
+    if (qFuzzyCompare(m_position.y(), y))
+        return;
+
+    m_position.setY(y);
+    emit positionChanged(m_position);
+    emit yChanged(y);
+    update();
+}
+
+void QDemonNode::setZ(float z)
+{
+    if (qFuzzyCompare(m_position.z(), z))
+        return;
+
+    m_position.setZ(z);
+    emit positionChanged(m_position);
+    emit zChanged(z);
+    update();
 }
 
 void QDemonNode::setRotation(QVector3D rotation)

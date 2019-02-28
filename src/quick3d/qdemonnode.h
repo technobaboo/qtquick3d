@@ -13,6 +13,9 @@ class QDemonWindowPrivate;
 class Q_QUICK3D_EXPORT QDemonNode : public QDemonObject
 {
     Q_OBJECT
+    Q_PROPERTY(float x READ x WRITE setX NOTIFY xChanged)
+    Q_PROPERTY(float y READ y WRITE setY NOTIFY yChanged)
+    Q_PROPERTY(float z READ z WRITE setZ NOTIFY zChanged)
     Q_PROPERTY(QVector3D rotation READ rotation WRITE setRotation NOTIFY rotationChanged)
     Q_PROPERTY(QVector3D position READ position WRITE setPosition NOTIFY positionChanged)
     Q_PROPERTY(QVector3D scale READ scale WRITE setScale NOTIFY scaleChanged)
@@ -48,6 +51,9 @@ public:
     QDemonNode();
     ~QDemonNode() override;
 
+    float x() const;
+    float y() const;
+    float z() const;
     QVector3D rotation() const;
     QVector3D position() const;
     QVector3D scale() const;
@@ -61,6 +67,9 @@ public:
     QDemonObject::Type type() const override;
 
 public Q_SLOTS:
+    void setX(float x);
+    void setY(float y);
+    void setZ(float z);
     void setRotation(QVector3D rotation);
     void setPosition(QVector3D position);
     void setScale(QVector3D scale);
@@ -72,6 +81,9 @@ public Q_SLOTS:
     void setVisible(bool visible);
 
 Q_SIGNALS:
+    void xChanged(float x);
+    void yChanged(float y);
+    void zChanged(float z);
     void rotationChanged(QVector3D rotation);
     void positionChanged(QVector3D position);
     void scaleChanged(QVector3D scale);
