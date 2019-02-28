@@ -16,25 +16,24 @@ DemonWindow {
         height: 100
         activeCamera: camera
 
-        DemonLight {
-            id: directionalLight
-            lightType: DemonLight.Directional
-        }
-
-
         DemonNode {
             id: cameraSpinner
             position: Qt.vector3d(0, 0, 0);
 
+            // Light always points the same direction as camera
+            DemonLight {
+                id: directionalLight
+                lightType: DemonLight.Directional
+            }
+
             DemonCamera {
                 id: camera
-                position: Qt.vector3d(0, 0, -200)
+                position: Qt.vector3d(0, 0, -600)
             }
 
             SequentialAnimation on rotation {
                 loops: Animation.Infinite
-                PropertyAnimation { duration: 5000; to: Qt.vector3d(0, 2, 2); from: Qt.vector3d(0, 0, 0) }
-                PropertyAnimation { duration: 5000; to: Qt.vector3d(0, 0, 0); from: Qt.vector3d(0, 2, 2) }
+                PropertyAnimation { duration: 5000; to: Qt.vector3d(0, 360, 0); from: Qt.vector3d(0, 0, 0) }
             }
         }
 
