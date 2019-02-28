@@ -26,23 +26,15 @@ DemonWindow {
             position: Qt.vector3d(0, 0, -200)
         }
 
-        DemonModel {
-            id: cube
-            source: "#Cube"
-            materials: [defaultMaterial]
-            rotation: Qt.vector3d(0.4, 0.4, 0.4)
-
-
-            SequentialAnimation on rotation {
-                loops: Animation.Infinite
-                PropertyAnimation { duration: 2000; to: Qt.vector3d(0, 2, 2) }
-            }
+        ColorfulCube {
+            id: cube1
+            position: Qt.vector3d(-200, 0, 0);
         }
+
+        ColorfulCube {
+            id: cube2
+            position: Qt.vector3d(200, 0, 0);
+        }
+
     }
-
-    DemonDefaultMaterial {
-        id: defaultMaterial
-    }
-
-
 }
