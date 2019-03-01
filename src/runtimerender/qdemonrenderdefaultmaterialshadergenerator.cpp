@@ -749,12 +749,13 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
 
         if (!pCB) {
             // create
-            QDemonLightSourceShader s[QDEMON_MAX_NUM_LIGHTS];
-            QDemonDataRef<quint8> cBuffer((quint8 *)&s, (sizeof(QDemonLightSourceShader) * QDEMON_MAX_NUM_LIGHTS)
-                                          + (4 * sizeof(qint32)));
+            size_t size = sizeof(QDemonLightSourceShader) * QDEMON_MAX_NUM_LIGHTS + (4 * sizeof(qint32));
+            quint8 stackData[size];
+            QDemonLightSourceShader *s = new (stackData)QDemonLightSourceShader[QDEMON_MAX_NUM_LIGHTS];
+            QDemonDataRef<quint8> cBuffer(stackData, size);
             pCB = theContext->createConstantBuffer(
                         theName.toLocal8Bit().constData(), QDemonRenderBufferUsageType::Static,
-                        (sizeof(QDemonLightSourceShader) * QDEMON_MAX_NUM_LIGHTS) + (4 * sizeof(qint32)), cBuffer);
+                        size, cBuffer);
             if (!pCB) {
                 Q_ASSERT(false);
                 return nullptr;
