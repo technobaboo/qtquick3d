@@ -84,9 +84,8 @@ QDemonRenderConstantBuffer::QDemonRenderConstantBuffer(const QSharedPointer<QDem
 QDemonRenderConstantBuffer::~QDemonRenderConstantBuffer()
 {
     // check if we should release memory
-    if (m_shadowCopy.size()) {
+    if (m_shadowCopy.size())
         ::free(m_shadowCopy.begin());
-    }
 
     m_shadowCopy = QDemonDataRef<quint8>();
 
@@ -396,11 +395,8 @@ QSharedPointer<QDemonRenderConstantBuffer> QDemonRenderConstantBuffer::create(co
 
     if (context->getConstantBufferSupport()) {
         const QString theBufferName = QString::fromLocal8Bit(bufferName);
-        quint32 cbufSize = sizeof(QDemonRenderConstantBuffer);
-        quint8 *newMem = static_cast<quint8 *>(::malloc(cbufSize));
-        retval.reset(new (newMem) QDemonRenderConstantBuffer(
-                    context, theBufferName, size, usageType,
-                    toDataRef(const_cast<quint8 *>(bufferData.begin()), bufferData.size())));
+        retval.reset(new QDemonRenderConstantBuffer(context, theBufferName, size, usageType,
+                                                    toDataRef(const_cast<quint8 *>(bufferData.begin()), bufferData.size())));
     } else {
         Q_ASSERT(false);
     }

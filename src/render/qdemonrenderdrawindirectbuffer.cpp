@@ -90,11 +90,8 @@ QSharedPointer<QDemonRenderDrawIndirectBuffer> QDemonRenderDrawIndirectBuffer::c
     QDemonRenderContextType ctxType = context->getRenderContextType();
 
     if (!(ctxType & noDrawIndirectSupported)) {
-        quint32 bufSize = sizeof(QDemonRenderDrawIndirectBuffer);
-        quint8 *newMem = static_cast<quint8 *>(::malloc(bufSize));
-        retval.reset(new (newMem) QDemonRenderDrawIndirectBuffer(
-                    context, size, usageType,
-                    toDataRef(const_cast<quint8 *>(bufferData.begin()), bufferData.size())));
+        retval.reset(new QDemonRenderDrawIndirectBuffer(context, size, usageType,
+                                                        toDataRef(const_cast<quint8 *>(bufferData.begin()), bufferData.size())));
     } else {
         Q_ASSERT(false);
     }

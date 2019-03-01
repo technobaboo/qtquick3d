@@ -88,10 +88,7 @@ QSharedPointer<QDemonRenderIndexBuffer> QDemonRenderIndexBuffer::create(const QS
         return nullptr;
     }
 
-    quint32 ibufSize = sizeof(QDemonRenderIndexBuffer);
-    quint8 *baseMem = static_cast<quint8 *>(::malloc(ibufSize));
-    return QSharedPointer<QDemonRenderIndexBuffer>(new (baseMem) QDemonRenderIndexBuffer(
-                                                       context, size, componentType, usageType,
-                                                       toDataRef(const_cast<quint8 *>(bufferData.begin()), bufferData.size())));
+    return QSharedPointer<QDemonRenderIndexBuffer>(new QDemonRenderIndexBuffer(context, size, componentType, usageType,
+                                                                               toDataRef(const_cast<quint8 *>(bufferData.begin()), bufferData.size())));
 }
 QT_END_NAMESPACE
