@@ -8,7 +8,6 @@ DEFINES += QT_BUILD_DEMON_LIB
 HEADERS += \
     qtdemonglobal.h \
     qtdemonglobal_p.h \
-    qdemonrefcounted.h \
     qdemonflags.h \
     qdemonbounds3.h \
     qdemontransform.h \
