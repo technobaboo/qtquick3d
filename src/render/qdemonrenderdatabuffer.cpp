@@ -58,7 +58,7 @@ QDemonRenderDataBuffer::~QDemonRenderDataBuffer()
     if (m_bufferHandle) {
         m_backend->releaseBuffer(m_bufferHandle);
     }
-    m_bufferHandle = 0;
+    m_bufferHandle = nullptr;
 
     releaseMemory();
 }

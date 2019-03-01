@@ -664,7 +664,7 @@ QDemonRenderBackend::QDemonRenderBackendQueryObject QDemonRenderBackendGLBase::c
     // needs GL 3 context
     qCCritical(INVALID_OPERATION) << QObject::tr("Unsupported method: ") << __FUNCTION__;
 
-    return QDemonRenderBackendQueryObject(0);
+    return QDemonRenderBackendQueryObject(nullptr);
 }
 
 void QDemonRenderBackendGLBase::releaseQuery(QDemonRenderBackendQueryObject)
@@ -711,7 +711,7 @@ QDemonRenderBackendGLBase::createSync(QDemonRenderSyncType::Enum, QDemonRenderSy
     // needs GL 3 context
     qCCritical(INVALID_OPERATION) << QObject::tr("Unsupported method: ") << __FUNCTION__;
 
-    return QDemonRenderBackendSyncObject(0);
+    return QDemonRenderBackendSyncObject(nullptr);
 }
 
 void QDemonRenderBackendGLBase::releaseSync(QDemonRenderBackendSyncObject)
@@ -1336,7 +1336,7 @@ QDemonRenderBackendGLBase::createTessControlShader(QDemonConstDataRef<qint8> sou
 
     qCCritical(INVALID_OPERATION) << QObject::tr("Unsupported method: ") << __FUNCTION__;
 
-    return (QDemonRenderBackend::QDemonRenderBackendTessControlShaderObject)0;
+    return (QDemonRenderBackend::QDemonRenderBackendTessControlShaderObject)nullptr;
 }
 
 QDemonRenderBackend::QDemonRenderBackendTessEvaluationShaderObject
@@ -1350,7 +1350,7 @@ QDemonRenderBackendGLBase::createTessEvaluationShader(QDemonConstDataRef<qint8> 
 
     qCCritical(INVALID_OPERATION) << QObject::tr("Unsupported method: ") << __FUNCTION__;
 
-    return (QDemonRenderBackend::QDemonRenderBackendTessEvaluationShaderObject)0;
+    return (QDemonRenderBackend::QDemonRenderBackendTessEvaluationShaderObject)nullptr;
 }
 
 QDemonRenderBackend::QDemonRenderBackendGeometryShaderObject
@@ -1364,7 +1364,7 @@ QDemonRenderBackendGLBase::createGeometryShader(QDemonConstDataRef<qint8> source
 
     qCCritical(INVALID_OPERATION) << QObject::tr("Unsupported method: ") << __FUNCTION__;
 
-    return (QDemonRenderBackend::QDemonRenderBackendGeometryShaderObject)0;
+    return (QDemonRenderBackend::QDemonRenderBackendGeometryShaderObject)nullptr;
 }
 
 QDemonRenderBackend::QDemonRenderBackendComputeShaderObject
@@ -1378,7 +1378,7 @@ QDemonRenderBackendGLBase::createComputeShader(QDemonConstDataRef<qint8> source,
 
     qCCritical(INVALID_OPERATION) << QObject::tr("Unsupported method: ") << __FUNCTION__;
 
-    return (QDemonRenderBackend::QDemonRenderBackendComputeShaderObject)0;
+    return (QDemonRenderBackend::QDemonRenderBackendComputeShaderObject)nullptr;
 }
 
 void QDemonRenderBackendGLBase::releaseVertexShader(QDemonRenderBackendVertexShaderObject vso)
@@ -1680,7 +1680,7 @@ QDemonRenderBackend::QDemonRenderBackendProgramPipeline QDemonRenderBackendGLBas
 {
     // needs GL 4 context
     qCCritical(INVALID_OPERATION) << QObject::tr("Unsupported method: ") << __FUNCTION__;
-    return QDemonRenderBackend::QDemonRenderBackendProgramPipeline(0);
+    return QDemonRenderBackend::QDemonRenderBackendProgramPipeline(nullptr);
 }
 
 void QDemonRenderBackendGLBase::releaseProgramPipeline(QDemonRenderBackendProgramPipeline)
@@ -2011,7 +2011,7 @@ QDemonRenderBackend::QDemonRenderBackendPathObject QDemonRenderBackendGLBase::cr
     // Needs GL 4 backend
     qCCritical(INVALID_OPERATION) << QObject::tr("Unsupported method: ") << __FUNCTION__;
 
-    return QDemonRenderBackend::QDemonRenderBackendPathObject(0);
+    return QDemonRenderBackend::QDemonRenderBackendPathObject(nullptr);
 }
 
 void QDemonRenderBackendGLBase::releasePathNVObject(QDemonRenderBackendPathObject, size_t)
@@ -2055,7 +2055,7 @@ QDemonRenderBackend::QDemonRenderBackendPathObject QDemonRenderBackendGLBase::lo
         QDemonRenderPathFontTarget::Enum, const void *, QDemonRenderPathFontStyleFlags,
         QDemonRenderBackend::QDemonRenderBackendPathObject, float, quint32 *)
 {
-    return QDemonRenderBackendPathObject(0);
+    return QDemonRenderBackendPathObject(nullptr);
 }
 
 void QDemonRenderBackendGLBase::getPathMetrics(QDemonRenderBackendPathObject, size_t,

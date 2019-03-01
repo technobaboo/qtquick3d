@@ -906,7 +906,7 @@ bool QDemonRenderContextImpl::applyPreDrawProperties()
 void QDemonRenderContextImpl::onPostDraw()
 {
     // reset input assembler binding
-    m_backend->setInputAssembler(nullptr, 0);
+    m_backend->setInputAssembler(nullptr, nullptr);
     // Texture unit 0 is used for setting up and loading textures.
     // Bugs happen if we load a texture then setup the sampler.
     // Then we load another texture.  Because when loading we use texture unit 0,

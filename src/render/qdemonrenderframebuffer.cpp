@@ -51,7 +51,7 @@ QDemonRenderFrameBuffer::~QDemonRenderFrameBuffer()
 {
     m_context->frameBufferDestroyed(this);
     m_backend->releaseRenderTarget(m_bufferHandle);
-    m_bufferHandle = 0;
+    m_bufferHandle = nullptr;
     m_attachmentBits = 0;
 
     // release attachments

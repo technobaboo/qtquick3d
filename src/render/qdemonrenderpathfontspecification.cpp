@@ -63,7 +63,7 @@ void QDemonRenderPathFontSpecification::loadPathGlyphs(const char *fontName,
 
     // create fonts based on the input
     m_pathRenderHandle = m_backend->loadPathGlyphsIndexedRange(
-                QDemonRenderPathFontTarget::FileFont, fontName, QDemonRenderPathFontStyleFlags(), 0, m_emScale,
+                QDemonRenderPathFontTarget::FileFont, fontName, QDemonRenderPathFontStyleFlags(), nullptr, m_emScale,
                 &m_numFontGlyphs);
 
     // Fallback in case the previuos call fails
@@ -71,7 +71,7 @@ void QDemonRenderPathFontSpecification::loadPathGlyphs(const char *fontName,
     // Note that sans is an inbuild driver font
     if (!m_pathRenderHandle) {
         m_pathRenderHandle = m_backend->loadPathGlyphsIndexedRange(
-                    QDemonRenderPathFontTarget::SystemFont, "Arial", QDemonRenderPathFontStyleFlags(), 0,
+                    QDemonRenderPathFontTarget::SystemFont, "Arial", QDemonRenderPathFontStyleFlags(), nullptr,
                     m_emScale, &m_numFontGlyphs);
     }
 

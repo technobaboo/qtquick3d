@@ -866,7 +866,7 @@ void QDemonRenderBackendGLES2Impl::setQueryTimer(QDemonRenderBackendQueryObject)
 QDemonRenderBackend::QDemonRenderBackendSyncObject
 QDemonRenderBackendGLES2Impl::createSync(QDemonRenderSyncType::Enum, QDemonRenderSyncFlags)
 {
-    GLsync syncID = 0;
+    GLsync syncID = nullptr;
     return QDemonRenderBackendSyncObject(syncID);
 }
 
