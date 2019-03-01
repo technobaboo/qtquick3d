@@ -191,12 +191,12 @@ void QDemonRenderBackendGL3Impl::setMultisampledTextureData2D(
     NVRENDER_BACKEND_UNUSED(fixedsamplelocations);
 #else
     GLuint texID = HandleToID_cast(GLuint, size_t, to);
-    GLenum glTarget = m_conversion.fromTextureTargetToGL(target);
+    GLenum glTarget = GLConversion::fromTextureTargetToGL(target);
     GL_CALL_EXTRA_FUNCTION(glActiveTexture(GL_TEXTURE0));
     GL_CALL_EXTRA_FUNCTION(glBindTexture(glTarget, texID));
 
     QDemonRenderTextureSwizzleMode::Enum swizzleMode = QDemonRenderTextureSwizzleMode::NoSwizzle;
-    internalFormat = m_conversion.replaceDeprecatedTextureFormat(getRenderContextType(),
+    internalFormat = GLConversion::replaceDeprecatedTextureFormat(getRenderContextType(),
                                                                  internalFormat, swizzleMode);
 
     GLenum glformat = 0, glInternalFormat = 0, gltype = GL_UNSIGNED_BYTE;
@@ -205,7 +205,7 @@ void QDemonRenderBackendGL3Impl::setMultisampledTextureData2D(
         GLConversion::fromUncompressedTextureFormatToGL(getRenderContextType(), internalFormat,
                                                         glformat, gltype, glInternalFormat);
     else if (QDemonRenderTextureFormats::isDepthTextureFormat(internalFormat))
-        m_conversion.fromDepthTextureFormatToGL(getRenderContextType(), internalFormat,
+        GLConversion::fromDepthTextureFormatToGL(getRenderContextType(), internalFormat,
                                                 glformat, gltype, glInternalFormat);
 
     GL_CALL_MULTISAMPLE_EXT(glTexImage2DMultisample(glTarget, GLsizei(samples), glInternalFormat,
@@ -221,31 +221,31 @@ void QDemonRenderBackendGL3Impl::setTextureData3D(
         qint32 border, QDemonRenderTextureFormats::Enum format, const void *hostPtr)
 {
     GLuint texID = HandleToID_cast(GLuint, size_t, to);
-    GLenum glTarget = m_conversion.fromTextureTargetToGL(target);
+    GLenum glTarget = GLConversion::fromTextureTargetToGL(target);
     GL_CALL_EXTRA_FUNCTION(glActiveTexture(GL_TEXTURE0));
     GL_CALL_EXTRA_FUNCTION(glBindTexture(glTarget, texID));
     bool conversionRequired = format != internalFormat;
 
     QDemonRenderTextureSwizzleMode::Enum swizzleMode = QDemonRenderTextureSwizzleMode::NoSwizzle;
-    internalFormat = m_conversion.replaceDeprecatedTextureFormat(getRenderContextType(),
+    internalFormat = GLConversion::replaceDeprecatedTextureFormat(getRenderContextType(),
                                                                  internalFormat, swizzleMode);
 
     GLenum glformat = 0, glInternalFormat = 0, gltype = GL_UNSIGNED_BYTE;
 
     if (QDemonRenderTextureFormats::isUncompressedTextureFormat(internalFormat))
-        m_conversion.fromUncompressedTextureFormatToGL(getRenderContextType(), internalFormat,
+        GLConversion::fromUncompressedTextureFormatToGL(getRenderContextType(), internalFormat,
                                                        glformat, gltype, glInternalFormat);
 
     if (conversionRequired) {
         GLenum dummy;
-        m_conversion.fromUncompressedTextureFormatToGL(getRenderContextType(), format, glformat,
+        GLConversion::fromUncompressedTextureFormatToGL(getRenderContextType(), format, glformat,
                                                        gltype, dummy);
     } else if (QDemonRenderTextureFormats::isCompressedTextureFormat(internalFormat)) {
-        m_conversion.fromUncompressedTextureFormatToGL(getRenderContextType(), format, glformat,
+        GLConversion::fromUncompressedTextureFormatToGL(getRenderContextType(), format, glformat,
                                                        gltype, glInternalFormat);
-        glInternalFormat = m_conversion.fromCompressedTextureFormatToGL(internalFormat);
+        glInternalFormat = GLConversion::fromCompressedTextureFormatToGL(internalFormat);
     } else if (QDemonRenderTextureFormats::isDepthTextureFormat(format))
-        m_conversion.fromDepthTextureFormatToGL(getRenderContextType(), format, glformat,
+        GLConversion::fromDepthTextureFormatToGL(getRenderContextType(), format, glformat,
                                                 gltype, glInternalFormat);
 
     GL_CALL_EXTRA_FUNCTION(glTexImage3D(glTarget, level, glInternalFormat, GLsizei(width), GLsizei(height),
@@ -270,7 +270,7 @@ void QDemonRenderBackendGL3Impl::updateSampler(
     NVRENDER_BACKEND_UNUSED(lodBias);
     NVRENDER_BACKEND_UNUSED(borderColor);
 
-    GLenum glTarget = m_conversion.fromTextureTargetToGL(target);
+    GLenum glTarget = GLConversion::fromTextureTargetToGL(target);
 
     GL_CALL_EXTRA_FUNCTION(glTexParameteri(glTarget, GL_TEXTURE_MIN_FILTER,
                                            m_conversion.fromTextureMinifyingOpToGL(minFilter)));
@@ -300,7 +300,7 @@ void QDemonRenderBackendGL3Impl::updateTextureObject(QDemonRenderBackendTextureO
 {
     NVRENDER_BACKEND_UNUSED(to);
 
-    GLenum glTarget = m_conversion.fromTextureTargetToGL(target);
+    GLenum glTarget = GLConversion::fromTextureTargetToGL(target);
 
     GL_CALL_EXTRA_FUNCTION(glTexParameteri(glTarget, GL_TEXTURE_BASE_LEVEL, baseLevel));
     GL_CALL_EXTRA_FUNCTION(glTexParameteri(glTarget, GL_TEXTURE_MAX_LEVEL, maxLevel));
@@ -313,8 +313,8 @@ void QDemonRenderBackendGL3Impl::updateTextureSwizzle(QDemonRenderBackendTexture
     NVRENDER_BACKEND_UNUSED(to);
     if (m_backendSupport.caps.bits.bTextureSwizzleSupported) {
         GLint glSwizzle[4];
-        GLenum glTarget = m_conversion.fromTextureTargetToGL(target);
-        m_conversion.NVRenderConvertSwizzleModeToGL(swizzleMode, glSwizzle);
+        GLenum glTarget = GLConversion::fromTextureTargetToGL(target);
+        GLConversion::NVRenderConvertSwizzleModeToGL(swizzleMode, glSwizzle);
 #if defined(QT_OPENGL_ES)
         // since ES3 spec has no GL_TEXTURE_SWIZZLE_RGBA set it separately
         GL_CALL_EXTRA_FUNCTION(glTexParameteri(glTarget, GL_TEXTURE_SWIZZLE_R, glSwizzle[0]));
@@ -353,7 +353,7 @@ void QDemonRenderBackendGL3Impl::generateMipMaps(QDemonRenderBackendTextureObjec
                                                  QDemonRenderHint::Enum /*genType*/)
 {
     GLuint texID = HandleToID_cast(GLuint, size_t, to);
-    GLenum glTarget = m_conversion.fromTextureTargetToGL(target);
+    GLenum glTarget = GLConversion::fromTextureTargetToGL(target);
     GL_CALL_EXTRA_FUNCTION(glActiveTexture(GL_TEXTURE0));
     GL_CALL_EXTRA_FUNCTION(glBindTexture(glTarget, texID));
     GL_CALL_EXTRA_FUNCTION(glGenerateMipmap(glTarget));
@@ -646,7 +646,7 @@ void QDemonRenderBackendGL3Impl::getConstantBufferParamInfoByIndices(
             // convert to UIC types
             QDEMON_FOREACH(idx, count)
             {
-                type[idx] = m_conversion.fromShaderGLToPropertyDataTypes(type[idx]);
+                type[idx] = GLConversion::fromShaderGLToPropertyDataTypes(type[idx]);
             }
         }
         if (size) {

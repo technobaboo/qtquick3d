@@ -185,32 +185,32 @@ void QDemonRenderBackendGLES2Impl::setTextureData3D(
         qint32 border, QDemonRenderTextureFormats::Enum format, const void *hostPtr)
 {
     GLuint texID = HandleToID_cast(GLuint, size_t, to);
-    GLenum glTarget = m_conversion.fromTextureTargetToGL(target);
+    GLenum glTarget = GLConversion::fromTextureTargetToGL(target);
     GL_CALL_EXTRA_FUNCTION(glActiveTexture(GL_TEXTURE0));
     GL_CALL_EXTRA_FUNCTION(glBindTexture(glTarget, texID));
     bool conversionRequired = format != internalFormat;
 
     QDemonRenderTextureSwizzleMode::Enum swizzleMode = QDemonRenderTextureSwizzleMode::NoSwizzle;
-    internalFormat = m_conversion.replaceDeprecatedTextureFormat(getRenderContextType(),
+    internalFormat = GLConversion::replaceDeprecatedTextureFormat(getRenderContextType(),
                                                                  internalFormat, swizzleMode);
 
     GLenum glformat = 0, glInternalFormat = 0, gltype = GL_UNSIGNED_BYTE;
 
     if (QDemonRenderTextureFormats::isUncompressedTextureFormat(internalFormat)) {
-        m_conversion.fromUncompressedTextureFormatToGL(getRenderContextType(), internalFormat,
+        GLConversion::fromUncompressedTextureFormatToGL(getRenderContextType(), internalFormat,
                                                        glformat, gltype, glInternalFormat);
     }
 
     if (conversionRequired) {
         GLenum dummy;
-        m_conversion.fromUncompressedTextureFormatToGL(getRenderContextType(), format, glformat,
+        GLConversion::fromUncompressedTextureFormatToGL(getRenderContextType(), format, glformat,
                                                        gltype, dummy);
     } else if (QDemonRenderTextureFormats::isCompressedTextureFormat(internalFormat)) {
-        m_conversion.fromUncompressedTextureFormatToGL(getRenderContextType(), format, glformat,
+        GLConversion::fromUncompressedTextureFormatToGL(getRenderContextType(), format, glformat,
                                                        gltype, glInternalFormat);
-        glInternalFormat = m_conversion.fromCompressedTextureFormatToGL(internalFormat);
+        glInternalFormat = GLConversion::fromCompressedTextureFormatToGL(internalFormat);
     } else if (QDemonRenderTextureFormats::isDepthTextureFormat(format)) {
-        m_conversion.fromDepthTextureFormatToGL(getRenderContextType(), format, glformat,
+        GLConversion::fromDepthTextureFormatToGL(getRenderContextType(), format, glformat,
                                                 gltype, glInternalFormat);
     }
 
@@ -227,33 +227,33 @@ void QDemonRenderBackendGLES2Impl::setTextureData2D(
         QDemonRenderTextureFormats::Enum format, const void *hostPtr)
 {
     GLuint texID = HandleToID_cast(GLuint, size_t, to);
-    GLenum glTarget = m_conversion.fromTextureTargetToGL(target);
+    GLenum glTarget = GLConversion::fromTextureTargetToGL(target);
     GL_CALL_EXTRA_FUNCTION(glActiveTexture(GL_TEXTURE0));
     GL_CALL_EXTRA_FUNCTION(glBindTexture(glTarget, texID));
     bool conversionRequired = format != internalFormat;
 
     QDemonRenderTextureSwizzleMode::Enum swizzleMode = QDemonRenderTextureSwizzleMode::NoSwizzle;
-    internalFormat = m_conversion.replaceDeprecatedTextureFormat(getRenderContextType(),
+    internalFormat = GLConversion::replaceDeprecatedTextureFormat(getRenderContextType(),
                                                                  internalFormat, swizzleMode);
 
     GLenum glformat = 0, glInternalFormat = 0, gltype = GL_UNSIGNED_BYTE;
 
     if (QDemonRenderTextureFormats::isUncompressedTextureFormat(internalFormat)) {
-        m_conversion.fromUncompressedTextureFormatToGL(getRenderContextType(), internalFormat,
+        GLConversion::fromUncompressedTextureFormatToGL(getRenderContextType(), internalFormat,
                                                        glformat, gltype, glInternalFormat);
         glInternalFormat = glformat;
     }
 
     if (conversionRequired) {
         GLenum dummy;
-        m_conversion.fromUncompressedTextureFormatToGL(getRenderContextType(), format, glformat,
+        GLConversion::fromUncompressedTextureFormatToGL(getRenderContextType(), format, glformat,
                                                        gltype, dummy);
     } else if (QDemonRenderTextureFormats::isCompressedTextureFormat(internalFormat)) {
-        m_conversion.fromUncompressedTextureFormatToGL(getRenderContextType(), format, glformat,
+        GLConversion::fromUncompressedTextureFormatToGL(getRenderContextType(), format, glformat,
                                                        gltype, glInternalFormat);
-        glInternalFormat = m_conversion.fromCompressedTextureFormatToGL(internalFormat);
+        glInternalFormat = GLConversion::fromCompressedTextureFormatToGL(internalFormat);
     } else if (QDemonRenderTextureFormats::isDepthTextureFormat(format)) {
-        m_conversion.fromDepthTextureFormatToGL(getRenderContextType(), format, glformat,
+        GLConversion::fromDepthTextureFormatToGL(getRenderContextType(), format, glformat,
                                                 gltype, glInternalFormat);
         if (format == QDemonRenderTextureFormats::Depth24Stencil8) {
             glformat = GL_DEPTH_STENCIL_OES;
@@ -289,7 +289,7 @@ void QDemonRenderBackendGLES2Impl::updateSampler(
     NVRENDER_BACKEND_UNUSED(compareMode);
     NVRENDER_BACKEND_UNUSED(compareFunc);
 
-    GLenum glTarget = m_conversion.fromTextureTargetToGL(target);
+    GLenum glTarget = GLConversion::fromTextureTargetToGL(target);
 
     GL_CALL_EXTRA_FUNCTION(glTexParameteri(glTarget, GL_TEXTURE_MIN_FILTER,
                                            m_conversion.fromTextureMinifyingOpToGL(minFilter)));
@@ -313,7 +313,7 @@ void QDemonRenderBackendGLES2Impl::updateTextureObject(QDemonRenderBackendTextur
 {
     NVRENDER_BACKEND_UNUSED(to);
 
-    GLenum glTarget = m_conversion.fromTextureTargetToGL(target);
+    GLenum glTarget = GLConversion::fromTextureTargetToGL(target);
 
     GL_CALL_EXTRA_FUNCTION(glTexParameteri(glTarget, GL_TEXTURE_BASE_LEVEL, baseLevel));
     GL_CALL_EXTRA_FUNCTION(glTexParameteri(glTarget, GL_TEXTURE_MAX_LEVEL, maxLevel));
@@ -369,7 +369,7 @@ void QDemonRenderBackendGLES2Impl::generateMipMaps(QDemonRenderBackendTextureObj
                                                QDemonRenderHint::Enum /*genType*/)
 {
     GLuint texID = HandleToID_cast(GLuint, size_t, to);
-    GLenum glTarget = m_conversion.fromTextureTargetToGL(target);
+    GLenum glTarget = GLConversion::fromTextureTargetToGL(target);
     GL_CALL_EXTRA_FUNCTION(glActiveTexture(GL_TEXTURE0));
     GL_CALL_EXTRA_FUNCTION(glBindTexture(glTarget, texID));
     GL_CALL_EXTRA_FUNCTION(glGenerateMipmap(glTarget));
@@ -586,7 +586,7 @@ void QDemonRenderBackendGLES2Impl::renderTargetAttach(QDemonRenderBackendRenderT
                  || m_backendSupport.caps.bits.bMsTextureSupported);
 
     GLenum glAttach = GLConversion::fromFramebufferAttachmentsToGL(attachment);
-    GLenum glTarget = m_conversion.fromTextureTargetToGL(target);
+    GLenum glTarget = GLConversion::fromTextureTargetToGL(target);
 
     if (attachment == QDemonRenderFrameBufferAttachments::DepthStencil) {
         GL_CALL_EXTRA_FUNCTION(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
@@ -789,7 +789,7 @@ void QDemonRenderBackendGLES2Impl::getConstantBufferParamInfoByIndices(
             // convert to UIC types
             QDEMON_FOREACH(idx, count)
             {
-                type[idx] = m_conversion.fromShaderGLToPropertyDataTypes(type[idx]);
+                type[idx] = GLConversion::fromShaderGLToPropertyDataTypes(type[idx]);
             }
         }
         if (size) {

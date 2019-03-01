@@ -195,7 +195,7 @@ void QDemonRenderBackendGL4Impl::createTextureStorage2D(QDemonRenderBackendTextu
                                                         size_t width, size_t height)
 {
     GLuint texID = HandleToID_cast(GLuint, size_t, to);
-    GLenum glTarget = m_conversion.fromTextureTargetToGL(target);
+    GLenum glTarget = GLConversion::fromTextureTargetToGL(target);
     GL_CALL_EXTRA_FUNCTION(glActiveTexture(GL_TEXTURE0));
     GL_CALL_EXTRA_FUNCTION(glBindTexture(glTarget, texID));
 
@@ -217,12 +217,12 @@ void QDemonRenderBackendGL4Impl::setMultisampledTextureData2D(
         bool fixedsamplelocations)
 {
     GLuint texID = HandleToID_cast(GLuint, size_t, to);
-    GLenum glTarget = m_conversion.fromTextureTargetToGL(target);
+    GLenum glTarget = GLConversion::fromTextureTargetToGL(target);
     GL_CALL_EXTRA_FUNCTION(glActiveTexture(GL_TEXTURE0));
     GL_CALL_EXTRA_FUNCTION(glBindTexture(glTarget, texID));
 
     QDemonRenderTextureSwizzleMode::Enum swizzleMode = QDemonRenderTextureSwizzleMode::NoSwizzle;
-    internalFormat = m_conversion.replaceDeprecatedTextureFormat(getRenderContextType(),
+    internalFormat = GLConversion::replaceDeprecatedTextureFormat(getRenderContextType(),
                                                                  internalFormat, swizzleMode);
 
     GLenum glformat = 0, glInternalFormat = 0, gltype = GL_UNSIGNED_BYTE;
@@ -231,7 +231,7 @@ void QDemonRenderBackendGL4Impl::setMultisampledTextureData2D(
         GLConversion::fromUncompressedTextureFormatToGL(getRenderContextType(), internalFormat,
                                                         glformat, gltype, glInternalFormat);
     else if (QDemonRenderTextureFormats::isDepthTextureFormat(internalFormat))
-        m_conversion.fromDepthTextureFormatToGL(getRenderContextType(), internalFormat,
+        GLConversion::fromDepthTextureFormatToGL(getRenderContextType(), internalFormat,
                                                 glformat, gltype, glInternalFormat);
     GL_CALL_EXTRA_FUNCTION(glTexStorage2DMultisample(glTarget, GLsizei(samples), glInternalFormat,
                                                      GLsizei(width), GLsizei(height),
@@ -472,7 +472,7 @@ void QDemonRenderBackendGL4Impl::setConstantValue(QDemonRenderBackendShaderProgr
     QDemonRenderBackendShaderProgramGL *pProgram = reinterpret_cast<QDemonRenderBackendShaderProgramGL *>(po);
     GLuint programID = static_cast<GLuint>(pProgram->m_programID);
 
-    GLenum glType = m_conversion.fromPropertyDataTypesToShaderGL(type);
+    GLenum glType = GLConversion::fromPropertyDataTypesToShaderGL(type);
 
     switch (glType) {
     case GL_FLOAT:
@@ -806,7 +806,7 @@ QDemonRenderPathReturnValues::Enum QDemonRenderBackendGL4Impl::loadPathGlyphsInd
                                    m_conversion.fromPathFontStyleToGL(fontStyle), firstGlyphIndex,
                                    (GLsizei)numGlyphs, pathTemplateID, emScale));
 
-    return m_conversion.fromGLToPathFontReturn(glRet);
+    return GLConversion::fromGLToPathFontReturn(glRet);
 }
 
 QDemonRenderBackend::QDemonRenderBackendPathObject QDemonRenderBackendGL4Impl::loadPathGlyphsIndexedRange(
