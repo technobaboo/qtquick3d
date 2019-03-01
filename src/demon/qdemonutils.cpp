@@ -69,7 +69,7 @@ QMatrix3x3 mat33::getInverse(const QMatrix3x3 &m)
     const float det = QVector3D::dotProduct(c0, QVector3D::crossProduct(c1, c2));
     QMatrix3x3 inverse;
 
-    if (det != 0) {
+    if (!qFuzzyIsNull(det)) {
         const float invDet = 1.0f / det;
 
         inverse(0, 0) = invDet * (m(1, 1) * m(2, 2) - m(2, 1) * m(1, 2));
@@ -85,9 +85,9 @@ QMatrix3x3 mat33::getInverse(const QMatrix3x3 &m)
         inverse(2, 2) = invDet * (m(0, 0) * m(1, 1) - m(1, 0) * m(0, 1));
 
         return inverse;
-    } else {
-        return QMatrix3x3();
     }
+
+    return QMatrix3x3();
 }
 
 QMatrix3x3 mat44::getUpper3x3(const QMatrix4x4 &m)
@@ -276,12 +276,12 @@ QString CFileTools::normalizePathForQtUsage(const QString &path)
 
     if (filePath.startsWith(QLatin1String("qrc:/")))
         return filePath.mid(3);
-    else
-        return filePath;
+
+    return filePath;
 }
 
 namespace  {
-bool IsAbsolute(const char *inPath, size_t inLen)
+bool isAbsolute(const char *inPath, size_t inLen)
 {
     if (inLen > 2 && inPath[1] == ':')
         return true;
@@ -289,7 +289,7 @@ bool IsAbsolute(const char *inPath, size_t inLen)
         return true;
     return false;
 }
-inline uint StrLen(const char *inType)
+inline uint strLen(const char *inType)
 {
     uint retval = 0;
     while (inType && *inType) {
@@ -411,14 +411,14 @@ inline uint StrLen(const char *inType)
 // ### Fix to Normalize Path
 void CFileTools::combineBaseAndRelative(const char *inBase, const char *inRelative, QString &outString)
 {
-    if (IsAbsolute(inRelative, StrLen(inRelative))) {
+    if (isAbsolute(inRelative, strLen(inRelative))) {
         outString = QString::fromLocal8Bit(nonNull(inRelative));
     } else {
         if (inRelative && *inRelative) {
             if (inRelative[0] == '#')
                 outString = QString::fromLocal8Bit(inRelative);
             else {
-                if (IsAbsolute(inRelative, strlen(inRelative))) {
+                if (isAbsolute(inRelative, strlen(inRelative))) {
                     outString = QString::fromLocal8Bit(inRelative);
                 } else {
                     outString = inBase ? QString::fromLocal8Bit(inBase) : QString();

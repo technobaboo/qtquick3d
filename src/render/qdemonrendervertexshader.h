@@ -51,11 +51,12 @@ public:
          *
          * @return No return.
          */
-    QDemonRenderVertexShader(QSharedPointer<QDemonRenderContextImpl> context,
-                         QDemonConstDataRef<qint8> source, bool binaryProgram);
+    QDemonRenderVertexShader(const QSharedPointer<QDemonRenderContextImpl> &context,
+                             QDemonConstDataRef<qint8> source,
+                             bool binaryProgram);
 
     /// @brief destructor
-    ~QDemonRenderVertexShader();
+    ~QDemonRenderVertexShader() override;
 
     /**
          * @brief Query if shader compiled succesfuly

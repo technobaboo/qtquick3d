@@ -69,7 +69,7 @@ public:
          *
          * @return No return.
          */
-    QDemonRenderDataBuffer(QSharedPointer<QDemonRenderContextImpl> context, size_t size,
+    QDemonRenderDataBuffer(const QSharedPointer<QDemonRenderContextImpl> &context, size_t size,
                            QDemonRenderBufferBindFlags bindFlags,
                            QDemonRenderBufferUsageType::Enum usageType, QDemonDataRef<quint8> data);
 

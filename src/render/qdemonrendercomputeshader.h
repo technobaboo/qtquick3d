@@ -51,7 +51,7 @@ public:
          *
          * @return No return.
          */
-    QDemonRenderComputeShader(QSharedPointer<QDemonRenderContextImpl> context,
+    QDemonRenderComputeShader(const QSharedPointer<QDemonRenderContextImpl> &context,
                               QDemonConstDataRef<qint8> source,
                               bool binaryProgram);
 
@@ -76,8 +76,7 @@ public:
     }
 
 private:
-    QDemonRenderBackend::QDemonRenderBackendComputeShaderObject
-    m_shaderHandle; ///< opaque backend handle
+    QDemonRenderBackend::QDemonRenderBackendComputeShaderObject m_shaderHandle; ///< opaque backend handle
 };
 
 QT_END_NAMESPACE

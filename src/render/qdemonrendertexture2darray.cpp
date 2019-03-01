@@ -35,7 +35,7 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonRenderTexture2DArray::QDemonRenderTexture2DArray(QSharedPointer<QDemonRenderContextImpl> context,
+QDemonRenderTexture2DArray::QDemonRenderTexture2DArray(const QSharedPointer<QDemonRenderContextImpl> &context,
                                                        QDemonRenderTextureTargetType::Enum texTarget)
     : QDemonRenderTextureBase(context, texTarget)
     , m_width(0)
@@ -113,7 +113,7 @@ void QDemonRenderTexture2DArray::bind()
     applyTexSwizzle();
 }
 
-QSharedPointer<QDemonRenderTexture2DArray> QDemonRenderTexture2DArray::create(QSharedPointer<QDemonRenderContextImpl> context)
+QSharedPointer<QDemonRenderTexture2DArray> QDemonRenderTexture2DArray::create(const QSharedPointer<QDemonRenderContextImpl> &context)
 {
     return QSharedPointer<QDemonRenderTexture2DArray>(new QDemonRenderTexture2DArray(context));
 }

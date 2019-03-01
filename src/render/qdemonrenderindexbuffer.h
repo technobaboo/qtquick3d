@@ -52,7 +52,7 @@ public:
          *
          * @return No return.
          */
-    QDemonRenderIndexBuffer(QSharedPointer<QDemonRenderContextImpl> context, size_t size,
+    QDemonRenderIndexBuffer(const QSharedPointer<QDemonRenderContextImpl> &context, size_t size,
                             QDemonRenderComponentTypes::Enum componentType,
                             QDemonRenderBufferUsageType::Enum usageType, QDemonDataRef<quint8> data);
 
@@ -118,7 +118,7 @@ public:
         return reinterpret_cast<void *>(m_bufferHandle);
     }
 
-    static QSharedPointer<QDemonRenderIndexBuffer> create(QSharedPointer<QDemonRenderContextImpl> context,
+    static QSharedPointer<QDemonRenderIndexBuffer> create(const QSharedPointer<QDemonRenderContextImpl> &context,
                                            QDemonRenderBufferUsageType::Enum usageType,
                                            QDemonRenderComponentTypes::Enum componentType, size_t size,
                                            QDemonConstDataRef<quint8> bufferData);

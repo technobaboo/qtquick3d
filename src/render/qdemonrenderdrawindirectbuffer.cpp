@@ -35,7 +35,7 @@
 
 
 QT_BEGIN_NAMESPACE
-QDemonRenderDrawIndirectBuffer::QDemonRenderDrawIndirectBuffer(QSharedPointer<QDemonRenderContextImpl> context,
+QDemonRenderDrawIndirectBuffer::QDemonRenderDrawIndirectBuffer(const QSharedPointer<QDemonRenderContextImpl> &context,
                                                                size_t size,
                                                                QDemonRenderBufferUsageType::Enum usageType,
                                                                QDemonDataRef<quint8> data)
@@ -76,7 +76,7 @@ void QDemonRenderDrawIndirectBuffer::updateData(qint32 offset, QDemonDataRef<qui
                                 data.begin() + offset);
 }
 
-QSharedPointer<QDemonRenderDrawIndirectBuffer> QDemonRenderDrawIndirectBuffer::create(QSharedPointer<QDemonRenderContextImpl> context,
+QSharedPointer<QDemonRenderDrawIndirectBuffer> QDemonRenderDrawIndirectBuffer::create(const QSharedPointer<QDemonRenderContextImpl> &context,
                                                                                       QDemonRenderBufferUsageType::Enum usageType,
                                                                                       size_t size,
                                                                                       QDemonConstDataRef<quint8> bufferData)

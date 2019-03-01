@@ -1094,7 +1094,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface, public QEnableSh
                 Q_ASSERT(false);
                 return;
             }
-            quint8 *dataPtr = inEffect->GetDataSectionBegin() + inCommand.m_valueOffset;
+            quint8 *dataPtr = inEffect->getDataSectionBegin() + inCommand.m_valueOffset;
             const QDemonPropertyDefinition *theDefinition =
                     inClass->dynamicClass->findPropertyByName(inCommand.m_propertyName);
             if (theDefinition)
@@ -1109,7 +1109,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface, public QEnableSh
                 // This is fine, the property wasn't found and we continue, no problem.
                 if (!theConstant)
                     continue;
-                quint8 *dataPtr = inEffect->GetDataSectionBegin() + theDefinition.offset;
+                quint8 *dataPtr = inEffect->getDataSectionBegin() + theDefinition.offset;
                 doApplyInstanceValue(inEffect, dataPtr, theDefinition.name,
                                      theDefinition.dataType, inShader, theDefinition);
             }

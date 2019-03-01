@@ -62,10 +62,10 @@ public:
          *
          * @return No return.
          */
-    QDemonRenderInputAssembler(QSharedPointer<QDemonRenderContextImpl> context,
-                               QSharedPointer<QDemonRenderAttribLayout> attribLayout,
+    QDemonRenderInputAssembler(const QSharedPointer<QDemonRenderContextImpl> &context,
+                               const QSharedPointer<QDemonRenderAttribLayout> &attribLayout,
                                QDemonConstDataRef<QSharedPointer<QDemonRenderVertexBuffer>> buffers,
-                               const QSharedPointer<QDemonRenderIndexBuffer> indexBuffer,
+                               const QSharedPointer<QDemonRenderIndexBuffer> &indexBuffer,
                                QDemonConstDataRef<quint32> strides,
                                QDemonConstDataRef<quint32> offsets,
                                QDemonRenderDrawMode::Enum primType = QDemonRenderDrawMode::Triangles,

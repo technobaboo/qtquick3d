@@ -51,7 +51,7 @@ public:
          *
          * @return No return.
          */
-    QDemonRenderPathSpecification(QSharedPointer<QDemonRenderContextImpl> context);
+    QDemonRenderPathSpecification(const QSharedPointer<QDemonRenderContextImpl> &context);
 
     /// @QDemonRenderPathSpecification destructor
     virtual ~QDemonRenderPathSpecification();
@@ -122,7 +122,7 @@ private:
     void addPoint(QVector2D inData);
 
 public:
-    static QSharedPointer<QDemonRenderPathSpecification> createPathSpecification(QSharedPointer<QDemonRenderContextImpl> context);
+    static QSharedPointer<QDemonRenderPathSpecification> createPathSpecification(const QSharedPointer<QDemonRenderContextImpl> &context);
 };
 
 QT_END_NAMESPACE

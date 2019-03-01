@@ -51,7 +51,9 @@ public:
          *
          * @return No return.
          */
-    QDemonRenderFragmentShader(QSharedPointer<QDemonRenderContextImpl> context, QDemonConstDataRef<qint8> source, bool binaryProgram);
+    QDemonRenderFragmentShader(const QSharedPointer<QDemonRenderContextImpl> &context,
+                               QDemonConstDataRef<qint8> source,
+                               bool binaryProgram);
 
     /// @brief destructor
     ~QDemonRenderFragmentShader() override;

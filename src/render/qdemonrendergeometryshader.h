@@ -51,11 +51,11 @@ public:
          *
          * @return No return.
          */
-    QDemonRenderGeometryShader(QSharedPointer<QDemonRenderContextImpl> context,
+    QDemonRenderGeometryShader(const QSharedPointer<QDemonRenderContextImpl> &context,
                                QDemonConstDataRef<qint8> source, bool binaryProgram);
 
     /// @brief destructor
-    virtual ~QDemonRenderGeometryShader();
+    virtual ~QDemonRenderGeometryShader() override;
 
     /**
          * @brief Query if shader compiled succesfuly

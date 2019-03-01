@@ -34,7 +34,7 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonRenderVertexBuffer::QDemonRenderVertexBuffer(QSharedPointer<QDemonRenderContextImpl> context, size_t size,
+QDemonRenderVertexBuffer::QDemonRenderVertexBuffer(const QSharedPointer<QDemonRenderContextImpl> &context, size_t size,
                                                    quint32 stride, QDemonRenderBufferBindFlags bindFlags,
                                                    QDemonRenderBufferUsageType::Enum usageType,
                                                    QDemonDataRef<quint8> data)
@@ -59,16 +59,16 @@ void QDemonRenderVertexBuffer::bind()
     m_backend->bindBuffer(m_bufferHandle, m_bindFlags);
 }
 
-QSharedPointer<QDemonRenderVertexBuffer> QDemonRenderVertexBuffer::create(QSharedPointer<QDemonRenderContextImpl> context,
+QSharedPointer<QDemonRenderVertexBuffer> QDemonRenderVertexBuffer::create(const QSharedPointer<QDemonRenderContextImpl> &context,
                                                                           QDemonRenderBufferUsageType::Enum usageType,
                                                                           size_t size, quint32 stride,
                                                                           QDemonConstDataRef<quint8> bufferData)
 {
-    quint32 vbufSize = sizeof(QDemonRenderVertexBuffer);
-    quint8 *newMem = static_cast<quint8 *>(::malloc(vbufSize));
-    return QSharedPointer<QDemonRenderVertexBuffer>(new (newMem) QDemonRenderVertexBuffer(
-                                                        context, size, stride, QDemonRenderBufferBindValues::Vertex, usageType,
-                                                        toDataRef(const_cast<quint8 *>(bufferData.begin()), bufferData.size())));
+    return QSharedPointer<QDemonRenderVertexBuffer>(new QDemonRenderVertexBuffer(context,
+                                                                                 size,
+                                                                                 stride,
+                                                                                 QDemonRenderBufferBindValues::Vertex, usageType,
+                                                                                 toDataRef(const_cast<quint8 *>(bufferData.begin()), bufferData.size())));
 }
 
 QT_END_NAMESPACE

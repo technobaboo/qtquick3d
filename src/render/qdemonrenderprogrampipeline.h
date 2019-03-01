@@ -54,7 +54,7 @@ public:
          *
          * @return No return.
          */
-    QDemonRenderProgramPipeline(QSharedPointer<QDemonRenderContextImpl> context);
+    QDemonRenderProgramPipeline(const QSharedPointer<QDemonRenderContextImpl> &context);
 
     /// @brief destructor
     ~QDemonRenderProgramPipeline();
@@ -75,7 +75,7 @@ public:
          *
          * @return no return.
          */
-    void setProgramStages(QSharedPointer<QDemonRenderShaderProgram> pProgram, QDemonRenderShaderTypeFlags flags);
+    void setProgramStages(const QSharedPointer<QDemonRenderShaderProgram> &pProgram, QDemonRenderShaderTypeFlags flags);
 
     /**
          * @brief Make the program pipeline active

@@ -73,7 +73,7 @@ public:
          *
          * @return No return.
          */
-    QDemonRenderRenderBuffer(QSharedPointer<QDemonRenderContextImpl> context,
+    QDemonRenderRenderBuffer(const QSharedPointer<QDemonRenderContextImpl> &context,
                              QDemonRenderRenderBufferFormats::Enum format,
                              quint32 width,
                              quint32 height);
@@ -122,7 +122,7 @@ public:
          *
          * @return No return.
          */
-    static QSharedPointer<QDemonRenderRenderBuffer> create(QSharedPointer<QDemonRenderContextImpl> context,
+    static QSharedPointer<QDemonRenderRenderBuffer> create(const QSharedPointer<QDemonRenderContextImpl> &context,
                                                            QDemonRenderRenderBufferFormats::Enum format, quint32 width,
                                                            quint32 height);
 

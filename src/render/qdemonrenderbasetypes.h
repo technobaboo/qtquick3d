@@ -2169,7 +2169,7 @@ struct QDemonDataTypeToShaderDataTypeMap
 template <>
 struct QDemonDataTypeToShaderDataTypeMap<qint32>
 {
-    static QDemonRenderShaderDataTypes::Enum GetType()
+    static QDemonRenderShaderDataTypes::Enum getType()
     {
         return QDemonRenderShaderDataTypes::Integer;
     }
@@ -2178,7 +2178,7 @@ struct QDemonDataTypeToShaderDataTypeMap<qint32>
 template <>
 struct QDemonDataTypeToShaderDataTypeMap<qint32_2>
 {
-    static QDemonRenderShaderDataTypes::Enum GetType()
+    static QDemonRenderShaderDataTypes::Enum getType()
     {
         return QDemonRenderShaderDataTypes::IntegerVec2;
     }
@@ -2186,7 +2186,7 @@ struct QDemonDataTypeToShaderDataTypeMap<qint32_2>
 
 template <> struct QDemonDataTypeToShaderDataTypeMap<qint32_3>
 {
-    static QDemonRenderShaderDataTypes::Enum GetType()
+    static QDemonRenderShaderDataTypes::Enum getType()
     {
         return QDemonRenderShaderDataTypes::IntegerVec3;
     }
@@ -2195,7 +2195,7 @@ template <> struct QDemonDataTypeToShaderDataTypeMap<qint32_3>
 template <>
 struct QDemonDataTypeToShaderDataTypeMap<qint32_4>
 {
-    static QDemonRenderShaderDataTypes::Enum GetType()
+    static QDemonRenderShaderDataTypes::Enum getType()
     {
         return QDemonRenderShaderDataTypes::IntegerVec4;
     }
@@ -2204,7 +2204,7 @@ struct QDemonDataTypeToShaderDataTypeMap<qint32_4>
 template <>
 struct QDemonDataTypeToShaderDataTypeMap<bool>
 {
-    static QDemonRenderShaderDataTypes::Enum GetType()
+    static QDemonRenderShaderDataTypes::Enum getType()
     {
         return QDemonRenderShaderDataTypes::Boolean;
     }
@@ -2213,7 +2213,7 @@ struct QDemonDataTypeToShaderDataTypeMap<bool>
 template <>
 struct QDemonDataTypeToShaderDataTypeMap<bool_2>
 {
-    static QDemonRenderShaderDataTypes::Enum GetType()
+    static QDemonRenderShaderDataTypes::Enum getType()
     {
         return QDemonRenderShaderDataTypes::BooleanVec2;
     }
@@ -2222,7 +2222,7 @@ struct QDemonDataTypeToShaderDataTypeMap<bool_2>
 template <>
 struct QDemonDataTypeToShaderDataTypeMap<bool_3>
 {
-    static QDemonRenderShaderDataTypes::Enum GetType()
+    static QDemonRenderShaderDataTypes::Enum getType()
     {
         return QDemonRenderShaderDataTypes::BooleanVec3;
     }
@@ -2231,7 +2231,7 @@ struct QDemonDataTypeToShaderDataTypeMap<bool_3>
 template <>
 struct QDemonDataTypeToShaderDataTypeMap<bool_4>
 {
-    static QDemonRenderShaderDataTypes::Enum GetType()
+    static QDemonRenderShaderDataTypes::Enum getType()
     {
         return QDemonRenderShaderDataTypes::BooleanVec4;
     }
@@ -2240,7 +2240,7 @@ struct QDemonDataTypeToShaderDataTypeMap<bool_4>
 template <>
 struct QDemonDataTypeToShaderDataTypeMap<float>
 {
-    static QDemonRenderShaderDataTypes::Enum GetType()
+    static QDemonRenderShaderDataTypes::Enum getType()
     {
         return QDemonRenderShaderDataTypes::Float;
     }
@@ -2249,7 +2249,7 @@ struct QDemonDataTypeToShaderDataTypeMap<float>
 template <>
 struct QDemonDataTypeToShaderDataTypeMap<QVector2D>
 {
-    static QDemonRenderShaderDataTypes::Enum GetType()
+    static QDemonRenderShaderDataTypes::Enum getType()
     {
         return QDemonRenderShaderDataTypes::Vec2;
     }
@@ -2258,7 +2258,7 @@ struct QDemonDataTypeToShaderDataTypeMap<QVector2D>
 template <>
 struct QDemonDataTypeToShaderDataTypeMap<QVector3D>
 {
-    static QDemonRenderShaderDataTypes::Enum GetType()
+    static QDemonRenderShaderDataTypes::Enum getType()
     {
         return QDemonRenderShaderDataTypes::Vec3;
     }
@@ -2267,7 +2267,7 @@ struct QDemonDataTypeToShaderDataTypeMap<QVector3D>
 template <>
 struct QDemonDataTypeToShaderDataTypeMap<QVector4D>
 {
-    static QDemonRenderShaderDataTypes::Enum GetType()
+    static QDemonRenderShaderDataTypes::Enum getType()
     {
         return QDemonRenderShaderDataTypes::Vec4;
     }
@@ -2276,7 +2276,7 @@ struct QDemonDataTypeToShaderDataTypeMap<QVector4D>
 template <>
 struct QDemonDataTypeToShaderDataTypeMap<quint32>
 {
-    static QDemonRenderShaderDataTypes::Enum GetType()
+    static QDemonRenderShaderDataTypes::Enum getType()
     {
         return QDemonRenderShaderDataTypes::UnsignedInteger;
     }
@@ -2285,7 +2285,7 @@ struct QDemonDataTypeToShaderDataTypeMap<quint32>
 template <>
 struct QDemonDataTypeToShaderDataTypeMap<quint32_2>
 {
-    static QDemonRenderShaderDataTypes::Enum GetType()
+    static QDemonRenderShaderDataTypes::Enum getType()
     {
         return QDemonRenderShaderDataTypes::UnsignedIntegerVec2;
     }
@@ -2294,7 +2294,7 @@ struct QDemonDataTypeToShaderDataTypeMap<quint32_2>
 template <>
 struct QDemonDataTypeToShaderDataTypeMap<quint32_3>
 {
-    static QDemonRenderShaderDataTypes::Enum GetType()
+    static QDemonRenderShaderDataTypes::Enum getType()
     {
         return QDemonRenderShaderDataTypes::UnsignedIntegerVec3;
     }
@@ -2303,7 +2303,7 @@ struct QDemonDataTypeToShaderDataTypeMap<quint32_3>
 template <>
 struct QDemonDataTypeToShaderDataTypeMap<quint32_4>
 {
-    static QDemonRenderShaderDataTypes::Enum GetType()
+    static QDemonRenderShaderDataTypes::Enum getType()
     {
         return QDemonRenderShaderDataTypes::UnsignedIntegerVec4;
     }
@@ -2312,7 +2312,7 @@ struct QDemonDataTypeToShaderDataTypeMap<quint32_4>
 template <>
 struct QDemonDataTypeToShaderDataTypeMap<QMatrix3x3>
 {
-    static QDemonRenderShaderDataTypes::Enum GetType()
+    static QDemonRenderShaderDataTypes::Enum getType()
     {
         return QDemonRenderShaderDataTypes::Matrix3x3;
     }
@@ -2321,7 +2321,7 @@ struct QDemonDataTypeToShaderDataTypeMap<QMatrix3x3>
 template <>
 struct QDemonDataTypeToShaderDataTypeMap<QMatrix4x4>
 {
-    static QDemonRenderShaderDataTypes::Enum GetType()
+    static QDemonRenderShaderDataTypes::Enum getType()
     {
         return QDemonRenderShaderDataTypes::Matrix4x4;
     }
@@ -2330,7 +2330,7 @@ struct QDemonDataTypeToShaderDataTypeMap<QMatrix4x4>
 template <>
 struct QDemonDataTypeToShaderDataTypeMap<QDemonConstDataRef<QMatrix4x4>>
 {
-    static QDemonRenderShaderDataTypes::Enum GetType()
+    static QDemonRenderShaderDataTypes::Enum getType()
     {
         return QDemonRenderShaderDataTypes::Matrix4x4;
     }
@@ -2339,7 +2339,7 @@ struct QDemonDataTypeToShaderDataTypeMap<QDemonConstDataRef<QMatrix4x4>>
 template <>
 struct QDemonDataTypeToShaderDataTypeMap<QDemonRenderTexture2DPtr>
 {
-    static QDemonRenderShaderDataTypes::Enum GetType()
+    static QDemonRenderShaderDataTypes::Enum getType()
     {
         return QDemonRenderShaderDataTypes::Texture2D;
     }
@@ -2348,7 +2348,7 @@ struct QDemonDataTypeToShaderDataTypeMap<QDemonRenderTexture2DPtr>
 template <>
 struct QDemonDataTypeToShaderDataTypeMap<QDemonRenderTexture2DHandle>
 {
-    static QDemonRenderShaderDataTypes::Enum GetType()
+    static QDemonRenderShaderDataTypes::Enum getType()
     {
         return QDemonRenderShaderDataTypes::Texture2DHandle;
     }
@@ -2357,7 +2357,7 @@ struct QDemonDataTypeToShaderDataTypeMap<QDemonRenderTexture2DHandle>
 template <>
 struct QDemonDataTypeToShaderDataTypeMap<QDemonRenderTexture2DArrayPtr>
 {
-    static QDemonRenderShaderDataTypes::Enum GetType()
+    static QDemonRenderShaderDataTypes::Enum getType()
     {
         return QDemonRenderShaderDataTypes::Texture2DArray;
     }
@@ -2366,7 +2366,7 @@ struct QDemonDataTypeToShaderDataTypeMap<QDemonRenderTexture2DArrayPtr>
 template <>
 struct QDemonDataTypeToShaderDataTypeMap<QDemonRenderTextureCubePtr>
 {
-    static QDemonRenderShaderDataTypes::Enum GetType()
+    static QDemonRenderShaderDataTypes::Enum getType()
     {
         return QDemonRenderShaderDataTypes::TextureCube;
     }
@@ -2375,7 +2375,7 @@ struct QDemonDataTypeToShaderDataTypeMap<QDemonRenderTextureCubePtr>
 template <>
 struct QDemonDataTypeToShaderDataTypeMap<QDemonRenderTextureCubeHandle>
 {
-    static QDemonRenderShaderDataTypes::Enum GetType()
+    static QDemonRenderShaderDataTypes::Enum getType()
     {
         return QDemonRenderShaderDataTypes::TextureCubeHandle;
     }
@@ -2384,7 +2384,7 @@ struct QDemonDataTypeToShaderDataTypeMap<QDemonRenderTextureCubeHandle>
 template <>
 struct QDemonDataTypeToShaderDataTypeMap<QDemonRenderImage2DPtr>
 {
-    static QDemonRenderShaderDataTypes::Enum GetType()
+    static QDemonRenderShaderDataTypes::Enum getType()
     {
         return QDemonRenderShaderDataTypes::Image2D;
     }
@@ -2393,7 +2393,7 @@ struct QDemonDataTypeToShaderDataTypeMap<QDemonRenderImage2DPtr>
 template <>
 struct QDemonDataTypeToShaderDataTypeMap<QDemonRenderDataBufferPtr>
 {
-    static QDemonRenderShaderDataTypes::Enum GetType()
+    static QDemonRenderShaderDataTypes::Enum getType()
     {
         return QDemonRenderShaderDataTypes::DataBuffer;
     }

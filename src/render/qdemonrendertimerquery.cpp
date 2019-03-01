@@ -33,7 +33,7 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonRenderTimerQuery::QDemonRenderTimerQuery(QSharedPointer<QDemonRenderContextImpl> context)
+QDemonRenderTimerQuery::QDemonRenderTimerQuery(const QSharedPointer<QDemonRenderContextImpl> &context)
     : QDemonRenderQueryBase(context)
 {
 }
@@ -59,7 +59,7 @@ void QDemonRenderTimerQuery::getResult(quint64 *params)
 
 void QDemonRenderTimerQuery::SetTimerQuery() { m_backend->setQueryTimer(m_queryHandle); }
 
-QSharedPointer<QDemonRenderTimerQuery> QDemonRenderTimerQuery::create(QSharedPointer<QDemonRenderContextImpl> context)
+QSharedPointer<QDemonRenderTimerQuery> QDemonRenderTimerQuery::create(const QSharedPointer<QDemonRenderContextImpl> &context)
 {
     if (!context->isTimerQuerySupported())
         return nullptr;

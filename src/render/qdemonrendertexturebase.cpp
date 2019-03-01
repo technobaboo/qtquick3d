@@ -36,7 +36,7 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonRenderTextureBase::QDemonRenderTextureBase(QSharedPointer<QDemonRenderContextImpl> context,
+QDemonRenderTextureBase::QDemonRenderTextureBase(const QSharedPointer<QDemonRenderContextImpl> &context,
                                                  QDemonRenderTextureTargetType::Enum texTarget)
     : m_context(context)
     , m_backend(context->getBackend())

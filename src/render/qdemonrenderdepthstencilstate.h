@@ -63,7 +63,7 @@ public:
          *
          * @return No return.
          */
-    QDemonRenderDepthStencilState(QSharedPointer<QDemonRenderContextImpl> context,
+    QDemonRenderDepthStencilState(const QSharedPointer<QDemonRenderContextImpl> &context,
                                   bool enableDepth,
                                   bool depthMask,
                                   QDemonRenderBoolOp::Enum depthFunc,
@@ -99,7 +99,7 @@ public:
         return m_stateHandle;
     }
 
-    static QSharedPointer<QDemonRenderDepthStencilState> create(QSharedPointer<QDemonRenderContextImpl> context,
+    static QSharedPointer<QDemonRenderDepthStencilState> create(const QSharedPointer<QDemonRenderContextImpl> &context,
                                                                 bool enableDepth,
                                                                 bool depthMask,
                                                                 QDemonRenderBoolOp::Enum depthFunc,

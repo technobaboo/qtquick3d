@@ -129,7 +129,7 @@ public:
          *
          * @return No return.
          */
-    QDemonRenderFrameBuffer(QSharedPointer<QDemonRenderContextImpl> context);
+    QDemonRenderFrameBuffer(const QSharedPointer<QDemonRenderContextImpl> &context);
 
     /// destructor
     virtual ~QDemonRenderFrameBuffer();
@@ -228,7 +228,7 @@ public:
          *
          * @return a pointer to framebuffer object.
          */
-    static QSharedPointer<QDemonRenderFrameBuffer> create(QSharedPointer<QDemonRenderContextImpl> context);
+    static QSharedPointer<QDemonRenderFrameBuffer> create(const QSharedPointer<QDemonRenderContextImpl> &context);
 
 private:
     /**

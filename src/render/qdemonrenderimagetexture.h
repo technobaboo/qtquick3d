@@ -63,8 +63,8 @@ public:
          *
          * @return No return.
          */
-    QDemonRenderImage2D(QSharedPointer<QDemonRenderContextImpl> context,
-                        QSharedPointer<QDemonRenderTexture2D> inTexture,
+    QDemonRenderImage2D(const QSharedPointer<QDemonRenderContextImpl> &context,
+                        const QSharedPointer<QDemonRenderTexture2D> &inTexture,
                         QDemonRenderImageAccessType::Enum inAccess);
 
     virtual ~QDemonRenderImage2D();
@@ -125,8 +125,8 @@ public:
          *
          * @return No return.
          */
-    static QSharedPointer<QDemonRenderImage2D> create(QSharedPointer<QDemonRenderContextImpl> context,
-                                                      QSharedPointer<QDemonRenderTexture2D> inTexture,
+    static QSharedPointer<QDemonRenderImage2D> create(const QSharedPointer<QDemonRenderContextImpl> &context,
+                                                      const QSharedPointer<QDemonRenderTexture2D> &inTexture,
                                                       QDemonRenderImageAccessType::Enum inAccess);
 };
 

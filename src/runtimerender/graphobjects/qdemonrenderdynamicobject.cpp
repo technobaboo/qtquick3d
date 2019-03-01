@@ -46,64 +46,64 @@ QDemonDynamicObject::QDemonDynamicObject(QDemonGraphObjectTypes::Enum inType, co
 }
 
 template <typename TDataType>
-void QDemonDynamicObject::SetPropertyValueT(const dynamic::QDemonPropertyDefinition &inDefinition,
+void QDemonDynamicObject::setPropertyValueT(const dynamic::QDemonPropertyDefinition &inDefinition,
                                        const TDataType &inValue)
 {
     if (sizeof(inValue) != inDefinition.byteSize) {
         Q_ASSERT(false);
         return;
     }
-    ::memcpy(GetDataSectionBegin() + inDefinition.offset, &inValue, sizeof(inValue));
+    ::memcpy(getDataSectionBegin() + inDefinition.offset, &inValue, sizeof(inValue));
 }
 
-void QDemonDynamicObject::SetPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition,
-                                      bool inValue)
+void QDemonDynamicObject::setPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition,
+                                           bool inValue)
 {
-    SetPropertyValueT(inDefinition, inValue);
+    setPropertyValueT(inDefinition, inValue);
 }
 
-void QDemonDynamicObject::SetPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition,
+void QDemonDynamicObject::setPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition,
                                       float inValue)
 {
-    SetPropertyValueT(inDefinition, inValue);
+    setPropertyValueT(inDefinition, inValue);
 }
-void QDemonDynamicObject::SetPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition,
+void QDemonDynamicObject::setPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition,
                                       float inValue, quint32 inOffset)
 {
     if (sizeof(float) > (inDefinition.byteSize - inOffset)) {
         Q_ASSERT(false);
         return;
     }
-    ::memcpy(GetDataSectionBegin() + inDefinition.offset + inOffset, &inValue, sizeof(inValue));
+    ::memcpy(getDataSectionBegin() + inDefinition.offset + inOffset, &inValue, sizeof(inValue));
 }
-void QDemonDynamicObject::SetPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition,
+void QDemonDynamicObject::setPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition,
                                       const QVector2D &inValue)
 {
-    SetPropertyValueT(inDefinition, inValue);
+    setPropertyValueT(inDefinition, inValue);
 }
-void QDemonDynamicObject::SetPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition,
+void QDemonDynamicObject::setPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition,
                                       const QVector3D &inValue)
 {
-    SetPropertyValueT(inDefinition, inValue);
+    setPropertyValueT(inDefinition, inValue);
 }
-void QDemonDynamicObject::SetPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition,
+void QDemonDynamicObject::setPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition,
                                       const QVector4D &inValue)
 {
-    SetPropertyValueT(inDefinition, inValue);
+    setPropertyValueT(inDefinition, inValue);
 }
-void QDemonDynamicObject::SetPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition,
+void QDemonDynamicObject::setPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition,
                                       qint32 inValue)
 {
-    SetPropertyValueT(inDefinition, inValue);
+    setPropertyValueT(inDefinition, inValue);
 }
-void QDemonDynamicObject::SetPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition,
+void QDemonDynamicObject::setPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition,
                                       const QString &inValue)
 {
     Q_ASSERT(inDefinition.dataType == QDemonRenderShaderDataTypes::Texture2D);
-    SetPropertyValueT(inDefinition, inValue);
+    setPropertyValueT(inDefinition, inValue);
 }
 template <typename TStrType>
-void QDemonDynamicObject::SetStrPropertyValueT(dynamic::QDemonPropertyDefinition &inDefinition,
+void QDemonDynamicObject::setStrPropertyValueT(dynamic::QDemonPropertyDefinition &inDefinition,
                                                const char *inValue,
                                                const char *inProjectDir,
                                                TStrType &ioWorkspace)
@@ -115,7 +115,7 @@ void QDemonDynamicObject::SetStrPropertyValueT(dynamic::QDemonPropertyDefinition
         QDemonConstDataRef<QString> theEnumValues = inDefinition.enumValueNames;
         for (int idx = 0, end = theEnumValues.size(); idx < end; ++idx) {
             if (theEnumValues[idx].compare(QString::fromLocal8Bit(inValue)) == 0) {
-                SetPropertyValueT(inDefinition, idx);
+                setPropertyValueT(inDefinition, idx);
                 break;
             }
         }
@@ -127,27 +127,27 @@ void QDemonDynamicObject::SetStrPropertyValueT(dynamic::QDemonPropertyDefinition
         if (RequiresCombineBaseAndRelative) {
             const QString absolute = QDir(QString::fromLocal8Bit(inProjectDir)).filePath(QString::fromLocal8Bit(inValue));
             ioWorkspace = absolute;
-            SetPropertyValueT(inDefinition, ioWorkspace);
+            setPropertyValueT(inDefinition, ioWorkspace);
             // We also adjust the image path in the definition
             // I could not find a better place
             inDefinition.imagePath = ioWorkspace;
         } else {
-            SetPropertyValueT(inDefinition, inValue);
+            setPropertyValueT(inDefinition, inValue);
         }
     } else if (inDefinition.dataType == QDemonRenderShaderDataTypes::Image2D) {
-        SetPropertyValueT(inDefinition, inValue);
+        setPropertyValueT(inDefinition, inValue);
     } else if (inDefinition.dataType == QDemonRenderShaderDataTypes::DataBuffer) {
-        SetPropertyValueT(inDefinition, inValue);
+        setPropertyValueT(inDefinition, inValue);
     } else {
         Q_ASSERT(false);
     }
 }
 
-void QDemonDynamicObject::SetPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition,
+void QDemonDynamicObject::setPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition,
                                       const char *inValue, const char *inProjectDir,
                                       QString &ioWorkspace)
 {
-    SetStrPropertyValueT(const_cast<dynamic::QDemonPropertyDefinition &>(inDefinition), inValue,
+    setStrPropertyValueT(const_cast<dynamic::QDemonPropertyDefinition &>(inDefinition), inValue,
                          inProjectDir, ioWorkspace);
 }
 

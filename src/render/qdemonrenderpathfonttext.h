@@ -116,7 +116,7 @@ private:
     QMatrix4x4 m_modelMatrix; ///< Matrix which converts from font space to box space
 
 public:
-    static QSharedPointer<QDemonRenderPathFontItem> createPathFontItem(QSharedPointer<QDemonRenderContextImpl> context);
+    static QSharedPointer<QDemonRenderPathFontItem> createPathFontItem(const QSharedPointer<QDemonRenderContextImpl> &context);
 };
 
 QT_END_NAMESPACE

@@ -58,7 +58,7 @@ public:
          *
          * @return No return.
          */
-    QDemonRenderRasterizerState(QSharedPointer<QDemonRenderContextImpl> context, float depthBias, float depthScale, QDemonRenderFaces::Enum cullFace);
+    QDemonRenderRasterizerState(const QSharedPointer<QDemonRenderContextImpl> &context, float depthBias, float depthScale, QDemonRenderFaces::Enum cullFace);
 
     virtual ~QDemonRenderRasterizerState();
 
@@ -72,7 +72,7 @@ public:
         return m_stateHandle;
     }
 
-    static QSharedPointer<QDemonRenderRasterizerState> create(QSharedPointer<QDemonRenderContextImpl> context,
+    static QSharedPointer<QDemonRenderRasterizerState> create(const QSharedPointer<QDemonRenderContextImpl> &context,
                                                               float depthBias,
                                                               float depthScale,
                                                               QDemonRenderFaces::Enum cullFace);

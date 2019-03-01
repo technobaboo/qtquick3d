@@ -1321,7 +1321,7 @@ struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface, public
                 Q_ASSERT(false);
                 return;
             }
-            quint8 *dataPtr = inMaterial.GetDataSectionBegin() + inCommand.m_valueOffset;
+            quint8 *dataPtr = inMaterial.getDataSectionBegin() + inCommand.m_valueOffset;
             const dynamic::QDemonPropertyDefinition *theDefinition =
                     inClass.m_class->findPropertyByName(inCommand.m_propertyName);
             if (theDefinition)
@@ -1336,7 +1336,7 @@ struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface, public
                 // This is fine, the property wasn't found and we continue, no problem.
                 if (!theConstant)
                     continue;
-                quint8 *dataPtr = inMaterial.GetDataSectionBegin() + theDefinition.offset;
+                quint8 *dataPtr = inMaterial.getDataSectionBegin() + theDefinition.offset;
                 doApplyInstanceValue(inMaterial, dataPtr, theDefinition.name, theDefinition.dataType, inShader, theDefinition);
             }
         }
@@ -1851,7 +1851,7 @@ struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface, public
 
                     // we only do this to not miss if "None" is selected
                     QString theStrPtr = *reinterpret_cast<QString *>(
-                                inMaterial.GetDataSectionBegin() + thePropDefs[idx].offset);
+                                inMaterial.getDataSectionBegin() + thePropDefs[idx].offset);
 
                     if (!theStrPtr.isNull()) {
 
@@ -1882,7 +1882,7 @@ struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface, public
 
                     // we only do this to not miss if "None" is selected
                     QString theStrPtr = *reinterpret_cast<QString *>(
-                                inMaterial.GetDataSectionBegin() + thePropDefs[idx].offset);
+                                inMaterial.getDataSectionBegin() + thePropDefs[idx].offset);
 
                     if (!theStrPtr.isNull()) {
                         quint32 index = findAllocatedImage(thePropDefs[idx].imagePath);
@@ -1921,12 +1921,12 @@ struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface, public
         for (quint32 idx = 0, end = thePropDefs.size(); idx < end; ++idx) {
             if (thePropDefs[idx].dataType == QDemonRenderShaderDataTypes::Float
                     && (thePropDefs[idx].name == QStringLiteral("displaceAmount"))) {
-                float theValue = *reinterpret_cast<const float *>(inMaterial.GetDataSectionBegin()
+                float theValue = *reinterpret_cast<const float *>(inMaterial.getDataSectionBegin()
                                                                   + thePropDefs[idx].offset);
                 inMaterial.m_displaceAmount = theValue;
             } else if (thePropDefs[idx].dataType == QDemonRenderShaderDataTypes::Vec3
                        && (thePropDefs[idx].name == QStringLiteral("displace_tiling"))) {
-                QVector3D theValue = *reinterpret_cast<const QVector3D *>(inMaterial.GetDataSectionBegin()
+                QVector3D theValue = *reinterpret_cast<const QVector3D *>(inMaterial.getDataSectionBegin()
                                                                           + thePropDefs[idx].offset);
                 if (theValue.x() != inMaterial.m_displacementMap->m_scale.x()
                         || theValue.y() != inMaterial.m_displacementMap->m_scale.y()) {

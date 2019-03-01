@@ -56,7 +56,7 @@ public:
          *
          * @return No return.
          */
-    QDemonRenderSync(QSharedPointer<QDemonRenderContextImpl> context);
+    explicit QDemonRenderSync(const QSharedPointer<QDemonRenderContextImpl> &context);
 
     virtual ~QDemonRenderSync();
 
@@ -103,7 +103,7 @@ public:
          *
          * @return a sync object on success
          */
-    static QSharedPointer<QDemonRenderSync> create(QSharedPointer<QDemonRenderContextImpl> context);
+    static QSharedPointer<QDemonRenderSync> create(const QSharedPointer<QDemonRenderContextImpl> &context);
 };
 
 QT_END_NAMESPACE

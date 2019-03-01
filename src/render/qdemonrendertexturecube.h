@@ -55,7 +55,7 @@ public:
          *
          * @return No return.
          */
-    QDemonRenderTextureCube(QSharedPointer<QDemonRenderContextImpl> context,
+    QDemonRenderTextureCube(const QSharedPointer<QDemonRenderContextImpl> &context,
                             QDemonRenderTextureTargetType::Enum texTarget = QDemonRenderTextureTargetType::TextureCube);
 
     virtual ~QDemonRenderTextureCube() override;
@@ -96,7 +96,7 @@ public:
          *
          * @ return a texture array object
          */
-    static QSharedPointer<QDemonRenderTextureCube> create(QSharedPointer<QDemonRenderContextImpl> context);
+    static QSharedPointer<QDemonRenderTextureCube> create(const QSharedPointer<QDemonRenderContextImpl> &context);
 };
 
 QT_END_NAMESPACE

@@ -51,7 +51,7 @@ public:
          *
          * @return No return.
          */
-    QDemonRenderAttribLayout(QSharedPointer<QDemonRenderContextImpl> context,
+    QDemonRenderAttribLayout(const QSharedPointer<QDemonRenderContextImpl> &context,
                              QDemonConstDataRef<QDemonRenderVertexBufferEntry> attribs);
     ///< destructor
     ~QDemonRenderAttribLayout();

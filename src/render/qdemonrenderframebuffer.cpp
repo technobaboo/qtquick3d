@@ -37,7 +37,7 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonRenderFrameBuffer::QDemonRenderFrameBuffer(QSharedPointer<QDemonRenderContextImpl> context)
+QDemonRenderFrameBuffer::QDemonRenderFrameBuffer(const QSharedPointer<QDemonRenderContextImpl> &context)
     : m_context(context)
     , m_backend(context->getBackend())
     , m_bufferHandle(nullptr)
@@ -173,11 +173,11 @@ void QDemonRenderFrameBuffer::attach(QDemonRenderFrameBufferAttachments::Enum at
         m_attachmentBits |= (1 << attachment);
     } else if (theRelTarget == QDemonRenderTextureTargetType::Unknown) {
         // detach renderbuffer
-        m_backend->renderTargetAttach(m_bufferHandle, attachment,
-                                      QDemonRenderBackend::QDemonRenderBackendRenderbufferObject(nullptr));
+        m_backend->renderTargetAttach(m_bufferHandle, attachment, QDemonRenderBackend::QDemonRenderBackendRenderbufferObject(nullptr));
     } else {
         // detach texture
-        m_backend->renderTargetAttach(m_bufferHandle, attachment,
+        m_backend->renderTargetAttach(m_bufferHandle,
+                                      attachment,
                                       QDemonRenderBackend::QDemonRenderBackendTextureObject(nullptr),
                                       theRelTarget);
     }
@@ -185,7 +185,8 @@ void QDemonRenderFrameBuffer::attach(QDemonRenderFrameBufferAttachments::Enum at
 }
 
 void QDemonRenderFrameBuffer::attachLayer(QDemonRenderFrameBufferAttachments::Enum attachment,
-                                          QDemonRenderTextureOrRenderBuffer buffer, qint32 layer,
+                                          QDemonRenderTextureOrRenderBuffer buffer,
+                                          qint32 layer,
                                           qint32 level)
 {
     if (attachment == QDemonRenderFrameBufferAttachments::Unknown
@@ -283,7 +284,7 @@ bool QDemonRenderFrameBuffer::isComplete()
     return m_backend->renderTargetIsValid(m_bufferHandle);
 }
 
-QSharedPointer<QDemonRenderFrameBuffer> QDemonRenderFrameBuffer::create(QSharedPointer<QDemonRenderContextImpl> context)
+QSharedPointer<QDemonRenderFrameBuffer> QDemonRenderFrameBuffer::create(const QSharedPointer<QDemonRenderContextImpl> &context)
 {
     return QSharedPointer<QDemonRenderFrameBuffer>(new QDemonRenderFrameBuffer(context));
 }

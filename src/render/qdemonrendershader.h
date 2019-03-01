@@ -57,7 +57,7 @@ public:
          *
          * @return No return.
          */
-    QDemonRenderShader(QSharedPointer<QDemonRenderContextImpl> context,
+    QDemonRenderShader(const QSharedPointer<QDemonRenderContextImpl> &context,
                        QDemonConstDataRef<qint8> source,
                        bool binaryProgram)
         : m_context(context)

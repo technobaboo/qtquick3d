@@ -35,9 +35,10 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonRenderRenderBuffer::QDemonRenderRenderBuffer(QSharedPointer<QDemonRenderContextImpl> context,
+QDemonRenderRenderBuffer::QDemonRenderRenderBuffer(const QSharedPointer<QDemonRenderContextImpl> &context,
                                                    QDemonRenderRenderBufferFormats::Enum format,
-                                                   quint32 width, quint32 height)
+                                                   quint32 width,
+                                                   quint32 height)
     : m_context(context)
     , m_backend(context->getBackend())
     , m_width(width)
@@ -90,7 +91,7 @@ void QDemonRenderRenderBuffer::setDimensions(const QDemonRenderRenderBufferDimen
 
 
 QSharedPointer<QDemonRenderRenderBuffer>
-QDemonRenderRenderBuffer::create(QSharedPointer<QDemonRenderContextImpl> context,
+QDemonRenderRenderBuffer::create(const QSharedPointer<QDemonRenderContextImpl> &context,
                                  QDemonRenderRenderBufferFormats::Enum format, quint32 width,
                                  quint32 height)
 {

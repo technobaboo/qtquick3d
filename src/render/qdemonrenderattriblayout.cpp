@@ -34,7 +34,7 @@
 QT_BEGIN_NAMESPACE
 
 ///< constructor
-QDemonRenderAttribLayout::QDemonRenderAttribLayout(QSharedPointer<QDemonRenderContextImpl> context,
+QDemonRenderAttribLayout::QDemonRenderAttribLayout(const QSharedPointer<QDemonRenderContextImpl> &context,
                                                    QDemonConstDataRef<QDemonRenderVertexBufferEntry> attribs)
     : m_context(context)
     , m_backend(context->getBackend())

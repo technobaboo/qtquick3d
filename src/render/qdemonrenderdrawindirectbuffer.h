@@ -70,7 +70,7 @@ public:
          *
          * @return No return.
          */
-    QDemonRenderDrawIndirectBuffer(QSharedPointer<QDemonRenderContextImpl> context, size_t size,
+    QDemonRenderDrawIndirectBuffer(const QSharedPointer<QDemonRenderContextImpl> &context, size_t size,
                                    QDemonRenderBufferUsageType::Enum usageType, QDemonDataRef<quint8> data);
 
     ///< destructor
@@ -134,7 +134,7 @@ public:
          *
          * @return the buffer object or nullptr
          */
-    static QSharedPointer<QDemonRenderDrawIndirectBuffer> create(QSharedPointer<QDemonRenderContextImpl> context,
+    static QSharedPointer<QDemonRenderDrawIndirectBuffer> create(const QSharedPointer<QDemonRenderContextImpl> &context,
                                                   QDemonRenderBufferUsageType::Enum usageType,
                                                   size_t size, QDemonConstDataRef<quint8> bufferData);
 

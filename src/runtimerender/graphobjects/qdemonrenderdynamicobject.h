@@ -54,7 +54,7 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonDynamicObject : public QDemonGraphObjec
                         quint32 inDSByteSize,
                         quint32 thisObjSize);
 
-    quint8 *GetDataSectionBegin()
+    quint8 *getDataSectionBegin()
     {
         quint8 *thisObjectStart = reinterpret_cast<quint8 *>(this);
         quint8 *retval = thisObjectStart + thisObjectSize;
@@ -62,38 +62,38 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonDynamicObject : public QDemonGraphObjec
         return retval;
     }
 
-    const quint8 *GetDataSectionBegin() const
+    const quint8 *getDataSectionBegin() const
     {
-        return const_cast<QDemonDynamicObject *>(this)->GetDataSectionBegin();
+        return const_cast<QDemonDynamicObject *>(this)->getDataSectionBegin();
     }
 
-    quint8 *GetDataSectionEnd() { return GetDataSectionBegin() + dataSectionByteSize; }
+    quint8 *getDataSectionEnd() { return getDataSectionBegin() + dataSectionByteSize; }
 
     template <typename TDataType>
-    void SetPropertyValueT(const dynamic::QDemonPropertyDefinition &inDefinition,
+    void setPropertyValueT(const dynamic::QDemonPropertyDefinition &inDefinition,
                            const TDataType &inType);
     template <typename TStrType>
-    void SetStrPropertyValueT(dynamic::QDemonPropertyDefinition &inDefinition,
+    void setStrPropertyValueT(dynamic::QDemonPropertyDefinition &inDefinition,
                               const char *inValue,
                               const char *inProjectDir,
                               TStrType &ioWorkspace);
 
-    void SetPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition, bool inValue);
-    void SetPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition, float inValue);
-    void SetPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition,
+    void setPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition, bool inValue);
+    void setPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition, float inValue);
+    void setPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition,
                           float inValue,
                           quint32 inOffset);
-    void SetPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition,
+    void setPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition,
                           const QVector2D &inValue);
-    void SetPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition,
+    void setPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition,
                           const QVector3D &inValue);
-    void SetPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition,
+    void setPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition,
                           const QVector4D &inValue);
-    void SetPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition, qint32 inValue);
-    void SetPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition,
+    void setPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition, qint32 inValue);
+    void setPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition,
                           const QString &inValue);
 
-    void SetPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition,
+    void setPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition,
                           const char *inValue,
                           const char *inProjectDir,
                           QString &ioWorkspace);

@@ -35,12 +35,11 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonRenderStorageBuffer::QDemonRenderStorageBuffer(QSharedPointer<QDemonRenderContextImpl> context,
+QDemonRenderStorageBuffer::QDemonRenderStorageBuffer(const QSharedPointer<QDemonRenderContextImpl> &context,
                                                      const QString &bufferName, size_t size,
                                                      QDemonRenderBufferUsageType::Enum usageType,
                                                      QDemonDataRef<quint8> data, QDemonRenderDataBuffer *pBuffer)
-    : QDemonRenderDataBuffer(context, size,
-                             QDemonRenderBufferBindValues::Storage, usageType, data)
+    : QDemonRenderDataBuffer(context, size, QDemonRenderBufferBindValues::Storage, usageType, data)
     , m_name(bufferName)
     , m_wrappedBuffer(pBuffer)
     , m_dirty(true)
@@ -91,7 +90,7 @@ void QDemonRenderStorageBuffer::updateData(qint32 offset, QDemonDataRef<quint8> 
                                 data.begin() + offset);
 }
 
-QSharedPointer<QDemonRenderStorageBuffer> QDemonRenderStorageBuffer::create(QSharedPointer<QDemonRenderContextImpl> context,
+QSharedPointer<QDemonRenderStorageBuffer> QDemonRenderStorageBuffer::create(const QSharedPointer<QDemonRenderContextImpl> &context,
                                                                             const char *bufferName,
                                                                             QDemonRenderBufferUsageType::Enum usageType,
                                                                             size_t size,
@@ -102,11 +101,8 @@ QSharedPointer<QDemonRenderStorageBuffer> QDemonRenderStorageBuffer::create(QSha
 
     if (context->isStorageBufferSupported()) {
         const QString theBufferName = QString::fromLocal8Bit(bufferName);
-        quint32 cbufSize = sizeof(QDemonRenderStorageBuffer);
-        quint8 *newMem = static_cast<quint8 *>(::malloc(cbufSize));
-        retval.reset(new (newMem) QDemonRenderStorageBuffer(
-                         context, theBufferName, size, usageType,
-                         toDataRef(const_cast<quint8 *>(bufferData.begin()), bufferData.size()), pBuffer));
+        retval.reset(new QDemonRenderStorageBuffer(context, theBufferName, size, usageType,
+                                                   toDataRef(const_cast<quint8 *>(bufferData.begin()), bufferData.size()), pBuffer));
     } else {
         QString errorMsg = QObject::tr("Shader storage buffers are not supported: %1").arg(bufferName);
         qCCritical(INVALID_OPERATION) << errorMsg;

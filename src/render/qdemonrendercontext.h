@@ -577,8 +577,8 @@ protected:
 
     // Circular dependencies between shader constants and shader programs preclude
     // implementation in header
-    void doSetActiveShader(QSharedPointer<QDemonRenderShaderProgram> inShader);
-    void doSetActiveProgramPipeline(QSharedPointer<QDemonRenderProgramPipeline> inProgramPipeline);
+    void doSetActiveShader(const QSharedPointer<QDemonRenderShaderProgram> &inShader);
+    void doSetActiveProgramPipeline(const QSharedPointer<QDemonRenderProgramPipeline> &inProgramPipeline);
 
     void doSetInputAssembler(QSharedPointer<QDemonRenderInputAssembler> inAssembler)
     {
@@ -604,13 +604,13 @@ protected:
             m_backend->setReadTarget(QDemonRenderBackend::QDemonRenderBackendRenderTargetObject(nullptr));
     }
 
-    bool bindShaderToInputAssembler(const QSharedPointer<QDemonRenderInputAssembler> inputAssembler,
-                                    QSharedPointer<QDemonRenderShaderProgram> shader);
+    bool bindShaderToInputAssembler(const QSharedPointer<QDemonRenderInputAssembler> &inputAssembler,
+                                    const QSharedPointer<QDemonRenderShaderProgram> &shader);
     bool applyPreDrawProperties();
     void onPostDraw();
 
 public:
-    QDemonRenderContextImpl(QSharedPointer<QDemonRenderBackend> inBackend);
+    QDemonRenderContextImpl(const QSharedPointer<QDemonRenderBackend> &inBackend);
     virtual ~QDemonRenderContextImpl();
 
     QSharedPointer<QDemonRenderBackend> getBackend() override { return m_backend; }

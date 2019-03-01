@@ -879,7 +879,7 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
         new (retval)
                 QDemonDynamicObject(theClass->m_graphObjectType, inClassName,
                                theClass->m_propertySectionByteSize, theClass->m_baseObjectSize);
-        ::memcpy(retval->GetDataSectionBegin(), theClass->m_propertyDefaultData,
+        ::memcpy(retval->getDataSectionBegin(), theClass->m_propertyDefaultData,
                 theClass->m_propertySectionByteSize);
         return retval;
     }

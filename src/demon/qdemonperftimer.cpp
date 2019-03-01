@@ -19,10 +19,7 @@ struct QDemonTimerEntry
     size_t m_order = 0;
 
     QDemonTimerEntry(const QString &tag, size_t order)
-        : m_total(0)
-        , m_max(0)
-        , m_updateCount(0)
-        , m_tag(tag)
+        : m_tag(tag)
         , m_order(order)
     {
     }
@@ -100,9 +97,11 @@ struct QDemonPerfTimer : public QDemonPerfTimerInterface
     void resetTimerData() override
     {
         QMutexLocker locker(&m_mutex);
-        for (THashMapType::iterator iter = m_entries.begin(), end = m_entries.end(); iter != end;
-             ++iter) {
+        auto iter = m_entries.begin();
+        const auto end = m_entries.end();
+        while (iter != end) {
             iter.value().reset();
+            ++iter;
         }
     }
 

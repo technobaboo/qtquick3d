@@ -29,7 +29,7 @@ public:
     \brief Default constructor, not performing any initialization for performance reason.
     \remark Use empty() function below to construct empty bounds.
     */
-    QDemonBounds3();
+    QDemonBounds3() = default;
 
     /**
     \brief Construct from two bounding points

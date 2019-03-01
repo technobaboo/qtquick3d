@@ -34,7 +34,8 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonRenderIndexBuffer::QDemonRenderIndexBuffer(QSharedPointer<QDemonRenderContextImpl> context, size_t size,
+QDemonRenderIndexBuffer::QDemonRenderIndexBuffer(const QSharedPointer<QDemonRenderContextImpl> &context,
+                                                 size_t size,
                                                  QDemonRenderComponentTypes::Enum componentType,
                                                  QDemonRenderBufferUsageType::Enum usageType,
                                                  QDemonDataRef<quint8> data)
@@ -74,7 +75,7 @@ void QDemonRenderIndexBuffer::bind()
     m_backend->bindBuffer(m_bufferHandle, m_bindFlags);
 }
 
-QSharedPointer<QDemonRenderIndexBuffer> QDemonRenderIndexBuffer::create(QSharedPointer<QDemonRenderContextImpl> context,
+QSharedPointer<QDemonRenderIndexBuffer> QDemonRenderIndexBuffer::create(const QSharedPointer<QDemonRenderContextImpl> &context,
                                                                         QDemonRenderBufferUsageType::Enum usageType,
                                                                         QDemonRenderComponentTypes::Enum componentType,
                                                                         size_t size, QDemonConstDataRef<quint8> bufferData)

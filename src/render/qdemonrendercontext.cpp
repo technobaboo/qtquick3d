@@ -36,7 +36,7 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonRenderContextImpl::QDemonRenderContextImpl(QSharedPointer<QDemonRenderBackend> inBackend)
+QDemonRenderContextImpl::QDemonRenderContextImpl(const QSharedPointer<QDemonRenderBackend> &inBackend)
     : m_backend(inBackend)
     , m_dirtyFlags(0)
     , m_defaultOffscreenRenderTarget((QDemonRenderBackend::QDemonRenderBackendRenderTargetObject)nullptr)
@@ -875,9 +875,8 @@ void QDemonRenderContextImpl::blitFramebuffer(qint32 srcX0, qint32 srcY0, qint32
     m_backend->blitFramebuffer(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, flags, filter);
 }
 
-bool
-QDemonRenderContextImpl::bindShaderToInputAssembler(const QSharedPointer<QDemonRenderInputAssembler> inputAssembler,
-                                                    QSharedPointer<QDemonRenderShaderProgram> shader)
+bool QDemonRenderContextImpl::bindShaderToInputAssembler(const QSharedPointer<QDemonRenderInputAssembler> &inputAssembler,
+                                                         const QSharedPointer<QDemonRenderShaderProgram> &shader)
 {
     // setup the input assembler object
     return m_backend->setInputAssembler(inputAssembler->getInputAssemblerHandle(),
@@ -1004,7 +1003,7 @@ QDemonRenderVertFragCompilationResult QDemonRenderContext::compileSource(const c
                          QDemonConstDataRef<qint8>((const qint8 *)geometryShaderSource, inGSLen), separableProgram);
 }
 
-void QDemonRenderContextImpl::doSetActiveShader(QSharedPointer<QDemonRenderShaderProgram> inShader)
+void QDemonRenderContextImpl::doSetActiveShader(const QSharedPointer<QDemonRenderShaderProgram> &inShader)
 {
     m_hardwarePropertyContext.m_activeShader = nullptr;
     if (!m_backend)
@@ -1018,7 +1017,7 @@ void QDemonRenderContextImpl::doSetActiveShader(QSharedPointer<QDemonRenderShade
     m_hardwarePropertyContext.m_activeShader = inShader;
 }
 
-void QDemonRenderContextImpl::doSetActiveProgramPipeline(QSharedPointer<QDemonRenderProgramPipeline> inProgramPipeline)
+void QDemonRenderContextImpl::doSetActiveProgramPipeline(const QSharedPointer<QDemonRenderProgramPipeline> &inProgramPipeline)
 {
     if (inProgramPipeline) {
         // invalid any bound shader

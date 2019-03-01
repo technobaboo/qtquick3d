@@ -166,7 +166,7 @@ public:
                   quint64 timeout) override;
 
 protected:
-    QDemonRenderBackendMiscStateGL *m_pCurrentMiscState; ///< this holds the current misc state
+    QDemonRenderBackendMiscStateGL *m_currentMiscState; ///< this holds the current misc state
 #if defined(QT_OPENGL_ES_2)
     QDemonOpenGLES2Extensions *m_qdemonExtensions;
 #else

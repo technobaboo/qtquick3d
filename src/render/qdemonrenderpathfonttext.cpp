@@ -177,7 +177,7 @@ QDemonRenderPathFontItem::getSizeOfType(QDemonRenderPathFormatType::Enum type)
     }
 }
 
-QSharedPointer<QDemonRenderPathFontItem> QDemonRenderPathFontItem::createPathFontItem(QSharedPointer<QDemonRenderContextImpl> context)
+QSharedPointer<QDemonRenderPathFontItem> QDemonRenderPathFontItem::createPathFontItem(const QSharedPointer<QDemonRenderContextImpl> &context)
 {
     Q_ASSERT(context->isPathRenderingSupported());
 

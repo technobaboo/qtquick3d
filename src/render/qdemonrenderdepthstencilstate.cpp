@@ -33,13 +33,14 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonRenderDepthStencilState::QDemonRenderDepthStencilState(
-        QSharedPointer<QDemonRenderContextImpl> context, bool enableDepth, bool depthMask,
-        QDemonRenderBoolOp::Enum depthFunc, bool enableStencil,
-        QDemonRenderStencilFunctionArgument &stencilFuncFront,
-        QDemonRenderStencilFunctionArgument &stencilFuncBack,
-        QDemonRenderStencilOperationArgument &depthStencilOpFront,
-        QDemonRenderStencilOperationArgument &depthStencilOpBack)
+QDemonRenderDepthStencilState::QDemonRenderDepthStencilState(const QSharedPointer<QDemonRenderContextImpl> &context,
+                                                             bool enableDepth,
+                                                             bool depthMask,
+                                                             QDemonRenderBoolOp::Enum depthFunc, bool enableStencil,
+                                                             QDemonRenderStencilFunctionArgument &stencilFuncFront,
+                                                             QDemonRenderStencilFunctionArgument &stencilFuncBack,
+                                                             QDemonRenderStencilOperationArgument &depthStencilOpFront,
+                                                             QDemonRenderStencilOperationArgument &depthStencilOpBack)
     : m_context(context)
     , m_backend(context->getBackend())
     , m_depthEnabled(enableDepth)
@@ -66,7 +67,7 @@ QDemonRenderDepthStencilState::~QDemonRenderDepthStencilState()
 }
 
 QSharedPointer<QDemonRenderDepthStencilState>
-QDemonRenderDepthStencilState::create(QSharedPointer<QDemonRenderContextImpl> context, bool enableDepth,
+QDemonRenderDepthStencilState::create(const QSharedPointer<QDemonRenderContextImpl> &context, bool enableDepth,
                                       bool depthMask, QDemonRenderBoolOp::Enum depthFunc,
                                       bool enableStencil,
                                       QDemonRenderStencilFunctionArgument &stencilFuncFront,

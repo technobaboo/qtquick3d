@@ -57,7 +57,7 @@ public:
          *
          * @return No return.
          */
-    QDemonRenderVertexBuffer(QSharedPointer<QDemonRenderContextImpl> context,
+    QDemonRenderVertexBuffer(const QSharedPointer<QDemonRenderContextImpl> &context,
                              size_t size,
                              quint32 stride,
                              QDemonRenderBufferBindFlags bindFlags,
@@ -110,7 +110,7 @@ public:
     // No stride means that stride is calculated from the size of last entry found via entry
     // offset
     // Leaves this buffer temporarily bound.
-    static QSharedPointer<QDemonRenderVertexBuffer> create(QSharedPointer<QDemonRenderContextImpl> context,
+    static QSharedPointer<QDemonRenderVertexBuffer> create(const QSharedPointer<QDemonRenderContextImpl> &context,
                                                            QDemonRenderBufferUsageType::Enum usageType,
                                                            size_t size,
                                                            quint32 stride,

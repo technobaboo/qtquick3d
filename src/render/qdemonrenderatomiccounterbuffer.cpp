@@ -52,7 +52,7 @@ public:
     }
 };
 
-QDemonRenderAtomicCounterBuffer::QDemonRenderAtomicCounterBuffer(QSharedPointer<QDemonRenderContextImpl> context,
+QDemonRenderAtomicCounterBuffer::QDemonRenderAtomicCounterBuffer(const QSharedPointer<QDemonRenderContextImpl> &context,
                                                                  const QString &bufferName,
                                                                  size_t size,
                                                                  QDemonRenderBufferUsageType::Enum usageType,
@@ -132,7 +132,7 @@ bool QDemonRenderAtomicCounterBuffer::containsParam(const QString &name)
         return false;
 }
 
-QSharedPointer<QDemonRenderAtomicCounterBuffer> QDemonRenderAtomicCounterBuffer::create(QSharedPointer<QDemonRenderContextImpl> context, const char *bufferName,
+QSharedPointer<QDemonRenderAtomicCounterBuffer> QDemonRenderAtomicCounterBuffer::create(const QSharedPointer<QDemonRenderContextImpl> &context, const char *bufferName,
                                                                                         QDemonRenderBufferUsageType::Enum usageType, size_t size,
                                                                                         QDemonConstDataRef<quint8> bufferData)
 {
@@ -140,11 +140,8 @@ QSharedPointer<QDemonRenderAtomicCounterBuffer> QDemonRenderAtomicCounterBuffer:
 
     if (context->isAtomicCounterBufferSupported()) {
         const QString theBufferName = QString::fromLocal8Bit(bufferName);
-        quint32 bufSize = sizeof(QDemonRenderAtomicCounterBuffer);
-        quint8 *newMem = static_cast<quint8 *>(::malloc(bufSize));
-        retval.reset(new (newMem) QDemonRenderAtomicCounterBuffer(
-                         context, theBufferName, size, usageType,
-                         toDataRef(const_cast<quint8 *>(bufferData.begin()), bufferData.size())));
+        retval.reset(new QDemonRenderAtomicCounterBuffer(context, theBufferName, size, usageType,
+                                                         toDataRef(const_cast<quint8 *>(bufferData.begin()), bufferData.size())));
     } else {
         Q_ASSERT(false);
     }

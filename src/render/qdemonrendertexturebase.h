@@ -86,7 +86,7 @@ public:
          *
          * @return No return.
          */
-    QDemonRenderTextureBase(QSharedPointer<QDemonRenderContextImpl> context,
+    QDemonRenderTextureBase(const QSharedPointer<QDemonRenderContextImpl> &context,
                             QDemonRenderTextureTargetType::Enum texTarget);
 
     virtual ~QDemonRenderTextureBase();

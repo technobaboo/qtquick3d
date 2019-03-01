@@ -56,7 +56,7 @@ public:
          *
          * @return No return.
          */
-    QDemonRenderQueryBase(QSharedPointer<QDemonRenderContextImpl> context);
+    QDemonRenderQueryBase(const QSharedPointer<QDemonRenderContextImpl> &context);
 
     virtual ~QDemonRenderQueryBase();
 

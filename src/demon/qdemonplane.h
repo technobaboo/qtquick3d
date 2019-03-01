@@ -15,10 +15,7 @@ QT_BEGIN_NAMESPACE
 class Q_DEMON_EXPORT QDemonPlane
 {
 public:
-    /**
-    \brief Constructor
-    */
-    Q_ALWAYS_INLINE QDemonPlane();
+    QDemonPlane() = default;
 
     /**
     \brief Constructor from a normal and a distance
@@ -87,7 +84,7 @@ public:
 ;
 
     QVector3D n; //!< The normal to the plane
-    float d; //!< The distance from the origin
+    float d = 0.0f; //!< The distance from the origin
 };
 
 QT_END_NAMESPACE

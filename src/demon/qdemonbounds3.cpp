@@ -3,12 +3,6 @@
 
 QT_BEGIN_NAMESPACE
 
-
-QDemonBounds3::QDemonBounds3()
-{
-
-}
-
 void QDemonBounds3::include(const QVector3D &v)
 {
     Q_ASSERT(isFinite());

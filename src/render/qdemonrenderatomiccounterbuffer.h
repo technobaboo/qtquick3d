@@ -59,7 +59,7 @@ public:
          *
          * @return No return.
          */
-    QDemonRenderAtomicCounterBuffer(QSharedPointer<QDemonRenderContextImpl> context,
+    QDemonRenderAtomicCounterBuffer(const QSharedPointer<QDemonRenderContextImpl> &context,
                                     const QString &bufferName,
                                     size_t size,
                                     QDemonRenderBufferUsageType::Enum usageType,
@@ -163,7 +163,7 @@ public:
          *
          * @return the buffer object or nullptr
          */
-    static QSharedPointer<QDemonRenderAtomicCounterBuffer> create(QSharedPointer<QDemonRenderContextImpl> context,
+    static QSharedPointer<QDemonRenderAtomicCounterBuffer> create(const QSharedPointer<QDemonRenderContextImpl> &context,
                                                                   const char *bufferName,
                                                                   QDemonRenderBufferUsageType::Enum usageType,
                                                                   size_t size,

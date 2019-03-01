@@ -55,7 +55,7 @@ public:
     }
 };
 
-QDemonRenderConstantBuffer::QDemonRenderConstantBuffer(QSharedPointer<QDemonRenderContextImpl> context,
+QDemonRenderConstantBuffer::QDemonRenderConstantBuffer(const QSharedPointer<QDemonRenderContextImpl> &context,
                                                        const QString &bufferName, size_t size,
                                                        QDemonRenderBufferUsageType::Enum usageType,
                                                        QDemonDataRef<quint8> data)
@@ -111,8 +111,9 @@ void QDemonRenderConstantBuffer::bind()
     m_backend->bindBuffer(m_bufferHandle, m_bindFlags);
 }
 
-void QDemonRenderConstantBuffer::bindToShaderProgram(QSharedPointer<QDemonRenderShaderProgram> inShader,
-                                                     quint32 blockIndex, quint32 binding)
+void QDemonRenderConstantBuffer::bindToShaderProgram(const QSharedPointer<QDemonRenderShaderProgram> &inShader,
+                                                     quint32 blockIndex,
+                                                     quint32 binding)
 {
     if ((qint32)binding == -1) {
         binding = m_context->getNextConstantBufferUnit();
@@ -385,7 +386,7 @@ bool QDemonRenderConstantBuffer::allocateShadowBuffer(quint32 size)
     return true;
 }
 
-QSharedPointer<QDemonRenderConstantBuffer> QDemonRenderConstantBuffer::create(QSharedPointer<QDemonRenderContextImpl> context,
+QSharedPointer<QDemonRenderConstantBuffer> QDemonRenderConstantBuffer::create(const QSharedPointer<QDemonRenderContextImpl> &context,
                                                                               const char *bufferName,
                                                                               QDemonRenderBufferUsageType::Enum usageType,
                                                                               size_t size,

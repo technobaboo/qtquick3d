@@ -51,11 +51,11 @@ public:
          *
          * @return No return.
          */
-    QDemonRenderTessControlShader(QSharedPointer<QDemonRenderContextImpl> context,
+    QDemonRenderTessControlShader(const QSharedPointer<QDemonRenderContextImpl> &context,
                                   QDemonConstDataRef<qint8> source, bool binaryProgram);
 
     /// @brief destructor
-    ~QDemonRenderTessControlShader();
+    ~QDemonRenderTessControlShader() override;
 
     /**
          * @brief Query if shader compiled succesfuly
@@ -94,11 +94,12 @@ public:
          *
          * @return No return.
          */
-    QDemonRenderTessEvaluationShader(QSharedPointer<QDemonRenderContextImpl> context,
-                                     QDemonConstDataRef<qint8> source, bool binaryProgram);
+    QDemonRenderTessEvaluationShader(const QSharedPointer<QDemonRenderContextImpl> &context,
+                                     QDemonConstDataRef<qint8> source,
+                                     bool binaryProgram);
 
     /// @brief destructor
-    ~QDemonRenderTessEvaluationShader();
+    ~QDemonRenderTessEvaluationShader() override;
 
     /**
          * @brief Query if shader compiled succesfuly

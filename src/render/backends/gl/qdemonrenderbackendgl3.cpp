@@ -142,7 +142,7 @@ QDemonRenderBackendGL3Impl::QDemonRenderBackendGL3Impl(const QSurfaceFormat &for
     GL_CALL_EXTRA_FUNCTION(glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &m_maxAttribCount));
 
     // internal state tracker
-    m_pCurrentMiscState = new QDemonRenderBackendMiscStateGL();
+    m_currentMiscState = new QDemonRenderBackendMiscStateGL();
 
     // finally setup caps based on device
     setAndInspectHardwareCaps();
@@ -165,15 +165,11 @@ QDemonRenderBackendGL3Impl::QDemonRenderBackendGL3Impl(const QSurfaceFormat &for
 /// destructor
 QDemonRenderBackendGL3Impl::~QDemonRenderBackendGL3Impl()
 {
-    if (m_pCurrentMiscState)
-        delete m_pCurrentMiscState;
+    delete m_currentMiscState;
 #if !defined(QT_OPENGL_ES_2)
-    if (m_timerExtension)
-        delete m_timerExtension;
-    if (m_tessellationShader)
-        delete m_tessellationShader;
-    if (m_multiSample)
-        delete m_multiSample;
+    delete m_timerExtension;
+    delete m_tessellationShader;
+    delete m_multiSample;
 #endif
     if (m_qdemonExtensions)
         delete m_qdemonExtensions;
@@ -397,8 +393,8 @@ bool QDemonRenderBackendGL3Impl::setInputAssembler(QDemonRenderBackendInputAssem
 
     // set patch parameter count if changed
     if (m_backendSupport.caps.bits.bTessellationSupported
-            && m_pCurrentMiscState->m_patchVertexCount != inputAssembler->m_patchVertexCount) {
-        m_pCurrentMiscState->m_patchVertexCount = inputAssembler->m_patchVertexCount;
+            && m_currentMiscState->m_patchVertexCount != inputAssembler->m_patchVertexCount) {
+        m_currentMiscState->m_patchVertexCount = inputAssembler->m_patchVertexCount;
 #if defined(QT_OPENGL_ES)
         GL_CALL_TESSELATION_EXT(glPatchParameteriEXT(GL_PATCH_VERTICES, inputAssembler->m_PatchVertexCount));
 #else
@@ -752,10 +748,10 @@ void QDemonRenderBackendGL3Impl::setQueryTimer(QDemonRenderBackendQueryObject qo
     }
 }
 
-QDemonRenderBackend::QDemonRenderBackendSyncObject
-QDemonRenderBackendGL3Impl::createSync(QDemonRenderSyncType::Enum syncType, QDemonRenderSyncFlags)
+QDemonRenderBackend::QDemonRenderBackendSyncObject QDemonRenderBackendGL3Impl::createSync(QDemonRenderSyncType::Enum syncType,
+                                                                                          QDemonRenderSyncFlags)
 {
-    GLsync syncID = 0;
+    GLsync syncID = nullptr;
 
     syncID = GL_CALL_EXTRA_FUNCTION(glFenceSync(m_conversion.fromSyncTypeToGL(syncType), 0));
 

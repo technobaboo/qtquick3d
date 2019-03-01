@@ -36,8 +36,8 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonRenderImage2D::QDemonRenderImage2D(QSharedPointer<QDemonRenderContextImpl> context,
-                                         QSharedPointer<QDemonRenderTexture2D> inTexture,
+QDemonRenderImage2D::QDemonRenderImage2D(const QSharedPointer<QDemonRenderContextImpl> &context,
+                                         const QSharedPointer<QDemonRenderTexture2D> &inTexture,
                                          QDemonRenderImageAccessType::Enum inAccess)
     : m_context(context)
     , m_backend(context->getBackend())
@@ -80,9 +80,9 @@ QDemonRenderBackend::QDemonRenderBackendTextureObject QDemonRenderImage2D::getTe
     return m_texture2D->getTextureObjectHandle();
 }
 
-QSharedPointer<QDemonRenderImage2D> QDemonRenderImage2D::create(QSharedPointer<QDemonRenderContextImpl> context,
-                                                 QSharedPointer<QDemonRenderTexture2D> inTexture,
-                                                 QDemonRenderImageAccessType::Enum inAccess)
+QSharedPointer<QDemonRenderImage2D> QDemonRenderImage2D::create(const QSharedPointer<QDemonRenderContextImpl> &context,
+                                                                const QSharedPointer<QDemonRenderTexture2D> &inTexture,
+                                                                QDemonRenderImageAccessType::Enum inAccess)
 {
     QSharedPointer<QDemonRenderImage2D> retval;
     if (inTexture)

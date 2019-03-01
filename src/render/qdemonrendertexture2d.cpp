@@ -34,7 +34,7 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonRenderTexture2D::QDemonRenderTexture2D(QSharedPointer<QDemonRenderContextImpl> context,
+QDemonRenderTexture2D::QDemonRenderTexture2D(const QSharedPointer<QDemonRenderContextImpl> &context,
                                              QDemonRenderTextureTargetType::Enum texTarget)
     : QDemonRenderTextureBase(context, texTarget)
     , m_width(0)
@@ -52,8 +52,11 @@ QDemonTextureDetails QDemonRenderTexture2D::getTextureDetails() const
     return QDemonTextureDetails(m_width, m_height, 0, m_sampleCount, m_format);
 }
 
-void QDemonRenderTexture2D::setTextureData(QDemonDataRef<quint8> newBuffer, quint8 inMipLevel, quint32 width,
-                                           quint32 height, QDemonRenderTextureFormats::Enum format,
+void QDemonRenderTexture2D::setTextureData(QDemonDataRef<quint8> newBuffer,
+                                           quint8 inMipLevel,
+                                           quint32 width,
+                                           quint32 height,
+                                           QDemonRenderTextureFormats::Enum format,
                                            QDemonRenderTextureFormats::Enum formatDest)
 {
     Q_ASSERT(m_textureHandle);
@@ -77,7 +80,7 @@ void QDemonRenderTexture2D::setTextureData(QDemonDataRef<quint8> newBuffer, quin
 
         if (QDemonRenderTextureFormats::isCompressedTextureFormat(formatDest)) {
             bool compress = QDemonRenderTextureFormats::isUncompressedTextureFormat(format);
-            bool appropriateSizes = ((width % 4) || (height % 4)) == false;
+            bool appropriateSizes = !((width % 4) || (height % 4));
 
             // we only compress multiple of 4 textures
             if (compress && !appropriateSizes)
@@ -253,7 +256,7 @@ void QDemonRenderTexture2D::bind()
     applyTexSwizzle();
 }
 
-QSharedPointer<QDemonRenderTexture2D> QDemonRenderTexture2D::create(QSharedPointer<QDemonRenderContextImpl> context)
+QSharedPointer<QDemonRenderTexture2D> QDemonRenderTexture2D::create(const QSharedPointer<QDemonRenderContextImpl> &context)
 {
     return QSharedPointer<QDemonRenderTexture2D>(new QDemonRenderTexture2D(context));
 }
