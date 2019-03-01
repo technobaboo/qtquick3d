@@ -802,14 +802,13 @@ MeshMultiHeader *Mesh::loadMultiHeader(QIODevice &inStream)
     }
     size_t allocSize =
         sizeof(MeshMultiHeader) + theHeader.m_entries.m_size * sizeof(MeshMultiEntry);
-    MeshMultiHeader *retval = new MeshMultiHeader;
-    if (retval == nullptr) {
+    quint8 *baseAddr = static_cast<quint8 *>(::malloc(allocSize));
+    if (baseAddr == nullptr) {
         Q_ASSERT(false);
         return nullptr;
     }
-    quint8 *baseAddr = reinterpret_cast<quint8 *>(retval);
+    MeshMultiHeader *retval = new (baseAddr) MeshMultiHeader(theHeader);
     quint8 *entryData = baseAddr + sizeof(MeshMultiHeader);
-    *retval = theHeader;
     retval->m_entries.m_offset = (quint32)(entryData - baseAddr);
     inStream.seek(inStream.size() -((qint64)allocSize));
 
