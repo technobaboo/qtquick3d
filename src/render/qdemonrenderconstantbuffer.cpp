@@ -64,9 +64,6 @@ QDemonRenderConstantBuffer::QDemonRenderConstantBuffer(const QSharedPointer<QDem
     , m_currentOffset(0)
     , m_currentSize(0)
     , m_hwBufferInitialized(false)
-    , m_dirty(true)
-    , m_rangeStart(0)
-    , m_rangeEnd(0)
     , m_maxBlockSize(0)
 {
     Q_ASSERT(context->getConstantBufferSupport());
@@ -228,28 +225,20 @@ void QDemonRenderConstantBuffer::update()
 {
     // we only update the buffer if the buffer is already on hardware
     // and if it is dirty
-    if (m_dirty && m_hwBufferInitialized) {
-        if (m_rangeEnd == 0)
+    if (m_rangeStart < m_rangeEnd && m_hwBufferInitialized) {
+        if (m_rangeStart == 0 && m_rangeEnd >= m_shadowCopy.size()) {
             m_backend->updateBuffer(m_bufferHandle, m_bindFlags, m_shadowCopy.size(),
                                     m_usageType, m_shadowCopy.begin());
-        else
-            updateRange();
+        } else {
+            Q_ASSERT(m_rangeStart < m_rangeEnd && m_rangeEnd <= m_shadowCopy.size());
+            m_backend->updateBufferRange(m_bufferHandle, m_bindFlags, m_rangeStart,
+                                         m_rangeEnd - m_rangeStart,
+                                         m_shadowCopy.begin() + m_rangeStart);
+        }
 
-        m_dirty = false;
-        m_rangeStart = m_rangeEnd = 0;
+        m_rangeStart = std::numeric_limits<quint32>::max();
+        m_rangeEnd = 0;
     }
-}
-
-void QDemonRenderConstantBuffer::updateRange()
-{
-    if ((m_rangeStart + m_rangeEnd) > m_shadowCopy.size()) {
-        Q_ASSERT(false);
-        return;
-    }
-
-    m_backend->updateBufferRange(m_bufferHandle, m_bindFlags, m_rangeStart,
-                                 m_rangeEnd - m_rangeStart,
-                                 m_shadowCopy.begin() + m_rangeStart);
 }
 
 void QDemonRenderConstantBuffer::addParam(const QString &name,
@@ -287,13 +276,13 @@ void QDemonRenderConstantBuffer::updateParam(const char *inName, QDemonDataRef<q
                     entry.value()->m_count * getUniformTypeSize(entry.value()->m_type))) {
             return;
         }
-        memcpy(m_shadowCopy.begin() + entry.value()->m_offset, value.begin(),
-               entry.value()->m_count * getUniformTypeSize(entry.value()->m_type));
-        m_dirty = true;
+        quint32 size = entry.value()->m_count * getUniformTypeSize(entry.value()->m_type);
+        memcpy(m_shadowCopy.begin() + entry.value()->m_offset, value.begin(), size);
+        setDirty(entry.value()->m_offset, size);
     }
 }
 
-void QDemonRenderConstantBuffer::updateRaw(qint32 offset, QDemonDataRef<quint8> data)
+void QDemonRenderConstantBuffer::updateRaw(quint32 offset, QDemonDataRef<quint8> data)
 {
     // allocate space if yet done
     if (!m_shadowCopy.size()) {
@@ -317,11 +306,7 @@ void QDemonRenderConstantBuffer::updateRaw(qint32 offset, QDemonDataRef<quint8> 
     }
     memcpy(m_shadowCopy.begin() + offset, data.begin(), data.size());
 
-    // update start
-    m_rangeStart = (m_dirty) ? (m_rangeStart > (quint32)offset) ? offset : m_rangeStart : offset;
-    m_rangeEnd = (offset + data.size() > m_rangeEnd) ? offset + data.size() : m_rangeEnd;
-
-    m_dirty = true;
+    setDirty(offset, data.size());
 }
 
 ConstantBufferParamEntry *QDemonRenderConstantBuffer::createParamEntry(const QString &name, QDemonRenderShaderDataTypes::Enum type, qint32 count, qint32 offset)

@@ -146,7 +146,7 @@ public:
          *
          * @return no return
          */
-    void updateRaw(qint32 offset, QDemonDataRef<quint8> data);
+    void updateRaw(quint32 offset, QDemonDataRef<quint8> data);
 
     /**
          * @brief get the backend object handle
@@ -221,22 +221,20 @@ private:
          */
     bool allocateShadowBuffer(quint32 size);
 
-    /**
-         * @brief update a certain range of the buffer to hardware
-         *
-         * @return no return.
-         */
-    virtual void updateRange();
-
 private:
+    inline void setDirty(quint32 start, quint32 size)
+    {
+        m_rangeStart = qMin(m_rangeStart, start);
+        m_rangeEnd = qMax(m_rangeEnd, start + size);
+    }
+
     QString m_name; ///< buffer name
     TRenderConstantBufferEntryMap m_constantBufferEntryMap; ///< holds the entries of a constant buffer
     quint32 m_currentOffset; ///< holds the current offset
     quint32 m_currentSize; ///< holds the current size
     bool m_hwBufferInitialized; ///< true if the hardware version of the buffer is initialized
-    bool m_dirty; ///< true if buffer is dirty
-    quint32 m_rangeStart; ///< start offset of the range to update
-    quint32 m_rangeEnd; ///< size of the range to update
+    quint32 m_rangeStart = 0; ///< start offset of the range to update
+    quint32 m_rangeEnd = std::numeric_limits<quint32>::max(); ///< end of the range to update
     qint32 m_maxBlockSize; ///< maximum size for a single constant buffer
     QDemonDataRef<quint8> m_shadowCopy; ///< host copy of the data in the GPU
 };
