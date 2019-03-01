@@ -1163,27 +1163,27 @@ QDemonRenderVertFragCompilationResult QDemonRenderShaderProgram::create(QSharedP
     if (vtxShader.hasValue()) {
         if (bProgramIsValid && vtxShader.getValue()->isValid())
             pProgram->detach(vtxShader.getValue());
-        ::free(vtxShader.getValue());
+        delete vtxShader.getValue();
     }
     if (fragShader.hasValue()) {
         if (bProgramIsValid && fragShader.getValue()->isValid())
             pProgram->detach(fragShader.getValue());
-        ::free(fragShader.getValue());
+        delete fragShader.getValue();
     }
     if (tcShader.hasValue()) {
         if (bProgramIsValid && tcShader.getValue()->isValid())
             pProgram->detach(tcShader.getValue());
-        ::free(tcShader.getValue());
+        delete tcShader.getValue();
     }
     if (teShader.hasValue()) {
         if (bProgramIsValid && teShader.getValue()->isValid())
             pProgram->detach(teShader.getValue());
-        ::free(teShader.getValue());
+        delete teShader.getValue();
     }
     if (geShader.hasValue()) {
         if (bProgramIsValid && geShader.getValue()->isValid())
             pProgram->detach(geShader.getValue());
-        ::free(geShader.getValue());
+        delete geShader.getValue();
     }
 
     // set program
