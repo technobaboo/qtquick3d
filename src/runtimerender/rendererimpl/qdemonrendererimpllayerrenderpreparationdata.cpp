@@ -818,9 +818,8 @@ bool QDemonLayerRenderPreparationData::prepareModelForRender(QDemonRenderModel &
             renderableFlags.setPickable(canModelBePickable
                                         && (theModelContext.model.flags.isGloballyPickable()
                                             || renderableFlags.getPickable()));
-            QDemonRenderableObject *theRenderableObject(nullptr);
-            QPair<bool, QDemonGraphObject *> theMaterialObjectAndDirty =
-                    resolveReferenceMaterial(theSourceMaterialObject);
+            QDemonRenderableObject *theRenderableObject = nullptr;
+            QPair<bool, QDemonGraphObject *> theMaterialObjectAndDirty = resolveReferenceMaterial(theSourceMaterialObject);
             QDemonGraphObject *theMaterialObject = theMaterialObjectAndDirty.second;
             subsetDirty = subsetDirty || theMaterialObjectAndDirty.first;
             if (theMaterialObject == nullptr)
@@ -882,13 +881,18 @@ bool QDemonLayerRenderPreparationData::prepareModelForRender(QDemonRenderModel &
                     Q_ASSERT(false);
                 }
 
-                theRenderableObject = new QDemonSubsetRenderable(
-                            renderableFlags, theModelCenter, renderer, theSubset, theMaterial,
-                            theModelContext, subsetOpacity, firstImage, theGeneratedKey, boneGlobals);
+                theRenderableObject = new QDemonSubsetRenderable(renderableFlags,
+                                                                 theModelCenter,
+                                                                 renderer,
+                                                                 theSubset,
+                                                                 theMaterial,
+                                                                 theModelContext,
+                                                                 subsetOpacity,
+                                                                 firstImage,
+                                                                 theGeneratedKey,
+                                                                 boneGlobals);
                 subsetDirty = subsetDirty || renderableFlags.isDirty();
-
-            } // if type == DefaultMaterial
-            else if (theMaterialObject->type == QDemonGraphObjectTypes::CustomMaterial) {
+            } else if (theMaterialObject->type == QDemonGraphObjectTypes::CustomMaterial) {
                 QDemonRenderCustomMaterial &theMaterial(
                             static_cast<QDemonRenderCustomMaterial &>(*theMaterialObject));
 
@@ -918,9 +922,15 @@ bool QDemonLayerRenderPreparationData::prepareModelForRender(QDemonRenderModel &
                     renderer->prepareImageForIbl(*theMaterial.m_iblProbe);
                 }
 
-                theRenderableObject = new QDemonCustomMaterialRenderable(
-                            renderableFlags, theModelCenter, renderer, theSubset, theMaterial,
-                            theModelContext, subsetOpacity, firstImage, theGeneratedKey);
+                theRenderableObject = new QDemonCustomMaterialRenderable(renderableFlags,
+                                                                         theModelCenter,
+                                                                         renderer,
+                                                                         theSubset,
+                                                                         theMaterial,
+                                                                         theModelContext,
+                                                                         subsetOpacity,
+                                                                         firstImage,
+                                                                         theGeneratedKey);
             }
             if (theRenderableObject) {
                 theRenderableObject->scopedLights = inScopedLights;
@@ -1159,7 +1169,9 @@ void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportD
             camera = nullptr;
             lights.clear();
             opaqueObjects.clear();
+            qDeleteAll(opaqueObjects);
             transparentObjects.clear();
+            qDeleteAll(transparentObjects);
             QVector<QDemonLightNodeMarker> theLightNodeMarkers;
             sourceLightDirections.clear();
 
