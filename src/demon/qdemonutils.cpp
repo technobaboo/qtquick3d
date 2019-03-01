@@ -208,9 +208,10 @@ void memSet(void *ptr, quint8 value, size_t size)
     memset(ptr, value, size);
 }
 
-
-const char *nonNull(const char *src) { return src == nullptr ? "" : src; }
-
+const char *nonNull(const char *src)
+{
+    return src == nullptr ? "" : src;
+}
 
 float radToDeg(const float a)
 {

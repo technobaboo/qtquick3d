@@ -74,7 +74,7 @@ QDemonDataRef<TDataType> PtrAtOffset(quint8 *baseData, quint32 offset, quint32 b
 void Q_DEMON_EXPORT memZero(void *ptr, size_t size);
 void Q_DEMON_EXPORT memSet(void *ptr, quint8 value, size_t size);
 
-inline Q_DEMON_EXPORT const char *nonNull(const char *src);
+Q_DEMON_EXPORT const char *nonNull(const char *src);
 
 Q_DEMON_EXPORT float radToDeg(const float a);
 Q_DEMON_EXPORT double radToDeg(const double a);
