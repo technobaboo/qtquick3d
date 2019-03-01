@@ -163,10 +163,8 @@ QDemonRenderBackendGL4Impl::QDemonRenderBackendGL4Impl(const QSurfaceFormat &for
 QDemonRenderBackendGL4Impl::~QDemonRenderBackendGL4Impl()
 {
 #if !defined(QT_OPENGL_ES)
-    if (m_nvPathRendering)
-        delete m_nvPathRendering;
-    if (m_directStateAccess)
-        delete m_directStateAccess;
+    delete m_nvPathRendering;
+    delete m_directStateAccess;
 #endif
 }
 

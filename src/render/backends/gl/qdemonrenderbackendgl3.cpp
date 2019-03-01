@@ -171,8 +171,7 @@ QDemonRenderBackendGL3Impl::~QDemonRenderBackendGL3Impl()
     delete m_tessellationShader;
     delete m_multiSample;
 #endif
-    if (m_qdemonExtensions)
-        delete m_qdemonExtensions;
+    delete m_qdemonExtensions;
 }
 
 void QDemonRenderBackendGL3Impl::setMultisampledTextureData2D(

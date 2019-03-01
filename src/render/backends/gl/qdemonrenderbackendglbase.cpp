@@ -85,14 +85,10 @@ QDemonRenderBackendGLBase::QDemonRenderBackendGLBase(const QSurfaceFormat &forma
 /// destructor
 QDemonRenderBackendGLBase::~QDemonRenderBackendGLBase()
 {
-    if (m_currentRasterizerState)
-        delete m_currentRasterizerState;
-    if (m_currentDepthStencilState)
-        delete m_currentDepthStencilState;
-    if (m_glFunctions)
-        delete m_glFunctions;
-    if (m_glExtraFunctions)
-        delete m_glExtraFunctions;
+    delete m_currentRasterizerState;
+    delete m_currentDepthStencilState;
+    delete m_glFunctions;
+    delete m_glExtraFunctions;
 }
 
 QDemonRenderContextType QDemonRenderBackendGLBase::getRenderContextType() const
@@ -352,13 +348,10 @@ QDemonRenderBackendGLBase::createDepthStencilState(
     return (QDemonRenderBackend::QDemonRenderBackendDepthStencilStateObject)retval;
 }
 
-void QDemonRenderBackendGLBase::releaseDepthStencilState(
-        QDemonRenderBackendDepthStencilStateObject inDepthStencilState)
+void QDemonRenderBackendGLBase::releaseDepthStencilState(QDemonRenderBackendDepthStencilStateObject inDepthStencilState)
 {
-    QDemonRenderBackendDepthStencilStateGL *inputState =
-            (QDemonRenderBackendDepthStencilStateGL *)inDepthStencilState;
-    if (inputState)
-        delete inputState;
+    QDemonRenderBackendDepthStencilStateGL *inputState = (QDemonRenderBackendDepthStencilStateGL *)inDepthStencilState;
+    delete inputState;
 }
 
 QDemonRenderBackend::QDemonRenderBackendRasterizerStateObject
@@ -370,20 +363,14 @@ QDemonRenderBackendGLBase::createRasterizerState(float depthBias, float depthSca
     return (QDemonRenderBackend::QDemonRenderBackendRasterizerStateObject)retval;
 }
 
-void QDemonRenderBackendGLBase::releaseRasterizerState(
-        QDemonRenderBackendRasterizerStateObject rasterizerState)
+void QDemonRenderBackendGLBase::releaseRasterizerState(QDemonRenderBackendRasterizerStateObject rasterizerState)
 {
-    QDemonRenderBackendRasterizerStateGL *inputState =
-            (QDemonRenderBackendRasterizerStateGL *)rasterizerState;
-    if (inputState)
-        delete inputState;
+    delete (QDemonRenderBackendRasterizerStateGL *)rasterizerState;
 }
 
-void QDemonRenderBackendGLBase::setDepthStencilState(
-        QDemonRenderBackendDepthStencilStateObject inDepthStencilState)
+void QDemonRenderBackendGLBase::setDepthStencilState(QDemonRenderBackendDepthStencilStateObject inDepthStencilState)
 {
-    QDemonRenderBackendDepthStencilStateGL *inputState =
-            (QDemonRenderBackendDepthStencilStateGL *)inDepthStencilState;
+    QDemonRenderBackendDepthStencilStateGL *inputState = (QDemonRenderBackendDepthStencilStateGL *)inDepthStencilState;
     if (inputState && !(*m_currentDepthStencilState == *inputState)) {
         // we check on a per single state base
         if (inputState->m_depthEnable != m_currentDepthStencilState->m_depthEnable) {
@@ -448,8 +435,7 @@ void QDemonRenderBackendGLBase::setDepthStencilState(
     }
 }
 
-void
-QDemonRenderBackendGLBase::setRasterizerState(QDemonRenderBackendRasterizerStateObject rasterizerState)
+void QDemonRenderBackendGLBase::setRasterizerState(QDemonRenderBackendRasterizerStateObject rasterizerState)
 {
     QDemonRenderBackendRasterizerStateGL *inputState =
             (QDemonRenderBackendRasterizerStateGL *)rasterizerState;

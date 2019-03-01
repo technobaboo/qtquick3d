@@ -157,11 +157,9 @@ QDemonRenderBackendGLES2Impl::QDemonRenderBackendGLES2Impl(const QSurfaceFormat 
 /// destructor
 QDemonRenderBackendGLES2Impl::~QDemonRenderBackendGLES2Impl()
 {
-    if (m_pCurrentMiscState)
-        delete m_pCurrentMiscState;
+    delete m_pCurrentMiscState;
 #if defined(QT_OPENGL_ES) || defined(QT_OPENGL_ES_2_ANGLE)
-    if (m_qdemonExtensions)
-        delete m_qdemonExtensions;
+    delete m_qdemonExtensions;
 #endif
 }
 
