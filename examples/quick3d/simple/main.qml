@@ -31,6 +31,8 @@ DemonWindow {
                 position: Qt.vector3d(0, 0, -600)
             }
 
+            rotation: Qt.vector3d(0, 90, 0)
+
             SequentialAnimation on rotation {
                 loops: Animation.Infinite
                 PropertyAnimation { duration: 5000; to: Qt.vector3d(0, 360, 0); from: Qt.vector3d(0, 0, 0) }
@@ -40,12 +42,13 @@ DemonWindow {
 
         ColorfulCube {
             id: cube1
-            position: Qt.vector3d(-200, 0, 0);
+            position: Qt.vector3d(-100, 0, 0);
+            rotationTo: Qt.vector3d(-360, 0, 0);
         }
 
         ColorfulCube {
             id: cube2
-            position: Qt.vector3d(200, 0, 0);
+            position: Qt.vector3d(100, 0, 0);
         }
 
     }

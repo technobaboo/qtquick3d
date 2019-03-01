@@ -471,9 +471,9 @@ QDemonBounds3 QDemonGraphNode::getChildBounds(QSharedPointer<QDemonBufferManager
 
 QVector3D QDemonGraphNode::getGlobalPos() const
 {
-    return QVector3D(globalTransform(3, 0),
-                     globalTransform(3, 1),
-                     globalTransform(3, 2));
+    return QVector3D(globalTransform(0, 3),
+                     globalTransform(1, 3),
+                     globalTransform(2, 3));
 }
 
 QVector3D QDemonGraphNode::getDirection() const
