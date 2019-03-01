@@ -84,6 +84,7 @@ typedef QHash<wchar_t, QDemonTextureAtlasFontEntry> TTextureAtlasMap;
 
 struct QDemonTextAtlasFont
 {
+    QAtomicInt ref;
     quint32 m_fontSize;
     TTextureAtlasMap m_atlasEntries; ///< our entries in the atlas
 
@@ -195,7 +196,7 @@ public:
     QDemonRef<QDemonTextRendererInterface> getTextRenderer(QDemonRef<QDemonRenderContext> inRenderContext) override
     {
         m_renderContext = inRenderContext;
-        return this->sharedFromThis();
+        return this;
     }
 
     void preloadFonts() override {}

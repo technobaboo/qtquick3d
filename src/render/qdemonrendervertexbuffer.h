@@ -39,7 +39,7 @@ QT_BEGIN_NAMESPACE
 class QDemonRenderContextImpl;
 
 ///< Vertex buffer representation
-class QDemonRenderVertexBuffer : public QDemonRenderDataBuffer, public QEnableSharedFromThis<QDemonRenderVertexBuffer>
+class QDemonRenderVertexBuffer : public QDemonRenderDataBuffer
 {
 public:
     /**

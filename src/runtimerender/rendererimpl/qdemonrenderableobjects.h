@@ -238,15 +238,8 @@ struct QDemonSubsetRenderableBase : public QDemonRenderableObject
                                QDemonRef<QDemonRendererImpl> gen,
                                const QDemonRenderSubset &inSubset,
                                const QDemonModelContext &inModelContext,
-                               float inOpacity)
-
-        : QDemonRenderableObject(inFlags, inWorldCenterPt, inModelContext.model.globalTransform, inSubset.bounds)
-        , generator(gen)
-        , modelContext(inModelContext)
-        , subset(inSubset)
-        , opacity(inOpacity)
-    {
-    }
+                               float inOpacity);
+    ~QDemonSubsetRenderableBase();
     void renderShadowMapPass(const QVector2D &inCameraVec,
                              const QDemonRenderLight *inLight,
                              const QDemonRenderCamera &inCamera,
@@ -278,18 +271,8 @@ struct QDemonSubsetRenderable : public QDemonSubsetRenderableBase
                            float inOpacity,
                            QDemonRenderableImage *inFirstImage,
                            QDemonShaderDefaultMaterialKey inShaderKey,
-                           QDemonConstDataRef<QMatrix4x4> inBoneGlobals)
-
-        : QDemonSubsetRenderableBase(inFlags, inWorldCenterPt, gen, inSubset, inModelContext, inOpacity)
-        , material(mat)
-        , firstImage(inFirstImage)
-        , shaderDescription(inShaderKey)
-        , bones(inBoneGlobals)
-    {
-        renderableFlags.setDefaultMaterialMeshSubset(true);
-        renderableFlags.setCustom(false);
-        renderableFlags.setText(false);
-    }
+                           QDemonConstDataRef<QMatrix4x4> inBoneGlobals);
+    ~QDemonSubsetRenderable();
 
     void render(const QVector2D &inCameraVec, TShaderFeatureSet inFeatureSet);
 
@@ -315,14 +298,8 @@ struct QDemonCustomMaterialRenderable : public QDemonSubsetRenderableBase
                                    const QDemonModelContext &inModelContext,
                                    float inOpacity,
                                    QDemonRenderableImage *inFirstImage,
-                                   QDemonShaderDefaultMaterialKey inShaderKey)
-        : QDemonSubsetRenderableBase(inFlags, inWorldCenterPt, gen, inSubset, inModelContext, inOpacity)
-        , material(mat)
-        , firstImage(inFirstImage)
-        , shaderDescription(inShaderKey)
-    {
-        renderableFlags.setCustomMaterialMeshSubset(true);
-    }
+                                   QDemonShaderDefaultMaterialKey inShaderKey);
+    ~QDemonCustomMaterialRenderable();
 
     void render(const QVector2D &inCameraVec,
                 const QDemonLayerRenderData &inLayerData,
@@ -413,22 +390,8 @@ struct QDemonPathRenderable : public QDemonRenderableObject
                          const QDemonGraphObject &inMaterial,
                          float inOpacity,
                          QDemonShaderDefaultMaterialKey inShaderKey,
-                         bool inIsStroke)
-
-        : QDemonRenderableObject(inFlags, inWorldCenterPt, inGlobalTransform, bounds)
-        , m_generator(gen)
-        , m_path(inPath)
-        , bounds(inBounds)
-        , m_mvp(inModelViewProjection)
-        , m_normalMatrix(inNormalMat)
-        , m_material(inMaterial)
-        , m_opacity(inOpacity)
-        , m_firstImage(nullptr)
-        , m_shaderDescription(inShaderKey)
-        , m_isStroke(inIsStroke)
-    {
-        renderableFlags.setPath(true);
-    }
+                         bool inIsStroke);
+    ~QDemonPathRenderable();
     void render(const QVector2D &inCameraVec,
                 const QDemonRenderLayer &inLayer,
                 const QVector<QDemonRenderLight *> &inLights,

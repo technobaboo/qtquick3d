@@ -55,7 +55,7 @@ QT_BEGIN_NAMESPACE
 
 namespace {
 
-struct QDemonQtTextRenderer : public QDemonTextRendererInterface, public QEnableSharedFromThis<QDemonQtTextRenderer>
+struct QDemonQtTextRenderer : public QDemonTextRendererInterface
 {
     struct FontInfo
     {
@@ -342,7 +342,7 @@ struct QDemonQtTextRenderer : public QDemonTextRendererInterface, public QEnable
     QDemonRef<QDemonTextRendererInterface> getTextRenderer(QDemonRef<QDemonRenderContext> inRenderContext) override
     {
         m_renderContext = inRenderContext;
-        return this->sharedFromThis();
+        return this;
     }
 
     FontInfo &fontInfoForName(const QString &fontName)

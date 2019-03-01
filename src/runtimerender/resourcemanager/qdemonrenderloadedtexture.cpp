@@ -551,7 +551,7 @@ QDemonRef<QDemonLoadedTexture> QDemonLoadedTexture::load(const QString &inPath,
         return nullptr;
 
     QDemonRef<QDemonLoadedTexture> theLoadedImage = nullptr;
-    QDemonRef<QIODevice> theStream(inFactory.getStreamForFile(inPath));
+    QSharedPointer<QIODevice> theStream(inFactory.getStreamForFile(inPath));
     QString fileName;
     inFactory.getPathForFile(inPath, fileName);
     if (theStream && inPath.size() > 3) {

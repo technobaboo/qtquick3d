@@ -132,7 +132,7 @@ struct QDemonTextShaderPtr
     operator QDemonTextShader *() { return shader; }
 };
 
-class Q_DEMONRUNTIMERENDER_EXPORT QDemonRendererImpl : public QDemonRendererInterface, public QDemonRenderWidgetContextInterface, public QEnableSharedFromThis<QDemonRendererImpl>
+class Q_DEMONRUNTIMERENDER_EXPORT QDemonRendererImpl : public QDemonRenderWidgetContextInterface
 {
     typedef QHash<QDemonShaderDefaultMaterialKey, QDemonRef<QDemonShaderGeneratorGeneratedShader>> TShaderMap;
     typedef QHash<QString, QDemonRef<QDemonRenderConstantBuffer>> TStrConstanBufMap;
@@ -297,7 +297,7 @@ public:
 
     QDemonRef<QDemonRenderWidgetContextInterface> getRenderWidgetContext()
     {
-        return sharedFromThis();
+        return this;
     }
 
     void beginFrame() override;

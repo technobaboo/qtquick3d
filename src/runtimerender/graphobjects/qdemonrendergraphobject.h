@@ -43,6 +43,7 @@ QT_BEGIN_NAMESPACE
 // at your own risk as the type is used for RTTI purposes.
 struct Q_DEMONRUNTIMERENDER_EXPORT QDemonGraphObject
 {
+    QAtomicInt ref;
     // Id's help debugging the object and are optionally set
     QString id;
     // Type is used for RTTI purposes down the road.

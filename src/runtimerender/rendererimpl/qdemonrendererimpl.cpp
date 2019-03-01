@@ -52,6 +52,7 @@
 #include <QtDemonRuntimeRender/qdemonrenderpath.h>
 #include <QtDemonRuntimeRender/qdemonrendershadercodegeneratorv2.h>
 #include <QtDemonRuntimeRender/qdemonrenderdefaultmaterialshadergenerator.h>
+#include <QtDemonRuntimeRender/qdemonrenderpathmanager.h>
 
 #include <QtDemonRender/qdemonrenderframebuffer.h>
 #include <QtDemon/QDemonDataRef>
@@ -279,7 +280,7 @@ QDemonRef<QDemonLayerRenderData> QDemonRendererImpl::getOrCreateLayerRenderDataF
             return QDemonRef<QDemonLayerRenderData>(theIter.value());
 
         QDemonRef<QDemonLayerRenderData> theRenderData = QDemonRef<QDemonLayerRenderData>(new QDemonLayerRenderData(
-                                                                                              const_cast<QDemonRenderLayer &>(*theLayer), sharedFromThis()));
+                                                                                              const_cast<QDemonRenderLayer &>(*theLayer), this));
         m_instanceRenderMap.insert(combineLayerAndId(theLayer, id), theRenderData);
 
         // create a profiler if enabled
@@ -1925,5 +1926,52 @@ bool QDemonRendererInterface::isGl2Context(QDemonRenderContextType inContextType
 QDemonRef<QDemonRendererInterface> QDemonRendererInterface::createRenderer(QDemonRenderContextInterface *inContext)
 {
     return QDemonRef<QDemonRendererImpl>(new QDemonRendererImpl(inContext));
+}
+
+QDemonRenderPickSubResult::QDemonRenderPickSubResult()
+    : m_subRenderer(nullptr)
+    , m_nextSibling(nullptr)
+{
+}
+
+QDemonRenderPickSubResult::QDemonRenderPickSubResult(QDemonRef<QDemonOffscreenRendererInterface> inSubRenderer, QMatrix4x4 inTextureMatrix,
+                         QDemonRenderTextureCoordOp::Enum inHorizontalTilingMode,
+                         QDemonRenderTextureCoordOp::Enum inVerticalTilingMode, quint32 width,
+                         quint32 height)
+    : m_subRenderer(inSubRenderer)
+    , m_textureMatrix(inTextureMatrix)
+    , m_horizontalTilingMode(inHorizontalTilingMode)
+    , m_verticalTilingMode(inVerticalTilingMode)
+    , m_viewportWidth(width)
+    , m_viewportHeight(height)
+    , m_nextSibling(nullptr)
+{
+}
+
+QDemonRenderPickSubResult::~QDemonRenderPickSubResult()
+{
+}
+
+QDemonRenderPickResult::QDemonRenderPickResult(const QDemonGraphObject &inHitObject,
+                       float inCameraDistance,
+                       const QVector2D &inLocalUVCoords)
+    : m_hitObject(&inHitObject)
+    , m_cameraDistanceSq(inCameraDistance)
+    , m_localUVCoords(inLocalUVCoords)
+    , m_firstSubObject(nullptr)
+    , m_offscreenRenderer(nullptr)
+{
+}
+QDemonRenderPickResult::QDemonRenderPickResult()
+    : m_hitObject(nullptr)
+    , m_cameraDistanceSq(std::numeric_limits<float>::max())
+    , m_localUVCoords(0, 0)
+    , m_firstSubObject(nullptr)
+    , m_offscreenRenderer(nullptr)
+{
+}
+
+QDemonRenderPickResult::~QDemonRenderPickResult()
+{
 }
 QT_END_NAMESPACE

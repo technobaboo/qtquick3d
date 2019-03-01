@@ -30,6 +30,7 @@
 #include <QtDemonRuntimeRender/qdemonrenderimage.h>
 #include <QtDemonRuntimeRender/qdemonrenderbuffermanager.h>
 #include <QtDemonRuntimeRender/qdemonoffscreenrendermanager.h>
+#include <QtDemonRuntimeRender/qdemonrenderprefiltertexture.h>
 #include <qdemonoffscreenrenderkey.h>
 
 QT_BEGIN_NAMESPACE
@@ -119,5 +120,14 @@ void QDemonRenderImage::calculateTextureTransform()
     m_textureTransform = m_textureTransform * scale;
     m_textureTransform = m_textureTransform * translation;
 }
+
+QDemonRenderImageTextureData::QDemonRenderImageTextureData()
+    : m_texture(nullptr)
+    , m_bsdfMipMap(nullptr)
+{
+}
+
+QDemonRenderImageTextureData::~QDemonRenderImageTextureData()
+{}
 
 QT_END_NAMESPACE

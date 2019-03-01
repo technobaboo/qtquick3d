@@ -53,6 +53,7 @@ uint qHash(const QDemonShaderDefaultMaterialKey &key) {
 namespace {
 struct QDemonShaderLightProperties
 {
+    QAtomicInt ref;
     QDemonRef<QDemonRenderShaderProgram> m_shader;
     RenderLightTypes::Enum m_lightType;
     QDemonLightSourceShader m_lightData;
@@ -145,6 +146,7 @@ struct QDemonShaderGeneratorGeneratedShader
 {
     typedef QHash<quint32, QDemonShaderTextureProperties> TCustomMaterialImagMap;
 
+    QAtomicInt ref;
     QDemonRef<QDemonRenderShaderProgram> m_shader;
     // Specific properties we know the shader has to have.
     QDemonRenderCachedShaderProperty<QMatrix4x4> m_modelMatrix;

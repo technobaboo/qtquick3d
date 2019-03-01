@@ -56,6 +56,8 @@ typedef QHash<QString, QDemonRef<QDemonRenderShaderBufferBase>> TShaderBufferMap
 class Q_DEMONRENDER_EXPORT QDemonRenderShaderProgram
 {
 public:
+    QAtomicInt ref;
+
     struct ProgramType
     {
         enum Enum { Graphics, Compute };
@@ -471,7 +473,7 @@ struct QDemonRenderCachedShaderBuffer
         : shader(inShader)
         , shaderBuffer(nullptr)
     {
-        QDemonRef<TDataType> theShaderBuffer = qSharedPointerCast<TDataType>(inShader->getShaderBuffer(inShaderBufferName));
+        QDemonRef<TDataType> theShaderBuffer = static_cast<TDataType *>(inShader->getShaderBuffer(inShaderBufferName).get());
         if (theShaderBuffer) {
             shaderBuffer = theShaderBuffer;
         }

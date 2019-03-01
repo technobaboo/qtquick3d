@@ -137,6 +137,7 @@ struct QDemonShadowMapProperties
  */
 struct QDemonShaderGeneratorGeneratedShader
 {
+    QAtomicInt ref;
     QDemonRef<QDemonRenderShaderProgram> m_shader;
     // Specific properties we know the shader has to have.
     QDemonRenderCachedShaderProperty<QMatrix4x4> m_mvp;

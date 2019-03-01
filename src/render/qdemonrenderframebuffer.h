@@ -111,8 +111,10 @@ public:
     }
 };
 
-class QDemonRenderFrameBuffer : public QDemonRenderImplemented, public QEnableSharedFromThis<QDemonRenderFrameBuffer>
+class QDemonRenderFrameBuffer : public QDemonRenderImplemented
 {
+public:
+    QAtomicInt ref;
 private:
     QDemonRef<QDemonRenderContextImpl> m_context; ///< pointer to context
     QDemonRef<QDemonRenderBackend> m_backend; ///< pointer to backend
@@ -132,7 +134,7 @@ public:
     QDemonRenderFrameBuffer(const QDemonRef<QDemonRenderContextImpl> &context);
 
     /// destructor
-    virtual ~QDemonRenderFrameBuffer();
+    virtual ~QDemonRenderFrameBuffer() override;
 
     /**
          * @brief query attachment

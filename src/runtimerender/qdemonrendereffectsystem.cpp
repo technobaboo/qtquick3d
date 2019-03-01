@@ -68,6 +68,7 @@ namespace {
 
 struct QDemonEffectClass
 {
+    QAtomicInt ref;
     QDemonDynamicObjectClassInterface *dynamicClass;
 
     QDemonEffectClass(QDemonDynamicObjectClassInterface &dynClass)
@@ -83,6 +84,7 @@ struct QDemonEffectClass
 
 struct QDemonAllocatedBufferEntry
 {
+    QAtomicInt ref;
     QString name;
     QDemonRef<QDemonRenderFrameBuffer> frameBuffer;
     QDemonRef<QDemonRenderTexture2D> texture;
@@ -105,6 +107,7 @@ struct QDemonAllocatedBufferEntry
 
 struct QDemonAllocatedImageEntry
 {
+    QAtomicInt ref;
     QString name;
     QDemonRef<QDemonRenderImage2D> image;
     QDemonRef<QDemonRenderTexture2D> texture;
@@ -125,6 +128,7 @@ struct QDemonAllocatedImageEntry
 
 struct QDemonImageEntry
 {
+    QAtomicInt ref;
     QDemonRef<QDemonRenderShaderProgram> shader;
     QDemonRenderCachedShaderProperty<QDemonRenderImage2D *> image;
 
@@ -144,6 +148,7 @@ struct QDemonImageEntry
 
 struct QDemonAllocatedDataBufferEntry
 {
+    QAtomicInt ref;
     QString name;
     QDemonRef<QDemonRenderDataBuffer> dataBuffer;
     QDemonRenderBufferBindValues::Enum bufferType;
@@ -168,6 +173,7 @@ struct QDemonAllocatedDataBufferEntry
 
 struct QDemonDataBufferEntry
 {
+    QAtomicInt ref;
     QDemonRef<QDemonRenderShaderProgram> shader;
     QDemonRenderCachedShaderBuffer<QDemonRenderShaderBufferBase> dataBuffer;
 
@@ -206,6 +212,7 @@ struct QDemonEffectTextureData
 
 struct QDemonTextureEntry
 {
+    QAtomicInt ref;
     QDemonRef<QDemonRenderShaderProgram> shader;
     QDemonRenderCachedShaderProperty<QDemonRenderTexture2D *> texture;
     QDemonRenderCachedShaderProperty<QVector4D> textureData;
@@ -265,6 +272,7 @@ typedef QPair<QString, QDemonRef<QDemonDataBufferEntry>> TNamedDataBufferEntry;
 
 struct QDemonEffectContext
 {
+    QAtomicInt ref;
     QString m_className;
     QDemonRenderContextInterface *m_context;
     QDemonRef<QDemonResourceManagerInterface> m_resourceManager;
@@ -427,6 +435,7 @@ namespace {
 /* We setup some shared state on the effect shaders */
 struct QDemonEffectShader
 {
+    QAtomicInt ref;
     QDemonRef<QDemonRenderShaderProgram> m_shader;
     QDemonRenderCachedShaderProperty<QMatrix4x4> m_mvp;
     QDemonRenderCachedShaderProperty<QVector2D> m_fragColorAlphaSettings;
@@ -448,7 +457,7 @@ struct QDemonEffectShader
     }
 };
 
-struct QDemonEffectSystem : public QDemonEffectSystemInterface, public QEnableSharedFromThis<QDemonEffectSystem>
+struct QDemonEffectSystem : public QDemonEffectSystemInterface
 {
     typedef QHash<QString, char *> TPathDataMap;
     typedef QSet<QString> TPathSet;
@@ -1825,7 +1834,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface, public QEnableSh
                     theContext->getDepthFunction(), theContext->isStencilTestEnabled(), stencilDefaultFunc,
                     stencilDefaultFunc, stencilDefaultOp, stencilDefaultOp);
 
-        return sharedFromThis();
+        return this;
     }
 
     QDemonRef<QDemonResourceManagerInterface> getResourceManager() override

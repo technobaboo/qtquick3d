@@ -111,7 +111,7 @@ struct QDemonInputStreamFactory : public QDemonInputStreamFactoryInterface
     }
 
 
-    QDemonRef<QIODevice> getStreamForFile(const QString &inFilename, bool inQuiet) override
+    QSharedPointer<QIODevice> getStreamForFile(const QString &inFilename, bool inQuiet) override
     {
         QMutexLocker factoryLocker(&m_mutex);
         QString localFile = CFileTools::normalizePathForQtUsage(inFilename);
@@ -136,12 +136,12 @@ struct QDemonInputStreamFactory : public QDemonInputStreamFactoryInterface
             qCritical("Failed to find file: %s", inFilename.toLatin1().data());
             qCritical("Searched path: %s", QDir::searchPaths(Q3DSTUDIO_TAG).join(',').toLatin1().constData());
         }
-        return QDemonRef<QIODevice>(inputStream);
+        return QSharedPointer<QIODevice>(inputStream);
     }
 
     bool getPathForFile(const QString &inFilename, QString &outFile, bool inQuiet = false) override
     {
-        QDemonRef<QIODevice> theStream = getStreamForFile(inFilename, inQuiet);
+        QSharedPointer<QIODevice> theStream = getStreamForFile(inFilename, inQuiet);
         if (theStream) {
             QDemonInputStream *theRealStream = static_cast<QDemonInputStream *>(theStream.data());
             outFile = theRealStream->path();

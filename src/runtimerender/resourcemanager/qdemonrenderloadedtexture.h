@@ -58,6 +58,7 @@ struct QDemonExtendedTextureFormats
 struct QDemonLoadedTexture
 {
 public:
+    QAtomicInt ref;
     qint32 width = 0;
     qint32 height = 0;
     qint32 components = 0;

@@ -514,6 +514,7 @@ void QDemonCustomMaterialVertexPipeline::doGenerateVertexColor()
 
 struct QDemonMaterialClass
 {
+    QAtomicInt ref;
     QDemonDynamicObjectClassInterface *m_class;
     bool m_hasTransparency = false;
     bool m_hasRefraction = false;
@@ -581,6 +582,7 @@ namespace {
 
 struct QDemonCustomMaterialTextureData
 {
+    QAtomicInt ref;
     QDemonRef<QDemonRenderShaderProgram> shader;
     QDemonRenderCachedShaderProperty<QDemonRenderTexture2D *> sampler;
     QDemonRef<QDemonRenderTexture2D> texture;
@@ -654,6 +656,7 @@ struct QDemonCustomMaterialsTessellationProperties
 /* We setup some shared state on the custom material shaders */
 struct QDemonCustomMaterialShader
 {
+    QAtomicInt ref;
     QDemonRef<QDemonRenderShaderProgram> shader;
     QDemonRenderCachedShaderProperty<QMatrix4x4> modelMatrix;
     QDemonRenderCachedShaderProperty<QMatrix4x4> viewProjMatrix;
@@ -834,7 +837,7 @@ QDemonStringBlendFuncMap g_BlendFuncMap[] = {
     QDemonStringBlendFuncMap("SrcAlphaSaturate", QDemonRenderSrcBlendFunc::SrcAlphaSaturate)
 };
 
-struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface, public QEnableSharedFromThis<QDemonMaterialSystem>
+struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface
 {
     typedef QHash<QDemonShaderMapKey, QDemonRef<QDemonCustomMaterialShader>> TShaderMap;
     typedef QPair<QString, QDemonRenderImage *> TAllocatedImageEntry;
@@ -2091,7 +2094,7 @@ struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface, public
         QDemonRef<QDemonRenderContext> theContext = m_context->getRenderContext();
         m_useFastBlits = theContext->getRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::FastBlits);
 
-        return this->sharedFromThis();
+        return this;
     }
 };
 }

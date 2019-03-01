@@ -974,7 +974,7 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
             const QString ver = m_context->getDynamicObjectSystem()->shaderCodeLibraryVersion();
 
             QString fullPath;
-            QDemonRef<QIODevice> theStream;
+            QSharedPointer<QIODevice> theStream;
             if (!platformDir.isEmpty()) {
                 QTextStream stream(&fullPath);
                 stream << platformDir << QLatin1Char('/') << inPathToEffect;
@@ -1217,7 +1217,7 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
     QDemonRef<QDemonDynamicObjectSystemInterface> createDynamicSystem(QDemonRenderContextInterface *rc) override
     {
         m_context = rc;
-        return sharedFromThis();
+        return this;
     }
 
     QStringList getParameters(const QString &str, int begin, int end)

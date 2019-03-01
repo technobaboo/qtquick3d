@@ -39,6 +39,7 @@ QT_BEGIN_NAMESPACE
 class QDemonRenderTask
 {
 public:
+    QAtomicInt ref;
     virtual ~QDemonRenderTask();
     virtual void run() = 0;
 };
@@ -69,6 +70,7 @@ public:
 class Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderListInterface
 {
 public:
+    QAtomicInt ref;
     virtual ~QDemonRenderListInterface() {}
     // Called by the render context, do not call this.
     virtual void beginFrame() = 0;

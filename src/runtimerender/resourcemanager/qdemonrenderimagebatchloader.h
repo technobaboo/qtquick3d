@@ -45,6 +45,7 @@ struct ImageLoadResult
 class IImageLoadListener
 {
 public:
+    QAtomicInt ref;
     virtual ~IImageLoadListener() {}
     virtual void OnImageLoadComplete(QString inPath, ImageLoadResult::Enum inResult) = 0;
     virtual void OnImageBatchComplete(quint64 inBatch) = 0;
@@ -59,10 +60,9 @@ class QDemonAbstractThreadPool;
 class QDemonPerfTimerInterface;
 class IImageBatchLoader
 {
-protected:
-    virtual ~IImageBatchLoader() {}
-
 public:
+    QAtomicInt ref;
+    virtual ~IImageBatchLoader() {}
     // Returns an ID to the load request.  Request a block of images to be loaded.
     // Also takes an image that the buffer system will return when requested for the given
     // source paths

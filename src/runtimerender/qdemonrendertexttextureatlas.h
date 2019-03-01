@@ -43,9 +43,9 @@ TTextRenderAtlasDetailsAndTexture;
 
 class QDemonTextTextureAtlasInterface
 {
-protected:
-    virtual ~QDemonTextTextureAtlasInterface();
 public:
+    QAtomicInt ref;
+    virtual ~QDemonTextTextureAtlasInterface();
     virtual TTextRenderAtlasDetailsAndTexture renderText(const QDemonTextRenderInfo &inText) = 0;
     virtual bool isInitialized() = 0;
     virtual TTextTextureAtlasDetailsAndTexture prepareTextureAtlas() = 0;

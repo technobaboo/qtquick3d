@@ -49,7 +49,7 @@ struct RenderRotationValues
     };
 };
 
-struct QDemonPresentation : public QDemonGraphObject
+struct Q_DEMONRUNTIMERENDER_EXPORT QDemonPresentation : public QDemonGraphObject
 {
     QVector2D presentationDimensions;
     RenderRotationValues::Enum presentationRotation;
@@ -57,22 +57,9 @@ struct QDemonPresentation : public QDemonGraphObject
 
     QString presentationDirectory;
 
-    QDemonPresentation()
-        : QDemonGraphObject(QDemonGraphObjectTypes::Presentation)
-        , presentationDimensions(800, 400)
-        , presentationRotation(RenderRotationValues::NoRotation)
-        , scene(nullptr)
-    {
-    }
-
-    QDemonPresentation(float w, float h, const QString &presDir)
-        : QDemonGraphObject(QDemonGraphObjectTypes::Presentation)
-        , presentationDimensions(w, h)
-        , presentationRotation(RenderRotationValues::NoRotation)
-        , scene(nullptr)
-        , presentationDirectory(presDir)
-    {
-    }
+    QDemonPresentation();
+    QDemonPresentation(float w, float h, const QString &presDir);
+    ~QDemonPresentation();
     // Generic method used during serialization
     // to remap string and object pointers
     template <typename TRemapperType>

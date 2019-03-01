@@ -104,4 +104,7 @@ void QDemonRenderProgramPipeline::bind()
 {
     m_backend->setActiveProgramPipeline(m_programPipelineHandle);
 }
+
+QDemonRef<QDemonRenderShaderProgram> QDemonRenderProgramPipeline::getVertexStage() { return m_vertexProgram; }
+
 QT_END_NAMESPACE

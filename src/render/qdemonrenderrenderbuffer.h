@@ -50,8 +50,10 @@ struct QDemonRenderRenderBufferDimensions
     QDemonRenderRenderBufferDimensions() = default;
 };
 
-class QDemonRenderRenderBuffer : public QDemonRenderImplemented, public QEnableSharedFromThis<QDemonRenderRenderBuffer>
+class QDemonRenderRenderBuffer : public QDemonRenderImplemented
 {
+public:
+    QAtomicInt ref;
 private:
     QDemonRef<QDemonRenderContextImpl> m_context; ///< pointer to context
     QDemonRef<QDemonRenderBackend> m_backend; ///< pointer to backend

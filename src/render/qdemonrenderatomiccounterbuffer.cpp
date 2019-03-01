@@ -136,16 +136,14 @@ QDemonRef<QDemonRenderAtomicCounterBuffer> QDemonRenderAtomicCounterBuffer::crea
                                                                                         QDemonRenderBufferUsageType::Enum usageType, size_t size,
                                                                                         QDemonConstDataRef<quint8> bufferData)
 {
-    QSharedPointer<QDemonRenderAtomicCounterBuffer> retval = nullptr;
-
     if (context->isAtomicCounterBufferSupported()) {
         const QString theBufferName = QString::fromLocal8Bit(bufferName);
-        retval.reset(new QDemonRenderAtomicCounterBuffer(context, theBufferName, size, usageType,
-                                                         toDataRef(const_cast<quint8 *>(bufferData.begin()), bufferData.size())));
+        return QDemonRef<QDemonRenderAtomicCounterBuffer>(new QDemonRenderAtomicCounterBuffer(context, theBufferName, size, usageType,
+                                                     toDataRef(const_cast<quint8 *>(bufferData.begin()), bufferData.size())));
     } else {
         Q_ASSERT(false);
     }
-    return retval;
+    return QDemonRef<QDemonRenderAtomicCounterBuffer>();
 }
 
 QT_END_NAMESPACE

@@ -40,6 +40,8 @@ class QDemonRenderContextImpl;
 // currently this handles only stencil state
 class QDemonRenderRasterizerState
 {
+public:
+    QAtomicInt ref;
 
 private:
     QDemonRef<QDemonRenderContextImpl> m_context; ///< pointer to context

@@ -41,7 +41,7 @@ class QDemonRenderContextImpl;
 class QDemonRenderVertexBuffer;
 
 ///< Constant (uniform) buffer representation
-class QDemonRenderStorageBuffer : public QDemonRenderDataBuffer, public QEnableSharedFromThis<QDemonRenderStorageBuffer>
+class QDemonRenderStorageBuffer : public QDemonRenderDataBuffer
 {
 public:
     /**

@@ -68,10 +68,9 @@ typedef QPair<QDemonTextureAtlasRect, QDemonDataRef<quint8>> TTextureAtlasEntryA
     */
 class QDemonTextureAtlasInterface
 {
-protected:
-    virtual ~QDemonTextureAtlasInterface() {}
-
 public:
+    QAtomicInt ref;
+    virtual ~QDemonTextureAtlasInterface() {}
     virtual qint32 getWidth() const = 0;
     virtual qint32 getHeight() const = 0;
     virtual qint32 getAtlasEntryCount() const = 0;

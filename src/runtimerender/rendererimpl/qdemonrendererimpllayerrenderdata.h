@@ -47,6 +47,7 @@ struct AdvancedBlendModes
 };
 struct QDemonLayerRenderData : public QDemonLayerRenderPreparationData
 {
+    QAtomicInt ref;
 
     // Layers can be rendered offscreen for many reasons; effects, progressive aa,
     // or just because a flag forces it.  If they are rendered offscreen we can then

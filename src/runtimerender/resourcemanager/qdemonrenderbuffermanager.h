@@ -45,10 +45,9 @@ class QDemonPerfTimerInterface;
 
 class Q_DEMONRUNTIMERENDER_EXPORT QDemonBufferManagerInterface
 {
-protected:
-    virtual ~QDemonBufferManagerInterface() {}
-
 public:
+    QAtomicInt ref;
+    virtual ~QDemonBufferManagerInterface() {}
     // Path manipulation used to get the final path form a base path plus relative extension
     virtual QString combineBaseAndRelative(const char *inBase,
                                            const char *inRelative) = 0;

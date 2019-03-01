@@ -45,6 +45,8 @@ class QDemonRenderAttribLayout;
 class Q_DEMONRENDER_EXPORT QDemonRenderInputAssembler
 {
 public:
+    QAtomicInt ref;
+
     /**
          * @brief constructor
          *

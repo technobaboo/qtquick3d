@@ -40,9 +40,10 @@ class QDemonRenderContextImpl;
 class QDemonRenderBackend;
 
 ///< this class handles the vertex attribute layout setup
-class QDemonRenderAttribLayout
+class Q_DEMONRENDER_EXPORT QDemonRenderAttribLayout
 {
 public:
+    QAtomicInt ref;
     /**
          * @brief constructor
          *

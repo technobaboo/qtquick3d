@@ -92,6 +92,7 @@ namespace {
 
 struct QDemonPathSubPathBuffer
 {
+    QAtomicInt ref;
     QVector<QDemonPathAnchorPoint> m_sourceData;
     QDemonPathDirtyFlags m_flags;
     QDemonPathSubPath &m_subPath;
@@ -106,6 +107,7 @@ struct QDemonPathSubPathBuffer
 
 struct QDemonImportPathWrapper
 {
+    QAtomicInt ref;
     QDemonPathUtilities::QDemonPathBuffer *m_path;
 
     QDemonImportPathWrapper(QDemonPathUtilities::QDemonPathBuffer &inPath)
@@ -121,6 +123,7 @@ typedef QDemonRef<QDemonImportPathWrapper> TPathBufferPtr;
 
 struct QDemonPathBuffer
 {
+    QAtomicInt ref;
     QVector<QDemonRef<QDemonPathSubPathBuffer>> m_subPaths;
     TPathBufferPtr m_pathBuffer;
 
@@ -266,6 +269,7 @@ struct QDemonPathBuffer
 
 struct QDemonPathGeneratedShader
 {
+    QAtomicInt ref;
     QDemonRef<QDemonRenderShaderProgram> m_shader;
     QDemonRenderCachedShaderProperty<float> m_width;
     QDemonRenderCachedShaderProperty<float> m_innerTessAmount;
@@ -503,6 +507,7 @@ struct QDemonPathVertexPipeline : public QDemonVertexPipelineImpl
 
 struct QDemonPathXYGeneratedShader
 {
+    QAtomicInt ref;
     QDemonRef<QDemonRenderShaderProgram> m_shader;
     QDemonRenderCachedShaderProperty<QVector4D> m_rectDimensions;
     QDemonRenderCachedShaderProperty<QMatrix4x4> m_modelMatrix;
@@ -684,7 +689,7 @@ struct QDemonXYRectVertexPipeline : public QDemonVertexPipelineImpl
     QDemonShaderStageGeneratorInterface &activeStage() override { return vertex(); }
 };
 
-struct QDemonPathManager : public QDemonPathManagerInterface, public QEnableSharedFromThis<QDemonPathManager>
+struct QDemonPathManager : public QDemonPathManagerInterface
 {
     typedef QHash<QDemonPath *, QDemonRef<QDemonPathBuffer>> TPathBufferHash;
     typedef QHash<QDemonPathSubPath *, QDemonRef<QDemonPathSubPathBuffer>> TPathSubPathBufferHash;
@@ -835,7 +840,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface, public QEnableShar
     QDemonRef<QDemonPathManagerInterface> onRenderSystemInitialize(QDemonRenderContextInterface *context) override
     {
         m_renderContext = context;
-        return sharedFromThis();
+        return this;
     }
 
     // find a point that will join these two curves *if* they are not first derivative continuous
@@ -1269,7 +1274,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface, public QEnableShar
             //            QPair<TStringPathBufferMap::iterator, bool> inserter =
             //                    m_SourcePathBufferMap.insert(inPath.m_PathBuffer, TPathBufferPtr());
             if (inserter == m_sourcePathBufferMap.end()) {
-                QDemonRef<QIODevice> theStream =
+                QSharedPointer<QIODevice> theStream =
                         m_coreContext->getInputStreamFactory()->getStreamForFile(inPath.m_pathBuffer);
                 if (theStream) {
                     QDemonPathUtilities::QDemonPathBuffer *theNewBuffer = QDemonPathUtilities::QDemonPathBuffer::load(*theStream);

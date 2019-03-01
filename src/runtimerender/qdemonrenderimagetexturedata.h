@@ -83,11 +83,8 @@ struct QDemonRenderImageTextureData
     QDemonRenderImageTextureFlags m_textureFlags;
     QDemonRef<QDemonRenderPrefilterTexture> m_bsdfMipMap;
 
-    QDemonRenderImageTextureData()
-        : m_texture(nullptr)
-        , m_bsdfMipMap(nullptr)
-    {
-    }
+    QDemonRenderImageTextureData();
+    ~QDemonRenderImageTextureData();
 
     bool operator!=(const QDemonRenderImageTextureData &inOther)
     {

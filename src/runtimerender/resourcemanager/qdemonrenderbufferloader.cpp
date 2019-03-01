@@ -161,7 +161,7 @@ struct QDemonBufferLoader : public QDemonBufferLoaderInterface
         QDemonLoadedBufferImpl &theBuffer = *reinterpret_cast<QDemonLoadedBufferImpl *>(loader);
 
         initializeActiveLoadingBuffer(theBuffer);
-        QDemonRef<QIODevice> theStream =
+        QSharedPointer<QIODevice> theStream =
                 theBuffer.loader.factory->getStreamForFile(theBuffer.path, theBuffer.quiet);
         if (theStream && theBuffer.cancel == false) {
             theStream->seek(IOStream::positionHelper(*theStream.data(), 0, IOStream::SeekPosition::End));

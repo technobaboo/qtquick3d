@@ -87,6 +87,20 @@ QDemonTextScaleAndOffset::QDemonTextScaleAndOffset(QDemonRenderTexture2D &inText
     textOffset = theTextOffset;
 }
 
+QDemonSubsetRenderableBase::QDemonSubsetRenderableBase(QDemonRenderableObjectFlags inFlags, QVector3D inWorldCenterPt, QDemonRef<QDemonRendererImpl> gen,
+                                                       const QDemonRenderSubset &inSubset, const QDemonModelContext &inModelContext, float inOpacity)
+    : QDemonRenderableObject(inFlags, inWorldCenterPt, inModelContext.model.globalTransform, inSubset.bounds)
+    , generator(gen)
+    , modelContext(inModelContext)
+    , subset(inSubset)
+    , opacity(inOpacity)
+{
+}
+
+QDemonSubsetRenderableBase::~QDemonSubsetRenderableBase()
+{
+}
+
 void QDemonSubsetRenderableBase::renderShadowMapPass(const QVector2D &inCameraVec,
                                                      const QDemonRenderLight *inLight,
                                                      const QDemonRenderCamera &inCamera,
@@ -236,6 +250,25 @@ void QDemonSubsetRenderableBase::renderDepthPass(const QVector2D &inCameraVec,
 }
 
 // An interface to the shader generator that is available to the renderables
+
+QDemonSubsetRenderable::QDemonSubsetRenderable(QDemonRenderableObjectFlags inFlags, QVector3D inWorldCenterPt, QDemonRef<QDemonRendererImpl> gen,
+                                               const QDemonRenderSubset &inSubset, const QDemonRenderDefaultMaterial &mat, const QDemonModelContext &inModelContext,
+                                               float inOpacity, QDemonRenderableImage *inFirstImage, QDemonShaderDefaultMaterialKey inShaderKey,
+                                               QDemonConstDataRef<QMatrix4x4> inBoneGlobals)
+    : QDemonSubsetRenderableBase(inFlags, inWorldCenterPt, gen, inSubset, inModelContext, inOpacity)
+    , material(mat)
+    , firstImage(inFirstImage)
+    , shaderDescription(inShaderKey)
+    , bones(inBoneGlobals)
+{
+    renderableFlags.setDefaultMaterialMeshSubset(true);
+    renderableFlags.setCustom(false);
+    renderableFlags.setText(false);
+}
+
+QDemonSubsetRenderable::~QDemonSubsetRenderable()
+{
+}
 
 void QDemonSubsetRenderable::render(const QVector2D &inCameraVec, TShaderFeatureSet inFeatureSet)
 {
@@ -423,14 +456,30 @@ void QDemonTextRenderable::renderDepthPass(const QVector2D &inCameraVec)
     }
 }
 
+QDemonCustomMaterialRenderable::QDemonCustomMaterialRenderable(QDemonRenderableObjectFlags inFlags, QVector3D inWorldCenterPt, QDemonRef<QDemonRendererImpl> gen,
+                                                               const QDemonRenderSubset &inSubset, const QDemonRenderCustomMaterial &mat,
+                                                               const QDemonModelContext &inModelContext, float inOpacity, QDemonRenderableImage *inFirstImage,
+                                                               QDemonShaderDefaultMaterialKey inShaderKey)
+    : QDemonSubsetRenderableBase(inFlags, inWorldCenterPt, gen, inSubset, inModelContext, inOpacity)
+    , material(mat)
+    , firstImage(inFirstImage)
+    , shaderDescription(inShaderKey)
+{
+    renderableFlags.setCustomMaterialMeshSubset(true);
+}
+
+QDemonCustomMaterialRenderable::~QDemonCustomMaterialRenderable()
+{
+}
+
 void QDemonCustomMaterialRenderable::render(const QVector2D & /*inCameraVec*/,
-                                       const QDemonLayerRenderData &inLayerData,
-                                       const QDemonRenderLayer &inLayer,
-                                       const QVector<QDemonRenderLight *> &inLights,
-                                       const QDemonRenderCamera &inCamera,
-                                       const QDemonRef<QDemonRenderTexture2D> inDepthTexture,
-                                       const QDemonRef<QDemonRenderTexture2D> inSsaoTexture,
-                                       TShaderFeatureSet inFeatureSet)
+                                            const QDemonLayerRenderData &inLayerData,
+                                            const QDemonRenderLayer &inLayer,
+                                            const QVector<QDemonRenderLight *> &inLights,
+                                            const QDemonRenderCamera &inCamera,
+                                            const QDemonRef<QDemonRenderTexture2D> inDepthTexture,
+                                            const QDemonRef<QDemonRenderTexture2D> inSsaoTexture,
+                                            TShaderFeatureSet inFeatureSet)
 {
     QDemonRenderContextInterface *demonContext(generator->getDemonContext());
     QDemonCustomMaterialRenderContext theRenderContext(
@@ -480,13 +529,36 @@ void QDemonPathRenderable::renderDepthPass(const QVector2D &inCameraVec, const Q
                 theRenderContext, m_generator->getLayerGlobalRenderProperties(), TShaderFeatureSet());
 }
 
+QDemonPathRenderable::QDemonPathRenderable(QDemonRenderableObjectFlags inFlags, QVector3D inWorldCenterPt, QDemonRef<QDemonRendererImpl> gen,
+                                           const QMatrix4x4 &inGlobalTransform, QDemonBounds3 &inBounds, QDemonPath &inPath, const QMatrix4x4 &inModelViewProjection,
+                                           const QMatrix3x3 inNormalMat, const QDemonGraphObject &inMaterial, float inOpacity, QDemonShaderDefaultMaterialKey inShaderKey,
+                                           bool inIsStroke)
+    : QDemonRenderableObject(inFlags, inWorldCenterPt, inGlobalTransform, bounds)
+    , m_generator(gen)
+    , m_path(inPath)
+    , bounds(inBounds)
+    , m_mvp(inModelViewProjection)
+    , m_normalMatrix(inNormalMat)
+    , m_material(inMaterial)
+    , m_opacity(inOpacity)
+    , m_firstImage(nullptr)
+    , m_shaderDescription(inShaderKey)
+    , m_isStroke(inIsStroke)
+{
+    renderableFlags.setPath(true);
+}
+
+QDemonPathRenderable::~QDemonPathRenderable()
+{
+}
+
 void QDemonPathRenderable::render(const QVector2D &inCameraVec, const QDemonRenderLayer & /*inLayer*/,
-                             const QVector<QDemonRenderLight *> &inLights, const QDemonRenderCamera &inCamera,
-                             const QDemonRef<QDemonRenderTexture2D> /*inDepthTexture*/
-                             ,
-                             const QDemonRef<QDemonRenderTexture2D> /*inSsaoTexture*/
-                             ,
-                             TShaderFeatureSet inFeatureSet)
+                                  const QVector<QDemonRenderLight *> &inLights, const QDemonRenderCamera &inCamera,
+                                  const QDemonRef<QDemonRenderTexture2D> /*inDepthTexture*/
+                                  ,
+                                  const QDemonRef<QDemonRenderTexture2D> /*inSsaoTexture*/
+                                  ,
+                                  TShaderFeatureSet inFeatureSet)
 {
     QDemonRenderContextInterface *demonContext(m_generator->getDemonContext());
     QDemonPathRenderContext theRenderContext(

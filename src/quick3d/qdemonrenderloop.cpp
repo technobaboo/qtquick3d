@@ -51,7 +51,7 @@ public:
     QHash<QDemonWindow *, WindowData> m_windows;
 
     QOpenGLContext *gl;
-    QDemonRef<QOffscreenSurface> m_offscreenSurface;
+    QSharedPointer<QOffscreenSurface> m_offscreenSurface;
     QDemonRef<QDemonRenderContextCoreInterface> m_contextCore;
     QDemonRef<QDemonRenderContextInterface> m_sgContext;
     QDemonRef<QDemonRenderContext> m_renderContext;

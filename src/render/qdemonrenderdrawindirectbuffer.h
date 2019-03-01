@@ -56,7 +56,7 @@ struct DrawElementsIndirectCommand
 };
 
 ///< Constant (uniform) buffer representation
-class QDemonRenderDrawIndirectBuffer : public QDemonRenderDataBuffer, public QEnableSharedFromThis<QDemonRenderDrawIndirectBuffer>
+class QDemonRenderDrawIndirectBuffer : public QDemonRenderDataBuffer
 {
 public:
     /**

@@ -38,7 +38,6 @@
 
 #include <QtDemonRuntimeRender/qdemonrendershadercache.h>
 
-
 QT_BEGIN_NAMESPACE
 
 // these are our current shader limits
@@ -106,6 +105,7 @@ struct QDemonLayerGlobalRenderProperties
 class QDemonMaterialShaderGeneratorInterface
 {
 public:
+    QAtomicInt ref;
     virtual ~QDemonMaterialShaderGeneratorInterface() {}
     struct ImageVariableNames
     {

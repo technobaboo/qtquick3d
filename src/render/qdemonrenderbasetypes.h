@@ -1243,9 +1243,8 @@ struct QDemonRenderHint
 
 class QDemonRenderImplemented
 {
-protected:
-    virtual ~QDemonRenderImplemented() {}
 public:
+    virtual ~QDemonRenderImplemented() {}
     // Get the handle that binds us to the implementation.
     // For instance, return the GLuint that came back from
     // glGenTextures.
@@ -1310,17 +1309,16 @@ class QDemonRenderShaderProgram;
 
 //typedef QDemonConstDataRef<qint8> TConstI8Ref;
 
-struct QDemonRenderVertFragCompilationResult
+struct Q_DEMONRENDER_EXPORT QDemonRenderVertFragCompilationResult
 {
     const char *m_shaderName;
 
     QDemonRef<QDemonRenderShaderProgram> m_shader; ///< contains the program
 
-    QDemonRenderVertFragCompilationResult()
-        : m_shaderName("")
-        , m_shader(nullptr)
-    {
-    }
+    QDemonRenderVertFragCompilationResult();
+    ~QDemonRenderVertFragCompilationResult();
+    QDemonRenderVertFragCompilationResult(const QDemonRenderVertFragCompilationResult &);
+    QDemonRenderVertFragCompilationResult & operator=(const QDemonRenderVertFragCompilationResult &);
 };
 
 struct QDemonRenderFrameBufferAttachments

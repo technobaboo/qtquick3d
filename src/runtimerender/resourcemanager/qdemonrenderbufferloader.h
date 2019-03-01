@@ -43,6 +43,7 @@ class QDemonBufferLoaderCallbackInterface;
 class QDemonLoadedBufferInterface
 {
 public:
+    QAtomicInt ref;
     virtual ~QDemonLoadedBufferInterface();
     virtual QString path() = 0;
     // Data is released when the buffer itself is released.
@@ -53,6 +54,7 @@ public:
 class QDemonBufferLoaderCallbackInterface
 {
 public:
+    QAtomicInt ref;
     virtual ~QDemonBufferLoaderCallbackInterface();
     virtual void onBufferLoaded(QDemonLoadedBufferInterface &inBuffer) = 0;
     virtual void onBufferLoadFailed(QString inPath) = 0;
@@ -63,6 +65,8 @@ public:
 class Q_DEMONRUNTIMERENDER_EXPORT QDemonBufferLoaderInterface
 {
 public:
+    QAtomicInt ref;
+
     virtual ~QDemonBufferLoaderInterface();
     // nonblocking.  Quiet failure is passed to the input stream factory.
     // Returns handle to loading buffer

@@ -37,10 +37,9 @@ QT_BEGIN_NAMESPACE
 
 class QDemonRenderDrawable
 {
-protected:
+public:
     virtual ~QDemonRenderDrawable() {}
 
-public:
     /**
          *	Draw using this object.
          *	offset is in num elements, not in number of bytes

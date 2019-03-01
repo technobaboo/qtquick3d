@@ -47,6 +47,8 @@ class Q_DEMONRENDER_EXPORT QDemonRenderBackend
     QDemonRenderBackend &operator=(const QDemonRenderBackend &) = delete ;
 
 public:
+    QAtomicInt ref;
+
     QDemonRenderBackend() = default;
     virtual ~QDemonRenderBackend() {}
     /// opaque buffer object handle

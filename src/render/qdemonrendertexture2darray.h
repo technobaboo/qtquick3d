@@ -39,7 +39,7 @@ QT_BEGIN_NAMESPACE
 class QDemonRenderContextImpl;
 class QDemonRenderTextureSampler;
 
-class Q_DEMONRENDER_EXPORT QDemonRenderTexture2DArray : public QDemonRenderTextureBase, public QEnableSharedFromThis<QDemonRenderTexture2DArray>
+class Q_DEMONRENDER_EXPORT QDemonRenderTexture2DArray : public QDemonRenderTextureBase
 {
 private:
     quint32 m_width; ///< texture width

@@ -42,10 +42,9 @@ QT_BEGIN_NAMESPACE
      */
 class Q_DEMONRUNTIMERENDER_EXPORT QDemonResourceManagerInterface
 {
-protected:
-    virtual ~QDemonResourceManagerInterface() {}
-
 public:
+    QAtomicInt ref;
+    virtual ~QDemonResourceManagerInterface() {}
     virtual QDemonRef<QDemonRenderFrameBuffer> allocateFrameBuffer() = 0;
     virtual void release(QDemonRef<QDemonRenderFrameBuffer> inBuffer) = 0;
     virtual QDemonRef<QDemonRenderRenderBuffer> allocateRenderBuffer(quint32 inWidth,

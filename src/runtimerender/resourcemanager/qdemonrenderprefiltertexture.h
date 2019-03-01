@@ -39,6 +39,7 @@ QT_BEGIN_NAMESPACE
 class QDemonRenderPrefilterTexture
 {
 public:
+    QAtomicInt ref;
     QDemonRenderPrefilterTexture(QDemonRef<QDemonRenderContext> inQDemonRenderContext,
                                  qint32 inWidth,
                                  qint32 inHeight,

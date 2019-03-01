@@ -126,6 +126,7 @@ typedef void *QDemonRenderInstanceId;
 class QDemonOffscreenRendererInterface
 {
 public:
+    QAtomicInt ref;
     class QDemonOffscreenRendererCallbackInterface
     {
     public:
@@ -215,6 +216,7 @@ struct QDemonOffscreenRendererKey;
 class Q_DEMONRUNTIMERENDER_EXPORT QDemonOffscreenRenderManagerInterface
 {
 public:
+    QAtomicInt ref;
     virtual ~QDemonOffscreenRenderManagerInterface();
     // returns true if the renderer has not been registered.
     // No return value means there was an error registering this id.

@@ -36,6 +36,8 @@
 
 QT_BEGIN_NAMESPACE
 
+class QDemonTextScaleAndOffset;
+
 /**
      *	Cached tessellation property lookups this is on a per mesh base
      */
@@ -66,6 +68,7 @@ struct QDemonShaderTessellationProperties
      */
 struct QDemonShaderGeneratorGeneratedShader
 {
+    QAtomicInt ref;
     quint32 layerSetIndex;
     QString queryString;
     QDemonRef<QDemonRenderShaderProgram> shader;
@@ -94,6 +97,8 @@ struct QDemonShaderGeneratorGeneratedShader
 
 struct QDemonDefaultMaterialRenderableDepthShader
 {
+    QAtomicInt ref;
+
     QDemonRef<QDemonRenderShaderProgram> shader;
     QDemonRenderCachedShaderProperty<QMatrix4x4> mvp;
 
@@ -130,6 +135,7 @@ struct QDemonShaderTextureProperties
 
 struct QDemonRenderableDepthPrepassShader
 {
+    QAtomicInt ref;
     QDemonRef<QDemonRenderShaderProgram> shader;
     QDemonRenderCachedShaderProperty<QMatrix4x4> mvp;
     QDemonRenderCachedShaderProperty<QMatrix4x4> globalTransform;
@@ -183,6 +189,7 @@ struct QDemonRenderableDepthPrepassShader
 
 struct QDemonDefaultAoPassShader
 {
+    QAtomicInt ref;
     QDemonRef<QDemonRenderShaderProgram> shader;
     QDemonRenderCachedShaderProperty<QMatrix4x4> viewMatrix;
     QDemonRenderCachedShaderProperty<QVector2D> cameraProperties;
@@ -279,6 +286,7 @@ struct QDemonTextShader
 
 struct QDemonTextDepthShader
 {
+    QAtomicInt ref;
     QDemonRef<QDemonRenderShaderProgram> shader;
     QDemonRenderCachedShaderProperty<QMatrix4x4> mvp;
     // Dimensions and offsetting of the image.
@@ -306,6 +314,7 @@ struct QDemonTextDepthShader
 
 struct QDemonLayerProgAABlendShader
 {
+    QAtomicInt ref;
     QDemonRef<QDemonRenderShaderProgram> shader;
     QDemonRenderCachedShaderProperty<QDemonRenderTexture2D *> accumSampler;
     QDemonRenderCachedShaderProperty<QDemonRenderTexture2D *> lastFrame;
@@ -321,6 +330,7 @@ struct QDemonLayerProgAABlendShader
 
 struct QDemonLayerSceneShader
 {
+    QAtomicInt ref;
     QDemonRef<QDemonRenderShaderProgram> shader;
 
     QDemonRenderCachedShaderProperty<QMatrix4x4> mvp;
@@ -343,6 +353,7 @@ struct QDemonLayerSceneShader
 
 struct QDemonShadowmapPreblurShader
 {
+    QAtomicInt ref;
     QDemonRef<QDemonRenderShaderProgram> shader;
     QDemonRenderCachedShaderProperty<QVector2D> cameraProperties;
     QDemonRenderCachedShaderProperty<QDemonRenderTextureCube *> depthCube;
@@ -363,6 +374,7 @@ struct QDemonShadowmapPreblurShader
 #ifdef ADVANCED_BLEND_SW_FALLBACK
 struct QDemonAdvancedModeBlendShader
 {
+    QAtomicInt ref;
     QDemonRef<QDemonRenderShaderProgram> shader;
     QDemonRenderCachedShaderProperty<QDemonRenderTexture2D *> baseLayer;
     QDemonRenderCachedShaderProperty<QDemonRenderTexture2D *> blendLayer;

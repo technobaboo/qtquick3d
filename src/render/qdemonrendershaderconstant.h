@@ -49,6 +49,7 @@ class QDemonRenderConstantBuffer;
 class Q_DEMONRENDER_EXPORT QDemonRenderShaderConstantBase
 {
 public:
+    QAtomicInt ref;
     QDemonRef<QDemonRenderBackend> m_backend; ///< pointer to backend
     QString m_name; ///< register constant name
     qint32 m_location; ///< constant index
@@ -221,6 +222,7 @@ public:
 class QDemonRenderShaderBufferBase
 {
 public:
+    QAtomicInt ref;
     QDemonRef<QDemonRenderContextImpl> m_context; ///< pointer to context
     QString m_name; ///< buffer name
     quint32 m_location; ///< program buffer block location
@@ -359,7 +361,7 @@ class QDemonRenderShaderAtomicCounterBuffer : public QDemonRenderShaderBufferBas
 {
 public:
     qint32 m_paramCount; ///< count of parameters contained in the constant buffer
-    QSharedPointer<QDemonRenderAtomicCounterBuffer> m_atomicCounterBuffer; ///< pointer to atomic counter buffer
+    QDemonRef<QDemonRenderAtomicCounterBuffer> m_atomicCounterBuffer; ///< pointer to atomic counter buffer
 
 public:
     QDemonRenderShaderAtomicCounterBuffer(QDemonRef<QDemonRenderContextImpl> context,
@@ -368,7 +370,7 @@ public:
                                           qint32 binding,
                                           qint32 size,
                                           qint32 count,
-                                          QSharedPointer<QDemonRenderAtomicCounterBuffer> pAcB)
+                                          QDemonRef<QDemonRenderAtomicCounterBuffer> pAcB)
         : QDemonRenderShaderBufferBase(context, name, location, binding, size)
         , m_paramCount(count)
         , m_atomicCounterBuffer(pAcB)
@@ -387,7 +389,7 @@ public:
         if (m_atomicCounterBuffer)
             return;
 
-        QSharedPointer<QDemonRenderAtomicCounterBuffer> acb = m_context->getAtomicCounterBuffer(m_name);
+        QDemonRef<QDemonRenderAtomicCounterBuffer> acb = m_context->getAtomicCounterBuffer(m_name);
         if (acb) {
             m_atomicCounterBuffer = acb;
         } else {

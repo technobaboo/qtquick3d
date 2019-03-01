@@ -173,9 +173,9 @@ struct QDemonDynamicShaderProgramFlags : public QDemonShaderCacheProgramFlags
 
 class Q_DEMONRUNTIMERENDER_EXPORT QDemonDynamicObjectClassInterface
 {
-protected:
-    virtual ~QDemonDynamicObjectClassInterface() {}
 public:
+    QAtomicInt ref;
+    virtual ~QDemonDynamicObjectClassInterface() {}
     virtual QString getId() const = 0;
     virtual QDemonConstDataRef<dynamic::QDemonPropertyDefinition> getProperties() const = 0;
     virtual quint32 getPropertySectionByteSize() const = 0;
@@ -193,9 +193,9 @@ public:
 
 class Q_DEMONRUNTIMERENDER_EXPORT QDemonDynamicObjectSystemCoreInterface
 {
-protected:
-    virtual ~QDemonDynamicObjectSystemCoreInterface() {}
 public:
+    QAtomicInt ref;
+    virtual ~QDemonDynamicObjectSystemCoreInterface() {}
     virtual bool isRegistered(QString inStr) = 0;
 
     virtual bool doRegister(QString inName,
@@ -267,12 +267,10 @@ public:
 
 typedef QPair<QDemonRef<QDemonRenderShaderProgram>, dynamic::QDemonDynamicShaderProgramFlags> TShaderAndFlags;
 
-class Q_DEMONRUNTIMERENDER_EXPORT QDemonDynamicObjectSystemInterface : public QDemonDynamicObjectSystemCoreInterface , public QEnableSharedFromThis<QDemonDynamicObjectSystemInterface>
+class Q_DEMONRUNTIMERENDER_EXPORT QDemonDynamicObjectSystemInterface : public QDemonDynamicObjectSystemCoreInterface
 {
-protected:
-    virtual ~QDemonDynamicObjectSystemInterface();
-
 public:
+    virtual ~QDemonDynamicObjectSystemInterface();
     virtual TShaderAndFlags getShaderProgram(QString inPath,
                                              QString inProgramMacro,
                                              TShaderFeatureSet inFeatureSet,

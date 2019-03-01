@@ -41,6 +41,8 @@ class QDemonRenderShaderProgram;
 ///< A program pipeline is a collection of a multiple programs (vertex, fragment, geometry,....)
 class Q_DEMONRENDER_EXPORT QDemonRenderProgramPipeline
 {
+public:
+    QAtomicInt ref;
 protected:
     QDemonRef<QDemonRenderContextImpl> m_context; ///< pointer to context
     QDemonRef<QDemonRenderBackend> m_backend; ///< pointer to backend
@@ -99,7 +101,7 @@ public:
          *
          * @return the backend object handle.
          */
-    QDemonRef<QDemonRenderShaderProgram> getVertexStage() { return m_vertexProgram; }
+    QDemonRef<QDemonRenderShaderProgram> getVertexStage();
 
 private:
     QDemonRenderBackend::QDemonRenderBackendProgramPipeline m_programPipelineHandle; ///< opaque backend handle

@@ -42,6 +42,8 @@ class QDemonRenderPathFontSpecification;
 ///< A program pipeline is a collection of a multiple programs (vertex, fragment, geometry,....)
 class Q_DEMONRENDER_EXPORT QDemonRenderPathRender
 {
+public:
+    QAtomicInt ref;
 protected:
     QDemonRef<QDemonRenderContextImpl> m_context; ///< pointer to context
     QDemonRef<QDemonRenderBackend> m_backend; ///< pointer to backend

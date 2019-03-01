@@ -37,7 +37,7 @@ QT_BEGIN_NAMESPACE
 // forward declaration
 class QDemonRenderContextImpl;
 
-class QDemonRenderIndexBuffer : public QDemonRenderDataBuffer, public QDemonRenderDrawable, public QEnableSharedFromThis<QDemonRenderIndexBuffer>
+class QDemonRenderIndexBuffer : public QDemonRenderDataBuffer, public QDemonRenderDrawable
 {
 public:
     /**

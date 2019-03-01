@@ -40,6 +40,7 @@
 #include <QtDemonRuntimeRender/qdemonrenderer.h>
 #include <QtDemonRuntimeRender/qdemonrenderpathmanager.h>
 #include <QtDemonRuntimeRender/qdemonrenderpath.h>
+#include <QtDemonRuntimeRender/qdemonrenderbuffermanager.h>
 
 QT_BEGIN_NAMESPACE
 

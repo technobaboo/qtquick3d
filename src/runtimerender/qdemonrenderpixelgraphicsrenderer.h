@@ -44,6 +44,8 @@ class QDemonRenderContextInterface;
 class Q_DEMONRUNTIMERENDER_EXPORT QDemonPixelGraphicsRendererInterface
 {
 public:
+    QAtomicInt ref;
+
     virtual ~QDemonPixelGraphicsRendererInterface();
 
     // Renders the node to the current viewport.

@@ -108,6 +108,7 @@ typedef QHash<QString, QDemonRenderPathFontSpecification *> TContextPathFontSpec
 class Q_DEMONRENDER_EXPORT QDemonRenderContext : public QDemonRenderDrawable
 {
 public:
+    QAtomicInt ref;
     virtual QDemonRenderContextType getRenderContextType() const = 0;
     virtual bool areMultisampleTexturesSupported() const = 0;
     virtual bool getConstantBufferSupport() const = 0;
@@ -176,13 +177,13 @@ public:
                         QDemonConstDataRef<quint8> bufferData, QDemonRenderDataBuffer *pBuffer) = 0;
     virtual QDemonRef<QDemonRenderStorageBuffer> getStorageBuffer(const QString &bufferName) = 0;
 
-    virtual QSharedPointer<QDemonRenderAtomicCounterBuffer>
+    virtual QDemonRef<QDemonRenderAtomicCounterBuffer>
     createAtomicCounterBuffer(const char *bufferName,
                               QDemonRenderBufferUsageType::Enum usageType, size_t size,
                               QDemonConstDataRef<quint8> bufferData) = 0;
-    virtual QSharedPointer<QDemonRenderAtomicCounterBuffer>
+    virtual QDemonRef<QDemonRenderAtomicCounterBuffer>
     getAtomicCounterBuffer(const QString &bufferName) = 0;
-    virtual QSharedPointer<QDemonRenderAtomicCounterBuffer>
+    virtual QDemonRef<QDemonRenderAtomicCounterBuffer>
     getAtomicCounterBufferByParam(const QString &paramName) = 0;
 
     virtual QDemonRef<QDemonRenderDrawIndirectBuffer>
@@ -445,7 +446,7 @@ struct QDemonRenderContextScopedProperty
 
 // forward declarations
 
-class QDemonRenderContextImpl : public QDemonRenderContext, public QEnableSharedFromThis<QDemonRenderContextImpl>
+class QDemonRenderContextImpl : public QDemonRenderContext
 {
 public:
     Q_DISABLE_COPY(QDemonRenderContextImpl)
@@ -805,12 +806,12 @@ public:
     QDemonRef<QDemonRenderStorageBuffer> getStorageBuffer(const QString &bufferName) override;
     virtual void bufferDestroyed(QDemonRenderStorageBuffer *buffer);
 
-    virtual QSharedPointer<QDemonRenderAtomicCounterBuffer> createAtomicCounterBuffer(const char *bufferName,
+    virtual QDemonRef<QDemonRenderAtomicCounterBuffer> createAtomicCounterBuffer(const char *bufferName,
                                                                                       QDemonRenderBufferUsageType::Enum usageType,
                                                                                       size_t size,
                                                                                       QDemonConstDataRef<quint8> bufferData) override;
-    QSharedPointer<QDemonRenderAtomicCounterBuffer> getAtomicCounterBuffer(const QString &bufferName) override;
-    virtual QSharedPointer<QDemonRenderAtomicCounterBuffer> getAtomicCounterBufferByParam(const QString &paramName) override;
+    QDemonRef<QDemonRenderAtomicCounterBuffer> getAtomicCounterBuffer(const QString &bufferName) override;
+    virtual QDemonRef<QDemonRenderAtomicCounterBuffer> getAtomicCounterBufferByParam(const QString &paramName) override;
     virtual void bufferDestroyed(QDemonRenderAtomicCounterBuffer *buffer);
 
     virtual QDemonRef<QDemonRenderDrawIndirectBuffer> createDrawIndirectBuffer(QDemonRenderBufferUsageType::Enum usageType,
@@ -971,10 +972,7 @@ public:
     }
 
     void setActiveShader(QDemonRef<QDemonRenderShaderProgram> inShader) override;
-    QDemonRef<QDemonRenderShaderProgram> getActiveShader() const override
-    {
-        return m_hardwarePropertyContext.m_activeShader;
-    }
+    QDemonRef<QDemonRenderShaderProgram> getActiveShader() const override;
 
     void setActiveProgramPipeline(QDemonRef<QDemonRenderProgramPipeline> inProgramPipeline) override;
     QDemonRef<QDemonRenderProgramPipeline> getActiveProgramPipeline() const override
@@ -1003,7 +1001,7 @@ public:
     void resetBlendState() override;
 
     // Push the entire set of properties.
-    void pushPropertySet() override { m_propertyStack.push_back(m_hardwarePropertyContext); }
+    void pushPropertySet() override;
 
     // Pop the entire set of properties, potentially forcing the values
     // to opengl.

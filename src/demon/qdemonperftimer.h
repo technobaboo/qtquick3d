@@ -10,9 +10,9 @@ QT_BEGIN_NAMESPACE
 
 class Q_DEMON_EXPORT QDemonPerfTimerInterface
 {
-protected:
-    virtual ~QDemonPerfTimerInterface() {}
 public:
+    QAtomicInt ref;
+    virtual ~QDemonPerfTimerInterface() {}
     // amount is in counter frequency units
     virtual void update(const char *inTag, quint64 inAmount) = 0;
     // Dump current summation of timer data.

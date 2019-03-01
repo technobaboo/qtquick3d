@@ -62,6 +62,7 @@ class QDemonRenderPathFontSpecification;
 class Q_DEMONRUNTIMERENDER_EXPORT QDemonTextRendererCoreInterface
 {
 public:
+    QAtomicInt ref;
     virtual ~QDemonTextRendererCoreInterface() {}
     // You can have several standard font directories and these will be persistent
     virtual void addSystemFontDirectory(const char *inDirectory) = 0;
@@ -96,10 +97,8 @@ public:
      */
 class Q_DEMONRUNTIMERENDER_EXPORT QDemonTextRendererInterface : public QDemonTextRendererCoreInterface
 {
-protected:
-    virtual ~QDemonTextRendererInterface() {}
-
 public:
+    virtual ~QDemonTextRendererInterface() {}
     // Measure text will inText if it isn't null or the text on the info if inText is null
     virtual QDemonTextDimensions measureText(const QDemonTextRenderInfo &inText,
                                         float inTextScaleFactor,

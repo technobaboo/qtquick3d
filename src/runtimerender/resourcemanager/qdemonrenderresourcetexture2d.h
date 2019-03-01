@@ -38,6 +38,8 @@
 QT_BEGIN_NAMESPACE
 class QDemonResourceTexture2D
 {
+public:
+    QAtomicInt ref;
 protected:
     QDemonRef<QDemonResourceManagerInterface> m_resourceManager;
     QDemonRef<QDemonRenderTexture2D> m_texture;

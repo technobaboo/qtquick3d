@@ -100,9 +100,9 @@ uint hashShaderFeatureSet(QVector<QDemonShaderPreprocessorFeature> inFeatureSet)
 
 class QDemonShaderCacheInterface
 {
-protected:
-    virtual ~QDemonShaderCacheInterface();
 public:
+    QAtomicInt ref;
+    virtual ~QDemonShaderCacheInterface();
     // If directory is nonnull, then we attempt to load any shaders from shadercache.xml in
     // inDirectory
     // and save any new ones out to the same file.  The shaders are marked by the gl version

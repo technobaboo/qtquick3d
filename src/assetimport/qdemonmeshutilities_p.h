@@ -423,6 +423,7 @@ struct MeshBuilderVBufEntry
 class Q_DEMONASSETIMPORT_EXPORT QDemonMeshBuilder
 {
 public:
+    QAtomicInt ref;
     virtual ~QDemonMeshBuilder();
     virtual void release() = 0;
     virtual void reset() = 0;

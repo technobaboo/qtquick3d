@@ -42,8 +42,8 @@ class QDemonRenderPathFontSpecification;
 
 class Q_DEMONRENDER_EXPORT QDemonRenderPathFontItem
 {
-
 public:
+    QAtomicInt ref;
     /**
              * @brief constructor
              *

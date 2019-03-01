@@ -73,6 +73,8 @@ public:
     virtual void addConstantBufferParam(const QString &cbName, const QString &paramName, const QString &type) = 0;
 
     virtual QDemonShaderStageGeneratorInterface &operator<<(const QString &data) = 0;
+    QDemonShaderStageGeneratorInterface &operator<<(const char *data)
+    { return (*this) << QString::fromUtf8(data); }
     virtual void append(const QString &data) = 0;
     virtual void appendPartial(const QString &data) = 0;
 
@@ -84,6 +86,8 @@ class QDemonRenderContextInterface;
 class Q_DEMONRUNTIMERENDER_EXPORT QDemonShaderProgramGeneratorInterface
 {
 public:
+    QAtomicInt ref;
+
     virtual ~QDemonShaderProgramGeneratorInterface() {}
     static TShaderGeneratorStageFlags defaultFlags()
     {

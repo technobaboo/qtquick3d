@@ -36,6 +36,27 @@
 
 QT_BEGIN_NAMESPACE
 
+QDemonPresentation::QDemonPresentation()
+    : QDemonGraphObject(QDemonGraphObjectTypes::Presentation)
+    , presentationDimensions(800, 400)
+    , presentationRotation(RenderRotationValues::NoRotation)
+    , scene(nullptr)
+{
+}
+
+QDemonPresentation::QDemonPresentation(float w, float h, const QString &presDir)
+    : QDemonGraphObject(QDemonGraphObjectTypes::Presentation)
+    , presentationDimensions(w, h)
+    , presentationRotation(RenderRotationValues::NoRotation)
+    , scene(nullptr)
+    , presentationDirectory(presDir)
+{
+}
+
+QDemonPresentation::~QDemonPresentation()
+{
+}
+
 void QDemonPresentation::render(QDemonRenderContextInterface *inContext)
 {
     if (scene) {

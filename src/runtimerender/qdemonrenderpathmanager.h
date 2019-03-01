@@ -31,6 +31,7 @@
 #define QDEMON_RENDER_PATH_MANAGER_H
 
 #include <QtDemonRender/QDemonRenderContext>
+#include <QtDemonRuntimeRender/qdemonrendershadowmap.h>
 #include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
 #include <QtDemon/QDemonDataRef>
 #include <QtDemon/QDemonBounds3>
@@ -56,6 +57,7 @@ struct QDemonPathAnchorPoint
 class Q_DEMONRUNTIMERENDER_EXPORT QDemonPathManagerCoreInterface
 {
 public:
+    QAtomicInt ref;
     // returns the path buffer id
     //!! Note this call is made from multiple threads simultaneously during binary load.
     //!! - see UICRenderGraphObjectSerializer.cpp

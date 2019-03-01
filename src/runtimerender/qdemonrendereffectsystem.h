@@ -73,6 +73,7 @@ struct QDemonEffectRenderArgument {
 class Q_DEMONRUNTIMERENDER_EXPORT QDemonEffectSystemCoreInterface
 {
 public:
+    QAtomicInt ref;
     virtual ~QDemonEffectSystemCoreInterface();
     virtual bool isEffectRegistered(QString inStr) = 0;
     virtual QVector<QString> getRegisteredEffects() = 0;
@@ -175,10 +176,8 @@ public:
       */
 class Q_DEMONRUNTIMERENDER_EXPORT QDemonEffectSystemInterface : public QDemonEffectSystemCoreInterface
 {
-protected:
-    virtual ~QDemonEffectSystemInterface() {}
-
 public:
+    virtual ~QDemonEffectSystemInterface() {}
     // Calling release effect context with no context results in no problems.
     virtual void releaseEffectContext(QDemonEffectContext *inEffect) = 0;
 
@@ -202,5 +201,6 @@ public:
                               QMatrix4x4 &inMVP,
                               bool inEnableBlendWhenRenderToTarget) = 0;
 };
+
 QT_END_NAMESPACE
 #endif

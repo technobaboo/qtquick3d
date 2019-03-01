@@ -43,9 +43,9 @@ typedef QPair<TPathFontSpecAndPathObject, TTextTextureDetailsAndTexture> TTPathO
 
 class Q_DEMONRUNTIMERENDER_EXPORT QDemonTextTextureCacheInterface
 {
-protected:
-    virtual ~QDemonTextTextureCacheInterface() {}
 public:
+    QAtomicInt ref;
+    virtual ~QDemonTextTextureCacheInterface() {}
     virtual TTPathObjectAndTexture renderText(const QDemonTextRenderInfo &inText, float inScaleFactor) = 0;
     // We may have one more texture in cache than this byte count, but this will be the limiting
     // factor.

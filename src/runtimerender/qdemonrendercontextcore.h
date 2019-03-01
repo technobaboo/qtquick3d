@@ -69,6 +69,7 @@ class QDemonCustomMaterialSystemCoreInterface;
 class Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderContextCoreInterface
 {
 public:
+    QAtomicInt ref;
     virtual ~QDemonRenderContextCoreInterface();
     virtual QDemonRef<QDemonInputStreamFactoryInterface> getInputStreamFactory() = 0;
     virtual QDemonRef<QDemonAbstractThreadPool> getThreadPool() = 0;
@@ -98,6 +99,7 @@ class QDemonOffscreenRenderManagerInterface;
 class Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderContextInterface
 {
 public:
+    QAtomicInt ref;
     virtual ~QDemonRenderContextInterface();
     virtual QDemonRef<QDemonRendererInterface> getRenderer() = 0;
     virtual QDemonRef<QDemonRenderWidgetContextInterface> getRenderWidgetContext() = 0;

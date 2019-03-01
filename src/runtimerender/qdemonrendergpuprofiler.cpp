@@ -44,6 +44,7 @@ namespace {
 
 struct QDemonGpuTimerInfo
 {
+    QAtomicInt ref;
     bool m_absoluteTime;
     quint16 m_writeID;
     quint16 m_readID;

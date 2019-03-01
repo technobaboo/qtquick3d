@@ -59,6 +59,8 @@ struct QDemonTextureDetails
 
 class QDemonRenderTextureBase
 {
+public:
+    QAtomicInt ref;
 
 protected:
     QDemonRef<QDemonRenderContextImpl> m_context; ///< pointer to context

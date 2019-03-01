@@ -44,6 +44,7 @@
 #include <QtDemonRender/qdemonrenderindexbuffer.h>
 
 #include <QtDemonRuntimeRender/qdemonrendertext.h>
+#include <QtDemonRuntimeRender/qdemonrenderer.h>
 
 #include <QtDemonRuntimeRender/qdemonrendershadercodegenerator.h>
 
@@ -118,11 +119,10 @@ struct RenderWidgetModes
 class QDemonRenderContext;
 class QDemonShaderProgramGeneratorInterface;
 // Context used to get render data for the widget.
-class Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderWidgetContextInterface
+class Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderWidgetContextInterface : public QDemonRendererInterface
 {
-protected:
-    virtual ~QDemonRenderWidgetContextInterface();
 public:
+    virtual ~QDemonRenderWidgetContextInterface();
     virtual QDemonRef<QDemonRenderVertexBuffer> getOrCreateVertexBuffer(QString &inStr,
                                                                              quint32 stride,
                                                                              QDemonConstDataRef<quint8> bufferData = QDemonConstDataRef<quint8>()) = 0;
@@ -165,11 +165,11 @@ public:
 
 class QDemonRenderWidgetInterface
 {
-protected:
+public:
+    QAtomicInt ref;
     virtual ~QDemonRenderWidgetInterface();
     QDemonGraphNode *m_node = nullptr;
 
-public:
     QDemonRenderWidgetInterface(QDemonGraphNode &inNode)
         : m_node(&inNode)
     {

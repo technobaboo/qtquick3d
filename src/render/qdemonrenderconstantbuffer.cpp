@@ -286,6 +286,7 @@ void QDemonRenderConstantBuffer::updateRaw(quint32 offset, QDemonDataRef<quint8>
 {
     // allocate space if yet done
     if (!m_shadowCopy.size()) {
+        Q_ASSERT(offset == 0);
         // allocate shadow buffer
         if (!allocateShadowBuffer(data.size()))
             return;

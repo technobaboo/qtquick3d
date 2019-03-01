@@ -633,6 +633,17 @@ static QDemonRef<QDemonRenderShaderBufferBase> shaderBufferFactory(QDemonRef<QDe
     return QDemonRef<QDemonRenderShaderBufferBase>(new TShaderBufferType(context, inName, cbLoc, cbBinding, cbSize, cbCount, pBuffer));
 }
 
+template <typename TShaderBufferType, typename TBufferDataType>
+static QSharedPointer<QDemonRenderShaderBufferBase> shaderBufferFactory(QSharedPointer<QDemonRenderContextImpl> context,
+                                                                        const QString &inName,
+                                                                        qint32 cbLoc,
+                                                                        qint32 cbBinding,
+                                                                        qint32 cbSize,
+                    qint32 cbCount, QExplicitlySharedDataPointer<TBufferDataType> pBuffer)
+{
+    return QSharedPointer<QDemonRenderShaderBufferBase>(new TShaderBufferType(context, inName, cbLoc, cbBinding, cbSize, cbCount, pBuffer));
+}
+
 bool QDemonRenderShaderProgram::link()
 {
     bool success = m_backend->linkProgram(m_programHandle, m_errorMessage);
@@ -722,7 +733,7 @@ bool QDemonRenderShaderProgram::link()
                 // counter buffer.
                 // We get the actual buffer name by searching for this uniform name
                 // See NVRenderTestAtomicCounterBuffer.cpp how the setup works
-                QSharedPointer<QDemonRenderAtomicCounterBuffer> acb =
+                QDemonRef<QDemonRenderAtomicCounterBuffer> acb =
                         m_context->getAtomicCounterBufferByParam(theName);
                 if (acb) {
                     m_shaderBuffers.insert(acb->getBufferName(), shaderBufferFactory<QDemonRenderShaderAtomicCounterBuffer,
@@ -1296,4 +1307,29 @@ QDemonRenderShaderProgram::createCompute(const QDemonRef<QDemonRenderContextImpl
 
     return result;
 }
+
+QDemonRenderVertFragCompilationResult::QDemonRenderVertFragCompilationResult()
+    : m_shaderName("")
+    , m_shader(nullptr)
+{
+}
+
+QDemonRenderVertFragCompilationResult::~QDemonRenderVertFragCompilationResult()
+{
+
+}
+
+QDemonRenderVertFragCompilationResult::QDemonRenderVertFragCompilationResult(const QDemonRenderVertFragCompilationResult &other)
+    : m_shaderName(other.m_shaderName),
+      m_shader(other.m_shader)
+{
+
+}
+
+QDemonRenderVertFragCompilationResult &QDemonRenderVertFragCompilationResult::operator=(const QDemonRenderVertFragCompilationResult &other)
+{
+    m_shaderName = other.m_shaderName;
+    m_shader = other.m_shader;
+}
+
 QT_END_NAMESPACE

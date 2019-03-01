@@ -49,6 +49,7 @@ struct QDemonRenderSubset;
 class Q_DEMONRUNTIMERENDER_EXPORT QDemonCustomMaterialSystemCoreInterface
 {
 public:
+    QAtomicInt ref;
     virtual ~QDemonCustomMaterialSystemCoreInterface() {}
     virtual bool isMaterialRegistered(QString inStr) = 0;
 

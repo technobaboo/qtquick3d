@@ -58,9 +58,9 @@ struct CancelReturnValues
 
 class Q_DEMONRUNTIMERENDER_EXPORT QDemonAbstractThreadPool
 {
-protected:
-    virtual ~QDemonAbstractThreadPool();
 public:
+    QAtomicInt ref;
+    virtual ~QDemonAbstractThreadPool();
     // Add a task to be run at some point in the future.
     // Tasks will be run roughly in order they are given.
     // The returned value is a handle that can be used to query

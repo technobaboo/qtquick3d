@@ -47,7 +47,7 @@ class QDemonRenderShaderProgram;
 typedef QHash<QString, ConstantBufferParamEntry *> TRenderConstantBufferEntryMap;
 
 ///< Constant (uniform) buffer representation
-class Q_DEMONRENDER_EXPORT QDemonRenderConstantBuffer : public QDemonRenderDataBuffer, public QEnableSharedFromThis<QDemonRenderConstantBuffer>
+class Q_DEMONRENDER_EXPORT QDemonRenderConstantBuffer : public QDemonRenderDataBuffer
 {
 public:
     /**

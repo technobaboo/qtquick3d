@@ -372,7 +372,7 @@ struct QDemonBufferManager : public QDemonBufferManagerInterface
             if (m_primitiveNames[idx].primitiveName == theName) {
                 CFileTools::combineBaseAndRelative(getPrimitivesDirectory(), m_primitiveNames[idx].fileName, m_pathBuilder);
                 quint32 id = 1;
-                QDemonRef<QIODevice> theInStream(m_inputStreamFactory->getStreamForFile(m_pathBuilder));
+                QSharedPointer<QIODevice> theInStream(m_inputStreamFactory->getStreamForFile(m_pathBuilder));
                 if (theInStream)
                     return QDemonMeshUtilities::Mesh::loadMulti(*theInStream, id);
                 else {
@@ -435,7 +435,7 @@ struct QDemonBufferManager : public QDemonBufferManagerInterface
                     id = m_pathBuilder.mid(poundIndex + 1).toInt();
                     m_pathBuilder = m_pathBuilder.left(poundIndex); //### double check this isn't off-by-one
                 }
-                QDemonRef<QIODevice> ioStream(m_inputStreamFactory->getStreamForFile(m_pathBuilder));
+                QSharedPointer<QIODevice> ioStream(m_inputStreamFactory->getStreamForFile(m_pathBuilder));
                 if (ioStream)
                     result = QDemonMeshUtilities::Mesh::loadMulti(*ioStream, id);
                 if (result.m_mesh == nullptr)

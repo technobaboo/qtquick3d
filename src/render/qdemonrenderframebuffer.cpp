@@ -137,7 +137,7 @@ void QDemonRenderFrameBuffer::attach(QDemonRenderFrameBufferAttachments::Enum at
 
     CheckAttachment(m_context, attachment);
     // Ensure we are the bound framebuffer
-    m_context->setRenderTarget(sharedFromThis());
+    m_context->setRenderTarget(this);
 
     // release previous attachments
     QDemonRenderTextureTargetType::Enum theRelTarget = releaseAttachment(attachment);
@@ -204,7 +204,7 @@ void QDemonRenderFrameBuffer::attachLayer(QDemonRenderFrameBufferAttachments::En
 
     CheckAttachment(m_context, attachment);
     // Ensure we are the bound framebuffer
-    m_context->setRenderTarget(sharedFromThis());
+    m_context->setRenderTarget(this);
 
     // release previous attachments
     QDemonRenderTextureTargetType::Enum theRelTarget = releaseAttachment(attachment);
@@ -243,7 +243,7 @@ void QDemonRenderFrameBuffer::attachFace(QDemonRenderFrameBufferAttachments::Enu
 
     CheckAttachment(m_context, attachment);
     // Ensure we are the bound framebuffer
-    m_context->setRenderTarget(sharedFromThis());
+    m_context->setRenderTarget(this);
 
     // release previous attachments
     QDemonRenderTextureTargetType::Enum attachTarget = static_cast<QDemonRenderTextureTargetType::Enum>(
@@ -279,7 +279,7 @@ void QDemonRenderFrameBuffer::attachFace(QDemonRenderFrameBufferAttachments::Enu
 bool QDemonRenderFrameBuffer::isComplete()
 {
     // Ensure we are the bound framebuffer
-    m_context->setRenderTarget(sharedFromThis());
+    m_context->setRenderTarget(this);
 
     return m_backend->renderTargetIsValid(m_bufferHandle);
 }

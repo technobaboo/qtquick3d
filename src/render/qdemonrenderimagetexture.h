@@ -43,6 +43,8 @@ class QDemonRenderTexture2D;
 
 class QDemonRenderImage2D
 {
+public:
+    QAtomicInt ref;
 
 private:
     QDemonRef<QDemonRenderContextImpl> m_context; ///< pointer to context

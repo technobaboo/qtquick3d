@@ -4,7 +4,7 @@
 #include <QtGui/QWindow>
 #include <QtCore/QElapsedTimer>
 #include <QtGui/QOpenGLContext>
-
+#include <QtDemon/qtdemonglobal.h>
 
 class QDemonRenderContextCoreInterface;
 class QDemonRenderContextInterface;

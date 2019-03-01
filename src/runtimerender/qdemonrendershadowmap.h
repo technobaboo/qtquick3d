@@ -121,9 +121,9 @@ class QDemonRenderShadowMap
     typedef QVector<QDemonShadowMapEntry> TShadowMapEntryList;
 
 public:
+    QAtomicInt ref;
     QDemonRenderContextInterface *m_context;
 
-public:
     QDemonRenderShadowMap(QDemonRenderContextInterface *inContext);
     ~QDemonRenderShadowMap();
 

@@ -32,6 +32,7 @@
 #include <QtDemonRender/qdemonrenderindexbuffer.h>
 #include <QtDemonRender/qdemonrendervertexbuffer.h>
 #include <QtDemonRender/qdemonrenderattriblayout.h>
+#include <QtDemonRender/qdemonrendershaderprogram.h>
 
 #include <QtGui/QVector3D>
 

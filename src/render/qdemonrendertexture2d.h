@@ -41,7 +41,7 @@ QT_BEGIN_NAMESPACE
 class QDemonRenderContextImpl;
 class QDemonRenderTextureSampler;
 
-class Q_DEMONRENDER_EXPORT QDemonRenderTexture2D : public QDemonRenderTextureBase, public QDemonRenderImplemented, public QEnableSharedFromThis<QDemonRenderTexture2D>
+class Q_DEMONRENDER_EXPORT QDemonRenderTexture2D : public QDemonRenderTextureBase, public QDemonRenderImplemented
 {
 
 private:

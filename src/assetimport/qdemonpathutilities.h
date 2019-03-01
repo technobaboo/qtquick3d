@@ -49,6 +49,7 @@ struct Q_DEMONASSETIMPORT_EXPORT QDemonPathBuffer
 class Q_DEMONASSETIMPORT_EXPORT QDemonPathBufferBuilderInterface
 {
 public:
+    QAtomicInt ref;
     virtual ~QDemonPathBufferBuilderInterface();
     virtual void clear() = 0;
 

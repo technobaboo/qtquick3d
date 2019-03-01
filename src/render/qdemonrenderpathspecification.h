@@ -39,6 +39,9 @@ class QDemonRenderContextImpl;
 
 class QDemonRenderPathSpecification
 {
+public:
+    QAtomicInt ref;
+private:
     QDemonRef<QDemonRenderContextImpl> m_context; ///< pointer to context
     QDemonRef<QDemonRenderBackend> m_backend; ///< pointer to backend
 

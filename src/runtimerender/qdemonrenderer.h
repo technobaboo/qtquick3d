@@ -86,10 +86,9 @@ class QDemonRenderContextInterface;
 
 class Q_DEMONRUNTIMERENDER_EXPORT QDemonRendererInterface
 {
-protected:
-    virtual ~QDemonRendererInterface() {}
-
 public:
+    QAtomicInt ref;
+    virtual ~QDemonRendererInterface() {}
     virtual void enableLayerCaching(bool inEnabled) = 0;
     virtual bool isLayerCachingEnabled() const = 0;
     virtual void enableLayerGpuProfiling(bool inEnabled) = 0;

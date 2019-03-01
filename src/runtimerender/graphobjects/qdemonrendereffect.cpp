@@ -41,7 +41,6 @@ void QDemonRenderEffect::initialize()
 {
     m_layer = nullptr;
     m_nextEffect = nullptr;
-    m_context = nullptr;
 }
 
 void QDemonRenderEffect::setActive(bool inActive, QDemonEffectSystemInterface &inManager)

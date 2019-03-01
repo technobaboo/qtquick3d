@@ -56,24 +56,12 @@ struct QDemonRenderPickSubResult
     quint32 m_viewportHeight;
     QDemonRenderPickSubResult *m_nextSibling;
 
-    QDemonRenderPickSubResult()
-        : m_subRenderer(nullptr)
-        , m_nextSibling(nullptr)
-    {
-    }
+    QDemonRenderPickSubResult();
     QDemonRenderPickSubResult(QDemonRef<QDemonOffscreenRendererInterface> inSubRenderer, QMatrix4x4 inTextureMatrix,
                              QDemonRenderTextureCoordOp::Enum inHorizontalTilingMode,
                              QDemonRenderTextureCoordOp::Enum inVerticalTilingMode, quint32 width,
-                             quint32 height)
-        : m_subRenderer(inSubRenderer)
-        , m_textureMatrix(inTextureMatrix)
-        , m_horizontalTilingMode(inHorizontalTilingMode)
-        , m_verticalTilingMode(inVerticalTilingMode)
-        , m_viewportWidth(width)
-        , m_viewportHeight(height)
-        , m_nextSibling(nullptr)
-    {
-    }
+                             quint32 height);
+    ~QDemonRenderPickSubResult();
 };
 
 struct QDemonRenderPickResult
@@ -90,22 +78,9 @@ struct QDemonRenderPickResult
 
     QDemonRenderPickResult(const QDemonGraphObject &inHitObject,
                            float inCameraDistance,
-                           const QVector2D &inLocalUVCoords)
-        : m_hitObject(&inHitObject)
-        , m_cameraDistanceSq(inCameraDistance)
-        , m_localUVCoords(inLocalUVCoords)
-        , m_firstSubObject(nullptr)
-        , m_offscreenRenderer(nullptr)
-    {
-    }
-    QDemonRenderPickResult()
-        : m_hitObject(nullptr)
-        , m_cameraDistanceSq(std::numeric_limits<float>::max())
-        , m_localUVCoords(0, 0)
-        , m_firstSubObject(nullptr)
-        , m_offscreenRenderer(nullptr)
-    {
-    }
+                           const QVector2D &inLocalUVCoords);
+    QDemonRenderPickResult();
+    ~QDemonRenderPickResult();
 };
 
 class QDemonGraphObjectPickQueryInterface

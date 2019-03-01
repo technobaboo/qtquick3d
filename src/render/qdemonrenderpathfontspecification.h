@@ -43,8 +43,11 @@ class QDemonRenderContextImpl;
 class QDemonRenderPathRender;
 class QDemonRenderPathFontItem;
 
-class Q_DEMONRENDER_EXPORT QDemonRenderPathFontSpecification : public QEnableSharedFromThis<QDemonRenderPathFontSpecification>
+class Q_DEMONRENDER_EXPORT QDemonRenderPathFontSpecification
 {
+public:
+    QAtomicInt ref;
+private:
     QDemonRef<QDemonRenderContextImpl> m_context; ///< pointer to context
     QDemonRef<QDemonRenderBackend> m_backend; ///< pointer to backend
 

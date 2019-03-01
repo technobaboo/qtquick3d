@@ -1,7 +1,7 @@
 #ifndef QTDEMONRUNTIMERENDERGLOBAL_H
 #define QTDEMONRUNTIMERENDERGLOBAL_H
 
-#include <QtCore/qglobal.h>
+#include <QtDemon/qtdemonglobal.h>
 
 QT_BEGIN_NAMESPACE
 

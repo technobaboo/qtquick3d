@@ -46,10 +46,8 @@ class QDemonRenderProfilerInterface
 public:
     typedef QVector<QString> TStrIDVec;
 
-protected:
+    QAtomicInt ref;
     virtual ~QDemonRenderProfilerInterface() {}
-
-public:
     /**
          * @brief start a timer query
          *
