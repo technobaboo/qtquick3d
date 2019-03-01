@@ -2,6 +2,8 @@
 
 #include <QtDemonRuntimeRender/qdemonrendercamera.h>
 
+#include <QtMath>
+
 QT_BEGIN_NAMESPACE
 
 QDemonCamera::QDemonCamera()
@@ -151,7 +153,7 @@ QDemonGraphObject *QDemonCamera::updateSpatialNode(QDemonGraphObject *node)
 
     camera->clipNear = m_clipNear;
     camera->clipFar = m_clipFar;
-    camera->fov = m_fieldOfView; //### Maybe convert to radians (as it is expected)
+    camera->fov = qDegreesToRadians(m_fieldOfView);
     camera->fovHorizontal = m_isFieldOFViewHorizontal;
 
     camera->scaleMode = CameraScaleModes::Enum(m_scaleMode);
