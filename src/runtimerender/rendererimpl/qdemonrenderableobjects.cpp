@@ -93,8 +93,8 @@ void QDemonSubsetRenderableBase::renderShadowMapPass(const QVector2D &inCameraVe
                                                      QDemonShadowMapEntry *inShadowMapEntry)
 {
     auto context = generator->getContext();
-    QSharedPointer<QDemonRenderableDepthPrepassShader> shader = nullptr;
-    QSharedPointer<QDemonRenderInputAssembler> pIA = nullptr;
+    QDemonRef<QDemonRenderableDepthPrepassShader> shader = nullptr;
+    QDemonRef<QDemonRenderInputAssembler> pIA = nullptr;
 
     /*
         if ( inLight->m_LightType == RenderLightTypes::Area )
@@ -163,8 +163,8 @@ void QDemonSubsetRenderableBase::renderDepthPass(const QVector2D &inCameraVec,
                                                  float inDisplacementAmount)
 {
     auto context = generator->getContext();
-    QSharedPointer<QDemonRenderableDepthPrepassShader> shader = nullptr;
-    QSharedPointer<QDemonRenderInputAssembler> pIA = nullptr;
+    QDemonRef<QDemonRenderableDepthPrepassShader> shader = nullptr;
+    QDemonRef<QDemonRenderInputAssembler> pIA = nullptr;
     QDemonRenderableImage *displacementImage = inDisplacementImage;
 
     if (subset.primitiveType != QDemonRenderDrawMode::Patches)
@@ -241,7 +241,7 @@ void QDemonSubsetRenderable::render(const QVector2D &inCameraVec, TShaderFeature
 {
     auto context = generator->getContext();
 
-    QSharedPointer<QDemonShaderGeneratorGeneratedShader> shader = generator->getShader(*this, inFeatureSet);
+    QDemonRef<QDemonShaderGeneratorGeneratedShader> shader = generator->getShader(*this, inFeatureSet);
     if (shader == nullptr)
         return;
 
@@ -298,7 +298,7 @@ void QDemonSubsetRenderable::renderDepthPass(const QVector2D &inCameraVec)
 
 void QDemonTextRenderable::render(const QVector2D &inCameraVec)
 {
-    QSharedPointer<QDemonRenderContext> context(generator.getContext());
+    QDemonRef<QDemonRenderContext> context(generator.getContext());
 
     if (!text.m_pathFontDetails) {
 
@@ -352,7 +352,7 @@ void QDemonTextRenderable::render(const QVector2D &inCameraVec)
 void QDemonTextRenderable::renderDepthPass(const QVector2D &inCameraVec)
 {
     auto context = generator.getContext();
-    QSharedPointer<QDemonTextDepthShader> theDepthShader = generator.getTextDepthShader();
+    QDemonRef<QDemonTextDepthShader> theDepthShader = generator.getTextDepthShader();
     if (theDepthShader == nullptr)
         return;
 
@@ -360,7 +360,7 @@ void QDemonTextRenderable::renderDepthPass(const QVector2D &inCameraVec)
         // we may change stencil test state
         QDemonRenderContextScopedProperty<bool> __stencilTest(*context, &QDemonRenderContext::isStencilTestEnabled, &QDemonRenderContext::setStencilTestEnabled, true);
 
-        QSharedPointer<QDemonRenderShaderProgram> theShader(theDepthShader->shader);
+        QDemonRef<QDemonRenderShaderProgram> theShader(theDepthShader->shader);
         context->setCullingEnabled(false);
         context->setActiveShader(theShader);
         theDepthShader->mvp.set(modelViewProjection);
@@ -391,7 +391,7 @@ void QDemonTextRenderable::renderDepthPass(const QVector2D &inCameraVec)
         QDemonRenderStencilOperationArgument theOpArg(QDemonRenderStencilOp::Keep,
                                                       QDemonRenderStencilOp::Keep,
                                                       QDemonRenderStencilOp::Zero);
-        QSharedPointer<QDemonRenderDepthStencilState> depthStencilState =
+        QDemonRef<QDemonRenderDepthStencilState> depthStencilState =
                 context->createDepthStencilState(isDepthEnabled, isDepthWriteEnabled,
                                                 theDepthFunction, false, theArg, theArg, theOpArg,
                                                 theOpArg);
@@ -428,8 +428,8 @@ void QDemonCustomMaterialRenderable::render(const QVector2D & /*inCameraVec*/,
                                        const QDemonRenderLayer &inLayer,
                                        const QVector<QDemonRenderLight *> &inLights,
                                        const QDemonRenderCamera &inCamera,
-                                       const QSharedPointer<QDemonRenderTexture2D> inDepthTexture,
-                                       const QSharedPointer<QDemonRenderTexture2D> inSsaoTexture,
+                                       const QDemonRef<QDemonRenderTexture2D> inDepthTexture,
+                                       const QDemonRef<QDemonRenderTexture2D> inSsaoTexture,
                                        TShaderFeatureSet inFeatureSet)
 {
     QDemonRenderContextInterface *demonContext(generator->getDemonContext());
@@ -482,9 +482,9 @@ void QDemonPathRenderable::renderDepthPass(const QVector2D &inCameraVec, const Q
 
 void QDemonPathRenderable::render(const QVector2D &inCameraVec, const QDemonRenderLayer & /*inLayer*/,
                              const QVector<QDemonRenderLight *> &inLights, const QDemonRenderCamera &inCamera,
-                             const QSharedPointer<QDemonRenderTexture2D> /*inDepthTexture*/
+                             const QDemonRef<QDemonRenderTexture2D> /*inDepthTexture*/
                              ,
-                             const QSharedPointer<QDemonRenderTexture2D> /*inSsaoTexture*/
+                             const QDemonRef<QDemonRenderTexture2D> /*inSsaoTexture*/
                              ,
                              TShaderFeatureSet inFeatureSet)
 {

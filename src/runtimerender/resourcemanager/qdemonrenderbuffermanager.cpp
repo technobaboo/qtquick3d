@@ -75,9 +75,9 @@ struct QDemonBufferManager : public QDemonBufferManagerInterface
     typedef QHash<QString, QDemonRenderMesh *> TMeshMap;
     typedef QHash<QString, QString> TAliasImageMap;
 
-    QSharedPointer<QDemonRenderContext> m_context;
-    QSharedPointer<QDemonInputStreamFactoryInterface> m_inputStreamFactory;
-    QSharedPointer<QDemonPerfTimerInterface> m_perfTimer;
+    QDemonRef<QDemonRenderContext> m_context;
+    QDemonRef<QDemonInputStreamFactoryInterface> m_inputStreamFactory;
+    QDemonRef<QDemonPerfTimerInterface> m_perfTimer;
     QString m_pathBuilder;
     TImageMap m_imageMap;
     QMutex m_loadedImageSetMutex;
@@ -89,9 +89,9 @@ struct QDemonBufferManager : public QDemonBufferManagerInterface
     bool m_gpuSupportsDXT;
     static const char *getPrimitivesDirectory() { return "res//primitives"; }
 
-    QDemonBufferManager(QSharedPointer<QDemonRenderContext> ctx,
-                   QSharedPointer<QDemonInputStreamFactoryInterface> inInputStreamFactory,
-                   QSharedPointer<QDemonPerfTimerInterface> inTimer)
+    QDemonBufferManager(QDemonRef<QDemonRenderContext> ctx,
+                   QDemonRef<QDemonInputStreamFactoryInterface> inInputStreamFactory,
+                   QDemonRef<QDemonPerfTimerInterface> inTimer)
         : m_context(ctx)
         , m_inputStreamFactory(inInputStreamFactory)
         , m_perfTimer(inTimer)
@@ -190,7 +190,7 @@ struct QDemonBufferManager : public QDemonBufferManagerInterface
     }
 
     QDemonRenderImageTextureData loadRenderImage(QString inImagePath,
-                                                 QSharedPointer<QDemonLoadedTexture> inLoadedImage,
+                                                 QDemonRef<QDemonLoadedTexture> inLoadedImage,
                                                  bool inForceScanForTransparency,
                                                  bool inBsdfMipmaps) override
     {
@@ -207,7 +207,7 @@ struct QDemonBufferManager : public QDemonBufferManagerInterface
         theImage.value().loaded = true;
         // inLoadedImage.EnsureMultiplerOfFour( m_Context->GetFoundation(), inImagePath.c_str() );
 
-        QSharedPointer<QDemonRenderTexture2D> theTexture = m_context->createTexture2D();
+        QDemonRef<QDemonRenderTexture2D> theTexture = m_context->createTexture2D();
         if (inLoadedImage->data) {
             QDemonRenderTextureFormats::Enum destFormat = inLoadedImage->format;
             if (inBsdfMipmaps) {
@@ -224,7 +224,7 @@ struct QDemonBufferManager : public QDemonBufferManagerInterface
             if (inBsdfMipmaps
                     && QDemonRenderTextureFormats::isUncompressedTextureFormat(inLoadedImage->format)) {
                 theTexture->setMinFilter(QDemonRenderTextureMinifyingOp::LinearMipmapLinear);
-                QSharedPointer<QDemonRenderPrefilterTexture> theBSDFMipMap = theImage.value().m_bsdfMipMap;
+                QDemonRef<QDemonRenderPrefilterTexture> theBSDFMipMap = theImage.value().m_bsdfMipMap;
                 if (theBSDFMipMap == nullptr) {
                     theBSDFMipMap = QDemonRenderPrefilterTexture::create(m_context, inLoadedImage->width, inLoadedImage->height, theTexture, destFormat);
                     theImage.value().m_bsdfMipMap = theBSDFMipMap;
@@ -290,7 +290,7 @@ struct QDemonBufferManager : public QDemonBufferManagerInterface
 
         TImageMap::iterator theIter = m_imageMap.find(inImagePath);
         if (theIter == m_imageMap.end() && !inImagePath.isNull()) {
-            QSharedPointer<QDemonLoadedTexture> theLoadedImage;
+            QDemonRef<QDemonLoadedTexture> theLoadedImage;
             {
                 //                SStackPerfTimer __perfTimer(m_PerfTimer, "Image Decompression");
                 theLoadedImage = QDemonLoadedTexture::load(
@@ -372,7 +372,7 @@ struct QDemonBufferManager : public QDemonBufferManagerInterface
             if (m_primitiveNames[idx].primitiveName == theName) {
                 CFileTools::combineBaseAndRelative(getPrimitivesDirectory(), m_primitiveNames[idx].fileName, m_pathBuilder);
                 quint32 id = 1;
-                QSharedPointer<QIODevice> theInStream(m_inputStreamFactory->getStreamForFile(m_pathBuilder));
+                QDemonRef<QIODevice> theInStream(m_inputStreamFactory->getStreamForFile(m_pathBuilder));
                 if (theInStream)
                     return QDemonMeshUtilities::Mesh::loadMulti(*theInStream, id);
                 else {
@@ -435,7 +435,7 @@ struct QDemonBufferManager : public QDemonBufferManagerInterface
                     id = m_pathBuilder.mid(poundIndex + 1).toInt();
                     m_pathBuilder = m_pathBuilder.left(poundIndex); //### double check this isn't off-by-one
                 }
-                QSharedPointer<QIODevice> ioStream(m_inputStreamFactory->getStreamForFile(m_pathBuilder));
+                QDemonRef<QIODevice> ioStream(m_inputStreamFactory->getStreamForFile(m_pathBuilder));
                 if (ioStream)
                     result = QDemonMeshUtilities::Mesh::loadMulti(*ioStream, id);
                 if (result.m_mesh == nullptr)
@@ -451,19 +451,19 @@ struct QDemonBufferManager : public QDemonBufferManagerInterface
                 QDemonConstDataRef<quint8> vertexBufferData(result.m_mesh->m_vertexBuffer.m_data.begin(baseAddress),
                                                             result.m_mesh->m_vertexBuffer.m_data.size());
 
-                QSharedPointer<QDemonRenderVertexBuffer> vertexBuffer = m_context->createVertexBuffer(QDemonRenderBufferUsageType::Static,
+                QDemonRef<QDemonRenderVertexBuffer> vertexBuffer = m_context->createVertexBuffer(QDemonRenderBufferUsageType::Static,
                                                                                                       result.m_mesh->m_vertexBuffer.m_data.m_size,
                                                                                                       result.m_mesh->m_vertexBuffer.m_stride,
                                                                                                       vertexBufferData);
 
                 // create a tight packed position data VBO
                 // this should improve our depth pre pass rendering
-                QSharedPointer<QDemonRenderVertexBuffer> posVertexBuffer;
+                QDemonRef<QDemonRenderVertexBuffer> posVertexBuffer;
                 QDemonConstDataRef<quint8> posData = createPackedPositionDataArray(&result);
                 if (posData.size())
                     posVertexBuffer = m_context->createVertexBuffer(QDemonRenderBufferUsageType::Static, posData.size(), 3 * sizeof(float), posData);
 
-                QSharedPointer<QDemonRenderIndexBuffer> indexBuffer;
+                QDemonRef<QDemonRenderIndexBuffer> indexBuffer;
                 if (result.m_mesh->m_indexBuffer.m_data.size()) {
                     quint32 indexBufferSize = result.m_mesh->m_indexBuffer.m_data.size();
                     QDemonRenderComponentTypes::Enum bufComponentType = result.m_mesh->m_indexBuffer.m_componentType;
@@ -681,10 +681,10 @@ struct QDemonBufferManager : public QDemonBufferManagerInterface
             // baseAddress )
             //		, theResult.m_Mesh->m_VertexBuffer.m_Data.size() );
 
-            QSharedPointer<QDemonRenderVertexBuffer> theVertexBuffer =
+            QDemonRef<QDemonRenderVertexBuffer> theVertexBuffer =
                     m_context->createVertexBuffer(QDemonRenderBufferUsageType::Static,
                                                   vertDataSize, inVertStride, theVBufData);
-            QSharedPointer<QDemonRenderIndexBuffer> theIndexBuffer = nullptr;
+            QDemonRef<QDemonRenderIndexBuffer> theIndexBuffer = nullptr;
             if (inIndexData != nullptr && inIndexCount > 3) {
                 const quint32 inSize = inIndexCount * sizeof(quint32);
                 Q_ASSERT(inSize <= INT32_MAX);
@@ -709,7 +709,7 @@ struct QDemonBufferManager : public QDemonBufferManagerInterface
             };
 
             // create our attribute layout
-            QSharedPointer<QDemonRenderAttribLayout> theAttribLayout =
+            QDemonRef<QDemonRenderAttribLayout> theAttribLayout =
                     m_context->createAttributeLayout(toConstDataRef(theEntries, 3));
             /*
             // create our attribute layout for depth pass
@@ -723,7 +723,7 @@ struct QDemonBufferManager : public QDemonBufferManagerInterface
             // create input assembler object
             quint32 strides = inVertStride;
             quint32 offsets = 0;
-            QSharedPointer<QDemonRenderInputAssembler> theInputAssembler = m_context->createInputAssembler(
+            QDemonRef<QDemonRenderInputAssembler> theInputAssembler = m_context->createInputAssembler(
                         theAttribLayout, toConstDataRef(&theVertexBuffer, 1), theIndexBuffer,
                         toConstDataRef(&strides, 1), toConstDataRef(&offsets, 1),
                         QDemonRenderDrawMode::Triangles);
@@ -821,11 +821,11 @@ struct QDemonBufferManager : public QDemonBufferManagerInterface
 };
 }
 
-QSharedPointer<QDemonBufferManagerInterface> QDemonBufferManagerInterface::create(QSharedPointer<QDemonRenderContext> inRenderContext,
-                                                      QSharedPointer<QDemonInputStreamFactoryInterface> inInputStreamFactory,
-                                                      QSharedPointer<QDemonPerfTimerInterface> inTimer)
+QDemonRef<QDemonBufferManagerInterface> QDemonBufferManagerInterface::create(QDemonRef<QDemonRenderContext> inRenderContext,
+                                                      QDemonRef<QDemonInputStreamFactoryInterface> inInputStreamFactory,
+                                                      QDemonRef<QDemonPerfTimerInterface> inTimer)
 {
-    return QSharedPointer<QDemonBufferManagerInterface>(new QDemonBufferManager(inRenderContext, inInputStreamFactory, inTimer));
+    return QDemonRef<QDemonBufferManagerInterface>(new QDemonBufferManager(inRenderContext, inInputStreamFactory, inTimer));
 }
 
 QT_END_NAMESPACE

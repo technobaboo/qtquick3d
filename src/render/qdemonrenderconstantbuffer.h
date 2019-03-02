@@ -62,7 +62,7 @@ public:
          *
          * @return No return.
          */
-    QDemonRenderConstantBuffer(const QSharedPointer<QDemonRenderContextImpl> &context, const QString &bufferName,
+    QDemonRenderConstantBuffer(const QDemonRef<QDemonRenderContextImpl> &context, const QString &bufferName,
                                size_t size, QDemonRenderBufferUsageType::Enum usageType,
                                QDemonDataRef<quint8> data);
 
@@ -85,7 +85,7 @@ public:
          *
          * @return no return.
          */
-    virtual void bindToShaderProgram(const QSharedPointer<QDemonRenderShaderProgram> &inShader, quint32 blockIndex,
+    virtual void bindToShaderProgram(const QDemonRef<QDemonRenderShaderProgram> &inShader, quint32 blockIndex,
                                      quint32 binding);
 
     /**
@@ -175,7 +175,7 @@ public:
          *
          * @return the backend object handle.
          */
-    static QSharedPointer<QDemonRenderConstantBuffer> create(const QSharedPointer<QDemonRenderContextImpl> &context, const char *bufferName,
+    static QDemonRef<QDemonRenderConstantBuffer> create(const QDemonRef<QDemonRenderContextImpl> &context, const char *bufferName,
                                               QDemonRenderBufferUsageType::Enum usageType, size_t size,
                                               QDemonConstDataRef<quint8> bufferData);
 

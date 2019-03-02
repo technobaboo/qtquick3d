@@ -36,10 +36,10 @@
 QT_BEGIN_NAMESPACE
 
 ///< constructor
-QDemonRenderInputAssembler::QDemonRenderInputAssembler(const QSharedPointer<QDemonRenderContextImpl> &context,
-                                                       const QSharedPointer<QDemonRenderAttribLayout> &attribLayout,
-                                                       QDemonConstDataRef<QSharedPointer<QDemonRenderVertexBuffer> > buffers,
-                                                       const QSharedPointer<QDemonRenderIndexBuffer> &indexBuffer,
+QDemonRenderInputAssembler::QDemonRenderInputAssembler(const QDemonRef<QDemonRenderContextImpl> &context,
+                                                       const QDemonRef<QDemonRenderAttribLayout> &attribLayout,
+                                                       QDemonConstDataRef<QDemonRef<QDemonRenderVertexBuffer> > buffers,
+                                                       const QDemonRef<QDemonRenderIndexBuffer> &indexBuffer,
                                                        QDemonConstDataRef<quint32> strides,
                                                        QDemonConstDataRef<quint32> offsets,
                                                        QDemonRenderDrawMode::Enum primType,

@@ -123,29 +123,29 @@ class Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderWidgetContextInterface
 protected:
     virtual ~QDemonRenderWidgetContextInterface();
 public:
-    virtual QSharedPointer<QDemonRenderVertexBuffer> getOrCreateVertexBuffer(QString &inStr,
+    virtual QDemonRef<QDemonRenderVertexBuffer> getOrCreateVertexBuffer(QString &inStr,
                                                                              quint32 stride,
                                                                              QDemonConstDataRef<quint8> bufferData = QDemonConstDataRef<quint8>()) = 0;
-    virtual QSharedPointer<QDemonRenderIndexBuffer> getOrCreateIndexBuffer(QString &inStr,
+    virtual QDemonRef<QDemonRenderIndexBuffer> getOrCreateIndexBuffer(QString &inStr,
                                                                            QDemonRenderComponentTypes::Enum componentType,
                                                                            size_t size,
                                                                            QDemonConstDataRef<quint8> bufferData = QDemonConstDataRef<quint8>()) = 0;
-    virtual QSharedPointer<QDemonRenderAttribLayout> createAttributeLayout(QDemonConstDataRef<QDemonRenderVertexBufferEntry> attribs) = 0;
-    virtual QSharedPointer<QDemonRenderInputAssembler> getOrCreateInputAssembler(QString &inStr,
-                                                                                 QSharedPointer<QDemonRenderAttribLayout> attribLayout,
-                                                                                 QDemonConstDataRef<QSharedPointer<QDemonRenderVertexBuffer>> buffers,
-                                                                                 const QSharedPointer<QDemonRenderIndexBuffer> indexBuffer,
+    virtual QDemonRef<QDemonRenderAttribLayout> createAttributeLayout(QDemonConstDataRef<QDemonRenderVertexBufferEntry> attribs) = 0;
+    virtual QDemonRef<QDemonRenderInputAssembler> getOrCreateInputAssembler(QString &inStr,
+                                                                                 QDemonRef<QDemonRenderAttribLayout> attribLayout,
+                                                                                 QDemonConstDataRef<QDemonRef<QDemonRenderVertexBuffer>> buffers,
+                                                                                 const QDemonRef<QDemonRenderIndexBuffer> indexBuffer,
                                                                                  QDemonConstDataRef<quint32> strides,
                                                                                  QDemonConstDataRef<quint32> offsets) = 0;
 
-    virtual QSharedPointer<QDemonRenderVertexBuffer> getVertexBuffer(const QString &inStr) = 0;
-    virtual QSharedPointer<QDemonRenderIndexBuffer> getIndexBuffer(const QString &inStr) = 0;
-    virtual QSharedPointer<QDemonRenderInputAssembler> getInputAssembler(const QString &inStr) = 0;
+    virtual QDemonRef<QDemonRenderVertexBuffer> getVertexBuffer(const QString &inStr) = 0;
+    virtual QDemonRef<QDemonRenderIndexBuffer> getIndexBuffer(const QString &inStr) = 0;
+    virtual QDemonRef<QDemonRenderInputAssembler> getInputAssembler(const QString &inStr) = 0;
 
-    virtual QSharedPointer<QDemonRenderShaderProgram> getShader(const QString &inStr) = 0;
-    virtual QSharedPointer<QDemonShaderProgramGeneratorInterface> getProgramGenerator() = 0;
+    virtual QDemonRef<QDemonRenderShaderProgram> getShader(const QString &inStr) = 0;
+    virtual QDemonRef<QDemonShaderProgramGeneratorInterface> getProgramGenerator() = 0;
     // calls compile on the program generator and stores result under this name.
-    virtual QSharedPointer<QDemonRenderShaderProgram> compileAndStoreShader(const QString &inStr) = 0;
+    virtual QDemonRef<QDemonRenderShaderProgram> compileAndStoreShader(const QString &inStr) = 0;
     virtual QDemonTextDimensions measureText(const QDemonTextRenderInfo &inText) = 0;
     // Render text using a specific MVP
     virtual void renderText(const QDemonTextRenderInfo &inText,
@@ -180,10 +180,10 @@ public:
     QDemonGraphNode &getNode() { return *m_node; }
 
     // Pure widgets.
-    static QSharedPointer<QDemonRenderWidgetInterface> createBoundingBoxWidget(QDemonGraphNode &inNode,
+    static QDemonRef<QDemonRenderWidgetInterface> createBoundingBoxWidget(QDemonGraphNode &inNode,
                                                                                const QDemonBounds3 &inBounds,
                                                                                const QVector3D &inColor);
-    static QSharedPointer<QDemonRenderWidgetInterface> createAxisWidget(QDemonGraphNode &inNode);
+    static QDemonRef<QDemonRenderWidgetInterface> createAxisWidget(QDemonGraphNode &inNode);
 };
 QT_END_NAMESPACE
 

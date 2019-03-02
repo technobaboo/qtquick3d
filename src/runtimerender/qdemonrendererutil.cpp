@@ -33,12 +33,12 @@
 
 QT_BEGIN_NAMESPACE
 
-void QDemonRendererUtil::resolveMutisampleFBOColorOnly(QSharedPointer<QDemonResourceManagerInterface> inManager,
+void QDemonRendererUtil::resolveMutisampleFBOColorOnly(QDemonRef<QDemonResourceManagerInterface> inManager,
                                                   QDemonResourceTexture2D &ioResult,
                                                   QDemonRenderContext &inRenderContext, quint32 inWidth,
                                                   quint32 inHeight,
                                                   QDemonRenderTextureFormats::Enum inColorFormat,
-                                                  QSharedPointer<QDemonRenderFrameBuffer> inSourceFBO)
+                                                  QDemonRef<QDemonRenderFrameBuffer> inSourceFBO)
 {
     // create resolve FBO
     QDemonResourceFrameBuffer theResolveFB(inManager);
@@ -68,12 +68,12 @@ void QDemonRendererUtil::resolveMutisampleFBOColorOnly(QSharedPointer<QDemonReso
                                     QDemonRenderTextureMagnifyingOp::Nearest);
 }
 
-void QDemonRendererUtil::resolveSSAAFBOColorOnly(QSharedPointer<QDemonResourceManagerInterface> inManager,
+void QDemonRendererUtil::resolveSSAAFBOColorOnly(QDemonRef<QDemonResourceManagerInterface> inManager,
                                             QDemonResourceTexture2D &ioResult, quint32 outWidth,
                                             quint32 outHeight, QDemonRenderContext &inRenderContext,
                                             quint32 inWidth, quint32 inHeight,
                                             QDemonRenderTextureFormats::Enum inColorFormat,
-                                            QSharedPointer<QDemonRenderFrameBuffer> inSourceFBO)
+                                            QDemonRef<QDemonRenderFrameBuffer> inSourceFBO)
 {
     // create resolve FBO
     QDemonResourceFrameBuffer theResolveFB(inManager);

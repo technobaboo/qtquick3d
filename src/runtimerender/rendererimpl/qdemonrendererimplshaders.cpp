@@ -43,13 +43,13 @@
 
 QT_BEGIN_NAMESPACE
 
-void QDemonTextShader::render(QSharedPointer<QDemonRenderTexture2D> inTexture,
+void QDemonTextShader::render(QDemonRef<QDemonRenderTexture2D> inTexture,
                          const QDemonTextScaleAndOffset &inScaleAndOffset,
                          const QVector4D &inTextColor,
                          const QMatrix4x4 &inMVP,
                          const QVector2D &inCameraVec,
-                         QSharedPointer<QDemonRenderContext> inRenderContext,
-                         QSharedPointer<QDemonRenderInputAssembler> inInputAssemblerBuffer,
+                         QDemonRef<QDemonRenderContext> inRenderContext,
+                         QDemonRef<QDemonRenderInputAssembler> inInputAssemblerBuffer,
                          quint32 count,
                          const QDemonTextTextureDetails &inTextTextureDetails,
                          const QVector3D &inBackgroundColor)
@@ -75,12 +75,12 @@ void QDemonTextShader::render(QSharedPointer<QDemonRenderTexture2D> inTexture,
     inRenderContext->draw(QDemonRenderDrawMode::Triangles, count, 0);
 }
 
-void QDemonTextShader::renderPath(QSharedPointer<QDemonRenderPathFontItem> inPathFontItem,
-                             QSharedPointer<QDemonRenderPathFontSpecification> inPathFontSpec,
+void QDemonTextShader::renderPath(QDemonRef<QDemonRenderPathFontItem> inPathFontItem,
+                             QDemonRef<QDemonRenderPathFontSpecification> inPathFontSpec,
                              const QDemonTextScaleAndOffset &inScaleAndOffset,
                              const QVector4D &inTextColor, const QMatrix4x4 &inViewProjection,
                              const QMatrix4x4 &inModel, const QVector2D &,
-                             QSharedPointer<QDemonRenderContext> inRenderContext,
+                             QDemonRef<QDemonRenderContext> inRenderContext,
                              const QDemonTextTextureDetails &inTextTextureDetails,
                              const QVector3D &inBackgroundColor)
 {
@@ -93,7 +93,7 @@ void QDemonTextShader::renderPath(QSharedPointer<QDemonRenderPathFontItem> inPat
     QDemonRenderStencilOperationArgument theOpArg(QDemonRenderStencilOp::Keep,
                                                   QDemonRenderStencilOp::Keep,
                                                   QDemonRenderStencilOp::Zero);
-    QSharedPointer<QDemonRenderDepthStencilState> depthStencilState =
+    QDemonRef<QDemonRenderDepthStencilState> depthStencilState =
             inRenderContext->createDepthStencilState(isDepthEnabled, isDepthWriteEnabled,
                                                     theDepthFunction, false, theArg, theArg,
                                                     theOpArg, theOpArg);
@@ -131,9 +131,9 @@ void QDemonTextShader::renderPath(QSharedPointer<QDemonRenderPathFontItem> inPat
     inRenderContext->setActiveProgramPipeline(nullptr);
 }
 
-void QDemonTextShader::render2D(QSharedPointer<QDemonRenderTexture2D> inTexture, const QVector4D &inTextColor,
-                           const QMatrix4x4 &inMVP, QSharedPointer<QDemonRenderContext> inRenderContext,
-                           QSharedPointer<QDemonRenderInputAssembler> inInputAssemblerBuffer, quint32 count,
+void QDemonTextShader::render2D(QDemonRef<QDemonRenderTexture2D> inTexture, const QVector4D &inTextColor,
+                           const QMatrix4x4 &inMVP, QDemonRef<QDemonRenderContext> inRenderContext,
+                           QDemonRef<QDemonRenderInputAssembler> inInputAssemblerBuffer, quint32 count,
                            QVector2D inVertexOffsets)
 {
     // inRenderContext.SetCullingEnabled( false );
@@ -546,7 +546,7 @@ struct QDemonSubsetMaterialVertexPipeline : public QDemonVertexPipelineImpl
     QDemonShaderStageGeneratorInterface &activeStage() override { return vertex(); }
 };
 
-QSharedPointer<QDemonRenderShaderProgram> QDemonRendererImpl::generateShader(QDemonSubsetRenderable &inRenderable,
+QDemonRef<QDemonRenderShaderProgram> QDemonRendererImpl::generateShader(QDemonSubsetRenderable &inRenderable,
                                                                              TShaderFeatureSet inFeatureSet)
 {
     // build a string that allows us to print out the shader we are generating to the log.
@@ -560,9 +560,9 @@ QSharedPointer<QDemonRenderShaderProgram> QDemonRendererImpl::generateShader(QDe
 
     QDemonShaderDefaultMaterialKey theKey(inRenderable.shaderDescription);
     theKey.toString(m_generatedShaderString, m_defaultMaterialShaderKeyProperties);
-    QSharedPointer<QDemonShaderCacheInterface> theCache = m_demonContext->getShaderCache();
+    QDemonRef<QDemonShaderCacheInterface> theCache = m_demonContext->getShaderCache();
     QString theCacheKey = m_generatedShaderString;
-    QSharedPointer<QDemonRenderShaderProgram> cachedProgram = theCache->getProgram(theCacheKey, inFeatureSet);
+    QDemonRef<QDemonRenderShaderProgram> cachedProgram = theCache->getProgram(theCacheKey, inFeatureSet);
     if (cachedProgram)
         return cachedProgram;
 
@@ -578,7 +578,7 @@ QSharedPointer<QDemonRenderShaderProgram> QDemonRendererImpl::generateShader(QDe
 
 // --------------  Special cases for shadows  -------------------
 
-QSharedPointer<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getParaboloidDepthShader(TessModeValues::Enum inTessMode)
+QDemonRef<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getParaboloidDepthShader(TessModeValues::Enum inTessMode)
 {
     if (!m_demonContext->getRenderContext()->isTessellationSupported()
             || inTessMode == TessModeValues::NoTess) {
@@ -594,17 +594,17 @@ QSharedPointer<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getParabo
     return getParaboloidDepthNoTessShader();
 }
 
-QSharedPointer<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getParaboloidDepthNoTessShader()
+QDemonRef<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getParaboloidDepthNoTessShader()
 {
-    QDemonOption<QSharedPointer<QDemonRenderableDepthPrepassShader>> &theDepthShader = m_paraboloidDepthShader;
+    QDemonOption<QDemonRef<QDemonRenderableDepthPrepassShader>> &theDepthShader = m_paraboloidDepthShader;
 
     if (theDepthShader.hasValue() == false) {
         QString name;
         name = QStringLiteral("paraboloid depth shader");
 
-        QSharedPointer<QDemonShaderCacheInterface> theCache = m_demonContext->getShaderCache();
+        QDemonRef<QDemonShaderCacheInterface> theCache = m_demonContext->getShaderCache();
         QString theCacheKey = name;
-        QSharedPointer<QDemonRenderShaderProgram> depthShaderProgram =
+        QDemonRef<QDemonRenderShaderProgram> depthShaderProgram =
                 theCache->getProgram(theCacheKey, TShaderFeatureSet());
         if (!depthShaderProgram) {
             getProgramGenerator()->beginProgram();
@@ -620,28 +620,28 @@ QSharedPointer<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getParabo
                     name, QDemonShaderCacheProgramFlags(), TShaderFeatureSet());
 
         if (depthShaderProgram) {
-            theDepthShader = QSharedPointer<QDemonRenderableDepthPrepassShader>(
+            theDepthShader = QDemonRef<QDemonRenderableDepthPrepassShader>(
                         new QDemonRenderableDepthPrepassShader(depthShaderProgram, getContext()));
         } else {
-            theDepthShader = QSharedPointer<QDemonRenderableDepthPrepassShader>();
+            theDepthShader = QDemonRef<QDemonRenderableDepthPrepassShader>();
         }
     }
 
     return theDepthShader.getValue();
 }
 
-QSharedPointer<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getParaboloidDepthTessLinearShader()
+QDemonRef<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getParaboloidDepthTessLinearShader()
 {
-    QDemonOption<QSharedPointer<QDemonRenderableDepthPrepassShader>> &theDepthShader =
+    QDemonOption<QDemonRef<QDemonRenderableDepthPrepassShader>> &theDepthShader =
             m_paraboloidDepthTessLinearShader;
 
     if (theDepthShader.hasValue() == false) {
         QString name;
         name = QStringLiteral("paraboloid depth tess linear shader");
 
-        QSharedPointer<QDemonShaderCacheInterface> theCache = m_demonContext->getShaderCache();
+        QDemonRef<QDemonShaderCacheInterface> theCache = m_demonContext->getShaderCache();
         QString theCacheKey = name;
-        QSharedPointer<QDemonRenderShaderProgram> depthShaderProgram =
+        QDemonRef<QDemonRenderShaderProgram> depthShaderProgram =
                 theCache->getProgram(theCacheKey, TShaderFeatureSet());
         if (!depthShaderProgram) {
             getProgramGenerator()->beginProgram(TShaderGeneratorStageFlags(
@@ -693,28 +693,28 @@ QSharedPointer<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getParabo
                     name, QDemonShaderCacheProgramFlags(), TShaderFeatureSet());
 
         if (depthShaderProgram) {
-            theDepthShader = QSharedPointer<QDemonRenderableDepthPrepassShader>(
+            theDepthShader = QDemonRef<QDemonRenderableDepthPrepassShader>(
                         new QDemonRenderableDepthPrepassShader(depthShaderProgram, getContext()));
         } else {
-            theDepthShader = QSharedPointer<QDemonRenderableDepthPrepassShader>();
+            theDepthShader = QDemonRef<QDemonRenderableDepthPrepassShader>();
         }
     }
 
     return theDepthShader.getValue();
 }
 
-QSharedPointer<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getParaboloidDepthTessPhongShader()
+QDemonRef<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getParaboloidDepthTessPhongShader()
 {
-    QDemonOption<QSharedPointer<QDemonRenderableDepthPrepassShader>> &theDepthShader =
+    QDemonOption<QDemonRef<QDemonRenderableDepthPrepassShader>> &theDepthShader =
             m_paraboloidDepthTessPhongShader;
 
     if (theDepthShader.hasValue() == false) {
         QString name;
         name = QStringLiteral("paraboloid depth tess phong shader");
 
-        QSharedPointer<QDemonShaderCacheInterface> theCache = m_demonContext->getShaderCache();
+        QDemonRef<QDemonShaderCacheInterface> theCache = m_demonContext->getShaderCache();
         QString theCacheKey = name;
-        QSharedPointer<QDemonRenderShaderProgram> depthShaderProgram =
+        QDemonRef<QDemonRenderShaderProgram> depthShaderProgram =
                 theCache->getProgram(theCacheKey, TShaderFeatureSet());
         if (!depthShaderProgram) {
             getProgramGenerator()->beginProgram(TShaderGeneratorStageFlags(
@@ -766,27 +766,27 @@ QSharedPointer<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getParabo
                     name, QDemonShaderCacheProgramFlags(), TShaderFeatureSet());
 
         if (depthShaderProgram) {
-            theDepthShader = QSharedPointer<QDemonRenderableDepthPrepassShader>(
+            theDepthShader = QDemonRef<QDemonRenderableDepthPrepassShader>(
                         new QDemonRenderableDepthPrepassShader(depthShaderProgram, getContext()));
         } else {
-            theDepthShader = QSharedPointer<QDemonRenderableDepthPrepassShader>();
+            theDepthShader = QDemonRef<QDemonRenderableDepthPrepassShader>();
         }
     }
 
     return theDepthShader.getValue();
 }
 
-QSharedPointer<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getParaboloidDepthTessNPatchShader()
+QDemonRef<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getParaboloidDepthTessNPatchShader()
 {
-    QDemonOption<QSharedPointer<QDemonRenderableDepthPrepassShader>> &theDepthShader = m_paraboloidDepthTessNPatchShader;
+    QDemonOption<QDemonRef<QDemonRenderableDepthPrepassShader>> &theDepthShader = m_paraboloidDepthTessNPatchShader;
 
     if (theDepthShader.hasValue() == false) {
         QString name;
         name = QStringLiteral("paraboloid depth tess NPatch shader");
 
-        QSharedPointer<QDemonShaderCacheInterface> theCache = m_demonContext->getShaderCache();
+        QDemonRef<QDemonShaderCacheInterface> theCache = m_demonContext->getShaderCache();
         QString theCacheKey = name;
-        QSharedPointer<QDemonRenderShaderProgram> depthShaderProgram =
+        QDemonRef<QDemonRenderShaderProgram> depthShaderProgram =
                 theCache->getProgram(theCacheKey, TShaderFeatureSet());
         if (!depthShaderProgram) {
             getProgramGenerator()->beginProgram(TShaderGeneratorStageFlags(
@@ -838,17 +838,17 @@ QSharedPointer<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getParabo
                     name, QDemonShaderCacheProgramFlags(), TShaderFeatureSet());
 
         if (depthShaderProgram) {
-            theDepthShader = QSharedPointer<QDemonRenderableDepthPrepassShader>(
+            theDepthShader = QDemonRef<QDemonRenderableDepthPrepassShader>(
                         new QDemonRenderableDepthPrepassShader(depthShaderProgram, getContext()));
         } else {
-            theDepthShader = QSharedPointer<QDemonRenderableDepthPrepassShader>();
+            theDepthShader = QDemonRef<QDemonRenderableDepthPrepassShader>();
         }
     }
 
     return theDepthShader.getValue();
 }
 
-QSharedPointer<QDemonRenderableDepthPrepassShader>
+QDemonRef<QDemonRenderableDepthPrepassShader>
 QDemonRendererImpl::getCubeShadowDepthShader(TessModeValues::Enum inTessMode)
 {
     if (!m_demonContext->getRenderContext()->isTessellationSupported()
@@ -865,18 +865,18 @@ QDemonRendererImpl::getCubeShadowDepthShader(TessModeValues::Enum inTessMode)
     return getCubeDepthNoTessShader();
 }
 
-QSharedPointer<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getCubeDepthNoTessShader()
+QDemonRef<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getCubeDepthNoTessShader()
 {
-    QDemonOption<QSharedPointer<QDemonRenderableDepthPrepassShader>> &theDepthShader =
+    QDemonOption<QDemonRef<QDemonRenderableDepthPrepassShader>> &theDepthShader =
             m_cubemapDepthShader;
 
     if (theDepthShader.hasValue() == false) {
         QString name;
         name = QStringLiteral("cubemap face depth shader");
 
-        QSharedPointer<QDemonShaderCacheInterface> theCache = m_demonContext->getShaderCache();
+        QDemonRef<QDemonShaderCacheInterface> theCache = m_demonContext->getShaderCache();
         QString theCacheKey = name;
-        QSharedPointer<QDemonRenderShaderProgram> depthShaderProgram =
+        QDemonRef<QDemonRenderShaderProgram> depthShaderProgram =
                 theCache->getProgram(theCacheKey, TShaderFeatureSet());
 
         if (!depthShaderProgram) {
@@ -903,28 +903,28 @@ QSharedPointer<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getCubeDe
                     name, QDemonShaderCacheProgramFlags(), TShaderFeatureSet());
 
         if (depthShaderProgram) {
-            theDepthShader = QSharedPointer<QDemonRenderableDepthPrepassShader>(
+            theDepthShader = QDemonRef<QDemonRenderableDepthPrepassShader>(
                         new QDemonRenderableDepthPrepassShader(depthShaderProgram, getContext()));
         } else {
-            theDepthShader = QSharedPointer<QDemonRenderableDepthPrepassShader>();
+            theDepthShader = QDemonRef<QDemonRenderableDepthPrepassShader>();
         }
     }
 
     return theDepthShader.getValue();
 }
 
-QSharedPointer<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getCubeDepthTessLinearShader()
+QDemonRef<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getCubeDepthTessLinearShader()
 {
-    QDemonOption<QSharedPointer<QDemonRenderableDepthPrepassShader>> &theDepthShader =
+    QDemonOption<QDemonRef<QDemonRenderableDepthPrepassShader>> &theDepthShader =
             m_cubemapDepthTessLinearShader;
 
     if (theDepthShader.hasValue() == false) {
         QString name;
         name = QStringLiteral("cubemap face depth linear tess shader");
 
-        QSharedPointer<QDemonShaderCacheInterface> theCache = m_demonContext->getShaderCache();
+        QDemonRef<QDemonShaderCacheInterface> theCache = m_demonContext->getShaderCache();
         QString theCacheKey = name;
-        QSharedPointer<QDemonRenderShaderProgram> depthShaderProgram =
+        QDemonRef<QDemonRenderShaderProgram> depthShaderProgram =
                 theCache->getProgram(theCacheKey, TShaderFeatureSet());
 
         if (!depthShaderProgram) {
@@ -978,28 +978,28 @@ QSharedPointer<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getCubeDe
                     name, QDemonShaderCacheProgramFlags(), TShaderFeatureSet());
 
         if (depthShaderProgram) {
-            theDepthShader = QSharedPointer<QDemonRenderableDepthPrepassShader>(
+            theDepthShader = QDemonRef<QDemonRenderableDepthPrepassShader>(
                         new QDemonRenderableDepthPrepassShader(depthShaderProgram, getContext()));
         } else {
-            theDepthShader = QSharedPointer<QDemonRenderableDepthPrepassShader>();
+            theDepthShader = QDemonRef<QDemonRenderableDepthPrepassShader>();
         }
     }
 
     return theDepthShader.getValue();
 }
 
-QSharedPointer<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getCubeDepthTessPhongShader()
+QDemonRef<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getCubeDepthTessPhongShader()
 {
-    QDemonOption<QSharedPointer<QDemonRenderableDepthPrepassShader>> &theDepthShader =
+    QDemonOption<QDemonRef<QDemonRenderableDepthPrepassShader>> &theDepthShader =
             m_cubemapDepthTessPhongShader;
 
     if (theDepthShader.hasValue() == false) {
         QString name;
         name = QStringLiteral("cubemap face depth phong tess shader");
 
-        QSharedPointer<QDemonShaderCacheInterface> theCache = m_demonContext->getShaderCache();
+        QDemonRef<QDemonShaderCacheInterface> theCache = m_demonContext->getShaderCache();
         QString theCacheKey = name;
-        QSharedPointer<QDemonRenderShaderProgram> depthShaderProgram =
+        QDemonRef<QDemonRenderShaderProgram> depthShaderProgram =
                 theCache->getProgram(theCacheKey, TShaderFeatureSet());
 
         if (!depthShaderProgram) {
@@ -1059,28 +1059,28 @@ QSharedPointer<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getCubeDe
                     name, QDemonShaderCacheProgramFlags(), TShaderFeatureSet());
 
         if (depthShaderProgram) {
-            theDepthShader = QSharedPointer<QDemonRenderableDepthPrepassShader>(
+            theDepthShader = QDemonRef<QDemonRenderableDepthPrepassShader>(
                         new QDemonRenderableDepthPrepassShader(depthShaderProgram, getContext()));
         } else {
-            theDepthShader = QSharedPointer<QDemonRenderableDepthPrepassShader>();
+            theDepthShader = QDemonRef<QDemonRenderableDepthPrepassShader>();
         }
     }
 
     return theDepthShader.getValue();
 }
 
-QSharedPointer<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getCubeDepthTessNPatchShader()
+QDemonRef<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getCubeDepthTessNPatchShader()
 {
-    QDemonOption<QSharedPointer<QDemonRenderableDepthPrepassShader>> &theDepthShader =
+    QDemonOption<QDemonRef<QDemonRenderableDepthPrepassShader>> &theDepthShader =
             m_cubemapDepthTessNPatchShader;
 
     if (theDepthShader.hasValue() == false) {
         QString name;
         name = QStringLiteral("cubemap face depth npatch tess shader");
 
-        QSharedPointer<QDemonShaderCacheInterface> theCache = m_demonContext->getShaderCache();
+        QDemonRef<QDemonShaderCacheInterface> theCache = m_demonContext->getShaderCache();
         QString theCacheKey = name;
-        QSharedPointer<QDemonRenderShaderProgram> depthShaderProgram =
+        QDemonRef<QDemonRenderShaderProgram> depthShaderProgram =
                 theCache->getProgram(theCacheKey, TShaderFeatureSet());
 
         if (!depthShaderProgram) {
@@ -1146,17 +1146,17 @@ QSharedPointer<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getCubeDe
                     name, QDemonShaderCacheProgramFlags(), TShaderFeatureSet());
 
         if (depthShaderProgram) {
-            theDepthShader = QSharedPointer<QDemonRenderableDepthPrepassShader>(
+            theDepthShader = QDemonRef<QDemonRenderableDepthPrepassShader>(
                         new QDemonRenderableDepthPrepassShader(depthShaderProgram, getContext()));
         } else {
-            theDepthShader = QSharedPointer<QDemonRenderableDepthPrepassShader>();
+            theDepthShader = QDemonRef<QDemonRenderableDepthPrepassShader>();
         }
     }
 
     return theDepthShader.getValue();
 }
 
-QSharedPointer<QDemonRenderableDepthPrepassShader>
+QDemonRef<QDemonRenderableDepthPrepassShader>
 QDemonRendererImpl::getOrthographicDepthShader(TessModeValues::Enum inTessMode)
 {
     if (!m_demonContext->getRenderContext()->isTessellationSupported()
@@ -1173,18 +1173,18 @@ QDemonRendererImpl::getOrthographicDepthShader(TessModeValues::Enum inTessMode)
     return getOrthographicDepthNoTessShader();
 }
 
-QSharedPointer<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getOrthographicDepthNoTessShader()
+QDemonRef<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getOrthographicDepthNoTessShader()
 {
-    QDemonOption<QSharedPointer<QDemonRenderableDepthPrepassShader>> &theDepthShader =
+    QDemonOption<QDemonRef<QDemonRenderableDepthPrepassShader>> &theDepthShader =
             m_orthographicDepthShader;
 
     if (theDepthShader.hasValue() == false) {
         QString name;
         name = QStringLiteral("orthographic depth shader");
 
-        QSharedPointer<QDemonShaderCacheInterface> theCache = m_demonContext->getShaderCache();
+        QDemonRef<QDemonShaderCacheInterface> theCache = m_demonContext->getShaderCache();
         QString theCacheKey = name;
-        QSharedPointer<QDemonRenderShaderProgram> depthShaderProgram =
+        QDemonRef<QDemonRenderShaderProgram> depthShaderProgram =
                 theCache->getProgram(theCacheKey, TShaderFeatureSet());
         if (!depthShaderProgram) {
             getProgramGenerator()->beginProgram();
@@ -1210,28 +1210,28 @@ QSharedPointer<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getOrthog
                     name, QDemonShaderCacheProgramFlags(), TShaderFeatureSet());
 
         if (depthShaderProgram) {
-            theDepthShader = QSharedPointer<QDemonRenderableDepthPrepassShader>(
+            theDepthShader = QDemonRef<QDemonRenderableDepthPrepassShader>(
                         new QDemonRenderableDepthPrepassShader(depthShaderProgram, getContext()));
         } else {
-            theDepthShader = QSharedPointer<QDemonRenderableDepthPrepassShader>();
+            theDepthShader = QDemonRef<QDemonRenderableDepthPrepassShader>();
         }
     }
 
     return theDepthShader.getValue();
 }
 
-QSharedPointer<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getOrthographicDepthTessLinearShader()
+QDemonRef<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getOrthographicDepthTessLinearShader()
 {
-    QDemonOption<QSharedPointer<QDemonRenderableDepthPrepassShader>> &theDepthShader =
+    QDemonOption<QDemonRef<QDemonRenderableDepthPrepassShader>> &theDepthShader =
             m_orthographicDepthTessLinearShader;
 
     if (theDepthShader.hasValue() == false) {
         QString name;
         name = QStringLiteral("orthographic depth tess linear shader");
 
-        QSharedPointer<QDemonShaderCacheInterface> theCache = m_demonContext->getShaderCache();
+        QDemonRef<QDemonShaderCacheInterface> theCache = m_demonContext->getShaderCache();
         QString theCacheKey = name;
-        QSharedPointer<QDemonRenderShaderProgram> depthShaderProgram =
+        QDemonRef<QDemonRenderShaderProgram> depthShaderProgram =
                 theCache->getProgram(theCacheKey, TShaderFeatureSet());
         if (!depthShaderProgram) {
             getProgramGenerator()->beginProgram(TShaderGeneratorStageFlags(
@@ -1280,28 +1280,28 @@ QSharedPointer<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getOrthog
                     name, QDemonShaderCacheProgramFlags(), TShaderFeatureSet());
 
         if (depthShaderProgram) {
-            theDepthShader = QSharedPointer<QDemonRenderableDepthPrepassShader>(
+            theDepthShader = QDemonRef<QDemonRenderableDepthPrepassShader>(
                         new QDemonRenderableDepthPrepassShader(depthShaderProgram, getContext()));
         } else {
-            theDepthShader = QSharedPointer<QDemonRenderableDepthPrepassShader>();
+            theDepthShader = QDemonRef<QDemonRenderableDepthPrepassShader>();
         }
     }
 
     return theDepthShader.getValue();
 }
 
-QSharedPointer<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getOrthographicDepthTessPhongShader()
+QDemonRef<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getOrthographicDepthTessPhongShader()
 {
-    QDemonOption<QSharedPointer<QDemonRenderableDepthPrepassShader>> &theDepthShader =
+    QDemonOption<QDemonRef<QDemonRenderableDepthPrepassShader>> &theDepthShader =
             m_orthographicDepthTessPhongShader;
 
     if (theDepthShader.hasValue() == false) {
         QString name;
         name = QStringLiteral("orthographic depth tess phong shader");
 
-        QSharedPointer<QDemonShaderCacheInterface> theCache = m_demonContext->getShaderCache();
+        QDemonRef<QDemonShaderCacheInterface> theCache = m_demonContext->getShaderCache();
         QString theCacheKey = name;
-        QSharedPointer<QDemonRenderShaderProgram> depthShaderProgram =
+        QDemonRef<QDemonRenderShaderProgram> depthShaderProgram =
                 theCache->getProgram(theCacheKey, TShaderFeatureSet());
         if (!depthShaderProgram) {
             getProgramGenerator()->beginProgram(TShaderGeneratorStageFlags(
@@ -1356,28 +1356,28 @@ QSharedPointer<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getOrthog
                     name, QDemonShaderCacheProgramFlags(), TShaderFeatureSet());
 
         if (depthShaderProgram) {
-            theDepthShader = QSharedPointer<QDemonRenderableDepthPrepassShader>(
+            theDepthShader = QDemonRef<QDemonRenderableDepthPrepassShader>(
                         new QDemonRenderableDepthPrepassShader(depthShaderProgram, getContext()));
         } else {
-            theDepthShader = QSharedPointer<QDemonRenderableDepthPrepassShader>();
+            theDepthShader = QDemonRef<QDemonRenderableDepthPrepassShader>();
         }
     }
 
     return theDepthShader.getValue();
 }
 
-QSharedPointer<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getOrthographicDepthTessNPatchShader()
+QDemonRef<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getOrthographicDepthTessNPatchShader()
 {
-    QDemonOption<QSharedPointer<QDemonRenderableDepthPrepassShader>> &theDepthShader =
+    QDemonOption<QDemonRef<QDemonRenderableDepthPrepassShader>> &theDepthShader =
             m_orthographicDepthTessNPatchShader;
 
     if (theDepthShader.hasValue() == false) {
         QString name;
         name = QStringLiteral("orthographic depth tess npatch shader");
 
-        QSharedPointer<QDemonShaderCacheInterface> theCache = m_demonContext->getShaderCache();
+        QDemonRef<QDemonShaderCacheInterface> theCache = m_demonContext->getShaderCache();
         QString theCacheKey = name;
-        QSharedPointer<QDemonRenderShaderProgram> depthShaderProgram =
+        QDemonRef<QDemonRenderShaderProgram> depthShaderProgram =
                 theCache->getProgram(theCacheKey, TShaderFeatureSet());
         if (!depthShaderProgram) {
             getProgramGenerator()->beginProgram(TShaderGeneratorStageFlags(
@@ -1441,10 +1441,10 @@ QSharedPointer<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getOrthog
                     name, QDemonShaderCacheProgramFlags(), TShaderFeatureSet());
 
         if (depthShaderProgram) {
-            theDepthShader = QSharedPointer<QDemonRenderableDepthPrepassShader>(
+            theDepthShader = QDemonRef<QDemonRenderableDepthPrepassShader>(
                         new QDemonRenderableDepthPrepassShader(depthShaderProgram, getContext()));
         } else {
-            theDepthShader = QSharedPointer<QDemonRenderableDepthPrepassShader>();
+            theDepthShader = QDemonRef<QDemonRenderableDepthPrepassShader>();
         }
     }
 
@@ -1453,9 +1453,9 @@ QSharedPointer<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getOrthog
 
 // ---------------------------------
 
-QSharedPointer<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getDepthPrepassShader(bool inDisplaced)
+QDemonRef<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getDepthPrepassShader(bool inDisplaced)
 {
-    QDemonOption<QSharedPointer<QDemonRenderableDepthPrepassShader>> &theDepthPrePassShader =
+    QDemonOption<QDemonRef<QDemonRenderableDepthPrepassShader>> &theDepthPrePassShader =
             (!inDisplaced) ? m_depthPrepassShader : m_depthPrepassShaderDisplaced;
 
     if (theDepthPrePassShader.hasValue() == false) {
@@ -1465,9 +1465,9 @@ QSharedPointer<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getDepthP
         if (inDisplaced)
             name.append(" displacement");
 
-        QSharedPointer<QDemonShaderCacheInterface> theCache = m_demonContext->getShaderCache();
+        QDemonRef<QDemonShaderCacheInterface> theCache = m_demonContext->getShaderCache();
         QString theCacheKey = name;
-        QSharedPointer<QDemonRenderShaderProgram> depthShaderProgram =
+        QDemonRef<QDemonRenderShaderProgram> depthShaderProgram =
                 theCache->getProgram(theCacheKey, TShaderFeatureSet());
         if (!depthShaderProgram) {
             getProgramGenerator()->beginProgram();
@@ -1501,16 +1501,16 @@ QSharedPointer<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getDepthP
                     name, QDemonShaderCacheProgramFlags(), TShaderFeatureSet());
 
         if (depthShaderProgram) {
-            theDepthPrePassShader = QSharedPointer<QDemonRenderableDepthPrepassShader>(
+            theDepthPrePassShader = QDemonRef<QDemonRenderableDepthPrepassShader>(
                         new QDemonRenderableDepthPrepassShader(depthShaderProgram, getContext()));
         } else {
-            theDepthPrePassShader = QSharedPointer<QDemonRenderableDepthPrepassShader>();
+            theDepthPrePassShader = QDemonRef<QDemonRenderableDepthPrepassShader>();
         }
     }
     return theDepthPrePassShader.getValue();
 }
 
-QSharedPointer<QDemonRenderableDepthPrepassShader>
+QDemonRef<QDemonRenderableDepthPrepassShader>
 QDemonRendererImpl::getDepthTessPrepassShader(TessModeValues::Enum inTessMode, bool inDisplaced)
 {
     if (!m_demonContext->getRenderContext()->isTessellationSupported()
@@ -1527,10 +1527,10 @@ QDemonRendererImpl::getDepthTessPrepassShader(TessModeValues::Enum inTessMode, b
     return getDepthPrepassShader(inDisplaced);
 }
 
-QSharedPointer<QDemonRenderableDepthPrepassShader>
+QDemonRef<QDemonRenderableDepthPrepassShader>
 QDemonRendererImpl::getDepthTessLinearPrepassShader(bool inDisplaced)
 {
-    QDemonOption<QSharedPointer<QDemonRenderableDepthPrepassShader>> &theDepthPrePassShader =
+    QDemonOption<QDemonRef<QDemonRenderableDepthPrepassShader>> &theDepthPrePassShader =
             (!inDisplaced) ? m_depthTessLinearPrepassShader
                            : m_depthTessLinearPrepassShaderDisplaced;
 
@@ -1541,9 +1541,9 @@ QDemonRendererImpl::getDepthTessLinearPrepassShader(bool inDisplaced)
         if (inDisplaced)
             name.append(" displacement");
 
-        QSharedPointer<QDemonShaderCacheInterface> theCache = m_demonContext->getShaderCache();
+        QDemonRef<QDemonShaderCacheInterface> theCache = m_demonContext->getShaderCache();
         QString theCacheKey = name;
-        QSharedPointer<QDemonRenderShaderProgram> depthShaderProgram =
+        QDemonRef<QDemonRenderShaderProgram> depthShaderProgram =
                 theCache->getProgram(theCacheKey, TShaderFeatureSet());
         if (!depthShaderProgram) {
             getProgramGenerator()->beginProgram(TShaderGeneratorStageFlags(
@@ -1657,21 +1657,21 @@ QDemonRendererImpl::getDepthTessLinearPrepassShader(bool inDisplaced)
                     name, theFlags, TShaderFeatureSet());
 
         if (depthShaderProgram) {
-            theDepthPrePassShader = QSharedPointer<QDemonRenderableDepthPrepassShader>(
+            theDepthPrePassShader = QDemonRef<QDemonRenderableDepthPrepassShader>(
                         new QDemonRenderableDepthPrepassShader(depthShaderProgram, getContext()));
         } else {
-            theDepthPrePassShader = QSharedPointer<QDemonRenderableDepthPrepassShader>();
+            theDepthPrePassShader = QDemonRef<QDemonRenderableDepthPrepassShader>();
         }
     }
     return theDepthPrePassShader;
 }
 
-QSharedPointer<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getDepthTessPhongPrepassShader()
+QDemonRef<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getDepthTessPhongPrepassShader()
 {
     if (m_depthTessPhongPrepassShader.hasValue() == false) {
-        QSharedPointer<QDemonShaderCacheInterface> theCache = m_demonContext->getShaderCache();
+        QDemonRef<QDemonShaderCacheInterface> theCache = m_demonContext->getShaderCache();
         QString theCacheKey = QString::fromLocal8Bit("depth tess phong prepass shader");
-        QSharedPointer<QDemonRenderShaderProgram> depthShaderProgram =
+        QDemonRef<QDemonRenderShaderProgram> depthShaderProgram =
                 theCache->getProgram(theCacheKey, TShaderFeatureSet());
         if (!depthShaderProgram) {
             getProgramGenerator()->beginProgram(TShaderGeneratorStageFlags(
@@ -1735,21 +1735,21 @@ QSharedPointer<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getDepthT
                     "depth tess phong prepass shader", theFlags, TShaderFeatureSet());
 
         if (depthShaderProgram) {
-            m_depthTessPhongPrepassShader = QSharedPointer<QDemonRenderableDepthPrepassShader>(
+            m_depthTessPhongPrepassShader = QDemonRef<QDemonRenderableDepthPrepassShader>(
                         new QDemonRenderableDepthPrepassShader(depthShaderProgram, getContext()));
         } else {
-            m_depthTessPhongPrepassShader = QSharedPointer<QDemonRenderableDepthPrepassShader>();
+            m_depthTessPhongPrepassShader = QDemonRef<QDemonRenderableDepthPrepassShader>();
         }
     }
     return m_depthTessPhongPrepassShader;
 }
 
-QSharedPointer<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getDepthTessNPatchPrepassShader()
+QDemonRef<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getDepthTessNPatchPrepassShader()
 {
     if (m_depthTessNPatchPrepassShader.hasValue() == false) {
-        QSharedPointer<QDemonShaderCacheInterface> theCache = m_demonContext->getShaderCache();
+        QDemonRef<QDemonShaderCacheInterface> theCache = m_demonContext->getShaderCache();
         QString theCacheKey = QString::fromLocal8Bit("depth tess npatch prepass shader");
-        QSharedPointer<QDemonRenderShaderProgram> depthShaderProgram =
+        QDemonRef<QDemonRenderShaderProgram> depthShaderProgram =
                 theCache->getProgram(theCacheKey, TShaderFeatureSet());
         if (!depthShaderProgram) {
             getProgramGenerator()->beginProgram(TShaderGeneratorStageFlags(
@@ -1827,22 +1827,22 @@ QSharedPointer<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getDepthT
                     "depth tess npatch prepass shader", theFlags, TShaderFeatureSet());
 
         if (depthShaderProgram) {
-            m_depthTessNPatchPrepassShader = QSharedPointer<QDemonRenderableDepthPrepassShader>(
+            m_depthTessNPatchPrepassShader = QDemonRef<QDemonRenderableDepthPrepassShader>(
                         new QDemonRenderableDepthPrepassShader(depthShaderProgram, getContext()));
         } else {
             m_depthTessNPatchPrepassShader =
-                    QSharedPointer<QDemonRenderableDepthPrepassShader>();
+                    QDemonRef<QDemonRenderableDepthPrepassShader>();
         }
     }
     return m_depthTessNPatchPrepassShader;
 }
 
-QSharedPointer<QDemonDefaultAoPassShader> QDemonRendererImpl::getDefaultAoPassShader(TShaderFeatureSet inFeatureSet)
+QDemonRef<QDemonDefaultAoPassShader> QDemonRendererImpl::getDefaultAoPassShader(TShaderFeatureSet inFeatureSet)
 {
     if (m_defaultAoPassShader.hasValue() == false) {
-        QSharedPointer<QDemonShaderCacheInterface> theCache = m_demonContext->getShaderCache();
+        QDemonRef<QDemonShaderCacheInterface> theCache = m_demonContext->getShaderCache();
         QString theCacheKey = QString::fromLocal8Bit("fullscreen AO pass shader");
-        QSharedPointer<QDemonRenderShaderProgram> aoPassShaderProgram =
+        QDemonRef<QDemonRenderShaderProgram> aoPassShaderProgram =
                 theCache->getProgram(theCacheKey, TShaderFeatureSet());
         if (!aoPassShaderProgram) {
             getProgramGenerator()->beginProgram();
@@ -1950,21 +1950,21 @@ QSharedPointer<QDemonDefaultAoPassShader> QDemonRendererImpl::getDefaultAoPassSh
                     "fullscreen AO pass shader", QDemonShaderCacheProgramFlags(), inFeatureSet);
 
         if (aoPassShaderProgram) {
-            m_defaultAoPassShader = QSharedPointer<QDemonDefaultAoPassShader>(
+            m_defaultAoPassShader = QDemonRef<QDemonDefaultAoPassShader>(
                         new QDemonDefaultAoPassShader(aoPassShaderProgram, getContext()));
         } else {
-            m_defaultAoPassShader = QSharedPointer<QDemonDefaultAoPassShader>();
+            m_defaultAoPassShader = QDemonRef<QDemonDefaultAoPassShader>();
         }
     }
     return m_defaultAoPassShader;
 }
 
-QSharedPointer<QDemonDefaultAoPassShader> QDemonRendererImpl::getFakeDepthShader(TShaderFeatureSet inFeatureSet)
+QDemonRef<QDemonDefaultAoPassShader> QDemonRendererImpl::getFakeDepthShader(TShaderFeatureSet inFeatureSet)
 {
     if (m_fakeDepthShader.hasValue() == false) {
-        QSharedPointer<QDemonShaderCacheInterface> theCache = m_demonContext->getShaderCache();
+        QDemonRef<QDemonShaderCacheInterface> theCache = m_demonContext->getShaderCache();
         QString theCacheKey = QString::fromLocal8Bit("depth display shader");
-        QSharedPointer<QDemonRenderShaderProgram> depthShaderProgram =
+        QDemonRef<QDemonRenderShaderProgram> depthShaderProgram =
                 theCache->getProgram(theCacheKey, TShaderFeatureSet());
         if (!depthShaderProgram) {
             getProgramGenerator()->beginProgram();
@@ -1995,22 +1995,22 @@ QSharedPointer<QDemonDefaultAoPassShader> QDemonRendererImpl::getFakeDepthShader
                     "depth display shader", QDemonShaderCacheProgramFlags(), inFeatureSet);
 
         if (depthShaderProgram) {
-            m_fakeDepthShader = QSharedPointer<QDemonDefaultAoPassShader>(
+            m_fakeDepthShader = QDemonRef<QDemonDefaultAoPassShader>(
                         new QDemonDefaultAoPassShader(
                             depthShaderProgram, getContext()));
         } else {
-            m_fakeDepthShader = QSharedPointer<QDemonDefaultAoPassShader>();
+            m_fakeDepthShader = QDemonRef<QDemonDefaultAoPassShader>();
         }
     }
     return m_fakeDepthShader;
 }
 
-QSharedPointer<QDemonDefaultAoPassShader> QDemonRendererImpl::getFakeCubeDepthShader(TShaderFeatureSet inFeatureSet)
+QDemonRef<QDemonDefaultAoPassShader> QDemonRendererImpl::getFakeCubeDepthShader(TShaderFeatureSet inFeatureSet)
 {
     if (!m_fakeCubemapDepthShader.hasValue()) {
-        QSharedPointer<QDemonShaderCacheInterface> theCache = m_demonContext->getShaderCache();
+        QDemonRef<QDemonShaderCacheInterface> theCache = m_demonContext->getShaderCache();
         QString theCacheKey = QString::fromLocal8Bit("cube depth display shader");
-        QSharedPointer<QDemonRenderShaderProgram> cubeShaderProgram =
+        QDemonRef<QDemonRenderShaderProgram> cubeShaderProgram =
                 theCache->getProgram(theCacheKey, TShaderFeatureSet());
         if (!cubeShaderProgram) {
             getProgramGenerator()->beginProgram();
@@ -2039,11 +2039,11 @@ QSharedPointer<QDemonDefaultAoPassShader> QDemonRendererImpl::getFakeCubeDepthSh
                     "cube depth display shader", QDemonShaderCacheProgramFlags(), inFeatureSet);
 
         if (cubeShaderProgram) {
-            m_fakeCubemapDepthShader = QSharedPointer<QDemonDefaultAoPassShader>(
+            m_fakeCubemapDepthShader = QDemonRef<QDemonDefaultAoPassShader>(
                         new QDemonDefaultAoPassShader(cubeShaderProgram,
                                                                                       getContext()));
         } else {
-            m_fakeCubemapDepthShader = QSharedPointer<QDemonDefaultAoPassShader>();
+            m_fakeCubemapDepthShader = QDemonRef<QDemonDefaultAoPassShader>();
         }
     }
     return m_fakeCubemapDepthShader.getValue();
@@ -2055,8 +2055,8 @@ QDemonTextRenderHelper QDemonRendererImpl::getTextShader(bool inUsePathRendering
     if (thePtr.hasGeneratedShader)
         return QDemonTextRenderHelper(thePtr, m_quadInputAssembler);
 
-    QSharedPointer<QDemonRenderShaderProgram> theShader = nullptr;
-    QSharedPointer<QDemonRenderProgramPipeline> thePipeline = nullptr;
+    QDemonRef<QDemonRenderShaderProgram> theShader = nullptr;
+    QDemonRef<QDemonRenderProgramPipeline> thePipeline = nullptr;
 
     if (!inUsePathRendering) {
         getProgramGenerator()->beginProgram();
@@ -2142,7 +2142,7 @@ QDemonTextRenderHelper QDemonRendererImpl::getTextShader(bool inUsePathRendering
     return QDemonTextRenderHelper(thePtr, m_quadInputAssembler);
 }
 
-QSharedPointer<QDemonTextDepthShader> QDemonRendererImpl::getTextDepthShader()
+QDemonRef<QDemonTextDepthShader> QDemonRendererImpl::getTextDepthShader()
 {
     if (m_textDepthPrepassShader.hasValue() == false) {
         getProgramGenerator()->beginProgram();
@@ -2182,13 +2182,13 @@ QSharedPointer<QDemonTextDepthShader> QDemonRendererImpl::getTextDepthShader()
         vertexGenerator.append("}");
         fragmentGenerator.append("}");
         const char *shaderName = "text depth shader";
-        QSharedPointer<QDemonRenderShaderProgram> theShader = getProgramGenerator()->compileGeneratedShader(
+        QDemonRef<QDemonRenderShaderProgram> theShader = getProgramGenerator()->compileGeneratedShader(
                     shaderName, QDemonShaderCacheProgramFlags(), TShaderFeatureSet());
         if (theShader == nullptr) {
-            m_textDepthPrepassShader = QSharedPointer<QDemonTextDepthShader>();
+            m_textDepthPrepassShader = QDemonRef<QDemonTextDepthShader>();
         } else {
             generateXYQuad();
-            m_textDepthPrepassShader = QSharedPointer<QDemonTextDepthShader>(
+            m_textDepthPrepassShader = QDemonRef<QDemonTextDepthShader>(
                         new QDemonTextDepthShader(theShader, m_quadInputAssembler));
         }
     }
@@ -2241,7 +2241,7 @@ QDemonTextRenderHelper QDemonRendererImpl::getTextWidgetShader()
     fragmentGenerator.append("\tfragOutput = vec4(mix(text_backgroundcolor.rgb, "
                              "text_textcolor.rgb, alpha_mask), 1.0 );");
     fragmentGenerator.append("}");
-    QSharedPointer<QDemonRenderShaderProgram> theShader = getProgramGenerator()->compileGeneratedShader(
+    QDemonRef<QDemonRenderShaderProgram> theShader = getProgramGenerator()->compileGeneratedShader(
                 "text widget shader", QDemonShaderCacheProgramFlags(), TShaderFeatureSet());
 
     if (theShader == nullptr)
@@ -2285,7 +2285,7 @@ QDemonTextRenderHelper QDemonRendererImpl::getOnscreenTextShader()
                 "\tfragOutput = vec4(text_textcolor.r, text_textcolor.g, text_textcolor.b, alpha);");
     fragmentGenerator.append("}");
 
-    QSharedPointer<QDemonRenderShaderProgram> theShader = getProgramGenerator()->compileGeneratedShader(
+    QDemonRef<QDemonRenderShaderProgram> theShader = getProgramGenerator()->compileGeneratedShader(
                 "onscreen texture shader", QDemonShaderCacheProgramFlags(), TShaderFeatureSet());
 
     if (theShader == nullptr)
@@ -2297,7 +2297,7 @@ QDemonTextRenderHelper QDemonRendererImpl::getOnscreenTextShader()
     return QDemonTextRenderHelper(m_textOnscreenShader, m_quadStripInputAssembler);
 }
 
-QSharedPointer<QDemonRenderShaderProgram> QDemonRendererImpl::getTextAtlasEntryShader()
+QDemonRef<QDemonRenderShaderProgram> QDemonRendererImpl::getTextAtlasEntryShader()
 {
     getProgramGenerator()->beginProgram();
 
@@ -2322,7 +2322,7 @@ QSharedPointer<QDemonRenderShaderProgram> QDemonRendererImpl::getTextAtlasEntryS
     fragmentGenerator.append("\tfragOutput = vec4(alpha, alpha, alpha, alpha);");
     fragmentGenerator.append("}");
 
-    QSharedPointer<QDemonRenderShaderProgram> theShader = getProgramGenerator()->compileGeneratedShader(
+    QDemonRef<QDemonRenderShaderProgram> theShader = getProgramGenerator()->compileGeneratedShader(
                 "texture atlas entry shader", QDemonShaderCacheProgramFlags(), TShaderFeatureSet());
 
     return theShader;
@@ -2334,7 +2334,7 @@ QDemonTextRenderHelper QDemonRendererImpl::getShader(QDemonTextRenderable & /*in
     return getTextShader(inUsePathRendering);
 }
 
-QSharedPointer<QDemonLayerSceneShader> QDemonRendererImpl::getSceneLayerShader()
+QDemonRef<QDemonLayerSceneShader> QDemonRendererImpl::getSceneLayerShader()
 {
     if (m_sceneLayerShader.hasValue())
         return m_sceneLayerShader.getValue();
@@ -2368,16 +2368,16 @@ QSharedPointer<QDemonLayerSceneShader> QDemonRendererImpl::getSceneLayerShader()
     fragmentGenerator.append("\tif( theLayerTexture.a == 0.0 ) discard;\n");
     fragmentGenerator.append("\tfragOutput = theLayerTexture;\n");
     fragmentGenerator.append("}");
-    QSharedPointer<QDemonRenderShaderProgram> theShader = getProgramGenerator()->compileGeneratedShader(
+    QDemonRef<QDemonRenderShaderProgram> theShader = getProgramGenerator()->compileGeneratedShader(
                 "layer shader", QDemonShaderCacheProgramFlags(), TShaderFeatureSet());
-    QSharedPointer<QDemonLayerSceneShader> retval;
+    QDemonRef<QDemonLayerSceneShader> retval;
     if (theShader)
-        retval = QSharedPointer<QDemonLayerSceneShader>(new QDemonLayerSceneShader(theShader));
+        retval = QDemonRef<QDemonLayerSceneShader>(new QDemonLayerSceneShader(theShader));
     m_sceneLayerShader = retval;
     return m_sceneLayerShader.getValue();
 }
 
-QSharedPointer<QDemonLayerProgAABlendShader> QDemonRendererImpl::getLayerProgAABlendShader()
+QDemonRef<QDemonLayerProgAABlendShader> QDemonRendererImpl::getLayerProgAABlendShader()
 {
     if (m_layerProgAAShader.hasValue())
         return m_layerProgAAShader.getValue();
@@ -2404,16 +2404,16 @@ QSharedPointer<QDemonLayerProgAABlendShader> QDemonRendererImpl::getLayerProgAAB
     fragmentGenerator.append(
                 "\tgl_FragColor = accum*blend_factors.y + lastFrame*blend_factors.x;");
     fragmentGenerator.append("}");
-    QSharedPointer<QDemonRenderShaderProgram> theShader = getProgramGenerator()->compileGeneratedShader(
+    QDemonRef<QDemonRenderShaderProgram> theShader = getProgramGenerator()->compileGeneratedShader(
                 "layer progressiveAA blend shader", QDemonShaderCacheProgramFlags(), TShaderFeatureSet());
-    QSharedPointer<QDemonLayerProgAABlendShader> retval;
+    QDemonRef<QDemonLayerProgAABlendShader> retval;
     if (theShader)
-        retval = QSharedPointer<QDemonLayerProgAABlendShader>(new QDemonLayerProgAABlendShader(theShader));
+        retval = QDemonRef<QDemonLayerProgAABlendShader>(new QDemonLayerProgAABlendShader(theShader));
     m_layerProgAAShader = retval;
     return m_layerProgAAShader.getValue();
 }
 
-QSharedPointer<QDemonShadowmapPreblurShader> QDemonRendererImpl::getCubeShadowBlurXShader()
+QDemonRef<QDemonShadowmapPreblurShader> QDemonRendererImpl::getCubeShadowBlurXShader()
 {
     if (m_cubeShadowBlurXShader.hasValue())
         return m_cubeShadowBlurXShader.getValue();
@@ -2535,16 +2535,16 @@ QSharedPointer<QDemonShadowmapPreblurShader> QDemonRendererImpl::getCubeShadowBl
 
     fragmentGenerator.append("}");
 
-    QSharedPointer<QDemonRenderShaderProgram> theShader = getProgramGenerator()->compileGeneratedShader(
+    QDemonRef<QDemonRenderShaderProgram> theShader = getProgramGenerator()->compileGeneratedShader(
                 "cubemap shadow blur X shader", QDemonShaderCacheProgramFlags(), TShaderFeatureSet());
-    QSharedPointer<QDemonShadowmapPreblurShader> retval;
+    QDemonRef<QDemonShadowmapPreblurShader> retval;
     if (theShader)
-        retval = QSharedPointer<QDemonShadowmapPreblurShader>(new QDemonShadowmapPreblurShader(theShader));
+        retval = QDemonRef<QDemonShadowmapPreblurShader>(new QDemonShadowmapPreblurShader(theShader));
     m_cubeShadowBlurXShader = retval;
     return m_cubeShadowBlurXShader.getValue();
 }
 
-QSharedPointer<QDemonShadowmapPreblurShader> QDemonRendererImpl::getCubeShadowBlurYShader()
+QDemonRef<QDemonShadowmapPreblurShader> QDemonRendererImpl::getCubeShadowBlurYShader()
 {
     if (m_cubeShadowBlurYShader.hasValue())
         return m_cubeShadowBlurYShader.getValue();
@@ -2666,16 +2666,16 @@ QSharedPointer<QDemonShadowmapPreblurShader> QDemonRendererImpl::getCubeShadowBl
 
     fragmentGenerator.append("}");
 
-    QSharedPointer<QDemonRenderShaderProgram> theShader = getProgramGenerator()->compileGeneratedShader(
+    QDemonRef<QDemonRenderShaderProgram> theShader = getProgramGenerator()->compileGeneratedShader(
                 "cubemap shadow blur Y shader", QDemonShaderCacheProgramFlags(), TShaderFeatureSet());
-    QSharedPointer<QDemonShadowmapPreblurShader> retval;
+    QDemonRef<QDemonShadowmapPreblurShader> retval;
     if (theShader)
-        retval = QSharedPointer<QDemonShadowmapPreblurShader>(new QDemonShadowmapPreblurShader(theShader));
+        retval = QDemonRef<QDemonShadowmapPreblurShader>(new QDemonShadowmapPreblurShader(theShader));
     m_cubeShadowBlurYShader = retval;
     return m_cubeShadowBlurYShader.getValue();
 }
 
-QSharedPointer<QDemonShadowmapPreblurShader> QDemonRendererImpl::getOrthoShadowBlurXShader()
+QDemonRef<QDemonShadowmapPreblurShader> QDemonRendererImpl::getOrthoShadowBlurXShader()
 {
     if (m_orthoShadowBlurXShader.hasValue())
         return m_orthoShadowBlurXShader.getValue();
@@ -2709,16 +2709,16 @@ QSharedPointer<QDemonShadowmapPreblurShader> QDemonRendererImpl::getOrthoShadowB
     fragmentGenerator.append("\tfragOutput = vec4(outDepth);");
     fragmentGenerator.append("}");
 
-    QSharedPointer<QDemonRenderShaderProgram> theShader = getProgramGenerator()->compileGeneratedShader(
+    QDemonRef<QDemonRenderShaderProgram> theShader = getProgramGenerator()->compileGeneratedShader(
                 "shadow map blur X shader", QDemonShaderCacheProgramFlags(), TShaderFeatureSet());
-    QSharedPointer<QDemonShadowmapPreblurShader> retval;
+    QDemonRef<QDemonShadowmapPreblurShader> retval;
     if (theShader)
-        retval = QSharedPointer<QDemonShadowmapPreblurShader>(new QDemonShadowmapPreblurShader(theShader));
+        retval = QDemonRef<QDemonShadowmapPreblurShader>(new QDemonShadowmapPreblurShader(theShader));
     m_orthoShadowBlurXShader = retval;
     return m_orthoShadowBlurXShader.getValue();
 }
 
-QSharedPointer<QDemonShadowmapPreblurShader> QDemonRendererImpl::getOrthoShadowBlurYShader()
+QDemonRef<QDemonShadowmapPreblurShader> QDemonRendererImpl::getOrthoShadowBlurYShader()
 {
     if (m_orthoShadowBlurYShader.hasValue())
         return m_orthoShadowBlurYShader.getValue();
@@ -2752,17 +2752,17 @@ QSharedPointer<QDemonShadowmapPreblurShader> QDemonRendererImpl::getOrthoShadowB
     fragmentGenerator.append("\tfragOutput = vec4(outDepth);");
     fragmentGenerator.append("}");
 
-    QSharedPointer<QDemonRenderShaderProgram> theShader = getProgramGenerator()->compileGeneratedShader(
+    QDemonRef<QDemonRenderShaderProgram> theShader = getProgramGenerator()->compileGeneratedShader(
                 "shadow map blur Y shader", QDemonShaderCacheProgramFlags(), TShaderFeatureSet());
-    QSharedPointer<QDemonShadowmapPreblurShader> retval;
+    QDemonRef<QDemonShadowmapPreblurShader> retval;
     if (theShader)
-        retval = QSharedPointer<QDemonShadowmapPreblurShader>(new QDemonShadowmapPreblurShader(theShader));
+        retval = QDemonRef<QDemonShadowmapPreblurShader>(new QDemonShadowmapPreblurShader(theShader));
     m_orthoShadowBlurYShader = retval;
     return m_orthoShadowBlurYShader.getValue();
 }
 
 #ifdef ADVANCED_BLEND_SW_FALLBACK
-QSharedPointer<QDemonAdvancedModeBlendShader>
+QDemonRef<QDemonAdvancedModeBlendShader>
 QDemonRendererImpl::getAdvancedBlendModeShader(AdvancedBlendModes::Enum blendMode)
 {
     // Select between blend equations.
@@ -2776,7 +2776,7 @@ QDemonRendererImpl::getAdvancedBlendModeShader(AdvancedBlendModes::Enum blendMod
     return {};
 }
 
-QSharedPointer<QDemonAdvancedModeBlendShader> QDemonRendererImpl::getOverlayBlendModeShader()
+QDemonRef<QDemonAdvancedModeBlendShader> QDemonRendererImpl::getOverlayBlendModeShader()
 {
     if (m_advancedModeOverlayBlendShader.hasValue())
         return m_advancedModeOverlayBlendShader.getValue();
@@ -2812,7 +2812,7 @@ QSharedPointer<QDemonAdvancedModeBlendShader> QDemonRendererImpl::getOverlayBlen
     fragmentGenerator.append("\tfloat p2 = blend.a * (1.0 - base.a);");
     fragmentGenerator.append("\tres.a = p0 + p1 + p2;");
 
-    QSharedPointer<QDemonRenderShaderProgram> theShader;
+    QDemonRef<QDemonRenderShaderProgram> theShader;
     fragmentGenerator.append(
                 "\tfloat f_rs_rd = (base.r < 0.5? (2.0 * base.r * blend.r) : "
                 "(1.0 - 2.0 * (1.0 - base.r) * (1.0 - blend.r)));");
@@ -2830,14 +2830,14 @@ QSharedPointer<QDemonAdvancedModeBlendShader> QDemonRendererImpl::getOverlayBlen
     theShader = getProgramGenerator()->compileGeneratedShader(
                 "advanced overlay shader", QDemonShaderCacheProgramFlags(), TShaderFeatureSet());
 
-    QSharedPointer<QDemonAdvancedModeBlendShader> retval;
+    QDemonRef<QDemonAdvancedModeBlendShader> retval;
     if (theShader)
-        retval = QSharedPointer<QDemonAdvancedModeBlendShader>(new QDemonAdvancedModeBlendShader(theShader));
+        retval = QDemonRef<QDemonAdvancedModeBlendShader>(new QDemonAdvancedModeBlendShader(theShader));
     m_advancedModeOverlayBlendShader = retval;
     return m_advancedModeOverlayBlendShader.getValue();
 }
 
- QSharedPointer<QDemonAdvancedModeBlendShader> QDemonRendererImpl::getColorBurnBlendModeShader()
+ QDemonRef<QDemonAdvancedModeBlendShader> QDemonRendererImpl::getColorBurnBlendModeShader()
 {
     if (m_advancedModeColorBurnBlendShader.hasValue())
         return m_advancedModeColorBurnBlendShader.getValue();
@@ -2873,7 +2873,7 @@ QSharedPointer<QDemonAdvancedModeBlendShader> QDemonRendererImpl::getOverlayBlen
     fragmentGenerator.append("\tfloat p2 = blend.a * (1.0 - base.a);");
     fragmentGenerator.append("\tres.a = p0 + p1 + p2;");
 
-    QSharedPointer<QDemonRenderShaderProgram> theShader;
+    QDemonRef<QDemonRenderShaderProgram> theShader;
     fragmentGenerator.append(
                 "\tfloat f_rs_rd = ((base.r == 1.0) ? 1.0 : "
                 "(blend.r == 0.0) ? 0.0 : 1.0 - min(1.0, ((1.0 - base.r) / blend.r)));");
@@ -2891,15 +2891,15 @@ QSharedPointer<QDemonAdvancedModeBlendShader> QDemonRendererImpl::getOverlayBlen
 
     theShader = getProgramGenerator()->compileGeneratedShader(
                 "advanced colorBurn shader", QDemonShaderCacheProgramFlags(), TShaderFeatureSet());
-    QSharedPointer<QDemonAdvancedModeBlendShader> retval;
+    QDemonRef<QDemonAdvancedModeBlendShader> retval;
     if (theShader)
-        retval = QSharedPointer<QDemonAdvancedModeBlendShader>(new QDemonAdvancedModeBlendShader(theShader));
+        retval = QDemonRef<QDemonAdvancedModeBlendShader>(new QDemonAdvancedModeBlendShader(theShader));
     m_advancedModeColorBurnBlendShader = retval;
     return m_advancedModeColorBurnBlendShader.getValue();
 
 }
 
-QSharedPointer<QDemonAdvancedModeBlendShader> QDemonRendererImpl::getColorDodgeBlendModeShader()
+QDemonRef<QDemonAdvancedModeBlendShader> QDemonRendererImpl::getColorDodgeBlendModeShader()
 {
     if (m_advancedModeColorDodgeBlendShader.hasValue())
         return m_advancedModeColorDodgeBlendShader.getValue();
@@ -2935,7 +2935,7 @@ QSharedPointer<QDemonAdvancedModeBlendShader> QDemonRendererImpl::getColorDodgeB
     fragmentGenerator.append("\tfloat p2 = blend.a * (1.0 - base.a);");
     fragmentGenerator.append("\tres.a = p0 + p1 + p2;");
 
-    QSharedPointer<QDemonRenderShaderProgram> theShader;
+    QDemonRef<QDemonRenderShaderProgram> theShader;
     fragmentGenerator.append(
                 "\tfloat f_rs_rd = ((base.r == 0.0) ? 0.0 : "
                 "(blend.r == 1.0) ? 1.0 : min(base.r / (1.0 - blend.r), 1.0));");
@@ -2953,9 +2953,9 @@ QSharedPointer<QDemonAdvancedModeBlendShader> QDemonRendererImpl::getColorDodgeB
     fragmentGenerator.append("}");
     theShader = getProgramGenerator()->compileGeneratedShader(
                 "advanced colorDodge shader", QDemonShaderCacheProgramFlags(), TShaderFeatureSet());
-    QSharedPointer<QDemonAdvancedModeBlendShader> retval;
+    QDemonRef<QDemonAdvancedModeBlendShader> retval;
     if (theShader)
-        retval = QSharedPointer<QDemonAdvancedModeBlendShader>(new QDemonAdvancedModeBlendShader(theShader));
+        retval = QDemonRef<QDemonAdvancedModeBlendShader>(new QDemonAdvancedModeBlendShader(theShader));
     m_advancedModeColorDodgeBlendShader = retval;
     return m_advancedModeColorDodgeBlendShader.getValue();
 

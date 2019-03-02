@@ -2,6 +2,7 @@
 #define QTDEMONGLOBAL_H
 
 #include <QtCore/qglobal.h>
+#include <QtCore/qsharedpointer.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -14,6 +15,9 @@ QT_BEGIN_NAMESPACE
 #else
 #  define Q_DEMON_EXPORT
 #endif
+
+template <typename T>
+using QDemonRef = QSharedPointer<T>;//QExplicitlySharedDataPointer<T>;
 
 QT_END_NAMESPACE
 

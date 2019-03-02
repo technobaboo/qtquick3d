@@ -52,8 +52,8 @@ public:
 
     virtual QAnimationDriver *animationDriver() const = 0;
 
-    virtual QSharedPointer<QDemonRenderContextInterface> sceneGraphContext() const = 0;
-    virtual QSharedPointer<QDemonRenderContext> renderContext() const = 0;
+    virtual QDemonRef<QDemonRenderContextInterface> sceneGraphContext() const = 0;
+    virtual QDemonRef<QDemonRenderContext> renderContext() const = 0;
 
     virtual void releaseResources(QDemonWindow *window) = 0;
     virtual void postJob(QDemonWindow *window, QRunnable *job);

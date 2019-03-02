@@ -32,7 +32,7 @@
 #include <QtDemonRender/qdemonrendercontext.h>
 
 QT_BEGIN_NAMESPACE
-QDemonRenderOcclusionQuery::QDemonRenderOcclusionQuery(const QSharedPointer<QDemonRenderContextImpl> &context)
+QDemonRenderOcclusionQuery::QDemonRenderOcclusionQuery(const QDemonRef<QDemonRenderContextImpl> &context)
     : QDemonRenderQueryBase(context)
 {
 }
@@ -63,11 +63,11 @@ bool QDemonRenderOcclusionQuery::GetResultAvailable()
     return (param == 1);
 }
 
-QSharedPointer<QDemonRenderOcclusionQuery> QDemonRenderOcclusionQuery::create(const QSharedPointer<QDemonRenderContextImpl> &context)
+QDemonRef<QDemonRenderOcclusionQuery> QDemonRenderOcclusionQuery::create(const QDemonRef<QDemonRenderContextImpl> &context)
 {
     if (!context->isSampleQuerySupported())
         return nullptr;
 
-    return QSharedPointer<QDemonRenderOcclusionQuery>(new QDemonRenderOcclusionQuery(context));
+    return QDemonRef<QDemonRenderOcclusionQuery>(new QDemonRenderOcclusionQuery(context));
 }
 QT_END_NAMESPACE

@@ -38,14 +38,14 @@
 
 QT_BEGIN_NAMESPACE
 
-QSharedPointer<QDemonRenderContext> QDemonRenderContext::createGl(const QSurfaceFormat &format)
+QDemonRef<QDemonRenderContext> QDemonRenderContext::createGl(const QSurfaceFormat &format)
 {
-    QSharedPointer<QDemonRenderContext> retval;
+    QDemonRef<QDemonRenderContext> retval;
 
     Q_ASSERT(format.majorVersion() >= 2);
 
     // create backend
-    QSharedPointer<QDemonRenderBackend> theBackend;
+    QDemonRef<QDemonRenderBackend> theBackend;
     bool isES = format.renderableType() == QSurfaceFormat::OpenGLES;
     if (isES && (format.majorVersion() == 2
                  || (format.majorVersion() == 3 && format.minorVersion() == 0))) {
@@ -66,7 +66,7 @@ QSharedPointer<QDemonRenderContext> QDemonRenderContext::createGl(const QSurface
         qCCritical(INTERNAL_ERROR) << "Can't find a suitable OpenGL version for" << format;
     }
 
-    QSharedPointer<QDemonRenderContextImpl> impl(new QDemonRenderContextImpl(theBackend));
+    QDemonRef<QDemonRenderContextImpl> impl(new QDemonRenderContextImpl(theBackend));
     retval = impl;
 
     return retval;

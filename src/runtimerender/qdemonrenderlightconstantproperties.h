@@ -83,7 +83,7 @@ struct QDemonLightConstantProperties
         QDemonRenderCachedShaderProperty<qint32> shadowIdx;
         QDemonRenderCachedShaderProperty<QVector3D> attenuation;
 
-        LightConstants(const QString &lightRef, QSharedPointer<QDemonRenderShaderProgram> shader)
+        LightConstants(const QString &lightRef, QDemonRef<QDemonRenderShaderProgram> shader)
             : position(LCSEED.arg(lightRef, lconstantnames[0]), shader)
             , direction(LCSEED.arg(lightRef).arg(lconstantnames[1]), shader)
             , up(LCSEED.arg(lightRef, lconstantnames[2]), shader)
@@ -177,13 +177,13 @@ struct QDemonLightConstantProperties
         qDeleteAll(m_constants);
     }
 
-    void updateLights(QSharedPointer<GeneratedShader> shader)
+    void updateLights(QDemonRef<GeneratedShader> shader)
     {
         for (int i = 0; i < m_constants.size(); ++i)
             m_constants[i]->updateLights(shader->m_lights[i].lightData);
     }
     template <typename LightProps>
-    void updateLights(const QVector<QSharedPointer<LightProps>> &props)
+    void updateLights(const QVector<QDemonRef<LightProps>> &props)
     {
         for (int i = 0; i < m_constants.size(); ++i)
             m_constants[i]->updateLights(props[i]->m_lightData);

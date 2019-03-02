@@ -105,11 +105,11 @@ public:
     QDemonTextureData decompressDXTImage(int inMipMapIdx, QDemonTextureData *inOptLastImage = nullptr);
     void releaseDecompressedTexture(QDemonTextureData inImage);
 
-    static QSharedPointer<QDemonLoadedTexture> load(const QString &inPath,
+    static QDemonRef<QDemonLoadedTexture> load(const QString &inPath,
                                                     QDemonInputStreamFactoryInterface &inFactory,
                                                     bool inFlipY = true,
                                                     QDemonRenderContextType renderContextType = QDemonRenderContextValues::NullContext);
-    static QSharedPointer<QDemonLoadedTexture> loadQImage(const QString &inPath,
+    static QDemonRef<QDemonLoadedTexture> loadQImage(const QString &inPath,
                                                           qint32 flipVertical,
                                                           QDemonRenderContextType renderContextType);
 

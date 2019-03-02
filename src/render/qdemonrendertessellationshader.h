@@ -51,7 +51,7 @@ public:
          *
          * @return No return.
          */
-    QDemonRenderTessControlShader(const QSharedPointer<QDemonRenderContextImpl> &context,
+    QDemonRenderTessControlShader(const QDemonRef<QDemonRenderContextImpl> &context,
                                   QDemonConstDataRef<qint8> source, bool binaryProgram);
 
     /// @brief destructor
@@ -94,7 +94,7 @@ public:
          *
          * @return No return.
          */
-    QDemonRenderTessEvaluationShader(const QSharedPointer<QDemonRenderContextImpl> &context,
+    QDemonRenderTessEvaluationShader(const QDemonRef<QDemonRenderContextImpl> &context,
                                      QDemonConstDataRef<qint8> source,
                                      bool binaryProgram);
 

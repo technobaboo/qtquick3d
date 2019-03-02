@@ -48,7 +48,7 @@ public:
          *
          * @return No return.
          */
-    explicit QDemonRenderTimerQuery(const QSharedPointer<QDemonRenderContextImpl> &context);
+    explicit QDemonRenderTimerQuery(const QDemonRef<QDemonRenderContextImpl> &context);
 
     ///< destructor
     ~QDemonRenderTimerQuery() override;
@@ -108,7 +108,7 @@ public:
          *
          * * @return a timer query object on success
          */
-    static QSharedPointer<QDemonRenderTimerQuery> create(const QSharedPointer<QDemonRenderContextImpl> &context);
+    static QDemonRef<QDemonRenderTimerQuery> create(const QDemonRef<QDemonRenderContextImpl> &context);
 };
 
 QT_END_NAMESPACE

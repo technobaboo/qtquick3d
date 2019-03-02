@@ -49,7 +49,7 @@ public:
     // Renders the node to the current viewport.
     virtual void render(const QVector<QDemonPGGraphObject *> &inObjects) = 0;
 
-    static QSharedPointer<QDemonPixelGraphicsRendererInterface> createRenderer(QDemonRenderContextInterface *ctx);
+    static QDemonRef<QDemonPixelGraphicsRendererInterface> createRenderer(QDemonRenderContextInterface *ctx);
 };
 QT_END_NAMESPACE
 

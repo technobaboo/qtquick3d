@@ -80,7 +80,7 @@ public:
     // Can't name this LoadImage because that gets mangled by windows to LoadImageA (uggh)
     // In some cases we need to only scan particular images for transparency.
     virtual QDemonRenderImageTextureData loadRenderImage(QString inImagePath,
-                                              QSharedPointer<QDemonLoadedTexture> inTexture,
+                                              QDemonRef<QDemonLoadedTexture> inTexture,
                                               bool inForceScanForTransparency = false,
                                               bool inBsdfMipmaps = false) = 0;
     virtual QDemonRenderImageTextureData loadRenderImage(QString inSourcePath,
@@ -100,9 +100,9 @@ public:
     virtual void clear() = 0;
     virtual void invalidateBuffer(QString inSourcePath) = 0;
 
-    static QSharedPointer<QDemonBufferManagerInterface> create(QSharedPointer<QDemonRenderContext> inRenderContext,
-                                                               QSharedPointer<QDemonInputStreamFactoryInterface> inInputStreamFactory,
-                                                               QSharedPointer<QDemonPerfTimerInterface> inTimer);
+    static QDemonRef<QDemonBufferManagerInterface> create(QDemonRef<QDemonRenderContext> inRenderContext,
+                                                               QDemonRef<QDemonInputStreamFactoryInterface> inInputStreamFactory,
+                                                               QDemonRef<QDemonPerfTimerInterface> inTimer);
 };
 QT_END_NAMESPACE
 

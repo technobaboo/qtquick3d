@@ -260,12 +260,12 @@ public:
     //    virtual void Load(QDemonDataRef<quint8> inData, CStrTableOrDataRef inStrDataBlock,
     //                      const char *inProjectDir) = 0;
 
-    virtual QSharedPointer<QDemonDynamicObjectSystemInterface> createDynamicSystem(QDemonRenderContextInterface *rc) = 0;
+    virtual QDemonRef<QDemonDynamicObjectSystemInterface> createDynamicSystem(QDemonRenderContextInterface *rc) = 0;
 
-    static QSharedPointer<QDemonDynamicObjectSystemCoreInterface> createDynamicSystemCore(QDemonRenderContextCoreInterface *rc);
+    static QDemonRef<QDemonDynamicObjectSystemCoreInterface> createDynamicSystemCore(QDemonRenderContextCoreInterface *rc);
 };
 
-typedef QPair<QSharedPointer<QDemonRenderShaderProgram>, dynamic::QDemonDynamicShaderProgramFlags> TShaderAndFlags;
+typedef QPair<QDemonRef<QDemonRenderShaderProgram>, dynamic::QDemonDynamicShaderProgramFlags> TShaderAndFlags;
 
 class Q_DEMONRUNTIMERENDER_EXPORT QDemonDynamicObjectSystemInterface : public QDemonDynamicObjectSystemCoreInterface , public QEnableSharedFromThis<QDemonDynamicObjectSystemInterface>
 {

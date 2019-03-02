@@ -50,9 +50,9 @@ struct QDemonGpuTimerInfo
     quint16 m_averageTimeWriteID;
     quint64 m_averageTime[10];
     quint32 m_frameID[RECORDED_FRAME_DELAY];
-    QSharedPointer<QDemonRenderTimerQuery> m_timerStartQueryObjects[RECORDED_FRAME_DELAY];
-    QSharedPointer<QDemonRenderTimerQuery> m_timerEndQueryObjects[RECORDED_FRAME_DELAY];
-    QSharedPointer<QDemonRenderSync> m_timerSyncObjects[RECORDED_FRAME_DELAY];
+    QDemonRef<QDemonRenderTimerQuery> m_timerStartQueryObjects[RECORDED_FRAME_DELAY];
+    QDemonRef<QDemonRenderTimerQuery> m_timerEndQueryObjects[RECORDED_FRAME_DELAY];
+    QDemonRef<QDemonRenderSync> m_timerSyncObjects[RECORDED_FRAME_DELAY];
 
     QDemonGpuTimerInfo()
         : m_absoluteTime(false)
@@ -150,10 +150,10 @@ struct QDemonGpuTimerInfo
 
 class QDemonRenderGpuProfiler : public QDemonRenderProfilerInterface
 {
-    typedef QHash<QString, QSharedPointer<QDemonGpuTimerInfo>> TStrGpuTimerInfoMap;
+    typedef QHash<QString, QDemonRef<QDemonGpuTimerInfo>> TStrGpuTimerInfoMap;
 
 private:
-    QSharedPointer<QDemonRenderContext> m_renderContext;
+    QDemonRef<QDemonRenderContext> m_renderContext;
     QDemonRenderContextInterface *m_context;
 
     TStrGpuTimerInfoMap m_strToGpuTimerMap;
@@ -162,7 +162,7 @@ private:
 
 public:
     QDemonRenderGpuProfiler(QDemonRenderContextInterface *inContext,
-                            QSharedPointer<QDemonRenderContext> inRenderContext)
+                            QDemonRef<QDemonRenderContext> inRenderContext)
         : m_renderContext(inRenderContext)
         , m_context(inContext)
         , m_vertexCount(0)
@@ -173,7 +173,7 @@ public:
 
     void startTimer(QString &nameID, bool absoluteTime, bool sync) override
     {
-        QSharedPointer<QDemonGpuTimerInfo> theGpuTimerData = getOrCreateGpuTimerInfo(nameID);
+        QDemonRef<QDemonGpuTimerInfo> theGpuTimerData = getOrCreateGpuTimerInfo(nameID);
 
         if (theGpuTimerData) {
             if (sync)
@@ -186,7 +186,7 @@ public:
 
     void endTimer(QString &nameID) override
     {
-        QSharedPointer<QDemonGpuTimerInfo> theGpuTimerData = getOrCreateGpuTimerInfo(nameID);
+        QDemonRef<QDemonGpuTimerInfo> theGpuTimerData = getOrCreateGpuTimerInfo(nameID);
 
         if (theGpuTimerData) {
             theGpuTimerData->endTimerQuery();
@@ -196,7 +196,7 @@ public:
     double getElapsedTime(const QString &nameID) const override
     {
         double time = 0;
-        QSharedPointer<QDemonGpuTimerInfo> theGpuTimerData = getGpuTimerInfo(nameID);
+        QDemonRef<QDemonGpuTimerInfo> theGpuTimerData = getGpuTimerInfo(nameID);
 
         if (theGpuTimerData) {
             time = theGpuTimerData->getElapsedTimeInMs(m_context->getFrameCount());
@@ -217,13 +217,13 @@ public:
     }
 
 private:
-    QSharedPointer<QDemonGpuTimerInfo> getOrCreateGpuTimerInfo(QString &nameID)
+    QDemonRef<QDemonGpuTimerInfo> getOrCreateGpuTimerInfo(QString &nameID)
     {
         TStrGpuTimerInfoMap::const_iterator theIter = m_strToGpuTimerMap.find(nameID);
         if (theIter != m_strToGpuTimerMap.end())
             return theIter.value();
 
-        QSharedPointer<QDemonGpuTimerInfo> theGpuTimerData = QSharedPointer<QDemonGpuTimerInfo>(new QDemonGpuTimerInfo());
+        QDemonRef<QDemonGpuTimerInfo> theGpuTimerData = QDemonRef<QDemonGpuTimerInfo>(new QDemonGpuTimerInfo());
 
         if (theGpuTimerData) {
             // create queries
@@ -240,7 +240,7 @@ private:
         return theGpuTimerData;
     }
 
-    QSharedPointer<QDemonGpuTimerInfo> getGpuTimerInfo(const QString &nameID) const
+    QDemonRef<QDemonGpuTimerInfo> getGpuTimerInfo(const QString &nameID) const
     {
         TStrGpuTimerInfoMap::const_iterator theIter = m_strToGpuTimerMap.find(nameID);
         if (theIter != m_strToGpuTimerMap.end())
@@ -251,10 +251,10 @@ private:
 };
 }
 
-QSharedPointer<QDemonRenderProfilerInterface> QDemonRenderProfilerInterface::createGpuProfiler(QDemonRenderContextInterface *inContext,
-                                                                                               QSharedPointer<QDemonRenderContext> inRenderContext)
+QDemonRef<QDemonRenderProfilerInterface> QDemonRenderProfilerInterface::createGpuProfiler(QDemonRenderContextInterface *inContext,
+                                                                                               QDemonRef<QDemonRenderContext> inRenderContext)
 {
-    return QSharedPointer<QDemonRenderProfilerInterface>(new QDemonRenderGpuProfiler(inContext, inRenderContext));
+    return QDemonRef<QDemonRenderProfilerInterface>(new QDemonRenderGpuProfiler(inContext, inRenderContext));
 }
 
 QT_END_NAMESPACE

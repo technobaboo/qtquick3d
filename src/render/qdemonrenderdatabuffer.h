@@ -43,8 +43,8 @@ class QDemonRenderBackend;
 class QDemonRenderDataBuffer : public QDemonRenderImplemented
 {
 protected:
-    QSharedPointer<QDemonRenderContextImpl> m_context; ///< pointer to context
-    QSharedPointer<QDemonRenderBackend> m_backend; ///< pointer to backend
+    QDemonRef<QDemonRenderContextImpl> m_context; ///< pointer to context
+    QDemonRef<QDemonRenderBackend> m_backend; ///< pointer to backend
     QDemonRenderBufferUsageType::Enum m_usageType; ///< usage type
     QDemonRenderBufferBindFlags m_bindFlags; ///< bind flags
     QDemonDataRef<quint8> m_bufferData; ///< buffer data pointer
@@ -69,7 +69,7 @@ public:
          *
          * @return No return.
          */
-    QDemonRenderDataBuffer(const QSharedPointer<QDemonRenderContextImpl> &context, size_t size,
+    QDemonRenderDataBuffer(const QDemonRef<QDemonRenderContextImpl> &context, size_t size,
                            QDemonRenderBufferBindFlags bindFlags,
                            QDemonRenderBufferUsageType::Enum usageType, QDemonDataRef<quint8> data);
 

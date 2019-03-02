@@ -34,7 +34,7 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonRenderIndexBuffer::QDemonRenderIndexBuffer(const QSharedPointer<QDemonRenderContextImpl> &context,
+QDemonRenderIndexBuffer::QDemonRenderIndexBuffer(const QDemonRef<QDemonRenderContextImpl> &context,
                                                  size_t size,
                                                  QDemonRenderComponentTypes::Enum componentType,
                                                  QDemonRenderBufferUsageType::Enum usageType,
@@ -75,7 +75,7 @@ void QDemonRenderIndexBuffer::bind()
     m_backend->bindBuffer(m_bufferHandle, m_bindFlags);
 }
 
-QSharedPointer<QDemonRenderIndexBuffer> QDemonRenderIndexBuffer::create(const QSharedPointer<QDemonRenderContextImpl> &context,
+QDemonRef<QDemonRenderIndexBuffer> QDemonRenderIndexBuffer::create(const QDemonRef<QDemonRenderContextImpl> &context,
                                                                         QDemonRenderBufferUsageType::Enum usageType,
                                                                         QDemonRenderComponentTypes::Enum componentType,
                                                                         size_t size, QDemonConstDataRef<quint8> bufferData)
@@ -88,7 +88,7 @@ QSharedPointer<QDemonRenderIndexBuffer> QDemonRenderIndexBuffer::create(const QS
         return nullptr;
     }
 
-    return QSharedPointer<QDemonRenderIndexBuffer>(new QDemonRenderIndexBuffer(context, size, componentType, usageType,
+    return QDemonRef<QDemonRenderIndexBuffer>(new QDemonRenderIndexBuffer(context, size, componentType, usageType,
                                                                                toDataRef(const_cast<quint8 *>(bufferData.begin()), bufferData.size())));
 }
 QT_END_NAMESPACE

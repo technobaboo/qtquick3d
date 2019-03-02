@@ -35,7 +35,7 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonRenderRenderBuffer::QDemonRenderRenderBuffer(const QSharedPointer<QDemonRenderContextImpl> &context,
+QDemonRenderRenderBuffer::QDemonRenderRenderBuffer(const QDemonRef<QDemonRenderContextImpl> &context,
                                                    QDemonRenderRenderBufferFormats::Enum format,
                                                    quint32 width,
                                                    quint32 height)
@@ -90,12 +90,12 @@ void QDemonRenderRenderBuffer::setDimensions(const QDemonRenderRenderBufferDimen
 
 
 
-QSharedPointer<QDemonRenderRenderBuffer>
-QDemonRenderRenderBuffer::create(const QSharedPointer<QDemonRenderContextImpl> &context,
+QDemonRef<QDemonRenderRenderBuffer>
+QDemonRenderRenderBuffer::create(const QDemonRef<QDemonRenderContextImpl> &context,
                                  QDemonRenderRenderBufferFormats::Enum format, quint32 width,
                                  quint32 height)
 {
-    QSharedPointer<QDemonRenderRenderBuffer> retval = nullptr;
+    QDemonRef<QDemonRenderRenderBuffer> retval = nullptr;
     if (width == 0 || height == 0) {
         qCCritical(INVALID_PARAMETER, "Invalid renderbuffer width or height");
         return retval;

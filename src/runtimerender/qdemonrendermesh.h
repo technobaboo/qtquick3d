@@ -70,12 +70,12 @@ struct QDemonRenderJoint
 
 struct QDemonRenderSubset : public QDemonRenderSubsetBase
 {
-    QSharedPointer<QDemonRenderInputAssembler> inputAssembler;
-    QSharedPointer<QDemonRenderInputAssembler> inputAssemblerDepth;
-    QSharedPointer<QDemonRenderInputAssembler> inputAssemblerPoints; ///< similar to depth but ignores index buffer.
-    QSharedPointer<QDemonRenderVertexBuffer> vertexBuffer;
-    QSharedPointer<QDemonRenderVertexBuffer> posVertexBuffer; ///< separate position buffer for fast depth path rendering
-    QSharedPointer<QDemonRenderIndexBuffer> indexBuffer;
+    QDemonRef<QDemonRenderInputAssembler> inputAssembler;
+    QDemonRef<QDemonRenderInputAssembler> inputAssemblerDepth;
+    QDemonRef<QDemonRenderInputAssembler> inputAssemblerPoints; ///< similar to depth but ignores index buffer.
+    QDemonRef<QDemonRenderVertexBuffer> vertexBuffer;
+    QDemonRef<QDemonRenderVertexBuffer> posVertexBuffer; ///< separate position buffer for fast depth path rendering
+    QDemonRef<QDemonRenderIndexBuffer> indexBuffer;
     QDemonRenderDrawMode::Enum primitiveType; ///< primitive type used for drawing
     float edgeTessFactor = 1.0f; ///< edge tessellation amount used for tessellation shaders
     float innerTessFactor = 1.0f; ///< inner tessellation amount used for tessellation shaders

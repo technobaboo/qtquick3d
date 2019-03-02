@@ -33,7 +33,7 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonRenderGeometryShader::QDemonRenderGeometryShader(const QSharedPointer<QDemonRenderContextImpl> &context,
+QDemonRenderGeometryShader::QDemonRenderGeometryShader(const QDemonRef<QDemonRenderContextImpl> &context,
                                                        QDemonConstDataRef<qint8> source,
                                                        bool binaryProgram)
     : QDemonRenderShader(context, source, binaryProgram)

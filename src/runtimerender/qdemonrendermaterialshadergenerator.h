@@ -90,9 +90,9 @@ struct QDemonLayerGlobalRenderProperties
     QVector3D cameraDirection;
     QVector<QDemonRenderLight *> &lights;
     QVector<QVector3D> lightDirections;
-    QSharedPointer<QDemonRenderShadowMap> shadowMapManager;
-    QSharedPointer<QDemonRenderTexture2D> depthTexture;
-    QSharedPointer<QDemonRenderTexture2D> ssaoTexture;
+    QDemonRef<QDemonRenderShadowMap> shadowMapManager;
+    QDemonRef<QDemonRenderTexture2D> depthTexture;
+    QDemonRef<QDemonRenderTexture2D> ssaoTexture;
     QDemonRenderImage *lightProbe;
     QDemonRenderImage *lightProbe2;
     float probeHorizon;
@@ -121,7 +121,7 @@ public:
 
     // inPipelineName needs to be unique else the shader cache will just return shaders from
     // different pipelines.
-    virtual QSharedPointer<QDemonRenderShaderProgram> generateShader(const QDemonGraphObject &inMaterial,
+    virtual QDemonRef<QDemonRenderShaderProgram> generateShader(const QDemonGraphObject &inMaterial,
                                                                      QDemonShaderDefaultMaterialKey inShaderDescription,
                                                                      QDemonShaderStageGeneratorInterface &inVertexPipeline,
                                                                      TShaderFeatureSet inFeatureSet,
@@ -132,7 +132,7 @@ public:
                                                                      const QString &inCustomMaterialName = QString()) = 0;
 
     // Also sets the blend function on the render context.
-    virtual void setMaterialProperties(QSharedPointer<QDemonRenderShaderProgram> inProgram,
+    virtual void setMaterialProperties(QDemonRef<QDemonRenderShaderProgram> inProgram,
                                        const QDemonGraphObject &inMaterial,
                                        const QVector2D &inCameraVec,
                                        const QMatrix4x4 &inModelViewProjection,

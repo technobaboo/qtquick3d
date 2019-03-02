@@ -61,8 +61,8 @@ class QDemonRenderTextureBase
 {
 
 protected:
-    QSharedPointer<QDemonRenderContextImpl> m_context; ///< pointer to context
-    QSharedPointer<QDemonRenderBackend> m_backend; ///< pointer to backend
+    QDemonRef<QDemonRenderContextImpl> m_context; ///< pointer to context
+    QDemonRef<QDemonRenderBackend> m_backend; ///< pointer to backend
     QDemonRenderBackend::QDemonRenderBackendTextureObject m_textureHandle; ///< opaque backend handle
     quint32 m_textureUnit; ///< texture unit this texture should use
     bool m_samplerParamsDirty; ///< true if sampler state is dirty
@@ -86,7 +86,7 @@ public:
          *
          * @return No return.
          */
-    QDemonRenderTextureBase(const QSharedPointer<QDemonRenderContextImpl> &context,
+    QDemonRenderTextureBase(const QDemonRef<QDemonRenderContextImpl> &context,
                             QDemonRenderTextureTargetType::Enum texTarget);
 
     virtual ~QDemonRenderTextureBase();

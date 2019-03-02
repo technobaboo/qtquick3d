@@ -92,9 +92,9 @@ struct QDemonTextAtlasFont
     {
     }
 
-    static QSharedPointer<QDemonTextAtlasFont> createTextureAtlasFont(quint32 fontSize)
+    static QDemonRef<QDemonTextAtlasFont> createTextureAtlasFont(quint32 fontSize)
     {
-        return QSharedPointer<QDemonTextAtlasFont>(new QDemonTextAtlasFont(fontSize));
+        return QDemonRef<QDemonTextAtlasFont>(new QDemonTextAtlasFont(fontSize));
     }
 };
 
@@ -106,10 +106,10 @@ struct QDemonOnscreenTextRenderer : public QDemonTextRendererInterface, public Q
     static constexpr qint32 TEXTURE_ATLAS_DIM = 256;
 
 private:
-    QSharedPointer<QDemonRenderContext> m_renderContext;
+    QDemonRef<QDemonRenderContext> m_renderContext;
     bool m_textureAtlasInitialized = false; ///< true if atlas is setup
-    QSharedPointer<QDemonTextureAtlasInterface> m_textTextureAtlas;
-    QSharedPointer<QDemonTextAtlasFont> m_textFont;
+    QDemonRef<QDemonTextureAtlasInterface> m_textTextureAtlas;
+    QDemonRef<QDemonTextAtlasFont> m_textFont;
     QRawFont *m_font = nullptr;
 public:
     virtual ~QDemonOnscreenTextRenderer() override
@@ -192,7 +192,7 @@ public:
 
     void clearProjectFontDirectories() override {}
 
-    QSharedPointer<QDemonTextRendererInterface> getTextRenderer(QSharedPointer<QDemonRenderContext> inRenderContext) override
+    QDemonRef<QDemonTextRendererInterface> getTextRenderer(QDemonRef<QDemonRenderContext> inRenderContext) override
     {
         m_renderContext = inRenderContext;
         return this->sharedFromThis();
@@ -253,7 +253,7 @@ public:
         const int length = wText.size();
 
         if (length) {
-            QSharedPointer<QDemonTextAtlasFont> pFont = m_textFont;
+            QDemonRef<QDemonTextAtlasFont> pFont = m_textFont;
 
             float x1, y1, x2, y2;
             float s, t, s1, t1;
@@ -359,14 +359,14 @@ public:
 
     void beginFrame() override {}
     void endFrame() override {}
-    void beginPreloadFonts(QDemonAbstractThreadPool &, QSharedPointer<QDemonPerfTimerInterface>) override {}
+    void beginPreloadFonts(QDemonAbstractThreadPool &, QDemonRef<QDemonPerfTimerInterface>) override {}
     void endPreloadFonts() override {}
 };
 }
 
-QSharedPointer<QDemonTextRendererCoreInterface> QDemonTextRendererCoreInterface::createOnscreenTextRenderer()
+QDemonRef<QDemonTextRendererCoreInterface> QDemonTextRendererCoreInterface::createOnscreenTextRenderer()
 {
-    return QSharedPointer<QDemonOnscreenTextRenderer>(new QDemonOnscreenTextRenderer());
+    return QDemonRef<QDemonOnscreenTextRenderer>(new QDemonOnscreenTextRenderer());
 }
 
 QT_END_NAMESPACE

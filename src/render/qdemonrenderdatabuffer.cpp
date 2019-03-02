@@ -35,7 +35,7 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonRenderDataBuffer::QDemonRenderDataBuffer(const QSharedPointer<QDemonRenderContextImpl> &context,
+QDemonRenderDataBuffer::QDemonRenderDataBuffer(const QDemonRef<QDemonRenderContextImpl> &context,
                                                size_t size, QDemonRenderBufferBindFlags bindFlags,
                                                QDemonRenderBufferUsageType::Enum usageType,
                                                QDemonDataRef<quint8> data)

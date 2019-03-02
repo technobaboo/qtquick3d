@@ -117,7 +117,7 @@ public:
     virtual bool isShaderCachePersistenceEnabled() const = 0;
     // It is up to the caller to ensure that inFeatures contains unique keys.
     // It is also up the the caller to ensure the keys are ordered in some way.
-    virtual QSharedPointer<QDemonRenderShaderProgram> getProgram(QString inKey,
+    virtual QDemonRef<QDemonRenderShaderProgram> getProgram(QString inKey,
                                                                  const QVector<QDemonShaderPreprocessorFeature> &inFeatures) = 0;
 
     // Replace an existing program in the cache for the same key with this program.
@@ -129,7 +129,7 @@ public:
     // reduce program compilations.
     // It is up to the caller to ensure that inFeatures contains unique keys.
     // It is also up the the caller to ensure the keys are ordered in some way.
-    virtual QSharedPointer<QDemonRenderShaderProgram> forceCompileProgram(QString inKey,
+    virtual QDemonRef<QDemonRenderShaderProgram> forceCompileProgram(QString inKey,
                                                                           const QString &inVert,
                                                                           const QString &inFrag,
                                                                           const QString &inTessCtrl,
@@ -142,7 +142,7 @@ public:
 
     // It is up to the caller to ensure that inFeatures contains unique keys.
     // It is also up the the caller to ensure the keys are ordered in some way.
-    virtual QSharedPointer<QDemonRenderShaderProgram> compileProgram(QString inKey,
+    virtual QDemonRef<QDemonRenderShaderProgram> compileProgram(QString inKey,
                                                                      const QString &inVert,
                                                                      const QString &inFrag,
                                                                      const QString &inTessCtrl,
@@ -162,9 +162,9 @@ public:
     static quint32 getShaderVersion() { return 4; }
     static const QString getShaderCacheFileName() { return QStringLiteral("shadercache.xml"); }
 
-    static QSharedPointer<QDemonShaderCacheInterface> createShaderCache(QSharedPointer<QDemonRenderContext> inContext,
-                                                                        QSharedPointer<QDemonInputStreamFactoryInterface> inInputStreamFactory,
-                                                                        QSharedPointer<QDemonPerfTimerInterface> inPerfTimer);
+    static QDemonRef<QDemonShaderCacheInterface> createShaderCache(QDemonRef<QDemonRenderContext> inContext,
+                                                                        QDemonRef<QDemonInputStreamFactoryInterface> inInputStreamFactory,
+                                                                        QDemonRef<QDemonPerfTimerInterface> inPerfTimer);
 };
 
 struct QDemonShaderCacheKey

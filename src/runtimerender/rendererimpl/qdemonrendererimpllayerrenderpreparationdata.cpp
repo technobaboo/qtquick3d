@@ -97,7 +97,7 @@ QDemonDefaultMaterialPreparationResult::QDemonDefaultMaterialPreparationResult(
 
 #define MAX_AA_LEVELS 8
 
-QDemonLayerRenderPreparationData::QDemonLayerRenderPreparationData(QDemonRenderLayer &inLayer, QSharedPointer<QDemonRendererImpl> inRenderer)
+QDemonLayerRenderPreparationData::QDemonLayerRenderPreparationData(QDemonRenderLayer &inLayer, QDemonRef<QDemonRendererImpl> inRenderer)
     : layer(inLayer)
     , renderer(inRenderer)
     , camera(nullptr)
@@ -315,7 +315,7 @@ bool QDemonLayerRenderPreparationData::prepareTextForRender(
         QDemonText &inText, const QMatrix4x4 &inViewProjection, float inTextScaleFactor,
         QDemonLayerRenderPreparationResultFlags &ioFlags)
 {
-    QSharedPointer<QDemonTextTextureCacheInterface> theTextRenderer = renderer->getDemonContext()->getTextureCache();
+    QDemonRef<QDemonTextTextureCacheInterface> theTextRenderer = renderer->getDemonContext()->getTextureCache();
     if (theTextRenderer == nullptr)
         return false;
 
@@ -463,7 +463,7 @@ bool QDemonLayerRenderPreparationData::preparePathForRender(
             theRenderable->m_firstImage = prepResult.firstImage;
 
             QDemonRenderContextInterface *demonContext(renderer->getDemonContext());
-            QSharedPointer<QDemonPathManagerInterface> thePathManager = demonContext->getPathManager();
+            QDemonRef<QDemonPathManagerInterface> thePathManager = demonContext->getPathManager();
             retval = thePathManager->prepareForRender(inPath) || retval;
             retval |= (inPath.m_wireframeMode != demonContext->getWireframeMode());
             inPath.m_wireframeMode = demonContext->getWireframeMode();
@@ -506,7 +506,7 @@ bool QDemonLayerRenderPreparationData::preparePathForRender(
             theRenderable->m_firstImage = prepResult.firstImage;
 
             QDemonRenderContextInterface *demonContext(renderer->getDemonContext());
-            QSharedPointer<QDemonPathManagerInterface> thePathManager = demonContext->getPathManager();
+            QDemonRef<QDemonPathManagerInterface> thePathManager = demonContext->getPathManager();
             retval = thePathManager->prepareForRender(inPath) || retval;
             retval |= (inPath.m_wireframeMode != demonContext->getWireframeMode());
             inPath.m_wireframeMode = demonContext->getWireframeMode();
@@ -526,8 +526,8 @@ void QDemonLayerRenderPreparationData::prepareImageForRender(
         QDemonShaderDefaultMaterialKey &inShaderKey, quint32 inImageIndex)
 {
     QDemonRenderContextInterface *demonContext(renderer->getDemonContext());
-    QSharedPointer<QDemonBufferManagerInterface> bufferManager = demonContext->getBufferManager();
-    QSharedPointer<QDemonOffscreenRenderManagerInterface> theOffscreenRenderManager(demonContext->getOffscreenRenderManager());
+    QDemonRef<QDemonBufferManagerInterface> bufferManager = demonContext->getBufferManager();
+    QDemonRef<QDemonOffscreenRenderManagerInterface> theOffscreenRenderManager(demonContext->getOffscreenRenderManager());
 //    IRenderPluginManager &theRenderPluginManager(demonContext.GetRenderPluginManager());
     if (inImage.clearDirty(*bufferManager, *theOffscreenRenderManager/*, theRenderPluginManager*/))
         ioFlags |= RenderPreparationResultFlagValues::Dirty;
@@ -774,7 +774,7 @@ bool QDemonLayerRenderPreparationData::prepareModelForRender(QDemonRenderModel &
                                                              QDemonNodeLightEntryList &inScopedLights)
 {
     QDemonRenderContextInterface *demonContext(renderer->getDemonContext());
-    QSharedPointer<QDemonBufferManagerInterface> bufferManager = demonContext->getBufferManager();
+    QDemonRef<QDemonBufferManagerInterface> bufferManager = demonContext->getBufferManager();
     QDemonRenderMesh *theMesh = bufferManager->loadMesh(inModel.meshPath);
     if (theMesh == nullptr)
         return false;
@@ -896,7 +896,7 @@ bool QDemonLayerRenderPreparationData::prepareModelForRender(QDemonRenderModel &
                 QDemonRenderCustomMaterial &theMaterial(
                             static_cast<QDemonRenderCustomMaterial &>(*theMaterialObject));
 
-                QSharedPointer<QDemonCustomMaterialSystemInterface> theMaterialSystem(demonContext->getCustomMaterialSystem());
+                QDemonRef<QDemonCustomMaterialSystemInterface> theMaterialSystem(demonContext->getCustomMaterialSystem());
                 subsetDirty |= theMaterialSystem->prepareForRender(theModelContext.model, theSubset, theMaterial, clearMaterialDirtyFlags);
 
                 QDemonDefaultMaterialPreparationResult theMaterialPrepResult(
@@ -1060,7 +1060,7 @@ void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportD
     featureSetHash = 0;
     QVector2D thePresentationDimensions((float)inViewportDimensions.width(),
                                         (float)inViewportDimensions.height());
-    QSharedPointer<QDemonRenderListInterface> theGraph(renderer->getDemonContext()->getRenderList());
+    QDemonRef<QDemonRenderListInterface> theGraph(renderer->getDemonContext()->getRenderList());
     QRect theViewport(theGraph->getViewport());
     QRect theScissor(theGraph->getViewport());
     if (theGraph->isScissorTestEnabled())
@@ -1089,7 +1089,7 @@ void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportD
 
     if (layer.flags.isActive()) {
         // Get the layer's width and height.
-        QSharedPointer<QDemonEffectSystemInterface> theEffectSystem(renderer->getDemonContext()->getEffectSystem());
+        QDemonRef<QDemonEffectSystemInterface> theEffectSystem(renderer->getDemonContext()->getEffectSystem());
         for (QDemonRenderEffect *theEffect = layer.firstEffect; theEffect;
              theEffect = theEffect->m_nextEffect) {
             if (theEffect->flags.isDirty()) {
@@ -1322,7 +1322,7 @@ void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportD
                 bool theScissor = true;
                 QRect theScissorRect = thePrepResult.getLayerToPresentationScissorRect().toRect();
                 // This happens here because if there are any fancy render steps
-                QSharedPointer<QDemonRenderListInterface> theRenderList(renderer->getDemonContext()->getRenderList());
+                QDemonRef<QDemonRenderListInterface> theRenderList(renderer->getDemonContext()->getRenderList());
                 auto theContext = renderer->getContext();
                 QDemonRenderListScopedProperty<bool> _listScissorEnabled(
                             *theRenderList, &QDemonRenderListInterface::isScissorTestEnabled,

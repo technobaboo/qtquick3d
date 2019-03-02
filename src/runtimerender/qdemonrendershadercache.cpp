@@ -175,9 +175,9 @@ namespace {
 
 struct ShaderCache : public QDemonShaderCacheInterface
 {
-    typedef QHash<QDemonShaderCacheKey, QSharedPointer<QDemonRenderShaderProgram>> TShaderMap;
-    QSharedPointer<QDemonRenderContext> m_renderContext;
-    QSharedPointer<QDemonPerfTimerInterface> m_perfTimer;
+    typedef QHash<QDemonShaderCacheKey, QDemonRef<QDemonRenderShaderProgram>> TShaderMap;
+    QDemonRef<QDemonRenderContext> m_renderContext;
+    QDemonRef<QDemonPerfTimerInterface> m_perfTimer;
     TShaderMap m_shaders;
     QString m_cacheFilePath;
     QString m_vertexCode;
@@ -191,13 +191,13 @@ struct ShaderCache : public QDemonShaderCacheInterface
     QDemonShaderCacheKey m_tempKey;
 
     // ### Shader Chache Writing Code is disabled
-    //QSharedPointer<IDOMWriter> m_ShaderCache;
-    QSharedPointer<QDemonInputStreamFactoryInterface> m_inputStreamFactory;
+    //QDemonRef<IDOMWriter> m_ShaderCache;
+    QDemonRef<QDemonInputStreamFactoryInterface> m_inputStreamFactory;
     bool m_shaderCompilationEnabled;
 
-    ShaderCache(QSharedPointer<QDemonRenderContext> ctx,
-                QSharedPointer<QDemonInputStreamFactoryInterface> inInputStreamFactory,
-                QSharedPointer<QDemonPerfTimerInterface> inPerfTimer)
+    ShaderCache(QDemonRef<QDemonRenderContext> ctx,
+                QDemonRef<QDemonInputStreamFactoryInterface> inInputStreamFactory,
+                QDemonRef<QDemonPerfTimerInterface> inPerfTimer)
         : m_renderContext(ctx)
         , m_perfTimer(inPerfTimer)
         , m_inputStreamFactory(inInputStreamFactory)
@@ -205,7 +205,7 @@ struct ShaderCache : public QDemonShaderCacheInterface
     {
     }
 
-    QSharedPointer<QDemonRenderShaderProgram> getProgram(QString inKey, const QVector<QDemonShaderPreprocessorFeature> &inFeatures) override
+    QDemonRef<QDemonRenderShaderProgram> getProgram(QString inKey, const QVector<QDemonShaderPreprocessorFeature> &inFeatures) override
     {
         m_tempKey.m_key = inKey;
         m_tempKey.m_features = inFeatures;
@@ -399,7 +399,7 @@ struct ShaderCache : public QDemonShaderCacheInterface
         }
     }
     // Compile this program overwriting any existing ones.
-    QSharedPointer<QDemonRenderShaderProgram> forceCompileProgram(QString inKey, const QString &inVert, const QString &inFrag,
+    QDemonRef<QDemonRenderShaderProgram> forceCompileProgram(QString inKey, const QString &inVert, const QString &inFrag,
                                                                   const QString &inTessCtrl, const QString &inTessEval, const QString &inGeom,
                                                                   const QDemonShaderCacheProgramFlags &inFlags,
                                                                   const QVector<QDemonShaderPreprocessorFeature> &inFeatures,
@@ -500,16 +500,16 @@ struct ShaderCache : public QDemonShaderCacheInterface
         return shaderProgram;
     }
 
-    virtual QSharedPointer<QDemonRenderShaderProgram> compileProgram(QString inKey, const QString &inVert, const QString &inFrag,
+    virtual QDemonRef<QDemonRenderShaderProgram> compileProgram(QString inKey, const QString &inVert, const QString &inFrag,
                                                                      const QString &inTessCtrl, const QString &inTessEval, const QString &inGeom,
                                                                      const QDemonShaderCacheProgramFlags &inFlags,
                                                                      const QVector<QDemonShaderPreprocessorFeature> &inFeatures, bool separableProgram) override
     {
-        QSharedPointer<QDemonRenderShaderProgram> theProgram = getProgram(inKey, inFeatures);
+        QDemonRef<QDemonRenderShaderProgram> theProgram = getProgram(inKey, inFeatures);
         if (theProgram)
             return theProgram;
 
-        QSharedPointer<QDemonRenderShaderProgram> retval =
+        QDemonRef<QDemonRenderShaderProgram> retval =
                 forceCompileProgram(inKey, inVert, inFrag, inTessCtrl, inTessEval, inGeom, inFlags,
                                     inFeatures, separableProgram);
         // ### Shader Chache Writing Code is disabled
@@ -541,17 +541,17 @@ struct ShaderCache : public QDemonShaderCacheInterface
         //        BootupDOMWriter();
         //        m_CacheFilePath = QDir(inDirectory).filePath(GetShaderCacheFileName()).toStdString();
 
-        //        QSharedPointer<IRefCountedInputStream> theInStream =
+        //        QDemonRef<IRefCountedInputStream> theInStream =
         //                m_InputStreamFactory.GetStreamForFile(m_CacheFilePath.c_str());
         //        if (theInStream) {
         //            SStackPerfTimer __perfTimer(m_PerfTimer, "ShaderCache - Load");
-        //            QSharedPointer<IDOMFactory> theFactory(
+        //            QDemonRef<IDOMFactory> theFactory(
         //                        IDOMFactory::CreateDOMFactory(m_RenderContext.GetAllocator(), theStringTable));
         //            QVector<SShaderPreprocessorFeature> theFeatures;
 
         //            SDOMElement *theElem = CDOMSerializer::Read(*theFactory, *theInStream).second;
         //            if (theElem) {
-        //                QSharedPointer<IDOMReader> theReader = IDOMReader::CreateDOMReader(
+        //                QDemonRef<IDOMReader> theReader = IDOMReader::CreateDOMReader(
         //                            m_RenderContext.GetAllocator(), *theElem, theStringTable, theFactory);
         //                quint32 theAttValue = 0;
         //                theReader->Att("cache_version", theAttValue);
@@ -640,7 +640,7 @@ struct ShaderCache : public QDemonShaderCacheInterface
         //                                if (loadVertexData.size()
         //                                        && (loadFragmentData.size() || loadGeometryData.size())) {
 
-        //                                    QSharedPointer<QDemonRenderShaderProgram> theShader = ForceCompileProgram(
+        //                                    QDemonRef<QDemonRenderShaderProgram> theShader = ForceCompileProgram(
         //                                                theKey, loadVertexData.toLocal8Bit().constData(), loadFragmentData.toLocal8Bit().constData(),
         //                                                loadTessControlData.toLocal8Bit().constData(), loadTessEvalData.toLocal8Bit().constData(),
         //                                                loadGeometryData.toLocal8Bit().constData(), theFlags,
@@ -701,11 +701,11 @@ QDemonShaderCacheInterface::~QDemonShaderCacheInterface()
 
 }
 
-QSharedPointer<QDemonShaderCacheInterface> QDemonShaderCacheInterface::createShaderCache(QSharedPointer<QDemonRenderContext> inContext,
-                                                                                         QSharedPointer<QDemonInputStreamFactoryInterface> inInputStreamFactory,
-                                                                                         QSharedPointer<QDemonPerfTimerInterface> inPerfTimer)
+QDemonRef<QDemonShaderCacheInterface> QDemonShaderCacheInterface::createShaderCache(QDemonRef<QDemonRenderContext> inContext,
+                                                                                         QDemonRef<QDemonInputStreamFactoryInterface> inInputStreamFactory,
+                                                                                         QDemonRef<QDemonPerfTimerInterface> inPerfTimer)
 {
-    return QSharedPointer<ShaderCache>(new ShaderCache(inContext, inInputStreamFactory, inPerfTimer));
+    return QDemonRef<ShaderCache>(new ShaderCache(inContext, inInputStreamFactory, inPerfTimer));
 }
 
 QT_END_NAMESPACE

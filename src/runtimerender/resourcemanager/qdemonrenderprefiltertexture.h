@@ -39,23 +39,23 @@ QT_BEGIN_NAMESPACE
 class QDemonRenderPrefilterTexture
 {
 public:
-    QDemonRenderPrefilterTexture(QSharedPointer<QDemonRenderContext> inQDemonRenderContext,
+    QDemonRenderPrefilterTexture(QDemonRef<QDemonRenderContext> inQDemonRenderContext,
                                  qint32 inWidth,
                                  qint32 inHeight,
-                                 QSharedPointer<QDemonRenderTexture2D> inTexture,
+                                 QDemonRef<QDemonRenderTexture2D> inTexture,
                                  QDemonRenderTextureFormats::Enum inDestFormat);
     virtual ~QDemonRenderPrefilterTexture();
 
     virtual void build(void *inTextureData, qint32 inTextureDataSize, QDemonRenderTextureFormats::Enum inFormat) = 0;
 
-    static QSharedPointer<QDemonRenderPrefilterTexture> create(QSharedPointer<QDemonRenderContext> inQDemonRenderContext,
+    static QDemonRef<QDemonRenderPrefilterTexture> create(QDemonRef<QDemonRenderContext> inQDemonRenderContext,
                                                                qint32 inWidth,
                                                                qint32 inHeight,
-                                                               QSharedPointer<QDemonRenderTexture2D> inTexture,
+                                                               QDemonRef<QDemonRenderTexture2D> inTexture,
                                                                QDemonRenderTextureFormats::Enum inDestFormat);
 
 protected:
-    QSharedPointer<QDemonRenderTexture2D> m_texture2D;
+    QDemonRef<QDemonRenderTexture2D> m_texture2D;
     QDemonRenderTextureFormats::Enum m_internalFormat;
     QDemonRenderTextureFormats::Enum m_destinationFormat;
 
@@ -66,16 +66,16 @@ protected:
     qint32 m_sizeOfInternalFormat;
     qint32 m_internalNoOfComponent;
     qint32 m_noOfComponent;
-    QSharedPointer<QDemonRenderContext> m_renderContext;
+    QDemonRef<QDemonRenderContext> m_renderContext;
 };
 
 class QDemonRenderPrefilterTextureCPU : public QDemonRenderPrefilterTexture
 {
 public:
-    QDemonRenderPrefilterTextureCPU(QSharedPointer<QDemonRenderContext> inQDemonRenderContext,
+    QDemonRenderPrefilterTextureCPU(QDemonRef<QDemonRenderContext> inQDemonRenderContext,
                                     qint32 inWidth,
                                     qint32 inHeight,
-                                    QSharedPointer<QDemonRenderTexture2D> inTexture,
+                                    QDemonRef<QDemonRenderTexture2D> inTexture,
                                     QDemonRenderTextureFormats::Enum inDestFormat);
 
     void build(void *inTextureData, qint32 inTextureDataSize, QDemonRenderTextureFormats::Enum inFormat) override;
@@ -89,10 +89,10 @@ public:
 class QDemonRenderPrefilterTextureCompute : public QDemonRenderPrefilterTexture
 {
 public:
-    QDemonRenderPrefilterTextureCompute(QSharedPointer<QDemonRenderContext> inQDemonRenderContext,
+    QDemonRenderPrefilterTextureCompute(QDemonRef<QDemonRenderContext> inQDemonRenderContext,
                                         qint32 inWidth,
                                         qint32 inHeight,
-                                        QSharedPointer<QDemonRenderTexture2D> inTexture,
+                                        QDemonRef<QDemonRenderTexture2D> inTexture,
                                         QDemonRenderTextureFormats::Enum inDestFormat);
     ~QDemonRenderPrefilterTextureCompute() override;
 
@@ -101,14 +101,14 @@ public:
 private:
     void createLevel0Tex(void *inTextureData, qint32 inTextureDataSize, QDemonRenderTextureFormats::Enum inFormat);
 
-    QSharedPointer<QDemonRenderShaderProgram> m_bsdfProgram;
-    QSharedPointer<QDemonRenderShaderProgram> m_uploadProgram_RGBA8;
-    QSharedPointer<QDemonRenderShaderProgram> m_uploadProgram_RGB8;
-    QSharedPointer<QDemonRenderTexture2D> m_level0Tex;
+    QDemonRef<QDemonRenderShaderProgram> m_bsdfProgram;
+    QDemonRef<QDemonRenderShaderProgram> m_uploadProgram_RGBA8;
+    QDemonRef<QDemonRenderShaderProgram> m_uploadProgram_RGB8;
+    QDemonRef<QDemonRenderTexture2D> m_level0Tex;
     bool m_textureCreated;
 
-    void createComputeProgram(QSharedPointer<QDemonRenderContext> context);
-    QSharedPointer<QDemonRenderShaderProgram> getOrCreateUploadComputeProgram(QSharedPointer<QDemonRenderContext> context, QDemonRenderTextureFormats::Enum inFormat);
+    void createComputeProgram(QDemonRef<QDemonRenderContext> context);
+    QDemonRef<QDemonRenderShaderProgram> getOrCreateUploadComputeProgram(QDemonRef<QDemonRenderContext> context, QDemonRenderTextureFormats::Enum inFormat);
 };
 QT_END_NAMESPACE
 

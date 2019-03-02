@@ -94,9 +94,9 @@ public:
     //    virtual void Load(QDemonDataRef<quint8> inData, CStrTableOrDataRef inStrDataBlock,
     //                      const char *inProjectDir) = 0;
 
-    virtual QSharedPointer<QDemonCustomMaterialSystemInterface> getCustomMaterialSystem(QDemonRenderContextInterface *inContext) = 0;
+    virtual QDemonRef<QDemonCustomMaterialSystemInterface> getCustomMaterialSystem(QDemonRenderContextInterface *inContext) = 0;
 
-    static QSharedPointer<QDemonCustomMaterialSystemCoreInterface> createCustomMaterialSystemCore(QDemonRenderContextCoreInterface * inContext);
+    static QDemonRef<QDemonCustomMaterialSystemCoreInterface> createCustomMaterialSystemCore(QDemonRenderContextCoreInterface * inContext);
 };
 // How to handle blend modes?
 struct QDemonRenderModel;
@@ -119,7 +119,7 @@ public:
     virtual QString getShaderName(const QDemonRenderCustomMaterial &inMaterial) = 0;
     // apply property values
     virtual void applyShaderPropertyValues(const QDemonRenderCustomMaterial &inMaterial,
-                                           QSharedPointer<QDemonRenderShaderProgram> inProgram) = 0;
+                                           QDemonRef<QDemonRenderShaderProgram> inProgram) = 0;
     // Called by the uiccontext so this system can clear any per-frame render information.
     virtual void endFrame() = 0;
 };

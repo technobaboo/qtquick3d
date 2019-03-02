@@ -48,7 +48,7 @@ class QDemonOffscreenRendererInterface;
 
 struct QDemonRenderPickSubResult
 {
-    QSharedPointer<QDemonOffscreenRendererInterface> m_subRenderer;
+    QDemonRef<QDemonOffscreenRendererInterface> m_subRenderer;
     QMatrix4x4 m_textureMatrix;
     QDemonRenderTextureCoordOp::Enum m_horizontalTilingMode;
     QDemonRenderTextureCoordOp::Enum m_verticalTilingMode;
@@ -61,7 +61,7 @@ struct QDemonRenderPickSubResult
         , m_nextSibling(nullptr)
     {
     }
-    QDemonRenderPickSubResult(QSharedPointer<QDemonOffscreenRendererInterface> inSubRenderer, QMatrix4x4 inTextureMatrix,
+    QDemonRenderPickSubResult(QDemonRef<QDemonOffscreenRendererInterface> inSubRenderer, QMatrix4x4 inTextureMatrix,
                              QDemonRenderTextureCoordOp::Enum inHorizontalTilingMode,
                              QDemonRenderTextureCoordOp::Enum inVerticalTilingMode, quint32 width,
                              quint32 height)
@@ -86,7 +86,7 @@ struct QDemonRenderPickResult
     QDemonRenderPickSubResult *m_firstSubObject;
     // The offscreen renderer that was used to render the scene graph this result was produced
     // from.
-    QSharedPointer<QDemonOffscreenRendererInterface> m_offscreenRenderer;
+    QDemonRef<QDemonOffscreenRendererInterface> m_offscreenRenderer;
 
     QDemonRenderPickResult(const QDemonGraphObject &inHitObject,
                            float inCameraDistance,

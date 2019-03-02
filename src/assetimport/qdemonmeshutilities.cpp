@@ -1322,9 +1322,9 @@ QDemonMeshBuilder::~QDemonMeshBuilder()
 
 }
 
-QSharedPointer<QDemonMeshBuilder> QDemonMeshBuilder::createMeshBuilder()
+QDemonRef<QDemonMeshBuilder> QDemonMeshBuilder::createMeshBuilder()
 {
-    return QSharedPointer<QDemonMeshBuilder>(new MeshBuilderImpl());
+    return QDemonRef<QDemonMeshBuilder>(new MeshBuilderImpl());
 }
 
 }

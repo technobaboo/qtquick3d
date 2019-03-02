@@ -62,10 +62,10 @@ public:
          *
          * @return No return.
          */
-    QDemonRenderInputAssembler(const QSharedPointer<QDemonRenderContextImpl> &context,
-                               const QSharedPointer<QDemonRenderAttribLayout> &attribLayout,
-                               QDemonConstDataRef<QSharedPointer<QDemonRenderVertexBuffer>> buffers,
-                               const QSharedPointer<QDemonRenderIndexBuffer> &indexBuffer,
+    QDemonRenderInputAssembler(const QDemonRef<QDemonRenderContextImpl> &context,
+                               const QDemonRef<QDemonRenderAttribLayout> &attribLayout,
+                               QDemonConstDataRef<QDemonRef<QDemonRenderVertexBuffer>> buffers,
+                               const QDemonRef<QDemonRenderIndexBuffer> &indexBuffer,
                                QDemonConstDataRef<quint32> strides,
                                QDemonConstDataRef<quint32> offsets,
                                QDemonRenderDrawMode::Enum primType = QDemonRenderDrawMode::Triangles,
@@ -88,7 +88,7 @@ public:
          *
          * @return the index buffer
          */
-    const QSharedPointer<QDemonRenderIndexBuffer> getIndexBuffer() { return m_indexBuffer; }
+    const QDemonRef<QDemonRenderIndexBuffer> getIndexBuffer() { return m_indexBuffer; }
 
     /**
          * @brief get the index count of the attached index buffer (if any)
@@ -129,12 +129,12 @@ public:
     }
 
 private:
-    QSharedPointer<QDemonRenderContextImpl> m_context; ///< pointer to context
-    QSharedPointer<QDemonRenderBackend> m_backend; ///< pointer to backend
+    QDemonRef<QDemonRenderContextImpl> m_context; ///< pointer to context
+    QDemonRef<QDemonRenderBackend> m_backend; ///< pointer to backend
 
-    QSharedPointer<QDemonRenderAttribLayout> m_attribLayout; ///< pointer to attribute layout
-    QVector<QSharedPointer<QDemonRenderVertexBuffer>> m_vertexBuffers; ///< vertex buffers
-    const QSharedPointer<QDemonRenderIndexBuffer> m_indexBuffer; ///< index buffer
+    QDemonRef<QDemonRenderAttribLayout> m_attribLayout; ///< pointer to attribute layout
+    QVector<QDemonRef<QDemonRenderVertexBuffer>> m_vertexBuffers; ///< vertex buffers
+    const QDemonRef<QDemonRenderIndexBuffer> m_indexBuffer; ///< index buffer
     QDemonConstDataRef<QDemonRenderBackend::QDemonRenderBackendBufferObject> m_vertexbufferHandles; ///< opaque vertex buffer backend handles
 
     QDemonRenderBackend::QDemonRenderBackendInputAssemblerObject m_inputAssemblertHandle; ///< opaque backend handle

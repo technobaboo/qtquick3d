@@ -71,7 +71,7 @@ public:
     virtual TaskStates::Enum getTaskState(quint64 inTaskId) = 0;
     virtual CancelReturnValues::Enum cancelTask(quint64 inTaskId) = 0;
 
-    static QSharedPointer<QDemonAbstractThreadPool> createThreadPool(quint32 inNumThreads = 4);
+    static QDemonRef<QDemonAbstractThreadPool> createThreadPool(quint32 inNumThreads = 4);
 };
 QT_END_NAMESPACE
 #endif

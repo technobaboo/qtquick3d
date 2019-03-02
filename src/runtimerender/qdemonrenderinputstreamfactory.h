@@ -47,7 +47,7 @@ protected:
 public:
     // These directories must have a '/' on them
     virtual void addSearchDirectory(const char *inDirectory) = 0;
-    virtual QSharedPointer<QIODevice> getStreamForFile(const QString &inFilename, bool inQuiet = false) = 0;
+    virtual QDemonRef<QIODevice> getStreamForFile(const QString &inFilename, bool inQuiet = false) = 0;
     // Return a path for this file.  Returns true if GetStreamForFile would return a valid
     // stream.
     // else returns false
@@ -56,7 +56,7 @@ public:
     // Create an input stream factory using this foundation and an platform-optional app
     // directory
     // on android the app directory has no effect; use use the assets bundled with the APK file.
-    static QSharedPointer<QDemonInputStreamFactoryInterface> create();
+    static QDemonRef<QDemonInputStreamFactoryInterface> create();
 };
 QT_END_NAMESPACE
 

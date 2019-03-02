@@ -47,11 +47,11 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonText : public QDemonGraphNode, public Q
     // These properties can change every frame with no additional cost.
     QVector3D m_textColor;
     // Setup and utilized by the rendering system
-    QSharedPointer<QDemonRenderTexture2D> m_textTexture;
+    QDemonRef<QDemonRenderTexture2D> m_textTexture;
     QDemonTextTextureDetails m_textTextureDetails;
     // used for nv path rendering
-    QSharedPointer<QDemonRenderPathFontItem> m_pathFontItem;
-    QSharedPointer<QDemonRenderPathFontSpecification> m_pathFontDetails;
+    QDemonRef<QDemonRenderPathFontItem> m_pathFontItem;
+    QDemonRef<QDemonRenderPathFontSpecification> m_pathFontDetails;
 
     QDemonBounds3 m_bounds;
 

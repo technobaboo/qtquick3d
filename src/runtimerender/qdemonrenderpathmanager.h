@@ -80,9 +80,9 @@ public:
     // Returns angle in x, distance in y.
     static QVector2D getAngleDistanceFromControlPoint(QVector2D inPosition, QVector2D inControlPoint);
 
-    virtual QSharedPointer<QDemonPathManagerInterface> onRenderSystemInitialize(QDemonRenderContextInterface *context) = 0;
+    virtual QDemonRef<QDemonPathManagerInterface> onRenderSystemInitialize(QDemonRenderContextInterface *context) = 0;
 
-    static QSharedPointer<QDemonPathManagerCoreInterface> createPathManagerCore(QDemonRenderContextCoreInterface * inContext);
+    static QDemonRef<QDemonPathManagerCoreInterface> createPathManagerCore(QDemonRenderContextCoreInterface * inContext);
 };
 
 struct QDemonPathRenderContext; // UICRenderPathRenderContext.h

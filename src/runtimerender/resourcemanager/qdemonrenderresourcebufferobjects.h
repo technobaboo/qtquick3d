@@ -40,19 +40,19 @@ QT_BEGIN_NAMESPACE
 class QDemonResourceFrameBuffer
 {
 protected:
-    QSharedPointer<QDemonResourceManagerInterface> m_resourceManager;
-    QSharedPointer<QDemonRenderFrameBuffer> m_frameBuffer;
+    QDemonRef<QDemonResourceManagerInterface> m_resourceManager;
+    QDemonRef<QDemonRenderFrameBuffer> m_frameBuffer;
 
 public:
-    QDemonResourceFrameBuffer(QSharedPointer<QDemonResourceManagerInterface> mgr);
+    QDemonResourceFrameBuffer(QDemonRef<QDemonResourceManagerInterface> mgr);
     ~QDemonResourceFrameBuffer();
     bool ensureFrameBuffer();
     void releaseFrameBuffer();
 
-    QSharedPointer<QDemonResourceManagerInterface> getResourceManager() { return m_resourceManager; }
-    QSharedPointer<QDemonRenderFrameBuffer> getFrameBuffer() { return m_frameBuffer; }
-    operator QSharedPointer<QDemonRenderFrameBuffer> () { return m_frameBuffer; }
-    QSharedPointer<QDemonRenderFrameBuffer> operator->()
+    QDemonRef<QDemonResourceManagerInterface> getResourceManager() { return m_resourceManager; }
+    QDemonRef<QDemonRenderFrameBuffer> getFrameBuffer() { return m_frameBuffer; }
+    operator QDemonRef<QDemonRenderFrameBuffer> () { return m_frameBuffer; }
+    QDemonRef<QDemonRenderFrameBuffer> operator->()
     {
         Q_ASSERT(m_frameBuffer);
         return m_frameBuffer;
@@ -67,20 +67,20 @@ public:
 class QDemonResourceRenderBuffer
 {
 protected:
-    QSharedPointer<QDemonResourceManagerInterface> m_resourceManager;
-    QSharedPointer<QDemonRenderRenderBuffer> m_renderBuffer;
+    QDemonRef<QDemonResourceManagerInterface> m_resourceManager;
+    QDemonRef<QDemonRenderRenderBuffer> m_renderBuffer;
     QDemonRenderRenderBufferFormats::Enum m_storageFormat;
     QDemonRenderRenderBufferDimensions m_dimensions;
 
 public:
-    QDemonResourceRenderBuffer(QSharedPointer<QDemonResourceManagerInterface> mgr);
+    QDemonResourceRenderBuffer(QDemonRef<QDemonResourceManagerInterface> mgr);
     ~QDemonResourceRenderBuffer();
     bool ensureRenderBuffer(quint32 width, quint32 height,
                             QDemonRenderRenderBufferFormats::Enum storageFormat);
     void releaseRenderBuffer();
 
-    operator QSharedPointer<QDemonRenderRenderBuffer> () { return m_renderBuffer; }
-    QSharedPointer<QDemonRenderRenderBuffer> operator->()
+    operator QDemonRef<QDemonRenderRenderBuffer> () { return m_renderBuffer; }
+    QDemonRef<QDemonRenderRenderBuffer> operator->()
     {
         Q_ASSERT(m_renderBuffer);
         return m_renderBuffer;

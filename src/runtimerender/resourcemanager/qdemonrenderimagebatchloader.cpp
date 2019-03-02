@@ -89,7 +89,7 @@ struct QDemonImageLoaderBatch
     // All variables setup in main thread and constant from then on except
     // loaded image count.
     QDemonBatchLoader &loader;
-    QSharedPointer<IImageLoadListener> loadListener;
+    QDemonRef<IImageLoadListener> loadListener;
     QWaitCondition loadEvent;
     QMutex loadMutex;
     TLoadingImageList images;
@@ -150,7 +150,7 @@ struct QDemonImageLoaderBatch
 struct QDemonBatchLoadedImage
 {
     QString sourcePath;
-    QSharedPointer<QDemonLoadedTexture> texture;
+    QDemonRef<QDemonLoadedTexture> texture;
     QDemonImageLoaderBatch *batch = nullptr;
     QDemonBatchLoadedImage() = default;
 
@@ -174,13 +174,13 @@ struct QDemonBatchLoader : public IImageBatchLoader
     typedef QHash<QString, TImageBatchId> TSourcePathToBatchMap;
 
     // Accessed from loader thread
-    QSharedPointer<QDemonInputStreamFactoryInterface> inputStreamFactory;
+    QDemonRef<QDemonInputStreamFactoryInterface> inputStreamFactory;
     //!!Not threadsafe!  accessed only from main thread
-    QSharedPointer<QDemonBufferManagerInterface> bufferManager;
+    QDemonRef<QDemonBufferManagerInterface> bufferManager;
     // Accessed from main thread
-    QSharedPointer<QDemonAbstractThreadPool> threadPool;
+    QDemonRef<QDemonAbstractThreadPool> threadPool;
     // Accessed from both threads
-    QSharedPointer<QDemonPerfTimerInterface> perfTimer;
+    QDemonRef<QDemonPerfTimerInterface> perfTimer;
     // main thread
     TImageBatchId nextBatchId;
     // main thread
@@ -197,10 +197,10 @@ struct QDemonBatchLoader : public IImageBatchLoader
     // main thread
     QVector<QDemonLoadingImage> loaderBuilderWorkspace;
 
-    QDemonBatchLoader(QSharedPointer<QDemonInputStreamFactoryInterface> inFactory,
-                      QSharedPointer<QDemonBufferManagerInterface> inBufferManager,
-                      QSharedPointer<QDemonAbstractThreadPool> inThreadPool,
-                      QSharedPointer<QDemonPerfTimerInterface> inTimer)
+    QDemonBatchLoader(QDemonRef<QDemonInputStreamFactoryInterface> inFactory,
+                      QDemonRef<QDemonBufferManagerInterface> inBufferManager,
+                      QDemonRef<QDemonAbstractThreadPool> inThreadPool,
+                      QDemonRef<QDemonPerfTimerInterface> inTimer)
         : inputStreamFactory(inFactory)
         , bufferManager(inBufferManager)
         , threadPool(inThreadPool)
@@ -336,7 +336,7 @@ void QDemonLoadingImage::loadImage(void *inImg)
     QDemonLoadingImage *theThis = reinterpret_cast<QDemonLoadingImage *>(inImg);
 //    SStackPerfTimer theTimer(theThis->m_Batch->m_Loader.m_PerfTimer, "Image Decompression");
     if (theThis->batch->loader.bufferManager->isImageLoaded(theThis->sourcePath) == false) {
-        QSharedPointer<QDemonLoadedTexture> theTexture = QDemonLoadedTexture::load(theThis->sourcePath,
+        QDemonRef<QDemonLoadedTexture> theTexture = QDemonLoadedTexture::load(theThis->sourcePath,
                                                                          *theThis->batch->loader.inputStreamFactory,
                                                                          true,
                                                                          theThis->batch->contextType);
@@ -479,12 +479,12 @@ void QDemonImageLoaderBatch::cancel(QString inSourcePath)
 }
 }
 
-QSharedPointer<IImageBatchLoader> IImageBatchLoader::createBatchLoader(QSharedPointer<QDemonInputStreamFactoryInterface> inFactory,
-                                                                       QSharedPointer<QDemonBufferManagerInterface> inBufferManager,
-                                                                       QSharedPointer<QDemonAbstractThreadPool> inThreadPool,
-                                                                       QSharedPointer<QDemonPerfTimerInterface> inTimer)
+QDemonRef<IImageBatchLoader> IImageBatchLoader::createBatchLoader(QDemonRef<QDemonInputStreamFactoryInterface> inFactory,
+                                                                       QDemonRef<QDemonBufferManagerInterface> inBufferManager,
+                                                                       QDemonRef<QDemonAbstractThreadPool> inThreadPool,
+                                                                       QDemonRef<QDemonPerfTimerInterface> inTimer)
 {
-    return QSharedPointer<IImageBatchLoader>(new QDemonBatchLoader(inFactory, inBufferManager, inThreadPool, inTimer));
+    return QDemonRef<IImageBatchLoader>(new QDemonBatchLoader(inFactory, inBufferManager, inThreadPool, inTimer));
 }
 
 QDemonBatchLoader::~QDemonBatchLoader()

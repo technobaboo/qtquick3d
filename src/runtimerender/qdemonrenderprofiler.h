@@ -100,8 +100,8 @@ public:
          */
     virtual quint32 getAndResetTriangleCount() const = 0;
 
-    static QSharedPointer<QDemonRenderProfilerInterface> createGpuProfiler(QDemonRenderContextInterface *inContext,
-                                                                           QSharedPointer<QDemonRenderContext> inRenderContext);
+    static QDemonRef<QDemonRenderProfilerInterface> createGpuProfiler(QDemonRenderContextInterface *inContext,
+                                                                           QDemonRef<QDemonRenderContext> inRenderContext);
 };
 QT_END_NAMESPACE
 

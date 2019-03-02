@@ -43,8 +43,8 @@ class QDemonRenderBackend;
 class QDemonRenderSync
 {
 protected:
-    QSharedPointer<QDemonRenderContextImpl> m_context; ///< pointer to context
-    QSharedPointer<QDemonRenderBackend> m_backend; ///< pointer to backend
+    QDemonRef<QDemonRenderContextImpl> m_context; ///< pointer to context
+    QDemonRef<QDemonRenderBackend> m_backend; ///< pointer to backend
     QDemonRenderBackend::QDemonRenderBackendSyncObject m_syncHandle; ///< opaque backend handle
 
 public:
@@ -56,7 +56,7 @@ public:
          *
          * @return No return.
          */
-    explicit QDemonRenderSync(const QSharedPointer<QDemonRenderContextImpl> &context);
+    explicit QDemonRenderSync(const QDemonRef<QDemonRenderContextImpl> &context);
 
     virtual ~QDemonRenderSync();
 
@@ -103,7 +103,7 @@ public:
          *
          * @return a sync object on success
          */
-    static QSharedPointer<QDemonRenderSync> create(const QSharedPointer<QDemonRenderContextImpl> &context);
+    static QDemonRef<QDemonRenderSync> create(const QDemonRef<QDemonRenderContextImpl> &context);
 };
 
 QT_END_NAMESPACE

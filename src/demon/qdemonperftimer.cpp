@@ -113,9 +113,9 @@ struct QDemonPerfTimer : public QDemonPerfTimerInterface
 };
 }
 
-QSharedPointer<QDemonPerfTimerInterface> QDemonPerfTimerInterface::createPerfTimer()
+QDemonRef<QDemonPerfTimerInterface> QDemonPerfTimerInterface::createPerfTimer()
 {
-    return QSharedPointer<QDemonPerfTimerInterface>(new QDemonPerfTimer());
+    return QDemonRef<QDemonPerfTimerInterface>(new QDemonPerfTimer());
 }
 
 QT_END_NAMESPACE

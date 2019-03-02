@@ -1314,7 +1314,7 @@ struct QDemonRenderVertFragCompilationResult
 {
     const char *m_shaderName;
 
-    QSharedPointer<QDemonRenderShaderProgram> m_shader; ///< contains the program
+    QDemonRef<QDemonRenderShaderProgram> m_shader; ///< contains the program
 
     QDemonRenderVertFragCompilationResult()
         : m_shaderName("")

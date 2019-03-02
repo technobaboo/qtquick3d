@@ -100,7 +100,7 @@ public:
 
     // inPipelineName needs to be unique else the shader cache will just return shaders from
     // different pipelines.
-    QSharedPointer<QDemonRenderShaderProgram> generateShader(const QDemonGraphObject &inMaterial,
+    QDemonRef<QDemonRenderShaderProgram> generateShader(const QDemonGraphObject &inMaterial,
                                                              QDemonShaderDefaultMaterialKey inShaderDescription,
                                                              QDemonShaderStageGeneratorInterface &inVertexPipeline,
                                                              TShaderFeatureSet inFeatureSet,
@@ -111,7 +111,7 @@ public:
                                                              const QString &inCustomMaterialName = QString()) override = 0;
 
     // Also sets the blend function on the render context.
-    virtual void setMaterialProperties(QSharedPointer<QDemonRenderShaderProgram> inProgram,
+    virtual void setMaterialProperties(QDemonRef<QDemonRenderShaderProgram> inProgram,
                                        const QDemonGraphObject &inMaterial,
                                        const QVector2D &inCameraVec,
                                        const QMatrix4x4 &inModelViewProjection,
@@ -121,7 +121,7 @@ public:
                                        float inOpacity,
                                        QDemonLayerGlobalRenderProperties inRenderProperties) override = 0;
 
-    static QSharedPointer<QDemonDefaultMaterialShaderGeneratorInterface> createDefaultMaterialShaderGenerator(QDemonRenderContextInterface *inRenderContext);
+    static QDemonRef<QDemonDefaultMaterialShaderGeneratorInterface> createDefaultMaterialShaderGenerator(QDemonRenderContextInterface *inRenderContext);
 
     QDemonLightConstantProperties<QDemonShaderGeneratorGeneratedShader> *getLightConstantProperties(QDemonShaderGeneratorGeneratedShader &shader);
 };

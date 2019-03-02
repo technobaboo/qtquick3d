@@ -47,18 +47,18 @@ void replaceWithLast(QVector<T> &vector, int index) {
 
 struct QDemonResourceManager : public QDemonResourceManagerInterface
 {
-    QSharedPointer<QDemonRenderContext> renderContext;
+    QDemonRef<QDemonRenderContext> renderContext;
     // Complete list of all allocated objects
-    //    QVector<QSharedPointer<QDemonRefCounted>> m_allocatedObjects;
+    //    QVector<QDemonRef<QDemonRefCounted>> m_allocatedObjects;
 
-    QVector<QSharedPointer<QDemonRenderFrameBuffer>> freeFrameBuffers;
-    QVector<QSharedPointer<QDemonRenderRenderBuffer>> freeRenderBuffers;
-    QVector<QSharedPointer<QDemonRenderTexture2D>> freeTextures;
-    QVector<QSharedPointer<QDemonRenderTexture2DArray>> freeTexArrays;
-    QVector<QSharedPointer<QDemonRenderTextureCube>> freeTexCubes;
-    QVector<QSharedPointer<QDemonRenderImage2D>> freeImages;
+    QVector<QDemonRef<QDemonRenderFrameBuffer>> freeFrameBuffers;
+    QVector<QDemonRef<QDemonRenderRenderBuffer>> freeRenderBuffers;
+    QVector<QDemonRef<QDemonRenderTexture2D>> freeTextures;
+    QVector<QDemonRef<QDemonRenderTexture2DArray>> freeTexArrays;
+    QVector<QDemonRef<QDemonRenderTextureCube>> freeTexCubes;
+    QVector<QDemonRef<QDemonRenderImage2D>> freeImages;
 
-    QDemonResourceManager(QSharedPointer<QDemonRenderContext> ctx)
+    QDemonResourceManager(QDemonRef<QDemonRenderContext> ctx)
         : renderContext(ctx)
     {
 
@@ -69,7 +69,7 @@ struct QDemonResourceManager : public QDemonResourceManagerInterface
 
     }
 
-    QSharedPointer<QDemonRenderFrameBuffer> allocateFrameBuffer() override
+    QDemonRef<QDemonRenderFrameBuffer> allocateFrameBuffer() override
     {
         if (freeFrameBuffers.empty() == true) {
             auto newBuffer = renderContext->createFrameBuffer();
@@ -79,7 +79,7 @@ struct QDemonResourceManager : public QDemonResourceManagerInterface
         freeFrameBuffers.pop_back();
         return retval;
     }
-    void release(QSharedPointer<QDemonRenderFrameBuffer> inBuffer) override
+    void release(QDemonRef<QDemonRenderFrameBuffer> inBuffer) override
     {
         if (inBuffer->hasAnyAttachment()) {
             // Ensure the framebuffer has no attachments.
@@ -114,7 +114,7 @@ struct QDemonResourceManager : public QDemonResourceManagerInterface
         freeFrameBuffers.push_back(inBuffer);
     }
 
-    virtual QSharedPointer<QDemonRenderRenderBuffer> allocateRenderBuffer(quint32 inWidth,
+    virtual QDemonRef<QDemonRenderRenderBuffer> allocateRenderBuffer(quint32 inWidth,
                                                                           quint32 inHeight,
                                                                           QDemonRenderRenderBufferFormats::Enum inBufferFormat) override
     {
@@ -144,7 +144,7 @@ struct QDemonResourceManager : public QDemonResourceManagerInterface
         auto theBuffer = renderContext->createRenderBuffer(inBufferFormat, inWidth, inHeight);
         return theBuffer;
     }
-    void release(QSharedPointer<QDemonRenderRenderBuffer> inBuffer) override
+    void release(QDemonRef<QDemonRenderRenderBuffer> inBuffer) override
     {
 #ifdef _DEBUG
         auto theFind = std::find(freeRenderBuffers.begin(), freeRenderBuffers.end(), inBuffer);
@@ -152,13 +152,13 @@ struct QDemonResourceManager : public QDemonResourceManagerInterface
 #endif
         freeRenderBuffers.push_back(inBuffer);
     }
-    QSharedPointer<QDemonRenderTexture2D> setupAllocatedTexture(QSharedPointer<QDemonRenderTexture2D> inTexture)
+    QDemonRef<QDemonRenderTexture2D> setupAllocatedTexture(QDemonRef<QDemonRenderTexture2D> inTexture)
     {
         inTexture->setMinFilter(QDemonRenderTextureMinifyingOp::Linear);
         inTexture->setMagFilter(QDemonRenderTextureMagnifyingOp::Linear);
         return inTexture;
     }
-    QSharedPointer<QDemonRenderTexture2D> allocateTexture2D(quint32 inWidth, quint32 inHeight,
+    QDemonRef<QDemonRenderTexture2D> allocateTexture2D(quint32 inWidth, quint32 inHeight,
                                                             QDemonRenderTextureFormats::Enum inTextureFormat,
                                                             quint32 inSampleCount, bool immutable) override
     {
@@ -203,7 +203,7 @@ struct QDemonResourceManager : public QDemonResourceManagerInterface
         return setupAllocatedTexture(theTexture);
     }
 
-    void release(QSharedPointer<QDemonRenderTexture2D> inBuffer) override
+    void release(QDemonRef<QDemonRenderTexture2D> inBuffer) override
     {
 #ifdef _DEBUG
         auto theFind = std::find(freeTextures.begin(), freeTextures.end(), inBuffer);
@@ -212,7 +212,7 @@ struct QDemonResourceManager : public QDemonResourceManagerInterface
         freeTextures.push_back(inBuffer);
     }
 
-    QSharedPointer<QDemonRenderTexture2DArray> allocateTexture2DArray(quint32 inWidth, quint32 inHeight, quint32 inSlices,
+    QDemonRef<QDemonRenderTexture2DArray> allocateTexture2DArray(quint32 inWidth, quint32 inHeight, quint32 inSlices,
                                                                       QDemonRenderTextureFormats::Enum inTextureFormat,
                                                                       quint32 inSampleCount) override
     {
@@ -246,7 +246,7 @@ struct QDemonResourceManager : public QDemonResourceManagerInterface
         }
 
         // else create a new texture.
-        QSharedPointer<QDemonRenderTexture2DArray> theTexture = nullptr;
+        QDemonRef<QDemonRenderTexture2DArray> theTexture = nullptr;
 
         if (!inMultisample) {
             theTexture = renderContext->createTexture2DArray();
@@ -262,7 +262,7 @@ struct QDemonResourceManager : public QDemonResourceManagerInterface
         return theTexture;
     }
 
-    void release(QSharedPointer<QDemonRenderTexture2DArray> inBuffer) override
+    void release(QDemonRef<QDemonRenderTexture2DArray> inBuffer) override
     {
 #ifdef _DEBUG
         auto theFind = std::find(freeTexArrays.begin(), freeTexArrays.end(), inBuffer);
@@ -271,7 +271,7 @@ struct QDemonResourceManager : public QDemonResourceManagerInterface
         freeTexArrays.push_back(inBuffer);
     }
 
-    QSharedPointer<QDemonRenderTextureCube> allocateTextureCube(quint32 inWidth, quint32 inHeight,
+    QDemonRef<QDemonRenderTextureCube> allocateTextureCube(quint32 inWidth, quint32 inHeight,
                                                                 QDemonRenderTextureFormats::Enum inTextureFormat,
                                                                 quint32 inSampleCount) override
     {
@@ -317,7 +317,7 @@ struct QDemonResourceManager : public QDemonResourceManagerInterface
         }
 
         // else create a new texture.
-        QSharedPointer<QDemonRenderTextureCube> theTexture = nullptr;
+        QDemonRef<QDemonRenderTextureCube> theTexture = nullptr;
 
         if (!inMultisample) {
             theTexture = renderContext->createTextureCube();
@@ -343,7 +343,7 @@ struct QDemonResourceManager : public QDemonResourceManagerInterface
         return theTexture;
     }
 
-    void release(QSharedPointer<QDemonRenderTextureCube> inBuffer) override
+    void release(QDemonRef<QDemonRenderTextureCube> inBuffer) override
     {
 #ifdef _DEBUG
         auto theFind = std::find(freeTexCubes.begin(), freeTexCubes.end(), inBuffer);
@@ -352,7 +352,7 @@ struct QDemonResourceManager : public QDemonResourceManagerInterface
         freeTexCubes.push_back(inBuffer);
     }
 
-    QSharedPointer<QDemonRenderImage2D> allocateImage2D(QSharedPointer<QDemonRenderTexture2D> inTexture,
+    QDemonRef<QDemonRenderImage2D> allocateImage2D(QDemonRef<QDemonRenderTexture2D> inTexture,
                                                         QDemonRenderImageAccessType::Enum inAccess) override
     {
         if (freeImages.empty() == true) {
@@ -368,7 +368,7 @@ struct QDemonResourceManager : public QDemonResourceManagerInterface
         return retval;
     }
 
-    void release(QSharedPointer<QDemonRenderImage2D> inBuffer) override
+    void release(QDemonRef<QDemonRenderImage2D> inBuffer) override
     {
 #ifdef _DEBUG
         auto theFind = std::find(freeImages.begin(), freeImages.end(), inBuffer);
@@ -377,7 +377,7 @@ struct QDemonResourceManager : public QDemonResourceManagerInterface
         freeImages.push_back(inBuffer);
     }
 
-    QSharedPointer<QDemonRenderContext> getRenderContext() override { return renderContext; }
+    QDemonRef<QDemonRenderContext> getRenderContext() override { return renderContext; }
 
     void destroyFreeSizedResources()
     {
@@ -401,9 +401,9 @@ struct QDemonResourceManager : public QDemonResourceManagerInterface
 };
 }
 
-QSharedPointer<QDemonResourceManagerInterface> QDemonResourceManagerInterface::createResourceManager(QSharedPointer<QDemonRenderContext> inContext)
+QDemonRef<QDemonResourceManagerInterface> QDemonResourceManagerInterface::createResourceManager(QDemonRef<QDemonRenderContext> inContext)
 {
-    return QSharedPointer<QDemonResourceManagerInterface>(new QDemonResourceManager(inContext));
+    return QDemonRef<QDemonResourceManagerInterface>(new QDemonResourceManager(inContext));
 }
 
 QT_END_NAMESPACE

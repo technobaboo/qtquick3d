@@ -93,11 +93,11 @@ public:
         m_context->draw(QDemonRenderDrawMode::Triangles, m_indexBuffer->getNumIndices(), 0);
     }
 private:
-    QSharedPointer<QDemonRenderContext> m_context;
-    QSharedPointer<QDemonRenderVertexBuffer> m_vertexBuffer;
-    QSharedPointer<QDemonRenderIndexBuffer> m_indexBuffer;
-    QSharedPointer<QDemonRenderInputAssembler> m_inputAssembler;
-    QSharedPointer<QDemonRenderShaderProgram> m_shader;
+    QDemonRef<QDemonRenderContext> m_context;
+    QDemonRef<QDemonRenderVertexBuffer> m_vertexBuffer;
+    QDemonRef<QDemonRenderIndexBuffer> m_indexBuffer;
+    QDemonRef<QDemonRenderInputAssembler> m_inputAssembler;
+    QDemonRef<QDemonRenderShaderProgram> m_shader;
     float frus[16];
     float model[16];
     float rot[9];

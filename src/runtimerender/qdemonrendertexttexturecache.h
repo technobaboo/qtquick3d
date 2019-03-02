@@ -37,8 +37,8 @@ QT_BEGIN_NAMESPACE
 class QDemonTextRendererInterface;
 class QDemonRenderContext;
 
-typedef QPair<QSharedPointer<QDemonRenderPathFontSpecification>, QSharedPointer<QDemonRenderPathFontItem>> TPathFontSpecAndPathObject;
-typedef QPair<QDemonTextTextureDetails, QSharedPointer<QDemonRenderTexture2D>> TTextTextureDetailsAndTexture;
+typedef QPair<QDemonRef<QDemonRenderPathFontSpecification>, QDemonRef<QDemonRenderPathFontItem>> TPathFontSpecAndPathObject;
+typedef QPair<QDemonTextTextureDetails, QDemonRef<QDemonRenderTexture2D>> TTextTextureDetailsAndTexture;
 typedef QPair<TPathFontSpecAndPathObject, TTextTextureDetailsAndTexture> TTPathObjectAndTexture;
 
 class Q_DEMONRUNTIMERENDER_EXPORT QDemonTextTextureCacheInterface
@@ -57,7 +57,7 @@ public:
     // frame.
     virtual void endFrame() = 0;
 
-    static QSharedPointer<QDemonTextTextureCacheInterface> createTextureCache(QSharedPointer<QDemonTextRendererInterface> inTextRenderer, QSharedPointer<QDemonRenderContext> inRenderContext);
+    static QDemonRef<QDemonTextTextureCacheInterface> createTextureCache(QDemonRef<QDemonTextRendererInterface> inTextRenderer, QDemonRef<QDemonRenderContext> inRenderContext);
 };
 
 struct QDemonTextRenderInfoAndHash

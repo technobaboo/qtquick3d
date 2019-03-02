@@ -42,11 +42,11 @@ struct QDemonTextTextureAtlas : public QDemonTextTextureAtlasInterface
     static const qint32 TEXTURE_ATLAS_DIM =
             256; // if you change this you need to adjust QDemonOnscreenTextRenderer size as well
 
-    QSharedPointer<QDemonTextRendererInterface> m_textRenderer;
-    QSharedPointer<QDemonRenderContext> m_renderContext;
+    QDemonRef<QDemonTextRendererInterface> m_textRenderer;
+    QDemonRef<QDemonRenderContext> m_renderContext;
 
-    QDemonTextTextureAtlas(QSharedPointer<QDemonTextRendererInterface> inRenderer,
-                           QSharedPointer<QDemonRenderContext> inRenderContext)
+    QDemonTextTextureAtlas(QDemonRef<QDemonTextRendererInterface> inRenderer,
+                           QDemonRef<QDemonRenderContext> inRenderContext)
         : m_textRenderer(inRenderer)
         , m_renderContext(inRenderContext)
         , m_textureAtlasInitialized(false)
@@ -99,7 +99,7 @@ struct QDemonTextTextureAtlas : public QDemonTextTextureAtlasInterface
 
 private:
     bool m_textureAtlasInitialized;
-    QSharedPointer<QDemonRenderTexture2D> m_textureAtlas; // this is the actual texture which has application lifetime
+    QDemonRef<QDemonRenderTexture2D> m_textureAtlas; // this is the actual texture which has application lifetime
 };
 
 } // namespace
@@ -109,10 +109,10 @@ QDemonTextTextureAtlasInterface::~QDemonTextTextureAtlasInterface()
 
 }
 
-QSharedPointer<QDemonTextTextureAtlasInterface> QDemonTextTextureAtlasInterface::createTextureAtlas(QSharedPointer<QDemonTextRendererInterface> inTextRenderer,
-                                                                                                    QSharedPointer<QDemonRenderContext> inRenderContext)
+QDemonRef<QDemonTextTextureAtlasInterface> QDemonTextTextureAtlasInterface::createTextureAtlas(QDemonRef<QDemonTextRendererInterface> inTextRenderer,
+                                                                                                    QDemonRef<QDemonRenderContext> inRenderContext)
 {
-    return QSharedPointer<QDemonTextTextureAtlasInterface>(new QDemonTextTextureAtlas(inTextRenderer, inRenderContext));
+    return QDemonRef<QDemonTextTextureAtlasInterface>(new QDemonTextTextureAtlas(inTextRenderer, inRenderContext));
 }
 
 QT_END_NAMESPACE

@@ -30,7 +30,8 @@
 #ifndef QTDEMONASSETIMPORTGLOBAL_H
 #define QTDEMONASSETIMPORTGLOBAL_H
 
-#include <QtCore/qglobal.h>
+#include <QtGui/qtguiglobal.h>
+#include <QtDemon/qtdemonglobal.h>
 
 QT_BEGIN_NAMESPACE
 

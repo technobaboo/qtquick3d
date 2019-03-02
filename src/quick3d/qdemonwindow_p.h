@@ -98,8 +98,8 @@ public:
 
     QOpenGLContext *glContext;
     QDemonRenderContextInterface *context;
-    QSharedPointer<QDemonPresentation> m_presentation;
-    QSharedPointer<QDemonRenderScene> m_scene;
+    QDemonRef<QDemonPresentation> m_presentation;
+    QDemonRef<QDemonRenderScene> m_scene;
 
     QDemonRenderLoop *windowManager;
     QQuickAnimatorController *animationController;

@@ -56,7 +56,7 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderModel : public QDemonGraphNode
 
     void addMaterial(QDemonGraphObject &inMaterial);
 
-    QDemonBounds3 getModelBounds(QSharedPointer<QDemonBufferManagerInterface> inManager) const;
+    QDemonBounds3 getModelBounds(QDemonRef<QDemonBufferManagerInterface> inManager) const;
 
     // Generic method used during serialization
     // to remap string and object pointers

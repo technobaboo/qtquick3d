@@ -45,10 +45,10 @@ struct QDemonWidgetBBox : public QDemonRenderWidgetInterface
 {
     QDemonBounds3 m_bounds;
     QVector3D m_color;
-    QSharedPointer<QDemonRenderVertexBuffer> m_boxVertexBuffer;
-    QSharedPointer<QDemonRenderIndexBuffer> m_boxIndexBuffer;
-    QSharedPointer<QDemonRenderInputAssembler> m_boxInputAssembler;
-    QSharedPointer<QDemonRenderShaderProgram> m_boxShader;
+    QDemonRef<QDemonRenderVertexBuffer> m_boxVertexBuffer;
+    QDemonRef<QDemonRenderIndexBuffer> m_boxIndexBuffer;
+    QDemonRef<QDemonRenderInputAssembler> m_boxInputAssembler;
+    QDemonRef<QDemonRenderShaderProgram> m_boxShader;
     QString m_itemName;
     QDemonWidgetBBox(QDemonGraphNode &inNode,
                      const QDemonBounds3 &inBounds,
@@ -63,7 +63,7 @@ struct QDemonWidgetBBox : public QDemonRenderWidgetInterface
     {
         m_boxShader = inContext.getShader(m_itemName);
         if (!m_boxShader) {
-            QSharedPointer<QDemonShaderProgramGeneratorInterface> theGenerator(inContext.getProgramGenerator());
+            QDemonRef<QDemonShaderProgramGeneratorInterface> theGenerator(inContext.getProgramGenerator());
             theGenerator->beginProgram();
             QDemonShaderStageGeneratorInterface &theVertexGenerator(
                         *theGenerator->getStage(ShaderGeneratorStages::Vertex));
@@ -131,7 +131,7 @@ struct QDemonWidgetBBox : public QDemonRenderWidgetInterface
         m_boxInputAssembler = inContext.getInputAssembler(m_itemName);
         if (!m_boxInputAssembler && m_boxIndexBuffer && m_boxVertexBuffer) {
             // create our attribute layout
-            QSharedPointer<QDemonRenderAttribLayout> theAttribLayout = inContext.createAttributeLayout(toConstDataRef(&theEntry, 1));
+            QDemonRef<QDemonRenderAttribLayout> theAttribLayout = inContext.createAttributeLayout(toConstDataRef(&theEntry, 1));
 
             quint32 strides = m_boxVertexBuffer->getStride();
             quint32 offsets = 0;
@@ -171,9 +171,9 @@ struct QDemonWidgetBBox : public QDemonRenderWidgetInterface
 
 struct QDemonWidgetAxis : public QDemonRenderWidgetInterface
 {
-    QSharedPointer<QDemonRenderVertexBuffer> m_axisVertexBuffer;
-    QSharedPointer<QDemonRenderInputAssembler> m_axisInputAssembler;
-    QSharedPointer<QDemonRenderShaderProgram> m_axisShader;
+    QDemonRef<QDemonRenderVertexBuffer> m_axisVertexBuffer;
+    QDemonRef<QDemonRenderInputAssembler> m_axisInputAssembler;
+    QDemonRef<QDemonRenderShaderProgram> m_axisShader;
     QString m_itemName;
 
     QDemonWidgetAxis(QDemonGraphNode &inNode)
@@ -188,7 +188,7 @@ struct QDemonWidgetAxis : public QDemonRenderWidgetInterface
     {
         m_axisShader = inContext.getShader(m_itemName);
         if (!m_axisShader) {
-            QSharedPointer<QDemonShaderProgramGeneratorInterface> theGenerator(inContext.getProgramGenerator());
+            QDemonRef<QDemonShaderProgramGeneratorInterface> theGenerator(inContext.getProgramGenerator());
             theGenerator->beginProgram();
             QDemonShaderStageGeneratorInterface &theVertexGenerator(*theGenerator->getStage(ShaderGeneratorStages::Vertex));
             QDemonShaderStageGeneratorInterface &theFragmentGenerator(*theGenerator->getStage(ShaderGeneratorStages::Fragment));
@@ -220,7 +220,7 @@ struct QDemonWidgetAxis : public QDemonRenderWidgetInterface
 
         if (!m_axisInputAssembler && m_axisVertexBuffer) {
             // create our attribute layout
-            QSharedPointer<QDemonRenderAttribLayout> theAttribLAyout = inContext.createAttributeLayout(toConstDataRef(theEntries, 2));
+            QDemonRef<QDemonRenderAttribLayout> theAttribLAyout = inContext.createAttributeLayout(toConstDataRef(theEntries, 2));
 
             quint32 strides = m_axisVertexBuffer->getStride();
             quint32 offsets = 0;
@@ -308,14 +308,14 @@ QDemonRenderWidgetInterface::~QDemonRenderWidgetInterface()
 
 }
 
-QSharedPointer<QDemonRenderWidgetInterface> QDemonRenderWidgetInterface::createBoundingBoxWidget(QDemonGraphNode &inNode, const QDemonBounds3 &inBounds, const QVector3D &inColor)
+QDemonRef<QDemonRenderWidgetInterface> QDemonRenderWidgetInterface::createBoundingBoxWidget(QDemonGraphNode &inNode, const QDemonBounds3 &inBounds, const QVector3D &inColor)
 {
-    return QSharedPointer<QDemonRenderWidgetInterface>(new QDemonWidgetBBox(inNode, inBounds, inColor));
+    return QDemonRef<QDemonRenderWidgetInterface>(new QDemonWidgetBBox(inNode, inBounds, inColor));
 }
 
-QSharedPointer<QDemonRenderWidgetInterface> QDemonRenderWidgetInterface::createAxisWidget(QDemonGraphNode &inNode)
+QDemonRef<QDemonRenderWidgetInterface> QDemonRenderWidgetInterface::createAxisWidget(QDemonGraphNode &inNode)
 {
-    return QSharedPointer<QDemonRenderWidgetInterface>(new QDemonWidgetAxis(inNode));
+    return QDemonRef<QDemonRenderWidgetInterface>(new QDemonWidgetAxis(inNode));
 }
 
 QDemonRenderWidgetContextInterface::~QDemonRenderWidgetContextInterface()

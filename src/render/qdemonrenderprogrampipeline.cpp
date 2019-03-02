@@ -34,7 +34,7 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonRenderProgramPipeline::QDemonRenderProgramPipeline(const QSharedPointer<QDemonRenderContextImpl> &context)
+QDemonRenderProgramPipeline::QDemonRenderProgramPipeline(const QDemonRef<QDemonRenderContextImpl> &context)
     : m_context(context)
     , m_backend(context->getBackend())
     , m_program(nullptr)
@@ -68,7 +68,7 @@ QDemonRenderProgramPipeline::~QDemonRenderProgramPipeline()
 
 bool QDemonRenderProgramPipeline::isValid() { return (m_programPipelineHandle != nullptr); }
 
-void QDemonRenderProgramPipeline::setProgramStages(const QSharedPointer<QDemonRenderShaderProgram> &inProgram,
+void QDemonRenderProgramPipeline::setProgramStages(const QDemonRef<QDemonRenderShaderProgram> &inProgram,
                                                    QDemonRenderShaderTypeFlags flags)
 {
     bool bDirty = false;

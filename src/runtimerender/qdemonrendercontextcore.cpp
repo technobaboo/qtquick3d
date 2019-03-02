@@ -62,16 +62,16 @@ namespace {
 
 struct QDemonRenderContextCore : public QDemonRenderContextCoreInterface
 {
-    QSharedPointer<QDemonPerfTimerInterface> m_perfTimer;
-    QSharedPointer<QDemonInputStreamFactoryInterface> m_inputStreamFactory;
-    QSharedPointer<QDemonAbstractThreadPool> m_threadPool;
-    QSharedPointer<QDemonDynamicObjectSystemCoreInterface> m_dynamicObjectSystem;
-    QSharedPointer<QDemonCustomMaterialSystemCoreInterface> m_materialSystem;
-    QSharedPointer<QDemonEffectSystemCoreInterface> m_effectSystem;
-    QSharedPointer<QDemonBufferLoaderInterface> m_bufferLoader;
-    QSharedPointer<QDemonTextRendererCoreInterface> m_textRenderer;
-    QSharedPointer<QDemonTextRendererCoreInterface> m_onscreenTexRenderer;
-    QSharedPointer<QDemonPathManagerCoreInterface> m_pathManagerCore;
+    QDemonRef<QDemonPerfTimerInterface> m_perfTimer;
+    QDemonRef<QDemonInputStreamFactoryInterface> m_inputStreamFactory;
+    QDemonRef<QDemonAbstractThreadPool> m_threadPool;
+    QDemonRef<QDemonDynamicObjectSystemCoreInterface> m_dynamicObjectSystem;
+    QDemonRef<QDemonCustomMaterialSystemCoreInterface> m_materialSystem;
+    QDemonRef<QDemonEffectSystemCoreInterface> m_effectSystem;
+    QDemonRef<QDemonBufferLoaderInterface> m_bufferLoader;
+    QDemonRef<QDemonTextRendererCoreInterface> m_textRenderer;
+    QDemonRef<QDemonTextRendererCoreInterface> m_onscreenTexRenderer;
+    QDemonRef<QDemonPathManagerCoreInterface> m_pathManagerCore;
 
     QDemonRenderContextCore()
         : m_perfTimer(QDemonPerfTimerInterface::createPerfTimer())
@@ -87,25 +87,25 @@ struct QDemonRenderContextCore : public QDemonRenderContextCoreInterface
 
     ~QDemonRenderContextCore() override {}
 
-    QSharedPointer<QDemonInputStreamFactoryInterface> getInputStreamFactory() override { return m_inputStreamFactory; }
-    QSharedPointer<QDemonAbstractThreadPool> getThreadPool() override { return m_threadPool; }
-    QSharedPointer<QDemonDynamicObjectSystemCoreInterface> getDynamicObjectSystemCore() override
+    QDemonRef<QDemonInputStreamFactoryInterface> getInputStreamFactory() override { return m_inputStreamFactory; }
+    QDemonRef<QDemonAbstractThreadPool> getThreadPool() override { return m_threadPool; }
+    QDemonRef<QDemonDynamicObjectSystemCoreInterface> getDynamicObjectSystemCore() override
     {
         return m_dynamicObjectSystem;
     }
-    QSharedPointer<QDemonCustomMaterialSystemCoreInterface> getMaterialSystemCore() override { return m_materialSystem; }
-    QSharedPointer<QDemonEffectSystemCoreInterface> getEffectSystemCore() override { return m_effectSystem; }
-    QSharedPointer<QDemonPerfTimerInterface> getPerfTimer() override { return m_perfTimer; }
-    QSharedPointer<QDemonBufferLoaderInterface> getBufferLoader() override { return m_bufferLoader; }
-    QSharedPointer<QDemonPathManagerCoreInterface> getPathManagerCore() override { return m_pathManagerCore; }
-    QSharedPointer<QDemonRenderContextInterface> createRenderContext(QSharedPointer<QDemonRenderContext> inContext, const char *inPrimitivesDirectory) override;
-    void setTextRendererCore(QSharedPointer<QDemonTextRendererCoreInterface> inRenderer) override { m_textRenderer = inRenderer; }
-    QSharedPointer<QDemonTextRendererCoreInterface> getTextRendererCore() override { return m_textRenderer; }
-    void setOnscreenTextRendererCore(QSharedPointer<QDemonTextRendererCoreInterface> inRenderer) override
+    QDemonRef<QDemonCustomMaterialSystemCoreInterface> getMaterialSystemCore() override { return m_materialSystem; }
+    QDemonRef<QDemonEffectSystemCoreInterface> getEffectSystemCore() override { return m_effectSystem; }
+    QDemonRef<QDemonPerfTimerInterface> getPerfTimer() override { return m_perfTimer; }
+    QDemonRef<QDemonBufferLoaderInterface> getBufferLoader() override { return m_bufferLoader; }
+    QDemonRef<QDemonPathManagerCoreInterface> getPathManagerCore() override { return m_pathManagerCore; }
+    QDemonRef<QDemonRenderContextInterface> createRenderContext(QDemonRef<QDemonRenderContext> inContext, const char *inPrimitivesDirectory) override;
+    void setTextRendererCore(QDemonRef<QDemonTextRendererCoreInterface> inRenderer) override { m_textRenderer = inRenderer; }
+    QDemonRef<QDemonTextRendererCoreInterface> getTextRendererCore() override { return m_textRenderer; }
+    void setOnscreenTextRendererCore(QDemonRef<QDemonTextRendererCoreInterface> inRenderer) override
     {
         m_onscreenTexRenderer = inRenderer;
     }
-    QSharedPointer<QDemonTextRendererCoreInterface> getOnscreenTextRendererCore() override { return m_onscreenTexRenderer; }
+    QDemonRef<QDemonTextRendererCoreInterface> getOnscreenTextRendererCore() override { return m_onscreenTexRenderer; }
 };
 
 inline float Clamp(float val, float inMin = 0.0f, float inMax = 1.0f)
@@ -127,30 +127,30 @@ void swapXY(QVector2D &v) {
 
 struct QDemonRenderContextData : public QDemonRenderContextInterface
 {
-    QSharedPointer<QDemonRenderContext> m_renderContext;
+    QDemonRef<QDemonRenderContext> m_renderContext;
     QDemonRenderContextCoreInterface *m_coreContext;
-    QSharedPointer<QDemonPerfTimerInterface> m_perfTimer;
-    QSharedPointer<QDemonInputStreamFactoryInterface> m_inputStreamFactory;
-    QSharedPointer<QDemonBufferManagerInterface> m_bufferManager;
-    QSharedPointer<QDemonResourceManagerInterface> m_resourceManager;
-    QSharedPointer<QDemonOffscreenRenderManagerInterface> m_offscreenRenderManager;
-    QSharedPointer<QDemonRendererInterface> m_renderer;
-    QSharedPointer<QDemonTextRendererInterface> m_textRenderer;
-    QSharedPointer<QDemonTextRendererInterface> m_onscreenTextRenderer;
-    QSharedPointer<QDemonTextTextureCacheInterface> m_textTextureCache;
-    QSharedPointer<QDemonTextTextureAtlasInterface> m_textTextureAtlas;
-    QSharedPointer<QDemonDynamicObjectSystemInterface> m_dynamicObjectSystem;
-    QSharedPointer<QDemonEffectSystemInterface> m_effectSystem;
-    QSharedPointer<QDemonShaderCacheInterface> m_shaderCache;
-    QSharedPointer<QDemonAbstractThreadPool> m_threadPool;
-    QSharedPointer<IImageBatchLoader> m_imageBatchLoader;
-    QSharedPointer<QDemonCustomMaterialSystemInterface> m_customMaterialSystem;
-    QSharedPointer<QDemonPixelGraphicsRendererInterface> m_pixelGraphicsRenderer;
-    QSharedPointer<QDemonPathManagerInterface> m_pathManager;
-    QSharedPointer<QDemonShaderProgramGeneratorInterface> m_shaderProgramGenerator;
-    QSharedPointer<QDemonDefaultMaterialShaderGeneratorInterface> m_defaultMaterialShaderGenerator;
-    QSharedPointer<ICustomMaterialShaderGenerator> m_customMaterialShaderGenerator;
-    QSharedPointer<QDemonRenderListInterface> m_renderList;
+    QDemonRef<QDemonPerfTimerInterface> m_perfTimer;
+    QDemonRef<QDemonInputStreamFactoryInterface> m_inputStreamFactory;
+    QDemonRef<QDemonBufferManagerInterface> m_bufferManager;
+    QDemonRef<QDemonResourceManagerInterface> m_resourceManager;
+    QDemonRef<QDemonOffscreenRenderManagerInterface> m_offscreenRenderManager;
+    QDemonRef<QDemonRendererInterface> m_renderer;
+    QDemonRef<QDemonTextRendererInterface> m_textRenderer;
+    QDemonRef<QDemonTextRendererInterface> m_onscreenTextRenderer;
+    QDemonRef<QDemonTextTextureCacheInterface> m_textTextureCache;
+    QDemonRef<QDemonTextTextureAtlasInterface> m_textTextureAtlas;
+    QDemonRef<QDemonDynamicObjectSystemInterface> m_dynamicObjectSystem;
+    QDemonRef<QDemonEffectSystemInterface> m_effectSystem;
+    QDemonRef<QDemonShaderCacheInterface> m_shaderCache;
+    QDemonRef<QDemonAbstractThreadPool> m_threadPool;
+    QDemonRef<IImageBatchLoader> m_imageBatchLoader;
+    QDemonRef<QDemonCustomMaterialSystemInterface> m_customMaterialSystem;
+    QDemonRef<QDemonPixelGraphicsRendererInterface> m_pixelGraphicsRenderer;
+    QDemonRef<QDemonPathManagerInterface> m_pathManager;
+    QDemonRef<QDemonShaderProgramGeneratorInterface> m_shaderProgramGenerator;
+    QDemonRef<QDemonDefaultMaterialShaderGeneratorInterface> m_defaultMaterialShaderGenerator;
+    QDemonRef<ICustomMaterialShaderGenerator> m_customMaterialShaderGenerator;
+    QDemonRef<QDemonRenderListInterface> m_renderList;
     quint32 m_frameCount;
     // Viewport that this render context should use
     QDemonOption<QRect> m_viewport;
@@ -161,10 +161,10 @@ struct QDemonRenderContextData : public QDemonRenderContextInterface
     QDemonOption<QVector4D> m_sceneColor;
     QDemonOption<QVector4D> m_matteColor;
     RenderRotationValues::Enum m_rotation;
-    QSharedPointer<QDemonRenderFrameBuffer> m_rotationFbo;
-    QSharedPointer<QDemonRenderTexture2D> m_rotationTexture;
-    QSharedPointer<QDemonRenderRenderBuffer> m_rotationDepthBuffer;
-    QSharedPointer<QDemonRenderFrameBuffer> m_contextRenderTarget;
+    QDemonRef<QDemonRenderFrameBuffer> m_rotationFbo;
+    QDemonRef<QDemonRenderTexture2D> m_rotationTexture;
+    QDemonRef<QDemonRenderRenderBuffer> m_rotationDepthBuffer;
+    QDemonRef<QDemonRenderFrameBuffer> m_contextRenderTarget;
     QRect m_presentationViewport;
     QSize m_presentationDimensions;
     QSize m_renderPresentationDimensions;
@@ -174,7 +174,7 @@ struct QDemonRenderContextData : public QDemonRenderContextInterface
     QPair<float, int> m_fps;
     bool m_authoringMode;
 
-    QDemonRenderContextData(QSharedPointer<QDemonRenderContext> ctx, QDemonRenderContextCoreInterface *inCore, const char *inApplicationDirectory)
+    QDemonRenderContextData(QDemonRef<QDemonRenderContext> ctx, QDemonRenderContextCoreInterface *inCore, const char *inApplicationDirectory)
         : m_renderContext(ctx)
         , m_coreContext(inCore)
         , m_perfTimer(inCore->getPerfTimer())
@@ -206,7 +206,7 @@ struct QDemonRenderContextData : public QDemonRenderContextInterface
         m_customMaterialSystem = inCore->getMaterialSystemCore()->getCustomMaterialSystem(this);
         // as does the custom material system
         m_pixelGraphicsRenderer = QDemonPixelGraphicsRendererInterface::createRenderer(this);
-        QSharedPointer<QDemonTextRendererCoreInterface> theTextCore = inCore->getTextRendererCore();
+        QDemonRef<QDemonTextRendererCoreInterface> theTextCore = inCore->getTextRendererCore();
         m_shaderProgramGenerator = QDemonShaderProgramGeneratorInterface::createProgramGenerator(this);
         m_defaultMaterialShaderGenerator = QDemonDefaultMaterialShaderGeneratorInterface::createDefaultMaterialShaderGenerator(this);
         m_customMaterialShaderGenerator = ICustomMaterialShaderGenerator::createCustomMaterialShaderGenerator(this);
@@ -215,7 +215,7 @@ struct QDemonRenderContextData : public QDemonRenderContextInterface
             m_textTextureCache = QDemonTextTextureCacheInterface::createTextureCache(m_textRenderer, m_renderContext);
         }
 
-        QSharedPointer<QDemonTextRendererCoreInterface> theOnscreenTextCore = inCore->getOnscreenTextRendererCore();
+        QDemonRef<QDemonTextRendererCoreInterface> theOnscreenTextCore = inCore->getOnscreenTextRendererCore();
         if (theOnscreenTextCore) {
             m_onscreenTextRenderer = theOnscreenTextCore->getTextRenderer(ctx);
             m_textTextureAtlas = QDemonTextTextureAtlasInterface::createTextureAtlas(m_onscreenTextRenderer, m_renderContext);
@@ -260,36 +260,36 @@ struct QDemonRenderContextData : public QDemonRenderContextInterface
 #endif
     }
 
-    QSharedPointer<QDemonRendererInterface> getRenderer() override { return m_renderer; }
-    QSharedPointer<QDemonBufferManagerInterface> getBufferManager() override { return m_bufferManager; }
-    QSharedPointer<QDemonResourceManagerInterface> getResourceManager() override { return m_resourceManager; }
-    QSharedPointer<QDemonRenderContext> getRenderContext() override { return m_renderContext; }
-    QSharedPointer<QDemonOffscreenRenderManagerInterface> getOffscreenRenderManager() override
+    QDemonRef<QDemonRendererInterface> getRenderer() override { return m_renderer; }
+    QDemonRef<QDemonBufferManagerInterface> getBufferManager() override { return m_bufferManager; }
+    QDemonRef<QDemonResourceManagerInterface> getResourceManager() override { return m_resourceManager; }
+    QDemonRef<QDemonRenderContext> getRenderContext() override { return m_renderContext; }
+    QDemonRef<QDemonOffscreenRenderManagerInterface> getOffscreenRenderManager() override
     {
         return m_offscreenRenderManager;
     }
-    QSharedPointer<QDemonInputStreamFactoryInterface> getInputStreamFactory() override { return m_inputStreamFactory; }
-    QSharedPointer<QDemonEffectSystemInterface> getEffectSystem() override { return m_effectSystem; }
-    QSharedPointer<QDemonShaderCacheInterface> getShaderCache() override { return m_shaderCache; }
-    QSharedPointer<QDemonAbstractThreadPool> getThreadPool() override { return m_threadPool; }
-    QSharedPointer<IImageBatchLoader> getImageBatchLoader() override { return m_imageBatchLoader; }
-    QSharedPointer<QDemonTextTextureCacheInterface> getTextureCache() override { return m_textTextureCache; }
-    QSharedPointer<QDemonTextTextureAtlasInterface> getTextureAtlas() override { return m_textTextureAtlas; }
-    QSharedPointer<QDemonDynamicObjectSystemInterface> getDynamicObjectSystem() override { return m_dynamicObjectSystem; }
-    QSharedPointer<QDemonCustomMaterialSystemInterface> getCustomMaterialSystem() override { return m_customMaterialSystem; }
-    QSharedPointer<QDemonPixelGraphicsRendererInterface> getPixelGraphicsRenderer() override { return m_pixelGraphicsRenderer; }
-    QSharedPointer<QDemonPerfTimerInterface> getPerfTimer() override { return m_perfTimer; }
-    QSharedPointer<QDemonRenderListInterface> getRenderList() override { return m_renderList; }
-    QSharedPointer<QDemonPathManagerInterface> getPathManager() override { return m_pathManager; }
-    QSharedPointer<QDemonShaderProgramGeneratorInterface> getShaderProgramGenerator() override
+    QDemonRef<QDemonInputStreamFactoryInterface> getInputStreamFactory() override { return m_inputStreamFactory; }
+    QDemonRef<QDemonEffectSystemInterface> getEffectSystem() override { return m_effectSystem; }
+    QDemonRef<QDemonShaderCacheInterface> getShaderCache() override { return m_shaderCache; }
+    QDemonRef<QDemonAbstractThreadPool> getThreadPool() override { return m_threadPool; }
+    QDemonRef<IImageBatchLoader> getImageBatchLoader() override { return m_imageBatchLoader; }
+    QDemonRef<QDemonTextTextureCacheInterface> getTextureCache() override { return m_textTextureCache; }
+    QDemonRef<QDemonTextTextureAtlasInterface> getTextureAtlas() override { return m_textTextureAtlas; }
+    QDemonRef<QDemonDynamicObjectSystemInterface> getDynamicObjectSystem() override { return m_dynamicObjectSystem; }
+    QDemonRef<QDemonCustomMaterialSystemInterface> getCustomMaterialSystem() override { return m_customMaterialSystem; }
+    QDemonRef<QDemonPixelGraphicsRendererInterface> getPixelGraphicsRenderer() override { return m_pixelGraphicsRenderer; }
+    QDemonRef<QDemonPerfTimerInterface> getPerfTimer() override { return m_perfTimer; }
+    QDemonRef<QDemonRenderListInterface> getRenderList() override { return m_renderList; }
+    QDemonRef<QDemonPathManagerInterface> getPathManager() override { return m_pathManager; }
+    QDemonRef<QDemonShaderProgramGeneratorInterface> getShaderProgramGenerator() override
     {
         return m_shaderProgramGenerator;
     }
-    QSharedPointer<QDemonDefaultMaterialShaderGeneratorInterface> getDefaultMaterialShaderGenerator() override
+    QDemonRef<QDemonDefaultMaterialShaderGeneratorInterface> getDefaultMaterialShaderGenerator() override
     {
         return m_defaultMaterialShaderGenerator;
     }
-    QSharedPointer<ICustomMaterialShaderGenerator> getCustomMaterialShaderGenerator() override
+    QDemonRef<ICustomMaterialShaderGenerator> getCustomMaterialShaderGenerator() override
     {
         return m_customMaterialShaderGenerator;
     }
@@ -304,9 +304,9 @@ struct QDemonRenderContextData : public QDemonRenderContextInterface
     bool isInSubPresentation() override { return m_isInSubPresentation; }
     void setInSubPresentation(bool inValue) override { m_isInSubPresentation = inValue; }
 
-    QSharedPointer<QDemonTextRendererInterface> getTextRenderer() override { return m_textRenderer; }
+    QDemonRef<QDemonTextRendererInterface> getTextRenderer() override { return m_textRenderer; }
 
-    QSharedPointer<QDemonTextRendererInterface> getOnscreenTextRenderer() override { return m_onscreenTextRenderer; }
+    QDemonRef<QDemonTextRendererInterface> getOnscreenTextRenderer() override { return m_onscreenTextRenderer; }
 
     void setSceneColor(QDemonOption<QVector4D> inSceneColor) override { m_sceneColor = inSceneColor; }
     void setMatteColor(QDemonOption<QVector4D> inMatteColor) override { m_matteColor = inMatteColor; }
@@ -329,7 +329,7 @@ struct QDemonRenderContextData : public QDemonRenderContextInterface
     void setViewport(QDemonOption<QRect> inViewport) override { m_viewport = inViewport; }
     QDemonOption<QRect> getViewport() const override { return m_viewport; }
 
-    QSharedPointer<QDemonRenderWidgetContextInterface> getRenderWidgetContext() override
+    QDemonRef<QDemonRenderWidgetContextInterface> getRenderWidgetContext() override
     {
         return m_renderer->getRenderWidgetContext();
     }
@@ -728,10 +728,10 @@ struct QDemonRenderContextData : public QDemonRenderContextInterface
     }
 };
 
-QSharedPointer<QDemonRenderContextInterface> QDemonRenderContextCore::createRenderContext(QSharedPointer<QDemonRenderContext> inContext,
+QDemonRef<QDemonRenderContextInterface> QDemonRenderContextCore::createRenderContext(QDemonRef<QDemonRenderContext> inContext,
                                                                                           const char *inPrimitivesDirectory)
 {
-    return QSharedPointer<QDemonRenderContextData>(new QDemonRenderContextData(inContext, this, inPrimitivesDirectory));
+    return QDemonRef<QDemonRenderContextData>(new QDemonRenderContextData(inContext, this, inPrimitivesDirectory));
 }
 }
 
@@ -740,9 +740,9 @@ QDemonRenderContextCoreInterface::~QDemonRenderContextCoreInterface()
 
 }
 
-QSharedPointer<QDemonRenderContextCoreInterface> QDemonRenderContextCoreInterface::create()
+QDemonRef<QDemonRenderContextCoreInterface> QDemonRenderContextCoreInterface::create()
 {
-    return QSharedPointer<QDemonRenderContextCore>(new QDemonRenderContextCore());
+    return QDemonRef<QDemonRenderContextCore>(new QDemonRenderContextCore());
 }
 
 QDemonRenderContextInterface::~QDemonRenderContextInterface()

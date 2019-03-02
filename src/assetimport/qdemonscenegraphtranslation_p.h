@@ -376,7 +376,7 @@ private:
     QTextStream m_stream;
     int m_tabDepth = 0;
 
-    QSharedPointer<QDemonMeshUtilities::QDemonMeshBuilder> m_meshBuilder;
+    QDemonRef<QDemonMeshUtilities::QDemonMeshBuilder> m_meshBuilder;
  };
 
 QT_END_NAMESPACE

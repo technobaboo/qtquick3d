@@ -57,7 +57,7 @@ public:
     // Opaque pointer to context type implemented by the effect system.
     // May be null in which case the effect system will generate a new context
     // the first time it needs to render this effect.
-    QSharedPointer<QDemonEffectContext> m_context;
+    QDemonRef<QDemonEffectContext> m_context;
 
     void initialize();
 

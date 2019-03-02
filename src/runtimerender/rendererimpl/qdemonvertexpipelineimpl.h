@@ -57,8 +57,8 @@ struct QDemonVertexPipelineImpl : public QDemonDefaultMaterialVertexPipelineInte
     typedef TStrTableStrMap::const_iterator TParamIter;
     typedef QDemonFlags<GenerationFlagValues::Enum> TGenerationFlags;
 
-    QSharedPointer<QDemonMaterialShaderGeneratorInterface> m_materialGenerator;
-    QSharedPointer<QDemonShaderProgramGeneratorInterface> m_programGenerator;
+    QDemonRef<QDemonMaterialShaderGeneratorInterface> m_materialGenerator;
+    QDemonRef<QDemonShaderProgramGeneratorInterface> m_programGenerator;
     QString m_tempString;
 
     TGenerationFlags m_generationFlags;
@@ -68,8 +68,8 @@ struct QDemonVertexPipelineImpl : public QDemonDefaultMaterialVertexPipelineInte
     QDemonRenderableImage *m_displacementImage;
     QStringList m_addedFunctions;
 
-    QDemonVertexPipelineImpl(QSharedPointer<QDemonMaterialShaderGeneratorInterface> inMaterial,
-                             QSharedPointer<QDemonShaderProgramGeneratorInterface> inProgram,
+    QDemonVertexPipelineImpl(QDemonRef<QDemonMaterialShaderGeneratorInterface> inMaterial,
+                             QDemonRef<QDemonShaderProgramGeneratorInterface> inProgram,
                              bool inWireframe /* only works if tessellation is true */)
 
         : m_materialGenerator(inMaterial)
@@ -92,7 +92,7 @@ struct QDemonVertexPipelineImpl : public QDemonDefaultMaterialVertexPipelineInte
     {
         return ((quint32(m_generationFlags) & inCode)) != 0;
     }
-    QSharedPointer<QDemonShaderProgramGeneratorInterface> programGenerator() { return m_programGenerator; }
+    QDemonRef<QDemonShaderProgramGeneratorInterface> programGenerator() { return m_programGenerator; }
 
     QDemonShaderStageGeneratorInterface &vertex()
     {
@@ -114,7 +114,7 @@ struct QDemonVertexPipelineImpl : public QDemonDefaultMaterialVertexPipelineInte
     {
         return *programGenerator()->getStage(ShaderGeneratorStages::Fragment);
     }
-    QSharedPointer<QDemonMaterialShaderGeneratorInterface> materialGenerator() { return m_materialGenerator; }
+    QDemonRef<QDemonMaterialShaderGeneratorInterface> materialGenerator() { return m_materialGenerator; }
 
     void setupDisplacement(quint32 displacementImageIdx, QDemonRenderableImage *displacementImage)
     {

@@ -83,10 +83,10 @@ public:
     virtual void beginFrame() = 0;
     virtual void endFrame() = 0;
 
-    static QSharedPointer<IImageBatchLoader> createBatchLoader(QSharedPointer<QDemonInputStreamFactoryInterface> inFactory,
-                                                               QSharedPointer<QDemonBufferManagerInterface> inBufferManager,
-                                                               QSharedPointer<QDemonAbstractThreadPool> inThreadPool,
-                                                               QSharedPointer<QDemonPerfTimerInterface> inTimer);
+    static QDemonRef<IImageBatchLoader> createBatchLoader(QDemonRef<QDemonInputStreamFactoryInterface> inFactory,
+                                                               QDemonRef<QDemonBufferManagerInterface> inBufferManager,
+                                                               QDemonRef<QDemonAbstractThreadPool> inThreadPool,
+                                                               QDemonRef<QDemonPerfTimerInterface> inTimer);
 };
 QT_END_NAMESPACE
 

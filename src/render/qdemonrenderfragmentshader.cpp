@@ -32,7 +32,7 @@
 #include <qdemonrenderfragmentshader.h>
 
 QT_BEGIN_NAMESPACE
-QDemonRenderFragmentShader::QDemonRenderFragmentShader(const QSharedPointer<QDemonRenderContextImpl> &context,
+QDemonRenderFragmentShader::QDemonRenderFragmentShader(const QDemonRef<QDemonRenderContextImpl> &context,
                                                        QDemonConstDataRef<qint8> source, bool binaryProgram)
     : QDemonRenderShader(context, source, binaryProgram)
     , m_shaderHandle(nullptr)

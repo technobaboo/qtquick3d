@@ -53,11 +53,11 @@ uint qHash(const QDemonShaderDefaultMaterialKey &key) {
 namespace {
 struct QDemonShaderLightProperties
 {
-    QSharedPointer<QDemonRenderShaderProgram> m_shader;
+    QDemonRef<QDemonRenderShaderProgram> m_shader;
     RenderLightTypes::Enum m_lightType;
     QDemonLightSourceShader m_lightData;
 
-    QDemonShaderLightProperties(QSharedPointer<QDemonRenderShaderProgram> inShader)
+    QDemonShaderLightProperties(QDemonRef<QDemonRenderShaderProgram> inShader)
         : m_shader(inShader)
         , m_lightType(RenderLightTypes::Directional)
     {
@@ -116,7 +116,7 @@ struct QDemonShaderLightProperties
         }
     }
 
-    static QDemonShaderLightProperties createLightEntry(QSharedPointer<QDemonRenderShaderProgram> inShader)
+    static QDemonShaderLightProperties createLightEntry(QDemonRef<QDemonRenderShaderProgram> inShader)
     {
         return QDemonShaderLightProperties(inShader);
     }
@@ -131,7 +131,7 @@ struct QDemonShaderTextureProperties
     QDemonRenderCachedShaderProperty<QDemonRenderTexture2D *> m_sampler;
     QDemonRenderCachedShaderProperty<QVector3D> m_offsets;
     QDemonRenderCachedShaderProperty<QVector4D> m_rotations;
-    QDemonShaderTextureProperties(const QString &sampName, const QString &offName, const QString &rotName, QSharedPointer<QDemonRenderShaderProgram> inShader)
+    QDemonShaderTextureProperties(const QString &sampName, const QString &offName, const QString &rotName, QDemonRef<QDemonRenderShaderProgram> inShader)
         : m_sampler(sampName, inShader)
         , m_offsets(offName, inShader)
         , m_rotations(rotName, inShader)
@@ -145,7 +145,7 @@ struct QDemonShaderGeneratorGeneratedShader
 {
     typedef QHash<quint32, QDemonShaderTextureProperties> TCustomMaterialImagMap;
 
-    QSharedPointer<QDemonRenderShaderProgram> m_shader;
+    QDemonRef<QDemonRenderShaderProgram> m_shader;
     // Specific properties we know the shader has to have.
     QDemonRenderCachedShaderProperty<QMatrix4x4> m_modelMatrix;
     QDemonRenderCachedShaderProperty<QMatrix4x4> m_viewProjMatrix;
@@ -186,7 +186,7 @@ struct QDemonShaderGeneratorGeneratedShader
     TCustomMaterialImagMap m_images; // Images external to custom material usage
     volatile qint32 m_refCount;
 
-    QDemonShaderGeneratorGeneratedShader(QSharedPointer<QDemonRenderShaderProgram> inShader, QSharedPointer<QDemonRenderContext> inContext)
+    QDemonShaderGeneratorGeneratedShader(QDemonRef<QDemonRenderShaderProgram> inShader, QDemonRef<QDemonRenderContext> inContext)
         : m_shader(inShader)
         , m_modelMatrix("model_matrix", inShader)
         , m_viewProjMatrix("model_view_projection", inShader)
@@ -256,14 +256,14 @@ struct QDemonShaderGeneratorGeneratedShader
 
 struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
 {
-    typedef QHash<QSharedPointer<QDemonRenderShaderProgram>, QSharedPointer<QDemonShaderGeneratorGeneratedShader>> TProgramToShaderMap;
-    typedef QPair<size_t, QSharedPointer<QDemonShaderLightProperties>> TCustomMaterialLightEntry;
+    typedef QHash<QDemonRef<QDemonRenderShaderProgram>, QDemonRef<QDemonShaderGeneratorGeneratedShader>> TProgramToShaderMap;
+    typedef QPair<size_t, QDemonRef<QDemonShaderLightProperties>> TCustomMaterialLightEntry;
     typedef QPair<size_t, QDemonRenderCachedShaderProperty<QDemonRenderTexture2D *>> TShadowMapEntry;
     typedef QPair<size_t, QDemonRenderCachedShaderProperty<QDemonRenderTextureCube *>> TShadowCubeEntry;
-    typedef QHash<QString, QSharedPointer<QDemonRenderConstantBuffer>> TStrConstanBufMap;
+    typedef QHash<QString, QDemonRef<QDemonRenderConstantBuffer>> TStrConstanBufMap;
 
     QDemonRenderContextInterface *m_renderContext;
-    QSharedPointer<QDemonShaderProgramGeneratorInterface> m_programGenerator;
+    QDemonRef<QDemonShaderProgramGeneratorInterface> m_programGenerator;
 
     const QDemonRenderCustomMaterial *m_currentMaterial;
     QDemonShaderDefaultMaterialKey *m_currentKey;
@@ -299,7 +299,7 @@ struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
     {
     }
 
-    QSharedPointer<QDemonShaderProgramGeneratorInterface> programGenerator() { return m_programGenerator; }
+    QDemonRef<QDemonShaderProgramGeneratorInterface> programGenerator() { return m_programGenerator; }
     QDemonDefaultMaterialVertexPipelineInterface &vertexGenerator() { return *m_currentPipeline; }
     QDemonShaderStageGeneratorInterface &fragmentGenerator()
     {
@@ -364,7 +364,7 @@ struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
         return retVal;
     }
 
-    void setImageShaderVariables(QSharedPointer<QDemonShaderGeneratorGeneratedShader> inShader,
+    void setImageShaderVariables(QDemonRef<QDemonShaderGeneratorGeneratedShader> inShader,
                                  QDemonRenderableImage &inImage)
     {
         // skip displacement and emissive mask maps which are handled differently
@@ -408,9 +408,9 @@ struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
     void generateImageUVCoordinates(QDemonShaderStageGeneratorInterface &, quint32, quint32, QDemonRenderableImage &) override {}
 
     ///< get the light constant buffer and generate if necessary
-    QSharedPointer<QDemonRenderConstantBuffer> getLightConstantBuffer(const char *name, quint32 inLightCount)
+    QDemonRef<QDemonRenderConstantBuffer> getLightConstantBuffer(const char *name, quint32 inLightCount)
     {
-        QSharedPointer<QDemonRenderContext> theContext(m_renderContext->getRenderContext());
+        QDemonRef<QDemonRenderContext> theContext(m_renderContext->getRenderContext());
 
         // we assume constant buffer support
         Q_ASSERT(theContext->getConstantBufferSupport());
@@ -419,7 +419,7 @@ struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
             return nullptr;
 
         QString theName = QString::fromLocal8Bit(name);
-        QSharedPointer<QDemonRenderConstantBuffer> pCB = theContext->getConstantBuffer(theName);
+        QDemonRef<QDemonRenderConstantBuffer> pCB = theContext->getConstantBuffer(theName);
 
         if (!pCB) {
             // create with size of all structures + int for light count
@@ -469,17 +469,17 @@ struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
         vertexGenerator().beginVertexGeneration(displacementImageIdx, displacementImage);
     }
 
-    QSharedPointer<QDemonShaderGeneratorGeneratedShader> getShaderForProgram(QSharedPointer<QDemonRenderShaderProgram> inProgram)
+    QDemonRef<QDemonShaderGeneratorGeneratedShader> getShaderForProgram(QDemonRef<QDemonRenderShaderProgram> inProgram)
     {
         TProgramToShaderMap::iterator inserter = m_programToShaderMap.find(inProgram);
 
         if (m_programToShaderMap.find(inProgram) == m_programToShaderMap.end())
-            inserter = m_programToShaderMap.insert(inProgram, QSharedPointer<QDemonShaderGeneratorGeneratedShader>(new QDemonShaderGeneratorGeneratedShader(inProgram, m_renderContext->getRenderContext())));
+            inserter = m_programToShaderMap.insert(inProgram, QDemonRef<QDemonShaderGeneratorGeneratedShader>(new QDemonShaderGeneratorGeneratedShader(inProgram, m_renderContext->getRenderContext())));
 
         return inserter.value();
     }
 
-    virtual QSharedPointer<QDemonShaderLightProperties> setLight(QSharedPointer<QDemonRenderShaderProgram> inShader,
+    virtual QDemonRef<QDemonShaderLightProperties> setLight(QDemonRef<QDemonRenderShaderProgram> inShader,
                                                                  size_t lightIdx,
                                                                  size_t shadeIdx,
                                                                  const QDemonRenderLight *inLight,
@@ -487,7 +487,7 @@ struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
                                                                  qint32 shadowIdx,
                                                                  float shadowDist)
     {
-        QSharedPointer<QDemonShaderLightProperties> theLightEntry;
+        QDemonRef<QDemonShaderLightProperties> theLightEntry;
         for (quint32 idx = 0, end = m_lightEntries.size(); idx < end && theLightEntry == nullptr;
              ++idx) {
             if (m_lightEntries[idx].first == lightIdx
@@ -507,7 +507,7 @@ struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
             qsnprintf(buf, 16, "[%d]", int(shadeIdx));
             lightName.append(QString::fromLocal8Bit(buf));
 
-            QSharedPointer<QDemonShaderLightProperties> theNewEntry(new QDemonShaderLightProperties(QDemonShaderLightProperties::createLightEntry(inShader)));
+            QDemonRef<QDemonShaderLightProperties> theNewEntry(new QDemonShaderLightProperties(QDemonShaderLightProperties::createLightEntry(inShader)));
             m_lightEntries.push_back(TCustomMaterialLightEntry(lightIdx, theNewEntry));
             theLightEntry = theNewEntry;
         }
@@ -519,7 +519,7 @@ struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
         return theLightEntry;
     }
 
-    void setShadowMaps(QSharedPointer<QDemonRenderShaderProgram> inProgram,
+    void setShadowMaps(QDemonRef<QDemonRenderShaderProgram> inProgram,
                        QDemonShadowMapEntry *inShadow,
                        qint32 &numShadowMaps,
                        qint32 &numShadowCubes,
@@ -541,15 +541,15 @@ struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
         }
     }
 
-    void setGlobalProperties(QSharedPointer<QDemonRenderShaderProgram> inProgram,
+    void setGlobalProperties(QDemonRef<QDemonRenderShaderProgram> inProgram,
                              const QDemonRenderLayer & /*inLayer*/,
                              QDemonRenderCamera &inCamera,
                              QVector3D,
                              QVector<QDemonRenderLight *> &inLights,
                              QVector<QVector3D> &,
-                             QSharedPointer<QDemonRenderShadowMap> inShadowMaps)
+                             QDemonRef<QDemonRenderShadowMap> inShadowMaps)
     {
-        QSharedPointer<QDemonShaderGeneratorGeneratedShader> theShader(getShaderForProgram(inProgram));
+        QDemonRef<QDemonShaderGeneratorGeneratedShader> theShader(getShaderForProgram(inProgram));
         m_renderContext->getRenderContext()->setActiveShader(inProgram);
 
         QDemonRenderCamera &theCamera(inCamera);
@@ -575,8 +575,8 @@ struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
         theShader->m_aoShadowParams.set();
 
         if (m_renderContext->getRenderContext()->getConstantBufferSupport()) {
-            QSharedPointer<QDemonRenderConstantBuffer> pLightCb = getLightConstantBuffer("cbBufferLights", inLights.size());
-            QSharedPointer<QDemonRenderConstantBuffer> pAreaLightCb = getLightConstantBuffer("cbBufferAreaLights", inLights.size());
+            QDemonRef<QDemonRenderConstantBuffer> pLightCb = getLightConstantBuffer("cbBufferLights", inLights.size());
+            QDemonRef<QDemonRenderConstantBuffer> pAreaLightCb = getLightConstantBuffer("cbBufferAreaLights", inLights.size());
 
             // Split the count between CG lights and area lights
             for (quint32 lightIdx = 0; lightIdx < inLights.size() && pLightCb; ++lightIdx) {
@@ -593,7 +593,7 @@ struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
                               theShader->m_shadowMaps, theShader->m_shadowCubes);
 
                 if (inLights[lightIdx]->m_lightType == RenderLightTypes::Area) {
-                    QSharedPointer<QDemonShaderLightProperties> theAreaLightEntry =
+                    QDemonRef<QDemonShaderLightProperties> theAreaLightEntry =
                             setLight(inProgram, lightIdx, areaLights, inLights[lightIdx], theShadow, shdwIdx, inCamera.clipFar);
 
                     if (theAreaLightEntry && pAreaLightCb) {
@@ -605,7 +605,7 @@ struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
 
                     areaLights++;
                 } else {
-                    QSharedPointer<QDemonShaderLightProperties> theLightEntry =
+                    QDemonRef<QDemonShaderLightProperties> theLightEntry =
                             setLight(inProgram, lightIdx, cgLights, inLights[lightIdx], theShadow,
                                      shdwIdx, inCamera.clipFar);
 
@@ -633,8 +633,8 @@ struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
             theShader->m_lightCount.set(cgLights);
             theShader->m_areaLightCount.set(areaLights);
         } else {
-            QVector<QSharedPointer<QDemonShaderLightProperties>> lprop;
-            QVector<QSharedPointer<QDemonShaderLightProperties >> alprop;
+            QVector<QDemonRef<QDemonShaderLightProperties>> lprop;
+            QVector<QDemonRef<QDemonShaderLightProperties >> alprop;
             for (quint32 lightIdx = 0; lightIdx < inLights.size(); ++lightIdx) {
 
                 QDemonShadowMapEntry *theShadow = nullptr;
@@ -649,7 +649,7 @@ struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
                               inLights[lightIdx]->m_lightType == RenderLightTypes::Directional,
                               theShader->m_shadowMaps, theShader->m_shadowCubes);
 
-                QSharedPointer<QDemonShaderLightProperties> p = setLight(inProgram, lightIdx, areaLights,
+                QDemonRef<QDemonShaderLightProperties> p = setLight(inProgram, lightIdx, areaLights,
                                                      inLights[lightIdx], theShadow,
                                                      shdwIdx, inCamera.clipFar);
                 if (inLights[lightIdx]->m_lightType == RenderLightTypes::Area)
@@ -678,7 +678,7 @@ struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
         theShader->m_shadowCubeCount.set(numShadowCubes);
     }
 
-    void setMaterialProperties(QSharedPointer<QDemonRenderShaderProgram> inProgram,
+    void setMaterialProperties(QDemonRef<QDemonRenderShaderProgram> inProgram,
                                const QDemonRenderCustomMaterial &inMaterial,
                                const QVector2D &,
                                const QMatrix4x4 &inModelViewProjection,
@@ -686,8 +686,8 @@ struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
                                const QMatrix4x4 &inGlobalTransform,
                                QDemonRenderableImage *inFirstImage,
                                float inOpacity,
-                               QSharedPointer<QDemonRenderTexture2D> inDepthTexture,
-                               QSharedPointer<QDemonRenderTexture2D> inSSaoTexture,
+                               QDemonRef<QDemonRenderTexture2D> inDepthTexture,
+                               QDemonRef<QDemonRenderTexture2D> inSSaoTexture,
                                QDemonRenderImage *inLightProbe,
                                QDemonRenderImage *inLightProbe2,
                                float inProbeHorizon,
@@ -697,8 +697,8 @@ struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
                                float inProbe2Fade,
                                float inProbeFOV)
     {
-        QSharedPointer<QDemonCustomMaterialSystemInterface> theMaterialSystem(m_renderContext->getCustomMaterialSystem());
-        QSharedPointer<QDemonShaderGeneratorGeneratedShader> theShader(getShaderForProgram(inProgram));
+        QDemonRef<QDemonCustomMaterialSystemInterface> theMaterialSystem(m_renderContext->getCustomMaterialSystem());
+        QDemonRef<QDemonShaderGeneratorGeneratedShader> theShader(getShaderForProgram(inProgram));
 
         theShader->m_viewProjMatrix.set(inModelViewProjection);
         theShader->m_normalMatrix.set(inNormalMatrix);
@@ -797,7 +797,7 @@ struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
             setImageShaderVariables(theShader, *theImage);
     }
 
-    void setMaterialProperties(QSharedPointer<QDemonRenderShaderProgram> inProgram,
+    void setMaterialProperties(QDemonRef<QDemonRenderShaderProgram> inProgram,
                                const QDemonGraphObject &inMaterial,
                                const QVector2D &inCameraVec,
                                const QMatrix4x4 &inModelViewProjection,
@@ -966,7 +966,7 @@ struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
 
     void generateFragmentShader(QDemonShaderDefaultMaterialKey &, const QString &inShaderPathName)
     {
-        QSharedPointer<QDemonDynamicObjectSystemInterface> theDynamicSystem(m_renderContext->getDynamicObjectSystem());
+        QDemonRef<QDemonDynamicObjectSystemInterface> theDynamicSystem(m_renderContext->getDynamicObjectSystem());
         QString fragSource = theDynamicSystem->getShaderSource(inShaderPathName);
 
         Q_ASSERT(!fragSource.isEmpty());
@@ -1114,7 +1114,7 @@ struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
             fragmentShader << "  fragColor = rgba;" << "\n";
     }
 
-    QSharedPointer<QDemonRenderShaderProgram> generateCustomMaterialShader(const QString &inShaderPrefix,
+    QDemonRef<QDemonRenderShaderProgram> generateCustomMaterialShader(const QString &inShaderPrefix,
                                                             const QString &inCustomMaterialName)
     {
         // build a string that allows us to print out the shader we are generating to the log.
@@ -1136,7 +1136,7 @@ struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
         return programGenerator()->compileGeneratedShader(m_generatedShaderString, QDemonShaderCacheProgramFlags(), featureSet());
     }
 
-    virtual QSharedPointer<QDemonRenderShaderProgram> generateShader(const QDemonGraphObject &inMaterial,
+    virtual QDemonRef<QDemonRenderShaderProgram> generateShader(const QDemonGraphObject &inMaterial,
                                                                      QDemonShaderDefaultMaterialKey inShaderDescription,
                                                                      QDemonShaderStageGeneratorInterface &inVertexPipeline,
                                                                      TShaderFeatureSet inFeatureSet,
@@ -1160,9 +1160,9 @@ struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
 };
 }
 
-QSharedPointer<ICustomMaterialShaderGenerator> ICustomMaterialShaderGenerator::createCustomMaterialShaderGenerator(QDemonRenderContextInterface *inRc)
+QDemonRef<ICustomMaterialShaderGenerator> ICustomMaterialShaderGenerator::createCustomMaterialShaderGenerator(QDemonRenderContextInterface *inRc)
 {
-    return QSharedPointer<ICustomMaterialShaderGenerator>(new QDemonShaderGenerator(inRc));
+    return QDemonRef<ICustomMaterialShaderGenerator>(new QDemonShaderGenerator(inRc));
 }
 
 QT_END_NAMESPACE

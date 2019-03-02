@@ -86,16 +86,16 @@ IMPLEMENT_INVASIVE_LIST(QDemonTextCacheNode, previousSibling, nextSibling);
 
 struct QDemonTextTextureCache : public QDemonTextTextureCacheInterface
 {
-    QSharedPointer<QDemonTextRendererInterface> textRenderer;
+    QDemonRef<QDemonTextRendererInterface> textRenderer;
     QDemonTextureInfoHash textureCache;
     QDemonTextCacheNodeList textCacheNodeList;
     quint32 highWaterMark;
     quint32 frameCount;
     quint32 textureTotalBytes;
-    QSharedPointer<QDemonRenderContext> renderContext;
+    QDemonRef<QDemonRenderContext> renderContext;
     bool canUsePathRendering; ///< true if we use hardware accelerated font rendering
 
-    QDemonTextTextureCache(QSharedPointer<QDemonTextRendererInterface> inRenderer, QSharedPointer<QDemonRenderContext> inRenderContext)
+    QDemonTextTextureCache(QDemonRef<QDemonTextRendererInterface> inRenderer, QDemonRef<QDemonRenderContext> inRenderContext)
         : textRenderer(inRenderer)
         , highWaterMark(0x100000)
         , frameCount(0)
@@ -122,9 +122,9 @@ struct QDemonTextTextureCache : public QDemonTextTextureCacheInterface
         return theDetails.width * theDetails.height * QDemonRenderTextureFormats::getSizeofFormat(theDetails.format);
     }
 
-    QSharedPointer<QDemonRenderTexture2D> invalidateLastItem()
+    QDemonRef<QDemonRenderTexture2D> invalidateLastItem()
     {
-        QSharedPointer<QDemonRenderTexture2D> nextTexture;
+        QDemonRef<QDemonRenderTexture2D> nextTexture;
         if (textCacheNodeList.empty() == false) {
             QDemonTextCacheNode *theEnd = textCacheNodeList.back_ptr();
             if (theEnd->frameCount != frameCount) {
@@ -149,15 +149,15 @@ struct QDemonTextTextureCache : public QDemonTextTextureCacheInterface
             retval = theFind.value();
             textCacheNodeList.remove(*retval);
         } else {
-            QSharedPointer<QDemonRenderTexture2D> nextTexture;
+            QDemonRef<QDemonRenderTexture2D> nextTexture;
             if (textureTotalBytes >= highWaterMark && textCacheNodeList.empty() == false)
                 nextTexture = invalidateLastItem();
 
             if (nextTexture.isNull())
                 nextTexture = renderContext->createTexture2D();
 
-            QSharedPointer<QDemonRenderPathFontItem> nextPathFontItemObject;
-            QSharedPointer<QDemonRenderPathFontSpecification> nextPathFontObject;
+            QDemonRef<QDemonRenderPathFontItem> nextPathFontItemObject;
+            QDemonRef<QDemonRenderPathFontSpecification> nextPathFontObject;
             // HW acceleration for fonts not supported
             //if (m_CanUsePathRendering && inText.m_EnableAcceleratedFont) {
             //    nextPathFontItemObject = m_RenderContext->CreatePathFontItem();
@@ -215,10 +215,10 @@ struct QDemonTextTextureCache : public QDemonTextTextureCacheInterface
 };
 }
 
-QSharedPointer<QDemonTextTextureCacheInterface> QDemonTextTextureCacheInterface::createTextureCache(QSharedPointer<QDemonTextRendererInterface> inTextRenderer,
-                                                                                                    QSharedPointer<QDemonRenderContext> inRenderContext)
+QDemonRef<QDemonTextTextureCacheInterface> QDemonTextTextureCacheInterface::createTextureCache(QDemonRef<QDemonTextRendererInterface> inTextRenderer,
+                                                                                                    QDemonRef<QDemonRenderContext> inRenderContext)
 {
-    return QSharedPointer<QDemonTextTextureCacheInterface>(new QDemonTextTextureCache(inTextRenderer, inRenderContext));
+    return QDemonRef<QDemonTextTextureCacheInterface>(new QDemonTextTextureCache(inTextRenderer, inRenderContext));
 }
 
 QDemonTextRenderInfoAndHash::QDemonTextRenderInfoAndHash(const QDemonTextRenderInfo &inInfo,

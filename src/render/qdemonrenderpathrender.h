@@ -43,8 +43,8 @@ class QDemonRenderPathFontSpecification;
 class Q_DEMONRENDER_EXPORT QDemonRenderPathRender
 {
 protected:
-    QSharedPointer<QDemonRenderContextImpl> m_context; ///< pointer to context
-    QSharedPointer<QDemonRenderBackend> m_backend; ///< pointer to backend
+    QDemonRef<QDemonRenderContextImpl> m_context; ///< pointer to context
+    QDemonRef<QDemonRenderBackend> m_backend; ///< pointer to backend
 
 public:
     /**
@@ -56,7 +56,7 @@ public:
          *
          * @return No return.
          */
-    QDemonRenderPathRender(const QSharedPointer<QDemonRenderContextImpl> &context, size_t range);
+    QDemonRenderPathRender(const QDemonRef<QDemonRenderContextImpl> &context, size_t range);
 
     /// @brief destructor
     ~QDemonRenderPathRender();
@@ -69,7 +69,7 @@ public:
     QDemonRenderBackend::QDemonRenderBackendPathObject getPathHandle() { return m_pathRenderHandle; }
 
     // The render context can create a path specification object.
-    void setPathSpecification(const QSharedPointer<QDemonRenderPathSpecification> &inCommandBuffer);
+    void setPathSpecification(const QDemonRef<QDemonRenderPathSpecification> &inCommandBuffer);
 
     QDemonBounds3 getPathObjectBoundingBox();
     QDemonBounds3 getPathObjectFillBox();
@@ -89,7 +89,7 @@ public:
          *
          * @return the backend object handle.
          */
-    static QSharedPointer<QDemonRenderPathRender> create(const QSharedPointer<QDemonRenderContextImpl> &context, size_t range);
+    static QDemonRef<QDemonRenderPathRender> create(const QDemonRef<QDemonRenderContextImpl> &context, size_t range);
 
 private:
     QDemonRenderBackend::QDemonRenderBackendPathObject m_pathRenderHandle; ///< opaque backend handle

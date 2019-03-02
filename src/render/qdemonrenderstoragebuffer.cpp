@@ -35,7 +35,7 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonRenderStorageBuffer::QDemonRenderStorageBuffer(const QSharedPointer<QDemonRenderContextImpl> &context,
+QDemonRenderStorageBuffer::QDemonRenderStorageBuffer(const QDemonRef<QDemonRenderContextImpl> &context,
                                                      const QString &bufferName, size_t size,
                                                      QDemonRenderBufferUsageType::Enum usageType,
                                                      QDemonDataRef<quint8> data, QDemonRenderDataBuffer *pBuffer)
@@ -90,14 +90,14 @@ void QDemonRenderStorageBuffer::updateData(qint32 offset, QDemonDataRef<quint8> 
                                 data.begin() + offset);
 }
 
-QSharedPointer<QDemonRenderStorageBuffer> QDemonRenderStorageBuffer::create(const QSharedPointer<QDemonRenderContextImpl> &context,
+QDemonRef<QDemonRenderStorageBuffer> QDemonRenderStorageBuffer::create(const QDemonRef<QDemonRenderContextImpl> &context,
                                                                             const char *bufferName,
                                                                             QDemonRenderBufferUsageType::Enum usageType,
                                                                             size_t size,
                                                                             QDemonConstDataRef<quint8> bufferData,
                                                                             QDemonRenderDataBuffer *pBuffer)
 {
-    QSharedPointer<QDemonRenderStorageBuffer> retval = nullptr;
+    QDemonRef<QDemonRenderStorageBuffer> retval = nullptr;
 
     if (context->isStorageBufferSupported()) {
         const QString theBufferName = QString::fromLocal8Bit(bufferName);

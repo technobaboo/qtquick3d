@@ -36,7 +36,7 @@ namespace {
 
 struct QDemonRenderList : public QDemonRenderListInterface
 {
-    typedef QPair<quint32, QSharedPointer<QDemonRenderTask>> TTaskIdTaskPair;
+    typedef QPair<quint32, QDemonRef<QDemonRenderTask>> TTaskIdTaskPair;
     typedef QVector<TTaskIdTaskPair> TTaskList;
 
     TTaskList m_tasks;
@@ -57,11 +57,11 @@ struct QDemonRenderList : public QDemonRenderListInterface
         m_tasks.clear();
     }
 
-    quint32 addRenderTask(QSharedPointer<QDemonRenderTask> inTask) override
+    quint32 addRenderTask(QDemonRef<QDemonRenderTask> inTask) override
     {
         quint32 taskId = m_nextTaskId;
         ++m_nextTaskId;
-        m_tasks.push_back(QPair<quint32, QSharedPointer<QDemonRenderTask>>(taskId, inTask));
+        m_tasks.push_back(QPair<quint32, QDemonRef<QDemonRenderTask>>(taskId, inTask));
         return taskId;
     }
 
@@ -97,9 +97,9 @@ struct QDemonRenderList : public QDemonRenderListInterface
 };
 }
 
-QSharedPointer<QDemonRenderListInterface> QDemonRenderListInterface::createRenderList()
+QDemonRef<QDemonRenderListInterface> QDemonRenderListInterface::createRenderList()
 {
-    return QSharedPointer<QDemonRenderListInterface>(new QDemonRenderList());
+    return QDemonRef<QDemonRenderListInterface>(new QDemonRenderList());
 }
 
 QDemonRenderTask::~QDemonRenderTask()

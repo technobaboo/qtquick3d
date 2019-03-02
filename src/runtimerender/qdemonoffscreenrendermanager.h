@@ -185,13 +185,13 @@ public:
 
 struct QDemonOffscreenRenderResult
 {
-    QSharedPointer<QDemonOffscreenRendererInterface> renderer;
-    QSharedPointer<QDemonRenderTexture2D> texture;
+    QDemonRef<QDemonOffscreenRendererInterface> renderer;
+    QDemonRef<QDemonRenderTexture2D> texture;
     bool hasTransparency = false;
     bool hasChangedSinceLastFrame = false;
 
-    QDemonOffscreenRenderResult(QSharedPointer<QDemonOffscreenRendererInterface> inRenderer,
-                                QSharedPointer<QDemonRenderTexture2D> inTexture,
+    QDemonOffscreenRenderResult(QDemonRef<QDemonOffscreenRendererInterface> inRenderer,
+                                QDemonRef<QDemonRenderTexture2D> inTexture,
                                 bool inTrans,
                                 bool inDirty)
         : renderer(inRenderer)
@@ -219,11 +219,11 @@ public:
     // returns true if the renderer has not been registered.
     // No return value means there was an error registering this id.
     virtual QDemonOption<bool> maybeRegisterOffscreenRenderer(const QDemonOffscreenRendererKey &inKey,
-                                                              QSharedPointer<QDemonOffscreenRendererInterface> inRenderer) = 0;
+                                                              QDemonRef<QDemonOffscreenRendererInterface> inRenderer) = 0;
     virtual void registerOffscreenRenderer(const QDemonOffscreenRendererKey &inKey,
-                                           QSharedPointer<QDemonOffscreenRendererInterface> inRenderer) = 0;
+                                           QDemonRef<QDemonOffscreenRendererInterface> inRenderer) = 0;
     virtual bool hasOffscreenRenderer(const QDemonOffscreenRendererKey &inKey) = 0;
-    virtual QSharedPointer<QDemonOffscreenRendererInterface> getOffscreenRenderer(const QDemonOffscreenRendererKey &inKey) = 0;
+    virtual QDemonRef<QDemonOffscreenRendererInterface> getOffscreenRenderer(const QDemonOffscreenRendererKey &inKey) = 0;
     virtual void releaseOffscreenRenderer(const QDemonOffscreenRendererKey &inKey) = 0;
 
     // This doesn't trigger rendering right away.  A node is added to the render graph that
@@ -235,7 +235,7 @@ public:
     virtual void beginFrame() = 0;
     virtual void endFrame() = 0;
 
-    static QSharedPointer<QDemonOffscreenRenderManagerInterface> createOffscreenRenderManager(QSharedPointer<QDemonResourceManagerInterface> inManager, QDemonRenderContextInterface *inContext);
+    static QDemonRef<QDemonOffscreenRenderManagerInterface> createOffscreenRenderManager(QDemonRef<QDemonResourceManagerInterface> inManager, QDemonRenderContextInterface *inContext);
 };
 
 QT_END_NAMESPACE

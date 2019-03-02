@@ -43,11 +43,11 @@ struct QDemonBufferLoader;
 class QDemonBufferLoadResult : public QDemonLoadedBufferInterface
 {
     QString m_path;
-    QSharedPointer<QDemonBufferLoaderCallbackInterface> m_userData;
+    QDemonRef<QDemonBufferLoaderCallbackInterface> m_userData;
     QDemonDataRef<quint8> m_data;
 public:
     QDemonBufferLoadResult(QString p,
-                           QSharedPointer<QDemonBufferLoaderCallbackInterface> ud,
+                           QDemonRef<QDemonBufferLoaderCallbackInterface> ud,
                            QDemonDataRef<quint8> inData)
         : m_path(p)
         , m_userData(ud)
@@ -58,11 +58,11 @@ public:
     QString path() override { return m_path; }
     // Data is released when the buffer itself is released.
     QDemonDataRef<quint8> data() override { return m_data; }
-    QSharedPointer<QDemonBufferLoaderCallbackInterface> userData() override { return m_userData; }
+    QDemonRef<QDemonBufferLoaderCallbackInterface> userData() override { return m_userData; }
 
-    static QSharedPointer<QDemonBufferLoadResult> Allocate(quint32 inBufferSize,
+    static QDemonRef<QDemonBufferLoadResult> Allocate(quint32 inBufferSize,
                                        QString p,
-                                       QSharedPointer<QDemonBufferLoaderCallbackInterface> ud)
+                                       QDemonRef<QDemonBufferLoaderCallbackInterface> ud)
     {
         size_t allocSize = sizeof(QDemonBufferLoadResult) + inBufferSize;
         quint8 *allocMem = static_cast<quint8 *>(::malloc(allocSize));
@@ -70,7 +70,7 @@ public:
             return nullptr;
         quint8 *bufferStart = allocMem + sizeof(QDemonBufferLoadResult);
         QDemonDataRef<quint8> dataBuffer = toDataRef(bufferStart, inBufferSize);
-        return QSharedPointer<QDemonBufferLoadResult>(new (allocMem) QDemonBufferLoadResult(p, ud, dataBuffer));
+        return QDemonRef<QDemonBufferLoadResult>(new (allocMem) QDemonBufferLoadResult(p, ud, dataBuffer));
     }
 };
 struct QDemonLoadedBufferImpl
@@ -79,16 +79,16 @@ struct QDemonLoadedBufferImpl
     quint64 jobId;
     quint64 loadId;
     QString path;
-    QSharedPointer<QDemonBufferLoaderCallbackInterface> userData;
+    QDemonRef<QDemonBufferLoaderCallbackInterface> userData;
     bool quiet;
     volatile bool cancel;
-    QSharedPointer<QDemonBufferLoadResult> result;
+    QDemonRef<QDemonBufferLoadResult> result;
     QDemonLoadedBufferImpl *nextBuffer;
     QDemonLoadedBufferImpl *previousBuffer;
 
     QDemonLoadedBufferImpl(QDemonBufferLoader &l,
                            QString inPath,
-                           QSharedPointer<QDemonBufferLoaderCallbackInterface> ud,
+                           QDemonRef<QDemonBufferLoaderCallbackInterface> ud,
                            bool inQuiet,
                            quint64 loadId)
         : loader(l)
@@ -109,8 +109,8 @@ IMPLEMENT_INVASIVE_LIST(QDemonLoadedBufferImpl, previousBuffer, nextBuffer);
 
 struct QDemonBufferLoader : public QDemonBufferLoaderInterface
 {
-    QSharedPointer<QDemonInputStreamFactoryInterface> factory;
-    QSharedPointer<QDemonAbstractThreadPool> threadPool;
+    QDemonRef<QDemonInputStreamFactoryInterface> factory;
+    QDemonRef<QDemonAbstractThreadPool> threadPool;
 
     QMutex buffersToLoadMutex;
     QDemonLoadedBufferImplList buffersToLoad;
@@ -125,7 +125,7 @@ struct QDemonBufferLoader : public QDemonBufferLoaderInterface
 
     quint64 nextBufferId;
 
-    QDemonBufferLoader(QSharedPointer<QDemonInputStreamFactoryInterface> fac, QSharedPointer<QDemonAbstractThreadPool> tp)
+    QDemonBufferLoader(QDemonRef<QDemonInputStreamFactoryInterface> fac, QDemonRef<QDemonAbstractThreadPool> tp)
         : factory(fac)
         , threadPool(tp)
         , buffersToLoadMutex()
@@ -161,7 +161,7 @@ struct QDemonBufferLoader : public QDemonBufferLoaderInterface
         QDemonLoadedBufferImpl &theBuffer = *reinterpret_cast<QDemonLoadedBufferImpl *>(loader);
 
         initializeActiveLoadingBuffer(theBuffer);
-        QSharedPointer<QIODevice> theStream =
+        QDemonRef<QIODevice> theStream =
                 theBuffer.loader.factory->getStreamForFile(theBuffer.path, theBuffer.quiet);
         if (theStream && theBuffer.cancel == false) {
             theStream->seek(IOStream::positionHelper(*theStream.data(), 0, IOStream::SeekPosition::End));
@@ -218,7 +218,7 @@ struct QDemonBufferLoader : public QDemonBufferLoaderInterface
 
     // nonblocking.  Quiet failure is passed to the input stream factory.
     quint64 queueForLoading(QString inPath,
-                            QSharedPointer<QDemonBufferLoaderCallbackInterface> inUserData = nullptr,
+                            QDemonRef<QDemonBufferLoaderCallbackInterface> inUserData = nullptr,
                             bool inQuietFailure = false) override
     {
         QDemonLoadedBufferImpl &theBuffer = *new QDemonLoadedBufferImpl(*this, inPath, inUserData, inQuietFailure, nextBufferId);
@@ -267,7 +267,7 @@ struct QDemonBufferLoader : public QDemonBufferLoaderInterface
     }
 
     // blocking, be careful with this.  No order guarantees here.
-    QSharedPointer<QDemonLoadedBufferInterface> nextLoadedBuffer() override
+    QDemonRef<QDemonLoadedBufferInterface> nextLoadedBuffer() override
     {
         while (!areLoadedBuffersAvailable()) {
             bufferLoadedEvent.wait(&loadedBuffersMutex);
@@ -278,7 +278,7 @@ struct QDemonBufferLoader : public QDemonBufferLoaderInterface
             theBuffer = loadedBuffers.back_ptr();
             loadedBuffers.remove(*theBuffer);
         }
-        QSharedPointer<QDemonLoadedBufferInterface> retval(theBuffer->result);
+        QDemonRef<QDemonLoadedBufferInterface> retval(theBuffer->result);
         if (retval == nullptr) {
             retval = QDemonBufferLoadResult::Allocate(0, theBuffer->path, theBuffer->userData);
         }
@@ -303,9 +303,9 @@ QDemonBufferLoaderInterface::~QDemonBufferLoaderInterface()
 
 }
 
-QSharedPointer<QDemonBufferLoaderInterface> QDemonBufferLoaderInterface::create(QSharedPointer<QDemonInputStreamFactoryInterface> &inFactory, QSharedPointer<QDemonAbstractThreadPool> inThreadPool)
+QDemonRef<QDemonBufferLoaderInterface> QDemonBufferLoaderInterface::create(QDemonRef<QDemonInputStreamFactoryInterface> &inFactory, QDemonRef<QDemonAbstractThreadPool> inThreadPool)
 {
-    return QSharedPointer<QDemonBufferLoaderInterface>(new QDemonBufferLoader(inFactory, inThreadPool));
+    return QDemonRef<QDemonBufferLoaderInterface>(new QDemonBufferLoader(inFactory, inThreadPool));
 }
 
 QDemonBufferLoader::~QDemonBufferLoader()

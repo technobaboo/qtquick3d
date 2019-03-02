@@ -431,7 +431,7 @@ void QDemonGraphNode::removeFromGraph()
     }
 }
 
-QDemonBounds3 QDemonGraphNode::getBounds(QSharedPointer<QDemonBufferManagerInterface> inManager, QSharedPointer<QDemonPathManagerInterface> inPathManager,
+QDemonBounds3 QDemonGraphNode::getBounds(QDemonRef<QDemonBufferManagerInterface> inManager, QDemonRef<QDemonPathManagerInterface> inPathManager,
                                bool inIncludeChildren, QDemonRenderNodeFilterInterface *inChildFilter) const
 {
     QDemonBounds3 retval;
@@ -448,7 +448,7 @@ QDemonBounds3 QDemonGraphNode::getBounds(QSharedPointer<QDemonBufferManagerInter
     return retval;
 }
 
-QDemonBounds3 QDemonGraphNode::getChildBounds(QSharedPointer<QDemonBufferManagerInterface> inManager, QSharedPointer<QDemonPathManagerInterface> inPathManager,
+QDemonBounds3 QDemonGraphNode::getChildBounds(QDemonRef<QDemonBufferManagerInterface> inManager, QDemonRef<QDemonPathManagerInterface> inPathManager,
                                     QDemonRenderNodeFilterInterface *inChildFilter) const
 {
     QDemonBounds3 retval;

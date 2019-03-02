@@ -33,7 +33,7 @@
 QT_BEGIN_NAMESPACE
 
 
-QDemonResourceFrameBuffer::QDemonResourceFrameBuffer(QSharedPointer<QDemonResourceManagerInterface> mgr)
+QDemonResourceFrameBuffer::QDemonResourceFrameBuffer(QDemonRef<QDemonResourceManagerInterface> mgr)
     : m_resourceManager(mgr)
     , m_frameBuffer(nullptr)
 {
@@ -60,7 +60,7 @@ void QDemonResourceFrameBuffer::releaseFrameBuffer()
     }
 }
 
-QDemonResourceRenderBuffer::QDemonResourceRenderBuffer(QSharedPointer<QDemonResourceManagerInterface> mgr)
+QDemonResourceRenderBuffer::QDemonResourceRenderBuffer(QDemonRef<QDemonResourceManagerInterface> mgr)
     : m_resourceManager(mgr)
     , m_renderBuffer(nullptr)
 {

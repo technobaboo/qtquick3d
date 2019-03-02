@@ -236,7 +236,7 @@ struct QDemonLayerRenderPreparationData
     };
 
     QDemonRenderLayer &layer;
-    QSharedPointer<QDemonRendererImpl> renderer;
+    QDemonRef<QDemonRendererImpl> renderer;
     // List of nodes we can render, not all may be active.  Found by doing a depth-first
     // search through m_FirstChild if length is zero.
 
@@ -275,7 +275,7 @@ struct QDemonLayerRenderPreparationData
     QVector<QVector3D> sourceLightDirections;
     QVector<QVector3D> lightDirections;
     TModelContextPtrList modelContexts;
-    QSharedPointer<QDemonOffscreenRendererInterface> lastFrameOffscreenRenderer;
+    QDemonRef<QDemonOffscreenRendererInterface> lastFrameOffscreenRenderer;
 
     QVector<QDemonShaderPreprocessorFeature> features;
     QString cgLightingFeatureName;
@@ -284,9 +284,9 @@ struct QDemonLayerRenderPreparationData
     bool tooManyLightsError;
 
     // shadow mapps
-    QSharedPointer<QDemonRenderShadowMap> shadowMapManager;
+    QDemonRef<QDemonRenderShadowMap> shadowMapManager;
 
-    QDemonLayerRenderPreparationData(QDemonRenderLayer &inLayer, QSharedPointer<QDemonRendererImpl> inRenderer);
+    QDemonLayerRenderPreparationData(QDemonRenderLayer &inLayer, QDemonRef<QDemonRendererImpl> inRenderer);
     virtual ~QDemonLayerRenderPreparationData();
     bool getOffscreenRenderer();
     bool getShadowMapManager();
@@ -354,7 +354,7 @@ struct QDemonLayerRenderPreparationData
     // need.
     virtual QDemonOffscreenRendererEnvironment createOffscreenRenderEnvironment() = 0;
 
-    virtual QSharedPointer<QDemonRenderTask> createRenderToTextureRunnable() = 0;
+    virtual QDemonRef<QDemonRenderTask> createRenderToTextureRunnable() = 0;
 };
 QT_END_NAMESPACE
 #endif

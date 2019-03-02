@@ -52,7 +52,7 @@ public:
     }
 };
 
-QDemonRenderAtomicCounterBuffer::QDemonRenderAtomicCounterBuffer(const QSharedPointer<QDemonRenderContextImpl> &context,
+QDemonRenderAtomicCounterBuffer::QDemonRenderAtomicCounterBuffer(const QDemonRef<QDemonRenderContextImpl> &context,
                                                                  const QString &bufferName,
                                                                  size_t size,
                                                                  QDemonRenderBufferUsageType::Enum usageType,
@@ -132,7 +132,7 @@ bool QDemonRenderAtomicCounterBuffer::containsParam(const QString &name)
         return false;
 }
 
-QSharedPointer<QDemonRenderAtomicCounterBuffer> QDemonRenderAtomicCounterBuffer::create(const QSharedPointer<QDemonRenderContextImpl> &context, const char *bufferName,
+QDemonRef<QDemonRenderAtomicCounterBuffer> QDemonRenderAtomicCounterBuffer::create(const QDemonRef<QDemonRenderContextImpl> &context, const char *bufferName,
                                                                                         QDemonRenderBufferUsageType::Enum usageType, size_t size,
                                                                                         QDemonConstDataRef<quint8> bufferData)
 {

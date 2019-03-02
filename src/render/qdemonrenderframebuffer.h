@@ -43,25 +43,25 @@ class QDemonRenderTextureCube;
 
 class QDemonRenderTextureOrRenderBuffer
 {
-    QSharedPointer<QDemonRenderTexture2D> m_texture2D;
-    QSharedPointer<QDemonRenderTexture2DArray> m_texture2DArray;
-    QSharedPointer<QDemonRenderTextureCube> m_textureCube;
-    QSharedPointer<QDemonRenderRenderBuffer> m_renderBuffer;
+    QDemonRef<QDemonRenderTexture2D> m_texture2D;
+    QDemonRef<QDemonRenderTexture2DArray> m_texture2DArray;
+    QDemonRef<QDemonRenderTextureCube> m_textureCube;
+    QDemonRef<QDemonRenderRenderBuffer> m_renderBuffer;
 
 public:
-    QDemonRenderTextureOrRenderBuffer(QSharedPointer<QDemonRenderTexture2D> texture)
+    QDemonRenderTextureOrRenderBuffer(QDemonRef<QDemonRenderTexture2D> texture)
         : m_texture2D(texture)
     {
     }
-    QDemonRenderTextureOrRenderBuffer(QSharedPointer<QDemonRenderRenderBuffer> render)
+    QDemonRenderTextureOrRenderBuffer(QDemonRef<QDemonRenderRenderBuffer> render)
         : m_renderBuffer(render)
     {
     }
-    QDemonRenderTextureOrRenderBuffer(QSharedPointer<QDemonRenderTexture2DArray> textureArray)
+    QDemonRenderTextureOrRenderBuffer(QDemonRef<QDemonRenderTexture2DArray> textureArray)
         : m_texture2DArray(textureArray)
     {
     }
-    QDemonRenderTextureOrRenderBuffer(QSharedPointer<QDemonRenderTextureCube> textureCube)
+    QDemonRenderTextureOrRenderBuffer(QDemonRef<QDemonRenderTextureCube> textureCube)
         : m_textureCube(textureCube)
     {
     }
@@ -76,10 +76,10 @@ public:
     QDemonRenderTextureOrRenderBuffer &operator=(const QDemonRenderTextureOrRenderBuffer &other)
     {
         if (this != &other) {
-            m_texture2D = QSharedPointer<QDemonRenderTexture2D>(other.m_texture2D);
-            m_texture2DArray = QSharedPointer<QDemonRenderTexture2DArray>(other.m_texture2DArray);
-            m_renderBuffer = QSharedPointer<QDemonRenderRenderBuffer>(other.m_renderBuffer);
-            m_textureCube = QSharedPointer<QDemonRenderTextureCube>(other.m_textureCube);
+            m_texture2D = QDemonRef<QDemonRenderTexture2D>(other.m_texture2D);
+            m_texture2DArray = QDemonRef<QDemonRenderTexture2DArray>(other.m_texture2DArray);
+            m_renderBuffer = QDemonRef<QDemonRenderRenderBuffer>(other.m_renderBuffer);
+            m_textureCube = QDemonRef<QDemonRenderTextureCube>(other.m_textureCube);
         }
         return *this;
     }
@@ -89,22 +89,22 @@ public:
     bool hasTextureCube() const { return m_textureCube != nullptr; }
     bool hasRenderBuffer() const { return m_renderBuffer != nullptr; }
 
-    QSharedPointer<QDemonRenderTexture2D> getTexture2D() const
+    QDemonRef<QDemonRenderTexture2D> getTexture2D() const
     {
         Q_ASSERT(hasTexture2D());
         return m_texture2D;
     }
-    QSharedPointer<QDemonRenderTexture2DArray> getTexture2DArray() const
+    QDemonRef<QDemonRenderTexture2DArray> getTexture2DArray() const
     {
         Q_ASSERT(hasTexture2DArray());
         return m_texture2DArray;
     }
-    QSharedPointer<QDemonRenderTextureCube> getTextureCube() const
+    QDemonRef<QDemonRenderTextureCube> getTextureCube() const
     {
         Q_ASSERT(hasTextureCube());
         return m_textureCube;
     }
-    QSharedPointer<QDemonRenderRenderBuffer> getRenderBuffer() const
+    QDemonRef<QDemonRenderRenderBuffer> getRenderBuffer() const
     {
         Q_ASSERT(hasRenderBuffer());
         return m_renderBuffer;
@@ -114,8 +114,8 @@ public:
 class QDemonRenderFrameBuffer : public QDemonRenderImplemented, public QEnableSharedFromThis<QDemonRenderFrameBuffer>
 {
 private:
-    QSharedPointer<QDemonRenderContextImpl> m_context; ///< pointer to context
-    QSharedPointer<QDemonRenderBackend> m_backend; ///< pointer to backend
+    QDemonRef<QDemonRenderContextImpl> m_context; ///< pointer to context
+    QDemonRef<QDemonRenderBackend> m_backend; ///< pointer to backend
 
     QDemonRenderTextureOrRenderBuffer m_attachments[QDemonRenderFrameBufferAttachments::LastAttachment]; ///< attachments array
     QDemonRenderBackend::QDemonRenderBackendRenderTargetObject m_bufferHandle; ///< opaque backend handle
@@ -129,7 +129,7 @@ public:
          *
          * @return No return.
          */
-    QDemonRenderFrameBuffer(const QSharedPointer<QDemonRenderContextImpl> &context);
+    QDemonRenderFrameBuffer(const QDemonRef<QDemonRenderContextImpl> &context);
 
     /// destructor
     virtual ~QDemonRenderFrameBuffer();
@@ -228,7 +228,7 @@ public:
          *
          * @return a pointer to framebuffer object.
          */
-    static QSharedPointer<QDemonRenderFrameBuffer> create(const QSharedPointer<QDemonRenderContextImpl> &context);
+    static QDemonRef<QDemonRenderFrameBuffer> create(const QDemonRef<QDemonRenderContextImpl> &context);
 
 private:
     /**

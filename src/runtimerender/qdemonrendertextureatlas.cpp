@@ -40,7 +40,7 @@ namespace {
 struct QDemonTextureAtlasBinPackSL
 {
 public:
-    QDemonTextureAtlasBinPackSL(QSharedPointer<QDemonRenderContext> inContext, qint32 width, qint32 height)
+    QDemonTextureAtlasBinPackSL(QDemonRef<QDemonRenderContext> inContext, qint32 width, qint32 height)
         : m_binWidth(width)
         , m_binHeight(height)
     {
@@ -226,9 +226,9 @@ struct QDemonTextureAtlasEntry
 
 struct QDemonTextureAtlas : public QDemonTextureAtlasInterface
 {
-    QSharedPointer<QDemonRenderContext> m_renderContext;
+    QDemonRef<QDemonRenderContext> m_renderContext;
 
-    QDemonTextureAtlas(QSharedPointer<QDemonRenderContext> inRenderContext, qint32 width, qint32 height)
+    QDemonTextureAtlas(QDemonRef<QDemonRenderContext> inRenderContext, qint32 width, qint32 height)
         : m_renderContext(inRenderContext)
         , m_width(width)
         , m_height(height)
@@ -335,9 +335,9 @@ private:
 
 } // namespace
 
-QSharedPointer<QDemonTextureAtlasInterface> QDemonTextureAtlasInterface::createTextureAtlas(QSharedPointer<QDemonRenderContext> inRenderContext, qint32 width, qint32 height)
+QDemonRef<QDemonTextureAtlasInterface> QDemonTextureAtlasInterface::createTextureAtlas(QDemonRef<QDemonRenderContext> inRenderContext, qint32 width, qint32 height)
 {
-    return QSharedPointer<QDemonTextureAtlasInterface>(new QDemonTextureAtlas(inRenderContext, width, height));
+    return QDemonRef<QDemonTextureAtlasInterface>(new QDemonTextureAtlas(inRenderContext, width, height));
 }
 
 QT_END_NAMESPACE

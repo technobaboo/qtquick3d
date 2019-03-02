@@ -19,7 +19,7 @@ public:
     virtual void outputTimerData(quint32 inFrameCount = 0) = 0;
     virtual void resetTimerData() = 0;
 
-    static QSharedPointer<QDemonPerfTimerInterface> createPerfTimer();
+    static QDemonRef<QDemonPerfTimerInterface> createPerfTimer();
 };
 
 // Specialize this struct to get the perf timer in different contexts.

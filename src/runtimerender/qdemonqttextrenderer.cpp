@@ -101,8 +101,8 @@ struct QDemonQtTextRenderer : public QDemonTextRendererInterface, public QEnable
     typedef QSet<QString> TStringSet;
     typedef QHash<QString, FontInfo> TFontInfoHash;
 
-    QSharedPointer<QDemonRenderContext> m_renderContext;
-    QSharedPointer<QDemonPerfTimerInterface> m_perfTimer;
+    QDemonRef<QDemonRenderContext> m_renderContext;
+    QDemonRef<QDemonPerfTimerInterface> m_perfTimer;
     QVector<QDemonRendererFontEntry> m_installedFonts;
 
     QWaitCondition m_preloadSync;
@@ -281,7 +281,7 @@ struct QDemonQtTextRenderer : public QDemonTextRendererInterface, public QEnable
         theRenderer->m_preloadSync.wakeAll();
     }
 
-    void beginPreloadFonts(QDemonAbstractThreadPool &inThreadPool, QSharedPointer<QDemonPerfTimerInterface> inTimer) override
+    void beginPreloadFonts(QDemonAbstractThreadPool &inThreadPool, QDemonRef<QDemonPerfTimerInterface> inTimer) override
     {
         m_preloadingFonts = true;
 
@@ -339,7 +339,7 @@ struct QDemonQtTextRenderer : public QDemonTextRendererInterface, public QEnable
         return getFontNameForFont(QString::fromLocal8Bit(inFontname));
     }
 
-    QSharedPointer<QDemonTextRendererInterface> getTextRenderer(QSharedPointer<QDemonRenderContext> inRenderContext) override
+    QDemonRef<QDemonTextRendererInterface> getTextRenderer(QDemonRef<QDemonRenderContext> inRenderContext) override
     {
         m_renderContext = inRenderContext;
         return this->sharedFromThis();
@@ -607,9 +607,9 @@ struct QDemonQtTextRenderer : public QDemonTextRendererInterface, public QEnable
 };
 }
 
-QSharedPointer<QDemonTextRendererCoreInterface> QDemonTextRendererCoreInterface::createQtTextRenderer()
+QDemonRef<QDemonTextRendererCoreInterface> QDemonTextRendererCoreInterface::createQtTextRenderer()
 {
-    return QSharedPointer<QDemonQtTextRenderer>(new QDemonQtTextRenderer());
+    return QDemonRef<QDemonQtTextRenderer>(new QDemonQtTextRenderer());
 }
 
 QT_END_NAMESPACE

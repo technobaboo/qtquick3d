@@ -99,17 +99,17 @@ public:
 
     // Implicit call to end program.
 
-    virtual QSharedPointer<QDemonRenderShaderProgram> compileGeneratedShader(const QString &inShaderName,
+    virtual QDemonRef<QDemonRenderShaderProgram> compileGeneratedShader(const QString &inShaderName,
                                                                              const QDemonShaderCacheProgramFlags &inFlags,
                                                                              TShaderFeatureSet inFeatureSet,
                                                                              bool separableProgram = false) = 0;
 
-    QSharedPointer<QDemonRenderShaderProgram> compileGeneratedShader(const QString &inShaderName, bool separableProgram = false)
+    QDemonRef<QDemonRenderShaderProgram> compileGeneratedShader(const QString &inShaderName, bool separableProgram = false)
     {
         return compileGeneratedShader(inShaderName, QDemonShaderCacheProgramFlags(), TShaderFeatureSet(), separableProgram);
     }
 
-    static QSharedPointer<QDemonShaderProgramGeneratorInterface> createProgramGenerator(QDemonRenderContextInterface *inContext);
+    static QDemonRef<QDemonShaderProgramGeneratorInterface> createProgramGenerator(QDemonRenderContextInterface *inContext);
 
     static void outputParaboloidDepthVertex(QDemonShaderStageGeneratorInterface &inGenerator);
     // By convention, the local space result of the TE is stored in vec4 pos local variable.

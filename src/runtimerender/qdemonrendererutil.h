@@ -43,15 +43,15 @@ class QDemonRendererUtil
     static const quint32 MAX_SSAA_DIM = 8192; // max render traget size for SSAA mode
 
 public:
-    static void resolveMutisampleFBOColorOnly(QSharedPointer<QDemonResourceManagerInterface> inManager,
+    static void resolveMutisampleFBOColorOnly(QDemonRef<QDemonResourceManagerInterface> inManager,
                                               QDemonResourceTexture2D &ioResult,
                                               QDemonRenderContext &inRenderContext,
                                               quint32 inWidth,
                                               quint32 inHeight,
                                               QDemonRenderTextureFormats::Enum inColorFormat,
-                                              QSharedPointer<QDemonRenderFrameBuffer> inSourceFBO);
+                                              QDemonRef<QDemonRenderFrameBuffer> inSourceFBO);
 
-    static void resolveSSAAFBOColorOnly(QSharedPointer<QDemonResourceManagerInterface> inManager,
+    static void resolveSSAAFBOColorOnly(QDemonRef<QDemonResourceManagerInterface> inManager,
                                         QDemonResourceTexture2D &ioResult,
                                         quint32 outWidth,
                                         quint32 outHeight,
@@ -59,7 +59,7 @@ public:
                                         quint32 inWidth,
                                         quint32 inHeight,
                                         QDemonRenderTextureFormats::Enum inColorFormat,
-                                        QSharedPointer<QDemonRenderFrameBuffer> inSourceFBO);
+                                        QDemonRef<QDemonRenderFrameBuffer> inSourceFBO);
 
     static void getSSAARenderSize(quint32 inWidth,
                                   quint32 inHeight,

@@ -35,7 +35,7 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonRenderPathFontSpecification::QDemonRenderPathFontSpecification(const QSharedPointer<QDemonRenderContextImpl> &context,
+QDemonRenderPathFontSpecification::QDemonRenderPathFontSpecification(const QDemonRef<QDemonRenderContextImpl> &context,
                                                                      const QString &fontName)
     : m_context(context)
     , m_backend(context->getBackend())
@@ -80,7 +80,7 @@ void QDemonRenderPathFontSpecification::loadPathGlyphs(const char *fontName,
 }
 
 void
-QDemonRenderPathFontSpecification::stencilFillPathInstanced(const QSharedPointer<QDemonRenderPathFontItem> &inPathFontItem)
+QDemonRenderPathFontSpecification::stencilFillPathInstanced(const QDemonRef<QDemonRenderPathFontItem> &inPathFontItem)
 {
     const void *glyphIDs = inPathFontItem->getGlyphIDs();
     const float *spacing = inPathFontItem->getSpacing();
@@ -98,7 +98,7 @@ QDemonRenderPathFontSpecification::stencilFillPathInstanced(const QSharedPointer
                                         spacing);
 }
 
-void QDemonRenderPathFontSpecification::coverFillPathInstanced(const QSharedPointer<QDemonRenderPathFontItem> &inPathFontItem)
+void QDemonRenderPathFontSpecification::coverFillPathInstanced(const QDemonRef<QDemonRenderPathFontItem> &inPathFontItem)
 {
     const void *glyphIDs = inPathFontItem->getGlyphIDs();
     const float *spacing = inPathFontItem->getSpacing();
@@ -136,11 +136,11 @@ QDemonRenderPathFontSpecification::getSizeOfType(QDemonRenderPathFormatType::Enu
     }
 }
 
-QSharedPointer<QDemonRenderPathFontSpecification> QDemonRenderPathFontSpecification::createPathFontSpecification(const QSharedPointer<QDemonRenderContextImpl> &context,
+QDemonRef<QDemonRenderPathFontSpecification> QDemonRenderPathFontSpecification::createPathFontSpecification(const QDemonRef<QDemonRenderContextImpl> &context,
                                                                                                                  const QString &fontName)
 {
     Q_ASSERT(context->isPathRenderingSupported());
 
-    return QSharedPointer<QDemonRenderPathFontSpecification>(new QDemonRenderPathFontSpecification(context, fontName));
+    return QDemonRef<QDemonRenderPathFontSpecification>(new QDemonRenderPathFontSpecification(context, fontName));
 }
 QT_END_NAMESPACE

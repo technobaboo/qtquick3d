@@ -63,9 +63,9 @@ static const QVector3D g_BoxUVs[] = {
     QVector3D(0, 1, 0), QVector3D(0, 0, 0), QVector3D(1, 0, 0), QVector3D(1, 1, 0),
 };
 
-QSharedPointer<QDemonRenderInputAssembler> QDemonRenderExampleTools::createBox(QSharedPointer<QDemonRenderContext> context,
-                                                                               QSharedPointer<QDemonRenderVertexBuffer> &outVertexBuffer,
-                                                                               QSharedPointer<QDemonRenderIndexBuffer> &outIndexBuffer)
+QDemonRef<QDemonRenderInputAssembler> QDemonRenderExampleTools::createBox(QDemonRef<QDemonRenderContext> context,
+                                                                               QDemonRef<QDemonRenderVertexBuffer> &outVertexBuffer,
+                                                                               QDemonRef<QDemonRenderIndexBuffer> &outIndexBuffer)
 {
     const quint32 numVerts = 24;
     const quint32 numIndices = 36;
@@ -78,7 +78,7 @@ QSharedPointer<QDemonRenderInputAssembler> QDemonRenderExampleTools::createBox(Q
         QDemonRenderVertexBufferEntry("attr_uv", QDemonRenderComponentTypes::Float32, 2, 6 * sizeof(float)),
     };
 
-    QSharedPointer<QDemonRenderAttribLayout> attribLayout = context->createAttributeLayout(toConstDataRef(entries, 3));
+    QDemonRef<QDemonRenderAttribLayout> attribLayout = context->createAttributeLayout(toConstDataRef(entries, 3));
 
     // Vertex Buffer
     quint32 bufStride = 8 * sizeof(float);
@@ -138,7 +138,7 @@ QSharedPointer<QDemonRenderInputAssembler> QDemonRenderExampleTools::createBox(Q
     quint32 strides = outVertexBuffer->getStride();
     quint32 offsets = 0;
 
-    QSharedPointer<QDemonRenderInputAssembler> inputAssembler = context->createInputAssembler(attribLayout,
+    QDemonRef<QDemonRenderInputAssembler> inputAssembler = context->createInputAssembler(attribLayout,
                                                                                               toConstDataRef(&outVertexBuffer, 1),
                                                                                               outIndexBuffer,
                                                                                               toConstDataRef(&strides, 1),
@@ -155,7 +155,7 @@ inline QDemonConstDataRef<qint8> toRef(const char *data)
     return QDemonConstDataRef<qint8>((const qint8 *)data, len);
 }
 
-static void dumpShaderOutput(QSharedPointer<QDemonRenderContext> ctx, const QDemonRenderVertFragCompilationResult &compResult)
+static void dumpShaderOutput(QDemonRef<QDemonRenderContext> ctx, const QDemonRenderVertFragCompilationResult &compResult)
 {
     //    if (!isTrivial(compResult.mFragCompilationOutput)) {
     //        qWarning("Frag output:\n%s", compResult.mFragCompilationOutput);
@@ -168,7 +168,7 @@ static void dumpShaderOutput(QSharedPointer<QDemonRenderContext> ctx, const QDem
     //    }
 }
 
-QSharedPointer<QDemonRenderShaderProgram> compileAndDump(QSharedPointer<QDemonRenderContext> ctx, const char *name, const char *vertShader, const char *fragShader)
+QDemonRef<QDemonRenderShaderProgram> compileAndDump(QDemonRef<QDemonRenderContext> ctx, const char *name, const char *vertShader, const char *fragShader)
 {
     QDemonRenderVertFragCompilationResult compResult =
             ctx->compileSource(name, toRef(vertShader), toRef(fragShader));
@@ -177,12 +177,12 @@ QSharedPointer<QDemonRenderShaderProgram> compileAndDump(QSharedPointer<QDemonRe
 }
 }
 
-QSharedPointer<QDemonRenderShaderProgram> QDemonRenderExampleTools::createSimpleShader(QSharedPointer<QDemonRenderContext> ctx)
+QDemonRef<QDemonRenderShaderProgram> QDemonRenderExampleTools::createSimpleShader(QDemonRef<QDemonRenderContext> ctx)
 {
     return compileAndDump(ctx, "SimpleShader", getSimpleVertShader(), getSimpleFragShader());
 }
 
-QSharedPointer<QDemonRenderShaderProgram> QDemonRenderExampleTools::createSimpleShaderTex(QSharedPointer<QDemonRenderContext> ctx)
+QDemonRef<QDemonRenderShaderProgram> QDemonRenderExampleTools::createSimpleShaderTex(QDemonRef<QDemonRenderContext> ctx)
 {
     return compileAndDump(ctx, "SimpleShader", getSimpleVertShader(), getSimpleFragShaderTex());
 }

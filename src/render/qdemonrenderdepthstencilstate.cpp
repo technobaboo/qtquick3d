@@ -33,7 +33,7 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonRenderDepthStencilState::QDemonRenderDepthStencilState(const QSharedPointer<QDemonRenderContextImpl> &context,
+QDemonRenderDepthStencilState::QDemonRenderDepthStencilState(const QDemonRef<QDemonRenderContextImpl> &context,
                                                              bool enableDepth,
                                                              bool depthMask,
                                                              QDemonRenderBoolOp::Enum depthFunc, bool enableStencil,
@@ -66,8 +66,8 @@ QDemonRenderDepthStencilState::~QDemonRenderDepthStencilState()
     }
 }
 
-QSharedPointer<QDemonRenderDepthStencilState>
-QDemonRenderDepthStencilState::create(const QSharedPointer<QDemonRenderContextImpl> &context, bool enableDepth,
+QDemonRef<QDemonRenderDepthStencilState>
+QDemonRenderDepthStencilState::create(const QDemonRef<QDemonRenderContextImpl> &context, bool enableDepth,
                                       bool depthMask, QDemonRenderBoolOp::Enum depthFunc,
                                       bool enableStencil,
                                       QDemonRenderStencilFunctionArgument &stencilFuncFront,
@@ -75,7 +75,7 @@ QDemonRenderDepthStencilState::create(const QSharedPointer<QDemonRenderContextIm
                                       QDemonRenderStencilOperationArgument &depthStencilOpFront,
                                       QDemonRenderStencilOperationArgument &depthStencilOpBack)
 {
-    return QSharedPointer<QDemonRenderDepthStencilState>(new QDemonRenderDepthStencilState(context, enableDepth, depthMask, depthFunc, enableStencil,
+    return QDemonRef<QDemonRenderDepthStencilState>(new QDemonRenderDepthStencilState(context, enableDepth, depthMask, depthFunc, enableStencil,
                 stencilFuncFront, stencilFuncBack, depthStencilOpFront, depthStencilOpBack));
 }
 QT_END_NAMESPACE

@@ -37,12 +37,12 @@
 
 QT_BEGIN_NAMESPACE
 
-QSharedPointer<QDemonLoadedTexture> QDemonLoadedTexture::loadQImage(const QString &inPath, qint32 flipVertical,
+QDemonRef<QDemonLoadedTexture> QDemonLoadedTexture::loadQImage(const QString &inPath, qint32 flipVertical,
                                            QDemonRenderContextType renderContextType)
 {
     Q_UNUSED(flipVertical)
     Q_UNUSED(renderContextType)
-    QSharedPointer<QDemonLoadedTexture> retval(nullptr);
+    QDemonRef<QDemonLoadedTexture> retval(nullptr);
     QImage image(inPath);
     image = image.mirrored();
     image = image.rgbSwapped();
@@ -542,7 +542,7 @@ void QDemonLoadedTexture::releaseDecompressedTexture(QDemonTextureData inImage)
 #define stricmp strcasecmp
 #endif
 
-QSharedPointer<QDemonLoadedTexture> QDemonLoadedTexture::load(const QString &inPath,
+QDemonRef<QDemonLoadedTexture> QDemonLoadedTexture::load(const QString &inPath,
                                                               QDemonInputStreamFactoryInterface &inFactory,
                                                               bool inFlipY,
                                                               QDemonRenderContextType renderContextType)
@@ -550,8 +550,8 @@ QSharedPointer<QDemonLoadedTexture> QDemonLoadedTexture::load(const QString &inP
     if (inPath.isEmpty())
         return nullptr;
 
-    QSharedPointer<QDemonLoadedTexture> theLoadedImage = nullptr;
-    QSharedPointer<QIODevice> theStream(inFactory.getStreamForFile(inPath));
+    QDemonRef<QDemonLoadedTexture> theLoadedImage = nullptr;
+    QDemonRef<QIODevice> theStream(inFactory.getStreamForFile(inPath));
     QString fileName;
     inFactory.getPathForFile(inPath, fileName);
     if (theStream && inPath.size() > 3) {

@@ -55,7 +55,7 @@ public:
     }
 };
 
-QDemonRenderConstantBuffer::QDemonRenderConstantBuffer(const QSharedPointer<QDemonRenderContextImpl> &context,
+QDemonRenderConstantBuffer::QDemonRenderConstantBuffer(const QDemonRef<QDemonRenderContextImpl> &context,
                                                        const QString &bufferName, size_t size,
                                                        QDemonRenderBufferUsageType::Enum usageType,
                                                        QDemonDataRef<quint8> data)
@@ -107,7 +107,7 @@ void QDemonRenderConstantBuffer::bind()
     m_backend->bindBuffer(m_bufferHandle, m_bindFlags);
 }
 
-void QDemonRenderConstantBuffer::bindToShaderProgram(const QSharedPointer<QDemonRenderShaderProgram> &inShader,
+void QDemonRenderConstantBuffer::bindToShaderProgram(const QDemonRef<QDemonRenderShaderProgram> &inShader,
                                                      quint32 blockIndex,
                                                      quint32 binding)
 {
@@ -370,13 +370,13 @@ bool QDemonRenderConstantBuffer::allocateShadowBuffer(quint32 size)
     return true;
 }
 
-QSharedPointer<QDemonRenderConstantBuffer> QDemonRenderConstantBuffer::create(const QSharedPointer<QDemonRenderContextImpl> &context,
+QDemonRef<QDemonRenderConstantBuffer> QDemonRenderConstantBuffer::create(const QDemonRef<QDemonRenderContextImpl> &context,
                                                                               const char *bufferName,
                                                                               QDemonRenderBufferUsageType::Enum usageType,
                                                                               size_t size,
                                                                               QDemonConstDataRef<quint8> bufferData)
 {
-    QSharedPointer<QDemonRenderConstantBuffer> retval = nullptr;
+    QDemonRef<QDemonRenderConstantBuffer> retval = nullptr;
 
     if (context->getConstantBufferSupport()) {
         const QString theBufferName = QString::fromLocal8Bit(bufferName);

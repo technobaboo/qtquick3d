@@ -70,24 +70,24 @@ class Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderContextCoreInterface
 {
 public:
     virtual ~QDemonRenderContextCoreInterface();
-    virtual QSharedPointer<QDemonInputStreamFactoryInterface> getInputStreamFactory() = 0;
-    virtual QSharedPointer<QDemonAbstractThreadPool> getThreadPool() = 0;
-    virtual QSharedPointer<QDemonDynamicObjectSystemCoreInterface> getDynamicObjectSystemCore() = 0;
-    virtual QSharedPointer<QDemonCustomMaterialSystemCoreInterface> getMaterialSystemCore() = 0;
-    virtual QSharedPointer<QDemonEffectSystemCoreInterface> getEffectSystemCore() = 0;
-    virtual QSharedPointer<QDemonPerfTimerInterface> getPerfTimer() = 0;
-    virtual QSharedPointer<QDemonBufferLoaderInterface> getBufferLoader() = 0;
-    virtual QSharedPointer<QDemonPathManagerCoreInterface> getPathManagerCore() = 0;
+    virtual QDemonRef<QDemonInputStreamFactoryInterface> getInputStreamFactory() = 0;
+    virtual QDemonRef<QDemonAbstractThreadPool> getThreadPool() = 0;
+    virtual QDemonRef<QDemonDynamicObjectSystemCoreInterface> getDynamicObjectSystemCore() = 0;
+    virtual QDemonRef<QDemonCustomMaterialSystemCoreInterface> getMaterialSystemCore() = 0;
+    virtual QDemonRef<QDemonEffectSystemCoreInterface> getEffectSystemCore() = 0;
+    virtual QDemonRef<QDemonPerfTimerInterface> getPerfTimer() = 0;
+    virtual QDemonRef<QDemonBufferLoaderInterface> getBufferLoader() = 0;
+    virtual QDemonRef<QDemonPathManagerCoreInterface> getPathManagerCore() = 0;
     // Text renderers may be provided by clients at runtime.
-    virtual void setTextRendererCore(QSharedPointer<QDemonTextRendererCoreInterface> inRenderer) = 0;
-    virtual QSharedPointer<QDemonTextRendererCoreInterface> getTextRendererCore() = 0;
+    virtual void setTextRendererCore(QDemonRef<QDemonTextRendererCoreInterface> inRenderer) = 0;
+    virtual QDemonRef<QDemonTextRendererCoreInterface> getTextRendererCore() = 0;
     // this is our default 2D text onscreen renderer
-    virtual void setOnscreenTextRendererCore(QSharedPointer<QDemonTextRendererCoreInterface> inRenderer) = 0;
-    virtual QSharedPointer<QDemonTextRendererCoreInterface> getOnscreenTextRendererCore() = 0;
+    virtual void setOnscreenTextRendererCore(QDemonRef<QDemonTextRendererCoreInterface> inRenderer) = 0;
+    virtual QDemonRef<QDemonTextRendererCoreInterface> getOnscreenTextRendererCore() = 0;
     // The render context maintains a reference to this object.
-    virtual QSharedPointer<QDemonRenderContextInterface> createRenderContext(QSharedPointer<QDemonRenderContext> inContext, const char *inPrimitivesDirectory) = 0;
+    virtual QDemonRef<QDemonRenderContextInterface> createRenderContext(QDemonRef<QDemonRenderContext> inContext, const char *inPrimitivesDirectory) = 0;
 
-    static QSharedPointer<QDemonRenderContextCoreInterface> create();
+    static QDemonRef<QDemonRenderContextCoreInterface> create();
 };
 
 class QDemonTextTextureAtlasInterface;
@@ -99,28 +99,28 @@ class Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderContextInterface
 {
 public:
     virtual ~QDemonRenderContextInterface();
-    virtual QSharedPointer<QDemonRendererInterface> getRenderer() = 0;
-    virtual QSharedPointer<QDemonRenderWidgetContextInterface> getRenderWidgetContext() = 0;
-    virtual QSharedPointer<QDemonBufferManagerInterface> getBufferManager() = 0;
-    virtual QSharedPointer<QDemonResourceManagerInterface> getResourceManager() = 0;
-    virtual QSharedPointer<QDemonRenderContext> getRenderContext() = 0;
-    virtual QSharedPointer<QDemonOffscreenRenderManagerInterface> getOffscreenRenderManager() = 0;
-    virtual QSharedPointer<QDemonInputStreamFactoryInterface> getInputStreamFactory() = 0;
-    virtual QSharedPointer<QDemonEffectSystemInterface> getEffectSystem() = 0;
-    virtual QSharedPointer<QDemonShaderCacheInterface> getShaderCache() = 0;
-    virtual QSharedPointer<QDemonAbstractThreadPool> getThreadPool() = 0;
-    virtual QSharedPointer<IImageBatchLoader> getImageBatchLoader() = 0;
-    virtual QSharedPointer<QDemonDynamicObjectSystemInterface> getDynamicObjectSystem() = 0;
-    virtual QSharedPointer<QDemonCustomMaterialSystemInterface> getCustomMaterialSystem() = 0;
-    virtual QSharedPointer<QDemonPixelGraphicsRendererInterface> getPixelGraphicsRenderer() = 0;
-    virtual QSharedPointer<QDemonPerfTimerInterface> getPerfTimer() = 0;
-    virtual QSharedPointer<QDemonTextTextureCacheInterface> getTextureCache() = 0;
-    virtual QSharedPointer<QDemonTextRendererInterface> getTextRenderer() = 0;
-    virtual QSharedPointer<QDemonRenderListInterface> getRenderList() = 0;
-    virtual QSharedPointer<QDemonPathManagerInterface> getPathManager() = 0;
-    virtual QSharedPointer<QDemonShaderProgramGeneratorInterface> getShaderProgramGenerator() = 0;
-    virtual QSharedPointer<QDemonDefaultMaterialShaderGeneratorInterface> getDefaultMaterialShaderGenerator() = 0;
-    virtual QSharedPointer<ICustomMaterialShaderGenerator> getCustomMaterialShaderGenerator() = 0;
+    virtual QDemonRef<QDemonRendererInterface> getRenderer() = 0;
+    virtual QDemonRef<QDemonRenderWidgetContextInterface> getRenderWidgetContext() = 0;
+    virtual QDemonRef<QDemonBufferManagerInterface> getBufferManager() = 0;
+    virtual QDemonRef<QDemonResourceManagerInterface> getResourceManager() = 0;
+    virtual QDemonRef<QDemonRenderContext> getRenderContext() = 0;
+    virtual QDemonRef<QDemonOffscreenRenderManagerInterface> getOffscreenRenderManager() = 0;
+    virtual QDemonRef<QDemonInputStreamFactoryInterface> getInputStreamFactory() = 0;
+    virtual QDemonRef<QDemonEffectSystemInterface> getEffectSystem() = 0;
+    virtual QDemonRef<QDemonShaderCacheInterface> getShaderCache() = 0;
+    virtual QDemonRef<QDemonAbstractThreadPool> getThreadPool() = 0;
+    virtual QDemonRef<IImageBatchLoader> getImageBatchLoader() = 0;
+    virtual QDemonRef<QDemonDynamicObjectSystemInterface> getDynamicObjectSystem() = 0;
+    virtual QDemonRef<QDemonCustomMaterialSystemInterface> getCustomMaterialSystem() = 0;
+    virtual QDemonRef<QDemonPixelGraphicsRendererInterface> getPixelGraphicsRenderer() = 0;
+    virtual QDemonRef<QDemonPerfTimerInterface> getPerfTimer() = 0;
+    virtual QDemonRef<QDemonTextTextureCacheInterface> getTextureCache() = 0;
+    virtual QDemonRef<QDemonTextRendererInterface> getTextRenderer() = 0;
+    virtual QDemonRef<QDemonRenderListInterface> getRenderList() = 0;
+    virtual QDemonRef<QDemonPathManagerInterface> getPathManager() = 0;
+    virtual QDemonRef<QDemonShaderProgramGeneratorInterface> getShaderProgramGenerator() = 0;
+    virtual QDemonRef<QDemonDefaultMaterialShaderGeneratorInterface> getDefaultMaterialShaderGenerator() = 0;
+    virtual QDemonRef<ICustomMaterialShaderGenerator> getCustomMaterialShaderGenerator() = 0;
     // Get the number of times EndFrame has been called
     virtual quint32 getFrameCount() = 0;
 
@@ -138,8 +138,8 @@ public:
     virtual void setAuthoringMode(bool inMode) = 0;
 
     // This one is setup by the runtime binding
-    virtual QSharedPointer<QDemonTextRendererInterface> getOnscreenTextRenderer() = 0;
-    virtual QSharedPointer<QDemonTextTextureAtlasInterface> getTextureAtlas() = 0;
+    virtual QDemonRef<QDemonTextRendererInterface> getOnscreenTextRenderer() = 0;
+    virtual QDemonRef<QDemonTextTextureAtlasInterface> getTextureAtlas() = 0;
 
     // Sub presentations change the rendering somewhat.
     virtual bool isInSubPresentation() = 0;

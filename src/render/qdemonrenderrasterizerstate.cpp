@@ -33,7 +33,7 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonRenderRasterizerState::QDemonRenderRasterizerState(const QSharedPointer<QDemonRenderContextImpl> &context,
+QDemonRenderRasterizerState::QDemonRenderRasterizerState(const QDemonRef<QDemonRenderContextImpl> &context,
                                                          float depthBias,
                                                          float depthScale, QDemonRenderFaces::Enum cullFace)
     : m_context(context)
@@ -51,11 +51,11 @@ QDemonRenderRasterizerState::~QDemonRenderRasterizerState()
     }
 }
 
-QSharedPointer<QDemonRenderRasterizerState> QDemonRenderRasterizerState::create(const QSharedPointer<QDemonRenderContextImpl> &context,
+QDemonRef<QDemonRenderRasterizerState> QDemonRenderRasterizerState::create(const QDemonRef<QDemonRenderContextImpl> &context,
                                                                                 float depthBias, float depthScale,
                                                                                 QDemonRenderFaces::Enum cullFace)
 {
-    return QSharedPointer<QDemonRenderRasterizerState>(new QDemonRenderRasterizerState(context, depthBias, depthScale, cullFace));
+    return QDemonRef<QDemonRenderRasterizerState>(new QDemonRenderRasterizerState(context, depthBias, depthScale, cullFace));
 }
 
 QT_END_NAMESPACE

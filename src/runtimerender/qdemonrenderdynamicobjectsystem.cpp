@@ -614,7 +614,7 @@ struct QDemonDataRemapper
 
 namespace {
 
-typedef QHash<QString, QSharedPointer<QDemonDynamicObjClassImpl>> TStringClassMap;
+typedef QHash<QString, QDemonRef<QDemonDynamicObjClassImpl>> TStringClassMap;
 typedef QHash<QString, QByteArray> TPathDataMap;
 typedef QHash<QString, QDemonDynamicObjectShaderInfo> TShaderInfoMap;
 typedef QSet<QString> TPathSet;
@@ -692,7 +692,7 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
             ::memcpy(defPtr, definitions.data(), defSize);
         if (defaultSize)
             memZero(defaultData, defaultSize);
-        QSharedPointer<QDemonDynamicObjClassImpl> theClass(new (allocData)
+        QDemonRef<QDemonDynamicObjClassImpl> theClass(new (allocData)
                 QDemonDynamicObjClassImpl(inName, toDataRef(defPtr, inProperties.size()),
                                      dataSectionSize, inBaseObjectSize, inGraphObjectType, defaultData));
         m_classes.insert(inName, theClass);
@@ -710,7 +710,7 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
         return true;
     }
 
-    QSharedPointer<QDemonDynamicObjClassImpl> findClass(QString inName)
+    QDemonRef<QDemonDynamicObjClassImpl> findClass(QString inName)
     {
         TStringClassMap::iterator iter = m_classes.find(inName);
         if (iter != m_classes.end())
@@ -718,22 +718,22 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
         return nullptr;
     }
 
-    QPair<const dynamic::QDemonPropertyDefinition *, QSharedPointer<QDemonDynamicObjClassImpl> >
+    QPair<const dynamic::QDemonPropertyDefinition *, QDemonRef<QDemonDynamicObjClassImpl> >
     findProperty(QString inName, QString inPropName)
     {
-        QSharedPointer<QDemonDynamicObjClassImpl> cls = findClass(inName);
+        QDemonRef<QDemonDynamicObjClassImpl> cls = findClass(inName);
         if (cls) {
             const dynamic::QDemonPropertyDefinition *def = cls->FindDefinition(inPropName);
             if (def)
-                return QPair<const dynamic::QDemonPropertyDefinition *, QSharedPointer<QDemonDynamicObjClassImpl> >(def, cls);
+                return QPair<const dynamic::QDemonPropertyDefinition *, QDemonRef<QDemonDynamicObjClassImpl> >(def, cls);
         }
-        return QPair<const dynamic::QDemonPropertyDefinition *, QSharedPointer<QDemonDynamicObjClassImpl> >(nullptr, nullptr);
+        return QPair<const dynamic::QDemonPropertyDefinition *, QDemonRef<QDemonDynamicObjClassImpl> >(nullptr, nullptr);
     }
 
     void setPropertyDefaultValue(QString inName, QString inPropName,
                                  QDemonConstDataRef<quint8> inDefaultData) override
     {
-        QPair<const dynamic::QDemonPropertyDefinition *, QSharedPointer<QDemonDynamicObjClassImpl> > def =
+        QPair<const dynamic::QDemonPropertyDefinition *, QDemonRef<QDemonDynamicObjClassImpl> > def =
                 findProperty(inName, inPropName);
         if (def.first && inDefaultData.size() >= def.first->byteSize) {
             ::memcpy(def.second->m_propertyDefaultData + def.first->offset, inDefaultData.begin(),
@@ -747,7 +747,7 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
                               QDemonConstDataRef<QString> inNames) override
     {
 
-        QPair<const dynamic::QDemonPropertyDefinition *, QSharedPointer<QDemonDynamicObjClassImpl> > def =
+        QPair<const dynamic::QDemonPropertyDefinition *, QDemonRef<QDemonDynamicObjClassImpl> > def =
                 findProperty(inName, inPropName);
         dynamic::QDemonPropertyDefinition *theDefinitionPtr = const_cast<dynamic::QDemonPropertyDefinition *>(def.first);
         if (theDefinitionPtr == nullptr) {
@@ -769,7 +769,7 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
     virtual QDemonConstDataRef<QString> getPropertyEnumNames(QString inName,
                                                              QString inPropName) const override
     {
-        QPair<const dynamic::QDemonPropertyDefinition *, QSharedPointer<QDemonDynamicObjClassImpl> > def =
+        QPair<const dynamic::QDemonPropertyDefinition *, QDemonRef<QDemonDynamicObjClassImpl> > def =
                 const_cast<QDemonDynamicObjectSystemImpl &>(*this).findProperty(inName, inPropName);
         if (def.first)
             return def.first->enumValueNames;
@@ -780,7 +780,7 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
     virtual QDemonConstDataRef<dynamic::QDemonPropertyDefinition> getProperties(QString inName) const override
     {
         QMutexLocker locker(&m_propertyLoadMutex);
-        QSharedPointer<QDemonDynamicObjClassImpl> cls = const_cast<QDemonDynamicObjectSystemImpl &>(*this).findClass(inName);
+        QDemonRef<QDemonDynamicObjClassImpl> cls = const_cast<QDemonDynamicObjectSystemImpl &>(*this).findClass(inName);
         if (cls)
             return cls->m_propertyDefinitions;
         return QDemonConstDataRef<dynamic::QDemonPropertyDefinition>();
@@ -793,7 +793,7 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
                                     QDemonRenderTextureMagnifyingOp::Enum inMagFilterOp,
                                     QDemonRenderTextureMinifyingOp::Enum inMinFilterOp) override
     {
-        QPair<const dynamic::QDemonPropertyDefinition *, QSharedPointer<QDemonDynamicObjClassImpl> > def =
+        QPair<const dynamic::QDemonPropertyDefinition *, QDemonRef<QDemonDynamicObjClassImpl> > def =
                 findProperty(inName, inPropName);
         dynamic::QDemonPropertyDefinition *theDefinitionPtr = const_cast<dynamic::QDemonPropertyDefinition *>(def.first);
         if (theDefinitionPtr == nullptr) {
@@ -816,7 +816,7 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
     void setRenderCommands(QString inClassName,
                            QDemonConstDataRef<dynamic::QDemonCommand *> inCommands) override
     {
-        QSharedPointer<QDemonDynamicObjClassImpl> theClass =
+        QDemonRef<QDemonDynamicObjClassImpl> theClass =
                 const_cast<QDemonDynamicObjectSystemImpl &>(*this).findClass(inClassName);
         if (theClass == nullptr) {
             Q_ASSERT(false);
@@ -860,7 +860,7 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
 
     virtual QDemonConstDataRef<dynamic::QDemonCommand *> getRenderCommands(QString inClassName) const override
     {
-        QSharedPointer<QDemonDynamicObjClassImpl> cls =
+        QDemonRef<QDemonDynamicObjClassImpl> cls =
                 const_cast<QDemonDynamicObjectSystemImpl &>(*this).findClass(inClassName);
         if (cls)
             return cls->m_renderCommands;
@@ -869,7 +869,7 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
 
     QDemonDynamicObject *createInstance(QString inClassName) override
     {
-        QSharedPointer<QDemonDynamicObjClassImpl> theClass = findClass(inClassName);
+        QDemonRef<QDemonDynamicObjClassImpl> theClass = findClass(inClassName);
         if (!theClass) {
             Q_ASSERT(false);
             return nullptr;
@@ -974,7 +974,7 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
             const QString ver = m_context->getDynamicObjectSystem()->shaderCodeLibraryVersion();
 
             QString fullPath;
-            QSharedPointer<QIODevice> theStream;
+            QDemonRef<QIODevice> theStream;
             if (!platformDir.isEmpty()) {
                 QTextStream stream(&fullPath);
                 stream << platformDir << QLatin1Char('/') << inPathToEffect;
@@ -1214,7 +1214,7 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
 //        }
 //    }
 
-    QSharedPointer<QDemonDynamicObjectSystemInterface> createDynamicSystem(QDemonRenderContextInterface *rc) override
+    QDemonRef<QDemonDynamicObjectSystemInterface> createDynamicSystem(QDemonRenderContextInterface *rc) override
     {
         m_context = rc;
         return sharedFromThis();
@@ -1305,7 +1305,7 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
         }
     }
 
-    QSharedPointer<QDemonRenderShaderProgram> compileShader(QString inId, const char *inProgramSource,
+    QDemonRef<QDemonRenderShaderProgram> compileShader(QString inId, const char *inProgramSource,
                                                             const char *inGeomSource,
                                                             QString inProgramMacroName,
                                                             TShaderFeatureSet inFeatureSet,
@@ -1361,7 +1361,7 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
             m_fragShader.append(inProgramSource);
         }
 
-        QSharedPointer<QDemonShaderCacheInterface> theShaderCache = m_context->getShaderCache();
+        QDemonRef<QDemonShaderCacheInterface> theShaderCache = m_context->getShaderCache();
 
         QString theKey = getShaderCacheKey(inId.toLocal8Bit(), inProgramMacroName.toLocal8Bit(), inFlags);
         if (inForceCompilation) {
@@ -1401,7 +1401,7 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
 
         // TODO: This looks funky (if found)...
         if (found || inForceCompilation) {
-            QSharedPointer<QDemonRenderShaderProgram> theProgram = m_context->getShaderCache()->getProgram(getShaderCacheKey(inPath.toLocal8Bit(), inProgramMacro.toLocal8Bit(), inFlags), inFeatureSet);
+            QDemonRef<QDemonRenderShaderProgram> theProgram = m_context->getShaderCache()->getProgram(getShaderCacheKey(inPath.toLocal8Bit(), inProgramMacro.toLocal8Bit(), inFlags), inFeatureSet);
             dynamic::QDemonDynamicShaderProgramFlags theFlags(inFlags);
             if (!theProgram || inForceCompilation) {
                 QDemonDynamicObjectShaderInfo &theShaderInfo =
@@ -1449,7 +1449,7 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
         auto theInserter = m_shaderMap.find(shaderMapKey);
         const bool found = theInserter != m_shaderMap.end();
         if (found) {
-            QSharedPointer<QDemonRenderShaderProgram> theProgram = m_context->getShaderCache()->getProgram(getShaderCacheKey(inPath.toLocal8Bit(), theProgramMacro.toLocal8Bit(), theFlags), inFeatureSet);
+            QDemonRef<QDemonRenderShaderProgram> theProgram = m_context->getShaderCache()->getProgram(getShaderCacheKey(inPath.toLocal8Bit(), theProgramMacro.toLocal8Bit(), theFlags), inFeatureSet);
             dynamic::QDemonDynamicShaderProgramFlags flags(theFlags);
             if (!theProgram) {
                 QString geomSource = doLoadShader(inPath);
@@ -1505,9 +1505,9 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
 };
 }
 
-QSharedPointer<QDemonDynamicObjectSystemCoreInterface> QDemonDynamicObjectSystemCoreInterface::createDynamicSystemCore(QDemonRenderContextCoreInterface *rc)
+QDemonRef<QDemonDynamicObjectSystemCoreInterface> QDemonDynamicObjectSystemCoreInterface::createDynamicSystemCore(QDemonRenderContextCoreInterface *rc)
 {
-    return QSharedPointer<QDemonDynamicObjectSystemImpl>(new QDemonDynamicObjectSystemImpl(rc));
+    return QDemonRef<QDemonDynamicObjectSystemImpl>(new QDemonDynamicObjectSystemImpl(rc));
 }
 
 QDemonDynamicObjectSystemInterface::~QDemonDynamicObjectSystemInterface()

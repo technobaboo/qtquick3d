@@ -51,7 +51,7 @@ public:
          *
          * @return No return.
          */
-    QDemonRenderVertexShader(const QSharedPointer<QDemonRenderContextImpl> &context,
+    QDemonRenderVertexShader(const QDemonRef<QDemonRenderContextImpl> &context,
                              QDemonConstDataRef<qint8> source,
                              bool binaryProgram);
 

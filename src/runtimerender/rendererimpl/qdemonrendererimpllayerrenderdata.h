@@ -63,19 +63,19 @@ struct QDemonLayerRenderData : public QDemonLayerRenderPreparationData
     QDemonResourceTexture2D m_layerMultisamplePrepassDepthTexture;
     QDemonResourceTexture2D m_layerMultisampleWidgetTexture;
     // the texture contains the render result inclusive post effects
-    QSharedPointer<QDemonRenderTexture2D> m_layerCachedTexture;
+    QDemonRef<QDemonRenderTexture2D> m_layerCachedTexture;
 
-    QSharedPointer<QDemonRenderTexture2D> m_advancedBlendDrawTexture;
-    QSharedPointer<QDemonRenderTexture2D> m_advancedBlendBlendTexture;
-    QSharedPointer<QDemonRenderFrameBuffer> m_advancedModeDrawFB;
-    QSharedPointer<QDemonRenderFrameBuffer> m_advancedModeBlendFB;
+    QDemonRef<QDemonRenderTexture2D> m_advancedBlendDrawTexture;
+    QDemonRef<QDemonRenderTexture2D> m_advancedBlendBlendTexture;
+    QDemonRef<QDemonRenderFrameBuffer> m_advancedModeDrawFB;
+    QDemonRef<QDemonRenderFrameBuffer> m_advancedModeBlendFB;
 
     // True if this layer was rendered offscreen.
     // If this object has no value then this layer wasn't rendered at all.
     QDemonOffscreenRendererEnvironment m_lastOffscreenRenderEnvironment;
 
     // GPU profiler per layer
-    QSharedPointer<QDemonRenderProfilerInterface> m_layerProfilerGpu;
+    QDemonRef<QDemonRenderProfilerInterface> m_layerProfilerGpu;
 
     QDemonRenderCamera m_sceneCamera;
     QVector2D m_sceneDimensions;
@@ -94,7 +94,7 @@ struct QDemonLayerRenderData : public QDemonLayerRenderPreparationData
 
     QSize m_previousDimensions;
 
-    QDemonLayerRenderData(QDemonRenderLayer &inLayer, QSharedPointer<QDemonRendererImpl> inRenderer);
+    QDemonLayerRenderData(QDemonRenderLayer &inLayer, QDemonRef<QDemonRendererImpl> inRenderer);
 
     virtual ~QDemonLayerRenderData() override;
 
@@ -113,13 +113,13 @@ struct QDemonLayerRenderData : public QDemonLayerRenderPreparationData
     void renderFakeDepthMapPass(QDemonRenderTexture2D *theDepthTex, QDemonRenderTextureCube *theDepthCube);
     void renderShadowMapPass(QDemonResourceFrameBuffer *theFB);
     void renderShadowCubeBlurPass(QDemonResourceFrameBuffer *theFB,
-                                  QSharedPointer<QDemonRenderTextureCube> target0,
-                                  QSharedPointer<QDemonRenderTextureCube> target1,
+                                  QDemonRef<QDemonRenderTextureCube> target0,
+                                  QDemonRef<QDemonRenderTextureCube> target1,
                                   float filterSz,
                                   float clipFar);
     void renderShadowMapBlurPass(QDemonResourceFrameBuffer *theFB,
-                                 QSharedPointer<QDemonRenderTexture2D> target0,
-                                 QSharedPointer<QDemonRenderTexture2D> target1,
+                                 QDemonRef<QDemonRenderTexture2D> target0,
+                                 QDemonRef<QDemonRenderTexture2D> target1,
                                  float filterSz,
                                  float clipFar);
 
@@ -140,15 +140,15 @@ struct QDemonLayerRenderData : public QDemonLayerRenderPreparationData
 
     void applyLayerPostEffects();
 
-    void runnableRenderToViewport(QSharedPointer<QDemonRenderFrameBuffer> theFB);
+    void runnableRenderToViewport(QDemonRef<QDemonRenderFrameBuffer> theFB);
 
     void addLayerRenderStep();
 
     void renderRenderWidgets();
 
 #ifdef ADVANCED_BLEND_SW_FALLBACK
-    void blendAdvancedEquationSwFallback(QSharedPointer<QDemonRenderTexture2D> drawTexture,
-                                         QSharedPointer<QDemonRenderTexture2D> m_layerTexture,
+    void blendAdvancedEquationSwFallback(QDemonRef<QDemonRenderTexture2D> drawTexture,
+                                         QDemonRef<QDemonRenderTexture2D> m_layerTexture,
                                          AdvancedBlendModes::Enum blendMode);
 #endif
     // test method to render this layer to a given view projection without running the entire
@@ -158,7 +158,7 @@ struct QDemonLayerRenderData : public QDemonLayerRenderPreparationData
     void prepareAndRender(const QMatrix4x4 &inViewProjection);
 
     QDemonOffscreenRendererEnvironment createOffscreenRenderEnvironment() override;
-    QSharedPointer<QDemonRenderTask> createRenderToTextureRunnable() override;
+    QDemonRef<QDemonRenderTask> createRenderToTextureRunnable() override;
 
 protected:
     // Used for both the normal passes and the depth pass.

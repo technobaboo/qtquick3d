@@ -198,9 +198,9 @@ QDemonAbstractThreadPool::~QDemonAbstractThreadPool()
 
 }
 
-QSharedPointer<QDemonAbstractThreadPool> QDemonAbstractThreadPool::createThreadPool(quint32 inNumThreads)
+QDemonRef<QDemonAbstractThreadPool> QDemonAbstractThreadPool::createThreadPool(quint32 inNumThreads)
 {
-    return QSharedPointer<QDemonAbstractThreadPool>(new QDemonThreadPool(inNumThreads));
+    return QDemonRef<QDemonAbstractThreadPool>(new QDemonThreadPool(inNumThreads));
 }
 
 QT_END_NAMESPACE

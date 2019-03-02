@@ -57,8 +57,8 @@ struct QDemonCustomMaterialRenderContext
     const QMatrix4x4 &modelMatrix; ///< model to world transformation
     const QMatrix3x3 &normalMatrix;
     const QDemonRenderCustomMaterial &material;
-    const QSharedPointer<QDemonRenderTexture2D> depthTexture;
-    const QSharedPointer<QDemonRenderTexture2D> aoTexture;
+    const QDemonRef<QDemonRenderTexture2D> depthTexture;
+    const QDemonRef<QDemonRenderTexture2D> aoTexture;
     QDemonShaderDefaultMaterialKey materialKey;
     QDemonRenderableImage *firstImage;
     float opacity;
@@ -73,8 +73,8 @@ struct QDemonCustomMaterialRenderContext
                                       const QMatrix4x4 &inWorld,
                                       const QMatrix3x3 &inNormal,
                                       const QDemonRenderCustomMaterial &inMaterial,
-                                      const QSharedPointer<QDemonRenderTexture2D> inDepthTex,
-                                      const QSharedPointer<QDemonRenderTexture2D> inAoTex,
+                                      const QDemonRef<QDemonRenderTexture2D> inDepthTex,
+                                      const QDemonRef<QDemonRenderTexture2D> inAoTex,
                                       QDemonShaderDefaultMaterialKey inMaterialKey,
                                       QDemonRenderableImage *inFirstImage = nullptr,
                                       float inOpacity = 1.0)

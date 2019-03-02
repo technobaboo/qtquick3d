@@ -35,7 +35,7 @@
 namespace {
 class ClearColor : public QDemonRenderExample
 {
-    QSharedPointer<QDemonRenderContext> m_context;
+    QDemonRef<QDemonRenderContext> m_context;
     qint64 m_elapsedTime = 0;
 
 public:

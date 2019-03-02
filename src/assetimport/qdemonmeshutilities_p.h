@@ -483,7 +483,7 @@ public:
     virtual Mesh &getMesh() = 0;
 
     // Uses new/delete.
-    static QSharedPointer<QDemonMeshBuilder> createMeshBuilder();
+    static QDemonRef<QDemonMeshBuilder> createMeshBuilder();
 };
 
 } // end QDemonMeshUtilities namespace

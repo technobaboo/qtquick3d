@@ -35,9 +35,9 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonRenderPrefilterTexture::QDemonRenderPrefilterTexture(QSharedPointer<QDemonRenderContext> inQDemonRenderContext,
+QDemonRenderPrefilterTexture::QDemonRenderPrefilterTexture(QDemonRef<QDemonRenderContext> inQDemonRenderContext,
                                                      qint32 inWidth, qint32 inHeight,
-                                                     QSharedPointer<QDemonRenderTexture2D> inTexture2D,
+                                                     QDemonRef<QDemonRenderTexture2D> inTexture2D,
                                                      QDemonRenderTextureFormats::Enum inDestFormat)
     : m_texture2D(inTexture2D)
     , m_destinationFormat(inDestFormat)
@@ -54,14 +54,14 @@ QDemonRenderPrefilterTexture::QDemonRenderPrefilterTexture(QSharedPointer<QDemon
     m_noOfComponent = QDemonRenderTextureFormats::getNumberOfComponent(m_destinationFormat);
 }
 
-QSharedPointer<QDemonRenderPrefilterTexture>
-QDemonRenderPrefilterTexture::create(QSharedPointer<QDemonRenderContext> inQDemonRenderContext,
+QDemonRef<QDemonRenderPrefilterTexture>
+QDemonRenderPrefilterTexture::create(QDemonRef<QDemonRenderContext> inQDemonRenderContext,
                                      qint32 inWidth,
                                      qint32 inHeight,
-                                     QSharedPointer<QDemonRenderTexture2D> inTexture2D,
+                                     QDemonRef<QDemonRenderTexture2D> inTexture2D,
                                      QDemonRenderTextureFormats::Enum inDestFormat)
 {
-    QSharedPointer<QDemonRenderPrefilterTexture> theBSDFMipMap;
+    QDemonRef<QDemonRenderPrefilterTexture> theBSDFMipMap;
 
     if (inQDemonRenderContext->isComputeSupported()) {
         theBSDFMipMap.reset(new QDemonRenderPrefilterTextureCompute(inQDemonRenderContext, inWidth, inHeight, inTexture2D, inDestFormat));
@@ -83,7 +83,7 @@ QDemonRenderPrefilterTexture::~QDemonRenderPrefilterTexture()
 //------------------------------------------------------------------------------------
 
 QDemonRenderPrefilterTextureCPU::QDemonRenderPrefilterTextureCPU(
-    QSharedPointer<QDemonRenderContext> inQDemonRenderContext, int inWidth, int inHeight, QSharedPointer<QDemonRenderTexture2D> inTexture2D,
+    QDemonRef<QDemonRenderContext> inQDemonRenderContext, int inWidth, int inHeight, QDemonRef<QDemonRenderTexture2D> inTexture2D,
     QDemonRenderTextureFormats::Enum inDestFormat)
     : QDemonRenderPrefilterTexture(inQDemonRenderContext, inWidth, inHeight, inTexture2D, inDestFormat)
 {
@@ -385,7 +385,7 @@ inline QDemonConstDataRef<qint8> toRef(const char *data)
     return QDemonConstDataRef<qint8>((const qint8 *)data, (quint32)len);
 }
 
-static bool isGLESContext(QSharedPointer<QDemonRenderContext> context)
+static bool isGLESContext(QDemonRef<QDemonRenderContext> context)
 {
     QDemonRenderContextType ctxType = context->getRenderContextType();
 
@@ -400,8 +400,8 @@ static bool isGLESContext(QSharedPointer<QDemonRenderContext> context)
 
 #define WORKGROUP_SIZE 16
 
-QDemonRenderPrefilterTextureCompute::QDemonRenderPrefilterTextureCompute(QSharedPointer<QDemonRenderContext> inQDemonRenderContext, qint32 inWidth, qint32 inHeight,
-    QSharedPointer<QDemonRenderTexture2D> inTexture2D, QDemonRenderTextureFormats::Enum inDestFormat)
+QDemonRenderPrefilterTextureCompute::QDemonRenderPrefilterTextureCompute(QDemonRef<QDemonRenderContext> inQDemonRenderContext, qint32 inWidth, qint32 inHeight,
+    QDemonRef<QDemonRenderTexture2D> inTexture2D, QDemonRenderTextureFormats::Enum inDestFormat)
     : QDemonRenderPrefilterTexture(inQDemonRenderContext, inWidth, inHeight, inTexture2D, inDestFormat)
     , m_bsdfProgram(nullptr)
     , m_uploadProgram_RGBA8(nullptr)
@@ -419,7 +419,7 @@ QDemonRenderPrefilterTextureCompute::~QDemonRenderPrefilterTextureCompute()
     m_level0Tex = nullptr;
 }
 
-void QDemonRenderPrefilterTextureCompute::createComputeProgram(QSharedPointer<QDemonRenderContext>context)
+void QDemonRenderPrefilterTextureCompute::createComputeProgram(QDemonRef<QDemonRenderContext>context)
 {
     QByteArray computeProg;
 
@@ -429,8 +429,8 @@ void QDemonRenderPrefilterTextureCompute::createComputeProgram(QSharedPointer<QD
     }
 }
 
-QSharedPointer<QDemonRenderShaderProgram> QDemonRenderPrefilterTextureCompute::getOrCreateUploadComputeProgram(
-    QSharedPointer<QDemonRenderContext> context, QDemonRenderTextureFormats::Enum inFormat)
+QDemonRef<QDemonRenderShaderProgram> QDemonRenderPrefilterTextureCompute::getOrCreateUploadComputeProgram(
+    QDemonRef<QDemonRenderContext> context, QDemonRenderTextureFormats::Enum inFormat)
 {
     QByteArray computeProg;
 
@@ -503,19 +503,19 @@ void QDemonRenderPrefilterTextureCompute::build(void *inTextureData, qint32 inTe
         createLevel0Tex(inTextureData, inTextureDataSize, inFormat);
     }
 
-    QSharedPointer<QDemonRenderImage2D> theInputImage;
-    QSharedPointer<QDemonRenderImage2D> theOutputImage;
+    QDemonRef<QDemonRenderImage2D> theInputImage;
+    QDemonRef<QDemonRenderImage2D> theOutputImage;
     theInputImage = m_renderContext->createImage2D(m_texture2D, QDemonRenderImageAccessType::ReadWrite);
     theOutputImage = m_renderContext->createImage2D(m_texture2D, QDemonRenderImageAccessType::ReadWrite);
 
     if (needMipUpload && m_level0Tex) {
-        QSharedPointer<QDemonRenderShaderProgram> uploadProg = getOrCreateUploadComputeProgram(m_renderContext, inFormat);
+        QDemonRef<QDemonRenderShaderProgram> uploadProg = getOrCreateUploadComputeProgram(m_renderContext, inFormat);
         if (!uploadProg)
             return;
 
         m_renderContext->setActiveShader(uploadProg);
 
-        QSharedPointer<QDemonRenderImage2D> theInputImage0;
+        QDemonRef<QDemonRenderImage2D> theInputImage0;
         theInputImage0 =
             m_renderContext->createImage2D(m_level0Tex, QDemonRenderImageAccessType::ReadWrite);
 

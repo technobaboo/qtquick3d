@@ -48,8 +48,8 @@ class QDemonRenderShaderConstantBase;
 class QDemonRenderShaderBufferBase;
 class QDemonRenderComputeShader;
 
-typedef QHash<QString, QSharedPointer<QDemonRenderShaderConstantBase>> TShaderConstantMap;
-typedef QHash<QString, QSharedPointer<QDemonRenderShaderBufferBase>> TShaderBufferMap;
+typedef QHash<QString, QDemonRef<QDemonRenderShaderConstantBase>> TShaderConstantMap;
+typedef QHash<QString, QDemonRef<QDemonRenderShaderBufferBase>> TShaderBufferMap;
 
 ///< A shader program is an object composed of a multiple shaders (vertex, fragment,
 ///geometry,....)
@@ -62,8 +62,8 @@ public:
     };
 
 private:
-    QSharedPointer<QDemonRenderContextImpl> m_context; ///< pointer to context
-    QSharedPointer<QDemonRenderBackend> m_backend; ///< pointer to backend
+    QDemonRef<QDemonRenderContextImpl> m_context; ///< pointer to context
+    QDemonRef<QDemonRenderBackend> m_backend; ///< pointer to backend
     const char *m_programName; /// Name of the program
     QDemonRenderBackend::QDemonRenderBackendShaderProgramObject m_programHandle; ///< opaque backend handle
     TShaderConstantMap m_constants; ///< map of shader constants
@@ -80,7 +80,7 @@ private:
          *
          * @return pointer to vertex shader object
          */
-    static QDemonOption<QDemonRenderVertexShader *> createVertexShader(const QSharedPointer<QDemonRenderContextImpl> &context,
+    static QDemonOption<QDemonRenderVertexShader *> createVertexShader(const QDemonRef<QDemonRenderContextImpl> &context,
                                                                        QDemonConstDataRef<qint8> vertexShaderSource,
                                                                        bool binaryProgram = false);
 
@@ -93,7 +93,7 @@ private:
          *
          * @return pointer to fragment shader object
          */
-    static QDemonOption<QDemonRenderFragmentShader *> createFragmentShader(const QSharedPointer<QDemonRenderContextImpl> &context,
+    static QDemonOption<QDemonRenderFragmentShader *> createFragmentShader(const QDemonRef<QDemonRenderContextImpl> &context,
                                                                            QDemonConstDataRef<qint8> fragmentShaderSource,
                                                                            bool binaryProgram = false);
 
@@ -106,7 +106,7 @@ private:
          *
          * @return pointer to tessellation control shader
          */
-    static QDemonOption<QDemonRenderTessControlShader *> createTessControlShader(const QSharedPointer<QDemonRenderContextImpl> &context,
+    static QDemonOption<QDemonRenderTessControlShader *> createTessControlShader(const QDemonRef<QDemonRenderContextImpl> &context,
                                                                                  QDemonConstDataRef<qint8> tessControlShaderSource,
                                                                                  bool binaryProgram = false);
 
@@ -119,7 +119,7 @@ private:
          *
          * @return pointer to tessellation evaluation shader
          */
-    static QDemonOption<QDemonRenderTessEvaluationShader *> createTessEvaluationShader(const QSharedPointer<QDemonRenderContextImpl> &context,
+    static QDemonOption<QDemonRenderTessEvaluationShader *> createTessEvaluationShader(const QDemonRef<QDemonRenderContextImpl> &context,
                                                                                        QDemonConstDataRef<qint8> tessEvaluationShaderSource,
                                                                                        bool binaryProgram = false);
 
@@ -132,7 +132,7 @@ private:
          *
          * @return pointer to geometry shader
          */
-    static QDemonOption<QDemonRenderGeometryShader *> createGeometryShader(const QSharedPointer<QDemonRenderContextImpl> &context,
+    static QDemonOption<QDemonRenderGeometryShader *> createGeometryShader(const QDemonRef<QDemonRenderContextImpl> &context,
                                                                            QDemonConstDataRef<qint8> geometryShaderSource,
                                                                            bool binaryProgram = false);
 
@@ -147,7 +147,7 @@ public:
          *
          * @return No return.
          */
-    QDemonRenderShaderProgram(const QSharedPointer<QDemonRenderContextImpl> &context,
+    QDemonRenderShaderProgram(const QDemonRef<QDemonRenderContextImpl> &context,
                               const char *programName, bool separableProgram);
 
     /// destructor
@@ -216,7 +216,7 @@ public:
          *
          * @return return a pointer to a constant class.
          */
-    QSharedPointer<QDemonRenderShaderConstantBase> getShaderConstant(const char *constantName);
+    QDemonRef<QDemonRenderShaderConstantBase> getShaderConstant(const char *constantName);
 
     /**
          * @brief Query a shader buffer (constant, ... )
@@ -225,7 +225,7 @@ public:
          *
          * @return return a pointer to a constant class.
          */
-    QSharedPointer<QDemonRenderShaderBufferBase> getShaderBuffer(const char *bufferName);
+    QDemonRef<QDemonRenderShaderBufferBase> getShaderBuffer(const char *bufferName);
 
     // concrete set functions
     void setConstantValue(QDemonRenderShaderConstantBase *inConstant, qint32 inValue, const qint32 inCount);
@@ -269,7 +269,7 @@ public:
                           const TDataType &inValue,
                           const qint32 inCount = 1)
     {
-        QSharedPointer<QDemonRenderShaderConstantBase> theConstant = getShaderConstant(inConstantName);
+        QDemonRef<QDemonRenderShaderConstantBase> theConstant = getShaderConstant(inConstantName);
 
         if (theConstant) {
             if (theConstant->getShaderConstantType() == QDemonDataTypeToShaderDataTypeMap<TDataType>::getType()) {
@@ -322,7 +322,7 @@ public:
          *
          * @return context which this shader belongs to.
          */
-    QSharedPointer<QDemonRenderContextImpl> getRenderContext();
+    QDemonRef<QDemonRenderContextImpl> getRenderContext();
 
     /**
          * @brief Create a shader program
@@ -340,7 +340,7 @@ public:
          *
          * @return a render result
          */
-    static QDemonRenderVertFragCompilationResult create(const QSharedPointer<QDemonRenderContextImpl> &context,
+    static QDemonRenderVertFragCompilationResult create(const QDemonRef<QDemonRenderContextImpl> &context,
                                                         const char *programName,
                                                         QDemonConstDataRef<qint8> vertShaderSource,
                                                         QDemonConstDataRef<qint8> fragShaderSource,
@@ -360,7 +360,7 @@ public:
          *
          * @return a render result
          */
-    static QDemonRenderVertFragCompilationResult createCompute(const QSharedPointer<QDemonRenderContextImpl> &context,
+    static QDemonRenderVertFragCompilationResult createCompute(const QDemonRef<QDemonRenderContextImpl> &context,
                                                                const char *programName,
                                                                QDemonConstDataRef<qint8> computeShaderSource);
 };
@@ -370,21 +370,21 @@ public:
 template <typename TDataType>
 struct QDemonRenderCachedShaderProperty
 {
-    QSharedPointer<QDemonRenderShaderProgram> shader; ///< pointer to shader program
-    QSharedPointer<QDemonRenderShaderConstantBase> constant; ///< poiner to shader constant object
+    QDemonRef<QDemonRenderShaderProgram> shader; ///< pointer to shader program
+    QDemonRef<QDemonRenderShaderConstantBase> constant; ///< poiner to shader constant object
 
     QDemonRenderCachedShaderProperty(const QString &inConstantName,
-                                     QSharedPointer<QDemonRenderShaderProgram> inShader)
+                                     QDemonRef<QDemonRenderShaderProgram> inShader)
         : QDemonRenderCachedShaderProperty(qPrintable(inConstantName), inShader)
     {
     }
 
     QDemonRenderCachedShaderProperty(const char *inConstantName,
-                                     QSharedPointer<QDemonRenderShaderProgram> inShader)
+                                     QDemonRef<QDemonRenderShaderProgram> inShader)
         : shader(inShader)
         , constant(nullptr)
     {
-        QSharedPointer<QDemonRenderShaderConstantBase> theConstant = inShader->getShaderConstant(inConstantName);
+        QDemonRef<QDemonRenderShaderConstantBase> theConstant = inShader->getShaderConstant(inConstantName);
         if (theConstant) {
             if (theConstant->getShaderConstantType() == QDemonDataTypeToShaderDataTypeMap<TDataType>::getType()) {
                 constant = theConstant;
@@ -412,24 +412,24 @@ struct QDemonRenderCachedShaderProperty
 template <typename TDataType, int size>
 struct QDemonRenderCachedShaderPropertyArray
 {
-    QSharedPointer<QDemonRenderShaderProgram> shader; ///< pointer to shader program
-    QSharedPointer<QDemonRenderShaderConstantBase> constant; ///< poiner to shader constant object
+    QDemonRef<QDemonRenderShaderProgram> shader; ///< pointer to shader program
+    QDemonRef<QDemonRenderShaderConstantBase> constant; ///< poiner to shader constant object
     TDataType m_array[size];
 
     QDemonRenderCachedShaderPropertyArray(const QString &inConstantName,
-                                          QSharedPointer<QDemonRenderShaderProgram> inShader)
+                                          QDemonRef<QDemonRenderShaderProgram> inShader)
         : QDemonRenderCachedShaderPropertyArray(qPrintable(inConstantName), inShader)
     {
 
     }
 
     QDemonRenderCachedShaderPropertyArray(const char *inConstantName,
-                                          QSharedPointer<QDemonRenderShaderProgram> inShader)
+                                          QDemonRef<QDemonRenderShaderProgram> inShader)
         : shader(inShader)
         , constant(nullptr)
     {
         memset(m_array,  0, sizeof(m_array));
-        QSharedPointer<QDemonRenderShaderConstantBase> theConstant = inShader->getShaderConstant(inConstantName);
+        QDemonRef<QDemonRenderShaderConstantBase> theConstant = inShader->getShaderConstant(inConstantName);
         if (theConstant) {
             if (theConstant->m_elementCount > 1 && theConstant->m_elementCount <= size &&
                     theConstant->getShaderConstantType()
@@ -464,14 +464,14 @@ struct QDemonRenderCachedShaderPropertyArray
 template <typename TDataType>
 struct QDemonRenderCachedShaderBuffer
 {
-    QSharedPointer<QDemonRenderShaderProgram> shader; ///< pointer to shader program
-    QSharedPointer<TDataType> shaderBuffer; ///< poiner to shader buffer object
+    QDemonRef<QDemonRenderShaderProgram> shader; ///< pointer to shader program
+    QDemonRef<TDataType> shaderBuffer; ///< poiner to shader buffer object
 
-    QDemonRenderCachedShaderBuffer(const char *inShaderBufferName, QSharedPointer<QDemonRenderShaderProgram> inShader)
+    QDemonRenderCachedShaderBuffer(const char *inShaderBufferName, QDemonRef<QDemonRenderShaderProgram> inShader)
         : shader(inShader)
         , shaderBuffer(nullptr)
     {
-        QSharedPointer<TDataType> theShaderBuffer = qSharedPointerCast<TDataType>(inShader->getShaderBuffer(inShaderBufferName));
+        QDemonRef<TDataType> theShaderBuffer = qSharedPointerCast<TDataType>(inShader->getShaderBuffer(inShaderBufferName));
         if (theShaderBuffer) {
             shaderBuffer = theShaderBuffer;
         }

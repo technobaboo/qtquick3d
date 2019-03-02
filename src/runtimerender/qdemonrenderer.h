@@ -228,14 +228,14 @@ public:
                                                         const QVector2D &inViewportDimensions,
                                                         bool forceImageIntersect = false) const = 0;
 
-    virtual QSharedPointer<QDemonRenderWidgetContextInterface> getRenderWidgetContext() = 0;
+    virtual QDemonRef<QDemonRenderWidgetContextInterface> getRenderWidgetContext() = 0;
 
     static bool isGlEsContext(QDemonRenderContextType inContextType);
     static bool isGlEs3Context(QDemonRenderContextType inContextType);
     static bool isGl2Context(QDemonRenderContextType inContextType);
     static const char *getGlslVesionString(QDemonRenderContextType inContextType);
 
-    static QSharedPointer<QDemonRendererInterface> createRenderer(QDemonRenderContextInterface *inContext);
+    static QDemonRef<QDemonRendererInterface> createRenderer(QDemonRenderContextInterface *inContext);
 };
 QT_END_NAMESPACE
 

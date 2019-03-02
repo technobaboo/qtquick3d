@@ -78,7 +78,7 @@ public:
     // we agree to *not* have rendered anything, no clears or anything so if you are caching
     // render state and you detect nothing has changed it may not be necessary to swap egl
     // buffers.
-    virtual quint32 addRenderTask(QSharedPointer<QDemonRenderTask> inTask) = 0;
+    virtual quint32 addRenderTask(QDemonRef<QDemonRenderTask> inTask) = 0;
     virtual void discardRenderTask(quint32 inTaskId) = 0;
     // This runs through the added tasks in reverse order.  This is used to render dependencies
     // before rendering to the main render target.
@@ -94,7 +94,7 @@ public:
     virtual QRect getScissor() const = 0;
     virtual QRect getViewport() const = 0;
 
-    static QSharedPointer<QDemonRenderListInterface> createRenderList();
+    static QDemonRef<QDemonRenderListInterface> createRenderList();
 };
 
 // Now for scoped property access.

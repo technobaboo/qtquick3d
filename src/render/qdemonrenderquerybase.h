@@ -43,8 +43,8 @@ class QDemonRenderBackend;
 class QDemonRenderQueryBase
 {
 protected:
-    QSharedPointer<QDemonRenderContextImpl> m_context; ///< pointer to context
-    QSharedPointer<QDemonRenderBackend> m_backend; ///< pointer to backend
+    QDemonRef<QDemonRenderContextImpl> m_context; ///< pointer to context
+    QDemonRef<QDemonRenderBackend> m_backend; ///< pointer to backend
     QDemonRenderBackend::QDemonRenderBackendQueryObject m_queryHandle; ///< opaque backend handle
 
 public:
@@ -56,7 +56,7 @@ public:
          *
          * @return No return.
          */
-    QDemonRenderQueryBase(const QSharedPointer<QDemonRenderContextImpl> &context);
+    QDemonRenderQueryBase(const QDemonRef<QDemonRenderContextImpl> &context);
 
     virtual ~QDemonRenderQueryBase();
 

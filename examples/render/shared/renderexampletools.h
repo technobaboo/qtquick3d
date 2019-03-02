@@ -78,11 +78,11 @@ public:
                "}\n";
     }
 
-    static QSharedPointer<QDemonRenderInputAssembler> createBox(QSharedPointer<QDemonRenderContext> context,
-                                                                QSharedPointer<QDemonRenderVertexBuffer> &outVertexBuffer,
-                                                                QSharedPointer<QDemonRenderIndexBuffer> &outIndexBuffer);
-    static QSharedPointer<QDemonRenderShaderProgram> createSimpleShader(QSharedPointer<QDemonRenderContext> context);
-    static QSharedPointer<QDemonRenderShaderProgram> createSimpleShaderTex(QSharedPointer<QDemonRenderContext> context);
+    static QDemonRef<QDemonRenderInputAssembler> createBox(QDemonRef<QDemonRenderContext> context,
+                                                                QDemonRef<QDemonRenderVertexBuffer> &outVertexBuffer,
+                                                                QDemonRef<QDemonRenderIndexBuffer> &outIndexBuffer);
+    static QDemonRef<QDemonRenderShaderProgram> createSimpleShader(QDemonRef<QDemonRenderContext> context);
+    static QDemonRef<QDemonRenderShaderProgram> createSimpleShaderTex(QDemonRef<QDemonRenderContext> context);
 };
 
 #endif

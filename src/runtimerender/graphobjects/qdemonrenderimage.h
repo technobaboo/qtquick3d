@@ -60,7 +60,7 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderImage : public QDemonGraphObject
 
     // Presentation id.
     QString m_offscreenRendererId; // overrides source path if available
-    QSharedPointer<QDemonOffscreenRendererInterface> m_lastFrameOffscreenRenderer;
+    QDemonRef<QDemonOffscreenRendererInterface> m_lastFrameOffscreenRenderer;
     QDemonGraphObject *m_parent;
 
     QDemonRenderImageTextureData m_textureData;

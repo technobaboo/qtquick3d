@@ -51,7 +51,7 @@ public:
          *
          * @return No return.
          */
-    QDemonRenderGeometryShader(const QSharedPointer<QDemonRenderContextImpl> &context,
+    QDemonRenderGeometryShader(const QDemonRef<QDemonRenderContextImpl> &context,
                                QDemonConstDataRef<qint8> source, bool binaryProgram);
 
     /// @brief destructor

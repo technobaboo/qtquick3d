@@ -43,7 +43,7 @@ QDemonRenderPickResult CSubPresentationPickQuery::pick(const QVector2D &inMouseC
 }
 
 QDemonSubPresentationRenderer::QDemonSubPresentationRenderer(QDemonRenderContextInterface *inRenderContext,
-                                                   QSharedPointer<QDemonPresentation> inPresentation)
+                                                   QDemonRef<QDemonPresentation> inPresentation)
     : m_renderContext(inRenderContext)
     , m_presentation(inPresentation)
     , m_pickQuery(*this)

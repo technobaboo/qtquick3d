@@ -71,7 +71,7 @@ public:
     // Force font loading *right now*
     virtual void preloadFonts() = 0;
     // Do not access object in between begin/end preload pairs.
-    virtual void beginPreloadFonts(QDemonAbstractThreadPool &inThreadPool, QSharedPointer<QDemonPerfTimerInterface> inTimer) = 0;
+    virtual void beginPreloadFonts(QDemonAbstractThreadPool &inThreadPool, QDemonRef<QDemonPerfTimerInterface> inTimer) = 0;
     virtual void endPreloadFonts() = 0;
     // Force a clear and reload of all of the fonts.
     virtual void reloadFonts() = 0;
@@ -83,13 +83,13 @@ public:
     virtual QDemonOption<QString> getFontNameForFont(QString inFontname) = 0;
     virtual QDemonOption<QString> getFontNameForFont(const char *inFontname) = 0;
 
-    virtual QSharedPointer<QDemonTextRendererInterface> getTextRenderer(QSharedPointer<QDemonRenderContext> inContext) = 0;
+    virtual QDemonRef<QDemonTextRendererInterface> getTextRenderer(QDemonRef<QDemonRenderContext> inContext) = 0;
 
-    static QSharedPointer<QDemonTextRendererCoreInterface> createQtTextRenderer();
+    static QDemonRef<QDemonTextRendererCoreInterface> createQtTextRenderer();
 
     // call this to create onscreen text renderer
     // it needs true type fonts
-    static QSharedPointer<QDemonTextRendererCoreInterface> createOnscreenTextRenderer();
+    static QDemonRef<QDemonTextRendererCoreInterface> createOnscreenTextRenderer();
 };
 /**
      *	Opaque text rendering system.  Must be able to render text to an opengl texture object.

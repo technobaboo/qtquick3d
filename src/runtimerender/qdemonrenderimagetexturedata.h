@@ -79,9 +79,9 @@ struct QDemonRenderImageTextureFlags : public QDemonFlags<ImageTextureFlagValues
 
 struct QDemonRenderImageTextureData
 {
-    QSharedPointer<QDemonRenderTexture2D> m_texture;
+    QDemonRef<QDemonRenderTexture2D> m_texture;
     QDemonRenderImageTextureFlags m_textureFlags;
-    QSharedPointer<QDemonRenderPrefilterTexture> m_bsdfMipMap;
+    QDemonRef<QDemonRenderPrefilterTexture> m_bsdfMipMap;
 
     QDemonRenderImageTextureData()
         : m_texture(nullptr)

@@ -66,9 +66,9 @@ struct QDemonShadowMapEntry {
     QDemonShadowMapEntry(quint32 index,
                     ShadowMapModes::Enum mode,
                     ShadowFilterValues::Enum filter,
-                    QSharedPointer<QDemonRenderTexture2D> depthMap,
-                    QSharedPointer<QDemonRenderTexture2D> depthCopy,
-                    QSharedPointer<QDemonRenderTexture2D> depthTemp)
+                    QDemonRef<QDemonRenderTexture2D> depthMap,
+                    QDemonRef<QDemonRenderTexture2D> depthCopy,
+                    QDemonRef<QDemonRenderTexture2D> depthTemp)
         : m_lightIndex(index)
         , m_shadowMapMode(mode)
         , m_shadowFilterFlags(filter)
@@ -83,9 +83,9 @@ struct QDemonShadowMapEntry {
     QDemonShadowMapEntry(quint32 index,
                     ShadowMapModes::Enum mode,
                     ShadowFilterValues::Enum filter,
-                    QSharedPointer<QDemonRenderTextureCube> depthCube,
-                    QSharedPointer<QDemonRenderTextureCube> cubeTmp,
-                    QSharedPointer<QDemonRenderTexture2D> depthTemp)
+                    QDemonRef<QDemonRenderTextureCube> depthCube,
+                    QDemonRef<QDemonRenderTextureCube> cubeTmp,
+                    QDemonRef<QDemonRenderTexture2D> depthTemp)
         : m_lightIndex(index)
         , m_shadowMapMode(mode)
         , m_shadowFilterFlags(filter)
@@ -105,11 +105,11 @@ struct QDemonShadowMapEntry {
     // the shadow maps (depth+stencil is necessary), but use a more compact format for the
     // actual
     // shadow map used at shade time.  See if it's worth adding.
-    QSharedPointer<QDemonRenderTexture2D> m_depthMap; ///< shadow map texture
-    QSharedPointer<QDemonRenderTexture2D> m_depthCopy; ///< shadow map buffer used during blur passes
-    QSharedPointer<QDemonRenderTextureCube> m_depthCube; ///< shadow cube map
-    QSharedPointer<QDemonRenderTextureCube> m_cubeCopy; ///< cube map buffer used during the blur passes
-    QSharedPointer<QDemonRenderTexture2D> m_depthRender; ///< shadow depth+stencil map used during rendering
+    QDemonRef<QDemonRenderTexture2D> m_depthMap; ///< shadow map texture
+    QDemonRef<QDemonRenderTexture2D> m_depthCopy; ///< shadow map buffer used during blur passes
+    QDemonRef<QDemonRenderTextureCube> m_depthCube; ///< shadow cube map
+    QDemonRef<QDemonRenderTextureCube> m_cubeCopy; ///< cube map buffer used during the blur passes
+    QDemonRef<QDemonRenderTexture2D> m_depthRender; ///< shadow depth+stencil map used during rendering
 
     QMatrix4x4 m_lightVP; ///< light view projection matrix
     QMatrix4x4 m_lightCubeView[6]; ///< light cubemap view matrices
@@ -165,7 +165,7 @@ public:
          */
     quint32 getShadowMapEntryCount() { return m_shadowMapList.size(); }
 
-    static QSharedPointer<QDemonRenderShadowMap> create(QDemonRenderContextInterface *inContext);
+    static QDemonRef<QDemonRenderShadowMap> create(QDemonRenderContextInterface *inContext);
 
 private:
     TShadowMapEntryList m_shadowMapList; ///< List of shadow map entries

@@ -568,9 +568,9 @@ struct QDemonNullBackend : public QDemonRenderBackend
 };
 }
 
-QSharedPointer<QDemonRenderBackend> QDemonRenderBackendNULL::createBackend()
+QDemonRef<QDemonRenderBackend> QDemonRenderBackendNULL::createBackend()
 {
-    return QSharedPointer<QDemonRenderBackend>(new QDemonNullBackend());
+    return QDemonRef<QDemonRenderBackend>(new QDemonNullBackend());
 }
 
 QT_END_NAMESPACE

@@ -42,11 +42,11 @@ private:
     bool m_autoUpdate = true;
     bool m_isIntialized = false;
     QOpenGLContext *m_glContext;
-    QSharedPointer<QDemonRenderContextCoreInterface> m_contextCore;
-    QSharedPointer<QDemonRenderContextInterface> m_context;
-    QSharedPointer<QDemonRenderContext> m_renderContext;
-    QSharedPointer<QDemonPresentation> m_presentation;
-    QSharedPointer<QDemonRenderScene> m_scene;
+    QDemonRef<QDemonRenderContextCoreInterface> m_contextCore;
+    QDemonRef<QDemonRenderContextInterface> m_context;
+    QDemonRef<QDemonRenderContext> m_renderContext;
+    QDemonRef<QDemonPresentation> m_presentation;
+    QDemonRef<QDemonRenderScene> m_scene;
     QDemonRenderModel *m_cube;
 
 };

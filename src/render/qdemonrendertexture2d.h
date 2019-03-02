@@ -58,7 +58,7 @@ public:
          *
          * @return No return.
          */
-    QDemonRenderTexture2D(const QSharedPointer<QDemonRenderContextImpl> &context,
+    QDemonRenderTexture2D(const QDemonRef<QDemonRenderContextImpl> &context,
                           QDemonRenderTextureTargetType::Enum texTarget = QDemonRenderTextureTargetType::Texture2D);
 
     virtual ~QDemonRenderTexture2D() override;
@@ -159,7 +159,7 @@ public:
         return reinterpret_cast<void *>(m_textureHandle);
     }
 
-    static QSharedPointer<QDemonRenderTexture2D> create(const QSharedPointer<QDemonRenderContextImpl> &context);
+    static QDemonRef<QDemonRenderTexture2D> create(const QDemonRef<QDemonRenderContextImpl> &context);
 };
 
 QT_END_NAMESPACE

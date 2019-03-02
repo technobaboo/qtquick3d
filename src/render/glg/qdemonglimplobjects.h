@@ -38,10 +38,10 @@ QT_BEGIN_NAMESPACE
 // The set of all properties as they are currently set in hardware.
 struct QDemonGLHardPropertyContext
 {
-    QSharedPointer<QDemonRenderFrameBuffer> m_frameBuffer;
-    QSharedPointer<QDemonRenderShaderProgram> m_activeShader;
-    QSharedPointer<QDemonRenderProgramPipeline> m_activeProgramPipeline;
-    QSharedPointer<QDemonRenderInputAssembler> m_inputAssembler;
+    QDemonRef<QDemonRenderFrameBuffer> m_frameBuffer;
+    QDemonRef<QDemonRenderShaderProgram> m_activeShader;
+    QDemonRef<QDemonRenderProgramPipeline> m_activeProgramPipeline;
+    QDemonRef<QDemonRenderInputAssembler> m_inputAssembler;
     QDemonRenderBlendFunctionArgument m_blendFunction;
     QDemonRenderBlendEquationArgument m_blendEquation;
     bool m_cullingEnabled = true;

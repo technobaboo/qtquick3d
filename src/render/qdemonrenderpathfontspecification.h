@@ -45,8 +45,8 @@ class QDemonRenderPathFontItem;
 
 class Q_DEMONRENDER_EXPORT QDemonRenderPathFontSpecification : public QEnableSharedFromThis<QDemonRenderPathFontSpecification>
 {
-    QSharedPointer<QDemonRenderContextImpl> m_context; ///< pointer to context
-    QSharedPointer<QDemonRenderBackend> m_backend; ///< pointer to backend
+    QDemonRef<QDemonRenderContextImpl> m_context; ///< pointer to context
+    QDemonRef<QDemonRenderBackend> m_backend; ///< pointer to backend
 
 public:
     /**
@@ -59,7 +59,7 @@ public:
              *
              * @return No return.
              */
-    QDemonRenderPathFontSpecification(const QSharedPointer<QDemonRenderContextImpl> &context, const QString &fontName);
+    QDemonRenderPathFontSpecification(const QDemonRef<QDemonRenderContextImpl> &context, const QString &fontName);
 
     /// @QDemonRenderPathSpecification destructor
     virtual ~QDemonRenderPathFontSpecification();
@@ -85,7 +85,7 @@ public:
              *
              * @return no return
              */
-    void stencilFillPathInstanced(const QSharedPointer<QDemonRenderPathFontItem> &inPathFontItem);
+    void stencilFillPathInstanced(const QDemonRef<QDemonRenderPathFontItem> &inPathFontItem);
 
     /**
              * @brief Render a cover fill pass for fonts
@@ -94,7 +94,7 @@ public:
              *
              * @return no return
              */
-    void coverFillPathInstanced(const QSharedPointer<QDemonRenderPathFontItem> &inPathFontItem);
+    void coverFillPathInstanced(const QDemonRef<QDemonRenderPathFontItem> &inPathFontItem);
 
     /**
              * @brief get type for font path set
@@ -143,7 +143,7 @@ private:
     quint32 getSizeOfType(QDemonRenderPathFormatType::Enum type);
 
 public:
-    static QSharedPointer<QDemonRenderPathFontSpecification> createPathFontSpecification(const QSharedPointer<QDemonRenderContextImpl> &context,
+    static QDemonRef<QDemonRenderPathFontSpecification> createPathFontSpecification(const QDemonRef<QDemonRenderContextImpl> &context,
                                                                                          const QString &fontName);
 };
 

@@ -66,7 +66,7 @@ void QDemonRenderShadowMap::addShadowMapEntry(quint32 index, quint32 width, quin
                                        QDemonRenderTextureFormats::Enum format, quint32 samples,
                                        ShadowMapModes::Enum mode, ShadowFilterValues::Enum filter)
 {
-    QSharedPointer<QDemonResourceManagerInterface> theManager(m_context->getResourceManager());
+    QDemonRef<QDemonResourceManagerInterface> theManager(m_context->getResourceManager());
     QDemonShadowMapEntry *pEntry = nullptr;
 
     if (index < m_shadowMapList.size())
@@ -128,16 +128,16 @@ void QDemonRenderShadowMap::addShadowMapEntry(quint32 index, quint32 width, quin
         pEntry->m_shadowMapMode = mode;
         pEntry->m_shadowFilterFlags = filter;
     } else if (mode == ShadowMapModes::CUBE) {
-        QSharedPointer<QDemonRenderTextureCube> theDepthTex = theManager->allocateTextureCube(width, height, format, samples);
-        QSharedPointer<QDemonRenderTextureCube> theDepthCopy = theManager->allocateTextureCube(width, height, format, samples);
-        QSharedPointer<QDemonRenderTexture2D> theDepthTemp = theManager->allocateTexture2D(width, height, QDemonRenderTextureFormats::Depth24Stencil8, samples);
+        QDemonRef<QDemonRenderTextureCube> theDepthTex = theManager->allocateTextureCube(width, height, format, samples);
+        QDemonRef<QDemonRenderTextureCube> theDepthCopy = theManager->allocateTextureCube(width, height, format, samples);
+        QDemonRef<QDemonRenderTexture2D> theDepthTemp = theManager->allocateTexture2D(width, height, QDemonRenderTextureFormats::Depth24Stencil8, samples);
         m_shadowMapList.push_back(QDemonShadowMapEntry(index, mode, filter, theDepthTex, theDepthCopy, theDepthTemp));
 
         pEntry = &m_shadowMapList.back();
     } else {
-        QSharedPointer<QDemonRenderTexture2D> theDepthMap = theManager->allocateTexture2D(width, height, format, samples);
-        QSharedPointer<QDemonRenderTexture2D> theDepthCopy = theManager->allocateTexture2D(width, height, format, samples);
-        QSharedPointer<QDemonRenderTexture2D> theDepthTemp = theManager->allocateTexture2D(width, height, QDemonRenderTextureFormats::Depth24Stencil8, samples);
+        QDemonRef<QDemonRenderTexture2D> theDepthMap = theManager->allocateTexture2D(width, height, format, samples);
+        QDemonRef<QDemonRenderTexture2D> theDepthCopy = theManager->allocateTexture2D(width, height, format, samples);
+        QDemonRef<QDemonRenderTexture2D> theDepthTemp = theManager->allocateTexture2D(width, height, QDemonRenderTextureFormats::Depth24Stencil8, samples);
         m_shadowMapList.push_back(QDemonShadowMapEntry(index, mode, filter, theDepthMap, theDepthCopy, theDepthTemp));
 
         pEntry = &m_shadowMapList.back();
@@ -198,9 +198,9 @@ QDemonShadowMapEntry *QDemonRenderShadowMap::getShadowMapEntry(int index)
     return nullptr;
 }
 
-QSharedPointer<QDemonRenderShadowMap> QDemonRenderShadowMap::create(QDemonRenderContextInterface *inContext)
+QDemonRef<QDemonRenderShadowMap> QDemonRenderShadowMap::create(QDemonRenderContextInterface *inContext)
 {
-    return QSharedPointer<QDemonRenderShadowMap>(new QDemonRenderShadowMap(inContext));
+    return QDemonRef<QDemonRenderShadowMap>(new QDemonRenderShadowMap(inContext));
 }
 
 QT_END_NAMESPACE

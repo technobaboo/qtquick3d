@@ -109,9 +109,9 @@ QDemonPathBufferBuilderInterface::~QDemonPathBufferBuilderInterface()
 
 }
 
-QSharedPointer<QDemonPathBufferBuilderInterface> QDemonPathBufferBuilderInterface::createBuilder()
+QDemonRef<QDemonPathBufferBuilderInterface> QDemonPathBufferBuilderInterface::createBuilder()
 {
-    return QSharedPointer<QDemonPathBufferBuilderInterface>(new QDemonPathBufferBuilder());
+    return QDemonRef<QDemonPathBufferBuilderInterface>(new QDemonPathBufferBuilder());
 }
 
 QT_END_NAMESPACE

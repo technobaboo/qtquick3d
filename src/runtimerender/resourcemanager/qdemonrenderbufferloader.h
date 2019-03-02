@@ -47,7 +47,7 @@ public:
     virtual QString path() = 0;
     // Data is released when the buffer itself is released.
     virtual QDemonDataRef<quint8> data() = 0;
-    virtual QSharedPointer<QDemonBufferLoaderCallbackInterface> userData() = 0;
+    virtual QDemonRef<QDemonBufferLoaderCallbackInterface> userData() = 0;
 };
 
 class QDemonBufferLoaderCallbackInterface
@@ -67,7 +67,7 @@ public:
     // nonblocking.  Quiet failure is passed to the input stream factory.
     // Returns handle to loading buffer
     virtual quint64 queueForLoading(QString inPath,
-                                    QSharedPointer<QDemonBufferLoaderCallbackInterface> inUserData = nullptr,
+                                    QDemonRef<QDemonBufferLoaderCallbackInterface> inUserData = nullptr,
                                     bool inQuietFailure = false) = 0;
     // Cancel a buffer that has not made it to the loaded buffers list.
     virtual void cancelBufferLoad(quint64 inBufferId) = 0;
@@ -77,9 +77,9 @@ public:
     virtual bool areLoadedBuffersAvailable() = 0;
 
     // blocking, be careful with this.  No guarantees about timely return here.
-    virtual QSharedPointer<QDemonLoadedBufferInterface> nextLoadedBuffer() = 0;
+    virtual QDemonRef<QDemonLoadedBufferInterface> nextLoadedBuffer() = 0;
 
-    static QSharedPointer<QDemonBufferLoaderInterface> create(QSharedPointer<QDemonInputStreamFactoryInterface> &inFactory, QSharedPointer<QDemonAbstractThreadPool> inThreadPool);
+    static QDemonRef<QDemonBufferLoaderInterface> create(QDemonRef<QDemonInputStreamFactoryInterface> &inFactory, QDemonRef<QDemonAbstractThreadPool> inThreadPool);
 };
 QT_END_NAMESPACE
 

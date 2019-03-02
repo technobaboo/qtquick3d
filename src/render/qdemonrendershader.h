@@ -42,8 +42,8 @@ class QDemonRenderContextImpl;
 class QDemonRenderShader
 {
 protected:
-    QSharedPointer<QDemonRenderContextImpl> m_context; ///< pointer to context
-    QSharedPointer<QDemonRenderBackend> m_backend; ///< pointer to backend
+    QDemonRef<QDemonRenderContextImpl> m_context; ///< pointer to context
+    QDemonRef<QDemonRenderBackend> m_backend; ///< pointer to backend
     QDemonConstDataRef<qint8> m_source; ///< shader source code
     bool m_binary; ///< true for binary programs
     QByteArray m_errorMessage; ///< contains the error message if linking fails
@@ -57,7 +57,7 @@ public:
          *
          * @return No return.
          */
-    QDemonRenderShader(const QSharedPointer<QDemonRenderContextImpl> &context,
+    QDemonRenderShader(const QDemonRef<QDemonRenderContextImpl> &context,
                        QDemonConstDataRef<qint8> source,
                        bool binaryProgram)
         : m_context(context)

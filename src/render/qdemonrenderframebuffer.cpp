@@ -37,7 +37,7 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonRenderFrameBuffer::QDemonRenderFrameBuffer(const QSharedPointer<QDemonRenderContextImpl> &context)
+QDemonRenderFrameBuffer::QDemonRenderFrameBuffer(const QDemonRef<QDemonRenderContextImpl> &context)
     : m_context(context)
     , m_backend(context->getBackend())
     , m_bufferHandle(nullptr)
@@ -64,7 +64,7 @@ QDemonRenderFrameBuffer::~QDemonRenderFrameBuffer()
     }
 }
 
-inline void CheckAttachment(QSharedPointer<QDemonRenderContext> ctx,
+inline void CheckAttachment(QDemonRef<QDemonRenderContext> ctx,
                             QDemonRenderFrameBufferAttachments::Enum attachment)
 {
 #ifdef _DEBUG
@@ -284,9 +284,9 @@ bool QDemonRenderFrameBuffer::isComplete()
     return m_backend->renderTargetIsValid(m_bufferHandle);
 }
 
-QSharedPointer<QDemonRenderFrameBuffer> QDemonRenderFrameBuffer::create(const QSharedPointer<QDemonRenderContextImpl> &context)
+QDemonRef<QDemonRenderFrameBuffer> QDemonRenderFrameBuffer::create(const QDemonRef<QDemonRenderContextImpl> &context)
 {
-    return QSharedPointer<QDemonRenderFrameBuffer>(new QDemonRenderFrameBuffer(context));
+    return QDemonRef<QDemonRenderFrameBuffer>(new QDemonRenderFrameBuffer(context));
 }
 
 QT_END_NAMESPACE

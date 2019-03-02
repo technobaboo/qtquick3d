@@ -58,7 +58,7 @@ public:
     // Points back to internal data structures, must use or copy.
     virtual QDemonPathBuffer getPathBuffer() = 0;
 
-    static QSharedPointer<QDemonPathBufferBuilderInterface> createBuilder();
+    static QDemonRef<QDemonPathBufferBuilderInterface> createBuilder();
 };
 } // end namespace
 

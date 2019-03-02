@@ -39,15 +39,15 @@ QT_BEGIN_NAMESPACE
 class QDemonResourceTexture2D
 {
 protected:
-    QSharedPointer<QDemonResourceManagerInterface> m_resourceManager;
-    QSharedPointer<QDemonRenderTexture2D> m_texture;
+    QDemonRef<QDemonResourceManagerInterface> m_resourceManager;
+    QDemonRef<QDemonRenderTexture2D> m_texture;
     QDemonTextureDetails m_textureDetails;
 
 public:
-    QDemonResourceTexture2D(QSharedPointer<QDemonResourceManagerInterface> mgr,
-                            QSharedPointer<QDemonRenderTexture2D> inTexture = nullptr);
+    QDemonResourceTexture2D(QDemonRef<QDemonResourceManagerInterface> mgr,
+                            QDemonRef<QDemonRenderTexture2D> inTexture = nullptr);
     // create and allocate the texture right away.
-    QDemonResourceTexture2D(QSharedPointer<QDemonResourceManagerInterface> mgr,
+    QDemonResourceTexture2D(QDemonRef<QDemonResourceManagerInterface> mgr,
                             quint32 width,
                             quint32 height,
                             QDemonRenderTextureFormats::Enum inFormat,
@@ -74,13 +74,13 @@ public:
         Q_ASSERT(m_texture);
         return *m_texture;
     }
-    QSharedPointer<QDemonRenderTexture2D> operator->()
+    QDemonRef<QDemonRenderTexture2D> operator->()
     {
         Q_ASSERT(m_texture);
         return m_texture;
     }
-    operator QSharedPointer<QDemonRenderTexture2D> () { return m_texture; }
-    QSharedPointer<QDemonRenderTexture2D> getTexture() { return m_texture; }
+    operator QDemonRef<QDemonRenderTexture2D> () { return m_texture; }
+    QDemonRef<QDemonRenderTexture2D> getTexture() { return m_texture; }
     void forgetTexture();
     // Enforces single ownership rules.
     void stealTexture(QDemonResourceTexture2D &inOther);
@@ -89,14 +89,14 @@ public:
 class QDemonResourceTexture2DArray
 {
 protected:
-    QSharedPointer<QDemonResourceManagerInterface> m_resourceManager;
-    QSharedPointer<QDemonRenderTexture2DArray> m_texture;
+    QDemonRef<QDemonResourceManagerInterface> m_resourceManager;
+    QDemonRef<QDemonRenderTexture2DArray> m_texture;
     QDemonTextureDetails m_textureDetails;
 
 public:
-    QDemonResourceTexture2DArray(QSharedPointer<QDemonResourceManagerInterface> mgr);
+    QDemonResourceTexture2DArray(QDemonRef<QDemonResourceManagerInterface> mgr);
     // create and allocate the texture right away.
-    QDemonResourceTexture2DArray(QSharedPointer<QDemonResourceManagerInterface> mgr,
+    QDemonResourceTexture2DArray(QDemonRef<QDemonResourceManagerInterface> mgr,
                                  quint32 width,
                                  quint32 height,
                                  quint32 slices,
@@ -126,13 +126,13 @@ public:
         Q_ASSERT(m_texture);
         return *m_texture;
     }
-    QSharedPointer<QDemonRenderTexture2DArray> operator->()
+    QDemonRef<QDemonRenderTexture2DArray> operator->()
     {
         Q_ASSERT(m_texture);
         return m_texture;
     }
-    operator QSharedPointer<QDemonRenderTexture2DArray> () { return m_texture; }
-    QSharedPointer<QDemonRenderTexture2DArray> getTexture() { return m_texture; }
+    operator QDemonRef<QDemonRenderTexture2DArray> () { return m_texture; }
+    QDemonRef<QDemonRenderTexture2DArray> getTexture() { return m_texture; }
     // Enforces single ownership rules.
     void stealTexture(QDemonResourceTexture2DArray &inOther);
 };

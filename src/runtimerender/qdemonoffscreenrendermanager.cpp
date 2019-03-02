@@ -62,11 +62,11 @@ namespace {
 
 struct QDemonRendererData : QDemonOffscreenRenderResult
 {
-    QSharedPointer<QDemonResourceManagerInterface> resourceManager;
+    QDemonRef<QDemonResourceManagerInterface> resourceManager;
     quint32 frameCount = std::numeric_limits<quint32>::max();
     bool rendering = false;
 
-    QDemonRendererData(QSharedPointer<QDemonResourceManagerInterface> inResourceManager)
+    QDemonRendererData(QDemonRef<QDemonResourceManagerInterface> inResourceManager)
         : resourceManager(inResourceManager)
     {
     }
@@ -87,7 +87,7 @@ struct QDemonScopedRenderDataRenderMarker
 struct QDemonRenderDataReleaser
 {
     // TODO:
-    QSharedPointer<QDemonRendererData> dataPtr;
+    QDemonRef<QDemonRendererData> dataPtr;
 };
 struct QDemonOffscreenRenderManager;
 
@@ -111,11 +111,11 @@ struct QDemonOffscreenRenderManager : public QDemonOffscreenRenderManagerInterfa
 {
     typedef QHash<QDemonOffscreenRendererKey, QDemonRendererData> TRendererMap;
     QDemonRenderContextInterface *m_context;
-    QSharedPointer<QDemonResourceManagerInterface> m_resourceManager;
+    QDemonRef<QDemonResourceManagerInterface> m_resourceManager;
     TRendererMap m_renderers;
     quint32 m_frameCount; // cheap per-
 
-    QDemonOffscreenRenderManager(QSharedPointer<QDemonResourceManagerInterface> inManager,
+    QDemonOffscreenRenderManager(QDemonRef<QDemonResourceManagerInterface> inManager,
                                  QDemonRenderContextInterface *inContext)
         : m_context(inContext)
         , m_resourceManager(inManager)
@@ -126,7 +126,7 @@ struct QDemonOffscreenRenderManager : public QDemonOffscreenRenderManagerInterfa
     virtual ~QDemonOffscreenRenderManager() override {}
 
     QDemonOption<bool> maybeRegisterOffscreenRenderer(const QDemonOffscreenRendererKey &inKey,
-                                                      QSharedPointer<QDemonOffscreenRendererInterface> inRenderer) override
+                                                      QDemonRef<QDemonOffscreenRendererInterface> inRenderer) override
     {
         TRendererMap::iterator theIter = m_renderers.find(inKey);
         if (theIter != m_renderers.end()) {
@@ -146,7 +146,7 @@ struct QDemonOffscreenRenderManager : public QDemonOffscreenRenderManagerInterfa
     }
 
     void registerOffscreenRenderer(const QDemonOffscreenRendererKey &inKey,
-                                   QSharedPointer<QDemonOffscreenRendererInterface> inRenderer) override
+                                   QDemonRef<QDemonOffscreenRendererInterface> inRenderer) override
     {
         auto inserter = m_renderers.find(inKey);
         if (inserter == m_renderers.end())
@@ -160,7 +160,7 @@ struct QDemonOffscreenRenderManager : public QDemonOffscreenRenderManagerInterfa
         return m_renderers.find(inKey) != m_renderers.end();
     }
 
-    QSharedPointer<QDemonOffscreenRendererInterface> getOffscreenRenderer(const QDemonOffscreenRendererKey &inKey) override
+    QDemonRef<QDemonOffscreenRendererInterface> getOffscreenRenderer(const QDemonOffscreenRendererKey &inKey) override
     {
         TRendererMap::iterator theRenderer = m_renderers.find(inKey);
         if (theRenderer != m_renderers.end()) {
@@ -208,7 +208,7 @@ struct QDemonOffscreenRenderManager : public QDemonOffscreenRenderManagerInterfa
                 __blendEquation(*theContext, &QDemonRenderContext::GetBlendEquation,
                                 &QDemonRenderContext::setBlendEquation,
                                 QDemonRenderBlendEquationArgument());
-        QDemonRenderContextScopedProperty<QSharedPointer<QDemonRenderFrameBuffer> >
+        QDemonRenderContextScopedProperty<QDemonRef<QDemonRenderFrameBuffer> >
                 __rendertarget(*theContext, &QDemonRenderContext::getRenderTarget,
                                &QDemonRenderContext::setRenderTarget);
 
@@ -311,7 +311,7 @@ struct QDemonOffscreenRenderManager : public QDemonOffscreenRenderManagerInterfa
                                    QDemonRenderScene::AlwaysClear, this);
 
         if (theSampleCount > 1) {
-            QSharedPointer<QDemonResourceTexture2D> theResult(new QDemonResourceTexture2D(m_resourceManager, theData.texture));
+            QDemonRef<QDemonResourceTexture2D> theResult(new QDemonResourceTexture2D(m_resourceManager, theData.texture));
 
             if (theDesiredEnvironment.msaaMode != AAModeValues::SSAA) {
                 // Have to downsample the FBO.
@@ -385,7 +385,7 @@ struct QDemonOffscreenRenderManager : public QDemonOffscreenRenderManagerInterfa
                         *theContext, &QDemonRenderContext::getViewport, &QDemonRenderContext::setViewport,
                         theViewport);
 
-            quint32 taskId = m_context->getRenderList()->addRenderTask(QSharedPointer<QDemonOffscreenRunnable>(new QDemonOffscreenRunnable(*this, theData, theDesiredEnvironment)));
+            quint32 taskId = m_context->getRenderList()->addRenderTask(QDemonRef<QDemonOffscreenRunnable>(new QDemonOffscreenRunnable(*this, theData, theDesiredEnvironment)));
 
             QDemonOffscreenRenderFlags theFlags =
                     theData.renderer->needsRender(theDesiredEnvironment, thePresScaleFactor, this);
@@ -438,11 +438,11 @@ QDemonOffscreenRenderManagerInterface::~QDemonOffscreenRenderManagerInterface()
 
 }
 
-QSharedPointer<QDemonOffscreenRenderManagerInterface> QDemonOffscreenRenderManagerInterface::createOffscreenRenderManager(
-        QSharedPointer<QDemonResourceManagerInterface> inManager,
+QDemonRef<QDemonOffscreenRenderManagerInterface> QDemonOffscreenRenderManagerInterface::createOffscreenRenderManager(
+        QDemonRef<QDemonResourceManagerInterface> inManager,
         QDemonRenderContextInterface *inContext)
 {
-    return QSharedPointer<QDemonOffscreenRenderManagerInterface>(new QDemonOffscreenRenderManager(inManager, inContext));
+    return QDemonRef<QDemonOffscreenRenderManagerInterface>(new QDemonOffscreenRenderManager(inManager, inContext));
 }
 
 QDemonOffscreenRendererInterface::~QDemonOffscreenRendererInterface()

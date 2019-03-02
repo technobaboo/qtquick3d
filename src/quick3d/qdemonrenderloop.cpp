@@ -40,8 +40,8 @@ public:
 
     QAnimationDriver *animationDriver() const override { return nullptr; }
 
-    QSharedPointer<QDemonRenderContextInterface> sceneGraphContext() const override;
-    QSharedPointer<QDemonRenderContext> renderContext() const override { return m_renderContext; }
+    QDemonRef<QDemonRenderContextInterface> sceneGraphContext() const override;
+    QDemonRef<QDemonRenderContext> renderContext() const override { return m_renderContext; }
 
     struct WindowData {
         bool updatePending : 1;
@@ -51,10 +51,10 @@ public:
     QHash<QDemonWindow *, WindowData> m_windows;
 
     QOpenGLContext *gl;
-    QSharedPointer<QOffscreenSurface> m_offscreenSurface;
-    QSharedPointer<QDemonRenderContextCoreInterface> m_contextCore;
-    QSharedPointer<QDemonRenderContextInterface> m_sgContext;
-    QSharedPointer<QDemonRenderContext> m_renderContext;
+    QDemonRef<QOffscreenSurface> m_offscreenSurface;
+    QDemonRef<QDemonRenderContextCoreInterface> m_contextCore;
+    QDemonRef<QDemonRenderContextInterface> m_sgContext;
+    QDemonRef<QDemonRenderContext> m_renderContext;
 
     QImage grabContent;
 };
@@ -378,7 +378,7 @@ void QDemonGuiThreadRenderLoop::maybeUpdate(QDemonWindow *window)
     window->requestUpdate();
 }
 
-QSharedPointer<QDemonRenderContextInterface> QDemonGuiThreadRenderLoop::sceneGraphContext() const
+QDemonRef<QDemonRenderContextInterface> QDemonGuiThreadRenderLoop::sceneGraphContext() const
 {
     return m_sgContext;
 }

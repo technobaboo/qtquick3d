@@ -34,7 +34,7 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonRenderVertexBuffer::QDemonRenderVertexBuffer(const QSharedPointer<QDemonRenderContextImpl> &context, size_t size,
+QDemonRenderVertexBuffer::QDemonRenderVertexBuffer(const QDemonRef<QDemonRenderContextImpl> &context, size_t size,
                                                    quint32 stride, QDemonRenderBufferBindFlags bindFlags,
                                                    QDemonRenderBufferUsageType::Enum usageType,
                                                    QDemonDataRef<quint8> data)
@@ -59,12 +59,12 @@ void QDemonRenderVertexBuffer::bind()
     m_backend->bindBuffer(m_bufferHandle, m_bindFlags);
 }
 
-QSharedPointer<QDemonRenderVertexBuffer> QDemonRenderVertexBuffer::create(const QSharedPointer<QDemonRenderContextImpl> &context,
+QDemonRef<QDemonRenderVertexBuffer> QDemonRenderVertexBuffer::create(const QDemonRef<QDemonRenderContextImpl> &context,
                                                                           QDemonRenderBufferUsageType::Enum usageType,
                                                                           size_t size, quint32 stride,
                                                                           QDemonConstDataRef<quint8> bufferData)
 {
-    return QSharedPointer<QDemonRenderVertexBuffer>(new QDemonRenderVertexBuffer(context,
+    return QDemonRef<QDemonRenderVertexBuffer>(new QDemonRenderVertexBuffer(context,
                                                                                  size,
                                                                                  stride,
                                                                                  QDemonRenderBufferBindValues::Vertex, usageType,

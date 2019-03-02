@@ -46,14 +46,14 @@ namespace {
 
 struct QDemonPGRectShader
 {
-    QSharedPointer<QDemonRenderShaderProgram> rectShader;
-    QSharedPointer<QDemonRenderShaderConstantBase> mvp;
-    QSharedPointer<QDemonRenderShaderConstantBase> rectColor;
-    QSharedPointer<QDemonRenderShaderConstantBase> leftright;
-    QSharedPointer<QDemonRenderShaderConstantBase> bottomtop;
+    QDemonRef<QDemonRenderShaderProgram> rectShader;
+    QDemonRef<QDemonRenderShaderConstantBase> mvp;
+    QDemonRef<QDemonRenderShaderConstantBase> rectColor;
+    QDemonRef<QDemonRenderShaderConstantBase> leftright;
+    QDemonRef<QDemonRenderShaderConstantBase> bottomtop;
 
     QDemonPGRectShader() = default;
-    void setShader(QSharedPointer<QDemonRenderShaderProgram> program)
+    void setShader(QDemonRef<QDemonRenderShaderProgram> program)
     {
         rectShader = program;
         if (program) {
@@ -86,10 +86,10 @@ struct QDemonPGRectShader
 struct QDemonPixelGraphicsRenderer : public QDemonPixelGraphicsRendererInterface
 {
     QDemonRenderContextInterface *m_renderContext;
-    QSharedPointer<QDemonRenderVertexBuffer> m_quadVertexBuffer;
-    QSharedPointer<QDemonRenderIndexBuffer> m_quadIndexBuffer;
-    QSharedPointer<QDemonRenderInputAssembler> m_quadInputAssembler;
-    QSharedPointer<QDemonRenderAttribLayout> m_quadAttribLayout;
+    QDemonRef<QDemonRenderVertexBuffer> m_quadVertexBuffer;
+    QDemonRef<QDemonRenderIndexBuffer> m_quadIndexBuffer;
+    QDemonRef<QDemonRenderInputAssembler> m_quadInputAssembler;
+    QDemonRef<QDemonRenderAttribLayout> m_quadAttribLayout;
     QDemonShaderVertexCodeGenerator m_vertexGenerator;
     QDemonShaderFragmentCodeGenerator m_fragmentGenerator;
     QDemonPGRectShader m_rectShader;
@@ -137,7 +137,7 @@ struct QDemonPixelGraphicsRenderer : public QDemonPixelGraphicsRendererInterface
     }
     void generateXYQuad()
     {
-        QSharedPointer<QDemonRenderContext> theRenderContext(m_renderContext->getRenderContext());
+        QDemonRef<QDemonRenderContext> theRenderContext(m_renderContext->getRenderContext());
 
         QDemonRenderVertexBufferEntry theEntries[] = {
             QDemonRenderVertexBufferEntry("attr_pos", QDemonRenderComponentTypes::Float32, 2),
@@ -220,7 +220,7 @@ struct QDemonPixelGraphicsRenderer : public QDemonPixelGraphicsRendererInterface
 
     void render(const QVector<QDemonPGGraphObject *> &inObjects) override
     {
-        QSharedPointer<QDemonRenderContext> theRenderContext(m_renderContext->getRenderContext());
+        QDemonRef<QDemonRenderContext> theRenderContext(m_renderContext->getRenderContext());
         theRenderContext->pushPropertySet();
         // Setup an orthographic camera that places the center at the
         // lower left of the viewport.
@@ -297,9 +297,9 @@ QDemonPixelGraphicsRendererInterface::~QDemonPixelGraphicsRendererInterface()
 
 }
 
-QSharedPointer<QDemonPixelGraphicsRendererInterface> QDemonPixelGraphicsRendererInterface::createRenderer(QDemonRenderContextInterface *ctx)
+QDemonRef<QDemonPixelGraphicsRendererInterface> QDemonPixelGraphicsRendererInterface::createRenderer(QDemonRenderContextInterface *ctx)
 {
-    return QSharedPointer<QDemonPixelGraphicsRenderer>(new QDemonPixelGraphicsRenderer(ctx));
+    return QDemonRef<QDemonPixelGraphicsRenderer>(new QDemonPixelGraphicsRenderer(ctx));
 }
 
 QT_END_NAMESPACE

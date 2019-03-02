@@ -53,7 +53,7 @@ struct QDemonPresentation : public QDemonGraphObject
 {
     QVector2D presentationDimensions;
     RenderRotationValues::Enum presentationRotation;
-    QSharedPointer<QDemonRenderScene> scene;
+    QDemonRef<QDemonRenderScene> scene;
 
     QString presentationDirectory;
 

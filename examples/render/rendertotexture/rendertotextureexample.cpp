@@ -41,24 +41,24 @@
 struct ShaderArgs
 {
     float mvp[16];
-    QSharedPointer<QDemonRenderTexture2D> texture;
-    QSharedPointer<QDemonRenderShaderProgram> shader;
+    QDemonRef<QDemonRenderTexture2D> texture;
+    QDemonRef<QDemonRenderShaderProgram> shader;
     ShaderArgs() {}
 };
 class RenderToTexture : public QDemonRenderExample
 {
-    QSharedPointer<QDemonRenderContext> m_Context;
-    QSharedPointer<QDemonRenderVertexBuffer> mVertexBuffer;
-    QSharedPointer<QDemonRenderIndexBuffer> mIndexBuffer;
-    QSharedPointer<QDemonRenderInputAssembler> mInputAssembler;
+    QDemonRef<QDemonRenderContext> m_Context;
+    QDemonRef<QDemonRenderVertexBuffer> mVertexBuffer;
+    QDemonRef<QDemonRenderIndexBuffer> mIndexBuffer;
+    QDemonRef<QDemonRenderInputAssembler> mInputAssembler;
     // Simple shader
-    QSharedPointer<QDemonRenderShaderProgram> mSimpleShader;
+    QDemonRef<QDemonRenderShaderProgram> mSimpleShader;
     // Simple shader with texture lookup.
-    QSharedPointer<QDemonRenderShaderProgram> mSimpleShaderTex;
+    QDemonRef<QDemonRenderShaderProgram> mSimpleShaderTex;
 
-    QSharedPointer<QDemonRenderFrameBuffer> mFrameBuffer;
-    QSharedPointer<QDemonRenderTexture2D> mColorBuffer;
-    QSharedPointer<QDemonRenderTexture2D> mDepthBuffer;
+    QDemonRef<QDemonRenderFrameBuffer> mFrameBuffer;
+    QDemonRef<QDemonRenderTexture2D> mColorBuffer;
+    QDemonRef<QDemonRenderTexture2D> mDepthBuffer;
 
     quint32 mFBWidth;
     quint32 mFBHeight;
@@ -148,7 +148,7 @@ public:
         QDemonRenderClearFlags clearFlags(QDemonRenderClearValues::Color | QDemonRenderClearValues::Depth);
         // render to frame buffer
         {
-            QDemonRenderContextScopedProperty<QSharedPointer<QDemonRenderFrameBuffer>> framebuffer(
+            QDemonRenderContextScopedProperty<QDemonRef<QDemonRenderFrameBuffer>> framebuffer(
                 *m_Context.data(),
                 &QDemonRenderContext::getRenderTarget,
                 &QDemonRenderContext::setRenderTarget,

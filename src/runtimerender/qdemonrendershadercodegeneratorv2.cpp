@@ -407,7 +407,7 @@ struct QDemonProgramGenerator : public QDemonShaderProgramGeneratorInterface
         return nullptr;
     }
 
-    QSharedPointer<QDemonRenderShaderProgram> compileGeneratedShader(const QString &inShaderName,
+    QDemonRef<QDemonRenderShaderProgram> compileGeneratedShader(const QString &inShaderName,
                                                                      const QDemonShaderCacheProgramFlags &inFlags,
                                                                      TShaderFeatureSet inFeatureSet,
                                                                      bool separableProgram) override
@@ -418,7 +418,7 @@ struct QDemonProgramGenerator : public QDemonShaderProgramGeneratorInterface
             return nullptr;
         }
 
-        QSharedPointer<QDemonDynamicObjectSystemInterface> theDynamicSystem(m_context->getDynamicObjectSystem());
+        QDemonRef<QDemonDynamicObjectSystemInterface> theDynamicSystem(m_context->getDynamicObjectSystem());
         QDemonShaderCacheProgramFlags theCacheFlags(inFlags);
         for (quint32 stageIdx = 0, stageEnd = ShaderGeneratorStages::StageCount; stageIdx < stageEnd;
              ++stageIdx) {
@@ -432,7 +432,7 @@ struct QDemonProgramGenerator : public QDemonShaderProgramGeneratorInterface
             }
         }
 
-        QSharedPointer<QDemonShaderCacheInterface> theCache = m_context->getShaderCache();
+        QDemonRef<QDemonShaderCacheInterface> theCache = m_context->getShaderCache();
         QString theCacheKey = inShaderName;
         return theCache->compileProgram(theCacheKey, m_vs.m_finalBuilder, m_fs.m_finalBuilder,
                                         m_tc.m_finalBuilder, m_te.m_finalBuilder, m_gs.m_finalBuilder,
@@ -441,9 +441,9 @@ struct QDemonProgramGenerator : public QDemonShaderProgramGeneratorInterface
 };
 };
 
-QSharedPointer<QDemonShaderProgramGeneratorInterface> QDemonShaderProgramGeneratorInterface::createProgramGenerator(QDemonRenderContextInterface *inContext)
+QDemonRef<QDemonShaderProgramGeneratorInterface> QDemonShaderProgramGeneratorInterface::createProgramGenerator(QDemonRenderContextInterface *inContext)
 {
-    return QSharedPointer<QDemonShaderProgramGeneratorInterface>(new QDemonProgramGenerator(inContext));
+    return QDemonRef<QDemonShaderProgramGeneratorInterface>(new QDemonProgramGenerator(inContext));
 }
 
 void QDemonShaderProgramGeneratorInterface::outputParaboloidDepthVertex(QDemonShaderStageGeneratorInterface &vertexShader)
