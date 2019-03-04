@@ -15,7 +15,7 @@ Standard: Cpp11
 
 # Leave the line breaks up to the user.
 # Note that this may be changed at some point in the future.
-ColumnLimit: 0
+ColumnLimit: 120
 # How much weight do extra characters after the line length limit have.
 # PenaltyExcessCharacter: 4
 
@@ -41,7 +41,7 @@ BraceWrapping:
     AfterFunction: true
     AfterNamespace: false
     AfterObjCDeclaration: false
-    AfterStruct: false
+    AfterStruct: true
     AfterUnion: false
     BeforeCatch: false
     BeforeElse: false
@@ -61,12 +61,22 @@ NamespaceIndentation: None
 # Horizontally align arguments after an open bracket.
 # The coding style does not specify the following, but this is what gives
 # results closest to the existing code.
-AlignAfterOpenBracket: true
+AlignAfterOpenBracket: Align
 AlwaysBreakTemplateDeclarations: true
 
 # Ideally we should also allow less short function in a single line, but
 # clang-format does not handle that.
 AllowShortFunctionsOnASingleLine: Inline
+
+#
+BinPackParameters: false
+AllowAllParametersOfDeclarationOnNextLine: true
+AlwaysBreakAfterReturnType: None
+
+#
+PenaltyReturnTypeOnItsOwnLine: 150
+PenaltyBreakAssignment: 150
+PenaltyBreakBeforeFirstCallParameter: 150
 
 # The coding style specifies some include order categories, but also tells to
 # separate categories with an empty line. It does not specify the order within
