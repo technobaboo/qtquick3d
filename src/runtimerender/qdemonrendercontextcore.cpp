@@ -64,44 +64,44 @@ struct QDemonRenderContextCore : public QDemonRenderContextCoreInterface
     QDemonRef<QDemonPerfTimerInterface> m_perfTimer;
     QDemonRef<QDemonInputStreamFactoryInterface> m_inputStreamFactory;
     QDemonRef<QDemonAbstractThreadPool> m_threadPool;
-    QDemonRef<QDemonDynamicObjectSystemCoreInterface> m_dynamicObjectSystem;
-    QDemonRef<QDemonCustomMaterialSystemCoreInterface> m_materialSystem;
-    QDemonRef<QDemonEffectSystemCoreInterface> m_effectSystem;
-    QDemonRef<QDemonTextRendererCoreInterface> m_textRenderer;
-    QDemonRef<QDemonTextRendererCoreInterface> m_onscreenTexRenderer;
-    QDemonRef<QDemonPathManagerCoreInterface> m_pathManagerCore;
+    QDemonRef<QDemonDynamicObjectSystemInterface> m_dynamicObjectSystem;
+    QDemonRef<QDemonCustomMaterialSystemInterface> m_materialSystem;
+    QDemonRef<QDemonEffectSystemInterface> m_effectSystem;
+    QDemonRef<QDemonTextRendererInterface> m_textRenderer;
+    QDemonRef<QDemonTextRendererInterface> m_onscreenTexRenderer;
+    QDemonRef<QDemonPathManagerInterface> m_pathManagerCore;
 
     QDemonRenderContextCore()
         : m_perfTimer(QDemonPerfTimerInterface::createPerfTimer())
         , m_inputStreamFactory(QDemonInputStreamFactoryInterface::create())
         , m_threadPool(QDemonAbstractThreadPool::createThreadPool(4))
     {
-        m_dynamicObjectSystem = QDemonDynamicObjectSystemCoreInterface::createDynamicSystemCore(this);
-        m_materialSystem = QDemonCustomMaterialSystemCoreInterface::createCustomMaterialSystemCore(this);
-        m_effectSystem = QDemonEffectSystemCoreInterface::createEffectSystemCore(this);
-        m_pathManagerCore = QDemonPathManagerCoreInterface::createPathManagerCore(this);
+        m_dynamicObjectSystem = QDemonDynamicObjectSystemInterface::createDynamicSystem(this);
+        m_materialSystem = QDemonCustomMaterialSystemInterface::createCustomMaterialSystem(this);
+        m_effectSystem = QDemonEffectSystemInterface::createEffectSystem(this);
+        m_pathManagerCore = QDemonPathManagerInterface::createPathManager(this);
     }
 
     ~QDemonRenderContextCore() override {}
 
     QDemonRef<QDemonInputStreamFactoryInterface> getInputStreamFactory() override { return m_inputStreamFactory; }
     QDemonRef<QDemonAbstractThreadPool> getThreadPool() override { return m_threadPool; }
-    QDemonRef<QDemonDynamicObjectSystemCoreInterface> getDynamicObjectSystemCore() override
+    QDemonRef<QDemonDynamicObjectSystemInterface> getDynamicObjectSystemCore() override
     {
         return m_dynamicObjectSystem;
     }
-    QDemonRef<QDemonCustomMaterialSystemCoreInterface> getMaterialSystemCore() override { return m_materialSystem; }
-    QDemonRef<QDemonEffectSystemCoreInterface> getEffectSystemCore() override { return m_effectSystem; }
+    QDemonRef<QDemonCustomMaterialSystemInterface> getMaterialSystemCore() override { return m_materialSystem; }
+    QDemonRef<QDemonEffectSystemInterface> getEffectSystemCore() override { return m_effectSystem; }
     QDemonRef<QDemonPerfTimerInterface> getPerfTimer() override { return m_perfTimer; }
-    QDemonRef<QDemonPathManagerCoreInterface> getPathManagerCore() override { return m_pathManagerCore; }
+    QDemonRef<QDemonPathManagerInterface> getPathManagerCore() override { return m_pathManagerCore; }
     QDemonRef<QDemonRenderContextInterface> createRenderContext(QDemonRef<QDemonRenderContext> inContext, const char *inPrimitivesDirectory) override;
-    void setTextRendererCore(QDemonRef<QDemonTextRendererCoreInterface> inRenderer) override { m_textRenderer = inRenderer; }
-    QDemonRef<QDemonTextRendererCoreInterface> getTextRendererCore() override { return m_textRenderer; }
-    void setOnscreenTextRendererCore(QDemonRef<QDemonTextRendererCoreInterface> inRenderer) override
+    void setTextRendererCore(QDemonRef<QDemonTextRendererInterface> inRenderer) override { m_textRenderer = inRenderer; }
+    QDemonRef<QDemonTextRendererInterface> getTextRendererCore() override { return m_textRenderer; }
+    void setOnscreenTextRendererCore(QDemonRef<QDemonTextRendererInterface> inRenderer) override
     {
         m_onscreenTexRenderer = inRenderer;
     }
-    QDemonRef<QDemonTextRendererCoreInterface> getOnscreenTextRendererCore() override { return m_onscreenTexRenderer; }
+    QDemonRef<QDemonTextRendererInterface> getOnscreenTextRendererCore() override { return m_onscreenTexRenderer; }
 };
 
 inline float Clamp(float val, float inMin = 0.0f, float inMax = 1.0f)
@@ -197,12 +197,13 @@ struct QDemonRenderContextData : public QDemonRenderContextInterface
             m_inputStreamFactory->addSearchDirectory(inApplicationDirectory);
 
         m_imageBatchLoader = IImageBatchLoader::createBatchLoader(m_inputStreamFactory, m_bufferManager, m_threadPool, m_perfTimer);
-        m_dynamicObjectSystem = inCore->getDynamicObjectSystemCore()->createDynamicSystem(this);
+        m_dynamicObjectSystem = inCore->getDynamicObjectSystemCore();
+        m_dynamicObjectSystem->setContextInterface(this);
         m_effectSystem = inCore->getEffectSystemCore()->getEffectSystem(this);
         m_customMaterialSystem = inCore->getMaterialSystemCore()->getCustomMaterialSystem(this);
         // as does the custom material system
         m_pixelGraphicsRenderer = QDemonPixelGraphicsRendererInterface::createRenderer(this);
-        QDemonRef<QDemonTextRendererCoreInterface> theTextCore = inCore->getTextRendererCore();
+        QDemonRef<QDemonTextRendererInterface> theTextCore = inCore->getTextRendererCore();
         m_shaderProgramGenerator = QDemonShaderProgramGeneratorInterface::createProgramGenerator(this);
         m_defaultMaterialShaderGenerator = QDemonDefaultMaterialShaderGeneratorInterface::createDefaultMaterialShaderGenerator(this);
         m_customMaterialShaderGenerator = ICustomMaterialShaderGenerator::createCustomMaterialShaderGenerator(this);
@@ -211,7 +212,7 @@ struct QDemonRenderContextData : public QDemonRenderContextInterface
             m_textTextureCache = QDemonTextTextureCacheInterface::createTextureCache(m_textRenderer, m_renderContext);
         }
 
-        QDemonRef<QDemonTextRendererCoreInterface> theOnscreenTextCore = inCore->getOnscreenTextRendererCore();
+        QDemonRef<QDemonTextRendererInterface> theOnscreenTextCore = inCore->getOnscreenTextRendererCore();
         if (theOnscreenTextCore) {
             m_onscreenTextRenderer = theOnscreenTextCore->getTextRenderer(ctx);
             m_textTextureAtlas = QDemonTextTextureAtlasInterface::createTextureAtlas(m_onscreenTextRenderer, m_renderContext);

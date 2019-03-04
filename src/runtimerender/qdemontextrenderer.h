@@ -59,11 +59,14 @@ class QDemonPerfTimerInterface;
 class QDemonRenderContext;
 class QDemonRenderPathFontSpecification;
 
-class Q_DEMONRUNTIMERENDER_EXPORT QDemonTextRendererCoreInterface
+/**
+     *	Opaque text rendering system.  Must be able to render text to an opengl texture object.
+     */
+class Q_DEMONRUNTIMERENDER_EXPORT QDemonTextRendererInterface
 {
 public:
     QAtomicInt ref;
-    virtual ~QDemonTextRendererCoreInterface() {}
+    virtual ~QDemonTextRendererInterface() {}
     // You can have several standard font directories and these will be persistent
     virtual void addSystemFontDirectory(const char *inDirectory) = 0;
     // Should be called to clear the current context.
@@ -86,19 +89,12 @@ public:
 
     virtual QDemonRef<QDemonTextRendererInterface> getTextRenderer(QDemonRef<QDemonRenderContext> inContext) = 0;
 
-    static QDemonRef<QDemonTextRendererCoreInterface> createQtTextRenderer();
+    static QDemonRef<QDemonTextRendererInterface> createQtTextRenderer();
 
     // call this to create onscreen text renderer
     // it needs true type fonts
-    static QDemonRef<QDemonTextRendererCoreInterface> createOnscreenTextRenderer();
-};
-/**
-     *	Opaque text rendering system.  Must be able to render text to an opengl texture object.
-     */
-class Q_DEMONRUNTIMERENDER_EXPORT QDemonTextRendererInterface : public QDemonTextRendererCoreInterface
-{
-public:
-    virtual ~QDemonTextRendererInterface() {}
+    static QDemonRef<QDemonTextRendererInterface> createOnscreenTextRenderer();
+
     // Measure text will inText if it isn't null or the text on the info if inText is null
     virtual QDemonTextDimensions measureText(const QDemonTextRenderInfo &inText,
                                         float inTextScaleFactor,

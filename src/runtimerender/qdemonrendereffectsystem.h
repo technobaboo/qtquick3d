@@ -65,11 +65,21 @@ struct QDemonEffectRenderArgument {
 
 };
 
-class Q_DEMONRUNTIMERENDER_EXPORT QDemonEffectSystemCoreInterface
+/**
+      * An effect is essentially a function that takes a image and produces a new image.  The source
+      *and dest images
+      *	aren't guaranteed to be the same size, the effect may enlarge or shrink the result.
+      * A specialization is when you want the effect to render to the final render target instead of
+      *to a separate image.
+      * In this case the effect cannot enlarge or shrink the final target and it will render to the
+      *destination buffer
+      *	using the given MVP.
+      */
+class Q_DEMONRUNTIMERENDER_EXPORT QDemonEffectSystemInterface
 {
 public:
     QAtomicInt ref;
-    virtual ~QDemonEffectSystemCoreInterface();
+    virtual ~QDemonEffectSystemInterface();
     virtual bool isEffectRegistered(QString inStr) = 0;
     virtual QVector<QString> getRegisteredEffects() = 0;
     // Register an effect class that uses exactly these commands to render.
@@ -156,23 +166,8 @@ public:
 
     virtual QDemonRef<QDemonResourceManagerInterface> getResourceManager() = 0;
 
-    static QDemonRef<QDemonEffectSystemCoreInterface> createEffectSystemCore(QDemonRenderContextCoreInterface * context);
-};
+    static QDemonRef<QDemonEffectSystemInterface> createEffectSystem(QDemonRenderContextCoreInterface * context);
 
-/**
-      * An effect is essentially a function that takes a image and produces a new image.  The source
-      *and dest images
-      *	aren't guaranteed to be the same size, the effect may enlarge or shrink the result.
-      * A specialization is when you want the effect to render to the final render target instead of
-      *to a separate image.
-      * In this case the effect cannot enlarge or shrink the final target and it will render to the
-      *destination buffer
-      *	using the given MVP.
-      */
-class Q_DEMONRUNTIMERENDER_EXPORT QDemonEffectSystemInterface : public QDemonEffectSystemCoreInterface
-{
-public:
-    virtual ~QDemonEffectSystemInterface() {}
     // Calling release effect context with no context results in no problems.
     virtual void releaseEffectContext(QDemonEffectContext *inEffect) = 0;
 

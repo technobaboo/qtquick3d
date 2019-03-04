@@ -1214,10 +1214,9 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
 //        }
 //    }
 
-    QDemonRef<QDemonDynamicObjectSystemInterface> createDynamicSystem(QDemonRenderContextInterface *rc) override
+    void setContextInterface(QDemonRenderContextInterface *rc) override
     {
         m_context = rc;
-        return this;
     }
 
     QStringList getParameters(const QString &str, int begin, int end)
@@ -1505,7 +1504,7 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
 };
 }
 
-QDemonRef<QDemonDynamicObjectSystemCoreInterface> QDemonDynamicObjectSystemCoreInterface::createDynamicSystemCore(QDemonRenderContextCoreInterface *rc)
+QDemonRef<QDemonDynamicObjectSystemInterface> QDemonDynamicObjectSystemInterface::createDynamicSystem(QDemonRenderContextCoreInterface *rc)
 {
     return QDemonRef<QDemonDynamicObjectSystemImpl>(new QDemonDynamicObjectSystemImpl(rc));
 }

@@ -54,7 +54,9 @@ struct QDemonPathAnchorPoint
     float outgoingDistance;
 };
 
-class Q_DEMONRUNTIMERENDER_EXPORT QDemonPathManagerCoreInterface
+struct QDemonPathRenderContext; // UICRenderPathRenderContext.h
+
+class Q_DEMONRUNTIMERENDER_EXPORT QDemonPathManagerInterface
 {
 public:
     QAtomicInt ref;
@@ -64,7 +66,7 @@ public:
     virtual void setPathSubPathData(const QDemonPathSubPath &inPathSubPath,
                                     QDemonConstDataRef<QDemonPathAnchorPoint> inPathSubPathAnchorPoints) = 0;
 
-    virtual ~QDemonPathManagerCoreInterface();
+    virtual ~QDemonPathManagerInterface();
     virtual QDemonDataRef<QDemonPathAnchorPoint>
     getPathSubPathBuffer(const QDemonPathSubPath &inPathSubPath) = 0;
     // Marks the PathSubPath anchor points as dirty.  This will mean rebuilding any PathSubPath
@@ -84,14 +86,8 @@ public:
 
     virtual QDemonRef<QDemonPathManagerInterface> onRenderSystemInitialize(QDemonRenderContextInterface *context) = 0;
 
-    static QDemonRef<QDemonPathManagerCoreInterface> createPathManagerCore(QDemonRenderContextCoreInterface * inContext);
-};
+    static QDemonRef<QDemonPathManagerInterface> createPathManager(QDemonRenderContextCoreInterface * inContext);
 
-struct QDemonPathRenderContext; // UICRenderPathRenderContext.h
-
-class Q_DEMONRUNTIMERENDER_EXPORT QDemonPathManagerInterface : public QDemonPathManagerCoreInterface
-{
-public:
     // The path segments are next expected to change after this call; changes will be ignored.
     virtual bool prepareForRender(const QDemonPath &inPath) = 0;
 

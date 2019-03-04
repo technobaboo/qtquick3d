@@ -46,11 +46,13 @@ struct QDemonRenderCustomMaterial;
 class QDemonCustomMaterialSystemInterface;
 struct QDemonRenderSubset;
 
-class Q_DEMONRUNTIMERENDER_EXPORT QDemonCustomMaterialSystemCoreInterface
+// How to handle blend modes?
+struct QDemonRenderModel;
+class Q_DEMONRUNTIMERENDER_EXPORT QDemonCustomMaterialSystemInterface
 {
 public:
     QAtomicInt ref;
-    virtual ~QDemonCustomMaterialSystemCoreInterface() {}
+    virtual ~QDemonCustomMaterialSystemInterface() {}
     virtual bool isMaterialRegistered(QString inStr) = 0;
 
     virtual bool registerMaterialClass(QString inName, QDemonConstDataRef<dynamic::QDemonPropertyDeclaration> inProperties) = 0;
@@ -97,14 +99,8 @@ public:
 
     virtual QDemonRef<QDemonCustomMaterialSystemInterface> getCustomMaterialSystem(QDemonRenderContextInterface *inContext) = 0;
 
-    static QDemonRef<QDemonCustomMaterialSystemCoreInterface> createCustomMaterialSystemCore(QDemonRenderContextCoreInterface * inContext);
-};
-// How to handle blend modes?
-struct QDemonRenderModel;
-class Q_DEMONRUNTIMERENDER_EXPORT QDemonCustomMaterialSystemInterface : public QDemonCustomMaterialSystemCoreInterface
-{
-public:
-    virtual ~QDemonCustomMaterialSystemInterface() override {}
+    static QDemonRef<QDemonCustomMaterialSystemInterface> createCustomMaterialSystem(QDemonRenderContextCoreInterface * inContext);
+
     // Returns true if the material is dirty and thus will produce a different render result
     // than previously.  This effects things like progressive AA.
     virtual bool prepareForRender(const QDemonRenderModel &inModel,

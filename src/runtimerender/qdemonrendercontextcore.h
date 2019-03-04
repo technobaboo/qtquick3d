@@ -63,8 +63,8 @@ struct ScaleModes
     };
 };
 
-class QDemonPathManagerCoreInterface;
-class QDemonCustomMaterialSystemCoreInterface;
+class QDemonPathManagerInterface;
+class QDemonCustomMaterialSystemInterface;
 
 // Part of render context that does not require the render system.
 class Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderContextCoreInterface
@@ -74,17 +74,17 @@ public:
     virtual ~QDemonRenderContextCoreInterface();
     virtual QDemonRef<QDemonInputStreamFactoryInterface> getInputStreamFactory() = 0;
     virtual QDemonRef<QDemonAbstractThreadPool> getThreadPool() = 0;
-    virtual QDemonRef<QDemonDynamicObjectSystemCoreInterface> getDynamicObjectSystemCore() = 0;
-    virtual QDemonRef<QDemonCustomMaterialSystemCoreInterface> getMaterialSystemCore() = 0;
-    virtual QDemonRef<QDemonEffectSystemCoreInterface> getEffectSystemCore() = 0;
+    virtual QDemonRef<QDemonDynamicObjectSystemInterface> getDynamicObjectSystemCore() = 0;
+    virtual QDemonRef<QDemonCustomMaterialSystemInterface> getMaterialSystemCore() = 0;
+    virtual QDemonRef<QDemonEffectSystemInterface> getEffectSystemCore() = 0;
     virtual QDemonRef<QDemonPerfTimerInterface> getPerfTimer() = 0;
-    virtual QDemonRef<QDemonPathManagerCoreInterface> getPathManagerCore() = 0;
+    virtual QDemonRef<QDemonPathManagerInterface> getPathManagerCore() = 0;
     // Text renderers may be provided by clients at runtime.
-    virtual void setTextRendererCore(QDemonRef<QDemonTextRendererCoreInterface> inRenderer) = 0;
-    virtual QDemonRef<QDemonTextRendererCoreInterface> getTextRendererCore() = 0;
+    virtual void setTextRendererCore(QDemonRef<QDemonTextRendererInterface> inRenderer) = 0;
+    virtual QDemonRef<QDemonTextRendererInterface> getTextRendererCore() = 0;
     // this is our default 2D text onscreen renderer
-    virtual void setOnscreenTextRendererCore(QDemonRef<QDemonTextRendererCoreInterface> inRenderer) = 0;
-    virtual QDemonRef<QDemonTextRendererCoreInterface> getOnscreenTextRendererCore() = 0;
+    virtual void setOnscreenTextRendererCore(QDemonRef<QDemonTextRendererInterface> inRenderer) = 0;
+    virtual QDemonRef<QDemonTextRendererInterface> getOnscreenTextRendererCore() = 0;
     // The render context maintains a reference to this object.
     virtual QDemonRef<QDemonRenderContextInterface> createRenderContext(QDemonRef<QDemonRenderContext> inContext, const char *inPrimitivesDirectory) = 0;
 

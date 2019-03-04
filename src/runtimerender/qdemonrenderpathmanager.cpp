@@ -819,14 +819,14 @@ struct QDemonPathManager : public QDemonPathManagerInterface
                 QVector2D position(thePoint.position);
                 retval.include(QVector3D(position.x(), position.y(), 0.0f));
                 if (idx) {
-                    QVector2D incoming(QDemonPathManagerCoreInterface::getControlPointFromAngleDistance(
+                    QVector2D incoming(QDemonPathManagerInterface::getControlPointFromAngleDistance(
                                            thePoint.position, thePoint.incomingAngle,
                                            thePoint.incomingDistance));
                     retval.include(QVector3D(incoming.x(), incoming.y(), 0.0f));
                 }
 
                 if (idx < (numAnchors - 1)) {
-                    QVector2D outgoing(QDemonPathManagerCoreInterface::getControlPointFromAngleDistance(
+                    QVector2D outgoing(QDemonPathManagerInterface::getControlPointFromAngleDistance(
                                            thePoint.position, thePoint.outgoingAngle,
                                            thePoint.outgoingDistance));
                     retval.include(QVector3D(outgoing.x(), outgoing.y(), 0.0f));
@@ -1789,12 +1789,12 @@ struct QDemonPathManager : public QDemonPathManagerInterface
 };
 }
 
-QDemonPathManagerCoreInterface::~QDemonPathManagerCoreInterface()
+QDemonPathManagerInterface::~QDemonPathManagerInterface()
 {
 
 }
 
-QVector2D QDemonPathManagerCoreInterface::getControlPointFromAngleDistance(QVector2D inPosition,
+QVector2D QDemonPathManagerInterface::getControlPointFromAngleDistance(QVector2D inPosition,
                                                                            float inIncomingAngle,
                                                                            float inIncomingDistance)
 {
@@ -1807,7 +1807,7 @@ QVector2D QDemonPathManagerCoreInterface::getControlPointFromAngleDistance(QVect
     return inPosition + relativeAngles;
 }
 
-QVector2D QDemonPathManagerCoreInterface::getAngleDistanceFromControlPoint(QVector2D inPosition, QVector2D inControlPoint)
+QVector2D QDemonPathManagerInterface::getAngleDistanceFromControlPoint(QVector2D inPosition, QVector2D inControlPoint)
 {
     const QVector2D relative = inControlPoint - inPosition;
     const float angleRad = std::atan2(relative.y(), relative.x());
@@ -1815,7 +1815,7 @@ QVector2D QDemonPathManagerCoreInterface::getAngleDistanceFromControlPoint(QVect
     return QVector2D(radToDeg(angleRad), distance);
 }
 
-QDemonRef<QDemonPathManagerCoreInterface> QDemonPathManagerCoreInterface::createPathManagerCore(QDemonRenderContextCoreInterface * ctx)
+QDemonRef<QDemonPathManagerInterface> QDemonPathManagerInterface::createPathManager(QDemonRenderContextCoreInterface * ctx)
 {
     return QDemonRef<QDemonPathManager>(new QDemonPathManager(ctx));
 }

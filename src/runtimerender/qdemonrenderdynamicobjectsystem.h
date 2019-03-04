@@ -191,11 +191,13 @@ public:
     virtual QDemonRenderTextureFormats::Enum getOutputTextureFormat() const = 0;
 };
 
-class Q_DEMONRUNTIMERENDER_EXPORT QDemonDynamicObjectSystemCoreInterface
+typedef QPair<QDemonRef<QDemonRenderShaderProgram>, dynamic::QDemonDynamicShaderProgramFlags> TShaderAndFlags;
+
+class Q_DEMONRUNTIMERENDER_EXPORT QDemonDynamicObjectSystemInterface
 {
 public:
     QAtomicInt ref;
-    virtual ~QDemonDynamicObjectSystemCoreInterface() {}
+    virtual ~QDemonDynamicObjectSystemInterface();
     virtual bool isRegistered(QString inStr) = 0;
 
     virtual bool doRegister(QString inName,
@@ -260,17 +262,10 @@ public:
     //    virtual void Load(QDemonDataRef<quint8> inData, CStrTableOrDataRef inStrDataBlock,
     //                      const char *inProjectDir) = 0;
 
-    virtual QDemonRef<QDemonDynamicObjectSystemInterface> createDynamicSystem(QDemonRenderContextInterface *rc) = 0;
+    virtual void setContextInterface(QDemonRenderContextInterface *rc) = 0;
 
-    static QDemonRef<QDemonDynamicObjectSystemCoreInterface> createDynamicSystemCore(QDemonRenderContextCoreInterface *rc);
-};
+    static QDemonRef<QDemonDynamicObjectSystemInterface> createDynamicSystem(QDemonRenderContextCoreInterface *rc);
 
-typedef QPair<QDemonRef<QDemonRenderShaderProgram>, dynamic::QDemonDynamicShaderProgramFlags> TShaderAndFlags;
-
-class Q_DEMONRUNTIMERENDER_EXPORT QDemonDynamicObjectSystemInterface : public QDemonDynamicObjectSystemCoreInterface
-{
-public:
-    virtual ~QDemonDynamicObjectSystemInterface();
     virtual TShaderAndFlags getShaderProgram(QString inPath,
                                              QString inProgramMacro,
                                              TShaderFeatureSet inFeatureSet,

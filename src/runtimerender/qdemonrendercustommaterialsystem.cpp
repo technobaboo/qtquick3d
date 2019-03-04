@@ -2096,7 +2096,7 @@ struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface
 };
 }
 
-QDemonRef<QDemonCustomMaterialSystemCoreInterface> QDemonCustomMaterialSystemCoreInterface::createCustomMaterialSystemCore(QDemonRenderContextCoreInterface * ctx)
+QDemonRef<QDemonCustomMaterialSystemInterface> QDemonCustomMaterialSystemInterface::createCustomMaterialSystem(QDemonRenderContextCoreInterface * ctx)
 {
     return QDemonRef<QDemonMaterialSystem>(new QDemonMaterialSystem(ctx));
 }

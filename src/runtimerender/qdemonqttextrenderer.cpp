@@ -607,7 +607,7 @@ struct QDemonQtTextRenderer : public QDemonTextRendererInterface
 };
 }
 
-QDemonRef<QDemonTextRendererCoreInterface> QDemonTextRendererCoreInterface::createQtTextRenderer()
+QDemonRef<QDemonTextRendererInterface> QDemonTextRendererInterface::createQtTextRenderer()
 {
     return QDemonRef<QDemonQtTextRenderer>(new QDemonQtTextRenderer());
 }

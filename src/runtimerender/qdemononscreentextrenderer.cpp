@@ -365,7 +365,7 @@ public:
 };
 }
 
-QDemonRef<QDemonTextRendererCoreInterface> QDemonTextRendererCoreInterface::createOnscreenTextRenderer()
+QDemonRef<QDemonTextRendererInterface> QDemonTextRendererInterface::createOnscreenTextRenderer()
 {
     return QDemonRef<QDemonOnscreenTextRenderer>(new QDemonOnscreenTextRenderer());
 }
