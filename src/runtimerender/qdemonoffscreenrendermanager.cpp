@@ -205,7 +205,7 @@ struct QDemonOffscreenRenderManager : public QDemonOffscreenRenderManagerInterfa
                                 &QDemonRenderContext::setBlendFunction,
                                 QDemonRenderBlendFunctionArgument());
         QDemonRenderContextScopedProperty<QDemonRenderBlendEquationArgument>
-                __blendEquation(*theContext, &QDemonRenderContext::GetBlendEquation,
+                __blendEquation(*theContext, &QDemonRenderContext::getBlendEquation,
                                 &QDemonRenderContext::setBlendEquation,
                                 QDemonRenderBlendEquationArgument());
         QDemonRenderContextScopedProperty<QDemonRef<QDemonRenderFrameBuffer> >

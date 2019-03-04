@@ -749,8 +749,11 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
         return theEffect;
     }
 
-    void AllocateBuffer(QDemonRenderEffect &inEffect, const QDemonAllocateBuffer &inCommand, quint32 inFinalWidth,
-                        quint32 inFinalHeight, QDemonRenderTextureFormats::Enum inSourceTextureFormat)
+    void allocateBuffer(QDemonRenderEffect &inEffect,
+                        const QDemonAllocateBuffer &inCommand,
+                        quint32 inFinalWidth,
+                        quint32 inFinalHeight,
+                        QDemonRenderTextureFormats::Enum inSourceTextureFormat)
     {
         // Check to see if it is already allocated and if it is, is it the correct size. If both of
         // these assumptions hold, then we are good.
@@ -1490,7 +1493,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
         bool wasBlendingEnabled = theContext->isBlendingEnabled();
         // save current blending setup
         QDemonRenderBlendFunctionArgument theBlendFunc = theContext->getBlendFunction();
-        QDemonRenderBlendEquationArgument theBlendEqu = theContext->GetBlendEquation();
+        QDemonRenderBlendEquationArgument theBlendEqu = theContext->getBlendEquation();
         bool intermediateBlendingEnabled = false;
         QDemonTextureDetails theDetails(inSourceTexture->getTextureDetails());
         quint32 theFinalWidth = (quint32)(theDetails.width);
@@ -1528,7 +1531,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
                 const QDemonCommand &theCommand(*theCommands[commandIdx]);
                 switch (theCommand.m_type) {
                 case CommandTypes::AllocateBuffer:
-                    AllocateBuffer(*inEffect, static_cast<const QDemonAllocateBuffer &>(theCommand),
+                    allocateBuffer(*inEffect, static_cast<const QDemonAllocateBuffer &>(theCommand),
                                    theFinalWidth, theFinalHeight, theDetails.format);
                     break;
 

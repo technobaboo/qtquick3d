@@ -285,7 +285,7 @@ public:
     virtual QDemonRenderBlendFunctionArgument getBlendFunction() const = 0;
 
     virtual void setBlendEquation(QDemonRenderBlendEquationArgument inEquations) = 0;
-    virtual QDemonRenderBlendEquationArgument GetBlendEquation() const = 0;
+    virtual QDemonRenderBlendEquationArgument getBlendEquation() const = 0;
 
     virtual void setCullingEnabled(bool inEnabled) = 0;
     virtual bool isCullingEnabled() const = 0;
@@ -910,7 +910,7 @@ public:
     }
 
     void setBlendEquation(QDemonRenderBlendEquationArgument inEquations) override;
-    QDemonRenderBlendEquationArgument GetBlendEquation() const override
+    QDemonRenderBlendEquationArgument getBlendEquation() const override
     {
         return m_hardwarePropertyContext.m_blendEquation;
     }

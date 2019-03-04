@@ -1987,7 +1987,7 @@ struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface
                                 &QDemonRenderContext::setBlendFunction,
                                 QDemonRenderBlendFunctionArgument());
         QDemonRenderContextScopedProperty<QDemonRenderBlendEquationArgument>
-                __blendEquation(*m_context->getRenderContext(), &QDemonRenderContext::GetBlendEquation,
+                __blendEquation(*m_context->getRenderContext(), &QDemonRenderContext::getBlendEquation,
                                 &QDemonRenderContext::setBlendEquation,
                                 QDemonRenderBlendEquationArgument());
 
