@@ -41,7 +41,7 @@ struct Q_DEMONASSETIMPORT_EXPORT QDemonPathBuffer
     static quint32 getFileVersion() { return 1; }
     QDemonConstDataRef<PathCommand::Enum> commands;
     QDemonConstDataRef<float> data;
-    QDemonPathBuffer();
+    QDemonPathBuffer() = default;
     void save(QIODevice &outStream) const;
     static QDemonPathBuffer *load(QIODevice &inStream);
 };

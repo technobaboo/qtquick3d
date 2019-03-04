@@ -45,10 +45,10 @@ namespace {
 struct QDemonGpuTimerInfo
 {
     QAtomicInt ref;
-    bool m_absoluteTime;
-    quint16 m_writeID;
-    quint16 m_readID;
-    quint16 m_averageTimeWriteID;
+    bool m_absoluteTime{false};
+    quint16 m_writeID{0};
+    quint16 m_readID{0};
+    quint16 m_averageTimeWriteID{0};
     quint64 m_averageTime[10];
     quint32 m_frameID[RECORDED_FRAME_DELAY];
     QDemonRef<QDemonRenderTimerQuery> m_timerStartQueryObjects[RECORDED_FRAME_DELAY];
@@ -56,10 +56,6 @@ struct QDemonGpuTimerInfo
     QDemonRef<QDemonRenderSync> m_timerSyncObjects[RECORDED_FRAME_DELAY];
 
     QDemonGpuTimerInfo()
-        : m_absoluteTime(false)
-        , m_writeID(0)
-        , m_readID(0)
-        , m_averageTimeWriteID(0)
     {
         memset(m_averageTime, 0x0, 10 * sizeof(quint64));
     }

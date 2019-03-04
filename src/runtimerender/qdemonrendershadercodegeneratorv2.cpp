@@ -299,21 +299,13 @@ struct QDemonFragmentShaderGenerator : public QDemonStageGeneratorBase
 struct QDemonShaderGeneratedProgramOutput
 {
     // never null; so safe to call strlen on.
-    const char *m_vertexShader;
-    const char *m_tessControlShader;
-    const char *m_tessEvalShader;
-    const char *m_geometryShader;
-    const char *m_fragmentShader;
+    const char *m_vertexShader{""};
+    const char *m_tessControlShader{""};
+    const char *m_tessEvalShader{""};
+    const char *m_geometryShader{""};
+    const char *m_fragmentShader{""};
 
-    QDemonShaderGeneratedProgramOutput()
-        : m_vertexShader("")
-        , m_tessControlShader("")
-        , m_tessEvalShader("")
-        , m_geometryShader("")
-        , m_fragmentShader("")
-    {
-    }
-
+    QDemonShaderGeneratedProgramOutput() = default;
     QDemonShaderGeneratedProgramOutput(const char *vs,
                                        const char *tc,
                                        const char *te,

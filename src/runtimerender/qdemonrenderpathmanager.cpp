@@ -133,11 +133,11 @@ struct QDemonPathBuffer
 
     QVector2D m_beginTaperData;
     QVector2D m_endTaperData;
-    quint32 m_numVertexes;
-    PathTypes::Enum m_pathType;
-    float m_width;
-    float m_cpuError;
-    QDemonBounds3 m_bounds;
+    quint32 m_numVertexes{0};
+    PathTypes::Enum m_pathType{PathTypes::Geometry};
+    float m_width{0.0f};
+    float m_cpuError{0.0f};
+    QDemonBounds3 m_bounds = QDemonBounds3::empty();
     QDemonOption<QDemonTaperInformation> m_beginTaper;
     QDemonOption<QDemonTaperInformation> m_endTaper;
     QString m_sourcePath;
@@ -145,15 +145,6 @@ struct QDemonPathBuffer
     // Cached data for geometry paths
 
     QDemonPathDirtyFlags m_flags;
-
-    QDemonPathBuffer()
-        : m_numVertexes(0)
-        , m_pathType(PathTypes::Geometry)
-        , m_width(0.0f)
-        , m_cpuError(0.0f)
-        , m_bounds(QDemonBounds3::empty())
-    {
-    }
 
     void clearGeometryPathData()
     {

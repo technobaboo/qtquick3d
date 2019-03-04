@@ -52,18 +52,14 @@ struct MeshSubsetV1
 
 struct LogicalVertexBuffer
 {
-    quint32 m_byteOffset;
-    quint32 m_byteSize;
+    quint32 m_byteOffset{0};
+    quint32 m_byteSize{0};
     LogicalVertexBuffer(quint32 byteOff, quint32 byteSize)
         : m_byteOffset(byteOff)
         , m_byteSize(byteSize)
     {
     }
-    LogicalVertexBuffer()
-        : m_byteOffset(0)
-        , m_byteSize(0)
-    {
-    }
+    LogicalVertexBuffer() = default;
 };
 
 struct MeshV1
@@ -897,8 +893,8 @@ struct DynamicIndexBuf
 
 struct SubsetDesc
 {
-    quint32 m_count;
-    quint32 m_offset;
+    quint32 m_count{0};
+    quint32 m_offset{0};
 
     QDemonBounds3 m_bounds;
     QString m_name;
@@ -907,11 +903,7 @@ struct SubsetDesc
         , m_offset(off)
     {
     }
-    SubsetDesc()
-        : m_count(0)
-        , m_offset(0)
-    {
-    }
+    SubsetDesc() = default;
 };
 
 class MeshBuilderImpl : public QDemonMeshBuilder

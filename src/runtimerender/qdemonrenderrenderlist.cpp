@@ -40,16 +40,12 @@ struct QDemonRenderList : public QDemonRenderListInterface
     typedef QVector<TTaskIdTaskPair> TTaskList;
 
     TTaskList m_tasks;
-    quint32 m_nextTaskId;
-    bool m_scissorEnabled;
+    quint32 m_nextTaskId{1};
+    bool m_scissorEnabled{false};
     QRect m_scissorRect;
     QRect m_viewport;
 
-    QDemonRenderList()
-        : m_nextTaskId(1)
-        , m_scissorEnabled(false)
-    {
-    }
+    QDemonRenderList() = default;
 
     void beginFrame() override
     {

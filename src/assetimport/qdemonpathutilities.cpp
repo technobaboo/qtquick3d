@@ -7,11 +7,6 @@ QT_BEGIN_NAMESPACE
 
 using namespace QDemonPathUtilities;
 
-QDemonPathBuffer::QDemonPathBuffer()
-{
-
-}
-
 void QDemonPathBuffer::save(QIODevice &outStream) const
 {
     QDataStream out(&outStream);

@@ -34,12 +34,12 @@ public:
     /**
     \brief Construct from two bounding points
     */
-    Q_ALWAYS_INLINE QDemonBounds3(const QVector3D &minimum, const QVector3D &maximum);
+    Q_DECL_CONSTEXPR Q_ALWAYS_INLINE QDemonBounds3(const QVector3D &minimum, const QVector3D &maximum);
 
     /**
     \brief Return empty bounds.
     */
-    static  Q_ALWAYS_INLINE QDemonBounds3 empty();
+    static Q_DECL_CONSTEXPR Q_ALWAYS_INLINE QDemonBounds3 empty();
 
     /**
     \brief returns the AABB containing v0 and v1.
@@ -185,16 +185,16 @@ public:
     QVector3D maximum;
 };
 
-Q_ALWAYS_INLINE QDemonBounds3::QDemonBounds3(const QVector3D &_minimum, const QVector3D &_maximum)
+Q_DECL_CONSTEXPR Q_ALWAYS_INLINE QDemonBounds3::QDemonBounds3(const QVector3D &_minimum, const QVector3D &_maximum)
     : minimum(_minimum)
     , maximum(_maximum)
 {
 }
 
-Q_ALWAYS_INLINE QDemonBounds3 QDemonBounds3::empty()
+Q_DECL_CONSTEXPR Q_ALWAYS_INLINE QDemonBounds3 QDemonBounds3::empty()
 {
-    const float maxFloat = std::numeric_limits<float>::max();
-    return QDemonBounds3(QVector3D(maxFloat, maxFloat, maxFloat), QVector3D(-maxFloat, -maxFloat, -maxFloat));
+    return QDemonBounds3(QVector3D(std::numeric_limits<float>::max(), std::numeric_limits<float>::max(), std::numeric_limits<float>::max()),
+                         QVector3D(-std::numeric_limits<float>::max(), -std::numeric_limits<float>::max(), -std::numeric_limits<float>::max()));
 }
 
 Q_ALWAYS_INLINE QDemonBounds3 QDemonBounds3::centerExtents(const QVector3D &center,

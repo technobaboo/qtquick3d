@@ -60,8 +60,8 @@ class RenderToTexture : public QDemonRenderExample
     QDemonRef<QDemonRenderTexture2D> mColorBuffer;
     QDemonRef<QDemonRenderTexture2D> mDepthBuffer;
 
-    quint32 mFBWidth;
-    quint32 mFBHeight;
+    quint32 mFBWidth{400};
+    quint32 mFBHeight{400};
 
     bool m_viewportDirty = true;
 
@@ -72,12 +72,7 @@ class RenderToTexture : public QDemonRenderExample
     qint64 m_elapsedTime = 0;
 
 public:
-    RenderToTexture()
-        : mFBWidth(400)
-        , mFBHeight(400)
-    {
-
-    }
+    RenderToTexture() = default;
     void setupMVP(const QVector3D &translation)
     {
         float *mvp(mShaderArgs.mvp);
