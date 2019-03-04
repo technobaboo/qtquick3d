@@ -146,8 +146,6 @@ struct QDemonPathBuffer
 
     QDemonPathDirtyFlags m_flags;
 
-    qint32 m_refCount;
-
     QDemonPathBuffer()
         : m_numVertexes(0)
         , m_pathType(PathTypes::Geometry)
