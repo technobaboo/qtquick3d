@@ -40,16 +40,16 @@ using namespace QDemonAssetImport;
 
 namespace {
 
-static inline QVector3D ToColor(const float p[])
+static inline QVector3D toColor(const float p[])
 {
     return QVector3D(p[0], p[1], p[2]);
 }
-static inline QVector3D ToColor(const float p[], float inMult)
+static inline QVector3D toColor(const float p[], float inMult)
 {
     return QVector3D(p[0] * inMult, p[1] * inMult, p[2] * inMult);
 }
 
-static void RGBtoHSV(float r, float g, float b, float *h, float *s, float *v)
+static void rgbToHsv(float r, float g, float b, float *h, float *s, float *v)
 {
     float min, max, delta;
 
@@ -80,7 +80,7 @@ static void RGBtoHSV(float r, float g, float b, float *h, float *s, float *v)
 /**
  *	Swizzle the vertex value to match Studio format
  */
-void SwizzleVertex(QVector<float> &ioValues)
+void swizzleVertex(QVector<float> &ioValues)
 {
     int theSize = ioValues.size();
     for (int i = 0; i < theSize; i += 3) {
@@ -93,7 +93,7 @@ void SwizzleVertex(QVector<float> &ioValues)
 /**
  *	Negate the vertex value
  */
-void NegateVertex(QVector<float> &ioValues)
+void negateVertex(QVector<float> &ioValues)
 {
     int theSize = ioValues.size();
     for (int i = 0; i < theSize; i += 3) {
@@ -108,7 +108,7 @@ void NegateVertex(QVector<float> &ioValues)
 /**
  *	Swizzle the TexCoord value to match Studio format
  */
-void SwizzleTexCoord(QVector<float> &ioValues)
+void swizzleTexCoord(QVector<float> &ioValues)
 {
     int theSize = ioValues.size();
     for (int i = 0; i < theSize; i += 2) {
@@ -121,7 +121,7 @@ void SwizzleTexCoord(QVector<float> &ioValues)
 /**
  *	Swizzle the Face Indices to match Studio format
  */
-void SwizzleFaceIndices(QVector<int> &ioValues)
+void swizzleFaceIndices(QVector<int> &ioValues)
 {
     int theSize = ioValues.size();
     int theTemp;
@@ -180,7 +180,7 @@ void matrixFromAxisAngle(float inDegreeAngle, float inXAxis, float inYAxis, floa
 #define FLT_TOLERANCE 0.0001f
 
 template <class T>
-T Sign(const T &val)
+T sign(const T &val)
 {
     return (val >= T(0)) ? T(1) : T(-1);
 }
@@ -209,7 +209,7 @@ static float det3x3(float a1, float a2, float a3, float b1, float b2, float b3, 
  *	Decomposes the scale portion of a matrix.
  *	Modified from FCollada's FMMatrix44::Decompose
  */
-void DecomposeScale(QVector3D &outScale, float inMatrix[4][4])
+void decomposeScale(QVector3D &outScale, float inMatrix[4][4])
 {
     outScale.setX(sqrtf(inMatrix[0][0] * inMatrix[0][0] + inMatrix[0][1] * inMatrix[0][1]
                   + inMatrix[0][2] * inMatrix[0][2]));
@@ -219,7 +219,7 @@ void DecomposeScale(QVector3D &outScale, float inMatrix[4][4])
                   + inMatrix[2][2] * inMatrix[2][2]));
 
     float isInverted =
-        Sign(det3x3(inMatrix[0][0], inMatrix[0][1], inMatrix[0][2], inMatrix[1][0], inMatrix[1][1],
+        sign(det3x3(inMatrix[0][0], inMatrix[0][1], inMatrix[0][2], inMatrix[1][0], inMatrix[1][1],
                     inMatrix[1][2], inMatrix[2][0], inMatrix[2][1], inMatrix[2][2]));
 
     if (isInverted < 0.0f) {
@@ -233,7 +233,7 @@ void DecomposeScale(QVector3D &outScale, float inMatrix[4][4])
 /**
 *	Translate SubPropertyName to index.
 */
-int GetSubPropertyIndex(const char *inSubPropertyName)
+int getSubPropertyIndex(const char *inSubPropertyName)
 {
     if (qstricmp(inSubPropertyName, "x") == 0 || qstricmp(inSubPropertyName, "r") == 0)
         return 0;
