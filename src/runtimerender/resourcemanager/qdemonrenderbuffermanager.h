@@ -99,9 +99,9 @@ public:
     virtual void clear() = 0;
     virtual void invalidateBuffer(QString inSourcePath) = 0;
 
-    static QDemonRef<QDemonBufferManagerInterface> create(QDemonRef<QDemonRenderContext> inRenderContext,
-                                                               QDemonRef<QDemonInputStreamFactoryInterface> inInputStreamFactory,
-                                                               QDemonRef<QDemonPerfTimerInterface> inTimer);
+    static QDemonRef<QDemonBufferManagerInterface> create(const QDemonRef<QDemonRenderContext> &inRenderContext,
+                                                               const QDemonRef<QDemonInputStreamFactoryInterface> &inInputStreamFactory,
+                                                               const QDemonRef<QDemonPerfTimerInterface> &inTimer);
 };
 QT_END_NAMESPACE
 

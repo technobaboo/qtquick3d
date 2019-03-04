@@ -163,7 +163,7 @@ private:
 
 public:
     QDemonRenderGpuProfiler(QDemonRenderContextInterface *inContext,
-                            QDemonRef<QDemonRenderContext> inRenderContext)
+                            const QDemonRef<QDemonRenderContext> &inRenderContext)
         : m_renderContext(inRenderContext)
         , m_context(inContext)
         , m_vertexCount(0)
@@ -253,7 +253,7 @@ private:
 }
 
 QDemonRef<QDemonRenderProfilerInterface> QDemonRenderProfilerInterface::createGpuProfiler(QDemonRenderContextInterface *inContext,
-                                                                                               QDemonRef<QDemonRenderContext> inRenderContext)
+                                                                                               const QDemonRef<QDemonRenderContext>& inRenderContext)
 {
     return QDemonRef<QDemonRenderProfilerInterface>(new QDemonRenderGpuProfiler(inContext, inRenderContext));
 }

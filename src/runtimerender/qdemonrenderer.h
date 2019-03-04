@@ -229,9 +229,9 @@ public:
 
     virtual QDemonRef<QDemonRenderWidgetContextInterface> getRenderWidgetContext() = 0;
 
-    static bool isGlEsContext(QDemonRenderContextType inContextType);
-    static bool isGlEs3Context(QDemonRenderContextType inContextType);
-    static bool isGl2Context(QDemonRenderContextType inContextType);
+    static bool isGlEsContext(const QDemonRenderContextType& inContextType);
+    static bool isGlEs3Context(const QDemonRenderContextType& inContextType);
+    static bool isGl2Context(const QDemonRenderContextType& inContextType);
     static const char *getGlslVesionString(QDemonRenderContextType inContextType);
 
     static QDemonRef<QDemonRendererInterface> createRenderer(QDemonRenderContextInterface *inContext);

@@ -35,10 +35,11 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonRenderPrefilterTexture::QDemonRenderPrefilterTexture(QDemonRef<QDemonRenderContext> inQDemonRenderContext,
-                                                     qint32 inWidth, qint32 inHeight,
-                                                     QDemonRef<QDemonRenderTexture2D> inTexture2D,
-                                                     QDemonRenderTextureFormats::Enum inDestFormat)
+QDemonRenderPrefilterTexture::QDemonRenderPrefilterTexture(const QDemonRef<QDemonRenderContext> &inQDemonRenderContext,
+                                                           qint32 inWidth,
+                                                           qint32 inHeight,
+                                                           const QDemonRef<QDemonRenderTexture2D> &inTexture2D,
+                                                           QDemonRenderTextureFormats::Enum inDestFormat)
     : m_texture2D(inTexture2D)
     , m_destinationFormat(inDestFormat)
     , m_width(inWidth)
@@ -55,10 +56,10 @@ QDemonRenderPrefilterTexture::QDemonRenderPrefilterTexture(QDemonRef<QDemonRende
 }
 
 QDemonRef<QDemonRenderPrefilterTexture>
-QDemonRenderPrefilterTexture::create(QDemonRef<QDemonRenderContext> inQDemonRenderContext,
+QDemonRenderPrefilterTexture::create(const QDemonRef<QDemonRenderContext> &inQDemonRenderContext,
                                      qint32 inWidth,
                                      qint32 inHeight,
-                                     QDemonRef<QDemonRenderTexture2D> inTexture2D,
+                                     const QDemonRef<QDemonRenderTexture2D> &inTexture2D,
                                      QDemonRenderTextureFormats::Enum inDestFormat)
 {
     QDemonRef<QDemonRenderPrefilterTexture> theBSDFMipMap;
@@ -82,9 +83,11 @@ QDemonRenderPrefilterTexture::~QDemonRenderPrefilterTexture()
 // CPU based filtering
 //------------------------------------------------------------------------------------
 
-QDemonRenderPrefilterTextureCPU::QDemonRenderPrefilterTextureCPU(
-    QDemonRef<QDemonRenderContext> inQDemonRenderContext, int inWidth, int inHeight, QDemonRef<QDemonRenderTexture2D> inTexture2D,
-    QDemonRenderTextureFormats::Enum inDestFormat)
+QDemonRenderPrefilterTextureCPU::QDemonRenderPrefilterTextureCPU(const QDemonRef<QDemonRenderContext> &inQDemonRenderContext,
+                                                                 int inWidth,
+                                                                 int inHeight,
+                                                                 const QDemonRef<QDemonRenderTexture2D> &inTexture2D,
+                                                                 QDemonRenderTextureFormats::Enum inDestFormat)
     : QDemonRenderPrefilterTexture(inQDemonRenderContext, inWidth, inHeight, inTexture2D, inDestFormat)
 {
 }
@@ -385,7 +388,7 @@ inline QDemonConstDataRef<qint8> toRef(const char *data)
     return QDemonConstDataRef<qint8>((const qint8 *)data, (quint32)len);
 }
 
-static bool isGLESContext(QDemonRef<QDemonRenderContext> context)
+static bool isGLESContext(const QDemonRef<QDemonRenderContext> &context)
 {
     QDemonRenderContextType ctxType = context->getRenderContextType();
 
@@ -400,26 +403,20 @@ static bool isGLESContext(QDemonRef<QDemonRenderContext> context)
 
 #define WORKGROUP_SIZE 16
 
-QDemonRenderPrefilterTextureCompute::QDemonRenderPrefilterTextureCompute(QDemonRef<QDemonRenderContext> inQDemonRenderContext, qint32 inWidth, qint32 inHeight,
-    QDemonRef<QDemonRenderTexture2D> inTexture2D, QDemonRenderTextureFormats::Enum inDestFormat)
+QDemonRenderPrefilterTextureCompute::QDemonRenderPrefilterTextureCompute(const QDemonRef<QDemonRenderContext> &inQDemonRenderContext,
+                                                                         qint32 inWidth,
+                                                                         qint32 inHeight,
+                                                                         const QDemonRef<QDemonRenderTexture2D> &inTexture2D,
+                                                                         QDemonRenderTextureFormats::Enum inDestFormat)
     : QDemonRenderPrefilterTexture(inQDemonRenderContext, inWidth, inHeight, inTexture2D, inDestFormat)
-    , m_bsdfProgram(nullptr)
-    , m_uploadProgram_RGBA8(nullptr)
-    , m_uploadProgram_RGB8(nullptr)
-    , m_level0Tex(nullptr)
-    , m_textureCreated(false)
 {
 }
 
 QDemonRenderPrefilterTextureCompute::~QDemonRenderPrefilterTextureCompute()
 {
-    m_uploadProgram_RGB8 = nullptr;
-    m_uploadProgram_RGBA8 = nullptr;
-    m_bsdfProgram = nullptr;
-    m_level0Tex = nullptr;
 }
 
-void QDemonRenderPrefilterTextureCompute::createComputeProgram(QDemonRef<QDemonRenderContext>context)
+void QDemonRenderPrefilterTextureCompute::createComputeProgram(const QDemonRef<QDemonRenderContext> &context)
 {
     QByteArray computeProg;
 
@@ -429,8 +426,8 @@ void QDemonRenderPrefilterTextureCompute::createComputeProgram(QDemonRef<QDemonR
     }
 }
 
-QDemonRef<QDemonRenderShaderProgram> QDemonRenderPrefilterTextureCompute::getOrCreateUploadComputeProgram(
-    QDemonRef<QDemonRenderContext> context, QDemonRenderTextureFormats::Enum inFormat)
+QDemonRef<QDemonRenderShaderProgram> QDemonRenderPrefilterTextureCompute::getOrCreateUploadComputeProgram(const QDemonRef<QDemonRenderContext> &context,
+                                                                                                          QDemonRenderTextureFormats::Enum inFormat)
 {
     QByteArray computeProg;
 

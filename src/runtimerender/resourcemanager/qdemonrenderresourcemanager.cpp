@@ -58,7 +58,7 @@ struct QDemonResourceManager : public QDemonResourceManagerInterface
     QVector<QDemonRef<QDemonRenderTextureCube>> freeTexCubes;
     QVector<QDemonRef<QDemonRenderImage2D>> freeImages;
 
-    QDemonResourceManager(QDemonRef<QDemonRenderContext> ctx)
+    QDemonResourceManager(const QDemonRef<QDemonRenderContext> &ctx)
         : renderContext(ctx)
     {
 
@@ -401,7 +401,7 @@ struct QDemonResourceManager : public QDemonResourceManagerInterface
 };
 }
 
-QDemonRef<QDemonResourceManagerInterface> QDemonResourceManagerInterface::createResourceManager(QDemonRef<QDemonRenderContext> inContext)
+QDemonRef<QDemonResourceManagerInterface> QDemonResourceManagerInterface::createResourceManager(const QDemonRef<QDemonRenderContext> &inContext)
 {
     return QDemonRef<QDemonResourceManagerInterface>(new QDemonResourceManager(inContext));
 }

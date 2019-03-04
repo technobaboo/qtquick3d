@@ -234,10 +234,10 @@ bool QDemonRenderCamera::computeFrustumPerspective(const QRectF &inViewport,
             writePtr[5] = theCotangent * (theAspectRatio / designAspect);
         }
         return true;
-    } else {
-        Q_ASSERT(false);
-        return false;
     }
+
+    Q_ASSERT(false);
+    return false;
 }
 
 //==============================================================================
@@ -270,10 +270,10 @@ bool QDemonRenderCamera::computeFrustumOrtho(const QRectF &inViewport, const QVe
             writePtr[5] = 1.0f / (halfWidth / theAspectRatio);
         }
         return true;
-    } else {
-        Q_ASSERT(false);
-        return false;
     }
+
+    Q_ASSERT(false);
+    return false;
 }
 
 float QDemonRenderCamera::getOrthographicScaleFactor(const QRectF &inViewport,
@@ -285,13 +285,10 @@ float QDemonRenderCamera::getOrthographicScaleFactor(const QRectF &inViewport,
     float designAspect = getAspectRatio(inDesignDimensions);
     float theAspectRatio = getAspectRatio(inViewport);
     if (scaleMode == CameraScaleModes::Fit) {
-        if (theAspectRatio >= designAspect) {
+        if (theAspectRatio >= designAspect)
             return inViewport.width() < inDesignDimensions.x() ? theAspectRatio / designAspect : 1.0f;
 
-        } else {
-            return inViewport.height() < inDesignDimensions.y() ? designAspect / theAspectRatio
-                                                              : 1.0f;
-        }
+        return inViewport.height() < inDesignDimensions.y() ? designAspect / theAspectRatio : 1.0f;
     } else if (scaleMode == CameraScaleModes::FitVertical) {
         return (float)inDesignDimensions.y() / (float)inViewport.height();
     } else {

@@ -53,7 +53,7 @@ struct QDemonPGRectShader
     QDemonRef<QDemonRenderShaderConstantBase> bottomtop;
 
     QDemonPGRectShader() = default;
-    void setShader(QDemonRef<QDemonRenderShaderProgram> program)
+    void setShader(const QDemonRef<QDemonRenderShaderProgram> &program)
     {
         rectShader = program;
         if (program) {

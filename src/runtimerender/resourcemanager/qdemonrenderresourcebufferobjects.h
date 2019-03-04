@@ -44,7 +44,7 @@ protected:
     QDemonRef<QDemonRenderFrameBuffer> m_frameBuffer;
 
 public:
-    QDemonResourceFrameBuffer(QDemonRef<QDemonResourceManagerInterface> mgr);
+    QDemonResourceFrameBuffer(const QDemonRef<QDemonResourceManagerInterface> &mgr);
     ~QDemonResourceFrameBuffer();
     bool ensureFrameBuffer();
     void releaseFrameBuffer();
@@ -73,7 +73,7 @@ protected:
     QDemonRenderRenderBufferDimensions m_dimensions;
 
 public:
-    QDemonResourceRenderBuffer(QDemonRef<QDemonResourceManagerInterface> mgr);
+    QDemonResourceRenderBuffer(const QDemonRef<QDemonResourceManagerInterface> &mgr);
     ~QDemonResourceRenderBuffer();
     bool ensureRenderBuffer(quint32 width, quint32 height,
                             QDemonRenderRenderBufferFormats::Enum storageFormat);

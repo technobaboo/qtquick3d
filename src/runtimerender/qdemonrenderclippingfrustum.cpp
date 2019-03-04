@@ -33,7 +33,7 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonClippingFrustum::QDemonClippingFrustum(const QMatrix4x4 &modelviewprojection, QDemonClipPlane nearPlane)
+QDemonClippingFrustum::QDemonClippingFrustum(const QMatrix4x4 &modelviewprojection, const QDemonClipPlane &nearPlane)
 {
     QDemonClipPlane *_cullingPlanes = mPlanes;
     const QMatrix4x4 &modelViewProjectionMat(modelviewprojection);
@@ -81,9 +81,8 @@ QDemonClippingFrustum::QDemonClippingFrustum(const QMatrix4x4 &modelviewprojecti
     _cullingPlanes[5] = nearPlane;
     // http://www.openscenegraph.org/projects/osg/browser/OpenSceneGraph/trunk/include/osg/Plane?rev=5328
     // setup the edges of the plane that we will clip against an axis-aligned bounding box.
-    for (quint32 idx = 0; idx < 6; ++idx) {
+    for (quint32 idx = 0; idx < 6; ++idx)
         _cullingPlanes[idx].calculateBBoxEdges();
-    }
 }
 
 QT_END_NAMESPACE

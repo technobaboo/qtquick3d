@@ -171,7 +171,7 @@ struct QDemonRenderableObject
     TRenderFunction renderFunction;
     QDemonNodeLightEntryList scopedLights;
     QDemonRenderableObject(QDemonRenderableObjectFlags inFlags,
-                           QVector3D inWorldCenterPt,
+                           const QVector3D &inWorldCenterPt,
                            const QMatrix4x4 &inGlobalTransform,
                            const QDemonBounds3 &inBounds,
                            TessModeValues::Enum inTessMode = TessModeValues::NoTess,
@@ -234,8 +234,8 @@ struct QDemonSubsetRenderableBase : public QDemonRenderableObject
     float opacity;
 
     QDemonSubsetRenderableBase(QDemonRenderableObjectFlags inFlags,
-                               QVector3D inWorldCenterPt,
-                               QDemonRef<QDemonRendererImpl> gen,
+                               const QVector3D &inWorldCenterPt,
+                               const QDemonRef<QDemonRendererImpl> &gen,
                                const QDemonRenderSubset &inSubset,
                                const QDemonModelContext &inModelContext,
                                float inOpacity);
@@ -243,7 +243,7 @@ struct QDemonSubsetRenderableBase : public QDemonRenderableObject
     void renderShadowMapPass(const QVector2D &inCameraVec,
                              const QDemonRenderLight *inLight,
                              const QDemonRenderCamera &inCamera,
-                             QDemonShadowMapEntry *inShadowMapEntry);
+                             QDemonShadowMapEntry *inShadowMapEntry) const;
 
     void renderDepthPass(const QVector2D &inCameraVec,
                          QDemonRenderableImage *inDisplacementImage,
@@ -263,18 +263,18 @@ struct QDemonSubsetRenderable : public QDemonSubsetRenderableBase
     QDemonConstDataRef<QMatrix4x4> bones;
 
     QDemonSubsetRenderable(QDemonRenderableObjectFlags inFlags,
-                           QVector3D inWorldCenterPt,
-                           QDemonRef<QDemonRendererImpl> gen,
+                           const QVector3D &inWorldCenterPt,
+                           const QDemonRef<QDemonRendererImpl> &gen,
                            const QDemonRenderSubset &inSubset,
                            const QDemonRenderDefaultMaterial &mat,
                            const QDemonModelContext &inModelContext,
                            float inOpacity,
                            QDemonRenderableImage *inFirstImage,
                            QDemonShaderDefaultMaterialKey inShaderKey,
-                           QDemonConstDataRef<QMatrix4x4> inBoneGlobals);
+                           const QDemonConstDataRef<QMatrix4x4> &inBoneGlobals);
     ~QDemonSubsetRenderable();
 
-    void render(const QVector2D &inCameraVec, TShaderFeatureSet inFeatureSet);
+    void render(const QVector2D &inCameraVec, const TShaderFeatureSet &inFeatureSet);
 
     void renderDepthPass(const QVector2D &inCameraVec);
 
@@ -291,8 +291,8 @@ struct QDemonCustomMaterialRenderable : public QDemonSubsetRenderableBase
     QDemonShaderDefaultMaterialKey shaderDescription;
 
     QDemonCustomMaterialRenderable(QDemonRenderableObjectFlags inFlags,
-                                   QVector3D inWorldCenterPt,
-                                   QDemonRef<QDemonRendererImpl> gen,
+                                   const QVector3D &inWorldCenterPt,
+                                   const QDemonRef<QDemonRendererImpl> &gen,
                                    const QDemonRenderSubset &inSubset,
                                    const QDemonRenderCustomMaterial &mat,
                                    const QDemonModelContext &inModelContext,
@@ -308,7 +308,7 @@ struct QDemonCustomMaterialRenderable : public QDemonSubsetRenderableBase
                 const QDemonRenderCamera &inCamera,
                 const QDemonRef<QDemonRenderTexture2D> inDepthTexture,
                 const QDemonRef<QDemonRenderTexture2D> inSsaoTexture,
-                TShaderFeatureSet inFeatureSet);
+                const TShaderFeatureSet &inFeatureSet);
 
     void renderDepthPass(const QVector2D &inCameraVec,
                          const QDemonRenderLayer &inLayer,
@@ -380,8 +380,8 @@ struct QDemonPathRenderable : public QDemonRenderableObject
     bool m_isStroke;
 
     QDemonPathRenderable(QDemonRenderableObjectFlags inFlags,
-                         QVector3D inWorldCenterPt,
-                         QDemonRef<QDemonRendererImpl> gen,
+                         const QVector3D &inWorldCenterPt,
+                         const QDemonRef<QDemonRendererImpl> &gen,
                          const QMatrix4x4 &inGlobalTransform,
                          QDemonBounds3 &inBounds,
                          QDemonPath &inPath,
@@ -396,9 +396,9 @@ struct QDemonPathRenderable : public QDemonRenderableObject
                 const QDemonRenderLayer &inLayer,
                 const QVector<QDemonRenderLight *> &inLights,
                 const QDemonRenderCamera &inCamera,
-                const QDemonRef<QDemonRenderTexture2D> inDepthTexture,
-                const QDemonRef<QDemonRenderTexture2D> inSsaoTexture,
-                TShaderFeatureSet inFeatureSet);
+                const QDemonRef<QDemonRenderTexture2D> &inDepthTexture,
+                const QDemonRef<QDemonRenderTexture2D> &inSsaoTexture,
+                const TShaderFeatureSet &inFeatureSet);
 
     void renderDepthPass(const QVector2D &inCameraVec,
                          const QDemonRenderLayer &inLayer,

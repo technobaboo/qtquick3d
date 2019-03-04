@@ -101,17 +101,17 @@ public:
     // inPipelineName needs to be unique else the shader cache will just return shaders from
     // different pipelines.
     QDemonRef<QDemonRenderShaderProgram> generateShader(const QDemonGraphObject &inMaterial,
-                                                             QDemonShaderDefaultMaterialKey inShaderDescription,
-                                                             QDemonShaderStageGeneratorInterface &inVertexPipeline,
-                                                             TShaderFeatureSet inFeatureSet,
-                                                             const QVector<QDemonRenderLight *> &inLights,
-                                                             QDemonRenderableImage *inFirstImage,
-                                                             bool inHasTransparency,
-                                                             const QString &inVertexPipelineName,
-                                                             const QString &inCustomMaterialName = QString()) override = 0;
+                                                        QDemonShaderDefaultMaterialKey inShaderDescription,
+                                                        QDemonShaderStageGeneratorInterface &inVertexPipeline,
+                                                        const TShaderFeatureSet &inFeatureSet,
+                                                        const QVector<QDemonRenderLight *> &inLights,
+                                                        QDemonRenderableImage *inFirstImage,
+                                                        bool inHasTransparency,
+                                                        const QString &inVertexPipelineName,
+                                                        const QString &inCustomMaterialName = QString()) override = 0;
 
     // Also sets the blend function on the render context.
-    virtual void setMaterialProperties(QDemonRef<QDemonRenderShaderProgram> inProgram,
+    virtual void setMaterialProperties(const QDemonRef<QDemonRenderShaderProgram> &inProgram,
                                        const QDemonGraphObject &inMaterial,
                                        const QVector2D &inCameraVec,
                                        const QMatrix4x4 &inModelViewProjection,
@@ -119,7 +119,7 @@ public:
                                        const QMatrix4x4 &inGlobalTransform,
                                        QDemonRenderableImage *inFirstImage,
                                        float inOpacity,
-                                       QDemonLayerGlobalRenderProperties inRenderProperties) override = 0;
+                                       const QDemonLayerGlobalRenderProperties &inRenderProperties) override = 0;
 
     static QDemonRef<QDemonDefaultMaterialShaderGeneratorInterface> createDefaultMaterialShaderGenerator(QDemonRenderContextInterface *inRenderContext);
 

@@ -33,9 +33,8 @@
 QT_BEGIN_NAMESPACE
 
 
-QDemonResourceFrameBuffer::QDemonResourceFrameBuffer(QDemonRef<QDemonResourceManagerInterface> mgr)
+QDemonResourceFrameBuffer::QDemonResourceFrameBuffer(const QDemonRef<QDemonResourceManagerInterface> &mgr)
     : m_resourceManager(mgr)
-    , m_frameBuffer(nullptr)
 {
 }
 
@@ -60,9 +59,8 @@ void QDemonResourceFrameBuffer::releaseFrameBuffer()
     }
 }
 
-QDemonResourceRenderBuffer::QDemonResourceRenderBuffer(QDemonRef<QDemonResourceManagerInterface> mgr)
+QDemonResourceRenderBuffer::QDemonResourceRenderBuffer(const QDemonRef<QDemonResourceManagerInterface> &mgr)
     : m_resourceManager(mgr)
-    , m_renderBuffer(nullptr)
 {
 }
 
@@ -71,8 +69,9 @@ QDemonResourceRenderBuffer::~QDemonResourceRenderBuffer()
     releaseRenderBuffer();
 }
 
-bool QDemonResourceRenderBuffer::ensureRenderBuffer(quint32 width, quint32 height,
-                                               QDemonRenderRenderBufferFormats::Enum storageFormat)
+bool QDemonResourceRenderBuffer::ensureRenderBuffer(quint32 width,
+                                                    quint32 height,
+                                                    QDemonRenderRenderBufferFormats::Enum storageFormat)
 {
     if (m_renderBuffer == nullptr || m_dimensions.m_width != width || m_dimensions.m_height != height
             || m_storageFormat != storageFormat) {

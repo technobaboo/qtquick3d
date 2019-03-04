@@ -89,9 +89,9 @@ struct QDemonBufferManager : public QDemonBufferManagerInterface
     bool m_gpuSupportsDXT;
     static const char *getPrimitivesDirectory() { return "res//primitives"; }
 
-    QDemonBufferManager(QDemonRef<QDemonRenderContext> ctx,
-                   QDemonRef<QDemonInputStreamFactoryInterface> inInputStreamFactory,
-                   QDemonRef<QDemonPerfTimerInterface> inTimer)
+    QDemonBufferManager(const QDemonRef<QDemonRenderContext> &ctx,
+                        const QDemonRef<QDemonInputStreamFactoryInterface> &inInputStreamFactory,
+                        const QDemonRef<QDemonPerfTimerInterface> &inTimer)
         : m_context(ctx)
         , m_inputStreamFactory(inInputStreamFactory)
         , m_perfTimer(inTimer)
@@ -821,9 +821,9 @@ struct QDemonBufferManager : public QDemonBufferManagerInterface
 };
 }
 
-QDemonRef<QDemonBufferManagerInterface> QDemonBufferManagerInterface::create(QDemonRef<QDemonRenderContext> inRenderContext,
-                                                      QDemonRef<QDemonInputStreamFactoryInterface> inInputStreamFactory,
-                                                      QDemonRef<QDemonPerfTimerInterface> inTimer)
+QDemonRef<QDemonBufferManagerInterface> QDemonBufferManagerInterface::create(const QDemonRef<QDemonRenderContext> &inRenderContext,
+                                                                             const QDemonRef<QDemonInputStreamFactoryInterface> &inInputStreamFactory,
+                                                                             const QDemonRef<QDemonPerfTimerInterface> &inTimer)
 {
     return QDemonRef<QDemonBufferManagerInterface>(new QDemonBufferManager(inRenderContext, inInputStreamFactory, inTimer));
 }

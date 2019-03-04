@@ -33,44 +33,7 @@ QT_BEGIN_NAMESPACE
 
 QDemonRenderDefaultMaterial::QDemonRenderDefaultMaterial()
     : QDemonGraphObject(QDemonGraphObjectTypes::DefaultMaterial)
-    , iblProbe(nullptr)
-    , lighting(DefaultMaterialLighting::VertexLighting)
-    , blendMode(DefaultMaterialBlendMode::Normal)
-    , diffuseColor(1, 1, 1)
-    , emissivePower(0)
-    , emissiveMap(nullptr)
-    , emissiveMap2(nullptr)
-    , emissiveColor(1, 1, 1)
-    , specularReflection(nullptr)
-    , specularMap(nullptr)
-    , specularModel(DefaultMaterialSpecularModel::Default)
-    , specularTint(1, 1, 1)
-    , ior(.2f)
-    , fresnelPower(0.0f)
-    , specularAmount(0)
-    , specularRoughness(50)
-    , roughnessMap(nullptr)
-    , opacity(1)
-    , opacityMap(nullptr)
-    , bumpMap(nullptr)
-    , bumpAmount(0.f)
-    , normalMap(nullptr)
-    , displacementMap(nullptr)
-    , displaceAmount(0.f)
-    , translucencyMap(nullptr)
-    , translucentFalloff(0.f)
-    , diffuseLightWrap(0.f)
-    , vertexColors(false)
-    , nextSibling(nullptr)
-    , parent(nullptr)
 {
-    lightmaps.m_lightmapIndirect = nullptr;
-    lightmaps.m_lightmapRadiosity = nullptr;
-    lightmaps.m_lightmapShadow = nullptr;
-
-    diffuseMaps[0] = nullptr;
-    diffuseMaps[2] = nullptr;
-    diffuseMaps[1] = nullptr;
 }
 
 QT_END_NAMESPACE

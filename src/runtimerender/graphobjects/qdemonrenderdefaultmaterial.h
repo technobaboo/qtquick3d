@@ -77,38 +77,40 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderDefaultMaterial : QDemonGraphObje
     // lightmap section
     QDemonRenderLightmaps lightmaps;
     // material section
-    QDemonRenderImage *iblProbe;
-    DefaultMaterialLighting::Enum lighting; // defaults to vertex
-    DefaultMaterialBlendMode::Enum blendMode; // defaults to normal
-    QVector3D diffuseColor; // colors are 0-1 normalized
-    QDemonRenderImage *diffuseMaps[3];
-    float emissivePower; // 0-100, defaults to 0
-    QDemonRenderImage *emissiveMap;
-    QDemonRenderImage *emissiveMap2;
-    QVector3D emissiveColor;
-    QDemonRenderImage *specularReflection;
-    QDemonRenderImage *specularMap;
-    DefaultMaterialSpecularModel::Enum specularModel;
-    QVector3D specularTint;
-    float ior;
-    float fresnelPower;
-    float specularAmount; // 0-??, defaults to 0
-    float specularRoughness; // 0-??, defaults to 50
-    QDemonRenderImage *roughnessMap;
-    float opacity; // 0-1
-    QDemonRenderImage *opacityMap;
-    QDemonRenderImage *bumpMap;
-    float bumpAmount; // 0-??
-    QDemonRenderImage *normalMap;
-    QDemonRenderImage *displacementMap;
-    float displaceAmount; // 0-??
-    QDemonRenderImage *translucencyMap;
-    float translucentFalloff; // 0 - ??
-    float diffuseLightWrap; // 0 - 1
-    bool vertexColors;
+    QDemonRenderImage *iblProbe = nullptr;
+    // defaults to vertex
+    DefaultMaterialLighting::Enum lighting = DefaultMaterialLighting::VertexLighting;
+    // defaults to normal
+    DefaultMaterialBlendMode::Enum blendMode = DefaultMaterialBlendMode::Normal;
+    QVector3D diffuseColor { 1.0f, 1.0f, 1.0f }; // colors are 0-1 normalized
+    QDemonRenderImage *diffuseMaps[3] { nullptr, nullptr, nullptr };
+    float emissivePower = 0.0f; // 0-100, defaults to 0
+    QDemonRenderImage *emissiveMap = nullptr;
+    QDemonRenderImage *emissiveMap2 = nullptr;
+    QVector3D emissiveColor = { 1.0f, 1.0f, 1.0f };
+    QDemonRenderImage *specularReflection = nullptr;
+    QDemonRenderImage *specularMap = nullptr;
+    DefaultMaterialSpecularModel::Enum specularModel = DefaultMaterialSpecularModel::Default;
+    QVector3D specularTint { 1.0f, 1.0f, 1.0f };
+    float ior = 0.2f;
+    float fresnelPower = 0.0f;
+    float specularAmount = 0.0f ; // 0-??, defaults to 0
+    float specularRoughness = 50.0f; // 0-??, defaults to 50
+    QDemonRenderImage *roughnessMap = nullptr;
+    float opacity = 1.0f; // 0-1
+    QDemonRenderImage *opacityMap = nullptr;
+    QDemonRenderImage *bumpMap = nullptr;
+    float bumpAmount = 0.0f; // 0-??
+    QDemonRenderImage *normalMap = nullptr;
+    QDemonRenderImage *displacementMap = nullptr;
+    float displaceAmount = 0.0f; // 0-??
+    QDemonRenderImage *translucencyMap = nullptr;
+    float translucentFalloff = 0.0f; // 0 - ??
+    float diffuseLightWrap = 0.0f; // 0 - 1
+    bool vertexColors = false;
     // Materials are stored as a linked list on models.
-    QDemonGraphObject *nextSibling;
-    QDemonRenderModel *parent;
+    QDemonGraphObject *nextSibling = nullptr;
+    QDemonRenderModel *parent = nullptr;
 
     QDemonRenderDefaultMaterial();
 

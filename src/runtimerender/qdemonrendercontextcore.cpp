@@ -172,7 +172,9 @@ struct QDemonRenderContextData : public QDemonRenderContextInterface
     QPair<float, int> m_fps;
     bool m_authoringMode;
 
-    QDemonRenderContextData(QDemonRef<QDemonRenderContext> ctx, QDemonRenderContextCoreInterface *inCore, const char *inApplicationDirectory)
+    QDemonRenderContextData(const QDemonRef<QDemonRenderContext> &ctx,
+                            QDemonRenderContextCoreInterface *inCore,
+                            const char *inApplicationDirectory)
         : m_renderContext(ctx)
         , m_coreContext(inCore)
         , m_perfTimer(inCore->getPerfTimer())

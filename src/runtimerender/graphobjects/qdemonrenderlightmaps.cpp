@@ -34,9 +34,6 @@ QT_BEGIN_NAMESPACE
 
 QDemonRenderLightmaps::QDemonRenderLightmaps()
     : QDemonGraphObject(QDemonGraphObjectTypes::Lightmaps)
-    , m_lightmapIndirect(nullptr)
-    , m_lightmapRadiosity(nullptr)
-    , m_lightmapShadow(nullptr)
 {
 }
 

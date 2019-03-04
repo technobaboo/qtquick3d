@@ -57,7 +57,7 @@ struct QDemonRenderPickSubResult
     QDemonRenderPickSubResult *m_nextSibling;
 
     QDemonRenderPickSubResult();
-    QDemonRenderPickSubResult(QDemonRef<QDemonOffscreenRendererInterface> inSubRenderer, QMatrix4x4 inTextureMatrix,
+    QDemonRenderPickSubResult(const QDemonRef<QDemonOffscreenRendererInterface> &inSubRenderer, const QMatrix4x4 &inTextureMatrix,
                              QDemonRenderTextureCoordOp::Enum inHorizontalTilingMode,
                              QDemonRenderTextureCoordOp::Enum inVerticalTilingMode, quint32 width,
                              quint32 height);

@@ -710,8 +710,9 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
         return QPair<const dynamic::QDemonPropertyDefinition *, QDemonRef<QDemonDynamicObjClassImpl> >(nullptr, nullptr);
     }
 
-    void setPropertyDefaultValue(QString inName, QString inPropName,
-                                 QDemonConstDataRef<quint8> inDefaultData) override
+    void setPropertyDefaultValue(const QString &inName,
+                                 const QString &inPropName,
+                                 const QDemonConstDataRef<quint8> &inDefaultData) override
     {
         QPair<const dynamic::QDemonPropertyDefinition *, QDemonRef<QDemonDynamicObjClassImpl> > def =
                 findProperty(inName, inPropName);
@@ -723,12 +724,12 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
         }
     }
 
-    void setPropertyEnumNames(QString inName, QString inPropName,
-                              QDemonConstDataRef<QString> inNames) override
+    void setPropertyEnumNames(const QString &inName,
+                              const QString &inPropName,
+                              const QDemonConstDataRef<QString> &inNames) override
     {
 
-        QPair<const dynamic::QDemonPropertyDefinition *, QDemonRef<QDemonDynamicObjClassImpl> > def =
-                findProperty(inName, inPropName);
+        QPair<const dynamic::QDemonPropertyDefinition *, QDemonRef<QDemonDynamicObjClassImpl> > def = findProperty(inName, inPropName);
         dynamic::QDemonPropertyDefinition *theDefinitionPtr = const_cast<dynamic::QDemonPropertyDefinition *>(def.first);
         if (theDefinitionPtr == nullptr) {
             Q_ASSERT(false);
@@ -746,8 +747,8 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
         }
     }
 
-    virtual QDemonConstDataRef<QString> getPropertyEnumNames(QString inName,
-                                                             QString inPropName) const override
+    virtual QDemonConstDataRef<QString> getPropertyEnumNames(const QString &inName,
+                                                             const QString &inPropName) const override
     {
         QPair<const dynamic::QDemonPropertyDefinition *, QDemonRef<QDemonDynamicObjClassImpl> > def =
                 const_cast<QDemonDynamicObjectSystemImpl &>(*this).findProperty(inName, inPropName);
@@ -757,7 +758,7 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
     }
 
     // Called during loading which is pretty heavily multithreaded.
-    virtual QDemonConstDataRef<dynamic::QDemonPropertyDefinition> getProperties(QString inName) const override
+    virtual QDemonConstDataRef<dynamic::QDemonPropertyDefinition> getProperties(const QString &inName) const override
     {
         QMutexLocker locker(&m_propertyLoadMutex);
         QDemonRef<QDemonDynamicObjClassImpl> cls = const_cast<QDemonDynamicObjectSystemImpl &>(*this).findClass(inName);
@@ -766,8 +767,9 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
         return QDemonConstDataRef<dynamic::QDemonPropertyDefinition>();
     }
 
-    void setPropertyTextureSettings(QString inName, QString inPropName,
-                                    QString inPropPath,
+    void setPropertyTextureSettings(const QString &inName,
+                                    const QString &inPropName,
+                                    const QString &inPropPath,
                                     QDemonRenderTextureTypeValue::Enum inTexType,
                                     QDemonRenderTextureCoordOp::Enum inCoordOp,
                                     QDemonRenderTextureMagnifyingOp::Enum inMagFilterOp,
@@ -787,14 +789,14 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
         theDefinitionPtr->minFilterOp = inMinFilterOp;
     }
 
-    QDemonDynamicObjectClassInterface *getDynamicObjectClass(QString inName) override
+    QDemonDynamicObjectClassInterface *getDynamicObjectClass(const QString &inName) override
     {
         // TODO: Should probably shared pointer
         return findClass(inName).data();
     }
 
-    void setRenderCommands(QString inClassName,
-                           QDemonConstDataRef<dynamic::QDemonCommand *> inCommands) override
+    void setRenderCommands(const QString &inClassName,
+                           const QDemonConstDataRef<dynamic::QDemonCommand *> &inCommands) override
     {
         QDemonRef<QDemonDynamicObjClassImpl> theClass =
                 const_cast<QDemonDynamicObjectSystemImpl &>(*this).findClass(inClassName);
@@ -838,7 +840,7 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
                 QDemonConstDataRef<dynamic::QDemonCommand *>(theCommandPtrBegin, inCommands.size());
     }
 
-    virtual QDemonConstDataRef<dynamic::QDemonCommand *> getRenderCommands(QString inClassName) const override
+    virtual QDemonConstDataRef<dynamic::QDemonCommand *> getRenderCommands(const QString &inClassName) const override
     {
         QDemonRef<QDemonDynamicObjClassImpl> cls =
                 const_cast<QDemonDynamicObjectSystemImpl &>(*this).findClass(inClassName);
@@ -847,7 +849,7 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
         return QDemonConstDataRef<dynamic::QDemonCommand *>();
     }
 
-    QDemonDynamicObject *createInstance(QString inClassName) override
+    QDemonDynamicObject *createInstance(const QString &inClassName) override
     {
         QDemonRef<QDemonDynamicObjClassImpl> theClass = findClass(inClassName);
         if (!theClass) {
@@ -864,9 +866,12 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
         return retval;
     }
 
-    void setShaderData(QString inPath, const char *inData,
-                       const char *inShaderType, const char *inShaderVersion,
-                       bool inHasGeomShader, bool inIsComputeShader) override
+    void setShaderData(const QString &inPath,
+                       const char *inData,
+                       const char *inShaderType,
+                       const char *inShaderVersion,
+                       bool inHasGeomShader,
+                       bool inIsComputeShader) override
     {
         inData = inData ? inData : "";
         auto foundIt = m_expandedFiles.find(inPath);

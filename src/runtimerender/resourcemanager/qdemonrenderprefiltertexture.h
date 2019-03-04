@@ -40,20 +40,20 @@ class QDemonRenderPrefilterTexture
 {
 public:
     QAtomicInt ref;
-    QDemonRenderPrefilterTexture(QDemonRef<QDemonRenderContext> inQDemonRenderContext,
+    QDemonRenderPrefilterTexture(const QDemonRef<QDemonRenderContext> &inQDemonRenderContext,
                                  qint32 inWidth,
                                  qint32 inHeight,
-                                 QDemonRef<QDemonRenderTexture2D> inTexture,
+                                 const QDemonRef<QDemonRenderTexture2D> &inTexture,
                                  QDemonRenderTextureFormats::Enum inDestFormat);
     virtual ~QDemonRenderPrefilterTexture();
 
     virtual void build(void *inTextureData, qint32 inTextureDataSize, QDemonRenderTextureFormats::Enum inFormat) = 0;
 
-    static QDemonRef<QDemonRenderPrefilterTexture> create(QDemonRef<QDemonRenderContext> inQDemonRenderContext,
-                                                               qint32 inWidth,
-                                                               qint32 inHeight,
-                                                               QDemonRef<QDemonRenderTexture2D> inTexture,
-                                                               QDemonRenderTextureFormats::Enum inDestFormat);
+    static QDemonRef<QDemonRenderPrefilterTexture> create(const QDemonRef<QDemonRenderContext> &inQDemonRenderContext,
+                                                          qint32 inWidth,
+                                                          qint32 inHeight,
+                                                          const QDemonRef<QDemonRenderTexture2D> &inTexture,
+                                                          QDemonRenderTextureFormats::Enum inDestFormat);
 
 protected:
     QDemonRef<QDemonRenderTexture2D> m_texture2D;
@@ -73,10 +73,10 @@ protected:
 class QDemonRenderPrefilterTextureCPU : public QDemonRenderPrefilterTexture
 {
 public:
-    QDemonRenderPrefilterTextureCPU(QDemonRef<QDemonRenderContext> inQDemonRenderContext,
+    QDemonRenderPrefilterTextureCPU(const QDemonRef<QDemonRenderContext> &inQDemonRenderContext,
                                     qint32 inWidth,
                                     qint32 inHeight,
-                                    QDemonRef<QDemonRenderTexture2D> inTexture,
+                                    const QDemonRef<QDemonRenderTexture2D> &inTexture,
                                     QDemonRenderTextureFormats::Enum inDestFormat);
 
     void build(void *inTextureData, qint32 inTextureDataSize, QDemonRenderTextureFormats::Enum inFormat) override;
@@ -90,10 +90,10 @@ public:
 class QDemonRenderPrefilterTextureCompute : public QDemonRenderPrefilterTexture
 {
 public:
-    QDemonRenderPrefilterTextureCompute(QDemonRef<QDemonRenderContext> inQDemonRenderContext,
+    QDemonRenderPrefilterTextureCompute(const QDemonRef<QDemonRenderContext> &inQDemonRenderContext,
                                         qint32 inWidth,
                                         qint32 inHeight,
-                                        QDemonRef<QDemonRenderTexture2D> inTexture,
+                                        const QDemonRef<QDemonRenderTexture2D> &inTexture,
                                         QDemonRenderTextureFormats::Enum inDestFormat);
     ~QDemonRenderPrefilterTextureCompute() override;
 
@@ -106,10 +106,10 @@ private:
     QDemonRef<QDemonRenderShaderProgram> m_uploadProgram_RGBA8;
     QDemonRef<QDemonRenderShaderProgram> m_uploadProgram_RGB8;
     QDemonRef<QDemonRenderTexture2D> m_level0Tex;
-    bool m_textureCreated;
+    bool m_textureCreated = false;
 
-    void createComputeProgram(QDemonRef<QDemonRenderContext> context);
-    QDemonRef<QDemonRenderShaderProgram> getOrCreateUploadComputeProgram(QDemonRef<QDemonRenderContext> context, QDemonRenderTextureFormats::Enum inFormat);
+    void createComputeProgram(const QDemonRef<QDemonRenderContext> &context);
+    QDemonRef<QDemonRenderShaderProgram> getOrCreateUploadComputeProgram(const QDemonRef<QDemonRenderContext> &context, QDemonRenderTextureFormats::Enum inFormat);
 };
 QT_END_NAMESPACE
 

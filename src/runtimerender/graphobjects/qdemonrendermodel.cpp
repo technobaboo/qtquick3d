@@ -61,7 +61,7 @@ void QDemonRenderModel::addMaterial(QDemonGraphObject &inMaterial)
         static_cast<QDemonRenderDefaultMaterial &>(inMaterial).parent = this;
 }
 
-QDemonBounds3 QDemonRenderModel::getModelBounds(QDemonRef<QDemonBufferManagerInterface> inManager) const
+QDemonBounds3 QDemonRenderModel::getModelBounds(const QDemonRef<QDemonBufferManagerInterface> &inManager) const
 {
     QDemonBounds3 retval;
     retval.setEmpty();

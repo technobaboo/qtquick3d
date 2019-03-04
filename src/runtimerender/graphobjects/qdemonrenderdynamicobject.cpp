@@ -123,7 +123,7 @@ void QDemonDynamicObject::setStrPropertyValueT(dynamic::QDemonPropertyDefinition
         if (inProjectDir == nullptr)
             inProjectDir = "";
 
-        const bool RequiresCombineBaseAndRelative = (inValue && (::strncmp(inValue, ".", 1) == 0)) ? true : false;
+        const bool RequiresCombineBaseAndRelative = inValue && (::strncmp(inValue, ".", 1) == 0);
         if (RequiresCombineBaseAndRelative) {
             const QString absolute = QDir(QString::fromLocal8Bit(inProjectDir)).filePath(QString::fromLocal8Bit(inValue));
             ioWorkspace = absolute;

@@ -91,7 +91,7 @@ struct QDemonAllocatedBufferEntry
     QDemonAllocateBufferFlags flags;
     bool needsClear;
 
-    QDemonAllocatedBufferEntry(QString inName,
+    QDemonAllocatedBufferEntry(const QString &inName,
                                QDemonRenderFrameBuffer &inFb,
                                QDemonRenderTexture2D &inTexture,
                                QDemonAllocateBufferFlags inFlags)
@@ -132,7 +132,7 @@ struct QDemonImageEntry
     QDemonRef<QDemonRenderShaderProgram> shader;
     QDemonRenderCachedShaderProperty<QDemonRenderImage2D *> image;
 
-    QDemonImageEntry(QDemonRef<QDemonRenderShaderProgram> inShader, const char *inImageName)
+    QDemonImageEntry(const QDemonRef<QDemonRenderShaderProgram> &inShader, const char *inImageName)
         : shader(inShader)
         , image(inImageName, inShader)
     {
@@ -140,7 +140,7 @@ struct QDemonImageEntry
 
     void set(QDemonRenderImage2D *inImage) { image.set(inImage); }
 
-    static QDemonImageEntry createImageEntry(QDemonRef<QDemonRenderShaderProgram> inShader, const char *inStem)
+    static QDemonImageEntry createImageEntry(const QDemonRef<QDemonRenderShaderProgram> &inShader, const char *inStem)
     {
         return QDemonImageEntry(inShader, inStem);
     }
@@ -156,10 +156,11 @@ struct QDemonAllocatedDataBufferEntry
     QDemonAllocateBufferFlags flags;
     bool needsClear;
 
-    QDemonAllocatedDataBufferEntry(QString inName,
-                              QDemonRenderDataBuffer &inDataBuffer,
-                              QDemonRenderBufferBindValues::Enum inType, QDemonDataRef<quint8> data,
-                              QDemonAllocateBufferFlags inFlags)
+    QDemonAllocatedDataBufferEntry(const QString &inName,
+                                   QDemonRenderDataBuffer &inDataBuffer,
+                                   QDemonRenderBufferBindValues::Enum inType,
+                                   const QDemonDataRef<quint8> &data,
+                                   QDemonAllocateBufferFlags inFlags)
         : name(inName)
         , dataBuffer(&inDataBuffer)
         , bufferType(inType)
@@ -177,7 +178,7 @@ struct QDemonDataBufferEntry
     QDemonRef<QDemonRenderShaderProgram> shader;
     QDemonRenderCachedShaderBuffer<QDemonRenderShaderBufferBase> dataBuffer;
 
-    QDemonDataBufferEntry(QDemonRef<QDemonRenderShaderProgram> inShader, const char *inBufferName)
+    QDemonDataBufferEntry(const QDemonRef<QDemonRenderShaderProgram> &inShader, const char *inBufferName)
         : shader(inShader)
         , dataBuffer(inBufferName, inShader)
     {
@@ -191,7 +192,7 @@ struct QDemonDataBufferEntry
         dataBuffer.set();
     }
 
-    static QDemonDataBufferEntry createDataBufferEntry(QDemonRef<QDemonRenderShaderProgram> inShader,
+    static QDemonDataBufferEntry createDataBufferEntry(const QDemonRef<QDemonRenderShaderProgram> &inShader,
                                                        const char *inStem)
     {
         return QDemonDataBufferEntry(inShader, inStem);
@@ -202,7 +203,7 @@ struct QDemonEffectTextureData
 {
     QDemonRef<QDemonRenderTexture2D> texture;
     bool needsAlphaMultiply = false;
-    QDemonEffectTextureData(QDemonRef<QDemonRenderTexture2D> inTexture, bool inNeedsMultiply)
+    QDemonEffectTextureData(const QDemonRef<QDemonRenderTexture2D> &inTexture, bool inNeedsMultiply)
         : texture(inTexture)
         , needsAlphaMultiply(inNeedsMultiply)
     {
@@ -218,7 +219,7 @@ struct QDemonTextureEntry
     QDemonRenderCachedShaderProperty<QVector4D> textureData;
     QDemonRenderCachedShaderProperty<qint32> textureFlags;
 
-    QDemonTextureEntry(QDemonRef<QDemonRenderShaderProgram> inShader,
+    QDemonTextureEntry(const QDemonRef<QDemonRenderShaderProgram> &inShader,
                        const char *inTexName,
                        const char *inDataName,
                        const char *inFlagName)
@@ -229,7 +230,7 @@ struct QDemonTextureEntry
     {
     }
 
-    void set(QDemonRef<QDemonRenderTexture2D> inTexture,
+    void set(const QDemonRef<QDemonRenderTexture2D> &inTexture,
              bool inNeedsAlphaMultiply,
              const QDemonPropertyDefinition *inDefinition)
     {
@@ -252,7 +253,7 @@ struct QDemonTextureEntry
         }
     }
 
-    static QDemonTextureEntry createTextureEntry(QDemonRef<QDemonRenderShaderProgram> inShader,
+    static QDemonTextureEntry createTextureEntry(const QDemonRef<QDemonRenderShaderProgram> &inShader,
                                                  const char *inStem,
                                                  QString &inBuilder,
                                                  QString &inBuilder2)
@@ -283,9 +284,9 @@ struct QDemonEffectContext
     QVector<TNamedImageEntry> m_imageEntries;
     QVector<TNamedDataBufferEntry> m_dataBufferEntries;
 
-    QDemonEffectContext(QString inName,
+    QDemonEffectContext(const QString &inName,
                         QDemonRenderContextInterface *ctx,
-                        QDemonRef<QDemonResourceManagerInterface> inManager)
+                        const QDemonRef<QDemonResourceManagerInterface> &inManager)
         : m_className(inName)
         , m_context(ctx)
         , m_resourceManager(inManager)
@@ -338,7 +339,7 @@ struct QDemonEffectContext
         }
     }
 
-    quint32 findBuffer(QString inName)
+    quint32 findBuffer(const QString &inName)
     {
         for (quint32 idx = 0, end = m_allocatedBuffers.size(); idx < end; ++idx)
             if (m_allocatedBuffers[idx].name == inName)
@@ -346,7 +347,7 @@ struct QDemonEffectContext
         return m_allocatedBuffers.size();
     }
 
-    quint32 findImage(QString inName)
+    quint32 findImage(const QString &inName)
     {
         for (quint32 idx = 0, end = m_allocatedImages.size(); idx < end; ++idx)
             if (m_allocatedImages[idx].name == inName)
@@ -355,7 +356,7 @@ struct QDemonEffectContext
         return m_allocatedImages.size();
     }
 
-    quint32 findDataBuffer(QString inName)
+    quint32 findDataBuffer(const QString &inName)
     {
         for (quint32 idx = 0, end = m_allocatedDataBuffers.size(); idx < end; ++idx) {
             if (m_allocatedDataBuffers[idx].name == inName)
@@ -365,9 +366,9 @@ struct QDemonEffectContext
         return m_allocatedDataBuffers.size();
     }
 
-    void setTexture(QDemonRef<QDemonRenderShaderProgram> inShader,
-                    QString inPropName,
-                    QDemonRef<QDemonRenderTexture2D> inTexture,
+    void setTexture(const QDemonRef<QDemonRenderShaderProgram> &inShader,
+                    const QString &inPropName,
+                    const QDemonRef<QDemonRenderTexture2D> &inTexture,
                     bool inNeedsMultiply,
                     QString &inStringBuilder,
                     QString &inStringBuilder2,
@@ -388,9 +389,9 @@ struct QDemonEffectContext
         theTextureEntry->set(inTexture, inNeedsMultiply, inPropDec);
     }
 
-    void setImage(QDemonRef<QDemonRenderShaderProgram> inShader,
-                  QString inPropName,
-                  QDemonRef<QDemonRenderImage2D> inImage)
+    void setImage(const QDemonRef<QDemonRenderShaderProgram> &inShader,
+                  const QString &inPropName,
+                  const QDemonRef<QDemonRenderImage2D> &inImage)
     {
         QDemonRef<QDemonImageEntry> theImageEntry;
         for (quint32 idx = 0, end = m_imageEntries.size(); idx < end && theImageEntry == nullptr;
@@ -408,8 +409,9 @@ struct QDemonEffectContext
         theImageEntry->set(inImage.data());
     }
 
-    void setDataBuffer(QDemonRef<QDemonRenderShaderProgram> inShader, QString inPropName,
-                       QDemonRef<QDemonRenderDataBuffer> inBuffer)
+    void setDataBuffer(const QDemonRef<QDemonRenderShaderProgram> &inShader,
+                       const QString &inPropName,
+                       const QDemonRef<QDemonRenderDataBuffer> &inBuffer)
     {
         QDemonRef<QDemonDataBufferEntry> theDataBufferEntry;
         for (quint32 idx = 0, end = m_dataBufferEntries.size();
@@ -444,7 +446,7 @@ struct QDemonEffectShader
     QDemonRenderCachedShaderProperty<float> m_fps;
     QDemonRenderCachedShaderProperty<QVector2D> m_cameraClipRange;
     QDemonTextureEntry m_textureEntry;
-    QDemonEffectShader(QDemonRef<QDemonRenderShaderProgram> inShader)
+    QDemonEffectShader(const QDemonRef<QDemonRenderShaderProgram> &inShader)
         : m_shader(inShader)
         , m_mvp("ModelViewProjectionMatrix", inShader)
         , m_fragColorAlphaSettings("FragColorAlphaSettings", inShader)
@@ -500,14 +502,14 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
         return *inEffect.m_context;
     }
 
-    QDemonRef<QDemonEffectClass> getEffectClass(QString inStr)
+    QDemonRef<QDemonEffectClass> getEffectClass(const QString &inStr)
     {
         TEffectClassMap::iterator theIter = m_effectClasses.find(inStr);
         if (theIter != m_effectClasses.end())
             return theIter.value();
         return nullptr;
     }
-    const QDemonRef<QDemonEffectClass> getEffectClass(QString inStr) const
+    const QDemonRef<QDemonEffectClass> getEffectClass(const QString &inStr) const
     {
         return const_cast<QDemonEffectSystem *>(this)->getEffectClass(inStr);
     }
@@ -897,7 +899,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
         }
     }
 
-    QDemonRef<QDemonRenderTexture2D> findTexture(QDemonRenderEffect *inEffect, QString inName)
+    QDemonRef<QDemonRenderTexture2D> findTexture(QDemonRenderEffect *inEffect, const QString &inName)
     {
         if (inEffect->m_context) {
             QDemonEffectContext &theContext(*inEffect->m_context);
@@ -983,9 +985,9 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
 
     void doApplyInstanceValue(QDemonRenderEffect *inEffect,
                               quint8 *inDataPtr,
-                              QString inPropertyName,
+                              const QString &inPropertyName,
                               QDemonRenderShaderDataTypes::Enum inPropertyType,
-                              QDemonRef<QDemonRenderShaderProgram> inShader,
+                              const QDemonRef<QDemonRenderShaderProgram> &inShader,
                               const QDemonPropertyDefinition &inDefinition)
     {
         auto theConstant = inShader->getShaderConstant(inPropertyName.toLocal8Bit());
@@ -1092,8 +1094,8 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
     }
 
     void applyInstanceValue(QDemonRenderEffect *inEffect,
-                            QDemonRef<QDemonEffectClass> inClass,
-                            QDemonRef<QDemonRenderShaderProgram> inShader,
+                            const QDemonRef<QDemonEffectClass> &inClass,
+                            const QDemonRef<QDemonRenderShaderProgram> &inShader,
                             const QDemonApplyInstanceValue &inCommand)
     {
         // sanity check
@@ -1126,8 +1128,8 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
     }
 
     void applyValue(QDemonRenderEffect *inEffect,
-                    QDemonRef<QDemonEffectClass> inClass,
-                    QDemonRef<QDemonRenderShaderProgram> inShader,
+                    const QDemonRef<QDemonEffectClass> &inClass,
+                    const QDemonRef<QDemonRenderShaderProgram> &inShader,
                     const QDemonApplyValue &inCommand)
     {
         if (!inCommand.m_propertyName.isEmpty()) {
@@ -1162,10 +1164,10 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
 
     // This has the potential to change the source texture for the current render pass
     QDemonEffectTextureData applyBufferValue(QDemonRenderEffect *inEffect,
-                                             QDemonRef<QDemonRenderShaderProgram> inShader,
+                                             const QDemonRef<QDemonRenderShaderProgram> &inShader,
                                              const QDemonApplyBufferValue &inCommand,
-                                             QDemonRef<QDemonRenderTexture2D> inSourceTexture,
-                                             QDemonEffectTextureData inCurrentSourceTexture)
+                                             const QDemonRef<QDemonRenderTexture2D> &inSourceTexture,
+                                             const QDemonEffectTextureData &inCurrentSourceTexture)
     {
         QDemonEffectTextureData theTextureToBind;
         if (!inCommand.m_bufferName.isEmpty()) {
@@ -1234,9 +1236,9 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
     }
 
     void applyDepthValue(QDemonRenderEffect *inEffect,
-                         QDemonRef<QDemonRenderShaderProgram> inShader,
+                         const QDemonRef<QDemonRenderShaderProgram> &inShader,
                          const QDemonApplyDepthValue &inCommand,
-                         QDemonRef<QDemonRenderTexture2D> inTexture)
+                         const QDemonRef<QDemonRenderTexture2D> &inTexture)
     {
         auto theConstant = inShader->getShaderConstant(inCommand.m_paramName.toLatin1());
 
@@ -1256,7 +1258,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
     }
 
     void applyImageValue(QDemonRenderEffect *inEffect,
-                         QDemonRef<QDemonRenderShaderProgram> inShader,
+                         const QDemonRef<QDemonRenderShaderProgram> &inShader,
                          const QDemonApplyImageValue &inCommand)
     {
         QDemonAllocatedImageEntry theImageToBind;
@@ -1303,7 +1305,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
     }
 
     void applyDataBufferValue(QDemonRenderEffect *inEffect,
-                              QDemonRef<QDemonRenderShaderProgram> inShader,
+                              const QDemonRef<QDemonRenderShaderProgram> &inShader,
                               const QDemonApplyDataBufferValue &inCommand)
     {
         QDemonAllocatedDataBufferEntry theBufferToBind;
@@ -1346,7 +1348,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
     }
 
     void applyRenderStateValue(QDemonRenderFrameBuffer *inTarget,
-                               QDemonRef<QDemonRenderTexture2D> inDepthStencilTexture,
+                               const QDemonRef<QDemonRenderTexture2D> &inDepthStencilTexture,
                                const QDemonApplyRenderState &theCommand)
     {
         auto theContext(m_context->getRenderContext());
@@ -1387,11 +1389,11 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
 
     void renderPass(QDemonEffectShader &inShader,
                     const QMatrix4x4 &inMVP,
-                    QDemonEffectTextureData inSourceTexture,
-                    QDemonRef<QDemonRenderFrameBuffer> inFrameBuffer,
+                    const QDemonEffectTextureData &inSourceTexture,
+                    const QDemonRef<QDemonRenderFrameBuffer> &inFrameBuffer,
                     QVector2D &inDestSize,
                     const QVector2D &inCameraClipRange,
-                    QDemonRef<QDemonRenderTexture2D> inDepthStencil,
+                    const QDemonRef<QDemonRenderTexture2D> &inDepthStencil,
                     QDemonOption<QDemonDepthStencil> inDepthStencilCommand,
                     bool drawIndirect)
     {
@@ -1465,14 +1467,14 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
     }
 
     void doRenderEffect(QDemonRenderEffect *inEffect,
-                        QDemonRef<QDemonEffectClass> inClass,
-                        QDemonRef<QDemonRenderTexture2D> inSourceTexture,
+                        const QDemonRef<QDemonEffectClass> &inClass,
+                        const QDemonRef<QDemonRenderTexture2D> &inSourceTexture,
                         QMatrix4x4 &inMVP,
-                        QDemonRef<QDemonRenderFrameBuffer> inTarget,
+                        const QDemonRef<QDemonRenderFrameBuffer> &inTarget,
                         bool inEnableBlendWhenRenderToTarget,
-                        QDemonRef<QDemonRenderTexture2D> inDepthTexture,
-                        QDemonRef<QDemonRenderTexture2D> inDepthStencilTexture,
-                        const QVector2D inCameraClipRange)
+                        const QDemonRef<QDemonRenderTexture2D> &inDepthTexture,
+                        const QDemonRef<QDemonRenderTexture2D> &inDepthStencilTexture,
+                        const QVector2D &inCameraClipRange)
     {
         // Run through the effect commands and render the effect.
         // QDemonRenderTexture2D* theCurrentTexture(&inSourceTexture);
@@ -1854,7 +1856,11 @@ QDemonRef<QDemonEffectSystemInterface> QDemonEffectSystemInterface::createEffect
     return QDemonRef<QDemonEffectSystem>(new QDemonEffectSystem(inContext));
 }
 
-QDemonEffectRenderArgument::QDemonEffectRenderArgument(QDemonRenderEffect *inEffect, QDemonRef<QDemonRenderTexture2D> inColorBuffer, const QVector2D &inCameraClipRange, QDemonRef<QDemonRenderTexture2D> inDepthTexture, QDemonRef<QDemonRenderTexture2D> inDepthBuffer)
+QDemonEffectRenderArgument::QDemonEffectRenderArgument(QDemonRenderEffect *inEffect,
+                                                       const QDemonRef<QDemonRenderTexture2D> &inColorBuffer,
+                                                       const QVector2D &inCameraClipRange,
+                                                       const QDemonRef<QDemonRenderTexture2D> &inDepthTexture,
+                                                       const QDemonRef<QDemonRenderTexture2D> &inDepthBuffer)
     : m_effect(inEffect)
     , m_colorBuffer(inColorBuffer)
     , m_cameraClipRange(inCameraClipRange)

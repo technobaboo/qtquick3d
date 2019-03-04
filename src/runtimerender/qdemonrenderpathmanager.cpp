@@ -70,7 +70,7 @@ struct QDemonPathShaderMapKey
     QString m_name;
     QDemonShaderDefaultMaterialKey m_materialKey;
     uint m_hashCode;
-    QDemonPathShaderMapKey(QString inName, QDemonShaderDefaultMaterialKey inKey)
+    QDemonPathShaderMapKey(const QString &inName, QDemonShaderDefaultMaterialKey inKey)
         : m_name(inName)
         , m_materialKey(inKey)
     {
@@ -278,7 +278,7 @@ struct QDemonPathGeneratedShader
     QDemonRenderCachedShaderProperty<QVector2D> m_endTaperData;
     QDemonRenderCachedShaderProperty<QMatrix4x4> m_wireframeViewMatrix;
 
-    QDemonPathGeneratedShader(QDemonRef<QDemonRenderShaderProgram> sh)
+    QDemonPathGeneratedShader(const QDemonRef<QDemonRenderShaderProgram> &sh)
         : m_shader(sh)
         , m_width("pathWidth", sh)
         , m_innerTessAmount("tessInnerLevel", sh)
@@ -293,8 +293,8 @@ struct QDemonPathGeneratedShader
 struct QDemonPathVertexPipeline : public QDemonVertexPipelineImpl
 {
 
-    QDemonPathVertexPipeline(QDemonRef<QDemonShaderProgramGeneratorInterface> inProgGenerator,
-                             QDemonRef<QDemonMaterialShaderGeneratorInterface> inMaterialGenerator,
+    QDemonPathVertexPipeline(const QDemonRef<QDemonShaderProgramGeneratorInterface> &inProgGenerator,
+                             const QDemonRef<QDemonMaterialShaderGeneratorInterface> &inMaterialGenerator,
                              bool inWireframe)
         : QDemonVertexPipelineImpl(inMaterialGenerator, inProgGenerator, inWireframe)
     {
@@ -515,7 +515,7 @@ struct QDemonPathXYGeneratedShader
     QDemonRenderCachedShaderProperty<QVector2D> m_cameraProperties;
     qint32 m_refCount;
 
-    QDemonPathXYGeneratedShader(QDemonRef<QDemonRenderShaderProgram> sh)
+    QDemonPathXYGeneratedShader(const QDemonRef<QDemonRenderShaderProgram>& sh)
         : m_shader(sh)
         , m_rectDimensions("uni_rect_dimensions", sh)
         , m_modelMatrix("model_matrix", sh)
@@ -1297,7 +1297,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
         return retval;
     }
 
-    void setMaterialProperties(QDemonRef<QDemonRenderShaderProgram> inShader,
+    void setMaterialProperties(const QDemonRef<QDemonRenderShaderProgram>& inShader,
                                QDemonPathRenderContext &inRenderContext,
                                QDemonLayerGlobalRenderProperties &inRenderProperties)
     {
@@ -1312,10 +1312,10 @@ struct QDemonPathManager : public QDemonPathManagerInterface
                     inRenderContext.opacity, inRenderProperties);
     }
 
-    void doRenderGeometryPath(QDemonRef<QDemonPathGeneratedShader> inShader,
+    void doRenderGeometryPath(const QDemonRef<QDemonPathGeneratedShader>& inShader,
                               QDemonPathRenderContext &inRenderContext,
                               QDemonLayerGlobalRenderProperties &inRenderProperties,
-                              QDemonRef<QDemonPathBuffer> inPathBuffer)
+                              const QDemonRef<QDemonPathBuffer>& inPathBuffer)
     {
         if (inPathBuffer->m_inputAssembler == nullptr)
             return;
@@ -1413,9 +1413,9 @@ struct QDemonPathManager : public QDemonPathManagerInterface
         outScale.scale(xscale, yscale, zscale);
     }
 
-    void doRenderPaintedPath(QDemonRef<QDemonPathXYGeneratedShader> inShader, QDemonPathRenderContext &inRenderContext,
+    void doRenderPaintedPath(const QDemonRef<QDemonPathXYGeneratedShader>& inShader, QDemonPathRenderContext &inRenderContext,
                              QDemonLayerGlobalRenderProperties &inRenderProperties,
-                             QDemonRef<QDemonPathBuffer> inPathBuffer, bool isParaboloidPass = false)
+                             const QDemonRef<QDemonPathBuffer>& inPathBuffer, bool isParaboloidPass = false)
     {
         if (!inPathBuffer->m_pathRender)
             return;

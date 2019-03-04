@@ -63,7 +63,7 @@ const float QDEMON_HALFPI = 1.57079632679489661923f;
 
 QT_BEGIN_NAMESPACE
 
-QDemonLayerRenderData::QDemonLayerRenderData(QDemonRenderLayer &inLayer, QDemonRef<QDemonRendererImpl> inRenderer)
+QDemonLayerRenderData::QDemonLayerRenderData(QDemonRenderLayer &inLayer, const QDemonRef<QDemonRendererImpl> &inRenderer)
     : QDemonLayerRenderPreparationData(inLayer, inRenderer)
     , m_layerTexture(inRenderer->getDemonContext()->getResourceManager())
     , m_temporalAATexture(inRenderer->getDemonContext()->getResourceManager())
@@ -479,9 +479,12 @@ void setupCubeShadowCameras(const QDemonRenderLight *inLight, QDemonRenderCamera
         */
 }
 
-inline void renderRenderableShadowMapPass(QDemonLayerRenderData &inData, QDemonRenderableObject &inObject,
-                                          const QVector2D &inCameraProps, TShaderFeatureSet,
-                                          quint32 lightIndex, const QDemonRenderCamera &inCamera)
+inline void renderRenderableShadowMapPass(QDemonLayerRenderData &inData,
+                                          QDemonRenderableObject &inObject,
+                                          const QVector2D &inCameraProps,
+                                          const TShaderFeatureSet &,
+                                          quint32 lightIndex,
+                                          const QDemonRenderCamera &inCamera)
 {
     QDemonShadowMapEntry *pEntry = inData.shadowMapManager->getShadowMapEntry(lightIndex);
 
@@ -498,10 +501,10 @@ inline void renderRenderableShadowMapPass(QDemonLayerRenderData &inData, QDemonR
 }
 
 void QDemonLayerRenderData::renderShadowCubeBlurPass(QDemonResourceFrameBuffer *theFB,
-                                                QDemonRef<QDemonRenderTextureCube> target0,
-                                                QDemonRef<QDemonRenderTextureCube> target1,
-                                                float filterSz,
-                                                float clipFar)
+                                                     const QDemonRef<QDemonRenderTextureCube> &target0,
+                                                     const QDemonRef<QDemonRenderTextureCube> &target1,
+                                                     float filterSz,
+                                                     float clipFar)
 {
     auto theContext = renderer->getContext();
 
@@ -589,10 +592,10 @@ void QDemonLayerRenderData::renderShadowCubeBlurPass(QDemonResourceFrameBuffer *
 }
 
 void QDemonLayerRenderData::renderShadowMapBlurPass(QDemonResourceFrameBuffer *theFB,
-                                               QDemonRef<QDemonRenderTexture2D> target0,
-                                               QDemonRef<QDemonRenderTexture2D> target1,
-                                               float filterSz,
-                                               float clipFar)
+                                                    const QDemonRef<QDemonRenderTexture2D> &target0,
+                                                    const QDemonRef<QDemonRenderTexture2D> &target1,
+                                                    float filterSz,
+                                                    float clipFar)
 {
     auto theContext = renderer->getContext();
 
@@ -763,8 +766,11 @@ void QDemonLayerRenderData::renderShadowMapPass(QDemonResourceFrameBuffer *theFB
     renderer->endLayerDepthPassRender();
 }
 
-inline void renderRenderableDepthPass(QDemonLayerRenderData &inData, QDemonRenderableObject &inObject,
-                                      const QVector2D &inCameraProps, TShaderFeatureSet, quint32,
+inline void renderRenderableDepthPass(QDemonLayerRenderData &inData,
+                                      QDemonRenderableObject &inObject,
+                                      const QVector2D &inCameraProps,
+                                      const TShaderFeatureSet &,
+                                      quint32,
                                       const QDemonRenderCamera &inCamera)
 {
     if (inObject.renderableFlags.isDefaultMaterialMeshSubset())
@@ -815,8 +821,11 @@ void QDemonLayerRenderData::renderDepthPass(bool inEnableTransparentDepthWrite)
     renderer->endLayerDepthPassRender();
 }
 
-inline void renderRenderable(QDemonLayerRenderData &inData, QDemonRenderableObject &inObject,
-                             const QVector2D &inCameraProps, TShaderFeatureSet inFeatureSet, quint32,
+inline void renderRenderable(QDemonLayerRenderData &inData,
+                             QDemonRenderableObject &inObject,
+                             const QVector2D &inCameraProps,
+                             const TShaderFeatureSet &inFeatureSet,
+                             quint32,
                              const QDemonRenderCamera &inCamera)
 {
     if (inObject.renderableFlags.isDefaultMaterialMeshSubset())
@@ -849,9 +858,12 @@ inline void renderRenderable(QDemonLayerRenderData &inData, QDemonRenderableObje
 }
 
 void QDemonLayerRenderData::runRenderPass(TRenderRenderableFunction inRenderFn,
-                                     bool inEnableBlending, bool inEnableDepthWrite,
-                                     bool inEnableTransparentDepthWrite, quint32 indexLight,
-                                     const QDemonRenderCamera &inCamera, QDemonResourceFrameBuffer *theFB)
+                                          bool inEnableBlending,
+                                          bool inEnableDepthWrite,
+                                          bool inEnableTransparentDepthWrite,
+                                          quint32 indexLight,
+                                          const QDemonRenderCamera &inCamera,
+                                          QDemonResourceFrameBuffer *theFB)
 {
     auto theRenderContext = renderer->getContext();
     theRenderContext->setDepthFunction(QDemonRenderBoolOp::LessThanOrEqual);
@@ -981,8 +993,7 @@ void QDemonLayerRenderData::render(QDemonResourceFrameBuffer *theFB)
         return;
 
     renderer->beginLayerRender(*this);
-    runRenderPass(renderRenderable, true, !layer.flags.isLayerEnableDepthPrepass(), false,
-                  0, *camera, theFB);
+    runRenderPass(renderRenderable, true, !layer.flags.isLayerEnableDepthPrepass(), false, 0, *camera, theFB);
     renderer->endLayerRender();
 }
 
@@ -1037,7 +1048,7 @@ void QDemonLayerRenderData::renderRenderWidgets()
 {
     if (camera) {
         auto theContext = renderer->getContext();
-        for (quint32 idx = 0, end = iRenderWidgets.size(); idx < end; ++idx) {
+        for (int idx = 0, end = iRenderWidgets.size(); idx < end; ++idx) {
             QDemonRenderWidgetInterface &theWidget = *iRenderWidgets[idx];
             theWidget.render(*renderer, *theContext);
         }
@@ -1045,9 +1056,9 @@ void QDemonLayerRenderData::renderRenderWidgets()
 }
 
 #ifdef ADVANCED_BLEND_SW_FALLBACK
-void QDemonLayerRenderData::blendAdvancedEquationSwFallback(QDemonRef<QDemonRenderTexture2D> drawTexture,
-                                                       QDemonRef<QDemonRenderTexture2D> layerTexture,
-                                                       AdvancedBlendModes::Enum blendMode)
+void QDemonLayerRenderData::blendAdvancedEquationSwFallback(const QDemonRef<QDemonRenderTexture2D> &drawTexture,
+                                                            const QDemonRef<QDemonRenderTexture2D> &layerTexture,
+                                                            AdvancedBlendModes::Enum blendMode)
 {
     auto theContext = renderer->getContext();
     QDemonRef<QDemonAdvancedModeBlendShader> shader = renderer->getAdvancedBlendModeShader(blendMode);
@@ -1687,23 +1698,23 @@ void QDemonLayerRenderData::applyLayerPostEffects()
         m_layerCachedTexture = theCurrentTexture;
 }
 
-inline bool AnyCompletelyNonTransparentObjects(TRenderableObjectList &inObjects)
+inline bool anyCompletelyNonTransparentObjects(const TRenderableObjectList &inObjects)
 {
-    for (quint32 idx = 0, end = inObjects.size(); idx < end; ++idx) {
+    for (int idx = 0, end = inObjects.size(); idx < end; ++idx) {
         if (inObjects[idx]->renderableFlags.isCompletelyTransparent() == false)
             return true;
     }
     return false;
 }
 
-void QDemonLayerRenderData::runnableRenderToViewport(QDemonRef<QDemonRenderFrameBuffer> theFB)
+void QDemonLayerRenderData::runnableRenderToViewport(const QDemonRef<QDemonRenderFrameBuffer> &theFB)
 {
     // If we have an effect, an opaque object, or any transparent objects that aren't completely
     // transparent
     // or an offscreen renderer or a layer widget texture
     // Then we can't possible affect the resulting render target.
     bool needsToRender = layer.firstEffect != nullptr || opaqueObjects.empty() == false
-            || AnyCompletelyNonTransparentObjects(transparentObjects) || getOffscreenRenderer()
+            || anyCompletelyNonTransparentObjects(transparentObjects) || getOffscreenRenderer()
             || m_layerWidgetTexture.getTexture() || m_boundingRectColor.hasValue()
             || layer.background == LayerBackground::Color;
 

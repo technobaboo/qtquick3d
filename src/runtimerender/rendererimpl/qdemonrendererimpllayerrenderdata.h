@@ -95,7 +95,7 @@ struct QDemonLayerRenderData : public QDemonLayerRenderPreparationData
 
     QSize m_previousDimensions;
 
-    QDemonLayerRenderData(QDemonRenderLayer &inLayer, QDemonRef<QDemonRendererImpl> inRenderer);
+    QDemonLayerRenderData(QDemonRenderLayer &inLayer, const QDemonRef<QDemonRendererImpl> &inRenderer);
 
     virtual ~QDemonLayerRenderData() override;
 
@@ -114,13 +114,13 @@ struct QDemonLayerRenderData : public QDemonLayerRenderPreparationData
     void renderFakeDepthMapPass(QDemonRenderTexture2D *theDepthTex, QDemonRenderTextureCube *theDepthCube);
     void renderShadowMapPass(QDemonResourceFrameBuffer *theFB);
     void renderShadowCubeBlurPass(QDemonResourceFrameBuffer *theFB,
-                                  QDemonRef<QDemonRenderTextureCube> target0,
-                                  QDemonRef<QDemonRenderTextureCube> target1,
+                                  const QDemonRef<QDemonRenderTextureCube> &target0,
+                                  const QDemonRef<QDemonRenderTextureCube> &target1,
                                   float filterSz,
                                   float clipFar);
     void renderShadowMapBlurPass(QDemonResourceFrameBuffer *theFB,
-                                 QDemonRef<QDemonRenderTexture2D> target0,
-                                 QDemonRef<QDemonRenderTexture2D> target1,
+                                 const QDemonRef<QDemonRenderTexture2D> &target0,
+                                 const QDemonRef<QDemonRenderTexture2D> &target1,
                                  float filterSz,
                                  float clipFar);
 
@@ -141,15 +141,15 @@ struct QDemonLayerRenderData : public QDemonLayerRenderPreparationData
 
     void applyLayerPostEffects();
 
-    void runnableRenderToViewport(QDemonRef<QDemonRenderFrameBuffer> theFB);
+    void runnableRenderToViewport(const QDemonRef<QDemonRenderFrameBuffer> &theFB);
 
     void addLayerRenderStep();
 
     void renderRenderWidgets();
 
 #ifdef ADVANCED_BLEND_SW_FALLBACK
-    void blendAdvancedEquationSwFallback(QDemonRef<QDemonRenderTexture2D> drawTexture,
-                                         QDemonRef<QDemonRenderTexture2D> m_layerTexture,
+    void blendAdvancedEquationSwFallback(const QDemonRef<QDemonRenderTexture2D> &drawTexture,
+                                         const QDemonRef<QDemonRenderTexture2D> &m_layerTexture,
                                          AdvancedBlendModes::Enum blendMode);
 #endif
     // test method to render this layer to a given view projection without running the entire

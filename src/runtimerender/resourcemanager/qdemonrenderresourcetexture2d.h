@@ -46,10 +46,10 @@ protected:
     QDemonTextureDetails m_textureDetails;
 
 public:
-    QDemonResourceTexture2D(QDemonRef<QDemonResourceManagerInterface> mgr,
-                            QDemonRef<QDemonRenderTexture2D> inTexture = nullptr);
+    QDemonResourceTexture2D(const QDemonRef<QDemonResourceManagerInterface> &mgr,
+                            const QDemonRef<QDemonRenderTexture2D> &inTexture = nullptr);
     // create and allocate the texture right away.
-    QDemonResourceTexture2D(QDemonRef<QDemonResourceManagerInterface> mgr,
+    QDemonResourceTexture2D(const QDemonRef<QDemonResourceManagerInterface> &mgr,
                             quint32 width,
                             quint32 height,
                             QDemonRenderTextureFormats::Enum inFormat,
@@ -96,9 +96,9 @@ protected:
     QDemonTextureDetails m_textureDetails;
 
 public:
-    QDemonResourceTexture2DArray(QDemonRef<QDemonResourceManagerInterface> mgr);
+    QDemonResourceTexture2DArray(const QDemonRef<QDemonResourceManagerInterface> &mgr);
     // create and allocate the texture right away.
-    QDemonResourceTexture2DArray(QDemonRef<QDemonResourceManagerInterface> mgr,
+    QDemonResourceTexture2DArray(const QDemonRef<QDemonResourceManagerInterface> &mgr,
                                  quint32 width,
                                  quint32 height,
                                  quint32 slices,

@@ -83,7 +83,7 @@ public:
                                             QDemonConstDataRef<quint8> bufferData) = 0;
     virtual void relaseEntries() = 0;
 
-    static QDemonRef<QDemonTextureAtlasInterface> createTextureAtlas(QDemonRef<QDemonRenderContext> inRenderContext, qint32 width, qint32 height);
+    static QDemonRef<QDemonTextureAtlasInterface> createTextureAtlas(const QDemonRef<QDemonRenderContext>& inRenderContext, qint32 width, qint32 height);
 };
 QT_END_NAMESPACE
 

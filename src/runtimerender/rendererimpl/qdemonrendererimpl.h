@@ -355,9 +355,9 @@ public:
                                              const char *inFrame);
 
     QDemonRef<QDemonRenderShaderProgram> generateShader(QDemonSubsetRenderable &inRenderable,
-                                                             TShaderFeatureSet inFeatureSet);
+                                                             const TShaderFeatureSet &inFeatureSet);
     QDemonRef<QDemonShaderGeneratorGeneratedShader> getShader(QDemonSubsetRenderable &inRenderable,
-                                                                   TShaderFeatureSet inFeatureSet);
+                                                                   const TShaderFeatureSet &inFeatureSet);
 
     QDemonRef<QDemonDefaultAoPassShader> getDefaultAoPassShader(TShaderFeatureSet inFeatureSet);
     QDemonRef<QDemonDefaultAoPassShader> getFakeDepthShader(TShaderFeatureSet inFeatureSet);

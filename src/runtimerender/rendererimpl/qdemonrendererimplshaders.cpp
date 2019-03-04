@@ -43,16 +43,16 @@
 
 QT_BEGIN_NAMESPACE
 
-void QDemonTextShader::render(QDemonRef<QDemonRenderTexture2D> inTexture,
-                         const QDemonTextScaleAndOffset &inScaleAndOffset,
-                         const QVector4D &inTextColor,
-                         const QMatrix4x4 &inMVP,
-                         const QVector2D &inCameraVec,
-                         QDemonRef<QDemonRenderContext> inRenderContext,
-                         QDemonRef<QDemonRenderInputAssembler> inInputAssemblerBuffer,
-                         quint32 count,
-                         const QDemonTextTextureDetails &inTextTextureDetails,
-                         const QVector3D &inBackgroundColor)
+void QDemonTextShader::render(const QDemonRef<QDemonRenderTexture2D> &inTexture,
+                              const QDemonTextScaleAndOffset &inScaleAndOffset,
+                              const QVector4D &inTextColor,
+                              const QMatrix4x4 &inMVP,
+                              const QVector2D &inCameraVec,
+                              const QDemonRef<QDemonRenderContext> &inRenderContext,
+                              const QDemonRef<QDemonRenderInputAssembler> &inInputAssemblerBuffer,
+                              quint32 count,
+                              const QDemonTextTextureDetails &inTextTextureDetails,
+                              const QVector3D &inBackgroundColor)
 {
     inRenderContext->setCullingEnabled(false);
     inRenderContext->setActiveShader(shader);
@@ -75,14 +75,14 @@ void QDemonTextShader::render(QDemonRef<QDemonRenderTexture2D> inTexture,
     inRenderContext->draw(QDemonRenderDrawMode::Triangles, count, 0);
 }
 
-void QDemonTextShader::renderPath(QDemonRef<QDemonRenderPathFontItem> inPathFontItem,
-                             QDemonRef<QDemonRenderPathFontSpecification> inPathFontSpec,
-                             const QDemonTextScaleAndOffset &inScaleAndOffset,
-                             const QVector4D &inTextColor, const QMatrix4x4 &inViewProjection,
-                             const QMatrix4x4 &inModel, const QVector2D &,
-                             QDemonRef<QDemonRenderContext> inRenderContext,
-                             const QDemonTextTextureDetails &inTextTextureDetails,
-                             const QVector3D &inBackgroundColor)
+void QDemonTextShader::renderPath(const QDemonRef<QDemonRenderPathFontItem> &inPathFontItem,
+                                  const QDemonRef<QDemonRenderPathFontSpecification> &inPathFontSpec,
+                                  const QDemonTextScaleAndOffset &inScaleAndOffset,
+                                  const QVector4D &inTextColor, const QMatrix4x4 &inViewProjection,
+                                  const QMatrix4x4 &inModel, const QVector2D &,
+                                  const QDemonRef<QDemonRenderContext> &inRenderContext,
+                                  const QDemonTextTextureDetails &inTextTextureDetails,
+                                  const QVector3D &inBackgroundColor)
 {
     QDemonRenderBoolOp::Enum theDepthFunction = inRenderContext->getDepthFunction();
     bool isDepthEnabled = inRenderContext->isDepthTestEnabled();
@@ -131,10 +131,13 @@ void QDemonTextShader::renderPath(QDemonRef<QDemonRenderPathFontItem> inPathFont
     inRenderContext->setActiveProgramPipeline(nullptr);
 }
 
-void QDemonTextShader::render2D(QDemonRef<QDemonRenderTexture2D> inTexture, const QVector4D &inTextColor,
-                           const QMatrix4x4 &inMVP, QDemonRef<QDemonRenderContext> inRenderContext,
-                           QDemonRef<QDemonRenderInputAssembler> inInputAssemblerBuffer, quint32 count,
-                           QVector2D inVertexOffsets)
+void QDemonTextShader::render2D(const QDemonRef<QDemonRenderTexture2D> &inTexture,
+                                const QVector4D &inTextColor,
+                                const QMatrix4x4 &inMVP,
+                                const QDemonRef<QDemonRenderContext> &inRenderContext,
+                                const QDemonRef<QDemonRenderInputAssembler> &inInputAssemblerBuffer,
+                                quint32 count,
+                                const QVector2D &inVertexOffsets)
 {
     // inRenderContext.SetCullingEnabled( false );
     inRenderContext->setBlendingEnabled(true);
@@ -547,7 +550,7 @@ struct QDemonSubsetMaterialVertexPipeline : public QDemonVertexPipelineImpl
 };
 
 QDemonRef<QDemonRenderShaderProgram> QDemonRendererImpl::generateShader(QDemonSubsetRenderable &inRenderable,
-                                                                             TShaderFeatureSet inFeatureSet)
+                                                                        const TShaderFeatureSet &inFeatureSet)
 {
     // build a string that allows us to print out the shader we are generating to the log.
     // This is time consuming but I feel like it doesn't happen all that often and is very
@@ -566,14 +569,16 @@ QDemonRef<QDemonRenderShaderProgram> QDemonRendererImpl::generateShader(QDemonSu
     if (cachedProgram)
         return cachedProgram;
 
-    QDemonSubsetMaterialVertexPipeline pipeline(
-                *this, inRenderable,
-                m_defaultMaterialShaderKeyProperties.m_wireframeMode.getValue(theKey));
-    return m_demonContext->getDefaultMaterialShaderGenerator()->generateShader(
-                inRenderable.material, inRenderable.shaderDescription, pipeline, inFeatureSet,
-                m_currentLayer->lights, inRenderable.firstImage,
-                inRenderable.renderableFlags.hasTransparency(),
-                logPrefix);
+    QDemonSubsetMaterialVertexPipeline pipeline(*this, inRenderable,
+                                                m_defaultMaterialShaderKeyProperties.m_wireframeMode.getValue(theKey));
+    return m_demonContext->getDefaultMaterialShaderGenerator()->generateShader(inRenderable.material,
+                                                                               inRenderable.shaderDescription,
+                                                                               pipeline,
+                                                                               inFeatureSet,
+                                                                               m_currentLayer->lights,
+                                                                               inRenderable.firstImage,
+                                                                               inRenderable.renderableFlags.hasTransparency(),
+                                                                               logPrefix);
 }
 
 // --------------  Special cases for shadows  -------------------

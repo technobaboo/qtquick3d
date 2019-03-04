@@ -254,34 +254,34 @@ struct QDemonTextShader
     ~QDemonTextShader()
     {
     }
-    void render(QDemonRef<QDemonRenderTexture2D> inTexture,
+    void render(const QDemonRef<QDemonRenderTexture2D> &inTexture,
                 const QDemonTextScaleAndOffset &inScaleAndOffset,
                 const QVector4D &inTextColor,
                 const QMatrix4x4 &inMVP,
                 const QVector2D &inCameraVec,
-                QDemonRef<QDemonRenderContext> inRenderContext,
-                QDemonRef<QDemonRenderInputAssembler> inInputAssemblerBuffer,
+                const QDemonRef<QDemonRenderContext> &inRenderContext,
+                const QDemonRef<QDemonRenderInputAssembler> &inInputAssemblerBuffer,
                 quint32 count,
                 const QDemonTextTextureDetails &inTextTextureDetails,
                 const QVector3D &inBackgroundColor);
 
-    void renderPath(QDemonRef<QDemonRenderPathFontItem> inPathFontItem,
-                    QDemonRef<QDemonRenderPathFontSpecification> inPathFontSpec,
+    void renderPath(const QDemonRef<QDemonRenderPathFontItem> &inPathFontItem,
+                    const QDemonRef<QDemonRenderPathFontSpecification> &inPathFontSpec,
                     const QDemonTextScaleAndOffset &inScaleAndOffset,
                     const QVector4D &inTextColor,
                     const QMatrix4x4 &inViewProjection,
                     const QMatrix4x4 &inModel,
                     const QVector2D &inCameraVec,
-                    QDemonRef<QDemonRenderContext> inRenderContext,
+                    const QDemonRef<QDemonRenderContext> &inRenderContext,
                     const QDemonTextTextureDetails &inTextTextureDetails,
                     const QVector3D &inBackgroundColor);
 
-    void render2D(QDemonRef<QDemonRenderTexture2D> inTexture,
+    void render2D(const QDemonRef<QDemonRenderTexture2D> &inTexture,
                   const QVector4D &inTextColor, const QMatrix4x4 &inMVP,
-                  QDemonRef<QDemonRenderContext> inRenderContext,
-                  QDemonRef<QDemonRenderInputAssembler> inInputAssemblerBuffer,
+                  const QDemonRef<QDemonRenderContext> &inRenderContext,
+                  const QDemonRef<QDemonRenderInputAssembler> &inInputAssemblerBuffer,
                   quint32 count,
-                  QVector2D inVertexOffsets);
+                  const QVector2D &inVertexOffsets);
 };
 
 struct QDemonTextDepthShader

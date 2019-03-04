@@ -224,7 +224,7 @@ struct QDemonLayerRenderPreparationData
     typedef void (*TRenderRenderableFunction)(QDemonLayerRenderData &inData,
                                               QDemonRenderableObject &inObject,
                                               const QVector2D &inCameraProps,
-                                              TShaderFeatureSet inShaderFeatures,
+                                              const TShaderFeatureSet &inShaderFeatures,
                                               quint32 lightIndex,
                                               const QDemonRenderCamera &inCamera);
     typedef QHash<QDemonRenderLight *, QDemonGraphNode *> TLightToNodeMap;
@@ -286,7 +286,7 @@ struct QDemonLayerRenderPreparationData
     // shadow mapps
     QDemonRef<QDemonRenderShadowMap> shadowMapManager;
 
-    QDemonLayerRenderPreparationData(QDemonRenderLayer &inLayer, QDemonRef<QDemonRendererImpl> inRenderer);
+    QDemonLayerRenderPreparationData(QDemonRenderLayer &inLayer, const QDemonRef<QDemonRendererImpl> &inRenderer);
     virtual ~QDemonLayerRenderPreparationData();
     bool getOffscreenRenderer();
     bool getShadowMapManager();
@@ -336,7 +336,7 @@ struct QDemonLayerRenderPreparationData
     bool checkLightProbeDirty(QDemonRenderImage &inLightProbe);
     void addRenderWidget(QDemonRenderWidgetInterface &inWidget);
     void setShaderFeature(const char *inName, bool inValue);
-    void setShaderFeature(QString inName, bool inValue);
+    void setShaderFeature(const QString &inName, bool inValue);
     QVector<QDemonShaderPreprocessorFeature> getShaderFeatureSet();
     size_t getShaderFeatureSetHash();
     // The graph object is not const because this traversal updates dirty state on the objects.

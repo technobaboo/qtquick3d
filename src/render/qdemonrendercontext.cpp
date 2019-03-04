@@ -557,12 +557,10 @@ QDemonRenderVertFragCompilationResult QDemonRenderContextImpl::compileBinary(
 #endif
 }
 
-QDemonRenderVertFragCompilationResult
-QDemonRenderContextImpl::compileComputeSource(const char *shaderName,
-                                              QDemonConstDataRef<qint8> computeShaderSource)
+QDemonRenderVertFragCompilationResult QDemonRenderContextImpl::compileComputeSource(const char *shaderName,
+                                                                                    QDemonConstDataRef<qint8> computeShaderSource)
 {
-    QDemonRenderVertFragCompilationResult result =
-            QDemonRenderShaderProgram::createCompute(this, shaderName, computeShaderSource);
+    QDemonRenderVertFragCompilationResult result = QDemonRenderShaderProgram::createCompute(this, shaderName, computeShaderSource);
 
     if (result.m_shader != nullptr)
         m_shaderToImpMap.insert(result.m_shader->getShaderProgramHandle(), result.m_shader.data());

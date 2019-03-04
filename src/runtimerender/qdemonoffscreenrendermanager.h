@@ -237,7 +237,7 @@ public:
     virtual void beginFrame() = 0;
     virtual void endFrame() = 0;
 
-    static QDemonRef<QDemonOffscreenRenderManagerInterface> createOffscreenRenderManager(QDemonRef<QDemonResourceManagerInterface> inManager, QDemonRenderContextInterface *inContext);
+    static QDemonRef<QDemonOffscreenRenderManagerInterface> createOffscreenRenderManager(const QDemonRef<QDemonResourceManagerInterface> &inManager, QDemonRenderContextInterface *inContext);
 };
 
 QT_END_NAMESPACE

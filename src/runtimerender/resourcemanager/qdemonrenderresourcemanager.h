@@ -75,7 +75,7 @@ public:
     virtual QDemonRef<QDemonRenderContext> getRenderContext() = 0;
     virtual void destroyFreeSizedResources() = 0;
 
-    static QDemonRef<QDemonResourceManagerInterface> createResourceManager(QDemonRef<QDemonRenderContext> inContext);
+    static QDemonRef<QDemonResourceManagerInterface> createResourceManager(const QDemonRef<QDemonRenderContext> &inContext);
 };
 QT_END_NAMESPACE
 

@@ -285,7 +285,7 @@ bool isAbsolute(const char *inPath, size_t inLen)
 {
     if (inLen > 2 && inPath[1] == ':')
         return true;
-    else if (inLen > 1 && (inPath[0] == '\\' || inPath[0] == '/'))
+    if (inLen > 1 && (inPath[0] == '\\' || inPath[0] == '/'))
         return true;
     return false;
 }

@@ -135,7 +135,7 @@ struct QDemonClippingFrustum
 
     QDemonClippingFrustum() = default;
 
-    QDemonClippingFrustum(const QMatrix4x4 &modelviewprojection, QDemonClipPlane nearPlane);
+    QDemonClippingFrustum(const QMatrix4x4 &modelviewprojection, const QDemonClipPlane &nearPlane);
 
     bool intersectsWith(const QDemonBounds3 &bounds) const
     {

@@ -32,7 +32,8 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonResourceTexture2D::QDemonResourceTexture2D(QDemonRef<QDemonResourceManagerInterface> mgr, QDemonRef<QDemonRenderTexture2D> inTexture)
+QDemonResourceTexture2D::QDemonResourceTexture2D(const QDemonRef<QDemonResourceManagerInterface> &mgr,
+                                                 const QDemonRef<QDemonRenderTexture2D> &inTexture)
     : m_resourceManager(mgr)
     , m_texture(inTexture)
 {
@@ -40,13 +41,12 @@ QDemonResourceTexture2D::QDemonResourceTexture2D(QDemonRef<QDemonResourceManager
         m_textureDetails = inTexture->getTextureDetails();
 }
 
-QDemonResourceTexture2D::QDemonResourceTexture2D(QDemonRef<QDemonResourceManagerInterface> mgr,
+QDemonResourceTexture2D::QDemonResourceTexture2D(const QDemonRef<QDemonResourceManagerInterface> &mgr,
                                                  quint32 width,
                                                  quint32 height,
                                                  QDemonRenderTextureFormats::Enum inFormat,
                                                  quint32 inSamples)
     : m_resourceManager(mgr)
-    , m_texture(nullptr)
 {
     ensureTexture(width, height, inFormat, inSamples);
 }
@@ -112,18 +112,18 @@ void QDemonResourceTexture2D::stealTexture(QDemonResourceTexture2D &inOther)
     inOther.m_texture = nullptr;
 }
 
-QDemonResourceTexture2DArray::QDemonResourceTexture2DArray(QDemonRef<QDemonResourceManagerInterface> mgr)
+QDemonResourceTexture2DArray::QDemonResourceTexture2DArray(const QDemonRef<QDemonResourceManagerInterface> &mgr)
     : m_resourceManager(mgr)
-    , m_texture(nullptr)
 {
 }
 
-QDemonResourceTexture2DArray::QDemonResourceTexture2DArray(QDemonRef<QDemonResourceManagerInterface> mgr, quint32 width, quint32 height,
-                                                 quint32 slices,
-                                                 QDemonRenderTextureFormats::Enum inFormat,
-                                                 quint32 inSamples)
+QDemonResourceTexture2DArray::QDemonResourceTexture2DArray(const QDemonRef<QDemonResourceManagerInterface> &mgr,
+                                                           quint32 width,
+                                                           quint32 height,
+                                                           quint32 slices,
+                                                           QDemonRenderTextureFormats::Enum inFormat,
+                                                           quint32 inSamples)
     : m_resourceManager(mgr)
-    , m_texture(nullptr)
 {
     ensureTexture(width, height, slices, inFormat, inSamples);
 }

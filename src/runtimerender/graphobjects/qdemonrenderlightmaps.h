@@ -52,9 +52,9 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderLightmaps : public QDemonGraphObj
 {
     QDemonMaterialDirty m_dirty;
 
-    QDemonRenderImage *m_lightmapIndirect;
-    QDemonRenderImage *m_lightmapRadiosity;
-    QDemonRenderImage *m_lightmapShadow;
+    QDemonRenderImage *m_lightmapIndirect = nullptr;
+    QDemonRenderImage *m_lightmapRadiosity = nullptr;
+    QDemonRenderImage *m_lightmapShadow = nullptr;
 
     QDemonRenderLightmaps();
 

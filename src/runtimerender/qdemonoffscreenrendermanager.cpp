@@ -66,7 +66,7 @@ struct QDemonRendererData : QDemonOffscreenRenderResult
     quint32 frameCount = std::numeric_limits<quint32>::max();
     bool rendering = false;
 
-    QDemonRendererData(QDemonRef<QDemonResourceManagerInterface> inResourceManager)
+    QDemonRendererData(const QDemonRef<QDemonResourceManagerInterface> &inResourceManager)
         : resourceManager(inResourceManager)
     {
     }
@@ -98,7 +98,7 @@ struct QDemonOffscreenRunnable : public QDemonRenderTask
     QDemonOffscreenRendererEnvironment m_desiredEnvironment;
     QDemonOffscreenRunnable(QDemonOffscreenRenderManager &rm,
                             QDemonRendererData &data,
-                            QDemonOffscreenRendererEnvironment env)
+                            const QDemonOffscreenRendererEnvironment &env)
         : m_renderManager(rm)
         , m_data(data)
         , m_desiredEnvironment(env)
@@ -115,7 +115,7 @@ struct QDemonOffscreenRenderManager : public QDemonOffscreenRenderManagerInterfa
     TRendererMap m_renderers;
     quint32 m_frameCount; // cheap per-
 
-    QDemonOffscreenRenderManager(QDemonRef<QDemonResourceManagerInterface> inManager,
+    QDemonOffscreenRenderManager(const QDemonRef<QDemonResourceManagerInterface> &inManager,
                                  QDemonRenderContextInterface *inContext)
         : m_context(inContext)
         , m_resourceManager(inManager)
@@ -438,9 +438,8 @@ QDemonOffscreenRenderManagerInterface::~QDemonOffscreenRenderManagerInterface()
 
 }
 
-QDemonRef<QDemonOffscreenRenderManagerInterface> QDemonOffscreenRenderManagerInterface::createOffscreenRenderManager(
-        QDemonRef<QDemonResourceManagerInterface> inManager,
-        QDemonRenderContextInterface *inContext)
+QDemonRef<QDemonOffscreenRenderManagerInterface> QDemonOffscreenRenderManagerInterface::createOffscreenRenderManager(const QDemonRef<QDemonResourceManagerInterface> &inManager,
+                                                                                                                     QDemonRenderContextInterface *inContext)
 {
     return QDemonRef<QDemonOffscreenRenderManagerInterface>(new QDemonOffscreenRenderManager(inManager, inContext));
 }

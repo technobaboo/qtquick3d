@@ -422,9 +422,8 @@ bool scanImageForAlpha(const void *inData,
     quint32 alphaRightShift = inPixelSizeInBytes * 8 - inAlphaSizeInBits;
     quint32 maxAlphaValue = (1 << inAlphaSizeInBits) - 1;
 
-    for (quint32 rowIdx = 0; rowIdx < inHeight && hasAlpha == false; ++rowIdx) {
-        for (quint32 idx = 0; idx < inWidth && hasAlpha == false;
-             ++idx, rowPtr += inPixelSizeInBytes) {
+    for (quint32 rowIdx = 0; rowIdx < inHeight && !hasAlpha; ++rowIdx) {
+        for (quint32 idx = 0; idx < inWidth && !hasAlpha; ++idx, rowPtr += inPixelSizeInBytes) {
             quint32 pixelValue = 0;
             if (inPixelSizeInBytes == 2)
                 pixelValue = *(reinterpret_cast<const quint16 *>(rowPtr));
@@ -543,9 +542,9 @@ void QDemonLoadedTexture::releaseDecompressedTexture(QDemonTextureData inImage)
 #endif
 
 QDemonRef<QDemonLoadedTexture> QDemonLoadedTexture::load(const QString &inPath,
-                                                              QDemonInputStreamFactoryInterface &inFactory,
-                                                              bool inFlipY,
-                                                              QDemonRenderContextType renderContextType)
+                                                         QDemonInputStreamFactoryInterface &inFactory,
+                                                         bool inFlipY,
+                                                         const QDemonRenderContextType& renderContextType)
 {
     if (inPath.isEmpty())
         return nullptr;

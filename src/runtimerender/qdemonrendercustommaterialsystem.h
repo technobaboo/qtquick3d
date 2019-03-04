@@ -53,17 +53,17 @@ class Q_DEMONRUNTIMERENDER_EXPORT QDemonCustomMaterialSystemInterface
 public:
     QAtomicInt ref;
     virtual ~QDemonCustomMaterialSystemInterface() {}
-    virtual bool isMaterialRegistered(QString inStr) = 0;
+    virtual bool isMaterialRegistered(const QString &inStr) = 0;
 
-    virtual bool registerMaterialClass(QString inName, QDemonConstDataRef<dynamic::QDemonPropertyDeclaration> inProperties) = 0;
+    virtual bool registerMaterialClass(const QString &inName, const QDemonConstDataRef<dynamic::QDemonPropertyDeclaration> &inProperties) = 0;
 
-    virtual QDemonConstDataRef<dynamic::QDemonPropertyDefinition> getCustomMaterialProperties(QString inCustomMaterialName) const = 0;
+    virtual QDemonConstDataRef<dynamic::QDemonPropertyDefinition> getCustomMaterialProperties(const QString &inCustomMaterialName) const = 0;
 
-    virtual void setCustomMaterialRefraction(QString inName, bool inHasRefraction) = 0;
-    virtual void setCustomMaterialTransparency(QString inName, bool inHasTransparency) = 0;
-    virtual void setCustomMaterialAlwaysDirty(QString inName, bool inIsAlwaysDirty) = 0;
-    virtual void setCustomMaterialShaderKey(QString inName, quint32 inShaderKey) = 0;
-    virtual void setCustomMaterialLayerCount(QString inName, quint32 inLayerCount) = 0;
+    virtual void setCustomMaterialRefraction(const QString &inName, bool inHasRefraction) = 0;
+    virtual void setCustomMaterialTransparency(const QString &inName, bool inHasTransparency) = 0;
+    virtual void setCustomMaterialAlwaysDirty(const QString &inName, bool inIsAlwaysDirty) = 0;
+    virtual void setCustomMaterialShaderKey(const QString &inName, quint32 inShaderKey) = 0;
+    virtual void setCustomMaterialLayerCount(const QString &inName, quint32 inLayerCount) = 0;
     // The custom material commands are the actual commands that run for a given material
     // effect.  The tell the system exactly
     // explicitly things like bind this shader, bind this render target, apply this property,
@@ -79,13 +79,15 @@ public:
                                         bool inHasGeomShader,
                                         bool inIsComputeShader) = 0;
 
-    virtual QDemonRenderCustomMaterial *createCustomMaterial(QString inName) = 0;
+    virtual QDemonRenderCustomMaterial *createCustomMaterial(const QString &inName) = 0;
 
-    virtual void setPropertyEnumNames(QString inName, QString inPropName, QDemonConstDataRef<QString> inNames) = 0;
+    virtual void setPropertyEnumNames(const QString &inName,
+                                      const QString &inPropName,
+                                      const QDemonConstDataRef<QString> &inNames) = 0;
 
-    virtual void setPropertyTextureSettings(QString inEffectName,
-                                            QString inPropName,
-                                            QString inPropPath,
+    virtual void setPropertyTextureSettings(const QString &inEffectName,
+                                            const QString &inPropName,
+                                            const QString &inPropPath,
                                             QDemonRenderTextureTypeValue::Enum inTexType,
                                             QDemonRenderTextureCoordOp::Enum inCoordOp,
                                             QDemonRenderTextureMagnifyingOp::Enum inMagFilterOp,
@@ -109,14 +111,14 @@ public:
                                   bool inClearDirty) = 0;
 
     virtual bool renderDepthPrepass(const QMatrix4x4 &inMVP, const QDemonRenderCustomMaterial &inMaterial, const QDemonRenderSubset &inSubset) = 0;
-    virtual void renderSubset(QDemonCustomMaterialRenderContext &inRenderContext, TShaderFeatureSet inFeatureSet) = 0;
+    virtual void renderSubset(QDemonCustomMaterialRenderContext &inRenderContext, const TShaderFeatureSet &inFeatureSet) = 0;
     virtual void onMaterialActivationChange(const QDemonRenderCustomMaterial &inMaterial, bool inActive) = 0;
 
     // get shader name
     virtual QString getShaderName(const QDemonRenderCustomMaterial &inMaterial) = 0;
     // apply property values
     virtual void applyShaderPropertyValues(const QDemonRenderCustomMaterial &inMaterial,
-                                           QDemonRef<QDemonRenderShaderProgram> inProgram) = 0;
+                                           const QDemonRef<QDemonRenderShaderProgram> &inProgram) = 0;
     // Called by the uiccontext so this system can clear any per-frame render information.
     virtual void endFrame() = 0;
 };

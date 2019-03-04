@@ -1348,7 +1348,7 @@ float translateQuadraticAttenuation(float attenuation)
 }
 
 QDemonRef<QDemonShaderGeneratorGeneratedShader> QDemonRendererImpl::getShader(QDemonSubsetRenderable &inRenderable,
-                                                                                   TShaderFeatureSet inFeatureSet)
+                                                                              const TShaderFeatureSet &inFeatureSet)
 {
     if (m_currentLayer == nullptr) {
         Q_ASSERT(false);
@@ -1781,7 +1781,7 @@ void QDemonRendererImpl::renderGpuProfilerStats(float x, float y,
 
     for (theIter = m_instanceRenderMap.begin(); theIter != m_instanceRenderMap.end(); theIter++) {
         float startX = x;
-        const QDemonRef<QDemonLayerRenderData> theLayerRenderData = theIter.value();
+        const QDemonRef<QDemonLayerRenderData>& theLayerRenderData = theIter.value();
         const QDemonRenderLayer *theLayer = &theLayerRenderData->layer;
 
         if (theLayer->flags.isActive() && theLayerRenderData->m_layerProfilerGpu) {
@@ -1898,7 +1898,7 @@ QDemonOption<QVector2D> QDemonRendererImpl::getLayerMouseCoords(QDemonRenderLaye
                                forceImageIntersect);
 }
 
-bool QDemonRendererInterface::isGlEsContext(QDemonRenderContextType inContextType)
+bool QDemonRendererInterface::isGlEsContext(const QDemonRenderContextType& inContextType)
 {
     QDemonRenderContextType esContextTypes(QDemonRenderContextValues::GLES2
                                            | QDemonRenderContextValues::GLES3
@@ -1910,7 +1910,7 @@ bool QDemonRendererInterface::isGlEsContext(QDemonRenderContextType inContextTyp
     return false;
 }
 
-bool QDemonRendererInterface::isGlEs3Context(QDemonRenderContextType inContextType)
+bool QDemonRendererInterface::isGlEs3Context(const QDemonRenderContextType& inContextType)
 {
     if (inContextType == QDemonRenderContextValues::GLES3
             || inContextType == QDemonRenderContextValues::GLES3PLUS)
@@ -1919,7 +1919,7 @@ bool QDemonRendererInterface::isGlEs3Context(QDemonRenderContextType inContextTy
     return false;
 }
 
-bool QDemonRendererInterface::isGl2Context(QDemonRenderContextType inContextType)
+bool QDemonRendererInterface::isGl2Context(const QDemonRenderContextType& inContextType)
 {
     if (inContextType == QDemonRenderContextValues::GL2)
         return true;
@@ -1938,10 +1938,11 @@ QDemonRenderPickSubResult::QDemonRenderPickSubResult()
 {
 }
 
-QDemonRenderPickSubResult::QDemonRenderPickSubResult(QDemonRef<QDemonOffscreenRendererInterface> inSubRenderer, QMatrix4x4 inTextureMatrix,
-                         QDemonRenderTextureCoordOp::Enum inHorizontalTilingMode,
-                         QDemonRenderTextureCoordOp::Enum inVerticalTilingMode, quint32 width,
-                         quint32 height)
+QDemonRenderPickSubResult::QDemonRenderPickSubResult(const QDemonRef<QDemonOffscreenRendererInterface> &inSubRenderer,
+                                                     const QMatrix4x4 &inTextureMatrix,
+                                                     QDemonRenderTextureCoordOp::Enum inHorizontalTilingMode,
+                                                     QDemonRenderTextureCoordOp::Enum inVerticalTilingMode, quint32 width,
+                                                     quint32 height)
     : m_subRenderer(inSubRenderer)
     , m_textureMatrix(inTextureMatrix)
     , m_horizontalTilingMode(inHorizontalTilingMode)

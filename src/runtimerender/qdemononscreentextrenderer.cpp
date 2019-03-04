@@ -119,7 +119,7 @@ public:
 
     void addSystemFontDirectory(const char *) override {}
 
-    virtual void addProjectFontDirectory(QString)
+    virtual void addProjectFontDirectory(const QString &)
     {
         // We always render using the default font with on-screen renderer,
         // so no need to care about font directories

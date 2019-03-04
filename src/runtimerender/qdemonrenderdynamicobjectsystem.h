@@ -209,27 +209,27 @@ public:
 
     // Set the default value.  THis is unnecessary if the default is zero as that is what it is
     // assumed to be.
-    virtual void setPropertyDefaultValue(QString inName,
-                                         QString inPropName,
-                                         QDemonConstDataRef<quint8> inDefaultData) = 0;
+    virtual void setPropertyDefaultValue(const QString &inName,
+                                         const QString &inPropName,
+                                         const QDemonConstDataRef<quint8> &inDefaultData) = 0;
 
-    virtual void setPropertyEnumNames(QString inName,
-                                      QString inPropName,
-                                      QDemonConstDataRef<QString> inNames) = 0;
+    virtual void setPropertyEnumNames(const QString &inName,
+                                      const QString &inPropName,
+                                      const QDemonConstDataRef<QString> &inNames) = 0;
 
-    virtual QDemonConstDataRef<QString> getPropertyEnumNames(QString inName, QString inPropName) const = 0;
+    virtual QDemonConstDataRef<QString> getPropertyEnumNames(const QString &inName, const QString &inPropName) const = 0;
 
-    virtual QDemonConstDataRef<dynamic::QDemonPropertyDefinition> getProperties(QString inName) const = 0;
+    virtual QDemonConstDataRef<dynamic::QDemonPropertyDefinition> getProperties(const QString &inName) const = 0;
 
-    virtual void setPropertyTextureSettings(QString inName,
-                                            QString inPropName,
-                                            QString inPropPath,
+    virtual void setPropertyTextureSettings(const QString &inName,
+                                            const QString &inPropName,
+                                            const QString &inPropPath,
                                             QDemonRenderTextureTypeValue::Enum inTexType,
                                             QDemonRenderTextureCoordOp::Enum inCoordOp,
                                             QDemonRenderTextureMagnifyingOp::Enum inMagFilterOp,
                                             QDemonRenderTextureMinifyingOp::Enum inMinFilterOp) = 0;
 
-    virtual QDemonDynamicObjectClassInterface *getDynamicObjectClass(QString inName) = 0;
+    virtual QDemonDynamicObjectClassInterface *getDynamicObjectClass(const QString &inName) = 0;
 
     // The effect commands are the actual commands that run for a given effect.  The tell the
     // system exactly
@@ -237,10 +237,10 @@ public:
     // run this shader
     // See qdemonrenderdynamicobjectssystemcommands.h for the list of commands.
     // These commands are copied into the effect.
-    virtual void setRenderCommands(QString inClassName, QDemonConstDataRef<dynamic::QDemonCommand *> inCommands) = 0;
-    virtual QDemonConstDataRef<dynamic::QDemonCommand *> getRenderCommands(QString inClassName) const = 0;
+    virtual void setRenderCommands(const QString &inClassName, const QDemonConstDataRef<dynamic::QDemonCommand *> &inCommands) = 0;
+    virtual QDemonConstDataRef<dynamic::QDemonCommand *> getRenderCommands(const QString &inClassName) const = 0;
 
-    virtual QDemonDynamicObject *createInstance(QString inClassName) = 0;
+    virtual QDemonDynamicObject *createInstance(const QString &inClassName) = 0;
 
     // scan shader for #includes and insert any found"
     virtual void insertShaderHeaderInformation(QString &inShader, const char *inLogPath) = 0;
@@ -249,7 +249,8 @@ public:
     // the data has been
     // auto-generated.  The system will look for data under this path key during the BindShader
     // effect command.
-    virtual void setShaderData(QString inPath, const char *inData,
+    virtual void setShaderData(const QString &inPath,
+                               const char *inData,
                                const char *inShaderType = nullptr,
                                const char *inShaderVersion = nullptr,
                                bool inHasGeomShader = false,

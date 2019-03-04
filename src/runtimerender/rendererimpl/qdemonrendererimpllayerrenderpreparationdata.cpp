@@ -98,7 +98,8 @@ QDemonDefaultMaterialPreparationResult::QDemonDefaultMaterialPreparationResult(
 
 #define MAX_AA_LEVELS 8
 
-QDemonLayerRenderPreparationData::QDemonLayerRenderPreparationData(QDemonRenderLayer &inLayer, QDemonRef<QDemonRendererImpl> inRenderer)
+QDemonLayerRenderPreparationData::QDemonLayerRenderPreparationData(QDemonRenderLayer &inLayer,
+                                                                   const QDemonRef<QDemonRendererImpl> &inRenderer)
     : layer(inLayer)
     , renderer(inRenderer)
     , camera(nullptr)
@@ -116,7 +117,7 @@ bool QDemonLayerRenderPreparationData::needsWidgetTexture() const
     return iRenderWidgets.size() > 0;
 }
 
-void QDemonLayerRenderPreparationData::setShaderFeature(QString theStr, bool inValue)
+void QDemonLayerRenderPreparationData::setShaderFeature(const QString &theStr, bool inValue)
 {
     QDemonShaderPreprocessorFeature item(theStr, inValue);
     QVector<QDemonShaderPreprocessorFeature>::iterator iter = features.begin(),

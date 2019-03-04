@@ -31,7 +31,7 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonShaderCodeGeneratorBase::QDemonShaderCodeGeneratorBase(QDemonRenderContextType ctxType)
+QDemonShaderCodeGeneratorBase::QDemonShaderCodeGeneratorBase(const QDemonRenderContextType& ctxType)
     : m_renderContextType(ctxType)
 {
 }
@@ -285,7 +285,7 @@ QDemonShaderCodeGeneratorBase &QDemonShaderCodeGeneratorBase::operator<<(const Q
     return *this;
 }
 
-QDemonShaderVertexCodeGenerator::QDemonShaderVertexCodeGenerator(QDemonRenderContextType ctxType)
+QDemonShaderVertexCodeGenerator::QDemonShaderVertexCodeGenerator(const QDemonRenderContextType& ctxType)
     : QDemonShaderCodeGeneratorBase(ctxType)
 {
 }
@@ -294,9 +294,8 @@ TStrTableStrMap &QDemonShaderVertexCodeGenerator::getVaryings()
     return m_varyings;
 }
 
-QDemonShaderTessControlCodeGenerator::QDemonShaderTessControlCodeGenerator(
-        QDemonShaderVertexCodeGenerator &vert,
-        QDemonRenderContextType ctxType)
+QDemonShaderTessControlCodeGenerator::QDemonShaderTessControlCodeGenerator(QDemonShaderVertexCodeGenerator &vert,
+                                                                           const QDemonRenderContextType& ctxType)
     : QDemonShaderCodeGeneratorBase(ctxType)
     , m_vertGenerator(vert)
 {
@@ -350,7 +349,7 @@ TStrTableStrMap &QDemonShaderTessControlCodeGenerator::getVaryings()
 }
 
 QDemonShaderTessEvalCodeGenerator::QDemonShaderTessEvalCodeGenerator(QDemonShaderTessControlCodeGenerator &tc,
-                                                           QDemonRenderContextType ctxType)
+                                                           const QDemonRenderContextType& ctxType)
     : QDemonShaderCodeGeneratorBase(ctxType)
     , m_tessControlGenerator(tc)
     , m_hasGeometryStage(false)
@@ -411,16 +410,15 @@ void QDemonShaderTessEvalCodeGenerator::setGeometryStage(bool hasGeometryStage)
 }
 
 QDemonShaderGeometryCodeGenerator::QDemonShaderGeometryCodeGenerator(QDemonShaderVertexCodeGenerator &vert,
-                                                           QDemonRenderContextType ctxType)
+                                                                     const QDemonRenderContextType& ctxType)
     : QDemonShaderCodeGeneratorBase(ctxType)
     , m_vertGenerator(vert)
-    , m_hasTessellationStage(true)
 {
 }
 
 // overwritten from base
 void QDemonShaderGeometryCodeGenerator::addShaderItemMap(const QString &itemType,
-                                                    const TStrTableStrMap &itemMap)
+                                                         const TStrTableStrMap &itemMap)
 {
     QString inExt("");
     QString type(itemType);
@@ -471,7 +469,7 @@ void QDemonShaderGeometryCodeGenerator::setTessellationStage(bool hasTessellatio
 }
 
 QDemonShaderFragmentCodeGenerator::QDemonShaderFragmentCodeGenerator(QDemonShaderVertexCodeGenerator &vert,
-                                                           QDemonRenderContextType ctxType)
+                                                                     const QDemonRenderContextType& ctxType)
     : QDemonShaderCodeGeneratorBase(ctxType)
     , m_vertGenerator(vert)
 {

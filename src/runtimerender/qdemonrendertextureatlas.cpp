@@ -228,7 +228,7 @@ struct QDemonTextureAtlas : public QDemonTextureAtlasInterface
 {
     QDemonRef<QDemonRenderContext> m_renderContext;
 
-    QDemonTextureAtlas(QDemonRef<QDemonRenderContext> inRenderContext, qint32 width, qint32 height)
+    QDemonTextureAtlas(const QDemonRef<QDemonRenderContext>& inRenderContext, qint32 width, qint32 height)
         : m_renderContext(inRenderContext)
         , m_width(width)
         , m_height(height)
@@ -335,7 +335,7 @@ private:
 
 } // namespace
 
-QDemonRef<QDemonTextureAtlasInterface> QDemonTextureAtlasInterface::createTextureAtlas(QDemonRef<QDemonRenderContext> inRenderContext, qint32 width, qint32 height)
+QDemonRef<QDemonTextureAtlasInterface> QDemonTextureAtlasInterface::createTextureAtlas(const QDemonRef<QDemonRenderContext>& inRenderContext, qint32 width, qint32 height)
 {
     return QDemonRef<QDemonTextureAtlasInterface>(new QDemonTextureAtlas(inRenderContext, width, height));
 }
