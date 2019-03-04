@@ -32,10 +32,10 @@
 //==============================================================================
 #include "qdemonrendereulerangles.h"
 
-#include <math.h>
-#include <float.h>
-#include <string.h>
-#include <stdio.h>
+#include <cmath>
+#include <cfloat>
+#include <cstring>
+#include <cstdio>
 
 #ifdef _MSC_VER
 #pragma warning(disable : 4365) // warnings on conversion from unsigned int to int

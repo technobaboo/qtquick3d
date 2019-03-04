@@ -30,11 +30,11 @@
 #include "renderexample.h"
 #include <QtDemonRender/qdemonrenderbasetypes.h>
 
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstring>
+#include <cstdio>
+#include <cstdlib>
 
-#include <math.h>
+#include <cmath>
 
 #include <QtGui/QSurfaceFormat>
 

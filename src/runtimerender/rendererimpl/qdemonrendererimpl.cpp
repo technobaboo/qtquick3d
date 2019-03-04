@@ -59,7 +59,7 @@
 #include <QtDemon/QDemonDataRef>
 #include <QtDemon/qdemonutils.h>
 
-#include <stdlib.h>
+#include <cstdlib>
 #include <algorithm>
 
 #ifdef _WIN32
