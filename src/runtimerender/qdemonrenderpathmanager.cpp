@@ -513,7 +513,6 @@ struct QDemonPathXYGeneratedShader
     QDemonRenderCachedShaderProperty<QMatrix4x4> m_modelMatrix;
     QDemonRenderCachedShaderProperty<QVector3D> m_cameraPosition;
     QDemonRenderCachedShaderProperty<QVector2D> m_cameraProperties;
-    qint32 m_refCount;
 
     QDemonPathXYGeneratedShader(const QDemonRef<QDemonRenderShaderProgram>& sh)
         : m_shader(sh)
