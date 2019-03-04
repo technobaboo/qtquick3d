@@ -34,29 +34,27 @@
 
 QT_BEGIN_NAMESPACE
 
-static const QStringList lconstantnames = {
-    QStringLiteral("position"),
-    QStringLiteral("direction"),
-    QStringLiteral("up"),
-    QStringLiteral("right"),
-    QStringLiteral("diffuse"),
-    QStringLiteral("ambient"),
-    QStringLiteral("specular"),
-    QStringLiteral("spotExponent"),
-    QStringLiteral("spotCutoff"),
-    QStringLiteral("constantAttenuation"),
-    QStringLiteral("linearAttenuation"),
-    QStringLiteral("quadraticAttenuation"),
-    QStringLiteral("range"),
-    QStringLiteral("width"),
-    QStringLiteral("height"),
-    QStringLiteral("shadowControls"),
-    QStringLiteral("shadowView"),
-    QStringLiteral("shadowIdx"),
-    QStringLiteral("attenuation")
+static const char *lconstantnames[] = {
+    "position",
+    "direction",
+    "up",
+    "right",
+    "diffuse",
+    "ambient",
+    "specular",
+    "spotExponent",
+    "spotCutoff",
+    "constantAttenuation",
+    "linearAttenuation",
+    "quadraticAttenuation",
+    "range",
+    "width",
+    "height",
+    "shadowControls",
+    "shadowView",
+    "shadowIdx",
+    "attenuation"
 };
-
-#define LCSEED QStringLiteral("%1%2")
 
 template <typename GeneratedShader>
 struct QDemonLightConstantProperties
@@ -83,26 +81,26 @@ struct QDemonLightConstantProperties
         QDemonRenderCachedShaderProperty<qint32> shadowIdx;
         QDemonRenderCachedShaderProperty<QVector3D> attenuation;
 
-        LightConstants(const QString &lightRef, QDemonRef<QDemonRenderShaderProgram> shader)
-            : position(LCSEED.arg(lightRef, lconstantnames[0]), shader)
-            , direction(LCSEED.arg(lightRef).arg(lconstantnames[1]), shader)
-            , up(LCSEED.arg(lightRef, lconstantnames[2]), shader)
-            , right(LCSEED.arg(lightRef, lconstantnames[3]), shader)
-            , diffuse(LCSEED.arg(lightRef, lconstantnames[4]), shader)
-            , ambient(LCSEED.arg(lightRef, lconstantnames[5]), shader)
-            , specular(LCSEED.arg(lightRef, lconstantnames[6]), shader)
-            , spotExponent(LCSEED.arg(lightRef, lconstantnames[7]), shader)
-            , spotCutoff(LCSEED.arg(lightRef, lconstantnames[8]), shader)
-            , constantAttenuation(LCSEED.arg(lightRef, lconstantnames[9]), shader)
-            , linearAttenuation(LCSEED.arg(lightRef, lconstantnames[10]), shader)
-            , quadraticAttenuation(LCSEED.arg(lightRef, lconstantnames[11]), shader)
-            , range(LCSEED.arg(lightRef, lconstantnames[12]), shader)
-            , width(LCSEED.arg(lightRef, lconstantnames[13]), shader)
-            , height(LCSEED.arg(lightRef, lconstantnames[14]), shader)
-            , shadowControls(LCSEED.arg(lightRef, lconstantnames[15]), shader)
-            , shadowView(LCSEED.arg(lightRef, lconstantnames[16]), shader)
-            , shadowIdx(LCSEED.arg(lightRef, lconstantnames[17]), shader)
-            , attenuation(LCSEED.arg(lightRef, lconstantnames[18]), shader)
+        LightConstants(const QByteArray &lightRef, QDemonRef<QDemonRenderShaderProgram> shader)
+            : position(lightRef + lconstantnames[0], shader)
+            , direction(lightRef + lconstantnames[1], shader)
+            , up(lightRef + lconstantnames[2], shader)
+            , right(lightRef + lconstantnames[3], shader)
+            , diffuse(lightRef + lconstantnames[4], shader)
+            , ambient(lightRef + lconstantnames[5], shader)
+            , specular(lightRef + lconstantnames[6], shader)
+            , spotExponent(lightRef + lconstantnames[7], shader)
+            , spotCutoff(lightRef + lconstantnames[8], shader)
+            , constantAttenuation(lightRef + lconstantnames[9], shader)
+            , linearAttenuation(lightRef + lconstantnames[10], shader)
+            , quadraticAttenuation(lightRef + lconstantnames[11], shader)
+            , range(lightRef + lconstantnames[12], shader)
+            , width(lightRef + lconstantnames[13], shader)
+            , height(lightRef + lconstantnames[14], shader)
+            , shadowControls(lightRef + lconstantnames[15], shader)
+            , shadowView(lightRef + lconstantnames[16], shader)
+            , shadowIdx(lightRef + lconstantnames[17], shader)
+            , attenuation(lightRef + lconstantnames[18], shader)
         {
 
         }
@@ -139,20 +137,24 @@ struct QDemonLightConstantProperties
     {
         m_constants.resize(shader->m_lights.size());
         for (int i = 0; i < shader->m_lights.size(); ++i) {
-            QString lref;
-            if (packed)
-                lref = QStringLiteral("light_%1_");
-            else
-                lref = QStringLiteral("lights[%1].");
-            lref = lref.arg(i);
+            QByteArray lref;
+            if (packed) {
+                lref += "light_";
+                lref += QByteArray::number(i);
+                lref += "_";
+            } else {
+                lref += "lights[";
+                lref += QByteArray::number(i);
+                lref += "].";
+            }
             m_constants[i] = new LightConstants(lref, shader->m_shader);
         }
         m_lightCount.set(shader->m_lights.size());
         m_lightCountInt = shader->m_lights.size();
     }
 
-    QDemonLightConstantProperties(const QString &lseed,
-                                  const QString &lcount,
+    QDemonLightConstantProperties(const QByteArray &lseed,
+                                  const QByteArray &lcount,
                                   GeneratedShader *shader,
                                   bool packed,
                                   int count)
@@ -160,12 +162,16 @@ struct QDemonLightConstantProperties
     {
         m_constants.resize(count);
         for (int i = 0; i < count; ++i) {
-            QString lref;
-            if (packed)
-                lref = lseed + QStringLiteral("_%1_");
-            else
-                lref = lseed + QStringLiteral("[%1].");
-            lref = lref.arg(i);
+            QByteArray lref = lseed;
+            if (packed) {
+                lref += "_";
+                lref += QByteArray::number(i);
+                lref += "_";
+            } else {
+                lref += "[";
+                lref += QByteArray::number(i);
+                lref += "].";
+            }
             m_constants[i] = new LightConstants(lref, shader->m_shader);
         }
         m_lightCount.set(count);

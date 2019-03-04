@@ -85,10 +85,10 @@ struct QDemonShaderTextureProperties
     QDemonRenderCachedShaderProperty<QVector3D> m_offsets;
     QDemonRenderCachedShaderProperty<QVector4D> m_rotations;
     QDemonRenderCachedShaderProperty<QVector2D> m_size;
-    QDemonShaderTextureProperties(const QString &sampName,
-                                  const QString &offName,
-                                  const QString &rotName,
-                                  const QString &sizeName,
+    QDemonShaderTextureProperties(const QByteArray &sampName,
+                                  const QByteArray &offName,
+                                  const QByteArray &rotName,
+                                  const QByteArray &sizeName,
                                   const QDemonRef<QDemonRenderShaderProgram> &inShader)
         : m_sampler(sampName, inShader)
         , m_offsets(offName, inShader)
@@ -118,10 +118,10 @@ struct QDemonShadowMapProperties
     QDemonRenderCachedShaderProperty<QVector4D> m_shadowmapSettings; ///< shadow rendering settings
 
     QDemonShadowMapProperties() = default;
-    QDemonShadowMapProperties(const QString &shadowmapTextureName,
-                              const QString &shadowcubeTextureName,
-                              const QString &shadowmapMatrixName,
-                              const QString &shadowmapSettingsName,
+    QDemonShadowMapProperties(const QByteArray &shadowmapTextureName,
+                              const QByteArray &shadowcubeTextureName,
+                              const QByteArray &shadowmapMatrixName,
+                              const QByteArray &shadowmapSettingsName,
                               const QDemonRef<QDemonRenderShaderProgram>& inShader)
         : m_shadowmapTexture(shadowmapTextureName, inShader)
         , m_shadowCubeTexture(shadowcubeTextureName, inShader)
@@ -710,8 +710,8 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
     }
 
     void generateTextureSwizzle(QDemonRenderTextureSwizzleMode::Enum swizzleMode,
-                                QString &texSwizzle,
-                                QString &lookupSwizzle)
+                                QByteArray &texSwizzle,
+                                QByteArray &lookupSwizzle)
     {
         QDemonRenderContextType deprecatedContextFlags(QDemonRenderContextValues::GL2
                                                        | QDemonRenderContextValues::GLES2);
@@ -1374,9 +1374,8 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
                     continue;
                 }
 
-                QString texSwizzle;
-                QString lookupSwizzle;
-                QString texLodStr;
+                QByteArray texSwizzle;
+                QByteArray lookupSwizzle;
 
                 generateImageUVCoordinates(idx, *image, 0);
 
@@ -1384,16 +1383,9 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
                             image->m_image.m_textureData.m_texture->getTextureSwizzleMode(), texSwizzle,
                             lookupSwizzle);
 
-                if (texLodStr.isEmpty()) {
-                    fragmentShader << "\ttexture_color" << texSwizzle.toUtf8() << " = texture2D( "
-                                   << m_imageSampler << ", " << m_imageFragCoords << ")"
-                                   << lookupSwizzle.toUtf8() << ";" << "\n";
-                } else {
-                    fragmentShader << "\ttexture_color" << texSwizzle.toUtf8() << "= textureLod( "
-                                   << m_imageSampler << ", " << m_imageFragCoords << ", "
-                                   << texLodStr.toUtf8() << " )" << lookupSwizzle.toUtf8() << ";"
-                                   << "\n";
-                }
+                fragmentShader << "\ttexture_color" << texSwizzle << " = texture2D( "
+                               << m_imageSampler << ", " << m_imageFragCoords << ")"
+                               << lookupSwizzle << ";" << "\n";
 
                 if (image->m_image.m_textureData.m_textureFlags.isPreMultiplied() == true)
                     fragmentShader << "\ttexture_color.rgb = texture_color.a > 0.0 ? "

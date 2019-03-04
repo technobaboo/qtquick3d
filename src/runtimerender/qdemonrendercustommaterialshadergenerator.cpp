@@ -132,9 +132,9 @@ struct QDemonShaderTextureProperties
     QDemonRenderCachedShaderProperty<QDemonRenderTexture2D *> m_sampler;
     QDemonRenderCachedShaderProperty<QVector3D> m_offsets;
     QDemonRenderCachedShaderProperty<QVector4D> m_rotations;
-    QDemonShaderTextureProperties(const QString &sampName,
-                                  const QString &offName,
-                                  const QString &rotName,
+    QDemonShaderTextureProperties(const QByteArray &sampName,
+                                  const QByteArray &offName,
+                                  const QByteArray &rotName,
                                   const QDemonRef<QDemonRenderShaderProgram> &inShader)
         : m_sampler(sampName, inShader)
         , m_offsets(offName, inShader)
@@ -237,8 +237,8 @@ struct QDemonShaderGeneratorGeneratedShader
         if (!m_lightsProperties || m_areaLightsProperties->m_lightCountInt < count) {
             if (m_lightsProperties)
                 delete m_lightsProperties;
-            m_lightsProperties = new QDemonLightConstantProperties<QDemonShaderGeneratorGeneratedShader>(QStringLiteral("lights"),
-                                                                                                         QStringLiteral("uNumLights"),
+            m_lightsProperties = new QDemonLightConstantProperties<QDemonShaderGeneratorGeneratedShader>("lights",
+                                                                                                         "uNumLights",
                                                                                                          this,
                                                                                                          false,
                                                                                                          count);
@@ -250,8 +250,8 @@ struct QDemonShaderGeneratorGeneratedShader
         if (!m_areaLightsProperties || m_areaLightsProperties->m_lightCountInt < count) {
             if (m_areaLightsProperties)
                 delete m_areaLightsProperties;
-            m_areaLightsProperties = new QDemonLightConstantProperties<QDemonShaderGeneratorGeneratedShader>(QStringLiteral("areaLights"),
-                                                                                                             QStringLiteral("uNumAreaLights"),
+            m_areaLightsProperties = new QDemonLightConstantProperties<QDemonShaderGeneratorGeneratedShader>("areaLights",
+                                                                                                             "uNumAreaLights",
                                                                                                              this,
                                                                                                              false,
                                                                                                              count);

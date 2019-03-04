@@ -375,9 +375,9 @@ struct QDemonRenderCachedShaderProperty
     QDemonRef<QDemonRenderShaderProgram> shader; ///< pointer to shader program
     QDemonRef<QDemonRenderShaderConstantBase> constant; ///< poiner to shader constant object
 
-    QDemonRenderCachedShaderProperty(const QString &inConstantName,
+    QDemonRenderCachedShaderProperty(const QByteArray &inConstantName,
                                      QDemonRef<QDemonRenderShaderProgram> inShader)
-        : QDemonRenderCachedShaderProperty(qPrintable(inConstantName), inShader)
+        : QDemonRenderCachedShaderProperty(inConstantName.constData(), inShader)
     {
     }
 

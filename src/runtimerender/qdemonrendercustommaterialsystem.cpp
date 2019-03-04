@@ -587,7 +587,7 @@ struct QDemonCustomMaterialTextureData
 
     QDemonCustomMaterialTextureData(const QDemonRef<QDemonRenderShaderProgram> &inShader,
                                     const QDemonRef<QDemonRenderTexture2D> &inTexture,
-                                    const QString &inTexName,
+                                    const QByteArray &inTexName,
                                     bool inNeedMips)
         : shader(inShader)
         , sampler(inTexName, inShader)
@@ -618,7 +618,7 @@ struct QDemonCustomMaterialTextureData
 
     static QDemonCustomMaterialTextureData createTextureEntry(const QDemonRef<QDemonRenderShaderProgram> &inShader,
                                                               const QDemonRef<QDemonRenderTexture2D> &inTexture,
-                                                              const QString &inTexName,
+                                                              const QByteArray &inTexName,
                                                               bool needMips)
     {
         return QDemonCustomMaterialTextureData(inShader, inTexture, inTexName, needMips);
@@ -982,7 +982,8 @@ struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface
             }
         }
         if (theTextureEntry == nullptr) {
-            QDemonRef<QDemonCustomMaterialTextureData> theNewEntry(new QDemonCustomMaterialTextureData(QDemonCustomMaterialTextureData::createTextureEntry(inShader, inTexture, inPropName, needMips)));
+            QDemonRef<QDemonCustomMaterialTextureData> theNewEntry(
+                        new QDemonCustomMaterialTextureData(QDemonCustomMaterialTextureData::createTextureEntry(inShader, inTexture, inPropName.toUtf8(), needMips)));
             m_textureEntries.push_back(QPair<QString, QDemonRef<QDemonCustomMaterialTextureData>>(inPropName, theNewEntry));
             theTextureEntry = theNewEntry;
         }

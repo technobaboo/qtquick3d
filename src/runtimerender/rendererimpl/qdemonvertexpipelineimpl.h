@@ -66,7 +66,7 @@ struct QDemonVertexPipelineImpl : public QDemonDefaultMaterialVertexPipelineInte
     TStrTableStrMap m_interpolationParameters;
     quint32 m_displacementIdx;
     QDemonRenderableImage *m_displacementImage;
-    QStringList m_addedFunctions;
+    QList<QByteArray> m_addedFunctions;
 
     QDemonVertexPipelineImpl(QDemonRef<QDemonMaterialShaderGeneratorInterface> inMaterial,
                              QDemonRef<QDemonShaderProgramGeneratorInterface> inProgram,
