@@ -458,7 +458,7 @@ struct QDemonRenderCachedShaderPropertyArray
             shader->setPropertyValue(constant.data(), static_cast<TDataType*>(m_array), qMin(size, count));
     }
 
-    bool isValid() const { return constant != 0; }
+    bool isValid() const { return constant != nullptr; }
 };
 
 // Helper class to cache the lookup of shader properties and apply them quickly in a typesafe
