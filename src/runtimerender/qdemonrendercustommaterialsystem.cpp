@@ -1120,7 +1120,7 @@ struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface
         }
         if (inFlags.isGeometryShaderEnabled() && inFlags.wireframeMode) {
             inShaderKeyBuffer.append("#");
-            inShaderKeyBuffer.append(inFlags.wireframeToString(inFlags.wireframeMode));
+            inShaderKeyBuffer.append(dynamic::QDemonDynamicShaderProgramFlags::wireframeToString(inFlags.wireframeMode));
         }
 
         return inShaderKeyBuffer;
