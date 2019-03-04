@@ -2051,9 +2051,9 @@ QDemonRef<QDemonDefaultAoPassShader> QDemonRendererImpl::getFakeCubeDepthShader(
 
 QDemonTextRenderHelper QDemonRendererImpl::getTextShader(bool inUsePathRendering)
 {
-    QDemonTextShaderPtr &thePtr = (!inUsePathRendering) ? m_textShader : m_textPathShader;
-    if (thePtr.hasGeneratedShader)
-        return QDemonTextRenderHelper(thePtr, m_quadInputAssembler);
+    QScopedPointer<QDemonTextShader> &thePtr = (!inUsePathRendering) ? m_textShader : m_textPathShader;
+    if (thePtr)
+        return QDemonTextRenderHelper(thePtr.get(), m_quadInputAssembler);
 
     QDemonRef<QDemonRenderShaderProgram> theShader = nullptr;
     QDemonRef<QDemonRenderProgramPipeline> thePipeline = nullptr;
@@ -2133,13 +2133,11 @@ QDemonTextRenderHelper QDemonRendererImpl::getTextShader(bool inUsePathRendering
         }
     }
 
-    if (theShader == nullptr) {
-        thePtr.set(nullptr);
-    } else {
+    if (theShader) {
         generateXYQuad();
-        thePtr.set(new QDemonTextShader(theShader, thePipeline));
+        thePtr.reset(new QDemonTextShader(theShader, thePipeline));
     }
-    return QDemonTextRenderHelper(thePtr, m_quadInputAssembler);
+    return QDemonTextRenderHelper(thePtr.get(), m_quadInputAssembler);
 }
 
 QDemonRef<QDemonTextDepthShader> QDemonRendererImpl::getTextDepthShader()
@@ -2197,8 +2195,8 @@ QDemonRef<QDemonTextDepthShader> QDemonRendererImpl::getTextDepthShader()
 
 QDemonTextRenderHelper QDemonRendererImpl::getTextWidgetShader()
 {
-    if (m_textWidgetShader.hasGeneratedShader)
-        return QDemonTextRenderHelper(m_textWidgetShader, m_quadInputAssembler);
+    if (m_textWidgetShader)
+        return QDemonTextRenderHelper(m_textWidgetShader.get(), m_quadInputAssembler);
 
     getProgramGenerator()->beginProgram();
 
@@ -2244,19 +2242,17 @@ QDemonTextRenderHelper QDemonRendererImpl::getTextWidgetShader()
     QDemonRef<QDemonRenderShaderProgram> theShader = getProgramGenerator()->compileGeneratedShader(
                 "text widget shader", QDemonShaderCacheProgramFlags(), TShaderFeatureSet());
 
-    if (theShader == nullptr)
-        m_textWidgetShader.set(nullptr);
-    else {
+    if (theShader) {
         generateXYQuad();
-        m_textWidgetShader.set(new QDemonTextShader(theShader));
+        m_textWidgetShader.reset(new QDemonTextShader(theShader));
     }
-    return QDemonTextRenderHelper(m_textWidgetShader, m_quadInputAssembler);
+    return QDemonTextRenderHelper(m_textWidgetShader.get(), m_quadInputAssembler);
 }
 
 QDemonTextRenderHelper QDemonRendererImpl::getOnscreenTextShader()
 {
-    if (m_textOnscreenShader.hasGeneratedShader)
-        return QDemonTextRenderHelper(m_textOnscreenShader, m_quadStripInputAssembler);
+    if (m_textOnscreenShader)
+        return QDemonTextRenderHelper(m_textOnscreenShader.get(), m_quadStripInputAssembler);
 
     getProgramGenerator()->beginProgram();
 
@@ -2288,13 +2284,11 @@ QDemonTextRenderHelper QDemonRendererImpl::getOnscreenTextShader()
     QDemonRef<QDemonRenderShaderProgram> theShader = getProgramGenerator()->compileGeneratedShader(
                 "onscreen texture shader", QDemonShaderCacheProgramFlags(), TShaderFeatureSet());
 
-    if (theShader == nullptr)
-        m_textOnscreenShader.set(nullptr);
-    else {
+    if (theShader) {
         generateXYQuadStrip();
-        m_textOnscreenShader.set(new QDemonTextShader(theShader));
+        m_textOnscreenShader.reset(new QDemonTextShader(theShader));
     }
-    return QDemonTextRenderHelper(m_textOnscreenShader, m_quadStripInputAssembler);
+    return QDemonTextRenderHelper(m_textOnscreenShader.get(), m_quadStripInputAssembler);
 }
 
 QDemonRef<QDemonRenderShaderProgram> QDemonRendererImpl::getTextAtlasEntryShader()

@@ -114,24 +114,6 @@ struct QDemonPickResultProcessResult : public QDemonRenderPickResult
     bool m_wasPickConsumed = false;
 };
 
-struct QDemonTextShaderPtr
-{
-    bool hasGeneratedShader = false;
-    QDemonTextShader *shader = nullptr;
-    QDemonTextShaderPtr() = default;
-    void set(QDemonTextShader *inShader)
-    {
-        shader = inShader;
-        hasGeneratedShader = true;
-    }
-    ~QDemonTextShaderPtr()
-    {
-        if (shader)
-            delete shader;
-    }
-    operator QDemonTextShader *() { return shader; }
-};
-
 class Q_DEMONRUNTIMERENDER_EXPORT QDemonRendererImpl : public QDemonRenderWidgetContextInterface
 {
     typedef QHash<QDemonShaderDefaultMaterialKey, QDemonRef<QDemonShaderGeneratorGeneratedShader>> TShaderMap;
@@ -224,10 +206,10 @@ class Q_DEMONRUNTIMERENDER_EXPORT QDemonRendererImpl : public QDemonRenderWidget
     QDemonOption<QDemonRef<QDemonAdvancedModeBlendShader>> m_advancedModeColorDodgeBlendShader;
 #endif
     // Text shaders may be generated on demand.
-    QDemonTextShaderPtr m_textShader;
-    QDemonTextShaderPtr m_textPathShader;
-    QDemonTextShaderPtr m_textWidgetShader;
-    QDemonTextShaderPtr m_textOnscreenShader;
+    QScopedPointer<QDemonTextShader> m_textShader;
+    QScopedPointer<QDemonTextShader> m_textPathShader;
+    QScopedPointer<QDemonTextShader> m_textWidgetShader;
+    QScopedPointer<QDemonTextShader> m_textOnscreenShader;
 
     // Overlay used to render all widgets.
     QRect m_beginFrameViewport;
