@@ -1147,7 +1147,7 @@ QDemonRenderVertFragCompilationResult QDemonRenderShaderProgram::create(const QD
 
     if (vertexValid && fragValid && tcValid && teValid && geValid) {
         // shaders were succesfuly created
-        pProgram.reset(new QDemonRenderShaderProgram(context, programName, separateProgram));
+        pProgram = new QDemonRenderShaderProgram(context, programName, separateProgram);
 
         if (pProgram) {
             // attach programs
@@ -1276,7 +1276,7 @@ QDemonRenderShaderProgram::createCompute(const QDemonRef<QDemonRenderContextImpl
 
     if (computeShader.isValid()) {
         // shaders were succesfuly created
-        pProgram.reset(new QDemonRenderShaderProgram(context, programName, false));
+        pProgram = new QDemonRenderShaderProgram(context, programName, false);
 
         if (pProgram) {
             // attach programs

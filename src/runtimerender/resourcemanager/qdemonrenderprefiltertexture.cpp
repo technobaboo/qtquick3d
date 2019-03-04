@@ -64,11 +64,11 @@ QDemonRenderPrefilterTexture::create(QDemonRef<QDemonRenderContext> inQDemonRend
     QDemonRef<QDemonRenderPrefilterTexture> theBSDFMipMap;
 
     if (inQDemonRenderContext->isComputeSupported()) {
-        theBSDFMipMap.reset(new QDemonRenderPrefilterTextureCompute(inQDemonRenderContext, inWidth, inHeight, inTexture2D, inDestFormat));
+        theBSDFMipMap = new QDemonRenderPrefilterTextureCompute(inQDemonRenderContext, inWidth, inHeight, inTexture2D, inDestFormat);
     }
 
     if (!theBSDFMipMap) {
-        theBSDFMipMap.reset(new QDemonRenderPrefilterTextureCPU(inQDemonRenderContext, inWidth, inHeight, inTexture2D, inDestFormat));
+        theBSDFMipMap = new QDemonRenderPrefilterTextureCPU(inQDemonRenderContext, inWidth, inHeight, inTexture2D, inDestFormat);
     }
 
     return theBSDFMipMap;

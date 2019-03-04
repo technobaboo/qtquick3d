@@ -520,8 +520,8 @@ void QDemonWindowPrivate::init(QDemonWindow *c)
     q->setSurfaceType(windowManager ? windowManager->windowSurfaceType() : QSurface::OpenGLSurface);
     q->setFormat(renderContext->format());
 
-    m_presentation.reset(new QDemonPresentation());
-    m_scene.reset(new QDemonRenderScene());
+    m_presentation = new QDemonPresentation();
+    m_scene = new QDemonRenderScene();
     m_presentation->scene = m_scene;
     m_scene->presentation = m_presentation.data();
     m_presentation->presentationDimensions.setX(q->width());

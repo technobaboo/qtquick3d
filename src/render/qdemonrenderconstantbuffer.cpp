@@ -381,8 +381,8 @@ QDemonRef<QDemonRenderConstantBuffer> QDemonRenderConstantBuffer::create(const Q
 
     if (context->getConstantBufferSupport()) {
         const QString theBufferName = QString::fromLocal8Bit(bufferName);
-        retval.reset(new QDemonRenderConstantBuffer(context, theBufferName, size, usageType,
-                                                    toDataRef(const_cast<quint8 *>(bufferData.begin()), bufferData.size())));
+        retval = new QDemonRenderConstantBuffer(context, theBufferName, size, usageType,
+                                                toDataRef(const_cast<quint8 *>(bufferData.begin()), bufferData.size()));
     } else {
         Q_ASSERT(false);
     }

@@ -81,7 +81,7 @@ QDemonRef<QDemonRenderDrawIndirectBuffer> QDemonRenderDrawIndirectBuffer::create
                                                                                       size_t size,
                                                                                       QDemonConstDataRef<quint8> bufferData)
 {
-    QDemonRef<QDemonRenderDrawIndirectBuffer> retval = nullptr;
+    QDemonRef<QDemonRenderDrawIndirectBuffer> retval;
 
     // these are the context flags which do not support this drawing mode
     QDemonRenderContextType noDrawIndirectSupported(
@@ -90,8 +90,8 @@ QDemonRef<QDemonRenderDrawIndirectBuffer> QDemonRenderDrawIndirectBuffer::create
     QDemonRenderContextType ctxType = context->getRenderContextType();
 
     if (!(ctxType & noDrawIndirectSupported)) {
-        retval.reset(new QDemonRenderDrawIndirectBuffer(context, size, usageType,
-                                                        toDataRef(const_cast<quint8 *>(bufferData.begin()), bufferData.size())));
+        retval = new QDemonRenderDrawIndirectBuffer(context, size, usageType,
+                                                        toDataRef(const_cast<quint8 *>(bufferData.begin()), bufferData.size()));
     } else {
         Q_ASSERT(false);
     }

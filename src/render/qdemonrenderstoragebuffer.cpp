@@ -101,8 +101,8 @@ QDemonRef<QDemonRenderStorageBuffer> QDemonRenderStorageBuffer::create(const QDe
 
     if (context->isStorageBufferSupported()) {
         const QString theBufferName = QString::fromLocal8Bit(bufferName);
-        retval.reset(new QDemonRenderStorageBuffer(context, theBufferName, size, usageType,
-                                                   toDataRef(const_cast<quint8 *>(bufferData.begin()), bufferData.size()), pBuffer));
+        retval = new QDemonRenderStorageBuffer(context, theBufferName, size, usageType,
+                                                   toDataRef(const_cast<quint8 *>(bufferData.begin()), bufferData.size()), pBuffer);
     } else {
         QString errorMsg = QObject::tr("Shader storage buffers are not supported: %1").arg(bufferName);
         qCCritical(INVALID_OPERATION) << errorMsg;

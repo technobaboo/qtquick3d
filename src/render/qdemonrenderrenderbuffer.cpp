@@ -101,7 +101,7 @@ QDemonRenderRenderBuffer::create(const QDemonRef<QDemonRenderContextImpl> &conte
         return retval;
     }
 
-    retval.reset(new QDemonRenderRenderBuffer(context, format, width, height));
+    retval = new QDemonRenderRenderBuffer(context, format, width, height);
 
     return retval;
 }

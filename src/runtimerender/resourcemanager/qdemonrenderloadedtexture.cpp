@@ -46,7 +46,7 @@ QDemonRef<QDemonLoadedTexture> QDemonLoadedTexture::loadQImage(const QString &in
     QImage image(inPath);
     image = image.mirrored();
     image = image.rgbSwapped();
-    retval.reset(new QDemonLoadedTexture);
+    retval = new QDemonLoadedTexture;
     retval->width = image.width();
     retval->height = image.height();
     retval->components = image.pixelFormat().channelCount();

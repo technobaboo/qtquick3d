@@ -22,6 +22,7 @@ class QDemonRef
 public:
     T *data() const { return d; }
     T *get() const { return d; }
+    T *take() { T *t = d; d = nullptr; return t; }
     bool isNull() const { return !d; }
     operator bool() const { return d; }
     bool operator!() const { return !d; }
@@ -30,7 +31,7 @@ public:
 
     // constructors
     constexpr QDemonRef() : d(nullptr) {}
-    QDemonRef(std::nullptr_t) : d(nullptr) {}
+    constexpr QDemonRef(std::nullptr_t) : d(nullptr) {}
 
     QDemonRef(T *ptr)
         : d(ptr)
@@ -47,6 +48,14 @@ public:
         : d(other.get())
     { if (d) d->ref.ref(); }
 
+    QDemonRef(QDemonRef<T> &&other)
+        : d(other.take())
+    {}
+    template <typename X>
+    QDemonRef(QDemonRef<X> &&other)
+        : d(other.take())
+    {}
+
     ~QDemonRef()
     { if (d && !d->ref.deref()) delete d; }
 
@@ -62,6 +71,13 @@ public:
         }
         return *this;
     }
+    template<typename X>
+    QDemonRef<T> &operator=(QDemonRef<X> &&other)
+    {
+        clear();
+        d = other.take();
+        return *this;
+    }
     QDemonRef<T> &operator=(const QDemonRef<T> &other)
     {
         if (d != other.get()) {
@@ -73,25 +89,21 @@ public:
         }
         return *this;
     }
+    QDemonRef<T> &operator=(QDemonRef<T> &&other)
+    {
+        qSwap(d, other.d);
+        return *this;
+    }
 
 
     void swap(QDemonRef<T> &other) { qSwap(d, other.d); }
 
     void clear()
-    { if (d && !d->ref.deref()) delete d; d = nullptr; }
-
-    void reset() { clear(); }
-    void reset(T *t) { *this = QDemonRef(t); }
-
-    // casts:
-//    template <class X> QDemonRef<X> staticCast() const;
-//    template <class X> QDemonRef<X> dynamicCast() const;
-//    template <class X> QDemonRef<X> constCast() const;
-//    template <class X> QDemonRef<X> objectCast() const;
-
-//    static inline QDemonRef<T> create();
-//    static inline QDemonRef<T> create(...);
-
+    {
+        if (d && !d->ref.deref())
+            delete d;
+        d = nullptr;
+    }
 };
 
 

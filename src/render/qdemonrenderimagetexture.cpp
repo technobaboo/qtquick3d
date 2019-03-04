@@ -86,7 +86,7 @@ QDemonRef<QDemonRenderImage2D> QDemonRenderImage2D::create(const QDemonRef<QDemo
 {
     QDemonRef<QDemonRenderImage2D> retval;
     if (inTexture)
-        retval.reset(new QDemonRenderImage2D(context, inTexture, inAccess));
+        retval = new QDemonRenderImage2D(context, inTexture, inAccess);
     return retval;
 }
 QT_END_NAMESPACE
