@@ -334,19 +334,19 @@ void QDemonRendererImpl::drawScreenRect(QRectF inRect, const QVector3D &inColor)
         QDemonShaderStageGeneratorInterface &fragmentGenerator(
                     *theGenerator->getStage(ShaderGeneratorStages::Fragment));
         // TODO: Move out and change type!
-        vertexGenerator.addIncoming(QLatin1String("attr_pos"), QLatin1String("vec3"));
-        vertexGenerator.addUniform(QLatin1String("model_view_projection"), QLatin1String("mat4"));
-        vertexGenerator.addUniform(QLatin1String("rectangle_dims"), QLatin1String("vec3"));
-        vertexGenerator.append(QLatin1String("void main() {"));
-        vertexGenerator.append(QLatin1String("\tgl_Position = model_view_projection * vec4(attr_pos * rectangle_dims, 1.0);"));
-        vertexGenerator.append(QLatin1String("}"));
-        fragmentGenerator.addUniform(QLatin1String("output_color"), QLatin1String("vec3"));
-        fragmentGenerator.append(QLatin1String("void main() {"));
-        fragmentGenerator.append(QLatin1String("\tgl_FragColor.rgb = output_color;"));
-        fragmentGenerator.append(QLatin1String("\tgl_FragColor.a = 1.0;"));
-        fragmentGenerator.append(QLatin1String("}"));
+        vertexGenerator.addIncoming("attr_pos", "vec3");
+        vertexGenerator.addUniform("model_view_projection", "mat4");
+        vertexGenerator.addUniform("rectangle_dims", "vec3");
+        vertexGenerator.append("void main() {");
+        vertexGenerator.append("\tgl_Position = model_view_projection * vec4(attr_pos * rectangle_dims, 1.0);");
+        vertexGenerator.append("}");
+        fragmentGenerator.addUniform("output_color", "vec3");
+        fragmentGenerator.append("void main() {");
+        fragmentGenerator.append("\tgl_FragColor.rgb = output_color;");
+        fragmentGenerator.append("\tgl_FragColor.a = 1.0;");
+        fragmentGenerator.append("}");
         // No flags enabled
-        m_screenRectShader = theGenerator->compileGeneratedShader(QLatin1String("DrawScreenRect"), QDemonShaderCacheProgramFlags(), TShaderFeatureSet());
+        m_screenRectShader = theGenerator->compileGeneratedShader("DrawScreenRect", QDemonShaderCacheProgramFlags(), TShaderFeatureSet());
     }
     if (m_screenRectShader) {
         // Fudge the rect by one pixel to ensure we see all the corners.
@@ -1320,8 +1320,8 @@ QDemonRef<QDemonRenderShaderProgram> QDemonRendererImpl::compileShader(const QSt
                                                                             const char *inFrag)
 {
     getProgramGenerator()->beginProgram();
-    getProgramGenerator()->getStage(ShaderGeneratorStages::Vertex)->append(QString::fromLatin1(inVert));
-    getProgramGenerator()->getStage(ShaderGeneratorStages::Fragment)->append(QString::fromLatin1(inFrag));
+    getProgramGenerator()->getStage(ShaderGeneratorStages::Vertex)->append(inVert);
+    getProgramGenerator()->getStage(ShaderGeneratorStages::Fragment)->append(inFrag);
     return getProgramGenerator()->compileGeneratedShader(inName);
 }
 

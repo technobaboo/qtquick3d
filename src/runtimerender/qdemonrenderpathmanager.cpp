@@ -298,15 +298,15 @@ struct QDemonPathVertexPipeline : public QDemonVertexPipelineImpl
         return false;
     }
 
-    void assignTessEvalVarying(const QString &inVarName, const QString &inVarValueExpr)
+    void assignTessEvalVarying(const QByteArray &inVarName, const QByteArray &inVarValueExpr)
     {
-        QString ext;
+        QByteArray ext;
         if (programGenerator()->getEnabledStages() & ShaderGeneratorStages::Geometry)
-            ext = QStringLiteral("TE");
+            ext = "TE";
         tessEval() << "\t" << inVarName << ext << " = " << inVarValueExpr << ";" << "\n";
     }
 
-    void assignOutput(const QString &inVarName, const QString &inVarValueExpr) override
+    void assignOutput(const QByteArray &inVarName, const QByteArray &inVarValueExpr) override
     {
         assignTessEvalVarying(inVarName, inVarValueExpr);
     }
@@ -330,7 +330,7 @@ struct QDemonPathVertexPipeline : public QDemonVertexPipelineImpl
         bool hasGeometryShader = programGenerator()->getStage(ShaderGeneratorStages::Geometry) != nullptr;
 
         // second setup tessellation control shader
-        QString outExt("");
+        QByteArray outExt("");
         if (hasGeometryShader)
             outExt = "TE";
 
@@ -477,12 +477,12 @@ struct QDemonPathVertexPipeline : public QDemonVertexPipelineImpl
 
     void endFragmentGeneration() override { fragment().append("}"); }
 
-    void addInterpolationParameter(const QString &inName, const QString &inType) override
+    void addInterpolationParameter(const QByteArray &inName, const QByteArray &inType) override
     {
         m_interpolationParameters.insert(inName, inType);
         fragment().addIncoming(inName, inType);
         if (hasTessellation()) {
-            QString nameBuilder;
+            QByteArray nameBuilder;
             nameBuilder = inName;
             if (programGenerator()->getEnabledStages() & ShaderGeneratorStages::Geometry)
                 nameBuilder.append("TE");
@@ -620,7 +620,7 @@ struct QDemonXYRectVertexPipeline : public QDemonVertexPipelineImpl
         fragment() << "\tfloat object_opacity = material_diffuse.a;" << "\n";
     }
 
-    void assignOutput(const QString &inVarName, const QString &inVarValue) override
+    void assignOutput(const QByteArray &inVarName, const QByteArray &inVarValue) override
     {
         vertex() << "\t" << inVarName << " = " << inVarValue << ";\n";
     }
@@ -667,7 +667,7 @@ struct QDemonXYRectVertexPipeline : public QDemonVertexPipelineImpl
 
     void endFragmentGeneration() override { fragment().append("}"); }
 
-    void addInterpolationParameter(const QString &inName, const QString &inType) override
+    void addInterpolationParameter(const QByteArray &inName, const QByteArray &inType) override
     {
         m_interpolationParameters.insert(inName, inType);
         vertex().addOutgoing(inName, inType);

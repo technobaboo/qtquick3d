@@ -122,8 +122,6 @@ struct QDemonVertexPipelineImpl : public QDemonDefaultMaterialVertexPipelineInte
         m_displacementImage = displacementImage;
     }
 
-    QString toQString(const char *inItem) { return QString::fromLocal8Bit(inItem); }
-
     bool hasTessellation() const
     {
         return m_programGenerator->getEnabledStages() & ShaderGeneratorStages::TessEval;
@@ -141,16 +139,16 @@ struct QDemonVertexPipelineImpl : public QDemonDefaultMaterialVertexPipelineInte
             QDemonShaderStageGeneratorInterface &geometryShader(*programGenerator()->getStage(ShaderGeneratorStages::Geometry));
             // currently geometry shader is only used for drawing wireframe
             if (m_wireframe) {
-                geometryShader.addUniform(QStringLiteral("viewport_matrix"), QStringLiteral("mat4"));
-                geometryShader.addOutgoing(QStringLiteral("varEdgeDistance"), QStringLiteral("vec3"));
-                geometryShader.append(QStringLiteral("layout (triangles) in;"));
-                geometryShader.append(QStringLiteral("layout (triangle_strip, max_vertices = 3) out;"));
-                geometryShader.append(QStringLiteral("void main() {"));
+                geometryShader.addUniform("viewport_matrix", "mat4");
+                geometryShader.addOutgoing("varEdgeDistance", "vec3");
+                geometryShader.append("layout (triangles) in;");
+                geometryShader.append("layout (triangle_strip, max_vertices = 3) out;");
+                geometryShader.append("void main() {");
 
                 // how this all work see
                 // http://developer.download.nvidia.com/SDK/10.5/direct3d/Source/SolidWireframe/Doc/SolidWireframe.pdf
 
-                geometryShader.append(QStringLiteral(
+                geometryShader.append(
                             "// project points to screen space\n"
                             "\tvec3 p0 = vec3(viewport_matrix * (gl_in[0].gl_Position / "
                             "gl_in[0].gl_Position.w));\n"
@@ -166,7 +164,7 @@ struct QDemonVertexPipelineImpl : public QDemonDefaultMaterialVertexPipelineInte
                             "\tfloat beta = acos( (e1*e1 + e3*e3 - e2*e2) / (2.0*e1*e3) );\n"
                             "\tfloat ha = abs( e3 * sin( beta ) );\n"
                             "\tfloat hb = abs( e3 * sin( alpha ) );\n"
-                            "\tfloat hc = abs( e2 * sin( alpha ) );\n"));
+                            "\tfloat hc = abs( e2 * sin( alpha ) );\n");
             }
         }
     }
@@ -183,33 +181,33 @@ struct QDemonVertexPipelineImpl : public QDemonDefaultMaterialVertexPipelineInte
                 char buf[10];
                 sprintf(buf, "%d", i);
                 for (TStrTableStrMap::iterator iter = m_interpolationParameters.begin(), end = m_interpolationParameters.end(); iter != end; ++iter) {
-                    geometryShader << QStringLiteral("\t")
+                    geometryShader << "\t"
                                    << iter.key()
-                                   << QStringLiteral(" = ")
+                                   << " = "
                                    << iter.key()
-                                   << QString::fromLocal8Bit(theExtension)
-                                   << QString::fromLocal8Bit(buf)
-                                   << QStringLiteral("];\n");
+                                   << theExtension
+                                   << buf
+                                   << "];\n";
                 }
 
-                geometryShader << QStringLiteral("\tgl_Position = gl_in[") << QString::fromLocal8Bit(buf) << QStringLiteral("].gl_Position;\n");
+                geometryShader << "\tgl_Position = gl_in[" << buf << "].gl_Position;\n";
                 // the triangle distance is interpolated through the shader stage
                 if (i == 0) {
-                    geometryShader << QStringLiteral("\n\tvarEdgeDistance = vec3(ha*")
-                                   << QStringLiteral("gl_in[") << QString::fromLocal8Bit(buf) << QStringLiteral("].gl_Position.w, 0.0, 0.0);\n");
+                    geometryShader << "\n\tvarEdgeDistance = vec3(ha*"
+                                   << "gl_in[" << buf << "].gl_Position.w, 0.0, 0.0);\n";
                 } else if (i == 1) {
-                    geometryShader << QStringLiteral("\n\tvarEdgeDistance = vec3(0.0, hb*")
-                                   << QStringLiteral("gl_in[") << QString::fromLocal8Bit(buf) << QStringLiteral("].gl_Position.w, 0.0);\n");
+                    geometryShader << "\n\tvarEdgeDistance = vec3(0.0, hb*"
+                                   << "gl_in[" << buf << "].gl_Position.w, 0.0);\n";
                 } else if (i == 2) {
-                    geometryShader << QStringLiteral("\n\tvarEdgeDistance = vec3(0.0, 0.0, hc*")
-                                   << QStringLiteral("gl_in[") << QString::fromLocal8Bit(buf) << QStringLiteral("].gl_Position.w);\n");
+                    geometryShader << "\n\tvarEdgeDistance = vec3(0.0, 0.0, hc*"
+                                   << "gl_in[" << buf << "].gl_Position.w);\n";
                 }
 
                 // submit vertex
-                geometryShader << QStringLiteral("\tEmitVertex();\n");
+                geometryShader << "\tEmitVertex();\n";
             }
             // end primitive
-            geometryShader << QStringLiteral("\tEndPrimitive();\n");
+            geometryShader << "\tEndPrimitive();\n";
         }
     }
 
@@ -220,15 +218,15 @@ struct QDemonVertexPipelineImpl : public QDemonDefaultMaterialVertexPipelineInte
         // depending on the selected tessellation mode chose program
         switch (inTessMode) {
         case TessModeValues::TessPhong:
-            tessShader.addInclude(QStringLiteral("tessellationPhong.glsllib"));
+            tessShader.addInclude("tessellationPhong.glsllib");
             break;
         case TessModeValues::TessNPatch:
-            tessShader.addInclude(QStringLiteral("tessellationNPatch.glsllib"));
+            tessShader.addInclude("tessellationNPatch.glsllib");
             break;
         default:
             Q_ASSERT(false); // fallthrough intentional
         case TessModeValues::TessLinear:
-            tessShader.addInclude(QStringLiteral("tessellationLinear.glsllib"));
+            tessShader.addInclude("tessellationLinear.glsllib");
             break;
         }
     }
@@ -243,9 +241,9 @@ struct QDemonVertexPipelineImpl : public QDemonDefaultMaterialVertexPipelineInte
         Q_ASSERT(inUVSet == 0 || inUVSet == 1);
 
         if (inUVSet == 0)
-            addInterpolationParameter(QStringLiteral("varTexCoord0"), QStringLiteral("vec2"));
+            addInterpolationParameter("varTexCoord0", "vec2");
         else if (inUVSet == 1)
-            addInterpolationParameter(QStringLiteral("varTexCoord1"), QStringLiteral("vec2"));
+            addInterpolationParameter("varTexCoord1", "vec2");
 
         doGenerateUVCoords(inUVSet);
     }
@@ -257,15 +255,15 @@ struct QDemonVertexPipelineImpl : public QDemonDefaultMaterialVertexPipelineInte
         generateWorldPosition();
         generateWorldNormal();
         QDemonShaderStageGeneratorInterface &activeGenerator(activeStage());
-        activeGenerator.addInclude(QStringLiteral("viewProperties.glsllib"));
-        addInterpolationParameter(QStringLiteral("var_object_to_camera"), QStringLiteral("vec3"));
-        activeGenerator.append(QStringLiteral("\tvar_object_to_camera = normalize( local_model_world_position "
-                               "- camera_position );"));
+        activeGenerator.addInclude("viewProperties.glsllib");
+        addInterpolationParameter("var_object_to_camera", "vec3");
+        activeGenerator.append("\tvar_object_to_camera = normalize( local_model_world_position "
+                               "- camera_position );");
         // World normal cannot be relied upon in the vertex shader because of bump maps.
-        fragment().append(QStringLiteral("\tvec3 environment_map_reflection = reflect( "
-                          "normalize(var_object_to_camera), world_normal.xyz );"));
-        fragment().append(QStringLiteral("\tenvironment_map_reflection *= vec3( 0.5, 0.5, 0 );"));
-        fragment().append(QStringLiteral("\tenvironment_map_reflection += vec3( 0.5, 0.5, 1.0 );"));
+        fragment().append("\tvec3 environment_map_reflection = reflect( "
+                          "normalize(var_object_to_camera), world_normal.xyz );");
+        fragment().append("\tenvironment_map_reflection *= vec3( 0.5, 0.5, 0 );");
+        fragment().append("\tenvironment_map_reflection += vec3( 0.5, 0.5, 1.0 );");
     }
     void generateViewVector() override
     {
@@ -273,12 +271,12 @@ struct QDemonVertexPipelineImpl : public QDemonDefaultMaterialVertexPipelineInte
             return;
         generateWorldPosition();
         QDemonShaderStageGeneratorInterface &activeGenerator(activeStage());
-        activeGenerator.addInclude(QStringLiteral("viewProperties.glsllib"));
-        addInterpolationParameter(QStringLiteral("varViewVector"), QStringLiteral("vec3"));
-        activeGenerator.append(QStringLiteral("\tvec3 local_view_vector = normalize(camera_position - "
-                               "local_model_world_position);"));
-        assignOutput(QStringLiteral("varViewVector"), QStringLiteral("local_view_vector"));
-        fragment() << QStringLiteral("\tvec3 view_vector = normalize(varViewVector);\n");
+        activeGenerator.addInclude("viewProperties.glsllib");
+        addInterpolationParameter("varViewVector", "vec3");
+        activeGenerator.append("\tvec3 local_view_vector = normalize(camera_position - "
+                               "local_model_world_position);");
+        assignOutput("varViewVector", "local_view_vector");
+        fragment() << "\tvec3 view_vector = normalize(varViewVector);\n";
     }
 
     // fragment shader expects varying vertex normal
@@ -287,93 +285,92 @@ struct QDemonVertexPipelineImpl : public QDemonDefaultMaterialVertexPipelineInte
     {
         if (setCode(GenerationFlagValues::WorldNormal))
             return;
-        addInterpolationParameter(QStringLiteral("varNormal"), QStringLiteral("vec3"));
+        addInterpolationParameter("varNormal", "vec3");
         doGenerateWorldNormal();
-        fragment().append(QStringLiteral("\tvec3 world_normal = normalize( varNormal );"));
+        fragment().append("\tvec3 world_normal = normalize( varNormal );");
     }
     void generateObjectNormal() override
     {
         if (setCode(GenerationFlagValues::ObjectNormal))
             return;
         doGenerateObjectNormal();
-        fragment().append(QStringLiteral("\tvec3 object_normal = normalize(varObjectNormal);"));
+        fragment().append("\tvec3 object_normal = normalize(varObjectNormal);");
     }
     void generateWorldPosition() override
     {
         if (setCode(GenerationFlagValues::WorldPosition))
             return;
 
-        activeStage().addUniform(QStringLiteral("model_matrix"), QStringLiteral("mat4"));
-        addInterpolationParameter(QStringLiteral("varWorldPos"), QStringLiteral("vec3"));
+        activeStage().addUniform("model_matrix", "mat4");
+        addInterpolationParameter("varWorldPos", "vec3");
         doGenerateWorldPosition();
 
-        assignOutput(QStringLiteral("varWorldPos"), QStringLiteral("local_model_world_position"));
+        assignOutput("varWorldPos", "local_model_world_position");
     }
     void generateVarTangentAndBinormal() override
     {
         if (setCode(GenerationFlagValues::TangentBinormal))
             return;
-        addInterpolationParameter(QStringLiteral("varTangent"), QStringLiteral("vec3"));
-        addInterpolationParameter(QStringLiteral("varBinormal"), QStringLiteral("vec3"));
+        addInterpolationParameter("varTangent", "vec3");
+        addInterpolationParameter("varBinormal", "vec3");
         doGenerateVarTangentAndBinormal();
-        fragment() << QStringLiteral("\tvec3 tangent = normalize(varTangent);\n")
-                   << QStringLiteral("\tvec3 binormal = normalize(varBinormal);\n");
+        fragment() << "\tvec3 tangent = normalize(varTangent);\n"
+                   << "\tvec3 binormal = normalize(varBinormal);\n";
     }
     void generateVertexColor() override
     {
         if (setCode(GenerationFlagValues::VertexColor))
             return;
-        addInterpolationParameter(QStringLiteral("varColor"), QStringLiteral("vec3"));
+        addInterpolationParameter("varColor", "vec3");
         doGenerateVertexColor();
-        fragment().append(QStringLiteral("\tvec3 vertColor = varColor;"));
+        fragment().append("\tvec3 vertColor = varColor;");
     }
 
     bool hasActiveWireframe() override { return m_wireframe; }
 
-    void addIncoming(const QString &name, const QString &type) override
+    void addIncoming(const QByteArray &name, const QByteArray &type) override
     {
         activeStage().addIncoming(name, type);
     }
 
-    void addOutgoing(const QString &name, const QString &type) override
+    void addOutgoing(const QByteArray &name, const QByteArray &type) override
     {
         addInterpolationParameter(name, type);
     }
 
-    void addUniform(const QString &name, const QString &type) override
+    void addUniform(const QByteArray &name, const QByteArray &type) override
     {
         activeStage().addUniform(name, type);
     }
 
-    void addInclude(const QString &name) override { activeStage().addInclude(name); }
+    void addInclude(const QByteArray &name) override { activeStage().addInclude(name); }
 
-    void addFunction(const QString &functionName) override
+    void addFunction(const QByteArray &functionName) override
     {
         if (!m_addedFunctions.contains(functionName)) {
             m_addedFunctions.push_back(functionName);
-            QString includeName = QStringLiteral("func") + functionName + QStringLiteral(".glsllib");
+            QByteArray includeName = "func" + functionName + ".glsllib";
             addInclude(includeName);
         }
     }
 
-    void addConstantBuffer(const QString &name, const QString &layout) override
+    void addConstantBuffer(const QByteArray &name, const QByteArray &layout) override
     {
         activeStage().addConstantBuffer(name, layout);
     }
-    void addConstantBufferParam(const QString &cbName, const QString &paramName,
-                                const QString &type) override
+    void addConstantBufferParam(const QByteArray &cbName, const QByteArray &paramName, const QByteArray &type) override
     {
         activeStage().addConstantBufferParam(cbName, paramName, type);
     }
 
-    QDemonShaderStageGeneratorInterface &operator<<(const QString &data) override
+    QDemonShaderStageGeneratorInterface &operator<<(const QByteArray &data) override
     {
         activeStage() << data;
         return *this;
     }
 
-    void append(const QString &data) override { activeStage().append(data); }
-    void appendPartial(const QString &data) override { activeStage().append(data); }
+    void append(const QByteArray &data) override { activeStage().append(data); }
+    void appendPartial(const QByteArray &data) override { activeStage().append(data); }
 
     ShaderGeneratorStages::Enum stage() const override
     {
@@ -381,14 +378,14 @@ struct QDemonVertexPipelineImpl : public QDemonDefaultMaterialVertexPipelineInte
     }
 
     void beginVertexGeneration(quint32 displacementImageIdx, QDemonRenderableImage *displacementImage) override = 0;
-    void assignOutput(const QString &inVarName, const QString &inVarValueExpr) override = 0;
+    void assignOutput(const QByteArray &inVarName, const QByteArray &inVarValueExpr) override = 0;
     void endVertexGeneration() override = 0;
 
     void beginFragmentGeneration() override = 0;
     void endFragmentGeneration() override = 0;
 
     virtual QDemonShaderStageGeneratorInterface &activeStage() = 0;
-    virtual void addInterpolationParameter(const QString &inParamName, const QString &inParamType) = 0;
+    virtual void addInterpolationParameter(const QByteArray &inParamName, const QByteArray &inParamType) = 0;
 
     virtual void doGenerateUVCoords(quint32 inUVSet) = 0;
     virtual void doGenerateWorldNormal() = 0;

@@ -54,7 +54,7 @@ public:
     // Output variables may be mangled in some circumstances so the shader generation system
     // needs an abstraction
     // mechanism around this.
-    virtual void assignOutput(const QString &inVarName, const QString &inVarValueExpr) = 0;
+    virtual void assignOutput(const QByteArray &inVarName, const QByteArray &inVarValueExpr) = 0;
 
     /**
          * @brief Generates UV coordinates in shader code

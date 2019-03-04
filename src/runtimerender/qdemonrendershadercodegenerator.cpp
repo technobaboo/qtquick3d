@@ -52,43 +52,43 @@ void QDemonShaderCodeGeneratorBase::begin()
     m_constantBuffers.clear();
     m_constantBufferParams.clear();
 }
-void QDemonShaderCodeGeneratorBase::append(const QString &data)
+void QDemonShaderCodeGeneratorBase::append(const QByteArray &data)
 {
     m_codeBuilder.append(data);
     m_codeBuilder.append("\n");
 }
 // don't add the newline
-void QDemonShaderCodeGeneratorBase::appendPartial(const QString &data)
+void QDemonShaderCodeGeneratorBase::appendPartial(const QByteArray &data)
 {
     m_codeBuilder.append(data);
 }
-void QDemonShaderCodeGeneratorBase::addUniform(const QString &name, const QString &type)
+void QDemonShaderCodeGeneratorBase::addUniform(const QByteArray &name, const QByteArray &type)
 {
     m_uniforms.insert(name, type);
 }
-void QDemonShaderCodeGeneratorBase::addConstantBuffer(const QString &name, const QString &layout)
+void QDemonShaderCodeGeneratorBase::addConstantBuffer(const QByteArray &name, const QByteArray &layout)
 {
     m_constantBuffers.insert(name, layout);
 }
-void QDemonShaderCodeGeneratorBase::addConstantBufferParam(const QString &cbName, const QString &paramName,
-                                                      const QString &type)
+void QDemonShaderCodeGeneratorBase::addConstantBufferParam(const QByteArray &cbName, const QByteArray &paramName,
+                                                      const QByteArray &type)
 {
     TParamPair theParamPair(paramName, type);
     TConstantBufferParamPair theBufferParamPair(cbName, theParamPair);
     m_constantBufferParams.push_back(theBufferParamPair);
 }
 
-void QDemonShaderCodeGeneratorBase::addAttribute(const QString &name, const QString &type)
+void QDemonShaderCodeGeneratorBase::addAttribute(const QByteArray &name, const QByteArray &type)
 {
     m_attributes.insert(name, type);
 }
 
-void QDemonShaderCodeGeneratorBase::addVarying(const QString &name, const QString &type)
+void QDemonShaderCodeGeneratorBase::addVarying(const QByteArray &name, const QByteArray &type)
 {
     getVaryings().insert(name, type);
 }
 
-void QDemonShaderCodeGeneratorBase::addLocalVariable(const QString &name, const QString &type, int tabCount)
+void QDemonShaderCodeGeneratorBase::addLocalVariable(const QByteArray &name, const QByteArray &type, int tabCount)
 {
     for (; tabCount >= 0; --tabCount)
         m_codeBuilder.append("\t");
@@ -98,7 +98,7 @@ void QDemonShaderCodeGeneratorBase::addLocalVariable(const QString &name, const 
     m_codeBuilder.append(";\n");
 }
 
-void QDemonShaderCodeGeneratorBase::addInclude(const QString &name)
+void QDemonShaderCodeGeneratorBase::addInclude(const QByteArray &name)
 {
     m_includes.insert(name);
 }
@@ -279,7 +279,8 @@ const QString &QDemonShaderCodeGeneratorBase::buildShaderSource()
     m_finalShaderBuilder.append(m_codeBuilder);
     return m_finalShaderBuilder;
 }
-QDemonShaderCodeGeneratorBase &QDemonShaderCodeGeneratorBase::operator<<(const QString &data)
+
+QDemonShaderCodeGeneratorBase &QDemonShaderCodeGeneratorBase::operator<<(const QByteArray &data)
 {
     m_codeBuilder.append(data);
     return *this;

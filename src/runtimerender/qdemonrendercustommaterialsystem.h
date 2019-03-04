@@ -142,7 +142,7 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonCustomMaterialVertexPipeline : public Q
     virtual void beginFragmentGeneration() override;
     // Output variables may be mangled in some circumstances so the shader generation
     // system needs an abstraction mechanism around this.
-    virtual void assignOutput(const QString &inVarName, const QString &inVarValue) override;
+    virtual void assignOutput(const QByteArray &inVarName, const QByteArray &inVarValue) override;
     virtual void generateEnvMapReflection() override {}
     virtual void generateViewVector() override {}
     virtual void generateUVCoords(quint32 inUVSet) override;
@@ -154,7 +154,7 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonCustomMaterialVertexPipeline : public Q
     virtual void endVertexGeneration() override;
     virtual void endFragmentGeneration() override;
     virtual QDemonShaderStageGeneratorInterface &activeStage() override;
-    virtual void addInterpolationParameter(const QString &inName, const QString &inType) override;
+    virtual void addInterpolationParameter(const QByteArray &inName, const QByteArray &inType) override;
     virtual void doGenerateUVCoords(quint32 inUVSet) override;
     virtual void doGenerateWorldNormal() override;
     virtual void doGenerateObjectNormal() override;

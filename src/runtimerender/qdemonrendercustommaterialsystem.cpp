@@ -82,31 +82,31 @@ void QDemonCustomMaterialVertexPipeline::initializeTessControlShader()
 
     QDemonShaderStageGeneratorInterface &tessCtrlShader(*programGenerator()->getStage(ShaderGeneratorStages::TessControl));
 
-    tessCtrlShader.addUniform(QStringLiteral("tessLevelInner"), QStringLiteral("float"));
-    tessCtrlShader.addUniform(QStringLiteral("tessLevelOuter"), QStringLiteral("float"));
+    tessCtrlShader.addUniform("tessLevelInner", "float");
+    tessCtrlShader.addUniform("tessLevelOuter", "float");
 
     setupTessIncludes(ShaderGeneratorStages::TessControl, m_tessMode);
 
-    tessCtrlShader.append(QStringLiteral("void main() {\n"));
+    tessCtrlShader.append("void main() {\n");
 
-    tessCtrlShader.append(QStringLiteral("\tctWorldPos[0] = varWorldPos[0];"));
-    tessCtrlShader.append(QStringLiteral("\tctWorldPos[1] = varWorldPos[1];"));
-    tessCtrlShader.append(QStringLiteral("\tctWorldPos[2] = varWorldPos[2];"));
+    tessCtrlShader.append("\tctWorldPos[0] = varWorldPos[0];");
+    tessCtrlShader.append("\tctWorldPos[1] = varWorldPos[1];");
+    tessCtrlShader.append("\tctWorldPos[2] = varWorldPos[2];");
 
     if (m_tessMode == TessModeValues::TessPhong || m_tessMode == TessModeValues::TessNPatch) {
-        tessCtrlShader.append(QStringLiteral("\tctNorm[0] = varObjectNormal[0];"));
-        tessCtrlShader.append(QStringLiteral("\tctNorm[1] = varObjectNormal[1];"));
-        tessCtrlShader.append(QStringLiteral("\tctNorm[2] = varObjectNormal[2];"));
+        tessCtrlShader.append("\tctNorm[0] = varObjectNormal[0];");
+        tessCtrlShader.append("\tctNorm[1] = varObjectNormal[1];");
+        tessCtrlShader.append("\tctNorm[2] = varObjectNormal[2];");
     }
     if (m_tessMode == TessModeValues::TessNPatch) {
-        tessCtrlShader.append(QStringLiteral("\tctTangent[0] = varObjTangent[0];"));
-        tessCtrlShader.append(QStringLiteral("\tctTangent[1] = varObjTangent[1];"));
-        tessCtrlShader.append(QStringLiteral("\tctTangent[2] = varObjTangent[2];"));
+        tessCtrlShader.append("\tctTangent[0] = varObjTangent[0];");
+        tessCtrlShader.append("\tctTangent[1] = varObjTangent[1];");
+        tessCtrlShader.append("\tctTangent[2] = varObjTangent[2];");
     }
 
     tessCtrlShader.append(
-                QStringLiteral("\tgl_out[gl_InvocationID].gl_Position = gl_in[gl_InvocationID].gl_Position;"));
-    tessCtrlShader.append(QStringLiteral("\ttessShader( tessLevelOuter, tessLevelInner);\n"));
+                "\tgl_out[gl_InvocationID].gl_Position = gl_in[gl_InvocationID].gl_Position;");
+    tessCtrlShader.append("\ttessShader( tessLevelOuter, tessLevelInner);\n");
 }
 
 void QDemonCustomMaterialVertexPipeline::initializeTessEvaluationShader()
@@ -119,32 +119,32 @@ void QDemonCustomMaterialVertexPipeline::initializeTessEvaluationShader()
     QDemonShaderStageGeneratorInterface &tessEvalShader(
                 *programGenerator()->getStage(ShaderGeneratorStages::TessEval));
 
-    tessEvalShader.addUniform(QStringLiteral("model_view_projection"), QStringLiteral("mat4"));
-    tessEvalShader.addUniform(QStringLiteral("normal_matrix"), QStringLiteral("mat3"));
+    tessEvalShader.addUniform("model_view_projection", "mat4");
+    tessEvalShader.addUniform("normal_matrix", "mat3");
 
     setupTessIncludes(ShaderGeneratorStages::TessEval, m_tessMode);
 
     if (m_tessMode == TessModeValues::TessLinear && m_displacementImage) {
-        tessEvalShader.addInclude(QStringLiteral("defaultMaterialFileDisplacementTexture.glsllib"));
-        tessEvalShader.addUniform(QStringLiteral("model_matrix"), QStringLiteral("mat4"));
-        tessEvalShader.addUniform(QStringLiteral("displace_tiling"), QStringLiteral("vec3"));
-        tessEvalShader.addUniform(QStringLiteral("displaceAmount"), QStringLiteral("float"));
-        tessEvalShader.addUniform(m_displacementImage->m_image.m_imageShaderName, QStringLiteral("sampler2D"));
+        tessEvalShader.addInclude("defaultMaterialFileDisplacementTexture.glsllib");
+        tessEvalShader.addUniform("model_matrix", "mat4");
+        tessEvalShader.addUniform("displace_tiling", "vec3");
+        tessEvalShader.addUniform("displaceAmount", "float");
+        tessEvalShader.addUniform(m_displacementImage->m_image.m_imageShaderName.toUtf8(), "sampler2D");
     }
 
-    tessEvalShader.append(QStringLiteral("void main() {"));
+    tessEvalShader.append("void main() {");
 
     if (m_tessMode == TessModeValues::TessNPatch) {
-        tessEvalShader.append(QStringLiteral("\tctNorm[0] = varObjectNormalTC[0];"));
-        tessEvalShader.append(QStringLiteral("\tctNorm[1] = varObjectNormalTC[1];"));
-        tessEvalShader.append(QStringLiteral("\tctNorm[2] = varObjectNormalTC[2];"));
+        tessEvalShader.append("\tctNorm[0] = varObjectNormalTC[0];");
+        tessEvalShader.append("\tctNorm[1] = varObjectNormalTC[1];");
+        tessEvalShader.append("\tctNorm[2] = varObjectNormalTC[2];");
 
-        tessEvalShader.append(QStringLiteral("\tctTangent[0] = varTangentTC[0];"));
-        tessEvalShader.append(QStringLiteral("\tctTangent[1] = varTangentTC[1];"));
-        tessEvalShader.append(QStringLiteral("\tctTangent[2] = varTangentTC[2];"));
+        tessEvalShader.append("\tctTangent[0] = varTangentTC[0];");
+        tessEvalShader.append("\tctTangent[1] = varTangentTC[1];");
+        tessEvalShader.append("\tctTangent[2] = varTangentTC[2];");
     }
 
-    tessEvalShader.append(QStringLiteral("\tvec4 pos = tessShader( );\n"));
+    tessEvalShader.append("\tvec4 pos = tessShader( );\n");
 }
 
 void QDemonCustomMaterialVertexPipeline::finalizeTessControlShader()
@@ -156,11 +156,11 @@ void QDemonCustomMaterialVertexPipeline::finalizeTessControlShader()
     for (TParamIter iter = m_interpolationParameters.begin(),
          end = m_interpolationParameters.end();
          iter != end; ++iter) {
-        tessCtrlShader << QStringLiteral("\t")
+        tessCtrlShader << "\t"
                        << iter.key()
-                       << QStringLiteral("TC[gl_InvocationID] = ")
+                       << "TC[gl_InvocationID] = "
                        << iter.key()
-                       << QStringLiteral("[gl_InvocationID];\n");
+                       << "[gl_InvocationID];\n";
     }
 }
 
@@ -168,9 +168,9 @@ void QDemonCustomMaterialVertexPipeline::finalizeTessEvaluationShader()
 {
     QDemonShaderStageGeneratorInterface &tessEvalShader(*programGenerator()->getStage(ShaderGeneratorStages::TessEval));
 
-    QString outExt;
+    QByteArray outExt;
     if (programGenerator()->getEnabledStages() & ShaderGeneratorStages::Geometry)
-        outExt = QStringLiteral("TE");
+        outExt = "TE";
 
     // add varyings we must pass through
     typedef TStrTableStrMap::const_iterator TParamIter;
@@ -178,40 +178,40 @@ void QDemonCustomMaterialVertexPipeline::finalizeTessEvaluationShader()
         for (TParamIter iter = m_interpolationParameters.begin(),
              end = m_interpolationParameters.end();
              iter != end; ++iter) {
-            tessEvalShader << QStringLiteral("\t")
+            tessEvalShader << "\t"
                            << iter.key()
                            << outExt
-                           << QStringLiteral(" = gl_TessCoord.z * ")
+                           << " = gl_TessCoord.z * "
                            << iter.key()
-                           << QStringLiteral("TC[0] + ");
-            tessEvalShader << QStringLiteral("gl_TessCoord.x * ")
+                           << "TC[0] + ";
+            tessEvalShader << "gl_TessCoord.x * "
                            << iter.key()
-                           << QStringLiteral("TC[1] + ");
-            tessEvalShader << QStringLiteral("gl_TessCoord.y * ")
+                           << "TC[1] + ";
+            tessEvalShader << "gl_TessCoord.y * "
                            << iter.key()
-                           << QStringLiteral("TC[2];\n");
+                           << "TC[2];\n";
         }
 
         // transform the normal
         if (m_generationFlags & GenerationFlagValues::WorldNormal)
-            tessEvalShader << QStringLiteral("\n\tvarNormal") << outExt
-                           << QStringLiteral(" = normalize(normal_matrix * teNorm);\n");
+            tessEvalShader << "\n\tvarNormal" << outExt
+                           << " = normalize(normal_matrix * teNorm);\n";
         // transform the tangent
         if (m_generationFlags & GenerationFlagValues::TangentBinormal) {
-            tessEvalShader << QStringLiteral("\n\tvarTangent") << outExt
-                           << QStringLiteral(" = normalize(normal_matrix * teTangent);\n");
+            tessEvalShader << "\n\tvarTangent" << outExt
+                           << " = normalize(normal_matrix * teTangent);\n";
             // transform the binormal
-            tessEvalShader << QStringLiteral("\n\tvarBinormal") << outExt
-                           << QStringLiteral(" = normalize(normal_matrix * teBinormal);\n");
+            tessEvalShader << "\n\tvarBinormal" << outExt
+                           << " = normalize(normal_matrix * teBinormal);\n";
         }
     } else {
         for (TParamIter iter = m_interpolationParameters.begin(),
              end = m_interpolationParameters.end();
              iter != end; ++iter) {
-            tessEvalShader << QStringLiteral("\t") << iter.key() << outExt
-                           << QStringLiteral(" = gl_TessCoord.x * ") << iter.key() << QStringLiteral("TC[0] + ");
-            tessEvalShader << QStringLiteral("gl_TessCoord.y * ") << iter.key() << QStringLiteral("TC[1] + ");
-            tessEvalShader << QStringLiteral("gl_TessCoord.z * ") << iter.key() << QStringLiteral("TC[2];\n");
+            tessEvalShader << "\t" << iter.key() << outExt
+                           << " = gl_TessCoord.x * " << iter.key() << "TC[0] + ";
+            tessEvalShader << "gl_TessCoord.y * " << iter.key() << "TC[1] + ";
+            tessEvalShader << "gl_TessCoord.z * " << iter.key() << "TC[2];\n";
         }
 
         // displacement mapping makes only sense with linear tessellation
@@ -219,19 +219,19 @@ void QDemonCustomMaterialVertexPipeline::finalizeTessEvaluationShader()
             tessEvalShader
                     << "\ttexture_coordinate_info tmp = textureCoordinateInfo( varTexCoord0"
                     << outExt << ", varTangent" << outExt << ", varBinormal"
-                    << outExt << " );" << QStringLiteral("\n");
+                    << outExt << " );" << "\n";
             tessEvalShader << "\ttmp = transformCoordinate( rotationTranslationScale( vec3( "
                               "0.000000, 0.000000, 0.000000 ), vec3( 0.000000, 0.000000, "
                               "0.000000 ), displace_tiling ), tmp);"
-                           << QStringLiteral("\n");
+                           << "\n";
 
             tessEvalShader << "\tpos.xyz = defaultMaterialFileDisplacementTexture( "
-                           << m_displacementImage->m_image.m_imageShaderName
+                           << m_displacementImage->m_image.m_imageShaderName.toUtf8()
                            << ", displaceAmount, "
                            << "tmp.position.xy";
-            tessEvalShader << ", varObjectNormal" << outExt << ", pos.xyz );" << QStringLiteral("\n");
+            tessEvalShader << ", varObjectNormal" << outExt << ", pos.xyz );" << "\n";
             tessEvalShader << "\tvarWorldPos" << outExt << "= (model_matrix * pos).xyz;"
-                           << QStringLiteral("\n");
+                           << "\n";
         }
 
         // transform the normal
@@ -277,7 +277,7 @@ void QDemonCustomMaterialVertexPipeline::beginVertexGeneration(quint32 displacem
     vertexShader.addInclude("customMaterial.glsllib");
 
     vertexShader.addIncoming("attr_pos", "vec3");
-    vertexShader << "void main()" << QStringLiteral("\n") << "{" << QStringLiteral("\n");
+    vertexShader << "void main()" << "\n" << "{" << "\n";
 
     if (displacementImage) {
         generateUVCoords(0);
@@ -290,22 +290,22 @@ void QDemonCustomMaterialVertexPipeline::beginVertexGeneration(quint32 displacem
             vertexShader.addUniform("model_matrix", "mat4");
 
             vertexShader.addInclude("defaultMaterialFileDisplacementTexture.glsllib");
-            vertexShader.addUniform(displacementImage->m_image.m_imageShaderName,
+            vertexShader.addUniform(displacementImage->m_image.m_imageShaderName.toUtf8(),
                                     "sampler2D");
 
             vertexShader << "\ttexture_coordinate_info tmp = textureCoordinateInfo( texCoord0, "
                             "varTangent, varBinormal );"
-                         << QStringLiteral("\n");
+                         << "\n";
             vertexShader << "\ttmp = transformCoordinate( rotationTranslationScale( vec3( "
                             "0.000000, 0.000000, 0.000000 ), vec3( 0.000000, 0.000000, "
                             "0.000000 ), displace_tiling ), tmp);"
-                         << QStringLiteral("\n");
+                         << "\n";
 
             vertexShader << "\tvec3 displacedPos = defaultMaterialFileDisplacementTexture( "
-                         << displacementImage->m_image.m_imageShaderName
+                         << displacementImage->m_image.m_imageShaderName.toUtf8()
                          << ", displaceAmount, "
                          << "tmp.position.xy"
-                         << ", attr_norm, attr_pos );" << QStringLiteral("\n");
+                         << ", attr_norm, attr_pos );" << "\n";
 
             addInterpolationParameter("varWorldPos", "vec3");
             vertexShader.append("\tvec3 local_model_world_position = (model_matrix * "
@@ -336,11 +336,11 @@ void QDemonCustomMaterialVertexPipeline::beginVertexGeneration(quint32 displacem
 void QDemonCustomMaterialVertexPipeline::beginFragmentGeneration()
 {
     fragment().addUniform("object_opacity", "float");
-    fragment() << "void main()" << QStringLiteral("\n") << "{" << QStringLiteral("\n");
+    fragment() << "void main()" << "\n" << "{" << "\n";
 }
 
-void QDemonCustomMaterialVertexPipeline::assignOutput(const QString &inVarName,
-                                                 const QString &inVarValue)
+void QDemonCustomMaterialVertexPipeline::assignOutput(const QByteArray &inVarName,
+                                                 const QByteArray &inVarValue)
 {
     vertex() << "\t" << inVarName << " = " << inVarValue << ";\n";
 }
@@ -431,14 +431,14 @@ QDemonShaderStageGeneratorInterface &QDemonCustomMaterialVertexPipeline::activeS
     return vertex();
 }
 
-void QDemonCustomMaterialVertexPipeline::addInterpolationParameter(const QString &inName, const QString &inType)
+void QDemonCustomMaterialVertexPipeline::addInterpolationParameter(const QByteArray &inName, const QByteArray &inType)
 {
     m_interpolationParameters.insert(inName, inType);
     vertex().addOutgoing(inName, inType);
     fragment().addIncoming(inName, inType);
 
     if (hasTessellation()) {
-        QString nameBuilder(inName);
+        QByteArray nameBuilder(inName);
         nameBuilder.append("TC");
         tessControl().addOutgoing(nameBuilder, inType);
 
@@ -457,11 +457,11 @@ void QDemonCustomMaterialVertexPipeline::doGenerateUVCoords(quint32 inUVSet)
 
     if (inUVSet == 0) {
         vertex().addIncoming("attr_uv0", "vec2");
-        vertex() << "\tvec3 texCoord0 = vec3( attr_uv0, 0.0 );" << QStringLiteral("\n");
+        vertex() << "\tvec3 texCoord0 = vec3( attr_uv0, 0.0 );" << "\n";
         assignOutput("varTexCoord0", "texCoord0");
     } else if (inUVSet == 1) {
         vertex().addIncoming("attr_uv1", "vec2");
-        vertex() << "\tvec3 texCoord1 = vec3( attr_uv1, 1.0 );" << QStringLiteral("\n");
+        vertex() << "\tvec3 texCoord1 = vec3( attr_uv1, 1.0 );" << "\n";
         assignOutput("varTexCoord1", "texCoord1");
     }
 }
@@ -495,11 +495,11 @@ void QDemonCustomMaterialVertexPipeline::doGenerateVarTangentAndBinormal()
     vertex().addIncoming("attr_textan", "vec3");
     vertex().addIncoming("attr_binormal", "vec3");
 
-    vertex() << "\tvarTangent = normal_matrix * attr_textan;" << QStringLiteral("\n")
-             << "\tvarBinormal = normal_matrix * attr_binormal;" << QStringLiteral("\n");
+    vertex() << "\tvarTangent = normal_matrix * attr_textan;" << "\n"
+             << "\tvarBinormal = normal_matrix * attr_binormal;" << "\n";
 
-    vertex() << "\tvarObjTangent = attr_textan;" << QStringLiteral("\n") << "\tvarObjBinormal = attr_binormal;"
-             << QStringLiteral("\n");
+    vertex() << "\tvarObjTangent = attr_textan;" << "\n" << "\tvarObjBinormal = attr_binormal;"
+             << "\n";
 }
 
 void QDemonCustomMaterialVertexPipeline::doGenerateVertexColor()
@@ -1924,12 +1924,12 @@ struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface
         QDemonConstDataRef<dynamic::QDemonPropertyDefinition> thePropDefs = inClass.m_class->getProperties();
         for (quint32 idx = 0, end = thePropDefs.size(); idx < end; ++idx) {
             if (thePropDefs[idx].dataType == QDemonRenderShaderDataTypes::Float
-                    && (thePropDefs[idx].name == QStringLiteral("displaceAmount"))) {
+                    && (thePropDefs[idx].name == "displaceAmount")) {
                 float theValue = *reinterpret_cast<const float *>(inMaterial.getDataSectionBegin()
                                                                   + thePropDefs[idx].offset);
                 inMaterial.m_displaceAmount = theValue;
             } else if (thePropDefs[idx].dataType == QDemonRenderShaderDataTypes::Vec3
-                       && (thePropDefs[idx].name == QStringLiteral("displace_tiling"))) {
+                       && (thePropDefs[idx].name == "displace_tiling")) {
                 QVector3D theValue = *reinterpret_cast<const QVector3D *>(inMaterial.getDataSectionBegin()
                                                                           + thePropDefs[idx].offset);
                 if (theValue.x() != inMaterial.m_displacementMap->m_scale.x()

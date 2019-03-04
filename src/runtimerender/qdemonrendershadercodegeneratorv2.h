@@ -59,24 +59,22 @@ class Q_DEMONRUNTIMERENDER_EXPORT QDemonShaderStageGeneratorInterface
 protected:
     virtual ~QDemonShaderStageGeneratorInterface();
 public:
-    virtual void addIncoming(const QString &name, const QString &type) = 0;
+    virtual void addIncoming(const QByteArray &name, const QByteArray &type) = 0;
 
-    virtual void addOutgoing(const QString &name, const QString &type) = 0;
+    virtual void addOutgoing(const QByteArray &name, const QByteArray &type) = 0;
 
-    virtual void addUniform(const QString &name, const QString &type) = 0;
+    virtual void addUniform(const QByteArray &name, const QByteArray &type) = 0;
 
-    virtual void addInclude(const QString &name) = 0;
+    virtual void addInclude(const QByteArray &name) = 0;
 
-    virtual void addFunction(const QString &functionName) = 0;
+    virtual void addFunction(const QByteArray &functionName) = 0;
 
-    virtual void addConstantBuffer(const QString &name, const QString &layout) = 0;
-    virtual void addConstantBufferParam(const QString &cbName, const QString &paramName, const QString &type) = 0;
+    virtual void addConstantBuffer(const QByteArray &name, const QByteArray &layout) = 0;
+    virtual void addConstantBufferParam(const QByteArray &cbName, const QByteArray &paramName, const QByteArray &type) = 0;
 
-    virtual QDemonShaderStageGeneratorInterface &operator<<(const QString &data) = 0;
-    QDemonShaderStageGeneratorInterface &operator<<(const char *data)
-    { return (*this) << QString::fromUtf8(data); }
-    virtual void append(const QString &data) = 0;
-    virtual void appendPartial(const QString &data) = 0;
+    virtual QDemonShaderStageGeneratorInterface &operator<<(const QByteArray &data) = 0;
+    virtual void append(const QByteArray &data) = 0;
+    virtual void appendPartial(const QByteArray &data) = 0;
 
     virtual ShaderGeneratorStages::Enum stage() const = 0;
 };

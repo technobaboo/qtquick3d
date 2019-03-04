@@ -244,40 +244,40 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
     bool m_hasTransparency;
     bool m_lightsAsSeparateUniforms;
 
-    QString m_imageStem;
-    QString m_imageSampler;
-    QString m_imageOffsets;
-    QString m_imageRotations;
-    QString m_imageFragCoords;
-    QString m_imageTemp;
-    QString m_imageSamplerSize;
+    QByteArray m_imageStem;
+    QByteArray m_imageSampler;
+    QByteArray m_imageOffsets;
+    QByteArray m_imageRotations;
+    QByteArray m_imageFragCoords;
+    QByteArray m_imageTemp;
+    QByteArray m_imageSamplerSize;
 
-    QString m_texCoordTemp;
+    QByteArray m_texCoordTemp;
 
-    QString m_lightStem;
-    QString m_lightColor;
-    QString m_lightSpecularColor;
-    QString m_lightAttenuation;
-    QString m_lightConstantAttenuation;
-    QString m_lightLinearAttenuation;
-    QString m_lightQuadraticAttenuation;
-    QString m_normalizedDirection;
-    QString m_lightDirection;
-    QString m_lightPos;
-    QString m_lightUp;
-    QString m_lightRt;
-    QString m_relativeDistance;
-    QString m_relativeDirection;
+    QByteArray m_lightStem;
+    QByteArray m_lightColor;
+    QByteArray m_lightSpecularColor;
+    QByteArray m_lightAttenuation;
+    QByteArray m_lightConstantAttenuation;
+    QByteArray m_lightLinearAttenuation;
+    QByteArray m_lightQuadraticAttenuation;
+    QByteArray m_normalizedDirection;
+    QByteArray m_lightDirection;
+    QByteArray m_lightPos;
+    QByteArray m_lightUp;
+    QByteArray m_lightRt;
+    QByteArray m_relativeDistance;
+    QByteArray m_relativeDirection;
 
-    QString m_shadowMapStem;
-    QString m_shadowCubeStem;
-    QString m_shadowMatrixStem;
-    QString m_shadowCoordStem;
-    QString m_shadowControlStem;
+    QByteArray m_shadowMapStem;
+    QByteArray m_shadowCubeStem;
+    QByteArray m_shadowMatrixStem;
+    QByteArray m_shadowCoordStem;
+    QByteArray m_shadowControlStem;
 
-    QString m_tempStr;
+    QByteArray m_tempStr;
 
-    QString m_generatedShaderString;
+    QByteArray m_generatedShaderString;
 
     QDemonShaderDefaultMaterialKeyProperties m_defaultMaterialShaderKeyProperties;
     TProgramToShaderMap m_programToShaderMap;
@@ -308,7 +308,7 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
     bool hasTransparency() { return m_hasTransparency; }
 
     void addFunction(QDemonShaderStageGeneratorInterface &generator,
-                     const QString &functionName)
+                     const QByteArray &functionName)
     {
         generator.addFunction(functionName);
     }
@@ -345,12 +345,12 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
     {
         setupImageVariableNames(inIdx);
         ImageVariableNames retval;
-        retval.m_imageSampler = m_imageSampler.toLocal8Bit();
-        retval.m_imageFragCoords = m_imageFragCoords.toLocal8Bit();
+        retval.m_imageSampler = m_imageSampler;
+        retval.m_imageFragCoords = m_imageFragCoords;
         return retval;
     }
 
-    void addLocalVariable(QDemonShaderStageGeneratorInterface &inGenerator, const QString &inName, const QString &inType)
+    void addLocalVariable(QDemonShaderStageGeneratorInterface &inGenerator, const QByteArray &inName, const QByteArray &inType)
     {
         inGenerator << "\t" << inType << " " << inName << ";" << "\n";
     }
@@ -443,8 +443,8 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
             fragmentShader.addUniform("material_specular", "vec4");
             fragmentShader << "\tglobal_specular_light.rgb += lightAttenuation * specularAmount * "
                               "specularColor * kggxGlossyDefaultMtl( "
-                           << "world_normal, tangent, -" << inLightDir << ".xyz, view_vector, "
-                           << inLightSpecColor
+                           << "world_normal, tangent, -" << inLightDir.toUtf8() << ".xyz, view_vector, "
+                           << inLightSpecColor.toUtf8()
                            << ".rgb, vec3(material_specular.xyz), roughnessAmount, "
                               "roughnessAmount ).rgb;"
                            << "\n";
@@ -454,8 +454,8 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
             fragmentShader.addUniform("material_specular", "vec4");
             fragmentShader << "\tglobal_specular_light.rgb += lightAttenuation * specularAmount * "
                               "specularColor * wardGlossyDefaultMtl( "
-                           << "world_normal, tangent, -" << inLightDir << ".xyz, view_vector, "
-                           << inLightSpecColor
+                           << "world_normal, tangent, -" << inLightDir.toUtf8() << ".xyz, view_vector, "
+                           << inLightSpecColor.toUtf8()
                            << ".rgb, vec3(material_specular.xyz), roughnessAmount, "
                               "roughnessAmount ).rgb;"
                            << "\n";
@@ -464,8 +464,8 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
             addFunction(fragmentShader, "specularBSDF");
             fragmentShader << "\tglobal_specular_light.rgb += lightAttenuation * specularAmount * "
                               "specularColor * specularBSDF( "
-                           << "world_normal, -" << inLightDir << ".xyz, view_vector, "
-                           << inLightSpecColor << ".rgb, 1.0, 2.56 / (roughnessAmount + "
+                           << "world_normal, -" << inLightDir.toUtf8() << ".xyz, view_vector, "
+                           << inLightSpecColor.toUtf8() << ".rgb, 1.0, 2.56 / (roughnessAmount + "
                                                   "0.01), vec3(1.0), scatter_reflect ).rgb;"
                            << "\n";
             break;
@@ -473,8 +473,8 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
     }
 
     void OutputDiffuseAreaLighting(QDemonShaderStageGeneratorInterface &infragmentShader,
-                                   const QString &inPos,
-                                   const QString &inLightPrefix)
+                                   const QByteArray &inPos,
+                                   const QByteArray &inLightPrefix)
     {
         m_normalizedDirection = inLightPrefix + "_areaDir";
         addLocalVariable(infragmentShader, m_normalizedDirection, "vec3");
@@ -483,8 +483,8 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
                          << ", " << inPos << ", " << m_normalizedDirection << " );" << "\n";
     }
 
-    void OutputSpecularAreaLighting(QDemonShaderStageGeneratorInterface &infragmentShader, const QString &inPos,
-                                    const QString &inView, const QString &inLightSpecColor)
+    void OutputSpecularAreaLighting(QDemonShaderStageGeneratorInterface &infragmentShader, const QByteArray &inPos,
+                                    const QByteArray &inView, const QByteArray &inLightSpecColor)
     {
         addFunction(infragmentShader, "sampleAreaGlossyDefault");
         infragmentShader.addUniform("material_specular", "vec4");
@@ -498,7 +498,7 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
 
     void addTranslucencyIrradiance(QDemonShaderStageGeneratorInterface &infragmentShader,
                                    QDemonRenderableImage *image,
-                                   const QString &inLightPrefix,
+                                   const QByteArray &inLightPrefix,
                                    bool areaLight)
     {
         if (image == nullptr)
@@ -1148,7 +1148,7 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
                 char buf[10];
                 sprintf(buf, "%d", lightIdx);
 
-                m_tempStr = QStringLiteral("light");
+                m_tempStr = "light";
                 m_tempStr.append(buf);
 
                 fragmentShader << "\t//Light " << buf << "\n";
@@ -1385,13 +1385,13 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
                             lookupSwizzle);
 
                 if (texLodStr.isEmpty()) {
-                    fragmentShader << "\ttexture_color" << texSwizzle << " = texture2D( "
+                    fragmentShader << "\ttexture_color" << texSwizzle.toUtf8() << " = texture2D( "
                                    << m_imageSampler << ", " << m_imageFragCoords << ")"
-                                   << lookupSwizzle << ";" << "\n";
+                                   << lookupSwizzle.toUtf8() << ";" << "\n";
                 } else {
-                    fragmentShader << "\ttexture_color" << texSwizzle << "= textureLod( "
+                    fragmentShader << "\ttexture_color" << texSwizzle.toUtf8() << "= textureLod( "
                                    << m_imageSampler << ", " << m_imageFragCoords << ", "
-                                   << texLodStr << " )" << lookupSwizzle << ";"
+                                   << texLodStr.toUtf8() << " )" << lookupSwizzle.toUtf8() << ";"
                                    << "\n";
                 }
 
@@ -1455,7 +1455,7 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
         }
     }
 
-    QDemonRef<QDemonRenderShaderProgram> generateMaterialShader(const QString &inShaderPrefix)
+    QDemonRef<QDemonRenderShaderProgram> generateMaterialShader(const QByteArray &inShaderPrefix)
     {
         // build a string that allows us to print out the shader we are generating to the log.
         // This is time consuming but I feel like it doesn't happen all that often and is very
@@ -1498,7 +1498,7 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
         m_firstImage = inFirstImage;
         m_hasTransparency = inHasTransparency;
 
-        return generateMaterialShader(inVertexPipelineName);
+        return generateMaterialShader(inVertexPipelineName.toUtf8());
     }
 
     QDemonRef<QDemonShaderGeneratorGeneratedShader> getShaderForProgram(const QDemonRef<QDemonRenderShaderProgram> &inProgram)

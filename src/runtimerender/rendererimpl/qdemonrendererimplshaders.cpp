@@ -173,8 +173,7 @@ static inline void addVertexDepth(QDemonShaderVertexCodeGenerator &vertexShader)
     // We want the normalized distance, with 0 representing the far plane and 1 representing
     // the near plane, of the object in the vertex depth variable.
 
-    vertexShader << "\tvertex_depth = calculateVertexDepth( camera_properties, gl_Position );"
-                 << QStringLiteral("\n");
+    vertexShader << "\tvertex_depth = calculateVertexDepth( camera_properties, gl_Position );" << "\n";
 }
 
 // Helper implements the vertex pipeline for mesh subsets when bound to the default material.
@@ -292,7 +291,7 @@ struct QDemonSubsetMaterialVertexPipeline : public QDemonVertexPipelineImpl
         QDemonShaderStageGeneratorInterface &tessEvalShader(
                     *programGenerator()->getStage(ShaderGeneratorStages::TessEval));
 
-        QString outExt;
+        QByteArray outExt;
         if (programGenerator()->getEnabledStages() & ShaderGeneratorStages::Geometry)
             outExt = "TE";
 
@@ -338,12 +337,12 @@ struct QDemonSubsetMaterialVertexPipeline : public QDemonVertexPipelineImpl
                                << theNames.m_imageSampler << ", displaceAmount, "
                                << theNames.m_imageFragCoords << outExt;
                 tessEvalShader << ", varObjectNormal" << outExt << ", pos.xyz );"
-                               << QStringLiteral("\n");
+                               << "\n";
                 tessEvalShader << "\tvarWorldPos" << outExt
-                               << "= (model_matrix * pos).xyz;" << QStringLiteral("\n");
+                               << "= (model_matrix * pos).xyz;" << "\n";
                 tessEvalShader << "\tvarViewVector" << outExt
                                << "= normalize(camera_position - "
-                               << "varWorldPos" << outExt << ");" << QStringLiteral("\n");
+                               << "varWorldPos" << outExt << ");" << "\n";
             }
 
             // transform the normal
@@ -380,9 +379,9 @@ struct QDemonSubsetMaterialVertexPipeline : public QDemonVertexPipelineImpl
         // Open up each stage.
         QDemonShaderStageGeneratorInterface &vertexShader(vertex());
         vertexShader.addIncoming("attr_pos", "vec3");
-        vertexShader << "void main()" << QStringLiteral("\n") << "{" << QStringLiteral("\n");
-        vertexShader << "\tvec3 uTransform;" << QStringLiteral("\n");
-        vertexShader << "\tvec3 vTransform;" << QStringLiteral("\n");
+        vertexShader << "void main()" << "\n" << "{" << "\n";
+        vertexShader << "\tvec3 uTransform;" << "\n";
+        vertexShader << "\tvec3 vTransform;" << "\n";
 
         if (displacementImage) {
             generateUVCoords();
@@ -404,7 +403,7 @@ struct QDemonSubsetMaterialVertexPipeline : public QDemonVertexPipelineImpl
                 vertexShader
                         << "\tvec3 displacedPos = defaultMaterialFileDisplacementTexture( "
                         << theVarNames.m_imageSampler << ", displaceAmount, "
-                        << theVarNames.m_imageFragCoords << ", attr_norm, attr_pos );" << QStringLiteral("\n");
+                        << theVarNames.m_imageFragCoords << ", attr_norm, attr_pos );" << "\n";
                 addInterpolationParameter("varWorldPos", "vec3");
                 vertexShader.append("\tvec3 local_model_world_position = (model_matrix * "
                                     "vec4(displacedPos, 1.0)).xyz;");
@@ -436,12 +435,12 @@ struct QDemonSubsetMaterialVertexPipeline : public QDemonVertexPipelineImpl
     void beginFragmentGeneration() override
     {
         fragment().addUniform("material_diffuse", "vec4");
-        fragment() << "void main()" << QStringLiteral("\n") << "{" << QStringLiteral("\n");
+        fragment() << "void main()" << "\n" << "{" << "\n";
         // We do not pass object opacity through the pipeline.
-        fragment() << "\tfloat object_opacity = material_diffuse.a;" << QStringLiteral("\n");
+        fragment() << "\tfloat object_opacity = material_diffuse.a;" << "\n";
     }
 
-    void assignOutput(const QString &inVarName, const QString &inVarValue) override
+    void assignOutput(const QByteArray &inVarName, const QByteArray &inVarValue) override
     {
         vertex() << "\t" << inVarName << " = " << inVarValue << ";\n";
     }
@@ -451,10 +450,10 @@ struct QDemonSubsetMaterialVertexPipeline : public QDemonVertexPipelineImpl
 
         if (inUVSet == 0) {
             vertex().addIncoming("attr_uv0", "vec2");
-            vertex() << "\tvarTexCoord0 = attr_uv0;" << QStringLiteral("\n");
+            vertex() << "\tvarTexCoord0 = attr_uv0;" << "\n";
         } else if (inUVSet == 1) {
             vertex().addIncoming("attr_uv1", "vec2");
-            vertex() << "\tvarTexCoord1 = attr_uv1;" << QStringLiteral("\n");
+            vertex() << "\tvarTexCoord1 = attr_uv1;" << "\n";
         }
     }
 
@@ -491,11 +490,11 @@ struct QDemonSubsetMaterialVertexPipeline : public QDemonVertexPipelineImpl
         bool hasNPatchTessellation = tessMode == TessModeValues::TessNPatch;
 
         if (!hasNPatchTessellation) {
-            vertex() << "\tvarTangent = normal_matrix * attr_textan;" << QStringLiteral("\n")
-                     << "\tvarBinormal = normal_matrix * attr_binormal;" << QStringLiteral("\n");
+            vertex() << "\tvarTangent = normal_matrix * attr_textan;" << "\n"
+                     << "\tvarBinormal = normal_matrix * attr_binormal;" << "\n";
         } else {
-            vertex() << "\tvarTangent = attr_textan;" << QStringLiteral("\n")
-                     << "\tvarBinormal = attr_binormal;" << QStringLiteral("\n");
+            vertex() << "\tvarTangent = attr_textan;" << "\n"
+                     << "\tvarBinormal = attr_binormal;" << "\n";
         }
     }
 
@@ -527,13 +526,13 @@ struct QDemonSubsetMaterialVertexPipeline : public QDemonVertexPipelineImpl
 
     void endFragmentGeneration() override { fragment().append("}"); }
 
-    void addInterpolationParameter(const QString &inName, const QString &inType) override
+    void addInterpolationParameter(const QByteArray &inName, const QByteArray &inType) override
     {
         m_interpolationParameters.insert(inName, inType);
         vertex().addOutgoing(inName, inType);
         fragment().addIncoming(inName, inType);
         if (hasTessellation()) {
-            QString nameBuilder(inName);
+            QByteArray nameBuilder(inName);
             nameBuilder.append("TC");
             tessControl().addOutgoing(nameBuilder, inType);
 
@@ -556,7 +555,7 @@ QDemonRef<QDemonRenderShaderProgram> QDemonRendererImpl::generateShader(QDemonSu
     // This is time consuming but I feel like it doesn't happen all that often and is very
     // useful to users
     // looking at the log file.
-    QLatin1String logPrefix("mesh subset pipeline-- ");
+    const char *logPrefix("mesh subset pipeline-- ");
 
     m_generatedShaderString.clear();
     m_generatedShaderString = logPrefix;
@@ -1587,7 +1586,7 @@ QDemonRendererImpl::getDepthTessLinearPrepassShader(bool inDisplaced)
                 vertexShader.addInclude(
                             "defaultMaterialLighting.glsllib"); // getTransformedUVCoords is in the
                 // lighting code addition.
-                vertexShader << "\tvec2 uv_coords = attr_uv0;" << QStringLiteral("\n");
+                vertexShader << "\tvec2 uv_coords = attr_uv0;" << "\n";
                 vertexShader << "\toutUV = getTransformedUVCoords( vec3( uv_coords, 1.0), "
                                 "uTransform, vTransform );\n";
             }
@@ -1633,15 +1632,15 @@ QDemonRendererImpl::getDepthTessLinearPrepassShader(bool inDisplaced)
             if (inDisplaced) {
                 tessEvalShader << "\toutUV = gl_TessCoord.x * outUVTC[0] + gl_TessCoord.y * "
                                   "outUVTC[1] + gl_TessCoord.z * outUVTC[2];"
-                               << QStringLiteral("\n");
+                               << "\n";
                 tessEvalShader
                         << "\toutNormal = gl_TessCoord.x * outNormalTC[0] + gl_TessCoord.y * "
                            "outNormalTC[1] + gl_TessCoord.z * outNormalTC[2];"
-                        << QStringLiteral("\n");
+                        << "\n";
                 tessEvalShader
                         << "\tvec3 displacedPos = defaultMaterialFileDisplacementTexture( "
                            "displacementSampler , displaceAmount, outUV , outNormal, pos.xyz );"
-                        << QStringLiteral("\n");
+                        << "\n";
                 tessEvalShader.append(
                             "\tgl_Position = model_view_projection * vec4(displacedPos, 1.0);");
             } else
@@ -1868,23 +1867,23 @@ QDemonRef<QDemonDefaultAoPassShader> QDemonRendererImpl::getDefaultAoPassShader(
             theFragmentGenerator.addInclude("screenSpaceAO.glsllib");
             if (m_context->getRenderContextType() == QDemonRenderContextValues::GLES2) {
                 theFragmentGenerator
-                        << "\tuniform vec4 ao_properties;" << QStringLiteral("\n")
-                        << "\tuniform vec4 ao_properties2;" << QStringLiteral("\n")
-                        << "\tuniform vec4 shadow_properties;" << QStringLiteral("\n")
-                        << "\tuniform vec4 aoScreenConst;" << QStringLiteral("\n")
-                        << "\tuniform vec4 UvToEyeConst;" << QStringLiteral("\n");
+                        << "\tuniform vec4 ao_properties;" << "\n"
+                        << "\tuniform vec4 ao_properties2;" << "\n"
+                        << "\tuniform vec4 shadow_properties;" << "\n"
+                        << "\tuniform vec4 aoScreenConst;" << "\n"
+                        << "\tuniform vec4 UvToEyeConst;" << "\n";
             } else {
                 theFragmentGenerator
-                        << "layout (std140) uniform cbAoShadow { " << QStringLiteral("\n") << "\tvec4 ao_properties;"
-                        << QStringLiteral("\n") << "\tvec4 ao_properties2;" << QStringLiteral("\n") << "\tvec4 shadow_properties;"
-                        << QStringLiteral("\n") << "\tvec4 aoScreenConst;" << QStringLiteral("\n") << "\tvec4 UvToEyeConst;" << QStringLiteral("\n")
-                        << "};" << QStringLiteral("\n");
+                        << "layout (std140) uniform cbAoShadow { " << "\n" << "\tvec4 ao_properties;"
+                        << "\n" << "\tvec4 ao_properties2;" << "\n" << "\tvec4 shadow_properties;"
+                        << "\n" << "\tvec4 aoScreenConst;" << "\n" << "\tvec4 UvToEyeConst;" << "\n"
+                        << "};" << "\n";
             }
             theFragmentGenerator.addUniform("camera_direction", "vec3");
             theFragmentGenerator.addUniform("depth_sampler", "sampler2D");
             theFragmentGenerator.append("void main() {");
-            theFragmentGenerator << "\tfloat aoFactor;" << QStringLiteral("\n");
-            theFragmentGenerator << "\tvec3 screenNorm;" << QStringLiteral("\n");
+            theFragmentGenerator << "\tfloat aoFactor;" << "\n";
+            theFragmentGenerator << "\tvec3 screenNorm;" << "\n";
 
             // We're taking multiple depth samples and getting the derivatives at each of them
             // to get a more
@@ -2080,7 +2079,7 @@ QDemonTextRenderHelper QDemonRendererImpl::getTextShader(bool inUsePathRendering
         vertexGenerator
                 << "\tvec3 textPos = vec3(attr_pos.x * text_dimensions.x + text_dimensions.z"
                 << ", attr_pos.y * text_dimensions.y + text_dimensions.w"
-                << ", attr_pos.z);" << QStringLiteral("\n");
+                << ", attr_pos.z);" << "\n";
 
         vertexGenerator.append("\tgl_Position = model_view_projection * vec4(textPos, 1.0);");
         vertexGenerator.append("\tuv_coords = attr_uv;");
@@ -2094,10 +2093,10 @@ QDemonTextRenderHelper QDemonRendererImpl::getTextShader(bool inUsePathRendering
         // Enable rendering from a sub-rect
 
         fragmentGenerator
-                << "\ttheCoords.x = theCoords.x * text_textdimensions.x;" << QStringLiteral("\n")
-                << "\ttheCoords.y = theCoords.y * text_textdimensions.y;" << QStringLiteral("\n")
+                << "\ttheCoords.x = theCoords.x * text_textdimensions.x;" << "\n"
+                << "\ttheCoords.y = theCoords.y * text_textdimensions.y;" << "\n"
                    // flip the y uv coord if the dimension's z variable is set
-                << "\tif ( text_textdimensions.z > 0.0 ) theCoords.y = 1.0 - theCoords.y;" << QStringLiteral("\n");
+                << "\tif ( text_textdimensions.z > 0.0 ) theCoords.y = 1.0 - theCoords.y;" << "\n";
         fragmentGenerator.append(
                     "\tvec4 c = texture2D(text_image, theCoords);");
         fragmentGenerator.append(
@@ -2164,7 +2163,7 @@ QDemonRef<QDemonTextDepthShader> QDemonRendererImpl::getTextDepthShader()
         vertexGenerator
                 << "\tvec3 textPos = vec3(attr_pos.x * text_dimensions.x + text_dimensions.z"
                 << ", attr_pos.y * text_dimensions.y + text_dimensions.w"
-                << ", attr_pos.z);" << QStringLiteral("\n");
+                << ", attr_pos.z);" << "\n";
 
         vertexGenerator.append("\tgl_Position = model_view_projection * vec4(textPos, 1.0);");
         vertexGenerator.append("\tuv_coords = attr_uv;");
@@ -2176,10 +2175,10 @@ QDemonRef<QDemonTextDepthShader> QDemonRendererImpl::getTextDepthShader()
         // Enable rendering from a sub-rect
 
         fragmentGenerator
-                << "\ttheCoords.x = theCoords.x * text_textdimensions.x;" << QStringLiteral("\n")
-                << "\ttheCoords.y = theCoords.y * text_textdimensions.y;" << QStringLiteral("\n")
+                << "\ttheCoords.x = theCoords.x * text_textdimensions.x;" << "\n"
+                << "\ttheCoords.y = theCoords.y * text_textdimensions.y;" << "\n"
                    // flip the y uv coord if the dimension's z variable is set
-                << "\tif ( text_textdimensions.z > 0.0 ) theCoords.y = 1.0 - theCoords.y;" << QStringLiteral("\n");
+                << "\tif ( text_textdimensions.z > 0.0 ) theCoords.y = 1.0 - theCoords.y;" << "\n";
         fragmentGenerator.append("\tfloat alpha_mask = texture2D( text_image, theCoords ).r;");
         fragmentGenerator.append("\tif ( alpha_mask < .05 ) discard;");
         vertexGenerator.append("}");
@@ -2220,7 +2219,7 @@ QDemonTextRenderHelper QDemonRendererImpl::getTextWidgetShader()
     vertexGenerator
             << "\tvec3 textPos = vec3(attr_pos.x * text_dimensions.x + text_dimensions.z"
             << ", attr_pos.y * text_dimensions.y + text_dimensions.w"
-            << ", attr_pos.z);" << QStringLiteral("\n");
+            << ", attr_pos.z);" << "\n";
 
     vertexGenerator.append("\tgl_Position = model_view_projection * vec4(textPos, 1.0);");
     vertexGenerator.append("\tuv_coords = attr_uv;");
@@ -2234,11 +2233,11 @@ QDemonTextRenderHelper QDemonRendererImpl::getTextWidgetShader()
     fragmentGenerator.append("\tvec2 theCoords = uv_coords;");
     // Enable rendering from a sub-rect
 
-    fragmentGenerator << "\ttheCoords.x = theCoords.x * text_textdimensions.x;" << QStringLiteral("\n")
-                      << "\ttheCoords.y = theCoords.y * text_textdimensions.y;" << QStringLiteral("\n")
+    fragmentGenerator << "\ttheCoords.x = theCoords.x * text_textdimensions.x;" << "\n"
+                      << "\ttheCoords.y = theCoords.y * text_textdimensions.y;" << "\n"
                          // flip the y uv coord if the dimension's z variable is set
                       << "\tif ( text_textdimensions.z > 0.0 ) theCoords.y = 1.0 - theCoords.y;"
-                      << QStringLiteral("\n");
+                      << "\n";
     fragmentGenerator.append(
                 "\tfloat alpha_mask = texture2D( text_image, theCoords ).r * text_textcolor.a;");
     fragmentGenerator.append("\tfragOutput = vec4(mix(text_backgroundcolor.rgb, "
@@ -2354,7 +2353,7 @@ QDemonRef<QDemonLayerSceneShader> QDemonRendererImpl::getSceneLayerShader()
     vertexGenerator.append("void main() {");
     vertexGenerator << "\tvec3 layerPos = vec3(attr_pos.x * layer_dimensions.x / 2.0"
                     << ", attr_pos.y * layer_dimensions.y / 2.0"
-                    << ", attr_pos.z);" << QStringLiteral("\n");
+                    << ", attr_pos.z);" << "\n";
 
     vertexGenerator.append("\tgl_Position = model_view_projection * vec4(layerPos, 1.0);");
     vertexGenerator.append("\tuv_coords = attr_uv;");

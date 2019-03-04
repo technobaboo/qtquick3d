@@ -75,7 +75,7 @@ struct QDemonStageGeneratorBase : public QDemonShaderStageGeneratorInterface
         // the shared buffers will be cleared elsewhere.
     }
 
-    void addIncoming(const QString &name, const QString &type) override
+    void addIncoming(const QByteArray &name, const QByteArray &type) override
     {
         m_incoming.insert(name, type);
     }
@@ -84,7 +84,7 @@ struct QDemonStageGeneratorBase : public QDemonShaderStageGeneratorInterface
         return QStringLiteral("in");
     }
 
-    void addOutgoing(const QString &name, const QString &type) override
+    void addOutgoing(const QByteArray &name, const QByteArray &type) override
     {
         if (m_outgoing == nullptr) {
             Q_ASSERT(false);
@@ -93,33 +93,33 @@ struct QDemonStageGeneratorBase : public QDemonShaderStageGeneratorInterface
         m_outgoing->insert(name, type);
     }
 
-    void addUniform(const QString &name, const QString &type) override
+    void addUniform(const QByteArray &name, const QByteArray &type) override
     {
         m_uniforms.insert(name, type);
     }
 
-    void addConstantBuffer(const QString &name, const QString &layout) override
+    void addConstantBuffer(const QByteArray &name, const QByteArray &layout) override
     {
         m_constantBuffers.insert(name, layout);
     }
-    void addConstantBufferParam(const QString &cbName, const QString &paramName, const QString &type) override
+    void addConstantBufferParam(const QByteArray &cbName, const QByteArray &paramName, const QByteArray &type) override
     {
         TParamPair theParamPair(paramName, type);
         TConstantBufferParamPair theBufferParamPair(cbName, theParamPair);
         m_constantBufferParams.push_back(theBufferParamPair);
     }
 
-    QDemonShaderStageGeneratorInterface &operator<<(const QString &data) override
+    QDemonShaderStageGeneratorInterface &operator<<(const QByteArray &data) override
     {
         m_codeBuilder.append(data);
         return *this;
     }
-    void append(const QString &data) override
+    void append(const QByteArray &data) override
     {
         m_codeBuilder.append(data);
         m_codeBuilder.append(QStringLiteral("\n"));
     }
-    void appendPartial(const QString &data) override { m_codeBuilder.append(data); }
+    void appendPartial(const QByteArray &data) override { m_codeBuilder.append(data); }
     ShaderGeneratorStages::Enum stage() const override { return m_stage; }
 
     virtual void addShaderItemMap(const QString &itemType, const TStrTableStrMap &itemMap,
@@ -183,7 +183,7 @@ struct QDemonStageGeneratorBase : public QDemonShaderStageGeneratorInterface
 
     virtual void updateShaderCacheFlags(QDemonShaderCacheProgramFlags &) {}
 
-    void addInclude(const QString &name) override { m_includes.insert(name); }
+    void addInclude(const QByteArray &name) override { m_includes.insert(name); }
 
     virtual const QString buildShaderSource()
     {
@@ -205,12 +205,12 @@ struct QDemonStageGeneratorBase : public QDemonShaderStageGeneratorInterface
         return m_finalBuilder;
     }
 
-    void addFunction(const QString &functionName) override
+    void addFunction(const QByteArray &functionName) override
     {
         if (!m_addedFunctions.contains(functionName)) {
             m_addedFunctions.push_back(functionName);
-            QString includeName;
-            includeName = QStringLiteral("func") + functionName + QStringLiteral(".glsllib");
+            QByteArray includeName;
+            includeName = "func" + functionName + ".glsllib";
             addInclude(includeName);
         }
     }

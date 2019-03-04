@@ -755,9 +755,9 @@ struct QDemonShaderDefaultMaterialKey
 
     struct StringVisitor
     {
-        QString &m_str;
+        QByteArray &m_str;
         QDemonConstDataRef<quint32> m_keyStore;
-        StringVisitor(QString &s, QDemonConstDataRef<quint32> ks)
+        StringVisitor(QByteArray &s, QDemonConstDataRef<quint32> ks)
             : m_str(s)
             , m_keyStore(ks)
         {
@@ -767,8 +767,9 @@ struct QDemonShaderDefaultMaterialKey
         {
             quint32 originalSize = m_str.size();
             if (m_str.size())
-                m_str.append(QStringLiteral(";"));
-            prop.toString(m_str, m_keyStore);
+                m_str.append(";");
+            QString str = QString::fromUtf8(m_str);
+            prop.toString(str, m_keyStore);
             // if the only thing we added was the semicolon
             // then nuke the semicolon
             if (originalSize && m_str.size() == int(originalSize + 1))
@@ -776,7 +777,7 @@ struct QDemonShaderDefaultMaterialKey
         }
     };
 
-    void toString(QString &ioString, QDemonShaderDefaultMaterialKeyProperties &inProperties) const
+    void toString(QByteArray &ioString, QDemonShaderDefaultMaterialKeyProperties &inProperties) const
     {
         StringVisitor theVisitor(ioString, *this);
         inProperties.visitProperties(theVisitor);

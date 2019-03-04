@@ -231,7 +231,7 @@ class Q_DEMONRUNTIMERENDER_EXPORT QDemonRendererImpl : public QDemonRenderWidget
     // Temporary information stored only when rendering a particular layer.
     QDemonLayerRenderData *m_currentLayer;
     QMatrix4x4 m_viewProjection;
-    QString m_generatedShaderString;
+    QByteArray m_generatedShaderString;
 
     TStrVertBufMap m_widgetVertexBuffers;
     TStrIndexBufMap m_widgetIndexBuffers;

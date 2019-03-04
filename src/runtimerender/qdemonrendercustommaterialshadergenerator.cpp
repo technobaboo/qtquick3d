@@ -266,7 +266,7 @@ struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
     typedef QPair<size_t, QDemonRef<QDemonShaderLightProperties>> TCustomMaterialLightEntry;
     typedef QPair<size_t, QDemonRenderCachedShaderProperty<QDemonRenderTexture2D *>> TShadowMapEntry;
     typedef QPair<size_t, QDemonRenderCachedShaderProperty<QDemonRenderTextureCube *>> TShadowCubeEntry;
-    typedef QHash<QString, QDemonRef<QDemonRenderConstantBuffer>> TStrConstanBufMap;
+    typedef QHash<QByteArray, QDemonRef<QDemonRenderConstantBuffer>> TStrConstanBufMap;
 
     QDemonRenderContextInterface *m_renderContext;
     QDemonRef<QDemonShaderProgramGeneratorInterface> m_programGenerator;
@@ -279,13 +279,13 @@ struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
     QDemonRenderableImage *m_firstImage;
     bool m_hasTransparency;
 
-    QString m_imageStem;
-    QString m_imageSampler;
-    QString m_imageFragCoords;
-    QString m_imageRotScale;
-    QString m_imageOffset;
+    QByteArray m_imageStem;
+    QByteArray m_imageSampler;
+    QByteArray m_imageFragCoords;
+    QByteArray m_imageRotScale;
+    QByteArray m_imageOffset;
 
-    QString m_generatedShaderString;
+    QByteArray m_generatedShaderString;
 
     QDemonShaderDefaultMaterialKeyProperties m_defaultMaterialShaderKeyProperties;
     TProgramToShaderMap m_programToShaderMap;
@@ -354,15 +354,15 @@ struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
         // convert to QDemonRenderTextureTypeValue
         QDemonRenderTextureTypeValue::Enum texType = (QDemonRenderTextureTypeValue::Enum)imageIdx;
         m_imageStem = QDemonRenderTextureTypeValue::toString(texType);
-        m_imageStem.append(QStringLiteral("_"));
+        m_imageStem.append("_");
         m_imageSampler = m_imageStem;
-        m_imageSampler.append(QStringLiteral("sampler"));
+        m_imageSampler.append("sampler");
         m_imageFragCoords = m_imageStem;
-        m_imageFragCoords.append(QStringLiteral("uv_coords"));
+        m_imageFragCoords.append("uv_coords");
         m_imageRotScale = m_imageStem;
-        m_imageRotScale.append(QStringLiteral("rot_scale"));
+        m_imageRotScale.append("rot_scale");
         m_imageOffset = m_imageStem;
-        m_imageOffset.append(QStringLiteral("offset"));
+        m_imageOffset.append("offset");
 
         ImageVariableNames retVal;
         retVal.m_imageSampler = m_imageSampler;
@@ -449,7 +449,7 @@ struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
                            sizeof(QDemonLightSourceShader) * QDEMON_MAX_NUM_LIGHTS));
             pCB->update(); // update to hardware
 
-            m_constantBuffers.insert(theName, pCB);
+            m_constantBuffers.insert(name, pCB);
         }
 
         return pCB;
@@ -908,7 +908,7 @@ struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
         if (!pIndirectLightmap && !pRadiosityLightmap)
             return;
 
-        QString finalValue;
+        QByteArray finalValue;
 
         inFragmentShader << "\n";
         inFragmentShader << "void initializeLayerVariablesWithLightmap(void)\n{\n";
@@ -960,7 +960,7 @@ struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
             inFragmentShader << "vec3( 0.000000, 0.000000, 0.000000 ), vec3( 1.000000, 1.000000, "
                                 "1.000000 ) ), tci );\n";
             inFragmentShader << "  emissiveMask = fileTexture( "
-                             << pEmissiveMaskMap->m_imageShaderName
+                             << pEmissiveMaskMap->m_imageShaderName.toUtf8()
                              << ", vec3( 0, 0, 0 ), vec3( 1, 1, 1 ), mono_alpha, transformed_tci, ";
             inFragmentShader << "vec2( 0.000000, 1.000000 ), vec2( 0.000000, 1.000000 ), "
                                 "wrap_repeat, wrap_repeat, gamma_default ).tint;\n";
@@ -973,7 +973,7 @@ struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
     void generateFragmentShader(QDemonShaderDefaultMaterialKey &, const QString &inShaderPathName)
     {
         QDemonRef<QDemonDynamicObjectSystemInterface> theDynamicSystem(m_renderContext->getDynamicObjectSystem());
-        QString fragSource = theDynamicSystem->getShaderSource(inShaderPathName);
+        QByteArray fragSource = theDynamicSystem->getShaderSource(inShaderPathName).toUtf8();
 
         Q_ASSERT(!fragSource.isEmpty());
 
@@ -1004,13 +1004,13 @@ struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
         QDemonDefaultMaterialVertexPipelineInterface &vertexShader(vertexGenerator());
         QDemonShaderStageGeneratorInterface &fragmentShader(fragmentGenerator());
 
-        QString srcString(fragSource);
+        QByteArray srcString(fragSource);
 
         if (m_renderContext->getRenderContext()->getRenderContextType()
                 == QDemonRenderContextValues::GLES2) {
             QString::size_type pos = 0;
             while ((pos = srcString.indexOf("out vec4 fragColor", pos)) != -1) {
-                srcString.insert(pos, QStringLiteral("//"));
+                srcString.insert(pos, "//");
                 pos += int(strlen("//out vec4 fragColor"));
             }
         }
@@ -1120,8 +1120,8 @@ struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
             fragmentShader << "  fragColor = rgba;" << "\n";
     }
 
-    QDemonRef<QDemonRenderShaderProgram> generateCustomMaterialShader(const QString &inShaderPrefix,
-                                                            const QString &inCustomMaterialName)
+    QDemonRef<QDemonRenderShaderProgram> generateCustomMaterialShader(const QByteArray &inShaderPrefix,
+                                                            const QByteArray &inCustomMaterialName)
     {
         // build a string that allows us to print out the shader we are generating to the log.
         // This is time consuming but I feel like it doesn't happen all that often and is very
@@ -1161,7 +1161,7 @@ struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
         m_firstImage = inFirstImage;
         m_hasTransparency = inHasTransparency;
 
-        return generateCustomMaterialShader(inShaderPrefix, inCustomMaterialName);
+        return generateCustomMaterialShader(inShaderPrefix.toUtf8(), inCustomMaterialName.toUtf8());
     }
 };
 }

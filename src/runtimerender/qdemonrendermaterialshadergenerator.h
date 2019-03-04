@@ -109,8 +109,8 @@ public:
     virtual ~QDemonMaterialShaderGeneratorInterface() {}
     struct ImageVariableNames
     {
-        QString m_imageSampler;
-        QString m_imageFragCoords;
+        QByteArray m_imageSampler;
+        QByteArray m_imageFragCoords;
     };
 
     virtual ImageVariableNames getImageVariableNames(quint32 inIdx) = 0;

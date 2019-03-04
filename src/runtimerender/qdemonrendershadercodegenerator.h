@@ -37,7 +37,7 @@ QT_BEGIN_NAMESPACE
 typedef QPair<QString, QString> TParamPair;
 typedef QPair<QString, TParamPair> TConstantBufferParamPair;
 typedef QVector<TConstantBufferParamPair> TConstantBufferParamArray;
-typedef QHash<QString, QString> TStrTableStrMap;
+typedef QHash<QByteArray, QByteArray> TStrTableStrMap;
 
 struct QDemonShaderCodeGeneratorBase
 {
@@ -64,16 +64,16 @@ struct QDemonShaderCodeGeneratorBase
     virtual ~QDemonShaderCodeGeneratorBase();
     virtual TStrTableStrMap &getVaryings() = 0;
     void begin();
-    void append(const QString &data);
+    void append(const QByteArray &data);
     // don't add the newline
-    void appendPartial(const QString &data);
-    void addConstantBuffer(const QString &name, const QString &layout);
-    void addConstantBufferParam(const QString &cbName, const QString &paramName, const QString &type);
-    void addUniform(const QString &name, const QString &type);
-    void addAttribute(const QString &name, const QString &type);
-    void addVarying(const QString &name, const QString &type);
-    void addLocalVariable(const QString &name, const QString &type, int tabCount = 1);
-    void addInclude(const QString &name);
+    void appendPartial(const QByteArray &data);
+    void addConstantBuffer(const QByteArray &name, const QByteArray &layout);
+    void addConstantBufferParam(const QByteArray &cbName, const QByteArray &paramName, const QByteArray &type);
+    void addUniform(const QByteArray &name, const QByteArray &type);
+    void addAttribute(const QByteArray &name, const QByteArray &type);
+    void addVarying(const QByteArray &name, const QByteArray &type);
+    void addLocalVariable(const QByteArray &name, const QByteArray &type, int tabCount = 1);
+    void addInclude(const QByteArray &name);
     bool hasCode(Enum value);
     void setCode(Enum value);
     void setupWorldPosition();
@@ -87,7 +87,7 @@ struct QDemonShaderCodeGeneratorBase
     void generateShadedWireframeBase();
     void addLighting();
     const QString &buildShaderSource();
-    QDemonShaderCodeGeneratorBase &operator<<(const QString &data);
+    QDemonShaderCodeGeneratorBase &operator<<(const QByteArray &data);
 
 protected:
     virtual void addShaderItemMap(const QString &itemType, const TStrTableStrMap &itemMap);
