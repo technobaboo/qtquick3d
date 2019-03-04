@@ -620,10 +620,6 @@ typedef QHash<QString, QDemonDynamicObjectShaderInfo> TShaderInfoMap;
 typedef QSet<QString> TPathSet;
 typedef QHash<dynamic::QDemonDynamicShaderMapKey, TShaderAndFlags> TShaderMap;
 
-struct QDemonDynamicObjectSystemCoreImpl : public QDemonDynamicObjectSystemInterface
-{
-};
-
 struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
 {
     QDemonRenderContextCoreInterface *m_coreContext;
