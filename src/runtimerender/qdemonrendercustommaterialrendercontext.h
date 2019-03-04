@@ -77,24 +77,8 @@ struct QDemonCustomMaterialRenderContext
                                       const QDemonRef<QDemonRenderTexture2D> inAoTex,
                                       QDemonShaderDefaultMaterialKey inMaterialKey,
                                       QDemonRenderableImage *inFirstImage = nullptr,
-                                      float inOpacity = 1.0)
-        : layer(inLayer)
-        , layerData(inData)
-        , lights(inLights)
-        , camera(inCamera)
-        , model(inModel)
-        , subset(inSubset)
-        , modelViewProjection(inMvp)
-        , modelMatrix(inWorld)
-        , normalMatrix(inNormal)
-        , material(inMaterial)
-        , depthTexture(inDepthTex)
-        , aoTexture(inAoTex)
-        , materialKey(inMaterialKey)
-        , firstImage(inFirstImage)
-        , opacity(inOpacity)
-    {
-    }
+                                      float inOpacity = 1.0);
+    ~QDemonCustomMaterialRenderContext();
 };
 
 QT_END_NAMESPACE

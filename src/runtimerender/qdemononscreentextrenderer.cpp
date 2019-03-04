@@ -101,7 +101,7 @@ struct QDemonTextAtlasFont
 
 // This class is only for rendering 2D screen aligned text
 // it uses a predefined true type font and character set with various sizes
-struct QDemonOnscreenTextRenderer : public QDemonTextRendererInterface, public QEnableSharedFromThis<QDemonOnscreenTextRenderer>
+struct QDemonOnscreenTextRenderer : public QDemonTextRendererInterface
 {
     // if you change this you need to adjust STextTextureAtlas size as well
     static constexpr qint32 TEXTURE_ATLAS_DIM = 256;

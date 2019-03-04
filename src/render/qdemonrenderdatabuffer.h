@@ -57,6 +57,7 @@ protected:
     QDemonRenderBackend::QDemonRenderBackendBufferObject m_bufferHandle; ///< opaque backend handle
 
 public:
+
     /**
          * @brief constructor
          *
@@ -166,6 +167,7 @@ public:
     const void *getImplementationHandle() const override = 0;
 
 private:
+    Q_DISABLE_COPY(QDemonRenderDataBuffer)
     void releaseMemory();
 };
 

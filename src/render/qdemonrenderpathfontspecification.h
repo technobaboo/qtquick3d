@@ -45,6 +45,7 @@ class QDemonRenderPathFontItem;
 
 class Q_DEMONRENDER_EXPORT QDemonRenderPathFontSpecification
 {
+    Q_DISABLE_COPY(QDemonRenderPathFontSpecification)
 public:
     QAtomicInt ref;
 private:

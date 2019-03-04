@@ -36,7 +36,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class QDemonTextScaleAndOffset;
+struct QDemonTextScaleAndOffset;
 
 /**
      *	Cached tessellation property lookups this is on a per mesh base

@@ -87,6 +87,11 @@ QDemonRenderInputAssembler::~QDemonRenderInputAssembler()
     ::free(const_cast<QDemonRenderBackend::QDemonRenderBackendBufferObject *>(m_vertexbufferHandles.mData));
 }
 
+const QDemonRef<QDemonRenderIndexBuffer> QDemonRenderInputAssembler::getIndexBuffer()
+{
+    return m_indexBuffer;
+}
+
 quint32 QDemonRenderInputAssembler::getIndexCount() const
 {
     return (m_indexBuffer) ? m_indexBuffer->getNumIndices() : 0;

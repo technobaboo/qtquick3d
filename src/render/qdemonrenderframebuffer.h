@@ -41,7 +41,7 @@ class QDemonRenderRenderBuffer;
 class QDemonRenderTexture2DArray;
 class QDemonRenderTextureCube;
 
-class QDemonRenderTextureOrRenderBuffer
+class Q_DEMONRENDER_EXPORT QDemonRenderTextureOrRenderBuffer
 {
     QDemonRef<QDemonRenderTexture2D> m_texture2D;
     QDemonRef<QDemonRenderTexture2DArray> m_texture2DArray;
@@ -49,66 +49,25 @@ class QDemonRenderTextureOrRenderBuffer
     QDemonRef<QDemonRenderRenderBuffer> m_renderBuffer;
 
 public:
-    QDemonRenderTextureOrRenderBuffer(QDemonRef<QDemonRenderTexture2D> texture)
-        : m_texture2D(texture)
-    {
-    }
-    QDemonRenderTextureOrRenderBuffer(QDemonRef<QDemonRenderRenderBuffer> render)
-        : m_renderBuffer(render)
-    {
-    }
-    QDemonRenderTextureOrRenderBuffer(QDemonRef<QDemonRenderTexture2DArray> textureArray)
-        : m_texture2DArray(textureArray)
-    {
-    }
-    QDemonRenderTextureOrRenderBuffer(QDemonRef<QDemonRenderTextureCube> textureCube)
-        : m_textureCube(textureCube)
-    {
-    }
-    QDemonRenderTextureOrRenderBuffer() = default;
-    QDemonRenderTextureOrRenderBuffer(const QDemonRenderTextureOrRenderBuffer &other)
-        : m_texture2D(other.m_texture2D)
-        , m_texture2DArray(other.m_texture2DArray)
-        , m_textureCube(other.m_textureCube)
-        , m_renderBuffer(other.m_renderBuffer)
-    {
-    }
-    QDemonRenderTextureOrRenderBuffer &operator=(const QDemonRenderTextureOrRenderBuffer &other)
-    {
-        if (this != &other) {
-            m_texture2D = QDemonRef<QDemonRenderTexture2D>(other.m_texture2D);
-            m_texture2DArray = QDemonRef<QDemonRenderTexture2DArray>(other.m_texture2DArray);
-            m_renderBuffer = QDemonRef<QDemonRenderRenderBuffer>(other.m_renderBuffer);
-            m_textureCube = QDemonRef<QDemonRenderTextureCube>(other.m_textureCube);
-        }
-        return *this;
-    }
+    QDemonRenderTextureOrRenderBuffer(QDemonRef<QDemonRenderTexture2D> texture);
+    QDemonRenderTextureOrRenderBuffer(QDemonRef<QDemonRenderRenderBuffer> render);
+    QDemonRenderTextureOrRenderBuffer(QDemonRef<QDemonRenderTexture2DArray> textureArray);
+    QDemonRenderTextureOrRenderBuffer(QDemonRef<QDemonRenderTextureCube> textureCube);
+    QDemonRenderTextureOrRenderBuffer();
+    QDemonRenderTextureOrRenderBuffer(const QDemonRenderTextureOrRenderBuffer &other);
+    ~QDemonRenderTextureOrRenderBuffer();
+
+    QDemonRenderTextureOrRenderBuffer &operator=(const QDemonRenderTextureOrRenderBuffer &other);
 
     bool hasTexture2D() const { return m_texture2D != nullptr; }
     bool hasTexture2DArray() const { return m_texture2DArray != nullptr; }
     bool hasTextureCube() const { return m_textureCube != nullptr; }
     bool hasRenderBuffer() const { return m_renderBuffer != nullptr; }
 
-    QDemonRef<QDemonRenderTexture2D> getTexture2D() const
-    {
-        Q_ASSERT(hasTexture2D());
-        return m_texture2D;
-    }
-    QDemonRef<QDemonRenderTexture2DArray> getTexture2DArray() const
-    {
-        Q_ASSERT(hasTexture2DArray());
-        return m_texture2DArray;
-    }
-    QDemonRef<QDemonRenderTextureCube> getTextureCube() const
-    {
-        Q_ASSERT(hasTextureCube());
-        return m_textureCube;
-    }
-    QDemonRef<QDemonRenderRenderBuffer> getRenderBuffer() const
-    {
-        Q_ASSERT(hasRenderBuffer());
-        return m_renderBuffer;
-    }
+    QDemonRef<QDemonRenderTexture2D> getTexture2D() const;
+    QDemonRef<QDemonRenderTexture2DArray> getTexture2DArray() const;
+    QDemonRef<QDemonRenderTextureCube> getTextureCube() const;
+    QDemonRef<QDemonRenderRenderBuffer> getRenderBuffer() const;
 };
 
 class QDemonRenderFrameBuffer : public QDemonRenderImplemented

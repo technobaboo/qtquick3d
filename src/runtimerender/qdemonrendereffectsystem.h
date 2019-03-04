@@ -60,14 +60,9 @@ struct QDemonEffectRenderArgument {
                                QDemonRef<QDemonRenderTexture2D> inColorBuffer,
                                const QVector2D &inCameraClipRange,
                                QDemonRef<QDemonRenderTexture2D> inDepthTexture = nullptr,
-                               QDemonRef<QDemonRenderTexture2D> inDepthBuffer = nullptr)
-        : m_effect(inEffect)
-        , m_colorBuffer(inColorBuffer)
-        , m_cameraClipRange(inCameraClipRange)
-        , m_depthTexture(inDepthTexture)
-        , m_depthStencilBuffer(inDepthBuffer)
-    {
-    }
+                               QDemonRef<QDemonRenderTexture2D> inDepthBuffer = nullptr);
+
+
 };
 
 class Q_DEMONRUNTIMERENDER_EXPORT QDemonEffectSystemCoreInterface

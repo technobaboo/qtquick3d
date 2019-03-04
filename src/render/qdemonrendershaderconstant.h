@@ -273,23 +273,7 @@ public:
     {
     }
 
-    void validate(QDemonRef<QDemonRenderShaderProgram> inShader) override
-    {
-        // A constant buffer might not be set at first call
-        // due to the fact that they are compiled from a cache file
-        // Now it must exists.
-        if (m_constBuffer)
-            return;
-
-        QDemonRef<QDemonRenderConstantBuffer> cb = m_context->getConstantBuffer(m_name);
-        if (cb) {
-            cb->setupBuffer(inShader.data(), m_location, m_size, m_paramCount);
-            //cb->addRef();
-            m_constBuffer = cb;
-        } else {
-            Q_ASSERT(false);
-        }
-    }
+    void validate(QDemonRef<QDemonRenderShaderProgram> inShader) override;
 
     void update() override
     {
@@ -297,11 +281,7 @@ public:
             m_constBuffer->update();
     }
 
-    void bindToProgram(QDemonRef<QDemonRenderShaderProgram> inShader) override
-    {
-        if (m_constBuffer)
-            m_constBuffer->bindToShaderProgram(inShader, m_location, m_binding);
-    }
+    void bindToProgram(QDemonRef<QDemonRenderShaderProgram> inShader) override;
 };
 
 class QDemonRenderShaderStorageBuffer : public QDemonRenderShaderBufferBase
@@ -328,21 +308,7 @@ public:
     {
     }
 
-    void validate(QDemonRef<QDemonRenderShaderProgram> /*inShader*/) override
-    {
-        // A constant buffer might not be set at first call
-        // due to the fact that they are compile from a cache file
-        // Now it must exists.
-        if (m_storageBuffer)
-            return;
-
-        QDemonRef<QDemonRenderStorageBuffer> sb = m_context->getStorageBuffer(m_name);
-        if (sb) {
-            m_storageBuffer = sb;
-        } else {
-            Q_ASSERT(false);
-        }
-    }
+    void validate(QDemonRef<QDemonRenderShaderProgram> /*inShader*/) override;
 
     void update() override
     {
@@ -350,11 +316,7 @@ public:
             m_storageBuffer->update();
     }
 
-    void bindToProgram(QDemonRef<QDemonRenderShaderProgram> /*inShader*/) override
-    {
-        if (m_storageBuffer)
-            m_storageBuffer->bindToShaderProgram(m_location);
-    }
+    void bindToProgram(QDemonRef<QDemonRenderShaderProgram> /*inShader*/) override;
 };
 
 class QDemonRenderShaderAtomicCounterBuffer : public QDemonRenderShaderBufferBase
@@ -381,21 +343,7 @@ public:
     {
     }
 
-    void validate(QDemonRef<QDemonRenderShaderProgram> /*inShader*/) override
-    {
-        // A constant buffer might not be set at first call
-        // due to the fact that they are compile from a cache file
-        // Now it must exists.
-        if (m_atomicCounterBuffer)
-            return;
-
-        QDemonRef<QDemonRenderAtomicCounterBuffer> acb = m_context->getAtomicCounterBuffer(m_name);
-        if (acb) {
-            m_atomicCounterBuffer = acb;
-        } else {
-            Q_ASSERT(false);
-        }
-    }
+    void validate(QDemonRef<QDemonRenderShaderProgram> /*inShader*/) override;
 
     void update() override
     {
@@ -403,11 +351,7 @@ public:
             m_atomicCounterBuffer->update();
     }
 
-    void bindToProgram(QDemonRef<QDemonRenderShaderProgram> /*inShader*/) override
-    {
-        if (m_atomicCounterBuffer)
-            m_atomicCounterBuffer->bindToShaderProgram(m_location);
-    }
+    void bindToProgram(QDemonRef<QDemonRenderShaderProgram> /*inShader*/) override;
 };
 
 QT_END_NAMESPACE

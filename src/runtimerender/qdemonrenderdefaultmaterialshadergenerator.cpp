@@ -750,7 +750,7 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
 
         if (!pCB) {
             // create
-            size_t size = sizeof(QDemonLightSourceShader) * QDEMON_MAX_NUM_LIGHTS + (4 * sizeof(qint32));
+            const size_t size = sizeof(QDemonLightSourceShader) * QDEMON_MAX_NUM_LIGHTS + (4 * sizeof(qint32));
             quint8 stackData[size];
             QDemonLightSourceShader *s = new (stackData)QDemonLightSourceShader[QDEMON_MAX_NUM_LIGHTS];
             QDemonDataRef<quint8> cBuffer(stackData, size);

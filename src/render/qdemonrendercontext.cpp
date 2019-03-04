@@ -31,6 +31,7 @@
 #include <QtGui/QMatrix4x4>
 #include <QtDemonRender/qdemonrendercontext.h>
 #include <QtDemonRender/qdemonrendershaderprogram.h>
+#include <QtDemonRender/qdemonrenderprogrampipeline.h>
 
 #include <QtDemon/qdemonutils.h>
 
@@ -763,6 +764,11 @@ void QDemonRenderContextImpl::setActiveProgramPipeline(QDemonRef<QDemonRenderPro
 {
     if (inProgramPipeline != m_hardwarePropertyContext.m_activeProgramPipeline)
         doSetActiveProgramPipeline(inProgramPipeline);
+}
+
+QDemonRef<QDemonRenderProgramPipeline> QDemonRenderContextImpl::getActiveProgramPipeline() const
+{
+    return m_hardwarePropertyContext.m_activeProgramPipeline;
 }
 
 void QDemonRenderContextImpl::dispatchCompute(QDemonRef<QDemonRenderShaderProgram> inShader, quint32 numGroupsX,

@@ -41,6 +41,7 @@ class QDemonRenderTextureSampler;
 
 class Q_DEMONRENDER_EXPORT QDemonRenderTexture2DArray : public QDemonRenderTextureBase
 {
+    Q_DISABLE_COPY(QDemonRenderTexture2DArray)
 private:
     quint32 m_width; ///< texture width
     quint32 m_height; ///< texture height

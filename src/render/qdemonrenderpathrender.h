@@ -42,6 +42,7 @@ class QDemonRenderPathFontSpecification;
 ///< A program pipeline is a collection of a multiple programs (vertex, fragment, geometry,....)
 class Q_DEMONRENDER_EXPORT QDemonRenderPathRender
 {
+    Q_DISABLE_COPY(QDemonRenderPathRender)
 public:
     QAtomicInt ref;
 protected:

@@ -289,4 +289,78 @@ QDemonRef<QDemonRenderFrameBuffer> QDemonRenderFrameBuffer::create(const QDemonR
     return QDemonRef<QDemonRenderFrameBuffer>(new QDemonRenderFrameBuffer(context));
 }
 
+QDemonRenderTextureOrRenderBuffer::QDemonRenderTextureOrRenderBuffer(QDemonRef<QDemonRenderTexture2D> texture)
+    : m_texture2D(texture)
+{
+}
+
+QDemonRenderTextureOrRenderBuffer::QDemonRenderTextureOrRenderBuffer(QDemonRef<QDemonRenderRenderBuffer> render)
+    : m_renderBuffer(render)
+{
+}
+
+QDemonRenderTextureOrRenderBuffer::QDemonRenderTextureOrRenderBuffer(QDemonRef<QDemonRenderTexture2DArray> textureArray)
+    : m_texture2DArray(textureArray)
+{
+}
+
+QDemonRenderTextureOrRenderBuffer::QDemonRenderTextureOrRenderBuffer(QDemonRef<QDemonRenderTextureCube> textureCube)
+    : m_textureCube(textureCube)
+{
+}
+
+QDemonRenderTextureOrRenderBuffer::QDemonRenderTextureOrRenderBuffer()
+{
+
+}
+
+QDemonRenderTextureOrRenderBuffer::QDemonRenderTextureOrRenderBuffer(const QDemonRenderTextureOrRenderBuffer &other)
+    : m_texture2D(other.m_texture2D)
+    , m_texture2DArray(other.m_texture2DArray)
+    , m_textureCube(other.m_textureCube)
+    , m_renderBuffer(other.m_renderBuffer)
+{
+}
+
+QDemonRenderTextureOrRenderBuffer::~QDemonRenderTextureOrRenderBuffer()
+{
+
+}
+
+QDemonRenderTextureOrRenderBuffer &QDemonRenderTextureOrRenderBuffer::operator=(const QDemonRenderTextureOrRenderBuffer &other)
+{
+    if (this != &other) {
+        m_texture2D = QDemonRef<QDemonRenderTexture2D>(other.m_texture2D);
+        m_texture2DArray = QDemonRef<QDemonRenderTexture2DArray>(other.m_texture2DArray);
+        m_renderBuffer = QDemonRef<QDemonRenderRenderBuffer>(other.m_renderBuffer);
+        m_textureCube = QDemonRef<QDemonRenderTextureCube>(other.m_textureCube);
+    }
+    return *this;
+}
+
+QDemonRef<QDemonRenderTexture2D> QDemonRenderTextureOrRenderBuffer::getTexture2D() const
+{
+    Q_ASSERT(hasTexture2D());
+    return m_texture2D;
+}
+
+QDemonRef<QDemonRenderTexture2DArray> QDemonRenderTextureOrRenderBuffer::getTexture2DArray() const
+{
+    Q_ASSERT(hasTexture2DArray());
+    return m_texture2DArray;
+}
+
+QDemonRef<QDemonRenderTextureCube> QDemonRenderTextureOrRenderBuffer::getTextureCube() const
+{
+    Q_ASSERT(hasTextureCube());
+    return m_textureCube;
+}
+
+QDemonRef<QDemonRenderRenderBuffer> QDemonRenderTextureOrRenderBuffer::getRenderBuffer() const
+{
+    Q_ASSERT(hasRenderBuffer());
+    return m_renderBuffer;
+}
+
+
 QT_END_NAMESPACE

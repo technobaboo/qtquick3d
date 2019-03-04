@@ -53,9 +53,6 @@
 #include <QtDemonRuntimeRender/qdemonrendercustommaterialshadergenerator.h>
 #include <QtDemonRuntimeRender/qdemonrendermodel.h>
 
-#include <QtCore/QEnableSharedFromThis>
-
-
 QT_BEGIN_NAMESPACE
 
 QDemonCustomMaterialVertexPipeline::QDemonCustomMaterialVertexPipeline(QDemonRenderContextInterface *inContext, TessModeValues::Enum inTessMode)

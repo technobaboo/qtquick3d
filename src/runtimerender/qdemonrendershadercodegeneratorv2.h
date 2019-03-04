@@ -108,10 +108,7 @@ public:
                                                                              TShaderFeatureSet inFeatureSet,
                                                                              bool separableProgram = false) = 0;
 
-    QDemonRef<QDemonRenderShaderProgram> compileGeneratedShader(const QString &inShaderName, bool separableProgram = false)
-    {
-        return compileGeneratedShader(inShaderName, QDemonShaderCacheProgramFlags(), TShaderFeatureSet(), separableProgram);
-    }
+    QDemonRef<QDemonRenderShaderProgram> compileGeneratedShader(const QString &inShaderName, bool separableProgram = false);
 
     static QDemonRef<QDemonShaderProgramGeneratorInterface> createProgramGenerator(QDemonRenderContextInterface *inContext);
 

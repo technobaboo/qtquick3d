@@ -107,7 +107,8 @@ SOURCES += \
     qdemonrenderwidgets.cpp \
     qdemontextrenderer.cpp \
     qdemonruntimerenderlogging.cpp \
-    qdemonrenderer.cpp
+    qdemonrenderer.cpp \
+    qdemonrendercustommaterialrendercontext.cpp
 
 RESOURCES += res.qrc
 

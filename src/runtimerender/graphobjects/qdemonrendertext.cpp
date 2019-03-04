@@ -43,6 +43,11 @@ QDemonText::QDemonText()
     m_bounds.setEmpty();
 }
 
+QDemonText::~QDemonText()
+{
+
+}
+
 QDemonBounds3 QDemonText::getTextBounds() const
 {
     QDemonBounds3 retval;

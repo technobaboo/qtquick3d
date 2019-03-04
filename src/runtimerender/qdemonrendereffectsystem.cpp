@@ -1854,4 +1854,14 @@ QDemonRef<QDemonEffectSystemCoreInterface> QDemonEffectSystemCoreInterface::crea
     return QDemonRef<QDemonEffectSystem>(new QDemonEffectSystem(inContext));
 }
 
+QDemonEffectRenderArgument::QDemonEffectRenderArgument(QDemonRenderEffect *inEffect, QDemonRef<QDemonRenderTexture2D> inColorBuffer, const QVector2D &inCameraClipRange, QDemonRef<QDemonRenderTexture2D> inDepthTexture, QDemonRef<QDemonRenderTexture2D> inDepthBuffer)
+    : m_effect(inEffect)
+    , m_colorBuffer(inColorBuffer)
+    , m_cameraClipRange(inCameraClipRange)
+    , m_depthTexture(inDepthTexture)
+    , m_depthStencilBuffer(inDepthBuffer)
+{
+}
+
+
 QT_END_NAMESPACE

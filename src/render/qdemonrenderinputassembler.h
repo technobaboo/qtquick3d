@@ -44,6 +44,7 @@ class QDemonRenderAttribLayout;
 ///< this class handles the vertex attribute layout setup
 class Q_DEMONRENDER_EXPORT QDemonRenderInputAssembler
 {
+    Q_DISABLE_COPY(QDemonRenderInputAssembler)
 public:
     QAtomicInt ref;
 
@@ -90,7 +91,7 @@ public:
          *
          * @return the index buffer
          */
-    const QDemonRef<QDemonRenderIndexBuffer> getIndexBuffer() { return m_indexBuffer; }
+    const QDemonRef<QDemonRenderIndexBuffer> getIndexBuffer();
 
     /**
          * @brief get the index count of the attached index buffer (if any)

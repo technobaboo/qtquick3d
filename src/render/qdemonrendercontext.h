@@ -58,7 +58,6 @@
 #include <QtDemonRender/qdemonrenderstoragebuffer.h>
 #include <QtDemonRender/qdemonrenderatomiccounterbuffer.h>
 #include <QtDemonRender/qdemonrenderdrawindirectbuffer.h>
-#include <QtDemonRender/qdemonrenderprogrampipeline.h>
 #include <QtDemonRender/qdemonrenderpathrender.h>
 #include <QtDemonRender/qdemonrenderpathspecification.h>
 #include <QtDemonRender/qdemonrenderpathfontspecification.h>
@@ -104,6 +103,9 @@ typedef QHash<QDemonRenderBackend::QDemonRenderBackendTextureObject, QDemonRende
 typedef QHash<QDemonRenderBackend::QDemonRenderBackendTextureObject, QDemonRenderTextureCube *> TContextTexCubeToImpMap;
 typedef QHash<QDemonRenderBackend::QDemonRenderBackendTextureObject, QDemonRenderImage2D *> TContextImage2DToImpMap;
 typedef QHash<QString, QDemonRenderPathFontSpecification *> TContextPathFontSpecificationMap;
+
+
+class QDemonRenderProgramPipeline;
 
 class Q_DEMONRENDER_EXPORT QDemonRenderContext : public QDemonRenderDrawable
 {
@@ -448,8 +450,8 @@ struct QDemonRenderContextScopedProperty
 
 class QDemonRenderContextImpl : public QDemonRenderContext
 {
-public:
     Q_DISABLE_COPY(QDemonRenderContextImpl)
+public:
     // these variables represent the current hardware state of the render context.
     QDemonGLHardPropertyContext m_hardwarePropertyContext;
 
@@ -975,10 +977,7 @@ public:
     QDemonRef<QDemonRenderShaderProgram> getActiveShader() const override;
 
     void setActiveProgramPipeline(QDemonRef<QDemonRenderProgramPipeline> inProgramPipeline) override;
-    QDemonRef<QDemonRenderProgramPipeline> getActiveProgramPipeline() const override
-    {
-        return m_hardwarePropertyContext.m_activeProgramPipeline;
-    }
+    QDemonRef<QDemonRenderProgramPipeline> getActiveProgramPipeline() const override;
 
     void dispatchCompute(QDemonRef<QDemonRenderShaderProgram> inShader,
                          quint32 numGroupsX,

@@ -31,6 +31,7 @@
 #include <QtGui/QMatrix4x4>
 #include <QtDemonRender/qdemonrendercontext.h>
 #include <QtDemonRender/qdemonrendershaderprogram.h>
+#include <QtDemonRender/qdemonrenderprogrampipeline.h>
 #include <QtDemon/qdemondataref.h>
 #include <QtDemon/qdemonutils.h>
 

@@ -408,7 +408,7 @@ struct QDemonRenderCachedShaderProperty
             shader->setPropertyValue(constant.data(), inValue);
     }
 
-    bool isValid() const { return constant != 0; }
+    bool isValid() const { return constant != nullptr; }
 };
 
 template <typename TDataType, int size>

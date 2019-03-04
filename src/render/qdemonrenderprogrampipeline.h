@@ -41,6 +41,7 @@ class QDemonRenderShaderProgram;
 ///< A program pipeline is a collection of a multiple programs (vertex, fragment, geometry,....)
 class Q_DEMONRENDER_EXPORT QDemonRenderProgramPipeline
 {
+    Q_DISABLE_COPY(QDemonRenderProgramPipeline)
 public:
     QAtomicInt ref;
 protected:

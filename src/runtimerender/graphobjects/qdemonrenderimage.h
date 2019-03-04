@@ -53,6 +53,7 @@ struct ImageMappingModes
 
 struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderImage : public QDemonGraphObject
 {
+    Q_DISABLE_COPY(QDemonRenderImage)
     // Complete path to the file;
     //*not* relative to the presentation directory
     QString m_imagePath;
@@ -81,6 +82,7 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderImage : public QDemonGraphObject
     QMatrix4x4 m_textureTransform;
 
     QDemonRenderImage();
+    ~QDemonRenderImage();
     // Renders the sub presentation
     // Or finds the image.
     // and sets up the texture transform

@@ -106,6 +106,7 @@ SOURCES += \
     qdemonrendertimerquery.cpp \
     qdemonrendervertexbuffer.cpp \
     qdemonrendervertexshader.cpp \
-    qdemonrenderlogging.cpp
+    qdemonrenderlogging.cpp \
+    qdemonrendershaderconstant.cpp
 
 load(qt_module)

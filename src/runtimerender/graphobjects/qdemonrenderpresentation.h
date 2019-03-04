@@ -51,6 +51,7 @@ struct RenderRotationValues
 
 struct Q_DEMONRUNTIMERENDER_EXPORT QDemonPresentation : public QDemonGraphObject
 {
+    Q_DISABLE_COPY(QDemonPresentation)
     QVector2D presentationDimensions;
     RenderRotationValues::Enum presentationRotation;
     QDemonRef<QDemonRenderScene> scene;

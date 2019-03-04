@@ -42,6 +42,7 @@ class QDemonRenderBackend;
 ///< this class handles the vertex attribute layout setup
 class Q_DEMONRENDER_EXPORT QDemonRenderAttribLayout
 {
+    Q_DISABLE_COPY(QDemonRenderAttribLayout)
 public:
     QAtomicInt ref;
     /**

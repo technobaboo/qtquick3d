@@ -52,6 +52,11 @@ QDemonRenderImage::QDemonRenderImage()
     m_flags.setTransformDirty(true);
 }
 
+QDemonRenderImage::~QDemonRenderImage()
+{
+
+}
+
 static void HandleOffscreenResult(QDemonRenderImage &theImage, QDemonRenderImageTextureData &newImage,
                                   QDemonOffscreenRenderResult &theResult, bool &replaceTexture,
                                   bool &wasDirty)

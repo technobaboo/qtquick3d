@@ -31,6 +31,8 @@
 #include <QtDemonRender/qdemonrendercontext.h>
 #include <qdemonrenderquerybase.h>
 #include <QtDemonRender/qdemonrenderbasetypes.h>
+#include <QtDemonRender/qdemonrendershaderprogram.h>
+#include <QtDemonRender/qdemonrenderprogrampipeline.h>
 
 QT_BEGIN_NAMESPACE
 

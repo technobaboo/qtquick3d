@@ -41,6 +41,7 @@ class QDemonRenderTextureSampler;
 
 class Q_DEMONRENDER_EXPORT QDemonRenderTextureCube : public QDemonRenderTextureBase
 {
+    Q_DISABLE_COPY(QDemonRenderTextureCube)
 private:
     quint32 m_width; ///< texture width (per face)
     quint32 m_height; ///< texture height (per face)

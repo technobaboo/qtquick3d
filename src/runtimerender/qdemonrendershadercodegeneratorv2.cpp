@@ -441,6 +441,11 @@ struct QDemonProgramGenerator : public QDemonShaderProgramGeneratorInterface
 };
 };
 
+QDemonRef<QDemonRenderShaderProgram> QDemonShaderProgramGeneratorInterface::compileGeneratedShader(const QString &inShaderName, bool separableProgram)
+{
+    return compileGeneratedShader(inShaderName, QDemonShaderCacheProgramFlags(), TShaderFeatureSet(), separableProgram);
+}
+
 QDemonRef<QDemonShaderProgramGeneratorInterface> QDemonShaderProgramGeneratorInterface::createProgramGenerator(QDemonRenderContextInterface *inContext)
 {
     return QDemonRef<QDemonShaderProgramGeneratorInterface>(new QDemonProgramGenerator(inContext));

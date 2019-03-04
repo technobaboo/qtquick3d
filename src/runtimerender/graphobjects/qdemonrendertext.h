@@ -40,6 +40,7 @@ class QDemonRenderPathFontSpecification;
 
 struct Q_DEMONRUNTIMERENDER_EXPORT QDemonText : public QDemonGraphNode, public QDemonTextRenderInfo
 {
+    Q_DISABLE_COPY(QDemonText)
     // Change any of these properties and you can expect
     // that the text will force an expensive re-layer and render.
     // For these you need to set TextDirty.
@@ -56,6 +57,7 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonText : public QDemonGraphNode, public Q
     QDemonBounds3 m_bounds;
 
     QDemonText();
+    ~QDemonText();
 
     QDemonBounds3 getTextBounds() const;
 

@@ -1330,6 +1330,7 @@ QDemonRenderVertFragCompilationResult &QDemonRenderVertFragCompilationResult::op
 {
     m_shaderName = other.m_shaderName;
     m_shader = other.m_shader;
+    return *this;
 }
 
 QT_END_NAMESPACE
