@@ -57,6 +57,7 @@
 #include <QtDemonRuntimeRender/qdemonrenderpath.h>
 #include <QtDemonRuntimeRender/qdemonrenderpathmanager.h>
 #include <QtDemonRuntimeRender/qdemonrendershadercache.h>
+#include <QtDemonRuntimeRender/qdemonperframeallocator.h>
 
 #ifdef _WIN32
 #pragma warning(disable : 4355)
@@ -269,6 +270,9 @@ void QDemonLayerRenderPreparationData::addRenderWidget(QDemonRenderWidgetInterfa
         iRenderWidgets.push_back(&inWidget);
 }
 
+#define RENDER_FRAME_NEW(type) \
+    new (renderer->getDemonContext()->getPerFrameAllocator().allocate(sizeof(type))) type
+
 #define QDEMON_RENDER_MINIMUM_RENDER_OPACITY .01f
 
 QDemonShaderDefaultMaterialKey
@@ -349,7 +353,7 @@ bool QDemonLayerRenderPreparationData::prepareTextForRender(
         if (inText.m_pathFontDetails)
             ioFlags.setRequiresStencilBuffer(true);
 
-        QDemonTextRenderable *theRenderable = new QDemonTextRenderable(
+        QDemonTextRenderable *theRenderable = RENDER_FRAME_NEW(QDemonTextRenderable)(
                     theFlags, inText.getGlobalPos(), *renderer, inText, inText.m_bounds, theMVP,
                     inViewProjection, *inText.m_textTexture, theTextOffset, theTextScale);
         transparentObjects.push_back(theRenderable);
@@ -456,7 +460,7 @@ bool QDemonLayerRenderPreparationData::preparePathForRender(
                     isStroke = false;
             }
 
-            QDemonPathRenderable *theRenderable = new QDemonPathRenderable(
+            QDemonPathRenderable *theRenderable = RENDER_FRAME_NEW(QDemonPathRenderable)(
                         theFlags, inPath.getGlobalPos(), renderer, inPath.globalTransform,
                         theBounds, inPath, theMVP, theNormalMatrix, *theMaterial, prepResult.opacity,
                         prepResult.materialKey, isStroke);
@@ -499,7 +503,7 @@ bool QDemonLayerRenderPreparationData::preparePathForRender(
                     isStroke = false;
             }
 
-            QDemonPathRenderable *theRenderable = new QDemonPathRenderable(
+            QDemonPathRenderable *theRenderable = RENDER_FRAME_NEW(QDemonPathRenderable)(
                         theFlags, inPath.getGlobalPos(), renderer, inPath.globalTransform,
                         theBounds, inPath, theMVP, theNormalMatrix, *theMaterial, prepResult.opacity,
                         prepResult.materialKey, isStroke);
@@ -553,7 +557,7 @@ void QDemonLayerRenderPreparationData::prepareImageForRender(
         // inImage.m_TextureData.m_Texture->SetMinFilter( QDemonRenderTextureMinifyingOp::Linear );
         // inImage.m_TextureData.m_Texture->SetMagFilter( QDemonRenderTextureMagnifyingOp::Linear );
 
-        QDemonRenderableImage *theImage = new QDemonRenderableImage(inMapType, inImage);
+        QDemonRenderableImage *theImage = RENDER_FRAME_NEW(QDemonRenderableImage)(inMapType, inImage);
         QDemonShaderKeyImageMap &theKeyProp = renderer->defaultMaterialShaderKeyProperties().m_imageMaps[inImageIndex];
 
         theKeyProp.setEnabled(inShaderKey, true);
@@ -780,7 +784,7 @@ bool QDemonLayerRenderPreparationData::prepareModelForRender(QDemonRenderModel &
         return false;
 
     QDemonGraphObject *theSourceMaterialObject = inModel.firstMaterial;
-    QDemonModelContext &theModelContext = *new QDemonModelContext(inModel, inViewProjection);
+    QDemonModelContext &theModelContext = *RENDER_FRAME_NEW(QDemonModelContext)(inModel, inViewProjection);
     modelContexts.push_back(&theModelContext);
 
     bool subsetDirty = false;
@@ -881,7 +885,7 @@ bool QDemonLayerRenderPreparationData::prepareModelForRender(QDemonRenderModel &
                     Q_ASSERT(false);
                 }
 
-                theRenderableObject = new QDemonSubsetRenderable(renderableFlags,
+                theRenderableObject = RENDER_FRAME_NEW(QDemonSubsetRenderable)(renderableFlags,
                                                                  theModelCenter,
                                                                  renderer,
                                                                  theSubset,
@@ -922,7 +926,7 @@ bool QDemonLayerRenderPreparationData::prepareModelForRender(QDemonRenderModel &
                     renderer->prepareImageForIbl(*theMaterial.m_iblProbe);
                 }
 
-                theRenderableObject = new QDemonCustomMaterialRenderable(renderableFlags,
+                theRenderableObject = RENDER_FRAME_NEW(QDemonCustomMaterialRenderable)(renderableFlags,
                                                                          theModelCenter,
                                                                          renderer,
                                                                          theSubset,

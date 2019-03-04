@@ -54,6 +54,7 @@
 #include <QtDemonRuntimeRender/qdemonrendershadercodegeneratorv2.h>
 #include <QtDemonRuntimeRender/qdemonrenderdefaultmaterialshadergenerator.h>
 #include <QtDemonRuntimeRender/qdemonrendercustommaterialshadergenerator.h>
+#include <QtDemonRuntimeRender/qdemonperframeallocator.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -146,6 +147,7 @@ struct QDemonRenderContextData : public QDemonRenderContextInterface
     QDemonRef<QDemonShaderProgramGeneratorInterface> m_shaderProgramGenerator;
     QDemonRef<QDemonDefaultMaterialShaderGeneratorInterface> m_defaultMaterialShaderGenerator;
     QDemonRef<ICustomMaterialShaderGenerator> m_customMaterialShaderGenerator;
+    QDemonPerFrameAllocator m_perFrameAllocator;
     QDemonRef<QDemonRenderListInterface> m_renderList;
     quint32 m_frameCount;
     // Viewport that this render context should use
@@ -289,6 +291,10 @@ struct QDemonRenderContextData : public QDemonRenderContextInterface
     QDemonRef<ICustomMaterialShaderGenerator> getCustomMaterialShaderGenerator() override
     {
         return m_customMaterialShaderGenerator;
+    }
+
+    QDemonPerFrameAllocator &getPerFrameAllocator() override {
+        return m_perFrameAllocator;
     }
 
     quint32 getFrameCount() override { return m_frameCount; }
@@ -514,6 +520,7 @@ struct QDemonRenderContextData : public QDemonRenderContextInterface
         m_preRenderPresentationDimensions = m_presentationDimensions;
         QSize thePresentationDimensions(m_preRenderPresentationDimensions);
         QRect theContextViewport(getContextViewport());
+        m_perFrameAllocator.reset();
         QDemonRenderListInterface &theRenderList(*m_renderList);
         theRenderList.beginFrame();
         if (m_viewport.hasValue()) {

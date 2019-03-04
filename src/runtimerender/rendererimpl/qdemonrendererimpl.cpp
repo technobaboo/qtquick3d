@@ -53,6 +53,7 @@
 #include <QtDemonRuntimeRender/qdemonrendershadercodegeneratorv2.h>
 #include <QtDemonRuntimeRender/qdemonrenderdefaultmaterialshadergenerator.h>
 #include <QtDemonRuntimeRender/qdemonrenderpathmanager.h>
+#include <QtDemonRuntimeRender/qdemonperframeallocator.h>
 
 #include <QtDemonRender/qdemonrenderframebuffer.h>
 #include <QtDemon/QDemonDataRef>
@@ -554,7 +555,7 @@ QDemonPickResultProcessResult QDemonRendererImpl::processPickResultList(bool inP
 
     quint32 numToCopy = (quint32)m_lastPickResults.size();
     quint32 numCopyBytes = numToCopy * sizeof(QDemonRenderPickResult);
-    QDemonRenderPickResult *thePickResults = reinterpret_cast<QDemonRenderPickResult *>(::malloc(numCopyBytes));
+    QDemonRenderPickResult *thePickResults = reinterpret_cast<QDemonRenderPickResult *>(m_demonContext->getPerFrameAllocator().allocate(numCopyBytes));
     ::memcpy(thePickResults, m_lastPickResults.data(), numCopyBytes);
     m_lastPickResults.clear();
     bool foundValidResult = false;
@@ -1037,6 +1038,9 @@ void QDemonRendererImpl::beginLayerRender(QDemonLayerRenderData &inLayer)
     m_layerShaders.clear();
 }
 void QDemonRendererImpl::endLayerRender() { m_currentLayer = nullptr; }
+
+#define RENDERER_FRAME_NEW(type) \
+    new (m_demonContext->getPerFrameAllocator().m_fastAllocator.allocate(sizeof(type))) type
 
 void QDemonRendererImpl::prepareImageForIbl(QDemonRenderImage &inImage)
 {

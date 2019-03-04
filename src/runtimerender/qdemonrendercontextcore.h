@@ -95,6 +95,7 @@ class QDemonTextTextureAtlasInterface;
 class QDemonRendererInterface;
 class QDemonShaderCacheInterface;
 class QDemonOffscreenRenderManagerInterface;
+struct QDemonPerFrameAllocator;
 
 class Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderContextInterface
 {
@@ -123,6 +124,10 @@ public:
     virtual QDemonRef<QDemonShaderProgramGeneratorInterface> getShaderProgramGenerator() = 0;
     virtual QDemonRef<QDemonDefaultMaterialShaderGeneratorInterface> getDefaultMaterialShaderGenerator() = 0;
     virtual QDemonRef<ICustomMaterialShaderGenerator> getCustomMaterialShaderGenerator() = 0;
+    // The memory used for the per frame allocator is released as the first step in BeginFrame.
+    // This is useful for short lived objects and datastructures.
+    virtual QDemonPerFrameAllocator &getPerFrameAllocator() = 0;
+
     // Get the number of times EndFrame has been called
     virtual quint32 getFrameCount() = 0;
 

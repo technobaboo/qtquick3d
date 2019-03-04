@@ -68,7 +68,8 @@ HEADERS += \
 #    qdemonrenderuipsharedtranslation.h \
     qdemonrenderwidgets.h \
     qdemontextrenderer.h \
-    qdemonruntimerenderlogging.h
+    qdemonruntimerenderlogging.h \
+    qdemonperframeallocator.h
 
 SOURCES += \
 #    qdemonqmlrender.cpp \
