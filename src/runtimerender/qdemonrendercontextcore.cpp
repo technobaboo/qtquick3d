@@ -49,7 +49,6 @@
 #include <QtDemonRuntimeRender/qdemonrenderdynamicobjectsystem.h>
 #include <QtDemonRuntimeRender/qdemonrendercustommaterialsystem.h>
 #include <QtDemonRuntimeRender/qdemonrenderpixelgraphicsrenderer.h>
-#include <QtDemonRuntimeRender/qdemonrenderbufferloader.h>
 #include <QtDemonRuntimeRender/qdemonrenderrenderlist.h>
 #include <QtDemonRuntimeRender/qdemonrenderpathmanager.h>
 #include <QtDemonRuntimeRender/qdemonrendershadercodegeneratorv2.h>
@@ -68,7 +67,6 @@ struct QDemonRenderContextCore : public QDemonRenderContextCoreInterface
     QDemonRef<QDemonDynamicObjectSystemCoreInterface> m_dynamicObjectSystem;
     QDemonRef<QDemonCustomMaterialSystemCoreInterface> m_materialSystem;
     QDemonRef<QDemonEffectSystemCoreInterface> m_effectSystem;
-    QDemonRef<QDemonBufferLoaderInterface> m_bufferLoader;
     QDemonRef<QDemonTextRendererCoreInterface> m_textRenderer;
     QDemonRef<QDemonTextRendererCoreInterface> m_onscreenTexRenderer;
     QDemonRef<QDemonPathManagerCoreInterface> m_pathManagerCore;
@@ -81,7 +79,6 @@ struct QDemonRenderContextCore : public QDemonRenderContextCoreInterface
         m_dynamicObjectSystem = QDemonDynamicObjectSystemCoreInterface::createDynamicSystemCore(this);
         m_materialSystem = QDemonCustomMaterialSystemCoreInterface::createCustomMaterialSystemCore(this);
         m_effectSystem = QDemonEffectSystemCoreInterface::createEffectSystemCore(this);
-        m_bufferLoader = QDemonBufferLoaderInterface::create(m_inputStreamFactory, m_threadPool);
         m_pathManagerCore = QDemonPathManagerCoreInterface::createPathManagerCore(this);
     }
 
@@ -96,7 +93,6 @@ struct QDemonRenderContextCore : public QDemonRenderContextCoreInterface
     QDemonRef<QDemonCustomMaterialSystemCoreInterface> getMaterialSystemCore() override { return m_materialSystem; }
     QDemonRef<QDemonEffectSystemCoreInterface> getEffectSystemCore() override { return m_effectSystem; }
     QDemonRef<QDemonPerfTimerInterface> getPerfTimer() override { return m_perfTimer; }
-    QDemonRef<QDemonBufferLoaderInterface> getBufferLoader() override { return m_bufferLoader; }
     QDemonRef<QDemonPathManagerCoreInterface> getPathManagerCore() override { return m_pathManagerCore; }
     QDemonRef<QDemonRenderContextInterface> createRenderContext(QDemonRef<QDemonRenderContext> inContext, const char *inPrimitivesDirectory) override;
     void setTextRendererCore(QDemonRef<QDemonTextRendererCoreInterface> inRenderer) override { m_textRenderer = inRenderer; }

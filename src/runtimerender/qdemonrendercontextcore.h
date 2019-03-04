@@ -36,7 +36,6 @@
 #include <QtDemonRuntimeRender/qdemonrenderdynamicobjectsystem.h>
 #include <QtDemonRuntimeRender/qdemonrendercustommaterialsystem.h>
 #include <QtDemonRuntimeRender/qdemonrendereffectsystem.h>
-#include <QtDemonRuntimeRender/qdemonrenderbufferloader.h>
 #include <QtDemonRuntimeRender/qdemontextrenderer.h>
 #include <QtDemonRuntimeRender/qdemonrenderwidgets.h>
 #include <QtDemonRuntimeRender/qdemonrenderimagebatchloader.h>
@@ -44,6 +43,8 @@
 #include <QtDemonRuntimeRender/qdemonrendertexttexturecache.h>
 #include <QtDemonRuntimeRender/qdemonrenderrenderlist.h>
 #include <QtDemonRuntimeRender/qdemonrendercustommaterialshadergenerator.h>
+#include <QtDemonRuntimeRender/qtdemonruntimerenderglobal.h>
+#include <QtDemonRuntimeRender/qdemonrenderinputstreamfactory.h>
 
 #include <QtDemon/qdemonperftimer.h>
 
@@ -77,7 +78,6 @@ public:
     virtual QDemonRef<QDemonCustomMaterialSystemCoreInterface> getMaterialSystemCore() = 0;
     virtual QDemonRef<QDemonEffectSystemCoreInterface> getEffectSystemCore() = 0;
     virtual QDemonRef<QDemonPerfTimerInterface> getPerfTimer() = 0;
-    virtual QDemonRef<QDemonBufferLoaderInterface> getBufferLoader() = 0;
     virtual QDemonRef<QDemonPathManagerCoreInterface> getPathManagerCore() = 0;
     // Text renderers may be provided by clients at runtime.
     virtual void setTextRendererCore(QDemonRef<QDemonTextRendererCoreInterface> inRenderer) = 0;
