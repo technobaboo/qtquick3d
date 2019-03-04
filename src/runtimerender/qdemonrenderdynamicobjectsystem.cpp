@@ -594,22 +594,6 @@ struct QDemonDynamicObjClassImpl : public QDemonDynamicObjectClassInterface
     QDemonRenderTextureFormats::Enum getOutputTextureFormat() const override { return m_outputFormat; }
 };
 
-struct QDemonDataRemapper
-{
-    template <typename TRemapper>
-    void remap(quint8 *inData, dynamic::QDemonPropertyDefinition &item, TRemapper &remapper)
-    {
-        switch (item.dataType) {
-        default:
-            break; // no remapping necessary
-        case QDemonRenderShaderDataTypes::Texture2D:
-            QString *realData = reinterpret_cast<QString *>(inData);
-            remapper.Remap(*realData);
-            break;
-        }
-    }
-};
-
 }
 
 namespace {
