@@ -61,7 +61,7 @@ NamespaceIndentation: None
 # Horizontally align arguments after an open bracket.
 # The coding style does not specify the following, but this is what gives
 # results closest to the existing code.
-AlignAfterOpenBracket: Align
+AlignAfterOpenBracket: true
 AlwaysBreakTemplateDeclarations: true
 
 # Ideally we should also allow less short function in a single line, but
@@ -70,13 +70,15 @@ AllowShortFunctionsOnASingleLine: Inline
 
 #
 BinPackParameters: false
-AllowAllParametersOfDeclarationOnNextLine: true
+BinPackArguments: false
+AllowAllParametersOfDeclarationOnNextLine: false
 AlwaysBreakAfterReturnType: None
 
 #
-PenaltyReturnTypeOnItsOwnLine: 150
-PenaltyBreakAssignment: 150
-PenaltyBreakBeforeFirstCallParameter: 150
+PenaltyReturnTypeOnItsOwnLine: 5000
+PenaltyBreakAssignment: 5000
+PenaltyBreakBeforeFirstCallParameter: 5000
+PenaltyExcessCharacter: 1
 
 # The coding style specifies some include order categories, but also tells to
 # separate categories with an empty line. It does not specify the order within
