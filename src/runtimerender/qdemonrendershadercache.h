@@ -130,11 +130,11 @@ public:
     // It is up to the caller to ensure that inFeatures contains unique keys.
     // It is also up the the caller to ensure the keys are ordered in some way.
     virtual QDemonRef<QDemonRenderShaderProgram> forceCompileProgram(const QByteArray &inKey,
-                                                                          const QString &inVert,
-                                                                          const QString &inFrag,
-                                                                          const QString &inTessCtrl,
-                                                                          const QString &inTessEval,
-                                                                          const QString &inGeom,
+                                                                          const QByteArray &inVert,
+                                                                          const QByteArray &inFrag,
+                                                                          const QByteArray &inTessCtrl,
+                                                                          const QByteArray &inTessEval,
+                                                                          const QByteArray &inGeom,
                                                                           const QDemonShaderCacheProgramFlags &inFlags,
                                                                           const QVector<QDemonShaderPreprocessorFeature> &inFeatures,
                                                                           bool separableProgram,
@@ -143,11 +143,11 @@ public:
     // It is up to the caller to ensure that inFeatures contains unique keys.
     // It is also up the the caller to ensure the keys are ordered in some way.
     virtual QDemonRef<QDemonRenderShaderProgram> compileProgram(const QByteArray &inKey,
-                                                                     const QString &inVert,
-                                                                     const QString &inFrag,
-                                                                     const QString &inTessCtrl,
-                                                                     const QString &inTessEval,
-                                                                     const QString &inGeom,
+                                                                     const QByteArray &inVert,
+                                                                     const QByteArray &inFrag,
+                                                                     const QByteArray &inTessCtrl,
+                                                                     const QByteArray &inTessEval,
+                                                                     const QByteArray &inGeom,
                                                                      const QDemonShaderCacheProgramFlags &inFlags,
                                                                      const QVector<QDemonShaderPreprocessorFeature> &inFeatures,
                                                                      bool separableProgram = false) = 0;
