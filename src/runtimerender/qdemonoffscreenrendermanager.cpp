@@ -115,7 +115,7 @@ struct QDemonOffscreenRenderManager : public QDemonOffscreenRenderManagerInterfa
     {
     }
 
-    virtual ~QDemonOffscreenRenderManager() override = default;
+    ~QDemonOffscreenRenderManager() override = default;
 
     QDemonOption<bool> maybeRegisterOffscreenRenderer(const QDemonOffscreenRendererKey &inKey,
                                                       QDemonRef<QDemonOffscreenRendererInterface> inRenderer) override

@@ -36,7 +36,7 @@ QT_BEGIN_NAMESPACE
 namespace {
 struct QDemonNullBackend : public QDemonRenderBackend
 {
-    virtual ~QDemonNullBackend() override = default;
+    ~QDemonNullBackend() override = default;
 
     /// backend interface
 
@@ -65,14 +65,14 @@ struct QDemonNullBackend : public QDemonRenderBackend
     quint32 getStencilBits() const override { return 0; }
     void setRenderState(bool, const QDemonRenderState::Enum) override {}
     bool getRenderState(const QDemonRenderState::Enum) override { return false; }
-    virtual QDemonRenderBackendDepthStencilStateObject createDepthStencilState(bool,
-                                                                               bool,
-                                                                               QDemonRenderBoolOp::Enum,
-                                                                               bool,
-                                                                               QDemonRenderStencilFunctionArgument &,
-                                                                               QDemonRenderStencilFunctionArgument &,
-                                                                               QDemonRenderStencilOperationArgument &,
-                                                                               QDemonRenderStencilOperationArgument &) override
+    QDemonRenderBackendDepthStencilStateObject createDepthStencilState(bool,
+                                                                       bool,
+                                                                       QDemonRenderBoolOp::Enum,
+                                                                       bool,
+                                                                       QDemonRenderStencilFunctionArgument &,
+                                                                       QDemonRenderStencilFunctionArgument &,
+                                                                       QDemonRenderStencilOperationArgument &,
+                                                                       QDemonRenderStencilOperationArgument &) override
     {
         return QDemonRenderBackendDepthStencilStateObject(1);
     }
@@ -280,23 +280,23 @@ struct QDemonNullBackend : public QDemonRenderBackend
     }
     void releaseTexture(QDemonRenderBackendTextureObject) override {}
 
-    virtual QDemonRenderTextureSwizzleMode::Enum getTextureSwizzleMode(const QDemonRenderTextureFormats::Enum) const override
+    QDemonRenderTextureSwizzleMode::Enum getTextureSwizzleMode(const QDemonRenderTextureFormats::Enum) const override
     {
         return QDemonRenderTextureSwizzleMode::NoSwizzle;
     }
 
-    virtual QDemonRenderBackendSamplerObject createSampler(QDemonRenderTextureMinifyingOp::Enum,
-                                                           QDemonRenderTextureMagnifyingOp::Enum,
-                                                           QDemonRenderTextureCoordOp::Enum,
-                                                           QDemonRenderTextureCoordOp::Enum,
-                                                           QDemonRenderTextureCoordOp::Enum,
-                                                           qint32,
-                                                           qint32,
-                                                           float,
-                                                           QDemonRenderTextureCompareMode::Enum,
-                                                           QDemonRenderTextureCompareOp::Enum,
-                                                           float,
-                                                           float *) override
+    QDemonRenderBackendSamplerObject createSampler(QDemonRenderTextureMinifyingOp::Enum,
+                                                   QDemonRenderTextureMagnifyingOp::Enum,
+                                                   QDemonRenderTextureCoordOp::Enum,
+                                                   QDemonRenderTextureCoordOp::Enum,
+                                                   QDemonRenderTextureCoordOp::Enum,
+                                                   qint32,
+                                                   qint32,
+                                                   float,
+                                                   QDemonRenderTextureCompareMode::Enum,
+                                                   QDemonRenderTextureCompareOp::Enum,
+                                                   float,
+                                                   float *) override
     {
         return QDemonRenderBackendSamplerObject(1);
     }
@@ -328,7 +328,7 @@ struct QDemonNullBackend : public QDemonRenderBackend
 
     void releaseSampler(QDemonRenderBackendSamplerObject) override {}
 
-    virtual QDemonRenderBackendAttribLayoutObject createAttribLayout(QDemonConstDataRef<QDemonRenderVertexBufferEntry>) override
+    QDemonRenderBackendAttribLayoutObject createAttribLayout(QDemonConstDataRef<QDemonRenderVertexBufferEntry>) override
     {
         return QDemonRenderBackendAttribLayoutObject(1);
     }
@@ -365,7 +365,7 @@ struct QDemonNullBackend : public QDemonRenderBackend
         return QDemonRenderBackendTessControlShaderObject(1);
     }
     void releaseTessControlShader(QDemonRenderBackendTessControlShaderObject) override {}
-    virtual QDemonRenderBackendTessEvaluationShaderObject createTessEvaluationShader(QDemonConstDataRef<qint8>, QByteArray &, bool) override
+    QDemonRenderBackendTessEvaluationShaderObject createTessEvaluationShader(QDemonConstDataRef<qint8>, QByteArray &, bool) override
     {
         return QDemonRenderBackendTessEvaluationShaderObject(1);
     }
@@ -507,14 +507,14 @@ struct QDemonNullBackend : public QDemonRenderBackend
                         float) override
     {
     }
-    virtual QDemonRenderPathReturnValues::Enum loadPathGlyphsIndexed(QDemonRenderBackendPathObject,
-                                                                     QDemonRenderPathFontTarget::Enum,
-                                                                     const void *,
-                                                                     QDemonRenderPathFontStyleFlags,
-                                                                     quint32,
-                                                                     size_t,
-                                                                     QDemonRenderBackendPathObject,
-                                                                     float) override
+    QDemonRenderPathReturnValues::Enum loadPathGlyphsIndexed(QDemonRenderBackendPathObject,
+                                                             QDemonRenderPathFontTarget::Enum,
+                                                             const void *,
+                                                             QDemonRenderPathFontStyleFlags,
+                                                             quint32,
+                                                             size_t,
+                                                             QDemonRenderBackendPathObject,
+                                                             float) override
     {
         return QDemonRenderPathReturnValues::FontUnavailable;
     }

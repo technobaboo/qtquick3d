@@ -850,7 +850,7 @@ struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface
         return const_cast<QDemonMaterialSystem *>(this)->getMaterialClass(inStr);
     }
 
-    virtual QDemonConstDataRef<dynamic::QDemonPropertyDefinition> getCustomMaterialProperties(const QString &inCustomMaterialName) const override
+    QDemonConstDataRef<dynamic::QDemonPropertyDefinition> getCustomMaterialProperties(const QString &inCustomMaterialName) const override
     {
         QDemonDynamicObjectClassInterface *theMaterialClass = m_coreContext->getDynamicObjectSystemCore()->getDynamicObjectClass(
                 inCustomMaterialName);

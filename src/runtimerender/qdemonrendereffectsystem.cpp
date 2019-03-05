@@ -575,7 +575,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
         return true;
     }
 
-    virtual QDemonConstDataRef<QString> getEffectPropertyEnumNames(QString inName, QString inPropName) const override
+    QDemonConstDataRef<QString> getEffectPropertyEnumNames(QString inName, QString inPropName) const override
     {
         const auto theClass = getEffectClass(inName);
         if (theClass == nullptr) {
@@ -588,7 +588,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
         return QDemonConstDataRef<QString>();
     }
 
-    virtual QDemonConstDataRef<QDemonPropertyDefinition> getEffectProperties(QString inEffectName) const override
+    QDemonConstDataRef<QDemonPropertyDefinition> getEffectProperties(QString inEffectName) const override
     {
         const auto theClass = getEffectClass(inEffectName);
         if (theClass)
@@ -653,7 +653,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
         m_coreContext->getDynamicObjectSystemCore()->setRenderCommands(inEffectName, inCommands);
     }
 
-    virtual QDemonConstDataRef<dynamic::QDemonCommand *> getEffectCommands(QString inEffectName) const override
+    QDemonConstDataRef<dynamic::QDemonCommand *> getEffectCommands(QString inEffectName) const override
     {
         return m_coreContext->getDynamicObjectSystemCore()->getRenderCommands(inEffectName);
     }

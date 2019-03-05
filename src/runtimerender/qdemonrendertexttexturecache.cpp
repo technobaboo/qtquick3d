@@ -98,7 +98,7 @@ struct QDemonTextTextureCache : public QDemonTextTextureCacheInterface
         canUsePathRendering = (renderContext->isPathRenderingSupported() && renderContext->isProgramPipelineSupported());
     }
 
-    virtual ~QDemonTextTextureCache() override
+    ~QDemonTextTextureCache() override
     {
         auto iter = textCacheNodeList.begin();
         const auto end = textCacheNodeList.end();

@@ -61,7 +61,7 @@ struct QDemonResourceManager : public QDemonResourceManagerInterface
 
     QDemonResourceManager(const QDemonRef<QDemonRenderContext> &ctx) : renderContext(ctx) {}
 
-    virtual ~QDemonResourceManager() override = default;
+    ~QDemonResourceManager() override = default;
 
     QDemonRef<QDemonRenderFrameBuffer> allocateFrameBuffer() override
     {
@@ -97,9 +97,9 @@ struct QDemonResourceManager : public QDemonResourceManagerInterface
         freeFrameBuffers.push_back(inBuffer);
     }
 
-    virtual QDemonRef<QDemonRenderRenderBuffer> allocateRenderBuffer(quint32 inWidth,
-                                                                     quint32 inHeight,
-                                                                     QDemonRenderRenderBufferFormats::Enum inBufferFormat) override
+    QDemonRef<QDemonRenderRenderBuffer> allocateRenderBuffer(quint32 inWidth,
+                                                             quint32 inHeight,
+                                                             QDemonRenderRenderBufferFormats::Enum inBufferFormat) override
     {
         // Look for one of this specific size and format.
         int existingMatchIdx = freeRenderBuffers.size();

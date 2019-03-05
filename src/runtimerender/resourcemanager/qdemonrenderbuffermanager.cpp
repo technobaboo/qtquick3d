@@ -98,7 +98,7 @@ struct QDemonBufferManager : public QDemonBufferManagerInterface
         , m_gpuSupportsDXT(ctx->areDXTImagesSupported())
     {
     }
-    virtual ~QDemonBufferManager() override { clear(); }
+    ~QDemonBufferManager() override { clear(); }
 
     QString combineBaseAndRelative(const char *inBase, const char *inRelative) override
     {

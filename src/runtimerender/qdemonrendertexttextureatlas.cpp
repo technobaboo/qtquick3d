@@ -49,7 +49,7 @@ struct QDemonTextTextureAtlas : public QDemonTextTextureAtlasInterface
     {
     }
 
-    virtual ~QDemonTextTextureAtlas() override = default;
+    ~QDemonTextTextureAtlas() override = default;
 
     TTextRenderAtlasDetailsAndTexture renderText(const QDemonTextRenderInfo &inText) override
     {
