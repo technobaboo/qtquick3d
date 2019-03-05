@@ -205,7 +205,7 @@ struct ShaderCache : public QDemonShaderCacheInterface
     {
     }
 
-    QDemonRef<QDemonRenderShaderProgram> getProgram(QString inKey, const QVector<QDemonShaderPreprocessorFeature> &inFeatures) override
+    QDemonRef<QDemonRenderShaderProgram> getProgram(const QByteArray &inKey, const QVector<QDemonShaderPreprocessorFeature> &inFeatures) override
     {
         m_tempKey.m_key = inKey;
         m_tempKey.m_features = inFeatures;
@@ -399,7 +399,7 @@ struct ShaderCache : public QDemonShaderCacheInterface
         }
     }
     // Compile this program overwriting any existing ones.
-    QDemonRef<QDemonRenderShaderProgram> forceCompileProgram(QString inKey, const QString &inVert, const QString &inFrag,
+    QDemonRef<QDemonRenderShaderProgram> forceCompileProgram(const QByteArray &inKey, const QString &inVert, const QString &inFrag,
                                                                   const QString &inTessCtrl, const QString &inTessEval, const QString &inGeom,
                                                                   const QDemonShaderCacheProgramFlags &inFlags,
                                                                   const QVector<QDemonShaderPreprocessorFeature> &inFeatures,
@@ -440,7 +440,7 @@ struct ShaderCache : public QDemonShaderCacheInterface
         if (inFlags.isGeometryShaderEnabled())
             addShaderPreprocessor(m_geometryCode, inKey, ShaderType::Geometry, inFeatures);
         // ### this call is awful because of QString conversions!
-        auto shaderProgram = m_renderContext->compileSource(inKey.toLocal8Bit().constData(),
+        auto shaderProgram = m_renderContext->compileSource(inKey.constData(),
                                                             m_vertexCode.toLocal8Bit().constData(),
                                                             quint32(m_vertexCode.toLocal8Bit().size()),
                                                             m_fragmentCode.toLocal8Bit().constData(),
@@ -500,7 +500,7 @@ struct ShaderCache : public QDemonShaderCacheInterface
         return shaderProgram;
     }
 
-    virtual QDemonRef<QDemonRenderShaderProgram> compileProgram(QString inKey, const QString &inVert, const QString &inFrag,
+    virtual QDemonRef<QDemonRenderShaderProgram> compileProgram(const QByteArray &inKey, const QString &inVert, const QString &inFrag,
                                                                      const QString &inTessCtrl, const QString &inTessEval, const QString &inGeom,
                                                                      const QDemonShaderCacheProgramFlags &inFlags,
                                                                      const QVector<QDemonShaderPreprocessorFeature> &inFeatures, bool separableProgram) override

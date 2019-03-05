@@ -70,13 +70,12 @@ struct QDemonShaderGeneratorGeneratedShader
 {
     QAtomicInt ref;
     quint32 layerSetIndex;
-    QString queryString;
+    QByteArray queryString;
     QDemonRef<QDemonRenderShaderProgram> shader;
     QDemonRenderCachedShaderProperty<QMatrix4x4> viewportMatrix;
     QDemonShaderTessellationProperties tessellation;
 
-    QDemonShaderGeneratorGeneratedShader(QString inQueryString,
-                                         QDemonRef<QDemonRenderShaderProgram> inShader)
+    QDemonShaderGeneratorGeneratedShader(const QByteArray &inQueryString, QDemonRef<QDemonRenderShaderProgram> inShader)
         : layerSetIndex(std::numeric_limits<quint32>::max())
         , queryString(inQueryString)
         , shader(inShader)

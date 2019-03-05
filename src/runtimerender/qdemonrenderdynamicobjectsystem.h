@@ -281,7 +281,7 @@ public:
                                                   QString inProgramMacro,
                                                   TShaderFeatureSet inFeatureSet) = 0;
 
-    virtual void setShaderCodeLibraryVersion(const QString &version) = 0;
+    virtual void setShaderCodeLibraryVersion(const QByteArray &version) = 0;
     virtual QString shaderCodeLibraryVersion() = 0;
 
     virtual void setShaderCodeLibraryPlatformDirectory(const QString &directory) = 0;

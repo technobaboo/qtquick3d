@@ -614,10 +614,10 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
     TPathDataMap m_expandedFiles;
     TShaderMap m_shaderMap;
     TShaderInfoMap m_shaderInfoMap;
-    QString m_vertShader;
-    QString m_fragShader;
-    QString m_geometryShader;
-    QString m_shaderLibraryVersion;
+    QByteArray m_vertShader;
+    QByteArray m_fragShader;
+    QByteArray m_geometryShader;
+    QByteArray m_shaderLibraryVersion;
     QString m_shaderLibraryPlatformDirectory;
     mutable QMutex m_propertyLoadMutex;
 
@@ -1344,16 +1344,16 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
 
         QDemonRef<QDemonShaderCacheInterface> theShaderCache = m_context->getShaderCache();
 
-        QString theKey = getShaderCacheKey(inId.toLocal8Bit(), inProgramMacroName.toLocal8Bit(), inFlags);
+        QByteArray theKey = getShaderCacheKey(inId.toLocal8Bit(), inProgramMacroName.toLocal8Bit(), inFlags);
         if (inForceCompilation) {
-            return theShaderCache->forceCompileProgram(theKey, m_vertShader.toLocal8Bit(),
-                                                      m_fragShader.toLocal8Bit(), nullptr, nullptr,
-                                                      m_geometryShader.toLocal8Bit(), theFlags,
+            return theShaderCache->forceCompileProgram(theKey, m_vertShader,
+                                                      m_fragShader, nullptr, nullptr,
+                                                      m_geometryShader, theFlags,
                                                       inFeatureSet, false);
         }
 
-        return theShaderCache->compileProgram(theKey, m_vertShader.toLocal8Bit(), m_fragShader.toLocal8Bit(),
-                                             nullptr, nullptr, m_geometryShader.toLocal8Bit(), theFlags,
+        return theShaderCache->compileProgram(theKey, m_vertShader, m_fragShader,
+                                             nullptr, nullptr, m_geometryShader, theFlags,
                                              inFeatureSet);
     }
 
@@ -1464,7 +1464,7 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
         return theInserter.value();
     }
 
-    void setShaderCodeLibraryVersion(const QString &version) override
+    void setShaderCodeLibraryVersion(const QByteArray &version) override
     {
         m_shaderLibraryVersion = version;
     }

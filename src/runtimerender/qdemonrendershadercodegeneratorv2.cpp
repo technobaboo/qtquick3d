@@ -51,7 +51,7 @@ struct QDemonStageGeneratorBase : public QDemonShaderStageGeneratorInterface
     QByteArray m_finalBuilder;
     ShaderGeneratorStages::Enum m_stage;
     TShaderGeneratorStageFlags m_enabledStages;
-    QStringList m_addedFunctions;
+    QList<QByteArray> m_addedFunctions;
 
     QDemonStageGeneratorBase(ShaderGeneratorStages::Enum inStage)
 
@@ -185,7 +185,7 @@ struct QDemonStageGeneratorBase : public QDemonShaderStageGeneratorInterface
 
     void addInclude(const QByteArray &name) override { m_includes.insert(name); }
 
-    virtual const QString buildShaderSource()
+    virtual QByteArray buildShaderSource()
     {
         auto iter = m_includes.constBegin();
         const auto end = m_includes.constEnd();
@@ -226,8 +226,8 @@ struct QDemonVertexShaderGenerator : public QDemonStageGeneratorBase
     const QByteArray GetIncomingVariableName() override { return "attribute"; }
     virtual void AddIncomingInterpolatedMap() {}
 
-    virtual const QString GetInterpolatedIncomingSuffix() const { return "_attr"; }
-    virtual const QString GetInterpolatedOutgoingSuffix() const { return QString(); }
+    virtual const QByteArray GetInterpolatedIncomingSuffix() const { return "_attr"; }
+    virtual const QByteArray GetInterpolatedOutgoingSuffix() const { return ""; }
 };
 
 struct QDemonTessControlShaderGenerator : public QDemonStageGeneratorBase
@@ -425,8 +425,7 @@ struct QDemonProgramGenerator : public QDemonShaderProgramGeneratorInterface
         }
 
         QDemonRef<QDemonShaderCacheInterface> theCache = m_context->getShaderCache();
-        QString theCacheKey = inShaderName;
-        return theCache->compileProgram(theCacheKey, m_vs.m_finalBuilder, m_fs.m_finalBuilder,
+        return theCache->compileProgram(inShaderName, m_vs.m_finalBuilder, m_fs.m_finalBuilder,
                                         m_tc.m_finalBuilder, m_te.m_finalBuilder, m_gs.m_finalBuilder,
                                         theCacheFlags, inFeatureSet, separableProgram);
     }

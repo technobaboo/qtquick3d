@@ -223,25 +223,25 @@ struct QDemonRenderContextData : public QDemonRenderContextInterface
         }
         m_pathManager = inCore->getPathManagerCore()->onRenderSystemInitialize(this);
 
-        QString versionString;
+        const char *versionString;
         switch ((quint32)ctx->getRenderContextType()) {
         case QDemonRenderContextValues::GLES2:
-            versionString = QLatin1Literal("gles2");
+            versionString = "gles2";
             break;
         case QDemonRenderContextValues::GL2:
-            versionString = QLatin1Literal("gl2");
+            versionString = "gl2";
             break;
         case QDemonRenderContextValues::GLES3:
-            versionString = QLatin1Literal("gles3");
+            versionString = "gles3";
             break;
         case QDemonRenderContextValues::GL3:
-            versionString = QLatin1Literal("gl3");
+            versionString = "gl3";
             break;
         case QDemonRenderContextValues::GLES3PLUS:
-            versionString = QLatin1Literal("gles3x");
+            versionString = "gles3x";
             break;
         case QDemonRenderContextValues::GL4:
-            versionString = QLatin1Literal("gl4");
+            versionString = "gl4";
             break;
         default:
             break;

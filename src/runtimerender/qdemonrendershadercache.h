@@ -117,7 +117,7 @@ public:
     virtual bool isShaderCachePersistenceEnabled() const = 0;
     // It is up to the caller to ensure that inFeatures contains unique keys.
     // It is also up the the caller to ensure the keys are ordered in some way.
-    virtual QDemonRef<QDemonRenderShaderProgram> getProgram(QString inKey,
+    virtual QDemonRef<QDemonRenderShaderProgram> getProgram(const QByteArray &inKey,
                                                                  const QVector<QDemonShaderPreprocessorFeature> &inFeatures) = 0;
 
     // Replace an existing program in the cache for the same key with this program.
@@ -129,7 +129,7 @@ public:
     // reduce program compilations.
     // It is up to the caller to ensure that inFeatures contains unique keys.
     // It is also up the the caller to ensure the keys are ordered in some way.
-    virtual QDemonRef<QDemonRenderShaderProgram> forceCompileProgram(QString inKey,
+    virtual QDemonRef<QDemonRenderShaderProgram> forceCompileProgram(const QByteArray &inKey,
                                                                           const QString &inVert,
                                                                           const QString &inFrag,
                                                                           const QString &inTessCtrl,
@@ -142,7 +142,7 @@ public:
 
     // It is up to the caller to ensure that inFeatures contains unique keys.
     // It is also up the the caller to ensure the keys are ordered in some way.
-    virtual QDemonRef<QDemonRenderShaderProgram> compileProgram(QString inKey,
+    virtual QDemonRef<QDemonRenderShaderProgram> compileProgram(const QByteArray &inKey,
                                                                      const QString &inVert,
                                                                      const QString &inFrag,
                                                                      const QString &inTessCtrl,
@@ -169,30 +169,18 @@ public:
 
 struct QDemonShaderCacheKey
 {
-    QString m_key;
+    QByteArray m_key;
     QVector<QDemonShaderPreprocessorFeature> m_features;
     uint m_hashCode = 0;
 
-    explicit QDemonShaderCacheKey(QString key = QString())
+    explicit QDemonShaderCacheKey(const QByteArray &key = QByteArray())
         : m_key(key)
         , m_hashCode(0)
     {
     }
 
-    QDemonShaderCacheKey(const QDemonShaderCacheKey &other)
-        : m_key(other.m_key)
-        , m_features(other.m_features)
-        , m_hashCode(other.m_hashCode)
-    {
-    }
-
-    QDemonShaderCacheKey &operator=(const QDemonShaderCacheKey &other)
-    {
-        m_key = other.m_key;
-        m_features = other.m_features;
-        m_hashCode = other.m_hashCode;
-        return *this;
-    }
+    QDemonShaderCacheKey(const QDemonShaderCacheKey &other) = default;
+    QDemonShaderCacheKey &operator=(const QDemonShaderCacheKey &other) = default;
 
     void generateHashCode()
     {
