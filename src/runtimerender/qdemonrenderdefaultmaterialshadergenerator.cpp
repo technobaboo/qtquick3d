@@ -628,8 +628,9 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
         }
         return inFragmentHasSpecularAmount;
     }
-    void setupLightVariableNames(size_t lightIdx, QDemonRenderLight &inLight)
+    void setupLightVariableNames(qint32 lightIdx, QDemonRenderLight &inLight)
     {
+        Q_ASSERT(lightIdx > -1);
         if (m_lightsAsSeparateUniforms) {
             char buf[16];
             qsnprintf(buf, 16, "light_%d", int(lightIdx));
@@ -923,13 +924,13 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
         bool enableShadowMaps = false;
         bool enableBumpNormal = normalImage || bumpImage;
 
-        for (quint32 idx = 0; idx < featureSet().size(); ++idx) {
-            QString name(featureSet()[idx].name);
-            if (name == "QDEMON_ENABLE_SSAO")
+        for (qint32 idx = 0; idx < featureSet().size(); ++idx) {
+            const auto &name = featureSet()[idx].name;
+            if (name == QStringLiteral("QDEMON_ENABLE_SSAO"))
                 enableSSAO = featureSet()[idx].enabled;
-            else if (name == "QDEMON_ENABLE_SSDO")
+            else if (name == QStringLiteral("QDEMON_ENABLE_SSDO"))
                 enableSSDO = featureSet()[idx].enabled;
-            else if (name == "QDEMON_ENABLE_SSM")
+            else if (name == QStringLiteral("QDEMON_ENABLE_SSM"))
                 enableShadowMaps = featureSet()[idx].enabled;
         }
 
@@ -1122,7 +1123,7 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
             fragmentHasSpecularAmount = maybeAddMaterialFresnel(fragmentShader, inKey, fragmentHasSpecularAmount);
 
             // Iterate through all lights
-            for (quint32 lightIdx = 0; lightIdx < m_lights.size(); ++lightIdx) {
+            for (int lightIdx = 0; lightIdx < m_lights.size(); ++lightIdx) {
                 QDemonRenderLight *lightNode = m_lights[lightIdx];
                 setupLightVariableNames(lightIdx, *lightNode);
                 bool isDirectional = lightNode->m_lightType == RenderLightTypes::Directional;

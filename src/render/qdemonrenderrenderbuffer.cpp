@@ -53,7 +53,7 @@ QDemonRenderRenderBuffer::~QDemonRenderRenderBuffer()
 
 void QDemonRenderRenderBuffer::setDimensions(const QDemonRenderRenderBufferDimensions &inDimensions)
 {
-    quint32 maxWidth, maxHeight;
+    qint32 maxWidth, maxHeight;
     m_width = inDimensions.m_width;
     m_height = inDimensions.m_height;
 

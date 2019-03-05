@@ -765,14 +765,14 @@ QDemonMaterialSystem::~QDemonMaterialSystem()
         d->allocatedBuffers.pop_back();
     }
 
-    for (quint32 idx = 0; idx < d->allocatedImages.size(); ++idx) {
+    for (qint32 idx = 0; idx < d->allocatedImages.size(); ++idx) {
         QDemonRenderImage *pImage = d->allocatedImages[idx].second;
         ::free(pImage);
     }
     d->allocatedImages.clear();
 }
 
-void QDemonMaterialSystem::releaseBuffer(quint32 inIdx)
+void QDemonMaterialSystem::releaseBuffer(qint32 inIdx)
 {
     // Don't call this on MaterialSystem destroy.
     // This causes issues for scene liftime buffers
@@ -836,20 +836,20 @@ QDemonConstDataRef<dynamic::QDemonPropertyDefinition> QDemonMaterialSystem::getC
     return QDemonConstDataRef<dynamic::QDemonPropertyDefinition>();
 }
 
-quint32 QDemonMaterialSystem::findBuffer(const QString &inName)
+qint32 QDemonMaterialSystem::findBuffer(const QString &inName)
 {
-    for (quint32 idx = 0, end = d->allocatedBuffers.size(); idx < end; ++idx)
+    for (qint32 idx = 0, end = d->allocatedBuffers.size(); idx < end; ++idx)
         if (d->allocatedBuffers[idx].name == inName)
             return idx;
     return d->allocatedBuffers.size();
 }
 
-quint32 QDemonMaterialSystem::findAllocatedImage(const QString &inName)
+qint32 QDemonMaterialSystem::findAllocatedImage(const QString &inName)
 {
-    for (quint32 idx = 0, end = d->allocatedImages.size(); idx < end; ++idx)
+    for (qint32 idx = 0, end = d->allocatedImages.size(); idx < end; ++idx)
         if (d->allocatedImages[idx].first == inName)
             return idx;
-    return quint32(-1);
+    return -1;
 }
 
 bool QDemonMaterialSystem::textureNeedsMips(const dynamic::QDemonPropertyDefinition *inPropDec, QDemonRenderTexture2D *inTexture)
@@ -1225,7 +1225,7 @@ const QDemonRef<QDemonRenderTexture2D> QDemonMaterialSystem::applyBufferValue(co
     QDemonRef<QDemonRenderTexture2D> theTexture = nullptr;
 
     if (!inCommand.m_bufferName.isNull()) {
-        quint32 bufferIdx = findBuffer(inCommand.m_bufferName);
+        qint32 bufferIdx = findBuffer(inCommand.m_bufferName);
         if (bufferIdx < d->allocatedBuffers.size()) {
             QDemonCustomMaterialBuffer &theEntry(d->allocatedBuffers[bufferIdx]);
             theTexture = theEntry.texture;
@@ -1280,14 +1280,14 @@ void QDemonMaterialSystem::allocateBuffer(const dynamic::QDemonAllocateBuffer &i
         theSourceTextureDetails.width = theViewport.width();
     }
 
-    quint32 theWidth = (quint32)(theSourceTextureDetails.width * inCommand.m_sizeMultiplier);
-    quint32 theHeight = (quint32)(theSourceTextureDetails.height * inCommand.m_sizeMultiplier);
+    const qint32 theWidth = qint32(theSourceTextureDetails.width * inCommand.m_sizeMultiplier);
+    const qint32 theHeight = qint32(theSourceTextureDetails.height * inCommand.m_sizeMultiplier);
     QDemonRenderTextureFormats::Enum theFormat = inCommand.m_format;
     if (theFormat == QDemonRenderTextureFormats::Unknown)
         theFormat = theSourceTextureDetails.format;
     QDemonRef<QDemonResourceManagerInterface> theResourceManager(d->context->getResourceManager());
     // size intentionally requiried every loop;
-    quint32 bufferIdx = findBuffer(inCommand.m_name);
+    qint32 bufferIdx = findBuffer(inCommand.m_name);
     if (bufferIdx < d->allocatedBuffers.size()) {
         QDemonCustomMaterialBuffer &theEntry(d->allocatedBuffers[bufferIdx]);
         QDemonTextureDetails theDetails = theEntry.texture->getTextureDetails();
@@ -1316,7 +1316,7 @@ QDemonRef<QDemonRenderFrameBuffer> QDemonMaterialSystem::bindBuffer(const QDemon
     QDemonRef<QDemonRenderTexture2D> theTexture;
 
     // search for the buffer
-    quint32 bufferIdx = findBuffer(inCommand.m_bufferName);
+    qint32 bufferIdx = findBuffer(inCommand.m_bufferName);
     if (bufferIdx < d->allocatedBuffers.size()) {
         theBuffer = d->allocatedBuffers[bufferIdx].frameBuffer;
         theTexture = d->allocatedBuffers[bufferIdx].texture;
@@ -1333,8 +1333,8 @@ QDemonRef<QDemonRenderFrameBuffer> QDemonMaterialSystem::bindBuffer(const QDemon
 
     if (theTexture) {
         QDemonTextureDetails theDetails(theTexture->getTextureDetails());
-        d->context->getRenderContext()->setViewport(QRect(0, 0, (quint32)theDetails.width, (quint32)theDetails.height));
-        outDestSize = QVector2D((float)theDetails.width, (float)theDetails.height);
+        d->context->getRenderContext()->setViewport(QRect(0, 0, theDetails.width, theDetails.height));
+        outDestSize = QVector2D(float(theDetails.width), float(theDetails.height));
         outClearTarget = inCommand.m_needsClear;
     }
 
@@ -1407,7 +1407,7 @@ void QDemonMaterialSystem::blitFramebuffer(QDemonCustomMaterialRenderContext &in
                                                               &QDemonRenderContext::setScissorTestEnabled);
 
     if (!inCommand.m_destBufferName.isNull()) {
-        quint32 bufferIdx = findBuffer(inCommand.m_destBufferName);
+        qint32 bufferIdx = findBuffer(inCommand.m_destBufferName);
         if (bufferIdx < d->allocatedBuffers.size()) {
             QDemonCustomMaterialBuffer &theEntry(d->allocatedBuffers[bufferIdx]);
             theContext->setRenderTarget(theEntry.frameBuffer);
@@ -1422,7 +1422,7 @@ void QDemonMaterialSystem::blitFramebuffer(QDemonCustomMaterialRenderContext &in
     }
 
     if (!inCommand.m_sourceBufferName.isNull()) {
-        quint32 bufferIdx = findBuffer(inCommand.m_sourceBufferName);
+        qint32 bufferIdx = findBuffer(inCommand.m_sourceBufferName);
         if (bufferIdx < d->allocatedBuffers.size()) {
             QDemonCustomMaterialBuffer &theEntry(d->allocatedBuffers[bufferIdx]);
             theContext->setReadTarget(theEntry.frameBuffer);
@@ -1590,7 +1590,7 @@ void QDemonMaterialSystem::doRenderCustomMaterial(QDemonCustomMaterialRenderCont
     bool theRenderTargetNeedsClear = false;
 
     QDemonConstDataRef<dynamic::QDemonCommand *> theCommands(inClass.m_class->getRenderCommands());
-    for (quint32 commandIdx = 0, commandEnd = theCommands.size(); commandIdx < commandEnd; ++commandIdx) {
+    for (qint32 commandIdx = 0, commandEnd = theCommands.size(); commandIdx < commandEnd; ++commandIdx) {
         const dynamic::QDemonCommand &theCommand(*theCommands[commandIdx]);
 
         switch (theCommand.m_type) {
@@ -1657,7 +1657,7 @@ void QDemonMaterialSystem::doRenderCustomMaterial(QDemonCustomMaterialRenderCont
         theContext->setBlendingEnabled(wasBlendingEnabled);
 
     // Release any per-frame buffers
-    for (quint32 idx = 0; idx < d->allocatedBuffers.size(); ++idx) {
+    for (qint32 idx = 0; idx < d->allocatedBuffers.size(); ++idx) {
         if (d->allocatedBuffers[idx].flags.isSceneLifetime() == false) {
             releaseBuffer(idx);
             --idx;
@@ -1673,7 +1673,7 @@ QString QDemonMaterialSystem::getShaderName(const QDemonRenderCustomMaterial &in
 
     QDemonConstDataRef<dynamic::QDemonCommand *> theCommands = theClass->m_class->getRenderCommands();
     TShaderAndFlags thePrepassShader;
-    for (quint32 idx = 0, end = theCommands.size(); idx < end && thePrepassShader.first == nullptr; ++idx) {
+    for (qint32 idx = 0, end = theCommands.size(); idx < end && thePrepassShader.first == nullptr; ++idx) {
         const dynamic::QDemonCommand &theCommand = *theCommands[idx];
         if (theCommand.m_type == dynamic::CommandTypes::BindShader) {
             const dynamic::QDemonBindShader &theBindCommand = static_cast<const dynamic::QDemonBindShader &>(theCommand);
@@ -1698,7 +1698,7 @@ void QDemonMaterialSystem::applyShaderPropertyValues(const QDemonRenderCustomMat
 void QDemonMaterialSystem::prepareTextureForRender(QDemonMaterialClass &inClass, QDemonRenderCustomMaterial &inMaterial)
 {
     QDemonConstDataRef<dynamic::QDemonPropertyDefinition> thePropDefs = inClass.m_class->getProperties();
-    for (quint32 idx = 0, end = thePropDefs.size(); idx < end; ++idx) {
+    for (qint32 idx = 0, end = thePropDefs.size(); idx < end; ++idx) {
         if (thePropDefs[idx].dataType == QDemonRenderShaderDataTypes::Texture2D) {
             if (thePropDefs[idx].texUsageType == QDemonRenderTextureTypeValue::Displace) {
                 QDemonRenderImage *pImage = nullptr;
@@ -1708,8 +1708,8 @@ void QDemonMaterialSystem::prepareTextureForRender(QDemonMaterialClass &inClass,
 
                 if (!theStrPtr.isNull()) {
 
-                    quint32 index = findAllocatedImage(thePropDefs[idx].imagePath);
-                    if (index == quint32(-1)) {
+                    const qint32 index = findAllocatedImage(thePropDefs[idx].imagePath);
+                    if (index == -1) {
                         pImage = new QDemonRenderImage();
                         d->allocatedImages.push_back(QPair<QString, QDemonRenderImage *>(thePropDefs[idx].imagePath, pImage));
                     } else
@@ -1732,8 +1732,8 @@ void QDemonMaterialSystem::prepareTextureForRender(QDemonMaterialClass &inClass,
                 QString theStrPtr = *reinterpret_cast<QString *>(inMaterial.getDataSectionBegin() + thePropDefs[idx].offset);
 
                 if (!theStrPtr.isNull()) {
-                    quint32 index = findAllocatedImage(thePropDefs[idx].imagePath);
-                    if (index == quint32(-1)) {
+                    const qint32 index = findAllocatedImage(thePropDefs[idx].imagePath);
+                    if (index == -1) {
                         pImage = new QDemonRenderImage();
                         d->allocatedImages.push_back(QPair<QString, QDemonRenderImage *>(thePropDefs[idx].imagePath, pImage));
                     } else
@@ -1761,7 +1761,7 @@ void QDemonMaterialSystem::prepareDisplacementForRender(QDemonMaterialClass &inC
 
     // our displacement mappin in MDL has fixed naming
     QDemonConstDataRef<dynamic::QDemonPropertyDefinition> thePropDefs = inClass.m_class->getProperties();
-    for (quint32 idx = 0, end = thePropDefs.size(); idx < end; ++idx) {
+    for (qint32 idx = 0, end = thePropDefs.size(); idx < end; ++idx) {
         if (thePropDefs[idx].dataType == QDemonRenderShaderDataTypes::Float && (thePropDefs[idx].name == "displaceAmount")) {
             float theValue = *reinterpret_cast<const float *>(inMaterial.getDataSectionBegin() + thePropDefs[idx].offset);
             inMaterial.m_displaceAmount = theValue;
@@ -1837,7 +1837,7 @@ bool QDemonMaterialSystem::renderDepthPrepass(const QMatrix4x4 &inMVP, const QDe
     QDemonMaterialClass *theClass = getMaterialClass(inMaterial.className);
     QDemonConstDataRef<dynamic::QDemonCommand *> theCommands = theClass->m_class->getRenderCommands();
     TShaderAndFlags thePrepassShader;
-    for (quint32 idx = 0, end = theCommands.size(); idx < end && thePrepassShader.first == nullptr; ++idx) {
+    for (qint32 idx = 0, end = theCommands.size(); idx < end && thePrepassShader.first == nullptr; ++idx) {
         const dynamic::QDemonCommand &theCommand = *theCommands[idx];
         if (theCommand.m_type == dynamic::CommandTypes::BindShader) {
             const dynamic::QDemonBindShader &theBindCommand = static_cast<const dynamic::QDemonBindShader &>(theCommand);

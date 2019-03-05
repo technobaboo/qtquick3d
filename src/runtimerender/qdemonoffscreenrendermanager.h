@@ -54,8 +54,8 @@ struct QDemonOffscreenRendererDepthValues
 
 struct QDemonOffscreenRendererEnvironment
 {
-    quint32 width;
-    quint32 height;
+    qint32 width;
+    qint32 height;
     QDemonRenderTextureFormats::Enum format;
     QDemonOffscreenRendererDepthValues::Enum depth;
     bool stencil;
@@ -71,7 +71,7 @@ struct QDemonOffscreenRendererEnvironment
     {
     }
 
-    QDemonOffscreenRendererEnvironment(quint32 inWidth, quint32 inHeight, QDemonRenderTextureFormats::Enum inFormat)
+    QDemonOffscreenRendererEnvironment(qint32 inWidth, qint32 inHeight, QDemonRenderTextureFormats::Enum inFormat)
         : width(inWidth)
         , height(inHeight)
         , format(inFormat)
@@ -81,8 +81,8 @@ struct QDemonOffscreenRendererEnvironment
     {
     }
 
-    QDemonOffscreenRendererEnvironment(quint32 inWidth,
-                                       quint32 inHeight,
+    QDemonOffscreenRendererEnvironment(qint32 inWidth,
+                                       qint32 inHeight,
                                        QDemonRenderTextureFormats::Enum inFormat,
                                        QDemonOffscreenRendererDepthValues::Enum inDepth,
                                        bool inStencil,

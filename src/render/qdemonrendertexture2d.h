@@ -45,8 +45,8 @@ class Q_DEMONRENDER_EXPORT QDemonRenderTexture2D : public QDemonRenderTextureBas
 {
     Q_DISABLE_COPY(QDemonRenderTexture2D)
 private:
-    quint32 m_width; ///< texture width
-    quint32 m_height; ///< texture height
+    qint32 m_width; ///< texture width
+    qint32 m_height; ///< texture height
 
 public:
     /**
@@ -80,8 +80,8 @@ public:
      */
     virtual void setTextureData(QDemonDataRef<quint8> newBuffer,
                                 quint8 inMipLevel,
-                                quint32 width,
-                                quint32 height,
+                                qint32 width,
+                                qint32 height,
                                 QDemonRenderTextureFormats::Enum format,
                                 QDemonRenderTextureFormats::Enum formaInternal = QDemonRenderTextureFormats::Unknown);
 
@@ -99,27 +99,27 @@ public:
      *
      * @return No return.
      */
-    virtual void setTextureStorage(quint32 inLevels,
-                                   quint32 width,
-                                   quint32 height,
+    virtual void setTextureStorage(qint32 inLevels,
+                                   qint32 width,
+                                   qint32 height,
                                    QDemonRenderTextureFormats::Enum formaInternal,
                                    QDemonRenderTextureFormats::Enum format = QDemonRenderTextureFormats::Unknown,
                                    QDemonDataRef<quint8> dataBuffer = QDemonDataRef<quint8>());
 
-    virtual void setTextureDataMultisample(quint32 sampleCount, quint32 width, quint32 height, QDemonRenderTextureFormats::Enum format);
+    virtual void setTextureDataMultisample(qint32 sampleCount, qint32 width, qint32 height, QDemonRenderTextureFormats::Enum format);
 
     bool isMultisampleTexture() const override { return (m_texTarget == QDemonRenderTextureTargetType::Texture2D_MS); }
-    quint32 getSampleCount() const override { return m_sampleCount; }
+    qint32 getSampleCount() const override { return m_sampleCount; }
     bool isImmutableTexture() const override { return m_immutable; }
 
     // Update a sub-rect of the image.  newBuffer is expected to be a continguous subrect of the
     // image.
     virtual void setTextureSubData(QDemonDataRef<quint8> newBuffer,
                                    quint8 inMipLevel,
-                                   quint32 inXOffset,
-                                   quint32 inYOffset,
-                                   quint32 inSubImageWidth,
-                                   quint32 inSubImageHeight,
+                                   qint32 inXOffset,
+                                   qint32 inYOffset,
+                                   qint32 inSubImageWidth,
+                                   qint32 inSubImageHeight,
                                    QDemonRenderTextureFormats::Enum format);
     // Generate a set of mipmaps from mipLevel( 0 ).  Uses the graphis layer to do this if
     // possible

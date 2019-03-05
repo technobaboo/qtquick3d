@@ -97,10 +97,11 @@ struct QDemonResourceManager : public QDemonResourceManagerInterface
         freeFrameBuffers.push_back(inBuffer);
     }
 
-    QDemonRef<QDemonRenderRenderBuffer> allocateRenderBuffer(quint32 inWidth,
-                                                             quint32 inHeight,
+    QDemonRef<QDemonRenderRenderBuffer> allocateRenderBuffer(qint32 inWidth,
+                                                             qint32 inHeight,
                                                              QDemonRenderRenderBufferFormats::Enum inBufferFormat) override
     {
+        Q_ASSERT(inWidth >= 0 && inHeight >= 0);
         // Look for one of this specific size and format.
         int existingMatchIdx = freeRenderBuffers.size();
         for (int idx = 0, end = existingMatchIdx; idx < end; ++idx) {
@@ -140,14 +141,15 @@ struct QDemonResourceManager : public QDemonResourceManagerInterface
         inTexture->setMagFilter(QDemonRenderTextureMagnifyingOp::Linear);
         return inTexture;
     }
-    QDemonRef<QDemonRenderTexture2D> allocateTexture2D(quint32 inWidth,
-                                                       quint32 inHeight,
+    QDemonRef<QDemonRenderTexture2D> allocateTexture2D(qint32 inWidth,
+                                                       qint32 inHeight,
                                                        QDemonRenderTextureFormats::Enum inTextureFormat,
-                                                       quint32 inSampleCount,
+                                                       qint32 inSampleCount,
                                                        bool immutable) override
     {
+        Q_ASSERT(inWidth >= 0 && inHeight >= 0 && inSampleCount >= 0);
         bool inMultisample = inSampleCount > 1 && renderContext->areMultisampleTexturesSupported();
-        for (quint32 idx = 0, end = freeTextures.size(); idx < end; ++idx) {
+        for (qint32 idx = 0, end = freeTextures.size(); idx < end; ++idx) {
             auto theTexture = freeTextures[idx];
             QDemonTextureDetails theDetails = theTexture->getTextureDetails();
             if (theDetails.width == inWidth && theDetails.height == inHeight && inTextureFormat == theDetails.format
@@ -193,12 +195,13 @@ struct QDemonResourceManager : public QDemonResourceManagerInterface
         freeTextures.push_back(inBuffer);
     }
 
-    QDemonRef<QDemonRenderTexture2DArray> allocateTexture2DArray(quint32 inWidth,
-                                                                 quint32 inHeight,
-                                                                 quint32 inSlices,
+    QDemonRef<QDemonRenderTexture2DArray> allocateTexture2DArray(qint32 inWidth,
+                                                                 qint32 inHeight,
+                                                                 qint32 inSlices,
                                                                  QDemonRenderTextureFormats::Enum inTextureFormat,
-                                                                 quint32 inSampleCount) override
+                                                                 qint32 inSampleCount) override
     {
+        Q_ASSERT(inWidth >= 0 && inHeight >= 0 && inSlices >= 0 && inSampleCount >= 0);
         bool inMultisample = inSampleCount > 1 && renderContext->areMultisampleTexturesSupported();
         for (int idx = 0, end = freeTexArrays.size(); idx < end; ++idx) {
             auto theTexture = freeTexArrays[idx];
@@ -251,10 +254,10 @@ struct QDemonResourceManager : public QDemonResourceManagerInterface
         freeTexArrays.push_back(inBuffer);
     }
 
-    QDemonRef<QDemonRenderTextureCube> allocateTextureCube(quint32 inWidth,
-                                                           quint32 inHeight,
+    QDemonRef<QDemonRenderTextureCube> allocateTextureCube(qint32 inWidth,
+                                                           qint32 inHeight,
                                                            QDemonRenderTextureFormats::Enum inTextureFormat,
-                                                           quint32 inSampleCount) override
+                                                           qint32 inSampleCount) override
     {
         bool inMultisample = inSampleCount > 1 && renderContext->areMultisampleTexturesSupported();
         for (int idx = 0, end = freeTexCubes.size(); idx < end; ++idx) {

@@ -253,9 +253,9 @@ struct QDemonShaderGeneratorGeneratedShader
 struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
 {
     typedef QHash<QDemonRef<QDemonRenderShaderProgram>, QDemonRef<QDemonShaderGeneratorGeneratedShader>> TProgramToShaderMap;
-    typedef QPair<size_t, QDemonRef<QDemonShaderLightProperties>> TCustomMaterialLightEntry;
-    typedef QPair<size_t, QDemonRenderCachedShaderProperty<QDemonRenderTexture2D *>> TShadowMapEntry;
-    typedef QPair<size_t, QDemonRenderCachedShaderProperty<QDemonRenderTextureCube *>> TShadowCubeEntry;
+    typedef QPair<qint32, QDemonRef<QDemonShaderLightProperties>> TCustomMaterialLightEntry;
+    typedef QPair<qint32, QDemonRenderCachedShaderProperty<QDemonRenderTexture2D *>> TShadowMapEntry;
+    typedef QPair<qint32, QDemonRenderCachedShaderProperty<QDemonRenderTextureCube *>> TShadowCubeEntry;
     typedef QHash<QByteArray, QDemonRef<QDemonRenderConstantBuffer>> TStrConstanBufMap;
 
     QDemonRenderContextInterface *m_renderContext;
@@ -468,15 +468,15 @@ struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
     }
 
     virtual QDemonRef<QDemonShaderLightProperties> setLight(const QDemonRef<QDemonRenderShaderProgram> &inShader,
-                                                            size_t lightIdx,
-                                                            size_t shadeIdx,
+                                                            qint32 lightIdx,
+                                                            qint32 shadeIdx,
                                                             const QDemonRenderLight *inLight,
                                                             QDemonShadowMapEntry *inShadow,
                                                             qint32 shadowIdx,
                                                             float shadowDist)
     {
         QDemonRef<QDemonShaderLightProperties> theLightEntry;
-        for (quint32 idx = 0, end = m_lightEntries.size(); idx < end && theLightEntry == nullptr; ++idx) {
+        for (int idx = 0, end = m_lightEntries.size(); idx < end && theLightEntry == nullptr; ++idx) {
             if (m_lightEntries[idx].first == lightIdx && m_lightEntries[idx].second->m_shader == inShader
                 && m_lightEntries[idx].second->m_lightType == inLight->m_lightType) {
                 theLightEntry = m_lightEntries[idx].second;
@@ -563,7 +563,7 @@ struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
             QDemonRef<QDemonRenderConstantBuffer> pAreaLightCb = getLightConstantBuffer("cbBufferAreaLights", inLights.size());
 
             // Split the count between CG lights and area lights
-            for (quint32 lightIdx = 0; lightIdx < inLights.size() && pLightCb; ++lightIdx) {
+            for (int lightIdx = 0; lightIdx < inLights.size() && pLightCb; ++lightIdx) {
                 QDemonShadowMapEntry *theShadow = nullptr;
                 if (inShadowMaps && inLights[lightIdx]->m_castShadow)
                     theShadow = inShadowMaps->getShadowMapEntry(lightIdx);
@@ -588,7 +588,7 @@ struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
 
                     if (theAreaLightEntry && pAreaLightCb) {
                         pAreaLightCb->updateRaw(areaLights * sizeof(QDemonLightSourceShader) + (4 * sizeof(qint32)),
-                                                QDemonDataRef<quint8>((quint8 *)&theAreaLightEntry->m_lightData,
+                                                QDemonDataRef<quint8>(reinterpret_cast<quint8 *>(&theAreaLightEntry->m_lightData),
                                                                       sizeof(QDemonLightSourceShader)));
                     }
 
@@ -604,7 +604,7 @@ struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
 
                     if (theLightEntry && pLightCb) {
                         pLightCb->updateRaw(cgLights * sizeof(QDemonLightSourceShader) + (4 * sizeof(qint32)),
-                                            QDemonDataRef<quint8>((quint8 *)&theLightEntry->m_lightData,
+                                            QDemonDataRef<quint8>(reinterpret_cast<quint8 *>(&theLightEntry->m_lightData),
                                                                   sizeof(QDemonLightSourceShader)));
                     }
 
@@ -613,11 +613,11 @@ struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
             }
 
             if (pLightCb) {
-                pLightCb->updateRaw(0, QDemonDataRef<quint8>((quint8 *)&cgLights, sizeof(qint32)));
+                pLightCb->updateRaw(0, QDemonDataRef<quint8>(reinterpret_cast<quint8 *>(&cgLights), sizeof(qint32)));
                 theShader->m_lightsBuffer.set();
             }
             if (pAreaLightCb) {
-                pAreaLightCb->updateRaw(0, QDemonDataRef<quint8>((quint8 *)&areaLights, sizeof(qint32)));
+                pAreaLightCb->updateRaw(0, QDemonDataRef<quint8>(reinterpret_cast<quint8 *>(&areaLights), sizeof(qint32)));
                 theShader->m_areaLightsBuffer.set();
             }
 
@@ -626,7 +626,7 @@ struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
         } else {
             QVector<QDemonRef<QDemonShaderLightProperties>> lprop;
             QVector<QDemonRef<QDemonShaderLightProperties>> alprop;
-            for (quint32 lightIdx = 0; lightIdx < inLights.size(); ++lightIdx) {
+            for (int lightIdx = 0; lightIdx < inLights.size(); ++lightIdx) {
 
                 QDemonShadowMapEntry *theShadow = nullptr;
                 if (inShadowMaps && inLights[lightIdx]->m_castShadow)
@@ -727,7 +727,7 @@ struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
                 QVector4D offsets(dataPtr[12],
                                   dataPtr[13],
                                   theLightProbe->m_textureData.m_textureFlags.isPreMultiplied() ? 1.0f : 0.0f,
-                                  (float)theLightProbe->m_textureData.m_texture->getNumMipmaps());
+                                  float(theLightProbe->m_textureData.m_texture->getNumMipmaps()));
                 // Fast IBL is always on;
                 // inRenderContext.m_Layer.m_FastIbl ? 1.0f : 0.0f );
                 // Grab just the upper 2x2 rotation matrix from the larger matrix.

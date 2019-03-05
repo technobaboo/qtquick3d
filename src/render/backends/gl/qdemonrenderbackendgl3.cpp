@@ -191,10 +191,10 @@ QDemonRenderBackendGL3Impl::~QDemonRenderBackendGL3Impl()
 
 void QDemonRenderBackendGL3Impl::setMultisampledTextureData2D(QDemonRenderBackendTextureObject to,
                                                               QDemonRenderTextureTargetType::Enum target,
-                                                              size_t samples,
+                                                              qint32 samples,
                                                               QDemonRenderTextureFormats::Enum internalFormat,
-                                                              size_t width,
-                                                              size_t height,
+                                                              qint32 width,
+                                                              qint32 height,
                                                               bool fixedsamplelocations)
 {
     // Not supported by ES 3 yet
@@ -231,11 +231,11 @@ void QDemonRenderBackendGL3Impl::setMultisampledTextureData2D(QDemonRenderBacken
 
 void QDemonRenderBackendGL3Impl::setTextureData3D(QDemonRenderBackendTextureObject to,
                                                   QDemonRenderTextureTargetType::Enum target,
-                                                  quint32 level,
+                                                  qint32 level,
                                                   QDemonRenderTextureFormats::Enum internalFormat,
-                                                  size_t width,
-                                                  size_t height,
-                                                  size_t depth,
+                                                  qint32 width,
+                                                  qint32 height,
+                                                  qint32 depth,
                                                   qint32 border,
                                                   QDemonRenderTextureFormats::Enum format,
                                                   const void *hostPtr)
@@ -343,7 +343,7 @@ void QDemonRenderBackendGL3Impl::updateTextureSwizzle(QDemonRenderBackendTexture
     }
 }
 
-quint32 QDemonRenderBackendGL3Impl::getDepthBits() const
+qint32 QDemonRenderBackendGL3Impl::getDepthBits() const
 {
     qint32 depthBits;
     GL_CALL_EXTRA_FUNCTION(
@@ -352,7 +352,7 @@ quint32 QDemonRenderBackendGL3Impl::getDepthBits() const
     return depthBits;
 }
 
-quint32 QDemonRenderBackendGL3Impl::getStencilBits() const
+qint32 QDemonRenderBackendGL3Impl::getStencilBits() const
 {
     qint32 stencilBits;
     GL_CALL_EXTRA_FUNCTION(

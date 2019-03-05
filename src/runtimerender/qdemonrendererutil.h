@@ -40,28 +40,28 @@ class QDemonRenderContext;
 
 class QDemonRendererUtil
 {
-    static const quint32 MAX_SSAA_DIM = 8192; // max render traget size for SSAA mode
+    static const qint16 MAX_SSAA_DIM = 8192; // max render traget size for SSAA mode
 
 public:
     static void resolveMutisampleFBOColorOnly(const QDemonRef<QDemonResourceManagerInterface> &inManager,
                                               QDemonResourceTexture2D &ioResult,
                                               QDemonRenderContext &inRenderContext,
-                                              quint32 inWidth,
-                                              quint32 inHeight,
+                                              qint32 inWidth,
+                                              qint32 inHeight,
                                               QDemonRenderTextureFormats::Enum inColorFormat,
                                               const QDemonRef<QDemonRenderFrameBuffer> &inSourceFBO);
 
     static void resolveSSAAFBOColorOnly(const QDemonRef<QDemonResourceManagerInterface> &inManager,
                                         QDemonResourceTexture2D &ioResult,
-                                        quint32 outWidth,
-                                        quint32 outHeight,
+                                        qint32 outWidth,
+                                        qint32 outHeight,
                                         QDemonRenderContext &inRenderContext,
-                                        quint32 inWidth,
-                                        quint32 inHeight,
+                                        qint32 inWidth,
+                                        qint32 inHeight,
                                         QDemonRenderTextureFormats::Enum inColorFormat,
                                         const QDemonRef<QDemonRenderFrameBuffer> &inSourceFBO);
 
-    static void getSSAARenderSize(quint32 inWidth, quint32 inHeight, quint32 &outWidth, quint32 &outHeight);
+    static void getSSAARenderSize(qint32 inWidth, qint32 inHeight, qint32 &outWidth, qint32 &outHeight);
 };
 QT_END_NAMESPACE
 

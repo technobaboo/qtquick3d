@@ -50,37 +50,37 @@ public:
     virtual ~QDemonRenderBackendGLES2Impl();
 
 public:
-    quint32 getDepthBits() const override;
-    quint32 getStencilBits() const override;
+    qint32 getDepthBits() const override;
+    qint32 getStencilBits() const override;
     void generateMipMaps(QDemonRenderBackendTextureObject to,
                          QDemonRenderTextureTargetType::Enum target,
                          QDemonRenderHint::Enum genType) override;
 
     void setMultisampledTextureData2D(QDemonRenderBackendTextureObject to,
                                       QDemonRenderTextureTargetType::Enum target,
-                                      size_t samples,
+                                      qint32 samples,
                                       QDemonRenderTextureFormats::Enum internalFormat,
-                                      size_t width,
-                                      size_t height,
+                                      qint32 width,
+                                      qint32 height,
                                       bool fixedsamplelocations) override;
 
     void setTextureData3D(QDemonRenderBackendTextureObject to,
                           QDemonRenderTextureTargetType::Enum target,
-                          quint32 level,
+                          qint32 level,
                           QDemonRenderTextureFormats::Enum internalFormat,
-                          size_t width,
-                          size_t height,
-                          size_t depth,
+                          qint32 width,
+                          qint32 height,
+                          qint32 depth,
                           qint32 border,
                           QDemonRenderTextureFormats::Enum format,
                           const void *hostPtr = nullptr) override;
 
     void setTextureData2D(QDemonRenderBackendTextureObject to,
                           QDemonRenderTextureTargetType::Enum target,
-                          quint32 level,
+                          qint32 level,
                           QDemonRenderTextureFormats::Enum internalFormat,
-                          size_t width,
-                          size_t height,
+                          qint32 width,
+                          qint32 height,
                           qint32 border,
                           QDemonRenderTextureFormats::Enum format,
                           const void *hostPtr = nullptr) override;
@@ -142,15 +142,15 @@ public:
     void setRenderTarget(QDemonRenderBackendRenderTargetObject rto) override;
     bool renderTargetIsValid(QDemonRenderBackendRenderTargetObject rto) override;
 
-    virtual QDemonRenderBackendRenderbufferObject createRenderbuffer(QDemonRenderRenderBufferFormats::Enum storageFormat,
-                                                                     size_t width,
-                                                                     size_t height) override;
+    QDemonRenderBackendRenderbufferObject createRenderbuffer(QDemonRenderRenderBufferFormats::Enum storageFormat,
+                                                             qint32 width,
+                                                             qint32 height) override;
     void setReadTarget(QDemonRenderBackendRenderTargetObject rto) override;
     void releaseRenderbuffer(QDemonRenderBackendRenderbufferObject rbo) override;
     bool resizeRenderbuffer(QDemonRenderBackendRenderbufferObject rbo,
                             QDemonRenderRenderBufferFormats::Enum storageFormat,
-                            size_t width,
-                            size_t height) override;
+                            qint32 width,
+                            qint32 height) override;
 
     void *mapBuffer(QDemonRenderBackendBufferObject bo,
                     QDemonRenderBufferBindFlags bindFlags,

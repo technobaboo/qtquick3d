@@ -686,7 +686,7 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
     void setPropertyDefaultValue(const QString &inName, const QString &inPropName, const QDemonConstDataRef<quint8> &inDefaultData) override
     {
         QPair<const dynamic::QDemonPropertyDefinition *, QDemonRef<QDemonDynamicObjClassImpl>> def = findProperty(inName, inPropName);
-        if (def.first && inDefaultData.size() >= def.first->byteSize) {
+        if (def.first && inDefaultData.size() >= qint32(def.first->byteSize)) {
             ::memcpy(def.second->m_propertyDefaultData + def.first->offset, inDefaultData.begin(), def.first->byteSize);
         } else {
             Q_ASSERT(false);
@@ -708,6 +708,7 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
         }
         theDefinitionPtr->isEnumProperty = true;
         if (inNames.size()) {
+            // TODO:
             QString *theNameValues = new QString[inName.size()];
             ::memcpy(theNameValues, inNames.begin(), inNames.size() * sizeof(QString));
             theDefinitionPtr->enumValueNames = QDemonConstDataRef<QString>(theNameValues, inNames.size());

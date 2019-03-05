@@ -201,10 +201,10 @@ QDemonRenderBackendGLES2Impl::~QDemonRenderBackendGLES2Impl()
 
 void QDemonRenderBackendGLES2Impl::setMultisampledTextureData2D(QDemonRenderBackendTextureObject to,
                                                                 QDemonRenderTextureTargetType::Enum target,
-                                                                size_t samples,
+                                                                qint32 samples,
                                                                 QDemonRenderTextureFormats::Enum internalFormat,
-                                                                size_t width,
-                                                                size_t height,
+                                                                qint32 width,
+                                                                qint32 height,
                                                                 bool fixedsamplelocations)
 {
     NVRENDER_BACKEND_UNUSED(to);
@@ -218,11 +218,11 @@ void QDemonRenderBackendGLES2Impl::setMultisampledTextureData2D(QDemonRenderBack
 
 void QDemonRenderBackendGLES2Impl::setTextureData3D(QDemonRenderBackendTextureObject to,
                                                     QDemonRenderTextureTargetType::Enum target,
-                                                    quint32 level,
+                                                    qint32 level,
                                                     QDemonRenderTextureFormats::Enum internalFormat,
-                                                    size_t width,
-                                                    size_t height,
-                                                    size_t depth,
+                                                    qint32 width,
+                                                    qint32 height,
+                                                    qint32 depth,
                                                     qint32 border,
                                                     QDemonRenderTextureFormats::Enum format,
                                                     const void *hostPtr)
@@ -260,10 +260,10 @@ void QDemonRenderBackendGLES2Impl::setTextureData3D(QDemonRenderBackendTextureOb
 
 void QDemonRenderBackendGLES2Impl::setTextureData2D(QDemonRenderBackendTextureObject to,
                                                     QDemonRenderTextureTargetType::Enum target,
-                                                    quint32 level,
+                                                    qint32 level,
                                                     QDemonRenderTextureFormats::Enum internalFormat,
-                                                    size_t width,
-                                                    size_t height,
+                                                    qint32 width,
+                                                    qint32 height,
                                                     qint32 border,
                                                     QDemonRenderTextureFormats::Enum format,
                                                     const void *hostPtr)
@@ -380,7 +380,7 @@ void QDemonRenderBackendGLES2Impl::updateTextureSwizzle(QDemonRenderBackendTextu
 #endif
 }
 
-quint32 QDemonRenderBackendGLES2Impl::getDepthBits() const
+qint32 QDemonRenderBackendGLES2Impl::getDepthBits() const
 {
     qint32 depthBits;
     GL_CALL_EXTRA_FUNCTION(
@@ -389,7 +389,7 @@ quint32 QDemonRenderBackendGLES2Impl::getDepthBits() const
     return depthBits;
 }
 
-quint32 QDemonRenderBackendGLES2Impl::getStencilBits() const
+qint32 QDemonRenderBackendGLES2Impl::getStencilBits() const
 {
     qint32 stencilBits;
     GL_CALL_EXTRA_FUNCTION(
@@ -660,8 +660,8 @@ bool QDemonRenderBackendGLES2Impl::renderTargetIsValid(QDemonRenderBackendRender
 }
 
 QDemonRenderBackend::QDemonRenderBackendRenderbufferObject QDemonRenderBackendGLES2Impl::createRenderbuffer(QDemonRenderRenderBufferFormats::Enum storageFormat,
-                                                                                                            size_t width,
-                                                                                                            size_t height)
+                                                                                                            qint32 width,
+                                                                                                            qint32 height)
 {
     GLuint bufID = 0;
 
@@ -696,8 +696,8 @@ void QDemonRenderBackendGLES2Impl::releaseRenderbuffer(QDemonRenderBackendRender
 
 bool QDemonRenderBackendGLES2Impl::resizeRenderbuffer(QDemonRenderBackendRenderbufferObject rbo,
                                                       QDemonRenderRenderBufferFormats::Enum storageFormat,
-                                                      size_t width,
-                                                      size_t height)
+                                                      qint32 width,
+                                                      qint32 height)
 {
     bool success = true;
     GLuint bufID = HandleToID_cast(GLuint, size_t, rbo);

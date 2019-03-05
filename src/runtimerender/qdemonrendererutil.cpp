@@ -36,8 +36,8 @@ QT_BEGIN_NAMESPACE
 void QDemonRendererUtil::resolveMutisampleFBOColorOnly(const QDemonRef<QDemonResourceManagerInterface> &inManager,
                                                        QDemonResourceTexture2D &ioResult,
                                                        QDemonRenderContext &inRenderContext,
-                                                       quint32 inWidth,
-                                                       quint32 inHeight,
+                                                       qint32 inWidth,
+                                                       qint32 inHeight,
                                                        QDemonRenderTextureFormats::Enum inColorFormat,
                                                        const QDemonRef<QDemonRenderFrameBuffer> &inSourceFBO)
 {
@@ -70,11 +70,11 @@ void QDemonRendererUtil::resolveMutisampleFBOColorOnly(const QDemonRef<QDemonRes
 
 void QDemonRendererUtil::resolveSSAAFBOColorOnly(const QDemonRef<QDemonResourceManagerInterface> &inManager,
                                                  QDemonResourceTexture2D &ioResult,
-                                                 quint32 outWidth,
-                                                 quint32 outHeight,
+                                                 qint32 outWidth,
+                                                 qint32 outHeight,
                                                  QDemonRenderContext &inRenderContext,
-                                                 quint32 inWidth,
-                                                 quint32 inHeight,
+                                                 qint32 inWidth,
+                                                 qint32 inHeight,
                                                  QDemonRenderTextureFormats::Enum inColorFormat,
                                                  const QDemonRef<QDemonRenderFrameBuffer> &inSourceFBO)
 {
@@ -105,7 +105,7 @@ void QDemonRendererUtil::resolveSSAAFBOColorOnly(const QDemonRef<QDemonResourceM
     inRenderContext.blitFramebuffer(0, 0, inWidth, inHeight, 0, 0, outWidth, outHeight, copyFlags, QDemonRenderTextureMagnifyingOp::Linear);
 }
 
-void QDemonRendererUtil::getSSAARenderSize(quint32 inWidth, quint32 inHeight, quint32 &outWidth, quint32 &outHeight)
+void QDemonRendererUtil::getSSAARenderSize(qint32 inWidth, qint32 inHeight, qint32 &outWidth, qint32 &outHeight)
 {
     // we currently double width and height
     outWidth = inWidth * 2;

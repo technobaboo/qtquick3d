@@ -28,14 +28,14 @@ struct QDemonTimerEntry
         ++m_updateCount;
     }
 
-    void output(quint32 inFramesPassed)
+    void output(quint32 inFramesPassed) const
     {
         if (m_total) {
-            quint64 tensNanos = QDemonTime::sCounterFreq.toTensOfNanos(m_total);
-            quint64 maxNanos = QDemonTime::sCounterFreq.toTensOfNanos(m_max);
+            const quint64 tensNanos = QDemonTime::sCounterFreq.toTensOfNanos(m_total);
+            const quint64 maxNanos = QDemonTime::sCounterFreq.toTensOfNanos(m_max);
 
             double milliseconds = tensNanos / 100000.0;
-            double maxMilliseconds = maxNanos / 100000.0;
+            const double maxMilliseconds = maxNanos / 100000.0;
             if (inFramesPassed == 0) {
                 qWarning("%s - %fms", qPrintable(m_tag), milliseconds);
             } else {
@@ -80,9 +80,8 @@ void QDemonPerfTimer::outputTimerData(quint32 inFramesPassed)
 
     std::sort(d->printEntries.begin(), d->printEntries.end());
 
-    for (quint32 idx = 0, end = (quint32)d->printEntries.size(); idx < end; ++idx) {
-        d->printEntries[idx].output(inFramesPassed);
-    }
+    for (const auto &printEntry : qAsConst(d->printEntries))
+        printEntry.output(inFramesPassed);
 }
 
 void QDemonPerfTimer::resetTimerData()

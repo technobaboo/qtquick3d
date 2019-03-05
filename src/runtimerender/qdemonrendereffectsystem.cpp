@@ -263,7 +263,7 @@ struct QDemonEffectContext
             releaseDataBuffer(0);
     }
 
-    void releaseBuffer(quint32 inIdx)
+    void releaseBuffer(qint32 inIdx)
     {
         QDemonAllocatedBufferEntry &theEntry(m_allocatedBuffers[inIdx]);
         theEntry.frameBuffer->attach(QDemonRenderFrameBufferAttachments::Color0, QDemonRenderTextureOrRenderBuffer());
@@ -275,7 +275,7 @@ struct QDemonEffectContext
         }
     }
 
-    void releaseImage(quint32 inIdx)
+    void releaseImage(qint32 inIdx)
     {
         QDemonAllocatedImageEntry &theEntry(m_allocatedImages[inIdx]);
         m_resourceManager->release(theEntry.image);
@@ -286,7 +286,7 @@ struct QDemonEffectContext
         }
     }
 
-    void releaseDataBuffer(quint32 inIdx)
+    void releaseDataBuffer(qint32 inIdx)
     {
         QDemonAllocatedDataBufferEntry &theEntry(m_allocatedDataBuffers[inIdx]);
         ::free(theEntry.bufferData.begin());
@@ -296,26 +296,26 @@ struct QDemonEffectContext
         }
     }
 
-    quint32 findBuffer(const QString &inName)
+    qint32 findBuffer(const QString &inName)
     {
-        for (quint32 idx = 0, end = m_allocatedBuffers.size(); idx < end; ++idx)
+        for (qint32 idx = 0, end = m_allocatedBuffers.size(); idx < end; ++idx)
             if (m_allocatedBuffers[idx].name == inName)
                 return idx;
         return m_allocatedBuffers.size();
     }
 
-    quint32 findImage(const QString &inName)
+    qint32 findImage(const QString &inName)
     {
-        for (quint32 idx = 0, end = m_allocatedImages.size(); idx < end; ++idx)
+        for (qint32 idx = 0, end = m_allocatedImages.size(); idx < end; ++idx)
             if (m_allocatedImages[idx].name == inName)
                 return idx;
 
         return m_allocatedImages.size();
     }
 
-    quint32 findDataBuffer(const QString &inName)
+    qint32 findDataBuffer(const QString &inName)
     {
-        for (quint32 idx = 0, end = m_allocatedDataBuffers.size(); idx < end; ++idx) {
+        for (qint32 idx = 0, end = m_allocatedDataBuffers.size(); idx < end; ++idx) {
             if (m_allocatedDataBuffers[idx].name == inName)
                 return idx;
         }
@@ -332,7 +332,7 @@ struct QDemonEffectContext
                     const QDemonPropertyDefinition *inPropDec = nullptr)
     {
         QDemonRef<QDemonTextureEntry> theTextureEntry;
-        for (quint32 idx = 0, end = m_textureEntries.size(); idx < end && theTextureEntry == nullptr; ++idx) {
+        for (qint32 idx = 0, end = m_textureEntries.size(); idx < end && theTextureEntry == nullptr; ++idx) {
             if (m_textureEntries[idx].first == inPropName && m_textureEntries[idx].second->shader == inShader)
                 theTextureEntry = m_textureEntries[idx].second;
         }
@@ -348,7 +348,7 @@ struct QDemonEffectContext
     void setImage(const QDemonRef<QDemonRenderShaderProgram> &inShader, const QString &inPropName, const QDemonRef<QDemonRenderImage2D> &inImage)
     {
         QDemonRef<QDemonImageEntry> theImageEntry;
-        for (quint32 idx = 0, end = m_imageEntries.size(); idx < end && theImageEntry == nullptr; ++idx) {
+        for (qint32 idx = 0, end = m_imageEntries.size(); idx < end && theImageEntry == nullptr; ++idx) {
             if (m_imageEntries[idx].first == inPropName && m_imageEntries[idx].second->shader == inShader)
                 theImageEntry = m_imageEntries[idx].second;
         }
@@ -367,7 +367,7 @@ struct QDemonEffectContext
                        const QDemonRef<QDemonRenderDataBuffer> &inBuffer)
     {
         QDemonRef<QDemonDataBufferEntry> theDataBufferEntry;
-        for (quint32 idx = 0, end = m_dataBufferEntries.size(); idx < end && theDataBufferEntry == nullptr; ++idx) {
+        for (qint32 idx = 0, end = m_dataBufferEntries.size(); idx < end && theDataBufferEntry == nullptr; ++idx) {
             if (m_dataBufferEntries[idx].first == inPropName && m_dataBufferEntries[idx].second->shader == inShader)
                 theDataBufferEntry = m_dataBufferEntries[idx].second;
         }
@@ -680,8 +680,8 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
         // Check to see if it is already allocated and if it is, is it the correct size. If both of
         // these assumptions hold, then we are good.
         QDemonRef<QDemonRenderTexture2D> theBufferTexture;
-        quint32 theWidth = QDemonTextRendererInterface::nextMultipleOf4((quint32)(inFinalWidth * inCommand.m_sizeMultiplier));
-        quint32 theHeight = QDemonTextRendererInterface::nextMultipleOf4((quint32)(inFinalHeight * inCommand.m_sizeMultiplier));
+        const qint32 theWidth = QDemonTextRendererInterface::nextMultipleOf4((quint32)(inFinalWidth * inCommand.m_sizeMultiplier));
+        const qint32 theHeight = QDemonTextRendererInterface::nextMultipleOf4((quint32)(inFinalHeight * inCommand.m_sizeMultiplier));
         QDemonRenderTextureFormats::Enum resultFormat = inCommand.m_format;
         if (resultFormat == QDemonRenderTextureFormats::Unknown)
             resultFormat = inSourceTextureFormat;
@@ -689,7 +689,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
         if (inEffect.m_context) {
             QDemonEffectContext &theContext(*inEffect.m_context);
             // size intentionally requiried every loop;
-            quint32 bufferIdx = theContext.findBuffer(inCommand.m_name);
+            qint32 bufferIdx = theContext.findBuffer(inCommand.m_name);
             if (bufferIdx < theContext.m_allocatedBuffers.size()) {
                 QDemonAllocatedBufferEntry &theEntry(theContext.m_allocatedBuffers[bufferIdx]);
                 QDemonTextureDetails theDetails = theEntry.texture->getTextureDetails();
@@ -718,15 +718,15 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
     void allocateImage(QDemonRenderEffect &inEffect, const QDemonAllocateImage &inCommand, quint32 inFinalWidth, quint32 inFinalHeight)
     {
         QDemonRef<QDemonRenderImage2D> theImage;
-        quint32 theWidth = QDemonTextRendererInterface::nextMultipleOf4((quint32)(inFinalWidth * inCommand.m_sizeMultiplier));
-        quint32 theHeight = QDemonTextRendererInterface::nextMultipleOf4((quint32)(inFinalHeight * inCommand.m_sizeMultiplier));
+        qint32 theWidth = QDemonTextRendererInterface::nextMultipleOf4((quint32)(inFinalWidth * inCommand.m_sizeMultiplier));
+        qint32 theHeight = QDemonTextRendererInterface::nextMultipleOf4((quint32)(inFinalHeight * inCommand.m_sizeMultiplier));
 
         Q_ASSERT(inCommand.m_format != QDemonRenderTextureFormats::Unknown);
 
         if (inEffect.m_context) {
             QDemonEffectContext &theContext(*inEffect.m_context);
             // size intentionally requiried every loop;
-            quint32 imageIdx = theContext.findImage(inCommand.m_name);
+            qint32 imageIdx = theContext.findImage(inCommand.m_name);
             if (imageIdx < theContext.m_allocatedImages.size()) {
                 QDemonAllocatedImageEntry &theEntry(theContext.m_allocatedImages[imageIdx]);
                 QDemonTextureDetails theDetails = theEntry.texture->getTextureDetails();
@@ -762,7 +762,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
         if (inEffect.m_context) {
             QDemonEffectContext &theContext(*inEffect.m_context);
             // size intentionally requiried every loop;
-            quint32 bufferIdx = theContext.findDataBuffer(inCommand.m_name);
+            qint32 bufferIdx = theContext.findDataBuffer(inCommand.m_name);
             if (bufferIdx < theContext.m_allocatedDataBuffers.size()) {
                 QDemonAllocatedDataBufferEntry &theEntry(theContext.m_allocatedDataBuffers[bufferIdx]);
                 if (theEntry.bufferType == inCommand.m_dataBufferType && theEntry.bufferData.size() == theBufferSize) {
@@ -824,7 +824,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
     {
         if (inEffect->m_context) {
             QDemonEffectContext &theContext(*inEffect->m_context);
-            quint32 bufferIdx = theContext.findBuffer(inName);
+            qint32 bufferIdx = theContext.findBuffer(inName);
             if (bufferIdx < theContext.m_allocatedBuffers.size()) {
                 return theContext.m_allocatedBuffers[bufferIdx].texture;
             }
@@ -842,7 +842,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
         QDemonRef<QDemonRenderTexture2D> theTexture;
         if (inEffect.m_context) {
             QDemonEffectContext &theContext(*inEffect.m_context);
-            quint32 bufferIdx = theContext.findBuffer(inCommand.m_bufferName);
+            qint32 bufferIdx = theContext.findBuffer(inCommand.m_bufferName);
             if (bufferIdx < theContext.m_allocatedBuffers.size()) {
                 theBuffer = theContext.m_allocatedBuffers[bufferIdx].frameBuffer;
                 theTexture = theContext.m_allocatedBuffers[bufferIdx].texture;
@@ -1122,7 +1122,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
         if (!inCommand.m_bufferName.isEmpty()) {
             if (inEffect->m_context) {
                 QDemonEffectContext &theContext(*inEffect->m_context);
-                quint32 bufferIdx = theContext.findBuffer(inCommand.m_bufferName);
+                qint32 bufferIdx = theContext.findBuffer(inCommand.m_bufferName);
                 if (bufferIdx < theContext.m_allocatedBuffers.size()) {
                     QDemonAllocatedBufferEntry &theEntry(theContext.m_allocatedBuffers[bufferIdx]);
                     if (theEntry.needsClear) {
@@ -1214,7 +1214,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
         if (!inCommand.m_imageName.isEmpty()) {
             if (inEffect->m_context) {
                 QDemonEffectContext &theContext(*inEffect->m_context);
-                quint32 bufferIdx = theContext.findImage(inCommand.m_imageName);
+                qint32 bufferIdx = theContext.findImage(inCommand.m_imageName);
                 if (bufferIdx < theContext.m_allocatedImages.size()) {
                     theImageToBind = QDemonAllocatedImageEntry(theContext.m_allocatedImages[bufferIdx]);
                 }
@@ -1262,7 +1262,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
         if (!inCommand.m_paramName.isEmpty()) {
             if (inEffect->m_context) {
                 QDemonEffectContext &theContext(*inEffect->m_context);
-                quint32 bufferIdx = theContext.findDataBuffer(inCommand.m_paramName);
+                qint32 bufferIdx = theContext.findDataBuffer(inCommand.m_paramName);
                 if (bufferIdx < theContext.m_allocatedDataBuffers.size()) {
                     theBufferToBind = QDemonAllocatedDataBufferEntry(theContext.m_allocatedDataBuffers[bufferIdx]);
                     if (theBufferToBind.needsClear) {
@@ -1603,13 +1603,13 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
             if (inEffect->m_context) {
                 QDemonEffectContext &theContext(*inEffect->m_context);
                 // Query for size on every loop intentional
-                for (quint32 idx = 0; idx < theContext.m_allocatedBuffers.size(); ++idx) {
+                for (qint32 idx = 0; idx < theContext.m_allocatedBuffers.size(); ++idx) {
                     if (theContext.m_allocatedBuffers[idx].flags.isSceneLifetime() == false) {
                         theContext.releaseBuffer(idx);
                         --idx;
                     }
                 }
-                for (quint32 idx = 0; idx < theContext.m_allocatedImages.size(); ++idx) {
+                for (qint32 idx = 0; idx < theContext.m_allocatedImages.size(); ++idx) {
                     if (theContext.m_allocatedImages[idx].flags.isSceneLifetime() == false) {
                         theContext.releaseImage(idx);
                         --idx;
@@ -1708,12 +1708,12 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
 
     void resetEffectFrameData(QDemonEffectContext &inContext) override
     { // Query for size on every loop intentional
-        for (quint32 idx = 0; idx < inContext.m_allocatedBuffers.size(); ++idx) {
+        for (qint32 idx = 0; idx < inContext.m_allocatedBuffers.size(); ++idx) {
             QDemonAllocatedBufferEntry &theBuffer(inContext.m_allocatedBuffers[idx]);
             if (theBuffer.flags.isSceneLifetime() == true)
                 theBuffer.needsClear = true;
         }
-        for (quint32 idx = 0; idx < inContext.m_allocatedDataBuffers.size(); ++idx) {
+        for (qint32 idx = 0; idx < inContext.m_allocatedDataBuffers.size(); ++idx) {
             QDemonAllocatedDataBufferEntry &theDataBuffer(inContext.m_allocatedDataBuffers[idx]);
             if (theDataBuffer.flags.isSceneLifetime() == true)
                 theDataBuffer.needsClear = true;

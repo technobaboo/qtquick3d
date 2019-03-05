@@ -150,7 +150,7 @@ const char *QDemonRenderBackendGLBase::getShadingLanguageVersion()
     return retval;
 }
 
-quint32 QDemonRenderBackendGLBase::getMaxCombinedTextureUnits()
+qint32 QDemonRenderBackendGLBase::getMaxCombinedTextureUnits()
 {
     qint32 maxUnits;
     GL_CALL_FUNCTION(glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &maxUnits));
@@ -303,14 +303,14 @@ void QDemonRenderBackendGLBase::getRenderBackendValue(QDemonRenderBackendQuery::
     }
 }
 
-quint32 QDemonRenderBackendGLBase::getDepthBits() const
+qint32 QDemonRenderBackendGLBase::getDepthBits() const
 {
     qint32 depthBits;
     GL_CALL_FUNCTION(glGetIntegerv(GL_DEPTH_BITS, &depthBits));
     return depthBits;
 }
 
-quint32 QDemonRenderBackendGLBase::getStencilBits() const
+qint32 QDemonRenderBackendGLBase::getStencilBits() const
 {
     qint32 stencilBits;
     GL_CALL_FUNCTION(glGetIntegerv(GL_STENCIL_BITS, &stencilBits));
@@ -800,8 +800,8 @@ bool QDemonRenderBackendGLBase::renderTargetIsValid(QDemonRenderBackendRenderTar
 }
 
 QDemonRenderBackend::QDemonRenderBackendRenderbufferObject QDemonRenderBackendGLBase::createRenderbuffer(QDemonRenderRenderBufferFormats::Enum storageFormat,
-                                                                                                         size_t width,
-                                                                                                         size_t height)
+                                                                                                         qint32 width,
+                                                                                                         qint32 height)
 {
     GLuint bufID = 0;
 
@@ -809,8 +809,8 @@ QDemonRenderBackend::QDemonRenderBackendRenderbufferObject QDemonRenderBackendGL
     GL_CALL_FUNCTION(glBindRenderbuffer(GL_RENDERBUFFER, bufID));
     GL_CALL_FUNCTION(glRenderbufferStorage(GL_RENDERBUFFER,
                                            GLConversion::fromRenderBufferFormatsToRenderBufferGL(storageFormat),
-                                           (GLsizei)width,
-                                           (GLsizei)height));
+                                           GLsizei(width),
+                                           GLsizei(height)));
 
     // check for error
     GLenum error = m_glFunctions->glGetError();
@@ -837,8 +837,8 @@ void QDemonRenderBackendGLBase::releaseRenderbuffer(QDemonRenderBackendRenderbuf
 
 bool QDemonRenderBackendGLBase::resizeRenderbuffer(QDemonRenderBackendRenderbufferObject rbo,
                                                    QDemonRenderRenderBufferFormats::Enum storageFormat,
-                                                   size_t width,
-                                                   size_t height)
+                                                   qint32 width,
+                                                   qint32 height)
 {
     bool success = true;
     GLuint bufID = HandleToID_cast(GLuint, size_t, rbo);
@@ -848,8 +848,8 @@ bool QDemonRenderBackendGLBase::resizeRenderbuffer(QDemonRenderBackendRenderbuff
     GL_CALL_FUNCTION(glBindRenderbuffer(GL_RENDERBUFFER, bufID));
     GL_CALL_FUNCTION(glRenderbufferStorage(GL_RENDERBUFFER,
                                            GLConversion::fromRenderBufferFormatsToRenderBufferGL(storageFormat),
-                                           (GLsizei)width,
-                                           (GLsizei)height));
+                                           GLsizei(width),
+                                           GLsizei(height)));
 
     // check for error
     GLenum error = m_glFunctions->glGetError();
@@ -870,10 +870,13 @@ QDemonRenderBackend::QDemonRenderBackendTextureObject QDemonRenderBackendGLBase:
     return (QDemonRenderBackend::QDemonRenderBackendTextureObject)texID;
 }
 
-void QDemonRenderBackendGLBase::bindTexture(QDemonRenderBackendTextureObject to, QDemonRenderTextureTargetType::Enum target, quint32 unit)
+void QDemonRenderBackendGLBase::bindTexture(QDemonRenderBackendTextureObject to,
+                                            QDemonRenderTextureTargetType::Enum target,
+                                            qint32 unit)
 {
+    Q_ASSERT(unit >= 0);
     GLuint texID = HandleToID_cast(GLuint, size_t, to);
-    GL_CALL_FUNCTION(glActiveTexture(GL_TEXTURE0 + unit));
+    GL_CALL_FUNCTION(glActiveTexture(GL_TEXTURE0 + GLenum(unit)));
     GL_CALL_FUNCTION(glBindTexture(m_conversion.fromTextureTargetToGL(target), texID));
 }
 
@@ -897,10 +900,10 @@ void QDemonRenderBackendGLBase::releaseTexture(QDemonRenderBackendTextureObject 
 
 void QDemonRenderBackendGLBase::setTextureData2D(QDemonRenderBackendTextureObject to,
                                                  QDemonRenderTextureTargetType::Enum target,
-                                                 quint32 level,
+                                                 qint32 level,
                                                  QDemonRenderTextureFormats::Enum internalFormat,
-                                                 size_t width,
-                                                 size_t height,
+                                                 qint32 width,
+                                                 qint32 height,
                                                  qint32 border,
                                                  QDemonRenderTextureFormats::Enum format,
                                                  const void *hostPtr)
@@ -938,10 +941,10 @@ void QDemonRenderBackendGLBase::setTextureData2D(QDemonRenderBackendTextureObjec
 // glTexImage2D.
 void QDemonRenderBackendGLBase::setTextureDataCubeFace(QDemonRenderBackendTextureObject to,
                                                        QDemonRenderTextureTargetType::Enum target,
-                                                       quint32 level,
+                                                       qint32 level,
                                                        QDemonRenderTextureFormats::Enum internalFormat,
-                                                       size_t width,
-                                                       size_t height,
+                                                       qint32 width,
+                                                       qint32 height,
                                                        qint32 border,
                                                        QDemonRenderTextureFormats::Enum format,
                                                        const void *hostPtr)
@@ -974,17 +977,17 @@ void QDemonRenderBackendGLBase::setTextureDataCubeFace(QDemonRenderBackendTextur
     if (getRenderContextType() == QDemonRenderContextValues::GLES2)
         glInternalFormat = glformat;
 
-    GL_CALL_FUNCTION(glTexImage2D(glTarget, level, glInternalFormat, (GLsizei)width, (GLsizei)height, border, glformat, gltype, hostPtr));
+    GL_CALL_FUNCTION(glTexImage2D(glTarget, level, glInternalFormat, GLsizei(width), GLsizei(height), border, glformat, gltype, hostPtr));
 
     GL_CALL_FUNCTION(glBindTexture(glTexTarget, 0));
 }
 
 void QDemonRenderBackendGLBase::createTextureStorage2D(QDemonRenderBackendTextureObject,
                                                        QDemonRenderTextureTargetType::Enum,
-                                                       quint32,
+                                                       qint32,
                                                        QDemonRenderTextureFormats::Enum,
-                                                       size_t,
-                                                       size_t)
+                                                       qint32,
+                                                       qint32)
 {
     // you need GL 4.2 or GLES 3.1
     qCCritical(INVALID_OPERATION) << QObject::tr("Unsupported method: ") << __FUNCTION__;
@@ -992,11 +995,11 @@ void QDemonRenderBackendGLBase::createTextureStorage2D(QDemonRenderBackendTextur
 
 void QDemonRenderBackendGLBase::setTextureSubData2D(QDemonRenderBackendTextureObject to,
                                                     QDemonRenderTextureTargetType::Enum target,
-                                                    quint32 level,
+                                                    qint32 level,
                                                     qint32 xOffset,
                                                     qint32 yOffset,
-                                                    size_t width,
-                                                    size_t height,
+                                                    qint32 width,
+                                                    qint32 height,
                                                     QDemonRenderTextureFormats::Enum format,
                                                     const void *hostPtr)
 {
@@ -1017,12 +1020,12 @@ void QDemonRenderBackendGLBase::setTextureSubData2D(QDemonRenderBackendTextureOb
 
 void QDemonRenderBackendGLBase::setCompressedTextureData2D(QDemonRenderBackendTextureObject to,
                                                            QDemonRenderTextureTargetType::Enum target,
-                                                           quint32 level,
+                                                           qint32 level,
                                                            QDemonRenderTextureFormats::Enum internalFormat,
-                                                           size_t width,
-                                                           size_t height,
+                                                           qint32 width,
+                                                           qint32 height,
                                                            qint32 border,
-                                                           size_t imageSize,
+                                                           qint32 imageSize,
                                                            const void *hostPtr)
 {
     GLuint texID = HandleToID_cast(GLuint, size_t, to);
@@ -1031,19 +1034,19 @@ void QDemonRenderBackendGLBase::setCompressedTextureData2D(QDemonRenderBackendTe
     GL_CALL_FUNCTION(glBindTexture(glTarget, texID));
 
     GLenum glformat = GLConversion::fromCompressedTextureFormatToGL(internalFormat);
-    GL_CALL_FUNCTION(glCompressedTexImage2D(glTarget, level, glformat, (GLsizei)width, (GLsizei)height, border, (GLsizei)imageSize, hostPtr));
+    GL_CALL_FUNCTION(glCompressedTexImage2D(glTarget, level, glformat, GLsizei(width), GLsizei(height), border, GLsizei(imageSize), hostPtr));
 
     GL_CALL_FUNCTION(glBindTexture(glTarget, 0));
 }
 
 void QDemonRenderBackendGLBase::setCompressedTextureDataCubeFace(QDemonRenderBackendTextureObject to,
                                                                  QDemonRenderTextureTargetType::Enum target,
-                                                                 quint32 level,
+                                                                 qint32 level,
                                                                  QDemonRenderTextureFormats::Enum internalFormat,
-                                                                 size_t width,
-                                                                 size_t height,
+                                                                 qint32 width,
+                                                                 qint32 height,
                                                                  qint32 border,
-                                                                 size_t imageSize,
+                                                                 qint32 imageSize,
                                                                  const void *hostPtr)
 {
     GLuint texID = HandleToID_cast(GLuint, size_t, to);
@@ -1053,20 +1056,20 @@ void QDemonRenderBackendGLBase::setCompressedTextureDataCubeFace(QDemonRenderBac
     GL_CALL_FUNCTION(glBindTexture(glTexTarget, texID));
 
     GLenum glformat = GLConversion::fromCompressedTextureFormatToGL(internalFormat);
-    GL_CALL_FUNCTION(glCompressedTexImage2D(glTarget, level, glformat, (GLsizei)width, (GLsizei)height, border, (GLsizei)imageSize, hostPtr));
+    GL_CALL_FUNCTION(glCompressedTexImage2D(glTarget, level, glformat, GLsizei(width), GLsizei(height), border, GLsizei(imageSize), hostPtr));
 
     GL_CALL_FUNCTION(glBindTexture(glTexTarget, 0));
 }
 
 void QDemonRenderBackendGLBase::setCompressedTextureSubData2D(QDemonRenderBackendTextureObject to,
                                                               QDemonRenderTextureTargetType::Enum target,
-                                                              quint32 level,
+                                                              qint32 level,
                                                               qint32 xOffset,
                                                               qint32 yOffset,
-                                                              size_t width,
-                                                              size_t height,
+                                                              qint32 width,
+                                                              qint32 height,
                                                               QDemonRenderTextureFormats::Enum format,
-                                                              size_t imageSize,
+                                                              qint32 imageSize,
                                                               const void *hostPtr)
 {
     GLuint texID = HandleToID_cast(GLuint, size_t, to);
@@ -1076,18 +1079,18 @@ void QDemonRenderBackendGLBase::setCompressedTextureSubData2D(QDemonRenderBacken
 
     GLenum glformat = GLConversion::fromCompressedTextureFormatToGL(format);
     GL_CALL_FUNCTION(
-            glCompressedTexSubImage2D(glTarget, level, xOffset, yOffset, (GLsizei)width, (GLsizei)height, glformat, (GLsizei)imageSize, hostPtr));
+            glCompressedTexSubImage2D(glTarget, level, xOffset, yOffset, GLsizei(width), GLsizei(height), glformat, GLsizei(imageSize), hostPtr));
 
     GL_CALL_FUNCTION(glBindTexture(glTarget, 0));
 }
 
 void QDemonRenderBackendGLBase::setTextureData3D(QDemonRenderBackendTextureObject,
                                                  QDemonRenderTextureTargetType::Enum,
-                                                 quint32,
+                                                 qint32,
                                                  QDemonRenderTextureFormats::Enum,
-                                                 size_t,
-                                                 size_t,
-                                                 size_t,
+                                                 qint32,
+                                                 qint32,
+                                                 qint32,
                                                  qint32,
                                                  QDemonRenderTextureFormats::Enum,
                                                  const void *)

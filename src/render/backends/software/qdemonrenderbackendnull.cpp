@@ -42,7 +42,7 @@ struct QDemonNullBackend : public QDemonRenderBackend
 
     QDemonRenderContextType getRenderContextType() const override { return QDemonRenderContextValues::NullContext; }
     const char *getShadingLanguageVersion() override { return ""; }
-    quint32 getMaxCombinedTextureUnits() override { return 32; }
+    qint32 getMaxCombinedTextureUnits() override { return 32; }
     bool getRenderBackendCap(QDemonRenderBackendCaps::Enum) const override { return false; }
     void getRenderBackendValue(QDemonRenderBackendQuery::Enum inQuery, qint32 *params) const override
     {
@@ -61,8 +61,8 @@ struct QDemonNullBackend : public QDemonRenderBackend
             }
         }
     }
-    quint32 getDepthBits() const override { return 16; }
-    quint32 getStencilBits() const override { return 0; }
+    qint32 getDepthBits() const override { return 16; }
+    qint32 getStencilBits() const override { return 0; }
     void setRenderState(bool, const QDemonRenderState::Enum) override {}
     bool getRenderState(const QDemonRenderState::Enum) override { return false; }
     QDemonRenderBackendDepthStencilStateObject createDepthStencilState(bool,
@@ -163,13 +163,13 @@ struct QDemonNullBackend : public QDemonRenderBackend
     void blitFramebuffer(qint32, qint32, qint32, qint32, qint32, qint32, qint32, qint32, QDemonRenderClearFlags, QDemonRenderTextureMagnifyingOp::Enum) override
     {
     }
-    QDemonRenderBackendRenderbufferObject createRenderbuffer(QDemonRenderRenderBufferFormats::Enum, size_t, size_t) override
+    QDemonRenderBackendRenderbufferObject createRenderbuffer(QDemonRenderRenderBufferFormats::Enum, qint32, qint32) override
     {
         return QDemonRenderBackendRenderbufferObject(1);
     }
     void releaseRenderbuffer(QDemonRenderBackendRenderbufferObject) override {}
 
-    bool resizeRenderbuffer(QDemonRenderBackendRenderbufferObject, QDemonRenderRenderBufferFormats::Enum, size_t, size_t) override
+    bool resizeRenderbuffer(QDemonRenderBackendRenderbufferObject, QDemonRenderRenderBufferFormats::Enum, qint32, qint32) override
     {
         return false;
     }
@@ -177,10 +177,10 @@ struct QDemonNullBackend : public QDemonRenderBackend
 
     void setTextureData2D(QDemonRenderBackendTextureObject,
                           QDemonRenderTextureTargetType::Enum,
-                          quint32,
+                          qint32,
                           QDemonRenderTextureFormats::Enum,
-                          size_t,
-                          size_t,
+                          qint32,
+                          qint32,
                           qint32,
                           QDemonRenderTextureFormats::Enum,
                           const void *) override
@@ -188,10 +188,10 @@ struct QDemonNullBackend : public QDemonRenderBackend
     }
     void setTextureDataCubeFace(QDemonRenderBackendTextureObject,
                                 QDemonRenderTextureTargetType::Enum,
-                                quint32,
+                                qint32,
                                 QDemonRenderTextureFormats::Enum,
-                                size_t,
-                                size_t,
+                                qint32,
+                                qint32,
                                 qint32,
                                 QDemonRenderTextureFormats::Enum,
                                 const void *) override
@@ -199,73 +199,73 @@ struct QDemonNullBackend : public QDemonRenderBackend
     }
     void createTextureStorage2D(QDemonRenderBackendTextureObject,
                                 QDemonRenderTextureTargetType::Enum,
-                                quint32,
+                                qint32,
                                 QDemonRenderTextureFormats::Enum,
-                                size_t,
-                                size_t) override
+                                qint32,
+                                qint32) override
     {
     }
     void setTextureSubData2D(QDemonRenderBackendTextureObject,
                              QDemonRenderTextureTargetType::Enum,
-                             quint32,
                              qint32,
                              qint32,
-                             size_t,
-                             size_t,
+                             qint32,
+                             qint32,
+                             qint32,
                              QDemonRenderTextureFormats::Enum,
                              const void *) override
     {
     }
     void setCompressedTextureData2D(QDemonRenderBackendTextureObject,
                                     QDemonRenderTextureTargetType::Enum,
-                                    quint32,
-                                    QDemonRenderTextureFormats::Enum,
-                                    size_t,
-                                    size_t,
                                     qint32,
-                                    size_t,
+                                    QDemonRenderTextureFormats::Enum,
+                                    qint32,
+                                    qint32,
+                                    qint32,
+                                    qint32,
                                     const void *) override
     {
     }
     void setCompressedTextureDataCubeFace(QDemonRenderBackendTextureObject,
                                           QDemonRenderTextureTargetType::Enum,
-                                          quint32,
-                                          QDemonRenderTextureFormats::Enum,
-                                          size_t,
-                                          size_t,
                                           qint32,
-                                          size_t,
+                                          QDemonRenderTextureFormats::Enum,
+                                          qint32,
+                                          qint32,
+                                          qint32,
+                                          qint32,
                                           const void *) override
     {
     }
     void setCompressedTextureSubData2D(QDemonRenderBackendTextureObject,
                                        QDemonRenderTextureTargetType::Enum,
-                                       quint32,
                                        qint32,
                                        qint32,
-                                       size_t,
-                                       size_t,
+                                       qint32,
+                                       qint32,
+                                       qint32,
                                        QDemonRenderTextureFormats::Enum,
-                                       size_t,
+                                       qint32,
                                        const void *) override
     {
     }
     void setMultisampledTextureData2D(QDemonRenderBackendTextureObject,
                                       QDemonRenderTextureTargetType::Enum,
-                                      size_t,
+                                      qint32,
                                       QDemonRenderTextureFormats::Enum,
-                                      size_t,
-                                      size_t,
+                                      qint32,
+                                      qint32,
                                       bool) override
     {
     }
     void setTextureData3D(QDemonRenderBackendTextureObject,
                           QDemonRenderTextureTargetType::Enum,
-                          quint32,
+                          qint32,
                           QDemonRenderTextureFormats::Enum,
-                          size_t,
-                          size_t,
-                          size_t,
+                          qint32,
+                          qint32,
+                          qint32,
                           qint32,
                           QDemonRenderTextureFormats::Enum,
                           const void *) override
@@ -274,7 +274,7 @@ struct QDemonNullBackend : public QDemonRenderBackend
     void generateMipMaps(QDemonRenderBackendTextureObject, QDemonRenderTextureTargetType::Enum, QDemonRenderHint::Enum) override
     {
     }
-    void bindTexture(QDemonRenderBackendTextureObject, QDemonRenderTextureTargetType::Enum, quint32) override {}
+    void bindTexture(QDemonRenderBackendTextureObject, QDemonRenderTextureTargetType::Enum, qint32) override {}
     void bindImageTexture(QDemonRenderBackendTextureObject, quint32, qint32, bool, qint32, QDemonRenderImageAccessType::Enum, QDemonRenderTextureFormats::Enum) override
     {
     }

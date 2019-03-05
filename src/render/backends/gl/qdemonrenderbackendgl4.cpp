@@ -229,10 +229,10 @@ void QDemonRenderBackendGL4Impl::drawIndexedIndirect(QDemonRenderDrawMode::Enum 
 
 void QDemonRenderBackendGL4Impl::createTextureStorage2D(QDemonRenderBackendTextureObject to,
                                                         QDemonRenderTextureTargetType::Enum target,
-                                                        quint32 levels,
+                                                        qint32 levels,
                                                         QDemonRenderTextureFormats::Enum internalFormat,
-                                                        size_t width,
-                                                        size_t height)
+                                                        qint32 width,
+                                                        qint32 height)
 {
     GLuint texID = HandleToID_cast(GLuint, size_t, to);
     GLenum glTarget = GLConversion::fromTextureTargetToGL(target);
@@ -252,10 +252,10 @@ void QDemonRenderBackendGL4Impl::createTextureStorage2D(QDemonRenderBackendTextu
 
 void QDemonRenderBackendGL4Impl::setMultisampledTextureData2D(QDemonRenderBackendTextureObject to,
                                                               QDemonRenderTextureTargetType::Enum target,
-                                                              size_t samples,
+                                                              qint32 samples,
                                                               QDemonRenderTextureFormats::Enum internalFormat,
-                                                              size_t width,
-                                                              size_t height,
+                                                              qint32 width,
+                                                              qint32 height,
                                                               bool fixedsamplelocations)
 {
     GLuint texID = HandleToID_cast(GLuint, size_t, to);

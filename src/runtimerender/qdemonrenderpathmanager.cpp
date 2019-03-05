@@ -1196,9 +1196,9 @@ struct QDemonPathManager : public QDemonPathManagerInterface
             thePathBuffer->m_pathBuffer = nullptr;
             // Ensure the SubPath list is identical and clear, percolating any dirty flags up to the
             // path buffer.
-            quint32 SubPathIdx = 0;
+            int subPathIdx = 0;
             for (const QDemonPathSubPath *theSubPath = inPath.m_firstSubPath; theSubPath;
-                 theSubPath = theSubPath->m_nextSubPath, ++SubPathIdx) {
+                 theSubPath = theSubPath->m_nextSubPath, ++subPathIdx) {
                 QDemonRef<QDemonPathSubPathBuffer> theSubPathBuffer = getPathBufferObject(*theSubPath);
                 if (theSubPathBuffer == nullptr)
                     continue;
@@ -1209,19 +1209,19 @@ struct QDemonPathManager : public QDemonPathManagerInterface
                     theSubPathBuffer->m_closed = theSubPath->m_closed;
                 }
 
-                if (thePathBuffer->m_subPaths.size() <= SubPathIdx || thePathBuffer->m_subPaths[SubPathIdx] != theSubPathBuffer) {
+                if (thePathBuffer->m_subPaths.size() <= subPathIdx || thePathBuffer->m_subPaths[subPathIdx] != theSubPathBuffer) {
                     thePathBuffer->m_flags.clearOrSet(true, PathDirtyFlagValues::SourceData);
-                    if (thePathBuffer->m_subPaths.size() <= SubPathIdx)
+                    if (thePathBuffer->m_subPaths.size() <= subPathIdx)
                         thePathBuffer->m_subPaths.push_back(theSubPathBuffer);
                     else
-                        thePathBuffer->m_subPaths[SubPathIdx] = theSubPathBuffer;
+                        thePathBuffer->m_subPaths[subPathIdx] = theSubPathBuffer;
                 }
 
                 theSubPathBuffer->m_flags.clear();
             }
 
-            if (SubPathIdx != thePathBuffer->m_subPaths.size()) {
-                thePathBuffer->m_subPaths.resize(SubPathIdx);
+            if (subPathIdx != thePathBuffer->m_subPaths.size()) {
+                thePathBuffer->m_subPaths.resize(subPathIdx);
                 thePathBuffer->m_flags.clearOrSet(true, PathDirtyFlagValues::SourceData);
             }
         } else {

@@ -144,11 +144,11 @@ public:
      *
      * @ return no return
      */
-    void addShadowMapEntry(quint32 index,
-                           quint32 width,
-                           quint32 height,
+    void addShadowMapEntry(qint32 index,
+                           qint32 width,
+                           qint32 height,
                            QDemonRenderTextureFormats::Enum format,
-                           quint32 samples,
+                           qint32 samples,
                            ShadowMapModes::Enum mode,
                            ShadowFilterValues::Enum filter);
 
@@ -166,7 +166,7 @@ public:
      *
      * @ return count of shadow map entries
      */
-    quint32 getShadowMapEntryCount() { return m_shadowMapList.size(); }
+    qint32 getShadowMapEntryCount() { return m_shadowMapList.size(); }
 
     static QDemonRef<QDemonRenderShadowMap> create(QDemonRenderContextInterface *inContext);
 

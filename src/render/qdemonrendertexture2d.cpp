@@ -52,8 +52,8 @@ QDemonTextureDetails QDemonRenderTexture2D::getTextureDetails() const
 
 void QDemonRenderTexture2D::setTextureData(QDemonDataRef<quint8> newBuffer,
                                            quint8 inMipLevel,
-                                           quint32 width,
-                                           quint32 height,
+                                           qint32 width,
+                                           qint32 height,
                                            QDemonRenderTextureFormats::Enum format,
                                            QDemonRenderTextureFormats::Enum formatDest)
 {
@@ -102,7 +102,7 @@ void QDemonRenderTexture2D::setTextureData(QDemonDataRef<quint8> newBuffer,
     }
 
     // get max size and check value
-    quint32 maxWidth, maxHeight;
+    qint32 maxWidth, maxHeight;
     m_context->getMaxTextureSize(maxWidth, maxHeight);
     if (width > maxWidth || height > maxHeight) {
         qCCritical(INVALID_OPERATION, "Width or height is greater than max texture size (%d, %d)", maxWidth, maxHeight);
@@ -133,9 +133,9 @@ void QDemonRenderTexture2D::setTextureData(QDemonDataRef<quint8> newBuffer,
         setMinFilter(QDemonRenderTextureMinifyingOp::LinearMipmapLinear);
 }
 
-void QDemonRenderTexture2D::setTextureStorage(quint32 inLevels,
-                                              quint32 width,
-                                              quint32 height,
+void QDemonRenderTexture2D::setTextureStorage(qint32 inLevels,
+                                              qint32 width,
+                                              qint32 height,
                                               QDemonRenderTextureFormats::Enum formaInternal,
                                               QDemonRenderTextureFormats::Enum format,
                                               QDemonDataRef<quint8> dataBuffer)
@@ -154,7 +154,7 @@ void QDemonRenderTexture2D::setTextureStorage(quint32 inLevels,
         format = formaInternal;
 
     // get max size and check value
-    quint32 maxWidth, maxHeight;
+    qint32 maxWidth, maxHeight;
     m_context->getMaxTextureSize(maxWidth, maxHeight);
     if (width > maxWidth || height > maxHeight) {
         qCCritical(INVALID_OPERATION, "Width or height is greater than max texture size (%d, %d)", maxWidth, maxHeight);
@@ -181,14 +181,17 @@ void QDemonRenderTexture2D::setTextureStorage(quint32 inLevels,
     }
 }
 
-void QDemonRenderTexture2D::setTextureDataMultisample(quint32 sampleCount, quint32 width, quint32 height, QDemonRenderTextureFormats::Enum format)
+void QDemonRenderTexture2D::setTextureDataMultisample(qint32 sampleCount,
+                                                      qint32 width,
+                                                      qint32 height,
+                                                      QDemonRenderTextureFormats::Enum format)
 {
     Q_ASSERT(m_textureHandle);
     Q_ASSERT(m_maxMipLevel == 0);
 
     m_texTarget = QDemonRenderTextureTargetType::Texture2D_MS;
 
-    quint32 maxWidth, maxHeight;
+    qint32 maxWidth, maxHeight;
     m_context->getMaxTextureSize(maxWidth, maxHeight);
     if (width > maxWidth || height > maxHeight) {
         qCCritical(INVALID_OPERATION, "Width or height is greater than max texture size (%d, %d)", maxWidth, maxHeight);
@@ -207,21 +210,22 @@ void QDemonRenderTexture2D::setTextureDataMultisample(quint32 sampleCount, quint
 
 void QDemonRenderTexture2D::setTextureSubData(QDemonDataRef<quint8> newBuffer,
                                               quint8 inMipLevel,
-                                              quint32 inXOffset,
-                                              quint32 inYOffset,
-                                              quint32 width,
-                                              quint32 height,
+                                              qint32 inXOffset,
+                                              qint32 inYOffset,
+                                              qint32 width,
+                                              qint32 height,
                                               QDemonRenderTextureFormats::Enum format)
 {
     Q_ASSERT(m_textureHandle);
+    Q_ASSERT(inXOffset >= 0 && inYOffset >= 0 && width >= 0 && height >= 0);
 
     if (!QDemonRenderTextureFormats::isUncompressedTextureFormat(format)) {
         qCCritical(INVALID_PARAMETER, "Cannot set sub data for depth or compressed formats");
         Q_ASSERT(false);
         return;
     }
-    quint32 subRectStride = width * QDemonRenderTextureFormats::getSizeofFormat(format);
-    if (newBuffer.size() < subRectStride * height) {
+    qint32 subRectStride = width * QDemonRenderTextureFormats::getSizeofFormat(format);
+    if (qint32(newBuffer.size()) < subRectStride * height) {
         qCCritical(INVALID_PARAMETER, "Invalid sub rect buffer size");
         Q_ASSERT(false);
         return;
@@ -254,10 +258,10 @@ void QDemonRenderTexture2D::generateMipmaps(QDemonRenderHint::Enum genType)
 {
     applyTexParams();
     m_backend->generateMipMaps(m_textureHandle, m_texTarget, genType);
-    quint32 maxDim = (m_width >= m_height) ? m_width : m_height;
-    m_maxMipLevel = static_cast<quint32>(logf((float)maxDim) / logf(2.0f));
+    qint32 maxDim = (m_width >= m_height) ? m_width : m_height;
+    m_maxMipLevel = qint32(float(std::log(maxDim)) / std::log(2.0f));
     // we never create more level than m_maxLevel
-    m_maxMipLevel = qMin(m_maxMipLevel, (quint32)m_maxLevel);
+    m_maxMipLevel = qMin(m_maxMipLevel, m_maxLevel);
 }
 
 void QDemonRenderTexture2D::bind()

@@ -113,11 +113,11 @@ public:
     virtual QDemonRenderContextType getRenderContextType() const = 0;
     virtual bool areMultisampleTexturesSupported() const = 0;
     virtual bool getConstantBufferSupport() const = 0;
-    virtual void getMaxTextureSize(quint32 &oWidth, quint32 &oHeight) = 0;
+    virtual void getMaxTextureSize(qint32 &oWidth, qint32 &oHeight) = 0;
     virtual const char *getShadingLanguageVersion() = 0;
     // Get the bit depth of the currently bound depth buffer.
-    virtual quint32 getDepthBits() const = 0;
-    virtual quint32 getStencilBits() const = 0;
+    virtual qint32 getDepthBits() const = 0;
+    virtual qint32 getStencilBits() const = 0;
     virtual bool getRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::Enum inCap) const = 0;
     virtual bool areDXTImagesSupported() const = 0;
     virtual bool isDepthStencilSupported() const = 0;
@@ -490,10 +490,10 @@ protected:
     QHash<const void *, QDemonRenderShaderProgram *> m_shaderToImpMap;
     QHash<const void *, QDemonRenderRenderBuffer *> m_renderBufferToImpMap;
     QHash<const void *, QDemonRenderFrameBuffer *> m_frameBufferToImpMap;
-    quint32 m_maxTextureUnits;
-    quint32 m_nextTextureUnit;
-    quint32 m_maxConstantBufferUnits;
-    quint32 m_nextConstantBufferUnit;
+    qint32 m_maxTextureUnits;
+    qint32 m_nextTextureUnit;
+    qint32 m_maxConstantBufferUnits;
+    qint32 m_nextConstantBufferUnit;
 
     QVector<QDemonGLHardPropertyContext> m_propertyStack;
 
@@ -625,13 +625,13 @@ public:
 
     QDemonRef<QDemonRenderBackend> getBackend() override { return m_backend; }
 
-    void getMaxTextureSize(quint32 &oWidth, quint32 &oHeight) override;
+    void getMaxTextureSize(qint32 &oWidth, qint32 &oHeight) override;
 
     const char *getShadingLanguageVersion() override { return m_backend->getShadingLanguageVersion(); }
 
     QDemonRenderContextType getRenderContextType() const override { return m_backend->getRenderContextType(); }
 
-    quint32 getDepthBits() const override
+    qint32 getDepthBits() const override
     {
         // only query this if a framebuffer is bound
         if (m_hardwarePropertyContext.m_frameBuffer)
@@ -640,7 +640,7 @@ public:
             return m_dephBits;
     }
 
-    quint32 getStencilBits() const override
+    qint32 getStencilBits() const override
     {
         // only query this if a framebuffer is bound
         if (m_hardwarePropertyContext.m_frameBuffer)
@@ -797,7 +797,7 @@ public:
     QDemonRef<QDemonRenderConstantBuffer> getConstantBuffer(const QByteArray &bufferName) override;
     virtual void bufferDestroyed(QDemonRenderConstantBuffer *buffer);
 
-    virtual quint32 getNextConstantBufferUnit();
+    virtual qint32 getNextConstantBufferUnit();
 
     virtual QDemonRef<QDemonRenderStorageBuffer> createStorageBuffer(const char *bufferName,
                                                                      QDemonRenderBufferUsageType::Enum usageType,
@@ -837,7 +837,7 @@ public:
     QDemonRef<QDemonRenderTextureCube> createTextureCube() override;
     virtual void textureDestroyed(QDemonRenderTextureCube *buffer);
 
-    virtual quint32 getNextTextureUnit();
+    virtual qint32 getNextTextureUnit();
 
     QDemonRef<QDemonRenderImage2D> createImage2D(QDemonRef<QDemonRenderTexture2D> inTexture,
                                                  QDemonRenderImageAccessType::Enum inAccess) override;

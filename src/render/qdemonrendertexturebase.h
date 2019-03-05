@@ -40,13 +40,13 @@ class QDemonRenderTextureSampler;
 
 struct QDemonTextureDetails
 {
-    quint32 width = 0;
-    quint32 height = 0;
-    quint32 depth = 0;
-    quint32 sampleCount = 1;
+    qint32 width = 0;
+    qint32 height = 0;
+    qint32 depth = 0;
+    qint32 sampleCount = 1;
     QDemonRenderTextureFormats::Enum format = QDemonRenderTextureFormats::Unknown;
 
-    QDemonTextureDetails(quint32 w, quint32 h, quint32 d, quint32 samples, QDemonRenderTextureFormats::Enum f)
+    QDemonTextureDetails(qint32 w, qint32 h, qint32 d, qint32 samples, QDemonRenderTextureFormats::Enum f)
         : width(w), height(h), depth(d), sampleCount(samples), format(f)
     {
     }
@@ -62,16 +62,16 @@ protected:
     QDemonRef<QDemonRenderContextImpl> m_context; ///< pointer to context
     QDemonRef<QDemonRenderBackend> m_backend; ///< pointer to backend
     QDemonRenderBackend::QDemonRenderBackendTextureObject m_textureHandle; ///< opaque backend handle
-    quint32 m_textureUnit; ///< texture unit this texture should use
+    qint32 m_textureUnit; ///< texture unit this texture should use
     bool m_samplerParamsDirty; ///< true if sampler state is dirty
     bool m_texStateDirty; ///< true if texture object state is dirty
-    quint32 m_sampleCount; ///< texture height
+    qint32 m_sampleCount; ///< texture height
     QDemonRenderTextureFormats::Enum m_format; ///< texture format
     QDemonRenderTextureTargetType::Enum m_texTarget; ///< texture target
     QDemonRenderTextureSampler *m_sampler; ///< current texture sampler state
     qint32 m_baseLevel; ///< minimum lod specified
     qint32 m_maxLevel; ///< maximum lod specified
-    quint32 m_maxMipLevel; ///< highest mip level
+    qint32 m_maxMipLevel; ///< highest mip level
     bool m_immutable; ///< true if this is a immutable texture ( size and format )
 
 public:
@@ -101,13 +101,13 @@ public:
     virtual void setTextureCompareFunc(QDemonRenderTextureCompareOp::Enum value);
 
     virtual void setTextureUnit(quint32 unit) { m_textureUnit = unit; }
-    virtual quint32 getTextureUnit() const { return m_textureUnit; }
+    virtual qint32 getTextureUnit() const { return m_textureUnit; }
 
     // Get the texture details for mipmap level 0 if it was set.
     virtual QDemonTextureDetails getTextureDetails() const = 0;
 
     virtual bool isMultisampleTexture() const { return (m_texTarget == QDemonRenderTextureTargetType::Texture2D_MS); }
-    virtual quint32 getSampleCount() const { return m_sampleCount; }
+    virtual qint32 getSampleCount() const { return m_sampleCount; }
     virtual bool isImmutableTexture() const { return m_immutable; }
 
     /**

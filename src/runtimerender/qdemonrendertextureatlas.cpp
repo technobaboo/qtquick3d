@@ -88,7 +88,7 @@ private:
         *binIndex = -1;
         QDemonTextureAtlasRect newRect;
 
-        for (quint32 i = 0; i < m_skyLine.size(); ++i) {
+        for (qint32 i = 0; i < m_skyLine.size(); ++i) {
             qint32 y = getSkylineLevel(i, width, height);
 
             if (y >= 0) {
@@ -111,7 +111,7 @@ private:
      *
      * return skyline hight
      */
-    int getSkylineLevel(quint32 binIndex, qint32 width, qint32 height)
+    int getSkylineLevel(qint32 binIndex, qint32 width, qint32 height)
     {
         // first check width exceed
         qint32 x = m_skyLine[binIndex].x;
@@ -119,7 +119,7 @@ private:
             return -1;
 
         qint32 leftAlign = width;
-        quint32 index = binIndex;
+        qint32 index = binIndex;
         qint32 y = m_skyLine[index].y;
 
         while (leftAlign > 0) {
@@ -152,7 +152,7 @@ private:
         m_skyLine.insert(m_skyLine.begin() + binIndex, newNode);
 
         // iterate over follow up nodes and adjust
-        for (quint32 i = binIndex + 1; i < m_skyLine.size(); ++i) {
+        for (qint32 i = binIndex + 1; i < m_skyLine.size(); ++i) {
             if (m_skyLine[i].x < m_skyLine[i - 1].x + m_skyLine[i - 1].width) {
                 int shrink = m_skyLine[i - 1].x + m_skyLine[i - 1].width - m_skyLine[i].x;
 
@@ -180,7 +180,7 @@ private:
     void mergeSkylineLevelNodes()
     {
         // check if we can merge nodes
-        for (quint32 i = 0; i < m_skyLine.size() - 1; ++i) {
+        for (qint32 i = 0; i < m_skyLine.size() - 1; ++i) {
             if (m_skyLine[i].y == m_skyLine[i + 1].y) {
                 m_skyLine[i].width += m_skyLine[i + 1].width;
                 m_skyLine.erase(m_skyLine.begin() + (i + 1));
@@ -251,15 +251,15 @@ struct QDemonTextureAtlas : public QDemonTextureAtlasInterface
 
     qint32 getAtlasEntryCount() const override { return m_atlasEntrys.size(); }
 
-    TTextureAtlasEntryAndBuffer getAtlasEntryByIndex(quint32 index) override
+    TTextureAtlasEntryAndBuffer getAtlasEntryByIndex(qint32 index) override
     {
         if (index >= m_atlasEntrys.size())
             return TTextureAtlasEntryAndBuffer(QDemonTextureAtlasRect(), QDemonDataRef<quint8>());
 
-        return TTextureAtlasEntryAndBuffer(QDemonTextureAtlasRect((qint32)m_atlasEntrys[index].m_x,
-                                                                  (qint32)m_atlasEntrys[index].m_y,
-                                                                  (qint32)m_atlasEntrys[index].m_width,
-                                                                  (qint32)m_atlasEntrys[index].m_height),
+        return TTextureAtlasEntryAndBuffer(QDemonTextureAtlasRect(qint32(m_atlasEntrys[index].m_x),
+                                                                  qint32(m_atlasEntrys[index].m_y),
+                                                                  qint32(m_atlasEntrys[index].m_width),
+                                                                  qint32(m_atlasEntrys[index].m_height)),
                                            m_atlasEntrys[index].m_buffer);
     }
 

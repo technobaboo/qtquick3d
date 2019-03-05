@@ -91,7 +91,7 @@ class Q_DEMONRUNTIMERENDER_EXPORT QDemonMaterialSystem
     };
     QExplicitlySharedDataPointer<Private> d;
 
-    void releaseBuffer(quint32 inIdx);
+    void releaseBuffer(qint32 inIdx);
     QDemonMaterialClass *getMaterialClass(const QString &inStr);
     const QDemonMaterialClass *getMaterialClass(const QString &inStr) const;
 
@@ -154,8 +154,8 @@ class Q_DEMONRUNTIMERENDER_EXPORT QDemonMaterialSystem
     void prepareDisplacementForRender(QDemonMaterialClass &inClass, QDemonRenderCustomMaterial &inMaterial);
     void prepareMaterialForRender(QDemonMaterialClass &inClass, QDemonRenderCustomMaterial &inMaterial);
 
-    quint32 findBuffer(const QString &inName);
-    quint32 findAllocatedImage(const QString &inName);
+    qint32 findBuffer(const QString &inName);
+    qint32 findAllocatedImage(const QString &inName);
     bool textureNeedsMips(const dynamic::QDemonPropertyDefinition *inPropDec, QDemonRenderTexture2D *inTexture);
     void setTexture(const QDemonRef<QDemonRenderShaderProgram> &inShader, const QString &inPropName,
                     const QDemonRef<QDemonRenderTexture2D> &inTexture,

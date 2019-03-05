@@ -43,9 +43,9 @@ class Q_DEMONRENDER_EXPORT QDemonRenderTexture2DArray : public QDemonRenderTextu
 {
     Q_DISABLE_COPY(QDemonRenderTexture2DArray)
 private:
-    quint32 m_width; ///< texture width
-    quint32 m_height; ///< texture height
-    quint32 m_slices; ///< texture slices
+    qint32 m_width; ///< texture width
+    qint32 m_height; ///< texture height
+    qint32 m_slices; ///< texture slices
 
 public:
     /**
@@ -76,9 +76,9 @@ public:
      */
     void setTextureData(QDemonDataRef<quint8> newBuffer,
                         quint8 inMipLevel,
-                        quint32 width,
-                        quint32 height,
-                        quint32 slices,
+                        qint32 width,
+                        qint32 height,
+                        qint32 slices,
                         QDemonRenderTextureFormats::Enum format);
 
     // Get the texture details for mipmap level 0 if it was set.

@@ -58,11 +58,11 @@ public:
     ~QDemonResourceTexture2D();
     // Returns true if the texture matches the specs, false if the texture needs to be
     // reallocated
-    bool textureMatches(quint32 width, quint32 height, QDemonRenderTextureFormats::Enum inFormat, quint32 inSamples = 1);
+    bool textureMatches(qint32 width, qint32 height, QDemonRenderTextureFormats::Enum inFormat, qint32 inSamples = 1);
 
     // Returns true if the texture was allocated, false if nothing changed (no allocation).
     // Note this is the exact opposite of TextureMatches.
-    bool ensureTexture(quint32 width, quint32 height, QDemonRenderTextureFormats::Enum inFormat, quint32 inSamples = 1);
+    bool ensureTexture(qint32 width, qint32 height, QDemonRenderTextureFormats::Enum inFormat, qint32 inSamples = 1);
 
     // Force release the texture.
     void releaseTexture();
@@ -102,11 +102,11 @@ public:
     ~QDemonResourceTexture2DArray();
     // Returns true if the texture matches the specs, false if the texture needs to be
     // reallocated
-    bool textureMatches(quint32 width, quint32 height, quint32 slices, QDemonRenderTextureFormats::Enum inFormat, quint32 inSamples = 1);
+    bool textureMatches(qint32 width, qint32 height, qint32 slices, QDemonRenderTextureFormats::Enum inFormat, qint32 inSamples = 1);
 
     // Returns true if the texture was allocated, false if nothing changed (no allocation).
     // Note this is the exact opposite of TextureMatches.
-    bool ensureTexture(quint32 width, quint32 height, quint32 slices, QDemonRenderTextureFormats::Enum inFormat, quint32 inSamples = 1);
+    bool ensureTexture(qint32 width, qint32 height, qint32 slices, QDemonRenderTextureFormats::Enum inFormat, qint32 inSamples = 1);
 
     // Force release the texture.
     void releaseTexture();

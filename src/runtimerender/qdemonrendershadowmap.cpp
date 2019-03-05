@@ -59,11 +59,11 @@ bool IsDepthFormat(QDemonRenderTextureFormats::Enum format)
 }
 }
 
-void QDemonRenderShadowMap::addShadowMapEntry(quint32 index,
-                                              quint32 width,
-                                              quint32 height,
+void QDemonRenderShadowMap::addShadowMapEntry(qint32 index,
+                                              qint32 width,
+                                              qint32 height,
                                               QDemonRenderTextureFormats::Enum format,
-                                              quint32 samples,
+                                              qint32 samples,
                                               ShadowMapModes::Enum mode,
                                               ShadowFilterValues::Enum filter)
 {

@@ -51,17 +51,17 @@ public:
 
     void createTextureStorage2D(QDemonRenderBackendTextureObject to,
                                 QDemonRenderTextureTargetType::Enum target,
-                                quint32 levels,
+                                qint32 levels,
                                 QDemonRenderTextureFormats::Enum internalFormat,
-                                size_t width,
-                                size_t height) override;
+                                qint32 width,
+                                qint32 height) override;
 
     void setMultisampledTextureData2D(QDemonRenderBackendTextureObject to,
                                       QDemonRenderTextureTargetType::Enum target,
-                                      size_t samples,
+                                      qint32 samples,
                                       QDemonRenderTextureFormats::Enum internalFormat,
-                                      size_t width,
-                                      size_t height,
+                                      qint32 width,
+                                      qint32 height,
                                       bool fixedsamplelocations) override;
 
     void setConstantValue(QDemonRenderBackendShaderProgramObject po,

@@ -60,7 +60,7 @@ void QDemonRenderImage2D::setTextureLevel(qint32 inLevel)
     }
 }
 
-void QDemonRenderImage2D::bind(quint32 unit)
+void QDemonRenderImage2D::bind(qint32 unit)
 {
     if (unit == -1)
         m_textureUnit = m_context->getNextTextureUnit();

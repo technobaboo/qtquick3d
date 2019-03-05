@@ -593,8 +593,8 @@ struct QDemonRenderContextData : public QDemonRenderContextInterface
                     m_renderContext->clear(QDemonRenderClearValues::Color);
                 }
             } else {
-                quint32 imageWidth = m_beginFrameResult.fboDimensions.width();
-                quint32 imageHeight = m_beginFrameResult.fboDimensions.height();
+                qint32 imageWidth = m_beginFrameResult.fboDimensions.width();
+                qint32 imageHeight = m_beginFrameResult.fboDimensions.height();
                 QDemonRenderTextureFormats::Enum theColorBufferFormat = QDemonRenderTextureFormats::RGBA8;
                 QDemonRenderRenderBufferFormats::Enum theDepthBufferFormat = QDemonRenderRenderBufferFormats::Depth16;
                 m_contextRenderTarget = m_renderContext->getRenderTarget();

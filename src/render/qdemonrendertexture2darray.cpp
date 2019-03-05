@@ -48,13 +48,13 @@ QDemonRenderTexture2DArray::~QDemonRenderTexture2DArray()
 
 void QDemonRenderTexture2DArray::setTextureData(QDemonDataRef<quint8> newBuffer,
                                                 quint8 inMipLevel,
-                                                quint32 width,
-                                                quint32 height,
-                                                quint32 slices,
+                                                qint32 width,
+                                                qint32 height,
+                                                qint32 slices,
                                                 QDemonRenderTextureFormats::Enum format)
 {
     Q_ASSERT(m_textureHandle);
-
+    Q_ASSERT(width >= 0 && height >= 0 && slices >= 0);
     if (inMipLevel == 0) {
         m_width = width;
         m_height = height;
@@ -71,7 +71,7 @@ void QDemonRenderTexture2DArray::setTextureData(QDemonDataRef<quint8> newBuffer,
     qint32 theMaxLayerSize, theMaxSize;
     m_backend->getRenderBackendValue(QDemonRenderBackend::QDemonRenderBackendQuery::MaxTextureSize, &theMaxSize);
     m_backend->getRenderBackendValue(QDemonRenderBackend::QDemonRenderBackendQuery::MaxTextureArrayLayers, &theMaxLayerSize);
-    if (width > (quint32)theMaxSize || height > (quint32)theMaxSize || slices > (quint32)theMaxLayerSize) {
+    if (width > theMaxSize || height > theMaxSize || slices > theMaxLayerSize) {
         qCCritical(INVALID_OPERATION, "Width or height or Slices is greater than max texture size (%d, %d, %d)", theMaxSize, theMaxSize, theMaxLayerSize);
     }
 

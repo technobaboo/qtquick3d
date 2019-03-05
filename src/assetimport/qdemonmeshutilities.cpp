@@ -1092,7 +1092,7 @@ public:
                 QBuffer newIndexBuffer(&m_newIndexBuffer);
                 newIndexBuffer.write(theIndices, theIter->m_count * theIndexCompSize);
 
-                for (quint32 j = 0, subsetEnd = m_meshSubsetDescs.size(); j < subsetEnd; ++j) {
+                for (int j = 0, subsetEnd = m_meshSubsetDescs.size(); j < subsetEnd; ++j) {
                     if (theIter == &m_meshSubsetDescs[j])
                         continue;
 

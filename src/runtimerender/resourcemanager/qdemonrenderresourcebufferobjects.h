@@ -75,7 +75,7 @@ protected:
 public:
     QDemonResourceRenderBuffer(const QDemonRef<QDemonResourceManagerInterface> &mgr);
     ~QDemonResourceRenderBuffer();
-    bool ensureRenderBuffer(quint32 width, quint32 height, QDemonRenderRenderBufferFormats::Enum storageFormat);
+    bool ensureRenderBuffer(qint32 width, qint32 height, QDemonRenderRenderBufferFormats::Enum storageFormat);
     void releaseRenderBuffer();
 
     operator QDemonRef<QDemonRenderRenderBuffer>() { return m_renderBuffer; }

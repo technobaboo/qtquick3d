@@ -102,13 +102,13 @@ QDemonRenderContextImpl::~QDemonRenderContextImpl()
     m_backend = nullptr;
 }
 
-void QDemonRenderContextImpl::getMaxTextureSize(quint32 &oWidth, quint32 &oHeight)
+void QDemonRenderContextImpl::getMaxTextureSize(qint32 &oWidth, qint32 &oHeight)
 {
     qint32 theMaxTextureSize = 0;
     m_backend->getRenderBackendValue(QDemonRenderBackend::QDemonRenderBackendQuery::MaxTextureSize, &theMaxTextureSize);
 
-    oWidth = (quint32)theMaxTextureSize;
-    oHeight = (quint32)theMaxTextureSize;
+    oWidth = theMaxTextureSize;
+    oHeight = theMaxTextureSize;
 }
 
 QDemonRef<QDemonRenderDepthStencilState> QDemonRenderContextImpl::createDepthStencilState(
@@ -253,9 +253,9 @@ void QDemonRenderContextImpl::bufferDestroyed(QDemonRenderConstantBuffer *buffer
     m_constantToImpMap.remove(buffer->GetBufferName());
 }
 
-quint32 QDemonRenderContextImpl::getNextConstantBufferUnit()
+qint32 QDemonRenderContextImpl::getNextConstantBufferUnit()
 {
-    quint32 retval = m_nextConstantBufferUnit;
+    qint32 retval = m_nextConstantBufferUnit;
     ++m_nextConstantBufferUnit;
     // Too many texture units for a single draw call.
     if (retval >= m_maxConstantBufferUnits) {
@@ -446,9 +446,9 @@ void QDemonRenderContextImpl::imageDestroyed(QDemonRenderImage2D *image)
 
 // IF this texture isn't on a texture unit, put it on one.
 // If it is on a texture unit, mark it as the most recently used texture.
-quint32 QDemonRenderContextImpl::getNextTextureUnit()
+qint32 QDemonRenderContextImpl::getNextTextureUnit()
 {
-    quint32 retval = m_nextTextureUnit;
+    qint32 retval = m_nextTextureUnit;
     ++m_nextTextureUnit;
     // Too many texture units for a single draw call.
     if (retval >= m_maxTextureUnits) {

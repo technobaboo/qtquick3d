@@ -39,10 +39,10 @@ class QDemonRenderContextImpl;
 
 struct QDemonRenderRenderBufferDimensions
 {
-    quint32 m_width = 0; ///< buffer width
-    quint32 m_height = 0; ///< buffer height
+    qint32 m_width = 0; ///< buffer width
+    qint32 m_height = 0; ///< buffer height
 
-    QDemonRenderRenderBufferDimensions(quint32 w, quint32 h) : m_width(w), m_height(h) {}
+    QDemonRenderRenderBufferDimensions(qint32 w, qint32 h) : m_width(w), m_height(h) {}
     QDemonRenderRenderBufferDimensions() = default;
 };
 
@@ -54,8 +54,8 @@ public:
 private:
     QDemonRef<QDemonRenderContextImpl> m_context; ///< pointer to context
     QDemonRef<QDemonRenderBackend> m_backend; ///< pointer to backend
-    quint32 m_width; ///< buffer width
-    quint32 m_height; ///< buffer height
+    qint32 m_width; ///< buffer width
+    qint32 m_height; ///< buffer height
     QDemonRenderRenderBufferFormats::Enum m_storageFormat; ///< buffer storage format
 
     QDemonRenderBackend::QDemonRenderBackendRenderbufferObject m_bufferHandle; ///< opaque backend handle

@@ -68,7 +68,7 @@ public:
     virtual qint32 getWidth() const = 0;
     virtual qint32 getHeight() const = 0;
     virtual qint32 getAtlasEntryCount() const = 0;
-    virtual TTextureAtlasEntryAndBuffer getAtlasEntryByIndex(quint32 index) = 0;
+    virtual TTextureAtlasEntryAndBuffer getAtlasEntryByIndex(qint32 index) = 0;
 
     virtual QDemonTextureAtlasRect addAtlasEntry(qint32 width,
                                                  qint32 height,

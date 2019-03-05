@@ -105,7 +105,7 @@ public:
      *
      * @return No return.
      */
-    virtual void bind(quint32 unit);
+    virtual void bind(qint32 unit);
 
     /**
      * @brief get the backend object handle

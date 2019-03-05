@@ -1197,10 +1197,10 @@ void QDemonLayerRenderData::renderToTexture()
     QDemonRenderTextureFormats::Enum ColorSSAOTextureFormat = QDemonRenderTextureFormats::RGBA8;
 
     bool needsRender = false;
-    quint32 sampleCount = 1;
+    qint32 sampleCount = 1;
     // check multsample mode and MSAA texture support
     if (layer.multisampleAAMode != AAModeValues::NoAA && theRenderContext->areMultisampleTexturesSupported())
-        sampleCount = (quint32)layer.multisampleAAMode;
+        sampleCount = qint32(layer.multisampleAAMode);
 
     bool isMultisamplePass = false;
     if (theRenderContext->getRenderContextType() != QDemonRenderContextValues::GLES2)
@@ -1245,7 +1245,7 @@ void QDemonLayerRenderData::renderToTexture()
 
     // adjust render size for SSAA
     if (layer.multisampleAAMode == AAModeValues::SSAA) {
-        quint32 ow, oh;
+        qint32 ow, oh;
         QDemonRendererUtil::getSSAARenderSize(theLayerOriginalTextureDimensions.width(),
                                               theLayerOriginalTextureDimensions.height(),
                                               ow,
@@ -1326,17 +1326,17 @@ void QDemonLayerRenderData::renderToTexture()
                 // run through all path and update MVP.
 
                 // TODO - optimize this exact matrix operation.
-                for (quint32 idx = 0, end = modelContexts.size(); idx < end; ++idx) {
+                for (qint32 idx = 0, end = modelContexts.size(); idx < end; ++idx) {
                     QMatrix4x4 &originalProjection(modelContexts[idx]->modelViewProjection);
                     offsetProjectionMatrix(originalProjection, theVertexOffsets);
                 }
-                for (quint32 idx = 0, end = opaqueObjects.size(); idx < end; ++idx) {
+                for (qint32 idx = 0, end = opaqueObjects.size(); idx < end; ++idx) {
                     if (opaqueObjects[idx]->renderableFlags.isPath()) {
                         QDemonPathRenderable &theRenderable = static_cast<QDemonPathRenderable &>(*opaqueObjects[idx]);
                         offsetProjectionMatrix(theRenderable.m_mvp, theVertexOffsets);
                     }
                 }
-                for (quint32 idx = 0, end = transparentObjects.size(); idx < end; ++idx) {
+                for (qint32 idx = 0, end = transparentObjects.size(); idx < end; ++idx) {
                     if (transparentObjects[idx]->renderableFlags.IsText()) {
                         QDemonTextRenderable &theRenderable = static_cast<QDemonTextRenderable &>(*transparentObjects[idx]);
                         offsetProjectionMatrix(theRenderable.modelViewProjection, theVertexOffsets);

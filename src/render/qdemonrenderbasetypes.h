@@ -695,7 +695,7 @@ struct QDemonRenderTextureFormats
         return "Unknown";
     }
 
-    static quint32 getSizeofFormat(Enum value)
+    static qint32 getSizeofFormat(Enum value)
     {
         switch (value) {
         case R8:
@@ -815,8 +815,9 @@ struct QDemonRenderTextureFormats
         return 0;
     }
 
-    static void decodeToFloat(void *inPtr, quint32 byteOfs, float *outPtr, QDemonRenderTextureFormats::Enum inFmt)
+    static void decodeToFloat(void *inPtr, qint32 byteOfs, float *outPtr, QDemonRenderTextureFormats::Enum inFmt)
     {
+        Q_ASSERT(byteOfs >= 0);
         outPtr[0] = 0.0f;
         outPtr[1] = 0.0f;
         outPtr[2] = 0.0f;
@@ -839,7 +840,7 @@ struct QDemonRenderTextureFormats
             // NOTE : RGBD Hack here for reference.  Not meant for installation.
             // divisor = (QDemonRenderTextureFormats::getSizeofFormat(inFmt) == 4) ?
             // ((float)src[byteOfs+3]) / 255.0f : 1.0f;
-            for (quint32 i = 0; i < QDemonRenderTextureFormats::getSizeofFormat(inFmt); ++i) {
+            for (qint32 i = 0; i < QDemonRenderTextureFormats::getSizeofFormat(inFmt); ++i) {
                 float val = (float(src[byteOfs + i])) / 255.0f;
                 outPtr[i] = (i < 3) ? std::pow(val, 0.4545454545f) : val;
                 // Assuming RGBA8 actually means RGBD (which is stupid, I know)
@@ -871,7 +872,7 @@ struct QDemonRenderTextureFormats
         case R16F:
         case RG16F:
         case RGBA16F:
-            for (quint32 i = 0; i < (QDemonRenderTextureFormats::getSizeofFormat(inFmt) >> 1); ++i) {
+            for (qint32 i = 0; i < (QDemonRenderTextureFormats::getSizeofFormat(inFmt) >> 1); ++i) {
                 // NOTE : This only works on the assumption that we don't have any denormals,
                 // Infs or NaNs.
                 // Every pixel in our source image should be "regular"
@@ -902,8 +903,9 @@ struct QDemonRenderTextureFormats
         }
     }
 
-    static void encodeToPixel(float *inPtr, void *outPtr, quint32 byteOfs, QDemonRenderTextureFormats::Enum inFmt)
+    static void encodeToPixel(float *inPtr, void *outPtr, qint32 byteOfs, QDemonRenderTextureFormats::Enum inFmt)
     {
+        Q_ASSERT(byteOfs >= 0);
         quint8 *dest = reinterpret_cast<quint8 *>(outPtr);
         switch (inFmt) {
         case QDemonRenderTextureFormats::Alpha8:
@@ -918,7 +920,7 @@ struct QDemonRenderTextureFormats
         case RGBA8:
         case SRGB8:
         case SRGB8A8:
-            for (quint32 i = 0; i < QDemonRenderTextureFormats::getSizeofFormat(inFmt); ++i) {
+            for (qint32 i = 0; i < QDemonRenderTextureFormats::getSizeofFormat(inFmt); ++i) {
                 inPtr[i] = (inPtr[i] > 1.0f) ? 1.0f : inPtr[i];
                 if (i < 3)
                     dest[byteOfs + i] = quint8(powf(inPtr[i], 2.2f) * 255.0f);
@@ -949,7 +951,7 @@ struct QDemonRenderTextureFormats
         case R16F:
         case RG16F:
         case RGBA16F:
-            for (quint32 i = 0; i < (QDemonRenderTextureFormats::getSizeofFormat(inFmt) >> 1); ++i) {
+            for (qint32 i = 0; i < (QDemonRenderTextureFormats::getSizeofFormat(inFmt) >> 1); ++i) {
                 // NOTE : This also has the limitation of not handling  infs, NaNs and
                 // denormals, but it should be
                 // sufficient for our purposes.
