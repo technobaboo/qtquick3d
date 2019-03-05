@@ -113,55 +113,6 @@ struct RenderWidgetModes
     };
 };
 
-class QDemonRenderContext;
-class QDemonShaderProgramGeneratorInterface;
-// Context used to get render data for the widget.
-class Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderWidgetContextInterface : public QDemonRendererInterface
-{
-public:
-    virtual ~QDemonRenderWidgetContextInterface();
-    virtual QDemonRef<QDemonRenderVertexBuffer> getOrCreateVertexBuffer(
-            const QByteArray &inStr,
-            quint32 stride,
-            QDemonConstDataRef<quint8> bufferData = QDemonConstDataRef<quint8>()) = 0;
-    virtual QDemonRef<QDemonRenderIndexBuffer> getOrCreateIndexBuffer(
-            const QByteArray &inStr,
-            QDemonRenderComponentTypes::Enum componentType,
-            size_t size,
-            QDemonConstDataRef<quint8> bufferData = QDemonConstDataRef<quint8>()) = 0;
-    virtual QDemonRef<QDemonRenderAttribLayout> createAttributeLayout(QDemonConstDataRef<QDemonRenderVertexBufferEntry> attribs) = 0;
-    virtual QDemonRef<QDemonRenderInputAssembler> getOrCreateInputAssembler(const QByteArray &inStr,
-                                                                            QDemonRef<QDemonRenderAttribLayout> attribLayout,
-                                                                            QDemonConstDataRef<QDemonRef<QDemonRenderVertexBuffer>> buffers,
-                                                                            const QDemonRef<QDemonRenderIndexBuffer> indexBuffer,
-                                                                            QDemonConstDataRef<quint32> strides,
-                                                                            QDemonConstDataRef<quint32> offsets) = 0;
-
-    virtual QDemonRef<QDemonRenderVertexBuffer> getVertexBuffer(const QByteArray &inStr) = 0;
-    virtual QDemonRef<QDemonRenderIndexBuffer> getIndexBuffer(const QByteArray &inStr) = 0;
-    virtual QDemonRef<QDemonRenderInputAssembler> getInputAssembler(const QByteArray &inStr) = 0;
-
-    virtual QDemonRef<QDemonRenderShaderProgram> getShader(const QByteArray &inStr) = 0;
-    virtual QDemonRef<QDemonShaderProgramGeneratorInterface> getProgramGenerator() = 0;
-    // calls compile on the program generator and stores result under this name.
-    virtual QDemonRef<QDemonRenderShaderProgram> compileAndStoreShader(const QByteArray &inStr) = 0;
-    virtual QDemonTextDimensions measureText(const QDemonTextRenderInfo &inText) = 0;
-    // Render text using a specific MVP
-    virtual void renderText(const QDemonTextRenderInfo &inText,
-                            const QVector3D &inTextColor,
-                            const QVector3D &inBackgroundColor,
-                            const QMatrix4x4 &inMVP) = 0;
-    // Given a node and a point in the node's local space (most likely its pivot point), we
-    // return
-    // a normal matrix so you can get the axis out, a transformation from node to camera
-    // a new position and a floating point scale factor so you can render in 1/2 perspective
-    // mode
-    // or orthographic mode if you would like to.
-    virtual QDemonWidgetRenderInformation getWidgetRenderInformation(QDemonGraphNode &inNode,
-                                                                     const QVector3D &inPos,
-                                                                     RenderWidgetModes::Enum inWidgetMode) = 0;
-};
-
 class QDemonRenderWidgetInterface
 {
 public:
@@ -171,7 +122,7 @@ public:
 
     QDemonRenderWidgetInterface(QDemonGraphNode &inNode) : m_node(&inNode) {}
     QDemonRenderWidgetInterface() = default;
-    virtual void render(QDemonRenderWidgetContextInterface &inWidgetContext, QDemonRenderContext &inRenderContext) = 0;
+    virtual void render(QDemonRendererImpl &inWidgetContext, QDemonRenderContext &inRenderContext) = 0;
     QDemonGraphNode &getNode() { return *m_node; }
 
     // Pure widgets.

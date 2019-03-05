@@ -104,6 +104,7 @@ QDemonRendererImpl::QDemonRendererImpl(QDemonRenderContextInterface *ctx)
     , m_layerGPuProfilingEnabled(false)
 {
 }
+
 QDemonRendererImpl::~QDemonRendererImpl()
 {
     m_layerShaders.clear();

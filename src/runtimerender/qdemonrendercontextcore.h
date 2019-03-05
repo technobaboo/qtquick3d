@@ -104,7 +104,7 @@ public:
     QAtomicInt ref;
     virtual ~QDemonRenderContextInterface();
     virtual QDemonRef<QDemonRendererInterface> getRenderer() = 0;
-    virtual QDemonRef<QDemonRenderWidgetContextInterface> getRenderWidgetContext() = 0;
+    virtual QDemonRef<QDemonRendererImpl> getRenderWidgetContext() = 0;
     virtual QDemonRef<QDemonBufferManagerInterface> getBufferManager() = 0;
     virtual QDemonRef<QDemonResourceManagerInterface> getResourceManager() = 0;
     virtual QDemonRef<QDemonRenderContext> getRenderContext() = 0;

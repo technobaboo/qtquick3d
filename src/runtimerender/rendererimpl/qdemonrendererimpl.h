@@ -119,7 +119,7 @@ struct QDemonPickResultProcessResult : public QDemonRenderPickResult
     bool m_wasPickConsumed = false;
 };
 
-class Q_DEMONRUNTIMERENDER_EXPORT QDemonRendererImpl : public QDemonRenderWidgetContextInterface
+class Q_DEMONRUNTIMERENDER_EXPORT QDemonRendererImpl : public QDemonRendererInterface
 {
     typedef QHash<QDemonShaderDefaultMaterialKey, QDemonRef<QDemonShaderGeneratorGeneratedShader>> TShaderMap;
     typedef QHash<QByteArray, QDemonRef<QDemonRenderConstantBuffer>> TStrConstanBufMap;
@@ -285,7 +285,7 @@ public:
     QDemonRef<QDemonLayerRenderData> getOrCreateLayerRenderDataForNode(const QDemonGraphNode &inNode,
                                                                        const QDemonRenderInstanceId id = nullptr);
 
-    QDemonRef<QDemonRenderWidgetContextInterface> getRenderWidgetContext() { return this; }
+    QDemonRef<QDemonRendererImpl> getRenderWidgetContext() { return this; }
 
     void beginFrame() override;
     void endFrame() override;
@@ -426,36 +426,36 @@ public:
     QDemonRef<QDemonRenderFrameBuffer> getBlendFB() { return m_blendFb; }
 #endif
     // widget context implementation
-    virtual QDemonRef<QDemonRenderVertexBuffer> getOrCreateVertexBuffer(
+    QDemonRef<QDemonRenderVertexBuffer> getOrCreateVertexBuffer(
             const QByteArray &inStr,
             quint32 stride,
-            QDemonConstDataRef<quint8> bufferData = QDemonConstDataRef<quint8>()) override;
-    virtual QDemonRef<QDemonRenderIndexBuffer> getOrCreateIndexBuffer(
+            QDemonConstDataRef<quint8> bufferData = QDemonConstDataRef<quint8>());
+    QDemonRef<QDemonRenderIndexBuffer> getOrCreateIndexBuffer(
             const QByteArray &inStr,
             QDemonRenderComponentTypes::Enum componentType,
             size_t size,
-            QDemonConstDataRef<quint8> bufferData = QDemonConstDataRef<quint8>()) override;
-    virtual QDemonRef<QDemonRenderAttribLayout> createAttributeLayout(QDemonConstDataRef<QDemonRenderVertexBufferEntry> attribs) override;
-    virtual QDemonRef<QDemonRenderInputAssembler> getOrCreateInputAssembler(const QByteArray &inStr,
-                                                                            QDemonRef<QDemonRenderAttribLayout> attribLayout,
-                                                                            QDemonConstDataRef<QDemonRef<QDemonRenderVertexBuffer>> buffers,
-                                                                            const QDemonRef<QDemonRenderIndexBuffer> indexBuffer,
-                                                                            QDemonConstDataRef<quint32> strides,
-                                                                            QDemonConstDataRef<quint32> offsets) override;
+            QDemonConstDataRef<quint8> bufferData = QDemonConstDataRef<quint8>());
+    QDemonRef<QDemonRenderAttribLayout> createAttributeLayout(QDemonConstDataRef<QDemonRenderVertexBufferEntry> attribs);
+    QDemonRef<QDemonRenderInputAssembler> getOrCreateInputAssembler(const QByteArray &inStr,
+                                                                    QDemonRef<QDemonRenderAttribLayout> attribLayout,
+                                                                    QDemonConstDataRef<QDemonRef<QDemonRenderVertexBuffer>> buffers,
+                                                                    const QDemonRef<QDemonRenderIndexBuffer> indexBuffer,
+                                                                    QDemonConstDataRef<quint32> strides,
+                                                                    QDemonConstDataRef<quint32> offsets);
 
-    QDemonRef<QDemonRenderVertexBuffer> getVertexBuffer(const QByteArray &inStr) override;
-    QDemonRef<QDemonRenderIndexBuffer> getIndexBuffer(const QByteArray &inStr) override;
-    QDemonRef<QDemonRenderInputAssembler> getInputAssembler(const QByteArray &inStr) override;
+    QDemonRef<QDemonRenderVertexBuffer> getVertexBuffer(const QByteArray &inStr);
+    QDemonRef<QDemonRenderIndexBuffer> getIndexBuffer(const QByteArray &inStr);
+    QDemonRef<QDemonRenderInputAssembler> getInputAssembler(const QByteArray &inStr);
 
-    QDemonRef<QDemonRenderShaderProgram> getShader(const QByteArray &inStr) override;
-    QDemonRef<QDemonRenderShaderProgram> compileAndStoreShader(const QByteArray &inStr) override;
-    QDemonRef<QDemonShaderProgramGeneratorInterface> getProgramGenerator() override;
+    QDemonRef<QDemonRenderShaderProgram> getShader(const QByteArray &inStr);
+    QDemonRef<QDemonRenderShaderProgram> compileAndStoreShader(const QByteArray &inStr);
+    QDemonRef<QDemonShaderProgramGeneratorInterface> getProgramGenerator();
 
-    QDemonTextDimensions measureText(const QDemonTextRenderInfo &inText) override;
+    QDemonTextDimensions measureText(const QDemonTextRenderInfo &inText);
     void renderText(const QDemonTextRenderInfo &inText,
                     const QVector3D &inTextColor,
                     const QVector3D &inBackgroundColor,
-                    const QMatrix4x4 &inMVP) override;
+                    const QMatrix4x4 &inMVP);
 
     // Given a node and a point in the node's local space (most likely its pivot point), we
     // return
@@ -463,9 +463,9 @@ public:
     // a new position and a floating point scale factor so you can render in 1/2 perspective
     // mode
     // or orthographic mode if you would like to.
-    virtual QDemonWidgetRenderInformation getWidgetRenderInformation(QDemonGraphNode &inNode,
+    QDemonWidgetRenderInformation getWidgetRenderInformation(QDemonGraphNode &inNode,
                                                                      const QVector3D &inPos,
-                                                                     RenderWidgetModes::Enum inWidgetMode) override;
+                                                                     RenderWidgetModes::Enum inWidgetMode);
 
     QDemonOption<QVector2D> getLayerMouseCoords(QDemonRenderLayer &inLayer,
                                                 const QVector2D &inMouseCoords,

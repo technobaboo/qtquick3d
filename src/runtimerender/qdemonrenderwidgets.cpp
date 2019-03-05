@@ -34,6 +34,7 @@
 #include <QtDemonRender/qdemonrendercontext.h>
 #include <QtDemonRuntimeRender/qdemonrendershadercodegeneratorv2.h>
 #include <QtDemonRender/qdemonrendershaderprogram.h>
+#include <QtDemonRuntimeRender/qdemonrendererimpl.h>
 #include <QtDemon/qdemonutils.h>
 #include <QtDemon/qdemondataref.h>
 
@@ -55,7 +56,7 @@ struct QDemonWidgetBBox : public QDemonRenderWidgetInterface
     {
     }
 
-    void setupBoxShader(QDemonRenderWidgetContextInterface &inContext)
+    void setupBoxShader(QDemonRendererImpl &inContext)
     {
         m_boxShader = inContext.getShader(m_itemName);
         if (!m_boxShader) {
@@ -78,7 +79,7 @@ struct QDemonWidgetBBox : public QDemonRenderWidgetInterface
         }
     }
 
-    void setupBoundingBoxGraphicsObjects(QDemonRenderWidgetContextInterface &inContext, QDemonDataRef<QVector3D> thePoints)
+    void setupBoundingBoxGraphicsObjects(QDemonRendererImpl &inContext, QDemonDataRef<QVector3D> thePoints)
     {
         QDemonRenderVertexBufferEntry theEntry("attr_pos", QDemonRenderComponentTypes::Float16, 3);
         m_boxVertexBuffer = inContext.getOrCreateVertexBuffer(m_itemName,
@@ -159,7 +160,7 @@ struct QDemonWidgetBBox : public QDemonRenderWidgetInterface
         setupBoxShader(inContext);
     }
 
-    void render(QDemonRenderWidgetContextInterface &inWidgetContext, QDemonRenderContext &inRenderContext) override
+    void render(QDemonRendererImpl &inWidgetContext, QDemonRenderContext &inRenderContext) override
     {
         m_itemName = "SWidgetBBox";
         QDemonWidgetRenderInformation theInfo(
@@ -197,7 +198,7 @@ struct QDemonWidgetAxis : public QDemonRenderWidgetInterface
     {
     }
 
-    void setupAxisShader(QDemonRenderWidgetContextInterface &inContext)
+    void setupAxisShader(QDemonRendererImpl &inContext)
     {
         m_axisShader = inContext.getShader(m_itemName);
         if (!m_axisShader) {
@@ -221,7 +222,7 @@ struct QDemonWidgetAxis : public QDemonRenderWidgetInterface
         }
     }
 
-    void setupAxesGraphicsObjects(QDemonRenderWidgetContextInterface &inContext, QDemonDataRef<QVector3D> theAxes)
+    void setupAxesGraphicsObjects(QDemonRendererImpl &inContext, QDemonDataRef<QVector3D> theAxes)
     {
         QDemonRenderVertexBufferEntry theEntries[] = {
             QDemonRenderVertexBufferEntry("attr_pos", QDemonRenderComponentTypes::Float16, 3),
@@ -253,7 +254,7 @@ struct QDemonWidgetAxis : public QDemonRenderWidgetInterface
         retval.normalize();
         return retval;
     }
-    void render(QDemonRenderWidgetContextInterface &inWidgetContext, QDemonRenderContext &inRenderContext) override
+    void render(QDemonRendererImpl &inWidgetContext, QDemonRenderContext &inRenderContext) override
     {
         m_itemName = "SWidgetAxis";
 
@@ -334,5 +335,4 @@ QDemonRef<QDemonRenderWidgetInterface> QDemonRenderWidgetInterface::createAxisWi
     return QDemonRef<QDemonRenderWidgetInterface>(new QDemonWidgetAxis(inNode));
 }
 
-QDemonRenderWidgetContextInterface::~QDemonRenderWidgetContextInterface() {}
 QT_END_NAMESPACE

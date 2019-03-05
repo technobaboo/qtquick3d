@@ -55,6 +55,7 @@
 #include <QtDemonRuntimeRender/qdemonrenderdefaultmaterialshadergenerator.h>
 #include <QtDemonRuntimeRender/qdemonrendercustommaterialshadergenerator.h>
 #include <QtDemonRuntimeRender/qdemonperframeallocator.h>
+#include <QtDemonRuntimeRender/qdemonrendererimpl.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -335,7 +336,7 @@ struct QDemonRenderContextData : public QDemonRenderContextInterface
     void setViewport(QDemonOption<QRect> inViewport) override { m_viewport = inViewport; }
     QDemonOption<QRect> getViewport() const override { return m_viewport; }
 
-    QDemonRef<QDemonRenderWidgetContextInterface> getRenderWidgetContext() override
+    QDemonRef<QDemonRendererImpl> getRenderWidgetContext() override
     {
         return m_renderer->getRenderWidgetContext();
     }

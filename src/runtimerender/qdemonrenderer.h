@@ -74,7 +74,7 @@ struct QDemonScaleAndPosition
 
 struct QDemonRenderLayer;
 class QDemonRenderWidgetInterface;
-class QDemonRenderWidgetContextInterface;
+class QDemonRendererImpl;
 class QDemonRenderContextInterface;
 
 class Q_DEMONRUNTIMERENDER_EXPORT QDemonRendererInterface
@@ -216,7 +216,7 @@ public:
                                                         const QVector2D &inViewportDimensions,
                                                         bool forceImageIntersect = false) const = 0;
 
-    virtual QDemonRef<QDemonRenderWidgetContextInterface> getRenderWidgetContext() = 0;
+    virtual QDemonRef<QDemonRendererImpl> getRenderWidgetContext() = 0;
 
     static bool isGlEsContext(const QDemonRenderContextType &inContextType);
     static bool isGlEs3Context(const QDemonRenderContextType &inContextType);
