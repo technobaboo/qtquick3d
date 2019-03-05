@@ -275,7 +275,7 @@ QDemonRef<QDemonRenderStorageBuffer> QDemonRenderContextImpl::createStorageBuffe
     return buffer;
 }
 
-QDemonRef<QDemonRenderStorageBuffer> QDemonRenderContextImpl::getStorageBuffer(const QString &bufferName)
+QDemonRef<QDemonRenderStorageBuffer> QDemonRenderContextImpl::getStorageBuffer(const QByteArray &bufferName)
 {
     TContextStorageBufferMap::iterator entry = m_storageToImpMap.find(bufferName);
     if (entry != m_storageToImpMap.end())
@@ -302,7 +302,7 @@ QDemonRef<QDemonRenderAtomicCounterBuffer> QDemonRenderContextImpl::createAtomic
     return buffer;
 }
 
-QDemonRef<QDemonRenderAtomicCounterBuffer> QDemonRenderContextImpl::getAtomicCounterBuffer(const QString &bufferName)
+QDemonRef<QDemonRenderAtomicCounterBuffer> QDemonRenderContextImpl::getAtomicCounterBuffer(const QByteArray &bufferName)
 {
     TContextAtomicCounterBufferMap::iterator entry = m_atomicCounterToImpMap.find(bufferName);
     if (entry != m_atomicCounterToImpMap.end())
@@ -310,7 +310,7 @@ QDemonRef<QDemonRenderAtomicCounterBuffer> QDemonRenderContextImpl::getAtomicCou
     return QDemonRef<QDemonRenderAtomicCounterBuffer>();
 }
 
-QDemonRef<QDemonRenderAtomicCounterBuffer> QDemonRenderContextImpl::getAtomicCounterBufferByParam(const QString &paramName)
+QDemonRef<QDemonRenderAtomicCounterBuffer> QDemonRenderContextImpl::getAtomicCounterBufferByParam(const QByteArray &paramName)
 {
     // iterate through all atomic counter buffers
     for (TContextAtomicCounterBufferMap::iterator iter = m_atomicCounterToImpMap.begin(),

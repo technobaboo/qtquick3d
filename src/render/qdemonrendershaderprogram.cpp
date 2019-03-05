@@ -624,24 +624,13 @@ static QDemonRef<QDemonRenderShaderConstantBase> shaderConstantFactory(const QDe
 
 template <typename TShaderBufferType, typename TBufferDataType>
 static QDemonRef<QDemonRenderShaderBufferBase> shaderBufferFactory(QDemonRef<QDemonRenderContextImpl> context,
-                                                                        const QString &inName,
+                                                                        const QByteArray &inName,
                                                                         qint32 cbLoc,
                                                                         qint32 cbBinding,
                                                                         qint32 cbSize,
                     qint32 cbCount, QDemonRef<TBufferDataType> pBuffer)
 {
     return QDemonRef<QDemonRenderShaderBufferBase>(new TShaderBufferType(context, inName, cbLoc, cbBinding, cbSize, cbCount, pBuffer));
-}
-
-template <typename TShaderBufferType, typename TBufferDataType>
-static QSharedPointer<QDemonRenderShaderBufferBase> shaderBufferFactory(QSharedPointer<QDemonRenderContextImpl> context,
-                                                                        const QString &inName,
-                                                                        qint32 cbLoc,
-                                                                        qint32 cbBinding,
-                                                                        qint32 cbSize,
-                    qint32 cbCount, QExplicitlySharedDataPointer<TBufferDataType> pBuffer)
-{
-    return QSharedPointer<QDemonRenderShaderBufferBase>(new TShaderBufferType(context, inName, cbLoc, cbBinding, cbSize, cbCount, pBuffer));
 }
 
 bool QDemonRenderShaderProgram::link()
@@ -682,16 +671,14 @@ bool QDemonRenderShaderProgram::link()
                         m_programHandle, idx, 512, &paramCount, &bufferSize, &length, nameBuf);
 
             if (location != -1) {
-                const QString theName = QString::fromLocal8Bit(nameBuf);
-
                 // find constant buffer in our DB
-                QDemonRef<QDemonRenderConstantBuffer> cb = m_context->getConstantBuffer(theName);
+                QDemonRef<QDemonRenderConstantBuffer> cb = m_context->getConstantBuffer(nameBuf);
                 if (cb) {
                     cb->setupBuffer(this, location, bufferSize, paramCount);
                 }
 
-                m_shaderBuffers.insert(theName, shaderBufferFactory<QDemonRenderShaderConstantBuffer, QDemonRenderConstantBuffer>(
-                                           m_context, theName, location, -1, bufferSize,
+                m_shaderBuffers.insert(nameBuf, shaderBufferFactory<QDemonRenderShaderConstantBuffer, QDemonRenderConstantBuffer>(
+                                           m_context, nameBuf, location, -1, bufferSize,
                                            paramCount, cb));
             }
         }
@@ -704,12 +691,10 @@ bool QDemonRenderShaderProgram::link()
                         m_programHandle, idx, 512, &paramCount, &bufferSize, &length, nameBuf);
 
             if (location != -1) {
-                const QString theName = QString::fromLocal8Bit(nameBuf);
-
                 // find constant buffer in our DB
-                QDemonRef<QDemonRenderStorageBuffer> sb = m_context->getStorageBuffer(theName);
-                m_shaderBuffers.insert(theName, shaderBufferFactory<QDemonRenderShaderStorageBuffer, QDemonRenderStorageBuffer>(
-                                           m_context, theName, location, -1, bufferSize,
+                QDemonRef<QDemonRenderStorageBuffer> sb = m_context->getStorageBuffer(nameBuf);
+                m_shaderBuffers.insert(nameBuf, shaderBufferFactory<QDemonRenderShaderStorageBuffer, QDemonRenderStorageBuffer>(
+                                           m_context, nameBuf, location, -1, bufferSize,
                                            paramCount, sb));
             }
         }
@@ -722,8 +707,6 @@ bool QDemonRenderShaderProgram::link()
                         m_programHandle, idx, 512, &paramCount, &bufferSize, &length, nameBuf);
 
             if (location != -1) {
-                const QString theName = QString::fromLocal8Bit(nameBuf);
-
                 // find atomic counter buffer in our DB
                 // The buffer itself is not used in the program itself.
                 // Instead uniform variables are used but the interface to set the value is like
@@ -734,7 +717,7 @@ bool QDemonRenderShaderProgram::link()
                 // We get the actual buffer name by searching for this uniform name
                 // See NVRenderTestAtomicCounterBuffer.cpp how the setup works
                 QDemonRef<QDemonRenderAtomicCounterBuffer> acb =
-                        m_context->getAtomicCounterBufferByParam(theName);
+                        m_context->getAtomicCounterBufferByParam(nameBuf);
                 if (acb) {
                     m_shaderBuffers.insert(acb->getBufferName(), shaderBufferFactory<QDemonRenderShaderAtomicCounterBuffer,
                                            QDemonRenderAtomicCounterBuffer>(m_context, acb->getBufferName(),
@@ -747,13 +730,10 @@ bool QDemonRenderShaderProgram::link()
     return success;
 }
 
-void QDemonRenderShaderProgram::getErrorMessage(qint32 *messageLength, const char *errorMessage)
+QByteArray QDemonRenderShaderProgram::getErrorMessage()
 {
-    *messageLength = m_errorMessage.size();
-    errorMessage = qPrintable(m_errorMessage);
+    return m_errorMessage;
 }
-
-const char *QDemonRenderShaderProgram::getErrorMessage() { return qPrintable(m_errorMessage); }
 
 QDemonRef<QDemonRenderShaderConstantBase> QDemonRenderShaderProgram::getShaderConstant(const char *constantName)
 {
@@ -768,8 +748,7 @@ QDemonRef<QDemonRenderShaderConstantBase> QDemonRenderShaderProgram::getShaderCo
 
 QDemonRef<QDemonRenderShaderBufferBase> QDemonRenderShaderProgram::getShaderBuffer(const char *bufferName)
 {
-    TShaderBufferMap::iterator theIter =
-            m_shaderBuffers.find(QString::fromLocal8Bit(bufferName));
+    TShaderBufferMap::iterator theIter = m_shaderBuffers.find(bufferName);
 
     if (theIter != m_shaderBuffers.end()) {
         return theIter.value();

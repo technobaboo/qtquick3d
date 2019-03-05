@@ -41,7 +41,7 @@ QT_BEGIN_NAMESPACE
 class QDemonRenderContextImpl;
 class AtomicCounterBufferEntry;
 
-typedef QHash<QString, AtomicCounterBufferEntry *> TRenderAtomiCounterBufferEntryMap;
+typedef QHash<QByteArray, AtomicCounterBufferEntry *> TRenderAtomiCounterBufferEntryMap;
 
 ///< Constant (uniform) buffer representation
 class Q_DEMONRENDER_EXPORT QDemonRenderAtomicCounterBuffer : public QDemonRenderDataBuffer
@@ -60,7 +60,7 @@ public:
          * @return No return.
          */
     QDemonRenderAtomicCounterBuffer(const QDemonRef<QDemonRenderContextImpl> &context,
-                                    const QString &bufferName,
+                                    const QByteArray &bufferName,
                                     size_t size,
                                     QDemonRenderBufferUsageType::Enum usageType,
                                     QDemonDataRef<quint8> data);
@@ -117,7 +117,7 @@ public:
          *
          * @return no return
          */
-    void addParam(const QString &name, quint32 offset);
+    void addParam(const QByteArray &name, quint32 offset);
 
     /**
          * @brief Check if the buffer contains this param
@@ -127,14 +127,14 @@ public:
          *
          * @return no return
          */
-    bool containsParam(const QString &name);
+    bool containsParam(const QByteArray &name);
 
     /**
          * @brief get the buffer name
          *
          * @return the buffer name
          */
-    QString getBufferName() const { return m_name; }
+    QByteArray getBufferName() const { return m_name; }
 
     /**
          * @brief get the backend object handle
@@ -170,7 +170,7 @@ public:
                                                                   QDemonConstDataRef<quint8> bufferData);
 
 private:
-    QString m_name; ///< buffer name
+    QByteArray m_name; ///< buffer name
     TRenderAtomiCounterBufferEntryMap m_atomicCounterBufferEntryMap; ///< holds the entries of a atomic counter buffer
     bool m_dirty; ///< true if buffer is dirty
 };

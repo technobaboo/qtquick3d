@@ -1553,8 +1553,7 @@ void QDemonRenderBackendGLBase::releaseShaderProgram(QDemonRenderBackendShaderPr
     delete pProgram;
 }
 
-bool QDemonRenderBackendGLBase::linkProgram(QDemonRenderBackendShaderProgramObject po,
-                                            QByteArray &errorMessage)
+bool QDemonRenderBackendGLBase::linkProgram(QDemonRenderBackendShaderProgramObject po, QByteArray &errorMessage)
 {
     QDemonRenderBackendShaderProgramGL *pProgram = (QDemonRenderBackendShaderProgramGL *)po;
     GLuint programID = static_cast<GLuint>(pProgram->m_programID);
@@ -2157,8 +2156,8 @@ const char *QDemonRenderBackendGLBase::getExtensionString()
      */
 void QDemonRenderBackendGLBase::setAndInspectHardwareCaps()
 {
-    QString apiVersion(getVersionString());
-    qCInfo(TRACE_INFO, "GL version: %s", qPrintable(apiVersion));
+    QByteArray apiVersion(getVersionString());
+    qCInfo(TRACE_INFO, "GL version: %s", apiVersion.constData());
 
     // we assume all GLES versions running on mobile with shared memory
     // this means framebuffer blits are slow and should be optimized or avoided

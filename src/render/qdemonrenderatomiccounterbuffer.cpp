@@ -42,10 +42,10 @@ QT_BEGIN_NAMESPACE
 class AtomicCounterBufferEntry
 {
 public:
-    QString m_name; ///< parameter Name
+    QByteArray m_name; ///< parameter Name
     qint32 m_offset; ///< offset into the memory buffer
 
-    AtomicCounterBufferEntry(const QString &name, qint32 offset)
+    AtomicCounterBufferEntry(const QByteArray &name, qint32 offset)
         : m_name(name)
         , m_offset(offset)
     {
@@ -53,7 +53,7 @@ public:
 };
 
 QDemonRenderAtomicCounterBuffer::QDemonRenderAtomicCounterBuffer(const QDemonRef<QDemonRenderContextImpl> &context,
-                                                                 const QString &bufferName,
+                                                                 const QByteArray &bufferName,
                                                                  size_t size,
                                                                  QDemonRenderBufferUsageType::Enum usageType,
                                                                  QDemonDataRef<quint8> data)
@@ -111,7 +111,7 @@ void QDemonRenderAtomicCounterBuffer::updateData(qint32 offset, QDemonDataRef<qu
                                 data.begin() + offset);
 }
 
-void QDemonRenderAtomicCounterBuffer::addParam(const QString &name, quint32 offset)
+void QDemonRenderAtomicCounterBuffer::addParam(const QByteArray &name, quint32 offset)
 {
     if (m_atomicCounterBufferEntryMap.find(name) == m_atomicCounterBufferEntryMap.end()) {
         AtomicCounterBufferEntry *newEntry = new AtomicCounterBufferEntry(name, offset);
@@ -124,7 +124,7 @@ void QDemonRenderAtomicCounterBuffer::addParam(const QString &name, quint32 offs
     }
 }
 
-bool QDemonRenderAtomicCounterBuffer::containsParam(const QString &name)
+bool QDemonRenderAtomicCounterBuffer::containsParam(const QByteArray &name)
 {
     if (m_atomicCounterBufferEntryMap.find(name) != m_atomicCounterBufferEntryMap.end())
         return true;
@@ -137,8 +137,7 @@ QDemonRef<QDemonRenderAtomicCounterBuffer> QDemonRenderAtomicCounterBuffer::crea
                                                                                         QDemonConstDataRef<quint8> bufferData)
 {
     if (context->isAtomicCounterBufferSupported()) {
-        const QString theBufferName = QString::fromLocal8Bit(bufferName);
-        return QDemonRef<QDemonRenderAtomicCounterBuffer>(new QDemonRenderAtomicCounterBuffer(context, theBufferName, size, usageType,
+        return QDemonRef<QDemonRenderAtomicCounterBuffer>(new QDemonRenderAtomicCounterBuffer(context, bufferName, size, usageType,
                                                      toDataRef(const_cast<quint8 *>(bufferData.begin()), bufferData.size())));
     } else {
         Q_ASSERT(false);

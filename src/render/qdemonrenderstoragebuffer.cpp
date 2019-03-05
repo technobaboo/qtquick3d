@@ -36,7 +36,7 @@
 QT_BEGIN_NAMESPACE
 
 QDemonRenderStorageBuffer::QDemonRenderStorageBuffer(const QDemonRef<QDemonRenderContextImpl> &context,
-                                                     const QString &bufferName, size_t size,
+                                                     const QByteArray &bufferName, size_t size,
                                                      QDemonRenderBufferUsageType::Enum usageType,
                                                      QDemonDataRef<quint8> data, QDemonRenderDataBuffer *pBuffer)
     : QDemonRenderDataBuffer(context, size, QDemonRenderBufferBindValues::Storage, usageType, data)
@@ -100,11 +100,10 @@ QDemonRef<QDemonRenderStorageBuffer> QDemonRenderStorageBuffer::create(const QDe
     QDemonRef<QDemonRenderStorageBuffer> retval = nullptr;
 
     if (context->isStorageBufferSupported()) {
-        const QString theBufferName = QString::fromLocal8Bit(bufferName);
-        retval = new QDemonRenderStorageBuffer(context, theBufferName, size, usageType,
+        retval = new QDemonRenderStorageBuffer(context, bufferName, size, usageType,
                                                    toDataRef(const_cast<quint8 *>(bufferData.begin()), bufferData.size()), pBuffer);
     } else {
-        QString errorMsg = QObject::tr("Shader storage buffers are not supported: %1").arg(bufferName);
+        QString errorMsg = QObject::tr("Shader storage buffers are not supported: %1").arg(QString::fromUtf8(bufferName));
         qCCritical(INVALID_OPERATION) << errorMsg;
     }
     return retval;

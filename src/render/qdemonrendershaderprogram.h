@@ -49,7 +49,7 @@ class QDemonRenderShaderBufferBase;
 class QDemonRenderComputeShader;
 
 typedef QHash<QString, QDemonRef<QDemonRenderShaderConstantBase>> TShaderConstantMap;
-typedef QHash<QString, QDemonRef<QDemonRenderShaderBufferBase>> TShaderBufferMap;
+typedef QHash<QByteArray, QDemonRef<QDemonRenderShaderBufferBase>> TShaderBufferMap;
 
 ///< A shader program is an object composed of a multiple shaders (vertex, fragment,
 ///geometry,....)
@@ -196,20 +196,10 @@ public:
     /**
          * @brief Get Error Message
          *
-         * @param[out] messageLength	Pointer to error string
-         * @param[out] messageLength	Size of error meesage
-         *
-         * @return no return.
-         */
-    void getErrorMessage(qint32 *messageLength, const char *errorMessage);
-
-    /**
-         * @brief Get Error Message
-         *
          *
          * @return error message.
          */
-    const char *getErrorMessage();
+    QByteArray getErrorMessage();
 
     /**
          * @brief Query constant class

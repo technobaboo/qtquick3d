@@ -224,13 +224,13 @@ class QDemonRenderShaderBufferBase
 public:
     QAtomicInt ref;
     QDemonRef<QDemonRenderContextImpl> m_context; ///< pointer to context
-    QString m_name; ///< buffer name
+    QByteArray m_name; ///< buffer name
     quint32 m_location; ///< program buffer block location
     quint32 m_binding; ///< program buffer binding
     qint32 m_size; ///< buffer size
 
 public:
-    QDemonRenderShaderBufferBase(QDemonRef<QDemonRenderContextImpl> context, const QString &name,
+    QDemonRenderShaderBufferBase(QDemonRef<QDemonRenderContextImpl> context, const QByteArray &name,
                                  qint32 location, qint32 binding, qint32 size)
         : m_context(context)
         , m_name(name)
@@ -257,7 +257,7 @@ public:
 
 public:
     QDemonRenderShaderConstantBuffer(QDemonRef<QDemonRenderContextImpl> context,
-                                     const QString &name,
+                                     const QByteArray &name,
                                      quint32 location,
                                      qint32 binding,
                                      qint32 size,
@@ -292,7 +292,7 @@ public:
 
 public:
     QDemonRenderShaderStorageBuffer(QDemonRef<QDemonRenderContextImpl> context,
-                                    const QString &name,
+                                    const QByteArray &name,
                                     quint32 location,
                                     qint32 binding,
                                     qint32 size,
@@ -327,7 +327,7 @@ public:
 
 public:
     QDemonRenderShaderAtomicCounterBuffer(QDemonRef<QDemonRenderContextImpl> context,
-                                          const QString &name,
+                                          const QByteArray &name,
                                           quint32 location,
                                           qint32 binding,
                                           qint32 size,

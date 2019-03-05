@@ -57,7 +57,7 @@ public:
          *
          * @return No return.
          */
-    QDemonRenderStorageBuffer(const QDemonRef<QDemonRenderContextImpl> &context, const QString &bufferName,
+    QDemonRenderStorageBuffer(const QDemonRef<QDemonRenderContextImpl> &context, const QByteArray &bufferName,
                               size_t size, QDemonRenderBufferUsageType::Enum usageType,
                               QDemonDataRef<quint8> data, QDemonRenderDataBuffer *pBuffer = nullptr);
 
@@ -109,7 +109,7 @@ public:
          *
          * @return the buffer name
          */
-    QString getBufferName() const { return m_name; }
+    QByteArray getBufferName() const { return m_name; }
 
     /**
          * @brief get the backend object handle
@@ -144,7 +144,7 @@ public:
                                              QDemonRenderDataBuffer *pBuffer);
 
 private:
-    QString m_name; ///< buffer name
+    QByteArray m_name; ///< buffer name
     QDemonRenderDataBuffer *m_wrappedBuffer; ///< pointer to wrapped buffer
     bool m_dirty; ///< true if buffer is dirty
 };

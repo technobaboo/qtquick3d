@@ -1585,8 +1585,8 @@ public:
          *
          * @return True if program is succesful linked.
          */
-    virtual bool linkProgram(QDemonRenderBackendShaderProgramObject po,
-                             QByteArray &errorMessage) = 0;
+    virtual bool
+    linkProgram(QDemonRenderBackendShaderProgramObject po, QByteArray &errorMessage) = 0;
 
     /**
          * @brief Make a program current

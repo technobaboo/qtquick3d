@@ -94,8 +94,8 @@ struct QDemonRenderContextDirtyValues
 
 typedef QDemonFlags<QDemonRenderContextDirtyValues::Enum, quint32> QDemonRenderContextDirtyFlags;
 typedef QHash<QString, QDemonRenderConstantBuffer *> TContextConstantBufferMap;
-typedef QHash<QString, QDemonRenderStorageBuffer *> TContextStorageBufferMap;
-typedef QHash<QString, QDemonRenderAtomicCounterBuffer *> TContextAtomicCounterBufferMap;
+typedef QHash<QByteArray, QDemonRenderStorageBuffer *> TContextStorageBufferMap;
+typedef QHash<QByteArray, QDemonRenderAtomicCounterBuffer *> TContextAtomicCounterBufferMap;
 typedef QHash<QDemonRenderBackend::QDemonRenderBackendBufferObject, QDemonRenderDrawIndirectBuffer *> TContextDrawIndirectBufferMap;
 typedef QHash<QDemonRenderBackend::QDemonRenderBackendDepthStencilStateObject, QDemonRenderDepthStencilState *> TContextDepthStencilStateMap;
 typedef QHash<QDemonRenderBackend::QDemonRenderBackendRasterizerStateObject, QDemonRenderRasterizerState *> TContextRasterizerStateMap;
@@ -177,16 +177,16 @@ public:
     createStorageBuffer(const char *bufferName,
                         QDemonRenderBufferUsageType::Enum usageType, size_t size,
                         QDemonConstDataRef<quint8> bufferData, QDemonRenderDataBuffer *pBuffer) = 0;
-    virtual QDemonRef<QDemonRenderStorageBuffer> getStorageBuffer(const QString &bufferName) = 0;
+    virtual QDemonRef<QDemonRenderStorageBuffer> getStorageBuffer(const QByteArray &bufferName) = 0;
 
     virtual QDemonRef<QDemonRenderAtomicCounterBuffer>
     createAtomicCounterBuffer(const char *bufferName,
                               QDemonRenderBufferUsageType::Enum usageType, size_t size,
                               QDemonConstDataRef<quint8> bufferData) = 0;
     virtual QDemonRef<QDemonRenderAtomicCounterBuffer>
-    getAtomicCounterBuffer(const QString &bufferName) = 0;
+    getAtomicCounterBuffer(const QByteArray &bufferName) = 0;
     virtual QDemonRef<QDemonRenderAtomicCounterBuffer>
-    getAtomicCounterBufferByParam(const QString &paramName) = 0;
+    getAtomicCounterBufferByParam(const QByteArray &paramName) = 0;
 
     virtual QDemonRef<QDemonRenderDrawIndirectBuffer>
     createDrawIndirectBuffer(QDemonRenderBufferUsageType::Enum usageType, size_t size,
@@ -805,15 +805,15 @@ public:
                                                                           size_t size,
                                                                           QDemonConstDataRef<quint8> bufferData,
                                                                           QDemonRenderDataBuffer *pBuffer) override;
-    QDemonRef<QDemonRenderStorageBuffer> getStorageBuffer(const QString &bufferName) override;
+    QDemonRef<QDemonRenderStorageBuffer> getStorageBuffer(const QByteArray &bufferName) override;
     virtual void bufferDestroyed(QDemonRenderStorageBuffer *buffer);
 
     virtual QDemonRef<QDemonRenderAtomicCounterBuffer> createAtomicCounterBuffer(const char *bufferName,
                                                                                       QDemonRenderBufferUsageType::Enum usageType,
                                                                                       size_t size,
                                                                                       QDemonConstDataRef<quint8> bufferData) override;
-    QDemonRef<QDemonRenderAtomicCounterBuffer> getAtomicCounterBuffer(const QString &bufferName) override;
-    virtual QDemonRef<QDemonRenderAtomicCounterBuffer> getAtomicCounterBufferByParam(const QString &paramName) override;
+    QDemonRef<QDemonRenderAtomicCounterBuffer> getAtomicCounterBuffer(const QByteArray &bufferName) override;
+    virtual QDemonRef<QDemonRenderAtomicCounterBuffer> getAtomicCounterBufferByParam(const QByteArray &paramName) override;
     virtual void bufferDestroyed(QDemonRenderAtomicCounterBuffer *buffer);
 
     virtual QDemonRef<QDemonRenderDrawIndirectBuffer> createDrawIndirectBuffer(QDemonRenderBufferUsageType::Enum usageType,
