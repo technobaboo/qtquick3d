@@ -1701,6 +1701,7 @@ struct GLConversion
         case QDemonRenderReadPixelFormats::RGB565:
             *outFormat = GL_RGB;
             *outType = GL_UNSIGNED_SHORT_5_6_5;
+            break;
         case QDemonRenderReadPixelFormats::RGB8:
             *outFormat = GL_RGB;
             *outType = GL_UNSIGNED_BYTE;
