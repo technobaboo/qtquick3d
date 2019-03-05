@@ -159,11 +159,11 @@ public:
             QImage glyphImage;
 
             // blank char is not contained in a true type font
-            if (cache.at(i) != QChar(' '))
+            if (cache.at(i) != QLatin1Char(' '))
                 glyphImage = rawFont->alphaMapForGlyph(index, QRawFont::PixelAntialiasing);
 
             QRectF rect = rawFont->boundingRect(index);
-            QDemonConstDataRef<quint8> bufferData(static_cast<const quint8 *>(glyphImage.bits()), glyphImage.byteCount());
+            QDemonConstDataRef<quint8> bufferData(static_cast<const quint8 *>(glyphImage.bits()), glyphImage.sizeInBytes());
 
             theAtlasRect = m_textTextureAtlas->addAtlasEntry(glyphImage.width(),
                                                              glyphImage.height(),

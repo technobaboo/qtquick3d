@@ -141,10 +141,10 @@ struct QDemonQtTextRenderer : public QDemonTextRendererInterface
     QString getFileStem(const QString &fileName)
     {
         QString retVal;
-        int dotPos = fileName.lastIndexOf(QChar('.'));
+        int dotPos = fileName.lastIndexOf(QLatin1Char('.'));
         if (dotPos < 0)
             return retVal;
-        int slashPos = fileName.lastIndexOf(QChar('/'));
+        int slashPos = fileName.lastIndexOf(QLatin1Char('/'));
         retVal = fileName.mid(slashPos + 1);
         retVal.chop(fileName.length() - dotPos);
         return retVal;
@@ -534,7 +534,7 @@ struct QDemonQtTextRenderer : public QDemonTextRendererInterface
             nextHeight += float(lineHeight) + inSrcText.leading;
         }
 
-        return QDemonTextRendererInterface::uploadData(toU8DataRef(image.bits(), image.byteCount()),
+        return QDemonTextRendererInterface::uploadData(toU8DataRef(image.bits(), image.sizeInBytes()),
                                                        inTexture,
                                                        image.width(),
                                                        image.height(),

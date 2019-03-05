@@ -155,8 +155,6 @@ public:
     virtual void setSceneColor(QDemonOption<QVector4D> inSceneColor) = 0;
     virtual void setMatteColor(QDemonOption<QVector4D> inMatteColor) = 0;
 
-    // Render screen aligned 2D text at x,y
-    virtual void renderText2D(float x, float y, QDemonOption<QVector3D> inColor, const char *text) = 0;
     // render Gpu profiler values
     virtual void renderGpuProfilerStats(float x, float y, QDemonOption<QVector3D> inColor) = 0;
 

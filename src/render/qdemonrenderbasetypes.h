@@ -2199,6 +2199,7 @@ struct QDemonRenderTextureTypeValue
         case LightmapShadow:
             return "LightmapShadow";
         }
+        return nullptr;
     }
 };
 

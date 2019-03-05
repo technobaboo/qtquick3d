@@ -223,7 +223,7 @@ struct QDemonShaderGeneratorGeneratedShader
 struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterface
 {
     typedef QHash<QDemonRef<QDemonRenderShaderProgram>, QDemonRef<QDemonShaderGeneratorGeneratedShader>> TProgramToShaderMap;
-    typedef QHash<QString, QDemonRef<QDemonRenderConstantBuffer>> TStrConstanBufMap;
+    typedef QHash<QByteArray, QDemonRef<QDemonRenderConstantBuffer>> TStrConstanBufMap;
 
     QDemonRenderContextInterface *m_renderContext;
     QDemonRef<QDemonShaderProgramGeneratorInterface> m_programGenerator;

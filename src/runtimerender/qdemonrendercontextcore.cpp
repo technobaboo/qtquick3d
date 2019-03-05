@@ -461,11 +461,6 @@ struct QDemonRenderContextData : public QDemonRenderContextInterface
         return { x, y, width, height };
     }
 
-    void renderText2D(float x, float y, QDemonOption<QVector3D> inColor, const char *text) override
-    {
-        m_renderer->renderText2D(x, y, inColor, text);
-    }
-
     void renderGpuProfilerStats(float x, float y, QDemonOption<QVector3D> inColor) override
     {
         m_renderer->renderGpuProfilerStats(x, y, inColor);

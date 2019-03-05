@@ -349,7 +349,8 @@ bool QDemonBatchLoadedImage::finalize(QDemonBufferManagerInterface &inMgr)
         // miplevels (if the image doesn't have
         // mipmaps of its own that is).
         QString thepath(sourcePath);
-        bool isIBL = (thepath.contains(".hdr")) || (thepath.contains("\\IBL\\")) || (thepath.contains("/IBL/"));
+        bool isIBL = (thepath.contains(QLatin1String(".hdr"))) || (thepath.contains(QLatin1String("\\IBL\\"))) ||
+                     (thepath.contains(QLatin1String("/IBL/")));
         inMgr.loadRenderImage(sourcePath, texture, false, isIBL);
         inMgr.unaliasImagePath(sourcePath);
     }

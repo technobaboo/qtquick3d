@@ -362,7 +362,6 @@ template<class DECODER, class TWriterType>
 static void decompressDds(void *inSrc, quint32 inDataSize, quint32 inWidth, quint32 inHeight, TWriterType ioWriter)
 {
     typedef typename DECODER::INFO INFO;
-    typedef typename INFO::Block Block;
     (void)inDataSize;
 
     const quint8 *pbSrc = (const quint8 *)inSrc;

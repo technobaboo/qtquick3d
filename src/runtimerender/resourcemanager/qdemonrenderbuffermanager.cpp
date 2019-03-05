@@ -301,7 +301,7 @@ struct QDemonBufferManager : public QDemonBufferManagerInterface
                             searchPath.prepend(QLatin1String("."));
                         int loops = 0;
                         while (!theLoadedImage && ++loops <= 3) {
-                            theLoadedImage = QDemonLoadedTexture::load(searchPath.toUtf8(),
+                            theLoadedImage = QDemonLoadedTexture::load(searchPath,
                                                                        *m_inputStreamFactory,
                                                                        true,
                                                                        m_context->getRenderContextType());
@@ -318,7 +318,7 @@ struct QDemonBufferManager : public QDemonBufferManagerInterface
                             QString searchPath = splitPath.at(0) + splitPath.at(1);
                             int loops = 0;
                             while (!theLoadedImage && ++loops <= 3) {
-                                theLoadedImage = QDemonLoadedTexture::load(searchPath.toUtf8(),
+                                theLoadedImage = QDemonLoadedTexture::load(searchPath,
                                                                            *m_inputStreamFactory,
                                                                            true,
                                                                            m_context->getRenderContextType());
@@ -364,7 +364,7 @@ struct QDemonBufferManager : public QDemonBufferManagerInterface
         }
         for (size_t idx = 0; idx < 5; ++idx) {
             if (m_primitiveNames[idx].primitiveName == theName) {
-                CFileTools::combineBaseAndRelative(getPrimitivesDirectory(), m_primitiveNames[idx].fileName, m_pathBuilder);
+                CFileTools::combineBaseAndRelative(QString::fromLatin1(getPrimitivesDirectory()), m_primitiveNames[idx].fileName, m_pathBuilder);
                 quint32 id = 1;
                 QSharedPointer<QIODevice> theInStream(m_inputStreamFactory->getStreamForFile(m_pathBuilder));
                 if (theInStream)
