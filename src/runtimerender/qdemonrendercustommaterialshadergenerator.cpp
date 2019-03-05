@@ -187,7 +187,6 @@ struct QDemonShaderGeneratorGeneratedShader
 
     // Cache the image property name lookups
     TCustomMaterialImagMap m_images; // Images external to custom material usage
-    volatile qint32 m_refCount;
 
     QDemonShaderGeneratorGeneratedShader(const QDemonRef<QDemonRenderShaderProgram> &inShader,
                                          const QDemonRef<QDemonRenderContext> &inContext)
