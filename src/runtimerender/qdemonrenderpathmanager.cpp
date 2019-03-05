@@ -1504,7 +1504,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
         if (thePathBuffer->m_pathType == PathTypes::Geometry) {
             quint32 displacementIdx = 0;
             quint32 imageIdx = 0;
-            QDemonRenderableImage *displacementImage = 0;
+            QDemonRenderableImage *displacementImage = nullptr;
 
             for (QDemonRenderableImage *theImage = inRenderContext.firstImage; theImage != nullptr && displacementImage == nullptr;
                  theImage = theImage->m_nextImage, ++imageIdx) {

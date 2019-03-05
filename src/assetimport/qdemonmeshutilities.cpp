@@ -949,7 +949,7 @@ public:
             for (quint32 entryIdx = 0, __numItems = (quint32)entries.size(); entryIdx < __numItems; ++entryIdx) {
                 const MeshBuilderVBufEntry &entry(entries[entryIdx]);
                 // Ignore entries with no data.
-                if (entry.m_data.begin() == NULL || entry.m_data.size() == 0)
+                if (entry.m_data.begin() == nullptr || entry.m_data.size() == 0)
                     continue;
 
                 quint32 alignment = (quint32)QDemonRenderComponentTypes::getSizeOfType(entry.m_componentType);
