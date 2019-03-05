@@ -251,7 +251,6 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonGraphNode : public QDemonGraphObject
     void calculateMVPAndNormalMatrix(const QMatrix4x4 &inViewProjection, QMatrix4x4 &outMVP, QMatrix3x3 &outNormalMatrix) const;
 
     // This should be in a utility file somewhere
-    static void getMatrixUpper3x3(QMatrix3x3 &inDest, const QMatrix4x4 &inSrc);
     void calculateNormalMatrix(QMatrix3x3 &outNormalMatrix) const;
 };
 QT_END_NAMESPACE

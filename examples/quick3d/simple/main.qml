@@ -16,39 +16,71 @@ DemonWindow {
         height: 100
         activeCamera: camera
 
-        DemonNode {
-            id: cameraSpinner
-            position: Qt.vector3d(0, 0, 0);
-
-            // Light always points the same direction as camera
-            DemonLight {
-                id: directionalLight
-                lightType: DemonLight.Directional
-            }
-
-            DemonCamera {
-                id: camera
-                position: Qt.vector3d(0, 0, -600)
-            }
-
-            rotation: Qt.vector3d(0, 90, 0)
-
+        // Light always points the same direction as camera
+        DemonLight {
+            id: directionalLight
+            lightType: DemonLight.Directional
+            rotation: Qt.vector3d(0, 0, 0)
             SequentialAnimation on rotation {
                 loops: Animation.Infinite
                 PropertyAnimation { duration: 5000; to: Qt.vector3d(0, 360, 0); from: Qt.vector3d(0, 0, 0) }
             }
+            onRotationChanged: {
+                console.log(rotation);
+            }
         }
 
 
-        ColorfulCube {
-            id: cube1
-            position: Qt.vector3d(-100, 0, 0);
-            rotationTo: Qt.vector3d(-360, 0, 0);
+        DemonNode {
+            id: cameraSpinner
+            position: Qt.vector3d(0, 0, 0);
+
+
+            DemonCamera {
+                id: camera
+                //position: Qt.vector3d(0, 0, -600)
+                y: 600
+                rotation: Qt.vector3d(90, 0, 0)
+            }
+
+            //rotation: Qt.vector3d(0, 90, 0)
+
+//            SequentialAnimation on rotation {
+//                loops: Animation.Infinite
+//                PropertyAnimation { duration: 5000; to: Qt.vector3d(0, 360, 0); from: Qt.vector3d(0, 0, 0) }
+//            }
         }
 
-        ColorfulCube {
-            id: cube2
-            position: Qt.vector3d(100, 0, 0);
+
+//        ColorfulCube {
+//            id: cube1
+//            position: Qt.vector3d(-100, 0, 0);
+//            rotationTo: Qt.vector3d(-360, 0, 0);
+//        }
+
+//        ColorfulCube {
+//            id: cube2
+//            position: Qt.vector3d(100, 0, 0);
+//        }
+
+        WeirdShape {
+            id: weirdShape
+        }
+
+        DemonModel {
+            id: floor
+            source: "#Rectangle"
+
+            y: -100
+
+            scale: Qt.vector3d(100, 100, 0);
+            rotation: Qt.vector3d(90, 0, 0);
+
+            materials: [floorMaterial]
+
+            DemonDefaultMaterial {
+                id: floorMaterial
+            }
         }
 
     }

@@ -44,8 +44,6 @@ QVector3D Q_DEMON_EXPORT rotate(const QMatrix4x4 &m, const QVector3D &v);
 QVector4D Q_DEMON_EXPORT rotate(const QMatrix4x4 &m, const QVector4D &v);
 QVector3D Q_DEMON_EXPORT transform(const QMatrix4x4 &m, const QVector3D &v);
 QVector4D Q_DEMON_EXPORT transform(const QMatrix4x4 &m, const QVector4D &v);
-// QVector3D Q_DEMON_EXPORT scale(const QMatrix4x4 &m, const QVector3D &v);
-// QVector4D Q_DEMON_EXPORT scale(const QMatrix4x4 &m, const QVector4D &v);
 }
 
 namespace quant {

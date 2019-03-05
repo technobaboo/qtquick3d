@@ -101,7 +101,7 @@ private:
     QVector3D m_pivot;
     float m_opacity = 1.0f;
     qint32 m_boneid = -1;
-    RotationOrder m_rotationorder = XYZ;
+    RotationOrder m_rotationorder = YXZ;
     Orientation m_orientation = LeftHanded;
     bool m_visible = true;
     friend QDemonWindow;

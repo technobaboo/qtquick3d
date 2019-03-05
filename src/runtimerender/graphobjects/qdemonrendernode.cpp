@@ -489,13 +489,12 @@ QVector3D QDemonGraphNode::getDirection() const
 
 QVector3D QDemonGraphNode::getScalingCorrectDirection() const
 {
-    float theDirMatrixData[9] = { globalTransform(0, 0), globalTransform(0, 1), globalTransform(0, 2),
-                                  globalTransform(1, 0), globalTransform(1, 1), globalTransform(1, 2),
-                                  globalTransform(2, 0), globalTransform(2, 1), globalTransform(2, 2) };
-    QMatrix3x3 theDirMatrix(theDirMatrixData);
+    // ### This code has been checked to be corect
+    QMatrix3x3 theDirMatrix = mat44::getUpper3x3(globalTransform);
     theDirMatrix = mat33::getInverse(theDirMatrix).transposed();
     QVector3D theOriginalDir(0, 0, -1);
     QVector3D retval = mat33::transform(theDirMatrix, theOriginalDir);
+    // Should already be normalized, but whatever
     retval.normalize();
     return retval;
 }
@@ -520,16 +519,9 @@ void QDemonGraphNode::calculateMVPAndNormalMatrix(const QMatrix4x4 &inViewProjec
     calculateNormalMatrix(outNormalMatrix);
 }
 
-void QDemonGraphNode::getMatrixUpper3x3(QMatrix3x3 &outDest, const QMatrix4x4 &inSrc)
-{
-    float matrixData[9] = { inSrc(0, 0), inSrc(0, 1), inSrc(0, 2), inSrc(1, 0), inSrc(1, 1),
-                            inSrc(1, 2), inSrc(2, 0), inSrc(2, 1), inSrc(2, 2) };
-    outDest = QMatrix3x3(matrixData);
-}
-
 void QDemonGraphNode::calculateNormalMatrix(QMatrix3x3 &outNormalMatrix) const
 {
-    getMatrixUpper3x3(outNormalMatrix, globalTransform);
+    outNormalMatrix = mat44::getUpper3x3(globalTransform);
     outNormalMatrix = mat33::getInverse(outNormalMatrix).transposed();
 }
 
