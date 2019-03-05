@@ -675,7 +675,7 @@ QDemonRenderBackend::QDemonRenderBackendRenderbufferObject QDemonRenderBackendGL
     // check for error
     GLenum error = m_glFunctions->glGetError();
     if (error != GL_NO_ERROR) {
-        qCCritical(GL_ERROR, GLConversion::processGLError(error));
+        qCCritical(GL_ERROR, "%s", GLConversion::processGLError(error));
         Q_ASSERT(false);
         GL_CALL_EXTRA_FUNCTION(glDeleteRenderbuffers(1, &bufID));
         bufID = 0;
@@ -713,7 +713,7 @@ bool QDemonRenderBackendGLES2Impl::resizeRenderbuffer(QDemonRenderBackendRenderb
     // check for error
     GLenum error = m_glFunctions->glGetError();
     if (error != GL_NO_ERROR) {
-        qCCritical(GL_ERROR, GLConversion::processGLError(error));
+        qCCritical(GL_ERROR, "%s", GLConversion::processGLError(error));
         Q_ASSERT(false);
         success = false;
     }

@@ -832,10 +832,12 @@ quint32 Mesh::getHighestMultiVersion(const char *inFilePath)
 
 namespace {
 
+#if 0
 MeshBuilderVBufEntry ToEntry(const QVector<float> &data, const char *name, quint32 numComponents)
 {
     return MeshBuilderVBufEntry(name, QByteArray(reinterpret_cast<const char *>(data.data())), QDemonRenderComponentTypes::Float32, numComponents);
 }
+#endif
 
 struct DynamicVBuf
 {

@@ -61,10 +61,12 @@ bool isCameraVerticalAdjust(CameraScaleModes::Enum inMode, float inDesignAspect,
     return (inMode == CameraScaleModes::Fit && inActualAspect >= inDesignAspect) || inMode == CameraScaleModes::FitVertical;
 }
 
+#if 0
 bool isCameraHorizontalAdjust(CameraScaleModes::Enum inMode, float inDesignAspect, float inActualAspect)
 {
     return (inMode == CameraScaleModes::Fit && inActualAspect < inDesignAspect) || inMode == CameraScaleModes::FitHorizontal;
 }
+#endif
 
 bool isFitTypeScaleMode(CameraScaleModes::Enum inMode)
 {

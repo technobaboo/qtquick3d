@@ -38,6 +38,7 @@ QT_BEGIN_NAMESPACE
 
 using namespace QDemonAssetImport;
 
+#if 0
 namespace {
 
 static inline QVector3D toColor(const float p[])
@@ -246,6 +247,7 @@ int getSubPropertyIndex(const char *inSubPropertyName)
     return 0;
 }
 }
+#endif
 
 QDemonSceneGraphTranslation::QDemonSceneGraphTranslation()
 {

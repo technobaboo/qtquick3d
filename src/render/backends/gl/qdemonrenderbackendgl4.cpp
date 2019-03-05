@@ -877,10 +877,9 @@ QDemonRenderBackend::QDemonRenderBackendPathObject QDemonRenderBackendGL4Impl::l
         quint32 *count)
 {
     GLuint pathTemplateID = (pathParameterTemplate == nullptr) ? ~0 : HandleToID_cast(GLuint, size_t, pathParameterTemplate);
-    GLenum glRet = 0;
     GLuint baseAndCount[2] = { 0, 0 };
 
-    glRet = GL_CALL_QDEMON_EXT(glPathGlyphIndexRangeNV(m_conversion.fromPathFontTargetToGL(fontTarget),
+    GL_CALL_QDEMON_EXT(glPathGlyphIndexRangeNV(m_conversion.fromPathFontTargetToGL(fontTarget),
                                                        fontName,
                                                        m_conversion.fromPathFontStyleToGL(fontStyle),
                                                        pathTemplateID,
