@@ -56,8 +56,8 @@ public:
                                                         const QVector<QDemonRenderLight *> &inLights,
                                                         QDemonRenderableImage *inFirstImage,
                                                         bool inHasTransparency,
-                                                        const QString &inVertexPipelineName,
-                                                        const QString &inCustomMaterialName) override = 0;
+                                                        const QByteArray &inVertexPipelineName,
+                                                        const QByteArray &inCustomMaterialName) override = 0;
 
     // Also sets the blend function on the render context.
     virtual void setMaterialProperties(const QDemonRef<QDemonRenderShaderProgram> &inProgram,

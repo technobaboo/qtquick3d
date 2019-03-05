@@ -101,12 +101,12 @@ public:
 
     // Implicit call to end program.
 
-    virtual QDemonRef<QDemonRenderShaderProgram> compileGeneratedShader(const QString &inShaderName,
+    virtual QDemonRef<QDemonRenderShaderProgram> compileGeneratedShader(const QByteArray &inShaderName,
                                                                              const QDemonShaderCacheProgramFlags &inFlags,
                                                                              TShaderFeatureSet inFeatureSet,
                                                                              bool separableProgram = false) = 0;
 
-    QDemonRef<QDemonRenderShaderProgram> compileGeneratedShader(const QString &inShaderName, bool separableProgram = false);
+    QDemonRef<QDemonRenderShaderProgram> compileGeneratedShader(const QByteArray &inShaderName, bool separableProgram = false);
 
     static QDemonRef<QDemonShaderProgramGeneratorInterface> createProgramGenerator(QDemonRenderContextInterface *inContext);
 

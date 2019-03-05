@@ -1149,8 +1149,8 @@ struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
                                                                 const QVector<QDemonRenderLight *> &inLights,
                                                                 QDemonRenderableImage *inFirstImage,
                                                                 bool inHasTransparency,
-                                                                const QString &inShaderPrefix,
-                                                                const QString &inCustomMaterialName) override
+                                                                const QByteArray &inShaderPrefix,
+                                                                const QByteArray &inCustomMaterialName) override
     {
         Q_ASSERT(inMaterial.type == QDemonGraphObjectTypes::CustomMaterial);
         m_currentMaterial = reinterpret_cast<const QDemonRenderCustomMaterial *>(&inMaterial);
@@ -1161,7 +1161,7 @@ struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
         m_firstImage = inFirstImage;
         m_hasTransparency = inHasTransparency;
 
-        return generateCustomMaterialShader(inShaderPrefix.toUtf8(), inCustomMaterialName.toUtf8());
+        return generateCustomMaterialShader(inShaderPrefix, inCustomMaterialName);
     }
 };
 }

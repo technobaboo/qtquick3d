@@ -49,7 +49,7 @@ struct QDemonWidgetBBox : public QDemonRenderWidgetInterface
     QDemonRef<QDemonRenderIndexBuffer> m_boxIndexBuffer;
     QDemonRef<QDemonRenderInputAssembler> m_boxInputAssembler;
     QDemonRef<QDemonRenderShaderProgram> m_boxShader;
-    QString m_itemName;
+    QByteArray m_itemName;
     QDemonWidgetBBox(QDemonGraphNode &inNode,
                      const QDemonBounds3 &inBounds,
                      const QVector3D &inColor)
@@ -144,7 +144,7 @@ struct QDemonWidgetBBox : public QDemonRenderWidgetInterface
 
     void render(QDemonRenderWidgetContextInterface &inWidgetContext, QDemonRenderContext &inRenderContext) override
     {
-        m_itemName = QString::fromLocal8Bit("SWidgetBBox");
+        m_itemName = "SWidgetBBox";
         QDemonWidgetRenderInformation theInfo(inWidgetContext.getWidgetRenderInformation(
                                              *m_node, m_node->position, RenderWidgetModes::Local));
         QDemonBounds2BoxPoints thePoints;
@@ -174,7 +174,7 @@ struct QDemonWidgetAxis : public QDemonRenderWidgetInterface
     QDemonRef<QDemonRenderVertexBuffer> m_axisVertexBuffer;
     QDemonRef<QDemonRenderInputAssembler> m_axisInputAssembler;
     QDemonRef<QDemonRenderShaderProgram> m_axisShader;
-    QString m_itemName;
+    QByteArray m_itemName;
 
     QDemonWidgetAxis(QDemonGraphNode &inNode)
         : QDemonRenderWidgetInterface(inNode)
@@ -238,7 +238,7 @@ struct QDemonWidgetAxis : public QDemonRenderWidgetInterface
     }
     void render(QDemonRenderWidgetContextInterface &inWidgetContext, QDemonRenderContext &inRenderContext) override
     {
-        m_itemName = QString::fromLocal8Bit("SWidgetAxis");
+        m_itemName = "SWidgetAxis";
 
         setupAxisShader(inWidgetContext);
 

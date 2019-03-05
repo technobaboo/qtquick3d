@@ -380,9 +380,10 @@ struct QDemonPathVertexPipeline : public QDemonVertexPipelineImpl
 
     void finalizeTessEvaluationShader()
     {
-        QString outExt("");
-        if (programGenerator()->getEnabledStages() & ShaderGeneratorStages::Geometry)
-            outExt = "TE";
+        // ### Investigate whether the outExp should be used
+//        QString outExt("");
+//        if (programGenerator()->getEnabledStages() & ShaderGeneratorStages::Geometry)
+//            outExt = "TE";
 
         QDemonShaderStageGeneratorInterface &tessEvalShader(
                     *programGenerator()->getStage(ShaderGeneratorStages::TessEval));
@@ -1543,9 +1544,9 @@ struct QDemonPathManager : public QDemonPathManagerInterface
                 thePipeline.fragment().append("\tfragOutput = vec4(1.0, 1.0, 1.0, 1.0);");
                 thePipeline.endVertexGeneration();
                 thePipeline.endFragmentGeneration();
-                QString shaderName = QStringLiteral("path depth");
+                const char *shaderName = "path depth";
                 if (displacementImage)
-                    shaderName = QStringLiteral("path depth displacement");
+                    shaderName = "path depth displacement";
 
                 QDemonShaderCacheProgramFlags theFlags;
                 QDemonRef<QDemonRenderShaderProgram> theProgram =
@@ -1569,10 +1570,9 @@ struct QDemonPathManager : public QDemonPathManagerInterface
                 thePipeline.fragment().append("\tfragOutput = vec4(1.0, 1.0, 1.0, 1.0);");
                 thePipeline.endVertexGeneration();
                 thePipeline.endFragmentGeneration();
-                QString shaderName = QStringLiteral("path painted depth");
                 QDemonShaderCacheProgramFlags theFlags;
                 QDemonRef<QDemonRenderShaderProgram> theProgram =
-                        thePipeline.programGenerator()->compileGeneratedShader(shaderName, theFlags,
+                        thePipeline.programGenerator()->compileGeneratedShader("path painted depth", theFlags,
                                                                                inFeatureSet);
                 if (theProgram) {
                     m_paintedDepthShader = QDemonRef<QDemonPathXYGeneratedShader>(new QDemonPathXYGeneratedShader(theProgram));
@@ -1603,10 +1603,9 @@ struct QDemonPathManager : public QDemonPathManagerInterface
                 QDemonRef<QDemonDefaultMaterialShaderGeneratorInterface> theMaterialGenerator(m_renderContext->getDefaultMaterialShaderGenerator());
                 QDemonXYRectVertexPipeline thePipeline(m_renderContext->getShaderProgramGenerator(), theMaterialGenerator);
                 thePipeline.outputParaboloidDepthShaders();
-                QString shaderName = QStringLiteral("path painted paraboloid depth");
                 QDemonShaderCacheProgramFlags theFlags;
                 QDemonRef<QDemonRenderShaderProgram> theProgram =
-                        thePipeline.programGenerator()->compileGeneratedShader(shaderName, theFlags, inFeatureSet);
+                        thePipeline.programGenerator()->compileGeneratedShader("path painted paraboloid depth", theFlags, inFeatureSet);
                 if (theProgram) {
                     m_paintedShadowShader = QDemonRef<QDemonPathXYGeneratedShader>(new QDemonPathXYGeneratedShader(theProgram));
                 }
@@ -1645,10 +1644,9 @@ struct QDemonPathManager : public QDemonPathManagerInterface
                 QDemonXYRectVertexPipeline thePipeline(
                             m_renderContext->getShaderProgramGenerator(), theMaterialGenerator);
                 thePipeline.outputCubeFaceDepthShaders();
-                QString shaderName = "path painted cube face depth";
                 QDemonShaderCacheProgramFlags theFlags;
                 QDemonRef<QDemonRenderShaderProgram> theProgram =
-                        thePipeline.programGenerator()->compileGeneratedShader(shaderName, theFlags,
+                        thePipeline.programGenerator()->compileGeneratedShader("path painted cube face depth", theFlags,
                                                                                inFeatureSet);
                 if (theProgram) {
                     m_paintedCubeShadowShader = QDemonRef<QDemonPathXYGeneratedShader>(new QDemonPathXYGeneratedShader(theProgram));
@@ -1708,7 +1706,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
                     theProgram = theMaterialGenerator->generateShader(
                                 inRenderContext.material, inRenderContext.materialKey, thePipeline,
                                 inFeatureSet, inRenderProperties.lights, inRenderContext.firstImage,
-                                inRenderContext.opacity < 1.0, QStringLiteral("path geometry pipeline-- "));
+                                inRenderContext.opacity < 1.0, "path geometry pipeline-- ");
                 } else {
                     QDemonRef<QDemonCustomMaterialSystemInterface> theMaterialSystem(
                                 m_renderContext->getCustomMaterialSystem());
@@ -1719,7 +1717,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
                                 inRenderContext.material, inRenderContext.materialKey, thePipeline,
                                 inFeatureSet, inRenderProperties.lights, inRenderContext.firstImage,
                                 inRenderContext.opacity < 1.0, "path geometry pipeline-- ",
-                                theMaterialSystem->getShaderName(theCustomMaterial));
+                                theMaterialSystem->getShaderName(theCustomMaterial).toUtf8());
                 }
 
                 if (theProgram)
@@ -1761,7 +1759,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
                                 inRenderContext.material, inRenderContext.materialKey, thePipeline,
                                 inFeatureSet, inRenderProperties.lights, inRenderContext.firstImage,
                                 inRenderContext.opacity < 1.0, "path painted pipeline-- ",
-                                theMaterialSystem->getShaderName(theCustomMaterial));
+                                theMaterialSystem->getShaderName(theCustomMaterial).toUtf8());
                 }
 
                 if (theProgram)

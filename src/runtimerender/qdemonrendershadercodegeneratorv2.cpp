@@ -399,7 +399,7 @@ struct QDemonProgramGenerator : public QDemonShaderProgramGeneratorInterface
         return nullptr;
     }
 
-    QDemonRef<QDemonRenderShaderProgram> compileGeneratedShader(const QString &inShaderName,
+    QDemonRef<QDemonRenderShaderProgram> compileGeneratedShader(const QByteArray &inShaderName,
                                                                      const QDemonShaderCacheProgramFlags &inFlags,
                                                                      TShaderFeatureSet inFeatureSet,
                                                                      bool separableProgram) override
@@ -420,7 +420,7 @@ struct QDemonProgramGenerator : public QDemonShaderProgramGeneratorInterface
                 QDemonStageGeneratorBase &theStage(internalGetStage(stageName));
                 theStage.buildShaderSource();
                 theStage.updateShaderCacheFlags(theCacheFlags);
-                theDynamicSystem->insertShaderHeaderInformation(theStage.m_finalBuilder, inShaderName.toLocal8Bit().constData());
+                theDynamicSystem->insertShaderHeaderInformation(theStage.m_finalBuilder, inShaderName.constData());
             }
         }
 
@@ -433,7 +433,7 @@ struct QDemonProgramGenerator : public QDemonShaderProgramGeneratorInterface
 };
 };
 
-QDemonRef<QDemonRenderShaderProgram> QDemonShaderProgramGeneratorInterface::compileGeneratedShader(const QString &inShaderName, bool separableProgram)
+QDemonRef<QDemonRenderShaderProgram> QDemonShaderProgramGeneratorInterface::compileGeneratedShader(const QByteArray &inShaderName, bool separableProgram)
 {
     return compileGeneratedShader(inShaderName, QDemonShaderCacheProgramFlags(), TShaderFeatureSet(), separableProgram);
 }

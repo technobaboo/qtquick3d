@@ -603,8 +603,7 @@ QDemonRef<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getParaboloidD
     QDemonOption<QDemonRef<QDemonRenderableDepthPrepassShader>> &theDepthShader = m_paraboloidDepthShader;
 
     if (theDepthShader.hasValue() == false) {
-        QString name;
-        name = QStringLiteral("paraboloid depth shader");
+        QByteArray name = "paraboloid depth shader";
 
         QDemonRef<QDemonShaderCacheInterface> theCache = m_demonContext->getShaderCache();
         QString theCacheKey = name;
@@ -640,8 +639,7 @@ QDemonRef<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getParaboloidD
             m_paraboloidDepthTessLinearShader;
 
     if (theDepthShader.hasValue() == false) {
-        QString name;
-        name = QStringLiteral("paraboloid depth tess linear shader");
+        QByteArray name = "paraboloid depth tess linear shader";
 
         QDemonRef<QDemonShaderCacheInterface> theCache = m_demonContext->getShaderCache();
         QString theCacheKey = name;
@@ -713,8 +711,7 @@ QDemonRef<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getParaboloidD
             m_paraboloidDepthTessPhongShader;
 
     if (theDepthShader.hasValue() == false) {
-        QString name;
-        name = QStringLiteral("paraboloid depth tess phong shader");
+        QByteArray name = "paraboloid depth tess phong shader";
 
         QDemonRef<QDemonShaderCacheInterface> theCache = m_demonContext->getShaderCache();
         QString theCacheKey = name;
@@ -785,8 +782,7 @@ QDemonRef<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getParaboloidD
     QDemonOption<QDemonRef<QDemonRenderableDepthPrepassShader>> &theDepthShader = m_paraboloidDepthTessNPatchShader;
 
     if (theDepthShader.hasValue() == false) {
-        QString name;
-        name = QStringLiteral("paraboloid depth tess NPatch shader");
+        QByteArray name = "paraboloid depth tess NPatch shader";
 
         QDemonRef<QDemonShaderCacheInterface> theCache = m_demonContext->getShaderCache();
         QString theCacheKey = name;
@@ -875,8 +871,7 @@ QDemonRef<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getCubeDepthNo
             m_cubemapDepthShader;
 
     if (theDepthShader.hasValue() == false) {
-        QString name;
-        name = QStringLiteral("cubemap face depth shader");
+        QByteArray name = "cubemap face depth shader";
 
         QDemonRef<QDemonShaderCacheInterface> theCache = m_demonContext->getShaderCache();
         QString theCacheKey = name;
@@ -923,8 +918,7 @@ QDemonRef<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getCubeDepthTe
             m_cubemapDepthTessLinearShader;
 
     if (theDepthShader.hasValue() == false) {
-        QString name;
-        name = QStringLiteral("cubemap face depth linear tess shader");
+        QByteArray name = "cubemap face depth linear tess shader";
 
         QDemonRef<QDemonShaderCacheInterface> theCache = m_demonContext->getShaderCache();
         QString theCacheKey = name;
@@ -998,8 +992,7 @@ QDemonRef<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getCubeDepthTe
             m_cubemapDepthTessPhongShader;
 
     if (theDepthShader.hasValue() == false) {
-        QString name;
-        name = QStringLiteral("cubemap face depth phong tess shader");
+        QByteArray name = "cubemap face depth phong tess shader";
 
         QDemonRef<QDemonShaderCacheInterface> theCache = m_demonContext->getShaderCache();
         QString theCacheKey = name;
@@ -1079,8 +1072,7 @@ QDemonRef<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getCubeDepthTe
             m_cubemapDepthTessNPatchShader;
 
     if (theDepthShader.hasValue() == false) {
-        QString name;
-        name = QStringLiteral("cubemap face depth npatch tess shader");
+        QByteArray name = "cubemap face depth npatch tess shader";
 
         QDemonRef<QDemonShaderCacheInterface> theCache = m_demonContext->getShaderCache();
         QString theCacheKey = name;
@@ -1183,8 +1175,7 @@ QDemonRef<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getOrthographi
             m_orthographicDepthShader;
 
     if (theDepthShader.hasValue() == false) {
-        QString name;
-        name = QStringLiteral("orthographic depth shader");
+        QByteArray name = "orthographic depth shader";
 
         QDemonRef<QDemonShaderCacheInterface> theCache = m_demonContext->getShaderCache();
         QString theCacheKey = name;
@@ -1230,8 +1221,7 @@ QDemonRef<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getOrthographi
             m_orthographicDepthTessLinearShader;
 
     if (theDepthShader.hasValue() == false) {
-        QString name;
-        name = QStringLiteral("orthographic depth tess linear shader");
+        QByteArray name = "orthographic depth tess linear shader";
 
         QDemonRef<QDemonShaderCacheInterface> theCache = m_demonContext->getShaderCache();
         QString theCacheKey = name;
@@ -1300,8 +1290,7 @@ QDemonRef<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getOrthographi
             m_orthographicDepthTessPhongShader;
 
     if (theDepthShader.hasValue() == false) {
-        QString name;
-        name = QStringLiteral("orthographic depth tess phong shader");
+        QByteArray name = "orthographic depth tess phong shader";
 
         QDemonRef<QDemonShaderCacheInterface> theCache = m_demonContext->getShaderCache();
         QString theCacheKey = name;
@@ -1376,8 +1365,7 @@ QDemonRef<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getOrthographi
             m_orthographicDepthTessNPatchShader;
 
     if (theDepthShader.hasValue() == false) {
-        QString name;
-        name = QStringLiteral("orthographic depth tess npatch shader");
+        QByteArray name = "orthographic depth tess npatch shader";
 
         QDemonRef<QDemonShaderCacheInterface> theCache = m_demonContext->getShaderCache();
         QString theCacheKey = name;
@@ -1464,8 +1452,7 @@ QDemonRef<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getDepthPrepas
 
     if (theDepthPrePassShader.hasValue() == false) {
         // check if we do displacement mapping
-        QString name;
-        name = QStringLiteral("depth prepass shader");
+        QByteArray name = "depth prepass shader";
         if (inDisplaced)
             name.append(" displacement");
 
@@ -1540,8 +1527,7 @@ QDemonRendererImpl::getDepthTessLinearPrepassShader(bool inDisplaced)
 
     if (theDepthPrePassShader.hasValue() == false) {
         // check if we do displacement mapping
-        QString name;
-        name = QStringLiteral("depth tess linear prepass shader");
+        QByteArray name = "depth tess linear prepass shader";
         if (inDisplaced)
             name.append(" displacement");
 

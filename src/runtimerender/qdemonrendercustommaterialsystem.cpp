@@ -1105,28 +1105,6 @@ struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface
         m_coreContext->getDynamicObjectSystemCore()->setRenderCommands(inName, inCommands);
     }
 
-    QString getShaderCacheKey(QString &inShaderKeyBuffer,
-                              const QString &inId,
-                              const QString &inProgramMacro,
-                              const dynamic::QDemonDynamicShaderProgramFlags &inFlags)
-    {
-        inShaderKeyBuffer = inId;
-        if (!inProgramMacro.isNull() && !inProgramMacro.isNull()) {
-            inShaderKeyBuffer.append("#");
-            inShaderKeyBuffer.append(inProgramMacro);
-        }
-        if (inFlags.isTessellationEnabled()) {
-            inShaderKeyBuffer.append("#");
-            inShaderKeyBuffer.append(TessModeValues::toString(inFlags.tessMode));
-        }
-        if (inFlags.isGeometryShaderEnabled() && inFlags.wireframeMode) {
-            inShaderKeyBuffer.append("#");
-            inShaderKeyBuffer.append(dynamic::QDemonDynamicShaderProgramFlags::wireframeToString(inFlags.wireframeMode));
-        }
-
-        return inShaderKeyBuffer;
-    }
-
     QDemonRef<QDemonRenderShaderProgram> getShader(QDemonCustomMaterialRenderContext &inRenderContext,
                                                    const QDemonRenderCustomMaterial &inMaterial,
                                                    const dynamic::QDemonBindShader &inCommand,
@@ -1136,9 +1114,9 @@ struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface
         QDemonRef<ICustomMaterialShaderGenerator> theMaterialGenerator(m_context->getCustomMaterialShaderGenerator());
 
         // generate key
-        QString theShaderKeyBuffer;
-        QString theKey = getShaderCacheKey(theShaderKeyBuffer, inCommand.m_shaderPath,
-                                           inCommand.m_shaderDefine, inFlags);
+//        QString theKey = getShaderCacheKey(theShaderKeyBuffer, inCommand.m_shaderPath,
+//                                           inCommand.m_shaderDefine, inFlags);
+        // ### TODO: Enable caching?
 
         QDemonCustomMaterialVertexPipeline thePipeline(m_context, inRenderContext.model.tessellationMode);
 
@@ -1146,7 +1124,7 @@ struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface
                     inMaterial, inRenderContext.materialKey, thePipeline, inFeatureSet,
                     inRenderContext.lights, inRenderContext.firstImage,
                     (inMaterial.m_hasTransparency || inMaterial.m_hasRefraction),
-                    "custom material pipeline-- ", inCommand.m_shaderPath);
+                    "custom material pipeline-- ", inCommand.m_shaderPath.toUtf8());
 
         return theProgram;
     }

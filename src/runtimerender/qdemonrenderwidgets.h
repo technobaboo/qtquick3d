@@ -123,15 +123,15 @@ class Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderWidgetContextInterface : public QD
 {
 public:
     virtual ~QDemonRenderWidgetContextInterface();
-    virtual QDemonRef<QDemonRenderVertexBuffer> getOrCreateVertexBuffer(QString &inStr,
+    virtual QDemonRef<QDemonRenderVertexBuffer> getOrCreateVertexBuffer(const QByteArray &inStr,
                                                                              quint32 stride,
                                                                              QDemonConstDataRef<quint8> bufferData = QDemonConstDataRef<quint8>()) = 0;
-    virtual QDemonRef<QDemonRenderIndexBuffer> getOrCreateIndexBuffer(QString &inStr,
+    virtual QDemonRef<QDemonRenderIndexBuffer> getOrCreateIndexBuffer(const QByteArray &inStr,
                                                                            QDemonRenderComponentTypes::Enum componentType,
                                                                            size_t size,
                                                                            QDemonConstDataRef<quint8> bufferData = QDemonConstDataRef<quint8>()) = 0;
     virtual QDemonRef<QDemonRenderAttribLayout> createAttributeLayout(QDemonConstDataRef<QDemonRenderVertexBufferEntry> attribs) = 0;
-    virtual QDemonRef<QDemonRenderInputAssembler> getOrCreateInputAssembler(QString &inStr,
+    virtual QDemonRef<QDemonRenderInputAssembler> getOrCreateInputAssembler(const QByteArray &inStr,
                                                                                  QDemonRef<QDemonRenderAttribLayout> attribLayout,
                                                                                  QDemonConstDataRef<QDemonRef<QDemonRenderVertexBuffer>> buffers,
                                                                                  const QDemonRef<QDemonRenderIndexBuffer> indexBuffer,
@@ -145,7 +145,7 @@ public:
     virtual QDemonRef<QDemonRenderShaderProgram> getShader(const QString &inStr) = 0;
     virtual QDemonRef<QDemonShaderProgramGeneratorInterface> getProgramGenerator() = 0;
     // calls compile on the program generator and stores result under this name.
-    virtual QDemonRef<QDemonRenderShaderProgram> compileAndStoreShader(const QString &inStr) = 0;
+    virtual QDemonRef<QDemonRenderShaderProgram> compileAndStoreShader(const QByteArray &inStr) = 0;
     virtual QDemonTextDimensions measureText(const QDemonTextRenderInfo &inText) = 0;
     // Render text using a specific MVP
     virtual void renderText(const QDemonTextRenderInfo &inText,

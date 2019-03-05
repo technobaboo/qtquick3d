@@ -351,7 +351,7 @@ public:
     void endLayerRender();
     void prepareImageForIbl(QDemonRenderImage &inImage);
 
-    QDemonRef<QDemonRenderShaderProgram> compileShader(const QString &inName, const char *inVert,
+    QDemonRef<QDemonRenderShaderProgram> compileShader(const QByteArray &inName, const char *inVert,
                                              const char *inFrame);
 
     QDemonRef<QDemonRenderShaderProgram> generateShader(QDemonSubsetRenderable &inRenderable,
@@ -435,15 +435,15 @@ public:
     }
 #endif
     // widget context implementation
-    virtual QDemonRef<QDemonRenderVertexBuffer> getOrCreateVertexBuffer(QString &inStr,
+    virtual QDemonRef<QDemonRenderVertexBuffer> getOrCreateVertexBuffer(const QByteArray &inStr,
                                                                              quint32 stride,
                                                                              QDemonConstDataRef<quint8> bufferData = QDemonConstDataRef<quint8>()) override;
-    virtual QDemonRef<QDemonRenderIndexBuffer> getOrCreateIndexBuffer(QString &inStr,
+    virtual QDemonRef<QDemonRenderIndexBuffer> getOrCreateIndexBuffer(const QByteArray &inStr,
                                                                            QDemonRenderComponentTypes::Enum componentType,
                                                                            size_t size,
                                                                            QDemonConstDataRef<quint8> bufferData = QDemonConstDataRef<quint8>()) override;
     virtual QDemonRef<QDemonRenderAttribLayout> createAttributeLayout(QDemonConstDataRef<QDemonRenderVertexBufferEntry> attribs) override;
-    virtual QDemonRef<QDemonRenderInputAssembler> getOrCreateInputAssembler(QString &inStr,
+    virtual QDemonRef<QDemonRenderInputAssembler> getOrCreateInputAssembler(const QByteArray &inStr,
                                                                                  QDemonRef<QDemonRenderAttribLayout> attribLayout,
                                                                                  QDemonConstDataRef<QDemonRef<QDemonRenderVertexBuffer>> buffers,
                                                                                  const QDemonRef<QDemonRenderIndexBuffer> indexBuffer,
@@ -455,7 +455,7 @@ public:
     QDemonRef<QDemonRenderInputAssembler> getInputAssembler(const QString &inStr) override;
 
     QDemonRef<QDemonRenderShaderProgram> getShader(const QString &inStr) override;
-    QDemonRef<QDemonRenderShaderProgram> compileAndStoreShader(const QString &inStr) override;
+    QDemonRef<QDemonRenderShaderProgram> compileAndStoreShader(const QByteArray &inStr) override;
     QDemonRef<QDemonShaderProgramGeneratorInterface> getProgramGenerator() override;
 
     QDemonTextDimensions measureText(const QDemonTextRenderInfo &inText) override;

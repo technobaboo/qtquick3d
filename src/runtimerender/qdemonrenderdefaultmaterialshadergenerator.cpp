@@ -1478,8 +1478,8 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
                                                                 const QVector<QDemonRenderLight *> &inLights,
                                                                 QDemonRenderableImage *inFirstImage,
                                                                 bool inHasTransparency,
-                                                                const QString &inVertexPipelineName,
-                                                                const QString &) override
+                                                                const QByteArray &inVertexPipelineName,
+                                                                const QByteArray &) override
     {
         Q_ASSERT(inMaterial.type == QDemonGraphObjectTypes::DefaultMaterial);
         m_currentMaterial = static_cast<const QDemonRenderDefaultMaterial *>(&inMaterial);
@@ -1490,7 +1490,7 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
         m_firstImage = inFirstImage;
         m_hasTransparency = inHasTransparency;
 
-        return generateMaterialShader(inVertexPipelineName.toUtf8());
+        return generateMaterialShader(inVertexPipelineName);
     }
 
     QDemonRef<QDemonShaderGeneratorGeneratedShader> getShaderForProgram(const QDemonRef<QDemonRenderShaderProgram> &inProgram)
