@@ -138,11 +138,11 @@ public:
                                                                                  QDemonConstDataRef<quint32> strides,
                                                                                  QDemonConstDataRef<quint32> offsets) = 0;
 
-    virtual QDemonRef<QDemonRenderVertexBuffer> getVertexBuffer(const QString &inStr) = 0;
-    virtual QDemonRef<QDemonRenderIndexBuffer> getIndexBuffer(const QString &inStr) = 0;
-    virtual QDemonRef<QDemonRenderInputAssembler> getInputAssembler(const QString &inStr) = 0;
+    virtual QDemonRef<QDemonRenderVertexBuffer> getVertexBuffer(const QByteArray &inStr) = 0;
+    virtual QDemonRef<QDemonRenderIndexBuffer> getIndexBuffer(const QByteArray &inStr) = 0;
+    virtual QDemonRef<QDemonRenderInputAssembler> getInputAssembler(const QByteArray &inStr) = 0;
 
-    virtual QDemonRef<QDemonRenderShaderProgram> getShader(const QString &inStr) = 0;
+    virtual QDemonRef<QDemonRenderShaderProgram> getShader(const QByteArray &inStr) = 0;
     virtual QDemonRef<QDemonShaderProgramGeneratorInterface> getProgramGenerator() = 0;
     // calls compile on the program generator and stores result under this name.
     virtual QDemonRef<QDemonRenderShaderProgram> compileAndStoreShader(const QByteArray &inStr) = 0;

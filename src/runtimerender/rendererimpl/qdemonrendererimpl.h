@@ -124,10 +124,10 @@ class Q_DEMONRUNTIMERENDER_EXPORT QDemonRendererImpl : public QDemonRenderWidget
     typedef QVector<QDemonRenderPickResult> TPickResultArray;
 
     // Items to implement the widget context.
-    typedef QHash<QString, QDemonRef<QDemonRenderVertexBuffer>> TStrVertBufMap;
-    typedef QHash<QString, QDemonRef<QDemonRenderIndexBuffer>> TStrIndexBufMap;
-    typedef QHash<QString, QDemonRef<QDemonRenderShaderProgram>> TStrShaderMap;
-    typedef QHash<QString, QDemonRef<QDemonRenderInputAssembler>> TStrIAMap;
+    typedef QHash<QByteArray, QDemonRef<QDemonRenderVertexBuffer>> TStrVertBufMap;
+    typedef QHash<QByteArray, QDemonRef<QDemonRenderIndexBuffer>> TStrIndexBufMap;
+    typedef QHash<QByteArray, QDemonRef<QDemonRenderShaderProgram>> TStrShaderMap;
+    typedef QHash<QByteArray, QDemonRef<QDemonRenderInputAssembler>> TStrIAMap;
 
     typedef QHash<long, QDemonGraphNode *> TBoneIdNodeMap;
 
@@ -450,11 +450,11 @@ public:
                                                                                  QDemonConstDataRef<quint32> strides,
                                                                                  QDemonConstDataRef<quint32> offsets) override;
 
-    QDemonRef<QDemonRenderVertexBuffer> getVertexBuffer(const QString &inStr) override;
-    QDemonRef<QDemonRenderIndexBuffer> getIndexBuffer(const QString &inStr) override;
-    QDemonRef<QDemonRenderInputAssembler> getInputAssembler(const QString &inStr) override;
+    QDemonRef<QDemonRenderVertexBuffer> getVertexBuffer(const QByteArray &inStr) override;
+    QDemonRef<QDemonRenderIndexBuffer> getIndexBuffer(const QByteArray &inStr) override;
+    QDemonRef<QDemonRenderInputAssembler> getInputAssembler(const QByteArray &inStr) override;
 
-    QDemonRef<QDemonRenderShaderProgram> getShader(const QString &inStr) override;
+    QDemonRef<QDemonRenderShaderProgram> getShader(const QByteArray &inStr) override;
     QDemonRef<QDemonRenderShaderProgram> compileAndStoreShader(const QByteArray &inStr) override;
     QDemonRef<QDemonShaderProgramGeneratorInterface> getProgramGenerator() override;
 

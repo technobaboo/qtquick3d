@@ -1641,7 +1641,7 @@ QDemonRef<QDemonRenderInputAssembler> QDemonRendererImpl::getOrCreateInputAssemb
     return retval;
 }
 
-QDemonRef<QDemonRenderVertexBuffer> QDemonRendererImpl::getVertexBuffer(const QString &inStr)
+QDemonRef<QDemonRenderVertexBuffer> QDemonRendererImpl::getVertexBuffer(const QByteArray &inStr)
 {
     TStrVertBufMap::iterator theIter = m_widgetVertexBuffers.find(inStr);
     if (theIter != m_widgetVertexBuffers.end())
@@ -1649,7 +1649,7 @@ QDemonRef<QDemonRenderVertexBuffer> QDemonRendererImpl::getVertexBuffer(const QS
     return nullptr;
 }
 
-QDemonRef<QDemonRenderIndexBuffer> QDemonRendererImpl::getIndexBuffer(const QString &inStr)
+QDemonRef<QDemonRenderIndexBuffer> QDemonRendererImpl::getIndexBuffer(const QByteArray &inStr)
 {
     TStrIndexBufMap::iterator theIter = m_widgetIndexBuffers.find(inStr);
     if (theIter != m_widgetIndexBuffers.end())
@@ -1657,7 +1657,7 @@ QDemonRef<QDemonRenderIndexBuffer> QDemonRendererImpl::getIndexBuffer(const QStr
     return nullptr;
 }
 
-QDemonRef<QDemonRenderInputAssembler> QDemonRendererImpl::getInputAssembler(const QString &inStr)
+QDemonRef<QDemonRenderInputAssembler> QDemonRendererImpl::getInputAssembler(const QByteArray &inStr)
 {
     TStrIAMap::iterator theIter = m_widgetInputAssembler.find(inStr);
     if (theIter != m_widgetInputAssembler.end())
@@ -1665,7 +1665,7 @@ QDemonRef<QDemonRenderInputAssembler> QDemonRendererImpl::getInputAssembler(cons
     return nullptr;
 }
 
-QDemonRef<QDemonRenderShaderProgram> QDemonRendererImpl::getShader(const QString &inStr)
+QDemonRef<QDemonRenderShaderProgram> QDemonRendererImpl::getShader(const QByteArray &inStr)
 {
     TStrShaderMap::iterator theIter = m_widgetShaders.find(inStr);
     if (theIter != m_widgetShaders.end())
