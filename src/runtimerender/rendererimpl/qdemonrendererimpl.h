@@ -285,8 +285,6 @@ public:
     QDemonRef<QDemonLayerRenderData> getOrCreateLayerRenderDataForNode(const QDemonGraphNode &inNode,
                                                                        const QDemonRenderInstanceId id = nullptr);
 
-    QDemonRef<QDemonRendererImpl> getRenderWidgetContext() { return this; }
-
     void beginFrame() override;
     void endFrame() override;
 

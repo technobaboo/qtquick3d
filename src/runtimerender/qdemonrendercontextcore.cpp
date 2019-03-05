@@ -338,7 +338,7 @@ struct QDemonRenderContextData : public QDemonRenderContextInterface
 
     QDemonRef<QDemonRendererImpl> getRenderWidgetContext() override
     {
-        return m_renderer->getRenderWidgetContext();
+        return static_cast<QDemonRendererImpl *>(m_renderer.get());
     }
 
     QPair<QRect, QRect> getPresentationViewportAndOuterViewport() const
