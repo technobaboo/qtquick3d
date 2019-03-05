@@ -40,19 +40,19 @@ QT_BEGIN_NAMESPACE
 class ConstantBufferParamEntry
 {
 public:
-    QString m_name; ///< parameter Name
+    QByteArray m_name; ///< parameter Name
     QDemonRenderShaderDataTypes::Enum m_type; ///< parameter type
     qint32 m_count; ///< one or array size
     qint32 m_offset; ///< offset into the memory buffer
 
-    ConstantBufferParamEntry(const QString &name, QDemonRenderShaderDataTypes::Enum type, qint32 count, qint32 offset)
+    ConstantBufferParamEntry(const QByteArray &name, QDemonRenderShaderDataTypes::Enum type, qint32 count, qint32 offset)
         : m_name(name), m_type(type), m_count(count), m_offset(offset)
     {
     }
 };
 
 QDemonRenderConstantBuffer::QDemonRenderConstantBuffer(const QDemonRef<QDemonRenderContextImpl> &context,
-                                                       const QString &bufferName,
+                                                       const QByteArray &bufferName,
                                                        size_t size,
                                                        QDemonRenderBufferUsageType::Enum usageType,
                                                        QDemonDataRef<quint8> data)
@@ -160,7 +160,7 @@ bool QDemonRenderConstantBuffer::setupBuffer(const QDemonRenderShaderProgram *pr
         {
             m_backend->getConstantInfoByID(program->getShaderProgramHandle(), theIndices[idx], 512, &elementCount, &type, &binding, nameBuf);
             // check if we already have this entry
-            const QString theName = QString::fromLocal8Bit(nameBuf);
+            const QByteArray theName = nameBuf;
             TRenderConstantBufferEntryMap::iterator entry = m_constantBufferEntryMap.find(theName);
             if (entry != m_constantBufferEntryMap.end()) {
                 ConstantBufferParamEntry *pParam = entry.value();
@@ -232,7 +232,7 @@ void QDemonRenderConstantBuffer::update()
     }
 }
 
-void QDemonRenderConstantBuffer::addParam(const QString &name, QDemonRenderShaderDataTypes::Enum type, qint32 count)
+void QDemonRenderConstantBuffer::addParam(const QByteArray &name, QDemonRenderShaderDataTypes::Enum type, qint32 count)
 {
     if (m_constantBufferEntryMap.find(name) == m_constantBufferEntryMap.end()) {
         ConstantBufferParamEntry *newEntry = new ConstantBufferParamEntry(name, type, count, m_currentOffset);
@@ -259,7 +259,7 @@ void QDemonRenderConstantBuffer::updateParam(const char *inName, QDemonDataRef<q
         if (!allocateShadowBuffer(m_currentSize))
             return;
     }
-    const QString theName = QString::fromLocal8Bit(inName);
+    const QByteArray theName = inName;
     TRenderConstantBufferEntryMap::iterator entry = m_constantBufferEntryMap.find(theName);
     if (entry != m_constantBufferEntryMap.end()) {
         if (!memcmp(m_shadowCopy.begin() + entry.value()->m_offset,
@@ -301,7 +301,7 @@ void QDemonRenderConstantBuffer::updateRaw(quint32 offset, QDemonDataRef<quint8>
     setDirty(offset, data.size());
 }
 
-ConstantBufferParamEntry *QDemonRenderConstantBuffer::createParamEntry(const QString &name,
+ConstantBufferParamEntry *QDemonRenderConstantBuffer::createParamEntry(const QByteArray &name,
                                                                        QDemonRenderShaderDataTypes::Enum type,
                                                                        qint32 count,
                                                                        qint32 offset)
@@ -373,9 +373,8 @@ QDemonRef<QDemonRenderConstantBuffer> QDemonRenderConstantBuffer::create(const Q
     QDemonRef<QDemonRenderConstantBuffer> retval = nullptr;
 
     if (context->getConstantBufferSupport()) {
-        const QString theBufferName = QString::fromLocal8Bit(bufferName);
         retval = new QDemonRenderConstantBuffer(context,
-                                                theBufferName,
+                                                bufferName,
                                                 size,
                                                 usageType,
                                                 toDataRef(const_cast<quint8 *>(bufferData.begin()), bufferData.size()));

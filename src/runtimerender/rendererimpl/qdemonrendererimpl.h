@@ -122,7 +122,7 @@ struct QDemonPickResultProcessResult : public QDemonRenderPickResult
 class Q_DEMONRUNTIMERENDER_EXPORT QDemonRendererImpl : public QDemonRenderWidgetContextInterface
 {
     typedef QHash<QDemonShaderDefaultMaterialKey, QDemonRef<QDemonShaderGeneratorGeneratedShader>> TShaderMap;
-    typedef QHash<QString, QDemonRef<QDemonRenderConstantBuffer>> TStrConstanBufMap;
+    typedef QHash<QByteArray, QDemonRef<QDemonRenderConstantBuffer>> TStrConstanBufMap;
     // typedef QHash<SRenderInstanceId, QDemonRef<SLayerRenderData>, eastl::hash<SRenderInstanceId>> TInstanceRenderMap;
     typedef QHash<QDemonRenderInstanceId, QDemonRef<QDemonLayerRenderData>> TInstanceRenderMap;
     typedef QVector<QDemonLayerRenderData *> TLayerRenderList;

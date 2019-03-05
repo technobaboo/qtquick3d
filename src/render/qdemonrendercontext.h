@@ -93,7 +93,7 @@ struct QDemonRenderContextDirtyValues
 };
 
 typedef QDemonFlags<QDemonRenderContextDirtyValues::Enum, quint32> QDemonRenderContextDirtyFlags;
-typedef QHash<QString, QDemonRenderConstantBuffer *> TContextConstantBufferMap;
+typedef QHash<QByteArray, QDemonRenderConstantBuffer *> TContextConstantBufferMap;
 typedef QHash<QByteArray, QDemonRenderStorageBuffer *> TContextStorageBufferMap;
 typedef QHash<QByteArray, QDemonRenderAtomicCounterBuffer *> TContextAtomicCounterBufferMap;
 typedef QHash<QDemonRenderBackend::QDemonRenderBackendBufferObject, QDemonRenderDrawIndirectBuffer *> TContextDrawIndirectBufferMap;
@@ -172,7 +172,7 @@ public:
                                                                        QDemonRenderBufferUsageType::Enum usageType,
                                                                        size_t size,
                                                                        QDemonConstDataRef<quint8> bufferData) = 0;
-    virtual QDemonRef<QDemonRenderConstantBuffer> getConstantBuffer(const QString &bufferName) = 0;
+    virtual QDemonRef<QDemonRenderConstantBuffer> getConstantBuffer(const QByteArray &bufferName) = 0;
 
     virtual QDemonRef<QDemonRenderStorageBuffer> createStorageBuffer(const char *bufferName,
                                                                      QDemonRenderBufferUsageType::Enum usageType,
@@ -794,7 +794,7 @@ public:
                                                                        QDemonRenderBufferUsageType::Enum usageType,
                                                                        size_t size,
                                                                        QDemonConstDataRef<quint8> bufferData) override;
-    QDemonRef<QDemonRenderConstantBuffer> getConstantBuffer(const QString &bufferName) override;
+    QDemonRef<QDemonRenderConstantBuffer> getConstantBuffer(const QByteArray &bufferName) override;
     virtual void bufferDestroyed(QDemonRenderConstantBuffer *buffer);
 
     virtual quint32 getNextConstantBufferUnit();

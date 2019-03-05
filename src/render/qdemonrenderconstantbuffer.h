@@ -44,7 +44,7 @@ class QDemonRenderContextImpl;
 class ConstantBufferParamEntry;
 class QDemonRenderShaderProgram;
 
-typedef QHash<QString, ConstantBufferParamEntry *> TRenderConstantBufferEntryMap;
+typedef QHash<QByteArray, ConstantBufferParamEntry *> TRenderConstantBufferEntryMap;
 
 ///< Constant (uniform) buffer representation
 class Q_DEMONRENDER_EXPORT QDemonRenderConstantBuffer : public QDemonRenderDataBuffer
@@ -63,13 +63,13 @@ public:
      * @return No return.
      */
     QDemonRenderConstantBuffer(const QDemonRef<QDemonRenderContextImpl> &context,
-                               const QString &bufferName,
+                               const QByteArray &bufferName,
                                size_t size,
                                QDemonRenderBufferUsageType::Enum usageType,
                                QDemonDataRef<quint8> data);
 
     ///< destructor
-    virtual ~QDemonRenderConstantBuffer();
+    virtual ~QDemonRenderConstantBuffer() override;
 
     /**
      * @brief bind the buffer bypasses the context state
@@ -118,7 +118,7 @@ public:
      *
      * @return no return
      */
-    void addParam(const QString &name, QDemonRenderShaderDataTypes::Enum type, qint32 count);
+    void addParam(const QByteArray &name, QDemonRenderShaderDataTypes::Enum type, qint32 count);
 
     /**
      * @brief update a parameter in the constant buffer
@@ -180,7 +180,7 @@ public:
      *
      * @return the buffer name
      */
-    QString GetBufferName() const { return m_name; }
+    QByteArray GetBufferName() const { return m_name; }
 
 private:
     /**
@@ -194,7 +194,7 @@ private:
      *
      * @return return new Entry
      */
-    ConstantBufferParamEntry *createParamEntry(const QString &name, QDemonRenderShaderDataTypes::Enum type, qint32 count, qint32 offset);
+    ConstantBufferParamEntry *createParamEntry(const QByteArray &name, QDemonRenderShaderDataTypes::Enum type, qint32 count, qint32 offset);
 
     /**
      * @brief get size of a uniform type
@@ -221,7 +221,7 @@ private:
         m_rangeEnd = qMax(m_rangeEnd, start + size);
     }
 
-    QString m_name; ///< buffer name
+    QByteArray m_name; ///< buffer name
     TRenderConstantBufferEntryMap m_constantBufferEntryMap; ///< holds the entries of a constant buffer
     quint32 m_currentOffset; ///< holds the current offset
     quint32 m_currentSize; ///< holds the current size

@@ -409,8 +409,7 @@ struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
         if (!inLightCount || !theContext->getConstantBufferSupport())
             return nullptr;
 
-        QString theName = QString::fromLocal8Bit(name);
-        QDemonRef<QDemonRenderConstantBuffer> pCB = theContext->getConstantBuffer(theName);
+        QDemonRef<QDemonRenderConstantBuffer> pCB = theContext->getConstantBuffer(name);
 
         if (!pCB) {
             // create with size of all structures + int for light count

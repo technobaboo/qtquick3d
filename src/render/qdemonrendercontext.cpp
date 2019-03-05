@@ -240,7 +240,7 @@ QDemonRef<QDemonRenderConstantBuffer> QDemonRenderContextImpl::createConstantBuf
     return buffer;
 }
 
-QDemonRef<QDemonRenderConstantBuffer> QDemonRenderContextImpl::getConstantBuffer(const QString &bufferName)
+QDemonRef<QDemonRenderConstantBuffer> QDemonRenderContextImpl::getConstantBuffer(const QByteArray &bufferName)
 {
     TContextConstantBufferMap::iterator entry = m_constantToImpMap.find(bufferName);
     if (entry != m_constantToImpMap.end())

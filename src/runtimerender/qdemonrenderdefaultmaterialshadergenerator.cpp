@@ -746,7 +746,7 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
         if (!inLightCount || !theContext->getConstantBufferSupport())
             return nullptr;
 
-        QString theName = QStringLiteral("cbBufferLights");
+        const char *theName = "cbBufferLights";
         QDemonRef<QDemonRenderConstantBuffer> pCB = theContext->getConstantBuffer(theName);
 
         if (!pCB) {
@@ -755,7 +755,7 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
             quint8 stackData[size];
             QDemonLightSourceShader *s = new (stackData) QDemonLightSourceShader[QDEMON_MAX_NUM_LIGHTS];
             QDemonDataRef<quint8> cBuffer(stackData, size);
-            pCB = theContext->createConstantBuffer(theName.toLocal8Bit().constData(), QDemonRenderBufferUsageType::Static, size, cBuffer);
+            pCB = theContext->createConstantBuffer(theName, QDemonRenderBufferUsageType::Static, size, cBuffer);
             if (!pCB) {
                 Q_ASSERT(false);
                 return nullptr;

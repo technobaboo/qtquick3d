@@ -1513,12 +1513,12 @@ void QDemonRendererImpl::generateXYQuadStrip()
 void QDemonRendererImpl::updateCbAoShadow(const QDemonRenderLayer *pLayer, const QDemonRenderCamera *pCamera, QDemonResourceTexture2D &inDepthTexture)
 {
     if (m_context->getConstantBufferSupport()) {
-        QString theName = QString::fromLocal8Bit("cbAoShadow");
+        const char *theName = "cbAoShadow";
         QDemonRef<QDemonRenderConstantBuffer> pCB = m_context->getConstantBuffer(theName);
 
         if (!pCB) {
             // the  size is determined automatically later on
-            pCB = m_context->createConstantBuffer(theName.toLocal8Bit().constData(),
+            pCB = m_context->createConstantBuffer(theName,
                                                   QDemonRenderBufferUsageType::Static,
                                                   0,
                                                   QDemonDataRef<quint8>());
@@ -1529,11 +1529,11 @@ void QDemonRendererImpl::updateCbAoShadow(const QDemonRenderLayer *pLayer, const
             m_constantBuffers.insert(theName, pCB);
 
             // Add paramters. Note should match the appearance in the shader program
-            pCB->addParam(QString::fromLocal8Bit("ao_properties"), QDemonRenderShaderDataTypes::Vec4, 1);
-            pCB->addParam(QString::fromLocal8Bit("ao_properties2"), QDemonRenderShaderDataTypes::Vec4, 1);
-            pCB->addParam(QString::fromLocal8Bit("shadow_properties"), QDemonRenderShaderDataTypes::Vec4, 1);
-            pCB->addParam(QString::fromLocal8Bit("aoScreenConst"), QDemonRenderShaderDataTypes::Vec4, 1);
-            pCB->addParam(QString::fromLocal8Bit("UvToEyeConst"), QDemonRenderShaderDataTypes::Vec4, 1);
+            pCB->addParam("ao_properties", QDemonRenderShaderDataTypes::Vec4, 1);
+            pCB->addParam("ao_properties2", QDemonRenderShaderDataTypes::Vec4, 1);
+            pCB->addParam("shadow_properties", QDemonRenderShaderDataTypes::Vec4, 1);
+            pCB->addParam("aoScreenConst", QDemonRenderShaderDataTypes::Vec4, 1);
+            pCB->addParam("UvToEyeConst", QDemonRenderShaderDataTypes::Vec4, 1);
         }
 
         // update values
