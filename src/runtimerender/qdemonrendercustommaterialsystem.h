@@ -55,7 +55,8 @@ public:
     virtual ~QDemonCustomMaterialSystemInterface() {}
     virtual bool isMaterialRegistered(const QString &inStr) = 0;
 
-    virtual bool registerMaterialClass(const QString &inName, const QDemonConstDataRef<dynamic::QDemonPropertyDeclaration> &inProperties) = 0;
+    virtual bool registerMaterialClass(const QString &inName,
+                                       const QDemonConstDataRef<dynamic::QDemonPropertyDeclaration> &inProperties) = 0;
 
     virtual QDemonConstDataRef<dynamic::QDemonPropertyDefinition> getCustomMaterialProperties(const QString &inCustomMaterialName) const = 0;
 
@@ -81,9 +82,7 @@ public:
 
     virtual QDemonRenderCustomMaterial *createCustomMaterial(const QString &inName) = 0;
 
-    virtual void setPropertyEnumNames(const QString &inName,
-                                      const QString &inPropName,
-                                      const QDemonConstDataRef<QString> &inNames) = 0;
+    virtual void setPropertyEnumNames(const QString &inName, const QString &inPropName, const QDemonConstDataRef<QString> &inNames) = 0;
 
     virtual void setPropertyTextureSettings(const QString &inEffectName,
                                             const QString &inPropName,
@@ -101,7 +100,7 @@ public:
 
     virtual QDemonRef<QDemonCustomMaterialSystemInterface> getCustomMaterialSystem(QDemonRenderContextInterface *inContext) = 0;
 
-    static QDemonRef<QDemonCustomMaterialSystemInterface> createCustomMaterialSystem(QDemonRenderContextCoreInterface * inContext);
+    static QDemonRef<QDemonCustomMaterialSystemInterface> createCustomMaterialSystem(QDemonRenderContextCoreInterface *inContext);
 
     // Returns true if the material is dirty and thus will produce a different render result
     // than previously.  This effects things like progressive AA.
@@ -110,7 +109,9 @@ public:
                                   QDemonRenderCustomMaterial &inMaterial,
                                   bool inClearDirty) = 0;
 
-    virtual bool renderDepthPrepass(const QMatrix4x4 &inMVP, const QDemonRenderCustomMaterial &inMaterial, const QDemonRenderSubset &inSubset) = 0;
+    virtual bool renderDepthPrepass(const QMatrix4x4 &inMVP,
+                                    const QDemonRenderCustomMaterial &inMaterial,
+                                    const QDemonRenderSubset &inSubset) = 0;
     virtual void renderSubset(QDemonCustomMaterialRenderContext &inRenderContext, const TShaderFeatureSet &inFeatureSet) = 0;
     virtual void onMaterialActivationChange(const QDemonRenderCustomMaterial &inMaterial, bool inActive) = 0;
 
@@ -135,8 +136,7 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonCustomMaterialVertexPipeline : public Q
     void finalizeTessEvaluationShader();
 
     // Responsible for beginning all vertex and fragment generation (void main() { etc).
-    virtual void beginVertexGeneration(quint32 displacementImageIdx,
-                                       QDemonRenderableImage *displacementImage) override;
+    virtual void beginVertexGeneration(quint32 displacementImageIdx, QDemonRenderableImage *displacementImage) override;
     // The fragment shader expects a floating point constant, object_opacity to be defined
     // post this method.
     virtual void beginFragmentGeneration() override;

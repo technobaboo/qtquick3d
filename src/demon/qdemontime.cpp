@@ -38,8 +38,7 @@ quint64 QDemonTime::getCurrentCounterValue()
     return ticks;
 }
 
-QDemonTime::QDemonTime()
-    : mTickCount(0)
+QDemonTime::QDemonTime() : mTickCount(0)
 {
     getElapsedSeconds();
 }
@@ -56,7 +55,9 @@ QDemonTime::Second QDemonTime::peekElapsedSeconds()
     return (getTimeTicks() - mTickCount) * sTickDuration;
 }
 
-QDemonTime::Second QDemonTime::getLastTime() const { return mTickCount * sTickDuration; }
-
+QDemonTime::Second QDemonTime::getLastTime() const
+{
+    return mTickCount * sTickDuration;
+}
 
 QT_END_NAMESPACE

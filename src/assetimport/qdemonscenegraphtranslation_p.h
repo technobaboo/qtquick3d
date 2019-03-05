@@ -130,27 +130,22 @@ enum MatCommonProfileTechnique {
 };
 
 enum MatOpaqueType // refer to domFx_opaque_enum
-{
-    MatOpaqueType_A_ONE, // When a transparent opaque attribute is set to A_ONE, it means the
-                        // transparency information will be taken from the alpha channel of the
-                        // color, texture, or parameter supplying the value. The value of 1.0 is
-                        // opaque in this mode.
-    MatOpaqueType_RGB_ZERO, // When a transparent opaque attribute is set to RGB_ZERO, it means the
-                           // transparency information will be taken from the red, green, and blue
-                           // channels of the color, texture, or parameter supplying the value. Each
-                           // channel is modulated independently. The value of 0.0 is opaque in this
-                           // mode.
+{ MatOpaqueType_A_ONE, // When a transparent opaque attribute is set to A_ONE, it means the
+                       // transparency information will be taken from the alpha channel of the
+                       // color, texture, or parameter supplying the value. The value of 1.0 is
+                       // opaque in this mode.
+  MatOpaqueType_RGB_ZERO, // When a transparent opaque attribute is set to RGB_ZERO, it means the
+                          // transparency information will be taken from the red, green, and blue
+                          // channels of the color, texture, or parameter supplying the value. Each
+                          // channel is modulated independently. The value of 0.0 is opaque in this
+                          // mode.
 };
 
 struct FloatFlag
 {
     float m_value; // the value of this struct
     bool m_flag; // to indicate if this value presents in SceneGraph
-    FloatFlag()
-        : m_value(0.0f)
-        , m_flag(false)
-    {
-    }
+    FloatFlag() : m_value(0.0f), m_flag(false) {}
     void setValue(float inValue)
     {
         m_value = inValue;
@@ -162,11 +157,7 @@ struct LongFlag
 {
     long m_value; // the value of this struct
     bool m_flag; // to indicate if this value presents in SceneGraph
-    LongFlag()
-        : m_value(0)
-        , m_flag(false)
-    {
-    }
+    LongFlag() : m_value(0), m_flag(false) {}
     void setValue(long inValue)
     {
         m_value = inValue;
@@ -184,11 +175,7 @@ struct ColorOrTexture
 
     Type m_type;
     float m_color[4]; // the color, if present
-    ColorOrTexture()
-        : m_type(None)
-    {
-        m_color[0] = m_color[1] = m_color[2] = m_color[3] = 0.0f;
-    }
+    ColorOrTexture() : m_type(None) { m_color[0] = m_color[1] = m_color[2] = m_color[3] = 0.0f; }
     void setColor(const float inColor[])
     {
         m_color[0] = inColor[0];
@@ -225,10 +212,7 @@ struct TextureParameters
     LongFlag m_mirrorU;
     LongFlag m_mirrorV;
     bool m_flag; // to indicate if dae contains texture parameters information
-    TextureParameters()
-        : m_flag(false)
-    {
-    }
+    TextureParameters() : m_flag(false) {}
 };
 
 //==============================================================================
@@ -239,10 +223,7 @@ struct MaterialExtraParameters
     FloatFlag m_specLevel;
     FloatFlag m_emissionLevel;
     bool m_flag; // to indicate if dae contains profile_COMMON technique extra information
-    MaterialExtraParameters()
-        : m_flag(false)
-    {
-    }
+    MaterialExtraParameters() : m_flag(false) {}
 };
 
 //==============================================================================
@@ -264,14 +245,8 @@ struct MaterialParameters
     FloatFlag m_indexOfRefraction;
     MaterialExtraParameters m_extra;
 
-    MaterialParameters()
-        : m_techniqueType(MatCommonProfileTechnique_Count)
-    {
-    }
-    MaterialParameters(MatCommonProfileTechnique inTechniqueType)
-        : m_techniqueType(inTechniqueType)
-    {
-    }
+    MaterialParameters() : m_techniqueType(MatCommonProfileTechnique_Count) {}
+    MaterialParameters(MatCommonProfileTechnique inTechniqueType) : m_techniqueType(inTechniqueType) {}
 };
 
 //==============================================================================
@@ -286,8 +261,7 @@ struct KeyframeParameters
     float m_outTangentX;
     float m_outTangentY;
 
-    KeyframeParameters(float inKeyframeTime, float inValue, float inINTANGENTX,
-                       float inINTANGENTY, float inOUTTANGENTX, float inOUTTANGENTY)
+    KeyframeParameters(float inKeyframeTime, float inValue, float inINTANGENTX, float inINTANGENTY, float inOUTTANGENTX, float inOUTTANGENTY)
         : m_keyframeTime(inKeyframeTime)
         , m_value(inValue)
         , m_inTangentX(inINTANGENTX)
@@ -296,7 +270,6 @@ struct KeyframeParameters
         , m_outTangentY(inOUTTANGENTY)
     {
     }
-
 };
 
 //==============================================================================
@@ -310,19 +283,17 @@ struct JointInfo
     float m_localToGlobalBoneSpace[16];
 
     JointInfo(int jointIndex, int parentID, float *invBindPose, float *localToGlobal)
-        : m_jointID(jointIndex)
-        , m_parentID(parentID)
+        : m_jointID(jointIndex), m_parentID(parentID)
     {
         ::memcpy(m_invBindPose, invBindPose, sizeof(float) * 16);
         ::memcpy(m_localToGlobalBoneSpace, localToGlobal, sizeof(float) * 16);
     }
-
 };
 
 } // end QDemonAssetImport namespace
 
 namespace QDemonMeshUtilities {
-    class QDemonMeshBuilder;
+class QDemonMeshBuilder;
 }
 
 class Q_DEMONASSETIMPORT_EXPORT QDemonSceneGraphTranslation
@@ -350,20 +321,25 @@ public:
     virtual void markInvalid();
 
     virtual void setTransforms(const QVector<QDemonAssetImport::AbstractNodeTransform *> &inTransforms);
-    virtual void setGeometry(const QVector<float> &ioVertices, const QVector<float> &ioNormals,
-                             const QVector<float> &ioTexCoords, const QVector<float> &ioTexCoords2,
-                             const QVector<float> &ioTexTangents, const QVector<float> &ioTexBinormals,
-                             const QVector<float> &ioWeights, const QVector<float> &ioBoneIndex,
-                             const QVector<float> &ioColors, const QVector<quint32> &ioFaceIndicies);
+    virtual void setGeometry(const QVector<float> &ioVertices,
+                             const QVector<float> &ioNormals,
+                             const QVector<float> &ioTexCoords,
+                             const QVector<float> &ioTexCoords2,
+                             const QVector<float> &ioTexTangents,
+                             const QVector<float> &ioTexBinormals,
+                             const QVector<float> &ioWeights,
+                             const QVector<float> &ioBoneIndex,
+                             const QVector<float> &ioColors,
+                             const QVector<quint32> &ioFaceIndicies);
     virtual void setMaterial(const QDemonAssetImport::MaterialParameters &inMaterialParameters);
     virtual void setTexture(int inMapType, const QDemonAssetImport::TextureParameters &inTextureParameters);
     virtual void setJointNode(QDemonAssetImport::JointInfo &inJointInfo);
 
     virtual int cacheAnimationTrack();
     virtual void applyAnimationTrack(int inAnimationTrackIndex);
-    virtual void setAnimationTrack(const QString &inBasePropertyName,
-                                   const QString &inSubPropertyName);
-    virtual void cacheAnimationKey(const QString &inBaseProperty, const QString &inSubPropertyName,
+    virtual void setAnimationTrack(const QString &inBasePropertyName, const QString &inSubPropertyName);
+    virtual void cacheAnimationKey(const QString &inBaseProperty,
+                                   const QString &inSubPropertyName,
                                    const QDemonAssetImport::KeyframeParameters &inParameters);
 
     virtual bool save(const QString &filename);
@@ -377,7 +353,7 @@ private:
     int m_tabDepth = 0;
 
     QDemonRef<QDemonMeshUtilities::QDemonMeshBuilder> m_meshBuilder;
- };
+};
 
 QT_END_NAMESPACE
 

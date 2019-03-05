@@ -44,64 +44,62 @@ class Q_DEMONRENDER_EXPORT QDemonRenderProgramPipeline
     Q_DISABLE_COPY(QDemonRenderProgramPipeline)
 public:
     QAtomicInt ref;
+
 protected:
     QDemonRef<QDemonRenderContextImpl> m_context; ///< pointer to context
     QDemonRef<QDemonRenderBackend> m_backend; ///< pointer to backend
 
 public:
     /**
-         * @brief constructor
-         *
-         * @param[in] context		Pointer to render context
-         * @param[in] fnd			Pointer to foundation
-         *
-         * @return No return.
-         */
+     * @brief constructor
+     *
+     * @param[in] context		Pointer to render context
+     * @param[in] fnd			Pointer to foundation
+     *
+     * @return No return.
+     */
     QDemonRenderProgramPipeline(const QDemonRef<QDemonRenderContextImpl> &context);
 
     /// @brief destructor
     ~QDemonRenderProgramPipeline();
 
     /**
-         * @brief Query if pipeline is valid
-         *
-         * @return True if valid.
-         */
+     * @brief Query if pipeline is valid
+     *
+     * @return True if valid.
+     */
     bool isValid();
 
     /**
-         * @brief enable / disable a program stage in the pipeline
-         *
-         * @param[in] pProgram	Pointer to program. If nullptr stage will be disabled
-         * @param[in] flags		Flags to which stage this program is bound to. Can more than
-         * one stage
-         *
-         * @return no return.
-         */
+     * @brief enable / disable a program stage in the pipeline
+     *
+     * @param[in] pProgram	Pointer to program. If nullptr stage will be disabled
+     * @param[in] flags		Flags to which stage this program is bound to. Can more than
+     * one stage
+     *
+     * @return no return.
+     */
     void setProgramStages(const QDemonRef<QDemonRenderShaderProgram> &pProgram, QDemonRenderShaderTypeFlags flags);
 
     /**
-         * @brief Make the program pipeline active
-         *
-         * @return True if valid.
-         */
+     * @brief Make the program pipeline active
+     *
+     * @return True if valid.
+     */
     void bind();
 
     /**
-         * @brief get the backend object handle
-         *
-         * @return the backend object handle.
-         */
-    QDemonRenderBackend::QDemonRenderBackendProgramPipeline getShaderHandle()
-    {
-        return m_programPipelineHandle;
-    }
+     * @brief get the backend object handle
+     *
+     * @return the backend object handle.
+     */
+    QDemonRenderBackend::QDemonRenderBackendProgramPipeline getShaderHandle() { return m_programPipelineHandle; }
 
     /**
-         * @brief get the vertex stage program
-         *
-         * @return the backend object handle.
-         */
+     * @brief get the vertex stage program
+     *
+     * @return the backend object handle.
+     */
     QDemonRef<QDemonRenderShaderProgram> getVertexStage();
 
 private:
@@ -111,9 +109,9 @@ private:
     QDemonRef<QDemonRenderShaderProgram> m_vertexProgram; ///< for separable programs this contains the vertex program
     QDemonRef<QDemonRenderShaderProgram> m_fragmentProgram; ///< for separable programs this contains the fragment program
     QDemonRef<QDemonRenderShaderProgram> m_tessControlProgram; ///< for separable programs this contains the
-    ///tessellation control program
+    /// tessellation control program
     QDemonRef<QDemonRenderShaderProgram> m_tessEvalProgram; ///< for separable programs this contains the
-    ///tessellation evaluation program
+    /// tessellation evaluation program
     QDemonRef<QDemonRenderShaderProgram> m_geometryProgram; ///< for separable programs this contains the geometry program
     QDemonRef<QDemonRenderShaderProgram> m_computProgram; ///< for separable programs this contains the compute program
 };

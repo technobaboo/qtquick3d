@@ -52,8 +52,7 @@ QDemonRenderPathFontSpecification::~QDemonRenderPathFontSpecification()
     m_context->releasePathFontSpecification(this);
 }
 
-void QDemonRenderPathFontSpecification::loadPathGlyphs(const char *fontName,
-                                                       QDemonRenderPathFormatType::Enum type)
+void QDemonRenderPathFontSpecification::loadPathGlyphs(const char *fontName, QDemonRenderPathFormatType::Enum type)
 {
     // check if we already created it
     if (m_numFontGlyphs)
@@ -62,25 +61,30 @@ void QDemonRenderPathFontSpecification::loadPathGlyphs(const char *fontName,
     m_type = type;
 
     // create fonts based on the input
-    m_pathRenderHandle = m_backend->loadPathGlyphsIndexedRange(
-                QDemonRenderPathFontTarget::FileFont, fontName, QDemonRenderPathFontStyleFlags(), nullptr, m_emScale,
-                &m_numFontGlyphs);
+    m_pathRenderHandle = m_backend->loadPathGlyphsIndexedRange(QDemonRenderPathFontTarget::FileFont,
+                                                               fontName,
+                                                               QDemonRenderPathFontStyleFlags(),
+                                                               nullptr,
+                                                               m_emScale,
+                                                               &m_numFontGlyphs);
 
     // Fallback in case the previuos call fails
     // This is a no-op if the previous call succeeds
     // Note that sans is an inbuild driver font
     if (!m_pathRenderHandle) {
-        m_pathRenderHandle = m_backend->loadPathGlyphsIndexedRange(
-                    QDemonRenderPathFontTarget::SystemFont, "Arial", QDemonRenderPathFontStyleFlags(), nullptr,
-                    m_emScale, &m_numFontGlyphs);
+        m_pathRenderHandle = m_backend->loadPathGlyphsIndexedRange(QDemonRenderPathFontTarget::SystemFont,
+                                                                   "Arial",
+                                                                   QDemonRenderPathFontStyleFlags(),
+                                                                   nullptr,
+                                                                   m_emScale,
+                                                                   &m_numFontGlyphs);
     }
 
     // we should have some glyphs
     Q_ASSERT(m_numFontGlyphs);
 }
 
-void
-QDemonRenderPathFontSpecification::stencilFillPathInstanced(const QDemonRef<QDemonRenderPathFontItem> &inPathFontItem)
+void QDemonRenderPathFontSpecification::stencilFillPathInstanced(const QDemonRef<QDemonRenderPathFontItem> &inPathFontItem)
 {
     const void *glyphIDs = inPathFontItem->getGlyphIDs();
     const float *spacing = inPathFontItem->getSpacing();
@@ -91,7 +95,8 @@ QDemonRenderPathFontSpecification::stencilFillPathInstanced(const QDemonRef<QDem
 
     m_backend->stencilFillPathInstanced(m_pathRenderHandle,
                                         inPathFontItem->getGlyphsCount(),
-                                        m_type, glyphIDs,
+                                        m_type,
+                                        glyphIDs,
                                         QDemonRenderPathFillMode::Fill,
                                         0xFF,
                                         m_transformType,
@@ -116,8 +121,7 @@ void QDemonRenderPathFontSpecification::coverFillPathInstanced(const QDemonRef<Q
                                       spacing);
 }
 
-quint32
-QDemonRenderPathFontSpecification::getSizeOfType(QDemonRenderPathFormatType::Enum type)
+quint32 QDemonRenderPathFontSpecification::getSizeOfType(QDemonRenderPathFormatType::Enum type)
 {
     switch (type) {
     case QDemonRenderPathFormatType::Byte:
@@ -136,8 +140,9 @@ QDemonRenderPathFontSpecification::getSizeOfType(QDemonRenderPathFormatType::Enu
     }
 }
 
-QDemonRef<QDemonRenderPathFontSpecification> QDemonRenderPathFontSpecification::createPathFontSpecification(const QDemonRef<QDemonRenderContextImpl> &context,
-                                                                                                                 const QString &fontName)
+QDemonRef<QDemonRenderPathFontSpecification> QDemonRenderPathFontSpecification::createPathFontSpecification(
+        const QDemonRef<QDemonRenderContextImpl> &context,
+        const QString &fontName)
 {
     Q_ASSERT(context->isPathRenderingSupported());
 

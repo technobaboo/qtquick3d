@@ -12,7 +12,6 @@
 // We mean it.
 //
 
-
 #include <QObject>
 #include <private/qtquick3dglobal_p.h>
 #include <QtGui/QImage>
@@ -31,9 +30,7 @@ class Q_QUICK3D_PRIVATE_EXPORT QDemonRenderLoop : public QObject
 {
     Q_OBJECT
 public:
-    enum RenderLoopFlags {
-        SupportsGrabWithoutExpose = 0x01
-    };
+    enum RenderLoopFlags { SupportsGrabWithoutExpose = 0x01 };
 
     virtual ~QDemonRenderLoop();
 
@@ -48,7 +45,7 @@ public:
 
     virtual void update(QDemonWindow *window) = 0;
     virtual void maybeUpdate(QDemonWindow *window) = 0;
-    virtual void handleUpdateRequest(QDemonWindow *) { }
+    virtual void handleUpdateRequest(QDemonWindow *) {}
 
     virtual QAnimationDriver *animationDriver() const = 0;
 

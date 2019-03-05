@@ -66,10 +66,12 @@ QDemonRenderProgramPipeline::~QDemonRenderProgramPipeline()
         m_geometryProgram.clear();
 }
 
-bool QDemonRenderProgramPipeline::isValid() { return (m_programPipelineHandle != nullptr); }
+bool QDemonRenderProgramPipeline::isValid()
+{
+    return (m_programPipelineHandle != nullptr);
+}
 
-void QDemonRenderProgramPipeline::setProgramStages(const QDemonRef<QDemonRenderShaderProgram> &inProgram,
-                                                   QDemonRenderShaderTypeFlags flags)
+void QDemonRenderProgramPipeline::setProgramStages(const QDemonRef<QDemonRenderShaderProgram> &inProgram, QDemonRenderShaderTypeFlags flags)
 {
     bool bDirty = false;
 
@@ -95,8 +97,7 @@ void QDemonRenderProgramPipeline::setProgramStages(const QDemonRef<QDemonRenderS
     }
 
     if (bDirty) {
-        m_backend->setProgramStages(m_programPipelineHandle, flags,
-                                    (inProgram) ? inProgram->getShaderProgramHandle() : nullptr);
+        m_backend->setProgramStages(m_programPipelineHandle, flags, (inProgram) ? inProgram->getShaderProgramHandle() : nullptr);
     }
 }
 
@@ -105,6 +106,9 @@ void QDemonRenderProgramPipeline::bind()
     m_backend->setActiveProgramPipeline(m_programPipelineHandle);
 }
 
-QDemonRef<QDemonRenderShaderProgram> QDemonRenderProgramPipeline::getVertexStage() { return m_vertexProgram; }
+QDemonRef<QDemonRenderShaderProgram> QDemonRenderProgramPipeline::getVertexStage()
+{
+    return m_vertexProgram;
+}
 
 QT_END_NAMESPACE

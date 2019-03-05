@@ -131,11 +131,18 @@ void QDemonRenderTextureBase::setTextureCompareFunc(QDemonRenderTextureCompareOp
 void QDemonRenderTextureBase::applyTexParams()
 {
     if (m_samplerParamsDirty) {
-        m_backend->updateSampler(m_sampler->GetSamplerHandle(), m_texTarget,
-                                 m_sampler->m_minFilter, m_sampler->m_magFilter,
-                                 m_sampler->m_wrapS, m_sampler->m_wrapT, m_sampler->m_wrapR,
-                                 m_sampler->m_minLod, m_sampler->m_maxLod, m_sampler->m_lodBias,
-                                 m_sampler->m_compareMode, m_sampler->m_compareOp);
+        m_backend->updateSampler(m_sampler->GetSamplerHandle(),
+                                 m_texTarget,
+                                 m_sampler->m_minFilter,
+                                 m_sampler->m_magFilter,
+                                 m_sampler->m_wrapS,
+                                 m_sampler->m_wrapT,
+                                 m_sampler->m_wrapR,
+                                 m_sampler->m_minLod,
+                                 m_sampler->m_maxLod,
+                                 m_sampler->m_lodBias,
+                                 m_sampler->m_compareMode,
+                                 m_sampler->m_compareOp);
 
         m_samplerParamsDirty = false;
     }
@@ -148,8 +155,7 @@ void QDemonRenderTextureBase::applyTexParams()
 
 void QDemonRenderTextureBase::applyTexSwizzle()
 {
-    QDemonRenderTextureSwizzleMode::Enum theSwizzleMode =
-            m_backend->getTextureSwizzleMode(m_format);
+    QDemonRenderTextureSwizzleMode::Enum theSwizzleMode = m_backend->getTextureSwizzleMode(m_format);
     if (theSwizzleMode != m_sampler->m_swizzleMode) {
         m_sampler->m_swizzleMode = theSwizzleMode;
         m_backend->updateTextureSwizzle(m_textureHandle, m_texTarget, theSwizzleMode);

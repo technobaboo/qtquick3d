@@ -36,7 +36,7 @@ QT_BEGIN_NAMESPACE
 
 // User's will need to define specialize this struct in order
 // to de-tag a pointer.
-template <typename TDataType>
+template<typename TDataType>
 struct QDemonPointerTag
 {
     /* Expected API for runtime RTTI
@@ -51,26 +51,17 @@ struct QDemonTaggedPointer
 {
     void *m_userData;
     quint32 m_tag;
-    QDemonTaggedPointer()
-        : m_userData(nullptr)
-        , m_tag(0)
-    {
-    }
+    QDemonTaggedPointer() : m_userData(nullptr), m_tag(0) {}
 
-    QDemonTaggedPointer(void *inUserData, quint32 inTag)
-        : m_userData(inUserData)
-        , m_tag(inTag)
-    {
-    }
+    QDemonTaggedPointer(void *inUserData, quint32 inTag) : m_userData(inUserData), m_tag(inTag) {}
 
-    template <typename TDataType>
+    template<typename TDataType>
     QDemonTaggedPointer(TDataType *inType)
-        : m_userData(reinterpret_cast<void *>(inType))
-        , m_tag(QDemonPointerTag<TDataType>::GetTag())
+        : m_userData(reinterpret_cast<void *>(inType)), m_tag(QDemonPointerTag<TDataType>::GetTag())
     {
     }
 
-    template <typename TDataType>
+    template<typename TDataType>
     TDataType *dynamicCast() const
     {
         // TODO:

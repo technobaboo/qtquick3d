@@ -37,7 +37,7 @@
 
 QT_BEGIN_NAMESPACE
 
-namespace  {
+namespace {
 class QDemonThreadPool;
 class QDemonTask : public QRunnable
 {
@@ -61,12 +61,14 @@ public:
 
     void run() override;
 
-    void doFunction() {
-        if(m_function)
+    void doFunction()
+    {
+        if (m_function)
             m_function(m_userData);
     }
 
-    bool doCancel() {
+    bool doCancel()
+    {
         {
             QMutexLocker locker(&m_mutex);
             if (m_taskState == TaskStates::Enum::Running)
@@ -79,7 +81,6 @@ public:
         return true;
     }
 
-
 private:
     void *m_userData;
     QDemonTaskCallback m_function;
@@ -89,7 +90,6 @@ private:
     QMutex m_mutex;
     QDemonThreadPool *m_threadPool;
 };
-
 
 class QDemonThreadPool : public QDemonAbstractThreadPool
 {
@@ -115,7 +115,7 @@ private:
     }
 
     QThreadPool m_threadPool;
-    QHash<quint64, QDemonTask*> m_taskMap;
+    QHash<quint64, QDemonTask *> m_taskMap;
     QMutex m_mutex;
 };
 
@@ -190,13 +190,9 @@ void QDemonThreadPool::taskFinished(quint64 inTaskId)
     delete task;
     m_taskMap.remove(inTaskId);
 }
-
 }
 
-QDemonAbstractThreadPool::~QDemonAbstractThreadPool()
-{
-
-}
+QDemonAbstractThreadPool::~QDemonAbstractThreadPool() {}
 
 QDemonRef<QDemonAbstractThreadPool> QDemonAbstractThreadPool::createThreadPool(quint32 inNumThreads)
 {
@@ -204,6 +200,3 @@ QDemonRef<QDemonAbstractThreadPool> QDemonAbstractThreadPool::createThreadPool(q
 }
 
 QT_END_NAMESPACE
-
-
-

@@ -42,41 +42,36 @@ class QDemonRenderGeometryShader : public QDemonRenderShader
 
 public:
     /**
-         * @brief constructor
-         *
-         * @param[in] context		Pointer to render context
-         * @param[in] fnd			Pointer to foundation
-         * @param[in] source		Pointer to shader source code
-         * @param[in] binaryProgram	true if this is a binary program
-         *
-         * @return No return.
-         */
-    QDemonRenderGeometryShader(const QDemonRef<QDemonRenderContextImpl> &context,
-                               QDemonConstDataRef<qint8> source, bool binaryProgram);
+     * @brief constructor
+     *
+     * @param[in] context		Pointer to render context
+     * @param[in] fnd			Pointer to foundation
+     * @param[in] source		Pointer to shader source code
+     * @param[in] binaryProgram	true if this is a binary program
+     *
+     * @return No return.
+     */
+    QDemonRenderGeometryShader(const QDemonRef<QDemonRenderContextImpl> &context, QDemonConstDataRef<qint8> source, bool binaryProgram);
 
     /// @brief destructor
     virtual ~QDemonRenderGeometryShader() override;
 
     /**
-         * @brief Query if shader compiled succesfuly
-         *
-         * @return True if shader is valid.
-         */
+     * @brief Query if shader compiled succesfuly
+     *
+     * @return True if shader is valid.
+     */
     bool isValid() override { return (m_shaderHandle != nullptr); }
 
     /**
-         * @brief get the backend object handle
-         *
-         * @return the backend object handle.
-         */
-    virtual QDemonRenderBackend::QDemonRenderBackendGeometryShaderObject getShaderHandle()
-    {
-        return m_shaderHandle;
-    }
+     * @brief get the backend object handle
+     *
+     * @return the backend object handle.
+     */
+    virtual QDemonRenderBackend::QDemonRenderBackendGeometryShaderObject getShaderHandle() { return m_shaderHandle; }
 
 private:
-    QDemonRenderBackend::QDemonRenderBackendGeometryShaderObject
-    m_shaderHandle; ///< opaque backend handle
+    QDemonRenderBackend::QDemonRenderBackendGeometryShaderObject m_shaderHandle; ///< opaque backend handle
 };
 
 QT_END_NAMESPACE

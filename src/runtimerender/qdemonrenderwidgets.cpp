@@ -50,12 +50,8 @@ struct QDemonWidgetBBox : public QDemonRenderWidgetInterface
     QDemonRef<QDemonRenderInputAssembler> m_boxInputAssembler;
     QDemonRef<QDemonRenderShaderProgram> m_boxShader;
     QByteArray m_itemName;
-    QDemonWidgetBBox(QDemonGraphNode &inNode,
-                     const QDemonBounds3 &inBounds,
-                     const QVector3D &inColor)
-        : QDemonRenderWidgetInterface(inNode)
-        , m_bounds(inBounds)
-        , m_color(inColor)
+    QDemonWidgetBBox(QDemonGraphNode &inNode, const QDemonBounds3 &inBounds, const QVector3D &inColor)
+        : QDemonRenderWidgetInterface(inNode), m_bounds(inBounds), m_color(inColor)
     {
     }
 
@@ -65,16 +61,13 @@ struct QDemonWidgetBBox : public QDemonRenderWidgetInterface
         if (!m_boxShader) {
             QDemonRef<QDemonShaderProgramGeneratorInterface> theGenerator(inContext.getProgramGenerator());
             theGenerator->beginProgram();
-            QDemonShaderStageGeneratorInterface &theVertexGenerator(
-                        *theGenerator->getStage(ShaderGeneratorStages::Vertex));
-            QDemonShaderStageGeneratorInterface &theFragmentGenerator(
-                        *theGenerator->getStage(ShaderGeneratorStages::Fragment));
+            QDemonShaderStageGeneratorInterface &theVertexGenerator(*theGenerator->getStage(ShaderGeneratorStages::Vertex));
+            QDemonShaderStageGeneratorInterface &theFragmentGenerator(*theGenerator->getStage(ShaderGeneratorStages::Fragment));
 
             theVertexGenerator.addIncoming("attr_pos", "vec3");
             theVertexGenerator.addUniform("model_view_projection", "mat4");
             theVertexGenerator.append("void main() {");
-            theVertexGenerator.append(
-                        "\tgl_Position = model_view_projection * vec4(attr_pos, 1.0);");
+            theVertexGenerator.append("\tgl_Position = model_view_projection * vec4(attr_pos, 1.0);");
             theVertexGenerator.append("}");
             theFragmentGenerator.addUniform("output_color", "vec3");
             theFragmentGenerator.append("void main() {");
@@ -85,11 +78,12 @@ struct QDemonWidgetBBox : public QDemonRenderWidgetInterface
         }
     }
 
-    void setupBoundingBoxGraphicsObjects(QDemonRenderWidgetContextInterface &inContext,
-                                         QDemonDataRef<QVector3D> thePoints)
+    void setupBoundingBoxGraphicsObjects(QDemonRenderWidgetContextInterface &inContext, QDemonDataRef<QVector3D> thePoints)
     {
         QDemonRenderVertexBufferEntry theEntry("attr_pos", QDemonRenderComponentTypes::Float16, 3);
-        m_boxVertexBuffer = inContext.getOrCreateVertexBuffer(m_itemName, 3 * sizeof(float), toU8DataRef(thePoints.begin(), thePoints.size()));
+        m_boxVertexBuffer = inContext.getOrCreateVertexBuffer(m_itemName,
+                                                              3 * sizeof(float),
+                                                              toU8DataRef(thePoints.begin(), thePoints.size()));
         m_boxIndexBuffer = inContext.getIndexBuffer(m_itemName);
         if (!m_boxIndexBuffer) {
             // The way the bounds lays out the bounds for the box
@@ -108,24 +102,44 @@ struct QDemonWidgetBBox : public QDemonRenderWidgetInterface
                 // The toBoxBounds function lays out points such that
                 // xyz, Xyz, xYz, xyZ, XYZ, xYZ, XyZ, XYz
                 // Min corner
-                xyz, Xyz, xyz, xYz, xyz, xyZ,
+                xyz,
+                Xyz,
+                xyz,
+                xYz,
+                xyz,
+                xyZ,
 
                 // Max corner
-                XYZ, xYZ, XYZ, XyZ, XYZ, XYz,
+                XYZ,
+                xYZ,
+                XYZ,
+                XyZ,
+                XYZ,
+                XYz,
 
                 // Now connect the rest of the dots.
                 // the rules are that only one letter can change
                 // else you are connecting *across* the box somehow.
 
-                Xyz, XYz, Xyz, XyZ,
+                Xyz,
+                XYz,
+                Xyz,
+                XyZ,
 
-                xYz, XYz, xYz, xYZ,
+                xYz,
+                XYz,
+                xYz,
+                xYZ,
 
-                xyZ, XyZ, xyZ, xYZ,
+                xyZ,
+                XyZ,
+                xyZ,
+                xYZ,
             };
-            m_boxIndexBuffer = inContext.getOrCreateIndexBuffer(
-                        m_itemName, QDemonRenderComponentTypes::UnsignedInteger8, sizeof(indexes),
-                        toU8DataRef(indexes, sizeof(indexes)));
+            m_boxIndexBuffer = inContext.getOrCreateIndexBuffer(m_itemName,
+                                                                QDemonRenderComponentTypes::UnsignedInteger8,
+                                                                sizeof(indexes),
+                                                                toU8DataRef(indexes, sizeof(indexes)));
         }
 
         m_boxInputAssembler = inContext.getInputAssembler(m_itemName);
@@ -135,9 +149,12 @@ struct QDemonWidgetBBox : public QDemonRenderWidgetInterface
 
             quint32 strides = m_boxVertexBuffer->getStride();
             quint32 offsets = 0;
-            m_boxInputAssembler = (inContext.getOrCreateInputAssembler(
-                        m_itemName, theAttribLayout, toConstDataRef(&m_boxVertexBuffer, 1),
-                        m_boxIndexBuffer, toConstDataRef(&strides, 1), toConstDataRef(&offsets, 1)));
+            m_boxInputAssembler = (inContext.getOrCreateInputAssembler(m_itemName,
+                                                                       theAttribLayout,
+                                                                       toConstDataRef(&m_boxVertexBuffer, 1),
+                                                                       m_boxIndexBuffer,
+                                                                       toConstDataRef(&strides, 1),
+                                                                       toConstDataRef(&offsets, 1)));
         }
         setupBoxShader(inContext);
     }
@@ -145,8 +162,8 @@ struct QDemonWidgetBBox : public QDemonRenderWidgetInterface
     void render(QDemonRenderWidgetContextInterface &inWidgetContext, QDemonRenderContext &inRenderContext) override
     {
         m_itemName = "SWidgetBBox";
-        QDemonWidgetRenderInformation theInfo(inWidgetContext.getWidgetRenderInformation(
-                                             *m_node, m_node->position, RenderWidgetModes::Local));
+        QDemonWidgetRenderInformation theInfo(
+                inWidgetContext.getWidgetRenderInformation(*m_node, m_node->position, RenderWidgetModes::Local));
         QDemonBounds2BoxPoints thePoints;
         m_bounds.expand(thePoints);
         QMatrix4x4 theNodeRotation;
@@ -163,8 +180,7 @@ struct QDemonWidgetBBox : public QDemonRenderWidgetInterface
             m_boxShader->setPropertyValue("model_view_projection", theInfo.m_layerProjection);
             m_boxShader->setPropertyValue("output_color", m_color);
             inRenderContext.setInputAssembler(m_boxInputAssembler);
-            inRenderContext.draw(QDemonRenderDrawMode::Lines,
-                                 m_boxInputAssembler->getIndexCount(), 0);
+            inRenderContext.draw(QDemonRenderDrawMode::Lines, m_boxInputAssembler->getIndexCount(), 0);
         }
     }
 };
@@ -177,10 +193,7 @@ struct QDemonWidgetAxis : public QDemonRenderWidgetInterface
     QByteArray m_itemName;
 
     QDemonWidgetAxis(QDemonGraphNode &inNode)
-        : QDemonRenderWidgetInterface(inNode)
-        , m_axisVertexBuffer(nullptr)
-        , m_axisInputAssembler(nullptr)
-        , m_axisShader(nullptr)
+        : QDemonRenderWidgetInterface(inNode), m_axisVertexBuffer(nullptr), m_axisInputAssembler(nullptr), m_axisShader(nullptr)
     {
     }
 
@@ -197,8 +210,7 @@ struct QDemonWidgetAxis : public QDemonRenderWidgetInterface
             theVertexGenerator.addOutgoing("output_color", "vec3");
             theVertexGenerator.addUniform("model_view_projection", "mat4");
             theVertexGenerator.append("void main() {");
-            theVertexGenerator.append(
-                        "\tgl_Position = model_view_projection * vec4(attr_pos, 1.0);");
+            theVertexGenerator.append("\tgl_Position = model_view_projection * vec4(attr_pos, 1.0);");
             theVertexGenerator.append("\toutput_color = attr_color;");
             theVertexGenerator.append("}");
             theFragmentGenerator.append("void main() {");
@@ -216,7 +228,9 @@ struct QDemonWidgetAxis : public QDemonRenderWidgetInterface
             QDemonRenderVertexBufferEntry("attr_color", QDemonRenderComponentTypes::Float16, 3, 12),
         };
 
-        m_axisVertexBuffer = inContext.getOrCreateVertexBuffer(m_itemName, 6 * sizeof(float), toU8DataRef(theAxes.begin(), theAxes.size()));
+        m_axisVertexBuffer = inContext.getOrCreateVertexBuffer(m_itemName,
+                                                               6 * sizeof(float),
+                                                               toU8DataRef(theAxes.begin(), theAxes.size()));
 
         if (!m_axisInputAssembler && m_axisVertexBuffer) {
             // create our attribute layout
@@ -224,9 +238,12 @@ struct QDemonWidgetAxis : public QDemonRenderWidgetInterface
 
             quint32 strides = m_axisVertexBuffer->getStride();
             quint32 offsets = 0;
-            m_axisInputAssembler = (inContext.getOrCreateInputAssembler(
-                        m_itemName, theAttribLAyout, toConstDataRef(&m_axisVertexBuffer, 1), nullptr,
-                        toConstDataRef(&strides, 1), toConstDataRef(&offsets, 1)));
+            m_axisInputAssembler = (inContext.getOrCreateInputAssembler(m_itemName,
+                                                                        theAttribLAyout,
+                                                                        toConstDataRef(&m_axisVertexBuffer, 1),
+                                                                        nullptr,
+                                                                        toConstDataRef(&strides, 1),
+                                                                        toConstDataRef(&offsets, 1)));
         }
     }
 
@@ -252,8 +269,8 @@ struct QDemonWidgetAxis : public QDemonRenderWidgetInterface
             QVector3D thePivot(m_node->pivot);
             if (m_node->flags.isLeftHanded())
                 thePivot[2] /* .z */ *= -1;
-            QDemonWidgetRenderInformation theInfo(inWidgetContext.getWidgetRenderInformation(
-                                                 *m_node, thePivot, RenderWidgetModes::Local));
+            QDemonWidgetRenderInformation theInfo(
+                    inWidgetContext.getWidgetRenderInformation(*m_node, thePivot, RenderWidgetModes::Local));
 
             QMatrix4x4 theNodeRotation;
             m_node->calculateRotationMatrix(theNodeRotation);
@@ -303,12 +320,11 @@ struct QDemonWidgetAxis : public QDemonRenderWidgetInterface
 };
 }
 
-QDemonRenderWidgetInterface::~QDemonRenderWidgetInterface()
-{
+QDemonRenderWidgetInterface::~QDemonRenderWidgetInterface() {}
 
-}
-
-QDemonRef<QDemonRenderWidgetInterface> QDemonRenderWidgetInterface::createBoundingBoxWidget(QDemonGraphNode &inNode, const QDemonBounds3 &inBounds, const QVector3D &inColor)
+QDemonRef<QDemonRenderWidgetInterface> QDemonRenderWidgetInterface::createBoundingBoxWidget(QDemonGraphNode &inNode,
+                                                                                            const QDemonBounds3 &inBounds,
+                                                                                            const QVector3D &inColor)
 {
     return QDemonRef<QDemonRenderWidgetInterface>(new QDemonWidgetBBox(inNode, inBounds, inColor));
 }
@@ -318,8 +334,5 @@ QDemonRef<QDemonRenderWidgetInterface> QDemonRenderWidgetInterface::createAxisWi
     return QDemonRef<QDemonRenderWidgetInterface>(new QDemonWidgetAxis(inNode));
 }
 
-QDemonRenderWidgetContextInterface::~QDemonRenderWidgetContextInterface()
-{
-
-}
+QDemonRenderWidgetContextInterface::~QDemonRenderWidgetContextInterface() {}
 QT_END_NAMESPACE

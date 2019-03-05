@@ -36,8 +36,6 @@
 #include <QtCore/QSharedPointer>
 #include <QtCore/QIODevice>
 
-
-
 QT_BEGIN_NAMESPACE
 // This class is threadsafe.
 class Q_DEMONRUNTIMERENDER_EXPORT QDemonInputStreamFactoryInterface

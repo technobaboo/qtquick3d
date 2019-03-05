@@ -49,14 +49,11 @@ public:
     QAtomicInt ref;
     virtual ~QDemonBufferManagerInterface() {}
     // Path manipulation used to get the final path form a base path plus relative extension
-    virtual QString combineBaseAndRelative(const char *inBase,
-                                           const char *inRelative) = 0;
-    virtual void setImageHasTransparency(QString inSourcePath,
-                                         bool inHasTransparency) = 0;
+    virtual QString combineBaseAndRelative(const char *inBase, const char *inRelative) = 0;
+    virtual void setImageHasTransparency(QString inSourcePath, bool inHasTransparency) = 0;
     virtual bool getImageHasTransparency(QString inSourcePath) const = 0;
     virtual void setImageTransparencyToFalseIfNotSet(QString inSourcePath) = 0;
-    virtual void setInvertImageUVCoords(QString inSourcePath,
-                                        bool inShouldInvertCoords) = 0;
+    virtual void setInvertImageUVCoords(QString inSourcePath, bool inShouldInvertCoords) = 0;
 
     // Returns true if this image has been loaded into memory
     // This call is threadsafe.  Nothing else on this object is guaranteed to be.
@@ -68,8 +65,7 @@ public:
     // to be shown
     // in place of an image that is loading offline.
     // Returns true if the image was aliased, false otherwise.
-    virtual bool aliasImagePath(QString inSourcePath, QString inAliasPath,
-                                bool inIgnoreIfLoaded) = 0;
+    virtual bool aliasImagePath(QString inSourcePath, QString inAliasPath, bool inIgnoreIfLoaded) = 0;
     virtual void unaliasImagePath(QString inSourcePath) = 0;
 
     // Returns the given source path unless the source path is aliased; in which case returns
@@ -79,29 +75,29 @@ public:
     // Can't name this LoadImage because that gets mangled by windows to LoadImageA (uggh)
     // In some cases we need to only scan particular images for transparency.
     virtual QDemonRenderImageTextureData loadRenderImage(QString inImagePath,
-                                              QDemonRef<QDemonLoadedTexture> inTexture,
-                                              bool inForceScanForTransparency = false,
-                                              bool inBsdfMipmaps = false) = 0;
+                                                         QDemonRef<QDemonLoadedTexture> inTexture,
+                                                         bool inForceScanForTransparency = false,
+                                                         bool inBsdfMipmaps = false) = 0;
     virtual QDemonRenderImageTextureData loadRenderImage(QString inSourcePath,
-                                              bool inForceScanForTransparency = false,
-                                              bool inBsdfMipmaps = false) = 0;
+                                                         bool inForceScanForTransparency = false,
+                                                         bool inBsdfMipmaps = false) = 0;
     virtual QDemonRenderMesh *loadMesh(const QString &inSourcePath) = 0;
 
     virtual QDemonRenderMesh *createMesh(const QString &inSourcePath,
-                                    quint8 *inVertData,
-                                    quint32 inNumVerts,
-                                    quint32 inVertStride,
-                                    quint32 *inIndexData,
-                                    quint32 inIndexCount,
-                                    QDemonBounds3 inBounds) = 0;
+                                         quint8 *inVertData,
+                                         quint32 inNumVerts,
+                                         quint32 inVertStride,
+                                         quint32 *inIndexData,
+                                         quint32 inIndexCount,
+                                         QDemonBounds3 inBounds) = 0;
 
     // Remove *all* buffers from the buffer manager;
     virtual void clear() = 0;
     virtual void invalidateBuffer(QString inSourcePath) = 0;
 
     static QDemonRef<QDemonBufferManagerInterface> create(const QDemonRef<QDemonRenderContext> &inRenderContext,
-                                                               const QDemonRef<QDemonInputStreamFactoryInterface> &inInputStreamFactory,
-                                                               const QDemonRef<QDemonPerfTimerInterface> &inTimer);
+                                                          const QDemonRef<QDemonInputStreamFactoryInterface> &inInputStreamFactory,
+                                                          const QDemonRef<QDemonPerfTimerInterface> &inTimer);
 };
 QT_END_NAMESPACE
 

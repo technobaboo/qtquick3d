@@ -38,7 +38,7 @@ QT_BEGIN_NAMESPACE
 class QDemonRenderContextImpl;
 
 ///< A shader program is an object composed of a multiple shaders (vertex, fragment,
-///geometry,....)
+/// geometry,....)
 class QDemonRenderShader
 {
 protected:
@@ -50,41 +50,36 @@ protected:
 
 public:
     /**
-         * @brief constructor
-         *
-         * @param[in] context		Pointer to render context
-         * @param[in] fnd			Pointer to foundation
-         *
-         * @return No return.
-         */
-    QDemonRenderShader(const QDemonRef<QDemonRenderContextImpl> &context,
-                       QDemonConstDataRef<qint8> source,
-                       bool binaryProgram)
-        : m_context(context)
-        , m_backend(context->getBackend())
-        , m_source(source)
-        , m_binary(binaryProgram)
+     * @brief constructor
+     *
+     * @param[in] context		Pointer to render context
+     * @param[in] fnd			Pointer to foundation
+     *
+     * @return No return.
+     */
+    QDemonRenderShader(const QDemonRef<QDemonRenderContextImpl> &context, QDemonConstDataRef<qint8> source, bool binaryProgram)
+        : m_context(context), m_backend(context->getBackend()), m_source(source), m_binary(binaryProgram)
     {
     }
 
     /// @brief destructor
-    virtual ~QDemonRenderShader(){}
+    virtual ~QDemonRenderShader() {}
 
     /**
-         * @brief Query if shader compiled succesfuly
-         *
-         * @return True if shader is valid.
-         */
+     * @brief Query if shader compiled succesfuly
+     *
+     * @return True if shader is valid.
+     */
     virtual bool isValid() = 0;
 
     /**
-         * @brief Get Error Message
-         *
-         * @param[out] messageLength	Pointer to error string
-         * @param[out] messageLength	Size of error meesage
-         *
-         * @return no return
-         */
+     * @brief Get Error Message
+     *
+     * @param[out] messageLength	Pointer to error string
+     * @param[out] messageLength	Size of error meesage
+     *
+     * @return no return
+     */
     virtual void getErrorMessage(qint32 *messageLength, const char *errorMessage)
     {
         // Since we do not have any error message just generate a generic one
@@ -98,11 +93,11 @@ public:
     }
 
     /**
-         * @brief Get Error Message
-         *
-         *
-         * @return error message.
-         */
+     * @brief Get Error Message
+     *
+     *
+     * @return error message.
+     */
     virtual const char *getErrorMessage()
     {
         if (m_binary)

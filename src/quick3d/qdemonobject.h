@@ -23,7 +23,8 @@ class Q_QUICK3D_EXPORT QDemonObject : public QObject, public QQmlParserStatus
     Q_PROPERTY(QDemonObject *parent READ parentItem WRITE setParentItem NOTIFY parentChanged DESIGNABLE false FINAL)
     Q_PRIVATE_PROPERTY(QDemonObject::d_func(), QQmlListProperty<QObject> data READ data DESIGNABLE false)
     Q_PRIVATE_PROPERTY(QDemonObject::d_func(), QQmlListProperty<QObject> resources READ resources DESIGNABLE false)
-    Q_PRIVATE_PROPERTY(QDemonObject::d_func(), QQmlListProperty<QDemonObject> children READ children NOTIFY childrenChanged DESIGNABLE false)
+    Q_PRIVATE_PROPERTY(QDemonObject::d_func(),
+                       QQmlListProperty<QDemonObject> children READ children NOTIFY childrenChanged DESIGNABLE false)
 
     Q_PROPERTY(QByteArray id READ id CONSTANT)
     Q_PROPERTY(QString name READ name WRITE setName)
@@ -34,7 +35,8 @@ class Q_QUICK3D_EXPORT QDemonObject : public QObject, public QQmlParserStatus
     Q_PRIVATE_PROPERTY(QDemonObject::d_func(), QQmlListProperty<QQuickState> states READ states DESIGNABLE false)
     Q_PRIVATE_PROPERTY(QDemonObject::d_func(), QQmlListProperty<QQuickTransition> transitions READ transitions DESIGNABLE false)
     Q_PROPERTY(QString state READ state WRITE setState NOTIFY stateChanged)
-    Q_PRIVATE_PROPERTY(QDemonObject::d_func(), QQmlListProperty<QDemonObject> visibleChildren READ visibleChildren NOTIFY visibleChildrenChanged DESIGNABLE false)
+    Q_PRIVATE_PROPERTY(QDemonObject::d_func(),
+                       QQmlListProperty<QDemonObject> visibleChildren READ visibleChildren NOTIFY visibleChildrenChanged DESIGNABLE false)
 
     Q_CLASSINFO("DefaultProperty", "data")
     Q_CLASSINFO("qt_QmlJSWrapperFactoryMethod", "_q_createJSWrapper(QV4::ExecutionEngine*)")
@@ -63,17 +65,17 @@ public:
     Q_ENUM(Type)
 
     enum ItemChange {
-        ItemChildAddedChange,      // value.item
-        ItemChildRemovedChange,    // value.item
-        ItemSceneChange,           // value.window
-        ItemVisibleHasChanged,     // value.boolValue
-        ItemParentHasChanged,      // value.item
-        ItemOpacityHasChanged,     // value.realValue
+        ItemChildAddedChange, // value.item
+        ItemChildRemovedChange, // value.item
+        ItemSceneChange, // value.window
+        ItemVisibleHasChanged, // value.boolValue
+        ItemParentHasChanged, // value.item
+        ItemOpacityHasChanged, // value.realValue
         ItemActiveFocusHasChanged, // value.boolValue
-        ItemRotationHasChanged,    // value.realValue
+        ItemRotationHasChanged, // value.realValue
         ItemAntialiasingHasChanged, // value.boolValue
         ItemDevicePixelRatioHasChanged, // value.realValue
-        ItemEnabledHasChanged      // value.boolValue
+        ItemEnabledHasChanged // value.boolValue
     };
 
     union ItemChangeData {
@@ -90,7 +92,6 @@ public:
 
     explicit QDemonObject(QDemonObject *parent = nullptr);
     virtual ~QDemonObject() override;
-
 
     QByteArray id() const;
     QString name() const;
@@ -111,13 +112,13 @@ public Q_SLOTS:
     void setName(QString name);
     void update();
 
-    void setParentItem(QDemonObject * parentItem);
+    void setParentItem(QDemonObject *parentItem);
     void setEnabled(bool enabled);
     void setVisible(bool visible);
 
 Q_SIGNALS:
-    void windowChanged(QDemonWindow* window);
-    void parentChanged(QDemonObject* parent); 
+    void windowChanged(QDemonWindow *window);
+    void parentChanged(QDemonObject *parent);
     void enabledChanged(bool enabled);
     void childrenChanged();
     void stateChanged(const QString &);

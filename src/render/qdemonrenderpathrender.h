@@ -45,30 +45,31 @@ class Q_DEMONRENDER_EXPORT QDemonRenderPathRender
     Q_DISABLE_COPY(QDemonRenderPathRender)
 public:
     QAtomicInt ref;
+
 protected:
     QDemonRef<QDemonRenderContextImpl> m_context; ///< pointer to context
     QDemonRef<QDemonRenderBackend> m_backend; ///< pointer to backend
 
 public:
     /**
-         * @brief constructor
-         *
-         * @param[in] context		Pointer to render context
-         * @param[in] fnd			Pointer to foundation
-          * @param[in] range		Number of internal objects
-         *
-         * @return No return.
-         */
+     * @brief constructor
+     *
+     * @param[in] context		Pointer to render context
+     * @param[in] fnd			Pointer to foundation
+     * @param[in] range		Number of internal objects
+     *
+     * @return No return.
+     */
     QDemonRenderPathRender(const QDemonRef<QDemonRenderContextImpl> &context, size_t range);
 
     /// @brief destructor
     ~QDemonRenderPathRender();
 
     /**
-         * @brief get the backend object handle
-         *
-         * @return the backend object handle.
-         */
+     * @brief get the backend object handle
+     *
+     * @return the backend object handle.
+     */
     QDemonRenderBackend::QDemonRenderBackendPathObject getPathHandle() { return m_pathRenderHandle; }
 
     // The render context can create a path specification object.
@@ -85,13 +86,13 @@ public:
     void stencilFill();
 
     /**
-         * @brief static create function
-         *
-         * @param[in] context		Pointer to render context
-         * @param[in] range			Number of internal objects
-         *
-         * @return the backend object handle.
-         */
+     * @brief static create function
+     *
+     * @param[in] context		Pointer to render context
+     * @param[in] range			Number of internal objects
+     *
+     * @return the backend object handle.
+     */
     static QDemonRef<QDemonRenderPathRender> create(const QDemonRef<QDemonRenderContextImpl> &context, size_t range);
 
 private:

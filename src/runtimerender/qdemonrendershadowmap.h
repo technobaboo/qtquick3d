@@ -39,7 +39,8 @@ QT_BEGIN_NAMESPACE
 
 struct QDemonLayerRenderData;
 
-struct ShadowMapModes {
+struct ShadowMapModes
+{
     enum Enum {
         SSM, ///< standard shadow mapping
         VSM, ///< variance shadow mapping
@@ -47,7 +48,8 @@ struct ShadowMapModes {
     };
 };
 
-struct ShadowFilterValues {
+struct ShadowFilterValues
+{
     enum Enum {
         NONE = 1 << 0, ///< hard shadows
         PCF = 1 << 1, ///< Percentage close filtering
@@ -55,7 +57,8 @@ struct ShadowFilterValues {
     };
 };
 
-struct QDemonShadowMapEntry {
+struct QDemonShadowMapEntry
+{
     QDemonShadowMapEntry()
         : m_lightIndex(std::numeric_limits<quint32>::max())
         , m_shadowMapMode(ShadowMapModes::SSM)
@@ -64,11 +67,11 @@ struct QDemonShadowMapEntry {
     }
 
     QDemonShadowMapEntry(quint32 index,
-                    ShadowMapModes::Enum mode,
-                    ShadowFilterValues::Enum filter,
-                    QDemonRef<QDemonRenderTexture2D> depthMap,
-                    QDemonRef<QDemonRenderTexture2D> depthCopy,
-                    QDemonRef<QDemonRenderTexture2D> depthTemp)
+                         ShadowMapModes::Enum mode,
+                         ShadowFilterValues::Enum filter,
+                         QDemonRef<QDemonRenderTexture2D> depthMap,
+                         QDemonRef<QDemonRenderTexture2D> depthCopy,
+                         QDemonRef<QDemonRenderTexture2D> depthTemp)
         : m_lightIndex(index)
         , m_shadowMapMode(mode)
         , m_shadowFilterFlags(filter)
@@ -81,11 +84,11 @@ struct QDemonShadowMapEntry {
     }
 
     QDemonShadowMapEntry(quint32 index,
-                    ShadowMapModes::Enum mode,
-                    ShadowFilterValues::Enum filter,
-                    QDemonRef<QDemonRenderTextureCube> depthCube,
-                    QDemonRef<QDemonRenderTextureCube> cubeTmp,
-                    QDemonRef<QDemonRenderTexture2D> depthTemp)
+                         ShadowMapModes::Enum mode,
+                         ShadowFilterValues::Enum filter,
+                         QDemonRef<QDemonRenderTextureCube> depthCube,
+                         QDemonRef<QDemonRenderTextureCube> cubeTmp,
+                         QDemonRef<QDemonRenderTexture2D> depthTemp)
         : m_lightIndex(index)
         , m_shadowMapMode(mode)
         , m_shadowFilterFlags(filter)
@@ -128,19 +131,19 @@ public:
     ~QDemonRenderShadowMap();
 
     /*
-         * @brief Add a shadow map entry
-         *		  This creates a new shadow map if it does not exist or changed
-         *
-         * @param[in] index		shadow map entry index
-         * @param[in] width		shadow map width
-         * @param[in] height	shadow map height
-         * @param[in] format	shadow map format
-         * @param[in] samples	shadow map sample count
-         * @param[in] mode		shadow map mode like SSM, VCM
-         * @param[in] filter	soft shadow map mode filter like PCF
-         *
-         * @ return no return
-         */
+     * @brief Add a shadow map entry
+     *		  This creates a new shadow map if it does not exist or changed
+     *
+     * @param[in] index		shadow map entry index
+     * @param[in] width		shadow map width
+     * @param[in] height	shadow map height
+     * @param[in] format	shadow map format
+     * @param[in] samples	shadow map sample count
+     * @param[in] mode		shadow map mode like SSM, VCM
+     * @param[in] filter	soft shadow map mode filter like PCF
+     *
+     * @ return no return
+     */
     void addShadowMapEntry(quint32 index,
                            quint32 width,
                            quint32 height,
@@ -150,19 +153,19 @@ public:
                            ShadowFilterValues::Enum filter);
 
     /*
-         * @brief Get a shadow map entry
-         *
-         * @param[in] index		shadow map entry index
-         *
-         * @ return shadow map entry or nullptr
-         */
+     * @brief Get a shadow map entry
+     *
+     * @param[in] index		shadow map entry index
+     *
+     * @ return shadow map entry or nullptr
+     */
     QDemonShadowMapEntry *getShadowMapEntry(int index);
 
     /*
-         * @brief Get shadow map entry count
-         *
-         * @ return count of shadow map entries
-         */
+     * @brief Get shadow map entry count
+     *
+     * @ return count of shadow map entries
+     */
     quint32 getShadowMapEntryCount() { return m_shadowMapList.size(); }
 
     static QDemonRef<QDemonRenderShadowMap> create(QDemonRenderContextInterface *inContext);

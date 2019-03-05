@@ -4,15 +4,9 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonMaterial::QDemonMaterial()
-{
+QDemonMaterial::QDemonMaterial() {}
 
-}
-
-QDemonMaterial::~QDemonMaterial()
-{
-
-}
+QDemonMaterial::~QDemonMaterial() {}
 
 QDemonImage *QDemonMaterial::lightmapIndirect() const
 {
@@ -98,7 +92,6 @@ void QDemonMaterial::setEmissiveMap2(QDemonImage *emissiveMap2)
     emit emissiveMap2Changed(m_emissiveMap2);
     update();
 }
-
 
 void QDemonMaterial::setDisplacementMap(QDemonImage *displacementMap)
 {

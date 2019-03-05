@@ -98,11 +98,9 @@ QDemonLayerRenderHelper::QDemonLayerRenderHelper(const QRectF &inPresentationVie
                 width *= m_scaleFactor.x();
         }
 
-        float horzMin = getMinValue(inPresentationViewport.x(), inPresentationViewport.width(),
-                                    left, m_layer->leftUnits);
+        float horzMin = getMinValue(inPresentationViewport.x(), inPresentationViewport.width(), left, m_layer->leftUnits);
         float horzWidth = getValueLen(inPresentationViewport.width(), width, m_layer->widthUnits);
-        float horzMax = getMaxValue(inPresentationViewport.x(), inPresentationViewport.width(),
-                                    right, m_layer->rightUnits);
+        float horzMax = getMaxValue(inPresentationViewport.x(), inPresentationViewport.width(), right, m_layer->rightUnits);
 
         switch (inLayer.horizontalFieldValues) {
         case HorizontalFieldValues::LeftWidth:
@@ -136,11 +134,9 @@ QDemonLayerRenderHelper::QDemonLayerRenderHelper(const QRectF &inPresentationVie
                 height *= m_scaleFactor.y();
         }
 
-        float vertMin = getMinValue(inPresentationViewport.y(), inPresentationViewport.height(),
-                                    bottom, m_layer->bottomUnits);
+        float vertMin = getMinValue(inPresentationViewport.y(), inPresentationViewport.height(), bottom, m_layer->bottomUnits);
         float vertWidth = getValueLen(inPresentationViewport.height(), height, m_layer->heightUnits);
-        float vertMax = getMaxValue(inPresentationViewport.y(), inPresentationViewport.height(),
-                                    top, m_layer->topUnits);
+        float vertMax = getMaxValue(inPresentationViewport.y(), inPresentationViewport.height(), top, m_layer->topUnits);
 
         switch (inLayer.verticalFieldValues) {
         case VerticalFieldValues::HeightBottom:
@@ -192,8 +188,7 @@ QSize QDemonLayerRenderHelper::getTextureDimensions() const
 {
     quint32 width = (quint32)m_viewport.width();
     quint32 height = (quint32)m_viewport.height();
-    return QSize(QDemonTextRendererInterface::nextMultipleOf4(width),
-                 QDemonTextRendererInterface::nextMultipleOf4(height));
+    return QSize(QDemonTextRendererInterface::nextMultipleOf4(width), QDemonTextRendererInterface::nextMultipleOf4(height));
 }
 
 QDemonCameraGlobalCalculationResult QDemonLayerRenderHelper::setupCameraForRender(QDemonRenderCamera &inCamera)
@@ -220,21 +215,20 @@ QDemonOption<QVector2D> QDemonLayerRenderHelper::getLayerMouseCoords(const QVect
     float theRenderRectHeight = m_viewport.height();
     // Crop the mouse to the rect.  Apply no further translations.
     if (inForceIntersect == false
-            && (theLocalMouse.x() < 0.0f || theLocalMouse.x() >= theRenderRectWidth
-                || theLocalMouse.y() < 0.0f || theLocalMouse.y() >= theRenderRectHeight)) {
+        && (theLocalMouse.x() < 0.0f || theLocalMouse.x() >= theRenderRectWidth || theLocalMouse.y() < 0.0f
+            || theLocalMouse.y() >= theRenderRectHeight)) {
         return QDemonEmpty();
     }
     return theLocalMouse;
 }
 
 QDemonOption<QDemonRenderRay> QDemonLayerRenderHelper::getPickRay(const QVector2D &inMouseCoords,
-                                            const QVector2D &inWindowDimensions,
-                                            bool inForceIntersect) const
+                                                                  const QVector2D &inWindowDimensions,
+                                                                  bool inForceIntersect) const
 {
     if (m_camera == nullptr)
         return QDemonEmpty();
-    QDemonOption<QVector2D> theCoords(
-                getLayerMouseCoords(inMouseCoords, inWindowDimensions, inForceIntersect));
+    QDemonOption<QVector2D> theCoords(getLayerMouseCoords(inMouseCoords, inWindowDimensions, inForceIntersect));
     if (theCoords.hasValue()) {
         // The cameras projection is different if we are onscreen vs. offscreen.
         // When offscreen, we need to move the mouse coordinates into a local space

@@ -38,12 +38,7 @@ QT_BEGIN_NAMESPACE
 
 struct AdvancedBlendModes
 {
-    enum Enum {
-        None = 0,
-        Overlay,
-        ColorBurn,
-        ColorDodge
-    };
+    enum Enum { None = 0, Overlay, ColorBurn, ColorDodge };
 };
 struct QDemonLayerRenderData : public QDemonLayerRenderPreparationData
 {
@@ -174,11 +169,9 @@ protected:
                        const QDemonRenderCamera &inCamera,
                        QDemonResourceFrameBuffer *theFB = nullptr);
 #ifdef ADVANCED_BLEND_SW_FALLBACK
-    //Functions for advanced blending mode fallback
+    // Functions for advanced blending mode fallback
     void setupDrawFB(bool depthEnabled);
-    void blendAdvancedToFB(DefaultMaterialBlendMode::Enum blendMode,
-                           bool depthEnabled,
-                           QDemonResourceFrameBuffer *theFB);
+    void blendAdvancedToFB(DefaultMaterialBlendMode::Enum blendMode, bool depthEnabled, QDemonResourceFrameBuffer *theFB);
 #endif
 };
 QT_END_NAMESPACE

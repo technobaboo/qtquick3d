@@ -55,7 +55,7 @@ struct QDemonGLHardPropertyContext
     bool m_multisampleEnabled = false;
     QRect m_scissorRect;
     QRect m_viewport;
-    QVector4D m_clearColor { 0.0, 0.0, 0.0, 1.0 };
+    QVector4D m_clearColor{ 0.0, 0.0, 0.0, 1.0 };
 };
 QT_END_NAMESPACE
 #endif

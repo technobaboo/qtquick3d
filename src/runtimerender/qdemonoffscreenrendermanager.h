@@ -71,9 +71,7 @@ struct QDemonOffscreenRendererEnvironment
     {
     }
 
-    QDemonOffscreenRendererEnvironment(quint32 inWidth,
-                                       quint32 inHeight,
-                                       QDemonRenderTextureFormats::Enum inFormat)
+    QDemonOffscreenRendererEnvironment(quint32 inWidth, quint32 inHeight, QDemonRenderTextureFormats::Enum inFormat)
         : width(inWidth)
         , height(inHeight)
         , format(inFormat)
@@ -89,12 +87,7 @@ struct QDemonOffscreenRendererEnvironment
                                        QDemonOffscreenRendererDepthValues::Enum inDepth,
                                        bool inStencil,
                                        AAModeValues::Enum inAAMode)
-        : width(inWidth)
-        , height(inHeight)
-        , format(inFormat)
-        , depth(inDepth)
-        , stencil(inStencil)
-        , msaaMode(inAAMode)
+        : width(inWidth), height(inHeight), format(inFormat), depth(inDepth), stencil(inStencil), msaaMode(inAAMode)
     {
     }
 
@@ -115,8 +108,7 @@ struct QDemonOffscreenRenderFlags
     bool hasChangedSinceLastFrame = false;
     constexpr QDemonOffscreenRenderFlags() = default;
     constexpr QDemonOffscreenRenderFlags(bool transparency, bool hasChanged)
-        : hasTransparency(transparency)
-        , hasChangedSinceLastFrame(hasChanged)
+        : hasTransparency(transparency), hasChangedSinceLastFrame(hasChanged)
     {
     }
 };
@@ -132,6 +124,7 @@ public:
     public:
         virtual void onOffscreenRendererInitialized(const QString &id) = 0;
         virtual void onOffscreenRendererFrame(const QString &id) = 0;
+
     protected:
         virtual ~QDemonOffscreenRendererCallbackInterface();
     };
@@ -158,11 +151,13 @@ public:
     // If we do so, the scale factor tells the subpresentation renderer how much the system has
     // scaled.
     virtual void render(const QDemonOffscreenRendererEnvironment &inEnvironment,
-                        QDemonRenderContext &inRenderContext, QVector2D inPresentationScaleFactor,
+                        QDemonRenderContext &inRenderContext,
+                        QVector2D inPresentationScaleFactor,
                         QDemonRenderScene::RenderClearCommand inColorBufferNeedsClear,
                         const QDemonRenderInstanceId instanceId) = 0;
     virtual void renderWithClear(const QDemonOffscreenRendererEnvironment &inEnvironment,
-                                 QDemonRenderContext &inRenderContext, QVector2D inPresentationScaleFactor,
+                                 QDemonRenderContext &inRenderContext,
+                                 QVector2D inPresentationScaleFactor,
                                  QDemonRenderScene::RenderClearCommand inColorBufferNeedsClear,
                                  QVector3D inclearColor,
                                  const QDemonRenderInstanceId instanceId) = 0;
@@ -179,9 +174,7 @@ public:
     // If you return true, then we will assume that you swallowed the pick and will continue no
     // further.
     // else we will assume you did not and will continue the picking algorithm.
-    virtual bool pick(const QVector2D &inMouseCoords,
-                      const QVector2D &inViewportDimensions,
-                      const QDemonRenderInstanceId instanceId) = 0;
+    virtual bool pick(const QVector2D &inMouseCoords, const QVector2D &inViewportDimensions, const QDemonRenderInstanceId instanceId) = 0;
 };
 
 struct QDemonOffscreenRenderResult
@@ -195,10 +188,7 @@ struct QDemonOffscreenRenderResult
                                 QDemonRef<QDemonRenderTexture2D> inTexture,
                                 bool inTrans,
                                 bool inDirty)
-        : renderer(inRenderer)
-        , texture(inTexture)
-        , hasTransparency(inTrans)
-        , hasChangedSinceLastFrame(inDirty)
+        : renderer(inRenderer), texture(inTexture), hasTransparency(inTrans), hasChangedSinceLastFrame(inDirty)
     {
     }
     QDemonOffscreenRenderResult() = default;
@@ -207,12 +197,12 @@ struct QDemonOffscreenRenderResult
 struct QDemonOffscreenRendererKey;
 
 /**
-     *	The offscreen render manager attempts to satisfy requests for a given image under a given
-     *key.
-     *	Renderers are throttled such that they render at most once per frame and potentially less
-     *than
-     *	that if they don't require a new render.
-     */
+ *	The offscreen render manager attempts to satisfy requests for a given image under a given
+ *key.
+ *	Renderers are throttled such that they render at most once per frame and potentially less
+ *than
+ *	that if they don't require a new render.
+ */
 class Q_DEMONRUNTIMERENDER_EXPORT QDemonOffscreenRenderManagerInterface
 {
 public:
@@ -237,7 +227,8 @@ public:
     virtual void beginFrame() = 0;
     virtual void endFrame() = 0;
 
-    static QDemonRef<QDemonOffscreenRenderManagerInterface> createOffscreenRenderManager(const QDemonRef<QDemonResourceManagerInterface> &inManager, QDemonRenderContextInterface *inContext);
+    static QDemonRef<QDemonOffscreenRenderManagerInterface> createOffscreenRenderManager(const QDemonRef<QDemonResourceManagerInterface> &inManager,
+                                                                                         QDemonRenderContextInterface *inContext);
 };
 
 QT_END_NAMESPACE

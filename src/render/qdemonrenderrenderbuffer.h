@@ -42,11 +42,7 @@ struct QDemonRenderRenderBufferDimensions
     quint32 m_width = 0; ///< buffer width
     quint32 m_height = 0; ///< buffer height
 
-    QDemonRenderRenderBufferDimensions(quint32 w, quint32 h)
-        : m_width(w)
-        , m_height(h)
-    {
-    }
+    QDemonRenderRenderBufferDimensions(quint32 w, quint32 h) : m_width(w), m_height(h) {}
     QDemonRenderRenderBufferDimensions() = default;
 };
 
@@ -54,6 +50,7 @@ class QDemonRenderRenderBuffer : public QDemonRenderImplemented
 {
 public:
     QAtomicInt ref;
+
 private:
     QDemonRef<QDemonRenderContextImpl> m_context; ///< pointer to context
     QDemonRef<QDemonRenderBackend> m_backend; ///< pointer to backend
@@ -65,16 +62,16 @@ private:
 
 public:
     /**
-         * @brief constructor
-         *
-         * @param[in] context		Pointer to context
-         * @param[in] fnd			Pointer to foundation
-         * @param[in] format		Renderbuffer format
-         * @param[in] width			Renderbuffer width
-         * @param[in] height		Renderbuffer height
-         *
-         * @return No return.
-         */
+     * @brief constructor
+     *
+     * @param[in] context		Pointer to context
+     * @param[in] fnd			Pointer to foundation
+     * @param[in] format		Renderbuffer format
+     * @param[in] width			Renderbuffer width
+     * @param[in] height		Renderbuffer height
+     *
+     * @return No return.
+     */
     QDemonRenderRenderBuffer(const QDemonRef<QDemonRenderContextImpl> &context,
                              QDemonRenderRenderBufferFormats::Enum format,
                              quint32 width,
@@ -84,65 +81,60 @@ public:
     virtual ~QDemonRenderRenderBuffer();
 
     /**
-         * @brief query buffer format
-         *
-         *
-         * @return buffer format
-         */
-    virtual QDemonRenderRenderBufferFormats::Enum getStorageFormat() const
-    {
-        return m_storageFormat;
-    }
+     * @brief query buffer format
+     *
+     *
+     * @return buffer format
+     */
+    virtual QDemonRenderRenderBufferFormats::Enum getStorageFormat() const { return m_storageFormat; }
 
     /**
-         * @brief query buffer dimension
-         *
-         *
-         * @return QDemonRenderRenderBufferDimensions object
-         */
+     * @brief query buffer dimension
+     *
+     *
+     * @return QDemonRenderRenderBufferDimensions object
+     */
     virtual QDemonRenderRenderBufferDimensions getDimensions() const
     {
         return QDemonRenderRenderBufferDimensions(m_width, m_height);
     }
 
     /**
-         * @brief constructor
-         *
-         * @param[in] inDimensions		A dimension object
-         *
-         * @return buffer format
-         */
+     * @brief constructor
+     *
+     * @param[in] inDimensions		A dimension object
+     *
+     * @return buffer format
+     */
     virtual void setDimensions(const QDemonRenderRenderBufferDimensions &inDimensions);
 
     /**
-         * @brief static creator function
-         *
-         * @param[in] context		Pointer to context
-         * @param[in] format		Renderbuffer format
-         * @param[in] width			Renderbuffer width
-         * @param[in] height		Renderbuffer height
-         *
-         * @return No return.
-         */
+     * @brief static creator function
+     *
+     * @param[in] context		Pointer to context
+     * @param[in] format		Renderbuffer format
+     * @param[in] width			Renderbuffer width
+     * @param[in] height		Renderbuffer height
+     *
+     * @return No return.
+     */
     static QDemonRef<QDemonRenderRenderBuffer> create(const QDemonRef<QDemonRenderContextImpl> &context,
-                                                           QDemonRenderRenderBufferFormats::Enum format, quint32 width,
-                                                           quint32 height);
+                                                      QDemonRenderRenderBufferFormats::Enum format,
+                                                      quint32 width,
+                                                      quint32 height);
 
     /**
-         * @brief get the backend object handle
-         *
-         * @return the backend object handle.
-         */
+     * @brief get the backend object handle
+     *
+     * @return the backend object handle.
+     */
     virtual QDemonRenderBackend::QDemonRenderBackendRenderbufferObject getRenderBuffertHandle()
     {
         return m_bufferHandle;
     }
 
     // this will be obsolete
-    const void *getImplementationHandle() const override
-    {
-        return reinterpret_cast<void *>(m_bufferHandle);
-    }
+    const void *getImplementationHandle() const override { return reinterpret_cast<void *>(m_bufferHandle); }
 };
 
 QT_END_NAMESPACE

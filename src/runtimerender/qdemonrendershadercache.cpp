@@ -44,16 +44,16 @@
 QT_BEGIN_NAMESPACE
 
 namespace {
-//using QDemonRenderContextScopedProperty;
-//const char *TessellationEnabledStr = "TessellationStageEnabled";
-//const char *GeometryEnabledStr = "GeometryStageEnabled";
-//inline void AppendFlagValue(QString &inStr, const char *flag)
+// using QDemonRenderContextScopedProperty;
+// const char *TessellationEnabledStr = "TessellationStageEnabled";
+// const char *GeometryEnabledStr = "GeometryStageEnabled";
+// inline void AppendFlagValue(QString &inStr, const char *flag)
 //{
 //    if (inStr.length())
 //        inStr.append(QStringLiteral(","));
 //    inStr.append(QString::fromLocal8Bit(flag));
 //}
-//inline void CacheFlagsToStr(const QDemonShaderCacheProgramFlags &inFlags, QString &inString)
+// inline void CacheFlagsToStr(const QDemonShaderCacheProgramFlags &inFlags, QString &inString)
 //{
 //    inString.clear();
 //    if (inFlags.isTessellationEnabled())
@@ -67,7 +67,7 @@ struct ShaderType
     enum Enum { Vertex, TessControl, TessEval, Fragment, Geometry, Compute };
 };
 
-//inline ShaderType::Enum StringToShaderType(QString &inShaderType)
+// inline ShaderType::Enum StringToShaderType(QString &inShaderType)
 //{
 //    ShaderType::Enum retval = ShaderType::Vertex;
 
@@ -90,7 +90,7 @@ struct ShaderType
 //    return retval;
 //}
 
-//inline QDemonShaderCacheProgramFlags CacheFlagsToStr(const QString &inString)
+// inline QDemonShaderCacheProgramFlags CacheFlagsToStr(const QString &inString)
 //{
 //    QDemonShaderCacheProgramFlags retval;
 //    if (inString.contains(QString::fromLocal8Bit(TessellationEnabledStr)))
@@ -100,7 +100,7 @@ struct ShaderType
 //    return retval;
 //}
 
-//typedef QPair<const char *, QDemonRenderContextValues::Enum> TStringToContextValuePair;
+// typedef QPair<const char *, QDemonRenderContextValues::Enum> TStringToContextValuePair;
 
 /*GLES2	= 1 << 0,
 GL2		= 1 << 1,
@@ -108,7 +108,7 @@ GLES3	= 1 << 2,
 GL3		= 1 << 3,
 GL4		= 1 << 4,
 NullContext = 1 << 5,*/
-//TStringToContextValuePair g_StringToContextTypeValue[] = {
+// TStringToContextValuePair g_StringToContextTypeValue[] = {
 //    TStringToContextValuePair("GLES2", QDemonRenderContextValues::GLES2),
 //    TStringToContextValuePair("GL2", QDemonRenderContextValues::GL2),
 //    TStringToContextValuePair("GLES3", QDemonRenderContextValues::GLES3),
@@ -118,10 +118,10 @@ NullContext = 1 << 5,*/
 //    TStringToContextValuePair("NullContext", QDemonRenderContextValues::NullContext),
 //};
 
-//size_t g_NumStringToContextValueEntries =
+// size_t g_NumStringToContextValueEntries =
 //        sizeof(g_StringToContextTypeValue) / sizeof(*g_StringToContextTypeValue);
 
-//inline void ContextTypeToString(QDemonRenderContextType inType,
+// inline void ContextTypeToString(QDemonRenderContextType inType,
 //                                QString &outContextType)
 //{
 //    outContextType.clear();
@@ -134,7 +134,7 @@ NullContext = 1 << 5,*/
 //    }
 //}
 
-//inline QDemonRenderContextType StringToContextType(const QString &inContextType)
+// inline QDemonRenderContextType StringToContextType(const QString &inContextType)
 //{
 //    QDemonRenderContextType retval;
 //    char tempBuffer[128];
@@ -191,21 +191,19 @@ struct ShaderCache : public QDemonShaderCacheInterface
     QDemonShaderCacheKey m_tempKey;
 
     // ### Shader Chache Writing Code is disabled
-    //QDemonRef<IDOMWriter> m_ShaderCache;
+    // QDemonRef<IDOMWriter> m_ShaderCache;
     QDemonRef<QDemonInputStreamFactoryInterface> m_inputStreamFactory;
     bool m_shaderCompilationEnabled;
 
     ShaderCache(QDemonRef<QDemonRenderContext> ctx,
                 QDemonRef<QDemonInputStreamFactoryInterface> inInputStreamFactory,
                 QDemonRef<QDemonPerfTimerInterface> inPerfTimer)
-        : m_renderContext(ctx)
-        , m_perfTimer(inPerfTimer)
-        , m_inputStreamFactory(inInputStreamFactory)
-        , m_shaderCompilationEnabled(true)
+        : m_renderContext(ctx), m_perfTimer(inPerfTimer), m_inputStreamFactory(inInputStreamFactory), m_shaderCompilationEnabled(true)
     {
     }
 
-    QDemonRef<QDemonRenderShaderProgram> getProgram(const QByteArray &inKey, const QVector<QDemonShaderPreprocessorFeature> &inFeatures) override
+    QDemonRef<QDemonRenderShaderProgram> getProgram(const QByteArray &inKey,
+                                                    const QVector<QDemonShaderPreprocessorFeature> &inFeatures) override
     {
         m_tempKey.m_key = inKey;
         m_tempKey.m_features = inFeatures;
@@ -219,7 +217,7 @@ struct ShaderCache : public QDemonShaderCacheInterface
     void addBackwardCompatibilityDefines(ShaderType::Enum shaderType)
     {
         if (shaderType == ShaderType::Vertex || shaderType == ShaderType::TessControl
-                || shaderType == ShaderType::TessEval || shaderType == ShaderType::Geometry) {
+            || shaderType == ShaderType::TessEval || shaderType == ShaderType::Geometry) {
             m_insertStr += "#define attribute in\n";
             m_insertStr += "#define varying out\n";
         } else if (shaderType == ShaderType::Fragment) {
@@ -254,8 +252,7 @@ struct ShaderCache : public QDemonShaderCacheInterface
                     m_insertStr += "#extension GL_KHR_blend_equation_advanced : enable\n";
             }
         } else {
-            if (shaderType == ShaderType::Vertex || shaderType == ShaderType::Fragment
-                    || shaderType == ShaderType::Geometry) {
+            if (shaderType == ShaderType::Vertex || shaderType == ShaderType::Fragment || shaderType == ShaderType::Geometry) {
                 if (m_renderContext->getRenderContextType() != QDemonRenderContextValues::GLES2) {
                     m_insertStr += "#extension GL_ARB_gpu_shader5 : enable\n";
                     m_insertStr += "#extension GL_ARB_shading_language_420pack : enable\n";
@@ -274,7 +271,8 @@ struct ShaderCache : public QDemonShaderCacheInterface
         }
     }
 
-    void addShaderPreprocessor(QByteArray &str, const QByteArray &inKey,
+    void addShaderPreprocessor(QByteArray &str,
+                               const QByteArray &inKey,
                                ShaderType::Enum shaderType,
                                const QVector<QDemonShaderPreprocessorFeature> &inFeatures)
     {
@@ -331,10 +329,10 @@ struct ShaderCache : public QDemonShaderCacheInterface
             if (QDemonRendererInterface::isGlEs3Context(m_renderContext->getRenderContextType())) {
                 m_insertStr.append("precision highp float;\n"
                                    "precision highp int;\n");
-                if( m_renderContext->getRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::gpuShader5) ) {
+                if (m_renderContext->getRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::gpuShader5)) {
                     m_insertStr.append("precision mediump sampler2D;\n"
-                                                      "precision mediump sampler2DArray;\n"
-                                                      "precision mediump sampler2DShadow;\n");
+                                       "precision mediump sampler2DArray;\n"
+                                       "precision mediump sampler2DShadow;\n");
                     if (m_renderContext->isShaderImageLoadStoreSupported()) {
                         m_insertStr.append("precision mediump image2D;\n");
                     }
@@ -344,8 +342,8 @@ struct ShaderCache : public QDemonShaderCacheInterface
             } else {
                 // GLES2
                 m_insertStr.append("precision mediump float;\n"
-                                                  "precision mediump int;\n"
-                                                  "#define texture texture2D\n");
+                                   "precision mediump int;\n"
+                                   "#define texture texture2D\n");
                 if (m_renderContext->isTextureLodSupported())
                     m_insertStr.append("#define textureLod texture2DLodEXT\n");
                 else
@@ -399,11 +397,16 @@ struct ShaderCache : public QDemonShaderCacheInterface
         }
     }
     // Compile this program overwriting any existing ones.
-    QDemonRef<QDemonRenderShaderProgram> forceCompileProgram(const QByteArray &inKey, const QByteArray &inVert, const QByteArray &inFrag,
-                                                                  const QByteArray &inTessCtrl, const QByteArray &inTessEval, const QByteArray &inGeom,
-                                                                  const QDemonShaderCacheProgramFlags &inFlags,
-                                                                  const QVector<QDemonShaderPreprocessorFeature> &inFeatures,
-                                                                  bool separableProgram, bool fromDisk = false) override
+    QDemonRef<QDemonRenderShaderProgram> forceCompileProgram(const QByteArray &inKey,
+                                                             const QByteArray &inVert,
+                                                             const QByteArray &inFrag,
+                                                             const QByteArray &inTessCtrl,
+                                                             const QByteArray &inTessEval,
+                                                             const QByteArray &inGeom,
+                                                             const QDemonShaderCacheProgramFlags &inFlags,
+                                                             const QVector<QDemonShaderPreprocessorFeature> &inFeatures,
+                                                             bool separableProgram,
+                                                             bool fromDisk = false) override
     {
         if (m_shaderCompilationEnabled == false)
             return nullptr;
@@ -412,14 +415,12 @@ struct ShaderCache : public QDemonShaderCacheInterface
         tempKey.generateHashCode();
 
         if (fromDisk) {
-            qCInfo(TRACE_INFO) << "Loading from persistent shader cache: '<"
-                               << tempKey.m_key << ">'";
+            qCInfo(TRACE_INFO) << "Loading from persistent shader cache: '<" << tempKey.m_key << ">'";
         } else {
-            qCInfo(TRACE_INFO) << "Compiling into shader cache: '"
-                               << tempKey.m_key << ">'";
+            qCInfo(TRACE_INFO) << "Compiling into shader cache: '" << tempKey.m_key << ">'";
         }
 
-        //SStackPerfTimer __perfTimer(m_PerfTimer, "Shader Compilation");
+        // SStackPerfTimer __perfTimer(m_PerfTimer, "Shader Compilation");
         m_vertexCode = inVert;
         m_tessCtrlCode = inTessCtrl;
         m_tessEvalCode = inTessEval;
@@ -440,18 +441,20 @@ struct ShaderCache : public QDemonShaderCacheInterface
         if (inFlags.isGeometryShaderEnabled())
             addShaderPreprocessor(m_geometryCode, inKey, ShaderType::Geometry, inFeatures);
 
-        auto shaderProgram = m_renderContext->compileSource(inKey.constData(),
-                                                            m_vertexCode.constData(),
-                                                            quint32(m_vertexCode.size()),
-                                                            m_fragmentCode.constData(),
-                                                            quint32(m_fragmentCode.size()),
-                                                            m_tessCtrlCode.constData(),
-                                                            quint32(m_tessCtrlCode.size()),
-                                                            m_tessEvalCode.constData(),
-                                                            quint32(m_tessEvalCode.size()),
-                                                            m_geometryCode.constData(),
-                                                            quint32(m_geometryCode.size()),
-                                                            separableProgram).m_shader;
+        auto shaderProgram = m_renderContext
+                                     ->compileSource(inKey.constData(),
+                                                     m_vertexCode.constData(),
+                                                     quint32(m_vertexCode.size()),
+                                                     m_fragmentCode.constData(),
+                                                     quint32(m_fragmentCode.size()),
+                                                     m_tessCtrlCode.constData(),
+                                                     quint32(m_tessCtrlCode.size()),
+                                                     m_tessEvalCode.constData(),
+                                                     quint32(m_tessEvalCode.size()),
+                                                     m_geometryCode.constData(),
+                                                     quint32(m_geometryCode.size()),
+                                                     separableProgram)
+                                     .m_shader;
         m_shaders.insert(tempKey, shaderProgram);
         if (shaderProgram) {
             // ### Shader Chache Writing Code is disabled
@@ -500,18 +503,21 @@ struct ShaderCache : public QDemonShaderCacheInterface
         return shaderProgram;
     }
 
-    virtual QDemonRef<QDemonRenderShaderProgram> compileProgram(const QByteArray &inKey, const QByteArray &inVert, const QByteArray &inFrag,
-                                                                     const QByteArray &inTessCtrl, const QByteArray &inTessEval, const QByteArray &inGeom,
-                                                                     const QDemonShaderCacheProgramFlags &inFlags,
-                                                                     const QVector<QDemonShaderPreprocessorFeature> &inFeatures, bool separableProgram) override
+    virtual QDemonRef<QDemonRenderShaderProgram> compileProgram(const QByteArray &inKey,
+                                                                const QByteArray &inVert,
+                                                                const QByteArray &inFrag,
+                                                                const QByteArray &inTessCtrl,
+                                                                const QByteArray &inTessEval,
+                                                                const QByteArray &inGeom,
+                                                                const QDemonShaderCacheProgramFlags &inFlags,
+                                                                const QVector<QDemonShaderPreprocessorFeature> &inFeatures,
+                                                                bool separableProgram) override
     {
         QDemonRef<QDemonRenderShaderProgram> theProgram = getProgram(inKey, inFeatures);
         if (theProgram)
             return theProgram;
 
-        QDemonRef<QDemonRenderShaderProgram> retval =
-                forceCompileProgram(inKey, inVert, inFrag, inTessCtrl, inTessEval, inGeom, inFlags,
-                                    inFeatures, separableProgram);
+        QDemonRef<QDemonRenderShaderProgram> retval = forceCompileProgram(inKey, inVert, inFrag, inTessCtrl, inTessEval, inGeom, inFlags, inFeatures, separableProgram);
         // ### Shader Chache Writing Code is disabled
         //        if (m_CacheFilePath.toLocal8Bit().constData() && m_ShaderCache && m_ShaderCompilationEnabled) {
         //            CFileSeekableIOStream theStream(m_CacheFilePath.toLocal8Bit().constData(), FileWriteFlags());
@@ -641,10 +647,10 @@ struct ShaderCache : public QDemonShaderCacheInterface
         //                                        && (loadFragmentData.size() || loadGeometryData.size())) {
 
         //                                    QDemonRef<QDemonRenderShaderProgram> theShader = ForceCompileProgram(
-        //                                                theKey, loadVertexData.toLocal8Bit().constData(), loadFragmentData.toLocal8Bit().constData(),
-        //                                                loadTessControlData.toLocal8Bit().constData(), loadTessEvalData.toLocal8Bit().constData(),
-        //                                                loadGeometryData.toLocal8Bit().constData(), theFlags,
-        //                                                theFeatures, false, true /*fromDisk*/);
+        //                                                theKey, loadVertexData.toLocal8Bit().constData(),
+        //                                                loadFragmentData.toLocal8Bit().constData(), loadTessControlData.toLocal8Bit().constData(),
+        //                                                loadTessEvalData.toLocal8Bit().constData(), loadGeometryData.toLocal8Bit().constData(),
+        //                                                theFlags, theFeatures, false, true /*fromDisk*/);
         //                                    // If something doesn't save or load correctly, get the runtime
         //                                    // to re-generate.
         //                                    if (!theShader)
@@ -661,7 +667,7 @@ struct ShaderCache : public QDemonShaderCacheInterface
     bool isShaderCachePersistenceEnabled() const override
     {
         // ### Shader Chache Writing Code is disabled
-        //return m_ShaderCache != nullptr;
+        // return m_ShaderCache != nullptr;
         return false;
     }
 
@@ -680,8 +686,7 @@ uint hashShaderFeatureSet(QVector<QDemonShaderPreprocessorFeature> inFeatureSet)
         // But we need to bind the feature flag together with its name, so that the flags will
         // influence
         // the final hash not only by the true-value count.
-        retval = retval
-                ^ (qHash(inFeatureSet[idx].name) * qHash(inFeatureSet[idx].enabled));
+        retval = retval ^ (qHash(inFeatureSet[idx].name) * qHash(inFeatureSet[idx].enabled));
     }
     return retval;
 }
@@ -696,14 +701,11 @@ bool QDemonShaderPreprocessorFeature::operator==(const QDemonShaderPreprocessorF
     return name == other.name && enabled == other.enabled;
 }
 
-QDemonShaderCacheInterface::~QDemonShaderCacheInterface()
-{
-
-}
+QDemonShaderCacheInterface::~QDemonShaderCacheInterface() {}
 
 QDemonRef<QDemonShaderCacheInterface> QDemonShaderCacheInterface::createShaderCache(QDemonRef<QDemonRenderContext> inContext,
-                                                                                         QDemonRef<QDemonInputStreamFactoryInterface> inInputStreamFactory,
-                                                                                         QDemonRef<QDemonPerfTimerInterface> inPerfTimer)
+                                                                                    QDemonRef<QDemonInputStreamFactoryInterface> inInputStreamFactory,
+                                                                                    QDemonRef<QDemonPerfTimerInterface> inPerfTimer)
 {
     return QDemonRef<ShaderCache>(new ShaderCache(inContext, inInputStreamFactory, inPerfTimer));
 }

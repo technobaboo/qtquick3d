@@ -47,15 +47,8 @@ namespace {
 class QDemonInputStream : public QFile
 {
 public:
-
-    QDemonInputStream(const QString &inPath)
-        : QFile(inPath)
-        , m_path(inPath)
-    {
-    }
-    virtual ~QDemonInputStream() override
-    {
-    }
+    QDemonInputStream(const QString &inPath) : QFile(inPath), m_path(inPath) {}
+    virtual ~QDemonInputStream() override {}
     QString path() const { return m_path; }
 
 private:
@@ -75,19 +68,17 @@ struct QDemonInputStreamFactory : public QDemonInputStreamFactoryInterface
             QDir::addSearchPath(Q3DSTUDIO_TAG, QStringLiteral(":/"));
     }
 
-    QFileInfo matchCaseInsensitiveFile(const QString& file)
+    QFileInfo matchCaseInsensitiveFile(const QString &file)
     {
-//        qCWarning(WARNING, PERF_INFO, "Case-insensitive matching with file: %s",
-//                  file.toLatin1().constData());
+        //        qCWarning(WARNING, PERF_INFO, "Case-insensitive matching with file: %s",
+        //                  file.toLatin1().constData());
         const QStringList searchDirectories = QDir::searchPaths(Q3DSTUDIO_TAG);
         for (const auto &directoryPath : searchDirectories) {
             QFileInfo fileInfo(file);
-            QDirIterator it(directoryPath, {fileInfo.fileName()}, QDir::NoFilter,
-                            QDirIterator::Subdirectories);
+            QDirIterator it(directoryPath, { fileInfo.fileName() }, QDir::NoFilter, QDirIterator::Subdirectories);
             while (it.hasNext()) {
                 QString filePath = it.next();
-                if (filePath.compare(QDir::cleanPath(directoryPath + '/' + file),
-                                     Qt::CaseInsensitive) == 0) {
+                if (filePath.compare(QDir::cleanPath(directoryPath + '/' + file), Qt::CaseInsensitive) == 0) {
                     return QFileInfo(filePath);
                 }
             }
@@ -109,7 +100,6 @@ struct QDemonInputStreamFactory : public QDemonInputStreamFactoryInterface
         if (!QDir::searchPaths(Q3DSTUDIO_TAG).contains(localDir))
             QDir::addSearchPath(Q3DSTUDIO_TAG, localDir);
     }
-
 
     QSharedPointer<QIODevice> getStreamForFile(const QString &inFilename, bool inQuiet) override
     {

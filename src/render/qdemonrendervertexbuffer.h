@@ -43,41 +43,42 @@ class QDemonRenderVertexBuffer : public QDemonRenderDataBuffer
 {
 public:
     /**
-         * @brief constructor
-         *
-         * @param[in] context		Pointer to context
-         * @param[in] entries		Vertex buffer attribute layout entries
-         * @param[in] size			Size of the buffer
-         * @param[in] bindFlags		Where to binf this buffer (e.g. vertex, index, ...)
-         *							For OpenGL this should be a single
-         *value
-         * @param[in] usage			Usage of the buffer (e.g. static, dynamic...)
-         * @param[in] data			A pointer to the buffer data that is allocated by the
-         *application.
-         *
-         * @return No return.
-         */
+     * @brief constructor
+     *
+     * @param[in] context		Pointer to context
+     * @param[in] entries		Vertex buffer attribute layout entries
+     * @param[in] size			Size of the buffer
+     * @param[in] bindFlags		Where to binf this buffer (e.g. vertex, index, ...)
+     *							For OpenGL this should be a single
+     *value
+     * @param[in] usage			Usage of the buffer (e.g. static, dynamic...)
+     * @param[in] data			A pointer to the buffer data that is allocated by the
+     *application.
+     *
+     * @return No return.
+     */
     QDemonRenderVertexBuffer(const QDemonRef<QDemonRenderContextImpl> &context,
                              size_t size,
                              quint32 stride,
                              QDemonRenderBufferBindFlags bindFlags,
-                             QDemonRenderBufferUsageType::Enum usageType, QDemonDataRef<quint8> data);
+                             QDemonRenderBufferUsageType::Enum usageType,
+                             QDemonDataRef<quint8> data);
 
     ///< destructor
     virtual ~QDemonRenderVertexBuffer();
 
     /**
-         * @brief return vertex data stride
-         *
-         * @return data stride.
-         */
+     * @brief return vertex data stride
+     *
+     * @return data stride.
+     */
     virtual quint32 getStride() const { return m_stride; }
 
     /**
-         * @brief get vertex count
-         *
-         * @return vertex count
-         */
+     * @brief get vertex count
+     *
+     * @return vertex count
+     */
     virtual quint32 getNumVertexes() const
     {
         Q_ASSERT((m_bufferCapacity % m_stride) == 0);
@@ -85,36 +86,30 @@ public:
     }
 
     /**
-         * @brief bind the buffer bypasses the context state
-         *
-         * @return no return.
-         */
+     * @brief bind the buffer bypasses the context state
+     *
+     * @return no return.
+     */
     void bind() override;
 
     /**
-         * @brief get the backend object handle
-         *
-         * @return the backend object handle.
-         */
-    QDemonRenderBackend::QDemonRenderBackendBufferObject getBuffertHandle() const override
-    {
-        return m_bufferHandle;
-    }
+     * @brief get the backend object handle
+     *
+     * @return the backend object handle.
+     */
+    QDemonRenderBackend::QDemonRenderBackendBufferObject getBuffertHandle() const override { return m_bufferHandle; }
 
     // this will be obsolete
-    const void *getImplementationHandle() const override
-    {
-        return reinterpret_cast<void *>(m_bufferHandle);
-    }
+    const void *getImplementationHandle() const override { return reinterpret_cast<void *>(m_bufferHandle); }
 
     // No stride means that stride is calculated from the size of last entry found via entry
     // offset
     // Leaves this buffer temporarily bound.
     static QDemonRef<QDemonRenderVertexBuffer> create(const QDemonRef<QDemonRenderContextImpl> &context,
-                                                           QDemonRenderBufferUsageType::Enum usageType,
-                                                           size_t size,
-                                                           quint32 stride,
-                                                           QDemonConstDataRef<quint8> bufferData);
+                                                      QDemonRenderBufferUsageType::Enum usageType,
+                                                      size_t size,
+                                                      quint32 stride,
+                                                      QDemonConstDataRef<quint8> bufferData);
 
 private:
     quint32 m_stride; ///< veretex data stride

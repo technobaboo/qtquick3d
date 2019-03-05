@@ -45,68 +45,72 @@ class Q_DEMONRENDER_EXPORT QDemonRenderPathFontItem
 public:
     QAtomicInt ref;
     /**
-             * @brief constructor
-             *
-             * @return No return.
-             */
+     * @brief constructor
+     *
+     * @return No return.
+     */
     QDemonRenderPathFontItem();
 
     /// @QDemonRenderPathFontItem destructor
     ~QDemonRenderPathFontItem();
 
     /**
-             * @brief Setup text
-             *
-             * @param[in] glyphCount		number of glyphs
-             * @param[in] glyphIDs			array of glyhp ID's
-             * @param[in] type				type ( byte, int,... )
-             * @param[in] posArray			array of glyhp positions
-             * @param[in] pixelBound		pixel boundary
-             * @param[in] logicalBound		logical boundary
-             * @param[in] emScale			true type scale
-             *
-             * @return No return.
-             */
-    void initTextItem(size_t glyphCount, const quint32 *glyphIDs,
-                      QDemonRenderPathFormatType::Enum type, float *posArray, QVector2D pixelBound,
-                      QVector2D logicalBound, float emScale);
+     * @brief Setup text
+     *
+     * @param[in] glyphCount		number of glyphs
+     * @param[in] glyphIDs			array of glyhp ID's
+     * @param[in] type				type ( byte, int,... )
+     * @param[in] posArray			array of glyhp positions
+     * @param[in] pixelBound		pixel boundary
+     * @param[in] logicalBound		logical boundary
+     * @param[in] emScale			true type scale
+     *
+     * @return No return.
+     */
+    void initTextItem(size_t glyphCount,
+                      const quint32 *glyphIDs,
+                      QDemonRenderPathFormatType::Enum type,
+                      float *posArray,
+                      QVector2D pixelBound,
+                      QVector2D logicalBound,
+                      float emScale);
 
     /**
-             * @brief get glyph count
-             *
-             * @return get glyph count
-             */
+     * @brief get glyph count
+     *
+     * @return get glyph count
+     */
     size_t getGlyphsCount() { return m_numGlyphs; }
 
     /**
-             * @brief get spacing for char set
-             *
-             * @return spacing array
-             */
+     * @brief get spacing for char set
+     *
+     * @return spacing array
+     */
     const float *getSpacing() { return m_translateXY; }
 
     /**
-             * @brief get name set
-             *
-             * @return name set
-             */
+     * @brief get name set
+     *
+     * @return name set
+     */
     const void *getGlyphIDs() { return reinterpret_cast<void *>(m_glyphIDs); }
 
     /**
-             * @brief Get Y bound of font metric
-             *
-             * @return transform matrix
-             */
+     * @brief Get Y bound of font metric
+     *
+     * @return transform matrix
+     */
     const QMatrix4x4 getTransform();
 
 private:
     /**
-             * @brief Get size of type
-             *
-             * @param[in]  type						type ( byte, int,... )
-             *
-             * @return true if successful
-             */
+     * @brief Get size of type
+     *
+     * @param[in]  type						type ( byte, int,... )
+     *
+     * @return true if successful
+     */
     quint32 getSizeOfType(QDemonRenderPathFormatType::Enum type);
 
 private:

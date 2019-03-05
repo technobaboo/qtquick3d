@@ -75,8 +75,7 @@ struct QDemonRendererData : QDemonOffscreenRenderResult
 struct QDemonScopedRenderDataRenderMarker
 {
     QDemonRendererData &data;
-    QDemonScopedRenderDataRenderMarker(QDemonRendererData &d)
-        : data(d)
+    QDemonScopedRenderDataRenderMarker(QDemonRendererData &d) : data(d)
     {
         Q_ASSERT(data.rendering == false);
         data.rendering = true;
@@ -96,12 +95,8 @@ struct QDemonOffscreenRunnable : public QDemonRenderTask
     QDemonOffscreenRenderManager &m_renderManager;
     QDemonRendererData &m_data;
     QDemonOffscreenRendererEnvironment m_desiredEnvironment;
-    QDemonOffscreenRunnable(QDemonOffscreenRenderManager &rm,
-                            QDemonRendererData &data,
-                            const QDemonOffscreenRendererEnvironment &env)
-        : m_renderManager(rm)
-        , m_data(data)
-        , m_desiredEnvironment(env)
+    QDemonOffscreenRunnable(QDemonOffscreenRenderManager &rm, QDemonRendererData &data, const QDemonOffscreenRendererEnvironment &env)
+        : m_renderManager(rm), m_data(data), m_desiredEnvironment(env)
     {
     }
     void run() override;
@@ -115,11 +110,8 @@ struct QDemonOffscreenRenderManager : public QDemonOffscreenRenderManagerInterfa
     TRendererMap m_renderers;
     quint32 m_frameCount; // cheap per-
 
-    QDemonOffscreenRenderManager(const QDemonRef<QDemonResourceManagerInterface> &inManager,
-                                 QDemonRenderContextInterface *inContext)
-        : m_context(inContext)
-        , m_resourceManager(inManager)
-        , m_frameCount(0)
+    QDemonOffscreenRenderManager(const QDemonRef<QDemonResourceManagerInterface> &inManager, QDemonRenderContextInterface *inContext)
+        : m_context(inContext), m_resourceManager(inManager), m_frameCount(0)
     {
     }
 
@@ -133,7 +125,8 @@ struct QDemonOffscreenRenderManager : public QDemonOffscreenRenderManagerInterfa
             QDemonRendererData &theData = theIter.value();
             if (theData.renderer != inRenderer) {
                 if (inKey.getType() == OffscreenRendererKeyTypes::RegisteredString) {
-                    qCCritical(INVALID_OPERATION, "Different renderers registered under same key: %s",
+                    qCCritical(INVALID_OPERATION,
+                               "Different renderers registered under same key: %s",
                                inKey.getData<QString>().toLatin1().constData());
                 }
                 Q_ASSERT(false);
@@ -145,8 +138,7 @@ struct QDemonOffscreenRenderManager : public QDemonOffscreenRenderManagerInterfa
         return true;
     }
 
-    void registerOffscreenRenderer(const QDemonOffscreenRendererKey &inKey,
-                                   QDemonRef<QDemonOffscreenRendererInterface> inRenderer) override
+    void registerOffscreenRenderer(const QDemonOffscreenRendererKey &inKey, QDemonRef<QDemonOffscreenRendererInterface> inRenderer) override
     {
         auto inserter = m_renderers.find(inKey);
         if (inserter == m_renderers.end())
@@ -169,48 +161,51 @@ struct QDemonOffscreenRenderManager : public QDemonOffscreenRenderManagerInterfa
         }
         return nullptr;
     }
-    void releaseOffscreenRenderer(const QDemonOffscreenRendererKey &inKey) override
-    {
-        m_renderers.remove(inKey);
-    }
+    void releaseOffscreenRenderer(const QDemonOffscreenRendererKey &inKey) override { m_renderers.remove(inKey); }
 
-    void renderItem(QDemonRendererData &theData,
-                    QDemonOffscreenRendererEnvironment theDesiredEnvironment)
+    void renderItem(QDemonRendererData &theData, QDemonOffscreenRendererEnvironment theDesiredEnvironment)
     {
         auto theContext = m_resourceManager->getRenderContext();
         QVector2D thePresScaleFactor = m_context->getPresentationScaleFactor();
         QDemonOffscreenRendererEnvironment theOriginalDesiredEnvironment(theDesiredEnvironment);
         // Ensure that our overall render context comes back no matter what the client does.
-        QDemonRenderContextScopedProperty<QVector4D> __clearColor(
-                    *theContext, &QDemonRenderContext::getClearColor, &QDemonRenderContext::setClearColor,
-                    QVector4D(0, 0, 0, 0));
-        QDemonRenderContextScopedProperty<bool> __scissorEnabled(
-                    *theContext, &QDemonRenderContext::isScissorTestEnabled,
-                    &QDemonRenderContext::setScissorTestEnabled, false);
-        QDemonRenderContextScopedProperty<QRect> __scissorRect(
-                    *theContext, &QDemonRenderContext::getScissorRect, &QDemonRenderContext::setScissorRect);
-        QDemonRenderContextScopedProperty<QRect> __viewportRect(
-                    *theContext, &QDemonRenderContext::getViewport, &QDemonRenderContext::setViewport);
-        QDemonRenderContextScopedProperty<bool> __depthWrite(
-                    *theContext, &QDemonRenderContext::isDepthWriteEnabled,
-                    &QDemonRenderContext::setDepthWriteEnabled, false);
-        QDemonRenderContextScopedProperty<QDemonRenderBoolOp::Enum> __depthFunction(
-                    *theContext, &QDemonRenderContext::getDepthFunction, &QDemonRenderContext::setDepthFunction,
-                    QDemonRenderBoolOp::Less);
-        QDemonRenderContextScopedProperty<bool> __blendEnabled(
-                    *theContext, &QDemonRenderContext::isBlendingEnabled, &QDemonRenderContext::setBlendingEnabled,
-                    false);
-        QDemonRenderContextScopedProperty<QDemonRenderBlendFunctionArgument>
-                __blendFunction(*theContext, &QDemonRenderContext::getBlendFunction,
-                                &QDemonRenderContext::setBlendFunction,
-                                QDemonRenderBlendFunctionArgument());
-        QDemonRenderContextScopedProperty<QDemonRenderBlendEquationArgument>
-                __blendEquation(*theContext, &QDemonRenderContext::getBlendEquation,
-                                &QDemonRenderContext::setBlendEquation,
-                                QDemonRenderBlendEquationArgument());
-        QDemonRenderContextScopedProperty<QDemonRef<QDemonRenderFrameBuffer> >
-                __rendertarget(*theContext, &QDemonRenderContext::getRenderTarget,
-                               &QDemonRenderContext::setRenderTarget);
+        QDemonRenderContextScopedProperty<QVector4D> __clearColor(*theContext,
+                                                                  &QDemonRenderContext::getClearColor,
+                                                                  &QDemonRenderContext::setClearColor,
+                                                                  QVector4D(0, 0, 0, 0));
+        QDemonRenderContextScopedProperty<bool> __scissorEnabled(*theContext,
+                                                                 &QDemonRenderContext::isScissorTestEnabled,
+                                                                 &QDemonRenderContext::setScissorTestEnabled,
+                                                                 false);
+        QDemonRenderContextScopedProperty<QRect> __scissorRect(*theContext,
+                                                               &QDemonRenderContext::getScissorRect,
+                                                               &QDemonRenderContext::setScissorRect);
+        QDemonRenderContextScopedProperty<QRect> __viewportRect(*theContext,
+                                                                &QDemonRenderContext::getViewport,
+                                                                &QDemonRenderContext::setViewport);
+        QDemonRenderContextScopedProperty<bool> __depthWrite(*theContext,
+                                                             &QDemonRenderContext::isDepthWriteEnabled,
+                                                             &QDemonRenderContext::setDepthWriteEnabled,
+                                                             false);
+        QDemonRenderContextScopedProperty<QDemonRenderBoolOp::Enum> __depthFunction(*theContext,
+                                                                                    &QDemonRenderContext::getDepthFunction,
+                                                                                    &QDemonRenderContext::setDepthFunction,
+                                                                                    QDemonRenderBoolOp::Less);
+        QDemonRenderContextScopedProperty<bool> __blendEnabled(*theContext,
+                                                               &QDemonRenderContext::isBlendingEnabled,
+                                                               &QDemonRenderContext::setBlendingEnabled,
+                                                               false);
+        QDemonRenderContextScopedProperty<QDemonRenderBlendFunctionArgument> __blendFunction(*theContext,
+                                                                                             &QDemonRenderContext::getBlendFunction,
+                                                                                             &QDemonRenderContext::setBlendFunction,
+                                                                                             QDemonRenderBlendFunctionArgument());
+        QDemonRenderContextScopedProperty<QDemonRenderBlendEquationArgument> __blendEquation(*theContext,
+                                                                                             &QDemonRenderContext::getBlendEquation,
+                                                                                             &QDemonRenderContext::setBlendEquation,
+                                                                                             QDemonRenderBlendEquationArgument());
+        QDemonRenderContextScopedProperty<QDemonRef<QDemonRenderFrameBuffer>> __rendertarget(*theContext,
+                                                                                             &QDemonRenderContext::getRenderTarget,
+                                                                                             &QDemonRenderContext::setRenderTarget);
 
         quint32 theSampleCount = 1;
         bool isMultisamplePass = false;
@@ -239,16 +234,16 @@ struct QDemonOffscreenRenderManager : public QDemonOffscreenRenderManagerInterfa
 
             // adjust render size for SSAA
             if (theDesiredEnvironment.msaaMode == AAModeValues::SSAA) {
-                QDemonRendererUtil::getSSAARenderSize(
-                            theOriginalDesiredEnvironment.width, theOriginalDesiredEnvironment.height,
-                            theDesiredEnvironment.width, theDesiredEnvironment.height);
+                QDemonRendererUtil::getSSAARenderSize(theOriginalDesiredEnvironment.width,
+                                                      theOriginalDesiredEnvironment.height,
+                                                      theDesiredEnvironment.width,
+                                                      theDesiredEnvironment.height);
             }
         }
         QDemonResourceFrameBuffer theFrameBuffer(m_resourceManager);
         theFrameBuffer.ensureFrameBuffer();
         auto &renderTargetTexture = theData.texture;
-        QDemonRenderTextureTargetType::Enum fboAttachmentType =
-                QDemonRenderTextureTargetType::Texture2D;
+        QDemonRenderTextureTargetType::Enum fboAttachmentType = QDemonRenderTextureTargetType::Texture2D;
         if (isMultisamplePass) {
             renderTargetTexture = nullptr;
             if (theSampleCount > 1)
@@ -264,8 +259,7 @@ struct QDemonOffscreenRenderManager : public QDemonOffscreenRenderManagerInterfa
 
         QDemonRenderClearFlags theClearFlags;
         QDemonRenderTextureFormats::Enum theDepthStencilTextureFormat(QDemonRenderTextureFormats::Unknown);
-        QDemonRenderFrameBufferAttachments::Enum theAttachmentLocation(
-                    QDemonRenderFrameBufferAttachments::Unknown);
+        QDemonRenderFrameBufferAttachments::Enum theAttachmentLocation(QDemonRenderFrameBufferAttachments::Unknown);
         if (theDesiredEnvironment.stencil) {
             theDepthStencilTextureFormat = QDemonRenderTextureFormats::Depth24Stencil8;
             theAttachmentLocation = QDemonRenderFrameBufferAttachments::DepthStencil;
@@ -289,16 +283,16 @@ struct QDemonOffscreenRenderManager : public QDemonOffscreenRenderManagerInterfa
         }
         renderColorTexture.ensureTexture(theDesiredEnvironment.width,
                                          theDesiredEnvironment.height,
-                                         theDesiredEnvironment.format, theSampleCount);
-        theFrameBuffer->attach(QDemonRenderFrameBufferAttachments::Color0, renderColorTexture.getTexture(),
-                               fboAttachmentType);
+                                         theDesiredEnvironment.format,
+                                         theSampleCount);
+        theFrameBuffer->attach(QDemonRenderFrameBufferAttachments::Color0, renderColorTexture.getTexture(), fboAttachmentType);
 
         if (theDepthStencilTextureFormat != QDemonRenderTextureFormats::Unknown) {
             renderDepthStencilTexture.ensureTexture(theDesiredEnvironment.width,
                                                     theDesiredEnvironment.height,
-                                                    theDepthStencilTextureFormat, theSampleCount);
-            theFrameBuffer->attach(theAttachmentLocation, renderDepthStencilTexture.getTexture(),
-                                   fboAttachmentType);
+                                                    theDepthStencilTextureFormat,
+                                                    theSampleCount);
+            theFrameBuffer->attach(theAttachmentLocation, renderDepthStencilTexture.getTexture(), fboAttachmentType);
         }
         // IsComplete check takes a really long time so I am not going to worry about it for now.
 
@@ -307,27 +301,33 @@ struct QDemonOffscreenRenderManager : public QDemonOffscreenRenderManagerInterfa
         theContext->setScissorTestEnabled(false);
 
         theContext->setBlendingEnabled(false);
-        theData.renderer->render(theDesiredEnvironment, *theContext, thePresScaleFactor,
-                                   QDemonRenderScene::AlwaysClear, this);
+        theData.renderer->render(theDesiredEnvironment, *theContext, thePresScaleFactor, QDemonRenderScene::AlwaysClear, this);
 
         if (theSampleCount > 1) {
             QDemonRef<QDemonResourceTexture2D> theResult(new QDemonResourceTexture2D(m_resourceManager, theData.texture));
 
             if (theDesiredEnvironment.msaaMode != AAModeValues::SSAA) {
                 // Have to downsample the FBO.
-                QDemonRendererUtil::resolveMutisampleFBOColorOnly(
-                            m_resourceManager, *theResult, *m_context->getRenderContext(),
-                            theDesiredEnvironment.width, theDesiredEnvironment.height,
-                            theDesiredEnvironment.format, theFrameBuffer);
+                QDemonRendererUtil::resolveMutisampleFBOColorOnly(m_resourceManager,
+                                                                  *theResult,
+                                                                  *m_context->getRenderContext(),
+                                                                  theDesiredEnvironment.width,
+                                                                  theDesiredEnvironment.height,
+                                                                  theDesiredEnvironment.format,
+                                                                  theFrameBuffer);
 
                 m_context->getRenderContext()->setMultisampleEnabled(false);
             } else {
                 // Resolve the FBO to the layer texture
-                QDemonRendererUtil::resolveSSAAFBOColorOnly(
-                            m_resourceManager, *theResult, theOriginalDesiredEnvironment.width,
-                            theOriginalDesiredEnvironment.height, *m_context->getRenderContext(),
-                            theDesiredEnvironment.width, theDesiredEnvironment.height,
-                            theDesiredEnvironment.format, theFrameBuffer);
+                QDemonRendererUtil::resolveSSAAFBOColorOnly(m_resourceManager,
+                                                            *theResult,
+                                                            theOriginalDesiredEnvironment.width,
+                                                            theOriginalDesiredEnvironment.height,
+                                                            *m_context->getRenderContext(),
+                                                            theDesiredEnvironment.width,
+                                                            theDesiredEnvironment.height,
+                                                            theDesiredEnvironment.format,
+                                                            theFrameBuffer);
             }
 
             Q_ASSERT(theData.texture == theResult->getTexture());
@@ -335,11 +335,9 @@ struct QDemonOffscreenRenderManager : public QDemonOffscreenRenderManagerInterfa
         } else {
             renderColorTexture.forgetTexture();
         }
-        theFrameBuffer->attach(QDemonRenderFrameBufferAttachments::Color0,
-                               QDemonRenderTextureOrRenderBuffer(), fboAttachmentType);
+        theFrameBuffer->attach(QDemonRenderFrameBufferAttachments::Color0, QDemonRenderTextureOrRenderBuffer(), fboAttachmentType);
         if (theAttachmentLocation != QDemonRenderFrameBufferAttachments::Unknown)
-            theFrameBuffer->attach(theAttachmentLocation, QDemonRenderTextureOrRenderBuffer(),
-                                   fboAttachmentType);
+            theFrameBuffer->attach(theAttachmentLocation, QDemonRenderTextureOrRenderBuffer(), fboAttachmentType);
     }
 
     QDemonOffscreenRenderResult getRenderedItem(const QDemonOffscreenRendererKey &inKey) override
@@ -356,39 +354,40 @@ struct QDemonOffscreenRenderManager : public QDemonOffscreenRenderManagerInterfa
             if (renderedThisFrame)
                 return theData;
 
-            QDemonOffscreenRendererEnvironment theDesiredEnvironment =
-                    theData.renderer->getDesiredEnvironment(thePresScaleFactor);
+            QDemonOffscreenRendererEnvironment theDesiredEnvironment = theData.renderer->getDesiredEnvironment(thePresScaleFactor);
             // Ensure we get a valid width and height
-            theDesiredEnvironment.width =
-                    QDemonTextRendererInterface::nextMultipleOf4(theDesiredEnvironment.width);
-            theDesiredEnvironment.height =
-                    QDemonTextRendererInterface::nextMultipleOf4(theDesiredEnvironment.height);
+            theDesiredEnvironment.width = QDemonTextRendererInterface::nextMultipleOf4(theDesiredEnvironment.width);
+            theDesiredEnvironment.height = QDemonTextRendererInterface::nextMultipleOf4(theDesiredEnvironment.height);
             if (theDesiredEnvironment.width == 0 || theDesiredEnvironment.height == 0) {
                 return QDemonOffscreenRenderResult();
             }
 
-            QRect theViewport(0, 0, theDesiredEnvironment.width,
-                                         theDesiredEnvironment.height);
+            QRect theViewport(0, 0, theDesiredEnvironment.width, theDesiredEnvironment.height);
             auto theRenderList = m_context->getRenderList();
             auto theContext = m_context->getRenderContext();
             // This happens here because if there are any fancy render steps
             QDemonRenderListScopedProperty<bool> scissor(*theRenderList,
-                                                     &QDemonRenderListInterface::isScissorTestEnabled,
-                                                     &QDemonRenderListInterface::setScissorTestEnabled, false);
-            QDemonRenderListScopedProperty<QRect> viewport(
-                        *theRenderList, &QDemonRenderListInterface::getViewport, &QDemonRenderListInterface::setViewport, theViewport);
+                                                         &QDemonRenderListInterface::isScissorTestEnabled,
+                                                         &QDemonRenderListInterface::setScissorTestEnabled,
+                                                         false);
+            QDemonRenderListScopedProperty<QRect> viewport(*theRenderList,
+                                                           &QDemonRenderListInterface::getViewport,
+                                                           &QDemonRenderListInterface::setViewport,
+                                                           theViewport);
             // Some plugins don't use the render list so they need the actual gl context setup.
-            QDemonRenderContextScopedProperty<bool> scissorEnabled(
-                        *theContext, &QDemonRenderContext::isScissorTestEnabled,
-                        &QDemonRenderContext::setScissorTestEnabled, false);
-            QDemonRenderContextScopedProperty<QRect> __viewportRect(
-                        *theContext, &QDemonRenderContext::getViewport, &QDemonRenderContext::setViewport,
-                        theViewport);
+            QDemonRenderContextScopedProperty<bool> scissorEnabled(*theContext,
+                                                                   &QDemonRenderContext::isScissorTestEnabled,
+                                                                   &QDemonRenderContext::setScissorTestEnabled,
+                                                                   false);
+            QDemonRenderContextScopedProperty<QRect> __viewportRect(*theContext,
+                                                                    &QDemonRenderContext::getViewport,
+                                                                    &QDemonRenderContext::setViewport,
+                                                                    theViewport);
 
-            quint32 taskId = m_context->getRenderList()->addRenderTask(QDemonRef<QDemonOffscreenRunnable>(new QDemonOffscreenRunnable(*this, theData, theDesiredEnvironment)));
+            quint32 taskId = m_context->getRenderList()->addRenderTask(
+                    QDemonRef<QDemonOffscreenRunnable>(new QDemonOffscreenRunnable(*this, theData, theDesiredEnvironment)));
 
-            QDemonOffscreenRenderFlags theFlags =
-                    theData.renderer->needsRender(theDesiredEnvironment, thePresScaleFactor, this);
+            QDemonOffscreenRenderFlags theFlags = theData.renderer->needsRender(theDesiredEnvironment, thePresScaleFactor, this);
             theData.hasTransparency = theFlags.hasTransparency;
             theData.hasChangedSinceLastFrame = theFlags.hasChangedSinceLastFrame;
             if (theData.texture) {
@@ -403,18 +402,17 @@ struct QDemonOffscreenRenderManager : public QDemonOffscreenRenderManagerInterfa
             // Release existing texture if it doesn't match latest environment request.
             if (theData.texture) {
                 QDemonTextureDetails theDetails = theData.texture->getTextureDetails();
-                if (theDesiredEnvironment.width != theDetails.width
-                        || theDesiredEnvironment.height != theDetails.height
-                        || theDesiredEnvironment.format != theDetails.format) {
+                if (theDesiredEnvironment.width != theDetails.width || theDesiredEnvironment.height != theDetails.height
+                    || theDesiredEnvironment.format != theDetails.format) {
                     m_resourceManager->release(theData.texture);
                     theData.texture = nullptr;
                 }
             }
 
             if (theData.texture == nullptr)
-                theData.texture = m_resourceManager->allocateTexture2D(
-                            theDesiredEnvironment.width, theDesiredEnvironment.height,
-                            theDesiredEnvironment.format);
+                theData.texture = m_resourceManager->allocateTexture2D(theDesiredEnvironment.width,
+                                                                       theDesiredEnvironment.height,
+                                                                       theDesiredEnvironment.format);
 
             // Add the node to the graph and get on with it.
 
@@ -423,7 +421,9 @@ struct QDemonOffscreenRenderManager : public QDemonOffscreenRenderManagerInterfa
         return QDemonOffscreenRenderResult();
     }
 
-    void beginFrame() override { /* TODO: m_PerFrameAllocator.reset();*/ }
+    void beginFrame() override
+    { /* TODO: m_PerFrameAllocator.reset();*/
+    }
     void endFrame() override { ++m_frameCount; }
 };
 
@@ -433,25 +433,19 @@ void QDemonOffscreenRunnable::run()
 }
 }
 
-QDemonOffscreenRenderManagerInterface::~QDemonOffscreenRenderManagerInterface()
-{
+QDemonOffscreenRenderManagerInterface::~QDemonOffscreenRenderManagerInterface() {}
 
-}
-
-QDemonRef<QDemonOffscreenRenderManagerInterface> QDemonOffscreenRenderManagerInterface::createOffscreenRenderManager(const QDemonRef<QDemonResourceManagerInterface> &inManager,
-                                                                                                                     QDemonRenderContextInterface *inContext)
+QDemonRef<QDemonOffscreenRenderManagerInterface> QDemonOffscreenRenderManagerInterface::createOffscreenRenderManager(
+        const QDemonRef<QDemonResourceManagerInterface> &inManager,
+        QDemonRenderContextInterface *inContext)
 {
     return QDemonRef<QDemonOffscreenRenderManagerInterface>(new QDemonOffscreenRenderManager(inManager, inContext));
 }
 
-QDemonOffscreenRendererInterface::~QDemonOffscreenRendererInterface()
-{
-
-}
+QDemonOffscreenRendererInterface::~QDemonOffscreenRendererInterface() {}
 
 QDemonOffscreenRendererInterface::QDemonOffscreenRendererCallbackInterface::~QDemonOffscreenRendererCallbackInterface()
 {
-
 }
 
 QT_END_NAMESPACE

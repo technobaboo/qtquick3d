@@ -49,51 +49,55 @@ private:
 
 public:
     /**
-         * @brief constructor
-         *
-         * @param[in] context		Pointer to context
-         * @param[in] fnd			Pointer to foundation
-         * @param[in] texTarget		Texture target
-         *
-         * @return No return.
-         */
+     * @brief constructor
+     *
+     * @param[in] context		Pointer to context
+     * @param[in] fnd			Pointer to foundation
+     * @param[in] texTarget		Texture target
+     *
+     * @return No return.
+     */
     QDemonRenderTexture2DArray(const QDemonRef<QDemonRenderContextImpl> &context,
                                QDemonRenderTextureTargetType::Enum texTarget = QDemonRenderTextureTargetType::Texture2D_Array);
 
     virtual ~QDemonRenderTexture2DArray();
 
     /**
-         * @brief constructor
-         *
-         * @param[in] newBuffer		Pointer to pixel buffer
-         * @param[in] inMipLevel	Pointer to foundation
-         * @param[in] width			Texture target
-         * @param[in] height		Texture target
-         * @param[in] slices		Texture target
-         * @param[in] format		Texture target
-         *
-         * @return No return.
-         */
-    void setTextureData(QDemonDataRef<quint8> newBuffer, quint8 inMipLevel, quint32 width, quint32 height,
-                        quint32 slices, QDemonRenderTextureFormats::Enum format);
+     * @brief constructor
+     *
+     * @param[in] newBuffer		Pointer to pixel buffer
+     * @param[in] inMipLevel	Pointer to foundation
+     * @param[in] width			Texture target
+     * @param[in] height		Texture target
+     * @param[in] slices		Texture target
+     * @param[in] format		Texture target
+     *
+     * @return No return.
+     */
+    void setTextureData(QDemonDataRef<quint8> newBuffer,
+                        quint8 inMipLevel,
+                        quint32 width,
+                        quint32 height,
+                        quint32 slices,
+                        QDemonRenderTextureFormats::Enum format);
 
     // Get the texture details for mipmap level 0 if it was set.
     QDemonTextureDetails getTextureDetails() const override;
 
     /**
-         * @brief Bind a texture for shader access
-         *
-         *
-         * @return No return.
-         */
+     * @brief Bind a texture for shader access
+     *
+     *
+     * @return No return.
+     */
     void bind() override;
 
     /**
-         * @brief create a texture array object
-         *
-         *
-         * @ return a texture array object
-         */
+     * @brief create a texture array object
+     *
+     *
+     * @ return a texture array object
+     */
     static QDemonRef<QDemonRenderTexture2DArray> create(const QDemonRef<QDemonRenderContextImpl> &context);
 };
 

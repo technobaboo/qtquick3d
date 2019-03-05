@@ -63,7 +63,7 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonPresentation : public QDemonGraphObject
     ~QDemonPresentation();
     // Generic method used during serialization
     // to remap string and object pointers
-    template <typename TRemapperType>
+    template<typename TRemapperType>
     void remap(TRemapperType &inRemapper)
     {
         QDemonGraphObject::remap(inRemapper);

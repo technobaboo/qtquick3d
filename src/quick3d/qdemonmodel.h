@@ -20,12 +20,11 @@ class Q_QUICK3D_EXPORT QDemonModel : public QDemonNode
     Q_PROPERTY(QQmlListProperty<QDemonMaterial> materials READ materials)
 
 public:
-    enum QDemonTessModeValues
-    {
-            NoTess = 0,
-            TessLinear = 1,
-            TessPhong = 2,
-            TessNPatch = 3,
+    enum QDemonTessModeValues {
+        NoTess = 0,
+        TessLinear = 1,
+        TessPhong = 2,
+        TessNPatch = 3,
     };
     Q_ENUM(QDemonTessModeValues)
 
@@ -63,7 +62,6 @@ protected:
     QDemonGraphObject *updateSpatialNode(QDemonGraphObject *node) override;
 
 private:
-
     QString m_source;
     int m_skeletonRoot = -1;
     QDemonTessModeValues m_tesselationMode = QDemonTessModeValues::NoTess;

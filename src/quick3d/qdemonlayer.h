@@ -48,89 +48,52 @@ class Q_QUICK3D_EXPORT QDemonLayer : public QDemonNode
     Q_PROPERTY(float shadowSoftness READ shadowSoftness WRITE setShadowSoftness NOTIFY shadowSoftnessChanged)
     Q_PROPERTY(float shadowBias READ shadowBias WRITE setShadowBias NOTIFY shadowBiasChanged)
 
-    Q_PROPERTY(QDemonImage* lightProbe READ lightProbe WRITE setLightProbe NOTIFY lightProbeChanged)
+    Q_PROPERTY(QDemonImage *lightProbe READ lightProbe WRITE setLightProbe NOTIFY lightProbeChanged)
     Q_PROPERTY(float probeBrightness READ probeBrightness WRITE setProbeBrightness NOTIFY probeBrightnessChanged)
     Q_PROPERTY(bool fastIBL READ fastIBL WRITE setFastIBL NOTIFY fastIBLChanged)
     Q_PROPERTY(float probeHorizon READ probeHorizon WRITE setProbeHorizon NOTIFY probeHorizonChanged)
     Q_PROPERTY(float probeFieldOfView READ probeFieldOfView WRITE setProbeFieldOfView NOTIFY probeFieldOfViewChanged)
 
-    Q_PROPERTY(QDemonImage* lightProbe2 READ lightProbe2 WRITE setLightProbe2 NOTIFY lightProbe2Changed)
+    Q_PROPERTY(QDemonImage *lightProbe2 READ lightProbe2 WRITE setLightProbe2 NOTIFY lightProbe2Changed)
     Q_PROPERTY(float probe2Fade READ probe2Fade WRITE setProbe2Fade NOTIFY probe2FadeChanged)
     Q_PROPERTY(float probe2Window READ probe2Window WRITE setProbe2Window NOTIFY probe2WindowChanged)
     Q_PROPERTY(float probe2Postion READ probe2Postion WRITE setProbe2Postion NOTIFY probe2PostionChanged)
 
     Q_PROPERTY(bool temporalAAEnabled READ temporalAAEnabled WRITE setTemporalAAEnabled NOTIFY temporalAAEnabledChanged)
 
-    Q_PROPERTY(QDemonCamera* activeCamera READ activeCamera WRITE setActiveCamera NOTIFY activeCameraChanged)
+    Q_PROPERTY(QDemonCamera *activeCamera READ activeCamera WRITE setActiveCamera NOTIFY activeCameraChanged)
 
 public:
-    enum QDemonAAModeValues
-    {
-        NoAA = 0,
-        SSAA = 1,
-        X2 = 2,
-        X4 = 4,
-        X8 = 8
-    };
+    enum QDemonAAModeValues { NoAA = 0, SSAA = 1, X2 = 2, X4 = 4, X8 = 8 };
     Q_ENUM(QDemonAAModeValues)
 
-    enum QDemonHorizontalFieldValues
-    {
-        LeftWidth = 0,
-        LeftRight,
-        WidthRight
-    };
+    enum QDemonHorizontalFieldValues { LeftWidth = 0, LeftRight, WidthRight };
     Q_ENUM(QDemonHorizontalFieldValues)
 
-    enum QDemonVerticalFieldValues
-    {
-        TopHeight = 0,
-        TopBottom,
-        HeightBottom
-    };
+    enum QDemonVerticalFieldValues { TopHeight = 0, TopBottom, HeightBottom };
     Q_ENUM(QDemonVerticalFieldValues)
 
-    enum QDemonLayerUnitTypes
-    {
-        Percent = 0,
-        Pixels
-    };
+    enum QDemonLayerUnitTypes { Percent = 0, Pixels };
     Q_ENUM(QDemonLayerUnitTypes)
 
-    enum QDemonLayerBackgroundTypes
-    {
-        Transparent = 0,
-        Unspecified,
-        Color
-    };
+    enum QDemonLayerBackgroundTypes { Transparent = 0, Unspecified, Color };
     Q_ENUM(QDemonLayerBackgroundTypes)
 
-    enum QDemonLayerBlendTypes
-    {
-        Normal = 0,
-        Screen,
-        Multiply,
-        Add,
-        Subtract,
-        Overlay,
-        ColorBurn,
-        ColorDodge
-    };
+    enum QDemonLayerBlendTypes { Normal = 0, Screen, Multiply, Add, Subtract, Overlay, ColorBurn, ColorDodge };
     Q_ENUM(QDemonLayerBlendTypes)
 
-
     enum QDemonLayerDirtyType {
-        AntiAliasing        = 0x00000001,
-        Background          = 0x00000002,
-        Blending            = 0x00000004,
-        Layout              = 0x00000008,
-        AmbientOcclusion    = 0x00000010,
-        Shadow              = 0x00000020,
-        LightProbe1         = 0x00000040,
-        LightProbe2         = 0x00000080,
-        Effects             = 0x00000100,
-        Camera              = 0x00000200,
-        RenderTarget        = 0x00000400
+        AntiAliasing = 0x00000001,
+        Background = 0x00000002,
+        Blending = 0x00000004,
+        Layout = 0x00000008,
+        AmbientOcclusion = 0x00000010,
+        Shadow = 0x00000020,
+        LightProbe1 = 0x00000040,
+        LightProbe2 = 0x00000080,
+        Effects = 0x00000100,
+        Camera = 0x00000200,
+        RenderTarget = 0x00000400
     };
 
     QDemonLayer();
@@ -275,6 +238,7 @@ Q_SIGNALS:
 
 protected:
     QDemonGraphObject *updateSpatialNode(QDemonGraphObject *node) override;
+
 private:
     friend QDemonWindowPrivate;
 
@@ -320,7 +284,7 @@ private:
     bool m_temporalAAEnabled = false;
     QVector<QDemonEffect *> m_effects;
     QDemonCamera *m_activeCamera = nullptr;
-    qint32 m_dirtyAttributes = 0x0000ffff; //all dirty by default
+    qint32 m_dirtyAttributes = 0x0000ffff; // all dirty by default
     void markDirty(QDemonLayerDirtyType type);
 
     static void qmlAppendEffect(QQmlListProperty<QDemonEffect> *list, QDemonEffect *effect);

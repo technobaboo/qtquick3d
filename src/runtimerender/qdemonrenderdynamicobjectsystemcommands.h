@@ -61,23 +61,23 @@ struct CommandTypes
     };
 };
 
-#define QDEMON_RENDER_EFFECTS_ITERATE_COMMAND_TYPES                                                   \
-    QDEMON_RENDER_EFFECTS_HANDLE_COMMAND_TYPES(AllocateBuffer)                                        \
-    QDEMON_RENDER_EFFECTS_HANDLE_COMMAND_TYPES(BindTarget)                                            \
-    QDEMON_RENDER_EFFECTS_HANDLE_COMMAND_TYPES(BindBuffer)                                            \
-    QDEMON_RENDER_EFFECTS_HANDLE_COMMAND_TYPES(BindShader)                                            \
-    QDEMON_RENDER_EFFECTS_HANDLE_COMMAND_TYPES(ApplyInstanceValue)                                    \
-    QDEMON_RENDER_EFFECTS_HANDLE_COMMAND_TYPES(ApplyBufferValue)                                      \
-    QDEMON_RENDER_EFFECTS_HANDLE_COMMAND_TYPES(ApplyDepthValue)                                       \
-    QDEMON_RENDER_EFFECTS_HANDLE_COMMAND_TYPES(Render)                                                \
-    QDEMON_RENDER_EFFECTS_HANDLE_COMMAND_TYPES(ApplyBlending)                                         \
-    QDEMON_RENDER_EFFECTS_HANDLE_COMMAND_TYPES(ApplyRenderState)                                      \
-    QDEMON_RENDER_EFFECTS_HANDLE_COMMAND_TYPES(ApplyBlitFramebuffer)                                  \
-    QDEMON_RENDER_EFFECTS_HANDLE_COMMAND_TYPES(ApplyValue)                                            \
-    QDEMON_RENDER_EFFECTS_HANDLE_COMMAND_TYPES(DepthStencil)                                          \
-    QDEMON_RENDER_EFFECTS_HANDLE_COMMAND_TYPES(AllocateImage)                                         \
-    QDEMON_RENDER_EFFECTS_HANDLE_COMMAND_TYPES(ApplyImageValue)                                       \
-    QDEMON_RENDER_EFFECTS_HANDLE_COMMAND_TYPES(AllocateDataBuffer)                                    \
+#define QDEMON_RENDER_EFFECTS_ITERATE_COMMAND_TYPES                                                                    \
+    QDEMON_RENDER_EFFECTS_HANDLE_COMMAND_TYPES(AllocateBuffer)                                                         \
+    QDEMON_RENDER_EFFECTS_HANDLE_COMMAND_TYPES(BindTarget)                                                             \
+    QDEMON_RENDER_EFFECTS_HANDLE_COMMAND_TYPES(BindBuffer)                                                             \
+    QDEMON_RENDER_EFFECTS_HANDLE_COMMAND_TYPES(BindShader)                                                             \
+    QDEMON_RENDER_EFFECTS_HANDLE_COMMAND_TYPES(ApplyInstanceValue)                                                     \
+    QDEMON_RENDER_EFFECTS_HANDLE_COMMAND_TYPES(ApplyBufferValue)                                                       \
+    QDEMON_RENDER_EFFECTS_HANDLE_COMMAND_TYPES(ApplyDepthValue)                                                        \
+    QDEMON_RENDER_EFFECTS_HANDLE_COMMAND_TYPES(Render)                                                                 \
+    QDEMON_RENDER_EFFECTS_HANDLE_COMMAND_TYPES(ApplyBlending)                                                          \
+    QDEMON_RENDER_EFFECTS_HANDLE_COMMAND_TYPES(ApplyRenderState)                                                       \
+    QDEMON_RENDER_EFFECTS_HANDLE_COMMAND_TYPES(ApplyBlitFramebuffer)                                                   \
+    QDEMON_RENDER_EFFECTS_HANDLE_COMMAND_TYPES(ApplyValue)                                                             \
+    QDEMON_RENDER_EFFECTS_HANDLE_COMMAND_TYPES(DepthStencil)                                                           \
+    QDEMON_RENDER_EFFECTS_HANDLE_COMMAND_TYPES(AllocateImage)                                                          \
+    QDEMON_RENDER_EFFECTS_HANDLE_COMMAND_TYPES(ApplyImageValue)                                                        \
+    QDEMON_RENDER_EFFECTS_HANDLE_COMMAND_TYPES(AllocateDataBuffer)                                                     \
     QDEMON_RENDER_EFFECTS_HANDLE_COMMAND_TYPES(ApplyDataBufferValue)
 
 // All commands need at least two constructors.  One for when they are created that should
@@ -87,14 +87,8 @@ struct CommandTypes
 struct QDemonCommand
 {
     CommandTypes::Enum m_type;
-    QDemonCommand(CommandTypes::Enum inType)
-        : m_type(inType)
-    {
-    }
-    QDemonCommand()
-        : m_type(CommandTypes::Unknown)
-    {
-    }
+    QDemonCommand(CommandTypes::Enum inType) : m_type(inType) {}
+    QDemonCommand() : m_type(CommandTypes::Unknown) {}
     // Implemented in UICRenderEffectSystem.cpp
     static quint32 getSizeofCommand(const QDemonCommand &inCommand);
     static void copyConstructCommand(quint8 *inDataBuffer, const QDemonCommand &inCommand);
@@ -109,21 +103,12 @@ struct AllocateBufferFlagValues
 
 struct QDemonAllocateBufferFlags : public QDemonFlags<AllocateBufferFlagValues::Enum, quint32>
 {
-    QDemonAllocateBufferFlags(quint32 inValues)
-        : QDemonFlags<AllocateBufferFlagValues::Enum, quint32>(inValues)
-    {
-    }
+    QDemonAllocateBufferFlags(quint32 inValues) : QDemonFlags<AllocateBufferFlagValues::Enum, quint32>(inValues) {}
     QDemonAllocateBufferFlags() {}
-    void setSceneLifetime(bool inValue)
-    {
-        clearOrSet(inValue, AllocateBufferFlagValues::SceneLifetime);
-    }
+    void setSceneLifetime(bool inValue) { clearOrSet(inValue, AllocateBufferFlagValues::SceneLifetime); }
     // If isSceneLifetime is unset the buffer is assumed to be frame lifetime and will be
     // released after this render operation.
-    bool isSceneLifetime() const
-    {
-        return this->operator&(AllocateBufferFlagValues::SceneLifetime);
-    }
+    bool isSceneLifetime() const { return this->operator&(AllocateBufferFlagValues::SceneLifetime); }
 };
 
 struct QDemonAllocateBuffer : public QDemonCommand
@@ -134,10 +119,7 @@ struct QDemonAllocateBuffer : public QDemonCommand
     QDemonRenderTextureCoordOp::Enum m_texCoordOp = QDemonRenderTextureCoordOp::ClampToEdge;
     float m_sizeMultiplier = 1.0f;
     QDemonAllocateBufferFlags m_bufferFlags;
-    QDemonAllocateBuffer()
-        : QDemonCommand(CommandTypes::AllocateBuffer)
-    {
-    }
+    QDemonAllocateBuffer() : QDemonCommand(CommandTypes::AllocateBuffer) {}
     QDemonAllocateBuffer(QString inName,
                          QDemonRenderTextureFormats::Enum inFormat,
                          QDemonRenderTextureMagnifyingOp::Enum inFilterOp,
@@ -169,25 +151,21 @@ struct QDemonAllocateImage : public QDemonAllocateBuffer
 {
     QDemonRenderImageAccessType::Enum m_access = QDemonRenderImageAccessType::ReadWrite;
 
-    QDemonAllocateImage()
-        : QDemonAllocateBuffer()
-    {
-        m_type = CommandTypes::AllocateImage;
-    }
-    QDemonAllocateImage(QString inName, QDemonRenderTextureFormats::Enum inFormat,
-                   QDemonRenderTextureMagnifyingOp::Enum inFilterOp,
-                   QDemonRenderTextureCoordOp::Enum inCoordOp, float inMultiplier,
-                   QDemonAllocateBufferFlags inFlags, QDemonRenderImageAccessType::Enum inAccess)
-        : QDemonAllocateBuffer(inName, inFormat, inFilterOp, inCoordOp, inMultiplier, inFlags)
-        , m_access(inAccess)
+    QDemonAllocateImage() : QDemonAllocateBuffer() { m_type = CommandTypes::AllocateImage; }
+    QDemonAllocateImage(QString inName,
+                        QDemonRenderTextureFormats::Enum inFormat,
+                        QDemonRenderTextureMagnifyingOp::Enum inFilterOp,
+                        QDemonRenderTextureCoordOp::Enum inCoordOp,
+                        float inMultiplier,
+                        QDemonAllocateBufferFlags inFlags,
+                        QDemonRenderImageAccessType::Enum inAccess)
+        : QDemonAllocateBuffer(inName, inFormat, inFilterOp, inCoordOp, inMultiplier, inFlags), m_access(inAccess)
     {
         m_type = CommandTypes::AllocateImage;
     }
 
     QDemonAllocateImage(const QDemonAllocateImage &inOther)
-        : QDemonAllocateBuffer(inOther.m_name, inOther.m_format,
-                          inOther.m_filterOp, inOther.m_texCoordOp,
-                          inOther.m_sizeMultiplier, inOther.m_bufferFlags)
+        : QDemonAllocateBuffer(inOther.m_name, inOther.m_format, inOther.m_filterOp, inOther.m_texCoordOp, inOther.m_sizeMultiplier, inOther.m_bufferFlags)
         , m_access(inOther.m_access)
     {
         m_type = CommandTypes::AllocateImage;
@@ -203,16 +181,14 @@ struct QDemonAllocateDataBuffer : public QDemonCommand
     float m_size;
     QDemonAllocateBufferFlags m_bufferFlags;
 
-    QDemonAllocateDataBuffer()
-        : QDemonCommand(CommandTypes::AllocateDataBuffer)
-    {
-    }
+    QDemonAllocateDataBuffer() : QDemonCommand(CommandTypes::AllocateDataBuffer) {}
 
     QDemonAllocateDataBuffer(QString inName,
-                        QDemonRenderBufferBindValues::Enum inBufferType,
-                        QString inWrapName,
-                        QDemonRenderBufferBindValues::Enum inBufferWrapType, float inSize,
-                        QDemonAllocateBufferFlags inFlags)
+                             QDemonRenderBufferBindValues::Enum inBufferType,
+                             QString inWrapName,
+                             QDemonRenderBufferBindValues::Enum inBufferWrapType,
+                             float inSize,
+                             QDemonAllocateBufferFlags inFlags)
         : QDemonCommand(CommandTypes::AllocateDataBuffer)
         , m_name(inName)
         , m_dataBufferType(inBufferType)
@@ -240,13 +216,11 @@ struct QDemonBindTarget : public QDemonCommand
     QDemonRenderTextureFormats::Enum m_outputFormat;
 
     explicit QDemonBindTarget(QDemonRenderTextureFormats::Enum inFormat = QDemonRenderTextureFormats::RGBA8)
-        : QDemonCommand(CommandTypes::BindTarget)
-        , m_outputFormat(inFormat)
+        : QDemonCommand(CommandTypes::BindTarget), m_outputFormat(inFormat)
     {
     }
     QDemonBindTarget(const QDemonBindTarget &inOther)
-        : QDemonCommand(CommandTypes::BindTarget)
-        , m_outputFormat(inOther.m_outputFormat)
+        : QDemonCommand(CommandTypes::BindTarget), m_outputFormat(inOther.m_outputFormat)
     {
     }
 };
@@ -256,15 +230,11 @@ struct QDemonBindBuffer : public QDemonCommand
     QString m_bufferName;
     bool m_needsClear;
     QDemonBindBuffer(QString inBufName, bool inNeedsClear)
-        : QDemonCommand(CommandTypes::BindBuffer)
-        , m_bufferName(inBufName)
-        , m_needsClear(inNeedsClear)
+        : QDemonCommand(CommandTypes::BindBuffer), m_bufferName(inBufName), m_needsClear(inNeedsClear)
     {
     }
     QDemonBindBuffer(const QDemonBindBuffer &inOther)
-        : QDemonCommand(CommandTypes::BindBuffer)
-        , m_bufferName(inOther.m_bufferName)
-        , m_needsClear(inOther.m_needsClear)
+        : QDemonCommand(CommandTypes::BindBuffer), m_bufferName(inOther.m_bufferName), m_needsClear(inOther.m_needsClear)
     {
     }
 };
@@ -277,21 +247,13 @@ struct QDemonBindShader : public QDemonCommand
     // but it means we need to #define a preprocessor token to indicate which
     // effect we intend to compile at this point.
     QString m_shaderDefine;
-    QDemonBindShader(QString inShaderPath,
-                     QString inShaderDefine = QString())
-        : QDemonCommand(CommandTypes::BindShader)
-        , m_shaderPath(inShaderPath)
-        , m_shaderDefine(inShaderDefine)
+    QDemonBindShader(QString inShaderPath, QString inShaderDefine = QString())
+        : QDemonCommand(CommandTypes::BindShader), m_shaderPath(inShaderPath), m_shaderDefine(inShaderDefine)
     {
     }
-    QDemonBindShader()
-        : QDemonCommand(CommandTypes::BindShader)
-    {
-    }
+    QDemonBindShader() : QDemonCommand(CommandTypes::BindShader) {}
     QDemonBindShader(const QDemonBindShader &inOther)
-        : QDemonCommand(CommandTypes::BindShader)
-        , m_shaderPath(inOther.m_shaderPath)
-        , m_shaderDefine(inOther.m_shaderDefine)
+        : QDemonCommand(CommandTypes::BindShader), m_shaderPath(inOther.m_shaderPath), m_shaderDefine(inOther.m_shaderDefine)
     {
     }
 };
@@ -308,20 +270,13 @@ struct QDemonApplyInstanceValue : public QDemonCommand
     QDemonRenderShaderDataTypes::Enum m_valueType;
     // offset in the effect data section of value.
     quint32 m_valueOffset;
-    QDemonApplyInstanceValue(QString inName,
-                             QDemonRenderShaderDataTypes::Enum inValueType,
-                             quint32 inValueOffset)
-        : QDemonCommand(CommandTypes::ApplyInstanceValue)
-        , m_propertyName(inName)
-        , m_valueType(inValueType)
-        , m_valueOffset(inValueOffset)
+    QDemonApplyInstanceValue(QString inName, QDemonRenderShaderDataTypes::Enum inValueType, quint32 inValueOffset)
+        : QDemonCommand(CommandTypes::ApplyInstanceValue), m_propertyName(inName), m_valueType(inValueType), m_valueOffset(inValueOffset)
     {
     }
     // Default will attempt to apply all effect values to the currently bound shader
     QDemonApplyInstanceValue()
-        : QDemonCommand(CommandTypes::ApplyInstanceValue)
-        , m_valueType(QDemonRenderShaderDataTypes::Unknown)
-        , m_valueOffset(0)
+        : QDemonCommand(CommandTypes::ApplyInstanceValue), m_valueType(QDemonRenderShaderDataTypes::Unknown), m_valueOffset(0)
     {
     }
     QDemonApplyInstanceValue(const QDemonApplyInstanceValue &inOther)
@@ -339,17 +294,11 @@ struct QDemonApplyValue : public QDemonCommand
     QDemonRenderShaderDataTypes::Enum m_valueType;
     QDemonDataRef<quint8> m_value;
     QDemonApplyValue(QString inName, QDemonRenderShaderDataTypes::Enum inValueType)
-        : QDemonCommand(CommandTypes::ApplyValue)
-        , m_propertyName(inName)
-        , m_valueType(inValueType)
+        : QDemonCommand(CommandTypes::ApplyValue), m_propertyName(inName), m_valueType(inValueType)
     {
     }
     // Default will attempt to apply all effect values to the currently bound shader
-    QDemonApplyValue()
-        : QDemonCommand(CommandTypes::ApplyValue)
-        , m_valueType(QDemonRenderShaderDataTypes::Unknown)
-    {
-    }
+    QDemonApplyValue() : QDemonCommand(CommandTypes::ApplyValue), m_valueType(QDemonRenderShaderDataTypes::Unknown) {}
 
     QDemonApplyValue(const QDemonApplyValue &inOther)
         : QDemonCommand(CommandTypes::ApplyValue)
@@ -371,15 +320,11 @@ struct QDemonApplyBufferValue : public QDemonCommand
     QString m_paramName;
 
     QDemonApplyBufferValue(QString bufferName, QString shaderParam)
-        : QDemonCommand(CommandTypes::ApplyBufferValue)
-        , m_bufferName(bufferName)
-        , m_paramName(shaderParam)
+        : QDemonCommand(CommandTypes::ApplyBufferValue), m_bufferName(bufferName), m_paramName(shaderParam)
     {
     }
     QDemonApplyBufferValue(const QDemonApplyBufferValue &inOther)
-        : QDemonCommand(CommandTypes::ApplyBufferValue)
-        , m_bufferName(inOther.m_bufferName)
-        , m_paramName(inOther.m_paramName)
+        : QDemonCommand(CommandTypes::ApplyBufferValue), m_bufferName(inOther.m_bufferName), m_paramName(inOther.m_paramName)
     {
     }
 };
@@ -392,10 +337,7 @@ struct QDemonApplyImageValue : public QDemonCommand
     bool m_bindAsTexture; ///< bind image as texture
     bool m_needSync; ///< if true we add a memory barrier before usage
 
-    QDemonApplyImageValue(QString bufferName,
-                          QString shaderParam,
-                          bool inBindAsTexture,
-                          bool inNeedSync)
+    QDemonApplyImageValue(QString bufferName, QString shaderParam, bool inBindAsTexture, bool inNeedSync)
         : QDemonCommand(CommandTypes::ApplyImageValue)
         , m_imageName(bufferName)
         , m_paramName(shaderParam)
@@ -419,17 +361,12 @@ struct QDemonApplyDataBufferValue : public QDemonCommand
     QString m_paramName; ///< must match the name in the shader
     QDemonRenderBufferBindValues::Enum m_bindAs; ///< to which target we bind this buffer
 
-    QDemonApplyDataBufferValue(QString inShaderParam,
-                               QDemonRenderBufferBindValues::Enum inBufferType)
-        : QDemonCommand(CommandTypes::ApplyDataBufferValue)
-        , m_paramName(inShaderParam)
-        , m_bindAs(inBufferType)
+    QDemonApplyDataBufferValue(QString inShaderParam, QDemonRenderBufferBindValues::Enum inBufferType)
+        : QDemonCommand(CommandTypes::ApplyDataBufferValue), m_paramName(inShaderParam), m_bindAs(inBufferType)
     {
     }
     QDemonApplyDataBufferValue(const QDemonApplyDataBufferValue &inOther)
-        : QDemonCommand(CommandTypes::ApplyDataBufferValue)
-        , m_paramName(inOther.m_paramName)
-        , m_bindAs(inOther.m_bindAs)
+        : QDemonCommand(CommandTypes::ApplyDataBufferValue), m_paramName(inOther.m_paramName), m_bindAs(inOther.m_bindAs)
     {
     }
 };
@@ -439,14 +376,9 @@ struct QDemonApplyDepthValue : public QDemonCommand
     // If no param name is given, the buffer is bound to the
     // input texture parameter (texture0).
     QString m_paramName;
-    QDemonApplyDepthValue(QString param)
-        : QDemonCommand(CommandTypes::ApplyDepthValue)
-        , m_paramName(param)
-    {
-    }
+    QDemonApplyDepthValue(QString param) : QDemonCommand(CommandTypes::ApplyDepthValue), m_paramName(param) {}
     QDemonApplyDepthValue(const QDemonApplyDepthValue &inOther)
-        : QDemonCommand(CommandTypes::ApplyDepthValue)
-        , m_paramName(inOther.m_paramName)
+        : QDemonCommand(CommandTypes::ApplyDepthValue), m_paramName(inOther.m_paramName)
     {
     }
 };
@@ -454,15 +386,10 @@ struct QDemonApplyDepthValue : public QDemonCommand
 struct QDemonRender : public QDemonCommand
 {
     bool m_drawIndirect;
-    explicit QDemonRender(bool inDrawIndirect)
-        : QDemonCommand(CommandTypes::Render)
-        , m_drawIndirect(inDrawIndirect)
-    {
-    }
+    explicit QDemonRender(bool inDrawIndirect) : QDemonCommand(CommandTypes::Render), m_drawIndirect(inDrawIndirect) {}
 
     QDemonRender(const QDemonRender &inOther)
-        : QDemonCommand(CommandTypes::Render)
-        , m_drawIndirect(inOther.m_drawIndirect)
+        : QDemonCommand(CommandTypes::Render), m_drawIndirect(inOther.m_drawIndirect)
     {
     }
 };
@@ -472,18 +399,13 @@ struct QDemonApplyBlending : public QDemonCommand
     QDemonRenderSrcBlendFunc::Enum m_srcBlendFunc;
     QDemonRenderDstBlendFunc::Enum m_dstBlendFunc;
 
-    QDemonApplyBlending(QDemonRenderSrcBlendFunc::Enum inSrcBlendFunc,
-                        QDemonRenderDstBlendFunc::Enum inDstBlendFunc)
-        : QDemonCommand(CommandTypes::ApplyBlending)
-        , m_srcBlendFunc(inSrcBlendFunc)
-        , m_dstBlendFunc(inDstBlendFunc)
+    QDemonApplyBlending(QDemonRenderSrcBlendFunc::Enum inSrcBlendFunc, QDemonRenderDstBlendFunc::Enum inDstBlendFunc)
+        : QDemonCommand(CommandTypes::ApplyBlending), m_srcBlendFunc(inSrcBlendFunc), m_dstBlendFunc(inDstBlendFunc)
     {
     }
 
     QDemonApplyBlending(const QDemonApplyBlending &inOther)
-        : QDemonCommand(CommandTypes::ApplyBlending)
-        , m_srcBlendFunc(inOther.m_srcBlendFunc)
-        , m_dstBlendFunc(inOther.m_dstBlendFunc)
+        : QDemonCommand(CommandTypes::ApplyBlending), m_srcBlendFunc(inOther.m_srcBlendFunc), m_dstBlendFunc(inOther.m_dstBlendFunc)
     {
     }
 };
@@ -494,16 +416,12 @@ struct QDemonApplyRenderState : public QDemonCommand
     bool m_enabled;
 
     QDemonApplyRenderState(QDemonRenderState::Enum inRenderStateValue, bool inEnabled)
-        : QDemonCommand(CommandTypes::ApplyRenderState)
-        , m_renderState(inRenderStateValue)
-        , m_enabled(inEnabled)
+        : QDemonCommand(CommandTypes::ApplyRenderState), m_renderState(inRenderStateValue), m_enabled(inEnabled)
     {
     }
 
     QDemonApplyRenderState(const QDemonApplyRenderState &inOther)
-        : QDemonCommand(CommandTypes::ApplyRenderState)
-        , m_renderState(inOther.m_renderState)
-        , m_enabled(inOther.m_enabled)
+        : QDemonCommand(CommandTypes::ApplyRenderState), m_renderState(inOther.m_renderState), m_enabled(inOther.m_enabled)
     {
     }
 };
@@ -517,11 +435,8 @@ struct QDemonApplyBlitFramebuffer : public QDemonCommand
     // is assumed. Which is the default render target
     QString m_destBufferName;
 
-    QDemonApplyBlitFramebuffer(QString inSourceBufferName,
-                               QString inDestBufferName)
-        : QDemonCommand(CommandTypes::ApplyBlitFramebuffer)
-        , m_sourceBufferName(inSourceBufferName)
-        , m_destBufferName(inDestBufferName)
+    QDemonApplyBlitFramebuffer(QString inSourceBufferName, QString inDestBufferName)
+        : QDemonCommand(CommandTypes::ApplyBlitFramebuffer), m_sourceBufferName(inSourceBufferName), m_destBufferName(inDestBufferName)
     {
     }
 
@@ -545,16 +460,10 @@ struct DepthStencilFlagValues
 struct QDemonDepthStencilFlags : public QDemonFlags<DepthStencilFlagValues::Enum>
 {
     bool hasClearStencil() const { return operator&(DepthStencilFlagValues::ClearStencil); }
-    void setClearStencil(bool value)
-    {
-        clearOrSet(value, DepthStencilFlagValues::ClearStencil);
-    }
+    void setClearStencil(bool value) { clearOrSet(value, DepthStencilFlagValues::ClearStencil); }
 
     bool hasClearDepth() const { return operator&(DepthStencilFlagValues::ClearDepth); }
-    void setClearDepth(bool value)
-    {
-        clearOrSet(value, DepthStencilFlagValues::ClearDepth);
-    }
+    void setClearDepth(bool value) { clearOrSet(value, DepthStencilFlagValues::ClearDepth); }
 };
 
 struct QDemonDepthStencil : public QDemonCommand
@@ -562,16 +471,13 @@ struct QDemonDepthStencil : public QDemonCommand
     QString m_bufferName;
     QDemonDepthStencilFlags m_glags;
     QDemonRenderStencilOp::Enum m_stencilFailOperation = QDemonRenderStencilOp::Keep;
-    QDemonRenderStencilOp::Enum m_depthPassOperation= QDemonRenderStencilOp::Keep;
+    QDemonRenderStencilOp::Enum m_depthPassOperation = QDemonRenderStencilOp::Keep;
     QDemonRenderStencilOp::Enum m_depthFailOperation = QDemonRenderStencilOp::Keep;
     QDemonRenderBoolOp::Enum m_stencilFunction = QDemonRenderBoolOp::Equal;
     quint32 m_reference = 0;
     quint32 m_mask = std::numeric_limits<quint32>::max();
 
-    QDemonDepthStencil()
-        : QDemonCommand(CommandTypes::DepthStencil)
-    {
-    }
+    QDemonDepthStencil() : QDemonCommand(CommandTypes::DepthStencil) {}
 
     QDemonDepthStencil(QString bufName,
                        QDemonDepthStencilFlags flags,

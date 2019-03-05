@@ -34,29 +34,27 @@
 
 QT_BEGIN_NAMESPACE
 
-static const char *lconstantnames[] = {
-    "position",
-    "direction",
-    "up",
-    "right",
-    "diffuse",
-    "ambient",
-    "specular",
-    "spotExponent",
-    "spotCutoff",
-    "constantAttenuation",
-    "linearAttenuation",
-    "quadraticAttenuation",
-    "range",
-    "width",
-    "height",
-    "shadowControls",
-    "shadowView",
-    "shadowIdx",
-    "attenuation"
-};
+static const char *lconstantnames[] = { "position",
+                                        "direction",
+                                        "up",
+                                        "right",
+                                        "diffuse",
+                                        "ambient",
+                                        "specular",
+                                        "spotExponent",
+                                        "spotCutoff",
+                                        "constantAttenuation",
+                                        "linearAttenuation",
+                                        "quadraticAttenuation",
+                                        "range",
+                                        "width",
+                                        "height",
+                                        "shadowControls",
+                                        "shadowView",
+                                        "shadowIdx",
+                                        "attenuation" };
 
-template <typename GeneratedShader>
+template<typename GeneratedShader>
 struct QDemonLightConstantProperties
 {
     struct LightConstants
@@ -102,10 +100,9 @@ struct QDemonLightConstantProperties
             , shadowIdx(lightRef + lconstantnames[17], shader)
             , attenuation(lightRef + lconstantnames[18], shader)
         {
-
         }
 
-        template <typename LightProps>
+        template<typename LightProps>
         void updateLights(LightProps &props)
         {
             position.set(props.position);
@@ -126,14 +123,11 @@ struct QDemonLightConstantProperties
             shadowControls.set(props.shadowControls);
             shadowView.set(props.shadowView);
             shadowIdx.set(props.shadowIdx);
-            attenuation.set(QVector3D(props.constantAttenuation,
-                                        props.linearAttenuation,
-                                        props.quadraticAttenuation));
+            attenuation.set(QVector3D(props.constantAttenuation, props.linearAttenuation, props.quadraticAttenuation));
         }
     };
 
-    QDemonLightConstantProperties(GeneratedShader *shader, bool packed)
-        : m_lightCount("uNumLights", shader->m_shader)
+    QDemonLightConstantProperties(GeneratedShader *shader, bool packed) : m_lightCount("uNumLights", shader->m_shader)
     {
         m_constants.resize(shader->m_lights.size());
         for (int i = 0; i < shader->m_lights.size(); ++i) {
@@ -153,11 +147,7 @@ struct QDemonLightConstantProperties
         m_lightCountInt = shader->m_lights.size();
     }
 
-    QDemonLightConstantProperties(const QByteArray &lseed,
-                                  const QByteArray &lcount,
-                                  GeneratedShader *shader,
-                                  bool packed,
-                                  int count)
+    QDemonLightConstantProperties(const QByteArray &lseed, const QByteArray &lcount, GeneratedShader *shader, bool packed, int count)
         : m_lightCount(lcount, shader->m_shader)
     {
         m_constants.resize(count);
@@ -178,17 +168,14 @@ struct QDemonLightConstantProperties
         m_lightCountInt = count;
     }
 
-    ~QDemonLightConstantProperties()
-    {
-        qDeleteAll(m_constants);
-    }
+    ~QDemonLightConstantProperties() { qDeleteAll(m_constants); }
 
     void updateLights(QDemonRef<GeneratedShader> shader)
     {
         for (int i = 0; i < m_constants.size(); ++i)
             m_constants[i]->updateLights(shader->m_lights[i].lightData);
     }
-    template <typename LightProps>
+    template<typename LightProps>
     void updateLights(const QVector<QDemonRef<LightProps>> &props)
     {
         for (int i = 0; i < m_constants.size(); ++i)

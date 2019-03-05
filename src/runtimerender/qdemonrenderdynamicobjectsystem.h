@@ -43,8 +43,8 @@
 
 QT_BEGIN_NAMESPACE
 struct QDemonDynamicObject;
-//struct SWriteBuffer;
-//struct SStrRemapMap;
+// struct SWriteBuffer;
+// struct SStrRemapMap;
 class QDemonRenderContextInterface;
 class QDemonDynamicObjectSystemInterface;
 class QDemonRenderContextCoreInterface;
@@ -60,28 +60,19 @@ struct QDemonDynamicShaderMapKey
     TessModeValues::Enum m_tessMode;
     bool m_wireframeMode;
     size_t m_hashCode;
-    QDemonDynamicShaderMapKey(TStrStrPair inName,
-                              TShaderFeatureSet inFeatures,
-                              TessModeValues::Enum inTessMode,
-                              bool inWireframeMode)
-        : m_name(inName)
-        , m_tessMode(inTessMode)
-        , m_wireframeMode(inWireframeMode)
+    QDemonDynamicShaderMapKey(TStrStrPair inName, TShaderFeatureSet inFeatures, TessModeValues::Enum inTessMode, bool inWireframeMode)
+        : m_name(inName), m_tessMode(inTessMode), m_wireframeMode(inWireframeMode)
     {
         for (int i = 0; i < inFeatures.size(); ++i) {
             m_features.append(inFeatures[i]);
         }
 
-        m_hashCode = qHash(m_name)
-                ^ hashShaderFeatureSet(m_features)
-                ^ qHash(m_tessMode) ^ qHash(m_wireframeMode);
+        m_hashCode = qHash(m_name) ^ hashShaderFeatureSet(m_features) ^ qHash(m_tessMode) ^ qHash(m_wireframeMode);
     }
     bool operator==(const QDemonDynamicShaderMapKey &inKey) const
     {
-        return m_name == inKey.m_name &&
-               m_features == inKey.m_features &&
-               m_tessMode == inKey.m_tessMode &&
-               m_wireframeMode == inKey.m_wireframeMode;
+        return m_name == inKey.m_name && m_features == inKey.m_features && m_tessMode == inKey.m_tessMode
+                && m_wireframeMode == inKey.m_wireframeMode;
     }
 };
 
@@ -97,15 +88,10 @@ struct QDemonPropertyDeclaration
     QDemonRenderShaderDataTypes::Enum dataType;
 
     QDemonPropertyDeclaration(const char *inName, QDemonRenderShaderDataTypes::Enum inDtype)
-        : name(inName)
-        , dataType(inDtype)
+        : name(inName), dataType(inDtype)
     {
     }
-    QDemonPropertyDeclaration()
-        : name("")
-        , dataType(QDemonRenderShaderDataTypes::Unknown)
-    {
-    }
+    QDemonPropertyDeclaration() : name(""), dataType(QDemonRenderShaderDataTypes::Unknown) {}
 };
 
 struct QDemonPropertyDefinition
@@ -137,14 +123,8 @@ struct QDemonPropertyDefinition
     bool isEnumProperty = false;
 
     QDemonPropertyDefinition() = default;
-    QDemonPropertyDefinition(QString inName,
-                             QDemonRenderShaderDataTypes::Enum inType,
-                             quint32 inOffset,
-                             quint32 inByteSize)
-        : name(inName)
-        , dataType(inType)
-        , offset(inOffset)
-        , byteSize(inByteSize)
+    QDemonPropertyDefinition(QString inName, QDemonRenderShaderDataTypes::Enum inType, quint32 inOffset, quint32 inByteSize)
+        : name(inName), dataType(inType), offset(inOffset), byteSize(inByteSize)
     {
     }
 };
@@ -156,8 +136,7 @@ struct QDemonDynamicShaderProgramFlags : public QDemonShaderCacheProgramFlags
 
     QDemonDynamicShaderProgramFlags() = default;
     QDemonDynamicShaderProgramFlags(TessModeValues::Enum inTessMode, bool inWireframeMode)
-        : tessMode(inTessMode)
-        , wireframeMode(inWireframeMode)
+        : tessMode(inTessMode), wireframeMode(inWireframeMode)
     {
     }
 
@@ -213,9 +192,7 @@ public:
                                          const QString &inPropName,
                                          const QDemonConstDataRef<quint8> &inDefaultData) = 0;
 
-    virtual void setPropertyEnumNames(const QString &inName,
-                                      const QString &inPropName,
-                                      const QDemonConstDataRef<QString> &inNames) = 0;
+    virtual void setPropertyEnumNames(const QString &inName, const QString &inPropName, const QDemonConstDataRef<QString> &inNames) = 0;
 
     virtual QDemonConstDataRef<QString> getPropertyEnumNames(const QString &inName, const QString &inPropName) const = 0;
 
@@ -277,9 +254,7 @@ public:
 
     // Will return null in the case where a custom prepass shader isn't needed for this object
     // If no geom shader, then no depth prepass shader.
-    virtual TShaderAndFlags getDepthPrepassShader(QString inPath,
-                                                  QString inProgramMacro,
-                                                  TShaderFeatureSet inFeatureSet) = 0;
+    virtual TShaderAndFlags getDepthPrepassShader(QString inPath, QString inProgramMacro, TShaderFeatureSet inFeatureSet) = 0;
 
     virtual void setShaderCodeLibraryVersion(const QByteArray &version) = 0;
     virtual QString shaderCodeLibraryVersion() = 0;

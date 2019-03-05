@@ -74,14 +74,8 @@ struct QDemonRenderableObjectFlags : public QDemonFlags<RenderPreparationResultF
     {
         clearOrSet(inHasTransparency, RenderPreparationResultFlagValues::HasTransparency);
     }
-    bool hasTransparency() const
-    {
-        return this->operator&(RenderPreparationResultFlagValues::HasTransparency);
-    }
-    bool hasRefraction() const
-    {
-        return this->operator&(RenderPreparationResultFlagValues::HasRefraction);
-    }
+    bool hasTransparency() const { return this->operator&(RenderPreparationResultFlagValues::HasTransparency); }
+    bool hasRefraction() const { return this->operator&(RenderPreparationResultFlagValues::HasRefraction); }
     void setCompletelyTransparent(bool inTransparent)
     {
         clearOrSet(inTransparent, RenderPreparationResultFlagValues::CompletelyTransparent);
@@ -90,19 +84,10 @@ struct QDemonRenderableObjectFlags : public QDemonFlags<RenderPreparationResultF
     {
         return this->operator&(RenderPreparationResultFlagValues::CompletelyTransparent);
     }
-    void setDirty(bool inDirty)
-    {
-        clearOrSet(inDirty, RenderPreparationResultFlagValues::Dirty);
-    }
+    void setDirty(bool inDirty) { clearOrSet(inDirty, RenderPreparationResultFlagValues::Dirty); }
     bool isDirty() const { return this->operator&(RenderPreparationResultFlagValues::Dirty); }
-    void setPickable(bool inPickable)
-    {
-        clearOrSet(inPickable, RenderPreparationResultFlagValues::Pickable);
-    }
-    bool getPickable() const
-    {
-        return this->operator&(RenderPreparationResultFlagValues::Pickable);
-    }
+    void setPickable(bool inPickable) { clearOrSet(inPickable, RenderPreparationResultFlagValues::Pickable); }
+    bool getPickable() const { return this->operator&(RenderPreparationResultFlagValues::Pickable); }
 
     // Mutually exclusive values
     void setDefaultMaterialMeshSubset(bool inMeshSubset)
@@ -126,10 +111,7 @@ struct QDemonRenderableObjectFlags : public QDemonFlags<RenderPreparationResultF
     void setText(bool inText) { clearOrSet(inText, RenderPreparationResultFlagValues::Text); }
     bool IsText() const { return this->operator&(RenderPreparationResultFlagValues::Text); }
 
-    void setCustom(bool inCustom)
-    {
-        clearOrSet(inCustom, RenderPreparationResultFlagValues::Custom);
-    }
+    void setCustom(bool inCustom) { clearOrSet(inCustom, RenderPreparationResultFlagValues::Custom); }
     bool isCustom() const { return this->operator&(RenderPreparationResultFlagValues::Custom); }
 
     void setPath(bool inPath) { clearOrSet(inPath, RenderPreparationResultFlagValues::Path); }
@@ -143,9 +125,7 @@ struct QDemonNodeLightEntry
     QDemonNodeLightEntry *nextNode = nullptr;
     QDemonNodeLightEntry() = default;
     QDemonNodeLightEntry(QDemonRenderLight *inLight, quint32 inLightIndex)
-        : light(inLight)
-        , lightIndex(inLightIndex)
-        , nextNode(nullptr)
+        : light(inLight), lightIndex(inLightIndex), nextNode(nullptr)
     {
     }
 };
@@ -186,10 +166,7 @@ struct QDemonRenderableObject
         , renderFunction(inFunction)
     {
     }
-    bool operator<(QDemonRenderableObject *inOther) const
-    {
-        return cameraDistanceSq < inOther->cameraDistanceSq;
-    }
+    bool operator<(QDemonRenderableObject *inOther) const { return cameraDistanceSq < inOther->cameraDistanceSq; }
 };
 
 typedef QVector<QDemonRenderableObject *> TRenderableObjectList;
@@ -203,19 +180,14 @@ struct QDemonModelContext
     QMatrix4x4 modelViewProjection;
     QMatrix3x3 normalMatrix;
 
-    QDemonModelContext(const QDemonRenderModel &inModel, const QMatrix4x4 &inViewProjection)
-        : model(inModel)
+    QDemonModelContext(const QDemonRenderModel &inModel, const QMatrix4x4 &inViewProjection) : model(inModel)
     {
-        model.calculateMVPAndNormalMatrix(inViewProjection,
-                                          modelViewProjection,
-                                          normalMatrix);
+        model.calculateMVPAndNormalMatrix(inViewProjection, modelViewProjection, normalMatrix);
     }
-    QDemonModelContext(const QDemonModelContext &inOther)
-        : model(inOther.model)
+    QDemonModelContext(const QDemonModelContext &inOther) : model(inOther.model)
     {
         // The default copy constructor for these objects is pretty darn slow.
-        ::memcpy(&modelViewProjection, &inOther.modelViewProjection,
-                sizeof(modelViewProjection));
+        ::memcpy(&modelViewProjection, &inOther.modelViewProjection, sizeof(modelViewProjection));
         ::memcpy(&normalMatrix, &inOther.normalMatrix, sizeof(normalMatrix));
     }
 };
@@ -245,16 +217,14 @@ struct QDemonSubsetRenderableBase : public QDemonRenderableObject
                              const QDemonRenderCamera &inCamera,
                              QDemonShadowMapEntry *inShadowMapEntry) const;
 
-    void renderDepthPass(const QVector2D &inCameraVec,
-                         QDemonRenderableImage *inDisplacementImage,
-                         float inDisplacementAmount);
+    void renderDepthPass(const QVector2D &inCameraVec, QDemonRenderableImage *inDisplacementImage, float inDisplacementAmount);
 };
 
 /**
-     *	A renderable that corresponds to a subset (a part of a model).
-     *	These are created per subset per layer and are responsible for actually
-     *	rendering this type of object.
-     */
+ *	A renderable that corresponds to a subset (a part of a model).
+ *	These are created per subset per layer and are responsible for actually
+ *	rendering this type of object.
+ */
 struct QDemonSubsetRenderable : public QDemonSubsetRenderableBase
 {
     const QDemonRenderDefaultMaterial &material;
@@ -278,10 +248,7 @@ struct QDemonSubsetRenderable : public QDemonSubsetRenderableBase
 
     void renderDepthPass(const QVector2D &inCameraVec);
 
-    DefaultMaterialBlendMode::Enum getBlendingMode()
-    {
-        return material.blendMode;
-    }
+    DefaultMaterialBlendMode::Enum getBlendingMode() { return material.blendMode; }
 };
 
 struct QDemonCustomMaterialRenderable : public QDemonSubsetRenderableBase
@@ -322,8 +289,7 @@ struct QDemonTextScaleAndOffset
     QVector2D textOffset;
     QVector2D textScale;
     QDemonTextScaleAndOffset(const QVector2D &inTextOffset, const QVector2D &inTextScale)
-        : textOffset(inTextOffset)
-        , textScale(inTextScale)
+        : textOffset(inTextOffset), textScale(inTextScale)
     {
     }
     QDemonTextScaleAndOffset(QDemonRenderTexture2D &inTexture,

@@ -5,23 +5,14 @@
 
 QT_BEGIN_NAMESPACE
 
-template <typename TDataType>
+template<typename TDataType>
 struct QDemonConstDataRef
 {
     const TDataType *mData;
     int mSize;
 
-    QDemonConstDataRef(const TDataType *inData, qint32 inSize)
-        : mData(inData)
-        , mSize(inSize)
-    {
-        Q_ASSERT(mSize > -1);
-    }
-    QDemonConstDataRef()
-        : mData(nullptr)
-        , mSize(0)
-    {
-    }
+    QDemonConstDataRef(const TDataType *inData, qint32 inSize) : mData(inData), mSize(inSize) { Q_ASSERT(mSize > -1); }
+    QDemonConstDataRef() : mData(nullptr), mSize(0) {}
 
     qint32 size() const { return mSize; }
 
@@ -36,47 +27,38 @@ struct QDemonConstDataRef
     }
 };
 
-template <typename TDataType>
+template<typename TDataType>
 inline QDemonConstDataRef<TDataType> toConstDataRef(const TDataType &type)
 {
     return QDemonConstDataRef<TDataType>(&type, 1);
 }
 
-template <typename TDataType>
+template<typename TDataType>
 inline QDemonConstDataRef<quint8> toU8ConstDataRef(const TDataType &type)
 {
     return QDemonConstDataRef<quint8>(reinterpret_cast<const quint8 *>(&type), sizeof(TDataType));
 }
 
-template <typename TDataType>
+template<typename TDataType>
 inline QDemonConstDataRef<TDataType> toConstDataRef(const TDataType *type, quint32 count)
 {
     return QDemonConstDataRef<TDataType>(type, count);
 }
 
-template <typename TDataType>
+template<typename TDataType>
 inline QDemonConstDataRef<quint8> toU8ConstDataRef(const TDataType *type, quint32 count)
 {
-    return QDemonConstDataRef<quint8>(reinterpret_cast<const quint8 *>(type),
-                                sizeof(TDataType) * count);
+    return QDemonConstDataRef<quint8>(reinterpret_cast<const quint8 *>(type), sizeof(TDataType) * count);
 }
 
-template <typename TDataType>
+template<typename TDataType>
 struct QDemonDataRef
 {
     TDataType *mData;
     quint32 mSize;
 
-    QDemonDataRef(TDataType *inData, quint32 inSize)
-        : mData(inData)
-        , mSize(inSize)
-    {
-    }
-    QDemonDataRef()
-        : mData(nullptr)
-        , mSize(0)
-    {
-    }
+    QDemonDataRef(TDataType *inData, quint32 inSize) : mData(inData), mSize(inSize) {}
+    QDemonDataRef() : mData(nullptr), mSize(0) {}
     quint32 size() const { return mSize; }
 
     TDataType *begin() { return mData; }
@@ -97,31 +79,28 @@ struct QDemonDataRef
         return mData[index];
     }
 
-    operator QDemonConstDataRef<TDataType>() const
-    {
-        return QDemonConstDataRef<TDataType>(mData, mSize);
-    }
+    operator QDemonConstDataRef<TDataType>() const { return QDemonConstDataRef<TDataType>(mData, mSize); }
 };
 
-template <typename TDataType>
+template<typename TDataType>
 inline QDemonDataRef<TDataType> toDataRef(TDataType &type)
 {
     return QDemonDataRef<TDataType>(&type, 1);
 }
 
-template <typename TDataType>
+template<typename TDataType>
 inline QDemonDataRef<quint8> toU8DataRef(TDataType &type)
 {
     return QDemonDataRef<quint8>(reinterpret_cast<quint8 *>(&type), sizeof(TDataType));
 }
 
-template <typename TDataType>
+template<typename TDataType>
 inline QDemonDataRef<TDataType> toDataRef(TDataType *type, quint32 count)
 {
     return QDemonDataRef<TDataType>(type, count);
 }
 
-template <typename TDataType>
+template<typename TDataType>
 inline QDemonDataRef<quint8> toU8DataRef(TDataType *type, quint32 count)
 {
     return QDemonDataRef<quint8>(reinterpret_cast<quint8 *>(type), sizeof(TDataType) * count);

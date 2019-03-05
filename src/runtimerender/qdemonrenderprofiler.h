@@ -35,8 +35,8 @@
 QT_BEGIN_NAMESPACE
 
 /**
-     *	Opaque profiling system for rendering.
-     */
+ *	Opaque profiling system for rendering.
+ */
 
 class QDemonRenderContextInterface;
 class QDemonRenderContext;
@@ -49,57 +49,57 @@ public:
     QAtomicInt ref;
     virtual ~QDemonRenderProfilerInterface() {}
     /**
-         * @brief start a timer query
-         *
-         * @param[in] nameID			Timer ID for tracking
-         * @param[in] absoluteTime		If true the absolute GPU is queried
-         * @param[in] sync				Do a sync before starting the timer
-         *
-         * @return no return
-         */
+     * @brief start a timer query
+     *
+     * @param[in] nameID			Timer ID for tracking
+     * @param[in] absoluteTime		If true the absolute GPU is queried
+     * @param[in] sync				Do a sync before starting the timer
+     *
+     * @return no return
+     */
     virtual void startTimer(QString &nameID, bool absoluteTime, bool sync) = 0;
 
     /**
-         * @brief stop a timer query
-         *
-         * @param[in] nameID			Timer ID for tracking
-         *
-         * @return no return
-         */
+     * @brief stop a timer query
+     *
+     * @param[in] nameID			Timer ID for tracking
+     *
+     * @return no return
+     */
     virtual void endTimer(QString &nameID) = 0;
 
     /**
-         * @brief Get elapsed timer value. Not this is an averaged time over several frames
-         *
-         * @param[in] nameID			Timer ID for tracking
-         *
-         * @return no return
-         */
+     * @brief Get elapsed timer value. Not this is an averaged time over several frames
+     *
+     * @param[in] nameID			Timer ID for tracking
+     *
+     * @return no return
+     */
     virtual double getElapsedTime(const QString &nameID) const = 0;
 
     /**
-         * @brief Get ID list of tracked timers
-         *
-         * @return ID list
-         */
+     * @brief Get ID list of tracked timers
+     *
+     * @return ID list
+     */
     virtual const TStrIDVec &getTimerIDs() const = 0;
 
     /**
-         * @brief add vertex count to current counter
-         *
-         * @return
-         */
+     * @brief add vertex count to current counter
+     *
+     * @return
+     */
     virtual void addVertexCount(quint32 count) = 0;
 
     /**
-         * @brief get current vertex count and reset
-         *
-         * @return
-         */
+     * @brief get current vertex count and reset
+     *
+     * @return
+     */
     virtual quint32 getAndResetTriangleCount() const = 0;
 
     static QDemonRef<QDemonRenderProfilerInterface> createGpuProfiler(QDemonRenderContextInterface *inContext,
-                                                                           const QDemonRef<QDemonRenderContext>& inRenderContext);
+                                                                      const QDemonRef<QDemonRenderContext> &inRenderContext);
 };
 QT_END_NAMESPACE
 

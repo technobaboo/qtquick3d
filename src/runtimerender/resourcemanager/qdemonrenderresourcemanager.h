@@ -38,8 +38,8 @@
 
 QT_BEGIN_NAMESPACE
 /**
-     *	Implements simple pooling of render resources
-     */
+ *	Implements simple pooling of render resources
+ */
 class Q_DEMONRUNTIMERENDER_EXPORT QDemonResourceManagerInterface
 {
 public:
@@ -48,28 +48,28 @@ public:
     virtual QDemonRef<QDemonRenderFrameBuffer> allocateFrameBuffer() = 0;
     virtual void release(QDemonRef<QDemonRenderFrameBuffer> inBuffer) = 0;
     virtual QDemonRef<QDemonRenderRenderBuffer> allocateRenderBuffer(quint32 inWidth,
-                                                                          quint32 inHeight,
-                                                                          QDemonRenderRenderBufferFormats::Enum inBufferFormat) = 0;
+                                                                     quint32 inHeight,
+                                                                     QDemonRenderRenderBufferFormats::Enum inBufferFormat) = 0;
     virtual void release(QDemonRef<QDemonRenderRenderBuffer> inBuffer) = 0;
     virtual QDemonRef<QDemonRenderTexture2D> allocateTexture2D(quint32 inWidth,
-                                                                    quint32 inHeight,
-                                                                    QDemonRenderTextureFormats::Enum inTextureFormat,
-                                                                    quint32 inSampleCount = 1,
-                                                                    bool immutable = false) = 0;
+                                                               quint32 inHeight,
+                                                               QDemonRenderTextureFormats::Enum inTextureFormat,
+                                                               quint32 inSampleCount = 1,
+                                                               bool immutable = false) = 0;
     virtual void release(QDemonRef<QDemonRenderTexture2D> inBuffer) = 0;
     virtual QDemonRef<QDemonRenderTexture2DArray> allocateTexture2DArray(quint32 inWidth,
-                                                                              quint32 inHeight,
-                                                                              quint32 inSlices,
-                                                                              QDemonRenderTextureFormats::Enum inTextureFormat,
-                                                                              quint32 inSampleCount = 1) = 0;
+                                                                         quint32 inHeight,
+                                                                         quint32 inSlices,
+                                                                         QDemonRenderTextureFormats::Enum inTextureFormat,
+                                                                         quint32 inSampleCount = 1) = 0;
     virtual void release(QDemonRef<QDemonRenderTexture2DArray> inBuffer) = 0;
-    virtual QDemonRef<QDemonRenderTextureCube>
-    allocateTextureCube(quint32 inWidth, quint32 inHeight,
-                        QDemonRenderTextureFormats::Enum inTextureFormat,
-                        quint32 inSampleCount = 1) = 0;
+    virtual QDemonRef<QDemonRenderTextureCube> allocateTextureCube(quint32 inWidth,
+                                                                   quint32 inHeight,
+                                                                   QDemonRenderTextureFormats::Enum inTextureFormat,
+                                                                   quint32 inSampleCount = 1) = 0;
     virtual void release(QDemonRef<QDemonRenderTextureCube> inBuffer) = 0;
     virtual QDemonRef<QDemonRenderImage2D> allocateImage2D(QDemonRef<QDemonRenderTexture2D> inTexture,
-                                                                QDemonRenderImageAccessType::Enum inAccess) = 0;
+                                                           QDemonRenderImageAccessType::Enum inAccess) = 0;
     virtual void release(QDemonRef<QDemonRenderImage2D> inBuffer) = 0;
 
     virtual QDemonRef<QDemonRenderContext> getRenderContext() = 0;

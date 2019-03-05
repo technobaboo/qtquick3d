@@ -27,7 +27,6 @@
 **
 ****************************************************************************/
 
-
 #ifndef OBJASSETIMPORTERPLUGIN_H
 #define OBJASSETIMPORTERPLUGIN_H
 

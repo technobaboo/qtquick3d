@@ -27,7 +27,6 @@
 **
 ****************************************************************************/
 
-
 #include "objassetimporter.h"
 
 #include <QtDemonAssetImport/private/qdemonscenegraphtranslation_p.h>
@@ -39,10 +38,7 @@
 
 QT_BEGIN_NAMESPACE
 
-ObjAssetImporter::ObjAssetImporter()
-{
-
-}
+ObjAssetImporter::ObjAssetImporter() {}
 
 const QString ObjAssetImporter::name() const
 {
@@ -83,7 +79,7 @@ const QString ObjAssetImporter::import(const QString &sourceFile, const QDir &sa
 
     // Validate file
     QFile objFile(sourceFile);
-    if (!objFile.open(QIODevice::ReadOnly|QIODevice::Text))
+    if (!objFile.open(QIODevice::ReadOnly | QIODevice::Text))
         return QStringLiteral("Failed to open %1 for reading").arg(sourceFile);
 
     QTextStream stream(&objFile);
@@ -171,9 +167,9 @@ void ObjAssetImporter::parseObj(QTextStream &stream)
 
                     int idx = j;
 
-//                    if (!flip_faces && idx < 2) {
-//                        idx = 1 ^ idx;
-//                    }
+                    //                    if (!flip_faces && idx < 2) {
+                    //                        idx = 1 ^ idx;
+                    //                    }
 
                     // Normal
                     if (face[idx].size() == 3) {
@@ -181,7 +177,7 @@ void ObjAssetImporter::parseObj(QTextStream &stream)
                         if (norm < 0)
                             norm += normals.size() + 1;
                         // ### add normal
-                        //surf_tool->add_normal(normals[norm]);
+                        // surf_tool->add_normal(normals[norm]);
                     }
 
                     // UV
@@ -190,7 +186,7 @@ void ObjAssetImporter::parseObj(QTextStream &stream)
                         if (uv < 0)
                             uv += uvs.size() + 1;
                         // ### add UV
-                        //surf_tool->add_uv(uvs[uv]);
+                        // surf_tool->add_uv(uvs[uv]);
                     }
 
                     // Vertex
@@ -198,62 +194,62 @@ void ObjAssetImporter::parseObj(QTextStream &stream)
                     if (vtx < 0)
                         vtx += vertices.size() + 1;
 
-                    //QVector3D vertex = vertices[vtx];
+                    // QVector3D vertex = vertices[vtx];
                     // ### add Vertex
-                    //surf_tool->add_vertex(vertex);
+                    // surf_tool->add_vertex(vertex);
                 }
 
                 face[1] = face[2];
             }
         } else if (line.startsWith("s ")) {
             QString smoothingString = line.right(line.length() - 2).trimmed();
-//            if (smoothingString == "off")
-//                //surf_tool->add_smooth_group(false);
-//            else
-//                //surf_tool->add_smooth_group(true);
-        } else if (line.startsWith("usemtl ") || (line.startsWith("o ") || line.isNull())) { //commit group to mesh
+            //            if (smoothingString == "off")
+            //                //surf_tool->add_smooth_group(false);
+            //            else
+            //                //surf_tool->add_smooth_group(true);
+        } else if (line.startsWith("usemtl ") || (line.startsWith("o ") || line.isNull())) { // commit group to mesh
 
-//            if (surf_tool->get_vertex_array().size()) {
-//                //another group going on, commit it
-//                if (normals.size() == 0) {
-//                    surf_tool->generate_normals();
-//                }
+            //            if (surf_tool->get_vertex_array().size()) {
+            //                //another group going on, commit it
+            //                if (normals.size() == 0) {
+            //                    surf_tool->generate_normals();
+            //                }
 
-//                if (generate_tangents && uvs.size()) {
-//                    surf_tool->generate_tangents();
-//                }
+            //                if (generate_tangents && uvs.size()) {
+            //                    surf_tool->generate_tangents();
+            //                }
 
-//                surf_tool->index();
+            //                surf_tool->index();
 
-//                print_line("current material library " + current_material_library + " has " + itos(material_map.has(current_material_library)));
-//                print_line("current material " + current_material + " has " + itos(material_map.has(current_material_library) && material_map[current_material_library].has(current_material)));
+            //                print_line("current material library " + current_material_library + " has " + itos(material_map.has(current_material_library)));
+            //                print_line("current material " + current_material + " has " + itos(material_map.has(current_material_library) && material_map[current_material_library].has(current_material)));
 
-//                if (material_map.has(current_material_library) && material_map[current_material_library].has(current_material)) {
-//                    surf_tool->set_material(material_map[current_material_library][current_material]);
-//                }
+            //                if (material_map.has(current_material_library) && material_map[current_material_library].has(current_material)) {
+            //                    surf_tool->set_material(material_map[current_material_library][current_material]);
+            //                }
 
-//                mesh = surf_tool->commit(mesh, mesh_flags);
+            //                mesh = surf_tool->commit(mesh, mesh_flags);
 
-//                if (current_material != String()) {
-//                    mesh->surface_set_name(mesh->get_surface_count() - 1, current_material.get_basename());
-//                } else if (current_group != String()) {
-//                    mesh->surface_set_name(mesh->get_surface_count() - 1, current_group);
-//                }
+            //                if (current_material != String()) {
+            //                    mesh->surface_set_name(mesh->get_surface_count() - 1, current_material.get_basename());
+            //                } else if (current_group != String()) {
+            //                    mesh->surface_set_name(mesh->get_surface_count() - 1, current_group);
+            //                }
 
-//                print_line("Added surface :" + mesh->surface_get_name(mesh->get_surface_count() - 1));
-//                surf_tool->clear();
-//                surf_tool->begin(Mesh::PRIMITIVE_TRIANGLES);
-//            }
+            //                print_line("Added surface :" + mesh->surface_get_name(mesh->get_surface_count() - 1));
+            //                surf_tool->clear();
+            //                surf_tool->begin(Mesh::PRIMITIVE_TRIANGLES);
+            //            }
 
             if (line.startsWith("o ") || line.isNull()) {
 
-//                if (!p_single_mesh) {
-//                    mesh->set_name(name);
-//                    r_meshes.push_back(mesh);
-//                    mesh.instance();
-//                    current_group = "";
-//                    current_material = "";
-//                }
+                //                if (!p_single_mesh) {
+                //                    mesh->set_name(name);
+                //                    r_meshes.push_back(mesh);
+                //                    mesh.instance();
+                //                    current_group = "";
+                //                    current_material = "";
+                //                }
             }
 
             // End of File
@@ -269,20 +265,20 @@ void ObjAssetImporter::parseObj(QTextStream &stream)
             if (line.startsWith("g "))
                 currentGroup = line.right(line.length() - 2).trimmed();
 
-        } else if (line.startsWith("mtllib ")) { //parse material
+        } else if (line.startsWith("mtllib ")) { // parse material
 
             currentMaterialLibrary = line.remove(0, 6).trimmed();
-//            if (!material_map.has(current_material_library)) {
-//                Map<String, Ref<SpatialMaterial> > lib;
-//                Error err = _parse_material_library(current_material_library, lib, r_missing_deps);
-//                if (err == ERR_CANT_OPEN) {
-//                    String dir = p_path.get_base_dir();
-//                    err = _parse_material_library(dir.plus_file(current_material_library), lib, r_missing_deps);
-//                }
-//                if (err == OK) {
-//                    material_map[current_material_library] = lib;
-//                }
-//            }
+            //            if (!material_map.has(current_material_library)) {
+            //                Map<String, Ref<SpatialMaterial> > lib;
+            //                Error err = _parse_material_library(current_material_library, lib, r_missing_deps);
+            //                if (err == ERR_CANT_OPEN) {
+            //                    String dir = p_path.get_base_dir();
+            //                    err = _parse_material_library(dir.plus_file(current_material_library), lib, r_missing_deps);
+            //                }
+            //                if (err == OK) {
+            //                    material_map[current_material_library] = lib;
+            //                }
+            //            }
         }
     }
 }

@@ -5,16 +5,9 @@
 #include <qdemonimage.h>
 QT_BEGIN_NAMESPACE
 
+QDemonLayer::QDemonLayer() {}
 
-QDemonLayer::QDemonLayer()
-{
-
-}
-
-QDemonLayer::~QDemonLayer()
-{
-
-}
+QDemonLayer::~QDemonLayer() {}
 
 QDemonObject::Type QDemonLayer::type() const
 {
@@ -213,7 +206,8 @@ bool QDemonLayer::temporalAAEnabled() const
 
 QQmlListProperty<QDemonEffect> QDemonLayer::effectsList()
 {
-    return QQmlListProperty<QDemonEffect>(this, nullptr,
+    return QQmlListProperty<QDemonEffect>(this,
+                                          nullptr,
                                           QDemonLayer::qmlAppendEffect,
                                           QDemonLayer::qmlEffectsCount,
                                           QDemonLayer::qmlEffectAt,
@@ -652,7 +646,7 @@ QDemonGraphObject *QDemonLayer::updateSpatialNode(QDemonGraphObject *node)
     // Update super properties
     QDemonNode::updateSpatialNode(node);
 
-    QDemonRenderLayer *layerNode = static_cast<QDemonRenderLayer*>(node);
+    QDemonRenderLayer *layerNode = static_cast<QDemonRenderLayer *>(node);
     if (m_dirtyAttributes & RenderTarget)
         layerNode->texturePath = m_texturePath;
     if (m_dirtyAttributes & AntiAliasing) {
@@ -663,9 +657,7 @@ QDemonGraphObject *QDemonLayer::updateSpatialNode(QDemonGraphObject *node)
 
     if (m_dirtyAttributes & Background) {
         layerNode->background = LayerBackground::Enum(m_backgroundMode);
-        layerNode->clearColor = QVector3D(m_clearColor.redF(),
-                                          m_clearColor.greenF(),
-                                          m_clearColor.blueF());
+        layerNode->clearColor = QVector3D(m_clearColor.redF(), m_clearColor.greenF(), m_clearColor.blueF());
     }
     if (m_dirtyAttributes & Layout) {
         layerNode->m_height = m_height;
@@ -725,15 +717,12 @@ QDemonGraphObject *QDemonLayer::updateSpatialNode(QDemonGraphObject *node)
         layerNode->probe2Pos = m_probe2Postion;
     }
 
-
     // ### Make sure effects are also handled
     if (m_dirtyAttributes & Effect) {
-
     }
 
     // ### Make sure active camera is correct
     if (m_dirtyAttributes & Camera) {
-
     }
 
     m_dirtyAttributes = 0;

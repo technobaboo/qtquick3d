@@ -41,11 +41,11 @@ public:
     virtual ~QDemonRenderDrawable() {}
 
     /**
-         *	Draw using this object.
-         *	offset is in num elements, not in number of bytes
-         *	because the various different draw functions differ in what datatype
-         *	offset is (gl drawarrays vs gl drawindexedarras).
-         */
+     *	Draw using this object.
+     *	offset is in num elements, not in number of bytes
+     *	because the various different draw functions differ in what datatype
+     *	offset is (gl drawarrays vs gl drawindexedarras).
+     */
     virtual void draw(QDemonRenderDrawMode::Enum drawMode, quint32 count, quint32 offset) = 0;
 };
 

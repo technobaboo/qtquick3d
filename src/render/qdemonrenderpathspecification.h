@@ -41,74 +41,74 @@ class QDemonRenderPathSpecification
 {
 public:
     QAtomicInt ref;
+
 private:
     QDemonRef<QDemonRenderContextImpl> m_context; ///< pointer to context
     QDemonRef<QDemonRenderBackend> m_backend; ///< pointer to backend
 
 public:
     /**
-         * @brief constructor
-         *
-         * @param[in] context		Pointer to render context
-         * @param[in] fnd			Pointer to foundation
-         *
-         * @return No return.
-         */
+     * @brief constructor
+     *
+     * @param[in] context		Pointer to render context
+     * @param[in] fnd			Pointer to foundation
+     *
+     * @return No return.
+     */
     QDemonRenderPathSpecification(const QDemonRef<QDemonRenderContextImpl> &context);
 
     /// @QDemonRenderPathSpecification destructor
     virtual ~QDemonRenderPathSpecification();
 
-
     /**
-         * @brief reset commands and coordiantes
-         *
-         * @return No return.
-         */
+     * @brief reset commands and coordiantes
+     *
+     * @return No return.
+     */
     virtual void reset();
 
     /**
-         * @brief add new move to command
-         *
-         * @param[in] inPoint		Coordinate
-         *
-         * @return No return.
-         */
+     * @brief add new move to command
+     *
+     * @param[in] inPoint		Coordinate
+     *
+     * @return No return.
+     */
     virtual void moveTo(QVector2D inPoint);
 
     /**
-         * @brief add new cubic curve command
-         *
-         * @param[in] inC1		control point 1
-         * @param[in] inC2		control point 2
-         * @param[in] inDest	final point
-         *
-         * @return No return.
-         */
+     * @brief add new cubic curve command
+     *
+     * @param[in] inC1		control point 1
+     * @param[in] inC2		control point 2
+     * @param[in] inDest	final point
+     *
+     * @return No return.
+     */
     virtual void cubicCurveTo(QVector2D inC1, QVector2D inC2, QVector2D inDest);
 
     /**
-         * @brief add new close command
-         *
-         *
-         * @return No return.
-         */
+     * @brief add new close command
+     *
+     *
+     * @return No return.
+     */
     virtual void closePath();
 
     /**
-         * @brief Get path command list
-         *
-         *
-         * @return path commands
-         */
+     * @brief Get path command list
+     *
+     *
+     * @return path commands
+     */
     virtual QVector<quint8> getPathCommands() { return m_pathCommands; }
 
     /**
-         * @brief Get path coordinates list
-         *
-         *
-         * @return path coordinates
-         */
+     * @brief Get path coordinates list
+     *
+     *
+     * @return path coordinates
+     */
     virtual QVector<float> getPathCoords() { return m_pathCoords; }
 
 private:
@@ -116,12 +116,12 @@ private:
     QVector<float> m_pathCoords;
 
     /**
-         * @brief add a new point to the coordinates
-         *
-         * @param[in] inPoint		Coordinate
-         *
-         * @return No return.
-         */
+     * @brief add a new point to the coordinates
+     *
+     * @param[in] inPoint		Coordinate
+     *
+     * @return No return.
+     */
     void addPoint(QVector2D inData);
 
 public:

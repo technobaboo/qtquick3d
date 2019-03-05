@@ -138,12 +138,10 @@ void swizzleFaceIndices(QVector<int> &ioValues)
  *	Convert an axis angle rotation vector into a matrix representation.
  *	This code is modified from FCollada's FMMatrix44::AxisRotationMatrix
  */
-void matrixFromAxisAngle(float inDegreeAngle, float inXAxis, float inYAxis, float inZAxis,
-                         float inMatrix[4][4])
+void matrixFromAxisAngle(float inDegreeAngle, float inXAxis, float inYAxis, float inZAxis, float inMatrix[4][4])
 {
     // If axis or angle is zero, we're going to get a bad matrix, so bail.
-    if (fabsf(inDegreeAngle) < 0.001f
-        || (fabsf(inXAxis) < 0.001f && fabsf(inYAxis) < 0.001f && fabsf(inZAxis) < 0.001f)) {
+    if (fabsf(inDegreeAngle) < 0.001f || (fabsf(inXAxis) < 0.001f && fabsf(inYAxis) < 0.001f && fabsf(inZAxis) < 0.001f)) {
         return;
     }
 
@@ -179,7 +177,7 @@ void matrixFromAxisAngle(float inDegreeAngle, float inXAxis, float inYAxis, floa
 
 #define FLT_TOLERANCE 0.0001f
 
-template <class T>
+template<class T>
 T sign(const T &val)
 {
     return (val >= T(0)) ? T(1) : T(-1);
@@ -198,8 +196,7 @@ static float det2x2(float a1, float a2, float b1, float b2)
 /**
  *	Get the 3x3 determinant
  */
-static float det3x3(float a1, float a2, float a3, float b1, float b2, float b3, float c1, float c2,
-                    float c3)
+static float det3x3(float a1, float a2, float a3, float b1, float b2, float b3, float c1, float c2, float c3)
 {
     return a1 * det2x2(b2, b3, c2, c3) - b1 * det2x2(a2, a3, c2, c3) + c1 * det2x2(a2, a3, b2, b3);
 }
@@ -211,16 +208,19 @@ static float det3x3(float a1, float a2, float a3, float b1, float b2, float b3, 
  */
 void decomposeScale(QVector3D &outScale, float inMatrix[4][4])
 {
-    outScale.setX(sqrtf(inMatrix[0][0] * inMatrix[0][0] + inMatrix[0][1] * inMatrix[0][1]
-                  + inMatrix[0][2] * inMatrix[0][2]));
-    outScale.setY(sqrtf(inMatrix[1][0] * inMatrix[1][0] + inMatrix[1][1] * inMatrix[1][1]
-                  + inMatrix[1][2] * inMatrix[1][2]));
-    outScale.setZ(sqrtf(inMatrix[2][0] * inMatrix[2][0] + inMatrix[2][1] * inMatrix[2][1]
-                  + inMatrix[2][2] * inMatrix[2][2]));
+    outScale.setX(sqrtf(inMatrix[0][0] * inMatrix[0][0] + inMatrix[0][1] * inMatrix[0][1] + inMatrix[0][2] * inMatrix[0][2]));
+    outScale.setY(sqrtf(inMatrix[1][0] * inMatrix[1][0] + inMatrix[1][1] * inMatrix[1][1] + inMatrix[1][2] * inMatrix[1][2]));
+    outScale.setZ(sqrtf(inMatrix[2][0] * inMatrix[2][0] + inMatrix[2][1] * inMatrix[2][1] + inMatrix[2][2] * inMatrix[2][2]));
 
-    float isInverted =
-        sign(det3x3(inMatrix[0][0], inMatrix[0][1], inMatrix[0][2], inMatrix[1][0], inMatrix[1][1],
-                    inMatrix[1][2], inMatrix[2][0], inMatrix[2][1], inMatrix[2][2]));
+    float isInverted = sign(det3x3(inMatrix[0][0],
+                                   inMatrix[0][1],
+                                   inMatrix[0][2],
+                                   inMatrix[1][0],
+                                   inMatrix[1][1],
+                                   inMatrix[1][2],
+                                   inMatrix[2][0],
+                                   inMatrix[2][1],
+                                   inMatrix[2][2]));
 
     if (isInverted < 0.0f) {
         outScale.setX(-outScale.x());
@@ -231,8 +231,8 @@ void decomposeScale(QVector3D &outScale, float inMatrix[4][4])
 
 //==============================================================================
 /**
-*	Translate SubPropertyName to index.
-*/
+ *	Translate SubPropertyName to index.
+ */
 int getSubPropertyIndex(const char *inSubPropertyName)
 {
     if (qstricmp(inSubPropertyName, "x") == 0 || qstricmp(inSubPropertyName, "r") == 0)
@@ -251,8 +251,7 @@ QDemonSceneGraphTranslation::QDemonSceneGraphTranslation()
 {
     m_meshBuilder = QDemonMeshUtilities::QDemonMeshBuilder::createMeshBuilder();
     m_documentBuffer = new QBuffer(&m_document);
-    if (!m_documentBuffer->open(QIODevice::WriteOnly | QIODevice::Text))
-    {
+    if (!m_documentBuffer->open(QIODevice::WriteOnly | QIODevice::Text)) {
         qDebug("failed to open buffer");
     }
     m_stream.setDevice(m_documentBuffer);
@@ -276,10 +275,7 @@ void QDemonSceneGraphTranslation::reset()
     m_stream << QStringLiteral("import QtStudio3D 2.1\n\n\n");
 }
 
-void QDemonSceneGraphTranslation::release()
-{
-
-}
+void QDemonSceneGraphTranslation::release() {}
 
 void QDemonSceneGraphTranslation::pushGroup(const QString &inName)
 {
@@ -366,10 +362,7 @@ void QDemonSceneGraphTranslation::popTexture()
     m_stream << QStringLiteral("}\n");
 }
 
-void QDemonSceneGraphTranslation::markInvalid()
-{
-
-}
+void QDemonSceneGraphTranslation::markInvalid() {}
 
 void QDemonSceneGraphTranslation::setTransforms(const QVector<AbstractNodeTransform *> &inTransforms)
 {
@@ -377,15 +370,15 @@ void QDemonSceneGraphTranslation::setTransforms(const QVector<AbstractNodeTransf
 }
 
 void QDemonSceneGraphTranslation::setGeometry(const QVector<float> &ioVertices,
-                                            const QVector<float> &ioNormals,
-                                            const QVector<float> &ioTexCoords,
-                                            const QVector<float> &ioTexCoords2,
-                                            const QVector<float> &ioTexTangents,
-                                            const QVector<float> &ioTexBinormals,
-                                            const QVector<float> &ioWeights,
-                                            const QVector<float> &ioBoneIndex,
-                                            const QVector<float> &ioColors,
-                                            const QVector<quint32> &ioFaceIndicies)
+                                              const QVector<float> &ioNormals,
+                                              const QVector<float> &ioTexCoords,
+                                              const QVector<float> &ioTexCoords2,
+                                              const QVector<float> &ioTexTangents,
+                                              const QVector<float> &ioTexBinormals,
+                                              const QVector<float> &ioWeights,
+                                              const QVector<float> &ioBoneIndex,
+                                              const QVector<float> &ioColors,
+                                              const QVector<quint32> &ioFaceIndicies)
 {
     Q_UNUSED(ioVertices)
     Q_UNUSED(ioNormals)
@@ -431,7 +424,9 @@ void QDemonSceneGraphTranslation::setAnimationTrack(const QString &inBasePropert
     Q_UNUSED(inSubPropertyName)
 }
 
-void QDemonSceneGraphTranslation::cacheAnimationKey(const QString &inBaseProperty, const QString &inSubPropertyName, const KeyframeParameters &inParameters)
+void QDemonSceneGraphTranslation::cacheAnimationKey(const QString &inBaseProperty,
+                                                    const QString &inSubPropertyName,
+                                                    const KeyframeParameters &inParameters)
 {
     Q_UNUSED(inBaseProperty)
     Q_UNUSED(inSubPropertyName)

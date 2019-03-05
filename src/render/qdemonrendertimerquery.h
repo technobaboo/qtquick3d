@@ -41,73 +41,70 @@ class QDemonRenderTimerQuery : public QDemonRenderQueryBase
 {
 public:
     /**
-         * @brief constructor
-         *
-         * @param[in] context		Pointer to context
-         * @param[in] fnd			Pointer to foundation
-         *
-         * @return No return.
-         */
+     * @brief constructor
+     *
+     * @param[in] context		Pointer to context
+     * @param[in] fnd			Pointer to foundation
+     *
+     * @return No return.
+     */
     explicit QDemonRenderTimerQuery(const QDemonRef<QDemonRenderContextImpl> &context);
 
     ///< destructor
     ~QDemonRenderTimerQuery() override;
 
     /**
-         * @brief Get query type
-         *
-         * @return Return query type
-         */
-    QDemonRenderQueryType::Enum getQueryType() const override
-    {
-        return QDemonRenderQueryType::Timer;
-    }
+     * @brief Get query type
+     *
+     * @return Return query type
+     */
+    QDemonRenderQueryType::Enum getQueryType() const override { return QDemonRenderQueryType::Timer; }
 
     /**
-         * @brief begin a query
-         *
-         * @return no return.
-         */
+     * @brief begin a query
+     *
+     * @return no return.
+     */
     void begin() override;
 
     /**
-         * @brief end a query
-         *
-         * @return no return.
-         */
+     * @brief end a query
+     *
+     * @return no return.
+     */
     void end() override;
 
     /**
-         * @brief Get the result of a query
-         *
-         * @param[out] params	Contains result of query regarding query type
-         *
-         * @return no return.
-         */
+     * @brief Get the result of a query
+     *
+     * @param[out] params	Contains result of query regarding query type
+     *
+     * @return no return.
+     */
     void getResult(quint32 *params) override;
 
     /**
-         * @brief Get the result of a query
-         *
-         * @param[out] params	Contains result of query regarding query type
-         *
-         * @return no return.
-         */
+     * @brief Get the result of a query
+     *
+     * @param[out] params	Contains result of query regarding query type
+     *
+     * @return no return.
+     */
     virtual void getResult(quint64 *params);
 
     /**
-         * @brief Places an absolute timer query into the render queue
-         *		  The result can be queried with GetResult
-         *
-         * @return no return.
-         */
+     * @brief Places an absolute timer query into the render queue
+     *		  The result can be queried with GetResult
+     *
+     * @return no return.
+     */
     virtual void SetTimerQuery();
 
     /*
-         * @brief static creation function
-         *
-         * * @return a timer query object on success
-         */
+     * @brief static creation function
+     *
+     * * @return a timer query object on success
+     */
     static QDemonRef<QDemonRenderTimerQuery> create(const QDemonRef<QDemonRenderContextImpl> &context);
 };
 

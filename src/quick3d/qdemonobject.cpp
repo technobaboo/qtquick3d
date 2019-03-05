@@ -10,8 +10,7 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonObject::QDemonObject(QDemonObject *parent)
-    : QObject(*(new QDemonObjectPrivate), parent)
+QDemonObject::QDemonObject(QDemonObject *parent) : QObject(*(new QDemonObjectPrivate), parent)
 {
     Q_D(QDemonObject);
     d->init(parent);
@@ -67,7 +66,6 @@ void QDemonObject::update()
     d->dirty(QDemonObjectPrivate::Content);
 }
 
-
 void QDemonObject::setParentItem(QDemonObject *parentItem)
 {
     Q_D(QDemonObject);
@@ -115,7 +113,7 @@ void QDemonObject::setParentItem(QDemonObject *parentItem)
         //        }
 
         //        const bool wasVisible = isVisible();
-                op->removeChild(this);
+        op->removeChild(this);
         //        if (wasVisible) {
         //            emit oldParentItem->visibleChildrenChanged();
         //        }
@@ -265,8 +263,7 @@ void QDemonObject::itemChange(QDemonObject::ItemChange change, const QDemonObjec
         emit windowChanged(value.window);
 }
 
-QDemonObject::QDemonObject(QDemonObjectPrivate &dd, QDemonObject *parent)
-    : QObject(dd, parent)
+QDemonObject::QDemonObject(QDemonObjectPrivate &dd, QDemonObject *parent) : QObject(dd, parent)
 {
     Q_D(QDemonObject);
     d->init(parent);
@@ -305,7 +302,6 @@ QDemonObjectPrivate::QDemonObjectPrivate()
     , sortedChildItems(&childItems)
     , subFocusItem(nullptr)
 {
-
 }
 
 QDemonObjectPrivate::~QDemonObjectPrivate()
@@ -324,7 +320,9 @@ void QDemonObjectPrivate::init(QDemonObject *parent)
 
 QQmlListProperty<QObject> QDemonObjectPrivate::data()
 {
-    return QQmlListProperty<QObject>(q_func(), nullptr, QDemonObjectPrivate::data_append,
+    return QQmlListProperty<QObject>(q_func(),
+                                     nullptr,
+                                     QDemonObjectPrivate::data_append,
                                      QDemonObjectPrivate::data_count,
                                      QDemonObjectPrivate::data_at,
                                      QDemonObjectPrivate::data_clear);
@@ -332,7 +330,9 @@ QQmlListProperty<QObject> QDemonObjectPrivate::data()
 
 QQmlListProperty<QObject> QDemonObjectPrivate::resources()
 {
-    return QQmlListProperty<QObject>(q_func(), nullptr, QDemonObjectPrivate::resources_append,
+    return QQmlListProperty<QObject>(q_func(),
+                                     nullptr,
+                                     QDemonObjectPrivate::resources_append,
                                      QDemonObjectPrivate::resources_count,
                                      QDemonObjectPrivate::resources_at,
                                      QDemonObjectPrivate::resources_clear);
@@ -340,7 +340,9 @@ QQmlListProperty<QObject> QDemonObjectPrivate::resources()
 
 QQmlListProperty<QDemonObject> QDemonObjectPrivate::children()
 {
-    return QQmlListProperty<QDemonObject>(q_func(), nullptr, QDemonObjectPrivate::children_append,
+    return QQmlListProperty<QDemonObject>(q_func(),
+                                          nullptr,
+                                          QDemonObjectPrivate::children_append,
                                           QDemonObjectPrivate::children_count,
                                           QDemonObjectPrivate::children_at,
                                           QDemonObjectPrivate::children_clear);
@@ -348,10 +350,7 @@ QQmlListProperty<QDemonObject> QDemonObjectPrivate::children()
 
 QQmlListProperty<QDemonObject> QDemonObjectPrivate::visibleChildren()
 {
-    return QQmlListProperty<QDemonObject>(q_func(),
-                                          nullptr,
-                                          QDemonObjectPrivate::visibleChildren_count,
-                                          QDemonObjectPrivate::visibleChildren_at);
+    return QQmlListProperty<QDemonObject>(q_func(), nullptr, QDemonObjectPrivate::visibleChildren_count, QDemonObjectPrivate::visibleChildren_at);
 }
 
 QQmlListProperty<QQuickState> QDemonObjectPrivate::states()
@@ -397,11 +396,10 @@ void QDemonObjectPrivate::data_append(QQmlListProperty<QObject> *prop, QObject *
 
         if (thisWindow) {
             if (itemWindow) {
-                //qCDebug(lcTransient) << thisWindow << "is transient for" << itemWindow;
+                // qCDebug(lcTransient) << thisWindow << "is transient for" << itemWindow;
                 thisWindow->setTransientParent(itemWindow);
             } else {
-                QObject::connect(item, SIGNAL(windowChanged(QQuickWindow*)),
-                                 thisWindow, SLOT(setTransientParent_helper(QQuickWindow*)));
+                QObject::connect(item, SIGNAL(windowChanged(QQuickWindow *)), thisWindow, SLOT(setTransientParent_helper(QQuickWindow *)));
             }
         }
         o->setParent(that);
@@ -410,10 +408,9 @@ void QDemonObjectPrivate::data_append(QQmlListProperty<QObject> *prop, QObject *
     resources_append(prop, o);
 }
 
-
 int QDemonObjectPrivate::data_count(QQmlListProperty<QObject> *property)
 {
-    QDemonObject *item = static_cast<QDemonObject*>(property->object);
+    QDemonObject *item = static_cast<QDemonObject *>(property->object);
     QDemonObjectPrivate *privateItem = QDemonObjectPrivate::get(item);
     QQmlListProperty<QObject> resourcesProperty = privateItem->resources();
     QQmlListProperty<QDemonObject> childrenProperty = privateItem->children();
@@ -423,7 +420,7 @@ int QDemonObjectPrivate::data_count(QQmlListProperty<QObject> *property)
 
 QObject *QDemonObjectPrivate::data_at(QQmlListProperty<QObject> *property, int i)
 {
-    QDemonObject *item = static_cast<QDemonObject*>(property->object);
+    QDemonObject *item = static_cast<QDemonObject *>(property->object);
     QDemonObjectPrivate *privateItem = QDemonObjectPrivate::get(item);
     QQmlListProperty<QObject> resourcesProperty = privateItem->resources();
     QQmlListProperty<QDemonObject> childrenProperty = privateItem->children();
@@ -439,7 +436,7 @@ QObject *QDemonObjectPrivate::data_at(QQmlListProperty<QObject> *property, int i
 
 void QDemonObjectPrivate::data_clear(QQmlListProperty<QObject> *property)
 {
-    QDemonObject *item = static_cast<QDemonObject*>(property->object);
+    QDemonObject *item = static_cast<QDemonObject *>(property->object);
     QDemonObjectPrivate *privateItem = QDemonObjectPrivate::get(item);
     QQmlListProperty<QObject> resourcesProperty = privateItem->resources();
     QQmlListProperty<QDemonObject> childrenProperty = privateItem->children();
@@ -460,25 +457,29 @@ void QDemonObjectPrivate::resources_append(QQmlListProperty<QObject> *prop, QObj
     QDemonObjectPrivate *quickItemPrivate = QDemonObjectPrivate::get(quickItem);
     if (!quickItemPrivate->extra.value().resourcesList.contains(object)) {
         quickItemPrivate->extra.value().resourcesList.append(object);
+        // clang-format off
         qmlobject_connect(object, QObject, SIGNAL(destroyed(QObject*)),
                           quickItem, QDemonObject, SLOT(_q_resourceObjectDeleted(QObject*)));
+        // clang-format on
     }
 }
 
 int QDemonObjectPrivate::resources_count(QQmlListProperty<QObject> *prop)
 {
     QDemonObjectPrivate *quickItemPrivate = QDemonObjectPrivate::get(static_cast<QDemonObject *>(prop->object));
-    return  quickItemPrivate->extra.isAllocated() ? quickItemPrivate->extra->resourcesList.count() : 0;
+    return quickItemPrivate->extra.isAllocated() ? quickItemPrivate->extra->resourcesList.count() : 0;
 }
 
 void QDemonObjectPrivate::resources_clear(QQmlListProperty<QObject> *prop)
 {
     QDemonObject *quickItem = static_cast<QDemonObject *>(prop->object);
     QDemonObjectPrivate *quickItemPrivate = QDemonObjectPrivate::get(quickItem);
-    if (quickItemPrivate->extra.isAllocated()) {//If extra is not allocated resources is empty.
+    if (quickItemPrivate->extra.isAllocated()) { // If extra is not allocated resources is empty.
         for (QObject *object : qAsConst(quickItemPrivate->extra->resourcesList)) {
+            // clang-format off
             qmlobject_disconnect(object, QObject, SIGNAL(destroyed(QObject*)),
                                  quickItem, QDemonObject, SLOT(_q_resourceObjectDeleted(QObject*)));
+            // clang-format on
         }
         quickItemPrivate->extra->resourcesList.clear();
     }
@@ -525,7 +526,8 @@ int QDemonObjectPrivate::visibleChildren_count(QQmlListProperty<QDemonObject> *p
     int visibleCount = 0;
     int c = p->childItems.count();
     while (c--) {
-        if (p->childItems.at(c)->isVisible()) visibleCount++;
+        if (p->childItems.at(c)->isVisible())
+            visibleCount++;
     }
 
     return visibleCount;
@@ -540,8 +542,10 @@ QDemonObject *QDemonObjectPrivate::visibleChildren_at(QQmlListProperty<QDemonObj
 
     int visibleCount = -1;
     for (int i = 0; i < childCount; i++) {
-        if (p->childItems.at(i)->isVisible()) visibleCount++;
-        if (visibleCount == index) return p->childItems.at(i);
+        if (p->childItems.at(i)->isVisible())
+            visibleCount++;
+        if (visibleCount == index)
+            return p->childItems.at(i);
     }
     return nullptr;
 }
@@ -573,7 +577,7 @@ void QDemonObjectPrivate::removeItemChangeListener(QDemonObjectChangeListener *l
     changeListeners.removeOne(change);
 }
 
-//void QDemonObjectPrivate::updateOrAddGeometryChangeListener(QDemonObjectChangeListener *listener, QQuickGeometryChange types)
+// void QDemonObjectPrivate::updateOrAddGeometryChangeListener(QDemonObjectChangeListener *listener, QQuickGeometryChange types)
 //{
 //    ChangeListener change(listener, types);
 //    int index = changeListeners.indexOf(change);
@@ -583,7 +587,7 @@ void QDemonObjectPrivate::removeItemChangeListener(QDemonObjectChangeListener *l
 //        changeListeners.append(change);
 //}
 
-//void QDemonObjectPrivate::updateOrRemoveGeometryChangeListener(QDemonObjectChangeListener *listener, QQuickGeometryChange types)
+// void QDemonObjectPrivate::updateOrRemoveGeometryChangeListener(QDemonObjectChangeListener *listener, QQuickGeometryChange types)
 //{
 //    ChangeListener change(listener, types);
 //    if (types.noChange()) {
@@ -602,8 +606,10 @@ QQuickStateGroup *QDemonObjectPrivate::_states()
         _stateGroup = new QQuickStateGroup;
         if (!componentComplete)
             _stateGroup->classBegin();
+        // clang-format off
         qmlobject_connect(_stateGroup, QQuickStateGroup, SIGNAL(stateChanged(QString)),
                           q, QDemonObject, SIGNAL(stateChanged(QString)))
+        // clang-format on
     }
 
     return _stateGroup;
@@ -611,13 +617,14 @@ QQuickStateGroup *QDemonObjectPrivate::_states()
 
 QString QDemonObjectPrivate::dirtyToString() const
 {
-#define DIRTY_TO_STRING(value) if (dirtyAttributes & value) { \
-    if (!rv.isEmpty()) \
-        rv.append(QLatin1Char('|')); \
-    rv.append(QLatin1String(#value)); \
-}
+#define DIRTY_TO_STRING(value)                                                                                         \
+    if (dirtyAttributes & value) {                                                                                     \
+        if (!rv.isEmpty())                                                                                             \
+            rv.append(QLatin1Char('|'));                                                                               \
+        rv.append(QLatin1String(#value));                                                                              \
+    }
 
-//    QString rv = QLatin1String("0x") + QString::number(dirtyAttributes, 16);
+    //    QString rv = QLatin1String("0x") + QString::number(dirtyAttributes, 16);
     QString rv;
 
     DIRTY_TO_STRING(TransformOrigin);
@@ -645,8 +652,8 @@ QString QDemonObjectPrivate::dirtyToString() const
 void QDemonObjectPrivate::dirty(QDemonObjectPrivate::DirtyType type)
 {
     Q_Q(QDemonObject);
-//    if (type & (TransformOrigin | Transform | BasicTransform | Position | Size))
-//        transformChanged();
+    //    if (type & (TransformOrigin | Transform | BasicTransform | Position | Size))
+    //        transformChanged();
 
     if (!(dirtyAttributes & type) || (window && !prevDirtyItem)) {
         dirtyAttributes |= type;
@@ -688,7 +695,8 @@ void QDemonObjectPrivate::addToDirtyList()
 void QDemonObjectPrivate::removeFromDirtyList()
 {
     if (prevDirtyItem) {
-        if (nextDirtyItem) QDemonObjectPrivate::get(nextDirtyItem)->prevDirtyItem = prevDirtyItem;
+        if (nextDirtyItem)
+            QDemonObjectPrivate::get(nextDirtyItem)->prevDirtyItem = prevDirtyItem;
         *prevDirtyItem = nextDirtyItem;
         prevDirtyItem = nullptr;
         nextDirtyItem = nullptr;
@@ -777,22 +785,22 @@ QList<QDemonObject *> QDemonObjectPrivate::paintOrderChildItems() const
     if (sortedChildItems)
         return *sortedChildItems;
 
-//    // If none of the items have set Z then the paint order list is the same as
-//    // the childItems list.  This is by far the most common case.
-//    bool haveZ = false;
-//    for (int i = 0; i < childItems.count(); ++i) {
-//        if (QDemonObjectPrivate::get(childItems.at(i))->z() != 0.) {
-//            haveZ = true;
-//            break;
-//        }
-//    }
-//    if (haveZ) {
-//        sortedChildItems = new QList<QDemonObject*>(childItems);
-//        std::stable_sort(sortedChildItems->begin(), sortedChildItems->end(), itemZOrder_sort);
-//        return *sortedChildItems;
-//    }
+    //    // If none of the items have set Z then the paint order list is the same as
+    //    // the childItems list.  This is by far the most common case.
+    //    bool haveZ = false;
+    //    for (int i = 0; i < childItems.count(); ++i) {
+    //        if (QDemonObjectPrivate::get(childItems.at(i))->z() != 0.) {
+    //            haveZ = true;
+    //            break;
+    //        }
+    //    }
+    //    if (haveZ) {
+    //        sortedChildItems = new QList<QDemonObject*>(childItems);
+    //        std::stable_sort(sortedChildItems->begin(), sortedChildItems->end(), itemZOrder_sort);
+    //        return *sortedChildItems;
+    //    }
 
-    sortedChildItems = const_cast<QList<QDemonObject*>*>(&childItems);
+    sortedChildItems = const_cast<QList<QDemonObject *> *>(&childItems);
 
     return childItems;
 }
@@ -807,10 +815,10 @@ void QDemonObjectPrivate::addChild(QDemonObject *child)
 
     QDemonObjectPrivate *childPrivate = QDemonObjectPrivate::get(child);
 
-//    if (childPrivate->subtreeHoverEnabled && !subtreeHoverEnabled)
-//        setHasHoverInChild(true);
+    //    if (childPrivate->subtreeHoverEnabled && !subtreeHoverEnabled)
+    //        setHasHoverInChild(true);
 
-    //childPrivate->recursiveRefFromEffectItem(extra.value().recursiveEffectRefCount);
+    // childPrivate->recursiveRefFromEffectItem(extra.value().recursiveEffectRefCount);
     markSortedChildrenDirty(child);
     dirty(QDemonObjectPrivate::ChildrenChanged);
 
@@ -830,16 +838,16 @@ void QDemonObjectPrivate::removeChild(QDemonObject *child)
 
     QDemonObjectPrivate *childPrivate = QDemonObjectPrivate::get(child);
 
-//#if QT_CONFIG(cursor)
-//    // turn it off, if nothing else is using it
-//    if (childPrivate->subtreeCursorEnabled && subtreeCursorEnabled)
-//        setHasCursorInChild(false);
-//#endif
+    //#if QT_CONFIG(cursor)
+    //    // turn it off, if nothing else is using it
+    //    if (childPrivate->subtreeCursorEnabled && subtreeCursorEnabled)
+    //        setHasCursorInChild(false);
+    //#endif
 
-//    if (childPrivate->subtreeHoverEnabled && subtreeHoverEnabled)
-//        setHasHoverInChild(false);
+    //    if (childPrivate->subtreeHoverEnabled && subtreeHoverEnabled)
+    //        setHasHoverInChild(false);
 
-//    childPrivate->recursiveRefFromEffectItem(-extra.value().recursiveEffectRefCount);
+    //    childPrivate->recursiveRefFromEffectItem(-extra.value().recursiveEffectRefCount);
     markSortedChildrenDirty(child);
     dirty(QDemonObjectPrivate::ChildrenChanged);
 
@@ -865,11 +873,11 @@ void QDemonObjectPrivate::markSortedChildrenDirty(QDemonObject *child)
 {
     // If sortedChildItems == &childItems then all in childItems have z == 0
     // and we don't need to invalidate if the changed item also has z == 0.
-//    if (child->z() != 0. || sortedChildItems != &childItems) {
-//        if (sortedChildItems != &childItems)
-//            delete sortedChildItems;
-//        sortedChildItems = nullptr;
-//    }
+    //    if (child->z() != 0. || sortedChildItems != &childItems) {
+    //        if (sortedChildItems != &childItems)
+    //            delete sortedChildItems;
+    //        sortedChildItems = nullptr;
+    //    }
 }
 
 void QDemonObjectPrivate::refWindow(QDemonWindow *c)
@@ -895,8 +903,8 @@ void QDemonObjectPrivate::refWindow(QDemonWindow *c)
     Q_ASSERT(window == nullptr);
     window = c;
 
-//    if (polishScheduled)
-//        QDemonWindowPrivate::get(window)->itemsToPolish.append(q);
+    //    if (polishScheduled)
+    //        QDemonWindowPrivate::get(window)->itemsToPolish.append(q);
 
     if (!parentItem)
         QDemonWindowPrivate::get(window)->parentlessItems.insert(q);
@@ -908,8 +916,8 @@ void QDemonObjectPrivate::refWindow(QDemonWindow *c)
 
     dirty(Window);
 
-//    if (extra.isAllocated() && extra->screenAttached)
-//        extra->screenAttached->windowChanged(c);
+    //    if (extra.isAllocated() && extra->screenAttached)
+    //        extra->screenAttached->windowChanged(c);
     itemChange(QDemonObject::ItemSceneChange, c);
 }
 
@@ -924,30 +932,30 @@ void QDemonObjectPrivate::derefWindow()
     if (--windowRefCount > 0)
         return; // There are still other references, so don't set window to null yet.
 
-//    q->releaseResources();
+    //    q->releaseResources();
     removeFromDirtyList();
     QDemonWindowPrivate *c = QDemonWindowPrivate::get(window);
-//    if (polishScheduled)
-//        c->itemsToPolish.removeOne(q);
-    //c->removeGrabber(q);
+    //    if (polishScheduled)
+    //        c->itemsToPolish.removeOne(q);
+    // c->removeGrabber(q);
 
-    //c->hoverItems.removeAll(q);
-//    if (itemNodeInstance)
-//        c->cleanup(itemNodeInstance);
+    // c->hoverItems.removeAll(q);
+    //    if (itemNodeInstance)
+    //        c->cleanup(itemNodeInstance);
     if (!parentItem)
         c->parentlessItems.remove(q);
 
     window = nullptr;
 
-//    itemNodeInstance = nullptr;
+    //    itemNodeInstance = nullptr;
 
-//    if (extra.isAllocated()) {
-//        extra->opacityNode = nullptr;
-//        extra->clipNode = nullptr;
-//        extra->rootNode = nullptr;
-//    }
+    //    if (extra.isAllocated()) {
+    //        extra->opacityNode = nullptr;
+    //        extra->clipNode = nullptr;
+    //        extra->rootNode = nullptr;
+    //    }
 
-//    paintNode = nullptr;
+    //    paintNode = nullptr;
 
     for (int ii = 0; ii < childItems.count(); ++ii) {
         QDemonObject *child = childItems.at(ii);
@@ -956,8 +964,8 @@ void QDemonObjectPrivate::derefWindow()
 
     dirty(Window);
 
-//    if (extra.isAllocated() && extra->screenAttached)
-//        extra->screenAttached->windowChanged(nullptr);
+    //    if (extra.isAllocated() && extra->screenAttached)
+    //        extra->screenAttached->windowChanged(nullptr);
     itemChange(QDemonObject::ItemSceneChange, (QDemonWindow *)nullptr);
 }
 
@@ -1072,18 +1080,18 @@ void QDemonObjectPrivate::itemChange(QDemonObject::ItemChange change, const QDem
     case QDemonObject::ItemActiveFocusHasChanged:
         q->itemChange(change, data);
         break;
-//    case QDemonObject::ItemRotationHasChanged: {
-//        q->itemChange(change, data);
-//        if (!changeListeners.isEmpty()) {
-//            const auto listeners = changeListeners; // NOTE: intentional copy (QTBUG-54732)
-//            for (const QDemonObjectPrivate::ChangeListener &change : listeners) {
-//                if (change.types & QDemonObjectPrivate::Rotation) {
-//                    change.listener->itemRotationChanged(q);
-//                }
-//            }
-//        }
-//        break;
-//    }
+        //    case QDemonObject::ItemRotationHasChanged: {
+        //        q->itemChange(change, data);
+        //        if (!changeListeners.isEmpty()) {
+        //            const auto listeners = changeListeners; // NOTE: intentional copy (QTBUG-54732)
+        //            for (const QDemonObjectPrivate::ChangeListener &change : listeners) {
+        //                if (change.types & QDemonObjectPrivate::Rotation) {
+        //                    change.listener->itemRotationChanged(q);
+        //                }
+        //            }
+        //        }
+        //        break;
+        //    }
     case QDemonObject::ItemAntialiasingHasChanged:
         // fall through
     case QDemonObject::ItemDevicePixelRatioHasChanged:
@@ -1094,13 +1102,15 @@ void QDemonObjectPrivate::itemChange(QDemonObject::ItemChange change, const QDem
 
 namespace QV4 {
 namespace Heap {
-struct QDemonItemWrapper : public QObjectWrapper {
+struct QDemonItemWrapper : public QObjectWrapper
+{
     static void markObjects(QV4::Heap::Base *that, QV4::MarkStack *markStack);
 };
 }
 }
 
-struct QDemonItemWrapper : public QV4::QObjectWrapper {
+struct QDemonItemWrapper : public QV4::QObjectWrapper
+{
     V4_OBJECT2(QDemonItemWrapper, QV4::QObjectWrapper)
 };
 
@@ -1109,7 +1119,7 @@ DEFINE_OBJECT_VTABLE(QDemonItemWrapper);
 void QV4::Heap::QDemonItemWrapper::markObjects(QV4::Heap::Base *that, QV4::MarkStack *markStack)
 {
     QObjectWrapper *This = static_cast<QObjectWrapper *>(that);
-    if (QDemonObject *item = static_cast<QDemonObject*>(This->object())) {
+    if (QDemonObject *item = static_cast<QDemonObject *>(This->object())) {
         for (QDemonObject *child : qAsConst(QDemonObjectPrivate::get(item)->childItems))
             QV4::QObjectWrapper::markWrapper(child, markStack);
     }
@@ -1121,11 +1131,7 @@ quint64 QDemonObjectPrivate::_q_createJSWrapper(QV4::ExecutionEngine *engine)
     return (engine->memoryManager->allocate<QDemonItemWrapper>(q_func()))->asReturnedValue();
 }
 
-QDemonObjectPrivate::ExtraData::ExtraData()
-    : hideRefCount(0)
-{
-}
-
+QDemonObjectPrivate::ExtraData::ExtraData() : hideRefCount(0) {}
 
 QT_END_NAMESPACE
 

@@ -45,28 +45,28 @@ public:
 };
 
 /**
-     * The render list exists so that dependencies of the main render target can render themselves
-     * completely before the main render target renders.  From Maxwell GPU's on, we have a tiled
-     * architecture.  This tiling mechanism is sensitive to switching the render target, so we would
-     * really like to render completely to a single render target and then switch.  With our layered
-     * render architecture, this is not very feasible unless dependencies render themselves before
-     * the
-     * main set of layers render themselves.  Furthermore it benefits the overall software
-     * architecture
-     * to have a distinct split between the prepare for render step and the render step and using
-     * this
-     * render list allows us to avoid some level of repeated tree traversal at the cost of some
-     * minimal
-     * per frame allocation.  The rules for using the render list are that you need to add yourself
-     * before
-     * your dependencies do; the list is iterated in reverse during RunRenderTasks.  So a layer adds
-     * itself
-     * (if it is going to render offscreen) before it runs through its renderable list to prepare
-     * each object
-     * because it is during the renderable prepare traversale that subpresentations will get added
-     * by
-     * the offscreen render manager.
-     */
+ * The render list exists so that dependencies of the main render target can render themselves
+ * completely before the main render target renders.  From Maxwell GPU's on, we have a tiled
+ * architecture.  This tiling mechanism is sensitive to switching the render target, so we would
+ * really like to render completely to a single render target and then switch.  With our layered
+ * render architecture, this is not very feasible unless dependencies render themselves before
+ * the
+ * main set of layers render themselves.  Furthermore it benefits the overall software
+ * architecture
+ * to have a distinct split between the prepare for render step and the render step and using
+ * this
+ * render list allows us to avoid some level of repeated tree traversal at the cost of some
+ * minimal
+ * per frame allocation.  The rules for using the render list are that you need to add yourself
+ * before
+ * your dependencies do; the list is iterated in reverse during RunRenderTasks.  So a layer adds
+ * itself
+ * (if it is going to render offscreen) before it runs through its renderable list to prepare
+ * each object
+ * because it is during the renderable prepare traversale that subpresentations will get added
+ * by
+ * the offscreen render manager.
+ */
 class Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderListInterface
 {
 public:
@@ -100,9 +100,8 @@ public:
 };
 
 // Now for scoped property access.
-template <typename TDataType>
-struct QDemonRenderListScopedProperty
-        : public QDemonRenderGenericScopedProperty<QDemonRenderListInterface, TDataType>
+template<typename TDataType>
+struct QDemonRenderListScopedProperty : public QDemonRenderGenericScopedProperty<QDemonRenderListInterface, TDataType>
 {
     typedef QDemonRenderGenericScopedProperty<QDemonRenderListInterface, TDataType> TBaseType;
     typedef typename TBaseType::TGetter TGetter;
@@ -111,8 +110,7 @@ struct QDemonRenderListScopedProperty
         : TBaseType(ctx, getter, setter)
     {
     }
-    QDemonRenderListScopedProperty(QDemonRenderListInterface &ctx, TGetter getter, TSetter setter,
-                              const TDataType &inNewValue)
+    QDemonRenderListScopedProperty(QDemonRenderListInterface &ctx, TGetter getter, TSetter setter, const TDataType &inNewValue)
         : TBaseType(ctx, getter, setter, inNewValue)
     {
     }

@@ -36,22 +36,22 @@ QT_BEGIN_NAMESPACE
 
 // If you need a generic switch statement, then these macros will ensure
 // you get all the types the first time.
-#define QDEMON_RENDER_ITERATE_GRAPH_OBJECT_TYPES                                                      \
-    QDEMON_RENDER_HANDL_GRAPH_OBJECT_TYPE(Presentation)                                               \
-    QDEMON_RENDER_HANDL_GRAPH_OBJECT_TYPE(Scene)                                                      \
-    QDEMON_RENDER_HANDL_GRAPH_OBJECT_TYPE(Node)                                                       \
-    QDEMON_RENDER_HANDL_GRAPH_OBJECT_TYPE(Layer)                                                      \
-    QDEMON_RENDER_HANDL_GRAPH_OBJECT_TYPE(Light)                                                      \
-    QDEMON_RENDER_HANDL_GRAPH_OBJECT_TYPE(Camera)                                                     \
-    QDEMON_RENDER_HANDL_GRAPH_OBJECT_TYPE(Model)                                                      \
-    QDEMON_RENDER_HANDL_GRAPH_OBJECT_TYPE(DefaultMaterial)                                            \
-    QDEMON_RENDER_HANDL_GRAPH_OBJECT_TYPE(Image)                                                      \
-    QDEMON_RENDER_HANDL_GRAPH_OBJECT_TYPE(Text)                                                       \
-    QDEMON_RENDER_HANDL_GRAPH_OBJECT_TYPE(Effect)                                                     \
-    QDEMON_RENDER_HANDL_GRAPH_OBJECT_TYPE(RenderPlugin)                                               \
-    QDEMON_RENDER_HANDL_GRAPH_OBJECT_TYPE(CustomMaterial)                                             \
-    QDEMON_RENDER_HANDL_GRAPH_OBJECT_TYPE(ReferencedMaterial)                                         \
-    QDEMON_RENDER_HANDL_GRAPH_OBJECT_TYPE(Path)                                                       \
+#define QDEMON_RENDER_ITERATE_GRAPH_OBJECT_TYPES                                                                       \
+    QDEMON_RENDER_HANDL_GRAPH_OBJECT_TYPE(Presentation)                                                                \
+    QDEMON_RENDER_HANDL_GRAPH_OBJECT_TYPE(Scene)                                                                       \
+    QDEMON_RENDER_HANDL_GRAPH_OBJECT_TYPE(Node)                                                                        \
+    QDEMON_RENDER_HANDL_GRAPH_OBJECT_TYPE(Layer)                                                                       \
+    QDEMON_RENDER_HANDL_GRAPH_OBJECT_TYPE(Light)                                                                       \
+    QDEMON_RENDER_HANDL_GRAPH_OBJECT_TYPE(Camera)                                                                      \
+    QDEMON_RENDER_HANDL_GRAPH_OBJECT_TYPE(Model)                                                                       \
+    QDEMON_RENDER_HANDL_GRAPH_OBJECT_TYPE(DefaultMaterial)                                                             \
+    QDEMON_RENDER_HANDL_GRAPH_OBJECT_TYPE(Image)                                                                       \
+    QDEMON_RENDER_HANDL_GRAPH_OBJECT_TYPE(Text)                                                                        \
+    QDEMON_RENDER_HANDL_GRAPH_OBJECT_TYPE(Effect)                                                                      \
+    QDEMON_RENDER_HANDL_GRAPH_OBJECT_TYPE(RenderPlugin)                                                                \
+    QDEMON_RENDER_HANDL_GRAPH_OBJECT_TYPE(CustomMaterial)                                                              \
+    QDEMON_RENDER_HANDL_GRAPH_OBJECT_TYPE(ReferencedMaterial)                                                          \
+    QDEMON_RENDER_HANDL_GRAPH_OBJECT_TYPE(Path)                                                                        \
     QDEMON_RENDER_HANDL_GRAPH_OBJECT_TYPE(PathSubPath)
 
 struct QDemonGraphObjectTypes
@@ -146,12 +146,12 @@ struct QDemonGraphObjectTypes
     static const char *GetObjectTypeName(Enum inType)
     {
         switch (inType) {
-#define QDEMON_RENDER_HANDL_GRAPH_OBJECT_TYPE(type)                                                   \
-        case type:                                                                                     \
-    return #type;
-        QDEMON_RENDER_ITERATE_GRAPH_OBJECT_TYPES
-        #undef QDEMON_RENDER_HANDL_GRAPH_OBJECT_TYPE
-                default:
+#define QDEMON_RENDER_HANDL_GRAPH_OBJECT_TYPE(type)                                                                    \
+    case type:                                                                                                         \
+        return #type;
+            QDEMON_RENDER_ITERATE_GRAPH_OBJECT_TYPES
+#undef QDEMON_RENDER_HANDL_GRAPH_OBJECT_TYPE
+        default:
             break;
         }
         Q_ASSERT(false);

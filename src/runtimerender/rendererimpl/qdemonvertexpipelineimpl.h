@@ -88,10 +88,7 @@ struct QDemonVertexPipelineImpl : public QDemonDefaultMaterialVertexPipelineInte
         m_generationFlags |= inCode;
         return false;
     }
-    bool hasCode(GenerationFlagValues::Enum inCode)
-    {
-        return ((quint32(m_generationFlags) & inCode)) != 0;
-    }
+    bool hasCode(GenerationFlagValues::Enum inCode) { return ((quint32(m_generationFlags) & inCode)) != 0; }
     QDemonRef<QDemonShaderProgramGeneratorInterface> programGenerator() { return m_programGenerator; }
 
     QDemonShaderStageGeneratorInterface &vertex()
@@ -122,20 +119,14 @@ struct QDemonVertexPipelineImpl : public QDemonDefaultMaterialVertexPipelineInte
         m_displacementImage = displacementImage;
     }
 
-    bool hasTessellation() const
-    {
-        return m_programGenerator->getEnabledStages() & ShaderGeneratorStages::TessEval;
-    }
-    bool hasGeometryStage() const
-    {
-        return m_programGenerator->getEnabledStages() & ShaderGeneratorStages::Geometry;
-    }
+    bool hasTessellation() const { return m_programGenerator->getEnabledStages() & ShaderGeneratorStages::TessEval; }
+    bool hasGeometryStage() const { return m_programGenerator->getEnabledStages() & ShaderGeneratorStages::Geometry; }
     bool hasDisplacment() const { return m_displacementImage != nullptr; }
 
     void initializeWireframeGeometryShader()
     {
         if (m_wireframe && programGenerator()->getStage(ShaderGeneratorStages::Geometry)
-                && programGenerator()->getStage(ShaderGeneratorStages::TessEval)) {
+            && programGenerator()->getStage(ShaderGeneratorStages::TessEval)) {
             QDemonShaderStageGeneratorInterface &geometryShader(*programGenerator()->getStage(ShaderGeneratorStages::Geometry));
             // currently geometry shader is only used for drawing wireframe
             if (m_wireframe) {
@@ -148,23 +139,22 @@ struct QDemonVertexPipelineImpl : public QDemonDefaultMaterialVertexPipelineInte
                 // how this all work see
                 // http://developer.download.nvidia.com/SDK/10.5/direct3d/Source/SolidWireframe/Doc/SolidWireframe.pdf
 
-                geometryShader.append(
-                            "// project points to screen space\n"
-                            "\tvec3 p0 = vec3(viewport_matrix * (gl_in[0].gl_Position / "
-                            "gl_in[0].gl_Position.w));\n"
-                            "\tvec3 p1 = vec3(viewport_matrix * (gl_in[1].gl_Position / "
-                            "gl_in[1].gl_Position.w));\n"
-                            "\tvec3 p2 = vec3(viewport_matrix * (gl_in[2].gl_Position / "
-                            "gl_in[2].gl_Position.w));\n"
-                            "// compute triangle heights\n"
-                            "\tfloat e1 = length(p1 - p2);\n"
-                            "\tfloat e2 = length(p2 - p0);\n"
-                            "\tfloat e3 = length(p1 - p0);\n"
-                            "\tfloat alpha = acos( (e2*e2 + e3*e3 - e1*e1) / (2.0*e2*e3) );\n"
-                            "\tfloat beta = acos( (e1*e1 + e3*e3 - e2*e2) / (2.0*e1*e3) );\n"
-                            "\tfloat ha = abs( e3 * sin( beta ) );\n"
-                            "\tfloat hb = abs( e3 * sin( alpha ) );\n"
-                            "\tfloat hc = abs( e2 * sin( alpha ) );\n");
+                geometryShader.append("// project points to screen space\n"
+                                      "\tvec3 p0 = vec3(viewport_matrix * (gl_in[0].gl_Position / "
+                                      "gl_in[0].gl_Position.w));\n"
+                                      "\tvec3 p1 = vec3(viewport_matrix * (gl_in[1].gl_Position / "
+                                      "gl_in[1].gl_Position.w));\n"
+                                      "\tvec3 p2 = vec3(viewport_matrix * (gl_in[2].gl_Position / "
+                                      "gl_in[2].gl_Position.w));\n"
+                                      "// compute triangle heights\n"
+                                      "\tfloat e1 = length(p1 - p2);\n"
+                                      "\tfloat e2 = length(p2 - p0);\n"
+                                      "\tfloat e3 = length(p1 - p0);\n"
+                                      "\tfloat alpha = acos( (e2*e2 + e3*e3 - e1*e1) / (2.0*e2*e3) );\n"
+                                      "\tfloat beta = acos( (e1*e1 + e3*e3 - e2*e2) / (2.0*e1*e3) );\n"
+                                      "\tfloat ha = abs( e3 * sin( beta ) );\n"
+                                      "\tfloat hb = abs( e3 * sin( alpha ) );\n"
+                                      "\tfloat hc = abs( e2 * sin( alpha ) );\n");
             }
         }
     }
@@ -174,20 +164,16 @@ struct QDemonVertexPipelineImpl : public QDemonDefaultMaterialVertexPipelineInte
         QDemonShaderStageGeneratorInterface &geometryShader(*programGenerator()->getStage(ShaderGeneratorStages::Geometry));
 
         if (m_wireframe == true && programGenerator()->getStage(ShaderGeneratorStages::Geometry)
-                && programGenerator()->getStage(ShaderGeneratorStages::TessEval)) {
+            && programGenerator()->getStage(ShaderGeneratorStages::TessEval)) {
             const char *theExtension("TE[");
             // we always assume triangles
             for (int i = 0; i < 3; i++) {
                 char buf[10];
                 sprintf(buf, "%d", i);
-                for (TStrTableStrMap::iterator iter = m_interpolationParameters.begin(), end = m_interpolationParameters.end(); iter != end; ++iter) {
-                    geometryShader << "\t"
-                                   << iter.key()
-                                   << " = "
-                                   << iter.key()
-                                   << theExtension
-                                   << buf
-                                   << "];\n";
+                for (TStrTableStrMap::iterator iter = m_interpolationParameters.begin(), end = m_interpolationParameters.end();
+                     iter != end;
+                     ++iter) {
+                    geometryShader << "\t" << iter.key() << " = " << iter.key() << theExtension << buf << "];\n";
                 }
 
                 geometryShader << "\tgl_Position = gl_in[" << buf << "].gl_Position;\n";
@@ -328,20 +314,11 @@ struct QDemonVertexPipelineImpl : public QDemonDefaultMaterialVertexPipelineInte
 
     bool hasActiveWireframe() override { return m_wireframe; }
 
-    void addIncoming(const QByteArray &name, const QByteArray &type) override
-    {
-        activeStage().addIncoming(name, type);
-    }
+    void addIncoming(const QByteArray &name, const QByteArray &type) override { activeStage().addIncoming(name, type); }
 
-    void addOutgoing(const QByteArray &name, const QByteArray &type) override
-    {
-        addInterpolationParameter(name, type);
-    }
+    void addOutgoing(const QByteArray &name, const QByteArray &type) override { addInterpolationParameter(name, type); }
 
-    void addUniform(const QByteArray &name, const QByteArray &type) override
-    {
-        activeStage().addUniform(name, type);
-    }
+    void addUniform(const QByteArray &name, const QByteArray &type) override { activeStage().addUniform(name, type); }
 
     void addInclude(const QByteArray &name) override { activeStage().addInclude(name); }
 

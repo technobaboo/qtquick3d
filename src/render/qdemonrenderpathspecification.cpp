@@ -35,8 +35,7 @@
 QT_BEGIN_NAMESPACE
 
 QDemonRenderPathSpecification::QDemonRenderPathSpecification(const QDemonRef<QDemonRenderContextImpl> &context)
-    : m_context(context)
-    , m_backend(context->getBackend())
+    : m_context(context), m_backend(context->getBackend())
 {
 }
 

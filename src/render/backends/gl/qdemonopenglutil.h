@@ -114,151 +114,151 @@ QT_BEGIN_NAMESPACE
 #define GL_TESS_EVALUATION_SHADER_BIT 0x00000010
 #endif
 
-#define QDEMON_RENDER_ITERATE_QDEMON_GL_COLOR_FUNC                                                         \
-    QDEMON_RENDER_HANDLE_GL_COLOR_FUNC(GL_ZERO, Zero)                                                  \
-    QDEMON_RENDER_HANDLE_GL_COLOR_FUNC(GL_ONE, One)                                                    \
-    QDEMON_RENDER_HANDLE_GL_COLOR_FUNC(GL_SRC_COLOR, SrcColor)                                         \
-    QDEMON_RENDER_HANDLE_GL_COLOR_FUNC(GL_ONE_MINUS_SRC_COLOR, OneMinusSrcColor)                       \
-    QDEMON_RENDER_HANDLE_GL_COLOR_FUNC(GL_DST_COLOR, DstColor)                                         \
-    QDEMON_RENDER_HANDLE_GL_COLOR_FUNC(GL_ONE_MINUS_DST_COLOR, OneMinusDstColor)                       \
-    QDEMON_RENDER_HANDLE_GL_COLOR_FUNC(GL_SRC_ALPHA, SrcAlpha)                                         \
-    QDEMON_RENDER_HANDLE_GL_COLOR_FUNC(GL_ONE_MINUS_SRC_ALPHA, OneMinusSrcAlpha)                       \
-    QDEMON_RENDER_HANDLE_GL_COLOR_FUNC(GL_DST_ALPHA, DstAlpha)                                         \
-    QDEMON_RENDER_HANDLE_GL_COLOR_FUNC(GL_ONE_MINUS_DST_ALPHA, OneMinusDstAlpha)                       \
-    QDEMON_RENDER_HANDLE_GL_COLOR_FUNC(GL_CONSTANT_COLOR, ConstantColor)                               \
-    QDEMON_RENDER_HANDLE_GL_COLOR_FUNC(GL_ONE_MINUS_CONSTANT_COLOR, OneMinusConstantColor)             \
-    QDEMON_RENDER_HANDLE_GL_COLOR_FUNC(GL_CONSTANT_ALPHA, ConstantAlpha)                               \
-    QDEMON_RENDER_HANDLE_GL_COLOR_FUNC(GL_ONE_MINUS_CONSTANT_ALPHA, OneMinusConstantAlpha)             \
+#define QDEMON_RENDER_ITERATE_QDEMON_GL_COLOR_FUNC                                                                     \
+    QDEMON_RENDER_HANDLE_GL_COLOR_FUNC(GL_ZERO, Zero)                                                                  \
+    QDEMON_RENDER_HANDLE_GL_COLOR_FUNC(GL_ONE, One)                                                                    \
+    QDEMON_RENDER_HANDLE_GL_COLOR_FUNC(GL_SRC_COLOR, SrcColor)                                                         \
+    QDEMON_RENDER_HANDLE_GL_COLOR_FUNC(GL_ONE_MINUS_SRC_COLOR, OneMinusSrcColor)                                       \
+    QDEMON_RENDER_HANDLE_GL_COLOR_FUNC(GL_DST_COLOR, DstColor)                                                         \
+    QDEMON_RENDER_HANDLE_GL_COLOR_FUNC(GL_ONE_MINUS_DST_COLOR, OneMinusDstColor)                                       \
+    QDEMON_RENDER_HANDLE_GL_COLOR_FUNC(GL_SRC_ALPHA, SrcAlpha)                                                         \
+    QDEMON_RENDER_HANDLE_GL_COLOR_FUNC(GL_ONE_MINUS_SRC_ALPHA, OneMinusSrcAlpha)                                       \
+    QDEMON_RENDER_HANDLE_GL_COLOR_FUNC(GL_DST_ALPHA, DstAlpha)                                                         \
+    QDEMON_RENDER_HANDLE_GL_COLOR_FUNC(GL_ONE_MINUS_DST_ALPHA, OneMinusDstAlpha)                                       \
+    QDEMON_RENDER_HANDLE_GL_COLOR_FUNC(GL_CONSTANT_COLOR, ConstantColor)                                               \
+    QDEMON_RENDER_HANDLE_GL_COLOR_FUNC(GL_ONE_MINUS_CONSTANT_COLOR, OneMinusConstantColor)                             \
+    QDEMON_RENDER_HANDLE_GL_COLOR_FUNC(GL_CONSTANT_ALPHA, ConstantAlpha)                                               \
+    QDEMON_RENDER_HANDLE_GL_COLOR_FUNC(GL_ONE_MINUS_CONSTANT_ALPHA, OneMinusConstantAlpha)                             \
     QDEMON_RENDER_HANDLE_GL_COLOR_FUNC_SRC_ONLY(GL_SRC_ALPHA_SATURATE, SrcAlphaSaturate)
 
-#define QDEMON_RENDER_ITERATE_GL_QDEMON_RENDER_FACE                                                        \
-    QDEMON_RENDER_HANDLE_GL_QDEMON_RENDER_FACE(GL_FRONT, Front)                                            \
-    QDEMON_RENDER_HANDLE_GL_QDEMON_RENDER_FACE(GL_BACK, Back)                                              \
+#define QDEMON_RENDER_ITERATE_GL_QDEMON_RENDER_FACE                                                                    \
+    QDEMON_RENDER_HANDLE_GL_QDEMON_RENDER_FACE(GL_FRONT, Front)                                                        \
+    QDEMON_RENDER_HANDLE_GL_QDEMON_RENDER_FACE(GL_BACK, Back)                                                          \
     QDEMON_RENDER_HANDLE_GL_QDEMON_RENDER_FACE(GL_FRONT_AND_BACK, FrontAndBack)
 
-#define QDEMON_RENDER_ITERATE_GL_QDEMON_RENDER_WINDING                                                     \
-    QDEMON_RENDER_HANDLE_GL_QDEMON_RENDER_WINDING(GL_CW, Clockwise)                                        \
+#define QDEMON_RENDER_ITERATE_GL_QDEMON_RENDER_WINDING                                                                 \
+    QDEMON_RENDER_HANDLE_GL_QDEMON_RENDER_WINDING(GL_CW, Clockwise)                                                    \
     QDEMON_RENDER_HANDLE_GL_QDEMON_RENDER_WINDING(GL_CCW, CounterClockwise)
 
-#define QDEMON_RENDER_ITERATE_GL_QDEMON_BOOL_OP                                                            \
-    QDEMON_RENDER_HANDLE_GL_QDEMON_BOOL_OP(GL_NEVER, Never)                                                \
-    QDEMON_RENDER_HANDLE_GL_QDEMON_BOOL_OP(GL_LESS, Less)                                                  \
-    QDEMON_RENDER_HANDLE_GL_QDEMON_BOOL_OP(GL_EQUAL, Equal)                                                \
-    QDEMON_RENDER_HANDLE_GL_QDEMON_BOOL_OP(GL_LEQUAL, LessThanOrEqual)                                     \
-    QDEMON_RENDER_HANDLE_GL_QDEMON_BOOL_OP(GL_GREATER, Greater)                                            \
-    QDEMON_RENDER_HANDLE_GL_QDEMON_BOOL_OP(GL_NOTEQUAL, NotEqual)                                          \
-    QDEMON_RENDER_HANDLE_GL_QDEMON_BOOL_OP(GL_GEQUAL, GreaterThanOrEqual)                                  \
+#define QDEMON_RENDER_ITERATE_GL_QDEMON_BOOL_OP                                                                        \
+    QDEMON_RENDER_HANDLE_GL_QDEMON_BOOL_OP(GL_NEVER, Never)                                                            \
+    QDEMON_RENDER_HANDLE_GL_QDEMON_BOOL_OP(GL_LESS, Less)                                                              \
+    QDEMON_RENDER_HANDLE_GL_QDEMON_BOOL_OP(GL_EQUAL, Equal)                                                            \
+    QDEMON_RENDER_HANDLE_GL_QDEMON_BOOL_OP(GL_LEQUAL, LessThanOrEqual)                                                 \
+    QDEMON_RENDER_HANDLE_GL_QDEMON_BOOL_OP(GL_GREATER, Greater)                                                        \
+    QDEMON_RENDER_HANDLE_GL_QDEMON_BOOL_OP(GL_NOTEQUAL, NotEqual)                                                      \
+    QDEMON_RENDER_HANDLE_GL_QDEMON_BOOL_OP(GL_GEQUAL, GreaterThanOrEqual)                                              \
     QDEMON_RENDER_HANDLE_GL_QDEMON_BOOL_OP(GL_ALWAYS, AlwaysTrue)
 
-#define QDEMON_RENDER_ITERATE_GL_QDEMON_HINT                                                               \
-    QDEMON_RENDER_HANDLE_GL_QDEMON_HINT(GL_FASTEST, Fastest)                                               \
-    QDEMON_RENDER_HANDLE_GL_QDEMON_HINT(GL_NICEST, Nicest)                                                 \
+#define QDEMON_RENDER_ITERATE_GL_QDEMON_HINT                                                                           \
+    QDEMON_RENDER_HANDLE_GL_QDEMON_HINT(GL_FASTEST, Fastest)                                                           \
+    QDEMON_RENDER_HANDLE_GL_QDEMON_HINT(GL_NICEST, Nicest)                                                             \
     QDEMON_RENDER_HANDLE_GL_QDEMON_HINT(GL_DONT_CARE, Unspecified)
 
-#define QDEMON_RENDER_ITERATE_QDEMON_GL_STENCIL_OP                                                         \
-    QDEMON_RENDER_HANDLE_QDEMON_GL_STENCIL_OP(GL_KEEP, Keep)                                               \
-    QDEMON_RENDER_HANDLE_QDEMON_GL_STENCIL_OP(GL_ZERO, Zero)                                               \
-    QDEMON_RENDER_HANDLE_QDEMON_GL_STENCIL_OP(GL_REPLACE, Replace)                                         \
-    QDEMON_RENDER_HANDLE_QDEMON_GL_STENCIL_OP(GL_INCR, Increment)                                          \
-    QDEMON_RENDER_HANDLE_QDEMON_GL_STENCIL_OP(GL_INCR_WRAP, IncrementWrap)                                 \
-    QDEMON_RENDER_HANDLE_QDEMON_GL_STENCIL_OP(GL_DECR, Decrement)                                          \
-    QDEMON_RENDER_HANDLE_QDEMON_GL_STENCIL_OP(GL_DECR_WRAP, DecrementWrap)                                 \
+#define QDEMON_RENDER_ITERATE_QDEMON_GL_STENCIL_OP                                                                     \
+    QDEMON_RENDER_HANDLE_QDEMON_GL_STENCIL_OP(GL_KEEP, Keep)                                                           \
+    QDEMON_RENDER_HANDLE_QDEMON_GL_STENCIL_OP(GL_ZERO, Zero)                                                           \
+    QDEMON_RENDER_HANDLE_QDEMON_GL_STENCIL_OP(GL_REPLACE, Replace)                                                     \
+    QDEMON_RENDER_HANDLE_QDEMON_GL_STENCIL_OP(GL_INCR, Increment)                                                      \
+    QDEMON_RENDER_HANDLE_QDEMON_GL_STENCIL_OP(GL_INCR_WRAP, IncrementWrap)                                             \
+    QDEMON_RENDER_HANDLE_QDEMON_GL_STENCIL_OP(GL_DECR, Decrement)                                                      \
+    QDEMON_RENDER_HANDLE_QDEMON_GL_STENCIL_OP(GL_DECR_WRAP, DecrementWrap)                                             \
     QDEMON_RENDER_HANDLE_QDEMON_GL_STENCIL_OP(GL_INVERT, Invert)
 
-#define QDEMON_RENDER_ITERATE_GL_QDEMON_BUFFER_COMPONENT_TYPES                                             \
+#define QDEMON_RENDER_ITERATE_GL_QDEMON_BUFFER_COMPONENT_TYPES                                                         \
     QDEMON_RENDER_HANDLE_GL_QDEMON_COMPONENT_TYPE(GL_UNSIGNED_BYTE, UnsignedInteger8)                                  \
-    QDEMON_RENDER_HANDLE_GL_QDEMON_COMPONENT_TYPE(GL_BYTE, Integer8)                                           \
+    QDEMON_RENDER_HANDLE_GL_QDEMON_COMPONENT_TYPE(GL_BYTE, Integer8)                                                   \
     QDEMON_RENDER_HANDLE_GL_QDEMON_COMPONENT_TYPE(GL_UNSIGNED_SHORT, UnsignedInteger16)                                \
-    QDEMON_RENDER_HANDLE_GL_QDEMON_COMPONENT_TYPE(GL_SHORT, Integer16)                                         \
+    QDEMON_RENDER_HANDLE_GL_QDEMON_COMPONENT_TYPE(GL_SHORT, Integer16)                                                 \
     QDEMON_RENDER_HANDLE_GL_QDEMON_COMPONENT_TYPE(GL_UNSIGNED_INT, UnsignedInteger32)                                  \
-    QDEMON_RENDER_HANDLE_GL_QDEMON_COMPONENT_TYPE_ALIAS(GL_INT, Integer32)                                     \
+    QDEMON_RENDER_HANDLE_GL_QDEMON_COMPONENT_TYPE_ALIAS(GL_INT, Integer32)                                             \
     QDEMON_RENDER_HANDLE_GL_QDEMON_COMPONENT_TYPE(GL_FLOAT, Float32)
 
-#define QDEMON_RENDER_ITERATE_GL_QDEMON_BUFFER_USAGE_TYPE                                                  \
-    QDEMON_RENDER_HANDLE_GL_QDEMON_BUFFER_USAGE_TYPE(GL_STATIC_DRAW, Static)                               \
+#define QDEMON_RENDER_ITERATE_GL_QDEMON_BUFFER_USAGE_TYPE                                                              \
+    QDEMON_RENDER_HANDLE_GL_QDEMON_BUFFER_USAGE_TYPE(GL_STATIC_DRAW, Static)                                           \
     QDEMON_RENDER_HANDLE_GL_QDEMON_BUFFER_USAGE_TYPE(GL_DYNAMIC_DRAW, Dynamic)
 
-#define QDEMON_RENDER_ITERATE_GL_QDEMON_TEXTURE_SCALE_OP                                                   \
-    QDEMON_RENDER_HANDLE_GL_QDEMON_TEXTURE_SCALE_OP(GL_NEAREST, Nearest)                                   \
-    QDEMON_RENDER_HANDLE_GL_QDEMON_TEXTURE_SCALE_OP(GL_LINEAR, Linear)                                     \
-    QDEMON_RENDER_HANDLE_GL_QDEMON_TEXTURE_MINIFYING_OP(GL_NEAREST_MIPMAP_NEAREST, NearestMipmapNearest)   \
-    QDEMON_RENDER_HANDLE_GL_QDEMON_TEXTURE_MINIFYING_OP(GL_LINEAR_MIPMAP_NEAREST, LinearMipmapNearest)     \
-    QDEMON_RENDER_HANDLE_GL_QDEMON_TEXTURE_MINIFYING_OP(GL_NEAREST_MIPMAP_LINEAR, NearestMipmapLinear)     \
+#define QDEMON_RENDER_ITERATE_GL_QDEMON_TEXTURE_SCALE_OP                                                               \
+    QDEMON_RENDER_HANDLE_GL_QDEMON_TEXTURE_SCALE_OP(GL_NEAREST, Nearest)                                               \
+    QDEMON_RENDER_HANDLE_GL_QDEMON_TEXTURE_SCALE_OP(GL_LINEAR, Linear)                                                 \
+    QDEMON_RENDER_HANDLE_GL_QDEMON_TEXTURE_MINIFYING_OP(GL_NEAREST_MIPMAP_NEAREST, NearestMipmapNearest)               \
+    QDEMON_RENDER_HANDLE_GL_QDEMON_TEXTURE_MINIFYING_OP(GL_LINEAR_MIPMAP_NEAREST, LinearMipmapNearest)                 \
+    QDEMON_RENDER_HANDLE_GL_QDEMON_TEXTURE_MINIFYING_OP(GL_NEAREST_MIPMAP_LINEAR, NearestMipmapLinear)                 \
     QDEMON_RENDER_HANDLE_GL_QDEMON_TEXTURE_MINIFYING_OP(GL_LINEAR_MIPMAP_LINEAR, LinearMipmapLinear)
 
-#define QDEMON_RENDER_ITERATE_GL_QDEMON_TEXTURE_WRAP_OP                                                    \
-    QDEMON_RENDER_HANDLE_GL_QDEMON_TEXTURE_WRAP_OP(GL_CLAMP_TO_EDGE, ClampToEdge)                          \
-    QDEMON_RENDER_HANDLE_GL_QDEMON_TEXTURE_WRAP_OP(GL_MIRRORED_REPEAT, MirroredRepeat)                     \
+#define QDEMON_RENDER_ITERATE_GL_QDEMON_TEXTURE_WRAP_OP                                                                \
+    QDEMON_RENDER_HANDLE_GL_QDEMON_TEXTURE_WRAP_OP(GL_CLAMP_TO_EDGE, ClampToEdge)                                      \
+    QDEMON_RENDER_HANDLE_GL_QDEMON_TEXTURE_WRAP_OP(GL_MIRRORED_REPEAT, MirroredRepeat)                                 \
     QDEMON_RENDER_HANDLE_GL_QDEMON_TEXTURE_WRAP_OP(GL_REPEAT, Repeat)
 
-#define QDEMON_RENDER_ITERATE_GL_QDEMON_SHADER_UNIFORM_TYPES                                               \
-    QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_UNIFORM_TYPES(GL_FLOAT, Float)                                   \
-    QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_UNIFORM_TYPES(GL_FLOAT_VEC2, Vec2)                             \
-    QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_UNIFORM_TYPES(GL_FLOAT_VEC3, Vec3)                             \
-    QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_UNIFORM_TYPES(GL_FLOAT_VEC4, Vec4)                             \
-    QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_UNIFORM_TYPES(GL_INT, Integer)                                     \
-    QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_UNIFORM_TYPES(GL_INT_VEC2, IntegerVec2)                              \
-    QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_UNIFORM_TYPES(GL_INT_VEC3, IntegerVec3)                              \
-    QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_UNIFORM_TYPES(GL_INT_VEC4, IntegerVec4)                              \
-    QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_UNIFORM_TYPES(GL_BOOL, Boolean)                             \
-    QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_UNIFORM_TYPES(GL_BOOL_VEC2, BooleanVec2)                              \
-    QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_UNIFORM_TYPES(GL_BOOL_VEC3, BooleanVec3)                              \
-    QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_UNIFORM_TYPES(GL_BOOL_VEC4, BooleanVec4)                              \
-    QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_UNIFORM_TYPES(GL_UNSIGNED_INT, UnsignedInteger)                            \
+#define QDEMON_RENDER_ITERATE_GL_QDEMON_SHADER_UNIFORM_TYPES                                                           \
+    QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_UNIFORM_TYPES(GL_FLOAT, Float)                                               \
+    QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_UNIFORM_TYPES(GL_FLOAT_VEC2, Vec2)                                           \
+    QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_UNIFORM_TYPES(GL_FLOAT_VEC3, Vec3)                                           \
+    QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_UNIFORM_TYPES(GL_FLOAT_VEC4, Vec4)                                           \
+    QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_UNIFORM_TYPES(GL_INT, Integer)                                               \
+    QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_UNIFORM_TYPES(GL_INT_VEC2, IntegerVec2)                                      \
+    QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_UNIFORM_TYPES(GL_INT_VEC3, IntegerVec3)                                      \
+    QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_UNIFORM_TYPES(GL_INT_VEC4, IntegerVec4)                                      \
+    QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_UNIFORM_TYPES(GL_BOOL, Boolean)                                              \
+    QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_UNIFORM_TYPES(GL_BOOL_VEC2, BooleanVec2)                                     \
+    QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_UNIFORM_TYPES(GL_BOOL_VEC3, BooleanVec3)                                     \
+    QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_UNIFORM_TYPES(GL_BOOL_VEC4, BooleanVec4)                                     \
+    QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_UNIFORM_TYPES(GL_UNSIGNED_INT, UnsignedInteger)                              \
     QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_UNIFORM_TYPES(GL_UNSIGNED_INT_VEC2, UnsignedIntegerVec2)                     \
     QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_UNIFORM_TYPES(GL_UNSIGNED_INT_VEC3, UnsignedIntegerVec3)                     \
     QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_UNIFORM_TYPES(GL_UNSIGNED_INT_VEC4, UnsignedIntegerVec4)                     \
-    QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_UNIFORM_TYPES(GL_FLOAT_MAT3, Matrix3x3)                            \
-    QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_UNIFORM_TYPES(GL_FLOAT_MAT4, Matrix4x4)                            \
-    QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_UNIFORM_TYPES(GL_SAMPLER_2D, Texture2D)               \
-    QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_UNIFORM_TYPES(GL_SAMPLER_2D_ARRAY, Texture2DArray)    \
-    QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_UNIFORM_TYPES(GL_SAMPLER_CUBE, TextureCube)           \
+    QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_UNIFORM_TYPES(GL_FLOAT_MAT3, Matrix3x3)                                      \
+    QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_UNIFORM_TYPES(GL_FLOAT_MAT4, Matrix4x4)                                      \
+    QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_UNIFORM_TYPES(GL_SAMPLER_2D, Texture2D)                                      \
+    QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_UNIFORM_TYPES(GL_SAMPLER_2D_ARRAY, Texture2DArray)                           \
+    QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_UNIFORM_TYPES(GL_SAMPLER_CUBE, TextureCube)                                  \
     QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_UNIFORM_TYPES(GL_IMAGE_2D, Image2D)
 // cube Sampler and mat22 unsupported
 
-#define QDEMON_RENDER_ITERATE_GL_QDEMON_SHADER_ATTRIB_TYPES                                                \
-    QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_ATTRIB_TYPES(GL_FLOAT, Float32, 1)                                 \
-    QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_ATTRIB_TYPES(GL_FLOAT_VEC2, Float32, 2)                            \
-    QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_ATTRIB_TYPES(GL_FLOAT_VEC3, Float32, 3)                            \
-    QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_ATTRIB_TYPES(GL_FLOAT_VEC4, Float32, 4)                            \
-    QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_ATTRIB_TYPES(GL_FLOAT_MAT2, Float32, 4)                            \
-    QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_ATTRIB_TYPES(GL_FLOAT_MAT3, Float32, 9)                            \
+#define QDEMON_RENDER_ITERATE_GL_QDEMON_SHADER_ATTRIB_TYPES                                                            \
+    QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_ATTRIB_TYPES(GL_FLOAT, Float32, 1)                                           \
+    QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_ATTRIB_TYPES(GL_FLOAT_VEC2, Float32, 2)                                      \
+    QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_ATTRIB_TYPES(GL_FLOAT_VEC3, Float32, 3)                                      \
+    QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_ATTRIB_TYPES(GL_FLOAT_VEC4, Float32, 4)                                      \
+    QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_ATTRIB_TYPES(GL_FLOAT_MAT2, Float32, 4)                                      \
+    QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_ATTRIB_TYPES(GL_FLOAT_MAT3, Float32, 9)                                      \
     QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_ATTRIB_TYPES(GL_FLOAT_MAT4, Float32, 16)
 #if defined(GL_DEPTH_COMPONENT32)
-#define QDEMON_RENDER_ITERATE_GL_QDEMON_RENDERBUFFER_FORMATS                                               \
-    QDEMON_RENDER_HANDLE_GL_QDEMON_RENDERBUFFER_FORMAT(GL_RGBA4, RGBA4)                                    \
-    QDEMON_RENDER_HANDLE_GL_QDEMON_RENDERBUFFER_FORMAT(GL_RGB565, RGB565)                                  \
-    QDEMON_RENDER_HANDLE_GL_QDEMON_RENDERBUFFER_FORMAT(GL_RGB5_A1, RGBA5551)                               \
-    QDEMON_RENDER_HANDLE_GL_QDEMON_RENDERBUFFER_FORMAT(GL_DEPTH_COMPONENT16, Depth16)                      \
-    QDEMON_RENDER_HANDLE_GL_QDEMON_RENDERBUFFER_FORMAT(GL_DEPTH_COMPONENT24, Depth24)                      \
-    QDEMON_RENDER_HANDLE_GL_QDEMON_RENDERBUFFER_FORMAT(GL_DEPTH_COMPONENT32, Depth32)                      \
+#define QDEMON_RENDER_ITERATE_GL_QDEMON_RENDERBUFFER_FORMATS                                                           \
+    QDEMON_RENDER_HANDLE_GL_QDEMON_RENDERBUFFER_FORMAT(GL_RGBA4, RGBA4)                                                \
+    QDEMON_RENDER_HANDLE_GL_QDEMON_RENDERBUFFER_FORMAT(GL_RGB565, RGB565)                                              \
+    QDEMON_RENDER_HANDLE_GL_QDEMON_RENDERBUFFER_FORMAT(GL_RGB5_A1, RGBA5551)                                           \
+    QDEMON_RENDER_HANDLE_GL_QDEMON_RENDERBUFFER_FORMAT(GL_DEPTH_COMPONENT16, Depth16)                                  \
+    QDEMON_RENDER_HANDLE_GL_QDEMON_RENDERBUFFER_FORMAT(GL_DEPTH_COMPONENT24, Depth24)                                  \
+    QDEMON_RENDER_HANDLE_GL_QDEMON_RENDERBUFFER_FORMAT(GL_DEPTH_COMPONENT32, Depth32)                                  \
     QDEMON_RENDER_HANDLE_GL_QDEMON_RENDERBUFFER_FORMAT(GL_STENCIL_INDEX8, StencilIndex8)
 #else
-#define QDEMON_RENDER_ITERATE_GL_QDEMON_RENDERBUFFER_FORMATS                                               \
-    QDEMON_RENDER_HANDLE_GL_QDEMON_RENDERBUFFER_FORMAT(GL_RGBA4, RGBA4)                                    \
-    QDEMON_RENDER_HANDLE_GL_QDEMON_RENDERBUFFER_FORMAT(GL_RGB565, RGB565)                                  \
-    QDEMON_RENDER_HANDLE_GL_QDEMON_RENDERBUFFER_FORMAT(GL_RGB5_A1, RGBA5551)                               \
-    QDEMON_RENDER_HANDLE_GL_QDEMON_RENDERBUFFER_FORMAT(GL_DEPTH_COMPONENT16, Depth16)                      \
-    QDEMON_RENDER_HANDLE_GL_QDEMON_RENDERBUFFER_FORMAT(GL_DEPTH_COMPONENT24, Depth24)                      \
+#define QDEMON_RENDER_ITERATE_GL_QDEMON_RENDERBUFFER_FORMATS                                                           \
+    QDEMON_RENDER_HANDLE_GL_QDEMON_RENDERBUFFER_FORMAT(GL_RGBA4, RGBA4)                                                \
+    QDEMON_RENDER_HANDLE_GL_QDEMON_RENDERBUFFER_FORMAT(GL_RGB565, RGB565)                                              \
+    QDEMON_RENDER_HANDLE_GL_QDEMON_RENDERBUFFER_FORMAT(GL_RGB5_A1, RGBA5551)                                           \
+    QDEMON_RENDER_HANDLE_GL_QDEMON_RENDERBUFFER_FORMAT(GL_DEPTH_COMPONENT16, Depth16)                                  \
+    QDEMON_RENDER_HANDLE_GL_QDEMON_RENDERBUFFER_FORMAT(GL_DEPTH_COMPONENT24, Depth24)                                  \
     QDEMON_RENDER_HANDLE_GL_QDEMON_RENDERBUFFER_FORMAT(GL_STENCIL_INDEX8, StencilIndex8)
 #endif
 
-#define QDEMON_RENDER_ITERATE_GL_QDEMON_FRAMEBUFFER_ATTACHMENTS                                            \
-    QDEMON_RENDER_HANDLE_GL_QDEMON_FRAMEBUFFER_COLOR_ATTACHMENT(Color0, 0)                                 \
-    QDEMON_RENDER_HANDLE_GL_QDEMON_FRAMEBUFFER_COLOR_ATTACHMENT(Color1, 1)                                 \
-    QDEMON_RENDER_HANDLE_GL_QDEMON_FRAMEBUFFER_COLOR_ATTACHMENT(Color2, 2)                                 \
-    QDEMON_RENDER_HANDLE_GL_QDEMON_FRAMEBUFFER_COLOR_ATTACHMENT(Color3, 3)                                 \
-    QDEMON_RENDER_HANDLE_GL_QDEMON_FRAMEBUFFER_COLOR_ATTACHMENT(Color4, 4)                                 \
-    QDEMON_RENDER_HANDLE_GL_QDEMON_FRAMEBUFFER_COLOR_ATTACHMENT(Color5, 5)                                 \
-    QDEMON_RENDER_HANDLE_GL_QDEMON_FRAMEBUFFER_COLOR_ATTACHMENT(Color6, 6)                                 \
-    QDEMON_RENDER_HANDLE_GL_QDEMON_FRAMEBUFFER_COLOR_ATTACHMENT(Color7, 7)                                 \
-    QDEMON_RENDER_HANDLE_GL_QDEMON_FRAMEBUFFER_ATTACHMENT(GL_DEPTH_ATTACHMENT, Depth)                      \
-    QDEMON_RENDER_HANDLE_GL_QDEMON_FRAMEBUFFER_ATTACHMENT(GL_STENCIL_ATTACHMENT, Stencil)                  \
+#define QDEMON_RENDER_ITERATE_GL_QDEMON_FRAMEBUFFER_ATTACHMENTS                                                        \
+    QDEMON_RENDER_HANDLE_GL_QDEMON_FRAMEBUFFER_COLOR_ATTACHMENT(Color0, 0)                                             \
+    QDEMON_RENDER_HANDLE_GL_QDEMON_FRAMEBUFFER_COLOR_ATTACHMENT(Color1, 1)                                             \
+    QDEMON_RENDER_HANDLE_GL_QDEMON_FRAMEBUFFER_COLOR_ATTACHMENT(Color2, 2)                                             \
+    QDEMON_RENDER_HANDLE_GL_QDEMON_FRAMEBUFFER_COLOR_ATTACHMENT(Color3, 3)                                             \
+    QDEMON_RENDER_HANDLE_GL_QDEMON_FRAMEBUFFER_COLOR_ATTACHMENT(Color4, 4)                                             \
+    QDEMON_RENDER_HANDLE_GL_QDEMON_FRAMEBUFFER_COLOR_ATTACHMENT(Color5, 5)                                             \
+    QDEMON_RENDER_HANDLE_GL_QDEMON_FRAMEBUFFER_COLOR_ATTACHMENT(Color6, 6)                                             \
+    QDEMON_RENDER_HANDLE_GL_QDEMON_FRAMEBUFFER_COLOR_ATTACHMENT(Color7, 7)                                             \
+    QDEMON_RENDER_HANDLE_GL_QDEMON_FRAMEBUFFER_ATTACHMENT(GL_DEPTH_ATTACHMENT, Depth)                                  \
+    QDEMON_RENDER_HANDLE_GL_QDEMON_FRAMEBUFFER_ATTACHMENT(GL_STENCIL_ATTACHMENT, Stencil)                              \
     QDEMON_RENDER_HANDLE_GL_QDEMON_FRAMEBUFFER_ATTACHMENT(GL_DEPTH_STENCIL_ATTACHMENT, DepthStencil)
 
-#define QDEMON_RENDER_ITERATE_GL_QDEMON_CLEAR_FLAGS                                                        \
-    QDEMON_RENDER_HANDLE_GL_QDEMON_CLEAR_FLAGS(GL_COLOR_BUFFER_BIT, Color)                                 \
-    QDEMON_RENDER_HANDLE_GL_QDEMON_CLEAR_FLAGS(GL_DEPTH_BUFFER_BIT, Depth)                                 \
+#define QDEMON_RENDER_ITERATE_GL_QDEMON_CLEAR_FLAGS                                                                    \
+    QDEMON_RENDER_HANDLE_GL_QDEMON_CLEAR_FLAGS(GL_COLOR_BUFFER_BIT, Color)                                             \
+    QDEMON_RENDER_HANDLE_GL_QDEMON_CLEAR_FLAGS(GL_DEPTH_BUFFER_BIT, Depth)                                             \
     QDEMON_RENDER_HANDLE_GL_QDEMON_CLEAR_FLAGS(GL_STENCIL_BUFFER_BIT, Stencil)
 
 #define QDEMON_RENDER_ITERATE_GL_QDEMON_RENDERBUFFER_COVERAGE_FORMATS
@@ -267,8 +267,7 @@ QT_BEGIN_NAMESPACE
 
 static bool IsGlEsContext(QDemonRenderContextType inContextType)
 {
-    QDemonRenderContextType esContextTypes(QDemonRenderContextValues::GLES2
-                                           | QDemonRenderContextValues::GLES3
+    QDemonRenderContextType esContextTypes(QDemonRenderContextValues::GLES2 | QDemonRenderContextValues::GLES3
                                            | QDemonRenderContextValues::GLES3PLUS);
 
     if ((inContextType & esContextTypes))
@@ -279,23 +278,22 @@ static bool IsGlEsContext(QDemonRenderContextType inContextType)
 
 struct GLConversion
 {
-    GLConversion()
-    { }
+    GLConversion() {}
 
     static const char *processGLError(GLenum error)
     {
         const char *errorString = "";
         switch (error) {
-#define stringiseError(error)                                                                      \
-        case error:                                                                                    \
-    errorString = #error;                                                                      \
-    break
-        stringiseError(GL_NO_ERROR);
-        stringiseError(GL_INVALID_ENUM);
-        stringiseError(GL_INVALID_VALUE);
-        stringiseError(GL_INVALID_OPERATION);
-        stringiseError(GL_INVALID_FRAMEBUFFER_OPERATION);
-        stringiseError(GL_OUT_OF_MEMORY);
+#define stringiseError(error)                                                                                          \
+    case error:                                                                                                        \
+        errorString = #error;                                                                                          \
+        break
+            stringiseError(GL_NO_ERROR);
+            stringiseError(GL_INVALID_ENUM);
+            stringiseError(GL_INVALID_VALUE);
+            stringiseError(GL_INVALID_OPERATION);
+            stringiseError(GL_INVALID_FRAMEBUFFER_OPERATION);
+            stringiseError(GL_OUT_OF_MEMORY);
 #undef stringiseError
         default:
             errorString = "Unknown GL error";
@@ -307,74 +305,72 @@ struct GLConversion
     static QDemonRenderSrcBlendFunc::Enum fromGLToSrcBlendFunc(qint32 value)
     {
         switch (value) {
-#define QDEMON_RENDER_HANDLE_GL_COLOR_FUNC(srcVal, enumVal)                                            \
-        case srcVal:                                                                                   \
-    return QDemonRenderSrcBlendFunc::enumVal;
-#define QDEMON_RENDER_HANDLE_GL_COLOR_FUNC_SRC_ONLY(srcVal, enumVal)                                   \
-        case srcVal:                                                                                   \
-    return QDemonRenderSrcBlendFunc::enumVal;
-        QDEMON_RENDER_ITERATE_QDEMON_GL_COLOR_FUNC
-        #undef QDEMON_RENDER_HANDLE_GL_COLOR_FUNC
-        #undef QDEMON_RENDER_HANDLE_GL_COLOR_FUNC_SRC_ONLY
-                default:
+#define QDEMON_RENDER_HANDLE_GL_COLOR_FUNC(srcVal, enumVal)                                                            \
+    case srcVal:                                                                                                       \
+        return QDemonRenderSrcBlendFunc::enumVal;
+#define QDEMON_RENDER_HANDLE_GL_COLOR_FUNC_SRC_ONLY(srcVal, enumVal)                                                   \
+    case srcVal:                                                                                                       \
+        return QDemonRenderSrcBlendFunc::enumVal;
+            QDEMON_RENDER_ITERATE_QDEMON_GL_COLOR_FUNC
+#undef QDEMON_RENDER_HANDLE_GL_COLOR_FUNC
+#undef QDEMON_RENDER_HANDLE_GL_COLOR_FUNC_SRC_ONLY
+        default:
             Q_ASSERT(false);
-        return QDemonRenderSrcBlendFunc::Unknown;
+            return QDemonRenderSrcBlendFunc::Unknown;
         }
     }
 
     static GLenum fromSrcBlendFuncToGL(QDemonRenderSrcBlendFunc::Enum value)
     {
         switch (value) {
-#define QDEMON_RENDER_HANDLE_GL_COLOR_FUNC(srcVal, enumVal)                                            \
-        case QDemonRenderSrcBlendFunc::enumVal:                                                            \
-    return srcVal;
-#define QDEMON_RENDER_HANDLE_GL_COLOR_FUNC_SRC_ONLY(srcVal, enumVal)                                   \
-        case QDemonRenderSrcBlendFunc::enumVal:                                                            \
-    return srcVal;
-        QDEMON_RENDER_ITERATE_QDEMON_GL_COLOR_FUNC
-        #undef QDEMON_RENDER_HANDLE_GL_COLOR_FUNC
-        #undef QDEMON_RENDER_HANDLE_GL_COLOR_FUNC_SRC_ONLY
-                default:
+#define QDEMON_RENDER_HANDLE_GL_COLOR_FUNC(srcVal, enumVal)                                                            \
+    case QDemonRenderSrcBlendFunc::enumVal:                                                                            \
+        return srcVal;
+#define QDEMON_RENDER_HANDLE_GL_COLOR_FUNC_SRC_ONLY(srcVal, enumVal)                                                   \
+    case QDemonRenderSrcBlendFunc::enumVal:                                                                            \
+        return srcVal;
+            QDEMON_RENDER_ITERATE_QDEMON_GL_COLOR_FUNC
+#undef QDEMON_RENDER_HANDLE_GL_COLOR_FUNC
+#undef QDEMON_RENDER_HANDLE_GL_COLOR_FUNC_SRC_ONLY
+        default:
             Q_ASSERT(false);
-        return 0;
+            return 0;
         }
     }
 
     static QDemonRenderDstBlendFunc::Enum fromGLToDstBlendFunc(qint32 value)
     {
         switch (value) {
-#define QDEMON_RENDER_HANDLE_GL_COLOR_FUNC(srcVal, enumVal)                                            \
-        case srcVal:                                                                                   \
-    return QDemonRenderDstBlendFunc::enumVal;
+#define QDEMON_RENDER_HANDLE_GL_COLOR_FUNC(srcVal, enumVal)                                                            \
+    case srcVal:                                                                                                       \
+        return QDemonRenderDstBlendFunc::enumVal;
 #define QDEMON_RENDER_HANDLE_GL_COLOR_FUNC_SRC_ONLY(srcVal, enumVal)
-        QDEMON_RENDER_ITERATE_QDEMON_GL_COLOR_FUNC
-        #undef QDEMON_RENDER_HANDLE_GL_COLOR_FUNC
-        #undef QDEMON_RENDER_HANDLE_GL_COLOR_FUNC_SRC_ONLY
-                default:
+            QDEMON_RENDER_ITERATE_QDEMON_GL_COLOR_FUNC
+#undef QDEMON_RENDER_HANDLE_GL_COLOR_FUNC
+#undef QDEMON_RENDER_HANDLE_GL_COLOR_FUNC_SRC_ONLY
+        default:
             Q_ASSERT(false);
-        return QDemonRenderDstBlendFunc::Unknown;
+            return QDemonRenderDstBlendFunc::Unknown;
         }
     }
 
     static GLenum fromDstBlendFuncToGL(QDemonRenderDstBlendFunc::Enum value)
     {
         switch (value) {
-#define QDEMON_RENDER_HANDLE_GL_COLOR_FUNC(srcVal, enumVal)                                            \
-        case QDemonRenderDstBlendFunc::enumVal:                                                            \
-    return srcVal;
+#define QDEMON_RENDER_HANDLE_GL_COLOR_FUNC(srcVal, enumVal)                                                            \
+    case QDemonRenderDstBlendFunc::enumVal:                                                                            \
+        return srcVal;
 #define QDEMON_RENDER_HANDLE_GL_COLOR_FUNC_SRC_ONLY(srcVal, enumVal)
-        QDEMON_RENDER_ITERATE_QDEMON_GL_COLOR_FUNC
-        #undef QDEMON_RENDER_HANDLE_GL_COLOR_FUNC
-        #undef QDEMON_RENDER_HANDLE_GL_COLOR_FUNC_SRC_ONLY
-                default:
+            QDEMON_RENDER_ITERATE_QDEMON_GL_COLOR_FUNC
+#undef QDEMON_RENDER_HANDLE_GL_COLOR_FUNC
+#undef QDEMON_RENDER_HANDLE_GL_COLOR_FUNC_SRC_ONLY
+        default:
             Q_ASSERT(false);
-        return 0;
+            return 0;
         }
     }
 
-    static GLenum fromBlendEquationToGL(QDemonRenderBlendEquation::Enum value,
-                                        bool nvAdvancedBlendSupported,
-                                        bool khrAdvancedBlendSupported)
+    static GLenum fromBlendEquationToGL(QDemonRenderBlendEquation::Enum value, bool nvAdvancedBlendSupported, bool khrAdvancedBlendSupported)
     {
         switch (value) {
         case QDemonRenderBlendEquation::Add:
@@ -423,12 +419,12 @@ struct GLConversion
     static QDemonRenderFaces::Enum fromGLToFaces(GLenum value)
     {
         switch (value) {
-#define QDEMON_RENDER_HANDLE_GL_QDEMON_RENDER_FACE(x, y)                                                   \
-        case x:                                                                                        \
-    return QDemonRenderFaces::y;
-        QDEMON_RENDER_ITERATE_GL_QDEMON_RENDER_FACE
-        #undef QDEMON_RENDER_HANDLE_GL_QDEMON_RENDER_FACE
-                default:
+#define QDEMON_RENDER_HANDLE_GL_QDEMON_RENDER_FACE(x, y)                                                               \
+    case x:                                                                                                            \
+        return QDemonRenderFaces::y;
+            QDEMON_RENDER_ITERATE_GL_QDEMON_RENDER_FACE
+#undef QDEMON_RENDER_HANDLE_GL_QDEMON_RENDER_FACE
+        default:
             break;
         }
         Q_ASSERT(false);
@@ -438,12 +434,12 @@ struct GLConversion
     static GLenum fromFacesToGL(QDemonRenderFaces::Enum value)
     {
         switch (value) {
-#define QDEMON_RENDER_HANDLE_GL_QDEMON_RENDER_FACE(x, y)                                                   \
-        case QDemonRenderFaces::y:                                                                         \
-    return x;
-        QDEMON_RENDER_ITERATE_GL_QDEMON_RENDER_FACE
-        #undef QDEMON_RENDER_HANDLE_GL_QDEMON_RENDER_FACE
-                default:
+#define QDEMON_RENDER_HANDLE_GL_QDEMON_RENDER_FACE(x, y)                                                               \
+    case QDemonRenderFaces::y:                                                                                         \
+        return x;
+            QDEMON_RENDER_ITERATE_GL_QDEMON_RENDER_FACE
+#undef QDEMON_RENDER_HANDLE_GL_QDEMON_RENDER_FACE
+        default:
             break;
         }
         Q_ASSERT(false);
@@ -514,12 +510,12 @@ struct GLConversion
     static QDemonRenderWinding::Enum fromGLToWinding(GLenum value)
     {
         switch (value) {
-#define QDEMON_RENDER_HANDLE_GL_QDEMON_RENDER_WINDING(x, y)                                                \
-        case x:                                                                                        \
-    return QDemonRenderWinding::y;
-        QDEMON_RENDER_ITERATE_GL_QDEMON_RENDER_WINDING
-        #undef QDEMON_RENDER_HANDLE_GL_QDEMON_RENDER_WINDING
-                default:
+#define QDEMON_RENDER_HANDLE_GL_QDEMON_RENDER_WINDING(x, y)                                                            \
+    case x:                                                                                                            \
+        return QDemonRenderWinding::y;
+            QDEMON_RENDER_ITERATE_GL_QDEMON_RENDER_WINDING
+#undef QDEMON_RENDER_HANDLE_GL_QDEMON_RENDER_WINDING
+        default:
             break;
         }
         Q_ASSERT(false);
@@ -529,12 +525,12 @@ struct GLConversion
     static GLenum fromWindingToGL(QDemonRenderWinding::Enum value)
     {
         switch (value) {
-#define QDEMON_RENDER_HANDLE_GL_QDEMON_RENDER_WINDING(x, y)                                                \
-        case QDemonRenderWinding::y:                                                                       \
-    return x;
-        QDEMON_RENDER_ITERATE_GL_QDEMON_RENDER_WINDING
-        #undef QDEMON_RENDER_HANDLE_GL_QDEMON_RENDER_WINDING
-                default:
+#define QDEMON_RENDER_HANDLE_GL_QDEMON_RENDER_WINDING(x, y)                                                            \
+    case QDemonRenderWinding::y:                                                                                       \
+        return x;
+            QDEMON_RENDER_ITERATE_GL_QDEMON_RENDER_WINDING
+#undef QDEMON_RENDER_HANDLE_GL_QDEMON_RENDER_WINDING
+        default:
             break;
         }
         Q_ASSERT(false);
@@ -544,12 +540,12 @@ struct GLConversion
     static QDemonRenderBoolOp::Enum fromGLToBoolOp(GLenum value)
     {
         switch (value) {
-#define QDEMON_RENDER_HANDLE_GL_QDEMON_BOOL_OP(x, y)                                                       \
-        case x:                                                                                        \
-    return QDemonRenderBoolOp::y;
-        QDEMON_RENDER_ITERATE_GL_QDEMON_BOOL_OP
-        #undef QDEMON_RENDER_HANDLE_GL_QDEMON_BOOL_OP
-                default:
+#define QDEMON_RENDER_HANDLE_GL_QDEMON_BOOL_OP(x, y)                                                                   \
+    case x:                                                                                                            \
+        return QDemonRenderBoolOp::y;
+            QDEMON_RENDER_ITERATE_GL_QDEMON_BOOL_OP
+#undef QDEMON_RENDER_HANDLE_GL_QDEMON_BOOL_OP
+        default:
             break;
         }
         Q_ASSERT(false);
@@ -559,12 +555,12 @@ struct GLConversion
     static GLenum fromBoolOpToGL(QDemonRenderBoolOp::Enum value)
     {
         switch (value) {
-#define QDEMON_RENDER_HANDLE_GL_QDEMON_BOOL_OP(x, y)                                                       \
-        case QDemonRenderBoolOp::y:                                                                        \
-    return x;
-        QDEMON_RENDER_ITERATE_GL_QDEMON_BOOL_OP
-        #undef QDEMON_RENDER_HANDLE_GL_QDEMON_BOOL_OP
-                default:
+#define QDEMON_RENDER_HANDLE_GL_QDEMON_BOOL_OP(x, y)                                                                   \
+    case QDemonRenderBoolOp::y:                                                                                        \
+        return x;
+            QDEMON_RENDER_ITERATE_GL_QDEMON_BOOL_OP
+#undef QDEMON_RENDER_HANDLE_GL_QDEMON_BOOL_OP
+        default:
             break;
         }
         Q_ASSERT(false);
@@ -574,12 +570,12 @@ struct GLConversion
     static QDemonRenderHint::Enum fromGLToHint(GLenum value)
     {
         switch (value) {
-#define QDEMON_RENDER_HANDLE_GL_QDEMON_HINT(x, y)                                                          \
-        case x:                                                                                        \
-    return QDemonRenderHint::y;
-        QDEMON_RENDER_ITERATE_GL_QDEMON_HINT
-        #undef QDEMON_RENDER_HANDLE_GL_QDEMON_HINT
-                default:
+#define QDEMON_RENDER_HANDLE_GL_QDEMON_HINT(x, y)                                                                      \
+    case x:                                                                                                            \
+        return QDemonRenderHint::y;
+            QDEMON_RENDER_ITERATE_GL_QDEMON_HINT
+#undef QDEMON_RENDER_HANDLE_GL_QDEMON_HINT
+        default:
             break;
         }
         Q_ASSERT(false);
@@ -589,12 +585,12 @@ struct GLConversion
     static GLenum fromHintToGL(QDemonRenderHint::Enum value)
     {
         switch (value) {
-#define QDEMON_RENDER_HANDLE_GL_QDEMON_HINT(x, y)                                                          \
-        case QDemonRenderHint::y:                                                                          \
-    return x;
-        QDEMON_RENDER_ITERATE_GL_QDEMON_HINT
-        #undef QDEMON_RENDER_HANDLE_GL_QDEMON_HINT
-                default:
+#define QDEMON_RENDER_HANDLE_GL_QDEMON_HINT(x, y)                                                                      \
+    case QDemonRenderHint::y:                                                                                          \
+        return x;
+            QDEMON_RENDER_ITERATE_GL_QDEMON_HINT
+#undef QDEMON_RENDER_HANDLE_GL_QDEMON_HINT
+        default:
             break;
         }
         Q_ASSERT(false);
@@ -604,12 +600,12 @@ struct GLConversion
     static QDemonRenderStencilOp::Enum fromGLToStencilOp(GLenum value)
     {
         switch (value) {
-#define QDEMON_RENDER_HANDLE_QDEMON_GL_STENCIL_OP(x, y)                                                    \
-        case x:                                                                                        \
-    return QDemonRenderStencilOp::y;
-        QDEMON_RENDER_ITERATE_QDEMON_GL_STENCIL_OP
-        #undef QDEMON_RENDER_HANDLE_QDEMON_GL_STENCIL_OP
-                default:
+#define QDEMON_RENDER_HANDLE_QDEMON_GL_STENCIL_OP(x, y)                                                                \
+    case x:                                                                                                            \
+        return QDemonRenderStencilOp::y;
+            QDEMON_RENDER_ITERATE_QDEMON_GL_STENCIL_OP
+#undef QDEMON_RENDER_HANDLE_QDEMON_GL_STENCIL_OP
+        default:
             break;
         }
 
@@ -620,12 +616,12 @@ struct GLConversion
     static GLenum fromStencilOpToGL(QDemonRenderStencilOp::Enum value)
     {
         switch (value) {
-#define QDEMON_RENDER_HANDLE_QDEMON_GL_STENCIL_OP(x, y)                                                    \
-        case QDemonRenderStencilOp::y:                                                                     \
-    return x;
-        QDEMON_RENDER_ITERATE_QDEMON_GL_STENCIL_OP
-        #undef QDEMON_RENDER_HANDLE_QDEMON_GL_STENCIL_OP
-                default:
+#define QDEMON_RENDER_HANDLE_QDEMON_GL_STENCIL_OP(x, y)                                                                \
+    case QDemonRenderStencilOp::y:                                                                                     \
+        return x;
+            QDEMON_RENDER_ITERATE_QDEMON_GL_STENCIL_OP
+#undef QDEMON_RENDER_HANDLE_QDEMON_GL_STENCIL_OP
+        default:
             break;
         }
 
@@ -636,14 +632,14 @@ struct GLConversion
     static QDemonRenderComponentTypes::Enum fromGLToBufferComponentTypes(GLenum value)
     {
         switch (value) {
-#define QDEMON_RENDER_HANDLE_GL_QDEMON_COMPONENT_TYPE(x, y)                                                \
-        case x:                                                                                        \
-    return QDemonRenderComponentTypes::y;
+#define QDEMON_RENDER_HANDLE_GL_QDEMON_COMPONENT_TYPE(x, y)                                                            \
+    case x:                                                                                                            \
+        return QDemonRenderComponentTypes::y;
 #define QDEMON_RENDER_HANDLE_GL_QDEMON_COMPONENT_TYPE_ALIAS(x, y)
-        QDEMON_RENDER_ITERATE_GL_QDEMON_BUFFER_COMPONENT_TYPES
-        #undef QDEMON_RENDER_HANDLE_GL_QDEMON_COMPONENT_TYPE
-        #undef QDEMON_RENDER_HANDLE_GL_QDEMON_COMPONENT_TYPE_ALIAS
-                default:
+            QDEMON_RENDER_ITERATE_GL_QDEMON_BUFFER_COMPONENT_TYPES
+#undef QDEMON_RENDER_HANDLE_GL_QDEMON_COMPONENT_TYPE
+#undef QDEMON_RENDER_HANDLE_GL_QDEMON_COMPONENT_TYPE_ALIAS
+        default:
             break;
         }
         Q_ASSERT(false);
@@ -653,16 +649,16 @@ struct GLConversion
     static GLenum fromBufferComponentTypesToGL(QDemonRenderComponentTypes::Enum value)
     {
         switch (value) {
-#define QDEMON_RENDER_HANDLE_GL_QDEMON_COMPONENT_TYPE(x, y)                                                \
-        case QDemonRenderComponentTypes::y:                                                                \
-    return x;
-#define QDEMON_RENDER_HANDLE_GL_QDEMON_COMPONENT_TYPE_ALIAS(x, y)                                          \
-        case QDemonRenderComponentTypes::y:                                                                \
-    return x;
-        QDEMON_RENDER_ITERATE_GL_QDEMON_BUFFER_COMPONENT_TYPES
-        #undef QDEMON_RENDER_HANDLE_GL_QDEMON_COMPONENT_TYPE
-        #undef QDEMON_RENDER_HANDLE_GL_QDEMON_COMPONENT_TYPE
-                default:
+#define QDEMON_RENDER_HANDLE_GL_QDEMON_COMPONENT_TYPE(x, y)                                                            \
+    case QDemonRenderComponentTypes::y:                                                                                \
+        return x;
+#define QDEMON_RENDER_HANDLE_GL_QDEMON_COMPONENT_TYPE_ALIAS(x, y)                                                      \
+    case QDemonRenderComponentTypes::y:                                                                                \
+        return x;
+            QDEMON_RENDER_ITERATE_GL_QDEMON_BUFFER_COMPONENT_TYPES
+#undef QDEMON_RENDER_HANDLE_GL_QDEMON_COMPONENT_TYPE
+#undef QDEMON_RENDER_HANDLE_GL_QDEMON_COMPONENT_TYPE
+        default:
             break;
         }
         Q_ASSERT(false);
@@ -732,12 +728,12 @@ struct GLConversion
     static QDemonRenderBufferUsageType::Enum fromGLToBufferUsageType(GLenum value)
     {
         switch (value) {
-#define QDEMON_RENDER_HANDLE_GL_QDEMON_BUFFER_USAGE_TYPE(x, y)                                             \
-        case x:                                                                                        \
-    return QDemonRenderBufferUsageType::y;
-        QDEMON_RENDER_ITERATE_GL_QDEMON_BUFFER_USAGE_TYPE
-        #undef QDEMON_RENDER_HANDLE_GL_QDEMON_BUFFER_USAGE_TYPE
-                default:
+#define QDEMON_RENDER_HANDLE_GL_QDEMON_BUFFER_USAGE_TYPE(x, y)                                                         \
+    case x:                                                                                                            \
+        return QDemonRenderBufferUsageType::y;
+            QDEMON_RENDER_ITERATE_GL_QDEMON_BUFFER_USAGE_TYPE
+#undef QDEMON_RENDER_HANDLE_GL_QDEMON_BUFFER_USAGE_TYPE
+        default:
             break;
         }
         Q_ASSERT(false);
@@ -747,12 +743,12 @@ struct GLConversion
     static GLenum fromBufferUsageTypeToGL(QDemonRenderBufferUsageType::Enum value)
     {
         switch (value) {
-#define QDEMON_RENDER_HANDLE_GL_QDEMON_BUFFER_USAGE_TYPE(x, y)                                             \
-        case QDemonRenderBufferUsageType::y:                                                               \
-    return x;
-        QDEMON_RENDER_ITERATE_GL_QDEMON_BUFFER_USAGE_TYPE
-        #undef QDEMON_RENDER_HANDLE_GL_QDEMON_BUFFER_USAGE_TYPE
-                default:
+#define QDEMON_RENDER_HANDLE_GL_QDEMON_BUFFER_USAGE_TYPE(x, y)                                                         \
+    case QDemonRenderBufferUsageType::y:                                                                               \
+        return x;
+            QDEMON_RENDER_ITERATE_GL_QDEMON_BUFFER_USAGE_TYPE
+#undef QDEMON_RENDER_HANDLE_GL_QDEMON_BUFFER_USAGE_TYPE
+        default:
             break;
         }
         Q_ASSERT(false);
@@ -801,12 +797,11 @@ struct GLConversion
         return retval;
     }
 
-    static QDemonRenderTextureFormats::Enum
-    replaceDeprecatedTextureFormat(QDemonRenderContextType type, QDemonRenderTextureFormats::Enum value,
-                                   QDemonRenderTextureSwizzleMode::Enum &swizzleMode)
+    static QDemonRenderTextureFormats::Enum replaceDeprecatedTextureFormat(QDemonRenderContextType type,
+                                                                           QDemonRenderTextureFormats::Enum value,
+                                                                           QDemonRenderTextureSwizzleMode::Enum &swizzleMode)
     {
-        QDemonRenderContextType deprecatedContextFlags(QDemonRenderContextValues::GL2
-                                                       | QDemonRenderContextValues::GLES2);
+        QDemonRenderContextType deprecatedContextFlags(QDemonRenderContextValues::GL2 | QDemonRenderContextValues::GLES2);
         QDemonRenderTextureFormats::Enum newValue = value;
         swizzleMode = QDemonRenderTextureSwizzleMode::NoSwizzle;
 
@@ -836,9 +831,7 @@ struct GLConversion
         return newValue;
     }
 
-    static void
-    NVRenderConvertSwizzleModeToGL(const QDemonRenderTextureSwizzleMode::Enum swizzleMode,
-                                   GLint glSwizzle[4])
+    static void NVRenderConvertSwizzleModeToGL(const QDemonRenderTextureSwizzleMode::Enum swizzleMode, GLint glSwizzle[4])
     {
         switch (swizzleMode) {
         case QDemonRenderTextureSwizzleMode::L16toR16:
@@ -872,7 +865,8 @@ struct GLConversion
 
     static bool fromUncompressedTextureFormatToGL(QDemonRenderContextType type,
                                                   QDemonRenderTextureFormats::Enum value,
-                                                  GLenum &outFormat, GLenum &outDataType,
+                                                  GLenum &outFormat,
+                                                  GLenum &outDataType,
                                                   GLenum &outInternalFormat)
     {
         switch (value) {
@@ -940,8 +934,7 @@ struct GLConversion
             break;
         }
 
-        QDemonRenderContextType contextFlags(QDemonRenderContextValues::GL2
-                                             | QDemonRenderContextValues::GLES2);
+        QDemonRenderContextType contextFlags(QDemonRenderContextValues::GL2 | QDemonRenderContextValues::GLES2);
         // check extented texture formats
         if (!(type & contextFlags)) {
             switch (value) {
@@ -1048,11 +1041,11 @@ struct GLConversion
 
     static bool fromDepthTextureFormatToGL(QDemonRenderContextType type,
                                            QDemonRenderTextureFormats::Enum value,
-                                           GLenum &outFormat, GLenum &outDataType,
+                                           GLenum &outFormat,
+                                           GLenum &outDataType,
                                            GLenum &outInternalFormat)
     {
-        QDemonRenderContextType theContextFlags(QDemonRenderContextValues::GLES2
-                                                | QDemonRenderContextValues::GL2);
+        QDemonRenderContextType theContextFlags(QDemonRenderContextValues::GLES2 | QDemonRenderContextValues::GL2);
 
         bool supportDepth24 = !(type & theContextFlags);
         bool supportDepth32f = !(type & theContextFlags);
@@ -1071,14 +1064,12 @@ struct GLConversion
             return true;
         case QDemonRenderTextureFormats::Depth32:
             outFormat = GL_DEPTH_COMPONENT;
-            outInternalFormat =
-                    (supportDepth32f) ? GL_DEPTH_COMPONENT32F : GL_DEPTH_COMPONENT16;
+            outInternalFormat = (supportDepth32f) ? GL_DEPTH_COMPONENT32F : GL_DEPTH_COMPONENT16;
             outDataType = (supportDepth32f) ? GL_FLOAT : GL_UNSIGNED_SHORT;
             return true;
         case QDemonRenderTextureFormats::Depth24Stencil8:
             outFormat = (supportDepth24Stencil8) ? GL_DEPTH_STENCIL : GL_DEPTH_COMPONENT;
-            outInternalFormat =
-                    (supportDepth24Stencil8) ? GL_DEPTH24_STENCIL8 : GL_DEPTH_COMPONENT16;
+            outInternalFormat = (supportDepth24Stencil8) ? GL_DEPTH24_STENCIL8 : GL_DEPTH_COMPONENT16;
             outDataType = (supportDepth24Stencil8) ? GL_UNSIGNED_INT_24_8 : GL_UNSIGNED_SHORT;
             return true;
         default:
@@ -1146,8 +1137,7 @@ struct GLConversion
         Q_ASSERT(value > GL_TEXTURE0);
 
         quint32 v = value - GL_TEXTURE0;
-        QDemonRenderTextureUnit::Enum retval =
-                QDemonRenderTextureUnit::Enum(QDemonRenderTextureUnit::TextureUnit_0 + v);
+        QDemonRenderTextureUnit::Enum retval = QDemonRenderTextureUnit::Enum(QDemonRenderTextureUnit::TextureUnit_0 + v);
 
         return retval;
     }
@@ -1155,16 +1145,16 @@ struct GLConversion
     static GLenum fromTextureMinifyingOpToGL(QDemonRenderTextureMinifyingOp::Enum value)
     {
         switch (value) {
-#define QDEMON_RENDER_HANDLE_GL_QDEMON_TEXTURE_SCALE_OP(x, y)                                              \
-        case QDemonRenderTextureMinifyingOp::y:                                                            \
-    return x;
-#define QDEMON_RENDER_HANDLE_GL_QDEMON_TEXTURE_MINIFYING_OP(x, y)                                          \
-        case QDemonRenderTextureMinifyingOp::y:                                                            \
-    return x;
-        QDEMON_RENDER_ITERATE_GL_QDEMON_TEXTURE_SCALE_OP
-        #undef QDEMON_RENDER_HANDLE_GL_QDEMON_TEXTURE_SCALE_OP
-        #undef QDEMON_RENDER_HANDLE_GL_QDEMON_TEXTURE_MINIFYING_OP
-                default:
+#define QDEMON_RENDER_HANDLE_GL_QDEMON_TEXTURE_SCALE_OP(x, y)                                                          \
+    case QDemonRenderTextureMinifyingOp::y:                                                                            \
+        return x;
+#define QDEMON_RENDER_HANDLE_GL_QDEMON_TEXTURE_MINIFYING_OP(x, y)                                                      \
+    case QDemonRenderTextureMinifyingOp::y:                                                                            \
+        return x;
+            QDEMON_RENDER_ITERATE_GL_QDEMON_TEXTURE_SCALE_OP
+#undef QDEMON_RENDER_HANDLE_GL_QDEMON_TEXTURE_SCALE_OP
+#undef QDEMON_RENDER_HANDLE_GL_QDEMON_TEXTURE_MINIFYING_OP
+        default:
             break;
         }
         Q_ASSERT(false);
@@ -1174,16 +1164,16 @@ struct GLConversion
     static QDemonRenderTextureMinifyingOp::Enum fromGLToTextureMinifyingOp(GLenum value)
     {
         switch (value) {
-#define QDEMON_RENDER_HANDLE_GL_QDEMON_TEXTURE_SCALE_OP(x, y)                                              \
-        case x:                                                                                        \
-    return QDemonRenderTextureMinifyingOp::y;
-#define QDEMON_RENDER_HANDLE_GL_QDEMON_TEXTURE_MINIFYING_OP(x, y)                                          \
-        case x:                                                                                        \
-    return QDemonRenderTextureMinifyingOp::y;
-        QDEMON_RENDER_ITERATE_GL_QDEMON_TEXTURE_SCALE_OP
-        #undef QDEMON_RENDER_HANDLE_GL_QDEMON_TEXTURE_SCALE_OP
-        #undef QDEMON_RENDER_HANDLE_GL_QDEMON_TEXTURE_MINIFYING_OP
-                default:
+#define QDEMON_RENDER_HANDLE_GL_QDEMON_TEXTURE_SCALE_OP(x, y)                                                          \
+    case x:                                                                                                            \
+        return QDemonRenderTextureMinifyingOp::y;
+#define QDEMON_RENDER_HANDLE_GL_QDEMON_TEXTURE_MINIFYING_OP(x, y)                                                      \
+    case x:                                                                                                            \
+        return QDemonRenderTextureMinifyingOp::y;
+            QDEMON_RENDER_ITERATE_GL_QDEMON_TEXTURE_SCALE_OP
+#undef QDEMON_RENDER_HANDLE_GL_QDEMON_TEXTURE_SCALE_OP
+#undef QDEMON_RENDER_HANDLE_GL_QDEMON_TEXTURE_MINIFYING_OP
+        default:
             break;
         }
         Q_ASSERT(false);
@@ -1193,14 +1183,14 @@ struct GLConversion
     static GLenum fromTextureMagnifyingOpToGL(QDemonRenderTextureMagnifyingOp::Enum value)
     {
         switch (value) {
-#define QDEMON_RENDER_HANDLE_GL_QDEMON_TEXTURE_SCALE_OP(x, y)                                              \
-        case QDemonRenderTextureMagnifyingOp::y:                                                           \
-    return x;
+#define QDEMON_RENDER_HANDLE_GL_QDEMON_TEXTURE_SCALE_OP(x, y)                                                          \
+    case QDemonRenderTextureMagnifyingOp::y:                                                                           \
+        return x;
 #define QDEMON_RENDER_HANDLE_GL_QDEMON_TEXTURE_MINIFYING_OP(x, y)
-        QDEMON_RENDER_ITERATE_GL_QDEMON_TEXTURE_SCALE_OP
-        #undef QDEMON_RENDER_HANDLE_GL_QDEMON_TEXTURE_SCALE_OP
-        #undef QDEMON_RENDER_HANDLE_GL_QDEMON_TEXTURE_MINIFYING_OP
-                default:
+            QDEMON_RENDER_ITERATE_GL_QDEMON_TEXTURE_SCALE_OP
+#undef QDEMON_RENDER_HANDLE_GL_QDEMON_TEXTURE_SCALE_OP
+#undef QDEMON_RENDER_HANDLE_GL_QDEMON_TEXTURE_MINIFYING_OP
+        default:
             break;
         }
         Q_ASSERT(false);
@@ -1210,14 +1200,14 @@ struct GLConversion
     static QDemonRenderTextureMagnifyingOp::Enum fromGLToTextureMagnifyingOp(GLenum value)
     {
         switch (value) {
-#define QDEMON_RENDER_HANDLE_GL_QDEMON_TEXTURE_SCALE_OP(x, y)                                              \
-        case x:                                                                                        \
-    return QDemonRenderTextureMagnifyingOp::y;
+#define QDEMON_RENDER_HANDLE_GL_QDEMON_TEXTURE_SCALE_OP(x, y)                                                          \
+    case x:                                                                                                            \
+        return QDemonRenderTextureMagnifyingOp::y;
 #define QDEMON_RENDER_HANDLE_GL_QDEMON_TEXTURE_MINIFYING_OP(x, y)
-        QDEMON_RENDER_ITERATE_GL_QDEMON_TEXTURE_SCALE_OP
-        #undef QDEMON_RENDER_HANDLE_GL_QDEMON_TEXTURE_SCALE_OP
-        #undef QDEMON_RENDER_HANDLE_GL_QDEMON_TEXTURE_MINIFYING_OP
-                default:
+            QDEMON_RENDER_ITERATE_GL_QDEMON_TEXTURE_SCALE_OP
+#undef QDEMON_RENDER_HANDLE_GL_QDEMON_TEXTURE_SCALE_OP
+#undef QDEMON_RENDER_HANDLE_GL_QDEMON_TEXTURE_MINIFYING_OP
+        default:
             break;
         }
         Q_ASSERT(false);
@@ -1227,12 +1217,12 @@ struct GLConversion
     static GLenum fromTextureCoordOpToGL(QDemonRenderTextureCoordOp::Enum value)
     {
         switch (value) {
-#define QDEMON_RENDER_HANDLE_GL_QDEMON_TEXTURE_WRAP_OP(x, y)                                               \
-        case QDemonRenderTextureCoordOp::y:                                                                \
-    return x;
-        QDEMON_RENDER_ITERATE_GL_QDEMON_TEXTURE_WRAP_OP
-        #undef QDEMON_RENDER_HANDLE_GL_QDEMON_TEXTURE_WRAP_OP
-                default:
+#define QDEMON_RENDER_HANDLE_GL_QDEMON_TEXTURE_WRAP_OP(x, y)                                                           \
+    case QDemonRenderTextureCoordOp::y:                                                                                \
+        return x;
+            QDEMON_RENDER_ITERATE_GL_QDEMON_TEXTURE_WRAP_OP
+#undef QDEMON_RENDER_HANDLE_GL_QDEMON_TEXTURE_WRAP_OP
+        default:
             break;
         }
         Q_ASSERT(false);
@@ -1242,12 +1232,12 @@ struct GLConversion
     static QDemonRenderTextureCoordOp::Enum fromGLToTextureCoordOp(GLenum value)
     {
         switch (value) {
-#define QDEMON_RENDER_HANDLE_GL_QDEMON_TEXTURE_WRAP_OP(x, y)                                               \
-        case x:                                                                                        \
-    return QDemonRenderTextureCoordOp::y;
-        QDEMON_RENDER_ITERATE_GL_QDEMON_TEXTURE_WRAP_OP
-        #undef QDEMON_RENDER_HANDLE_GL_QDEMON_TEXTURE_WRAP_OP
-                default:
+#define QDEMON_RENDER_HANDLE_GL_QDEMON_TEXTURE_WRAP_OP(x, y)                                                           \
+    case x:                                                                                                            \
+        return QDemonRenderTextureCoordOp::y;
+            QDEMON_RENDER_ITERATE_GL_QDEMON_TEXTURE_WRAP_OP
+#undef QDEMON_RENDER_HANDLE_GL_QDEMON_TEXTURE_WRAP_OP
+        default:
             break;
         }
         Q_ASSERT(false);
@@ -1287,12 +1277,12 @@ struct GLConversion
     static GLenum fromTextureCompareFuncToGL(QDemonRenderTextureCompareOp::Enum value)
     {
         switch (value) {
-#define QDEMON_RENDER_HANDLE_GL_QDEMON_BOOL_OP(x, y)                                                       \
-        case QDemonRenderTextureCompareOp::y:                                                              \
-    return x;
-        QDEMON_RENDER_ITERATE_GL_QDEMON_BOOL_OP
-        #undef QDEMON_RENDER_HANDLE_GL_QDEMON_BOOL_OP
-                default:
+#define QDEMON_RENDER_HANDLE_GL_QDEMON_BOOL_OP(x, y)                                                                   \
+    case QDemonRenderTextureCompareOp::y:                                                                              \
+        return x;
+            QDEMON_RENDER_ITERATE_GL_QDEMON_BOOL_OP
+#undef QDEMON_RENDER_HANDLE_GL_QDEMON_BOOL_OP
+        default:
             break;
         }
         Q_ASSERT(false);
@@ -1327,7 +1317,6 @@ struct GLConversion
         Q_ASSERT(false);
         return GL_INVALID_ENUM;
     }
-
 
     static GLenum fromImageAccessToGL(QDemonRenderImageAccessType::Enum value)
     {
@@ -1424,12 +1413,12 @@ struct GLConversion
     static GLenum fromPropertyDataTypesToShaderGL(QDemonRenderShaderDataTypes::Enum value)
     {
         switch (value) {
-#define QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_UNIFORM_TYPES(gl, nv)                                        \
-        case QDemonRenderShaderDataTypes::nv:                                                              \
-    return gl;
-        QDEMON_RENDER_ITERATE_GL_QDEMON_SHADER_UNIFORM_TYPES
-        #undef QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_UNIFORM_TYPES
-                default:
+#define QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_UNIFORM_TYPES(gl, nv)                                                    \
+    case QDemonRenderShaderDataTypes::nv:                                                                              \
+        return gl;
+            QDEMON_RENDER_ITERATE_GL_QDEMON_SHADER_UNIFORM_TYPES
+#undef QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_UNIFORM_TYPES
+        default:
             break;
         }
         Q_ASSERT(false);
@@ -1439,12 +1428,12 @@ struct GLConversion
     static QDemonRenderShaderDataTypes::Enum fromShaderGLToPropertyDataTypes(GLenum value)
     {
         switch (value) {
-#define QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_UNIFORM_TYPES(gl, nv)                                        \
-        case gl:                                                                                       \
-    return QDemonRenderShaderDataTypes::nv;
-        QDEMON_RENDER_ITERATE_GL_QDEMON_SHADER_UNIFORM_TYPES
-        #undef QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_UNIFORM_TYPES
-                case GL_SAMPLER_2D_SHADOW:
+#define QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_UNIFORM_TYPES(gl, nv)                                                    \
+    case gl:                                                                                                           \
+        return QDemonRenderShaderDataTypes::nv;
+            QDEMON_RENDER_ITERATE_GL_QDEMON_SHADER_UNIFORM_TYPES
+#undef QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_UNIFORM_TYPES
+        case GL_SAMPLER_2D_SHADOW:
             return QDemonRenderShaderDataTypes::Texture2D;
 #if !defined(QT_OPENGL_ES)
         case GL_UNSIGNED_INT_ATOMIC_COUNTER:
@@ -1459,30 +1448,28 @@ struct GLConversion
         return QDemonRenderShaderDataTypes::Unknown;
     }
 
-    static GLenum fromComponentTypeAndNumCompsToAttribGL(QDemonRenderComponentTypes::Enum compType,
-                                                         quint32 numComps)
+    static GLenum fromComponentTypeAndNumCompsToAttribGL(QDemonRenderComponentTypes::Enum compType, quint32 numComps)
     {
-#define QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_ATTRIB_TYPES(gl, ct, nc)                                     \
-    if (compType == QDemonRenderComponentTypes::ct && numComps == nc)                                  \
-    return gl;
+#define QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_ATTRIB_TYPES(gl, ct, nc)                                                 \
+    if (compType == QDemonRenderComponentTypes::ct && numComps == nc)                                                  \
+        return gl;
         QDEMON_RENDER_ITERATE_GL_QDEMON_SHADER_ATTRIB_TYPES
-        #undef QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_ATTRIB_TYPES
-                Q_ASSERT(false);
+#undef QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_ATTRIB_TYPES
+        Q_ASSERT(false);
         return 0;
     }
 
-    static void fromAttribGLToComponentTypeAndNumComps(
-            GLenum enumVal, QDemonRenderComponentTypes::Enum &outCompType, quint32 &outNumComps)
+    static void fromAttribGLToComponentTypeAndNumComps(GLenum enumVal, QDemonRenderComponentTypes::Enum &outCompType, quint32 &outNumComps)
     {
         switch (enumVal) {
-#define QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_ATTRIB_TYPES(gl, ct, nc)                                     \
-        case gl:                                                                                       \
-    outCompType = QDemonRenderComponentTypes::ct;                                                  \
-    outNumComps = nc;                                                                          \
-    return;
-        QDEMON_RENDER_ITERATE_GL_QDEMON_SHADER_ATTRIB_TYPES
-        #undef QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_ATTRIB_TYPES
-                default:
+#define QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_ATTRIB_TYPES(gl, ct, nc)                                                 \
+    case gl:                                                                                                           \
+        outCompType = QDemonRenderComponentTypes::ct;                                                                  \
+        outNumComps = nc;                                                                                              \
+        return;
+            QDEMON_RENDER_ITERATE_GL_QDEMON_SHADER_ATTRIB_TYPES
+#undef QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_ATTRIB_TYPES
+        default:
             break;
         }
         Q_ASSERT(false);
@@ -1490,34 +1477,32 @@ struct GLConversion
         outNumComps = 0;
     }
 
-    static GLenum
-    fromRenderBufferFormatsToRenderBufferGL(QDemonRenderRenderBufferFormats::Enum value)
+    static GLenum fromRenderBufferFormatsToRenderBufferGL(QDemonRenderRenderBufferFormats::Enum value)
     {
         switch (value) {
-#define QDEMON_RENDER_HANDLE_GL_QDEMON_RENDERBUFFER_FORMAT(gl, nv)                                         \
-        case QDemonRenderRenderBufferFormats::nv:                                                          \
-    return gl;
-        QDEMON_RENDER_ITERATE_GL_QDEMON_RENDERBUFFER_FORMATS
-                QDEMON_RENDER_ITERATE_GL_QDEMON_RENDERBUFFER_COVERAGE_FORMATS
-        #undef QDEMON_RENDER_HANDLE_GL_QDEMON_RENDERBUFFER_FORMAT
-                default:
+#define QDEMON_RENDER_HANDLE_GL_QDEMON_RENDERBUFFER_FORMAT(gl, nv)                                                     \
+    case QDemonRenderRenderBufferFormats::nv:                                                                          \
+        return gl;
+            QDEMON_RENDER_ITERATE_GL_QDEMON_RENDERBUFFER_FORMATS
+            QDEMON_RENDER_ITERATE_GL_QDEMON_RENDERBUFFER_COVERAGE_FORMATS
+#undef QDEMON_RENDER_HANDLE_GL_QDEMON_RENDERBUFFER_FORMAT
+        default:
             break;
         }
         Q_ASSERT(false);
         return 0;
     }
 
-    static QDemonRenderRenderBufferFormats::Enum
-    fromRenderBufferGLToRenderBufferFormats(GLenum value)
+    static QDemonRenderRenderBufferFormats::Enum fromRenderBufferGLToRenderBufferFormats(GLenum value)
     {
         switch (value) {
-#define QDEMON_RENDER_HANDLE_GL_QDEMON_RENDERBUFFER_FORMAT(gl, nv)                                         \
-        case gl:                                                                                       \
-    return QDemonRenderRenderBufferFormats::nv;
-        QDEMON_RENDER_ITERATE_GL_QDEMON_RENDERBUFFER_FORMATS
-                QDEMON_RENDER_ITERATE_GL_QDEMON_RENDERBUFFER_COVERAGE_FORMATS
-        #undef QDEMON_RENDER_HANDLE_GL_QDEMON_RENDERBUFFER_FORMAT
-                default:
+#define QDEMON_RENDER_HANDLE_GL_QDEMON_RENDERBUFFER_FORMAT(gl, nv)                                                     \
+    case gl:                                                                                                           \
+        return QDemonRenderRenderBufferFormats::nv;
+            QDEMON_RENDER_ITERATE_GL_QDEMON_RENDERBUFFER_FORMATS
+            QDEMON_RENDER_ITERATE_GL_QDEMON_RENDERBUFFER_COVERAGE_FORMATS
+#undef QDEMON_RENDER_HANDLE_GL_QDEMON_RENDERBUFFER_FORMAT
+        default:
             break;
         }
         Q_ASSERT(false);
@@ -1527,17 +1512,17 @@ struct GLConversion
     static GLenum fromFramebufferAttachmentsToGL(QDemonRenderFrameBufferAttachments::Enum value)
     {
         switch (value) {
-#define QDEMON_RENDER_HANDLE_GL_QDEMON_FRAMEBUFFER_COLOR_ATTACHMENT(x, idx)                                \
-        case QDemonRenderFrameBufferAttachments::x:                                                        \
-    return GL_COLOR_ATTACHMENT0 + idx;
-#define QDEMON_RENDER_HANDLE_GL_QDEMON_FRAMEBUFFER_ATTACHMENT(x, y)                                        \
-        case QDemonRenderFrameBufferAttachments::y:                                                        \
-    return x;
-        QDEMON_RENDER_ITERATE_GL_QDEMON_FRAMEBUFFER_ATTACHMENTS
-                QDEMON_RENDER_ITERATE_GL_QDEMON_FRAMEBUFFER_COVERAGE_ATTACHMENTS
-        #undef QDEMON_RENDER_HANDLE_GL_QDEMON_FRAMEBUFFER_COLOR_ATTACHMENT
-        #undef QDEMON_RENDER_HANDLE_GL_QDEMON_FRAMEBUFFER_ATTACHMENT
-                default:
+#define QDEMON_RENDER_HANDLE_GL_QDEMON_FRAMEBUFFER_COLOR_ATTACHMENT(x, idx)                                            \
+    case QDemonRenderFrameBufferAttachments::x:                                                                        \
+        return GL_COLOR_ATTACHMENT0 + idx;
+#define QDEMON_RENDER_HANDLE_GL_QDEMON_FRAMEBUFFER_ATTACHMENT(x, y)                                                    \
+    case QDemonRenderFrameBufferAttachments::y:                                                                        \
+        return x;
+            QDEMON_RENDER_ITERATE_GL_QDEMON_FRAMEBUFFER_ATTACHMENTS
+            QDEMON_RENDER_ITERATE_GL_QDEMON_FRAMEBUFFER_COVERAGE_ATTACHMENTS
+#undef QDEMON_RENDER_HANDLE_GL_QDEMON_FRAMEBUFFER_COLOR_ATTACHMENT
+#undef QDEMON_RENDER_HANDLE_GL_QDEMON_FRAMEBUFFER_ATTACHMENT
+        default:
             break;
         }
         Q_ASSERT(false);
@@ -1546,17 +1531,17 @@ struct GLConversion
 
     static QDemonRenderFrameBufferAttachments::Enum fromGLToFramebufferAttachments(GLenum value)
     {
-#define QDEMON_RENDER_HANDLE_GL_QDEMON_FRAMEBUFFER_COLOR_ATTACHMENT(x, idx)                                \
-    if (value == GL_COLOR_ATTACHMENT0 + idx)                                                       \
-    return QDemonRenderFrameBufferAttachments::x;
-#define QDEMON_RENDER_HANDLE_GL_QDEMON_FRAMEBUFFER_ATTACHMENT(x, y)                                        \
-    if (value == x)                                                                                \
-    return QDemonRenderFrameBufferAttachments::y;
+#define QDEMON_RENDER_HANDLE_GL_QDEMON_FRAMEBUFFER_COLOR_ATTACHMENT(x, idx)                                            \
+    if (value == GL_COLOR_ATTACHMENT0 + idx)                                                                           \
+        return QDemonRenderFrameBufferAttachments::x;
+#define QDEMON_RENDER_HANDLE_GL_QDEMON_FRAMEBUFFER_ATTACHMENT(x, y)                                                    \
+    if (value == x)                                                                                                    \
+        return QDemonRenderFrameBufferAttachments::y;
         QDEMON_RENDER_ITERATE_GL_QDEMON_FRAMEBUFFER_ATTACHMENTS
-                QDEMON_RENDER_ITERATE_GL_QDEMON_FRAMEBUFFER_COVERAGE_ATTACHMENTS
-        #undef QDEMON_RENDER_HANDLE_GL_QDEMON_FRAMEBUFFER_COLOR_ATTACHMENT
-        #undef QDEMON_RENDER_HANDLE_GL_QDEMON_FRAMEBUFFER_ATTACHMENT
-                Q_ASSERT(false);
+        QDEMON_RENDER_ITERATE_GL_QDEMON_FRAMEBUFFER_COVERAGE_ATTACHMENTS
+#undef QDEMON_RENDER_HANDLE_GL_QDEMON_FRAMEBUFFER_COLOR_ATTACHMENT
+#undef QDEMON_RENDER_HANDLE_GL_QDEMON_FRAMEBUFFER_ATTACHMENT
+        Q_ASSERT(false);
         return QDemonRenderFrameBufferAttachments::Unknown;
     }
 
@@ -1564,25 +1549,25 @@ struct GLConversion
     {
         quint32 value = flags;
         GLbitfield retval = 0;
-#define QDEMON_RENDER_HANDLE_GL_QDEMON_CLEAR_FLAGS(gl, nv)                                                 \
-    if ((value & QDemonRenderClearValues::nv))                                                         \
-    retval |= gl;
+#define QDEMON_RENDER_HANDLE_GL_QDEMON_CLEAR_FLAGS(gl, nv)                                                             \
+    if ((value & QDemonRenderClearValues::nv))                                                                         \
+        retval |= gl;
         QDEMON_RENDER_ITERATE_GL_QDEMON_CLEAR_FLAGS
-                QDEMON_RENDER_ITERATE_GL_QDEMON_CLEAR_COVERAGE_FLAGS
-        #undef QDEMON_RENDER_HANDLE_GL_QDEMON_CLEAR_FLAGS
-                return retval;
+        QDEMON_RENDER_ITERATE_GL_QDEMON_CLEAR_COVERAGE_FLAGS
+#undef QDEMON_RENDER_HANDLE_GL_QDEMON_CLEAR_FLAGS
+        return retval;
     }
 
     static QDemonRenderClearFlags fromGLToClearFlags(GLbitfield value)
     {
         quint32 retval = 0;
-#define QDEMON_RENDER_HANDLE_GL_QDEMON_CLEAR_FLAGS(gl, nv)                                                 \
-    if ((value & gl))                                                                              \
-    retval |= QDemonRenderClearValues::nv;
+#define QDEMON_RENDER_HANDLE_GL_QDEMON_CLEAR_FLAGS(gl, nv)                                                             \
+    if ((value & gl))                                                                                                  \
+        retval |= QDemonRenderClearValues::nv;
         QDEMON_RENDER_ITERATE_GL_QDEMON_CLEAR_FLAGS
-                QDEMON_RENDER_ITERATE_GL_QDEMON_CLEAR_COVERAGE_FLAGS
-        #undef QDEMON_RENDER_HANDLE_GL_QDEMON_CLEAR_FLAGS
-                return QDemonRenderClearFlags(retval);
+        QDEMON_RENDER_ITERATE_GL_QDEMON_CLEAR_COVERAGE_FLAGS
+#undef QDEMON_RENDER_HANDLE_GL_QDEMON_CLEAR_FLAGS
+        return QDemonRenderClearFlags(retval);
     }
 
     static GLenum fromDrawModeToGL(QDemonRenderDrawMode::Enum value, bool inTesselationSupported)
@@ -1690,8 +1675,7 @@ struct GLConversion
         return QDemonRenderState::Unknown;
     }
 
-    static bool fromReadPixelsToGlFormatAndType(QDemonRenderReadPixelFormats::Enum inReadPixels,
-                                                GLuint *outFormat, GLuint *outType)
+    static bool fromReadPixelsToGlFormatAndType(QDemonRenderReadPixelFormats::Enum inReadPixels, GLuint *outFormat, GLuint *outType)
     {
         switch (inReadPixels) {
         case QDemonRenderReadPixelFormats::Alpha8:

@@ -41,87 +41,84 @@ class QDemonRenderIndexBuffer : public QDemonRenderDataBuffer, public QDemonRend
 {
 public:
     /**
-         * @brief constructor
-         *
-         * @param[in] context		Pointer to context
-         * @param[in] size			Size of the buffer
-         * @param[in] componentType	Size of the buffer
-         * @param[in] usage			Usage of the buffer (e.g. static, dynamic...)
-         * @param[in] data			A pointer to the buffer data that is allocated by the
-         * application.
-         *
-         * @return No return.
-         */
-    QDemonRenderIndexBuffer(const QDemonRef<QDemonRenderContextImpl> &context, size_t size,
+     * @brief constructor
+     *
+     * @param[in] context		Pointer to context
+     * @param[in] size			Size of the buffer
+     * @param[in] componentType	Size of the buffer
+     * @param[in] usage			Usage of the buffer (e.g. static, dynamic...)
+     * @param[in] data			A pointer to the buffer data that is allocated by the
+     * application.
+     *
+     * @return No return.
+     */
+    QDemonRenderIndexBuffer(const QDemonRef<QDemonRenderContextImpl> &context,
+                            size_t size,
                             QDemonRenderComponentTypes::Enum componentType,
-                            QDemonRenderBufferUsageType::Enum usageType, QDemonDataRef<quint8> data);
+                            QDemonRenderBufferUsageType::Enum usageType,
+                            QDemonDataRef<quint8> data);
 
     ///< destruvtor
     ~QDemonRenderIndexBuffer();
 
     /**
-         * @brief get the component type (quint8, quint16)
-         *
-         * @return the component type
-         */
+     * @brief get the component type (quint8, quint16)
+     *
+     * @return the component type
+     */
     virtual QDemonRenderComponentTypes::Enum getComponentType() const { return m_componentType; }
 
     /**
-         * @brief get the index count
-         *
-         * @return actual index count
-         */
+     * @brief get the index count
+     *
+     * @return actual index count
+     */
     virtual quint32 getNumIndices() const;
 
     /**
-         * @brief bind the buffer bypasses the context state
-         *
-         * @return no return.
-         */
+     * @brief bind the buffer bypasses the context state
+     *
+     * @return no return.
+     */
     void bind() override;
 
     /**
-         * @brief draw the buffer
-         *
-         * @param[in] drawMode		draw mode (e.g Triangles...)
-         * @param[in] count			vertex count
-         * @param[in] offset		start offset in byte
-         *
-         * @return no return.
-         */
+     * @brief draw the buffer
+     *
+     * @param[in] drawMode		draw mode (e.g Triangles...)
+     * @param[in] count			vertex count
+     * @param[in] offset		start offset in byte
+     *
+     * @return no return.
+     */
     void draw(QDemonRenderDrawMode::Enum drawMode, quint32 count, quint32 offset) override;
 
     /**
-         * @brief draw the buffer via indirec draw buffer setup
-         *
-         * @param[in] drawMode		draw mode (e.g Triangles...)
-         * @param[in] offset		byte offset into the bound drawIndirectBuffer see
-         * QDemonRenderDrawIndirectBuffer
-         *
-         * @return no return.
-         */
+     * @brief draw the buffer via indirec draw buffer setup
+     *
+     * @param[in] drawMode		draw mode (e.g Triangles...)
+     * @param[in] offset		byte offset into the bound drawIndirectBuffer see
+     * QDemonRenderDrawIndirectBuffer
+     *
+     * @return no return.
+     */
     virtual void drawIndirect(QDemonRenderDrawMode::Enum drawMode, quint32 offset);
 
     /**
-         * @brief get the backend object handle
-         *
-         * @return the backend object handle.
-         */
-    QDemonRenderBackend::QDemonRenderBackendBufferObject getBuffertHandle() const override
-    {
-        return m_bufferHandle;
-    }
+     * @brief get the backend object handle
+     *
+     * @return the backend object handle.
+     */
+    QDemonRenderBackend::QDemonRenderBackendBufferObject getBuffertHandle() const override { return m_bufferHandle; }
 
     // this will be obsolete
-    const void *getImplementationHandle() const override
-    {
-        return reinterpret_cast<void *>(m_bufferHandle);
-    }
+    const void *getImplementationHandle() const override { return reinterpret_cast<void *>(m_bufferHandle); }
 
     static QDemonRef<QDemonRenderIndexBuffer> create(const QDemonRef<QDemonRenderContextImpl> &context,
-                                           QDemonRenderBufferUsageType::Enum usageType,
-                                           QDemonRenderComponentTypes::Enum componentType, size_t size,
-                                           QDemonConstDataRef<quint8> bufferData);
+                                                     QDemonRenderBufferUsageType::Enum usageType,
+                                                     QDemonRenderComponentTypes::Enum componentType,
+                                                     size_t size,
+                                                     QDemonConstDataRef<quint8> bufferData);
 
 private:
     QDemonRenderComponentTypes::Enum m_componentType; ///< component type (quint8, quint16)

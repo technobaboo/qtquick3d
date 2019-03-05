@@ -52,60 +52,54 @@ protected:
 
 public:
     /**
-         * @brief constructor
-         *
-         * @param[in] context		Pointer to context
-         * @param[in] fnd			Pointer to foundation
-         *
-         * @return No return.
-         */
+     * @brief constructor
+     *
+     * @param[in] context		Pointer to context
+     * @param[in] fnd			Pointer to foundation
+     *
+     * @return No return.
+     */
     explicit QDemonRenderSync(const QDemonRef<QDemonRenderContextImpl> &context);
 
     virtual ~QDemonRenderSync();
 
     /**
-         * @brief Get sync type
-         *
-         * @return Return query type
-         */
-    virtual QDemonRenderSyncType::Enum getSyncType() const
-    {
-        return QDemonRenderSyncType::GpuCommandsComplete;
-    }
+     * @brief Get sync type
+     *
+     * @return Return query type
+     */
+    virtual QDemonRenderSyncType::Enum getSyncType() const { return QDemonRenderSyncType::GpuCommandsComplete; }
 
     /**
-         * @brief Create a sync object and place it in command stream.
-         *		  Note every syncobject can only be used once.
-         *		  This function creates a new sync object on ever call
-         *		  and deletes the previous one
-         *
-         * @return no return.
-         */
+     * @brief Create a sync object and place it in command stream.
+     *		  Note every syncobject can only be used once.
+     *		  This function creates a new sync object on ever call
+     *		  and deletes the previous one
+     *
+     * @return no return.
+     */
     virtual void sync();
 
     /**
-         * @brief Wait for a sync to be signaled
-         *		  Note this blocks until the sync is signaled
-         *
-         * @return no return.
-         */
+     * @brief Wait for a sync to be signaled
+     *		  Note this blocks until the sync is signaled
+     *
+     * @return no return.
+     */
     virtual void wait();
 
     /**
-         * @brief get the backend object handle
-         *
-         * @return the backend object handle.
-         */
-    virtual QDemonRenderBackend::QDemonRenderBackendSyncObject getSyncHandle() const
-    {
-        return m_syncHandle;
-    }
+     * @brief get the backend object handle
+     *
+     * @return the backend object handle.
+     */
+    virtual QDemonRenderBackend::QDemonRenderBackendSyncObject getSyncHandle() const { return m_syncHandle; }
 
     /*
-         * @brief static creation function
-         *
-         * @return a sync object on success
-         */
+     * @brief static creation function
+     *
+     * @return a sync object on success
+     */
     static QDemonRef<QDemonRenderSync> create(const QDemonRef<QDemonRenderContextImpl> &context);
 };
 

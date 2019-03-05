@@ -40,8 +40,8 @@ struct QDemonRenderList : public QDemonRenderListInterface
     typedef QVector<TTaskIdTaskPair> TTaskList;
 
     TTaskList m_tasks;
-    quint32 m_nextTaskId{1};
-    bool m_scissorEnabled{false};
+    quint32 m_nextTaskId{ 1 };
+    bool m_scissorEnabled{ false };
     QRect m_scissorRect;
     QRect m_viewport;
 
@@ -98,9 +98,6 @@ QDemonRef<QDemonRenderListInterface> QDemonRenderListInterface::createRenderList
     return QDemonRef<QDemonRenderListInterface>(new QDemonRenderList());
 }
 
-QDemonRenderTask::~QDemonRenderTask()
-{
-
-}
+QDemonRenderTask::~QDemonRenderTask() {}
 
 QT_END_NAMESPACE

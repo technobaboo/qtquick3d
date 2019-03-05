@@ -10,15 +10,9 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonModel::QDemonModel()
-{
+QDemonModel::QDemonModel() {}
 
-}
-
-QDemonModel::~QDemonModel()
-{
-
-}
+QDemonModel::~QDemonModel() {}
 
 QDemonObject::Type QDemonModel::type() const
 {
@@ -57,7 +51,8 @@ bool QDemonModel::isWireframeMode() const
 
 QQmlListProperty<QDemonMaterial> QDemonModel::materials()
 {
-    return QQmlListProperty<QDemonMaterial>(this, nullptr,
+    return QQmlListProperty<QDemonMaterial>(this,
+                                            nullptr,
                                             QDemonModel::qmlAppendMaterial,
                                             QDemonModel::qmlMaterialsCount,
                                             QDemonModel::qmlMaterialAt,
@@ -124,7 +119,8 @@ void QDemonModel::setIsWireframeMode(bool isWireframeMode)
     update();
 }
 
-static QDemonGraphObject *getMaterialNodeFromQDemonMaterial(QDemonMaterial *material) {
+static QDemonGraphObject *getMaterialNodeFromQDemonMaterial(QDemonMaterial *material)
+{
     QDemonObjectPrivate *p = QDemonObjectPrivate::get(material);
     return p->spatialNode;
 }
@@ -140,7 +136,6 @@ QDemonGraphObject *getNextSibling(QDemonGraphObject *obj)
     else
         return static_cast<QDemonReferencedMaterial *>(obj)->m_nextSibling;
 }
-
 
 void setNextSibling(QDemonGraphObject *obj, QDemonGraphObject *sibling)
 {
@@ -195,7 +190,7 @@ QDemonGraphObject *QDemonModel::updateSpatialNode(QDemonGraphObject *node)
                 if (material != newMaterial) {
                     // materials are not the same
                     if (index == 0) {
-                        //new first
+                        // new first
                         modelNode->firstMaterial = newMaterial;
                     } else {
                         setNextSibling(previousMaterial, newMaterial);

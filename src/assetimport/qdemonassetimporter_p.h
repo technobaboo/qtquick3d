@@ -59,10 +59,12 @@ public:
     virtual const QString outputExtension() const = 0;
     virtual const QString type() const = 0;
     virtual const QVariantMap importOptions() const = 0;
-    virtual const QString import(const QString &sourceFile, const QDir &savePath, const QVariantMap &options, QStringList *generatedFiles = nullptr) = 0;
+    virtual const QString import(const QString &sourceFile,
+                                 const QDir &savePath,
+                                 const QVariantMap &options,
+                                 QStringList *generatedFiles = nullptr) = 0;
 };
 
 QT_END_NAMESPACE
 
 #endif // QDEMONASSETIMPORTER_H
-

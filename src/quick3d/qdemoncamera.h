@@ -19,7 +19,6 @@ class Q_QUICK3D_EXPORT QDemonCamera : public QDemonNode
     Q_PROPERTY(float frustumScaleY READ frustumScaleY WRITE setFrustumScaleY NOTIFY frustumScaleYChanged)
 
 public:
-
     enum QDemonCameraScaleModes {
         Fit = 0,
         SameSize,
@@ -91,7 +90,6 @@ protected:
     QDemonGraphObject *updateSpatialNode(QDemonGraphObject *node) override;
 
 private:
-
     float m_clipNear = 10.0f;
     float m_clipFar = 10000.0f;
     float m_fieldOfView = 60.0f;
@@ -105,6 +103,5 @@ private:
 };
 
 QT_END_NAMESPACE
-
 
 #endif // QDEMONCAMERA_H

@@ -56,11 +56,11 @@ public:
     {
     }
     ///< destructor
-    ~QDemonRenderBackendShaderInputGL(){}
+    ~QDemonRenderBackendShaderInputGL() {}
 
     QDemonRenderBackendShaderInputEntryGL *getEntryByName(const QString &entryName) const
     {
-       QDEMON_FOREACH (idx , m_shaderInputEntries.size())
+        QDEMON_FOREACH(idx, m_shaderInputEntries.size())
         {
             if (m_shaderInputEntries[idx].m_attribName == entryName)
                 return &m_shaderInputEntries.mData[idx];
@@ -86,14 +86,10 @@ class QDemonRenderBackendShaderProgramGL
 {
 public:
     ///< constructor
-    QDemonRenderBackendShaderProgramGL(quint32 programID)
-        : m_programID(programID)
-        , m_shaderInput(nullptr)
-    {
-    }
+    QDemonRenderBackendShaderProgramGL(quint32 programID) : m_programID(programID), m_shaderInput(nullptr) {}
 
     ///< destructor
-    ~QDemonRenderBackendShaderProgramGL(){}
+    ~QDemonRenderBackendShaderProgramGL() {}
 
     quint32 m_programID; ///< this is the OpenGL object ID
     QDemonRenderBackendShaderInputGL *m_shaderInput; ///< pointer to shader input object

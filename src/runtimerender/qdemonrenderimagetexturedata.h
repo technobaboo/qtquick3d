@@ -49,32 +49,14 @@ struct ImageTextureFlagValues
 
 struct QDemonRenderImageTextureFlags : public QDemonFlags<ImageTextureFlagValues::Enum, quint32>
 {
-    bool hasTransparency() const
-    {
-        return this->operator&(ImageTextureFlagValues::HasTransparency);
-    }
-    void setHasTransparency(bool inValue)
-    {
-        clearOrSet(inValue, ImageTextureFlagValues::HasTransparency);
-    }
+    bool hasTransparency() const { return this->operator&(ImageTextureFlagValues::HasTransparency); }
+    void setHasTransparency(bool inValue) { clearOrSet(inValue, ImageTextureFlagValues::HasTransparency); }
 
-    bool isInvertUVCoords() const
-    {
-        return this->operator&(ImageTextureFlagValues::InvertUVCoords);
-    }
-    void setInvertUVCoords(bool inValue)
-    {
-        clearOrSet(inValue, ImageTextureFlagValues::InvertUVCoords);
-    }
+    bool isInvertUVCoords() const { return this->operator&(ImageTextureFlagValues::InvertUVCoords); }
+    void setInvertUVCoords(bool inValue) { clearOrSet(inValue, ImageTextureFlagValues::InvertUVCoords); }
 
-    bool isPreMultiplied() const
-    {
-        return this->operator&(ImageTextureFlagValues::PreMultiplied);
-    }
-    void setPreMultiplied(bool inValue)
-    {
-        clearOrSet(inValue, ImageTextureFlagValues::PreMultiplied);
-    }
+    bool isPreMultiplied() const { return this->operator&(ImageTextureFlagValues::PreMultiplied); }
+    void setPreMultiplied(bool inValue) { clearOrSet(inValue, ImageTextureFlagValues::PreMultiplied); }
 };
 
 struct QDemonRenderImageTextureData
@@ -88,8 +70,7 @@ struct QDemonRenderImageTextureData
 
     bool operator!=(const QDemonRenderImageTextureData &inOther)
     {
-        return m_texture != inOther.m_texture || m_textureFlags != inOther.m_textureFlags
-                || m_bsdfMipMap != inOther.m_bsdfMipMap;
+        return m_texture != inOther.m_texture || m_textureFlags != inOther.m_textureFlags || m_bsdfMipMap != inOther.m_bsdfMipMap;
     }
 };
 QT_END_NAMESPACE

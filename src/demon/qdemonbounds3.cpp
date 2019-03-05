@@ -17,8 +17,7 @@ void QDemonBounds3::include(const QDemonBounds3 &b)
     maximum = vec3::maximum(maximum, b.maximum);
 }
 
-QDemonBounds3 QDemonBounds3::poseExtent(const QDemonTransform &pose,
-                                        const QVector3D &extent)
+QDemonBounds3 QDemonBounds3::poseExtent(const QDemonTransform &pose, const QVector3D &extent)
 {
     return basisExtent(pose.p, pose.q.toRotationMatrix(), extent);
 }
@@ -33,14 +32,12 @@ QDemonBounds3 QDemonBounds3::boundsOfPoints(const QVector3D &v0, const QVector3D
     return QDemonBounds3(vec3::minimum(v0, v1), vec3::maximum(v0, v1));
 }
 
-QDemonBounds3 QDemonBounds3::basisExtent(const QVector3D &center,
-                                         const QMatrix3x3 &basis,
-                                         const QVector3D &extent)
+QDemonBounds3 QDemonBounds3::basisExtent(const QVector3D &center, const QMatrix3x3 &basis, const QVector3D &extent)
 {
     // extended basis vectors
-    QVector3D c0 = QVector3D(basis(0,0), basis(1,0), basis(2,0)) * extent.x();
-    QVector3D c1 = QVector3D(basis(0,1), basis(1,1), basis(2,1)) * extent.y();
-    QVector3D c2 = QVector3D(basis(0,2), basis(1,2), basis(2,2)) * extent.z();
+    QVector3D c0 = QVector3D(basis(0, 0), basis(1, 0), basis(2, 0)) * extent.x();
+    QVector3D c1 = QVector3D(basis(0, 1), basis(1, 1), basis(2, 1)) * extent.y();
+    QVector3D c2 = QVector3D(basis(0, 2), basis(1, 2), basis(2, 2)) * extent.z();
 
     QVector3D w;
     // find combination of base vectors that produces max. distance for each component = sum of
@@ -52,22 +49,20 @@ QDemonBounds3 QDemonBounds3::basisExtent(const QVector3D &center,
     return QDemonBounds3(center - w, center + w);
 }
 
-QDemonBounds3 QDemonBounds3::transform(const QMatrix3x3 &matrix,
-                                       const QDemonBounds3 &bounds)
+QDemonBounds3 QDemonBounds3::transform(const QMatrix3x3 &matrix, const QDemonBounds3 &bounds)
 {
     Q_ASSERT(bounds.isFinite());
-    return bounds.isEmpty() ? bounds : QDemonBounds3::basisExtent(mat33::transform(matrix, bounds.getCenter()),
-                                                                  matrix,
-                                                                  bounds.getExtents());
+    return bounds.isEmpty()
+            ? bounds
+            : QDemonBounds3::basisExtent(mat33::transform(matrix, bounds.getCenter()), matrix, bounds.getExtents());
 }
 
-QDemonBounds3 QDemonBounds3::transform(const QDemonTransform &transform,
-                                       const QDemonBounds3 &bounds)
+QDemonBounds3 QDemonBounds3::transform(const QDemonTransform &transform, const QDemonBounds3 &bounds)
 {
     Q_ASSERT(bounds.isFinite());
-    return bounds.isEmpty() ? bounds
-                            : QDemonBounds3::basisExtent(transform.transform(bounds.getCenter()),
-                                                         transform.q.toRotationMatrix(), bounds.getExtents());
+    return bounds.isEmpty()
+            ? bounds
+            : QDemonBounds3::basisExtent(transform.transform(bounds.getCenter()), transform.q.toRotationMatrix(), bounds.getExtents());
 }
 
 void QDemonBounds3::transform(const QMatrix4x4 &inMatrix)

@@ -51,9 +51,7 @@ QStringList QDemonAssetImporterFactory::keys(const QString &pluginPath)
         QCoreApplication::addLibraryPath(pluginPath);
         list = directLoader()->keyMap().values();
         if (!list.isEmpty()) {
-            const QString postFix = QStringLiteral(" (from ")
-                    + QDir::toNativeSeparators(pluginPath)
-                    + QLatin1Char(')');
+            const QString postFix = QStringLiteral(" (from ") + QDir::toNativeSeparators(pluginPath) + QLatin1Char(')');
             const QStringList::iterator end = list.end();
             for (QStringList::iterator it = list.begin(); it != end; ++it)
                 (*it).append(postFix);
@@ -85,4 +83,3 @@ QDemonAssetImporter *QDemonAssetImporterFactory::create(const QString &name, con
 }
 
 QT_END_NAMESPACE
-

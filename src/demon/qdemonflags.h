@@ -35,7 +35,7 @@
 
 QT_BEGIN_NAMESPACE
 
-template <typename enumtype, typename storagetype = quint32>
+template<typename enumtype, typename storagetype = quint32>
 class QDemonFlags
 {
 public:
@@ -55,22 +55,19 @@ public:
     QDemonFlags<enumtype, storagetype> &operator|=(enumtype e);
     QDemonFlags<enumtype, storagetype> &operator|=(const QDemonFlags<enumtype, storagetype> &f);
     QDemonFlags<enumtype, storagetype> operator|(enumtype e) const;
-    QDemonFlags<enumtype, storagetype>
-    operator|(const QDemonFlags<enumtype, storagetype> &f) const;
+    QDemonFlags<enumtype, storagetype> operator|(const QDemonFlags<enumtype, storagetype> &f) const;
 
     QDemonFlags<enumtype, storagetype> &operator&=(enumtype e);
     QDemonFlags<enumtype, storagetype> &operator&=(const QDemonFlags<enumtype, storagetype> &f);
     QDemonFlags<enumtype, storagetype> operator&(enumtype e) const;
-    QDemonFlags<enumtype, storagetype>
-    operator&(const QDemonFlags<enumtype, storagetype> &f) const;
+    QDemonFlags<enumtype, storagetype> operator&(const QDemonFlags<enumtype, storagetype> &f) const;
 
     QDemonFlags<enumtype, storagetype> &operator^=(enumtype e);
     QDemonFlags<enumtype, storagetype> &operator^=(const QDemonFlags<enumtype, storagetype> &f);
     QDemonFlags<enumtype, storagetype> operator^(enumtype e) const;
-    QDemonFlags<enumtype, storagetype>
-    operator^(const QDemonFlags<enumtype, storagetype> &f) const;
+    QDemonFlags<enumtype, storagetype> operator^(const QDemonFlags<enumtype, storagetype> &f) const;
 
-    QDemonFlags<enumtype, storagetype> operator~(void)const;
+    QDemonFlags<enumtype, storagetype> operator~(void) const;
 
     operator bool(void) const;
     operator quint8(void) const;
@@ -82,8 +79,7 @@ public:
     void clearOrSet(bool value, enumtype enumVal);
 
 public:
-    friend  QDemonFlags<enumtype, storagetype> operator&(enumtype a,
-                                                         QDemonFlags<enumtype, storagetype> &b)
+    friend QDemonFlags<enumtype, storagetype> operator&(enumtype a, QDemonFlags<enumtype, storagetype> &b)
     {
         QDemonFlags<enumtype, storagetype> out;
         out.mBits = a & b.mBits;
@@ -94,103 +90,97 @@ private:
     storagetype mBits;
 };
 
-#define QDEMON_FLAGS_OPERATORS(enumtype, storagetype)                                                  \
-    QDemonFlags<enumtype, storagetype> operator|(enumtype a, enumtype b)                     \
-{                                                                                              \
-    QDemonFlags<enumtype, storagetype> r(a);                                                       \
-    r |= b;                                                                                    \
-    return r;                                                                                  \
-    }                                                                                              \
-    QDemonFlags<enumtype, storagetype> operator&(enumtype a, enumtype b)                     \
-{                                                                                              \
-    QDemonFlags<enumtype, storagetype> r(a);                                                       \
-    r &= b;                                                                                    \
-    return r;                                                                                  \
-    }                                                                                              \
-    QDemonFlags<enumtype, storagetype> operator~(enumtype a)                                 \
-{                                                                                              \
-    return ~QDemonFlags<enumtype, storagetype>(a);                                                 \
-    }
+#define QDEMON_FLAGS_OPERATORS(enumtype, storagetype)                                                                  \
+    QDemonFlags<enumtype, storagetype> operator|(enumtype a, enumtype b)                                               \
+    {                                                                                                                  \
+        QDemonFlags<enumtype, storagetype> r(a);                                                                       \
+        r |= b;                                                                                                        \
+        return r;                                                                                                      \
+    }                                                                                                                  \
+    QDemonFlags<enumtype, storagetype> operator&(enumtype a, enumtype b)                                               \
+    {                                                                                                                  \
+        QDemonFlags<enumtype, storagetype> r(a);                                                                       \
+        r &= b;                                                                                                        \
+        return r;                                                                                                      \
+    }                                                                                                                  \
+    QDemonFlags<enumtype, storagetype> operator~(enumtype a) { return ~QDemonFlags<enumtype, storagetype>(a); }
 
-template <typename enumtype, typename storagetype>
+template<typename enumtype, typename storagetype>
 QDemonFlags<enumtype, storagetype>::QDemonFlags()
 {
     mBits = 0;
 }
 
-template <typename enumtype, typename storagetype>
+template<typename enumtype, typename storagetype>
 QDemonFlags<enumtype, storagetype>::QDemonFlags(enumtype e)
 {
     mBits = static_cast<storagetype>(e);
 }
 
-template <typename enumtype, typename storagetype>
+template<typename enumtype, typename storagetype>
 QDemonFlags<enumtype, storagetype>::QDemonFlags(const QDemonFlags<enumtype, storagetype> &f)
 {
     mBits = f.mBits;
 }
 
-template <typename enumtype, typename storagetype>
+template<typename enumtype, typename storagetype>
 QDemonFlags<enumtype, storagetype>::QDemonFlags(storagetype b)
 {
     mBits = b;
 }
 
-template <typename enumtype, typename storagetype>
+template<typename enumtype, typename storagetype>
 bool QDemonFlags<enumtype, storagetype>::operator==(enumtype e) const
 {
     return mBits == static_cast<storagetype>(e);
 }
 
-template <typename enumtype, typename storagetype>
-bool QDemonFlags<enumtype, storagetype>::
-operator==(const QDemonFlags<enumtype, storagetype> &f) const
+template<typename enumtype, typename storagetype>
+bool QDemonFlags<enumtype, storagetype>::operator==(const QDemonFlags<enumtype, storagetype> &f) const
 {
     return mBits == f.mBits;
 }
 
-template <typename enumtype, typename storagetype>
+template<typename enumtype, typename storagetype>
 bool QDemonFlags<enumtype, storagetype>::operator==(bool b) const
 {
     return (bool(*this)) == b;
 }
 
-template <typename enumtype, typename storagetype>
+template<typename enumtype, typename storagetype>
 bool QDemonFlags<enumtype, storagetype>::operator!=(enumtype e) const
 {
     return mBits != static_cast<storagetype>(e);
 }
 
-template <typename enumtype, typename storagetype>
-bool QDemonFlags<enumtype, storagetype>::
-operator!=(const QDemonFlags<enumtype, storagetype> &f) const
+template<typename enumtype, typename storagetype>
+bool QDemonFlags<enumtype, storagetype>::operator!=(const QDemonFlags<enumtype, storagetype> &f) const
 {
     return mBits != f.mBits;
 }
 
-template <typename enumtype, typename storagetype>
+template<typename enumtype, typename storagetype>
 QDemonFlags<enumtype, storagetype> &QDemonFlags<enumtype, storagetype>::operator=(enumtype e)
 {
     mBits = static_cast<storagetype>(e);
     return *this;
 }
 
-template <typename enumtype, typename storagetype>
+template<typename enumtype, typename storagetype>
 QDemonFlags<enumtype, storagetype> &QDemonFlags<enumtype, storagetype>::operator|=(enumtype e)
 {
     mBits |= static_cast<storagetype>(e);
     return *this;
 }
 
-template <typename enumtype, typename storagetype>
-QDemonFlags<enumtype, storagetype> &QDemonFlags<enumtype, storagetype>::
-operator|=(const QDemonFlags<enumtype, storagetype> &f)
+template<typename enumtype, typename storagetype>
+QDemonFlags<enumtype, storagetype> &QDemonFlags<enumtype, storagetype>::operator|=(const QDemonFlags<enumtype, storagetype> &f)
 {
     mBits |= f.mBits;
     return *this;
 }
 
-template <typename enumtype, typename storagetype>
+template<typename enumtype, typename storagetype>
 QDemonFlags<enumtype, storagetype> QDemonFlags<enumtype, storagetype>::operator|(enumtype e) const
 {
     QDemonFlags<enumtype, storagetype> out(*this);
@@ -198,31 +188,29 @@ QDemonFlags<enumtype, storagetype> QDemonFlags<enumtype, storagetype>::operator|
     return out;
 }
 
-template <typename enumtype, typename storagetype>
-QDemonFlags<enumtype, storagetype> QDemonFlags<enumtype, storagetype>::
-operator|(const QDemonFlags<enumtype, storagetype> &f) const
+template<typename enumtype, typename storagetype>
+QDemonFlags<enumtype, storagetype> QDemonFlags<enumtype, storagetype>::operator|(const QDemonFlags<enumtype, storagetype> &f) const
 {
     QDemonFlags<enumtype, storagetype> out(*this);
     out |= f;
     return out;
 }
 
-template <typename enumtype, typename storagetype>
+template<typename enumtype, typename storagetype>
 QDemonFlags<enumtype, storagetype> &QDemonFlags<enumtype, storagetype>::operator&=(enumtype e)
 {
     mBits &= static_cast<storagetype>(e);
     return *this;
 }
 
-template <typename enumtype, typename storagetype>
-QDemonFlags<enumtype, storagetype> &QDemonFlags<enumtype, storagetype>::
-operator&=(const QDemonFlags<enumtype, storagetype> &f)
+template<typename enumtype, typename storagetype>
+QDemonFlags<enumtype, storagetype> &QDemonFlags<enumtype, storagetype>::operator&=(const QDemonFlags<enumtype, storagetype> &f)
 {
     mBits &= f.mBits;
     return *this;
 }
 
-template <typename enumtype, typename storagetype>
+template<typename enumtype, typename storagetype>
 QDemonFlags<enumtype, storagetype> QDemonFlags<enumtype, storagetype>::operator&(enumtype e) const
 {
     QDemonFlags<enumtype, storagetype> out = *this;
@@ -230,31 +218,29 @@ QDemonFlags<enumtype, storagetype> QDemonFlags<enumtype, storagetype>::operator&
     return out;
 }
 
-template <typename enumtype, typename storagetype>
-QDemonFlags<enumtype, storagetype> QDemonFlags<enumtype, storagetype>::
-operator&(const QDemonFlags<enumtype, storagetype> &f) const
+template<typename enumtype, typename storagetype>
+QDemonFlags<enumtype, storagetype> QDemonFlags<enumtype, storagetype>::operator&(const QDemonFlags<enumtype, storagetype> &f) const
 {
     QDemonFlags<enumtype, storagetype> out = *this;
     out.mBits &= f.mBits;
     return out;
 }
 
-template <typename enumtype, typename storagetype>
+template<typename enumtype, typename storagetype>
 QDemonFlags<enumtype, storagetype> &QDemonFlags<enumtype, storagetype>::operator^=(enumtype e)
 {
     mBits ^= static_cast<storagetype>(e);
     return *this;
 }
 
-template <typename enumtype, typename storagetype>
-QDemonFlags<enumtype, storagetype> &QDemonFlags<enumtype, storagetype>::
-operator^=(const QDemonFlags<enumtype, storagetype> &f)
+template<typename enumtype, typename storagetype>
+QDemonFlags<enumtype, storagetype> &QDemonFlags<enumtype, storagetype>::operator^=(const QDemonFlags<enumtype, storagetype> &f)
 {
     mBits ^= f.mBits;
     return *this;
 }
 
-template <typename enumtype, typename storagetype>
+template<typename enumtype, typename storagetype>
 QDemonFlags<enumtype, storagetype> QDemonFlags<enumtype, storagetype>::operator^(enumtype e) const
 {
     QDemonFlags<enumtype, storagetype> out = *this;
@@ -262,54 +248,53 @@ QDemonFlags<enumtype, storagetype> QDemonFlags<enumtype, storagetype>::operator^
     return out;
 }
 
-template <typename enumtype, typename storagetype>
-QDemonFlags<enumtype, storagetype> QDemonFlags<enumtype, storagetype>::
-operator^(const QDemonFlags<enumtype, storagetype> &f) const
+template<typename enumtype, typename storagetype>
+QDemonFlags<enumtype, storagetype> QDemonFlags<enumtype, storagetype>::operator^(const QDemonFlags<enumtype, storagetype> &f) const
 {
     QDemonFlags<enumtype, storagetype> out = *this;
     out.mBits ^= f.mBits;
     return out;
 }
 
-template <typename enumtype, typename storagetype>
-QDemonFlags<enumtype, storagetype> QDemonFlags<enumtype, storagetype>::operator~(void)const
+template<typename enumtype, typename storagetype>
+QDemonFlags<enumtype, storagetype> QDemonFlags<enumtype, storagetype>::operator~(void) const
 {
     QDemonFlags<enumtype, storagetype> out;
     out.mBits = ~mBits;
     return out;
 }
 
-template <typename enumtype, typename storagetype>
+template<typename enumtype, typename storagetype>
 QDemonFlags<enumtype, storagetype>::operator bool(void) const
 {
     return mBits ? true : false;
 }
 
-template <typename enumtype, typename storagetype>
+template<typename enumtype, typename storagetype>
 QDemonFlags<enumtype, storagetype>::operator quint8(void) const
 {
     return static_cast<quint8>(mBits);
 }
 
-template <typename enumtype, typename storagetype>
+template<typename enumtype, typename storagetype>
 QDemonFlags<enumtype, storagetype>::operator quint16(void) const
 {
     return static_cast<quint16>(mBits);
 }
 
-template <typename enumtype, typename storagetype>
+template<typename enumtype, typename storagetype>
 QDemonFlags<enumtype, storagetype>::operator quint32(void) const
 {
     return static_cast<quint32>(mBits);
 }
 
-template <typename enumtype, typename storagetype>
+template<typename enumtype, typename storagetype>
 void QDemonFlags<enumtype, storagetype>::clear(enumtype e)
 {
     mBits &= ~static_cast<storagetype>(e);
 }
 
-template <typename enumtype, typename storagetype>
+template<typename enumtype, typename storagetype>
 void QDemonFlags<enumtype, storagetype>::clearOrSet(bool value, enumtype enumVal)
 {
     if (value)

@@ -43,10 +43,9 @@ struct QDemonShaderGeneratorGeneratedShader;
 struct QDemonSubsetRenderable;
 
 QDemonTextScaleAndOffset::QDemonTextScaleAndOffset(QDemonRenderTexture2D &inTexture,
-                                         const QDemonTextTextureDetails &inTextDetails,
-                                         const QDemonTextRenderInfo &inInfo)
-    : textOffset(0, 0)
-    , textScale(1, 1)
+                                                   const QDemonTextTextureDetails &inTextDetails,
+                                                   const QDemonTextRenderInfo &inInfo)
+    : textOffset(0, 0), textScale(1, 1)
 
 {
     QDemonRenderTexture2D &theTexture = inTexture;
@@ -101,9 +100,7 @@ QDemonSubsetRenderableBase::QDemonSubsetRenderableBase(QDemonRenderableObjectFla
 {
 }
 
-QDemonSubsetRenderableBase::~QDemonSubsetRenderableBase()
-{
-}
+QDemonSubsetRenderableBase::~QDemonSubsetRenderableBase() {}
 
 void QDemonSubsetRenderableBase::renderShadowMapPass(const QVector2D &inCameraVec,
                                                      const QDemonRenderLight *inLight,
@@ -133,8 +130,7 @@ void QDemonSubsetRenderableBase::renderShadowMapPass(const QVector2D &inCameraVe
         return;
 
     // for phong and npatch tesselleation we need the normals too
-    if (tessellationMode == TessModeValues::NoTess
-            || tessellationMode == TessModeValues::TessLinear)
+    if (tessellationMode == TessModeValues::NoTess || tessellationMode == TessModeValues::TessLinear)
         pIA = subset.inputAssemblerDepth;
     else
         pIA = subset.inputAssembler;
@@ -176,9 +172,7 @@ void QDemonSubsetRenderableBase::renderShadowMapPass(const QVector2D &inCameraVe
     context->draw(subset.primitiveType, subset.count, subset.offset);
 }
 
-void QDemonSubsetRenderableBase::renderDepthPass(const QVector2D &inCameraVec,
-                                                 QDemonRenderableImage *inDisplacementImage,
-                                                 float inDisplacementAmount)
+void QDemonSubsetRenderableBase::renderDepthPass(const QVector2D &inCameraVec, QDemonRenderableImage *inDisplacementImage, float inDisplacementAmount)
 {
     auto context = generator->getContext();
     QDemonRef<QDemonRenderableDepthPrepassShader> shader = nullptr;
@@ -188,17 +182,14 @@ void QDemonSubsetRenderableBase::renderDepthPass(const QVector2D &inCameraVec,
     if (subset.primitiveType != QDemonRenderDrawMode::Patches)
         shader = generator->getDepthPrepassShader(displacementImage != nullptr);
     else
-        shader = generator->getDepthTessPrepassShader(tessellationMode,
-                                                       displacementImage != nullptr);
+        shader = generator->getDepthTessPrepassShader(tessellationMode, displacementImage != nullptr);
 
     if (shader == nullptr)
         return;
 
     // for phong and npatch tesselleation or displacement mapping we need the normals (and uv's)
     // too
-    if ((tessellationMode == TessModeValues::NoTess
-         || tessellationMode == TessModeValues::TessLinear)
-            && !displacementImage)
+    if ((tessellationMode == TessModeValues::NoTess || tessellationMode == TessModeValues::TessLinear) && !displacementImage)
         pIA = subset.inputAssemblerDepth;
     else
         pIA = subset.inputAssembler;
@@ -212,15 +203,12 @@ void QDemonSubsetRenderableBase::renderDepthPass(const QVector2D &inCameraVec,
         // setup image transform
         const QMatrix4x4 &textureTransform = displacementImage->m_image.m_textureTransform;
         const float *dataPtr(textureTransform.data());
-        QVector3D offsets(dataPtr[12], dataPtr[13],
-                displacementImage->m_image.m_textureData.m_textureFlags.isPreMultiplied()
-                ? 1.0f
-                : 0.0f);
+        QVector3D offsets(dataPtr[12],
+                          dataPtr[13],
+                          displacementImage->m_image.m_textureData.m_textureFlags.isPreMultiplied() ? 1.0f : 0.0f);
         QVector4D rotations(dataPtr[0], dataPtr[4], dataPtr[1], dataPtr[5]);
-        displacementImage->m_image.m_textureData.m_texture->setTextureWrapS(
-                    displacementImage->m_image.m_horizontalTilingMode);
-        displacementImage->m_image.m_textureData.m_texture->setTextureWrapT(
-                    displacementImage->m_image.m_verticalTilingMode);
+        displacementImage->m_image.m_textureData.m_texture->setTextureWrapS(displacementImage->m_image.m_horizontalTilingMode);
+        displacementImage->m_image.m_textureData.m_texture->setTextureWrapT(displacementImage->m_image.m_verticalTilingMode);
 
         shader->displaceAmount.set(inDisplacementAmount);
         shader->displacementProps.offsets.set(offsets);
@@ -234,8 +222,7 @@ void QDemonSubsetRenderableBase::renderDepthPass(const QVector2D &inCameraVec,
         shader->globalTransform.set(globalTransform);
 
         if (generator->getLayerRenderData() && generator->getLayerRenderData()->camera)
-            shader->cameraPosition.set(
-                        generator->getLayerRenderData()->camera->getGlobalPos());
+            shader->cameraPosition.set(generator->getLayerRenderData()->camera->getGlobalPos());
         else if (generator->getLayerRenderData()->camera)
             shader->cameraPosition.set(QVector3D(0.0, 0.0, 1.0));
 
@@ -276,9 +263,7 @@ QDemonSubsetRenderable::QDemonSubsetRenderable(QDemonRenderableObjectFlags inFla
     renderableFlags.setText(false);
 }
 
-QDemonSubsetRenderable::~QDemonSubsetRenderable()
-{
-}
+QDemonSubsetRenderable::~QDemonSubsetRenderable() {}
 
 void QDemonSubsetRenderable::render(const QVector2D &inCameraVec, const TShaderFeatureSet &inFeatureSet)
 {
@@ -290,10 +275,15 @@ void QDemonSubsetRenderable::render(const QVector2D &inCameraVec, const TShaderF
 
     context->setActiveShader(shader->shader);
 
-    generator->getDemonContext()->getDefaultMaterialShaderGenerator()->setMaterialProperties(
-                shader->shader, material, inCameraVec, modelContext.modelViewProjection,
-                modelContext.normalMatrix, modelContext.model.globalTransform, firstImage,
-                opacity, generator->getLayerGlobalRenderProperties());
+    generator->getDemonContext()->getDefaultMaterialShaderGenerator()->setMaterialProperties(shader->shader,
+                                                                                             material,
+                                                                                             inCameraVec,
+                                                                                             modelContext.modelViewProjection,
+                                                                                             modelContext.normalMatrix,
+                                                                                             modelContext.model.globalTransform,
+                                                                                             firstImage,
+                                                                                             opacity,
+                                                                                             generator->getLayerGlobalRenderProperties());
 
     // tesselation
     if (subset.primitiveType == QDemonRenderDrawMode::Patches) {
@@ -309,14 +299,22 @@ void QDemonSubsetRenderable::render(const QVector2D &inCameraVec, const TShaderF
         if (subset.wireframeMode) {
             // we need the viewport matrix
             QRect theViewport(context->getViewport());
-            float matrixData[16] = {
-                float(theViewport.width()) / 2.0f, 0.0f, 0.0f, 0.0f,
-                0.0f, float(theViewport.width()) / 2.0f, 0.0f, 0.0f,
-                0.0f, 0.0f, 1.0f, 0.0f,
-                float(theViewport.width()) / 2.0f + float(theViewport.x()),
-                float(theViewport.height()) / 2.0f + float(theViewport.y()),
-                0.0f, 1.0f
-            };
+            float matrixData[16] = { float(theViewport.width()) / 2.0f,
+                                     0.0f,
+                                     0.0f,
+                                     0.0f,
+                                     0.0f,
+                                     float(theViewport.width()) / 2.0f,
+                                     0.0f,
+                                     0.0f,
+                                     0.0f,
+                                     0.0f,
+                                     1.0f,
+                                     0.0f,
+                                     float(theViewport.width()) / 2.0f + float(theViewport.x()),
+                                     float(theViewport.height()) / 2.0f + float(theViewport.y()),
+                                     0.0f,
+                                     1.0f };
             QMatrix4x4 vpMatrix(matrixData);
             shader->viewportMatrix.set(vpMatrix);
         }
@@ -330,13 +328,12 @@ void QDemonSubsetRenderable::render(const QVector2D &inCameraVec, const TShaderF
 void QDemonSubsetRenderable::renderDepthPass(const QVector2D &inCameraVec)
 {
     QDemonRenderableImage *displacementImage = nullptr;
-    for (QDemonRenderableImage *theImage = firstImage;
-         theImage != nullptr && displacementImage == nullptr; theImage = theImage->m_nextImage) {
+    for (QDemonRenderableImage *theImage = firstImage; theImage != nullptr && displacementImage == nullptr;
+         theImage = theImage->m_nextImage) {
         if (theImage->m_mapType == QDemonImageMapTypes::Displacement)
             displacementImage = theImage;
     }
-    QDemonSubsetRenderableBase::renderDepthPass(inCameraVec, displacementImage,
-                                           material.displaceAmount);
+    QDemonSubsetRenderableBase::renderDepthPass(inCameraVec, displacementImage, material.displaceAmount);
 }
 
 void QDemonTextRenderable::render(const QVector2D &inCameraVec)
@@ -349,21 +346,27 @@ void QDemonTextRenderable::render(const QVector2D &inCameraVec)
         if (theInfo.shader == nullptr)
             return;
         // All of our shaders produce premultiplied values.
-        QDemonRenderBlendFunctionArgument blendFunc(
-                    QDemonRenderSrcBlendFunc::One, QDemonRenderDstBlendFunc::OneMinusSrcAlpha,
-                    QDemonRenderSrcBlendFunc::One, QDemonRenderDstBlendFunc::OneMinusSrcAlpha);
+        QDemonRenderBlendFunctionArgument blendFunc(QDemonRenderSrcBlendFunc::One,
+                                                    QDemonRenderDstBlendFunc::OneMinusSrcAlpha,
+                                                    QDemonRenderSrcBlendFunc::One,
+                                                    QDemonRenderDstBlendFunc::OneMinusSrcAlpha);
 
-        QDemonRenderBlendEquationArgument blendEqu(QDemonRenderBlendEquation::Add,
-                                                   QDemonRenderBlendEquation::Add);
+        QDemonRenderBlendEquationArgument blendEqu(QDemonRenderBlendEquation::Add, QDemonRenderBlendEquation::Add);
 
         context->setBlendFunction(blendFunc);
         context->setBlendEquation(blendEqu);
         QVector4D theColor(text.m_textColor, text.globalOpacity);
 
         QDemonTextShader &shader(*theInfo.shader);
-        shader.render(text.m_textTexture, *this, theColor, modelViewProjection,
-                      inCameraVec, context, theInfo.quadInputAssembler,
-                      theInfo.quadInputAssembler->getIndexCount(), text.m_textTextureDetails,
+        shader.render(text.m_textTexture,
+                      *this,
+                      theColor,
+                      modelViewProjection,
+                      inCameraVec,
+                      context,
+                      theInfo.quadInputAssembler,
+                      theInfo.quadInputAssembler->getIndexCount(),
+                      text.m_textTextureDetails,
                       QVector3D(0, 0, 0));
     } else {
         Q_ASSERT(context->isPathRenderingSupported() && context->isProgramPipelineSupported());
@@ -373,12 +376,12 @@ void QDemonTextRenderable::render(const QVector2D &inCameraVec)
             return;
 
         // All of our shaders produce premultiplied values.
-        QDemonRenderBlendFunctionArgument blendFunc(
-                    QDemonRenderSrcBlendFunc::One, QDemonRenderDstBlendFunc::OneMinusSrcAlpha,
-                    QDemonRenderSrcBlendFunc::One, QDemonRenderDstBlendFunc::OneMinusSrcAlpha);
+        QDemonRenderBlendFunctionArgument blendFunc(QDemonRenderSrcBlendFunc::One,
+                                                    QDemonRenderDstBlendFunc::OneMinusSrcAlpha,
+                                                    QDemonRenderSrcBlendFunc::One,
+                                                    QDemonRenderDstBlendFunc::OneMinusSrcAlpha);
 
-        QDemonRenderBlendEquationArgument blendEqu(QDemonRenderBlendEquation::Add,
-                                                   QDemonRenderBlendEquation::Add);
+        QDemonRenderBlendEquationArgument blendEqu(QDemonRenderBlendEquation::Add, QDemonRenderBlendEquation::Add);
 
         context->setBlendFunction(blendFunc);
         context->setBlendEquation(blendEqu);
@@ -386,9 +389,16 @@ void QDemonTextRenderable::render(const QVector2D &inCameraVec)
 
         QDemonTextShader &shader(*theInfo.shader);
 
-        shader.renderPath(text.m_pathFontItem, text.m_pathFontDetails, *this, theColor,
-                          viewProjection, globalTransform, inCameraVec, context,
-                          text.m_textTextureDetails, QVector3D(0, 0, 0));
+        shader.renderPath(text.m_pathFontItem,
+                          text.m_pathFontDetails,
+                          *this,
+                          theColor,
+                          viewProjection,
+                          globalTransform,
+                          inCameraVec,
+                          context,
+                          text.m_textTextureDetails,
+                          QVector3D(0, 0, 0));
     }
 }
 
@@ -401,7 +411,10 @@ void QDemonTextRenderable::renderDepthPass(const QVector2D &inCameraVec)
 
     if (!text.m_pathFontDetails) {
         // we may change stencil test state
-        QDemonRenderContextScopedProperty<bool> __stencilTest(*context, &QDemonRenderContext::isStencilTestEnabled, &QDemonRenderContext::setStencilTestEnabled, true);
+        QDemonRenderContextScopedProperty<bool> __stencilTest(*context,
+                                                              &QDemonRenderContext::isStencilTestEnabled,
+                                                              &QDemonRenderContext::setStencilTestEnabled,
+                                                              true);
 
         QDemonRef<QDemonRenderShaderProgram> theShader(theDepthShader->shader);
         context->setCullingEnabled(false);
@@ -409,35 +422,34 @@ void QDemonTextRenderable::renderDepthPass(const QVector2D &inCameraVec)
         theDepthShader->mvp.set(modelViewProjection);
         theDepthShader->sampler.set(text.m_textTexture.data());
         const QDemonTextScaleAndOffset &theScaleAndOffset(*this);
-        theDepthShader->dimensions.set(
-                    QVector4D(theScaleAndOffset.textScale.x(), theScaleAndOffset.textScale.y(),
-                              theScaleAndOffset.textOffset.x(), theScaleAndOffset.textOffset.y()));
+        theDepthShader->dimensions.set(QVector4D(theScaleAndOffset.textScale.x(),
+                                                 theScaleAndOffset.textScale.y(),
+                                                 theScaleAndOffset.textOffset.x(),
+                                                 theScaleAndOffset.textOffset.y()));
         theDepthShader->cameraProperties.set(inCameraVec);
 
         QDemonTextureDetails theTextureDetails = text.m_textTexture->getTextureDetails();
         const QDemonTextTextureDetails &theTextTextureDetails(text.m_textTextureDetails);
-        float theWidthScale =
-                (float)theTextTextureDetails.textWidth / (float)theTextureDetails.width;
-        float theHeightScale =
-                (float)theTextTextureDetails.textHeight / (float)theTextureDetails.height;
-        theDepthShader->textDimensions.set(
-                    QVector3D(theWidthScale, theHeightScale, theTextTextureDetails.flipY ? 1.0f : 0.0f));
+        float theWidthScale = (float)theTextTextureDetails.textWidth / (float)theTextureDetails.width;
+        float theHeightScale = (float)theTextTextureDetails.textHeight / (float)theTextureDetails.height;
+        theDepthShader->textDimensions.set(QVector3D(theWidthScale, theHeightScale, theTextTextureDetails.flipY ? 1.0f : 0.0f));
         context->setInputAssembler(theDepthShader->quadInputAssembler);
-        context->draw(QDemonRenderDrawMode::Triangles,
-                     theDepthShader->quadInputAssembler->getIndexCount(), 0);
+        context->draw(QDemonRenderDrawMode::Triangles, theDepthShader->quadInputAssembler->getIndexCount(), 0);
     } else {
         QDemonRenderBoolOp::Enum theDepthFunction = context->getDepthFunction();
         bool isDepthEnabled = context->isDepthTestEnabled();
         bool isStencilEnabled = context->isStencilTestEnabled();
         bool isDepthWriteEnabled = context->isDepthWriteEnabled();
         QDemonRenderStencilFunctionArgument theArg(QDemonRenderBoolOp::NotEqual, 0, 0xFF);
-        QDemonRenderStencilOperationArgument theOpArg(QDemonRenderStencilOp::Keep,
-                                                      QDemonRenderStencilOp::Keep,
-                                                      QDemonRenderStencilOp::Zero);
-        QDemonRef<QDemonRenderDepthStencilState> depthStencilState =
-                context->createDepthStencilState(isDepthEnabled, isDepthWriteEnabled,
-                                                theDepthFunction, false, theArg, theArg, theOpArg,
-                                                theOpArg);
+        QDemonRenderStencilOperationArgument theOpArg(QDemonRenderStencilOp::Keep, QDemonRenderStencilOp::Keep, QDemonRenderStencilOp::Zero);
+        QDemonRef<QDemonRenderDepthStencilState> depthStencilState = context->createDepthStencilState(isDepthEnabled,
+                                                                                                      isDepthWriteEnabled,
+                                                                                                      theDepthFunction,
+                                                                                                      false,
+                                                                                                      theArg,
+                                                                                                      theArg,
+                                                                                                      theOpArg,
+                                                                                                      theOpArg);
 
         context->setActiveShader(nullptr);
         context->setCullingEnabled(false);
@@ -483,9 +495,7 @@ QDemonCustomMaterialRenderable::QDemonCustomMaterialRenderable(QDemonRenderableO
     renderableFlags.setCustomMaterialMeshSubset(true);
 }
 
-QDemonCustomMaterialRenderable::~QDemonCustomMaterialRenderable()
-{
-}
+QDemonCustomMaterialRenderable::~QDemonCustomMaterialRenderable() {}
 
 void QDemonCustomMaterialRenderable::render(const QVector2D & /*inCameraVec*/,
                                             const QDemonLayerRenderData &inLayerData,
@@ -497,9 +507,20 @@ void QDemonCustomMaterialRenderable::render(const QVector2D & /*inCameraVec*/,
                                             const TShaderFeatureSet &inFeatureSet)
 {
     QDemonRenderContextInterface *demonContext(generator->getDemonContext());
-    QDemonCustomMaterialRenderContext theRenderContext(inLayer, inLayerData, inLights, inCamera, modelContext.model, subset,
-                                                       modelContext.modelViewProjection, globalTransform, modelContext.normalMatrix,
-                                                       material, inDepthTexture, inSsaoTexture, shaderDescription, firstImage,
+    QDemonCustomMaterialRenderContext theRenderContext(inLayer,
+                                                       inLayerData,
+                                                       inLights,
+                                                       inCamera,
+                                                       modelContext.model,
+                                                       subset,
+                                                       modelContext.modelViewProjection,
+                                                       globalTransform,
+                                                       modelContext.normalMatrix,
+                                                       material,
+                                                       inDepthTexture,
+                                                       inSsaoTexture,
+                                                       shaderDescription,
+                                                       firstImage,
                                                        opacity);
 
     demonContext->getCustomMaterialSystem()->renderSubset(theRenderContext, inFeatureSet);
@@ -513,33 +534,41 @@ void QDemonCustomMaterialRenderable::renderDepthPass(const QVector2D &inCameraVe
 {
 
     QDemonRenderContextInterface *demonContext(generator->getDemonContext());
-    if (!demonContext->getCustomMaterialSystem()->renderDepthPrepass(
-                modelContext.modelViewProjection, material, subset)) {
+    if (!demonContext->getCustomMaterialSystem()->renderDepthPrepass(modelContext.modelViewProjection, material, subset)) {
         QDemonRenderableImage *displacementImage = nullptr;
-        for (QDemonRenderableImage *theImage = firstImage;
-             theImage != nullptr && displacementImage == nullptr; theImage = theImage->m_nextImage) {
+        for (QDemonRenderableImage *theImage = firstImage; theImage != nullptr && displacementImage == nullptr;
+             theImage = theImage->m_nextImage) {
             if (theImage->m_mapType == QDemonImageMapTypes::Displacement)
                 displacementImage = theImage;
         }
 
-        QDemonSubsetRenderableBase::renderDepthPass(inCameraVec, displacementImage,
-                                               material.m_displaceAmount);
+        QDemonSubsetRenderableBase::renderDepthPass(inCameraVec, displacementImage, material.m_displaceAmount);
     }
 }
 
-void QDemonPathRenderable::renderDepthPass(const QVector2D &inCameraVec, const QDemonRenderLayer & /*inLayer*/,
-                                      const QVector<QDemonRenderLight *> &inLights,
-                                      const QDemonRenderCamera &inCamera,
-                                      const QDemonRenderTexture2D * /*inDepthTexture*/)
+void QDemonPathRenderable::renderDepthPass(const QVector2D &inCameraVec,
+                                           const QDemonRenderLayer & /*inLayer*/,
+                                           const QVector<QDemonRenderLight *> &inLights,
+                                           const QDemonRenderCamera &inCamera,
+                                           const QDemonRenderTexture2D * /*inDepthTexture*/)
 {
     QDemonRenderContextInterface *demonContext(m_generator->getDemonContext());
-    QDemonPathRenderContext theRenderContext(
-                inLights, inCamera, m_path, m_mvp, globalTransform, m_normalMatrix,
-                m_opacity, m_material, m_shaderDescription, m_firstImage, demonContext->getWireframeMode(),
-                inCameraVec, false, m_isStroke);
+    QDemonPathRenderContext theRenderContext(inLights,
+                                             inCamera,
+                                             m_path,
+                                             m_mvp,
+                                             globalTransform,
+                                             m_normalMatrix,
+                                             m_opacity,
+                                             m_material,
+                                             m_shaderDescription,
+                                             m_firstImage,
+                                             demonContext->getWireframeMode(),
+                                             inCameraVec,
+                                             false,
+                                             m_isStroke);
 
-    demonContext->getPathManager()->renderDepthPrepass(
-                theRenderContext, m_generator->getLayerGlobalRenderProperties(), TShaderFeatureSet());
+    demonContext->getPathManager()->renderDepthPrepass(theRenderContext, m_generator->getLayerGlobalRenderProperties(), TShaderFeatureSet());
 }
 
 QDemonPathRenderable::QDemonPathRenderable(QDemonRenderableObjectFlags inFlags,
@@ -569,47 +598,66 @@ QDemonPathRenderable::QDemonPathRenderable(QDemonRenderableObjectFlags inFlags,
     renderableFlags.setPath(true);
 }
 
-QDemonPathRenderable::~QDemonPathRenderable()
-{
-}
+QDemonPathRenderable::~QDemonPathRenderable() {}
 
 void QDemonPathRenderable::render(const QVector2D &inCameraVec,
                                   const QDemonRenderLayer & /*inLayer*/,
                                   const QVector<QDemonRenderLight *> &inLights,
                                   const QDemonRenderCamera &inCamera,
-                                  const QDemonRef<QDemonRenderTexture2D> &/*inDepthTexture*/,
-                                  const QDemonRef<QDemonRenderTexture2D> &/*inSsaoTexture*/,
+                                  const QDemonRef<QDemonRenderTexture2D> & /*inDepthTexture*/,
+                                  const QDemonRef<QDemonRenderTexture2D> & /*inSsaoTexture*/,
                                   const TShaderFeatureSet &inFeatureSet)
 {
     QDemonRenderContextInterface *demonContext(m_generator->getDemonContext());
-    QDemonPathRenderContext theRenderContext(
-                inLights, inCamera, m_path, m_mvp, globalTransform, m_normalMatrix,
-                m_opacity, m_material, m_shaderDescription, m_firstImage, demonContext->getWireframeMode(),
-                inCameraVec, renderableFlags.hasTransparency(), m_isStroke);
+    QDemonPathRenderContext theRenderContext(inLights,
+                                             inCamera,
+                                             m_path,
+                                             m_mvp,
+                                             globalTransform,
+                                             m_normalMatrix,
+                                             m_opacity,
+                                             m_material,
+                                             m_shaderDescription,
+                                             m_firstImage,
+                                             demonContext->getWireframeMode(),
+                                             inCameraVec,
+                                             renderableFlags.hasTransparency(),
+                                             m_isStroke);
 
     demonContext->getPathManager()->renderPath(theRenderContext, m_generator->getLayerGlobalRenderProperties(), inFeatureSet);
 }
 
-void QDemonPathRenderable::renderShadowMapPass(const QVector2D &inCameraVec, const QDemonRenderLight *inLight,
-                                          const QDemonRenderCamera &inCamera,
-                                          QDemonShadowMapEntry *inShadowMapEntry)
+void QDemonPathRenderable::renderShadowMapPass(const QVector2D &inCameraVec,
+                                               const QDemonRenderLight *inLight,
+                                               const QDemonRenderCamera &inCamera,
+                                               QDemonShadowMapEntry *inShadowMapEntry)
 {
     QVector<QDemonRenderLight *> theLights;
     QDemonRenderContextInterface *demonContext(m_generator->getDemonContext());
 
     QMatrix4x4 theModelViewProjection = inShadowMapEntry->m_lightVP * globalTransform;
-    QDemonPathRenderContext theRenderContext(
-                theLights, inCamera, m_path, theModelViewProjection, globalTransform, m_normalMatrix,
-                m_opacity, m_material, m_shaderDescription, m_firstImage, demonContext->getWireframeMode(),
-                inCameraVec, false, m_isStroke);
+    QDemonPathRenderContext theRenderContext(theLights,
+                                             inCamera,
+                                             m_path,
+                                             theModelViewProjection,
+                                             globalTransform,
+                                             m_normalMatrix,
+                                             m_opacity,
+                                             m_material,
+                                             m_shaderDescription,
+                                             m_firstImage,
+                                             demonContext->getWireframeMode(),
+                                             inCameraVec,
+                                             false,
+                                             m_isStroke);
 
     if (inLight->m_lightType != RenderLightTypes::Directional) {
-        demonContext->getPathManager()->renderCubeFaceShadowPass(
-                    theRenderContext, m_generator->getLayerGlobalRenderProperties(),
-                    TShaderFeatureSet());
+        demonContext->getPathManager()->renderCubeFaceShadowPass(theRenderContext,
+                                                                 m_generator->getLayerGlobalRenderProperties(),
+                                                                 TShaderFeatureSet());
     } else
-        demonContext->getPathManager()->renderShadowMapPass(
-                    theRenderContext, m_generator->getLayerGlobalRenderProperties(),
-                    TShaderFeatureSet());
+        demonContext->getPathManager()->renderShadowMapPass(theRenderContext,
+                                                            m_generator->getLayerGlobalRenderProperties(),
+                                                            TShaderFeatureSet());
 }
 QT_END_NAMESPACE

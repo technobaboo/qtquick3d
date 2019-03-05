@@ -34,7 +34,6 @@
 #include <QtDemonRuntimeRender/qdemonrenderlightconstantproperties.h>
 #include <QtDemonRuntimeRender/qdemonrendershadercodegeneratorv2.h>
 
-
 QT_BEGIN_NAMESPACE
 
 class QDemonRenderShadowMap;
@@ -45,6 +44,7 @@ class Q_DEMONRUNTIMERENDER_EXPORT QDemonDefaultMaterialVertexPipelineInterface :
 {
 protected:
     virtual ~QDemonDefaultMaterialVertexPipelineInterface();
+
 public:
     // Responsible for beginning all vertex and fragment generation (void main() { etc).
     virtual void beginVertexGeneration(quint32 displacementImageIdx, QDemonRenderableImage *displacementImage) = 0;
@@ -57,12 +57,12 @@ public:
     virtual void assignOutput(const QByteArray &inVarName, const QByteArray &inVarValueExpr) = 0;
 
     /**
-         * @brief Generates UV coordinates in shader code
-         *
-         * @param[in] inUVSet		index of UV data set
-         *
-         * @return no return
-         */
+     * @brief Generates UV coordinates in shader code
+     *
+     * @param[in] inUVSet		index of UV data set
+     *
+     * @return no return
+     */
     virtual void generateUVCoords(quint32 inUVSet = 0) = 0;
 
     virtual void generateEnvMapReflection() = 0;

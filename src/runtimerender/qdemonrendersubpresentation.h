@@ -44,13 +44,8 @@ struct CSubPresentationPickQuery : public QDemonGraphObjectPickQueryInterface
 {
     QDemonSubPresentationRenderer &m_renderer;
 
-    CSubPresentationPickQuery(QDemonSubPresentationRenderer &renderer)
-        : m_renderer(renderer)
-    {
-    }
-    QDemonRenderPickResult pick(const QVector2D &inMouseCoords,
-                                const QVector2D &inViewportDimensions,
-                                bool inPickEverything) override;
+    CSubPresentationPickQuery(QDemonSubPresentationRenderer &renderer) : m_renderer(renderer) {}
+    QDemonRenderPickResult pick(const QVector2D &inMouseCoords, const QVector2D &inViewportDimensions, bool inPickEverything) override;
 };
 
 class QDemonSubPresentationRenderer : public QDemonOffscreenRendererInterface
@@ -79,17 +74,15 @@ public:
                          QDemonRenderScene::RenderClearCommand inClearBuffer,
                          QVector3D inClearColor,
                          const QDemonRenderInstanceId instanceId) override;
-    QDemonGraphObjectPickQueryInterface *getGraphObjectPickQuery(const QDemonRenderInstanceId) override { return &m_pickQuery; }
-    bool pick(const QVector2D & /*inMouseCoords*/,
-              const QVector2D & /*inViewportDimensions*/,
-              const QDemonRenderInstanceId) override
+    QDemonGraphObjectPickQueryInterface *getGraphObjectPickQuery(const QDemonRenderInstanceId) override
+    {
+        return &m_pickQuery;
+    }
+    bool pick(const QVector2D & /*inMouseCoords*/, const QVector2D & /*inViewportDimensions*/, const QDemonRenderInstanceId) override
     {
         return false;
     }
-    void addCallback(QDemonOffscreenRendererCallbackInterface *cb) override
-    {
-        Q_UNUSED(cb)
-    }
+    void addCallback(QDemonOffscreenRendererCallbackInterface *cb) override { Q_UNUSED(cb) }
     // Used for RTTI purposes so we can safely static-cast an offscreen renderer to a
     // CSubPresentationRenderer
     static const char *getRendererName() { return "SubPresentation"; }

@@ -101,10 +101,7 @@ struct QDemonWidgetRenderInformation
         , m_camera(&inCamera)
     {
     }
-    QDemonWidgetRenderInformation()
-        : m_camera(nullptr)
-    {
-    }
+    QDemonWidgetRenderInformation() : m_camera(nullptr) {}
 };
 typedef QPair<QDemonShaderVertexCodeGenerator &, QDemonShaderFragmentCodeGenerator &> TShaderGeneratorPair;
 
@@ -123,20 +120,22 @@ class Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderWidgetContextInterface : public QD
 {
 public:
     virtual ~QDemonRenderWidgetContextInterface();
-    virtual QDemonRef<QDemonRenderVertexBuffer> getOrCreateVertexBuffer(const QByteArray &inStr,
-                                                                             quint32 stride,
-                                                                             QDemonConstDataRef<quint8> bufferData = QDemonConstDataRef<quint8>()) = 0;
-    virtual QDemonRef<QDemonRenderIndexBuffer> getOrCreateIndexBuffer(const QByteArray &inStr,
-                                                                           QDemonRenderComponentTypes::Enum componentType,
-                                                                           size_t size,
-                                                                           QDemonConstDataRef<quint8> bufferData = QDemonConstDataRef<quint8>()) = 0;
+    virtual QDemonRef<QDemonRenderVertexBuffer> getOrCreateVertexBuffer(
+            const QByteArray &inStr,
+            quint32 stride,
+            QDemonConstDataRef<quint8> bufferData = QDemonConstDataRef<quint8>()) = 0;
+    virtual QDemonRef<QDemonRenderIndexBuffer> getOrCreateIndexBuffer(
+            const QByteArray &inStr,
+            QDemonRenderComponentTypes::Enum componentType,
+            size_t size,
+            QDemonConstDataRef<quint8> bufferData = QDemonConstDataRef<quint8>()) = 0;
     virtual QDemonRef<QDemonRenderAttribLayout> createAttributeLayout(QDemonConstDataRef<QDemonRenderVertexBufferEntry> attribs) = 0;
     virtual QDemonRef<QDemonRenderInputAssembler> getOrCreateInputAssembler(const QByteArray &inStr,
-                                                                                 QDemonRef<QDemonRenderAttribLayout> attribLayout,
-                                                                                 QDemonConstDataRef<QDemonRef<QDemonRenderVertexBuffer>> buffers,
-                                                                                 const QDemonRef<QDemonRenderIndexBuffer> indexBuffer,
-                                                                                 QDemonConstDataRef<quint32> strides,
-                                                                                 QDemonConstDataRef<quint32> offsets) = 0;
+                                                                            QDemonRef<QDemonRenderAttribLayout> attribLayout,
+                                                                            QDemonConstDataRef<QDemonRef<QDemonRenderVertexBuffer>> buffers,
+                                                                            const QDemonRef<QDemonRenderIndexBuffer> indexBuffer,
+                                                                            QDemonConstDataRef<quint32> strides,
+                                                                            QDemonConstDataRef<quint32> offsets) = 0;
 
     virtual QDemonRef<QDemonRenderVertexBuffer> getVertexBuffer(const QByteArray &inStr) = 0;
     virtual QDemonRef<QDemonRenderIndexBuffer> getIndexBuffer(const QByteArray &inStr) = 0;
@@ -170,19 +169,15 @@ public:
     virtual ~QDemonRenderWidgetInterface();
     QDemonGraphNode *m_node = nullptr;
 
-    QDemonRenderWidgetInterface(QDemonGraphNode &inNode)
-        : m_node(&inNode)
-    {
-    }
+    QDemonRenderWidgetInterface(QDemonGraphNode &inNode) : m_node(&inNode) {}
     QDemonRenderWidgetInterface() = default;
-    virtual void render(QDemonRenderWidgetContextInterface &inWidgetContext,
-                        QDemonRenderContext &inRenderContext) = 0;
+    virtual void render(QDemonRenderWidgetContextInterface &inWidgetContext, QDemonRenderContext &inRenderContext) = 0;
     QDemonGraphNode &getNode() { return *m_node; }
 
     // Pure widgets.
     static QDemonRef<QDemonRenderWidgetInterface> createBoundingBoxWidget(QDemonGraphNode &inNode,
-                                                                               const QDemonBounds3 &inBounds,
-                                                                               const QVector3D &inColor);
+                                                                          const QDemonBounds3 &inBounds,
+                                                                          const QVector3D &inColor);
     static QDemonRef<QDemonRenderWidgetInterface> createAxisWidget(QDemonGraphNode &inNode);
 };
 QT_END_NAMESPACE

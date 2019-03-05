@@ -90,14 +90,8 @@ struct QDemonLayerRenderPreparationResultFlags : public QDemonFlags<LayerRenderP
         clearOrSet(inValue, LayerRenderPreparationResultFlagValues::WasLayerDataDirty);
     }
 
-    bool wasDirty() const
-    {
-        return this->operator&(LayerRenderPreparationResultFlagValues::WasDirty);
-    }
-    void setWasDirty(bool inValue)
-    {
-        clearOrSet(inValue, LayerRenderPreparationResultFlagValues::WasDirty);
-    }
+    bool wasDirty() const { return this->operator&(LayerRenderPreparationResultFlagValues::WasDirty); }
+    void setWasDirty(bool inValue) { clearOrSet(inValue, LayerRenderPreparationResultFlagValues::WasDirty); }
 
     bool shouldRenderToTexture() const
     {
@@ -126,10 +120,7 @@ struct QDemonLayerRenderPreparationResultFlags : public QDemonFlags<LayerRenderP
         clearOrSet(inValue, LayerRenderPreparationResultFlagValues::ShouldCreateIndependentViewport);
     }
 
-    bool requiresSsaoPass() const
-    {
-        return this->operator&(LayerRenderPreparationResultFlagValues::RequiresSsaoPass);
-    }
+    bool requiresSsaoPass() const { return this->operator&(LayerRenderPreparationResultFlagValues::RequiresSsaoPass); }
     void setRequiresSsaoPass(bool inValue)
     {
         clearOrSet(inValue, LayerRenderPreparationResultFlagValues::RequiresSsaoPass);
@@ -161,9 +152,7 @@ struct QDemonLayerRenderPreparationResult : public QDemonLayerRenderHelper
     quint32 maxAAPassIndex = 0;
     QDemonLayerRenderPreparationResult() = default;
     QDemonLayerRenderPreparationResult(const QDemonLayerRenderHelper &inHelper)
-        : QDemonLayerRenderHelper(inHelper)
-        , lastEffect(nullptr)
-        , maxAAPassIndex(0)
+        : QDemonLayerRenderHelper(inHelper), lastEffect(nullptr), maxAAPassIndex(0)
     {
     }
 };
@@ -173,10 +162,7 @@ struct QDemonRenderableNodeEntry
     QDemonGraphNode *node = nullptr;
     QDemonNodeLightEntryList lights;
     QDemonRenderableNodeEntry() = default;
-    QDemonRenderableNodeEntry(QDemonGraphNode &inNode)
-        : node(&inNode)
-    {
-    }
+    QDemonRenderableNodeEntry(QDemonGraphNode &inNode) : node(&inNode) {}
 };
 
 struct QDemonScopedLightsListScope
@@ -188,9 +174,7 @@ struct QDemonScopedLightsListScope
                                 QVector<QVector3D> &inDestLightDirList,
                                 QVector<QVector3D> &inSrcLightDirList,
                                 QDemonNodeLightEntryList &inScopedLights)
-        : lightsList(inLights)
-        , lightDirList(inDestLightDirList)
-        , listOriginalSize(lightsList.size())
+        : lightsList(inLights), lightDirList(inDestLightDirList), listOriginalSize(lightsList.size())
     {
         auto iter = inScopedLights.begin();
         const auto end = inScopedLights.end();
@@ -228,7 +212,7 @@ struct QDemonLayerRenderPreparationData
                                               quint32 lightIndex,
                                               const QDemonRenderCamera &inCamera);
     typedef QHash<QDemonRenderLight *, QDemonGraphNode *> TLightToNodeMap;
-    //typedef Pool<SNodeLightEntry, ForwardingAllocator> TNodeLightEntryPoolType;
+    // typedef Pool<SNodeLightEntry, ForwardingAllocator> TNodeLightEntryPoolType;
 
     enum Enum {
         MAX_AA_LEVELS = 8,
@@ -240,7 +224,7 @@ struct QDemonLayerRenderPreparationData
     // List of nodes we can render, not all may be active.  Found by doing a depth-first
     // search through m_FirstChild if length is zero.
 
-    //TNodeLightEntryPoolType m_RenderableNodeLightEntryPool;
+    // TNodeLightEntryPoolType m_RenderableNodeLightEntryPool;
     QVector<QDemonRenderableNodeEntry> renderableNodes;
     TLightToNodeMap lightToNodeMap; // map of lights to nodes to cache if we have looked up a
     // given scoped light yet.

@@ -39,12 +39,9 @@ struct QDemonReferencedMaterial : QDemonGraphObject
     QDemonMaterialDirty m_dirty;
     QDemonGraphObject *m_referencedMaterial = nullptr;
     QDemonGraphObject *m_nextSibling = nullptr;
-    QDemonReferencedMaterial()
-        : QDemonGraphObject(QDemonGraphObjectTypes::ReferencedMaterial)
-    {
-    }
+    QDemonReferencedMaterial() : QDemonGraphObject(QDemonGraphObjectTypes::ReferencedMaterial) {}
 
-    template <typename TRemapperType>
+    template<typename TRemapperType>
     void remap(TRemapperType &inRemapper)
     {
         QDemonGraphObject::remap(inRemapper);

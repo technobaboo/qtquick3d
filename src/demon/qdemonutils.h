@@ -30,7 +30,6 @@ bool Q_DEMON_EXPORT isFinite(const QVector3D &v);
 float Q_DEMON_EXPORT magnitude(const QVector3D &v);
 float Q_DEMON_EXPORT magnitudeSquared(const QVector3D &v);
 float Q_DEMON_EXPORT normalize(QVector3D &v);
-
 }
 
 namespace mat33 {
@@ -45,8 +44,8 @@ QVector3D Q_DEMON_EXPORT rotate(const QMatrix4x4 &m, const QVector3D &v);
 QVector4D Q_DEMON_EXPORT rotate(const QMatrix4x4 &m, const QVector4D &v);
 QVector3D Q_DEMON_EXPORT transform(const QMatrix4x4 &m, const QVector3D &v);
 QVector4D Q_DEMON_EXPORT transform(const QMatrix4x4 &m, const QVector4D &v);
-//QVector3D Q_DEMON_EXPORT scale(const QMatrix4x4 &m, const QVector3D &v);
-//QVector4D Q_DEMON_EXPORT scale(const QMatrix4x4 &m, const QVector4D &v);
+// QVector3D Q_DEMON_EXPORT scale(const QMatrix4x4 &m, const QVector3D &v);
+// QVector4D Q_DEMON_EXPORT scale(const QMatrix4x4 &m, const QVector4D &v);
 }
 
 namespace quant {
@@ -58,17 +57,16 @@ bool Q_DEMON_EXPORT isSane(const QQuaternion &q);
 
 bool Q_DEMON_EXPORT isUnit(const QQuaternion &q);
 
-
 QVector3D Q_DEMON_EXPORT rotated(const QQuaternion &q, const QVector3D &v);
 
 QVector3D Q_DEMON_EXPORT inverseRotated(const QQuaternion &q, const QVector3D &v);
-
 }
 
-template <typename TDataType>
+template<typename TDataType>
 QDemonDataRef<TDataType> PtrAtOffset(quint8 *baseData, quint32 offset, quint32 byteSize)
 {
-    return QDemonDataRef<TDataType>(byteSize ? reinterpret_cast<TDataType *>(baseData + offset) : nullptr, byteSize / sizeof(TDataType));
+    return QDemonDataRef<TDataType>(byteSize ? reinterpret_cast<TDataType *>(baseData + offset) : nullptr,
+                                    byteSize / sizeof(TDataType));
 }
 
 void Q_DEMON_EXPORT memZero(void *ptr, size_t size);
@@ -93,7 +91,6 @@ struct SeekPosition
 };
 qint64 Q_DEMON_EXPORT positionHelper(const QIODevice &device, qint64 offset, SeekPosition::Enum seekPosition);
 }
-
 
 namespace CFileTools {
 QString Q_DEMON_EXPORT normalizePathForQtUsage(const QString &path);

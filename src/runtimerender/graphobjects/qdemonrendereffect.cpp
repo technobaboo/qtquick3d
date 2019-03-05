@@ -34,7 +34,6 @@
 #include <QtGui/QVector2D>
 #include <QtGui/QVector3D>
 
-
 QT_BEGIN_NAMESPACE
 
 void QDemonRenderEffect::initialize()

@@ -40,11 +40,7 @@ QDemonRenderPrefilterTexture::QDemonRenderPrefilterTexture(const QDemonRef<QDemo
                                                            qint32 inHeight,
                                                            const QDemonRef<QDemonRenderTexture2D> &inTexture2D,
                                                            QDemonRenderTextureFormats::Enum inDestFormat)
-    : m_texture2D(inTexture2D)
-    , m_destinationFormat(inDestFormat)
-    , m_width(inWidth)
-    , m_height(inHeight)
-    , m_renderContext(inQDemonRenderContext)
+    : m_texture2D(inTexture2D), m_destinationFormat(inDestFormat), m_width(inWidth), m_height(inHeight), m_renderContext(inQDemonRenderContext)
 {
     // Calculate mip level
     int maxDim = inWidth >= inHeight ? inWidth : inHeight;
@@ -55,12 +51,11 @@ QDemonRenderPrefilterTexture::QDemonRenderPrefilterTexture(const QDemonRef<QDemo
     m_noOfComponent = QDemonRenderTextureFormats::getNumberOfComponent(m_destinationFormat);
 }
 
-QDemonRef<QDemonRenderPrefilterTexture>
-QDemonRenderPrefilterTexture::create(const QDemonRef<QDemonRenderContext> &inQDemonRenderContext,
-                                     qint32 inWidth,
-                                     qint32 inHeight,
-                                     const QDemonRef<QDemonRenderTexture2D> &inTexture2D,
-                                     QDemonRenderTextureFormats::Enum inDestFormat)
+QDemonRef<QDemonRenderPrefilterTexture> QDemonRenderPrefilterTexture::create(const QDemonRef<QDemonRenderContext> &inQDemonRenderContext,
+                                                                             qint32 inWidth,
+                                                                             qint32 inHeight,
+                                                                             const QDemonRef<QDemonRenderTexture2D> &inTexture2D,
+                                                                             QDemonRenderTextureFormats::Enum inDestFormat)
 {
     QDemonRef<QDemonRenderPrefilterTexture> theBSDFMipMap;
 
@@ -75,9 +70,7 @@ QDemonRenderPrefilterTexture::create(const QDemonRef<QDemonRenderContext> &inQDe
     return theBSDFMipMap;
 }
 
-QDemonRenderPrefilterTexture::~QDemonRenderPrefilterTexture()
-{
-}
+QDemonRenderPrefilterTexture::~QDemonRenderPrefilterTexture() {}
 
 //------------------------------------------------------------------------------------
 // CPU based filtering
@@ -110,10 +103,10 @@ inline void QDemonRenderPrefilterTextureCPU::getWrappedCoords(int &sX, int &sY, 
     sX = wrapMod(sX, width);
 }
 
-QDemonTextureData
-QDemonRenderPrefilterTextureCPU::createBsdfMipLevel(QDemonTextureData &inCurMipLevel,
-                                                 QDemonTextureData &inPrevMipLevel, int width,
-                                                 int height) //, IPerfTimer& inPerfTimer )
+QDemonTextureData QDemonRenderPrefilterTextureCPU::createBsdfMipLevel(QDemonTextureData &inCurMipLevel,
+                                                                      QDemonTextureData &inPrevMipLevel,
+                                                                      int width,
+                                                                      int height) //, IPerfTimer& inPerfTimer )
 {
     QDemonTextureData retval;
     int newWidth = width >> 1;
@@ -123,11 +116,9 @@ QDemonRenderPrefilterTextureCPU::createBsdfMipLevel(QDemonTextureData &inCurMipL
 
     if (inCurMipLevel.data) {
         retval = inCurMipLevel;
-        retval.dataSizeInBytes =
-            newWidth * newHeight * QDemonRenderTextureFormats::getSizeofFormat(inPrevMipLevel.format);
+        retval.dataSizeInBytes = newWidth * newHeight * QDemonRenderTextureFormats::getSizeofFormat(inPrevMipLevel.format);
     } else {
-        retval.dataSizeInBytes =
-            newWidth * newHeight * QDemonRenderTextureFormats::getSizeofFormat(inPrevMipLevel.format);
+        retval.dataSizeInBytes = newWidth * newHeight * QDemonRenderTextureFormats::getSizeofFormat(inPrevMipLevel.format);
         retval.format = inPrevMipLevel.format; // inLoadedImage.format;
         retval.data = ::malloc(retval.dataSizeInBytes);
     }
@@ -154,9 +145,7 @@ QDemonRenderPrefilterTextureCPU::createBsdfMipLevel(QDemonTextureData &inCurMipL
                     // whereas with LDR formats, the fear with a continuous normalization factor is
                     // that we'd lose
                     // intensity and saturation as well.
-                    filterPdf /= (QDemonRenderTextureFormats::getSizeofFormat(retval.format) >= 8)
-                        ? 4.71238898f
-                        : 4.5403446f;
+                    filterPdf /= (QDemonRenderTextureFormats::getSizeofFormat(retval.format) >= 8) ? 4.71238898f : 4.5403446f;
                     // filterPdf /= 4.5403446f;		// Discrete normalization factor
                     // filterPdf /= 4.71238898f;		// Continuous normalization factor
                     float curPix[4];
@@ -184,16 +173,14 @@ QDemonRenderPrefilterTextureCPU::createBsdfMipLevel(QDemonTextureData &inCurMipL
     return retval;
 }
 
-void QDemonRenderPrefilterTextureCPU::build(void *inTextureData, qint32 inTextureDataSize,
-                                         QDemonRenderTextureFormats::Enum inFormat)
+void QDemonRenderPrefilterTextureCPU::build(void *inTextureData, qint32 inTextureDataSize, QDemonRenderTextureFormats::Enum inFormat)
 {
 
     m_internalFormat = inFormat;
     m_sizeOfInternalFormat = QDemonRenderTextureFormats::getSizeofFormat(m_internalFormat);
     m_internalNoOfComponent = QDemonRenderTextureFormats::getNumberOfComponent(m_internalFormat);
 
-    m_texture2D->setTextureData(QDemonDataRef<quint8>((quint8 *)inTextureData, inTextureDataSize), 0,
-                               m_width, m_height, inFormat, m_destinationFormat);
+    m_texture2D->setTextureData(QDemonDataRef<quint8>((quint8 *)inTextureData, inTextureDataSize), 0, m_width, m_height, inFormat, m_destinationFormat);
 
     QDemonTextureData theMipImage;
     QDemonTextureData prevImage;
@@ -204,8 +191,7 @@ void QDemonRenderPrefilterTextureCPU::build(void *inTextureData, qint32 inTextur
     int curHeight = m_height;
     int size = QDemonRenderTextureFormats::getSizeofFormat(m_internalFormat);
     for (int idx = 1; idx <= m_maxMipMapLevel; ++idx) {
-        theMipImage =
-            createBsdfMipLevel(theMipImage, prevImage, curWidth, curHeight); //, m_PerfTimer );
+        theMipImage = createBsdfMipLevel(theMipImage, prevImage, curWidth, curHeight); //, m_PerfTimer );
         curWidth = curWidth >> 1;
         curHeight = curHeight >> 1;
         curWidth = curWidth >= 1 ? curWidth : 1;
@@ -213,8 +199,11 @@ void QDemonRenderPrefilterTextureCPU::build(void *inTextureData, qint32 inTextur
         inTextureDataSize = curWidth * curHeight * size;
 
         m_texture2D->setTextureData(toU8DataRef((char *)theMipImage.data, (quint32)inTextureDataSize),
-                                   (quint8)idx, (quint32)curWidth, (quint32)curHeight, theMipImage.format,
-                                   m_destinationFormat);
+                                    (quint8)idx,
+                                    (quint32)curWidth,
+                                    (quint32)curHeight,
+                                    theMipImage.format,
+                                    m_destinationFormat);
 
         if (prevImage.data == inTextureData)
             prevImage = QDemonTextureData();
@@ -231,8 +220,7 @@ void QDemonRenderPrefilterTextureCPU::build(void *inTextureData, qint32 inTextur
 // GL compute based filtering
 //------------------------------------------------------------------------------------
 
-static const char *computeUploadShader(QByteArray &prog, QDemonRenderTextureFormats::Enum inFormat,
-                                       bool binESContext)
+static const char *computeUploadShader(QByteArray &prog, QDemonRenderTextureFormats::Enum inFormat, bool binESContext)
 {
     if (binESContext) {
         prog += "#version 310 es\n"
@@ -412,9 +400,7 @@ QDemonRenderPrefilterTextureCompute::QDemonRenderPrefilterTextureCompute(const Q
 {
 }
 
-QDemonRenderPrefilterTextureCompute::~QDemonRenderPrefilterTextureCompute()
-{
-}
+QDemonRenderPrefilterTextureCompute::~QDemonRenderPrefilterTextureCompute() {}
 
 void QDemonRenderPrefilterTextureCompute::createComputeProgram(const QDemonRef<QDemonRenderContext> &context)
 {
@@ -422,26 +408,30 @@ void QDemonRenderPrefilterTextureCompute::createComputeProgram(const QDemonRef<Q
 
     if (!m_bsdfProgram) {
         m_bsdfProgram = context->compileComputeSource("Compute BSDF mipmap shader",
-                                                      toRef(computeWorkShader(computeProg, isGLESContext(context)))).m_shader;
+                                                      toRef(computeWorkShader(computeProg, isGLESContext(context))))
+                                .m_shader;
     }
 }
 
-QDemonRef<QDemonRenderShaderProgram> QDemonRenderPrefilterTextureCompute::getOrCreateUploadComputeProgram(const QDemonRef<QDemonRenderContext> &context,
-                                                                                                          QDemonRenderTextureFormats::Enum inFormat)
+QDemonRef<QDemonRenderShaderProgram> QDemonRenderPrefilterTextureCompute::getOrCreateUploadComputeProgram(
+        const QDemonRef<QDemonRenderContext> &context,
+        QDemonRenderTextureFormats::Enum inFormat)
 {
     QByteArray computeProg;
 
     if (inFormat == QDemonRenderTextureFormats::RGB8) {
         if (!m_uploadProgram_RGB8) {
             m_uploadProgram_RGB8 = context->compileComputeSource("Compute BSDF mipmap level 0 RGB8 shader",
-                                                                 toRef(computeUploadShader(computeProg, inFormat, isGLESContext(context)))).m_shader;
+                                                                 toRef(computeUploadShader(computeProg, inFormat, isGLESContext(context))))
+                                           .m_shader;
         }
 
         return m_uploadProgram_RGB8;
     } else {
         if (!m_uploadProgram_RGBA8) {
             m_uploadProgram_RGBA8 = context->compileComputeSource("Compute BSDF mipmap level 0 RGBA8 shader",
-                                                                  toRef(computeUploadShader(computeProg, inFormat, isGLESContext(context)))).m_shader;
+                                                                  toRef(computeUploadShader(computeProg, inFormat, isGLESContext(context))))
+                                            .m_shader;
         }
 
         return m_uploadProgram_RGBA8;
@@ -464,11 +454,9 @@ void QDemonRenderPrefilterTextureCompute::createLevel0Tex(void *inTextureData, q
 
     if (m_level0Tex == nullptr) {
         m_level0Tex = m_renderContext->createTexture2D();
-        m_level0Tex->setTextureStorage(1, theWidth, m_height, theFormat, theFormat,
-                                       QDemonDataRef<quint8>((quint8 *)inTextureData, inTextureDataSize));
+        m_level0Tex->setTextureStorage(1, theWidth, m_height, theFormat, theFormat, QDemonDataRef<quint8>((quint8 *)inTextureData, inTextureDataSize));
     } else {
-        m_level0Tex->setTextureSubData(QDemonDataRef<quint8>((quint8 *)inTextureData, inTextureDataSize), 0,
-                                       0, 0, theWidth, m_height, theFormat);
+        m_level0Tex->setTextureSubData(QDemonDataRef<quint8>((quint8 *)inTextureData, inTextureDataSize), 0, 0, 0, theWidth, m_height, theFormat);
     }
 }
 
@@ -477,10 +465,13 @@ void QDemonRenderPrefilterTextureCompute::build(void *inTextureData, qint32 inTe
     bool needMipUpload = (inFormat != m_destinationFormat);
     // re-upload data
     if (!m_textureCreated) {
-        m_texture2D->setTextureStorage(
-            m_maxMipMapLevel + 1, m_width, m_height, m_destinationFormat, inFormat, (needMipUpload)
-                ? QDemonDataRef<quint8>()
-                : QDemonDataRef<quint8>((quint8 *)inTextureData, inTextureDataSize));
+        m_texture2D->setTextureStorage(m_maxMipMapLevel + 1,
+                                       m_width,
+                                       m_height,
+                                       m_destinationFormat,
+                                       inFormat,
+                                       (needMipUpload) ? QDemonDataRef<quint8>()
+                                                       : QDemonDataRef<quint8>((quint8 *)inTextureData, inTextureDataSize));
         // create a compute shader (if not aloread done) which computes the BSDF mipmaps for this
         // texture
         createComputeProgram(m_renderContext);
@@ -492,8 +483,7 @@ void QDemonRenderPrefilterTextureCompute::build(void *inTextureData, qint32 inTe
 
         m_textureCreated = true;
     } else if (!needMipUpload) {
-        m_texture2D->setTextureSubData(QDemonDataRef<quint8>((quint8 *)inTextureData, inTextureDataSize), 0,
-                                      0, 0, m_width, m_height, inFormat);
+        m_texture2D->setTextureSubData(QDemonDataRef<quint8>((quint8 *)inTextureData, inTextureDataSize), 0, 0, 0, m_width, m_height, inFormat);
     }
 
     if (needMipUpload) {
@@ -513,8 +503,7 @@ void QDemonRenderPrefilterTextureCompute::build(void *inTextureData, qint32 inTe
         m_renderContext->setActiveShader(uploadProg);
 
         QDemonRef<QDemonRenderImage2D> theInputImage0;
-        theInputImage0 =
-            m_renderContext->createImage2D(m_level0Tex, QDemonRenderImageAccessType::ReadWrite);
+        theInputImage0 = m_renderContext->createImage2D(m_level0Tex, QDemonRenderImageAccessType::ReadWrite);
 
         theInputImage0->setTextureLevel(0);
         QDemonRenderCachedShaderProperty<QDemonRenderImage2D *> theCachedinputImage0("inputImage", uploadProg);

@@ -34,7 +34,6 @@
 #include <QtDemonRender/qdemonrendersync.h>
 #include <QtDemonRender/qdemonrendercontext.h>
 
-
 #define RECORDED_FRAME_DELAY 3
 #define RECORDED_FRAME_DELAY_MASK 0x0003
 
@@ -45,20 +44,17 @@ namespace {
 struct QDemonGpuTimerInfo
 {
     QAtomicInt ref;
-    bool m_absoluteTime{false};
-    quint16 m_writeID{0};
-    quint16 m_readID{0};
-    quint16 m_averageTimeWriteID{0};
+    bool m_absoluteTime{ false };
+    quint16 m_writeID{ 0 };
+    quint16 m_readID{ 0 };
+    quint16 m_averageTimeWriteID{ 0 };
     quint64 m_averageTime[10];
     quint32 m_frameID[RECORDED_FRAME_DELAY];
     QDemonRef<QDemonRenderTimerQuery> m_timerStartQueryObjects[RECORDED_FRAME_DELAY];
     QDemonRef<QDemonRenderTimerQuery> m_timerEndQueryObjects[RECORDED_FRAME_DELAY];
     QDemonRef<QDemonRenderSync> m_timerSyncObjects[RECORDED_FRAME_DELAY];
 
-    QDemonGpuTimerInfo()
-    {
-        memset(m_averageTime, 0x0, 10 * sizeof(quint64));
-    }
+    QDemonGpuTimerInfo() { memset(m_averageTime, 0x0, 10 * sizeof(quint64)); }
 
     void incrementWriteCounter()
     {
@@ -106,12 +102,10 @@ struct QDemonGpuTimerInfo
 
     double GetAveragedElapsedTimeInMs()
     {
-        double time =
-                double(((m_averageTime[0] + m_averageTime[1] + m_averageTime[2] + m_averageTime[3]
-                + m_averageTime[4] + m_averageTime[5] + m_averageTime[6] + m_averageTime[7]
-                + m_averageTime[8] + m_averageTime[9])
-                / 10)
-                / 1e06);
+        double time = double(((m_averageTime[0] + m_averageTime[1] + m_averageTime[2] + m_averageTime[3] + m_averageTime[4]
+                               + m_averageTime[5] + m_averageTime[6] + m_averageTime[7] + m_averageTime[8] + m_averageTime[9])
+                              / 10)
+                             / 1e06);
 
         return time;
     }
@@ -158,11 +152,8 @@ private:
     mutable quint32 m_vertexCount;
 
 public:
-    QDemonRenderGpuProfiler(QDemonRenderContextInterface *inContext,
-                            const QDemonRef<QDemonRenderContext> &inRenderContext)
-        : m_renderContext(inRenderContext)
-        , m_context(inContext)
-        , m_vertexCount(0)
+    QDemonRenderGpuProfiler(QDemonRenderContextInterface *inContext, const QDemonRef<QDemonRenderContext> &inRenderContext)
+        : m_renderContext(inRenderContext), m_context(inContext), m_vertexCount(0)
     {
     }
 
@@ -249,7 +240,7 @@ private:
 }
 
 QDemonRef<QDemonRenderProfilerInterface> QDemonRenderProfilerInterface::createGpuProfiler(QDemonRenderContextInterface *inContext,
-                                                                                               const QDemonRef<QDemonRenderContext>& inRenderContext)
+                                                                                          const QDemonRef<QDemonRenderContext> &inRenderContext)
 {
     return QDemonRef<QDemonRenderProfilerInterface>(new QDemonRenderGpuProfiler(inContext, inRenderContext));
 }

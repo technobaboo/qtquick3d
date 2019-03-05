@@ -28,7 +28,6 @@
 **
 ****************************************************************************/
 
-
 #include <QtDemonRuntimeRender/qdemonrenderer.h>
 #include <QtDemonRuntimeRender/qdemonrendererimpl.h>
 #include <QtDemonRuntimeRender/qdemonrenderlayer.h>
@@ -66,8 +65,10 @@
 QT_BEGIN_NAMESPACE
 
 namespace {
-void MaybeQueueNodeForRender(QDemonGraphNode &inNode, QVector<QDemonRenderableNodeEntry> &outRenderables,
-                             QVector<QDemonGraphNode *> &outCamerasAndLights, quint32 &ioDFSIndex)
+void MaybeQueueNodeForRender(QDemonGraphNode &inNode,
+                             QVector<QDemonRenderableNodeEntry> &outRenderables,
+                             QVector<QDemonGraphNode *> &outCamerasAndLights,
+                             quint32 &ioDFSIndex)
 {
     ++ioDFSIndex;
     inNode.dfsIndex = ioDFSIndex;
@@ -76,8 +77,7 @@ void MaybeQueueNodeForRender(QDemonGraphNode &inNode, QVector<QDemonRenderableNo
     else if (QDemonGraphObjectTypes::IsLightCameraType(inNode.type))
         outCamerasAndLights.push_back(&inNode);
 
-    for (QDemonGraphNode *theChild = inNode.firstChild; theChild != nullptr;
-         theChild = theChild->nextSibling)
+    for (QDemonGraphNode *theChild = inNode.firstChild; theChild != nullptr; theChild = theChild->nextSibling)
         MaybeQueueNodeForRender(*theChild, outRenderables, outCamerasAndLights, ioDFSIndex);
 }
 
@@ -87,12 +87,8 @@ bool HasValidLightProbe(QDemonRenderImage *inLightProbeImage)
 }
 }
 
-QDemonDefaultMaterialPreparationResult::QDemonDefaultMaterialPreparationResult(
-        QDemonShaderDefaultMaterialKey inKey)
-    : firstImage(nullptr)
-    , opacity(1.0f)
-    , materialKey(inKey)
-    , dirty(false)
+QDemonDefaultMaterialPreparationResult::QDemonDefaultMaterialPreparationResult(QDemonShaderDefaultMaterialKey inKey)
+    : firstImage(nullptr), opacity(1.0f), materialKey(inKey), dirty(false)
 {
 }
 
@@ -120,8 +116,7 @@ bool QDemonLayerRenderPreparationData::needsWidgetTexture() const
 void QDemonLayerRenderPreparationData::setShaderFeature(const QString &theStr, bool inValue)
 {
     QDemonShaderPreprocessorFeature item(theStr, inValue);
-    QVector<QDemonShaderPreprocessorFeature>::iterator iter = features.begin(),
-            end = features.end();
+    QVector<QDemonShaderPreprocessorFeature>::iterator iter = features.begin(), end = features.end();
 
     // empty loop intentional.
     for (; iter != end && ((iter->name == theStr) == false); ++iter)
@@ -177,17 +172,17 @@ bool QDemonLayerRenderPreparationData::getOffscreenRenderer()
     if (lastFrameOffscreenRenderer)
         return true;
 
-//    if (m_Layer.m_RenderPlugin && m_Layer.m_RenderPlugin->m_Flags.IsActive()) {
-//        IRenderPluginInstance *theInstance =
-//                m_Renderer.GetDemonContext().GetRenderPluginManager().GetOrCreateRenderPluginInstance(
-//                    m_Layer.m_RenderPlugin->m_PluginPath, m_Layer.m_RenderPlugin);
-//        if (theInstance) {
-//            m_Renderer.GetDemonContext()
-//                    .GetOffscreenRenderManager()
-//                    .MaybeRegisterOffscreenRenderer(&theInstance, *theInstance);
-//            m_LastFrameOffscreenRenderer = theInstance;
-//        }
-//    }
+    //    if (m_Layer.m_RenderPlugin && m_Layer.m_RenderPlugin->m_Flags.IsActive()) {
+    //        IRenderPluginInstance *theInstance =
+    //                m_Renderer.GetDemonContext().GetRenderPluginManager().GetOrCreateRenderPluginInstance(
+    //                    m_Layer.m_RenderPlugin->m_PluginPath, m_Layer.m_RenderPlugin);
+    //        if (theInstance) {
+    //            m_Renderer.GetDemonContext()
+    //                    .GetOffscreenRenderManager()
+    //                    .MaybeRegisterOffscreenRenderer(&theInstance, *theInstance);
+    //            m_LastFrameOffscreenRenderer = theInstance;
+    //        }
+    //    }
     if (lastFrameOffscreenRenderer == nullptr)
         lastFrameOffscreenRenderer = renderer->getDemonContext()->getOffscreenRenderManager()->getOffscreenRenderer(layer.texturePath);
     return lastFrameOffscreenRenderer != nullptr;
@@ -271,25 +266,21 @@ void QDemonLayerRenderPreparationData::addRenderWidget(QDemonRenderWidgetInterfa
         iRenderWidgets.push_back(&inWidget);
 }
 
-#define RENDER_FRAME_NEW(type) \
-    new (renderer->getDemonContext()->getPerFrameAllocator().allocate(sizeof(type))) type
+#define RENDER_FRAME_NEW(type) new (renderer->getDemonContext()->getPerFrameAllocator().allocate(sizeof(type))) type
 
 #define QDEMON_RENDER_MINIMUM_RENDER_OPACITY .01f
 
-QDemonShaderDefaultMaterialKey
-QDemonLayerRenderPreparationData::generateLightingKey(DefaultMaterialLighting::Enum inLightingType)
+QDemonShaderDefaultMaterialKey QDemonLayerRenderPreparationData::generateLightingKey(DefaultMaterialLighting::Enum inLightingType)
 {
     QDemonShaderDefaultMaterialKey theGeneratedKey(getShaderFeatureSetHash());
     const bool lighting = inLightingType != DefaultMaterialLighting::NoLighting;
     renderer->defaultMaterialShaderKeyProperties().m_hasLighting.setValue(theGeneratedKey, lighting);
     if (lighting) {
-        const bool lightProbe = layer.lightProbe
-                && layer.lightProbe->m_textureData.m_texture;
+        const bool lightProbe = layer.lightProbe && layer.lightProbe->m_textureData.m_texture;
         renderer->defaultMaterialShaderKeyProperties().m_hasIbl.setValue(theGeneratedKey, lightProbe);
 
         quint32 numLights = (quint32)lights.size();
-        if (numLights > QDemonShaderDefaultMaterialKeyProperties::LightCount
-                && tooManyLightsError == false) {
+        if (numLights > QDemonShaderDefaultMaterialKeyProperties::LightCount && tooManyLightsError == false) {
             tooManyLightsError = true;
             numLights = QDemonShaderDefaultMaterialKeyProperties::LightCount;
             qCCritical(INVALID_OPERATION, "Too many lights on layer, max is 7");
@@ -297,28 +288,24 @@ QDemonLayerRenderPreparationData::generateLightingKey(DefaultMaterialLighting::E
         }
         renderer->defaultMaterialShaderKeyProperties().m_lightCount.setValue(theGeneratedKey, numLights);
 
-        for (quint32 lightIdx = 0, lightEnd = lights.size();
-             lightIdx < lightEnd; ++lightIdx) {
+        for (quint32 lightIdx = 0, lightEnd = lights.size(); lightIdx < lightEnd; ++lightIdx) {
             QDemonRenderLight *theLight(lights[lightIdx]);
             const bool isDirectional = theLight->m_lightType == RenderLightTypes::Directional;
             const bool isArea = theLight->m_lightType == RenderLightTypes::Area;
-            const bool castShadowsArea = (theLight->m_lightType != RenderLightTypes::Area)
-                    && (theLight->m_castShadow);
+            const bool castShadowsArea = (theLight->m_lightType != RenderLightTypes::Area) && (theLight->m_castShadow);
 
-            renderer->defaultMaterialShaderKeyProperties().m_lightFlags[lightIdx]
-                    .setValue(theGeneratedKey, !isDirectional);
-            renderer->defaultMaterialShaderKeyProperties().m_lightAreaFlags[lightIdx]
-                    .setValue(theGeneratedKey, isArea);
-            renderer->defaultMaterialShaderKeyProperties().m_lightShadowFlags[lightIdx]
-                    .setValue(theGeneratedKey, castShadowsArea);
+            renderer->defaultMaterialShaderKeyProperties().m_lightFlags[lightIdx].setValue(theGeneratedKey, !isDirectional);
+            renderer->defaultMaterialShaderKeyProperties().m_lightAreaFlags[lightIdx].setValue(theGeneratedKey, isArea);
+            renderer->defaultMaterialShaderKeyProperties().m_lightShadowFlags[lightIdx].setValue(theGeneratedKey, castShadowsArea);
         }
     }
     return theGeneratedKey;
 }
 
-bool QDemonLayerRenderPreparationData::prepareTextForRender(
-        QDemonText &inText, const QMatrix4x4 &inViewProjection, float inTextScaleFactor,
-        QDemonLayerRenderPreparationResultFlags &ioFlags)
+bool QDemonLayerRenderPreparationData::prepareTextForRender(QDemonText &inText,
+                                                            const QMatrix4x4 &inViewProjection,
+                                                            float inTextScaleFactor,
+                                                            QDemonLayerRenderPreparationResultFlags &ioFlags)
 {
     QDemonRef<QDemonTextTextureCacheInterface> theTextRenderer = renderer->getDemonContext()->getTextureCache();
     if (theTextRenderer == nullptr)
@@ -338,14 +325,11 @@ bool QDemonLayerRenderPreparationData::prepareTextForRender(
         inText.m_textTextureDetails = theResult.second.first;
         inText.m_pathFontItem = theResult.first.second;
         inText.m_pathFontDetails = theResult.first.first;
-        QDemonTextScaleAndOffset theScaleAndOffset(*inText.m_textTexture,
-                                              inText.m_textTextureDetails, inText);
+        QDemonTextScaleAndOffset theScaleAndOffset(*inText.m_textTexture, inText.m_textTextureDetails, inText);
         QVector2D theTextScale(theScaleAndOffset.textScale);
         QVector2D theTextOffset(theScaleAndOffset.textOffset);
-        QVector3D minimum(theTextOffset[0] - theTextScale[0], theTextOffset[1] - theTextScale[1],
-                0);
-        QVector3D maximum(theTextOffset[0] + theTextScale[0], theTextOffset[1] + theTextScale[1],
-                0);
+        QVector3D minimum(theTextOffset[0] - theTextScale[0], theTextOffset[1] - theTextScale[1], 0);
+        QVector3D maximum(theTextOffset[0] + theTextScale[0], theTextOffset[1] + theTextScale[1], 0);
         inText.m_bounds = QDemonBounds3(minimum, maximum);
         QMatrix4x4 theMVP;
         QMatrix3x3 theNormalMatrix;
@@ -354,25 +338,29 @@ bool QDemonLayerRenderPreparationData::prepareTextForRender(
         if (inText.m_pathFontDetails)
             ioFlags.setRequiresStencilBuffer(true);
 
-        QDemonTextRenderable *theRenderable = RENDER_FRAME_NEW(QDemonTextRenderable)(
-                    theFlags, inText.getGlobalPos(), *renderer, inText, inText.m_bounds, theMVP,
-                    inViewProjection, *inText.m_textTexture, theTextOffset, theTextScale);
+        QDemonTextRenderable *theRenderable = RENDER_FRAME_NEW(QDemonTextRenderable)(theFlags,
+                                                                                     inText.getGlobalPos(),
+                                                                                     *renderer,
+                                                                                     inText,
+                                                                                     inText.m_bounds,
+                                                                                     theMVP,
+                                                                                     inViewProjection,
+                                                                                     *inText.m_textTexture,
+                                                                                     theTextOffset,
+                                                                                     theTextScale);
         transparentObjects.push_back(theRenderable);
     }
     return retval;
 }
 
-QPair<bool, QDemonGraphObject *>
-QDemonLayerRenderPreparationData::resolveReferenceMaterial(QDemonGraphObject *inMaterial)
+QPair<bool, QDemonGraphObject *> QDemonLayerRenderPreparationData::resolveReferenceMaterial(QDemonGraphObject *inMaterial)
 {
     bool subsetDirty = false;
     bool badIdea = false;
     QDemonGraphObject *theSourceMaterialObject(inMaterial);
     QDemonGraphObject *theMaterialObject(inMaterial);
-    while (theMaterialObject
-           && theMaterialObject->type == QDemonGraphObjectTypes::ReferencedMaterial && !badIdea) {
-        QDemonReferencedMaterial *theRefMaterial =
-                static_cast<QDemonReferencedMaterial *>(theMaterialObject);
+    while (theMaterialObject && theMaterialObject->type == QDemonGraphObjectTypes::ReferencedMaterial && !badIdea) {
+        QDemonReferencedMaterial *theRefMaterial = static_cast<QDemonReferencedMaterial *>(theMaterialObject);
         theMaterialObject = theRefMaterial->m_referencedMaterial;
         if (theMaterialObject == theSourceMaterialObject) {
             badIdea = true;
@@ -389,9 +377,10 @@ QDemonLayerRenderPreparationData::resolveReferenceMaterial(QDemonGraphObject *in
     return QPair<bool, QDemonGraphObject *>(subsetDirty, theMaterialObject);
 }
 
-bool QDemonLayerRenderPreparationData::preparePathForRender(
-        QDemonPath &inPath, const QMatrix4x4 &inViewProjection,
-        const QDemonOption<QDemonClippingFrustum> &inClipFrustum, QDemonLayerRenderPreparationResultFlags &ioFlags)
+bool QDemonLayerRenderPreparationData::preparePathForRender(QDemonPath &inPath,
+                                                            const QMatrix4x4 &inViewProjection,
+                                                            const QDemonOption<QDemonClippingFrustum> &inClipFrustum,
+                                                            QDemonLayerRenderPreparationResultFlags &ioFlags)
 {
     QDemonRenderableObjectFlags theSharedFlags;
     theSharedFlags.setPickable(true);
@@ -404,8 +393,7 @@ bool QDemonLayerRenderPreparationData::preparePathForRender(
     inPath.calculateMVPAndNormalMatrix(inViewProjection, theMVP, theNormalMatrix);
     QDemonBounds3 theBounds(this->renderer->getDemonContext()->getPathManager()->getBounds(inPath));
 
-    if (inPath.globalOpacity >= QDEMON_RENDER_MINIMUM_RENDER_OPACITY
-            && inClipFrustum.hasValue()) {
+    if (inPath.globalOpacity >= QDEMON_RENDER_MINIMUM_RENDER_OPACITY && inClipFrustum.hasValue()) {
         // Check bounding box against the clipping planes
         QDemonBounds3 theGlobalBounds = theBounds;
         theGlobalBounds.transform(inPath.globalTransform);
@@ -415,8 +403,7 @@ bool QDemonLayerRenderPreparationData::preparePathForRender(
 
     QDemonGraphObject *theMaterials[2] = { inPath.m_material, inPath.m_secondMaterial };
 
-    if (inPath.m_pathType == PathTypes::Geometry
-            || inPath.m_paintStyle != PathPaintStyles::FilledAndStroked)
+    if (inPath.m_pathType == PathTypes::Geometry || inPath.m_paintStyle != PathPaintStyles::FilledAndStroked)
         theMaterials[1] = nullptr;
 
     // We need to fill material to be the first one rendered so the stroke goes on top.
@@ -431,8 +418,7 @@ bool QDemonLayerRenderPreparationData::preparePathForRender(
 
         QDemonRenderableObjectFlags theFlags = theSharedFlags;
 
-        QPair<bool, QDemonGraphObject *> theMaterialAndDirty(
-                    resolveReferenceMaterial(theMaterials[idx]));
+        QPair<bool, QDemonGraphObject *> theMaterialAndDirty(resolveReferenceMaterial(theMaterials[idx]));
         QDemonGraphObject *theMaterial(theMaterialAndDirty.second);
         retval = retval || theMaterialAndDirty.first;
 
@@ -440,15 +426,13 @@ bool QDemonLayerRenderPreparationData::preparePathForRender(
             QDemonRenderDefaultMaterial *theDefaultMaterial = static_cast<QDemonRenderDefaultMaterial *>(theMaterial);
             // Don't clear dirty flags if the material was referenced.
             bool clearMaterialFlags = theMaterial == inPath.m_material;
-            QDemonDefaultMaterialPreparationResult prepResult(prepareDefaultMaterialForRender(
-                                                             *theDefaultMaterial, theFlags, subsetOpacity, clearMaterialFlags));
+            QDemonDefaultMaterialPreparationResult prepResult(
+                    prepareDefaultMaterialForRender(*theDefaultMaterial, theFlags, subsetOpacity, clearMaterialFlags));
 
             theFlags = prepResult.renderableFlags;
             if (inPath.m_pathType == PathTypes::Geometry) {
-                if ((inPath.m_beginCapping != PathCapping::Noner
-                     && inPath.m_beginCapOpacity < 1.0f)
-                        || (inPath.m_endCapping != PathCapping::Noner
-                            && inPath.m_endCapOpacity < 1.0f))
+                if ((inPath.m_beginCapping != PathCapping::Noner && inPath.m_beginCapOpacity < 1.0f)
+                    || (inPath.m_endCapping != PathCapping::Noner && inPath.m_endCapOpacity < 1.0f))
                     theFlags.setHasTransparency(true);
             } else {
                 ioFlags.setRequiresStencilBuffer(true);
@@ -456,15 +440,22 @@ bool QDemonLayerRenderPreparationData::preparePathForRender(
             retval = retval || prepResult.dirty;
             bool isStroke = true;
             if (idx == 0 && inPath.m_pathType == PathTypes::Painted) {
-                if (inPath.m_paintStyle == PathPaintStyles::Filled
-                        || inPath.m_paintStyle == PathPaintStyles::FilledAndStroked)
+                if (inPath.m_paintStyle == PathPaintStyles::Filled || inPath.m_paintStyle == PathPaintStyles::FilledAndStroked)
                     isStroke = false;
             }
 
-            QDemonPathRenderable *theRenderable = RENDER_FRAME_NEW(QDemonPathRenderable)(
-                        theFlags, inPath.getGlobalPos(), renderer, inPath.globalTransform,
-                        theBounds, inPath, theMVP, theNormalMatrix, *theMaterial, prepResult.opacity,
-                        prepResult.materialKey, isStroke);
+            QDemonPathRenderable *theRenderable = RENDER_FRAME_NEW(QDemonPathRenderable)(theFlags,
+                                                                                         inPath.getGlobalPos(),
+                                                                                         renderer,
+                                                                                         inPath.globalTransform,
+                                                                                         theBounds,
+                                                                                         inPath,
+                                                                                         theMVP,
+                                                                                         theNormalMatrix,
+                                                                                         *theMaterial,
+                                                                                         prepResult.opacity,
+                                                                                         prepResult.materialKey,
+                                                                                         isStroke);
             theRenderable->m_firstImage = prepResult.firstImage;
 
             QDemonRenderContextInterface *demonContext(renderer->getDemonContext());
@@ -477,20 +468,16 @@ bool QDemonLayerRenderPreparationData::preparePathForRender(
                 transparentObjects.push_back(theRenderable);
             else
                 opaqueObjects.push_back(theRenderable);
-        } else if (theMaterial != nullptr
-                   && theMaterial->type == QDemonGraphObjectTypes::CustomMaterial) {
+        } else if (theMaterial != nullptr && theMaterial->type == QDemonGraphObjectTypes::CustomMaterial) {
             QDemonRenderCustomMaterial *theCustomMaterial = static_cast<QDemonRenderCustomMaterial *>(theMaterial);
             // Don't clear dirty flags if the material was referenced.
             // bool clearMaterialFlags = theMaterial == inPath.m_Material;
-            QDemonDefaultMaterialPreparationResult prepResult(
-                        prepareCustomMaterialForRender(*theCustomMaterial, theFlags, subsetOpacity));
+            QDemonDefaultMaterialPreparationResult prepResult(prepareCustomMaterialForRender(*theCustomMaterial, theFlags, subsetOpacity));
 
             theFlags = prepResult.renderableFlags;
             if (inPath.m_pathType == PathTypes::Geometry) {
-                if ((inPath.m_beginCapping != PathCapping::Noner
-                     && inPath.m_beginCapOpacity < 1.0f)
-                        || (inPath.m_endCapping != PathCapping::Noner
-                            && inPath.m_endCapOpacity < 1.0f))
+                if ((inPath.m_beginCapping != PathCapping::Noner && inPath.m_beginCapOpacity < 1.0f)
+                    || (inPath.m_endCapping != PathCapping::Noner && inPath.m_endCapOpacity < 1.0f))
                     theFlags.setHasTransparency(true);
             } else {
                 ioFlags.setRequiresStencilBuffer(true);
@@ -499,15 +486,22 @@ bool QDemonLayerRenderPreparationData::preparePathForRender(
             retval = retval || prepResult.dirty;
             bool isStroke = true;
             if (idx == 0 && inPath.m_pathType == PathTypes::Painted) {
-                if (inPath.m_paintStyle == PathPaintStyles::Filled
-                        || inPath.m_paintStyle == PathPaintStyles::FilledAndStroked)
+                if (inPath.m_paintStyle == PathPaintStyles::Filled || inPath.m_paintStyle == PathPaintStyles::FilledAndStroked)
                     isStroke = false;
             }
 
-            QDemonPathRenderable *theRenderable = RENDER_FRAME_NEW(QDemonPathRenderable)(
-                        theFlags, inPath.getGlobalPos(), renderer, inPath.globalTransform,
-                        theBounds, inPath, theMVP, theNormalMatrix, *theMaterial, prepResult.opacity,
-                        prepResult.materialKey, isStroke);
+            QDemonPathRenderable *theRenderable = RENDER_FRAME_NEW(QDemonPathRenderable)(theFlags,
+                                                                                         inPath.getGlobalPos(),
+                                                                                         renderer,
+                                                                                         inPath.globalTransform,
+                                                                                         theBounds,
+                                                                                         inPath,
+                                                                                         theMVP,
+                                                                                         theNormalMatrix,
+                                                                                         *theMaterial,
+                                                                                         prepResult.opacity,
+                                                                                         prepResult.materialKey,
+                                                                                         isStroke);
             theRenderable->m_firstImage = prepResult.firstImage;
 
             QDemonRenderContextInterface *demonContext(renderer->getDemonContext());
@@ -525,16 +519,19 @@ bool QDemonLayerRenderPreparationData::preparePathForRender(
     return retval;
 }
 
-void QDemonLayerRenderPreparationData::prepareImageForRender(
-        QDemonRenderImage &inImage, QDemonImageMapTypes::Enum inMapType, QDemonRenderableImage *&ioFirstImage,
-        QDemonRenderableImage *&ioNextImage, QDemonRenderableObjectFlags &ioFlags,
-        QDemonShaderDefaultMaterialKey &inShaderKey, quint32 inImageIndex)
+void QDemonLayerRenderPreparationData::prepareImageForRender(QDemonRenderImage &inImage,
+                                                             QDemonImageMapTypes::Enum inMapType,
+                                                             QDemonRenderableImage *&ioFirstImage,
+                                                             QDemonRenderableImage *&ioNextImage,
+                                                             QDemonRenderableObjectFlags &ioFlags,
+                                                             QDemonShaderDefaultMaterialKey &inShaderKey,
+                                                             quint32 inImageIndex)
 {
     QDemonRenderContextInterface *demonContext(renderer->getDemonContext());
     QDemonRef<QDemonBufferManagerInterface> bufferManager = demonContext->getBufferManager();
     QDemonRef<QDemonOffscreenRenderManagerInterface> theOffscreenRenderManager(demonContext->getOffscreenRenderManager());
-//    IRenderPluginManager &theRenderPluginManager(demonContext.GetRenderPluginManager());
-    if (inImage.clearDirty(*bufferManager, *theOffscreenRenderManager/*, theRenderPluginManager*/))
+    //    IRenderPluginManager &theRenderPluginManager(demonContext.GetRenderPluginManager());
+    if (inImage.clearDirty(*bufferManager, *theOffscreenRenderManager /*, theRenderPluginManager*/))
         ioFlags |= RenderPreparationResultFlagValues::Dirty;
 
     // All objects with offscreen renderers are pickable so we can pass the pick through to the
@@ -546,9 +543,8 @@ void QDemonLayerRenderPreparationData::prepareImageForRender(
 
     if (inImage.m_textureData.m_texture) {
         if (inImage.m_textureData.m_textureFlags.hasTransparency()
-                && (inMapType == QDemonImageMapTypes::Diffuse
-                    || inMapType == QDemonImageMapTypes::Opacity
-                    || inMapType == QDemonImageMapTypes::Translucency)) {
+            && (inMapType == QDemonImageMapTypes::Diffuse || inMapType == QDemonImageMapTypes::Opacity
+                || inMapType == QDemonImageMapTypes::Translucency)) {
             ioFlags |= RenderPreparationResultFlagValues::HasTransparency;
         }
         // Textures used in general have linear characteristics.
@@ -584,21 +580,20 @@ void QDemonLayerRenderPreparationData::prepareImageForRender(
             ioNextImage->m_nextImage = theImage;
 
         // assume offscreen renderer produces non-premultiplied image
-        if (inImage.m_lastFrameOffscreenRenderer == nullptr
-                && inImage.m_textureData.m_textureFlags.isPreMultiplied())
+        if (inImage.m_lastFrameOffscreenRenderer == nullptr && inImage.m_textureData.m_textureFlags.isPreMultiplied())
             theKeyProp.setPremultiplied(inShaderKey, true);
 
-        QDemonShaderKeyTextureSwizzle &theSwizzleKeyProp =
-                renderer->defaultMaterialShaderKeyProperties().m_textureSwizzle[inImageIndex];
-        theSwizzleKeyProp.setSwizzleMode(
-                    inShaderKey, inImage.m_textureData.m_texture->getTextureSwizzleMode(), true);
+        QDemonShaderKeyTextureSwizzle &theSwizzleKeyProp = renderer->defaultMaterialShaderKeyProperties().m_textureSwizzle[inImageIndex];
+        theSwizzleKeyProp.setSwizzleMode(inShaderKey, inImage.m_textureData.m_texture->getTextureSwizzleMode(), true);
 
         ioNextImage = theImage;
     }
 }
 
 QDemonDefaultMaterialPreparationResult QDemonLayerRenderPreparationData::prepareDefaultMaterialForRender(
-        QDemonRenderDefaultMaterial &inMaterial, QDemonRenderableObjectFlags &inExistingFlags, float inOpacity,
+        QDemonRenderDefaultMaterial &inMaterial,
+        QDemonRenderableObjectFlags &inExistingFlags,
+        float inOpacity,
         bool inClearDirtyFlags)
 {
     QDemonRenderDefaultMaterial *theMaterial = &inMaterial;
@@ -619,8 +614,8 @@ QDemonDefaultMaterialPreparationResult QDemonLayerRenderPreparationData::prepare
     QDemonRenderableImage *firstImage = nullptr;
 
     // set wireframe mode
-    renderer->defaultMaterialShaderKeyProperties().m_wireframeMode.setValue(
-                theGeneratedKey, renderer->getDemonContext()->getWireframeMode());
+    renderer->defaultMaterialShaderKeyProperties().m_wireframeMode.setValue(theGeneratedKey,
+                                                                            renderer->getDemonContext()->getWireframeMode());
 
     if (theMaterial->iblProbe && checkLightProbeDirty(*theMaterial->iblProbe)) {
         renderer->prepareImageForIbl(*theMaterial->iblProbe);
@@ -629,67 +624,64 @@ QDemonDefaultMaterialPreparationResult QDemonLayerRenderPreparationData::prepare
     if (!renderer->defaultMaterialShaderKeyProperties().m_hasIbl.getValue(theGeneratedKey)) {
         bool lightProbeValid = HasValidLightProbe(theMaterial->iblProbe);
         setShaderFeature("QDEMON_ENABLE_LIGHT_PROBE", lightProbeValid);
-        renderer->defaultMaterialShaderKeyProperties().m_hasIbl.setValue(theGeneratedKey,
-                                                                          lightProbeValid);
+        renderer->defaultMaterialShaderKeyProperties().m_hasIbl.setValue(theGeneratedKey, lightProbeValid);
         // SetShaderFeature( "QDEMON_ENABLE_IBL_FOV",
         // m_Renderer.GetLayerRenderData()->m_Layer.m_ProbeFov < 180.0f );
     }
 
     if (subsetOpacity >= QDEMON_RENDER_MINIMUM_RENDER_OPACITY) {
 
-        if (theMaterial->blendMode != DefaultMaterialBlendMode::Normal
-                || theMaterial->opacityMap) {
+        if (theMaterial->blendMode != DefaultMaterialBlendMode::Normal || theMaterial->opacityMap) {
             renderableFlags |= RenderPreparationResultFlagValues::HasTransparency;
         }
 
         bool specularEnabled = theMaterial->isSpecularEnabled();
-        renderer->defaultMaterialShaderKeyProperties().m_specularEnabled.setValue(
-                    theGeneratedKey, specularEnabled);
+        renderer->defaultMaterialShaderKeyProperties().m_specularEnabled.setValue(theGeneratedKey, specularEnabled);
         if (specularEnabled) {
-            renderer->defaultMaterialShaderKeyProperties().m_specularModel.setSpecularModel(
-                        theGeneratedKey, theMaterial->specularModel);
+            renderer->defaultMaterialShaderKeyProperties().m_specularModel.setSpecularModel(theGeneratedKey, theMaterial->specularModel);
         }
 
-        renderer->defaultMaterialShaderKeyProperties().m_fresnelEnabled.setValue(
-                    theGeneratedKey, theMaterial->isFresnelEnabled());
+        renderer->defaultMaterialShaderKeyProperties().m_fresnelEnabled.setValue(theGeneratedKey, theMaterial->isFresnelEnabled());
 
-        renderer->defaultMaterialShaderKeyProperties().m_vertexColorsEnabled.setValue(
-                    theGeneratedKey, theMaterial->isVertexColorsEnabled());
+        renderer->defaultMaterialShaderKeyProperties().m_vertexColorsEnabled.setValue(theGeneratedKey,
+                                                                                      theMaterial->isVertexColorsEnabled());
 
         // Run through the material's images and prepare them for render.
         // this may in fact set pickable on the renderable flags if one of the images
         // links to a sub presentation or any offscreen rendered object.
         QDemonRenderableImage *nextImage = nullptr;
-#define CHECK_IMAGE_AND_PREPARE(img, imgtype, shadercomponent)                                     \
-    if ((img))                                                                                     \
-    prepareImageForRender(*(img), imgtype, firstImage, nextImage, renderableFlags,             \
-    theGeneratedKey, shadercomponent);
+#define CHECK_IMAGE_AND_PREPARE(img, imgtype, shadercomponent)                                                         \
+    if ((img))                                                                                                         \
+        prepareImageForRender(*(img), imgtype, firstImage, nextImage, renderableFlags, theGeneratedKey, shadercomponent);
 
-        CHECK_IMAGE_AND_PREPARE(theMaterial->diffuseMaps[0], QDemonImageMapTypes::Diffuse,
-                QDemonShaderDefaultMaterialKeyProperties::DiffuseMap0);
-        CHECK_IMAGE_AND_PREPARE(theMaterial->diffuseMaps[1], QDemonImageMapTypes::Diffuse,
-                QDemonShaderDefaultMaterialKeyProperties::DiffuseMap1);
-        CHECK_IMAGE_AND_PREPARE(theMaterial->diffuseMaps[2], QDemonImageMapTypes::Diffuse,
-                QDemonShaderDefaultMaterialKeyProperties::DiffuseMap2);
-        CHECK_IMAGE_AND_PREPARE(theMaterial->emissiveMap, QDemonImageMapTypes::Emissive,
-                                QDemonShaderDefaultMaterialKeyProperties::EmissiveMap);
-        CHECK_IMAGE_AND_PREPARE(theMaterial->emissiveMap2, QDemonImageMapTypes::Emissive,
-                                QDemonShaderDefaultMaterialKeyProperties::EmissiveMap2);
-        CHECK_IMAGE_AND_PREPARE(theMaterial->specularReflection, QDemonImageMapTypes::Specular,
+        CHECK_IMAGE_AND_PREPARE(theMaterial->diffuseMaps[0],
+                                QDemonImageMapTypes::Diffuse,
+                                QDemonShaderDefaultMaterialKeyProperties::DiffuseMap0);
+        CHECK_IMAGE_AND_PREPARE(theMaterial->diffuseMaps[1],
+                                QDemonImageMapTypes::Diffuse,
+                                QDemonShaderDefaultMaterialKeyProperties::DiffuseMap1);
+        CHECK_IMAGE_AND_PREPARE(theMaterial->diffuseMaps[2],
+                                QDemonImageMapTypes::Diffuse,
+                                QDemonShaderDefaultMaterialKeyProperties::DiffuseMap2);
+        CHECK_IMAGE_AND_PREPARE(theMaterial->emissiveMap, QDemonImageMapTypes::Emissive, QDemonShaderDefaultMaterialKeyProperties::EmissiveMap);
+        CHECK_IMAGE_AND_PREPARE(theMaterial->emissiveMap2, QDemonImageMapTypes::Emissive, QDemonShaderDefaultMaterialKeyProperties::EmissiveMap2);
+        CHECK_IMAGE_AND_PREPARE(theMaterial->specularReflection,
+                                QDemonImageMapTypes::Specular,
                                 QDemonShaderDefaultMaterialKeyProperties::SpecularMap);
-        CHECK_IMAGE_AND_PREPARE(theMaterial->roughnessMap, QDemonImageMapTypes::Roughness,
+        CHECK_IMAGE_AND_PREPARE(theMaterial->roughnessMap,
+                                QDemonImageMapTypes::Roughness,
                                 QDemonShaderDefaultMaterialKeyProperties::RoughnessMap);
-        CHECK_IMAGE_AND_PREPARE(theMaterial->opacityMap, QDemonImageMapTypes::Opacity,
-                                QDemonShaderDefaultMaterialKeyProperties::OpacityMap);
-        CHECK_IMAGE_AND_PREPARE(theMaterial->bumpMap, QDemonImageMapTypes::Bump,
-                                QDemonShaderDefaultMaterialKeyProperties::BumpMap);
-        CHECK_IMAGE_AND_PREPARE(theMaterial->specularMap, QDemonImageMapTypes::SpecularAmountMap,
+        CHECK_IMAGE_AND_PREPARE(theMaterial->opacityMap, QDemonImageMapTypes::Opacity, QDemonShaderDefaultMaterialKeyProperties::OpacityMap);
+        CHECK_IMAGE_AND_PREPARE(theMaterial->bumpMap, QDemonImageMapTypes::Bump, QDemonShaderDefaultMaterialKeyProperties::BumpMap);
+        CHECK_IMAGE_AND_PREPARE(theMaterial->specularMap,
+                                QDemonImageMapTypes::SpecularAmountMap,
                                 QDemonShaderDefaultMaterialKeyProperties::SpecularAmountMap);
-        CHECK_IMAGE_AND_PREPARE(theMaterial->normalMap, QDemonImageMapTypes::Normal,
-                                QDemonShaderDefaultMaterialKeyProperties::NormalMap);
-        CHECK_IMAGE_AND_PREPARE(theMaterial->displacementMap, QDemonImageMapTypes::Displacement,
+        CHECK_IMAGE_AND_PREPARE(theMaterial->normalMap, QDemonImageMapTypes::Normal, QDemonShaderDefaultMaterialKeyProperties::NormalMap);
+        CHECK_IMAGE_AND_PREPARE(theMaterial->displacementMap,
+                                QDemonImageMapTypes::Displacement,
                                 QDemonShaderDefaultMaterialKeyProperties::DisplacementMap);
-        CHECK_IMAGE_AND_PREPARE(theMaterial->translucencyMap, QDemonImageMapTypes::Translucency,
+        CHECK_IMAGE_AND_PREPARE(theMaterial->translucencyMap,
+                                QDemonImageMapTypes::Translucency,
                                 QDemonShaderDefaultMaterialKeyProperties::TranslucencyMap);
         CHECK_IMAGE_AND_PREPARE(theMaterial->lightmaps.m_lightmapIndirect,
                                 QDemonImageMapTypes::LightmapIndirect,
@@ -721,11 +713,11 @@ QDemonDefaultMaterialPreparationResult QDemonLayerRenderPreparationData::prepare
     return retval;
 }
 
-QDemonDefaultMaterialPreparationResult QDemonLayerRenderPreparationData::prepareCustomMaterialForRender(
-        QDemonRenderCustomMaterial &inMaterial, QDemonRenderableObjectFlags &inExistingFlags, float inOpacity)
+QDemonDefaultMaterialPreparationResult QDemonLayerRenderPreparationData::prepareCustomMaterialForRender(QDemonRenderCustomMaterial &inMaterial,
+                                                                                                        QDemonRenderableObjectFlags &inExistingFlags,
+                                                                                                        float inOpacity)
 {
-    QDemonDefaultMaterialPreparationResult retval(generateLightingKey(
-                                                 DefaultMaterialLighting::FragmentLighting)); // always fragment lighting
+    QDemonDefaultMaterialPreparationResult retval(generateLightingKey(DefaultMaterialLighting::FragmentLighting)); // always fragment lighting
     retval.renderableFlags = inExistingFlags;
     QDemonRenderableObjectFlags &renderableFlags(retval.renderableFlags);
     QDemonShaderDefaultMaterialKey &theGeneratedKey(retval.materialKey);
@@ -733,8 +725,8 @@ QDemonDefaultMaterialPreparationResult QDemonLayerRenderPreparationData::prepare
     float &subsetOpacity(retval.opacity);
 
     // set wireframe mode
-    renderer->defaultMaterialShaderKeyProperties().m_wireframeMode.setValue(
-                theGeneratedKey, renderer->getDemonContext()->getWireframeMode());
+    renderer->defaultMaterialShaderKeyProperties().m_wireframeMode.setValue(theGeneratedKey,
+                                                                            renderer->getDemonContext()->getWireframeMode());
 
     if (subsetOpacity < QDEMON_RENDER_MINIMUM_RENDER_OPACITY) {
         subsetOpacity = 0.0f;
@@ -751,12 +743,12 @@ QDemonDefaultMaterialPreparationResult QDemonLayerRenderPreparationData::prepare
     QDemonRenderableImage *firstImage = nullptr;
     QDemonRenderableImage *nextImage = nullptr;
 
-#define CHECK_IMAGE_AND_PREPARE(img, imgtype, shadercomponent)                                     \
-    if ((img))                                                                                     \
-    prepareImageForRender(*(img), imgtype, firstImage, nextImage, renderableFlags,             \
-    theGeneratedKey, shadercomponent);
+#define CHECK_IMAGE_AND_PREPARE(img, imgtype, shadercomponent)                                                         \
+    if ((img))                                                                                                         \
+        prepareImageForRender(*(img), imgtype, firstImage, nextImage, renderableFlags, theGeneratedKey, shadercomponent);
 
-    CHECK_IMAGE_AND_PREPARE(inMaterial.m_displacementMap, QDemonImageMapTypes::Displacement,
+    CHECK_IMAGE_AND_PREPARE(inMaterial.m_displacementMap,
+                            QDemonImageMapTypes::Displacement,
                             QDemonShaderDefaultMaterialKeyProperties::DisplacementMap);
     CHECK_IMAGE_AND_PREPARE(inMaterial.m_lightmaps.m_lightmapIndirect,
                             QDemonImageMapTypes::LightmapIndirect,
@@ -803,8 +795,7 @@ bool QDemonLayerRenderPreparationData::prepareModelForRender(QDemonRenderModel &
             QVector3D theModelCenter(theSubset.bounds.getCenter());
             theModelCenter = mat44::transform(inModel.globalTransform, theModelCenter);
 
-            if (subsetOpacity >= QDEMON_RENDER_MINIMUM_RENDER_OPACITY
-                    && inClipFrustum.hasValue()) {
+            if (subsetOpacity >= QDEMON_RENDER_MINIMUM_RENDER_OPACITY && inClipFrustum.hasValue()) {
                 // Check bounding box against the clipping planes
                 QDemonBounds3 theGlobalBounds = theSubset.bounds;
                 theGlobalBounds.transform(theModelContext.model.globalTransform);
@@ -821,8 +812,7 @@ bool QDemonLayerRenderPreparationData::prepareModelForRender(QDemonRenderModel &
             // fine-grained style.
             bool canModelBePickable = inModel.globalOpacity > .01f;
             renderableFlags.setPickable(canModelBePickable
-                                        && (theModelContext.model.flags.isGloballyPickable()
-                                            || renderableFlags.getPickable()));
+                                        && (theModelContext.model.flags.isGloballyPickable() || renderableFlags.getPickable()));
             QDemonRenderableObject *theRenderableObject = nullptr;
             QPair<bool, QDemonGraphObject *> theMaterialObjectAndDirty = resolveReferenceMaterial(theSourceMaterialObject);
             QDemonGraphObject *theMaterialObject = theMaterialObjectAndDirty.second;
@@ -843,8 +833,7 @@ bool QDemonLayerRenderPreparationData::prepareModelForRender(QDemonRenderModel &
                 // check wireframe mode
                 theSubset.wireframeMode = demonContext->getWireframeMode();
 
-                subsetDirty =
-                        subsetDirty | (theSubset.wireframeMode != inModel.wireframeMode);
+                subsetDirty = subsetDirty | (theSubset.wireframeMode != inModel.wireframeMode);
                 inModel.wireframeMode = demonContext->getWireframeMode();
             } else {
                 theSubset.primitiveType = theSubset.inputAssembler->getPrimitiveType();
@@ -853,8 +842,7 @@ bool QDemonLayerRenderPreparationData::prepareModelForRender(QDemonRenderModel &
                 // currently we allow wirframe mode only if tessellation is on
                 theSubset.wireframeMode = false;
 
-                subsetDirty =
-                        subsetDirty | (theSubset.wireframeMode != inModel.wireframeMode);
+                subsetDirty = subsetDirty | (theSubset.wireframeMode != inModel.wireframeMode);
                 inModel.wireframeMode = false;
             }
             // Only clear flags on the materials in this direct hierarchy.  Do not clear them of
@@ -866,20 +854,18 @@ bool QDemonLayerRenderPreparationData::prepareModelForRender(QDemonRenderModel &
                 continue;
 
             if (theMaterialObject->type == QDemonGraphObjectTypes::DefaultMaterial) {
-                QDemonRenderDefaultMaterial &theMaterial(
-                            static_cast<QDemonRenderDefaultMaterial &>(*theMaterialObject));
+                QDemonRenderDefaultMaterial &theMaterial(static_cast<QDemonRenderDefaultMaterial &>(*theMaterialObject));
                 QDemonDefaultMaterialPreparationResult theMaterialPrepResult(
-                            prepareDefaultMaterialForRender(theMaterial, renderableFlags, subsetOpacity,
-                                                            clearMaterialDirtyFlags));
+                        prepareDefaultMaterialForRender(theMaterial, renderableFlags, subsetOpacity, clearMaterialDirtyFlags));
                 QDemonShaderDefaultMaterialKey theGeneratedKey = theMaterialPrepResult.materialKey;
                 subsetOpacity = theMaterialPrepResult.opacity;
                 QDemonRenderableImage *firstImage(theMaterialPrepResult.firstImage);
                 subsetDirty |= theMaterialPrepResult.dirty;
                 renderableFlags = theMaterialPrepResult.renderableFlags;
 
-                renderer->defaultMaterialShaderKeyProperties()
-                        .m_tessellationMode.setTessellationMode(theGeneratedKey,
-                                                                inModel.tessellationMode, true);
+                renderer->defaultMaterialShaderKeyProperties().m_tessellationMode.setTessellationMode(theGeneratedKey,
+                                                                                                      inModel.tessellationMode,
+                                                                                                      true);
 
                 QDemonConstDataRef<QMatrix4x4> boneGlobals;
                 if (theSubset.joints.size()) {
@@ -887,26 +873,24 @@ bool QDemonLayerRenderPreparationData::prepareModelForRender(QDemonRenderModel &
                 }
 
                 theRenderableObject = RENDER_FRAME_NEW(QDemonSubsetRenderable)(renderableFlags,
-                                                                 theModelCenter,
-                                                                 renderer,
-                                                                 theSubset,
-                                                                 theMaterial,
-                                                                 theModelContext,
-                                                                 subsetOpacity,
-                                                                 firstImage,
-                                                                 theGeneratedKey,
-                                                                 boneGlobals);
+                                                                               theModelCenter,
+                                                                               renderer,
+                                                                               theSubset,
+                                                                               theMaterial,
+                                                                               theModelContext,
+                                                                               subsetOpacity,
+                                                                               firstImage,
+                                                                               theGeneratedKey,
+                                                                               boneGlobals);
                 subsetDirty = subsetDirty || renderableFlags.isDirty();
             } else if (theMaterialObject->type == QDemonGraphObjectTypes::CustomMaterial) {
-                QDemonRenderCustomMaterial &theMaterial(
-                            static_cast<QDemonRenderCustomMaterial &>(*theMaterialObject));
+                QDemonRenderCustomMaterial &theMaterial(static_cast<QDemonRenderCustomMaterial &>(*theMaterialObject));
 
                 QDemonRef<QDemonCustomMaterialSystemInterface> theMaterialSystem(demonContext->getCustomMaterialSystem());
                 subsetDirty |= theMaterialSystem->prepareForRender(theModelContext.model, theSubset, theMaterial, clearMaterialDirtyFlags);
 
                 QDemonDefaultMaterialPreparationResult theMaterialPrepResult(
-                            prepareCustomMaterialForRender(theMaterial, renderableFlags,
-                                                           subsetOpacity));
+                        prepareCustomMaterialForRender(theMaterial, renderableFlags, subsetOpacity));
                 QDemonShaderDefaultMaterialKey theGeneratedKey = theMaterialPrepResult.materialKey;
                 subsetOpacity = theMaterialPrepResult.opacity;
                 QDemonRenderableImage *firstImage(theMaterialPrepResult.firstImage);
@@ -919,31 +903,30 @@ bool QDemonLayerRenderPreparationData::prepareModelForRender(QDemonRenderModel &
                 if (theMaterial.m_hasRefraction)
                     renderableFlags |= RenderPreparationResultFlagValues::HasRefraction;
 
-                renderer->defaultMaterialShaderKeyProperties()
-                        .m_tessellationMode.setTessellationMode(theGeneratedKey,
-                                                                inModel.tessellationMode, true);
+                renderer->defaultMaterialShaderKeyProperties().m_tessellationMode.setTessellationMode(theGeneratedKey,
+                                                                                                      inModel.tessellationMode,
+                                                                                                      true);
 
                 if (theMaterial.m_iblProbe && checkLightProbeDirty(*theMaterial.m_iblProbe)) {
                     renderer->prepareImageForIbl(*theMaterial.m_iblProbe);
                 }
 
                 theRenderableObject = RENDER_FRAME_NEW(QDemonCustomMaterialRenderable)(renderableFlags,
-                                                                         theModelCenter,
-                                                                         renderer,
-                                                                         theSubset,
-                                                                         theMaterial,
-                                                                         theModelContext,
-                                                                         subsetOpacity,
-                                                                         firstImage,
-                                                                         theGeneratedKey);
+                                                                                       theModelCenter,
+                                                                                       renderer,
+                                                                                       theSubset,
+                                                                                       theMaterial,
+                                                                                       theModelContext,
+                                                                                       subsetOpacity,
+                                                                                       firstImage,
+                                                                                       theGeneratedKey);
             }
             if (theRenderableObject) {
                 theRenderableObject->scopedLights = inScopedLights;
                 // set tessellation
                 theRenderableObject->tessellationMode = inModel.tessellationMode;
 
-                if (theRenderableObject->renderableFlags.hasTransparency()
-                        || theRenderableObject->renderableFlags.hasRefraction()) {
+                if (theRenderableObject->renderableFlags.hasTransparency() || theRenderableObject->renderableFlags.hasRefraction()) {
                     transparentObjects.push_back(theRenderableObject);
                 } else {
                     opaqueObjects.push_back(theRenderableObject);
@@ -954,9 +937,10 @@ bool QDemonLayerRenderPreparationData::prepareModelForRender(QDemonRenderModel &
     return subsetDirty;
 }
 
-bool QDemonLayerRenderPreparationData::prepareRenderablesForRender(
-        const QMatrix4x4 &inViewProjection, const QDemonOption<QDemonClippingFrustum> &inClipFrustum,
-        float inTextScaleFactor, QDemonLayerRenderPreparationResultFlags &ioFlags)
+bool QDemonLayerRenderPreparationData::prepareRenderablesForRender(const QMatrix4x4 &inViewProjection,
+                                                                   const QDemonOption<QDemonClippingFrustum> &inClipFrustum,
+                                                                   float inTextScaleFactor,
+                                                                   QDemonLayerRenderPreparationResultFlags &ioFlags)
 {
     QDemonStackPerfTimer __timer(*renderer->getDemonContext()->getPerfTimer(), "SLayerRenderData::PrepareRenderablesForRender");
     viewProjection = inViewProjection;
@@ -972,8 +956,7 @@ bool QDemonLayerRenderPreparationData::prepareRenderablesForRender(
             QDemonRenderModel *theModel = static_cast<QDemonRenderModel *>(theNode);
             theModel->calculateGlobalVariables();
             if (theModel->flags.isGloballyActive()) {
-                bool wasModelDirty = prepareModelForRender(
-                            *theModel, inViewProjection, inClipFrustum, theNodeEntry.lights);
+                bool wasModelDirty = prepareModelForRender(*theModel, inViewProjection, inClipFrustum, theNodeEntry.lights);
                 wasDataDirty = wasDataDirty || wasModelDirty;
             }
         } break;
@@ -982,8 +965,7 @@ bool QDemonLayerRenderPreparationData::prepareRenderablesForRender(
                 QDemonText *theText = static_cast<QDemonText *>(theNode);
                 theText->calculateGlobalVariables();
                 if (theText->flags.isGloballyActive()) {
-                    bool wasTextDirty = prepareTextForRender(*theText, inViewProjection,
-                                                             theTextScaleFactor, ioFlags);
+                    bool wasTextDirty = prepareTextForRender(*theText, inViewProjection, theTextScaleFactor, ioFlags);
                     wasDataDirty = wasDataDirty || wasTextDirty;
                 }
             }
@@ -992,8 +974,7 @@ bool QDemonLayerRenderPreparationData::prepareRenderablesForRender(
             QDemonPath *thePath = static_cast<QDemonPath *>(theNode);
             thePath->calculateGlobalVariables();
             if (thePath->flags.isGloballyActive()) {
-                bool wasPathDirty =
-                        preparePathForRender(*thePath, inViewProjection, inClipFrustum, ioFlags);
+                bool wasPathDirty = preparePathForRender(*thePath, inViewProjection, inClipFrustum, ioFlags);
                 wasDataDirty = wasDataDirty || wasPathDirty;
             }
         } break;
@@ -1009,8 +990,10 @@ bool QDemonLayerRenderPreparationData::checkLightProbeDirty(QDemonRenderImage &i
 {
     QDemonRenderContextInterface *theContext(renderer->getDemonContext());
     return inLightProbe.clearDirty(*theContext->getBufferManager(),
-                                   *theContext->getOffscreenRenderManager()/*,
-                                   theContext.GetRenderPluginManager()*/, true);
+                                   *theContext->getOffscreenRenderManager() /*,
+                                    theContext.GetRenderPluginManager()*/
+                                   ,
+                                   true);
 }
 
 struct QDemonLightNodeMarker
@@ -1022,9 +1005,7 @@ struct QDemonLightNodeMarker
     bool addOrRemove = false;
     QDemonLightNodeMarker() = default;
     QDemonLightNodeMarker(QDemonRenderLight &inLight, quint32 inLightIndex, QDemonGraphNode &inNode, bool aorm)
-        : light(&inLight)
-        , lightIndex(inLightIndex)
-        , addOrRemove(aorm)
+        : light(&inLight), lightIndex(inLightIndex), addOrRemove(aorm)
     {
         if (inNode.type == QDemonGraphObjectTypes::Layer) {
             firstValidIndex = 0;
@@ -1035,8 +1016,7 @@ struct QDemonLightNodeMarker
             QDemonGraphNode *firstChild = inNode.firstChild;
             // find deepest last child
             while (firstChild) {
-                for (QDemonGraphNode *childNode = firstChild; childNode;
-                     childNode = childNode->nextSibling)
+                for (QDemonGraphNode *childNode = firstChild; childNode; childNode = childNode->nextSibling)
                     lastChild = childNode;
 
                 if (lastChild)
@@ -1056,15 +1036,13 @@ struct QDemonLightNodeMarker
 // m_Layer.m_Camera->CalculateViewProjectionMatrix(m_ViewProjection);
 void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportDimensions)
 {
-    QDemonStackPerfTimer __timer(*renderer->getDemonContext()->getPerfTimer(),
-                            "SLayerRenderData::PrepareForRender");
+    QDemonStackPerfTimer __timer(*renderer->getDemonContext()->getPerfTimer(), "SLayerRenderData::PrepareForRender");
     if (layerPrepResult.hasValue())
         return;
 
     features.clear();
     featureSetHash = 0;
-    QVector2D thePresentationDimensions((float)inViewportDimensions.width(),
-                                        (float)inViewportDimensions.height());
+    QVector2D thePresentationDimensions((float)inViewportDimensions.width(), (float)inViewportDimensions.height());
     QDemonRef<QDemonRenderListInterface> theGraph(renderer->getDemonContext()->getRenderList());
     QRect theViewport(theGraph->getViewport());
     QRect theScissor(theGraph->getViewport());
@@ -1074,9 +1052,7 @@ void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportD
     bool wasDataDirty = false;
     wasDirty = layer.flags.isDirty();
     // The first pass is just to render the data.
-    quint32 maxNumAAPasses = layer.progressiveAAMode == AAModeValues::NoAA
-            ? (quint32)0
-            : (quint32)(layer.progressiveAAMode) + 1;
+    quint32 maxNumAAPasses = layer.progressiveAAMode == AAModeValues::NoAA ? (quint32)0 : (quint32)(layer.progressiveAAMode) + 1;
     maxNumAAPasses = qMin((quint32)(MAX_AA_LEVELS + 1), maxNumAAPasses);
     QDemonRenderEffect *theLastEffect = nullptr;
     // Uncomment the line below to disable all progressive AA.
@@ -1095,16 +1071,14 @@ void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportD
     if (layer.flags.isActive()) {
         // Get the layer's width and height.
         QDemonRef<QDemonEffectSystemInterface> theEffectSystem(renderer->getDemonContext()->getEffectSystem());
-        for (QDemonRenderEffect *theEffect = layer.firstEffect; theEffect;
-             theEffect = theEffect->m_nextEffect) {
+        for (QDemonRenderEffect *theEffect = layer.firstEffect; theEffect; theEffect = theEffect->m_nextEffect) {
             if (theEffect->flags.isDirty()) {
                 wasDirty = true;
                 theEffect->flags.setDirty(false);
             }
             if (theEffect->flags.isActive()) {
                 theLastEffect = theEffect;
-                if (hasOffscreenRenderer == false
-                        && theEffectSystem->doesEffectRequireDepthTexture(theEffect->className))
+                if (hasOffscreenRenderer == false && theEffectSystem->doesEffectRequireDepthTexture(theEffect->className))
                     requiresDepthPrepass = true;
             }
         }
@@ -1123,22 +1097,24 @@ void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportD
             maxNumAAPasses = 0;
         }
 
-        thePrepResult = QDemonLayerRenderPreparationResult(QDemonLayerRenderHelper(
-                                                          theViewport, theScissor, layer.scene->presentation->presentationDimensions,
-                                                          layer, shouldRenderToTexture, renderer->getDemonContext()->getScaleMode(),
-                                                          renderer->getDemonContext()->getPresentationScaleFactor()));
+        thePrepResult = QDemonLayerRenderPreparationResult(
+                QDemonLayerRenderHelper(theViewport,
+                                        theScissor,
+                                        layer.scene->presentation->presentationDimensions,
+                                        layer,
+                                        shouldRenderToTexture,
+                                        renderer->getDemonContext()->getScaleMode(),
+                                        renderer->getDemonContext()->getPresentationScaleFactor()));
         thePrepResult.lastEffect = theLastEffect;
         thePrepResult.maxAAPassIndex = maxNumAAPasses;
-        thePrepResult.flags.setRequiresDepthTexture(requiresDepthPrepass
-                                                      || needsWidgetTexture());
+        thePrepResult.flags.setRequiresDepthTexture(requiresDepthPrepass || needsWidgetTexture());
         thePrepResult.flags.setShouldRenderToTexture(shouldRenderToTexture);
         if (renderer->getContext()->getRenderContextType() != QDemonRenderContextValues::GLES2)
             thePrepResult.flags.setRequiresSsaoPass(SSAOEnabled);
 
         if (thePrepResult.isLayerVisible()) {
             if (shouldRenderToTexture) {
-                renderer->getDemonContext()->getRenderList()->addRenderTask(
-                            createRenderToTextureRunnable());
+                renderer->getDemonContext()->getRenderList()->addRenderTask(createRenderToTextureRunnable());
             }
             if (layer.lightProbe && checkLightProbeDirty(*layer.lightProbe)) {
                 renderer->prepareImageForIbl(*layer.lightProbe);
@@ -1150,23 +1126,19 @@ void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportD
             setShaderFeature("QDEMON_ENABLE_LIGHT_PROBE", lightProbeValid);
             setShaderFeature("QDEMON_ENABLE_IBL_FOV", layer.probeFov < 180.0f);
 
-            if (lightProbeValid && layer.lightProbe2
-                    && checkLightProbeDirty(*layer.lightProbe2)) {
+            if (lightProbeValid && layer.lightProbe2 && checkLightProbeDirty(*layer.lightProbe2)) {
                 renderer->prepareImageForIbl(*layer.lightProbe2);
                 wasDataDirty = true;
             }
 
-            setShaderFeature("QDEMON_ENABLE_LIGHT_PROBE_2",
-                             lightProbeValid && HasValidLightProbe(layer.lightProbe2));
+            setShaderFeature("QDEMON_ENABLE_LIGHT_PROBE_2", lightProbeValid && HasValidLightProbe(layer.lightProbe2));
 
             // Push nodes in reverse depth first order
             if (renderableNodes.empty()) {
                 camerasAndLights.clear();
                 quint32 dfsIndex = 0;
-                for (QDemonGraphNode *theChild = layer.firstChild; theChild;
-                     theChild = theChild->nextSibling)
-                    MaybeQueueNodeForRender(*theChild, renderableNodes, camerasAndLights,
-                                            dfsIndex);
+                for (QDemonGraphNode *theChild = layer.firstChild; theChild; theChild = theChild->nextSibling)
+                    MaybeQueueNodeForRender(*theChild, renderableNodes, camerasAndLights, dfsIndex);
                 std::reverse(camerasAndLights.begin(), camerasAndLights.end());
                 std::reverse(renderableNodes.begin(), renderableNodes.end());
                 lightToNodeMap.clear();
@@ -1212,22 +1184,23 @@ void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportD
                     if (theLight->flags.isGloballyActive()) {
                         if (theLight->m_scope == nullptr) {
                             lights.push_back(theLight);
-                            if (renderer->getContext()->getRenderContextType()
-                                    != QDemonRenderContextValues::GLES2
-                                    && theLight->m_castShadow && getShadowMapManager()) {
+                            if (renderer->getContext()->getRenderContextType() != QDemonRenderContextValues::GLES2
+                                && theLight->m_castShadow && getShadowMapManager()) {
                                 // PKC -- use of "res" as an exponent of two is an annoying
                                 // artifact of the XML interface
                                 // I'll change this with an enum interface later on, but that's
                                 // less important right now.
                                 quint32 mapSize = 1 << theLight->m_shadowMapRes;
-                                ShadowMapModes::Enum mapMode =
-                                        (theLight->m_lightType != RenderLightTypes::Directional)
+                                ShadowMapModes::Enum mapMode = (theLight->m_lightType != RenderLightTypes::Directional)
                                         ? ShadowMapModes::CUBE
                                         : ShadowMapModes::VSM;
-                                shadowMapManager->addShadowMapEntry(
-                                            lights.size() - 1, mapSize, mapSize,
-                                            QDemonRenderTextureFormats::R16F, 1, mapMode,
-                                            ShadowFilterValues::NONE);
+                                shadowMapManager->addShadowMapEntry(lights.size() - 1,
+                                                                    mapSize,
+                                                                    mapSize,
+                                                                    QDemonRenderTextureFormats::R16F,
+                                                                    1,
+                                                                    mapMode,
+                                                                    ShadowFilterValues::NONE);
                                 thePrepResult.flags.setRequiresShadowMapPass(true);
                                 setShaderFeature("QDEMON_ENABLE_SSM", true);
                             }
@@ -1239,15 +1212,12 @@ void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportD
                         if (oldLightScope != newLightScope) {
                             iter.value() = newLightScope;
                             if (oldLightScope)
-                                theLightNodeMarkers.push_back(QDemonLightNodeMarker(
-                                                                  *theLight, lightIndex, *oldLightScope, false));
+                                theLightNodeMarkers.push_back(QDemonLightNodeMarker(*theLight, lightIndex, *oldLightScope, false));
                             if (newLightScope)
-                                theLightNodeMarkers.push_back(QDemonLightNodeMarker(
-                                                                  *theLight, lightIndex, *newLightScope, true));
+                                theLightNodeMarkers.push_back(QDemonLightNodeMarker(*theLight, lightIndex, *newLightScope, true));
                         }
                         if (newLightScope) {
-                            sourceLightDirections.back() =
-                                    theLight->getScalingCorrectDirection();
+                            sourceLightDirections.back() = theLight->getScalingCorrectDirection();
                         }
                     }
                 } break;
@@ -1261,19 +1231,17 @@ void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportD
                 for (quint32 idx = 0, end = renderableNodes.size(); idx < end; ++idx) {
                     QDemonRenderableNodeEntry &theNodeEntry(renderableNodes[idx]);
                     quint32 nodeDFSIndex = theNodeEntry.node->dfsIndex;
-                    for (quint32 markerIdx = 0, markerEnd = theLightNodeMarkers.size();
-                         markerIdx < markerEnd; ++markerIdx) {
+                    for (quint32 markerIdx = 0, markerEnd = theLightNodeMarkers.size(); markerIdx < markerEnd; ++markerIdx) {
                         QDemonLightNodeMarker &theMarker = theLightNodeMarkers[markerIdx];
-                        if (nodeDFSIndex >= theMarker.firstValidIndex
-                                && nodeDFSIndex < theMarker.justPastLastValidIndex) {
+                        if (nodeDFSIndex >= theMarker.firstValidIndex && nodeDFSIndex < theMarker.justPastLastValidIndex) {
                             if (theMarker.addOrRemove) {
                                 QDemonNodeLightEntry *theNewEntry = new QDemonNodeLightEntry(theMarker.light, theMarker.lightIndex);
                                 theNodeEntry.lights.push_back(*theNewEntry);
                             } else {
-                                for (QDemonNodeLightEntryList::iterator
-                                     lightIter = theNodeEntry.lights.begin(),
-                                     lightEnd = theNodeEntry.lights.end();
-                                     lightIter != lightEnd; ++lightIter) {
+                                for (QDemonNodeLightEntryList::iterator lightIter = theNodeEntry.lights.begin(),
+                                                                        lightEnd = theNodeEntry.lights.end();
+                                     lightIter != lightEnd;
+                                     ++lightIter) {
                                     if (lightIter->light == theMarker.light) {
                                         QDemonNodeLightEntry &theEntry = *lightIter;
                                         theNodeEntry.lights.remove(theEntry);
@@ -1290,9 +1258,8 @@ void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportD
             float theTextScaleFactor = 1.0f;
             if (camera) {
                 camera->calculateViewProjectionMatrix(viewProjection);
-                theTextScaleFactor = camera->getTextScaleFactor(
-                            thePrepResult.getLayerToPresentationViewport(),
-                            thePrepResult.getPresentationDesignDimensions());
+                theTextScaleFactor = camera->getTextScaleFactor(thePrepResult.getLayerToPresentationViewport(),
+                                                                thePrepResult.getPresentationDesignDimensions());
                 QDemonClipPlane nearPlane;
                 QMatrix3x3 theUpper33(camera->globalTransform.normalMatrix());
 
@@ -1309,16 +1276,16 @@ void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportD
 
             // Setup the light directions here.
 
-            for (quint32 lightIdx = 0, lightEnd = lights.size(); lightIdx < lightEnd;
-                 ++lightIdx) {
+            for (quint32 lightIdx = 0, lightEnd = lights.size(); lightIdx < lightEnd; ++lightIdx) {
                 lightDirections.push_back(lights[lightIdx]->getScalingCorrectDirection());
             }
 
             modelContexts.clear();
             if (getOffscreenRenderer() == false) {
-                bool renderablesDirty =
-                        prepareRenderablesForRender(viewProjection, clippingFrustum,
-                                                    theTextScaleFactor, thePrepResult.flags);
+                bool renderablesDirty = prepareRenderablesForRender(viewProjection,
+                                                                    clippingFrustum,
+                                                                    theTextScaleFactor,
+                                                                    thePrepResult.flags);
                 wasDataDirty = wasDataDirty || renderablesDirty;
                 if (thePrepResult.flags.requiresStencilBuffer())
                     thePrepResult.flags.setShouldRenderToTexture(true);
@@ -1329,15 +1296,18 @@ void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportD
                 // This happens here because if there are any fancy render steps
                 QDemonRef<QDemonRenderListInterface> theRenderList(renderer->getDemonContext()->getRenderList());
                 auto theContext = renderer->getContext();
-                QDemonRenderListScopedProperty<bool> _listScissorEnabled(
-                            *theRenderList, &QDemonRenderListInterface::isScissorTestEnabled,
-                            &QDemonRenderListInterface::setScissorTestEnabled, theScissor);
-                QDemonRenderListScopedProperty<QRect> _listViewport(
-                            *theRenderList, &QDemonRenderListInterface::getViewport, &QDemonRenderListInterface::setViewport,
-                            theViewport);
-                QDemonRenderListScopedProperty<QRect> _listScissor(
-                            *theRenderList, &QDemonRenderListInterface::getScissor, &QDemonRenderListInterface::setScissorRect,
-                            theScissorRect);
+                QDemonRenderListScopedProperty<bool> _listScissorEnabled(*theRenderList,
+                                                                         &QDemonRenderListInterface::isScissorTestEnabled,
+                                                                         &QDemonRenderListInterface::setScissorTestEnabled,
+                                                                         theScissor);
+                QDemonRenderListScopedProperty<QRect> _listViewport(*theRenderList,
+                                                                    &QDemonRenderListInterface::getViewport,
+                                                                    &QDemonRenderListInterface::setViewport,
+                                                                    theViewport);
+                QDemonRenderListScopedProperty<QRect> _listScissor(*theRenderList,
+                                                                   &QDemonRenderListInterface::getScissor,
+                                                                   &QDemonRenderListInterface::setScissorRect,
+                                                                   theScissorRect);
                 // Some plugins don't use the render list so they need the actual gl context
                 // setup.
                 QDemonRenderContextScopedProperty<bool> __scissorEnabled(*theContext,
@@ -1352,9 +1322,10 @@ void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportD
                                                                         &QDemonRenderContext::getViewport,
                                                                         &QDemonRenderContext::setViewport,
                                                                         theViewport);
-                QDemonOffscreenRenderFlags theResult = lastFrameOffscreenRenderer->needsRender(createOffscreenRenderEnvironment(),
-                                                                                               renderer->getDemonContext()->getPresentationScaleFactor(),
-                                                                                               &layer);
+                QDemonOffscreenRenderFlags theResult = lastFrameOffscreenRenderer
+                                                               ->needsRender(createOffscreenRenderEnvironment(),
+                                                                             renderer->getDemonContext()->getPresentationScaleFactor(),
+                                                                             &layer);
                 wasDataDirty = wasDataDirty || theResult.hasChangedSinceLastFrame;
             }
         }

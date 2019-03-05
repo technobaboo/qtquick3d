@@ -42,8 +42,8 @@ QT_BEGIN_NAMESPACE
 //==============================================================================
 //==============================================================================
 /**
-     *	@class	QDemonImageScaler
-     */
+ *	@class	QDemonImageScaler
+ */
 //==============================================================================
 class QDemonImageScaler
 {
@@ -66,52 +66,80 @@ public:
 public:
     QDemonImageScaler();
 
-    void scale(EScaleMethod inScaleMethod, unsigned char *inOldBuffer, unsigned long inOldWidth,
-               unsigned long inOldHeight, unsigned char *&outNewBuffer,
-               unsigned long inNewWidth, unsigned long inNewHeight, unsigned long inChannels);
+    void scale(EScaleMethod inScaleMethod,
+               unsigned char *inOldBuffer,
+               unsigned long inOldWidth,
+               unsigned long inOldHeight,
+               unsigned char *&outNewBuffer,
+               unsigned long inNewWidth,
+               unsigned long inNewHeight,
+               unsigned long inChannels);
 
-    void fastScale(EScaleMethod inScaleMethod, unsigned char *inOldBuffer,
-                   unsigned long inOldWidth, unsigned long inOldHeight,
-                   unsigned char *&outNewBuffer, unsigned long inNewWidth,
-                   unsigned long inNewHeight, unsigned long inChannels);
+    void fastScale(EScaleMethod inScaleMethod,
+                   unsigned char *inOldBuffer,
+                   unsigned long inOldWidth,
+                   unsigned long inOldHeight,
+                   unsigned char *&outNewBuffer,
+                   unsigned long inNewWidth,
+                   unsigned long inNewHeight,
+                   unsigned long inChannels);
 
-    void crop(unsigned char *inOldBuffer, unsigned long inOldWidth, unsigned long inOldHeight,
-              unsigned char *&outNewBuffer, unsigned long inNewWidth, unsigned long inNewHeight,
+    void crop(unsigned char *inOldBuffer,
+              unsigned long inOldWidth,
+              unsigned long inOldHeight,
+              unsigned char *&outNewBuffer,
+              unsigned long inNewWidth,
+              unsigned long inNewHeight,
               unsigned long inPlanes);
 
-    void bilinear(unsigned char *inOldBuffer, unsigned long inOldWidth,
-                  unsigned long inOldHeight, unsigned char *&outNewBuffer,
-                  unsigned long inNewWidth, unsigned long inNewHeight, unsigned long inPlanes);
+    void bilinear(unsigned char *inOldBuffer,
+                  unsigned long inOldWidth,
+                  unsigned long inOldHeight,
+                  unsigned char *&outNewBuffer,
+                  unsigned long inNewWidth,
+                  unsigned long inNewHeight,
+                  unsigned long inPlanes);
 
-    void fastPointSample(unsigned char *inOldBuffer, unsigned long inOldWidth,
-                         unsigned long inOldHeight, unsigned char *&outNewBuffer,
-                         unsigned long inNewWidth, unsigned long inNewHeight,
+    void fastPointSample(unsigned char *inOldBuffer,
+                         unsigned long inOldWidth,
+                         unsigned long inOldHeight,
+                         unsigned char *&outNewBuffer,
+                         unsigned long inNewWidth,
+                         unsigned long inNewHeight,
                          unsigned long inPlanes);
 
     unsigned char *allocateBuffer(long inWidth, long inHeight);
     void releaseBuffer(unsigned char *&ioBuffer);
-    void resize(unsigned char *inOldBuffer, unsigned long inOldWidth, unsigned long inOldHeight,
-                unsigned char *&outNewBuffer, unsigned long inNewWidth,
-                unsigned long inNewHeight, unsigned long inPlanes);
+    void resize(unsigned char *inOldBuffer,
+                unsigned long inOldWidth,
+                unsigned long inOldHeight,
+                unsigned char *&outNewBuffer,
+                unsigned long inNewWidth,
+                unsigned long inNewHeight,
+                unsigned long inPlanes);
 
     // variable numbers of planes, i.e. greyscale, rb, rbg, and rgba or argb
     // Bilinear algorithms, good for quality
-    void expandRowsAndColumns(unsigned char *inBuffer, unsigned long inWidth,
-                              unsigned long inHeight, unsigned char *outBuffer,
-                              unsigned long inDstWidth, unsigned long inDstHeight,
+    void expandRowsAndColumns(unsigned char *inBuffer,
+                              unsigned long inWidth,
+                              unsigned long inHeight,
+                              unsigned char *outBuffer,
+                              unsigned long inDstWidth,
+                              unsigned long inDstHeight,
                               unsigned long inPlanes);
 
     // The method implemented above, but with some optimizations
     // specifically, fixed the number of planes at 4
     // eliminated the new/delete allocations
-    void fastExpandRowsAndColumns(unsigned char *inBuffer, unsigned long inWidth,
-                                  unsigned long inHeight, unsigned char *outBuffer,
-                                  unsigned long inDstWidth, unsigned long inDstHeight);
+    void fastExpandRowsAndColumns(unsigned char *inBuffer,
+                                  unsigned long inWidth,
+                                  unsigned long inHeight,
+                                  unsigned char *outBuffer,
+                                  unsigned long inDstWidth,
+                                  unsigned long inDstHeight);
 
-    void reduceCols(unsigned char *inSrcBuffer, long inSrcWidth, long inSrcHeight,
-                    unsigned char *&outDstBuffer, long inDstWidth);
-    void reduceRows(unsigned char *inSrcBuffer, long inSrcWidth, long inSrcHeight,
-                    unsigned char *&outDstBuffer, long inDstHeight);
+    void reduceCols(unsigned char *inSrcBuffer, long inSrcWidth, long inSrcHeight, unsigned char *&outDstBuffer, long inDstWidth);
+    void reduceRows(unsigned char *inSrcBuffer, long inSrcWidth, long inSrcHeight, unsigned char *&outDstBuffer, long inDstHeight);
 };
 QT_END_NAMESPACE
 

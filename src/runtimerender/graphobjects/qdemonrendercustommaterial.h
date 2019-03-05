@@ -98,29 +98,14 @@ public:
         m_layerCount = inLayerCount;
     }
 
-    bool isDielectric() const
-    {
-        return m_shaderKeyValues & QDemonCustomMaterialShaderKeyValues::diffuse;
-    }
-    bool isSpecularEnabled() const
-    {
-        return m_shaderKeyValues & QDemonCustomMaterialShaderKeyValues::specular;
-    }
-    bool isCutOutEnabled() const
-    {
-        return m_shaderKeyValues & QDemonCustomMaterialShaderKeyValues::cutout;
-    }
-    bool isVolumetric() const
-    {
-        return m_shaderKeyValues & QDemonCustomMaterialShaderKeyValues::volumetric;
-    }
-    bool isTransmissive() const
-    {
-        return m_shaderKeyValues & QDemonCustomMaterialShaderKeyValues::transmissive;
-    }
+    bool isDielectric() const { return m_shaderKeyValues & QDemonCustomMaterialShaderKeyValues::diffuse; }
+    bool isSpecularEnabled() const { return m_shaderKeyValues & QDemonCustomMaterialShaderKeyValues::specular; }
+    bool isCutOutEnabled() const { return m_shaderKeyValues & QDemonCustomMaterialShaderKeyValues::cutout; }
+    bool isVolumetric() const { return m_shaderKeyValues & QDemonCustomMaterialShaderKeyValues::volumetric; }
+    bool isTransmissive() const { return m_shaderKeyValues & QDemonCustomMaterialShaderKeyValues::transmissive; }
     bool hasLighting() const { return true; }
 
-    template <typename TRemapperType>
+    template<typename TRemapperType>
     void remap(TRemapperType &inRemapper)
     {
         QDemonDynamicObject::remap(inRemapper);

@@ -36,10 +36,8 @@ QT_BEGIN_NAMESPACE
 class QDemonTextRendererInterface;
 class QDemonRenderContext;
 
-typedef QPair<QDemonTextTextureAtlasDetails, QDemonRef<QDemonRenderTexture2D>>
-TTextTextureAtlasDetailsAndTexture;
-typedef QPair<QDemonRenderTextureAtlasDetails, QDemonRef<QDemonRenderTexture2D>>
-TTextRenderAtlasDetailsAndTexture;
+typedef QPair<QDemonTextTextureAtlasDetails, QDemonRef<QDemonRenderTexture2D>> TTextTextureAtlasDetailsAndTexture;
+typedef QPair<QDemonRenderTextureAtlasDetails, QDemonRef<QDemonRenderTexture2D>> TTextRenderAtlasDetailsAndTexture;
 
 class QDemonTextTextureAtlasInterface
 {
@@ -51,7 +49,7 @@ public:
     virtual TTextTextureAtlasDetailsAndTexture prepareTextureAtlas() = 0;
 
     static QDemonRef<QDemonTextTextureAtlasInterface> createTextureAtlas(QDemonRef<QDemonTextRendererInterface> inTextRenderer,
-                                                                              QDemonRef<QDemonRenderContext> inRenderContext);
+                                                                         QDemonRef<QDemonRenderContext> inRenderContext);
 };
 QT_END_NAMESPACE
 #endif

@@ -45,18 +45,15 @@ public:
     qint32 m_count; ///< one or array size
     qint32 m_offset; ///< offset into the memory buffer
 
-    ConstantBufferParamEntry(const QString &name, QDemonRenderShaderDataTypes::Enum type,
-                             qint32 count, qint32 offset)
-        : m_name(name)
-        , m_type(type)
-        , m_count(count)
-        , m_offset(offset)
+    ConstantBufferParamEntry(const QString &name, QDemonRenderShaderDataTypes::Enum type, qint32 count, qint32 offset)
+        : m_name(name), m_type(type), m_count(count), m_offset(offset)
     {
     }
 };
 
 QDemonRenderConstantBuffer::QDemonRenderConstantBuffer(const QDemonRef<QDemonRenderContextImpl> &context,
-                                                       const QString &bufferName, size_t size,
+                                                       const QString &bufferName,
+                                                       size_t size,
                                                        QDemonRenderBufferUsageType::Enum usageType,
                                                        QDemonDataRef<quint8> data)
     : QDemonRenderDataBuffer(context, size, QDemonRenderBufferBindValues::Constant, usageType, QDemonDataRef<quint8>())
@@ -86,9 +83,9 @@ QDemonRenderConstantBuffer::~QDemonRenderConstantBuffer()
 
     m_shadowCopy = QDemonDataRef<quint8>();
 
-    for (TRenderConstantBufferEntryMap::iterator iter = m_constantBufferEntryMap.begin(),
-         end = m_constantBufferEntryMap.end();
-         iter != end; ++iter) {
+    for (TRenderConstantBufferEntryMap::iterator iter = m_constantBufferEntryMap.begin(), end = m_constantBufferEntryMap.end();
+         iter != end;
+         ++iter) {
         delete iter.value();
     }
 
@@ -107,21 +104,17 @@ void QDemonRenderConstantBuffer::bind()
     m_backend->bindBuffer(m_bufferHandle, m_bindFlags);
 }
 
-void QDemonRenderConstantBuffer::bindToShaderProgram(const QDemonRef<QDemonRenderShaderProgram> &inShader,
-                                                     quint32 blockIndex,
-                                                     quint32 binding)
+void QDemonRenderConstantBuffer::bindToShaderProgram(const QDemonRef<QDemonRenderShaderProgram> &inShader, quint32 blockIndex, quint32 binding)
 {
     if ((qint32)binding == -1) {
         binding = m_context->getNextConstantBufferUnit();
-        m_backend->programSetConstantBlock(inShader->getShaderProgramHandle(), blockIndex,
-                                           binding);
+        m_backend->programSetConstantBlock(inShader->getShaderProgramHandle(), blockIndex, binding);
     }
 
     m_backend->programSetConstantBuffer(binding, m_bufferHandle);
 }
 
-bool QDemonRenderConstantBuffer::setupBuffer(const QDemonRenderShaderProgram *program, qint32 index,
-                                             qint32 bufSize, qint32 paramCount)
+bool QDemonRenderConstantBuffer::setupBuffer(const QDemonRenderShaderProgram *program, qint32 index, qint32 bufSize, qint32 paramCount)
 {
     bool bSuccess = false;
 
@@ -153,13 +146,10 @@ bool QDemonRenderConstantBuffer::setupBuffer(const QDemonRenderShaderProgram *pr
         bSuccess = true;
 
         // get indices for the individal constant buffer entries
-        m_backend->getConstantBufferParamIndices(program->getShaderProgramHandle(), index,
-                                                 theIndices);
+        m_backend->getConstantBufferParamIndices(program->getShaderProgramHandle(), index, theIndices);
 
         // get constant buffer uniform information
-        m_backend->getConstantBufferParamInfoByIndices(program->getShaderProgramHandle(),
-                                                       paramCount, (quint32 *)theIndices,
-                                                       theTypes, theSizes, theOffsets);
+        m_backend->getConstantBufferParamInfoByIndices(program->getShaderProgramHandle(), paramCount, (quint32 *)theIndices, theTypes, theSizes, theOffsets);
 
         // get the names of the uniforms
         char nameBuf[512];
@@ -168,12 +158,10 @@ bool QDemonRenderConstantBuffer::setupBuffer(const QDemonRenderShaderProgram *pr
 
         QDEMON_FOREACH(idx, paramCount)
         {
-            m_backend->getConstantInfoByID(program->getShaderProgramHandle(), theIndices[idx],
-                                           512, &elementCount, &type, &binding, nameBuf);
+            m_backend->getConstantInfoByID(program->getShaderProgramHandle(), theIndices[idx], 512, &elementCount, &type, &binding, nameBuf);
             // check if we already have this entry
             const QString theName = QString::fromLocal8Bit(nameBuf);
-            TRenderConstantBufferEntryMap::iterator entry =
-                    m_constantBufferEntryMap.find(theName);
+            TRenderConstantBufferEntryMap::iterator entry = m_constantBufferEntryMap.find(theName);
             if (entry != m_constantBufferEntryMap.end()) {
                 ConstantBufferParamEntry *pParam = entry.value();
                 // copy content
@@ -188,8 +176,10 @@ bool QDemonRenderConstantBuffer::setupBuffer(const QDemonRenderShaderProgram *pr
             } else {
                 // create one
                 m_constantBufferEntryMap.insert(theName,
-                                                createParamEntry(theName, (QDemonRenderShaderDataTypes::Enum)theTypes[idx],
-                                                                 theSizes[idx], theOffsets[idx]));
+                                                createParamEntry(theName,
+                                                                 (QDemonRenderShaderDataTypes::Enum)theTypes[idx],
+                                                                 theSizes[idx],
+                                                                 theOffsets[idx]));
             }
         }
 
@@ -202,7 +192,7 @@ bool QDemonRenderConstantBuffer::setupBuffer(const QDemonRenderShaderProgram *pr
 
         m_hwBufferInitialized = true;
 
-fail:
+    fail:
         if (theIndices)
             ::free(theIndices);
         if (theTypes)
@@ -227,11 +217,12 @@ void QDemonRenderConstantBuffer::update()
     // and if it is dirty
     if (m_rangeStart < m_rangeEnd && m_hwBufferInitialized) {
         if (m_rangeStart == 0 && m_rangeEnd >= m_shadowCopy.size()) {
-            m_backend->updateBuffer(m_bufferHandle, m_bindFlags, m_shadowCopy.size(),
-                                    m_usageType, m_shadowCopy.begin());
+            m_backend->updateBuffer(m_bufferHandle, m_bindFlags, m_shadowCopy.size(), m_usageType, m_shadowCopy.begin());
         } else {
             Q_ASSERT(m_rangeStart < m_rangeEnd && m_rangeEnd <= m_shadowCopy.size());
-            m_backend->updateBufferRange(m_bufferHandle, m_bindFlags, m_rangeStart,
+            m_backend->updateBufferRange(m_bufferHandle,
+                                         m_bindFlags,
+                                         m_rangeStart,
                                          m_rangeEnd - m_rangeStart,
                                          m_shadowCopy.begin() + m_rangeStart);
         }
@@ -241,8 +232,7 @@ void QDemonRenderConstantBuffer::update()
     }
 }
 
-void QDemonRenderConstantBuffer::addParam(const QString &name,
-                                          QDemonRenderShaderDataTypes::Enum type, qint32 count)
+void QDemonRenderConstantBuffer::addParam(const QString &name, QDemonRenderShaderDataTypes::Enum type, qint32 count)
 {
     if (m_constantBufferEntryMap.find(name) == m_constantBufferEntryMap.end()) {
         ConstantBufferParamEntry *newEntry = new ConstantBufferParamEntry(name, type, count, m_currentOffset);
@@ -272,7 +262,8 @@ void QDemonRenderConstantBuffer::updateParam(const char *inName, QDemonDataRef<q
     const QString theName = QString::fromLocal8Bit(inName);
     TRenderConstantBufferEntryMap::iterator entry = m_constantBufferEntryMap.find(theName);
     if (entry != m_constantBufferEntryMap.end()) {
-        if (!memcmp(m_shadowCopy.begin() + entry.value()->m_offset, value.begin(),
+        if (!memcmp(m_shadowCopy.begin() + entry.value()->m_offset,
+                    value.begin(),
                     entry.value()->m_count * getUniformTypeSize(entry.value()->m_type))) {
             return;
         }
@@ -310,15 +301,17 @@ void QDemonRenderConstantBuffer::updateRaw(quint32 offset, QDemonDataRef<quint8>
     setDirty(offset, data.size());
 }
 
-ConstantBufferParamEntry *QDemonRenderConstantBuffer::createParamEntry(const QString &name, QDemonRenderShaderDataTypes::Enum type, qint32 count, qint32 offset)
+ConstantBufferParamEntry *QDemonRenderConstantBuffer::createParamEntry(const QString &name,
+                                                                       QDemonRenderShaderDataTypes::Enum type,
+                                                                       qint32 count,
+                                                                       qint32 offset)
 {
     ConstantBufferParamEntry *newEntry = new ConstantBufferParamEntry(name, type, count, offset);
 
     return newEntry;
 }
 
-qint32
-QDemonRenderConstantBuffer::getUniformTypeSize(QDemonRenderShaderDataTypes::Enum type)
+qint32 QDemonRenderConstantBuffer::getUniformTypeSize(QDemonRenderShaderDataTypes::Enum type)
 {
     switch (type) {
     case QDemonRenderShaderDataTypes::Float:
@@ -372,16 +365,19 @@ bool QDemonRenderConstantBuffer::allocateShadowBuffer(quint32 size)
 }
 
 QDemonRef<QDemonRenderConstantBuffer> QDemonRenderConstantBuffer::create(const QDemonRef<QDemonRenderContextImpl> &context,
-                                                                              const char *bufferName,
-                                                                              QDemonRenderBufferUsageType::Enum usageType,
-                                                                              size_t size,
-                                                                              QDemonConstDataRef<quint8> bufferData)
+                                                                         const char *bufferName,
+                                                                         QDemonRenderBufferUsageType::Enum usageType,
+                                                                         size_t size,
+                                                                         QDemonConstDataRef<quint8> bufferData)
 {
     QDemonRef<QDemonRenderConstantBuffer> retval = nullptr;
 
     if (context->getConstantBufferSupport()) {
         const QString theBufferName = QString::fromLocal8Bit(bufferName);
-        retval = new QDemonRenderConstantBuffer(context, theBufferName, size, usageType,
+        retval = new QDemonRenderConstantBuffer(context,
+                                                theBufferName,
+                                                size,
+                                                usageType,
                                                 toDataRef(const_cast<quint8 *>(bufferData.begin()), bufferData.size()));
     } else {
         Q_ASSERT(false);

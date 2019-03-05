@@ -22,8 +22,7 @@
 
 QT_BEGIN_NAMESPACE
 
-namespace QDemonPathUtilities
-{
+namespace QDemonPathUtilities {
 struct PathCommand
 {
     enum Enum {

@@ -44,7 +44,8 @@ namespace dynamic {
 struct QDemonCommand; // UICRenderEffectCommands.h
 }
 
-struct QDemonEffectRenderArgument {
+struct QDemonEffectRenderArgument
+{
     QDemonRenderEffect *m_effect;
     QDemonRef<QDemonRenderTexture2D> m_colorBuffer;
     // Some effects need the camera near and far ranges.
@@ -61,20 +62,18 @@ struct QDemonEffectRenderArgument {
                                const QVector2D &inCameraClipRange,
                                const QDemonRef<QDemonRenderTexture2D> &inDepthTexture = nullptr,
                                const QDemonRef<QDemonRenderTexture2D> &inDepthBuffer = nullptr);
-
-
 };
 
 /**
-      * An effect is essentially a function that takes a image and produces a new image.  The source
-      *and dest images
-      *	aren't guaranteed to be the same size, the effect may enlarge or shrink the result.
-      * A specialization is when you want the effect to render to the final render target instead of
-      *to a separate image.
-      * In this case the effect cannot enlarge or shrink the final target and it will render to the
-      *destination buffer
-      *	using the given MVP.
-      */
+ * An effect is essentially a function that takes a image and produces a new image.  The source
+ *and dest images
+ *	aren't guaranteed to be the same size, the effect may enlarge or shrink the result.
+ * A specialization is when you want the effect to render to the final render target instead of
+ *to a separate image.
+ * In this case the effect cannot enlarge or shrink the final target and it will render to the
+ *destination buffer
+ *	using the given MVP.
+ */
 class Q_DEMONRUNTIMERENDER_EXPORT QDemonEffectSystemInterface
 {
 public:
@@ -86,8 +85,7 @@ public:
     // Effect properties cannot change after the effect is created because that would invalidate
     // existing effect instances.
     // Effect commands, which are stored on the effect class, can change.
-    virtual bool registerEffect(QString inName,
-                                QDemonConstDataRef<dynamic::QDemonPropertyDeclaration> inProperties) = 0;
+    virtual bool registerEffect(QString inName, QDemonConstDataRef<dynamic::QDemonPropertyDeclaration> inProperties) = 0;
 
     virtual bool unregisterEffect(QString inName) = 0;
 
@@ -100,14 +98,9 @@ public:
                                     QDemonConstDataRef<dynamic::QDemonPropertyDeclaration> inProperties) = 0;
     // Set the default value.  THis is unnecessary if the default is zero as that is what it is
     // assumed to be.
-    virtual void setEffectPropertyDefaultValue(QString inName,
-                                               QString inPropName,
-                                               QDemonConstDataRef<quint8> inDefaultData) = 0;
-    virtual void setEffectPropertyEnumNames(QString inName,
-                                            QString inPropName,
-                                            QDemonConstDataRef<QString> inNames) = 0;
-    virtual QDemonConstDataRef<QString> getEffectPropertyEnumNames(QString inName,
-                                                                   QString inPropName) const = 0;
+    virtual void setEffectPropertyDefaultValue(QString inName, QString inPropName, QDemonConstDataRef<quint8> inDefaultData) = 0;
+    virtual void setEffectPropertyEnumNames(QString inName, QString inPropName, QDemonConstDataRef<QString> inNames) = 0;
+    virtual QDemonConstDataRef<QString> getEffectPropertyEnumNames(QString inName, QString inPropName) const = 0;
 
     virtual QDemonConstDataRef<dynamic::QDemonPropertyDefinition> getEffectProperties(QString inEffectName) const = 0;
 
@@ -123,12 +116,10 @@ public:
     // value"
     // command then this effect does not require the depth texture.
     // So the setter here is completely optional.
-    virtual void setEffectRequiresDepthTexture(QString inEffectName,
-                                               bool inValue) = 0;
+    virtual void setEffectRequiresDepthTexture(QString inEffectName, bool inValue) = 0;
     virtual bool doesEffectRequireDepthTexture(QString inEffectName) const = 0;
 
-    virtual void setEffectRequiresCompilation(QString inEffectName,
-                                              bool inValue) = 0;
+    virtual void setEffectRequiresCompilation(QString inEffectName, bool inValue) = 0;
     virtual bool doesEffectRequireCompilation(QString inEffectName) const = 0;
 
     // The effect commands are the actual commands that run for a given effect.  The tell the
@@ -137,8 +128,7 @@ public:
     // run this shader
     // See UICRenderEffectCommands.h for the list of commands.
     // These commands are copied into the effect.
-    virtual void setEffectCommands(QString inEffectName,
-                                   QDemonConstDataRef<dynamic::QDemonCommand *> inCommands) = 0;
+    virtual void setEffectCommands(QString inEffectName, QDemonConstDataRef<dynamic::QDemonCommand *> inCommands) = 0;
     virtual QDemonConstDataRef<dynamic::QDemonCommand *> getEffectCommands(QString inEffectName) const = 0;
 
     // Set the shader data for a given path.  Used when a path doesn't correspond to a file but
@@ -166,7 +156,7 @@ public:
 
     virtual QDemonRef<QDemonResourceManagerInterface> getResourceManager() = 0;
 
-    static QDemonRef<QDemonEffectSystemInterface> createEffectSystem(QDemonRenderContextCoreInterface * context);
+    static QDemonRef<QDemonEffectSystemInterface> createEffectSystem(QDemonRenderContextCoreInterface *context);
 
     // Calling release effect context with no context results in no problems.
     virtual void releaseEffectContext(QDemonEffectContext *inEffect) = 0;
@@ -187,9 +177,7 @@ public:
 
     // Render the effect to the currently bound render target using this MVP and optionally
     // enabling blending when rendering to the target
-    virtual bool renderEffect(QDemonEffectRenderArgument inRenderArgument,
-                              QMatrix4x4 &inMVP,
-                              bool inEnableBlendWhenRenderToTarget) = 0;
+    virtual bool renderEffect(QDemonEffectRenderArgument inRenderArgument, QMatrix4x4 &inMVP, bool inEnableBlendWhenRenderToTarget) = 0;
 };
 
 QT_END_NAMESPACE

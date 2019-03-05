@@ -35,9 +35,7 @@
 QT_BEGIN_NAMESPACE
 
 QDemonRenderSync::QDemonRenderSync(const QDemonRef<QDemonRenderContextImpl> &context)
-    : m_context(context)
-    , m_backend(context->getBackend())
-    , m_syncHandle(nullptr)
+    : m_context(context), m_backend(context->getBackend()), m_syncHandle(nullptr)
 {
 }
 
@@ -58,8 +56,7 @@ void QDemonRenderSync::sync()
     if (m_syncHandle)
         m_backend->releaseSync(m_syncHandle);
 
-    m_syncHandle =
-            m_backend->createSync(QDemonRenderSyncType::GpuCommandsComplete, QDemonRenderSyncFlags());
+    m_syncHandle = m_backend->createSync(QDemonRenderSyncType::GpuCommandsComplete, QDemonRenderSyncFlags());
 }
 
 void QDemonRenderSync::wait()

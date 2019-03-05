@@ -52,13 +52,12 @@ QDemonRenderImage::QDemonRenderImage()
     m_flags.setTransformDirty(true);
 }
 
-QDemonRenderImage::~QDemonRenderImage()
-{
+QDemonRenderImage::~QDemonRenderImage() {}
 
-}
-
-static void HandleOffscreenResult(QDemonRenderImage &theImage, QDemonRenderImageTextureData &newImage,
-                                  QDemonOffscreenRenderResult &theResult, bool &replaceTexture,
+static void HandleOffscreenResult(QDemonRenderImage &theImage,
+                                  QDemonRenderImageTextureData &newImage,
+                                  QDemonOffscreenRenderResult &theResult,
+                                  bool &replaceTexture,
                                   bool &wasDirty)
 {
     newImage.m_texture = theResult.texture;
@@ -69,7 +68,9 @@ static void HandleOffscreenResult(QDemonRenderImage &theImage, QDemonRenderImage
     replaceTexture = true;
 }
 
-bool QDemonRenderImage::clearDirty(QDemonBufferManagerInterface &inBufferManager, QDemonOffscreenRenderManagerInterface &inRenderManager, bool forIbl)
+bool QDemonRenderImage::clearDirty(QDemonBufferManagerInterface &inBufferManager,
+                                   QDemonOffscreenRenderManagerInterface &inRenderManager,
+                                   bool forIbl)
 {
 
     bool wasDirty = m_flags.isDirty();
@@ -78,8 +79,7 @@ bool QDemonRenderImage::clearDirty(QDemonBufferManagerInterface &inBufferManager
     bool replaceTexture(false);
     if (newImage.m_texture == nullptr) {
         if (!m_offscreenRendererId.isEmpty()) {
-            QDemonOffscreenRenderResult theResult =
-                inRenderManager.getRenderedItem(m_offscreenRendererId);
+            QDemonOffscreenRenderResult theResult = inRenderManager.getRenderedItem(m_offscreenRendererId);
             HandleOffscreenResult(*this, newImage, theResult, replaceTexture, wasDirty);
         }
     }
@@ -126,13 +126,8 @@ void QDemonRenderImage::calculateTextureTransform()
     m_textureTransform = m_textureTransform * translation;
 }
 
-QDemonRenderImageTextureData::QDemonRenderImageTextureData()
-    : m_texture(nullptr)
-    , m_bsdfMipMap(nullptr)
-{
-}
+QDemonRenderImageTextureData::QDemonRenderImageTextureData() : m_texture(nullptr), m_bsdfMipMap(nullptr) {}
 
-QDemonRenderImageTextureData::~QDemonRenderImageTextureData()
-{}
+QDemonRenderImageTextureData::~QDemonRenderImageTextureData() {}
 
 QT_END_NAMESPACE

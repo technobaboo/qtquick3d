@@ -55,11 +55,9 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonCustomMaterialVertexPipeline::QDemonCustomMaterialVertexPipeline(QDemonRenderContextInterface *inContext, TessModeValues::Enum inTessMode)
-    : QDemonVertexPipelineImpl(
-          inContext->getCustomMaterialShaderGenerator(),
-          inContext->getShaderProgramGenerator(),
-          false)
+QDemonCustomMaterialVertexPipeline::QDemonCustomMaterialVertexPipeline(QDemonRenderContextInterface *inContext,
+                                                                       TessModeValues::Enum inTessMode)
+    : QDemonVertexPipelineImpl(inContext->getCustomMaterialShaderGenerator(), inContext->getShaderProgramGenerator(), false)
     , m_context(inContext)
     , m_tessMode(TessModeValues::NoTess)
 {
@@ -67,16 +65,14 @@ QDemonCustomMaterialVertexPipeline::QDemonCustomMaterialVertexPipeline(QDemonRen
         m_tessMode = inTessMode;
     }
 
-    if (m_context->getRenderContext()->isGeometryStageSupported()
-            && m_tessMode != TessModeValues::NoTess) {
+    if (m_context->getRenderContext()->isGeometryStageSupported() && m_tessMode != TessModeValues::NoTess) {
         m_wireframe = inContext->getWireframeMode();
     }
 }
 
 void QDemonCustomMaterialVertexPipeline::initializeTessControlShader()
 {
-    if (m_tessMode == TessModeValues::NoTess
-            || programGenerator()->getStage(ShaderGeneratorStages::TessControl) == nullptr) {
+    if (m_tessMode == TessModeValues::NoTess || programGenerator()->getStage(ShaderGeneratorStages::TessControl) == nullptr) {
         return;
     }
 
@@ -104,20 +100,17 @@ void QDemonCustomMaterialVertexPipeline::initializeTessControlShader()
         tessCtrlShader.append("\tctTangent[2] = varObjTangent[2];");
     }
 
-    tessCtrlShader.append(
-                "\tgl_out[gl_InvocationID].gl_Position = gl_in[gl_InvocationID].gl_Position;");
+    tessCtrlShader.append("\tgl_out[gl_InvocationID].gl_Position = gl_in[gl_InvocationID].gl_Position;");
     tessCtrlShader.append("\ttessShader( tessLevelOuter, tessLevelInner);\n");
 }
 
 void QDemonCustomMaterialVertexPipeline::initializeTessEvaluationShader()
 {
-    if (m_tessMode == TessModeValues::NoTess
-            || programGenerator()->getStage(ShaderGeneratorStages::TessEval) == nullptr) {
+    if (m_tessMode == TessModeValues::NoTess || programGenerator()->getStage(ShaderGeneratorStages::TessEval) == nullptr) {
         return;
     }
 
-    QDemonShaderStageGeneratorInterface &tessEvalShader(
-                *programGenerator()->getStage(ShaderGeneratorStages::TessEval));
+    QDemonShaderStageGeneratorInterface &tessEvalShader(*programGenerator()->getStage(ShaderGeneratorStages::TessEval));
 
     tessEvalShader.addUniform("model_view_projection", "mat4");
     tessEvalShader.addUniform("normal_matrix", "mat3");
@@ -149,18 +142,11 @@ void QDemonCustomMaterialVertexPipeline::initializeTessEvaluationShader()
 
 void QDemonCustomMaterialVertexPipeline::finalizeTessControlShader()
 {
-    QDemonShaderStageGeneratorInterface &tessCtrlShader(
-                *programGenerator()->getStage(ShaderGeneratorStages::TessControl));
+    QDemonShaderStageGeneratorInterface &tessCtrlShader(*programGenerator()->getStage(ShaderGeneratorStages::TessControl));
     // add varyings we must pass through
     typedef TStrTableStrMap::const_iterator TParamIter;
-    for (TParamIter iter = m_interpolationParameters.begin(),
-         end = m_interpolationParameters.end();
-         iter != end; ++iter) {
-        tessCtrlShader << "\t"
-                       << iter.key()
-                       << "TC[gl_InvocationID] = "
-                       << iter.key()
-                       << "[gl_InvocationID];\n";
+    for (TParamIter iter = m_interpolationParameters.begin(), end = m_interpolationParameters.end(); iter != end; ++iter) {
+        tessCtrlShader << "\t" << iter.key() << "TC[gl_InvocationID] = " << iter.key() << "[gl_InvocationID];\n";
     }
 }
 
@@ -175,77 +161,56 @@ void QDemonCustomMaterialVertexPipeline::finalizeTessEvaluationShader()
     // add varyings we must pass through
     typedef TStrTableStrMap::const_iterator TParamIter;
     if (m_tessMode == TessModeValues::TessNPatch) {
-        for (TParamIter iter = m_interpolationParameters.begin(),
-             end = m_interpolationParameters.end();
-             iter != end; ++iter) {
-            tessEvalShader << "\t"
-                           << iter.key()
-                           << outExt
-                           << " = gl_TessCoord.z * "
-                           << iter.key()
-                           << "TC[0] + ";
-            tessEvalShader << "gl_TessCoord.x * "
-                           << iter.key()
-                           << "TC[1] + ";
-            tessEvalShader << "gl_TessCoord.y * "
-                           << iter.key()
-                           << "TC[2];\n";
+        for (TParamIter iter = m_interpolationParameters.begin(), end = m_interpolationParameters.end(); iter != end; ++iter) {
+            tessEvalShader << "\t" << iter.key() << outExt << " = gl_TessCoord.z * " << iter.key() << "TC[0] + ";
+            tessEvalShader << "gl_TessCoord.x * " << iter.key() << "TC[1] + ";
+            tessEvalShader << "gl_TessCoord.y * " << iter.key() << "TC[2];\n";
         }
 
         // transform the normal
         if (m_generationFlags & GenerationFlagValues::WorldNormal)
-            tessEvalShader << "\n\tvarNormal" << outExt
-                           << " = normalize(normal_matrix * teNorm);\n";
+            tessEvalShader << "\n\tvarNormal" << outExt << " = normalize(normal_matrix * teNorm);\n";
         // transform the tangent
         if (m_generationFlags & GenerationFlagValues::TangentBinormal) {
-            tessEvalShader << "\n\tvarTangent" << outExt
-                           << " = normalize(normal_matrix * teTangent);\n";
+            tessEvalShader << "\n\tvarTangent" << outExt << " = normalize(normal_matrix * teTangent);\n";
             // transform the binormal
-            tessEvalShader << "\n\tvarBinormal" << outExt
-                           << " = normalize(normal_matrix * teBinormal);\n";
+            tessEvalShader << "\n\tvarBinormal" << outExt << " = normalize(normal_matrix * teBinormal);\n";
         }
     } else {
-        for (TParamIter iter = m_interpolationParameters.begin(),
-             end = m_interpolationParameters.end();
-             iter != end; ++iter) {
-            tessEvalShader << "\t" << iter.key() << outExt
-                           << " = gl_TessCoord.x * " << iter.key() << "TC[0] + ";
+        for (TParamIter iter = m_interpolationParameters.begin(), end = m_interpolationParameters.end(); iter != end; ++iter) {
+            tessEvalShader << "\t" << iter.key() << outExt << " = gl_TessCoord.x * " << iter.key() << "TC[0] + ";
             tessEvalShader << "gl_TessCoord.y * " << iter.key() << "TC[1] + ";
             tessEvalShader << "gl_TessCoord.z * " << iter.key() << "TC[2];\n";
         }
 
         // displacement mapping makes only sense with linear tessellation
         if (m_tessMode == TessModeValues::TessLinear && m_displacementImage) {
-            tessEvalShader
-                    << "\ttexture_coordinate_info tmp = textureCoordinateInfo( varTexCoord0"
-                    << outExt << ", varTangent" << outExt << ", varBinormal"
-                    << outExt << " );" << "\n";
+            tessEvalShader << "\ttexture_coordinate_info tmp = textureCoordinateInfo( varTexCoord0" << outExt
+                           << ", varTangent" << outExt << ", varBinormal" << outExt << " );"
+                           << "\n";
             tessEvalShader << "\ttmp = transformCoordinate( rotationTranslationScale( vec3( "
                               "0.000000, 0.000000, 0.000000 ), vec3( 0.000000, 0.000000, "
                               "0.000000 ), displace_tiling ), tmp);"
                            << "\n";
 
             tessEvalShader << "\tpos.xyz = defaultMaterialFileDisplacementTexture( "
-                           << m_displacementImage->m_image.m_imageShaderName.toUtf8()
-                           << ", displaceAmount, "
+                           << m_displacementImage->m_image.m_imageShaderName.toUtf8() << ", displaceAmount, "
                            << "tmp.position.xy";
-            tessEvalShader << ", varObjectNormal" << outExt << ", pos.xyz );" << "\n";
+            tessEvalShader << ", varObjectNormal" << outExt << ", pos.xyz );"
+                           << "\n";
             tessEvalShader << "\tvarWorldPos" << outExt << "= (model_matrix * pos).xyz;"
                            << "\n";
         }
 
         // transform the normal
-        tessEvalShader << "\n\tvarNormal" << outExt
-                       << " = normalize(normal_matrix * varObjectNormal" << outExt
-                       << ");\n";
+        tessEvalShader << "\n\tvarNormal" << outExt << " = normalize(normal_matrix * varObjectNormal" << outExt << ");\n";
     }
 
     tessEvalShader.append("\tgl_Position = model_view_projection * pos;\n");
 }
 
 // Responsible for beginning all vertex and fragment generation (void main() { etc).
-void QDemonCustomMaterialVertexPipeline::beginVertexGeneration(quint32 displacementImageIdx,
-                                                          QDemonRenderableImage *displacementImage)
+void QDemonCustomMaterialVertexPipeline::beginVertexGeneration(quint32 displacementImageIdx, QDemonRenderableImage *displacementImage)
 {
     m_displacementIdx = displacementImageIdx;
     m_displacementImage = displacementImage;
@@ -277,7 +242,10 @@ void QDemonCustomMaterialVertexPipeline::beginVertexGeneration(quint32 displacem
     vertexShader.addInclude("customMaterial.glsllib");
 
     vertexShader.addIncoming("attr_pos", "vec3");
-    vertexShader << "void main()" << "\n" << "{" << "\n";
+    vertexShader << "void main()"
+                 << "\n"
+                 << "{"
+                 << "\n";
 
     if (displacementImage) {
         generateUVCoords(0);
@@ -290,8 +258,7 @@ void QDemonCustomMaterialVertexPipeline::beginVertexGeneration(quint32 displacem
             vertexShader.addUniform("model_matrix", "mat4");
 
             vertexShader.addInclude("defaultMaterialFileDisplacementTexture.glsllib");
-            vertexShader.addUniform(displacementImage->m_image.m_imageShaderName.toUtf8(),
-                                    "sampler2D");
+            vertexShader.addUniform(displacementImage->m_image.m_imageShaderName.toUtf8(), "sampler2D");
 
             vertexShader << "\ttexture_coordinate_info tmp = textureCoordinateInfo( texCoord0, "
                             "varTangent, varBinormal );"
@@ -302,10 +269,10 @@ void QDemonCustomMaterialVertexPipeline::beginVertexGeneration(quint32 displacem
                          << "\n";
 
             vertexShader << "\tvec3 displacedPos = defaultMaterialFileDisplacementTexture( "
-                         << displacementImage->m_image.m_imageShaderName.toUtf8()
-                         << ", displaceAmount, "
+                         << displacementImage->m_image.m_imageShaderName.toUtf8() << ", displaceAmount, "
                          << "tmp.position.xy"
-                         << ", attr_norm, attr_pos );" << "\n";
+                         << ", attr_norm, attr_pos );"
+                         << "\n";
 
             addInterpolationParameter("varWorldPos", "vec3");
             vertexShader.append("\tvec3 local_model_world_position = (model_matrix * "
@@ -319,8 +286,7 @@ void QDemonCustomMaterialVertexPipeline::beginVertexGeneration(quint32 displacem
     } else {
         vertexShader.addUniform("model_view_projection", "mat4");
         if (displacementImage)
-            vertexShader.append(
-                        "\tgl_Position = model_view_projection * vec4(displacedPos, 1.0);");
+            vertexShader.append("\tgl_Position = model_view_projection * vec4(displacedPos, 1.0);");
         else
             vertexShader.append("\tgl_Position = model_view_projection * vec4(attr_pos, 1.0);");
     }
@@ -336,11 +302,13 @@ void QDemonCustomMaterialVertexPipeline::beginVertexGeneration(quint32 displacem
 void QDemonCustomMaterialVertexPipeline::beginFragmentGeneration()
 {
     fragment().addUniform("object_opacity", "float");
-    fragment() << "void main()" << "\n" << "{" << "\n";
+    fragment() << "void main()"
+               << "\n"
+               << "{"
+               << "\n";
 }
 
-void QDemonCustomMaterialVertexPipeline::assignOutput(const QByteArray &inVarName,
-                                                 const QByteArray &inVarValue)
+void QDemonCustomMaterialVertexPipeline::assignOutput(const QByteArray &inVarName, const QByteArray &inVarValue)
 {
     vertex() << "\t" << inVarName << " = " << inVarValue << ";\n";
 }
@@ -457,11 +425,13 @@ void QDemonCustomMaterialVertexPipeline::doGenerateUVCoords(quint32 inUVSet)
 
     if (inUVSet == 0) {
         vertex().addIncoming("attr_uv0", "vec2");
-        vertex() << "\tvec3 texCoord0 = vec3( attr_uv0, 0.0 );" << "\n";
+        vertex() << "\tvec3 texCoord0 = vec3( attr_uv0, 0.0 );"
+                 << "\n";
         assignOutput("varTexCoord0", "texCoord0");
     } else if (inUVSet == 1) {
         vertex().addIncoming("attr_uv1", "vec2");
-        vertex() << "\tvec3 texCoord1 = vec3( attr_uv1, 1.0 );" << "\n";
+        vertex() << "\tvec3 texCoord1 = vec3( attr_uv1, 1.0 );"
+                 << "\n";
         assignOutput("varTexCoord1", "texCoord1");
     }
 }
@@ -495,10 +465,14 @@ void QDemonCustomMaterialVertexPipeline::doGenerateVarTangentAndBinormal()
     vertex().addIncoming("attr_textan", "vec3");
     vertex().addIncoming("attr_binormal", "vec3");
 
-    vertex() << "\tvarTangent = normal_matrix * attr_textan;" << "\n"
-             << "\tvarBinormal = normal_matrix * attr_binormal;" << "\n";
+    vertex() << "\tvarTangent = normal_matrix * attr_textan;"
+             << "\n"
+             << "\tvarBinormal = normal_matrix * attr_binormal;"
+             << "\n";
 
-    vertex() << "\tvarObjTangent = attr_textan;" << "\n" << "\tvarObjBinormal = attr_binormal;"
+    vertex() << "\tvarObjTangent = attr_textan;"
+             << "\n"
+             << "\tvarObjBinormal = attr_binormal;"
              << "\n";
 }
 
@@ -507,7 +481,6 @@ void QDemonCustomMaterialVertexPipeline::doGenerateVertexColor()
     vertex().addIncoming("attr_color", "vec3");
     vertex().append("\tvarColor = attr_color;");
 }
-
 
 struct QDemonMaterialClass
 {
@@ -519,20 +492,11 @@ struct QDemonMaterialClass
     bool m_alwaysDirty = false;
     quint32 m_shaderKey = 0;
     quint32 m_layerCount = 0;
-    QDemonMaterialClass(QDemonDynamicObjectClassInterface &inCls)
-        : m_class(&inCls)
-    {
-    }
+    QDemonMaterialClass(QDemonDynamicObjectClassInterface &inCls) : m_class(&inCls) {}
 
-    void afterWrite()
-    {
-        m_class = nullptr;
-    }
+    void afterWrite() { m_class = nullptr; }
 
-    void afterRead(QDemonDynamicObjectClassInterface &inCls)
-    {
-        m_class = &inCls;
-    }
+    void afterRead(QDemonDynamicObjectClassInterface &inCls) { m_class = &inCls; }
 };
 
 typedef QHash<QString, QDemonRef<QDemonMaterialClass>> TStringMaterialMap;
@@ -551,22 +515,15 @@ struct QDemonShaderMapKey
                        TessModeValues::Enum inTessMode,
                        bool inWireframeMode,
                        QDemonShaderDefaultMaterialKey inMaterialKey)
-        : m_name(inName)
-        , m_features(inFeatures)
-        , m_tessMode(inTessMode)
-        , m_wireframeMode(inWireframeMode)
-        , m_materialKey(inMaterialKey)
+        : m_name(inName), m_features(inFeatures), m_tessMode(inTessMode), m_wireframeMode(inWireframeMode), m_materialKey(inMaterialKey)
     {
-        m_hashCode = qHash(m_name)
-                ^ hashShaderFeatureSet(m_features)
-                ^ qHash(m_tessMode) ^ qHash(m_wireframeMode)
+        m_hashCode = qHash(m_name) ^ hashShaderFeatureSet(m_features) ^ qHash(m_tessMode) ^ qHash(m_wireframeMode)
                 ^ qHash(inMaterialKey.hash());
     }
     bool operator==(const QDemonShaderMapKey &inKey) const
     {
-        return m_name == inKey.m_name && m_features == inKey.m_features
-                && m_tessMode == inKey.m_tessMode && m_wireframeMode == inKey.m_wireframeMode
-                && m_materialKey == inKey.m_materialKey;
+        return m_name == inKey.m_name && m_features == inKey.m_features && m_tessMode == inKey.m_tessMode
+                && m_wireframeMode == inKey.m_wireframeMode && m_materialKey == inKey.m_materialKey;
     }
 };
 
@@ -589,10 +546,7 @@ struct QDemonCustomMaterialTextureData
                                     const QDemonRef<QDemonRenderTexture2D> &inTexture,
                                     const QByteArray &inTexName,
                                     bool inNeedMips)
-        : shader(inShader)
-        , sampler(inTexName, inShader)
-        , texture(inTexture)
-        , needsMips(inNeedMips)
+        : shader(inShader), sampler(inTexName, inShader), texture(inTexture), needsMips(inNeedMips)
     {
     }
 
@@ -637,7 +591,7 @@ struct QDemonCustomMaterialsTessellationProperties
     QDemonRenderCachedShaderProperty<float> m_phongBlend; ///< blending between linear and phong component
     QDemonRenderCachedShaderProperty<QVector2D> m_distanceRange; ///< distance range for min and max tess level
     QDemonRenderCachedShaderProperty<float> m_disableCulling; ///< if set to 1.0 this disables backface
-    ///culling optimization in the tess shader
+    /// culling optimization in the tess shader
 
     QDemonCustomMaterialsTessellationProperties() = default;
     QDemonCustomMaterialsTessellationProperties(const QDemonRef<QDemonRenderShaderProgram> &inShader)
@@ -678,8 +632,7 @@ struct QDemonCustomMaterialShader
     QDemonCustomMaterialsTessellationProperties tessellation;
     dynamic::QDemonDynamicShaderProgramFlags programFlags;
 
-    QDemonCustomMaterialShader(const QDemonRef<QDemonRenderShaderProgram> &inShader,
-                               dynamic::QDemonDynamicShaderProgramFlags inFlags)
+    QDemonCustomMaterialShader(const QDemonRef<QDemonRenderShaderProgram> &inShader, dynamic::QDemonDynamicShaderProgramFlags inFlags)
         : shader(inShader)
         , modelMatrix("model_matrix", inShader)
         , viewProjMatrix("model_view_projection", inShader)
@@ -748,98 +701,72 @@ struct QDemonCustomMaterialBuffer
                                const QDemonRef<QDemonRenderFrameBuffer> &inFb,
                                const QDemonRef<QDemonRenderTexture2D> &inTexture,
                                dynamic::QDemonAllocateBufferFlags inFlags)
-        : name(inName)
-        , frameBuffer(inFb)
-        , texture(inTexture)
-        , flags(inFlags)
+        : name(inName), frameBuffer(inFb), texture(inTexture), flags(inFlags)
     {
     }
     QDemonCustomMaterialBuffer() = default;
 };
 
 struct QDemonMaterialSystem;
-typedef QHash<QString, QDemonRef<QDemonRenderVertexBuffer>>
-TStringVertexBufferMap;
-typedef QHash<QString, QDemonRef<QDemonRenderInputAssembler>>
-TStringAssemblerMap;
+typedef QHash<QString, QDemonRef<QDemonRenderVertexBuffer>> TStringVertexBufferMap;
+typedef QHash<QString, QDemonRef<QDemonRenderInputAssembler>> TStringAssemblerMap;
 
 struct QDemonStringMemoryBarrierFlagMap
 {
     const char *name;
     QDemonRenderBufferBarrierValues::Enum value;
-    QDemonStringMemoryBarrierFlagMap(const char *nm,
-                                     QDemonRenderBufferBarrierValues::Enum val)
-        : name(nm)
-        , value(val)
+    QDemonStringMemoryBarrierFlagMap(const char *nm, QDemonRenderBufferBarrierValues::Enum val) : name(nm), value(val)
     {
     }
 };
 
 QDemonStringMemoryBarrierFlagMap g_StringMemoryFlagMap[] = {
-    QDemonStringMemoryBarrierFlagMap("vertex_attribute",
-    QDemonRenderBufferBarrierValues::VertexAttribArray),
-    QDemonStringMemoryBarrierFlagMap("element_array",
-    QDemonRenderBufferBarrierValues::ElementArray),
-    QDemonStringMemoryBarrierFlagMap("uniform_buffer",
-    QDemonRenderBufferBarrierValues::UniformBuffer),
-    QDemonStringMemoryBarrierFlagMap("texture_fetch",
-    QDemonRenderBufferBarrierValues::TextureFetch),
-    QDemonStringMemoryBarrierFlagMap("shader_image_access",
-    QDemonRenderBufferBarrierValues::ShaderImageAccess),
-    QDemonStringMemoryBarrierFlagMap("command_buffer",
-    QDemonRenderBufferBarrierValues::CommandBuffer),
-    QDemonStringMemoryBarrierFlagMap("pixel_buffer",
-    QDemonRenderBufferBarrierValues::PixelBuffer),
-    QDemonStringMemoryBarrierFlagMap("texture_update",
-    QDemonRenderBufferBarrierValues::TextureUpdate),
-    QDemonStringMemoryBarrierFlagMap("buffer_update",
-    QDemonRenderBufferBarrierValues::BufferUpdate),
-    QDemonStringMemoryBarrierFlagMap("frame_buffer",
-    QDemonRenderBufferBarrierValues::Framebuffer),
-    QDemonStringMemoryBarrierFlagMap("transform_feedback",
-    QDemonRenderBufferBarrierValues::TransformFeedback),
-    QDemonStringMemoryBarrierFlagMap("atomic_counter",
-    QDemonRenderBufferBarrierValues::AtomicCounter),
-    QDemonStringMemoryBarrierFlagMap("shader_storage",
-    QDemonRenderBufferBarrierValues::ShaderStorage),
+    QDemonStringMemoryBarrierFlagMap("vertex_attribute", QDemonRenderBufferBarrierValues::VertexAttribArray),
+    QDemonStringMemoryBarrierFlagMap("element_array", QDemonRenderBufferBarrierValues::ElementArray),
+    QDemonStringMemoryBarrierFlagMap("uniform_buffer", QDemonRenderBufferBarrierValues::UniformBuffer),
+    QDemonStringMemoryBarrierFlagMap("texture_fetch", QDemonRenderBufferBarrierValues::TextureFetch),
+    QDemonStringMemoryBarrierFlagMap("shader_image_access", QDemonRenderBufferBarrierValues::ShaderImageAccess),
+    QDemonStringMemoryBarrierFlagMap("command_buffer", QDemonRenderBufferBarrierValues::CommandBuffer),
+    QDemonStringMemoryBarrierFlagMap("pixel_buffer", QDemonRenderBufferBarrierValues::PixelBuffer),
+    QDemonStringMemoryBarrierFlagMap("texture_update", QDemonRenderBufferBarrierValues::TextureUpdate),
+    QDemonStringMemoryBarrierFlagMap("buffer_update", QDemonRenderBufferBarrierValues::BufferUpdate),
+    QDemonStringMemoryBarrierFlagMap("frame_buffer", QDemonRenderBufferBarrierValues::Framebuffer),
+    QDemonStringMemoryBarrierFlagMap("transform_feedback", QDemonRenderBufferBarrierValues::TransformFeedback),
+    QDemonStringMemoryBarrierFlagMap("atomic_counter", QDemonRenderBufferBarrierValues::AtomicCounter),
+    QDemonStringMemoryBarrierFlagMap("shader_storage", QDemonRenderBufferBarrierValues::ShaderStorage),
 };
 
 struct QDemonStringBlendFuncMap
 {
     const char *name;
     QDemonRenderSrcBlendFunc::Enum value;
-    QDemonStringBlendFuncMap(const char *nm, QDemonRenderSrcBlendFunc::Enum val)
-        : name(nm)
-        , value(val)
-    {
-    }
+    QDemonStringBlendFuncMap(const char *nm, QDemonRenderSrcBlendFunc::Enum val) : name(nm), value(val) {}
 };
 
-QDemonStringBlendFuncMap g_BlendFuncMap[] = {
-    QDemonStringBlendFuncMap("Unknown", QDemonRenderSrcBlendFunc::Unknown),
-    QDemonStringBlendFuncMap("Zero", QDemonRenderSrcBlendFunc::Zero),
-    QDemonStringBlendFuncMap("One", QDemonRenderSrcBlendFunc::One),
-    QDemonStringBlendFuncMap("SrcColor", QDemonRenderSrcBlendFunc::SrcColor),
-    QDemonStringBlendFuncMap("OneMinusSrcColor", QDemonRenderSrcBlendFunc::OneMinusSrcColor),
-    QDemonStringBlendFuncMap("DstColor", QDemonRenderSrcBlendFunc::DstColor),
-    QDemonStringBlendFuncMap("OneMinusDstColor", QDemonRenderSrcBlendFunc::OneMinusDstColor),
-    QDemonStringBlendFuncMap("SrcAlpha", QDemonRenderSrcBlendFunc::SrcAlpha),
-    QDemonStringBlendFuncMap("OneMinusSrcAlpha", QDemonRenderSrcBlendFunc::OneMinusSrcAlpha),
-    QDemonStringBlendFuncMap("DstAlpha", QDemonRenderSrcBlendFunc::DstAlpha),
-    QDemonStringBlendFuncMap("OneMinusDstAlpha", QDemonRenderSrcBlendFunc::OneMinusDstAlpha),
-    QDemonStringBlendFuncMap("ConstantColor", QDemonRenderSrcBlendFunc::ConstantColor),
-    QDemonStringBlendFuncMap("OneMinusConstantColor", QDemonRenderSrcBlendFunc::OneMinusConstantColor),
-    QDemonStringBlendFuncMap("ConstantAlpha", QDemonRenderSrcBlendFunc::ConstantAlpha),
-    QDemonStringBlendFuncMap("OneMinusConstantAlpha", QDemonRenderSrcBlendFunc::OneMinusConstantAlpha),
-    QDemonStringBlendFuncMap("SrcAlphaSaturate", QDemonRenderSrcBlendFunc::SrcAlphaSaturate)
-};
+QDemonStringBlendFuncMap g_BlendFuncMap[] =
+        { QDemonStringBlendFuncMap("Unknown", QDemonRenderSrcBlendFunc::Unknown),
+          QDemonStringBlendFuncMap("Zero", QDemonRenderSrcBlendFunc::Zero),
+          QDemonStringBlendFuncMap("One", QDemonRenderSrcBlendFunc::One),
+          QDemonStringBlendFuncMap("SrcColor", QDemonRenderSrcBlendFunc::SrcColor),
+          QDemonStringBlendFuncMap("OneMinusSrcColor", QDemonRenderSrcBlendFunc::OneMinusSrcColor),
+          QDemonStringBlendFuncMap("DstColor", QDemonRenderSrcBlendFunc::DstColor),
+          QDemonStringBlendFuncMap("OneMinusDstColor", QDemonRenderSrcBlendFunc::OneMinusDstColor),
+          QDemonStringBlendFuncMap("SrcAlpha", QDemonRenderSrcBlendFunc::SrcAlpha),
+          QDemonStringBlendFuncMap("OneMinusSrcAlpha", QDemonRenderSrcBlendFunc::OneMinusSrcAlpha),
+          QDemonStringBlendFuncMap("DstAlpha", QDemonRenderSrcBlendFunc::DstAlpha),
+          QDemonStringBlendFuncMap("OneMinusDstAlpha", QDemonRenderSrcBlendFunc::OneMinusDstAlpha),
+          QDemonStringBlendFuncMap("ConstantColor", QDemonRenderSrcBlendFunc::ConstantColor),
+          QDemonStringBlendFuncMap("OneMinusConstantColor", QDemonRenderSrcBlendFunc::OneMinusConstantColor),
+          QDemonStringBlendFuncMap("ConstantAlpha", QDemonRenderSrcBlendFunc::ConstantAlpha),
+          QDemonStringBlendFuncMap("OneMinusConstantAlpha", QDemonRenderSrcBlendFunc::OneMinusConstantAlpha),
+          QDemonStringBlendFuncMap("SrcAlphaSaturate", QDemonRenderSrcBlendFunc::SrcAlphaSaturate) };
 
 struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface
 {
     typedef QHash<QDemonShaderMapKey, QDemonRef<QDemonCustomMaterialShader>> TShaderMap;
     typedef QPair<QString, QDemonRenderImage *> TAllocatedImageEntry;
 
-    QDemonRenderContextCoreInterface * m_coreContext;
+    QDemonRenderContextCoreInterface *m_coreContext;
     QDemonRenderContextInterface *m_context;
     TStringMaterialMap m_stringMaterialMap;
     TShaderMap m_shaderMap;
@@ -851,23 +778,17 @@ struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface
     quint64 m_lastFrameTime;
     float m_msSinceLastFrame;
 
-    QDemonMaterialSystem(QDemonRenderContextCoreInterface * ct)
-        : m_coreContext(ct)
-        , m_context(nullptr)
-        , m_useFastBlits(true)
-        , m_lastFrameTime(0)
-        , m_msSinceLastFrame(0)
+    QDemonMaterialSystem(QDemonRenderContextCoreInterface *ct)
+        : m_coreContext(ct), m_context(nullptr), m_useFastBlits(true), m_lastFrameTime(0), m_msSinceLastFrame(0)
     {
     }
 
     ~QDemonMaterialSystem()
     {
-        while (m_allocatedBuffers.size())
-        { // replace_with_last
+        while (m_allocatedBuffers.size()) { // replace_with_last
             m_allocatedBuffers[0] = m_allocatedBuffers.back();
             m_allocatedBuffers.pop_back();
         }
-
 
         for (quint32 idx = 0; idx < m_allocatedImages.size(); ++idx) {
             QDemonRenderImage *pImage = m_allocatedImages[idx].second;
@@ -898,14 +819,15 @@ struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface
         return m_stringMaterialMap.find(inStr) != m_stringMaterialMap.end();
     }
 
-    bool registerMaterialClass(const QString &inName,
-                               const QDemonConstDataRef<dynamic::QDemonPropertyDeclaration> &inProperties) override
+    bool registerMaterialClass(const QString &inName, const QDemonConstDataRef<dynamic::QDemonPropertyDeclaration> &inProperties) override
     {
         if (isMaterialRegistered(inName))
             return false;
-        m_coreContext->getDynamicObjectSystemCore()->doRegister(inName, inProperties, sizeof(QDemonRenderCustomMaterial), QDemonGraphObjectTypes::CustomMaterial);
-        QDemonDynamicObjectClassInterface *theClass =
-                m_coreContext->getDynamicObjectSystemCore()->getDynamicObjectClass(inName);
+        m_coreContext->getDynamicObjectSystemCore()->doRegister(inName,
+                                                                inProperties,
+                                                                sizeof(QDemonRenderCustomMaterial),
+                                                                QDemonGraphObjectTypes::CustomMaterial);
+        QDemonDynamicObjectClassInterface *theClass = m_coreContext->getDynamicObjectSystemCore()->getDynamicObjectClass(inName);
         if (theClass == nullptr) {
             Q_ASSERT(false);
             return false;
@@ -930,8 +852,8 @@ struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface
 
     virtual QDemonConstDataRef<dynamic::QDemonPropertyDefinition> getCustomMaterialProperties(const QString &inCustomMaterialName) const override
     {
-        QDemonDynamicObjectClassInterface *theMaterialClass =
-                m_coreContext->getDynamicObjectSystemCore()->getDynamicObjectClass(inCustomMaterialName);
+        QDemonDynamicObjectClassInterface *theMaterialClass = m_coreContext->getDynamicObjectSystemCore()->getDynamicObjectClass(
+                inCustomMaterialName);
 
         if (theMaterialClass)
             return theMaterialClass->getProperties();
@@ -955,8 +877,7 @@ struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface
         return quint32(-1);
     }
 
-    virtual bool textureNeedsMips(const dynamic::QDemonPropertyDefinition *inPropDec,
-                                  QDemonRenderTexture2D *inTexture)
+    virtual bool textureNeedsMips(const dynamic::QDemonPropertyDefinition *inPropDec, QDemonRenderTexture2D *inTexture)
     {
         if (inPropDec && inTexture) {
             return bool((inPropDec->minFilterOp == QDemonRenderTextureMinifyingOp::LinearMipmapLinear)
@@ -974,27 +895,24 @@ struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface
     {
         QDemonRef<QDemonCustomMaterialTextureData> theTextureEntry;
         for (quint32 idx = 0, end = m_textureEntries.size(); idx < end && theTextureEntry == nullptr; ++idx) {
-            if (m_textureEntries[idx].first == inPropName
-                    && m_textureEntries[idx].second->shader == inShader
-                    && m_textureEntries[idx].second->texture == inTexture) {
+            if (m_textureEntries[idx].first == inPropName && m_textureEntries[idx].second->shader == inShader
+                && m_textureEntries[idx].second->texture == inTexture) {
                 theTextureEntry = m_textureEntries[idx].second;
                 break;
             }
         }
         if (theTextureEntry == nullptr) {
-            QDemonRef<QDemonCustomMaterialTextureData> theNewEntry(
-                        new QDemonCustomMaterialTextureData(QDemonCustomMaterialTextureData::createTextureEntry(inShader, inTexture, inPropName.toUtf8(), needMips)));
+            QDemonRef<QDemonCustomMaterialTextureData> theNewEntry(new QDemonCustomMaterialTextureData(
+                    QDemonCustomMaterialTextureData::createTextureEntry(inShader, inTexture, inPropName.toUtf8(), needMips)));
             m_textureEntries.push_back(QPair<QString, QDemonRef<QDemonCustomMaterialTextureData>>(inPropName, theNewEntry));
             theTextureEntry = theNewEntry;
         }
         theTextureEntry->set(inPropDec);
     }
 
-    void setPropertyEnumNames(const QString &inName,
-                              const QString &inPropName,
-                              const QDemonConstDataRef<QString> &inNames) override
+    void setPropertyEnumNames(const QString &inName, const QString &inPropName, const QDemonConstDataRef<QString> &inNames) override
     {
-        m_coreContext->getDynamicObjectSystemCore()->setPropertyEnumNames(inName, inPropName,inNames);
+        m_coreContext->getDynamicObjectSystemCore()->setPropertyEnumNames(inName, inPropName, inNames);
     }
 
     void setPropertyTextureSettings(const QString &inName,
@@ -1009,22 +927,24 @@ struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface
         if (theClass && inTexType == QDemonRenderTextureTypeValue::Displace) {
             theClass->m_hasDisplacement = true;
         }
-        m_coreContext->getDynamicObjectSystemCore()->setPropertyTextureSettings(
-                    inName, inPropName, inPropPath, inTexType, inCoordOp, inMagFilterOp, inMinFilterOp);
+        m_coreContext->getDynamicObjectSystemCore()
+                ->setPropertyTextureSettings(inName, inPropName, inPropPath, inTexType, inCoordOp, inMagFilterOp, inMinFilterOp);
     }
 
-    void setMaterialClassShader(QString inName, const char *inShaderType,
-                                const char *inShaderVersion, const char *inShaderData,
-                                bool inHasGeomShader, bool inIsComputeShader) override
+    void setMaterialClassShader(QString inName,
+                                const char *inShaderType,
+                                const char *inShaderVersion,
+                                const char *inShaderData,
+                                bool inHasGeomShader,
+                                bool inIsComputeShader) override
     {
-        m_coreContext->getDynamicObjectSystemCore()->setShaderData(inName, inShaderData, inShaderType,
-                                                                   inShaderVersion, inHasGeomShader,
-                                                                   inIsComputeShader);
+        m_coreContext->getDynamicObjectSystemCore()->setShaderData(inName, inShaderData, inShaderType, inShaderVersion, inHasGeomShader, inIsComputeShader);
     }
 
     QDemonRenderCustomMaterial *createCustomMaterial(const QString &inName) override
     {
-        QDemonRenderCustomMaterial *theMaterial = static_cast<QDemonRenderCustomMaterial *>(m_coreContext->getDynamicObjectSystemCore()->createInstance(inName));
+        QDemonRenderCustomMaterial *theMaterial = static_cast<QDemonRenderCustomMaterial *>(
+                m_coreContext->getDynamicObjectSystemCore()->createInstance(inName));
         QDemonMaterialClass *theClass = getMaterialClass(inName);
 
         if (theMaterial) {
@@ -1099,8 +1019,7 @@ struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface
         theClass->m_layerCount = inLayerCount;
     }
 
-    void setCustomMaterialCommands(QString inName,
-                                   QDemonConstDataRef<dynamic::QDemonCommand *> inCommands) override
+    void setCustomMaterialCommands(QString inName, QDemonConstDataRef<dynamic::QDemonCommand *> inCommands) override
     {
         m_coreContext->getDynamicObjectSystemCore()->setRenderCommands(inName, inCommands);
     }
@@ -1114,17 +1033,22 @@ struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface
         QDemonRef<ICustomMaterialShaderGenerator> theMaterialGenerator(m_context->getCustomMaterialShaderGenerator());
 
         // generate key
-//        QString theKey = getShaderCacheKey(theShaderKeyBuffer, inCommand.m_shaderPath,
-//                                           inCommand.m_shaderDefine, inFlags);
+        //        QString theKey = getShaderCacheKey(theShaderKeyBuffer, inCommand.m_shaderPath,
+        //                                           inCommand.m_shaderDefine, inFlags);
         // ### TODO: Enable caching?
 
         QDemonCustomMaterialVertexPipeline thePipeline(m_context, inRenderContext.model.tessellationMode);
 
-        QDemonRef<QDemonRenderShaderProgram> theProgram = theMaterialGenerator->generateShader(
-                    inMaterial, inRenderContext.materialKey, thePipeline, inFeatureSet,
-                    inRenderContext.lights, inRenderContext.firstImage,
-                    (inMaterial.m_hasTransparency || inMaterial.m_hasRefraction),
-                    "custom material pipeline-- ", inCommand.m_shaderPath.toUtf8());
+        QDemonRef<QDemonRenderShaderProgram>
+                theProgram = theMaterialGenerator->generateShader(inMaterial,
+                                                                  inRenderContext.materialKey,
+                                                                  thePipeline,
+                                                                  inFeatureSet,
+                                                                  inRenderContext.lights,
+                                                                  inRenderContext.firstImage,
+                                                                  (inMaterial.m_hasTransparency || inMaterial.m_hasRefraction),
+                                                                  "custom material pipeline-- ",
+                                                                  inCommand.m_shaderPath.toUtf8());
 
         return theProgram;
     }
@@ -1136,22 +1060,25 @@ struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface
     {
         QDemonRef<QDemonRenderShaderProgram> theProgram;
 
-        dynamic::QDemonDynamicShaderProgramFlags theFlags(inRenderContext.model.tessellationMode,
-                                                     inRenderContext.subset.wireframeMode);
+        dynamic::QDemonDynamicShaderProgramFlags theFlags(inRenderContext.model.tessellationMode, inRenderContext.subset.wireframeMode);
         theFlags.setTessellationEnabled(inRenderContext.model.tessellationMode != TessModeValues::NoTess);
         theFlags.setGeometryShaderEnabled(inRenderContext.subset.wireframeMode);
 
-        QDemonShaderMapKey skey = QDemonShaderMapKey(
-                    TStrStrPair(inCommand.m_shaderPath, inCommand.m_shaderDefine), inFeatureSet,
-                    theFlags.tessMode, theFlags.wireframeMode, inRenderContext.materialKey);
+        QDemonShaderMapKey skey = QDemonShaderMapKey(TStrStrPair(inCommand.m_shaderPath, inCommand.m_shaderDefine),
+                                                     inFeatureSet,
+                                                     theFlags.tessMode,
+                                                     theFlags.wireframeMode,
+                                                     inRenderContext.materialKey);
         auto theInsertResult = m_shaderMap.find(skey);
-        //QPair<TShaderMap::iterator, bool> theInsertResult(m_ShaderMap.insert(skey, QDemonRef<SCustomMaterialShader>(nullptr)));
+        // QPair<TShaderMap::iterator, bool> theInsertResult(m_ShaderMap.insert(skey, QDemonRef<SCustomMaterialShader>(nullptr)));
 
         if (theInsertResult == m_shaderMap.end()) {
             theProgram = getShader(inRenderContext, inMaterial, inCommand, inFeatureSet, theFlags);
 
             if (theProgram) {
-                theInsertResult = m_shaderMap.insert(skey, QDemonRef<QDemonCustomMaterialShader>(new QDemonCustomMaterialShader(theProgram, theFlags)));
+                theInsertResult = m_shaderMap.insert(skey,
+                                                     QDemonRef<QDemonCustomMaterialShader>(
+                                                             new QDemonCustomMaterialShader(theProgram, theFlags)));
             }
         } else if (theInsertResult.value())
             theProgram = theInsertResult.value()->shader;
@@ -1193,7 +1120,10 @@ struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface
                         QDemonRenderImageTextureData theTextureData = theBufferManager->loadRenderImage(*theStrPtr);
                         if (theTextureData.m_texture) {
                             theTexture = theTextureData.m_texture;
-                            setTexture(inShader, inPropertyName, theTexture, &inDefinition,
+                            setTexture(inShader,
+                                       inPropertyName,
+                                       theTexture,
+                                       &inDefinition,
                                        textureNeedsMips(&inDefinition, theTexture.data()));
                         }
                     }
@@ -1213,7 +1143,8 @@ struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface
                         break;
                     case QDemonRenderShaderDataTypes::Boolean:
                         inShader->setPropertyValue(theConstant.data(), *(reinterpret_cast<bool *>(inDataPtr)));
-                        break;                    case QDemonRenderShaderDataTypes::BooleanVec2:
+                        break;
+                    case QDemonRenderShaderDataTypes::BooleanVec2:
                         inShader->setPropertyValue(theConstant.data(), *(reinterpret_cast<bool_2 *>(inDataPtr)));
                         break;
                     case QDemonRenderShaderDataTypes::BooleanVec3:
@@ -1256,16 +1187,19 @@ struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface
                         inShader->setPropertyValue(theConstant.data(), *(reinterpret_cast<QDemonRenderTexture2DPtr *>(inDataPtr)));
                         break;
                     case QDemonRenderShaderDataTypes::Texture2DHandle:
-                        inShader->setPropertyValue(theConstant.data(), *(reinterpret_cast<QDemonRenderTexture2DHandle *>(inDataPtr)));
+                        inShader->setPropertyValue(theConstant.data(),
+                                                   *(reinterpret_cast<QDemonRenderTexture2DHandle *>(inDataPtr)));
                         break;
                     case QDemonRenderShaderDataTypes::Texture2DArray:
-                        inShader->setPropertyValue(theConstant.data(), *(reinterpret_cast<QDemonRenderTexture2DArrayPtr *>(inDataPtr)));
+                        inShader->setPropertyValue(theConstant.data(),
+                                                   *(reinterpret_cast<QDemonRenderTexture2DArrayPtr *>(inDataPtr)));
                         break;
                     case QDemonRenderShaderDataTypes::TextureCube:
                         inShader->setPropertyValue(theConstant.data(), *(reinterpret_cast<QDemonRenderTextureCubePtr *>(inDataPtr)));
                         break;
                     case QDemonRenderShaderDataTypes::TextureCubeHandle:
-                        inShader->setPropertyValue(theConstant.data(), *(reinterpret_cast<QDemonRenderTextureCubeHandle *>(inDataPtr)));
+                        inShader->setPropertyValue(theConstant.data(),
+                                                   *(reinterpret_cast<QDemonRenderTextureCubeHandle *>(inDataPtr)));
                         break;
                     case QDemonRenderShaderDataTypes::Image2D:
                         inShader->setPropertyValue(theConstant.data(), *(reinterpret_cast<QDemonRenderImage2DPtr *>(inDataPtr)));
@@ -1276,7 +1210,6 @@ struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface
                     default:
                         Q_UNREACHABLE();
                     }
-
                 }
             } else {
                 qCCritical(INVALID_OPERATION,
@@ -1295,24 +1228,22 @@ struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface
     {
         // sanity check
         if (!inCommand.m_propertyName.isNull()) {
-            bool canGetData =
-                    inCommand.m_valueOffset + dynamic::getSizeofShaderDataType(inCommand.m_valueType)
+            bool canGetData = inCommand.m_valueOffset + dynamic::getSizeofShaderDataType(inCommand.m_valueType)
                     <= inMaterial.dataSectionByteSize;
             if (canGetData == false) {
                 Q_ASSERT(false);
                 return;
             }
             quint8 *dataPtr = inMaterial.getDataSectionBegin() + inCommand.m_valueOffset;
-            const dynamic::QDemonPropertyDefinition *theDefinition =
-                    inClass.m_class->findPropertyByName(inCommand.m_propertyName);
+            const dynamic::QDemonPropertyDefinition *theDefinition = inClass.m_class->findPropertyByName(inCommand.m_propertyName);
             if (theDefinition)
-                doApplyInstanceValue(inMaterial, dataPtr, inCommand.m_propertyName,
-                                     inCommand.m_valueType, inShader, *theDefinition);
+                doApplyInstanceValue(inMaterial, dataPtr, inCommand.m_propertyName, inCommand.m_valueType, inShader, *theDefinition);
         } else {
             QDemonConstDataRef<dynamic::QDemonPropertyDefinition> theDefs = inClass.m_class->getProperties();
             for (quint32 idx = 0, end = theDefs.size(); idx < end; ++idx) {
                 const dynamic::QDemonPropertyDefinition &theDefinition(theDefs[idx]);
-                QDemonRef<QDemonRenderShaderConstantBase> theConstant = inShader->getShaderConstant(theDefinition.name.toLocal8Bit().constData());
+                QDemonRef<QDemonRenderShaderConstantBase> theConstant = inShader->getShaderConstant(
+                        theDefinition.name.toLocal8Bit().constData());
 
                 // This is fine, the property wasn't found and we continue, no problem.
                 if (!theConstant)
@@ -1329,13 +1260,12 @@ struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface
 
         theContext->setBlendingEnabled(true);
 
-        QDemonRenderBlendFunctionArgument blendFunc =
-                QDemonRenderBlendFunctionArgument(
-                    inCommand.m_srcBlendFunc, inCommand.m_dstBlendFunc, inCommand.m_srcBlendFunc,
-                    inCommand.m_dstBlendFunc);
+        QDemonRenderBlendFunctionArgument blendFunc = QDemonRenderBlendFunctionArgument(inCommand.m_srcBlendFunc,
+                                                                                        inCommand.m_dstBlendFunc,
+                                                                                        inCommand.m_srcBlendFunc,
+                                                                                        inCommand.m_dstBlendFunc);
 
-        QDemonRenderBlendEquationArgument blendEqu(QDemonRenderBlendEquation::Add,
-                                                   QDemonRenderBlendEquation::Add);
+        QDemonRenderBlendEquationArgument blendEqu(QDemonRenderBlendEquation::Add, QDemonRenderBlendEquation::Add);
 
         theContext->setBlendFunction(blendFunc);
         theContext->setBlendEquation(blendEqu);
@@ -1356,23 +1286,22 @@ struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface
                 theTexture = theEntry.texture;
             } else {
                 // we must have allocated the read target before
-                qCCritical(INTERNAL_ERROR,
-                           "CustomMaterial: ApplyBufferValue: Failed to setup read target");
+                qCCritical(INTERNAL_ERROR, "CustomMaterial: ApplyBufferValue: Failed to setup read target");
                 Q_ASSERT(false);
             }
         } else
             theTexture = inSourceTexture;
 
         if (!inCommand.m_paramName.isNull()) {
-            QDemonRef<QDemonRenderShaderConstantBase> theConstant =
-                    inShader->getShaderConstant(inCommand.m_paramName.toLocal8Bit().constData());
+            QDemonRef<QDemonRenderShaderConstantBase> theConstant = inShader->getShaderConstant(
+                    inCommand.m_paramName.toLocal8Bit().constData());
 
             if (theConstant) {
-                if (theConstant->getShaderConstantType()
-                        != QDemonRenderShaderDataTypes::Texture2D) {
+                if (theConstant->getShaderConstantType() != QDemonRenderShaderDataTypes::Texture2D) {
                     qCCritical(INVALID_OPERATION,
                                "CustomMaterial %s: Binding buffer to parameter %s that is not a texture",
-                               qPrintable(inMaterial.className), qPrintable(inCommand.m_paramName));
+                               qPrintable(inMaterial.className),
+                               qPrintable(inCommand.m_paramName));
                     Q_ASSERT(false);
                 } else {
                     setTexture(inShader, inCommand.m_paramName, theTexture);
@@ -1383,21 +1312,18 @@ struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface
         return theTexture;
     }
 
-    void allocateBuffer(const dynamic::QDemonAllocateBuffer &inCommand,
-                        const QDemonRef<QDemonRenderFrameBuffer> &inTarget)
+    void allocateBuffer(const dynamic::QDemonAllocateBuffer &inCommand, const QDemonRef<QDemonRenderFrameBuffer> &inTarget)
     {
         QDemonTextureDetails theSourceTextureDetails;
         QDemonRef<QDemonRenderTexture2D> theTexture;
         // get color attachment we always assume at location 0
         if (inTarget) {
-            QDemonRenderTextureOrRenderBuffer theSourceTexture =
-                    inTarget->getAttachment(QDemonRenderFrameBufferAttachments::Color0);
+            QDemonRenderTextureOrRenderBuffer theSourceTexture = inTarget->getAttachment(QDemonRenderFrameBufferAttachments::Color0);
             // we need a texture
             if (theSourceTexture.hasTexture2D()) {
                 theSourceTextureDetails = theSourceTexture.getTexture2D()->getTextureDetails();
             } else {
-                qCCritical(INVALID_OPERATION, "CustomMaterial %s: Invalid source texture",
-                           qPrintable(inCommand.m_name));
+                qCCritical(INVALID_OPERATION, "CustomMaterial %s: Invalid source texture", qPrintable(inCommand.m_name));
                 Q_ASSERT(false);
                 return;
             }
@@ -1420,8 +1346,7 @@ struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface
         if (bufferIdx < m_allocatedBuffers.size()) {
             QDemonCustomMaterialBuffer &theEntry(m_allocatedBuffers[bufferIdx]);
             QDemonTextureDetails theDetails = theEntry.texture->getTextureDetails();
-            if (theDetails.width == theWidth && theDetails.height == theHeight
-                    && theDetails.format == theFormat) {
+            if (theDetails.width == theWidth && theDetails.height == theHeight && theDetails.format == theFormat) {
                 theTexture = theEntry.texture;
             } else {
                 releaseBuffer(bufferIdx);
@@ -1432,8 +1357,7 @@ struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface
             QDemonRef<QDemonRenderFrameBuffer> theFB(theResourceManager->allocateFrameBuffer());
             QDemonRef<QDemonRenderTexture2D> theTexture(theResourceManager->allocateTexture2D(theWidth, theHeight, theFormat));
             theTexture->setMagFilter(inCommand.m_filterOp);
-            theTexture->setMinFilter(
-                        static_cast<QDemonRenderTextureMinifyingOp::Enum>(inCommand.m_filterOp));
+            theTexture->setMinFilter(static_cast<QDemonRenderTextureMinifyingOp::Enum>(inCommand.m_filterOp));
             theTexture->setTextureWrapS(inCommand.m_texCoordOp);
             theTexture->setTextureWrapT(inCommand.m_texCoordOp);
             theFB->attach(QDemonRenderFrameBufferAttachments::Color0, theTexture);
@@ -1441,8 +1365,10 @@ struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface
         }
     }
 
-    QDemonRef<QDemonRenderFrameBuffer> bindBuffer(const QDemonRenderCustomMaterial &inMaterial, const dynamic::QDemonBindBuffer &inCommand,
-                                                       bool &outClearTarget, QVector2D &outDestSize)
+    QDemonRef<QDemonRenderFrameBuffer> bindBuffer(const QDemonRenderCustomMaterial &inMaterial,
+                                                  const dynamic::QDemonBindBuffer &inCommand,
+                                                  bool &outClearTarget,
+                                                  QVector2D &outDestSize)
     {
         QDemonRef<QDemonRenderFrameBuffer> theBuffer;
         QDemonRef<QDemonRenderTexture2D> theTexture;
@@ -1455,8 +1381,10 @@ struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface
         }
 
         if (theBuffer == nullptr) {
-            qCCritical(INVALID_OPERATION, "Effect %s: Failed to find buffer %s for bind",
-                       qPrintable(inMaterial.className), qPrintable(inCommand.m_bufferName));
+            qCCritical(INVALID_OPERATION,
+                       "Effect %s: Failed to find buffer %s for bind",
+                       qPrintable(inMaterial.className),
+                       qPrintable(inCommand.m_bufferName));
             Q_ASSERT(false);
             return nullptr;
         }
@@ -1471,8 +1399,7 @@ struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface
         return theBuffer;
     }
 
-    void computeScreenCoverage(QDemonCustomMaterialRenderContext &inRenderContext, qint32 *xMin,
-                               qint32 *yMin, qint32 *xMax, qint32 *yMax)
+    void computeScreenCoverage(QDemonCustomMaterialRenderContext &inRenderContext, qint32 *xMin, qint32 *yMin, qint32 *xMax, qint32 *yMax)
     {
         QDemonRef<QDemonRenderContext> theContext(m_context->getRenderContext());
         QDemonBounds2BoxPoints outPoints;
@@ -1503,15 +1430,11 @@ struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface
         }
 
         QRect theViewport(theContext->getViewport());
-        qint32 x1 = qint32(projMax.x() * (theViewport.width() / 2)
-                           + (theViewport.x() + (theViewport.width() / 2)));
-        qint32 y1 = qint32(projMax.y() * (theViewport.height() / 2)
-                           + (theViewport.y() + (theViewport.height() / 2)));
+        qint32 x1 = qint32(projMax.x() * (theViewport.width() / 2) + (theViewport.x() + (theViewport.width() / 2)));
+        qint32 y1 = qint32(projMax.y() * (theViewport.height() / 2) + (theViewport.y() + (theViewport.height() / 2)));
 
-        qint32 x2 = qint32(projMin.x() * (theViewport.width() / 2)
-                           + (theViewport.x() + (theViewport.width() / 2)));
-        qint32 y2 = qint32(projMin.y() * (theViewport.height() / 2)
-                           + (theViewport.y() + (theViewport.height() / 2)));
+        qint32 x2 = qint32(projMin.x() * (theViewport.width() / 2) + (theViewport.x() + (theViewport.width() / 2)));
+        qint32 y2 = qint32(projMin.y() * (theViewport.height() / 2) + (theViewport.y() + (theViewport.height() / 2)));
 
         if (x1 > x2) {
             *xMin = x2;
@@ -1535,12 +1458,13 @@ struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface
     {
         QDemonRef<QDemonRenderContext> theContext(m_context->getRenderContext());
         // we change the read/render targets here
-        QDemonRenderContextScopedProperty<QDemonRef<QDemonRenderFrameBuffer>> __framebuffer(
-                    *theContext, &QDemonRenderContext::getRenderTarget, &QDemonRenderContext::setRenderTarget);
+        QDemonRenderContextScopedProperty<QDemonRef<QDemonRenderFrameBuffer>> __framebuffer(*theContext,
+                                                                                            &QDemonRenderContext::getRenderTarget,
+                                                                                            &QDemonRenderContext::setRenderTarget);
         // we may alter scissor
-        QDemonRenderContextScopedProperty<bool> theScissorEnabled(
-                    *theContext, &QDemonRenderContext::isScissorTestEnabled,
-                    &QDemonRenderContext::setScissorTestEnabled);
+        QDemonRenderContextScopedProperty<bool> theScissorEnabled(*theContext,
+                                                                  &QDemonRenderContext::isScissorTestEnabled,
+                                                                  &QDemonRenderContext::setScissorTestEnabled);
 
         if (!inCommand.m_destBufferName.isNull()) {
             quint32 bufferIdx = findBuffer(inCommand.m_destBufferName);
@@ -1549,8 +1473,7 @@ struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface
                 theContext->setRenderTarget(theEntry.frameBuffer);
             } else {
                 // we must have allocated the read target before
-                qCCritical(INTERNAL_ERROR,
-                           "CustomMaterial: BlitFramebuffer: Failed to setup render target");
+                qCCritical(INTERNAL_ERROR, "CustomMaterial: BlitFramebuffer: Failed to setup render target");
                 Q_ASSERT(false);
             }
         } else {
@@ -1566,8 +1489,7 @@ struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface
                 theContext->setReadBuffer(QDemonReadFaces::Color0);
             } else {
                 // we must have allocated the read target before
-                qCCritical(INTERNAL_ERROR,
-                           "CustomMaterial: BlitFramebuffer: Failed to setup read target");
+                qCCritical(INTERNAL_ERROR, "CustomMaterial: BlitFramebuffer: Failed to setup read target");
                 Q_ASSERT(false);
             }
         } else {
@@ -1587,15 +1509,19 @@ struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface
             computeScreenCoverage(inRenderContext, &xMin, &yMin, &xMax, &yMax);
 
             // same dimension
-            theContext->blitFramebuffer(xMin, yMin, xMax, yMax, xMin, yMin, xMax, yMax,
-                                        QDemonRenderClearValues::Color,
-                                        QDemonRenderTextureMagnifyingOp::Nearest);
+            theContext->blitFramebuffer(xMin, yMin, xMax, yMax, xMin, yMin, xMax, yMax, QDemonRenderClearValues::Color, QDemonRenderTextureMagnifyingOp::Nearest);
         } else {
             // same dimension
-            theContext->blitFramebuffer(theViewport.x(), theViewport.y(), theViewport.x() + theViewport.width(),
-                                        theViewport.y() + theViewport.height(), theViewport.x(), theViewport.y(),
-                                        theViewport.x() + theViewport.width(), theViewport.y() + theViewport.height(),
-                                        QDemonRenderClearValues::Color, QDemonRenderTextureMagnifyingOp::Nearest);
+            theContext->blitFramebuffer(theViewport.x(),
+                                        theViewport.y(),
+                                        theViewport.x() + theViewport.width(),
+                                        theViewport.y() + theViewport.height(),
+                                        theViewport.x(),
+                                        theViewport.y(),
+                                        theViewport.x() + theViewport.width(),
+                                        theViewport.y() + theViewport.height(),
+                                        QDemonRenderClearValues::Color,
+                                        QDemonRenderTextureMagnifyingOp::Nearest);
         }
     }
 
@@ -1606,27 +1532,27 @@ struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface
 
         QVector<QVector3D> tempDirection;
 
-        return QDemonLayerGlobalRenderProperties { theLayer,
-                                            const_cast<QDemonRenderCamera &>(inRenderContext.camera),
-                                            theData.cameraDirection,
-                                            const_cast<QVector<QDemonRenderLight *> &>(inRenderContext.lights),
-                                            tempDirection,
-                                            theData.shadowMapManager,
-                                            inRenderContext.depthTexture,
-                                            inRenderContext.aoTexture,
-                                            theLayer.lightProbe,
-                                            theLayer.lightProbe2,
-                                            theLayer.probeHorizon,
-                                            theLayer.probeBright,
-                                            theLayer.probe2Window,
-                                            theLayer.probe2Pos,
-                                            theLayer.probe2Fade,
-                                            theLayer.probeFov };
+        return QDemonLayerGlobalRenderProperties{ theLayer,
+                                                  const_cast<QDemonRenderCamera &>(inRenderContext.camera),
+                                                  theData.cameraDirection,
+                                                  const_cast<QVector<QDemonRenderLight *> &>(inRenderContext.lights),
+                                                  tempDirection,
+                                                  theData.shadowMapManager,
+                                                  inRenderContext.depthTexture,
+                                                  inRenderContext.aoTexture,
+                                                  theLayer.lightProbe,
+                                                  theLayer.lightProbe2,
+                                                  theLayer.probeHorizon,
+                                                  theLayer.probeBright,
+                                                  theLayer.probe2Window,
+                                                  theLayer.probe2Pos,
+                                                  theLayer.probe2Fade,
+                                                  theLayer.probeFov };
     }
 
     void renderPass(QDemonCustomMaterialRenderContext &inRenderContext,
                     const QDemonRef<QDemonCustomMaterialShader> &inShader,
-                    const QDemonRef<QDemonRenderTexture2D> &/* inSourceTexture */,
+                    const QDemonRef<QDemonRenderTexture2D> & /* inSourceTexture */,
                     const QDemonRef<QDemonRenderFrameBuffer> &inFrameBuffer,
                     bool inRenderTargetNeedsClear,
                     const QDemonRef<QDemonRenderInputAssembler> &inAssembler,
@@ -1637,20 +1563,25 @@ struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface
         theContext->setRenderTarget(inFrameBuffer);
 
         QVector4D clearColor(0.0, 0.0, 0.0, 0.0);
-        QDemonRenderContextScopedProperty<QVector4D> __clearColor(
-                    *theContext, &QDemonRenderContext::getClearColor, &QDemonRenderContext::setClearColor,
-                    clearColor);
+        QDemonRenderContextScopedProperty<QVector4D> __clearColor(*theContext,
+                                                                  &QDemonRenderContext::getClearColor,
+                                                                  &QDemonRenderContext::setClearColor,
+                                                                  clearColor);
         if (inRenderTargetNeedsClear) {
             theContext->clear(QDemonRenderClearValues::Color);
         }
 
         QDemonRef<ICustomMaterialShaderGenerator> theMaterialGenerator(m_context->getCustomMaterialShaderGenerator());
 
-        theMaterialGenerator->setMaterialProperties(
-                    inShader->shader, inRenderContext.material, QVector2D(1.0, 1.0),
-                    inRenderContext.modelViewProjection, inRenderContext.normalMatrix,
-                    inRenderContext.modelMatrix, inRenderContext.firstImage, inRenderContext.opacity,
-                    getLayerGlobalRenderProperties(inRenderContext));
+        theMaterialGenerator->setMaterialProperties(inShader->shader,
+                                                    inRenderContext.material,
+                                                    QVector2D(1.0, 1.0),
+                                                    inRenderContext.modelViewProjection,
+                                                    inRenderContext.normalMatrix,
+                                                    inRenderContext.modelMatrix,
+                                                    inRenderContext.firstImage,
+                                                    inRenderContext.opacity,
+                                                    getLayerGlobalRenderProperties(inRenderContext));
 
         // I think the prim type should always be fetched from the
         // current mesh subset setup because there you get the actual draw mode
@@ -1673,13 +1604,22 @@ struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface
 
         if (inRenderContext.subset.wireframeMode) {
             QRect theViewport(theContext->getViewport());
-            QMatrix4x4 vpMatrix = {
-                (float)theViewport.width() / 2.0f, 0.0, 0.0, 0.0,
-                0.0, (float)theViewport.height() / 2.0f, 0.0, 0.0,
-                0.0, 0.0, 1.0, 0.0,
-                (float)theViewport.width() / 2.0f + (float)theViewport.x(),
-                (float)theViewport.height() / 2.0f + (float)theViewport.y(), 0.0, 1.0
-            };
+            QMatrix4x4 vpMatrix = { (float)theViewport.width() / 2.0f,
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    (float)theViewport.height() / 2.0f,
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0,
+                                    0.0,
+                                    (float)theViewport.width() / 2.0f + (float)theViewport.x(),
+                                    (float)theViewport.height() / 2.0f + (float)theViewport.y(),
+                                    0.0,
+                                    1.0 };
 
             inShader->viewportMatrix.set(vpMatrix);
         }
@@ -1712,17 +1652,16 @@ struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface
         if (inMaterial.m_hasRefraction)
             theContext->setBlendingEnabled(false);
 
-        QDemonRenderContextScopedProperty<QDemonRef<QDemonRenderFrameBuffer>> __framebuffer(
-                    *theContext, &QDemonRenderContext::getRenderTarget, &QDemonRenderContext::setRenderTarget);
-        QDemonRenderContextScopedProperty<QRect> __viewport(
-                    *theContext, &QDemonRenderContext::getViewport, &QDemonRenderContext::setViewport);
+        QDemonRenderContextScopedProperty<QDemonRef<QDemonRenderFrameBuffer>> __framebuffer(*theContext,
+                                                                                            &QDemonRenderContext::getRenderTarget,
+                                                                                            &QDemonRenderContext::setRenderTarget);
+        QDemonRenderContextScopedProperty<QRect> __viewport(*theContext, &QDemonRenderContext::getViewport, &QDemonRenderContext::setViewport);
 
         QVector2D theDestSize;
         bool theRenderTargetNeedsClear = false;
 
         QDemonConstDataRef<dynamic::QDemonCommand *> theCommands(inClass.m_class->getRenderCommands());
-        for (quint32 commandIdx = 0, commandEnd = theCommands.size(); commandIdx < commandEnd;
-             ++commandIdx) {
+        for (quint32 commandIdx = 0, commandEnd = theCommands.size(); commandIdx < commandEnd; ++commandIdx) {
             const dynamic::QDemonCommand &theCommand(*theCommands[commandIdx]);
 
             switch (theCommand.m_type) {
@@ -1730,9 +1669,10 @@ struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface
                 allocateBuffer(static_cast<const dynamic::QDemonAllocateBuffer &>(theCommand), inTarget);
                 break;
             case dynamic::CommandTypes::BindBuffer:
-                theCurrentRenderTarget =
-                        bindBuffer(inMaterial, static_cast<const dynamic::QDemonBindBuffer &>(theCommand),
-                                   theRenderTargetNeedsClear, theDestSize);
+                theCurrentRenderTarget = bindBuffer(inMaterial,
+                                                    static_cast<const dynamic::QDemonBindBuffer &>(theCommand),
+                                                    theRenderTargetNeedsClear,
+                                                    theDestSize);
                 break;
             case dynamic::CommandTypes::BindTarget:
                 // Restore the previous render target and info.
@@ -1741,9 +1681,10 @@ struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface
                 break;
             case dynamic::CommandTypes::BindShader: {
                 theCurrentShader = nullptr;
-                QDemonMaterialOrComputeShader theBindResult =
-                        bindShader(inRenderContext, inMaterial,
-                                   static_cast<const dynamic::QDemonBindShader &>(theCommand), inFeatureSet);
+                QDemonMaterialOrComputeShader theBindResult = bindShader(inRenderContext,
+                                                                         inMaterial,
+                                                                         static_cast<const dynamic::QDemonBindShader &>(theCommand),
+                                                                         inFeatureSet);
                 if (theBindResult.isMaterialShader())
                     theCurrentShader = theBindResult.materialShader();
             } break;
@@ -1752,10 +1693,14 @@ struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface
                 break;
             case dynamic::CommandTypes::Render:
                 if (theCurrentShader) {
-                    renderPass(inRenderContext, theCurrentShader, theCurrentSourceTexture,
-                               theCurrentRenderTarget, theRenderTargetNeedsClear,
+                    renderPass(inRenderContext,
+                               theCurrentShader,
+                               theCurrentSourceTexture,
+                               theCurrentRenderTarget,
+                               theRenderTargetNeedsClear,
                                inRenderContext.subset.inputAssembler,
-                               inRenderContext.subset.count, inRenderContext.subset.offset);
+                               inRenderContext.subset.count,
+                               inRenderContext.subset.offset);
                 }
                 // reset
                 theRenderTargetNeedsClear = false;
@@ -1765,13 +1710,13 @@ struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface
                 break;
             case dynamic::CommandTypes::ApplyBufferValue:
                 if (theCurrentShader)
-                    applyBufferValue(inMaterial, theCurrentShader->shader,
+                    applyBufferValue(inMaterial,
+                                     theCurrentShader->shader,
                                      static_cast<const dynamic::QDemonApplyBufferValue &>(theCommand),
                                      theCurrentSourceTexture);
                 break;
             case dynamic::CommandTypes::ApplyBlitFramebuffer:
-                blitFramebuffer(inRenderContext,
-                                static_cast<const dynamic::QDemonApplyBlitFramebuffer &>(theCommand), inTarget);
+                blitFramebuffer(inRenderContext, static_cast<const dynamic::QDemonApplyBlitFramebuffer &>(theCommand), inTarget);
                 break;
             default:
                 Q_ASSERT(false);
@@ -1799,8 +1744,7 @@ struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface
 
         QDemonConstDataRef<dynamic::QDemonCommand *> theCommands = theClass->m_class->getRenderCommands();
         TShaderAndFlags thePrepassShader;
-        for (quint32 idx = 0, end = theCommands.size();
-             idx < end && thePrepassShader.first == nullptr; ++idx) {
+        for (quint32 idx = 0, end = theCommands.size(); idx < end && thePrepassShader.first == nullptr; ++idx) {
             const dynamic::QDemonCommand &theCommand = *theCommands[idx];
             if (theCommand.m_type == dynamic::CommandTypes::BindShader) {
                 const dynamic::QDemonBindShader &theBindCommand = static_cast<const dynamic::QDemonBindShader &>(theCommand);
@@ -1820,8 +1764,7 @@ struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface
             return;
 
         dynamic::QDemonApplyInstanceValue applier;
-        applyInstanceValue(const_cast<QDemonRenderCustomMaterial &>(inMaterial), *theClass, inProgram,
-                           applier);
+        applyInstanceValue(const_cast<QDemonRenderCustomMaterial &>(inMaterial), *theClass, inProgram, applier);
     }
 
     virtual void prepareTextureForRender(QDemonMaterialClass &inClass, QDemonRenderCustomMaterial &inMaterial)
@@ -1833,29 +1776,23 @@ struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface
                     QDemonRenderImage *pImage = nullptr;
 
                     // we only do this to not miss if "None" is selected
-                    QString theStrPtr = *reinterpret_cast<QString *>(
-                                inMaterial.getDataSectionBegin() + thePropDefs[idx].offset);
+                    QString theStrPtr = *reinterpret_cast<QString *>(inMaterial.getDataSectionBegin() + thePropDefs[idx].offset);
 
                     if (!theStrPtr.isNull()) {
 
                         quint32 index = findAllocatedImage(thePropDefs[idx].imagePath);
                         if (index == quint32(-1)) {
                             pImage = new QDemonRenderImage();
-                            m_allocatedImages.push_back(
-                                        QPair<QString, QDemonRenderImage *>(thePropDefs[idx].imagePath, pImage));
+                            m_allocatedImages.push_back(QPair<QString, QDemonRenderImage *>(thePropDefs[idx].imagePath, pImage));
                         } else
                             pImage = m_allocatedImages[index].second;
 
                         if (inMaterial.m_displacementMap != pImage) {
                             inMaterial.m_displacementMap = pImage;
-                            inMaterial.m_displacementMap->m_imagePath =
-                                    thePropDefs[idx].imagePath;
-                            inMaterial.m_displacementMap->m_imageShaderName =
-                                    thePropDefs[idx].name; // this is our name in the shader
-                            inMaterial.m_displacementMap->m_verticalTilingMode =
-                                    thePropDefs[idx].coordOp;
-                            inMaterial.m_displacementMap->m_horizontalTilingMode =
-                                    thePropDefs[idx].coordOp;
+                            inMaterial.m_displacementMap->m_imagePath = thePropDefs[idx].imagePath;
+                            inMaterial.m_displacementMap->m_imageShaderName = thePropDefs[idx].name; // this is our name in the shader
+                            inMaterial.m_displacementMap->m_verticalTilingMode = thePropDefs[idx].coordOp;
+                            inMaterial.m_displacementMap->m_horizontalTilingMode = thePropDefs[idx].coordOp;
                         }
                     } else {
                         inMaterial.m_displacementMap = nullptr;
@@ -1864,27 +1801,22 @@ struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface
                     QDemonRenderImage *pImage = nullptr;
 
                     // we only do this to not miss if "None" is selected
-                    QString theStrPtr = *reinterpret_cast<QString *>(
-                                inMaterial.getDataSectionBegin() + thePropDefs[idx].offset);
+                    QString theStrPtr = *reinterpret_cast<QString *>(inMaterial.getDataSectionBegin() + thePropDefs[idx].offset);
 
                     if (!theStrPtr.isNull()) {
                         quint32 index = findAllocatedImage(thePropDefs[idx].imagePath);
                         if (index == quint32(-1)) {
                             pImage = new QDemonRenderImage();
-                            m_allocatedImages.push_back(
-                                        QPair<QString, QDemonRenderImage *>(thePropDefs[idx].imagePath, pImage));
+                            m_allocatedImages.push_back(QPair<QString, QDemonRenderImage *>(thePropDefs[idx].imagePath, pImage));
                         } else
                             pImage = m_allocatedImages[index].second;
 
                         if (inMaterial.m_emissiveMap2 != pImage) {
                             inMaterial.m_emissiveMap2 = pImage;
                             inMaterial.m_emissiveMap2->m_imagePath = thePropDefs[idx].imagePath;
-                            inMaterial.m_emissiveMap2->m_imageShaderName =
-                                    thePropDefs[idx].name; // this is our name in the shader
-                            inMaterial.m_emissiveMap2->m_verticalTilingMode =
-                                    thePropDefs[idx].coordOp;
-                            inMaterial.m_emissiveMap2->m_horizontalTilingMode =
-                                    thePropDefs[idx].coordOp;
+                            inMaterial.m_emissiveMap2->m_imageShaderName = thePropDefs[idx].name; // this is our name in the shader
+                            inMaterial.m_emissiveMap2->m_verticalTilingMode = thePropDefs[idx].coordOp;
+                            inMaterial.m_emissiveMap2->m_horizontalTilingMode = thePropDefs[idx].coordOp;
                         }
                     } else {
                         inMaterial.m_emissiveMap2 = nullptr;
@@ -1902,17 +1834,14 @@ struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface
         // our displacement mappin in MDL has fixed naming
         QDemonConstDataRef<dynamic::QDemonPropertyDefinition> thePropDefs = inClass.m_class->getProperties();
         for (quint32 idx = 0, end = thePropDefs.size(); idx < end; ++idx) {
-            if (thePropDefs[idx].dataType == QDemonRenderShaderDataTypes::Float
-                    && (thePropDefs[idx].name == "displaceAmount")) {
-                float theValue = *reinterpret_cast<const float *>(inMaterial.getDataSectionBegin()
-                                                                  + thePropDefs[idx].offset);
+            if (thePropDefs[idx].dataType == QDemonRenderShaderDataTypes::Float && (thePropDefs[idx].name == "displaceAmount")) {
+                float theValue = *reinterpret_cast<const float *>(inMaterial.getDataSectionBegin() + thePropDefs[idx].offset);
                 inMaterial.m_displaceAmount = theValue;
-            } else if (thePropDefs[idx].dataType == QDemonRenderShaderDataTypes::Vec3
-                       && (thePropDefs[idx].name == "displace_tiling")) {
+            } else if (thePropDefs[idx].dataType == QDemonRenderShaderDataTypes::Vec3 && (thePropDefs[idx].name == "displace_tiling")) {
                 QVector3D theValue = *reinterpret_cast<const QVector3D *>(inMaterial.getDataSectionBegin()
                                                                           + thePropDefs[idx].offset);
                 if (theValue.x() != inMaterial.m_displacementMap->m_scale.x()
-                        || theValue.y() != inMaterial.m_displacementMap->m_scale.y()) {
+                    || theValue.y() != inMaterial.m_displacementMap->m_scale.y()) {
                     inMaterial.m_displacementMap->m_scale = QVector2D(theValue.x(), theValue.y());
                     inMaterial.m_displacementMap->m_flags.setTransformDirty(true);
                 }
@@ -1932,8 +1861,10 @@ struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface
     // than previously.  This effects things like progressive AA.
     // TODO - return more information, specifically about transparency (object is transparent,
     // object is completely transparent
-    bool prepareForRender(const QDemonRenderModel & /*inModel*/, const QDemonRenderSubset & /*inSubset*/,
-                          QDemonRenderCustomMaterial &inMaterial, bool clearMaterialDirtyFlags) override
+    bool prepareForRender(const QDemonRenderModel & /*inModel*/,
+                          const QDemonRenderSubset & /*inSubset*/,
+                          QDemonRenderCustomMaterial &inMaterial,
+                          bool clearMaterialDirtyFlags) override
     {
         QDemonMaterialClass *theMaterialClass = getMaterialClass(inMaterial.className);
         if (theMaterialClass == nullptr) {
@@ -1955,27 +1886,25 @@ struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface
     }
 
     // TODO - handle UIC specific features such as vertex offsets for prog-aa and opacity.
-    void renderSubset(QDemonCustomMaterialRenderContext &inRenderContext,
-                      const TShaderFeatureSet &inFeatureSet) override
+    void renderSubset(QDemonCustomMaterialRenderContext &inRenderContext, const TShaderFeatureSet &inFeatureSet) override
     {
         QDemonMaterialClass *theClass = getMaterialClass(inRenderContext.material.className);
 
         // Ensure that our overall render context comes back no matter what the client does.
-        QDemonRenderContextScopedProperty<QDemonRenderBlendFunctionArgument>
-                __blendFunction(*m_context->getRenderContext(), &QDemonRenderContext::getBlendFunction,
-                                &QDemonRenderContext::setBlendFunction,
-                                QDemonRenderBlendFunctionArgument());
-        QDemonRenderContextScopedProperty<QDemonRenderBlendEquationArgument>
-                __blendEquation(*m_context->getRenderContext(), &QDemonRenderContext::getBlendEquation,
-                                &QDemonRenderContext::setBlendEquation,
-                                QDemonRenderBlendEquationArgument());
+        QDemonRenderContextScopedProperty<QDemonRenderBlendFunctionArgument> __blendFunction(*m_context->getRenderContext(),
+                                                                                             &QDemonRenderContext::getBlendFunction,
+                                                                                             &QDemonRenderContext::setBlendFunction,
+                                                                                             QDemonRenderBlendFunctionArgument());
+        QDemonRenderContextScopedProperty<QDemonRenderBlendEquationArgument> __blendEquation(*m_context->getRenderContext(),
+                                                                                             &QDemonRenderContext::getBlendEquation,
+                                                                                             &QDemonRenderContext::setBlendEquation,
+                                                                                             QDemonRenderBlendEquationArgument());
 
         QDemonRenderContextScopedProperty<bool> theBlendEnabled(*m_context->getRenderContext(),
                                                                 &QDemonRenderContext::isBlendingEnabled,
                                                                 &QDemonRenderContext::setBlendingEnabled);
 
-        doRenderCustomMaterial(inRenderContext, inRenderContext.material, *theClass,
-                               m_context->getRenderContext()->getRenderTarget(), inFeatureSet);
+        doRenderCustomMaterial(inRenderContext, inRenderContext.material, *theClass, m_context->getRenderContext()->getRenderTarget(), inFeatureSet);
     }
 
     bool renderDepthPrepass(const QMatrix4x4 &inMVP, const QDemonRenderCustomMaterial &inMaterial, const QDemonRenderSubset &inSubset) override
@@ -1983,13 +1912,13 @@ struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface
         QDemonMaterialClass *theClass = getMaterialClass(inMaterial.className);
         QDemonConstDataRef<dynamic::QDemonCommand *> theCommands = theClass->m_class->getRenderCommands();
         TShaderAndFlags thePrepassShader;
-        for (quint32 idx = 0, end = theCommands.size();
-             idx < end && thePrepassShader.first == nullptr; ++idx) {
+        for (quint32 idx = 0, end = theCommands.size(); idx < end && thePrepassShader.first == nullptr; ++idx) {
             const dynamic::QDemonCommand &theCommand = *theCommands[idx];
             if (theCommand.m_type == dynamic::CommandTypes::BindShader) {
                 const dynamic::QDemonBindShader &theBindCommand = static_cast<const dynamic::QDemonBindShader &>(theCommand);
-                thePrepassShader = m_context->getDynamicObjectSystem()->getDepthPrepassShader(
-                            theBindCommand.m_shaderPath, QString(), TShaderFeatureSet());
+                thePrepassShader = m_context->getDynamicObjectSystem()->getDepthPrepassShader(theBindCommand.m_shaderPath,
+                                                                                              QString(),
+                                                                                              TShaderFeatureSet());
             }
         }
 
@@ -2079,10 +2008,9 @@ struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface
 };
 }
 
-QDemonRef<QDemonCustomMaterialSystemInterface> QDemonCustomMaterialSystemInterface::createCustomMaterialSystem(QDemonRenderContextCoreInterface * ctx)
+QDemonRef<QDemonCustomMaterialSystemInterface> QDemonCustomMaterialSystemInterface::createCustomMaterialSystem(QDemonRenderContextCoreInterface *ctx)
 {
     return QDemonRef<QDemonMaterialSystem>(new QDemonMaterialSystem(ctx));
 }
 
 QT_END_NAMESPACE
-

@@ -48,8 +48,8 @@ QDemonOption<QVector3D> QDemonRenderRay::intersect(const QDemonPlane &inPlane) c
 }
 
 QDemonOption<QDemonRenderRayIntersectionResult> QDemonRenderRay::intersectWithAABB(const QMatrix4x4 &inGlobalTransform,
-                                                       const QDemonBounds3 &inBounds,
-                                                       bool inForceIntersect) const
+                                                                                   const QDemonBounds3 &inBounds,
+                                                                                   bool inForceIntersect) const
 {
     // Intersect the origin with the AABB described by bounds.
 
@@ -91,8 +91,7 @@ QDemonOption<QDemonRenderRayIntersectionResult> QDemonRenderRay::intersectWithAA
         } else if (theDirectionAxis < -kEpsilon) {
             theMinAxis = (theMaxBox - theOriginAxis) / theDirectionAxis;
             theMaxAxis = (theMinBox - theOriginAxis) / theDirectionAxis;
-        } else if ((theOriginAxis < theMinBox || theOriginAxis > theMaxBox)
-                   && inForceIntersect == false) {
+        } else if ((theOriginAxis < theMinBox || theOriginAxis > theMaxBox) && inForceIntersect == false) {
             // Pickray is roughly parallel to the plane of the slab
             // so, if the origin is not in the range, we have no intersection
             return QDemonEmpty();
@@ -123,8 +122,9 @@ QDemonOption<QDemonRenderRayIntersectionResult> QDemonRenderRay::intersectWithAA
     return QDemonRenderRayIntersectionResult(rayLengthSquared, relXY);
 }
 
-QDemonOption<QVector2D> QDemonRenderRay::getRelative(const QMatrix4x4 &inGlobalTransform, const QDemonBounds3 &inBounds,
-                                    QDemonRenderBasisPlanes::Enum inPlane) const
+QDemonOption<QVector2D> QDemonRenderRay::getRelative(const QMatrix4x4 &inGlobalTransform,
+                                                     const QDemonBounds3 &inBounds,
+                                                     QDemonRenderBasisPlanes::Enum inPlane) const
 {
     QMatrix4x4 theOriginTransform = mat44::getInverse(inGlobalTransform);
 
@@ -150,9 +150,10 @@ QDemonOption<QVector2D> QDemonRenderRay::getRelative(const QMatrix4x4 &inGlobalT
         theRight = QVector3D(0, 0, 1);
         break;
     }
-    QDemonPlane thePlane(theDirection, QVector3D::dotProduct(theDirection, theTransformedDirection) > 0.0f
-                     ? QVector3D::dotProduct(theDirection, inBounds.maximum)
-                     : QVector3D::dotProduct(theDirection, inBounds.minimum));
+    QDemonPlane thePlane(theDirection,
+                         QVector3D::dotProduct(theDirection, theTransformedDirection) > 0.0f
+                                 ? QVector3D::dotProduct(theDirection, inBounds.maximum)
+                                 : QVector3D::dotProduct(theDirection, inBounds.minimum));
 
     QDemonRenderRay relativeRay(theTransformedOrigin, theTransformedDirection);
     QDemonOption<QVector3D> localIsect = relativeRay.intersect(thePlane);

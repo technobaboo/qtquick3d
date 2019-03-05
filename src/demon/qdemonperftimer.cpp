@@ -18,11 +18,7 @@ struct QDemonTimerEntry
     QString m_tag;
     size_t m_order = 0;
 
-    QDemonTimerEntry(const QString &tag, size_t order)
-        : m_tag(tag)
-        , m_order(order)
-    {
-    }
+    QDemonTimerEntry(const QString &tag, size_t order) : m_tag(tag), m_order(order) {}
 
     QDemonTimerEntry() = default;
 
@@ -45,8 +41,7 @@ struct QDemonTimerEntry
                 qWarning("%s - %fms", qPrintable(m_tag), milliseconds);
             } else {
                 milliseconds /= inFramesPassed;
-                qWarning("%s - %fms/frame-total %fms-max %u hits",
-                         qPrintable(m_tag), milliseconds, maxMilliseconds, m_updateCount);
+                qWarning("%s - %fms/frame-total %fms-max %u hits", qPrintable(m_tag), milliseconds, maxMilliseconds, m_updateCount);
             }
         }
     }

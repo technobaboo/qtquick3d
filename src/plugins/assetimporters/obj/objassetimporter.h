@@ -27,7 +27,6 @@
 **
 ****************************************************************************/
 
-
 #ifndef OBJASSETIMPORTER_H
 #define OBJASSETIMPORTER_H
 
@@ -49,6 +48,7 @@ public:
     const QString type() const override;
     const QVariantMap importOptions() const override;
     const QString import(const QString &sourceFile, const QDir &savePath, const QVariantMap &options, QStringList *generatedFiles) override;
+
 private:
     void parseObj(QTextStream &stream);
 

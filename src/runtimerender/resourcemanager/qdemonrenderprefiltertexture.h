@@ -109,7 +109,8 @@ private:
     bool m_textureCreated = false;
 
     void createComputeProgram(const QDemonRef<QDemonRenderContext> &context);
-    QDemonRef<QDemonRenderShaderProgram> getOrCreateUploadComputeProgram(const QDemonRef<QDemonRenderContext> &context, QDemonRenderTextureFormats::Enum inFormat);
+    QDemonRef<QDemonRenderShaderProgram> getOrCreateUploadComputeProgram(const QDemonRef<QDemonRenderContext> &context,
+                                                                         QDemonRenderTextureFormats::Enum inFormat);
 };
 QT_END_NAMESPACE
 

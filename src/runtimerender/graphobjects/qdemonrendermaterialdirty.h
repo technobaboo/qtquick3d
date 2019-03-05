@@ -41,11 +41,7 @@ private:
     bool m_dirtyFlagWithInFrame;
 
 public:
-    QDemonMaterialDirty()
-        : m_dirty(true)
-        , m_dirtyFlagWithInFrame(m_dirty)
-    {
-    }
+    QDemonMaterialDirty() : m_dirty(true), m_dirtyFlagWithInFrame(m_dirty) {}
 
     void setDirty() { m_dirty = m_dirtyFlagWithInFrame = true; }
     bool isDirty() const { return m_dirty || m_dirtyFlagWithInFrame; }

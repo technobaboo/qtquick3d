@@ -9,7 +9,6 @@
 
 #include <QtQml/qqml.h>
 
-
 QT_BEGIN_NAMESPACE
 
 class QDemonWindowPrivate;
@@ -23,8 +22,8 @@ class Q_QUICK3D_EXPORT QDemonWindow : public QWindow
     Q_OBJECT
     Q_PRIVATE_PROPERTY(QDemonWindow::d_func(), QQmlListProperty<QObject> data READ data DESIGNABLE false)
     Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
-    Q_PROPERTY(QDemonObject* contentItem READ contentItem CONSTANT)
-    Q_PROPERTY(QDemonObject* activeFocusItem READ activeFocusItem NOTIFY activeFocusItemChanged)
+    Q_PROPERTY(QDemonObject *contentItem READ contentItem CONSTANT)
+    Q_PROPERTY(QDemonObject *activeFocusItem READ activeFocusItem NOTIFY activeFocusItemChanged)
     Q_CLASSINFO("DefaultProperty", "data")
     Q_DECLARE_PRIVATE(QDemonWindow)
 public:
@@ -37,9 +36,7 @@ public:
         NoStage
     };
 
-    enum SceneGraphError {
-        ContextNotAvailable = 1
-    };
+    enum SceneGraphError { ContextNotAvailable = 1 };
     Q_ENUM(SceneGraphError)
 
     QDemonWindow(QWindow *parent = nullptr);
@@ -78,7 +75,6 @@ Q_SIGNALS:
     void colorChanged(const QColor &);
     void activeFocusItemChanged();
     void sceneGraphError(QDemonWindow::SceneGraphError error, const QString &message);
-
 
 public Q_SLOTS:
     void update();

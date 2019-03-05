@@ -86,7 +86,8 @@ public:
     virtual void setOnscreenTextRendererCore(QDemonRef<QDemonTextRendererInterface> inRenderer) = 0;
     virtual QDemonRef<QDemonTextRendererInterface> getOnscreenTextRendererCore() = 0;
     // The render context maintains a reference to this object.
-    virtual QDemonRef<QDemonRenderContextInterface> createRenderContext(QDemonRef<QDemonRenderContext> inContext, const char *inPrimitivesDirectory) = 0;
+    virtual QDemonRef<QDemonRenderContextInterface> createRenderContext(QDemonRef<QDemonRenderContext> inContext,
+                                                                        const char *inPrimitivesDirectory) = 0;
 
     static QDemonRef<QDemonRenderContextCoreInterface> create();
 };
@@ -155,8 +156,7 @@ public:
     virtual void setMatteColor(QDemonOption<QVector4D> inMatteColor) = 0;
 
     // Render screen aligned 2D text at x,y
-    virtual void renderText2D(float x, float y, QDemonOption<QVector3D> inColor,
-                              const char *text) = 0;
+    virtual void renderText2D(float x, float y, QDemonOption<QVector3D> inColor, const char *text) = 0;
     // render Gpu profiler values
     virtual void renderGpuProfilerStats(float x, float y, QDemonOption<QVector3D> inColor) = 0;
 

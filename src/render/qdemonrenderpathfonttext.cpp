@@ -81,20 +81,17 @@ static QMatrix3x3 mapQuadToQuad(QVector2D fromSquare[4], QVector2D toSquare[4])
 
 static QMatrix4x4 mapBoxToQuad(QVector4D inBox, QVector2D inSquare[4])
 {
-    QVector2D fromSquare[4] = { QVector2D(inBox.x(), inBox.y()), QVector2D(inBox.z(), inBox.y()),
-                                QVector2D(inBox.z(), inBox.w()), QVector2D(inBox.x(), inBox.w()) };
+    QVector2D fromSquare[4] = { QVector2D(inBox.x(), inBox.y()),
+                                QVector2D(inBox.z(), inBox.y()),
+                                QVector2D(inBox.z(), inBox.w()),
+                                QVector2D(inBox.x(), inBox.w()) };
 
     QMatrix3x3 ret = mapQuadToQuad(fromSquare, inSquare);
 
     return QMatrix4x4(ret);
 }
 
-QDemonRenderPathFontItem::QDemonRenderPathFontItem()
-    : m_numGlyphs(0)
-    , m_glyphIDs(nullptr)
-    , m_translateXY(nullptr)
-{
-}
+QDemonRenderPathFontItem::QDemonRenderPathFontItem() : m_numGlyphs(0), m_glyphIDs(nullptr), m_translateXY(nullptr) {}
 
 QDemonRenderPathFontItem::~QDemonRenderPathFontItem()
 {
@@ -104,9 +101,13 @@ QDemonRenderPathFontItem::~QDemonRenderPathFontItem()
         ::free(m_glyphIDs);
 }
 
-void QDemonRenderPathFontItem::initTextItem(size_t glyphCount, const quint32 *glyphIDs,
-                                            QDemonRenderPathFormatType::Enum type, float *posArray,
-                                            QVector2D pixelBound, QVector2D logicalBound, float emScale)
+void QDemonRenderPathFontItem::initTextItem(size_t glyphCount,
+                                            const quint32 *glyphIDs,
+                                            QDemonRenderPathFormatType::Enum type,
+                                            float *posArray,
+                                            QVector2D pixelBound,
+                                            QVector2D logicalBound,
+                                            float emScale)
 {
     m_numGlyphs = glyphCount;
 
@@ -142,8 +143,10 @@ void QDemonRenderPathFontItem::initTextItem(size_t glyphCount, const quint32 *gl
     }
 
     // setup transform
-    QVector2D square[4] = { QVector2D(0.0, 0.0), QVector2D(pixelBound.x(), 0.0),
-                            QVector2D(pixelBound.x(), pixelBound.y()), QVector2D(0.0, pixelBound.y()) };
+    QVector2D square[4] = { QVector2D(0.0, 0.0),
+                            QVector2D(pixelBound.x(), 0.0),
+                            QVector2D(pixelBound.x(), pixelBound.y()),
+                            QVector2D(0.0, pixelBound.y()) };
     QVector4D box(0.0, 0.0, logicalBound.x() * emScale, logicalBound.y() * emScale);
 
     m_modelMatrix = mapBoxToQuad(box, square);
@@ -151,14 +154,25 @@ void QDemonRenderPathFontItem::initTextItem(size_t glyphCount, const quint32 *gl
 
 const QMatrix4x4 QDemonRenderPathFontItem::getTransform()
 {
-    return QMatrix4x4(m_modelMatrix(0, 0), m_modelMatrix(1, 0), 0.0, m_modelMatrix(2, 0),
-                      m_modelMatrix(0, 1), m_modelMatrix(1, 1), 0.0, m_modelMatrix(2, 1),
-                      0.0, 0.0, 1.0, 0.0,
-                      m_modelMatrix(0, 2), m_modelMatrix(1, 2), 0.0, m_modelMatrix(2, 2));
+    return QMatrix4x4(m_modelMatrix(0, 0),
+                      m_modelMatrix(1, 0),
+                      0.0,
+                      m_modelMatrix(2, 0),
+                      m_modelMatrix(0, 1),
+                      m_modelMatrix(1, 1),
+                      0.0,
+                      m_modelMatrix(2, 1),
+                      0.0,
+                      0.0,
+                      1.0,
+                      0.0,
+                      m_modelMatrix(0, 2),
+                      m_modelMatrix(1, 2),
+                      0.0,
+                      m_modelMatrix(2, 2));
 }
 
-quint32
-QDemonRenderPathFontItem::getSizeOfType(QDemonRenderPathFormatType::Enum type)
+quint32 QDemonRenderPathFontItem::getSizeOfType(QDemonRenderPathFormatType::Enum type)
 {
     switch (type) {
     case QDemonRenderPathFormatType::Byte:

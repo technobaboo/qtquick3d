@@ -58,8 +58,7 @@ QDemonRenderLayer *QDemonRenderScene::getLastChild()
 {
     // empty loop intentional
     QDemonRenderLayer *child;
-    for (child = firstChild; child && child->nextSibling;
-         child = static_cast<QDemonRenderLayer *>(child->nextSibling)) {
+    for (child = firstChild; child && child->nextSibling; child = static_cast<QDemonRenderLayer *>(child->nextSibling)) {
     }
 
     return child;
@@ -92,9 +91,10 @@ void QDemonRenderScene::render(const QVector2D &inViewportDimensions,
             clearColor.setZ(clearColor.z());
         }
         // Maybe clear and reset to previous clear color after we leave.
-        QDemonRenderContextScopedProperty<QVector4D> __clearColor(
-            *inContext->getRenderContext(), &QDemonRenderContext::getClearColor,
-                    &QDemonRenderContext::setClearColor, clearColor);
+        QDemonRenderContextScopedProperty<QVector4D> __clearColor(*inContext->getRenderContext(),
+                                                                  &QDemonRenderContext::getClearColor,
+                                                                  &QDemonRenderContext::setClearColor,
+                                                                  clearColor);
         inContext->getRenderContext()->clear(QDemonRenderClearValues::Color);
     }
     if (firstChild)

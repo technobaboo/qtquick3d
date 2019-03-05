@@ -7,22 +7,14 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonTransform::QDemonTransform()
-    : q(0, 0, 0, 1)
-    , p(0, 0, 0)
-{
-}
+QDemonTransform::QDemonTransform() : q(0, 0, 0, 1), p(0, 0, 0) {}
 
-QDemonTransform::QDemonTransform(const QQuaternion &orientation)
-    : q(orientation)
-    , p(0, 0, 0)
+QDemonTransform::QDemonTransform(const QQuaternion &orientation) : q(orientation), p(0, 0, 0)
 {
     Q_ASSERT(quant::isSane(orientation));
 }
 
-QDemonTransform::QDemonTransform(const QVector3D &p0, const QQuaternion &q0)
-    : q(q0)
-    , p(p0)
+QDemonTransform::QDemonTransform(const QVector3D &p0, const QQuaternion &q0) : q(q0), p(p0)
 {
     Q_ASSERT(quant::isSane(q0));
 }

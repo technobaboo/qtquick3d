@@ -70,11 +70,7 @@ struct QDemonTextCacheNode
     quint32 frameCount;
 
     QDemonTextCacheNode(const QDemonTextRenderInfoAndHash &inRenderInfo, const TTPathObjectAndTexture &inTextInfo)
-        : previousSibling(nullptr)
-        , nextSibling(nullptr)
-        , renderInfo(inRenderInfo)
-        , textInfo(inTextInfo)
-        , frameCount(0)
+        : previousSibling(nullptr), nextSibling(nullptr), renderInfo(inRenderInfo), textInfo(inTextInfo), frameCount(0)
     {
     }
 };
@@ -96,11 +92,7 @@ struct QDemonTextTextureCache : public QDemonTextTextureCacheInterface
     bool canUsePathRendering; ///< true if we use hardware accelerated font rendering
 
     QDemonTextTextureCache(QDemonRef<QDemonTextRendererInterface> inRenderer, QDemonRef<QDemonRenderContext> inRenderContext)
-        : textRenderer(inRenderer)
-        , highWaterMark(0x100000)
-        , frameCount(0)
-        , textureTotalBytes(0)
-        , renderContext(inRenderContext)
+        : textRenderer(inRenderer), highWaterMark(0x100000), frameCount(0), textureTotalBytes(0), renderContext(inRenderContext)
     {
         // hardware accelerate font rendering not ready yet
         canUsePathRendering = (renderContext->isPathRenderingSupported() && renderContext->isProgramPipelineSupported());
@@ -129,7 +121,7 @@ struct QDemonTextTextureCache : public QDemonTextTextureCacheInterface
             QDemonTextCacheNode *theEnd = textCacheNodeList.back_ptr();
             if (theEnd->frameCount != frameCount) {
                 nextTexture = theEnd->textInfo.second.second;
-                //STextureDetails theDetails = nextTexture->GetTextureDetails();
+                // STextureDetails theDetails = nextTexture->GetTextureDetails();
                 textureTotalBytes -= getNumBytes(*nextTexture.data());
                 textCacheNodeList.remove(*theEnd);
                 // copy the key because the next statement will destroy memory
@@ -159,7 +151,7 @@ struct QDemonTextTextureCache : public QDemonTextTextureCacheInterface
             QDemonRef<QDemonRenderPathFontItem> nextPathFontItemObject;
             QDemonRef<QDemonRenderPathFontSpecification> nextPathFontObject;
             // HW acceleration for fonts not supported
-            //if (m_CanUsePathRendering && inText.m_EnableAcceleratedFont) {
+            // if (m_CanUsePathRendering && inText.m_EnableAcceleratedFont) {
             //    nextPathFontItemObject = m_RenderContext->CreatePathFontItem();
             //    nextPathFontObject = m_RenderContext->CreatePathFontSpecification(inText.m_Font);
             //}
@@ -168,11 +160,10 @@ struct QDemonTextTextureCache : public QDemonTextTextureCacheInterface
             theTextInfo.fontSize *= inScaleFactor;
             QDemonTextTextureDetails theDetails;
 
-
             // HW acceleration for fonts not supported
-            //if (!m_CanUsePathRendering || !inText.m_EnableAcceleratedFont)
+            // if (!m_CanUsePathRendering || !inText.m_EnableAcceleratedFont)
             theDetails = textRenderer->renderText(theTextInfo, *nextTexture.data());
-            //else
+            // else
             //    theDetails = m_TextRenderer->RenderText(theTextInfo, *nextPathFontItemObject.mPtr,
             //                                            *nextPathFontObject.mPtr);
 
@@ -182,9 +173,9 @@ struct QDemonTextTextureCache : public QDemonTextTextureCacheInterface
                 theDetails.scaleFactor.setY(float(theDetails.textHeight) / theCanonicalDetails.second.first.textHeight);
             }
             theKey = QDemonTextRenderInfoAndHash(inText, inScaleFactor);
-            retval = new QDemonTextCacheNode(theKey, TTPathObjectAndTexture(
-                                            TPathFontSpecAndPathObject(nextPathFontObject, nextPathFontItemObject),
-                                            TTextTextureDetailsAndTexture(theDetails, nextTexture)));
+            retval = new QDemonTextCacheNode(theKey,
+                                             TTPathObjectAndTexture(TPathFontSpecAndPathObject(nextPathFontObject, nextPathFontItemObject),
+                                                                    TTextTextureDetailsAndTexture(theDetails, nextTexture)));
             textureCache.insert(theKey, retval);
             if (!canUsePathRendering)
                 textureTotalBytes += getNumBytes(*(retval->textInfo.second.second.data()));
@@ -216,16 +207,13 @@ struct QDemonTextTextureCache : public QDemonTextTextureCacheInterface
 }
 
 QDemonRef<QDemonTextTextureCacheInterface> QDemonTextTextureCacheInterface::createTextureCache(QDemonRef<QDemonTextRendererInterface> inTextRenderer,
-                                                                                                    QDemonRef<QDemonRenderContext> inRenderContext)
+                                                                                               QDemonRef<QDemonRenderContext> inRenderContext)
 {
     return QDemonRef<QDemonTextTextureCacheInterface>(new QDemonTextTextureCache(inTextRenderer, inRenderContext));
 }
 
-QDemonTextRenderInfoAndHash::QDemonTextRenderInfoAndHash(const QDemonTextRenderInfo &inInfo,
-                                                         float inScaleFactor)
-    : m_info(inInfo)
-    , m_scaleFactor(inScaleFactor)
-    , m_hashcode(qHash(inInfo) ^ qHash(inScaleFactor))
+QDemonTextRenderInfoAndHash::QDemonTextRenderInfoAndHash(const QDemonTextRenderInfo &inInfo, float inScaleFactor)
+    : m_info(inInfo), m_scaleFactor(inScaleFactor), m_hashcode(qHash(inInfo) ^ qHash(inScaleFactor))
 {
 }
 

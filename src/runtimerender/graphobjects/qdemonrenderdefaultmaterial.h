@@ -42,31 +42,16 @@ QT_BEGIN_NAMESPACE
 
 struct DefaultMaterialLighting
 {
-    enum Enum {
-        NoLighting = 0,
-        VertexLighting,
-        FragmentLighting
-    };
+    enum Enum { NoLighting = 0, VertexLighting, FragmentLighting };
 };
 struct DefaultMaterialBlendMode
 {
-    enum Enum {
-        Normal = 0,
-        Screen,
-        Multiply,
-        Overlay,
-        ColorBurn,
-        ColorDodge
-    };
+    enum Enum { Normal = 0, Screen, Multiply, Overlay, ColorBurn, ColorDodge };
 };
 
 struct DefaultMaterialSpecularModel
 {
-    enum Enum {
-        Default = 0,
-        KGGX,
-        KWard
-    };
+    enum Enum { Default = 0, KGGX, KWard };
 };
 
 struct QDemonRenderImage;
@@ -82,8 +67,8 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderDefaultMaterial : QDemonGraphObje
     DefaultMaterialLighting::Enum lighting = DefaultMaterialLighting::VertexLighting;
     // defaults to normal
     DefaultMaterialBlendMode::Enum blendMode = DefaultMaterialBlendMode::Normal;
-    QVector3D diffuseColor { 1.0f, 1.0f, 1.0f }; // colors are 0-1 normalized
-    QDemonRenderImage *diffuseMaps[3] { nullptr, nullptr, nullptr };
+    QVector3D diffuseColor{ 1.0f, 1.0f, 1.0f }; // colors are 0-1 normalized
+    QDemonRenderImage *diffuseMaps[3]{ nullptr, nullptr, nullptr };
     float emissivePower = 0.0f; // 0-100, defaults to 0
     QDemonRenderImage *emissiveMap = nullptr;
     QDemonRenderImage *emissiveMap2 = nullptr;
@@ -91,10 +76,10 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderDefaultMaterial : QDemonGraphObje
     QDemonRenderImage *specularReflection = nullptr;
     QDemonRenderImage *specularMap = nullptr;
     DefaultMaterialSpecularModel::Enum specularModel = DefaultMaterialSpecularModel::Default;
-    QVector3D specularTint { 1.0f, 1.0f, 1.0f };
+    QVector3D specularTint{ 1.0f, 1.0f, 1.0f };
     float ior = 0.2f;
     float fresnelPower = 0.0f;
-    float specularAmount = 0.0f ; // 0-??, defaults to 0
+    float specularAmount = 0.0f; // 0-??, defaults to 0
     float specularRoughness = 50.0f; // 0-??, defaults to 50
     QDemonRenderImage *roughnessMap = nullptr;
     float opacity = 1.0f; // 0-1
@@ -121,7 +106,7 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderDefaultMaterial : QDemonGraphObje
 
     // Generic method used during serialization
     // to remap string and object pointers
-    template <typename TRemapperType>
+    template<typename TRemapperType>
     void remap(TRemapperType &inRemapper)
     {
         QDemonGraphObject::remap(inRemapper);

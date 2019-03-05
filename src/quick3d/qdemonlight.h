@@ -27,8 +27,7 @@ class Q_QUICK3D_EXPORT QDemonLight : public QDemonNode
     Q_PROPERTY(float shadowFilter READ shadowFilter WRITE setShadowFilter NOTIFY shadowFilterChanged)
 
 public:
-    enum QDemonRenderLightTypes
-    {
+    enum QDemonRenderLightTypes {
         Unknown = 0,
         Directional,
         Point,
@@ -97,7 +96,6 @@ protected:
     QDemonGraphObject *updateSpatialNode(QDemonGraphObject *node) override;
 
 private:
-
     QDemonRenderLightTypes m_lightType = Directional;
     QColor m_diffuseColor;
     QColor m_specularColor;

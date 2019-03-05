@@ -69,9 +69,9 @@ public:
     QDemonExtendedTextureFormats::Enum m_ExtendedFormat = QDemonExtendedTextureFormats::NoExtendedFormat;
     // Used for palettized images.
     void *m_palette = nullptr;
-    qint32 m_customMasks[3] { 0, 0, 0 };
+    qint32 m_customMasks[3]{ 0, 0, 0 };
     int m_bitCount = 0;
-    char m_backgroundColor[3] { 0, 0, 0 };
+    char m_backgroundColor[3]{ 0, 0, 0 };
     quint8 *m_transparencyTable = nullptr;
     qint32 m_transparentPaletteIndex = -1;
 
@@ -107,12 +107,10 @@ public:
     void releaseDecompressedTexture(QDemonTextureData inImage);
 
     static QDemonRef<QDemonLoadedTexture> load(const QString &inPath,
-                                                    QDemonInputStreamFactoryInterface &inFactory,
-                                                    bool inFlipY = true,
-                                                    const QDemonRenderContextType& renderContextType = QDemonRenderContextValues::NullContext);
-    static QDemonRef<QDemonLoadedTexture> loadQImage(const QString &inPath,
-                                                          qint32 flipVertical,
-                                                          QDemonRenderContextType renderContextType);
+                                               QDemonInputStreamFactoryInterface &inFactory,
+                                               bool inFlipY = true,
+                                               const QDemonRenderContextType &renderContextType = QDemonRenderContextValues::NullContext);
+    static QDemonRef<QDemonLoadedTexture> loadQImage(const QString &inPath, qint32 flipVertical, QDemonRenderContextType renderContextType);
 
 private:
     // Implemented in the bmp loader.

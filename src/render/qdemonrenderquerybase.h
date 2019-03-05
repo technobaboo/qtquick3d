@@ -52,56 +52,53 @@ protected:
 
 public:
     /**
-         * @brief constructor
-         *
-         * @param[in] context		Pointer to context
-         * @param[in] fnd			Pointer to foundation
-         *
-         * @return No return.
-         */
+     * @brief constructor
+     *
+     * @param[in] context		Pointer to context
+     * @param[in] fnd			Pointer to foundation
+     *
+     * @return No return.
+     */
     QDemonRenderQueryBase(const QDemonRef<QDemonRenderContextImpl> &context);
 
     virtual ~QDemonRenderQueryBase();
 
     /**
-         * @brief Get query type
-         *
-         * @return Return query type
-         */
+     * @brief Get query type
+     *
+     * @return Return query type
+     */
     virtual QDemonRenderQueryType::Enum getQueryType() const = 0;
 
     /**
-         * @brief begin a query
-         *
-         * @return no return.
-         */
+     * @brief begin a query
+     *
+     * @return no return.
+     */
     virtual void begin() = 0;
 
     /**
-         * @brief end a query
-         *
-         * @return no return.
-         */
+     * @brief end a query
+     *
+     * @return no return.
+     */
     virtual void end() = 0;
 
     /**
-         * @brief Get the result of a query
-         *
-         * @param[out] params	Contains result of query regarding query type
-         *
-         * @return no return.
-         */
+     * @brief Get the result of a query
+     *
+     * @param[out] params	Contains result of query regarding query type
+     *
+     * @return no return.
+     */
     virtual void getResult(quint32 *params) = 0;
 
     /**
-         * @brief get the backend object handle
-         *
-         * @return the backend object handle.
-         */
-    virtual QDemonRenderBackend::QDemonRenderBackendQueryObject getQuerytHandle() const
-    {
-        return m_queryHandle;
-    }
+     * @brief get the backend object handle
+     *
+     * @return the backend object handle.
+     */
+    virtual QDemonRenderBackend::QDemonRenderBackendQueryObject getQuerytHandle() const { return m_queryHandle; }
 };
 
 QT_END_NAMESPACE

@@ -57,7 +57,8 @@ public:
     // frame.
     virtual void endFrame() = 0;
 
-    static QDemonRef<QDemonTextTextureCacheInterface> createTextureCache(QDemonRef<QDemonTextRendererInterface> inTextRenderer, QDemonRef<QDemonRenderContext> inRenderContext);
+    static QDemonRef<QDemonTextTextureCacheInterface> createTextureCache(QDemonRef<QDemonTextRendererInterface> inTextRenderer,
+                                                                         QDemonRef<QDemonRenderContext> inRenderContext);
 };
 
 struct QDemonTextRenderInfoAndHash
@@ -68,14 +69,12 @@ struct QDemonTextRenderInfoAndHash
     QDemonTextRenderInfoAndHash(const QDemonTextRenderInfo &inInfo, float inScaleFactor);
     bool operator==(const QDemonTextRenderInfoAndHash &inOther) const
     {
-        return m_info.text == inOther.m_info.text
-                && m_info.font == inOther.m_info.font
+        return m_info.text == inOther.m_info.text && m_info.font == inOther.m_info.font
                 && qFuzzyCompare(m_info.fontSize, inOther.m_info.fontSize)
                 && m_info.horizontalAlignment == inOther.m_info.horizontalAlignment
                 && m_info.verticalAlignment == inOther.m_info.verticalAlignment
                 && qFuzzyCompare(m_info.leading, inOther.m_info.leading)
-                && qFuzzyCompare(m_info.tracking, inOther.m_info.tracking)
-                && m_info.dropShadow == inOther.m_info.dropShadow
+                && qFuzzyCompare(m_info.tracking, inOther.m_info.tracking) && m_info.dropShadow == inOther.m_info.dropShadow
                 && qFuzzyCompare(m_info.dropShadowStrength, inOther.m_info.dropShadowStrength)
                 && qFuzzyCompare(m_info.dropShadowOffset, inOther.m_info.dropShadowOffset)
                 && m_info.dropShadowHorizontalAlignment == inOther.m_info.dropShadowHorizontalAlignment

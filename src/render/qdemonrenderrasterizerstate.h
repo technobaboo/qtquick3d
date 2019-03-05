@@ -50,35 +50,37 @@ private:
 
 public:
     /**
-         * @brief constructor
-         *
-         * @param[in] context		Pointer to context
-         * @param[in] fnd			Pointer to foundation
-         * @param[in] depthBias		depth bias
-         * @param[in] depthScale	depth multiplicator
-         * @param[in] cullFace		which face to cull front or back
-         *
-         * @return No return.
-         */
-    QDemonRenderRasterizerState(const QDemonRef<QDemonRenderContextImpl> &context, float depthBias, float depthScale, QDemonRenderFaces::Enum cullFace);
+     * @brief constructor
+     *
+     * @param[in] context		Pointer to context
+     * @param[in] fnd			Pointer to foundation
+     * @param[in] depthBias		depth bias
+     * @param[in] depthScale	depth multiplicator
+     * @param[in] cullFace		which face to cull front or back
+     *
+     * @return No return.
+     */
+    QDemonRenderRasterizerState(const QDemonRef<QDemonRenderContextImpl> &context,
+                                float depthBias,
+                                float depthScale,
+                                QDemonRenderFaces::Enum cullFace);
 
     virtual ~QDemonRenderRasterizerState();
 
     /**
-         * @brief get the backend object handle
-         *
-         * @return the backend object handle.
-         */
+     * @brief get the backend object handle
+     *
+     * @return the backend object handle.
+     */
     virtual QDemonRenderBackend::QDemonRenderBackendRasterizerStateObject GetRasterizerObjectHandle()
     {
         return m_stateHandle;
     }
 
     static QDemonRef<QDemonRenderRasterizerState> create(const QDemonRef<QDemonRenderContextImpl> &context,
-                                                              float depthBias,
-                                                              float depthScale,
-                                                              QDemonRenderFaces::Enum cullFace);
-
+                                                         float depthBias,
+                                                         float depthScale,
+                                                         QDemonRenderFaces::Enum cullFace);
 };
 
 QT_END_NAMESPACE

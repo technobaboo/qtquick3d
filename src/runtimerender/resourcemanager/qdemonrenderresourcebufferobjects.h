@@ -51,7 +51,7 @@ public:
 
     QDemonRef<QDemonResourceManagerInterface> getResourceManager() { return m_resourceManager; }
     QDemonRef<QDemonRenderFrameBuffer> getFrameBuffer() { return m_frameBuffer; }
-    operator QDemonRef<QDemonRenderFrameBuffer> () { return m_frameBuffer; }
+    operator QDemonRef<QDemonRenderFrameBuffer>() { return m_frameBuffer; }
     QDemonRef<QDemonRenderFrameBuffer> operator->()
     {
         Q_ASSERT(m_frameBuffer);
@@ -75,11 +75,10 @@ protected:
 public:
     QDemonResourceRenderBuffer(const QDemonRef<QDemonResourceManagerInterface> &mgr);
     ~QDemonResourceRenderBuffer();
-    bool ensureRenderBuffer(quint32 width, quint32 height,
-                            QDemonRenderRenderBufferFormats::Enum storageFormat);
+    bool ensureRenderBuffer(quint32 width, quint32 height, QDemonRenderRenderBufferFormats::Enum storageFormat);
     void releaseRenderBuffer();
 
-    operator QDemonRef<QDemonRenderRenderBuffer> () { return m_renderBuffer; }
+    operator QDemonRef<QDemonRenderRenderBuffer>() { return m_renderBuffer; }
     QDemonRef<QDemonRenderRenderBuffer> operator->()
     {
         Q_ASSERT(m_renderBuffer);

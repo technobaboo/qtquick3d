@@ -48,6 +48,7 @@ class QDemonRenderNodeFilterInterface
 {
 protected:
     virtual ~QDemonRenderNodeFilterInterface() {}
+
 public:
     virtual bool includeNode(const QDemonGraphNode &inNode) = 0;
 };
@@ -56,12 +57,8 @@ struct QDemonLayerPickSetup
     QMatrix4x4 projectionPreMultiply;
     QMatrix4x4 viewProjection;
     QRect scissorRect;
-    QDemonLayerPickSetup(const QMatrix4x4 &inProjPreMult,
-                         const QMatrix4x4 &inVP,
-                         const QRect &inScissor)
-        : projectionPreMultiply(inProjPreMult)
-        , viewProjection(inVP)
-        , scissorRect(inScissor)
+    QDemonLayerPickSetup(const QMatrix4x4 &inProjPreMult, const QMatrix4x4 &inVP, const QRect &inScissor)
+        : projectionPreMultiply(inProjPreMult), viewProjection(inVP), scissorRect(inScissor)
     {
     }
     QDemonLayerPickSetup() {}
@@ -71,11 +68,7 @@ struct QDemonScaleAndPosition
 {
     QVector3D position;
     float scale;
-    QDemonScaleAndPosition(const QVector3D &inPos, float inScale)
-        : position(inPos)
-        , scale(inScale)
-    {
-    }
+    QDemonScaleAndPosition(const QVector3D &inPos, float inScale) : position(inPos), scale(inScale) {}
     QDemonScaleAndPosition() = default;
 };
 
@@ -112,9 +105,7 @@ public:
     virtual void renderQuad() = 0;
 
     // Render a given texture to the scene using a given transform.
-    virtual void renderQuad(const QVector2D inDimensions,
-                            const QMatrix4x4 &inMVP,
-                            QDemonRenderTexture2D &inQuadTexture) = 0;
+    virtual void renderQuad(const QVector2D inDimensions, const QMatrix4x4 &inMVP, QDemonRenderTexture2D &inQuadTexture) = 0;
 
     // This point rendering works uisng indirect array drawing
     // This means you need to setup a GPU buffer
@@ -153,17 +144,16 @@ public:
     // to map the mouse coordinates into the subpresentation.  So for instance if inNode is in
     // a subpres then we need to know which image is displaying the subpres in order to map
     // the mouse coordinates into the subpres's render space.
-    virtual QDemonOption<QVector2D> facePosition(QDemonGraphNode &inNode, QDemonBounds3 inBounds,
+    virtual QDemonOption<QVector2D> facePosition(QDemonGraphNode &inNode,
+                                                 QDemonBounds3 inBounds,
                                                  const QMatrix4x4 &inGlobalTransform,
                                                  const QVector2D &inViewportDimensions,
                                                  const QVector2D &inMouseCoords,
                                                  QDemonDataRef<QDemonGraphObject *> inMapperObjects,
                                                  QDemonRenderBasisPlanes::Enum inIsectPlane) = 0;
 
-    virtual QVector3D unprojectToPosition(QDemonGraphNode &inNode, QVector3D &inPosition,
-                                          const QVector2D &inMouseVec) const = 0;
-    virtual QVector3D unprojectWithDepth(QDemonGraphNode &inNode, QVector3D &inPosition,
-                                         const QVector3D &inMouseVec) const = 0;
+    virtual QVector3D unprojectToPosition(QDemonGraphNode &inNode, QVector3D &inPosition, const QVector2D &inMouseVec) const = 0;
+    virtual QVector3D unprojectWithDepth(QDemonGraphNode &inNode, QVector3D &inPosition, const QVector3D &inMouseVec) const = 0;
     virtual QVector3D projectPosition(QDemonGraphNode &inNode, const QVector3D &inPosition) const = 0;
 
     // Roughly equivalent of gluPickMatrix, allows users to setup a perspective transform that
@@ -174,8 +164,8 @@ public:
     // The return value is optional because if the mouse point is completely outside the layer
     // obviously this method is irrelevant.
     virtual QDemonOption<QDemonLayerPickSetup> getLayerPickSetup(QDemonRenderLayer &inLayer,
-                                                            const QVector2D &inMouseCoords,
-                                                            const QSize &inPickDims) = 0;
+                                                                 const QVector2D &inMouseCoords,
+                                                                 const QSize &inPickDims) = 0;
 
     // Return the layer's viewport rect after the layer's member variables have been applied.
     // Uses the last rendered viewport rect.
@@ -210,8 +200,7 @@ public:
     // things by to account for
     // the FOV and also where the origin of the object needs to be to ensure the scale factor is
     // relevant.
-    virtual QDemonScaleAndPosition getWorldToPixelScaleFactor(QDemonRenderLayer &inLayer,
-                                                         const QVector3D &inWorldPoint) = 0;
+    virtual QDemonScaleAndPosition getWorldToPixelScaleFactor(QDemonRenderLayer &inLayer, const QVector3D &inWorldPoint) = 0;
     // Called before a layer goes completely out of scope to release any rendering resources
     // related to the layer.
     virtual void releaseLayerRenderResources(QDemonRenderLayer &inLayer, const QDemonRenderInstanceId id) = 0;
@@ -229,9 +218,9 @@ public:
 
     virtual QDemonRef<QDemonRenderWidgetContextInterface> getRenderWidgetContext() = 0;
 
-    static bool isGlEsContext(const QDemonRenderContextType& inContextType);
-    static bool isGlEs3Context(const QDemonRenderContextType& inContextType);
-    static bool isGl2Context(const QDemonRenderContextType& inContextType);
+    static bool isGlEsContext(const QDemonRenderContextType &inContextType);
+    static bool isGlEs3Context(const QDemonRenderContextType &inContextType);
+    static bool isGl2Context(const QDemonRenderContextType &inContextType);
     static const char *getGlslVesionString(QDemonRenderContextType inContextType);
 
     static QDemonRef<QDemonRendererInterface> createRenderer(QDemonRenderContextInterface *inContext);

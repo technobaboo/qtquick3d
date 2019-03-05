@@ -9,17 +9,12 @@ struct Q_DEMON_EXPORT QDemonTimeCounterFrequencyToTensOfNanos
 {
     quint64 mNumerator;
     quint64 mDenominator;
-    QDemonTimeCounterFrequencyToTensOfNanos(quint64 inNum, quint64 inDenom)
-        : mNumerator(inNum)
-        , mDenominator(inDenom)
+    QDemonTimeCounterFrequencyToTensOfNanos(quint64 inNum, quint64 inDenom) : mNumerator(inNum), mDenominator(inDenom)
     {
     }
 
     // quite slow.
-    quint64 toTensOfNanos(quint64 inCounter) const
-    {
-        return (inCounter * mNumerator) / mDenominator;
-    }
+    quint64 toTensOfNanos(quint64 inCounter) const { return (inCounter * mNumerator) / mDenominator; }
 };
 
 class Q_DEMON_EXPORT QDemonTime

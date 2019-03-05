@@ -31,7 +31,6 @@
 #ifndef QDEMON_RENDER_LIGHTMAPS_H
 #define QDEMON_RENDER_LIGHTMAPS_H
 
-
 #include <QtDemonRuntimeRender/qdemonrendergraphobject.h>
 #include <QtDemonRuntimeRender/qdemonrenderer.h>
 #include <QtDemonRuntimeRender/qdemonrendermaterialdirty.h>
@@ -60,7 +59,7 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderLightmaps : public QDemonGraphObj
 
     // Generic method used during serialization
     // to remap string and object pointers
-    template <typename TRemapperType>
+    template<typename TRemapperType>
     void remap(TRemapperType &inRemapper)
     {
         QDemonGraphObject::remap(inRemapper);

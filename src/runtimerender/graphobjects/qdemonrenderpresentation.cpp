@@ -53,9 +53,7 @@ QDemonPresentation::QDemonPresentation(float w, float h, const QString &presDir)
 {
 }
 
-QDemonPresentation::~QDemonPresentation()
-{
-}
+QDemonPresentation::~QDemonPresentation() {}
 
 void QDemonPresentation::render(QDemonRenderContextInterface *inContext)
 {

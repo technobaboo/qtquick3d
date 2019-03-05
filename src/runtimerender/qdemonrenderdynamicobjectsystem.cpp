@@ -86,8 +86,7 @@ quint32 QDemonCommand::getSizeofCommand(const QDemonCommand &inCommand)
     case CommandTypes::ApplyBlitFramebuffer:
         return sizeof(QDemonApplyBlitFramebuffer);
     case CommandTypes::ApplyValue:
-        return sizeof(QDemonApplyValue)
-                + static_cast<const QDemonApplyValue &>(inCommand).m_value.mSize;
+        return sizeof(QDemonApplyValue) + static_cast<const QDemonApplyValue &>(inCommand).m_value.mSize;
     case CommandTypes::DepthStencil:
         return sizeof(QDemonDepthStencil);
     case CommandTypes::AllocateImage:
@@ -105,12 +104,11 @@ quint32 QDemonCommand::getSizeofCommand(const QDemonCommand &inCommand)
     return 0;
 }
 
-template <typename TCommandType>
+template<typename TCommandType>
 inline void CopyConstructCommandT(quint8 *inDataBuffer, const QDemonCommand &inCommand)
 {
     TCommandType *theCommand = (TCommandType *)inDataBuffer;
-    theCommand = new (theCommand)
-            TCommandType(static_cast<const TCommandType &>(inCommand));
+    theCommand = new (theCommand) TCommandType(static_cast<const TCommandType &>(inCommand));
 }
 
 void QDemonCommand::copyConstructCommand(quint8 *inDataBuffer, const QDemonCommand &inCommand)
@@ -182,39 +180,39 @@ void QDemonCommand::copyConstructCommand(quint8 *inDataBuffer, const QDemonComma
 
 namespace {
 
-template <typename TCommandType>
+template<typename TCommandType>
 struct QDemonCommandRemapping
 {
-    template <typename TRemapper>
+    template<typename TRemapper>
     static void remapCommandData(TCommandType &, TRemapper &)
     {
     }
 };
 
-template <>
+template<>
 struct QDemonCommandRemapping<dynamic::QDemonAllocateBuffer>
 {
-    template <typename TRemapper>
+    template<typename TRemapper>
     static void remapCommandData(dynamic::QDemonAllocateBuffer &cmd, TRemapper &remapper)
     {
         remapper.Remap(cmd.m_name);
     }
 };
 
-template <>
+template<>
 struct QDemonCommandRemapping<dynamic::QDemonAllocateImage>
 {
-    template <typename TRemapper>
+    template<typename TRemapper>
     static void remapCommandData(dynamic::QDemonAllocateImage &cmd, TRemapper &remapper)
     {
         remapper.Remap(cmd.m_name);
     }
 };
 
-template <>
+template<>
 struct QDemonCommandRemapping<dynamic::QDemonAllocateDataBuffer>
 {
-    template <typename TRemapper>
+    template<typename TRemapper>
     static void remapCommandData(dynamic::QDemonAllocateDataBuffer &cmd, TRemapper &remapper)
     {
         remapper.Remap(cmd.m_name);
@@ -223,38 +221,38 @@ struct QDemonCommandRemapping<dynamic::QDemonAllocateDataBuffer>
     }
 };
 
-template <>
+template<>
 struct QDemonCommandRemapping<dynamic::QDemonBindBuffer>
 {
-    template <typename TRemapper>
+    template<typename TRemapper>
     static void remapCommandData(dynamic::QDemonBindBuffer &cmd, TRemapper &remapper)
     {
         remapper.Remap(cmd.m_bufferName);
     }
 };
-template <>
+template<>
 struct QDemonCommandRemapping<dynamic::QDemonBindShader>
 {
-    template <typename TRemapper>
+    template<typename TRemapper>
     static void remapCommandData(dynamic::QDemonBindShader &cmd, TRemapper &remapper)
     {
         remapper.Remap(cmd.m_shaderPath);
         remapper.Remap(cmd.m_shaderDefine);
     }
 };
-template <>
+template<>
 struct QDemonCommandRemapping<dynamic::QDemonApplyInstanceValue>
 {
-    template <typename TRemapper>
+    template<typename TRemapper>
     static void remapCommandData(dynamic::QDemonApplyInstanceValue &cmd, TRemapper &remapper)
     {
         remapper.Remap(cmd.m_propertyName);
     }
 };
-template <>
+template<>
 struct QDemonCommandRemapping<dynamic::QDemonApplyBufferValue>
 {
-    template <typename TRemapper>
+    template<typename TRemapper>
     static void remapCommandData(dynamic::QDemonApplyBufferValue &cmd, TRemapper &remapper)
     {
         remapper.Remap(cmd.m_bufferName);
@@ -262,20 +260,20 @@ struct QDemonCommandRemapping<dynamic::QDemonApplyBufferValue>
     }
 };
 
-template <>
+template<>
 struct QDemonCommandRemapping<dynamic::QDemonApplyDepthValue>
 {
-    template <typename TRemapper>
+    template<typename TRemapper>
     static void remapCommandData(dynamic::QDemonApplyDepthValue &cmd, TRemapper &remapper)
     {
         remapper.Remap(cmd.m_paramName);
     }
 };
 
-template <>
+template<>
 struct QDemonCommandRemapping<dynamic::QDemonApplyBlitFramebuffer>
 {
-    template <typename TRemapper>
+    template<typename TRemapper>
     static void remapCommandData(dynamic::QDemonApplyBlitFramebuffer &cmd, TRemapper &remapper)
     {
         remapper.Remap(cmd.m_sourceBufferName);
@@ -283,30 +281,30 @@ struct QDemonCommandRemapping<dynamic::QDemonApplyBlitFramebuffer>
     }
 };
 
-template <>
+template<>
 struct QDemonCommandRemapping<dynamic::QDemonApplyValue>
 {
-    template <typename TRemapper>
+    template<typename TRemapper>
     static void remapCommandData(dynamic::QDemonApplyValue &cmd, TRemapper &remapper)
     {
         remapper.Remap(cmd.m_propertyName);
     }
 };
 
-template <>
+template<>
 struct QDemonCommandRemapping<dynamic::QDemonApplyDataBufferValue>
 {
-    template <typename TRemapper>
+    template<typename TRemapper>
     static void remapCommandData(dynamic::QDemonApplyDataBufferValue &cmd, TRemapper &remapper)
     {
         remapper.Remap(cmd.m_paramName);
     }
 };
 
-template <>
+template<>
 struct QDemonCommandRemapping<dynamic::QDemonDepthStencil>
 {
-    template <typename TRemapper>
+    template<typename TRemapper>
     static void remapCommandData(dynamic::QDemonDepthStencil &cmd, TRemapper &remapper)
     {
         remapper.Remap(cmd.m_bufferName);
@@ -454,17 +452,9 @@ struct QDemonDynamicObjectShaderInfo
     bool m_hasGeomShader;
     bool m_isComputeShader;
 
-    QDemonDynamicObjectShaderInfo()
-        : m_hasGeomShader(false)
-        , m_isComputeShader(false)
-    {
-    }
-    QDemonDynamicObjectShaderInfo(QString inType, QString inVersion,
-                             bool inHasGeomShader, bool inIsComputeShader)
-        : m_type(inType)
-        , m_version(inVersion)
-        , m_hasGeomShader(inHasGeomShader)
-        , m_isComputeShader(inIsComputeShader)
+    QDemonDynamicObjectShaderInfo() : m_hasGeomShader(false), m_isComputeShader(false) {}
+    QDemonDynamicObjectShaderInfo(QString inType, QString inVersion, bool inHasGeomShader, bool inIsComputeShader)
+        : m_type(inType), m_version(inVersion), m_hasGeomShader(inHasGeomShader), m_isComputeShader(inIsComputeShader)
     {
     }
 };
@@ -513,24 +503,23 @@ struct QDemonDynamicObjClassImpl : public QDemonDynamicObjectClassInterface
         releaseCommands();
     }
 
-    template <typename TRemapperType>
+    template<typename TRemapperType>
     static void remapCommand(dynamic::QDemonCommand &inCommand, TRemapperType &inRemapper)
     {
         switch (inCommand.m_type) {
-        // TODO: ...
-#define QDEMON_RENDER_EFFECTS_HANDLE_COMMAND_TYPES(type)                                              \
-        case dynamic::CommandTypes::type:                                                                       \
-    QDemonCommandRemapping<dynamic::QDemon##type>::remapCommandData(static_cast<dynamic::QDemon##type &>(inCommand),            \
-    inRemapper);                                  \
-    break;
-        QDEMON_RENDER_EFFECTS_ITERATE_COMMAND_TYPES
-        #undef QDEMON_RENDER_EFFECTS_HANDLE_COMMAND_TYPES
-                default:
-            Q_ASSERT(false);
+            // TODO: ...
+#define QDEMON_RENDER_EFFECTS_HANDLE_COMMAND_TYPES(type)                                                                              \
+    case dynamic::CommandTypes::type:                                                                                                 \
+        QDemonCommandRemapping<dynamic::QDemon##type>::remapCommandData(static_cast<dynamic::QDemon##type &>(inCommand), inRemapper); \
         break;
+            QDEMON_RENDER_EFFECTS_ITERATE_COMMAND_TYPES
+#undef QDEMON_RENDER_EFFECTS_HANDLE_COMMAND_TYPES
+        default:
+            Q_ASSERT(false);
+            break;
         }
     }
-    template <typename TRemapper>
+    template<typename TRemapper>
     void setupThisObjectFromMemory(TRemapper &inRemapper, quint8 *inCommandStart, quint32 numEffectCommands)
     {
         quint8 *theCommandPtrBegin = inCommandStart;
@@ -539,14 +528,12 @@ struct QDemonDynamicObjClassImpl : public QDemonDynamicObjectClassInterface
             dynamic::QDemonCommand *theCommand = reinterpret_cast<dynamic::QDemonCommand *>(inCommandStart + theCommandOffset);
             theCommandOffset += dynamic::QDemonCommand::getSizeofCommand(*theCommand);
         }
-        dynamic::QDemonCommand **theCommandPtrStart =
-                reinterpret_cast<dynamic::QDemonCommand **>(theCommandPtrBegin + theCommandOffset);
+        dynamic::QDemonCommand **theCommandPtrStart = reinterpret_cast<dynamic::QDemonCommand **>(theCommandPtrBegin + theCommandOffset);
         m_renderCommands = QDemonConstDataRef<dynamic::QDemonCommand *>(theCommandPtrStart, numEffectCommands);
         // Now run through the commands, fixup strings and setup the command ptrs
         theCommandOffset = 0;
         for (quint32 idx = 0; idx < numEffectCommands; ++idx) {
-            dynamic::QDemonCommand *theCommand =
-                    reinterpret_cast<dynamic::QDemonCommand *>(theCommandPtrBegin + theCommandOffset);
+            dynamic::QDemonCommand *theCommand = reinterpret_cast<dynamic::QDemonCommand *>(theCommandPtrBegin + theCommandOffset);
             theCommandPtrStart[idx] = theCommand;
             remapCommand(*theCommand, inRemapper);
             theCommandOffset += dynamic::QDemonCommand::getSizeofCommand(*theCommand);
@@ -583,17 +570,13 @@ struct QDemonDynamicObjClassImpl : public QDemonDynamicObjectClassInterface
     {
         return FindDefinition(inName);
     }
-    QDemonConstDataRef<dynamic::QDemonCommand *> getRenderCommands() const override
-    {
-        return m_renderCommands;
-    }
+    QDemonConstDataRef<dynamic::QDemonCommand *> getRenderCommands() const override { return m_renderCommands; }
     bool requiresDepthTexture() const override { return m_requiresDepthTexture; }
     void setRequiresDepthTexture(bool inVal) override { m_requiresDepthTexture = inVal; }
     virtual bool requiresCompilation() const override { return m_requiresCompilation; }
     virtual void setRequiresCompilation(bool inVal) override { m_requiresCompilation = inVal; }
     QDemonRenderTextureFormats::Enum getOutputTextureFormat() const override { return m_outputFormat; }
 };
-
 }
 
 namespace {
@@ -622,20 +605,13 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
     mutable QMutex m_propertyLoadMutex;
 
     QDemonDynamicObjectSystemImpl(QDemonRenderContextCoreInterface *inCore)
-        : m_coreContext(inCore)
-        , m_context(nullptr)
-        , m_propertyLoadMutex()
+        : m_coreContext(inCore), m_context(nullptr), m_propertyLoadMutex()
     {
     }
 
-    virtual ~QDemonDynamicObjectSystemImpl()
-    {
-    }
+    virtual ~QDemonDynamicObjectSystemImpl() {}
 
-    bool isRegistered(QString inStr) override
-    {
-        return m_classes.find(inStr) != m_classes.end();
-    }
+    bool isRegistered(QString inStr) override { return m_classes.find(inStr) != m_classes.end(); }
 
     bool doRegister(QString inName,
                     QDemonConstDataRef<dynamic::QDemonPropertyDeclaration> inProperties,
@@ -652,8 +628,7 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
             const dynamic::QDemonPropertyDeclaration &thePropDec = inProperties[idx];
             QString thePropName(QString::fromLocal8Bit(thePropDec.name));
             quint32 propSize = getSizeofShaderDataType(thePropDec.dataType);
-            definitions.push_back(dynamic::QDemonPropertyDefinition(thePropName, thePropDec.dataType,
-                                                      theCurrentOffset, propSize));
+            definitions.push_back(dynamic::QDemonPropertyDefinition(thePropName, thePropDec.dataType, theCurrentOffset, propSize));
             theCurrentOffset += propSize;
             theCurrentOffset = align(theCurrentOffset);
         }
@@ -670,14 +645,15 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
             ::memcpy(defPtr, definitions.data(), defSize);
         if (defaultSize)
             memZero(defaultData, defaultSize);
-        QDemonRef<QDemonDynamicObjClassImpl> theClass(new (allocData)
-                QDemonDynamicObjClassImpl(inName, toDataRef(defPtr, inProperties.size()),
-                                     dataSectionSize, inBaseObjectSize, inGraphObjectType, defaultData));
+        QDemonRef<QDemonDynamicObjClassImpl> theClass(
+                new (allocData)
+                        QDemonDynamicObjClassImpl(inName, toDataRef(defPtr, inProperties.size()), dataSectionSize, inBaseObjectSize, inGraphObjectType, defaultData));
         m_classes.insert(inName, theClass);
         return true;
     }
 
-    bool unregister(QString inName) override {
+    bool unregister(QString inName) override
+    {
         if (!isRegistered(inName)) {
             Q_ASSERT(false);
             return false;
@@ -696,38 +672,31 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
         return nullptr;
     }
 
-    QPair<const dynamic::QDemonPropertyDefinition *, QDemonRef<QDemonDynamicObjClassImpl> >
-    findProperty(QString inName, QString inPropName)
+    QPair<const dynamic::QDemonPropertyDefinition *, QDemonRef<QDemonDynamicObjClassImpl>> findProperty(QString inName, QString inPropName)
     {
         QDemonRef<QDemonDynamicObjClassImpl> cls = findClass(inName);
         if (cls) {
             const dynamic::QDemonPropertyDefinition *def = cls->FindDefinition(inPropName);
             if (def)
-                return QPair<const dynamic::QDemonPropertyDefinition *, QDemonRef<QDemonDynamicObjClassImpl> >(def, cls);
+                return QPair<const dynamic::QDemonPropertyDefinition *, QDemonRef<QDemonDynamicObjClassImpl>>(def, cls);
         }
-        return QPair<const dynamic::QDemonPropertyDefinition *, QDemonRef<QDemonDynamicObjClassImpl> >(nullptr, nullptr);
+        return QPair<const dynamic::QDemonPropertyDefinition *, QDemonRef<QDemonDynamicObjClassImpl>>(nullptr, nullptr);
     }
 
-    void setPropertyDefaultValue(const QString &inName,
-                                 const QString &inPropName,
-                                 const QDemonConstDataRef<quint8> &inDefaultData) override
+    void setPropertyDefaultValue(const QString &inName, const QString &inPropName, const QDemonConstDataRef<quint8> &inDefaultData) override
     {
-        QPair<const dynamic::QDemonPropertyDefinition *, QDemonRef<QDemonDynamicObjClassImpl> > def =
-                findProperty(inName, inPropName);
+        QPair<const dynamic::QDemonPropertyDefinition *, QDemonRef<QDemonDynamicObjClassImpl>> def = findProperty(inName, inPropName);
         if (def.first && inDefaultData.size() >= def.first->byteSize) {
-            ::memcpy(def.second->m_propertyDefaultData + def.first->offset, inDefaultData.begin(),
-                    def.first->byteSize);
+            ::memcpy(def.second->m_propertyDefaultData + def.first->offset, inDefaultData.begin(), def.first->byteSize);
         } else {
             Q_ASSERT(false);
         }
     }
 
-    void setPropertyEnumNames(const QString &inName,
-                              const QString &inPropName,
-                              const QDemonConstDataRef<QString> &inNames) override
+    void setPropertyEnumNames(const QString &inName, const QString &inPropName, const QDemonConstDataRef<QString> &inNames) override
     {
 
-        QPair<const dynamic::QDemonPropertyDefinition *, QDemonRef<QDemonDynamicObjClassImpl> > def = findProperty(inName, inPropName);
+        QPair<const dynamic::QDemonPropertyDefinition *, QDemonRef<QDemonDynamicObjClassImpl>> def = findProperty(inName, inPropName);
         dynamic::QDemonPropertyDefinition *theDefinitionPtr = const_cast<dynamic::QDemonPropertyDefinition *>(def.first);
         if (theDefinitionPtr == nullptr) {
             Q_ASSERT(false);
@@ -745,11 +714,10 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
         }
     }
 
-    virtual QDemonConstDataRef<QString> getPropertyEnumNames(const QString &inName,
-                                                             const QString &inPropName) const override
+    virtual QDemonConstDataRef<QString> getPropertyEnumNames(const QString &inName, const QString &inPropName) const override
     {
-        QPair<const dynamic::QDemonPropertyDefinition *, QDemonRef<QDemonDynamicObjClassImpl> > def =
-                const_cast<QDemonDynamicObjectSystemImpl &>(*this).findProperty(inName, inPropName);
+        QPair<const dynamic::QDemonPropertyDefinition *, QDemonRef<QDemonDynamicObjClassImpl>>
+                def = const_cast<QDemonDynamicObjectSystemImpl &>(*this).findProperty(inName, inPropName);
         if (def.first)
             return def.first->enumValueNames;
         return QDemonConstDataRef<QString>();
@@ -773,8 +741,7 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
                                     QDemonRenderTextureMagnifyingOp::Enum inMagFilterOp,
                                     QDemonRenderTextureMinifyingOp::Enum inMinFilterOp) override
     {
-        QPair<const dynamic::QDemonPropertyDefinition *, QDemonRef<QDemonDynamicObjClassImpl> > def =
-                findProperty(inName, inPropName);
+        QPair<const dynamic::QDemonPropertyDefinition *, QDemonRef<QDemonDynamicObjClassImpl>> def = findProperty(inName, inPropName);
         dynamic::QDemonPropertyDefinition *theDefinitionPtr = const_cast<dynamic::QDemonPropertyDefinition *>(def.first);
         if (theDefinitionPtr == nullptr) {
             Q_ASSERT(false);
@@ -793,11 +760,9 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
         return findClass(inName).data();
     }
 
-    void setRenderCommands(const QString &inClassName,
-                           const QDemonConstDataRef<dynamic::QDemonCommand *> &inCommands) override
+    void setRenderCommands(const QString &inClassName, const QDemonConstDataRef<dynamic::QDemonCommand *> &inCommands) override
     {
-        QDemonRef<QDemonDynamicObjClassImpl> theClass =
-                const_cast<QDemonDynamicObjectSystemImpl &>(*this).findClass(inClassName);
+        QDemonRef<QDemonDynamicObjClassImpl> theClass = const_cast<QDemonDynamicObjectSystemImpl &>(*this).findClass(inClassName);
         if (theClass == nullptr) {
             Q_ASSERT(false);
             return;
@@ -812,7 +777,8 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
         quint32 totalAllocationSize = align8(commandAllocationSize) + commandPtrSize;
         quint8 *theCommandDataBegin = (quint8 *)::malloc(totalAllocationSize);
         quint8 *theCurrentCommandData(theCommandDataBegin);
-        dynamic::QDemonCommand **theCommandPtrBegin = reinterpret_cast<dynamic::QDemonCommand **>(theCommandDataBegin + align8(commandAllocationSize));
+        dynamic::QDemonCommand **theCommandPtrBegin = reinterpret_cast<dynamic::QDemonCommand **>(
+                theCommandDataBegin + align8(commandAllocationSize));
         dynamic::QDemonCommand **theCurrentCommandPtr = theCommandPtrBegin;
         memZero(theCommandDataBegin, totalAllocationSize);
 
@@ -834,14 +800,12 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
         }
         Q_ASSERT(theCurrentCommandData - theCommandDataBegin == (int)commandAllocationSize);
         Q_ASSERT((quint8 *)theCurrentCommandPtr - theCommandDataBegin == (int)totalAllocationSize);
-        theClass->m_renderCommands =
-                QDemonConstDataRef<dynamic::QDemonCommand *>(theCommandPtrBegin, inCommands.size());
+        theClass->m_renderCommands = QDemonConstDataRef<dynamic::QDemonCommand *>(theCommandPtrBegin, inCommands.size());
     }
 
     virtual QDemonConstDataRef<dynamic::QDemonCommand *> getRenderCommands(const QString &inClassName) const override
     {
-        QDemonRef<QDemonDynamicObjClassImpl> cls =
-                const_cast<QDemonDynamicObjectSystemImpl &>(*this).findClass(inClassName);
+        QDemonRef<QDemonDynamicObjClassImpl> cls = const_cast<QDemonDynamicObjectSystemImpl &>(*this).findClass(inClassName);
         if (cls)
             return cls->m_renderCommands;
         return QDemonConstDataRef<dynamic::QDemonCommand *>();
@@ -856,11 +820,8 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
         }
         quint32 totalObjectSize = theClass->m_baseObjectSize + theClass->m_propertySectionByteSize;
         QDemonDynamicObject *retval = reinterpret_cast<QDemonDynamicObject *>(::malloc(totalObjectSize));
-        new (retval)
-                QDemonDynamicObject(theClass->m_graphObjectType, inClassName,
-                               theClass->m_propertySectionByteSize, theClass->m_baseObjectSize);
-        ::memcpy(retval->getDataSectionBegin(), theClass->m_propertyDefaultData,
-                theClass->m_propertySectionByteSize);
+        new (retval) QDemonDynamicObject(theClass->m_graphObjectType, inClassName, theClass->m_propertySectionByteSize, theClass->m_baseObjectSize);
+        ::memcpy(retval->getDataSectionBegin(), theClass->m_propertyDefaultData, theClass->m_propertySectionByteSize);
         return retval;
     }
 
@@ -883,7 +844,8 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
         if (inShaderType || inShaderVersion || inHasGeomShader || inIsComputeShader) {
             // UdoL TODO: Add this to the load / save setction
             // In addition we should merge the source code into SDynamicObjectShaderInfo as well
-            QDemonDynamicObjectShaderInfo &theShaderInfo = m_shaderInfoMap.insert(inPath, QDemonDynamicObjectShaderInfo()).value();
+            QDemonDynamicObjectShaderInfo
+                    &theShaderInfo = m_shaderInfoMap.insert(inPath, QDemonDynamicObjectShaderInfo()).value();
             theShaderInfo.m_type = QString::fromLocal8Bit(nonNull(inShaderType));
             theShaderInfo.m_version = QString::fromLocal8Bit(nonNull(inShaderVersion));
             theShaderInfo.m_hasGeomShader = inHasGeomShader;
@@ -912,17 +874,16 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
         return shaderKey;
     }
 
-    void insertShaderHeaderInformation(QByteArray &theReadBuffer,
-                                       const char *inPathToEffect) override
+    void insertShaderHeaderInformation(QByteArray &theReadBuffer, const char *inPathToEffect) override
     {
         doInsertShaderHeaderInformation(theReadBuffer, inPathToEffect);
     }
 
-    void doInsertShaderHeaderInformation(QByteArray &theReadBuffer,
-                                         const QString &inPathToEffect)
+    void doInsertShaderHeaderInformation(QByteArray &theReadBuffer, const QString &inPathToEffect)
     {
         // Now do search and replace for the headers
-        for (int thePos = theReadBuffer.indexOf(includeSearch); thePos != -1; thePos = theReadBuffer.indexOf(includeSearch, thePos + 1)) {
+        for (int thePos = theReadBuffer.indexOf(includeSearch); thePos != -1;
+             thePos = theReadBuffer.indexOf(includeSearch, thePos + 1)) {
             int theEndQuote = theReadBuffer.indexOf('\"', thePos + strlen(includeSearch) + 1);
             // Indicates an unterminated include file.
             if (theEndQuote == -1) {
@@ -934,8 +895,8 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
             QString theInclude = theReadBuffer.mid(theActualBegin, theEndQuote - theActualBegin);
             // If we haven't included the file yet this round
             QByteArray theHeader = doLoadShader(theInclude);
-//            quint32 theLen = (quint32)strlen(theHeader);
-//            theReadBuffer = theReadBuffer.replace(theReadBuffer.begin() + thePos, theReadBuffer.begin() + theEndQuote + 1, theHeader, theLen);
+            //            quint32 theLen = (quint32)strlen(theHeader);
+            //            theReadBuffer = theReadBuffer.replace(theReadBuffer.begin() + thePos, theReadBuffer.begin() + theEndQuote + 1, theHeader, theLen);
             theReadBuffer = theReadBuffer.replace(thePos, (theEndQuote + 1) - thePos, theHeader);
         }
     }
@@ -944,10 +905,10 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
     {
         auto theInsert = m_expandedFiles.find(inPathToEffect);
         const bool found = (theInsert != m_expandedFiles.end());
-//        if (found)
-//            *theInsert = QByteArray();
-//        else
-//            theInsert = m_expandedFiles.insert(inPathToEffect, QByteArray());
+        //        if (found)
+        //            *theInsert = QByteArray();
+        //        else
+        //            theInsert = m_expandedFiles.insert(inPathToEffect, QByteArray());
 
         QByteArray theReadBuffer;
         if (!found) {
@@ -966,8 +927,7 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
             if (theStream.isNull()) {
                 fullPath.clear();
                 QTextStream stream(&fullPath);
-                stream << defaultDir << QLatin1Char('/') << ver << QLatin1Char('/')
-                       << inPathToEffect;
+                stream << defaultDir << QLatin1Char('/') << ver << QLatin1Char('/') << inPathToEffect;
                 theStream = m_coreContext->getInputStreamFactory()->getStreamForFile(fullPath, true);
                 if (theStream.isNull()) {
                     fullPath.clear();
@@ -996,210 +956,207 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
         return theReadBuffer;
     }
 
-//    void save(SWriteBuffer &ioBuffer, const SStrRemapMap &inRemapMap, const char *inProjectDir) const override
-//    {
-//        quint32 startOffset = ioBuffer.size();
-//        ioBuffer.write((quint32)m_ExpandedFiles.size());
-//        for (TPathDataMap::const_iterator theIter = m_ExpandedFiles.begin();
-//             theIter != m_ExpandedFiles.end(); ++theIter) {
-//            QString thePath(theIter->first);
-//            char *theData = theIter->second;
-//            theData = theData ? theData : (char *)"";
-//            quint32 theLen = (quint32)strlen(theData);
-//            thePath.Remap(inRemapMap);
-//            ioBuffer.write(thePath);
-//            ioBuffer.write(theLen + 1);
-//            ioBuffer.write(theData, theLen + 1);
-//            ioBuffer.align(sizeof(void *));
-//        }
-//        ioBuffer.write((quint32)m_Classes.size());
-//        SStringSaveRemapper theRemapper(m_Allocator, inRemapMap, inProjectDir,
-//                                        m_CoreContext.GetStringTable());
-//        for (TStringClassMap::const_iterator iter = m_Classes.begin(), end = m_Classes.end();
-//             iter != end; ++iter) {
-//            const SDynamicObjClassImpl *theClass = iter->second;
-//            ioBuffer.align(4);
-//            quint32 objOffset = ioBuffer.size();
-//            quint32 classOffset = objOffset - startOffset;
-//            (void)classOffset;
-//            quint32 defOffset = objOffset + sizeof(SDynamicObjClassImpl);
-//            quint32 dataOffset =
-//                    defOffset + theClass->m_PropertyDefinitions.size() * sizeof(SPropertyDefinition);
-//            quint32 dataEnd = dataOffset + theClass->m_PropertySectionByteSize;
-//            quint32 writeAmount = dataEnd - objOffset;
-//            ioBuffer.write((const quint8 *)theClass, writeAmount);
-//            ioBuffer.align(4);
-//            quint32 cmdOffset = 0;
-//            quint8 *writeCommandStart = nullptr;
-//            if (theClass->m_RenderCommands.size()) {
-//                // We know commands are allocated in a block.
-//                const SCommand &firstCommand = *theClass->m_RenderCommands[0];
-//                const quint8 *commandStart = reinterpret_cast<const quint8 *>(&firstCommand);
-//                const SCommand &lastCommand(
-//                            *theClass->m_RenderCommands[theClass->m_RenderCommands.size() - 1]);
-//                const quint8 *commandEnd = reinterpret_cast<const quint8 *>(&lastCommand)
-//                        + SCommand::GetSizeofCommand(lastCommand);
-//                cmdOffset = ioBuffer.size();
-//                ioBuffer.write(commandStart, (quint32)(commandEnd - commandStart));
-//                // Write location of the actual storage for the command ptr array.
-//                ioBuffer.writeZeros(theClass->m_RenderCommands.size() * sizeof(SCommand **));
-//            }
-//            ioBuffer.align(4);
-//            if (cmdOffset)
-//                writeCommandStart = ioBuffer.begin() + cmdOffset;
+    //    void save(SWriteBuffer &ioBuffer, const SStrRemapMap &inRemapMap, const char *inProjectDir) const override
+    //    {
+    //        quint32 startOffset = ioBuffer.size();
+    //        ioBuffer.write((quint32)m_ExpandedFiles.size());
+    //        for (TPathDataMap::const_iterator theIter = m_ExpandedFiles.begin();
+    //             theIter != m_ExpandedFiles.end(); ++theIter) {
+    //            QString thePath(theIter->first);
+    //            char *theData = theIter->second;
+    //            theData = theData ? theData : (char *)"";
+    //            quint32 theLen = (quint32)strlen(theData);
+    //            thePath.Remap(inRemapMap);
+    //            ioBuffer.write(thePath);
+    //            ioBuffer.write(theLen + 1);
+    //            ioBuffer.write(theData, theLen + 1);
+    //            ioBuffer.align(sizeof(void *));
+    //        }
+    //        ioBuffer.write((quint32)m_Classes.size());
+    //        SStringSaveRemapper theRemapper(m_Allocator, inRemapMap, inProjectDir,
+    //                                        m_CoreContext.GetStringTable());
+    //        for (TStringClassMap::const_iterator iter = m_Classes.begin(), end = m_Classes.end();
+    //             iter != end; ++iter) {
+    //            const SDynamicObjClassImpl *theClass = iter->second;
+    //            ioBuffer.align(4);
+    //            quint32 objOffset = ioBuffer.size();
+    //            quint32 classOffset = objOffset - startOffset;
+    //            (void)classOffset;
+    //            quint32 defOffset = objOffset + sizeof(SDynamicObjClassImpl);
+    //            quint32 dataOffset =
+    //                    defOffset + theClass->m_PropertyDefinitions.size() * sizeof(SPropertyDefinition);
+    //            quint32 dataEnd = dataOffset + theClass->m_PropertySectionByteSize;
+    //            quint32 writeAmount = dataEnd - objOffset;
+    //            ioBuffer.write((const quint8 *)theClass, writeAmount);
+    //            ioBuffer.align(4);
+    //            quint32 cmdOffset = 0;
+    //            quint8 *writeCommandStart = nullptr;
+    //            if (theClass->m_RenderCommands.size()) {
+    //                // We know commands are allocated in a block.
+    //                const SCommand &firstCommand = *theClass->m_RenderCommands[0];
+    //                const quint8 *commandStart = reinterpret_cast<const quint8 *>(&firstCommand);
+    //                const SCommand &lastCommand(
+    //                            *theClass->m_RenderCommands[theClass->m_RenderCommands.size() - 1]);
+    //                const quint8 *commandEnd = reinterpret_cast<const quint8 *>(&lastCommand)
+    //                        + SCommand::GetSizeofCommand(lastCommand);
+    //                cmdOffset = ioBuffer.size();
+    //                ioBuffer.write(commandStart, (quint32)(commandEnd - commandStart));
+    //                // Write location of the actual storage for the command ptr array.
+    //                ioBuffer.writeZeros(theClass->m_RenderCommands.size() * sizeof(SCommand **));
+    //            }
+    //            ioBuffer.align(4);
+    //            if (cmdOffset)
+    //                writeCommandStart = ioBuffer.begin() + cmdOffset;
 
-//            SDynamicObjClassImpl *writeClass =
-//                    (SDynamicObjClassImpl *)(ioBuffer.begin() + objOffset);
-//            writeClass->m_Id.Remap(inRemapMap);
-//            writeClass->SetupThisObjectFromMemory(m_Allocator, theRemapper, writeCommandStart,
-//                                                  theClass->m_RenderCommands.size());
-//            for (quint32 idx = 0, end = theClass->m_PropertyDefinitions.size(); idx < end; ++idx) {
-//                // Moved into the loop because writing the enumerations may resize the data buffer.
-//                SPropertyDefinition *theDefinitions =
-//                        (SPropertyDefinition *)(ioBuffer.begin() + defOffset);
-//                theDefinitions[idx].m_Name.Remap(inRemapMap);
-//                const SPropertyDefinition &theDefinition(theClass->m_PropertyDefinitions[idx]);
-//                if (theDefinitions[idx].m_EnumValueNames.size()) {
-//                    quint32 enumOffset = ioBuffer.size();
-//                    ioBuffer.write(theDefinition.m_EnumValueNames.begin(),
-//                                   theDefinition.m_EnumValueNames.size()
-//                                   * sizeof(QString));
-//                    QString *strPtr =
-//                            (QString *)(ioBuffer.begin() + enumOffset);
-//                    for (quint32 enumIdx = 0, enumEnd = theDefinition.m_EnumValueNames.size();
-//                         enumIdx < enumEnd; ++enumIdx)
-//                        strPtr[enumIdx].Remap(inRemapMap);
-//                }
-//                if (theDefinition.m_DataType == QDemonRenderShaderDataTypes::QDemonRenderTexture2DPtr) {
-//                    quint8 *theDataPtr = ioBuffer.begin() + dataOffset;
-//                    QString *realData =
-//                            reinterpret_cast<QString *>(theDataPtr + theDefinition.m_Offset);
-//                    realData->Remap(inRemapMap);
-//                }
-//            }
-//        }
+    //            SDynamicObjClassImpl *writeClass =
+    //                    (SDynamicObjClassImpl *)(ioBuffer.begin() + objOffset);
+    //            writeClass->m_Id.Remap(inRemapMap);
+    //            writeClass->SetupThisObjectFromMemory(m_Allocator, theRemapper, writeCommandStart,
+    //                                                  theClass->m_RenderCommands.size());
+    //            for (quint32 idx = 0, end = theClass->m_PropertyDefinitions.size(); idx < end; ++idx) {
+    //                // Moved into the loop because writing the enumerations may resize the data buffer.
+    //                SPropertyDefinition *theDefinitions =
+    //                        (SPropertyDefinition *)(ioBuffer.begin() + defOffset);
+    //                theDefinitions[idx].m_Name.Remap(inRemapMap);
+    //                const SPropertyDefinition &theDefinition(theClass->m_PropertyDefinitions[idx]);
+    //                if (theDefinitions[idx].m_EnumValueNames.size()) {
+    //                    quint32 enumOffset = ioBuffer.size();
+    //                    ioBuffer.write(theDefinition.m_EnumValueNames.begin(),
+    //                                   theDefinition.m_EnumValueNames.size()
+    //                                   * sizeof(QString));
+    //                    QString *strPtr =
+    //                            (QString *)(ioBuffer.begin() + enumOffset);
+    //                    for (quint32 enumIdx = 0, enumEnd = theDefinition.m_EnumValueNames.size();
+    //                         enumIdx < enumEnd; ++enumIdx)
+    //                        strPtr[enumIdx].Remap(inRemapMap);
+    //                }
+    //                if (theDefinition.m_DataType == QDemonRenderShaderDataTypes::QDemonRenderTexture2DPtr) {
+    //                    quint8 *theDataPtr = ioBuffer.begin() + dataOffset;
+    //                    QString *realData =
+    //                            reinterpret_cast<QString *>(theDataPtr + theDefinition.m_Offset);
+    //                    realData->Remap(inRemapMap);
+    //                }
+    //            }
+    //        }
 
-//        // Write out meta information about the shader system
-//        quint32 numShaderInfos = (quint32)m_ShaderInfoMap.size();
-//        ioBuffer.write(numShaderInfos);
-//        for (TShaderInfoMap::const_iterator iter = m_ShaderInfoMap.begin(),
-//             end = m_ShaderInfoMap.end();
-//             iter != end; ++iter) {
-//            QString infoName = iter->first;
-//            infoName.Remap(inRemapMap);
-//            ioBuffer.write(infoName);
-//            const SDynamicObjectShaderInfo &theInfo = iter->second;
-//            QString infoType(theInfo.m_Type);
-//            QString infoVersion(theInfo.m_Version);
-//            infoType.Remap(inRemapMap);
-//            infoVersion.Remap(inRemapMap);
-//            ioBuffer.write(infoType);
-//            ioBuffer.write(infoVersion);
-//        }
-//    }
+    //        // Write out meta information about the shader system
+    //        quint32 numShaderInfos = (quint32)m_ShaderInfoMap.size();
+    //        ioBuffer.write(numShaderInfos);
+    //        for (TShaderInfoMap::const_iterator iter = m_ShaderInfoMap.begin(),
+    //             end = m_ShaderInfoMap.end();
+    //             iter != end; ++iter) {
+    //            QString infoName = iter->first;
+    //            infoName.Remap(inRemapMap);
+    //            ioBuffer.write(infoName);
+    //            const SDynamicObjectShaderInfo &theInfo = iter->second;
+    //            QString infoType(theInfo.m_Type);
+    //            QString infoVersion(theInfo.m_Version);
+    //            infoType.Remap(inRemapMap);
+    //            infoVersion.Remap(inRemapMap);
+    //            ioBuffer.write(infoType);
+    //            ioBuffer.write(infoVersion);
+    //        }
+    //    }
 
-//    void load(QDemonDataRef<quint8> inData, CStrTableOrDataRef inStrDataBlock,
-//              const char *inProjectDir) override
-//    {
-//        m_Allocator.m_PreAllocatedBlock = inData;
-//        m_Allocator.m_OwnsMemory = false;
-//        TStr workspaceStr(ForwardingAllocator(m_Foundation.getAllocator(), "ProjPath"));
-//        SDataReader theReader(inData.begin(), inData.end());
-//        quint32 numMappedPaths = theReader.LoadRef<quint32>();
-//        for (quint32 idx = 0, end = numMappedPaths; idx < end; ++idx) {
-//            QString theStr(theReader.LoadRef<QString>());
-//            quint32 theCharLen = theReader.LoadRef<quint32>();
-//            char *thePathData = reinterpret_cast<char *>(theReader.m_CurrentPtr);
-//            theReader.m_CurrentPtr += theCharLen;
-//            theReader.Align();
-//            theStr.Remap(inStrDataBlock);
-//            m_ExpandedFiles.insert(theStr, thePathData);
-//        }
-//        SStringLoadRemapper theRemapper(m_Allocator, inStrDataBlock, inProjectDir,
-//                                        m_CoreContext.GetStringTable());
-//        quint32 numClasses = theReader.LoadRef<quint32>();
-//        for (quint32 idx = 0, end = numClasses; idx < end; ++idx) {
-//            theReader.Align(4);
-//            size_t classOffset = static_cast<quint32>(theReader.m_CurrentPtr - inData.mData);
-//            (void)classOffset;
-//            SDynamicObjClassImpl *theClass = (SDynamicObjClassImpl *)theReader.m_CurrentPtr;
-//            theClass->m_Allocator = &m_Allocator;
-//            theReader.m_CurrentPtr += sizeof(SDynamicObjClassImpl);
-//            SPropertyDefinition *theDefinitions = (SPropertyDefinition *)theReader.m_CurrentPtr;
-//            theReader.m_CurrentPtr +=
-//                    theClass->m_PropertyDefinitions.size() * sizeof(SPropertyDefinition);
-//            quint8 *theDataBuffer = theReader.m_CurrentPtr;
-//            theReader.m_CurrentPtr += theClass->m_PropertySectionByteSize;
-//            theClass->m_Id.Remap(inStrDataBlock);
-//            theClass->m_PropertyDefinitions = QDemonConstDataRef<SPropertyDefinition>(
-//                        theDefinitions, theClass->m_PropertyDefinitions.size());
-//            theClass->m_PropertyDefaultData = theDataBuffer;
-//            theReader.Align(4);
-//            quint8 *theCommandStart = theReader.m_CurrentPtr;
+    //    void load(QDemonDataRef<quint8> inData, CStrTableOrDataRef inStrDataBlock,
+    //              const char *inProjectDir) override
+    //    {
+    //        m_Allocator.m_PreAllocatedBlock = inData;
+    //        m_Allocator.m_OwnsMemory = false;
+    //        TStr workspaceStr(ForwardingAllocator(m_Foundation.getAllocator(), "ProjPath"));
+    //        SDataReader theReader(inData.begin(), inData.end());
+    //        quint32 numMappedPaths = theReader.LoadRef<quint32>();
+    //        for (quint32 idx = 0, end = numMappedPaths; idx < end; ++idx) {
+    //            QString theStr(theReader.LoadRef<QString>());
+    //            quint32 theCharLen = theReader.LoadRef<quint32>();
+    //            char *thePathData = reinterpret_cast<char *>(theReader.m_CurrentPtr);
+    //            theReader.m_CurrentPtr += theCharLen;
+    //            theReader.Align();
+    //            theStr.Remap(inStrDataBlock);
+    //            m_ExpandedFiles.insert(theStr, thePathData);
+    //        }
+    //        SStringLoadRemapper theRemapper(m_Allocator, inStrDataBlock, inProjectDir,
+    //                                        m_CoreContext.GetStringTable());
+    //        quint32 numClasses = theReader.LoadRef<quint32>();
+    //        for (quint32 idx = 0, end = numClasses; idx < end; ++idx) {
+    //            theReader.Align(4);
+    //            size_t classOffset = static_cast<quint32>(theReader.m_CurrentPtr - inData.mData);
+    //            (void)classOffset;
+    //            SDynamicObjClassImpl *theClass = (SDynamicObjClassImpl *)theReader.m_CurrentPtr;
+    //            theClass->m_Allocator = &m_Allocator;
+    //            theReader.m_CurrentPtr += sizeof(SDynamicObjClassImpl);
+    //            SPropertyDefinition *theDefinitions = (SPropertyDefinition *)theReader.m_CurrentPtr;
+    //            theReader.m_CurrentPtr +=
+    //                    theClass->m_PropertyDefinitions.size() * sizeof(SPropertyDefinition);
+    //            quint8 *theDataBuffer = theReader.m_CurrentPtr;
+    //            theReader.m_CurrentPtr += theClass->m_PropertySectionByteSize;
+    //            theClass->m_Id.Remap(inStrDataBlock);
+    //            theClass->m_PropertyDefinitions = QDemonConstDataRef<SPropertyDefinition>(
+    //                        theDefinitions, theClass->m_PropertyDefinitions.size());
+    //            theClass->m_PropertyDefaultData = theDataBuffer;
+    //            theReader.Align(4);
+    //            quint8 *theCommandStart = theReader.m_CurrentPtr;
 
-//            quint32 numRenderCommands = theClass->m_RenderCommands.size();
-//            new (theClass) SDynamicObjClassImpl(
-//                        m_Allocator, theClass->m_Id, theClass->m_PropertyDefinitions,
-//                        theClass->m_PropertySectionByteSize, theClass->m_BaseObjectSize,
-//                        theClass->m_GraphObjectType, theClass->m_PropertyDefaultData,
-//                        theClass->m_RequiresDepthTexture, theClass->m_OutputFormat);
+    //            quint32 numRenderCommands = theClass->m_RenderCommands.size();
+    //            new (theClass) SDynamicObjClassImpl(
+    //                        m_Allocator, theClass->m_Id, theClass->m_PropertyDefinitions,
+    //                        theClass->m_PropertySectionByteSize, theClass->m_BaseObjectSize,
+    //                        theClass->m_GraphObjectType, theClass->m_PropertyDefaultData,
+    //                        theClass->m_RequiresDepthTexture, theClass->m_OutputFormat);
 
-//            theClass->SetupThisObjectFromMemory(m_Allocator, theRemapper, theCommandStart,
-//                                                numRenderCommands);
+    //            theClass->SetupThisObjectFromMemory(m_Allocator, theRemapper, theCommandStart,
+    //                                                numRenderCommands);
 
-//            if (theClass->m_RenderCommands.size()) {
-//                const SCommand &theLastCommand =
-//                        *theClass->m_RenderCommands[theClass->m_RenderCommands.size() - 1];
-//                const quint8 *theCommandEnd = reinterpret_cast<const quint8 *>(&theLastCommand)
-//                        + SCommand::GetSizeofCommand(theLastCommand);
-//                theReader.m_CurrentPtr = const_cast<quint8 *>(theCommandEnd);
-//                theReader.m_CurrentPtr += theClass->m_RenderCommands.size() * sizeof(SCommand **);
-//            }
-//            theReader.Align(4);
+    //            if (theClass->m_RenderCommands.size()) {
+    //                const SCommand &theLastCommand =
+    //                        *theClass->m_RenderCommands[theClass->m_RenderCommands.size() - 1];
+    //                const quint8 *theCommandEnd = reinterpret_cast<const quint8 *>(&theLastCommand)
+    //                        + SCommand::GetSizeofCommand(theLastCommand);
+    //                theReader.m_CurrentPtr = const_cast<quint8 *>(theCommandEnd);
+    //                theReader.m_CurrentPtr += theClass->m_RenderCommands.size() * sizeof(SCommand **);
+    //            }
+    //            theReader.Align(4);
 
-//            for (quint32 defIdx = 0, defEnd = theClass->m_PropertyDefinitions.size(); defIdx < defEnd;
-//                 ++defIdx) {
-//                SPropertyDefinition &theDef(theDefinitions[defIdx]);
-//                theDef.m_Name.Remap(inStrDataBlock);
-//                if (theDef.m_EnumValueNames.size()) {
-//                    QString *theNames = (QString *)theReader.m_CurrentPtr;
-//                    theReader.m_CurrentPtr +=
-//                            theDef.m_EnumValueNames.size() * sizeof(QString);
-//                    theDef.m_EnumValueNames =
-//                            QDemonDataRef<QString>(theNames, theDef.m_EnumValueNames.size());
-//                    for (quint32 enumIdx = 0, enumEnd = theDef.m_EnumValueNames.size();
-//                         enumIdx < enumEnd; ++enumIdx)
-//                        theNames[enumIdx].Remap(inStrDataBlock);
-//                }
-//                if (theDef.m_DataType == QDemonRenderShaderDataTypes::QDemonRenderTexture2DPtr) {
-//                    QString *realData =
-//                            reinterpret_cast<QString *>(theDataBuffer + theDef.m_Offset);
-//                    realData->Remap(inStrDataBlock);
-//                }
-//            }
-//            m_Classes.insert(theClass->m_Id, theClass);
-//        }
-//        quint32 theNumShaderInfos = theReader.LoadRef<quint32>();
-//        for (quint32 idx = 0, end = theNumShaderInfos; idx < end; ++idx) {
-//            QString name, type, version;
-//            name = theReader.LoadRef<QString>();
-//            type = theReader.LoadRef<QString>();
-//            version = theReader.LoadRef<QString>();
-//            name.Remap(inStrDataBlock);
-//            type.Remap(inStrDataBlock);
-//            version.Remap(inStrDataBlock);
-//            SDynamicObjectShaderInfo &theInfo =
-//                    m_ShaderInfoMap.insert(name, SDynamicObjectShaderInfo())
-//                    .first->second;
-//            theInfo.m_Type = type;
-//            theInfo.m_Version = version;
-//        }
-//    }
+    //            for (quint32 defIdx = 0, defEnd = theClass->m_PropertyDefinitions.size(); defIdx < defEnd;
+    //                 ++defIdx) {
+    //                SPropertyDefinition &theDef(theDefinitions[defIdx]);
+    //                theDef.m_Name.Remap(inStrDataBlock);
+    //                if (theDef.m_EnumValueNames.size()) {
+    //                    QString *theNames = (QString *)theReader.m_CurrentPtr;
+    //                    theReader.m_CurrentPtr +=
+    //                            theDef.m_EnumValueNames.size() * sizeof(QString);
+    //                    theDef.m_EnumValueNames =
+    //                            QDemonDataRef<QString>(theNames, theDef.m_EnumValueNames.size());
+    //                    for (quint32 enumIdx = 0, enumEnd = theDef.m_EnumValueNames.size();
+    //                         enumIdx < enumEnd; ++enumIdx)
+    //                        theNames[enumIdx].Remap(inStrDataBlock);
+    //                }
+    //                if (theDef.m_DataType == QDemonRenderShaderDataTypes::QDemonRenderTexture2DPtr) {
+    //                    QString *realData =
+    //                            reinterpret_cast<QString *>(theDataBuffer + theDef.m_Offset);
+    //                    realData->Remap(inStrDataBlock);
+    //                }
+    //            }
+    //            m_Classes.insert(theClass->m_Id, theClass);
+    //        }
+    //        quint32 theNumShaderInfos = theReader.LoadRef<quint32>();
+    //        for (quint32 idx = 0, end = theNumShaderInfos; idx < end; ++idx) {
+    //            QString name, type, version;
+    //            name = theReader.LoadRef<QString>();
+    //            type = theReader.LoadRef<QString>();
+    //            version = theReader.LoadRef<QString>();
+    //            name.Remap(inStrDataBlock);
+    //            type.Remap(inStrDataBlock);
+    //            version.Remap(inStrDataBlock);
+    //            SDynamicObjectShaderInfo &theInfo =
+    //                    m_ShaderInfoMap.insert(name, SDynamicObjectShaderInfo())
+    //                    .first->second;
+    //            theInfo.m_Type = type;
+    //            theInfo.m_Version = version;
+    //        }
+    //    }
 
-    void setContextInterface(QDemonRenderContextInterface *rc) override
-    {
-        m_context = rc;
-    }
+    void setContextInterface(QDemonRenderContextInterface *rc) override { m_context = rc; }
 
     QStringList getParameters(const QString &str, int begin, int end)
     {
@@ -1235,8 +1192,7 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
 
         while ((beginIndex = str.indexOf(snapperSampler, beginIndex)) >= 0) {
             int endIndex = str.indexOf(endingBracket, beginIndex);
-            const QStringList list = getParameters(str, beginIndex + snapperSampler.length(),
-                                                   endIndex);
+            const QStringList list = getParameters(str, beginIndex + snapperSampler.length(), endIndex);
             str.remove(beginIndex, endIndex - beginIndex + 1);
             if (list.size() == 5) {
                 QString insertStr;
@@ -1245,16 +1201,14 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
                 stream << "uniform int flag" << list[0] << ";\n";
                 stream << "vec4 " << list[0] << "Info;\n";
                 stream << "vec4 texture2D_" << list[0] << "(vec2 uv) "
-                       << "{ return GetTextureValue( " << list[0] << ", uv, "
-                       << list[0] <<"Info.z ); }\n";
+                       << "{ return GetTextureValue( " << list[0] << ", uv, " << list[0] << "Info.z ); }\n";
                 str.insert(beginIndex, insertStr);
             }
         }
         beginIndex = 0;
         while ((beginIndex = str.indexOf(snapperSamplerDefault, beginIndex)) >= 0) {
             int endIndex = str.indexOf(endingBracket, beginIndex);
-            const QStringList list = getParameters(str, beginIndex + snapperSamplerDefault.length(),
-                                                   endIndex);
+            const QStringList list = getParameters(str, beginIndex + snapperSamplerDefault.length(), endIndex);
             str.remove(beginIndex, endIndex - beginIndex + 1);
             if (list.size() == 5) {
                 QString insertStr;
@@ -1263,35 +1217,34 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
                 stream << "uniform int flag" << list[0] << ";\n";
                 stream << "vec4 " << list[0] << "Info;\n";
                 stream << "vec4 texture2D_" << list[0] << "(vec2 uv) "
-                       << "{ return GetTextureValue( " << list[0] << ", uv, "
-                       << list[0] <<"Info.z ); }\n";
+                       << "{ return GetTextureValue( " << list[0] << ", uv, " << list[0] << "Info.z ); }\n";
                 str.insert(beginIndex, insertStr);
             }
         }
         beginIndex = 0;
         while ((beginIndex = str.indexOf(snapperSamplerCube, beginIndex)) >= 0) {
             int endIndex = str.indexOf(endingBracket, beginIndex);
-            const QStringList list = getParameters(str, beginIndex + snapperSamplerCube.length(),
-                                                   endIndex);
+            const QStringList list = getParameters(str, beginIndex + snapperSamplerCube.length(), endIndex);
             str.remove(beginIndex, endIndex - beginIndex + 1);
             if (list.size() == 4) {
                 QString insertStr;
                 QTextStream stream(&insertStr);
                 stream << "uniform samplerCube " << list[0] << ";\n";
-                stream << "uniform vec2 "<< list[0] << "UVRange;\n";
+                stream << "uniform vec2 " << list[0] << "UVRange;\n";
                 stream << "uniform int flag" << list[0] << ";\n";
-                stream << "uniform vec2 "<< list[0] << "Size;\n";
+                stream << "uniform vec2 " << list[0] << "Size;\n";
                 str.insert(beginIndex, insertStr);
             }
         }
     }
 
-    QDemonRef<QDemonRenderShaderProgram> compileShader(QString inId, const char *inProgramSource,
-                                                            const char *inGeomSource,
-                                                            QString inProgramMacroName,
-                                                            TShaderFeatureSet inFeatureSet,
-                                                            const dynamic::QDemonDynamicShaderProgramFlags &inFlags,
-                                                            bool inForceCompilation = false)
+    QDemonRef<QDemonRenderShaderProgram> compileShader(QString inId,
+                                                       const char *inProgramSource,
+                                                       const char *inGeomSource,
+                                                       QString inProgramMacroName,
+                                                       TShaderFeatureSet inFeatureSet,
+                                                       const dynamic::QDemonDynamicShaderProgramFlags &inFlags,
+                                                       bool inForceCompilation = false)
     {
         m_vertShader.clear();
         m_fragShader.clear();
@@ -1346,15 +1299,10 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
 
         QByteArray theKey = getShaderCacheKey(inId.toLocal8Bit(), inProgramMacroName.toLocal8Bit(), inFlags);
         if (inForceCompilation) {
-            return theShaderCache->forceCompileProgram(theKey, m_vertShader,
-                                                      m_fragShader, nullptr, nullptr,
-                                                      m_geometryShader, theFlags,
-                                                      inFeatureSet, false);
+            return theShaderCache->forceCompileProgram(theKey, m_vertShader, m_fragShader, nullptr, nullptr, m_geometryShader, theFlags, inFeatureSet, false);
         }
 
-        return theShaderCache->compileProgram(theKey, m_vertShader, m_fragShader,
-                                             nullptr, nullptr, m_geometryShader, theFlags,
-                                             inFeatureSet);
+        return theShaderCache->compileProgram(theKey, m_vertShader, m_fragShader, nullptr, nullptr, m_geometryShader, theFlags, inFeatureSet);
     }
 
     // This just returns the custom material shader source without compiling
@@ -1382,11 +1330,15 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
 
         // TODO: This looks funky (if found)...
         if (found || inForceCompilation) {
-            QDemonRef<QDemonRenderShaderProgram> theProgram = m_context->getShaderCache()->getProgram(getShaderCacheKey(inPath.toLocal8Bit(), inProgramMacro.toLocal8Bit(), inFlags), inFeatureSet);
+            QDemonRef<QDemonRenderShaderProgram> theProgram = m_context->getShaderCache()
+                                                                      ->getProgram(getShaderCacheKey(inPath.toLocal8Bit(),
+                                                                                                     inProgramMacro.toLocal8Bit(),
+                                                                                                     inFlags),
+                                                                                   inFeatureSet);
             dynamic::QDemonDynamicShaderProgramFlags theFlags(inFlags);
             if (!theProgram || inForceCompilation) {
-                QDemonDynamicObjectShaderInfo &theShaderInfo =
-                        m_shaderInfoMap.insert(inPath, QDemonDynamicObjectShaderInfo()).value();
+                QDemonDynamicObjectShaderInfo
+                        &theShaderInfo = m_shaderInfoMap.insert(inPath, QDemonDynamicObjectShaderInfo()).value();
                 if (theShaderInfo.m_isComputeShader == false) {
                     QString programSource = doLoadShader(inPath);
                     if (theShaderInfo.m_hasGeomShader)
@@ -1395,14 +1347,16 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
                 } else {
                     QString theShaderBuffer;
                     QString shaderVersionStr = QStringLiteral("#version 430\n");
-                    if ((quint32)m_context->getRenderContext()->getRenderContextType()
-                            == QDemonRenderContextValues::GLES3PLUS)
+                    if ((quint32)m_context->getRenderContext()->getRenderContextType() == QDemonRenderContextValues::GLES3PLUS)
                         shaderVersionStr = QStringLiteral("#version 310 es\n");
                     theShaderBuffer = doLoadShader(inPath);
                     theShaderBuffer.insert(0, shaderVersionStr);
                     const char *programSource = theShaderBuffer.toLocal8Bit();
                     quint32 len = (quint32)strlen(nonNull(programSource)) + 1;
-                    theProgram = m_context->getRenderContext()->compileComputeSource(inPath.toLocal8Bit(), QDemonConstDataRef<qint8>((qint8 *)programSource, len)).m_shader;
+                    theProgram = m_context->getRenderContext()
+                                         ->compileComputeSource(inPath.toLocal8Bit(),
+                                                                QDemonConstDataRef<qint8>((qint8 *)programSource, len))
+                                         .m_shader;
                 }
             }
             theInserter.value() = TShaderAndFlags(theProgram, theFlags);
@@ -1410,12 +1364,9 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
         return theInserter.value();
     }
 
-    TShaderAndFlags getDepthPrepassShader(QString inPath,
-                                          QString inPMacro,
-                                          TShaderFeatureSet inFeatureSet) override
+    TShaderAndFlags getDepthPrepassShader(QString inPath, QString inPMacro, TShaderFeatureSet inFeatureSet) override
     {
-        QDemonDynamicObjectShaderInfo &theShaderInfo =
-                m_shaderInfoMap.insert(inPath, QDemonDynamicObjectShaderInfo()).value();
+        QDemonDynamicObjectShaderInfo &theShaderInfo = m_shaderInfoMap.insert(inPath, QDemonDynamicObjectShaderInfo()).value();
         if (theShaderInfo.m_hasGeomShader == false)
             return TShaderAndFlags();
         // else, here we go...
@@ -1425,17 +1376,25 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
 
         QString theProgramMacro = shaderKey;
 
-        const dynamic::QDemonDynamicShaderMapKey shaderMapKey(TStrStrPair(inPath, theProgramMacro), inFeatureSet, theFlags.tessMode, theFlags.wireframeMode);
+        const dynamic::QDemonDynamicShaderMapKey shaderMapKey(TStrStrPair(inPath, theProgramMacro),
+                                                              inFeatureSet,
+                                                              theFlags.tessMode,
+                                                              theFlags.wireframeMode);
         const TShaderAndFlags shaderFlags;
         auto theInserter = m_shaderMap.find(shaderMapKey);
         const bool found = theInserter != m_shaderMap.end();
         if (found) {
-            QDemonRef<QDemonRenderShaderProgram> theProgram = m_context->getShaderCache()->getProgram(getShaderCacheKey(inPath.toLocal8Bit(), theProgramMacro.toLocal8Bit(), theFlags), inFeatureSet);
+            QDemonRef<QDemonRenderShaderProgram> theProgram = m_context->getShaderCache()
+                                                                      ->getProgram(getShaderCacheKey(inPath.toLocal8Bit(),
+                                                                                                     theProgramMacro.toLocal8Bit(),
+                                                                                                     theFlags),
+                                                                                   inFeatureSet);
             dynamic::QDemonDynamicShaderProgramFlags flags(theFlags);
             if (!theProgram) {
                 QString geomSource = doLoadShader(inPath);
                 QDemonShaderVertexCodeGenerator vertexShader(m_context->getRenderContext()->getRenderContextType());
-                QDemonShaderFragmentCodeGenerator fragmentShader(vertexShader, m_context->getRenderContext()->getRenderContextType());
+                QDemonShaderFragmentCodeGenerator fragmentShader(vertexShader,
+                                                                 m_context->getRenderContext()->getRenderContextType());
 
                 vertexShader.addAttribute("attr_pos", "vec3");
                 vertexShader.addUniform("model_view_projection", "mat4");
@@ -1456,33 +1415,23 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
                 programBuffer.append(fragmentSource);
                 programBuffer.append("\n#endif");
                 flags.setGeometryShaderEnabled(true);
-                theProgram = compileShader(inPath, programBuffer.toLatin1(), geomSource.toLocal8Bit().constData(),
-                                           theProgramMacro, inFeatureSet, flags);
+                theProgram = compileShader(inPath, programBuffer.toLatin1(), geomSource.toLocal8Bit().constData(), theProgramMacro, inFeatureSet, flags);
             }
             theInserter.value() = TShaderAndFlags(theProgram, flags);
         }
         return theInserter.value();
     }
 
-    void setShaderCodeLibraryVersion(const QByteArray &version) override
-    {
-        m_shaderLibraryVersion = version;
-    }
+    void setShaderCodeLibraryVersion(const QByteArray &version) override { m_shaderLibraryVersion = version; }
 
-    QString shaderCodeLibraryVersion() override
-    {
-        return m_shaderLibraryVersion;
-    }
+    QString shaderCodeLibraryVersion() override { return m_shaderLibraryVersion; }
 
     virtual void setShaderCodeLibraryPlatformDirectory(const QString &directory) override
     {
         m_shaderLibraryPlatformDirectory = directory;
     }
 
-    virtual QString shaderCodeLibraryPlatformDirectory() override
-    {
-        return m_shaderLibraryPlatformDirectory;
-    }
+    virtual QString shaderCodeLibraryPlatformDirectory() override { return m_shaderLibraryPlatformDirectory; }
 };
 }
 
@@ -1491,9 +1440,6 @@ QDemonRef<QDemonDynamicObjectSystemInterface> QDemonDynamicObjectSystemInterface
     return QDemonRef<QDemonDynamicObjectSystemImpl>(new QDemonDynamicObjectSystemImpl(rc));
 }
 
-QDemonDynamicObjectSystemInterface::~QDemonDynamicObjectSystemInterface()
-{
-
-}
+QDemonDynamicObjectSystemInterface::~QDemonDynamicObjectSystemInterface() {}
 
 QT_END_NAMESPACE

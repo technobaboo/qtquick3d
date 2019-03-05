@@ -6,7 +6,7 @@
 QT_BEGIN_NAMESPACE
 
 // Base linked list without an included head or tail member.
-template <typename TObjType, typename TObjHeadOp, typename TObjTailOp>
+template<typename TObjType, typename TObjHeadOp, typename TObjTailOp>
 struct QDemonInvasiveLinkListBase
 {
     TObjType *tail(TObjType *inObj)
@@ -80,15 +80,12 @@ struct QDemonInvasiveLinkListBase
     }
 };
 
-template <typename TObjType, typename TObjTailOp>
+template<typename TObjType, typename TObjTailOp>
 struct QDemonLinkedListIterator
 {
     typedef QDemonLinkedListIterator<TObjType, TObjTailOp> TMyType;
     TObjType *m_obj;
-    QDemonLinkedListIterator(TObjType *inObj = nullptr)
-        : m_obj(inObj)
-    {
-    }
+    QDemonLinkedListIterator(TObjType *inObj = nullptr) : m_obj(inObj) {}
 
     bool operator!=(const TMyType &inIter) const { return m_obj != inIter.m_obj; }
     bool operator==(const TMyType &inIter) const { return m_obj == inIter.m_obj; }
@@ -113,16 +110,15 @@ struct QDemonLinkedListIterator
 
 // Used for singly linked list where
 // items have either no head or tail ptr.
-template <typename TObjType>
+template<typename TObjType>
 struct QDemonNullOp
 {
     void set(TObjType &, TObjType *) {}
     TObjType *get(const TObjType &) { return nullptr; }
 };
 
-template <typename TObjType, typename TObjTailOp>
-struct QDemonInvasiveSingleLinkedList
-        : public QDemonInvasiveLinkListBase<TObjType, QDemonNullOp<TObjType>, TObjTailOp>
+template<typename TObjType, typename TObjTailOp>
+struct QDemonInvasiveSingleLinkedList : public QDemonInvasiveLinkListBase<TObjType, QDemonNullOp<TObjType>, TObjTailOp>
 {
     typedef QDemonInvasiveSingleLinkedList<TObjType, TObjTailOp> TMyType;
     typedef QDemonInvasiveLinkListBase<TObjType, QDemonNullOp<TObjType>, TObjTailOp> TBaseType;
@@ -130,10 +126,7 @@ struct QDemonInvasiveSingleLinkedList
     typedef iterator const_iterator;
     TObjType *m_head = nullptr;
     QDemonInvasiveSingleLinkedList() = default;
-    QDemonInvasiveSingleLinkedList(const TMyType &inOther)
-        : m_head(inOther.m_head)
-    {
-    }
+    QDemonInvasiveSingleLinkedList(const TMyType &inOther) : m_head(inOther.m_head) {}
     TMyType &operator=(const TMyType &inOther)
     {
         m_head = inOther.m_head;
@@ -180,7 +173,7 @@ struct QDemonInvasiveSingleLinkedList
     const_iterator end() const { return iterator(nullptr); }
 };
 
-template <typename TObjType, typename TObjHeadOp, typename TObjTailOp>
+template<typename TObjType, typename TObjHeadOp, typename TObjTailOp>
 struct QDemonInvasiveLinkedList : public QDemonInvasiveLinkListBase<TObjType, TObjHeadOp, TObjTailOp>
 {
     typedef QDemonInvasiveLinkedList<TObjType, TObjHeadOp, TObjTailOp> TMyType;
@@ -194,11 +187,7 @@ struct QDemonInvasiveLinkedList : public QDemonInvasiveLinkListBase<TObjType, TO
     TObjType *m_tail = nullptr;
 
     QDemonInvasiveLinkedList() = default;
-    QDemonInvasiveLinkedList(const TMyType &inOther)
-        : m_head(inOther.m_head)
-        , m_tail(inOther.m_tail)
-    {
-    }
+    QDemonInvasiveLinkedList(const TMyType &inOther) : m_head(inOther.m_head), m_tail(inOther.m_tail) {}
     TMyType &operator=(const TMyType &inOther)
     {
         m_head = inOther.m_head;
@@ -266,56 +255,44 @@ struct QDemonInvasiveLinkedList : public QDemonInvasiveLinkListBase<TObjType, TO
 };
 
 // Macros to speed up the definitely of invasive linked lists.
-#define DEFINE_INVASIVE_SINGLE_LIST(type)                                                          \
-    struct type;                                                                                \
-    struct type##NextOp                                                                         \
-{                                                                                              \
-    type *get(type &s);                                                                  \
-    const type *get(const type &s) const;                                                \
-    void set(type &inItem, type *inNext);                                                \
-    };                                                                                             \
+#define DEFINE_INVASIVE_SINGLE_LIST(type)                                                                              \
+    struct type;                                                                                                       \
+    struct type##NextOp                                                                                                \
+    {                                                                                                                  \
+        type *get(type &s);                                                                                            \
+        const type *get(const type &s) const;                                                                          \
+        void set(type &inItem, type *inNext);                                                                          \
+    };                                                                                                                 \
     typedef QDemonInvasiveSingleLinkedList<type, type##NextOp> type##List;
 
-#define DEFINE_INVASIVE_LIST(type)                                                                 \
-    struct type;                                                                                \
-    struct type##NextOp                                                                         \
-{                                                                                              \
-    type *get(type &s);                                                                  \
-    const type *get(const type &s) const;                                                \
-    void set(type &inItem, type *inNext);                                                \
-    };                                                                                             \
-    struct type##PreviousOp                                                                     \
-{                                                                                              \
-    type *get(type &s);                                                                  \
-    const type *get(const type &s) const;                                                \
-    void set(type &inItem, type *inNext);                                                \
-    };                                                                                             \
+#define DEFINE_INVASIVE_LIST(type)                                                                                     \
+    struct type;                                                                                                       \
+    struct type##NextOp                                                                                                \
+    {                                                                                                                  \
+        type *get(type &s);                                                                                            \
+        const type *get(const type &s) const;                                                                          \
+        void set(type &inItem, type *inNext);                                                                          \
+    };                                                                                                                 \
+    struct type##PreviousOp                                                                                            \
+    {                                                                                                                  \
+        type *get(type &s);                                                                                            \
+        const type *get(const type &s) const;                                                                          \
+        void set(type &inItem, type *inNext);                                                                          \
+    };                                                                                                                 \
     typedef QDemonInvasiveLinkedList<type, type##PreviousOp, type##NextOp> type##List;
 
-#define IMPLEMENT_INVASIVE_LIST(type, prevMember, nextMember)                                      \
-    inline type *type##NextOp::get(type &s) { return s.nextMember; }                      \
-    inline const type *type##NextOp::get(const type &s) const { return s.nextMember; }    \
-    inline void type##NextOp::set(type &inItem, type *inNext)                             \
-{                                                                                              \
-    inItem.nextMember = inNext;                                                                \
-    }                                                                                              \
-    inline type *type##PreviousOp::get(type &s) { return s.prevMember; }                  \
-    inline const type *type##PreviousOp::get(const type &s) const                         \
-{                                                                                              \
-    return s.prevMember;                                                                       \
-    }                                                                                              \
-    inline void type##PreviousOp::set(type &inItem, type *inNext)                         \
-{                                                                                              \
-    inItem.prevMember = inNext;                                                                \
-    }
+#define IMPLEMENT_INVASIVE_LIST(type, prevMember, nextMember)                                                          \
+    inline type *type##NextOp::get(type &s) { return s.nextMember; }                                                   \
+    inline const type *type##NextOp::get(const type &s) const { return s.nextMember; }                                 \
+    inline void type##NextOp::set(type &inItem, type *inNext) { inItem.nextMember = inNext; }                          \
+    inline type *type##PreviousOp::get(type &s) { return s.prevMember; }                                               \
+    inline const type *type##PreviousOp::get(const type &s) const { return s.prevMember; }                             \
+    inline void type##PreviousOp::set(type &inItem, type *inNext) { inItem.prevMember = inNext; }
 
-#define IMPLEMENT_INVASIVE_SINGLE_LIST(type, nextMember)                                           \
-    inline type *type##NextOp::get(type &s) { return s.nextMember; }                      \
-    inline const type *type##NextOp::get(const type &s) const { return s.nextMember; }    \
-    inline void type##NextOp::set(type &inItem, type *inNext)                             \
-{                                                                                              \
-    inItem.nextMember = inNext;                                                                \
-    }
+#define IMPLEMENT_INVASIVE_SINGLE_LIST(type, nextMember)                                                               \
+    inline type *type##NextOp::get(type &s) { return s.nextMember; }                                                   \
+    inline const type *type##NextOp::get(const type &s) const { return s.nextMember; }                                 \
+    inline void type##NextOp::set(type &inItem, type *inNext) { inItem.nextMember = inNext; }
 
 QT_END_NAMESPACE
 

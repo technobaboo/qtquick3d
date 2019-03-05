@@ -40,6 +40,7 @@ class QDemonResourceTexture2D
 {
 public:
     QAtomicInt ref;
+
 protected:
     QDemonRef<QDemonResourceManagerInterface> m_resourceManager;
     QDemonRef<QDemonRenderTexture2D> m_texture;
@@ -57,17 +58,11 @@ public:
     ~QDemonResourceTexture2D();
     // Returns true if the texture matches the specs, false if the texture needs to be
     // reallocated
-    bool textureMatches(quint32 width,
-                        quint32 height,
-                        QDemonRenderTextureFormats::Enum inFormat,
-                        quint32 inSamples = 1);
+    bool textureMatches(quint32 width, quint32 height, QDemonRenderTextureFormats::Enum inFormat, quint32 inSamples = 1);
 
     // Returns true if the texture was allocated, false if nothing changed (no allocation).
     // Note this is the exact opposite of TextureMatches.
-    bool ensureTexture(quint32 width,
-                       quint32 height,
-                       QDemonRenderTextureFormats::Enum inFormat,
-                       quint32 inSamples = 1);
+    bool ensureTexture(quint32 width, quint32 height, QDemonRenderTextureFormats::Enum inFormat, quint32 inSamples = 1);
 
     // Force release the texture.
     void releaseTexture();
@@ -81,7 +76,7 @@ public:
         Q_ASSERT(m_texture);
         return m_texture;
     }
-    operator QDemonRef<QDemonRenderTexture2D> () { return m_texture; }
+    operator QDemonRef<QDemonRenderTexture2D>() { return m_texture; }
     QDemonRef<QDemonRenderTexture2D> getTexture() { return m_texture; }
     void forgetTexture();
     // Enforces single ownership rules.
@@ -107,19 +102,11 @@ public:
     ~QDemonResourceTexture2DArray();
     // Returns true if the texture matches the specs, false if the texture needs to be
     // reallocated
-    bool textureMatches(quint32 width,
-                        quint32 height,
-                        quint32 slices,
-                        QDemonRenderTextureFormats::Enum inFormat,
-                        quint32 inSamples = 1);
+    bool textureMatches(quint32 width, quint32 height, quint32 slices, QDemonRenderTextureFormats::Enum inFormat, quint32 inSamples = 1);
 
     // Returns true if the texture was allocated, false if nothing changed (no allocation).
     // Note this is the exact opposite of TextureMatches.
-    bool ensureTexture(quint32 width,
-                       quint32 height,
-                       quint32 slices,
-                       QDemonRenderTextureFormats::Enum inFormat,
-                       quint32 inSamples = 1);
+    bool ensureTexture(quint32 width, quint32 height, quint32 slices, QDemonRenderTextureFormats::Enum inFormat, quint32 inSamples = 1);
 
     // Force release the texture.
     void releaseTexture();
@@ -133,7 +120,7 @@ public:
         Q_ASSERT(m_texture);
         return m_texture;
     }
-    operator QDemonRef<QDemonRenderTexture2DArray> () { return m_texture; }
+    operator QDemonRef<QDemonRenderTexture2DArray>() { return m_texture; }
     QDemonRef<QDemonRenderTexture2DArray> getTexture() { return m_texture; }
     // Enforces single ownership rules.
     void stealTexture(QDemonResourceTexture2DArray &inOther);

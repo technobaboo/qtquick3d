@@ -39,8 +39,10 @@ class QDemonRenderBackendDepthStencilStateGL
 {
 public:
     ///< constructor
-    QDemonRenderBackendDepthStencilStateGL(bool enableDepth, bool depthMask,
-                                           QDemonRenderBoolOp::Enum depthFunc, bool enableStencil,
+    QDemonRenderBackendDepthStencilStateGL(bool enableDepth,
+                                           bool depthMask,
+                                           QDemonRenderBoolOp::Enum depthFunc,
+                                           bool enableStencil,
                                            QDemonRenderStencilFunctionArgument &stencilFuncFront,
                                            QDemonRenderStencilFunctionArgument &stencilFuncBack,
                                            QDemonRenderStencilOperationArgument &depthStencilOpFront,
@@ -58,15 +60,12 @@ public:
 
     ///< constructor
     QDemonRenderBackendDepthStencilStateGL()
-        : m_depthEnable(true)
-        , m_depthMask(true)
-        , m_depthFunc(QDemonRenderBoolOp::LessThanOrEqual)
-        , m_stencilEnable(false)
+        : m_depthEnable(true), m_depthMask(true), m_depthFunc(QDemonRenderBoolOp::LessThanOrEqual), m_stencilEnable(false)
     {
     }
 
     ///< destructor
-    ~QDemonRenderBackendDepthStencilStateGL(){}
+    ~QDemonRenderBackendDepthStencilStateGL() {}
 
     ///< assignement
     QDemonRenderBackendDepthStencilStateGL &operator=(const QDemonRenderBackendDepthStencilStateGL &rhs)
@@ -89,11 +88,9 @@ public:
 
     bool operator==(const QDemonRenderBackendDepthStencilStateGL &other) const
     {
-        return (m_depthEnable == other.m_depthEnable && m_depthMask == other.m_depthMask
-                && m_depthFunc == other.m_depthFunc && m_stencilEnable == other.m_stencilEnable
-                && m_stencilFuncFront == other.m_stencilFuncFront
-                && m_stencilFuncBack == other.m_stencilFuncBack
-                && m_depthStencilOpFront == other.m_depthStencilOpFront
+        return (m_depthEnable == other.m_depthEnable && m_depthMask == other.m_depthMask && m_depthFunc == other.m_depthFunc
+                && m_stencilEnable == other.m_stencilEnable && m_stencilFuncFront == other.m_stencilFuncFront
+                && m_stencilFuncBack == other.m_stencilFuncBack && m_depthStencilOpFront == other.m_depthStencilOpFront
                 && m_depthStencilOpBack == other.m_depthStencilOpBack);
     }
 
@@ -111,10 +108,7 @@ class QDemonRenderBackendMiscStateGL
 {
 public:
     ///< constructor
-    QDemonRenderBackendMiscStateGL()
-        : m_patchVertexCount(1)
-    {
-    }
+    QDemonRenderBackendMiscStateGL() : m_patchVertexCount(1) {}
 
     quint32 m_patchVertexCount; ///< vertex count for a single patch primitive
 };
@@ -123,20 +117,12 @@ class QDemonRenderBackendRasterizerStateGL
 {
 public:
     ///< constructor
-    QDemonRenderBackendRasterizerStateGL(float depthBias, float depthScale,
-                                         QDemonRenderFaces::Enum cullFace)
-        : m_depthBias(depthBias)
-        , m_depthScale(depthScale)
-        , m_cullFace(cullFace)
+    QDemonRenderBackendRasterizerStateGL(float depthBias, float depthScale, QDemonRenderFaces::Enum cullFace)
+        : m_depthBias(depthBias), m_depthScale(depthScale), m_cullFace(cullFace)
     {
     }
     ///< constructor
-    QDemonRenderBackendRasterizerStateGL()
-        : m_depthBias(0.0)
-        , m_depthScale(0.0)
-        , m_cullFace(QDemonRenderFaces::Back)
-    {
-    }
+    QDemonRenderBackendRasterizerStateGL() : m_depthBias(0.0), m_depthScale(0.0), m_cullFace(QDemonRenderFaces::Back) {}
 
     QDemonRenderBackendRasterizerStateGL &operator=(const QDemonRenderBackendRasterizerStateGL &rhs)
     {

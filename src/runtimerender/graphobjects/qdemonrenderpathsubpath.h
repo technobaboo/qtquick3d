@@ -42,16 +42,13 @@ struct QDemonPathSubPath : public QDemonGraphObject
     bool m_closed;
 
     QDemonPathSubPath()
-        : QDemonGraphObject(QDemonGraphObjectTypes::PathSubPath)
-        , m_path(nullptr)
-        , m_nextSubPath(nullptr)
-        , m_closed(false)
+        : QDemonGraphObject(QDemonGraphObjectTypes::PathSubPath), m_path(nullptr), m_nextSubPath(nullptr), m_closed(false)
     {
     }
 
     // Generic method used during serialization
     // to remap string and object pointers
-    template <typename TRemapperType>
+    template<typename TRemapperType>
     void remap(TRemapperType &inRemapper)
     {
         QDemonGraphObject::remap(inRemapper);

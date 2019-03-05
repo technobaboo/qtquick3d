@@ -50,21 +50,21 @@ private:
 
 public:
     /**
-         * @brief constructor
-         *
-         * @param[in] context				Pointer to context
-         * @param[in] fnd					Pointer to foundation
-         * @param[in] enableDepth			enable depth test
-         * @param[in] depthMask				enable depth writes
-         * @param[in] depthFunc				depth compare function
-         * @param[in] enableStencil			enable stencil test
-         * @param[in] stencilFuncFront		stencil setup front faces
-         * @param[in] stencilFuncBack		stencil setup back faces
-         * @param[in] depthStencilOpFront	depth/stencil operations front faces
-         * @param[in] depthStencilOpBack	depth/stencil operations back faces
-         *
-         * @return No return.
-         */
+     * @brief constructor
+     *
+     * @param[in] context				Pointer to context
+     * @param[in] fnd					Pointer to foundation
+     * @param[in] enableDepth			enable depth test
+     * @param[in] depthMask				enable depth writes
+     * @param[in] depthFunc				depth compare function
+     * @param[in] enableStencil			enable stencil test
+     * @param[in] stencilFuncFront		stencil setup front faces
+     * @param[in] stencilFuncBack		stencil setup back faces
+     * @param[in] depthStencilOpFront	depth/stencil operations front faces
+     * @param[in] depthStencilOpBack	depth/stencil operations back faces
+     *
+     * @return No return.
+     */
     QDemonRenderDepthStencilState(const QDemonRef<QDemonRenderContextImpl> &context,
                                   bool enableDepth,
                                   bool depthMask,
@@ -92,24 +92,24 @@ public:
     bool getDepthMask() const { return m_depthMask; }
 
     /**
-         * @brief get the backend object handle
-         *
-         * @return the backend object handle.
-         */
+     * @brief get the backend object handle
+     *
+     * @return the backend object handle.
+     */
     virtual QDemonRenderBackend::QDemonRenderBackendDepthStencilStateObject getDepthStencilObjectHandle()
     {
         return m_stateHandle;
     }
 
     static QDemonRef<QDemonRenderDepthStencilState> create(const QDemonRef<QDemonRenderContextImpl> &context,
-                                                                bool enableDepth,
-                                                                bool depthMask,
-                                                                QDemonRenderBoolOp::Enum depthFunc,
-                                                                bool enableStencil,
-                                                                QDemonRenderStencilFunctionArgument &stencilFuncFront,
-                                                                QDemonRenderStencilFunctionArgument &stencilFuncBack,
-                                                                QDemonRenderStencilOperationArgument &depthStencilOpFront,
-                                                                QDemonRenderStencilOperationArgument &depthStencilOpBack);
+                                                           bool enableDepth,
+                                                           bool depthMask,
+                                                           QDemonRenderBoolOp::Enum depthFunc,
+                                                           bool enableStencil,
+                                                           QDemonRenderStencilFunctionArgument &stencilFuncFront,
+                                                           QDemonRenderStencilFunctionArgument &stencilFuncBack,
+                                                           QDemonRenderStencilOperationArgument &depthStencilOpFront,
+                                                           QDemonRenderStencilOperationArgument &depthStencilOpBack);
 
 private:
     bool m_depthEnabled; ///< depth test enabled

@@ -22,21 +22,11 @@ class Q_QUICK3D_EXPORT QDemonImage : public QDemonObject
     Q_PROPERTY(float pivotu READ pivotU WRITE setPivotU NOTIFY piviotUChanged)
     Q_PROPERTY(float pivotv READ pivotV WRITE setPivotV NOTIFY piviotVChanged)
 
-
 public:
-    enum MappingMode {
-        UVMapping = 0,
-        EnvironmentalMapping,
-        LightProbe,
-        IBLOverride
-    };
+    enum MappingMode { UVMapping = 0, EnvironmentalMapping, LightProbe, IBLOverride };
     Q_ENUM(MappingMode)
 
-    enum TilingMode {
-        Tiled = 0,
-        Mirrored,
-        NoTiling
-    };
+    enum TilingMode { Tiled = 0, Mirrored, NoTiling };
     Q_ENUM(TilingMode)
 
     QDemonImage();
@@ -54,7 +44,6 @@ public:
     float pivotU() const;
     float pivotV() const;
     QDemonObject::Type type() const override;
-
 
     QDemonRenderImage *getRenderImage();
 

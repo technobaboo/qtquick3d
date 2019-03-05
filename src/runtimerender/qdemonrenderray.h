@@ -37,7 +37,6 @@
 #include <QtGui/QVector3D>
 #include <QtGui/QMatrix4x4>
 
-
 QT_BEGIN_NAMESPACE
 struct QDemonRenderBasisPlanes
 {
@@ -52,30 +51,17 @@ struct QDemonRenderRayIntersectionResult
 {
     float m_rayLengthSquared; // Length of the ray in world coordinates for the hit.
     QVector2D m_relXY; // UV coords for further mouse picking against a offscreen-rendered object.
-    QDemonRenderRayIntersectionResult()
-        : m_rayLengthSquared(0)
-        , m_relXY(0, 0)
-    {
-    }
-    QDemonRenderRayIntersectionResult(float rl, QVector2D relxy)
-        : m_rayLengthSquared(rl)
-        , m_relXY(relxy)
-    {
-    }
+    QDemonRenderRayIntersectionResult() : m_rayLengthSquared(0), m_relXY(0, 0) {}
+    QDemonRenderRayIntersectionResult(float rl, QVector2D relxy) : m_rayLengthSquared(rl), m_relXY(relxy) {}
 };
 
 struct QDemonRenderRay
 {
     QVector3D m_origin;
     QVector3D m_direction;
-    QDemonRenderRay()
-        : m_origin(0, 0, 0)
-        , m_direction(0, 0, 0)
-    {
-    }
+    QDemonRenderRay() : m_origin(0, 0, 0), m_direction(0, 0, 0) {}
     QDemonRenderRay(const QVector3D &inOrigin, const QVector3D &inDirection)
-        : m_origin(inOrigin)
-        , m_direction(inDirection)
+        : m_origin(inOrigin), m_direction(inDirection)
     {
     }
     // If we are parallel, then no intersection of course.
@@ -89,8 +75,7 @@ struct QDemonRenderRay
                                         const QDemonBounds3 &inBounds,
                                         QDemonRenderBasisPlanes::Enum inPlane) const;
 
-    QDemonOption<QVector2D> getRelativeXY(const QMatrix4x4 &inGlobalTransform,
-                                          const QDemonBounds3 &inBounds) const
+    QDemonOption<QVector2D> getRelativeXY(const QMatrix4x4 &inGlobalTransform, const QDemonBounds3 &inBounds) const
     {
         return getRelative(inGlobalTransform, inBounds, QDemonRenderBasisPlanes::XY);
     }

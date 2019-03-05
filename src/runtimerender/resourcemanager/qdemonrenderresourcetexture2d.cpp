@@ -34,8 +34,7 @@ QT_BEGIN_NAMESPACE
 
 QDemonResourceTexture2D::QDemonResourceTexture2D(const QDemonRef<QDemonResourceManagerInterface> &mgr,
                                                  const QDemonRef<QDemonRenderTexture2D> &inTexture)
-    : m_resourceManager(mgr)
-    , m_texture(inTexture)
+    : m_resourceManager(mgr), m_texture(inTexture)
 {
     if (inTexture)
         m_textureDetails = inTexture->getTextureDetails();
@@ -57,19 +56,13 @@ QDemonResourceTexture2D::~QDemonResourceTexture2D()
 }
 
 // Returns true if the texture was allocated, false if nothing changed (no allocation).
-bool QDemonResourceTexture2D::textureMatches(quint32 width,
-                                             quint32 height,
-                                             QDemonRenderTextureFormats::Enum inFormat,
-                                             quint32 inSamples)
+bool QDemonResourceTexture2D::textureMatches(quint32 width, quint32 height, QDemonRenderTextureFormats::Enum inFormat, quint32 inSamples)
 {
     return m_texture && m_textureDetails.width == width && m_textureDetails.height == height
             && m_textureDetails.format == inFormat && m_textureDetails.sampleCount == inSamples;
 }
 
-bool QDemonResourceTexture2D::ensureTexture(quint32 width,
-                                            quint32 height,
-                                            QDemonRenderTextureFormats::Enum inFormat,
-                                            quint32 inSamples)
+bool QDemonResourceTexture2D::ensureTexture(quint32 width, quint32 height, QDemonRenderTextureFormats::Enum inFormat, quint32 inSamples)
 {
     if (textureMatches(width, height, inFormat, inSamples))
         return false;
@@ -133,16 +126,13 @@ QDemonResourceTexture2DArray::~QDemonResourceTexture2DArray()
     releaseTexture();
 }
 
-bool QDemonResourceTexture2DArray::textureMatches(quint32 width, quint32 height, quint32 slices,
-                                             QDemonRenderTextureFormats::Enum inFormat, quint32 inSamples)
+bool QDemonResourceTexture2DArray::textureMatches(quint32 width, quint32 height, quint32 slices, QDemonRenderTextureFormats::Enum inFormat, quint32 inSamples)
 {
-    return m_texture && m_textureDetails.depth == slices && m_textureDetails.width == width
-            && m_textureDetails.height == height && m_textureDetails.format == inFormat
-            && m_textureDetails.sampleCount == inSamples;
+    return m_texture && m_textureDetails.depth == slices && m_textureDetails.width == width && m_textureDetails.height == height
+            && m_textureDetails.format == inFormat && m_textureDetails.sampleCount == inSamples;
 }
 
-bool QDemonResourceTexture2DArray::ensureTexture(quint32 width, quint32 height, quint32 slices,
-                                            QDemonRenderTextureFormats::Enum inFormat, quint32 inSamples)
+bool QDemonResourceTexture2DArray::ensureTexture(quint32 width, quint32 height, quint32 slices, QDemonRenderTextureFormats::Enum inFormat, quint32 inSamples)
 {
     if (textureMatches(width, height, slices, inFormat, inSamples))
         return false;

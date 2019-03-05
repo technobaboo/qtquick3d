@@ -31,15 +31,12 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonShaderCodeGeneratorBase::QDemonShaderCodeGeneratorBase(const QDemonRenderContextType& ctxType)
+QDemonShaderCodeGeneratorBase::QDemonShaderCodeGeneratorBase(const QDemonRenderContextType &ctxType)
     : m_renderContextType(ctxType)
 {
 }
 
-QDemonShaderCodeGeneratorBase::~QDemonShaderCodeGeneratorBase()
-{
-
-}
+QDemonShaderCodeGeneratorBase::~QDemonShaderCodeGeneratorBase() {}
 void QDemonShaderCodeGeneratorBase::begin()
 {
     m_uniforms.clear();
@@ -70,8 +67,7 @@ void QDemonShaderCodeGeneratorBase::addConstantBuffer(const QByteArray &name, co
 {
     m_constantBuffers.insert(name, layout);
 }
-void QDemonShaderCodeGeneratorBase::addConstantBufferParam(const QByteArray &cbName, const QByteArray &paramName,
-                                                      const QByteArray &type)
+void QDemonShaderCodeGeneratorBase::addConstantBufferParam(const QByteArray &cbName, const QByteArray &paramName, const QByteArray &type)
 {
     TParamPair theParamPair(paramName, type);
     TConstantBufferParamPair theBufferParamPair(cbName, theParamPair);
@@ -169,11 +165,10 @@ void QDemonShaderCodeGeneratorBase::generateUVCoords()
 }
 
 void QDemonShaderCodeGeneratorBase::generateTextureSwizzle(QDemonRenderTextureSwizzleMode::Enum swizzleMode,
-                                                      QByteArray &texSwizzle,
-                                                      QByteArray &lookupSwizzle)
+                                                           QByteArray &texSwizzle,
+                                                           QByteArray &lookupSwizzle)
 {
-    QDemonRenderContextType deprecatedContextFlags(QDemonRenderContextValues::GL2
-                                                   | QDemonRenderContextValues::GLES2);
+    QDemonRenderContextType deprecatedContextFlags(QDemonRenderContextValues::GL2 | QDemonRenderContextValues::GLES2);
 
     if (!(m_renderContextType & deprecatedContextFlags)) {
         switch (swizzleMode) {
@@ -215,13 +210,11 @@ void QDemonShaderCodeGeneratorBase::generateShadedWireframeBase()
            "\tfloat hc = abs( e2 * sin( alpha ) );\n");
 }
 
-void QDemonShaderCodeGeneratorBase::addShaderItemMap(const QByteArray &itemType,
-                                                const TStrTableStrMap &itemMap)
+void QDemonShaderCodeGeneratorBase::addShaderItemMap(const QByteArray &itemType, const TStrTableStrMap &itemMap)
 {
     m_finalShaderBuilder.append("\n");
 
-    for (TStrTableStrMap::const_iterator iter = itemMap.begin(), end = itemMap.end(); iter != end;
-         ++iter) {
+    for (TStrTableStrMap::const_iterator iter = itemMap.begin(), end = itemMap.end(); iter != end; ++iter) {
         m_finalShaderBuilder.append(itemType);
         m_finalShaderBuilder.append(" ");
         m_finalShaderBuilder.append(iter.value());
@@ -231,14 +224,14 @@ void QDemonShaderCodeGeneratorBase::addShaderItemMap(const QByteArray &itemType,
     }
 }
 
-void QDemonShaderCodeGeneratorBase::addShaderConstantBufferItemMap(const QByteArray &itemType, const TStrTableStrMap &cbMap,
+void QDemonShaderCodeGeneratorBase::addShaderConstantBufferItemMap(const QByteArray &itemType,
+                                                                   const TStrTableStrMap &cbMap,
                                                                    TConstantBufferParamArray cbParamsArray)
 {
     m_finalShaderBuilder.append("\n");
 
     // iterate over all constant buffers
-    for (TStrTableStrMap::const_iterator iter = cbMap.begin(), end = cbMap.end(); iter != end;
-         ++iter) {
+    for (TStrTableStrMap::const_iterator iter = cbMap.begin(), end = cbMap.end(); iter != end; ++iter) {
         m_finalShaderBuilder.append(iter.value());
         m_finalShaderBuilder.append(" ");
         m_finalShaderBuilder.append(itemType);
@@ -246,9 +239,7 @@ void QDemonShaderCodeGeneratorBase::addShaderConstantBufferItemMap(const QByteAr
         m_finalShaderBuilder.append(iter.key());
         m_finalShaderBuilder.append(" {\n");
         // iterate over all param entries and add match
-        for (TConstantBufferParamArray::const_iterator iter1 = cbParamsArray.begin(),
-             end = cbParamsArray.end();
-             iter1 != end; ++iter1) {
+        for (TConstantBufferParamArray::const_iterator iter1 = cbParamsArray.begin(), end = cbParamsArray.end(); iter1 != end; ++iter1) {
             if (iter1->first == iter.key()) {
                 m_finalShaderBuilder.append(iter1->second.second);
                 m_finalShaderBuilder.append(" ");
@@ -283,7 +274,7 @@ QDemonShaderCodeGeneratorBase &QDemonShaderCodeGeneratorBase::operator<<(const Q
     return *this;
 }
 
-QDemonShaderVertexCodeGenerator::QDemonShaderVertexCodeGenerator(const QDemonRenderContextType& ctxType)
+QDemonShaderVertexCodeGenerator::QDemonShaderVertexCodeGenerator(const QDemonRenderContextType &ctxType)
     : QDemonShaderCodeGeneratorBase(ctxType)
 {
 }
@@ -293,18 +284,17 @@ TStrTableStrMap &QDemonShaderVertexCodeGenerator::getVaryings()
 }
 
 QDemonShaderTessControlCodeGenerator::QDemonShaderTessControlCodeGenerator(QDemonShaderVertexCodeGenerator &vert,
-                                                                           const QDemonRenderContextType& ctxType)
-    : QDemonShaderCodeGeneratorBase(ctxType)
-    , m_vertGenerator(vert)
+                                                                           const QDemonRenderContextType &ctxType)
+    : QDemonShaderCodeGeneratorBase(ctxType), m_vertGenerator(vert)
 {
 }
 
 // overwritten from base
 void QDemonShaderTessControlCodeGenerator::addShaderItemMap(const QByteArray &itemType, const TStrTableStrMap &itemMap)
 {
-    QByteArray  extVtx("");
-    QByteArray  extTC("");
-    QByteArray  type(itemType);
+    QByteArray extVtx("");
+    QByteArray extTC("");
+    QByteArray type(itemType);
     if (type != QByteArrayLiteral("varying")) {
         extVtx = "[]";
         extTC = "TC[]";
@@ -313,8 +303,7 @@ void QDemonShaderTessControlCodeGenerator::addShaderItemMap(const QByteArray &it
 
     m_finalShaderBuilder.append("\n");
 
-    for (TStrTableStrMap::const_iterator iter = itemMap.begin(), end = itemMap.end(); iter != end;
-         ++iter) {
+    for (TStrTableStrMap::const_iterator iter = itemMap.begin(), end = itemMap.end(); iter != end; ++iter) {
         m_finalShaderBuilder.append(type);
         m_finalShaderBuilder.append(" ");
         m_finalShaderBuilder.append(iter.value());
@@ -329,8 +318,7 @@ void QDemonShaderTessControlCodeGenerator::addShaderItemMap(const QByteArray &it
         m_finalShaderBuilder.append("\n");
         type = "varying";
 
-        for (TStrTableStrMap::const_iterator iter = itemMap.begin(), end = itemMap.end();
-             iter != end; ++iter) {
+        for (TStrTableStrMap::const_iterator iter = itemMap.begin(), end = itemMap.end(); iter != end; ++iter) {
             m_finalShaderBuilder.append(type);
             m_finalShaderBuilder.append(" ");
             m_finalShaderBuilder.append(iter.value());
@@ -347,18 +335,16 @@ TStrTableStrMap &QDemonShaderTessControlCodeGenerator::getVaryings()
 }
 
 QDemonShaderTessEvalCodeGenerator::QDemonShaderTessEvalCodeGenerator(QDemonShaderTessControlCodeGenerator &tc,
-                                                           const QDemonRenderContextType& ctxType)
-    : QDemonShaderCodeGeneratorBase(ctxType)
-    , m_tessControlGenerator(tc)
-    , m_hasGeometryStage(false)
+                                                                     const QDemonRenderContextType &ctxType)
+    : QDemonShaderCodeGeneratorBase(ctxType), m_tessControlGenerator(tc), m_hasGeometryStage(false)
 {
 }
 // overwritten from base
 void QDemonShaderTessEvalCodeGenerator::addShaderItemMap(const QByteArray &itemType, const TStrTableStrMap &itemMap)
 {
-    QByteArray  extTC("");
-    QByteArray  extTE("");
-    QByteArray  type(itemType);
+    QByteArray extTC("");
+    QByteArray extTE("");
+    QByteArray type(itemType);
     if (type != QByteArrayLiteral("varying")) {
         extTC = "TC[]";
         type = "attribute";
@@ -369,8 +355,7 @@ void QDemonShaderTessEvalCodeGenerator::addShaderItemMap(const QByteArray &itemT
 
     m_finalShaderBuilder.append("\n");
 
-    for (TStrTableStrMap::const_iterator iter = itemMap.begin(), end = itemMap.end(); iter != end;
-         ++iter) {
+    for (TStrTableStrMap::const_iterator iter = itemMap.begin(), end = itemMap.end(); iter != end; ++iter) {
         m_finalShaderBuilder.append(type);
         m_finalShaderBuilder.append(" ");
         m_finalShaderBuilder.append(iter.value());
@@ -385,8 +370,7 @@ void QDemonShaderTessEvalCodeGenerator::addShaderItemMap(const QByteArray &itemT
         m_finalShaderBuilder.append("\n");
         type = "varying";
 
-        for (TStrTableStrMap::const_iterator iter = itemMap.begin(), end = itemMap.end();
-             iter != end; ++iter) {
+        for (TStrTableStrMap::const_iterator iter = itemMap.begin(), end = itemMap.end(); iter != end; ++iter) {
             m_finalShaderBuilder.append(type);
             m_finalShaderBuilder.append(" ");
             m_finalShaderBuilder.append(iter.value());
@@ -407,17 +391,16 @@ void QDemonShaderTessEvalCodeGenerator::setGeometryStage(bool hasGeometryStage)
 }
 
 QDemonShaderGeometryCodeGenerator::QDemonShaderGeometryCodeGenerator(QDemonShaderVertexCodeGenerator &vert,
-                                                                     const QDemonRenderContextType& ctxType)
-    : QDemonShaderCodeGeneratorBase(ctxType)
-    , m_vertGenerator(vert)
+                                                                     const QDemonRenderContextType &ctxType)
+    : QDemonShaderCodeGeneratorBase(ctxType), m_vertGenerator(vert)
 {
 }
 
 // overwritten from base
 void QDemonShaderGeometryCodeGenerator::addShaderItemMap(const QByteArray &itemType, const TStrTableStrMap &itemMap)
 {
-    QByteArray  inExt("");
-    QByteArray  type(itemType);
+    QByteArray inExt("");
+    QByteArray type(itemType);
     if (type != QByteArrayLiteral("varying")) {
         type = "attribute";
         if (m_hasTessellationStage)
@@ -428,8 +411,7 @@ void QDemonShaderGeometryCodeGenerator::addShaderItemMap(const QByteArray &itemT
 
     m_finalShaderBuilder.append("\n");
 
-    for (TStrTableStrMap::const_iterator iter = itemMap.begin(), end = itemMap.end(); iter != end;
-         ++iter) {
+    for (TStrTableStrMap::const_iterator iter = itemMap.begin(), end = itemMap.end(); iter != end; ++iter) {
         m_finalShaderBuilder.append(type);
         m_finalShaderBuilder.append(" ");
         m_finalShaderBuilder.append(iter.value());
@@ -444,8 +426,7 @@ void QDemonShaderGeometryCodeGenerator::addShaderItemMap(const QByteArray &itemT
         m_finalShaderBuilder.append("\n");
         type = "varying";
 
-        for (TStrTableStrMap::const_iterator iter = itemMap.begin(), end = itemMap.end();
-             iter != end; ++iter) {
+        for (TStrTableStrMap::const_iterator iter = itemMap.begin(), end = itemMap.end(); iter != end; ++iter) {
             m_finalShaderBuilder.append(type);
             m_finalShaderBuilder.append(" ");
             m_finalShaderBuilder.append(iter.value());
@@ -465,9 +446,8 @@ void QDemonShaderGeometryCodeGenerator::setTessellationStage(bool hasTessellatio
 }
 
 QDemonShaderFragmentCodeGenerator::QDemonShaderFragmentCodeGenerator(QDemonShaderVertexCodeGenerator &vert,
-                                                                     const QDemonRenderContextType& ctxType)
-    : QDemonShaderCodeGeneratorBase(ctxType)
-    , m_vertGenerator(vert)
+                                                                     const QDemonRenderContextType &ctxType)
+    : QDemonShaderCodeGeneratorBase(ctxType), m_vertGenerator(vert)
 {
 }
 TStrTableStrMap &QDemonShaderFragmentCodeGenerator::getVaryings()

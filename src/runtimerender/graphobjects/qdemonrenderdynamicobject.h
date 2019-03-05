@@ -49,10 +49,7 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonDynamicObject : public QDemonGraphObjec
     quint32 dataSectionByteSize;
     quint32 thisObjectSize;
 
-    QDemonDynamicObject(QDemonGraphObjectTypes::Enum inType,
-                        const QString &inClassName,
-                        quint32 inDSByteSize,
-                        quint32 thisObjSize);
+    QDemonDynamicObject(QDemonGraphObjectTypes::Enum inType, const QString &inClassName, quint32 inDSByteSize, quint32 thisObjSize);
 
     quint8 *getDataSectionBegin()
     {
@@ -62,45 +59,29 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonDynamicObject : public QDemonGraphObjec
         return retval;
     }
 
-    const quint8 *getDataSectionBegin() const
-    {
-        return const_cast<QDemonDynamicObject *>(this)->getDataSectionBegin();
-    }
+    const quint8 *getDataSectionBegin() const { return const_cast<QDemonDynamicObject *>(this)->getDataSectionBegin(); }
 
     quint8 *getDataSectionEnd() { return getDataSectionBegin() + dataSectionByteSize; }
 
-    template <typename TDataType>
-    void setPropertyValueT(const dynamic::QDemonPropertyDefinition &inDefinition,
-                           const TDataType &inType);
-    template <typename TStrType>
-    void setStrPropertyValueT(dynamic::QDemonPropertyDefinition &inDefinition,
-                              const char *inValue,
-                              const char *inProjectDir,
-                              TStrType &ioWorkspace);
+    template<typename TDataType>
+    void setPropertyValueT(const dynamic::QDemonPropertyDefinition &inDefinition, const TDataType &inType);
+    template<typename TStrType>
+    void setStrPropertyValueT(dynamic::QDemonPropertyDefinition &inDefinition, const char *inValue, const char *inProjectDir, TStrType &ioWorkspace);
 
     void setPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition, bool inValue);
     void setPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition, float inValue);
-    void setPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition,
-                          float inValue,
-                          quint32 inOffset);
-    void setPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition,
-                          const QVector2D &inValue);
-    void setPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition,
-                          const QVector3D &inValue);
-    void setPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition,
-                          const QVector4D &inValue);
+    void setPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition, float inValue, quint32 inOffset);
+    void setPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition, const QVector2D &inValue);
+    void setPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition, const QVector3D &inValue);
+    void setPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition, const QVector4D &inValue);
     void setPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition, qint32 inValue);
-    void setPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition,
-                          const QString &inValue);
+    void setPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition, const QString &inValue);
 
-    void setPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition,
-                          const char *inValue,
-                          const char *inProjectDir,
-                          QString &ioWorkspace);
+    void setPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition, const char *inValue, const char *inProjectDir, QString &ioWorkspace);
 
     // Generic method used during serialization
     // to remap string and object pointers
-    template <typename TRemapperType>
+    template<typename TRemapperType>
     void remap(TRemapperType &inRemapper)
     {
         QDemonGraphObject::remap(inRemapper);

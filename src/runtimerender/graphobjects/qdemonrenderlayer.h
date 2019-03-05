@@ -43,62 +43,32 @@ struct QDemonRenderImage;
 
 struct AAModeValues
 {
-    enum Enum {
-        NoAA = 0,
-        SSAA = 1,
-        X2 = 2,
-        X4 = 4,
-        X8 = 8
-    };
+    enum Enum { NoAA = 0, SSAA = 1, X2 = 2, X4 = 4, X8 = 8 };
 };
 
 struct HorizontalFieldValues
 {
-    enum Enum {
-        LeftWidth = 0,
-        LeftRight,
-        WidthRight
-    };
+    enum Enum { LeftWidth = 0, LeftRight, WidthRight };
 };
 
 struct VerticalFieldValues
 {
-    enum Enum {
-        TopHeight = 0,
-        TopBottom,
-        HeightBottom
-    };
+    enum Enum { TopHeight = 0, TopBottom, HeightBottom };
 };
 
 struct LayerUnitTypes
 {
-    enum Enum {
-        Percent = 0,
-        Pixels
-    };
+    enum Enum { Percent = 0, Pixels };
 };
 
 struct LayerBackground
 {
-    enum Enum {
-        Transparent = 0,
-        Unspecified,
-        Color
-    };
+    enum Enum { Transparent = 0, Unspecified, Color };
 };
 
 struct LayerBlendTypes
 {
-    enum Enum {
-        Normal = 0,
-        Screen,
-        Multiply,
-        Add,
-        Subtract,
-        Overlay,
-        ColorBurn,
-        ColorDodge
-    };
+    enum Enum { Normal = 0, Screen, Multiply, Add, Subtract, Overlay, ColorBurn, ColorDodge };
 };
 
 // A layer is a special node.  It *always* presents its global transform
@@ -177,14 +147,11 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderLayer : public QDemonGraphNode
 
     QDemonRenderEffect *getLastEffect();
 
-    LayerBlendTypes::Enum getLayerBlend()
-    {
-        return blendType;
-    }
+    LayerBlendTypes::Enum getLayerBlend() { return blendType; }
 
     // Generic method used during serialization
     // to remap string and object pointers
-    template <typename TRemapperType>
+    template<typename TRemapperType>
     void remap(TRemapperType &inRemapper)
     {
         QDemonGraphNode::remap(inRemapper);

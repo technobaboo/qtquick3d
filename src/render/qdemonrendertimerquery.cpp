@@ -45,7 +45,10 @@ void QDemonRenderTimerQuery::begin()
     m_backend->beginQuery(m_queryHandle, QDemonRenderQueryType::Timer);
 }
 
-void QDemonRenderTimerQuery::end() { m_backend->endQuery(m_queryHandle, QDemonRenderQueryType::Timer); }
+void QDemonRenderTimerQuery::end()
+{
+    m_backend->endQuery(m_queryHandle, QDemonRenderQueryType::Timer);
+}
 
 void QDemonRenderTimerQuery::getResult(quint32 *params)
 {
@@ -57,7 +60,10 @@ void QDemonRenderTimerQuery::getResult(quint64 *params)
     m_backend->getQueryResult(m_queryHandle, QDemonRenderQueryResultType::Result, params);
 }
 
-void QDemonRenderTimerQuery::SetTimerQuery() { m_backend->setQueryTimer(m_queryHandle); }
+void QDemonRenderTimerQuery::SetTimerQuery()
+{
+    m_backend->setQueryTimer(m_queryHandle);
+}
 
 QDemonRef<QDemonRenderTimerQuery> QDemonRenderTimerQuery::create(const QDemonRef<QDemonRenderContextImpl> &context)
 {

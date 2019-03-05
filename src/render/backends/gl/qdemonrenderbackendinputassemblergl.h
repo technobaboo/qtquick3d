@@ -56,14 +56,12 @@ class QDemonRenderBackendAttributeLayoutGL
 {
 public:
     ///< constructor
-    QDemonRenderBackendAttributeLayoutGL(QDemonDataRef<QDemonRenderBackendLayoutEntryGL> entries,
-                                         quint32 maxInputSlot)
-        : m_layoutAttribEntries(entries)
-        , m_maxInputSlot(maxInputSlot)
+    QDemonRenderBackendAttributeLayoutGL(QDemonDataRef<QDemonRenderBackendLayoutEntryGL> entries, quint32 maxInputSlot)
+        : m_layoutAttribEntries(entries), m_maxInputSlot(maxInputSlot)
     {
     }
     ///< destructor
-    ~QDemonRenderBackendAttributeLayoutGL(){}
+    ~QDemonRenderBackendAttributeLayoutGL() {}
 
     QDemonRenderBackendLayoutEntryGL *getEntryByName(const QString &entryName) const
     {
@@ -94,11 +92,12 @@ class QDemonRenderBackendInputAssemblerGL
 {
 public:
     ///< constructor
-    QDemonRenderBackendInputAssemblerGL(
-            QDemonRenderBackendAttributeLayoutGL *attribLayout,
-            QDemonConstDataRef<QDemonRenderBackend::QDemonRenderBackendBufferObject> buffers,
-            const QDemonRenderBackend::QDemonRenderBackendBufferObject indexBuffer,
-            QDemonConstDataRef<quint32> strides, QDemonConstDataRef<quint32> offsets, quint32 patchVertexCount)
+    QDemonRenderBackendInputAssemblerGL(QDemonRenderBackendAttributeLayoutGL *attribLayout,
+                                        QDemonConstDataRef<QDemonRenderBackend::QDemonRenderBackendBufferObject> buffers,
+                                        const QDemonRenderBackend::QDemonRenderBackendBufferObject indexBuffer,
+                                        QDemonConstDataRef<quint32> strides,
+                                        QDemonConstDataRef<quint32> offsets,
+                                        quint32 patchVertexCount)
         : m_attribLayout(attribLayout)
         , m_vertexbufferHandles(buffers)
         , m_indexbufferHandle(indexBuffer)

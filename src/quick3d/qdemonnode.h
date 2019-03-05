@@ -43,10 +43,7 @@ public:
     };
     Q_ENUM(RotationOrder)
 
-    enum Orientation {
-        LeftHanded = 0,
-        RightHanded
-    };
+    enum Orientation { LeftHanded = 0, RightHanded };
     Q_ENUM(Orientation)
     QDemonNode();
     ~QDemonNode() override;
@@ -100,7 +97,7 @@ protected:
 private:
     QVector3D m_rotation;
     QVector3D m_position;
-    QVector3D m_scale { 1.0f, 1.0f, 1.0f };
+    QVector3D m_scale{ 1.0f, 1.0f, 1.0f };
     QVector3D m_pivot;
     float m_opacity = 1.0f;
     qint32 m_boneid = -1;

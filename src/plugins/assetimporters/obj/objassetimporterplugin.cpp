@@ -27,7 +27,6 @@
 **
 ****************************************************************************/
 
-
 #include "objassetimporterplugin.h"
 #include "objassetimporter.h"
 

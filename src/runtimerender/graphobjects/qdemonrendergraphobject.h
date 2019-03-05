@@ -30,7 +30,6 @@
 #ifndef QDEMON_RENDER_GRAPH_OBJECT_H
 #define QDEMON_RENDER_GRAPH_OBJECT_H
 
-
 #include <QtDemonRuntimeRender/qdemonrendertaggedpointer.h>
 #include <QtDemonRuntimeRender/qdemonrendergraphobjecttypes.h>
 #include <QtDemonRuntimeRender/qtdemonruntimerenderglobal.h>
@@ -50,15 +49,8 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonGraphObject
     QDemonGraphObjectTypes::Enum type;
     QDemonTaggedPointer userData;
 
-    QDemonGraphObject(QDemonGraphObjectTypes::Enum inType)
-        : type(inType)
-    {
-    }
-    QDemonGraphObject(const QDemonGraphObject &inCloningObject)
-        : id(inCloningObject.id)
-        , type(inCloningObject.type)
-    {
-    }
+    QDemonGraphObject(QDemonGraphObjectTypes::Enum inType) : type(inType) {}
+    QDemonGraphObject(const QDemonGraphObject &inCloningObject) : id(inCloningObject.id), type(inCloningObject.type) {}
 
     // If you change any detail of the scene graph, or even *breath* on a
     // scene graph object, you need to bump this binary version so at least
@@ -67,7 +59,7 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonGraphObject
 
     // Generic method used during serialization
     // to remap string and object pointers
-    template <typename TRemapperType>
+    template<typename TRemapperType>
     void remap(TRemapperType &inRemapper)
     {
         inRemapper.remap(id);

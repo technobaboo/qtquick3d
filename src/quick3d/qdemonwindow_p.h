@@ -40,9 +40,7 @@ class Q_QUICK3D_PRIVATE_EXPORT QDemonWindowPrivate : public QWindowPrivate
 public:
     Q_DECLARE_PUBLIC(QDemonWindow)
 
-    enum CustomEvents {
-        FullUpdateRequest = QEvent::User + 1
-    };
+    enum CustomEvents { FullUpdateRequest = QEvent::User + 1 };
 
     static inline QDemonWindowPrivate *get(QDemonWindow *c) { return c->d_func(); }
 
@@ -69,7 +67,7 @@ public:
 
     bool isRenderable() const;
 
-    //QDemonNode::UpdatePaintNodeData updatePaintNodeData;
+    // QDemonNode::UpdatePaintNodeData updatePaintNodeData;
 
     QDemonObject *dirtySpatialNodeList;
     QDemonObject *dirtyResourceList;
@@ -141,10 +139,11 @@ private:
 class QDemonWindowQObjectCleanupJob : public QRunnable
 {
 public:
-    QDemonWindowQObjectCleanupJob(QObject *o) : object(o) { }
+    QDemonWindowQObjectCleanupJob(QObject *o) : object(o) {}
     void run() override { delete object; }
     QObject *object;
-    static void schedule(QDemonWindow *window, QObject *object) {
+    static void schedule(QDemonWindow *window, QObject *object)
+    {
         Q_ASSERT(window);
         Q_ASSERT(object);
         window->scheduleRenderJob(new QDemonWindowQObjectCleanupJob(object), QDemonWindow::AfterSynchronizingStage);

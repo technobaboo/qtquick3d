@@ -112,27 +112,36 @@ struct QDemonPixelGraphicsRenderer : public QDemonPixelGraphicsRendererInterface
             m_vertexGenerator.addUniform("bottomtop[2]", "float");
             m_fragmentGenerator.addVarying("rect_uvs", "vec2");
             m_fragmentGenerator.addUniform("rect_color", "vec4");
-            m_vertexGenerator << "void main() {" << "\n"
+            m_vertexGenerator << "void main() {"
+                              << "\n"
                               << "\tgl_Position = model_view_projection * vec4( "
                                  "leftright[int(attr_pos.x)], bottomtop[int(attr_pos.y)], 0.0, 1.0 "
                                  ");"
-                              << "\n" << "\trect_uvs = attr_pos;" << "\n" << "}" << "\n";
+                              << "\n"
+                              << "\trect_uvs = attr_pos;"
+                              << "\n"
+                              << "}"
+                              << "\n";
 
-            m_fragmentGenerator << "void main() {" << "\n" << "\tfragOutput = rect_color;" << "\n"
-                                << "}" << "\n";
+            m_fragmentGenerator << "void main() {"
+                                << "\n"
+                                << "\tfragOutput = rect_color;"
+                                << "\n"
+                                << "}"
+                                << "\n";
 
             m_vertexGenerator.buildShaderSource();
             m_fragmentGenerator.buildShaderSource();
 
-            m_rectShader.setShader(m_renderContext->getShaderCache()->compileProgram(
-                                       "PixelRectShader",
-                                       m_vertexGenerator.m_finalShaderBuilder.constData(),
-                                       m_fragmentGenerator.m_finalShaderBuilder.constData(),
-                                       nullptr, // no tess control shader
-                                       nullptr, // no tess eval shader
-                                       nullptr, // no geometry shader
-                                       QDemonShaderCacheProgramFlags(),
-                                       shaderCacheNoFeatures()));
+            m_rectShader.setShader(
+                    m_renderContext->getShaderCache()->compileProgram("PixelRectShader",
+                                                                      m_vertexGenerator.m_finalShaderBuilder.constData(),
+                                                                      m_fragmentGenerator.m_finalShaderBuilder.constData(),
+                                                                      nullptr, // no tess control shader
+                                                                      nullptr, // no tess eval shader
+                                                                      nullptr, // no geometry shader
+                                                                      QDemonShaderCacheProgramFlags(),
+                                                                      shaderCacheNoFeatures()));
         }
     }
     void generateXYQuad()
@@ -147,25 +156,25 @@ struct QDemonPixelGraphicsRenderer : public QDemonPixelGraphicsRendererInterface
 
         if (m_quadVertexBuffer == nullptr) {
             size_t bufSize = sizeof(pos);
-            m_quadVertexBuffer = theRenderContext->createVertexBuffer(
-                        QDemonRenderBufferUsageType::Static, bufSize, 2 * sizeof(float),
-                        toU8DataRef(pos, 4));
+            m_quadVertexBuffer = theRenderContext->createVertexBuffer(QDemonRenderBufferUsageType::Static,
+                                                                      bufSize,
+                                                                      2 * sizeof(float),
+                                                                      toU8DataRef(pos, 4));
         }
 
         if (m_quadIndexBuffer == nullptr) {
             quint8 indexData[] = {
                 0, 1, 2, 0, 2, 3,
             };
-            m_quadIndexBuffer = theRenderContext->createIndexBuffer(
-                        QDemonRenderBufferUsageType::Static,
-                        QDemonRenderComponentTypes::UnsignedInteger8, sizeof(indexData),
-                        toU8DataRef(indexData, sizeof(indexData)));
+            m_quadIndexBuffer = theRenderContext->createIndexBuffer(QDemonRenderBufferUsageType::Static,
+                                                                    QDemonRenderComponentTypes::UnsignedInteger8,
+                                                                    sizeof(indexData),
+                                                                    toU8DataRef(indexData, sizeof(indexData)));
         }
 
         if (m_quadAttribLayout == nullptr) {
             // create our attribute layout
-            m_quadAttribLayout =
-                    theRenderContext->createAttributeLayout(toConstDataRef(theEntries, 1));
+            m_quadAttribLayout = theRenderContext->createAttributeLayout(toConstDataRef(theEntries, 1));
         }
 
         if (m_quadInputAssembler == nullptr) {
@@ -173,9 +182,11 @@ struct QDemonPixelGraphicsRenderer : public QDemonPixelGraphicsRendererInterface
             // create input assembler object
             quint32 strides = m_quadVertexBuffer->getStride();
             quint32 offsets = 0;
-            m_quadInputAssembler = theRenderContext->createInputAssembler(
-                        m_quadAttribLayout, toConstDataRef(&m_quadVertexBuffer, 1), m_quadIndexBuffer,
-                        toConstDataRef(&strides, 1), toConstDataRef(&offsets, 1));
+            m_quadInputAssembler = theRenderContext->createInputAssembler(m_quadAttribLayout,
+                                                                          toConstDataRef(&m_quadVertexBuffer, 1),
+                                                                          m_quadIndexBuffer,
+                                                                          toConstDataRef(&strides, 1),
+                                                                          toConstDataRef(&offsets, 1));
         }
     }
 
@@ -188,8 +199,7 @@ struct QDemonPixelGraphicsRenderer : public QDemonPixelGraphicsRendererInterface
             m_rectShader.apply(inProjection, inObject);
 
             m_renderContext->getRenderContext()->setInputAssembler(m_quadInputAssembler);
-            m_renderContext->getRenderContext()->draw(QDemonRenderDrawMode::Triangles,
-                                                     m_quadInputAssembler->getIndexCount(), 0);
+            m_renderContext->getRenderContext()->draw(QDemonRenderDrawMode::Triangles, m_quadInputAssembler->getIndexCount(), 0);
         }
     }
 
@@ -234,11 +244,12 @@ struct QDemonPixelGraphicsRenderer : public QDemonPixelGraphicsRendererInterface
         theRenderContext->setCullingEnabled(false);
         // Colors are expected to be non-premultiplied, so we premultiply alpha into them at this
         // point.
-        theRenderContext->setBlendFunction(QDemonRenderBlendFunctionArgument(
-                                               QDemonRenderSrcBlendFunc::SrcAlpha, QDemonRenderDstBlendFunc::OneMinusSrcAlpha,
-                                               QDemonRenderSrcBlendFunc::One, QDemonRenderDstBlendFunc::OneMinusSrcAlpha));
-        theRenderContext->setBlendEquation(QDemonRenderBlendEquationArgument(
-                                               QDemonRenderBlendEquation::Add, QDemonRenderBlendEquation::Add));
+        theRenderContext->setBlendFunction(QDemonRenderBlendFunctionArgument(QDemonRenderSrcBlendFunc::SrcAlpha,
+                                                                             QDemonRenderDstBlendFunc::OneMinusSrcAlpha,
+                                                                             QDemonRenderSrcBlendFunc::One,
+                                                                             QDemonRenderDstBlendFunc::OneMinusSrcAlpha));
+        theRenderContext->setBlendEquation(
+                QDemonRenderBlendEquationArgument(QDemonRenderBlendEquation::Add, QDemonRenderBlendEquation::Add));
 
         QDemonRenderCamera theCamera;
         theCamera.position.setZ(-5.f);
@@ -246,8 +257,7 @@ struct QDemonPixelGraphicsRenderer : public QDemonPixelGraphicsRendererInterface
         theCamera.clipFar = 10.0f;
         theCamera.flags.setOrthographic(true);
         // Setup camera projection
-        theCamera.computeFrustumOrtho(theViewport,
-                                      QVector2D(theViewport.width(), theViewport.height()));
+        theCamera.computeFrustumOrtho(theViewport, QVector2D(theViewport.width(), theViewport.height()));
         // Translate such that 0, 0 is lower left of screen.
         QRectF theIdealViewport = theViewport;
         theIdealViewport.setX(theIdealViewport.x() - theViewport.width() / 2.0f);
@@ -292,10 +302,7 @@ struct QDemonPixelGraphicsRenderer : public QDemonPixelGraphicsRendererInterface
 };
 }
 
-QDemonPixelGraphicsRendererInterface::~QDemonPixelGraphicsRendererInterface()
-{
-
-}
+QDemonPixelGraphicsRendererInterface::~QDemonPixelGraphicsRendererInterface() {}
 
 QDemonRef<QDemonPixelGraphicsRendererInterface> QDemonPixelGraphicsRendererInterface::createRenderer(QDemonRenderContextInterface *ctx)
 {

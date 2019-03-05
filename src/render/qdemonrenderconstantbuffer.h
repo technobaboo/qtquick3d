@@ -51,174 +51,167 @@ class Q_DEMONRENDER_EXPORT QDemonRenderConstantBuffer : public QDemonRenderDataB
 {
 public:
     /**
-         * @brief constructor
-         *
-         * @param[in] context		Pointer to context
-         * @param[in] bufferName	Name of the buffer. Must match the name used in programs
-         * @param[in] size			Size of the buffer
-         * @param[in] usage			Usage of the buffer (e.g. static, dynamic...)
-         * @param[in] data			A pointer to the buffer data that is allocated by the
-         * application.
-         *
-         * @return No return.
-         */
-    QDemonRenderConstantBuffer(const QDemonRef<QDemonRenderContextImpl> &context, const QString &bufferName,
-                               size_t size, QDemonRenderBufferUsageType::Enum usageType,
+     * @brief constructor
+     *
+     * @param[in] context		Pointer to context
+     * @param[in] bufferName	Name of the buffer. Must match the name used in programs
+     * @param[in] size			Size of the buffer
+     * @param[in] usage			Usage of the buffer (e.g. static, dynamic...)
+     * @param[in] data			A pointer to the buffer data that is allocated by the
+     * application.
+     *
+     * @return No return.
+     */
+    QDemonRenderConstantBuffer(const QDemonRef<QDemonRenderContextImpl> &context,
+                               const QString &bufferName,
+                               size_t size,
+                               QDemonRenderBufferUsageType::Enum usageType,
                                QDemonDataRef<quint8> data);
 
     ///< destructor
     virtual ~QDemonRenderConstantBuffer();
 
     /**
-         * @brief bind the buffer bypasses the context state
-         *
-         * @return no return.
-         */
+     * @brief bind the buffer bypasses the context state
+     *
+     * @return no return.
+     */
     void bind() override;
 
     /**
-         * @brief bind the buffer to a shader program
-         *
-         * @param[in] inShader		Pointer to active program
-         * @param[in] blockIndex	Index of the constant block within the program
-         * @param[in] binding		Binding point of constant buffer
-         *
-         * @return no return.
-         */
-    virtual void bindToShaderProgram(const QDemonRef<QDemonRenderShaderProgram> &inShader, quint32 blockIndex,
-                                     quint32 binding);
+     * @brief bind the buffer to a shader program
+     *
+     * @param[in] inShader		Pointer to active program
+     * @param[in] blockIndex	Index of the constant block within the program
+     * @param[in] binding		Binding point of constant buffer
+     *
+     * @return no return.
+     */
+    virtual void bindToShaderProgram(const QDemonRef<QDemonRenderShaderProgram> &inShader, quint32 blockIndex, quint32 binding);
 
     /**
-         * @brief update the buffer to hardware
-         *
-         * @return no return.
-         */
+     * @brief update the buffer to hardware
+     *
+     * @return no return.
+     */
     virtual void update();
 
     /**
-         * @brief setup constant buffer
-         *
-         * @param[in] pProgram		Pointer to the shader program
-         * @param[in] index			Index of the constant buffer within the program
-         * @param[in] bufSize		Size of the constant buffer
-         * @param[in] paramCount	Parameter entry count of the constant buffer
-         *
-         * @return return if successful
-         */
-    bool setupBuffer(const QDemonRenderShaderProgram *program, qint32 index, qint32 bufSize,
-                     qint32 paramCount);
+     * @brief setup constant buffer
+     *
+     * @param[in] pProgram		Pointer to the shader program
+     * @param[in] index			Index of the constant buffer within the program
+     * @param[in] bufSize		Size of the constant buffer
+     * @param[in] paramCount	Parameter entry count of the constant buffer
+     *
+     * @return return if successful
+     */
+    bool setupBuffer(const QDemonRenderShaderProgram *program, qint32 index, qint32 bufSize, qint32 paramCount);
 
     /**
-         * @brief add a parameter to the constant buffer
-         *
-         * @param[in] name		Name of the parameter (must match the name in the shader
-         * program)
-         * @param[in] type		Type of the parameter like Mat44
-         * @param[in] count		One or size of array
-         *
-         * @return no return
-         */
+     * @brief add a parameter to the constant buffer
+     *
+     * @param[in] name		Name of the parameter (must match the name in the shader
+     * program)
+     * @param[in] type		Type of the parameter like Mat44
+     * @param[in] count		One or size of array
+     *
+     * @return no return
+     */
     void addParam(const QString &name, QDemonRenderShaderDataTypes::Enum type, qint32 count);
 
     /**
-         * @brief update a parameter in the constant buffer
-         *
-         * @param[in] name		Name of the parameter (must match the name in the shader
-         * program)
-         * @param[in] value		New value
-         *
-         * @return no return
-         */
+     * @brief update a parameter in the constant buffer
+     *
+     * @param[in] name		Name of the parameter (must match the name in the shader
+     * program)
+     * @param[in] value		New value
+     *
+     * @return no return
+     */
     void updateParam(const char *name, QDemonDataRef<quint8> value);
 
     /**
-         * @brief update a piece of memory directly within the constant buffer
-         *
-         * Note: When you use this function you should know what you are doing.
-         *		 The memory layout within C++ must exactly match the memory layout in the
-         *shader.
-         *		 We use std140 layout which guarantees a specific layout behavior across all
-         *HW vendors.
-         *		 How the memory layout is computed can be found in the GL spec.
-         *
-         * @param[in] offset	offset into constant buffer
-         * @param[in] data		pointer to new data
-         *
-         * @return no return
-         */
+     * @brief update a piece of memory directly within the constant buffer
+     *
+     * Note: When you use this function you should know what you are doing.
+     *		 The memory layout within C++ must exactly match the memory layout in the
+     *shader.
+     *		 We use std140 layout which guarantees a specific layout behavior across all
+     *HW vendors.
+     *		 How the memory layout is computed can be found in the GL spec.
+     *
+     * @param[in] offset	offset into constant buffer
+     * @param[in] data		pointer to new data
+     *
+     * @return no return
+     */
     void updateRaw(quint32 offset, QDemonDataRef<quint8> data);
 
     /**
-         * @brief get the backend object handle
-         *
-         * @return the backend object handle.
-         */
-    QDemonRenderBackend::QDemonRenderBackendBufferObject getBuffertHandle() const override
-    {
-        return m_bufferHandle;
-    }
+     * @brief get the backend object handle
+     *
+     * @return the backend object handle.
+     */
+    QDemonRenderBackend::QDemonRenderBackendBufferObject getBuffertHandle() const override { return m_bufferHandle; }
 
     // this will be obsolete
-    const void *getImplementationHandle() const override
-    {
-        return reinterpret_cast<void *>(m_bufferHandle);
-    }
+    const void *getImplementationHandle() const override { return reinterpret_cast<void *>(m_bufferHandle); }
 
     /**
-         * @brief create a QDemonRenderConstantBuffer object
-         *
-         * @param[in] context		Pointer to context
-         * @param[in] size			Size of the buffer
-         * @param[in] usage			Usage of the buffer (e.g. static, dynamic...)
-         * @param[in] data			A pointer to the buffer data that is allocated by the
-         * application.
-         *
-         * @return the backend object handle.
-         */
-    static QDemonRef<QDemonRenderConstantBuffer> create(const QDemonRef<QDemonRenderContextImpl> &context, const char *bufferName,
-                                              QDemonRenderBufferUsageType::Enum usageType, size_t size,
-                                              QDemonConstDataRef<quint8> bufferData);
+     * @brief create a QDemonRenderConstantBuffer object
+     *
+     * @param[in] context		Pointer to context
+     * @param[in] size			Size of the buffer
+     * @param[in] usage			Usage of the buffer (e.g. static, dynamic...)
+     * @param[in] data			A pointer to the buffer data that is allocated by the
+     * application.
+     *
+     * @return the backend object handle.
+     */
+    static QDemonRef<QDemonRenderConstantBuffer> create(const QDemonRef<QDemonRenderContextImpl> &context,
+                                                        const char *bufferName,
+                                                        QDemonRenderBufferUsageType::Enum usageType,
+                                                        size_t size,
+                                                        QDemonConstDataRef<quint8> bufferData);
 
     /**
-         * @brief get the buffer name
-         *
-         * @return the buffer name
-         */
+     * @brief get the buffer name
+     *
+     * @return the buffer name
+     */
     QString GetBufferName() const { return m_name; }
 
 private:
     /**
-         * @brief Create a parameter entry
-         *
-         * @param[in] name		Name of the parameter (must match the name in the shader
-         * program)
-         * @param[in] type		Type of the parameter like Mat44
-         * @param[in] count		One or size of array
-         * @param[in] offset	Offset of the parameter in the memory buffer
-         *
-         * @return return new Entry
-         */
-    ConstantBufferParamEntry *createParamEntry(const QString &name,
-                                               QDemonRenderShaderDataTypes::Enum type, qint32 count,
-                                               qint32 offset);
+     * @brief Create a parameter entry
+     *
+     * @param[in] name		Name of the parameter (must match the name in the shader
+     * program)
+     * @param[in] type		Type of the parameter like Mat44
+     * @param[in] count		One or size of array
+     * @param[in] offset	Offset of the parameter in the memory buffer
+     *
+     * @return return new Entry
+     */
+    ConstantBufferParamEntry *createParamEntry(const QString &name, QDemonRenderShaderDataTypes::Enum type, qint32 count, qint32 offset);
 
     /**
-         * @brief get size of a uniform type
-         *
-         * @param[in] type		type of uniform
-         *
-         * @return return uniform size
-         */
-    qint32
-    getUniformTypeSize(QDemonRenderShaderDataTypes::Enum type);
+     * @brief get size of a uniform type
+     *
+     * @param[in] type		type of uniform
+     *
+     * @return return uniform size
+     */
+    qint32 getUniformTypeSize(QDemonRenderShaderDataTypes::Enum type);
 
     /**
-         * @brief allocate the shadow buffer
-         *
-         * @param[in] size		size of buffer
-         *
-         * @return return true on success
-         */
+     * @brief allocate the shadow buffer
+     *
+     * @param[in] size		size of buffer
+     *
+     * @return return true on success
+     */
     bool allocateShadowBuffer(quint32 size);
 
 private:

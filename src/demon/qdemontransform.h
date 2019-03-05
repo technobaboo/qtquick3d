@@ -6,7 +6,6 @@
 #include <QtGui/QQuaternion>
 #include <QtGui/QVector3D>
 
-
 QT_BEGIN_NAMESPACE
 
 class Q_DEMON_EXPORT QDemonTransform
@@ -17,11 +16,7 @@ public:
 
     Q_ALWAYS_INLINE QDemonTransform();
 
-    Q_ALWAYS_INLINE explicit QDemonTransform(const QVector3D &position)
-        : q(0, 0, 0, 1)
-        , p(position)
-    {
-    }
+    Q_ALWAYS_INLINE explicit QDemonTransform(const QVector3D &position) : q(0, 0, 0, 1), p(position) {}
 
     Q_ALWAYS_INLINE explicit QDemonTransform(const QQuaternion &orientation);
 

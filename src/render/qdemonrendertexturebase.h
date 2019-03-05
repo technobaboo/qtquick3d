@@ -47,11 +47,7 @@ struct QDemonTextureDetails
     QDemonRenderTextureFormats::Enum format = QDemonRenderTextureFormats::Unknown;
 
     QDemonTextureDetails(quint32 w, quint32 h, quint32 d, quint32 samples, QDemonRenderTextureFormats::Enum f)
-        : width(w)
-        , height(h)
-        , depth(d)
-        , sampleCount(samples)
-        , format(f)
+        : width(w), height(h), depth(d), sampleCount(samples), format(f)
     {
     }
     QDemonTextureDetails() = default;
@@ -80,16 +76,15 @@ protected:
 
 public:
     /**
-         * @brief constructor
-         *
-         * @param[in] context		Pointer to context
-         * @param[in] fnd			Pointer to foundation
-         * @param[in] texTarget		Texture target
-         *
-         * @return No return.
-         */
-    QDemonRenderTextureBase(const QDemonRef<QDemonRenderContextImpl> &context,
-                            QDemonRenderTextureTargetType::Enum texTarget);
+     * @brief constructor
+     *
+     * @param[in] context		Pointer to context
+     * @param[in] fnd			Pointer to foundation
+     * @param[in] texTarget		Texture target
+     *
+     * @return No return.
+     */
+    QDemonRenderTextureBase(const QDemonRef<QDemonRenderContextImpl> &context, QDemonRenderTextureTargetType::Enum texTarget);
 
     virtual ~QDemonRenderTextureBase();
 
@@ -111,28 +106,25 @@ public:
     // Get the texture details for mipmap level 0 if it was set.
     virtual QDemonTextureDetails getTextureDetails() const = 0;
 
-    virtual bool isMultisampleTexture() const
-    {
-        return (m_texTarget == QDemonRenderTextureTargetType::Texture2D_MS);
-    }
+    virtual bool isMultisampleTexture() const { return (m_texTarget == QDemonRenderTextureTargetType::Texture2D_MS); }
     virtual quint32 getSampleCount() const { return m_sampleCount; }
     virtual bool isImmutableTexture() const { return m_immutable; }
 
     /**
-         * @brief Bind a texture for shader access
-         *
-         *
-         * @return No return.
-         */
+     * @brief Bind a texture for shader access
+     *
+     *
+     * @return No return.
+     */
     virtual void bind() = 0;
 
     virtual quint32 getNumMipmaps() { return m_maxMipLevel; }
 
     /**
-         * @brief Query if texture needs coordinate swizzle
-         *
-         * @return texture swizzle mode
-         */
+     * @brief Query if texture needs coordinate swizzle
+     *
+     * @return texture swizzle mode
+     */
     virtual QDemonRenderTextureSwizzleMode::Enum getTextureSwizzleMode()
     {
         // if our backend supports hardware texture swizzle then there is no need for a shader
@@ -143,14 +135,11 @@ public:
     }
 
     /**
-         * @brief get the backend object handle
-         *
-         * @return the backend object handle.
-         */
-    virtual QDemonRenderBackend::QDemonRenderBackendTextureObject getTextureObjectHandle()
-    {
-        return m_textureHandle;
-    }
+     * @brief get the backend object handle
+     *
+     * @return the backend object handle.
+     */
+    virtual QDemonRenderBackend::QDemonRenderBackendTextureObject getTextureObjectHandle() { return m_textureHandle; }
 
 protected:
     void applyTexParams();

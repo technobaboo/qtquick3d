@@ -26,7 +26,6 @@ protected:
     QDemonGraphObject *updateSpatialNode(QDemonGraphObject *node) override;
 
 private:
-
     QString m_source;
 };
 

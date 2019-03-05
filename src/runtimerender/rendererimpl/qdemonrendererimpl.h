@@ -70,23 +70,32 @@ inline bool floatLessThan(float lhs, float rhs)
         return false;
     return diff < 0.0f ? true : false;
 }
-inline bool iSRenderObjectPtrLessThan(const QDemonRenderableObject *lhs,
-                                      const QDemonRenderableObject *rhs)
+inline bool iSRenderObjectPtrLessThan(const QDemonRenderableObject *lhs, const QDemonRenderableObject *rhs)
 {
     return floatLessThan(lhs->cameraDistanceSq, rhs->cameraDistanceSq);
 }
-inline bool iSRenderObjectPtrGreatThan(const QDemonRenderableObject *lhs,
-                                       const QDemonRenderableObject *rhs)
+inline bool iSRenderObjectPtrGreatThan(const QDemonRenderableObject *lhs, const QDemonRenderableObject *rhs)
 {
     return floatLessThan(rhs->cameraDistanceSq, lhs->cameraDistanceSq);
 }
-inline bool nonZero(float inValue) { return std::abs(inValue) > .001f; }
-inline bool nonZero(quint32 inValue) { return inValue != 0; }
-inline bool isZero(float inValue) { return std::abs(inValue) < .001f; }
-inline bool isNotOne(float inValue) { return std::abs(1.0f - inValue) > .001f; }
+inline bool nonZero(float inValue)
+{
+    return std::abs(inValue) > .001f;
+}
+inline bool nonZero(quint32 inValue)
+{
+    return inValue != 0;
+}
+inline bool isZero(float inValue)
+{
+    return std::abs(inValue) < .001f;
+}
+inline bool isNotOne(float inValue)
+{
+    return std::abs(1.0f - inValue) > .001f;
+}
 
-inline bool isRectEdgeInBounds(qint32 inNewRectOffset, qint32 inNewRectWidth,
-                               qint32 inCurrentRectOffset, qint32 inCurrentRectWidth)
+inline bool isRectEdgeInBounds(qint32 inNewRectOffset, qint32 inNewRectWidth, qint32 inCurrentRectOffset, qint32 inCurrentRectWidth)
 {
     qint32 newEnd = inNewRectOffset + inNewRectWidth;
     qint32 currentEnd = inCurrentRectOffset + inCurrentRectWidth;
@@ -98,18 +107,14 @@ struct QDemonTextRenderHelper
     QDemonTextShader *shader;
     QDemonRef<QDemonRenderInputAssembler> quadInputAssembler;
     QDemonTextRenderHelper(QDemonTextShader *inShader, QDemonRef<QDemonRenderInputAssembler> inQuadInputAssembler)
-        : shader(inShader)
-        , quadInputAssembler(inQuadInputAssembler)
+        : shader(inShader), quadInputAssembler(inQuadInputAssembler)
     {
     }
 };
 
 struct QDemonPickResultProcessResult : public QDemonRenderPickResult
 {
-    QDemonPickResultProcessResult(const QDemonRenderPickResult &inSrc)
-        : QDemonRenderPickResult(inSrc)
-    {
-    }
+    QDemonPickResultProcessResult(const QDemonRenderPickResult &inSrc) : QDemonRenderPickResult(inSrc) {}
     QDemonPickResultProcessResult() = default;
     bool m_wasPickConsumed = false;
 };
@@ -118,7 +123,7 @@ class Q_DEMONRUNTIMERENDER_EXPORT QDemonRendererImpl : public QDemonRenderWidget
 {
     typedef QHash<QDemonShaderDefaultMaterialKey, QDemonRef<QDemonShaderGeneratorGeneratedShader>> TShaderMap;
     typedef QHash<QString, QDemonRef<QDemonRenderConstantBuffer>> TStrConstanBufMap;
-    //typedef QHash<SRenderInstanceId, QDemonRef<SLayerRenderData>, eastl::hash<SRenderInstanceId>> TInstanceRenderMap;
+    // typedef QHash<SRenderInstanceId, QDemonRef<SLayerRenderData>, eastl::hash<SRenderInstanceId>> TInstanceRenderMap;
     typedef QHash<QDemonRenderInstanceId, QDemonRef<QDemonLayerRenderData>> TInstanceRenderMap;
     typedef QVector<QDemonLayerRenderData *> TLayerRenderList;
     typedef QVector<QDemonRenderPickResult> TPickResultArray;
@@ -256,18 +261,20 @@ public:
     void enableLayerCaching(bool inEnabled) override { m_layerCachingEnabled = inEnabled; }
     bool isLayerCachingEnabled() const override { return m_layerCachingEnabled; }
 
-    void enableLayerGpuProfiling(bool inEnabled) override
-    {
-        m_layerGPuProfilingEnabled = inEnabled;
-    }
+    void enableLayerGpuProfiling(bool inEnabled) override { m_layerGPuProfilingEnabled = inEnabled; }
     bool isLayerGpuProfilingEnabled() const override { return m_layerGPuProfilingEnabled; }
 
     // Calls prepare layer for render
     // and then do render layer.
-    bool prepareLayerForRender(QDemonRenderLayer &inLayer, const QVector2D &inViewportDimensions,
-                               bool inRenderSiblings, const QDemonRenderInstanceId id) override;
-    void renderLayer(QDemonRenderLayer &inLayer, const QVector2D &inViewportDimensions,
-                     bool clear, QVector3D clearColor, bool inRenderSiblings,
+    bool prepareLayerForRender(QDemonRenderLayer &inLayer,
+                               const QVector2D &inViewportDimensions,
+                               bool inRenderSiblings,
+                               const QDemonRenderInstanceId id) override;
+    void renderLayer(QDemonRenderLayer &inLayer,
+                     const QVector2D &inViewportDimensions,
+                     bool clear,
+                     QVector3D clearColor,
+                     bool inRenderSiblings,
                      const QDemonRenderInstanceId id) override;
     void childrenUpdated(QDemonGraphNode &inParent) override;
     float getTextScale(const QDemonText &inText) override;
@@ -275,19 +282,19 @@ public:
     QDemonRenderCamera *getCameraForNode(const QDemonGraphNode &inNode) const override;
     QDemonOption<QDemonCuboidRect> getCameraBounds(const QDemonGraphObject &inObject) override;
     virtual QDemonRenderLayer *getLayerForNode(const QDemonGraphNode &inNode) const;
-    QDemonRef<QDemonLayerRenderData> getOrCreateLayerRenderDataForNode(const QDemonGraphNode &inNode, const QDemonRenderInstanceId id = nullptr);
+    QDemonRef<QDemonLayerRenderData> getOrCreateLayerRenderDataForNode(const QDemonGraphNode &inNode,
+                                                                       const QDemonRenderInstanceId id = nullptr);
 
-    QDemonRef<QDemonRenderWidgetContextInterface> getRenderWidgetContext()
-    {
-        return this;
-    }
+    QDemonRef<QDemonRenderWidgetContextInterface> getRenderWidgetContext() { return this; }
 
     void beginFrame() override;
     void endFrame() override;
 
     void pickRenderPlugins(bool inPick) override { m_pickRenderPlugins = inPick; }
-    QDemonRenderPickResult pick(QDemonRenderLayer &inLayer, const QVector2D &inViewportDimensions,
-                                const QVector2D &inMouseCoords, bool inPickSiblings,
+    QDemonRenderPickResult pick(QDemonRenderLayer &inLayer,
+                                const QVector2D &inViewportDimensions,
+                                const QVector2D &inMouseCoords,
+                                bool inPickSiblings,
                                 bool inPickEverything,
                                 const QDemonRenderInstanceId id) override;
 
@@ -304,15 +311,13 @@ public:
                                                       const QVector2D &inMouseCoords,
                                                       bool inPickEverything);
 
-    QVector3D unprojectToPosition(QDemonGraphNode &inNode, QVector3D &inPosition,
-                                  const QVector2D &inMouseVec) const override;
-    QVector3D unprojectWithDepth(QDemonGraphNode &inNode, QVector3D &inPosition,
-                                 const QVector3D &inMouseVec) const override;
+    QVector3D unprojectToPosition(QDemonGraphNode &inNode, QVector3D &inPosition, const QVector2D &inMouseVec) const override;
+    QVector3D unprojectWithDepth(QDemonGraphNode &inNode, QVector3D &inPosition, const QVector3D &inMouseVec) const override;
     QVector3D projectPosition(QDemonGraphNode &inNode, const QVector3D &inPosition) const override;
 
     QDemonOption<QDemonLayerPickSetup> getLayerPickSetup(QDemonRenderLayer &inLayer,
-                                                    const QVector2D &inMouseCoords,
-                                                    const QSize &inPickDims) override;
+                                                         const QVector2D &inMouseCoords,
+                                                         const QSize &inPickDims) override;
 
     QDemonOption<QRectF> getLayerRect(QDemonRenderLayer &inLayer) override;
 
@@ -321,16 +326,14 @@ public:
     void renderLayerRect(QDemonRenderLayer &inLayer, const QVector3D &inColor) override;
     void addRenderWidget(QDemonRenderWidgetInterface &inWidget) override;
 
-    QDemonScaleAndPosition getWorldToPixelScaleFactor(QDemonRenderLayer &inLayer,
-                                                 const QVector3D &inWorldPoint) override;
+    QDemonScaleAndPosition getWorldToPixelScaleFactor(QDemonRenderLayer &inLayer, const QVector3D &inWorldPoint) override;
     QDemonScaleAndPosition getWorldToPixelScaleFactor(const QDemonRenderCamera &inCamera,
-                                                 const QVector3D &inWorldPoint,
-                                                 QDemonLayerRenderData &inRenderData);
+                                                      const QVector3D &inWorldPoint,
+                                                      QDemonLayerRenderData &inRenderData);
 
     void releaseLayerRenderResources(QDemonRenderLayer &inLayer, const QDemonRenderInstanceId id) override;
 
-    void renderQuad(const QVector2D inDimensions, const QMatrix4x4 &inMVP,
-                    QDemonRenderTexture2D &inQuadTexture) override;
+    void renderQuad(const QVector2D inDimensions, const QMatrix4x4 &inMVP, QDemonRenderTexture2D &inQuadTexture) override;
     void renderQuad() override;
 
     void renderPointsIndirect() override;
@@ -340,8 +343,7 @@ public:
     bool prepareTextureAtlasForRender();
 
     // render Gpu profiler values
-    void renderGpuProfilerStats(float x, float y,
-                                QDemonOption<QVector3D> inColor) override;
+    void renderGpuProfilerStats(float x, float y, QDemonOption<QVector3D> inColor) override;
 
     // Callback during the layer render process.
     void layerNeedsFrameClear(QDemonLayerRenderData &inLayer);
@@ -351,13 +353,11 @@ public:
     void endLayerRender();
     void prepareImageForIbl(QDemonRenderImage &inImage);
 
-    QDemonRef<QDemonRenderShaderProgram> compileShader(const QByteArray &inName, const char *inVert,
-                                             const char *inFrame);
+    QDemonRef<QDemonRenderShaderProgram> compileShader(const QByteArray &inName, const char *inVert, const char *inFrame);
 
-    QDemonRef<QDemonRenderShaderProgram> generateShader(QDemonSubsetRenderable &inRenderable,
-                                                             const TShaderFeatureSet &inFeatureSet);
+    QDemonRef<QDemonRenderShaderProgram> generateShader(QDemonSubsetRenderable &inRenderable, const TShaderFeatureSet &inFeatureSet);
     QDemonRef<QDemonShaderGeneratorGeneratedShader> getShader(QDemonSubsetRenderable &inRenderable,
-                                                                   const TShaderFeatureSet &inFeatureSet);
+                                                              const TShaderFeatureSet &inFeatureSet);
 
     QDemonRef<QDemonDefaultAoPassShader> getDefaultAoPassShader(TShaderFeatureSet inFeatureSet);
     QDemonRef<QDemonDefaultAoPassShader> getFakeDepthShader(TShaderFeatureSet inFeatureSet);
@@ -381,8 +381,7 @@ public:
     QDemonRef<QDemonRenderableDepthPrepassShader> getOrthographicDepthTessNPatchShader();
 
     QDemonRef<QDemonRenderableDepthPrepassShader> getDepthPrepassShader(bool inDisplaced);
-    QDemonRef<QDemonRenderableDepthPrepassShader> getDepthTessPrepassShader(TessModeValues::Enum inTessMode,
-                                                                                 bool inDisplaced);
+    QDemonRef<QDemonRenderableDepthPrepassShader> getDepthTessPrepassShader(TessModeValues::Enum inTessMode, bool inDisplaced);
     QDemonRef<QDemonRenderableDepthPrepassShader> getDepthTessLinearPrepassShader(bool inDisplaced);
     QDemonRef<QDemonRenderableDepthPrepassShader> getDepthTessPhongPrepassShader();
     QDemonRef<QDemonRenderableDepthPrepassShader> getDepthTessNPatchPrepassShader();
@@ -396,7 +395,7 @@ public:
     void generateXYQuad();
     void generateXYQuadStrip();
     void generateXYZPoint();
-    QPair<QDemonRef<QDemonRenderVertexBuffer>, QDemonRef<QDemonRenderIndexBuffer> > getXYQuad();
+    QPair<QDemonRef<QDemonRenderVertexBuffer>, QDemonRef<QDemonRenderIndexBuffer>> getXYQuad();
     QDemonRef<QDemonLayerProgAABlendShader> getLayerProgAABlendShader();
     QDemonRef<QDemonShadowmapPreblurShader> getCubeShadowBlurXShader();
     QDemonRef<QDemonShadowmapPreblurShader> getCubeShadowBlurYShader();
@@ -411,9 +410,7 @@ public:
 #endif
     QDemonLayerRenderData *getLayerRenderData() { return m_currentLayer; }
     QDemonLayerGlobalRenderProperties getLayerGlobalRenderProperties();
-    void updateCbAoShadow(const QDemonRenderLayer *pLayer,
-                          const QDemonRenderCamera *pCamera,
-                          QDemonResourceTexture2D &inDepthTexture);
+    void updateCbAoShadow(const QDemonRenderLayer *pLayer, const QDemonRenderCamera *pCamera, QDemonResourceTexture2D &inDepthTexture);
 
     QDemonRef<QDemonRenderContext> getContext() { return m_context; }
 
@@ -424,31 +421,27 @@ public:
     void setupWidgetLayer();
 
 #ifdef ADVANCED_BLEND_SW_FALLBACK
-    QDemonRef<QDemonRenderTexture2D> getLayerBlendTexture()
-    {
-        return m_layerBlendTexture.getTexture();
-    }
+    QDemonRef<QDemonRenderTexture2D> getLayerBlendTexture() { return m_layerBlendTexture.getTexture(); }
 
-    QDemonRef<QDemonRenderFrameBuffer> getBlendFB()
-    {
-        return m_blendFb;
-    }
+    QDemonRef<QDemonRenderFrameBuffer> getBlendFB() { return m_blendFb; }
 #endif
     // widget context implementation
-    virtual QDemonRef<QDemonRenderVertexBuffer> getOrCreateVertexBuffer(const QByteArray &inStr,
-                                                                             quint32 stride,
-                                                                             QDemonConstDataRef<quint8> bufferData = QDemonConstDataRef<quint8>()) override;
-    virtual QDemonRef<QDemonRenderIndexBuffer> getOrCreateIndexBuffer(const QByteArray &inStr,
-                                                                           QDemonRenderComponentTypes::Enum componentType,
-                                                                           size_t size,
-                                                                           QDemonConstDataRef<quint8> bufferData = QDemonConstDataRef<quint8>()) override;
+    virtual QDemonRef<QDemonRenderVertexBuffer> getOrCreateVertexBuffer(
+            const QByteArray &inStr,
+            quint32 stride,
+            QDemonConstDataRef<quint8> bufferData = QDemonConstDataRef<quint8>()) override;
+    virtual QDemonRef<QDemonRenderIndexBuffer> getOrCreateIndexBuffer(
+            const QByteArray &inStr,
+            QDemonRenderComponentTypes::Enum componentType,
+            size_t size,
+            QDemonConstDataRef<quint8> bufferData = QDemonConstDataRef<quint8>()) override;
     virtual QDemonRef<QDemonRenderAttribLayout> createAttributeLayout(QDemonConstDataRef<QDemonRenderVertexBufferEntry> attribs) override;
     virtual QDemonRef<QDemonRenderInputAssembler> getOrCreateInputAssembler(const QByteArray &inStr,
-                                                                                 QDemonRef<QDemonRenderAttribLayout> attribLayout,
-                                                                                 QDemonConstDataRef<QDemonRef<QDemonRenderVertexBuffer>> buffers,
-                                                                                 const QDemonRef<QDemonRenderIndexBuffer> indexBuffer,
-                                                                                 QDemonConstDataRef<quint32> strides,
-                                                                                 QDemonConstDataRef<quint32> offsets) override;
+                                                                            QDemonRef<QDemonRenderAttribLayout> attribLayout,
+                                                                            QDemonConstDataRef<QDemonRef<QDemonRenderVertexBuffer>> buffers,
+                                                                            const QDemonRef<QDemonRenderIndexBuffer> indexBuffer,
+                                                                            QDemonConstDataRef<quint32> strides,
+                                                                            QDemonConstDataRef<quint32> offsets) override;
 
     QDemonRef<QDemonRenderVertexBuffer> getVertexBuffer(const QByteArray &inStr) override;
     QDemonRef<QDemonRenderIndexBuffer> getIndexBuffer(const QByteArray &inStr) override;
@@ -471,8 +464,8 @@ public:
     // mode
     // or orthographic mode if you would like to.
     virtual QDemonWidgetRenderInformation getWidgetRenderInformation(QDemonGraphNode &inNode,
-                                                                const QVector3D &inPos,
-                                                                RenderWidgetModes::Enum inWidgetMode) override;
+                                                                     const QVector3D &inPos,
+                                                                     RenderWidgetModes::Enum inWidgetMode) override;
 
     QDemonOption<QVector2D> getLayerMouseCoords(QDemonRenderLayer &inLayer,
                                                 const QVector2D &inMouseCoords,

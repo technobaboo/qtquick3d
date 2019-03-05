@@ -91,23 +91,23 @@ struct QDemonClipPlane
     static inline QVector3D corner(const QDemonBounds3 &bounds, TRenderBoxEdge edge)
     {
         return QVector3D((edge & BoxEdgeFlagValues::xMax) ? bounds.maximum[0] : bounds.minimum[0],
-                (edge & BoxEdgeFlagValues::yMax) ? bounds.maximum[1] : bounds.minimum[1],
-                    (edge & BoxEdgeFlagValues::zMax) ? bounds.maximum[2] : bounds.minimum[2]);
-        }
+                         (edge & BoxEdgeFlagValues::yMax) ? bounds.maximum[1] : bounds.minimum[1],
+                         (edge & BoxEdgeFlagValues::zMax) ? bounds.maximum[2] : bounds.minimum[2]);
+    }
 
-        // dividing the distance numerator
+    // dividing the distance numerator
 
-        // I got this code from osg, but it is in graphics gems
-        // as well.
-        /** intersection test between plane and bounding sphere.
-        return 1 if the bs is completely above plane,
-        return 0 if the bs intersects the plane,
-        return -1 if the bs is completely below the plane.*/
-        inline int intersect(const QDemonBounds3 &bounds) const
-        {
+    // I got this code from osg, but it is in graphics gems
+    // as well.
+    /** intersection test between plane and bounding sphere.
+    return 1 if the bs is completely above plane,
+    return 0 if the bs intersects the plane,
+    return -1 if the bs is completely below the plane.*/
+    inline int intersect(const QDemonBounds3 &bounds) const
+    {
         // if lowest point above plane than all above.
         if (distance(corner(bounds, mEdges.lowerEdge)) > 0.0f)
-        return 1;
+            return 1;
 
         // if highest point is below plane then all below.
         if (distance(corner(bounds, mEdges.upperEdge)) < 0.0f)
@@ -120,10 +120,9 @@ struct QDemonClipPlane
 
     inline void calculateBBoxEdges()
     {
-        mEdges.upperEdge = TRenderBoxEdge(
-                    static_cast<quint8>((normal[0] >= 0.0f ? BoxEdgeFlagValues::xMax : 0)
-                    | (normal[1] >= 0.0f ? BoxEdgeFlagValues::yMax : 0)
-                | (normal[2] >= 0.0f ? BoxEdgeFlagValues::zMax : 0)));
+        mEdges.upperEdge = TRenderBoxEdge(static_cast<quint8>((normal[0] >= 0.0f ? BoxEdgeFlagValues::xMax : 0)
+                                                              | (normal[1] >= 0.0f ? BoxEdgeFlagValues::yMax : 0)
+                                                              | (normal[2] >= 0.0f ? BoxEdgeFlagValues::zMax : 0)));
 
         mEdges.lowerEdge = TRenderBoxEdge((~(quint8(mEdges.upperEdge))) & 7);
     }

@@ -34,12 +34,12 @@
 
 QT_BEGIN_NAMESPACE
 /**
-     *	Unfortunately we still use an XYZ-Euler rotation system.  This means that identical
-     *rotations
-     *	can be represented in various ways.  We need to ensure that the value that we write in the
-     *	inspector palette are reasonable, however, and to do this we need a least-distance function
-     *	from two different xyz tuples.
-     */
+ *	Unfortunately we still use an XYZ-Euler rotation system.  This means that identical
+ *rotations
+ *	can be represented in various ways.  We need to ensure that the value that we write in the
+ *	inspector palette are reasonable, however, and to do this we need a least-distance function
+ *	from two different xyz tuples.
+ */
 
 struct QDemonRotationHelper
 {
@@ -60,20 +60,20 @@ struct QDemonRotationHelper
     }
 
     /**
-         *	Convert an angle to a canonical form.  Return this canonical form.
-         *
-         *	The canonical form is defined as:
-         *	1. XYZ all positive.
-         *	2. XYZ all less than 360.
-         *
-         *	To do this we rely on two identities, the first is that given an angle, adding
-         *	(or subtracting) pi from all three components does not change the angle.
-         *
-         *	The second is the obvious one that adding or subtracting 2*pi from any single
-         *	component does not change the angle.
-         *
-         *	Note that this function works in radian space.
-         */
+     *	Convert an angle to a canonical form.  Return this canonical form.
+     *
+     *	The canonical form is defined as:
+     *	1. XYZ all positive.
+     *	2. XYZ all less than 360.
+     *
+     *	To do this we rely on two identities, the first is that given an angle, adding
+     *	(or subtracting) pi from all three components does not change the angle.
+     *
+     *	The second is the obvious one that adding or subtracting 2*pi from any single
+     *	component does not change the angle.
+     *
+     *	Note that this function works in radian space.
+     */
     static QVector3D toCanonicalFormStaticAxis(const QVector3D &inSrcAngle, quint32 inRotOrder)
     {
         // step 1 - reduce all components to less than 2*pi but greater than 0
@@ -149,20 +149,16 @@ struct QDemonRotationHelper
 
     static QVector3D toMinimalAngleDiff(const QVector3D inDiff)
     {
-        return QVector3D(toMinimalAngle(inDiff.x()),
-                         toMinimalAngle(inDiff.y()),
-                         toMinimalAngle(inDiff.z()));
+        return QVector3D(toMinimalAngle(inDiff.x()), toMinimalAngle(inDiff.y()), toMinimalAngle(inDiff.z()));
     }
 
     /**
-         *	Given an old angle and a new angle, return an angle has the same rotational value
-         *	as the new angle *but* is as close to the old angle as possible.
-         *	Works in radian space.  This function doesn't currently work for euler angles or
-         *	with Euler angles with repeating axis.
-         */
-    static QVector3D toNearestAngle(const QVector3D &inOldAngle,
-                                    const QVector3D &inNewAngle,
-                                    quint32 inRotOrder)
+     *	Given an old angle and a new angle, return an angle has the same rotational value
+     *	as the new angle *but* is as close to the old angle as possible.
+     *	Works in radian space.  This function doesn't currently work for euler angles or
+     *	with Euler angles with repeating axis.
+     */
+    static QVector3D toNearestAngle(const QVector3D &inOldAngle, const QVector3D &inNewAngle, quint32 inRotOrder)
     {
         switch (inRotOrder) {
         case EulOrdXYZs:

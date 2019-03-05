@@ -6,7 +6,7 @@
 
 QT_BEGIN_NAMESPACE
 
-template <typename TUnionTraits, int TBufferSize>
+template<typename TUnionTraits, int TBufferSize>
 class DiscriminatedUnion
 {
 public:
@@ -22,13 +22,12 @@ protected:
 public:
     DiscriminatedUnion() { TTraits::defaultConstruct(m_data, m_dataType); }
 
-    DiscriminatedUnion(const TThisType &inOther)
-        : m_dataType(inOther.m_dataType)
+    DiscriminatedUnion(const TThisType &inOther) : m_dataType(inOther.m_dataType)
     {
         TTraits::copyConstruct(m_data, inOther.m_data, m_dataType);
     }
 
-    template <typename TDataType>
+    template<typename TDataType>
     DiscriminatedUnion(const TDataType &inType)
     {
         TTraits::copyConstruct(m_data, m_dataType, inType);
@@ -48,19 +47,19 @@ public:
 
     typename TTraits::TIdType getType() const { return m_dataType; }
 
-    template <typename TDataType>
+    template<typename TDataType>
     const TDataType *getDataPtr() const
     {
         return TTraits::template getDataPtr<TDataType>(m_data, m_dataType);
     }
 
-    template <typename TDataType>
+    template<typename TDataType>
     TDataType *getDataPtr()
     {
         return TTraits::template getDataPtr<TDataType>(m_data, m_dataType);
     }
 
-    template <typename TDataType>
+    template<typename TDataType>
     TDataType getData() const
     {
         const TDataType *dataPtr = getDataPtr<TDataType>();
@@ -72,23 +71,21 @@ public:
 
     bool operator==(const TThisType &inOther) const
     {
-        return m_dataType == inOther.m_dataType
-            && TTraits::areEqual(m_data, inOther.m_data, m_dataType);
+        return m_dataType == inOther.m_dataType && TTraits::areEqual(m_data, inOther.m_data, m_dataType);
     }
 
     bool operator!=(const TThisType &inOther) const
     {
-        return m_dataType != inOther.m_dataType
-            || TTraits::areEqual(m_data, inOther.m_data, m_dataType) == false;
+        return m_dataType != inOther.m_dataType || TTraits::areEqual(m_data, inOther.m_data, m_dataType) == false;
     }
 
-    template <typename TRetType, typename TVisitorType>
+    template<typename TRetType, typename TVisitorType>
     TRetType visit(TVisitorType inVisitor)
     {
         return TTraits::template visit<TRetType>(m_data, m_dataType, inVisitor);
     }
 
-    template <typename TRetType, typename TVisitorType>
+    template<typename TRetType, typename TVisitorType>
     TRetType visit(TVisitorType inVisitor) const
     {
         return TTraits::template visit<TRetType>(m_data, m_dataType, inVisitor);
@@ -100,12 +97,9 @@ public:
 struct CopyConstructVisitor
 {
     const char *m_src;
-    CopyConstructVisitor(const char *inSrc)
-        : m_src(inSrc)
-    {
-    }
+    CopyConstructVisitor(const char *inSrc) : m_src(inSrc) {}
 
-    template <typename TDataType>
+    template<typename TDataType>
     void operator()(TDataType &inDst)
     {
         new (&inDst) TDataType(*reinterpret_cast<const TDataType *>(m_src));
@@ -113,7 +107,7 @@ struct CopyConstructVisitor
     void operator()() { Q_ASSERT(false); }
 };
 
-template <typename TDataType>
+template<typename TDataType>
 struct DestructTraits
 {
     void destruct(TDataType &inType) { inType.~TDataType(); }
@@ -121,73 +115,73 @@ struct DestructTraits
 
 // Until compilers improve a bit, you need this for POD types else you get
 // unused parameter warnings.
-template <>
+template<>
 struct DestructTraits<quint8>
 {
     void destruct(quint8 &) {}
 };
-template <>
+template<>
 struct DestructTraits<qint8>
 {
     void destruct(qint8 &) {}
 };
-template <>
+template<>
 struct DestructTraits<quint16>
 {
     void destruct(quint16 &) {}
 };
-template <>
+template<>
 struct DestructTraits<qint16>
 {
     void destruct(qint16 &) {}
 };
-template <>
+template<>
 struct DestructTraits<quint32>
 {
     void destruct(quint32 &) {}
 };
-template <>
+template<>
 struct DestructTraits<qint32>
 {
     void destruct(qint32 &) {}
 };
-template <>
+template<>
 struct DestructTraits<quint64>
 {
     void destruct(quint64 &) {}
 };
-template <>
+template<>
 struct DestructTraits<qint64>
 {
     void destruct(qint64 &) {}
 };
-template <>
+template<>
 struct DestructTraits<float>
 {
     void destruct(float &) {}
 };
-template <>
+template<>
 struct DestructTraits<double>
 {
     void destruct(double &) {}
 };
-template <>
+template<>
 struct DestructTraits<bool>
 {
     void destruct(bool &) {}
 };
-template <>
+template<>
 struct DestructTraits<void *>
 {
     void destruct(void *&) {}
 };
 #ifdef __INTEGRITY
-template <>
+template<>
 struct DestructTraits<QVector2D>
 {
     void destruct(QVector2D &) {}
 };
-template <>
+template<>
 struct DestructTraits<QVector3D>
 {
     void destruct(QVector3D &) {}
@@ -196,7 +190,7 @@ struct DestructTraits<QVector3D>
 
 struct DestructVisitor
 {
-    template <typename TDataType>
+    template<typename TDataType>
     void operator()(TDataType &inDst)
     {
         DestructTraits<TDataType>().destruct(inDst);
@@ -204,7 +198,7 @@ struct DestructVisitor
     void operator()() { Q_ASSERT(false); }
 };
 
-template <typename TDataType>
+template<typename TDataType>
 struct EqualVisitorTraits
 {
     bool operator()(const TDataType &lhs, const TDataType &rhs) { return lhs == rhs; }
@@ -213,11 +207,8 @@ struct EqualVisitorTraits
 struct EqualVisitor
 {
     const char *m_rhs;
-    EqualVisitor(const char *rhs)
-        : m_rhs(rhs)
-    {
-    }
-    template <typename TDataType>
+    EqualVisitor(const char *rhs) : m_rhs(rhs) {}
+    template<typename TDataType>
     bool operator()(const TDataType &lhs)
     {
         const TDataType &rhs(*reinterpret_cast<const TDataType *>(m_rhs));
@@ -230,7 +221,7 @@ struct EqualVisitor
     }
 };
 
-template <typename TBase, quint32 TBufferSize>
+template<typename TBase, quint32 TBufferSize>
 struct DiscriminatedUnionGenericBase : public TBase
 {
     typedef typename TBase::TIdType TIdType;
@@ -243,7 +234,7 @@ struct DiscriminatedUnionGenericBase : public TBase
         outType = TBase::getNoDataId();
     }
 
-    template <typename TDataType>
+    template<typename TDataType>
     static void copyConstruct(char *outDst, TIdType &outType, const TDataType &inSrc)
     {
         zeroBuf(outDst);
@@ -266,7 +257,7 @@ struct DiscriminatedUnionGenericBase : public TBase
         zeroBuf(inDst);
     }
 
-    template <typename TDataType>
+    template<typename TDataType>
     static const TDataType *getDataPtr(const char *inData, const TIdType &inType)
     {
         if (TBase::template getType<TDataType>() == inType)
@@ -275,7 +266,7 @@ struct DiscriminatedUnionGenericBase : public TBase
         return NULL;
     }
 
-    template <typename TDataType>
+    template<typename TDataType>
     static TDataType *getDataPtr(char *inData, const TIdType &inType)
     {
         if (TBase::template getType<TDataType>() == inType)

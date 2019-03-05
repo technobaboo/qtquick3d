@@ -3,24 +3,14 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonDefaultMaterial::QDemonDefaultMaterial()
-    : m_diffuseColor(Qt::white)
-    , m_specularTint(Qt::white)
-{
+QDemonDefaultMaterial::QDemonDefaultMaterial() : m_diffuseColor(Qt::white), m_specularTint(Qt::white) {}
 
-}
-
-QDemonDefaultMaterial::~QDemonDefaultMaterial()
-{
-
-}
+QDemonDefaultMaterial::~QDemonDefaultMaterial() {}
 
 QDemonObject::Type QDemonDefaultMaterial::type() const
 {
     return QDemonObject::DefaultMaterial;
 }
-
-
 
 QDemonDefaultMaterial::QDemonDefaultMaterialLighting QDemonDefaultMaterial::lighting() const
 {
@@ -448,9 +438,7 @@ QDemonGraphObject *QDemonDefaultMaterial::updateSpatialNode(QDemonGraphObject *n
         material->blendMode = DefaultMaterialBlendMode::Enum(m_blendMode);
 
     if (m_dirtyAttributes & DiffuseDirty) {
-        material->diffuseColor = QVector3D(m_diffuseColor.redF(),
-                                           m_diffuseColor.greenF(),
-                                           m_diffuseColor.blueF());
+        material->diffuseColor = QVector3D(m_diffuseColor.redF(), m_diffuseColor.greenF(), m_diffuseColor.blueF());
         if (!m_diffuseMap)
             material->diffuseMaps[0] = nullptr;
         else
@@ -475,9 +463,7 @@ QDemonGraphObject *QDemonDefaultMaterial::updateSpatialNode(QDemonGraphObject *n
             material->emissiveMap = nullptr;
         else
             material->emissiveMap = m_emissiveMap->getRenderImage();
-        material->emissiveColor = QVector3D(m_emissiveColor.redF(),
-                                            m_emissiveColor.greenF(),
-                                            m_emissiveColor.blueF());
+        material->emissiveColor = QVector3D(m_emissiveColor.redF(), m_emissiveColor.greenF(), m_emissiveColor.blueF());
     }
 
     if (m_dirtyAttributes & SpecularDirty) {
@@ -492,9 +478,7 @@ QDemonGraphObject *QDemonDefaultMaterial::updateSpatialNode(QDemonGraphObject *n
             material->specularMap = m_specularMap->getRenderImage();
 
         material->specularModel = DefaultMaterialSpecularModel::Enum(m_specularModel);
-        material->specularTint = QVector3D(m_specularTint.redF(),
-                                           m_specularTint.greenF(),
-                                           m_specularTint.blueF());
+        material->specularTint = QVector3D(m_specularTint.redF(), m_specularTint.greenF(), m_specularTint.blueF());
         material->ior = m_indexOfRefraction;
         material->fresnelPower = m_fresnelPower;
         material->specularAmount = m_specularAmount;

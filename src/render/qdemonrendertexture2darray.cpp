@@ -37,10 +37,7 @@ QT_BEGIN_NAMESPACE
 
 QDemonRenderTexture2DArray::QDemonRenderTexture2DArray(const QDemonRef<QDemonRenderContextImpl> &context,
                                                        QDemonRenderTextureTargetType::Enum texTarget)
-    : QDemonRenderTextureBase(context, texTarget)
-    , m_width(0)
-    , m_height(0)
-    , m_slices(0)
+    : QDemonRenderTextureBase(context, texTarget), m_width(0), m_height(0), m_slices(0)
 {
 }
 
@@ -72,25 +69,27 @@ void QDemonRenderTexture2DArray::setTextureData(QDemonDataRef<quint8> newBuffer,
 
     // get max size and check value
     qint32 theMaxLayerSize, theMaxSize;
-    m_backend->getRenderBackendValue(QDemonRenderBackend::QDemonRenderBackendQuery::MaxTextureSize,
-                                     &theMaxSize);
-    m_backend->getRenderBackendValue(
-                QDemonRenderBackend::QDemonRenderBackendQuery::MaxTextureArrayLayers, &theMaxLayerSize);
-    if (width > (quint32)theMaxSize || height > (quint32)theMaxSize
-            || slices > (quint32)theMaxLayerSize) {
-        qCCritical(INVALID_OPERATION,
-                   "Width or height or Slices is greater than max texture size (%d, %d, %d)",
-                   theMaxSize, theMaxSize, theMaxLayerSize);
+    m_backend->getRenderBackendValue(QDemonRenderBackend::QDemonRenderBackendQuery::MaxTextureSize, &theMaxSize);
+    m_backend->getRenderBackendValue(QDemonRenderBackend::QDemonRenderBackendQuery::MaxTextureArrayLayers, &theMaxLayerSize);
+    if (width > (quint32)theMaxSize || height > (quint32)theMaxSize || slices > (quint32)theMaxLayerSize) {
+        qCCritical(INVALID_OPERATION, "Width or height or Slices is greater than max texture size (%d, %d, %d)", theMaxSize, theMaxSize, theMaxLayerSize);
     }
 
     // currently we do not support compressed texture arrays
     Q_ASSERT(QDemonRenderTextureFormats::isUncompressedTextureFormat(format)
              || QDemonRenderTextureFormats::isDepthTextureFormat(format));
 
-    if (QDemonRenderTextureFormats::isUncompressedTextureFormat(format)
-            || QDemonRenderTextureFormats::isDepthTextureFormat(format)) {
-        m_backend->setTextureData3D(m_textureHandle, m_texTarget, inMipLevel, m_format, width,
-                                    height, slices, 0, format, newBuffer.begin());
+    if (QDemonRenderTextureFormats::isUncompressedTextureFormat(format) || QDemonRenderTextureFormats::isDepthTextureFormat(format)) {
+        m_backend->setTextureData3D(m_textureHandle,
+                                    m_texTarget,
+                                    inMipLevel,
+                                    m_format,
+                                    width,
+                                    height,
+                                    slices,
+                                    0,
+                                    format,
+                                    newBuffer.begin());
     }
 
     // Set our texture parameters to a default that will look the best

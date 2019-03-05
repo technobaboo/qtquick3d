@@ -43,7 +43,7 @@ QDemonPathBuffer *QDemonPathBuffer::load(QIODevice &inStream)
     quint32 dataSize = numData * sizeof(float);
     quint32 objectSize = sizeof(QDemonPathBuffer);
     quint32 allocSize = objectSize + commandSize + dataSize;
-    char *rawData = reinterpret_cast<char*>(::malloc(allocSize));
+    char *rawData = reinterpret_cast<char *>(::malloc(allocSize));
     QDemonPathBuffer *retval = new (rawData) QDemonPathBuffer();
     char *commandBuffer = rawData + sizeof(QDemonPathBuffer);
     char *dataBuffer = commandBuffer + commandSize;
@@ -93,16 +93,14 @@ struct QDemonPathBufferBuilder : public QDemonPathBufferBuilderInterface
     {
         QDemonPathBuffer retval;
         retval.data = toConstDataRef(static_cast<const float *>(m_data.constData()), m_data.size());
-        retval.commands = toConstDataRef(static_cast<const PathCommand::Enum *>(m_commands.constData()), m_commands.size());;
+        retval.commands = toConstDataRef(static_cast<const PathCommand::Enum *>(m_commands.constData()), m_commands.size());
+        ;
         return retval;
     }
 };
 }
 
-QDemonPathBufferBuilderInterface::~QDemonPathBufferBuilderInterface()
-{
-
-}
+QDemonPathBufferBuilderInterface::~QDemonPathBufferBuilderInterface() {}
 
 QDemonRef<QDemonPathBufferBuilderInterface> QDemonPathBufferBuilderInterface::createBuilder()
 {

@@ -3,15 +3,9 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonCustomMaterial::QDemonCustomMaterial()
-{
+QDemonCustomMaterial::QDemonCustomMaterial() {}
 
-}
-
-QDemonCustomMaterial::~QDemonCustomMaterial()
-{
-
-}
+QDemonCustomMaterial::~QDemonCustomMaterial() {}
 
 QDemonObject::Type QDemonCustomMaterial::type() const
 {

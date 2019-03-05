@@ -49,22 +49,22 @@ public:
     QAtomicInt ref;
 
     /**
-         * @brief constructor
-         *
-         *	NOTE: The limit for buffers count is currently 16
-         *
-         * @param[in] context			Pointer to context
-         * @param[in] attribLayout		Pointer to QDemonRenderAttribLayout object
-         * @param[in] buffers			list of vertex buffers
-         * @param[in] indexBuffer		pointer to index buffer. Can be nullptr
-         * @param[in] strides			list of strides of the buffer
-         * @param[in] offsets			list of offsets into the buffer
-         * @param[in] primType			primitive type used for drawing
-         * @param[in] patchVertexCount	if primitive is "Patch" this is the vertex count for a
-         *single patch
-         *
-         * @return No return.
-         */
+     * @brief constructor
+     *
+     *	NOTE: The limit for buffers count is currently 16
+     *
+     * @param[in] context			Pointer to context
+     * @param[in] attribLayout		Pointer to QDemonRenderAttribLayout object
+     * @param[in] buffers			list of vertex buffers
+     * @param[in] indexBuffer		pointer to index buffer. Can be nullptr
+     * @param[in] strides			list of strides of the buffer
+     * @param[in] offsets			list of offsets into the buffer
+     * @param[in] primType			primitive type used for drawing
+     * @param[in] patchVertexCount	if primitive is "Patch" this is the vertex count for a
+     *single patch
+     *
+     * @return No return.
+     */
     QDemonRenderInputAssembler(const QDemonRef<QDemonRenderContextImpl> &context,
                                const QDemonRef<QDemonRenderAttribLayout> &attribLayout,
                                QDemonConstDataRef<QDemonRef<QDemonRenderVertexBuffer>> buffers,
@@ -77,50 +77,50 @@ public:
     ~QDemonRenderInputAssembler();
 
     /**
-         * @brief get the backend object handle
-         *
-         * @return the backend object handle.
-         */
+     * @brief get the backend object handle
+     *
+     * @return the backend object handle.
+     */
     QDemonRenderBackend::QDemonRenderBackendInputAssemblerObject getInputAssemblerHandle() const
     {
         return m_inputAssemblertHandle;
     }
 
     /**
-         * @brief get the attached index buffer
-         *
-         * @return the index buffer
-         */
+     * @brief get the attached index buffer
+     *
+     * @return the index buffer
+     */
     const QDemonRef<QDemonRenderIndexBuffer> getIndexBuffer();
 
     /**
-         * @brief get the index count of the attached index buffer (if any)
-         *
-         * @return the index buffer count
-         */
+     * @brief get the index count of the attached index buffer (if any)
+     *
+     * @return the index buffer count
+     */
     quint32 getIndexCount() const;
 
     /**
-         * @brief get the vertex count of the buffer
-         *		  Note this makes only sense if we have a single
-         *		  interleaved buffer
-         *
-         * @return the vertex buffer count
-         */
+     * @brief get the vertex count of the buffer
+     *		  Note this makes only sense if we have a single
+     *		  interleaved buffer
+     *
+     * @return the vertex buffer count
+     */
     quint32 getVertexCount() const;
 
     /**
-         * @brief get the primitive type used for drawing
-         *
-         * @return primitive type
-         */
+     * @brief get the primitive type used for drawing
+     *
+     * @return primitive type
+     */
     QDemonRenderDrawMode::Enum getPrimitiveType() const { return m_primitiveType; }
 
     /**
-         * @brief set the per vertex patch count
-         *
-         * @return none
-         */
+     * @brief set the per vertex patch count
+     *
+     * @return none
+     */
     void setPatchVertexCount(quint32 count)
     {
         if (count != m_patchVertexCount) {

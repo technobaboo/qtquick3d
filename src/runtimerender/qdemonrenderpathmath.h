@@ -31,7 +31,7 @@
 #define QDEMON_RENDER_PATH_MATH_H
 
 #if defined(_MSC_VER) && (_MSC_VER > 1000)
-#pragma warning(disable:4267)
+#pragma warning(disable : 4267)
 #endif
 
 #include <QtGui/QVector2D>
@@ -52,7 +52,7 @@ QT_BEGIN_NAMESPACE
 
 namespace path {
 // Solve quadratic equation in with a templated real number system.
-template <typename REAL>
+template<typename REAL>
 int quadratic(REAL b, REAL c, REAL rts[2])
 {
     int nquad;
@@ -95,7 +95,7 @@ int quadratic(REAL b, REAL c, REAL rts[2])
     return (nquad);
 } /* quadratic */
 
-static float interest_range[2] = {0, 1};
+static float interest_range[2] = { 0, 1 };
 
 static void cubicInflectionPoint(const QVector2D cp[4], QVector<float> &key_point)
 {
@@ -133,14 +133,7 @@ static void cubicInflectionPoint(const QVector2D cp[4], QVector<float> &key_poin
     }
 }
 
-typedef enum {
-    CT_POINT,
-    CT_LINE,
-    CT_QUADRATIC,
-    CT_CUSP,
-    CT_LOOP,
-    CT_SERPENTINE
-} CurveType;
+typedef enum { CT_POINT, CT_LINE, CT_QUADRATIC, CT_CUSP, CT_LOOP, CT_SERPENTINE } CurveType;
 
 static inline bool isZero(double v)
 {
@@ -161,7 +154,7 @@ static inline QVector3D crossv1(const QVector2D &a, const QVector2D &b)
     return QVector3D(a[1] - b[1], b[0] - a[0], a[0] * b[1] - a[1] * b[0]);
 }
 
-//static inline bool sameVertex(const QVector2D &a, const QVector2D &b)
+// static inline bool sameVertex(const QVector2D &a, const QVector2D &b)
 //{
 //    return (qFuzzyCompare(a.x(), b.x()) && qFuzzyCompare(a.y(), b.y()));
 //}
@@ -277,8 +270,7 @@ static inline CurveType cubicDoublePoint(const QVector2D points[4], QVector<floa
 
         const float t = static_cast<float>(d2 + sqrt(-discriminant));
         QVector2D d = QVector2D(t, static_cast<float>(2 * d1));
-        QVector2D e = QVector2D(static_cast<float>(2 * (d2 * d2 - d1 * d3)),
-                                static_cast<float>(d1 * double(t)));
+        QVector2D e = QVector2D(static_cast<float>(2 * (d2 * d2 - d1 * d3)), static_cast<float>(d1 * double(t)));
 
         // There is the situation where r2=c/t results in division by zero, but
         // in this case, the two roots represent a double root at zero so
@@ -316,7 +308,7 @@ static inline CurveType cubicDoublePoint(const QVector2D points[4], QVector<floa
         if (tt >= interest_range[0] && tt <= interest_range[1])
             // key_point.push_back(tt);
 #endif
-            tt = (double(roots[0] + roots[1])) / 2.0;
+        tt = (double(roots[0] + roots[1])) / 2.0;
         if (tt >= double(interest_range[0]) && tt <= double(interest_range[1]))
             key_point.push_back(static_cast<float>(tt));
 
@@ -361,7 +353,7 @@ static inline float tangentAt(float inT, float p1, float c1, float c2, float p2)
     return retval;
 }
 
-//static inline QVector2D midpoint(QVector2D p1, QVector2D p2)
+// static inline QVector2D midpoint(QVector2D p1, QVector2D p2)
 //{
 //    return lerp(p1, p2, .5f);
 //}
@@ -386,9 +378,8 @@ struct QDemonCubicBezierCurve
     // Normal is of course orthogonal to the tangent.
     QVector2D normalAt(float inT) const
     {
-        QVector2D tangent = QVector2D(
-                    tangentAt(inT, m_points[0].x(), m_points[1].x(), m_points[2].x(), m_points[3].x()),
-                tangentAt(inT, m_points[0].y(), m_points[1].y(), m_points[2].y(), m_points[3].y()));
+        QVector2D tangent = QVector2D(tangentAt(inT, m_points[0].x(), m_points[1].x(), m_points[2].x(), m_points[3].x()),
+                                      tangentAt(inT, m_points[0].y(), m_points[1].y(), m_points[2].y(), m_points[3].y()));
 
         QVector2D result(tangent.y(), -tangent.x());
         result.normalize();
@@ -407,7 +398,7 @@ struct QDemonCubicBezierCurve
         QVector2D p1234 = lerp(p123, p234, inT);
 
         return QPair<QDemonCubicBezierCurve, QDemonCubicBezierCurve>(QDemonCubicBezierCurve(m_points[0], p12, p123, p1234),
-                QDemonCubicBezierCurve(p1234, p234, p34, m_points[3]));
+                                                                     QDemonCubicBezierCurve(p1234, p234, p34, m_points[3]));
     }
 };
 
@@ -430,8 +421,7 @@ struct QDemonResultCubic
     QVector2D m_taperMultiplier; // normally 1, goes to zero at very end of taper if any taper.
     Mode m_mode;
 
-    QDemonResultCubic(QVector2D inP1, QVector2D inC1, QVector2D inC2, QVector2D inP2,
-                 quint32 equationIndex, float tStart, float tStop, float length)
+    QDemonResultCubic(QVector2D inP1, QVector2D inC1, QVector2D inC2, QVector2D inP2, quint32 equationIndex, float tStart, float tStop, float length)
         : m_p1(inP1)
         , m_c1(inC1)
         , m_c2(inC2)
@@ -456,8 +446,7 @@ struct QDemonResultCubic
         return getPathWidth(inPathWidth, beginTaperWidth, endTaperWidth, 1);
     }
 
-    float getPathWidth(float inPathWidth, float beginTaperWidth, float endTaperWidth,
-                       quint32 inTaperIndex)
+    float getPathWidth(float inPathWidth, float beginTaperWidth, float endTaperWidth, quint32 inTaperIndex)
     {
         float retval = inPathWidth;
         switch (m_mode) {
@@ -477,9 +466,8 @@ struct QDemonResultCubic
 inline void pushLine(QVector<QDemonResultCubic> &ioResultVec, QVector2D inStart, QVector2D inStop, quint32 inEquationIndex)
 {
     QVector2D range = inStop - inStart;
-    ioResultVec.push_back(QDemonResultCubic(inStart, inStart + range * .333f,
-                                       inStart + range * .666f, inStop, inEquationIndex,
-                                       0.0f, 1.0f, lineLength(inStart, inStop)));
+    ioResultVec.push_back(
+            QDemonResultCubic(inStart, inStart + range * .333f, inStart + range * .666f, inStop, inEquationIndex, 0.0f, 1.0f, lineLength(inStart, inStop)));
 }
 
 struct PathDirtyFlagValues
@@ -498,14 +486,8 @@ struct QDemonPathDirtyFlags : public QDemonFlags<PathDirtyFlagValues::Enum>
 {
     typedef QDemonFlags<PathDirtyFlagValues::Enum> TBase;
     QDemonPathDirtyFlags() {}
-    QDemonPathDirtyFlags(int inFlags)
-        : TBase(static_cast<PathDirtyFlagValues::Enum>(inFlags))
-    {
-    }
-    void clear()
-    {
-        *this = QDemonPathDirtyFlags();
-    }
+    QDemonPathDirtyFlags(int inFlags) : TBase(static_cast<PathDirtyFlagValues::Enum>(inFlags)) {}
+    void clear() { *this = QDemonPathDirtyFlags(); }
 };
 
 struct QDemonTaperInformation
@@ -516,9 +498,7 @@ struct QDemonTaperInformation
 
     QDemonTaperInformation() = default;
     QDemonTaperInformation(float capOffset, float capOpacity, float capWidth)
-        : m_capOffset(capOffset)
-        , m_capOpacity(capOpacity)
-        , m_capWidth(capWidth)
+        : m_capOffset(capOffset), m_capOpacity(capOpacity), m_capWidth(capWidth)
     {
     }
 
@@ -529,7 +509,7 @@ struct QDemonTaperInformation
     }
 };
 
-template <typename TOptData>
+template<typename TOptData>
 bool optionEquals(const QDemonOption<TOptData> &lhs, const QDemonOption<TOptData> &rhs)
 {
     if (lhs.hasValue() != rhs.hasValue())
@@ -540,15 +520,19 @@ bool optionEquals(const QDemonOption<TOptData> &lhs, const QDemonOption<TOptData
 }
 void outerAdaptiveSubdivideBezierCurve(QVector<QDemonResultCubic> &ioResultVec,
                                        QVector<float> &keyPointVec,
-                                       QDemonCubicBezierCurve inCurve, float inLinearError,
+                                       QDemonCubicBezierCurve inCurve,
+                                       float inLinearError,
                                        quint32 inEquationIndex);
 
 static void adaptiveSubdivideBezierCurve(QVector<QDemonResultCubic> &ioResultVec,
-                                         QDemonCubicBezierCurve &inCurve, float inLinearError,
-                                         quint32 inEquationIndex, float inTStart, float inTStop);
+                                         QDemonCubicBezierCurve &inCurve,
+                                         float inLinearError,
+                                         quint32 inEquationIndex,
+                                         float inTStart,
+                                         float inTStop);
 
 // Adaptively subdivide source data to produce m_PatchData.
-//static void adaptiveSubdivideSourceData(QDemonConstDataRef<QDemonPathAnchorPoint> inSourceData,
+// static void adaptiveSubdivideSourceData(QDemonConstDataRef<QDemonPathAnchorPoint> inSourceData,
 //                                        QVector<QDemonResultCubic> &ioResultVec,
 //                                        QVector<float> &keyPointVec, float inLinearError)
 //{
@@ -583,7 +567,8 @@ static void adaptiveSubdivideBezierCurve(QVector<QDemonResultCubic> &ioResultVec
 // until the curve is accurately approximated by a straight line.
 inline void outerAdaptiveSubdivideBezierCurve(QVector<QDemonResultCubic> &ioResultVec,
                                               QVector<float> &keyPointVec,
-                                              QDemonCubicBezierCurve inCurve, float inLinearError,
+                                              QDemonCubicBezierCurve inCurve,
+                                              float inLinearError,
                                               quint32 inEquationIndex)
 {
     // Step 1, find what type of curve we are dealing with and the inflection points.
@@ -593,9 +578,8 @@ inline void outerAdaptiveSubdivideBezierCurve(QVector<QDemonResultCubic> &ioResu
     float tStart = 0;
     switch (theCurveType) {
     case CT_POINT:
-        ioResultVec.push_back(QDemonResultCubic(inCurve.m_points[0], inCurve.m_points[0],
-                inCurve.m_points[0], inCurve.m_points[0],
-                inEquationIndex, 0.0f, 1.0f, 0.0f));
+        ioResultVec.push_back(
+                QDemonResultCubic(inCurve.m_points[0], inCurve.m_points[0], inCurve.m_points[0], inCurve.m_points[0], inEquationIndex, 0.0f, 1.0f, 0.0f));
         return; // don't allow further recursion
     case CT_LINE:
         pushLine(ioResultVec, inCurve.m_points[0], inCurve.m_points[3], inEquationIndex);
@@ -613,8 +597,7 @@ inline void outerAdaptiveSubdivideBezierCurve(QVector<QDemonResultCubic> &ioResu
 
             if (keyPointVec.size() > 1)
                 std::sort(keyPointVec.begin(), keyPointVec.end());
-            for (quint32 idx = 0, end = quint32(keyPointVec.size());
-                 idx < end && keyPointVec[idx] < 1.0f; ++idx) {
+            for (quint32 idx = 0, end = quint32(keyPointVec.size()); idx < end && keyPointVec[idx] < 1.0f; ++idx) {
                 // We have a list of T values I believe sorted from beginning to end, we
                 // will create a set of bezier curves
                 // Since we split the curves, tValue is relative to tSTart, not 0.
@@ -622,25 +605,21 @@ inline void outerAdaptiveSubdivideBezierCurve(QVector<QDemonResultCubic> &ioResu
                 float splitPoint = keyPointVec[idx] - tStart;
                 float tValue = splitPoint / range;
                 if (tValue > 0.0f) {
-                    QPair<QDemonCubicBezierCurve, QDemonCubicBezierCurve> newCurves
-                            = inCurve.splitCubicBezierCurve(tValue);
-                    adaptiveSubdivideBezierCurve(ioResultVec, newCurves.first,
-                                                 inLinearError, inEquationIndex, tStart,
-                                                 splitPoint);
+                    QPair<QDemonCubicBezierCurve, QDemonCubicBezierCurve> newCurves = inCurve.splitCubicBezierCurve(tValue);
+                    adaptiveSubdivideBezierCurve(ioResultVec, newCurves.first, inLinearError, inEquationIndex, tStart, splitPoint);
                     inCurve = newCurves.second;
                     tStart = splitPoint;
                 }
             }
         }
     }
-        // fallthrough intentional
-        break;
+    // fallthrough intentional
+    break;
         // fallthrough intentional
     case CT_QUADRATIC:
         break;
     }
-    adaptiveSubdivideBezierCurve(ioResultVec, inCurve, inLinearError, inEquationIndex,
-                                 tStart, 1.0f);
+    adaptiveSubdivideBezierCurve(ioResultVec, inCurve, inLinearError, inEquationIndex, tStart, 1.0f);
 }
 
 static float distanceFromPointToLine(QVector2D inLineDxDy, QVector2D lineStart, QVector2D point)
@@ -661,16 +640,12 @@ static float lengthOfBezierCurve(QDemonCubicBezierCurve &inCurve)
     // on same side of line else we have a serpentine which should have been removed by topological
     // analysis.
     QVector2D lineDxDy = inCurve.m_points[3] - inCurve.m_points[0];
-    float c1Distance = distanceFromPointToLine(
-                lineDxDy, inCurve.m_points[0], inCurve.m_points[1]);
-    float c2Distance = distanceFromPointToLine(
-                lineDxDy, inCurve.m_points[0], inCurve.m_points[2]);
+    float c1Distance = distanceFromPointToLine(lineDxDy, inCurve.m_points[0], inCurve.m_points[1]);
+    float c2Distance = distanceFromPointToLine(lineDxDy, inCurve.m_points[0], inCurve.m_points[2]);
     const float lineTolerance = 100.0f; // error in world coordinates, squared.
     if (c1Distance > lineTolerance || c2Distance > lineTolerance) {
-        QPair<QDemonCubicBezierCurve, QDemonCubicBezierCurve> subdivCurve
-                = inCurve.splitCubicBezierCurve(.5f);
-        return lengthOfBezierCurve(subdivCurve.first)
-                + lengthOfBezierCurve(subdivCurve.second);
+        QPair<QDemonCubicBezierCurve, QDemonCubicBezierCurve> subdivCurve = inCurve.splitCubicBezierCurve(.5f);
+        return lengthOfBezierCurve(subdivCurve.first) + lengthOfBezierCurve(subdivCurve.second);
     } else {
         return lineLength(inCurve.m_points[0], inCurve.m_points[3]);
     }
@@ -682,37 +657,39 @@ static float lengthOfBezierCurve(QDemonCubicBezierCurve &inCurve)
 // maximum curvature, where the second derivative will have a max value. This is probably not
 // necessary.
 static void adaptiveSubdivideBezierCurve(QVector<QDemonResultCubic> &ioResultVec,
-                                  QDemonCubicBezierCurve &inCurve, float inLinearError,
-                                  quint32 inEquationIndex, float inTStart, float inTStop)
+                                         QDemonCubicBezierCurve &inCurve,
+                                         float inLinearError,
+                                         quint32 inEquationIndex,
+                                         float inTStart,
+                                         float inTStop)
 {
     // Find distance of control points from line.  Note that both control points should be
     // on same side of line else we have a serpentine which should have been removed by topological
     // analysis.
     QVector2D lineDxDy = inCurve.m_points[3] - inCurve.m_points[0];
-    float c1Distance = distanceFromPointToLine(lineDxDy, inCurve.m_points[0],
-            inCurve.m_points[1]);
-    float c2Distance = distanceFromPointToLine(lineDxDy, inCurve.m_points[0],
-            inCurve.m_points[2]);
+    float c1Distance = distanceFromPointToLine(lineDxDy, inCurve.m_points[0], inCurve.m_points[1]);
+    float c2Distance = distanceFromPointToLine(lineDxDy, inCurve.m_points[0], inCurve.m_points[2]);
     const float lineTolerance = inLinearError * inLinearError; // error in world coordinates
     if (c1Distance > lineTolerance || c2Distance > lineTolerance) {
-        QPair<QDemonCubicBezierCurve, QDemonCubicBezierCurve> subdivCurve
-                = inCurve.splitCubicBezierCurve(.5f);
+        QPair<QDemonCubicBezierCurve, QDemonCubicBezierCurve> subdivCurve = inCurve.splitCubicBezierCurve(.5f);
         float halfway = lerp(inTStart, inTStop, .5f);
-        adaptiveSubdivideBezierCurve(ioResultVec, subdivCurve.first, inLinearError,
-                                     inEquationIndex, inTStart, halfway);
-        adaptiveSubdivideBezierCurve(ioResultVec, subdivCurve.second, inLinearError,
-                                     inEquationIndex, halfway, inTStop);
+        adaptiveSubdivideBezierCurve(ioResultVec, subdivCurve.first, inLinearError, inEquationIndex, inTStart, halfway);
+        adaptiveSubdivideBezierCurve(ioResultVec, subdivCurve.second, inLinearError, inEquationIndex, halfway, inTStop);
     } else {
-        ioResultVec.push_back(QDemonResultCubic(inCurve.m_points[0], inCurve.m_points[1],
-                inCurve.m_points[2], inCurve.m_points[3],
-                inEquationIndex, inTStart, inTStop,
-                lengthOfBezierCurve(inCurve)));
+        ioResultVec.push_back(QDemonResultCubic(inCurve.m_points[0],
+                                                inCurve.m_points[1],
+                                                inCurve.m_points[2],
+                                                inCurve.m_points[3],
+                                                inEquationIndex,
+                                                inTStart,
+                                                inTStop,
+                                                lengthOfBezierCurve(inCurve)));
     }
 }
 }
 QT_END_NAMESPACE
 
 #if defined(_MSC_VER) && (_MSC_VER > 1000)
-#pragma warning(default:4267)
+#pragma warning(default : 4267)
 #endif
 #endif

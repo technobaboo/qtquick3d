@@ -50,14 +50,14 @@ private:
 
 public:
     /**
-         * @brief constructor
-         *
-         * @param[in] context		Pointer to context
-         * @param[in] fnd			Pointer to foundation
-         * @param[in] texTarget		Texture target
-         *
-         * @return No return.
-         */
+     * @brief constructor
+     *
+     * @param[in] context		Pointer to context
+     * @param[in] fnd			Pointer to foundation
+     * @param[in] texTarget		Texture target
+     *
+     * @return No return.
+     */
     QDemonRenderTexture2D(const QDemonRef<QDemonRenderContextImpl> &context,
                           QDemonRenderTextureTargetType::Enum texTarget = QDemonRenderTextureTargetType::Texture2D);
 
@@ -67,17 +67,17 @@ public:
     QDemonTextureDetails getTextureDetails() const override;
 
     /**
-         * @brief Create GL texture object and upload data
-         *
-         * @param[in] newBuffer			Texture data for level 0
-         * @param[in] inMipLevel		Texture level count
-         * @param[in] width				Texture width
-         * @param[in] height			Texture height
-         * @param[in] format			Texture data format
-         * @param[in] formaInternal		Texture internal format
-         *
-         * @return No return.
-         */
+     * @brief Create GL texture object and upload data
+     *
+     * @param[in] newBuffer			Texture data for level 0
+     * @param[in] inMipLevel		Texture level count
+     * @param[in] width				Texture width
+     * @param[in] height			Texture height
+     * @param[in] format			Texture data format
+     * @param[in] formaInternal		Texture internal format
+     *
+     * @return No return.
+     */
     virtual void setTextureData(QDemonDataRef<quint8> newBuffer,
                                 quint8 inMipLevel,
                                 quint32 width,
@@ -86,19 +86,19 @@ public:
                                 QDemonRenderTextureFormats::Enum formaInternal = QDemonRenderTextureFormats::Unknown);
 
     /**
-         * @brief Create memory storage for a texture object
-         *		  This create a texture storage which is immutable in size and format
-         *		  Use this for textures used within compute shaders
-         *
-         * @param[in] inLevels			Texture level count
-         * @param[in] width				Texture width
-         * @param[in] height			Texture height
-         * @param[in] formaInternal		Texture internal format
-         * @param[in] format			Texture data format of dataBuffer
-         * @param[in] dataBuffer		Texture data for level 0
-         *
-         * @return No return.
-         */
+     * @brief Create memory storage for a texture object
+     *		  This create a texture storage which is immutable in size and format
+     *		  Use this for textures used within compute shaders
+     *
+     * @param[in] inLevels			Texture level count
+     * @param[in] width				Texture width
+     * @param[in] height			Texture height
+     * @param[in] formaInternal		Texture internal format
+     * @param[in] format			Texture data format of dataBuffer
+     * @param[in] dataBuffer		Texture data for level 0
+     *
+     * @return No return.
+     */
     virtual void setTextureStorage(quint32 inLevels,
                                    quint32 width,
                                    quint32 height,
@@ -106,58 +106,52 @@ public:
                                    QDemonRenderTextureFormats::Enum format = QDemonRenderTextureFormats::Unknown,
                                    QDemonDataRef<quint8> dataBuffer = QDemonDataRef<quint8>());
 
-    virtual void setTextureDataMultisample(quint32 sampleCount,
-                                           quint32 width,
-                                           quint32 height,
-                                           QDemonRenderTextureFormats::Enum format);
+    virtual void setTextureDataMultisample(quint32 sampleCount, quint32 width, quint32 height, QDemonRenderTextureFormats::Enum format);
 
-    bool isMultisampleTexture() const override
-    {
-        return (m_texTarget == QDemonRenderTextureTargetType::Texture2D_MS);
-    }
+    bool isMultisampleTexture() const override { return (m_texTarget == QDemonRenderTextureTargetType::Texture2D_MS); }
     quint32 getSampleCount() const override { return m_sampleCount; }
     bool isImmutableTexture() const override { return m_immutable; }
 
     // Update a sub-rect of the image.  newBuffer is expected to be a continguous subrect of the
     // image.
-    virtual void setTextureSubData(QDemonDataRef<quint8> newBuffer, quint8 inMipLevel, quint32 inXOffset,
-                                   quint32 inYOffset, quint32 inSubImageWidth,
-                                   quint32 inSubImageHeight, QDemonRenderTextureFormats::Enum format);
+    virtual void setTextureSubData(QDemonDataRef<quint8> newBuffer,
+                                   quint8 inMipLevel,
+                                   quint32 inXOffset,
+                                   quint32 inYOffset,
+                                   quint32 inSubImageWidth,
+                                   quint32 inSubImageHeight,
+                                   QDemonRenderTextureFormats::Enum format);
     // Generate a set of mipmaps from mipLevel( 0 ).  Uses the graphis layer to do this if
     // possible
     // glGenerateMipmap
     virtual void generateMipmaps(QDemonRenderHint::Enum genType = QDemonRenderHint::Nicest);
 
     /**
-         * @brief Bind a texture for shader access
-         *
-         *
-         * @return No return.
-         */
+     * @brief Bind a texture for shader access
+     *
+     *
+     * @return No return.
+     */
     void bind() override;
 
     quint32 getNumMipmaps() override { return m_maxMipLevel; }
 
     /**
-         * @brief Query if texture needs coordinate swizzle
-         *
-         * @return texture swizzle mode
-         */
+     * @brief Query if texture needs coordinate swizzle
+     *
+     * @return texture swizzle mode
+     */
     QDemonRenderTextureSwizzleMode::Enum getTextureSwizzleMode() override
     {
         // if our backend supports hardware texture swizzle then there is no need for a shader
         // swizzle
-        return (m_backend->getRenderBackendCap(
-                    QDemonRenderBackend::QDemonRenderBackendCaps::TexSwizzle))
+        return (m_backend->getRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::TexSwizzle))
                 ? QDemonRenderTextureSwizzleMode::NoSwizzle
                 : m_backend->getTextureSwizzleMode(m_format);
     }
 
     // this will be obsolete
-    const void *getImplementationHandle() const override
-    {
-        return reinterpret_cast<void *>(m_textureHandle);
-    }
+    const void *getImplementationHandle() const override { return reinterpret_cast<void *>(m_textureHandle); }
 
     static QDemonRef<QDemonRenderTexture2D> create(const QDemonRef<QDemonRenderContextImpl> &context);
 };

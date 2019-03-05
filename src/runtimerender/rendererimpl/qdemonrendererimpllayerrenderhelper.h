@@ -37,20 +37,20 @@
 QT_BEGIN_NAMESPACE
 
 /**	An independent, testable entity to encapsulate taking at least:
-     *  layer, current viewport rect, current scissor rect, presentation design dimensions
-     *	and producing a set of rectangles:
-     *	layer viewport rect (inside viewport rect and calculated using outer viewport rect info)
-     *	layer scissor rect (inside current scissor rect)
-     *	layer camera rect (may be the viewport rect)
-     *
-     *  In the case where we have to render offscreen for this layer then we need to handle produce
-     *	a set of texture dimensions and the layer camera rect ends up being same size but with no
-     *offsets.
-     *
-     *  This object should handle part of any translation from screenspace to global space.
-     *	I am using language level access control on this object because it needs specific
-     *	interface design that will enable future modifications.
-     */
+ *  layer, current viewport rect, current scissor rect, presentation design dimensions
+ *	and producing a set of rectangles:
+ *	layer viewport rect (inside viewport rect and calculated using outer viewport rect info)
+ *	layer scissor rect (inside current scissor rect)
+ *	layer camera rect (may be the viewport rect)
+ *
+ *  In the case where we have to render offscreen for this layer then we need to handle produce
+ *	a set of texture dimensions and the layer camera rect ends up being same size but with no
+ *offsets.
+ *
+ *  This object should handle part of any translation from screenspace to global space.
+ *	I am using language level access control on this object because it needs specific
+ *	interface design that will enable future modifications.
+ */
 struct QDemonLayerRenderHelper
 {
 private:
@@ -96,13 +96,9 @@ public:
 
     QDemonCameraGlobalCalculationResult setupCameraForRender(QDemonRenderCamera &inCamera);
 
-    QDemonOption<QVector2D> getLayerMouseCoords(const QVector2D &inMouseCoords,
-                                                const QVector2D &inWindowDimensions,
-                                                bool inForceIntersect) const;
+    QDemonOption<QVector2D> getLayerMouseCoords(const QVector2D &inMouseCoords, const QVector2D &inWindowDimensions, bool inForceIntersect) const;
 
-    QDemonOption<QDemonRenderRay> getPickRay(const QVector2D &inMouseCoords,
-                                             const QVector2D &inWindowDimensions,
-                                             bool inForceIntersect) const;
+    QDemonOption<QDemonRenderRay> getPickRay(const QVector2D &inMouseCoords, const QVector2D &inWindowDimensions, bool inForceIntersect) const;
 
     // Checks the various viewports and determines if the layer is visible or not.
     bool isLayerVisible() const;

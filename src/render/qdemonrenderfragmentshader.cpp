@@ -33,9 +33,9 @@
 
 QT_BEGIN_NAMESPACE
 QDemonRenderFragmentShader::QDemonRenderFragmentShader(const QDemonRef<QDemonRenderContextImpl> &context,
-                                                       QDemonConstDataRef<qint8> source, bool binaryProgram)
-    : QDemonRenderShader(context, source, binaryProgram)
-    , m_shaderHandle(nullptr)
+                                                       QDemonConstDataRef<qint8> source,
+                                                       bool binaryProgram)
+    : QDemonRenderShader(context, source, binaryProgram), m_shaderHandle(nullptr)
 {
     m_shaderHandle = m_backend->createFragmentShader(source, m_errorMessage, binaryProgram);
 }

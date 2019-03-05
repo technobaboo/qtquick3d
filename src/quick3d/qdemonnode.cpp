@@ -6,15 +6,9 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonNode::QDemonNode()
-{
+QDemonNode::QDemonNode() {}
 
-}
-
-QDemonNode::~QDemonNode()
-{
-
-}
+QDemonNode::~QDemonNode() {}
 
 float QDemonNode::x() const
 {
@@ -210,7 +204,7 @@ QDemonGraphObject *QDemonNode::updateSpatialNode(QDemonGraphObject *node)
     if (!node)
         node = new QDemonGraphNode();
 
-    auto spacialNode = static_cast<QDemonGraphNode*>(node);
+    auto spacialNode = static_cast<QDemonGraphNode *>(node);
     bool transformIsDirty = false;
     if (spacialNode->position != m_position) {
         transformIsDirty = true;
@@ -245,7 +239,6 @@ QDemonGraphObject *QDemonNode::updateSpatialNode(QDemonGraphObject *node)
         spacialNode->markDirty(NodeTransformDirtyFlag::TransformNotDirty);
 
     return spacialNode;
-
 }
 
 QT_END_NAMESPACE

@@ -65,26 +65,22 @@ struct QDemonQtTextRenderer : public QDemonTextRendererInterface
         int fontId;
         QFont font;
 
-        FontInfo() :
-            fontId(-1)
-        {}
+        FontInfo() : fontId(-1) {}
 
-        FontInfo(const QString &fileName, const QString &name, const QString &family, int id) :
-            fontFileName(fileName)
-          , fontName(name)
-          , fontFamily(family)
-          , fontId(id)
+        FontInfo(const QString &fileName, const QString &name, const QString &family, int id)
+            : fontFileName(fileName), fontName(name), fontFamily(family), fontId(id)
         {
             font.setFamily(fontFamily);
         }
 
-        FontInfo(const FontInfo &other) :
-            fontFileName(other.fontFileName)
-          , fontName(other.fontName)
-          , fontFamily(other.fontFamily)
-          , fontId(other.fontId)
-          , font(other.font)
-        {}
+        FontInfo(const FontInfo &other)
+            : fontFileName(other.fontFileName)
+            , fontName(other.fontName)
+            , fontFamily(other.fontFamily)
+            , fontId(other.fontId)
+            , font(other.font)
+        {
+        }
 
         FontInfo &operator=(const FontInfo &other)
         {
@@ -122,10 +118,7 @@ struct QDemonQtTextRenderer : public QDemonTextRendererInterface
     qreal m_pixelRatio;
 
     QDemonQtTextRenderer()
-        : m_systemFontsInitialized(false)
-        , m_projectFontsInitialized(false)
-        , m_preloadingFonts(false)
-        , m_pixelRatio(1.0)
+        : m_systemFontsInitialized(false), m_projectFontsInitialized(false), m_preloadingFonts(false), m_pixelRatio(1.0)
     {
         const QWindowList list = QGuiApplication::topLevelWindows();
         if (list.size() > 0)
@@ -134,10 +127,7 @@ struct QDemonQtTextRenderer : public QDemonTextRendererInterface
         m_nameFilters << QStringLiteral("*.ttf");
         m_nameFilters << QStringLiteral("*.otf");
     }
-    virtual ~QDemonQtTextRenderer()
-    {
-        QFontDatabase::removeAllApplicationFonts();
-    }
+    virtual ~QDemonQtTextRenderer() { QFontDatabase::removeAllApplicationFonts(); }
 
     void unregisterProjectFonts()
     {
@@ -162,9 +152,7 @@ struct QDemonQtTextRenderer : public QDemonTextRendererInterface
 
     void registerFonts(TStringSet dirSet, TFontInfoHash *fontInfos = nullptr)
     {
-        for (TStringSet::const_iterator theIter = dirSet.begin(),
-             theEnd = dirSet.end();
-             theIter != theEnd; ++theIter) {
+        for (TStringSet::const_iterator theIter = dirSet.begin(), theEnd = dirSet.end(); theIter != theEnd; ++theIter) {
             QString localDir = CFileTools::normalizePathForQtUsage(*theIter);
             QDir dir(localDir);
             if (!dir.exists()) {
@@ -181,8 +169,7 @@ struct QDemonQtTextRenderer : public QDemonTextRendererInterface
                     QByteArray rawData = file.readAll();
                     int fontId = QFontDatabase::addApplicationFontFromData(rawData);
                     if (fontId < 0) {
-                        qCWarning(WARNING, "Failed to register font: %s",
-                                  entry.toStdString().c_str());
+                        qCWarning(WARNING, "Failed to register font: %s", entry.toStdString().c_str());
                     } else if (fontInfos) {
                         QString fontName = getFileStem(entry);
                         QString fontFamily;
@@ -198,14 +185,12 @@ struct QDemonQtTextRenderer : public QDemonTextRendererInterface
                                 fi.font.setWeight(rawFont.weight());
                             }
                         } else {
-                            qCWarning(WARNING, "Failed to determine font style: %s",
-                                      entry.toStdString().c_str());
+                            qCWarning(WARNING, "Failed to determine font style: %s", entry.toStdString().c_str());
                         }
                         fontInfos->insert(fontName, fi);
                     }
                 } else {
-                    qCWarning(WARNING, "Failed to load font: %s",
-                              entry.toStdString().c_str());
+                    qCWarning(WARNING, "Failed to load font: %s", entry.toStdString().c_str());
                 }
             }
         }
@@ -269,10 +254,7 @@ struct QDemonQtTextRenderer : public QDemonTextRendererInterface
         }
     }
 
-    void clearProjectFontDirectories() override
-    {
-        projectCleanup();
-    }
+    void clearProjectFontDirectories() override { projectCleanup(); }
 
     static void PreloadThreadCallback(void *inData)
     {
@@ -296,7 +278,7 @@ struct QDemonQtTextRenderer : public QDemonTextRendererInterface
         m_mutex.lock();
         if (m_preloadingFonts) {
             {
-                //SStackPerfTimer __perfTimer(*m_perfTimer, "QtText: Wait till font preloading completed");
+                // SStackPerfTimer __perfTimer(*m_perfTimer, "QtText: Wait till font preloading completed");
                 m_preloadSync.wait(&m_mutex);
             }
         }
@@ -362,8 +344,7 @@ struct QDemonQtTextRenderer : public QDemonTextRendererInterface
         return m_systemFontInfos[qtFontName];
     }
 
-    void updateFontInfo(FontInfo &fi, const QDemonTextRenderInfo &inText,
-                        float inTextScaleFactor = 1.0f)
+    void updateFontInfo(FontInfo &fi, const QDemonTextRenderInfo &inText, float inTextScaleFactor = 1.0f)
     {
         qreal pixelSize = inText.fontSize;
         fi.font.setPixelSize(pixelSize * inTextScaleFactor);
@@ -398,8 +379,10 @@ struct QDemonQtTextRenderer : public QDemonTextRendererInterface
     }
 
     QRectF textBoundingBox(const QDemonTextRenderInfo &inText,
-                           const QFontMetricsF &fm, QStringList &lineList,
-                           QVector<qreal> &lineWidths, const char *inTextOverride = nullptr)
+                           const QFontMetricsF &fm,
+                           QStringList &lineList,
+                           QVector<qreal> &lineWidths,
+                           const char *inTextOverride = nullptr)
     {
         const char *theText = inTextOverride ? inTextOverride : inText.text.toLocal8Bit().constData();
         lineList = splitText(theText);
@@ -431,8 +414,7 @@ struct QDemonQtTextRenderer : public QDemonTextRendererInterface
         return boundingBox;
     }
 
-    QDemonTextDimensions measureText(const QDemonTextRenderInfo &inText, float inTextScaleFactor,
-                                const char *inTextOverride) override
+    QDemonTextDimensions measureText(const QDemonTextRenderInfo &inText, float inTextScaleFactor, const char *inTextOverride) override
     {
         FontInfo &fi = fontInfoForName(inText.font);
         updateFontInfo(fi, inText, inTextScaleFactor);
@@ -460,8 +442,7 @@ struct QDemonQtTextRenderer : public QDemonTextRendererInterface
         return qtAlign;
     }
 
-    QDemonTextTextureDetails renderText(const QDemonTextRenderInfo &inSrcText,
-                                   QDemonRenderTexture2D &inTexture) override
+    QDemonTextTextureDetails renderText(const QDemonTextRenderInfo &inSrcText, QDemonRenderTexture2D &inTexture) override
     {
         FontInfo &fi = fontInfoForName(inSrcText.font);
         updateFontInfo(fi, inSrcText);
@@ -473,9 +454,7 @@ struct QDemonQtTextRenderer : public QDemonTextRendererInterface
         QRectF boundingBox = textBoundingBox(inSrcText, fm, lineList, lineWidths);
 
         if (boundingBox.width() <= 0 || boundingBox.height() <= 0) {
-            return QDemonTextRendererInterface::uploadData(toU8DataRef((char *)nullptr, 0), inTexture, 4, 4,
-                                             0, 0,
-                                             QDemonRenderTextureFormats::RGBA8, true);
+            return QDemonTextRendererInterface::uploadData(toU8DataRef((char *)nullptr, 0), inTexture, 4, 4, 0, 0, QDemonRenderTextureFormats::RGBA8, true);
         }
 
         int finalWidth = nextMultipleOf4(boundingBox.width());
@@ -544,31 +523,30 @@ struct QDemonQtTextRenderer : public QDemonTextRendererInterface
             QRectF bound(xTranslation, qreal(nextHeight), lineWidths.at(i), lineHeight);
             QRectF actualBound;
             if (inSrcText.dropShadow) {
-                QRectF boundShadow(xTranslation + shadowOffsetX, nextHeight + shadowOffsetY,
-                                   qreal(lineWidths.at(i)), lineHeight);
+                QRectF boundShadow(xTranslation + shadowOffsetX, nextHeight + shadowOffsetY, qreal(lineWidths.at(i)), lineHeight);
                 // shadow is a darker shade of the given font color
                 painter.setPen(QColor(shadowRgb, shadowRgb, shadowRgb));
-                painter.drawText(boundShadow,
-                                 alignToQtAlign(inSrcText.verticalAlignment) |
-                                 Qt::TextDontClip | Qt::AlignLeft, line, &actualBound);
+                painter.drawText(boundShadow, alignToQtAlign(inSrcText.verticalAlignment) | Qt::TextDontClip | Qt::AlignLeft, line, &actualBound);
                 painter.setPen(Qt::white); // coloring is done in the shader
             }
-            painter.drawText(bound,
-                             alignToQtAlign(inSrcText.verticalAlignment) |
-                             Qt::TextDontClip | Qt::AlignLeft, line, &actualBound);
+            painter.drawText(bound, alignToQtAlign(inSrcText.verticalAlignment) | Qt::TextDontClip | Qt::AlignLeft, line, &actualBound);
 
             nextHeight += float(lineHeight) + inSrcText.leading;
         }
 
-        return QDemonTextRendererInterface::uploadData(toU8DataRef(image.bits(), image.byteCount()), inTexture,
-                                         image.width(), image.height(),
-                                         image.width(), image.height(),
-                                         QDemonRenderTextureFormats::RGBA8, true);
+        return QDemonTextRendererInterface::uploadData(toU8DataRef(image.bits(), image.byteCount()),
+                                                       inTexture,
+                                                       image.width(),
+                                                       image.height(),
+                                                       image.width(),
+                                                       image.height(),
+                                                       QDemonRenderTextureFormats::RGBA8,
+                                                       true);
     }
 
     QDemonTextTextureDetails renderText(const QDemonTextRenderInfo &inText,
-                                   QDemonRenderPathFontItem &inPathFontItem,
-                                   QDemonRenderPathFontSpecification &inFontPathSpec) override
+                                        QDemonRenderPathFontItem &inPathFontItem,
+                                        QDemonRenderPathFontSpecification &inFontPathSpec) override
     {
         Q_UNUSED(inText);
         Q_UNUSED(inPathFontItem);
@@ -596,10 +574,7 @@ struct QDemonQtTextRenderer : public QDemonTextRendererInterface
     {
         return QDemonTextTextureAtlasEntryDetails();
     }
-    qint32 createTextureAtlas() override
-    {
-        return 0;
-    }
+    qint32 createTextureAtlas() override { return 0; }
     QDemonRenderTextureAtlasDetails renderText(const QDemonTextRenderInfo &) override
     {
         return QDemonRenderTextureAtlasDetails();

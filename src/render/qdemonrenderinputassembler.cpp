@@ -38,7 +38,7 @@ QT_BEGIN_NAMESPACE
 ///< constructor
 QDemonRenderInputAssembler::QDemonRenderInputAssembler(const QDemonRef<QDemonRenderContextImpl> &context,
                                                        const QDemonRef<QDemonRenderAttribLayout> &attribLayout,
-                                                       QDemonConstDataRef<QDemonRef<QDemonRenderVertexBuffer> > buffers,
+                                                       QDemonConstDataRef<QDemonRef<QDemonRenderVertexBuffer>> buffers,
                                                        const QDemonRef<QDemonRenderIndexBuffer> &indexBuffer,
                                                        QDemonConstDataRef<quint32> strides,
                                                        QDemonConstDataRef<quint32> offsets,
@@ -57,7 +57,8 @@ QDemonRenderInputAssembler::QDemonRenderInputAssembler(const QDemonRef<QDemonRen
     Q_ASSERT(m_primitiveType != QDemonRenderDrawMode::Patches || m_patchVertexCount > 1);
 
     quint32 entrySize = sizeof(QDemonRenderBackend::QDemonRenderBackendBufferObject) * buffers.size();
-    QDemonRenderBackend::QDemonRenderBackendBufferObject *bufferHandle = static_cast<QDemonRenderBackend::QDemonRenderBackendBufferObject *>(::malloc(entrySize));
+    QDemonRenderBackend::QDemonRenderBackendBufferObject *bufferHandle = static_cast<QDemonRenderBackend::QDemonRenderBackendBufferObject *>(
+            ::malloc(entrySize));
     // setup vertex buffer backend handle array
     QDEMON_FOREACH(idx, buffers.size())
     {
@@ -67,18 +68,20 @@ QDemonRenderInputAssembler::QDemonRenderInputAssembler(const QDemonRef<QDemonRen
 
     m_vertexbufferHandles = toConstDataRef(bufferHandle, buffers.size());
 
-    m_inputAssemblertHandle = m_backend->createInputAssembler(
-                m_attribLayout->GetAttribLayoutHandle(), m_vertexbufferHandles,
-                (m_indexBuffer) ? m_indexBuffer->getBuffertHandle() : nullptr, strides, offsets,
-                patchVertexCount);
+    m_inputAssemblertHandle = m_backend->createInputAssembler(m_attribLayout->GetAttribLayoutHandle(),
+                                                              m_vertexbufferHandles,
+                                                              (m_indexBuffer) ? m_indexBuffer->getBuffertHandle() : nullptr,
+                                                              strides,
+                                                              offsets,
+                                                              patchVertexCount);
 
-    //attribLayout->addRef();
+    // attribLayout->addRef();
 }
 
 ///< destructor
 QDemonRenderInputAssembler::~QDemonRenderInputAssembler()
 {
-    //m_attribLayout->release();
+    // m_attribLayout->release();
 
     if (m_inputAssemblertHandle) {
         m_backend->releaseInputAssembler(m_inputAssemblertHandle);

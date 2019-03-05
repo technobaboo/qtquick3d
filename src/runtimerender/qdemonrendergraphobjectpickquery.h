@@ -30,7 +30,6 @@
 #ifndef QDEMON_RENDER_GRAPH_OBJECT_PICK_QUERY_H
 #define QDEMON_RENDER_GRAPH_OBJECT_PICK_QUERY_H
 
-
 #include <QtGui/QVector2D>
 #include <QtGui/QMatrix4x4>
 
@@ -57,10 +56,12 @@ struct QDemonRenderPickSubResult
     QDemonRenderPickSubResult *m_nextSibling;
 
     QDemonRenderPickSubResult();
-    QDemonRenderPickSubResult(const QDemonRef<QDemonOffscreenRendererInterface> &inSubRenderer, const QMatrix4x4 &inTextureMatrix,
-                             QDemonRenderTextureCoordOp::Enum inHorizontalTilingMode,
-                             QDemonRenderTextureCoordOp::Enum inVerticalTilingMode, quint32 width,
-                             quint32 height);
+    QDemonRenderPickSubResult(const QDemonRef<QDemonOffscreenRendererInterface> &inSubRenderer,
+                              const QMatrix4x4 &inTextureMatrix,
+                              QDemonRenderTextureCoordOp::Enum inHorizontalTilingMode,
+                              QDemonRenderTextureCoordOp::Enum inVerticalTilingMode,
+                              quint32 width,
+                              quint32 height);
     ~QDemonRenderPickSubResult();
 };
 
@@ -76,9 +77,7 @@ struct QDemonRenderPickResult
     // from.
     QDemonRef<QDemonOffscreenRendererInterface> m_offscreenRenderer;
 
-    QDemonRenderPickResult(const QDemonGraphObject &inHitObject,
-                           float inCameraDistance,
-                           const QVector2D &inLocalUVCoords);
+    QDemonRenderPickResult(const QDemonGraphObject &inHitObject, float inCameraDistance, const QVector2D &inLocalUVCoords);
     QDemonRenderPickResult();
     ~QDemonRenderPickResult();
 };
@@ -95,9 +94,7 @@ public:
     // If the return value has size of zero then we assume nothing more can be picked and the
     // pick
     // is finished.
-    virtual QDemonRenderPickResult pick(const QVector2D &inMouseCoords,
-                                        const QVector2D &inViewportDimensions,
-                                        bool inPickEverything) = 0;
+    virtual QDemonRenderPickResult pick(const QVector2D &inMouseCoords, const QVector2D &inViewportDimensions, bool inPickEverything) = 0;
 };
 QT_END_NAMESPACE
 #endif

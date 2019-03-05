@@ -58,6 +58,7 @@ class Q_DEMONRUNTIMERENDER_EXPORT QDemonShaderStageGeneratorInterface
 {
 protected:
     virtual ~QDemonShaderStageGeneratorInterface();
+
 public:
     virtual void addIncoming(const QByteArray &name, const QByteArray &type) = 0;
 
@@ -89,8 +90,7 @@ public:
     virtual ~QDemonShaderProgramGeneratorInterface() {}
     static TShaderGeneratorStageFlags defaultFlags()
     {
-        return TShaderGeneratorStageFlags(ShaderGeneratorStages::Vertex
-                                          | ShaderGeneratorStages::Fragment);
+        return TShaderGeneratorStageFlags(ShaderGeneratorStages::Vertex | ShaderGeneratorStages::Fragment);
     }
     virtual void beginProgram(TShaderGeneratorStageFlags inEnabledStages = defaultFlags()) = 0;
 
@@ -102,9 +102,9 @@ public:
     // Implicit call to end program.
 
     virtual QDemonRef<QDemonRenderShaderProgram> compileGeneratedShader(const QByteArray &inShaderName,
-                                                                             const QDemonShaderCacheProgramFlags &inFlags,
-                                                                             TShaderFeatureSet inFeatureSet,
-                                                                             bool separableProgram = false) = 0;
+                                                                        const QDemonShaderCacheProgramFlags &inFlags,
+                                                                        TShaderFeatureSet inFeatureSet,
+                                                                        bool separableProgram = false) = 0;
 
     QDemonRef<QDemonRenderShaderProgram> compileGeneratedShader(const QByteArray &inShaderName, bool separableProgram = false);
 

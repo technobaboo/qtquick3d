@@ -39,24 +39,17 @@ namespace {
 
 struct QDemonTextTextureAtlas : public QDemonTextTextureAtlasInterface
 {
-    static const qint32 TEXTURE_ATLAS_DIM =
-            256; // if you change this you need to adjust QDemonOnscreenTextRenderer size as well
+    static const qint32 TEXTURE_ATLAS_DIM = 256; // if you change this you need to adjust QDemonOnscreenTextRenderer size as well
 
     QDemonRef<QDemonTextRendererInterface> m_textRenderer;
     QDemonRef<QDemonRenderContext> m_renderContext;
 
-    QDemonTextTextureAtlas(QDemonRef<QDemonTextRendererInterface> inRenderer,
-                           QDemonRef<QDemonRenderContext> inRenderContext)
-        : m_textRenderer(inRenderer)
-        , m_renderContext(inRenderContext)
-        , m_textureAtlasInitialized(false)
-        , m_textureAtlas(nullptr)
+    QDemonTextTextureAtlas(QDemonRef<QDemonTextRendererInterface> inRenderer, QDemonRef<QDemonRenderContext> inRenderContext)
+        : m_textRenderer(inRenderer), m_renderContext(inRenderContext), m_textureAtlasInitialized(false), m_textureAtlas(nullptr)
     {
     }
 
-    virtual ~QDemonTextTextureAtlas() override
-    {
-    }
+    virtual ~QDemonTextTextureAtlas() override {}
 
     TTextRenderAtlasDetailsAndTexture renderText(const QDemonTextRenderInfo &inText) override
     {
@@ -76,21 +69,23 @@ struct QDemonTextTextureAtlas : public QDemonTextTextureAtlasInterface
             m_textureAtlas = m_renderContext->createTexture2D();
             if (m_textureAtlas && count) {
                 m_textureAtlasInitialized = true;
-                //m_textureAtlas->addRef();
+                // m_textureAtlas->addRef();
                 // if you change the size you need to adjust QDemonOnscreenTextRenderer too
                 if (m_renderContext->getRenderContextType() == QDemonRenderContextValues::GLES2) {
-                    m_textureAtlas->setTextureData(QDemonDataRef<quint8>(), 0, TEXTURE_ATLAS_DIM,
-                                                   TEXTURE_ATLAS_DIM, QDemonRenderTextureFormats::RGBA8);
+                    m_textureAtlas->setTextureData(QDemonDataRef<quint8>(), 0, TEXTURE_ATLAS_DIM, TEXTURE_ATLAS_DIM, QDemonRenderTextureFormats::RGBA8);
                 } else {
-                    m_textureAtlas->setTextureData(QDemonDataRef<quint8>(), 0, TEXTURE_ATLAS_DIM,
-                                                   TEXTURE_ATLAS_DIM, QDemonRenderTextureFormats::Alpha8);
+                    m_textureAtlas->setTextureData(QDemonDataRef<quint8>(), 0, TEXTURE_ATLAS_DIM, TEXTURE_ATLAS_DIM, QDemonRenderTextureFormats::Alpha8);
                 }
                 m_textureAtlas->setMagFilter(QDemonRenderTextureMagnifyingOp::Linear);
                 m_textureAtlas->setMinFilter(QDemonRenderTextureMinifyingOp::Linear);
                 m_textureAtlas->setTextureWrapS(QDemonRenderTextureCoordOp::ClampToEdge);
                 m_textureAtlas->setTextureWrapT(QDemonRenderTextureCoordOp::ClampToEdge);
                 QDemonTextureDetails texTexDetails = m_textureAtlas->getTextureDetails();
-                return TTextTextureAtlasDetailsAndTexture(QDemonTextTextureAtlasDetails(texTexDetails.height, texTexDetails.height, false, count), m_textureAtlas);
+                return TTextTextureAtlasDetailsAndTexture(QDemonTextTextureAtlasDetails(texTexDetails.height,
+                                                                                        texTexDetails.height,
+                                                                                        false,
+                                                                                        count),
+                                                          m_textureAtlas);
             }
         }
 
@@ -104,13 +99,10 @@ private:
 
 } // namespace
 
-QDemonTextTextureAtlasInterface::~QDemonTextTextureAtlasInterface()
-{
-
-}
+QDemonTextTextureAtlasInterface::~QDemonTextTextureAtlasInterface() {}
 
 QDemonRef<QDemonTextTextureAtlasInterface> QDemonTextTextureAtlasInterface::createTextureAtlas(QDemonRef<QDemonTextRendererInterface> inTextRenderer,
-                                                                                                    QDemonRef<QDemonRenderContext> inRenderContext)
+                                                                                               QDemonRef<QDemonRenderContext> inRenderContext)
 {
     return QDemonRef<QDemonTextTextureAtlasInterface>(new QDemonTextTextureAtlas(inTextRenderer, inRenderContext));
 }

@@ -48,13 +48,11 @@ QDemonRef<QDemonRenderContext> QDemonRenderContext::createGl(const QSurfaceForma
     // create backend
     QDemonRef<QDemonRenderBackend> theBackend;
     bool isES = format.renderableType() == QSurfaceFormat::OpenGLES;
-    if (isES && (format.majorVersion() == 2
-                 || (format.majorVersion() == 3 && format.minorVersion() == 0))) {
+    if (isES && (format.majorVersion() == 2 || (format.majorVersion() == 3 && format.minorVersion() == 0))) {
         theBackend = new QDemonRenderBackendGLES2Impl(format);
     } else if (format.majorVersion() == 3 && format.minorVersion() >= 1 && !isES) {
         theBackend = new QDemonRenderBackendGL3Impl(format);
-    } else if (format.majorVersion() == 4
-               || (isES && format.majorVersion() == 3 && format.minorVersion() >= 1)) {
+    } else if (format.majorVersion() == 4 || (isES && format.majorVersion() == 3 && format.minorVersion() >= 1)) {
 #ifdef Q_OS_MACOS
         // TODO: macOS crashes with glTextStorage2DMultisample, so fall back to OpenGL3
         // for now (QDEMON-590)

@@ -6,10 +6,7 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonCamera::QDemonCamera()
-{
-
-}
+QDemonCamera::QDemonCamera() {}
 
 float QDemonCamera::clipNear() const
 {
@@ -147,7 +144,6 @@ QDemonGraphObject *QDemonCamera::updateSpatialNode(QDemonGraphObject *node)
         node = new QDemonRenderCamera();
 
     QDemonNode::updateSpatialNode(node);
-
 
     QDemonRenderCamera *camera = static_cast<QDemonRenderCamera *>(node);
 

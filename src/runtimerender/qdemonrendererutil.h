@@ -61,10 +61,7 @@ public:
                                         QDemonRenderTextureFormats::Enum inColorFormat,
                                         const QDemonRef<QDemonRenderFrameBuffer> &inSourceFBO);
 
-    static void getSSAARenderSize(quint32 inWidth,
-                                  quint32 inHeight,
-                                  quint32 &outWidth,
-                                  quint32 &outHeight);
+    static void getSSAARenderSize(quint32 inWidth, quint32 inHeight, quint32 &outWidth, quint32 &outHeight);
 };
 QT_END_NAMESPACE
 

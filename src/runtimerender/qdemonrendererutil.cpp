@@ -65,8 +65,7 @@ void QDemonRendererUtil::resolveMutisampleFBOColorOnly(const QDemonRef<QDemonRes
     inRenderContext.setReadTarget(inSourceFBO);
     inRenderContext.setReadBuffer(QDemonReadFaces::Color0);
     // 3.
-    inRenderContext.blitFramebuffer(0, 0, inWidth, inHeight, 0, 0, inWidth, inHeight, copyFlags,
-                                    QDemonRenderTextureMagnifyingOp::Nearest);
+    inRenderContext.blitFramebuffer(0, 0, inWidth, inHeight, 0, 0, inWidth, inHeight, copyFlags, QDemonRenderTextureMagnifyingOp::Nearest);
 }
 
 void QDemonRendererUtil::resolveSSAAFBOColorOnly(const QDemonRef<QDemonResourceManagerInterface> &inManager,
@@ -103,12 +102,10 @@ void QDemonRendererUtil::resolveSSAAFBOColorOnly(const QDemonRef<QDemonResourceM
     inRenderContext.setReadTarget(inSourceFBO);
     inRenderContext.setReadBuffer(QDemonReadFaces::Color0);
     // 3.
-    inRenderContext.blitFramebuffer(0, 0, inWidth, inHeight, 0, 0, outWidth, outHeight, copyFlags,
-                                    QDemonRenderTextureMagnifyingOp::Linear);
+    inRenderContext.blitFramebuffer(0, 0, inWidth, inHeight, 0, 0, outWidth, outHeight, copyFlags, QDemonRenderTextureMagnifyingOp::Linear);
 }
 
-void QDemonRendererUtil::getSSAARenderSize(quint32 inWidth, quint32 inHeight, quint32 &outWidth,
-                                      quint32 &outHeight)
+void QDemonRendererUtil::getSSAARenderSize(quint32 inWidth, quint32 inHeight, quint32 &outWidth, quint32 &outHeight)
 {
     // we currently double width and height
     outWidth = inWidth * 2;

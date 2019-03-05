@@ -67,8 +67,7 @@ public:
                                     QDemonConstDataRef<QDemonPathAnchorPoint> inPathSubPathAnchorPoints) = 0;
 
     virtual ~QDemonPathManagerInterface();
-    virtual QDemonDataRef<QDemonPathAnchorPoint>
-    getPathSubPathBuffer(const QDemonPathSubPath &inPathSubPath) = 0;
+    virtual QDemonDataRef<QDemonPathAnchorPoint> getPathSubPathBuffer(const QDemonPathSubPath &inPathSubPath) = 0;
     // Marks the PathSubPath anchor points as dirty.  This will mean rebuilding any PathSubPath
     // context required to render the PathSubPath.
     virtual QDemonDataRef<QDemonPathAnchorPoint> resizePathSubPathBuffer(const QDemonPathSubPath &inPathSubPath,
@@ -77,16 +76,14 @@ public:
 
     // Helper functions used in various locations
     // Angles here are in degrees because that is how they are represented in the data.
-    static QVector2D getControlPointFromAngleDistance(QVector2D inPosition,
-                                                      float inAngle,
-                                                      float inDistance);
+    static QVector2D getControlPointFromAngleDistance(QVector2D inPosition, float inAngle, float inDistance);
 
     // Returns angle in x, distance in y.
     static QVector2D getAngleDistanceFromControlPoint(QVector2D inPosition, QVector2D inControlPoint);
 
     virtual QDemonRef<QDemonPathManagerInterface> onRenderSystemInitialize(QDemonRenderContextInterface *context) = 0;
 
-    static QDemonRef<QDemonPathManagerInterface> createPathManager(QDemonRenderContextCoreInterface * inContext);
+    static QDemonRef<QDemonPathManagerInterface> createPathManager(QDemonRenderContextCoreInterface *inContext);
 
     // The path segments are next expected to change after this call; changes will be ignored.
     virtual bool prepareForRender(const QDemonPath &inPath) = 0;

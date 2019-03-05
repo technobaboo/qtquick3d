@@ -45,8 +45,7 @@ QT_BEGIN_NAMESPACE
 ///< forward declaration
 class QDemonRenderBackendMiscStateGL;
 
-namespace QDemonGlExtStrings
-{
+namespace QDemonGlExtStrings {
 QByteArray extsAstcHDR();
 QByteArray extsAstcLDR();
 }
@@ -59,8 +58,8 @@ public:
     /// destructor
     ~QDemonRenderBackendGL3Impl() override;
 
-    public:
-        quint32 getDepthBits() const override;
+public:
+    quint32 getDepthBits() const override;
     quint32 getStencilBits() const override;
     void generateMipMaps(QDemonRenderBackendTextureObject to,
                          QDemonRenderTextureTargetType::Enum target,
@@ -70,54 +69,64 @@ public:
                                       QDemonRenderTextureTargetType::Enum target,
                                       size_t samples,
                                       QDemonRenderTextureFormats::Enum internalFormat,
-                                      size_t width, size_t height,
+                                      size_t width,
+                                      size_t height,
                                       bool fixedsamplelocations) override;
 
     void setTextureData3D(QDemonRenderBackendTextureObject to,
-                          QDemonRenderTextureTargetType::Enum target, quint32 level,
-                          QDemonRenderTextureFormats::Enum internalFormat, size_t width,
-                          size_t height, size_t depth, qint32 border,
+                          QDemonRenderTextureTargetType::Enum target,
+                          quint32 level,
+                          QDemonRenderTextureFormats::Enum internalFormat,
+                          size_t width,
+                          size_t height,
+                          size_t depth,
+                          qint32 border,
                           QDemonRenderTextureFormats::Enum format,
                           const void *hostPtr = nullptr) override;
 
-    void updateSampler(
-            QDemonRenderBackendSamplerObject so, QDemonRenderTextureTargetType::Enum target,
-            QDemonRenderTextureMinifyingOp::Enum minFilter = QDemonRenderTextureMinifyingOp::Linear,
-            QDemonRenderTextureMagnifyingOp::Enum magFilter = QDemonRenderTextureMagnifyingOp::Linear,
-            QDemonRenderTextureCoordOp::Enum wrapS = QDemonRenderTextureCoordOp::ClampToEdge,
-            QDemonRenderTextureCoordOp::Enum wrapT = QDemonRenderTextureCoordOp::ClampToEdge,
-            QDemonRenderTextureCoordOp::Enum wrapR = QDemonRenderTextureCoordOp::ClampToEdge,
-            float minLod = -1000.0, float maxLod = 1000.0, float lodBias = 0.0,
-            QDemonRenderTextureCompareMode::Enum compareMode = QDemonRenderTextureCompareMode::NoCompare,
-            QDemonRenderTextureCompareOp::Enum compareFunc = QDemonRenderTextureCompareOp::LessThanOrEqual,
-            float anisotropy = 1.0, float *borderColor = nullptr) override;
+    void updateSampler(QDemonRenderBackendSamplerObject so,
+                       QDemonRenderTextureTargetType::Enum target,
+                       QDemonRenderTextureMinifyingOp::Enum minFilter = QDemonRenderTextureMinifyingOp::Linear,
+                       QDemonRenderTextureMagnifyingOp::Enum magFilter = QDemonRenderTextureMagnifyingOp::Linear,
+                       QDemonRenderTextureCoordOp::Enum wrapS = QDemonRenderTextureCoordOp::ClampToEdge,
+                       QDemonRenderTextureCoordOp::Enum wrapT = QDemonRenderTextureCoordOp::ClampToEdge,
+                       QDemonRenderTextureCoordOp::Enum wrapR = QDemonRenderTextureCoordOp::ClampToEdge,
+                       float minLod = -1000.0,
+                       float maxLod = 1000.0,
+                       float lodBias = 0.0,
+                       QDemonRenderTextureCompareMode::Enum compareMode = QDemonRenderTextureCompareMode::NoCompare,
+                       QDemonRenderTextureCompareOp::Enum compareFunc = QDemonRenderTextureCompareOp::LessThanOrEqual,
+                       float anisotropy = 1.0,
+                       float *borderColor = nullptr) override;
 
     void updateTextureObject(QDemonRenderBackendTextureObject to,
-                             QDemonRenderTextureTargetType::Enum target, qint32 baseLevel,
+                             QDemonRenderTextureTargetType::Enum target,
+                             qint32 baseLevel,
                              qint32 maxLevel) override;
 
     void updateTextureSwizzle(QDemonRenderBackendTextureObject to,
                               QDemonRenderTextureTargetType::Enum target,
                               QDemonRenderTextureSwizzleMode::Enum swizzleMode) override;
 
-    bool setInputAssembler(QDemonRenderBackendInputAssemblerObject iao,
-                           QDemonRenderBackendShaderProgramObject po) override;
+    bool setInputAssembler(QDemonRenderBackendInputAssemblerObject iao, QDemonRenderBackendShaderProgramObject po) override;
 
-    void setDrawBuffers(QDemonRenderBackendRenderTargetObject rto,
-                        QDemonConstDataRef<qint32> inDrawBufferSet) override;
-    void setReadBuffer(QDemonRenderBackendRenderTargetObject rto,
-                       QDemonReadFaces::Enum inReadFace) override;
+    void setDrawBuffers(QDemonRenderBackendRenderTargetObject rto, QDemonConstDataRef<qint32> inDrawBufferSet) override;
+    void setReadBuffer(QDemonRenderBackendRenderTargetObject rto, QDemonReadFaces::Enum inReadFace) override;
 
     void renderTargetAttach(QDemonRenderBackendRenderTargetObject rto,
                             QDemonRenderFrameBufferAttachments::Enum attachment,
                             QDemonRenderBackendRenderbufferObject rbo) override
-    { QDemonRenderBackendGLBase::renderTargetAttach(rto, attachment, rbo); }
+    {
+        QDemonRenderBackendGLBase::renderTargetAttach(rto, attachment, rbo);
+    }
 
     void renderTargetAttach(QDemonRenderBackendRenderTargetObject rto,
                             QDemonRenderFrameBufferAttachments::Enum attachment,
                             QDemonRenderBackendTextureObject to,
                             QDemonRenderTextureTargetType::Enum target = QDemonRenderTextureTargetType::Texture2D) override
-    { QDemonRenderBackendGLBase::renderTargetAttach(rto, attachment, to, target); }
+    {
+        QDemonRenderBackendGLBase::renderTargetAttach(rto, attachment, to, target);
+    }
 
     void renderTargetAttach(QDemonRenderBackendRenderTargetObject rto,
                             QDemonRenderFrameBufferAttachments::Enum attachment,
@@ -126,44 +135,53 @@ public:
                             qint32 layer) override;
     void setReadTarget(QDemonRenderBackendRenderTargetObject rto) override;
 
-    void blitFramebuffer(qint32 srcX0, qint32 srcY0, qint32 srcX1, qint32 srcY1,
-                         qint32 dstX0, qint32 dstY0, qint32 dstX1, qint32 dstY1,
+    void blitFramebuffer(qint32 srcX0,
+                         qint32 srcY0,
+                         qint32 srcX1,
+                         qint32 srcY1,
+                         qint32 dstX0,
+                         qint32 dstY0,
+                         qint32 dstX1,
+                         qint32 dstY1,
                          QDemonRenderClearFlags flags,
                          QDemonRenderTextureMagnifyingOp::Enum filter) override;
 
-    void *mapBuffer(QDemonRenderBackendBufferObject bo, QDemonRenderBufferBindFlags bindFlags,
-                    size_t offset, size_t length,
+    void *mapBuffer(QDemonRenderBackendBufferObject bo,
+                    QDemonRenderBufferBindFlags bindFlags,
+                    size_t offset,
+                    size_t length,
                     QDemonRenderBufferAccessFlags accessFlags) override;
     bool unmapBuffer(QDemonRenderBackendBufferObject bo, QDemonRenderBufferBindFlags bindFlags) override;
 
     qint32 getConstantBufferCount(QDemonRenderBackendShaderProgramObject po) override;
-    qint32 getConstantBufferInfoByID(QDemonRenderBackendShaderProgramObject po, quint32 id,
-                                     quint32 nameBufSize, qint32 *paramCount,
-                                     qint32 *bufferSize, qint32 *length, char *nameBuf) override;
-    void getConstantBufferParamIndices(QDemonRenderBackendShaderProgramObject po, quint32 id,
-                                       qint32 *indices) override;
+    qint32 getConstantBufferInfoByID(QDemonRenderBackendShaderProgramObject po,
+                                     quint32 id,
+                                     quint32 nameBufSize,
+                                     qint32 *paramCount,
+                                     qint32 *bufferSize,
+                                     qint32 *length,
+                                     char *nameBuf) override;
+    void getConstantBufferParamIndices(QDemonRenderBackendShaderProgramObject po, quint32 id, qint32 *indices) override;
     void getConstantBufferParamInfoByIndices(QDemonRenderBackendShaderProgramObject po,
-                                             quint32 count, quint32 *indices, qint32 *type,
-                                             qint32 *size, qint32 *offset) override;
-    void programSetConstantBlock(QDemonRenderBackendShaderProgramObject po,
-                                 quint32 blockIndex, quint32 binding) override;
+                                             quint32 count,
+                                             quint32 *indices,
+                                             qint32 *type,
+                                             qint32 *size,
+                                             qint32 *offset) override;
+    void programSetConstantBlock(QDemonRenderBackendShaderProgramObject po, quint32 blockIndex, quint32 binding) override;
     void programSetConstantBuffer(quint32 index, QDemonRenderBackendBufferObject bo) override;
 
     QDemonRenderBackendQueryObject createQuery() override;
     void releaseQuery(QDemonRenderBackendQueryObject qo) override;
     void beginQuery(QDemonRenderBackendQueryObject qo, QDemonRenderQueryType::Enum type) override;
     void endQuery(QDemonRenderBackendQueryObject qo, QDemonRenderQueryType::Enum type) override;
-    void getQueryResult(QDemonRenderBackendQueryObject qo,
-                        QDemonRenderQueryResultType::Enum resultType, quint32 *params) override;
-    void getQueryResult(QDemonRenderBackendQueryObject qo,
-                        QDemonRenderQueryResultType::Enum resultType, quint64 *params) override;
+    void getQueryResult(QDemonRenderBackendQueryObject qo, QDemonRenderQueryResultType::Enum resultType, quint32 *params) override;
+    void getQueryResult(QDemonRenderBackendQueryObject qo, QDemonRenderQueryResultType::Enum resultType, quint64 *params) override;
     void setQueryTimer(QDemonRenderBackendQueryObject qo) override;
 
-    QDemonRenderBackendSyncObject createSync(QDemonRenderSyncType::Enum tpye,
-                                             QDemonRenderSyncFlags syncFlags) override;
+    QDemonRenderBackendSyncObject createSync(QDemonRenderSyncType::Enum tpye, QDemonRenderSyncFlags syncFlags) override;
     void releaseSync(QDemonRenderBackendSyncObject so) override;
-    void waitSync(QDemonRenderBackendSyncObject so, QDemonRenderCommandFlushFlags syncFlags,
-                  quint64 timeout) override;
+    void waitSync(QDemonRenderBackendSyncObject so, QDemonRenderCommandFlushFlags syncFlags, quint64 timeout) override;
 
 protected:
     QDemonRenderBackendMiscStateGL *m_currentMiscState; ///< this holds the current misc state

@@ -41,13 +41,7 @@ struct QDemonTextureAtlasRect
 {
 
     QDemonTextureAtlasRect() = default;
-    QDemonTextureAtlasRect(qint32 inX, qint32 inY, qint32 inW, qint32 inH)
-        : x(inX)
-        , y(inY)
-        , width(inW)
-        , height(inH)
-    {
-    }
+    QDemonTextureAtlasRect(qint32 inX, qint32 inY, qint32 inW, qint32 inH) : x(inX), y(inY), width(inW), height(inH) {}
 
     qint32 x = 0;
     qint32 y = 0;
@@ -64,8 +58,8 @@ struct QDemonTextureAtlasRect
 typedef QPair<QDemonTextureAtlasRect, QDemonDataRef<quint8>> TTextureAtlasEntryAndBuffer;
 
 /**
-     *	Abstract class of a texture atlas representation
-    */
+ *	Abstract class of a texture atlas representation
+ */
 class QDemonTextureAtlasInterface
 {
 public:
@@ -77,13 +71,15 @@ public:
     virtual TTextureAtlasEntryAndBuffer getAtlasEntryByIndex(quint32 index) = 0;
 
     virtual QDemonTextureAtlasRect addAtlasEntry(qint32 width,
-                                            qint32 height,
-                                            qint32 pitch,
-                                            qint32 dataWidth,
-                                            QDemonConstDataRef<quint8> bufferData) = 0;
+                                                 qint32 height,
+                                                 qint32 pitch,
+                                                 qint32 dataWidth,
+                                                 QDemonConstDataRef<quint8> bufferData) = 0;
     virtual void relaseEntries() = 0;
 
-    static QDemonRef<QDemonTextureAtlasInterface> createTextureAtlas(const QDemonRef<QDemonRenderContext>& inRenderContext, qint32 width, qint32 height);
+    static QDemonRef<QDemonTextureAtlasInterface> createTextureAtlas(const QDemonRef<QDemonRenderContext> &inRenderContext,
+                                                                     qint32 width,
+                                                                     qint32 height);
 };
 QT_END_NAMESPACE
 

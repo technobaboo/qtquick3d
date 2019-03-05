@@ -45,11 +45,7 @@ struct QDemonRendererFontEntry
     QString m_fontName;
     QString m_fontFile;
     QDemonRendererFontEntry() = default;
-    QDemonRendererFontEntry(QString nm, QString file)
-        : m_fontName(nm)
-        , m_fontFile(file)
-    {
-    }
+    QDemonRendererFontEntry(QString nm, QString file) : m_fontName(nm), m_fontFile(file) {}
 };
 
 class QDemonTextRendererInterface;
@@ -60,8 +56,8 @@ class QDemonRenderContext;
 class QDemonRenderPathFontSpecification;
 
 /**
-     *	Opaque text rendering system.  Must be able to render text to an opengl texture object.
-     */
+ *	Opaque text rendering system.  Must be able to render text to an opengl texture object.
+ */
 class Q_DEMONRUNTIMERENDER_EXPORT QDemonTextRendererInterface
 {
 public:
@@ -97,8 +93,8 @@ public:
 
     // Measure text will inText if it isn't null or the text on the info if inText is null
     virtual QDemonTextDimensions measureText(const QDemonTextRenderInfo &inText,
-                                        float inTextScaleFactor,
-                                        const char *inTextOverride = nullptr) = 0;
+                                             float inTextScaleFactor,
+                                             const char *inTextOverride = nullptr) = 0;
     // The system will use the 'r' channel as an alpha mask in order to render the
     // text.  You can assume GetTextDimensions was called *just* prior to this.
     // It is a good idea to ensure the texture is a power of two as not all rendering systems
@@ -107,12 +103,11 @@ public:
     // assuming it is located toward the upper-left of the image and we are also capable of
     // flipping
     // the image.
-    virtual QDemonTextTextureDetails renderText(const QDemonTextRenderInfo &inText,
-                                           QDemonRenderTexture2D &inTexture) = 0;
+    virtual QDemonTextTextureDetails renderText(const QDemonTextRenderInfo &inText, QDemonRenderTexture2D &inTexture) = 0;
     // this is for rendering text with NV path rendering
     virtual QDemonTextTextureDetails renderText(const QDemonTextRenderInfo &inText,
-                                           QDemonRenderPathFontItem &inPathFontItem,
-                                           QDemonRenderPathFontSpecification &inPathFontSpecicification) = 0;
+                                                QDemonRenderPathFontItem &inPathFontItem,
+                                                QDemonRenderPathFontSpecification &inPathFontSpecicification) = 0;
     // this is for rednering text using a texture atlas
     virtual QDemonRenderTextureAtlasDetails renderText(const QDemonTextRenderInfo &inText) = 0;
 
@@ -122,8 +117,7 @@ public:
     // these two function are for texture atlas usage only
     // returns the atlas entries count
     virtual qint32 createTextureAtlas() = 0;
-    virtual QDemonTextTextureAtlasEntryDetails renderAtlasEntry(quint32 index,
-                                                           QDemonRenderTexture2D &inTexture) = 0;
+    virtual QDemonTextTextureAtlasEntryDetails renderAtlasEntry(quint32 index, QDemonRenderTexture2D &inTexture) = 0;
 
     // Helper function to upload the texture data to the texture
     // Will resize texture as necessary and upload using texSubImage for

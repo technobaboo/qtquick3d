@@ -33,7 +33,6 @@
 #include <QtDemonRender/qdemonrendershaderprogram.h>
 #include <QtDemon/qdemonutils.h>
 
-
 #include <QtCore/QString>
 
 QT_BEGIN_NAMESPACE
@@ -45,11 +44,7 @@ public:
     QByteArray m_name; ///< parameter Name
     qint32 m_offset; ///< offset into the memory buffer
 
-    AtomicCounterBufferEntry(const QByteArray &name, qint32 offset)
-        : m_name(name)
-        , m_offset(offset)
-    {
-    }
+    AtomicCounterBufferEntry(const QByteArray &name, qint32 offset) : m_name(name), m_offset(offset) {}
 };
 
 QDemonRenderAtomicCounterBuffer::QDemonRenderAtomicCounterBuffer(const QDemonRef<QDemonRenderContextImpl> &context,
@@ -66,10 +61,10 @@ QDemonRenderAtomicCounterBuffer::QDemonRenderAtomicCounterBuffer(const QDemonRef
 
 QDemonRenderAtomicCounterBuffer::~QDemonRenderAtomicCounterBuffer()
 {
-    for (TRenderAtomiCounterBufferEntryMap::iterator
-         iter = m_atomicCounterBufferEntryMap.begin(),
-         end = m_atomicCounterBufferEntryMap.end();
-         iter != end; ++iter) {
+    for (TRenderAtomiCounterBufferEntryMap::iterator iter = m_atomicCounterBufferEntryMap.begin(),
+                                                     end = m_atomicCounterBufferEntryMap.end();
+         iter != end;
+         ++iter) {
         delete iter.value();
     }
 
@@ -97,8 +92,7 @@ void QDemonRenderAtomicCounterBuffer::update()
 {
     // we only update the buffer if it is dirty and we actually have some data
     if (m_dirty && m_bufferData.size()) {
-        m_backend->updateBuffer(m_bufferHandle, m_bindFlags, m_bufferData.size(), m_usageType,
-                                m_bufferData.begin());
+        m_backend->updateBuffer(m_bufferHandle, m_bindFlags, m_bufferData.size(), m_usageType, m_bufferData.begin());
         m_dirty = false;
     }
 }
@@ -107,8 +101,7 @@ void QDemonRenderAtomicCounterBuffer::updateData(qint32 offset, QDemonDataRef<qu
 {
     // we only update the buffer if we something
     if (data.size())
-        m_backend->updateBuffer(m_bufferHandle, m_bindFlags, data.size(), m_usageType,
-                                data.begin() + offset);
+        m_backend->updateBuffer(m_bufferHandle, m_bindFlags, data.size(), m_usageType, data.begin() + offset);
 }
 
 void QDemonRenderAtomicCounterBuffer::addParam(const QByteArray &name, quint32 offset)
@@ -132,13 +125,19 @@ bool QDemonRenderAtomicCounterBuffer::containsParam(const QByteArray &name)
         return false;
 }
 
-QDemonRef<QDemonRenderAtomicCounterBuffer> QDemonRenderAtomicCounterBuffer::create(const QDemonRef<QDemonRenderContextImpl> &context, const char *bufferName,
-                                                                                        QDemonRenderBufferUsageType::Enum usageType, size_t size,
-                                                                                        QDemonConstDataRef<quint8> bufferData)
+QDemonRef<QDemonRenderAtomicCounterBuffer> QDemonRenderAtomicCounterBuffer::create(const QDemonRef<QDemonRenderContextImpl> &context,
+                                                                                   const char *bufferName,
+                                                                                   QDemonRenderBufferUsageType::Enum usageType,
+                                                                                   size_t size,
+                                                                                   QDemonConstDataRef<quint8> bufferData)
 {
     if (context->isAtomicCounterBufferSupported()) {
-        return QDemonRef<QDemonRenderAtomicCounterBuffer>(new QDemonRenderAtomicCounterBuffer(context, bufferName, size, usageType,
-                                                     toDataRef(const_cast<quint8 *>(bufferData.begin()), bufferData.size())));
+        return QDemonRef<QDemonRenderAtomicCounterBuffer>(
+                new QDemonRenderAtomicCounterBuffer(context,
+                                                    bufferName,
+                                                    size,
+                                                    usageType,
+                                                    toDataRef(const_cast<quint8 *>(bufferData.begin()), bufferData.size())));
     } else {
         Q_ASSERT(false);
     }

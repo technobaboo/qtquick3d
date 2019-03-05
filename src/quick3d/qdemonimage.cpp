@@ -3,15 +3,9 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonImage::QDemonImage()
-{
+QDemonImage::QDemonImage() {}
 
-}
-
-QDemonImage::~QDemonImage()
-{
-
-}
+QDemonImage::~QDemonImage() {}
 
 QString QDemonImage::source() const
 {
@@ -195,28 +189,28 @@ QDemonGraphObject *QDemonImage::updateSpatialNode(QDemonGraphObject *node)
     if (!node)
         node = new QDemonRenderImage();
 
-    auto imageNode = static_cast<QDemonRenderImage*>(node);
+    auto imageNode = static_cast<QDemonRenderImage *>(node);
 
-//    String imagePath
-//    String imageShaderName
+    //    String imagePath
+    //    String imageShaderName
 
-//    String offscreenRenderId
-//    IOffscreenRenderer* lastFrameOffscreenRenderer
-//    QDemonGraphObject* parent
+    //    String offscreenRenderId
+    //    IOffscreenRenderer* lastFrameOffscreenRenderer
+    //    QDemonGraphObject* parent
 
-//    SImageTextureData textureData
+    //    SImageTextureData textureData
 
-//    NodeFlags flags
+    //    NodeFlags flags
 
-//    Vec2 scale
-//    Vec2 pivot
-//    Float rotation
-//    Vec2 position
-//    Enum mappingMode
-//    Enum horizontalTilingMode
-//    Enum verticalTilingMode
+    //    Vec2 scale
+    //    Vec2 pivot
+    //    Float rotation
+    //    Vec2 position
+    //    Enum mappingMode
+    //    Enum horizontalTilingMode
+    //    Enum verticalTilingMode
 
-//    mat44 textureTransform
+    //    mat44 textureTransform
 
     m_renderImage = imageNode;
     return imageNode;

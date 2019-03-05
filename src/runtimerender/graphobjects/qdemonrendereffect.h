@@ -70,7 +70,7 @@ public:
 
     // Generic method used during serialization
     // to remap string and object pointers
-    template <typename TRemapperType>
+    template<typename TRemapperType>
     void remap(TRemapperType &inRemapper)
     {
         QDemonDynamicObject::remap(inRemapper);

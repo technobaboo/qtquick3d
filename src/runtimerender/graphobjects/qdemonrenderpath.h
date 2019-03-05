@@ -87,20 +87,16 @@ struct QDemonPath : public QDemonGraphNode
 
     bool m_wireframeMode = false;
     // Loaded onto the card just as data.
-    QDemonPath() : QDemonGraphNode(QDemonGraphObjectTypes::Path)
-    {
-    }
+    QDemonPath() : QDemonGraphNode(QDemonGraphObjectTypes::Path) {}
 
     bool isStroked() const
     {
-        return m_paintStyle == PathPaintStyles::Stroked
-                || m_paintStyle == PathPaintStyles::FilledAndStroked;
+        return m_paintStyle == PathPaintStyles::Stroked || m_paintStyle == PathPaintStyles::FilledAndStroked;
     }
 
     bool isFilled() const
     {
-        return m_paintStyle == PathPaintStyles::Filled
-                || m_paintStyle == PathPaintStyles::FilledAndStroked;
+        return m_paintStyle == PathPaintStyles::Filled || m_paintStyle == PathPaintStyles::FilledAndStroked;
     }
 
     void addMaterial(QDemonGraphObject *inMaterial)
@@ -122,7 +118,7 @@ struct QDemonPath : public QDemonGraphNode
 
     // Generic method used during serialization
     // to remap string and object pointers
-    template <typename TRemapperType>
+    template<typename TRemapperType>
     void remap(TRemapperType &inRemapper)
     {
         QDemonGraphNode::remap(inRemapper);

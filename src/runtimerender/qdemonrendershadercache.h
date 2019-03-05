@@ -59,10 +59,7 @@ struct QDemonShaderCacheProgramFlags : public QDemonFlags<ShaderCacheProgramFlag
     {
         clearOrSet(inValue, ShaderCacheProgramFlagValues::TessellationEnabled);
     }
-    bool isTessellationEnabled() const
-    {
-        return this->operator&(ShaderCacheProgramFlagValues::TessellationEnabled);
-    }
+    bool isTessellationEnabled() const { return this->operator&(ShaderCacheProgramFlagValues::TessellationEnabled); }
     // geometry shader enabled
     void setGeometryShaderEnabled(bool inValue)
     {
@@ -82,18 +79,17 @@ struct QDemonShaderPreprocessorFeature
     QString name;
     bool enabled = false;
     QDemonShaderPreprocessorFeature() = default;
-    QDemonShaderPreprocessorFeature(const QString &inName, bool val)
-        : name(inName)
-        , enabled(val)
-    {
-    }
+    QDemonShaderPreprocessorFeature(const QString &inName, bool val) : name(inName), enabled(val) {}
     bool operator<(const QDemonShaderPreprocessorFeature &inOther) const;
     bool operator==(const QDemonShaderPreprocessorFeature &inOther) const;
 };
 
 typedef QVector<QDemonShaderPreprocessorFeature> TShaderFeatureSet;
 
-inline const QVector<QDemonShaderPreprocessorFeature> shaderCacheNoFeatures() { return QVector<QDemonShaderPreprocessorFeature>(); }
+inline const QVector<QDemonShaderPreprocessorFeature> shaderCacheNoFeatures()
+{
+    return QVector<QDemonShaderPreprocessorFeature>();
+}
 
 // Hash is dependent on the order of the keys; so make sure their order is consistent!!
 uint hashShaderFeatureSet(QVector<QDemonShaderPreprocessorFeature> inFeatureSet);
@@ -118,7 +114,7 @@ public:
     // It is up to the caller to ensure that inFeatures contains unique keys.
     // It is also up the the caller to ensure the keys are ordered in some way.
     virtual QDemonRef<QDemonRenderShaderProgram> getProgram(const QByteArray &inKey,
-                                                                 const QVector<QDemonShaderPreprocessorFeature> &inFeatures) = 0;
+                                                            const QVector<QDemonShaderPreprocessorFeature> &inFeatures) = 0;
 
     // Replace an existing program in the cache for the same key with this program.
     // The shaders returned by *CompileProgram functions can be released by this object
@@ -130,19 +126,6 @@ public:
     // It is up to the caller to ensure that inFeatures contains unique keys.
     // It is also up the the caller to ensure the keys are ordered in some way.
     virtual QDemonRef<QDemonRenderShaderProgram> forceCompileProgram(const QByteArray &inKey,
-                                                                          const QByteArray &inVert,
-                                                                          const QByteArray &inFrag,
-                                                                          const QByteArray &inTessCtrl,
-                                                                          const QByteArray &inTessEval,
-                                                                          const QByteArray &inGeom,
-                                                                          const QDemonShaderCacheProgramFlags &inFlags,
-                                                                          const QVector<QDemonShaderPreprocessorFeature> &inFeatures,
-                                                                          bool separableProgram,
-                                                                          bool fromDisk = false) = 0;
-
-    // It is up to the caller to ensure that inFeatures contains unique keys.
-    // It is also up the the caller to ensure the keys are ordered in some way.
-    virtual QDemonRef<QDemonRenderShaderProgram> compileProgram(const QByteArray &inKey,
                                                                      const QByteArray &inVert,
                                                                      const QByteArray &inFrag,
                                                                      const QByteArray &inTessCtrl,
@@ -150,7 +133,20 @@ public:
                                                                      const QByteArray &inGeom,
                                                                      const QDemonShaderCacheProgramFlags &inFlags,
                                                                      const QVector<QDemonShaderPreprocessorFeature> &inFeatures,
-                                                                     bool separableProgram = false) = 0;
+                                                                     bool separableProgram,
+                                                                     bool fromDisk = false) = 0;
+
+    // It is up to the caller to ensure that inFeatures contains unique keys.
+    // It is also up the the caller to ensure the keys are ordered in some way.
+    virtual QDemonRef<QDemonRenderShaderProgram> compileProgram(const QByteArray &inKey,
+                                                                const QByteArray &inVert,
+                                                                const QByteArray &inFrag,
+                                                                const QByteArray &inTessCtrl,
+                                                                const QByteArray &inTessEval,
+                                                                const QByteArray &inGeom,
+                                                                const QDemonShaderCacheProgramFlags &inFlags,
+                                                                const QVector<QDemonShaderPreprocessorFeature> &inFeatures,
+                                                                bool separableProgram = false) = 0;
 
     // Used to disable any shader compilation during loading.  This is used when we are just
     // interested in going from uia->binary
@@ -163,8 +159,8 @@ public:
     static const QString getShaderCacheFileName() { return QStringLiteral("shadercache.xml"); }
 
     static QDemonRef<QDemonShaderCacheInterface> createShaderCache(QDemonRef<QDemonRenderContext> inContext,
-                                                                        QDemonRef<QDemonInputStreamFactoryInterface> inInputStreamFactory,
-                                                                        QDemonRef<QDemonPerfTimerInterface> inPerfTimer);
+                                                                   QDemonRef<QDemonInputStreamFactoryInterface> inInputStreamFactory,
+                                                                   QDemonRef<QDemonPerfTimerInterface> inPerfTimer);
 };
 
 struct QDemonShaderCacheKey
@@ -173,11 +169,7 @@ struct QDemonShaderCacheKey
     QVector<QDemonShaderPreprocessorFeature> m_features;
     uint m_hashCode = 0;
 
-    explicit QDemonShaderCacheKey(const QByteArray &key = QByteArray())
-        : m_key(key)
-        , m_hashCode(0)
-    {
-    }
+    explicit QDemonShaderCacheKey(const QByteArray &key = QByteArray()) : m_key(key), m_hashCode(0) {}
 
     QDemonShaderCacheKey(const QDemonShaderCacheKey &other) = default;
     QDemonShaderCacheKey &operator=(const QDemonShaderCacheKey &other) = default;

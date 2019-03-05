@@ -37,9 +37,7 @@ QT_BEGIN_NAMESPACE
 
 QDemonRenderTextureCube::QDemonRenderTextureCube(const QDemonRef<QDemonRenderContextImpl> &context,
                                                  QDemonRenderTextureTargetType::Enum texTarget)
-    : QDemonRenderTextureBase(context, texTarget)
-    , m_width(0)
-    , m_height(0)
+    : QDemonRenderTextureBase(context, texTarget), m_width(0), m_height(0)
 {
 }
 
@@ -48,9 +46,12 @@ QDemonRenderTextureCube::~QDemonRenderTextureCube()
     m_context->textureDestroyed(this);
 }
 
-void QDemonRenderTextureCube::setTextureData(QDemonDataRef<quint8> newBuffer, quint8 inMipLevel,
-                                             QDemonRenderTextureCubeFaces::Enum inFace, quint32 width,
-                                             quint32 height, QDemonRenderTextureFormats::Enum format)
+void QDemonRenderTextureCube::setTextureData(QDemonDataRef<quint8> newBuffer,
+                                             quint8 inMipLevel,
+                                             QDemonRenderTextureCubeFaces::Enum inFace,
+                                             quint32 width,
+                                             quint32 height,
+                                             QDemonRenderTextureFormats::Enum format)
 {
     Q_ASSERT(m_textureHandle);
     Q_ASSERT(inFace != QDemonRenderTextureCubeFaces::InvalidFace);
@@ -68,22 +69,31 @@ void QDemonRenderTextureCube::setTextureData(QDemonDataRef<quint8> newBuffer, qu
 
     // get max size and check value
     qint32 theMaxSize;
-    m_backend->getRenderBackendValue(QDemonRenderBackend::QDemonRenderBackendQuery::MaxTextureSize,
-                                     &theMaxSize);
+    m_backend->getRenderBackendValue(QDemonRenderBackend::QDemonRenderBackendQuery::MaxTextureSize, &theMaxSize);
     if (width > (quint32)theMaxSize || height > (quint32)theMaxSize) {
-        qCCritical(INVALID_OPERATION, "Width or height is greater than max texture size (%d, %d)",
-                   theMaxSize, theMaxSize);
+        qCCritical(INVALID_OPERATION, "Width or height is greater than max texture size (%d, %d)", theMaxSize, theMaxSize);
     }
 
-    QDemonRenderTextureTargetType::Enum outTarget =
-            static_cast<QDemonRenderTextureTargetType::Enum>((int)m_texTarget + (int)inFace);
-    if (QDemonRenderTextureFormats::isUncompressedTextureFormat(format)
-            || QDemonRenderTextureFormats::isDepthTextureFormat(format)) {
-        m_backend->setTextureDataCubeFace(m_textureHandle, outTarget, inMipLevel, format, width,
-                                          height, 0, format, newBuffer.begin());
+    QDemonRenderTextureTargetType::Enum outTarget = static_cast<QDemonRenderTextureTargetType::Enum>((int)m_texTarget + (int)inFace);
+    if (QDemonRenderTextureFormats::isUncompressedTextureFormat(format) || QDemonRenderTextureFormats::isDepthTextureFormat(format)) {
+        m_backend->setTextureDataCubeFace(m_textureHandle,
+                                          outTarget,
+                                          inMipLevel,
+                                          format,
+                                          width,
+                                          height,
+                                          0,
+                                          format,
+                                          newBuffer.begin());
     } else if (QDemonRenderTextureFormats::isCompressedTextureFormat(format)) {
-        m_backend->setCompressedTextureDataCubeFace(m_textureHandle, outTarget, inMipLevel,
-                                                    format, width, height, 0, newBuffer.size(),
+        m_backend->setCompressedTextureDataCubeFace(m_textureHandle,
+                                                    outTarget,
+                                                    inMipLevel,
+                                                    format,
+                                                    width,
+                                                    height,
+                                                    0,
+                                                    newBuffer.size(),
                                                     newBuffer.begin());
     }
 

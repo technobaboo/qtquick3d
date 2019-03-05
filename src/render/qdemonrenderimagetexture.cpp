@@ -71,8 +71,13 @@ void QDemonRenderImage2D::bind(quint32 unit)
 
     // note it is the callers responsibility that the texture format is supported by the compute
     // shader
-    m_backend->bindImageTexture(m_texture2D->getTextureObjectHandle(), m_textureUnit,
-                                m_textureLevel, false, 0, m_accessType, theDetails.format);
+    m_backend->bindImageTexture(m_texture2D->getTextureObjectHandle(),
+                                m_textureUnit,
+                                m_textureLevel,
+                                false,
+                                0,
+                                m_accessType,
+                                theDetails.format);
 }
 
 QDemonRenderBackend::QDemonRenderBackendTextureObject QDemonRenderImage2D::getTextureObjectHandle()
@@ -81,8 +86,8 @@ QDemonRenderBackend::QDemonRenderBackendTextureObject QDemonRenderImage2D::getTe
 }
 
 QDemonRef<QDemonRenderImage2D> QDemonRenderImage2D::create(const QDemonRef<QDemonRenderContextImpl> &context,
-                                                                const QDemonRef<QDemonRenderTexture2D> &inTexture,
-                                                                QDemonRenderImageAccessType::Enum inAccess)
+                                                           const QDemonRef<QDemonRenderTexture2D> &inTexture,
+                                                           QDemonRenderImageAccessType::Enum inAccess)
 {
     QDemonRef<QDemonRenderImage2D> retval;
     if (inTexture)

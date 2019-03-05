@@ -56,35 +56,26 @@ float getAspectRatio(const QVector2D &inDimensions)
     return inDimensions.y() != 0 ? inDimensions.x() / inDimensions.y() : 0.0f;
 }
 
-bool isCameraVerticalAdjust(CameraScaleModes::Enum inMode, float inDesignAspect,
-                            float inActualAspect)
+bool isCameraVerticalAdjust(CameraScaleModes::Enum inMode, float inDesignAspect, float inActualAspect)
 {
-    return (inMode == CameraScaleModes::Fit && inActualAspect >= inDesignAspect)
-        || inMode == CameraScaleModes::FitVertical;
+    return (inMode == CameraScaleModes::Fit && inActualAspect >= inDesignAspect) || inMode == CameraScaleModes::FitVertical;
 }
 
-bool isCameraHorizontalAdjust(CameraScaleModes::Enum inMode, float inDesignAspect,
-                              float inActualAspect)
+bool isCameraHorizontalAdjust(CameraScaleModes::Enum inMode, float inDesignAspect, float inActualAspect)
 {
-    return (inMode == CameraScaleModes::Fit && inActualAspect < inDesignAspect)
-        || inMode == CameraScaleModes::FitHorizontal;
+    return (inMode == CameraScaleModes::Fit && inActualAspect < inDesignAspect) || inMode == CameraScaleModes::FitHorizontal;
 }
 
 bool isFitTypeScaleMode(CameraScaleModes::Enum inMode)
 {
-    return inMode == CameraScaleModes::Fit || inMode == CameraScaleModes::FitHorizontal
-        || inMode == CameraScaleModes::FitVertical;
+    return inMode == CameraScaleModes::Fit || inMode == CameraScaleModes::FitHorizontal || inMode == CameraScaleModes::FitVertical;
 }
 
 struct QDemonPinCameraResult
 {
     QRectF m_viewport;
     QRectF m_virtualViewport;
-    QDemonPinCameraResult(QRectF v, QRectF vv)
-        : m_viewport(v)
-        , m_virtualViewport(vv)
-    {
-    }
+    QDemonPinCameraResult(QRectF v, QRectF vv) : m_viewport(v), m_virtualViewport(vv) {}
 };
 // Scale and transform the projection matrix to respect the camera anchor attribute
 // and the scale mode.
@@ -107,18 +98,14 @@ QDemonPinCameraResult pinCamera(const QRectF &inViewport,
     // We only need to translate in X *if* our actual aspect > design aspect
     // And then we only need to account for whatever centering would happen.
 
-    bool pinLeft = inPinLocation == CameraScaleAnchors::SouthWest
-        || inPinLocation == CameraScaleAnchors::West
-        || inPinLocation == CameraScaleAnchors::NorthWest;
-    bool pinRight = inPinLocation == CameraScaleAnchors::SouthEast
-        || inPinLocation == CameraScaleAnchors::East
-        || inPinLocation == CameraScaleAnchors::NorthEast;
-    bool pinTop = inPinLocation == CameraScaleAnchors::NorthWest
-        || inPinLocation == CameraScaleAnchors::North
-        || inPinLocation == CameraScaleAnchors::NorthEast;
-    bool pinBottom = inPinLocation == CameraScaleAnchors::SouthWest
-        || inPinLocation == CameraScaleAnchors::South
-        || inPinLocation == CameraScaleAnchors::SouthEast;
+    bool pinLeft = inPinLocation == CameraScaleAnchors::SouthWest || inPinLocation == CameraScaleAnchors::West
+            || inPinLocation == CameraScaleAnchors::NorthWest;
+    bool pinRight = inPinLocation == CameraScaleAnchors::SouthEast || inPinLocation == CameraScaleAnchors::East
+            || inPinLocation == CameraScaleAnchors::NorthEast;
+    bool pinTop = inPinLocation == CameraScaleAnchors::NorthWest || inPinLocation == CameraScaleAnchors::North
+            || inPinLocation == CameraScaleAnchors::NorthEast;
+    bool pinBottom = inPinLocation == CameraScaleAnchors::SouthWest || inPinLocation == CameraScaleAnchors::South
+            || inPinLocation == CameraScaleAnchors::SouthEast;
 
     if (inScaleMode == CameraScaleModes::SameSize) {
         // In this case the perspective transform does not center the view,
@@ -155,8 +142,7 @@ QDemonPinCameraResult pinCamera(const QRectF &inViewport,
         }
     }
 
-    ioPerspectiveMatrix = QDemonRenderContext::applyVirtualViewportToProjectionMatrix(
-        ioPerspectiveMatrix, viewport, idealViewport);
+    ioPerspectiveMatrix = QDemonRenderContext::applyVirtualViewportToProjectionMatrix(ioPerspectiveMatrix, viewport, idealViewport);
     return QDemonPinCameraResult(viewport, idealViewport);
 }
 }
@@ -176,15 +162,13 @@ QDemonRenderCamera::QDemonRenderCamera()
 }
 
 // Code for testing
-QDemonCameraGlobalCalculationResult QDemonRenderCamera::calculateGlobalVariables(const QRectF &inViewport,
-                                                                                 const QVector2D &inDesignDimensions)
+QDemonCameraGlobalCalculationResult QDemonRenderCamera::calculateGlobalVariables(const QRectF &inViewport, const QVector2D &inDesignDimensions)
 {
     bool wasDirty = QDemonGraphNode::calculateGlobalVariables();
-    return QDemonCameraGlobalCalculationResult {wasDirty, calculateProjection(inViewport, inDesignDimensions) };
+    return QDemonCameraGlobalCalculationResult{ wasDirty, calculateProjection(inViewport, inDesignDimensions) };
 }
 
-bool QDemonRenderCamera::calculateProjection(const QRectF &inViewport,
-                                             const QVector2D &inDesignDimensions)
+bool QDemonRenderCamera::calculateProjection(const QRectF &inViewport, const QVector2D &inDesignDimensions)
 {
     bool retval = false;
     if (flags.isOrthographic())
@@ -205,8 +189,7 @@ bool QDemonRenderCamera::calculateProjection(const QRectF &inViewport,
  *	Compute the projection matrix for a perspective camera
  *	@return true if the computed projection matrix is valid
  */
-bool QDemonRenderCamera::computeFrustumPerspective(const QRectF &inViewport,
-                                                   const QVector2D &inDesignDimensions)
+bool QDemonRenderCamera::computeFrustumPerspective(const QRectF &inViewport, const QVector2D &inDesignDimensions)
 {
     projection = QMatrix4x4();
     float theAngleInRadians = verticalFov(inViewport) / 2.0f;
@@ -276,8 +259,7 @@ bool QDemonRenderCamera::computeFrustumOrtho(const QRectF &inViewport, const QVe
     return false;
 }
 
-float QDemonRenderCamera::getOrthographicScaleFactor(const QRectF &inViewport,
-                                          const QVector2D &inDesignDimensions) const
+float QDemonRenderCamera::getOrthographicScaleFactor(const QRectF &inViewport, const QVector2D &inDesignDimensions) const
 {
     if (scaleMode == CameraScaleModes::SameSize)
         return 1.0f;
@@ -296,8 +278,7 @@ float QDemonRenderCamera::getOrthographicScaleFactor(const QRectF &inViewport,
     }
 }
 
-float QDemonRenderCamera::getTextScaleFactor(const QRectF &inViewport,
-                                  const QVector2D &inDesignDimensions) const
+float QDemonRenderCamera::getTextScaleFactor(const QRectF &inViewport, const QVector2D &inDesignDimensions) const
 {
     return qMax(1.0f, 1.0f / getOrthographicScaleFactor(inViewport, inDesignDimensions));
 }
@@ -320,9 +301,8 @@ QMatrix3x3 QDemonRenderCamera::getLookAtMatrix(const QVector3D &inUpDir, const Q
         multiplier = -1.0f;
 
     theDirection *= multiplier;
-    float matrixData[9] = {theCrossDir.x(), theCrossDir.y(), theCrossDir.z(),
-                           theFinalDir.x(), theFinalDir.y(), theFinalDir.z(),
-                           theDirection.x(), theDirection.y(), theDirection.z()};
+    float matrixData[9] = { theCrossDir.x(), theCrossDir.y(),  theCrossDir.z(),  theFinalDir.x(), theFinalDir.y(),
+                            theFinalDir.z(), theDirection.x(), theDirection.y(), theDirection.z() };
 
     QMatrix3x3 theResultMatrix(matrixData);
     return theResultMatrix;
@@ -344,17 +324,15 @@ void QDemonRenderCamera::calculateViewProjectionMatrix(QMatrix4x4 &outMatrix) co
     outMatrix = projection * globalInverse;
 }
 
-QDemonCuboidRect QDemonRenderCamera::getCameraBounds(const QRectF &inViewport,
-                                                     const QVector2D &inDesignDimensions) const
+QDemonCuboidRect QDemonRenderCamera::getCameraBounds(const QRectF &inViewport, const QVector2D &inDesignDimensions) const
 {
     QMatrix4x4 unused;
-    QDemonPinCameraResult theResult =
-        pinCamera(inViewport, inDesignDimensions, unused, scaleMode, scaleAnchor);
+    QDemonPinCameraResult theResult = pinCamera(inViewport, inDesignDimensions, unused, scaleMode, scaleAnchor);
     // find the normalized edges of the view frustum given the renormalization that happens when
     // pinning the camera.
     QDemonCuboidRect normalizedCuboid(-1, 1, 1, -1);
     QVector2D translation(theResult.m_viewport.x() - theResult.m_virtualViewport.x(),
-                       theResult.m_viewport.y() - theResult.m_virtualViewport.y());
+                          theResult.m_viewport.y() - theResult.m_virtualViewport.y());
     if (scaleMode == CameraScaleModes::SameSize) {
         // the cuboid ranges are the actual divided by the ideal in this case
         float xRange = 2.0f * (theResult.m_viewport.width() / theResult.m_virtualViewport.width());
@@ -378,16 +356,14 @@ QDemonCuboidRect QDemonRenderCamera::getCameraBounds(const QRectF &inViewport,
             // then we just need to setup the left, right parameters of the cuboid because we know
             // the top
             // bottom are -1,1 due to how fit works.
-            idealWidth = (float)QDemonTextRendererInterface::nextMultipleOf4(
-                (quint32)(inViewport.height() * designAspect + .5f));
+            idealWidth = (float)QDemonTextRendererInterface::nextMultipleOf4((quint32)(inViewport.height() * designAspect + .5f));
             // halfRange should always be greater than 1.0f.
             float halfRange = inViewport.width() / idealWidth;
             normalizedCuboid.left = -halfRange;
             normalizedCuboid.right = halfRange;
             translation.setX(translation.x() / (idealWidth / 2.0f));
         } else {
-            idealHeight = (float)QDemonTextRendererInterface::nextMultipleOf4(
-                (quint32)(inViewport.width() / designAspect + .5f));
+            idealHeight = (float)QDemonTextRendererInterface::nextMultipleOf4((quint32)(inViewport.width() / designAspect + .5f));
             float halfRange = inViewport.height() / idealHeight;
             normalizedCuboid.bottom = -halfRange;
             normalizedCuboid.top = halfRange;
@@ -400,8 +376,7 @@ QDemonCuboidRect QDemonRenderCamera::getCameraBounds(const QRectF &inViewport,
     return normalizedCuboid;
 }
 
-void QDemonRenderCamera::setupOrthographicCameraForOffscreenRender(QDemonRenderTexture2D &inTexture,
-                                                        QMatrix4x4 &outVP)
+void QDemonRenderCamera::setupOrthographicCameraForOffscreenRender(QDemonRenderTexture2D &inTexture, QMatrix4x4 &outVP)
 {
     QDemonTextureDetails theDetails(inTexture.getTextureDetails());
     // TODO:
@@ -410,16 +385,14 @@ void QDemonRenderCamera::setupOrthographicCameraForOffscreenRender(QDemonRenderT
     setupOrthographicCameraForOffscreenRender(inTexture, outVP, theTempCamera);
 }
 
-void QDemonRenderCamera::setupOrthographicCameraForOffscreenRender(QDemonRenderTexture2D &inTexture,
-                                                        QMatrix4x4 &outVP, QDemonRenderCamera &outCamera)
+void QDemonRenderCamera::setupOrthographicCameraForOffscreenRender(QDemonRenderTexture2D &inTexture, QMatrix4x4 &outVP, QDemonRenderCamera &outCamera)
 {
     QDemonTextureDetails theDetails(inTexture.getTextureDetails());
     QDemonRenderCamera theTempCamera;
     theTempCamera.flags.setOrthographic(true);
     theTempCamera.markDirty(NodeTransformDirtyFlag::TransformIsDirty);
     QVector2D theDimensions((float)theDetails.width, (float)theDetails.height);
-    theTempCamera.calculateGlobalVariables(
-        QRect(0, 0, theDetails.width, theDetails.height), theDimensions);
+    theTempCamera.calculateGlobalVariables(QRect(0, 0, theDetails.width, theDetails.height), theDimensions);
     theTempCamera.calculateViewProjectionMatrix(outVP);
     outCamera = theTempCamera;
 }
@@ -430,15 +403,13 @@ QDemonRenderRay QDemonRenderCamera::unproject(const QVector2D &inViewportRelativ
 {
     QDemonRenderRay theRay;
     QMatrix4x4 tempVal;
-    QDemonPinCameraResult result =
-        pinCamera(inViewport, inDesignDimensions, tempVal, scaleMode, scaleAnchor);
+    QDemonPinCameraResult result = pinCamera(inViewport, inDesignDimensions, tempVal, scaleMode, scaleAnchor);
     QVector2D globalCoords = toAbsoluteCoords(inViewport, inViewportRelativeCoords);
     QVector2D normalizedCoords = absoluteToNormalizedCoordinates(result.m_virtualViewport, globalCoords);
     QVector3D &outOrigin(theRay.m_origin);
     QVector3D &outDir(theRay.m_direction);
     QVector2D inverseFrustumScale(1.0f / frustumScale.x(), 1.0f / frustumScale.y());
-    QVector2D scaledCoords(inverseFrustumScale.x() * normalizedCoords.x(),
-                        inverseFrustumScale.y() * normalizedCoords.y());
+    QVector2D scaledCoords(inverseFrustumScale.x() * normalizedCoords.x(), inverseFrustumScale.y() * normalizedCoords.y());
 
     if (flags.isOrthographic()) {
         outOrigin.setX(scaledCoords.x());

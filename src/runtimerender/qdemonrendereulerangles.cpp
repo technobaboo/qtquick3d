@@ -45,27 +45,30 @@ QT_BEGIN_NAMESPACE
 
 //==============================================================================
 /**
-     *	Constructor
-     */
-QDemonEulerAngleConverter::QDemonEulerAngleConverter() { m_orderInfoBuffer[0] = '\0'; }
+ *	Constructor
+ */
+QDemonEulerAngleConverter::QDemonEulerAngleConverter()
+{
+    m_orderInfoBuffer[0] = '\0';
+}
 
 //==============================================================================
 /**
-     *	Destructor
-     */
+ *	Destructor
+ */
 QDemonEulerAngleConverter::~QDemonEulerAngleConverter() {}
 
 //==============================================================================
 /**
-     *	Constructs a Euler angle & holds it in a EulerAngles struct
-     *	@param theI			x rotation ( radians )
-     *	@param theJ			y rotation ( radians )
-     *	@param theH			z rotation ( radians )
-     *	@param theOrder		the order this angle is in namely XYZ( static ), etc.
-     *						use the EulOrd**** macros to generate values
-     *						0 to 23 is valid
-     *	@return the euler angle
-     */
+ *	Constructs a Euler angle & holds it in a EulerAngles struct
+ *	@param theI			x rotation ( radians )
+ *	@param theJ			y rotation ( radians )
+ *	@param theH			z rotation ( radians )
+ *	@param theOrder		the order this angle is in namely XYZ( static ), etc.
+ *						use the EulOrd**** macros to generate values
+ *						0 to 23 is valid
+ *	@return the euler angle
+ */
 EulerAngles QDemonEulerAngleConverter::euler(float theI, float theJ, float theH, int theOrder)
 {
     EulerAngles theEulerAngle;
@@ -78,10 +81,10 @@ EulerAngles QDemonEulerAngleConverter::euler(float theI, float theJ, float theH,
 
 //==============================================================================
 /**
-     *	Construct quaternion from Euler angles (in radians).
-     *	@param theEulerAngle		incoming angle( radians )
-     *	@return the Quaternion
-     */
+ *	Construct quaternion from Euler angles (in radians).
+ *	@param theEulerAngle		incoming angle( radians )
+ *	@return the Quaternion
+ */
 Quat QDemonEulerAngleConverter::eulerToQuat(EulerAngles theEulerAngle)
 {
     Quat theQuaternion;
@@ -137,10 +140,10 @@ Quat QDemonEulerAngleConverter::eulerToQuat(EulerAngles theEulerAngle)
 
 //==============================================================================
 /**
-     *	Construct matrix from Euler angles (in radians).
-     *	@param theEulerAngle		incoming angle
-     *	@param theMatrix			outgoing matrix
-     */
+ *	Construct matrix from Euler angles (in radians).
+ *	@param theEulerAngle		incoming angle
+ *	@param theMatrix			outgoing matrix
+ */
 void QDemonEulerAngleConverter::eulerToHMatrix(EulerAngles theEulerAngle, HMatrix theMatrix)
 {
     double ti, tj, th, ci, cj, ch, si, sj, sh, cc, cs, sc, ss;
@@ -209,11 +212,11 @@ void QDemonEulerAngleConverter::eulerToHMatrix(EulerAngles theEulerAngle, HMatri
 
 //==============================================================================
 /**
-     *	Convert matrix to Euler angles (in radians).
-     *	@param theMatrix			incoming matrix
-     *	@param theOrder				0-23, use EulOrd**** to generate this value
-     *	@return a set of angles in radians!!!!
-     */
+ *	Convert matrix to Euler angles (in radians).
+ *	@param theMatrix			incoming matrix
+ *	@param theOrder				0-23, use EulOrd**** to generate this value
+ *	@return a set of angles in radians!!!!
+ */
 EulerAngles QDemonEulerAngleConverter::eulerFromHMatrix(HMatrix theMatrix, int theOrder)
 {
     EulerAngles theEulerAngle;
@@ -261,11 +264,11 @@ EulerAngles QDemonEulerAngleConverter::eulerFromHMatrix(HMatrix theMatrix, int t
 
 //==============================================================================
 /**
-     *	Convert quaternion to Euler angles (in radians).
-     *	@param theQuaternion		incoming quaternion
-     *	@param theOrder				0-23, use EulOrd**** to generate this value
-     *	@return the generated angles ( radians )
-     */
+ *	Convert quaternion to Euler angles (in radians).
+ *	@param theQuaternion		incoming quaternion
+ *	@param theOrder				0-23, use EulOrd**** to generate this value
+ *	@return the generated angles ( radians )
+ */
 EulerAngles QDemonEulerAngleConverter::eulerFromQuat(Quat theQuaternion, int theOrder)
 {
     HMatrix theMatrix;
@@ -307,8 +310,8 @@ EulerAngles QDemonEulerAngleConverter::eulerFromQuat(Quat theQuaternion, int the
 
 //==============================================================================
 /**
-     *	Dump the Order information
-     */
+ *	Dump the Order information
+ */
 const char *QDemonEulerAngleConverter::dumpOrderInfo()
 {
     long theCount = 0;

@@ -40,9 +40,7 @@ QT_BEGIN_NAMESPACE
 //==============================================================================
 //	Namespace
 //==============================================================================
-QDemonImageScaler::QDemonImageScaler()
-{
-}
+QDemonImageScaler::QDemonImageScaler() {}
 //==============================================================================
 /**
  *	Scales the given image by the given scale factor.
@@ -59,20 +57,22 @@ QDemonImageScaler::QDemonImageScaler()
  *	@param  inPlanes		number of planes (1 for greyscale, 3 for rgb, etc)
  *  also equivalent to the return value of the CTextureType::PixelSize method.
  */
-void QDemonImageScaler::scale(EScaleMethod inScaleMethod, unsigned char *inOldBuffer,
-                         unsigned long inOldWidth, unsigned long inOldHeight,
-                         unsigned char *&outNewBuffer, unsigned long inNewWidth,
-                         unsigned long inNewHeight, unsigned long inPlanes)
+void QDemonImageScaler::scale(EScaleMethod inScaleMethod,
+                              unsigned char *inOldBuffer,
+                              unsigned long inOldWidth,
+                              unsigned long inOldHeight,
+                              unsigned char *&outNewBuffer,
+                              unsigned long inNewWidth,
+                              unsigned long inNewHeight,
+                              unsigned long inPlanes)
 {
     switch (inScaleMethod) {
     case SCALEMETHOD_CROP:
-        QDemonImageScaler::crop(inOldBuffer, inOldWidth, inOldHeight, outNewBuffer, inNewWidth,
-                           inNewHeight, inPlanes);
+        QDemonImageScaler::crop(inOldBuffer, inOldWidth, inOldHeight, outNewBuffer, inNewWidth, inNewHeight, inPlanes);
         break;
 
     case SCALEMETHOD_BILINEAR:
-        QDemonImageScaler::bilinear(inOldBuffer, inOldWidth, inOldHeight, outNewBuffer, inNewWidth,
-                               inNewHeight, inPlanes);
+        QDemonImageScaler::bilinear(inOldBuffer, inOldWidth, inOldHeight, outNewBuffer, inNewWidth, inNewHeight, inPlanes);
         break;
 
     default:
@@ -97,20 +97,22 @@ void QDemonImageScaler::scale(EScaleMethod inScaleMethod, unsigned char *inOldBu
  *	@param  inPlanes		number of planes (1 for greyscale, 3 for rgb, etc)
  *  also equivalent to the return value of the CTextureType::PixelSize method.
  */
-void QDemonImageScaler::fastScale(EScaleMethod inScaleMethod, unsigned char *inOldBuffer,
-                             unsigned long inOldWidth, unsigned long inOldHeight,
-                             unsigned char *&outNewBuffer, unsigned long inNewWidth,
-                             unsigned long inNewHeight, unsigned long inPlanes)
+void QDemonImageScaler::fastScale(EScaleMethod inScaleMethod,
+                                  unsigned char *inOldBuffer,
+                                  unsigned long inOldWidth,
+                                  unsigned long inOldHeight,
+                                  unsigned char *&outNewBuffer,
+                                  unsigned long inNewWidth,
+                                  unsigned long inNewHeight,
+                                  unsigned long inPlanes)
 {
     switch (inScaleMethod) {
     case SCALEMETHOD_CROP:
-        QDemonImageScaler::crop(inOldBuffer, inOldWidth, inOldHeight, outNewBuffer, inNewWidth,
-                           inNewHeight, inPlanes);
+        QDemonImageScaler::crop(inOldBuffer, inOldWidth, inOldHeight, outNewBuffer, inNewWidth, inNewHeight, inPlanes);
         break;
 
     case SCALEMETHOD_POINTSAMPLE:
-        QDemonImageScaler::fastPointSample(inOldBuffer, inOldWidth, inOldHeight, outNewBuffer,
-                                      inNewWidth, inNewHeight, inPlanes);
+        QDemonImageScaler::fastPointSample(inOldBuffer, inOldWidth, inOldHeight, outNewBuffer, inNewWidth, inNewHeight, inPlanes);
         break;
 
     default:
@@ -133,10 +135,14 @@ void QDemonImageScaler::fastScale(EScaleMethod inScaleMethod, unsigned char *inO
  *	@param	inNewHeight		height of the new picture
  *	@param  inPlanes		number of planes (1 for greyscale, 3 for rgb, etc)
  *  also equivalent to the return value of the CTextureType::PixelSize method.
-*/
-void QDemonImageScaler::crop(unsigned char *inOldBuffer, unsigned long inOldWidth,
-                        unsigned long inOldHeight, unsigned char *&outNewBuffer,
-                        unsigned long inNewWidth, unsigned long inNewHeight, unsigned long inPlanes)
+ */
+void QDemonImageScaler::crop(unsigned char *inOldBuffer,
+                             unsigned long inOldWidth,
+                             unsigned long inOldHeight,
+                             unsigned char *&outNewBuffer,
+                             unsigned long inNewWidth,
+                             unsigned long inNewHeight,
+                             unsigned long inPlanes)
 {
     Q_UNUSED(inOldHeight);
 
@@ -149,8 +155,7 @@ void QDemonImageScaler::crop(unsigned char *inOldBuffer, unsigned long inOldWidt
     ::memset(outNewBuffer, 0, inNewWidth * inNewHeight * inPlanes);
 
     for (unsigned long theRow = 0; theRow < inNewHeight; ++theRow) {
-        ::memcpy(outNewBuffer + theRow * inNewWidth * inPlanes,
-                 inOldBuffer + theRow * inOldWidth * inPlanes, theMinWidth * inPlanes);
+        ::memcpy(outNewBuffer + theRow * inNewWidth * inPlanes, inOldBuffer + theRow * inOldWidth * inPlanes, theMinWidth * inPlanes);
     }
 }
 
@@ -169,17 +174,19 @@ void QDemonImageScaler::crop(unsigned char *inOldBuffer, unsigned long inOldWidt
  *	@param	inNewHeight		height of the new picture
  *	@param  inPlanes		number of planes (1 for greyscale, 3 for rgb, etc)
  *  also equivalent to the return value of the CTextureType::PixelSize method.
-*/
-void QDemonImageScaler::bilinear(unsigned char *inOldBuffer, unsigned long inOldWidth,
-                            unsigned long inOldHeight, unsigned char *&outNewBuffer,
-                            unsigned long inNewWidth, unsigned long inNewHeight,
-                            unsigned long inPlanes)
+ */
+void QDemonImageScaler::bilinear(unsigned char *inOldBuffer,
+                                 unsigned long inOldWidth,
+                                 unsigned long inOldHeight,
+                                 unsigned char *&outNewBuffer,
+                                 unsigned long inNewWidth,
+                                 unsigned long inNewHeight,
+                                 unsigned long inPlanes)
 {
     Q_ASSERT(inPlanes > 0);
 
     outNewBuffer = new unsigned char[inNewWidth * inNewHeight * inPlanes];
-    QDemonImageScaler::resize(inOldBuffer, inOldWidth, inOldHeight, outNewBuffer, inNewWidth,
-                         inNewHeight, inPlanes);
+    QDemonImageScaler::resize(inOldBuffer, inOldWidth, inOldHeight, outNewBuffer, inNewWidth, inNewHeight, inPlanes);
 }
 
 //==============================================================================
@@ -198,11 +205,14 @@ void QDemonImageScaler::bilinear(unsigned char *inOldBuffer, unsigned long inOld
  *	@param	inNewHeight		height of the new picture
  *	@param  inPlanes		number of planes (1 for greyscale, 3 for rgb, etc)
  *  also equivalent to the return value of the CTextureType::PixelSize method.
-*/
-void QDemonImageScaler::fastPointSample(unsigned char *inOldBuffer, unsigned long inOldWidth,
-                                   unsigned long inOldHeight, unsigned char *&outNewBuffer,
-                                   unsigned long inNewWidth, unsigned long inNewHeight,
-                                   unsigned long inPlanes)
+ */
+void QDemonImageScaler::fastPointSample(unsigned char *inOldBuffer,
+                                        unsigned long inOldWidth,
+                                        unsigned long inOldHeight,
+                                        unsigned char *&outNewBuffer,
+                                        unsigned long inNewWidth,
+                                        unsigned long inNewHeight,
+                                        unsigned long inPlanes)
 {
     unsigned long theXAccum;
     unsigned long theYAccum;
@@ -366,17 +376,19 @@ void QDemonImageScaler::releaseBuffer(unsigned char *&ioBuffer)
  *	@param  inPlanes		number of planes (1 for greyscale, 3 for rgb, etc)
  *  also equivalent to the return value of the CTextureType::PixelSize method.
  */
-void QDemonImageScaler::resize(unsigned char *inOldBuffer, unsigned long inOldWidth,
-                          unsigned long inOldHeight, unsigned char *&outNewBuffer,
-                          unsigned long inNewWidth, unsigned long inNewHeight,
-                          unsigned long inPlanes)
+void QDemonImageScaler::resize(unsigned char *inOldBuffer,
+                               unsigned long inOldWidth,
+                               unsigned long inOldHeight,
+                               unsigned char *&outNewBuffer,
+                               unsigned long inNewWidth,
+                               unsigned long inNewHeight,
+                               unsigned long inPlanes)
 {
     Q_ASSERT(inPlanes == 4);
 
     // only do the temporary allocation if necessary
     if (inOldWidth < inNewWidth || inOldHeight < inNewHeight) {
-        QDemonImageScaler::expandRowsAndColumns(inOldBuffer, inOldWidth, inOldHeight, outNewBuffer,
-                                           inNewWidth, inNewHeight, inPlanes);
+        QDemonImageScaler::expandRowsAndColumns(inOldBuffer, inOldWidth, inOldHeight, outNewBuffer, inNewWidth, inNewHeight, inPlanes);
         return;
     } else {
         // The downsampling algorithms *do* assume four planes.
@@ -384,24 +396,23 @@ void QDemonImageScaler::resize(unsigned char *inOldBuffer, unsigned long inOldWi
             QByteArray theBuffer;
             theBuffer.resize(inNewWidth * inOldHeight * 4);
             unsigned char *theTempBuffer = reinterpret_cast<unsigned char *>(theBuffer.data());
-            QDemonImageScaler::reduceCols(inOldBuffer, inOldWidth, inOldHeight, theTempBuffer,
-                                     inNewWidth);
-            QDemonImageScaler::reduceRows(theTempBuffer, inNewWidth, inOldHeight, outNewBuffer,
-                                     inNewHeight);
+            QDemonImageScaler::reduceCols(inOldBuffer, inOldWidth, inOldHeight, theTempBuffer, inNewWidth);
+            QDemonImageScaler::reduceRows(theTempBuffer, inNewWidth, inOldHeight, outNewBuffer, inNewHeight);
         } else if (inOldWidth > inNewWidth) {
-            QDemonImageScaler::reduceCols(inOldBuffer, inOldWidth, inOldHeight, outNewBuffer,
-                                     inNewWidth);
+            QDemonImageScaler::reduceCols(inOldBuffer, inOldWidth, inOldHeight, outNewBuffer, inNewWidth);
         } else if (inOldHeight > inNewHeight) {
-            QDemonImageScaler::reduceRows(inOldBuffer, inNewWidth, inOldHeight, outNewBuffer,
-                                     inNewHeight);
+            QDemonImageScaler::reduceRows(inOldBuffer, inNewWidth, inOldHeight, outNewBuffer, inNewHeight);
         }
     }
 }
 
-void QDemonImageScaler::expandRowsAndColumns(unsigned char *inBuffer, unsigned long inWidth,
-                                        unsigned long inHeight, unsigned char *outBuffer,
-                                        unsigned long inDstWidth, unsigned long inDstHeight,
-                                        unsigned long inPlanes)
+void QDemonImageScaler::expandRowsAndColumns(unsigned char *inBuffer,
+                                             unsigned long inWidth,
+                                             unsigned long inHeight,
+                                             unsigned char *outBuffer,
+                                             unsigned long inDstWidth,
+                                             unsigned long inDstHeight,
+                                             unsigned long inPlanes)
 {
     if (inDstWidth < inWidth || inDstHeight < inHeight) {
         return;
@@ -463,8 +474,7 @@ void QDemonImageScaler::expandRowsAndColumns(unsigned char *inBuffer, unsigned l
                         theTemp = (theLeftRatio * inBuffer[theSrcIndex]);
                         theTemp += (theRightRatio * inBuffer[theSrcIndex + inPlanes]);
                         theTemp += (theLowLeftRatio * inBuffer[theSrcIndex + theSrcLineLength]);
-                        theTemp += (theLowRightRatio
-                                    * inBuffer[theSrcIndex + theSrcLineLength + inPlanes]);
+                        theTemp += (theLowRightRatio * inBuffer[theSrcIndex + theSrcLineLength + inPlanes]);
                         outBuffer[theDstIndex] = (unsigned char)(theTemp >> 8);
                         theDstIndex++;
                         theSrcIndex++;
@@ -474,8 +484,7 @@ void QDemonImageScaler::expandRowsAndColumns(unsigned char *inBuffer, unsigned l
                 } else {
                     for (thePixel = 0; thePixel < inPlanes; thePixel++) {
                         theTemp = theYRatio * inBuffer[theSrcIndex + thePixel];
-                        theTemp +=
-                                theYInvRatio * inBuffer[theSrcIndex + theSrcLineLength + thePixel];
+                        theTemp += theYInvRatio * inBuffer[theSrcIndex + theSrcLineLength + thePixel];
                         outBuffer[theDstIndex] = (unsigned char)(theTemp >> 8);
                         theDstIndex++;
                     }
@@ -526,9 +535,12 @@ void QDemonImageScaler::expandRowsAndColumns(unsigned char *inBuffer, unsigned l
 
 // Assuming the number of planes is four
 
-void QDemonImageScaler::fastExpandRowsAndColumns(unsigned char *inBuffer, unsigned long inWidth,
-                                            unsigned long inHeight, unsigned char *outBuffer,
-                                            unsigned long inDstWidth, unsigned long inDstHeight)
+void QDemonImageScaler::fastExpandRowsAndColumns(unsigned char *inBuffer,
+                                                 unsigned long inWidth,
+                                                 unsigned long inHeight,
+                                                 unsigned char *outBuffer,
+                                                 unsigned long inDstWidth,
+                                                 unsigned long inDstHeight)
 {
 
     if (inDstWidth < inWidth || inDstHeight < inHeight) {
@@ -695,8 +707,7 @@ void QDemonImageScaler::fastExpandRowsAndColumns(unsigned char *inBuffer, unsign
 /**
  *	@param	inSrcBuffer
  */
-void QDemonImageScaler::reduceCols(unsigned char *inSrcBuffer, long inSrcWidth, long inSrcHeight,
-                              unsigned char *&outDstBuffer, long inDstWidth)
+void QDemonImageScaler::reduceCols(unsigned char *inSrcBuffer, long inSrcWidth, long inSrcHeight, unsigned char *&outDstBuffer, long inDstWidth)
 {
     long theDDAConst = static_cast<long>(1024.0 * inDstWidth / inSrcWidth);
     long theDDAAccum = 0L;
@@ -748,23 +759,15 @@ void QDemonImageScaler::reduceCols(unsigned char *inSrcBuffer, long inSrcWidth, 
             theDDAAccum = (theSrcCol < inSrcWidth) ? (theDDAAccum - 1024L) : (0L);
             thePixelCount -= theDDAAccum;
 
-            theRedAccum -=
-                    theDDAAccum * (long)theSrcRowPointer[((theSrcCol - 1) * theSrcStepSize) + 0];
-            theGreenAccum -=
-                    theDDAAccum * (long)theSrcRowPointer[((theSrcCol - 1) * theSrcStepSize) + 1];
-            theBlueAccum -=
-                    theDDAAccum * (long)theSrcRowPointer[((theSrcCol - 1) * theSrcStepSize) + 2];
-            theAlphaAccum -=
-                    theDDAAccum * (long)theSrcRowPointer[((theSrcCol - 1) * theSrcStepSize) + 3];
+            theRedAccum -= theDDAAccum * (long)theSrcRowPointer[((theSrcCol - 1) * theSrcStepSize) + 0];
+            theGreenAccum -= theDDAAccum * (long)theSrcRowPointer[((theSrcCol - 1) * theSrcStepSize) + 1];
+            theBlueAccum -= theDDAAccum * (long)theSrcRowPointer[((theSrcCol - 1) * theSrcStepSize) + 2];
+            theAlphaAccum -= theDDAAccum * (long)theSrcRowPointer[((theSrcCol - 1) * theSrcStepSize) + 3];
 
-            theDstRowPointer[(theDstCol * theDstStepSize) + 0] =
-                    (unsigned char)(theRedAccum / thePixelCount);
-            theDstRowPointer[(theDstCol * theDstStepSize) + 1] =
-                    (unsigned char)(theGreenAccum / thePixelCount);
-            theDstRowPointer[(theDstCol * theDstStepSize) + 2] =
-                    (unsigned char)(theBlueAccum / thePixelCount);
-            theDstRowPointer[(theDstCol * theDstStepSize) + 3] =
-                    (unsigned char)(theAlphaAccum / thePixelCount);
+            theDstRowPointer[(theDstCol * theDstStepSize) + 0] = (unsigned char)(theRedAccum / thePixelCount);
+            theDstRowPointer[(theDstCol * theDstStepSize) + 1] = (unsigned char)(theGreenAccum / thePixelCount);
+            theDstRowPointer[(theDstCol * theDstStepSize) + 2] = (unsigned char)(theBlueAccum / thePixelCount);
+            theDstRowPointer[(theDstCol * theDstStepSize) + 3] = (unsigned char)(theAlphaAccum / thePixelCount);
 
             thePixelCount = 1024L - theDDAAccum;
             ++theDstCol;
@@ -773,14 +776,10 @@ void QDemonImageScaler::reduceCols(unsigned char *inSrcBuffer, long inSrcWidth, 
                 break;
             }
 
-            theRedAccum =
-                    thePixelCount * (long)theSrcRowPointer[((theSrcCol - 1) * theSrcStepSize) + 0];
-            theGreenAccum =
-                    thePixelCount * (long)theSrcRowPointer[((theSrcCol - 1) * theSrcStepSize) + 1];
-            theBlueAccum =
-                    thePixelCount * (long)theSrcRowPointer[((theSrcCol - 1) * theSrcStepSize) + 2];
-            theAlphaAccum =
-                    thePixelCount * (long)theSrcRowPointer[((theSrcCol - 1) * theSrcStepSize) + 3];
+            theRedAccum = thePixelCount * (long)theSrcRowPointer[((theSrcCol - 1) * theSrcStepSize) + 0];
+            theGreenAccum = thePixelCount * (long)theSrcRowPointer[((theSrcCol - 1) * theSrcStepSize) + 1];
+            theBlueAccum = thePixelCount * (long)theSrcRowPointer[((theSrcCol - 1) * theSrcStepSize) + 2];
+            theAlphaAccum = thePixelCount * (long)theSrcRowPointer[((theSrcCol - 1) * theSrcStepSize) + 3];
         }
     }
 }
@@ -789,8 +788,7 @@ void QDemonImageScaler::reduceCols(unsigned char *inSrcBuffer, long inSrcWidth, 
 /**
  *	@param	inSrcBuffer
  */
-void QDemonImageScaler::reduceRows(unsigned char *inSrcBuffer, long inSrcWidth, long inSrcHeight,
-                              unsigned char *&outDstBuffer, long inDstHeight)
+void QDemonImageScaler::reduceRows(unsigned char *inSrcBuffer, long inSrcWidth, long inSrcHeight, unsigned char *&outDstBuffer, long inDstHeight)
 {
     long theDDAConst = static_cast<long>(1024.0 * inDstHeight / inSrcHeight);
     long theDDAAccum = 0;
@@ -843,23 +841,15 @@ void QDemonImageScaler::reduceRows(unsigned char *inSrcBuffer, long inSrcWidth, 
             theDDAAccum = (theSrcRow < inSrcHeight) ? (theDDAAccum - 1024L) : (0L);
             thePixelCount -= theDDAAccum;
 
-            theRedAccum -=
-                    theDDAAccum * (long)theSrcColPointer[((theSrcRow - 1) * theSrcStride) + 0];
-            theGreenAccum -=
-                    theDDAAccum * (long)theSrcColPointer[((theSrcRow - 1) * theSrcStride) + 1];
-            theBlueAccum -=
-                    theDDAAccum * (long)theSrcColPointer[((theSrcRow - 1) * theSrcStride) + 2];
-            theAlphaAccum -=
-                    theDDAAccum * (long)theSrcColPointer[((theSrcRow - 1) * theSrcStride) + 3];
+            theRedAccum -= theDDAAccum * (long)theSrcColPointer[((theSrcRow - 1) * theSrcStride) + 0];
+            theGreenAccum -= theDDAAccum * (long)theSrcColPointer[((theSrcRow - 1) * theSrcStride) + 1];
+            theBlueAccum -= theDDAAccum * (long)theSrcColPointer[((theSrcRow - 1) * theSrcStride) + 2];
+            theAlphaAccum -= theDDAAccum * (long)theSrcColPointer[((theSrcRow - 1) * theSrcStride) + 3];
 
-            theDstColPointer[(theDstRow * theDstStride) + 0] =
-                    (unsigned char)(theRedAccum / thePixelCount);
-            theDstColPointer[(theDstRow * theDstStride) + 1] =
-                    (unsigned char)(theGreenAccum / thePixelCount);
-            theDstColPointer[(theDstRow * theDstStride) + 2] =
-                    (unsigned char)(theBlueAccum / thePixelCount);
-            theDstColPointer[(theDstRow * theDstStride) + 3] =
-                    (unsigned char)(theAlphaAccum / thePixelCount);
+            theDstColPointer[(theDstRow * theDstStride) + 0] = (unsigned char)(theRedAccum / thePixelCount);
+            theDstColPointer[(theDstRow * theDstStride) + 1] = (unsigned char)(theGreenAccum / thePixelCount);
+            theDstColPointer[(theDstRow * theDstStride) + 2] = (unsigned char)(theBlueAccum / thePixelCount);
+            theDstColPointer[(theDstRow * theDstStride) + 3] = (unsigned char)(theAlphaAccum / thePixelCount);
 
             thePixelCount = 1024L - theDDAAccum;
             ++theDstRow;
@@ -868,14 +858,10 @@ void QDemonImageScaler::reduceRows(unsigned char *inSrcBuffer, long inSrcWidth, 
                 break;
             }
 
-            theRedAccum =
-                    thePixelCount * (long)theSrcColPointer[((theSrcRow - 1) * theSrcStride) + 0];
-            theGreenAccum =
-                    thePixelCount * (long)theSrcColPointer[((theSrcRow - 1) * theSrcStride) + 1];
-            theBlueAccum =
-                    thePixelCount * (long)theSrcColPointer[((theSrcRow - 1) * theSrcStride) + 2];
-            theAlphaAccum =
-                    thePixelCount * (long)theSrcColPointer[((theSrcRow - 1) * theSrcStride) + 3];
+            theRedAccum = thePixelCount * (long)theSrcColPointer[((theSrcRow - 1) * theSrcStride) + 0];
+            theGreenAccum = thePixelCount * (long)theSrcColPointer[((theSrcRow - 1) * theSrcStride) + 1];
+            theBlueAccum = thePixelCount * (long)theSrcColPointer[((theSrcRow - 1) * theSrcStride) + 2];
+            theAlphaAccum = thePixelCount * (long)theSrcColPointer[((theSrcRow - 1) * theSrcStride) + 3];
         }
     }
 }

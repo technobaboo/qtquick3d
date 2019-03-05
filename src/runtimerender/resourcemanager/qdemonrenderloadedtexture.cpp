@@ -37,8 +37,7 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonRef<QDemonLoadedTexture> QDemonLoadedTexture::loadQImage(const QString &inPath, qint32 flipVertical,
-                                           QDemonRenderContextType renderContextType)
+QDemonRef<QDemonLoadedTexture> QDemonLoadedTexture::loadQImage(const QString &inPath, qint32 flipVertical, QDemonRenderContextType renderContextType)
 {
     Q_UNUSED(flipVertical)
     Q_UNUSED(renderContextType)
@@ -51,12 +50,11 @@ QDemonRef<QDemonLoadedTexture> QDemonLoadedTexture::loadQImage(const QString &in
     retval->height = image.height();
     retval->components = image.pixelFormat().channelCount();
     retval->image = image;
-    retval->data = (void*)retval->image.bits();
+    retval->data = (void *)retval->image.bits();
     retval->dataSizeInBytes = image.sizeInBytes();
     retval->setFormatFromComponents();
     return retval;
 }
-
 
 namespace {
 
@@ -131,12 +129,9 @@ static void getBlockColors(const DXTColBlock &block, Color8888 colors[4], bool i
         // 4 color block
         for (i = 0; i < 2; i++) {
             colors[i + 2].a = 0xff;
-            colors[i + 2].r =
-                (quint8)((quint16(colors[0].r) * (2 - i) + quint16(colors[1].r) * (1 + i)) / 3);
-            colors[i + 2].g =
-                (quint8)((quint16(colors[0].g) * (2 - i) + quint16(colors[1].g) * (1 + i)) / 3);
-            colors[i + 2].b =
-                (quint8)((quint16(colors[0].b) * (2 - i) + quint16(colors[1].b) * (1 + i)) / 3);
+            colors[i + 2].r = (quint8)((quint16(colors[0].r) * (2 - i) + quint16(colors[1].r) * (1 + i)) / 3);
+            colors[i + 2].g = (quint8)((quint16(colors[0].g) * (2 - i) + quint16(colors[1].g) * (1 + i)) / 3);
+            colors[i + 2].b = (quint8)((quint16(colors[0].b) * (2 - i) + quint16(colors[1].b) * (1 + i)) / 3);
         }
     } else {
         // 3 color block, number 4 is transparent
@@ -170,7 +165,7 @@ struct DXT_INFO_5
     enum { isDXT1 = 1, bytesPerBlock = 16 };
 };
 
-template <class INFO>
+template<class INFO>
 class DXT_BLOCKDECODER_BASE
 {
 protected:
@@ -266,7 +261,7 @@ public:
         int i = y / 2;
         const DXTAlphaBlock3BitLinear &block = m_pBlock->alpha;
         m_alphaBits = unsigned(block.data[0 + i * 3]) | (unsigned(block.data[1 + i * 3]) << 8)
-            | (unsigned(block.data[2 + i * 3]) << 16);
+                | (unsigned(block.data[2 + i * 3]) << 16);
         m_offset = (y & 1) * 12;
     }
 
@@ -279,7 +274,7 @@ public:
     }
 };
 
-template <class DECODER>
+template<class DECODER>
 void decodeDXTBlock(quint8 *dstData, const quint8 *srcBlock, long dstPitch, int bw, int bh)
 {
     DECODER decoder;
@@ -304,11 +299,7 @@ struct QDemonTextureDataWriter
     quint32 m_numComponents;
     QDemonTextureData &m_textureData;
     QDemonTextureDataWriter(quint32 w, quint32 h, bool hasA, QDemonTextureData &inTd)
-        : m_width(w)
-        , m_height(h)
-        , m_stride(hasA ? m_width * 4 : m_width * 3)
-        , m_numComponents(hasA ? 4 : 3)
-        , m_textureData(inTd)
+        : m_width(w), m_height(h), m_stride(hasA ? m_width * 4 : m_width * 3), m_numComponents(hasA ? 4 : 3), m_textureData(inTd)
     {
         quint32 dataSize = m_stride * m_height;
         if (dataSize > m_textureData.dataSizeInBytes) {
@@ -346,7 +337,7 @@ struct QDemonTextureDataWriter
     bool finished() { return false; }
 };
 
-//struct QDemonTextureAlphaScanner
+// struct QDemonTextureAlphaScanner
 //{
 //    bool &alpha;
 
@@ -367,12 +358,8 @@ struct QDemonTextureDataWriter
 //    bool finished() { return alpha; }
 //};
 // Scan the dds image's mipmap 0 level for alpha.
-template <class DECODER, class TWriterType>
-static void decompressDds(void *inSrc,
-                          quint32 inDataSize,
-                          quint32 inWidth,
-                          quint32 inHeight,
-                          TWriterType ioWriter)
+template<class DECODER, class TWriterType>
+static void decompressDds(void *inSrc, quint32 inDataSize, quint32 inWidth, quint32 inHeight, TWriterType ioWriter)
 {
     typedef typename DECODER::INFO INFO;
     typedef typename INFO::Block Block;
@@ -400,11 +387,7 @@ static void decompressDds(void *inSrc,
     }
 }
 
-bool scanImageForAlpha(const void *inData,
-                       quint32 inWidth,
-                       quint32 inHeight,
-                       quint32 inPixelSizeInBytes,
-                       quint8 inAlphaSizeInBits)
+bool scanImageForAlpha(const void *inData, quint32 inWidth, quint32 inHeight, quint32 inPixelSizeInBytes, quint8 inAlphaSizeInBits)
 {
     const quint8 *rowPtr = reinterpret_cast<const quint8 *>(inData);
     bool hasAlpha = false;
@@ -507,8 +490,7 @@ bool QDemonLoadedTexture::scanForTransparency()
 void QDemonLoadedTexture::ensureMultiplerOfFour(const char *inPath)
 {
     if (width % 4 || height % 4) {
-        qCWarning(PERF_WARNING,
-            "Image %s has non multiple of four width or height; perf hit for scaling", inPath);
+        qCWarning(PERF_WARNING, "Image %s has non multiple of four width or height; perf hit for scaling", inPath);
         if (data) {
             quint32 newWidth = QDemonTextRendererInterface::nextMultipleOf4(width);
             quint32 newHeight = QDemonTextRendererInterface::nextMultipleOf4(height);
@@ -516,11 +498,9 @@ void QDemonLoadedTexture::ensureMultiplerOfFour(const char *inPath)
             quint8 *newData = static_cast<quint8 *>(::malloc(newDataSize));
             QDemonImageScaler theScaler;
             if (components == 4) {
-                theScaler.fastExpandRowsAndColumns((unsigned char *)data, width, height, newData,
-                                                   newWidth, newHeight);
+                theScaler.fastExpandRowsAndColumns((unsigned char *)data, width, height, newData, newWidth, newHeight);
             } else
-                theScaler.expandRowsAndColumns((unsigned char *)data, width, height, newData,
-                                               newWidth, newHeight, components);
+                theScaler.expandRowsAndColumns((unsigned char *)data, width, height, newData, newWidth, newHeight, components);
 
             ::free(data);
             data = newData;
@@ -544,7 +524,7 @@ void QDemonLoadedTexture::releaseDecompressedTexture(QDemonTextureData inImage)
 QDemonRef<QDemonLoadedTexture> QDemonLoadedTexture::load(const QString &inPath,
                                                          QDemonInputStreamFactoryInterface &inFactory,
                                                          bool inFlipY,
-                                                         const QDemonRenderContextType& renderContextType)
+                                                         const QDemonRenderContextType &renderContextType)
 {
     if (inPath.isEmpty())
         return nullptr;
@@ -554,17 +534,15 @@ QDemonRef<QDemonLoadedTexture> QDemonLoadedTexture::load(const QString &inPath,
     QString fileName;
     inFactory.getPathForFile(inPath, fileName);
     if (theStream && inPath.size() > 3) {
-        if (inPath.endsWith(QStringLiteral("png"), Qt::CaseInsensitive)
-                || inPath.endsWith(QStringLiteral("jpg"), Qt::CaseInsensitive)
-                || inPath.endsWith(QStringLiteral("peg"), Qt::CaseInsensitive)
-                || inPath.endsWith(QStringLiteral("ktx"), Qt::CaseInsensitive)
-                || inPath.endsWith(QStringLiteral("gif"), Qt::CaseInsensitive)
-                || inPath.endsWith(QStringLiteral("bmp"), Qt::CaseInsensitive)) {
+        if (inPath.endsWith(QStringLiteral("png"), Qt::CaseInsensitive) || inPath.endsWith(QStringLiteral("jpg"), Qt::CaseInsensitive)
+            || inPath.endsWith(QStringLiteral("peg"), Qt::CaseInsensitive)
+            || inPath.endsWith(QStringLiteral("ktx"), Qt::CaseInsensitive) || inPath.endsWith(QStringLiteral("gif"), Qt::CaseInsensitive)
+            || inPath.endsWith(QStringLiteral("bmp"), Qt::CaseInsensitive)) {
             theLoadedImage = loadQImage(fileName, inFlipY, renderContextType);
-//        } else if (inPath.endsWith("dds", Qt::CaseInsensitive)) {
-//            theLoadedImage = LoadDDS(theStream, inFlipY, renderContextType);
-//        } else if (inPath.endsWith("hdr", Qt::CaseInsensitive)) {
-//            theLoadedImage = LoadHDR(theStream, renderContextType);
+            //        } else if (inPath.endsWith("dds", Qt::CaseInsensitive)) {
+            //            theLoadedImage = LoadDDS(theStream, inFlipY, renderContextType);
+            //        } else if (inPath.endsWith("hdr", Qt::CaseInsensitive)) {
+            //            theLoadedImage = LoadHDR(theStream, renderContextType);
         } else {
             qCWarning(INTERNAL_ERROR, "Unrecognized image extension: %s", qPrintable(inPath));
         }

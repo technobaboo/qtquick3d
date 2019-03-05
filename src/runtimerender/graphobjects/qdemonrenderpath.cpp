@@ -39,8 +39,7 @@ void QDemonPath::addSubPath(QDemonPathSubPath &inSegment)
     inSegment.m_nextSubPath = nullptr;
     if (m_firstSubPath) {
         // find last segment
-        for (lastSegment = m_firstSubPath; lastSegment && lastSegment->m_nextSubPath;
-             lastSegment = lastSegment->m_nextSubPath)
+        for (lastSegment = m_firstSubPath; lastSegment && lastSegment->m_nextSubPath; lastSegment = lastSegment->m_nextSubPath)
             ;
         lastSegment->m_nextSubPath = &inSegment;
     } else

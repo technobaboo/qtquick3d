@@ -46,23 +46,23 @@ class Q_DEMONRENDER_EXPORT QDemonRenderAttribLayout
 public:
     QAtomicInt ref;
     /**
-         * @brief constructor
-         *
-         * @param[in] context		Pointer to context
-         * @param[in] attribs		Pointer to attribute list
-         *
-         * @return No return.
-         */
+     * @brief constructor
+     *
+     * @param[in] context		Pointer to context
+     * @param[in] attribs		Pointer to attribute list
+     *
+     * @return No return.
+     */
     QDemonRenderAttribLayout(const QDemonRef<QDemonRenderContextImpl> &context,
                              QDemonConstDataRef<QDemonRenderVertexBufferEntry> attribs);
     ///< destructor
     ~QDemonRenderAttribLayout();
 
     /**
-         * @brief get the backend object handle
-         *
-         * @return the backend object handle.
-         */
+     * @brief get the backend object handle
+     *
+     * @return the backend object handle.
+     */
     QDemonRenderBackend::QDemonRenderBackendAttribLayoutObject GetAttribLayoutHandle() const
     {
         return m_attribLayoutHandle;

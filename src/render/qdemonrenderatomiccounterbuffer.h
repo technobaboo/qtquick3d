@@ -48,17 +48,17 @@ class Q_DEMONRENDER_EXPORT QDemonRenderAtomicCounterBuffer : public QDemonRender
 {
 public:
     /**
-         * @brief constructor
-         *
-         * @param[in] context		Pointer to context
-         * @param[in] bufferName	Name of the buffer. Must match the name used in programs
-         * @param[in] size			Size of the buffer
-         * @param[in] usage			Usage of the buffer (e.g. static, dynamic...)
-         * @param[in] data			A pointer to the buffer data that is allocated by the
-         * application.
-         *
-         * @return No return.
-         */
+     * @brief constructor
+     *
+     * @param[in] context		Pointer to context
+     * @param[in] bufferName	Name of the buffer. Must match the name used in programs
+     * @param[in] size			Size of the buffer
+     * @param[in] usage			Usage of the buffer (e.g. static, dynamic...)
+     * @param[in] data			A pointer to the buffer data that is allocated by the
+     * application.
+     *
+     * @return No return.
+     */
     QDemonRenderAtomicCounterBuffer(const QDemonRef<QDemonRenderContextImpl> &context,
                                     const QByteArray &bufferName,
                                     size_t size,
@@ -69,105 +69,99 @@ public:
     virtual ~QDemonRenderAtomicCounterBuffer() override;
 
     /**
-         * @brief bind the buffer bypasses the context state
-         *
-         * @return no return.
-         */
+     * @brief bind the buffer bypasses the context state
+     *
+     * @return no return.
+     */
     void bind() override;
 
     /**
-         * @brief bind the buffer to a shader program
-         *
-         * @param[in] index			Index of the constant buffer within the program
-         *
-         * @return no return.
-         */
+     * @brief bind the buffer to a shader program
+     *
+     * @param[in] index			Index of the constant buffer within the program
+     *
+     * @return no return.
+     */
     virtual void bindToShaderProgram(quint32 index);
 
     /**
-         * @brief update the buffer to hardware
-         *
-         * @return no return.
-         */
+     * @brief update the buffer to hardware
+     *
+     * @return no return.
+     */
     virtual void update();
 
     /**
-         * @brief update a piece of memory directly within the storage buffer
-         *
-         * Note: When you use this function you should know what you are doing.
-         *		 The memory layout within C++ must exactly match the memory layout in the
-         *shader.
-         *		 We use std140 (430) layout which guarantees a specific layout behavior across
-         *all HW vendors.
-         *		 How the memory layout is computed can be found in the GL spec.
-         *
-         * @param[in] offset	offset into storage buffer
-         * @param[in] data		pointer to data
-         *
-         * @return no return
-         */
+     * @brief update a piece of memory directly within the storage buffer
+     *
+     * Note: When you use this function you should know what you are doing.
+     *		 The memory layout within C++ must exactly match the memory layout in the
+     *shader.
+     *		 We use std140 (430) layout which guarantees a specific layout behavior across
+     *all HW vendors.
+     *		 How the memory layout is computed can be found in the GL spec.
+     *
+     * @param[in] offset	offset into storage buffer
+     * @param[in] data		pointer to data
+     *
+     * @return no return
+     */
     void updateData(qint32 offset, QDemonDataRef<quint8> data);
 
     /**
-         * @brief add a parameter to the atomic counter buffer
-         *
-         * @param[in] name		Name of the parameter (must match the name in the shader
-         * program)
-         * @param[in] offset	Offset in bytes into the buffer
-         *
-         * @return no return
-         */
+     * @brief add a parameter to the atomic counter buffer
+     *
+     * @param[in] name		Name of the parameter (must match the name in the shader
+     * program)
+     * @param[in] offset	Offset in bytes into the buffer
+     *
+     * @return no return
+     */
     void addParam(const QByteArray &name, quint32 offset);
 
     /**
-         * @brief Check if the buffer contains this param
-         *
-         * @param[in] name		Name of the parameter (must match the name in the shader
-         * program)
-         *
-         * @return no return
-         */
+     * @brief Check if the buffer contains this param
+     *
+     * @param[in] name		Name of the parameter (must match the name in the shader
+     * program)
+     *
+     * @return no return
+     */
     bool containsParam(const QByteArray &name);
 
     /**
-         * @brief get the buffer name
-         *
-         * @return the buffer name
-         */
+     * @brief get the buffer name
+     *
+     * @return the buffer name
+     */
     QByteArray getBufferName() const { return m_name; }
 
     /**
-         * @brief get the backend object handle
-         *
-         * @return the backend object handle.
-         */
-    QDemonRenderBackend::QDemonRenderBackendBufferObject getBuffertHandle() const override
-    {
-        return m_bufferHandle;
-    }
+     * @brief get the backend object handle
+     *
+     * @return the backend object handle.
+     */
+    QDemonRenderBackend::QDemonRenderBackendBufferObject getBuffertHandle() const override { return m_bufferHandle; }
 
     // this will be obsolete
-    const void *getImplementationHandle() const override
-    {
-        return reinterpret_cast<void *>(m_bufferHandle);
-    }
+    const void *getImplementationHandle() const override { return reinterpret_cast<void *>(m_bufferHandle); }
 
     /**
-         * @brief create a QDemonRenderAtomicCounterBuffer object
-         *
-         * @param[in] context		Pointer to context
-         * @param[in] size			Size of the buffer
-         * @param[in] usage			Usage of the buffer (e.g. static, dynamic...)
-         * @param[in] data			A pointer to the buffer data that is allocated by the
-         * application.
-         *
-         * @return the buffer object or nullptr
-         */
+     * @brief create a QDemonRenderAtomicCounterBuffer object
+     *
+     * @param[in] context		Pointer to context
+     * @param[in] size			Size of the buffer
+     * @param[in] usage			Usage of the buffer (e.g. static, dynamic...)
+     * @param[in] data			A pointer to the buffer data that is allocated by the
+     * application.
+     *
+     * @return the buffer object or nullptr
+     */
     static QDemonRef<QDemonRenderAtomicCounterBuffer> create(const QDemonRef<QDemonRenderContextImpl> &context,
-                                                                  const char *bufferName,
-                                                                  QDemonRenderBufferUsageType::Enum usageType,
-                                                                  size_t size,
-                                                                  QDemonConstDataRef<quint8> bufferData);
+                                                             const char *bufferName,
+                                                             QDemonRenderBufferUsageType::Enum usageType,
+                                                             size_t size,
+                                                             QDemonConstDataRef<quint8> bufferData);
 
 private:
     QByteArray m_name; ///< buffer name

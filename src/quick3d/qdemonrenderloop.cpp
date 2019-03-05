@@ -14,7 +14,7 @@
 QT_BEGIN_NAMESPACE
 
 QDemonRenderLoop *QDemonRenderLoop::s_instance = nullptr;
-//extern bool qsg_useConsistentTiming();
+// extern bool qsg_useConsistentTiming();
 
 class QDemonGuiThreadRenderLoop : public QDemonRenderLoop
 {
@@ -43,7 +43,8 @@ public:
     QDemonRef<QDemonRenderContextInterface> sceneGraphContext() const override;
     QDemonRef<QDemonRenderContext> renderContext() const override { return m_renderContext; }
 
-    struct WindowData {
+    struct WindowData
+    {
         bool updatePending : 1;
         bool grabOnly : 1;
     };
@@ -61,9 +62,7 @@ public:
 
 #include "qdemonrenderloop.moc"
 
-QDemonRenderLoop::~QDemonRenderLoop()
-{
-}
+QDemonRenderLoop::~QDemonRenderLoop() {}
 
 void QDemonRenderLoop::postJob(QDemonWindow *window, QRunnable *job)
 {
@@ -88,19 +87,15 @@ void QDemonRenderLoop::cleanup()
     for (QDemonWindow *w : s_instance->windows()) {
         QDemonWindowPrivate *wd = QDemonWindowPrivate::get(w);
         if (wd->windowManager == s_instance) {
-           s_instance->windowDestroyed(w);
-           wd->windowManager = nullptr;
+            s_instance->windowDestroyed(w);
+            wd->windowManager = nullptr;
         }
     }
     delete s_instance;
     s_instance = nullptr;
 }
 
-void QDemonRenderLoop::handleContextCreationFailure(QDemonWindow *window, bool isEs)
-{
-    Q_UNUSED(window)
-    Q_UNUSED(isEs)
-}
+void QDemonRenderLoop::handleContextCreationFailure(QDemonWindow *window, bool isEs){ Q_UNUSED(window) Q_UNUSED(isEs) }
 
 QDemonRenderLoop *QDemonRenderLoop::instance()
 {
@@ -200,8 +195,7 @@ static QSurfaceFormat idealSurfaceFormat()
     return f;
 }
 
-QDemonGuiThreadRenderLoop::QDemonGuiThreadRenderLoop()
-    : gl(nullptr)
+QDemonGuiThreadRenderLoop::QDemonGuiThreadRenderLoop() : gl(nullptr)
 {
     m_contextCore = QDemonRenderContextCoreInterface::create();
     m_contextCore->setTextRendererCore(QDemonTextRendererInterface::createQtTextRenderer());
@@ -230,9 +224,7 @@ QDemonGuiThreadRenderLoop::QDemonGuiThreadRenderLoop()
     }
 }
 
-QDemonGuiThreadRenderLoop::~QDemonGuiThreadRenderLoop()
-{
-}
+QDemonGuiThreadRenderLoop::~QDemonGuiThreadRenderLoop() {}
 
 void QDemonGuiThreadRenderLoop::show(QDemonWindow *window)
 {
@@ -270,13 +262,13 @@ void QDemonGuiThreadRenderLoop::windowDestroyed(QDemonWindow *window)
 
     d->cleanupNodesOnShutdown();
     if (m_windows.size() == 0) {
-        //rc->invalidate();
+        // rc->invalidate();
         delete gl;
         gl = nullptr;
     } else if (gl && window == gl->surface() && current) {
         gl->doneCurrent();
     }
-    //delete d->animationController;
+    // delete d->animationController;
 }
 
 void QDemonGuiThreadRenderLoop::renderWindow(QDemonWindow *window)
@@ -313,7 +305,7 @@ void QDemonGuiThreadRenderLoop::renderWindow(QDemonWindow *window)
         return;
 
     if (!data.grabOnly) {
-        //cd->flushFrameSynchronousEvents();
+        // cd->flushFrameSynchronousEvents();
         // Event delivery/processing triggered the window to be deleted or stop rendering.
         if (!m_windows.contains(window))
             return;
@@ -324,15 +316,15 @@ void QDemonGuiThreadRenderLoop::renderWindow(QDemonWindow *window)
     emit window->afterAnimating();
 
     cd->syncSceneGraph();
-//    if (lastDirtyWindow)
-//        rc->endSync();
+    //    if (lastDirtyWindow)
+    //        rc->endSync();
 
     cd->renderSceneGraph(window->size());
 
     if (data.grabOnly) {
-//        bool alpha = window->format().alphaBufferSize() > 0 && window->color().alpha() != 255;
-//        grabContent = qt_gl_read_framebuffer(window->size() * window->effectiveDevicePixelRatio(), alpha, alpha);
-//        grabContent.setDevicePixelRatio(window->effectiveDevicePixelRatio());
+        //        bool alpha = window->format().alphaBufferSize() > 0 && window->color().alpha() != 255;
+        //        grabContent = qt_gl_read_framebuffer(window->size() * window->effectiveDevicePixelRatio(), alpha,
+        //        alpha); grabContent.setDevicePixelRatio(window->effectiveDevicePixelRatio());
         data.grabOnly = false;
     }
 
@@ -386,15 +378,14 @@ QDemonRef<QDemonRenderContextInterface> QDemonGuiThreadRenderLoop::sceneGraphCon
 void QDemonGuiThreadRenderLoop::releaseResources(QDemonWindow *w)
 {
     // No full invalidation of the rendercontext, just clear some caches.
-    //QDemonWindowPrivate *d = QDemonWindowPrivate::get(w);
-//    if (d->renderer)
-//        d->renderer->releaseCachedResources();
+    // QDemonWindowPrivate *d = QDemonWindowPrivate::get(w);
+    //    if (d->renderer)
+    //        d->renderer->releaseCachedResources();
 }
 
 void QDemonGuiThreadRenderLoop::handleUpdateRequest(QDemonWindow *window)
 {
     renderWindow(window);
 }
-
 
 QT_END_NAMESPACE

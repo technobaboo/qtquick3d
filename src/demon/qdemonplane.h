@@ -20,27 +20,18 @@ public:
     /**
     \brief Constructor from a normal and a distance
     */
-    Q_ALWAYS_INLINE QDemonPlane(float nx, float ny, float nz, float distance)
-        : n(nx, ny, nz)
-        , d(distance)
-    {
-    }
+    Q_ALWAYS_INLINE QDemonPlane(float nx, float ny, float nz, float distance) : n(nx, ny, nz), d(distance) {}
 
     /**
     \brief Constructor from a normal and a distance
     */
-    Q_ALWAYS_INLINE QDemonPlane(const QVector3D &normal, float distance)
-        : n(normal)
-        , d(distance)
-    {
-    }
+    Q_ALWAYS_INLINE QDemonPlane(const QVector3D &normal, float distance) : n(normal), d(distance) {}
 
     /**
     \brief Constructor from a point on the plane and a normal
     */
     Q_ALWAYS_INLINE QDemonPlane(const QVector3D &point, const QVector3D &normal)
-        : n(normal)
-        , d(-QVector3D::dotProduct(point, n)) // p satisfies normal.dot(p) + d = 0
+        : n(normal), d(-QVector3D::dotProduct(point, n)) // p satisfies normal.dot(p) + d = 0
     {
     }
 
@@ -53,23 +44,14 @@ public:
         d = QVector3D::dotProduct(-p0, n);
     }
 
-    Q_ALWAYS_INLINE float distance(const QVector3D &p) const
-    {
-        return QVector3D::dotProduct(p, n) + d;
-    }
+    Q_ALWAYS_INLINE float distance(const QVector3D &p) const { return QVector3D::dotProduct(p, n) + d; }
 
-    Q_ALWAYS_INLINE bool contains(const QVector3D &p) const
-    {
-        return qAbs(distance(p)) < (1.0e-7f);
-    }
+    Q_ALWAYS_INLINE bool contains(const QVector3D &p) const { return qAbs(distance(p)) < (1.0e-7f); }
 
     /**
     \brief projects p into the plane
     */
-    Q_ALWAYS_INLINE QVector3D project(const QVector3D &p) const
-    {
-        return p - n * distance(p);
-    }
+    Q_ALWAYS_INLINE QVector3D project(const QVector3D &p) const { return p - n * distance(p); }
 
     /**
     \brief find an arbitrary point in the plane
@@ -80,8 +62,7 @@ public:
     \brief equivalent plane with unit normal
     */
 
-    Q_ALWAYS_INLINE void normalize()
-;
+    Q_ALWAYS_INLINE void normalize();
 
     QVector3D n; //!< The normal to the plane
     float d = 0.0f; //!< The distance from the origin

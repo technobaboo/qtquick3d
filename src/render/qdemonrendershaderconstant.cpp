@@ -2,7 +2,6 @@
 #include <QtDemonRender/QDemonRenderShaderProgram>
 #include <QtDemonRender/QDemonRenderContext>
 
-
 QT_BEGIN_NAMESPACE
 
 void QDemonRenderShaderConstantBuffer::validate(QDemonRef<QDemonRenderShaderProgram> inShader)
@@ -16,7 +15,7 @@ void QDemonRenderShaderConstantBuffer::validate(QDemonRef<QDemonRenderShaderProg
     QDemonRef<QDemonRenderConstantBuffer> cb = m_context->getConstantBuffer(m_name);
     if (cb) {
         cb->setupBuffer(inShader.data(), m_location, m_size, m_paramCount);
-        //cb->addRef();
+        // cb->addRef();
         m_constBuffer = cb;
     } else {
         Q_ASSERT(false);
@@ -73,6 +72,4 @@ void QDemonRenderShaderAtomicCounterBuffer::bindToProgram(QDemonRef<QDemonRender
         m_atomicCounterBuffer->bindToShaderProgram(m_location);
 }
 
-
 QT_END_NAMESPACE
-

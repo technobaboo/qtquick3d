@@ -60,8 +60,7 @@ struct QDemonTextureAtlasFontEntry
     float m_t1 = 0.0f;
 
     QDemonTextureAtlasFontEntry() = default;
-    QDemonTextureAtlasFontEntry(float x, float y, float width, float height, float xoffset,
-                                float yoffset, float advance, float s, float t, float s1, float t1)
+    QDemonTextureAtlasFontEntry(float x, float y, float width, float height, float xoffset, float yoffset, float advance, float s, float t, float s1, float t1)
         : m_x(x)
         , m_y(y)
         , m_width(width)
@@ -75,8 +74,6 @@ struct QDemonTextureAtlasFontEntry
         , m_t1(t1)
     {
     }
-
-
 };
 
 typedef QString TStrType;
@@ -88,10 +85,7 @@ struct QDemonTextAtlasFont
     quint32 m_fontSize;
     TTextureAtlasMap m_atlasEntries; ///< our entries in the atlas
 
-    QDemonTextAtlasFont(quint32 fontSize)
-        : m_fontSize(fontSize)
-    {
-    }
+    QDemonTextAtlasFont(quint32 fontSize) : m_fontSize(fontSize) {}
 
     static QDemonRef<QDemonTextAtlasFont> createTextureAtlasFont(quint32 fontSize)
     {
@@ -112,10 +106,9 @@ private:
     QDemonRef<QDemonTextureAtlasInterface> m_textTextureAtlas;
     QDemonRef<QDemonTextAtlasFont> m_textFont;
     QRawFont *m_font = nullptr;
+
 public:
-    virtual ~QDemonOnscreenTextRenderer() override
-    {
-    }
+    virtual ~QDemonOnscreenTextRenderer() override {}
 
     void addSystemFontDirectory(const char *) override {}
 
@@ -170,23 +163,27 @@ public:
                 glyphImage = rawFont->alphaMapForGlyph(index, QRawFont::PixelAntialiasing);
 
             QRectF rect = rawFont->boundingRect(index);
-            QDemonConstDataRef<quint8> bufferData(static_cast<const quint8 *>(glyphImage.bits()),
-                                                  glyphImage.byteCount());
+            QDemonConstDataRef<quint8> bufferData(static_cast<const quint8 *>(glyphImage.bits()), glyphImage.byteCount());
 
-            theAtlasRect = m_textTextureAtlas->addAtlasEntry(
-                        glyphImage.width(), glyphImage.height(),
-                        glyphImage.bytesPerLine(), glyphImage.width(), bufferData);
+            theAtlasRect = m_textTextureAtlas->addAtlasEntry(glyphImage.width(),
+                                                             glyphImage.height(),
+                                                             glyphImage.bytesPerLine(),
+                                                             glyphImage.width(),
+                                                             bufferData);
 
             if (theAtlasRect.width != 0) {
-                font.m_atlasEntries.insert(
-                                cache.at(i).unicode(), QDemonTextureAtlasFontEntry(
-                                    (float)theAtlasRect.x, (float)theAtlasRect.y,
-                                    (float)theAtlasRect.width, (float)theAtlasRect.height,
-                                    (float)rect.x(), (float)(0.0 - rect.height() - rect.y()),
-                                    glyphAdvances[i].x(),
-                                    theAtlasRect.normX, theAtlasRect.normY,
-                                    theAtlasRect.normX + theAtlasRect.normWidth,
-                                    theAtlasRect.normY + theAtlasRect.normHeight));
+                font.m_atlasEntries.insert(cache.at(i).unicode(),
+                                           QDemonTextureAtlasFontEntry((float)theAtlasRect.x,
+                                                                       (float)theAtlasRect.y,
+                                                                       (float)theAtlasRect.width,
+                                                                       (float)theAtlasRect.height,
+                                                                       (float)rect.x(),
+                                                                       (float)(0.0 - rect.height() - rect.y()),
+                                                                       glyphAdvances[i].x(),
+                                                                       theAtlasRect.normX,
+                                                                       theAtlasRect.normY,
+                                                                       theAtlasRect.normX + theAtlasRect.normWidth,
+                                                                       theAtlasRect.normY + theAtlasRect.normHeight));
             }
         }
     }
@@ -238,8 +235,7 @@ public:
     }
 
     // unused
-    QDemonTextTextureDetails renderText(const QDemonTextRenderInfo &, QDemonRenderPathFontItem &,
-                                   QDemonRenderPathFontSpecification &) override
+    QDemonTextTextureDetails renderText(const QDemonTextRenderInfo &, QDemonRenderPathFontItem &, QDemonRenderPathFontSpecification &) override
     {
         Q_ASSERT(false);
         return QDemonTextTextureDetails();
@@ -247,8 +243,8 @@ public:
 
     QDemonRenderTextureAtlasDetails renderText(const QDemonTextRenderInfo &inText) override
     {
-//        const wchar_t *wText = theStringTable.GetWideStr(inText.m_Text);
-//        quint32 length = (quint32)wcslen(wText);
+        //        const wchar_t *wText = theStringTable.GetWideStr(inText.m_Text);
+        //        quint32 length = (quint32)wcslen(wText);
         // ### Fix this to not use w_char's and instead use 8bit values
         QByteArray wText = inText.text.toLocal8Bit();
         const int length = wText.size();
@@ -262,7 +258,7 @@ public:
             // allocate buffer for all the vertex data we need
             // we construct triangles here
             // which means character count x 6 vertices x 5 floats
-            float *vertexData = static_cast<float*>(::malloc(length * 6 * 5 * sizeof(float)));
+            float *vertexData = static_cast<float *>(::malloc(length * 6 * 5 * sizeof(float)));
             float *bufPtr = vertexData;
             if (vertexData) {
                 for (int i = 0; i < length; ++i) {
@@ -326,22 +322,21 @@ public:
         return QDemonRenderTextureAtlasDetails();
     }
 
-    QDemonTextTextureAtlasEntryDetails renderAtlasEntry(quint32 index,
-                                                   QDemonRenderTexture2D &inTexture) override
+    QDemonTextTextureAtlasEntryDetails renderAtlasEntry(quint32 index, QDemonRenderTexture2D &inTexture) override
     {
         if (m_textTextureAtlas) {
             TTextureAtlasEntryAndBuffer theEntry = m_textTextureAtlas->getAtlasEntryByIndex(index);
             if (theEntry.first.width) {
-                inTexture.setTextureData(theEntry.second, 0, theEntry.first.width,
-                                         theEntry.first.height, QDemonRenderTextureFormats::Alpha8);
+                inTexture.setTextureData(theEntry.second, 0, theEntry.first.width, theEntry.first.height, QDemonRenderTextureFormats::Alpha8);
                 inTexture.setMagFilter(QDemonRenderTextureMagnifyingOp::Linear);
                 inTexture.setMinFilter(QDemonRenderTextureMinifyingOp::Linear);
                 inTexture.setTextureWrapS(QDemonRenderTextureCoordOp::ClampToEdge);
                 inTexture.setTextureWrapT(QDemonRenderTextureCoordOp::ClampToEdge);
                 QDemonTextureDetails theTextureDetails = inTexture.getTextureDetails();
                 return QDemonTextTextureAtlasEntryDetails(theTextureDetails.width,
-                                                     theTextureDetails.height, theEntry.first.x,
-                                                     theEntry.first.y);
+                                                          theTextureDetails.height,
+                                                          theEntry.first.x,
+                                                          theEntry.first.y);
             }
         }
 

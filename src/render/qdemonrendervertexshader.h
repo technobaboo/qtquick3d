@@ -42,38 +42,33 @@ class QDemonRenderVertexShader : public QDemonRenderShader
 
 public:
     /**
-         * @brief constructor
-         *
-         * @param[in] context		Pointer to render context
-         * @param[in] fnd			Pointer to foundation
-         * @param[in] source		Pointer to shader source code
-         * @param[in] binaryProgram	true if this is a binary program
-         *
-         * @return No return.
-         */
-    QDemonRenderVertexShader(const QDemonRef<QDemonRenderContextImpl> &context,
-                             QDemonConstDataRef<qint8> source,
-                             bool binaryProgram);
+     * @brief constructor
+     *
+     * @param[in] context		Pointer to render context
+     * @param[in] fnd			Pointer to foundation
+     * @param[in] source		Pointer to shader source code
+     * @param[in] binaryProgram	true if this is a binary program
+     *
+     * @return No return.
+     */
+    QDemonRenderVertexShader(const QDemonRef<QDemonRenderContextImpl> &context, QDemonConstDataRef<qint8> source, bool binaryProgram);
 
     /// @brief destructor
     ~QDemonRenderVertexShader() override;
 
     /**
-         * @brief Query if shader compiled succesfuly
-         *
-         * @return True if shader is valid.
-         */
+     * @brief Query if shader compiled succesfuly
+     *
+     * @return True if shader is valid.
+     */
     bool isValid() override { return (m_shaderHandle != nullptr); }
 
     /**
-         * @brief get the backend object handle
-         *
-         * @return the backend object handle.
-         */
-    virtual QDemonRenderBackend::QDemonRenderBackendVertexShaderObject getShaderHandle()
-    {
-        return m_shaderHandle;
-    }
+     * @brief get the backend object handle
+     *
+     * @return the backend object handle.
+     */
+    virtual QDemonRenderBackend::QDemonRenderBackendVertexShaderObject getShaderHandle() { return m_shaderHandle; }
 
 private:
     QDemonRenderBackend::QDemonRenderBackendVertexShaderObject m_shaderHandle; ///< opaque backend handle

@@ -39,8 +39,7 @@ QDemonRenderIndexBuffer::QDemonRenderIndexBuffer(const QDemonRef<QDemonRenderCon
                                                  QDemonRenderComponentTypes::Enum componentType,
                                                  QDemonRenderBufferUsageType::Enum usageType,
                                                  QDemonDataRef<quint8> data)
-    : QDemonRenderDataBuffer(context, size, QDemonRenderBufferBindValues::Index, usageType, data)
-    , m_componentType(componentType)
+    : QDemonRenderDataBuffer(context, size, QDemonRenderBufferBindValues::Index, usageType, data), m_componentType(componentType)
 {
 }
 
@@ -76,19 +75,23 @@ void QDemonRenderIndexBuffer::bind()
 }
 
 QDemonRef<QDemonRenderIndexBuffer> QDemonRenderIndexBuffer::create(const QDemonRef<QDemonRenderContextImpl> &context,
-                                                                        QDemonRenderBufferUsageType::Enum usageType,
-                                                                        QDemonRenderComponentTypes::Enum componentType,
-                                                                        size_t size, QDemonConstDataRef<quint8> bufferData)
+                                                                   QDemonRenderBufferUsageType::Enum usageType,
+                                                                   QDemonRenderComponentTypes::Enum componentType,
+                                                                   size_t size,
+                                                                   QDemonConstDataRef<quint8> bufferData)
 {
-    if (componentType != QDemonRenderComponentTypes::UnsignedInteger32
-            && componentType != QDemonRenderComponentTypes::UnsignedInteger16
-            && componentType != QDemonRenderComponentTypes::UnsignedInteger8) {
+    if (componentType != QDemonRenderComponentTypes::UnsignedInteger32 && componentType != QDemonRenderComponentTypes::UnsignedInteger16
+        && componentType != QDemonRenderComponentTypes::UnsignedInteger8) {
         qCCritical(INVALID_PARAMETER, "Invalid component type for index buffer");
         Q_ASSERT(false);
         return nullptr;
     }
 
-    return QDemonRef<QDemonRenderIndexBuffer>(new QDemonRenderIndexBuffer(context, size, componentType, usageType,
-                                                                               toDataRef(const_cast<quint8 *>(bufferData.begin()), bufferData.size())));
+    return QDemonRef<QDemonRenderIndexBuffer>(
+            new QDemonRenderIndexBuffer(context,
+                                        size,
+                                        componentType,
+                                        usageType,
+                                        toDataRef(const_cast<quint8 *>(bufferData.begin()), bufferData.size())));
 }
 QT_END_NAMESPACE

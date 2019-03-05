@@ -41,64 +41,61 @@ class QDemonRenderOcclusionQuery : public QDemonRenderQueryBase
 {
 public:
     /**
-         * @brief constructor
-         *
-         * @param[in] context		Pointer to context
-         * @param[in] fnd			Pointer to foundation
-         *
-         * @return No return.
-         */
+     * @brief constructor
+     *
+     * @param[in] context		Pointer to context
+     * @param[in] fnd			Pointer to foundation
+     *
+     * @return No return.
+     */
     QDemonRenderOcclusionQuery(const QDemonRef<QDemonRenderContextImpl> &context);
 
     ///< destructor
     ~QDemonRenderOcclusionQuery() override;
 
     /**
-         * @brief Get query type
-         *
-         * @return Return query type
-         */
-    QDemonRenderQueryType::Enum getQueryType() const override
-    {
-        return QDemonRenderQueryType::Samples;
-    }
+     * @brief Get query type
+     *
+     * @return Return query type
+     */
+    QDemonRenderQueryType::Enum getQueryType() const override { return QDemonRenderQueryType::Samples; }
 
     /**
-         * @brief begin a query
-         *
-         * @return no return.
-         */
+     * @brief begin a query
+     *
+     * @return no return.
+     */
     void begin() override;
 
     /**
-         * @brief end a query
-         *
-         * @return no return.
-         */
+     * @brief end a query
+     *
+     * @return no return.
+     */
     void end() override;
 
     /**
-         * @brief Get the result of a query
-         *
-         * @param[out] params	Contains result of query regarding query type
-         *
-         * @return no return.
-         */
+     * @brief Get the result of a query
+     *
+     * @param[out] params	Contains result of query regarding query type
+     *
+     * @return no return.
+     */
     void getResult(quint32 *params) override;
 
     /**
-         * @brief query if a result is available
-         *
-         *
-         * @return true if available.
-         */
+     * @brief query if a result is available
+     *
+     *
+     * @return true if available.
+     */
     virtual bool GetResultAvailable();
 
     /*
-         * @brief static creation function
-         *
-         * * @return a occlusion query object on success
-         */
+     * @brief static creation function
+     *
+     * * @return a occlusion query object on success
+     */
     static QDemonRef<QDemonRenderOcclusionQuery> create(const QDemonRef<QDemonRenderContextImpl> &context);
 };
 

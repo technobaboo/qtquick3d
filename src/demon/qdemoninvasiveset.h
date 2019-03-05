@@ -8,7 +8,7 @@
 
 QT_BEGIN_NAMESPACE
 
-template <typename TObjectType, typename TGetSetIndexOp, typename TSetSetIndexOp>
+template<typename TObjectType, typename TGetSetIndexOp, typename TSetSetIndexOp>
 class InvasiveSet
 {
     QVector<TObjectType *> mSet;
@@ -17,9 +17,7 @@ class InvasiveSet
     InvasiveSet &operator=(const InvasiveSet &other);
 
 public:
-    InvasiveSet()
-    {
-    }
+    InvasiveSet() {}
 
     bool insert(TObjectType &inObject)
     {

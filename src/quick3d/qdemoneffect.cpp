@@ -3,15 +3,9 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonEffect::QDemonEffect()
-{
+QDemonEffect::QDemonEffect() {}
 
-}
-
-QDemonEffect::~QDemonEffect()
-{
-
-}
+QDemonEffect::~QDemonEffect() {}
 
 QDemonObject::Type QDemonEffect::type() const
 {
@@ -37,7 +31,6 @@ QDemonGraphObject *QDemonEffect::updateSpatialNode(QDemonGraphObject *node)
     // TODO: Add Effect Node and update properties
 
     return node;
-
 }
 
 QT_END_NAMESPACE

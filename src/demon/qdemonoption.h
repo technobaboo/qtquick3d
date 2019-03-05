@@ -9,31 +9,17 @@ struct QDemonEmpty
 {
 };
 
-template <typename TDataType>
+template<typename TDataType>
 class QDemonOption
 {
     TDataType mData;
     bool mHasValue;
 
 public:
-    QDemonOption(const TDataType &data)
-        : mData(data)
-        , mHasValue(true)
-    {
-    }
-    QDemonOption(const QDemonEmpty &)
-        : mHasValue(false)
-    {
-    }
-    QDemonOption()
-        : mHasValue(false)
-    {
-    }
-    QDemonOption(const QDemonOption &other)
-        : mData(other.mData)
-        , mHasValue(other.mHasValue)
-    {
-    }
+    QDemonOption(const TDataType &data) : mData(data), mHasValue(true) {}
+    QDemonOption(const QDemonEmpty &) : mHasValue(false) {}
+    QDemonOption() : mHasValue(false) {}
+    QDemonOption(const QDemonOption &other) : mData(other.mData), mHasValue(other.mHasValue) {}
     QDemonOption &operator=(const QDemonOption &other)
     {
         mData = other.mData;

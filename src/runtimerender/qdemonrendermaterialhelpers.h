@@ -37,8 +37,7 @@ QT_BEGIN_NAMESPACE
 
 inline bool isMaterial(QDemonGraphObject &obj)
 {
-    return obj.type == QDemonGraphObjectTypes::CustomMaterial
-            || obj.type == QDemonGraphObjectTypes::DefaultMaterial
+    return obj.type == QDemonGraphObjectTypes::CustomMaterial || obj.type == QDemonGraphObjectTypes::DefaultMaterial
             || obj.type == QDemonGraphObjectTypes::ReferencedMaterial;
 }
 
@@ -49,7 +48,10 @@ inline bool isMaterial(QDemonGraphObject *obj)
     return false;
 }
 
-inline bool isImage(QDemonGraphObject &obj) { return obj.type == QDemonGraphObjectTypes::Image; }
+inline bool isImage(QDemonGraphObject &obj)
+{
+    return obj.type == QDemonGraphObjectTypes::Image;
+}
 
 inline bool isImage(QDemonGraphObject *obj)
 {

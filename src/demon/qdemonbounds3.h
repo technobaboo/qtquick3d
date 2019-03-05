@@ -46,45 +46,38 @@ public:
     \param v0 first point included in the AABB.
     \param v1 second point included in the AABB.
     */
-    static  Q_ALWAYS_INLINE QDemonBounds3 boundsOfPoints(const QVector3D &v0,
-                                                         const QVector3D &v1);
+    static Q_ALWAYS_INLINE QDemonBounds3 boundsOfPoints(const QVector3D &v0, const QVector3D &v1);
 
     /**
     \brief returns the AABB from center and extents vectors.
     \param center Center vector
     \param extent Extents vector
     */
-    static  Q_ALWAYS_INLINE QDemonBounds3 centerExtents(const QVector3D &center,
-                                                        const QVector3D &extent);
+    static Q_ALWAYS_INLINE QDemonBounds3 centerExtents(const QVector3D &center, const QVector3D &extent);
 
     /**
     \brief Construct from center, extent, and (not necessarily orthogonal) basis
     */
-    static  Q_ALWAYS_INLINE QDemonBounds3 basisExtent(const QVector3D &center,
-                                                      const QMatrix3x3 &basis,
-                                                      const QVector3D &extent);
+    static Q_ALWAYS_INLINE QDemonBounds3 basisExtent(const QVector3D &center, const QMatrix3x3 &basis, const QVector3D &extent);
 
     /**
     \brief Construct from pose and extent
     */
-    static  Q_ALWAYS_INLINE QDemonBounds3 poseExtent(const QDemonTransform &pose,
-                                                     const QVector3D &extent);
+    static Q_ALWAYS_INLINE QDemonBounds3 poseExtent(const QDemonTransform &pose, const QVector3D &extent);
 
     /**
     \brief gets the transformed bounds of the passed AABB (resulting in a bigger AABB).
     \param[in] matrix Transform to apply, can contain scaling as well
     \param[in] bounds The bounds to transform.
     */
-    static  Q_ALWAYS_INLINE QDemonBounds3 transform(const QMatrix3x3 &matrix,
-                                                    const QDemonBounds3 &bounds);
+    static Q_ALWAYS_INLINE QDemonBounds3 transform(const QMatrix3x3 &matrix, const QDemonBounds3 &bounds);
 
     /**
     \brief gets the transformed bounds of the passed AABB (resulting in a bigger AABB).
     \param[in] transform Transform to apply, can contain scaling as well
     \param[in] bounds The bounds to transform.
     */
-    static  Q_ALWAYS_INLINE QDemonBounds3 transform(const QDemonTransform &transform,
-                                                    const QDemonBounds3 &bounds);
+    static Q_ALWAYS_INLINE QDemonBounds3 transform(const QDemonTransform &transform, const QDemonBounds3 &bounds);
 
     /**
     \brief Sets empty to true
@@ -186,19 +179,19 @@ public:
 };
 
 Q_DECL_CONSTEXPR Q_ALWAYS_INLINE QDemonBounds3::QDemonBounds3(const QVector3D &_minimum, const QVector3D &_maximum)
-    : minimum(_minimum)
-    , maximum(_maximum)
+    : minimum(_minimum), maximum(_maximum)
 {
 }
 
 Q_DECL_CONSTEXPR Q_ALWAYS_INLINE QDemonBounds3 QDemonBounds3::empty()
 {
     return QDemonBounds3(QVector3D(std::numeric_limits<float>::max(), std::numeric_limits<float>::max(), std::numeric_limits<float>::max()),
-                         QVector3D(-std::numeric_limits<float>::max(), -std::numeric_limits<float>::max(), -std::numeric_limits<float>::max()));
+                         QVector3D(-std::numeric_limits<float>::max(),
+                                   -std::numeric_limits<float>::max(),
+                                   -std::numeric_limits<float>::max()));
 }
 
-Q_ALWAYS_INLINE QDemonBounds3 QDemonBounds3::centerExtents(const QVector3D &center,
-                                                           const QVector3D &extent)
+Q_ALWAYS_INLINE QDemonBounds3 QDemonBounds3::centerExtents(const QVector3D &center, const QVector3D &extent)
 {
     return QDemonBounds3(center - extent, center + extent);
 }
@@ -216,7 +209,6 @@ Q_ALWAYS_INLINE void QDemonBounds3::setInfinite()
     minimum = QVector3D(-maxFloat, -maxFloat, -maxFloat);
     maximum = QVector3D(maxFloat, maxFloat, maxFloat);
 }
-
 
 Q_ALWAYS_INLINE bool QDemonBounds3::isEmpty() const
 {

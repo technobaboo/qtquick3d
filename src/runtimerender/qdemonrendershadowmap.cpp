@@ -37,10 +37,7 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonRenderShadowMap::QDemonRenderShadowMap(QDemonRenderContextInterface *inContext)
-    : m_context(inContext)
-{
-}
+QDemonRenderShadowMap::QDemonRenderShadowMap(QDemonRenderContextInterface *inContext) : m_context(inContext) {}
 
 QDemonRenderShadowMap::~QDemonRenderShadowMap()
 {
@@ -62,9 +59,13 @@ bool IsDepthFormat(QDemonRenderTextureFormats::Enum format)
 }
 }
 
-void QDemonRenderShadowMap::addShadowMapEntry(quint32 index, quint32 width, quint32 height,
-                                       QDemonRenderTextureFormats::Enum format, quint32 samples,
-                                       ShadowMapModes::Enum mode, ShadowFilterValues::Enum filter)
+void QDemonRenderShadowMap::addShadowMapEntry(quint32 index,
+                                              quint32 width,
+                                              quint32 height,
+                                              QDemonRenderTextureFormats::Enum format,
+                                              quint32 samples,
+                                              ShadowMapModes::Enum mode,
+                                              ShadowFilterValues::Enum filter)
 {
     QDemonRef<QDemonResourceManagerInterface> theManager(m_context->getResourceManager());
     QDemonShadowMapEntry *pEntry = nullptr;
@@ -95,8 +96,8 @@ void QDemonRenderShadowMap::addShadowMapEntry(quint32 index, quint32 width, quin
             QDemonTextureDetails theDetails(pEntry->m_depthMap->getTextureDetails());
 
             // If anything differs about the map we're looking for, let's recreate it.
-            if (theDetails.format != format || theDetails.width != width
-                    || theDetails.height != height || theDetails.sampleCount != samples) {
+            if (theDetails.format != format || theDetails.width != width || theDetails.height != height
+                || theDetails.sampleCount != samples) {
                 // release texture
                 theManager->release(pEntry->m_depthMap);
                 theManager->release(pEntry->m_depthCopy);
@@ -111,8 +112,8 @@ void QDemonRenderShadowMap::addShadowMapEntry(quint32 index, quint32 width, quin
             QDemonTextureDetails theDetails(pEntry->m_depthCube->getTextureDetails());
 
             // If anything differs about the map we're looking for, let's recreate it.
-            if (theDetails.format != format || theDetails.width != width
-                    || theDetails.height != height || theDetails.sampleCount != samples) {
+            if (theDetails.format != format || theDetails.width != width || theDetails.height != height
+                || theDetails.sampleCount != samples) {
                 // release texture
                 theManager->release(pEntry->m_depthCube);
                 theManager->release(pEntry->m_cubeCopy);
@@ -130,14 +131,20 @@ void QDemonRenderShadowMap::addShadowMapEntry(quint32 index, quint32 width, quin
     } else if (mode == ShadowMapModes::CUBE) {
         QDemonRef<QDemonRenderTextureCube> theDepthTex = theManager->allocateTextureCube(width, height, format, samples);
         QDemonRef<QDemonRenderTextureCube> theDepthCopy = theManager->allocateTextureCube(width, height, format, samples);
-        QDemonRef<QDemonRenderTexture2D> theDepthTemp = theManager->allocateTexture2D(width, height, QDemonRenderTextureFormats::Depth24Stencil8, samples);
+        QDemonRef<QDemonRenderTexture2D> theDepthTemp = theManager->allocateTexture2D(width,
+                                                                                      height,
+                                                                                      QDemonRenderTextureFormats::Depth24Stencil8,
+                                                                                      samples);
         m_shadowMapList.push_back(QDemonShadowMapEntry(index, mode, filter, theDepthTex, theDepthCopy, theDepthTemp));
 
         pEntry = &m_shadowMapList.back();
     } else {
         QDemonRef<QDemonRenderTexture2D> theDepthMap = theManager->allocateTexture2D(width, height, format, samples);
         QDemonRef<QDemonRenderTexture2D> theDepthCopy = theManager->allocateTexture2D(width, height, format, samples);
-        QDemonRef<QDemonRenderTexture2D> theDepthTemp = theManager->allocateTexture2D(width, height, QDemonRenderTextureFormats::Depth24Stencil8, samples);
+        QDemonRef<QDemonRenderTexture2D> theDepthTemp = theManager->allocateTexture2D(width,
+                                                                                      height,
+                                                                                      QDemonRenderTextureFormats::Depth24Stencil8,
+                                                                                      samples);
         m_shadowMapList.push_back(QDemonShadowMapEntry(index, mode, filter, theDepthMap, theDepthCopy, theDepthTemp));
 
         pEntry = &m_shadowMapList.back();

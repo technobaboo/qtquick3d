@@ -31,8 +31,7 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonRenderDefaultMaterial::QDemonRenderDefaultMaterial()
-    : QDemonGraphObject(QDemonGraphObjectTypes::DefaultMaterial)
+QDemonRenderDefaultMaterial::QDemonRenderDefaultMaterial() : QDemonGraphObject(QDemonGraphObjectTypes::DefaultMaterial)
 {
 }
 

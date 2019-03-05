@@ -53,6 +53,7 @@ class INodeQueue
 {
 protected:
     virtual ~INodeQueue();
+
 public:
     virtual void enqueue(QDemonRenderModel &inModel) = 0;
     virtual void enqueue(QDemonRenderLight &inLight) = 0;
@@ -75,9 +76,9 @@ struct NodeFlagValues
         GloballyPickable = 1 << 9,
         LayerEnableDepthTest = 1 << 10,
         LayerRenderToTarget = 1 << 11, ///< Does this layer render to the normal render target,
-        ///or is it offscreen-only
+        /// or is it offscreen-only
         ForceLayerOffscreen = 1 << 12, ///< Forces a layer to always use the offscreen rendering
-        ///mechanism.  This can be usefulf or caching purposes.
+        /// mechanism.  This can be usefulf or caching purposes.
         IgnoreParentTransform = 1 << 13,
         LayerEnableDepthPrePass = 1 << 14, ///< True when we render a depth pass before
     };
@@ -93,9 +94,7 @@ struct NodeTransformDirtyFlag
 
 struct QDemonNodeFlags : public QDemonFlags<NodeFlagValues::Enum, quint32>
 {
-    QDemonNodeFlags() : QDemonFlags<NodeFlagValues::Enum, quint32>(0)
-    {
-    }
+    QDemonNodeFlags() : QDemonFlags<NodeFlagValues::Enum, quint32>(0) {}
     void clearOrSet(bool value, NodeFlagValues::Enum enumVal) { QDemonFlags::clearOrSet(value, enumVal); }
     void setActive(bool value) { clearOrSet(value, NodeFlagValues::Active); }
     bool isActive() const { return this->operator&(NodeFlagValues::Active); }
@@ -124,59 +123,23 @@ struct QDemonNodeFlags : public QDemonFlags<NodeFlagValues::Enum, quint32>
     bool isLocallyPickable() const { return this->operator&(NodeFlagValues::LocallyPickable); }
     void setLocallyPickable(bool value) { clearOrSet(value, NodeFlagValues::LocallyPickable); }
 
-    bool isGloballyPickable() const
-    {
-        return this->operator&(NodeFlagValues::GloballyPickable);
-    }
-    void setGloballyPickable(bool value)
-    {
-        clearOrSet(value, NodeFlagValues::GloballyPickable);
-    }
+    bool isGloballyPickable() const { return this->operator&(NodeFlagValues::GloballyPickable); }
+    void setGloballyPickable(bool value) { clearOrSet(value, NodeFlagValues::GloballyPickable); }
 
-    bool isLayerRenderToTarget() const
-    {
-        return this->operator&(NodeFlagValues::LayerRenderToTarget);
-    }
-    void setLayerRenderToTarget(bool value)
-    {
-        clearOrSet(value, NodeFlagValues::LayerRenderToTarget);
-    }
+    bool isLayerRenderToTarget() const { return this->operator&(NodeFlagValues::LayerRenderToTarget); }
+    void setLayerRenderToTarget(bool value) { clearOrSet(value, NodeFlagValues::LayerRenderToTarget); }
 
-    bool isLayerEnableDepthTest() const
-    {
-        return this->operator&(NodeFlagValues::LayerEnableDepthTest);
-    }
-    void setLayerEnableDepthTest(bool value)
-    {
-        clearOrSet(value, NodeFlagValues::LayerEnableDepthTest);
-    }
+    bool isLayerEnableDepthTest() const { return this->operator&(NodeFlagValues::LayerEnableDepthTest); }
+    void setLayerEnableDepthTest(bool value) { clearOrSet(value, NodeFlagValues::LayerEnableDepthTest); }
 
-    bool isForceLayerOffscreen() const
-    {
-        return this->operator&(NodeFlagValues::ForceLayerOffscreen);
-    }
-    void setForceLayerOffscreen(bool value)
-    {
-        clearOrSet(value, NodeFlagValues::ForceLayerOffscreen);
-    }
+    bool isForceLayerOffscreen() const { return this->operator&(NodeFlagValues::ForceLayerOffscreen); }
+    void setForceLayerOffscreen(bool value) { clearOrSet(value, NodeFlagValues::ForceLayerOffscreen); }
 
-    bool isIgnoreParentTransform() const
-    {
-        return this->operator&(NodeFlagValues::IgnoreParentTransform);
-    }
-    void setIgnoreParentTransform(bool value)
-    {
-        clearOrSet(value, NodeFlagValues::IgnoreParentTransform);
-    }
+    bool isIgnoreParentTransform() const { return this->operator&(NodeFlagValues::IgnoreParentTransform); }
+    void setIgnoreParentTransform(bool value) { clearOrSet(value, NodeFlagValues::IgnoreParentTransform); }
 
-    bool isLayerEnableDepthPrepass() const
-    {
-        return this->operator&(NodeFlagValues::LayerEnableDepthPrePass);
-    }
-    void setLayerEnableDepthPrepass(bool value)
-    {
-        clearOrSet(value, NodeFlagValues::LayerEnableDepthPrePass);
-    }
+    bool isLayerEnableDepthPrepass() const { return this->operator&(NodeFlagValues::LayerEnableDepthPrePass); }
+    void setLayerEnableDepthPrepass(bool value) { clearOrSet(value, NodeFlagValues::LayerEnableDepthPrePass); }
 };
 
 class QDemonRenderNodeFilterInterface;
@@ -256,14 +219,14 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonGraphNode : public QDemonGraphObject
     void calculateLocalTransform();
 
     /**
-         * @brief setup local tranform from a matrix.
-         *		  This function decomposes a SRT matrix.
-         *		  This will fail if this matrix contains non-affine transformations
-         *
-         * @param inTransform[in]	input transformation
-         *
-         * @return true backend type
-         */
+     * @brief setup local tranform from a matrix.
+     *		  This function decomposes a SRT matrix.
+     *		  This will fail if this matrix contains non-affine transformations
+     *
+     * @param inTransform[in]	input transformation
+     *
+     * @return true backend type
+     */
     void setLocalTransformFromMatrix(QMatrix4x4 &inTransform);
 
     // Get the bounds of us and our children in our local space.
@@ -285,8 +248,7 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonGraphNode : public QDemonGraphObject
 
     // outMVP and outNormalMatrix are returned ready to upload to openGL, meaning they are
     // row-major.
-    void calculateMVPAndNormalMatrix(const QMatrix4x4 &inViewProjection, QMatrix4x4 &outMVP,
-                                     QMatrix3x3 &outNormalMatrix) const;
+    void calculateMVPAndNormalMatrix(const QMatrix4x4 &inViewProjection, QMatrix4x4 &outMVP, QMatrix3x3 &outNormalMatrix) const;
 
     // This should be in a utility file somewhere
     static void getMatrixUpper3x3(QMatrix3x3 &inDest, const QMatrix4x4 &inSrc);
@@ -294,7 +256,7 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonGraphNode : public QDemonGraphObject
 
     // Generic method used during serialization
     // to remap string and object pointers
-    template <typename TRemapperType>
+    template<typename TRemapperType>
     void remap(TRemapperType &inRemapper)
     {
         QDemonGraphObject::remap(inRemapper);

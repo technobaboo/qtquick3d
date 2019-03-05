@@ -37,9 +37,7 @@
 QT_BEGIN_NAMESPACE
 
 QDemonRenderPathRender::QDemonRenderPathRender(const QDemonRef<QDemonRenderContextImpl> &context, size_t range)
-    : m_context(context)
-    , m_backend(context->getBackend())
-    , m_strokeWidth(0.0f)
+    : m_context(context), m_backend(context->getBackend()), m_strokeWidth(0.0f)
 {
     m_range = range;
     m_pathRenderHandle = m_backend->createPathNVObject(range);
@@ -55,8 +53,10 @@ QDemonRenderPathRender::~QDemonRenderPathRender()
 void QDemonRenderPathRender::setPathSpecification(const QDemonRef<QDemonRenderPathSpecification> &inCommandBuffer)
 {
     m_backend->setPathSpecification(m_pathRenderHandle,
-                                    toConstDataRef(inCommandBuffer->getPathCommands().constData(), inCommandBuffer->getPathCommands().size()),
-                                    toConstDataRef(inCommandBuffer->getPathCoords().constData(), inCommandBuffer->getPathCoords().size()));
+                                    toConstDataRef(inCommandBuffer->getPathCommands().constData(),
+                                                   inCommandBuffer->getPathCommands().size()),
+                                    toConstDataRef(inCommandBuffer->getPathCoords().constData(),
+                                                   inCommandBuffer->getPathCoords().size()));
 }
 
 QDemonBounds3 QDemonRenderPathRender::getPathObjectBoundingBox()
@@ -82,11 +82,20 @@ void QDemonRenderPathRender::setStrokeWidth(float inStrokeWidth)
     }
 }
 
-float QDemonRenderPathRender::getStrokeWidth() const { return m_strokeWidth; }
+float QDemonRenderPathRender::getStrokeWidth() const
+{
+    return m_strokeWidth;
+}
 
-void QDemonRenderPathRender::stencilStroke() { m_backend->stencilStrokePath(m_pathRenderHandle); }
+void QDemonRenderPathRender::stencilStroke()
+{
+    m_backend->stencilStrokePath(m_pathRenderHandle);
+}
 
-void QDemonRenderPathRender::stencilFill() { m_backend->stencilFillPath(m_pathRenderHandle); }
+void QDemonRenderPathRender::stencilFill()
+{
+    m_backend->stencilFillPath(m_pathRenderHandle);
+}
 
 QDemonRef<QDemonRenderPathRender> QDemonRenderPathRender::create(const QDemonRef<QDemonRenderContextImpl> &context, size_t range)
 {

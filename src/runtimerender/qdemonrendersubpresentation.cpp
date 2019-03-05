@@ -35,15 +35,13 @@
 #endif
 QT_BEGIN_NAMESPACE
 
-QDemonRenderPickResult CSubPresentationPickQuery::pick(const QVector2D &inMouseCoords,
-                                                      const QVector2D &inViewportDimensions,
-                                                      bool inPickEverything)
+QDemonRenderPickResult CSubPresentationPickQuery::pick(const QVector2D &inMouseCoords, const QVector2D &inViewportDimensions, bool inPickEverything)
 {
     return m_renderer.doGraphQueryPick(inMouseCoords, inViewportDimensions, inPickEverything);
 }
 
 QDemonSubPresentationRenderer::QDemonSubPresentationRenderer(QDemonRenderContextInterface *inRenderContext,
-                                                   QDemonRef<QDemonPresentation> inPresentation)
+                                                             QDemonRef<QDemonPresentation> inPresentation)
     : m_renderContext(inRenderContext)
     , m_presentation(inPresentation)
     , m_pickQuery(*this)
@@ -51,71 +49,80 @@ QDemonSubPresentationRenderer::QDemonSubPresentationRenderer(QDemonRenderContext
 {
 }
 
-QDemonOffscreenRendererEnvironment
-QDemonSubPresentationRenderer::getDesiredEnvironment(QVector2D /*inPresScale*/)
+QDemonOffscreenRendererEnvironment QDemonSubPresentationRenderer::getDesiredEnvironment(QVector2D /*inPresScale*/)
 {
     // If we aren't using a clear color, then we are expected to blend with the background
     bool hasTransparency = m_presentation->scene->useClearColor ? false : true;
-    QDemonRenderTextureFormats::Enum format =
-            hasTransparency ? QDemonRenderTextureFormats::RGBA8 : QDemonRenderTextureFormats::RGB8;
+    QDemonRenderTextureFormats::Enum format = hasTransparency ? QDemonRenderTextureFormats::RGBA8
+                                                              : QDemonRenderTextureFormats::RGB8;
     return QDemonOffscreenRendererEnvironment((quint32)(m_presentation->presentationDimensions.x()),
-                                         (quint32)(m_presentation->presentationDimensions.y()),
-                                         format, QDemonOffscreenRendererDepthValues::Depth16, false,
-                                         AAModeValues::NoAA);
+                                              (quint32)(m_presentation->presentationDimensions.y()),
+                                              format,
+                                              QDemonOffscreenRendererDepthValues::Depth16,
+                                              false,
+                                              AAModeValues::NoAA);
 }
 
-QDemonOffscreenRenderFlags
-QDemonSubPresentationRenderer::needsRender(const QDemonOffscreenRendererEnvironment & /*inEnvironment*/,
-                                      QVector2D /*inPresScale*/,
-                                      const QDemonRenderInstanceId instanceId)
+QDemonOffscreenRenderFlags QDemonSubPresentationRenderer::needsRender(const QDemonOffscreenRendererEnvironment & /*inEnvironment*/,
+                                                                      QVector2D /*inPresScale*/,
+                                                                      const QDemonRenderInstanceId instanceId)
 {
     bool hasTransparency = m_presentation->scene->useClearColor ? false : true;
     QRect theViewportSize(m_renderContext->getRenderList()->getViewport());
-    bool wasDirty = m_presentation->scene->prepareForRender(
-                QVector2D((float)theViewportSize.width(), (float)theViewportSize.height()),
-                m_renderContext, instanceId);
+    bool wasDirty = m_presentation->scene->prepareForRender(QVector2D((float)theViewportSize.width(),
+                                                                      (float)theViewportSize.height()),
+                                                            m_renderContext,
+                                                            instanceId);
     return QDemonOffscreenRenderFlags(hasTransparency, wasDirty);
 }
 
 // Returns true if the rendered result image has transparency, or false
 // if it should be treated as a completely opaque image.
 void QDemonSubPresentationRenderer::render(const QDemonOffscreenRendererEnvironment &inEnvironment,
-                                      QDemonRenderContext &inRenderContext, QVector2D,
-                                      QDemonRenderScene::RenderClearCommand inClearColorBuffer,
-                                      const QDemonRenderInstanceId instanceId)
+                                           QDemonRenderContext &inRenderContext,
+                                           QVector2D,
+                                           QDemonRenderScene::RenderClearCommand inClearColorBuffer,
+                                           const QDemonRenderInstanceId instanceId)
 {
     QDemonSubPresentationHelper theHelper(m_renderContext, QSize((quint32)inEnvironment.width, (quint32)inEnvironment.height));
     QRect theViewportSize(inRenderContext.getViewport());
-    m_presentation->scene->render(
-                QVector2D((float)theViewportSize.width(), (float)theViewportSize.height()),
-                m_renderContext, inClearColorBuffer, instanceId);
+    m_presentation->scene->render(QVector2D((float)theViewportSize.width(), (float)theViewportSize.height()),
+                                  m_renderContext,
+                                  inClearColorBuffer,
+                                  instanceId);
     m_lastRenderedEnvironment = inEnvironment;
 }
 
-void QDemonSubPresentationRenderer::renderWithClear(
-        const QDemonOffscreenRendererEnvironment &inEnvironment,
-        QDemonRenderContext &inRenderContext, QVector2D inPresScale,
-        QDemonRenderScene::RenderClearCommand inClearBuffer, QVector3D inClearColor,
-        const QDemonRenderInstanceId id)
+void QDemonSubPresentationRenderer::renderWithClear(const QDemonOffscreenRendererEnvironment &inEnvironment,
+                                                    QDemonRenderContext &inRenderContext,
+                                                    QVector2D inPresScale,
+                                                    QDemonRenderScene::RenderClearCommand inClearBuffer,
+                                                    QVector3D inClearColor,
+                                                    const QDemonRenderInstanceId id)
 {
     Q_UNUSED(inEnvironment);
     Q_UNUSED(inPresScale);
     QRect theViewportSize(inRenderContext.getViewport());
-    m_presentation->scene->renderWithClear(
-                QVector2D((float)theViewportSize.width(), (float)theViewportSize.height()),
-                m_renderContext, inClearBuffer, inClearColor, id);
+    m_presentation->scene->renderWithClear(QVector2D((float)theViewportSize.width(), (float)theViewportSize.height()),
+                                           m_renderContext,
+                                           inClearBuffer,
+                                           inClearColor,
+                                           id);
 }
 
 // You know the viewport dimensions because
-QDemonRenderPickResult QDemonSubPresentationRenderer::doGraphQueryPick(
-        const QVector2D &inMouseCoords, const QVector2D &inViewportDimensions, bool inPickEverything)
+QDemonRenderPickResult QDemonSubPresentationRenderer::doGraphQueryPick(const QVector2D &inMouseCoords,
+                                                                       const QVector2D &inViewportDimensions,
+                                                                       bool inPickEverything)
 {
     QDemonRenderPickResult thePickResult;
 
     if (m_presentation->scene && m_presentation->scene->firstChild) {
-        thePickResult = m_renderContext->getRenderer()->pick(
-                    *m_presentation->scene->firstChild, inViewportDimensions,
-                    QVector2D(inMouseCoords.x(), inMouseCoords.y()), true, inPickEverything);
+        thePickResult = m_renderContext->getRenderer()->pick(*m_presentation->scene->firstChild,
+                                                             inViewportDimensions,
+                                                             QVector2D(inMouseCoords.x(), inMouseCoords.y()),
+                                                             true,
+                                                             inPickEverything);
     }
     return thePickResult;
 }

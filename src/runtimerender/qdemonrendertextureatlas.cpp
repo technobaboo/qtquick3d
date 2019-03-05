@@ -41,8 +41,7 @@ struct QDemonTextureAtlasBinPackSL
 {
 public:
     QDemonTextureAtlasBinPackSL(QDemonRef<QDemonRenderContext> inContext, qint32 width, qint32 height)
-        : m_binWidth(width)
-        , m_binHeight(height)
+        : m_binWidth(width), m_binHeight(height)
     {
         // TODO:
         Q_UNUSED(inContext);
@@ -82,8 +81,7 @@ private:
     /*	find position
      *
      */
-    QDemonTextureAtlasRect findPosition(qint32 width, qint32 height, qint32 *binWidth, qint32 *binHeight,
-                                   qint32 *binIndex)
+    QDemonTextureAtlasRect findPosition(qint32 width, qint32 height, qint32 *binWidth, qint32 *binHeight, qint32 *binIndex)
     {
         *binWidth = m_binWidth;
         *binHeight = m_binHeight;
@@ -201,11 +199,7 @@ struct QDemonTextureAtlasEntry
 {
     QDemonTextureAtlasEntry() = default;
     QDemonTextureAtlasEntry(float x, float y, float w, float h, QDemonDataRef<quint8> buffer)
-        : m_x(x)
-        , m_y(y)
-        , m_width(w)
-        , m_height(h)
-        , m_buffer(buffer)
+        : m_x(x), m_y(y), m_width(w), m_height(h), m_buffer(buffer)
     {
     }
     QDemonTextureAtlasEntry(const QDemonTextureAtlasEntry &entry)
@@ -228,11 +222,8 @@ struct QDemonTextureAtlas : public QDemonTextureAtlasInterface
 {
     QDemonRef<QDemonRenderContext> m_renderContext;
 
-    QDemonTextureAtlas(const QDemonRef<QDemonRenderContext>& inRenderContext, qint32 width, qint32 height)
-        : m_renderContext(inRenderContext)
-        , m_width(width)
-        , m_height(height)
-        , m_spacing(1)
+    QDemonTextureAtlas(const QDemonRef<QDemonRenderContext> &inRenderContext, qint32 width, qint32 height)
+        : m_renderContext(inRenderContext), m_width(width), m_height(height), m_spacing(1)
     {
         m_binPack = new QDemonTextureAtlasBinPackSL(inRenderContext, width, height);
     }
@@ -266,14 +257,13 @@ struct QDemonTextureAtlas : public QDemonTextureAtlasInterface
             return TTextureAtlasEntryAndBuffer(QDemonTextureAtlasRect(), QDemonDataRef<quint8>());
 
         return TTextureAtlasEntryAndBuffer(QDemonTextureAtlasRect((qint32)m_atlasEntrys[index].m_x,
-                                                             (qint32)m_atlasEntrys[index].m_y,
-                                                             (qint32)m_atlasEntrys[index].m_width,
-                                                             (qint32)m_atlasEntrys[index].m_height),
+                                                                  (qint32)m_atlasEntrys[index].m_y,
+                                                                  (qint32)m_atlasEntrys[index].m_width,
+                                                                  (qint32)m_atlasEntrys[index].m_height),
                                            m_atlasEntrys[index].m_buffer);
     }
 
-    QDemonTextureAtlasRect addAtlasEntry(qint32 width, qint32 height, qint32 pitch,
-                                    qint32 dataWidth, QDemonConstDataRef<quint8> bufferData) override
+    QDemonTextureAtlasRect addAtlasEntry(qint32 width, qint32 height, qint32 pitch, qint32 dataWidth, QDemonConstDataRef<quint8> bufferData) override
     {
         QDemonTextureAtlasRect rect;
 
@@ -295,8 +285,7 @@ struct QDemonTextureAtlas : public QDemonTextureAtlasInterface
             paddedPitch += alignment;
 
             // since we do spacing around the character we need to copy line by line
-            quint8 *glyphBuffer =
-                    static_cast<quint8 *>(::malloc(paddedHeight * paddedPitch * sizeof(quint8)));
+            quint8 *glyphBuffer = static_cast<quint8 *>(::malloc(paddedHeight * paddedPitch * sizeof(quint8)));
             if (glyphBuffer) {
                 memset(glyphBuffer, 0, paddedHeight * paddedPitch);
 
@@ -310,9 +299,12 @@ struct QDemonTextureAtlas : public QDemonTextureAtlasInterface
                 }
 
                 // add new entry
-                m_atlasEntrys.push_back(QDemonTextureAtlasEntry(
-                                            (float)rect.x, (float)rect.y, (float)paddedWith, (float)paddedHeight,
-                                            QDemonDataRef<quint8>(glyphBuffer, paddedHeight * paddedPitch * sizeof(quint8))));
+                m_atlasEntrys.push_back(
+                        QDemonTextureAtlasEntry((float)rect.x,
+                                                (float)rect.y,
+                                                (float)paddedWith,
+                                                (float)paddedHeight,
+                                                QDemonDataRef<quint8>(glyphBuffer, paddedHeight * paddedPitch * sizeof(quint8))));
 
                 // normalize texture coordinates
                 rect.normX = (float)rect.x / (float)m_width;
@@ -335,7 +327,9 @@ private:
 
 } // namespace
 
-QDemonRef<QDemonTextureAtlasInterface> QDemonTextureAtlasInterface::createTextureAtlas(const QDemonRef<QDemonRenderContext>& inRenderContext, qint32 width, qint32 height)
+QDemonRef<QDemonTextureAtlasInterface> QDemonTextureAtlasInterface::createTextureAtlas(const QDemonRef<QDemonRenderContext> &inRenderContext,
+                                                                                       qint32 width,
+                                                                                       qint32 height)
 {
     return QDemonRef<QDemonTextureAtlasInterface>(new QDemonTextureAtlas(inRenderContext, width, height));
 }

@@ -8,7 +8,7 @@
 
 QT_BEGIN_NAMESPACE
 
-template <quint32 alignmentInBytes = 4, quint32 slabSize = 8192>
+template<quint32 alignmentInBytes = 4, quint32 slabSize = 8192>
 struct QDemonFastAllocator
 {
     QVector<quint8 *> m_slabs;
@@ -20,9 +20,7 @@ struct QDemonFastAllocator
 
     static size_t getSlabSize() { return slabSize; }
 
-    QDemonFastAllocator()
-    {
-    }
+    QDemonFastAllocator() {}
 
     ~QDemonFastAllocator()
     {
@@ -74,9 +72,7 @@ struct QDemonFastAllocator
 struct QDemonAutoDeallocatorAllocator
 {
     QHash<void *, size_t> m_allocations;
-    QDemonAutoDeallocatorAllocator()
-    {
-    }
+    QDemonAutoDeallocatorAllocator() {}
 
     // Automatically deallocates everything that hasn't already been deallocated.
     ~QDemonAutoDeallocatorAllocator() { deallocateAllAllocations(); }
@@ -113,11 +109,11 @@ struct QDemonAutoDeallocatorAllocator
     }
 };
 
-
 struct QDemonPerFrameAllocator
 {
     QDemonFastAllocator<> m_fastAllocator;
     QDemonAutoDeallocatorAllocator m_largeAllocator;
+
 public:
     QDemonPerFrameAllocator() {}
 

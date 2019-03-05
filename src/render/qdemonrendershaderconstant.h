@@ -64,12 +64,7 @@ public:
                                    qint32 elementCount,
                                    QDemonRenderShaderDataTypes::Enum type,
                                    qint32 binding)
-        : m_backend(backend)
-        , m_name(name)
-        , m_location(location)
-        , m_elementCount(elementCount)
-        , m_type(type)
-        , m_binding(binding)
+        : m_backend(backend), m_name(name), m_location(location), m_elementCount(elementCount), m_type(type), m_binding(binding)
     {
     }
 
@@ -81,7 +76,7 @@ public:
 };
 
 ///< A general class for shader types
-template <typename TDataType>
+template<typename TDataType>
 class QDemonRenderShaderConstant : public QDemonRenderShaderConstantBase
 {
 public:
@@ -99,38 +94,44 @@ public:
         memset(&m_value, 0, sizeof(TDataType));
     }
 
-    void release() override {  }
+    void release() override {}
 };
 
 ///< A specialized class for textures
-template <>
+template<>
 class QDemonRenderShaderConstant<QDemonRenderTexture2DPtr> : public QDemonRenderShaderConstantBase
 {
 public:
     quint32 m_value; ///< constant value
 
 public:
-    QDemonRenderShaderConstant(QDemonRef<QDemonRenderBackend> backend, const QString &name, qint32 location,
-                               qint32 elementCount, QDemonRenderShaderDataTypes::Enum type,
+    QDemonRenderShaderConstant(QDemonRef<QDemonRenderBackend> backend,
+                               const QString &name,
+                               qint32 location,
+                               qint32 elementCount,
+                               QDemonRenderShaderDataTypes::Enum type,
                                qint32 binding)
         : QDemonRenderShaderConstantBase(backend, name, location, elementCount, type, binding)
     {
         m_value = std::numeric_limits<quint32>::max();
     }
 
-    void release() override { }
+    void release() override {}
 };
 
 ///< A specialized class for textures
-template <>
+template<>
 class QDemonRenderShaderConstant<QDemonRenderTexture2DHandle> : public QDemonRenderShaderConstantBase
 {
 public:
     QVector<quint32> m_value; ///< constant value
 
 public:
-    QDemonRenderShaderConstant(QDemonRef<QDemonRenderBackend> backend, const QString &name, qint32 location,
-                               qint32 elementCount, QDemonRenderShaderDataTypes::Enum type,
+    QDemonRenderShaderConstant(QDemonRef<QDemonRenderBackend> backend,
+                               const QString &name,
+                               qint32 location,
+                               qint32 elementCount,
+                               QDemonRenderShaderDataTypes::Enum type,
                                qint32 binding)
         : QDemonRenderShaderConstantBase(backend, name, location, elementCount, type, binding)
     {
@@ -138,57 +139,66 @@ public:
         m_value.fill(std::numeric_limits<quint32>::max());
     }
 
-    void release() override {  }
+    void release() override {}
 };
 
 ///< A specialized class for texture arrays
-template <>
+template<>
 class QDemonRenderShaderConstant<QDemonRenderTexture2DArrayPtr> : public QDemonRenderShaderConstantBase
 {
 public:
     quint32 m_value; ///< constant value
 
 public:
-    QDemonRenderShaderConstant(QDemonRef<QDemonRenderBackend> backend, const QString &name, qint32 location,
-                               qint32 elementCount, QDemonRenderShaderDataTypes::Enum type,
+    QDemonRenderShaderConstant(QDemonRef<QDemonRenderBackend> backend,
+                               const QString &name,
+                               qint32 location,
+                               qint32 elementCount,
+                               QDemonRenderShaderDataTypes::Enum type,
                                qint32 binding)
         : QDemonRenderShaderConstantBase(backend, name, location, elementCount, type, binding)
     {
         m_value = std::numeric_limits<quint32>::max();
     }
 
-    void release() override {  }
+    void release() override {}
 };
 
 ///< A specialized class for cubemap textures
-template <>
+template<>
 class QDemonRenderShaderConstant<QDemonRenderTextureCubePtr> : public QDemonRenderShaderConstantBase
 {
 public:
     quint32 m_value; ///< constant value
 
 public:
-    QDemonRenderShaderConstant(QDemonRef<QDemonRenderBackend> backend, const QString &name, qint32 location,
-                               qint32 elementCount, QDemonRenderShaderDataTypes::Enum type,
+    QDemonRenderShaderConstant(QDemonRef<QDemonRenderBackend> backend,
+                               const QString &name,
+                               qint32 location,
+                               qint32 elementCount,
+                               QDemonRenderShaderDataTypes::Enum type,
                                qint32 binding)
         : QDemonRenderShaderConstantBase(backend, name, location, elementCount, type, binding)
     {
         m_value = std::numeric_limits<quint32>::max();
     }
 
-    void release() override {  }
+    void release() override {}
 };
 
 ///< A specialized class for cubemap textures
-template <>
+template<>
 class QDemonRenderShaderConstant<QDemonRenderTextureCubeHandle> : public QDemonRenderShaderConstantBase
 {
 public:
     QVector<quint32> m_value; ///< constant value
 
 public:
-    QDemonRenderShaderConstant(QDemonRef<QDemonRenderBackend> backend, const QString &name, qint32 location,
-                               qint32 elementCount, QDemonRenderShaderDataTypes::Enum type,
+    QDemonRenderShaderConstant(QDemonRef<QDemonRenderBackend> backend,
+                               const QString &name,
+                               qint32 location,
+                               qint32 elementCount,
+                               QDemonRenderShaderDataTypes::Enum type,
                                qint32 binding)
         : QDemonRenderShaderConstantBase(backend, name, location, elementCount, type, binding)
     {
@@ -196,26 +206,29 @@ public:
         m_value.fill(std::numeric_limits<quint32>::max());
     }
 
-    void release() override {  }
+    void release() override {}
 };
 
 ///< A specialized class for texture image buffer
-template <>
+template<>
 class QDemonRenderShaderConstant<QDemonRenderImage2DPtr> : public QDemonRenderShaderConstantBase
 {
 public:
     quint32 m_value; ///< constant value
 
 public:
-    QDemonRenderShaderConstant(QDemonRef<QDemonRenderBackend> backend, const QString &name, qint32 location,
-                               qint32 elementCount, QDemonRenderShaderDataTypes::Enum type,
+    QDemonRenderShaderConstant(QDemonRef<QDemonRenderBackend> backend,
+                               const QString &name,
+                               qint32 location,
+                               qint32 elementCount,
+                               QDemonRenderShaderDataTypes::Enum type,
                                qint32 binding)
         : QDemonRenderShaderConstantBase(backend, name, location, elementCount, type, binding)
     {
         m_value = std::numeric_limits<quint32>::max();
     }
 
-    void release() override {  }
+    void release() override {}
 };
 
 ///< Base for any buffer ( constant, texture, ... ) which is used by this program
@@ -230,13 +243,8 @@ public:
     qint32 m_size; ///< buffer size
 
 public:
-    QDemonRenderShaderBufferBase(QDemonRef<QDemonRenderContextImpl> context, const QByteArray &name,
-                                 qint32 location, qint32 binding, qint32 size)
-        : m_context(context)
-        , m_name(name)
-        , m_location(location)
-        , m_binding(binding)
-        , m_size(size)
+    QDemonRenderShaderBufferBase(QDemonRef<QDemonRenderContextImpl> context, const QByteArray &name, qint32 location, qint32 binding, qint32 size)
+        : m_context(context), m_name(name), m_location(location), m_binding(binding), m_size(size)
     {
     }
 
@@ -263,15 +271,11 @@ public:
                                      qint32 size,
                                      qint32 count,
                                      QDemonRef<QDemonRenderConstantBuffer> pCB)
-        : QDemonRenderShaderBufferBase(context, name, location, binding, size)
-        , m_paramCount(count)
-        , m_constBuffer(pCB)
+        : QDemonRenderShaderBufferBase(context, name, location, binding, size), m_paramCount(count), m_constBuffer(pCB)
     {
     }
 
-    void release() override
-    {
-    }
+    void release() override {}
 
     void validate(QDemonRef<QDemonRenderShaderProgram> inShader) override;
 
@@ -298,15 +302,11 @@ public:
                                     qint32 size,
                                     qint32 count,
                                     QDemonRef<QDemonRenderStorageBuffer> pSB)
-        : QDemonRenderShaderBufferBase(context, name, location, binding, size)
-        , m_paramCount(count)
-        , m_storageBuffer(pSB)
+        : QDemonRenderShaderBufferBase(context, name, location, binding, size), m_paramCount(count), m_storageBuffer(pSB)
     {
     }
 
-    void release() override
-    {
-    }
+    void release() override {}
 
     void validate(QDemonRef<QDemonRenderShaderProgram> /*inShader*/) override;
 
@@ -333,15 +333,11 @@ public:
                                           qint32 size,
                                           qint32 count,
                                           QDemonRef<QDemonRenderAtomicCounterBuffer> pAcB)
-        : QDemonRenderShaderBufferBase(context, name, location, binding, size)
-        , m_paramCount(count)
-        , m_atomicCounterBuffer(pAcB)
+        : QDemonRenderShaderBufferBase(context, name, location, binding, size), m_paramCount(count), m_atomicCounterBuffer(pAcB)
     {
     }
 
-    void release() override
-    {
-    }
+    void release() override {}
 
     void validate(QDemonRef<QDemonRenderShaderProgram> /*inShader*/) override;
 

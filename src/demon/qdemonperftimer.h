@@ -23,16 +23,13 @@ public:
 };
 
 // Specialize this struct to get the perf timer in different contexts.
-template <typename TTimerProvider>
+template<typename TTimerProvider>
 struct QDemonTimerProvider
 {
-    static QDemonPerfTimerInterface &getPerfTimer(TTimerProvider &inProvider)
-    {
-        return inProvider.getPerfTimer();
-    }
+    static QDemonPerfTimerInterface &getPerfTimer(TTimerProvider &inProvider) { return inProvider.getPerfTimer(); }
 };
 
-template <typename TTimerProvider>
+template<typename TTimerProvider>
 QDemonPerfTimerInterface &getPerfTimer(TTimerProvider &inProvider)
 {
     return QDemonTimerProvider<TTimerProvider>::getPerfTimer(inProvider);
@@ -45,16 +42,12 @@ struct QDemonStackPerfTimer
     const char *m_id;
 
     QDemonStackPerfTimer(QDemonPerfTimerInterface &destination, const char *inId)
-        : m_timer(&destination)
-        , m_start(QDemonTime::getCurrentCounterValue())
-        , m_id(inId)
+        : m_timer(&destination), m_start(QDemonTime::getCurrentCounterValue()), m_id(inId)
     {
     }
 
     QDemonStackPerfTimer(QDemonPerfTimerInterface *destination, const char *inId)
-        : m_timer(destination)
-        , m_start(QDemonTime::getCurrentCounterValue())
-        , m_id(inId)
+        : m_timer(destination), m_start(QDemonTime::getCurrentCounterValue()), m_id(inId)
     {
     }
 

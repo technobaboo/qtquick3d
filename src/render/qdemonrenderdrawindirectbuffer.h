@@ -60,83 +60,80 @@ class QDemonRenderDrawIndirectBuffer : public QDemonRenderDataBuffer
 {
 public:
     /**
-         * @brief constructor
-         *
-         * @param[in] context		Pointer to context
-         * @param[in] size			Size of the buffer
-         * @param[in] usage			Usage of the buffer (e.g. static, dynamic...)
-         * @param[in] data			A pointer to the buffer data that is allocated by the
-         * application.
-         *
-         * @return No return.
-         */
-    QDemonRenderDrawIndirectBuffer(const QDemonRef<QDemonRenderContextImpl> &context, size_t size,
-                                   QDemonRenderBufferUsageType::Enum usageType, QDemonDataRef<quint8> data);
+     * @brief constructor
+     *
+     * @param[in] context		Pointer to context
+     * @param[in] size			Size of the buffer
+     * @param[in] usage			Usage of the buffer (e.g. static, dynamic...)
+     * @param[in] data			A pointer to the buffer data that is allocated by the
+     * application.
+     *
+     * @return No return.
+     */
+    QDemonRenderDrawIndirectBuffer(const QDemonRef<QDemonRenderContextImpl> &context,
+                                   size_t size,
+                                   QDemonRenderBufferUsageType::Enum usageType,
+                                   QDemonDataRef<quint8> data);
 
     ///< destructor
     virtual ~QDemonRenderDrawIndirectBuffer();
 
     /**
-         * @brief bind the buffer bypasses the context state
-         *
-         * @return no return.
-         */
+     * @brief bind the buffer bypasses the context state
+     *
+     * @return no return.
+     */
     void bind() override;
 
     /**
-         * @brief update the buffer to hardware
-         *
-         * @return no return.
-         */
+     * @brief update the buffer to hardware
+     *
+     * @return no return.
+     */
     virtual void update();
 
     /**
-         * @brief update a piece of memory directly within the storage buffer
-         *
-         * Note: When you use this function you should know what you are doing.
-         *		 The memory layout within C++ must exactly match the memory layout in the
-         *shader.
-         *		 We use std140 (430) layout which guarantees a specific layout behavior across
-         *all HW vendors.
-         *		 How the memory layout is computed can be found in the GL spec.
-         *
-         * @param[in] offset	offset into storage buffer
-         * @param[in] data		pointer to data
-         *
-         * @return no return
-         */
+     * @brief update a piece of memory directly within the storage buffer
+     *
+     * Note: When you use this function you should know what you are doing.
+     *		 The memory layout within C++ must exactly match the memory layout in the
+     *shader.
+     *		 We use std140 (430) layout which guarantees a specific layout behavior across
+     *all HW vendors.
+     *		 How the memory layout is computed can be found in the GL spec.
+     *
+     * @param[in] offset	offset into storage buffer
+     * @param[in] data		pointer to data
+     *
+     * @return no return
+     */
     void updateData(qint32 offset, QDemonDataRef<quint8> data);
 
     /**
-         * @brief get the backend object handle
-         *
-         * @return the backend object handle.
-         */
-    QDemonRenderBackend::QDemonRenderBackendBufferObject getBuffertHandle() const override
-    {
-        return m_bufferHandle;
-    }
+     * @brief get the backend object handle
+     *
+     * @return the backend object handle.
+     */
+    QDemonRenderBackend::QDemonRenderBackendBufferObject getBuffertHandle() const override { return m_bufferHandle; }
 
     // this will be obsolete
-    const void *getImplementationHandle() const override
-    {
-        return reinterpret_cast<void *>(m_bufferHandle);
-    }
+    const void *getImplementationHandle() const override { return reinterpret_cast<void *>(m_bufferHandle); }
 
     /**
-         * @brief create a QDemonRenderDrawIndirectBuffer object
-         *
-         * @param[in] context		Pointer to context
-         * @param[in] size			Size of the buffer
-         * @param[in] usage			Usage of the buffer (e.g. static, dynamic...)
-         * @param[in] data			A pointer to the buffer data that is allocated by the
-         * application.
-         *
-         * @return the buffer object or nullptr
-         */
+     * @brief create a QDemonRenderDrawIndirectBuffer object
+     *
+     * @param[in] context		Pointer to context
+     * @param[in] size			Size of the buffer
+     * @param[in] usage			Usage of the buffer (e.g. static, dynamic...)
+     * @param[in] data			A pointer to the buffer data that is allocated by the
+     * application.
+     *
+     * @return the buffer object or nullptr
+     */
     static QDemonRef<QDemonRenderDrawIndirectBuffer> create(const QDemonRef<QDemonRenderContextImpl> &context,
-                                                  QDemonRenderBufferUsageType::Enum usageType,
-                                                  size_t size, QDemonConstDataRef<quint8> bufferData);
+                                                            QDemonRenderBufferUsageType::Enum usageType,
+                                                            size_t size,
+                                                            QDemonConstDataRef<quint8> bufferData);
 
 private:
     bool m_dirty; ///< true if buffer is dirty

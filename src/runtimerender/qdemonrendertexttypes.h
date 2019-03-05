@@ -62,11 +62,7 @@ struct QDemonTextDimensions
 {
     quint32 textWidth = 0;
     quint32 textHeight = 0;
-    QDemonTextDimensions(quint32 w, quint32 h)
-        : textWidth(w)
-        , textHeight(h)
-    {
-    }
+    QDemonTextDimensions(quint32 w, quint32 h) : textWidth(w), textHeight(h) {}
     QDemonTextDimensions() = default;
 };
 
@@ -75,16 +71,10 @@ struct QDemonTextTextureDetails : public QDemonTextDimensions
     QVector2D scaleFactor;
     bool flipY;
     QDemonTextTextureDetails(quint32 w, quint32 h, bool inFlipY, QVector2D scaleF)
-        : QDemonTextDimensions(w, h)
-        , scaleFactor(scaleF)
-        , flipY(inFlipY)
+        : QDemonTextDimensions(w, h), scaleFactor(scaleF), flipY(inFlipY)
     {
     }
-    QDemonTextTextureDetails()
-        : scaleFactor(1.0f, 1.0f)
-        , flipY(false)
-    {
-    }
+    QDemonTextTextureDetails() : scaleFactor(1.0f, 1.0f), flipY(false) {}
 };
 
 struct QDemonTextTextureAtlasEntryDetails : public QDemonTextDimensions
@@ -92,9 +82,7 @@ struct QDemonTextTextureAtlasEntryDetails : public QDemonTextDimensions
     qint32 x = 0;
     qint32 y = 0;
     QDemonTextTextureAtlasEntryDetails(quint32 inW, quint32 inH, qint32 inX, qint32 inY)
-        : QDemonTextDimensions(inW, inH)
-        , x(inX)
-        , y(inY)
+        : QDemonTextDimensions(inW, inH), x(inX), y(inY)
     {
     }
     QDemonTextTextureAtlasEntryDetails() = default;
@@ -106,8 +94,7 @@ struct QDemonRenderTextureAtlasDetails
     QDemonDataRef<quint8> vertices;
 
     QDemonRenderTextureAtlasDetails(quint32 count, QDemonDataRef<quint8> inVertices)
-        : vertexCount(count)
-        , vertices(inVertices)
+        : vertexCount(count), vertices(inVertices)
     {
     }
     QDemonRenderTextureAtlasDetails() = default;
@@ -117,8 +104,7 @@ struct QDemonTextTextureAtlasDetails : public QDemonTextTextureDetails
 {
     quint32 entryCount = 0;
     QDemonTextTextureAtlasDetails(quint32 w, quint32 h, bool inFlipY, quint32 count)
-        : QDemonTextTextureDetails(w, h, inFlipY, QVector2D(1.0f, 1.0f))
-        , entryCount(count)
+        : QDemonTextTextureDetails(w, h, inFlipY, QVector2D(1.0f, 1.0f)), entryCount(count)
     {
     }
     QDemonTextTextureAtlasDetails() = default;

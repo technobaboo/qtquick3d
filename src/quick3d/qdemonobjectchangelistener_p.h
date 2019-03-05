@@ -15,9 +15,9 @@ public:
     virtual void itemEnabledChanged(QDemonObject *) {}
     virtual void itemOpacityChanged(QDemonObject *) {}
     virtual void itemDestroyed(QDemonObject *) {}
-    virtual void itemChildAdded(QDemonObject *, QDemonObject * /* child */ ) {}
-    virtual void itemChildRemoved(QDemonObject *, QDemonObject * /* child */ ) {}
-    virtual void itemParentChanged(QDemonObject *, QDemonObject * /* parent */ ) {}
+    virtual void itemChildAdded(QDemonObject *, QDemonObject * /* child */) {}
+    virtual void itemChildRemoved(QDemonObject *, QDemonObject * /* child */) {}
+    virtual void itemParentChanged(QDemonObject *, QDemonObject * /* parent */) {}
 };
 
 QT_END_NAMESPACE

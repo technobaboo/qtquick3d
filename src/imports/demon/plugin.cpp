@@ -43,7 +43,6 @@
 #include <QtQuick3d/qdemonobject.h>
 #include <QtQuick3d/qdemonwindow.h>
 
-
 static void initResources()
 {
 #ifdef QT_STATIC

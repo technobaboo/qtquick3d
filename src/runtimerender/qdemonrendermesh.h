@@ -45,9 +45,7 @@ struct QDemonRenderSubsetBase
     QDemonBounds3 bounds; // Vertex buffer bounds
     QDemonRenderSubsetBase() = default;
     QDemonRenderSubsetBase(const QDemonRenderSubsetBase &inOther)
-        : count(inOther.count)
-        , offset(inOther.offset)
-        , bounds(inOther.bounds)
+        : count(inOther.count), offset(inOther.offset), bounds(inOther.bounds)
     {
     }
 
@@ -80,7 +78,7 @@ struct QDemonRenderSubset : public QDemonRenderSubsetBase
     float edgeTessFactor = 1.0f; ///< edge tessellation amount used for tessellation shaders
     float innerTessFactor = 1.0f; ///< inner tessellation amount used for tessellation shaders
     bool wireframeMode; ///< true if we should draw the object as wireframe ( currently ony if
-    ///tessellation is enabled )
+    /// tessellation is enabled )
     QVector<QDemonRenderJoint> joints;
     QString name;
     QVector<QDemonRenderSubsetBase> subSubsets;
@@ -151,12 +149,8 @@ struct QDemonRenderMesh
     QDemonRenderWinding::Enum winding; // counterclockwise
     quint32 meshId; // Id from the file of this mesh.
 
-    QDemonRenderMesh(QDemonRenderDrawMode::Enum inDrawMode,
-                     QDemonRenderWinding::Enum inWinding,
-                     quint32 inMeshId)
-        : drawMode(inDrawMode)
-        , winding(inWinding)
-        , meshId(inMeshId)
+    QDemonRenderMesh(QDemonRenderDrawMode::Enum inDrawMode, QDemonRenderWinding::Enum inWinding, quint32 inMeshId)
+        : drawMode(inDrawMode), winding(inWinding), meshId(inMeshId)
     {
     }
 };

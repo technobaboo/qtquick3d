@@ -55,26 +55,26 @@ public:
     float m_borderColor[4];
 
     /**
-         * @brief constructor
-         *
-         * @param[in] context		Pointer to context
-         * @param[in] fnd			Pointer to foundation
-         * @param[in] minFilter		Texture min filter
-         * @param[in] magFilter		Texture mag filter
-         * @param[in] wrapS			Texture coord generation for S
-         * @param[in] wrapT			Texture coord generation for T
-         * @param[in] wrapR			Texture coord generation for R
-         * @param[in] swizzleMode	Texture swizzle mode
-         * @param[in] minLod		Texture min level of detail
-         * @param[in] maxLod		Texture max level of detail
-         * @param[in] lodBias		Texture level of detail bias (unused)
-         * @param[in] compareMode	Texture compare mode
-         * @param[in] compareFunc	Texture compare function
-         * @param[in] anisoFilter	Aniso filter value [1.0, 16.0]
-         * @param[in] borderColor	Texture border color float[4] (unused)
-         *
-         * @return No return.
-         */
+     * @brief constructor
+     *
+     * @param[in] context		Pointer to context
+     * @param[in] fnd			Pointer to foundation
+     * @param[in] minFilter		Texture min filter
+     * @param[in] magFilter		Texture mag filter
+     * @param[in] wrapS			Texture coord generation for S
+     * @param[in] wrapT			Texture coord generation for T
+     * @param[in] wrapR			Texture coord generation for R
+     * @param[in] swizzleMode	Texture swizzle mode
+     * @param[in] minLod		Texture min level of detail
+     * @param[in] maxLod		Texture max level of detail
+     * @param[in] lodBias		Texture level of detail bias (unused)
+     * @param[in] compareMode	Texture compare mode
+     * @param[in] compareFunc	Texture compare function
+     * @param[in] anisoFilter	Aniso filter value [1.0, 16.0]
+     * @param[in] borderColor	Texture border color float[4] (unused)
+     *
+     * @return No return.
+     */
     QDemonRenderTextureSampler(const QDemonRef<QDemonRenderContextImpl> &context,
                                QDemonRenderTextureMinifyingOp::Enum minFilter = QDemonRenderTextureMinifyingOp::Linear,
                                QDemonRenderTextureMagnifyingOp::Enum magFilter = QDemonRenderTextureMagnifyingOp::Linear,
@@ -82,26 +82,26 @@ public:
                                QDemonRenderTextureCoordOp::Enum wrapT = QDemonRenderTextureCoordOp::ClampToEdge,
                                QDemonRenderTextureCoordOp::Enum wrapR = QDemonRenderTextureCoordOp::ClampToEdge,
                                QDemonRenderTextureSwizzleMode::Enum swizzleMode = QDemonRenderTextureSwizzleMode::NoSwizzle,
-                               float minLod = -1000.0, float maxLod = 1000.0, float lodBias = 0.0,
+                               float minLod = -1000.0,
+                               float maxLod = 1000.0,
+                               float lodBias = 0.0,
                                QDemonRenderTextureCompareMode::Enum compareMode = QDemonRenderTextureCompareMode::NoCompare,
                                QDemonRenderTextureCompareOp::Enum compareFunc = QDemonRenderTextureCompareOp::LessThanOrEqual,
-                               float anisotropy = 1.0, float *borderColor = nullptr);
+                               float anisotropy = 1.0,
+                               float *borderColor = nullptr);
 
     /**
-         * @brief destructor
-         *
-         */
+     * @brief destructor
+     *
+     */
     virtual ~QDemonRenderTextureSampler();
 
     /**
-         * @brief get the backend object handle
-         *
-         * @return the backend object handle.
-         */
-    QDemonRenderBackend::QDemonRenderBackendSamplerObject GetSamplerHandle() const
-    {
-        return m_samplerHandle;
-    }
+     * @brief get the backend object handle
+     *
+     * @return the backend object handle.
+     */
+    QDemonRenderBackend::QDemonRenderBackendSamplerObject GetSamplerHandle() const { return m_samplerHandle; }
 
 private:
     QDemonRef<QDemonRenderContextImpl> m_context; ///< pointer to context

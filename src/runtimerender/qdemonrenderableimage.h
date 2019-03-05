@@ -56,19 +56,17 @@ struct QDemonImageMapTypes
 };
 
 /**
-     *	Some precomputed information on a given image.  When generating a renderable, the shader
-     *	generator goes through all the possible images on a material and for each valid image
-     *	computes this renderable image and attaches it to the renderable.
-     */
+ *	Some precomputed information on a given image.  When generating a renderable, the shader
+ *	generator goes through all the possible images on a material and for each valid image
+ *	computes this renderable image and attaches it to the renderable.
+ */
 struct QDemonRenderableImage
 {
     QDemonImageMapTypes::Enum m_mapType;
     QDemonRenderImage &m_image;
     QDemonRenderableImage *m_nextImage;
     QDemonRenderableImage(QDemonImageMapTypes::Enum inMapType, QDemonRenderImage &inImage)
-        : m_mapType(inMapType)
-        , m_image(inImage)
-        , m_nextImage(nullptr)
+        : m_mapType(inMapType), m_image(inImage), m_nextImage(nullptr)
     {
     }
 };

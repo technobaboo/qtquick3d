@@ -42,41 +42,36 @@ class QDemonRenderTessControlShader : public QDemonRenderShader
 
 public:
     /**
-         * @brief constructor
-         *
-         * @param[in] context		Pointer to render context
-         * @param[in] fnd			Pointer to foundation
-         * @param[in] source		Pointer to shader source code
-         * @param[in] binaryProgram	true if this is a binary program
-         *
-         * @return No return.
-         */
-    QDemonRenderTessControlShader(const QDemonRef<QDemonRenderContextImpl> &context,
-                                  QDemonConstDataRef<qint8> source, bool binaryProgram);
+     * @brief constructor
+     *
+     * @param[in] context		Pointer to render context
+     * @param[in] fnd			Pointer to foundation
+     * @param[in] source		Pointer to shader source code
+     * @param[in] binaryProgram	true if this is a binary program
+     *
+     * @return No return.
+     */
+    QDemonRenderTessControlShader(const QDemonRef<QDemonRenderContextImpl> &context, QDemonConstDataRef<qint8> source, bool binaryProgram);
 
     /// @brief destructor
     ~QDemonRenderTessControlShader() override;
 
     /**
-         * @brief Query if shader compiled succesfuly
-         *
-         * @return True if shader is valid.
-         */
+     * @brief Query if shader compiled succesfuly
+     *
+     * @return True if shader is valid.
+     */
     bool isValid() override { return (m_shaderHandle != nullptr); }
 
     /**
-         * @brief get the backend object handle
-         *
-         * @return the backend object handle.
-         */
-    virtual QDemonRenderBackend::QDemonRenderBackendTessControlShaderObject getShaderHandle()
-    {
-        return m_shaderHandle;
-    }
+     * @brief get the backend object handle
+     *
+     * @return the backend object handle.
+     */
+    virtual QDemonRenderBackend::QDemonRenderBackendTessControlShaderObject getShaderHandle() { return m_shaderHandle; }
 
 private:
-    QDemonRenderBackend::QDemonRenderBackendTessControlShaderObject
-    m_shaderHandle; ///< opaque backend handle
+    QDemonRenderBackend::QDemonRenderBackendTessControlShaderObject m_shaderHandle; ///< opaque backend handle
 };
 
 ///< This class represents a tessellation evaluation shader
@@ -85,42 +80,39 @@ class QDemonRenderTessEvaluationShader : public QDemonRenderShader
 
 public:
     /**
-         * @brief constructor
-         *
-         * @param[in] context		Pointer to render context
-         * @param[in] fnd			Pointer to foundation
-         * @param[in] source		Pointer to shader source code
-         * @param[in] binaryProgram	true if this is a binary program
-         *
-         * @return No return.
-         */
-    QDemonRenderTessEvaluationShader(const QDemonRef<QDemonRenderContextImpl> &context,
-                                     QDemonConstDataRef<qint8> source,
-                                     bool binaryProgram);
+     * @brief constructor
+     *
+     * @param[in] context		Pointer to render context
+     * @param[in] fnd			Pointer to foundation
+     * @param[in] source		Pointer to shader source code
+     * @param[in] binaryProgram	true if this is a binary program
+     *
+     * @return No return.
+     */
+    QDemonRenderTessEvaluationShader(const QDemonRef<QDemonRenderContextImpl> &context, QDemonConstDataRef<qint8> source, bool binaryProgram);
 
     /// @brief destructor
     ~QDemonRenderTessEvaluationShader() override;
 
     /**
-         * @brief Query if shader compiled succesfuly
-         *
-         * @return True if shader is valid.
-         */
+     * @brief Query if shader compiled succesfuly
+     *
+     * @return True if shader is valid.
+     */
     bool isValid() override { return (m_shaderHandle != nullptr); }
 
     /**
-         * @brief get the backend object handle
-         *
-         * @return the backend object handle.
-         */
+     * @brief get the backend object handle
+     *
+     * @return the backend object handle.
+     */
     virtual QDemonRenderBackend::QDemonRenderBackendTessEvaluationShaderObject getShaderHandle()
     {
         return m_shaderHandle;
     }
 
 private:
-    QDemonRenderBackend::QDemonRenderBackendTessEvaluationShaderObject
-    m_shaderHandle; ///< opaque backend handle
+    QDemonRenderBackend::QDemonRenderBackendTessEvaluationShaderObject m_shaderHandle; ///< opaque backend handle
 };
 
 QT_END_NAMESPACE

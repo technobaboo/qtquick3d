@@ -52,8 +52,8 @@ public:
     bool importFile(const QString &filename, const QDir &outputPath, QString *error = nullptr);
 
 private:
-    QVector<QDemonAssetImporter*> m_assetImporters;
-    QMap<QString, QDemonAssetImporter*> m_extensionsMap;
+    QVector<QDemonAssetImporter *> m_assetImporters;
+    QMap<QString, QDemonAssetImporter *> m_extensionsMap;
 };
 
 QT_END_NAMESPACE

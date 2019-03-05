@@ -44,10 +44,7 @@
 
 QT_BEGIN_NAMESPACE
 
-INodeQueue::~INodeQueue()
-{
-
-}
+INodeQueue::~INodeQueue() {}
 
 QDemonGraphNode::QDemonGraphNode(QDemonGraphObjectTypes::Enum inGraphObjectType)
     : QDemonGraphObject(inGraphObjectType)
@@ -143,8 +140,7 @@ bool QDemonGraphNode::calculateGlobalVariables()
                 globalTransform = localTransform;
 
             flags.setGlobalActive(flags.isActive() && parent->flags.isGloballyActive());
-            flags.setGloballyPickable(flags.isLocallyPickable()
-                                        || parent->flags.isGloballyPickable());
+            flags.setGloballyPickable(flags.isLocallyPickable() || parent->flags.isGloballyPickable());
         } else {
             globalTransform = localTransform;
             flags.setGlobalActive(flags.isActive());
@@ -157,30 +153,30 @@ bool QDemonGraphNode::calculateGlobalVariables()
 }
 
 // Create some mapping of euler angles to their axis mapping.
-#define ITERATE_POSSIBLE_EULER_ANGLES                                                              \
-    HANDLE_EULER_ANGLE(EulOrdXYZs, X, Y, Z)                                                        \
-    HANDLE_EULER_ANGLE(EulOrdXYXs, X, Y, X)                                                        \
-    HANDLE_EULER_ANGLE(EulOrdXZYs, X, Z, Y)                                                        \
-    HANDLE_EULER_ANGLE(EulOrdXZXs, X, Z, X)                                                        \
-    HANDLE_EULER_ANGLE(EulOrdYZXs, Y, Z, X)                                                        \
-    HANDLE_EULER_ANGLE(EulOrdYZYs, Y, Z, Y)                                                        \
-    HANDLE_EULER_ANGLE(EulOrdYXZs, Y, X, Z)                                                        \
-    HANDLE_EULER_ANGLE(EulOrdYXYs, Y, X, Y)                                                        \
-    HANDLE_EULER_ANGLE(EulOrdZXYs, Z, X, Y)                                                        \
-    HANDLE_EULER_ANGLE(EulOrdZXZs, Z, X, Z)                                                        \
-    HANDLE_EULER_ANGLE(EulOrdZYXs, Z, Y, X)                                                        \
-    HANDLE_EULER_ANGLE(EulOrdZYZs, Z, Y, Z)                                                        \
-    HANDLE_EULER_ANGLE(EulOrdZYXr, Z, Y, X)                                                        \
-    HANDLE_EULER_ANGLE(EulOrdXYXr, X, Y, X)                                                        \
-    HANDLE_EULER_ANGLE(EulOrdYZXr, Y, Z, X)                                                        \
-    HANDLE_EULER_ANGLE(EulOrdXZXr, X, Z, X)                                                        \
-    HANDLE_EULER_ANGLE(EulOrdXZYr, X, Z, Y)                                                        \
-    HANDLE_EULER_ANGLE(EulOrdYZYr, Y, Z, Y)                                                        \
-    HANDLE_EULER_ANGLE(EulOrdZXYr, Z, X, Y)                                                        \
-    HANDLE_EULER_ANGLE(EulOrdYXYr, Y, X, Y)                                                        \
-    HANDLE_EULER_ANGLE(EulOrdYXZr, Y, X, Z)                                                        \
-    HANDLE_EULER_ANGLE(EulOrdZXZr, Z, X, Z)                                                        \
-    HANDLE_EULER_ANGLE(EulOrdXYZr, X, Y, Z)                                                        \
+#define ITERATE_POSSIBLE_EULER_ANGLES                                                                                  \
+    HANDLE_EULER_ANGLE(EulOrdXYZs, X, Y, Z)                                                                            \
+    HANDLE_EULER_ANGLE(EulOrdXYXs, X, Y, X)                                                                            \
+    HANDLE_EULER_ANGLE(EulOrdXZYs, X, Z, Y)                                                                            \
+    HANDLE_EULER_ANGLE(EulOrdXZXs, X, Z, X)                                                                            \
+    HANDLE_EULER_ANGLE(EulOrdYZXs, Y, Z, X)                                                                            \
+    HANDLE_EULER_ANGLE(EulOrdYZYs, Y, Z, Y)                                                                            \
+    HANDLE_EULER_ANGLE(EulOrdYXZs, Y, X, Z)                                                                            \
+    HANDLE_EULER_ANGLE(EulOrdYXYs, Y, X, Y)                                                                            \
+    HANDLE_EULER_ANGLE(EulOrdZXYs, Z, X, Y)                                                                            \
+    HANDLE_EULER_ANGLE(EulOrdZXZs, Z, X, Z)                                                                            \
+    HANDLE_EULER_ANGLE(EulOrdZYXs, Z, Y, X)                                                                            \
+    HANDLE_EULER_ANGLE(EulOrdZYZs, Z, Y, Z)                                                                            \
+    HANDLE_EULER_ANGLE(EulOrdZYXr, Z, Y, X)                                                                            \
+    HANDLE_EULER_ANGLE(EulOrdXYXr, X, Y, X)                                                                            \
+    HANDLE_EULER_ANGLE(EulOrdYZXr, Y, Z, X)                                                                            \
+    HANDLE_EULER_ANGLE(EulOrdXZXr, X, Z, X)                                                                            \
+    HANDLE_EULER_ANGLE(EulOrdXZYr, X, Z, Y)                                                                            \
+    HANDLE_EULER_ANGLE(EulOrdYZYr, Y, Z, Y)                                                                            \
+    HANDLE_EULER_ANGLE(EulOrdZXYr, Z, X, Y)                                                                            \
+    HANDLE_EULER_ANGLE(EulOrdYXYr, Y, X, Y)                                                                            \
+    HANDLE_EULER_ANGLE(EulOrdYXZr, Y, X, Z)                                                                            \
+    HANDLE_EULER_ANGLE(EulOrdZXZr, Z, X, Z)                                                                            \
+    HANDLE_EULER_ANGLE(EulOrdXYZr, X, Y, Z)                                                                            \
     HANDLE_EULER_ANGLE(EulOrdZYZr, Z, Y, Z)
 
 inline EulerAngles rotationAndOrderToShoemake(QVector3D inRotation, quint32 inOrder)
@@ -192,39 +188,48 @@ inline EulerAngles rotationAndOrderToShoemake(QVector3D inRotation, quint32 inOr
     int Z = 2;
 
     switch (inOrder) {
-#define HANDLE_EULER_ANGLE(order, xIdx, yIdx, zIdx)                                                \
-    case order:                                                                                    \
-    retval.x = -inRotation[xIdx];                                                              \
-    retval.y = -inRotation[yIdx];                                                              \
-    retval.z = -inRotation[zIdx];                                                              \
-    break;
-    ITERATE_POSSIBLE_EULER_ANGLES
-        #undef HANDLE_EULER_ANGLE
-            default:
+#define HANDLE_EULER_ANGLE(order, xIdx, yIdx, zIdx)                                                                    \
+    case order:                                                                                                        \
+        retval.x = -inRotation[xIdx];                                                                                  \
+        retval.y = -inRotation[yIdx];                                                                                  \
+        retval.z = -inRotation[zIdx];                                                                                  \
+        break;
+        ITERATE_POSSIBLE_EULER_ANGLES
+#undef HANDLE_EULER_ANGLE
+    default:
         Q_ASSERT(false);
-    retval.x = inRotation[X];
-    retval.y = inRotation[Y];
-    retval.z = inRotation[Z];
-    break;
+        retval.x = inRotation[X];
+        retval.y = inRotation[Y];
+        retval.z = inRotation[Z];
+        break;
     }
     return retval;
 }
 
 QVector3D QDemonGraphNode::getRotationVectorFromRotationMatrix(const QMatrix3x3 &inMatrix) const
 {
-    float theConvertMatrixData[16] = {
-        inMatrix(0, 0), inMatrix(0, 1), inMatrix(0, 2), 0.0f,
-        inMatrix(1, 0), inMatrix(1, 1), inMatrix(1, 2), 0.0f,
-        inMatrix(2, 0), inMatrix(2, 1), inMatrix(2, 2), 0.0f,
-        0, 0, 0, 1
-    };
+    float theConvertMatrixData[16] = { inMatrix(0, 0),
+                                       inMatrix(0, 1),
+                                       inMatrix(0, 2),
+                                       0.0f,
+                                       inMatrix(1, 0),
+                                       inMatrix(1, 1),
+                                       inMatrix(1, 2),
+                                       0.0f,
+                                       inMatrix(2, 0),
+                                       inMatrix(2, 1),
+                                       inMatrix(2, 2),
+                                       0.0f,
+                                       0,
+                                       0,
+                                       0,
+                                       1 };
 
     QMatrix4x4 theConvertMatrix(theConvertMatrixData);
     if (flags.isLeftHanded())
         QDemonGraphNode::flipCoordinateSystem(theConvertMatrix);
     QDemonEulerAngleConverter theConverter;
-    HMatrix *theHMatrix =
-            reinterpret_cast<HMatrix *>(theConvertMatrix.data());
+    HMatrix *theHMatrix = reinterpret_cast<HMatrix *>(theConvertMatrix.data());
     EulerAngles theAngles = theConverter.eulerFromHMatrix(*theHMatrix, rotationOrder);
     return getRotationVectorFromEulerAngles(theAngles);
 }
@@ -236,20 +241,20 @@ QVector3D QDemonGraphNode::getRotationVectorFromEulerAngles(const EulerAngles &i
     int Y = 1;
     int Z = 2;
     switch (int(inAngles.w)) {
-#define HANDLE_EULER_ANGLE(order, xIdx, yIdx, zIdx)                                                \
-    case order:                                                                                    \
-    retval[xIdx] = -inAngles.x;                                                                \
-    retval[yIdx] = -inAngles.y;                                                                \
-    retval[zIdx] = -inAngles.z;                                                                \
-    break;
-    ITERATE_POSSIBLE_EULER_ANGLES
-        #undef HANDLE_EULER_ANGLE
-            default:
+#define HANDLE_EULER_ANGLE(order, xIdx, yIdx, zIdx)                                                                    \
+    case order:                                                                                                        \
+        retval[xIdx] = -inAngles.x;                                                                                    \
+        retval[yIdx] = -inAngles.y;                                                                                    \
+        retval[zIdx] = -inAngles.z;                                                                                    \
+        break;
+        ITERATE_POSSIBLE_EULER_ANGLES
+#undef HANDLE_EULER_ANGLE
+    default:
         Q_ASSERT(false);
-    retval.setX(inAngles.x);
-    retval.setY(inAngles.y);
-    retval.setZ(inAngles.z);
-    break;
+        retval.setX(inAngles.x);
+        retval.setY(inAngles.y);
+        retval.setZ(inAngles.z);
+        break;
     }
 
     return retval;
@@ -283,8 +288,7 @@ void QDemonGraphNode::calculateLocalTransform()
     localTransform = QMatrix4x4();
     globalTransform = localTransform;
     float *writePtr = localTransform.data();
-    QVector3D theScaledPivot(-pivot[0] * scale[0], -pivot[1] * scale[1],
-            -pivot[2] * scale[2]);
+    QVector3D theScaledPivot(-pivot[0] * scale[0], -pivot[1] * scale[1], -pivot[2] * scale[2]);
     localTransform(0, 0) = scale[0];
     localTransform(1, 1) = scale[1];
     localTransform(2, 2) = scale[2];
@@ -325,9 +329,9 @@ void QDemonGraphNode::setLocalTransformFromMatrix(QMatrix4x4 &inTransform)
     position[1] = inTransform(3, 1);
     position[2] = inTransform(3, 2);
     // set scale
-    const QVector3D column0(inTransform(0,0), inTransform(0,1), inTransform(0,2));
-    const QVector3D column1(inTransform(1,0), inTransform(1,1), inTransform(1,2));
-    const QVector3D column2(inTransform(2,0), inTransform(2,1), inTransform(2,2));
+    const QVector3D column0(inTransform(0, 0), inTransform(0, 1), inTransform(0, 2));
+    const QVector3D column1(inTransform(1, 0), inTransform(1, 1), inTransform(1, 2));
+    const QVector3D column2(inTransform(2, 0), inTransform(2, 1), inTransform(2, 2));
     scale[0] = vec3::magnitude(column0);
     scale[1] = vec3::magnitude(column1);
     scale[2] = vec3::magnitude(column2);
@@ -351,11 +355,9 @@ void QDemonGraphNode::setLocalTransformFromMatrix(QMatrix4x4 &inTransform)
     inTransform(2, 1) *= invScaleZ;
     inTransform(2, 2) *= invScaleZ;
 
-    float rotationMatrixData[9] = {
-        inTransform(0,0), inTransform(0,1), inTransform(0,2),
-        inTransform(1,0), inTransform(1,1), inTransform(1,2),
-        inTransform(2,0), inTransform(2,1), inTransform(2,2)
-    };
+    float rotationMatrixData[9] = { inTransform(0, 0), inTransform(0, 1), inTransform(0, 2),
+                                    inTransform(1, 0), inTransform(1, 1), inTransform(1, 2),
+                                    inTransform(2, 0), inTransform(2, 1), inTransform(2, 2) };
 
     QMatrix3x3 theRotationMatrix(rotationMatrixData);
     rotation = getRotationVectorFromRotationMatrix(theRotationMatrix);
@@ -409,8 +411,7 @@ QDemonGraphNode *QDemonGraphNode::getLastChild()
 {
     QDemonGraphNode *lastChild = nullptr;
     // empty loop intentional
-    for (lastChild = firstChild; lastChild && lastChild->nextSibling;
-         lastChild = lastChild->nextSibling) {
+    for (lastChild = firstChild; lastChild && lastChild->nextSibling; lastChild = lastChild->nextSibling) {
     }
     return lastChild;
 }
@@ -475,9 +476,7 @@ QDemonBounds3 QDemonGraphNode::getChildBounds(const QDemonRef<QDemonBufferManage
 
 QVector3D QDemonGraphNode::getGlobalPos() const
 {
-    return QVector3D(globalTransform(0, 3),
-                     globalTransform(1, 3),
-                     globalTransform(2, 3));
+    return QVector3D(globalTransform(0, 3), globalTransform(1, 3), globalTransform(2, 3));
 }
 
 QVector3D QDemonGraphNode::getDirection() const
@@ -490,11 +489,9 @@ QVector3D QDemonGraphNode::getDirection() const
 
 QVector3D QDemonGraphNode::getScalingCorrectDirection() const
 {
-    float theDirMatrixData[9] = {
-        globalTransform(0,0), globalTransform(0,1), globalTransform(0,2),
-        globalTransform(1,0), globalTransform(1,1), globalTransform(1,2),
-        globalTransform(2,0), globalTransform(2,1), globalTransform(2,2)
-    };
+    float theDirMatrixData[9] = { globalTransform(0, 0), globalTransform(0, 1), globalTransform(0, 2),
+                                  globalTransform(1, 0), globalTransform(1, 1), globalTransform(1, 2),
+                                  globalTransform(2, 0), globalTransform(2, 1), globalTransform(2, 2) };
     QMatrix3x3 theDirMatrix(theDirMatrixData);
     theDirMatrix = mat33::getInverse(theDirMatrix).transposed();
     QVector3D theOriginalDir(0, 0, -1);
@@ -517,8 +514,7 @@ QVector3D QDemonGraphNode::getGlobalPivot() const
     return retval;
 }
 
-void QDemonGraphNode::calculateMVPAndNormalMatrix(const QMatrix4x4 &inViewProjection, QMatrix4x4 &outMVP,
-                                        QMatrix3x3 &outNormalMatrix) const
+void QDemonGraphNode::calculateMVPAndNormalMatrix(const QMatrix4x4 &inViewProjection, QMatrix4x4 &outMVP, QMatrix3x3 &outNormalMatrix) const
 {
     outMVP = inViewProjection * globalTransform;
     calculateNormalMatrix(outNormalMatrix);
@@ -526,11 +522,8 @@ void QDemonGraphNode::calculateMVPAndNormalMatrix(const QMatrix4x4 &inViewProjec
 
 void QDemonGraphNode::getMatrixUpper3x3(QMatrix3x3 &outDest, const QMatrix4x4 &inSrc)
 {
-    float matrixData[9] = {
-        inSrc(0,0), inSrc(0,1), inSrc(0,2),
-        inSrc(1,0), inSrc(1,1), inSrc(1,2),
-        inSrc(2,0), inSrc(2,1), inSrc(2,2)
-    };
+    float matrixData[9] = { inSrc(0, 0), inSrc(0, 1), inSrc(0, 2), inSrc(1, 0), inSrc(1, 1),
+                            inSrc(1, 2), inSrc(2, 0), inSrc(2, 1), inSrc(2, 2) };
     outDest = QMatrix3x3(matrixData);
 }
 
