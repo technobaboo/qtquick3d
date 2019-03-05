@@ -243,7 +243,7 @@ public:
     virtual QDemonDynamicObject *createInstance(const QString &inClassName) = 0;
 
     // scan shader for #includes and insert any found"
-    virtual void insertShaderHeaderInformation(QString &inShader, const char *inLogPath) = 0;
+    virtual void insertShaderHeaderInformation(QByteArray &inShader, const char *inLogPath) = 0;
 
     // Set the shader data for a given path.  Used when a path doesn't correspond to a file but
     // the data has been

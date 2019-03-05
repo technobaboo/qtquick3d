@@ -43,12 +43,12 @@ struct QDemonStageGeneratorBase : public QDemonShaderStageGeneratorInterface
 {
     TStrTableStrMap m_incoming;
     TStrTableStrMap *m_outgoing;
-    QSet<QString> m_includes;
+    QSet<QByteArray> m_includes;
     TStrTableStrMap m_uniforms;
     TStrTableStrMap m_constantBuffers;
     TConstantBufferParamArray m_constantBufferParams;
-    QString m_codeBuilder;
-    QString m_finalBuilder;
+    QByteArray m_codeBuilder;
+    QByteArray m_finalBuilder;
     ShaderGeneratorStages::Enum m_stage;
     TShaderGeneratorStageFlags m_enabledStages;
     QStringList m_addedFunctions;
@@ -79,9 +79,9 @@ struct QDemonStageGeneratorBase : public QDemonShaderStageGeneratorInterface
     {
         m_incoming.insert(name, type);
     }
-    virtual const QString GetIncomingVariableName()
+    virtual const QByteArray GetIncomingVariableName()
     {
-        return QStringLiteral("in");
+        return "in";
     }
 
     void addOutgoing(const QByteArray &name, const QByteArray &type) override
@@ -117,25 +117,25 @@ struct QDemonStageGeneratorBase : public QDemonShaderStageGeneratorInterface
     void append(const QByteArray &data) override
     {
         m_codeBuilder.append(data);
-        m_codeBuilder.append(QStringLiteral("\n"));
+        m_codeBuilder.append("\n");
     }
     void appendPartial(const QByteArray &data) override { m_codeBuilder.append(data); }
     ShaderGeneratorStages::Enum stage() const override { return m_stage; }
 
-    virtual void addShaderItemMap(const QString &itemType, const TStrTableStrMap &itemMap,
-                                  const QString &inItemSuffix = QString())
+    virtual void addShaderItemMap(const QByteArray &itemType, const TStrTableStrMap &itemMap,
+                                  const QByteArray &inItemSuffix = QByteArray())
     {
-        m_finalBuilder.append(QStringLiteral("\n"));
+        m_finalBuilder.append("\n");
 
         for (TStrTableStrMap::const_iterator iter = itemMap.begin(), end = itemMap.end();
              iter != end; ++iter) {
             m_finalBuilder.append(itemType);
-            m_finalBuilder.append(QStringLiteral(" "));
+            m_finalBuilder.append(" ");
             m_finalBuilder.append(iter.value());
-            m_finalBuilder.append(QStringLiteral(" "));
+            m_finalBuilder.append(" ");
             m_finalBuilder.append(iter.key());
             m_finalBuilder.append(inItemSuffix);
-            m_finalBuilder.append(QStringLiteral(";\n"));
+            m_finalBuilder.append(";\n");
         }
     }
 
@@ -149,33 +149,33 @@ struct QDemonStageGeneratorBase : public QDemonShaderStageGeneratorInterface
             addShaderItemMap("varying", *m_outgoing);
     }
 
-    virtual void addShaderConstantBufferItemMap(const QString &itemType, const TStrTableStrMap &cbMap,
+    virtual void addShaderConstantBufferItemMap(const QByteArray &itemType, const TStrTableStrMap &cbMap,
                                                 TConstantBufferParamArray cbParamsArray)
     {
-        m_finalBuilder.append(QStringLiteral("\n"));
+        m_finalBuilder.append("\n");
 
         // iterate over all constant buffers
         for (TStrTableStrMap::const_iterator iter = cbMap.begin(), end = cbMap.end(); iter != end;
              ++iter) {
             m_finalBuilder.append(iter.value());
-            m_finalBuilder.append(QStringLiteral(" "));
+            m_finalBuilder.append(" ");
             m_finalBuilder.append(itemType);
-            m_finalBuilder.append(QStringLiteral(" "));
+            m_finalBuilder.append(" ");
             m_finalBuilder.append(iter.key());
-            m_finalBuilder.append(QStringLiteral(" {\n"));
+            m_finalBuilder.append(" {\n");
             // iterate over all param entries and add match
             for (TConstantBufferParamArray::const_iterator iter1 = cbParamsArray.begin(),
                  end = cbParamsArray.end();
                  iter1 != end; ++iter1) {
                 if (iter1->first == iter.key()) {
                     m_finalBuilder.append(iter1->second.second);
-                    m_finalBuilder.append(QStringLiteral(" "));
+                    m_finalBuilder.append(" ");
                     m_finalBuilder.append(iter1->second.first);
-                    m_finalBuilder.append(QStringLiteral(";\n"));
+                    m_finalBuilder.append(";\n");
                 }
             }
 
-            m_finalBuilder.append(QStringLiteral("};\n"));
+            m_finalBuilder.append("};\n");
         }
     }
 
@@ -187,19 +187,19 @@ struct QDemonStageGeneratorBase : public QDemonShaderStageGeneratorInterface
 
     virtual const QString buildShaderSource()
     {
-        auto iter = m_includes.begin();
-        const auto end = m_includes.end();
+        auto iter = m_includes.constBegin();
+        const auto end = m_includes.constEnd();
         while (iter != end) {
-            m_finalBuilder.append(QStringLiteral("#include \""));
+            m_finalBuilder.append("#include \"");
             m_finalBuilder.append(*iter);
-            m_finalBuilder.append(QStringLiteral("\"\n"));
+            m_finalBuilder.append("\"\n");
             ++iter;
         }
         addShaderIncomingMap();
         addShaderUniformMap();
         addShaderConstantBufferItemMap("uniform", m_constantBuffers, m_constantBufferParams);
         addShaderOutgoingMap();
-        m_finalBuilder.append(QStringLiteral("\n"));
+        m_finalBuilder.append("\n");
         appendShaderCode();
 
         return m_finalBuilder;
@@ -223,10 +223,10 @@ struct QDemonVertexShaderGenerator : public QDemonStageGeneratorBase
     {
     }
 
-    const QString GetIncomingVariableName() override { return QStringLiteral("attribute"); }
+    const QByteArray GetIncomingVariableName() override { return "attribute"; }
     virtual void AddIncomingInterpolatedMap() {}
 
-    virtual const QString GetInterpolatedIncomingSuffix() const { return QStringLiteral("_attr"); }
+    virtual const QString GetInterpolatedIncomingSuffix() const { return "_attr"; }
     virtual const QString GetInterpolatedOutgoingSuffix() const { return QString(); }
 };
 

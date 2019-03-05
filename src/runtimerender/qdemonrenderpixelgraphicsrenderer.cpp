@@ -126,8 +126,8 @@ struct QDemonPixelGraphicsRenderer : public QDemonPixelGraphicsRendererInterface
 
             m_rectShader.setShader(m_renderContext->getShaderCache()->compileProgram(
                                        QStringLiteral("PixelRectShader"),
-                                       m_vertexGenerator.m_finalShaderBuilder.toLocal8Bit().constData(),
-                                       m_fragmentGenerator.m_finalShaderBuilder.toLocal8Bit().constData(),
+                                       m_vertexGenerator.m_finalShaderBuilder.constData(),
+                                       m_fragmentGenerator.m_finalShaderBuilder.constData(),
                                        nullptr, // no tess control shader
                                        nullptr, // no tess eval shader
                                        nullptr, // no geometry shader
