@@ -36,7 +36,7 @@ QT_BEGIN_NAMESPACE
 namespace {
 struct QDemonNullBackend : public QDemonRenderBackend
 {
-    virtual ~QDemonNullBackend() override {}
+    virtual ~QDemonNullBackend() override = default;
 
     /// backend interface
 

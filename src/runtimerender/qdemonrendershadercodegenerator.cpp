@@ -36,7 +36,7 @@ QDemonShaderCodeGeneratorBase::QDemonShaderCodeGeneratorBase(const QDemonRenderC
 {
 }
 
-QDemonShaderCodeGeneratorBase::~QDemonShaderCodeGeneratorBase() {}
+QDemonShaderCodeGeneratorBase::~QDemonShaderCodeGeneratorBase() = default;
 void QDemonShaderCodeGeneratorBase::begin()
 {
     m_uniforms.clear();

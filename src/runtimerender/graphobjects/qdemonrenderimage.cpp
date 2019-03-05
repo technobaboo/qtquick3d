@@ -52,7 +52,7 @@ QDemonRenderImage::QDemonRenderImage()
     m_flags.setTransformDirty(true);
 }
 
-QDemonRenderImage::~QDemonRenderImage() {}
+QDemonRenderImage::~QDemonRenderImage() = default;
 
 static void HandleOffscreenResult(QDemonRenderImage &theImage,
                                   QDemonRenderImageTextureData &newImage,
@@ -126,8 +126,7 @@ void QDemonRenderImage::calculateTextureTransform()
     m_textureTransform = m_textureTransform * translation;
 }
 
-QDemonRenderImageTextureData::QDemonRenderImageTextureData() : m_texture(nullptr), m_bsdfMipMap(nullptr) {}
-
-QDemonRenderImageTextureData::~QDemonRenderImageTextureData() {}
+QDemonRenderImageTextureData::QDemonRenderImageTextureData() = default;
+QDemonRenderImageTextureData::~QDemonRenderImageTextureData() = default;
 
 QT_END_NAMESPACE

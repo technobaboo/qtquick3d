@@ -38,7 +38,7 @@ QDemonRenderTimerQuery::QDemonRenderTimerQuery(const QDemonRef<QDemonRenderConte
 {
 }
 
-QDemonRenderTimerQuery::~QDemonRenderTimerQuery() {}
+QDemonRenderTimerQuery::~QDemonRenderTimerQuery() = default;
 
 void QDemonRenderTimerQuery::begin()
 {

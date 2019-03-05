@@ -84,7 +84,7 @@ struct QDemonRenderContextCore : public QDemonRenderContextCoreInterface
         m_pathManagerCore = QDemonPathManagerInterface::createPathManager(this);
     }
 
-    ~QDemonRenderContextCore() override {}
+    ~QDemonRenderContextCore() override = default;
 
     QDemonRef<QDemonInputStreamFactoryInterface> getInputStreamFactory() override { return m_inputStreamFactory; }
     QDemonRef<QDemonAbstractThreadPool> getThreadPool() override { return m_threadPool; }
@@ -706,13 +706,13 @@ QDemonRef<QDemonRenderContextInterface> QDemonRenderContextCore::createRenderCon
 }
 }
 
-QDemonRenderContextCoreInterface::~QDemonRenderContextCoreInterface() {}
+QDemonRenderContextCoreInterface::~QDemonRenderContextCoreInterface() = default;
 
 QDemonRef<QDemonRenderContextCoreInterface> QDemonRenderContextCoreInterface::create()
 {
     return QDemonRef<QDemonRenderContextCore>(new QDemonRenderContextCore());
 }
 
-QDemonRenderContextInterface::~QDemonRenderContextInterface() {}
+QDemonRenderContextInterface::~QDemonRenderContextInterface() = default;
 
 QT_END_NAMESPACE

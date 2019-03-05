@@ -61,7 +61,7 @@ struct QDemonResourceManager : public QDemonResourceManagerInterface
 
     QDemonResourceManager(const QDemonRef<QDemonRenderContext> &ctx) : renderContext(ctx) {}
 
-    virtual ~QDemonResourceManager() override {}
+    virtual ~QDemonResourceManager() override = default;
 
     QDemonRef<QDemonRenderFrameBuffer> allocateFrameBuffer() override
     {

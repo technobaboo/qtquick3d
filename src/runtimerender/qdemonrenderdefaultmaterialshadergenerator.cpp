@@ -93,7 +93,7 @@ struct QDemonShaderTextureProperties
         : m_sampler(sampName, inShader), m_offsets(offName, inShader), m_rotations(rotName, inShader), m_size(sizeName, inShader)
     {
     }
-    QDemonShaderTextureProperties() {}
+    QDemonShaderTextureProperties() = default;
 };
 
 /**
@@ -1864,6 +1864,6 @@ QDemonRef<QDemonDefaultMaterialShaderGeneratorInterface> QDemonDefaultMaterialSh
     return QDemonRef<QDemonDefaultMaterialShaderGeneratorInterface>(new QDemonShaderGenerator(inRc));
 }
 
-QDemonDefaultMaterialVertexPipelineInterface::~QDemonDefaultMaterialVertexPipelineInterface() {}
+QDemonDefaultMaterialVertexPipelineInterface::~QDemonDefaultMaterialVertexPipelineInterface() = default;
 
 QT_END_NAMESPACE

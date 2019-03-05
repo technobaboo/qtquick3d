@@ -321,7 +321,7 @@ struct QDemonWidgetAxis : public QDemonRenderWidgetInterface
 };
 }
 
-QDemonRenderWidgetInterface::~QDemonRenderWidgetInterface() {}
+QDemonRenderWidgetInterface::~QDemonRenderWidgetInterface() = default;
 
 QDemonRef<QDemonRenderWidgetInterface> QDemonRenderWidgetInterface::createBoundingBoxWidget(QDemonGraphNode &inNode,
                                                                                             const QDemonBounds3 &inBounds,

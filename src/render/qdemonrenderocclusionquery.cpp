@@ -37,7 +37,7 @@ QDemonRenderOcclusionQuery::QDemonRenderOcclusionQuery(const QDemonRef<QDemonRen
 {
 }
 
-QDemonRenderOcclusionQuery::~QDemonRenderOcclusionQuery() {}
+QDemonRenderOcclusionQuery::~QDemonRenderOcclusionQuery() = default;
 
 void QDemonRenderOcclusionQuery::begin()
 {

@@ -106,7 +106,7 @@ QDemonLayerRenderPreparationData::QDemonLayerRenderPreparationData(QDemonRenderL
 {
 }
 
-QDemonLayerRenderPreparationData::~QDemonLayerRenderPreparationData() {}
+QDemonLayerRenderPreparationData::~QDemonLayerRenderPreparationData() = default;
 
 bool QDemonLayerRenderPreparationData::needsWidgetTexture() const
 {

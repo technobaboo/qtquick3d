@@ -70,7 +70,7 @@ QDemonRef<QDemonRenderPrefilterTexture> QDemonRenderPrefilterTexture::create(con
     return theBSDFMipMap;
 }
 
-QDemonRenderPrefilterTexture::~QDemonRenderPrefilterTexture() {}
+QDemonRenderPrefilterTexture::~QDemonRenderPrefilterTexture() = default;
 
 //------------------------------------------------------------------------------------
 // CPU based filtering
@@ -400,7 +400,7 @@ QDemonRenderPrefilterTextureCompute::QDemonRenderPrefilterTextureCompute(const Q
 {
 }
 
-QDemonRenderPrefilterTextureCompute::~QDemonRenderPrefilterTextureCompute() {}
+QDemonRenderPrefilterTextureCompute::~QDemonRenderPrefilterTextureCompute() = default;
 
 void QDemonRenderPrefilterTextureCompute::createComputeProgram(const QDemonRef<QDemonRenderContext> &context)
 {

@@ -1319,20 +1319,4 @@ QDemonRenderVertFragCompilationResult QDemonRenderShaderProgram::createCompute(c
     return result;
 }
 
-QDemonRenderVertFragCompilationResult::QDemonRenderVertFragCompilationResult() : m_shaderName(""), m_shader(nullptr) {}
-
-QDemonRenderVertFragCompilationResult::~QDemonRenderVertFragCompilationResult() {}
-
-QDemonRenderVertFragCompilationResult::QDemonRenderVertFragCompilationResult(const QDemonRenderVertFragCompilationResult &other)
-    : m_shaderName(other.m_shaderName), m_shader(other.m_shader)
-{
-}
-
-QDemonRenderVertFragCompilationResult &QDemonRenderVertFragCompilationResult::operator=(const QDemonRenderVertFragCompilationResult &other)
-{
-    m_shaderName = other.m_shaderName;
-    m_shader = other.m_shader;
-    return *this;
-}
-
 QT_END_NAMESPACE

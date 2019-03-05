@@ -1798,7 +1798,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
 };
 }
 
-QDemonEffectSystemInterface::~QDemonEffectSystemInterface() {}
+QDemonEffectSystemInterface::~QDemonEffectSystemInterface() = default;
 
 QDemonRef<QDemonEffectSystemInterface> QDemonEffectSystemInterface::createEffectSystem(QDemonRenderContextCoreInterface *inContext)
 {

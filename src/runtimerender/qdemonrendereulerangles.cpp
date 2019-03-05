@@ -56,7 +56,7 @@ QDemonEulerAngleConverter::QDemonEulerAngleConverter()
 /**
  *	Destructor
  */
-QDemonEulerAngleConverter::~QDemonEulerAngleConverter() {}
+QDemonEulerAngleConverter::~QDemonEulerAngleConverter() = default;
 
 //==============================================================================
 /**

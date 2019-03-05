@@ -38,7 +38,7 @@
 
 QT_BEGIN_NAMESPACE
 
-ObjAssetImporter::ObjAssetImporter() {}
+ObjAssetImporter::ObjAssetImporter() = default;
 
 const QString ObjAssetImporter::name() const
 {

@@ -139,7 +139,7 @@ struct QDemonShaderTextureProperties
         : m_sampler(sampName, inShader), m_offsets(offName, inShader), m_rotations(rotName, inShader)
     {
     }
-    QDemonShaderTextureProperties() {}
+    QDemonShaderTextureProperties() = default;
 };
 
 /* We setup some shared state on the custom material shaders */

@@ -518,6 +518,6 @@ void QDemonShaderProgramGeneratorInterface::outputCubeFaceDepthFragment(QDemonSh
     fragmentShader.append("}");
 }
 
-QDemonShaderStageGeneratorInterface::~QDemonShaderStageGeneratorInterface() {}
+QDemonShaderStageGeneratorInterface::~QDemonShaderStageGeneratorInterface() = default;
 
 QT_END_NAMESPACE

@@ -100,7 +100,7 @@ struct QDemonPathBufferBuilder : public QDemonPathBufferBuilderInterface
 };
 }
 
-QDemonPathBufferBuilderInterface::~QDemonPathBufferBuilderInterface() {}
+QDemonPathBufferBuilderInterface::~QDemonPathBufferBuilderInterface() = default;
 
 QDemonRef<QDemonPathBufferBuilderInterface> QDemonPathBufferBuilderInterface::createBuilder()
 {

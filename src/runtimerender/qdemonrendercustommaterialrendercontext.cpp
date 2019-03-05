@@ -37,6 +37,6 @@ QDemonCustomMaterialRenderContext::QDemonCustomMaterialRenderContext(const QDemo
 {
 }
 
-QDemonCustomMaterialRenderContext::~QDemonCustomMaterialRenderContext() {}
+QDemonCustomMaterialRenderContext::~QDemonCustomMaterialRenderContext() = default;
 
 QT_END_NAMESPACE

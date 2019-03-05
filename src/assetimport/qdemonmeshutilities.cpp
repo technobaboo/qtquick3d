@@ -856,8 +856,6 @@ struct DynamicIndexBuf
 {
     QDemonRenderComponentTypes::Enum m_compType;
     QByteArray m_indexData;
-    DynamicIndexBuf() {}
-
     void clear() { m_indexData.clear(); }
 };
 
@@ -1260,7 +1258,7 @@ public:
 };
 }
 
-QDemonMeshBuilder::~QDemonMeshBuilder() {}
+QDemonMeshBuilder::~QDemonMeshBuilder() = default;
 
 QDemonRef<QDemonMeshBuilder> QDemonMeshBuilder::createMeshBuilder()
 {

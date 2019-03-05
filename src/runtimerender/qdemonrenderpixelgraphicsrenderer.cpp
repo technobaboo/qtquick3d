@@ -302,7 +302,7 @@ struct QDemonPixelGraphicsRenderer : public QDemonPixelGraphicsRendererInterface
 };
 }
 
-QDemonPixelGraphicsRendererInterface::~QDemonPixelGraphicsRendererInterface() {}
+QDemonPixelGraphicsRendererInterface::~QDemonPixelGraphicsRendererInterface() = default;
 
 QDemonRef<QDemonPixelGraphicsRendererInterface> QDemonPixelGraphicsRendererInterface::createRenderer(QDemonRenderContextInterface *ctx)
 {

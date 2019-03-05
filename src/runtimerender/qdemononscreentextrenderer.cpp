@@ -108,7 +108,7 @@ private:
     QRawFont *m_font = nullptr;
 
 public:
-    virtual ~QDemonOnscreenTextRenderer() override {}
+    virtual ~QDemonOnscreenTextRenderer() override = default;
 
     void addSystemFontDirectory(const char *) override {}
 

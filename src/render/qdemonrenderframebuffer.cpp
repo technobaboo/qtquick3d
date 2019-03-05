@@ -274,18 +274,6 @@ QDemonRenderTextureOrRenderBuffer::QDemonRenderTextureOrRenderBuffer(QDemonRef<Q
 {
 }
 
-QDemonRenderTextureOrRenderBuffer::QDemonRenderTextureOrRenderBuffer() {}
-
-QDemonRenderTextureOrRenderBuffer::QDemonRenderTextureOrRenderBuffer(const QDemonRenderTextureOrRenderBuffer &other)
-    : m_texture2D(other.m_texture2D)
-    , m_texture2DArray(other.m_texture2DArray)
-    , m_textureCube(other.m_textureCube)
-    , m_renderBuffer(other.m_renderBuffer)
-{
-}
-
-QDemonRenderTextureOrRenderBuffer::~QDemonRenderTextureOrRenderBuffer() {}
-
 QDemonRenderTextureOrRenderBuffer &QDemonRenderTextureOrRenderBuffer::operator=(const QDemonRenderTextureOrRenderBuffer &other)
 {
     if (this != &other) {

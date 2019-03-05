@@ -496,7 +496,7 @@ struct QDemonPathXYGeneratedShader
         , m_cameraProperties("camera_properties", sh)
     {
     }
-    virtual ~QDemonPathXYGeneratedShader() {}
+    virtual ~QDemonPathXYGeneratedShader() = default;
 };
 
 // Helper implements the vertex pipeline for mesh subsets when bound to the default material.
@@ -1764,7 +1764,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
 };
 }
 
-QDemonPathManagerInterface::~QDemonPathManagerInterface() {}
+QDemonPathManagerInterface::~QDemonPathManagerInterface() = default;
 
 QVector2D QDemonPathManagerInterface::getControlPointFromAngleDistance(QVector2D inPosition, float inIncomingAngle, float inIncomingDistance)
 {

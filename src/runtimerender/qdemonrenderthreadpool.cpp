@@ -192,7 +192,7 @@ void QDemonThreadPool::taskFinished(quint64 inTaskId)
 }
 }
 
-QDemonAbstractThreadPool::~QDemonAbstractThreadPool() {}
+QDemonAbstractThreadPool::~QDemonAbstractThreadPool() = default;
 
 QDemonRef<QDemonAbstractThreadPool> QDemonAbstractThreadPool::createThreadPool(quint32 inNumThreads)
 {

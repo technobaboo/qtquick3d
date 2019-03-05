@@ -115,7 +115,7 @@ struct QDemonOffscreenRenderManager : public QDemonOffscreenRenderManagerInterfa
     {
     }
 
-    virtual ~QDemonOffscreenRenderManager() override {}
+    virtual ~QDemonOffscreenRenderManager() override = default;
 
     QDemonOption<bool> maybeRegisterOffscreenRenderer(const QDemonOffscreenRendererKey &inKey,
                                                       QDemonRef<QDemonOffscreenRendererInterface> inRenderer) override
@@ -433,7 +433,7 @@ void QDemonOffscreenRunnable::run()
 }
 }
 
-QDemonOffscreenRenderManagerInterface::~QDemonOffscreenRenderManagerInterface() {}
+QDemonOffscreenRenderManagerInterface::~QDemonOffscreenRenderManagerInterface() = default;
 
 QDemonRef<QDemonOffscreenRenderManagerInterface> QDemonOffscreenRenderManagerInterface::createOffscreenRenderManager(
         const QDemonRef<QDemonResourceManagerInterface> &inManager,
@@ -442,10 +442,8 @@ QDemonRef<QDemonOffscreenRenderManagerInterface> QDemonOffscreenRenderManagerInt
     return QDemonRef<QDemonOffscreenRenderManagerInterface>(new QDemonOffscreenRenderManager(inManager, inContext));
 }
 
-QDemonOffscreenRendererInterface::~QDemonOffscreenRendererInterface() {}
+QDemonOffscreenRendererInterface::~QDemonOffscreenRendererInterface() = default;
 
-QDemonOffscreenRendererInterface::QDemonOffscreenRendererCallbackInterface::~QDemonOffscreenRendererCallbackInterface()
-{
-}
+QDemonOffscreenRendererInterface::QDemonOffscreenRendererCallbackInterface::~QDemonOffscreenRendererCallbackInterface() = default;
 
 QT_END_NAMESPACE

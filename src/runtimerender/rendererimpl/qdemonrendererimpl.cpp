@@ -1936,7 +1936,7 @@ QDemonRenderPickSubResult::QDemonRenderPickSubResult(const QDemonRef<QDemonOffsc
 {
 }
 
-QDemonRenderPickSubResult::~QDemonRenderPickSubResult() {}
+QDemonRenderPickSubResult::~QDemonRenderPickSubResult() = default;
 
 QDemonRenderPickResult::QDemonRenderPickResult(const QDemonGraphObject &inHitObject, float inCameraDistance, const QVector2D &inLocalUVCoords)
     : m_hitObject(&inHitObject)
@@ -1955,5 +1955,5 @@ QDemonRenderPickResult::QDemonRenderPickResult()
 {
 }
 
-QDemonRenderPickResult::~QDemonRenderPickResult() {}
+QDemonRenderPickResult::~QDemonRenderPickResult() = default;
 QT_END_NAMESPACE

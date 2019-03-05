@@ -39,7 +39,7 @@ QDemonRenderPathSpecification::QDemonRenderPathSpecification(const QDemonRef<QDe
 {
 }
 
-QDemonRenderPathSpecification::~QDemonRenderPathSpecification() {}
+QDemonRenderPathSpecification::~QDemonRenderPathSpecification() = default;
 
 void QDemonRenderPathSpecification::reset()
 {

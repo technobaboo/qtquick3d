@@ -98,6 +98,6 @@ QDemonRef<QDemonRenderListInterface> QDemonRenderListInterface::createRenderList
     return QDemonRef<QDemonRenderListInterface>(new QDemonRenderList());
 }
 
-QDemonRenderTask::~QDemonRenderTask() {}
+QDemonRenderTask::~QDemonRenderTask() = default;
 
 QT_END_NAMESPACE

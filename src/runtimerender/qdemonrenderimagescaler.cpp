@@ -40,7 +40,7 @@ QT_BEGIN_NAMESPACE
 //==============================================================================
 //	Namespace
 //==============================================================================
-QDemonImageScaler::QDemonImageScaler() {}
+QDemonImageScaler::QDemonImageScaler() = default;
 //==============================================================================
 /**
  *	Scales the given image by the given scale factor.

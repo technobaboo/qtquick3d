@@ -44,7 +44,7 @@
 
 QT_BEGIN_NAMESPACE
 
-INodeQueue::~INodeQueue() {}
+INodeQueue::~INodeQueue() = default;
 
 QDemonGraphNode::QDemonGraphNode(QDemonGraphObjectTypes::Enum inGraphObjectType)
     : QDemonGraphObject(inGraphObjectType)

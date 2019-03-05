@@ -100,7 +100,7 @@ QDemonSubsetRenderableBase::QDemonSubsetRenderableBase(QDemonRenderableObjectFla
 {
 }
 
-QDemonSubsetRenderableBase::~QDemonSubsetRenderableBase() {}
+QDemonSubsetRenderableBase::~QDemonSubsetRenderableBase() = default;
 
 void QDemonSubsetRenderableBase::renderShadowMapPass(const QVector2D &inCameraVec,
                                                      const QDemonRenderLight *inLight,
@@ -263,7 +263,7 @@ QDemonSubsetRenderable::QDemonSubsetRenderable(QDemonRenderableObjectFlags inFla
     renderableFlags.setText(false);
 }
 
-QDemonSubsetRenderable::~QDemonSubsetRenderable() {}
+QDemonSubsetRenderable::~QDemonSubsetRenderable() = default;
 
 void QDemonSubsetRenderable::render(const QVector2D &inCameraVec, const TShaderFeatureSet &inFeatureSet)
 {
@@ -495,7 +495,7 @@ QDemonCustomMaterialRenderable::QDemonCustomMaterialRenderable(QDemonRenderableO
     renderableFlags.setCustomMaterialMeshSubset(true);
 }
 
-QDemonCustomMaterialRenderable::~QDemonCustomMaterialRenderable() {}
+QDemonCustomMaterialRenderable::~QDemonCustomMaterialRenderable() = default;
 
 void QDemonCustomMaterialRenderable::render(const QVector2D & /*inCameraVec*/,
                                             const QDemonLayerRenderData &inLayerData,
@@ -598,7 +598,7 @@ QDemonPathRenderable::QDemonPathRenderable(QDemonRenderableObjectFlags inFlags,
     renderableFlags.setPath(true);
 }
 
-QDemonPathRenderable::~QDemonPathRenderable() {}
+QDemonPathRenderable::~QDemonPathRenderable() = default;
 
 void QDemonPathRenderable::render(const QVector2D &inCameraVec,
                                   const QDemonRenderLayer & /*inLayer*/,

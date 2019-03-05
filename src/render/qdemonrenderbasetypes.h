@@ -1221,14 +1221,8 @@ class QDemonRenderShaderProgram;
 
 struct Q_DEMONRENDER_EXPORT QDemonRenderVertFragCompilationResult
 {
-    const char *m_shaderName;
-
+    const char *m_shaderName = nullptr;
     QDemonRef<QDemonRenderShaderProgram> m_shader; ///< contains the program
-
-    QDemonRenderVertFragCompilationResult();
-    ~QDemonRenderVertFragCompilationResult();
-    QDemonRenderVertFragCompilationResult(const QDemonRenderVertFragCompilationResult &);
-    QDemonRenderVertFragCompilationResult &operator=(const QDemonRenderVertFragCompilationResult &);
 };
 
 struct QDemonRenderFrameBufferAttachments

@@ -53,9 +53,7 @@ public:
     QDemonRenderTextureOrRenderBuffer(QDemonRef<QDemonRenderRenderBuffer> render);
     QDemonRenderTextureOrRenderBuffer(QDemonRef<QDemonRenderTexture2DArray> textureArray);
     QDemonRenderTextureOrRenderBuffer(QDemonRef<QDemonRenderTextureCube> textureCube);
-    QDemonRenderTextureOrRenderBuffer();
-    QDemonRenderTextureOrRenderBuffer(const QDemonRenderTextureOrRenderBuffer &other);
-    ~QDemonRenderTextureOrRenderBuffer();
+    QDemonRenderTextureOrRenderBuffer() = default;
 
     QDemonRenderTextureOrRenderBuffer &operator=(const QDemonRenderTextureOrRenderBuffer &other);
 
