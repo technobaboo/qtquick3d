@@ -674,11 +674,21 @@ void QDemonObjectPrivate::addToDirtyList()
 
         QDemonWindowPrivate *p = QDemonWindowPrivate::get(window);
         if (isResourceNode()) {
-            nextDirtyItem = p->dirtyResourceList;
-            if (nextDirtyItem)
-                QDemonObjectPrivate::get(nextDirtyItem)->prevDirtyItem = &nextDirtyItem;
-            prevDirtyItem = &p->dirtyResourceList;
-            p->dirtyResourceList = q;
+            if (q->type() == QDemonObject::Image) {
+                // Will likely need to refactor this, but images need to come before other
+                // resources
+                nextDirtyItem = p->dirtyImageList;
+                if (nextDirtyItem)
+                    QDemonObjectPrivate::get(nextDirtyItem)->prevDirtyItem = &nextDirtyItem;
+                prevDirtyItem = &p->dirtyImageList;
+                p->dirtyImageList = q;
+            } else {
+                nextDirtyItem = p->dirtyResourceList;
+                if (nextDirtyItem)
+                    QDemonObjectPrivate::get(nextDirtyItem)->prevDirtyItem = &nextDirtyItem;
+                prevDirtyItem = &p->dirtyResourceList;
+                p->dirtyResourceList = q;
+            }
         } else {
             nextDirtyItem = p->dirtySpatialNodeList;
             if (nextDirtyItem)

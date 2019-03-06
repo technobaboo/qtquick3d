@@ -46,82 +46,55 @@ DemonWindow {
             }
         }
 
+//        Timer {
+//            property real range: 100
+//            property var instances: []
+//            property bool reverse: false
 
-        //        ColorfulCube {
-        //            id: cube1
-        //            position: Qt.vector3d(-100, 0, 0);
-        //            rotationTo: Qt.vector3d(-360, 0, 0);
-        //        }
+//            running: true
+//            repeat: true
+//            interval: 500
+//            onTriggered: {
+//                if (!reverse) {
+//                    // Create a new weirdShape at random postion
+//                    var xPos = Math.random() * (range - (-range)) + -range;
+//                    var yPos = Math.random() * (range - (-range)) + -range;
+//                    var zPos = Math.random() * (range - (-range)) + -range;
+//                    var weirdShapeComponent = Qt.createComponent("WeirdShape.qml");
+//                    let instance = weirdShapeComponent.createObject(layer1, {"x": xPos, "y": yPos, "z": zPos, "scale": Qt.vector3d(0.25, 0.25, 0.25)})
+//                    instances.push(instance);
+//                    console.log("created WeirdShape[" + instances.length + "] at: (" + xPos + ", " + yPos + ", " + zPos + ")");
+//                    if (instances.length === 10)
+//                        reverse = true;
+//                } else {
+//                    // remove last item in instances list
+//                    console.log("removed WeirdShape[" + instances.length + "]");
+//                    let instance = instances.pop();
+//                    instance.destroy();
+//                    if (instances.length === 0) {
+//                        reverse = false;
+//                    }
+//                }
+//            }
+//        }
 
-        //        ColorfulCube {
-        //            id: cube2
-        //            position: Qt.vector3d(100, 0, 0);
-        //        }
+//        WeirdShape {
+//            id: weirdShape1
+//            color: "red"
+//        }
 
-        Timer {
-            property real range: 100
-            property var instances: []
-            property bool reverse: false
+//        WeirdShape {
+//            id: weirdShape2
+//            color: "orange"
+//            x: 100
+//            y: 100
+//            z: 100
+//        }
 
-            running: true
-            repeat: true
-            interval: 500
-            onTriggered: {
-                if (!reverse) {
-                    // Create a new weirdShape at random postion
-                    var xPos = Math.random() * (range - (-range)) + -range;
-                    var yPos = Math.random() * (range - (-range)) + -range;
-                    var zPos = Math.random() * (range - (-range)) + -range;
-                    var weirdShapeComponent = Qt.createComponent("WeirdShape.qml");
-                    let instance = weirdShapeComponent.createObject(layer1, {"x": xPos, "y": yPos, "z": zPos, "scale": Qt.vector3d(0.25, 0.25, 0.25)})
-                    instances.push(instance);
-                    console.log("created WeirdShape[" + instances.length + "] at: (" + xPos + ", " + yPos + ", " + zPos + ")");
-                    if (instances.length === 10)
-                        reverse = true;
-                } else {
-                    // remove last item in instances list
-                    console.log("removed WeirdShape[" + instances.length + "]");
-                    let instance = instances.pop();
-                    instance.destroy();
-                    if (instances.length === 0) {
-                        reverse = false;
-                    }
-                }
-            }
+
+        TexturedCube {
+            x: -300
         }
-
-        WeirdShape {
-            id: weirdShape1
-            color: "red"
-        }
-
-        WeirdShape {
-            id: weirdShape2
-            color: "orange"
-            x: 100
-            y: 100
-            z: 100
-        }
-
-        //        WeirdShape {
-        //            id: weirdShape
-        //        }
-
-        //        DemonModel {
-        //            id: floor
-        //            source: "#Rectangle"
-
-        //            y: -100
-
-        //            scale: Qt.vector3d(100, 100, 0);
-        //            rotation: Qt.vector3d(90, 0, 0);
-
-        //            materials: [floorMaterial]
-
-        //            DemonDefaultMaterial {
-        //                id: floorMaterial
-        //            }
-        //        }
 
     }
 }

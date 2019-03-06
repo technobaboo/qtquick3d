@@ -1,6 +1,8 @@
 #include "qdemonimage.h"
 #include <QtDemonRuntimeRender/qdemonrenderimage.h>
 
+#include "qdemonobject_p.h"
+
 QT_BEGIN_NAMESPACE
 
 QDemonImage::QDemonImage() {}
@@ -191,34 +193,25 @@ QDemonGraphObject *QDemonImage::updateSpatialNode(QDemonGraphObject *node)
 
     auto imageNode = static_cast<QDemonRenderImage *>(node);
 
-    //    String imagePath
-    //    String imageShaderName
+    imageNode->m_imagePath = m_source;
+    imageNode->m_scale = QVector2D(m_scaleu, m_scalev);
+    imageNode->m_pivot = QVector2D(m_pivotu, m_pivotv);
+    imageNode->m_rotation = m_rotationuv;
+    imageNode->m_position = QVector2D(m_positionu, m_positionv);
+    imageNode->m_mappingMode = ImageMappingModes::Enum(m_mappingmode);
+    imageNode->m_horizontalTilingMode = QDemonRenderTextureCoordOp::Enum(m_tilingmodehorz);
+    imageNode->m_verticalTilingMode = QDemonRenderTextureCoordOp::Enum(m_tilingmodevert);
+    // ### Make this more conditional
+    imageNode->m_flags.setDirty(true);
+    imageNode->m_flags.setTransformDirty(true);
 
-    //    String offscreenRenderId
-    //    IOffscreenRenderer* lastFrameOffscreenRenderer
-    //    QDemonGraphObject* parent
-
-    //    SImageTextureData textureData
-
-    //    NodeFlags flags
-
-    //    Vec2 scale
-    //    Vec2 pivot
-    //    Float rotation
-    //    Vec2 position
-    //    Enum mappingMode
-    //    Enum horizontalTilingMode
-    //    Enum verticalTilingMode
-
-    //    mat44 textureTransform
-
-    m_renderImage = imageNode;
     return imageNode;
 }
 
 QDemonRenderImage *QDemonImage::getRenderImage()
 {
-    return m_renderImage;
+    QDemonObjectPrivate *p = QDemonObjectPrivate::get(this);
+    return static_cast<QDemonRenderImage *>(p->spatialNode);
 }
 
 QT_END_NAMESPACE

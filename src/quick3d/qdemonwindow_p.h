@@ -71,6 +71,7 @@ public:
 
     QDemonObject *dirtySpatialNodeList;
     QDemonObject *dirtyResourceList;
+    QDemonObject *dirtyImageList;
     QList<QDemonGraphObject *> cleanupNodeList;
 
     QVector<QDemonObject *> itemsToPolish;

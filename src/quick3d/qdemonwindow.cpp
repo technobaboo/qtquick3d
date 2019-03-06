@@ -447,6 +447,7 @@ QDemonWindowPrivate::QDemonWindowPrivate()
     , activeFocusItem(nullptr)
     , dirtySpatialNodeList(nullptr)
     , dirtyResourceList(nullptr)
+    , dirtyImageList(nullptr)
     , devicePixelRatio(0)
     , clearColor(Qt::white)
     , clearBeforeRendering(true)
@@ -682,11 +683,14 @@ void QDemonWindowPrivate::updateDirtyNodes()
         }
     };
 
+    updateNodes(dirtyImageList);
     updateNodes(dirtyResourceList);
     updateNodes(dirtySpatialNodeList);
 
+    dirtyImageList = nullptr;
     dirtyResourceList = nullptr;
     dirtySpatialNodeList = nullptr;
+
 }
 
 void QDemonWindowPrivate::cleanupNodes()

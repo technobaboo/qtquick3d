@@ -23,10 +23,21 @@ class Q_QUICK3D_EXPORT QDemonImage : public QDemonObject
     Q_PROPERTY(float pivotv READ pivotV WRITE setPivotV NOTIFY piviotVChanged)
 
 public:
-    enum MappingMode { UVMapping = 0, EnvironmentalMapping, LightProbe, IBLOverride };
+    enum MappingMode
+    {
+        Normal = 0, // UV mapping
+        Environment = 1,
+        LightProbe = 2,
+    };
     Q_ENUM(MappingMode)
 
-    enum TilingMode { Tiled = 0, Mirrored, NoTiling };
+    enum TilingMode
+    {
+        Unknown = 0,
+        ClampToEdge,
+        MirroredRepeat,
+        Repeat
+    };
     Q_ENUM(TilingMode)
 
     QDemonImage();
@@ -78,17 +89,16 @@ protected:
 
 private:
     QString m_source;
-    float m_scaleu;
-    float m_scalev;
-    MappingMode m_mappingmode;
-    TilingMode m_tilingmodehorz;
-    TilingMode m_tilingmodevert;
-    float m_rotationuv;
-    float m_positionu;
-    float m_positionv;
-    float m_pivotu;
-    float m_pivotv;
-    QDemonRenderImage *m_renderImage = nullptr;
+    float m_scaleu = 1.0f;
+    float m_scalev = 1.0f;
+    MappingMode m_mappingmode = Normal;
+    TilingMode m_tilingmodehorz = ClampToEdge;
+    TilingMode m_tilingmodevert = ClampToEdge;
+    float m_rotationuv = 0;
+    float m_positionu = 0;
+    float m_positionv = 0;
+    float m_pivotu = 0;
+    float m_pivotv = 0;
 };
 
 QT_END_NAMESPACE
