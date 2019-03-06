@@ -5,6 +5,7 @@
 #include <QtDemon/qdemontime.h>
 
 #include <QtCore/QSharedPointer>
+#include <QtCore/QVector>
 #include <QtCore/qmutex.h>
 
 QT_BEGIN_NAMESPACE

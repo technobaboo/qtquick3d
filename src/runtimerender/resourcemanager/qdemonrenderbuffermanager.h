@@ -32,6 +32,7 @@
 
 #include <QtDemonRuntimeRender/qtdemonruntimerenderglobal.h>
 #include <QtDemonRuntimeRender/qdemonrenderimagetexturedata.h>
+#include <QtDemon/QDemonPerfTimer>
 
 #include <QtDemon/qdemonbounds3.h>
 #include <QtCore/qmutex.h>
@@ -42,7 +43,6 @@ struct QDemonRenderMesh;
 struct QDemonLoadedTexture;
 class QDemonRenderContext;
 class QDemonInputStreamFactoryInterface;
-class QDemonPerfTimer;
 namespace QDemonMeshUtilities {
     struct MultiLoadResult;
 }
