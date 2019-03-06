@@ -854,21 +854,21 @@ QDemonRenderBackend::QDemonRenderBackendQueryObject QDemonRenderBackendGLES2Impl
 
 void QDemonRenderBackendGLES2Impl::releaseQuery(QDemonRenderBackendQueryObject) {}
 
-void QDemonRenderBackendGLES2Impl::beginQuery(QDemonRenderBackendQueryObject, QDemonRenderQueryType::Enum) {}
+void QDemonRenderBackendGLES2Impl::beginQuery(QDemonRenderBackendQueryObject, QDemonRenderQueryType) {}
 
-void QDemonRenderBackendGLES2Impl::endQuery(QDemonRenderBackendQueryObject, QDemonRenderQueryType::Enum) {}
+void QDemonRenderBackendGLES2Impl::endQuery(QDemonRenderBackendQueryObject, QDemonRenderQueryType) {}
 
-void QDemonRenderBackendGLES2Impl::getQueryResult(QDemonRenderBackendQueryObject, QDemonRenderQueryResultType::Enum, quint32 *)
+void QDemonRenderBackendGLES2Impl::getQueryResult(QDemonRenderBackendQueryObject, QDemonRenderQueryResultType, quint32 *)
 {
 }
 
-void QDemonRenderBackendGLES2Impl::getQueryResult(QDemonRenderBackendQueryObject, QDemonRenderQueryResultType::Enum, quint64 *)
+void QDemonRenderBackendGLES2Impl::getQueryResult(QDemonRenderBackendQueryObject, QDemonRenderQueryResultType, quint64 *)
 {
 }
 
 void QDemonRenderBackendGLES2Impl::setQueryTimer(QDemonRenderBackendQueryObject) {}
 
-QDemonRenderBackend::QDemonRenderBackendSyncObject QDemonRenderBackendGLES2Impl::createSync(QDemonRenderSyncType::Enum, QDemonRenderSyncFlags)
+QDemonRenderBackend::QDemonRenderBackendSyncObject QDemonRenderBackendGLES2Impl::createSync(QDemonRenderSyncType, QDemonRenderSyncFlags)
 {
     GLsync syncID = nullptr;
     return QDemonRenderBackendSyncObject(syncID);

@@ -68,7 +68,7 @@ public:
      *
      * @return Return query type
      */
-    virtual QDemonRenderSyncType::Enum getSyncType() const { return QDemonRenderSyncType::GpuCommandsComplete; }
+    virtual QDemonRenderSyncType getSyncType() const { return QDemonRenderSyncType::GpuCommandsComplete; }
 
     /**
      * @brief Create a sync object and place it in command stream.

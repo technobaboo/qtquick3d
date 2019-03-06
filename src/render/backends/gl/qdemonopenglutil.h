@@ -755,7 +755,7 @@ struct GLConversion
         return 0;
     }
 
-    static GLenum fromQueryTypeToGL(QDemonRenderQueryType::Enum type)
+    static GLenum fromQueryTypeToGL(QDemonRenderQueryType type)
     {
         GLenum retval = GL_INVALID_ENUM;
         if (type == QDemonRenderQueryType::Samples)
@@ -773,7 +773,7 @@ struct GLConversion
         return retval;
     }
 
-    static GLenum fromQueryResultTypeToGL(QDemonRenderQueryResultType::Enum type)
+    static GLenum fromQueryResultTypeToGL(QDemonRenderQueryResultType type)
     {
         GLenum retval = GL_INVALID_ENUM;
         if (type == QDemonRenderQueryResultType::ResultAvailable)
@@ -786,7 +786,7 @@ struct GLConversion
         return retval;
     }
 
-    static GLenum fromSyncTypeToGL(QDemonRenderSyncType::Enum type)
+    static GLenum fromSyncTypeToGL(QDemonRenderSyncType type)
     {
         GLenum retval = GL_INVALID_ENUM;
         if (type == QDemonRenderSyncType::GpuCommandsComplete)
@@ -1547,10 +1547,9 @@ struct GLConversion
 
     static GLbitfield fromClearFlagsToGL(QDemonRenderClearFlags flags)
     {
-        quint32 value = flags;
         GLbitfield retval = 0;
 #define QDEMON_RENDER_HANDLE_GL_QDEMON_CLEAR_FLAGS(gl, nv)                                                             \
-    if ((value & QDemonRenderClearValues::nv))                                                                         \
+    if ((flags & QDemonRenderClearValues::nv))                                                                         \
         retval |= gl;
         QDEMON_RENDER_ITERATE_GL_QDEMON_CLEAR_FLAGS
         QDEMON_RENDER_ITERATE_GL_QDEMON_CLEAR_COVERAGE_FLAGS
@@ -1560,14 +1559,14 @@ struct GLConversion
 
     static QDemonRenderClearFlags fromGLToClearFlags(GLbitfield value)
     {
-        quint32 retval = 0;
+        QDemonRenderClearFlags retval;
 #define QDEMON_RENDER_HANDLE_GL_QDEMON_CLEAR_FLAGS(gl, nv)                                                             \
     if ((value & gl))                                                                                                  \
         retval |= QDemonRenderClearValues::nv;
         QDEMON_RENDER_ITERATE_GL_QDEMON_CLEAR_FLAGS
         QDEMON_RENDER_ITERATE_GL_QDEMON_CLEAR_COVERAGE_FLAGS
 #undef QDEMON_RENDER_HANDLE_GL_QDEMON_CLEAR_FLAGS
-        return QDemonRenderClearFlags(retval);
+        return retval;
     }
 
     static GLenum fromDrawModeToGL(QDemonRenderDrawMode::Enum value, bool inTesselationSupported)

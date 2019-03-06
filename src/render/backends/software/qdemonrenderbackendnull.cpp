@@ -122,12 +122,12 @@ struct QDemonNullBackend : public QDemonRenderBackend
     void setMemoryBarrier(QDemonRenderBufferBarrierFlags) override {}
     QDemonRenderBackendQueryObject createQuery() override { return QDemonRenderBackendQueryObject(1); }
     void releaseQuery(QDemonRenderBackendQueryObject) override {}
-    void beginQuery(QDemonRenderBackendQueryObject, QDemonRenderQueryType::Enum) override {}
-    void endQuery(QDemonRenderBackendQueryObject, QDemonRenderQueryType::Enum) override {}
-    void getQueryResult(QDemonRenderBackendQueryObject, QDemonRenderQueryResultType::Enum, quint32 *) override {}
-    void getQueryResult(QDemonRenderBackendQueryObject, QDemonRenderQueryResultType::Enum, quint64 *) override {}
+    void beginQuery(QDemonRenderBackendQueryObject, QDemonRenderQueryType) override {}
+    void endQuery(QDemonRenderBackendQueryObject, QDemonRenderQueryType) override {}
+    void getQueryResult(QDemonRenderBackendQueryObject, QDemonRenderQueryResultType, quint32 *) override {}
+    void getQueryResult(QDemonRenderBackendQueryObject, QDemonRenderQueryResultType, quint64 *) override {}
     void setQueryTimer(QDemonRenderBackendQueryObject) override {}
-    QDemonRenderBackendSyncObject createSync(QDemonRenderSyncType::Enum, QDemonRenderSyncFlags) override
+    QDemonRenderBackendSyncObject createSync(QDemonRenderSyncType, QDemonRenderSyncFlags) override
     {
         return QDemonRenderBackendSyncObject(1);
     }

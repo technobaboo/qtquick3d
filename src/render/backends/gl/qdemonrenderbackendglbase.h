@@ -151,13 +151,13 @@ public:
 
     QDemonRenderBackendQueryObject createQuery() override;
     void releaseQuery(QDemonRenderBackendQueryObject qo) override;
-    void beginQuery(QDemonRenderBackendQueryObject qo, QDemonRenderQueryType::Enum type) override;
-    void endQuery(QDemonRenderBackendQueryObject qo, QDemonRenderQueryType::Enum type) override;
-    void getQueryResult(QDemonRenderBackendQueryObject qo, QDemonRenderQueryResultType::Enum resultType, quint32 *params) override;
-    void getQueryResult(QDemonRenderBackendQueryObject qo, QDemonRenderQueryResultType::Enum resultType, quint64 *params) override;
+    void beginQuery(QDemonRenderBackendQueryObject qo, QDemonRenderQueryType type) override;
+    void endQuery(QDemonRenderBackendQueryObject qo, QDemonRenderQueryType type) override;
+    void getQueryResult(QDemonRenderBackendQueryObject qo, QDemonRenderQueryResultType resultType, quint32 *params) override;
+    void getQueryResult(QDemonRenderBackendQueryObject qo, QDemonRenderQueryResultType resultType, quint64 *params) override;
     void setQueryTimer(QDemonRenderBackendQueryObject qo) override;
 
-    QDemonRenderBackendSyncObject createSync(QDemonRenderSyncType::Enum tpye, QDemonRenderSyncFlags syncFlags) override;
+    QDemonRenderBackendSyncObject createSync(QDemonRenderSyncType tpye, QDemonRenderSyncFlags syncFlags) override;
     void releaseSync(QDemonRenderBackendSyncObject so) override;
     void waitSync(QDemonRenderBackendSyncObject so, QDemonRenderCommandFlushFlags syncFlags, quint64 timeout) override;
 

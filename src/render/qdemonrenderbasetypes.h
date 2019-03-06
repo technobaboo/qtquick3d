@@ -333,61 +333,52 @@ enum class QDemonRenderContextType : quint32
 Q_DECLARE_FLAGS(QDemonRenderContextTypes, QDemonRenderContextType);
 Q_DECLARE_OPERATORS_FOR_FLAGS(QDemonRenderContextTypes);
 
-struct QDemonRenderClearValues
+enum class QDemonRenderClearValues : quint32
 {
-    enum Enum {
-        Color = 1 << 0,
-        Depth = 1 << 1,
-        Stencil = 1 << 3,
-        Coverage = 1 << 4,
-    };
+    Color = 1 << 0,
+    Depth = 1 << 1,
+    Stencil = 1 << 3,
+    Coverage = 1 << 4,
 };
 
-typedef QDemonFlags<QDemonRenderClearValues::Enum, quint32> QDemonRenderClearFlags;
+Q_DECLARE_FLAGS(QDemonRenderClearFlags, QDemonRenderClearValues);
+Q_DECLARE_OPERATORS_FOR_FLAGS(QDemonRenderClearFlags);
 
-struct QDemonRenderQueryType
+enum class QDemonRenderQueryType
 {
-    enum Enum {
-        Unknown = 0,
-        Samples, ///< samples query object
-        Timer, ///< timer query object
-    };
+    Unknown = 0,
+    Samples, ///< samples query object
+    Timer, ///< timer query object
 };
 
-struct QDemonRenderQueryResultType
+enum class QDemonRenderQueryResultType
 {
-    enum Enum {
-        Unknown = 0,
-        ResultAvailable, ///< Check if query result is available
-        Result, ///< Get actual result
-    };
+    Unknown = 0,
+    ResultAvailable, ///< Check if query result is available
+    Result, ///< Get actual result
 };
 
-struct QDemonRenderSyncType
+enum class QDemonRenderSyncType
 {
-    enum Enum {
-        Unknown = 0,
-        GpuCommandsComplete, ///< sync to Gpu commands finished
-    };
+    Unknown = 0,
+    GpuCommandsComplete, ///< sync to Gpu commands finished
 };
 
-struct QDemonRenderSyncValues
+enum class QDemonRenderSyncValues
 {
-    enum Enum {
-        Unknown = 0, ///< for future usage
-    };
+    Unknown = 0, ///< for future usage
 };
 
-typedef QDemonFlags<QDemonRenderSyncValues::Enum, quint32> QDemonRenderSyncFlags;
+Q_DECLARE_FLAGS(QDemonRenderSyncFlags, QDemonRenderSyncValues);
+Q_DECLARE_OPERATORS_FOR_FLAGS(QDemonRenderSyncFlags);
 
-struct QDemonRenderCommandFlushValues
+enum class QDemonRenderCommandFlushValues
 {
-    enum Enum {
-        SyncFlushCommands = 0, ///< sync for flushing command
-    };
+    SyncFlushCommands = 0, ///< sync for flushing command
 };
 
-typedef QDemonFlags<QDemonRenderCommandFlushValues::Enum, quint32> QDemonRenderCommandFlushFlags;
+Q_DECLARE_FLAGS(QDemonRenderCommandFlushFlags, QDemonRenderCommandFlushValues);
+Q_DECLARE_OPERATORS_FOR_FLAGS(QDemonRenderCommandFlushFlags);
 
 struct QDemonRenderBufferBindValues
 {

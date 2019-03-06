@@ -1345,14 +1345,14 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
             inFrameBuffer->attach(QDemonRenderFrameBufferAttachments::DepthStencil, inDepthStencil);
             if (inDepthStencilCommand.hasValue()) {
                 QDemonDepthStencil &theDepthStencil(*inDepthStencilCommand);
-                quint32 clearFlags = 0;
+                QDemonRenderClearFlags clearFlags;
                 if (theDepthStencil.m_glags.hasClearStencil())
                     clearFlags |= QDemonRenderClearValues::Stencil;
                 if (theDepthStencil.m_glags.hasClearDepth())
                     clearFlags |= QDemonRenderClearValues::Depth;
 
                 if (clearFlags)
-                    theContext->clear(QDemonRenderClearFlags(clearFlags));
+                    theContext->clear(clearFlags);
 
                 QDemonRef<QDemonRenderDepthStencilState> targetState;
                 for (quint32 idx = 0, end = m_depthStencilStates.size(); idx < end && targetState == nullptr; ++idx) {

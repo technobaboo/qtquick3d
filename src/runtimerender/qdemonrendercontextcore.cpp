@@ -571,7 +571,7 @@ struct QDemonRenderContextData : public QDemonRenderContextInterface
                 theClearColor = m_sceneColor;
             Q_ASSERT(m_sceneColor.hasValue());
             m_renderContext->setClearColor(theClearColor);
-            m_renderContext->clear(QDemonRenderClearValues::Enum::Color);
+            m_renderContext->clear(QDemonRenderClearValues::Color);
         }
         bool renderOffscreen = m_beginFrameResult.renderOffscreen;
         m_renderContext->setViewport(m_beginFrameResult.viewport);

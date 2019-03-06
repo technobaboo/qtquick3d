@@ -68,7 +68,7 @@ public:
      *
      * @return Return query type
      */
-    virtual QDemonRenderQueryType::Enum getQueryType() const = 0;
+    virtual QDemonRenderQueryType getQueryType() const = 0;
 
     /**
      * @brief begin a query

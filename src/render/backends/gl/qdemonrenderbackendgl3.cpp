@@ -705,20 +705,20 @@ void QDemonRenderBackendGL3Impl::releaseQuery(QDemonRenderBackendQueryObject qo)
     GL_CALL_EXTRA_FUNCTION(glDeleteQueries(1, &queryID));
 }
 
-void QDemonRenderBackendGL3Impl::beginQuery(QDemonRenderBackendQueryObject qo, QDemonRenderQueryType::Enum type)
+void QDemonRenderBackendGL3Impl::beginQuery(QDemonRenderBackendQueryObject qo, QDemonRenderQueryType type)
 {
     GLuint queryID = HandleToID_cast(GLuint, size_t, qo);
 
     GL_CALL_EXTRA_FUNCTION(glBeginQuery(m_conversion.fromQueryTypeToGL(type), queryID));
 }
 
-void QDemonRenderBackendGL3Impl::endQuery(QDemonRenderBackendQueryObject, QDemonRenderQueryType::Enum type)
+void QDemonRenderBackendGL3Impl::endQuery(QDemonRenderBackendQueryObject, QDemonRenderQueryType type)
 {
     GL_CALL_EXTRA_FUNCTION(glEndQuery(m_conversion.fromQueryTypeToGL(type)));
 }
 
 void QDemonRenderBackendGL3Impl::getQueryResult(QDemonRenderBackendQueryObject qo,
-                                                QDemonRenderQueryResultType::Enum resultType,
+                                                QDemonRenderQueryResultType resultType,
                                                 quint32 *params)
 {
     GLuint queryID = HandleToID_cast(GLuint, size_t, qo);
@@ -728,7 +728,7 @@ void QDemonRenderBackendGL3Impl::getQueryResult(QDemonRenderBackendQueryObject q
 }
 
 void QDemonRenderBackendGL3Impl::getQueryResult(QDemonRenderBackendQueryObject qo,
-                                                QDemonRenderQueryResultType::Enum resultType,
+                                                QDemonRenderQueryResultType resultType,
                                                 quint64 *params)
 {
     // TODO: params type!
@@ -756,7 +756,7 @@ void QDemonRenderBackendGL3Impl::setQueryTimer(QDemonRenderBackendQueryObject qo
     }
 }
 
-QDemonRenderBackend::QDemonRenderBackendSyncObject QDemonRenderBackendGL3Impl::createSync(QDemonRenderSyncType::Enum syncType,
+QDemonRenderBackend::QDemonRenderBackendSyncObject QDemonRenderBackendGL3Impl::createSync(QDemonRenderSyncType syncType,
                                                                                           QDemonRenderSyncFlags)
 {
     GLsync syncID = nullptr;

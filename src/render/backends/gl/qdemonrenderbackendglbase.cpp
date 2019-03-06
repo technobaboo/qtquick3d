@@ -668,25 +668,25 @@ void QDemonRenderBackendGLBase::releaseQuery(QDemonRenderBackendQueryObject)
     qCCritical(INVALID_OPERATION) << QObject::tr("Unsupported method: ") << __FUNCTION__;
 }
 
-void QDemonRenderBackendGLBase::beginQuery(QDemonRenderBackendQueryObject, QDemonRenderQueryType::Enum)
+void QDemonRenderBackendGLBase::beginQuery(QDemonRenderBackendQueryObject, QDemonRenderQueryType)
 {
     // needs GL 3 context
     qCCritical(INVALID_OPERATION) << QObject::tr("Unsupported method: ") << __FUNCTION__;
 }
 
-void QDemonRenderBackendGLBase::endQuery(QDemonRenderBackendQueryObject, QDemonRenderQueryType::Enum)
+void QDemonRenderBackendGLBase::endQuery(QDemonRenderBackendQueryObject, QDemonRenderQueryType)
 {
     // needs GL 3 context
     qCCritical(INVALID_OPERATION) << QObject::tr("Unsupported method: ") << __FUNCTION__;
 }
 
-void QDemonRenderBackendGLBase::getQueryResult(QDemonRenderBackendQueryObject, QDemonRenderQueryResultType::Enum, quint32 *)
+void QDemonRenderBackendGLBase::getQueryResult(QDemonRenderBackendQueryObject, QDemonRenderQueryResultType, quint32 *)
 {
     // needs GL 3 context
     qCCritical(INVALID_OPERATION) << QObject::tr("Unsupported method: ") << __FUNCTION__;
 }
 
-void QDemonRenderBackendGLBase::getQueryResult(QDemonRenderBackendQueryObject, QDemonRenderQueryResultType::Enum, quint64 *)
+void QDemonRenderBackendGLBase::getQueryResult(QDemonRenderBackendQueryObject, QDemonRenderQueryResultType, quint64 *)
 {
     // needs GL 3 context
     qCCritical(INVALID_OPERATION) << QObject::tr("Unsupported method: ") << __FUNCTION__;
@@ -698,7 +698,7 @@ void QDemonRenderBackendGLBase::setQueryTimer(QDemonRenderBackendQueryObject)
     qCCritical(INVALID_OPERATION) << QObject::tr("Unsupported method: ") << __FUNCTION__;
 }
 
-QDemonRenderBackend::QDemonRenderBackendSyncObject QDemonRenderBackendGLBase::createSync(QDemonRenderSyncType::Enum, QDemonRenderSyncFlags)
+QDemonRenderBackend::QDemonRenderBackendSyncObject QDemonRenderBackendGLBase::createSync(QDemonRenderSyncType, QDemonRenderSyncFlags)
 {
     // needs GL 3 context
     qCCritical(INVALID_OPERATION) << QObject::tr("Unsupported method: ") << __FUNCTION__;

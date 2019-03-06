@@ -575,7 +575,7 @@ public:
      *
      * @return  no return
      */
-    virtual void beginQuery(QDemonRenderBackendQueryObject qo, QDemonRenderQueryType::Enum type) = 0;
+    virtual void beginQuery(QDemonRenderBackendQueryObject qo, QDemonRenderQueryType type) = 0;
 
     /**
      * @brief End query recording
@@ -585,7 +585,7 @@ public:
      *
      * @return  no return
      */
-    virtual void endQuery(QDemonRenderBackendQueryObject qo, QDemonRenderQueryType::Enum type) = 0;
+    virtual void endQuery(QDemonRenderBackendQueryObject qo, QDemonRenderQueryType type) = 0;
 
     /**
      * @brief Get a query result
@@ -596,7 +596,7 @@ public:
      *
      * @return  no return
      */
-    virtual void getQueryResult(QDemonRenderBackendQueryObject qo, QDemonRenderQueryResultType::Enum resultType, quint32 *params) = 0;
+    virtual void getQueryResult(QDemonRenderBackendQueryObject qo, QDemonRenderQueryResultType resultType, quint32 *params) = 0;
 
     /**
      * @brief Get a query result
@@ -607,7 +607,7 @@ public:
      *
      * @return  no return
      */
-    virtual void getQueryResult(QDemonRenderBackendQueryObject qo, QDemonRenderQueryResultType::Enum resultType, quint64 *params) = 0;
+    virtual void getQueryResult(QDemonRenderBackendQueryObject qo, QDemonRenderQueryResultType resultType, quint64 *params) = 0;
 
     /**
      * @brief Record the GPU time using the query object
@@ -626,7 +626,7 @@ public:
      *
      * @return The created sync object or nullptr if the creation failed.
      */
-    virtual QDemonRenderBackendSyncObject createSync(QDemonRenderSyncType::Enum tpye, QDemonRenderSyncFlags syncFlags) = 0;
+    virtual QDemonRenderBackendSyncObject createSync(QDemonRenderSyncType tpye, QDemonRenderSyncFlags syncFlags) = 0;
 
     /**
      * @brief delete sync object

@@ -58,7 +58,7 @@ public:
      *
      * @return Return query type
      */
-    QDemonRenderQueryType::Enum getQueryType() const override { return QDemonRenderQueryType::Samples; }
+    QDemonRenderQueryType getQueryType() const override { return QDemonRenderQueryType::Samples; }
 
     /**
      * @brief begin a query
