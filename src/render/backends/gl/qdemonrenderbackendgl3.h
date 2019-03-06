@@ -165,7 +165,7 @@ public:
     void getConstantBufferParamInfoByIndices(QDemonRenderBackendShaderProgramObject po,
                                              quint32 count,
                                              quint32 *indices,
-                                             qint32 *type,
+                                             QDemonRenderShaderDataType *type,
                                              qint32 *size,
                                              qint32 *offset) override;
     void programSetConstantBlock(QDemonRenderBackendShaderProgramObject po, quint32 blockIndex, quint32 binding) override;

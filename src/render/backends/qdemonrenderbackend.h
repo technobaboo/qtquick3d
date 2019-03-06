@@ -1671,7 +1671,7 @@ public:
                                        quint32 id,
                                        quint32 bufSize,
                                        qint32 *numElem,
-                                       QDemonRenderShaderDataTypes::Enum *type,
+                                       QDemonRenderShaderDataType *type,
                                        qint32 *binding,
                                        char *nameBuf) = 0;
 
@@ -1724,7 +1724,7 @@ public:
     virtual void getConstantBufferParamInfoByIndices(QDemonRenderBackendShaderProgramObject po,
                                                      quint32 count,
                                                      quint32 *indices,
-                                                     qint32 *type,
+                                                     QDemonRenderShaderDataType *type,
                                                      qint32 *size,
                                                      qint32 *offset) = 0;
 
@@ -1845,7 +1845,7 @@ public:
      */
     virtual void setConstantValue(QDemonRenderBackendShaderProgramObject po,
                                   quint32 id,
-                                  QDemonRenderShaderDataTypes::Enum type,
+                                  QDemonRenderShaderDataType type,
                                   qint32 count,
                                   const void *value,
                                   bool transpose = false) = 0;
@@ -1917,7 +1917,7 @@ public:
                            qint32 y,
                            qint32 width,
                            qint32 height,
-                           QDemonRenderReadPixelFormats::Enum inFormat,
+                           QDemonRenderReadPixelFormat inFormat,
                            void *pixels) = 0;
 
     /**

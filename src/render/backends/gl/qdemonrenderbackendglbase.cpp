@@ -1742,7 +1742,7 @@ qint32 QDemonRenderBackendGLBase::getConstantInfoByID(QDemonRenderBackendShaderP
                                                       quint32 id,
                                                       quint32 bufSize,
                                                       qint32 *numElem,
-                                                      QDemonRenderShaderDataTypes::Enum *type,
+                                                      QDemonRenderShaderDataType *type,
                                                       qint32 *binding,
                                                       char *nameBuf)
 {
@@ -1800,7 +1800,7 @@ void QDemonRenderBackendGLBase::getConstantBufferParamIndices(QDemonRenderBacken
 void QDemonRenderBackendGLBase::getConstantBufferParamInfoByIndices(QDemonRenderBackendShaderProgramObject po,
                                                                     quint32 count,
                                                                     quint32 *indices,
-                                                                    qint32 *type,
+                                                                    QDemonRenderShaderDataType *type,
                                                                     qint32 *size,
                                                                     qint32 *offset)
 {
@@ -1910,7 +1910,7 @@ void QDemonRenderBackendGLBase::programSetAtomicCounterBuffer(quint32 index, QDe
 
 void QDemonRenderBackendGLBase::setConstantValue(QDemonRenderBackendShaderProgramObject,
                                                  quint32 id,
-                                                 QDemonRenderShaderDataTypes::Enum type,
+                                                 QDemonRenderShaderDataType type,
                                                  qint32 count,
                                                  const void *value,
                                                  bool transpose)
@@ -2015,7 +2015,7 @@ void QDemonRenderBackendGLBase::readPixel(QDemonRenderBackendRenderTargetObject 
                                           qint32 y,
                                           qint32 width,
                                           qint32 height,
-                                          QDemonRenderReadPixelFormats::Enum inFormat,
+                                          QDemonRenderReadPixelFormat inFormat,
                                           void *pixels)
 {
     GLuint glFormat;

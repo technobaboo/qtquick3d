@@ -803,7 +803,7 @@ void QDemonRenderBackendGLES2Impl::getConstantBufferParamIndices(QDemonRenderBac
 void QDemonRenderBackendGLES2Impl::getConstantBufferParamInfoByIndices(QDemonRenderBackendShaderProgramObject po,
                                                                        quint32 count,
                                                                        quint32 *indices,
-                                                                       qint32 *type,
+                                                                       QDemonRenderShaderDataType *type,
                                                                        qint32 *size,
                                                                        qint32 *offset)
 {
@@ -816,9 +816,10 @@ void QDemonRenderBackendGLES2Impl::getConstantBufferParamInfoByIndices(QDemonRen
 
     if (count && indices) {
         if (type) {
-            GL_CALL_EXTRA_FUNCTION(glGetActiveUniformsiv(programID, count, indices, GL_UNIFORM_TYPE, type));
+            qint32 *glTypes = reinterpret_cast<qint32 *>(alloca(count*sizeof(qint32)));
+            GL_CALL_EXTRA_FUNCTION(glGetActiveUniformsiv(programID, count, indices, GL_UNIFORM_TYPE, glTypes));
             // convert to UIC types
-            QDEMON_FOREACH(idx, count) { type[idx] = GLConversion::fromShaderGLToPropertyDataTypes(type[idx]); }
+            QDEMON_FOREACH(idx, count) { type[idx] = GLConversion::fromShaderGLToPropertyDataTypes(glTypes[idx]); }
         }
         if (size) {
             GL_CALL_EXTRA_FUNCTION(glGetActiveUniformsiv(programID, count, indices, GL_UNIFORM_SIZE, size));

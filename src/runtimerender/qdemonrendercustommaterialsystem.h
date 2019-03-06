@@ -109,7 +109,7 @@ class Q_DEMONRUNTIMERENDER_EXPORT QDemonMaterialSystem
     void doApplyInstanceValue(QDemonRenderCustomMaterial & /* inMaterial */,
                               quint8 *inDataPtr,
                               const QString &inPropertyName,
-                              QDemonRenderShaderDataTypes::Enum inPropertyType,
+                              QDemonRenderShaderDataType inPropertyType,
                               const QDemonRef<QDemonRenderShaderProgram> &inShader,
                               const dynamic::QDemonPropertyDefinition &inDefinition);
 
@@ -200,7 +200,7 @@ public:
     void setPropertyTextureSettings(const QString &inEffectName,
                                             const QString &inPropName,
                                             const QString &inPropPath,
-                                            QDemonRenderTextureTypeValue::Enum inTexType,
+                                            QDemonRenderTextureTypeValue inTexType,
                                             QDemonRenderTextureCoordOp::Enum inCoordOp,
                                             QDemonRenderTextureMagnifyingOp::Enum inMagFilterOp,
                                             QDemonRenderTextureMinifyingOp::Enum inMinFilterOp);

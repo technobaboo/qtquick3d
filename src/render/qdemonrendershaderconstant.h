@@ -54,7 +54,7 @@ public:
     QString m_name; ///< register constant name
     qint32 m_location; ///< constant index
     qint32 m_elementCount; ///< constant element count for arrays
-    QDemonRenderShaderDataTypes::Enum m_type; ///< constant type
+    QDemonRenderShaderDataType m_type; ///< constant type
     qint32 m_binding; ///< sampler/imnage binding point
 
 public:
@@ -62,7 +62,7 @@ public:
                                    const QString &name,
                                    qint32 location,
                                    qint32 elementCount,
-                                   QDemonRenderShaderDataTypes::Enum type,
+                                   QDemonRenderShaderDataType type,
                                    qint32 binding)
         : m_backend(backend), m_name(name), m_location(location), m_elementCount(elementCount), m_type(type), m_binding(binding)
     {
@@ -70,7 +70,7 @@ public:
 
     virtual ~QDemonRenderShaderConstantBase() {}
 
-    QDemonRenderShaderDataTypes::Enum getShaderConstantType() const { return m_type; }
+    QDemonRenderShaderDataType getShaderConstantType() const { return m_type; }
 
     virtual void release() = 0;
 };
@@ -87,7 +87,7 @@ public:
                                const QString &name,
                                qint32 location,
                                qint32 elementCount,
-                               QDemonRenderShaderDataTypes::Enum type,
+                               QDemonRenderShaderDataType type,
                                qint32 binding)
         : QDemonRenderShaderConstantBase(backend, name, location, elementCount, type, binding)
     {
@@ -109,7 +109,7 @@ public:
                                const QString &name,
                                qint32 location,
                                qint32 elementCount,
-                               QDemonRenderShaderDataTypes::Enum type,
+                               QDemonRenderShaderDataType type,
                                qint32 binding)
         : QDemonRenderShaderConstantBase(backend, name, location, elementCount, type, binding)
     {
@@ -131,7 +131,7 @@ public:
                                const QString &name,
                                qint32 location,
                                qint32 elementCount,
-                               QDemonRenderShaderDataTypes::Enum type,
+                               QDemonRenderShaderDataType type,
                                qint32 binding)
         : QDemonRenderShaderConstantBase(backend, name, location, elementCount, type, binding)
     {
@@ -154,7 +154,7 @@ public:
                                const QString &name,
                                qint32 location,
                                qint32 elementCount,
-                               QDemonRenderShaderDataTypes::Enum type,
+                               QDemonRenderShaderDataType type,
                                qint32 binding)
         : QDemonRenderShaderConstantBase(backend, name, location, elementCount, type, binding)
     {
@@ -176,7 +176,7 @@ public:
                                const QString &name,
                                qint32 location,
                                qint32 elementCount,
-                               QDemonRenderShaderDataTypes::Enum type,
+                               QDemonRenderShaderDataType type,
                                qint32 binding)
         : QDemonRenderShaderConstantBase(backend, name, location, elementCount, type, binding)
     {
@@ -198,7 +198,7 @@ public:
                                const QString &name,
                                qint32 location,
                                qint32 elementCount,
-                               QDemonRenderShaderDataTypes::Enum type,
+                               QDemonRenderShaderDataType type,
                                qint32 binding)
         : QDemonRenderShaderConstantBase(backend, name, location, elementCount, type, binding)
     {
@@ -221,7 +221,7 @@ public:
                                const QString &name,
                                qint32 location,
                                qint32 elementCount,
-                               QDemonRenderShaderDataTypes::Enum type,
+                               QDemonRenderShaderDataType type,
                                qint32 binding)
         : QDemonRenderShaderConstantBase(backend, name, location, elementCount, type, binding)
     {

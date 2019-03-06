@@ -86,7 +86,7 @@ void QDemonDynamicObject::setPropertyValue(const dynamic::QDemonPropertyDefiniti
 }
 void QDemonDynamicObject::setPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition, const QString &inValue)
 {
-    Q_ASSERT(inDefinition.dataType == QDemonRenderShaderDataTypes::Texture2D);
+    Q_ASSERT(inDefinition.dataType == QDemonRenderShaderDataType::Texture2D);
     setPropertyValueT(inDefinition, inValue);
 }
 template<typename TStrType>
@@ -97,7 +97,7 @@ void QDemonDynamicObject::setStrPropertyValueT(dynamic::QDemonPropertyDefinition
 {
     if (inValue == nullptr)
         inValue = "";
-    if (inDefinition.dataType == QDemonRenderShaderDataTypes::Integer) {
+    if (inDefinition.dataType == QDemonRenderShaderDataType::Integer) {
         // TODO: Can the enum values be anything but 8bit chars?
         QDemonConstDataRef<QString> theEnumValues = inDefinition.enumValueNames;
         for (int idx = 0, end = theEnumValues.size(); idx < end; ++idx) {
@@ -106,7 +106,7 @@ void QDemonDynamicObject::setStrPropertyValueT(dynamic::QDemonPropertyDefinition
                 break;
             }
         }
-    } else if (inDefinition.dataType == QDemonRenderShaderDataTypes::Texture2D) {
+    } else if (inDefinition.dataType == QDemonRenderShaderDataType::Texture2D) {
         if (inProjectDir == nullptr)
             inProjectDir = "";
 
@@ -121,9 +121,9 @@ void QDemonDynamicObject::setStrPropertyValueT(dynamic::QDemonPropertyDefinition
         } else {
             setPropertyValueT(inDefinition, inValue);
         }
-    } else if (inDefinition.dataType == QDemonRenderShaderDataTypes::Image2D) {
+    } else if (inDefinition.dataType == QDemonRenderShaderDataType::Image2D) {
         setPropertyValueT(inDefinition, inValue);
-    } else if (inDefinition.dataType == QDemonRenderShaderDataTypes::DataBuffer) {
+    } else if (inDefinition.dataType == QDemonRenderShaderDataType::DataBuffer) {
         setPropertyValueT(inDefinition, inValue);
     } else {
         Q_ASSERT(false);

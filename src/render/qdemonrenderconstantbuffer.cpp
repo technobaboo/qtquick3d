@@ -41,11 +41,11 @@ class ConstantBufferParamEntry
 {
 public:
     QByteArray m_name; ///< parameter Name
-    QDemonRenderShaderDataTypes::Enum m_type; ///< parameter type
+    QDemonRenderShaderDataType m_type; ///< parameter type
     qint32 m_count; ///< one or array size
     qint32 m_offset; ///< offset into the memory buffer
 
-    ConstantBufferParamEntry(const QByteArray &name, QDemonRenderShaderDataTypes::Enum type, qint32 count, qint32 offset)
+    ConstantBufferParamEntry(const QByteArray &name, QDemonRenderShaderDataType type, qint32 count, qint32 offset)
         : m_name(name), m_type(type), m_count(count), m_offset(offset)
     {
     }
@@ -126,14 +126,14 @@ bool QDemonRenderConstantBuffer::setupBuffer(const QDemonRenderShaderProgram *pr
 
         // allocate temp buffers to hold constant buffer information
         qint32 *theIndices = nullptr;
-        qint32 *theTypes = nullptr;
+        QDemonRenderShaderDataType *theTypes = nullptr;
         qint32 *theSizes = nullptr;
         qint32 *theOffsets = nullptr;
 
         theIndices = static_cast<qint32 *>(::malloc(size_t(paramCount) * sizeof(qint32)));
         if (!theIndices)
             goto fail;
-        theTypes = static_cast<qint32 *>(::malloc(size_t(paramCount) * sizeof(qint32)));
+        theTypes = static_cast<QDemonRenderShaderDataType *>(::malloc(size_t(paramCount) * sizeof(QDemonRenderShaderDataType)));
         if (!theTypes)
             goto fail;
         theSizes = static_cast<qint32 *>(::malloc(size_t(paramCount) * sizeof(qint32)));
@@ -154,7 +154,7 @@ bool QDemonRenderConstantBuffer::setupBuffer(const QDemonRenderShaderProgram *pr
         // get the names of the uniforms
         char nameBuf[512];
         qint32 elementCount, binding;
-        QDemonRenderShaderDataTypes::Enum type;
+        QDemonRenderShaderDataType type;
 
         QDEMON_FOREACH(idx, paramCount)
         {
@@ -177,7 +177,7 @@ bool QDemonRenderConstantBuffer::setupBuffer(const QDemonRenderShaderProgram *pr
                 // create one
                 m_constantBufferEntryMap.insert(theName,
                                                 createParamEntry(theName,
-                                                                 (QDemonRenderShaderDataTypes::Enum)theTypes[idx],
+                                                                 theTypes[idx],
                                                                  theSizes[idx],
                                                                  theOffsets[idx]));
             }
@@ -232,7 +232,7 @@ void QDemonRenderConstantBuffer::update()
     }
 }
 
-void QDemonRenderConstantBuffer::addParam(const QByteArray &name, QDemonRenderShaderDataTypes::Enum type, qint32 count)
+void QDemonRenderConstantBuffer::addParam(const QByteArray &name, QDemonRenderShaderDataType type, qint32 count)
 {
     if (m_constantBufferEntryMap.find(name) == m_constantBufferEntryMap.end()) {
         ConstantBufferParamEntry *newEntry = new ConstantBufferParamEntry(name, type, count, m_currentOffset);
@@ -302,7 +302,7 @@ void QDemonRenderConstantBuffer::updateRaw(quint32 offset, QDemonDataRef<quint8>
 }
 
 ConstantBufferParamEntry *QDemonRenderConstantBuffer::createParamEntry(const QByteArray &name,
-                                                                       QDemonRenderShaderDataTypes::Enum type,
+                                                                       QDemonRenderShaderDataType type,
                                                                        qint32 count,
                                                                        qint32 offset)
 {
@@ -311,36 +311,36 @@ ConstantBufferParamEntry *QDemonRenderConstantBuffer::createParamEntry(const QBy
     return newEntry;
 }
 
-qint32 QDemonRenderConstantBuffer::getUniformTypeSize(QDemonRenderShaderDataTypes::Enum type)
+qint32 QDemonRenderConstantBuffer::getUniformTypeSize(QDemonRenderShaderDataType type)
 {
     switch (type) {
-    case QDemonRenderShaderDataTypes::Float:
+    case QDemonRenderShaderDataType::Float:
         return sizeof(float);
-    case QDemonRenderShaderDataTypes::Integer:
+    case QDemonRenderShaderDataType::Integer:
         return sizeof(qint32);
-    case QDemonRenderShaderDataTypes::IntegerVec2:
+    case QDemonRenderShaderDataType::IntegerVec2:
         return sizeof(qint32) * 2;
-    case QDemonRenderShaderDataTypes::IntegerVec3:
+    case QDemonRenderShaderDataType::IntegerVec3:
         return sizeof(qint32) * 3;
-    case QDemonRenderShaderDataTypes::IntegerVec4:
+    case QDemonRenderShaderDataType::IntegerVec4:
         return sizeof(qint32) * 4;
-    case QDemonRenderShaderDataTypes::UnsignedInteger:
+    case QDemonRenderShaderDataType::UnsignedInteger:
         return sizeof(quint32);
-    case QDemonRenderShaderDataTypes::UnsignedIntegerVec2:
+    case QDemonRenderShaderDataType::UnsignedIntegerVec2:
         return sizeof(quint32) * 2;
-    case QDemonRenderShaderDataTypes::UnsignedIntegerVec3:
+    case QDemonRenderShaderDataType::UnsignedIntegerVec3:
         return sizeof(quint32) * 3;
-    case QDemonRenderShaderDataTypes::UnsignedIntegerVec4:
+    case QDemonRenderShaderDataType::UnsignedIntegerVec4:
         return sizeof(quint32) * 4;
-    case QDemonRenderShaderDataTypes::Vec2:
+    case QDemonRenderShaderDataType::Vec2:
         return sizeof(float) * 2;
-    case QDemonRenderShaderDataTypes::Vec3:
+    case QDemonRenderShaderDataType::Vec3:
         return sizeof(float) * 3;
-    case QDemonRenderShaderDataTypes::Vec4:
+    case QDemonRenderShaderDataType::Vec4:
         return sizeof(float) * 4;
-    case QDemonRenderShaderDataTypes::Matrix3x3:
+    case QDemonRenderShaderDataType::Matrix3x3:
         return sizeof(float) * 9;
-    case QDemonRenderShaderDataTypes::Matrix4x4:
+    case QDemonRenderShaderDataType::Matrix4x4:
         return sizeof(float) * 16;
     default:
         Q_ASSERT(!"Unhandled type in QDemonRenderConstantBuffer::getUniformTypeSize");

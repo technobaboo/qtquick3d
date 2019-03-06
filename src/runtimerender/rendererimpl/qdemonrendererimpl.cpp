@@ -1530,11 +1530,11 @@ void QDemonRendererImpl::updateCbAoShadow(const QDemonRenderLayer *pLayer, const
             m_constantBuffers.insert(theName, pCB);
 
             // Add paramters. Note should match the appearance in the shader program
-            pCB->addParam("ao_properties", QDemonRenderShaderDataTypes::Vec4, 1);
-            pCB->addParam("ao_properties2", QDemonRenderShaderDataTypes::Vec4, 1);
-            pCB->addParam("shadow_properties", QDemonRenderShaderDataTypes::Vec4, 1);
-            pCB->addParam("aoScreenConst", QDemonRenderShaderDataTypes::Vec4, 1);
-            pCB->addParam("UvToEyeConst", QDemonRenderShaderDataTypes::Vec4, 1);
+            pCB->addParam("ao_properties", QDemonRenderShaderDataType::Vec4, 1);
+            pCB->addParam("ao_properties2", QDemonRenderShaderDataType::Vec4, 1);
+            pCB->addParam("shadow_properties", QDemonRenderShaderDataType::Vec4, 1);
+            pCB->addParam("aoScreenConst", QDemonRenderShaderDataType::Vec4, 1);
+            pCB->addParam("UvToEyeConst", QDemonRenderShaderDataType::Vec4, 1);
         }
 
         // update values

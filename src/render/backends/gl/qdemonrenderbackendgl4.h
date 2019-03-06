@@ -66,7 +66,7 @@ public:
 
     void setConstantValue(QDemonRenderBackendShaderProgramObject po,
                           quint32 id,
-                          QDemonRenderShaderDataTypes::Enum type,
+                          QDemonRenderShaderDataType type,
                           qint32 count,
                           const void *value,
                           bool transpose) override;

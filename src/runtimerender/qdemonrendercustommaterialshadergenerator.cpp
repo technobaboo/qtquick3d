@@ -308,7 +308,7 @@ struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
 
     quint32 convertTextureTypeValue(QDemonImageMapTypes::Enum inType)
     {
-        QDemonRenderTextureTypeValue::Enum retVal = QDemonRenderTextureTypeValue::Unknown;
+        QDemonRenderTextureTypeValue retVal = QDemonRenderTextureTypeValue::Unknown;
 
         switch (inType) {
         case QDemonImageMapTypes::LightmapIndirect:
@@ -336,14 +336,14 @@ struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
 
         Q_ASSERT(retVal != QDemonRenderTextureTypeValue::Unknown);
 
-        return (quint32)retVal;
+        return static_cast<quint32>(retVal);
     }
 
-    ImageVariableNames getImageVariableNames(quint32 imageIdx) override
+    ImageVariableNames getImageVariableNames(uint imageIdx) override
     {
         // convert to QDemonRenderTextureTypeValue
-        QDemonRenderTextureTypeValue::Enum texType = (QDemonRenderTextureTypeValue::Enum)imageIdx;
-        m_imageStem = QDemonRenderTextureTypeValue::toString(texType);
+        QDemonRenderTextureTypeValue texType = QDemonRenderTextureTypeValue(imageIdx);
+        m_imageStem = toString(texType);
         m_imageStem.append("_");
         m_imageSampler = m_imageStem;
         m_imageSampler.append("sampler");
@@ -864,7 +864,7 @@ struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
         inFragmentShader << "vec4 computeMaterialLightmapShadow()\n{\n";
         inFragmentShader << "  vec4 shadowMask = vec4( 1.0, 1.0, 1.0, 1.0 );\n";
         if (pBakedShadowMap) {
-            ImageVariableNames names = getImageVariableNames((quint32)QDemonRenderTextureTypeValue::LightmapShadow);
+            ImageVariableNames names = getImageVariableNames(static_cast<quint32>(QDemonRenderTextureTypeValue::LightmapShadow));
             // Add uniforms
             inFragmentShader.addUniform(names.m_imageSampler, "sampler2D");
             inFragmentShader.addUniform(m_imageOffset, "vec3");

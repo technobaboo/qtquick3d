@@ -107,7 +107,7 @@ public:
     virtual void setEffectPropertyTextureSettings(QString inEffectName,
                                                   QString inPropName,
                                                   QString inPropPath,
-                                                  QDemonRenderTextureTypeValue::Enum inTexType,
+                                                  QDemonRenderTextureTypeValue inTexType,
                                                   QDemonRenderTextureCoordOp::Enum inCoordOp,
                                                   QDemonRenderTextureMagnifyingOp::Enum inMagFilterOp,
                                                   QDemonRenderTextureMinifyingOp::Enum inMinFilterOp) = 0;

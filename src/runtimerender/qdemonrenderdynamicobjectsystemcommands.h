@@ -267,16 +267,16 @@ struct QDemonApplyInstanceValue : public QDemonCommand
     // Name of value to apply in shader
     QString m_propertyName;
     // type of value
-    QDemonRenderShaderDataTypes::Enum m_valueType;
+    QDemonRenderShaderDataType m_valueType;
     // offset in the effect data section of value.
     quint32 m_valueOffset;
-    QDemonApplyInstanceValue(QString inName, QDemonRenderShaderDataTypes::Enum inValueType, quint32 inValueOffset)
+    QDemonApplyInstanceValue(QString inName, QDemonRenderShaderDataType inValueType, quint32 inValueOffset)
         : QDemonCommand(CommandTypes::ApplyInstanceValue), m_propertyName(inName), m_valueType(inValueType), m_valueOffset(inValueOffset)
     {
     }
     // Default will attempt to apply all effect values to the currently bound shader
     QDemonApplyInstanceValue()
-        : QDemonCommand(CommandTypes::ApplyInstanceValue), m_valueType(QDemonRenderShaderDataTypes::Unknown), m_valueOffset(0)
+        : QDemonCommand(CommandTypes::ApplyInstanceValue), m_valueType(QDemonRenderShaderDataType::Unknown), m_valueOffset(0)
     {
     }
     QDemonApplyInstanceValue(const QDemonApplyInstanceValue &inOther)
@@ -291,14 +291,14 @@ struct QDemonApplyInstanceValue : public QDemonCommand
 struct QDemonApplyValue : public QDemonCommand
 {
     QString m_propertyName;
-    QDemonRenderShaderDataTypes::Enum m_valueType;
+    QDemonRenderShaderDataType m_valueType;
     QDemonDataRef<quint8> m_value;
-    QDemonApplyValue(QString inName, QDemonRenderShaderDataTypes::Enum inValueType)
+    QDemonApplyValue(QString inName, QDemonRenderShaderDataType inValueType)
         : QDemonCommand(CommandTypes::ApplyValue), m_propertyName(inName), m_valueType(inValueType)
     {
     }
     // Default will attempt to apply all effect values to the currently bound shader
-    QDemonApplyValue() : QDemonCommand(CommandTypes::ApplyValue), m_valueType(QDemonRenderShaderDataTypes::Unknown) {}
+    QDemonApplyValue() : QDemonCommand(CommandTypes::ApplyValue), m_valueType(QDemonRenderShaderDataType::Unknown) {}
 
     QDemonApplyValue(const QDemonApplyValue &inOther)
         : QDemonCommand(CommandTypes::ApplyValue)

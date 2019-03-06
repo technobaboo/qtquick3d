@@ -118,7 +118,7 @@ public:
      *
      * @return no return
      */
-    void addParam(const QByteArray &name, QDemonRenderShaderDataTypes::Enum type, qint32 count);
+    void addParam(const QByteArray &name, QDemonRenderShaderDataType type, qint32 count);
 
     /**
      * @brief update a parameter in the constant buffer
@@ -194,7 +194,7 @@ private:
      *
      * @return return new Entry
      */
-    ConstantBufferParamEntry *createParamEntry(const QByteArray &name, QDemonRenderShaderDataTypes::Enum type, qint32 count, qint32 offset);
+    ConstantBufferParamEntry *createParamEntry(const QByteArray &name, QDemonRenderShaderDataType type, qint32 count, qint32 offset);
 
     /**
      * @brief get size of a uniform type
@@ -203,7 +203,7 @@ private:
      *
      * @return return uniform size
      */
-    qint32 getUniformTypeSize(QDemonRenderShaderDataTypes::Enum type);
+    qint32 getUniformTypeSize(QDemonRenderShaderDataType type);
 
     /**
      * @brief allocate the shadow buffer

@@ -81,120 +81,120 @@ inline quint32 Align8(quint32 inValue)
     return inValue;
 }
 
-inline quint32 getSizeofShaderDataType(QDemonRenderShaderDataTypes::Enum value)
+inline quint32 getSizeofShaderDataType(QDemonRenderShaderDataType value)
 {
     switch (value) {
-    case QDemonRenderShaderDataTypes::Unknown:
+    case QDemonRenderShaderDataType::Unknown:
         return 0;
-    case QDemonRenderShaderDataTypes::Integer: // qint32,
+    case QDemonRenderShaderDataType::Integer: // qint32,
         return sizeof(qint32);
-    case QDemonRenderShaderDataTypes::IntegerVec2: // qint32_2,
+    case QDemonRenderShaderDataType::IntegerVec2: // qint32_2,
         return sizeof(qint32_2);
-    case QDemonRenderShaderDataTypes::IntegerVec3: // qint32_3,
+    case QDemonRenderShaderDataType::IntegerVec3: // qint32_3,
         return sizeof(qint32_3);
-    case QDemonRenderShaderDataTypes::IntegerVec4: // qint32_4,
+    case QDemonRenderShaderDataType::IntegerVec4: // qint32_4,
         return sizeof(qint32_4);
-    case QDemonRenderShaderDataTypes::Boolean: // bool
+    case QDemonRenderShaderDataType::Boolean: // bool
         return sizeof(bool);
-    case QDemonRenderShaderDataTypes::BooleanVec2: // bool_2,
+    case QDemonRenderShaderDataType::BooleanVec2: // bool_2,
         return sizeof(bool_2);
-    case QDemonRenderShaderDataTypes::BooleanVec3: // bool_3,
+    case QDemonRenderShaderDataType::BooleanVec3: // bool_3,
         return sizeof(bool_3);
-    case QDemonRenderShaderDataTypes::BooleanVec4: // bool_4,
+    case QDemonRenderShaderDataType::BooleanVec4: // bool_4,
         return sizeof(bool_4);
-    case QDemonRenderShaderDataTypes::Float: // float,
+    case QDemonRenderShaderDataType::Float: // float,
         return sizeof(float);
-    case QDemonRenderShaderDataTypes::Vec2: // QVector2D,
+    case QDemonRenderShaderDataType::Vec2: // QVector2D,
         return sizeof(QVector2D);
-    case QDemonRenderShaderDataTypes::Vec3: // QVector3D,
+    case QDemonRenderShaderDataType::Vec3: // QVector3D,
         return sizeof(QVector3D);
-    case QDemonRenderShaderDataTypes::Vec4: // QVector4D,
+    case QDemonRenderShaderDataType::Vec4: // QVector4D,
         return sizeof(QVector4D);
-    case QDemonRenderShaderDataTypes::UnsignedInteger: // quint32,
+    case QDemonRenderShaderDataType::UnsignedInteger: // quint32,
         return sizeof(quint32);
-    case QDemonRenderShaderDataTypes::UnsignedIntegerVec2: // quint32_2,
+    case QDemonRenderShaderDataType::UnsignedIntegerVec2: // quint32_2,
         return sizeof(quint32_2);
-    case QDemonRenderShaderDataTypes::UnsignedIntegerVec3: // quint32_3,
+    case QDemonRenderShaderDataType::UnsignedIntegerVec3: // quint32_3,
         return sizeof(quint32_3);
-    case QDemonRenderShaderDataTypes::UnsignedIntegerVec4: // quint32_4,
+    case QDemonRenderShaderDataType::UnsignedIntegerVec4: // quint32_4,
         return sizeof(quint32_4);
-    case QDemonRenderShaderDataTypes::Matrix3x3: // QMatrix3x3,
+    case QDemonRenderShaderDataType::Matrix3x3: // QMatrix3x3,
         return sizeof(QMatrix3x3);
-    case QDemonRenderShaderDataTypes::Matrix4x4: // QMatrix4x4,
+    case QDemonRenderShaderDataType::Matrix4x4: // QMatrix4x4,
         return sizeof(QMatrix4x4);
-    case QDemonRenderShaderDataTypes::Texture2D: // QDemonRenderTexture2DPtr,
+    case QDemonRenderShaderDataType::Texture2D: // QDemonRenderTexture2DPtr,
         return sizeof(QDemonRenderTexture2DPtr);
-    case QDemonRenderShaderDataTypes::Texture2DHandle: // QDemonRenderTexture2DHandle,
+    case QDemonRenderShaderDataType::Texture2DHandle: // QDemonRenderTexture2DHandle,
         return sizeof(QDemonRenderTexture2DHandle);
-    case QDemonRenderShaderDataTypes::Texture2DArray: // QDemonRenderTexture2DArrayPtr,
+    case QDemonRenderShaderDataType::Texture2DArray: // QDemonRenderTexture2DArrayPtr,
         return sizeof(QDemonRenderTexture2DArrayPtr);
-    case QDemonRenderShaderDataTypes::TextureCube: // QDemonRenderTextureCubePtr,
+    case QDemonRenderShaderDataType::TextureCube: // QDemonRenderTextureCubePtr,
         return sizeof(QDemonRenderTextureCubePtr);
-    case QDemonRenderShaderDataTypes::TextureCubeHandle: // QDemonRenderTextureCubeHandle,
+    case QDemonRenderShaderDataType::TextureCubeHandle: // QDemonRenderTextureCubeHandle,
         return sizeof(QDemonRenderTextureCubeHandle);
-    case QDemonRenderShaderDataTypes::Image2D: // QDemonRenderImage2DPtr,
+    case QDemonRenderShaderDataType::Image2D: // QDemonRenderImage2DPtr,
         return sizeof(QDemonRenderImage2DPtr);
-    case QDemonRenderShaderDataTypes::DataBuffer: // QDemonRenderDataBufferPtr
+    case QDemonRenderShaderDataType::DataBuffer: // QDemonRenderDataBufferPtr
         return sizeof(QDemonRenderDataBufferPtr);
     }
     Q_UNREACHABLE();
     return 0;
 }
 
-inline const char *GetShaderDatatypeName(QDemonRenderShaderDataTypes::Enum inValue)
+inline const char *GetShaderDatatypeName(QDemonRenderShaderDataType inValue)
 {
     switch (inValue) {
-    case QDemonRenderShaderDataTypes::Unknown:
+    case QDemonRenderShaderDataType::Unknown:
         return nullptr;
-    case QDemonRenderShaderDataTypes::Integer: // qint32,
+    case QDemonRenderShaderDataType::Integer: // qint32,
         return "qint32";
-    case QDemonRenderShaderDataTypes::IntegerVec2: // qint32_2,
+    case QDemonRenderShaderDataType::IntegerVec2: // qint32_2,
         return "qint32_2";
-    case QDemonRenderShaderDataTypes::IntegerVec3: // qint32_3,
+    case QDemonRenderShaderDataType::IntegerVec3: // qint32_3,
         return "qint32_3";
-    case QDemonRenderShaderDataTypes::IntegerVec4: // qint32_4,
+    case QDemonRenderShaderDataType::IntegerVec4: // qint32_4,
         return "qint32_4";
-    case QDemonRenderShaderDataTypes::Boolean: // bool
+    case QDemonRenderShaderDataType::Boolean: // bool
         return "bool";
-    case QDemonRenderShaderDataTypes::BooleanVec2: // bool_2,
+    case QDemonRenderShaderDataType::BooleanVec2: // bool_2,
         return "bool_2";
-    case QDemonRenderShaderDataTypes::BooleanVec3: // bool_3,
+    case QDemonRenderShaderDataType::BooleanVec3: // bool_3,
         return "bool_3";
-    case QDemonRenderShaderDataTypes::BooleanVec4: // bool_4,
+    case QDemonRenderShaderDataType::BooleanVec4: // bool_4,
         return "bool_4";
-    case QDemonRenderShaderDataTypes::Float: // float,
+    case QDemonRenderShaderDataType::Float: // float,
         return "float";
-    case QDemonRenderShaderDataTypes::Vec2: // QVector2D,
+    case QDemonRenderShaderDataType::Vec2: // QVector2D,
         return "QVector2D";
-    case QDemonRenderShaderDataTypes::Vec3: // QVector3D,
+    case QDemonRenderShaderDataType::Vec3: // QVector3D,
         return "QVector3D";
-    case QDemonRenderShaderDataTypes::Vec4: // QVector4D,
+    case QDemonRenderShaderDataType::Vec4: // QVector4D,
         return "QVector4D";
-    case QDemonRenderShaderDataTypes::UnsignedInteger: // quint32,
+    case QDemonRenderShaderDataType::UnsignedInteger: // quint32,
         return "quint32";
-    case QDemonRenderShaderDataTypes::UnsignedIntegerVec2: // quint32_2,
+    case QDemonRenderShaderDataType::UnsignedIntegerVec2: // quint32_2,
         return "quint32_2";
-    case QDemonRenderShaderDataTypes::UnsignedIntegerVec3: // quint32_3,
+    case QDemonRenderShaderDataType::UnsignedIntegerVec3: // quint32_3,
         return "quint32_3";
-    case QDemonRenderShaderDataTypes::UnsignedIntegerVec4: // quint32_4,
+    case QDemonRenderShaderDataType::UnsignedIntegerVec4: // quint32_4,
         return "quint32_4";
-    case QDemonRenderShaderDataTypes::Matrix3x3: // QMatrix3x3,
+    case QDemonRenderShaderDataType::Matrix3x3: // QMatrix3x3,
         return "QMatrix3x3";
-    case QDemonRenderShaderDataTypes::Matrix4x4: // QMatrix4x4,
+    case QDemonRenderShaderDataType::Matrix4x4: // QMatrix4x4,
         return "QMatrix4x4";
-    case QDemonRenderShaderDataTypes::Texture2D: // QDemonRenderTexture2DPtr,
+    case QDemonRenderShaderDataType::Texture2D: // QDemonRenderTexture2DPtr,
         return "QDemonRenderTexture2DPtr";
-    case QDemonRenderShaderDataTypes::Texture2DHandle: // QDemonRenderTexture2DHandle,
+    case QDemonRenderShaderDataType::Texture2DHandle: // QDemonRenderTexture2DHandle,
         return "QDemonRenderTexture2DHandle";
-    case QDemonRenderShaderDataTypes::Texture2DArray: // QDemonRenderTexture2DArrayPtr,
+    case QDemonRenderShaderDataType::Texture2DArray: // QDemonRenderTexture2DArrayPtr,
         return "QDemonRenderTexture2DArrayPtr";
-    case QDemonRenderShaderDataTypes::TextureCube: // QDemonRenderTextureCubePtr,
+    case QDemonRenderShaderDataType::TextureCube: // QDemonRenderTextureCubePtr,
         return "QDemonRenderTextureCubePtr";
-    case QDemonRenderShaderDataTypes::TextureCubeHandle: // QDemonRenderTextureCubeHandle,
+    case QDemonRenderShaderDataType::TextureCubeHandle: // QDemonRenderTextureCubeHandle,
         return "QDemonRenderTextureCubeHandle";
-    case QDemonRenderShaderDataTypes::Image2D: // QDemonRenderImage2DPtr,
+    case QDemonRenderShaderDataType::Image2D: // QDemonRenderImage2DPtr,
         return "QDemonRenderImage2DPtr";
-    case QDemonRenderShaderDataTypes::DataBuffer: // QDemonRenderDataBufferPtr
+    case QDemonRenderShaderDataType::DataBuffer: // QDemonRenderDataBufferPtr
         return "QDemonRenderDataBufferPtr";
     }
 }

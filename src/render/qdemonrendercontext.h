@@ -365,7 +365,7 @@ public:
     virtual void setDrawBuffers(QDemonConstDataRef<qint32> inDrawBufferSet) = 0;
     virtual void setReadBuffer(QDemonReadFace inReadFace) = 0;
 
-    virtual void readPixels(QRect inRect, QDemonRenderReadPixelFormats::Enum inFormat, QDemonDataRef<quint8> inWriteBuffer) = 0;
+    virtual void readPixels(QRect inRect, QDemonRenderReadPixelFormat inFormat, QDemonDataRef<quint8> inWriteBuffer) = 0;
 
     // Return the property manager for this render context
     // virtual NVRenderPropertyManager& GetPropertyManager() = 0;
@@ -958,7 +958,7 @@ public:
     void setDrawBuffers(QDemonConstDataRef<qint32> inDrawBufferSet) override;
     void setReadBuffer(QDemonReadFace inReadFace) override;
 
-    void readPixels(QRect inRect, QDemonRenderReadPixelFormats::Enum inFormat, QDemonDataRef<quint8> inWriteBuffer) override;
+    void readPixels(QRect inRect, QDemonRenderReadPixelFormat inFormat, QDemonDataRef<quint8> inWriteBuffer) override;
 
     void setRenderTarget(QDemonRef<QDemonRenderFrameBuffer> inBuffer) override;
     void setReadTarget(QDemonRef<QDemonRenderFrameBuffer> inBuffer) override;

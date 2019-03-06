@@ -599,7 +599,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
     void setEffectPropertyTextureSettings(QString inName,
                                           QString inPropName,
                                           QString inPropPath,
-                                          QDemonRenderTextureTypeValue::Enum inTexType,
+                                          QDemonRenderTextureTypeValue inTexType,
                                           QDemonRenderTextureCoordOp::Enum inCoordOp,
                                           QDemonRenderTextureMagnifyingOp::Enum inMagFilterOp,
                                           QDemonRenderTextureMinifyingOp::Enum inMinFilterOp) override
@@ -911,14 +911,14 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
     void doApplyInstanceValue(QDemonRenderEffect *inEffect,
                               quint8 *inDataPtr,
                               const QString &inPropertyName,
-                              QDemonRenderShaderDataTypes::Enum inPropertyType,
+                              QDemonRenderShaderDataType inPropertyType,
                               const QDemonRef<QDemonRenderShaderProgram> &inShader,
                               const QDemonPropertyDefinition &inDefinition)
     {
         auto theConstant = inShader->getShaderConstant(inPropertyName.toLocal8Bit());
         if (theConstant) {
             if (theConstant->getShaderConstantType() == inPropertyType) {
-                if (inPropertyType == QDemonRenderShaderDataTypes::Texture2D) {
+                if (inPropertyType == QDemonRenderShaderDataType::Texture2D) {
                     // TODO:
                     //                    StaticAssert<sizeof(QString) == sizeof(QDemonRenderTexture2DPtr)>::valid_expression();
                     QString theStrPtr = QString::fromLatin1(reinterpret_cast<char *>(inDataPtr));
@@ -944,92 +944,92 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
                                                            m_textureStringBuilder,
                                                            m_textureStringBuilder2,
                                                            &inDefinition);
-                } else if (inPropertyType == QDemonRenderShaderDataTypes::Image2D) {
+                } else if (inPropertyType == QDemonRenderShaderDataType::Image2D) {
                     // TODO:
                     //                    StaticAssert<sizeof(QString)
                     //                            == sizeof(QDemonRenderTexture2DPtr)>::valid_expression();
                     QDemonRef<QDemonRenderImage2D> theImage;
                     getEffectContext(*inEffect).setImage(inShader, inPropertyName, theImage);
-                } else if (inPropertyType == QDemonRenderShaderDataTypes::DataBuffer) {
+                } else if (inPropertyType == QDemonRenderShaderDataType::DataBuffer) {
                     // we don't handle this here
                 } else {
                     switch (inPropertyType) {
-                    case QDemonRenderShaderDataTypes::Integer:
+                    case QDemonRenderShaderDataType::Integer:
                         inShader->setPropertyValue(theConstant.data(), *(reinterpret_cast<qint32 *>(inDataPtr)));
                         break;
-                    case QDemonRenderShaderDataTypes::IntegerVec2:
+                    case QDemonRenderShaderDataType::IntegerVec2:
                         inShader->setPropertyValue(theConstant.data(), *(reinterpret_cast<qint32_2 *>(inDataPtr)));
                         break;
-                    case QDemonRenderShaderDataTypes::IntegerVec3:
+                    case QDemonRenderShaderDataType::IntegerVec3:
                         inShader->setPropertyValue(theConstant.data(), *(reinterpret_cast<qint32_3 *>(inDataPtr)));
                         break;
-                    case QDemonRenderShaderDataTypes::IntegerVec4:
+                    case QDemonRenderShaderDataType::IntegerVec4:
                         inShader->setPropertyValue(theConstant.data(), *(reinterpret_cast<qint32_4 *>(inDataPtr)));
                         break;
-                    case QDemonRenderShaderDataTypes::Boolean:
+                    case QDemonRenderShaderDataType::Boolean:
                         inShader->setPropertyValue(theConstant.data(), *(reinterpret_cast<bool *>(inDataPtr)));
                         break;
-                    case QDemonRenderShaderDataTypes::BooleanVec2:
+                    case QDemonRenderShaderDataType::BooleanVec2:
                         inShader->setPropertyValue(theConstant.data(), *(reinterpret_cast<bool_2 *>(inDataPtr)));
                         break;
-                    case QDemonRenderShaderDataTypes::BooleanVec3:
+                    case QDemonRenderShaderDataType::BooleanVec3:
                         inShader->setPropertyValue(theConstant.data(), *(reinterpret_cast<bool_3 *>(inDataPtr)));
                         break;
-                    case QDemonRenderShaderDataTypes::BooleanVec4:
+                    case QDemonRenderShaderDataType::BooleanVec4:
                         inShader->setPropertyValue(theConstant.data(), *(reinterpret_cast<bool_4 *>(inDataPtr)));
                         break;
-                    case QDemonRenderShaderDataTypes::Float:
+                    case QDemonRenderShaderDataType::Float:
                         inShader->setPropertyValue(theConstant.data(), *(reinterpret_cast<float *>(inDataPtr)));
                         break;
-                    case QDemonRenderShaderDataTypes::Vec2:
+                    case QDemonRenderShaderDataType::Vec2:
                         inShader->setPropertyValue(theConstant.data(), *(reinterpret_cast<QVector2D *>(inDataPtr)));
                         break;
-                    case QDemonRenderShaderDataTypes::Vec3:
+                    case QDemonRenderShaderDataType::Vec3:
                         inShader->setPropertyValue(theConstant.data(), *(reinterpret_cast<QVector3D *>(inDataPtr)));
                         break;
-                    case QDemonRenderShaderDataTypes::Vec4:
+                    case QDemonRenderShaderDataType::Vec4:
                         inShader->setPropertyValue(theConstant.data(), *(reinterpret_cast<QVector4D *>(inDataPtr)));
                         break;
-                    case QDemonRenderShaderDataTypes::UnsignedInteger:
+                    case QDemonRenderShaderDataType::UnsignedInteger:
                         inShader->setPropertyValue(theConstant.data(), *(reinterpret_cast<quint32 *>(inDataPtr)));
                         break;
-                    case QDemonRenderShaderDataTypes::UnsignedIntegerVec2:
+                    case QDemonRenderShaderDataType::UnsignedIntegerVec2:
                         inShader->setPropertyValue(theConstant.data(), *(reinterpret_cast<quint32_2 *>(inDataPtr)));
                         break;
-                    case QDemonRenderShaderDataTypes::UnsignedIntegerVec3:
+                    case QDemonRenderShaderDataType::UnsignedIntegerVec3:
                         inShader->setPropertyValue(theConstant.data(), *(reinterpret_cast<quint32_3 *>(inDataPtr)));
                         break;
-                    case QDemonRenderShaderDataTypes::UnsignedIntegerVec4:
+                    case QDemonRenderShaderDataType::UnsignedIntegerVec4:
                         inShader->setPropertyValue(theConstant.data(), *(reinterpret_cast<quint32_4 *>(inDataPtr)));
                         break;
-                    case QDemonRenderShaderDataTypes::Matrix3x3:
+                    case QDemonRenderShaderDataType::Matrix3x3:
                         inShader->setPropertyValue(theConstant.data(), *(reinterpret_cast<QMatrix3x3 *>(inDataPtr)));
                         break;
-                    case QDemonRenderShaderDataTypes::Matrix4x4:
+                    case QDemonRenderShaderDataType::Matrix4x4:
                         inShader->setPropertyValue(theConstant.data(), *(reinterpret_cast<QMatrix4x4 *>(inDataPtr)));
                         break;
-                    case QDemonRenderShaderDataTypes::Texture2D:
+                    case QDemonRenderShaderDataType::Texture2D:
                         inShader->setPropertyValue(theConstant.data(), *(reinterpret_cast<QDemonRenderTexture2DPtr *>(inDataPtr)));
                         break;
-                    case QDemonRenderShaderDataTypes::Texture2DHandle:
+                    case QDemonRenderShaderDataType::Texture2DHandle:
                         inShader->setPropertyValue(theConstant.data(),
                                                    *(reinterpret_cast<QDemonRenderTexture2DHandle *>(inDataPtr)));
                         break;
-                    case QDemonRenderShaderDataTypes::Texture2DArray:
+                    case QDemonRenderShaderDataType::Texture2DArray:
                         inShader->setPropertyValue(theConstant.data(),
                                                    *(reinterpret_cast<QDemonRenderTexture2DArrayPtr *>(inDataPtr)));
                         break;
-                    case QDemonRenderShaderDataTypes::TextureCube:
+                    case QDemonRenderShaderDataType::TextureCube:
                         inShader->setPropertyValue(theConstant.data(), *(reinterpret_cast<QDemonRenderTextureCubePtr *>(inDataPtr)));
                         break;
-                    case QDemonRenderShaderDataTypes::TextureCubeHandle:
+                    case QDemonRenderShaderDataType::TextureCubeHandle:
                         inShader->setPropertyValue(theConstant.data(),
                                                    *(reinterpret_cast<QDemonRenderTextureCubeHandle *>(inDataPtr)));
                         break;
-                    case QDemonRenderShaderDataTypes::Image2D:
+                    case QDemonRenderShaderDataType::Image2D:
                         inShader->setPropertyValue(theConstant.data(), *(reinterpret_cast<QDemonRenderImage2DPtr *>(inDataPtr)));
                         break;
-                    case QDemonRenderShaderDataTypes::DataBuffer:
+                    case QDemonRenderShaderDataType::DataBuffer:
                         inShader->setPropertyValue(theConstant.data(), *(reinterpret_cast<QDemonRenderDataBufferPtr *>(inDataPtr)));
                         break;
                     default:
@@ -1167,7 +1167,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
             auto theConstant = inShader->getShaderConstant(inCommand.m_paramName.toLatin1());
 
             if (theConstant) {
-                if (theConstant->getShaderConstantType() != QDemonRenderShaderDataTypes::Texture2D) {
+                if (theConstant->getShaderConstantType() != QDemonRenderShaderDataType::Texture2D) {
                     qCCritical(INVALID_OPERATION,
                                "Effect %s: Binding buffer to parameter %s that is not a texture",
                                qPrintable(inEffect->className),
@@ -1196,7 +1196,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
         auto theConstant = inShader->getShaderConstant(inCommand.m_paramName.toLatin1());
 
         if (theConstant) {
-            if (theConstant->getShaderConstantType() != QDemonRenderShaderDataTypes::Texture2D) {
+            if (theConstant->getShaderConstantType() != QDemonRenderShaderDataType::Texture2D) {
                 qCCritical(INVALID_OPERATION,
                            "Effect %s: Binding buffer to parameter %s that is not a texture",
                            qPrintable(inEffect->className),
@@ -1239,9 +1239,9 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
                     inShader->getRenderContext()->setMemoryBarrier(flags);
                 }
 
-                if (theConstant->getShaderConstantType() == QDemonRenderShaderDataTypes::Image2D && !inCommand.m_bindAsTexture) {
+                if (theConstant->getShaderConstantType() == QDemonRenderShaderDataType::Image2D && !inCommand.m_bindAsTexture) {
                     getEffectContext(*inEffect).setImage(inShader, inCommand.m_paramName, theImageToBind.image);
-                } else if (theConstant->getShaderConstantType() == QDemonRenderShaderDataTypes::Texture2D && inCommand.m_bindAsTexture) {
+                } else if (theConstant->getShaderConstantType() == QDemonRenderShaderDataType::Texture2D && inCommand.m_bindAsTexture) {
                     getEffectContext(*inEffect).setTexture(inShader, inCommand.m_paramName, theImageToBind.texture, false, m_textureStringBuilder, m_textureStringBuilder2);
                 } else {
                     qCCritical(INVALID_OPERATION,

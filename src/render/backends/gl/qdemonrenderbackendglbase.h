@@ -396,12 +396,12 @@ public:
                                quint32 id,
                                quint32 bufSize,
                                qint32 *numElem,
-                               QDemonRenderShaderDataTypes::Enum *type,
+                               QDemonRenderShaderDataType *type,
                                qint32 *binding,
                                char *nameBuf) override;
     void setConstantValue(QDemonRenderBackendShaderProgramObject po,
                           quint32 id,
-                          QDemonRenderShaderDataTypes::Enum type,
+                          QDemonRenderShaderDataType type,
                           qint32 count,
                           const void *value,
                           bool transpose) override;
@@ -419,7 +419,7 @@ public:
     void getConstantBufferParamInfoByIndices(QDemonRenderBackendShaderProgramObject po,
                                              quint32 count,
                                              quint32 *indices,
-                                             qint32 *type,
+                                             QDemonRenderShaderDataType *type,
                                              qint32 *size,
                                              qint32 *offset) override;
     void programSetConstantBlock(QDemonRenderBackendShaderProgramObject po, quint32 blockIndex, quint32 binding) override;
@@ -459,7 +459,7 @@ public:
                    qint32 y,
                    qint32 width,
                    qint32 height,
-                   QDemonRenderReadPixelFormats::Enum inFormat,
+                   QDemonRenderReadPixelFormat inFormat,
                    void *pixels) override;
 
     // NV path rendering

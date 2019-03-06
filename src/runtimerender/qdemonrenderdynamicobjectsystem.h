@@ -85,13 +85,13 @@ struct QDemonPropertyDeclaration
     // for QDemonRenderTexture2DPtr.  This type will be interpreted as a
     // QString (they are the same binary size)
     // and will be used to lookup the texture from the buffer manager.
-    QDemonRenderShaderDataTypes::Enum dataType;
+    QDemonRenderShaderDataType dataType;
 
-    QDemonPropertyDeclaration(const char *inName, QDemonRenderShaderDataTypes::Enum inDtype)
+    QDemonPropertyDeclaration(const char *inName, QDemonRenderShaderDataType inDtype)
         : name(inName), dataType(inDtype)
     {
     }
-    QDemonPropertyDeclaration() : name(""), dataType(QDemonRenderShaderDataTypes::Unknown) {}
+    QDemonPropertyDeclaration() : name(""), dataType(QDemonRenderShaderDataType::Unknown) {}
 };
 
 struct QDemonPropertyDefinition
@@ -104,7 +104,7 @@ struct QDemonPropertyDefinition
     // for QDemonRenderTexture2DPtr.  This type will be interpreted as a
     // QString and will be used to lookup the texture
     // from the buffer manager.
-    QDemonRenderShaderDataTypes::Enum dataType = QDemonRenderShaderDataTypes::Unknown;
+    QDemonRenderShaderDataType dataType = QDemonRenderShaderDataType::Unknown;
     // All offsets are relative to the beginning of the SEffect
     // and are aligned to 4 byte boundaries.
     quint32 offset = 0;
@@ -113,7 +113,7 @@ struct QDemonPropertyDefinition
     QDemonConstDataRef<QString> enumValueNames;
 
     ///< texture usage type like diffuse, specular, ...
-    QDemonRenderTextureTypeValue::Enum texUsageType = QDemonRenderTextureTypeValue::Unknown;
+    QDemonRenderTextureTypeValue texUsageType = QDemonRenderTextureTypeValue::Unknown;
     // Applies to both s,t
     QDemonRenderTextureCoordOp::Enum coordOp = QDemonRenderTextureCoordOp::ClampToEdge;
     // Set mag Filter
@@ -123,7 +123,7 @@ struct QDemonPropertyDefinition
     bool isEnumProperty = false;
 
     QDemonPropertyDefinition() = default;
-    QDemonPropertyDefinition(QString inName, QDemonRenderShaderDataTypes::Enum inType, quint32 inOffset, quint32 inByteSize)
+    QDemonPropertyDefinition(QString inName, QDemonRenderShaderDataType inType, quint32 inOffset, quint32 inByteSize)
         : name(inName), dataType(inType), offset(inOffset), byteSize(inByteSize)
     {
     }
@@ -201,7 +201,7 @@ public:
     virtual void setPropertyTextureSettings(const QString &inName,
                                             const QString &inPropName,
                                             const QString &inPropPath,
-                                            QDemonRenderTextureTypeValue::Enum inTexType,
+                                            QDemonRenderTextureTypeValue inTexType,
                                             QDemonRenderTextureCoordOp::Enum inCoordOp,
                                             QDemonRenderTextureMagnifyingOp::Enum inMagFilterOp,
                                             QDemonRenderTextureMinifyingOp::Enum inMinFilterOp) = 0;

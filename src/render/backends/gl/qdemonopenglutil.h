@@ -1387,31 +1387,30 @@ struct GLConversion
 
     static GLbitfield fromShaderTypeFlagsToGL(QDemonRenderShaderTypeFlags flags)
     {
-        quint32 value = flags;
         GLbitfield retval = 0;
-        if (value & QDemonRenderShaderTypeValue::Vertex)
+        if (flags & QDemonRenderShaderTypeValue::Vertex)
             retval |= GL_VERTEX_SHADER_BIT;
-        if (value & QDemonRenderShaderTypeValue::Fragment)
+        if (flags & QDemonRenderShaderTypeValue::Fragment)
             retval |= GL_FRAGMENT_SHADER_BIT;
-        if (value & QDemonRenderShaderTypeValue::TessControl)
+        if (flags & QDemonRenderShaderTypeValue::TessControl)
             retval |= GL_TESS_CONTROL_SHADER_BIT;
-        if (value & QDemonRenderShaderTypeValue::TessEvaluation)
+        if (flags & QDemonRenderShaderTypeValue::TessEvaluation)
             retval |= GL_TESS_EVALUATION_SHADER_BIT;
-        if (value & QDemonRenderShaderTypeValue::Geometry)
+        if (flags & QDemonRenderShaderTypeValue::Geometry)
 #if defined(QT_OPENGL_ES_3_1)
             retval |= GL_GEOMETRY_SHADER_BIT_EXT;
 #else
             retval |= GL_GEOMETRY_SHADER_BIT;
 #endif
-        Q_ASSERT(retval || !value);
+        Q_ASSERT(retval || !flags);
         return retval;
     }
 
-    static GLenum fromPropertyDataTypesToShaderGL(QDemonRenderShaderDataTypes::Enum value)
+    static GLenum fromPropertyDataTypesToShaderGL(QDemonRenderShaderDataType value)
     {
         switch (value) {
 #define QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_UNIFORM_TYPES(gl, nv)                                                    \
-    case QDemonRenderShaderDataTypes::nv:                                                                              \
+    case QDemonRenderShaderDataType::nv:                                                                              \
         return gl;
             QDEMON_RENDER_ITERATE_GL_QDEMON_SHADER_UNIFORM_TYPES
 #undef QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_UNIFORM_TYPES
@@ -1422,27 +1421,27 @@ struct GLConversion
         return 0;
     }
 
-    static QDemonRenderShaderDataTypes::Enum fromShaderGLToPropertyDataTypes(GLenum value)
+    static QDemonRenderShaderDataType fromShaderGLToPropertyDataTypes(GLenum value)
     {
         switch (value) {
 #define QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_UNIFORM_TYPES(gl, nv)                                                    \
     case gl:                                                                                                           \
-        return QDemonRenderShaderDataTypes::nv;
+        return QDemonRenderShaderDataType::nv;
             QDEMON_RENDER_ITERATE_GL_QDEMON_SHADER_UNIFORM_TYPES
 #undef QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_UNIFORM_TYPES
         case GL_SAMPLER_2D_SHADOW:
-            return QDemonRenderShaderDataTypes::Texture2D;
+            return QDemonRenderShaderDataType::Texture2D;
 #if !defined(QT_OPENGL_ES)
         case GL_UNSIGNED_INT_ATOMIC_COUNTER:
-            return QDemonRenderShaderDataTypes::Integer;
+            return QDemonRenderShaderDataType::Integer;
         case GL_UNSIGNED_INT_IMAGE_2D:
-            return QDemonRenderShaderDataTypes::Image2D;
+            return QDemonRenderShaderDataType::Image2D;
 #endif
         default:
             break;
         }
         Q_ASSERT(false);
-        return QDemonRenderShaderDataTypes::Unknown;
+        return QDemonRenderShaderDataType::Unknown;
     }
 
     static GLenum fromComponentTypeAndNumCompsToAttribGL(QDemonRenderComponentTypes::Enum compType, quint32 numComps)
@@ -1671,30 +1670,30 @@ struct GLConversion
         return QDemonRenderState::Unknown;
     }
 
-    static bool fromReadPixelsToGlFormatAndType(QDemonRenderReadPixelFormats::Enum inReadPixels, GLuint *outFormat, GLuint *outType)
+    static bool fromReadPixelsToGlFormatAndType(QDemonRenderReadPixelFormat inReadPixels, GLuint *outFormat, GLuint *outType)
     {
         switch (inReadPixels) {
-        case QDemonRenderReadPixelFormats::Alpha8:
+        case QDemonRenderReadPixelFormat::Alpha8:
             *outFormat = GL_ALPHA;
             *outType = GL_UNSIGNED_BYTE;
             break;
-        case QDemonRenderReadPixelFormats::RGB565:
+        case QDemonRenderReadPixelFormat::RGB565:
             *outFormat = GL_RGB;
             *outType = GL_UNSIGNED_SHORT_5_6_5;
             break;
-        case QDemonRenderReadPixelFormats::RGB8:
+        case QDemonRenderReadPixelFormat::RGB8:
             *outFormat = GL_RGB;
             *outType = GL_UNSIGNED_BYTE;
             break;
-        case QDemonRenderReadPixelFormats::RGBA4444:
+        case QDemonRenderReadPixelFormat::RGBA4444:
             *outFormat = GL_RGBA;
             *outType = GL_UNSIGNED_SHORT_4_4_4_4;
             break;
-        case QDemonRenderReadPixelFormats::RGBA5551:
+        case QDemonRenderReadPixelFormat::RGBA5551:
             *outFormat = GL_RGBA;
             *outType = GL_UNSIGNED_SHORT_5_5_5_1;
             break;
-        case QDemonRenderReadPixelFormats::RGBA8:
+        case QDemonRenderReadPixelFormat::RGBA8:
             *outFormat = GL_RGBA;
             *outType = GL_UNSIGNED_BYTE;
             break;

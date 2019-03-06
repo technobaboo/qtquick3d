@@ -416,7 +416,7 @@ struct QDemonNullBackend : public QDemonRenderBackend
                                quint32,
                                quint32,
                                qint32 *,
-                               QDemonRenderShaderDataTypes::Enum *,
+                               QDemonRenderShaderDataType *,
                                qint32 *,
                                char *) override
     {
@@ -429,7 +429,7 @@ struct QDemonNullBackend : public QDemonRenderBackend
     }
 
     void getConstantBufferParamIndices(QDemonRenderBackendShaderProgramObject, quint32, qint32 *) override {}
-    void getConstantBufferParamInfoByIndices(QDemonRenderBackendShaderProgramObject, quint32, quint32 *, qint32 *, qint32 *, qint32 *) override
+    void getConstantBufferParamInfoByIndices(QDemonRenderBackendShaderProgramObject, quint32, quint32 *, QDemonRenderShaderDataType *, qint32 *, qint32 *) override
     {
     }
     void programSetConstantBlock(QDemonRenderBackendShaderProgramObject, quint32, quint32) override {}
@@ -449,7 +449,7 @@ struct QDemonNullBackend : public QDemonRenderBackend
     }
     void programSetAtomicCounterBuffer(quint32, QDemonRenderBackendBufferObject) override {}
 
-    void setConstantValue(QDemonRenderBackendShaderProgramObject, quint32, QDemonRenderShaderDataTypes::Enum, qint32, const void *, bool) override
+    void setConstantValue(QDemonRenderBackendShaderProgramObject, quint32, QDemonRenderShaderDataType, qint32, const void *, bool) override
     {
     }
 
@@ -459,7 +459,7 @@ struct QDemonNullBackend : public QDemonRenderBackend
     void drawIndexed(QDemonRenderDrawMode, quint32, QDemonRenderComponentTypes::Enum, const void *) override {}
     void drawIndexedIndirect(QDemonRenderDrawMode, QDemonRenderComponentTypes::Enum, const void *) override {}
 
-    void readPixel(QDemonRenderBackendRenderTargetObject, qint32, qint32, qint32, qint32, QDemonRenderReadPixelFormats::Enum, void *) override
+    void readPixel(QDemonRenderBackendRenderTargetObject, qint32, qint32, qint32, qint32, QDemonRenderReadPixelFormat, void *) override
     {
     }
 

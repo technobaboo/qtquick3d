@@ -1952,36 +1952,34 @@ typedef QDemonRenderGenericVec2<qint32> qint32_2;
 typedef QDemonRenderGenericVec3<qint32> qint32_3;
 typedef QDemonRenderGenericVec4<qint32> qint32_4;
 
-struct QDemonRenderShaderDataTypes
+enum class QDemonRenderShaderDataType : quint32
 {
-    enum Enum {
-        Unknown = 0,
-        Integer, // qint32,
-        IntegerVec2, // qint32_2,
-        IntegerVec3, // qint32_3,
-        IntegerVec4, // qint32_4,
-        Boolean, // bool
-        BooleanVec2, // bool_2,
-        BooleanVec3, // bool_3,
-        BooleanVec4, // bool_4,
-        Float, // float,
-        Vec2, // QVector2D,
-        Vec3, // QVector3D,
-        Vec4, // QVector4D,
-        UnsignedInteger, // quint32,
-        UnsignedIntegerVec2, // quint32_2,
-        UnsignedIntegerVec3, // quint32_3,
-        UnsignedIntegerVec4, // quint32_4,
-        Matrix3x3, // QMatrix3x3,
-        Matrix4x4, // QMatrix4x4,
-        Texture2D, // QDemonRenderTexture2DPtr,
-        Texture2DHandle, // QDemonRenderTexture2DHandle,
-        Texture2DArray, // QDemonRenderTexture2DArrayPtr,
-        TextureCube, // QDemonRenderTextureCubePtr,
-        TextureCubeHandle, // QDemonRenderTextureCubeHandle,
-        Image2D, // QDemonRenderImage2DPtr,
-        DataBuffer // QDemonRenderDataBufferPtr
-    };
+    Unknown = 0,
+    Integer, // qint32,
+    IntegerVec2, // qint32_2,
+    IntegerVec3, // qint32_3,
+    IntegerVec4, // qint32_4,
+    Boolean, // bool
+    BooleanVec2, // bool_2,
+    BooleanVec3, // bool_3,
+    BooleanVec4, // bool_4,
+    Float, // float,
+    Vec2, // QVector2D,
+    Vec3, // QVector3D,
+    Vec4, // QVector4D,
+    UnsignedInteger, // quint32,
+    UnsignedIntegerVec2, // quint32_2,
+    UnsignedIntegerVec3, // quint32_3,
+    UnsignedIntegerVec4, // quint32_4,
+    Matrix3x3, // QMatrix3x3,
+    Matrix4x4, // QMatrix4x4,
+    Texture2D, // QDemonRenderTexture2DPtr,
+    Texture2DHandle, // QDemonRenderTexture2DHandle,
+    Texture2DArray, // QDemonRenderTexture2DArrayPtr,
+    TextureCube, // QDemonRenderTextureCubePtr,
+    TextureCubeHandle, // QDemonRenderTextureCubeHandle,
+    Image2D, // QDemonRenderImage2DPtr,
+    DataBuffer // QDemonRenderDataBufferPtr
 };
 
 template<typename TDataType>
@@ -1992,231 +1990,234 @@ struct QDemonDataTypeToShaderDataTypeMap
 template<>
 struct QDemonDataTypeToShaderDataTypeMap<qint32>
 {
-    static QDemonRenderShaderDataTypes::Enum getType() { return QDemonRenderShaderDataTypes::Integer; }
+    static QDemonRenderShaderDataType getType() { return QDemonRenderShaderDataType::Integer; }
 };
 
 template<>
 struct QDemonDataTypeToShaderDataTypeMap<qint32_2>
 {
-    static QDemonRenderShaderDataTypes::Enum getType() { return QDemonRenderShaderDataTypes::IntegerVec2; }
+    static QDemonRenderShaderDataType getType() { return QDemonRenderShaderDataType::IntegerVec2; }
 };
 
 template<>
 struct QDemonDataTypeToShaderDataTypeMap<qint32_3>
 {
-    static QDemonRenderShaderDataTypes::Enum getType() { return QDemonRenderShaderDataTypes::IntegerVec3; }
+    static QDemonRenderShaderDataType getType() { return QDemonRenderShaderDataType::IntegerVec3; }
 };
 
 template<>
 struct QDemonDataTypeToShaderDataTypeMap<qint32_4>
 {
-    static QDemonRenderShaderDataTypes::Enum getType() { return QDemonRenderShaderDataTypes::IntegerVec4; }
+    static QDemonRenderShaderDataType getType() { return QDemonRenderShaderDataType::IntegerVec4; }
 };
 
 template<>
 struct QDemonDataTypeToShaderDataTypeMap<bool>
 {
-    static QDemonRenderShaderDataTypes::Enum getType() { return QDemonRenderShaderDataTypes::Boolean; }
+    static QDemonRenderShaderDataType getType() { return QDemonRenderShaderDataType::Boolean; }
 };
 
 template<>
 struct QDemonDataTypeToShaderDataTypeMap<bool_2>
 {
-    static QDemonRenderShaderDataTypes::Enum getType() { return QDemonRenderShaderDataTypes::BooleanVec2; }
+    static QDemonRenderShaderDataType getType() { return QDemonRenderShaderDataType::BooleanVec2; }
 };
 
 template<>
 struct QDemonDataTypeToShaderDataTypeMap<bool_3>
 {
-    static QDemonRenderShaderDataTypes::Enum getType() { return QDemonRenderShaderDataTypes::BooleanVec3; }
+    static QDemonRenderShaderDataType getType() { return QDemonRenderShaderDataType::BooleanVec3; }
 };
 
 template<>
 struct QDemonDataTypeToShaderDataTypeMap<bool_4>
 {
-    static QDemonRenderShaderDataTypes::Enum getType() { return QDemonRenderShaderDataTypes::BooleanVec4; }
+    static QDemonRenderShaderDataType getType() { return QDemonRenderShaderDataType::BooleanVec4; }
 };
 
 template<>
 struct QDemonDataTypeToShaderDataTypeMap<float>
 {
-    static QDemonRenderShaderDataTypes::Enum getType() { return QDemonRenderShaderDataTypes::Float; }
+    static QDemonRenderShaderDataType getType() { return QDemonRenderShaderDataType::Float; }
 };
 
 template<>
 struct QDemonDataTypeToShaderDataTypeMap<QVector2D>
 {
-    static QDemonRenderShaderDataTypes::Enum getType() { return QDemonRenderShaderDataTypes::Vec2; }
+    static QDemonRenderShaderDataType getType() { return QDemonRenderShaderDataType::Vec2; }
 };
 
 template<>
 struct QDemonDataTypeToShaderDataTypeMap<QVector3D>
 {
-    static QDemonRenderShaderDataTypes::Enum getType() { return QDemonRenderShaderDataTypes::Vec3; }
+    static QDemonRenderShaderDataType getType() { return QDemonRenderShaderDataType::Vec3; }
 };
 
 template<>
 struct QDemonDataTypeToShaderDataTypeMap<QVector4D>
 {
-    static QDemonRenderShaderDataTypes::Enum getType() { return QDemonRenderShaderDataTypes::Vec4; }
+    static QDemonRenderShaderDataType getType() { return QDemonRenderShaderDataType::Vec4; }
 };
 
 template<>
 struct QDemonDataTypeToShaderDataTypeMap<quint32>
 {
-    static QDemonRenderShaderDataTypes::Enum getType() { return QDemonRenderShaderDataTypes::UnsignedInteger; }
+    static QDemonRenderShaderDataType getType() { return QDemonRenderShaderDataType::UnsignedInteger; }
 };
 
 template<>
 struct QDemonDataTypeToShaderDataTypeMap<quint32_2>
 {
-    static QDemonRenderShaderDataTypes::Enum getType() { return QDemonRenderShaderDataTypes::UnsignedIntegerVec2; }
+    static QDemonRenderShaderDataType getType() { return QDemonRenderShaderDataType::UnsignedIntegerVec2; }
 };
 
 template<>
 struct QDemonDataTypeToShaderDataTypeMap<quint32_3>
 {
-    static QDemonRenderShaderDataTypes::Enum getType() { return QDemonRenderShaderDataTypes::UnsignedIntegerVec3; }
+    static QDemonRenderShaderDataType getType() { return QDemonRenderShaderDataType::UnsignedIntegerVec3; }
 };
 
 template<>
 struct QDemonDataTypeToShaderDataTypeMap<quint32_4>
 {
-    static QDemonRenderShaderDataTypes::Enum getType() { return QDemonRenderShaderDataTypes::UnsignedIntegerVec4; }
+    static QDemonRenderShaderDataType getType() { return QDemonRenderShaderDataType::UnsignedIntegerVec4; }
 };
 
 template<>
 struct QDemonDataTypeToShaderDataTypeMap<QMatrix3x3>
 {
-    static QDemonRenderShaderDataTypes::Enum getType() { return QDemonRenderShaderDataTypes::Matrix3x3; }
+    static QDemonRenderShaderDataType getType() { return QDemonRenderShaderDataType::Matrix3x3; }
 };
 
 template<>
 struct QDemonDataTypeToShaderDataTypeMap<QMatrix4x4>
 {
-    static QDemonRenderShaderDataTypes::Enum getType() { return QDemonRenderShaderDataTypes::Matrix4x4; }
+    static QDemonRenderShaderDataType getType() { return QDemonRenderShaderDataType::Matrix4x4; }
 };
 
 template<>
 struct QDemonDataTypeToShaderDataTypeMap<QDemonConstDataRef<QMatrix4x4>>
 {
-    static QDemonRenderShaderDataTypes::Enum getType() { return QDemonRenderShaderDataTypes::Matrix4x4; }
+    static QDemonRenderShaderDataType getType() { return QDemonRenderShaderDataType::Matrix4x4; }
 };
 
 template<>
 struct QDemonDataTypeToShaderDataTypeMap<QDemonRenderTexture2DPtr>
 {
-    static QDemonRenderShaderDataTypes::Enum getType() { return QDemonRenderShaderDataTypes::Texture2D; }
+    static QDemonRenderShaderDataType getType() { return QDemonRenderShaderDataType::Texture2D; }
 };
 
 template<>
 struct QDemonDataTypeToShaderDataTypeMap<QDemonRenderTexture2DHandle>
 {
-    static QDemonRenderShaderDataTypes::Enum getType() { return QDemonRenderShaderDataTypes::Texture2DHandle; }
+    static QDemonRenderShaderDataType getType() { return QDemonRenderShaderDataType::Texture2DHandle; }
 };
 
 template<>
 struct QDemonDataTypeToShaderDataTypeMap<QDemonRenderTexture2DArrayPtr>
 {
-    static QDemonRenderShaderDataTypes::Enum getType() { return QDemonRenderShaderDataTypes::Texture2DArray; }
+    static QDemonRenderShaderDataType getType() { return QDemonRenderShaderDataType::Texture2DArray; }
 };
 
 template<>
 struct QDemonDataTypeToShaderDataTypeMap<QDemonRenderTextureCubePtr>
 {
-    static QDemonRenderShaderDataTypes::Enum getType() { return QDemonRenderShaderDataTypes::TextureCube; }
+    static QDemonRenderShaderDataType getType() { return QDemonRenderShaderDataType::TextureCube; }
 };
 
 template<>
 struct QDemonDataTypeToShaderDataTypeMap<QDemonRenderTextureCubeHandle>
 {
-    static QDemonRenderShaderDataTypes::Enum getType() { return QDemonRenderShaderDataTypes::TextureCubeHandle; }
+    static QDemonRenderShaderDataType getType() { return QDemonRenderShaderDataType::TextureCubeHandle; }
 };
 
 template<>
 struct QDemonDataTypeToShaderDataTypeMap<QDemonRenderImage2DPtr>
 {
-    static QDemonRenderShaderDataTypes::Enum getType() { return QDemonRenderShaderDataTypes::Image2D; }
+    static QDemonRenderShaderDataType getType() { return QDemonRenderShaderDataType::Image2D; }
 };
 
 template<>
 struct QDemonDataTypeToShaderDataTypeMap<QDemonRenderDataBufferPtr>
 {
-    static QDemonRenderShaderDataTypes::Enum getType() { return QDemonRenderShaderDataTypes::DataBuffer; }
+    static QDemonRenderShaderDataType getType() { return QDemonRenderShaderDataType::DataBuffer; }
 };
 
-struct QDemonRenderShaderTypeValue
+enum class QDemonRenderShaderTypeValue
 {
-    enum Enum {
-        Unknown = 1 << 0,
-        Vertex = 1 << 1,
-        Fragment = 1 << 2,
-        TessControl = 1 << 3,
-        TessEvaluation = 1 << 4,
-        Geometry = 1 << 5
-    };
+    Unknown = 1 << 0,
+    Vertex = 1 << 1,
+    Fragment = 1 << 2,
+    TessControl = 1 << 3,
+    TessEvaluation = 1 << 4,
+    Geometry = 1 << 5
 };
 
-typedef QDemonFlags<QDemonRenderShaderTypeValue::Enum, quint32> QDemonRenderShaderTypeFlags;
+Q_DECLARE_FLAGS(QDemonRenderShaderTypeFlags, QDemonRenderShaderTypeValue);
+Q_DECLARE_OPERATORS_FOR_FLAGS(QDemonRenderShaderTypeFlags);
 
-struct QDemonRenderTextureTypeValue
+enum class QDemonRenderTextureTypeValue
 {
-    enum Enum {
-        Unknown = 0,
-        Diffuse,
-        Specular,
-        Environment,
-        Bump,
-        Normal,
-        Displace,
-        Emissive,
-        Emissive2,
-        Anisotropy,
-        Translucent,
-        LightmapIndirect,
-        LightmapRadiosity,
-        LightmapShadow
-    };
+    Unknown = 0,
+    Diffuse,
+    Specular,
+    Environment,
+    Bump,
+    Normal,
+    Displace,
+    Emissive,
+    Emissive2,
+    Anisotropy,
+    Translucent,
+    LightmapIndirect,
+    LightmapRadiosity,
+    LightmapShadow
+};
 
-    static const char *toString(QDemonRenderTextureTypeValue::Enum value)
-    {
-        switch (value) {
-        case Unknown:
-            return "Unknown";
-        case Diffuse:
-            return "Diffuse";
-        case Specular:
-            return "Specular";
-        case Environment:
-            return "Environment";
-        case Bump:
-            return "Bump";
-        case Normal:
-            return "Normal";
-        case Displace:
-            return "Displace";
-        case Emissive:
-            return "Emissive";
-        case Emissive2:
-            return "Emissive2";
-        case Anisotropy:
-            return "Anisotropy";
-        case Translucent:
-            return "Translucent";
-        case LightmapIndirect:
-            return "LightmapIndirect";
-        case LightmapRadiosity:
-            return "LightmapRadiosity";
-        case LightmapShadow:
-            return "LightmapShadow";
-        }
-        return nullptr;
+inline const char *toString(QDemonRenderTextureTypeValue value)
+{
+    switch (value) {
+    case QDemonRenderTextureTypeValue::Unknown:
+        return "Unknown";
+    case QDemonRenderTextureTypeValue::Diffuse:
+        return "Diffuse";
+    case QDemonRenderTextureTypeValue::Specular:
+        return "Specular";
+    case QDemonRenderTextureTypeValue::Environment:
+        return "Environment";
+    case QDemonRenderTextureTypeValue::Bump:
+        return "Bump";
+    case QDemonRenderTextureTypeValue::Normal:
+        return "Normal";
+    case QDemonRenderTextureTypeValue::Displace:
+        return "Displace";
+    case QDemonRenderTextureTypeValue::Emissive:
+        return "Emissive";
+    case QDemonRenderTextureTypeValue::Emissive2:
+        return "Emissive2";
+    case QDemonRenderTextureTypeValue::Anisotropy:
+        return "Anisotropy";
+    case QDemonRenderTextureTypeValue::Translucent:
+        return "Translucent";
+    case QDemonRenderTextureTypeValue::LightmapIndirect:
+        return "LightmapIndirect";
+    case QDemonRenderTextureTypeValue::LightmapRadiosity:
+        return "LightmapRadiosity";
+    case QDemonRenderTextureTypeValue::LightmapShadow:
+        return "LightmapShadow";
     }
-};
+    return nullptr;
+}
 
-struct QDemonRenderReadPixelFormats
+enum class QDemonRenderReadPixelFormat
 {
-    enum Enum { Unknown = 0, Alpha8, RGB565, RGB8, RGBA4444, RGBA5551, RGBA8 };
+    Unknown = 0,
+    Alpha8,
+    RGB565,
+    RGB8,
+    RGBA4444,
+    RGBA5551,
+    RGBA8
 };
 
 // Now for scoped property access.

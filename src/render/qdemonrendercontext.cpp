@@ -819,7 +819,7 @@ void QDemonRenderContextImpl::setReadBuffer(QDemonReadFace inReadFace)
     m_backend->setReadBuffer(nullptr, inReadFace);
 }
 
-void QDemonRenderContextImpl::readPixels(QRect inRect, QDemonRenderReadPixelFormats::Enum inFormat, QDemonDataRef<quint8> inWriteBuffer)
+void QDemonRenderContextImpl::readPixels(QRect inRect, QDemonRenderReadPixelFormat inFormat, QDemonDataRef<quint8> inWriteBuffer)
 {
     // nullptr means read from current render target
     m_backend->readPixel(nullptr,
