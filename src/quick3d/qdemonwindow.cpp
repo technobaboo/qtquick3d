@@ -339,6 +339,8 @@ bool QDemonWindow::event(QEvent *e)
         if (d->windowManager)
             d->windowManager->handleUpdateRequest(this);
         break;
+    default:
+        break;
     }
     return QWindow::event(e);
 }
