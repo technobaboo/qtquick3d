@@ -1113,11 +1113,11 @@ struct QDemonMaterialSystem : public QDemonCustomMaterialSystemInterface
                 if (inPropertyType == QDemonRenderShaderDataTypes::Texture2D) {
                     //                    StaticAssert<sizeof(QString) == sizeof(QDemonRenderTexture2DPtr)>::valid_expression();
                     QString *theStrPtr = reinterpret_cast<QString *>(inDataPtr);
-                    QDemonRef<QDemonBufferManagerInterface> theBufferManager(m_context->getBufferManager());
+                    QDemonBufferManager theBufferManager(m_context->getBufferManager());
                     QDemonRef<QDemonRenderTexture2D> theTexture;
 
                     if (!theStrPtr->isNull()) {
-                        QDemonRenderImageTextureData theTextureData = theBufferManager->loadRenderImage(*theStrPtr);
+                        QDemonRenderImageTextureData theTextureData = theBufferManager.loadRenderImage(*theStrPtr);
                         if (theTextureData.m_texture) {
                             theTexture = theTextureData.m_texture;
                             setTexture(inShader,

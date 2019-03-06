@@ -38,7 +38,7 @@
 QT_BEGIN_NAMESPACE
 
 struct QDemonRenderDefaultMaterial;
-class QDemonBufferManagerInterface;
+class QDemonBufferManager;
 
 struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderModel : public QDemonGraphNode
 {
@@ -56,7 +56,7 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderModel : public QDemonGraphNode
 
     void addMaterial(QDemonGraphObject &inMaterial);
 
-    QDemonBounds3 getModelBounds(const QDemonRef<QDemonBufferManagerInterface> &inManager) const;
+    QDemonBounds3 getModelBounds(const QDemonBufferManager &inManager) const;
 };
 QT_END_NAMESPACE
 

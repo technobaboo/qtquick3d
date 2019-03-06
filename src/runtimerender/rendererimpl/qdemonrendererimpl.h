@@ -52,7 +52,7 @@
 #include <QtDemonRuntimeRender/qdemonrendershadercache.h>
 #include <QtDemonRuntimeRender/qdemonrenderprofiler.h>
 #include <QtDemonRuntimeRender/qdemonrenderdefaultmaterialshadergenerator.h>
-
+#include <QtDemonRuntimeRender/qdemonrenderbuffermanager.h>
 #include <QtDemonRender/qdemonrendercontext.h>
 #include <QtDemonRender/qdemonrendershaderprogram.h>
 
@@ -138,7 +138,7 @@ class Q_DEMONRUNTIMERENDER_EXPORT QDemonRendererImpl : public QDemonRendererInte
 
     QDemonRenderContextInterface *m_demonContext;
     QDemonRef<QDemonRenderContext> m_context;
-    QDemonRef<QDemonBufferManagerInterface> m_bufferManager;
+    QDemonBufferManager m_bufferManager;
     QDemonRef<QDemonOffscreenRenderManagerInterface> m_offscreenRenderManager;
     InvasiveSet<QDemonShaderGeneratorGeneratedShader, QDemonGGSGet, QDemonGGSSet> m_layerShaders;
     // For rendering bounding boxes.

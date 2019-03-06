@@ -86,7 +86,7 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderImage : public QDemonGraphObject
     // Renders the sub presentation
     // Or finds the image.
     // and sets up the texture transform
-    bool clearDirty(QDemonBufferManagerInterface &inBufferManager,
+    bool clearDirty(QDemonBufferManager &inBufferManager,
                     QDemonOffscreenRenderManagerInterface &inRenderManager,
                     /*IRenderPluginManager &pluginManager,*/
                     bool forIbl = false);

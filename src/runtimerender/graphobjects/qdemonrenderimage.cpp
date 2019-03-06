@@ -68,7 +68,7 @@ static void HandleOffscreenResult(QDemonRenderImage &theImage,
     replaceTexture = true;
 }
 
-bool QDemonRenderImage::clearDirty(QDemonBufferManagerInterface &inBufferManager,
+bool QDemonRenderImage::clearDirty(QDemonBufferManager &inBufferManager,
                                    QDemonOffscreenRenderManagerInterface &inRenderManager,
                                    bool forIbl)
 {

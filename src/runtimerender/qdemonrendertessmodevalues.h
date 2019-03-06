@@ -35,7 +35,7 @@
 QT_BEGIN_NAMESPACE
 
 struct QDemonRenderDefaultMaterial;
-class QDemonBufferManagerInterface;
+class QDemonBufferManager;
 
 struct TessModeValues
 {

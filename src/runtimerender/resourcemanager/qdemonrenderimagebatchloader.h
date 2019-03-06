@@ -54,7 +54,7 @@ public:
 typedef quint32 TImageBatchId;
 
 class QDemonInputStreamFactoryInterface;
-class QDemonBufferManagerInterface;
+class QDemonBufferManager;
 class QDemonAbstractThreadPool;
 class QDemonPerfTimerInterface;
 class IImageBatchLoader
@@ -83,7 +83,7 @@ public:
     virtual void endFrame() = 0;
 
     static QDemonRef<IImageBatchLoader> createBatchLoader(QDemonRef<QDemonInputStreamFactoryInterface> inFactory,
-                                                          QDemonRef<QDemonBufferManagerInterface> inBufferManager,
+                                                          QDemonBufferManager inBufferManager,
                                                           QDemonRef<QDemonAbstractThreadPool> inThreadPool,
                                                           QDemonRef<QDemonPerfTimerInterface> inTimer);
 };

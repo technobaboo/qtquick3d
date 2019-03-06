@@ -47,7 +47,7 @@ struct QDemonRenderLight;
 struct QDemonRenderCamera;
 struct QDemonText;
 struct QDemonGraphNode;
-class QDemonBufferManagerInterface;
+class QDemonBufferManager;
 
 class INodeQueue
 {
@@ -230,11 +230,11 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonGraphNode : public QDemonGraphObject
     void setLocalTransformFromMatrix(QMatrix4x4 &inTransform);
 
     // Get the bounds of us and our children in our local space.
-    QDemonBounds3 getBounds(const QDemonRef<QDemonBufferManagerInterface> &inManager,
+    QDemonBounds3 getBounds(const QDemonBufferManager &inManager,
                             const QDemonRef<QDemonPathManagerInterface> &inPathManager,
                             bool inIncludeChildren = true,
                             QDemonRenderNodeFilterInterface *inChildFilter = nullptr) const;
-    QDemonBounds3 getChildBounds(const QDemonRef<QDemonBufferManagerInterface> &inManager,
+    QDemonBounds3 getChildBounds(const QDemonBufferManager &inManager,
                                  const QDemonRef<QDemonPathManagerInterface> &inPathManager,
                                  QDemonRenderNodeFilterInterface *inChildFilter = nullptr) const;
     // Assumes CalculateGlobalVariables has already been called.

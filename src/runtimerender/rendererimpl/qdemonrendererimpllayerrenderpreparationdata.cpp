@@ -528,10 +528,10 @@ void QDemonLayerRenderPreparationData::prepareImageForRender(QDemonRenderImage &
                                                              quint32 inImageIndex)
 {
     QDemonRenderContextInterface *demonContext(renderer->getDemonContext());
-    QDemonRef<QDemonBufferManagerInterface> bufferManager = demonContext->getBufferManager();
+    QDemonBufferManager bufferManager = demonContext->getBufferManager();
     QDemonRef<QDemonOffscreenRenderManagerInterface> theOffscreenRenderManager(demonContext->getOffscreenRenderManager());
     //    IRenderPluginManager &theRenderPluginManager(demonContext.GetRenderPluginManager());
-    if (inImage.clearDirty(*bufferManager, *theOffscreenRenderManager /*, theRenderPluginManager*/))
+    if (inImage.clearDirty(bufferManager, *theOffscreenRenderManager /*, theRenderPluginManager*/))
         ioFlags |= RenderPreparationResultFlagValues::Dirty;
 
     // All objects with offscreen renderers are pickable so we can pass the pick through to the
@@ -771,8 +771,8 @@ bool QDemonLayerRenderPreparationData::prepareModelForRender(QDemonRenderModel &
                                                              QDemonNodeLightEntryList &inScopedLights)
 {
     QDemonRenderContextInterface *demonContext(renderer->getDemonContext());
-    QDemonRef<QDemonBufferManagerInterface> bufferManager = demonContext->getBufferManager();
-    QDemonRenderMesh *theMesh = bufferManager->loadMesh(inModel.meshPath);
+    QDemonBufferManager bufferManager = demonContext->getBufferManager();
+    QDemonRenderMesh *theMesh = bufferManager.loadMesh(inModel.meshPath);
     if (theMesh == nullptr)
         return false;
 
@@ -989,7 +989,8 @@ bool QDemonLayerRenderPreparationData::prepareRenderablesForRender(const QMatrix
 bool QDemonLayerRenderPreparationData::checkLightProbeDirty(QDemonRenderImage &inLightProbe)
 {
     QDemonRenderContextInterface *theContext(renderer->getDemonContext());
-    return inLightProbe.clearDirty(*theContext->getBufferManager(),
+    QDemonBufferManager bufferManager = theContext->getBufferManager();
+    return inLightProbe.clearDirty(bufferManager,
                                    *theContext->getOffscreenRenderManager() /*,
                                     theContext.GetRenderPluginManager()*/
                                    ,
