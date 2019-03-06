@@ -736,6 +736,8 @@ void QDemonBufferManager::releaseTexture(QDemonRenderImageTextureData &inEntry)
     //     inEntry.d->Texture->release();
 }
 
+QDemonBufferManager::QDemonBufferManager() = default;
+
 void QDemonBufferManager::clear()
 {
     for (Private::MeshMap::iterator iter = d->meshMap.begin(), end = d->meshMap.end(); iter != end; ++iter) {
@@ -781,5 +783,8 @@ void QDemonBufferManager::invalidateBuffer(QString inSourcePath)
     }
 }
 
-QT_END_NAMESPACE
+QDemonBufferManager::Private::Private() = default;
 
+QDemonBufferManager::Private::~Private() = default;
+
+QT_END_NAMESPACE

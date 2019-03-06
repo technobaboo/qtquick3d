@@ -42,7 +42,7 @@ class Q_DEMONRUNTIMERENDER_EXPORT QDemonInputStreamFactoryInterface
 {
 public:
     QAtomicInt ref;
-    virtual ~QDemonInputStreamFactoryInterface() {}
+    virtual ~QDemonInputStreamFactoryInterface();
     // These directories must have a '/' on them
     virtual void addSearchDirectory(const char *inDirectory) = 0;
     virtual QSharedPointer<QIODevice> getStreamForFile(const QString &inFilename, bool inQuiet = false) = 0;

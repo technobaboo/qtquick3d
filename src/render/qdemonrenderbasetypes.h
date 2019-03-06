@@ -1223,6 +1223,11 @@ struct Q_DEMONRENDER_EXPORT QDemonRenderVertFragCompilationResult
 {
     const char *m_shaderName = nullptr;
     QDemonRef<QDemonRenderShaderProgram> m_shader; ///< contains the program
+
+    QDemonRenderVertFragCompilationResult();
+    ~QDemonRenderVertFragCompilationResult();
+    QDemonRenderVertFragCompilationResult(const QDemonRenderVertFragCompilationResult &);
+    QDemonRenderVertFragCompilationResult & operator=(const QDemonRenderVertFragCompilationResult &other);
 };
 
 struct QDemonRenderFrameBufferAttachments
@@ -1821,7 +1826,6 @@ struct QDemonRenderStencilFunctionArgument
 class QDemonRenderFrameBuffer;
 class QDemonRenderVertexBuffer;
 class QDemonRenderIndexBuffer;
-class QDemonRenderShaderProgram;
 class QDemonRenderProgramPipeline;
 class QDemonRenderTextureBase;
 class QDemonRenderTexture2D;

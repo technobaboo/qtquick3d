@@ -142,6 +142,8 @@ struct QDemonInputStreamFactory : public QDemonInputStreamFactoryInterface
 };
 }
 
+QDemonInputStreamFactoryInterface::~QDemonInputStreamFactoryInterface() {}
+
 QDemonRef<QDemonInputStreamFactoryInterface> QDemonInputStreamFactoryInterface::create()
 {
     return QDemonRef<QDemonInputStreamFactoryInterface>(new QDemonInputStreamFactory());

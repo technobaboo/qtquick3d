@@ -274,6 +274,13 @@ QDemonRenderTextureOrRenderBuffer::QDemonRenderTextureOrRenderBuffer(QDemonRef<Q
 {
 }
 
+QDemonRenderTextureOrRenderBuffer::QDemonRenderTextureOrRenderBuffer() = default;
+
+QDemonRenderTextureOrRenderBuffer::QDemonRenderTextureOrRenderBuffer(const QDemonRenderTextureOrRenderBuffer &other) = default;
+
+QDemonRenderTextureOrRenderBuffer::~QDemonRenderTextureOrRenderBuffer() = default;
+
+
 QDemonRenderTextureOrRenderBuffer &QDemonRenderTextureOrRenderBuffer::operator=(const QDemonRenderTextureOrRenderBuffer &other)
 {
     if (this != &other) {

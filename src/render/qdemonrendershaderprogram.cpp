@@ -1319,4 +1319,12 @@ QDemonRenderVertFragCompilationResult QDemonRenderShaderProgram::createCompute(c
     return result;
 }
 
+QDemonRenderVertFragCompilationResult::QDemonRenderVertFragCompilationResult() = default;
+
+QDemonRenderVertFragCompilationResult::~QDemonRenderVertFragCompilationResult() = default;
+
+QDemonRenderVertFragCompilationResult::QDemonRenderVertFragCompilationResult(const QDemonRenderVertFragCompilationResult &other) = default;
+
+QDemonRenderVertFragCompilationResult &QDemonRenderVertFragCompilationResult::operator=(const QDemonRenderVertFragCompilationResult &other) = default;
+
 QT_END_NAMESPACE

@@ -50,6 +50,9 @@ namespace QDemonMeshUtilities {
 class Q_DEMONRUNTIMERENDER_EXPORT QDemonBufferManager
 {
     struct Private {
+        Q_DISABLE_COPY(Private)
+        Private();
+        ~Private();
         QAtomicInt ref;
         typedef QSet<QString> StringSet;
         typedef QHash<QString, QDemonRenderImageTextureData> ImageMap;
@@ -76,7 +79,7 @@ class Q_DEMONRUNTIMERENDER_EXPORT QDemonBufferManager
     void releaseTexture(QDemonRenderImageTextureData &inEntry);
 
 public:
-    QDemonBufferManager() = default;
+    QDemonBufferManager();
     QDemonBufferManager(const QDemonRef<QDemonRenderContext> &inRenderContext,
                         const QDemonRef<QDemonInputStreamFactoryInterface> &inInputStreamFactory,
                         const QDemonPerfTimer &inTimer);
