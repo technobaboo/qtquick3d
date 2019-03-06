@@ -330,7 +330,7 @@ void QDemonRenderBackendGLBase::setMultisample(bool bEnable)
     }
 }
 
-void QDemonRenderBackendGLBase::setRenderState(bool bEnable, const QDemonRenderState::Enum value)
+void QDemonRenderBackendGLBase::setRenderState(bool bEnable, const QDemonRenderState value)
 {
     if (value == QDemonRenderState::DepthWrite) {
         GL_CALL_FUNCTION(glDepthMask(bEnable));
@@ -346,7 +346,7 @@ void QDemonRenderBackendGLBase::setRenderState(bool bEnable, const QDemonRenderS
 QDemonRenderBackend::QDemonRenderBackendDepthStencilStateObject QDemonRenderBackendGLBase::createDepthStencilState(
         bool enableDepth,
         bool depthMask,
-        QDemonRenderBoolOp::Enum depthFunc,
+        QDemonRenderBoolOp depthFunc,
         bool enableStencil,
         QDemonRenderStencilFunctionArgument &stencilFuncFront,
         QDemonRenderStencilFunctionArgument &stencilFuncBack,
@@ -373,7 +373,7 @@ void QDemonRenderBackendGLBase::releaseDepthStencilState(QDemonRenderBackendDept
 
 QDemonRenderBackend::QDemonRenderBackendRasterizerStateObject QDemonRenderBackendGLBase::createRasterizerState(float depthBias,
                                                                                                                float depthScale,
-                                                                                                               QDemonRenderFaces::Enum cullFace)
+                                                                                                               QDemonRenderFace cullFace)
 {
     QDemonRenderBackendRasterizerStateGL *retval = new QDemonRenderBackendRasterizerStateGL(depthBias, depthScale, cullFace);
 
@@ -463,20 +463,20 @@ void QDemonRenderBackendGLBase::setRasterizerState(QDemonRenderBackendRasterizer
     }
 }
 
-bool QDemonRenderBackendGLBase::getRenderState(const QDemonRenderState::Enum value)
+bool QDemonRenderBackendGLBase::getRenderState(const QDemonRenderState value)
 {
     bool enabled = GL_CALL_FUNCTION(glIsEnabled(m_conversion.fromRenderStateToGL(value)));
     return enabled;
 }
 
-QDemonRenderBoolOp::Enum QDemonRenderBackendGLBase::getDepthFunc()
+QDemonRenderBoolOp QDemonRenderBackendGLBase::getDepthFunc()
 {
     qint32 value;
     GL_CALL_FUNCTION(glGetIntegerv(GL_DEPTH_FUNC, &value));
     return GLConversion::fromGLToBoolOp(value);
 }
 
-void QDemonRenderBackendGLBase::setDepthFunc(const QDemonRenderBoolOp::Enum func)
+void QDemonRenderBackendGLBase::setDepthFunc(const QDemonRenderBoolOp func)
 {
     GL_CALL_FUNCTION(glDepthFunc(m_conversion.fromBoolOpToGL(func)));
 }
@@ -2114,12 +2114,12 @@ void QDemonRenderBackendGLBase::getPathMetricsRange(QDemonRenderBackendPathObjec
 
 void QDemonRenderBackendGLBase::getPathSpacing(QDemonRenderBackendPathObject,
                                                size_t,
-                                               QDemonRenderPathListMode::Enum,
+                                               QDemonRenderPathListMode,
                                                QDemonRenderPathFormatType,
                                                const void *,
                                                float,
                                                float,
-                                               QDemonRenderPathTransformType::Enum,
+                                               QDemonRenderPathTransformType,
                                                float *)
 {
     // Needs GL 4 backend
@@ -2130,9 +2130,9 @@ void QDemonRenderBackendGLBase::stencilFillPathInstanced(QDemonRenderBackendPath
                                                          size_t,
                                                          QDemonRenderPathFormatType,
                                                          const void *,
-                                                         QDemonRenderPathFillMode::Enum,
+                                                         QDemonRenderPathFillMode,
                                                          quint32,
-                                                         QDemonRenderPathTransformType::Enum,
+                                                         QDemonRenderPathTransformType,
                                                          const float *)
 {
     // Needs GL 4 backend
@@ -2145,7 +2145,7 @@ void QDemonRenderBackendGLBase::stencilStrokePathInstancedN(QDemonRenderBackendP
                                                             const void *,
                                                             qint32,
                                                             quint32,
-                                                            QDemonRenderPathTransformType::Enum,
+                                                            QDemonRenderPathTransformType,
                                                             const float *)
 {
     // Needs GL 4 backend
@@ -2156,8 +2156,8 @@ void QDemonRenderBackendGLBase::coverFillPathInstanced(QDemonRenderBackendPathOb
                                                        size_t,
                                                        QDemonRenderPathFormatType,
                                                        const void *,
-                                                       QDemonRenderPathCoverMode::Enum,
-                                                       QDemonRenderPathTransformType::Enum,
+                                                       QDemonRenderPathCoverMode,
+                                                       QDemonRenderPathTransformType,
                                                        const float *)
 {
     // Needs GL 4 backend
@@ -2168,8 +2168,8 @@ void QDemonRenderBackendGLBase::coverStrokePathInstanced(QDemonRenderBackendPath
                                                          size_t,
                                                          QDemonRenderPathFormatType,
                                                          const void *,
-                                                         QDemonRenderPathCoverMode::Enum,
-                                                         QDemonRenderPathTransformType::Enum,
+                                                         QDemonRenderPathCoverMode,
+                                                         QDemonRenderPathTransformType,
                                                          const float *)
 {
     // Needs GL 4 backend

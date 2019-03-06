@@ -538,7 +538,7 @@ void QDemonRenderBackendGLES2Impl::setDrawBuffers(QDemonRenderBackendRenderTarge
     GL_CALL_EXTRA_FUNCTION(glDrawBuffers((int)m_drawBuffersArray.size(), m_drawBuffersArray.data()));
 }
 
-void QDemonRenderBackendGLES2Impl::setReadBuffer(QDemonRenderBackendRenderTargetObject rto, QDemonReadFaces::Enum inReadFace)
+void QDemonRenderBackendGLES2Impl::setReadBuffer(QDemonRenderBackendRenderTargetObject rto, QDemonReadFace inReadFace)
 {
     NVRENDER_BACKEND_UNUSED(rto);
     NVRENDER_BACKEND_UNUSED(inReadFace);

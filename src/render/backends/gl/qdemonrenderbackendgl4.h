@@ -138,7 +138,7 @@ public:
     void setPathProjectionMatrix(const QMatrix4x4 inPathProjection) override;
     void setPathModelViewMatrix(const QMatrix4x4 inPathModelview) override;
     void setPathStencilDepthOffset(float inSlope, float inBias) override;
-    void setPathCoverDepthFunc(QDemonRenderBoolOp::Enum inDepthFunction) override;
+    void setPathCoverDepthFunc(QDemonRenderBoolOp inDepthFunction) override;
     void stencilStrokePath(QDemonRenderBackendPathObject inPathObject) override;
     void stencilFillPath(QDemonRenderBackendPathObject inPathObject) override;
     void releasePathNVObject(QDemonRenderBackendPathObject po, size_t range) override;
@@ -147,9 +147,9 @@ public:
                                   size_t numPaths,
                                   QDemonRenderPathFormatType type,
                                   const void *charCodes,
-                                  QDemonRenderPathFillMode::Enum fillMode,
+                                  QDemonRenderPathFillMode fillMode,
                                   quint32 stencilMask,
-                                  QDemonRenderPathTransformType::Enum transformType,
+                                  QDemonRenderPathTransformType transformType,
                                   const float *transformValues) override;
     void stencilStrokePathInstancedN(QDemonRenderBackendPathObject po,
                                      size_t numPaths,
@@ -157,21 +157,21 @@ public:
                                      const void *charCodes,
                                      qint32 stencilRef,
                                      quint32 stencilMask,
-                                     QDemonRenderPathTransformType::Enum transformType,
+                                     QDemonRenderPathTransformType transformType,
                                      const float *transformValues) override;
     void coverFillPathInstanced(QDemonRenderBackendPathObject po,
                                 size_t numPaths,
                                 QDemonRenderPathFormatType type,
                                 const void *charCodes,
-                                QDemonRenderPathCoverMode::Enum coverMode,
-                                QDemonRenderPathTransformType::Enum transformType,
+                                QDemonRenderPathCoverMode coverMode,
+                                QDemonRenderPathTransformType transformType,
                                 const float *transformValues) override;
     void coverStrokePathInstanced(QDemonRenderBackendPathObject po,
                                   size_t numPaths,
                                   QDemonRenderPathFormatType type,
                                   const void *charCodes,
-                                  QDemonRenderPathCoverMode::Enum coverMode,
-                                  QDemonRenderPathTransformType::Enum transformType,
+                                  QDemonRenderPathCoverMode coverMode,
+                                  QDemonRenderPathTransformType transformType,
                                   const float *transformValues) override;
     void loadPathGlyphs(QDemonRenderBackendPathObject po,
                         QDemonRenderPathFontTarget fontTarget,
@@ -220,12 +220,12 @@ public:
                              float *metrics) override;
     void getPathSpacing(QDemonRenderBackendPathObject po,
                         size_t numPaths,
-                        QDemonRenderPathListMode::Enum pathListMode,
+                        QDemonRenderPathListMode pathListMode,
                         QDemonRenderPathFormatType type,
                         const void *charCodes,
                         float advanceScale,
                         float kerningScale,
-                        QDemonRenderPathTransformType::Enum transformType,
+                        QDemonRenderPathTransformType transformType,
                         float *spacing) override;
 
 private:

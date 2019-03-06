@@ -145,7 +145,7 @@ public:
 
     virtual QDemonRef<QDemonRenderDepthStencilState> createDepthStencilState(bool enableDepth,
                                                                              bool depthMask,
-                                                                             QDemonRenderBoolOp::Enum depthFunc,
+                                                                             QDemonRenderBoolOp depthFunc,
                                                                              bool enableStencil,
                                                                              QDemonRenderStencilFunctionArgument &stencilFuncFront,
                                                                              QDemonRenderStencilFunctionArgument &stencilFuncBack,
@@ -154,7 +154,7 @@ public:
 
     virtual QDemonRef<QDemonRenderRasterizerState> createRasterizerState(float depthBias,
                                                                          float depthScale,
-                                                                         QDemonRenderFaces::Enum cullFace) = 0;
+                                                                         QDemonRenderFace cullFace) = 0;
 
     virtual QDemonRef<QDemonRenderVertexBuffer> createVertexBuffer(QDemonRenderBufferUsageType usageType,
                                                                    size_t size,
@@ -276,7 +276,7 @@ public:
     virtual void setPathProjectionMatrix(const QMatrix4x4 inPathProjection) = 0;
     virtual void setPathModelViewMatrix(const QMatrix4x4 inPathModelview) = 0;
     virtual void setPathStencilDepthOffset(float inSlope, float inBias) = 0;
-    virtual void setPathCoverDepthFunc(QDemonRenderBoolOp::Enum inFunc) = 0;
+    virtual void setPathCoverDepthFunc(QDemonRenderBoolOp inFunc) = 0;
 
     virtual QDemonRef<QDemonRenderPathFontSpecification> createPathFontSpecification(const QString &fontName) = 0;
     virtual QDemonRef<QDemonRenderPathFontItem> createPathFontItem() = 0;
@@ -298,8 +298,8 @@ public:
     virtual void setCullingEnabled(bool inEnabled) = 0;
     virtual bool isCullingEnabled() const = 0;
 
-    virtual void setDepthFunction(QDemonRenderBoolOp::Enum inFunction) = 0;
-    virtual QDemonRenderBoolOp::Enum getDepthFunction() const = 0;
+    virtual void setDepthFunction(QDemonRenderBoolOp inFunction) = 0;
+    virtual QDemonRenderBoolOp getDepthFunction() const = 0;
 
     virtual void setBlendingEnabled(bool inEnabled) = 0;
     virtual bool isBlendingEnabled() const = 0;
@@ -363,7 +363,7 @@ public:
     //-1 means none, else the integer is assumed to be an index past the draw buffer index.
     // This applies only to the currently bound framebuffer.
     virtual void setDrawBuffers(QDemonConstDataRef<qint32> inDrawBufferSet) = 0;
-    virtual void setReadBuffer(QDemonReadFaces::Enum inReadFace) = 0;
+    virtual void setReadBuffer(QDemonReadFace inReadFace) = 0;
 
     virtual void readPixels(QRect inRect, QDemonRenderReadPixelFormats::Enum inFormat, QDemonDataRef<quint8> inWriteBuffer) = 0;
 
@@ -525,7 +525,7 @@ protected:
         m_backend->setRenderState(inEnabled, QDemonRenderState::CullFace);
     }
 
-    void doSetDepthFunction(QDemonRenderBoolOp::Enum inFunction)
+    void doSetDepthFunction(QDemonRenderBoolOp inFunction)
     {
         m_hardwarePropertyContext.m_depthFunction = inFunction;
         m_backend->setDepthFunc(inFunction);
@@ -763,7 +763,7 @@ public:
 
     virtual QDemonRef<QDemonRenderDepthStencilState> createDepthStencilState(bool enableDepth,
                                                                              bool depthMask,
-                                                                             QDemonRenderBoolOp::Enum depthFunc,
+                                                                             QDemonRenderBoolOp depthFunc,
                                                                              bool enableStencil,
                                                                              QDemonRenderStencilFunctionArgument &stencilFuncFront,
                                                                              QDemonRenderStencilFunctionArgument &stencilFuncBack,
@@ -772,7 +772,7 @@ public:
     void setDepthStencilState(QDemonRef<QDemonRenderDepthStencilState> inDepthStencilState) override;
     virtual void stateDestroyed(QDemonRenderDepthStencilState *state);
 
-    QDemonRef<QDemonRenderRasterizerState> createRasterizerState(float depthBias, float depthScale, QDemonRenderFaces::Enum cullFace) override;
+    QDemonRef<QDemonRenderRasterizerState> createRasterizerState(float depthBias, float depthScale, QDemonRenderFace cullFace) override;
     void setRasterizerState(QDemonRef<QDemonRenderRasterizerState> inRasterizerState) override;
     virtual void stateDestroyed(QDemonRenderRasterizerState *state);
 
@@ -895,7 +895,7 @@ public:
     void setPathProjectionMatrix(const QMatrix4x4 inPathProjection) override;
     void setPathModelViewMatrix(const QMatrix4x4 inPathModelview) override;
     void setPathStencilDepthOffset(float inSlope, float inBias) override;
-    void setPathCoverDepthFunc(QDemonRenderBoolOp::Enum inFunc) override;
+    void setPathCoverDepthFunc(QDemonRenderBoolOp inFunc) override;
 
     virtual QDemonRef<QDemonRenderPathFontSpecification> createPathFontSpecification(const QString &fontName) override;
     virtual void releasePathFontSpecification(QDemonRenderPathFontSpecification *inPathSpec);
@@ -919,8 +919,8 @@ public:
     void setCullingEnabled(bool inEnabled) override;
     bool isCullingEnabled() const override { return m_hardwarePropertyContext.m_cullingEnabled; }
 
-    void setDepthFunction(QDemonRenderBoolOp::Enum inFunction) override;
-    QDemonRenderBoolOp::Enum getDepthFunction() const override { return m_hardwarePropertyContext.m_depthFunction; }
+    void setDepthFunction(QDemonRenderBoolOp inFunction) override;
+    QDemonRenderBoolOp getDepthFunction() const override { return m_hardwarePropertyContext.m_depthFunction; }
 
     void setBlendingEnabled(bool inEnabled) override;
     bool isBlendingEnabled() const override { return m_hardwarePropertyContext.m_blendingEnabled; }
@@ -956,7 +956,7 @@ public:
     void dispatchCompute(QDemonRef<QDemonRenderShaderProgram> inShader, quint32 numGroupsX, quint32 numGroupsY, quint32 numGroupsZ) override;
 
     void setDrawBuffers(QDemonConstDataRef<qint32> inDrawBufferSet) override;
-    void setReadBuffer(QDemonReadFaces::Enum inReadFace) override;
+    void setReadBuffer(QDemonReadFace inReadFace) override;
 
     void readPixels(QRect inRect, QDemonRenderReadPixelFormats::Enum inFormat, QDemonDataRef<quint8> inWriteBuffer) override;
 

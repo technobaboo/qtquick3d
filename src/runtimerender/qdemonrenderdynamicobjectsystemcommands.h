@@ -396,10 +396,10 @@ struct QDemonRender : public QDemonCommand
 
 struct QDemonApplyBlending : public QDemonCommand
 {
-    QDemonRenderSrcBlendFunc::Enum m_srcBlendFunc;
-    QDemonRenderDstBlendFunc::Enum m_dstBlendFunc;
+    QDemonRenderSrcBlendFunc m_srcBlendFunc;
+    QDemonRenderDstBlendFunc m_dstBlendFunc;
 
-    QDemonApplyBlending(QDemonRenderSrcBlendFunc::Enum inSrcBlendFunc, QDemonRenderDstBlendFunc::Enum inDstBlendFunc)
+    QDemonApplyBlending(QDemonRenderSrcBlendFunc inSrcBlendFunc, QDemonRenderDstBlendFunc inDstBlendFunc)
         : QDemonCommand(CommandTypes::ApplyBlending), m_srcBlendFunc(inSrcBlendFunc), m_dstBlendFunc(inDstBlendFunc)
     {
     }
@@ -412,10 +412,10 @@ struct QDemonApplyBlending : public QDemonCommand
 
 struct QDemonApplyRenderState : public QDemonCommand
 {
-    QDemonRenderState::Enum m_renderState;
+    QDemonRenderState m_renderState;
     bool m_enabled;
 
-    QDemonApplyRenderState(QDemonRenderState::Enum inRenderStateValue, bool inEnabled)
+    QDemonApplyRenderState(QDemonRenderState inRenderStateValue, bool inEnabled)
         : QDemonCommand(CommandTypes::ApplyRenderState), m_renderState(inRenderStateValue), m_enabled(inEnabled)
     {
     }
@@ -470,10 +470,10 @@ struct QDemonDepthStencil : public QDemonCommand
 {
     QString m_bufferName;
     QDemonDepthStencilFlags m_glags;
-    QDemonRenderStencilOp::Enum m_stencilFailOperation = QDemonRenderStencilOp::Keep;
-    QDemonRenderStencilOp::Enum m_depthPassOperation = QDemonRenderStencilOp::Keep;
-    QDemonRenderStencilOp::Enum m_depthFailOperation = QDemonRenderStencilOp::Keep;
-    QDemonRenderBoolOp::Enum m_stencilFunction = QDemonRenderBoolOp::Equal;
+    QDemonRenderStencilOp m_stencilFailOperation = QDemonRenderStencilOp::Keep;
+    QDemonRenderStencilOp m_depthPassOperation = QDemonRenderStencilOp::Keep;
+    QDemonRenderStencilOp m_depthFailOperation = QDemonRenderStencilOp::Keep;
+    QDemonRenderBoolOp m_stencilFunction = QDemonRenderBoolOp::Equal;
     quint32 m_reference = 0;
     quint32 m_mask = std::numeric_limits<quint32>::max();
 
@@ -481,10 +481,10 @@ struct QDemonDepthStencil : public QDemonCommand
 
     QDemonDepthStencil(QString bufName,
                        QDemonDepthStencilFlags flags,
-                       QDemonRenderStencilOp::Enum inStencilOp,
-                       QDemonRenderStencilOp::Enum inDepthPassOp,
-                       QDemonRenderStencilOp::Enum inDepthFailOp,
-                       QDemonRenderBoolOp::Enum inStencilFunc,
+                       QDemonRenderStencilOp inStencilOp,
+                       QDemonRenderStencilOp inDepthPassOp,
+                       QDemonRenderStencilOp inDepthFailOp,
+                       QDemonRenderBoolOp inStencilFunc,
                        quint32 value,
                        quint32 mask)
         : QDemonCommand(CommandTypes::DepthStencil)

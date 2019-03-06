@@ -713,7 +713,7 @@ void QDemonRenderBackendGL4Impl::setPathStencilDepthOffset(float inSlope, float 
     GL_CALL_NVPATH_EXT(glPathStencilDepthOffsetNV(inSlope, inBias));
 }
 
-void QDemonRenderBackendGL4Impl::setPathCoverDepthFunc(QDemonRenderBoolOp::Enum inDepthFunction)
+void QDemonRenderBackendGL4Impl::setPathCoverDepthFunc(QDemonRenderBoolOp inDepthFunction)
 {
     GL_CALL_NVPATH_EXT(glPathCoverDepthFuncNV(m_conversion.fromBoolOpToGL(inDepthFunction)));
 }
@@ -741,9 +741,9 @@ void QDemonRenderBackendGL4Impl::stencilFillPathInstanced(QDemonRenderBackendPat
                                                           size_t numPaths,
                                                           QDemonRenderPathFormatType type,
                                                           const void *charCodes,
-                                                          QDemonRenderPathFillMode::Enum fillMode,
+                                                          QDemonRenderPathFillMode fillMode,
                                                           quint32 stencilMask,
-                                                          QDemonRenderPathTransformType::Enum transformType,
+                                                          QDemonRenderPathTransformType transformType,
                                                           const float *transformValues)
 {
     GLuint pathID = HandleToID_cast(GLuint, size_t, po);
@@ -764,7 +764,7 @@ void QDemonRenderBackendGL4Impl::stencilStrokePathInstancedN(QDemonRenderBackend
                                                              const void *charCodes,
                                                              qint32 stencilRef,
                                                              quint32 stencilMask,
-                                                             QDemonRenderPathTransformType::Enum transformType,
+                                                             QDemonRenderPathTransformType transformType,
                                                              const float *transformValues)
 {
     GLuint pathID = HandleToID_cast(GLuint, size_t, po);
@@ -783,8 +783,8 @@ void QDemonRenderBackendGL4Impl::coverFillPathInstanced(QDemonRenderBackendPathO
                                                         size_t numPaths,
                                                         QDemonRenderPathFormatType type,
                                                         const void *charCodes,
-                                                        QDemonRenderPathCoverMode::Enum coverMode,
-                                                        QDemonRenderPathTransformType::Enum transformType,
+                                                        QDemonRenderPathCoverMode coverMode,
+                                                        QDemonRenderPathTransformType transformType,
                                                         const float *transformValues)
 {
     GLuint pathID = HandleToID_cast(GLuint, size_t, po);
@@ -802,8 +802,8 @@ void QDemonRenderBackendGL4Impl::coverStrokePathInstanced(QDemonRenderBackendPat
                                                           size_t numPaths,
                                                           QDemonRenderPathFormatType type,
                                                           const void *charCodes,
-                                                          QDemonRenderPathCoverMode::Enum coverMode,
-                                                          QDemonRenderPathTransformType::Enum transformType,
+                                                          QDemonRenderPathCoverMode coverMode,
+                                                          QDemonRenderPathTransformType transformType,
                                                           const float *transformValues)
 {
     GLuint pathID = HandleToID_cast(GLuint, size_t, po);
@@ -949,12 +949,12 @@ void QDemonRenderBackendGL4Impl::getPathMetricsRange(QDemonRenderBackendPathObje
 
 void QDemonRenderBackendGL4Impl::getPathSpacing(QDemonRenderBackendPathObject po,
                                                 size_t numPaths,
-                                                QDemonRenderPathListMode::Enum pathListMode,
+                                                QDemonRenderPathListMode pathListMode,
                                                 QDemonRenderPathFormatType type,
                                                 const void *charCodes,
                                                 float advanceScale,
                                                 float kerningScale,
-                                                QDemonRenderPathTransformType::Enum transformType,
+                                                QDemonRenderPathTransformType transformType,
                                                 float *spacing)
 {
     GLuint pathID = HandleToID_cast(GLuint, size_t, po);

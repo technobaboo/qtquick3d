@@ -68,7 +68,7 @@ public:
     QDemonRenderDepthStencilState(const QDemonRef<QDemonRenderContextImpl> &context,
                                   bool enableDepth,
                                   bool depthMask,
-                                  QDemonRenderBoolOp::Enum depthFunc,
+                                  QDemonRenderBoolOp depthFunc,
                                   bool enableStencil,
                                   QDemonRenderStencilFunctionArgument &stencilFuncFront,
                                   QDemonRenderStencilFunctionArgument &stencilFuncBack,
@@ -78,15 +78,15 @@ public:
     virtual ~QDemonRenderDepthStencilState();
 
     ///< various get functions
-    const QDemonRenderStencilFunctionArgument getStencilFunc(QDemonRenderFaces::Enum face) const
+    const QDemonRenderStencilFunctionArgument getStencilFunc(QDemonRenderFace face) const
     {
-        return (face == QDemonRenderFaces::Back) ? m_stencilFuncBack : m_stencilFuncFront;
+        return (face == QDemonRenderFace::Back) ? m_stencilFuncBack : m_stencilFuncFront;
     }
-    const QDemonRenderStencilOperationArgument getStencilOp(QDemonRenderFaces::Enum face) const
+    const QDemonRenderStencilOperationArgument getStencilOp(QDemonRenderFace face) const
     {
-        return (face == QDemonRenderFaces::Back) ? m_depthStencilOpBack : m_depthStencilOpFront;
+        return (face == QDemonRenderFace::Back) ? m_depthStencilOpBack : m_depthStencilOpFront;
     }
-    QDemonRenderBoolOp::Enum getDepthFunc() const { return m_depthFunc; }
+    QDemonRenderBoolOp getDepthFunc() const { return m_depthFunc; }
     bool getDepthEnabled() const { return m_depthEnabled; }
     bool getStencilEnabled() const { return m_stencilEnabled; }
     bool getDepthMask() const { return m_depthMask; }
@@ -104,7 +104,7 @@ public:
     static QDemonRef<QDemonRenderDepthStencilState> create(const QDemonRef<QDemonRenderContextImpl> &context,
                                                            bool enableDepth,
                                                            bool depthMask,
-                                                           QDemonRenderBoolOp::Enum depthFunc,
+                                                           QDemonRenderBoolOp depthFunc,
                                                            bool enableStencil,
                                                            QDemonRenderStencilFunctionArgument &stencilFuncFront,
                                                            QDemonRenderStencilFunctionArgument &stencilFuncBack,
@@ -114,7 +114,7 @@ public:
 private:
     bool m_depthEnabled; ///< depth test enabled
     bool m_depthMask; ///< depth writes enabled
-    QDemonRenderBoolOp::Enum m_depthFunc; ///< depth comparison func
+    QDemonRenderBoolOp m_depthFunc; ///< depth comparison func
     bool m_stencilEnabled; ///< stencil test enabled
     QDemonRenderStencilFunctionArgument m_stencilFuncFront; ///< stencil setup front faces
     QDemonRenderStencilFunctionArgument m_stencilFuncBack; ///< stencil setup back faces

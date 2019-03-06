@@ -85,7 +85,7 @@ void QDemonTextShader::renderPath(const QDemonRef<QDemonRenderPathFontItem> &inP
                                   const QDemonTextTextureDetails &inTextTextureDetails,
                                   const QVector3D &inBackgroundColor)
 {
-    QDemonRenderBoolOp::Enum theDepthFunction = inRenderContext->getDepthFunction();
+    QDemonRenderBoolOp theDepthFunction = inRenderContext->getDepthFunction();
     bool isDepthEnabled = inRenderContext->isDepthTestEnabled();
     bool isStencilEnabled = inRenderContext->isStencilTestEnabled();
     bool isDepthWriteEnabled = inRenderContext->isDepthWriteEnabled();

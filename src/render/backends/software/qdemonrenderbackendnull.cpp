@@ -63,11 +63,11 @@ struct QDemonNullBackend : public QDemonRenderBackend
     }
     qint32 getDepthBits() const override { return 16; }
     qint32 getStencilBits() const override { return 0; }
-    void setRenderState(bool, const QDemonRenderState::Enum) override {}
-    bool getRenderState(const QDemonRenderState::Enum) override { return false; }
+    void setRenderState(bool, const QDemonRenderState) override {}
+    bool getRenderState(const QDemonRenderState) override { return false; }
     QDemonRenderBackendDepthStencilStateObject createDepthStencilState(bool,
                                                                        bool,
-                                                                       QDemonRenderBoolOp::Enum,
+                                                                       QDemonRenderBoolOp,
                                                                        bool,
                                                                        QDemonRenderStencilFunctionArgument &,
                                                                        QDemonRenderStencilFunctionArgument &,
@@ -77,15 +77,15 @@ struct QDemonNullBackend : public QDemonRenderBackend
         return QDemonRenderBackendDepthStencilStateObject(1);
     }
     void releaseDepthStencilState(QDemonRenderBackendDepthStencilStateObject) override {}
-    QDemonRenderBackendRasterizerStateObject createRasterizerState(float, float, QDemonRenderFaces::Enum) override
+    QDemonRenderBackendRasterizerStateObject createRasterizerState(float, float, QDemonRenderFace) override
     {
         return QDemonRenderBackendRasterizerStateObject(1);
     }
     void releaseRasterizerState(QDemonRenderBackendRasterizerStateObject) override {}
     void setDepthStencilState(QDemonRenderBackendDepthStencilStateObject) override {}
     void setRasterizerState(QDemonRenderBackendRasterizerStateObject) override {}
-    QDemonRenderBoolOp::Enum getDepthFunc() override { return QDemonRenderBoolOp::Equal; }
-    void setDepthFunc(const QDemonRenderBoolOp::Enum) override {}
+    QDemonRenderBoolOp getDepthFunc() override { return QDemonRenderBoolOp::Equal; }
+    void setDepthFunc(const QDemonRenderBoolOp) override {}
     bool getDepthWrite() override { return false; }
 
     void setDepthWrite(bool) override {}
@@ -158,7 +158,7 @@ struct QDemonNullBackend : public QDemonRenderBackend
     bool renderTargetIsValid(QDemonRenderBackendRenderTargetObject) override { return false; }
     void setReadTarget(QDemonRenderBackendRenderTargetObject) override {}
     void setDrawBuffers(QDemonRenderBackendRenderTargetObject, QDemonConstDataRef<qint32>) override {}
-    void setReadBuffer(QDemonRenderBackendRenderTargetObject, QDemonReadFaces::Enum) override {}
+    void setReadBuffer(QDemonRenderBackendRenderTargetObject, QDemonReadFace) override {}
 
     void blitFramebuffer(qint32, qint32, qint32, qint32, qint32, qint32, qint32, qint32, QDemonRenderClearFlags, QDemonRenderTextureMagnifyingOp::Enum) override
     {
@@ -490,7 +490,7 @@ struct QDemonNullBackend : public QDemonRenderBackend
     void setPathModelViewMatrix(const QMatrix4x4 /*inPathModelview*/) override {}
 
     void setPathStencilDepthOffset(float /*inSlope*/, float /*inBias*/) override {}
-    void setPathCoverDepthFunc(QDemonRenderBoolOp::Enum /*inDepthFunction*/) override {}
+    void setPathCoverDepthFunc(QDemonRenderBoolOp /*inDepthFunction*/) override {}
     void stencilStrokePath(QDemonRenderBackendPathObject /*inPathObject*/) override {}
     void stencilFillPath(QDemonRenderBackendPathObject /*inPathObject*/) override {}
     void releasePathNVObject(QDemonRenderBackendPathObject, size_t) override {}
@@ -552,12 +552,12 @@ struct QDemonNullBackend : public QDemonRenderBackend
     }
     void getPathSpacing(QDemonRenderBackendPathObject,
                         size_t,
-                        QDemonRenderPathListMode::Enum,
+                        QDemonRenderPathListMode,
                         QDemonRenderPathFormatType,
                         const void *,
                         float,
                         float,
-                        QDemonRenderPathTransformType::Enum,
+                        QDemonRenderPathTransformType,
                         float *) override
     {
     }
@@ -566,9 +566,9 @@ struct QDemonNullBackend : public QDemonRenderBackend
                                   size_t,
                                   QDemonRenderPathFormatType,
                                   const void *,
-                                  QDemonRenderPathFillMode::Enum,
+                                  QDemonRenderPathFillMode,
                                   quint32,
-                                  QDemonRenderPathTransformType::Enum,
+                                  QDemonRenderPathTransformType,
                                   const float *) override
     {
     }
@@ -578,7 +578,7 @@ struct QDemonNullBackend : public QDemonRenderBackend
                                      const void *,
                                      qint32,
                                      quint32,
-                                     QDemonRenderPathTransformType::Enum,
+                                     QDemonRenderPathTransformType,
                                      const float *) override
     {
     }
@@ -586,8 +586,8 @@ struct QDemonNullBackend : public QDemonRenderBackend
                                 size_t,
                                 QDemonRenderPathFormatType,
                                 const void *,
-                                QDemonRenderPathCoverMode::Enum,
-                                QDemonRenderPathTransformType::Enum,
+                                QDemonRenderPathCoverMode,
+                                QDemonRenderPathTransformType,
                                 const float *) override
     {
     }
@@ -595,8 +595,8 @@ struct QDemonNullBackend : public QDemonRenderBackend
                                   size_t,
                                   QDemonRenderPathFormatType,
                                   const void *,
-                                  QDemonRenderPathCoverMode::Enum,
-                                  QDemonRenderPathTransformType::Enum,
+                                  QDemonRenderPathCoverMode,
+                                  QDemonRenderPathTransformType,
                                   const float *) override
     {
     }

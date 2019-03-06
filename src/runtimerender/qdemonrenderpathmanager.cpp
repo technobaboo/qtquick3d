@@ -1321,7 +1321,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
     QDemonRef<QDemonRenderDepthStencilState> getDepthStencilState()
     {
         QDemonRef<QDemonRenderContext> theRenderContext(m_renderContext->getRenderContext());
-        QDemonRenderBoolOp::Enum theDepthFunction = theRenderContext->getDepthFunction();
+        QDemonRenderBoolOp theDepthFunction = theRenderContext->getDepthFunction();
         bool isDepthEnabled = theRenderContext->isDepthTestEnabled();
         bool isStencilEnabled = theRenderContext->isStencilTestEnabled();
         bool isDepthWriteEnabled = theRenderContext->isDepthWriteEnabled();
@@ -1474,7 +1474,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
 
         // The stencil buffer will dictate whether this object renders or not.  So we need to ignore
         // the depth test result.
-        QDemonRenderBoolOp::Enum theDepthFunc = theRenderContext->getDepthFunction();
+        QDemonRenderBoolOp theDepthFunc = theRenderContext->getDepthFunction();
         theRenderContext->setDepthFunction(QDemonRenderBoolOp::AlwaysTrue);
         // Now render the path; this resets the stencil buffer.
         setMaterialProperties(inShader->m_shader, inRenderContext, inRenderProperties);

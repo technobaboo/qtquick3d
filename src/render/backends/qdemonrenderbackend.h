@@ -205,7 +205,7 @@ public:
      *
      * @return no return
      */
-    virtual void setRenderState(bool bEnable, const QDemonRenderState::Enum value) = 0;
+    virtual void setRenderState(bool bEnable, const QDemonRenderState value) = 0;
 
     /**
      * @brief get a backend rende state
@@ -214,14 +214,14 @@ public:
      *
      * @return  true if state enabled otherwise false
      */
-    virtual bool getRenderState(const QDemonRenderState::Enum value) = 0;
+    virtual bool getRenderState(const QDemonRenderState value) = 0;
 
     /**
      * @brief get current depth function
      *
      * @return  active depth function
      */
-    virtual QDemonRenderBoolOp::Enum getDepthFunc() = 0;
+    virtual QDemonRenderBoolOp getDepthFunc() = 0;
 
     /**
      * @brief create a depth stencil state object
@@ -240,7 +240,7 @@ public:
     virtual QDemonRenderBackendDepthStencilStateObject createDepthStencilState(
             bool enableDepth,
             bool depthMask,
-            QDemonRenderBoolOp::Enum depthFunc,
+            QDemonRenderBoolOp depthFunc,
             bool enableStencil,
             QDemonRenderStencilFunctionArgument &stencilFuncFront,
             QDemonRenderStencilFunctionArgument &stencilFuncBack,
@@ -267,7 +267,7 @@ public:
      */
     virtual QDemonRenderBackendRasterizerStateObject createRasterizerState(float depthBias,
                                                                            float depthScale,
-                                                                           QDemonRenderFaces::Enum cullFace) = 0;
+                                                                           QDemonRenderFace cullFace) = 0;
 
     /**
      * @brief release a rasterizer state object
@@ -303,7 +303,7 @@ public:
      *
      * @return no return
      */
-    virtual void setDepthFunc(const QDemonRenderBoolOp::Enum func) = 0;
+    virtual void setDepthFunc(const QDemonRenderBoolOp func) = 0;
 
     /**
      * @brief query if depth write is enabled
@@ -755,7 +755,7 @@ public:
      *
      * @return no return.
      */
-    virtual void setReadBuffer(QDemonRenderBackendRenderTargetObject rto, QDemonReadFaces::Enum inReadFace) = 0;
+    virtual void setReadBuffer(QDemonRenderBackendRenderTargetObject rto, QDemonReadFace inReadFace) = 0;
 
     /**
      * @brief Copy framebuffer attachments. Source is set with SetReadTarget dest with
@@ -2010,9 +2010,9 @@ public:
                                           size_t numPaths,
                                           QDemonRenderPathFormatType type,
                                           const void *charCodes,
-                                          QDemonRenderPathFillMode::Enum fillMode,
+                                          QDemonRenderPathFillMode fillMode,
                                           quint32 stencilMask,
-                                          QDemonRenderPathTransformType::Enum transformType,
+                                          QDemonRenderPathTransformType transformType,
                                           const float *transformValues) = 0;
 
     /**
@@ -2035,7 +2035,7 @@ public:
                                              const void *charCodes,
                                              qint32 stencilRef,
                                              quint32 stencilMask,
-                                             QDemonRenderPathTransformType::Enum transformType,
+                                             QDemonRenderPathTransformType transformType,
                                              const float *transformValues) = 0;
 
     /**
@@ -2055,8 +2055,8 @@ public:
                                         size_t numPaths,
                                         QDemonRenderPathFormatType type,
                                         const void *charCodes,
-                                        QDemonRenderPathCoverMode::Enum coverMode,
-                                        QDemonRenderPathTransformType::Enum transformType,
+                                        QDemonRenderPathCoverMode coverMode,
+                                        QDemonRenderPathTransformType transformType,
                                         const float *transformValues) = 0;
 
     /**
@@ -2076,8 +2076,8 @@ public:
                                           size_t numPaths,
                                           QDemonRenderPathFormatType type,
                                           const void *charCodes,
-                                          QDemonRenderPathCoverMode::Enum coverMode,
-                                          QDemonRenderPathTransformType::Enum transformType,
+                                          QDemonRenderPathCoverMode coverMode,
+                                          QDemonRenderPathTransformType transformType,
                                           const float *transformValues) = 0;
 
     /**
@@ -2097,7 +2097,7 @@ public:
      *
      * @return No return
      */
-    virtual void setPathCoverDepthFunc(QDemonRenderBoolOp::Enum inDepthFunction) = 0;
+    virtual void setPathCoverDepthFunc(QDemonRenderBoolOp inDepthFunction) = 0;
 
     /**
      * @brief Load glyphs
@@ -2248,12 +2248,12 @@ public:
      */
     virtual void getPathSpacing(QDemonRenderBackendPathObject po,
                                 size_t numPaths,
-                                QDemonRenderPathListMode::Enum pathListMode,
+                                QDemonRenderPathListMode pathListMode,
                                 QDemonRenderPathFormatType type,
                                 const void *charCodes,
                                 float advanceScale,
                                 float kerningScale,
-                                QDemonRenderPathTransformType::Enum transformType,
+                                QDemonRenderPathTransformType transformType,
                                 float *spacing) = 0;
 
     virtual QSurfaceFormat format() const = 0;

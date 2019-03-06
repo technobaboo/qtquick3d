@@ -132,7 +132,7 @@ private:
     quint32 m_numFontGlyphs; ///< glyph count of the entire font set
     float m_emScale; ///< true type scale
     QDemonRenderPathFormatType m_type; ///< type ( byte, int,... )
-    QDemonRenderPathTransformType::Enum m_transformType; ///< transform type default 2D
+    QDemonRenderPathTransformType m_transformType; ///< transform type default 2D
     QString m_fontName; ///< Name of Font
     QDemonRenderBackend::QDemonRenderBackendPathObject m_pathRenderHandle; ///< opaque backend handle
 

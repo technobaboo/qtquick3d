@@ -728,8 +728,8 @@ const QDemonStringMemoryBarrierFlagMap g_StringMemoryFlagMap[] = {
 struct QDemonStringBlendFuncMap
 {
     const char *name;
-    QDemonRenderSrcBlendFunc::Enum value;
-    constexpr QDemonStringBlendFuncMap(const char *nm, QDemonRenderSrcBlendFunc::Enum val) : name(nm), value(val) {}
+    QDemonRenderSrcBlendFunc value;
+    constexpr QDemonStringBlendFuncMap(const char *nm, QDemonRenderSrcBlendFunc val) : name(nm), value(val) {}
 };
 
 const QDemonStringBlendFuncMap g_BlendFuncMap[] = {
@@ -1426,7 +1426,7 @@ void QDemonMaterialSystem::blitFramebuffer(QDemonCustomMaterialRenderContext &in
         if (bufferIdx < d->allocatedBuffers.size()) {
             QDemonCustomMaterialBuffer &theEntry(d->allocatedBuffers[bufferIdx]);
             theContext->setReadTarget(theEntry.frameBuffer);
-            theContext->setReadBuffer(QDemonReadFaces::Color0);
+            theContext->setReadBuffer(QDemonReadFace::Color0);
         } else {
             // we must have allocated the read target before
             qCCritical(INTERNAL_ERROR, "CustomMaterial: BlitFramebuffer: Failed to setup read target");
@@ -1436,7 +1436,7 @@ void QDemonMaterialSystem::blitFramebuffer(QDemonCustomMaterialRenderContext &in
         // our source is the default read target
         // depending on what we render we assume color0 or back
         theContext->setReadTarget(inTarget);
-        QDemonReadFaces::Enum value = (inTarget) ? QDemonReadFaces::Color0 : QDemonReadFaces::Back;
+        QDemonReadFace value = (inTarget) ? QDemonReadFace::Color0 : QDemonReadFace::Back;
         theContext->setReadBuffer(value);
     }
 

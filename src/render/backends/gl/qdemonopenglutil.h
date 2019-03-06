@@ -302,7 +302,7 @@ struct GLConversion
         return errorString;
     }
 
-    static QDemonRenderSrcBlendFunc::Enum fromGLToSrcBlendFunc(qint32 value)
+    static QDemonRenderSrcBlendFunc fromGLToSrcBlendFunc(qint32 value)
     {
         switch (value) {
 #define QDEMON_RENDER_HANDLE_GL_COLOR_FUNC(srcVal, enumVal)                                                            \
@@ -320,14 +320,14 @@ struct GLConversion
         }
     }
 
-    static GLenum fromSrcBlendFuncToGL(QDemonRenderSrcBlendFunc::Enum value)
+    static GLenum fromSrcBlendFuncToGL(QDemonRenderSrcBlendFunc value)
     {
         switch (value) {
 #define QDEMON_RENDER_HANDLE_GL_COLOR_FUNC(srcVal, enumVal)                                                            \
-    case QDemonRenderSrcBlendFunc::enumVal:                                                                            \
+        case QDemonRenderSrcBlendFunc::enumVal:                                                                            \
         return srcVal;
 #define QDEMON_RENDER_HANDLE_GL_COLOR_FUNC_SRC_ONLY(srcVal, enumVal)                                                   \
-    case QDemonRenderSrcBlendFunc::enumVal:                                                                            \
+        case QDemonRenderSrcBlendFunc::enumVal:                                                                            \
         return srcVal;
             QDEMON_RENDER_ITERATE_QDEMON_GL_COLOR_FUNC
 #undef QDEMON_RENDER_HANDLE_GL_COLOR_FUNC
@@ -338,7 +338,7 @@ struct GLConversion
         }
     }
 
-    static QDemonRenderDstBlendFunc::Enum fromGLToDstBlendFunc(qint32 value)
+    static QDemonRenderDstBlendFunc fromGLToDstBlendFunc(qint32 value)
     {
         switch (value) {
 #define QDEMON_RENDER_HANDLE_GL_COLOR_FUNC(srcVal, enumVal)                                                            \
@@ -354,11 +354,11 @@ struct GLConversion
         }
     }
 
-    static GLenum fromDstBlendFuncToGL(QDemonRenderDstBlendFunc::Enum value)
+    static GLenum fromDstBlendFuncToGL(QDemonRenderDstBlendFunc value)
     {
         switch (value) {
 #define QDEMON_RENDER_HANDLE_GL_COLOR_FUNC(srcVal, enumVal)                                                            \
-    case QDemonRenderDstBlendFunc::enumVal:                                                                            \
+        case QDemonRenderDstBlendFunc::enumVal:                                                                            \
         return srcVal;
 #define QDEMON_RENDER_HANDLE_GL_COLOR_FUNC_SRC_ONLY(srcVal, enumVal)
             QDEMON_RENDER_ITERATE_QDEMON_GL_COLOR_FUNC
@@ -370,7 +370,7 @@ struct GLConversion
         }
     }
 
-    static GLenum fromBlendEquationToGL(QDemonRenderBlendEquation::Enum value, bool nvAdvancedBlendSupported, bool khrAdvancedBlendSupported)
+    static GLenum fromBlendEquationToGL(QDemonRenderBlendEquation value, bool nvAdvancedBlendSupported, bool khrAdvancedBlendSupported)
     {
         switch (value) {
         case QDemonRenderBlendEquation::Add:
@@ -416,26 +416,26 @@ struct GLConversion
         return GL_FUNC_ADD;
     }
 
-    static QDemonRenderFaces::Enum fromGLToFaces(GLenum value)
+    static QDemonRenderFace fromGLToFaces(GLenum value)
     {
         switch (value) {
 #define QDEMON_RENDER_HANDLE_GL_QDEMON_RENDER_FACE(x, y)                                                               \
     case x:                                                                                                            \
-        return QDemonRenderFaces::y;
+        return QDemonRenderFace::y;
             QDEMON_RENDER_ITERATE_GL_QDEMON_RENDER_FACE
 #undef QDEMON_RENDER_HANDLE_GL_QDEMON_RENDER_FACE
         default:
             break;
         }
         Q_ASSERT(false);
-        return QDemonRenderFaces::Unknown;
+        return QDemonRenderFace::Unknown;
     }
 
-    static GLenum fromFacesToGL(QDemonRenderFaces::Enum value)
+    static GLenum fromFacesToGL(QDemonRenderFace value)
     {
         switch (value) {
 #define QDEMON_RENDER_HANDLE_GL_QDEMON_RENDER_FACE(x, y)                                                               \
-    case QDemonRenderFaces::y:                                                                                         \
+    case QDemonRenderFace::y:                                                                                         \
         return x;
             QDEMON_RENDER_ITERATE_GL_QDEMON_RENDER_FACE
 #undef QDEMON_RENDER_HANDLE_GL_QDEMON_RENDER_FACE
@@ -446,59 +446,59 @@ struct GLConversion
         return 0;
     }
 
-    static QDemonReadFaces::Enum fromGLToReadFaces(GLenum value)
+    static QDemonReadFace fromGLToReadFaces(GLenum value)
     {
         switch (value) {
         case GL_FRONT:
-            return QDemonReadFaces::Front;
+            return QDemonReadFace::Front;
         case GL_BACK:
-            return QDemonReadFaces::Back;
+            return QDemonReadFace::Back;
         case GL_COLOR_ATTACHMENT0:
-            return QDemonReadFaces::Color0;
+            return QDemonReadFace::Color0;
         case GL_COLOR_ATTACHMENT1:
-            return QDemonReadFaces::Color1;
+            return QDemonReadFace::Color1;
         case GL_COLOR_ATTACHMENT2:
-            return QDemonReadFaces::Color2;
+            return QDemonReadFace::Color2;
         case GL_COLOR_ATTACHMENT3:
-            return QDemonReadFaces::Color3;
+            return QDemonReadFace::Color3;
         case GL_COLOR_ATTACHMENT4:
-            return QDemonReadFaces::Color4;
+            return QDemonReadFace::Color4;
         case GL_COLOR_ATTACHMENT5:
-            return QDemonReadFaces::Color5;
+            return QDemonReadFace::Color5;
         case GL_COLOR_ATTACHMENT6:
-            return QDemonReadFaces::Color6;
+            return QDemonReadFace::Color6;
         case GL_COLOR_ATTACHMENT7:
-            return QDemonReadFaces::Color7;
+            return QDemonReadFace::Color7;
 
         default:
             break;
         }
         Q_ASSERT(false);
-        return QDemonReadFaces::Unknown;
+        return QDemonReadFace::Unknown;
     }
 
-    static GLenum fromReadFacesToGL(QDemonReadFaces::Enum value)
+    static GLenum fromReadFacesToGL(QDemonReadFace value)
     {
         switch (value) {
-        case QDemonReadFaces::Front:
+        case QDemonReadFace::Front:
             return GL_FRONT;
-        case QDemonReadFaces::Back:
+        case QDemonReadFace::Back:
             return GL_BACK;
-        case QDemonReadFaces::Color0:
+        case QDemonReadFace::Color0:
             return GL_COLOR_ATTACHMENT0;
-        case QDemonReadFaces::Color1:
+        case QDemonReadFace::Color1:
             return GL_COLOR_ATTACHMENT1;
-        case QDemonReadFaces::Color2:
+        case QDemonReadFace::Color2:
             return GL_COLOR_ATTACHMENT2;
-        case QDemonReadFaces::Color3:
+        case QDemonReadFace::Color3:
             return GL_COLOR_ATTACHMENT3;
-        case QDemonReadFaces::Color4:
+        case QDemonReadFace::Color4:
             return GL_COLOR_ATTACHMENT4;
-        case QDemonReadFaces::Color5:
+        case QDemonReadFace::Color5:
             return GL_COLOR_ATTACHMENT5;
-        case QDemonReadFaces::Color6:
+        case QDemonReadFace::Color6:
             return GL_COLOR_ATTACHMENT6;
-        case QDemonReadFaces::Color7:
+        case QDemonReadFace::Color7:
             return GL_COLOR_ATTACHMENT7;
         default:
             break;
@@ -507,7 +507,7 @@ struct GLConversion
         return 0;
     }
 
-    static QDemonRenderWinding::Enum fromGLToWinding(GLenum value)
+    static QDemonRenderWinding fromGLToWinding(GLenum value)
     {
         switch (value) {
 #define QDEMON_RENDER_HANDLE_GL_QDEMON_RENDER_WINDING(x, y)                                                            \
@@ -522,7 +522,7 @@ struct GLConversion
         return QDemonRenderWinding::Unknown;
     }
 
-    static GLenum fromWindingToGL(QDemonRenderWinding::Enum value)
+    static GLenum fromWindingToGL(QDemonRenderWinding value)
     {
         switch (value) {
 #define QDEMON_RENDER_HANDLE_GL_QDEMON_RENDER_WINDING(x, y)                                                            \
@@ -537,7 +537,7 @@ struct GLConversion
         return 0;
     }
 
-    static QDemonRenderBoolOp::Enum fromGLToBoolOp(GLenum value)
+    static QDemonRenderBoolOp fromGLToBoolOp(GLenum value)
     {
         switch (value) {
 #define QDEMON_RENDER_HANDLE_GL_QDEMON_BOOL_OP(x, y)                                                                   \
@@ -552,7 +552,7 @@ struct GLConversion
         return QDemonRenderBoolOp::Unknown;
     }
 
-    static GLenum fromBoolOpToGL(QDemonRenderBoolOp::Enum value)
+    static GLenum fromBoolOpToGL(QDemonRenderBoolOp value)
     {
         switch (value) {
 #define QDEMON_RENDER_HANDLE_GL_QDEMON_BOOL_OP(x, y)                                                                   \
@@ -597,7 +597,7 @@ struct GLConversion
         return 0;
     }
 
-    static QDemonRenderStencilOp::Enum fromGLToStencilOp(GLenum value)
+    static QDemonRenderStencilOp fromGLToStencilOp(GLenum value)
     {
         switch (value) {
 #define QDEMON_RENDER_HANDLE_QDEMON_GL_STENCIL_OP(x, y)                                                                \
@@ -613,7 +613,7 @@ struct GLConversion
         return QDemonRenderStencilOp::Unknown;
     }
 
-    static GLenum fromStencilOpToGL(QDemonRenderStencilOp::Enum value)
+    static GLenum fromStencilOpToGL(QDemonRenderStencilOp value)
     {
         switch (value) {
 #define QDEMON_RENDER_HANDLE_QDEMON_GL_STENCIL_OP(x, y)                                                                \
@@ -1619,7 +1619,7 @@ struct GLConversion
         return QDemonRenderDrawMode::Unknown;
     }
 
-    static GLenum fromRenderStateToGL(QDemonRenderState::Enum value)
+    static GLenum fromRenderStateToGL(QDemonRenderState value)
     {
         switch (value) {
         case QDemonRenderState::Blend:
@@ -1645,7 +1645,7 @@ struct GLConversion
         return 0;
     }
 
-    static QDemonRenderState::Enum fromGLToRenderState(GLenum value)
+    static QDemonRenderState fromGLToRenderState(GLenum value)
     {
         switch (value) {
         case GL_BLEND:
@@ -1708,7 +1708,7 @@ struct GLConversion
         return true;
     }
 
-    static GLenum fromPathFillModeToGL(QDemonRenderPathFillMode::Enum inMode)
+    static GLenum fromPathFillModeToGL(QDemonRenderPathFillMode inMode)
     {
         GLenum glFillMode;
 
@@ -1815,7 +1815,7 @@ struct GLConversion
         return glMissingGlyphs;
     }
 
-    static GLenum fromPathListModeToGL(QDemonRenderPathListMode::Enum inListMode)
+    static GLenum fromPathListModeToGL(QDemonRenderPathListMode inListMode)
     {
         GLenum glListMode;
 
@@ -1839,7 +1839,7 @@ struct GLConversion
         return glListMode;
     }
 
-    static GLenum fromPathCoverModeToGL(QDemonRenderPathCoverMode::Enum inMode)
+    static GLenum fromPathCoverModeToGL(QDemonRenderPathCoverMode inMode)
     {
         GLenum glCoverMode;
 
@@ -1916,7 +1916,7 @@ struct GLConversion
         return retval;
     }
 
-    static GLenum fromPathTransformToGL(QDemonRenderPathTransformType::Enum value)
+    static GLenum fromPathTransformToGL(QDemonRenderPathTransformType value)
     {
         switch (value) {
         case QDemonRenderPathTransformType::NoTransform:

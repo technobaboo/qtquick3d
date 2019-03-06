@@ -655,8 +655,8 @@ void QDemonLayerRenderData::renderShadowMapPass(QDemonResourceFrameBuffer *theFB
 
     // we render the shadow map with a slight offset to prevent shadow acne and cull the front
     // faces
-    QDemonRef<QDemonRenderRasterizerState> rsdefaultstate = theRenderContext->createRasterizerState(0.0, 0.0, QDemonRenderFaces::Back);
-    QDemonRef<QDemonRenderRasterizerState> rsstate = theRenderContext->createRasterizerState(1.5, 2.0, QDemonRenderFaces::Front);
+    QDemonRef<QDemonRenderRasterizerState> rsdefaultstate = theRenderContext->createRasterizerState(0.0, 0.0, QDemonRenderFace::Back);
+    QDemonRef<QDemonRenderRasterizerState> rsstate = theRenderContext->createRasterizerState(1.5, 2.0, QDemonRenderFace::Front);
     theRenderContext->setRasterizerState(rsstate);
 
     QDemonRenderClearFlags clearFlags(QDemonRenderClearValues::Depth | QDemonRenderClearValues::Stencil
@@ -1102,7 +1102,7 @@ void QDemonLayerRenderData::blendAdvancedToFB(DefaultMaterialBlendMode::Enum ble
     theRenderContext->setRenderTarget(*theFB);
     // setup read target
     theRenderContext->setReadTarget(m_advancedModeBlendFB);
-    theRenderContext->setReadBuffer(QDemonReadFaces::Color0);
+    theRenderContext->setReadBuffer(QDemonReadFace::Color0);
     theRenderContext->blitFramebuffer(0,
                                       0,
                                       theViewport.width(),
@@ -1880,7 +1880,7 @@ void QDemonLayerRenderData::runnableRenderToViewport(const QDemonRef<QDemonRende
                         blendFB->attach(QDemonRenderFrameBufferAttachment::Color0, QDemonRenderTextureOrRenderBuffer(screenTexture));
                         theContext->setRenderTarget(blitFB);
                         theContext->setReadTarget(blendFB);
-                        theContext->setReadBuffer(QDemonReadFaces::Color0);
+                        theContext->setReadBuffer(QDemonReadFace::Color0);
                         theContext->blitFramebuffer(theLayerViewport.x(),
                                                     theLayerViewport.y(),
                                                     theLayerViewport.width() + theLayerViewport.x(),

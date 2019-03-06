@@ -45,7 +45,7 @@ struct QDemonGLHardPropertyContext
     QDemonRenderBlendFunctionArgument m_blendFunction;
     QDemonRenderBlendEquationArgument m_blendEquation;
     bool m_cullingEnabled = true;
-    QDemonRenderBoolOp::Enum m_depthFunction = QDemonRenderBoolOp::Less;
+    QDemonRenderBoolOp m_depthFunction = QDemonRenderBoolOp::Less;
     bool m_blendingEnabled = true;
     bool m_depthWriteEnabled = true;
     bool m_depthTestEnabled = true;

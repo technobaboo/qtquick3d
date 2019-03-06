@@ -1299,10 +1299,9 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
                                const QDemonApplyRenderState &theCommand)
     {
         auto theContext(m_context->getRenderContext());
-        quint32 inState = (quint32)theCommand.m_renderState;
         bool inEnable = theCommand.m_enabled;
 
-        switch (inState) {
+        switch (theCommand.m_renderState) {
         case QDemonRenderState::StencilTest: {
             if (inEnable && inTarget) {
                 inTarget->attach(QDemonRenderFrameBufferAttachment::DepthStencil, inDepthStencilTexture);
@@ -1320,8 +1319,8 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
 
     static bool compareDepthStencilState(QDemonRenderDepthStencilState &inState, QDemonDepthStencil &inStencil)
     {
-        QDemonRenderStencilFunctionArgument theFunction = inState.getStencilFunc(QDemonRenderFaces::Front);
-        QDemonRenderStencilOperationArgument theOperation = inState.getStencilOp(QDemonRenderFaces::Front);
+        QDemonRenderStencilFunctionArgument theFunction = inState.getStencilFunc(QDemonRenderFace::Front);
+        QDemonRenderStencilOperationArgument theOperation = inState.getStencilOp(QDemonRenderFace::Front);
 
         return theFunction.m_function == inStencil.m_stencilFunction && theFunction.m_mask == inStencil.m_mask
                 && theFunction.m_referenceValue == inStencil.m_reference && theOperation.m_stencilFail == inStencil.m_stencilFailOperation
@@ -1455,7 +1454,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
             QDemonRenderContextScopedProperty<bool> __stencilTest(*theContext,
                                                                   &QDemonRenderContext::isStencilTestEnabled,
                                                                   &QDemonRenderContext::setStencilTestEnabled);
-            QDemonRenderContextScopedProperty<QDemonRenderBoolOp::Enum> __depthFunction(*theContext,
+            QDemonRenderContextScopedProperty<QDemonRenderBoolOp> __depthFunction(*theContext,
                                                                                         &QDemonRenderContext::getDepthFunction,
                                                                                         &QDemonRenderContext::setDepthFunction);
             QDemonOption<QDemonDepthStencil> theCurrentDepthStencil;

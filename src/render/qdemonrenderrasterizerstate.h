@@ -63,7 +63,7 @@ public:
     QDemonRenderRasterizerState(const QDemonRef<QDemonRenderContextImpl> &context,
                                 float depthBias,
                                 float depthScale,
-                                QDemonRenderFaces::Enum cullFace);
+                                QDemonRenderFace cullFace);
 
     virtual ~QDemonRenderRasterizerState();
 
@@ -80,7 +80,7 @@ public:
     static QDemonRef<QDemonRenderRasterizerState> create(const QDemonRef<QDemonRenderContextImpl> &context,
                                                          float depthBias,
                                                          float depthScale,
-                                                         QDemonRenderFaces::Enum cullFace);
+                                                         QDemonRenderFace cullFace);
 };
 
 QT_END_NAMESPACE

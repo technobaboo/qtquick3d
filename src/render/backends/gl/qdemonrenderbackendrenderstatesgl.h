@@ -41,7 +41,7 @@ public:
     ///< constructor
     QDemonRenderBackendDepthStencilStateGL(bool enableDepth,
                                            bool depthMask,
-                                           QDemonRenderBoolOp::Enum depthFunc,
+                                           QDemonRenderBoolOp depthFunc,
                                            bool enableStencil,
                                            QDemonRenderStencilFunctionArgument &stencilFuncFront,
                                            QDemonRenderStencilFunctionArgument &stencilFuncBack,
@@ -96,7 +96,7 @@ public:
 
     bool m_depthEnable; ///< depth test enabled
     bool m_depthMask; ///< enable / disable depth writes
-    QDemonRenderBoolOp::Enum m_depthFunc; ///< depth comparison func
+    QDemonRenderBoolOp m_depthFunc; ///< depth comparison func
     bool m_stencilEnable; ///< enable disable stencil test
     QDemonRenderStencilFunctionArgument m_stencilFuncFront; ///< stencil setup for front faces
     QDemonRenderStencilFunctionArgument m_stencilFuncBack; ///< stencil setup for back faces
@@ -117,12 +117,12 @@ class QDemonRenderBackendRasterizerStateGL
 {
 public:
     ///< constructor
-    QDemonRenderBackendRasterizerStateGL(float depthBias, float depthScale, QDemonRenderFaces::Enum cullFace)
+    QDemonRenderBackendRasterizerStateGL(float depthBias, float depthScale, QDemonRenderFace cullFace)
         : m_depthBias(depthBias), m_depthScale(depthScale), m_cullFace(cullFace)
     {
     }
     ///< constructor
-    QDemonRenderBackendRasterizerStateGL() : m_depthBias(0.0), m_depthScale(0.0), m_cullFace(QDemonRenderFaces::Back) {}
+    QDemonRenderBackendRasterizerStateGL() : m_depthBias(0.0), m_depthScale(0.0), m_cullFace(QDemonRenderFace::Back) {}
 
     QDemonRenderBackendRasterizerStateGL &operator=(const QDemonRenderBackendRasterizerStateGL &rhs)
     {
@@ -147,7 +147,7 @@ public:
 
     float m_depthBias; ///< depth bias
     float m_depthScale; ///< mulitply constant
-    QDemonRenderFaces::Enum m_cullFace; ///< cull face front or back
+    QDemonRenderFace m_cullFace; ///< cull face front or back
 };
 
 QT_END_NAMESPACE

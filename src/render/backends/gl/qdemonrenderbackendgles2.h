@@ -112,7 +112,7 @@ public:
     bool setInputAssembler(QDemonRenderBackendInputAssemblerObject iao, QDemonRenderBackendShaderProgramObject po) override;
 
     void setDrawBuffers(QDemonRenderBackendRenderTargetObject rto, QDemonConstDataRef<qint32> inDrawBufferSet) override;
-    void setReadBuffer(QDemonRenderBackendRenderTargetObject rto, QDemonReadFaces::Enum inReadFace) override;
+    void setReadBuffer(QDemonRenderBackendRenderTargetObject rto, QDemonReadFace inReadFace) override;
 
     void blitFramebuffer(qint32 srcX0,
                          qint32 srcY0,

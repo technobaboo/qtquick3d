@@ -63,7 +63,7 @@ void QDemonRendererUtil::resolveMutisampleFBOColorOnly(const QDemonRef<QDemonRes
 
     // 2.
     inRenderContext.setReadTarget(inSourceFBO);
-    inRenderContext.setReadBuffer(QDemonReadFaces::Color0);
+    inRenderContext.setReadBuffer(QDemonReadFace::Color0);
     // 3.
     inRenderContext.blitFramebuffer(0, 0, inWidth, inHeight, 0, 0, inWidth, inHeight, copyFlags, QDemonRenderTextureMagnifyingOp::Nearest);
 }
@@ -100,7 +100,7 @@ void QDemonRendererUtil::resolveSSAAFBOColorOnly(const QDemonRef<QDemonResourceM
 
     // 2.
     inRenderContext.setReadTarget(inSourceFBO);
-    inRenderContext.setReadBuffer(QDemonReadFaces::Color0);
+    inRenderContext.setReadBuffer(QDemonReadFace::Color0);
     // 3.
     inRenderContext.blitFramebuffer(0, 0, inWidth, inHeight, 0, 0, outWidth, outHeight, copyFlags, QDemonRenderTextureMagnifyingOp::Linear);
 }

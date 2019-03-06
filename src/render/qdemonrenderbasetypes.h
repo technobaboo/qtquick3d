@@ -1351,288 +1351,318 @@ enum class QDemonRenderPathGlyphFontMetricValues
 Q_DECLARE_FLAGS(QDemonRenderPathGlyphFontMetricFlags, QDemonRenderPathGlyphFontMetricValues);
 Q_DECLARE_OPERATORS_FOR_FLAGS(QDemonRenderPathGlyphFontMetricFlags);
 
-struct QDemonRenderPathListMode
+enum class QDemonRenderPathListMode
 {
-    enum Enum {
-        AccumAdjacentPairs = 1,
-        AdjacentPairs,
-        FirstToRest,
-    };
+    AccumAdjacentPairs = 1,
+    AdjacentPairs,
+    FirstToRest,
 };
 
-struct QDemonRenderPathFillMode
+enum class QDemonRenderPathFillMode
 {
-    enum Enum {
-        Fill = 1,
-        CountUp,
-        CountDown,
-        Invert,
-    };
+    Fill = 1,
+    CountUp,
+    CountDown,
+    Invert,
 };
 
-struct QDemonRenderPathCoverMode
+enum class QDemonRenderPathCoverMode
 {
-    enum Enum {
-        ConvexHull = 1,
-        BoundingBox,
-        BoundingBoxOfBoundingBox,
-        PathFillCover,
-        PathStrokeCover,
-    };
+    ConvexHull = 1,
+    BoundingBox,
+    BoundingBoxOfBoundingBox,
+    PathFillCover,
+    PathStrokeCover,
 };
 
-struct QDemonRenderPathTransformType
+enum class QDemonRenderPathTransformType
 {
-    enum Enum {
-        NoTransform = 0,
-        TranslateX,
-        TranslateY,
-        Translate2D,
-        Translate3D,
-        Affine2D,
-        Affine3D,
-        TransposeAffine2D,
-        TransposeAffine3D,
-    };
+    NoTransform = 0,
+    TranslateX,
+    TranslateY,
+    Translate2D,
+    Translate3D,
+    Affine2D,
+    Affine3D,
+    TransposeAffine2D,
+    TransposeAffine3D,
 };
 
-struct QDemonRenderWinding
+enum class QDemonRenderWinding
 {
-    enum Enum { Unknown = 0, Clockwise, CounterClockwise };
-    static const char *toString(Enum value)
-    {
-        switch (value) {
-        case Clockwise:
-            return "Clockwise";
-        case CounterClockwise:
-            return "CounterClockwise";
-        default:
-            break;
-        }
-        return "Unknown";
+    Unknown = 0,
+    Clockwise,
+    CounterClockwise
+};
+
+inline const char *toString(QDemonRenderWinding value)
+{
+    switch (value) {
+    case QDemonRenderWinding::Clockwise:
+        return "Clockwise";
+    case QDemonRenderWinding::CounterClockwise:
+        return "CounterClockwise";
+    default:
+        break;
     }
-};
+    return "Unknown";
+}
 
-struct QDemonRenderState
+enum class QDemonRenderState
 {
-    enum Enum { Unknown = 0, Blend, CullFace, DepthTest, StencilTest, ScissorTest, DepthWrite, Multisample };
-    static const char *toString(Enum value)
-    {
-        switch (value) {
-        case Blend:
-            return "Blend";
-        case CullFace:
-            return "CullFace";
-        case DepthTest:
-            return "DepthTest";
-        case StencilTest:
-            return "StencilTest";
-        case ScissorTest:
-            return "ScissorTest";
-        case DepthWrite:
-            return "DepthWrite";
-        case Multisample:
-            return "Multisample";
-        default:
-            break;
-        }
-        return "Unknown";
-    }
+    Unknown = 0,
+    Blend,
+    CullFace,
+    DepthTest,
+    StencilTest,
+    ScissorTest,
+    DepthWrite,
+    Multisample
 };
 
-struct QDemonRenderSrcBlendFunc
+inline const char *toString(QDemonRenderState value)
 {
-    enum Enum {
-        Unknown = 0,
-        Zero,
-        One,
-        SrcColor,
-        OneMinusSrcColor,
-        DstColor,
-        OneMinusDstColor,
-        SrcAlpha,
-        OneMinusSrcAlpha,
-        DstAlpha,
-        OneMinusDstAlpha,
-        ConstantColor,
-        OneMinusConstantColor,
-        ConstantAlpha,
-        OneMinusConstantAlpha,
-        SrcAlphaSaturate
-    };
-
-    static const char *toString(Enum value)
-    {
-        switch (value) {
-        case Zero:
-            return "Zero";
-        case One:
-            return "One";
-        case SrcColor:
-            return "SrcColor";
-        case OneMinusSrcColor:
-            return "OneMinusSrcColor";
-        case DstColor:
-            return "DstColor";
-        case OneMinusDstColor:
-            return "OneMinusDstColor";
-        case SrcAlpha:
-            return "SrcAlpha";
-        case OneMinusSrcAlpha:
-            return "OneMinusSrcAlpha";
-        case DstAlpha:
-            return "DstAlpha";
-        case OneMinusDstAlpha:
-            return "OneMinusDstAlpha";
-        case ConstantColor:
-            return "ConstantColor";
-        case OneMinusConstantColor:
-            return "OneMinusConstantColor";
-        case ConstantAlpha:
-            return "ConstantAlpha";
-        case OneMinusConstantAlpha:
-            return "OneMinusConstantAlpha";
-        case SrcAlphaSaturate:
-            return "SrcAlphaSaturate";
-        default:
-            break;
-        }
-        return "Unknown";
+    switch (value) {
+    case QDemonRenderState::Blend:
+        return "Blend";
+    case QDemonRenderState::CullFace:
+        return "CullFace";
+    case QDemonRenderState::DepthTest:
+        return "DepthTest";
+    case QDemonRenderState::StencilTest:
+        return "StencilTest";
+    case QDemonRenderState::ScissorTest:
+        return "ScissorTest";
+    case QDemonRenderState::DepthWrite:
+        return "DepthWrite";
+    case QDemonRenderState::Multisample:
+        return "Multisample";
+    default:
+        break;
     }
-};
+    return "Unknown";
+}
 
-struct QDemonRenderDstBlendFunc
+enum class QDemonRenderSrcBlendFunc
 {
-    enum Enum {
-        Unknown = 0,
-        Zero,
-        One,
-        SrcColor,
-        OneMinusSrcColor,
-        DstColor,
-        OneMinusDstColor,
-        SrcAlpha,
-        OneMinusSrcAlpha,
-        DstAlpha,
-        OneMinusDstAlpha,
-        ConstantColor,
-        OneMinusConstantColor,
-        ConstantAlpha,
-        OneMinusConstantAlpha
-    };
-
-    static const char *toString(Enum value)
-    {
-        return QDemonRenderSrcBlendFunc::toString(static_cast<QDemonRenderSrcBlendFunc::Enum>(value));
-    }
+    Unknown = 0,
+    Zero,
+    One,
+    SrcColor,
+    OneMinusSrcColor,
+    DstColor,
+    OneMinusDstColor,
+    SrcAlpha,
+    OneMinusSrcAlpha,
+    DstAlpha,
+    OneMinusDstAlpha,
+    ConstantColor,
+    OneMinusConstantColor,
+    ConstantAlpha,
+    OneMinusConstantAlpha,
+    SrcAlphaSaturate
 };
 
-struct QDemonRenderBlendEquation
+inline const char *toString(QDemonRenderSrcBlendFunc value)
 {
-    enum Enum { Unknown = 0, Add, Subtract, ReverseSubtract, Overlay, ColorBurn, ColorDodge };
-    static const char *toString(Enum value)
-    {
-        switch (value) {
-        case Add:
-            return "Add";
-        case Subtract:
-            return "Subtract";
-        case ReverseSubtract:
-            return "ReverseSubtract";
-        case Overlay:
-            return "Overlay";
-        case ColorBurn:
-            return "ColorBurn";
-        case ColorDodge:
-            return "ColorDodge";
-        default:
-            break;
-        }
-        return "Unknown";
+    switch (value) {
+    case QDemonRenderSrcBlendFunc::Zero:
+        return "Zero";
+    case QDemonRenderSrcBlendFunc::One:
+        return "One";
+    case QDemonRenderSrcBlendFunc::SrcColor:
+        return "SrcColor";
+    case QDemonRenderSrcBlendFunc::OneMinusSrcColor:
+        return "OneMinusSrcColor";
+    case QDemonRenderSrcBlendFunc::DstColor:
+        return "DstColor";
+    case QDemonRenderSrcBlendFunc::OneMinusDstColor:
+        return "OneMinusDstColor";
+    case QDemonRenderSrcBlendFunc::SrcAlpha:
+        return "SrcAlpha";
+    case QDemonRenderSrcBlendFunc::OneMinusSrcAlpha:
+        return "OneMinusSrcAlpha";
+    case QDemonRenderSrcBlendFunc::DstAlpha:
+        return "DstAlpha";
+    case QDemonRenderSrcBlendFunc::OneMinusDstAlpha:
+        return "OneMinusDstAlpha";
+    case QDemonRenderSrcBlendFunc::ConstantColor:
+        return "ConstantColor";
+    case QDemonRenderSrcBlendFunc::OneMinusConstantColor:
+        return "OneMinusConstantColor";
+    case QDemonRenderSrcBlendFunc::ConstantAlpha:
+        return "ConstantAlpha";
+    case QDemonRenderSrcBlendFunc::OneMinusConstantAlpha:
+        return "OneMinusConstantAlpha";
+    case QDemonRenderSrcBlendFunc::SrcAlphaSaturate:
+        return "SrcAlphaSaturate";
+    default:
+        break;
     }
-};
+    return "Unknown";
+}
 
-struct QDemonRenderFaces
+enum class QDemonRenderDstBlendFunc
 {
-    enum Enum { Unknown = 0, Front, Back, FrontAndBack };
-    static const char *toString(Enum value)
-    {
-        switch (value) {
-        case Front:
-            return "Front";
-        case Back:
-            return "Back";
-        case FrontAndBack:
-            return "FrontAndBack";
-        default:
-            break;
-        }
-        return "Unknown";
-    }
+    Unknown = 0,
+    Zero,
+    One,
+    SrcColor,
+    OneMinusSrcColor,
+    DstColor,
+    OneMinusDstColor,
+    SrcAlpha,
+    OneMinusSrcAlpha,
+    DstAlpha,
+    OneMinusDstAlpha,
+    ConstantColor,
+    OneMinusConstantColor,
+    ConstantAlpha,
+    OneMinusConstantAlpha
 };
 
-struct QDemonReadFaces
+inline const char *toString(QDemonRenderDstBlendFunc value)
 {
-    enum Enum { Unknown = 0, Front, Back, Color0, Color1, Color2, Color3, Color4, Color5, Color6, Color7 };
-    static const char *toString(Enum value)
-    {
-        switch (value) {
-        case Front:
-            return "Front";
-        case Back:
-            return "Back";
-        case Color0:
-            return "Color0";
-        case Color1:
-            return "Color1";
-        case Color2:
-            return "Color2";
-        case Color3:
-            return "Color3";
-        case Color4:
-            return "Color4";
-        case Color5:
-            return "Color5";
-        case Color6:
-            return "Color6";
-        case Color7:
-            return "Color7";
-        default:
-            break;
-        }
-        return "Unknown";
-    }
-};
+    return toString(static_cast<QDemonRenderSrcBlendFunc>(value));
+}
 
-struct QDemonRenderBoolOp
+enum class QDemonRenderBlendEquation
 {
-    enum Enum { Unknown = 0, Never, Less, LessThanOrEqual, Equal, NotEqual, Greater, GreaterThanOrEqual, AlwaysTrue };
-
-    static const char *toString(Enum value)
-    {
-        switch (value) {
-        case Never:
-            return "Never";
-        case Less:
-            return "Less";
-        case LessThanOrEqual:
-            return "LessThanOrEqual";
-        case Equal:
-            return "Equal";
-        case NotEqual:
-            return "NotEqual";
-        case Greater:
-            return "Greater";
-        case GreaterThanOrEqual:
-            return "GreaterThanOrEqual";
-        case AlwaysTrue:
-            return "AlwaysTrue";
-        default:
-            break;
-        }
-        return "Unknown";
-    }
+    Unknown = 0,
+    Add,
+    Subtract,
+    ReverseSubtract,
+    Overlay,
+    ColorBurn,
+    ColorDodge
 };
+
+inline const char *toString(QDemonRenderBlendEquation value)
+{
+    switch (value) {
+    case QDemonRenderBlendEquation::Add:
+        return "Add";
+    case QDemonRenderBlendEquation::Subtract:
+        return "Subtract";
+    case QDemonRenderBlendEquation::ReverseSubtract:
+        return "ReverseSubtract";
+    case QDemonRenderBlendEquation::Overlay:
+        return "Overlay";
+    case QDemonRenderBlendEquation::ColorBurn:
+        return "ColorBurn";
+    case QDemonRenderBlendEquation::ColorDodge:
+        return "ColorDodge";
+    default:
+        break;
+    }
+    return "Unknown";
+}
+
+enum class QDemonRenderFace
+{
+    Unknown = 0,
+    Front,
+    Back,
+    FrontAndBack
+};
+
+inline const char *toString(QDemonRenderFace value)
+{
+    switch (value) {
+    case QDemonRenderFace::Front:
+        return "Front";
+    case QDemonRenderFace::Back:
+        return "Back";
+    case QDemonRenderFace::FrontAndBack:
+        return "FrontAndBack";
+    default:
+        break;
+    }
+    return "Unknown";
+}
+
+enum class QDemonReadFace
+{
+    Unknown = 0,
+    Front,
+    Back,
+    Color0,
+    Color1,
+    Color2,
+    Color3,
+    Color4,
+    Color5,
+    Color6,
+    Color7
+};
+
+inline const char *toString(QDemonReadFace value)
+{
+    switch (value) {
+    case QDemonReadFace::Front:
+        return "Front";
+    case QDemonReadFace::Back:
+        return "Back";
+    case QDemonReadFace::Color0:
+        return "Color0";
+    case QDemonReadFace::Color1:
+        return "Color1";
+    case QDemonReadFace::Color2:
+        return "Color2";
+    case QDemonReadFace::Color3:
+        return "Color3";
+    case QDemonReadFace::Color4:
+        return "Color4";
+    case QDemonReadFace::Color5:
+        return "Color5";
+    case QDemonReadFace::Color6:
+        return "Color6";
+    case QDemonReadFace::Color7:
+        return "Color7";
+    default:
+        break;
+    }
+    return "Unknown";
+}
+
+enum class QDemonRenderBoolOp
+{
+
+    Unknown = 0,
+    Never,
+    Less,
+    LessThanOrEqual,
+    Equal,
+    NotEqual,
+    Greater,
+    GreaterThanOrEqual,
+    AlwaysTrue
+};
+
+inline const char *toString(QDemonRenderBoolOp value)
+{
+    switch (value) {
+    case QDemonRenderBoolOp::Never:
+        return "Never";
+    case QDemonRenderBoolOp::Less:
+        return "Less";
+    case QDemonRenderBoolOp::LessThanOrEqual:
+        return "LessThanOrEqual";
+    case QDemonRenderBoolOp::Equal:
+        return "Equal";
+    case QDemonRenderBoolOp::NotEqual:
+        return "NotEqual";
+    case QDemonRenderBoolOp::Greater:
+        return "Greater";
+    case QDemonRenderBoolOp::GreaterThanOrEqual:
+        return "GreaterThanOrEqual";
+    case QDemonRenderBoolOp::AlwaysTrue:
+        return "AlwaysTrue";
+    default:
+        break;
+    }
+    return "Unknown";
+}
 
 #define QDEMON_RENDER_ITERATE_STENCIL_OP                                                                               \
     QDEMON_RENDER_HANDLE_STENCIL_OP(Keep)                                                                              \
@@ -1644,46 +1674,55 @@ struct QDemonRenderBoolOp
     QDEMON_RENDER_HANDLE_STENCIL_OP(DecrementWrap)                                                                     \
     QDEMON_RENDER_HANDLE_STENCIL_OP(Invert)
 
-struct QDemonRenderStencilOp
+enum class QDemonRenderStencilOp
 {
-    enum Enum { Unknown = 0, Keep, Zero, Replace, Increment, IncrementWrap, Decrement, DecrementWrap, Invert };
-    static const char *toString(Enum value)
-    {
-        switch (value) {
-        case Keep:
-            return "Keep";
-        case Zero:
-            return "Zero";
-        case Replace:
-            return "Replace";
-        case Increment:
-            return "Increment";
-        case IncrementWrap:
-            return "IncrementWrap";
-        case Decrement:
-            return "Decrement";
-        case DecrementWrap:
-            return "DecrementWrap";
-        case Invert:
-            return "Invert";
-        default:
-            break;
-        }
-        return "Unknown";
-    }
+    Unknown = 0,
+    Keep,
+    Zero,
+    Replace,
+    Increment,
+    IncrementWrap,
+    Decrement,
+    DecrementWrap,
+    Invert
 };
+
+inline const char *toString(QDemonRenderStencilOp value)
+{
+    switch (value) {
+    case QDemonRenderStencilOp::Keep:
+        return "Keep";
+    case QDemonRenderStencilOp::Zero:
+        return "Zero";
+    case QDemonRenderStencilOp::Replace:
+        return "Replace";
+    case QDemonRenderStencilOp::Increment:
+        return "Increment";
+    case QDemonRenderStencilOp::IncrementWrap:
+        return "IncrementWrap";
+    case QDemonRenderStencilOp::Decrement:
+        return "Decrement";
+    case QDemonRenderStencilOp::DecrementWrap:
+        return "DecrementWrap";
+    case QDemonRenderStencilOp::Invert:
+        return "Invert";
+    default:
+        break;
+    }
+    return "Unknown";
+}
 
 struct QDemonRenderBlendFunctionArgument
 {
-    QDemonRenderSrcBlendFunc::Enum m_srcRgb;
-    QDemonRenderDstBlendFunc::Enum m_dstRgb;
-    QDemonRenderSrcBlendFunc::Enum m_srcAlpha;
-    QDemonRenderDstBlendFunc::Enum m_dstAlpha;
+    QDemonRenderSrcBlendFunc m_srcRgb;
+    QDemonRenderDstBlendFunc m_dstRgb;
+    QDemonRenderSrcBlendFunc m_srcAlpha;
+    QDemonRenderDstBlendFunc m_dstAlpha;
 
-    QDemonRenderBlendFunctionArgument(QDemonRenderSrcBlendFunc::Enum srcRGB,
-                                      QDemonRenderDstBlendFunc::Enum dstRGB,
-                                      QDemonRenderSrcBlendFunc::Enum srcAlpha,
-                                      QDemonRenderDstBlendFunc::Enum dstAlpha)
+    QDemonRenderBlendFunctionArgument(QDemonRenderSrcBlendFunc srcRGB,
+                                      QDemonRenderDstBlendFunc dstRGB,
+                                      QDemonRenderSrcBlendFunc srcAlpha,
+                                      QDemonRenderDstBlendFunc dstAlpha)
         : m_srcRgb(srcRGB), m_dstRgb(dstRGB), m_srcAlpha(srcAlpha), m_dstAlpha(dstAlpha)
     {
     }
@@ -1700,10 +1739,10 @@ struct QDemonRenderBlendFunctionArgument
 
 struct QDemonRenderBlendEquationArgument
 {
-    QDemonRenderBlendEquation::Enum m_rgbEquation;
-    QDemonRenderBlendEquation::Enum m_alphaEquation;
+    QDemonRenderBlendEquation m_rgbEquation;
+    QDemonRenderBlendEquation m_alphaEquation;
 
-    QDemonRenderBlendEquationArgument(QDemonRenderBlendEquation::Enum rgb, QDemonRenderBlendEquation::Enum alpha)
+    QDemonRenderBlendEquationArgument(QDemonRenderBlendEquation rgb, QDemonRenderBlendEquation alpha)
         : m_rgbEquation(rgb), m_alphaEquation(alpha)
     {
     }
@@ -1715,16 +1754,16 @@ struct QDemonRenderBlendEquationArgument
 
 struct QDemonRenderStencilOperationArgument
 {
-    QDemonRenderStencilOp::Enum m_stencilFail; // What happens when stencil test fails.
+    QDemonRenderStencilOp m_stencilFail; // What happens when stencil test fails.
     // These values assume the stencil passed
 
     // What happens when the stencil passes but depth test fail.
-    QDemonRenderStencilOp::Enum m_depthFail;
-    QDemonRenderStencilOp::Enum m_depthPass; // What happens when the stencil and depth tests pass.
+    QDemonRenderStencilOp m_depthFail;
+    QDemonRenderStencilOp m_depthPass; // What happens when the stencil and depth tests pass.
 
-    QDemonRenderStencilOperationArgument(QDemonRenderStencilOp::Enum fail,
-                                         QDemonRenderStencilOp::Enum depthFail,
-                                         QDemonRenderStencilOp::Enum depthPass)
+    QDemonRenderStencilOperationArgument(QDemonRenderStencilOp fail,
+                                         QDemonRenderStencilOp depthFail,
+                                         QDemonRenderStencilOp depthPass)
         : m_stencilFail(fail), m_depthFail(depthFail), m_depthPass(depthPass)
     {
     }
@@ -1761,11 +1800,11 @@ struct QDemonRenderStencilOperationArgument
 // see glStencilFuncSeparate
 struct QDemonRenderStencilFunctionArgument
 {
-    QDemonRenderBoolOp::Enum m_function;
+    QDemonRenderBoolOp m_function;
     quint32 m_referenceValue;
     quint32 m_mask;
 
-    QDemonRenderStencilFunctionArgument(QDemonRenderBoolOp::Enum function, quint32 referenceValue, quint32 mask)
+    QDemonRenderStencilFunctionArgument(QDemonRenderBoolOp function, quint32 referenceValue, quint32 mask)
         : m_function(function), m_referenceValue(referenceValue), m_mask(mask)
     {
     }

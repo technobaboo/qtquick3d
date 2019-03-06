@@ -187,7 +187,7 @@ struct QDemonOffscreenRenderManager : public QDemonOffscreenRenderManagerInterfa
                                                              &QDemonRenderContext::isDepthWriteEnabled,
                                                              &QDemonRenderContext::setDepthWriteEnabled,
                                                              false);
-        QDemonRenderContextScopedProperty<QDemonRenderBoolOp::Enum> __depthFunction(*theContext,
+        QDemonRenderContextScopedProperty<QDemonRenderBoolOp> __depthFunction(*theContext,
                                                                                     &QDemonRenderContext::getDepthFunction,
                                                                                     &QDemonRenderContext::setDepthFunction,
                                                                                     QDemonRenderBoolOp::Less);

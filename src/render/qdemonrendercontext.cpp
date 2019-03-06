@@ -114,7 +114,7 @@ void QDemonRenderContextImpl::getMaxTextureSize(qint32 &oWidth, qint32 &oHeight)
 QDemonRef<QDemonRenderDepthStencilState> QDemonRenderContextImpl::createDepthStencilState(
         bool enableDepth,
         bool depthMask,
-        QDemonRenderBoolOp::Enum depthFunc,
+        QDemonRenderBoolOp depthFunc,
         bool enableStencil,
         QDemonRenderStencilFunctionArgument &stencilFuncFront,
         QDemonRenderStencilFunctionArgument &stencilFuncBack,
@@ -155,7 +155,7 @@ void QDemonRenderContextImpl::stateDestroyed(QDemonRenderDepthStencilState *stat
 
 QDemonRef<QDemonRenderRasterizerState> QDemonRenderContextImpl::createRasterizerState(float depthBias,
                                                                                       float depthScale,
-                                                                                      QDemonRenderFaces::Enum cullFace)
+                                                                                      QDemonRenderFace cullFace)
 {
     QDemonRef<QDemonRenderRasterizerState> state = QDemonRenderRasterizerState::create(this, depthBias, depthScale, cullFace);
     if (state)
@@ -641,7 +641,7 @@ void QDemonRenderContextImpl::setPathStencilDepthOffset(float inSlope, float inB
 {
     m_backend->setPathStencilDepthOffset(inSlope, inBias);
 }
-void QDemonRenderContextImpl::setPathCoverDepthFunc(QDemonRenderBoolOp::Enum inFunc)
+void QDemonRenderContextImpl::setPathCoverDepthFunc(QDemonRenderBoolOp inFunc)
 {
     m_backend->setPathCoverDepthFunc(inFunc);
 }
@@ -700,7 +700,7 @@ void QDemonRenderContextImpl::setCullingEnabled(bool inEnabled)
     }
 }
 
-void QDemonRenderContextImpl::setDepthFunction(QDemonRenderBoolOp::Enum inFunction)
+void QDemonRenderContextImpl::setDepthFunction(QDemonRenderBoolOp inFunction)
 {
     if (inFunction != m_hardwarePropertyContext.m_depthFunction) {
         doSetDepthFunction(inFunction);
@@ -813,7 +813,7 @@ void QDemonRenderContextImpl::setDrawBuffers(QDemonConstDataRef<qint32> inDrawBu
                               inDrawBufferSet);
 }
 
-void QDemonRenderContextImpl::setReadBuffer(QDemonReadFaces::Enum inReadFace)
+void QDemonRenderContextImpl::setReadBuffer(QDemonReadFace inReadFace)
 {
     // currently nullptr which means the read target must be set with setReadTarget
     m_backend->setReadBuffer(nullptr, inReadFace);

@@ -146,10 +146,10 @@ struct QDemonRenderMesh
     QVector<QDemonRenderSubset> subsets;
     QVector<QDemonRenderJoint> joints;
     QDemonRenderDrawMode drawMode;
-    QDemonRenderWinding::Enum winding; // counterclockwise
+    QDemonRenderWinding winding; // counterclockwise
     quint32 meshId; // Id from the file of this mesh.
 
-    QDemonRenderMesh(QDemonRenderDrawMode inDrawMode, QDemonRenderWinding::Enum inWinding, quint32 inMeshId)
+    QDemonRenderMesh(QDemonRenderDrawMode inDrawMode, QDemonRenderWinding inWinding, quint32 inMeshId)
         : drawMode(inDrawMode), winding(inWinding), meshId(inMeshId)
     {
     }

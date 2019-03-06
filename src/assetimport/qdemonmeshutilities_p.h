@@ -238,7 +238,7 @@ struct Q_DEMONASSETIMPORT_EXPORT Mesh
     OffsetDataRef<MeshSubset> m_subsets;
     OffsetDataRef<Joint> m_joints;
     QDemonRenderDrawMode m_drawMode;
-    QDemonRenderWinding::Enum m_winding;
+    QDemonRenderWinding m_winding;
 
     Mesh() : m_drawMode(QDemonRenderDrawMode::Triangles), m_winding(QDemonRenderWinding::CounterClockwise) {}
     Mesh(VertexBuffer vbuf,
@@ -246,7 +246,7 @@ struct Q_DEMONASSETIMPORT_EXPORT Mesh
          const OffsetDataRef<MeshSubset> &insts,
          const OffsetDataRef<Joint> &joints,
          QDemonRenderDrawMode drawMode = QDemonRenderDrawMode::Triangles,
-         QDemonRenderWinding::Enum winding = QDemonRenderWinding::CounterClockwise)
+         QDemonRenderWinding winding = QDemonRenderWinding::CounterClockwise)
         : m_vertexBuffer(vbuf), m_indexBuffer(ibuf), m_subsets(insts), m_joints(joints), m_drawMode(drawMode), m_winding(winding)
     {
     }
@@ -359,7 +359,7 @@ public:
     virtual void release() = 0;
     virtual void reset() = 0;
     // Set the draw parameters for any subsets.  Defaults to triangles and counter clockwise
-    virtual void setDrawParameters(QDemonRenderDrawMode drawMode, QDemonRenderWinding::Enum winding) = 0;
+    virtual void setDrawParameters(QDemonRenderDrawMode drawMode, QDemonRenderWinding winding) = 0;
     // Set the vertex buffer and have the mesh builder interleave the data for you
     virtual bool setVertexBuffer(const QVector<MeshBuilderVBufEntry> &entries) = 0;
     // Set the vertex buffer from interleaved data.

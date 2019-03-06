@@ -36,7 +36,7 @@ QT_BEGIN_NAMESPACE
 QDemonRenderRasterizerState::QDemonRenderRasterizerState(const QDemonRef<QDemonRenderContextImpl> &context,
                                                          float depthBias,
                                                          float depthScale,
-                                                         QDemonRenderFaces::Enum cullFace)
+                                                         QDemonRenderFace cullFace)
     : m_context(context), m_backend(context->getBackend())
 {
     // create backend handle
@@ -54,7 +54,7 @@ QDemonRenderRasterizerState::~QDemonRenderRasterizerState()
 QDemonRef<QDemonRenderRasterizerState> QDemonRenderRasterizerState::create(const QDemonRef<QDemonRenderContextImpl> &context,
                                                                            float depthBias,
                                                                            float depthScale,
-                                                                           QDemonRenderFaces::Enum cullFace)
+                                                                           QDemonRenderFace cullFace)
 {
     return QDemonRef<QDemonRenderRasterizerState>(new QDemonRenderRasterizerState(context, depthBias, depthScale, cullFace));
 }

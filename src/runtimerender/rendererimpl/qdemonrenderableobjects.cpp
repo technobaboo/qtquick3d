@@ -436,7 +436,7 @@ void QDemonTextRenderable::renderDepthPass(const QVector2D &inCameraVec)
         context->setInputAssembler(theDepthShader->quadInputAssembler);
         context->draw(QDemonRenderDrawMode::Triangles, theDepthShader->quadInputAssembler->getIndexCount(), 0);
     } else {
-        QDemonRenderBoolOp::Enum theDepthFunction = context->getDepthFunction();
+        QDemonRenderBoolOp theDepthFunction = context->getDepthFunction();
         bool isDepthEnabled = context->isDepthTestEnabled();
         bool isStencilEnabled = context->isStencilTestEnabled();
         bool isDepthWriteEnabled = context->isDepthWriteEnabled();

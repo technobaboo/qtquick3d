@@ -88,12 +88,12 @@ public:
     void getRenderBackendValue(QDemonRenderBackendQuery::Enum inQuery, qint32 *params) const override;
 
     /// state get/set functions
-    void setRenderState(bool bEnable, const QDemonRenderState::Enum value) override;
-    bool getRenderState(const QDemonRenderState::Enum value) override;
+    void setRenderState(bool bEnable, const QDemonRenderState value) override;
+    bool getRenderState(const QDemonRenderState value) override;
     virtual QDemonRenderBackendDepthStencilStateObject createDepthStencilState(
             bool enableDepth,
             bool depthMask,
-            QDemonRenderBoolOp::Enum depthFunc,
+            QDemonRenderBoolOp depthFunc,
             bool enableStencil,
             QDemonRenderStencilFunctionArgument &stencilFuncFront,
             QDemonRenderStencilFunctionArgument &stencilFuncBack,
@@ -102,12 +102,12 @@ public:
     virtual void releaseDepthStencilState(QDemonRenderBackendDepthStencilStateObject inDepthStencilState) override;
     virtual QDemonRenderBackendRasterizerStateObject createRasterizerState(float depthBias,
                                                                            float depthScale,
-                                                                           QDemonRenderFaces::Enum cullFace) override;
+                                                                           QDemonRenderFace cullFace) override;
     void releaseRasterizerState(QDemonRenderBackendRasterizerStateObject rasterizerState) override;
     virtual void setDepthStencilState(QDemonRenderBackendDepthStencilStateObject inDepthStencilState) override;
     void setRasterizerState(QDemonRenderBackendRasterizerStateObject rasterizerState) override;
-    QDemonRenderBoolOp::Enum getDepthFunc() override;
-    void setDepthFunc(const QDemonRenderBoolOp::Enum func) override;
+    QDemonRenderBoolOp getDepthFunc() override;
+    void setDepthFunc(const QDemonRenderBoolOp func) override;
     bool getDepthWrite() override;
     void setDepthWrite(bool bEnable) override;
     void setColorWrites(bool bRed, bool bGreen, bool bBlue, bool bAlpha) override;
@@ -490,7 +490,7 @@ public:
     void setPathProjectionMatrix(const QMatrix4x4 /*inPathProjection*/) override {}
     void setPathModelViewMatrix(const QMatrix4x4 /*inPathModelview*/) override {}
     void setPathStencilDepthOffset(float /*inSlope*/, float /*inBias*/) override {}
-    void setPathCoverDepthFunc(QDemonRenderBoolOp::Enum /*inDepthFunction*/) override {}
+    void setPathCoverDepthFunc(QDemonRenderBoolOp /*inDepthFunction*/) override {}
     void stencilStrokePath(QDemonRenderBackendPathObject /*inPathObject*/) override {}
     void stencilFillPath(QDemonRenderBackendPathObject /*inPathObject*/) override {}
     void releasePathNVObject(QDemonRenderBackendPathObject po, size_t range) override;
@@ -538,21 +538,21 @@ public:
     void getPathMetricsRange(QDemonRenderBackendPathObject, size_t, QDemonRenderPathGlyphFontMetricFlags, size_t, float *) override;
     void getPathSpacing(QDemonRenderBackendPathObject,
                         size_t,
-                        QDemonRenderPathListMode::Enum,
+                        QDemonRenderPathListMode,
                         QDemonRenderPathFormatType,
                         const void *,
                         float,
                         float,
-                        QDemonRenderPathTransformType::Enum,
+                        QDemonRenderPathTransformType,
                         float *) override;
 
     void stencilFillPathInstanced(QDemonRenderBackendPathObject,
                                   size_t,
                                   QDemonRenderPathFormatType,
                                   const void *,
-                                  QDemonRenderPathFillMode::Enum,
+                                  QDemonRenderPathFillMode,
                                   quint32,
-                                  QDemonRenderPathTransformType::Enum,
+                                  QDemonRenderPathTransformType,
                                   const float *) override;
     void stencilStrokePathInstancedN(QDemonRenderBackendPathObject,
                                      size_t,
@@ -560,21 +560,21 @@ public:
                                      const void *,
                                      qint32,
                                      quint32,
-                                     QDemonRenderPathTransformType::Enum,
+                                     QDemonRenderPathTransformType,
                                      const float *) override;
     void coverFillPathInstanced(QDemonRenderBackendPathObject,
                                 size_t,
                                 QDemonRenderPathFormatType,
                                 const void *,
-                                QDemonRenderPathCoverMode::Enum,
-                                QDemonRenderPathTransformType::Enum,
+                                QDemonRenderPathCoverMode,
+                                QDemonRenderPathTransformType,
                                 const float *) override;
     void coverStrokePathInstanced(QDemonRenderBackendPathObject,
                                   size_t,
                                   QDemonRenderPathFormatType,
                                   const void *,
-                                  QDemonRenderPathCoverMode::Enum,
-                                  QDemonRenderPathTransformType::Enum,
+                                  QDemonRenderPathCoverMode,
+                                  QDemonRenderPathTransformType,
                                   const float *) override;
 
     QSurfaceFormat format() const override { return m_format; }
