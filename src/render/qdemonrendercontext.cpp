@@ -175,7 +175,7 @@ void QDemonRenderContextImpl::stateDestroyed(QDemonRenderRasterizerState *state)
     m_rasterizerStateToImpMap.remove(state->GetRasterizerObjectHandle());
 }
 
-QDemonRef<QDemonRenderVertexBuffer> QDemonRenderContextImpl::createVertexBuffer(QDemonRenderBufferUsageType::Enum usageType,
+QDemonRef<QDemonRenderVertexBuffer> QDemonRenderContextImpl::createVertexBuffer(QDemonRenderBufferUsageType usageType,
                                                                                 size_t size,
                                                                                 quint32 stride,
                                                                                 QDemonConstDataRef<quint8> bufferData)
@@ -199,7 +199,7 @@ void QDemonRenderContextImpl::bufferDestroyed(QDemonRenderVertexBuffer *buffer)
     m_vertToImpMap.remove(buffer->getImplementationHandle());
 }
 
-QDemonRef<QDemonRenderIndexBuffer> QDemonRenderContextImpl::createIndexBuffer(QDemonRenderBufferUsageType::Enum usageType,
+QDemonRef<QDemonRenderIndexBuffer> QDemonRenderContextImpl::createIndexBuffer(QDemonRenderBufferUsageType usageType,
                                                                               QDemonRenderComponentTypes::Enum componentType,
                                                                               size_t size,
                                                                               QDemonConstDataRef<quint8> bufferData)
@@ -227,7 +227,7 @@ void QDemonRenderContextImpl::bufferDestroyed(QDemonRenderIndexBuffer *buffer)
 }
 
 QDemonRef<QDemonRenderConstantBuffer> QDemonRenderContextImpl::createConstantBuffer(const char *bufferName,
-                                                                                    QDemonRenderBufferUsageType::Enum usageType,
+                                                                                    QDemonRenderBufferUsageType usageType,
                                                                                     size_t size,
                                                                                     QDemonConstDataRef<quint8> bufferData)
 {
@@ -266,7 +266,7 @@ qint32 QDemonRenderContextImpl::getNextConstantBufferUnit()
 }
 
 QDemonRef<QDemonRenderStorageBuffer> QDemonRenderContextImpl::createStorageBuffer(const char *bufferName,
-                                                                                  QDemonRenderBufferUsageType::Enum usageType,
+                                                                                  QDemonRenderBufferUsageType usageType,
                                                                                   size_t size,
                                                                                   QDemonConstDataRef<quint8> bufferData,
                                                                                   QDemonRenderDataBuffer *pBuffer)
@@ -294,7 +294,7 @@ void QDemonRenderContextImpl::bufferDestroyed(QDemonRenderStorageBuffer *buffer)
 }
 
 QDemonRef<QDemonRenderAtomicCounterBuffer> QDemonRenderContextImpl::createAtomicCounterBuffer(const char *bufferName,
-                                                                                              QDemonRenderBufferUsageType::Enum usageType,
+                                                                                              QDemonRenderBufferUsageType usageType,
                                                                                               size_t size,
                                                                                               QDemonConstDataRef<quint8> bufferData)
 {
@@ -333,7 +333,7 @@ void QDemonRenderContextImpl::bufferDestroyed(QDemonRenderAtomicCounterBuffer *b
     m_atomicCounterToImpMap.remove(buffer->getBufferName());
 }
 
-QDemonRef<QDemonRenderDrawIndirectBuffer> QDemonRenderContextImpl::createDrawIndirectBuffer(QDemonRenderBufferUsageType::Enum usageType,
+QDemonRef<QDemonRenderDrawIndirectBuffer> QDemonRenderContextImpl::createDrawIndirectBuffer(QDemonRenderBufferUsageType usageType,
                                                                                             size_t size,
                                                                                             QDemonConstDataRef<quint8> bufferData)
 {
@@ -430,7 +430,7 @@ void QDemonRenderContextImpl::textureDestroyed(QDemonRenderTextureCube *buffer)
 }
 
 QDemonRef<QDemonRenderImage2D> QDemonRenderContextImpl::createImage2D(QDemonRef<QDemonRenderTexture2D> inTexture,
-                                                                      QDemonRenderImageAccessType::Enum inAccess)
+                                                                      QDemonRenderImageAccessType inAccess)
 {
     QDemonRef<QDemonRenderImage2D> retval = QDemonRenderImage2D::create(this, inTexture, inAccess);
     if (retval)
@@ -458,7 +458,7 @@ qint32 QDemonRenderContextImpl::getNextTextureUnit()
     return retval;
 }
 
-QDemonRef<QDemonRenderRenderBuffer> QDemonRenderContextImpl::createRenderBuffer(QDemonRenderRenderBufferFormats::Enum bufferFormat,
+QDemonRef<QDemonRenderRenderBuffer> QDemonRenderContextImpl::createRenderBuffer(QDemonRenderRenderBufferFormat bufferFormat,
                                                                                 quint32 width,
                                                                                 quint32 height)
 {

@@ -55,7 +55,7 @@ public:
     QDemonRenderIndexBuffer(const QDemonRef<QDemonRenderContextImpl> &context,
                             size_t size,
                             QDemonRenderComponentTypes::Enum componentType,
-                            QDemonRenderBufferUsageType::Enum usageType,
+                            QDemonRenderBufferUsageType usageType,
                             QDemonDataRef<quint8> data);
 
     ///< destruvtor
@@ -115,7 +115,7 @@ public:
     const void *getImplementationHandle() const override { return reinterpret_cast<void *>(m_bufferHandle); }
 
     static QDemonRef<QDemonRenderIndexBuffer> create(const QDemonRef<QDemonRenderContextImpl> &context,
-                                                     QDemonRenderBufferUsageType::Enum usageType,
+                                                     QDemonRenderBufferUsageType usageType,
                                                      QDemonRenderComponentTypes::Enum componentType,
                                                      size_t size,
                                                      QDemonConstDataRef<quint8> bufferData);

@@ -574,7 +574,7 @@ void QDemonRenderBackendGLBase::clear(QDemonRenderClearFlags flags)
 
 QDemonRenderBackend::QDemonRenderBackendBufferObject QDemonRenderBackendGLBase::createBuffer(size_t size,
                                                                                              QDemonRenderBufferBindFlags bindFlags,
-                                                                                             QDemonRenderBufferUsageType::Enum usage,
+                                                                                             QDemonRenderBufferUsageType usage,
                                                                                              const void *hostPtr)
 {
     GLuint bufID = 0;
@@ -611,7 +611,7 @@ void QDemonRenderBackendGLBase::releaseBuffer(QDemonRenderBackendBufferObject bo
 void QDemonRenderBackendGLBase::updateBuffer(QDemonRenderBackendBufferObject bo,
                                              QDemonRenderBufferBindFlags bindFlags,
                                              size_t size,
-                                             QDemonRenderBufferUsageType::Enum usage,
+                                             QDemonRenderBufferUsageType usage,
                                              const void *data)
 {
     GLuint bufID = HandleToID_cast(GLuint, size_t, bo);
@@ -751,7 +751,7 @@ void QDemonRenderBackendGLBase::renderTargetAttach(QDemonRenderBackendRenderTarg
 void QDemonRenderBackendGLBase::renderTargetAttach(QDemonRenderBackendRenderTargetObject /* rto */,
                                                    QDemonRenderFrameBufferAttachments::Enum attachment,
                                                    QDemonRenderBackendTextureObject to,
-                                                   QDemonRenderTextureTargetType::Enum target)
+                                                   QDemonRenderTextureTargetType target)
 {
     // rto must be the current render target
     GLuint texID = HandleToID_cast(GLuint, size_t, to);
@@ -799,7 +799,7 @@ bool QDemonRenderBackendGLBase::renderTargetIsValid(QDemonRenderBackendRenderTar
     return true;
 }
 
-QDemonRenderBackend::QDemonRenderBackendRenderbufferObject QDemonRenderBackendGLBase::createRenderbuffer(QDemonRenderRenderBufferFormats::Enum storageFormat,
+QDemonRenderBackend::QDemonRenderBackendRenderbufferObject QDemonRenderBackendGLBase::createRenderbuffer(QDemonRenderRenderBufferFormat storageFormat,
                                                                                                          qint32 width,
                                                                                                          qint32 height)
 {
@@ -836,7 +836,7 @@ void QDemonRenderBackendGLBase::releaseRenderbuffer(QDemonRenderBackendRenderbuf
 }
 
 bool QDemonRenderBackendGLBase::resizeRenderbuffer(QDemonRenderBackendRenderbufferObject rbo,
-                                                   QDemonRenderRenderBufferFormats::Enum storageFormat,
+                                                   QDemonRenderRenderBufferFormat storageFormat,
                                                    qint32 width,
                                                    qint32 height)
 {
@@ -871,7 +871,7 @@ QDemonRenderBackend::QDemonRenderBackendTextureObject QDemonRenderBackendGLBase:
 }
 
 void QDemonRenderBackendGLBase::bindTexture(QDemonRenderBackendTextureObject to,
-                                            QDemonRenderTextureTargetType::Enum target,
+                                            QDemonRenderTextureTargetType target,
                                             qint32 unit)
 {
     Q_ASSERT(unit >= 0);
@@ -885,7 +885,7 @@ void QDemonRenderBackendGLBase::bindImageTexture(QDemonRenderBackendTextureObjec
                                                  qint32,
                                                  bool,
                                                  qint32,
-                                                 QDemonRenderImageAccessType::Enum,
+                                                 QDemonRenderImageAccessType,
                                                  QDemonRenderTextureFormats::Enum)
 {
     // needs GL 4 context
@@ -899,7 +899,7 @@ void QDemonRenderBackendGLBase::releaseTexture(QDemonRenderBackendTextureObject 
 }
 
 void QDemonRenderBackendGLBase::setTextureData2D(QDemonRenderBackendTextureObject to,
-                                                 QDemonRenderTextureTargetType::Enum target,
+                                                 QDemonRenderTextureTargetType target,
                                                  qint32 level,
                                                  QDemonRenderTextureFormats::Enum internalFormat,
                                                  qint32 width,
@@ -914,7 +914,7 @@ void QDemonRenderBackendGLBase::setTextureData2D(QDemonRenderBackendTextureObjec
     GL_CALL_FUNCTION(glBindTexture(glTarget, texID));
     bool conversionRequired = format != internalFormat;
 
-    QDemonRenderTextureSwizzleMode::Enum swizzleMode = QDemonRenderTextureSwizzleMode::NoSwizzle;
+    QDemonRenderTextureSwizzleMode swizzleMode = QDemonRenderTextureSwizzleMode::NoSwizzle;
     internalFormat = GLConversion::replaceDeprecatedTextureFormat(getRenderContextType(), internalFormat, swizzleMode);
 
     GLenum glformat = 0, glInternalFormat = 0, gltype = GL_UNSIGNED_BYTE;
@@ -940,7 +940,7 @@ void QDemonRenderBackendGLBase::setTextureData2D(QDemonRenderBackendTextureObjec
 // the target for
 // glTexImage2D.
 void QDemonRenderBackendGLBase::setTextureDataCubeFace(QDemonRenderBackendTextureObject to,
-                                                       QDemonRenderTextureTargetType::Enum target,
+                                                       QDemonRenderTextureTargetType target,
                                                        qint32 level,
                                                        QDemonRenderTextureFormats::Enum internalFormat,
                                                        qint32 width,
@@ -956,7 +956,7 @@ void QDemonRenderBackendGLBase::setTextureDataCubeFace(QDemonRenderBackendTextur
     GL_CALL_FUNCTION(glBindTexture(glTexTarget, texID));
     bool conversionRequired = format != internalFormat;
 
-    QDemonRenderTextureSwizzleMode::Enum swizzleMode = QDemonRenderTextureSwizzleMode::NoSwizzle;
+    QDemonRenderTextureSwizzleMode swizzleMode = QDemonRenderTextureSwizzleMode::NoSwizzle;
     internalFormat = GLConversion::replaceDeprecatedTextureFormat(getRenderContextType(), internalFormat, swizzleMode);
 
     GLenum glformat = 0, glInternalFormat = 0, gltype = GL_UNSIGNED_BYTE;
@@ -983,7 +983,7 @@ void QDemonRenderBackendGLBase::setTextureDataCubeFace(QDemonRenderBackendTextur
 }
 
 void QDemonRenderBackendGLBase::createTextureStorage2D(QDemonRenderBackendTextureObject,
-                                                       QDemonRenderTextureTargetType::Enum,
+                                                       QDemonRenderTextureTargetType,
                                                        qint32,
                                                        QDemonRenderTextureFormats::Enum,
                                                        qint32,
@@ -994,7 +994,7 @@ void QDemonRenderBackendGLBase::createTextureStorage2D(QDemonRenderBackendTextur
 }
 
 void QDemonRenderBackendGLBase::setTextureSubData2D(QDemonRenderBackendTextureObject to,
-                                                    QDemonRenderTextureTargetType::Enum target,
+                                                    QDemonRenderTextureTargetType target,
                                                     qint32 level,
                                                     qint32 xOffset,
                                                     qint32 yOffset,
@@ -1008,7 +1008,7 @@ void QDemonRenderBackendGLBase::setTextureSubData2D(QDemonRenderBackendTextureOb
     GL_CALL_FUNCTION(glActiveTexture(GL_TEXTURE0));
     GL_CALL_FUNCTION(glBindTexture(glTarget, texID));
 
-    QDemonRenderTextureSwizzleMode::Enum swizzleMode = QDemonRenderTextureSwizzleMode::NoSwizzle;
+    QDemonRenderTextureSwizzleMode swizzleMode = QDemonRenderTextureSwizzleMode::NoSwizzle;
     format = GLConversion::replaceDeprecatedTextureFormat(getRenderContextType(), format, swizzleMode);
 
     GLenum glformat = 0, glInternalFormat = 0, gltype = 0;
@@ -1019,7 +1019,7 @@ void QDemonRenderBackendGLBase::setTextureSubData2D(QDemonRenderBackendTextureOb
 }
 
 void QDemonRenderBackendGLBase::setCompressedTextureData2D(QDemonRenderBackendTextureObject to,
-                                                           QDemonRenderTextureTargetType::Enum target,
+                                                           QDemonRenderTextureTargetType target,
                                                            qint32 level,
                                                            QDemonRenderTextureFormats::Enum internalFormat,
                                                            qint32 width,
@@ -1040,7 +1040,7 @@ void QDemonRenderBackendGLBase::setCompressedTextureData2D(QDemonRenderBackendTe
 }
 
 void QDemonRenderBackendGLBase::setCompressedTextureDataCubeFace(QDemonRenderBackendTextureObject to,
-                                                                 QDemonRenderTextureTargetType::Enum target,
+                                                                 QDemonRenderTextureTargetType target,
                                                                  qint32 level,
                                                                  QDemonRenderTextureFormats::Enum internalFormat,
                                                                  qint32 width,
@@ -1062,7 +1062,7 @@ void QDemonRenderBackendGLBase::setCompressedTextureDataCubeFace(QDemonRenderBac
 }
 
 void QDemonRenderBackendGLBase::setCompressedTextureSubData2D(QDemonRenderBackendTextureObject to,
-                                                              QDemonRenderTextureTargetType::Enum target,
+                                                              QDemonRenderTextureTargetType target,
                                                               qint32 level,
                                                               qint32 xOffset,
                                                               qint32 yOffset,
@@ -1085,7 +1085,7 @@ void QDemonRenderBackendGLBase::setCompressedTextureSubData2D(QDemonRenderBacken
 }
 
 void QDemonRenderBackendGLBase::setTextureData3D(QDemonRenderBackendTextureObject,
-                                                 QDemonRenderTextureTargetType::Enum,
+                                                 QDemonRenderTextureTargetType,
                                                  qint32,
                                                  QDemonRenderTextureFormats::Enum,
                                                  qint32,
@@ -1100,7 +1100,7 @@ void QDemonRenderBackendGLBase::setTextureData3D(QDemonRenderBackendTextureObjec
 }
 
 void QDemonRenderBackendGLBase::generateMipMaps(QDemonRenderBackendTextureObject to,
-                                                QDemonRenderTextureTargetType::Enum target,
+                                                QDemonRenderTextureTargetType target,
                                                 QDemonRenderHint::Enum genType)
 {
     GLuint texID = HandleToID_cast(GLuint, size_t, to);
@@ -1115,9 +1115,9 @@ void QDemonRenderBackendGLBase::generateMipMaps(QDemonRenderBackendTextureObject
     GL_CALL_FUNCTION(glBindTexture(glTarget, 0));
 }
 
-QDemonRenderTextureSwizzleMode::Enum QDemonRenderBackendGLBase::getTextureSwizzleMode(const QDemonRenderTextureFormats::Enum inFormat) const
+QDemonRenderTextureSwizzleMode QDemonRenderBackendGLBase::getTextureSwizzleMode(const QDemonRenderTextureFormats::Enum inFormat) const
 {
-    QDemonRenderTextureSwizzleMode::Enum swizzleMode = QDemonRenderTextureSwizzleMode::NoSwizzle;
+    QDemonRenderTextureSwizzleMode swizzleMode = QDemonRenderTextureSwizzleMode::NoSwizzle;
     GLConversion::replaceDeprecatedTextureFormat(getRenderContextType(), inFormat, swizzleMode);
 
     return swizzleMode;
@@ -1132,8 +1132,8 @@ QDemonRenderBackend::QDemonRenderBackendSamplerObject QDemonRenderBackendGLBase:
         qint32 minLod,
         qint32 maxLod,
         float lodBias,
-        QDemonRenderTextureCompareMode::Enum compareMode,
-        QDemonRenderTextureCompareOp::Enum compareFunc,
+        QDemonRenderTextureCompareMode compareMode,
+        QDemonRenderTextureCompareOp compareFunc,
         float anisotropy,
         float *borderColor)
 {
@@ -1159,7 +1159,7 @@ QDemonRenderBackend::QDemonRenderBackendSamplerObject QDemonRenderBackendGLBase:
 }
 
 void QDemonRenderBackendGLBase::updateSampler(QDemonRenderBackendSamplerObject /* so */,
-                                              QDemonRenderTextureTargetType::Enum target,
+                                              QDemonRenderTextureTargetType target,
                                               QDemonRenderTextureMinifyingOp::Enum minFilter,
                                               QDemonRenderTextureMagnifyingOp::Enum magFilter,
                                               QDemonRenderTextureCoordOp::Enum wrapS,
@@ -1168,8 +1168,8 @@ void QDemonRenderBackendGLBase::updateSampler(QDemonRenderBackendSamplerObject /
                                               float minLod,
                                               float maxLod,
                                               float lodBias,
-                                              QDemonRenderTextureCompareMode::Enum compareMode,
-                                              QDemonRenderTextureCompareOp::Enum compareFunc,
+                                              QDemonRenderTextureCompareMode compareMode,
+                                              QDemonRenderTextureCompareOp compareFunc,
                                               float anisotropy,
                                               float *borderColor)
 {
@@ -1195,7 +1195,7 @@ void QDemonRenderBackendGLBase::updateSampler(QDemonRenderBackendSamplerObject /
 }
 
 void QDemonRenderBackendGLBase::updateTextureObject(QDemonRenderBackendTextureObject to,
-                                                    QDemonRenderTextureTargetType::Enum target,
+                                                    QDemonRenderTextureTargetType target,
                                                     qint32 baseLevel,
                                                     qint32 maxLevel)
 {
@@ -1206,8 +1206,8 @@ void QDemonRenderBackendGLBase::updateTextureObject(QDemonRenderBackendTextureOb
 }
 
 void QDemonRenderBackendGLBase::updateTextureSwizzle(QDemonRenderBackendTextureObject to,
-                                                     QDemonRenderTextureTargetType::Enum target,
-                                                     QDemonRenderTextureSwizzleMode::Enum swizzleMode)
+                                                     QDemonRenderTextureTargetType target,
+                                                     QDemonRenderTextureSwizzleMode swizzleMode)
 {
     NVRENDER_BACKEND_UNUSED(to);
     NVRENDER_BACKEND_UNUSED(target);

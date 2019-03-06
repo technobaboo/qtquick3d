@@ -45,12 +45,12 @@ public:
     QDemonRenderTextureCoordOp::Enum m_wrapS;
     QDemonRenderTextureCoordOp::Enum m_wrapT;
     QDemonRenderTextureCoordOp::Enum m_wrapR;
-    QDemonRenderTextureSwizzleMode::Enum m_swizzleMode;
+    QDemonRenderTextureSwizzleMode m_swizzleMode;
     float m_minLod;
     float m_maxLod;
     float m_lodBias;
-    QDemonRenderTextureCompareMode::Enum m_compareMode;
-    QDemonRenderTextureCompareOp::Enum m_compareOp;
+    QDemonRenderTextureCompareMode m_compareMode;
+    QDemonRenderTextureCompareOp m_compareOp;
     float m_anisotropy;
     float m_borderColor[4];
 
@@ -81,12 +81,12 @@ public:
                                QDemonRenderTextureCoordOp::Enum wrapS = QDemonRenderTextureCoordOp::ClampToEdge,
                                QDemonRenderTextureCoordOp::Enum wrapT = QDemonRenderTextureCoordOp::ClampToEdge,
                                QDemonRenderTextureCoordOp::Enum wrapR = QDemonRenderTextureCoordOp::ClampToEdge,
-                               QDemonRenderTextureSwizzleMode::Enum swizzleMode = QDemonRenderTextureSwizzleMode::NoSwizzle,
+                               QDemonRenderTextureSwizzleMode swizzleMode = QDemonRenderTextureSwizzleMode::NoSwizzle,
                                float minLod = -1000.0,
                                float maxLod = 1000.0,
                                float lodBias = 0.0,
-                               QDemonRenderTextureCompareMode::Enum compareMode = QDemonRenderTextureCompareMode::NoCompare,
-                               QDemonRenderTextureCompareOp::Enum compareFunc = QDemonRenderTextureCompareOp::LessThanOrEqual,
+                               QDemonRenderTextureCompareMode compareMode = QDemonRenderTextureCompareMode::NoCompare,
+                               QDemonRenderTextureCompareOp compareFunc = QDemonRenderTextureCompareOp::LessThanOrEqual,
                                float anisotropy = 1.0,
                                float *borderColor = nullptr);
 

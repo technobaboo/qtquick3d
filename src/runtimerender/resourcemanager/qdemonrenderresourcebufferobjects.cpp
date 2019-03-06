@@ -68,7 +68,7 @@ QDemonResourceRenderBuffer::~QDemonResourceRenderBuffer()
     releaseRenderBuffer();
 }
 
-bool QDemonResourceRenderBuffer::ensureRenderBuffer(qint32 width, qint32 height, QDemonRenderRenderBufferFormats::Enum storageFormat)
+bool QDemonResourceRenderBuffer::ensureRenderBuffer(qint32 width, qint32 height, QDemonRenderRenderBufferFormat storageFormat)
 {
     if (m_renderBuffer == nullptr || m_dimensions.m_width != width || m_dimensions.m_height != height || m_storageFormat != storageFormat) {
         if (m_renderBuffer == nullptr || m_storageFormat != storageFormat) {

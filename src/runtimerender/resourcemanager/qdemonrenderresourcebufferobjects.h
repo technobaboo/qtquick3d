@@ -69,13 +69,13 @@ class QDemonResourceRenderBuffer
 protected:
     QDemonRef<QDemonResourceManagerInterface> m_resourceManager;
     QDemonRef<QDemonRenderRenderBuffer> m_renderBuffer;
-    QDemonRenderRenderBufferFormats::Enum m_storageFormat;
+    QDemonRenderRenderBufferFormat m_storageFormat;
     QDemonRenderRenderBufferDimensions m_dimensions;
 
 public:
     QDemonResourceRenderBuffer(const QDemonRef<QDemonResourceManagerInterface> &mgr);
     ~QDemonResourceRenderBuffer();
-    bool ensureRenderBuffer(qint32 width, qint32 height, QDemonRenderRenderBufferFormats::Enum storageFormat);
+    bool ensureRenderBuffer(qint32 width, qint32 height, QDemonRenderRenderBufferFormat storageFormat);
     void releaseRenderBuffer();
 
     operator QDemonRef<QDemonRenderRenderBuffer>() { return m_renderBuffer; }

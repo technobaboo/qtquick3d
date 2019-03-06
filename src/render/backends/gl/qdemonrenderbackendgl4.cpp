@@ -228,7 +228,7 @@ void QDemonRenderBackendGL4Impl::drawIndexedIndirect(QDemonRenderDrawMode::Enum 
 }
 
 void QDemonRenderBackendGL4Impl::createTextureStorage2D(QDemonRenderBackendTextureObject to,
-                                                        QDemonRenderTextureTargetType::Enum target,
+                                                        QDemonRenderTextureTargetType target,
                                                         qint32 levels,
                                                         QDemonRenderTextureFormats::Enum internalFormat,
                                                         qint32 width,
@@ -251,7 +251,7 @@ void QDemonRenderBackendGL4Impl::createTextureStorage2D(QDemonRenderBackendTextu
 }
 
 void QDemonRenderBackendGL4Impl::setMultisampledTextureData2D(QDemonRenderBackendTextureObject to,
-                                                              QDemonRenderTextureTargetType::Enum target,
+                                                              QDemonRenderTextureTargetType target,
                                                               qint32 samples,
                                                               QDemonRenderTextureFormats::Enum internalFormat,
                                                               qint32 width,
@@ -263,7 +263,7 @@ void QDemonRenderBackendGL4Impl::setMultisampledTextureData2D(QDemonRenderBacken
     GL_CALL_EXTRA_FUNCTION(glActiveTexture(GL_TEXTURE0));
     GL_CALL_EXTRA_FUNCTION(glBindTexture(glTarget, texID));
 
-    QDemonRenderTextureSwizzleMode::Enum swizzleMode = QDemonRenderTextureSwizzleMode::NoSwizzle;
+    QDemonRenderTextureSwizzleMode swizzleMode = QDemonRenderTextureSwizzleMode::NoSwizzle;
     internalFormat = GLConversion::replaceDeprecatedTextureFormat(getRenderContextType(), internalFormat, swizzleMode);
 
     GLenum glformat = 0, glInternalFormat = 0, gltype = GL_UNSIGNED_BYTE;
@@ -350,7 +350,7 @@ void QDemonRenderBackendGL4Impl::bindImageTexture(QDemonRenderBackendTextureObje
                                                   qint32 level,
                                                   bool layered,
                                                   qint32 layer,
-                                                  QDemonRenderImageAccessType::Enum access,
+                                                  QDemonRenderImageAccessType access,
                                                   QDemonRenderTextureFormats::Enum format)
 {
     GLuint texID = HandleToID_cast(GLuint, size_t, to);

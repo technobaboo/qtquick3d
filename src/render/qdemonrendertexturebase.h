@@ -67,7 +67,7 @@ protected:
     bool m_texStateDirty; ///< true if texture object state is dirty
     qint32 m_sampleCount; ///< texture height
     QDemonRenderTextureFormats::Enum m_format; ///< texture format
-    QDemonRenderTextureTargetType::Enum m_texTarget; ///< texture target
+    QDemonRenderTextureTargetType m_texTarget; ///< texture target
     QDemonRenderTextureSampler *m_sampler; ///< current texture sampler state
     qint32 m_baseLevel; ///< minimum lod specified
     qint32 m_maxLevel; ///< maximum lod specified
@@ -84,7 +84,7 @@ public:
      *
      * @return No return.
      */
-    QDemonRenderTextureBase(const QDemonRef<QDemonRenderContextImpl> &context, QDemonRenderTextureTargetType::Enum texTarget);
+    QDemonRenderTextureBase(const QDemonRef<QDemonRenderContextImpl> &context, QDemonRenderTextureTargetType texTarget);
 
     virtual ~QDemonRenderTextureBase();
 
@@ -97,8 +97,8 @@ public:
     virtual void setTextureWrapS(QDemonRenderTextureCoordOp::Enum value);
     virtual void setTextureWrapT(QDemonRenderTextureCoordOp::Enum value);
 
-    virtual void setTextureCompareMode(QDemonRenderTextureCompareMode::Enum value);
-    virtual void setTextureCompareFunc(QDemonRenderTextureCompareOp::Enum value);
+    virtual void setTextureCompareMode(QDemonRenderTextureCompareMode value);
+    virtual void setTextureCompareFunc(QDemonRenderTextureCompareOp value);
 
     virtual void setTextureUnit(quint32 unit) { m_textureUnit = unit; }
     virtual qint32 getTextureUnit() const { return m_textureUnit; }
@@ -125,7 +125,7 @@ public:
      *
      * @return texture swizzle mode
      */
-    virtual QDemonRenderTextureSwizzleMode::Enum getTextureSwizzleMode()
+    virtual QDemonRenderTextureSwizzleMode getTextureSwizzleMode()
     {
         // if our backend supports hardware texture swizzle then there is no need for a shader
         // swizzle

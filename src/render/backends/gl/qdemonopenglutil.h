@@ -683,19 +683,18 @@ struct GLConversion
 
     static GLenum fromBindBufferFlagsToGL(QDemonRenderBufferBindFlags flags)
     {
-        quint32 value = flags;
         GLenum retval = GL_INVALID_ENUM;
-        if (value & QDemonRenderBufferBindValues::Vertex)
+        if (flags & QDemonRenderBufferBindValues::Vertex)
             retval = GL_ARRAY_BUFFER;
-        else if (value & QDemonRenderBufferBindValues::Index)
+        else if (flags & QDemonRenderBufferBindValues::Index)
             retval = GL_ELEMENT_ARRAY_BUFFER;
-        else if (value & QDemonRenderBufferBindValues::Constant)
+        else if (flags & QDemonRenderBufferBindValues::Constant)
             retval = GL_UNIFORM_BUFFER;
-        else if (value & QDemonRenderBufferBindValues::Storage)
+        else if (flags & QDemonRenderBufferBindValues::Storage)
             retval = GL_SHADER_STORAGE_BUFFER;
-        else if (value & QDemonRenderBufferBindValues::Atomic_Counter)
+        else if (flags & QDemonRenderBufferBindValues::Atomic_Counter)
             retval = GL_ATOMIC_COUNTER_BUFFER;
-        else if (value & QDemonRenderBufferBindValues::Draw_Indirect)
+        else if (flags & QDemonRenderBufferBindValues::Draw_Indirect)
             retval = GL_DRAW_INDIRECT_BUFFER;
         else
             Q_ASSERT(false);
@@ -705,7 +704,7 @@ struct GLConversion
 
     static QDemonRenderBufferBindFlags fromGLToBindBufferFlags(GLenum value)
     {
-        quint32 retval = 0;
+        QDemonRenderBufferBindFlags retval;
 
         if (value == GL_ARRAY_BUFFER)
             retval |= QDemonRenderBufferBindValues::Vertex;
@@ -722,10 +721,10 @@ struct GLConversion
         else
             Q_ASSERT(false);
 
-        return QDemonRenderBufferBindFlags(retval);
+        return retval;
     }
 
-    static QDemonRenderBufferUsageType::Enum fromGLToBufferUsageType(GLenum value)
+    static QDemonRenderBufferUsageType fromGLToBufferUsageType(GLenum value)
     {
         switch (value) {
 #define QDEMON_RENDER_HANDLE_GL_QDEMON_BUFFER_USAGE_TYPE(x, y)                                                         \
@@ -740,7 +739,7 @@ struct GLConversion
         return QDemonRenderBufferUsageType::Unknown;
     }
 
-    static GLenum fromBufferUsageTypeToGL(QDemonRenderBufferUsageType::Enum value)
+    static GLenum fromBufferUsageTypeToGL(QDemonRenderBufferUsageType value)
     {
         switch (value) {
 #define QDEMON_RENDER_HANDLE_GL_QDEMON_BUFFER_USAGE_TYPE(x, y)                                                         \
@@ -799,7 +798,7 @@ struct GLConversion
 
     static QDemonRenderTextureFormats::Enum replaceDeprecatedTextureFormat(QDemonRenderContextType type,
                                                                            QDemonRenderTextureFormats::Enum value,
-                                                                           QDemonRenderTextureSwizzleMode::Enum &swizzleMode)
+                                                                           QDemonRenderTextureSwizzleMode &swizzleMode)
     {
         QDemonRenderContextTypes deprecatedContextFlags(QDemonRenderContextType::GL2 | QDemonRenderContextType::GLES2);
         QDemonRenderTextureFormats::Enum newValue = value;
@@ -831,7 +830,7 @@ struct GLConversion
         return newValue;
     }
 
-    static void NVRenderConvertSwizzleModeToGL(const QDemonRenderTextureSwizzleMode::Enum swizzleMode, GLint glSwizzle[4])
+    static void NVRenderConvertSwizzleModeToGL(const QDemonRenderTextureSwizzleMode swizzleMode, GLint glSwizzle[4])
     {
         switch (swizzleMode) {
         case QDemonRenderTextureSwizzleMode::L16toR16:
@@ -1080,7 +1079,7 @@ struct GLConversion
         return false;
     }
 
-    static GLenum fromTextureTargetToGL(QDemonRenderTextureTargetType::Enum value)
+    static GLenum fromTextureTargetToGL(QDemonRenderTextureTargetType value)
     {
         GLenum retval = 0;
         if (value == QDemonRenderTextureTargetType::Texture2D)
@@ -1109,9 +1108,9 @@ struct GLConversion
         return retval;
     }
 
-    static QDemonRenderTextureTargetType::Enum fromGLToTextureTarget(GLenum value)
+    static QDemonRenderTextureTargetType fromGLToTextureTarget(GLenum value)
     {
-        QDemonRenderTextureTargetType::Enum retval = QDemonRenderTextureTargetType::Unknown;
+        QDemonRenderTextureTargetType retval = QDemonRenderTextureTargetType::Unknown;
 
         if (value == GL_TEXTURE_2D)
             retval = QDemonRenderTextureTargetType::Texture2D;
@@ -1123,21 +1122,21 @@ struct GLConversion
         return retval;
     }
 
-    static GLenum fromTextureUnitToGL(QDemonRenderTextureUnit::Enum value)
+    static GLenum fromTextureUnitToGL(QDemonRenderTextureUnit value)
     {
-        quint32 v = value;
+        quint32 v = static_cast<quint32>(value);
         GLenum retval = GL_TEXTURE0;
         retval = GL_TEXTURE0 + v;
 
         return retval;
     }
 
-    static GLenum fromGLToTextureUnit(GLenum value)
+    static QDemonRenderTextureUnit fromGLToTextureUnit(GLenum value)
     {
         Q_ASSERT(value > GL_TEXTURE0);
 
         quint32 v = value - GL_TEXTURE0;
-        QDemonRenderTextureUnit::Enum retval = QDemonRenderTextureUnit::Enum(QDemonRenderTextureUnit::TextureUnit_0 + v);
+        QDemonRenderTextureUnit retval = QDemonRenderTextureUnit(v);
 
         return retval;
     }
@@ -1244,7 +1243,7 @@ struct GLConversion
         return QDemonRenderTextureCoordOp::Unknown;
     }
 
-    static GLenum fromTextureCompareModeToGL(QDemonRenderTextureCompareMode::Enum value)
+    static GLenum fromTextureCompareModeToGL(QDemonRenderTextureCompareMode value)
     {
         switch (value) {
         case QDemonRenderTextureCompareMode::NoCompare:
@@ -1256,10 +1255,10 @@ struct GLConversion
         }
 
         Q_ASSERT(false);
-        return QDemonRenderTextureCompareMode::Unknown;
+        return GL_INVALID_ENUM;
     }
 
-    static GLenum fromGLToTextureCompareMode(GLenum value)
+    static QDemonRenderTextureCompareMode fromGLToTextureCompareMode(GLenum value)
     {
         switch (value) {
         case GL_NONE:
@@ -1271,10 +1270,10 @@ struct GLConversion
         }
 
         Q_ASSERT(false);
-        return GL_INVALID_ENUM;
+        return QDemonRenderTextureCompareMode::Unknown;
     }
 
-    static GLenum fromTextureCompareFuncToGL(QDemonRenderTextureCompareOp::Enum value)
+    static GLenum fromTextureCompareFuncToGL(QDemonRenderTextureCompareOp value)
     {
         switch (value) {
 #define QDEMON_RENDER_HANDLE_GL_QDEMON_BOOL_OP(x, y)                                                                   \
@@ -1318,7 +1317,7 @@ struct GLConversion
         return GL_INVALID_ENUM;
     }
 
-    static GLenum fromImageAccessToGL(QDemonRenderImageAccessType::Enum value)
+    static GLenum fromImageAccessToGL(QDemonRenderImageAccessType value)
     {
         switch (value) {
         case QDemonRenderImageAccessType::Read:
@@ -1336,16 +1335,15 @@ struct GLConversion
 
     static GLbitfield fromBufferAccessBitToGL(QDemonRenderBufferAccessFlags flags)
     {
-        quint32 value = flags;
         GLbitfield retval = 0;
 
-        if (value & QDemonRenderBufferAccessTypeValues::Read)
+        if (flags & QDemonRenderBufferAccessTypeValues::Read)
             retval |= GL_MAP_READ_BIT;
-        if (value & QDemonRenderBufferAccessTypeValues::Write)
+        if (flags & QDemonRenderBufferAccessTypeValues::Write)
             retval |= GL_MAP_WRITE_BIT;
-        if (value & QDemonRenderBufferAccessTypeValues::Invalid)
+        if (flags & QDemonRenderBufferAccessTypeValues::Invalid)
             retval |= GL_MAP_INVALIDATE_BUFFER_BIT;
-        if (value & QDemonRenderBufferAccessTypeValues::InvalidRange)
+        if (flags & QDemonRenderBufferAccessTypeValues::InvalidRange)
             retval |= GL_MAP_INVALIDATE_RANGE_BIT;
 
         Q_ASSERT(retval);
@@ -1354,34 +1352,33 @@ struct GLConversion
 
     static GLbitfield fromMemoryBarrierFlagsToGL(QDemonRenderBufferBarrierFlags flags)
     {
-        quint32 value = flags;
         GLbitfield retval = 0;
 #if !defined(QT_OPENGL_ES)
-        if (value & QDemonRenderBufferBarrierValues::AtomicCounter)
+        if (flags & QDemonRenderBufferBarrierValues::AtomicCounter)
             retval |= GL_ATOMIC_COUNTER_BARRIER_BIT;
-        if (value & QDemonRenderBufferBarrierValues::BufferUpdate)
+        if (flags & QDemonRenderBufferBarrierValues::BufferUpdate)
             retval |= GL_BUFFER_UPDATE_BARRIER_BIT;
-        if (value & QDemonRenderBufferBarrierValues::CommandBuffer)
+        if (flags & QDemonRenderBufferBarrierValues::CommandBuffer)
             retval |= GL_COMMAND_BARRIER_BIT;
-        if (value & QDemonRenderBufferBarrierValues::ElementArray)
+        if (flags & QDemonRenderBufferBarrierValues::ElementArray)
             retval |= GL_ELEMENT_ARRAY_BARRIER_BIT;
-        if (value & QDemonRenderBufferBarrierValues::Framebuffer)
+        if (flags & QDemonRenderBufferBarrierValues::Framebuffer)
             retval |= GL_FRAMEBUFFER_BARRIER_BIT;
-        if (value & QDemonRenderBufferBarrierValues::PixelBuffer)
+        if (flags & QDemonRenderBufferBarrierValues::PixelBuffer)
             retval |= GL_PIXEL_BUFFER_BARRIER_BIT;
-        if (value & QDemonRenderBufferBarrierValues::ShaderImageAccess)
+        if (flags & QDemonRenderBufferBarrierValues::ShaderImageAccess)
             retval |= GL_SHADER_IMAGE_ACCESS_BARRIER_BIT;
-        if (value & QDemonRenderBufferBarrierValues::ShaderStorage)
+        if (flags & QDemonRenderBufferBarrierValues::ShaderStorage)
             retval |= GL_SHADER_STORAGE_BARRIER_BIT;
-        if (value & QDemonRenderBufferBarrierValues::TextureFetch)
+        if (flags & QDemonRenderBufferBarrierValues::TextureFetch)
             retval |= GL_TEXTURE_FETCH_BARRIER_BIT;
-        if (value & QDemonRenderBufferBarrierValues::TextureUpdate)
+        if (flags & QDemonRenderBufferBarrierValues::TextureUpdate)
             retval |= GL_TEXTURE_UPDATE_BARRIER_BIT;
-        if (value & QDemonRenderBufferBarrierValues::TransformFeedback)
+        if (flags & QDemonRenderBufferBarrierValues::TransformFeedback)
             retval |= GL_TRANSFORM_FEEDBACK_BARRIER_BIT;
-        if (value & QDemonRenderBufferBarrierValues::UniformBuffer)
+        if (flags & QDemonRenderBufferBarrierValues::UniformBuffer)
             retval |= GL_UNIFORM_BARRIER_BIT;
-        if (value & QDemonRenderBufferBarrierValues::VertexAttribArray)
+        if (flags & QDemonRenderBufferBarrierValues::VertexAttribArray)
             retval |= GL_VERTEX_ATTRIB_ARRAY_BARRIER_BIT;
 #endif
         Q_ASSERT(retval);
@@ -1477,11 +1474,11 @@ struct GLConversion
         outNumComps = 0;
     }
 
-    static GLenum fromRenderBufferFormatsToRenderBufferGL(QDemonRenderRenderBufferFormats::Enum value)
+    static GLenum fromRenderBufferFormatsToRenderBufferGL(QDemonRenderRenderBufferFormat value)
     {
         switch (value) {
 #define QDEMON_RENDER_HANDLE_GL_QDEMON_RENDERBUFFER_FORMAT(gl, nv)                                                     \
-    case QDemonRenderRenderBufferFormats::nv:                                                                          \
+    case QDemonRenderRenderBufferFormat::nv:                                                                          \
         return gl;
             QDEMON_RENDER_ITERATE_GL_QDEMON_RENDERBUFFER_FORMATS
             QDEMON_RENDER_ITERATE_GL_QDEMON_RENDERBUFFER_COVERAGE_FORMATS
@@ -1493,12 +1490,12 @@ struct GLConversion
         return 0;
     }
 
-    static QDemonRenderRenderBufferFormats::Enum fromRenderBufferGLToRenderBufferFormats(GLenum value)
+    static QDemonRenderRenderBufferFormat fromRenderBufferGLToRenderBufferFormats(GLenum value)
     {
         switch (value) {
 #define QDEMON_RENDER_HANDLE_GL_QDEMON_RENDERBUFFER_FORMAT(gl, nv)                                                     \
     case gl:                                                                                                           \
-        return QDemonRenderRenderBufferFormats::nv;
+        return QDemonRenderRenderBufferFormat::nv;
             QDEMON_RENDER_ITERATE_GL_QDEMON_RENDERBUFFER_FORMATS
             QDEMON_RENDER_ITERATE_GL_QDEMON_RENDERBUFFER_COVERAGE_FORMATS
 #undef QDEMON_RENDER_HANDLE_GL_QDEMON_RENDERBUFFER_FORMAT
@@ -1506,7 +1503,7 @@ struct GLConversion
             break;
         }
         Q_ASSERT(false);
-        return QDemonRenderRenderBufferFormats::Unknown;
+        return QDemonRenderRenderBufferFormat::Unknown;
     }
 
     static GLenum fromFramebufferAttachmentsToGL(QDemonRenderFrameBufferAttachments::Enum value)

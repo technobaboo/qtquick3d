@@ -99,7 +99,7 @@ struct QDemonResourceManager : public QDemonResourceManagerInterface
 
     QDemonRef<QDemonRenderRenderBuffer> allocateRenderBuffer(qint32 inWidth,
                                                              qint32 inHeight,
-                                                             QDemonRenderRenderBufferFormats::Enum inBufferFormat) override
+                                                             QDemonRenderRenderBufferFormat inBufferFormat) override
     {
         Q_ASSERT(inWidth >= 0 && inHeight >= 0);
         // Look for one of this specific size and format.
@@ -107,7 +107,7 @@ struct QDemonResourceManager : public QDemonResourceManagerInterface
         for (int idx = 0, end = existingMatchIdx; idx < end; ++idx) {
             auto theBuffer = freeRenderBuffers[idx];
             QDemonRenderRenderBufferDimensions theDims = theBuffer->getDimensions();
-            QDemonRenderRenderBufferFormats::Enum theFormat = theBuffer->getStorageFormat();
+            QDemonRenderRenderBufferFormat theFormat = theBuffer->getStorageFormat();
             if (theDims.m_width == inWidth && theDims.m_height == inHeight && theFormat == inBufferFormat) {
                 // Replace idx with last for efficient erasure (that reorders the vector).
                 replaceWithLast(freeRenderBuffers, idx);
@@ -323,7 +323,7 @@ struct QDemonResourceManager : public QDemonResourceManagerInterface
     }
 
     QDemonRef<QDemonRenderImage2D> allocateImage2D(QDemonRef<QDemonRenderTexture2D> inTexture,
-                                                   QDemonRenderImageAccessType::Enum inAccess) override
+                                                   QDemonRenderImageAccessType inAccess) override
     {
         if (freeImages.empty() == true) {
             auto newImage = renderContext->createImage2D(inTexture, inAccess);

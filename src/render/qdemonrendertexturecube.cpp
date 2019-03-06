@@ -36,7 +36,7 @@
 QT_BEGIN_NAMESPACE
 
 QDemonRenderTextureCube::QDemonRenderTextureCube(const QDemonRef<QDemonRenderContextImpl> &context,
-                                                 QDemonRenderTextureTargetType::Enum texTarget)
+                                                 QDemonRenderTextureTargetType texTarget)
     : QDemonRenderTextureBase(context, texTarget), m_width(0), m_height(0)
 {
 }
@@ -74,7 +74,7 @@ void QDemonRenderTextureCube::setTextureData(QDemonDataRef<quint8> newBuffer,
         qCCritical(INVALID_OPERATION, "Width or height is greater than max texture size (%d, %d)", theMaxSize, theMaxSize);
     }
 
-    QDemonRenderTextureTargetType::Enum outTarget = static_cast<QDemonRenderTextureTargetType::Enum>((int)m_texTarget + (int)inFace);
+    QDemonRenderTextureTargetType outTarget = static_cast<QDemonRenderTextureTargetType>((int)m_texTarget + (int)inFace);
     if (QDemonRenderTextureFormats::isUncompressedTextureFormat(format) || QDemonRenderTextureFormats::isDepthTextureFormat(format)) {
         m_backend->setTextureDataCubeFace(m_textureHandle,
                                           outTarget,

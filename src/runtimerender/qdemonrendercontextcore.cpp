@@ -596,7 +596,7 @@ struct QDemonRenderContextData : public QDemonRenderContextInterface
                 qint32 imageWidth = m_beginFrameResult.fboDimensions.width();
                 qint32 imageHeight = m_beginFrameResult.fboDimensions.height();
                 QDemonRenderTextureFormats::Enum theColorBufferFormat = QDemonRenderTextureFormats::RGBA8;
-                QDemonRenderRenderBufferFormats::Enum theDepthBufferFormat = QDemonRenderRenderBufferFormats::Depth16;
+                QDemonRenderRenderBufferFormat theDepthBufferFormat = QDemonRenderRenderBufferFormat::Depth16;
                 m_contextRenderTarget = m_renderContext->getRenderTarget();
                 if (m_rotationFbo == nullptr) {
                     m_rotationFbo = m_resourceManager->allocateFrameBuffer();

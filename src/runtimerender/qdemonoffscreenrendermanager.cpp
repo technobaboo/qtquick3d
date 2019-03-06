@@ -243,7 +243,7 @@ struct QDemonOffscreenRenderManager : public QDemonOffscreenRenderManagerInterfa
         QDemonResourceFrameBuffer theFrameBuffer(m_resourceManager);
         theFrameBuffer.ensureFrameBuffer();
         auto &renderTargetTexture = theData.texture;
-        QDemonRenderTextureTargetType::Enum fboAttachmentType = QDemonRenderTextureTargetType::Texture2D;
+        QDemonRenderTextureTargetType fboAttachmentType = QDemonRenderTextureTargetType::Texture2D;
         if (isMultisamplePass) {
             renderTargetTexture = nullptr;
             if (theSampleCount > 1)

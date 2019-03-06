@@ -130,14 +130,14 @@ struct QDemonAllocatedDataBufferEntry
     QAtomicInt ref;
     QString name;
     QDemonRef<QDemonRenderDataBuffer> dataBuffer;
-    QDemonRenderBufferBindValues::Enum bufferType;
+    QDemonRenderBufferBindValues bufferType;
     QDemonDataRef<quint8> bufferData;
     QDemonAllocateBufferFlags flags;
     bool needsClear;
 
     QDemonAllocatedDataBufferEntry(const QString &inName,
                                    QDemonRenderDataBuffer &inDataBuffer,
-                                   QDemonRenderBufferBindValues::Enum inType,
+                                   QDemonRenderBufferBindValues inType,
                                    const QDemonDataRef<quint8> &data,
                                    QDemonAllocateBufferFlags inFlags)
         : name(inName), dataBuffer(&inDataBuffer), bufferType(inType), bufferData(data), flags(inFlags), needsClear(false)

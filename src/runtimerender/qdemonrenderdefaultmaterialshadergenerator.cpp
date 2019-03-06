@@ -710,7 +710,7 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
         inShader.append("\tgl_Position = model_view_projection * vec4(displacedPos, 1.0);");
     }
 
-    void generateTextureSwizzle(QDemonRenderTextureSwizzleMode::Enum swizzleMode, QByteArray &texSwizzle, QByteArray &lookupSwizzle)
+    void generateTextureSwizzle(QDemonRenderTextureSwizzleMode swizzleMode, QByteArray &texSwizzle, QByteArray &lookupSwizzle)
     {
         QDemonRenderContextTypes deprecatedContextFlags(QDemonRenderContextType::GL2 | QDemonRenderContextType::GLES2);
 

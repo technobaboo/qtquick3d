@@ -36,7 +36,7 @@
 QT_BEGIN_NAMESPACE
 
 QDemonRenderRenderBuffer::QDemonRenderRenderBuffer(const QDemonRef<QDemonRenderContextImpl> &context,
-                                                   QDemonRenderRenderBufferFormats::Enum format,
+                                                   QDemonRenderRenderBufferFormat format,
                                                    quint32 width,
                                                    quint32 height)
     : m_context(context), m_backend(context->getBackend()), m_width(width), m_height(height), m_storageFormat(format), m_bufferHandle(nullptr)
@@ -77,14 +77,14 @@ void QDemonRenderRenderBuffer::setDimensions(const QDemonRenderRenderBufferDimen
         Q_ASSERT(false);
         qCCritical(INTERNAL_ERROR,
                    "Unable to create render buffer %s, %dx%d",
-                   QDemonRenderRenderBufferFormats::toString(m_storageFormat),
+                   toString(m_storageFormat),
                    m_width,
                    m_height);
     }
 }
 
 QDemonRef<QDemonRenderRenderBuffer> QDemonRenderRenderBuffer::create(const QDemonRef<QDemonRenderContextImpl> &context,
-                                                                     QDemonRenderRenderBufferFormats::Enum format,
+                                                                     QDemonRenderRenderBufferFormat format,
                                                                      quint32 width,
                                                                      quint32 height)
 {

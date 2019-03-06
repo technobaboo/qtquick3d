@@ -51,7 +51,7 @@ private:
     QDemonRef<QDemonRenderBackend> m_backend; ///< pointer to backend
     QDemonRef<QDemonRenderTexture2D> m_texture2D; ///< pointer to texture
     qint32 m_textureUnit; ///< texture unit this texture should use
-    QDemonRenderImageAccessType::Enum m_accessType; ///< texture / image access type ( read, write, read_write )
+    QDemonRenderImageAccessType m_accessType; ///< texture / image access type ( read, write, read_write )
     quint32 m_textureLevel; ///< texture level we use for this image
 
 public:
@@ -67,7 +67,7 @@ public:
      */
     QDemonRenderImage2D(const QDemonRef<QDemonRenderContextImpl> &context,
                         const QDemonRef<QDemonRenderTexture2D> &inTexture,
-                        QDemonRenderImageAccessType::Enum inAccess);
+                        QDemonRenderImageAccessType inAccess);
 
     virtual ~QDemonRenderImage2D();
 
@@ -79,7 +79,7 @@ public:
      *
      * @return No return.
      */
-    virtual void setAccessType(QDemonRenderImageAccessType::Enum inAccess) { m_accessType = inAccess; }
+    virtual void setAccessType(QDemonRenderImageAccessType inAccess) { m_accessType = inAccess; }
 
     /**
      * @brief	Set the texture level we use for this image
@@ -126,7 +126,7 @@ public:
      */
     static QDemonRef<QDemonRenderImage2D> create(const QDemonRef<QDemonRenderContextImpl> &context,
                                                  const QDemonRef<QDemonRenderTexture2D> &inTexture,
-                                                 QDemonRenderImageAccessType::Enum inAccess);
+                                                 QDemonRenderImageAccessType inAccess);
 };
 
 QT_END_NAMESPACE

@@ -50,14 +50,14 @@ public:
     void drawIndexedIndirect(QDemonRenderDrawMode::Enum drawMode, QDemonRenderComponentTypes::Enum type, const void *indirect) override;
 
     void createTextureStorage2D(QDemonRenderBackendTextureObject to,
-                                QDemonRenderTextureTargetType::Enum target,
+                                QDemonRenderTextureTargetType target,
                                 qint32 levels,
                                 QDemonRenderTextureFormats::Enum internalFormat,
                                 qint32 width,
                                 qint32 height) override;
 
     void setMultisampledTextureData2D(QDemonRenderBackendTextureObject to,
-                                      QDemonRenderTextureTargetType::Enum target,
+                                      QDemonRenderTextureTargetType target,
                                       qint32 samples,
                                       QDemonRenderTextureFormats::Enum internalFormat,
                                       qint32 width,
@@ -108,7 +108,7 @@ public:
                           qint32 level,
                           bool layered,
                           qint32 layer,
-                          QDemonRenderImageAccessType::Enum access,
+                          QDemonRenderImageAccessType access,
                           QDemonRenderTextureFormats::Enum format) override;
 
     virtual QDemonRenderBackendComputeShaderObject createComputeShader(QDemonConstDataRef<qint8> source,

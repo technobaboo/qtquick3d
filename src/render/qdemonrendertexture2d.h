@@ -59,7 +59,7 @@ public:
      * @return No return.
      */
     QDemonRenderTexture2D(const QDemonRef<QDemonRenderContextImpl> &context,
-                          QDemonRenderTextureTargetType::Enum texTarget = QDemonRenderTextureTargetType::Texture2D);
+                          QDemonRenderTextureTargetType texTarget = QDemonRenderTextureTargetType::Texture2D);
 
     virtual ~QDemonRenderTexture2D() override;
 
@@ -141,7 +141,7 @@ public:
      *
      * @return texture swizzle mode
      */
-    QDemonRenderTextureSwizzleMode::Enum getTextureSwizzleMode() override
+    QDemonRenderTextureSwizzleMode getTextureSwizzleMode() override
     {
         // if our backend supports hardware texture swizzle then there is no need for a shader
         // swizzle

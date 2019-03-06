@@ -164,7 +164,7 @@ void QDemonShaderCodeGeneratorBase::generateUVCoords()
     }
 }
 
-void QDemonShaderCodeGeneratorBase::generateTextureSwizzle(QDemonRenderTextureSwizzleMode::Enum swizzleMode,
+void QDemonShaderCodeGeneratorBase::generateTextureSwizzle(QDemonRenderTextureSwizzleMode swizzleMode,
                                                            QByteArray &texSwizzle,
                                                            QByteArray &lookupSwizzle)
 {

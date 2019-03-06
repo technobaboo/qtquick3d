@@ -703,8 +703,8 @@ struct QDemonCustomMaterialBuffer
 struct QDemonStringMemoryBarrierFlagMap
 {
     const char *name;
-    QDemonRenderBufferBarrierValues::Enum value;
-    constexpr QDemonStringMemoryBarrierFlagMap(const char *nm, QDemonRenderBufferBarrierValues::Enum val) : name(nm), value(val)
+    QDemonRenderBufferBarrierValues value;
+    constexpr QDemonStringMemoryBarrierFlagMap(const char *nm, QDemonRenderBufferBarrierValues val) : name(nm), value(val)
     {
     }
 };

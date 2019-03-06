@@ -39,12 +39,12 @@ QDemonRenderTextureSampler::QDemonRenderTextureSampler(const QDemonRef<QDemonRen
                                                        QDemonRenderTextureCoordOp::Enum wrapS,
                                                        QDemonRenderTextureCoordOp::Enum wrapT,
                                                        QDemonRenderTextureCoordOp::Enum wrapR,
-                                                       QDemonRenderTextureSwizzleMode::Enum swizzleMode,
+                                                       QDemonRenderTextureSwizzleMode swizzleMode,
                                                        float minLod,
                                                        float maxLod,
                                                        float lodBias,
-                                                       QDemonRenderTextureCompareMode::Enum compareMode,
-                                                       QDemonRenderTextureCompareOp::Enum compareFunc,
+                                                       QDemonRenderTextureCompareMode compareMode,
+                                                       QDemonRenderTextureCompareOp compareFunc,
                                                        float anisotropy,
                                                        float *borderColor)
     : m_minFilter(minFilter)

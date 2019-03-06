@@ -38,7 +38,7 @@ QDemonRenderVertexBuffer::QDemonRenderVertexBuffer(const QDemonRef<QDemonRenderC
                                                    size_t size,
                                                    quint32 stride,
                                                    QDemonRenderBufferBindFlags bindFlags,
-                                                   QDemonRenderBufferUsageType::Enum usageType,
+                                                   QDemonRenderBufferUsageType usageType,
                                                    QDemonDataRef<quint8> data)
     : QDemonRenderDataBuffer(context, size, bindFlags, usageType, data), m_stride(stride)
 {
@@ -61,7 +61,7 @@ void QDemonRenderVertexBuffer::bind()
 }
 
 QDemonRef<QDemonRenderVertexBuffer> QDemonRenderVertexBuffer::create(const QDemonRef<QDemonRenderContextImpl> &context,
-                                                                     QDemonRenderBufferUsageType::Enum usageType,
+                                                                     QDemonRenderBufferUsageType usageType,
                                                                      size_t size,
                                                                      quint32 stride,
                                                                      QDemonConstDataRef<quint8> bufferData)

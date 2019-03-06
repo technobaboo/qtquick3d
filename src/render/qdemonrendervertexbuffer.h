@@ -61,7 +61,7 @@ public:
                              size_t size,
                              quint32 stride,
                              QDemonRenderBufferBindFlags bindFlags,
-                             QDemonRenderBufferUsageType::Enum usageType,
+                             QDemonRenderBufferUsageType usageType,
                              QDemonDataRef<quint8> data);
 
     ///< destructor
@@ -106,7 +106,7 @@ public:
     // offset
     // Leaves this buffer temporarily bound.
     static QDemonRef<QDemonRenderVertexBuffer> create(const QDemonRef<QDemonRenderContextImpl> &context,
-                                                      QDemonRenderBufferUsageType::Enum usageType,
+                                                      QDemonRenderBufferUsageType usageType,
                                                       size_t size,
                                                       quint32 stride,
                                                       QDemonConstDataRef<quint8> bufferData);

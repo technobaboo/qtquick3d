@@ -38,7 +38,7 @@ QT_BEGIN_NAMESPACE
 QDemonRenderDataBuffer::QDemonRenderDataBuffer(const QDemonRef<QDemonRenderContextImpl> &context,
                                                size_t size,
                                                QDemonRenderBufferBindFlags bindFlags,
-                                               QDemonRenderBufferUsageType::Enum usageType,
+                                               QDemonRenderBufferUsageType usageType,
                                                QDemonDataRef<quint8> data)
     : m_context(context)
     , m_backend(context->getBackend())

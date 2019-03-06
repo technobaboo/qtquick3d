@@ -200,7 +200,7 @@ QDemonRenderBackendGLES2Impl::~QDemonRenderBackendGLES2Impl()
 }
 
 void QDemonRenderBackendGLES2Impl::setMultisampledTextureData2D(QDemonRenderBackendTextureObject to,
-                                                                QDemonRenderTextureTargetType::Enum target,
+                                                                QDemonRenderTextureTargetType target,
                                                                 qint32 samples,
                                                                 QDemonRenderTextureFormats::Enum internalFormat,
                                                                 qint32 width,
@@ -217,7 +217,7 @@ void QDemonRenderBackendGLES2Impl::setMultisampledTextureData2D(QDemonRenderBack
 }
 
 void QDemonRenderBackendGLES2Impl::setTextureData3D(QDemonRenderBackendTextureObject to,
-                                                    QDemonRenderTextureTargetType::Enum target,
+                                                    QDemonRenderTextureTargetType target,
                                                     qint32 level,
                                                     QDemonRenderTextureFormats::Enum internalFormat,
                                                     qint32 width,
@@ -233,7 +233,7 @@ void QDemonRenderBackendGLES2Impl::setTextureData3D(QDemonRenderBackendTextureOb
     GL_CALL_EXTRA_FUNCTION(glBindTexture(glTarget, texID));
     bool conversionRequired = format != internalFormat;
 
-    QDemonRenderTextureSwizzleMode::Enum swizzleMode = QDemonRenderTextureSwizzleMode::NoSwizzle;
+    QDemonRenderTextureSwizzleMode swizzleMode = QDemonRenderTextureSwizzleMode::NoSwizzle;
     internalFormat = GLConversion::replaceDeprecatedTextureFormat(getRenderContextType(), internalFormat, swizzleMode);
 
     GLenum glformat = 0, glInternalFormat = 0, gltype = GL_UNSIGNED_BYTE;
@@ -259,7 +259,7 @@ void QDemonRenderBackendGLES2Impl::setTextureData3D(QDemonRenderBackendTextureOb
 }
 
 void QDemonRenderBackendGLES2Impl::setTextureData2D(QDemonRenderBackendTextureObject to,
-                                                    QDemonRenderTextureTargetType::Enum target,
+                                                    QDemonRenderTextureTargetType target,
                                                     qint32 level,
                                                     QDemonRenderTextureFormats::Enum internalFormat,
                                                     qint32 width,
@@ -274,7 +274,7 @@ void QDemonRenderBackendGLES2Impl::setTextureData2D(QDemonRenderBackendTextureOb
     GL_CALL_EXTRA_FUNCTION(glBindTexture(glTarget, texID));
     bool conversionRequired = format != internalFormat;
 
-    QDemonRenderTextureSwizzleMode::Enum swizzleMode = QDemonRenderTextureSwizzleMode::NoSwizzle;
+    QDemonRenderTextureSwizzleMode swizzleMode = QDemonRenderTextureSwizzleMode::NoSwizzle;
     internalFormat = GLConversion::replaceDeprecatedTextureFormat(getRenderContextType(), internalFormat, swizzleMode);
 
     GLenum glformat = 0, glInternalFormat = 0, gltype = GL_UNSIGNED_BYTE;
@@ -306,7 +306,7 @@ void QDemonRenderBackendGLES2Impl::setTextureData2D(QDemonRenderBackendTextureOb
 }
 
 void QDemonRenderBackendGLES2Impl::updateSampler(QDemonRenderBackendSamplerObject /* so */,
-                                                 QDemonRenderTextureTargetType::Enum target,
+                                                 QDemonRenderTextureTargetType target,
                                                  QDemonRenderTextureMinifyingOp::Enum minFilter,
                                                  QDemonRenderTextureMagnifyingOp::Enum magFilter,
                                                  QDemonRenderTextureCoordOp::Enum wrapS,
@@ -315,8 +315,8 @@ void QDemonRenderBackendGLES2Impl::updateSampler(QDemonRenderBackendSamplerObjec
                                                  float minLod,
                                                  float maxLod,
                                                  float lodBias,
-                                                 QDemonRenderTextureCompareMode::Enum compareMode,
-                                                 QDemonRenderTextureCompareOp::Enum compareFunc,
+                                                 QDemonRenderTextureCompareMode compareMode,
+                                                 QDemonRenderTextureCompareOp compareFunc,
                                                  float anisotropy,
                                                  float *borderColor)
 {
@@ -346,7 +346,7 @@ void QDemonRenderBackendGLES2Impl::updateSampler(QDemonRenderBackendSamplerObjec
 }
 
 void QDemonRenderBackendGLES2Impl::updateTextureObject(QDemonRenderBackendTextureObject to,
-                                                       QDemonRenderTextureTargetType::Enum target,
+                                                       QDemonRenderTextureTargetType target,
                                                        qint32 baseLevel,
                                                        qint32 maxLevel)
 {
@@ -359,8 +359,8 @@ void QDemonRenderBackendGLES2Impl::updateTextureObject(QDemonRenderBackendTextur
 }
 
 void QDemonRenderBackendGLES2Impl::updateTextureSwizzle(QDemonRenderBackendTextureObject to,
-                                                        QDemonRenderTextureTargetType::Enum target,
-                                                        QDemonRenderTextureSwizzleMode::Enum swizzleMode)
+                                                        QDemonRenderTextureTargetType target,
+                                                        QDemonRenderTextureSwizzleMode swizzleMode)
 {
     NVRENDER_BACKEND_UNUSED(to);
     NVRENDER_BACKEND_UNUSED(target);
@@ -399,7 +399,7 @@ qint32 QDemonRenderBackendGLES2Impl::getStencilBits() const
 }
 
 void QDemonRenderBackendGLES2Impl::generateMipMaps(QDemonRenderBackendTextureObject to,
-                                                   QDemonRenderTextureTargetType::Enum target,
+                                                   QDemonRenderTextureTargetType target,
                                                    QDemonRenderHint::Enum /*genType*/)
 {
     GLuint texID = HandleToID_cast(GLuint, size_t, to);
@@ -610,7 +610,7 @@ void QDemonRenderBackendGLES2Impl::renderTargetAttach(QDemonRenderBackendRenderT
 void QDemonRenderBackendGLES2Impl::renderTargetAttach(QDemonRenderBackendRenderTargetObject /* rto */,
                                                       QDemonRenderFrameBufferAttachments::Enum attachment,
                                                       QDemonRenderBackendTextureObject to,
-                                                      QDemonRenderTextureTargetType::Enum target)
+                                                      QDemonRenderTextureTargetType target)
 {
     // rto must be the current render target
     GLuint texID = HandleToID_cast(GLuint, size_t, to);
@@ -659,7 +659,7 @@ bool QDemonRenderBackendGLES2Impl::renderTargetIsValid(QDemonRenderBackendRender
     return true;
 }
 
-QDemonRenderBackend::QDemonRenderBackendRenderbufferObject QDemonRenderBackendGLES2Impl::createRenderbuffer(QDemonRenderRenderBufferFormats::Enum storageFormat,
+QDemonRenderBackend::QDemonRenderBackendRenderbufferObject QDemonRenderBackendGLES2Impl::createRenderbuffer(QDemonRenderRenderBufferFormat storageFormat,
                                                                                                             qint32 width,
                                                                                                             qint32 height)
 {
@@ -695,7 +695,7 @@ void QDemonRenderBackendGLES2Impl::releaseRenderbuffer(QDemonRenderBackendRender
 }
 
 bool QDemonRenderBackendGLES2Impl::resizeRenderbuffer(QDemonRenderBackendRenderbufferObject rbo,
-                                                      QDemonRenderRenderBufferFormats::Enum storageFormat,
+                                                      QDemonRenderRenderBufferFormat storageFormat,
                                                       qint32 width,
                                                       qint32 height)
 {

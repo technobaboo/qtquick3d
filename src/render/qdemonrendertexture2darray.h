@@ -58,7 +58,7 @@ public:
      * @return No return.
      */
     QDemonRenderTexture2DArray(const QDemonRef<QDemonRenderContextImpl> &context,
-                               QDemonRenderTextureTargetType::Enum texTarget = QDemonRenderTextureTargetType::Texture2D_Array);
+                               QDemonRenderTextureTargetType texTarget = QDemonRenderTextureTargetType::Texture2D_Array);
 
     virtual ~QDemonRenderTexture2DArray();
 

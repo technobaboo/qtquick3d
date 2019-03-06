@@ -446,7 +446,7 @@ public:
      */
     virtual QDemonRenderBackendBufferObject createBuffer(size_t size,
                                                          QDemonRenderBufferBindFlags bindFlags,
-                                                         QDemonRenderBufferUsageType::Enum usage,
+                                                         QDemonRenderBufferUsageType usage,
                                                          const void *hostPtr = nullptr) = 0;
 
     /**
@@ -487,7 +487,7 @@ public:
     virtual void updateBuffer(QDemonRenderBackendBufferObject bo,
                               QDemonRenderBufferBindFlags bindFlags,
                               size_t size,
-                              QDemonRenderBufferUsageType::Enum usage,
+                              QDemonRenderBufferUsageType usage,
                               const void *data) = 0;
 
     /**
@@ -691,7 +691,7 @@ public:
     virtual void renderTargetAttach(QDemonRenderBackendRenderTargetObject rto,
                                     QDemonRenderFrameBufferAttachments::Enum attachment,
                                     QDemonRenderBackendTextureObject to,
-                                    QDemonRenderTextureTargetType::Enum target = QDemonRenderTextureTargetType::Texture2D) = 0;
+                                    QDemonRenderTextureTargetType target = QDemonRenderTextureTargetType::Texture2D) = 0;
 
     /**
      * @brief Attach a texture object to the render target
@@ -794,7 +794,7 @@ public:
      *
      * @return The created render buffer object or nullptr if the creation failed.
      */
-    virtual QDemonRenderBackendRenderbufferObject createRenderbuffer(QDemonRenderRenderBufferFormats::Enum storageFormat,
+    virtual QDemonRenderBackendRenderbufferObject createRenderbuffer(QDemonRenderRenderBufferFormat storageFormat,
                                                                      qint32 width,
                                                                      qint32 height) = 0;
 
@@ -817,7 +817,7 @@ public:
      * @return True on success
      */
     virtual bool resizeRenderbuffer(QDemonRenderBackendRenderbufferObject rbo,
-                                    QDemonRenderRenderBufferFormats::Enum storageFormat,
+                                    QDemonRenderRenderBufferFormat storageFormat,
                                     qint32 width,
                                     qint32 height) = 0;
 
@@ -845,7 +845,7 @@ public:
      * @return No return
      */
     virtual void setTextureData2D(QDemonRenderBackendTextureObject to,
-                                  QDemonRenderTextureTargetType::Enum target,
+                                  QDemonRenderTextureTargetType target,
                                   qint32 level,
                                   QDemonRenderTextureFormats::Enum internalFormat,
                                   qint32 width,
@@ -871,7 +871,7 @@ public:
      * @return No return
      */
     virtual void setTextureDataCubeFace(QDemonRenderBackendTextureObject to,
-                                        QDemonRenderTextureTargetType::Enum target,
+                                        QDemonRenderTextureTargetType target,
                                         qint32 level,
                                         QDemonRenderTextureFormats::Enum internalFormat,
                                         qint32 width,
@@ -894,7 +894,7 @@ public:
      * @return No return
      */
     virtual void createTextureStorage2D(QDemonRenderBackendTextureObject to,
-                                        QDemonRenderTextureTargetType::Enum target,
+                                        QDemonRenderTextureTargetType target,
                                         qint32 levels,
                                         QDemonRenderTextureFormats::Enum internalFormat,
                                         qint32 width,
@@ -918,7 +918,7 @@ public:
      * @return No return
      */
     virtual void setTextureSubData2D(QDemonRenderBackendTextureObject to,
-                                     QDemonRenderTextureTargetType::Enum target,
+                                     QDemonRenderTextureTargetType target,
                                      qint32 level,
                                      qint32 xOffset,
                                      qint32 yOffset,
@@ -944,7 +944,7 @@ public:
      * @return No return
      */
     virtual void setCompressedTextureData2D(QDemonRenderBackendTextureObject to,
-                                            QDemonRenderTextureTargetType::Enum target,
+                                            QDemonRenderTextureTargetType target,
                                             qint32 level,
                                             QDemonRenderTextureFormats::Enum internalFormat,
                                             qint32 width,
@@ -970,7 +970,7 @@ public:
      * @return No return
      */
     virtual void setCompressedTextureDataCubeFace(QDemonRenderBackendTextureObject to,
-                                                  QDemonRenderTextureTargetType::Enum target,
+                                                  QDemonRenderTextureTargetType target,
                                                   qint32 level,
                                                   QDemonRenderTextureFormats::Enum internalFormat,
                                                   qint32 width,
@@ -997,7 +997,7 @@ public:
      * @return No return
      */
     virtual void setCompressedTextureSubData2D(QDemonRenderBackendTextureObject to,
-                                               QDemonRenderTextureTargetType::Enum target,
+                                               QDemonRenderTextureTargetType target,
                                                qint32 level,
                                                qint32 xOffset,
                                                qint32 yOffset,
@@ -1021,7 +1021,7 @@ public:
      * @return No return
      */
     virtual void setMultisampledTextureData2D(QDemonRenderBackendTextureObject to,
-                                              QDemonRenderTextureTargetType::Enum target,
+                                              QDemonRenderTextureTargetType target,
                                               qint32 samples,
                                               QDemonRenderTextureFormats::Enum internalFormat,
                                               qint32 width,
@@ -1046,7 +1046,7 @@ public:
      * @return No return
      */
     virtual void setTextureData3D(QDemonRenderBackendTextureObject to,
-                                  QDemonRenderTextureTargetType::Enum target,
+                                  QDemonRenderTextureTargetType target,
                                   qint32 level,
                                   QDemonRenderTextureFormats::Enum internalFormat,
                                   qint32 width,
@@ -1066,7 +1066,7 @@ public:
      * @return No return
      */
     virtual void generateMipMaps(QDemonRenderBackendTextureObject to,
-                                 QDemonRenderTextureTargetType::Enum target,
+                                 QDemonRenderTextureTargetType target,
                                  QDemonRenderHint::Enum genType) = 0;
 
     /**
@@ -1079,7 +1079,7 @@ public:
      * @return no return.
      */
     virtual void bindTexture(QDemonRenderBackendTextureObject to,
-                             QDemonRenderTextureTargetType::Enum target,
+                             QDemonRenderTextureTargetType target,
                              qint32 unit) = 0;
 
     /**
@@ -1100,7 +1100,7 @@ public:
                                   qint32 level,
                                   bool layered,
                                   qint32 layer,
-                                  QDemonRenderImageAccessType::Enum accessFlags,
+                                  QDemonRenderImageAccessType accessFlags,
                                   QDemonRenderTextureFormats::Enum format) = 0;
 
     /**
@@ -1120,7 +1120,7 @@ public:
      *
      * @return texture swizzle mode
      */
-    virtual QDemonRenderTextureSwizzleMode::Enum getTextureSwizzleMode(const QDemonRenderTextureFormats::Enum inFormat) const = 0;
+    virtual QDemonRenderTextureSwizzleMode getTextureSwizzleMode(const QDemonRenderTextureFormats::Enum inFormat) const = 0;
 
     /**
      * @ brief create a sampler
@@ -1149,8 +1149,8 @@ public:
             qint32 minLod = -1000,
             qint32 maxLod = 1000,
             float lodBias = 0.0,
-            QDemonRenderTextureCompareMode::Enum compareMode = QDemonRenderTextureCompareMode::NoCompare,
-            QDemonRenderTextureCompareOp::Enum compareFunc = QDemonRenderTextureCompareOp::LessThanOrEqual,
+            QDemonRenderTextureCompareMode compareMode = QDemonRenderTextureCompareMode::NoCompare,
+            QDemonRenderTextureCompareOp compareFunc = QDemonRenderTextureCompareOp::LessThanOrEqual,
             float anisotropy = 1.0,
             float *borderColor = nullptr) = 0;
 
@@ -1175,7 +1175,7 @@ public:
      * @return No return
      */
     virtual void updateSampler(QDemonRenderBackendSamplerObject so,
-                               QDemonRenderTextureTargetType::Enum target,
+                               QDemonRenderTextureTargetType target,
                                QDemonRenderTextureMinifyingOp::Enum minFilter = QDemonRenderTextureMinifyingOp::Linear,
                                QDemonRenderTextureMagnifyingOp::Enum magFilter = QDemonRenderTextureMagnifyingOp::Linear,
                                QDemonRenderTextureCoordOp::Enum wrapS = QDemonRenderTextureCoordOp::ClampToEdge,
@@ -1184,8 +1184,8 @@ public:
                                float minLod = -1000.0,
                                float maxLod = 1000.0,
                                float lodBias = 0.0,
-                               QDemonRenderTextureCompareMode::Enum compareMode = QDemonRenderTextureCompareMode::NoCompare,
-                               QDemonRenderTextureCompareOp::Enum compareFunc = QDemonRenderTextureCompareOp::LessThanOrEqual,
+                               QDemonRenderTextureCompareMode compareMode = QDemonRenderTextureCompareMode::NoCompare,
+                               QDemonRenderTextureCompareOp compareFunc = QDemonRenderTextureCompareOp::LessThanOrEqual,
                                float anisotropy = 1.0,
                                float *borderColor = nullptr) = 0;
 
@@ -1199,8 +1199,8 @@ public:
      * @return No return
      */
     virtual void updateTextureSwizzle(QDemonRenderBackendTextureObject to,
-                                      QDemonRenderTextureTargetType::Enum target,
-                                      QDemonRenderTextureSwizzleMode::Enum swizzleMode) = 0;
+                                      QDemonRenderTextureTargetType target,
+                                      QDemonRenderTextureSwizzleMode swizzleMode) = 0;
 
     /**
      * @ brief Update state belonging to a texture object
@@ -1213,7 +1213,7 @@ public:
      * @return No return
      */
     virtual void updateTextureObject(QDemonRenderBackendTextureObject to,
-                                     QDemonRenderTextureTargetType::Enum target,
+                                     QDemonRenderTextureTargetType target,
                                      qint32 baseLevel,
                                      qint32 maxLevel) = 0;
 

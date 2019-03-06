@@ -35,7 +35,7 @@
 QT_BEGIN_NAMESPACE
 
 QDemonRenderTexture2D::QDemonRenderTexture2D(const QDemonRef<QDemonRenderContextImpl> &context,
-                                             QDemonRenderTextureTargetType::Enum texTarget)
+                                             QDemonRenderTextureTargetType texTarget)
     : QDemonRenderTextureBase(context, texTarget), m_width(0), m_height(0)
 {
 }

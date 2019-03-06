@@ -116,7 +116,7 @@ public:
      */
     virtual void attach(QDemonRenderFrameBufferAttachments::Enum attachment,
                         QDemonRenderTextureOrRenderBuffer buffer,
-                        QDemonRenderTextureTargetType::Enum target = QDemonRenderTextureTargetType::Texture2D);
+                        QDemonRenderTextureTargetType target = QDemonRenderTextureTargetType::Texture2D);
 
     /**
      * @brief Attach a particular layer of the texture 2D array to a render target
@@ -196,7 +196,7 @@ private:
      *
      * @return which target we released
      */
-    QDemonRenderTextureTargetType::Enum releaseAttachment(QDemonRenderFrameBufferAttachments::Enum idx);
+    QDemonRenderTextureTargetType releaseAttachment(QDemonRenderFrameBufferAttachments::Enum idx);
 
     quint32 m_attachmentBits; ///< holds flags for current attached buffers
 };

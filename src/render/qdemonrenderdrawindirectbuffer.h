@@ -72,7 +72,7 @@ public:
      */
     QDemonRenderDrawIndirectBuffer(const QDemonRef<QDemonRenderContextImpl> &context,
                                    size_t size,
-                                   QDemonRenderBufferUsageType::Enum usageType,
+                                   QDemonRenderBufferUsageType usageType,
                                    QDemonDataRef<quint8> data);
 
     ///< destructor
@@ -131,7 +131,7 @@ public:
      * @return the buffer object or nullptr
      */
     static QDemonRef<QDemonRenderDrawIndirectBuffer> create(const QDemonRef<QDemonRenderContextImpl> &context,
-                                                            QDemonRenderBufferUsageType::Enum usageType,
+                                                            QDemonRenderBufferUsageType usageType,
                                                             size_t size,
                                                             QDemonConstDataRef<quint8> bufferData);
 

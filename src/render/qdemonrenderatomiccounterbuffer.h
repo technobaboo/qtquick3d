@@ -62,7 +62,7 @@ public:
     QDemonRenderAtomicCounterBuffer(const QDemonRef<QDemonRenderContextImpl> &context,
                                     const QByteArray &bufferName,
                                     size_t size,
-                                    QDemonRenderBufferUsageType::Enum usageType,
+                                    QDemonRenderBufferUsageType usageType,
                                     QDemonDataRef<quint8> data);
 
     ///< destructor
@@ -159,7 +159,7 @@ public:
      */
     static QDemonRef<QDemonRenderAtomicCounterBuffer> create(const QDemonRef<QDemonRenderContextImpl> &context,
                                                              const char *bufferName,
-                                                             QDemonRenderBufferUsageType::Enum usageType,
+                                                             QDemonRenderBufferUsageType usageType,
                                                              size_t size,
                                                              QDemonConstDataRef<quint8> bufferData);
 

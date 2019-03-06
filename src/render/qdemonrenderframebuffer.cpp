@@ -69,9 +69,9 @@ inline void CheckAttachment(QDemonRef<QDemonRenderContext> ctx, QDemonRenderFram
     (void)attachment;
 }
 
-QDemonRenderTextureTargetType::Enum QDemonRenderFrameBuffer::releaseAttachment(QDemonRenderFrameBufferAttachments::Enum idx)
+QDemonRenderTextureTargetType QDemonRenderFrameBuffer::releaseAttachment(QDemonRenderFrameBufferAttachments::Enum idx)
 {
-    QDemonRenderTextureTargetType::Enum target = QDemonRenderTextureTargetType::Unknown;
+    QDemonRenderTextureTargetType target = QDemonRenderTextureTargetType::Unknown;
 
     QDemonRenderTextureOrRenderBuffer Attach = m_attachments[idx];
     if (Attach.hasTexture2D()) {
@@ -109,7 +109,7 @@ QDemonRenderTextureOrRenderBuffer QDemonRenderFrameBuffer::getAttachment(QDemonR
 
 void QDemonRenderFrameBuffer::attach(QDemonRenderFrameBufferAttachments::Enum attachment,
                                      QDemonRenderTextureOrRenderBuffer buffer,
-                                     QDemonRenderTextureTargetType::Enum target)
+                                     QDemonRenderTextureTargetType target)
 {
     if (attachment == QDemonRenderFrameBufferAttachments::Unknown || attachment > QDemonRenderFrameBufferAttachments::LastAttachment) {
         qCCritical(INVALID_PARAMETER, "Attachment out of range");
@@ -126,7 +126,7 @@ void QDemonRenderFrameBuffer::attach(QDemonRenderFrameBufferAttachments::Enum at
     m_context->setRenderTarget(this);
 
     // release previous attachments
-    QDemonRenderTextureTargetType::Enum theRelTarget = releaseAttachment(attachment);
+    QDemonRenderTextureTargetType theRelTarget = releaseAttachment(attachment);
 
     if (buffer.hasTexture2D()) {
         // On the same attachment point there could be a something attached with a different
@@ -182,7 +182,7 @@ void QDemonRenderFrameBuffer::attachLayer(QDemonRenderFrameBufferAttachments::En
     m_context->setRenderTarget(this);
 
     // release previous attachments
-    QDemonRenderTextureTargetType::Enum theRelTarget = releaseAttachment(attachment);
+    QDemonRenderTextureTargetType theRelTarget = releaseAttachment(attachment);
 
     // On the same attachment point there could be a something attached with a different target
     // MSAA <--> NoMSAA
@@ -215,9 +215,9 @@ void QDemonRenderFrameBuffer::attachFace(QDemonRenderFrameBufferAttachments::Enu
     m_context->setRenderTarget(this);
 
     // release previous attachments
-    QDemonRenderTextureTargetType::Enum attachTarget = static_cast<QDemonRenderTextureTargetType::Enum>(
+    QDemonRenderTextureTargetType attachTarget = static_cast<QDemonRenderTextureTargetType>(
             (int)QDemonRenderTextureTargetType::TextureCube + (int)face);
-    QDemonRenderTextureTargetType::Enum theRelTarget = releaseAttachment(attachment);
+    QDemonRenderTextureTargetType theRelTarget = releaseAttachment(attachment);
 
     // If buffer has no texture cube, this call is used to detach faces.
     // If release target is not cube, there is something else attached to that

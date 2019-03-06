@@ -380,108 +380,108 @@ enum class QDemonRenderCommandFlushValues
 Q_DECLARE_FLAGS(QDemonRenderCommandFlushFlags, QDemonRenderCommandFlushValues);
 Q_DECLARE_OPERATORS_FOR_FLAGS(QDemonRenderCommandFlushFlags);
 
-struct QDemonRenderBufferBindValues
+enum class QDemonRenderBufferBindValues : quint32
 {
-    enum Enum {
-        Unknown = 0,
-        Vertex = 1 << 0, ///< Bind as vertex buffer
-        Index = 1 << 1, ///< Bind as index buffer
-        Constant = 1 << 2, ///< Bind as constant buffer
-        Storage = 1 << 3, ///< Bind as shader storage buffer
-        Atomic_Counter = 1 << 4, ///< Bind as atomic counter buffer
-        Draw_Indirect = 1 << 5, ///< Bind as draw indirect buffer
-    };
+    Unknown = 0,
+    Vertex = 1 << 0, ///< Bind as vertex buffer
+    Index = 1 << 1, ///< Bind as index buffer
+    Constant = 1 << 2, ///< Bind as constant buffer
+    Storage = 1 << 3, ///< Bind as shader storage buffer
+    Atomic_Counter = 1 << 4, ///< Bind as atomic counter buffer
+    Draw_Indirect = 1 << 5, ///< Bind as draw indirect buffer
 };
 
-typedef QDemonFlags<QDemonRenderBufferBindValues::Enum, quint32> QDemonRenderBufferBindFlags;
+Q_DECLARE_FLAGS(QDemonRenderBufferBindFlags, QDemonRenderBufferBindValues);
+Q_DECLARE_OPERATORS_FOR_FLAGS(QDemonRenderBufferBindFlags);
 
-struct QDemonRenderBufferUsageType
+enum class QDemonRenderBufferUsageType
 {
-    enum Enum {
-        Unknown = 0,
-        Static, ///< Rarely updated
-        Dynamic, ///< Most likely updated every frame
-    };
+    Unknown = 0,
+    Static, ///< Rarely updated
+    Dynamic, ///< Most likely updated every frame
 };
 
-struct QDemonRenderImageAccessType
+enum class QDemonRenderImageAccessType
 {
-    enum Enum {
-        Unknown = 0,
-        Read, ///< Read only access
-        Write, ///< Write only access
-        ReadWrite, ///< Read and write access
-    };
+    Unknown = 0,
+    Read, ///< Read only access
+    Write, ///< Write only access
+    ReadWrite, ///< Read and write access
 };
 
-struct QDemonRenderBufferAccessTypeValues
+enum class QDemonRenderBufferAccessTypeValues
 {
-    enum Enum {
-        Unknown = 0,
-        Read = 1 << 0, ///< Read access
-        Write = 1 << 1, ///< Write access
-        Invalid = 1 << 2, ///< No sync
-        InvalidRange = 1 << 3, ///< No sync
-
-    };
+    Unknown = 0,
+    Read = 1 << 0, ///< Read access
+    Write = 1 << 1, ///< Write access
+    Invalid = 1 << 2, ///< No sync
+    InvalidRange = 1 << 3, ///< No sync
 };
 
-typedef QDemonFlags<QDemonRenderBufferAccessTypeValues::Enum, quint32> QDemonRenderBufferAccessFlags;
+Q_DECLARE_FLAGS(QDemonRenderBufferAccessFlags, QDemonRenderBufferAccessTypeValues);
+Q_DECLARE_OPERATORS_FOR_FLAGS(QDemonRenderBufferAccessFlags);
 
 ///< defines a barrier of ordering the memory transactions to a command relative to those issued
 /// before the barrier
-struct QDemonRenderBufferBarrierValues
+enum class QDemonRenderBufferBarrierValues
 {
-    enum Enum {
-        Unknown = 0,
-        VertexAttribArray = 1 << 0, ///< Barrier for vertex attributes sourced from a buffer
-        ElementArray = 1 << 1, ///< Barrier for indices sourced from a buffer
-        UniformBuffer = 1 << 2, ///< Barrier for shader uniforms sourced from a buffer
-        TextureFetch = 1 << 3, ///< Barrier for texture fetches within shaders
-        ShaderImageAccess = 1 << 4, ///< Barrier for image access using load / store
-        CommandBuffer = 1 << 5, ///< Barrier for indirect drawing
-        PixelBuffer = 1 << 6, ///< Barrier for pixel buffer access
-        TextureUpdate = 1 << 7, ///< Barrier for texture writes
-        BufferUpdate = 1 << 8, ///< Barrier for buffer writes
-        Framebuffer = 1 << 9, ///< Barrier for framebuffer writes
-        TransformFeedback = 1 << 10, ///< Barrier for transform feedback writes
-        AtomicCounter = 1 << 11, ///< Barrier for atomic counter writes
-        ShaderStorage = 1 << 12, ///< Barrier for shader storage blocks writes
-        All = 0xFFFF, ///< Barrier for all of the above
-    };
+    Unknown = 0,
+    VertexAttribArray = 1 << 0, ///< Barrier for vertex attributes sourced from a buffer
+    ElementArray = 1 << 1, ///< Barrier for indices sourced from a buffer
+    UniformBuffer = 1 << 2, ///< Barrier for shader uniforms sourced from a buffer
+    TextureFetch = 1 << 3, ///< Barrier for texture fetches within shaders
+    ShaderImageAccess = 1 << 4, ///< Barrier for image access using load / store
+    CommandBuffer = 1 << 5, ///< Barrier for indirect drawing
+    PixelBuffer = 1 << 6, ///< Barrier for pixel buffer access
+    TextureUpdate = 1 << 7, ///< Barrier for texture writes
+    BufferUpdate = 1 << 8, ///< Barrier for buffer writes
+    Framebuffer = 1 << 9, ///< Barrier for framebuffer writes
+    TransformFeedback = 1 << 10, ///< Barrier for transform feedback writes
+    AtomicCounter = 1 << 11, ///< Barrier for atomic counter writes
+    ShaderStorage = 1 << 12, ///< Barrier for shader storage blocks writes
+    All = 0xFFFF, ///< Barrier for all of the above
 };
 
-typedef QDemonFlags<QDemonRenderBufferBarrierValues::Enum, quint32> QDemonRenderBufferBarrierFlags;
+Q_DECLARE_FLAGS(QDemonRenderBufferBarrierFlags, QDemonRenderBufferBarrierValues);
+Q_DECLARE_OPERATORS_FOR_FLAGS(QDemonRenderBufferBarrierFlags);
 
-struct QDemonRenderRenderBufferFormats
+enum class QDemonRenderRenderBufferFormat
 {
-    enum Enum { Unknown = 0, RGBA4, RGB565, RGBA5551, Depth16, Depth24, Depth32, StencilIndex8, CoverageNV };
+    Unknown = 0,
+    RGBA4,
+    RGB565,
+    RGBA5551,
+    Depth16,
+    Depth24,
+    Depth32,
+    StencilIndex8,
+    CoverageNV
+};
 
-    static const char *toString(Enum value)
-    {
-        switch (value) {
-        case RGBA4:
-            return "RGBA4";
-        case RGB565:
-            return "RGB565";
-        case RGBA5551:
-            return "RGBA5551";
-        case Depth16:
-            return "Depth16";
-        case Depth24:
-            return "Depth24";
-        case Depth32:
-            return "Depth32";
-        case StencilIndex8:
-            return "StencilIndex8";
-        case CoverageNV:
-            return "CoverageNV";
-        default:
-            break;
-        }
-        return "Unknown";
+inline const char *toString(QDemonRenderRenderBufferFormat value)
+{
+    switch (value) {
+    case QDemonRenderRenderBufferFormat::RGBA4:
+        return "RGBA4";
+    case QDemonRenderRenderBufferFormat::RGB565:
+        return "RGB565";
+    case QDemonRenderRenderBufferFormat::RGBA5551:
+        return "RGBA5551";
+    case QDemonRenderRenderBufferFormat::Depth16:
+        return "Depth16";
+    case QDemonRenderRenderBufferFormat::Depth24:
+        return "Depth24";
+    case QDemonRenderRenderBufferFormat::Depth32:
+        return "Depth32";
+    case QDemonRenderRenderBufferFormat::StencilIndex8:
+        return "StencilIndex8";
+    case QDemonRenderRenderBufferFormat::CoverageNV:
+        return "CoverageNV";
+    default:
+        break;
     }
-};
+    return "Unknown";
+}
 
 struct QDemonRenderTextureFormats
 {
@@ -982,83 +982,83 @@ struct QDemonRenderTextureFormats
     }
 };
 
-struct QDemonRenderTextureTargetType
+enum class QDemonRenderTextureTargetType
 {
-    enum Enum {
-        Unknown = 0,
-        Texture2D,
-        Texture2D_MS,
-        Texture2D_Array,
-        TextureCube,
-        TextureCubePosX,
-        TextureCubeNegX,
-        TextureCubePosY,
-        TextureCubeNegY,
-        TextureCubePosZ,
-        TextureCubeNegZ,
-    };
+    Unknown = 0,
+    Texture2D,
+    Texture2D_MS,
+    Texture2D_Array,
+    TextureCube,
+    TextureCubePosX,
+    TextureCubeNegX,
+    TextureCubePosY,
+    TextureCubeNegY,
+    TextureCubePosZ,
+    TextureCubeNegZ,
 };
 
-struct QDemonRenderTextureUnit
+enum class QDemonRenderTextureUnit
 {
-    enum Enum {
-        TextureUnit_0 = 0,
-        TextureUnit_1,
-        TextureUnit_2,
-        TextureUnit_3,
-        TextureUnit_4,
-        TextureUnit_5,
-        TextureUnit_6,
-        TextureUnit_7,
-        TextureUnit_8,
-        TextureUnit_9,
-        TextureUnit_10,
-        TextureUnit_11,
-        TextureUnit_12,
-        TextureUnit_13,
-        TextureUnit_14,
-        TextureUnit_15,
-        TextureUnit_16,
-        TextureUnit_17,
-        TextureUnit_18,
-        TextureUnit_19,
-        TextureUnit_20,
-        TextureUnit_21,
-        TextureUnit_22,
-        TextureUnit_23,
-        TextureUnit_24,
-        TextureUnit_25,
-        TextureUnit_26,
-        TextureUnit_27,
-        TextureUnit_28,
-        TextureUnit_29,
-        TextureUnit_30,
-        TextureUnit_31
-    };
+    TextureUnit_0 = 0,
+    TextureUnit_1,
+    TextureUnit_2,
+    TextureUnit_3,
+    TextureUnit_4,
+    TextureUnit_5,
+    TextureUnit_6,
+    TextureUnit_7,
+    TextureUnit_8,
+    TextureUnit_9,
+    TextureUnit_10,
+    TextureUnit_11,
+    TextureUnit_12,
+    TextureUnit_13,
+    TextureUnit_14,
+    TextureUnit_15,
+    TextureUnit_16,
+    TextureUnit_17,
+    TextureUnit_18,
+    TextureUnit_19,
+    TextureUnit_20,
+    TextureUnit_21,
+    TextureUnit_22,
+    TextureUnit_23,
+    TextureUnit_24,
+    TextureUnit_25,
+    TextureUnit_26,
+    TextureUnit_27,
+    TextureUnit_28,
+    TextureUnit_29,
+    TextureUnit_30,
+    TextureUnit_31
 };
 
-struct QDemonRenderTextureCompareMode
+enum class QDemonRenderTextureCompareMode
 {
-    enum Enum { Unknown = 0, NoCompare, CompareToRef };
+    Unknown = 0,
+    NoCompare,
+    CompareToRef
 };
 
-struct QDemonRenderTextureSwizzleMode
+enum class QDemonRenderTextureSwizzleMode
 {
-    enum Enum { NoSwizzle = 0, L8toR8, A8toR8, L8A8toRG8, L16toR16 };
+    NoSwizzle = 0,
+    L8toR8,
+    A8toR8,
+    L8A8toRG8,
+    L16toR16
 };
 
-struct QDemonRenderTextureCompareOp
+enum class QDemonRenderTextureCompareOp
 {
-    enum Enum {
-        Never,
-        Less,
-        LessThanOrEqual,
-        Equal,
-        NotEqual,
-        Greater,
-        GreaterThanOrEqual,
-        AlwaysTrue,
-    };
+    Never,
+    Less,
+    LessThanOrEqual,
+    Equal,
+    NotEqual,
+    Greater,
+    GreaterThanOrEqual,
+    AlwaysTrue,
 };
 
 struct QDemonRenderTextureMinifyingOp

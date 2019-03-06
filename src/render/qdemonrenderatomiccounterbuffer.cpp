@@ -50,7 +50,7 @@ public:
 QDemonRenderAtomicCounterBuffer::QDemonRenderAtomicCounterBuffer(const QDemonRef<QDemonRenderContextImpl> &context,
                                                                  const QByteArray &bufferName,
                                                                  size_t size,
-                                                                 QDemonRenderBufferUsageType::Enum usageType,
+                                                                 QDemonRenderBufferUsageType usageType,
                                                                  QDemonDataRef<quint8> data)
     : QDemonRenderDataBuffer(context, size, QDemonRenderBufferBindValues::Storage, usageType, data)
     , m_name(bufferName)
@@ -127,7 +127,7 @@ bool QDemonRenderAtomicCounterBuffer::containsParam(const QByteArray &name)
 
 QDemonRef<QDemonRenderAtomicCounterBuffer> QDemonRenderAtomicCounterBuffer::create(const QDemonRef<QDemonRenderContextImpl> &context,
                                                                                    const char *bufferName,
-                                                                                   QDemonRenderBufferUsageType::Enum usageType,
+                                                                                   QDemonRenderBufferUsageType usageType,
                                                                                    size_t size,
                                                                                    QDemonConstDataRef<quint8> bufferData)
 {

@@ -295,7 +295,7 @@ struct QDemonShaderKeyTextureSwizzle : public QDemonShaderKeyUnsigned<5>
         setValue(inKeySet, theValue);
     }
 
-    void setSwizzleMode(QDemonDataRef<quint32> inKeySet, QDemonRenderTextureSwizzleMode::Enum swizzleMode, bool val)
+    void setSwizzleMode(QDemonDataRef<quint32> inKeySet, QDemonRenderTextureSwizzleMode swizzleMode, bool val)
     {
         switch (swizzleMode) {
         case QDemonRenderTextureSwizzleMode::NoSwizzle:

@@ -49,7 +49,7 @@ public:
     virtual void release(QDemonRef<QDemonRenderFrameBuffer> inBuffer) = 0;
     virtual QDemonRef<QDemonRenderRenderBuffer> allocateRenderBuffer(qint32 inWidth,
                                                                      qint32 inHeight,
-                                                                     QDemonRenderRenderBufferFormats::Enum inBufferFormat) = 0;
+                                                                     QDemonRenderRenderBufferFormat inBufferFormat) = 0;
     virtual void release(QDemonRef<QDemonRenderRenderBuffer> inBuffer) = 0;
     virtual QDemonRef<QDemonRenderTexture2D> allocateTexture2D(qint32 inWidth,
                                                                qint32 inHeight,
@@ -69,7 +69,7 @@ public:
                                                                    qint32 inSampleCount = 1) = 0;
     virtual void release(QDemonRef<QDemonRenderTextureCube> inBuffer) = 0;
     virtual QDemonRef<QDemonRenderImage2D> allocateImage2D(QDemonRef<QDemonRenderTexture2D> inTexture,
-                                                           QDemonRenderImageAccessType::Enum inAccess) = 0;
+                                                           QDemonRenderImageAccessType inAccess) = 0;
     virtual void release(QDemonRef<QDemonRenderImage2D> inBuffer) = 0;
 
     virtual QDemonRef<QDemonRenderContext> getRenderContext() = 0;

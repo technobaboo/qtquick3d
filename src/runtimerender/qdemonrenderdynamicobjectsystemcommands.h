@@ -149,7 +149,7 @@ struct QDemonAllocateBuffer : public QDemonCommand
 
 struct QDemonAllocateImage : public QDemonAllocateBuffer
 {
-    QDemonRenderImageAccessType::Enum m_access = QDemonRenderImageAccessType::ReadWrite;
+    QDemonRenderImageAccessType m_access = QDemonRenderImageAccessType::ReadWrite;
 
     QDemonAllocateImage() : QDemonAllocateBuffer() { m_type = CommandTypes::AllocateImage; }
     QDemonAllocateImage(QString inName,
@@ -158,7 +158,7 @@ struct QDemonAllocateImage : public QDemonAllocateBuffer
                         QDemonRenderTextureCoordOp::Enum inCoordOp,
                         float inMultiplier,
                         QDemonAllocateBufferFlags inFlags,
-                        QDemonRenderImageAccessType::Enum inAccess)
+                        QDemonRenderImageAccessType inAccess)
         : QDemonAllocateBuffer(inName, inFormat, inFilterOp, inCoordOp, inMultiplier, inFlags), m_access(inAccess)
     {
         m_type = CommandTypes::AllocateImage;
@@ -175,18 +175,18 @@ struct QDemonAllocateImage : public QDemonAllocateBuffer
 struct QDemonAllocateDataBuffer : public QDemonCommand
 {
     QString m_name;
-    QDemonRenderBufferBindValues::Enum m_dataBufferType;
+    QDemonRenderBufferBindValues m_dataBufferType;
     QString m_wrapName;
-    QDemonRenderBufferBindValues::Enum m_dataBufferWrapType;
+    QDemonRenderBufferBindValues m_dataBufferWrapType;
     float m_size;
     QDemonAllocateBufferFlags m_bufferFlags;
 
     QDemonAllocateDataBuffer() : QDemonCommand(CommandTypes::AllocateDataBuffer) {}
 
     QDemonAllocateDataBuffer(QString inName,
-                             QDemonRenderBufferBindValues::Enum inBufferType,
+                             QDemonRenderBufferBindValues inBufferType,
                              QString inWrapName,
-                             QDemonRenderBufferBindValues::Enum inBufferWrapType,
+                             QDemonRenderBufferBindValues inBufferWrapType,
                              float inSize,
                              QDemonAllocateBufferFlags inFlags)
         : QDemonCommand(CommandTypes::AllocateDataBuffer)
@@ -359,9 +359,9 @@ struct QDemonApplyImageValue : public QDemonCommand
 struct QDemonApplyDataBufferValue : public QDemonCommand
 {
     QString m_paramName; ///< must match the name in the shader
-    QDemonRenderBufferBindValues::Enum m_bindAs; ///< to which target we bind this buffer
+    QDemonRenderBufferBindValues m_bindAs; ///< to which target we bind this buffer
 
-    QDemonApplyDataBufferValue(QString inShaderParam, QDemonRenderBufferBindValues::Enum inBufferType)
+    QDemonApplyDataBufferValue(QString inShaderParam, QDemonRenderBufferBindValues inBufferType)
         : QDemonCommand(CommandTypes::ApplyDataBufferValue), m_paramName(inShaderParam), m_bindAs(inBufferType)
     {
     }

@@ -57,7 +57,7 @@ public:
      * @return No return.
      */
     QDemonRenderTextureCube(const QDemonRef<QDemonRenderContextImpl> &context,
-                            QDemonRenderTextureTargetType::Enum texTarget = QDemonRenderTextureTargetType::TextureCube);
+                            QDemonRenderTextureTargetType texTarget = QDemonRenderTextureTargetType::TextureCube);
 
     virtual ~QDemonRenderTextureCube() override;
 

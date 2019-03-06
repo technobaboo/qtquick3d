@@ -62,11 +62,11 @@ public:
     qint32 getDepthBits() const override;
     qint32 getStencilBits() const override;
     void generateMipMaps(QDemonRenderBackendTextureObject to,
-                         QDemonRenderTextureTargetType::Enum target,
+                         QDemonRenderTextureTargetType target,
                          QDemonRenderHint::Enum genType) override;
 
     void setMultisampledTextureData2D(QDemonRenderBackendTextureObject to,
-                                      QDemonRenderTextureTargetType::Enum target,
+                                      QDemonRenderTextureTargetType target,
                                       qint32 samples,
                                       QDemonRenderTextureFormats::Enum internalFormat,
                                       qint32 width,
@@ -74,7 +74,7 @@ public:
                                       bool fixedsamplelocations) override;
 
     void setTextureData3D(QDemonRenderBackendTextureObject to,
-                          QDemonRenderTextureTargetType::Enum target,
+                          QDemonRenderTextureTargetType target,
                           qint32 level,
                           QDemonRenderTextureFormats::Enum internalFormat,
                           qint32 width,
@@ -85,7 +85,7 @@ public:
                           const void *hostPtr = nullptr) override;
 
     void updateSampler(QDemonRenderBackendSamplerObject so,
-                       QDemonRenderTextureTargetType::Enum target,
+                       QDemonRenderTextureTargetType target,
                        QDemonRenderTextureMinifyingOp::Enum minFilter = QDemonRenderTextureMinifyingOp::Linear,
                        QDemonRenderTextureMagnifyingOp::Enum magFilter = QDemonRenderTextureMagnifyingOp::Linear,
                        QDemonRenderTextureCoordOp::Enum wrapS = QDemonRenderTextureCoordOp::ClampToEdge,
@@ -94,19 +94,19 @@ public:
                        float minLod = -1000.0,
                        float maxLod = 1000.0,
                        float lodBias = 0.0,
-                       QDemonRenderTextureCompareMode::Enum compareMode = QDemonRenderTextureCompareMode::NoCompare,
-                       QDemonRenderTextureCompareOp::Enum compareFunc = QDemonRenderTextureCompareOp::LessThanOrEqual,
+                       QDemonRenderTextureCompareMode compareMode = QDemonRenderTextureCompareMode::NoCompare,
+                       QDemonRenderTextureCompareOp compareFunc = QDemonRenderTextureCompareOp::LessThanOrEqual,
                        float anisotropy = 1.0,
                        float *borderColor = nullptr) override;
 
     void updateTextureObject(QDemonRenderBackendTextureObject to,
-                             QDemonRenderTextureTargetType::Enum target,
+                             QDemonRenderTextureTargetType target,
                              qint32 baseLevel,
                              qint32 maxLevel) override;
 
     void updateTextureSwizzle(QDemonRenderBackendTextureObject to,
-                              QDemonRenderTextureTargetType::Enum target,
-                              QDemonRenderTextureSwizzleMode::Enum swizzleMode) override;
+                              QDemonRenderTextureTargetType target,
+                              QDemonRenderTextureSwizzleMode swizzleMode) override;
 
     bool setInputAssembler(QDemonRenderBackendInputAssemblerObject iao, QDemonRenderBackendShaderProgramObject po) override;
 
@@ -123,7 +123,7 @@ public:
     void renderTargetAttach(QDemonRenderBackendRenderTargetObject rto,
                             QDemonRenderFrameBufferAttachments::Enum attachment,
                             QDemonRenderBackendTextureObject to,
-                            QDemonRenderTextureTargetType::Enum target = QDemonRenderTextureTargetType::Texture2D) override
+                            QDemonRenderTextureTargetType target = QDemonRenderTextureTargetType::Texture2D) override
     {
         QDemonRenderBackendGLBase::renderTargetAttach(rto, attachment, to, target);
     }

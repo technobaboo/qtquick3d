@@ -37,7 +37,7 @@
 QT_BEGIN_NAMESPACE
 
 QDemonRenderTextureBase::QDemonRenderTextureBase(const QDemonRef<QDemonRenderContextImpl> &context,
-                                                 QDemonRenderTextureTargetType::Enum texTarget)
+                                                 QDemonRenderTextureTargetType texTarget)
     : m_context(context)
     , m_backend(context->getBackend())
     , m_textureHandle(nullptr)
@@ -112,7 +112,7 @@ void QDemonRenderTextureBase::setTextureWrapT(QDemonRenderTextureCoordOp::Enum v
     }
 }
 
-void QDemonRenderTextureBase::setTextureCompareMode(QDemonRenderTextureCompareMode::Enum value)
+void QDemonRenderTextureBase::setTextureCompareMode(QDemonRenderTextureCompareMode value)
 {
     if (m_sampler->m_compareMode != value) {
         m_sampler->m_compareMode = value;
@@ -120,7 +120,7 @@ void QDemonRenderTextureBase::setTextureCompareMode(QDemonRenderTextureCompareMo
     }
 }
 
-void QDemonRenderTextureBase::setTextureCompareFunc(QDemonRenderTextureCompareOp::Enum value)
+void QDemonRenderTextureBase::setTextureCompareFunc(QDemonRenderTextureCompareOp value)
 {
     if (m_sampler->m_compareOp != value) {
         m_sampler->m_compareOp = value;
@@ -155,7 +155,7 @@ void QDemonRenderTextureBase::applyTexParams()
 
 void QDemonRenderTextureBase::applyTexSwizzle()
 {
-    QDemonRenderTextureSwizzleMode::Enum theSwizzleMode = m_backend->getTextureSwizzleMode(m_format);
+    QDemonRenderTextureSwizzleMode theSwizzleMode = m_backend->getTextureSwizzleMode(m_format);
     if (theSwizzleMode != m_sampler->m_swizzleMode) {
         m_sampler->m_swizzleMode = theSwizzleMode;
         m_backend->updateTextureSwizzle(m_textureHandle, m_texTarget, theSwizzleMode);

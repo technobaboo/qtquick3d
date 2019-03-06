@@ -1206,7 +1206,7 @@ void QDemonLayerRenderData::renderToTexture()
     if (theRenderContext->getRenderContextType() != QDemonRenderContextType::GLES2)
         isMultisamplePass = (sampleCount > 1) || (layer.multisampleAAMode == AAModeValues::SSAA);
 
-    QDemonRenderTextureTargetType::Enum thFboAttachTarget = QDemonRenderTextureTargetType::Texture2D;
+    QDemonRenderTextureTargetType thFboAttachTarget = QDemonRenderTextureTargetType::Texture2D;
 
     // If the user has disabled all layer caching this has the side effect of disabling the
     // progressive AA algorithm.

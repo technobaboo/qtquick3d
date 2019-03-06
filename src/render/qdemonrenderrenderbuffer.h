@@ -56,7 +56,7 @@ private:
     QDemonRef<QDemonRenderBackend> m_backend; ///< pointer to backend
     qint32 m_width; ///< buffer width
     qint32 m_height; ///< buffer height
-    QDemonRenderRenderBufferFormats::Enum m_storageFormat; ///< buffer storage format
+    QDemonRenderRenderBufferFormat m_storageFormat; ///< buffer storage format
 
     QDemonRenderBackend::QDemonRenderBackendRenderbufferObject m_bufferHandle; ///< opaque backend handle
 
@@ -73,7 +73,7 @@ public:
      * @return No return.
      */
     QDemonRenderRenderBuffer(const QDemonRef<QDemonRenderContextImpl> &context,
-                             QDemonRenderRenderBufferFormats::Enum format,
+                             QDemonRenderRenderBufferFormat format,
                              quint32 width,
                              quint32 height);
 
@@ -86,7 +86,7 @@ public:
      *
      * @return buffer format
      */
-    virtual QDemonRenderRenderBufferFormats::Enum getStorageFormat() const { return m_storageFormat; }
+    virtual QDemonRenderRenderBufferFormat getStorageFormat() const { return m_storageFormat; }
 
     /**
      * @brief query buffer dimension
@@ -119,7 +119,7 @@ public:
      * @return No return.
      */
     static QDemonRef<QDemonRenderRenderBuffer> create(const QDemonRef<QDemonRenderContextImpl> &context,
-                                                      QDemonRenderRenderBufferFormats::Enum format,
+                                                      QDemonRenderRenderBufferFormat format,
                                                       quint32 width,
                                                       quint32 height);
 
