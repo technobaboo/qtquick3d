@@ -241,7 +241,6 @@ struct QDemonPathBuffer
 
 struct QDemonPathGeneratedShader
 {
-    QAtomicInt ref;
     QDemonRef<QDemonRenderShaderProgram> m_shader;
     QDemonRenderCachedShaderProperty<float> m_width;
     QDemonRenderCachedShaderProperty<float> m_innerTessAmount;
@@ -481,7 +480,6 @@ struct QDemonPathVertexPipeline : public QDemonVertexPipelineImpl
 
 struct QDemonPathXYGeneratedShader
 {
-    QAtomicInt ref;
     QDemonRef<QDemonRenderShaderProgram> m_shader;
     QDemonRenderCachedShaderProperty<QVector4D> m_rectDimensions;
     QDemonRenderCachedShaderProperty<QMatrix4x4> m_modelMatrix;
@@ -675,8 +673,8 @@ struct QDemonPathManager : public QDemonPathManagerInterface
 {
     typedef QHash<QDemonPath *, QDemonRef<QDemonPathBuffer>> TPathBufferHash;
     typedef QHash<QDemonPathSubPath *, QDemonRef<QDemonPathSubPathBuffer>> TPathSubPathBufferHash;
-    typedef QHash<QDemonPathShaderMapKey, QDemonRef<QDemonPathGeneratedShader>> TShaderMap;
-    typedef QHash<QDemonPathShaderMapKey, QDemonRef<QDemonPathXYGeneratedShader>> TPaintedShaderMap;
+    typedef QHash<QDemonPathShaderMapKey, QDemonPathGeneratedShader *> TShaderMap;
+    typedef QHash<QDemonPathShaderMapKey, QDemonPathXYGeneratedShader *> TPaintedShaderMap;
     typedef QHash<QString, TPathBufferPtr> TStringPathBufferMap;
 
     QDemonRenderContextCoreInterface *m_coreContext;
@@ -692,15 +690,12 @@ struct QDemonPathManager : public QDemonPathManagerInterface
     TStringPathBufferMap m_sourcePathBufferMap;
     QMutex m_pathBufferMutex;
 
-    QDemonRef<QDemonPathGeneratedShader> m_depthShader;
-    QDemonRef<QDemonPathGeneratedShader> m_depthDisplacementShader;
-    QDemonRef<QDemonPathGeneratedShader> m_geometryShadowShader;
-    QDemonRef<QDemonPathGeneratedShader> m_geometryCubeShadowShader;
-    QDemonRef<QDemonPathGeneratedShader> m_geometryDisplacementShadowShader;
+    QScopedPointer<QDemonPathGeneratedShader> m_depthShader;
+    QScopedPointer<QDemonPathGeneratedShader> m_depthDisplacementShader;
 
-    QDemonRef<QDemonPathXYGeneratedShader> m_paintedDepthShader;
-    QDemonRef<QDemonPathXYGeneratedShader> m_paintedShadowShader;
-    QDemonRef<QDemonPathXYGeneratedShader> m_paintedCubeShadowShader;
+    QScopedPointer<QDemonPathXYGeneratedShader> m_paintedDepthShader;
+    QScopedPointer<QDemonPathXYGeneratedShader> m_paintedShadowShader;
+    QScopedPointer<QDemonPathXYGeneratedShader> m_paintedCubeShadowShader;
     QDemonRef<QDemonRenderInputAssembler> m_paintedRectInputAssembler;
     QDemonRef<QDemonRenderVertexBuffer> m_paintedRectVertexBuffer;
     QDemonRef<QDemonRenderIndexBuffer> m_paintedRectIndexBuffer;
@@ -712,7 +707,11 @@ struct QDemonPathManager : public QDemonPathManagerInterface
 
     QDemonPathManager(QDemonRenderContextCoreInterface *inRC) : m_coreContext(inRC), m_renderContext(nullptr) {}
 
-    virtual ~QDemonPathManager() { m_paintedRectInputAssembler = nullptr; }
+    virtual ~QDemonPathManager() {
+        m_paintedRectInputAssembler = nullptr;
+        qDeleteAll(m_pathGeometryShaders);
+        qDeleteAll(m_pathPaintedShaders);
+    }
 
     // Called during binary load which is heavily threaded.
     void setPathSubPathData(const QDemonPathSubPath &inPath, QDemonConstDataRef<QDemonPathAnchorPoint> inPathCubicCurves) override
@@ -1273,7 +1272,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
                                                     inRenderProperties);
     }
 
-    void doRenderGeometryPath(const QDemonRef<QDemonPathGeneratedShader> &inShader,
+    void doRenderGeometryPath(QDemonPathGeneratedShader *inShader,
                               QDemonPathRenderContext &inRenderContext,
                               QDemonLayerGlobalRenderProperties &inRenderProperties,
                               const QDemonRef<QDemonPathBuffer> &inPathBuffer)
@@ -1378,7 +1377,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
         outScale.scale(xscale, yscale, zscale);
     }
 
-    void doRenderPaintedPath(const QDemonRef<QDemonPathXYGeneratedShader> &inShader,
+    void doRenderPaintedPath(QDemonPathXYGeneratedShader *inShader,
                              QDemonPathRenderContext &inRenderContext,
                              QDemonLayerGlobalRenderProperties &inRenderProperties,
                              const QDemonRef<QDemonPathBuffer> &inPathBuffer,
@@ -1514,7 +1513,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
                 }
             }
 
-            QDemonRef<QDemonPathGeneratedShader> theDesiredDepthShader = displacementImage == nullptr ? m_depthShader : m_depthDisplacementShader;
+            QScopedPointer<QDemonPathGeneratedShader> &theDesiredDepthShader = displacementImage == nullptr ? m_depthShader : m_depthDisplacementShader;
 
             if (!theDesiredDepthShader) {
                 QDemonRef<QDemonDefaultMaterialShaderGeneratorInterface> theMaterialGenerator(
@@ -1531,13 +1530,11 @@ struct QDemonPathManager : public QDemonPathManagerInterface
 
                 QDemonShaderCacheProgramFlags theFlags;
                 QDemonRef<QDemonRenderShaderProgram> theProgram = thePipeline.programGenerator()->compileGeneratedShader(shaderName, theFlags, inFeatureSet);
-                if (theProgram) {
-                    theDesiredDepthShader = QDemonRef<QDemonPathGeneratedShader>(new QDemonPathGeneratedShader(theProgram));
-                }
+                if (theProgram)
+                    theDesiredDepthShader.reset(new QDemonPathGeneratedShader(theProgram));
             }
-            if (theDesiredDepthShader) {
-                doRenderGeometryPath(theDesiredDepthShader, inRenderContext, inRenderProperties, thePathBuffer);
-            }
+            if (theDesiredDepthShader)
+                doRenderGeometryPath(theDesiredDepthShader.get(), inRenderContext, inRenderProperties, thePathBuffer);
         } else {
             // painted path, go stroke route for now.
             if (!m_paintedDepthShader) {
@@ -1553,14 +1550,11 @@ struct QDemonPathManager : public QDemonPathManagerInterface
                 QDemonRef<QDemonRenderShaderProgram> theProgram = thePipeline.programGenerator()->compileGeneratedShader("path painted depth",
                                                                                                                          theFlags,
                                                                                                                          inFeatureSet);
-                if (theProgram) {
-                    m_paintedDepthShader = QDemonRef<QDemonPathXYGeneratedShader>(new QDemonPathXYGeneratedShader(theProgram));
-                }
+                if (theProgram)
+                    m_paintedDepthShader.reset(new QDemonPathXYGeneratedShader(theProgram));
             }
-            if (m_paintedDepthShader) {
-
-                doRenderPaintedPath(m_paintedDepthShader, inRenderContext, inRenderProperties, thePathBuffer);
-            }
+            if (m_paintedDepthShader)
+                doRenderPaintedPath(m_paintedDepthShader.get(), inRenderContext, inRenderProperties, thePathBuffer);
         }
     }
 
@@ -1587,7 +1581,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
                                                                                                                          theFlags,
                                                                                                                          inFeatureSet);
                 if (theProgram) {
-                    m_paintedShadowShader = QDemonRef<QDemonPathXYGeneratedShader>(new QDemonPathXYGeneratedShader(theProgram));
+                    m_paintedShadowShader.reset(new QDemonPathXYGeneratedShader(theProgram));
                 }
             }
             if (m_paintedShadowShader) {
@@ -1595,7 +1589,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
                 QDemonRef<QDemonRenderContext> theRenderContext(m_renderContext->getRenderContext());
                 theRenderContext->setActiveShader(m_paintedShadowShader->m_shader);
 
-                doRenderPaintedPath(m_paintedShadowShader, inRenderContext, inRenderProperties, thePathBuffer, true);
+                doRenderPaintedPath(m_paintedShadowShader.get(), inRenderContext, inRenderProperties, thePathBuffer, true);
             }
         } else {
             // Until we've also got a proper path render path for this, we'll call the old-fashioned
@@ -1627,7 +1621,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
                                                                                                                          theFlags,
                                                                                                                          inFeatureSet);
                 if (theProgram) {
-                    m_paintedCubeShadowShader = QDemonRef<QDemonPathXYGeneratedShader>(new QDemonPathXYGeneratedShader(theProgram));
+                    m_paintedCubeShadowShader.reset(new QDemonPathXYGeneratedShader(theProgram));
                 }
             }
             if (m_paintedCubeShadowShader) {
@@ -1639,7 +1633,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
                 m_paintedCubeShadowShader->m_cameraProperties.set(QVector2D(1.0f, inRenderContext.camera.clipFar));
                 m_paintedCubeShadowShader->m_modelMatrix.set(inRenderContext.modelMatrix);
 
-                doRenderPaintedPath(m_paintedCubeShadowShader, inRenderContext, inRenderProperties, thePathBuffer, false);
+                doRenderPaintedPath(m_paintedCubeShadowShader.get(), inRenderContext, inRenderProperties, thePathBuffer, false);
             }
         } else {
             // Until we've also got a proper path render path for this, we'll call the old-fashioned
@@ -1702,9 +1696,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
                 }
 
                 if (theProgram)
-                    inserter = m_pathGeometryShaders.insert(sPathkey,
-                                                            QDemonRef<QDemonPathGeneratedShader>(
-                                                                    new QDemonPathGeneratedShader(theProgram)));
+                    inserter = m_pathGeometryShaders.insert(sPathkey, new QDemonPathGeneratedShader(theProgram));
             }
             if (inserter == m_pathGeometryShaders.end())
                 return;
@@ -1751,9 +1743,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
                 }
 
                 if (theProgram)
-                    inserter = m_pathPaintedShaders.insert(sPathkey,
-                                                           QDemonRef<QDemonPathXYGeneratedShader>(
-                                                                   new QDemonPathXYGeneratedShader(theProgram)));
+                    inserter = m_pathPaintedShaders.insert(sPathkey, new QDemonPathXYGeneratedShader(theProgram));
             }
             if (inserter == m_pathPaintedShaders.end())
                 return;
