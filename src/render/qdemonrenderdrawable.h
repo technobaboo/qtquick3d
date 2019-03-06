@@ -46,7 +46,7 @@ public:
      *	because the various different draw functions differ in what datatype
      *	offset is (gl drawarrays vs gl drawindexedarras).
      */
-    virtual void draw(QDemonRenderDrawMode::Enum drawMode, quint32 count, quint32 offset) = 0;
+    virtual void draw(QDemonRenderDrawMode drawMode, quint32 count, quint32 offset) = 0;
 };
 
 QT_END_NAMESPACE

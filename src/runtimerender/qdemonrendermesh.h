@@ -74,7 +74,7 @@ struct QDemonRenderSubset : public QDemonRenderSubsetBase
     QDemonRef<QDemonRenderVertexBuffer> vertexBuffer;
     QDemonRef<QDemonRenderVertexBuffer> posVertexBuffer; ///< separate position buffer for fast depth path rendering
     QDemonRef<QDemonRenderIndexBuffer> indexBuffer;
-    QDemonRenderDrawMode::Enum primitiveType; ///< primitive type used for drawing
+    QDemonRenderDrawMode primitiveType; ///< primitive type used for drawing
     float edgeTessFactor = 1.0f; ///< edge tessellation amount used for tessellation shaders
     float innerTessFactor = 1.0f; ///< inner tessellation amount used for tessellation shaders
     bool wireframeMode; ///< true if we should draw the object as wireframe ( currently ony if
@@ -145,11 +145,11 @@ struct QDemonRenderMesh
 
     QVector<QDemonRenderSubset> subsets;
     QVector<QDemonRenderJoint> joints;
-    QDemonRenderDrawMode::Enum drawMode;
+    QDemonRenderDrawMode drawMode;
     QDemonRenderWinding::Enum winding; // counterclockwise
     quint32 meshId; // Id from the file of this mesh.
 
-    QDemonRenderMesh(QDemonRenderDrawMode::Enum inDrawMode, QDemonRenderWinding::Enum inWinding, quint32 inMeshId)
+    QDemonRenderMesh(QDemonRenderDrawMode inDrawMode, QDemonRenderWinding::Enum inWinding, quint32 inMeshId)
         : drawMode(inDrawMode), winding(inWinding), meshId(inMeshId)
     {
     }

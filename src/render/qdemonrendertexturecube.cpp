@@ -48,13 +48,13 @@ QDemonRenderTextureCube::~QDemonRenderTextureCube()
 
 void QDemonRenderTextureCube::setTextureData(QDemonDataRef<quint8> newBuffer,
                                              quint8 inMipLevel,
-                                             QDemonRenderTextureCubeFaces::Enum inFace,
+                                             QDemonRenderTextureCubeFace inFace,
                                              quint32 width,
                                              quint32 height,
                                              QDemonRenderTextureFormats::Enum format)
 {
     Q_ASSERT(m_textureHandle);
-    Q_ASSERT(inFace != QDemonRenderTextureCubeFaces::InvalidFace);
+    Q_ASSERT(inFace != QDemonRenderTextureCubeFace::InvalidFace);
 
     if (inMipLevel == 0) {
         m_width = width;

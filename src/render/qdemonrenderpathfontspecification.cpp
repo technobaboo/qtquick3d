@@ -52,7 +52,7 @@ QDemonRenderPathFontSpecification::~QDemonRenderPathFontSpecification()
     m_context->releasePathFontSpecification(this);
 }
 
-void QDemonRenderPathFontSpecification::loadPathGlyphs(const char *fontName, QDemonRenderPathFormatType::Enum type)
+void QDemonRenderPathFontSpecification::loadPathGlyphs(const char *fontName, QDemonRenderPathFormatType type)
 {
     // check if we already created it
     if (m_numFontGlyphs)
@@ -121,7 +121,7 @@ void QDemonRenderPathFontSpecification::coverFillPathInstanced(const QDemonRef<Q
                                       spacing);
 }
 
-quint32 QDemonRenderPathFontSpecification::getSizeOfType(QDemonRenderPathFormatType::Enum type)
+quint32 QDemonRenderPathFontSpecification::getSizeOfType(QDemonRenderPathFormatType type)
 {
     switch (type) {
     case QDemonRenderPathFormatType::Byte:

@@ -779,7 +779,7 @@ void QDemonMaterialSystem::releaseBuffer(qint32 inIdx)
     // because the resource manager is destroyed before
     QDemonRef<QDemonResourceManagerInterface> theManager(d->context->getResourceManager());
     QDemonCustomMaterialBuffer &theEntry(d->allocatedBuffers[inIdx]);
-    theEntry.frameBuffer->attach(QDemonRenderFrameBufferAttachments::Color0, QDemonRenderTextureOrRenderBuffer());
+    theEntry.frameBuffer->attach(QDemonRenderFrameBufferAttachment::Color0, QDemonRenderTextureOrRenderBuffer());
 
     theManager->release(theEntry.frameBuffer);
     theManager->release(theEntry.texture);
@@ -1263,7 +1263,7 @@ void QDemonMaterialSystem::allocateBuffer(const dynamic::QDemonAllocateBuffer &i
     QDemonRef<QDemonRenderTexture2D> theTexture;
     // get color attachment we always assume at location 0
     if (inTarget) {
-        QDemonRenderTextureOrRenderBuffer theSourceTexture = inTarget->getAttachment(QDemonRenderFrameBufferAttachments::Color0);
+        QDemonRenderTextureOrRenderBuffer theSourceTexture = inTarget->getAttachment(QDemonRenderFrameBufferAttachment::Color0);
         // we need a texture
         if (theSourceTexture.hasTexture2D()) {
             theSourceTextureDetails = theSourceTexture.getTexture2D()->getTextureDetails();
@@ -1305,7 +1305,7 @@ void QDemonMaterialSystem::allocateBuffer(const dynamic::QDemonAllocateBuffer &i
         theTexture->setMinFilter(static_cast<QDemonRenderTextureMinifyingOp::Enum>(inCommand.m_filterOp));
         theTexture->setTextureWrapS(inCommand.m_texCoordOp);
         theTexture->setTextureWrapT(inCommand.m_texCoordOp);
-        theFB->attach(QDemonRenderFrameBufferAttachments::Color0, theTexture);
+        theFB->attach(QDemonRenderFrameBufferAttachment::Color0, theTexture);
         d->allocatedBuffers.push_back(QDemonCustomMaterialBuffer(inCommand.m_name, theFB, theTexture, inCommand.m_bufferFlags));
     }
 }
@@ -1519,7 +1519,7 @@ void QDemonMaterialSystem::renderPass(QDemonCustomMaterialRenderContext &inRende
     // I think the prim type should always be fetched from the
     // current mesh subset setup because there you get the actual draw mode
     // for this frame
-    QDemonRenderDrawMode::Enum theDrawMode = inAssembler->getPrimitiveType();
+    QDemonRenderDrawMode theDrawMode = inAssembler->getPrimitiveType();
 
     // tesselation
     if (inRenderContext.subset.primitiveType == QDemonRenderDrawMode::Patches) {

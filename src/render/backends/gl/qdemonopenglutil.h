@@ -1506,14 +1506,14 @@ struct GLConversion
         return QDemonRenderRenderBufferFormat::Unknown;
     }
 
-    static GLenum fromFramebufferAttachmentsToGL(QDemonRenderFrameBufferAttachments::Enum value)
+    static GLenum fromFramebufferAttachmentsToGL(QDemonRenderFrameBufferAttachment value)
     {
         switch (value) {
 #define QDEMON_RENDER_HANDLE_GL_QDEMON_FRAMEBUFFER_COLOR_ATTACHMENT(x, idx)                                            \
-    case QDemonRenderFrameBufferAttachments::x:                                                                        \
+    case QDemonRenderFrameBufferAttachment::x:                                                                        \
         return GL_COLOR_ATTACHMENT0 + idx;
 #define QDEMON_RENDER_HANDLE_GL_QDEMON_FRAMEBUFFER_ATTACHMENT(x, y)                                                    \
-    case QDemonRenderFrameBufferAttachments::y:                                                                        \
+    case QDemonRenderFrameBufferAttachment::y:                                                                        \
         return x;
             QDEMON_RENDER_ITERATE_GL_QDEMON_FRAMEBUFFER_ATTACHMENTS
             QDEMON_RENDER_ITERATE_GL_QDEMON_FRAMEBUFFER_COVERAGE_ATTACHMENTS
@@ -1523,23 +1523,23 @@ struct GLConversion
             break;
         }
         Q_ASSERT(false);
-        return QDemonRenderFrameBufferAttachments::Unknown;
+        return 0;
     }
 
-    static QDemonRenderFrameBufferAttachments::Enum fromGLToFramebufferAttachments(GLenum value)
+    static QDemonRenderFrameBufferAttachment fromGLToFramebufferAttachments(GLenum value)
     {
 #define QDEMON_RENDER_HANDLE_GL_QDEMON_FRAMEBUFFER_COLOR_ATTACHMENT(x, idx)                                            \
     if (value == GL_COLOR_ATTACHMENT0 + idx)                                                                           \
-        return QDemonRenderFrameBufferAttachments::x;
+        return QDemonRenderFrameBufferAttachment::x;
 #define QDEMON_RENDER_HANDLE_GL_QDEMON_FRAMEBUFFER_ATTACHMENT(x, y)                                                    \
     if (value == x)                                                                                                    \
-        return QDemonRenderFrameBufferAttachments::y;
+        return QDemonRenderFrameBufferAttachment::y;
         QDEMON_RENDER_ITERATE_GL_QDEMON_FRAMEBUFFER_ATTACHMENTS
         QDEMON_RENDER_ITERATE_GL_QDEMON_FRAMEBUFFER_COVERAGE_ATTACHMENTS
 #undef QDEMON_RENDER_HANDLE_GL_QDEMON_FRAMEBUFFER_COLOR_ATTACHMENT
 #undef QDEMON_RENDER_HANDLE_GL_QDEMON_FRAMEBUFFER_ATTACHMENT
         Q_ASSERT(false);
-        return QDemonRenderFrameBufferAttachments::Unknown;
+        return QDemonRenderFrameBufferAttachment::Unknown;
     }
 
     static GLbitfield fromClearFlagsToGL(QDemonRenderClearFlags flags)
@@ -1566,7 +1566,7 @@ struct GLConversion
         return retval;
     }
 
-    static GLenum fromDrawModeToGL(QDemonRenderDrawMode::Enum value, bool inTesselationSupported)
+    static GLenum fromDrawModeToGL(QDemonRenderDrawMode value, bool inTesselationSupported)
     {
         switch (value) {
         case QDemonRenderDrawMode::Points:
@@ -1593,7 +1593,7 @@ struct GLConversion
         return GL_INVALID_ENUM;
     }
 
-    static QDemonRenderDrawMode::Enum fromGLToDrawMode(GLenum value)
+    static QDemonRenderDrawMode fromGLToDrawMode(GLenum value)
     {
         switch (value) {
         case GL_POINTS:
@@ -1735,7 +1735,7 @@ struct GLConversion
         return glFillMode;
     }
 
-    static GLenum fromPathFontTargetToGL(QDemonRenderPathFontTarget::Enum inFontTarget)
+    static GLenum fromPathFontTargetToGL(QDemonRenderPathFontTarget inFontTarget)
     {
         GLenum glFontTarget;
 
@@ -1759,9 +1759,9 @@ struct GLConversion
         return glFontTarget;
     }
 
-    static QDemonRenderPathReturnValues::Enum fromGLToPathFontReturn(GLenum inReturnValue)
+    static QDemonRenderPathReturnValues fromGLToPathFontReturn(GLenum inReturnValue)
     {
-        QDemonRenderPathReturnValues::Enum returnValue;
+        QDemonRenderPathReturnValues returnValue;
 
         switch (inReturnValue) {
 #if !defined(QT_OPENGL_ES)
@@ -1794,7 +1794,7 @@ struct GLConversion
         return returnValue;
     }
 
-    static GLenum fromPathMissingGlyphsToGL(QDemonRenderPathMissingGlyphs::Enum inHandleGlyphs)
+    static GLenum fromPathMissingGlyphsToGL(QDemonRenderPathMissingGlyphs inHandleGlyphs)
     {
         GLenum glMissingGlyphs;
 
@@ -1869,7 +1869,7 @@ struct GLConversion
         return glCoverMode;
     }
 
-    static GLenum fromPathTypeToGL(QDemonRenderPathFormatType::Enum value)
+    static GLenum fromPathTypeToGL(QDemonRenderPathFormatType value)
     {
         switch (value) {
         case QDemonRenderPathFormatType::Byte:
@@ -1905,15 +1905,14 @@ struct GLConversion
 
     static GLbitfield fromPathFontStyleToGL(QDemonRenderPathFontStyleFlags flags)
     {
-        quint32 value = flags;
         GLbitfield retval = 0;
 #if !defined(QT_OPENGL_ES)
-        if (value & QDemonRenderPathFontStyleValues::Bold)
+        if (flags & QDemonRenderPathFontStyleValue::Bold)
             retval |= GL_BOLD_BIT_NV;
-        if (value & QDemonRenderPathFontStyleValues::Italic)
+        if (flags & QDemonRenderPathFontStyleValue::Italic)
             retval |= GL_ITALIC_BIT_NV;
 #endif
-        Q_ASSERT(retval || !value);
+        Q_ASSERT(retval || !flags);
         return retval;
     }
 
@@ -1949,58 +1948,57 @@ struct GLConversion
 
     static GLbitfield fromPathMetricQueryFlagsToGL(QDemonRenderPathGlyphFontMetricFlags flags)
     {
-        quint32 value = flags;
         GLbitfield retval = 0;
 #if !defined(QT_OPENGL_ES)
-        if (value & QDemonRenderPathGlyphFontMetricValues::GlyphWidth)
+        if (flags & QDemonRenderPathGlyphFontMetricValues::GlyphWidth)
             retval |= GL_GLYPH_WIDTH_BIT_NV;
-        if (value & QDemonRenderPathGlyphFontMetricValues::GlyphHeight)
+        if (flags & QDemonRenderPathGlyphFontMetricValues::GlyphHeight)
             retval |= GL_GLYPH_HEIGHT_BIT_NV;
-        if (value & QDemonRenderPathGlyphFontMetricValues::GlyphHorizontalBearingX)
+        if (flags & QDemonRenderPathGlyphFontMetricValues::GlyphHorizontalBearingX)
             retval |= GL_GLYPH_HORIZONTAL_BEARING_X_BIT_NV;
-        if (value & QDemonRenderPathGlyphFontMetricValues::GlyphHorizontalBearingY)
+        if (flags & QDemonRenderPathGlyphFontMetricValues::GlyphHorizontalBearingY)
             retval |= GL_GLYPH_HORIZONTAL_BEARING_Y_BIT_NV;
-        if (value & QDemonRenderPathGlyphFontMetricValues::GlyphHorizontalBearingAdvance)
+        if (flags & QDemonRenderPathGlyphFontMetricValues::GlyphHorizontalBearingAdvance)
             retval |= GL_GLYPH_HORIZONTAL_BEARING_ADVANCE_BIT_NV;
-        if (value & QDemonRenderPathGlyphFontMetricValues::GlyphVerticalBearingX)
+        if (flags & QDemonRenderPathGlyphFontMetricValues::GlyphVerticalBearingX)
             retval |= GL_GLYPH_VERTICAL_BEARING_X_BIT_NV;
-        if (value & QDemonRenderPathGlyphFontMetricValues::GlyphVerticalBearingY)
+        if (flags & QDemonRenderPathGlyphFontMetricValues::GlyphVerticalBearingY)
             retval |= GL_GLYPH_VERTICAL_BEARING_Y_BIT_NV;
-        if (value & QDemonRenderPathGlyphFontMetricValues::GlyphVerticalBearingAdvance)
+        if (flags & QDemonRenderPathGlyphFontMetricValues::GlyphVerticalBearingAdvance)
             retval |= GL_GLYPH_VERTICAL_BEARING_ADVANCE_BIT_NV;
-        if (value & QDemonRenderPathGlyphFontMetricValues::GlyphHasKerning)
+        if (flags & QDemonRenderPathGlyphFontMetricValues::GlyphHasKerning)
             retval |= GL_GLYPH_HAS_KERNING_BIT_NV;
 
-        if (value & QDemonRenderPathGlyphFontMetricValues::FontXMinBounds)
+        if (flags & QDemonRenderPathGlyphFontMetricValues::FontXMinBounds)
             retval |= GL_FONT_X_MIN_BOUNDS_BIT_NV;
-        if (value & QDemonRenderPathGlyphFontMetricValues::FontYMinBounds)
+        if (flags & QDemonRenderPathGlyphFontMetricValues::FontYMinBounds)
             retval |= GL_FONT_Y_MIN_BOUNDS_BIT_NV;
-        if (value & QDemonRenderPathGlyphFontMetricValues::FontXMaxBounds)
+        if (flags & QDemonRenderPathGlyphFontMetricValues::FontXMaxBounds)
             retval |= GL_FONT_X_MAX_BOUNDS_BIT_NV;
-        if (value & QDemonRenderPathGlyphFontMetricValues::FontYMaxBounds)
+        if (flags & QDemonRenderPathGlyphFontMetricValues::FontYMaxBounds)
             retval |= GL_FONT_Y_MAX_BOUNDS_BIT_NV;
-        if (value & QDemonRenderPathGlyphFontMetricValues::FontUnitsPerEm)
+        if (flags & QDemonRenderPathGlyphFontMetricValues::FontUnitsPerEm)
             retval |= GL_FONT_UNITS_PER_EM_BIT_NV;
-        if (value & QDemonRenderPathGlyphFontMetricValues::FontAscender)
+        if (flags & QDemonRenderPathGlyphFontMetricValues::FontAscender)
             retval |= GL_FONT_ASCENDER_BIT_NV;
-        if (value & QDemonRenderPathGlyphFontMetricValues::FontDescender)
+        if (flags & QDemonRenderPathGlyphFontMetricValues::FontDescender)
             retval |= GL_FONT_DESCENDER_BIT_NV;
-        if (value & QDemonRenderPathGlyphFontMetricValues::FontHeight)
+        if (flags & QDemonRenderPathGlyphFontMetricValues::FontHeight)
             retval |= GL_FONT_HEIGHT_BIT_NV;
-        if (value & QDemonRenderPathGlyphFontMetricValues::FontMaxAdvanceWidth)
+        if (flags & QDemonRenderPathGlyphFontMetricValues::FontMaxAdvanceWidth)
             retval |= GL_FONT_MAX_ADVANCE_WIDTH_BIT_NV;
-        if (value & QDemonRenderPathGlyphFontMetricValues::FontMaxAdvanceHeight)
+        if (flags & QDemonRenderPathGlyphFontMetricValues::FontMaxAdvanceHeight)
             retval |= GL_FONT_MAX_ADVANCE_HEIGHT_BIT_NV;
-        if (value & QDemonRenderPathGlyphFontMetricValues::FontUnderlinePosition)
+        if (flags & QDemonRenderPathGlyphFontMetricValues::FontUnderlinePosition)
             retval |= GL_FONT_UNDERLINE_POSITION_BIT_NV;
-        if (value & QDemonRenderPathGlyphFontMetricValues::FontMaxAdvanceWidth)
+        if (flags & QDemonRenderPathGlyphFontMetricValues::FontMaxAdvanceWidth)
             retval |= GL_FONT_UNDERLINE_THICKNESS_BIT_NV;
-        if (value & QDemonRenderPathGlyphFontMetricValues::FontHasKerning)
+        if (flags & QDemonRenderPathGlyphFontMetricValues::FontHasKerning)
             retval |= GL_FONT_HAS_KERNING_BIT_NV;
-        if (value & QDemonRenderPathGlyphFontMetricValues::FontNumGlyphIndices)
+        if (flags & QDemonRenderPathGlyphFontMetricValues::FontNumGlyphIndices)
             retval |= GL_FONT_NUM_GLYPH_INDICES_BIT_NV;
 #endif
-        Q_ASSERT(retval || !value);
+        Q_ASSERT(retval || !flags);
         return retval;
     }
 };

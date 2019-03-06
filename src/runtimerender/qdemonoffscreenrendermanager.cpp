@@ -259,12 +259,12 @@ struct QDemonOffscreenRenderManager : public QDemonOffscreenRenderManagerInterfa
 
         QDemonRenderClearFlags theClearFlags;
         QDemonRenderTextureFormats::Enum theDepthStencilTextureFormat(QDemonRenderTextureFormats::Unknown);
-        QDemonRenderFrameBufferAttachments::Enum theAttachmentLocation(QDemonRenderFrameBufferAttachments::Unknown);
+        QDemonRenderFrameBufferAttachment theAttachmentLocation(QDemonRenderFrameBufferAttachment::Unknown);
         if (theDesiredEnvironment.stencil) {
             theDepthStencilTextureFormat = QDemonRenderTextureFormats::Depth24Stencil8;
-            theAttachmentLocation = QDemonRenderFrameBufferAttachments::DepthStencil;
+            theAttachmentLocation = QDemonRenderFrameBufferAttachment::DepthStencil;
         } else if (theDesiredEnvironment.depth != QDemonOffscreenRendererDepthValues::NoDepthBuffer) {
-            theAttachmentLocation = QDemonRenderFrameBufferAttachments::Depth;
+            theAttachmentLocation = QDemonRenderFrameBufferAttachment::Depth;
             switch (theDesiredEnvironment.depth) {
             case QDemonOffscreenRendererDepthValues::Depth16:
                 theDepthStencilTextureFormat = QDemonRenderTextureFormats::Depth16;
@@ -276,7 +276,7 @@ struct QDemonOffscreenRenderManager : public QDemonOffscreenRenderManagerInterfa
                 theDepthStencilTextureFormat = QDemonRenderTextureFormats::Depth32;
                 break;
             default:
-                theAttachmentLocation = QDemonRenderFrameBufferAttachments::Unknown;
+                theAttachmentLocation = QDemonRenderFrameBufferAttachment::Unknown;
                 theDepthStencilTextureFormat = QDemonRenderTextureFormats::Unknown;
                 break;
             }
@@ -285,7 +285,7 @@ struct QDemonOffscreenRenderManager : public QDemonOffscreenRenderManagerInterfa
                                          theDesiredEnvironment.height,
                                          theDesiredEnvironment.format,
                                          theSampleCount);
-        theFrameBuffer->attach(QDemonRenderFrameBufferAttachments::Color0, renderColorTexture.getTexture(), fboAttachmentType);
+        theFrameBuffer->attach(QDemonRenderFrameBufferAttachment::Color0, renderColorTexture.getTexture(), fboAttachmentType);
 
         if (theDepthStencilTextureFormat != QDemonRenderTextureFormats::Unknown) {
             renderDepthStencilTexture.ensureTexture(theDesiredEnvironment.width,
@@ -335,8 +335,8 @@ struct QDemonOffscreenRenderManager : public QDemonOffscreenRenderManagerInterfa
         } else {
             renderColorTexture.forgetTexture();
         }
-        theFrameBuffer->attach(QDemonRenderFrameBufferAttachments::Color0, QDemonRenderTextureOrRenderBuffer(), fboAttachmentType);
-        if (theAttachmentLocation != QDemonRenderFrameBufferAttachments::Unknown)
+        theFrameBuffer->attach(QDemonRenderFrameBufferAttachment::Color0, QDemonRenderTextureOrRenderBuffer(), fboAttachmentType);
+        if (theAttachmentLocation != QDemonRenderFrameBufferAttachment::Unknown)
             theFrameBuffer->attach(theAttachmentLocation, QDemonRenderTextureOrRenderBuffer(), fboAttachmentType);
     }
 

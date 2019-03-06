@@ -226,7 +226,7 @@ public:
                                                                        const QDemonRef<QDemonRenderIndexBuffer> indexBuffer,
                                                                        QDemonConstDataRef<quint32> strides,
                                                                        QDemonConstDataRef<quint32> offsets,
-                                                                       QDemonRenderDrawMode::Enum primType = QDemonRenderDrawMode::Triangles,
+                                                                       QDemonRenderDrawMode primType = QDemonRenderDrawMode::Triangles,
                                                                        quint32 patchVertexCount = 1) = 0;
     virtual void setInputAssembler(QDemonRef<QDemonRenderInputAssembler> inputAssembler) = 0;
 
@@ -393,7 +393,7 @@ public:
     // before the draw operation.  Note that there isn't another way to set the immedate
     // property values for a given shader because it isn't clear which shader is active
     // when the properties are getting set.
-    void draw(QDemonRenderDrawMode::Enum drawMode, quint32 count, quint32 offset) override = 0;
+    void draw(QDemonRenderDrawMode drawMode, quint32 count, quint32 offset) override = 0;
 
     /**
      * @brief Draw the current active vertex buffer using an indirect buffer
@@ -405,7 +405,7 @@ public:
      *
      * @return no return.
      */
-    virtual void drawIndirect(QDemonRenderDrawMode::Enum drawMode, quint32 offset) = 0;
+    virtual void drawIndirect(QDemonRenderDrawMode drawMode, quint32 offset) = 0;
 
     virtual QSurfaceFormat format() const = 0;
 
@@ -859,7 +859,7 @@ public:
                                                                const QDemonRef<QDemonRenderIndexBuffer> indexBuffer,
                                                                QDemonConstDataRef<quint32> strides,
                                                                QDemonConstDataRef<quint32> offsets,
-                                                               QDemonRenderDrawMode::Enum primType,
+                                                               QDemonRenderDrawMode primType,
                                                                quint32 patchVertexCount) override;
     void setInputAssembler(QDemonRef<QDemonRenderInputAssembler> inputAssembler) override;
 
@@ -993,8 +993,8 @@ public:
                          QDemonRenderClearFlags flags,
                          QDemonRenderTextureMagnifyingOp::Enum filter) override;
 
-    void draw(QDemonRenderDrawMode::Enum drawMode, quint32 count, quint32 offset) override;
-    void drawIndirect(QDemonRenderDrawMode::Enum drawMode, quint32 offset) override;
+    void draw(QDemonRenderDrawMode drawMode, quint32 count, quint32 offset) override;
+    void drawIndirect(QDemonRenderDrawMode drawMode, quint32 offset) override;
 
     QSurfaceFormat format() const override { return m_backend->format(); }
     virtual void resetStates()

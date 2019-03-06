@@ -55,13 +55,13 @@ void QDemonRenderPathSpecification::addPoint(QVector2D inData)
 
 void QDemonRenderPathSpecification::moveTo(QVector2D inPoint)
 {
-    m_pathCommands.push_back(QDemonRenderPathCommands::MoveTo);
+    m_pathCommands.push_back(static_cast<uchar>(QDemonRenderPathCommands::MoveTo));
     addPoint(inPoint);
 }
 
 void QDemonRenderPathSpecification::cubicCurveTo(QVector2D inC1, QVector2D inC2, QVector2D inDest)
 {
-    m_pathCommands.push_back(QDemonRenderPathCommands::CubicCurveTo);
+    m_pathCommands.push_back(static_cast<uchar>(QDemonRenderPathCommands::CubicCurveTo));
     addPoint(inC1);
     addPoint(inC2);
     addPoint(inDest);
@@ -69,7 +69,7 @@ void QDemonRenderPathSpecification::cubicCurveTo(QVector2D inC1, QVector2D inC2,
 
 void QDemonRenderPathSpecification::closePath()
 {
-    m_pathCommands.push_back(QDemonRenderPathCommands::Close);
+    m_pathCommands.push_back(static_cast<uchar>(QDemonRenderPathCommands::Close));
 }
 
 QDemonRef<QDemonRenderPathSpecification> QDemonRenderPathSpecification::createPathSpecification(const QDemonRef<QDemonRenderContextImpl> &context)

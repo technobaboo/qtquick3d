@@ -737,7 +737,7 @@ void QDemonRenderBackendGLBase::releaseRenderTarget(QDemonRenderBackendRenderTar
 }
 
 void QDemonRenderBackendGLBase::renderTargetAttach(QDemonRenderBackendRenderTargetObject /* rto */,
-                                                   QDemonRenderFrameBufferAttachments::Enum attachment,
+                                                   QDemonRenderFrameBufferAttachment attachment,
                                                    QDemonRenderBackendRenderbufferObject rbo)
 {
     // rto must be the current render target
@@ -749,7 +749,7 @@ void QDemonRenderBackendGLBase::renderTargetAttach(QDemonRenderBackendRenderTarg
 }
 
 void QDemonRenderBackendGLBase::renderTargetAttach(QDemonRenderBackendRenderTargetObject /* rto */,
-                                                   QDemonRenderFrameBufferAttachments::Enum attachment,
+                                                   QDemonRenderFrameBufferAttachment attachment,
                                                    QDemonRenderBackendTextureObject to,
                                                    QDemonRenderTextureTargetType target)
 {
@@ -765,7 +765,7 @@ void QDemonRenderBackendGLBase::renderTargetAttach(QDemonRenderBackendRenderTarg
 }
 
 void QDemonRenderBackendGLBase::renderTargetAttach(QDemonRenderBackendRenderTargetObject,
-                                                   QDemonRenderFrameBufferAttachments::Enum,
+                                                   QDemonRenderFrameBufferAttachment,
                                                    QDemonRenderBackendTextureObject,
                                                    qint32,
                                                    qint32)
@@ -1977,19 +1977,19 @@ void QDemonRenderBackendGLBase::setConstantValue(QDemonRenderBackendShaderProgra
     }
 }
 
-void QDemonRenderBackendGLBase::draw(QDemonRenderDrawMode::Enum drawMode, quint32 start, quint32 count)
+void QDemonRenderBackendGLBase::draw(QDemonRenderDrawMode drawMode, quint32 start, quint32 count)
 {
     GL_CALL_FUNCTION(glDrawArrays(m_conversion.fromDrawModeToGL(drawMode, m_backendSupport.caps.bits.bTessellationSupported), start, count));
 }
 
-void QDemonRenderBackendGLBase::drawIndirect(QDemonRenderDrawMode::Enum drawMode, const void *indirect)
+void QDemonRenderBackendGLBase::drawIndirect(QDemonRenderDrawMode drawMode, const void *indirect)
 {
     // needs GL4 and above
     NVRENDER_BACKEND_UNUSED(drawMode);
     NVRENDER_BACKEND_UNUSED(indirect);
 }
 
-void QDemonRenderBackendGLBase::drawIndexed(QDemonRenderDrawMode::Enum drawMode,
+void QDemonRenderBackendGLBase::drawIndexed(QDemonRenderDrawMode drawMode,
                                             quint32 count,
                                             QDemonRenderComponentTypes::Enum type,
                                             const void *indices)
@@ -2000,7 +2000,7 @@ void QDemonRenderBackendGLBase::drawIndexed(QDemonRenderDrawMode::Enum drawMode,
                                     indices));
 }
 
-void QDemonRenderBackendGLBase::drawIndexedIndirect(QDemonRenderDrawMode::Enum drawMode,
+void QDemonRenderBackendGLBase::drawIndexedIndirect(QDemonRenderDrawMode drawMode,
                                                     QDemonRenderComponentTypes::Enum type,
                                                     const void *indirect)
 {
@@ -2040,13 +2040,13 @@ void QDemonRenderBackendGLBase::releasePathNVObject(QDemonRenderBackendPathObjec
 }
 
 void QDemonRenderBackendGLBase::loadPathGlyphs(QDemonRenderBackendPathObject,
-                                               QDemonRenderPathFontTarget::Enum,
+                                               QDemonRenderPathFontTarget,
                                                const void *,
                                                QDemonRenderPathFontStyleFlags,
                                                size_t,
-                                               QDemonRenderPathFormatType::Enum,
+                                               QDemonRenderPathFormatType,
                                                const void *,
-                                               QDemonRenderPathMissingGlyphs::Enum,
+                                               QDemonRenderPathMissingGlyphs,
                                                QDemonRenderBackendPathObject,
                                                float)
 {
@@ -2055,12 +2055,12 @@ void QDemonRenderBackendGLBase::loadPathGlyphs(QDemonRenderBackendPathObject,
 }
 
 void QDemonRenderBackendGLBase::loadPathGlyphRange(QDemonRenderBackendPathObject,
-                                                   QDemonRenderPathFontTarget::Enum,
+                                                   QDemonRenderPathFontTarget,
                                                    const void *,
                                                    QDemonRenderPathFontStyleFlags,
                                                    quint32,
                                                    size_t,
-                                                   QDemonRenderPathMissingGlyphs::Enum,
+                                                   QDemonRenderPathMissingGlyphs,
                                                    QDemonRenderBackendPathObject,
                                                    float)
 {
@@ -2068,8 +2068,8 @@ void QDemonRenderBackendGLBase::loadPathGlyphRange(QDemonRenderBackendPathObject
     qCCritical(INVALID_OPERATION) << QObject::tr("Unsupported method: ") << __FUNCTION__;
 }
 
-QDemonRenderPathReturnValues::Enum QDemonRenderBackendGLBase::loadPathGlyphsIndexed(QDemonRenderBackendPathObject,
-                                                                                    QDemonRenderPathFontTarget::Enum,
+QDemonRenderPathReturnValues QDemonRenderBackendGLBase::loadPathGlyphsIndexed(QDemonRenderBackendPathObject,
+                                                                                    QDemonRenderPathFontTarget,
                                                                                     const void *,
                                                                                     QDemonRenderPathFontStyleFlags,
                                                                                     quint32,
@@ -2084,7 +2084,7 @@ QDemonRenderPathReturnValues::Enum QDemonRenderBackendGLBase::loadPathGlyphsInde
 }
 
 QDemonRenderBackend::QDemonRenderBackendPathObject QDemonRenderBackendGLBase::loadPathGlyphsIndexedRange(
-        QDemonRenderPathFontTarget::Enum,
+        QDemonRenderPathFontTarget,
         const void *,
         QDemonRenderPathFontStyleFlags,
         QDemonRenderBackend::QDemonRenderBackendPathObject,
@@ -2097,7 +2097,7 @@ QDemonRenderBackend::QDemonRenderBackendPathObject QDemonRenderBackendGLBase::lo
 void QDemonRenderBackendGLBase::getPathMetrics(QDemonRenderBackendPathObject,
                                                size_t,
                                                QDemonRenderPathGlyphFontMetricFlags,
-                                               QDemonRenderPathFormatType::Enum,
+                                               QDemonRenderPathFormatType,
                                                const void *,
                                                size_t,
                                                float *)
@@ -2115,7 +2115,7 @@ void QDemonRenderBackendGLBase::getPathMetricsRange(QDemonRenderBackendPathObjec
 void QDemonRenderBackendGLBase::getPathSpacing(QDemonRenderBackendPathObject,
                                                size_t,
                                                QDemonRenderPathListMode::Enum,
-                                               QDemonRenderPathFormatType::Enum,
+                                               QDemonRenderPathFormatType,
                                                const void *,
                                                float,
                                                float,
@@ -2128,7 +2128,7 @@ void QDemonRenderBackendGLBase::getPathSpacing(QDemonRenderBackendPathObject,
 
 void QDemonRenderBackendGLBase::stencilFillPathInstanced(QDemonRenderBackendPathObject,
                                                          size_t,
-                                                         QDemonRenderPathFormatType::Enum,
+                                                         QDemonRenderPathFormatType,
                                                          const void *,
                                                          QDemonRenderPathFillMode::Enum,
                                                          quint32,
@@ -2141,7 +2141,7 @@ void QDemonRenderBackendGLBase::stencilFillPathInstanced(QDemonRenderBackendPath
 
 void QDemonRenderBackendGLBase::stencilStrokePathInstancedN(QDemonRenderBackendPathObject,
                                                             size_t,
-                                                            QDemonRenderPathFormatType::Enum,
+                                                            QDemonRenderPathFormatType,
                                                             const void *,
                                                             qint32,
                                                             quint32,
@@ -2154,7 +2154,7 @@ void QDemonRenderBackendGLBase::stencilStrokePathInstancedN(QDemonRenderBackendP
 
 void QDemonRenderBackendGLBase::coverFillPathInstanced(QDemonRenderBackendPathObject,
                                                        size_t,
-                                                       QDemonRenderPathFormatType::Enum,
+                                                       QDemonRenderPathFormatType,
                                                        const void *,
                                                        QDemonRenderPathCoverMode::Enum,
                                                        QDemonRenderPathTransformType::Enum,
@@ -2166,7 +2166,7 @@ void QDemonRenderBackendGLBase::coverFillPathInstanced(QDemonRenderBackendPathOb
 
 void QDemonRenderBackendGLBase::coverStrokePathInstanced(QDemonRenderBackendPathObject,
                                                          size_t,
-                                                         QDemonRenderPathFormatType::Enum,
+                                                         QDemonRenderPathFormatType,
                                                          const void *,
                                                          QDemonRenderPathCoverMode::Enum,
                                                          QDemonRenderPathTransformType::Enum,

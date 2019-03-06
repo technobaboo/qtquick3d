@@ -545,7 +545,7 @@ void QDemonRenderBackendGLES2Impl::setReadBuffer(QDemonRenderBackendRenderTarget
 }
 
 void QDemonRenderBackendGLES2Impl::renderTargetAttach(QDemonRenderBackendRenderTargetObject,
-                                                      QDemonRenderFrameBufferAttachments::Enum attachment,
+                                                      QDemonRenderFrameBufferAttachment attachment,
                                                       QDemonRenderBackendTextureObject to,
                                                       qint32 level,
                                                       qint32 layer)
@@ -596,7 +596,7 @@ void QDemonRenderBackendGLES2Impl::releaseRenderTarget(QDemonRenderBackendRender
 }
 
 void QDemonRenderBackendGLES2Impl::renderTargetAttach(QDemonRenderBackendRenderTargetObject /* rto */,
-                                                      QDemonRenderFrameBufferAttachments::Enum attachment,
+                                                      QDemonRenderFrameBufferAttachment attachment,
                                                       QDemonRenderBackendRenderbufferObject rbo)
 {
     // rto must be the current render target
@@ -608,7 +608,7 @@ void QDemonRenderBackendGLES2Impl::renderTargetAttach(QDemonRenderBackendRenderT
 }
 
 void QDemonRenderBackendGLES2Impl::renderTargetAttach(QDemonRenderBackendRenderTargetObject /* rto */,
-                                                      QDemonRenderFrameBufferAttachments::Enum attachment,
+                                                      QDemonRenderFrameBufferAttachment attachment,
                                                       QDemonRenderBackendTextureObject to,
                                                       QDemonRenderTextureTargetType target)
 {
@@ -620,7 +620,7 @@ void QDemonRenderBackendGLES2Impl::renderTargetAttach(QDemonRenderBackendRenderT
     GLenum glAttach = GLConversion::fromFramebufferAttachmentsToGL(attachment);
     GLenum glTarget = GLConversion::fromTextureTargetToGL(target);
 
-    if (attachment == QDemonRenderFrameBufferAttachments::DepthStencil) {
+    if (attachment == QDemonRenderFrameBufferAttachment::DepthStencil) {
         GL_CALL_EXTRA_FUNCTION(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, glTarget, texID, 0));
         GL_CALL_EXTRA_FUNCTION(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, glTarget, texID, 0));
     } else {

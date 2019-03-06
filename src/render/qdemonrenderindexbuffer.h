@@ -91,7 +91,7 @@ public:
      *
      * @return no return.
      */
-    void draw(QDemonRenderDrawMode::Enum drawMode, quint32 count, quint32 offset) override;
+    void draw(QDemonRenderDrawMode drawMode, quint32 count, quint32 offset) override;
 
     /**
      * @brief draw the buffer via indirec draw buffer setup
@@ -102,7 +102,7 @@ public:
      *
      * @return no return.
      */
-    virtual void drawIndirect(QDemonRenderDrawMode::Enum drawMode, quint32 offset);
+    virtual void drawIndirect(QDemonRenderDrawMode drawMode, quint32 offset);
 
     /**
      * @brief get the backend object handle

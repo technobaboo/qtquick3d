@@ -69,7 +69,7 @@ public:
      */
     void initTextItem(size_t glyphCount,
                       const quint32 *glyphIDs,
-                      QDemonRenderPathFormatType::Enum type,
+                      QDemonRenderPathFormatType type,
                       float *posArray,
                       QVector2D pixelBound,
                       QVector2D logicalBound,
@@ -111,7 +111,7 @@ private:
      *
      * @return true if successful
      */
-    quint32 getSizeOfType(QDemonRenderPathFormatType::Enum type);
+    quint32 getSizeOfType(QDemonRenderPathFormatType type);
 
 private:
     size_t m_numGlyphs; ///< glyph count

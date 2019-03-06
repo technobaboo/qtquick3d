@@ -128,14 +128,14 @@ public:
     QDemonRenderBackendRenderTargetObject createRenderTarget() override;
     void releaseRenderTarget(QDemonRenderBackendRenderTargetObject rto) override;
     void renderTargetAttach(QDemonRenderBackendRenderTargetObject rto,
-                            QDemonRenderFrameBufferAttachments::Enum attachment,
+                            QDemonRenderFrameBufferAttachment attachment,
                             QDemonRenderBackendRenderbufferObject rbo) override;
     void renderTargetAttach(QDemonRenderBackendRenderTargetObject rto,
-                            QDemonRenderFrameBufferAttachments::Enum attachment,
+                            QDemonRenderFrameBufferAttachment attachment,
                             QDemonRenderBackendTextureObject to,
                             QDemonRenderTextureTargetType target = QDemonRenderTextureTargetType::Texture2D) override;
     void renderTargetAttach(QDemonRenderBackendRenderTargetObject rto,
-                            QDemonRenderFrameBufferAttachments::Enum attachment,
+                            QDemonRenderFrameBufferAttachment attachment,
                             QDemonRenderBackendTextureObject to,
                             qint32 level,
                             qint32 layer) override;

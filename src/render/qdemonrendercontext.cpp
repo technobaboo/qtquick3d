@@ -515,7 +515,7 @@ QDemonRef<QDemonRenderInputAssembler> QDemonRenderContextImpl::createInputAssemb
         const QDemonRef<QDemonRenderIndexBuffer> indexBuffer,
         QDemonConstDataRef<quint32> strides,
         QDemonConstDataRef<quint32> offsets,
-        QDemonRenderDrawMode::Enum primType,
+        QDemonRenderDrawMode primType,
         quint32 patchVertexCount)
 {
     return QDemonRef<QDemonRenderInputAssembler>(
@@ -956,7 +956,7 @@ void QDemonRenderContextImpl::onPostDraw()
     m_nextConstantBufferUnit = 0;
 }
 
-void QDemonRenderContextImpl::draw(QDemonRenderDrawMode::Enum drawMode, quint32 count, quint32 offset)
+void QDemonRenderContextImpl::draw(QDemonRenderDrawMode drawMode, quint32 count, quint32 offset)
 {
     if (!applyPreDrawProperties())
         return;
@@ -970,7 +970,7 @@ void QDemonRenderContextImpl::draw(QDemonRenderDrawMode::Enum drawMode, quint32 
     onPostDraw();
 }
 
-void QDemonRenderContextImpl::drawIndirect(QDemonRenderDrawMode::Enum drawMode, quint32 offset)
+void QDemonRenderContextImpl::drawIndirect(QDemonRenderDrawMode drawMode, quint32 offset)
 {
     if (!applyPreDrawProperties())
         return;

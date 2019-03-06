@@ -103,7 +103,7 @@ QDemonRenderPathFontItem::~QDemonRenderPathFontItem()
 
 void QDemonRenderPathFontItem::initTextItem(size_t glyphCount,
                                             const quint32 *glyphIDs,
-                                            QDemonRenderPathFormatType::Enum type,
+                                            QDemonRenderPathFormatType type,
                                             float *posArray,
                                             QVector2D pixelBound,
                                             QVector2D logicalBound,
@@ -172,7 +172,7 @@ const QMatrix4x4 QDemonRenderPathFontItem::getTransform()
                       m_modelMatrix(2, 2));
 }
 
-quint32 QDemonRenderPathFontItem::getSizeOfType(QDemonRenderPathFormatType::Enum type)
+quint32 QDemonRenderPathFontItem::getSizeOfType(QDemonRenderPathFormatType type)
 {
     switch (type) {
     case QDemonRenderPathFormatType::Byte:

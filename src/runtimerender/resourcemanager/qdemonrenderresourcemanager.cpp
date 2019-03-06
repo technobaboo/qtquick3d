@@ -77,18 +77,18 @@ struct QDemonResourceManager : public QDemonResourceManagerInterface
     {
         if (inBuffer->hasAnyAttachment()) {
             // Ensure the framebuffer has no attachments.
-            inBuffer->attach(QDemonRenderFrameBufferAttachments::Color0, QDemonRenderTextureOrRenderBuffer());
-            inBuffer->attach(QDemonRenderFrameBufferAttachments::Color1, QDemonRenderTextureOrRenderBuffer());
-            inBuffer->attach(QDemonRenderFrameBufferAttachments::Color2, QDemonRenderTextureOrRenderBuffer());
-            inBuffer->attach(QDemonRenderFrameBufferAttachments::Color3, QDemonRenderTextureOrRenderBuffer());
-            inBuffer->attach(QDemonRenderFrameBufferAttachments::Color4, QDemonRenderTextureOrRenderBuffer());
-            inBuffer->attach(QDemonRenderFrameBufferAttachments::Color5, QDemonRenderTextureOrRenderBuffer());
-            inBuffer->attach(QDemonRenderFrameBufferAttachments::Color6, QDemonRenderTextureOrRenderBuffer());
-            inBuffer->attach(QDemonRenderFrameBufferAttachments::Color7, QDemonRenderTextureOrRenderBuffer());
-            inBuffer->attach(QDemonRenderFrameBufferAttachments::Depth, QDemonRenderTextureOrRenderBuffer());
-            inBuffer->attach(QDemonRenderFrameBufferAttachments::Stencil, QDemonRenderTextureOrRenderBuffer());
+            inBuffer->attach(QDemonRenderFrameBufferAttachment::Color0, QDemonRenderTextureOrRenderBuffer());
+            inBuffer->attach(QDemonRenderFrameBufferAttachment::Color1, QDemonRenderTextureOrRenderBuffer());
+            inBuffer->attach(QDemonRenderFrameBufferAttachment::Color2, QDemonRenderTextureOrRenderBuffer());
+            inBuffer->attach(QDemonRenderFrameBufferAttachment::Color3, QDemonRenderTextureOrRenderBuffer());
+            inBuffer->attach(QDemonRenderFrameBufferAttachment::Color4, QDemonRenderTextureOrRenderBuffer());
+            inBuffer->attach(QDemonRenderFrameBufferAttachment::Color5, QDemonRenderTextureOrRenderBuffer());
+            inBuffer->attach(QDemonRenderFrameBufferAttachment::Color6, QDemonRenderTextureOrRenderBuffer());
+            inBuffer->attach(QDemonRenderFrameBufferAttachment::Color7, QDemonRenderTextureOrRenderBuffer());
+            inBuffer->attach(QDemonRenderFrameBufferAttachment::Depth, QDemonRenderTextureOrRenderBuffer());
+            inBuffer->attach(QDemonRenderFrameBufferAttachment::Stencil, QDemonRenderTextureOrRenderBuffer());
             if (renderContext->isDepthStencilSupported())
-                inBuffer->attach(QDemonRenderFrameBufferAttachments::DepthStencil, QDemonRenderTextureOrRenderBuffer());
+                inBuffer->attach(QDemonRenderFrameBufferAttachment::DepthStencil, QDemonRenderTextureOrRenderBuffer());
         }
 #ifdef _DEBUG
         auto theFind = std::find(freeFrameBuffers.begin(), freeFrameBuffers.end(), inBuffer);
@@ -281,12 +281,12 @@ struct QDemonResourceManager : public QDemonResourceManagerInterface
 
             // note we could re-use a former MSAA texture
             // this causes a entire destroy of the previous texture object
-            theTexture->setTextureData(QDemonDataRef<quint8>(), 0, QDemonRenderTextureCubeFaces::CubePosX, inWidth, inHeight, inTextureFormat);
-            theTexture->setTextureData(QDemonDataRef<quint8>(), 0, QDemonRenderTextureCubeFaces::CubeNegX, inWidth, inHeight, inTextureFormat);
-            theTexture->setTextureData(QDemonDataRef<quint8>(), 0, QDemonRenderTextureCubeFaces::CubePosY, inWidth, inHeight, inTextureFormat);
-            theTexture->setTextureData(QDemonDataRef<quint8>(), 0, QDemonRenderTextureCubeFaces::CubeNegY, inWidth, inHeight, inTextureFormat);
-            theTexture->setTextureData(QDemonDataRef<quint8>(), 0, QDemonRenderTextureCubeFaces::CubePosZ, inWidth, inHeight, inTextureFormat);
-            theTexture->setTextureData(QDemonDataRef<quint8>(), 0, QDemonRenderTextureCubeFaces::CubeNegZ, inWidth, inHeight, inTextureFormat);
+            theTexture->setTextureData(QDemonDataRef<quint8>(), 0, QDemonRenderTextureCubeFace::CubePosX, inWidth, inHeight, inTextureFormat);
+            theTexture->setTextureData(QDemonDataRef<quint8>(), 0, QDemonRenderTextureCubeFace::CubeNegX, inWidth, inHeight, inTextureFormat);
+            theTexture->setTextureData(QDemonDataRef<quint8>(), 0, QDemonRenderTextureCubeFace::CubePosY, inWidth, inHeight, inTextureFormat);
+            theTexture->setTextureData(QDemonDataRef<quint8>(), 0, QDemonRenderTextureCubeFace::CubeNegY, inWidth, inHeight, inTextureFormat);
+            theTexture->setTextureData(QDemonDataRef<quint8>(), 0, QDemonRenderTextureCubeFace::CubePosZ, inWidth, inHeight, inTextureFormat);
+            theTexture->setTextureData(QDemonDataRef<quint8>(), 0, QDemonRenderTextureCubeFace::CubeNegZ, inWidth, inHeight, inTextureFormat);
             theTexture->setMinFilter(QDemonRenderTextureMinifyingOp::Linear);
             theTexture->setMagFilter(QDemonRenderTextureMagnifyingOp::Linear);
             return theTexture;
@@ -297,12 +297,12 @@ struct QDemonResourceManager : public QDemonResourceManagerInterface
 
         if (!inMultisample) {
             theTexture = renderContext->createTextureCube();
-            theTexture->setTextureData(QDemonDataRef<quint8>(), 0, QDemonRenderTextureCubeFaces::CubePosX, inWidth, inHeight, inTextureFormat);
-            theTexture->setTextureData(QDemonDataRef<quint8>(), 0, QDemonRenderTextureCubeFaces::CubeNegX, inWidth, inHeight, inTextureFormat);
-            theTexture->setTextureData(QDemonDataRef<quint8>(), 0, QDemonRenderTextureCubeFaces::CubePosY, inWidth, inHeight, inTextureFormat);
-            theTexture->setTextureData(QDemonDataRef<quint8>(), 0, QDemonRenderTextureCubeFaces::CubeNegY, inWidth, inHeight, inTextureFormat);
-            theTexture->setTextureData(QDemonDataRef<quint8>(), 0, QDemonRenderTextureCubeFaces::CubePosZ, inWidth, inHeight, inTextureFormat);
-            theTexture->setTextureData(QDemonDataRef<quint8>(), 0, QDemonRenderTextureCubeFaces::CubeNegZ, inWidth, inHeight, inTextureFormat);
+            theTexture->setTextureData(QDemonDataRef<quint8>(), 0, QDemonRenderTextureCubeFace::CubePosX, inWidth, inHeight, inTextureFormat);
+            theTexture->setTextureData(QDemonDataRef<quint8>(), 0, QDemonRenderTextureCubeFace::CubeNegX, inWidth, inHeight, inTextureFormat);
+            theTexture->setTextureData(QDemonDataRef<quint8>(), 0, QDemonRenderTextureCubeFace::CubePosY, inWidth, inHeight, inTextureFormat);
+            theTexture->setTextureData(QDemonDataRef<quint8>(), 0, QDemonRenderTextureCubeFace::CubeNegY, inWidth, inHeight, inTextureFormat);
+            theTexture->setTextureData(QDemonDataRef<quint8>(), 0, QDemonRenderTextureCubeFace::CubePosZ, inWidth, inHeight, inTextureFormat);
+            theTexture->setTextureData(QDemonDataRef<quint8>(), 0, QDemonRenderTextureCubeFace::CubeNegZ, inWidth, inHeight, inTextureFormat);
         } else {
             // Not supported yet
             return nullptr;

@@ -64,7 +64,7 @@ struct MeshV1
     IndexBuffer m_indexBuffer;
     OffsetDataRef<LogicalVertexBuffer> m_logicalVertexBuffers; // may be empty
     OffsetDataRef<MeshSubsetV1> m_subsets;
-    QDemonRenderDrawMode::Enum m_drawMode;
+    QDemonRenderDrawMode m_drawMode;
     QDemonRenderWinding::Enum m_winding;
     typedef MeshSubsetV1 TSubsetType;
 };
@@ -107,7 +107,7 @@ struct MeshV2
     IndexBuffer m_indexBuffer;
     OffsetDataRef<LogicalVertexBuffer> m_logicalVertexBuffers; // may be empty
     OffsetDataRef<MeshSubsetV2> m_subsets;
-    QDemonRenderDrawMode::Enum m_drawMode;
+    QDemonRenderDrawMode m_drawMode;
     QDemonRenderWinding::Enum m_winding;
     typedef MeshSubsetV2 TSubsetType;
 };
@@ -876,7 +876,7 @@ class MeshBuilderImpl : public QDemonMeshBuilder
     DynamicIndexBuf m_indexBuffer;
     QVector<Joint> m_joints;
     QVector<SubsetDesc> m_meshSubsetDescs;
-    QDemonRenderDrawMode::Enum m_drawMode;
+    QDemonRenderDrawMode m_drawMode;
     QDemonRenderWinding::Enum m_winding;
     QByteArray m_remappedVertexData;
     QByteArray m_newIndexBuffer;
@@ -897,7 +897,7 @@ public:
         m_meshBuffer.clear();
     }
 
-    void setDrawParameters(QDemonRenderDrawMode::Enum drawMode, QDemonRenderWinding::Enum winding) override
+    void setDrawParameters(QDemonRenderDrawMode drawMode, QDemonRenderWinding::Enum winding) override
     {
         m_drawMode = drawMode;
         m_winding = winding;

@@ -79,7 +79,7 @@ private:
     QDemonRef<QDemonRenderContextImpl> m_context; ///< pointer to context
     QDemonRef<QDemonRenderBackend> m_backend; ///< pointer to backend
 
-    QDemonRenderTextureOrRenderBuffer m_attachments[QDemonRenderFrameBufferAttachments::LastAttachment]; ///< attachments array
+    QDemonRenderTextureOrRenderBuffer m_attachments[static_cast<int>(QDemonRenderFrameBufferAttachment::LastAttachment)]; ///< attachments array
     QDemonRenderBackend::QDemonRenderBackendRenderTargetObject m_bufferHandle; ///< opaque backend handle
 
 public:
@@ -102,7 +102,7 @@ public:
      *
      * @return buffer format
      */
-    virtual QDemonRenderTextureOrRenderBuffer getAttachment(QDemonRenderFrameBufferAttachments::Enum attachment);
+    virtual QDemonRenderTextureOrRenderBuffer getAttachment(QDemonRenderFrameBufferAttachment attachment);
 
     /**
      * @brief Attach a render or texture buffer to a render target
@@ -114,7 +114,7 @@ public:
      *
      * @return no return
      */
-    virtual void attach(QDemonRenderFrameBufferAttachments::Enum attachment,
+    virtual void attach(QDemonRenderFrameBufferAttachment attachment,
                         QDemonRenderTextureOrRenderBuffer buffer,
                         QDemonRenderTextureTargetType target = QDemonRenderTextureTargetType::Texture2D);
 
@@ -131,7 +131,7 @@ public:
      *
      * @return no return
      */
-    virtual void attachLayer(QDemonRenderFrameBufferAttachments::Enum attachment,
+    virtual void attachLayer(QDemonRenderFrameBufferAttachment attachment,
                              QDemonRenderTextureOrRenderBuffer buffer,
                              qint32 layer,
                              qint32 level = 0);
@@ -149,9 +149,9 @@ public:
      *
      * @return no return
      */
-    virtual void attachFace(QDemonRenderFrameBufferAttachments::Enum attachment,
+    virtual void attachFace(QDemonRenderFrameBufferAttachment attachment,
                             QDemonRenderTextureOrRenderBuffer buffer,
-                            QDemonRenderTextureCubeFaces::Enum face);
+                            QDemonRenderTextureCubeFace face);
 
     /**
      * @brief Check that this framebuffer is complete and can be rendered to.
@@ -196,7 +196,7 @@ private:
      *
      * @return which target we released
      */
-    QDemonRenderTextureTargetType releaseAttachment(QDemonRenderFrameBufferAttachments::Enum idx);
+    QDemonRenderTextureTargetType releaseAttachment(QDemonRenderFrameBufferAttachment idx);
 
     quint32 m_attachmentBits; ///< holds flags for current attached buffers
 };

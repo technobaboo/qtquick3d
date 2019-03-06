@@ -51,7 +51,7 @@ void QDemonRendererUtil::resolveMutisampleFBOColorOnly(const QDemonRef<QDemonRes
 
     // get / create resolve targets and attach
     ioResult.ensureTexture(inWidth, inHeight, inColorFormat);
-    theResolveFB->attach(QDemonRenderFrameBufferAttachments::Color0, ioResult.getTexture());
+    theResolveFB->attach(QDemonRenderFrameBufferAttachment::Color0, ioResult.getTexture());
     // CN - I don't believe we have to resolve the depth.
     // The reason is we render the depth texture specially unresolved.  So there is no need to
     // resolve
@@ -88,7 +88,7 @@ void QDemonRendererUtil::resolveSSAAFBOColorOnly(const QDemonRef<QDemonResourceM
 
     // get / create resolve targets and attach
     ioResult.ensureTexture(outWidth, outHeight, inColorFormat);
-    theResolveFB->attach(QDemonRenderFrameBufferAttachments::Color0, ioResult.getTexture());
+    theResolveFB->attach(QDemonRenderFrameBufferAttachment::Color0, ioResult.getTexture());
     // CN - I don't believe we have to resolve the depth.
     // The reason is we render the depth texture specially unresolved.  So there is no need to
     // resolve

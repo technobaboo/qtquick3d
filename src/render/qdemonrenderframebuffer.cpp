@@ -52,15 +52,15 @@ QDemonRenderFrameBuffer::~QDemonRenderFrameBuffer()
     m_attachmentBits = 0;
 
     // release attachments
-    QDEMON_FOREACH(idx, (quint32)QDemonRenderFrameBufferAttachments::LastAttachment)
+    QDEMON_FOREACH(idx, (quint32)QDemonRenderFrameBufferAttachment::LastAttachment)
     {
-        if ((QDemonRenderFrameBufferAttachments::Enum)idx != QDemonRenderFrameBufferAttachments::DepthStencil
+        if ((QDemonRenderFrameBufferAttachment)idx != QDemonRenderFrameBufferAttachment::DepthStencil
             || m_context->isDepthStencilSupported())
-            releaseAttachment((QDemonRenderFrameBufferAttachments::Enum)idx);
+            releaseAttachment((QDemonRenderFrameBufferAttachment)idx);
     }
 }
 
-inline void CheckAttachment(QDemonRef<QDemonRenderContext> ctx, QDemonRenderFrameBufferAttachments::Enum attachment)
+inline void CheckAttachment(QDemonRef<QDemonRenderContext> ctx, QDemonRenderFrameBufferAttachment attachment)
 {
 #ifdef _DEBUG
     Q_ASSERT(attachment != QDemonRenderFrameBufferAttachments::DepthStencil || ctx->isDepthStencilSupported());
@@ -69,11 +69,12 @@ inline void CheckAttachment(QDemonRef<QDemonRenderContext> ctx, QDemonRenderFram
     (void)attachment;
 }
 
-QDemonRenderTextureTargetType QDemonRenderFrameBuffer::releaseAttachment(QDemonRenderFrameBufferAttachments::Enum idx)
+QDemonRenderTextureTargetType QDemonRenderFrameBuffer::releaseAttachment(QDemonRenderFrameBufferAttachment idx)
 {
     QDemonRenderTextureTargetType target = QDemonRenderTextureTargetType::Unknown;
+    int index = static_cast<int>(idx);
 
-    QDemonRenderTextureOrRenderBuffer Attach = m_attachments[idx];
+    QDemonRenderTextureOrRenderBuffer Attach = m_attachments[index];
     if (Attach.hasTexture2D()) {
         target = (Attach.getTexture2D()->isMultisampleTexture()) ? QDemonRenderTextureTargetType::Texture2D_MS
                                                                  : QDemonRenderTextureTargetType::Texture2D;
@@ -90,35 +91,37 @@ QDemonRenderTextureTargetType QDemonRenderFrameBuffer::releaseAttachment(QDemonR
         // Attach.GetRenderBuffer()->release();
 
         CheckAttachment(m_context, idx);
-    m_attachments[idx] = QDemonRenderTextureOrRenderBuffer();
+    m_attachments[index] = QDemonRenderTextureOrRenderBuffer();
 
-    m_attachmentBits &= ~(1 << idx);
+    m_attachmentBits &= ~(1 << index);
 
     return target;
 }
 
-QDemonRenderTextureOrRenderBuffer QDemonRenderFrameBuffer::getAttachment(QDemonRenderFrameBufferAttachments::Enum attachment)
+QDemonRenderTextureOrRenderBuffer QDemonRenderFrameBuffer::getAttachment(QDemonRenderFrameBufferAttachment attachment)
 {
-    if (attachment == QDemonRenderFrameBufferAttachments::Unknown || attachment > QDemonRenderFrameBufferAttachments::LastAttachment) {
+    if (attachment == QDemonRenderFrameBufferAttachment::Unknown || attachment > QDemonRenderFrameBufferAttachment::LastAttachment) {
         qCCritical(INVALID_PARAMETER, "Attachment out of range");
         return QDemonRenderTextureOrRenderBuffer();
     }
     CheckAttachment(m_context, attachment);
-    return m_attachments[attachment];
+    return m_attachments[static_cast<int>(attachment)];
 }
 
-void QDemonRenderFrameBuffer::attach(QDemonRenderFrameBufferAttachments::Enum attachment,
+void QDemonRenderFrameBuffer::attach(QDemonRenderFrameBufferAttachment attachment,
                                      QDemonRenderTextureOrRenderBuffer buffer,
                                      QDemonRenderTextureTargetType target)
 {
-    if (attachment == QDemonRenderFrameBufferAttachments::Unknown || attachment > QDemonRenderFrameBufferAttachments::LastAttachment) {
+    if (attachment == QDemonRenderFrameBufferAttachment::Unknown || attachment > QDemonRenderFrameBufferAttachment::LastAttachment) {
         qCCritical(INVALID_PARAMETER, "Attachment out of range");
         return;
     }
 
+    quint32 attachmentBit = (1 << static_cast<int>(attachment));
+
     // early out
     // if there is nothing to detach
-    if (!buffer.hasTexture2D() && !buffer.hasRenderBuffer() && !buffer.hasTexture2DArray() && !(m_attachmentBits & (1 << attachment)))
+    if (!buffer.hasTexture2D() && !buffer.hasRenderBuffer() && !buffer.hasTexture2DArray() && !(m_attachmentBits & attachmentBit))
         return;
 
     CheckAttachment(m_context, attachment);
@@ -136,7 +139,7 @@ void QDemonRenderFrameBuffer::attach(QDemonRenderFrameBufferAttachments::Enum at
 
         m_backend->renderTargetAttach(m_bufferHandle, attachment, buffer.getTexture2D()->getTextureObjectHandle(), target);
         // buffer.GetTexture2D()->addRef();
-        m_attachmentBits |= (1 << attachment);
+        m_attachmentBits |= attachmentBit;
     } else if (buffer.hasTexture2DArray()) {
         // On the same attachment point there could be a something attached with a different
         // target MSAA <--> NoMSAA
@@ -145,11 +148,11 @@ void QDemonRenderFrameBuffer::attach(QDemonRenderFrameBufferAttachments::Enum at
 
         m_backend->renderTargetAttach(m_bufferHandle, attachment, buffer.getTexture2D()->getTextureObjectHandle(), target);
         // buffer.GetTexture2DArray()->addRef();
-        m_attachmentBits |= (1 << attachment);
+        m_attachmentBits |= attachmentBit;
     } else if (buffer.hasRenderBuffer()) {
         m_backend->renderTargetAttach(m_bufferHandle, attachment, buffer.getRenderBuffer()->getRenderBuffertHandle());
         // buffer.GetRenderBuffer()->addRef();
-        m_attachmentBits |= (1 << attachment);
+        m_attachmentBits |= attachmentBit;
     } else if (theRelTarget == QDemonRenderTextureTargetType::Unknown) {
         // detach renderbuffer
         m_backend->renderTargetAttach(m_bufferHandle, attachment, QDemonRenderBackend::QDemonRenderBackendRenderbufferObject(nullptr));
@@ -157,15 +160,15 @@ void QDemonRenderFrameBuffer::attach(QDemonRenderFrameBufferAttachments::Enum at
         // detach texture
         m_backend->renderTargetAttach(m_bufferHandle, attachment, QDemonRenderBackend::QDemonRenderBackendTextureObject(nullptr), theRelTarget);
     }
-    m_attachments[attachment] = buffer;
+    m_attachments[static_cast<int>(attachment)] = buffer;
 }
 
-void QDemonRenderFrameBuffer::attachLayer(QDemonRenderFrameBufferAttachments::Enum attachment,
+void QDemonRenderFrameBuffer::attachLayer(QDemonRenderFrameBufferAttachment attachment,
                                           QDemonRenderTextureOrRenderBuffer buffer,
                                           qint32 layer,
                                           qint32 level)
 {
-    if (attachment == QDemonRenderFrameBufferAttachments::Unknown || attachment > QDemonRenderFrameBufferAttachments::LastAttachment) {
+    if (attachment == QDemonRenderFrameBufferAttachment::Unknown || attachment > QDemonRenderFrameBufferAttachment::LastAttachment) {
         qCCritical(INVALID_PARAMETER, "Attachment out of range");
         return;
     }
@@ -191,21 +194,21 @@ void QDemonRenderFrameBuffer::attachLayer(QDemonRenderFrameBufferAttachments::En
 
     m_backend->renderTargetAttach(m_bufferHandle, attachment, buffer.getTexture2DArray()->getTextureObjectHandle(), level, layer);
     // buffer.GetTexture2DArray()->addRef();
-    m_attachmentBits |= (1 << attachment);
+    m_attachmentBits |= (1 << static_cast<int>(attachment));
 
-    m_attachments[attachment] = buffer;
+    m_attachments[static_cast<int>(attachment)] = buffer;
 }
 
-void QDemonRenderFrameBuffer::attachFace(QDemonRenderFrameBufferAttachments::Enum attachment,
+void QDemonRenderFrameBuffer::attachFace(QDemonRenderFrameBufferAttachment attachment,
                                          QDemonRenderTextureOrRenderBuffer buffer,
-                                         QDemonRenderTextureCubeFaces::Enum face)
+                                         QDemonRenderTextureCubeFace face)
 {
-    if (attachment == QDemonRenderFrameBufferAttachments::Unknown || attachment > QDemonRenderFrameBufferAttachments::LastAttachment) {
+    if (attachment == QDemonRenderFrameBufferAttachment::Unknown || attachment > QDemonRenderFrameBufferAttachment::LastAttachment) {
         qCCritical(INVALID_PARAMETER, "Attachment out of range");
         return;
     }
 
-    if (face == QDemonRenderTextureCubeFaces::InvalidFace) {
+    if (face == QDemonRenderTextureCubeFace::InvalidFace) {
         Q_ASSERT(false);
         return;
     }
@@ -235,10 +238,10 @@ void QDemonRenderFrameBuffer::attachFace(QDemonRenderFrameBufferAttachments::Enu
     if (attachTarget != QDemonRenderTextureTargetType::Unknown) {
         m_backend->renderTargetAttach(m_bufferHandle, attachment, buffer.getTextureCube()->getTextureObjectHandle(), attachTarget);
         // buffer.GetTextureCube()->addRef();
-        m_attachmentBits |= (1 << attachment);
+        m_attachmentBits |= (1 << static_cast<int>(attachment));
     }
 
-    m_attachments[attachment] = buffer;
+    m_attachments[static_cast<int>(attachment)] = buffer;
 }
 
 bool QDemonRenderFrameBuffer::isComplete()

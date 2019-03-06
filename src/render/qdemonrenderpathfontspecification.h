@@ -80,7 +80,7 @@ public:
      *
      * @return No return
      */
-    virtual void loadPathGlyphs(const char *fontName, QDemonRenderPathFormatType::Enum type);
+    virtual void loadPathGlyphs(const char *fontName, QDemonRenderPathFormatType type);
 
     /**
      * @brief Render a stencil fill pass for fonts
@@ -105,7 +105,7 @@ public:
      *
      * @return path font type
      */
-    QDemonRenderPathFormatType::Enum getPathFontType() { return m_type; }
+    QDemonRenderPathFormatType getPathFontType() { return m_type; }
 
     /**
      * @brief get font glyph count
@@ -131,7 +131,7 @@ public:
 private:
     quint32 m_numFontGlyphs; ///< glyph count of the entire font set
     float m_emScale; ///< true type scale
-    QDemonRenderPathFormatType::Enum m_type; ///< type ( byte, int,... )
+    QDemonRenderPathFormatType m_type; ///< type ( byte, int,... )
     QDemonRenderPathTransformType::Enum m_transformType; ///< transform type default 2D
     QString m_fontName; ///< Name of Font
     QDemonRenderBackend::QDemonRenderBackendPathObject m_pathRenderHandle; ///< opaque backend handle
@@ -144,7 +144,7 @@ private:
      *
      * @return true if successful
      */
-    quint32 getSizeOfType(QDemonRenderPathFormatType::Enum type);
+    quint32 getSizeOfType(QDemonRenderPathFormatType type);
 
 public:
     static QDemonRef<QDemonRenderPathFontSpecification> createPathFontSpecification(const QDemonRef<QDemonRenderContextImpl> &context,

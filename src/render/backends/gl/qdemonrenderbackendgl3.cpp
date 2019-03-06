@@ -523,7 +523,7 @@ void QDemonRenderBackendGL3Impl::setReadBuffer(QDemonRenderBackendRenderTargetOb
 }
 
 void QDemonRenderBackendGL3Impl::renderTargetAttach(QDemonRenderBackendRenderTargetObject,
-                                                    QDemonRenderFrameBufferAttachments::Enum attachment,
+                                                    QDemonRenderFrameBufferAttachment attachment,
                                                     QDemonRenderBackendTextureObject to,
                                                     qint32 level,
                                                     qint32 layer)

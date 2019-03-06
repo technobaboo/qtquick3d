@@ -1067,7 +1067,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
                     QDemonRenderVertexBufferEntry("attr_pos", QDemonRenderComponentTypes::Float32, 4),
                 };
 
-                QDemonRenderDrawMode::Enum primType = QDemonRenderDrawMode::Patches;
+                QDemonRenderDrawMode primType = QDemonRenderDrawMode::Patches;
 
                 QDemonRef<QDemonRenderAttribLayout> theLayout = theRenderContext->createAttributeLayout(toConstDataRef(theEntries, 1));
                 // How many vertices the TCS shader has access to in order to produce its output
@@ -1314,7 +1314,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
         inShader->m_width.set(inRenderContext.path.m_width / 2.0f);
         theRenderContext->setInputAssembler(inPathBuffer->m_inputAssembler);
         theRenderContext->setCullingEnabled(false);
-        QDemonRenderDrawMode::Enum primType = QDemonRenderDrawMode::Patches;
+        QDemonRenderDrawMode primType = QDemonRenderDrawMode::Patches;
         theRenderContext->draw(primType, (quint32)inPathBuffer->m_numVertexes, 0);
     }
 

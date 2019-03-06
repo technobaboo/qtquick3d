@@ -1222,152 +1222,134 @@ struct Q_DEMONRENDER_EXPORT QDemonRenderVertFragCompilationResult
     QDemonRenderVertFragCompilationResult & operator=(const QDemonRenderVertFragCompilationResult &other);
 };
 
-struct QDemonRenderFrameBufferAttachments
+enum class QDemonRenderFrameBufferAttachment
 {
-    enum Enum {
-        Unknown = 0,
-        Color0,
-        Color1,
-        Color2,
-        Color3,
-        Color4,
-        Color5,
-        Color6,
-        Color7,
-        Depth,
-        Stencil,
-        DepthStencil,
-        CoverageNV,
-        LastAttachment,
-    };
+    Unknown = 0,
+    Color0,
+    Color1,
+    Color2,
+    Color3,
+    Color4,
+    Color5,
+    Color6,
+    Color7,
+    Depth,
+    Stencil,
+    DepthStencil,
+    CoverageNV,
+    LastAttachment,
 };
 
-struct QDemonRenderDrawMode
+enum class QDemonRenderDrawMode
 {
-    enum Enum {
-        Unknown = 0,
-        Points,
-        LineStrip,
-        LineLoop,
-        Lines,
-        TriangleStrip,
-        TriangleFan,
-        Triangles,
-        Patches,
-    };
+    Unknown = 0,
+    Points,
+    LineStrip,
+    LineLoop,
+    Lines,
+    TriangleStrip,
+    TriangleFan,
+    Triangles,
+    Patches,
 };
 
-struct QDemonRenderTextureCubeFaces
+enum class QDemonRenderTextureCubeFace
 {
-    enum Enum {
-        InvalidFace = 0,
-        CubePosX = 1,
-        CubeNegX,
-        CubePosY,
-        CubeNegY,
-        CubePosZ,
-        CubeNegZ,
-    };
+    InvalidFace = 0,
+    CubePosX = 1,
+    CubeNegX,
+    CubePosY,
+    CubeNegY,
+    CubePosZ,
+    CubeNegZ
 };
 
 // enums match the NV path extensions
-struct QDemonRenderPathCommands
+enum class QDemonRenderPathCommands : quint8
 {
-    enum Enum {
-        Close = 0,
-        MoveTo = 2,
-        CubicCurveTo = 12,
-    };
+    Close = 0,
+    MoveTo = 2,
+    CubicCurveTo = 12,
 };
 
-struct QDemonRenderPathFontTarget
+enum class QDemonRenderPathFontTarget
 {
-    enum Enum {
-        StandardFont = 0,
-        SystemFont = 1,
-        FileFont = 2,
-    };
+    StandardFont = 0,
+    SystemFont = 1,
+    FileFont = 2,
 };
 
-struct QDemonRenderPathMissingGlyphs
+enum class QDemonRenderPathMissingGlyphs
 {
-    enum Enum {
-        SkipMissing = 0,
-        UseMissing = 1,
-    };
+    SkipMissing = 0,
+    UseMissing = 1,
 };
 
-struct QDemonRenderPathFontStyleValues
+enum class QDemonRenderPathFontStyleValue
 {
-    enum Enum {
-        Bold = 1 << 0,
-        Italic = 1 << 1,
-    };
+    Bold = 1 << 0,
+    Italic = 1 << 1,
 };
 
-typedef QDemonFlags<QDemonRenderPathFontStyleValues::Enum, quint32> QDemonRenderPathFontStyleFlags;
+Q_DECLARE_FLAGS(QDemonRenderPathFontStyleFlags, QDemonRenderPathFontStyleValue);
+Q_DECLARE_OPERATORS_FOR_FLAGS(QDemonRenderPathFontStyleFlags);
 
-struct QDemonRenderPathReturnValues
+enum class QDemonRenderPathReturnValues
 {
-    enum Enum {
-        FontGlypsAvailable = 0,
-        FontTargetUnavailable = 1,
-        FontUnavailable = 2,
-        FontUnintelligible = 3,
-        InvalidEnum = 4,
-        OutOfMemory = 5,
-    };
+    FontGlypsAvailable = 0,
+    FontTargetUnavailable = 1,
+    FontUnavailable = 2,
+    FontUnintelligible = 3,
+    InvalidEnum = 4,
+    OutOfMemory = 5,
 };
 
-struct QDemonRenderPathFormatType
+enum class QDemonRenderPathFormatType
 {
-    enum Enum {
-        Byte = 1,
-        UByte,
-        Short,
-        UShort,
-        Int,
-        Uint,
-        Float,
-        Utf8,
-        Utf16,
-        Bytes2,
-        Bytes3,
-        Bytes4,
-    };
+    Byte = 1,
+    UByte,
+    Short,
+    UShort,
+    Int,
+    Uint,
+    Float,
+    Utf8,
+    Utf16,
+    Bytes2,
+    Bytes3,
+    Bytes4,
 };
 
-struct QDemonRenderPathGlyphFontMetricValues
+enum class QDemonRenderPathGlyphFontMetricValues
 {
-    enum Enum {
-        GlyphWidth = 1 << 0,
-        GlyphHeight = 1 << 1,
-        GlyphHorizontalBearingX = 1 << 2,
-        GlyphHorizontalBearingY = 1 << 3,
-        GlyphHorizontalBearingAdvance = 1 << 4,
-        GlyphVerticalBearingX = 1 << 5,
-        GlyphVerticalBearingY = 1 << 6,
-        GlyphVerticalBearingAdvance = 1 << 7,
-        GlyphHasKerning = 1 << 8,
+    GlyphWidth = 1 << 0,
+    GlyphHeight = 1 << 1,
+    GlyphHorizontalBearingX = 1 << 2,
+    GlyphHorizontalBearingY = 1 << 3,
+    GlyphHorizontalBearingAdvance = 1 << 4,
+    GlyphVerticalBearingX = 1 << 5,
+    GlyphVerticalBearingY = 1 << 6,
+    GlyphVerticalBearingAdvance = 1 << 7,
+    GlyphHasKerning = 1 << 8,
 
-        FontXMinBounds = 1 << 9,
-        FontYMinBounds = 1 << 10,
-        FontXMaxBounds = 1 << 11,
-        FontYMaxBounds = 1 << 12,
-        FontUnitsPerEm = 1 << 13,
-        FontAscender = 1 << 14,
-        FontDescender = 1 << 15,
-        FontHeight = 1 << 16,
-        FontMaxAdvanceWidth = 1 << 17,
-        FontMaxAdvanceHeight = 1 << 18,
-        FontUnderlinePosition = 1 << 19,
-        FontUnderlineThickness = 1 << 20,
-        FontHasKerning = 1 << 21,
-        FontNumGlyphIndices = 1 << 22,
-    };
+    FontXMinBounds = 1 << 9,
+    FontYMinBounds = 1 << 10,
+    FontXMaxBounds = 1 << 11,
+    FontYMaxBounds = 1 << 12,
+    FontUnitsPerEm = 1 << 13,
+    FontAscender = 1 << 14,
+    FontDescender = 1 << 15,
+    FontHeight = 1 << 16,
+    FontMaxAdvanceWidth = 1 << 17,
+    FontMaxAdvanceHeight = 1 << 18,
+    FontUnderlinePosition = 1 << 19,
+    FontUnderlineThickness = 1 << 20,
+    FontHasKerning = 1 << 21,
+    FontNumGlyphIndices = 1 << 22,
 };
 
-typedef QDemonFlags<QDemonRenderPathGlyphFontMetricValues::Enum, quint32> QDemonRenderPathGlyphFontMetricFlags;
+Q_DECLARE_FLAGS(QDemonRenderPathGlyphFontMetricFlags, QDemonRenderPathGlyphFontMetricValues);
+Q_DECLARE_OPERATORS_FOR_FLAGS(QDemonRenderPathGlyphFontMetricFlags);
 
 struct QDemonRenderPathListMode
 {

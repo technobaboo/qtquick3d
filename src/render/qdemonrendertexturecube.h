@@ -75,7 +75,7 @@ public:
      */
     void setTextureData(QDemonDataRef<quint8> newBuffer,
                         quint8 inMipLevel,
-                        QDemonRenderTextureCubeFaces::Enum inFace,
+                        QDemonRenderTextureCubeFace inFace,
                         quint32 width,
                         quint32 height,
                         QDemonRenderTextureFormats::Enum format);

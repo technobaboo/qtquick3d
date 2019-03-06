@@ -219,7 +219,7 @@ void QDemonRendererImpl::renderLayer(QDemonRenderLayer &inLayer,
                                               QDemonRenderTextureFormats::RGBA8);
             if (m_blendFb == nullptr)
                 m_blendFb = theRenderContext->createFrameBuffer();
-            m_blendFb->attach(QDemonRenderFrameBufferAttachments::Color0, m_layerBlendTexture.getTexture());
+            m_blendFb->attach(QDemonRenderFrameBufferAttachment::Color0, m_layerBlendTexture.getTexture());
             theRenderContext->setRenderTarget(m_blendFb);
             theRenderContext->setScissorTestEnabled(false);
             QVector4D color(0.0f, 0.0f, 0.0f, 0.0f);
@@ -410,7 +410,7 @@ void QDemonRendererImpl::setupWidgetLayer()
                                                         m_beginFrameViewport.height(),
                                                         QDemonRenderTextureFormats::RGBA8);
         m_widgetFbo = theManager->allocateFrameBuffer();
-        m_widgetFbo->attach(QDemonRenderFrameBufferAttachments::Color0, QDemonRenderTextureOrRenderBuffer(m_widgetTexture));
+        m_widgetFbo->attach(QDemonRenderFrameBufferAttachment::Color0, QDemonRenderTextureOrRenderBuffer(m_widgetTexture));
         theContext->setRenderTarget(m_widgetFbo);
 
         // QDemonRenderRect theScissorRect( 0, 0, m_BeginFrameViewport.m_Width,
@@ -1095,7 +1095,7 @@ bool QDemonRendererImpl::prepareTextureAtlasForRender()
         mAttribLayout = m_context->createAttributeLayout(toConstDataRef(theEntries, 2));
 
         QDemonRef<QDemonRenderFrameBuffer> theAtlasFB(m_demonContext->getResourceManager()->allocateFrameBuffer());
-        theAtlasFB->attach(QDemonRenderFrameBufferAttachments::Color0, theResult.second);
+        theAtlasFB->attach(QDemonRenderFrameBufferAttachment::Color0, theResult.second);
         m_demonContext->getRenderContext()->setRenderTarget(theAtlasFB);
 
         // this texture contains our single entries

@@ -602,8 +602,8 @@ struct QDemonRenderContextData : public QDemonRenderContextInterface
                     m_rotationFbo = m_resourceManager->allocateFrameBuffer();
                     m_rotationTexture = m_resourceManager->allocateTexture2D(imageWidth, imageHeight, theColorBufferFormat);
                     m_rotationDepthBuffer = m_resourceManager->allocateRenderBuffer(imageWidth, imageHeight, theDepthBufferFormat);
-                    m_rotationFbo->attach(QDemonRenderFrameBufferAttachments::Color0, m_rotationTexture);
-                    m_rotationFbo->attach(QDemonRenderFrameBufferAttachments::Depth, m_rotationDepthBuffer);
+                    m_rotationFbo->attach(QDemonRenderFrameBufferAttachment::Color0, m_rotationTexture);
+                    m_rotationFbo->attach(QDemonRenderFrameBufferAttachment::Depth, m_rotationDepthBuffer);
                 } else {
                     QDemonTextureDetails theDetails = m_rotationTexture->getTextureDetails();
                     if (theDetails.width != imageWidth || theDetails.height != imageHeight) {

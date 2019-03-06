@@ -223,7 +223,7 @@ int main(int argc, char *argv[])
                 }
 
                 // Draw Mode
-                qDebug() << "\t\tdraw Mode: " << mesh->m_drawMode;
+                qDebug() << "\t\tdraw Mode: " << static_cast<int>(mesh->m_drawMode);
 
                 // Winding
                 qDebug() << "\t\twinding: " << mesh->m_winding;

@@ -42,7 +42,7 @@ QDemonRenderInputAssembler::QDemonRenderInputAssembler(const QDemonRef<QDemonRen
                                                        const QDemonRef<QDemonRenderIndexBuffer> &indexBuffer,
                                                        QDemonConstDataRef<quint32> strides,
                                                        QDemonConstDataRef<quint32> offsets,
-                                                       QDemonRenderDrawMode::Enum primType,
+                                                       QDemonRenderDrawMode primType,
                                                        quint32 patchVertexCount)
     : m_context(context)
     , m_backend(context->getBackend())

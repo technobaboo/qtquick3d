@@ -675,7 +675,7 @@ public:
      * @return no return.
      */
     virtual void renderTargetAttach(QDemonRenderBackendRenderTargetObject rto,
-                                    QDemonRenderFrameBufferAttachments::Enum attachment,
+                                    QDemonRenderFrameBufferAttachment attachment,
                                     QDemonRenderBackendRenderbufferObject rbo) = 0;
 
     /**
@@ -689,7 +689,7 @@ public:
      * @return no return.
      */
     virtual void renderTargetAttach(QDemonRenderBackendRenderTargetObject rto,
-                                    QDemonRenderFrameBufferAttachments::Enum attachment,
+                                    QDemonRenderFrameBufferAttachment attachment,
                                     QDemonRenderBackendTextureObject to,
                                     QDemonRenderTextureTargetType target = QDemonRenderTextureTargetType::Texture2D) = 0;
 
@@ -705,7 +705,7 @@ public:
      * @return no return.
      */
     virtual void renderTargetAttach(QDemonRenderBackendRenderTargetObject rto,
-                                    QDemonRenderFrameBufferAttachments::Enum attachment,
+                                    QDemonRenderFrameBufferAttachment attachment,
                                     QDemonRenderBackendTextureObject to,
                                     qint32 level,
                                     qint32 layer) = 0;
@@ -1859,7 +1859,7 @@ public:
      *
      * @return no return.
      */
-    virtual void draw(QDemonRenderDrawMode::Enum drawMode, quint32 start, quint32 count) = 0;
+    virtual void draw(QDemonRenderDrawMode drawMode, quint32 start, quint32 count) = 0;
 
     /**
      * @brief Draw the current active vertex buffer using an indirect buffer
@@ -1871,7 +1871,7 @@ public:
      *
      * @return no return.
      */
-    virtual void drawIndirect(QDemonRenderDrawMode::Enum drawMode, const void *indirect) = 0;
+    virtual void drawIndirect(QDemonRenderDrawMode drawMode, const void *indirect) = 0;
 
     /**
      * @brief Draw the current active index buffer
@@ -1885,7 +1885,7 @@ public:
      *
      * @return no return.
      */
-    virtual void drawIndexed(QDemonRenderDrawMode::Enum drawMode, quint32 count, QDemonRenderComponentTypes::Enum type, const void *indices) = 0;
+    virtual void drawIndexed(QDemonRenderDrawMode drawMode, quint32 count, QDemonRenderComponentTypes::Enum type, const void *indices) = 0;
 
     /**
      * @brief Draw the current active index buffer using an indirect buffer
@@ -1898,7 +1898,7 @@ public:
      *
      * @return no return.
      */
-    virtual void drawIndexedIndirect(QDemonRenderDrawMode::Enum drawMode, QDemonRenderComponentTypes::Enum type, const void *indirect) = 0;
+    virtual void drawIndexedIndirect(QDemonRenderDrawMode drawMode, QDemonRenderComponentTypes::Enum type, const void *indirect) = 0;
 
     /**
      * @brief Read a pixel rectangle from render target (from bottom left)
@@ -2008,7 +2008,7 @@ public:
      */
     virtual void stencilFillPathInstanced(QDemonRenderBackendPathObject po,
                                           size_t numPaths,
-                                          QDemonRenderPathFormatType::Enum type,
+                                          QDemonRenderPathFormatType type,
                                           const void *charCodes,
                                           QDemonRenderPathFillMode::Enum fillMode,
                                           quint32 stencilMask,
@@ -2031,7 +2031,7 @@ public:
      */
     virtual void stencilStrokePathInstancedN(QDemonRenderBackendPathObject po,
                                              size_t numPaths,
-                                             QDemonRenderPathFormatType::Enum type,
+                                             QDemonRenderPathFormatType type,
                                              const void *charCodes,
                                              qint32 stencilRef,
                                              quint32 stencilMask,
@@ -2053,7 +2053,7 @@ public:
      */
     virtual void coverFillPathInstanced(QDemonRenderBackendPathObject po,
                                         size_t numPaths,
-                                        QDemonRenderPathFormatType::Enum type,
+                                        QDemonRenderPathFormatType type,
                                         const void *charCodes,
                                         QDemonRenderPathCoverMode::Enum coverMode,
                                         QDemonRenderPathTransformType::Enum transformType,
@@ -2074,7 +2074,7 @@ public:
      */
     virtual void coverStrokePathInstanced(QDemonRenderBackendPathObject po,
                                           size_t numPaths,
-                                          QDemonRenderPathFormatType::Enum type,
+                                          QDemonRenderPathFormatType type,
                                           const void *charCodes,
                                           QDemonRenderPathCoverMode::Enum coverMode,
                                           QDemonRenderPathTransformType::Enum transformType,
@@ -2116,13 +2116,13 @@ public:
      * @return No return
      */
     virtual void loadPathGlyphs(QDemonRenderBackendPathObject po,
-                                QDemonRenderPathFontTarget::Enum fontTarget,
+                                QDemonRenderPathFontTarget fontTarget,
                                 const void *fontName,
                                 QDemonRenderPathFontStyleFlags fontStyle,
                                 size_t numGlyphs,
-                                QDemonRenderPathFormatType::Enum type,
+                                QDemonRenderPathFormatType type,
                                 const void *charCodes,
-                                QDemonRenderPathMissingGlyphs::Enum handleMissingGlyphs,
+                                QDemonRenderPathMissingGlyphs handleMissingGlyphs,
                                 QDemonRenderBackendPathObject pathParameterTemplate,
                                 float emScale) = 0;
 
@@ -2140,8 +2140,8 @@ public:
      *
      * @return return load status
      */
-    virtual QDemonRenderPathReturnValues::Enum loadPathGlyphsIndexed(QDemonRenderBackendPathObject po,
-                                                                     QDemonRenderPathFontTarget::Enum fontTarget,
+    virtual QDemonRenderPathReturnValues loadPathGlyphsIndexed(QDemonRenderBackendPathObject po,
+                                                                     QDemonRenderPathFontTarget fontTarget,
                                                                      const void *fontName,
                                                                      QDemonRenderPathFontStyleFlags fontStyle,
                                                                      quint32 firstGlyphIndex,
@@ -2161,7 +2161,7 @@ public:
      *
      * @return returnr base path object
      */
-    virtual QDemonRenderBackendPathObject loadPathGlyphsIndexedRange(QDemonRenderPathFontTarget::Enum fontTarget,
+    virtual QDemonRenderBackendPathObject loadPathGlyphsIndexedRange(QDemonRenderPathFontTarget fontTarget,
                                                                      const void *fontName,
                                                                      QDemonRenderPathFontStyleFlags fontStyle,
                                                                      QDemonRenderBackendPathObject pathParameterTemplate,
@@ -2184,12 +2184,12 @@ public:
      * @return No return
      */
     virtual void loadPathGlyphRange(QDemonRenderBackendPathObject po,
-                                    QDemonRenderPathFontTarget::Enum fontTarget,
+                                    QDemonRenderPathFontTarget fontTarget,
                                     const void *fontName,
                                     QDemonRenderPathFontStyleFlags fontStyle,
                                     quint32 firstGlyph,
                                     size_t numGlyphs,
-                                    QDemonRenderPathMissingGlyphs::Enum handleMissingGlyphs,
+                                    QDemonRenderPathMissingGlyphs handleMissingGlyphs,
                                     QDemonRenderBackendPathObject pathParameterTemplate,
                                     float emScale) = 0;
 
@@ -2209,7 +2209,7 @@ public:
     virtual void getPathMetrics(QDemonRenderBackendPathObject po,
                                 size_t numPaths,
                                 QDemonRenderPathGlyphFontMetricFlags metricQueryMask,
-                                QDemonRenderPathFormatType::Enum type,
+                                QDemonRenderPathFormatType type,
                                 const void *charCodes,
                                 size_t stride,
                                 float *metrics) = 0;
@@ -2249,7 +2249,7 @@ public:
     virtual void getPathSpacing(QDemonRenderBackendPathObject po,
                                 size_t numPaths,
                                 QDemonRenderPathListMode::Enum pathListMode,
-                                QDemonRenderPathFormatType::Enum type,
+                                QDemonRenderPathFormatType type,
                                 const void *charCodes,
                                 float advanceScale,
                                 float kerningScale,

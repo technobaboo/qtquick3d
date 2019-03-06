@@ -266,7 +266,7 @@ struct QDemonEffectContext
     void releaseBuffer(qint32 inIdx)
     {
         QDemonAllocatedBufferEntry &theEntry(m_allocatedBuffers[inIdx]);
-        theEntry.frameBuffer->attach(QDemonRenderFrameBufferAttachments::Color0, QDemonRenderTextureOrRenderBuffer());
+        theEntry.frameBuffer->attach(QDemonRenderFrameBufferAttachment::Color0, QDemonRenderTextureOrRenderBuffer());
         m_resourceManager->release(theEntry.frameBuffer);
         m_resourceManager->release(theEntry.texture);
         { // replace_with_last
@@ -708,7 +708,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
             theTexture->setMinFilter(static_cast<QDemonRenderTextureMinifyingOp::Enum>(inCommand.m_filterOp));
             theTexture->setTextureWrapS(inCommand.m_texCoordOp);
             theTexture->setTextureWrapT(inCommand.m_texCoordOp);
-            theFB->attach(QDemonRenderFrameBufferAttachments::Color0, theTexture);
+            theFB->attach(QDemonRenderFrameBufferAttachment::Color0, theTexture);
             theContext.m_allocatedBuffers.push_back(
                     QDemonAllocatedBufferEntry(inCommand.m_name, *theFB, *theTexture, inCommand.m_bufferFlags));
             theBufferTexture = theTexture;
@@ -1305,9 +1305,9 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
         switch (inState) {
         case QDemonRenderState::StencilTest: {
             if (inEnable && inTarget) {
-                inTarget->attach(QDemonRenderFrameBufferAttachments::DepthStencil, inDepthStencilTexture);
+                inTarget->attach(QDemonRenderFrameBufferAttachment::DepthStencil, inDepthStencilTexture);
             } else if (inTarget) {
-                inTarget->attach(QDemonRenderFrameBufferAttachments::DepthStencil, QDemonRenderTextureOrRenderBuffer());
+                inTarget->attach(QDemonRenderFrameBufferAttachment::DepthStencil, QDemonRenderTextureOrRenderBuffer());
             }
 
             theContext->setStencilTestEnabled(inEnable);
@@ -1342,7 +1342,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
         auto theContext(m_context->getRenderContext());
         theContext->setRenderTarget(inFrameBuffer);
         if (inDepthStencil && inFrameBuffer) {
-            inFrameBuffer->attach(QDemonRenderFrameBufferAttachments::DepthStencil, inDepthStencil);
+            inFrameBuffer->attach(QDemonRenderFrameBufferAttachment::DepthStencil, inDepthStencil);
             if (inDepthStencilCommand.hasValue()) {
                 QDemonDepthStencil &theDepthStencil(*inDepthStencilCommand);
                 QDemonRenderClearFlags clearFlags;
@@ -1404,7 +1404,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
             m_context->getRenderer()->renderPointsIndirect();
 
         if (inDepthStencil && inFrameBuffer) {
-            inFrameBuffer->attach(QDemonRenderFrameBufferAttachments::DepthStencil, QDemonRenderTextureOrRenderBuffer());
+            inFrameBuffer->attach(QDemonRenderFrameBufferAttachment::DepthStencil, QDemonRenderTextureOrRenderBuffer());
             theContext->setDepthStencilState(m_defaultStencilState);
         }
     }
@@ -1644,7 +1644,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
         if (theClass->dynamicClass->getOutputTextureFormat() == QDemonRenderTextureFormats::Unknown)
             theOutputFormat = theDetails.format;
         auto theTargetTexture = theManager->allocateTexture2D(theFinalWidth, theFinalHeight, theOutputFormat);
-        theBuffer->attach(QDemonRenderFrameBufferAttachments::Color0, theTargetTexture);
+        theBuffer->attach(QDemonRenderFrameBufferAttachment::Color0, theTargetTexture);
         theContext->setRenderTarget(theBuffer);
         QDemonRenderContextScopedProperty<QRect> __viewport(*theContext,
                                                             &QDemonRenderContext::getViewport,
@@ -1666,7 +1666,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
                        inRenderArgument.m_depthStencilBuffer,
                        inRenderArgument.m_cameraClipRange);
 
-        theBuffer->attach(QDemonRenderFrameBufferAttachments::Color0, QDemonRenderTextureOrRenderBuffer());
+        theBuffer->attach(QDemonRenderFrameBufferAttachment::Color0, QDemonRenderTextureOrRenderBuffer());
         theManager->release(theBuffer);
         return theTargetTexture;
     }

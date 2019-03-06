@@ -196,18 +196,18 @@ QDemonRenderTextureFormats::Enum QDemonLayerRenderData::getDepthBufferFormat()
     return m_depthBufferFormat;
 }
 
-QDemonRenderFrameBufferAttachments::Enum QDemonLayerRenderData::getFramebufferDepthAttachmentFormat(QDemonRenderTextureFormats::Enum depthFormat)
+QDemonRenderFrameBufferAttachment QDemonLayerRenderData::getFramebufferDepthAttachmentFormat(QDemonRenderTextureFormats::Enum depthFormat)
 {
-    QDemonRenderFrameBufferAttachments::Enum fmt = QDemonRenderFrameBufferAttachments::Depth;
+    QDemonRenderFrameBufferAttachment fmt = QDemonRenderFrameBufferAttachment::Depth;
 
     switch (depthFormat) {
     case QDemonRenderTextureFormats::Depth16:
     case QDemonRenderTextureFormats::Depth24:
     case QDemonRenderTextureFormats::Depth32:
-        fmt = QDemonRenderFrameBufferAttachments::Depth;
+        fmt = QDemonRenderFrameBufferAttachment::Depth;
         break;
     case QDemonRenderTextureFormats::Depth24Stencil8:
-        fmt = QDemonRenderFrameBufferAttachments::DepthStencil;
+        fmt = QDemonRenderFrameBufferAttachment::DepthStencil;
         break;
     default:
         Q_ASSERT(false);
@@ -514,12 +514,12 @@ void QDemonLayerRenderData::renderShadowCubeBlurPass(QDemonResourceFrameBuffer *
     theContext->setDrawBuffers(bufferList);
 
     // Attach framebuffer targets
-    (*theFB)->attachFace(QDemonRenderFrameBufferAttachments::Color0, target1, QDemonRenderTextureCubeFaces::CubePosX);
-    (*theFB)->attachFace(QDemonRenderFrameBufferAttachments::Color1, target1, QDemonRenderTextureCubeFaces::CubeNegX);
-    (*theFB)->attachFace(QDemonRenderFrameBufferAttachments::Color2, target1, QDemonRenderTextureCubeFaces::CubePosY);
-    (*theFB)->attachFace(QDemonRenderFrameBufferAttachments::Color3, target1, QDemonRenderTextureCubeFaces::CubeNegY);
-    (*theFB)->attachFace(QDemonRenderFrameBufferAttachments::Color4, target1, QDemonRenderTextureCubeFaces::CubePosZ);
-    (*theFB)->attachFace(QDemonRenderFrameBufferAttachments::Color5, target1, QDemonRenderTextureCubeFaces::CubeNegZ);
+    (*theFB)->attachFace(QDemonRenderFrameBufferAttachment::Color0, target1, QDemonRenderTextureCubeFace::CubePosX);
+    (*theFB)->attachFace(QDemonRenderFrameBufferAttachment::Color1, target1, QDemonRenderTextureCubeFace::CubeNegX);
+    (*theFB)->attachFace(QDemonRenderFrameBufferAttachment::Color2, target1, QDemonRenderTextureCubeFace::CubePosY);
+    (*theFB)->attachFace(QDemonRenderFrameBufferAttachment::Color3, target1, QDemonRenderTextureCubeFace::CubeNegY);
+    (*theFB)->attachFace(QDemonRenderFrameBufferAttachment::Color4, target1, QDemonRenderTextureCubeFace::CubePosZ);
+    (*theFB)->attachFace(QDemonRenderFrameBufferAttachment::Color5, target1, QDemonRenderTextureCubeFace::CubeNegZ);
 
     // Set initial state
     theContext->setBlendingEnabled(false);
@@ -537,12 +537,12 @@ void QDemonLayerRenderData::renderShadowCubeBlurPass(QDemonResourceFrameBuffer *
     theContext->setActiveShader(shaderY->shader);
 
     // Lather, Rinse, and Repeat for the Y-blur pass
-    (*theFB)->attachFace(QDemonRenderFrameBufferAttachments::Color0, target0, QDemonRenderTextureCubeFaces::CubePosX);
-    (*theFB)->attachFace(QDemonRenderFrameBufferAttachments::Color1, target0, QDemonRenderTextureCubeFaces::CubeNegX);
-    (*theFB)->attachFace(QDemonRenderFrameBufferAttachments::Color2, target0, QDemonRenderTextureCubeFaces::CubePosY);
-    (*theFB)->attachFace(QDemonRenderFrameBufferAttachments::Color3, target0, QDemonRenderTextureCubeFaces::CubeNegY);
-    (*theFB)->attachFace(QDemonRenderFrameBufferAttachments::Color4, target0, QDemonRenderTextureCubeFaces::CubePosZ);
-    (*theFB)->attachFace(QDemonRenderFrameBufferAttachments::Color5, target0, QDemonRenderTextureCubeFaces::CubeNegZ);
+    (*theFB)->attachFace(QDemonRenderFrameBufferAttachment::Color0, target0, QDemonRenderTextureCubeFace::CubePosX);
+    (*theFB)->attachFace(QDemonRenderFrameBufferAttachment::Color1, target0, QDemonRenderTextureCubeFace::CubeNegX);
+    (*theFB)->attachFace(QDemonRenderFrameBufferAttachment::Color2, target0, QDemonRenderTextureCubeFace::CubePosY);
+    (*theFB)->attachFace(QDemonRenderFrameBufferAttachment::Color3, target0, QDemonRenderTextureCubeFace::CubeNegY);
+    (*theFB)->attachFace(QDemonRenderFrameBufferAttachment::Color4, target0, QDemonRenderTextureCubeFace::CubePosZ);
+    (*theFB)->attachFace(QDemonRenderFrameBufferAttachment::Color5, target0, QDemonRenderTextureCubeFace::CubeNegZ);
 
     shaderY->cameraProperties.set(QVector2D(filterSz, clipFar));
     shaderY->depthCube.set(target1.data());
@@ -554,24 +554,24 @@ void QDemonLayerRenderData::renderShadowCubeBlurPass(QDemonResourceFrameBuffer *
     theContext->setDepthTestEnabled(true);
     // theContext.SetColorWritesEnabled(false);
 
-    (*theFB)->attachFace(QDemonRenderFrameBufferAttachments::Color0,
+    (*theFB)->attachFace(QDemonRenderFrameBufferAttachment::Color0,
                          QDemonRenderTextureOrRenderBuffer(),
-                         QDemonRenderTextureCubeFaces::CubePosX);
-    (*theFB)->attachFace(QDemonRenderFrameBufferAttachments::Color1,
+                         QDemonRenderTextureCubeFace::CubePosX);
+    (*theFB)->attachFace(QDemonRenderFrameBufferAttachment::Color1,
                          QDemonRenderTextureOrRenderBuffer(),
-                         QDemonRenderTextureCubeFaces::CubeNegX);
-    (*theFB)->attachFace(QDemonRenderFrameBufferAttachments::Color2,
+                         QDemonRenderTextureCubeFace::CubeNegX);
+    (*theFB)->attachFace(QDemonRenderFrameBufferAttachment::Color2,
                          QDemonRenderTextureOrRenderBuffer(),
-                         QDemonRenderTextureCubeFaces::CubePosY);
-    (*theFB)->attachFace(QDemonRenderFrameBufferAttachments::Color3,
+                         QDemonRenderTextureCubeFace::CubePosY);
+    (*theFB)->attachFace(QDemonRenderFrameBufferAttachment::Color3,
                          QDemonRenderTextureOrRenderBuffer(),
-                         QDemonRenderTextureCubeFaces::CubeNegY);
-    (*theFB)->attachFace(QDemonRenderFrameBufferAttachments::Color4,
+                         QDemonRenderTextureCubeFace::CubeNegY);
+    (*theFB)->attachFace(QDemonRenderFrameBufferAttachment::Color4,
                          QDemonRenderTextureOrRenderBuffer(),
-                         QDemonRenderTextureCubeFaces::CubePosZ);
-    (*theFB)->attachFace(QDemonRenderFrameBufferAttachments::Color5,
+                         QDemonRenderTextureCubeFace::CubePosZ);
+    (*theFB)->attachFace(QDemonRenderFrameBufferAttachment::Color5,
                          QDemonRenderTextureOrRenderBuffer(),
-                         QDemonRenderTextureCubeFaces::CubeNegZ);
+                         QDemonRenderTextureCubeFace::CubeNegZ);
 
     theContext->setDrawBuffers(toConstDataRef((qint32)0));
 }
@@ -593,7 +593,7 @@ void QDemonLayerRenderData::renderShadowMapBlurPass(QDemonResourceFrameBuffer *t
         return;
 
     // Attach framebuffer target
-    (*theFB)->attach(QDemonRenderFrameBufferAttachments::Color0, target1);
+    (*theFB)->attach(QDemonRenderFrameBufferAttachment::Color0, target1);
     //(*theFB)->Attach( QDemonRenderFrameBufferAttachments::DepthStencil, *target1 );
 
     // Set initial state
@@ -609,7 +609,7 @@ void QDemonLayerRenderData::renderShadowMapBlurPass(QDemonResourceFrameBuffer *t
     // Draw a fullscreen quad
     renderer->renderQuad();
 
-    (*theFB)->attach(QDemonRenderFrameBufferAttachments::Color0, target0);
+    (*theFB)->attach(QDemonRenderFrameBufferAttachment::Color0, target0);
     //(*theFB)->Attach( QDemonRenderFrameBufferAttachments::DepthStencil, *target0 );
     theContext->setActiveShader(shaderY->shader);
 
@@ -625,7 +625,7 @@ void QDemonLayerRenderData::renderShadowMapBlurPass(QDemonResourceFrameBuffer *t
 
     //(*theFB)->Attach( QDemonRenderFrameBufferAttachments::DepthStencil,
     // QDemonRenderTextureOrRenderBuffer() );
-    (*theFB)->attach(QDemonRenderFrameBufferAttachments::Color0, QDemonRenderTextureOrRenderBuffer());
+    (*theFB)->attach(QDemonRenderFrameBufferAttachment::Color0, QDemonRenderTextureOrRenderBuffer());
 }
 
 void QDemonLayerRenderData::renderShadowMapPass(QDemonResourceFrameBuffer *theFB)
@@ -679,8 +679,8 @@ void QDemonLayerRenderData::renderShadowMapPass(QDemonResourceFrameBuffer *theFB
             QDemonTextureDetails theDetails(pEntry->m_depthMap->getTextureDetails());
             theRenderContext->setViewport(QRect(0, 0, (quint32)theDetails.width, (quint32)theDetails.height));
 
-            (*theFB)->attach(QDemonRenderFrameBufferAttachments::Color0, pEntry->m_depthMap);
-            (*theFB)->attach(QDemonRenderFrameBufferAttachments::DepthStencil, pEntry->m_depthRender);
+            (*theFB)->attach(QDemonRenderFrameBufferAttachment::Color0, pEntry->m_depthMap);
+            (*theFB)->attach(QDemonRenderFrameBufferAttachment::DepthStencil, pEntry->m_depthRender);
             theRenderContext->clear(clearFlags);
 
             runRenderPass(renderRenderableShadowMapPass, false, true, true, i, theCamera);
@@ -710,11 +710,11 @@ void QDemonLayerRenderData::renderShadowMapPass(QDemonResourceFrameBuffer *theFB
                 // Otherwise, you have no way to depth test while rendering...
                 // which more or less completely defeats the purpose of having a cubemap render
                 // target.
-                QDemonRenderTextureCubeFaces::Enum curFace = (QDemonRenderTextureCubeFaces::Enum)(k + 1);
+                QDemonRenderTextureCubeFace curFace = (QDemonRenderTextureCubeFace)(k + 1);
                 //(*theFB)->AttachFace( QDemonRenderFrameBufferAttachments::DepthStencil,
                 //*pEntry->m_DepthCube, curFace );
-                (*theFB)->attach(QDemonRenderFrameBufferAttachments::DepthStencil, pEntry->m_depthRender);
-                (*theFB)->attachFace(QDemonRenderFrameBufferAttachments::Color0, pEntry->m_depthCube, curFace);
+                (*theFB)->attach(QDemonRenderFrameBufferAttachment::DepthStencil, pEntry->m_depthRender);
+                (*theFB)->attachFace(QDemonRenderFrameBufferAttachment::Color0, pEntry->m_depthCube, curFace);
                 (*theFB)->isComplete();
                 theRenderContext->clear(clearFlags);
 
@@ -729,8 +729,8 @@ void QDemonLayerRenderData::renderShadowMapPass(QDemonResourceFrameBuffer *theFB
         }
     }
 
-    (*theFB)->attach(QDemonRenderFrameBufferAttachments::Depth, QDemonRenderTextureOrRenderBuffer());
-    (*theFB)->attach(QDemonRenderFrameBufferAttachments::Color0, QDemonRenderTextureOrRenderBuffer());
+    (*theFB)->attach(QDemonRenderFrameBufferAttachment::Depth, QDemonRenderTextureOrRenderBuffer());
+    (*theFB)->attach(QDemonRenderFrameBufferAttachment::Color0, QDemonRenderTextureOrRenderBuffer());
 
     // enable color writes
     theRenderContext->setColorWritesEnabled(true);
@@ -1045,10 +1045,10 @@ void QDemonLayerRenderData::setupDrawFB(bool depthEnabled)
         m_advancedBlendDrawTexture = theRenderContext->createTexture2D();
         QRect theViewport = renderer->getDemonContext()->getRenderList()->getViewport();
         m_advancedBlendDrawTexture->setTextureData(QDemonDataRef<quint8>(), 0, theViewport.width(), theViewport.height(), QDemonRenderTextureFormats::RGBA8);
-        m_advancedModeDrawFB->attach(QDemonRenderFrameBufferAttachments::Color0, m_advancedBlendDrawTexture);
+        m_advancedModeDrawFB->attach(QDemonRenderFrameBufferAttachment::Color0, m_advancedBlendDrawTexture);
         // Use existing depth prepass information when rendering transparent objects to a FBO
         if (depthEnabled)
-            m_advancedModeDrawFB->attach(QDemonRenderFrameBufferAttachments::Depth, m_layerPrepassDepthTexture.getTexture());
+            m_advancedModeDrawFB->attach(QDemonRenderFrameBufferAttachment::Depth, m_layerPrepassDepthTexture.getTexture());
     }
     theRenderContext->setRenderTarget(m_advancedModeDrawFB);
     // make sure that depth testing is on in order to render just the
@@ -1087,7 +1087,7 @@ void QDemonLayerRenderData::blendAdvancedToFB(DefaultMaterialBlendMode::Enum ble
     if (!m_advancedBlendBlendTexture) {
         m_advancedBlendBlendTexture = theRenderContext->createTexture2D();
         m_advancedBlendBlendTexture->setTextureData(QDemonDataRef<quint8>(), 0, theViewport.width(), theViewport.height(), QDemonRenderTextureFormats::RGBA8);
-        m_advancedModeBlendFB->attach(QDemonRenderFrameBufferAttachments::Color0, m_advancedBlendBlendTexture);
+        m_advancedModeBlendFB->attach(QDemonRenderFrameBufferAttachment::Color0, m_advancedBlendBlendTexture);
     }
     theRenderContext->setRenderTarget(m_advancedModeBlendFB);
 
@@ -1368,7 +1368,7 @@ void QDemonLayerRenderData::renderToTexture()
     // We have to all this here in because once we change the FB by allocating an FB we are
     // screwed.
     QDemonRenderTextureFormats::Enum theDepthFormat(getDepthBufferFormat());
-    QDemonRenderFrameBufferAttachments::Enum theDepthAttachmentFormat(getFramebufferDepthAttachmentFormat(theDepthFormat));
+    QDemonRenderFrameBufferAttachment theDepthAttachmentFormat(getFramebufferDepthAttachmentFormat(theDepthFormat));
 
     // Definitely disable the scissor rect if it is running right now.
     QDemonRenderContextScopedProperty<bool> __scissorEnabled(*theRenderContext,
@@ -1411,7 +1411,7 @@ void QDemonLayerRenderData::renderToTexture()
         if (thePrepResult.flags.requiresDepthTexture() && m_progressiveAAPassIndex == 0) {
             // Setup FBO with single depth buffer target.
             // Note this does not use multisample.
-            QDemonRenderFrameBufferAttachments::Enum theAttachment = getFramebufferDepthAttachmentFormat(DepthTextureFormat);
+            QDemonRenderFrameBufferAttachment theAttachment = getFramebufferDepthAttachmentFormat(DepthTextureFormat);
             theFB->attach(theAttachment, m_layerDepthTexture.getTexture());
 
             // In this case transparent objects also may write their depth.
@@ -1422,10 +1422,10 @@ void QDemonLayerRenderData::renderToTexture()
         if (thePrepResult.flags.requiresSsaoPass() && m_progressiveAAPassIndex == 0 && camera != nullptr) {
             startProfiling("AO pass", false);
             // Setup FBO with single color buffer target
-            theFB->attach(QDemonRenderFrameBufferAttachments::Color0, m_layerSsaoTexture.getTexture());
+            theFB->attach(QDemonRenderFrameBufferAttachment::Color0, m_layerSsaoTexture.getTexture());
             theRenderContext->clear(QDemonRenderClearValues::Color);
             renderAoPass();
-            theFB->attach(QDemonRenderFrameBufferAttachments::Color0, QDemonRenderTextureOrRenderBuffer());
+            theFB->attach(QDemonRenderFrameBufferAttachment::Color0, QDemonRenderTextureOrRenderBuffer());
             endProfiling("AO pass");
         }
 
@@ -1456,7 +1456,7 @@ void QDemonLayerRenderData::renderToTexture()
             }
         }
 
-        theFB->attach(QDemonRenderFrameBufferAttachments::Color0, renderColorTexture->getTexture(), thFboAttachTarget);
+        theFB->attach(QDemonRenderFrameBufferAttachment::Color0, renderColorTexture->getTexture(), thFboAttachTarget);
         if (layer.background != LayerBackground::Unspecified)
             theRenderContext->clear(clearFlags);
 
@@ -1509,7 +1509,7 @@ void QDemonLayerRenderData::renderToTexture()
                                                theLayerTextureDimensions.height(),
                                                QDemonRenderTextureFormats::RGBA8);
             theRenderContext->setRenderTarget(theFB);
-            theFB->attach(QDemonRenderFrameBufferAttachments::Color0, m_layerWidgetTexture.getTexture());
+            theFB->attach(QDemonRenderFrameBufferAttachment::Color0, m_layerWidgetTexture.getTexture());
             theFB->attach(getFramebufferDepthAttachmentFormat(DepthTextureFormat), m_layerDepthTexture.getTexture());
             theRenderContext->setClearColor(QVector4D(0.0, 0.0, 0.0, 0.0));
             theRenderContext->clear(QDemonRenderClearValues::Color);
@@ -1525,7 +1525,7 @@ void QDemonLayerRenderData::renderToTexture()
                                                   theLayerOriginalTextureDimensions.height(),
                                                   ColorTextureFormat);
             theFB->attach(theDepthAttachmentFormat, QDemonRenderTextureOrRenderBuffer());
-            theFB->attach(QDemonRenderFrameBufferAttachments::Color0, targetTexture.getTexture());
+            theFB->attach(QDemonRenderFrameBufferAttachment::Color0, targetTexture.getTexture());
             QVector2D theBlendFactors;
             if (isProgressiveAABlendPass)
                 theBlendFactors = s_BlendFactors[aaFactorIndex];
@@ -1540,7 +1540,7 @@ void QDemonLayerRenderData::renderToTexture()
             theBlendShader->lastFrame.set(m_layerTexture.getTexture().data());
             theBlendShader->blendFactors.set(theBlendFactors);
             renderer->renderQuad();
-            theFB->attach(QDemonRenderFrameBufferAttachments::Color0, QDemonRenderTextureOrRenderBuffer());
+            theFB->attach(QDemonRenderFrameBufferAttachment::Color0, QDemonRenderTextureOrRenderBuffer());
             if (isTemporalAABlendPass)
                 m_temporalAATexture.stealTexture(m_layerTexture);
             m_layerTexture.stealTexture(targetTexture);
@@ -1564,7 +1564,7 @@ void QDemonLayerRenderData::renderToTexture()
             theFB->attach(theDepthAttachmentFormat, QDemonRenderTextureOrRenderBuffer(), thFboAttachTarget);
         }
 
-        theFB->attach(QDemonRenderFrameBufferAttachments::Color0, QDemonRenderTextureOrRenderBuffer(), thFboAttachTarget);
+        theFB->attach(QDemonRenderFrameBufferAttachment::Color0, QDemonRenderTextureOrRenderBuffer(), thFboAttachTarget);
         // Let natural scoping rules destroy the other stuff.
     }
 }
@@ -1875,9 +1875,9 @@ void QDemonLayerRenderData::runnableRenderToViewport(const QDemonRef<QDemonRende
                                                          QDemonRenderTextureFormats::RGBA8);
                         QDemonRef<QDemonRenderFrameBuffer> blitFB;
                         blitFB = theContext->createFrameBuffer();
-                        blitFB->attach(QDemonRenderFrameBufferAttachments::Color0,
+                        blitFB->attach(QDemonRenderFrameBufferAttachment::Color0,
                                        QDemonRenderTextureOrRenderBuffer(blendBlitTexture));
-                        blendFB->attach(QDemonRenderFrameBufferAttachments::Color0, QDemonRenderTextureOrRenderBuffer(screenTexture));
+                        blendFB->attach(QDemonRenderFrameBufferAttachment::Color0, QDemonRenderTextureOrRenderBuffer(screenTexture));
                         theContext->setRenderTarget(blitFB);
                         theContext->setReadTarget(blendFB);
                         theContext->setReadBuffer(QDemonReadFaces::Color0);
@@ -1901,7 +1901,7 @@ void QDemonLayerRenderData::runnableRenderToViewport(const QDemonRef<QDemonRende
                                                            QDemonRenderTextureFormats::RGBA8);
                         QDemonRef<QDemonRenderFrameBuffer> resultFB;
                         resultFB = theContext->createFrameBuffer();
-                        resultFB->attach(QDemonRenderFrameBufferAttachments::Color0,
+                        resultFB->attach(QDemonRenderFrameBufferAttachment::Color0,
                                          QDemonRenderTextureOrRenderBuffer(blendResultTexture));
                         theContext->setRenderTarget(resultFB);
 

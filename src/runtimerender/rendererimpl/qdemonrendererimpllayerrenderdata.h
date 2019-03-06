@@ -100,7 +100,7 @@ struct QDemonLayerRenderData : public QDemonLayerRenderPreparationData
     void prepareForRender(const QSize &inViewportDimensions) override;
 
     QDemonRenderTextureFormats::Enum getDepthBufferFormat();
-    QDemonRenderFrameBufferAttachments::Enum getFramebufferDepthAttachmentFormat(QDemonRenderTextureFormats::Enum depthFormat);
+    QDemonRenderFrameBufferAttachment getFramebufferDepthAttachmentFormat(QDemonRenderTextureFormats::Enum depthFormat);
 
     // Render this layer assuming viewport and RT are setup.  Just renders exactly this item
     // no effects.

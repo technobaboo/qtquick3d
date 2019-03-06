@@ -71,7 +71,7 @@ public:
                                const QDemonRef<QDemonRenderIndexBuffer> &indexBuffer,
                                QDemonConstDataRef<quint32> strides,
                                QDemonConstDataRef<quint32> offsets,
-                               QDemonRenderDrawMode::Enum primType = QDemonRenderDrawMode::Triangles,
+                               QDemonRenderDrawMode primType = QDemonRenderDrawMode::Triangles,
                                quint32 patchVertexCount = 1);
     ///< destructor
     ~QDemonRenderInputAssembler();
@@ -114,7 +114,7 @@ public:
      *
      * @return primitive type
      */
-    QDemonRenderDrawMode::Enum getPrimitiveType() const { return m_primitiveType; }
+    QDemonRenderDrawMode getPrimitiveType() const { return m_primitiveType; }
 
     /**
      * @brief set the per vertex patch count
@@ -141,7 +141,7 @@ private:
     QDemonConstDataRef<QDemonRenderBackend::QDemonRenderBackendBufferObject> m_vertexbufferHandles; ///< opaque vertex buffer backend handles
 
     QDemonRenderBackend::QDemonRenderBackendInputAssemblerObject m_inputAssemblertHandle; ///< opaque backend handle
-    QDemonRenderDrawMode::Enum m_primitiveType; ///< primitive type used for drawing
+    QDemonRenderDrawMode m_primitiveType; ///< primitive type used for drawing
     quint32 m_patchVertexCount; ///< vertex count if primitive type is patch
 };
 

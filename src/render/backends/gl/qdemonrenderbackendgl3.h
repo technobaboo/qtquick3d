@@ -114,14 +114,14 @@ public:
     void setReadBuffer(QDemonRenderBackendRenderTargetObject rto, QDemonReadFaces::Enum inReadFace) override;
 
     void renderTargetAttach(QDemonRenderBackendRenderTargetObject rto,
-                            QDemonRenderFrameBufferAttachments::Enum attachment,
+                            QDemonRenderFrameBufferAttachment attachment,
                             QDemonRenderBackendRenderbufferObject rbo) override
     {
         QDemonRenderBackendGLBase::renderTargetAttach(rto, attachment, rbo);
     }
 
     void renderTargetAttach(QDemonRenderBackendRenderTargetObject rto,
-                            QDemonRenderFrameBufferAttachments::Enum attachment,
+                            QDemonRenderFrameBufferAttachment attachment,
                             QDemonRenderBackendTextureObject to,
                             QDemonRenderTextureTargetType target = QDemonRenderTextureTargetType::Texture2D) override
     {
@@ -129,7 +129,7 @@ public:
     }
 
     void renderTargetAttach(QDemonRenderBackendRenderTargetObject rto,
-                            QDemonRenderFrameBufferAttachments::Enum attachment,
+                            QDemonRenderFrameBufferAttachment attachment,
                             QDemonRenderBackendTextureObject to,
                             qint32 level,
                             qint32 layer) override;
