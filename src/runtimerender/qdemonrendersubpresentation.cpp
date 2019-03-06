@@ -53,8 +53,8 @@ QDemonOffscreenRendererEnvironment QDemonSubPresentationRenderer::getDesiredEnvi
 {
     // If we aren't using a clear color, then we are expected to blend with the background
     bool hasTransparency = m_presentation->scene->useClearColor ? false : true;
-    QDemonRenderTextureFormats::Enum format = hasTransparency ? QDemonRenderTextureFormats::RGBA8
-                                                              : QDemonRenderTextureFormats::RGB8;
+    QDemonRenderTextureFormat format = hasTransparency ? QDemonRenderTextureFormat::RGBA8
+                                                              : QDemonRenderTextureFormat::RGB8;
     return QDemonOffscreenRendererEnvironment((quint32)(m_presentation->presentationDimensions.x()),
                                               (quint32)(m_presentation->presentationDimensions.y()),
                                               format,

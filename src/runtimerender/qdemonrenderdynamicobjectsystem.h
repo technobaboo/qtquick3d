@@ -167,7 +167,7 @@ public:
     virtual void setRequiresDepthTexture(bool inRequires) = 0;
     virtual bool requiresCompilation() const = 0;
     virtual void setRequiresCompilation(bool inRequires) = 0;
-    virtual QDemonRenderTextureFormats::Enum getOutputTextureFormat() const = 0;
+    virtual QDemonRenderTextureFormat getOutputTextureFormat() const = 0;
 };
 
 typedef QPair<QDemonRef<QDemonRenderShaderProgram>, dynamic::QDemonDynamicShaderProgramFlags> TShaderAndFlags;

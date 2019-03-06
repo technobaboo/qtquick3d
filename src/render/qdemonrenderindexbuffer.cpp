@@ -36,7 +36,7 @@ QT_BEGIN_NAMESPACE
 
 QDemonRenderIndexBuffer::QDemonRenderIndexBuffer(const QDemonRef<QDemonRenderContextImpl> &context,
                                                  size_t size,
-                                                 QDemonRenderComponentTypes::Enum componentType,
+                                                 QDemonRenderComponentType componentType,
                                                  QDemonRenderBufferUsageType usageType,
                                                  QDemonDataRef<quint8> data)
     : QDemonRenderDataBuffer(context, size, QDemonRenderBufferBindValues::Index, usageType, data), m_componentType(componentType)
@@ -50,13 +50,13 @@ QDemonRenderIndexBuffer::~QDemonRenderIndexBuffer()
 
 quint32 QDemonRenderIndexBuffer::getNumIndices() const
 {
-    quint32 dtypeSize = QDemonRenderComponentTypes::getSizeOfType(m_componentType);
+    quint32 dtypeSize = getSizeOfType(m_componentType);
     return m_bufferCapacity / dtypeSize;
 }
 
 void QDemonRenderIndexBuffer::draw(QDemonRenderDrawMode drawMode, quint32 count, quint32 offset)
 {
-    m_backend->drawIndexed(drawMode, count, m_componentType, (const void *)(offset * QDemonRenderComponentTypes::getSizeOfType(m_componentType)));
+    m_backend->drawIndexed(drawMode, count, m_componentType, (const void *)(offset * getSizeOfType(m_componentType)));
 }
 
 void QDemonRenderIndexBuffer::drawIndirect(QDemonRenderDrawMode drawMode, quint32 offset)
@@ -76,12 +76,12 @@ void QDemonRenderIndexBuffer::bind()
 
 QDemonRef<QDemonRenderIndexBuffer> QDemonRenderIndexBuffer::create(const QDemonRef<QDemonRenderContextImpl> &context,
                                                                    QDemonRenderBufferUsageType usageType,
-                                                                   QDemonRenderComponentTypes::Enum componentType,
+                                                                   QDemonRenderComponentType componentType,
                                                                    size_t size,
                                                                    QDemonConstDataRef<quint8> bufferData)
 {
-    if (componentType != QDemonRenderComponentTypes::UnsignedInteger32 && componentType != QDemonRenderComponentTypes::UnsignedInteger16
-        && componentType != QDemonRenderComponentTypes::UnsignedInteger8) {
+    if (componentType != QDemonRenderComponentType::UnsignedInteger32 && componentType != QDemonRenderComponentType::UnsignedInteger16
+        && componentType != QDemonRenderComponentType::UnsignedInteger8) {
         qCCritical(INVALID_PARAMETER, "Invalid component type for index buffer");
         Q_ASSERT(false);
         return nullptr;

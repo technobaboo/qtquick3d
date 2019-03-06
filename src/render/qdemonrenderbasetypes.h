@@ -46,277 +46,83 @@
 
 QT_BEGIN_NAMESPACE
 
-struct QDemonRenderComponentTypes
+enum class QDemonRenderComponentType
 {
-    enum Enum {
-        Unknown = 0,
-        UnsignedInteger8,
-        Integer8,
-        UnsignedInteger16,
-        Integer16,
-        UnsignedInteger32,
-        Integer32,
-        UnsignedInteger64,
-        Integer64,
-        Float16,
-        Float32,
-        Float64
-    };
-    static const char *toString(Enum value)
-    {
-        switch (value) {
-        case UnsignedInteger8:
-            return "UnsignedInteger8";
-        case Integer8:
-            return "Integer8";
-        case UnsignedInteger16:
-            return "UnsignedInteger16";
-        case Integer16:
-            return "Integer16";
-        case UnsignedInteger32:
-            return "UnsignedInteger32";
-        case Integer32:
-            return "Integer32";
-        case UnsignedInteger64:
-            return "UnsignedInteger64";
-        case Integer64:
-            return "Integer64";
-        case Float16:
-            return "Float16";
-        case Float32:
-            return "Float32";
-        case Float64:
-            return "Float64";
-        default:
-            break;
-        }
-        return "Unknown";
+    Unknown = 0,
+    UnsignedInteger8,
+    Integer8,
+    UnsignedInteger16,
+    Integer16,
+    UnsignedInteger32,
+    Integer32,
+    UnsignedInteger64,
+    Integer64,
+    Float16,
+    Float32,
+    Float64
+};
+
+inline const char *toString(QDemonRenderComponentType value)
+{
+    switch (value) {
+    case QDemonRenderComponentType::UnsignedInteger8:
+        return "UnsignedInteger8";
+    case QDemonRenderComponentType::Integer8:
+        return "Integer8";
+    case QDemonRenderComponentType::UnsignedInteger16:
+        return "UnsignedInteger16";
+    case QDemonRenderComponentType::Integer16:
+        return "Integer16";
+    case QDemonRenderComponentType::UnsignedInteger32:
+        return "UnsignedInteger32";
+    case QDemonRenderComponentType::Integer32:
+        return "Integer32";
+    case QDemonRenderComponentType::UnsignedInteger64:
+        return "UnsignedInteger64";
+    case QDemonRenderComponentType::Integer64:
+        return "Integer64";
+    case QDemonRenderComponentType::Float16:
+        return "Float16";
+    case QDemonRenderComponentType::Float32:
+        return "Float32";
+    case QDemonRenderComponentType::Float64:
+        return "Float64";
+    default:
+        break;
     }
+    return "Unknown";
+}
 
-    static quint32 getSizeOfType(Enum value)
-    {
-        switch (value) {
-        case UnsignedInteger8:
-            return sizeof(quint8);
-        case Integer8:
-            return sizeof(qint8);
-        case UnsignedInteger16:
-            return sizeof(quint16);
-        case Integer16:
-            return sizeof(qint16);
-        case UnsignedInteger32:
-            return sizeof(quint32);
-        case Integer32:
-            return sizeof(qint32);
-        case UnsignedInteger64:
-            return sizeof(quint64);
-        case Integer64:
-            return sizeof(qint64);
-        case Float16:
-            return sizeof(qfloat16);
-        case Float32:
-            return sizeof(float);
-        case Float64:
-            return sizeof(double);
-        default:
-            break;
-        }
-        Q_ASSERT(false);
-        return 0;
+inline quint32 getSizeOfType(QDemonRenderComponentType value)
+{
+    switch (value) {
+    case QDemonRenderComponentType::UnsignedInteger8:
+        return sizeof(quint8);
+    case QDemonRenderComponentType::Integer8:
+        return sizeof(qint8);
+    case QDemonRenderComponentType::UnsignedInteger16:
+        return sizeof(quint16);
+    case QDemonRenderComponentType::Integer16:
+        return sizeof(qint16);
+    case QDemonRenderComponentType::UnsignedInteger32:
+        return sizeof(quint32);
+    case QDemonRenderComponentType::Integer32:
+        return sizeof(qint32);
+    case QDemonRenderComponentType::UnsignedInteger64:
+        return sizeof(quint64);
+    case QDemonRenderComponentType::Integer64:
+        return sizeof(qint64);
+    case QDemonRenderComponentType::Float16:
+        return sizeof(qfloat16);
+    case QDemonRenderComponentType::Float32:
+        return sizeof(float);
+    case QDemonRenderComponentType::Float64:
+        return sizeof(double);
+    default:
+        break;
     }
-};
-
-/**
-            Define a set of compile-time trait classes that map the enumerations
-            to actual compile time types and sizeof so we can deal with the enumeration
-            in generic ways.
-    */
-template<QDemonRenderComponentTypes::Enum TraitType>
-struct QDemonRenderComponentTraits
-{
-    bool force_compile_error;
-};
-
-/**
-            Define a compile time mapping from datatype to enumeration.  Not that if you
-            use this with a type that isn't a component type you will get a compilation
-            error.
-    */
-template<typename TDataType>
-struct QDemonRenderComponentTypeToTypeMap
-{
-    bool force_compile_error;
-};
-
-template<>
-struct QDemonRenderComponentTraits<QDemonRenderComponentTypes::UnsignedInteger8>
-{
-    typedef quint8 TComponentType;
-    quint8 m_componentSize;
-    QDemonRenderComponentTraits<QDemonRenderComponentTypes::UnsignedInteger8>() : m_componentSize(sizeof(quint8)) {}
-};
-
-template<>
-struct QDemonRenderComponentTypeToTypeMap<quint8>
-{
-    QDemonRenderComponentTypes::Enum m_componentType;
-    QDemonRenderComponentTypeToTypeMap<quint8>() : m_componentType(QDemonRenderComponentTypes::UnsignedInteger8) {}
-};
-
-template<>
-struct QDemonRenderComponentTraits<QDemonRenderComponentTypes::Integer8>
-{
-    typedef qint8 TComponentType;
-    quint8 m_componentSize;
-    QDemonRenderComponentTraits<QDemonRenderComponentTypes::Integer8>() : m_componentSize(sizeof(qint8)) {}
-};
-
-template<>
-struct QDemonRenderComponentTypeToTypeMap<qint8>
-{
-    QDemonRenderComponentTypes::Enum m_componentType;
-    QDemonRenderComponentTypeToTypeMap<qint8>() : m_componentType(QDemonRenderComponentTypes::Integer8) {}
-};
-
-template<>
-struct QDemonRenderComponentTraits<QDemonRenderComponentTypes::UnsignedInteger16>
-{
-    typedef quint16 TComponentType;
-    quint8 m_componentSize;
-    QDemonRenderComponentTraits<QDemonRenderComponentTypes::UnsignedInteger16>() : m_componentSize(sizeof(quint16)) {}
-};
-
-template<>
-struct QDemonRenderComponentTypeToTypeMap<quint16>
-{
-    QDemonRenderComponentTypes::Enum m_componentType;
-    QDemonRenderComponentTypeToTypeMap<quint16>() : m_componentType(QDemonRenderComponentTypes::UnsignedInteger16) {}
-};
-
-template<>
-struct QDemonRenderComponentTraits<QDemonRenderComponentTypes::Integer16>
-{
-    typedef qint16 TComponentType;
-    quint8 m_componentSize;
-    QDemonRenderComponentTraits<QDemonRenderComponentTypes::Integer16>() : m_componentSize(sizeof(qint16)) {}
-};
-
-template<>
-struct QDemonRenderComponentTypeToTypeMap<qint16>
-{
-    QDemonRenderComponentTypes::Enum m_componentType;
-    QDemonRenderComponentTypeToTypeMap<qint16>() : m_componentType(QDemonRenderComponentTypes::Integer16) {}
-};
-
-template<>
-struct QDemonRenderComponentTraits<QDemonRenderComponentTypes::UnsignedInteger32>
-{
-    typedef quint32 TComponentType;
-    quint8 m_componentSize;
-    QDemonRenderComponentTraits<QDemonRenderComponentTypes::UnsignedInteger32>() : m_componentSize(sizeof(quint32)) {}
-};
-
-template<>
-struct QDemonRenderComponentTypeToTypeMap<quint32>
-{
-    QDemonRenderComponentTypes::Enum m_componentType;
-    QDemonRenderComponentTypeToTypeMap<quint32>() : m_componentType(QDemonRenderComponentTypes::UnsignedInteger32) {}
-};
-template<>
-struct QDemonRenderComponentTraits<QDemonRenderComponentTypes::Integer32>
-{
-    typedef qint32 TComponentType;
-    quint8 m_componentSize;
-    QDemonRenderComponentTraits<QDemonRenderComponentTypes::Integer32>() : m_componentSize(sizeof(qint32)) {}
-};
-
-template<>
-struct QDemonRenderComponentTypeToTypeMap<qint32>
-{
-    QDemonRenderComponentTypes::Enum m_componentType;
-    QDemonRenderComponentTypeToTypeMap<qint32>() : m_componentType(QDemonRenderComponentTypes::Integer32) {}
-};
-
-template<>
-struct QDemonRenderComponentTraits<QDemonRenderComponentTypes::UnsignedInteger64>
-{
-    typedef quint64 TComponentType;
-    quint8 m_componentSize;
-    QDemonRenderComponentTraits<QDemonRenderComponentTypes::UnsignedInteger64>() : m_componentSize(sizeof(quint64)) {}
-};
-
-template<>
-struct QDemonRenderComponentTypeToTypeMap<quint64>
-{
-    QDemonRenderComponentTypes::Enum m_componentType;
-    QDemonRenderComponentTypeToTypeMap<quint64>() : m_componentType(QDemonRenderComponentTypes::UnsignedInteger64) {}
-};
-
-template<>
-struct QDemonRenderComponentTraits<QDemonRenderComponentTypes::Integer64>
-{
-    typedef qint64 TComponentType;
-    quint8 m_componentSize;
-    QDemonRenderComponentTraits<QDemonRenderComponentTypes::Integer64>() : m_componentSize(sizeof(qint64)) {}
-};
-
-template<>
-struct QDemonRenderComponentTypeToTypeMap<qint64>
-{
-    QDemonRenderComponentTypes::Enum m_componentType;
-    QDemonRenderComponentTypeToTypeMap<qint64>() : m_componentType(QDemonRenderComponentTypes::Integer64) {}
-};
-
-template<>
-struct QDemonRenderComponentTraits<QDemonRenderComponentTypes::Float16>
-{
-    typedef qfloat16 TComponentType;
-    quint8 m_componentSize;
-    QDemonRenderComponentTraits<QDemonRenderComponentTypes::Float16>() : m_componentSize(sizeof(qfloat16)) {}
-};
-
-template<>
-struct QDemonRenderComponentTypeToTypeMap<qfloat16>
-{
-    QDemonRenderComponentTypes::Enum m_componentType;
-    QDemonRenderComponentTypeToTypeMap<qfloat16>() : m_componentType(QDemonRenderComponentTypes::Float16) {}
-};
-
-template<>
-struct QDemonRenderComponentTraits<QDemonRenderComponentTypes::Float32>
-{
-    typedef float TComponentType;
-    quint8 m_componentSize;
-    QDemonRenderComponentTraits<QDemonRenderComponentTypes::Float32>() : m_componentSize(sizeof(float)) {}
-};
-
-template<>
-struct QDemonRenderComponentTypeToTypeMap<float>
-{
-    QDemonRenderComponentTypes::Enum m_componentType;
-    QDemonRenderComponentTypeToTypeMap<float>() : m_componentType(QDemonRenderComponentTypes::Float32) {}
-};
-
-template<>
-struct QDemonRenderComponentTraits<QDemonRenderComponentTypes::Float64>
-{
-    typedef double TComponentType;
-    quint8 m_componentSize;
-    QDemonRenderComponentTraits<QDemonRenderComponentTypes::Float64>() : m_componentSize(sizeof(double)) {}
-};
-
-template<>
-struct QDemonRenderComponentTypeToTypeMap<double>
-{
-    QDemonRenderComponentTypes::Enum m_componentType;
-    QDemonRenderComponentTypeToTypeMap<double>() : m_componentType(QDemonRenderComponentTypes::Float64) {}
-};
-
-// Map at compile time from component type to datatype;
-template<typename TDataType>
-inline QDemonRenderComponentTypes::Enum getComponentTypeForType()
-{
-    return QDemonRenderComponentTypeToTypeMap<TDataType>().m_componentType;
+    Q_ASSERT(false);
+    return 0;
 }
 
 enum class QDemonRenderContextType : quint32
@@ -483,9 +289,9 @@ inline const char *toString(QDemonRenderRenderBufferFormat value)
     return "Unknown";
 }
 
-struct QDemonRenderTextureFormats
+struct QDemonRenderTextureFormat
 {
-    enum Enum {
+    enum Format {
         Unknown = 0,
         R8,
         R16,
@@ -520,57 +326,60 @@ struct QDemonRenderTextureFormats
         Depth32,
         Depth24Stencil8
     };
+    Format format;
 
-    static bool isUncompressedTextureFormat(QDemonRenderTextureFormats::Enum value)
+    constexpr QDemonRenderTextureFormat(Format f) : format(f) {}
+
+    bool isUncompressedTextureFormat() const
     {
-        switch (value) {
-        case QDemonRenderTextureFormats::R8:
+        switch (format) {
+        case QDemonRenderTextureFormat::R8:
             return true;
-        case QDemonRenderTextureFormats::R16:
+        case QDemonRenderTextureFormat::R16:
             return true;
-        case QDemonRenderTextureFormats::R16F:
+        case QDemonRenderTextureFormat::R16F:
             return true;
-        case QDemonRenderTextureFormats::R32I:
+        case QDemonRenderTextureFormat::R32I:
             return true;
-        case QDemonRenderTextureFormats::R32UI:
+        case QDemonRenderTextureFormat::R32UI:
             return true;
-        case QDemonRenderTextureFormats::R32F:
+        case QDemonRenderTextureFormat::R32F:
             return true;
-        case QDemonRenderTextureFormats::RG8:
+        case QDemonRenderTextureFormat::RG8:
             return true;
-        case QDemonRenderTextureFormats::RGBA8:
+        case QDemonRenderTextureFormat::RGBA8:
             return true;
-        case QDemonRenderTextureFormats::RGB8:
+        case QDemonRenderTextureFormat::RGB8:
             return true;
-        case QDemonRenderTextureFormats::SRGB8:
+        case QDemonRenderTextureFormat::SRGB8:
             return true;
-        case QDemonRenderTextureFormats::SRGB8A8:
+        case QDemonRenderTextureFormat::SRGB8A8:
             return true;
-        case QDemonRenderTextureFormats::RGB565:
+        case QDemonRenderTextureFormat::RGB565:
             return true;
-        case QDemonRenderTextureFormats::RGBA5551:
+        case QDemonRenderTextureFormat::RGBA5551:
             return true;
-        case QDemonRenderTextureFormats::Alpha8:
+        case QDemonRenderTextureFormat::Alpha8:
             return true;
-        case QDemonRenderTextureFormats::Luminance8:
+        case QDemonRenderTextureFormat::Luminance8:
             return true;
-        case QDemonRenderTextureFormats::Luminance16:
+        case QDemonRenderTextureFormat::Luminance16:
             return true;
-        case QDemonRenderTextureFormats::LuminanceAlpha8:
+        case QDemonRenderTextureFormat::LuminanceAlpha8:
             return true;
-        case QDemonRenderTextureFormats::RGBA16F:
+        case QDemonRenderTextureFormat::RGBA16F:
             return true;
-        case QDemonRenderTextureFormats::RG16F:
+        case QDemonRenderTextureFormat::RG16F:
             return true;
-        case QDemonRenderTextureFormats::RG32F:
+        case QDemonRenderTextureFormat::RG32F:
             return true;
-        case QDemonRenderTextureFormats::RGB32F:
+        case QDemonRenderTextureFormat::RGB32F:
             return true;
-        case QDemonRenderTextureFormats::RGBA32F:
+        case QDemonRenderTextureFormat::RGBA32F:
             return true;
-        case QDemonRenderTextureFormats::R11G11B10:
+        case QDemonRenderTextureFormat::R11G11B10:
             return true;
-        case QDemonRenderTextureFormats::RGB9E5:
+        case QDemonRenderTextureFormat::RGB9E5:
             return true;
         default:
             break;
@@ -578,16 +387,16 @@ struct QDemonRenderTextureFormats
         return false;
     }
 
-    static bool isCompressedTextureFormat(QDemonRenderTextureFormats::Enum value)
+    bool isCompressedTextureFormat() const
     {
-        switch (value) {
-        case QDemonRenderTextureFormats::RGBA_DXT1:
+        switch (format) {
+        case QDemonRenderTextureFormat::RGBA_DXT1:
             return true;
-        case QDemonRenderTextureFormats::RGB_DXT1:
+        case QDemonRenderTextureFormat::RGB_DXT1:
             return true;
-        case QDemonRenderTextureFormats::RGBA_DXT3:
+        case QDemonRenderTextureFormat::RGBA_DXT3:
             return true;
-        case QDemonRenderTextureFormats::RGBA_DXT5:
+        case QDemonRenderTextureFormat::RGBA_DXT5:
             return true;
         default:
             break;
@@ -595,16 +404,16 @@ struct QDemonRenderTextureFormats
         return false;
     }
 
-    static bool isDepthTextureFormat(QDemonRenderTextureFormats::Enum value)
+    bool isDepthTextureFormat() const
     {
-        switch (value) {
-        case QDemonRenderTextureFormats::Depth16:
+        switch (format) {
+        case QDemonRenderTextureFormat::Depth16:
             return true;
-        case QDemonRenderTextureFormats::Depth24:
+        case QDemonRenderTextureFormat::Depth24:
             return true;
-        case QDemonRenderTextureFormats::Depth32:
+        case QDemonRenderTextureFormat::Depth32:
             return true;
-        case QDemonRenderTextureFormats::Depth24Stencil8:
+        case QDemonRenderTextureFormat::Depth24Stencil8:
             return true;
         default:
             break;
@@ -612,9 +421,9 @@ struct QDemonRenderTextureFormats
         return false;
     }
 
-    static const char *toString(Enum value)
+    const char *toString() const
     {
-        switch (value) {
+        switch (format) {
         case R8:
             return "R8";
         case R16:
@@ -685,9 +494,9 @@ struct QDemonRenderTextureFormats
         return "Unknown";
     }
 
-    static qint32 getSizeofFormat(Enum value)
+    qint32 getSizeofFormat() const
     {
-        switch (value) {
+        switch (format) {
         case R8:
             return 1;
         case R16F:
@@ -745,9 +554,9 @@ struct QDemonRenderTextureFormats
         return 0;
     }
 
-    static quint32 getNumberOfComponent(Enum value)
+    quint32 getNumberOfComponent() const
     {
-        switch (value) {
+        switch (format) {
         case R8:
             return 1;
         case R16F:
@@ -805,7 +614,7 @@ struct QDemonRenderTextureFormats
         return 0;
     }
 
-    static void decodeToFloat(void *inPtr, qint32 byteOfs, float *outPtr, QDemonRenderTextureFormats::Enum inFmt)
+    void decodeToFloat(void *inPtr, qint32 byteOfs, float *outPtr) const
     {
         Q_ASSERT(byteOfs >= 0);
         outPtr[0] = 0.0f;
@@ -814,7 +623,7 @@ struct QDemonRenderTextureFormats
         outPtr[3] = 0.0f;
         quint8 *src = reinterpret_cast<quint8 *>(inPtr);
         // float divisor;		// If we want to support RGBD?
-        switch (inFmt) {
+        switch (format) {
         case Alpha8:
             outPtr[0] = (float(src[byteOfs])) / 255.0f;
             break;
@@ -828,13 +637,13 @@ struct QDemonRenderTextureFormats
         case SRGB8:
         case SRGB8A8:
             // NOTE : RGBD Hack here for reference.  Not meant for installation.
-            // divisor = (QDemonRenderTextureFormats::getSizeofFormat(inFmt) == 4) ?
+            // divisor = (QDemonRenderTextureFormat::getSizeofFormat(inFmt) == 4) ?
             // ((float)src[byteOfs+3]) / 255.0f : 1.0f;
-            for (qint32 i = 0; i < QDemonRenderTextureFormats::getSizeofFormat(inFmt); ++i) {
+            for (qint32 i = 0; i < getSizeofFormat(); ++i) {
                 float val = (float(src[byteOfs + i])) / 255.0f;
                 outPtr[i] = (i < 3) ? std::pow(val, 0.4545454545f) : val;
                 // Assuming RGBA8 actually means RGBD (which is stupid, I know)
-                // if ( QDemonRenderTextureFormats::getSizeofFormat(inFmt) == 4 ) { outPtr[i] /=
+                // if ( QDemonRenderTextureFormat::getSizeofFormat(inFmt) == 4 ) { outPtr[i] /=
                 // divisor; }
             }
             // outPtr[3] = divisor;
@@ -862,7 +671,7 @@ struct QDemonRenderTextureFormats
         case R16F:
         case RG16F:
         case RGBA16F:
-            for (qint32 i = 0; i < (QDemonRenderTextureFormats::getSizeofFormat(inFmt) >> 1); ++i) {
+            for (qint32 i = 0; i < (getSizeofFormat() >> 1); ++i) {
                 // NOTE : This only works on the assumption that we don't have any denormals,
                 // Infs or NaNs.
                 // Every pixel in our source image should be "regular"
@@ -893,12 +702,12 @@ struct QDemonRenderTextureFormats
         }
     }
 
-    static void encodeToPixel(float *inPtr, void *outPtr, qint32 byteOfs, QDemonRenderTextureFormats::Enum inFmt)
+    void encodeToPixel(float *inPtr, void *outPtr, qint32 byteOfs) const
     {
         Q_ASSERT(byteOfs >= 0);
         quint8 *dest = reinterpret_cast<quint8 *>(outPtr);
-        switch (inFmt) {
-        case QDemonRenderTextureFormats::Alpha8:
+        switch (format) {
+        case QDemonRenderTextureFormat::Alpha8:
             dest[byteOfs] = quint8(inPtr[0] * 255.0f);
             break;
 
@@ -910,7 +719,7 @@ struct QDemonRenderTextureFormats
         case RGBA8:
         case SRGB8:
         case SRGB8A8:
-            for (qint32 i = 0; i < QDemonRenderTextureFormats::getSizeofFormat(inFmt); ++i) {
+            for (qint32 i = 0; i < getSizeofFormat(); ++i) {
                 inPtr[i] = (inPtr[i] > 1.0f) ? 1.0f : inPtr[i];
                 if (i < 3)
                     dest[byteOfs + i] = quint8(powf(inPtr[i], 2.2f) * 255.0f);
@@ -941,7 +750,7 @@ struct QDemonRenderTextureFormats
         case R16F:
         case RG16F:
         case RGBA16F:
-            for (qint32 i = 0; i < (QDemonRenderTextureFormats::getSizeofFormat(inFmt) >> 1); ++i) {
+            for (qint32 i = 0; i < (getSizeofFormat() >> 1); ++i) {
                 // NOTE : This also has the limitation of not handling  infs, NaNs and
                 // denormals, but it should be
                 // sufficient for our purposes.
@@ -980,6 +789,9 @@ struct QDemonRenderTextureFormats
             break;
         }
     }
+
+    bool operator==(const QDemonRenderTextureFormat &other) const { return format == other.format; }
+    bool operator!=(const QDemonRenderTextureFormat &other) const { return format != other.format; }
 };
 
 enum class QDemonRenderTextureTargetType
@@ -1163,7 +975,7 @@ struct QDemonRenderVertexBufferEntry
 {
     const char *m_name;
     /** Datatype of the this entry points to in the buffer */
-    QDemonRenderComponentTypes::Enum m_componentType;
+    QDemonRenderComponentType m_componentType;
     /** Number of components of each data member. 1,2,3, or 4.  Don't be stupid.*/
     quint32 m_numComponents;
     /** Offset from the beginning of the buffer of the first item */
@@ -1172,7 +984,7 @@ struct QDemonRenderVertexBufferEntry
     quint32 m_inputSlot;
 
     QDemonRenderVertexBufferEntry(const char *nm,
-                                  QDemonRenderComponentTypes::Enum type,
+                                  QDemonRenderComponentType type,
                                   quint32 numComponents,
                                   quint32 firstItemOffset = 0,
                                   quint32 inputSlot = 0)
@@ -1181,7 +993,7 @@ struct QDemonRenderVertexBufferEntry
     }
 
     QDemonRenderVertexBufferEntry()
-        : m_name(nullptr), m_componentType(QDemonRenderComponentTypes::Unknown), m_numComponents(0), m_firstItemOffset(0), m_inputSlot(0)
+        : m_name(nullptr), m_componentType(QDemonRenderComponentType::Unknown), m_numComponents(0), m_firstItemOffset(0), m_inputSlot(0)
     {
     }
 

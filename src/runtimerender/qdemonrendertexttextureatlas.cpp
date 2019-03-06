@@ -72,9 +72,9 @@ struct QDemonTextTextureAtlas : public QDemonTextTextureAtlasInterface
                 // m_textureAtlas->addRef();
                 // if you change the size you need to adjust QDemonOnscreenTextRenderer too
                 if (m_renderContext->getRenderContextType() == QDemonRenderContextType::GLES2) {
-                    m_textureAtlas->setTextureData(QDemonDataRef<quint8>(), 0, TEXTURE_ATLAS_DIM, TEXTURE_ATLAS_DIM, QDemonRenderTextureFormats::RGBA8);
+                    m_textureAtlas->setTextureData(QDemonDataRef<quint8>(), 0, TEXTURE_ATLAS_DIM, TEXTURE_ATLAS_DIM, QDemonRenderTextureFormat::RGBA8);
                 } else {
-                    m_textureAtlas->setTextureData(QDemonDataRef<quint8>(), 0, TEXTURE_ATLAS_DIM, TEXTURE_ATLAS_DIM, QDemonRenderTextureFormats::Alpha8);
+                    m_textureAtlas->setTextureData(QDemonDataRef<quint8>(), 0, TEXTURE_ATLAS_DIM, TEXTURE_ATLAS_DIM, QDemonRenderTextureFormat::Alpha8);
                 }
                 m_textureAtlas->setMagFilter(QDemonRenderTextureMagnifyingOp::Linear);
                 m_textureAtlas->setMinFilter(QDemonRenderTextureMinifyingOp::Linear);

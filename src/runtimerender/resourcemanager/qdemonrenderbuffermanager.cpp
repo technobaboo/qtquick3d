@@ -193,12 +193,12 @@ QDemonRenderImageTextureData QDemonBufferManager::loadRenderImage(QString inImag
 
     QDemonRef<QDemonRenderTexture2D> theTexture = d->context->createTexture2D();
     if (inLoadedImage->data) {
-        QDemonRenderTextureFormats::Enum destFormat = inLoadedImage->format;
+        QDemonRenderTextureFormat destFormat = inLoadedImage->format;
         if (inBsdfMipmaps) {
             if (d->context->getRenderContextType() == QDemonRenderContextType::GLES2)
-                destFormat = QDemonRenderTextureFormats::RGBA8;
+                destFormat = QDemonRenderTextureFormat::RGBA8;
             else
-                destFormat = QDemonRenderTextureFormats::RGBA16F;
+                destFormat = QDemonRenderTextureFormat::RGBA16F;
         } else {
             theTexture->setTextureData(QDemonDataRef<quint8>((quint8 *)inLoadedImage->data, inLoadedImage->dataSizeInBytes),
                                        0,
@@ -208,7 +208,7 @@ QDemonRenderImageTextureData QDemonBufferManager::loadRenderImage(QString inImag
                                        destFormat);
         }
 
-        if (inBsdfMipmaps && QDemonRenderTextureFormats::isUncompressedTextureFormat(inLoadedImage->format)) {
+        if (inBsdfMipmaps && inLoadedImage->format.isUncompressedTextureFormat()) {
             theTexture->setMinFilter(QDemonRenderTextureMinifyingOp::LinearMipmapLinear);
             QDemonRef<QDemonRenderPrefilterTexture> theBSDFMipMap = theImage.value().m_bsdfMipMap;
             if (theBSDFMipMap == nullptr) {
@@ -223,7 +223,7 @@ QDemonRenderImageTextureData QDemonBufferManager::loadRenderImage(QString inImag
     } /*else if (inLoadedImage->dds) {
             theImage.first->second.m_Texture = theTexture;
             bool supportsDXT = d->GPUSupportsDXT;
-            bool isDXT = QDemonRenderTextureFormats::isCompressedTextureFormat(inLoadedImage.format);
+            bool isDXT = QDemonRenderTextureFormat::isCompressedTextureFormat(inLoadedImage.format);
             bool requiresDecompression = (supportsDXT == false && isDXT) || false;
             // test code for DXT decompression
             // if ( isDXT ) requiresDecompression = true;
@@ -438,15 +438,15 @@ QDemonRenderMesh *QDemonBufferManager::loadMesh(const QString &inMeshPath) const
             QDemonRef<QDemonRenderIndexBuffer> indexBuffer;
             if (result.m_mesh->m_indexBuffer.m_data.size()) {
                 quint32 indexBufferSize = result.m_mesh->m_indexBuffer.m_data.size();
-                QDemonRenderComponentTypes::Enum bufComponentType = result.m_mesh->m_indexBuffer.m_componentType;
-                quint32 sizeofType = QDemonRenderComponentTypes::getSizeOfType(bufComponentType);
+                QDemonRenderComponentType bufComponentType = result.m_mesh->m_indexBuffer.m_componentType;
+                quint32 sizeofType = getSizeOfType(bufComponentType);
 
                 if (sizeofType == 2 || sizeofType == 4) {
                     // Ensure type is unsigned; else things will fail in rendering pipeline.
-                    if (bufComponentType == QDemonRenderComponentTypes::Integer16)
-                        bufComponentType = QDemonRenderComponentTypes::UnsignedInteger16;
-                    if (bufComponentType == QDemonRenderComponentTypes::Integer32)
-                        bufComponentType = QDemonRenderComponentTypes::UnsignedInteger32;
+                    if (bufComponentType == QDemonRenderComponentType::Integer16)
+                        bufComponentType = QDemonRenderComponentType::UnsignedInteger16;
+                    if (bufComponentType == QDemonRenderComponentType::Integer32)
+                        bufComponentType = QDemonRenderComponentType::UnsignedInteger32;
 
                     QDemonConstDataRef<quint8> indexBufferData(result.m_mesh->m_indexBuffer.m_data.begin(baseAddress),
                                                                result.m_mesh->m_indexBuffer.m_data.size());
@@ -468,7 +468,7 @@ QDemonRenderMesh *QDemonBufferManager::loadMesh(const QString &inMeshPath) const
             auto attribLayout = d->context->createAttributeLayout(toConstDataRef(entryBuffer.constData(), entryBuffer.count()));
             // create our attribute layout for depth pass
             QDemonRenderVertexBufferEntry vertBufferEntries[] = {
-                QDemonRenderVertexBufferEntry("attr_pos", QDemonRenderComponentTypes::Float32, 3),
+                QDemonRenderVertexBufferEntry("attr_pos", QDemonRenderComponentType::Float32, 3),
             };
             auto attribLayoutDepth = d->context->createAttributeLayout(toConstDataRef(vertBufferEntries, 1));
 
@@ -654,7 +654,7 @@ QDemonRenderMesh *QDemonBufferManager::createMesh(const QString &inSourcePath, q
             Q_ASSERT(*inIndexData <= INT8_MAX);
             QDemonConstDataRef<quint8> theIBufData(reinterpret_cast<quint8 *>(inIndexData), qint32(inSize));
             theIndexBuffer = d->context->createIndexBuffer(QDemonRenderBufferUsageType::Static,
-                                                          QDemonRenderComponentTypes::UnsignedInteger32,
+                                                          QDemonRenderComponentType::UnsignedInteger32,
                                                           inIndexCount * sizeof(quint32),
                                                           theIBufData);
         }
@@ -663,9 +663,9 @@ QDemonRenderMesh *QDemonBufferManager::createMesh(const QString &inSourcePath, q
         // Making an assumption here about the contents of the stream
         // PKC TODO : We may have to consider some other format.
         QDemonRenderVertexBufferEntry theEntries[] = {
-            QDemonRenderVertexBufferEntry("attr_pos", QDemonRenderComponentTypes::Float32, 3),
-            QDemonRenderVertexBufferEntry("attr_uv", QDemonRenderComponentTypes::Float32, 2, 12),
-            QDemonRenderVertexBufferEntry("attr_norm", QDemonRenderComponentTypes::Float32, 3, 18),
+            QDemonRenderVertexBufferEntry("attr_pos", QDemonRenderComponentType::Float32, 3),
+            QDemonRenderVertexBufferEntry("attr_uv", QDemonRenderComponentType::Float32, 2, 12),
+            QDemonRenderVertexBufferEntry("attr_norm", QDemonRenderComponentType::Float32, 3, 18),
         };
 
         // create our attribute layout

@@ -1282,8 +1282,8 @@ void QDemonMaterialSystem::allocateBuffer(const dynamic::QDemonAllocateBuffer &i
 
     const qint32 theWidth = qint32(theSourceTextureDetails.width * inCommand.m_sizeMultiplier);
     const qint32 theHeight = qint32(theSourceTextureDetails.height * inCommand.m_sizeMultiplier);
-    QDemonRenderTextureFormats::Enum theFormat = inCommand.m_format;
-    if (theFormat == QDemonRenderTextureFormats::Unknown)
+    QDemonRenderTextureFormat theFormat = inCommand.m_format;
+    if (theFormat == QDemonRenderTextureFormat::Unknown)
         theFormat = theSourceTextureDetails.format;
     QDemonRef<QDemonResourceManagerInterface> theResourceManager(d->context->getResourceManager());
     // size intentionally requiried every loop;

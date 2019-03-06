@@ -359,22 +359,22 @@ quint32 nextIndex(const QByteArray &data, quint32 idx)
     }
 }
 
-inline quint32 nextIndex(const QByteArray &inData, QDemonRenderComponentTypes::Enum inCompType, quint32 idx)
+inline quint32 nextIndex(const QByteArray &inData, QDemonRenderComponentType inCompType, quint32 idx)
 {
     if (inData.size() == 0)
         return idx;
     switch (inCompType) {
-    case QDemonRenderComponentTypes::UnsignedInteger8:
+    case QDemonRenderComponentType::UnsignedInteger8:
         return nextIndex<quint8>(inData, idx);
-    case QDemonRenderComponentTypes::Integer8:
+    case QDemonRenderComponentType::Integer8:
         return nextIndex<quint8>(inData, idx);
-    case QDemonRenderComponentTypes::UnsignedInteger16:
+    case QDemonRenderComponentType::UnsignedInteger16:
         return nextIndex<quint16>(inData, idx);
-    case QDemonRenderComponentTypes::Integer16:
+    case QDemonRenderComponentType::Integer16:
         return nextIndex<qint16>(inData, idx);
-    case QDemonRenderComponentTypes::UnsignedInteger32:
+    case QDemonRenderComponentType::UnsignedInteger32:
         return nextIndex<quint32>(inData, idx);
-    case QDemonRenderComponentTypes::Integer32:
+    case QDemonRenderComponentType::Integer32:
         return nextIndex<qint32>(inData, idx);
     default:
         // Invalid index buffer index type.
@@ -525,13 +525,13 @@ QDemonBounds3 Mesh::calculateSubsetBounds(const QDemonRenderVertexBufferEntry &i
                                           const QByteArray &inVertxData,
                                           quint32 inStride,
                                           const QByteArray &inIndexData,
-                                          QDemonRenderComponentTypes::Enum inIndexCompType,
+                                          QDemonRenderComponentType inIndexCompType,
                                           quint32 inSubsetCount,
                                           quint32 inSubsetOffset)
 {
     QDemonBounds3 retval = QDemonBounds3();
     const QDemonRenderVertexBufferEntry &entry(inEntry);
-    if (entry.m_componentType != QDemonRenderComponentTypes::Float32 || entry.m_numComponents != 3) {
+    if (entry.m_componentType != QDemonRenderComponentType::Float32 || entry.m_numComponents != 3) {
         Q_ASSERT(false);
         return retval;
     }
@@ -854,7 +854,7 @@ struct DynamicVBuf
 };
 struct DynamicIndexBuf
 {
-    QDemonRenderComponentTypes::Enum m_compType;
+    QDemonRenderComponentType m_compType;
     QByteArray m_indexData;
     void clear() { m_indexData.clear(); }
 };
@@ -917,7 +917,7 @@ public:
             if (entry.m_data.begin() == nullptr || entry.m_data.size() == 0)
                 continue;
 
-            quint32 alignment = (quint32)QDemonRenderComponentTypes::getSizeOfType(entry.m_componentType);
+            quint32 alignment = getSizeOfType(entry.m_componentType);
             bufferAlignment = qMax(bufferAlignment, alignment);
             quint32 byteSize = alignment * entry.m_numComponents;
 
@@ -952,7 +952,7 @@ public:
                 if (entry.m_data.begin() == nullptr || entry.m_data.size() == 0)
                     continue;
 
-                quint32 alignment = (quint32)QDemonRenderComponentTypes::getSizeOfType(entry.m_componentType);
+                quint32 alignment = (quint32)getSizeOfType(entry.m_componentType);
                 quint32 byteSize = alignment * entry.m_numComponents;
                 quint32 offset = byteSize * idx;
                 quint32 newOffset = getAlignedOffset(dataOffset, alignment);
@@ -982,13 +982,13 @@ public:
                 const QDemonRenderVertexBufferEntry &entry(entries[idx]);
                 stride = qMax(stride,
                               (quint32)(entry.m_firstItemOffset
-                                        + (entry.m_numComponents * QDemonRenderComponentTypes::getSizeOfType(entry.m_componentType))));
+                                        + (entry.m_numComponents * getSizeOfType(entry.m_componentType))));
             }
         }
         m_vertexBuffer.m_stride = stride;
     }
 
-    void setIndexBuffer(const QByteArray &data, QDemonRenderComponentTypes::Enum comp) override
+    void setIndexBuffer(const QByteArray &data, QDemonRenderComponentType comp) override
     {
         m_indexBuffer.m_compType = comp;
         QBuffer indexBuffer(&m_indexBuffer.m_indexData);
@@ -1083,7 +1083,7 @@ public:
 
                 curMatName = theIter->m_name;
 
-                quint32 theIndexCompSize = (quint32)QDemonRenderComponentTypes::getSizeOfType(m_indexBuffer.m_compType);
+                quint32 theIndexCompSize = (quint32)getSizeOfType(m_indexBuffer.m_compType);
                 // get pointer to indices
                 char *theIndices = (m_indexBuffer.m_indexData.begin()) + (theIter->m_offset * theIndexCompSize);
                 // write new offset
@@ -1133,10 +1133,10 @@ public:
     // Here is the NVTriStrip magic.
     void optimizeMesh() override
     {
-        if (QDemonRenderComponentTypes::getSizeOfType(m_indexBuffer.m_compType) != 2) {
+        if (getSizeOfType(m_indexBuffer.m_compType) != 2) {
             // we currently re-arrange unsigned int indices.
             // this is because NvTriStrip only supports short indices
-            Q_ASSERT(QDemonRenderComponentTypes::getSizeOfType(m_indexBuffer.m_compType) == 4);
+            Q_ASSERT(getSizeOfType(m_indexBuffer.m_compType) == 4);
             return;
         }
     }

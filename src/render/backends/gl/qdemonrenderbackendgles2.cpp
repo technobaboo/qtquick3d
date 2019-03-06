@@ -202,7 +202,7 @@ QDemonRenderBackendGLES2Impl::~QDemonRenderBackendGLES2Impl()
 void QDemonRenderBackendGLES2Impl::setMultisampledTextureData2D(QDemonRenderBackendTextureObject to,
                                                                 QDemonRenderTextureTargetType target,
                                                                 qint32 samples,
-                                                                QDemonRenderTextureFormats::Enum internalFormat,
+                                                                QDemonRenderTextureFormat internalFormat,
                                                                 qint32 width,
                                                                 qint32 height,
                                                                 bool fixedsamplelocations)
@@ -219,12 +219,12 @@ void QDemonRenderBackendGLES2Impl::setMultisampledTextureData2D(QDemonRenderBack
 void QDemonRenderBackendGLES2Impl::setTextureData3D(QDemonRenderBackendTextureObject to,
                                                     QDemonRenderTextureTargetType target,
                                                     qint32 level,
-                                                    QDemonRenderTextureFormats::Enum internalFormat,
+                                                    QDemonRenderTextureFormat internalFormat,
                                                     qint32 width,
                                                     qint32 height,
                                                     qint32 depth,
                                                     qint32 border,
-                                                    QDemonRenderTextureFormats::Enum format,
+                                                    QDemonRenderTextureFormat format,
                                                     const void *hostPtr)
 {
     GLuint texID = HandleToID_cast(GLuint, size_t, to);
@@ -238,17 +238,17 @@ void QDemonRenderBackendGLES2Impl::setTextureData3D(QDemonRenderBackendTextureOb
 
     GLenum glformat = 0, glInternalFormat = 0, gltype = GL_UNSIGNED_BYTE;
 
-    if (QDemonRenderTextureFormats::isUncompressedTextureFormat(internalFormat)) {
+    if (internalFormat.isUncompressedTextureFormat()) {
         GLConversion::fromUncompressedTextureFormatToGL(getRenderContextType(), internalFormat, glformat, gltype, glInternalFormat);
     }
 
     if (conversionRequired) {
         GLenum dummy;
         GLConversion::fromUncompressedTextureFormatToGL(getRenderContextType(), format, glformat, gltype, dummy);
-    } else if (QDemonRenderTextureFormats::isCompressedTextureFormat(internalFormat)) {
+    } else if (internalFormat.isCompressedTextureFormat()) {
         GLConversion::fromUncompressedTextureFormatToGL(getRenderContextType(), format, glformat, gltype, glInternalFormat);
         glInternalFormat = GLConversion::fromCompressedTextureFormatToGL(internalFormat);
-    } else if (QDemonRenderTextureFormats::isDepthTextureFormat(format)) {
+    } else if (format.isDepthTextureFormat()) {
         GLConversion::fromDepthTextureFormatToGL(getRenderContextType(), format, glformat, gltype, glInternalFormat);
     }
 
@@ -261,11 +261,11 @@ void QDemonRenderBackendGLES2Impl::setTextureData3D(QDemonRenderBackendTextureOb
 void QDemonRenderBackendGLES2Impl::setTextureData2D(QDemonRenderBackendTextureObject to,
                                                     QDemonRenderTextureTargetType target,
                                                     qint32 level,
-                                                    QDemonRenderTextureFormats::Enum internalFormat,
+                                                    QDemonRenderTextureFormat internalFormat,
                                                     qint32 width,
                                                     qint32 height,
                                                     qint32 border,
-                                                    QDemonRenderTextureFormats::Enum format,
+                                                    QDemonRenderTextureFormat format,
                                                     const void *hostPtr)
 {
     GLuint texID = HandleToID_cast(GLuint, size_t, to);
@@ -279,7 +279,7 @@ void QDemonRenderBackendGLES2Impl::setTextureData2D(QDemonRenderBackendTextureOb
 
     GLenum glformat = 0, glInternalFormat = 0, gltype = GL_UNSIGNED_BYTE;
 
-    if (QDemonRenderTextureFormats::isUncompressedTextureFormat(internalFormat)) {
+    if (internalFormat.isUncompressedTextureFormat()) {
         GLConversion::fromUncompressedTextureFormatToGL(getRenderContextType(), internalFormat, glformat, gltype, glInternalFormat);
         glInternalFormat = glformat;
     }
@@ -287,12 +287,12 @@ void QDemonRenderBackendGLES2Impl::setTextureData2D(QDemonRenderBackendTextureOb
     if (conversionRequired) {
         GLenum dummy;
         GLConversion::fromUncompressedTextureFormatToGL(getRenderContextType(), format, glformat, gltype, dummy);
-    } else if (QDemonRenderTextureFormats::isCompressedTextureFormat(internalFormat)) {
+    } else if (internalFormat.isCompressedTextureFormat()) {
         GLConversion::fromUncompressedTextureFormatToGL(getRenderContextType(), format, glformat, gltype, glInternalFormat);
         glInternalFormat = GLConversion::fromCompressedTextureFormatToGL(internalFormat);
-    } else if (QDemonRenderTextureFormats::isDepthTextureFormat(format)) {
+    } else if (format.isDepthTextureFormat()) {
         GLConversion::fromDepthTextureFormatToGL(getRenderContextType(), format, glformat, gltype, glInternalFormat);
-        if (format == QDemonRenderTextureFormats::Depth24Stencil8) {
+        if (format == QDemonRenderTextureFormat::Depth24Stencil8) {
             glformat = GL_DEPTH_STENCIL_OES;
             gltype = GL_UNSIGNED_INT_24_8;
         }

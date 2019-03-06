@@ -88,13 +88,13 @@ struct MeshVertexBufferEntry
 {
     quint32 m_nameOffset;
     /** Datatype of the this entry points to in the buffer */
-    QDemonRenderComponentTypes::Enum m_componentType;
+    QDemonRenderComponentType m_componentType;
     /** Number of components of each data member. 1,2,3, or 4.  Don't be stupid.*/
     quint32 m_numComponents;
     /** Offset from the beginning of the buffer of the first item */
     quint32 m_firstItemOffset;
     MeshVertexBufferEntry()
-        : m_nameOffset(0), m_componentType(QDemonRenderComponentTypes::Float32), m_numComponents(3), m_firstItemOffset(0)
+        : m_nameOffset(0), m_componentType(QDemonRenderComponentType::Float32), m_numComponents(3), m_firstItemOffset(0)
     {
     }
     QDemonRenderVertexBufferEntry toVertexBufferEntry(quint8 *inBaseAddress) const
@@ -122,15 +122,15 @@ struct IndexBuffer
 {
     // Component types must be either UnsignedInt16 or UnsignedInt8 in order for the
     // graphics hardware to deal with the buffer correctly.
-    QDemonRenderComponentTypes::Enum m_componentType;
+    QDemonRenderComponentType m_componentType;
     OffsetDataRef<quint8> m_data;
     // Either quint8 or quint16 component types are allowed by the underlying rendering
     // system, so you would be wise to stick with those.
-    IndexBuffer(QDemonRenderComponentTypes::Enum compType, OffsetDataRef<quint8> data)
+    IndexBuffer(QDemonRenderComponentType compType, OffsetDataRef<quint8> data)
         : m_componentType(compType), m_data(data)
     {
     }
-    IndexBuffer() : m_componentType(QDemonRenderComponentTypes::Unknown) {}
+    IndexBuffer() : m_componentType(QDemonRenderComponentType::Unknown) {}
 };
 
 template<quint32 TNumBytes>
@@ -274,7 +274,7 @@ struct Q_DEMONASSETIMPORT_EXPORT Mesh
                                                const QByteArray &inVertxData,
                                                quint32 inStride,
                                                const QByteArray &inIndexData,
-                                               QDemonRenderComponentTypes::Enum inIndexCompType,
+                                               QDemonRenderComponentType inIndexCompType,
                                                quint32 inSubsetCount,
                                                quint32 inSubsetOffset);
 
@@ -338,12 +338,12 @@ struct MeshBuilderVBufEntry
 {
     const char *m_name;
     QByteArray m_data;
-    QDemonRenderComponentTypes::Enum m_componentType;
+    QDemonRenderComponentType m_componentType;
     quint32 m_numComponents;
-    MeshBuilderVBufEntry() : m_name(nullptr), m_componentType(QDemonRenderComponentTypes::Unknown), m_numComponents(0)
+    MeshBuilderVBufEntry() : m_name(nullptr), m_componentType(QDemonRenderComponentType::Unknown), m_numComponents(0)
     {
     }
-    MeshBuilderVBufEntry(const char *name, QByteArray data, QDemonRenderComponentTypes::Enum componentType, quint32 numComponents)
+    MeshBuilderVBufEntry(const char *name, QByteArray data, QDemonRenderComponentType componentType, quint32 numComponents)
         : m_name(name), m_data(data), m_componentType(componentType), m_numComponents(numComponents)
     {
     }
@@ -366,7 +366,7 @@ public:
     virtual void setVertexBuffer(const QVector<QDemonRenderVertexBufferEntry> &entries, quint32 stride, QByteArray data) = 0;
     // The builder (and the majority of the rest of the product) only supports unsigned 16 bit
     // indexes
-    virtual void setIndexBuffer(const QByteArray &data, QDemonRenderComponentTypes::Enum comp) = 0;
+    virtual void setIndexBuffer(const QByteArray &data, QDemonRenderComponentType comp) = 0;
     // Assets if the supplied parameters are out of range.
     virtual void addJoint(qint32 jointID, qint32 parentID, const float *invBindPose, const float *localToGlobalBoneSpace) = 0;
     /**

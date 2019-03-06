@@ -78,7 +78,7 @@ public:
                         QDemonRenderTextureCubeFace inFace,
                         quint32 width,
                         quint32 height,
-                        QDemonRenderTextureFormats::Enum format);
+                        QDemonRenderTextureFormat format);
 
     // Get the texture details for mipmap level 0 if it was set.
     QDemonTextureDetails getTextureDetails() const override;

@@ -79,7 +79,7 @@ public:
                         qint32 width,
                         qint32 height,
                         qint32 slices,
-                        QDemonRenderTextureFormats::Enum format);
+                        QDemonRenderTextureFormat format);
 
     // Get the texture details for mipmap level 0 if it was set.
     QDemonTextureDetails getTextureDetails() const override;

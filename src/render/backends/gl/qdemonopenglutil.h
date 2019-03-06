@@ -629,12 +629,12 @@ struct GLConversion
         return 0;
     }
 
-    static QDemonRenderComponentTypes::Enum fromGLToBufferComponentTypes(GLenum value)
+    static QDemonRenderComponentType fromGLToBufferComponentTypes(GLenum value)
     {
         switch (value) {
 #define QDEMON_RENDER_HANDLE_GL_QDEMON_COMPONENT_TYPE(x, y)                                                            \
     case x:                                                                                                            \
-        return QDemonRenderComponentTypes::y;
+        return QDemonRenderComponentType::y;
 #define QDEMON_RENDER_HANDLE_GL_QDEMON_COMPONENT_TYPE_ALIAS(x, y)
             QDEMON_RENDER_ITERATE_GL_QDEMON_BUFFER_COMPONENT_TYPES
 #undef QDEMON_RENDER_HANDLE_GL_QDEMON_COMPONENT_TYPE
@@ -643,17 +643,17 @@ struct GLConversion
             break;
         }
         Q_ASSERT(false);
-        return QDemonRenderComponentTypes::Unknown;
+        return QDemonRenderComponentType::Unknown;
     }
 
-    static GLenum fromBufferComponentTypesToGL(QDemonRenderComponentTypes::Enum value)
+    static GLenum fromBufferComponentTypesToGL(QDemonRenderComponentType value)
     {
         switch (value) {
 #define QDEMON_RENDER_HANDLE_GL_QDEMON_COMPONENT_TYPE(x, y)                                                            \
-    case QDemonRenderComponentTypes::y:                                                                                \
+    case QDemonRenderComponentType::y:                                                                                \
         return x;
 #define QDEMON_RENDER_HANDLE_GL_QDEMON_COMPONENT_TYPE_ALIAS(x, y)                                                      \
-    case QDemonRenderComponentTypes::y:                                                                                \
+    case QDemonRenderComponentType::y:                                                                                \
         return x;
             QDEMON_RENDER_ITERATE_GL_QDEMON_BUFFER_COMPONENT_TYPES
 #undef QDEMON_RENDER_HANDLE_GL_QDEMON_COMPONENT_TYPE
@@ -665,14 +665,14 @@ struct GLConversion
         return 0;
     }
 
-    static GLenum fromIndexBufferComponentsTypesToGL(QDemonRenderComponentTypes::Enum value)
+    static GLenum fromIndexBufferComponentsTypesToGL(QDemonRenderComponentType value)
     {
         switch (value) {
-        case QDemonRenderComponentTypes::UnsignedInteger8:
+        case QDemonRenderComponentType::UnsignedInteger8:
             return GL_UNSIGNED_BYTE;
-        case QDemonRenderComponentTypes::UnsignedInteger16:
+        case QDemonRenderComponentType::UnsignedInteger16:
             return GL_UNSIGNED_SHORT;
-        case QDemonRenderComponentTypes::UnsignedInteger32:
+        case QDemonRenderComponentType::UnsignedInteger32:
             return GL_UNSIGNED_INT;
         default:
             break;
@@ -796,30 +796,30 @@ struct GLConversion
         return retval;
     }
 
-    static QDemonRenderTextureFormats::Enum replaceDeprecatedTextureFormat(QDemonRenderContextType type,
-                                                                           QDemonRenderTextureFormats::Enum value,
+    static QDemonRenderTextureFormat replaceDeprecatedTextureFormat(QDemonRenderContextType type,
+                                                                           QDemonRenderTextureFormat value,
                                                                            QDemonRenderTextureSwizzleMode &swizzleMode)
     {
         QDemonRenderContextTypes deprecatedContextFlags(QDemonRenderContextType::GL2 | QDemonRenderContextType::GLES2);
-        QDemonRenderTextureFormats::Enum newValue = value;
+        QDemonRenderTextureFormat newValue = value;
         swizzleMode = QDemonRenderTextureSwizzleMode::NoSwizzle;
 
         if (!(deprecatedContextFlags & type)) {
-            switch (value) {
-            case QDemonRenderTextureFormats::Luminance8:
-                newValue = QDemonRenderTextureFormats::R8;
+            switch (value.format) {
+            case QDemonRenderTextureFormat::Luminance8:
+                newValue = QDemonRenderTextureFormat::R8;
                 swizzleMode = QDemonRenderTextureSwizzleMode::L8toR8;
                 break;
-            case QDemonRenderTextureFormats::LuminanceAlpha8:
-                newValue = QDemonRenderTextureFormats::RG8;
+            case QDemonRenderTextureFormat::LuminanceAlpha8:
+                newValue = QDemonRenderTextureFormat::RG8;
                 swizzleMode = QDemonRenderTextureSwizzleMode::L8A8toRG8;
                 break;
-            case QDemonRenderTextureFormats::Alpha8:
-                newValue = QDemonRenderTextureFormats::R8;
+            case QDemonRenderTextureFormat::Alpha8:
+                newValue = QDemonRenderTextureFormat::R8;
                 swizzleMode = QDemonRenderTextureSwizzleMode::A8toR8;
                 break;
-            case QDemonRenderTextureFormats::Luminance16:
-                newValue = QDemonRenderTextureFormats::R16;
+            case QDemonRenderTextureFormat::Luminance16:
+                newValue = QDemonRenderTextureFormat::R16;
                 swizzleMode = QDemonRenderTextureSwizzleMode::L16toR16;
                 break;
             default:
@@ -863,13 +863,13 @@ struct GLConversion
     }
 
     static bool fromUncompressedTextureFormatToGL(QDemonRenderContextType type,
-                                                  QDemonRenderTextureFormats::Enum value,
+                                                  QDemonRenderTextureFormat value,
                                                   GLenum &outFormat,
                                                   GLenum &outDataType,
                                                   GLenum &outInternalFormat)
     {
-        switch (value) {
-        case QDemonRenderTextureFormats::R8:
+        switch (value.format) {
+        case QDemonRenderTextureFormat::R8:
             if (type == QDemonRenderContextType::GLES2) {
                 outFormat = GL_ALPHA;
                 outInternalFormat = GL_ALPHA;
@@ -879,47 +879,47 @@ struct GLConversion
             }
             outDataType = GL_UNSIGNED_BYTE;
             return true;
-        case QDemonRenderTextureFormats::RG8:
+        case QDemonRenderTextureFormat::RG8:
             outFormat = GL_RG;
             outInternalFormat = GL_RG8;
             outDataType = GL_UNSIGNED_BYTE;
             return true;
-        case QDemonRenderTextureFormats::RGBA8:
+        case QDemonRenderTextureFormat::RGBA8:
             outFormat = GL_RGBA;
             outInternalFormat = GL_RGBA8;
             outDataType = GL_UNSIGNED_BYTE;
             return true;
-        case QDemonRenderTextureFormats::RGB8:
+        case QDemonRenderTextureFormat::RGB8:
             outFormat = GL_RGB;
             outInternalFormat = GL_RGB8;
             outDataType = GL_UNSIGNED_BYTE;
             return true;
-        case QDemonRenderTextureFormats::RGB565:
+        case QDemonRenderTextureFormat::RGB565:
             outFormat = GL_RGB;
             outInternalFormat = GL_RGB8;
             outDataType = GL_UNSIGNED_SHORT_5_6_5;
             return true;
-        case QDemonRenderTextureFormats::RGBA5551:
+        case QDemonRenderTextureFormat::RGBA5551:
             outFormat = GL_RGBA;
             outInternalFormat = GL_RGBA8;
             outDataType = GL_UNSIGNED_SHORT_5_5_5_1;
             return true;
-        case QDemonRenderTextureFormats::Alpha8:
+        case QDemonRenderTextureFormat::Alpha8:
             outFormat = GL_ALPHA;
             outInternalFormat = GL_ALPHA;
             outDataType = GL_UNSIGNED_BYTE;
             return true;
-        case QDemonRenderTextureFormats::Luminance8:
+        case QDemonRenderTextureFormat::Luminance8:
             outFormat = GL_LUMINANCE;
             outInternalFormat = GL_LUMINANCE;
             outDataType = GL_UNSIGNED_BYTE;
             return true;
-        case QDemonRenderTextureFormats::LuminanceAlpha8:
+        case QDemonRenderTextureFormat::LuminanceAlpha8:
             outFormat = GL_LUMINANCE_ALPHA;
             outInternalFormat = GL_LUMINANCE_ALPHA;
             outDataType = GL_UNSIGNED_BYTE;
             return true;
-        case QDemonRenderTextureFormats::Luminance16:
+        case QDemonRenderTextureFormat::Luminance16:
 #if defined(QT_OPENGL_ES)
             outFormat = GL_LUMINANCE16F_EXT;
             outInternalFormat = GL_LUMINANCE16F_EXT;
@@ -936,9 +936,9 @@ struct GLConversion
         QDemonRenderContextTypes contextFlags(QDemonRenderContextType::GL2 | QDemonRenderContextType::GLES2);
         // check extented texture formats
         if (!(contextFlags & type)) {
-            switch (value) {
+            switch (value.format) {
 #if !defined(QT_OPENGL_ES)
-            case QDemonRenderTextureFormats::R16: {
+            case QDemonRenderTextureFormat::R16: {
                 if (IsGlEsContext(type)) {
                     outFormat = GL_RED_INTEGER;
                     outInternalFormat = GL_R16UI;
@@ -950,62 +950,62 @@ struct GLConversion
                 return true;
             }
 #endif
-            case QDemonRenderTextureFormats::R16F:
+            case QDemonRenderTextureFormat::R16F:
                 outFormat = GL_RED;
                 outInternalFormat = GL_R16F;
                 outDataType = GL_HALF_FLOAT;
                 return true;
-            case QDemonRenderTextureFormats::R32UI:
+            case QDemonRenderTextureFormat::R32UI:
                 outFormat = GL_RED_INTEGER;
                 outInternalFormat = GL_R32UI;
                 outDataType = GL_UNSIGNED_INT;
                 return true;
-            case QDemonRenderTextureFormats::R32F:
+            case QDemonRenderTextureFormat::R32F:
                 outFormat = GL_RED;
                 outInternalFormat = GL_R32F;
                 outDataType = GL_FLOAT;
                 return true;
-            case QDemonRenderTextureFormats::RGBA16F:
+            case QDemonRenderTextureFormat::RGBA16F:
                 outFormat = GL_RGBA;
                 outInternalFormat = GL_RGBA16F;
                 outDataType = GL_HALF_FLOAT;
                 return true;
-            case QDemonRenderTextureFormats::RG16F:
+            case QDemonRenderTextureFormat::RG16F:
                 outFormat = GL_RG;
                 outInternalFormat = GL_RG16F;
                 outDataType = GL_HALF_FLOAT;
                 return true;
-            case QDemonRenderTextureFormats::RG32F:
+            case QDemonRenderTextureFormat::RG32F:
                 outFormat = GL_RG;
                 outInternalFormat = GL_RG32F;
                 outDataType = GL_FLOAT;
                 return true;
-            case QDemonRenderTextureFormats::RGBA32F:
+            case QDemonRenderTextureFormat::RGBA32F:
                 outFormat = GL_RGBA;
                 outInternalFormat = GL_RGBA32F;
                 outDataType = GL_FLOAT;
                 return true;
-            case QDemonRenderTextureFormats::RGB32F:
+            case QDemonRenderTextureFormat::RGB32F:
                 outFormat = GL_RGB;
                 outInternalFormat = GL_RGB32F;
                 outDataType = GL_FLOAT;
                 return true;
-            case QDemonRenderTextureFormats::R11G11B10:
+            case QDemonRenderTextureFormat::R11G11B10:
                 outFormat = GL_RGB;
                 outInternalFormat = GL_R11F_G11F_B10F;
                 outDataType = GL_UNSIGNED_INT_10F_11F_11F_REV;
                 return true;
-            case QDemonRenderTextureFormats::RGB9E5:
+            case QDemonRenderTextureFormat::RGB9E5:
                 outFormat = GL_RGB;
                 outInternalFormat = GL_RGB9_E5;
                 outDataType = GL_UNSIGNED_INT_5_9_9_9_REV;
                 return true;
-            case QDemonRenderTextureFormats::SRGB8:
+            case QDemonRenderTextureFormat::SRGB8:
                 outFormat = GL_RGB;
                 outInternalFormat = GL_SRGB8;
                 outDataType = GL_UNSIGNED_BYTE;
                 return true;
-            case QDemonRenderTextureFormats::SRGB8A8:
+            case QDemonRenderTextureFormat::SRGB8A8:
                 outFormat = GL_RGBA;
                 outInternalFormat = GL_SRGB8_ALPHA8;
                 outDataType = GL_UNSIGNED_BYTE;
@@ -1019,16 +1019,16 @@ struct GLConversion
         return false;
     }
 
-    static GLenum fromCompressedTextureFormatToGL(QDemonRenderTextureFormats::Enum value)
+    static GLenum fromCompressedTextureFormatToGL(QDemonRenderTextureFormat value)
     {
-        switch (value) {
-        case QDemonRenderTextureFormats::RGBA_DXT1:
+        switch (value.format) {
+        case QDemonRenderTextureFormat::RGBA_DXT1:
             return GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
-        case QDemonRenderTextureFormats::RGB_DXT1:
+        case QDemonRenderTextureFormat::RGB_DXT1:
             return GL_COMPRESSED_RGB_S3TC_DXT1_EXT;
-        case QDemonRenderTextureFormats::RGBA_DXT3:
+        case QDemonRenderTextureFormat::RGBA_DXT3:
             return GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
-        case QDemonRenderTextureFormats::RGBA_DXT5:
+        case QDemonRenderTextureFormat::RGBA_DXT5:
             return GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
         default:
             break;
@@ -1039,7 +1039,7 @@ struct GLConversion
     }
 
     static bool fromDepthTextureFormatToGL(QDemonRenderContextType type,
-                                           QDemonRenderTextureFormats::Enum value,
+                                           QDemonRenderTextureFormat value,
                                            GLenum &outFormat,
                                            GLenum &outDataType,
                                            GLenum &outInternalFormat)
@@ -1050,23 +1050,23 @@ struct GLConversion
         bool supportDepth32f = !(theContextFlags & type);
         bool supportDepth24Stencil8 = !(theContextFlags & type);
 
-        switch (value) {
-        case QDemonRenderTextureFormats::Depth16:
+        switch (value.format) {
+        case QDemonRenderTextureFormat::Depth16:
             outFormat = GL_DEPTH_COMPONENT;
             outInternalFormat = GL_DEPTH_COMPONENT16;
             outDataType = GL_UNSIGNED_SHORT;
             return true;
-        case QDemonRenderTextureFormats::Depth24:
+        case QDemonRenderTextureFormat::Depth24:
             outFormat = GL_DEPTH_COMPONENT;
             outInternalFormat = (supportDepth24) ? GL_DEPTH_COMPONENT24 : GL_DEPTH_COMPONENT16;
             outDataType = (supportDepth24) ? GL_UNSIGNED_INT : GL_UNSIGNED_SHORT;
             return true;
-        case QDemonRenderTextureFormats::Depth32:
+        case QDemonRenderTextureFormat::Depth32:
             outFormat = GL_DEPTH_COMPONENT;
             outInternalFormat = (supportDepth32f) ? GL_DEPTH_COMPONENT32F : GL_DEPTH_COMPONENT16;
             outDataType = (supportDepth32f) ? GL_FLOAT : GL_UNSIGNED_SHORT;
             return true;
-        case QDemonRenderTextureFormats::Depth24Stencil8:
+        case QDemonRenderTextureFormat::Depth24Stencil8:
             outFormat = (supportDepth24Stencil8) ? GL_DEPTH_STENCIL : GL_DEPTH_COMPONENT;
             outInternalFormat = (supportDepth24Stencil8) ? GL_DEPTH24_STENCIL8 : GL_DEPTH_COMPONENT16;
             outDataType = (supportDepth24Stencil8) ? GL_UNSIGNED_INT_24_8 : GL_UNSIGNED_SHORT;
@@ -1288,26 +1288,26 @@ struct GLConversion
         return 0;
     }
 
-    static GLenum fromImageFormatToGL(QDemonRenderTextureFormats::Enum value)
+    static GLenum fromImageFormatToGL(QDemonRenderTextureFormat value)
     {
-        switch (value) {
-        case QDemonRenderTextureFormats::R8:
+        switch (value.format) {
+        case QDemonRenderTextureFormat::R8:
             return GL_R8;
-        case QDemonRenderTextureFormats::R32I:
+        case QDemonRenderTextureFormat::R32I:
             return GL_R32I;
-        case QDemonRenderTextureFormats::R32UI:
+        case QDemonRenderTextureFormat::R32UI:
             return GL_R32UI;
-        case QDemonRenderTextureFormats::R32F:
+        case QDemonRenderTextureFormat::R32F:
             return GL_R32F;
-        case QDemonRenderTextureFormats::RGBA8:
+        case QDemonRenderTextureFormat::RGBA8:
             return GL_RGBA8;
-        case QDemonRenderTextureFormats::SRGB8A8:
+        case QDemonRenderTextureFormat::SRGB8A8:
             return GL_RGBA8_SNORM;
-        case QDemonRenderTextureFormats::RG16F:
+        case QDemonRenderTextureFormat::RG16F:
             return GL_RG16F;
-        case QDemonRenderTextureFormats::RGBA16F:
+        case QDemonRenderTextureFormat::RGBA16F:
             return GL_RGBA16F;
-        case QDemonRenderTextureFormats::RGBA32F:
+        case QDemonRenderTextureFormat::RGBA32F:
             return GL_RGBA32F;
         default:
             break;
@@ -1444,10 +1444,10 @@ struct GLConversion
         return QDemonRenderShaderDataType::Unknown;
     }
 
-    static GLenum fromComponentTypeAndNumCompsToAttribGL(QDemonRenderComponentTypes::Enum compType, quint32 numComps)
+    static GLenum fromComponentTypeAndNumCompsToAttribGL(QDemonRenderComponentType compType, quint32 numComps)
     {
 #define QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_ATTRIB_TYPES(gl, ct, nc)                                                 \
-    if (compType == QDemonRenderComponentTypes::ct && numComps == nc)                                                  \
+    if (compType == QDemonRenderComponentType::ct && numComps == nc)                                                  \
         return gl;
         QDEMON_RENDER_ITERATE_GL_QDEMON_SHADER_ATTRIB_TYPES
 #undef QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_ATTRIB_TYPES
@@ -1455,12 +1455,12 @@ struct GLConversion
         return 0;
     }
 
-    static void fromAttribGLToComponentTypeAndNumComps(GLenum enumVal, QDemonRenderComponentTypes::Enum &outCompType, quint32 &outNumComps)
+    static void fromAttribGLToComponentTypeAndNumComps(GLenum enumVal, QDemonRenderComponentType &outCompType, quint32 &outNumComps)
     {
         switch (enumVal) {
 #define QDEMON_RENDER_HANDLE_GL_QDEMON_SHADER_ATTRIB_TYPES(gl, ct, nc)                                                 \
     case gl:                                                                                                           \
-        outCompType = QDemonRenderComponentTypes::ct;                                                                  \
+        outCompType = QDemonRenderComponentType::ct;                                                                  \
         outNumComps = nc;                                                                                              \
         return;
             QDEMON_RENDER_ITERATE_GL_QDEMON_SHADER_ATTRIB_TYPES
@@ -1469,7 +1469,7 @@ struct GLConversion
             break;
         }
         Q_ASSERT(false);
-        outCompType = QDemonRenderComponentTypes::Unknown;
+        outCompType = QDemonRenderComponentType::Unknown;
         outNumComps = 0;
     }
 

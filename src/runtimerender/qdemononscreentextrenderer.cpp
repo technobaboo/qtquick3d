@@ -327,7 +327,7 @@ public:
         if (m_textTextureAtlas) {
             TTextureAtlasEntryAndBuffer theEntry = m_textTextureAtlas->getAtlasEntryByIndex(index);
             if (theEntry.first.width) {
-                inTexture.setTextureData(theEntry.second, 0, theEntry.first.width, theEntry.first.height, QDemonRenderTextureFormats::Alpha8);
+                inTexture.setTextureData(theEntry.second, 0, theEntry.first.width, theEntry.first.height, QDemonRenderTextureFormat::Alpha8);
                 inTexture.setMagFilter(QDemonRenderTextureMagnifyingOp::Linear);
                 inTexture.setMinFilter(QDemonRenderTextureMinifyingOp::Linear);
                 inTexture.setTextureWrapS(QDemonRenderTextureCoordOp::ClampToEdge);

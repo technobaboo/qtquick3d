@@ -54,7 +54,7 @@ public:
      */
     QDemonRenderIndexBuffer(const QDemonRef<QDemonRenderContextImpl> &context,
                             size_t size,
-                            QDemonRenderComponentTypes::Enum componentType,
+                            QDemonRenderComponentType componentType,
                             QDemonRenderBufferUsageType usageType,
                             QDemonDataRef<quint8> data);
 
@@ -66,7 +66,7 @@ public:
      *
      * @return the component type
      */
-    virtual QDemonRenderComponentTypes::Enum getComponentType() const { return m_componentType; }
+    virtual QDemonRenderComponentType getComponentType() const { return m_componentType; }
 
     /**
      * @brief get the index count
@@ -116,12 +116,12 @@ public:
 
     static QDemonRef<QDemonRenderIndexBuffer> create(const QDemonRef<QDemonRenderContextImpl> &context,
                                                      QDemonRenderBufferUsageType usageType,
-                                                     QDemonRenderComponentTypes::Enum componentType,
+                                                     QDemonRenderComponentType componentType,
                                                      size_t size,
                                                      QDemonConstDataRef<quint8> bufferData);
 
 private:
-    QDemonRenderComponentTypes::Enum m_componentType; ///< component type (quint8, quint16)
+    QDemonRenderComponentType m_componentType; ///< component type (quint8, quint16)
 };
 
 QT_END_NAMESPACE

@@ -45,13 +45,13 @@ QDemonRenderShadowMap::~QDemonRenderShadowMap()
 }
 
 namespace {
-bool IsDepthFormat(QDemonRenderTextureFormats::Enum format)
+bool IsDepthFormat(QDemonRenderTextureFormat format)
 {
-    switch (format) {
-    case QDemonRenderTextureFormats::Depth16:
-    case QDemonRenderTextureFormats::Depth24:
-    case QDemonRenderTextureFormats::Depth32:
-    case QDemonRenderTextureFormats::Depth24Stencil8:
+    switch (format.format) {
+    case QDemonRenderTextureFormat::Depth16:
+    case QDemonRenderTextureFormat::Depth24:
+    case QDemonRenderTextureFormat::Depth32:
+    case QDemonRenderTextureFormat::Depth24Stencil8:
         return true;
     default:
         return false;
@@ -62,7 +62,7 @@ bool IsDepthFormat(QDemonRenderTextureFormats::Enum format)
 void QDemonRenderShadowMap::addShadowMapEntry(qint32 index,
                                               qint32 width,
                                               qint32 height,
-                                              QDemonRenderTextureFormats::Enum format,
+                                              QDemonRenderTextureFormat format,
                                               qint32 samples,
                                               ShadowMapModes::Enum mode,
                                               ShadowFilterValues::Enum filter)
@@ -80,7 +80,7 @@ void QDemonRenderShadowMap::addShadowMapEntry(qint32 index,
             theManager->release(pEntry->m_depthRender);
             pEntry->m_depthCube = theManager->allocateTextureCube(width, height, format, samples);
             pEntry->m_cubeCopy = theManager->allocateTextureCube(width, height, format, samples);
-            pEntry->m_depthRender = theManager->allocateTexture2D(width, height, QDemonRenderTextureFormats::Depth24Stencil8, samples);
+            pEntry->m_depthRender = theManager->allocateTexture2D(width, height, QDemonRenderTextureFormat::Depth24Stencil8, samples);
             pEntry->m_depthMap = nullptr;
             pEntry->m_depthCopy = nullptr;
         } else if ((nullptr != pEntry->m_depthCube) && (mode != ShadowMapModes::CUBE)) {
@@ -91,7 +91,7 @@ void QDemonRenderShadowMap::addShadowMapEntry(qint32 index,
             pEntry->m_depthCopy = theManager->allocateTexture2D(width, height, format, samples);
             pEntry->m_depthCube = nullptr;
             pEntry->m_cubeCopy = nullptr;
-            pEntry->m_depthRender = theManager->allocateTexture2D(width, height, QDemonRenderTextureFormats::Depth24Stencil8, samples);
+            pEntry->m_depthRender = theManager->allocateTexture2D(width, height, QDemonRenderTextureFormat::Depth24Stencil8, samples);
         } else if (nullptr != pEntry->m_depthMap) {
             QDemonTextureDetails theDetails(pEntry->m_depthMap->getTextureDetails());
 
@@ -106,7 +106,7 @@ void QDemonRenderShadowMap::addShadowMapEntry(qint32 index,
                 pEntry->m_depthCopy = theManager->allocateTexture2D(width, height, format, samples);
                 pEntry->m_depthCube = nullptr;
                 pEntry->m_cubeCopy = nullptr;
-                pEntry->m_depthRender = theManager->allocateTexture2D(width, height, QDemonRenderTextureFormats::Depth24Stencil8, samples);
+                pEntry->m_depthRender = theManager->allocateTexture2D(width, height, QDemonRenderTextureFormat::Depth24Stencil8, samples);
             }
         } else {
             QDemonTextureDetails theDetails(pEntry->m_depthCube->getTextureDetails());
@@ -120,7 +120,7 @@ void QDemonRenderShadowMap::addShadowMapEntry(qint32 index,
                 theManager->release(pEntry->m_depthRender);
                 pEntry->m_depthCube = theManager->allocateTextureCube(width, height, format, samples);
                 pEntry->m_cubeCopy = theManager->allocateTextureCube(width, height, format, samples);
-                pEntry->m_depthRender = theManager->allocateTexture2D(width, height, QDemonRenderTextureFormats::Depth24Stencil8, samples);
+                pEntry->m_depthRender = theManager->allocateTexture2D(width, height, QDemonRenderTextureFormat::Depth24Stencil8, samples);
                 pEntry->m_depthMap = nullptr;
                 pEntry->m_depthCopy = nullptr;
             }
@@ -133,7 +133,7 @@ void QDemonRenderShadowMap::addShadowMapEntry(qint32 index,
         QDemonRef<QDemonRenderTextureCube> theDepthCopy = theManager->allocateTextureCube(width, height, format, samples);
         QDemonRef<QDemonRenderTexture2D> theDepthTemp = theManager->allocateTexture2D(width,
                                                                                       height,
-                                                                                      QDemonRenderTextureFormats::Depth24Stencil8,
+                                                                                      QDemonRenderTextureFormat::Depth24Stencil8,
                                                                                       samples);
         m_shadowMapList.push_back(QDemonShadowMapEntry(index, mode, filter, theDepthTex, theDepthCopy, theDepthTemp));
 
@@ -143,7 +143,7 @@ void QDemonRenderShadowMap::addShadowMapEntry(qint32 index,
         QDemonRef<QDemonRenderTexture2D> theDepthCopy = theManager->allocateTexture2D(width, height, format, samples);
         QDemonRef<QDemonRenderTexture2D> theDepthTemp = theManager->allocateTexture2D(width,
                                                                                       height,
-                                                                                      QDemonRenderTextureFormats::Depth24Stencil8,
+                                                                                      QDemonRenderTextureFormat::Depth24Stencil8,
                                                                                       samples);
         m_shadowMapList.push_back(QDemonShadowMapEntry(index, mode, filter, theDepthMap, theDepthCopy, theDepthTemp));
 

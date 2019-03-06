@@ -53,19 +53,19 @@ public:
     virtual void release(QDemonRef<QDemonRenderRenderBuffer> inBuffer) = 0;
     virtual QDemonRef<QDemonRenderTexture2D> allocateTexture2D(qint32 inWidth,
                                                                qint32 inHeight,
-                                                               QDemonRenderTextureFormats::Enum inTextureFormat,
+                                                               QDemonRenderTextureFormat inTextureFormat,
                                                                qint32 inSampleCount = 1,
                                                                bool immutable = false) = 0;
     virtual void release(QDemonRef<QDemonRenderTexture2D> inBuffer) = 0;
     virtual QDemonRef<QDemonRenderTexture2DArray> allocateTexture2DArray(qint32 inWidth,
                                                                          qint32 inHeight,
                                                                          qint32 inSlices,
-                                                                         QDemonRenderTextureFormats::Enum inTextureFormat,
+                                                                         QDemonRenderTextureFormat inTextureFormat,
                                                                          qint32 inSampleCount = 1) = 0;
     virtual void release(QDemonRef<QDemonRenderTexture2DArray> inBuffer) = 0;
     virtual QDemonRef<QDemonRenderTextureCube> allocateTextureCube(qint32 inWidth,
                                                                    qint32 inHeight,
-                                                                   QDemonRenderTextureFormats::Enum inTextureFormat,
+                                                                   QDemonRenderTextureFormat inTextureFormat,
                                                                    qint32 inSampleCount = 1) = 0;
     virtual void release(QDemonRef<QDemonRenderTextureCube> inBuffer) = 0;
     virtual QDemonRef<QDemonRenderImage2D> allocateImage2D(QDemonRef<QDemonRenderTexture2D> inTexture,

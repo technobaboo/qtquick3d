@@ -675,15 +675,15 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
                         const QDemonAllocateBuffer &inCommand,
                         quint32 inFinalWidth,
                         quint32 inFinalHeight,
-                        QDemonRenderTextureFormats::Enum inSourceTextureFormat)
+                        QDemonRenderTextureFormat inSourceTextureFormat)
     {
         // Check to see if it is already allocated and if it is, is it the correct size. If both of
         // these assumptions hold, then we are good.
         QDemonRef<QDemonRenderTexture2D> theBufferTexture;
         const qint32 theWidth = QDemonTextRendererInterface::nextMultipleOf4((quint32)(inFinalWidth * inCommand.m_sizeMultiplier));
         const qint32 theHeight = QDemonTextRendererInterface::nextMultipleOf4((quint32)(inFinalHeight * inCommand.m_sizeMultiplier));
-        QDemonRenderTextureFormats::Enum resultFormat = inCommand.m_format;
-        if (resultFormat == QDemonRenderTextureFormats::Unknown)
+        QDemonRenderTextureFormat resultFormat = inCommand.m_format;
+        if (resultFormat == QDemonRenderTextureFormat::Unknown)
             resultFormat = inSourceTextureFormat;
 
         if (inEffect.m_context) {
@@ -721,7 +721,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
         qint32 theWidth = QDemonTextRendererInterface::nextMultipleOf4((quint32)(inFinalWidth * inCommand.m_sizeMultiplier));
         qint32 theHeight = QDemonTextRendererInterface::nextMultipleOf4((quint32)(inFinalHeight * inCommand.m_sizeMultiplier));
 
-        Q_ASSERT(inCommand.m_format != QDemonRenderTextureFormats::Unknown);
+        Q_ASSERT(inCommand.m_format != QDemonRenderTextureFormat::Unknown);
 
         if (inEffect.m_context) {
             QDemonEffectContext &theContext(*inEffect.m_context);
@@ -1134,11 +1134,11 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
                         // we clear the least amount of information possible.
 
                         if (theEntry.texture) {
-                            QDemonRenderTextureFormats::Enum theTextureFormat = theEntry.texture->getTextureDetails().format;
-                            if (theTextureFormat != QDemonRenderTextureFormats::Depth16
-                                && theTextureFormat != QDemonRenderTextureFormats::Depth24
-                                && theTextureFormat != QDemonRenderTextureFormats::Depth32
-                                && theTextureFormat != QDemonRenderTextureFormats::Depth24Stencil8) {
+                            QDemonRenderTextureFormat theTextureFormat = theEntry.texture->getTextureDetails().format;
+                            if (theTextureFormat != QDemonRenderTextureFormat::Depth16
+                                && theTextureFormat != QDemonRenderTextureFormat::Depth24
+                                && theTextureFormat != QDemonRenderTextureFormat::Depth32
+                                && theTextureFormat != QDemonRenderTextureFormat::Depth24Stencil8) {
                                 QDemonRenderContextScopedProperty<QVector4D> __clearColor(*theRenderContext,
                                                                                           &QDemonRenderContext::getClearColor,
                                                                                           &QDemonRenderContext::setClearColor,
@@ -1639,8 +1639,8 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
         auto theBuffer = theManager->allocateFrameBuffer();
         // UdoL Some Effects may need to run before HDR tonemap. This means we need to keep the
         // input format
-        QDemonRenderTextureFormats::Enum theOutputFormat = QDemonRenderTextureFormats::RGBA8;
-        if (theClass->dynamicClass->getOutputTextureFormat() == QDemonRenderTextureFormats::Unknown)
+        QDemonRenderTextureFormat theOutputFormat = QDemonRenderTextureFormat::RGBA8;
+        if (theClass->dynamicClass->getOutputTextureFormat() == QDemonRenderTextureFormat::Unknown)
             theOutputFormat = theDetails.format;
         auto theTargetTexture = theManager->allocateTexture2D(theFinalWidth, theFinalHeight, theOutputFormat);
         theBuffer->attach(QDemonRenderFrameBufferAttachment::Color0, theTargetTexture);

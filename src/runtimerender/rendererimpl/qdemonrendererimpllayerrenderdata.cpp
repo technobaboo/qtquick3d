@@ -82,7 +82,7 @@ QDemonLayerRenderData::QDemonLayerRenderData(QDemonRenderLayer &inLayer, const Q
     , m_temporalAAPassIndex(0)
     , m_nonDirtyTemporalAAPassIndex(0)
     , m_textScale(1.0f)
-    , m_depthBufferFormat(QDemonRenderTextureFormats::Unknown)
+    , m_depthBufferFormat(QDemonRenderTextureFormat::Unknown)
 {
 }
 
@@ -166,47 +166,47 @@ void QDemonLayerRenderData::prepareForRender(const QSize &inViewportDimensions)
     }
 }
 
-QDemonRenderTextureFormats::Enum QDemonLayerRenderData::getDepthBufferFormat()
+QDemonRenderTextureFormat QDemonLayerRenderData::getDepthBufferFormat()
 {
-    if (m_depthBufferFormat == QDemonRenderTextureFormats::Unknown) {
+    if (m_depthBufferFormat == QDemonRenderTextureFormat::Unknown) {
         quint32 theExistingDepthBits = renderer->getContext()->getDepthBits();
         quint32 theExistingStencilBits = renderer->getContext()->getStencilBits();
         switch (theExistingDepthBits) {
         case 32:
-            m_depthBufferFormat = QDemonRenderTextureFormats::Depth32;
+            m_depthBufferFormat = QDemonRenderTextureFormat::Depth32;
             break;
         case 24:
             //  check if we have stencil bits
             if (theExistingStencilBits > 0)
-                m_depthBufferFormat = QDemonRenderTextureFormats::Depth24Stencil8; // currently no stencil usage
+                m_depthBufferFormat = QDemonRenderTextureFormat::Depth24Stencil8; // currently no stencil usage
             // should be Depth24Stencil8 in
             // this case
             else
-                m_depthBufferFormat = QDemonRenderTextureFormats::Depth24;
+                m_depthBufferFormat = QDemonRenderTextureFormat::Depth24;
             break;
         case 16:
-            m_depthBufferFormat = QDemonRenderTextureFormats::Depth16;
+            m_depthBufferFormat = QDemonRenderTextureFormat::Depth16;
             break;
         default:
             Q_ASSERT(false);
-            m_depthBufferFormat = QDemonRenderTextureFormats::Depth16;
+            m_depthBufferFormat = QDemonRenderTextureFormat::Depth16;
             break;
         }
     }
     return m_depthBufferFormat;
 }
 
-QDemonRenderFrameBufferAttachment QDemonLayerRenderData::getFramebufferDepthAttachmentFormat(QDemonRenderTextureFormats::Enum depthFormat)
+QDemonRenderFrameBufferAttachment QDemonLayerRenderData::getFramebufferDepthAttachmentFormat(QDemonRenderTextureFormat depthFormat)
 {
     QDemonRenderFrameBufferAttachment fmt = QDemonRenderFrameBufferAttachment::Depth;
 
-    switch (depthFormat) {
-    case QDemonRenderTextureFormats::Depth16:
-    case QDemonRenderTextureFormats::Depth24:
-    case QDemonRenderTextureFormats::Depth32:
+    switch (depthFormat.format) {
+    case QDemonRenderTextureFormat::Depth16:
+    case QDemonRenderTextureFormat::Depth24:
+    case QDemonRenderTextureFormat::Depth32:
         fmt = QDemonRenderFrameBufferAttachment::Depth;
         break;
-    case QDemonRenderTextureFormats::Depth24Stencil8:
+    case QDemonRenderTextureFormat::Depth24Stencil8:
         fmt = QDemonRenderFrameBufferAttachment::DepthStencil;
         break;
     default:
@@ -1044,7 +1044,7 @@ void QDemonLayerRenderData::setupDrawFB(bool depthEnabled)
     if (!m_advancedBlendDrawTexture) {
         m_advancedBlendDrawTexture = theRenderContext->createTexture2D();
         QRect theViewport = renderer->getDemonContext()->getRenderList()->getViewport();
-        m_advancedBlendDrawTexture->setTextureData(QDemonDataRef<quint8>(), 0, theViewport.width(), theViewport.height(), QDemonRenderTextureFormats::RGBA8);
+        m_advancedBlendDrawTexture->setTextureData(QDemonDataRef<quint8>(), 0, theViewport.width(), theViewport.height(), QDemonRenderTextureFormat::RGBA8);
         m_advancedModeDrawFB->attach(QDemonRenderFrameBufferAttachment::Color0, m_advancedBlendDrawTexture);
         // Use existing depth prepass information when rendering transparent objects to a FBO
         if (depthEnabled)
@@ -1086,7 +1086,7 @@ void QDemonLayerRenderData::blendAdvancedToFB(DefaultMaterialBlendMode::Enum ble
         m_advancedModeBlendFB = theRenderContext->createFrameBuffer();
     if (!m_advancedBlendBlendTexture) {
         m_advancedBlendBlendTexture = theRenderContext->createTexture2D();
-        m_advancedBlendBlendTexture->setTextureData(QDemonDataRef<quint8>(), 0, theViewport.width(), theViewport.height(), QDemonRenderTextureFormats::RGBA8);
+        m_advancedBlendBlendTexture->setTextureData(QDemonDataRef<quint8>(), 0, theViewport.width(), theViewport.height(), QDemonRenderTextureFormat::RGBA8);
         m_advancedModeBlendFB->attach(QDemonRenderFrameBufferAttachment::Color0, m_advancedBlendBlendTexture);
     }
     theRenderContext->setRenderTarget(m_advancedModeBlendFB);
@@ -1186,15 +1186,15 @@ void QDemonLayerRenderData::renderToTexture()
     auto theRenderContext = renderer->getContext();
     QSize theLayerTextureDimensions = thePrepResult.getTextureDimensions();
     QSize theLayerOriginalTextureDimensions = theLayerTextureDimensions;
-    QDemonRenderTextureFormats::Enum DepthTextureFormat = QDemonRenderTextureFormats::Depth24Stencil8;
-    QDemonRenderTextureFormats::Enum ColorTextureFormat = QDemonRenderTextureFormats::RGBA8;
+    QDemonRenderTextureFormat DepthTextureFormat = QDemonRenderTextureFormat::Depth24Stencil8;
+    QDemonRenderTextureFormat ColorTextureFormat = QDemonRenderTextureFormat::RGBA8;
     if (thePrepResult.lastEffect && theRenderContext->getRenderContextType() != QDemonRenderContextType::GLES2) {
         if (layer.background != LayerBackground::Transparent)
-            ColorTextureFormat = QDemonRenderTextureFormats::R11G11B10;
+            ColorTextureFormat = QDemonRenderTextureFormat::R11G11B10;
         else
-            ColorTextureFormat = QDemonRenderTextureFormats::RGBA16F;
+            ColorTextureFormat = QDemonRenderTextureFormat::RGBA16F;
     }
-    QDemonRenderTextureFormats::Enum ColorSSAOTextureFormat = QDemonRenderTextureFormats::RGBA8;
+    QDemonRenderTextureFormat ColorSSAOTextureFormat = QDemonRenderTextureFormat::RGBA8;
 
     bool needsRender = false;
     qint32 sampleCount = 1;
@@ -1367,7 +1367,7 @@ void QDemonLayerRenderData::renderToTexture()
     // to non aa layers
     // We have to all this here in because once we change the FB by allocating an FB we are
     // screwed.
-    QDemonRenderTextureFormats::Enum theDepthFormat(getDepthBufferFormat());
+    QDemonRenderTextureFormat theDepthFormat(getDepthBufferFormat());
     QDemonRenderFrameBufferAttachment theDepthAttachmentFormat(getFramebufferDepthAttachmentFormat(theDepthFormat));
 
     // Definitely disable the scissor rect if it is running right now.
@@ -1507,7 +1507,7 @@ void QDemonLayerRenderData::renderToTexture()
         if (needsWidgetTexture()) {
             m_layerWidgetTexture.ensureTexture(theLayerTextureDimensions.width(),
                                                theLayerTextureDimensions.height(),
-                                               QDemonRenderTextureFormats::RGBA8);
+                                               QDemonRenderTextureFormat::RGBA8);
             theRenderContext->setRenderTarget(theFB);
             theFB->attach(QDemonRenderFrameBufferAttachment::Color0, m_layerWidgetTexture.getTexture());
             theFB->attach(getFramebufferDepthAttachmentFormat(DepthTextureFormat), m_layerDepthTexture.getTexture());
@@ -1872,7 +1872,7 @@ void QDemonLayerRenderData::runnableRenderToViewport(const QDemonRef<QDemonRende
                                                          0,
                                                          theLayerViewport.width(),
                                                          theLayerViewport.height(),
-                                                         QDemonRenderTextureFormats::RGBA8);
+                                                         QDemonRenderTextureFormat::RGBA8);
                         QDemonRef<QDemonRenderFrameBuffer> blitFB;
                         blitFB = theContext->createFrameBuffer();
                         blitFB->attach(QDemonRenderFrameBufferAttachment::Color0,
@@ -1898,7 +1898,7 @@ void QDemonLayerRenderData::runnableRenderToViewport(const QDemonRef<QDemonRende
                                                            0,
                                                            theLayerViewport.width(),
                                                            theLayerViewport.height(),
-                                                           QDemonRenderTextureFormats::RGBA8);
+                                                           QDemonRenderTextureFormat::RGBA8);
                         QDemonRef<QDemonRenderFrameBuffer> resultFB;
                         resultFB = theContext->createFrameBuffer();
                         resultFB->attach(QDemonRenderFrameBufferAttachment::Color0,
@@ -2071,18 +2071,18 @@ struct QDemonLayerRenderToTextureRunnable : public QDemonRenderTask
     void run() override { m_data.renderToTexture(); }
 };
 
-static inline QDemonOffscreenRendererDepthValues::Enum getOffscreenRendererDepthValue(QDemonRenderTextureFormats::Enum inBufferFormat)
+static inline QDemonOffscreenRendererDepthValues::Enum getOffscreenRendererDepthValue(QDemonRenderTextureFormat inBufferFormat)
 {
-    switch (inBufferFormat) {
-    case QDemonRenderTextureFormats::Depth32:
+    switch (inBufferFormat.format) {
+    case QDemonRenderTextureFormat::Depth32:
         return QDemonOffscreenRendererDepthValues::Depth32;
-    case QDemonRenderTextureFormats::Depth24:
+    case QDemonRenderTextureFormat::Depth24:
         return QDemonOffscreenRendererDepthValues::Depth24;
-    case QDemonRenderTextureFormats::Depth24Stencil8:
+    case QDemonRenderTextureFormat::Depth24Stencil8:
         return QDemonOffscreenRendererDepthValues::Depth24;
     default:
         Q_ASSERT(false); // fallthrough intentional
-    case QDemonRenderTextureFormats::Depth16:
+    case QDemonRenderTextureFormat::Depth16:
         return QDemonOffscreenRendererDepthValues::Depth16;
     }
 }
@@ -2093,7 +2093,7 @@ QDemonOffscreenRendererEnvironment QDemonLayerRenderData::createOffscreenRenderE
     QRect theViewport = renderer->getDemonContext()->getRenderList()->getViewport();
     return QDemonOffscreenRendererEnvironment(theViewport.width(),
                                               theViewport.height(),
-                                              QDemonRenderTextureFormats::RGBA8,
+                                              QDemonRenderTextureFormat::RGBA8,
                                               theOffscreenDepth,
                                               false,
                                               AAModeValues::NoAA);

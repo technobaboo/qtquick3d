@@ -44,9 +44,9 @@ struct QDemonTextureDetails
     qint32 height = 0;
     qint32 depth = 0;
     qint32 sampleCount = 1;
-    QDemonRenderTextureFormats::Enum format = QDemonRenderTextureFormats::Unknown;
+    QDemonRenderTextureFormat format = QDemonRenderTextureFormat::Unknown;
 
-    QDemonTextureDetails(qint32 w, qint32 h, qint32 d, qint32 samples, QDemonRenderTextureFormats::Enum f)
+    QDemonTextureDetails(qint32 w, qint32 h, qint32 d, qint32 samples, QDemonRenderTextureFormat f)
         : width(w), height(h), depth(d), sampleCount(samples), format(f)
     {
     }
@@ -66,7 +66,7 @@ protected:
     bool m_samplerParamsDirty; ///< true if sampler state is dirty
     bool m_texStateDirty; ///< true if texture object state is dirty
     qint32 m_sampleCount; ///< texture height
-    QDemonRenderTextureFormats::Enum m_format; ///< texture format
+    QDemonRenderTextureFormat m_format; ///< texture format
     QDemonRenderTextureTargetType m_texTarget; ///< texture target
     QDemonRenderTextureSampler *m_sampler; ///< current texture sampler state
     qint32 m_baseLevel; ///< minimum lod specified

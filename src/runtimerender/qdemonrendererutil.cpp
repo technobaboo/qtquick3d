@@ -38,7 +38,7 @@ void QDemonRendererUtil::resolveMutisampleFBOColorOnly(const QDemonRef<QDemonRes
                                                        QDemonRenderContext &inRenderContext,
                                                        qint32 inWidth,
                                                        qint32 inHeight,
-                                                       QDemonRenderTextureFormats::Enum inColorFormat,
+                                                       QDemonRenderTextureFormat inColorFormat,
                                                        const QDemonRef<QDemonRenderFrameBuffer> &inSourceFBO)
 {
     // create resolve FBO
@@ -75,7 +75,7 @@ void QDemonRendererUtil::resolveSSAAFBOColorOnly(const QDemonRef<QDemonResourceM
                                                  QDemonRenderContext &inRenderContext,
                                                  qint32 inWidth,
                                                  qint32 inHeight,
-                                                 QDemonRenderTextureFormats::Enum inColorFormat,
+                                                 QDemonRenderTextureFormat inColorFormat,
                                                  const QDemonRef<QDemonRenderFrameBuffer> &inSourceFBO)
 {
     // create resolve FBO

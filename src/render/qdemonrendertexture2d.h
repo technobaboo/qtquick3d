@@ -82,8 +82,8 @@ public:
                                 quint8 inMipLevel,
                                 qint32 width,
                                 qint32 height,
-                                QDemonRenderTextureFormats::Enum format,
-                                QDemonRenderTextureFormats::Enum formaInternal = QDemonRenderTextureFormats::Unknown);
+                                QDemonRenderTextureFormat format,
+                                QDemonRenderTextureFormat formaInternal = QDemonRenderTextureFormat::Unknown);
 
     /**
      * @brief Create memory storage for a texture object
@@ -102,11 +102,11 @@ public:
     virtual void setTextureStorage(qint32 inLevels,
                                    qint32 width,
                                    qint32 height,
-                                   QDemonRenderTextureFormats::Enum formaInternal,
-                                   QDemonRenderTextureFormats::Enum format = QDemonRenderTextureFormats::Unknown,
+                                   QDemonRenderTextureFormat formaInternal,
+                                   QDemonRenderTextureFormat format = QDemonRenderTextureFormat::Unknown,
                                    QDemonDataRef<quint8> dataBuffer = QDemonDataRef<quint8>());
 
-    virtual void setTextureDataMultisample(qint32 sampleCount, qint32 width, qint32 height, QDemonRenderTextureFormats::Enum format);
+    virtual void setTextureDataMultisample(qint32 sampleCount, qint32 width, qint32 height, QDemonRenderTextureFormat format);
 
     bool isMultisampleTexture() const override { return (m_texTarget == QDemonRenderTextureTargetType::Texture2D_MS); }
     qint32 getSampleCount() const override { return m_sampleCount; }
@@ -120,7 +120,7 @@ public:
                                    qint32 inYOffset,
                                    qint32 inSubImageWidth,
                                    qint32 inSubImageHeight,
-                                   QDemonRenderTextureFormats::Enum format);
+                                   QDemonRenderTextureFormat format);
     // Generate a set of mipmaps from mipLevel( 0 ).  Uses the graphis layer to do this if
     // possible
     // glGenerateMipmap

@@ -430,7 +430,7 @@ public:
             QDemonConstDataRef<quint8> bufferData = QDemonConstDataRef<quint8>());
     QDemonRef<QDemonRenderIndexBuffer> getOrCreateIndexBuffer(
             const QByteArray &inStr,
-            QDemonRenderComponentTypes::Enum componentType,
+            QDemonRenderComponentType componentType,
             size_t size,
             QDemonConstDataRef<quint8> bufferData = QDemonConstDataRef<quint8>());
     QDemonRef<QDemonRenderAttribLayout> createAttributeLayout(QDemonConstDataRef<QDemonRenderVertexBufferEntry> attribs);

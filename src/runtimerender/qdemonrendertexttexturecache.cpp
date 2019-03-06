@@ -111,7 +111,7 @@ struct QDemonTextTextureCache : public QDemonTextTextureCacheInterface
     static inline quint32 getNumBytes(QDemonRenderTexture2D &inTexture)
     {
         QDemonTextureDetails theDetails(inTexture.getTextureDetails());
-        return theDetails.width * theDetails.height * QDemonRenderTextureFormats::getSizeofFormat(theDetails.format);
+        return theDetails.width * theDetails.height * theDetails.format.getSizeofFormat();
     }
 
     QDemonRef<QDemonRenderTexture2D> invalidateLastItem()

@@ -216,7 +216,7 @@ void QDemonRendererImpl::renderLayer(QDemonRenderLayer &inLayer,
             QRect viewport = theRenderContext->getViewport();
             m_layerBlendTexture.ensureTexture(viewport.width() + viewport.x(),
                                               viewport.height() + viewport.y(),
-                                              QDemonRenderTextureFormats::RGBA8);
+                                              QDemonRenderTextureFormat::RGBA8);
             if (m_blendFb == nullptr)
                 m_blendFb = theRenderContext->createFrameBuffer();
             m_blendFb->attach(QDemonRenderFrameBufferAttachment::Color0, m_layerBlendTexture.getTexture());
@@ -376,12 +376,12 @@ void QDemonRendererImpl::drawScreenRect(QRectF inRect, const QVector3D &inColor)
         quint8 indexData[] = { 0, 1, 1, 2, 2, 3, 3, 0 };
 
         m_rectIndexBuffer = m_context->createIndexBuffer(QDemonRenderBufferUsageType::Static,
-                                                         QDemonRenderComponentTypes::UnsignedInteger8,
+                                                         QDemonRenderComponentType::UnsignedInteger8,
                                                          sizeof(indexData),
                                                          toConstDataRef(indexData, sizeof(indexData)));
 
         QDemonRenderVertexBufferEntry theEntries[] = {
-            QDemonRenderVertexBufferEntry("attr_pos", QDemonRenderComponentTypes::Float32, 3),
+            QDemonRenderVertexBufferEntry("attr_pos", QDemonRenderComponentType::Float32, 3),
         };
 
         // create our attribute layout
@@ -408,7 +408,7 @@ void QDemonRendererImpl::setupWidgetLayer()
         QDemonRef<QDemonResourceManagerInterface> theManager = m_demonContext->getResourceManager();
         m_widgetTexture = theManager->allocateTexture2D(m_beginFrameViewport.width(),
                                                         m_beginFrameViewport.height(),
-                                                        QDemonRenderTextureFormats::RGBA8);
+                                                        QDemonRenderTextureFormat::RGBA8);
         m_widgetFbo = theManager->allocateFrameBuffer();
         m_widgetFbo->attach(QDemonRenderFrameBufferAttachment::Color0, QDemonRenderTextureOrRenderBuffer(m_widgetTexture));
         theContext->setRenderTarget(m_widgetFbo);
@@ -1087,8 +1087,8 @@ bool QDemonRendererImpl::prepareTextureAtlasForRender()
         generateXYQuad();
 
         QDemonRenderVertexBufferEntry theEntries[] = {
-            QDemonRenderVertexBufferEntry("attr_pos", QDemonRenderComponentTypes::Float32, 3),
-            QDemonRenderVertexBufferEntry("attr_uv", QDemonRenderComponentTypes::Float32, 2, 12),
+            QDemonRenderVertexBufferEntry("attr_pos", QDemonRenderComponentType::Float32, 3),
+            QDemonRenderVertexBufferEntry("attr_uv", QDemonRenderComponentType::Float32, 2, 12),
         };
 
         // create our attribute layout
@@ -1101,9 +1101,9 @@ bool QDemonRendererImpl::prepareTextureAtlasForRender()
         // this texture contains our single entries
         QDemonRef<QDemonRenderTexture2D> theTexture = nullptr;
         if (m_context->getRenderContextType() == QDemonRenderContextType::GLES2) {
-            theTexture = m_demonContext->getResourceManager()->allocateTexture2D(32, 32, QDemonRenderTextureFormats::RGBA8);
+            theTexture = m_demonContext->getResourceManager()->allocateTexture2D(32, 32, QDemonRenderTextureFormat::RGBA8);
         } else {
-            theTexture = m_demonContext->getResourceManager()->allocateTexture2D(32, 32, QDemonRenderTextureFormats::Alpha8);
+            theTexture = m_demonContext->getResourceManager()->allocateTexture2D(32, 32, QDemonRenderTextureFormat::Alpha8);
         }
         m_context->setClearColor(QVector4D(0, 0, 0, 0));
         m_context->clear(QDemonRenderClearValues::Color);
@@ -1375,8 +1375,8 @@ void QDemonRendererImpl::generateXYQuad()
         return;
 
     QDemonRenderVertexBufferEntry theEntries[] = {
-        QDemonRenderVertexBufferEntry("attr_pos", QDemonRenderComponentTypes::Float32, 3),
-        QDemonRenderVertexBufferEntry("attr_uv", QDemonRenderComponentTypes::Float32, 2, 12),
+        QDemonRenderVertexBufferEntry("attr_pos", QDemonRenderComponentType::Float32, 3),
+        QDemonRenderVertexBufferEntry("attr_uv", QDemonRenderComponentType::Float32, 2, 12),
     };
 
     float tempBuf[20];
@@ -1399,7 +1399,7 @@ void QDemonRendererImpl::generateXYQuad()
         0, 1, 2, 0, 2, 3,
     };
     m_quadIndexBuffer = m_context->createIndexBuffer(QDemonRenderBufferUsageType::Static,
-                                                     QDemonRenderComponentTypes::UnsignedInteger8,
+                                                     QDemonRenderComponentType::UnsignedInteger8,
                                                      sizeof(indexData),
                                                      toU8DataRef(indexData, sizeof(indexData)));
 
@@ -1422,8 +1422,8 @@ void QDemonRendererImpl::generateXYZPoint()
         return;
 
     QDemonRenderVertexBufferEntry theEntries[] = {
-        QDemonRenderVertexBufferEntry("attr_pos", QDemonRenderComponentTypes::Float32, 3),
-        QDemonRenderVertexBufferEntry("attr_uv", QDemonRenderComponentTypes::Float32, 2, 12),
+        QDemonRenderVertexBufferEntry("attr_pos", QDemonRenderComponentType::Float32, 3),
+        QDemonRenderVertexBufferEntry("attr_uv", QDemonRenderComponentType::Float32, 2, 12),
     };
 
     float tempBuf[5];
@@ -1487,8 +1487,8 @@ void QDemonRendererImpl::generateXYQuadStrip()
         return;
 
     QDemonRenderVertexBufferEntry theEntries[] = {
-        QDemonRenderVertexBufferEntry("attr_pos", QDemonRenderComponentTypes::Float32, 3),
-        QDemonRenderVertexBufferEntry("attr_uv", QDemonRenderComponentTypes::Float32, 2, 12),
+        QDemonRenderVertexBufferEntry("attr_pos", QDemonRenderComponentType::Float32, 3),
+        QDemonRenderVertexBufferEntry("attr_uv", QDemonRenderComponentType::Float32, 2, 12),
     };
 
     // this buffer is filled dynmically
@@ -1583,7 +1583,7 @@ QDemonRef<QDemonRenderVertexBuffer> QDemonRendererImpl::getOrCreateVertexBuffer(
     return retval;
 }
 QDemonRef<QDemonRenderIndexBuffer> QDemonRendererImpl::getOrCreateIndexBuffer(const QByteArray &inStr,
-                                                                              QDemonRenderComponentTypes::Enum componentType,
+                                                                              QDemonRenderComponentType componentType,
                                                                               size_t size,
                                                                               QDemonConstDataRef<quint8> bufferData)
 {
@@ -1682,7 +1682,7 @@ void QDemonRendererImpl::renderText(const QDemonTextRenderInfo &inText,
 {
     if (m_demonContext->getTextRenderer() != nullptr) {
         QDemonTextRendererInterface &theTextRenderer(*m_demonContext->getTextRenderer());
-        QDemonRef<QDemonRenderTexture2D> theTexture = m_demonContext->getResourceManager()->allocateTexture2D(32, 32, QDemonRenderTextureFormats::RGBA8);
+        QDemonRef<QDemonRenderTexture2D> theTexture = m_demonContext->getResourceManager()->allocateTexture2D(32, 32, QDemonRenderTextureFormat::RGBA8);
         QDemonTextTextureDetails theTextTextureDetails = theTextRenderer.renderText(inText, *theTexture);
         QDemonTextRenderHelper theTextHelper(getTextWidgetShader());
         if (theTextHelper.shader != nullptr) {

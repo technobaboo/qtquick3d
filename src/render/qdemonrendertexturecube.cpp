@@ -51,7 +51,7 @@ void QDemonRenderTextureCube::setTextureData(QDemonDataRef<quint8> newBuffer,
                                              QDemonRenderTextureCubeFace inFace,
                                              quint32 width,
                                              quint32 height,
-                                             QDemonRenderTextureFormats::Enum format)
+                                             QDemonRenderTextureFormat format)
 {
     Q_ASSERT(m_textureHandle);
     Q_ASSERT(inFace != QDemonRenderTextureCubeFace::InvalidFace);
@@ -75,7 +75,7 @@ void QDemonRenderTextureCube::setTextureData(QDemonDataRef<quint8> newBuffer,
     }
 
     QDemonRenderTextureTargetType outTarget = static_cast<QDemonRenderTextureTargetType>((int)m_texTarget + (int)inFace);
-    if (QDemonRenderTextureFormats::isUncompressedTextureFormat(format) || QDemonRenderTextureFormats::isDepthTextureFormat(format)) {
+    if (format.isUncompressedTextureFormat() || format.isDepthTextureFormat()) {
         m_backend->setTextureDataCubeFace(m_textureHandle,
                                           outTarget,
                                           inMipLevel,
@@ -85,7 +85,7 @@ void QDemonRenderTextureCube::setTextureData(QDemonDataRef<quint8> newBuffer,
                                           0,
                                           format,
                                           newBuffer.begin());
-    } else if (QDemonRenderTextureFormats::isCompressedTextureFormat(format)) {
+    } else if (format.isCompressedTextureFormat()) {
         m_backend->setCompressedTextureDataCubeFace(m_textureHandle,
                                                     outTarget,
                                                     inMipLevel,

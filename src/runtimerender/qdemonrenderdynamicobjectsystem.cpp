@@ -470,7 +470,7 @@ struct QDemonDynamicObjClassImpl : public QDemonDynamicObjectClassInterface
     QDemonConstDataRef<dynamic::QDemonCommand *> m_renderCommands;
     bool m_requiresDepthTexture;
     bool m_requiresCompilation;
-    QDemonRenderTextureFormats::Enum m_outputFormat;
+    QDemonRenderTextureFormat m_outputFormat;
 
     QDemonDynamicObjClassImpl(QString id,
                               QDemonConstDataRef<dynamic::QDemonPropertyDefinition> definitions,
@@ -479,7 +479,7 @@ struct QDemonDynamicObjClassImpl : public QDemonDynamicObjectClassInterface
                               QDemonGraphObjectTypes::Enum objectType,
                               quint8 *propDefaultData,
                               bool inRequiresDepthTexture = false,
-                              QDemonRenderTextureFormats::Enum inOutputFormat = QDemonRenderTextureFormats::RGBA8)
+                              QDemonRenderTextureFormat inOutputFormat = QDemonRenderTextureFormat::RGBA8)
         : m_id(id)
         , m_propertyDefinitions(definitions)
         , m_propertySectionByteSize(propertySectionByteSize)
@@ -575,7 +575,7 @@ struct QDemonDynamicObjClassImpl : public QDemonDynamicObjectClassInterface
     void setRequiresDepthTexture(bool inVal) override { m_requiresDepthTexture = inVal; }
     virtual bool requiresCompilation() const override { return m_requiresCompilation; }
     virtual void setRequiresCompilation(bool inVal) override { m_requiresCompilation = inVal; }
-    QDemonRenderTextureFormats::Enum getOutputTextureFormat() const override { return m_outputFormat; }
+    QDemonRenderTextureFormat getOutputTextureFormat() const override { return m_outputFormat; }
 };
 }
 

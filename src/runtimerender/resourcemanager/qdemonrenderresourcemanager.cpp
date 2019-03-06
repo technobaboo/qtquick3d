@@ -143,7 +143,7 @@ struct QDemonResourceManager : public QDemonResourceManagerInterface
     }
     QDemonRef<QDemonRenderTexture2D> allocateTexture2D(qint32 inWidth,
                                                        qint32 inHeight,
-                                                       QDemonRenderTextureFormats::Enum inTextureFormat,
+                                                       QDemonRenderTextureFormat inTextureFormat,
                                                        qint32 inSampleCount,
                                                        bool immutable) override
     {
@@ -198,7 +198,7 @@ struct QDemonResourceManager : public QDemonResourceManagerInterface
     QDemonRef<QDemonRenderTexture2DArray> allocateTexture2DArray(qint32 inWidth,
                                                                  qint32 inHeight,
                                                                  qint32 inSlices,
-                                                                 QDemonRenderTextureFormats::Enum inTextureFormat,
+                                                                 QDemonRenderTextureFormat inTextureFormat,
                                                                  qint32 inSampleCount) override
     {
         Q_ASSERT(inWidth >= 0 && inHeight >= 0 && inSlices >= 0 && inSampleCount >= 0);
@@ -256,7 +256,7 @@ struct QDemonResourceManager : public QDemonResourceManagerInterface
 
     QDemonRef<QDemonRenderTextureCube> allocateTextureCube(qint32 inWidth,
                                                            qint32 inHeight,
-                                                           QDemonRenderTextureFormats::Enum inTextureFormat,
+                                                           QDemonRenderTextureFormat inTextureFormat,
                                                            qint32 inSampleCount) override
     {
         bool inMultisample = inSampleCount > 1 && renderContext->areMultisampleTexturesSupported();

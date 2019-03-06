@@ -200,7 +200,7 @@ void QDemonRenderContextImpl::bufferDestroyed(QDemonRenderVertexBuffer *buffer)
 }
 
 QDemonRef<QDemonRenderIndexBuffer> QDemonRenderContextImpl::createIndexBuffer(QDemonRenderBufferUsageType usageType,
-                                                                              QDemonRenderComponentTypes::Enum componentType,
+                                                                              QDemonRenderComponentType componentType,
                                                                               size_t size,
                                                                               QDemonConstDataRef<quint8> bufferData)
 {

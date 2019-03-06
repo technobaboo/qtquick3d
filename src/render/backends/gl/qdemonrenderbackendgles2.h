@@ -59,7 +59,7 @@ public:
     void setMultisampledTextureData2D(QDemonRenderBackendTextureObject to,
                                       QDemonRenderTextureTargetType target,
                                       qint32 samples,
-                                      QDemonRenderTextureFormats::Enum internalFormat,
+                                      QDemonRenderTextureFormat internalFormat,
                                       qint32 width,
                                       qint32 height,
                                       bool fixedsamplelocations) override;
@@ -67,22 +67,22 @@ public:
     void setTextureData3D(QDemonRenderBackendTextureObject to,
                           QDemonRenderTextureTargetType target,
                           qint32 level,
-                          QDemonRenderTextureFormats::Enum internalFormat,
+                          QDemonRenderTextureFormat internalFormat,
                           qint32 width,
                           qint32 height,
                           qint32 depth,
                           qint32 border,
-                          QDemonRenderTextureFormats::Enum format,
+                          QDemonRenderTextureFormat format,
                           const void *hostPtr = nullptr) override;
 
     void setTextureData2D(QDemonRenderBackendTextureObject to,
                           QDemonRenderTextureTargetType target,
                           qint32 level,
-                          QDemonRenderTextureFormats::Enum internalFormat,
+                          QDemonRenderTextureFormat internalFormat,
                           qint32 width,
                           qint32 height,
                           qint32 border,
-                          QDemonRenderTextureFormats::Enum format,
+                          QDemonRenderTextureFormat format,
                           const void *hostPtr = nullptr) override;
 
     void updateSampler(QDemonRenderBackendSamplerObject so,

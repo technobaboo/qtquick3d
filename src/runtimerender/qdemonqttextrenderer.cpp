@@ -454,7 +454,7 @@ struct QDemonQtTextRenderer : public QDemonTextRendererInterface
         QRectF boundingBox = textBoundingBox(inSrcText, fm, lineList, lineWidths);
 
         if (boundingBox.width() <= 0 || boundingBox.height() <= 0) {
-            return QDemonTextRendererInterface::uploadData(toU8DataRef((char *)nullptr, 0), inTexture, 4, 4, 0, 0, QDemonRenderTextureFormats::RGBA8, true);
+            return QDemonTextRendererInterface::uploadData(toU8DataRef((char *)nullptr, 0), inTexture, 4, 4, 0, 0, QDemonRenderTextureFormat::RGBA8, true);
         }
 
         int finalWidth = nextMultipleOf4(boundingBox.width());
@@ -540,7 +540,7 @@ struct QDemonQtTextRenderer : public QDemonTextRendererInterface
                                                        image.height(),
                                                        image.width(),
                                                        image.height(),
-                                                       QDemonRenderTextureFormats::RGBA8,
+                                                       QDemonRenderTextureFormat::RGBA8,
                                                        true);
     }
 

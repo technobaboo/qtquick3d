@@ -162,7 +162,7 @@ int main(int argc, char *argv[])
                     qDebug() << "\t\t\t -- Vertex Buffer Entry " << idx << "-- ";
                     const MeshVertexBufferEntry &entry = reinterpret_cast<const MeshVertexBufferEntry *>(vertexBufferEntriesData.constData())[idx];
                     qDebug() << "\t\t\tname: " << nameBuffer.constData();
-                    qDebug() << "\t\t\ttype: " << entry.m_componentType;
+                    qDebug() << "\t\t\ttype: " << toString(entry.m_componentType);
                     qDebug() << "\t\t\tnumComponents: " << entry.m_numComponents;
                     qDebug() << "\t\t\tfirstItemOffset: " << entry.m_firstItemOffset;
                 }
@@ -174,7 +174,7 @@ int main(int argc, char *argv[])
                 // Index Buffer
                 qDebug() << "\t\t -- Index Buffer -- ";
                 offsetTracker.advance(mesh->m_indexBuffer.m_data);
-                qDebug() << "\t\tcomponentType: " << mesh->m_indexBuffer.m_componentType;
+                qDebug() << "\t\tcomponentType: " << toString(mesh->m_indexBuffer.m_componentType);
                 qDebug() << "\t\tdata Offset: " << hex << mesh->m_indexBuffer.m_data.m_offset;
                 qDebug() << "\t\tdata Size: " << mesh->m_indexBuffer.m_data.m_size * sizeof(quint8);
 

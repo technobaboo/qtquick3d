@@ -51,7 +51,7 @@ void QDemonRenderTexture2DArray::setTextureData(QDemonDataRef<quint8> newBuffer,
                                                 qint32 width,
                                                 qint32 height,
                                                 qint32 slices,
-                                                QDemonRenderTextureFormats::Enum format)
+                                                QDemonRenderTextureFormat format)
 {
     Q_ASSERT(m_textureHandle);
     Q_ASSERT(width >= 0 && height >= 0 && slices >= 0);
@@ -76,10 +76,10 @@ void QDemonRenderTexture2DArray::setTextureData(QDemonDataRef<quint8> newBuffer,
     }
 
     // currently we do not support compressed texture arrays
-    Q_ASSERT(QDemonRenderTextureFormats::isUncompressedTextureFormat(format)
-             || QDemonRenderTextureFormats::isDepthTextureFormat(format));
+    Q_ASSERT(format.isUncompressedTextureFormat()
+             || format.isDepthTextureFormat());
 
-    if (QDemonRenderTextureFormats::isUncompressedTextureFormat(format) || QDemonRenderTextureFormats::isDepthTextureFormat(format)) {
+    if (format.isUncompressedTextureFormat() || format.isDepthTextureFormat()) {
         m_backend->setTextureData3D(m_textureHandle,
                                     m_texTarget,
                                     inMipLevel,

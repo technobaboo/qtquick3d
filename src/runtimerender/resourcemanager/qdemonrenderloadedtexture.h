@@ -43,7 +43,7 @@ struct QDemonTextureData
 {
     void *data = nullptr;
     quint32 dataSizeInBytes = 0;
-    QDemonRenderTextureFormats::Enum format = QDemonRenderTextureFormats::Unknown;
+    QDemonRenderTextureFormat format = QDemonRenderTextureFormat::Unknown;
 };
 struct QDemonExtendedTextureFormats
 {
@@ -65,7 +65,7 @@ public:
     void *data = nullptr;
     QImage image;
     quint32 dataSizeInBytes = 0;
-    QDemonRenderTextureFormats::Enum format = QDemonRenderTextureFormats::RGBA8;
+    QDemonRenderTextureFormat format = QDemonRenderTextureFormat::RGBA8;
     QDemonExtendedTextureFormats::Enum m_ExtendedFormat = QDemonExtendedTextureFormats::NoExtendedFormat;
     // Used for palettized images.
     void *m_palette = nullptr;
@@ -80,19 +80,19 @@ public:
     {
         switch (components) {
         case 1: // undefined, but in this context probably luminance
-            format = QDemonRenderTextureFormats::Luminance8;
+            format = QDemonRenderTextureFormat::Luminance8;
             break;
         case 2:
-            format = QDemonRenderTextureFormats::LuminanceAlpha8;
+            format = QDemonRenderTextureFormat::LuminanceAlpha8;
             break;
         case 3:
-            format = QDemonRenderTextureFormats::RGB8;
+            format = QDemonRenderTextureFormat::RGB8;
             break;
 
         default:
             // fallthrough intentional
         case 4:
-            format = QDemonRenderTextureFormats::RGBA8;
+            format = QDemonRenderTextureFormat::RGBA8;
             break;
         }
     }

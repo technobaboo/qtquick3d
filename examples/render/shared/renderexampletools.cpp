@@ -74,9 +74,9 @@ QDemonRef<QDemonRenderInputAssembler> QDemonRenderExampleTools::createBox(QDemon
 
     // Attribute Layouts
     QDemonRenderVertexBufferEntry entries[] = {
-        QDemonRenderVertexBufferEntry("attr_pos", QDemonRenderComponentTypes::Float32, 3, 0),
-        QDemonRenderVertexBufferEntry("attr_norm", QDemonRenderComponentTypes::Float32, 3, 3 * sizeof(float)),
-        QDemonRenderVertexBufferEntry("attr_uv", QDemonRenderComponentTypes::Float32, 2, 6 * sizeof(float)),
+        QDemonRenderVertexBufferEntry("attr_pos", QDemonRenderComponentType::Float32, 3, 0),
+        QDemonRenderVertexBufferEntry("attr_norm", QDemonRenderComponentType::Float32, 3, 3 * sizeof(float)),
+        QDemonRenderVertexBufferEntry("attr_uv", QDemonRenderComponentType::Float32, 2, 6 * sizeof(float)),
     };
 
     QDemonRef<QDemonRenderAttribLayout> attribLayout = context->createAttributeLayout(toConstDataRef(entries, 3));
@@ -131,7 +131,7 @@ QDemonRef<QDemonRenderInputAssembler> QDemonRenderExampleTools::createBox(QDemon
         *(indices++) = base + 3;
     }
     outIndexBuffer= context->createIndexBuffer(QDemonRenderBufferUsageType::Static,
-                                               QDemonRenderComponentTypes::UnsignedInteger16,
+                                               QDemonRenderComponentType::UnsignedInteger16,
                                                bufSize,
                                                indexData);
     ::free(indexData.begin());

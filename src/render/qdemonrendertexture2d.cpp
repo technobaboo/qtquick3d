@@ -54,8 +54,8 @@ void QDemonRenderTexture2D::setTextureData(QDemonDataRef<quint8> newBuffer,
                                            quint8 inMipLevel,
                                            qint32 width,
                                            qint32 height,
-                                           QDemonRenderTextureFormats::Enum format,
-                                           QDemonRenderTextureFormats::Enum formatDest)
+                                           QDemonRenderTextureFormat format,
+                                           QDemonRenderTextureFormat formatDest)
 {
     Q_ASSERT(m_textureHandle);
 
@@ -76,8 +76,8 @@ void QDemonRenderTexture2D::setTextureData(QDemonDataRef<quint8> newBuffer,
             m_textureHandle = m_backend->createTexture();
         }
 
-        if (QDemonRenderTextureFormats::isCompressedTextureFormat(formatDest)) {
-            bool compress = QDemonRenderTextureFormats::isUncompressedTextureFormat(format);
+        if (formatDest.isCompressedTextureFormat()) {
+            bool compress = format.isUncompressedTextureFormat();
             bool appropriateSizes = !((width % 4) || (height % 4));
 
             // we only compress multiple of 4 textures
@@ -92,7 +92,7 @@ void QDemonRenderTexture2D::setTextureData(QDemonDataRef<quint8> newBuffer,
                 m_height = height / 4;
                 m_format = formatDest;
             }
-        } else if (QDemonRenderTextureFormats::isUncompressedTextureFormat(formatDest)) {
+        } else if (formatDest.isUncompressedTextureFormat()) {
             m_format = formatDest;
         }
     }
@@ -107,7 +107,7 @@ void QDemonRenderTexture2D::setTextureData(QDemonDataRef<quint8> newBuffer,
     if (width > maxWidth || height > maxHeight) {
         qCCritical(INVALID_OPERATION, "Width or height is greater than max texture size (%d, %d)", maxWidth, maxHeight);
     }
-    if (QDemonRenderTextureFormats::isUncompressedTextureFormat(format) || QDemonRenderTextureFormats::isDepthTextureFormat(format)) {
+    if (format.isUncompressedTextureFormat() || format.isDepthTextureFormat()) {
         m_backend->setTextureData2D(m_textureHandle,
                                     m_texTarget,
                                     inMipLevel,
@@ -117,7 +117,7 @@ void QDemonRenderTexture2D::setTextureData(QDemonDataRef<quint8> newBuffer,
                                     0,
                                     format,
                                     newBuffer.begin());
-    } else if (QDemonRenderTextureFormats::isCompressedTextureFormat(format)) {
+    } else if (format.isCompressedTextureFormat()) {
         m_backend->setCompressedTextureData2D(m_textureHandle,
                                               m_texTarget,
                                               inMipLevel,
@@ -136,8 +136,8 @@ void QDemonRenderTexture2D::setTextureData(QDemonDataRef<quint8> newBuffer,
 void QDemonRenderTexture2D::setTextureStorage(qint32 inLevels,
                                               qint32 width,
                                               qint32 height,
-                                              QDemonRenderTextureFormats::Enum formaInternal,
-                                              QDemonRenderTextureFormats::Enum format,
+                                              QDemonRenderTextureFormat formaInternal,
+                                              QDemonRenderTextureFormat format,
                                               QDemonDataRef<quint8> dataBuffer)
 {
     Q_ASSERT(m_textureHandle);
@@ -150,7 +150,7 @@ void QDemonRenderTexture2D::setTextureStorage(qint32 inLevels,
     m_width = width;
     m_height = height;
     m_format = formaInternal;
-    if (format == QDemonRenderTextureFormats::Unknown)
+    if (format == QDemonRenderTextureFormat::Unknown)
         format = formaInternal;
 
     // get max size and check value
@@ -167,7 +167,7 @@ void QDemonRenderTexture2D::setTextureStorage(qint32 inLevels,
     m_maxMipLevel = inLevels - 1; // we count from 0
 
     // only uncompressed formats are supported and no depth
-    if (QDemonRenderTextureFormats::isUncompressedTextureFormat(formaInternal)) {
+    if (formaInternal.isUncompressedTextureFormat()) {
         m_backend->createTextureStorage2D(m_textureHandle, m_texTarget, inLevels, formaInternal, width, height);
 
         m_immutable = true;
@@ -184,7 +184,7 @@ void QDemonRenderTexture2D::setTextureStorage(qint32 inLevels,
 void QDemonRenderTexture2D::setTextureDataMultisample(qint32 sampleCount,
                                                       qint32 width,
                                                       qint32 height,
-                                                      QDemonRenderTextureFormats::Enum format)
+                                                      QDemonRenderTextureFormat format)
 {
     Q_ASSERT(m_textureHandle);
     Q_ASSERT(m_maxMipLevel == 0);
@@ -197,8 +197,8 @@ void QDemonRenderTexture2D::setTextureDataMultisample(qint32 sampleCount,
         qCCritical(INVALID_OPERATION, "Width or height is greater than max texture size (%d, %d)", maxWidth, maxHeight);
     }
 
-    Q_ASSERT(QDemonRenderTextureFormats::isUncompressedTextureFormat(format)
-             || QDemonRenderTextureFormats::isDepthTextureFormat(format));
+    Q_ASSERT(format.isUncompressedTextureFormat()
+             || format.isDepthTextureFormat());
 
     m_backend->setMultisampledTextureData2D(m_textureHandle, m_texTarget, sampleCount, format, width, height, true);
 
@@ -214,17 +214,17 @@ void QDemonRenderTexture2D::setTextureSubData(QDemonDataRef<quint8> newBuffer,
                                               qint32 inYOffset,
                                               qint32 width,
                                               qint32 height,
-                                              QDemonRenderTextureFormats::Enum format)
+                                              QDemonRenderTextureFormat format)
 {
     Q_ASSERT(m_textureHandle);
     Q_ASSERT(inXOffset >= 0 && inYOffset >= 0 && width >= 0 && height >= 0);
 
-    if (!QDemonRenderTextureFormats::isUncompressedTextureFormat(format)) {
+    if (!format.isUncompressedTextureFormat()) {
         qCCritical(INVALID_PARAMETER, "Cannot set sub data for depth or compressed formats");
         Q_ASSERT(false);
         return;
     }
-    qint32 subRectStride = width * QDemonRenderTextureFormats::getSizeofFormat(format);
+    qint32 subRectStride = width * format.getSizeofFormat();
     if (qint32(newBuffer.size()) < subRectStride * height) {
         qCCritical(INVALID_PARAMETER, "Invalid sub rect buffer size");
         Q_ASSERT(false);
@@ -241,7 +241,7 @@ void QDemonRenderTexture2D::setTextureSubData(QDemonDataRef<quint8> newBuffer,
     }
 
     // not handled yet
-    Q_ASSERT(!QDemonRenderTextureFormats::isDepthTextureFormat(format));
+    Q_ASSERT(!format.isDepthTextureFormat());
 
     m_backend->setTextureSubData2D(m_textureHandle,
                                    m_texTarget,

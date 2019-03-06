@@ -163,7 +163,7 @@ public:
     virtual QDemonRef<QDemonRenderVertexBuffer> getVertexBuffer(const void *implementationHandle) = 0;
 
     virtual QDemonRef<QDemonRenderIndexBuffer> createIndexBuffer(QDemonRenderBufferUsageType usageType,
-                                                                 QDemonRenderComponentTypes::Enum componentType,
+                                                                 QDemonRenderComponentType componentType,
                                                                  size_t size,
                                                                  QDemonConstDataRef<quint8> bufferData = QDemonConstDataRef<quint8>()) = 0;
     virtual QDemonRef<QDemonRenderIndexBuffer> getIndexBuffer(const void *implementationHandle) = 0;
@@ -784,7 +784,7 @@ public:
     virtual void bufferDestroyed(QDemonRenderVertexBuffer *buffer);
 
     virtual QDemonRef<QDemonRenderIndexBuffer> createIndexBuffer(QDemonRenderBufferUsageType usageType,
-                                                                 QDemonRenderComponentTypes::Enum componentType,
+                                                                 QDemonRenderComponentType componentType,
                                                                  size_t size,
                                                                  QDemonConstDataRef<quint8> bufferData) override;
     QDemonRef<QDemonRenderIndexBuffer> getIndexBuffer(const void *implementationHandle) override;

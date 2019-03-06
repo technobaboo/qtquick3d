@@ -86,7 +86,7 @@ struct QDemonLayerRenderData : public QDemonLayerRenderPreparationData
     float m_textScale;
 
     QDemonOption<QVector3D> m_boundingRectColor;
-    QDemonRenderTextureFormats::Enum m_depthBufferFormat;
+    QDemonRenderTextureFormat m_depthBufferFormat;
 
     QSize m_previousDimensions;
 
@@ -99,8 +99,8 @@ struct QDemonLayerRenderData : public QDemonLayerRenderPreparationData
     // Internal Call
     void prepareForRender(const QSize &inViewportDimensions) override;
 
-    QDemonRenderTextureFormats::Enum getDepthBufferFormat();
-    QDemonRenderFrameBufferAttachment getFramebufferDepthAttachmentFormat(QDemonRenderTextureFormats::Enum depthFormat);
+    QDemonRenderTextureFormat getDepthBufferFormat();
+    QDemonRenderFrameBufferAttachment getFramebufferDepthAttachmentFormat(QDemonRenderTextureFormat depthFormat);
 
     // Render this layer assuming viewport and RT are setup.  Just renders exactly this item
     // no effects.

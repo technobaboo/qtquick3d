@@ -62,17 +62,17 @@ QDemonTextTextureDetails QDemonTextRendererInterface::uploadData(QDemonDataRef<q
                                                                  quint32 inDataHeight,
                                                                  quint32 inTextWidth,
                                                                  quint32 inTextHeight,
-                                                                 QDemonRenderTextureFormats::Enum inFormat,
+                                                                 QDemonRenderTextureFormat inFormat,
                                                                  bool inFlipYAxis)
 {
     if (inTextWidth == 0 || inTextHeight == 0) {
         quint32 black[] = { 0, 0, 0, 0 };
-        inTexture.setTextureData(toU8DataRef(black, 4), 0, 2, 2, QDemonRenderTextureFormats::RGBA8);
+        inTexture.setTextureData(toU8DataRef(black, 4), 0, 2, 2, QDemonRenderTextureFormat::RGBA8);
         return QDemonTextTextureDetails(2, 2, false, QVector2D(1.0f, 1.0f));
     }
     Q_ASSERT(nextMultipleOf4(inDataWidth) == inDataWidth);
     quint32 theNecessaryHeight = nextMultipleOf4(inTextHeight);
-    quint32 dataStride = inDataWidth * QDemonRenderTextureFormats::getSizeofFormat(inFormat);
+    quint32 dataStride = inDataWidth * inFormat.getSizeofFormat();
     if (inTextureData.size() < dataStride * inDataHeight) {
         Q_ASSERT(false);
         return QDemonTextTextureDetails();

@@ -47,19 +47,19 @@ public:
 
 public:
     void drawIndirect(QDemonRenderDrawMode drawMode, const void *indirect) override;
-    void drawIndexedIndirect(QDemonRenderDrawMode drawMode, QDemonRenderComponentTypes::Enum type, const void *indirect) override;
+    void drawIndexedIndirect(QDemonRenderDrawMode drawMode, QDemonRenderComponentType type, const void *indirect) override;
 
     void createTextureStorage2D(QDemonRenderBackendTextureObject to,
                                 QDemonRenderTextureTargetType target,
                                 qint32 levels,
-                                QDemonRenderTextureFormats::Enum internalFormat,
+                                QDemonRenderTextureFormat internalFormat,
                                 qint32 width,
                                 qint32 height) override;
 
     void setMultisampledTextureData2D(QDemonRenderBackendTextureObject to,
                                       QDemonRenderTextureTargetType target,
                                       qint32 samples,
-                                      QDemonRenderTextureFormats::Enum internalFormat,
+                                      QDemonRenderTextureFormat internalFormat,
                                       qint32 width,
                                       qint32 height,
                                       bool fixedsamplelocations) override;
@@ -109,7 +109,7 @@ public:
                           bool layered,
                           qint32 layer,
                           QDemonRenderImageAccessType access,
-                          QDemonRenderTextureFormats::Enum format) override;
+                          QDemonRenderTextureFormat format) override;
 
     virtual QDemonRenderBackendComputeShaderObject createComputeShader(QDemonConstDataRef<qint8> source,
                                                                        QByteArray &errorMessage,

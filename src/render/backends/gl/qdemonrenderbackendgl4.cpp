@@ -219,7 +219,7 @@ void QDemonRenderBackendGL4Impl::drawIndirect(QDemonRenderDrawMode drawMode, con
 }
 
 void QDemonRenderBackendGL4Impl::drawIndexedIndirect(QDemonRenderDrawMode drawMode,
-                                                     QDemonRenderComponentTypes::Enum type,
+                                                     QDemonRenderComponentType type,
                                                      const void *indirect)
 {
     GL_CALL_EXTRA_FUNCTION(glDrawElementsIndirect(m_conversion.fromDrawModeToGL(drawMode, m_backendSupport.caps.bits.bTessellationSupported),
@@ -230,7 +230,7 @@ void QDemonRenderBackendGL4Impl::drawIndexedIndirect(QDemonRenderDrawMode drawMo
 void QDemonRenderBackendGL4Impl::createTextureStorage2D(QDemonRenderBackendTextureObject to,
                                                         QDemonRenderTextureTargetType target,
                                                         qint32 levels,
-                                                        QDemonRenderTextureFormats::Enum internalFormat,
+                                                        QDemonRenderTextureFormat internalFormat,
                                                         qint32 width,
                                                         qint32 height)
 {
@@ -240,7 +240,7 @@ void QDemonRenderBackendGL4Impl::createTextureStorage2D(QDemonRenderBackendTextu
     GL_CALL_EXTRA_FUNCTION(glBindTexture(glTarget, texID));
 
     // up to now compressed is not supported
-    Q_ASSERT(QDemonRenderTextureFormats::isUncompressedTextureFormat(internalFormat));
+    Q_ASSERT(internalFormat.isUncompressedTextureFormat());
 
     GLenum glformat = 0, glInternalFormat = 0, gltype = GL_UNSIGNED_BYTE;
     GLConversion::fromUncompressedTextureFormatToGL(getRenderContextType(), internalFormat, glformat, gltype, glInternalFormat);
@@ -253,7 +253,7 @@ void QDemonRenderBackendGL4Impl::createTextureStorage2D(QDemonRenderBackendTextu
 void QDemonRenderBackendGL4Impl::setMultisampledTextureData2D(QDemonRenderBackendTextureObject to,
                                                               QDemonRenderTextureTargetType target,
                                                               qint32 samples,
-                                                              QDemonRenderTextureFormats::Enum internalFormat,
+                                                              QDemonRenderTextureFormat internalFormat,
                                                               qint32 width,
                                                               qint32 height,
                                                               bool fixedsamplelocations)
@@ -268,9 +268,9 @@ void QDemonRenderBackendGL4Impl::setMultisampledTextureData2D(QDemonRenderBacken
 
     GLenum glformat = 0, glInternalFormat = 0, gltype = GL_UNSIGNED_BYTE;
 
-    if (QDemonRenderTextureFormats::isUncompressedTextureFormat(internalFormat))
+    if (internalFormat.isUncompressedTextureFormat())
         GLConversion::fromUncompressedTextureFormatToGL(getRenderContextType(), internalFormat, glformat, gltype, glInternalFormat);
-    else if (QDemonRenderTextureFormats::isDepthTextureFormat(internalFormat))
+    else if (internalFormat.isDepthTextureFormat())
         GLConversion::fromDepthTextureFormatToGL(getRenderContextType(), internalFormat, glformat, gltype, glInternalFormat);
     GL_CALL_EXTRA_FUNCTION(
             glTexStorage2DMultisample(glTarget, GLsizei(samples), glInternalFormat, GLsizei(width), GLsizei(height), fixedsamplelocations));
@@ -351,7 +351,7 @@ void QDemonRenderBackendGL4Impl::bindImageTexture(QDemonRenderBackendTextureObje
                                                   bool layered,
                                                   qint32 layer,
                                                   QDemonRenderImageAccessType access,
-                                                  QDemonRenderTextureFormats::Enum format)
+                                                  QDemonRenderTextureFormat format)
 {
     GLuint texID = HandleToID_cast(GLuint, size_t, to);
 

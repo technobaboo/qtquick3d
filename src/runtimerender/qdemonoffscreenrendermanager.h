@@ -56,7 +56,7 @@ struct QDemonOffscreenRendererEnvironment
 {
     qint32 width;
     qint32 height;
-    QDemonRenderTextureFormats::Enum format;
+    QDemonRenderTextureFormat format;
     QDemonOffscreenRendererDepthValues::Enum depth;
     bool stencil;
     AAModeValues::Enum msaaMode;
@@ -64,14 +64,14 @@ struct QDemonOffscreenRendererEnvironment
     QDemonOffscreenRendererEnvironment()
         : width(0)
         , height(0)
-        , format(QDemonRenderTextureFormats::Unknown)
+        , format(QDemonRenderTextureFormat::Unknown)
         , depth(QDemonOffscreenRendererDepthValues::NoDepthBuffer)
         , stencil(false)
         , msaaMode(AAModeValues::NoAA)
     {
     }
 
-    QDemonOffscreenRendererEnvironment(qint32 inWidth, qint32 inHeight, QDemonRenderTextureFormats::Enum inFormat)
+    QDemonOffscreenRendererEnvironment(qint32 inWidth, qint32 inHeight, QDemonRenderTextureFormat inFormat)
         : width(inWidth)
         , height(inHeight)
         , format(inFormat)
@@ -83,7 +83,7 @@ struct QDemonOffscreenRendererEnvironment
 
     QDemonOffscreenRendererEnvironment(qint32 inWidth,
                                        qint32 inHeight,
-                                       QDemonRenderTextureFormats::Enum inFormat,
+                                       QDemonRenderTextureFormat inFormat,
                                        QDemonOffscreenRendererDepthValues::Enum inDepth,
                                        bool inStencil,
                                        AAModeValues::Enum inAAMode)

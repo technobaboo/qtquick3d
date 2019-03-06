@@ -308,7 +308,7 @@ struct QDemonTextureDataWriter
             m_textureData.dataSizeInBytes = dataSize;
         }
         memZero(m_textureData.data, m_textureData.dataSizeInBytes);
-        m_textureData.format = hasA ? QDemonRenderTextureFormats::RGBA8 : QDemonRenderTextureFormats::RGB8;
+        m_textureData.format = hasA ? QDemonRenderTextureFormat::RGBA8 : QDemonRenderTextureFormat::RGB8;
     }
 
     void writePixel(quint32 X, quint32 Y, quint8 *pixelData)
@@ -433,46 +433,46 @@ QDemonLoadedTexture::~QDemonLoadedTexture()
 
 bool QDemonLoadedTexture::scanForTransparency()
 {
-    switch (format) {
-    case QDemonRenderTextureFormats::SRGB8A8:
-    case QDemonRenderTextureFormats::RGBA8:
+    switch (format.format) {
+    case QDemonRenderTextureFormat::SRGB8A8:
+    case QDemonRenderTextureFormat::RGBA8:
         if (!data) // dds
             return true;
 
         return scanImageForAlpha(data, width, height, 4, 8);
     // Scan the image.
-    case QDemonRenderTextureFormats::SRGB8:
-    case QDemonRenderTextureFormats::RGB8:
+    case QDemonRenderTextureFormat::SRGB8:
+    case QDemonRenderTextureFormat::RGB8:
         return false;
-    case QDemonRenderTextureFormats::RGB565:
+    case QDemonRenderTextureFormat::RGB565:
         return false;
-    case QDemonRenderTextureFormats::RGBA5551:
+    case QDemonRenderTextureFormat::RGBA5551:
         if (!data) { // dds
             return true;
         } else {
             return scanImageForAlpha(data, width, height, 2, 1);
         }
-    case QDemonRenderTextureFormats::Alpha8:
+    case QDemonRenderTextureFormat::Alpha8:
         return true;
-    case QDemonRenderTextureFormats::Luminance8:
+    case QDemonRenderTextureFormat::Luminance8:
         return false;
-    case QDemonRenderTextureFormats::LuminanceAlpha8:
+    case QDemonRenderTextureFormat::LuminanceAlpha8:
         if (!data) // dds
             return true;
 
         return scanImageForAlpha(data, width, height, 2, 8);
-    case QDemonRenderTextureFormats::RGB_DXT1:
+    case QDemonRenderTextureFormat::RGB_DXT1:
         return false;
-    case QDemonRenderTextureFormats::RGBA_DXT3:
-    case QDemonRenderTextureFormats::RGBA_DXT1:
-    case QDemonRenderTextureFormats::RGBA_DXT5:
+    case QDemonRenderTextureFormat::RGBA_DXT3:
+    case QDemonRenderTextureFormat::RGBA_DXT1:
+    case QDemonRenderTextureFormat::RGBA_DXT5:
         return false;
-    case QDemonRenderTextureFormats::RGB9E5:
+    case QDemonRenderTextureFormat::RGB9E5:
         return false;
-    case QDemonRenderTextureFormats::RG32F:
-    case QDemonRenderTextureFormats::RGB32F:
-    case QDemonRenderTextureFormats::RGBA16F:
-    case QDemonRenderTextureFormats::RGBA32F:
+    case QDemonRenderTextureFormat::RG32F:
+    case QDemonRenderTextureFormat::RGB32F:
+    case QDemonRenderTextureFormat::RGBA16F:
+    case QDemonRenderTextureFormat::RGBA32F:
         // PKC TODO : For now, since IBL will be the main consumer, we'll just pretend there's no
         // alpha.
         // Need to do a proper scan down the line, but doing it for floats is a little different

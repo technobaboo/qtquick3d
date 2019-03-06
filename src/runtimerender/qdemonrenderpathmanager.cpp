@@ -1064,7 +1064,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
 
             if (!inPathBuffer.m_inputAssembler) {
                 QDemonRenderVertexBufferEntry theEntries[] = {
-                    QDemonRenderVertexBufferEntry("attr_pos", QDemonRenderComponentTypes::Float32, 4),
+                    QDemonRenderVertexBufferEntry("attr_pos", QDemonRenderComponentType::Float32, 4),
                 };
 
                 QDemonRenderDrawMode primType = QDemonRenderDrawMode::Patches;
@@ -1401,7 +1401,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
             quint32 stride = sizeof(QVector2D);
 
             QDemonRenderVertexBufferEntry theBufferEntries[] = {
-                QDemonRenderVertexBufferEntry("attr_pos", QDemonRenderComponentTypes::Float32, 2, 0)
+                QDemonRenderVertexBufferEntry("attr_pos", QDemonRenderComponentType::Float32, 2, 0)
             };
 
             m_paintedRectVertexBuffer = theRenderContext->createVertexBuffer(QDemonRenderBufferUsageType::Static,
@@ -1409,7 +1409,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
                                                                              sizeof(QVector2D),
                                                                              toU8DataRef(vertexes, 4));
             m_paintedRectIndexBuffer = theRenderContext->createIndexBuffer(QDemonRenderBufferUsageType::Static,
-                                                                           QDemonRenderComponentTypes::UnsignedInteger8,
+                                                                           QDemonRenderComponentType::UnsignedInteger8,
                                                                            6,
                                                                            toU8DataRef(indexes, 6));
             QDemonRef<QDemonRenderAttribLayout> theAttribLayout = theRenderContext->createAttributeLayout(

@@ -147,7 +147,7 @@ public:
     void addShadowMapEntry(qint32 index,
                            qint32 width,
                            qint32 height,
-                           QDemonRenderTextureFormats::Enum format,
+                           QDemonRenderTextureFormat format,
                            qint32 samples,
                            ShadowMapModes::Enum mode,
                            ShadowFilterValues::Enum filter);

@@ -1209,7 +1209,7 @@ void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportD
                                 shadowMapManager->addShadowMapEntry(lights.size() - 1,
                                                                     mapSize,
                                                                     mapSize,
-                                                                    QDemonRenderTextureFormats::R16F,
+                                                                    QDemonRenderTextureFormat::R16F,
                                                                     1,
                                                                     mapMode,
                                                                     ShadowFilterValues::NONE);

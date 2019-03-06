@@ -81,7 +81,7 @@ struct QDemonWidgetBBox : public QDemonRenderWidgetInterface
 
     void setupBoundingBoxGraphicsObjects(QDemonRendererImpl &inContext, QDemonDataRef<QVector3D> thePoints)
     {
-        QDemonRenderVertexBufferEntry theEntry("attr_pos", QDemonRenderComponentTypes::Float16, 3);
+        QDemonRenderVertexBufferEntry theEntry("attr_pos", QDemonRenderComponentType::Float16, 3);
         m_boxVertexBuffer = inContext.getOrCreateVertexBuffer(m_itemName,
                                                               3 * sizeof(float),
                                                               toU8DataRef(thePoints.begin(), thePoints.size()));
@@ -138,7 +138,7 @@ struct QDemonWidgetBBox : public QDemonRenderWidgetInterface
                 xYZ,
             };
             m_boxIndexBuffer = inContext.getOrCreateIndexBuffer(m_itemName,
-                                                                QDemonRenderComponentTypes::UnsignedInteger8,
+                                                                QDemonRenderComponentType::UnsignedInteger8,
                                                                 sizeof(indexes),
                                                                 toU8DataRef(indexes, sizeof(indexes)));
         }
@@ -225,8 +225,8 @@ struct QDemonWidgetAxis : public QDemonRenderWidgetInterface
     void setupAxesGraphicsObjects(QDemonRendererImpl &inContext, QDemonDataRef<QVector3D> theAxes)
     {
         QDemonRenderVertexBufferEntry theEntries[] = {
-            QDemonRenderVertexBufferEntry("attr_pos", QDemonRenderComponentTypes::Float16, 3),
-            QDemonRenderVertexBufferEntry("attr_color", QDemonRenderComponentTypes::Float16, 3, 12),
+            QDemonRenderVertexBufferEntry("attr_pos", QDemonRenderComponentType::Float16, 3),
+            QDemonRenderVertexBufferEntry("attr_color", QDemonRenderComponentType::Float16, 3, 12),
         };
 
         m_axisVertexBuffer = inContext.getOrCreateVertexBuffer(m_itemName,

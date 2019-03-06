@@ -149,7 +149,7 @@ struct QDemonPixelGraphicsRenderer : public QDemonPixelGraphicsRendererInterface
         QDemonRef<QDemonRenderContext> theRenderContext(m_renderContext->getRenderContext());
 
         QDemonRenderVertexBufferEntry theEntries[] = {
-            QDemonRenderVertexBufferEntry("attr_pos", QDemonRenderComponentTypes::Float32, 2),
+            QDemonRenderVertexBufferEntry("attr_pos", QDemonRenderComponentType::Float32, 2),
         };
 
         QVector2D pos[] = { QVector2D(0, 0), QVector2D(0, 1), QVector2D(1, 1), QVector2D(1, 0) };
@@ -167,7 +167,7 @@ struct QDemonPixelGraphicsRenderer : public QDemonPixelGraphicsRendererInterface
                 0, 1, 2, 0, 2, 3,
             };
             m_quadIndexBuffer = theRenderContext->createIndexBuffer(QDemonRenderBufferUsageType::Static,
-                                                                    QDemonRenderComponentTypes::UnsignedInteger8,
+                                                                    QDemonRenderComponentType::UnsignedInteger8,
                                                                     sizeof(indexData),
                                                                     toU8DataRef(indexData, sizeof(indexData)));
         }

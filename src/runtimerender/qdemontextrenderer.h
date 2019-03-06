@@ -132,7 +132,7 @@ public:
                                                quint32 inDataHeight,
                                                quint32 inTextWidth,
                                                quint32 inTextHeight,
-                                               QDemonRenderTextureFormats::Enum inFormat,
+                                               QDemonRenderTextureFormat inFormat,
                                                bool inFlipYAxis);
 
     // Helper function to return the next power of two.

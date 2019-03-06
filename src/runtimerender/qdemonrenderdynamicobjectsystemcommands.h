@@ -114,14 +114,14 @@ struct QDemonAllocateBufferFlags : public QDemonFlags<AllocateBufferFlagValues::
 struct QDemonAllocateBuffer : public QDemonCommand
 {
     QString m_name;
-    QDemonRenderTextureFormats::Enum m_format = QDemonRenderTextureFormats::RGBA8;
+    QDemonRenderTextureFormat m_format = QDemonRenderTextureFormat::RGBA8;
     QDemonRenderTextureMagnifyingOp::Enum m_filterOp = QDemonRenderTextureMagnifyingOp::Linear;
     QDemonRenderTextureCoordOp::Enum m_texCoordOp = QDemonRenderTextureCoordOp::ClampToEdge;
     float m_sizeMultiplier = 1.0f;
     QDemonAllocateBufferFlags m_bufferFlags;
     QDemonAllocateBuffer() : QDemonCommand(CommandTypes::AllocateBuffer) {}
     QDemonAllocateBuffer(QString inName,
-                         QDemonRenderTextureFormats::Enum inFormat,
+                         QDemonRenderTextureFormat inFormat,
                          QDemonRenderTextureMagnifyingOp::Enum inFilterOp,
                          QDemonRenderTextureCoordOp::Enum inCoordOp,
                          float inMultiplier,
@@ -153,7 +153,7 @@ struct QDemonAllocateImage : public QDemonAllocateBuffer
 
     QDemonAllocateImage() : QDemonAllocateBuffer() { m_type = CommandTypes::AllocateImage; }
     QDemonAllocateImage(QString inName,
-                        QDemonRenderTextureFormats::Enum inFormat,
+                        QDemonRenderTextureFormat inFormat,
                         QDemonRenderTextureMagnifyingOp::Enum inFilterOp,
                         QDemonRenderTextureCoordOp::Enum inCoordOp,
                         float inMultiplier,
@@ -213,9 +213,9 @@ struct QDemonAllocateDataBuffer : public QDemonCommand
 
 struct QDemonBindTarget : public QDemonCommand
 {
-    QDemonRenderTextureFormats::Enum m_outputFormat;
+    QDemonRenderTextureFormat m_outputFormat;
 
-    explicit QDemonBindTarget(QDemonRenderTextureFormats::Enum inFormat = QDemonRenderTextureFormats::RGBA8)
+    explicit QDemonBindTarget(QDemonRenderTextureFormat inFormat = QDemonRenderTextureFormat::RGBA8)
         : QDemonCommand(CommandTypes::BindTarget), m_outputFormat(inFormat)
     {
     }

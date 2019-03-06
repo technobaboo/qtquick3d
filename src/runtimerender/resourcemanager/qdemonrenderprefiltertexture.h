@@ -44,21 +44,20 @@ public:
                                  qint32 inWidth,
                                  qint32 inHeight,
                                  const QDemonRef<QDemonRenderTexture2D> &inTexture,
-                                 QDemonRenderTextureFormats::Enum inDestFormat);
+                                 QDemonRenderTextureFormat inDestFormat);
     virtual ~QDemonRenderPrefilterTexture();
 
-    virtual void build(void *inTextureData, qint32 inTextureDataSize, QDemonRenderTextureFormats::Enum inFormat) = 0;
+    virtual void build(void *inTextureData, qint32 inTextureDataSize, QDemonRenderTextureFormat inFormat) = 0;
 
     static QDemonRef<QDemonRenderPrefilterTexture> create(const QDemonRef<QDemonRenderContext> &inQDemonRenderContext,
                                                           qint32 inWidth,
                                                           qint32 inHeight,
                                                           const QDemonRef<QDemonRenderTexture2D> &inTexture,
-                                                          QDemonRenderTextureFormats::Enum inDestFormat);
+                                                          QDemonRenderTextureFormat inDestFormat);
 
 protected:
     QDemonRef<QDemonRenderTexture2D> m_texture2D;
-    QDemonRenderTextureFormats::Enum m_internalFormat;
-    QDemonRenderTextureFormats::Enum m_destinationFormat;
+    QDemonRenderTextureFormat m_destinationFormat;
 
     qint32 m_width;
     qint32 m_height;
@@ -77,9 +76,9 @@ public:
                                     qint32 inWidth,
                                     qint32 inHeight,
                                     const QDemonRef<QDemonRenderTexture2D> &inTexture,
-                                    QDemonRenderTextureFormats::Enum inDestFormat);
+                                    QDemonRenderTextureFormat inDestFormat);
 
-    void build(void *inTextureData, qint32 inTextureDataSize, QDemonRenderTextureFormats::Enum inFormat) override;
+    void build(void *inTextureData, qint32 inTextureDataSize, QDemonRenderTextureFormat inFormat) override;
 
     QDemonTextureData createBsdfMipLevel(QDemonTextureData &inCurMipLevel, QDemonTextureData &inPrevMipLevel, qint32 width, qint32 height);
 
@@ -94,13 +93,13 @@ public:
                                         qint32 inWidth,
                                         qint32 inHeight,
                                         const QDemonRef<QDemonRenderTexture2D> &inTexture,
-                                        QDemonRenderTextureFormats::Enum inDestFormat);
+                                        QDemonRenderTextureFormat inDestFormat);
     ~QDemonRenderPrefilterTextureCompute() override;
 
-    void build(void *inTextureData, qint32 inTextureDataSize, QDemonRenderTextureFormats::Enum inFormat) override;
+    void build(void *inTextureData, qint32 inTextureDataSize, QDemonRenderTextureFormat inFormat) override;
 
 private:
-    void createLevel0Tex(void *inTextureData, qint32 inTextureDataSize, QDemonRenderTextureFormats::Enum inFormat);
+    void createLevel0Tex(void *inTextureData, qint32 inTextureDataSize, QDemonRenderTextureFormat inFormat);
 
     QDemonRef<QDemonRenderShaderProgram> m_bsdfProgram;
     QDemonRef<QDemonRenderShaderProgram> m_uploadProgram_RGBA8;
@@ -110,7 +109,7 @@ private:
 
     void createComputeProgram(const QDemonRef<QDemonRenderContext> &context);
     QDemonRef<QDemonRenderShaderProgram> getOrCreateUploadComputeProgram(const QDemonRef<QDemonRenderContext> &context,
-                                                                         QDemonRenderTextureFormats::Enum inFormat);
+                                                                         QDemonRenderTextureFormat inFormat);
 };
 QT_END_NAMESPACE
 

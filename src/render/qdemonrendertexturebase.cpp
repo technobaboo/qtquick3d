@@ -45,7 +45,7 @@ QDemonRenderTextureBase::QDemonRenderTextureBase(const QDemonRef<QDemonRenderCon
     , m_samplerParamsDirty(true)
     , m_texStateDirty(false)
     , m_sampleCount(1)
-    , m_format(QDemonRenderTextureFormats::Unknown)
+    , m_format(QDemonRenderTextureFormat::Unknown)
     , m_texTarget(texTarget)
     , m_baseLevel(0)
     , m_maxLevel(1000)
