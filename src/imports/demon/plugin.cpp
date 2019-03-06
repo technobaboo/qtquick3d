@@ -29,7 +29,6 @@
 
 #include <QtQml/qqmlextensionplugin.h>
 #include <QtQml/qqml.h>
-#include <private/qqmlmetatype_p.h>
 
 #include <QtQuick3d/qdemoncamera.h>
 #include <QtQuick3d/qdemoncustommaterial.h>

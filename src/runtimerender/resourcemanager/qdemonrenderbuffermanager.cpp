@@ -109,7 +109,7 @@ QDemonBufferManager::QDemonBufferManager(const QDemonRef<QDemonRenderContext> &c
     d->gpuSupportsDXT = ctx->areDXTImagesSupported();
 }
 
-QDemonBufferManager::~QDemonBufferManager() { clear(); }
+QDemonBufferManager::~QDemonBufferManager() = default;
 
 QString QDemonBufferManager::combineBaseAndRelative(const char *inBase, const char *inRelative)
 {
@@ -736,25 +736,23 @@ void QDemonBufferManager::releaseTexture(QDemonRenderImageTextureData &inEntry)
     //     inEntry.d->Texture->release();
 }
 
-QDemonBufferManager::QDemonBufferManager() = default;
-
-void QDemonBufferManager::clear()
+void QDemonBufferManager::Private::clear()
 {
-    for (Private::MeshMap::iterator iter = d->meshMap.begin(), end = d->meshMap.end(); iter != end; ++iter) {
+    for (auto iter = meshMap.begin(), end = meshMap.end(); iter != end; ++iter) {
         QDemonRenderMesh *theMesh = iter.value();
         if (theMesh)
-            releaseMesh(*theMesh);
+            QDemonBufferManager::releaseMesh(*theMesh);
     }
-    d->meshMap.clear();
-    for (Private::ImageMap::iterator iter = d->imageMap.begin(), end = d->imageMap.end(); iter != end; ++iter) {
+    meshMap.clear();
+    for (auto iter = imageMap.begin(), end = imageMap.end(); iter != end; ++iter) {
         QDemonRenderImageTextureData &theEntry = iter.value();
-        releaseTexture(theEntry);
+        QDemonBufferManager::releaseTexture(theEntry);
     }
-    d->imageMap.clear();
-    d->aliasImageMap.clear();
+    imageMap.clear();
+    aliasImageMap.clear();
     {
-        QMutexLocker locker(&d->loadedImageSetMutex);
-        d->loadedImageSet.clear();
+        QMutexLocker locker(&loadedImageSetMutex);
+        loadedImageSet.clear();
     }
 }
 
@@ -785,6 +783,8 @@ void QDemonBufferManager::invalidateBuffer(QString inSourcePath)
 
 QDemonBufferManager::Private::Private() = default;
 
-QDemonBufferManager::Private::~Private() = default;
+QDemonBufferManager::Private::~Private() {
+    clear();
+}
 
 QT_END_NAMESPACE

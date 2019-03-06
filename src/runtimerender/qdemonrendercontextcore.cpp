@@ -183,6 +183,7 @@ struct QDemonRenderContextData : public QDemonRenderContextInterface
         , m_coreContext(inCore)
         , m_perfTimer(inCore->getPerfTimer())
         , m_inputStreamFactory(inCore->getInputStreamFactory())
+        , m_bufferManager(ctx, m_inputStreamFactory, m_perfTimer)
         , m_resourceManager(QDemonResourceManagerInterface::createResourceManager(ctx))
         , m_shaderCache(QDemonShaderCacheInterface::createShaderCache(ctx, m_inputStreamFactory, m_perfTimer))
         , m_threadPool(inCore->getThreadPool())
@@ -197,7 +198,6 @@ struct QDemonRenderContextData : public QDemonRenderContextInterface
         , m_fps(qMakePair(0.0, 0))
         , m_authoringMode(false)
     {
-        m_bufferManager = QDemonBufferManager(ctx, m_inputStreamFactory, m_perfTimer);
         m_renderList = QDemonRenderListInterface::createRenderList();
         m_offscreenRenderManager = QDemonOffscreenRenderManagerInterface::createOffscreenRenderManager(m_resourceManager, this);
         m_renderer = QDemonRendererInterface::createRenderer(this);

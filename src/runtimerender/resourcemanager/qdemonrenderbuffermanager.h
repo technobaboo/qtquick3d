@@ -70,16 +70,17 @@ class Q_DEMONRUNTIMERENDER_EXPORT QDemonBufferManager
         MeshMap meshMap;
         QVector<QDemonRenderVertexBufferEntry> entryBuffer;
         bool gpuSupportsDXT;
+
+        void clear();
     };
     QExplicitlySharedDataPointer<Private> d;
 
     QDemonMeshUtilities::MultiLoadResult loadPrimitive(const QString &inRelativePath) const;
     QDemonConstDataRef<quint8> createPackedPositionDataArray(QDemonMeshUtilities::MultiLoadResult *inResult) const;
-    void releaseMesh(QDemonRenderMesh &inMesh);
-    void releaseTexture(QDemonRenderImageTextureData &inEntry);
+    static void releaseMesh(QDemonRenderMesh &inMesh);
+    static void releaseTexture(QDemonRenderImageTextureData &inEntry);
 
 public:
-    QDemonBufferManager();
     QDemonBufferManager(const QDemonRef<QDemonRenderContext> &inRenderContext,
                         const QDemonRef<QDemonInputStreamFactoryInterface> &inInputStreamFactory,
                         const QDemonPerfTimer &inTimer);
@@ -128,7 +129,7 @@ public:
                                          QDemonBounds3 inBounds);
 
     // Remove *all* buffers from the buffer manager;
-    void clear();
+
     void invalidateBuffer(QString inSourcePath);
 
 };
