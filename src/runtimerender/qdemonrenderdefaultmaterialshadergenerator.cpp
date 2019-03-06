@@ -925,7 +925,7 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
         bool enableBumpNormal = normalImage || bumpImage;
 
         for (qint32 idx = 0; idx < featureSet().size(); ++idx) {
-            const auto &name = featureSet()[idx].name;
+            const auto &name = featureSet().at(idx).name;
             if (name == QStringLiteral("QDEMON_ENABLE_SSAO"))
                 enableSSAO = featureSet()[idx].enabled;
             else if (name == QStringLiteral("QDEMON_ENABLE_SSDO"))
