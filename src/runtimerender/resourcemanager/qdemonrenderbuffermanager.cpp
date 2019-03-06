@@ -55,13 +55,29 @@ QT_BEGIN_NAMESPACE
 
 namespace {
 
-struct QDemonPrimitiveEntry
+namespace {
+
+struct PrimitiveEntry
 {
     // Name of the primitive as it will be in the UIP file
-    QString primitiveName;
+    const char *primitive;
     // Name of the primitive file on the filesystem
-    QString fileName;
+    const char *file;
 };
+
+const int nPrimitives = 5;
+const PrimitiveEntry primitives[nPrimitives] = {
+        {"#Rectangle", "Rectangle.mesh"},
+        {"#Sphere","Sphere.mesh"},
+        {"#Cube","Cube.mesh"},
+        {"#Cone","Cone.mesh"},
+        {"#Cylinder","Cylinder.mesh"},
+};
+
+const char *primitivesDirectory = "res//primitives";
+
+}
+
 
 struct QDemonBufferManager : public QDemonBufferManagerInterface
 {
@@ -79,10 +95,8 @@ struct QDemonBufferManager : public QDemonBufferManagerInterface
     TStringSet m_loadedImageSet;
     TAliasImageMap m_aliasImageMap;
     TMeshMap m_meshMap;
-    QDemonPrimitiveEntry m_primitiveNames[5];
     QVector<QDemonRenderVertexBufferEntry> m_entryBuffer;
     bool m_gpuSupportsDXT;
-    static const char *getPrimitivesDirectory() { return "res//primitives"; }
 
     QDemonBufferManager(const QDemonRef<QDemonRenderContext> &ctx,
                         const QDemonRef<QDemonInputStreamFactoryInterface> &inInputStreamFactory,
@@ -342,22 +356,10 @@ struct QDemonBufferManager : public QDemonBufferManagerInterface
 
     QDemonMeshUtilities::MultiLoadResult loadPrimitive(const QString &inRelativePath)
     {
-        QString theName = inRelativePath;
-        if (m_primitiveNames[0].primitiveName.isNull()) {
-            m_primitiveNames[0].primitiveName = QStringLiteral("#Rectangle");
-            m_primitiveNames[0].fileName = QStringLiteral("Rectangle.mesh");
-            m_primitiveNames[1].primitiveName = QStringLiteral("#Sphere");
-            m_primitiveNames[1].fileName = QStringLiteral("Sphere.mesh");
-            m_primitiveNames[2].primitiveName = QStringLiteral("#Cube");
-            m_primitiveNames[2].fileName = QStringLiteral("Cube.mesh");
-            m_primitiveNames[3].primitiveName = QStringLiteral("#Cone");
-            m_primitiveNames[3].fileName = QStringLiteral("Cone.mesh");
-            m_primitiveNames[4].primitiveName = QStringLiteral("#Cylinder");
-            m_primitiveNames[4].fileName = QStringLiteral("Cylinder.mesh");
-        }
+        QByteArray theName = inRelativePath.toUtf8();
         for (size_t idx = 0; idx < 5; ++idx) {
-            if (m_primitiveNames[idx].primitiveName == theName) {
-                CFileTools::combineBaseAndRelative(QString::fromLatin1(getPrimitivesDirectory()), m_primitiveNames[idx].fileName, m_pathBuilder);
+            if (primitives[idx].primitive == theName) {
+                CFileTools::combineBaseAndRelative(QString::fromLatin1(primitivesDirectory), QString::fromLatin1(primitives[idx].file), m_pathBuilder);
                 quint32 id = 1;
                 QSharedPointer<QIODevice> theInStream(m_inputStreamFactory->getStreamForFile(m_pathBuilder));
                 if (theInStream)
