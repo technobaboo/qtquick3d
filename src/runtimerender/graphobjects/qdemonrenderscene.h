@@ -57,6 +57,7 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderScene : public QDemonGraphObject
     QDemonRenderScene();
 
     void addChild(QDemonRenderLayer &inLayer);
+    void removeChild(QDemonRenderLayer &inLayer);
     QDemonRenderLayer *getLastChild();
     // returns true if any of the layers were dirty or if this object was dirty
     bool prepareForRender(const QVector2D &inViewportDimensions,

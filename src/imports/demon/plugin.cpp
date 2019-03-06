@@ -29,6 +29,7 @@
 
 #include <QtQml/qqmlextensionplugin.h>
 #include <QtQml/qqml.h>
+#include <private/qqmlmetatype_p.h>
 
 #include <QtQuick3d/qdemoncamera.h>
 #include <QtQuick3d/qdemoncustommaterial.h>
@@ -43,6 +44,8 @@
 #include <QtQuick3d/qdemonobject.h>
 #include <QtQuick3d/qdemonwindow.h>
 
+#include <private/qqmlglobal_p.h>
+
 static void initResources()
 {
 #ifdef QT_STATIC
@@ -51,6 +54,43 @@ static void initResources()
 }
 
 QT_BEGIN_NAMESPACE
+
+static QQmlPrivate::AutoParentResult qdemonobject_autoParent(QObject *obj, QObject *parent)
+{
+    // When setting a parent (especially during dynamic object creation) in QML,
+    // also try to set up the analogous item/window relationship.
+    if (QDemonObject *parentItem = qmlobject_cast<QDemonObject *>(parent)) {
+        QDemonObject *item = qmlobject_cast<QDemonObject *>(obj);
+        if (item) {
+            // An Item has another Item
+            item->setParentItem(parentItem);
+            return QQmlPrivate::Parented;
+        } else if (parentItem->window()) {
+            QDemonWindow *win = qmlobject_cast<QDemonWindow *>(obj);
+            if (win) {
+                // A Window inside an Item should be transient for that item's window
+                win->setTransientParent(parentItem->window());
+                return QQmlPrivate::Parented;
+            }
+        }
+        return QQmlPrivate::IncompatibleObject;
+    } else if (QDemonWindow *parentWindow = qmlobject_cast<QDemonWindow *>(parent)) {
+        QDemonWindow *win = qmlobject_cast<QDemonWindow *>(obj);
+        if (win) {
+            // A Window inside a Window should be transient for it
+            win->setTransientParent(parentWindow);
+            return QQmlPrivate::Parented;
+        } else if (QDemonObject *item = qmlobject_cast<QDemonObject *>(obj)) {
+            // The parent of an Item inside a Window is actually the implicit content Item
+            item->setParentItem(parentWindow->contentItem());
+            return QQmlPrivate::Parented;
+        }
+        return QQmlPrivate::IncompatibleObject;
+    } else if (qmlobject_cast<QDemonObject *>(obj)) {
+        return QQmlPrivate::IncompatibleParent;
+    }
+    return QQmlPrivate::IncompatibleObject;
+}
 
 class QDemonPlugin : public QQmlExtensionPlugin
 {
@@ -61,6 +101,9 @@ public:
     QDemonPlugin(QObject *parent = nullptr) : QQmlExtensionPlugin(parent) { initResources(); }
     void registerTypes(const char *uri) override
     {
+        QQmlPrivate::RegisterAutoParent autoparent = { 0, &qdemonobject_autoParent };
+        QQmlPrivate::qmlregister(QQmlPrivate::AutoParentRegistration, &autoparent);
+
         qmlRegisterType<QDemonCamera>(uri, 1, 0, "DemonCamera");
         qmlRegisterType<QDemonCustomMaterial>(uri, 1, 0, "DemonCustomMaterial");
         qmlRegisterType<QDemonDefaultMaterial>(uri, 1, 0, "DemonDefaultMaterial");

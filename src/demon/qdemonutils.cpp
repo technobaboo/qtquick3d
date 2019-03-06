@@ -56,17 +56,10 @@ QVector3D mat33::transform(const QMatrix3x3 &m, const QVector3D &v)
 
 QMatrix3x3 mat33::getInverse(const QMatrix3x3 &m)
 {
-<<<<<<< HEAD
-    // return column0.dot(column1.cross(column2));
-    const QVector3D c0(m(0, 0), m(0, 1), m(0, 2));
-    const QVector3D c1(m(1, 0), m(1, 1), m(1, 2));
-    const QVector3D c2(m(2, 0), m(2, 1), m(2, 2));
-=======
     //return column0.dot(column1.cross(column2));
     const QVector3D c0(m(0, 0), m(1, 0), m(2, 0));
     const QVector3D c1(m(0, 1), m(1, 1), m(2, 1));
     const QVector3D c2(m(0, 2), m(1, 2), m(2, 2));
->>>>>>> Some fixes to matrix math (Col vs Row)
 
     const float det = QVector3D::dotProduct(c0, QVector3D::crossProduct(c1, c2));
     QMatrix3x3 inverse;

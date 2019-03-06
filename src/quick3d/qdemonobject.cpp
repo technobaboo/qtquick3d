@@ -112,11 +112,11 @@ void QDemonObject::setParentItem(QDemonObject *parentItem)
         //            }
         //        }
 
-        //        const bool wasVisible = isVisible();
+        const bool wasVisible = isVisible();
         op->removeChild(this);
-        //        if (wasVisible) {
-        //            emit oldParentItem->visibleChildrenChanged();
-        //        }
+        if (wasVisible) {
+            emit oldParentItem->visibleChildrenChanged();
+        }
     } else if (d->window) {
         QDemonWindowPrivate::get(d->window)->parentlessItems.remove(this);
     }
@@ -180,8 +180,8 @@ void QDemonObject::setParentItem(QDemonObject *parentItem)
     d->itemChange(ItemParentHasChanged, d->parentItem);
 
     emit parentChanged(d->parentItem);
-    //    if (isVisible() && d->parentItem)
-    //        emit d->parentItem->visibleChildrenChanged();
+    if (isVisible() && d->parentItem)
+        emit d->parentItem->visibleChildrenChanged();
 }
 
 void QDemonObject::setEnabled(bool enabled)
@@ -940,8 +940,8 @@ void QDemonObjectPrivate::derefWindow()
     // c->removeGrabber(q);
 
     // c->hoverItems.removeAll(q);
-    //    if (itemNodeInstance)
-    //        c->cleanup(itemNodeInstance);
+    if (spatialNode)
+        c->cleanup(spatialNode);
     if (!parentItem)
         c->parentlessItems.remove(q);
 
@@ -955,7 +955,7 @@ void QDemonObjectPrivate::derefWindow()
     //        extra->rootNode = nullptr;
     //    }
 
-    //    paintNode = nullptr;
+    spatialNode = nullptr;
 
     for (int ii = 0; ii < childItems.count(); ++ii) {
         QDemonObject *child = childItems.at(ii);

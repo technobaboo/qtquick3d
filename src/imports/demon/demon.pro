@@ -3,7 +3,7 @@ TARGET = qdemonplugin
 TARGETPATH = QtDemon
 IMPORT_VERSION = 1.$$QT_MINOR_VERSION
 
-QT += qml quick quick3d
+QT += qml-private quick quick3d
 
 OTHER_FILES += \
     qmldir

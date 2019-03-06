@@ -1135,15 +1135,26 @@ void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportD
             setShaderFeature("QDEMON_ENABLE_LIGHT_PROBE_2", lightProbeValid && HasValidLightProbe(layer.lightProbe2));
 
             // Push nodes in reverse depth first order
-            if (renderableNodes.empty()) {
-                camerasAndLights.clear();
-                quint32 dfsIndex = 0;
-                for (QDemonGraphNode *theChild = layer.firstChild; theChild; theChild = theChild->nextSibling)
-                    MaybeQueueNodeForRender(*theChild, renderableNodes, camerasAndLights, dfsIndex);
-                std::reverse(camerasAndLights.begin(), camerasAndLights.end());
-                std::reverse(renderableNodes.begin(), renderableNodes.end());
-                lightToNodeMap.clear();
-            }
+//            if (renderableNodes.empty()) {
+//                camerasAndLights.clear();
+//                quint32 dfsIndex = 0;
+//                for (QDemonGraphNode *theChild = layer.firstChild; theChild; theChild = theChild->nextSibling)
+//                    MaybeQueueNodeForRender(*theChild, renderableNodes, camerasAndLights, dfsIndex);
+//                std::reverse(camerasAndLights.begin(), camerasAndLights.end());
+//                std::reverse(renderableNodes.begin(), renderableNodes.end());
+//                lightToNodeMap.clear();
+//            }
+            // ### TODO: Really this should only be done if renderableNodes is empty or dirty
+            // but we don't have a way to say it's dirty yet (new renderables added to the tree)
+            camerasAndLights.clear();
+            renderableNodes.clear();
+            quint32 dfsIndex = 0;
+            for (QDemonGraphNode *theChild = layer.firstChild; theChild; theChild = theChild->nextSibling)
+                MaybeQueueNodeForRender(*theChild, renderableNodes, camerasAndLights, dfsIndex);
+            std::reverse(camerasAndLights.begin(), camerasAndLights.end());
+            std::reverse(renderableNodes.begin(), renderableNodes.end());
+            lightToNodeMap.clear();
+
             camera = nullptr;
             lights.clear();
             opaqueObjects.clear();

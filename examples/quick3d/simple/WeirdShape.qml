@@ -4,6 +4,8 @@ import QtDemon 1.0
 DemonNode {
     id: weirdShape
 
+    property alias color: weirdShapeMaterial.diffuseColor
+
     DemonModel {
         source: "weirdShape.mesh"
         scale: Qt.vector3d(100, 100, 100)

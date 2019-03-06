@@ -57,6 +57,7 @@ void QDemonRenderModel::addMaterial(QDemonGraphObject &inMaterial)
         }
         setNextMaterialSibling(*lastMaterial, &inMaterial);
     }
+    // ### I don't think reparenting is necessary here (I tested without it at least)
     if (inMaterial.type == QDemonGraphObjectTypes::DefaultMaterial)
         static_cast<QDemonRenderDefaultMaterial &>(inMaterial).parent = this;
 }

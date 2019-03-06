@@ -54,6 +54,25 @@ void QDemonRenderScene::addChild(QDemonRenderLayer &inLayer)
     inLayer.scene = this;
 }
 
+void QDemonRenderScene:: removeChild(QDemonRenderLayer &inLayer)
+{
+    QDemonRenderLayer *child;
+    for (child = firstChild; child && child->nextSibling; child = static_cast<QDemonRenderLayer *>(child->nextSibling)) {
+        if (child == &inLayer) {
+            if (child->previousSibling)
+                child->previousSibling->nextSibling = child->nextSibling;
+            if (child->nextSibling)
+                child->nextSibling->previousSibling = child->previousSibling;
+            child->parent = nullptr;
+            if (firstChild == child)
+                firstChild = static_cast<QDemonRenderLayer *>(child->nextSibling);
+            child->nextSibling = nullptr;
+            child->previousSibling = nullptr;
+            return;
+        }
+    }
+}
+
 QDemonRenderLayer *QDemonRenderScene::getLastChild()
 {
     // empty loop intentional
