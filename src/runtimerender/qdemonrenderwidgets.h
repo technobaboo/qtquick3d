@@ -77,10 +77,10 @@ struct QDemonWidgetRenderInformation
     // Position in camera space to center the widget around
     QVector3D m_position;
     // Scale factor to scale the widget by.
-    float m_scale;
+    float m_scale = 1.0f;
 
     // The camera used to render this object.
-    QDemonRenderCamera *m_camera;
+    QDemonRenderCamera *m_camera = nullptr;
     QDemonWidgetRenderInformation(const QMatrix3x3 &inNormal,
                                   const QMatrix4x4 &inNodeParentToCamera,
                                   const QMatrix4x4 &inLayerProjection,
@@ -103,7 +103,7 @@ struct QDemonWidgetRenderInformation
         , m_camera(&inCamera)
     {
     }
-    QDemonWidgetRenderInformation() : m_camera(nullptr) {}
+    QDemonWidgetRenderInformation() = default;
 };
 typedef QPair<QDemonShaderVertexCodeGenerator &, QDemonShaderFragmentCodeGenerator &> TShaderGeneratorPair;
 
