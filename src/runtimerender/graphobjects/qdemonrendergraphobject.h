@@ -51,6 +51,7 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonGraphObject
 
     QDemonGraphObject(QDemonGraphObjectTypes::Enum inType) : type(inType) {}
     QDemonGraphObject(const QDemonGraphObject &inCloningObject) : id(inCloningObject.id), type(inCloningObject.type) {}
+    virtual ~QDemonGraphObject() {}
 
     // If you change any detail of the scene graph, or even *breath* on a
     // scene graph object, you need to bump this binary version so at least

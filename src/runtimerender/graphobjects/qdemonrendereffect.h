@@ -50,7 +50,7 @@ private:
     QDemonRenderEffect(const QDemonRenderEffect &) = delete;
     QDemonRenderEffect &operator=(const QDemonRenderEffect &) = delete;
     QDemonRenderEffect() = delete;
-    ~QDemonRenderEffect() = delete;
+    ~QDemonRenderEffect();
 
 public:
     QDemonRenderLayer *m_layer;
@@ -68,6 +68,7 @@ public:
 
     void reset(QDemonEffectSystemInterface &inSystem);
 };
+
 QT_END_NAMESPACE
 
 #endif

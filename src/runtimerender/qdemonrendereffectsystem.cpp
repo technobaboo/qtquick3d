@@ -1818,4 +1818,9 @@ QDemonEffectRenderArgument::QDemonEffectRenderArgument(QDemonRenderEffect *inEff
 {
 }
 
+QDemonRenderEffect::~QDemonRenderEffect()
+{
+
+}
+
 QT_END_NAMESPACE
