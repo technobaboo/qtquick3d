@@ -55,11 +55,6 @@ QT_BEGIN_NAMESPACE
 
 namespace {
 
-struct QDemonImageEntry : public QDemonRenderImageTextureData
-{
-    bool loaded = false;
-};
-
 struct QDemonPrimitiveEntry
 {
     // Name of the primitive as it will be in the UIP file
@@ -71,7 +66,7 @@ struct QDemonPrimitiveEntry
 struct QDemonBufferManager : public QDemonBufferManagerInterface
 {
     typedef QSet<QString> TStringSet;
-    typedef QHash<QString, QDemonImageEntry> TImageMap;
+    typedef QHash<QString, QDemonRenderImageTextureData> TImageMap;
     typedef QHash<QString, QDemonRenderMesh *> TMeshMap;
     typedef QHash<QString, QString> TAliasImageMap;
 
@@ -108,7 +103,7 @@ struct QDemonBufferManager : public QDemonBufferManagerInterface
 
     void setImageHasTransparency(QString inImagePath, bool inHasTransparency) override
     {
-        TImageMap::iterator theImage = m_imageMap.insert(inImagePath, QDemonImageEntry());
+        TImageMap::iterator theImage = m_imageMap.insert(inImagePath, QDemonRenderImageTextureData());
         theImage.value().m_textureFlags.setHasTransparency(inHasTransparency);
     }
 
@@ -198,9 +193,8 @@ struct QDemonBufferManager : public QDemonBufferManagerInterface
         TImageMap::iterator theImage = m_imageMap.find(inImagePath);
         bool wasInserted = theImage == m_imageMap.end();
         if (wasInserted)
-            theImage = m_imageMap.insert(inImagePath, QDemonImageEntry());
+            theImage = m_imageMap.insert(inImagePath, QDemonRenderImageTextureData());
 
-        theImage.value().loaded = true;
         // inLoadedImage.EnsureMultiplerOfFour( m_Context->GetFoundation(), inImagePath.c_str() );
 
         QDemonRef<QDemonRenderTexture2D> theTexture = m_context->createTexture2D();
@@ -283,7 +277,7 @@ struct QDemonBufferManager : public QDemonBufferManagerInterface
         inImagePath = getImagePath(inImagePath);
 
         if (inImagePath.isNull())
-            return QDemonImageEntry();
+            return QDemonRenderImageTextureData();
 
         TImageMap::iterator theIter = m_imageMap.find(inImagePath);
         if (theIter == m_imageMap.end() && !inImagePath.isNull()) {
@@ -338,8 +332,7 @@ struct QDemonBufferManager : public QDemonBufferManagerInterface
                 // We want to make sure that bad path fails once and doesn't fail over and over
                 // again
                 // which could slow down the system quite a bit.
-                TImageMap::iterator theImage = m_imageMap.insert(inImagePath, QDemonImageEntry());
-                theImage.value().loaded = true;
+                TImageMap::iterator theImage = m_imageMap.insert(inImagePath, QDemonRenderImageTextureData());
                 qCWarning(WARNING, "Failed to load image: %s", qPrintable(inImagePath));
                 theIter = theImage;
             }
@@ -755,7 +748,7 @@ struct QDemonBufferManager : public QDemonBufferManagerInterface
     }
 
     void releaseMesh(QDemonRenderMesh &inMesh) { delete &inMesh; }
-    void releaseTexture(QDemonImageEntry &inEntry)
+    void releaseTexture(QDemonRenderImageTextureData &inEntry)
     {
         // TODO:
         Q_UNUSED(inEntry);
@@ -771,7 +764,7 @@ struct QDemonBufferManager : public QDemonBufferManagerInterface
         }
         m_meshMap.clear();
         for (TImageMap::iterator iter = m_imageMap.begin(), end = m_imageMap.end(); iter != end; ++iter) {
-            QDemonImageEntry &theEntry = iter.value();
+            QDemonRenderImageTextureData &theEntry = iter.value();
             releaseTexture(theEntry);
         }
         m_imageMap.clear();
@@ -795,7 +788,7 @@ struct QDemonBufferManager : public QDemonBufferManagerInterface
         {
             TImageMap::iterator iter = m_imageMap.find(inSourcePath);
             if (iter != m_imageMap.end()) {
-                QDemonImageEntry &theEntry = iter.value();
+                QDemonRenderImageTextureData &theEntry = iter.value();
                 releaseTexture(theEntry);
                 m_imageMap.remove(inSourcePath);
                 {
