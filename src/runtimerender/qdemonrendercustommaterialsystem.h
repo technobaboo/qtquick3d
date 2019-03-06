@@ -35,6 +35,8 @@
 #include <QtDemonRuntimeRender/qdemonrenderdynamicobjectsystem.h>
 #include <QtDemonRuntimeRender/qdemonvertexpipelineimpl.h>
 
+#include <QtCore/qhash.h>
+
 QT_BEGIN_NAMESPACE
 
 namespace dynamic {
@@ -43,85 +45,188 @@ struct QDemonCommand;
 
 struct QDemonCustomMaterialRenderContext;
 struct QDemonRenderCustomMaterial;
-class QDemonCustomMaterialSystemInterface;
+class QDemonMaterialSystem;
 struct QDemonRenderSubset;
+struct QDemonShaderMapKey;
+struct QDemonCustomMaterialShader;
+struct QDemonMaterialClass;
+struct QDemonCustomMaterialTextureData;
+struct QDemonCustomMaterialBuffer;
+struct QDemonMaterialOrComputeShader;
+namespace dynamic {
+    struct QDemonBindShader;
+    struct QDemonApplyInstanceValue;
+    struct QDemonApplyBlending;
+    struct QDemonAllocateBuffer;
+    struct QDemonApplyBufferValue;
+    struct QDemonBindBuffer;
+    struct QDemonApplyBlitFramebuffer;
+}
 
 // How to handle blend modes?
 struct QDemonRenderModel;
-class Q_DEMONRUNTIMERENDER_EXPORT QDemonCustomMaterialSystemInterface
+
+class Q_DEMONRUNTIMERENDER_EXPORT QDemonMaterialSystem
 {
+    struct Private {
+        ~Private();
+        QAtomicInt ref;
+        typedef QHash<QDemonShaderMapKey, QDemonRef<QDemonCustomMaterialShader>> ShaderMap;
+        typedef QPair<QString, QDemonRenderImage *> AllocatedImageEntry;
+        typedef QHash<QString, QDemonRef<QDemonMaterialClass>> StringMaterialMap;
+        typedef QPair<QString, QString> TStrStrPair;
+        typedef QPair<QString, QDemonRef<QDemonCustomMaterialTextureData>> CustomMaterialTextureEntry;
+
+        QDemonRenderContextCoreInterface *coreContext = nullptr;
+        QDemonRenderContextInterface *context = nullptr;
+        StringMaterialMap stringMaterialMap;
+        ShaderMap shaderMap;
+        QVector<CustomMaterialTextureEntry> textureEntries;
+        QVector<QDemonCustomMaterialBuffer> allocatedBuffers;
+        QVector<AllocatedImageEntry> allocatedImages;
+        bool useFastBlits = true;
+        QString shaderNameBuilder;
+        quint64 lastFrameTime = 0;
+        float msSinceLastFrame = 0;
+    };
+    QExplicitlySharedDataPointer<Private> d;
+
+    void releaseBuffer(quint32 inIdx);
+    QDemonMaterialClass *getMaterialClass(const QString &inStr);
+    const QDemonMaterialClass *getMaterialClass(const QString &inStr) const;
+
+    QDemonRef<QDemonRenderShaderProgram> getShader(QDemonCustomMaterialRenderContext &inRenderContext,
+                                                   const QDemonRenderCustomMaterial &inMaterial,
+                                                   const dynamic::QDemonBindShader &inCommand,
+                                                   const TShaderFeatureSet &inFeatureSet,
+                                                   const dynamic::QDemonDynamicShaderProgramFlags &inFlags);
+
+    QDemonMaterialOrComputeShader bindShader(QDemonCustomMaterialRenderContext &inRenderContext,
+                                             const QDemonRenderCustomMaterial &inMaterial,
+                                             const dynamic::QDemonBindShader &inCommand,
+                                             const TShaderFeatureSet &inFeatureSet);
+
+    void doApplyInstanceValue(QDemonRenderCustomMaterial & /* inMaterial */,
+                              quint8 *inDataPtr,
+                              const QString &inPropertyName,
+                              QDemonRenderShaderDataTypes::Enum inPropertyType,
+                              const QDemonRef<QDemonRenderShaderProgram> &inShader,
+                              const dynamic::QDemonPropertyDefinition &inDefinition);
+
+    void applyInstanceValue(QDemonRenderCustomMaterial &inMaterial,
+                            QDemonMaterialClass &inClass,
+                            const QDemonRef<QDemonRenderShaderProgram> &inShader,
+                            const dynamic::QDemonApplyInstanceValue &inCommand);
+
+    void applyBlending(const dynamic::QDemonApplyBlending &inCommand);
+
+    // we currently only bind a source texture
+    const QDemonRef<QDemonRenderTexture2D> applyBufferValue(const QDemonRenderCustomMaterial &inMaterial,
+                                                            const QDemonRef<QDemonRenderShaderProgram> &inShader,
+                                                            const dynamic::QDemonApplyBufferValue &inCommand,
+                                                            const QDemonRef<QDemonRenderTexture2D> inSourceTexture);
+
+    void allocateBuffer(const dynamic::QDemonAllocateBuffer &inCommand, const QDemonRef<QDemonRenderFrameBuffer> &inTarget);
+
+    QDemonRef<QDemonRenderFrameBuffer> bindBuffer(const QDemonRenderCustomMaterial &inMaterial,
+                                                  const dynamic::QDemonBindBuffer &inCommand,
+                                                  bool &outClearTarget,
+                                                  QVector2D &outDestSize);
+    void computeScreenCoverage(QDemonCustomMaterialRenderContext &inRenderContext, qint32 *xMin, qint32 *yMin, qint32 *xMax, qint32 *yMax);
+    void blitFramebuffer(QDemonCustomMaterialRenderContext &inRenderContext,
+                         const dynamic::QDemonApplyBlitFramebuffer &inCommand,
+                         const QDemonRef<QDemonRenderFrameBuffer> &inTarget);
+    QDemonLayerGlobalRenderProperties getLayerGlobalRenderProperties(QDemonCustomMaterialRenderContext &inRenderContext);
+    void renderPass(QDemonCustomMaterialRenderContext &inRenderContext,
+                    const QDemonRef<QDemonCustomMaterialShader> &inShader,
+                    const QDemonRef<QDemonRenderTexture2D> & /* inSourceTexture */,
+                    const QDemonRef<QDemonRenderFrameBuffer> &inFrameBuffer,
+                    bool inRenderTargetNeedsClear,
+                    const QDemonRef<QDemonRenderInputAssembler> &inAssembler,
+                    quint32 inCount,
+                    quint32 inOffset);
+    void doRenderCustomMaterial(QDemonCustomMaterialRenderContext &inRenderContext,
+                                const QDemonRenderCustomMaterial &inMaterial,
+                                QDemonMaterialClass &inClass,
+                                const QDemonRef<QDemonRenderFrameBuffer> &inTarget,
+                                const TShaderFeatureSet &inFeatureSet);
+    void prepareTextureForRender(QDemonMaterialClass &inClass, QDemonRenderCustomMaterial &inMaterial);
+    void prepareDisplacementForRender(QDemonMaterialClass &inClass, QDemonRenderCustomMaterial &inMaterial);
+    void prepareMaterialForRender(QDemonMaterialClass &inClass, QDemonRenderCustomMaterial &inMaterial);
+
+    quint32 findBuffer(const QString &inName);
+    quint32 findAllocatedImage(const QString &inName);
+    bool textureNeedsMips(const dynamic::QDemonPropertyDefinition *inPropDec, QDemonRenderTexture2D *inTexture);
+    void setTexture(const QDemonRef<QDemonRenderShaderProgram> &inShader, const QString &inPropName,
+                    const QDemonRef<QDemonRenderTexture2D> &inTexture,
+                    const dynamic::QDemonPropertyDefinition *inPropDec = nullptr,
+                    bool needMips = false);
 public:
-    QAtomicInt ref;
-    virtual ~QDemonCustomMaterialSystemInterface() {}
-    virtual bool isMaterialRegistered(const QString &inStr) = 0;
+    QDemonMaterialSystem() = default;
+    QDemonMaterialSystem(QDemonRenderContextCoreInterface *ct);
 
-    virtual bool registerMaterialClass(const QString &inName,
-                                       const QDemonConstDataRef<dynamic::QDemonPropertyDeclaration> &inProperties) = 0;
+    ~QDemonMaterialSystem();
+    bool isMaterialRegistered(const QString &inStr);
 
-    virtual QDemonConstDataRef<dynamic::QDemonPropertyDefinition> getCustomMaterialProperties(const QString &inCustomMaterialName) const = 0;
+    bool registerMaterialClass(const QString &inName,
+                                       const QDemonConstDataRef<dynamic::QDemonPropertyDeclaration> &inProperties);
 
-    virtual void setCustomMaterialRefraction(const QString &inName, bool inHasRefraction) = 0;
-    virtual void setCustomMaterialTransparency(const QString &inName, bool inHasTransparency) = 0;
-    virtual void setCustomMaterialAlwaysDirty(const QString &inName, bool inIsAlwaysDirty) = 0;
-    virtual void setCustomMaterialShaderKey(const QString &inName, quint32 inShaderKey) = 0;
-    virtual void setCustomMaterialLayerCount(const QString &inName, quint32 inLayerCount) = 0;
+    QDemonConstDataRef<dynamic::QDemonPropertyDefinition> getCustomMaterialProperties(const QString &inCustomMaterialName) const;
+
+    void setCustomMaterialRefraction(const QString &inName, bool inHasRefraction);
+    void setCustomMaterialTransparency(const QString &inName, bool inHasTransparency);
+    void setCustomMaterialAlwaysDirty(const QString &inName, bool inIsAlwaysDirty);
+    void setCustomMaterialShaderKey(const QString &inName, quint32 inShaderKey);
+    void setCustomMaterialLayerCount(const QString &inName, quint32 inLayerCount);
     // The custom material commands are the actual commands that run for a given material
     // effect.  The tell the system exactly
     // explicitly things like bind this shader, bind this render target, apply this property,
     // run this shader
     // See UICRenderEffectCommands.h for the list of commands.
     // These commands are copied into the effect.
-    virtual void setCustomMaterialCommands(QString inName, QDemonConstDataRef<dynamic::QDemonCommand *> inCommands) = 0;
+    void setCustomMaterialCommands(QString inName, QDemonConstDataRef<dynamic::QDemonCommand *> inCommands);
 
-    virtual void setMaterialClassShader(QString inName,
+    void setMaterialClassShader(QString inName,
                                         const char *inShaderType,
                                         const char *inShaderVersion,
                                         const char *inShaderData,
                                         bool inHasGeomShader,
-                                        bool inIsComputeShader) = 0;
+                                        bool inIsComputeShader);
 
-    virtual QDemonRenderCustomMaterial *createCustomMaterial(const QString &inName) = 0;
+    QDemonRenderCustomMaterial *createCustomMaterial(const QString &inName);
 
-    virtual void setPropertyEnumNames(const QString &inName, const QString &inPropName, const QDemonConstDataRef<QString> &inNames) = 0;
+    void setPropertyEnumNames(const QString &inName, const QString &inPropName, const QDemonConstDataRef<QString> &inNames);
 
-    virtual void setPropertyTextureSettings(const QString &inEffectName,
+    void setPropertyTextureSettings(const QString &inEffectName,
                                             const QString &inPropName,
                                             const QString &inPropPath,
                                             QDemonRenderTextureTypeValue::Enum inTexType,
                                             QDemonRenderTextureCoordOp::Enum inCoordOp,
                                             QDemonRenderTextureMagnifyingOp::Enum inMagFilterOp,
-                                            QDemonRenderTextureMinifyingOp::Enum inMinFilterOp) = 0;
+                                            QDemonRenderTextureMinifyingOp::Enum inMinFilterOp);
 
-    //    virtual void Save(SWriteBuffer &ioBuffer,
-    //                      const SStrRemapMap &inRemapMap,
-    //                      const char *inProjectDir) const = 0;
-    //    virtual void Load(QDemonDataRef<quint8> inData, CStrTableOrDataRef inStrDataBlock,
-    //                      const char *inProjectDir) = 0;
-
-    virtual QDemonRef<QDemonCustomMaterialSystemInterface> getCustomMaterialSystem(QDemonRenderContextInterface *inContext) = 0;
-
-    static QDemonRef<QDemonCustomMaterialSystemInterface> createCustomMaterialSystem(QDemonRenderContextCoreInterface *inContext);
+    void setRenderContextInterface(QDemonRenderContextInterface *inContext);
 
     // Returns true if the material is dirty and thus will produce a different render result
     // than previously.  This effects things like progressive AA.
-    virtual bool prepareForRender(const QDemonRenderModel &inModel,
+    bool prepareForRender(const QDemonRenderModel &inModel,
                                   const QDemonRenderSubset &inSubset,
                                   QDemonRenderCustomMaterial &inMaterial,
-                                  bool inClearDirty) = 0;
+                                  bool inClearDirty);
 
-    virtual bool renderDepthPrepass(const QMatrix4x4 &inMVP,
+    bool renderDepthPrepass(const QMatrix4x4 &inMVP,
                                     const QDemonRenderCustomMaterial &inMaterial,
-                                    const QDemonRenderSubset &inSubset) = 0;
-    virtual void renderSubset(QDemonCustomMaterialRenderContext &inRenderContext, const TShaderFeatureSet &inFeatureSet) = 0;
-    virtual void onMaterialActivationChange(const QDemonRenderCustomMaterial &inMaterial, bool inActive) = 0;
+                                    const QDemonRenderSubset &inSubset);
+    void renderSubset(QDemonCustomMaterialRenderContext &inRenderContext, const TShaderFeatureSet &inFeatureSet);
+    void onMaterialActivationChange(const QDemonRenderCustomMaterial &inMaterial, bool inActive);
 
     // get shader name
-    virtual QString getShaderName(const QDemonRenderCustomMaterial &inMaterial) = 0;
+    QString getShaderName(const QDemonRenderCustomMaterial &inMaterial);
     // apply property values
-    virtual void applyShaderPropertyValues(const QDemonRenderCustomMaterial &inMaterial,
-                                           const QDemonRef<QDemonRenderShaderProgram> &inProgram) = 0;
+    void applyShaderPropertyValues(const QDemonRenderCustomMaterial &inMaterial,
+                                           const QDemonRef<QDemonRenderShaderProgram> &inProgram);
     // Called by the uiccontext so this system can clear any per-frame render information.
-    virtual void endFrame() = 0;
+    void endFrame();
 };
 
 struct Q_DEMONRUNTIMERENDER_EXPORT QDemonCustomMaterialVertexPipeline : public QDemonVertexPipelineImpl

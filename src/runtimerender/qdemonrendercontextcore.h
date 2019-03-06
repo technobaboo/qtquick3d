@@ -64,7 +64,7 @@ struct ScaleModes
 };
 
 class QDemonPathManagerInterface;
-class QDemonCustomMaterialSystemInterface;
+class QDemonMaterialSystem;
 
 // Part of render context that does not require the render system.
 class Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderContextCoreInterface
@@ -75,7 +75,7 @@ public:
     virtual QDemonRef<QDemonInputStreamFactoryInterface> getInputStreamFactory() = 0;
     virtual QDemonRef<QDemonAbstractThreadPool> getThreadPool() = 0;
     virtual QDemonRef<QDemonDynamicObjectSystemInterface> getDynamicObjectSystemCore() = 0;
-    virtual QDemonRef<QDemonCustomMaterialSystemInterface> getMaterialSystemCore() = 0;
+    virtual QDemonMaterialSystem getMaterialSystemCore() = 0;
     virtual QDemonRef<QDemonEffectSystemInterface> getEffectSystemCore() = 0;
     virtual QDemonRef<QDemonPerfTimerInterface> getPerfTimer() = 0;
     virtual QDemonRef<QDemonPathManagerInterface> getPathManagerCore() = 0;
@@ -115,7 +115,7 @@ public:
     virtual QDemonRef<QDemonAbstractThreadPool> getThreadPool() = 0;
     virtual QDemonRef<IImageBatchLoader> getImageBatchLoader() = 0;
     virtual QDemonRef<QDemonDynamicObjectSystemInterface> getDynamicObjectSystem() = 0;
-    virtual QDemonRef<QDemonCustomMaterialSystemInterface> getCustomMaterialSystem() = 0;
+    virtual QDemonMaterialSystem getCustomMaterialSystem() = 0;
     virtual QDemonRef<QDemonPixelGraphicsRendererInterface> getPixelGraphicsRenderer() = 0;
     virtual QDemonRef<QDemonPerfTimerInterface> getPerfTimer() = 0;
     virtual QDemonRef<QDemonTextTextureCacheInterface> getTextureCache() = 0;
