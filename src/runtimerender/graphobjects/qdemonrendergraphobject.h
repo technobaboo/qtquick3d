@@ -56,15 +56,6 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonGraphObject
     // scene graph object, you need to bump this binary version so at least
     // we know if we can load a file or not.
     static quint32 getSceneGraphBinaryVersion() { return 1; }
-
-    // Generic method used during serialization
-    // to remap string and object pointers
-    template<typename TRemapperType>
-    void remap(TRemapperType &inRemapper)
-    {
-        inRemapper.remap(id);
-        inRemapper.NullPtr(userData.m_userData);
-    }
 };
 
 QT_END_NAMESPACE

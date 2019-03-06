@@ -105,17 +105,6 @@ public:
     bool isTransmissive() const { return m_shaderKeyValues & QDemonCustomMaterialShaderKeyValues::transmissive; }
     bool hasLighting() const { return true; }
 
-    template<typename TRemapperType>
-    void remap(TRemapperType &inRemapper)
-    {
-        QDemonDynamicObject::remap(inRemapper);
-        m_lightmaps.remap(inRemapper);
-        inRemapper.remap(m_iblProbe);
-        inRemapper.remapMaterial(m_nextSibling);
-        inRemapper.remap(m_emissiveMap2);
-        inRemapper.remap(m_displacementMap);
-    }
-
     // Dirty
     bool m_dirtyFlagWithInFrame;
     bool isDirty() const { return flags.isDirty() || m_dirtyFlagWithInFrame; }

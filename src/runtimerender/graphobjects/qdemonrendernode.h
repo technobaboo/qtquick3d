@@ -253,18 +253,6 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonGraphNode : public QDemonGraphObject
     // This should be in a utility file somewhere
     static void getMatrixUpper3x3(QMatrix3x3 &inDest, const QMatrix4x4 &inSrc);
     void calculateNormalMatrix(QMatrix3x3 &outNormalMatrix) const;
-
-    // Generic method used during serialization
-    // to remap string and object pointers
-    template<typename TRemapperType>
-    void remap(TRemapperType &inRemapper)
-    {
-        QDemonGraphObject::remap(inRemapper);
-        inRemapper.remap(parent);
-        inRemapper.remap(firstChild);
-        inRemapper.remap(nextSibling);
-        inRemapper.remap(previousSibling);
-    }
 };
 QT_END_NAMESPACE
 

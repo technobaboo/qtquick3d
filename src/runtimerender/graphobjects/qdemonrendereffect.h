@@ -67,17 +67,6 @@ public:
     void setActive(bool inActive, QDemonEffectSystemInterface &inSystem);
 
     void reset(QDemonEffectSystemInterface &inSystem);
-
-    // Generic method used during serialization
-    // to remap string and object pointers
-    template<typename TRemapperType>
-    void remap(TRemapperType &inRemapper)
-    {
-        QDemonDynamicObject::remap(inRemapper);
-        inRemapper.remap(m_layer);
-        inRemapper.remap(m_nextEffect);
-        inRemapper.NullPtr(m_context);
-    }
 };
 QT_END_NAMESPACE
 

@@ -56,17 +56,6 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderLightmaps : public QDemonGraphObj
     QDemonRenderImage *m_lightmapShadow = nullptr;
 
     QDemonRenderLightmaps();
-
-    // Generic method used during serialization
-    // to remap string and object pointers
-    template<typename TRemapperType>
-    void remap(TRemapperType &inRemapper)
-    {
-        QDemonGraphObject::remap(inRemapper);
-        inRemapper.remap(m_lightmapIndirect);
-        inRemapper.remap(m_lightmapRadiosity);
-        inRemapper.remap(m_lightmapShadow);
-    }
 };
 QT_END_NAMESPACE
 

@@ -92,20 +92,6 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderImage : public QDemonGraphObject
                     bool forIbl = false);
 
     void calculateTextureTransform();
-
-    // Generic method used during serialization
-    // to remap string and object pointers
-    template<typename TRemapperType>
-    void remap(TRemapperType &inRemapper)
-    {
-        QDemonGraphObject::remap(inRemapper);
-        inRemapper.remap(m_imagePath);
-        inRemapper.remap(m_offscreenRendererId);
-        // Null out objects that should be null when loading from file.
-        inRemapper.NullPtr(m_lastFrameOffscreenRenderer);
-        inRemapper.NullPtr(m_textureData.m_texture);
-        inRemapper.remap(m_parent);
-    }
 };
 QT_END_NAMESPACE
 

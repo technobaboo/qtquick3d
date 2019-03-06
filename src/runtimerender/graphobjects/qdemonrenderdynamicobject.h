@@ -78,15 +78,6 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonDynamicObject : public QDemonGraphObjec
     void setPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition, const QString &inValue);
 
     void setPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition, const char *inValue, const char *inProjectDir, QString &ioWorkspace);
-
-    // Generic method used during serialization
-    // to remap string and object pointers
-    template<typename TRemapperType>
-    void remap(TRemapperType &inRemapper)
-    {
-        QDemonGraphObject::remap(inRemapper);
-        inRemapper.remap(className);
-    }
 };
 
 QT_END_NAMESPACE

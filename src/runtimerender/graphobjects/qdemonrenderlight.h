@@ -72,15 +72,6 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderLight : public QDemonGraphNode
 
     // Defaults to directional light
     QDemonRenderLight();
-
-    // Generic method used during serialization
-    // to remap string and object pointers
-    template<typename TRemapperType>
-    void remap(TRemapperType &inRemapper)
-    {
-        QDemonGraphNode::remap(inRemapper);
-        inRemapper.remap(m_scope);
-    }
 };
 QT_END_NAMESPACE
 

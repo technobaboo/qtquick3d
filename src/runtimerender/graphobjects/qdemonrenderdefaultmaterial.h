@@ -103,31 +103,6 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderDefaultMaterial : QDemonGraphObje
     bool isFresnelEnabled() const { return fresnelPower > 0.0f; }
     bool isVertexColorsEnabled() const { return vertexColors; }
     bool hasLighting() const { return lighting != DefaultMaterialLighting::NoLighting; }
-
-    // Generic method used during serialization
-    // to remap string and object pointers
-    template<typename TRemapperType>
-    void remap(TRemapperType &inRemapper)
-    {
-        QDemonGraphObject::remap(inRemapper);
-        lightmaps.remap(inRemapper);
-        inRemapper.remap(iblProbe);
-        inRemapper.remap(diffuseMaps[0]);
-        inRemapper.remap(diffuseMaps[1]);
-        inRemapper.remap(diffuseMaps[2]);
-        inRemapper.remap(emissiveMap);
-        inRemapper.remap(emissiveMap2);
-        inRemapper.remap(specularReflection);
-        inRemapper.remap(specularMap);
-        inRemapper.remap(roughnessMap);
-        inRemapper.remap(opacityMap);
-        inRemapper.remap(bumpMap);
-        inRemapper.remap(normalMap);
-        inRemapper.remap(displacementMap);
-        inRemapper.remap(translucencyMap);
-        inRemapper.remapMaterial(nextSibling);
-        inRemapper.remap(parent);
-    }
 };
 
 QT_END_NAMESPACE

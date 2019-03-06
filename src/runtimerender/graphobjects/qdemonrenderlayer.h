@@ -148,20 +148,6 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderLayer : public QDemonGraphNode
     QDemonRenderEffect *getLastEffect();
 
     LayerBlendTypes::Enum getLayerBlend() { return blendType; }
-
-    // Generic method used during serialization
-    // to remap string and object pointers
-    template<typename TRemapperType>
-    void remap(TRemapperType &inRemapper)
-    {
-        QDemonGraphNode::remap(inRemapper);
-        inRemapper.remap(scene);
-        inRemapper.remap(firstEffect);
-        inRemapper.remap(texturePath);
-        inRemapper.remap(renderPlugin);
-        inRemapper.remap(lightProbe);
-        inRemapper.remap(lightProbe2);
-    }
 };
 QT_END_NAMESPACE
 

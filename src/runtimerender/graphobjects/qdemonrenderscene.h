@@ -58,16 +58,6 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderScene : public QDemonGraphObject
 
     void addChild(QDemonRenderLayer &inLayer);
     QDemonRenderLayer *getLastChild();
-
-    // Generic method used during serialization
-    // to remap string and object pointers
-    template<typename TRemapperType>
-    void remap(TRemapperType &inRemapper)
-    {
-        QDemonGraphObject::remap(inRemapper);
-        inRemapper.remap(presentation);
-        inRemapper.remap(firstChild);
-    }
     // returns true if any of the layers were dirty or if this object was dirty
     bool prepareForRender(const QVector2D &inViewportDimensions,
                           QDemonRenderContextInterface *inContext,

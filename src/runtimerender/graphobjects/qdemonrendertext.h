@@ -60,19 +60,6 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonText : public QDemonGraphNode, public Q
     ~QDemonText();
 
     QDemonBounds3 getTextBounds() const;
-
-    // Generic method used during serialization
-    // to remap string and object pointers
-    template<typename TRemapperType>
-    void remap(TRemapperType &inRemapper)
-    {
-        QDemonGraphNode::remap(inRemapper);
-        inRemapper.remap(text);
-        inRemapper.remap(font);
-        inRemapper.NullPtr(m_textTexture);
-        inRemapper.NullPtr(m_pathFontItem);
-        inRemapper.NullPtr(m_pathFontDetails);
-    }
 };
 QT_END_NAMESPACE
 #endif

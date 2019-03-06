@@ -115,18 +115,6 @@ struct QDemonPath : public QDemonGraphNode
 
     void addSubPath(QDemonPathSubPath &inSubPath);
     void clearSubPaths();
-
-    // Generic method used during serialization
-    // to remap string and object pointers
-    template<typename TRemapperType>
-    void remap(TRemapperType &inRemapper)
-    {
-        QDemonGraphNode::remap(inRemapper);
-        inRemapper.remap(m_pathBuffer);
-        inRemapper.remapMaterial(m_material);
-        inRemapper.remapMaterial(m_secondMaterial);
-        inRemapper.remap(m_firstSubPath);
-    }
 };
 QT_END_NAMESPACE
 #endif
