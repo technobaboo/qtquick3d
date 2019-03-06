@@ -226,7 +226,7 @@ struct QDemonTessControlShaderGenerator : public QDemonStageGeneratorBase
 
     void updateShaderCacheFlags(QDemonShaderCacheProgramFlags &inFlags) override
     {
-        inFlags.setTessellationEnabled(true);
+        inFlags |= ShaderCacheProgramFlagValues::TessellationEnabled;
     }
 };
 
@@ -238,7 +238,7 @@ struct QDemonTessEvalShaderGenerator : public QDemonStageGeneratorBase
 
     void updateShaderCacheFlags(QDemonShaderCacheProgramFlags &inFlags) override
     {
-        inFlags.setTessellationEnabled(true);
+        inFlags |= ShaderCacheProgramFlagValues::TessellationEnabled;
     }
 };
 
@@ -255,7 +255,7 @@ struct QDemonGeometryShaderGenerator : public QDemonStageGeneratorBase
     }
     void updateShaderCacheFlags(QDemonShaderCacheProgramFlags &inFlags) override
     {
-        inFlags.setGeometryShaderEnabled(true);
+        inFlags |= ShaderCacheProgramFlagValues::GeometryShaderEnabled;
     }
 };
 

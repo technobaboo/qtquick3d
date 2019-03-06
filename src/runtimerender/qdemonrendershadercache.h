@@ -44,32 +44,15 @@ class QDemonRenderContext;
 class QDemonInputStreamFactoryInterface;
 class QDemonPerfTimer;
 
-struct ShaderCacheProgramFlagValues
+enum class ShaderCacheProgramFlagValues : quint32
 {
-    enum Enum {
-        TessellationEnabled = 1 << 0, // tessellation enabled
-        GeometryShaderEnabled = 1 << 1, // geometry shader enabled
-    };
+    TessellationEnabled = 1 << 0, // tessellation enabled
+    GeometryShaderEnabled = 1 << 1, // geometry shader enabled
 };
 
-struct QDemonShaderCacheProgramFlags : public QDemonFlags<ShaderCacheProgramFlagValues::Enum, quint32>
-{
-    // tessellation enabled
-    void setTessellationEnabled(bool inValue)
-    {
-        clearOrSet(inValue, ShaderCacheProgramFlagValues::TessellationEnabled);
-    }
-    bool isTessellationEnabled() const { return this->operator&(ShaderCacheProgramFlagValues::TessellationEnabled); }
-    // geometry shader enabled
-    void setGeometryShaderEnabled(bool inValue)
-    {
-        clearOrSet(inValue, ShaderCacheProgramFlagValues::GeometryShaderEnabled);
-    }
-    bool isGeometryShaderEnabled() const
-    {
-        return this->operator&(ShaderCacheProgramFlagValues::GeometryShaderEnabled);
-    }
-};
+Q_DECLARE_FLAGS(QDemonShaderCacheProgramFlags, ShaderCacheProgramFlagValues);
+
+
 // There are a number of macros used to turn on or off various features.  This allows those
 // features
 // to be propagated into the shader cache's caching mechanism.  They will be translated into

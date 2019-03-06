@@ -433,12 +433,12 @@ struct ShaderCache : public QDemonShaderCacheInterface
         if (!separableProgram || !m_fragmentCode.isEmpty())
             addShaderPreprocessor(m_fragmentCode, inKey, ShaderType::Fragment, inFeatures);
         // optional shaders
-        if (inFlags.isTessellationEnabled()) {
+        if (inFlags & ShaderCacheProgramFlagValues::TessellationEnabled) {
             Q_ASSERT(m_tessCtrlCode.size() && m_tessEvalCode.size());
             addShaderPreprocessor(m_tessCtrlCode, inKey, ShaderType::TessControl, inFeatures);
             addShaderPreprocessor(m_tessEvalCode, inKey, ShaderType::TessEval, inFeatures);
         }
-        if (inFlags.isGeometryShaderEnabled())
+        if (inFlags & ShaderCacheProgramFlagValues::GeometryShaderEnabled)
             addShaderPreprocessor(m_geometryCode, inKey, ShaderType::Geometry, inFeatures);
 
         auto shaderProgram = m_renderContext

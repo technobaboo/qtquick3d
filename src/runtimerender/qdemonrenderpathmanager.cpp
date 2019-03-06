@@ -77,7 +77,7 @@ struct QDemonPathShaderMapKey
     }
     bool operator==(const QDemonPathShaderMapKey &inKey) const
     {
-        return m_name == inKey.m_name && m_materialKey == inKey.m_materialKey;
+        return m_hashCode == inKey.m_hashCode && m_name == inKey.m_name && m_materialKey == inKey.m_materialKey;
     }
 };
 

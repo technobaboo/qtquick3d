@@ -1502,8 +1502,7 @@ QDemonRef<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getDepthTessLi
                                                | ShaderGeneratorStages::TessEval | ShaderGeneratorStages::Fragment));
         }
 
-        QDemonShaderCacheProgramFlags theFlags;
-        theFlags.setTessellationEnabled(true);
+        QDemonShaderCacheProgramFlags theFlags(ShaderCacheProgramFlagValues::TessellationEnabled);
 
         depthShaderProgram = getProgramGenerator()->compileGeneratedShader(name, theFlags, TShaderFeatureSet());
 
@@ -1573,8 +1572,7 @@ QDemonRef<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getDepthTessPh
                                                | ShaderGeneratorStages::TessEval | ShaderGeneratorStages::Fragment));
         }
 
-        QDemonShaderCacheProgramFlags theFlags;
-        theFlags.setTessellationEnabled(true);
+        QDemonShaderCacheProgramFlags theFlags(ShaderCacheProgramFlagValues::TessellationEnabled);
 
         depthShaderProgram = getProgramGenerator()->compileGeneratedShader(name, theFlags, TShaderFeatureSet());
 
@@ -1655,8 +1653,7 @@ QDemonRef<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getDepthTessNP
                                                | ShaderGeneratorStages::TessEval | ShaderGeneratorStages::Fragment));
         }
 
-        QDemonShaderCacheProgramFlags theFlags;
-        theFlags.setTessellationEnabled(true);
+        QDemonShaderCacheProgramFlags theFlags(ShaderCacheProgramFlagValues::TessellationEnabled);
 
         depthShaderProgram = getProgramGenerator()->compileGeneratedShader(name, theFlags, TShaderFeatureSet());
 

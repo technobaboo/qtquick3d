@@ -862,11 +862,11 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
             shaderKey.append("#");
             shaderKey.append(inProgramMacro);
         }
-        if (inFlags.isTessellationEnabled()) {
+        if (inFlags & ShaderCacheProgramFlagValues::TessellationEnabled) {
             shaderKey.append("#");
             shaderKey.append(TessModeValues::toString(inFlags.tessMode));
         }
-        if (inFlags.isGeometryShaderEnabled() && inFlags.wireframeMode) {
+        if (inFlags & ShaderCacheProgramFlagValues::GeometryShaderEnabled && inFlags.wireframeMode) {
             shaderKey.append("#");
             shaderKey.append(inFlags.wireframeToString(inFlags.wireframeMode));
         }
@@ -1264,15 +1264,15 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
             m_fragShader.append("\n");
         }
 
-        if (inGeomSource && inFlags.isGeometryShaderEnabled()) {
-            theFlags.setGeometryShaderEnabled(true);
+        if (inGeomSource && inFlags & ShaderCacheProgramFlagValues::GeometryShaderEnabled) {
+            theFlags |= ShaderCacheProgramFlagValues::GeometryShaderEnabled;
 
             m_geometryShader.append("#define GEOMETRY_SHADER 1\n");
             m_geometryShader.append(inGeomSource);
 
             m_vertShader.append("#define GEOMETRY_SHADER 1\n");
-        } else if (inFlags.isGeometryShaderEnabled()) {
-            theFlags.setGeometryShaderEnabled(true);
+        } else if (inFlags & ShaderCacheProgramFlagValues::GeometryShaderEnabled) {
+            theFlags |= ShaderCacheProgramFlagValues::GeometryShaderEnabled;
             m_geometryShader.append("#define USER_GEOMETRY_SHADER 1\n");
             m_geometryShader.append(inProgramSource);
             m_vertShader.append("#define GEOMETRY_SHADER 0\n");
@@ -1342,7 +1342,7 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
                 if (theShaderInfo.m_isComputeShader == false) {
                     QString programSource = doLoadShader(inPath);
                     if (theShaderInfo.m_hasGeomShader)
-                        theFlags.setGeometryShaderEnabled(true);
+                        theFlags |= ShaderCacheProgramFlagValues::GeometryShaderEnabled;
                     theProgram = compileShader(inPath, programSource.toLocal8Bit().constData(), nullptr, inProgramMacro, inFeatureSet, theFlags, inForceCompilation);
                 } else {
                     QString theShaderBuffer;
@@ -1414,7 +1414,7 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
                 programBuffer.append("\n#ifdef FRAGMENT_SHADER\n");
                 programBuffer.append(fragmentSource);
                 programBuffer.append("\n#endif");
-                flags.setGeometryShaderEnabled(true);
+                flags |= ShaderCacheProgramFlagValues::GeometryShaderEnabled;
                 theProgram = compileShader(inPath, programBuffer.toLatin1(), geomSource.toLocal8Bit().constData(), theProgramMacro, inFeatureSet, flags);
             }
             theInserter.value() = TShaderAndFlags(theProgram, flags);

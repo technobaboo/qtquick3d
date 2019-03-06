@@ -1016,8 +1016,10 @@ QDemonMaterialOrComputeShader QDemonMaterialSystem::bindShader(QDemonCustomMater
     QDemonRef<QDemonRenderShaderProgram> theProgram;
 
     dynamic::QDemonDynamicShaderProgramFlags theFlags(inRenderContext.model.tessellationMode, inRenderContext.subset.wireframeMode);
-    theFlags.setTessellationEnabled(inRenderContext.model.tessellationMode != TessModeValues::NoTess);
-    theFlags.setGeometryShaderEnabled(inRenderContext.subset.wireframeMode);
+    if (inRenderContext.model.tessellationMode != TessModeValues::NoTess)
+        theFlags |= ShaderCacheProgramFlagValues::TessellationEnabled;
+    if (inRenderContext.subset.wireframeMode)
+        theFlags |= ShaderCacheProgramFlagValues::GeometryShaderEnabled;
 
     QDemonShaderMapKey skey = QDemonShaderMapKey(TStrStrPair(inCommand.m_shaderPath, inCommand.m_shaderDefine),
                                                  inFeatureSet,
