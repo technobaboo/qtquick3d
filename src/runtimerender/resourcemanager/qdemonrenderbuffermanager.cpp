@@ -195,7 +195,7 @@ QDemonRenderImageTextureData QDemonBufferManager::loadRenderImage(QString inImag
     if (inLoadedImage->data) {
         QDemonRenderTextureFormats::Enum destFormat = inLoadedImage->format;
         if (inBsdfMipmaps) {
-            if (d->context->getRenderContextType() == QDemonRenderContextValues::GLES2)
+            if (d->context->getRenderContextType() == QDemonRenderContextType::GLES2)
                 destFormat = QDemonRenderTextureFormats::RGBA8;
             else
                 destFormat = QDemonRenderTextureFormats::RGBA16F;

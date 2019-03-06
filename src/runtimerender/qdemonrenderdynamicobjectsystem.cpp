@@ -1348,7 +1348,7 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
                 } else {
                     QString theShaderBuffer;
                     QString shaderVersionStr = QStringLiteral("#version 430\n");
-                    if ((quint32)m_context->getRenderContext()->getRenderContextType() == QDemonRenderContextValues::GLES3PLUS)
+                    if (m_context->getRenderContext()->getRenderContextType() == QDemonRenderContextType::GLES3PLUS)
                         shaderVersionStr = QStringLiteral("#version 310 es\n");
                     theShaderBuffer = doLoadShader(inPath);
                     theShaderBuffer.insert(0, shaderVersionStr);

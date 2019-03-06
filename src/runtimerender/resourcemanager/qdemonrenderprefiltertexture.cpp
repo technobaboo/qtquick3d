@@ -381,8 +381,8 @@ static bool isGLESContext(const QDemonRef<QDemonRenderContext> &context)
     QDemonRenderContextType ctxType = context->getRenderContextType();
 
     // Need minimum of GL3 or GLES3
-    if (ctxType == QDemonRenderContextValues::GLES2 || ctxType == QDemonRenderContextValues::GLES3
-        || ctxType == QDemonRenderContextValues::GLES3PLUS) {
+    if (ctxType == QDemonRenderContextType::GLES2 || ctxType == QDemonRenderContextType::GLES3
+        || ctxType == QDemonRenderContextType::GLES3PLUS) {
         return true;
     }
 

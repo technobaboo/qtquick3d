@@ -712,9 +712,9 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
 
     void generateTextureSwizzle(QDemonRenderTextureSwizzleMode::Enum swizzleMode, QByteArray &texSwizzle, QByteArray &lookupSwizzle)
     {
-        QDemonRenderContextType deprecatedContextFlags(QDemonRenderContextValues::GL2 | QDemonRenderContextValues::GLES2);
+        QDemonRenderContextTypes deprecatedContextFlags(QDemonRenderContextType::GL2 | QDemonRenderContextType::GLES2);
 
-        if (!(m_renderContext->getRenderContext()->getRenderContextType() & deprecatedContextFlags)) {
+        if (!(deprecatedContextFlags & m_renderContext->getRenderContext()->getRenderContextType())) {
             switch (swizzleMode) {
             case QDemonRenderTextureSwizzleMode::L8toR8:
             case QDemonRenderTextureSwizzleMode::L16toR16:

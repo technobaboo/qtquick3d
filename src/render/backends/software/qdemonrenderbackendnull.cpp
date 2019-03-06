@@ -40,7 +40,7 @@ struct QDemonNullBackend : public QDemonRenderBackend
 
     /// backend interface
 
-    QDemonRenderContextType getRenderContextType() const override { return QDemonRenderContextValues::NullContext; }
+    QDemonRenderContextType getRenderContextType() const override { return QDemonRenderContextType::NullContext; }
     const char *getShadingLanguageVersion() override { return ""; }
     qint32 getMaxCombinedTextureUnits() override { return 32; }
     bool getRenderBackendCap(QDemonRenderBackendCaps::Enum) const override { return false; }

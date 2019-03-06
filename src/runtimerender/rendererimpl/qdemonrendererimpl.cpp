@@ -1100,7 +1100,7 @@ bool QDemonRendererImpl::prepareTextureAtlasForRender()
 
         // this texture contains our single entries
         QDemonRef<QDemonRenderTexture2D> theTexture = nullptr;
-        if (m_context->getRenderContextType() == QDemonRenderContextValues::GLES2) {
+        if (m_context->getRenderContextType() == QDemonRenderContextType::GLES2) {
             theTexture = m_demonContext->getResourceManager()->allocateTexture2D(32, 32, QDemonRenderTextureFormats::RGBA8);
         } else {
             theTexture = m_demonContext->getResourceManager()->allocateTexture2D(32, 32, QDemonRenderTextureFormats::Alpha8);
@@ -1888,10 +1888,10 @@ QDemonOption<QVector2D> QDemonRendererImpl::getLayerMouseCoords(QDemonRenderLaye
 
 bool QDemonRendererInterface::isGlEsContext(const QDemonRenderContextType &inContextType)
 {
-    QDemonRenderContextType esContextTypes(QDemonRenderContextValues::GLES2 | QDemonRenderContextValues::GLES3
-                                           | QDemonRenderContextValues::GLES3PLUS);
+    QDemonRenderContextTypes esContextTypes(QDemonRenderContextType::GLES2 | QDemonRenderContextType::GLES3
+                                           | QDemonRenderContextType::GLES3PLUS);
 
-    if ((inContextType & esContextTypes))
+    if (esContextTypes & inContextType)
         return true;
 
     return false;
@@ -1899,7 +1899,7 @@ bool QDemonRendererInterface::isGlEsContext(const QDemonRenderContextType &inCon
 
 bool QDemonRendererInterface::isGlEs3Context(const QDemonRenderContextType &inContextType)
 {
-    if (inContextType == QDemonRenderContextValues::GLES3 || inContextType == QDemonRenderContextValues::GLES3PLUS)
+    if (inContextType == QDemonRenderContextType::GLES3 || inContextType == QDemonRenderContextType::GLES3PLUS)
         return true;
 
     return false;
@@ -1907,7 +1907,7 @@ bool QDemonRendererInterface::isGlEs3Context(const QDemonRenderContextType &inCo
 
 bool QDemonRendererInterface::isGl2Context(const QDemonRenderContextType &inContextType)
 {
-    if (inContextType == QDemonRenderContextValues::GL2)
+    if (inContextType == QDemonRenderContextType::GL2)
         return true;
 
     return false;

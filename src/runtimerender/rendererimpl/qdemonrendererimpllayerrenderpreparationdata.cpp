@@ -1110,7 +1110,7 @@ void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportD
         thePrepResult.maxAAPassIndex = maxNumAAPasses;
         thePrepResult.flags.setRequiresDepthTexture(requiresDepthPrepass || needsWidgetTexture());
         thePrepResult.flags.setShouldRenderToTexture(shouldRenderToTexture);
-        if (renderer->getContext()->getRenderContextType() != QDemonRenderContextValues::GLES2)
+        if (renderer->getContext()->getRenderContextType() != QDemonRenderContextType::GLES2)
             thePrepResult.flags.setRequiresSsaoPass(SSAOEnabled);
 
         if (thePrepResult.isLayerVisible()) {
@@ -1196,7 +1196,7 @@ void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportD
                     if (theLight->flags.isGloballyActive()) {
                         if (theLight->m_scope == nullptr) {
                             lights.push_back(theLight);
-                            if (renderer->getContext()->getRenderContextType() != QDemonRenderContextValues::GLES2
+                            if (renderer->getContext()->getRenderContextType() != QDemonRenderContextType::GLES2
                                 && theLight->m_castShadow && getShadowMapManager()) {
                                 // PKC -- use of "res" as an exponent of two is an annoying
                                 // artifact of the XML interface

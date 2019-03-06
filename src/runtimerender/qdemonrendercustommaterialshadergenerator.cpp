@@ -980,7 +980,7 @@ struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
 
         QByteArray srcString(fragSource);
 
-        if (m_renderContext->getRenderContext()->getRenderContextType() == QDemonRenderContextValues::GLES2) {
+        if (m_renderContext->getRenderContext()->getRenderContextType() == QDemonRenderContextType::GLES2) {
             QString::size_type pos = 0;
             while ((pos = srcString.indexOf("out vec4 fragColor", pos)) != -1) {
                 srcString.insert(pos, "//");
@@ -1096,7 +1096,7 @@ struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
         }
         fragmentShader << "  rgba.a *= object_opacity;"
                        << "\n";
-        if (m_renderContext->getRenderContext()->getRenderContextType() == QDemonRenderContextValues::GLES2)
+        if (m_renderContext->getRenderContext()->getRenderContextType() == QDemonRenderContextType::GLES2)
             fragmentShader << "  gl_FragColor = rgba;"
                            << "\n";
         else

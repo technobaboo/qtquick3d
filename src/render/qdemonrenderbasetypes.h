@@ -319,20 +319,19 @@ inline QDemonRenderComponentTypes::Enum getComponentTypeForType()
     return QDemonRenderComponentTypeToTypeMap<TDataType>().m_componentType;
 }
 
-struct QDemonRenderContextValues
+enum class QDemonRenderContextType : quint32
 {
-    enum Enum {
-        GLES2 = 1 << 0,
-        GL2 = 1 << 1,
-        GLES3 = 1 << 2,
-        GL3 = 1 << 3,
-        GLES3PLUS = 1 << 4,
-        GL4 = 1 << 5,
-        NullContext = 1 << 6,
-    };
+    GLES2 = 1 << 0,
+    GL2 = 1 << 1,
+    GLES3 = 1 << 2,
+    GL3 = 1 << 3,
+    GLES3PLUS = 1 << 4,
+    GL4 = 1 << 5,
+    NullContext = 1 << 6,
 };
 
-typedef QDemonFlags<QDemonRenderContextValues::Enum, quint32> QDemonRenderContextType;
+Q_DECLARE_FLAGS(QDemonRenderContextTypes, QDemonRenderContextType);
+Q_DECLARE_OPERATORS_FOR_FLAGS(QDemonRenderContextTypes);
 
 struct QDemonRenderClearValues
 {

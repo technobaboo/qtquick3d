@@ -1188,7 +1188,7 @@ void QDemonLayerRenderData::renderToTexture()
     QSize theLayerOriginalTextureDimensions = theLayerTextureDimensions;
     QDemonRenderTextureFormats::Enum DepthTextureFormat = QDemonRenderTextureFormats::Depth24Stencil8;
     QDemonRenderTextureFormats::Enum ColorTextureFormat = QDemonRenderTextureFormats::RGBA8;
-    if (thePrepResult.lastEffect && theRenderContext->getRenderContextType() != QDemonRenderContextValues::GLES2) {
+    if (thePrepResult.lastEffect && theRenderContext->getRenderContextType() != QDemonRenderContextType::GLES2) {
         if (layer.background != LayerBackground::Transparent)
             ColorTextureFormat = QDemonRenderTextureFormats::R11G11B10;
         else
@@ -1203,7 +1203,7 @@ void QDemonLayerRenderData::renderToTexture()
         sampleCount = qint32(layer.multisampleAAMode);
 
     bool isMultisamplePass = false;
-    if (theRenderContext->getRenderContextType() != QDemonRenderContextValues::GLES2)
+    if (theRenderContext->getRenderContextType() != QDemonRenderContextType::GLES2)
         isMultisamplePass = (sampleCount > 1) || (layer.multisampleAAMode == AAModeValues::SSAA);
 
     QDemonRenderTextureTargetType::Enum thFboAttachTarget = QDemonRenderTextureTargetType::Texture2D;

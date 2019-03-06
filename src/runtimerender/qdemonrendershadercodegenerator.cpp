@@ -168,9 +168,9 @@ void QDemonShaderCodeGeneratorBase::generateTextureSwizzle(QDemonRenderTextureSw
                                                            QByteArray &texSwizzle,
                                                            QByteArray &lookupSwizzle)
 {
-    QDemonRenderContextType deprecatedContextFlags(QDemonRenderContextValues::GL2 | QDemonRenderContextValues::GLES2);
+    QDemonRenderContextTypes deprecatedContextFlags(QDemonRenderContextType::GL2 | QDemonRenderContextType::GLES2);
 
-    if (!(m_renderContextType & deprecatedContextFlags)) {
+    if (!(deprecatedContextFlags & m_renderContextType)) {
         switch (swizzleMode) {
         case QDemonRenderTextureSwizzleMode::L8toR8:
         case QDemonRenderTextureSwizzleMode::L16toR16:

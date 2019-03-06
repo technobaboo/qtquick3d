@@ -253,7 +253,7 @@ struct ShaderCache : public QDemonShaderCacheInterface
             }
         } else {
             if (shaderType == ShaderType::Vertex || shaderType == ShaderType::Fragment || shaderType == ShaderType::Geometry) {
-                if (m_renderContext->getRenderContextType() != QDemonRenderContextValues::GLES2) {
+                if (m_renderContext->getRenderContextType() != QDemonRenderContextType::GLES2) {
                     m_insertStr += "#extension GL_ARB_gpu_shader5 : enable\n";
                     m_insertStr += "#extension GL_ARB_shading_language_420pack : enable\n";
                 }
@@ -285,25 +285,24 @@ struct ShaderCache : public QDemonShaderCacheInterface
         QString versionStr;
         QTextStream stream(&versionStr);
         stream << "#version ";
-        const quint32 type = quint32(m_renderContext->getRenderContextType());
-        switch (type) {
-        case QDemonRenderContextValues::GLES2:
+        switch (m_renderContext->getRenderContextType()) {
+        case QDemonRenderContextType::GLES2:
             stream << "1" << minor << "0\n";
             break;
-        case QDemonRenderContextValues::GL2:
+        case QDemonRenderContextType::GL2:
             stream << "1" << minor << "0\n";
             break;
-        case QDemonRenderContextValues::GLES3PLUS:
-        case QDemonRenderContextValues::GLES3:
+        case QDemonRenderContextType::GLES3PLUS:
+        case QDemonRenderContextType::GLES3:
             stream << "3" << minor << "0 es\n";
             break;
-        case QDemonRenderContextValues::GL3:
+        case QDemonRenderContextType::GL3:
             if (minor == 3)
                 stream << "3" << minor << "0\n";
             else
                 stream << "1" << 3 + minor << "0\n";
             break;
-        case QDemonRenderContextValues::GL4:
+        case QDemonRenderContextType::GL4:
             stream << "4" << minor << "0\n";
             break;
         default:

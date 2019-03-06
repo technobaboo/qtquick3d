@@ -1688,7 +1688,7 @@ QDemonRef<QDemonDefaultAoPassShader> QDemonRendererImpl::getDefaultAoPassShader(
             // fragmentGenerator.AddInclude( "SSAOCustomMaterial.glsllib" );
             theFragmentGenerator.addInclude("viewProperties.glsllib");
             theFragmentGenerator.addInclude("screenSpaceAO.glsllib");
-            if (m_context->getRenderContextType() == QDemonRenderContextValues::GLES2) {
+            if (m_context->getRenderContextType() == QDemonRenderContextType::GLES2) {
                 theFragmentGenerator << "\tuniform vec4 ao_properties;"
                                      << "\n"
                                      << "\tuniform vec4 ao_properties2;"
@@ -1729,7 +1729,7 @@ QDemonRef<QDemonDefaultAoPassShader> QDemonRendererImpl::getDefaultAoPassShader(
             // values at the edges
             // surrounding objects, and this also ends up giving us weird AO values.
             // If we had a proper screen-space normal map, that would also do the trick.
-            if (m_context->getRenderContextType() == QDemonRenderContextValues::GLES2) {
+            if (m_context->getRenderContextType() == QDemonRenderContextType::GLES2) {
                 theFragmentGenerator.addUniform("depth_sampler_size", "vec2");
                 theFragmentGenerator.append("\tivec2 iCoords = ivec2( gl_FragCoord.xy );");
                 theFragmentGenerator.append("\tfloat depth = getDepthValue( "

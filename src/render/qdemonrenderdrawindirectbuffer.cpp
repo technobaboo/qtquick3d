@@ -81,11 +81,11 @@ QDemonRef<QDemonRenderDrawIndirectBuffer> QDemonRenderDrawIndirectBuffer::create
     QDemonRef<QDemonRenderDrawIndirectBuffer> retval;
 
     // these are the context flags which do not support this drawing mode
-    QDemonRenderContextType noDrawIndirectSupported(QDemonRenderContextValues::GL2 | QDemonRenderContextValues::GLES2
-                                                    | QDemonRenderContextValues::GL3 | QDemonRenderContextValues::GLES3);
+    QDemonRenderContextTypes noDrawIndirectSupported(QDemonRenderContextType::GL2 | QDemonRenderContextType::GLES2
+                                                    | QDemonRenderContextType::GL3 | QDemonRenderContextType::GLES3);
     QDemonRenderContextType ctxType = context->getRenderContextType();
 
-    if (!(ctxType & noDrawIndirectSupported)) {
+    if (!(noDrawIndirectSupported & ctxType)) {
         retval = new QDemonRenderDrawIndirectBuffer(context,
                                                     size,
                                                     usageType,

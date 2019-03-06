@@ -109,7 +109,7 @@ public:
     static QDemonRef<QDemonLoadedTexture> load(const QString &inPath,
                                                QDemonInputStreamFactoryInterface &inFactory,
                                                bool inFlipY = true,
-                                               const QDemonRenderContextType &renderContextType = QDemonRenderContextValues::NullContext);
+                                               const QDemonRenderContextType &renderContextType = QDemonRenderContextType::NullContext);
     static QDemonRef<QDemonLoadedTexture> loadQImage(const QString &inPath, qint32 flipVertical, QDemonRenderContextType renderContextType);
 
 private:

@@ -117,23 +117,23 @@ QDemonRenderContextType QDemonRenderBackendGLBase::getRenderContextType() const
 {
     if (m_format.renderableType() == QSurfaceFormat::OpenGLES) {
         if (m_format.majorVersion() == 2)
-            return QDemonRenderContextValues::GLES2;
+            return QDemonRenderContextType::GLES2;
 
         if (m_format.majorVersion() == 3) {
             if (m_format.minorVersion() >= 1)
-                return QDemonRenderContextValues::GLES3PLUS;
+                return QDemonRenderContextType::GLES3PLUS;
             else
-                return QDemonRenderContextValues::GLES3;
+                return QDemonRenderContextType::GLES3;
         }
     } else if (m_format.majorVersion() == 2) {
-        return QDemonRenderContextValues::GL2;
+        return QDemonRenderContextType::GL2;
     } else if (m_format.majorVersion() == 3) {
-        return QDemonRenderContextValues::GL3;
+        return QDemonRenderContextType::GL3;
     } else if (m_format.majorVersion() == 4) {
-        return QDemonRenderContextValues::GL4;
+        return QDemonRenderContextType::GL4;
     }
 
-    return QDemonRenderContextValues::NullContext;
+    return QDemonRenderContextType::NullContext;
 }
 
 bool QDemonRenderBackendGLBase::isESCompatible() const
@@ -194,24 +194,24 @@ bool QDemonRenderBackendGLBase::getRenderBackendCap(QDemonRenderBackend::QDemonR
         break;
     case QDemonRenderBackendCaps::SampleQuery: {
         // On the following context sample query is not supported
-        QDemonRenderContextType noSamplesQuerySupportedContextFlags(QDemonRenderContextValues::GL2 | QDemonRenderContextValues::GLES2);
+        QDemonRenderContextTypes noSamplesQuerySupportedContextFlags(QDemonRenderContextType::GL2 | QDemonRenderContextType::GLES2);
         QDemonRenderContextType ctxType = getRenderContextType();
-        bSupported = !(ctxType & noSamplesQuerySupportedContextFlags);
+        bSupported = !(noSamplesQuerySupportedContextFlags & ctxType);
     } break;
     case QDemonRenderBackendCaps::TimerQuery:
         bSupported = m_backendSupport.caps.bits.bTimerQuerySupported;
         break;
     case QDemonRenderBackendCaps::CommandSync: {
         // On the following context sync objects are not supported
-        QDemonRenderContextType noSyncObjectSupportedContextFlags(QDemonRenderContextValues::GL2 | QDemonRenderContextValues::GLES2);
+        QDemonRenderContextTypes noSyncObjectSupportedContextFlags(QDemonRenderContextType::GL2 | QDemonRenderContextType::GLES2);
         QDemonRenderContextType ctxType = getRenderContextType();
-        bSupported = !(ctxType & noSyncObjectSupportedContextFlags);
+        bSupported = !(noSyncObjectSupportedContextFlags & ctxType);
     } break;
     case QDemonRenderBackendCaps::TextureArray: {
         // On the following context texture arrays are not supported
-        QDemonRenderContextType noTextureArraySupportedContextFlags(QDemonRenderContextValues::GL2 | QDemonRenderContextValues::GLES2);
+        QDemonRenderContextTypes noTextureArraySupportedContextFlags(QDemonRenderContextType::GL2 | QDemonRenderContextType::GLES2);
         QDemonRenderContextType ctxType = getRenderContextType();
-        bSupported = !(ctxType & noTextureArraySupportedContextFlags);
+        bSupported = !(noTextureArraySupportedContextFlags& ctxType);
     } break;
     case QDemonRenderBackendCaps::StorageBuffer:
         bSupported = m_backendSupport.caps.bits.bStorageBufferSupported;
@@ -266,30 +266,30 @@ void QDemonRenderBackendGLBase::getRenderBackendValue(QDemonRenderBackendQuery::
             GL_CALL_FUNCTION(glGetIntegerv(GL_MAX_TEXTURE_SIZE, params));
             break;
         case QDemonRenderBackendQuery::MaxTextureArrayLayers: {
-            QDemonRenderContextType noTextureArraySupportedContextFlags(QDemonRenderContextValues::GL2
-                                                                        | QDemonRenderContextValues::GLES2);
+            QDemonRenderContextTypes noTextureArraySupportedContextFlags(QDemonRenderContextType::GL2
+                                                                        | QDemonRenderContextType::GLES2);
             QDemonRenderContextType ctxType = getRenderContextType();
-            if (!(ctxType & noTextureArraySupportedContextFlags)) {
+            if (!(noTextureArraySupportedContextFlags & ctxType)) {
                 GL_CALL_FUNCTION(glGetIntegerv(GL_MAX_ARRAY_TEXTURE_LAYERS, params));
             } else {
                 *params = 0;
             }
         } break;
         case QDemonRenderBackendQuery::MaxConstantBufferSlots: {
-            QDemonRenderContextType noConstantBufferSupportedContextFlags(QDemonRenderContextValues::GL2
-                                                                          | QDemonRenderContextValues::GLES2);
+            QDemonRenderContextTypes noConstantBufferSupportedContextFlags(QDemonRenderContextType::GL2
+                                                                          | QDemonRenderContextType::GLES2);
             QDemonRenderContextType ctxType = getRenderContextType();
-            if (!(ctxType & noConstantBufferSupportedContextFlags)) {
+            if (!(noConstantBufferSupportedContextFlags & ctxType)) {
                 GL_CALL_FUNCTION(glGetIntegerv(GL_MAX_UNIFORM_BUFFER_BINDINGS, params));
             } else {
                 *params = 0;
             }
         } break;
         case QDemonRenderBackendQuery::MaxConstantBufferBlockSize: {
-            QDemonRenderContextType noConstantBufferSupportedContextFlags(QDemonRenderContextValues::GL2
-                                                                          | QDemonRenderContextValues::GLES2);
+            QDemonRenderContextTypes noConstantBufferSupportedContextFlags(QDemonRenderContextType::GL2
+                                                                          | QDemonRenderContextType::GLES2);
             QDemonRenderContextType ctxType = getRenderContextType();
-            if (!(ctxType & noConstantBufferSupportedContextFlags)) {
+            if (!(noConstantBufferSupportedContextFlags & ctxType)) {
                 GL_CALL_FUNCTION(glGetIntegerv(GL_MAX_UNIFORM_BLOCK_SIZE, params));
             } else {
                 *params = 0;
@@ -322,10 +322,10 @@ void QDemonRenderBackendGLBase::setMultisample(bool bEnable)
     Q_ASSERT(m_backendSupport.caps.bits.bMsTextureSupported || !bEnable);
     // For GL ES explicit multisample enabling is not needed
     // and does not exist
-    QDemonRenderContextType noMsaaEnableContextFlags(QDemonRenderContextValues::GLES2 | QDemonRenderContextValues::GLES3
-                                                     | QDemonRenderContextValues::GLES3PLUS);
+    QDemonRenderContextTypes noMsaaEnableContextFlags(QDemonRenderContextType::GLES2 | QDemonRenderContextType::GLES3
+                                                     | QDemonRenderContextType::GLES3PLUS);
     QDemonRenderContextType ctxType = getRenderContextType();
-    if (!(ctxType & noMsaaEnableContextFlags)) {
+    if (!(noMsaaEnableContextFlags & ctxType)) {
         setRenderState(bEnable, QDemonRenderState::Multisample);
     }
 }
@@ -974,7 +974,7 @@ void QDemonRenderBackendGLBase::setTextureDataCubeFace(QDemonRenderBackendTextur
         GLConversion::fromDepthTextureFormatToGL(getRenderContextType(), format, glformat, gltype, glInternalFormat);
 
     // for es2 internal format must be same as format
-    if (getRenderContextType() == QDemonRenderContextValues::GLES2)
+    if (getRenderContextType() == QDemonRenderContextType::GLES2)
         glInternalFormat = glformat;
 
     GL_CALL_FUNCTION(glTexImage2D(glTarget, level, glInternalFormat, GLsizei(width), GLsizei(height), border, glformat, gltype, hostPtr));

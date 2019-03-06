@@ -267,10 +267,10 @@ QT_BEGIN_NAMESPACE
 
 static bool IsGlEsContext(QDemonRenderContextType inContextType)
 {
-    QDemonRenderContextType esContextTypes(QDemonRenderContextValues::GLES2 | QDemonRenderContextValues::GLES3
-                                           | QDemonRenderContextValues::GLES3PLUS);
+    QDemonRenderContextTypes esContextTypes(QDemonRenderContextType::GLES2 | QDemonRenderContextType::GLES3
+                                           | QDemonRenderContextType::GLES3PLUS);
 
-    if ((inContextType & esContextTypes))
+    if (esContextTypes & inContextType)
         return true;
 
     return false;
@@ -801,11 +801,11 @@ struct GLConversion
                                                                            QDemonRenderTextureFormats::Enum value,
                                                                            QDemonRenderTextureSwizzleMode::Enum &swizzleMode)
     {
-        QDemonRenderContextType deprecatedContextFlags(QDemonRenderContextValues::GL2 | QDemonRenderContextValues::GLES2);
+        QDemonRenderContextTypes deprecatedContextFlags(QDemonRenderContextType::GL2 | QDemonRenderContextType::GLES2);
         QDemonRenderTextureFormats::Enum newValue = value;
         swizzleMode = QDemonRenderTextureSwizzleMode::NoSwizzle;
 
-        if (!(type & deprecatedContextFlags)) {
+        if (!(deprecatedContextFlags & type)) {
             switch (value) {
             case QDemonRenderTextureFormats::Luminance8:
                 newValue = QDemonRenderTextureFormats::R8;
@@ -871,7 +871,7 @@ struct GLConversion
     {
         switch (value) {
         case QDemonRenderTextureFormats::R8:
-            if (type == QDemonRenderContextValues::GLES2) {
+            if (type == QDemonRenderContextType::GLES2) {
                 outFormat = GL_ALPHA;
                 outInternalFormat = GL_ALPHA;
             } else {
@@ -934,9 +934,9 @@ struct GLConversion
             break;
         }
 
-        QDemonRenderContextType contextFlags(QDemonRenderContextValues::GL2 | QDemonRenderContextValues::GLES2);
+        QDemonRenderContextTypes contextFlags(QDemonRenderContextType::GL2 | QDemonRenderContextType::GLES2);
         // check extented texture formats
-        if (!(type & contextFlags)) {
+        if (!(contextFlags & type)) {
             switch (value) {
 #if !defined(QT_OPENGL_ES)
             case QDemonRenderTextureFormats::R16: {
@@ -1045,11 +1045,11 @@ struct GLConversion
                                            GLenum &outDataType,
                                            GLenum &outInternalFormat)
     {
-        QDemonRenderContextType theContextFlags(QDemonRenderContextValues::GLES2 | QDemonRenderContextValues::GL2);
+        QDemonRenderContextTypes theContextFlags(QDemonRenderContextType::GLES2 | QDemonRenderContextType::GL2);
 
-        bool supportDepth24 = !(type & theContextFlags);
-        bool supportDepth32f = !(type & theContextFlags);
-        bool supportDepth24Stencil8 = !(type & theContextFlags);
+        bool supportDepth24 = !(theContextFlags & type);
+        bool supportDepth32f = !(theContextFlags & type);
+        bool supportDepth24Stencil8 = !(theContextFlags & type);
 
         switch (value) {
         case QDemonRenderTextureFormats::Depth16:
