@@ -50,7 +50,7 @@ enum class ShaderCacheProgramFlagValues : quint32
     GeometryShaderEnabled = 1 << 1, // geometry shader enabled
 };
 
-Q_DECLARE_FLAGS(QDemonShaderCacheProgramFlags, ShaderCacheProgramFlagValues);
+Q_DECLARE_FLAGS(QDemonShaderCacheProgramFlags, ShaderCacheProgramFlagValues)
 
 
 // There are a number of macros used to turn on or off various features.  This allows those
