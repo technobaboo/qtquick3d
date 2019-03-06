@@ -63,7 +63,7 @@ namespace {
 
 struct QDemonRenderContextCore : public QDemonRenderContextCoreInterface
 {
-    QDemonRef<QDemonPerfTimerInterface> m_perfTimer;
+    QDemonPerfTimer m_perfTimer;
     QDemonRef<QDemonInputStreamFactoryInterface> m_inputStreamFactory;
     QDemonRef<QDemonAbstractThreadPool> m_threadPool;
     QDemonRef<QDemonDynamicObjectSystemInterface> m_dynamicObjectSystem;
@@ -74,7 +74,7 @@ struct QDemonRenderContextCore : public QDemonRenderContextCoreInterface
     QDemonRef<QDemonPathManagerInterface> m_pathManagerCore;
 
     QDemonRenderContextCore()
-        : m_perfTimer(QDemonPerfTimerInterface::createPerfTimer())
+        : m_perfTimer(QDemonPerfTimer::create())
         , m_inputStreamFactory(QDemonInputStreamFactoryInterface::create())
         , m_threadPool(QDemonAbstractThreadPool::createThreadPool(4))
     {
@@ -94,7 +94,7 @@ struct QDemonRenderContextCore : public QDemonRenderContextCoreInterface
     }
     QDemonMaterialSystem getMaterialSystemCore() override { return m_materialSystem; }
     QDemonRef<QDemonEffectSystemInterface> getEffectSystemCore() override { return m_effectSystem; }
-    QDemonRef<QDemonPerfTimerInterface> getPerfTimer() override { return m_perfTimer; }
+    QDemonPerfTimer getPerfTimer() override { return m_perfTimer; }
     QDemonRef<QDemonPathManagerInterface> getPathManagerCore() override { return m_pathManagerCore; }
     QDemonRef<QDemonRenderContextInterface> createRenderContext(QDemonRef<QDemonRenderContext> inContext,
                                                                 const char *inPrimitivesDirectory) override;
@@ -132,7 +132,7 @@ struct QDemonRenderContextData : public QDemonRenderContextInterface
 {
     QDemonRef<QDemonRenderContext> m_renderContext;
     QDemonRenderContextCoreInterface *m_coreContext;
-    QDemonRef<QDemonPerfTimerInterface> m_perfTimer;
+    QDemonPerfTimer m_perfTimer;
     QDemonRef<QDemonInputStreamFactoryInterface> m_inputStreamFactory;
     QDemonBufferManager m_bufferManager;
     QDemonRef<QDemonResourceManagerInterface> m_resourceManager;
@@ -287,7 +287,7 @@ struct QDemonRenderContextData : public QDemonRenderContextInterface
     {
         return m_pixelGraphicsRenderer;
     }
-    QDemonRef<QDemonPerfTimerInterface> getPerfTimer() override { return m_perfTimer; }
+    QDemonPerfTimer getPerfTimer() override { return m_perfTimer; }
     QDemonRef<QDemonRenderListInterface> getRenderList() override { return m_renderList; }
     QDemonRef<QDemonPathManagerInterface> getPathManager() override { return m_pathManager; }
     QDemonRef<QDemonShaderProgramGeneratorInterface> getShaderProgramGenerator() override

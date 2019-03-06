@@ -42,7 +42,7 @@ QT_BEGIN_NAMESPACE
 class QDemonRenderShaderProgram;
 class QDemonRenderContext;
 class QDemonInputStreamFactoryInterface;
-class QDemonPerfTimerInterface;
+class QDemonPerfTimer;
 
 struct ShaderCacheProgramFlagValues
 {
@@ -160,7 +160,7 @@ public:
 
     static QDemonRef<QDemonShaderCacheInterface> createShaderCache(QDemonRef<QDemonRenderContext> inContext,
                                                                    QDemonRef<QDemonInputStreamFactoryInterface> inInputStreamFactory,
-                                                                   QDemonRef<QDemonPerfTimerInterface> inPerfTimer);
+                                                                   QDemonPerfTimer inPerfTimer);
 };
 
 struct QDemonShaderCacheKey

@@ -9,7 +9,6 @@
 
 QT_BEGIN_NAMESPACE
 
-namespace {
 struct QDemonTimerEntry
 {
     quint64 m_total = 0;
@@ -55,62 +54,59 @@ struct QDemonTimerEntry
 
     bool operator<(const QDemonTimerEntry &other) const { return m_order < other.m_order; }
 };
-struct QDemonPerfTimer : public QDemonPerfTimerInterface
+
+QDemonPerfTimer::~QDemonPerfTimer()
 {
-    typedef QHash<QString, QDemonTimerEntry> THashMapType;
-    // This object needs its own string table because it is used during the binary load process with
-    // the application string table gets booted up.
-    THashMapType m_entries;
-    QVector<QDemonTimerEntry> m_printEntries;
-    QMutex m_mutex;
-
-    void update(const char *inId, quint64 inAmount) override
-    {
-        QMutexLocker locker(&m_mutex);
-        QString theStr = QString::fromLocal8Bit(inId);
-        THashMapType::iterator theFind = m_entries.insert(theStr, QDemonTimerEntry(theStr, m_entries.size()));
-        theFind.value().update(inAmount);
-    }
-
-    // Dump current summation of timer data.
-    void outputTimerData(quint32 inFramesPassed = 0) override
-    {
-        QMutexLocker locker(&m_mutex);
-        m_printEntries.clear();
-        for (THashMapType::iterator iter = m_entries.begin(), end = m_entries.end(); iter != end; ++iter) {
-            m_printEntries.push_back(iter.value());
-            iter.value().reset();
-        }
-
-        std::sort(m_printEntries.begin(), m_printEntries.end());
-
-        for (quint32 idx = 0, end = (quint32)m_printEntries.size(); idx < end; ++idx) {
-            m_printEntries[idx].output(inFramesPassed);
-        }
-    }
-
-    void resetTimerData() override
-    {
-        QMutexLocker locker(&m_mutex);
-        auto iter = m_entries.begin();
-        const auto end = m_entries.end();
-        while (iter != end) {
-            iter.value().reset();
-            ++iter;
-        }
-    }
-
-    virtual void clearPerfKeys()
-    {
-        QMutexLocker locker(&m_mutex);
-        m_entries.clear();
-    }
-};
 }
 
-QDemonRef<QDemonPerfTimerInterface> QDemonPerfTimerInterface::createPerfTimer()
+void QDemonPerfTimer::update(const char *inId, quint64 inAmount)
 {
-    return QDemonRef<QDemonPerfTimerInterface>(new QDemonPerfTimer());
+    QMutexLocker locker(&d->mutex);
+    QString theStr = QString::fromLocal8Bit(inId);
+    auto it = d->entries.find(inId);
+    if (it == d->entries.end())
+        it = d->entries.insert(inId, QDemonTimerEntry(inId, d->entries.size()));
+    it.value().update(inAmount);
+}
+
+void QDemonPerfTimer::outputTimerData(quint32 inFramesPassed)
+{
+    QMutexLocker locker(&d->mutex);
+    d->printEntries.clear();
+    for (Private::Map::iterator iter = d->entries.begin(), end = d->entries.end(); iter != end; ++iter) {
+        d->printEntries.push_back(iter.value());
+        iter.value().reset();
+    }
+
+    std::sort(d->printEntries.begin(), d->printEntries.end());
+
+    for (quint32 idx = 0, end = (quint32)d->printEntries.size(); idx < end; ++idx) {
+        d->printEntries[idx].output(inFramesPassed);
+    }
+}
+
+void QDemonPerfTimer::resetTimerData()
+{
+    QMutexLocker locker(&d->mutex);
+    auto iter = d->entries.begin();
+    const auto end = d->entries.end();
+    while (iter != end) {
+        iter.value().reset();
+        ++iter;
+    }
+}
+
+QDemonPerfTimer QDemonPerfTimer::create()
+{
+    QDemonPerfTimer timer;
+    timer.d = new Private;
+    return timer;
+}
+
+
+QDemonPerfTimer::Private::~Private()
+{
+
 }
 
 QT_END_NAMESPACE

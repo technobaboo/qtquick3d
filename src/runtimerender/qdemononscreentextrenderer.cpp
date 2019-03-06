@@ -355,7 +355,7 @@ public:
 
     void beginFrame() override {}
     void endFrame() override {}
-    void beginPreloadFonts(QDemonAbstractThreadPool &, QDemonRef<QDemonPerfTimerInterface>) override {}
+    void beginPreloadFonts(QDemonAbstractThreadPool &, QDemonPerfTimer) override {}
     void endPreloadFonts() override {}
 };
 }

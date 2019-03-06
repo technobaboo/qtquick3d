@@ -100,7 +100,7 @@ static inline void getWrappedCoords(int &sX, int &sY, int width, int height)
 
 
 QDemonBufferManager::QDemonBufferManager(const QDemonRef<QDemonRenderContext> &ctx, const QDemonRef<QDemonInputStreamFactoryInterface> &inInputStreamFactory,
-                                         const QDemonRef<QDemonPerfTimerInterface> &inTimer)
+                                         const QDemonPerfTimer &inTimer)
     : d(new Private)
 {
     d->context = ctx;

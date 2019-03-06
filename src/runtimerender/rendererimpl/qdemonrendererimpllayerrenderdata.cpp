@@ -630,7 +630,7 @@ void QDemonLayerRenderData::renderShadowMapBlurPass(QDemonResourceFrameBuffer *t
 
 void QDemonLayerRenderData::renderShadowMapPass(QDemonResourceFrameBuffer *theFB)
 {
-    QDemonStackPerfTimer ___timer(*renderer->getDemonContext()->getPerfTimer(), "SLayerRenderData::RenderShadowMapPass");
+    QDemonStackPerfTimer ___timer(renderer->getDemonContext()->getPerfTimer(), "SLayerRenderData::RenderShadowMapPass");
 
     if (camera == nullptr || !getShadowMapManager())
         return;
@@ -764,7 +764,7 @@ inline void renderRenderableDepthPass(QDemonLayerRenderData &inData,
 
 void QDemonLayerRenderData::renderDepthPass(bool inEnableTransparentDepthWrite)
 {
-    QDemonStackPerfTimer ___timer(*renderer->getDemonContext()->getPerfTimer(), "SLayerRenderData::renderDepthPass");
+    QDemonStackPerfTimer ___timer(renderer->getDemonContext()->getPerfTimer(), "SLayerRenderData::renderDepthPass");
     if (camera == nullptr)
         return;
 
@@ -950,7 +950,7 @@ void QDemonLayerRenderData::runRenderPass(TRenderRenderableFunction inRenderFn,
 
 void QDemonLayerRenderData::render(QDemonResourceFrameBuffer *theFB)
 {
-    QDemonStackPerfTimer ___timer(*renderer->getDemonContext()->getPerfTimer(), "SLayerRenderData::Render");
+    QDemonStackPerfTimer ___timer(renderer->getDemonContext()->getPerfTimer(), "SLayerRenderData::Render");
     if (camera == nullptr)
         return;
 
@@ -2024,7 +2024,7 @@ void QDemonLayerRenderData::runnableRenderToViewport(const QDemonRef<QDemonRende
 
 void QDemonLayerRenderData::addLayerRenderStep()
 {
-    QDemonStackPerfTimer __perfTimer(*renderer->getDemonContext()->getPerfTimer(), "SLayerRenderData::AddLayerRenderStep");
+    QDemonStackPerfTimer __perfTimer(renderer->getDemonContext()->getPerfTimer(), "SLayerRenderData::AddLayerRenderStep");
     Q_ASSERT(camera);
     if (!camera)
         return;

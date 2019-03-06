@@ -42,7 +42,7 @@ struct QDemonRenderMesh;
 struct QDemonLoadedTexture;
 class QDemonRenderContext;
 class QDemonInputStreamFactoryInterface;
-class QDemonPerfTimerInterface;
+class QDemonPerfTimer;
 namespace QDemonMeshUtilities {
     struct MultiLoadResult;
 }
@@ -58,7 +58,7 @@ class Q_DEMONRUNTIMERENDER_EXPORT QDemonBufferManager
 
         QDemonRef<QDemonRenderContext> context;
         QDemonRef<QDemonInputStreamFactoryInterface> inputStreamFactory;
-        QDemonRef<QDemonPerfTimerInterface> perfTimer;
+        QDemonPerfTimer perfTimer;
         QString pathBuilder;
         ImageMap imageMap;
         QMutex loadedImageSetMutex;
@@ -79,7 +79,7 @@ public:
     QDemonBufferManager() = default;
     QDemonBufferManager(const QDemonRef<QDemonRenderContext> &inRenderContext,
                         const QDemonRef<QDemonInputStreamFactoryInterface> &inInputStreamFactory,
-                        const QDemonRef<QDemonPerfTimerInterface> &inTimer);
+                        const QDemonPerfTimer &inTimer);
     ~QDemonBufferManager();
     // Path manipulation used to get the final path form a base path plus relative extension
     QString combineBaseAndRelative(const char *inBase, const char *inRelative);

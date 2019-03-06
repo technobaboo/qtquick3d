@@ -177,7 +177,7 @@ struct ShaderCache : public QDemonShaderCacheInterface
 {
     typedef QHash<QDemonShaderCacheKey, QDemonRef<QDemonRenderShaderProgram>> TShaderMap;
     QDemonRef<QDemonRenderContext> m_renderContext;
-    QDemonRef<QDemonPerfTimerInterface> m_perfTimer;
+    QDemonPerfTimer m_perfTimer;
     TShaderMap m_shaders;
     QString m_cacheFilePath;
     QByteArray m_vertexCode;
@@ -197,7 +197,7 @@ struct ShaderCache : public QDemonShaderCacheInterface
 
     ShaderCache(QDemonRef<QDemonRenderContext> ctx,
                 QDemonRef<QDemonInputStreamFactoryInterface> inInputStreamFactory,
-                QDemonRef<QDemonPerfTimerInterface> inPerfTimer)
+                QDemonPerfTimer inPerfTimer)
         : m_renderContext(ctx), m_perfTimer(inPerfTimer), m_inputStreamFactory(inInputStreamFactory), m_shaderCompilationEnabled(true)
     {
     }
@@ -705,7 +705,7 @@ QDemonShaderCacheInterface::~QDemonShaderCacheInterface() {}
 
 QDemonRef<QDemonShaderCacheInterface> QDemonShaderCacheInterface::createShaderCache(QDemonRef<QDemonRenderContext> inContext,
                                                                                     QDemonRef<QDemonInputStreamFactoryInterface> inInputStreamFactory,
-                                                                                    QDemonRef<QDemonPerfTimerInterface> inPerfTimer)
+                                                                                    QDemonPerfTimer inPerfTimer)
 {
     return QDemonRef<ShaderCache>(new ShaderCache(inContext, inInputStreamFactory, inPerfTimer));
 }
