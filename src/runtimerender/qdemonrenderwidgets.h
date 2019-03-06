@@ -50,6 +50,8 @@
 
 QT_BEGIN_NAMESPACE
 
+class QDemonRenderContext;
+
 struct QDemonWidgetRenderInformation
 {
     // Just the rotation component of the nodeparenttocamera.
