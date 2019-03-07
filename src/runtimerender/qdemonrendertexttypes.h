@@ -35,6 +35,7 @@
 #include <QtCore/QString>
 
 #include <QtGui/QVector2D>
+#include <QtCore/qhash.h>
 
 QT_BEGIN_NAMESPACE
 

@@ -31,6 +31,7 @@
 #define QDEMON_RENDER_TESS_MODE_VALUES_H
 
 #include <QtDemonRuntimeRender/qtdemonruntimerenderglobal.h>
+#include <QtCore/qhash.h>
 
 QT_BEGIN_NAMESPACE
 
