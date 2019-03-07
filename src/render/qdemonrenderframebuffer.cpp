@@ -63,7 +63,7 @@ QDemonRenderFrameBuffer::~QDemonRenderFrameBuffer()
 inline void CheckAttachment(QDemonRef<QDemonRenderContext> ctx, QDemonRenderFrameBufferAttachment attachment)
 {
 #ifdef _DEBUG
-    Q_ASSERT(attachment != QDemonRenderFrameBufferAttachments::DepthStencil || ctx->isDepthStencilSupported());
+    Q_ASSERT(attachment != QDemonRenderFrameBufferAttachment::DepthStencil || ctx->isDepthStencilSupported());
 #endif
     (void)ctx;
     (void)attachment;
