@@ -129,10 +129,6 @@ struct QDemonResourceManager : public QDemonResourceManagerInterface
     }
     void release(QDemonRenderRenderBuffer inBuffer) override
     {
-#ifdef _DEBUG
-        auto theFind = std::find(freeRenderBuffers.begin(), freeRenderBuffers.end(), inBuffer);
-        Q_ASSERT(theFind == freeRenderBuffers.end());
-#endif
         freeRenderBuffers.push_back(inBuffer);
     }
     QDemonRef<QDemonRenderTexture2D> setupAllocatedTexture(QDemonRef<QDemonRenderTexture2D> inTexture)
