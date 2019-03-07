@@ -89,7 +89,7 @@ struct QDemonPixelGraphicsRenderer : public QDemonPixelGraphicsRendererInterface
     QDemonRef<QDemonRenderVertexBuffer> m_quadVertexBuffer;
     QDemonRef<QDemonRenderIndexBuffer> m_quadIndexBuffer;
     QDemonRef<QDemonRenderInputAssembler> m_quadInputAssembler;
-    QDemonRef<QDemonRenderAttribLayout> m_quadAttribLayout;
+    QDemonRenderAttribLayout m_quadAttribLayout;
     QDemonShaderVertexCodeGenerator m_vertexGenerator;
     QDemonShaderFragmentCodeGenerator m_fragmentGenerator;
     QDemonPGRectShader m_rectShader;
@@ -172,9 +172,9 @@ struct QDemonPixelGraphicsRenderer : public QDemonPixelGraphicsRendererInterface
                                                                     toU8DataRef(indexData, sizeof(indexData)));
         }
 
-        if (m_quadAttribLayout == nullptr) {
+        if (m_quadAttribLayout.isNull()) {
             // create our attribute layout
-            m_quadAttribLayout = theRenderContext->createAttributeLayout(toConstDataRef(theEntries, 1));
+            m_quadAttribLayout = QDemonRenderAttribLayout(theRenderContext, toConstDataRef(theEntries, 1));
         }
 
         if (m_quadInputAssembler == nullptr) {

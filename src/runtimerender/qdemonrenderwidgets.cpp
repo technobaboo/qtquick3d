@@ -146,7 +146,7 @@ struct QDemonWidgetBBox : public QDemonRenderWidgetInterface
         m_boxInputAssembler = inContext.getInputAssembler(m_itemName);
         if (!m_boxInputAssembler && m_boxIndexBuffer && m_boxVertexBuffer) {
             // create our attribute layout
-            QDemonRef<QDemonRenderAttribLayout> theAttribLayout = inContext.createAttributeLayout(toConstDataRef(&theEntry, 1));
+            QDemonRenderAttribLayout theAttribLayout(inContext.getContext(), toConstDataRef(&theEntry, 1));
 
             quint32 strides = m_boxVertexBuffer->getStride();
             quint32 offsets = 0;
@@ -235,7 +235,7 @@ struct QDemonWidgetAxis : public QDemonRenderWidgetInterface
 
         if (!m_axisInputAssembler && m_axisVertexBuffer) {
             // create our attribute layout
-            QDemonRef<QDemonRenderAttribLayout> theAttribLAyout = inContext.createAttributeLayout(toConstDataRef(theEntries, 2));
+            QDemonRenderAttribLayout theAttribLAyout(inContext.getContext(), toConstDataRef(theEntries, 2));
 
             quint32 strides = m_axisVertexBuffer->getStride();
             quint32 offsets = 0;

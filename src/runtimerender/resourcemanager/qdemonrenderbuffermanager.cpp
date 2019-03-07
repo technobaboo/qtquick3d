@@ -465,12 +465,12 @@ QDemonRenderMesh *QDemonBufferManager::loadMesh(const QString &inMeshPath) const
                 entryBuffer[entryIdx] = entries.index(baseAddress, entryIdx).toVertexBufferEntry(baseAddress);
 
             // create our attribute layout
-            auto attribLayout = d->context->createAttributeLayout(toConstDataRef(entryBuffer.constData(), entryBuffer.count()));
+            QDemonRenderAttribLayout attribLayout(d->context, toConstDataRef(entryBuffer.constData(), entryBuffer.count()));
             // create our attribute layout for depth pass
             QDemonRenderVertexBufferEntry vertBufferEntries[] = {
                 QDemonRenderVertexBufferEntry("attr_pos", QDemonRenderComponentType::Float32, 3),
             };
-            auto attribLayoutDepth = d->context->createAttributeLayout(toConstDataRef(vertBufferEntries, 1));
+            QDemonRenderAttribLayout attribLayoutDepth(d->context, toConstDataRef(vertBufferEntries, 1));
 
             // create input assembler object
             quint32 strides = result.m_mesh->m_vertexBuffer.m_stride;
@@ -669,15 +669,14 @@ QDemonRenderMesh *QDemonBufferManager::createMesh(const QString &inSourcePath, q
         };
 
         // create our attribute layout
-        QDemonRef<QDemonRenderAttribLayout> theAttribLayout = d->context->createAttributeLayout(toConstDataRef(theEntries, 3));
+        QDemonRenderAttribLayout theAttribLayout(d->context, toConstDataRef(theEntries, 3));
         /*
             // create our attribute layout for depth pass
             QDemonRenderVertexBufferEntry theEntriesDepth[] = {
                     QDemonRenderVertexBufferEntry( "attr_pos",
             QDemonRenderComponentTypes::float, 3 ),
             };
-            QDemonRenderAttribLayout* theAttribLayoutDepth = d->context->CreateAttributeLayout(
-            toConstDataRef( theEntriesDepth, 1 ) );
+            QDemonRenderAttribLayout theAttribLayoutDepth(d->context, toConstDataRef( theEntriesDepth, 1 ) );
             */
         // create input assembler object
         quint32 strides = inVertStride;

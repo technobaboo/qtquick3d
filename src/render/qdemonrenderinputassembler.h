@@ -33,6 +33,7 @@
 #include <QtDemonRender/qtdemonrenderglobal.h>
 #include <QtDemonRender/qdemonrenderbasetypes.h>
 #include <QtDemonRender/qdemonrenderbackend.h>
+#include <QtDemonRender/qdemonrenderattriblayout.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -66,7 +67,7 @@ public:
      * @return No return.
      */
     QDemonRenderInputAssembler(const QDemonRef<QDemonRenderContextImpl> &context,
-                               const QDemonRef<QDemonRenderAttribLayout> &attribLayout,
+                               const QDemonRenderAttribLayout &attribLayout,
                                QDemonConstDataRef<QDemonRef<QDemonRenderVertexBuffer>> buffers,
                                const QDemonRef<QDemonRenderIndexBuffer> &indexBuffer,
                                QDemonConstDataRef<quint32> strides,
@@ -135,7 +136,7 @@ private:
     QDemonRef<QDemonRenderContextImpl> m_context; ///< pointer to context
     QDemonRef<QDemonRenderBackend> m_backend; ///< pointer to backend
 
-    QDemonRef<QDemonRenderAttribLayout> m_attribLayout; ///< pointer to attribute layout
+    QDemonRenderAttribLayout m_attribLayout; ///< pointer to attribute layout
     QVector<QDemonRef<QDemonRenderVertexBuffer>> m_vertexBuffers; ///< vertex buffers
     const QDemonRef<QDemonRenderIndexBuffer> m_indexBuffer; ///< index buffer
     QDemonConstDataRef<QDemonRenderBackend::QDemonRenderBackendBufferObject> m_vertexbufferHandles; ///< opaque vertex buffer backend handles

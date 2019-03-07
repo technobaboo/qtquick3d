@@ -37,7 +37,7 @@ QT_BEGIN_NAMESPACE
 
 ///< constructor
 QDemonRenderInputAssembler::QDemonRenderInputAssembler(const QDemonRef<QDemonRenderContextImpl> &context,
-                                                       const QDemonRef<QDemonRenderAttribLayout> &attribLayout,
+                                                       const QDemonRenderAttribLayout &attribLayout,
                                                        QDemonConstDataRef<QDemonRef<QDemonRenderVertexBuffer>> buffers,
                                                        const QDemonRef<QDemonRenderIndexBuffer> &indexBuffer,
                                                        QDemonConstDataRef<quint32> strides,
@@ -68,7 +68,7 @@ QDemonRenderInputAssembler::QDemonRenderInputAssembler(const QDemonRef<QDemonRen
 
     m_vertexbufferHandles = toConstDataRef(bufferHandle, buffers.size());
 
-    m_inputAssemblertHandle = m_backend->createInputAssembler(m_attribLayout->GetAttribLayoutHandle(),
+    m_inputAssemblertHandle = m_backend->createInputAssembler(m_attribLayout.handle(),
                                                               m_vertexbufferHandles,
                                                               (m_indexBuffer) ? m_indexBuffer->getBuffertHandle() : nullptr,
                                                               strides,

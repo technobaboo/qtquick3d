@@ -217,9 +217,7 @@ public:
     virtual QDemonRef<QDemonRenderFrameBuffer> createFrameBuffer() = 0;
     virtual QDemonRef<QDemonRenderFrameBuffer> getFrameBuffer(const void *implementationHandle) = 0;
 
-    virtual QDemonRef<QDemonRenderAttribLayout> createAttributeLayout(QDemonConstDataRef<QDemonRenderVertexBufferEntry> attribs) = 0;
-
-    virtual QDemonRef<QDemonRenderInputAssembler> createInputAssembler(QDemonRef<QDemonRenderAttribLayout> attribLayout,
+    virtual QDemonRef<QDemonRenderInputAssembler> createInputAssembler(QDemonRenderAttribLayout attribLayout,
                                                                        QDemonConstDataRef<QDemonRef<QDemonRenderVertexBuffer>> buffers,
                                                                        const QDemonRef<QDemonRenderIndexBuffer> indexBuffer,
                                                                        QDemonConstDataRef<quint32> strides,
@@ -851,8 +849,7 @@ public:
     QDemonRef<QDemonRenderFrameBuffer> getFrameBuffer(const void *implementationHandle) override;
     virtual void frameBufferDestroyed(QDemonRenderFrameBuffer *fb);
 
-    virtual QDemonRef<QDemonRenderAttribLayout> createAttributeLayout(QDemonConstDataRef<QDemonRenderVertexBufferEntry> attribs) override;
-    QDemonRef<QDemonRenderInputAssembler> createInputAssembler(QDemonRef<QDemonRenderAttribLayout> attribLayout,
+    QDemonRef<QDemonRenderInputAssembler> createInputAssembler(QDemonRenderAttribLayout attribLayout,
                                                                QDemonConstDataRef<QDemonRef<QDemonRenderVertexBuffer>> buffers,
                                                                const QDemonRef<QDemonRenderIndexBuffer> indexBuffer,
                                                                QDemonConstDataRef<quint32> strides,

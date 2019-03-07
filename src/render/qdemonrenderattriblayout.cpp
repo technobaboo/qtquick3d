@@ -34,19 +34,19 @@
 QT_BEGIN_NAMESPACE
 
 ///< constructor
-QDemonRenderAttribLayout::QDemonRenderAttribLayout(const QDemonRef<QDemonRenderContextImpl> &context,
-                                                   QDemonConstDataRef<QDemonRenderVertexBufferEntry> attribs)
-    : m_context(context), m_backend(context->getBackend())
+QDemonRenderAttribLayout::Private::Private(const QDemonRef<QDemonRenderContext> &context,
+                                           QDemonConstDataRef<QDemonRenderVertexBufferEntry> attribs)
 {
-    m_attribLayoutHandle = m_backend->createAttribLayout(attribs);
-    Q_ASSERT(m_attribLayoutHandle);
+    backend = context->getBackend();
+    handle = backend->createAttribLayout(attribs);
+    Q_ASSERT(handle);
 }
 
-///< destructor
-QDemonRenderAttribLayout::~QDemonRenderAttribLayout()
+QDemonRenderAttribLayout::Private::~Private()
 {
-    if (m_attribLayoutHandle) {
-        m_backend->releaseAttribLayout(m_attribLayoutHandle);
-    }
+    Q_ASSERT(handle);
+    backend->releaseAttribLayout(handle);
 }
+
 QT_END_NAMESPACE
+

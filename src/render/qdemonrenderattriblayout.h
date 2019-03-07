@@ -36,15 +36,25 @@
 QT_BEGIN_NAMESPACE
 
 // forward declarations
-class QDemonRenderContextImpl;
+class QDemonRenderContext;
 class QDemonRenderBackend;
 
 ///< this class handles the vertex attribute layout setup
 class Q_DEMONRENDER_EXPORT QDemonRenderAttribLayout
 {
-    Q_DISABLE_COPY(QDemonRenderAttribLayout)
+    struct Private {
+        Q_DISABLE_COPY(Private)
+        Private(const QDemonRef<QDemonRenderContext> &context, QDemonConstDataRef<QDemonRenderVertexBufferEntry> attribs);
+        ~Private();
+        QAtomicInt ref;
+        QDemonRef<QDemonRenderBackend> backend; ///< pointer to backend
+        QDemonRenderBackend::QDemonRenderBackendAttribLayoutObject handle; ///< opaque backend handle
+
+    };
+    QExplicitlySharedDataPointer<Private> d;
+
 public:
-    QAtomicInt ref;
+    QDemonRenderAttribLayout() = default;
     /**
      * @brief constructor
      *
@@ -53,26 +63,22 @@ public:
      *
      * @return No return.
      */
-    QDemonRenderAttribLayout(const QDemonRef<QDemonRenderContextImpl> &context,
-                             QDemonConstDataRef<QDemonRenderVertexBufferEntry> attribs);
-    ///< destructor
-    ~QDemonRenderAttribLayout();
+    QDemonRenderAttribLayout(const QDemonRef<QDemonRenderContext> &context,
+                             QDemonConstDataRef<QDemonRenderVertexBufferEntry> attribs)
+        : d(new Private(context, attribs))
+    {}
+    ~QDemonRenderAttribLayout() {}
 
+    bool isNull() const { return !d; }
     /**
      * @brief get the backend object handle
      *
      * @return the backend object handle.
      */
-    QDemonRenderBackend::QDemonRenderBackendAttribLayoutObject GetAttribLayoutHandle() const
+    QDemonRenderBackend::QDemonRenderBackendAttribLayoutObject handle() const
     {
-        return m_attribLayoutHandle;
+        return d ? d->handle : nullptr;
     }
-
-private:
-    QDemonRef<QDemonRenderContextImpl> m_context; ///< pointer to context
-    QDemonRef<QDemonRenderBackend> m_backend; ///< pointer to backend
-
-    QDemonRenderBackend::QDemonRenderBackendAttribLayoutObject m_attribLayoutHandle; ///< opaque backend handle
 };
 
 QT_END_NAMESPACE
