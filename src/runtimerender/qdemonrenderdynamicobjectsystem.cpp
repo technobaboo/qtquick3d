@@ -557,7 +557,7 @@ struct QDemonDynamicObjClassImpl : public QDemonDynamicObjectClassInterface
     const quint8 *getDefaultValueBuffer() const override { return m_propertyDefaultData; }
     quint32 getBaseObjectSize() const override { return m_baseObjectSize; }
     QDemonGraphObjectType graphObjectType() const override { return m_graphObjectType; }
-    const dynamic::QDemonPropertyDefinition *FindDefinition(QString &str) const
+    const dynamic::QDemonPropertyDefinition *findDefinition(QString &str) const
     {
         for (quint32 idx = 0, end = m_propertyDefinitions.size(); idx < end; ++idx) {
             const dynamic::QDemonPropertyDefinition &def(m_propertyDefinitions[idx]);
@@ -568,7 +568,7 @@ struct QDemonDynamicObjClassImpl : public QDemonDynamicObjectClassInterface
     }
     const dynamic::QDemonPropertyDefinition *findPropertyByName(QString inName) const override
     {
-        return FindDefinition(inName);
+        return findDefinition(inName);
     }
     QDemonConstDataRef<dynamic::QDemonCommand *> getRenderCommands() const override { return m_renderCommands; }
     bool requiresDepthTexture() const override { return m_requiresDepthTexture; }
@@ -676,7 +676,7 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
     {
         QDemonRef<QDemonDynamicObjClassImpl> cls = findClass(inName);
         if (cls) {
-            const dynamic::QDemonPropertyDefinition *def = cls->FindDefinition(inPropName);
+            const dynamic::QDemonPropertyDefinition *def = cls->findDefinition(inPropName);
             if (def)
                 return QPair<const dynamic::QDemonPropertyDefinition *, QDemonRef<QDemonDynamicObjClassImpl>>(def, cls);
         }
