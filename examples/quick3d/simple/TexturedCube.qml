@@ -8,8 +8,7 @@ DemonNode {
         materials: [
             DemonDefaultMaterial {
                 id: texturedCubeMaterial
-                diffuseMap: cubeTexture
-                DemonImage {
+                diffuseMap: DemonImage {
                     id: cubeTexture
                     source: "texture.png"
                 }

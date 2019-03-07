@@ -4,6 +4,7 @@
 #include <QtQuick3d/qdemonmaterial.h>
 #include <QtQuick3d/qdemonimage.h>
 #include <QColor>
+#include <QHash>
 
 QT_BEGIN_NAMESPACE
 
@@ -70,6 +71,8 @@ public:
         TranslucencyDirty = 0x00000100,
         VertexColorsDirty = 0x00000200
     };
+
+    using ConnectionMap = QHash<QObject*, QMetaObject::Connection>;
 
     QDemonDefaultMaterial();
     ~QDemonDefaultMaterial() override;
@@ -168,8 +171,9 @@ Q_SIGNALS:
 
 protected:
     QDemonGraphObject *updateSpatialNode(QDemonGraphObject *node) override;
-
+    void itemChange(ItemChange, const ItemChangeData &) override;
 private:
+    void updateWindow(QDemonWindow *window);
     QDemonDefaultMaterialLighting m_lighting = VertexLighting;
     QDemonDefaultMaterialBlendMode m_blendMode = Normal;
     QColor m_diffuseColor;
@@ -202,6 +206,10 @@ private:
 
     quint32 m_dirtyAttributes = 0xffffffff; // all dirty by default
     void markDirty(QDemonDefaultMaterialDirtyType type);
+
+
+    ConnectionMap m_connections;
+
 };
 
 QT_END_NAMESPACE

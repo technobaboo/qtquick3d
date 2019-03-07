@@ -59,8 +59,9 @@ Q_SIGNALS:
 
 protected:
     QDemonGraphObject *updateSpatialNode(QDemonGraphObject *node);
-
+    void itemChange(ItemChange, const ItemChangeData &) override;
 private:
+    void updateWindow(QDemonWindow *window);
     QDemonImage *m_lightmapIndirect = nullptr;
     QDemonImage *m_lightmapRadiosity = nullptr;
     QDemonImage *m_lightmapShadow = nullptr;
@@ -70,6 +71,8 @@ private:
 
     QDemonImage *m_displacementMap = nullptr;
     float m_displacementAmount = 0.0f;
+
+    QHash<QObject*, QMetaObject::Connection> m_connections;
 };
 
 QT_END_NAMESPACE
