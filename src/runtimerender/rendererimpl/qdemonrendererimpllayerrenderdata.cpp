@@ -1175,8 +1175,6 @@ static inline void offsetProjectionMatrix(QMatrix4x4 &inProjectionMatrix, QVecto
     inProjectionMatrix(3, 1) = inProjectionMatrix(3, 1) + inProjectionMatrix(3, 3) * inVertexOffsets.y();
 }
 
-QString depthPassStr;
-
 // Render this layer's data to a texture.  Required if we have any effects,
 // prog AA, or if forced.
 void QDemonLayerRenderData::renderToTexture()
