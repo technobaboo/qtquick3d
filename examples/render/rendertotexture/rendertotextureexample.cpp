@@ -40,7 +40,7 @@
 
 struct ShaderArgs
 {
-    float mvp[16];
+    QMatrix4x4 mvp;
     QDemonRef<QDemonRenderTexture2D> texture;
     QDemonRef<QDemonRenderShaderProgram> shader;
     ShaderArgs() {}
@@ -66,27 +66,25 @@ class RenderToTexture : public QDemonRenderExample
     bool m_viewportDirty = true;
 
     ShaderArgs mShaderArgs;
-    float frus[16];
-    float model[16];
-    float rot[9];
+    QMatrix4x4 frus;
+    QMatrix4x4 model;
+    QMatrix4x4 rot;
     qint64 m_elapsedTime = 0;
 
 public:
     RenderToTexture() = default;
     void setupMVP(const QVector3D &translation)
     {
-        float *mvp(mShaderArgs.mvp);
-        ::memcpy(mvp, frus, 16 * sizeof(float));
-        QDemonGl2DemoMatrixMultiply(mvp, model);
-        QDemonGl2DemoMatrixTranslate(mvp, translation.x(), translation.y(), translation.z());
-        QDemonGl2DemoMatrixMultiply_4x4_3x3(mvp, rot);
+        mShaderArgs.mvp = frus;
+        mShaderArgs.mvp *= model;
+        mShaderArgs.mvp.translate(translation);
+        mShaderArgs.mvp *= rot;
     }
     void DrawIndexedArrays(const QVector3D &translation)
     {
         setupMVP(translation);
         m_Context->setActiveShader(mShaderArgs.shader);
-        mShaderArgs.shader->setPropertyValue("mat_mvp",
-                                             *reinterpret_cast<QMatrix4x4 *>(mShaderArgs.mvp));
+        mShaderArgs.shader->setPropertyValue("mat_mvp", mShaderArgs.mvp);
         mShaderArgs.shader->setPropertyValue("image0", mShaderArgs.texture.data());
         m_Context->draw(QDemonRenderDrawMode::Triangles, mIndexBuffer->getNumIndices(), 0);
     }
@@ -131,15 +129,14 @@ public:
         m_Context->setDepthWriteEnabled(true);
         m_Context->setClearColor(QVector4D(.3f, .3f, .3f, .3f));
         // Setup various matrici
-        QDemonGl2DemoMatrixIdentity(model);
-        QDemonGl2DemoMatrixIdentity(frus);
-        QDemonGl2DemoMatrixFrustum(frus, -1, 1, -1, 1, 1, 10);
-        QDemonGl2DemoMatrixTranslate(model, 0, 0, -4);
+        frus.frustum(-1, 1, -1, 1, 1, 10);
+        model.translate(0, 0, -4);
         mShaderArgs.texture = mColorBuffer;
     }
     void drawFrame(qint64 delta) override {
         m_elapsedTime += delta;
-        QDemonGl2DemoMatrixRotate_create3x3(rot, (float)m_elapsedTime * 0.1f, .707f, .707f, 0);
+        rot = QMatrix4x4();
+        rot.rotate((float)m_elapsedTime * 0.1f, .707f, .707f, 0);
         QDemonRenderClearFlags clearFlags(QDemonRenderClearValues::Color | QDemonRenderClearValues::Depth);
         // render to frame buffer
         {

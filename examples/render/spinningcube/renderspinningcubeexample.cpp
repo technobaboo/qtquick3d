@@ -63,33 +63,30 @@ public:
         }
         m_context->setDepthTestEnabled(true);
         m_context->setDepthWriteEnabled(true);
-        QDemonGl2DemoMatrixIdentity(model);
-        QDemonGl2DemoMatrixIdentity(frus);
-        QDemonGl2DemoMatrixFrustum(frus, -1, 1, -1, 1, 1, 10);
-        QDemonGl2DemoMatrixTranslate(model, 0, 0, -4);
+        frus.frustum(-1, 1, -1, 1, 1, 10);
+        model.translate(0, 0, -4);
     }
 
     virtual void drawFrame(qint64 delta) override
     {
         m_elapsedTime += delta;
-        QDemonGl2DemoMatrixRotate_create3x3(rot, (float)m_elapsedTime * 0.1f, .707f, .707f, 0);
-        float mvp[16];
-        QDemonGl2DemoMatrixIdentity(mvp);
-        QDemonGl2DemoMatrixMultiply(mvp, frus);
-        QDemonGl2DemoMatrixMultiply(mvp, model);
-        QDemonGl2DemoMatrixMultiply_4x4_3x3(mvp, rot);
+        QMatrix4x4 rot;
+        rot.rotate((float)m_elapsedTime * 0.1f, .707f, .707f, 0);
+        QMatrix4x4 mvp;
+        mvp *= frus;
+        mvp *= model;
+        mvp *= rot;;
 
         if (m_viewportDirty) {
             m_context->setViewport(QRect(0, 0, this->width(), this->height()));
             m_viewportDirty = false;
         }
 
-        QDemonConstDataRef<quint8> instance((quint8 *)mvp, 16 * sizeof(float));
         m_context->clear(
             QDemonRenderClearFlags(QDemonRenderClearValues::Color | QDemonRenderClearValues::Depth));
         m_context->setInputAssembler(m_inputAssembler);
 
-        m_shader->setPropertyValue("mat_mvp", *reinterpret_cast<QMatrix4x4 *>(mvp));
+        m_shader->setPropertyValue("mat_mvp", mvp);
         m_context->draw(QDemonRenderDrawMode::Triangles, m_indexBuffer->getNumIndices(), 0);
     }
 private:
@@ -98,9 +95,8 @@ private:
     QDemonRef<QDemonRenderIndexBuffer> m_indexBuffer;
     QDemonRef<QDemonRenderInputAssembler> m_inputAssembler;
     QDemonRef<QDemonRenderShaderProgram> m_shader;
-    float frus[16];
-    float model[16];
-    float rot[9];
+    QMatrix4x4 frus;
+    QMatrix4x4 model;
     qint64 m_elapsedTime = 0;
     bool m_viewportDirty = true;
 
