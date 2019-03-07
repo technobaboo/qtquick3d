@@ -218,12 +218,12 @@ class Q_DEMONRUNTIMERENDER_EXPORT QDemonRendererImpl : public QDemonRendererInte
     // Overlay used to render all widgets.
     QRect m_beginFrameViewport;
     QDemonRef<QDemonRenderTexture2D> m_widgetTexture;
-    QDemonRef<QDemonRenderFrameBuffer> m_widgetFbo;
+    QDemonRenderFrameBuffer m_widgetFbo;
 
 #ifdef ADVANCED_BLEND_SW_FALLBACK
     // Advanced blend mode SW fallback
     QDemonResourceTexture2D m_layerBlendTexture;
-    QDemonRef<QDemonRenderFrameBuffer> m_blendFb;
+    QDemonRenderFrameBuffer m_blendFb;
 #endif
     // Allocator for temporary data that is cleared after every layer.
     TInstanceRenderMap m_instanceRenderMap;
@@ -420,7 +420,7 @@ public:
 #ifdef ADVANCED_BLEND_SW_FALLBACK
     QDemonRef<QDemonRenderTexture2D> getLayerBlendTexture() { return m_layerBlendTexture.getTexture(); }
 
-    QDemonRef<QDemonRenderFrameBuffer> getBlendFB() { return m_blendFb; }
+    QDemonRenderFrameBuffer getBlendFB() { return m_blendFb; }
 #endif
     // widget context implementation
     QDemonRef<QDemonRenderVertexBuffer> getOrCreateVertexBuffer(

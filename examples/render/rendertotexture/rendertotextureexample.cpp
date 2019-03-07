@@ -56,7 +56,7 @@ class RenderToTexture : public QDemonRenderExample
     // Simple shader with texture lookup.
     QDemonRef<QDemonRenderShaderProgram> mSimpleShaderTex;
 
-    QDemonRef<QDemonRenderFrameBuffer> mFrameBuffer;
+    QDemonRenderFrameBuffer mFrameBuffer;
     QDemonRef<QDemonRenderTexture2D> mColorBuffer;
     QDemonRef<QDemonRenderTexture2D> mDepthBuffer;
 
@@ -116,12 +116,12 @@ public:
             // need
             // to push the current state
             // Auto-binds the framebuffer.
-            mFrameBuffer = m_Context->createFrameBuffer();
-            mFrameBuffer->attach(QDemonRenderFrameBufferAttachment::Color0, mColorBuffer);
-            mFrameBuffer->attach(QDemonRenderFrameBufferAttachment::Depth, mDepthBuffer);
-            Q_ASSERT(mFrameBuffer->isComplete());
+            mFrameBuffer = QDemonRenderFrameBuffer(m_Context);
+            mFrameBuffer.attach(QDemonRenderFrameBufferAttachment::Color0, mColorBuffer);
+            mFrameBuffer.attach(QDemonRenderFrameBufferAttachment::Depth, mDepthBuffer);
+            Q_ASSERT(mFrameBuffer.isComplete());
 
-            m_Context->setRenderTarget(nullptr);
+            m_Context->setRenderTarget(QDemonRenderFrameBuffer());
         }
         mColorBuffer->setMinFilter(QDemonRenderTextureMinifyingOp::Linear);
         mColorBuffer->setMagFilter(QDemonRenderTextureMagnifyingOp::Linear);
@@ -140,7 +140,7 @@ public:
         QDemonRenderClearFlags clearFlags(QDemonRenderClearValues::Color | QDemonRenderClearValues::Depth);
         // render to frame buffer
         {
-            QDemonRenderContextScopedProperty<QDemonRef<QDemonRenderFrameBuffer>> framebuffer(
+            QDemonRenderContextScopedProperty<QDemonRenderFrameBuffer> framebuffer(
                 *m_Context.data(),
                 &QDemonRenderContext::getRenderTarget,
                 &QDemonRenderContext::setRenderTarget,

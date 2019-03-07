@@ -32,13 +32,14 @@
 
 #include <QtDemonRender/qdemonopenglutil.h>
 #include <QtDemonRender/qdemonrendertexture2d.h>
+#include <QtDemonRender/qdemonrenderframebuffer.h>
 
 QT_BEGIN_NAMESPACE
 
 // The set of all properties as they are currently set in hardware.
 struct QDemonGLHardPropertyContext
 {
-    QDemonRef<QDemonRenderFrameBuffer> m_frameBuffer;
+    QDemonRenderFrameBuffer m_frameBuffer;
     QDemonRef<QDemonRenderShaderProgram> m_activeShader;
     QDemonRef<QDemonRenderProgramPipeline> m_activeProgramPipeline;
     QDemonRef<QDemonRenderInputAssembler> m_inputAssembler;

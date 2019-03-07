@@ -58,6 +58,7 @@ class Q_DEMONRENDER_EXPORT QDemonRenderRenderBuffer
 
 public:
     QDemonRenderRenderBuffer() = default;
+    QDemonRenderRenderBuffer(std::nullptr_t) {}
     /**
      * @brief constructor
      *

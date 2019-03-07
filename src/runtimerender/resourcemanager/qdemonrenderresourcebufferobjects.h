@@ -41,7 +41,7 @@ class QDemonResourceFrameBuffer
 {
 protected:
     QDemonRef<QDemonResourceManagerInterface> m_resourceManager;
-    QDemonRef<QDemonRenderFrameBuffer> m_frameBuffer;
+    QDemonRenderFrameBuffer m_frameBuffer;
 
 public:
     QDemonResourceFrameBuffer(const QDemonRef<QDemonResourceManagerInterface> &mgr);
@@ -50,17 +50,17 @@ public:
     void releaseFrameBuffer();
 
     QDemonRef<QDemonResourceManagerInterface> getResourceManager() { return m_resourceManager; }
-    QDemonRef<QDemonRenderFrameBuffer> getFrameBuffer() { return m_frameBuffer; }
-    operator QDemonRef<QDemonRenderFrameBuffer>() { return m_frameBuffer; }
-    QDemonRef<QDemonRenderFrameBuffer> operator->()
+    QDemonRenderFrameBuffer getFrameBuffer() { return m_frameBuffer; }
+    operator QDemonRenderFrameBuffer() { return m_frameBuffer; }
+    QDemonRenderFrameBuffer *operator->()
     {
-        Q_ASSERT(m_frameBuffer);
-        return m_frameBuffer;
+        Q_ASSERT(!m_frameBuffer.isNull());
+        return &m_frameBuffer;
     }
     QDemonRenderFrameBuffer &operator*()
     {
-        Q_ASSERT(m_frameBuffer);
-        return *m_frameBuffer;
+        Q_ASSERT(!m_frameBuffer.isNull());
+        return m_frameBuffer;
     }
 };
 
@@ -79,10 +79,10 @@ public:
     void releaseRenderBuffer();
 
     operator QDemonRenderRenderBuffer() { return m_renderBuffer; }
-    QDemonRenderRenderBuffer operator->()
+    QDemonRenderRenderBuffer *operator->()
     {
         Q_ASSERT(!m_renderBuffer.isNull());
-        return m_renderBuffer;
+        return &m_renderBuffer;
     }
     QDemonRenderRenderBuffer &operator*()
     {

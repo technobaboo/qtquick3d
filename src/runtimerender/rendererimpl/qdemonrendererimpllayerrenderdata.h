@@ -63,8 +63,8 @@ struct QDemonLayerRenderData : public QDemonLayerRenderPreparationData
 
     QDemonRef<QDemonRenderTexture2D> m_advancedBlendDrawTexture;
     QDemonRef<QDemonRenderTexture2D> m_advancedBlendBlendTexture;
-    QDemonRef<QDemonRenderFrameBuffer> m_advancedModeDrawFB;
-    QDemonRef<QDemonRenderFrameBuffer> m_advancedModeBlendFB;
+    QDemonRenderFrameBuffer m_advancedModeDrawFB;
+    QDemonRenderFrameBuffer m_advancedModeBlendFB;
 
     // True if this layer was rendered offscreen.
     // If this object has no value then this layer wasn't rendered at all.
@@ -136,7 +136,7 @@ struct QDemonLayerRenderData : public QDemonLayerRenderPreparationData
 
     void applyLayerPostEffects();
 
-    void runnableRenderToViewport(const QDemonRef<QDemonRenderFrameBuffer> &theFB);
+    void runnableRenderToViewport(const QDemonRenderFrameBuffer &theFB);
 
     void addLayerRenderStep();
 

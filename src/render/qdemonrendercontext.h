@@ -284,22 +284,22 @@ protected:
         m_dirtyFlags |= QDemonRenderContextDirtyValues::InputAssembler;
     }
 
-    void doSetRenderTarget(QDemonRef<QDemonRenderFrameBuffer> inBuffer)
+    void doSetRenderTarget(QDemonRenderFrameBuffer inBuffer)
     {
-        if (inBuffer)
-            m_backend->setRenderTarget(inBuffer->handle());
-        else
+        if (!inBuffer)
             m_backend->setRenderTarget(m_defaultOffscreenRenderTarget);
+        else
+            m_backend->setRenderTarget(inBuffer.handle());
 
         m_hardwarePropertyContext.m_frameBuffer = inBuffer;
     }
 
-    void doSetReadTarget(QDemonRef<QDemonRenderFrameBuffer> inBuffer)
+    void doSetReadTarget(QDemonRenderFrameBuffer inBuffer)
     {
-        if (inBuffer)
-            m_backend->setReadTarget(inBuffer->handle());
-        else
+        if (!inBuffer)
             m_backend->setReadTarget(QDemonRenderBackend::QDemonRenderBackendRenderTargetObject(nullptr));
+        else
+            m_backend->setReadTarget(inBuffer.handle());
     }
 
     bool bindShaderToInputAssembler(const QDemonRef<QDemonRenderInputAssembler> &inputAssembler,
@@ -322,7 +322,7 @@ public:
     qint32 getDepthBits() const
     {
         // only query this if a framebuffer is bound
-        if (m_hardwarePropertyContext.m_frameBuffer)
+        if (!m_hardwarePropertyContext.m_frameBuffer.isNull())
             return m_backend->getDepthBits();
         else
             return m_dephBits;
@@ -331,7 +331,7 @@ public:
     qint32 getStencilBits() const
     {
         // only query this if a framebuffer is bound
-        if (m_hardwarePropertyContext.m_frameBuffer)
+        if (!m_hardwarePropertyContext.m_frameBuffer.isNull())
             return m_backend->getStencilBits();
         else
             return m_stencilBits;
@@ -531,10 +531,6 @@ public:
                                                  QDemonRenderImageAccessType inAccess);
     void imageDestroyed(QDemonRenderImage2D *buffer);
 
-    QDemonRef<QDemonRenderFrameBuffer> createFrameBuffer();
-    QDemonRef<QDemonRenderFrameBuffer> getFrameBuffer(const void *implementationHandle);
-    void frameBufferDestroyed(QDemonRenderFrameBuffer *fb);
-
     QDemonRef<QDemonRenderInputAssembler> createInputAssembler(QDemonRenderAttribLayout attribLayout,
                                                                QDemonConstDataRef<QDemonRef<QDemonRenderVertexBuffer>> buffers,
                                                                const QDemonRef<QDemonRenderIndexBuffer> indexBuffer,
@@ -655,9 +651,9 @@ public:
 
     void readPixels(QRect inRect, QDemonRenderReadPixelFormat inFormat, QDemonDataRef<quint8> inWriteBuffer);
 
-    void setRenderTarget(QDemonRef<QDemonRenderFrameBuffer> inBuffer);
-    void setReadTarget(QDemonRef<QDemonRenderFrameBuffer> inBuffer);
-    QDemonRef<QDemonRenderFrameBuffer> getRenderTarget() const
+    void setRenderTarget(QDemonRenderFrameBuffer inBuffer);
+    void setReadTarget(QDemonRenderFrameBuffer inBuffer);
+    QDemonRenderFrameBuffer getRenderTarget() const
     {
         return m_hardwarePropertyContext.m_frameBuffer;
     }
@@ -674,7 +670,7 @@ public:
     // clear current bound render target
     void clear(QDemonRenderClearFlags flags);
     // clear passed in rendertarget
-    void clear(QDemonRef<QDemonRenderFrameBuffer> fb, QDemonRenderClearFlags flags);
+    void clear(QDemonRenderFrameBuffer fb, QDemonRenderClearFlags flags);
 
     // copy framebuffer content between read target and render target
     void blitFramebuffer(qint32 srcX0,
