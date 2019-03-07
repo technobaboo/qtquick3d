@@ -103,7 +103,7 @@ QDemonGraphNode::QDemonGraphNode(const QDemonGraphNode &inCloningObject)
 
 // Sets this object dirty and walks down the graph setting all
 // children who are not dirty to be dirty.
-void QDemonGraphNode::markDirty(NodeTransformDirtyFlag::Enum inTransformDirty)
+void QDemonGraphNode::markDirty(NodeTransformDirtyFlag inTransformDirty)
 {
     if (flags.isTransformDirty() == false)
         flags.setTransformDirty(inTransformDirty != NodeTransformDirtyFlag::TransformNotDirty);

@@ -31,7 +31,6 @@
 #define QDEMONN_RENDERQDEMONDER_TYPES_H
 
 #include <QtDemonRender/qtdemonrenderglobal.h>
-#include <QtDemon/QDemonFlags>
 #include <QtDemon/QDemonDataRef>
 #include <QtDemonRender/qdemonrenderlogging.h>
 

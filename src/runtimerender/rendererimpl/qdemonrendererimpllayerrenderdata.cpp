@@ -392,7 +392,7 @@ void setupCameraForShadowMap(const QVector2D &inCameraVec,
 
     theCamera.flags.setLeftHanded(false);
 
-    theCamera.flags.clearOrSet(inLight->m_lightType == RenderLightTypes::Directional, NodeFlagValues::Orthographic);
+    theCamera.flags.setFlag(QDemonNodeFlagValues::Orthographic, inLight->m_lightType == RenderLightTypes::Directional);
     theCamera.parent = nullptr;
     theCamera.pivot = inLight->pivot;
 
@@ -430,7 +430,7 @@ void setupCubeShadowCameras(const QDemonRenderLight *inLight, QDemonRenderCamera
     for (int i = 0; i < 6; ++i) {
         inCameras[i].flags.setLeftHanded(false);
 
-        inCameras[i].flags.clearOrSet(false, NodeFlagValues::Orthographic);
+        inCameras[i].flags.setFlag(QDemonNodeFlagValues::Orthographic, false);
         inCameras[i].parent = nullptr;
         inCameras[i].pivot = inLight->pivot;
         inCameras[i].clipNear = 1.0f;

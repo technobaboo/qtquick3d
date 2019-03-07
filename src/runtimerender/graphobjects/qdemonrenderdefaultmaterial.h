@@ -34,8 +34,6 @@
 #include <QtDemonRuntimeRender/qdemonrendermaterialdirty.h>
 #include <QtDemonRuntimeRender/qdemonrenderlightmaps.h>
 
-#include <QtDemon/qdemonflags.h>
-
 #include <QtGui/QVector3D>
 
 QT_BEGIN_NAMESPACE

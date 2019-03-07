@@ -76,23 +76,21 @@ QT_BEGIN_NAMESPACE
 // used in custom shaders.
 #define ADVANCED_BLEND_SW_FALLBACK
 
-struct QDemonRenderShaderProgramBinaryType
+enum class QDemonRenderShaderProgramBinaryType
 {
-    enum Enum {
-        Unknown = 0,
-        NVBinary = 1,
-    };
+    Unknown = 0,
+    NVBinary = 1,
 };
 
 // context dirty flags
-struct QDemonRenderContextDirtyValues
+enum class QDemonRenderContextDirtyValues
 {
-    enum Enum {
-        InputAssembler = 1 << 0,
-    };
+    InputAssembler = 1 << 0,
 };
 
-typedef QDemonFlags<QDemonRenderContextDirtyValues::Enum, quint32> QDemonRenderContextDirtyFlags;
+Q_DECLARE_FLAGS(QDemonRenderContextDirtyFlags, QDemonRenderContextDirtyValues);
+Q_DECLARE_OPERATORS_FOR_FLAGS(QDemonRenderContextDirtyFlags);
+
 typedef QHash<QByteArray, QDemonRenderConstantBuffer *> TContextConstantBufferMap;
 typedef QHash<QByteArray, QDemonRenderStorageBuffer *> TContextStorageBufferMap;
 typedef QHash<QByteArray, QDemonRenderAtomicCounterBuffer *> TContextAtomicCounterBufferMap;
@@ -238,7 +236,7 @@ public:
             QDemonConstDataRef<qint8> tessEvaluationShaderSource = QDemonConstDataRef<qint8>(),
             QDemonConstDataRef<qint8> geometryShaderSource = QDemonConstDataRef<qint8>(),
             bool separateProgram = false,
-            QDemonRenderShaderProgramBinaryType::Enum type = QDemonRenderShaderProgramBinaryType::Unknown,
+            QDemonRenderShaderProgramBinaryType type = QDemonRenderShaderProgramBinaryType::Unknown,
             bool binaryProgram = false) = 0;
 
     // You must figure out inVertLen and inFragLen yourself, this object doesn't do that.
@@ -257,7 +255,7 @@ public:
 
     virtual QDemonRenderVertFragCompilationResult compileBinary(
             const char *shaderName,
-            QDemonRenderShaderProgramBinaryType::Enum type,
+            QDemonRenderShaderProgramBinaryType type,
             QDemonDataRef<qint8> vertShader,
             QDemonDataRef<qint8> fragShader,
             QDemonDataRef<qint8> tessControlShaderSource = QDemonDataRef<qint8>(),
@@ -871,12 +869,12 @@ public:
             QDemonConstDataRef<qint8> tessEvaluationShaderSource = QDemonConstDataRef<qint8>(),
             QDemonConstDataRef<qint8> geometryShaderSource = QDemonConstDataRef<qint8>(),
             bool separateProgram = false,
-            QDemonRenderShaderProgramBinaryType::Enum type = QDemonRenderShaderProgramBinaryType::Unknown,
+            QDemonRenderShaderProgramBinaryType type = QDemonRenderShaderProgramBinaryType::Unknown,
             bool binaryProgram = false) override;
 
     virtual QDemonRenderVertFragCompilationResult compileBinary(
             const char *shaderName,
-            QDemonRenderShaderProgramBinaryType::Enum type,
+            QDemonRenderShaderProgramBinaryType type,
             QDemonDataRef<qint8> vertShader,
             QDemonDataRef<qint8> fragShader,
             QDemonDataRef<qint8> tessControlShaderSource = QDemonDataRef<qint8>(),

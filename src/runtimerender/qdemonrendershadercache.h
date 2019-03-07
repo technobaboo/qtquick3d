@@ -30,7 +30,6 @@
 #ifndef QDEMON_RENDER_SHADER_CACHE_H
 #define QDEMON_RENDER_SHADER_CACHE_H
 
-#include <QtDemon/qdemonflags.h>
 #include <QtDemon/qdemondataref.h>
 
 #include <QtCore/QString>

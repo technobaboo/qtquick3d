@@ -30,7 +30,6 @@
 #ifndef QDEMON_RENDERER_IMPL_LAYER_RENDER_PREPARATION_DATA_H
 #define QDEMON_RENDERER_IMPL_LAYER_RENDER_PREPARATION_DATA_H
 
-#include <QtDemon/qdemonflags.h>
 #include <QtDemonRuntimeRender/qdemonrendererimpllayerrenderhelper.h>
 #include <QtDemonRuntimeRender/qdemonrendershadercache.h>
 #include <QtDemonRuntimeRender/qdemonrenderableobjects.h>
@@ -46,102 +45,100 @@ struct QDemonLayerRenderData;
 class QDemonRendererImpl;
 struct QDemonRenderableObject;
 
-struct LayerRenderPreparationResultFlagValues
+enum class QDemonLayerRenderPreparationResultFlag
 {
-    enum Enum {
-        // Was the data in this layer dirty (meaning re-render to texture, possibly)
-        WasLayerDataDirty = 1,
-        // Was the data in this layer dirty *or* this layer *or* any effect dirty.
-        WasDirty = 1 << 1,
-        // An effect or flag or rotation on the layer dictates this object should
-        // render to the texture.
-        ShouldRenderToTexture = 1 << 2,
-        // Some effects require depth texturing, this should be set on the effect
-        // instance.
-        RequiresDepthTexture = 1 << 3,
+    // Was the data in this layer dirty (meaning re-render to texture, possibly)
+    WasLayerDataDirty = 1,
+    // Was the data in this layer dirty *or* this layer *or* any effect dirty.
+    WasDirty = 1 << 1,
+    // An effect or flag or rotation on the layer dictates this object should
+    // render to the texture.
+    ShouldRenderToTexture = 1 << 2,
+    // Some effects require depth texturing, this should be set on the effect
+    // instance.
+    RequiresDepthTexture = 1 << 3,
 
-        // Should create independent viewport
-        // If we aren't rendering to texture we still may have width/height manipulations
-        // that require our own viewport.
-        ShouldCreateIndependentViewport = 1 << 4,
+    // Should create independent viewport
+    // If we aren't rendering to texture we still may have width/height manipulations
+    // that require our own viewport.
+    ShouldCreateIndependentViewport = 1 << 4,
 
-        // SSAO should be done in a separate pass
-        // Note that having an AO pass necessitates a DepthTexture so this flag should
-        // never be set without the RequiresDepthTexture flag as well.
-        RequiresSsaoPass = 1 << 5,
+    // SSAO should be done in a separate pass
+    // Note that having an AO pass necessitates a DepthTexture so this flag should
+    // never be set without the RequiresDepthTexture flag as well.
+    RequiresSsaoPass = 1 << 5,
 
-        // if some light cause shadow
-        // we need a separate per light shadow map pass
-        RequiresShadowMapPass = 1 << 6,
+    // if some light cause shadow
+    // we need a separate per light shadow map pass
+    RequiresShadowMapPass = 1 << 6,
 
-        // Currently we use a stencil-cover algorithm to render bezier curves.
-        RequiresStencilBuffer = 1 << 7
-    };
+    // Currently we use a stencil-cover algorithm to render bezier curves.
+    RequiresStencilBuffer = 1 << 7
 };
 
-struct QDemonLayerRenderPreparationResultFlags : public QDemonFlags<LayerRenderPreparationResultFlagValues::Enum, quint32>
+struct QDemonLayerRenderPreparationResultFlags : public QFlags<QDemonLayerRenderPreparationResultFlag>
 {
     bool wasLayerDataDirty() const
     {
-        return this->operator&(LayerRenderPreparationResultFlagValues::WasLayerDataDirty);
+        return this->operator&(QDemonLayerRenderPreparationResultFlag::WasLayerDataDirty);
     }
     void setLayerDataDirty(bool inValue)
     {
-        clearOrSet(inValue, LayerRenderPreparationResultFlagValues::WasLayerDataDirty);
+        setFlag(QDemonLayerRenderPreparationResultFlag::WasLayerDataDirty, inValue);
     }
 
-    bool wasDirty() const { return this->operator&(LayerRenderPreparationResultFlagValues::WasDirty); }
-    void setWasDirty(bool inValue) { clearOrSet(inValue, LayerRenderPreparationResultFlagValues::WasDirty); }
+    bool wasDirty() const { return this->operator&(QDemonLayerRenderPreparationResultFlag::WasDirty); }
+    void setWasDirty(bool inValue) { setFlag(QDemonLayerRenderPreparationResultFlag::WasDirty, inValue); }
 
     bool shouldRenderToTexture() const
     {
-        return this->operator&(LayerRenderPreparationResultFlagValues::ShouldRenderToTexture);
+        return this->operator&(QDemonLayerRenderPreparationResultFlag::ShouldRenderToTexture);
     }
     void setShouldRenderToTexture(bool inValue)
     {
-        clearOrSet(inValue, LayerRenderPreparationResultFlagValues::ShouldRenderToTexture);
+        setFlag(QDemonLayerRenderPreparationResultFlag::ShouldRenderToTexture, inValue);
     }
 
     bool requiresDepthTexture() const
     {
-        return this->operator&(LayerRenderPreparationResultFlagValues::RequiresDepthTexture);
+        return this->operator&(QDemonLayerRenderPreparationResultFlag::RequiresDepthTexture);
     }
     void setRequiresDepthTexture(bool inValue)
     {
-        clearOrSet(inValue, LayerRenderPreparationResultFlagValues::RequiresDepthTexture);
+        setFlag(QDemonLayerRenderPreparationResultFlag::RequiresDepthTexture, inValue);
     }
 
     bool shouldCreateIndependentViewport() const
     {
-        return this->operator&(LayerRenderPreparationResultFlagValues::ShouldCreateIndependentViewport);
+        return this->operator&(QDemonLayerRenderPreparationResultFlag::ShouldCreateIndependentViewport);
     }
     void setShouldCreateIndependentViewport(bool inValue)
     {
-        clearOrSet(inValue, LayerRenderPreparationResultFlagValues::ShouldCreateIndependentViewport);
+        setFlag(QDemonLayerRenderPreparationResultFlag::ShouldCreateIndependentViewport, inValue);
     }
 
-    bool requiresSsaoPass() const { return this->operator&(LayerRenderPreparationResultFlagValues::RequiresSsaoPass); }
+    bool requiresSsaoPass() const { return this->operator&(QDemonLayerRenderPreparationResultFlag::RequiresSsaoPass); }
     void setRequiresSsaoPass(bool inValue)
     {
-        clearOrSet(inValue, LayerRenderPreparationResultFlagValues::RequiresSsaoPass);
+        setFlag(QDemonLayerRenderPreparationResultFlag::RequiresSsaoPass, inValue);
     }
 
     bool requiresShadowMapPass() const
     {
-        return this->operator&(LayerRenderPreparationResultFlagValues::RequiresShadowMapPass);
+        return this->operator&(QDemonLayerRenderPreparationResultFlag::RequiresShadowMapPass);
     }
     void setRequiresShadowMapPass(bool inValue)
     {
-        clearOrSet(inValue, LayerRenderPreparationResultFlagValues::RequiresShadowMapPass);
+        setFlag(QDemonLayerRenderPreparationResultFlag::RequiresShadowMapPass, inValue);
     }
 
     bool requiresStencilBuffer() const
     {
-        return this->operator&(LayerRenderPreparationResultFlagValues::RequiresStencilBuffer);
+        return this->operator&(QDemonLayerRenderPreparationResultFlag::RequiresStencilBuffer);
     }
     void setRequiresStencilBuffer(bool inValue)
     {
-        clearOrSet(inValue, LayerRenderPreparationResultFlagValues::RequiresStencilBuffer);
+        setFlag(QDemonLayerRenderPreparationResultFlag::RequiresStencilBuffer, inValue);
     }
 };
 

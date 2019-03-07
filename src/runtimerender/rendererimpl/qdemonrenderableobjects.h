@@ -44,78 +44,68 @@
 
 QT_BEGIN_NAMESPACE
 
-struct RenderPreparationResultFlagValues
+enum class QDemonRenderableObjectFlag
 {
-    enum Enum {
-        HasTransparency = 1 << 0,
-        CompletelyTransparent = 1 << 1,
-        Dirty = 1 << 2,
-        Pickable = 1 << 3,
-        DefaultMaterialMeshSubset = 1 << 4,
-        Text = 1 << 5,
-        Custom = 1 << 6,
-        CustomMaterialMeshSubset = 1 << 7,
-        HasRefraction = 1 << 8,
-        Path = 1 << 9,
-    };
+    HasTransparency = 1 << 0,
+    CompletelyTransparent = 1 << 1,
+    Dirty = 1 << 2,
+    Pickable = 1 << 3,
+    DefaultMaterialMeshSubset = 1 << 4,
+    Text = 1 << 5,
+    Custom = 1 << 6,
+    CustomMaterialMeshSubset = 1 << 7,
+    HasRefraction = 1 << 8,
+    Path = 1 << 9,
 };
 
-struct QDemonRenderableObjectFlags : public QDemonFlags<RenderPreparationResultFlagValues::Enum, quint32>
+struct QDemonRenderableObjectFlags : public QFlags<QDemonRenderableObjectFlag>
 {
-    void clearOrSet(bool value, RenderPreparationResultFlagValues::Enum enumVal)
-    {
-        if (value)
-            this->operator|=(enumVal);
-        else
-            clear(enumVal);
-    }
-
     void setHasTransparency(bool inHasTransparency)
     {
-        clearOrSet(inHasTransparency, RenderPreparationResultFlagValues::HasTransparency);
+        setFlag(QDemonRenderableObjectFlag::HasTransparency, inHasTransparency);
     }
-    bool hasTransparency() const { return this->operator&(RenderPreparationResultFlagValues::HasTransparency); }
-    bool hasRefraction() const { return this->operator&(RenderPreparationResultFlagValues::HasRefraction); }
+    bool hasTransparency() const { return this->operator&(QDemonRenderableObjectFlag::HasTransparency); }
+    bool hasRefraction() const { return this->operator&(QDemonRenderableObjectFlag::HasRefraction); }
     void setCompletelyTransparent(bool inTransparent)
     {
-        clearOrSet(inTransparent, RenderPreparationResultFlagValues::CompletelyTransparent);
+        setFlag(QDemonRenderableObjectFlag::CompletelyTransparent, inTransparent);
     }
     bool isCompletelyTransparent() const
     {
-        return this->operator&(RenderPreparationResultFlagValues::CompletelyTransparent);
+        return this->operator&(QDemonRenderableObjectFlag::CompletelyTransparent);
     }
-    void setDirty(bool inDirty) { clearOrSet(inDirty, RenderPreparationResultFlagValues::Dirty); }
-    bool isDirty() const { return this->operator&(RenderPreparationResultFlagValues::Dirty); }
-    void setPickable(bool inPickable) { clearOrSet(inPickable, RenderPreparationResultFlagValues::Pickable); }
-    bool getPickable() const { return this->operator&(RenderPreparationResultFlagValues::Pickable); }
+    void setDirty(bool inDirty) { setFlag(QDemonRenderableObjectFlag::Dirty, inDirty); }
+    bool isDirty() const { return this->operator&(QDemonRenderableObjectFlag::Dirty); }
+    void setPickable(bool inPickable) { setFlag(QDemonRenderableObjectFlag::Pickable, inPickable); }
+    bool getPickable() const { return this->operator&(QDemonRenderableObjectFlag::Pickable); }
 
     // Mutually exclusive values
     void setDefaultMaterialMeshSubset(bool inMeshSubset)
     {
-        clearOrSet(inMeshSubset, RenderPreparationResultFlagValues::DefaultMaterialMeshSubset);
+        setFlag(QDemonRenderableObjectFlag::DefaultMaterialMeshSubset, inMeshSubset);
     }
     bool isDefaultMaterialMeshSubset() const
     {
-        return this->operator&(RenderPreparationResultFlagValues::DefaultMaterialMeshSubset);
+        return this->operator&(QDemonRenderableObjectFlag::DefaultMaterialMeshSubset);
     }
 
     void setCustomMaterialMeshSubset(bool inMeshSubset)
     {
-        clearOrSet(inMeshSubset, RenderPreparationResultFlagValues::CustomMaterialMeshSubset);
+        setFlag(QDemonRenderableObjectFlag::CustomMaterialMeshSubset, inMeshSubset);
     }
     bool isCustomMaterialMeshSubset() const
     {
-        return this->operator&(RenderPreparationResultFlagValues::CustomMaterialMeshSubset);
+        return this->operator&(QDemonRenderableObjectFlag::CustomMaterialMeshSubset);
     }
 
-    void setText(bool inText) { clearOrSet(inText, RenderPreparationResultFlagValues::Text); }
-    bool IsText() const { return this->operator&(RenderPreparationResultFlagValues::Text); }
+    void setText(bool inText) { setFlag(QDemonRenderableObjectFlag::Text, inText); }
+    bool IsText() const { return this->operator&(QDemonRenderableObjectFlag::Text); }
 
-    void setCustom(bool inCustom) { clearOrSet(inCustom, RenderPreparationResultFlagValues::Custom); }
-    bool isCustom() const { return this->operator&(RenderPreparationResultFlagValues::Custom); }
+    void setCustom(bool inCustom) { setFlag(QDemonRenderableObjectFlag::Custom, inCustom); }
+    bool isCustom() const { return this->operator&(QDemonRenderableObjectFlag::Custom); }
 
-    void setPath(bool inPath) { clearOrSet(inPath, RenderPreparationResultFlagValues::Path); }
-    bool isPath() const { return this->operator&(RenderPreparationResultFlagValues::Path); }
+    void setPath(bool inPath) { setFlag(QDemonRenderableObjectFlag::Path, inPath); }
+    bool isPath() const { return this->operator&(QDemonRenderableObjectFlag::Path); }
 };
 
 struct QDemonNodeLightEntry

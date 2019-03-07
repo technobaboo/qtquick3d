@@ -31,7 +31,6 @@
 #define QDEMON_RENDERER_H
 
 #include <QtDemon/qdemondataref.h>
-#include <QtDemon/qdemonflags.h>
 #include <QtDemonRender/qdemonrenderbasetypes.h>
 #include <QtDemonRuntimeRender/qdemonrendergraphobjectpickquery.h>
 #include <QtDemonRuntimeRender/qdemonrendercamera.h>

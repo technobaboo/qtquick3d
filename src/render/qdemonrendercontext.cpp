@@ -536,7 +536,7 @@ QDemonRenderVertFragCompilationResult QDemonRenderContextImpl::compileSource(con
                                                                              QDemonConstDataRef<qint8> tessEvaluationShaderSource,
                                                                              QDemonConstDataRef<qint8> geometryShaderSource,
                                                                              bool separateProgram,
-                                                                             QDemonRenderShaderProgramBinaryType::Enum type,
+                                                                             QDemonRenderShaderProgramBinaryType type,
                                                                              bool binaryProgram)
 {
     QDemonRenderVertFragCompilationResult result = QDemonRenderShaderProgram::create(this,
@@ -557,7 +557,7 @@ QDemonRenderVertFragCompilationResult QDemonRenderContextImpl::compileSource(con
 }
 
 QDemonRenderVertFragCompilationResult QDemonRenderContextImpl::compileBinary(const char *shaderName,
-                                                                             QDemonRenderShaderProgramBinaryType::Enum type,
+                                                                             QDemonRenderShaderProgramBinaryType type,
                                                                              QDemonDataRef<qint8> vertShader,
                                                                              QDemonDataRef<qint8> fragShader,
                                                                              QDemonDataRef<qint8> tessControlShaderSource,

@@ -39,7 +39,6 @@
 #include <QtGui/QVector4D>
 #include <QtCore/QVector>
 
-#include <QtDemon/QDemonFlags>
 #include <QtDemon/QDemonOption>
 #include <QtDemon/qdemonutils.h>
 #include <QtDemon/qdemondataref.h>
@@ -470,25 +469,19 @@ inline void pushLine(QVector<QDemonResultCubic> &ioResultVec, QVector2D inStart,
             QDemonResultCubic(inStart, inStart + range * .333f, inStart + range * .666f, inStop, inEquationIndex, 0.0f, 1.0f, lineLength(inStart, inStop)));
 }
 
-struct PathDirtyFlagValues
+enum class QDemonPathDirtyFlagValue
 {
-    enum Enum {
-        SourceData = 1,
-        PathType = 1 << 1,
-        Width = 1 << 2,
-        BeginTaper = 1 << 3,
-        EndTaper = 1 << 4,
-        CPUError = 1 << 5,
-    };
+    None = 0,
+    SourceData = 1,
+    PathType = 1 << 1,
+    Width = 1 << 2,
+    BeginTaper = 1 << 3,
+    EndTaper = 1 << 4,
+    CPUError = 1 << 5,
 };
 
-struct QDemonPathDirtyFlags : public QDemonFlags<PathDirtyFlagValues::Enum>
-{
-    typedef QDemonFlags<PathDirtyFlagValues::Enum> TBase;
-    QDemonPathDirtyFlags() {}
-    QDemonPathDirtyFlags(int inFlags) : TBase(static_cast<PathDirtyFlagValues::Enum>(inFlags)) {}
-    void clear() { *this = QDemonPathDirtyFlags(); }
-};
+Q_DECLARE_FLAGS(QDemonPathDirtyFlags, QDemonPathDirtyFlagValue);
+Q_DECLARE_OPERATORS_FOR_FLAGS(QDemonPathDirtyFlags);
 
 struct QDemonTaperInformation
 {

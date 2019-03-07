@@ -49,17 +49,17 @@ struct QDemonStageGeneratorBase : public QDemonShaderStageGeneratorInterface
     TConstantBufferParamArray m_constantBufferParams;
     QByteArray m_codeBuilder;
     QByteArray m_finalBuilder;
-    ShaderGeneratorStages::Enum m_stage;
-    TShaderGeneratorStageFlags m_enabledStages;
+    QDemonShaderGeneratorStage m_stage;
+    QDemonShaderGeneratorStageFlags m_enabledStages;
     QList<QByteArray> m_addedFunctions;
 
-    QDemonStageGeneratorBase(ShaderGeneratorStages::Enum inStage)
+    QDemonStageGeneratorBase(QDemonShaderGeneratorStage inStage)
 
         : m_outgoing(nullptr), m_stage(inStage)
     {
     }
 
-    virtual void begin(TShaderGeneratorStageFlags inEnabledStages)
+    virtual void begin(QDemonShaderGeneratorStageFlags inEnabledStages)
     {
         m_incoming.clear();
         m_outgoing = nullptr;
@@ -110,7 +110,7 @@ struct QDemonStageGeneratorBase : public QDemonShaderStageGeneratorInterface
         m_codeBuilder.append("\n");
     }
     void appendPartial(const QByteArray &data) override { m_codeBuilder.append(data); }
-    ShaderGeneratorStages::Enum stage() const override { return m_stage; }
+    QDemonShaderGeneratorStage stage() const override { return m_stage; }
 
     virtual void addShaderItemMap(const QByteArray &itemType, const TStrTableStrMap &itemMap, const QByteArray &inItemSuffix = QByteArray())
     {
@@ -203,7 +203,7 @@ struct QDemonStageGeneratorBase : public QDemonShaderStageGeneratorInterface
 
 struct QDemonVertexShaderGenerator : public QDemonStageGeneratorBase
 {
-    QDemonVertexShaderGenerator() : QDemonStageGeneratorBase(ShaderGeneratorStages::Vertex) {}
+    QDemonVertexShaderGenerator() : QDemonStageGeneratorBase(QDemonShaderGeneratorStage::Vertex) {}
 
     const QByteArray GetIncomingVariableName() override { return "attribute"; }
     virtual void AddIncomingInterpolatedMap() {}
@@ -214,7 +214,7 @@ struct QDemonVertexShaderGenerator : public QDemonStageGeneratorBase
 
 struct QDemonTessControlShaderGenerator : public QDemonStageGeneratorBase
 {
-    QDemonTessControlShaderGenerator() : QDemonStageGeneratorBase(ShaderGeneratorStages::TessControl) {}
+    QDemonTessControlShaderGenerator() : QDemonStageGeneratorBase(QDemonShaderGeneratorStage::TessControl) {}
 
     void addShaderIncomingMap() override { addShaderItemMap("attribute", m_incoming, "[]"); }
 
@@ -232,7 +232,7 @@ struct QDemonTessControlShaderGenerator : public QDemonStageGeneratorBase
 
 struct QDemonTessEvalShaderGenerator : public QDemonStageGeneratorBase
 {
-    QDemonTessEvalShaderGenerator() : QDemonStageGeneratorBase(ShaderGeneratorStages::TessEval) {}
+    QDemonTessEvalShaderGenerator() : QDemonStageGeneratorBase(QDemonShaderGeneratorStage::TessEval) {}
 
     void addShaderIncomingMap() override { addShaderItemMap("attribute", m_incoming, "[]"); }
 
@@ -244,7 +244,7 @@ struct QDemonTessEvalShaderGenerator : public QDemonStageGeneratorBase
 
 struct QDemonGeometryShaderGenerator : public QDemonStageGeneratorBase
 {
-    QDemonGeometryShaderGenerator() : QDemonStageGeneratorBase(ShaderGeneratorStages::Geometry) {}
+    QDemonGeometryShaderGenerator() : QDemonStageGeneratorBase(QDemonShaderGeneratorStage::Geometry) {}
 
     void addShaderIncomingMap() override { addShaderItemMap("attribute", m_incoming, "[]"); }
 
@@ -261,7 +261,7 @@ struct QDemonGeometryShaderGenerator : public QDemonStageGeneratorBase
 
 struct QDemonFragmentShaderGenerator : public QDemonStageGeneratorBase
 {
-    QDemonFragmentShaderGenerator() : QDemonStageGeneratorBase(ShaderGeneratorStages::Fragment) {}
+    QDemonFragmentShaderGenerator() : QDemonStageGeneratorBase(QDemonShaderGeneratorStage::Fragment) {}
     void addShaderIncomingMap() override { addShaderItemMap("varying", m_incoming); }
     void addShaderOutgoingMap() override {}
 };
@@ -291,7 +291,7 @@ struct QDemonProgramGenerator : public QDemonShaderProgramGeneratorInterface
     QDemonGeometryShaderGenerator m_gs;
     QDemonFragmentShaderGenerator m_fs;
 
-    TShaderGeneratorStageFlags m_enabledStages;
+    QDemonShaderGeneratorStageFlags m_enabledStages;
 
     QDemonProgramGenerator(QDemonRenderContextInterface *inContext) : m_context(inContext) {}
 
@@ -300,9 +300,9 @@ struct QDemonProgramGenerator : public QDemonShaderProgramGeneratorInterface
         // Link stages incoming to outgoing variables.
         QDemonStageGeneratorBase *previous = nullptr;
         quint32 theStageId = 1;
-        for (quint32 idx = 0, end = quint32(ShaderGeneratorStages::StageCount); idx < end; ++idx, theStageId = theStageId << 1) {
+        for (quint32 idx = 0, end = quint32(QDemonShaderGeneratorStage::StageCount); idx < end; ++idx, theStageId = theStageId << 1) {
             QDemonStageGeneratorBase *thisStage = nullptr;
-            ShaderGeneratorStages::Enum theStageEnum = static_cast<ShaderGeneratorStages::Enum>(theStageId);
+            QDemonShaderGeneratorStage theStageEnum = static_cast<QDemonShaderGeneratorStage>(theStageId);
             if ((m_enabledStages & theStageEnum)) {
                 thisStage = &internalGetStage(theStageEnum);
                 if (previous)
@@ -312,7 +312,7 @@ struct QDemonProgramGenerator : public QDemonShaderProgramGeneratorInterface
         }
     }
 
-    void beginProgram(TShaderGeneratorStageFlags inEnabledStages) override
+    void beginProgram(QDemonShaderGeneratorStageFlags inEnabledStages) override
     {
         m_vs.begin(inEnabledStages);
         m_tc.begin(inEnabledStages);
@@ -323,20 +323,20 @@ struct QDemonProgramGenerator : public QDemonShaderProgramGeneratorInterface
         linkStages();
     }
 
-    TShaderGeneratorStageFlags getEnabledStages() const override { return m_enabledStages; }
+    QDemonShaderGeneratorStageFlags getEnabledStages() const override { return m_enabledStages; }
 
-    QDemonStageGeneratorBase &internalGetStage(ShaderGeneratorStages::Enum inStage)
+    QDemonStageGeneratorBase &internalGetStage(QDemonShaderGeneratorStage inStage)
     {
         switch (inStage) {
-        case ShaderGeneratorStages::Vertex:
+        case QDemonShaderGeneratorStage::Vertex:
             return m_vs;
-        case ShaderGeneratorStages::TessControl:
+        case QDemonShaderGeneratorStage::TessControl:
             return m_tc;
-        case ShaderGeneratorStages::TessEval:
+        case QDemonShaderGeneratorStage::TessEval:
             return m_te;
-        case ShaderGeneratorStages::Geometry:
+        case QDemonShaderGeneratorStage::Geometry:
             return m_gs;
-        case ShaderGeneratorStages::Fragment:
+        case QDemonShaderGeneratorStage::Fragment:
             return m_fs;
         default:
             Q_ASSERT(false);
@@ -345,14 +345,10 @@ struct QDemonProgramGenerator : public QDemonShaderProgramGeneratorInterface
         return m_vs;
     }
     // get the stage or nullptr if it has not been created.
-    QDemonShaderStageGeneratorInterface *getStage(ShaderGeneratorStages::Enum inStage) override
+    QDemonShaderStageGeneratorInterface *getStage(QDemonShaderGeneratorStage inStage) override
     {
-        if (inStage > 0 || inStage < ShaderGeneratorStages::StageCount) {
-            if ((m_enabledStages & inStage))
-                return &internalGetStage(inStage);
-        } else {
-            Q_ASSERT(false);
-        }
+        if ((m_enabledStages & inStage))
+            return &internalGetStage(inStage);
         return nullptr;
     }
 
@@ -369,8 +365,8 @@ struct QDemonProgramGenerator : public QDemonShaderProgramGeneratorInterface
 
         QDemonRef<QDemonDynamicObjectSystemInterface> theDynamicSystem(m_context->getDynamicObjectSystem());
         QDemonShaderCacheProgramFlags theCacheFlags(inFlags);
-        for (quint32 stageIdx = 0, stageEnd = ShaderGeneratorStages::StageCount; stageIdx < stageEnd; ++stageIdx) {
-            ShaderGeneratorStages::Enum stageName = static_cast<ShaderGeneratorStages::Enum>(1 << stageIdx);
+        for (quint32 stageIdx = 0; stageIdx < static_cast<quint32>(QDemonShaderGeneratorStage::StageCount); ++stageIdx) {
+            QDemonShaderGeneratorStage stageName = static_cast<QDemonShaderGeneratorStage>(1 << stageIdx);
             if (m_enabledStages & stageName) {
                 QDemonStageGeneratorBase &theStage(internalGetStage(stageName));
                 theStage.buildShaderSource();

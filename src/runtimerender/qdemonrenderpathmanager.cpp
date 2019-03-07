@@ -29,8 +29,6 @@
 ****************************************************************************/
 #include "qdemonrenderpathmanager.h"
 
-#include <QtDemon/QDemonFlags>
-
 #include <QtDemonRender/qdemonrendervertexbuffer.h>
 #include <QtDemonRender/qdemonrenderinputassembler.h>
 #include <QtDemonRender/qdemonrendercontext.h>
@@ -191,7 +189,7 @@ struct QDemonPathBuffer
                 // No further processing for unexpected path type
                 return;
             }
-            m_flags.clearOrSet(true, PathDirtyFlagValues::PathType);
+            m_flags |= QDemonPathDirtyFlagValue::PathType;
         }
         m_pathType = inPathType;
     }
@@ -209,7 +207,7 @@ struct QDemonPathBuffer
         QDemonOption<QDemonTaperInformation> newBeginInfo = toTaperInfo(capping, capOffset, capOpacity, capWidth);
         if (!optionEquals(newBeginInfo, m_beginTaper)) {
             m_beginTaper = newBeginInfo;
-            m_flags.clearOrSet(true, PathDirtyFlagValues::BeginTaper);
+            m_flags |= QDemonPathDirtyFlagValue::BeginTaper;
         }
     }
 
@@ -218,7 +216,7 @@ struct QDemonPathBuffer
         QDemonOption<QDemonTaperInformation> newEndInfo = toTaperInfo(capping, capOffset, capOpacity, capWidth);
         if (!optionEquals(newEndInfo, m_endTaper)) {
             m_endTaper = newEndInfo;
-            m_flags.clearOrSet(true, PathDirtyFlagValues::EndTaper);
+            m_flags |= QDemonPathDirtyFlagValue::EndTaper;
         }
     }
 
@@ -226,7 +224,7 @@ struct QDemonPathBuffer
     {
         if (inWidth != m_width) {
             m_width = inWidth;
-            m_flags.clearOrSet(true, PathDirtyFlagValues::Width);
+            m_flags |= QDemonPathDirtyFlagValue::Width;
         }
     }
 
@@ -234,7 +232,7 @@ struct QDemonPathBuffer
     {
         if (inError != m_cpuError) {
             m_cpuError = inError;
-            m_flags.clearOrSet(true, PathDirtyFlagValues::CPUError);
+            m_flags |= QDemonPathDirtyFlagValue::CPUError;
         }
     }
 };
@@ -271,19 +269,10 @@ struct QDemonPathVertexPipeline : public QDemonVertexPipelineImpl
     {
     }
 
-    // Trues true if the code was *not* set.
-    bool setCode(GenerationFlagValues::Enum inCode)
-    {
-        if (((quint32)m_generationFlags & inCode) != 0)
-            return true;
-        m_generationFlags |= inCode;
-        return false;
-    }
-
     void assignTessEvalVarying(const QByteArray &inVarName, const QByteArray &inVarValueExpr)
     {
         QByteArray ext;
-        if (programGenerator()->getEnabledStages() & ShaderGeneratorStages::Geometry)
+        if (programGenerator()->getEnabledStages() & QDemonShaderGeneratorStage::Geometry)
             ext = "TE";
         tessEval() << "\t" << inVarName << ext << " = " << inVarValueExpr << ";"
                    << "\n";
@@ -309,7 +298,7 @@ struct QDemonPathVertexPipeline : public QDemonVertexPipelineImpl
         theTessControl.append("\tgl_out[gl_InvocationID].gl_Position = gl_in[gl_InvocationID].gl_Position;");
         theTessControl.append("\ttessShader( tessEdgeLevel, tessInnerLevel );\n");
 
-        bool hasGeometryShader = programGenerator()->getStage(ShaderGeneratorStages::Geometry) != nullptr;
+        bool hasGeometryShader = programGenerator()->getStage(QDemonShaderGeneratorStage::Geometry) != nullptr;
 
         // second setup tessellation control shader
         QByteArray outExt("");
@@ -369,7 +358,7 @@ struct QDemonPathVertexPipeline : public QDemonVertexPipelineImpl
         //        if (programGenerator()->getEnabledStages() & ShaderGeneratorStages::Geometry)
         //            outExt = "TE";
 
-        QDemonShaderStageGeneratorInterface &tessEvalShader(*programGenerator()->getStage(ShaderGeneratorStages::TessEval));
+        QDemonShaderStageGeneratorInterface &tessEvalShader(*programGenerator()->getStage(QDemonShaderGeneratorStage::TessEval));
         tessEvalShader.append("\tgl_Position = model_view_projection * vec4( pos, 1.0 );\n");
     }
 
@@ -377,11 +366,11 @@ struct QDemonPathVertexPipeline : public QDemonVertexPipelineImpl
     {
         setupDisplacement(displacementImageIdx, displacementImage);
 
-        TShaderGeneratorStageFlags theStages(QDemonShaderProgramGeneratorInterface::defaultFlags());
-        theStages |= ShaderGeneratorStages::TessControl;
-        theStages |= ShaderGeneratorStages::TessEval;
+        QDemonShaderGeneratorStageFlags theStages(QDemonShaderProgramGeneratorInterface::defaultFlags());
+        theStages |= QDemonShaderGeneratorStage::TessControl;
+        theStages |= QDemonShaderGeneratorStage::TessEval;
         if (m_wireframe) {
-            theStages |= ShaderGeneratorStages::Geometry;
+            theStages |= QDemonShaderGeneratorStage::Geometry;
         }
         programGenerator()->beginProgram(theStages);
         initializeTessShaders();
@@ -468,7 +457,7 @@ struct QDemonPathVertexPipeline : public QDemonVertexPipelineImpl
         if (hasTessellation()) {
             QByteArray nameBuilder;
             nameBuilder = inName;
-            if (programGenerator()->getEnabledStages() & ShaderGeneratorStages::Geometry)
+            if (programGenerator()->getEnabledStages() & QDemonShaderGeneratorStage::Geometry)
                 nameBuilder.append("TE");
 
             tessEval().addOutgoing(nameBuilder, inType);
@@ -513,7 +502,7 @@ struct QDemonXYRectVertexPipeline : public QDemonVertexPipelineImpl
         m_displacementIdx = displacementImageIdx;
         m_displacementImage = displacementImage;
 
-        TShaderGeneratorStageFlags theStages(QDemonShaderProgramGeneratorInterface::defaultFlags());
+        QDemonShaderGeneratorStageFlags theStages(QDemonShaderProgramGeneratorInterface::defaultFlags());
         programGenerator()->beginProgram(theStages);
         // Open up each stage.
         QDemonShaderStageGeneratorInterface &vertexShader(vertex());
@@ -541,7 +530,7 @@ struct QDemonXYRectVertexPipeline : public QDemonVertexPipelineImpl
 
     void outputParaboloidDepthShaders()
     {
-        TShaderGeneratorStageFlags theStages(QDemonShaderProgramGeneratorInterface::defaultFlags());
+        QDemonShaderGeneratorStageFlags theStages(QDemonShaderProgramGeneratorInterface::defaultFlags());
         programGenerator()->beginProgram(theStages);
         QDemonShaderStageGeneratorInterface &vertexShader(vertex());
         vertexShader.addIncoming("attr_pos", "vec2");
@@ -566,7 +555,7 @@ struct QDemonXYRectVertexPipeline : public QDemonVertexPipelineImpl
 
     void outputCubeFaceDepthShaders()
     {
-        TShaderGeneratorStageFlags theStages(QDemonShaderProgramGeneratorInterface::defaultFlags());
+        QDemonShaderGeneratorStageFlags theStages(QDemonShaderProgramGeneratorInterface::defaultFlags());
         programGenerator()->beginProgram(theStages);
         QDemonShaderStageGeneratorInterface &vertexShader(vertex());
         QDemonShaderStageGeneratorInterface &fragmentShader(fragment());
@@ -728,7 +717,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
         theBuffer->m_sourceData.clear();
         for (int i = 0; i < inPathCubicCurves.size(); ++i)
             theBuffer->m_sourceData.append(inPathCubicCurves[i]);
-        theBuffer->m_flags.clearOrSet(true, PathDirtyFlagValues::SourceData);
+        theBuffer->m_flags |= QDemonPathDirtyFlagValue::SourceData;
     }
 
     QDemonRef<QDemonPathBuffer> getPathBufferObject(const QDemonPath &inPath)
@@ -763,7 +752,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
             setPathSubPathData(inPath, QDemonConstDataRef<QDemonPathAnchorPoint>());
         theBuffer = getPathBufferObject(inPath);
         theBuffer->m_sourceData.resize(inNumAnchors);
-        theBuffer->m_flags.clearOrSet(true, PathDirtyFlagValues::SourceData);
+        theBuffer->m_flags |= QDemonPathDirtyFlagValue::SourceData;
         return toDataRef(theBuffer->m_sourceData.data(), (quint32)theBuffer->m_sourceData.size());
     }
 
@@ -774,9 +763,9 @@ struct QDemonPathManager : public QDemonPathManagerInterface
 
         QDemonRef<QDemonPathBuffer> thePathBuffer = getPathBufferObject(inPath);
         if (thePathBuffer) {
-            QDemonPathDirtyFlags geomDirtyFlags(PathDirtyFlagValues::SourceData | PathDirtyFlagValues::BeginTaper
-                                                | PathDirtyFlagValues::EndTaper | PathDirtyFlagValues::Width
-                                                | PathDirtyFlagValues::CPUError);
+            QDemonPathDirtyFlags geomDirtyFlags(QDemonPathDirtyFlagValue::SourceData | QDemonPathDirtyFlagValue::BeginTaper
+                                                | QDemonPathDirtyFlagValue::EndTaper | QDemonPathDirtyFlagValue::Width
+                                                | QDemonPathDirtyFlagValue::CPUError);
 
             if ((((quint32)thePathBuffer->m_flags) & (quint32)geomDirtyFlags) == 0) {
                 return thePathBuffer->m_bounds;
@@ -887,8 +876,8 @@ struct QDemonPathManager : public QDemonPathManagerInterface
         inPathBuffer.setWidth(inPath.m_width);
         inPathBuffer.setCPUError(inPath.m_linearError);
 
-        QDemonPathDirtyFlags geomDirtyFlags(PathDirtyFlagValues::SourceData | PathDirtyFlagValues::BeginTaper | PathDirtyFlagValues::EndTaper
-                                            | PathDirtyFlagValues::Width | PathDirtyFlagValues::CPUError);
+        QDemonPathDirtyFlags geomDirtyFlags(QDemonPathDirtyFlagValue::SourceData | QDemonPathDirtyFlagValue::BeginTaper | QDemonPathDirtyFlagValue::EndTaper
+                                            | QDemonPathDirtyFlagValue::Width | QDemonPathDirtyFlagValue::CPUError);
 
         bool retval = false;
         if (!inPathBuffer.m_patchData || (((quint32)inPathBuffer.m_flags) & (quint32)geomDirtyFlags) != 0) {
@@ -1124,7 +1113,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
     bool preparePaintedPathForRender(const QDemonPath &inPath, QDemonPathBuffer &inPathBuffer)
     {
         QDemonRef<QDemonRenderContext> theContext(this->m_renderContext->getRenderContext());
-        if (!inPathBuffer.m_pathRender || (((quint32)inPathBuffer.m_flags) & PathDirtyFlagValues::SourceData)) {
+        if (!inPathBuffer.m_pathRender || (inPathBuffer.m_flags & QDemonPathDirtyFlagValue::SourceData)) {
             if (!inPathBuffer.m_pathRender) {
                 inPathBuffer.m_pathRender = theContext->createPathRender();
             }
@@ -1202,27 +1191,27 @@ struct QDemonPathManager : public QDemonPathManagerInterface
                 QDemonRef<QDemonPathSubPathBuffer> theSubPathBuffer = getPathBufferObject(*theSubPath);
                 if (theSubPathBuffer == nullptr)
                     continue;
-                thePathBuffer->m_flags = (quint32)(thePathBuffer->m_flags | theSubPathBuffer->m_flags);
+                thePathBuffer->m_flags |= theSubPathBuffer->m_flags;
 
                 if (theSubPathBuffer->m_closed != theSubPath->m_closed) {
-                    thePathBuffer->m_flags.clearOrSet(true, PathDirtyFlagValues::SourceData);
+                    thePathBuffer->m_flags |= QDemonPathDirtyFlagValue::SourceData;
                     theSubPathBuffer->m_closed = theSubPath->m_closed;
                 }
 
                 if (thePathBuffer->m_subPaths.size() <= subPathIdx || thePathBuffer->m_subPaths[subPathIdx] != theSubPathBuffer) {
-                    thePathBuffer->m_flags.clearOrSet(true, PathDirtyFlagValues::SourceData);
+                    thePathBuffer->m_flags |= QDemonPathDirtyFlagValue::SourceData;
                     if (thePathBuffer->m_subPaths.size() <= subPathIdx)
                         thePathBuffer->m_subPaths.push_back(theSubPathBuffer);
                     else
                         thePathBuffer->m_subPaths[subPathIdx] = theSubPathBuffer;
                 }
 
-                theSubPathBuffer->m_flags.clear();
+                theSubPathBuffer->m_flags = QDemonPathDirtyFlags();
             }
 
             if (subPathIdx != thePathBuffer->m_subPaths.size()) {
                 thePathBuffer->m_subPaths.resize(subPathIdx);
-                thePathBuffer->m_flags.clearOrSet(true, PathDirtyFlagValues::SourceData);
+                thePathBuffer->m_flags |= QDemonPathDirtyFlagValue::SourceData;
             }
         } else {
             thePathBuffer->m_subPaths.clear();
@@ -1241,7 +1230,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
             }
             if (thePathBuffer->m_pathBuffer != inserter.value()) {
                 thePathBuffer->m_pathBuffer = inserter.value();
-                thePathBuffer->m_flags.clearOrSet(true, PathDirtyFlagValues::SourceData);
+                thePathBuffer->m_flags |= QDemonPathDirtyFlagValue::SourceData;
             }
         }
 
@@ -1249,7 +1238,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
             retval = prepareGeometryPathForRender(inPath, *thePathBuffer);
         else
             retval = preparePaintedPathForRender(inPath, *thePathBuffer);
-        thePathBuffer->m_flags.clear();
+        thePathBuffer->m_flags = QDemonPathDirtyFlags();
         return retval;
     }
 

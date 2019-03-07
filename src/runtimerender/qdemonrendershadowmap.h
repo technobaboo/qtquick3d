@@ -32,7 +32,6 @@
 #include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
 #include <QtGui/QMatrix4x4>
 #include <QtGui/QVector3D>
-#include <QtDemon/qdemonflags.h>
 #include <QtDemonRender/qdemonrenderbasetypes.h>
 
 QT_BEGIN_NAMESPACE

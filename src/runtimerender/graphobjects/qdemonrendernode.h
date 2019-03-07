@@ -35,7 +35,6 @@
 //#include <QtDemonRuntimeRender/qdemonrenderpathmanager.h>
 
 #include <QtDemon/QDemonBounds3>
-#include <QtDemon/QDemonFlags>
 
 #include <QtGui/QMatrix4x4>
 #include <QtGui/QVector3D>
@@ -61,85 +60,80 @@ public:
     // virtual void Enqueue( SText& inText ) = 0;
 };
 
-struct NodeFlagValues
+enum class QDemonNodeFlagValues
 {
-    enum Enum {
-        Dirty = 1,
-        TransformDirty = 1 << 1,
-        Active = 1 << 2, ///< Is this exact object active
-        LeftHanded = 1 << 3,
-        Orthographic = 1 << 4,
-        PointLight = 1 << 5,
-        GlobalActive = 1 << 6, ///< set based in Active and if a parent is active.
-        TextDirty = 1 << 7,
-        LocallyPickable = 1 << 8,
-        GloballyPickable = 1 << 9,
-        LayerEnableDepthTest = 1 << 10,
-        LayerRenderToTarget = 1 << 11, ///< Does this layer render to the normal render target,
-        /// or is it offscreen-only
-        ForceLayerOffscreen = 1 << 12, ///< Forces a layer to always use the offscreen rendering
-        /// mechanism.  This can be usefulf or caching purposes.
-        IgnoreParentTransform = 1 << 13,
-        LayerEnableDepthPrePass = 1 << 14, ///< True when we render a depth pass before
-    };
+    Dirty = 1,
+    TransformDirty = 1 << 1,
+    Active = 1 << 2, ///< Is this exact object active
+    LeftHanded = 1 << 3,
+    Orthographic = 1 << 4,
+    PointLight = 1 << 5,
+    GlobalActive = 1 << 6, ///< set based in Active and if a parent is active.
+    TextDirty = 1 << 7,
+    LocallyPickable = 1 << 8,
+    GloballyPickable = 1 << 9,
+    LayerEnableDepthTest = 1 << 10,
+    LayerRenderToTarget = 1 << 11, ///< Does this layer render to the normal render target,
+    /// or is it offscreen-only
+    ForceLayerOffscreen = 1 << 12, ///< Forces a layer to always use the offscreen rendering
+    /// mechanism.  This can be usefulf or caching purposes.
+    IgnoreParentTransform = 1 << 13,
+    LayerEnableDepthPrePass = 1 << 14, ///< True when we render a depth pass before
 };
 
-struct NodeTransformDirtyFlag
+enum class NodeTransformDirtyFlag
 {
-    enum Enum {
-        TransformNotDirty,
-        TransformIsDirty,
-    };
+    TransformNotDirty,
+    TransformIsDirty,
 };
 
-struct QDemonNodeFlags : public QDemonFlags<NodeFlagValues::Enum, quint32>
+struct QDemonNodeFlags : public QFlags<QDemonNodeFlagValues>
 {
-    QDemonNodeFlags() : QDemonFlags<NodeFlagValues::Enum, quint32>(0) {}
-    void clearOrSet(bool value, NodeFlagValues::Enum enumVal) { QDemonFlags::clearOrSet(value, enumVal); }
-    void setActive(bool value) { clearOrSet(value, NodeFlagValues::Active); }
-    bool isActive() const { return this->operator&(NodeFlagValues::Active); }
+    QDemonNodeFlags() : QFlags() {}
+    void setActive(bool value) { setFlag(QDemonNodeFlagValues::Active, value); }
+    bool isActive() const { return this->operator&(QDemonNodeFlagValues::Active); }
 
-    void setGlobalActive(bool value) { clearOrSet(value, NodeFlagValues::GlobalActive); }
-    bool isGloballyActive() const { return this->operator&(NodeFlagValues::GlobalActive); }
+    void setGlobalActive(bool value) { setFlag(QDemonNodeFlagValues::GlobalActive, value); }
+    bool isGloballyActive() const { return this->operator&(QDemonNodeFlagValues::GlobalActive); }
 
-    void setTransformDirty(bool value) { clearOrSet(value, NodeFlagValues::TransformDirty); }
-    bool isTransformDirty() const { return this->operator&(NodeFlagValues::TransformDirty); }
+    void setTransformDirty(bool value) { setFlag(QDemonNodeFlagValues::TransformDirty, value); }
+    bool isTransformDirty() const { return this->operator&(QDemonNodeFlagValues::TransformDirty); }
 
-    void setDirty(bool value) { clearOrSet(value, NodeFlagValues::Dirty); }
-    bool isDirty() const { return this->operator&(NodeFlagValues::Dirty); }
+    void setDirty(bool value) { setFlag(QDemonNodeFlagValues::Dirty, value); }
+    bool isDirty() const { return this->operator&(QDemonNodeFlagValues::Dirty); }
 
-    bool isLeftHanded() const { return this->operator&(NodeFlagValues::LeftHanded); }
-    void setLeftHanded(bool value) { clearOrSet(value, NodeFlagValues::LeftHanded); }
+    bool isLeftHanded() const { return this->operator&(QDemonNodeFlagValues::LeftHanded); }
+    void setLeftHanded(bool value) { setFlag(QDemonNodeFlagValues::LeftHanded, value); }
 
-    bool isOrthographic() const { return this->operator&(NodeFlagValues::Orthographic); }
-    void setOrthographic(bool value) { clearOrSet(value, NodeFlagValues::Orthographic); }
+    bool isOrthographic() const { return this->operator&(QDemonNodeFlagValues::Orthographic); }
+    void setOrthographic(bool value) { setFlag(QDemonNodeFlagValues::Orthographic, value); }
 
-    bool isPointLight() const { return this->operator&(NodeFlagValues::PointLight); }
-    void setPointLight(bool value) { clearOrSet(value, NodeFlagValues::PointLight); }
+    bool isPointLight() const { return this->operator&(QDemonNodeFlagValues::PointLight); }
+    void setPointLight(bool value) { setFlag(QDemonNodeFlagValues::PointLight, value); }
 
-    bool isTextDirty() const { return this->operator&(NodeFlagValues::TextDirty); }
-    void setTextDirty(bool value) { clearOrSet(value, NodeFlagValues::TextDirty); }
+    bool isTextDirty() const { return this->operator&(QDemonNodeFlagValues::TextDirty); }
+    void setTextDirty(bool value) { setFlag(QDemonNodeFlagValues::TextDirty, value); }
 
-    bool isLocallyPickable() const { return this->operator&(NodeFlagValues::LocallyPickable); }
-    void setLocallyPickable(bool value) { clearOrSet(value, NodeFlagValues::LocallyPickable); }
+    bool isLocallyPickable() const { return this->operator&(QDemonNodeFlagValues::LocallyPickable); }
+    void setLocallyPickable(bool value) { setFlag(QDemonNodeFlagValues::LocallyPickable, value); }
 
-    bool isGloballyPickable() const { return this->operator&(NodeFlagValues::GloballyPickable); }
-    void setGloballyPickable(bool value) { clearOrSet(value, NodeFlagValues::GloballyPickable); }
+    bool isGloballyPickable() const { return this->operator&(QDemonNodeFlagValues::GloballyPickable); }
+    void setGloballyPickable(bool value) { setFlag(QDemonNodeFlagValues::GloballyPickable, value); }
 
-    bool isLayerRenderToTarget() const { return this->operator&(NodeFlagValues::LayerRenderToTarget); }
-    void setLayerRenderToTarget(bool value) { clearOrSet(value, NodeFlagValues::LayerRenderToTarget); }
+    bool isLayerRenderToTarget() const { return this->operator&(QDemonNodeFlagValues::LayerRenderToTarget); }
+    void setLayerRenderToTarget(bool value) { setFlag(QDemonNodeFlagValues::LayerRenderToTarget, value); }
 
-    bool isLayerEnableDepthTest() const { return this->operator&(NodeFlagValues::LayerEnableDepthTest); }
-    void setLayerEnableDepthTest(bool value) { clearOrSet(value, NodeFlagValues::LayerEnableDepthTest); }
+    bool isLayerEnableDepthTest() const { return this->operator&(QDemonNodeFlagValues::LayerEnableDepthTest); }
+    void setLayerEnableDepthTest(bool value) { setFlag(QDemonNodeFlagValues::LayerEnableDepthTest, value); }
 
-    bool isForceLayerOffscreen() const { return this->operator&(NodeFlagValues::ForceLayerOffscreen); }
-    void setForceLayerOffscreen(bool value) { clearOrSet(value, NodeFlagValues::ForceLayerOffscreen); }
+    bool isForceLayerOffscreen() const { return this->operator&(QDemonNodeFlagValues::ForceLayerOffscreen); }
+    void setForceLayerOffscreen(bool value) { setFlag(QDemonNodeFlagValues::ForceLayerOffscreen, value); }
 
-    bool isIgnoreParentTransform() const { return this->operator&(NodeFlagValues::IgnoreParentTransform); }
-    void setIgnoreParentTransform(bool value) { clearOrSet(value, NodeFlagValues::IgnoreParentTransform); }
+    bool isIgnoreParentTransform() const { return this->operator&(QDemonNodeFlagValues::IgnoreParentTransform); }
+    void setIgnoreParentTransform(bool value) { setFlag(QDemonNodeFlagValues::IgnoreParentTransform, value); }
 
-    bool isLayerEnableDepthPrepass() const { return this->operator&(NodeFlagValues::LayerEnableDepthPrePass); }
-    void setLayerEnableDepthPrepass(bool value) { clearOrSet(value, NodeFlagValues::LayerEnableDepthPrePass); }
+    bool isLayerEnableDepthPrepass() const { return this->operator&(QDemonNodeFlagValues::LayerEnableDepthPrePass); }
+    void setLayerEnableDepthPrepass(bool value) { setFlag(QDemonNodeFlagValues::LayerEnableDepthPrePass, value); }
 };
 
 class QDemonRenderNodeFilterInterface;
@@ -182,7 +176,7 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonGraphNode : public QDemonGraphObject
 
     // Sets this object dirty and walks down the graph setting all
     // children who are not dirty to be dirty.
-    void markDirty(NodeTransformDirtyFlag::Enum inTransformDirty = NodeTransformDirtyFlag::TransformNotDirty);
+    void markDirty(NodeTransformDirtyFlag inTransformDirty = NodeTransformDirtyFlag::TransformNotDirty);
 
     void addChild(QDemonGraphNode &inChild);
     void removeChild(QDemonGraphNode &inChild);

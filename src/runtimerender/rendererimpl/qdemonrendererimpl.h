@@ -56,7 +56,6 @@
 #include <QtDemonRender/qdemonrendercontext.h>
 #include <QtDemonRender/qdemonrendershaderprogram.h>
 
-#include <QtDemon/QDemonFlags>
 #include <QtDemon/QDemonBounds3>
 #include <QtDemon/QDemonOption>
 #include <QtDemon/QDemonDataRef>

@@ -532,20 +532,20 @@ void QDemonLayerRenderPreparationData::prepareImageForRender(QDemonRenderImage &
     QDemonRef<QDemonOffscreenRenderManagerInterface> theOffscreenRenderManager(demonContext->getOffscreenRenderManager());
     //    IRenderPluginManager &theRenderPluginManager(demonContext.GetRenderPluginManager());
     if (inImage.clearDirty(bufferManager, *theOffscreenRenderManager /*, theRenderPluginManager*/))
-        ioFlags |= RenderPreparationResultFlagValues::Dirty;
+        ioFlags |= QDemonRenderableObjectFlag::Dirty;
 
     // All objects with offscreen renderers are pickable so we can pass the pick through to the
     // offscreen renderer and let it deal with the pick.
     if (inImage.m_lastFrameOffscreenRenderer != nullptr) {
         ioFlags.setPickable(true);
-        ioFlags |= RenderPreparationResultFlagValues::HasTransparency;
+        ioFlags |= QDemonRenderableObjectFlag::HasTransparency;
     }
 
     if (inImage.m_textureData.m_texture) {
         if (inImage.m_textureData.m_textureFlags.hasTransparency()
             && (inMapType == QDemonImageMapTypes::Diffuse || inMapType == QDemonImageMapTypes::Opacity
                 || inMapType == QDemonImageMapTypes::Translucency)) {
-            ioFlags |= RenderPreparationResultFlagValues::HasTransparency;
+            ioFlags |= QDemonRenderableObjectFlag::HasTransparency;
         }
         // Textures used in general have linear characteristics.
         // PKC -- The filters are properly set already.  Setting them here only overrides what
@@ -605,7 +605,7 @@ QDemonDefaultMaterialPreparationResult QDemonLayerRenderPreparationData::prepare
     float &subsetOpacity(retval.opacity);
 
     if (theMaterial->dirty.isDirty()) {
-        renderableFlags |= RenderPreparationResultFlagValues::Dirty;
+        renderableFlags |= QDemonRenderableObjectFlag::Dirty;
     }
     subsetOpacity *= theMaterial->opacity;
     if (inClearDirtyFlags)
@@ -632,7 +632,7 @@ QDemonDefaultMaterialPreparationResult QDemonLayerRenderPreparationData::prepare
     if (subsetOpacity >= QDEMON_RENDER_MINIMUM_RENDER_OPACITY) {
 
         if (theMaterial->blendMode != DefaultMaterialBlendMode::Normal || theMaterial->opacityMap) {
-            renderableFlags |= RenderPreparationResultFlagValues::HasTransparency;
+            renderableFlags |= QDemonRenderableObjectFlag::HasTransparency;
         }
 
         bool specularEnabled = theMaterial->isSpecularEnabled();
@@ -700,12 +700,12 @@ QDemonDefaultMaterialPreparationResult QDemonLayerRenderPreparationData::prepare
         // You can still pick against completely transparent objects(or rather their bounding
         // box)
         // you just don't render them.
-        renderableFlags |= RenderPreparationResultFlagValues::HasTransparency;
-        renderableFlags |= RenderPreparationResultFlagValues::CompletelyTransparent;
+        renderableFlags |= QDemonRenderableObjectFlag::HasTransparency;
+        renderableFlags |= QDemonRenderableObjectFlag::CompletelyTransparent;
     }
 
     if (isNotOne(subsetOpacity))
-        renderableFlags |= RenderPreparationResultFlagValues::HasTransparency;
+        renderableFlags |= QDemonRenderableObjectFlag::HasTransparency;
 
     retval.firstImage = firstImage;
     if (retval.renderableFlags.isDirty())
@@ -733,12 +733,12 @@ QDemonDefaultMaterialPreparationResult QDemonLayerRenderPreparationData::prepare
         // You can still pick against completely transparent objects(or rather their bounding
         // box)
         // you just don't render them.
-        renderableFlags |= RenderPreparationResultFlagValues::HasTransparency;
-        renderableFlags |= RenderPreparationResultFlagValues::CompletelyTransparent;
+        renderableFlags |= QDemonRenderableObjectFlag::HasTransparency;
+        renderableFlags |= QDemonRenderableObjectFlag::CompletelyTransparent;
     }
 
     if (isNotOne(subsetOpacity))
-        renderableFlags |= RenderPreparationResultFlagValues::HasTransparency;
+        renderableFlags |= QDemonRenderableObjectFlag::HasTransparency;
 
     QDemonRenderableImage *firstImage = nullptr;
     QDemonRenderableImage *nextImage = nullptr;
@@ -898,10 +898,10 @@ bool QDemonLayerRenderPreparationData::prepareModelForRender(QDemonRenderModel &
 
                 // prepare for render tells us if the object is transparent
                 if (theMaterial.m_hasTransparency)
-                    renderableFlags |= RenderPreparationResultFlagValues::HasTransparency;
+                    renderableFlags |= QDemonRenderableObjectFlag::HasTransparency;
                 // prepare for render tells us if the object is transparent
                 if (theMaterial.m_hasRefraction)
-                    renderableFlags |= RenderPreparationResultFlagValues::HasRefraction;
+                    renderableFlags |= QDemonRenderableObjectFlag::HasRefraction;
 
                 renderer->defaultMaterialShaderKeyProperties().m_tessellationMode.setTessellationMode(theGeneratedKey,
                                                                                                       inModel.tessellationMode,

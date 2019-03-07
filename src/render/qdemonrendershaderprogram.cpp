@@ -1133,7 +1133,7 @@ QDemonRenderVertFragCompilationResult QDemonRenderShaderProgram::create(const QD
                                                                         QDemonConstDataRef<qint8> tessEvaluationShaderSource,
                                                                         QDemonConstDataRef<qint8> geometryShaderSource,
                                                                         bool separateProgram,
-                                                                        QDemonRenderShaderProgramBinaryType::Enum type,
+                                                                        QDemonRenderShaderProgramBinaryType type,
                                                                         bool binaryProgram)
 {
     QDemonRenderVertFragCompilationResult result;

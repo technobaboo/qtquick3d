@@ -299,7 +299,7 @@ struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
     QDemonDefaultMaterialVertexPipelineInterface &vertexGenerator() { return *m_currentPipeline; }
     QDemonShaderStageGeneratorInterface &fragmentGenerator()
     {
-        return *m_programGenerator->getStage(ShaderGeneratorStages::Fragment);
+        return *m_programGenerator->getStage(QDemonShaderGeneratorStage::Fragment);
     }
     QDemonShaderDefaultMaterialKey &key() { return *m_currentKey; }
     const QDemonRenderCustomMaterial &material() { return *m_currentMaterial; }

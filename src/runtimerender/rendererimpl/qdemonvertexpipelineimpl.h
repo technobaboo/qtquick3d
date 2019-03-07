@@ -39,29 +39,27 @@ QT_BEGIN_NAMESPACE
 // Baseclass for the vertex pipelines to be sure we have consistent implementations.
 struct QDemonVertexPipelineImpl : public QDemonDefaultMaterialVertexPipelineInterface
 {
-    struct GenerationFlagValues
+    enum class GenerationFlag
     {
-        enum Enum {
-            UVCoords = 1,
-            EnvMapReflection = 1 << 1,
-            ViewVector = 1 << 2,
-            WorldNormal = 1 << 3,
-            ObjectNormal = 1 << 4,
-            WorldPosition = 1 << 5,
-            TangentBinormal = 1 << 6,
-            UVCoords1 = 1 << 7,
-            VertexColor = 1 << 8,
-        };
+        UVCoords = 1,
+        EnvMapReflection = 1 << 1,
+        ViewVector = 1 << 2,
+        WorldNormal = 1 << 3,
+        ObjectNormal = 1 << 4,
+        WorldPosition = 1 << 5,
+        TangentBinormal = 1 << 6,
+        UVCoords1 = 1 << 7,
+        VertexColor = 1 << 8,
     };
 
     typedef TStrTableStrMap::const_iterator TParamIter;
-    typedef QDemonFlags<GenerationFlagValues::Enum> TGenerationFlags;
+    typedef QFlags<GenerationFlag> GenerationFlags;
 
     QDemonRef<QDemonMaterialShaderGeneratorInterface> m_materialGenerator;
     QDemonRef<QDemonShaderProgramGeneratorInterface> m_programGenerator;
     QString m_tempString;
 
-    TGenerationFlags m_generationFlags;
+    GenerationFlags m_generationFlags;
     bool m_wireframe;
     TStrTableStrMap m_interpolationParameters;
     quint32 m_displacementIdx;
@@ -81,35 +79,35 @@ struct QDemonVertexPipelineImpl : public QDemonDefaultMaterialVertexPipelineInte
     }
 
     // Trues true if the code was *not* set.
-    bool setCode(GenerationFlagValues::Enum inCode)
+    bool setCode(GenerationFlag inCode)
     {
-        if ((quint32(m_generationFlags) & inCode) != 0)
+        if (m_generationFlags & inCode)
             return true;
         m_generationFlags |= inCode;
         return false;
     }
-    bool hasCode(GenerationFlagValues::Enum inCode) { return ((quint32(m_generationFlags) & inCode)) != 0; }
+    bool hasCode(GenerationFlag inCode) { return (m_generationFlags & inCode); }
     QDemonRef<QDemonShaderProgramGeneratorInterface> programGenerator() { return m_programGenerator; }
 
     QDemonShaderStageGeneratorInterface &vertex()
     {
-        return *programGenerator()->getStage(ShaderGeneratorStages::Vertex);
+        return *programGenerator()->getStage(QDemonShaderGeneratorStage::Vertex);
     }
     QDemonShaderStageGeneratorInterface &tessControl()
     {
-        return *programGenerator()->getStage(ShaderGeneratorStages::TessControl);
+        return *programGenerator()->getStage(QDemonShaderGeneratorStage::TessControl);
     }
     QDemonShaderStageGeneratorInterface &tessEval()
     {
-        return *programGenerator()->getStage(ShaderGeneratorStages::TessEval);
+        return *programGenerator()->getStage(QDemonShaderGeneratorStage::TessEval);
     }
     QDemonShaderStageGeneratorInterface &geometry()
     {
-        return *programGenerator()->getStage(ShaderGeneratorStages::Geometry);
+        return *programGenerator()->getStage(QDemonShaderGeneratorStage::Geometry);
     }
     QDemonShaderStageGeneratorInterface &fragment()
     {
-        return *programGenerator()->getStage(ShaderGeneratorStages::Fragment);
+        return *programGenerator()->getStage(QDemonShaderGeneratorStage::Fragment);
     }
     QDemonRef<QDemonMaterialShaderGeneratorInterface> materialGenerator() { return m_materialGenerator; }
 
@@ -119,15 +117,15 @@ struct QDemonVertexPipelineImpl : public QDemonDefaultMaterialVertexPipelineInte
         m_displacementImage = displacementImage;
     }
 
-    bool hasTessellation() const { return m_programGenerator->getEnabledStages() & ShaderGeneratorStages::TessEval; }
-    bool hasGeometryStage() const { return m_programGenerator->getEnabledStages() & ShaderGeneratorStages::Geometry; }
+    bool hasTessellation() const { return m_programGenerator->getEnabledStages() & QDemonShaderGeneratorStage::TessEval; }
+    bool hasGeometryStage() const { return m_programGenerator->getEnabledStages() & QDemonShaderGeneratorStage::Geometry; }
     bool hasDisplacment() const { return m_displacementImage != nullptr; }
 
     void initializeWireframeGeometryShader()
     {
-        if (m_wireframe && programGenerator()->getStage(ShaderGeneratorStages::Geometry)
-            && programGenerator()->getStage(ShaderGeneratorStages::TessEval)) {
-            QDemonShaderStageGeneratorInterface &geometryShader(*programGenerator()->getStage(ShaderGeneratorStages::Geometry));
+        if (m_wireframe && programGenerator()->getStage(QDemonShaderGeneratorStage::Geometry)
+            && programGenerator()->getStage(QDemonShaderGeneratorStage::TessEval)) {
+            QDemonShaderStageGeneratorInterface &geometryShader(*programGenerator()->getStage(QDemonShaderGeneratorStage::Geometry));
             // currently geometry shader is only used for drawing wireframe
             if (m_wireframe) {
                 geometryShader.addUniform("viewport_matrix", "mat4");
@@ -161,10 +159,10 @@ struct QDemonVertexPipelineImpl : public QDemonDefaultMaterialVertexPipelineInte
 
     void finalizeWireframeGeometryShader()
     {
-        QDemonShaderStageGeneratorInterface &geometryShader(*programGenerator()->getStage(ShaderGeneratorStages::Geometry));
+        QDemonShaderStageGeneratorInterface &geometryShader(*programGenerator()->getStage(QDemonShaderGeneratorStage::Geometry));
 
-        if (m_wireframe == true && programGenerator()->getStage(ShaderGeneratorStages::Geometry)
-            && programGenerator()->getStage(ShaderGeneratorStages::TessEval)) {
+        if (m_wireframe == true && programGenerator()->getStage(QDemonShaderGeneratorStage::Geometry)
+            && programGenerator()->getStage(QDemonShaderGeneratorStage::TessEval)) {
             const char *theExtension("TE[");
             // we always assume triangles
             for (int i = 0; i < 3; i++) {
@@ -197,7 +195,7 @@ struct QDemonVertexPipelineImpl : public QDemonDefaultMaterialVertexPipelineInte
         }
     }
 
-    virtual void setupTessIncludes(ShaderGeneratorStages::Enum inStage, TessModeValues::Enum inTessMode)
+    virtual void setupTessIncludes(QDemonShaderGeneratorStage inStage, TessModeValues::Enum inTessMode)
     {
         QDemonShaderStageGeneratorInterface &tessShader(*programGenerator()->getStage(inStage));
 
@@ -219,9 +217,9 @@ struct QDemonVertexPipelineImpl : public QDemonDefaultMaterialVertexPipelineInte
 
     void generateUVCoords(quint32 inUVSet = 0) override
     {
-        if (inUVSet == 0 && setCode(GenerationFlagValues::UVCoords))
+        if (inUVSet == 0 && setCode(GenerationFlag::UVCoords))
             return;
-        if (inUVSet == 1 && setCode(GenerationFlagValues::UVCoords1))
+        if (inUVSet == 1 && setCode(GenerationFlag::UVCoords1))
             return;
 
         Q_ASSERT(inUVSet == 0 || inUVSet == 1);
@@ -235,7 +233,7 @@ struct QDemonVertexPipelineImpl : public QDemonDefaultMaterialVertexPipelineInte
     }
     void generateEnvMapReflection() override
     {
-        if (setCode(GenerationFlagValues::EnvMapReflection))
+        if (setCode(GenerationFlag::EnvMapReflection))
             return;
 
         generateWorldPosition();
@@ -253,7 +251,7 @@ struct QDemonVertexPipelineImpl : public QDemonDefaultMaterialVertexPipelineInte
     }
     void generateViewVector() override
     {
-        if (setCode(GenerationFlagValues::ViewVector))
+        if (setCode(GenerationFlag::ViewVector))
             return;
         generateWorldPosition();
         QDemonShaderStageGeneratorInterface &activeGenerator(activeStage());
@@ -269,7 +267,7 @@ struct QDemonVertexPipelineImpl : public QDemonDefaultMaterialVertexPipelineInte
     // lighting in vertex pipeline expects world_normal
     void generateWorldNormal() override
     {
-        if (setCode(GenerationFlagValues::WorldNormal))
+        if (setCode(GenerationFlag::WorldNormal))
             return;
         addInterpolationParameter("varNormal", "vec3");
         doGenerateWorldNormal();
@@ -277,14 +275,14 @@ struct QDemonVertexPipelineImpl : public QDemonDefaultMaterialVertexPipelineInte
     }
     void generateObjectNormal() override
     {
-        if (setCode(GenerationFlagValues::ObjectNormal))
+        if (setCode(GenerationFlag::ObjectNormal))
             return;
         doGenerateObjectNormal();
         fragment().append("\tvec3 object_normal = normalize(varObjectNormal);");
     }
     void generateWorldPosition() override
     {
-        if (setCode(GenerationFlagValues::WorldPosition))
+        if (setCode(GenerationFlag::WorldPosition))
             return;
 
         activeStage().addUniform("model_matrix", "mat4");
@@ -295,7 +293,7 @@ struct QDemonVertexPipelineImpl : public QDemonDefaultMaterialVertexPipelineInte
     }
     void generateVarTangentAndBinormal() override
     {
-        if (setCode(GenerationFlagValues::TangentBinormal))
+        if (setCode(GenerationFlag::TangentBinormal))
             return;
         addInterpolationParameter("varTangent", "vec3");
         addInterpolationParameter("varBinormal", "vec3");
@@ -305,7 +303,7 @@ struct QDemonVertexPipelineImpl : public QDemonDefaultMaterialVertexPipelineInte
     }
     void generateVertexColor() override
     {
-        if (setCode(GenerationFlagValues::VertexColor))
+        if (setCode(GenerationFlag::VertexColor))
             return;
         addInterpolationParameter("varColor", "vec3");
         doGenerateVertexColor();
@@ -349,7 +347,7 @@ struct QDemonVertexPipelineImpl : public QDemonDefaultMaterialVertexPipelineInte
     void append(const QByteArray &data) override { activeStage().append(data); }
     void appendPartial(const QByteArray &data) override { activeStage().append(data); }
 
-    ShaderGeneratorStages::Enum stage() const override
+    QDemonShaderGeneratorStage stage() const override
     {
         return const_cast<QDemonVertexPipelineImpl *>(this)->activeStage().stage();
     }

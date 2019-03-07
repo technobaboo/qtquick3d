@@ -31,29 +31,28 @@
 #define QDEMON_RENDER_CLIPPING_PLANE_H
 
 #include <QtDemon/QDemonPlane>
-#include <QtDemon/QDemonFlags>
 #include <QtDemon/QDemonBounds3>
 
 QT_BEGIN_NAMESPACE
 
-struct BoxEdgeFlagValues
+enum class BoxEdgeFlagValues
 {
-    enum Enum {
-        xMax = 1,
-        yMax = 1 << 1,
-        zMax = 1 << 2,
-    };
+    None = 0,
+    xMax = 1,
+    yMax = 1 << 1,
+    zMax = 1 << 2,
 };
 
-typedef QDemonFlags<BoxEdgeFlagValues::Enum, quint8> TRenderBoxEdge;
+Q_DECLARE_FLAGS(QDemonRenderBoxEdge, BoxEdgeFlagValues);
+Q_DECLARE_OPERATORS_FOR_FLAGS(QDemonRenderBoxEdge);
 
 // For an intesection test, we only need two points of the bounding box.
 // There will be a point nearest to the plane, and a point furthest from the plane.
 // We can derive these points from the plane normal equation.
 struct QDemonPlaneBoxEdge
 {
-    TRenderBoxEdge lowerEdge;
-    TRenderBoxEdge upperEdge;
+    QDemonRenderBoxEdge lowerEdge;
+    QDemonRenderBoxEdge upperEdge;
 };
 
 struct QDemonClipPlane
@@ -88,7 +87,7 @@ struct QDemonClipPlane
         return retval;
     }
 
-    static inline QVector3D corner(const QDemonBounds3 &bounds, TRenderBoxEdge edge)
+    static inline QVector3D corner(const QDemonBounds3 &bounds, QDemonRenderBoxEdge edge)
     {
         return QVector3D((edge & BoxEdgeFlagValues::xMax) ? bounds.maximum[0] : bounds.minimum[0],
                          (edge & BoxEdgeFlagValues::yMax) ? bounds.maximum[1] : bounds.minimum[1],
@@ -120,11 +119,11 @@ struct QDemonClipPlane
 
     inline void calculateBBoxEdges()
     {
-        mEdges.upperEdge = TRenderBoxEdge(static_cast<quint8>((normal[0] >= 0.0f ? BoxEdgeFlagValues::xMax : 0)
-                                                              | (normal[1] >= 0.0f ? BoxEdgeFlagValues::yMax : 0)
-                                                              | (normal[2] >= 0.0f ? BoxEdgeFlagValues::zMax : 0)));
+        mEdges.upperEdge = QDemonRenderBoxEdge(static_cast<quint8>((normal[0] >= 0.0f ? BoxEdgeFlagValues::xMax : BoxEdgeFlagValues::None)
+                                                              | (normal[1] >= 0.0f ? BoxEdgeFlagValues::yMax : BoxEdgeFlagValues::None)
+                                                              | (normal[2] >= 0.0f ? BoxEdgeFlagValues::zMax : BoxEdgeFlagValues::None)));
 
-        mEdges.lowerEdge = TRenderBoxEdge((~(quint8(mEdges.upperEdge))) & 7);
+        mEdges.lowerEdge = QDemonRenderBoxEdge((~(quint8(mEdges.upperEdge))) & 7);
     }
 };
 

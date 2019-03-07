@@ -8,7 +8,6 @@ DEFINES += QT_BUILD_DEMON_LIB
 HEADERS += \
     qtdemonglobal.h \
     qtdemonglobal_p.h \
-    qdemonflags.h \
     qdemonbounds3.h \
     qdemontransform.h \
     qdemonplane.h \
@@ -22,7 +21,6 @@ HEADERS += \
     qdemontime.h
 
 SOURCES += \
-    qdemonflags.cpp \
     qdemonbounds3.cpp \
     qdemontransform.cpp \
     qdemonplane.cpp \

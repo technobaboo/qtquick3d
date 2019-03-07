@@ -62,8 +62,8 @@ struct QDemonWidgetBBox : public QDemonRenderWidgetInterface
         if (!m_boxShader) {
             QDemonRef<QDemonShaderProgramGeneratorInterface> theGenerator(inContext.getProgramGenerator());
             theGenerator->beginProgram();
-            QDemonShaderStageGeneratorInterface &theVertexGenerator(*theGenerator->getStage(ShaderGeneratorStages::Vertex));
-            QDemonShaderStageGeneratorInterface &theFragmentGenerator(*theGenerator->getStage(ShaderGeneratorStages::Fragment));
+            QDemonShaderStageGeneratorInterface &theVertexGenerator(*theGenerator->getStage(QDemonShaderGeneratorStage::Vertex));
+            QDemonShaderStageGeneratorInterface &theFragmentGenerator(*theGenerator->getStage(QDemonShaderGeneratorStage::Fragment));
 
             theVertexGenerator.addIncoming("attr_pos", "vec3");
             theVertexGenerator.addUniform("model_view_projection", "mat4");
@@ -204,8 +204,8 @@ struct QDemonWidgetAxis : public QDemonRenderWidgetInterface
         if (!m_axisShader) {
             QDemonRef<QDemonShaderProgramGeneratorInterface> theGenerator(inContext.getProgramGenerator());
             theGenerator->beginProgram();
-            QDemonShaderStageGeneratorInterface &theVertexGenerator(*theGenerator->getStage(ShaderGeneratorStages::Vertex));
-            QDemonShaderStageGeneratorInterface &theFragmentGenerator(*theGenerator->getStage(ShaderGeneratorStages::Fragment));
+            QDemonShaderStageGeneratorInterface &theVertexGenerator(*theGenerator->getStage(QDemonShaderGeneratorStage::Vertex));
+            QDemonShaderStageGeneratorInterface &theFragmentGenerator(*theGenerator->getStage(QDemonShaderGeneratorStage::Fragment));
             theVertexGenerator.addIncoming("attr_pos", "vec3");
             theVertexGenerator.addIncoming("attr_color", "vec3");
             theVertexGenerator.addOutgoing("output_color", "vec3");

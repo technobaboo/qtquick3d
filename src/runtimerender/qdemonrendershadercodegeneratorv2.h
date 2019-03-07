@@ -33,26 +33,25 @@
 #include <QtDemonRuntimeRender/qtdemonruntimerenderglobal.h>
 #include <QtDemonRuntimeRender/qdemonrendershadercodegenerator.h>
 #include <QtDemonRuntimeRender/qdemonrendershadercache.h>
-#include <QtDemon/qdemonflags.h>
 
 #include <QtCore/qstring.h>
 
 QT_BEGIN_NAMESPACE
 // So far the generator is only useful for graphics stages,
 // it doesn't seem useful for compute stages.
-struct ShaderGeneratorStages
+enum class QDemonShaderGeneratorStage
 {
-    enum Enum {
-        Vertex = 1,
-        TessControl = 1 << 1,
-        TessEval = 1 << 2,
-        Geometry = 1 << 3,
-        Fragment = 1 << 4,
-        StageCount = 5,
-    };
+    None = 0,
+    Vertex = 1,
+    TessControl = 1 << 1,
+    TessEval = 1 << 2,
+    Geometry = 1 << 3,
+    Fragment = 1 << 4,
+    StageCount = 5,
 };
 
-typedef QDemonFlags<ShaderGeneratorStages::Enum, quint32> TShaderGeneratorStageFlags;
+Q_DECLARE_FLAGS(QDemonShaderGeneratorStageFlags, QDemonShaderGeneratorStage);
+Q_DECLARE_OPERATORS_FOR_FLAGS(QDemonShaderGeneratorStageFlags);
 
 class Q_DEMONRUNTIMERENDER_EXPORT QDemonShaderStageGeneratorInterface
 {
@@ -77,7 +76,7 @@ public:
     virtual void append(const QByteArray &data) = 0;
     virtual void appendPartial(const QByteArray &data) = 0;
 
-    virtual ShaderGeneratorStages::Enum stage() const = 0;
+    virtual QDemonShaderGeneratorStage stage() const = 0;
 };
 
 class QDemonRenderContextInterface;
@@ -88,16 +87,16 @@ public:
     QAtomicInt ref;
 
     virtual ~QDemonShaderProgramGeneratorInterface() {}
-    static TShaderGeneratorStageFlags defaultFlags()
+    static QDemonShaderGeneratorStageFlags defaultFlags()
     {
-        return TShaderGeneratorStageFlags(ShaderGeneratorStages::Vertex | ShaderGeneratorStages::Fragment);
+        return QDemonShaderGeneratorStageFlags(QDemonShaderGeneratorStage::Vertex | QDemonShaderGeneratorStage::Fragment);
     }
-    virtual void beginProgram(TShaderGeneratorStageFlags inEnabledStages = defaultFlags()) = 0;
+    virtual void beginProgram(QDemonShaderGeneratorStageFlags inEnabledStages = defaultFlags()) = 0;
 
-    virtual TShaderGeneratorStageFlags getEnabledStages() const = 0;
+    virtual QDemonShaderGeneratorStageFlags getEnabledStages() const = 0;
 
     // get the stage or nullptr if it has not been created.
-    virtual QDemonShaderStageGeneratorInterface *getStage(ShaderGeneratorStages::Enum inStage) = 0;
+    virtual QDemonShaderStageGeneratorInterface *getStage(QDemonShaderGeneratorStage inStage) = 0;
 
     // Implicit call to end program.
 

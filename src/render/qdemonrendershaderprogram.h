@@ -336,7 +336,7 @@ public:
             QDemonConstDataRef<qint8> tessEvaluationShaderSource = QDemonConstDataRef<qint8>(),
             QDemonConstDataRef<qint8> geometryShaderSource = QDemonConstDataRef<qint8>(),
             bool separateProgram = false,
-            QDemonRenderShaderProgramBinaryType::Enum type = QDemonRenderShaderProgramBinaryType::Unknown,
+            QDemonRenderShaderProgramBinaryType type = QDemonRenderShaderProgramBinaryType::Unknown,
             bool binaryProgram = false);
 
     /**

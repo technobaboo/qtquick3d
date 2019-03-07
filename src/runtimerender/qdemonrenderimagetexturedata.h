@@ -30,33 +30,29 @@
 #ifndef QDEMON_RENDER_IMAGE_TEXTURE_DATA_H
 #define QDEMON_RENDER_IMAGE_TEXTURE_DATA_H
 
-#include <QtDemon/QDemonFlags>
-
 #include <QtDemonRender/qdemonrendertexture2d.h>
 
 QT_BEGIN_NAMESPACE
 // forward declararion
 class QDemonRenderPrefilterTexture;
 
-struct ImageTextureFlagValues
+enum class QDemonImageTextureFlagValue
 {
-    enum Enum {
-        HasTransparency = 1,
-        InvertUVCoords = 1 << 1,
-        PreMultiplied = 1 << 2,
-    };
+    HasTransparency = 1,
+    InvertUVCoords = 1 << 1,
+    PreMultiplied = 1 << 2,
 };
 
-struct QDemonRenderImageTextureFlags : public QDemonFlags<ImageTextureFlagValues::Enum, quint32>
+struct QDemonRenderImageTextureFlags : public QFlags<QDemonImageTextureFlagValue>
 {
-    bool hasTransparency() const { return this->operator&(ImageTextureFlagValues::HasTransparency); }
-    void setHasTransparency(bool inValue) { clearOrSet(inValue, ImageTextureFlagValues::HasTransparency); }
+    bool hasTransparency() const { return this->operator&(QDemonImageTextureFlagValue::HasTransparency); }
+    void setHasTransparency(bool inValue) { setFlag(QDemonImageTextureFlagValue::HasTransparency, inValue); }
 
-    bool isInvertUVCoords() const { return this->operator&(ImageTextureFlagValues::InvertUVCoords); }
-    void setInvertUVCoords(bool inValue) { clearOrSet(inValue, ImageTextureFlagValues::InvertUVCoords); }
+    bool isInvertUVCoords() const { return this->operator&(QDemonImageTextureFlagValue::InvertUVCoords); }
+    void setInvertUVCoords(bool inValue) { setFlag(QDemonImageTextureFlagValue::InvertUVCoords, inValue); }
 
-    bool isPreMultiplied() const { return this->operator&(ImageTextureFlagValues::PreMultiplied); }
-    void setPreMultiplied(bool inValue) { clearOrSet(inValue, ImageTextureFlagValues::PreMultiplied); }
+    bool isPreMultiplied() const { return this->operator&(QDemonImageTextureFlagValue::PreMultiplied); }
+    void setPreMultiplied(bool inValue) { setFlag(QDemonImageTextureFlagValue::PreMultiplied, inValue); }
 };
 
 struct QDemonRenderImageTextureData

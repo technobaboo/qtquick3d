@@ -33,27 +33,25 @@
 #include <QtDemonRuntimeRender/qdemonrenderdynamicobject.h>
 #include <QtDemonRuntimeRender/qdemonrenderimage.h>
 #include <QtDemonRuntimeRender/qdemonrenderlightmaps.h>
-#include <QtDemon/qdemonflags.h>
 
 QT_BEGIN_NAMESPACE
 
 // IMPORTANT: These flags matches the key produced by a MDL export file
-struct QDemonCustomMaterialShaderKeyValues
+enum class QDemonCustomMaterialShaderKeyValues
 {
-    enum Enum {
-        diffuse = 1 << 0,
-        specular = 1 << 1,
-        glossy = 1 << 2,
-        cutout = 1 << 3,
-        refraction = 1 << 4,
-        transparent = 1 << 5,
-        displace = 1 << 6,
-        volumetric = 1 << 7,
-        transmissive = 1 << 8,
-    };
+    diffuse = 1 << 0,
+    specular = 1 << 1,
+    glossy = 1 << 2,
+    cutout = 1 << 3,
+    refraction = 1 << 4,
+    transparent = 1 << 5,
+    displace = 1 << 6,
+    volumetric = 1 << 7,
+    transmissive = 1 << 8,
 };
 
-typedef QDemonFlags<QDemonCustomMaterialShaderKeyValues::Enum, quint32> SCustomMaterialShaderKeyFlags;
+Q_DECLARE_FLAGS(QDemonCustomMaterialShaderKeyFlags, QDemonCustomMaterialShaderKeyValues);
+Q_DECLARE_OPERATORS_FOR_FLAGS(QDemonCustomMaterialShaderKeyFlags);
 
 struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderCustomMaterial : public QDemonDynamicObject
 {
@@ -77,7 +75,7 @@ public:
 
     QDemonGraphObject *m_nextSibling;
 
-    SCustomMaterialShaderKeyFlags m_shaderKeyValues; ///< input from MDL files
+    QDemonCustomMaterialShaderKeyFlags m_shaderKeyValues; ///< input from MDL files
     quint32 m_layerCount; ///< input from MDL files
 
     void initialize(quint32 inKey, quint32 inLayerCount)
@@ -94,7 +92,7 @@ public:
         m_emissiveMap2 = nullptr;
         m_displacementMap = nullptr;
         m_displaceAmount = 0.0;
-        m_shaderKeyValues = static_cast<SCustomMaterialShaderKeyFlags>(inKey);
+        m_shaderKeyValues = static_cast<QDemonCustomMaterialShaderKeyFlags>(inKey);
         m_layerCount = inLayerCount;
     }
 

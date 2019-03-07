@@ -322,8 +322,8 @@ void QDemonRendererImpl::drawScreenRect(QRectF inRect, const QVector3D &inColor)
     if (!m_screenRectShader) {
         QDemonRef<QDemonShaderProgramGeneratorInterface> theGenerator(getProgramGenerator());
         theGenerator->beginProgram();
-        QDemonShaderStageGeneratorInterface &vertexGenerator(*theGenerator->getStage(ShaderGeneratorStages::Vertex));
-        QDemonShaderStageGeneratorInterface &fragmentGenerator(*theGenerator->getStage(ShaderGeneratorStages::Fragment));
+        QDemonShaderStageGeneratorInterface &vertexGenerator(*theGenerator->getStage(QDemonShaderGeneratorStage::Vertex));
+        QDemonShaderStageGeneratorInterface &fragmentGenerator(*theGenerator->getStage(QDemonShaderGeneratorStage::Fragment));
         // TODO: Move out and change type!
         vertexGenerator.addIncoming("attr_pos", "vec3");
         vertexGenerator.addUniform("model_view_projection", "mat4");
@@ -1292,8 +1292,8 @@ void QDemonRendererImpl::intersectRayWithSubsetRenderable(const QDemonRenderRay 
 QDemonRef<QDemonRenderShaderProgram> QDemonRendererImpl::compileShader(const QByteArray &inName, const char *inVert, const char *inFrag)
 {
     getProgramGenerator()->beginProgram();
-    getProgramGenerator()->getStage(ShaderGeneratorStages::Vertex)->append(inVert);
-    getProgramGenerator()->getStage(ShaderGeneratorStages::Fragment)->append(inFrag);
+    getProgramGenerator()->getStage(QDemonShaderGeneratorStage::Vertex)->append(inVert);
+    getProgramGenerator()->getStage(QDemonShaderGeneratorStage::Fragment)->append(inFrag);
     return getProgramGenerator()->compileGeneratedShader(inName);
 }
 

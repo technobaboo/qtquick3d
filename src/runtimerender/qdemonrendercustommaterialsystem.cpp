@@ -72,16 +72,16 @@ QDemonCustomMaterialVertexPipeline::QDemonCustomMaterialVertexPipeline(QDemonRen
 
 void QDemonCustomMaterialVertexPipeline::initializeTessControlShader()
 {
-    if (m_tessMode == TessModeValues::NoTess || programGenerator()->getStage(ShaderGeneratorStages::TessControl) == nullptr) {
+    if (m_tessMode == TessModeValues::NoTess || programGenerator()->getStage(QDemonShaderGeneratorStage::TessControl) == nullptr) {
         return;
     }
 
-    QDemonShaderStageGeneratorInterface &tessCtrlShader(*programGenerator()->getStage(ShaderGeneratorStages::TessControl));
+    QDemonShaderStageGeneratorInterface &tessCtrlShader(*programGenerator()->getStage(QDemonShaderGeneratorStage::TessControl));
 
     tessCtrlShader.addUniform("tessLevelInner", "float");
     tessCtrlShader.addUniform("tessLevelOuter", "float");
 
-    setupTessIncludes(ShaderGeneratorStages::TessControl, m_tessMode);
+    setupTessIncludes(QDemonShaderGeneratorStage::TessControl, m_tessMode);
 
     tessCtrlShader.append("void main() {\n");
 
@@ -106,16 +106,16 @@ void QDemonCustomMaterialVertexPipeline::initializeTessControlShader()
 
 void QDemonCustomMaterialVertexPipeline::initializeTessEvaluationShader()
 {
-    if (m_tessMode == TessModeValues::NoTess || programGenerator()->getStage(ShaderGeneratorStages::TessEval) == nullptr) {
+    if (m_tessMode == TessModeValues::NoTess || programGenerator()->getStage(QDemonShaderGeneratorStage::TessEval) == nullptr) {
         return;
     }
 
-    QDemonShaderStageGeneratorInterface &tessEvalShader(*programGenerator()->getStage(ShaderGeneratorStages::TessEval));
+    QDemonShaderStageGeneratorInterface &tessEvalShader(*programGenerator()->getStage(QDemonShaderGeneratorStage::TessEval));
 
     tessEvalShader.addUniform("model_view_projection", "mat4");
     tessEvalShader.addUniform("normal_matrix", "mat3");
 
-    setupTessIncludes(ShaderGeneratorStages::TessEval, m_tessMode);
+    setupTessIncludes(QDemonShaderGeneratorStage::TessEval, m_tessMode);
 
     if (m_tessMode == TessModeValues::TessLinear && m_displacementImage) {
         tessEvalShader.addInclude("defaultMaterialFileDisplacementTexture.glsllib");
@@ -142,7 +142,7 @@ void QDemonCustomMaterialVertexPipeline::initializeTessEvaluationShader()
 
 void QDemonCustomMaterialVertexPipeline::finalizeTessControlShader()
 {
-    QDemonShaderStageGeneratorInterface &tessCtrlShader(*programGenerator()->getStage(ShaderGeneratorStages::TessControl));
+    QDemonShaderStageGeneratorInterface &tessCtrlShader(*programGenerator()->getStage(QDemonShaderGeneratorStage::TessControl));
     // add varyings we must pass through
     typedef TStrTableStrMap::const_iterator TParamIter;
     for (TParamIter iter = m_interpolationParameters.begin(), end = m_interpolationParameters.end(); iter != end; ++iter) {
@@ -152,10 +152,10 @@ void QDemonCustomMaterialVertexPipeline::finalizeTessControlShader()
 
 void QDemonCustomMaterialVertexPipeline::finalizeTessEvaluationShader()
 {
-    QDemonShaderStageGeneratorInterface &tessEvalShader(*programGenerator()->getStage(ShaderGeneratorStages::TessEval));
+    QDemonShaderStageGeneratorInterface &tessEvalShader(*programGenerator()->getStage(QDemonShaderGeneratorStage::TessEval));
 
     QByteArray outExt;
-    if (programGenerator()->getEnabledStages() & ShaderGeneratorStages::Geometry)
+    if (programGenerator()->getEnabledStages() & QDemonShaderGeneratorStage::Geometry)
         outExt = "TE";
 
     // add varyings we must pass through
@@ -168,10 +168,10 @@ void QDemonCustomMaterialVertexPipeline::finalizeTessEvaluationShader()
         }
 
         // transform the normal
-        if (m_generationFlags & GenerationFlagValues::WorldNormal)
+        if (m_generationFlags & GenerationFlag::WorldNormal)
             tessEvalShader << "\n\tvarNormal" << outExt << " = normalize(normal_matrix * teNorm);\n";
         // transform the tangent
-        if (m_generationFlags & GenerationFlagValues::TangentBinormal) {
+        if (m_generationFlags & GenerationFlag::TangentBinormal) {
             tessEvalShader << "\n\tvarTangent" << outExt << " = normalize(normal_matrix * teTangent);\n";
             // transform the binormal
             tessEvalShader << "\n\tvarBinormal" << outExt << " = normalize(normal_matrix * teBinormal);\n";
@@ -215,14 +215,14 @@ void QDemonCustomMaterialVertexPipeline::beginVertexGeneration(quint32 displacem
     m_displacementIdx = displacementImageIdx;
     m_displacementImage = displacementImage;
 
-    TShaderGeneratorStageFlags theStages(QDemonShaderProgramGeneratorInterface::defaultFlags());
+    QDemonShaderGeneratorStageFlags theStages(QDemonShaderProgramGeneratorInterface::defaultFlags());
 
     if (m_tessMode != TessModeValues::NoTess) {
-        theStages |= ShaderGeneratorStages::TessControl;
-        theStages |= ShaderGeneratorStages::TessEval;
+        theStages |= QDemonShaderGeneratorStage::TessControl;
+        theStages |= QDemonShaderGeneratorStage::TessEval;
     }
     if (m_wireframe) {
-        theStages |= ShaderGeneratorStages::Geometry;
+        theStages |= QDemonShaderGeneratorStage::Geometry;
     }
 
     programGenerator()->beginProgram(theStages);
@@ -254,7 +254,7 @@ void QDemonCustomMaterialVertexPipeline::beginVertexGeneration(quint32 displacem
             vertexShader.addUniform("displace_tiling", "vec3");
             // we create the world position setup here
             // because it will be replaced with the displaced position
-            setCode(GenerationFlagValues::WorldPosition);
+            setCode(GenerationFlag::WorldPosition);
             vertexShader.addUniform("model_matrix", "mat4");
 
             vertexShader.addInclude("defaultMaterialFileDisplacementTexture.glsllib");
@@ -315,9 +315,9 @@ void QDemonCustomMaterialVertexPipeline::assignOutput(const QByteArray &inVarNam
 
 void QDemonCustomMaterialVertexPipeline::generateUVCoords(quint32 inUVSet)
 {
-    if (inUVSet == 0 && setCode(GenerationFlagValues::UVCoords))
+    if (inUVSet == 0 && setCode(GenerationFlag::UVCoords))
         return;
-    if (inUVSet == 1 && setCode(GenerationFlagValues::UVCoords1))
+    if (inUVSet == 1 && setCode(GenerationFlag::UVCoords1))
         return;
 
     Q_ASSERT(inUVSet == 0 || inUVSet == 1);
@@ -332,7 +332,7 @@ void QDemonCustomMaterialVertexPipeline::generateUVCoords(quint32 inUVSet)
 
 void QDemonCustomMaterialVertexPipeline::generateWorldNormal()
 {
-    if (setCode(GenerationFlagValues::WorldNormal))
+    if (setCode(GenerationFlag::WorldNormal))
         return;
     addInterpolationParameter("varNormal", "vec3");
     doGenerateWorldNormal();
@@ -340,14 +340,14 @@ void QDemonCustomMaterialVertexPipeline::generateWorldNormal()
 
 void QDemonCustomMaterialVertexPipeline::generateObjectNormal()
 {
-    if (setCode(GenerationFlagValues::ObjectNormal))
+    if (setCode(GenerationFlag::ObjectNormal))
         return;
     doGenerateObjectNormal();
 }
 
 void QDemonCustomMaterialVertexPipeline::generateVarTangentAndBinormal()
 {
-    if (setCode(GenerationFlagValues::TangentBinormal))
+    if (setCode(GenerationFlag::TangentBinormal))
         return;
     addInterpolationParameter("varTangent", "vec3");
     addInterpolationParameter("varBinormal", "vec3");
@@ -358,7 +358,7 @@ void QDemonCustomMaterialVertexPipeline::generateVarTangentAndBinormal()
 
 void QDemonCustomMaterialVertexPipeline::generateWorldPosition()
 {
-    if (setCode(GenerationFlagValues::WorldPosition))
+    if (setCode(GenerationFlag::WorldPosition))
         return;
 
     activeStage().addUniform("model_matrix", "mat4");
@@ -411,7 +411,7 @@ void QDemonCustomMaterialVertexPipeline::addInterpolationParameter(const QByteAr
         tessControl().addOutgoing(nameBuilder, inType);
 
         nameBuilder = inName;
-        if (programGenerator()->getEnabledStages() & ShaderGeneratorStages::Geometry) {
+        if (programGenerator()->getEnabledStages() & QDemonShaderGeneratorStage::Geometry) {
             nameBuilder.append("TE");
             geometry().addOutgoing(inName, inType);
         }

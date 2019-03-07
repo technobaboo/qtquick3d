@@ -31,7 +31,6 @@
 #define QDEMON_RENDER_EFFECT_SYSTEM_COMMANDS_H
 
 #include <QtDemonRender/qdemonrenderbasetypes.h>
-#include <QtDemon/qdemonflags.h>
 
 QT_BEGIN_NAMESPACE
 namespace dynamic {
@@ -94,18 +93,17 @@ struct QDemonCommand
     static void copyConstructCommand(quint8 *inDataBuffer, const QDemonCommand &inCommand);
 };
 
-struct AllocateBufferFlagValues
+enum class AllocateBufferFlagValues
 {
-    enum Enum {
-        SceneLifetime = 1,
-    };
+    None = 0,
+    SceneLifetime = 1,
 };
 
-struct QDemonAllocateBufferFlags : public QDemonFlags<AllocateBufferFlagValues::Enum, quint32>
+struct QDemonAllocateBufferFlags : public QFlags<AllocateBufferFlagValues>
 {
-    QDemonAllocateBufferFlags(quint32 inValues) : QDemonFlags<AllocateBufferFlagValues::Enum, quint32>(inValues) {}
+    QDemonAllocateBufferFlags(quint32 inValues) : QFlags(inValues) {}
     QDemonAllocateBufferFlags() {}
-    void setSceneLifetime(bool inValue) { clearOrSet(inValue, AllocateBufferFlagValues::SceneLifetime); }
+    void setSceneLifetime(bool inValue) { setFlag(AllocateBufferFlagValues::SceneLifetime, inValue); }
     // If isSceneLifetime is unset the buffer is assumed to be frame lifetime and will be
     // released after this render operation.
     bool isSceneLifetime() const { return this->operator&(AllocateBufferFlagValues::SceneLifetime); }
@@ -448,22 +446,20 @@ struct QDemonApplyBlitFramebuffer : public QDemonCommand
     }
 };
 
-struct DepthStencilFlagValues
+enum class QDemonDepthStencilFlagValue
 {
-    enum Enum {
-        NoFlagValue = 0,
-        ClearStencil = 1 << 0,
-        ClearDepth = 1 << 1,
-    };
+    NoFlagValue = 0,
+    ClearStencil = 1 << 0,
+    ClearDepth = 1 << 1,
 };
 
-struct QDemonDepthStencilFlags : public QDemonFlags<DepthStencilFlagValues::Enum>
+struct QDemonDepthStencilFlags : public QFlags<QDemonDepthStencilFlagValue>
 {
-    bool hasClearStencil() const { return operator&(DepthStencilFlagValues::ClearStencil); }
-    void setClearStencil(bool value) { clearOrSet(value, DepthStencilFlagValues::ClearStencil); }
+    bool hasClearStencil() const { return operator&(QDemonDepthStencilFlagValue::ClearStencil); }
+    void setClearStencil(bool value) { setFlag(QDemonDepthStencilFlagValue::ClearStencil, value); }
 
-    bool hasClearDepth() const { return operator&(DepthStencilFlagValues::ClearDepth); }
-    void setClearDepth(bool value) { clearOrSet(value, DepthStencilFlagValues::ClearDepth); }
+    bool hasClearDepth() const { return operator&(QDemonDepthStencilFlagValue::ClearDepth); }
+    void setClearDepth(bool value) { setFlag(QDemonDepthStencilFlagValue::ClearDepth, value); }
 };
 
 struct QDemonDepthStencil : public QDemonCommand
