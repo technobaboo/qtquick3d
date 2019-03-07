@@ -81,7 +81,6 @@ void QDemonImage::setSource(QString source)
 
 void QDemonImage::setScaleU(float scaleu)
 {
-    qWarning("Floating point comparison needs context sanity check");
     if (qFuzzyCompare(m_scaleu, scaleu))
         return;
 
@@ -92,7 +91,6 @@ void QDemonImage::setScaleU(float scaleu)
 
 void QDemonImage::setScaleV(float scalev)
 {
-    qWarning("Floating point comparison needs context sanity check");
     if (qFuzzyCompare(m_scalev, scalev))
         return;
 
@@ -133,7 +131,6 @@ void QDemonImage::setVerticalTiling(QDemonImage::TilingMode tilingmodevert)
 
 void QDemonImage::setRotationUV(float rotationuv)
 {
-    qWarning("Floating point comparison needs context sanity check");
     if (qFuzzyCompare(m_rotationuv, rotationuv))
         return;
 
@@ -144,7 +141,6 @@ void QDemonImage::setRotationUV(float rotationuv)
 
 void QDemonImage::setPositionU(float positionu)
 {
-    qWarning("Floating point comparison needs context sanity check");
     if (qFuzzyCompare(m_positionu, positionu))
         return;
 
@@ -155,7 +151,6 @@ void QDemonImage::setPositionU(float positionu)
 
 void QDemonImage::setPositionV(float positionv)
 {
-    qWarning("Floating point comparison needs context sanity check");
     if (qFuzzyCompare(m_positionv, positionv))
         return;
 
@@ -166,7 +161,6 @@ void QDemonImage::setPositionV(float positionv)
 
 void QDemonImage::setPivotU(float pivotu)
 {
-    qWarning("Floating point comparison needs context sanity check");
     if (qFuzzyCompare(m_pivotu, pivotu))
         return;
 
@@ -177,7 +171,6 @@ void QDemonImage::setPivotU(float pivotu)
 
 void QDemonImage::setPivotV(float pivotv)
 {
-    qWarning("Floating point comparison needs context sanity check");
     if (qFuzzyCompare(m_pivotv, pivotv))
         return;
 

@@ -289,7 +289,6 @@ void QDemonDefaultMaterial::setIndexOfRefraction(float indexOfRefraction)
 
 void QDemonDefaultMaterial::setFresnelPower(float fresnelPower)
 {
-    qWarning("Floating point comparison needs context sanity check");
     if (qFuzzyCompare(m_fresnelPower, fresnelPower))
         return;
 
@@ -300,7 +299,6 @@ void QDemonDefaultMaterial::setFresnelPower(float fresnelPower)
 
 void QDemonDefaultMaterial::setSpecularAmount(float specularAmount)
 {
-    qWarning("Floating point comparison needs context sanity check");
     if (qFuzzyCompare(m_specularAmount, specularAmount))
         return;
 
@@ -311,7 +309,6 @@ void QDemonDefaultMaterial::setSpecularAmount(float specularAmount)
 
 void QDemonDefaultMaterial::setSpecularRoughness(float specularRoughness)
 {
-    qWarning("Floating point comparison needs context sanity check");
     if (qFuzzyCompare(m_specularRoughness, specularRoughness))
         return;
 
@@ -332,7 +329,6 @@ void QDemonDefaultMaterial::setRoughnessMap(QDemonImage *roughnessMap)
 
 void QDemonDefaultMaterial::setOpacity(float opacity)
 {
-    qWarning("Floating point comparison needs context sanity check");
     if (qFuzzyCompare(m_opacity, opacity))
         return;
 
