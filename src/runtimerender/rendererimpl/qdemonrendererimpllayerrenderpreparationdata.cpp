@@ -942,7 +942,7 @@ bool QDemonLayerRenderPreparationData::prepareRenderablesForRender(const QMatrix
                                                                    float inTextScaleFactor,
                                                                    QDemonLayerRenderPreparationResultFlags &ioFlags)
 {
-    QDemonStackPerfTimer __timer(renderer->getDemonContext()->getPerfTimer(), "SLayerRenderData::PrepareRenderablesForRender");
+    QDemonStackPerfTimer perfTimer(renderer->getDemonContext()->getPerfTimer(), Q_FUNC_INFO);
     viewProjection = inViewProjection;
     float theTextScaleFactor = inTextScaleFactor;
     bool wasDataDirty = false;
@@ -1037,7 +1037,7 @@ struct QDemonLightNodeMarker
 // m_Layer.m_Camera->CalculateViewProjectionMatrix(m_ViewProjection);
 void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportDimensions)
 {
-    QDemonStackPerfTimer __timer(renderer->getDemonContext()->getPerfTimer(), "SLayerRenderData::PrepareForRender");
+    QDemonStackPerfTimer perfTimer(renderer->getDemonContext()->getPerfTimer(), Q_FUNC_INFO);
     if (layerPrepResult.hasValue())
         return;
 
