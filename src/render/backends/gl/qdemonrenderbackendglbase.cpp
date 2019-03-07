@@ -157,7 +157,7 @@ qint32 QDemonRenderBackendGLBase::getMaxCombinedTextureUnits()
     return maxUnits;
 }
 
-bool QDemonRenderBackendGLBase::getRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::Enum inCap) const
+bool QDemonRenderBackendGLBase::getRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps inCap) const
 {
     bool bSupported = false;
 
@@ -258,7 +258,7 @@ bool QDemonRenderBackendGLBase::getRenderBackendCap(QDemonRenderBackend::QDemonR
     return bSupported;
 }
 
-void QDemonRenderBackendGLBase::getRenderBackendValue(QDemonRenderBackendQuery::Enum inQuery, qint32 *params) const
+void QDemonRenderBackendGLBase::getRenderBackendValue(QDemonRenderBackendQuery inQuery, qint32 *params) const
 {
     if (params) {
         switch (inQuery) {
@@ -1101,7 +1101,7 @@ void QDemonRenderBackendGLBase::setTextureData3D(QDemonRenderBackendTextureObjec
 
 void QDemonRenderBackendGLBase::generateMipMaps(QDemonRenderBackendTextureObject to,
                                                 QDemonRenderTextureTargetType target,
-                                                QDemonRenderHint::Enum genType)
+                                                QDemonRenderHint genType)
 {
     GLuint texID = HandleToID_cast(GLuint, size_t, to);
     GLenum glTarget = GLConversion::fromTextureTargetToGL(target);
@@ -1124,11 +1124,11 @@ QDemonRenderTextureSwizzleMode QDemonRenderBackendGLBase::getTextureSwizzleMode(
 }
 
 QDemonRenderBackend::QDemonRenderBackendSamplerObject QDemonRenderBackendGLBase::createSampler(
-        QDemonRenderTextureMinifyingOp::Enum minFilter,
-        QDemonRenderTextureMagnifyingOp::Enum magFilter,
-        QDemonRenderTextureCoordOp::Enum wrapS,
-        QDemonRenderTextureCoordOp::Enum wrapT,
-        QDemonRenderTextureCoordOp::Enum wrapR,
+        QDemonRenderTextureMinifyingOp minFilter,
+        QDemonRenderTextureMagnifyingOp magFilter,
+        QDemonRenderTextureCoordOp wrapS,
+        QDemonRenderTextureCoordOp wrapT,
+        QDemonRenderTextureCoordOp wrapR,
         qint32 minLod,
         qint32 maxLod,
         float lodBias,
@@ -1160,11 +1160,11 @@ QDemonRenderBackend::QDemonRenderBackendSamplerObject QDemonRenderBackendGLBase:
 
 void QDemonRenderBackendGLBase::updateSampler(QDemonRenderBackendSamplerObject /* so */,
                                               QDemonRenderTextureTargetType target,
-                                              QDemonRenderTextureMinifyingOp::Enum minFilter,
-                                              QDemonRenderTextureMagnifyingOp::Enum magFilter,
-                                              QDemonRenderTextureCoordOp::Enum wrapS,
-                                              QDemonRenderTextureCoordOp::Enum wrapT,
-                                              QDemonRenderTextureCoordOp::Enum wrapR,
+                                              QDemonRenderTextureMinifyingOp minFilter,
+                                              QDemonRenderTextureMagnifyingOp magFilter,
+                                              QDemonRenderTextureCoordOp wrapS,
+                                              QDemonRenderTextureCoordOp wrapT,
+                                              QDemonRenderTextureCoordOp wrapR,
                                               float minLod,
                                               float maxLod,
                                               float lodBias,

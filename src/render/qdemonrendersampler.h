@@ -40,11 +40,11 @@ class QDemonRenderContextImpl;
 class QDemonRenderTextureSampler
 {
 public:
-    QDemonRenderTextureMinifyingOp::Enum m_minFilter;
-    QDemonRenderTextureMagnifyingOp::Enum m_magFilter;
-    QDemonRenderTextureCoordOp::Enum m_wrapS;
-    QDemonRenderTextureCoordOp::Enum m_wrapT;
-    QDemonRenderTextureCoordOp::Enum m_wrapR;
+    QDemonRenderTextureMinifyingOp m_minFilter;
+    QDemonRenderTextureMagnifyingOp m_magFilter;
+    QDemonRenderTextureCoordOp m_wrapS;
+    QDemonRenderTextureCoordOp m_wrapT;
+    QDemonRenderTextureCoordOp m_wrapR;
     QDemonRenderTextureSwizzleMode m_swizzleMode;
     float m_minLod;
     float m_maxLod;
@@ -76,11 +76,11 @@ public:
      * @return No return.
      */
     QDemonRenderTextureSampler(const QDemonRef<QDemonRenderContextImpl> &context,
-                               QDemonRenderTextureMinifyingOp::Enum minFilter = QDemonRenderTextureMinifyingOp::Linear,
-                               QDemonRenderTextureMagnifyingOp::Enum magFilter = QDemonRenderTextureMagnifyingOp::Linear,
-                               QDemonRenderTextureCoordOp::Enum wrapS = QDemonRenderTextureCoordOp::ClampToEdge,
-                               QDemonRenderTextureCoordOp::Enum wrapT = QDemonRenderTextureCoordOp::ClampToEdge,
-                               QDemonRenderTextureCoordOp::Enum wrapR = QDemonRenderTextureCoordOp::ClampToEdge,
+                               QDemonRenderTextureMinifyingOp minFilter = QDemonRenderTextureMinifyingOp::Linear,
+                               QDemonRenderTextureMagnifyingOp magFilter = QDemonRenderTextureMagnifyingOp::Linear,
+                               QDemonRenderTextureCoordOp wrapS = QDemonRenderTextureCoordOp::ClampToEdge,
+                               QDemonRenderTextureCoordOp wrapT = QDemonRenderTextureCoordOp::ClampToEdge,
+                               QDemonRenderTextureCoordOp wrapR = QDemonRenderTextureCoordOp::ClampToEdge,
                                QDemonRenderTextureSwizzleMode swizzleMode = QDemonRenderTextureSwizzleMode::NoSwizzle,
                                float minLod = -1000.0,
                                float maxLod = 1000.0,

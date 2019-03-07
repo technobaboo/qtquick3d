@@ -195,7 +195,7 @@ struct QDemonVertexPipelineImpl : public QDemonDefaultMaterialVertexPipelineInte
         }
     }
 
-    virtual void setupTessIncludes(QDemonShaderGeneratorStage inStage, TessModeValues::Enum inTessMode)
+    virtual void setupTessIncludes(QDemonShaderGeneratorStage inStage, TessModeValues inTessMode)
     {
         QDemonShaderStageGeneratorInterface &tessShader(*programGenerator()->getStage(inStage));
 

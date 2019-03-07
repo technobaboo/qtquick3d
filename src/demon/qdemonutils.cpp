@@ -204,7 +204,7 @@ double degToRad(const double a)
     return 0.01745329251994329547 * a;
 }
 
-qint64 IOStream::positionHelper(const QIODevice &device, qint64 offset, IOStream::SeekPosition::Enum seekPosition)
+qint64 IOStream::positionHelper(const QIODevice &device, qint64 offset, IOStream::SeekPosition seekPosition)
 {
     qint64 startPos = 0;
 
@@ -272,32 +272,28 @@ inline uint strLen(const char *inType)
 //// and it will tell you how many characters to erase
 // struct SPathStateMachine
 //{
-//    struct States
+//    enum class States
 //    {
-//        enum Enum {
 //            NoState = 0, // Don't care
 //            Slash, // Last char was either a forward or backward slash
 //            Period, // Last char was a period
 //            TwoPeriods, // Last two characters were periods
-//        };
 //    };
-//    struct Actions
+//    enum class Actions
 //    {
-//        enum Enum {
 //            NoAction = 0,
 //            DeleteBack1Slash,
 //            DeleteBack2Slashes,
-//        };
 //    };
 
-//    States::Enum m_State;
+//    States m_State;
 
 //    SPathStateMachine()
 //        : m_State(States::NoState)
 //    {
 //    }
 
-//    Actions::Enum AnalyzeChar(QCharRef inChar)
+//    Actions AnalyzeChar(QCharRef inChar)
 //    {
 //        switch (inChar.toLatin1()) {
 //        case '\\':
@@ -359,7 +355,7 @@ inline uint strLen(const char *inType)
 //        QCharRef currentChar = ioPath[idx];
 //        if (currentChar == '\\')
 //            currentChar = QChar::fromLatin1('/');
-//        SPathStateMachine::Actions::Enum action = theStateMachine.AnalyzeChar(currentChar);
+//        SPathStateMachine::Actions action = theStateMachine.AnalyzeChar(currentChar);
 //        switch (action) {
 //        case SPathStateMachine::Actions::DeleteBack2Slashes:
 //            if (DoDeleteBack1Slash(idx, ioPath))

@@ -107,12 +107,10 @@ struct QDemonWidgetRenderInformation
 };
 typedef QPair<QDemonShaderVertexCodeGenerator &, QDemonShaderFragmentCodeGenerator &> TShaderGeneratorPair;
 
-struct RenderWidgetModes
+enum class RenderWidgetModes
 {
-    enum Enum {
-        Local,
-        Global,
-    };
+    Local,
+    Global,
 };
 
 class QDemonRenderWidgetInterface

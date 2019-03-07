@@ -49,7 +49,7 @@ QDemonPathBuffer *QDemonPathBuffer::load(QIODevice &inStream)
     char *dataBuffer = commandBuffer + commandSize;
     in.readRawData(commandBuffer, commandSize);
     in.readRawData(dataBuffer, dataSize);
-    retval->commands = toDataRef((PathCommand::Enum *)commandBuffer, numCommands);
+    retval->commands = toDataRef((PathCommand *)commandBuffer, numCommands);
     retval->data = toDataRef((float *)dataBuffer, numData);
     return retval;
 }
@@ -57,7 +57,7 @@ QDemonPathBuffer *QDemonPathBuffer::load(QIODevice &inStream)
 namespace {
 struct QDemonPathBufferBuilder : public QDemonPathBufferBuilderInterface
 {
-    QVector<PathCommand::Enum> m_commands;
+    QVector<PathCommand> m_commands;
     QVector<float> m_data;
 
     void clear() override
@@ -93,7 +93,7 @@ struct QDemonPathBufferBuilder : public QDemonPathBufferBuilderInterface
     {
         QDemonPathBuffer retval;
         retval.data = toConstDataRef(static_cast<const float *>(m_data.constData()), m_data.size());
-        retval.commands = toConstDataRef(static_cast<const PathCommand::Enum *>(m_commands.constData()), m_commands.size());
+        retval.commands = toConstDataRef(static_cast<const PathCommand *>(m_commands.constData()), m_commands.size());
         ;
         return retval;
     }

@@ -37,13 +37,11 @@
 
 QT_BEGIN_NAMESPACE
 
-struct MaterialLightmapsUsage
+enum class MaterialLightmapsUsage
 {
-    enum Enum {
-        Dynamic = 0,
-        Baked,
-        DynamicAndBaked,
-    };
+    Dynamic = 0,
+    Baked,
+    DynamicAndBaked,
 };
 
 struct QDemonRenderImage;

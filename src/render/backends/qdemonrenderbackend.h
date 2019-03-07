@@ -92,50 +92,46 @@ public:
     typedef struct _QDemonRenderBackendPathObject *QDemonRenderBackendPathObject;
 
     // backend capability caps
-    typedef struct
+    enum class QDemonRenderBackendCaps
     {
-        enum Enum {
-            ConstantBuffer, ///< Constant buffer support query
-            DepthStencilTexture, ///< depth stencil texture format suport query
-            DxtImages, ///< DXT image support query
-            FpRenderTarget, ///< render to floating point target support query
-            MsTexture, ///< Multisample texture support query
-            TexSwizzle, ///< Texture swizzle support query
-            FastBlits, ///< Hardware supports fast blits
-            Tessellation, ///< Hardware supports tessellation
-            Compute, ///< Hardware supports compute shader
-            Geometry, ///< Hardware supports geometry shader
-            SampleQuery, ///< Hardware supports query calls of type samples
-            TimerQuery, ///< Hardware supports query calls of type timer
-            CommandSync, ///< Hardware supports command sync object
-            TextureArray, ///< Hardware supports texture arrays
-            StorageBuffer, ///< Hardware supports shader storage buffers
-            AtomicCounterBuffer, ///< Hardware supports atomic counter buffers
-            ShaderImageLoadStore, ///< Hardware supports shader image load store operations
-            ProgramPipeline, ///< Driver supports separate programs
-            PathRendering, ///< Driver support path rendering
-            AdvancedBlend, ///< Driver supports advanced blend modes
-            BlendCoherency, ///< Hardware supports blend coherency
-            gpuShader5, // for high precision sampling
-            AdvancedBlendKHR, ///< Driver supports advanced blend modes
-            VertexArrayObject,
-            StandardDerivatives,
-            TextureLod
-        };
-    } QDemonRenderBackendCaps;
+        ConstantBuffer, ///< Constant buffer support query
+        DepthStencilTexture, ///< depth stencil texture format suport query
+        DxtImages, ///< DXT image support query
+        FpRenderTarget, ///< render to floating point target support query
+        MsTexture, ///< Multisample texture support query
+        TexSwizzle, ///< Texture swizzle support query
+        FastBlits, ///< Hardware supports fast blits
+        Tessellation, ///< Hardware supports tessellation
+        Compute, ///< Hardware supports compute shader
+        Geometry, ///< Hardware supports geometry shader
+        SampleQuery, ///< Hardware supports query calls of type samples
+        TimerQuery, ///< Hardware supports query calls of type timer
+        CommandSync, ///< Hardware supports command sync object
+        TextureArray, ///< Hardware supports texture arrays
+        StorageBuffer, ///< Hardware supports shader storage buffers
+        AtomicCounterBuffer, ///< Hardware supports atomic counter buffers
+        ShaderImageLoadStore, ///< Hardware supports shader image load store operations
+        ProgramPipeline, ///< Driver supports separate programs
+        PathRendering, ///< Driver support path rendering
+        AdvancedBlend, ///< Driver supports advanced blend modes
+        BlendCoherency, ///< Hardware supports blend coherency
+        gpuShader5, // for high precision sampling
+        AdvancedBlendKHR, ///< Driver supports advanced blend modes
+        VertexArrayObject,
+        StandardDerivatives,
+        TextureLod
+    };
 
     // backend queries
-    typedef struct
+    enum class QDemonRenderBackendQuery
     {
-        enum Enum {
-            MaxTextureSize, ///< Return max supported texture size
-            MaxTextureArrayLayers, ///< Return max supported layer count for texture arrays
-            MaxConstantBufferSlots, ///< Return max supported constant buffe slots for a single
-            /// shader stage
-            MaxConstantBufferBlockSize ///< Return max supported size for a single constant
-            /// buffer block
-        };
-    } QDemonRenderBackendQuery;
+        MaxTextureSize, ///< Return max supported texture size
+        MaxTextureArrayLayers, ///< Return max supported layer count for texture arrays
+        MaxConstantBufferSlots, ///< Return max supported constant buffe slots for a single
+        /// shader stage
+        MaxConstantBufferBlockSize ///< Return max supported size for a single constant
+        /// buffer block
+    };
 
     /// backend interface
 
@@ -169,7 +165,7 @@ public:
      *
      * @return true if supported
      */
-    virtual bool getRenderBackendCap(QDemonRenderBackendCaps::Enum inCap) const = 0;
+    virtual bool getRenderBackendCap(QDemonRenderBackendCaps inCap) const = 0;
 
     /**
      * @brief query Backend values
@@ -181,7 +177,7 @@ public:
      *
      * @return no return
      */
-    virtual void getRenderBackendValue(QDemonRenderBackendQuery::Enum inQuery, qint32 *params) const = 0;
+    virtual void getRenderBackendValue(QDemonRenderBackendQuery inQuery, qint32 *params) const = 0;
 
     /**
      * @brief query for bit depth of the depth buffer
@@ -783,7 +779,7 @@ public:
                                  qint32 dstX1,
                                  qint32 dstY1,
                                  QDemonRenderClearFlags flags,
-                                 QDemonRenderTextureMagnifyingOp::Enum filter) = 0;
+                                 QDemonRenderTextureMagnifyingOp filter) = 0;
 
     /**
      * @brief create a render buffer object
@@ -1067,7 +1063,7 @@ public:
      */
     virtual void generateMipMaps(QDemonRenderBackendTextureObject to,
                                  QDemonRenderTextureTargetType target,
-                                 QDemonRenderHint::Enum genType) = 0;
+                                 QDemonRenderHint genType) = 0;
 
     /**
      * @brief bind a texture object
@@ -1141,11 +1137,11 @@ public:
      * @return The created sampler object or nullptr if the creation failed.
      */
     virtual QDemonRenderBackendSamplerObject createSampler(
-            QDemonRenderTextureMinifyingOp::Enum minFilter = QDemonRenderTextureMinifyingOp::Linear,
-            QDemonRenderTextureMagnifyingOp::Enum magFilter = QDemonRenderTextureMagnifyingOp::Linear,
-            QDemonRenderTextureCoordOp::Enum wrapS = QDemonRenderTextureCoordOp::ClampToEdge,
-            QDemonRenderTextureCoordOp::Enum wrapT = QDemonRenderTextureCoordOp::ClampToEdge,
-            QDemonRenderTextureCoordOp::Enum wrapR = QDemonRenderTextureCoordOp::ClampToEdge,
+            QDemonRenderTextureMinifyingOp minFilter = QDemonRenderTextureMinifyingOp::Linear,
+            QDemonRenderTextureMagnifyingOp magFilter = QDemonRenderTextureMagnifyingOp::Linear,
+            QDemonRenderTextureCoordOp wrapS = QDemonRenderTextureCoordOp::ClampToEdge,
+            QDemonRenderTextureCoordOp wrapT = QDemonRenderTextureCoordOp::ClampToEdge,
+            QDemonRenderTextureCoordOp wrapR = QDemonRenderTextureCoordOp::ClampToEdge,
             qint32 minLod = -1000,
             qint32 maxLod = 1000,
             float lodBias = 0.0,
@@ -1176,11 +1172,11 @@ public:
      */
     virtual void updateSampler(QDemonRenderBackendSamplerObject so,
                                QDemonRenderTextureTargetType target,
-                               QDemonRenderTextureMinifyingOp::Enum minFilter = QDemonRenderTextureMinifyingOp::Linear,
-                               QDemonRenderTextureMagnifyingOp::Enum magFilter = QDemonRenderTextureMagnifyingOp::Linear,
-                               QDemonRenderTextureCoordOp::Enum wrapS = QDemonRenderTextureCoordOp::ClampToEdge,
-                               QDemonRenderTextureCoordOp::Enum wrapT = QDemonRenderTextureCoordOp::ClampToEdge,
-                               QDemonRenderTextureCoordOp::Enum wrapR = QDemonRenderTextureCoordOp::ClampToEdge,
+                               QDemonRenderTextureMinifyingOp minFilter = QDemonRenderTextureMinifyingOp::Linear,
+                               QDemonRenderTextureMagnifyingOp magFilter = QDemonRenderTextureMagnifyingOp::Linear,
+                               QDemonRenderTextureCoordOp wrapS = QDemonRenderTextureCoordOp::ClampToEdge,
+                               QDemonRenderTextureCoordOp wrapT = QDemonRenderTextureCoordOp::ClampToEdge,
+                               QDemonRenderTextureCoordOp wrapR = QDemonRenderTextureCoordOp::ClampToEdge,
                                float minLod = -1000.0,
                                float maxLod = 1000.0,
                                float lodBias = 0.0,

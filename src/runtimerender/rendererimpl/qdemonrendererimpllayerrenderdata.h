@@ -36,9 +36,9 @@
 
 QT_BEGIN_NAMESPACE
 
-struct AdvancedBlendModes
+enum class AdvancedBlendModes
 {
-    enum Enum { None = 0, Overlay, ColorBurn, ColorDodge };
+    None = 0, Overlay, ColorBurn, ColorDodge
 };
 struct QDemonLayerRenderData : public QDemonLayerRenderPreparationData
 {
@@ -145,7 +145,7 @@ struct QDemonLayerRenderData : public QDemonLayerRenderPreparationData
 #ifdef ADVANCED_BLEND_SW_FALLBACK
     void blendAdvancedEquationSwFallback(const QDemonRef<QDemonRenderTexture2D> &drawTexture,
                                          const QDemonRef<QDemonRenderTexture2D> &m_layerTexture,
-                                         AdvancedBlendModes::Enum blendMode);
+                                         AdvancedBlendModes blendMode);
 #endif
     // test method to render this layer to a given view projection without running the entire
     // layer setup system.  This assumes the client has setup the viewport, scissor, and render
@@ -171,7 +171,7 @@ protected:
 #ifdef ADVANCED_BLEND_SW_FALLBACK
     // Functions for advanced blending mode fallback
     void setupDrawFB(bool depthEnabled);
-    void blendAdvancedToFB(DefaultMaterialBlendMode::Enum blendMode, bool depthEnabled, QDemonResourceFrameBuffer *theFB);
+    void blendAdvancedToFB(DefaultMaterialBlendMode blendMode, bool depthEnabled, QDemonResourceFrameBuffer *theFB);
 #endif
 };
 QT_END_NAMESPACE

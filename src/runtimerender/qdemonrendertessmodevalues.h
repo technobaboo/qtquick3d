@@ -37,36 +37,29 @@ QT_BEGIN_NAMESPACE
 struct QDemonRenderDefaultMaterial;
 class QDemonBufferManager;
 
-struct TessModeValues
+enum class TessModeValues
 {
-    enum Enum {
-        NoTess = 0,
-        TessLinear = 1,
-        TessPhong = 2,
-        TessNPatch = 3,
-    };
-
-    static const char *toString(Enum value)
-    {
-        switch (value) {
-        case NoTess:
-            return "NoTess";
-            break;
-        case TessLinear:
-            return "TessLinear";
-            break;
-        case TessPhong:
-            return "TessPhong";
-            break;
-        case TessNPatch:
-            return "TessNPatch";
-            break;
-        default:
-            return "NoTess";
-            break;
-        }
-    }
+    NoTess = 0,
+    TessLinear = 1,
+    TessPhong = 2,
+    TessNPatch = 3,
 };
+
+inline uint qHash(TessModeValues v) { return qHash(static_cast<uint>(v)); }
+
+inline const char *toString(TessModeValues value)
+{
+    switch (value) {
+    case TessModeValues::TessLinear:
+        return "TessLinear";
+    case TessModeValues::TessPhong:
+        return "TessPhong";
+    case TessModeValues::TessNPatch:
+        return "TessNPatch";
+    default:
+        return "NoTess";
+    }
+}
 
 QT_END_NAMESPACE
 

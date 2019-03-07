@@ -200,7 +200,7 @@ struct QDemonTextureEntry
         float theMixValue(inNeedsAlphaMultiply ? 0.0f : 1.0f);
         if (inTexture && inDefinition) {
             inTexture->setMagFilter(inDefinition->magFilterOp);
-            inTexture->setMinFilter(static_cast<QDemonRenderTextureMinifyingOp::Enum>(inDefinition->magFilterOp));
+            inTexture->setMinFilter(static_cast<QDemonRenderTextureMinifyingOp>(inDefinition->magFilterOp));
             inTexture->setTextureWrapS(inDefinition->coordOp);
             inTexture->setTextureWrapT(inDefinition->coordOp);
         }
@@ -475,7 +475,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
         if (isEffectRegistered(inName))
             return false;
 
-        m_coreContext->getDynamicObjectSystemCore()->doRegister(inName, inProperties, sizeof(QDemonRenderEffect), QDemonGraphObjectTypes::Effect);
+        m_coreContext->getDynamicObjectSystemCore()->doRegister(inName, inProperties, sizeof(QDemonRenderEffect), QDemonGraphObjectType::Effect);
         QDemonDynamicObjectClassInterface &theClass = *m_coreContext->getDynamicObjectSystemCore()->getDynamicObjectClass(inName);
 
         QDemonRef<QDemonEffectClass> theEffect(new QDemonEffectClass(theClass));
@@ -550,7 +550,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
     {
         if (isEffectRegistered(inName))
             return false;
-        m_coreContext->getDynamicObjectSystemCore()->doRegister(inName, inProperties, sizeof(QDemonRenderEffect), QDemonGraphObjectTypes::Effect);
+        m_coreContext->getDynamicObjectSystemCore()->doRegister(inName, inProperties, sizeof(QDemonRenderEffect), QDemonGraphObjectType::Effect);
         auto theClass = m_coreContext->getDynamicObjectSystemCore()->getDynamicObjectClass(inName);
         QDemonRef<QDemonEffectClass> theEffect(new QDemonEffectClass(*theClass));
         m_effectClasses.insert(inName, theEffect);
@@ -600,9 +600,9 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
                                           QString inPropName,
                                           QString inPropPath,
                                           QDemonRenderTextureTypeValue inTexType,
-                                          QDemonRenderTextureCoordOp::Enum inCoordOp,
-                                          QDemonRenderTextureMagnifyingOp::Enum inMagFilterOp,
-                                          QDemonRenderTextureMinifyingOp::Enum inMinFilterOp) override
+                                          QDemonRenderTextureCoordOp inCoordOp,
+                                          QDemonRenderTextureMagnifyingOp inMagFilterOp,
+                                          QDemonRenderTextureMinifyingOp inMinFilterOp) override
     {
         m_coreContext->getDynamicObjectSystemCore()
                 ->setPropertyTextureSettings(inName, inPropName, inPropPath, inTexType, inCoordOp, inMagFilterOp, inMinFilterOp);
@@ -705,7 +705,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
             auto theFB(m_resourceManager->allocateFrameBuffer());
             auto theTexture(m_resourceManager->allocateTexture2D(theWidth, theHeight, resultFormat));
             theTexture->setMagFilter(inCommand.m_filterOp);
-            theTexture->setMinFilter(static_cast<QDemonRenderTextureMinifyingOp::Enum>(inCommand.m_filterOp));
+            theTexture->setMinFilter(static_cast<QDemonRenderTextureMinifyingOp>(inCommand.m_filterOp));
             theTexture->setTextureWrapS(inCommand.m_texCoordOp);
             theTexture->setTextureWrapT(inCommand.m_texCoordOp);
             theFB->attach(QDemonRenderFrameBufferAttachment::Color0, theTexture);
@@ -743,7 +743,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
             // allocate an immutable texture
             auto theTexture(m_resourceManager->allocateTexture2D(theWidth, theHeight, inCommand.m_format, 1, true));
             theTexture->setMagFilter(inCommand.m_filterOp);
-            theTexture->setMinFilter(static_cast<QDemonRenderTextureMinifyingOp::Enum>(inCommand.m_filterOp));
+            theTexture->setMinFilter(static_cast<QDemonRenderTextureMinifyingOp>(inCommand.m_filterOp));
             theTexture->setTextureWrapS(inCommand.m_texCoordOp);
             theTexture->setTextureWrapT(inCommand.m_texCoordOp);
             auto theImage = (m_resourceManager->allocateImage2D(theTexture, inCommand.m_access));
@@ -1470,7 +1470,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
             for (quint32 commandIdx = 0, commandEnd = theCommands.size(); commandIdx < commandEnd; ++commandIdx) {
                 const QDemonCommand &theCommand(*theCommands[commandIdx]);
                 switch (theCommand.m_type) {
-                case CommandTypes::AllocateBuffer:
+                case CommandType::AllocateBuffer:
                     allocateBuffer(*inEffect,
                                    static_cast<const QDemonAllocateBuffer &>(theCommand),
                                    theFinalWidth,
@@ -1478,19 +1478,19 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
                                    theDetails.format);
                     break;
 
-                case CommandTypes::AllocateImage:
+                case CommandType::AllocateImage:
                     allocateImage(*inEffect, static_cast<const QDemonAllocateImage &>(theCommand), theFinalWidth, theFinalHeight);
                     break;
 
-                case CommandTypes::AllocateDataBuffer:
+                case CommandType::AllocateDataBuffer:
                     allocateDataBuffer(*inEffect, static_cast<const QDemonAllocateDataBuffer &>(theCommand));
                     break;
 
-                case CommandTypes::BindBuffer:
+                case CommandType::BindBuffer:
                     theCurrentRenderTarget = bindBuffer(*inEffect, static_cast<const QDemonBindBuffer &>(theCommand), theMVP, theDestSize);
                     break;
 
-                case CommandTypes::BindTarget: {
+                case CommandType::BindTarget: {
                     m_context->getRenderContext()->setRenderTarget(inTarget);
                     theCurrentRenderTarget = inTarget;
                     theMVP = inMVP;
@@ -1507,24 +1507,24 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
                         theContext->setBlendEquation(theBlendEqu);
                     }
                 } break;
-                case CommandTypes::BindShader:
+                case CommandType::BindShader:
                     theCurrentShader = bindShader(inEffect->className, static_cast<const QDemonBindShader &>(theCommand));
                     break;
-                case CommandTypes::ApplyInstanceValue:
+                case CommandType::ApplyInstanceValue:
                     if (theCurrentShader)
                         applyInstanceValue(inEffect,
                                            inClass,
                                            theCurrentShader->m_shader,
                                            static_cast<const QDemonApplyInstanceValue &>(theCommand));
                     break;
-                case CommandTypes::ApplyValue:
+                case CommandType::ApplyValue:
                     if (theCurrentShader)
                         applyValue(inEffect, inClass, theCurrentShader->m_shader, static_cast<const QDemonApplyValue &>(theCommand));
                     break;
-                case CommandTypes::ApplyBlending:
+                case CommandType::ApplyBlending:
                     intermediateBlendingEnabled = applyBlending(static_cast<const QDemonApplyBlending &>(theCommand));
                     break;
-                case CommandTypes::ApplyBufferValue:
+                case CommandType::ApplyBufferValue:
                     if (theCurrentShader)
                         theCurrentSourceTexture = applyBufferValue(inEffect,
                                                                    theCurrentShader->m_shader,
@@ -1532,7 +1532,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
                                                                    inSourceTexture,
                                                                    theCurrentSourceTexture);
                     break;
-                case CommandTypes::ApplyDepthValue:
+                case CommandType::ApplyDepthValue:
                     if (theCurrentShader)
                         applyDepthValue(inEffect, theCurrentShader->m_shader, static_cast<const QDemonApplyDepthValue &>(theCommand), inDepthTexture);
                     if (!inDepthTexture) {
@@ -1543,23 +1543,23 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
                         Q_ASSERT(false);
                     }
                     break;
-                case CommandTypes::ApplyImageValue:
+                case CommandType::ApplyImageValue:
                     if (theCurrentShader)
                         applyImageValue(inEffect, theCurrentShader->m_shader, static_cast<const QDemonApplyImageValue &>(theCommand));
                     break;
-                case CommandTypes::ApplyDataBufferValue:
+                case CommandType::ApplyDataBufferValue:
                     if (theCurrentShader)
                         applyDataBufferValue(inEffect,
                                              theCurrentShader->m_shader,
                                              static_cast<const QDemonApplyDataBufferValue &>(theCommand));
                     break;
-                case CommandTypes::DepthStencil: {
+                case CommandType::DepthStencil: {
                     const QDemonDepthStencil &theDepthStencil = static_cast<const QDemonDepthStencil &>(theCommand);
                     theCurrentDepthStencilTexture = findTexture(inEffect, theDepthStencil.m_bufferName);
                     if (theCurrentDepthStencilTexture)
                         theCurrentDepthStencil = theDepthStencil;
                 } break;
-                case CommandTypes::Render:
+                case CommandType::Render:
                     if (theCurrentShader && theCurrentSourceTexture.texture) {
                         renderPass(*theCurrentShader,
                                    theMVP,
@@ -1581,7 +1581,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
                         intermediateBlendingEnabled = false;
                     }
                     break;
-                case CommandTypes::ApplyRenderState:
+                case CommandType::ApplyRenderState:
                     applyRenderStateValue(theCurrentRenderTarget.data(),
                                           inDepthStencilTexture,
                                           static_cast<const QDemonApplyRenderState &>(theCommand));

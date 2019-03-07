@@ -122,7 +122,7 @@ struct QDemonPathBuffer
     QVector2D m_beginTaperData;
     QVector2D m_endTaperData;
     quint32 m_numVertexes{ 0 };
-    PathTypes::Enum m_pathType{ PathTypes::Geometry };
+    PathTypes m_pathType{ PathTypes::Geometry };
     float m_width{ 0.0f };
     float m_cpuError{ 0.0f };
     QDemonBounds3 m_bounds = QDemonBounds3::empty();
@@ -174,7 +174,7 @@ struct QDemonPathBuffer
         return QDemonPathUtilities::QDemonPathBuffer();
     }
 
-    void setPathType(PathTypes::Enum inPathType)
+    void setPathType(PathTypes inPathType)
     {
         if (inPathType != m_pathType) {
             switch (m_pathType) {
@@ -194,7 +194,7 @@ struct QDemonPathBuffer
         m_pathType = inPathType;
     }
 
-    static QDemonOption<QDemonTaperInformation> toTaperInfo(PathCapping::Enum capping, float capOffset, float capOpacity, float capWidth)
+    static QDemonOption<QDemonTaperInformation> toTaperInfo(PathCapping capping, float capOffset, float capOpacity, float capWidth)
     {
         if (capping == PathCapping::Noner)
             return QDemonEmpty();
@@ -202,7 +202,7 @@ struct QDemonPathBuffer
         return QDemonTaperInformation(capOffset, capOpacity, capWidth);
     }
 
-    void setBeginTaperInfo(PathCapping::Enum capping, float capOffset, float capOpacity, float capWidth)
+    void setBeginTaperInfo(PathCapping capping, float capOffset, float capOpacity, float capWidth)
     {
         QDemonOption<QDemonTaperInformation> newBeginInfo = toTaperInfo(capping, capOffset, capOpacity, capWidth);
         if (!optionEquals(newBeginInfo, m_beginTaper)) {
@@ -211,7 +211,7 @@ struct QDemonPathBuffer
         }
     }
 
-    void setEndTaperInfo(PathCapping::Enum capping, float capOffset, float capOpacity, float capWidth)
+    void setEndTaperInfo(PathCapping capping, float capOffset, float capOpacity, float capWidth)
     {
         QDemonOption<QDemonTaperInformation> newEndInfo = toTaperInfo(capping, capOffset, capOpacity, capWidth);
         if (!optionEquals(newEndInfo, m_endTaper)) {
@@ -1084,7 +1084,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
 
     QDemonRef<QDemonMaterialShaderGeneratorInterface> getMaterialShaderGenertator(QDemonPathRenderContext &inRenderContext)
     {
-        bool isDefaultMaterial = (inRenderContext.material.type == QDemonGraphObjectTypes::DefaultMaterial);
+        bool isDefaultMaterial = (inRenderContext.material.type == QDemonGraphObjectType::DefaultMaterial);
 
         QDemonRef<QDemonMaterialShaderGeneratorInterface> theMaterialGenerator = nullptr;
         if (isDefaultMaterial)
@@ -1097,7 +1097,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
 
     QString getMaterialNameForKey(QDemonPathRenderContext &inRenderContext)
     {
-        bool isDefaultMaterial = (inRenderContext.material.type == QDemonGraphObjectTypes::DefaultMaterial);
+        bool isDefaultMaterial = (inRenderContext.material.type == QDemonGraphObjectType::DefaultMaterial);
 
         if (!isDefaultMaterial) {
             QDemonMaterialSystem theMaterialSystem(m_renderContext->getCustomMaterialSystem());
@@ -1555,7 +1555,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
         if (!thePathBuffer)
             return;
 
-        if (inRenderContext.material.type != QDemonGraphObjectTypes::DefaultMaterial)
+        if (inRenderContext.material.type != QDemonGraphObjectType::DefaultMaterial)
             return;
 
         if (thePathBuffer->m_pathType == PathTypes::Painted) {
@@ -1596,7 +1596,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
         if (!thePathBuffer)
             return;
 
-        if (inRenderContext.material.type != QDemonGraphObjectTypes::DefaultMaterial)
+        if (inRenderContext.material.type != QDemonGraphObjectType::DefaultMaterial)
             return;
 
         if (thePathBuffer->m_pathType == PathTypes::Painted) {
@@ -1640,7 +1640,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
             return;
         }
 
-        bool isDefaultMaterial = (inRenderContext.material.type == QDemonGraphObjectTypes::DefaultMaterial);
+        bool isDefaultMaterial = (inRenderContext.material.type == QDemonGraphObjectType::DefaultMaterial);
 
         if (thePathBuffer->m_pathType == PathTypes::Geometry) {
             QDemonRef<QDemonMaterialShaderGeneratorInterface> theMaterialGenerator = getMaterialShaderGenertator(inRenderContext);

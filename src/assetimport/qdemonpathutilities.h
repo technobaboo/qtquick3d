@@ -23,14 +23,12 @@
 QT_BEGIN_NAMESPACE
 
 namespace QDemonPathUtilities {
-struct PathCommand
+enum class PathCommand
 {
-    enum Enum {
-        Noner = 0,
-        MoveTo, // 2 floats
-        CubicCurveTo, // 6 floats, c1, c2, p2.  p1 is existing location
-        Close, // 0 floats
-    };
+    None = 0,
+    MoveTo, // 2 floats
+    CubicCurveTo, // 6 floats, c1, c2, p2.  p1 is existing location
+    Close, // 0 floats
 };
 
 struct Q_DEMONASSETIMPORT_EXPORT QDemonPathBuffer
@@ -38,7 +36,7 @@ struct Q_DEMONASSETIMPORT_EXPORT QDemonPathBuffer
     // 64 bit random number to uniquely identify this file type.
     static quint64 getFileTag() { return 0x7b1a41633c43a6afULL; }
     static quint32 getFileVersion() { return 1; }
-    QDemonConstDataRef<PathCommand::Enum> commands;
+    QDemonConstDataRef<PathCommand> commands;
     QDemonConstDataRef<float> data;
     QDemonPathBuffer() = default;
     void save(QIODevice &outStream) const;

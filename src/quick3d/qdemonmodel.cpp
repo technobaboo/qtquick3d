@@ -129,9 +129,9 @@ namespace {
 QDemonGraphObject *getNextSibling(QDemonGraphObject *obj)
 {
 
-    if (obj->type == QDemonGraphObjectTypes::CustomMaterial)
+    if (obj->type == QDemonGraphObjectType::CustomMaterial)
         return static_cast<QDemonRenderCustomMaterial *>(obj)->m_nextSibling;
-    else if (obj->type == QDemonGraphObjectTypes::DefaultMaterial)
+    else if (obj->type == QDemonGraphObjectType::DefaultMaterial)
         return static_cast<QDemonRenderDefaultMaterial *>(obj)->nextSibling;
     else
         return static_cast<QDemonReferencedMaterial *>(obj)->m_nextSibling;
@@ -139,9 +139,9 @@ QDemonGraphObject *getNextSibling(QDemonGraphObject *obj)
 
 void setNextSibling(QDemonGraphObject *obj, QDemonGraphObject *sibling)
 {
-    if (obj->type == QDemonGraphObjectTypes::Enum::CustomMaterial)
+    if (obj->type == QDemonGraphObjectType::CustomMaterial)
         static_cast<QDemonRenderCustomMaterial *>(obj)->m_nextSibling = sibling;
-    else if (obj->type == QDemonGraphObjectTypes::Enum::DefaultMaterial)
+    else if (obj->type == QDemonGraphObjectType::DefaultMaterial)
         static_cast<QDemonRenderDefaultMaterial *>(obj)->nextSibling = sibling;
     else
         static_cast<QDemonReferencedMaterial *>(obj)->m_nextSibling = sibling;
@@ -159,7 +159,7 @@ QDemonGraphObject *QDemonModel::updateSpatialNode(QDemonGraphObject *node)
 
     modelNode->meshPath = m_source;
     modelNode->skeletonRoot = m_skeletonRoot;
-    modelNode->tessellationMode = TessModeValues::Enum(m_tesselationMode);
+    modelNode->tessellationMode = TessModeValues(m_tesselationMode);
     modelNode->edgeTess = m_edgeTess;
     modelNode->innerTess = m_innerTess;
     modelNode->wireframeMode = m_isWireframeMode;

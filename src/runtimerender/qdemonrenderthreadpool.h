@@ -38,22 +38,18 @@ QT_BEGIN_NAMESPACE
 
 using QDemonTaskCallback = void (*)(void *);
 
-struct TaskStates
+enum class TaskStates
 {
-    enum Enum {
-        UnknownTask = 0,
-        Queued,
-        Running,
-    };
+    UnknownTask = 0,
+    Queued,
+    Running,
 };
 
-struct CancelReturnValues
+enum class CancelReturnValues
 {
-    enum Enum {
-        TaskCanceled = 0,
-        TaskRunning,
-        TaskNotFound,
-    };
+    TaskCanceled = 0,
+    TaskRunning,
+    TaskNotFound,
 };
 
 class Q_DEMONRUNTIMERENDER_EXPORT QDemonAbstractThreadPool
@@ -68,8 +64,8 @@ public:
     // Cancel function will be called if the thread pool is destroyed or
     // of the task gets canceled.
     virtual quint64 addTask(void *inUserData, QDemonTaskCallback inFunction, QDemonTaskCallback inCancelFunction) = 0;
-    virtual TaskStates::Enum getTaskState(quint64 inTaskId) = 0;
-    virtual CancelReturnValues::Enum cancelTask(quint64 inTaskId) = 0;
+    virtual TaskStates getTaskState(quint64 inTaskId) = 0;
+    virtual CancelReturnValues cancelTask(quint64 inTaskId) = 0;
 
     static QDemonRef<QDemonAbstractThreadPool> createThreadPool(quint32 inNumThreads = 4);
 };

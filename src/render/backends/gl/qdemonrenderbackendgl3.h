@@ -63,7 +63,7 @@ public:
     qint32 getStencilBits() const override;
     void generateMipMaps(QDemonRenderBackendTextureObject to,
                          QDemonRenderTextureTargetType target,
-                         QDemonRenderHint::Enum genType) override;
+                         QDemonRenderHint genType) override;
 
     void setMultisampledTextureData2D(QDemonRenderBackendTextureObject to,
                                       QDemonRenderTextureTargetType target,
@@ -86,11 +86,11 @@ public:
 
     void updateSampler(QDemonRenderBackendSamplerObject so,
                        QDemonRenderTextureTargetType target,
-                       QDemonRenderTextureMinifyingOp::Enum minFilter = QDemonRenderTextureMinifyingOp::Linear,
-                       QDemonRenderTextureMagnifyingOp::Enum magFilter = QDemonRenderTextureMagnifyingOp::Linear,
-                       QDemonRenderTextureCoordOp::Enum wrapS = QDemonRenderTextureCoordOp::ClampToEdge,
-                       QDemonRenderTextureCoordOp::Enum wrapT = QDemonRenderTextureCoordOp::ClampToEdge,
-                       QDemonRenderTextureCoordOp::Enum wrapR = QDemonRenderTextureCoordOp::ClampToEdge,
+                       QDemonRenderTextureMinifyingOp minFilter = QDemonRenderTextureMinifyingOp::Linear,
+                       QDemonRenderTextureMagnifyingOp magFilter = QDemonRenderTextureMagnifyingOp::Linear,
+                       QDemonRenderTextureCoordOp wrapS = QDemonRenderTextureCoordOp::ClampToEdge,
+                       QDemonRenderTextureCoordOp wrapT = QDemonRenderTextureCoordOp::ClampToEdge,
+                       QDemonRenderTextureCoordOp wrapR = QDemonRenderTextureCoordOp::ClampToEdge,
                        float minLod = -1000.0,
                        float maxLod = 1000.0,
                        float lodBias = 0.0,
@@ -144,7 +144,7 @@ public:
                          qint32 dstX1,
                          qint32 dstY1,
                          QDemonRenderClearFlags flags,
-                         QDemonRenderTextureMagnifyingOp::Enum filter) override;
+                         QDemonRenderTextureMagnifyingOp filter) override;
 
     void *mapBuffer(QDemonRenderBackendBufferObject bo,
                     QDemonRenderBufferBindFlags bindFlags,

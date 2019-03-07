@@ -64,7 +64,7 @@ private:
     QRectF m_viewport;
     QRectF m_scissor;
 
-    ScaleModes::Enum m_scaleMode;
+    ScaleModes m_scaleMode;
     QVector2D m_scaleFactor;
 
 public:
@@ -75,7 +75,7 @@ public:
                             const QVector2D &inPresentationDesignDimensions,
                             QDemonRenderLayer &inLayer,
                             bool inOffscreen,
-                            ScaleModes::Enum inScaleMode,
+                            ScaleModes inScaleMode,
                             QVector2D inScaleFactor);
 
     QRectF getPresentationViewport() const { return m_presentationViewport; }

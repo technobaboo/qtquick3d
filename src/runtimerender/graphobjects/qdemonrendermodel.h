@@ -47,7 +47,7 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderModel : public QDemonGraphNode
     QString meshPath;
     QDemonGraphObject *firstMaterial;
     qint32 skeletonRoot;
-    TessModeValues::Enum tessellationMode;
+    TessModeValues tessellationMode;
     float edgeTess;
     float innerTess;
     bool wireframeMode;

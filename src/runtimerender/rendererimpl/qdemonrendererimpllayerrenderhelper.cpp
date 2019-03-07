@@ -35,7 +35,7 @@ QT_BEGIN_NAMESPACE
 
 namespace {
 // left/top
-float getMinValue(float start, float width, float value, LayerUnitTypes::Enum units)
+float getMinValue(float start, float width, float value, LayerUnitTypes units)
 {
     if (units == LayerUnitTypes::Pixels)
         return start + value;
@@ -44,7 +44,7 @@ float getMinValue(float start, float width, float value, LayerUnitTypes::Enum un
 }
 
 // width/height
-float getValueLen(float width, float value, LayerUnitTypes::Enum units)
+float getValueLen(float width, float value, LayerUnitTypes units)
 {
     if (units == LayerUnitTypes::Pixels)
         return value;
@@ -53,7 +53,7 @@ float getValueLen(float width, float value, LayerUnitTypes::Enum units)
 }
 
 // right/bottom
-float getMaxValue(float start, float width, float value, LayerUnitTypes::Enum units)
+float getMaxValue(float start, float width, float value, LayerUnitTypes units)
 {
     if (units == LayerUnitTypes::Pixels)
         return start + width - value;
@@ -72,7 +72,7 @@ QDemonLayerRenderHelper::QDemonLayerRenderHelper(const QRectF &inPresentationVie
                                                  const QVector2D &inPresentationDesignDimensions,
                                                  QDemonRenderLayer &inLayer,
                                                  bool inOffscreen,
-                                                 ScaleModes::Enum inScaleMode,
+                                                 ScaleModes inScaleMode,
                                                  QVector2D inScaleFactor)
     : m_presentationViewport(inPresentationViewport)
     , m_presentationScissor(inPresentationScissor)

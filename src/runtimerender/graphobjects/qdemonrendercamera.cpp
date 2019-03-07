@@ -56,19 +56,19 @@ float getAspectRatio(const QVector2D &inDimensions)
     return inDimensions.y() != 0 ? inDimensions.x() / inDimensions.y() : 0.0f;
 }
 
-bool isCameraVerticalAdjust(CameraScaleModes::Enum inMode, float inDesignAspect, float inActualAspect)
+bool isCameraVerticalAdjust(CameraScaleModes inMode, float inDesignAspect, float inActualAspect)
 {
     return (inMode == CameraScaleModes::Fit && inActualAspect >= inDesignAspect) || inMode == CameraScaleModes::FitVertical;
 }
 
 #if 0
-bool isCameraHorizontalAdjust(CameraScaleModes::Enum inMode, float inDesignAspect, float inActualAspect)
+bool isCameraHorizontalAdjust(CameraScaleModes inMode, float inDesignAspect, float inActualAspect)
 {
     return (inMode == CameraScaleModes::Fit && inActualAspect < inDesignAspect) || inMode == CameraScaleModes::FitHorizontal;
 }
 #endif
 
-bool isFitTypeScaleMode(CameraScaleModes::Enum inMode)
+bool isFitTypeScaleMode(CameraScaleModes inMode)
 {
     return inMode == CameraScaleModes::Fit || inMode == CameraScaleModes::FitHorizontal || inMode == CameraScaleModes::FitVertical;
 }
@@ -84,8 +84,8 @@ struct QDemonPinCameraResult
 QDemonPinCameraResult pinCamera(const QRectF &inViewport,
                                 QVector2D inDesignDims,
                                 QMatrix4x4 &ioPerspectiveMatrix,
-                                CameraScaleModes::Enum inScaleMode,
-                                CameraScaleAnchors::Enum inPinLocation)
+                                CameraScaleModes inScaleMode,
+                                CameraScaleAnchors inPinLocation)
 {
     QRectF viewport(inViewport);
     QRectF idealViewport(inViewport.x(), inViewport.y(), inDesignDims.x(), inDesignDims.y());
@@ -150,7 +150,7 @@ QDemonPinCameraResult pinCamera(const QRectF &inViewport,
 }
 
 QDemonRenderCamera::QDemonRenderCamera()
-    : QDemonGraphNode(QDemonGraphObjectTypes::Camera)
+    : QDemonGraphNode(QDemonGraphObjectType::Camera)
     , clipNear(10)
     , clipFar(10000)
     , fov(60)

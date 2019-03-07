@@ -136,7 +136,7 @@ struct QDemonRenderableObject
     // For rough sorting for transparency and for depth
     QVector3D worldCenterPoint;
     float cameraDistanceSq;
-    TessModeValues::Enum tessellationMode;
+    TessModeValues tessellationMode;
     // For custom renderable objects the render function must be defined
     TRenderFunction renderFunction;
     QDemonNodeLightEntryList scopedLights;
@@ -144,7 +144,7 @@ struct QDemonRenderableObject
                            const QVector3D &inWorldCenterPt,
                            const QMatrix4x4 &inGlobalTransform,
                            const QDemonBounds3 &inBounds,
-                           TessModeValues::Enum inTessMode = TessModeValues::NoTess,
+                           TessModeValues inTessMode = TessModeValues::NoTess,
                            TRenderFunction inFunction = nullptr)
 
         : globalTransform(inGlobalTransform)
@@ -238,7 +238,7 @@ struct QDemonSubsetRenderable : public QDemonSubsetRenderableBase
 
     void renderDepthPass(const QVector2D &inCameraVec);
 
-    DefaultMaterialBlendMode::Enum getBlendingMode() { return material.blendMode; }
+    DefaultMaterialBlendMode getBlendingMode() { return material.blendMode; }
 };
 
 struct QDemonCustomMaterialRenderable : public QDemonSubsetRenderableBase

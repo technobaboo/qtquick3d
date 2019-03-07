@@ -38,18 +38,27 @@
 
 QT_BEGIN_NAMESPACE
 
-struct DefaultMaterialLighting
+enum class DefaultMaterialLighting
 {
-    enum Enum { NoLighting = 0, VertexLighting, FragmentLighting };
+    NoLighting = 0,
+    VertexLighting,
+    FragmentLighting
 };
-struct DefaultMaterialBlendMode
+enum class DefaultMaterialBlendMode
 {
-    enum Enum { Normal = 0, Screen, Multiply, Overlay, ColorBurn, ColorDodge };
+    Normal = 0,
+    Screen,
+    Multiply,
+    Overlay,
+    ColorBurn,
+    ColorDodge
 };
 
-struct DefaultMaterialSpecularModel
+enum class DefaultMaterialSpecularModel
 {
-    enum Enum { Default = 0, KGGX, KWard };
+    Default = 0,
+    KGGX,
+    KWard
 };
 
 struct QDemonRenderImage;
@@ -62,9 +71,9 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderDefaultMaterial : QDemonGraphObje
     // material section
     QDemonRenderImage *iblProbe = nullptr;
     // defaults to vertex
-    DefaultMaterialLighting::Enum lighting = DefaultMaterialLighting::VertexLighting;
+    DefaultMaterialLighting lighting = DefaultMaterialLighting::VertexLighting;
     // defaults to normal
-    DefaultMaterialBlendMode::Enum blendMode = DefaultMaterialBlendMode::Normal;
+    DefaultMaterialBlendMode blendMode = DefaultMaterialBlendMode::Normal;
     QVector3D diffuseColor{ 1.0f, 1.0f, 1.0f }; // colors are 0-1 normalized
     QDemonRenderImage *diffuseMaps[3]{ nullptr, nullptr, nullptr };
     float emissivePower = 0.0f; // 0-100, defaults to 0
@@ -73,7 +82,7 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderDefaultMaterial : QDemonGraphObje
     QVector3D emissiveColor = { 1.0f, 1.0f, 1.0f };
     QDemonRenderImage *specularReflection = nullptr;
     QDemonRenderImage *specularMap = nullptr;
-    DefaultMaterialSpecularModel::Enum specularModel = DefaultMaterialSpecularModel::Default;
+    DefaultMaterialSpecularModel specularModel = DefaultMaterialSpecularModel::Default;
     QVector3D specularTint{ 1.0f, 1.0f, 1.0f };
     float ior = 0.2f;
     float fresnelPower = 0.0f;

@@ -262,7 +262,7 @@ QDemonGraphObject *QDemonLight::updateSpatialNode(QDemonGraphObject *node)
 
     QDemonRenderLight *light = static_cast<QDemonRenderLight *>(node);
 
-    light->m_lightType = RenderLightTypes::Enum(m_lightType);
+    light->m_lightType = RenderLightTypes(m_lightType);
     light->m_diffuseColor = QVector3D(m_diffuseColor.redF(), m_diffuseColor.greenF(), m_diffuseColor.blueF());
     light->m_specularColor = QVector3D(m_specularColor.redF(), m_specularColor.greenF(), m_specularColor.blueF());
     light->m_ambientColor = QVector3D(m_ambientColor.redF(), m_ambientColor.greenF(), m_ambientColor.blueF());

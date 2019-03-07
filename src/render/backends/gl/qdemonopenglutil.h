@@ -567,7 +567,7 @@ struct GLConversion
         return 0;
     }
 
-    static QDemonRenderHint::Enum fromGLToHint(GLenum value)
+    static QDemonRenderHint fromGLToHint(GLenum value)
     {
         switch (value) {
 #define QDEMON_RENDER_HANDLE_GL_QDEMON_HINT(x, y)                                                                      \
@@ -582,7 +582,7 @@ struct GLConversion
         return QDemonRenderHint::Unknown;
     }
 
-    static GLenum fromHintToGL(QDemonRenderHint::Enum value)
+    static GLenum fromHintToGL(QDemonRenderHint value)
     {
         switch (value) {
 #define QDEMON_RENDER_HANDLE_GL_QDEMON_HINT(x, y)                                                                      \
@@ -1141,7 +1141,7 @@ struct GLConversion
         return retval;
     }
 
-    static GLenum fromTextureMinifyingOpToGL(QDemonRenderTextureMinifyingOp::Enum value)
+    static GLenum fromTextureMinifyingOpToGL(QDemonRenderTextureMinifyingOp value)
     {
         switch (value) {
 #define QDEMON_RENDER_HANDLE_GL_QDEMON_TEXTURE_SCALE_OP(x, y)                                                          \
@@ -1160,7 +1160,7 @@ struct GLConversion
         return 0;
     }
 
-    static QDemonRenderTextureMinifyingOp::Enum fromGLToTextureMinifyingOp(GLenum value)
+    static QDemonRenderTextureMinifyingOp fromGLToTextureMinifyingOp(GLenum value)
     {
         switch (value) {
 #define QDEMON_RENDER_HANDLE_GL_QDEMON_TEXTURE_SCALE_OP(x, y)                                                          \
@@ -1179,7 +1179,7 @@ struct GLConversion
         return QDemonRenderTextureMinifyingOp::Unknown;
     }
 
-    static GLenum fromTextureMagnifyingOpToGL(QDemonRenderTextureMagnifyingOp::Enum value)
+    static GLenum fromTextureMagnifyingOpToGL(QDemonRenderTextureMagnifyingOp value)
     {
         switch (value) {
 #define QDEMON_RENDER_HANDLE_GL_QDEMON_TEXTURE_SCALE_OP(x, y)                                                          \
@@ -1196,7 +1196,7 @@ struct GLConversion
         return 0;
     }
 
-    static QDemonRenderTextureMagnifyingOp::Enum fromGLToTextureMagnifyingOp(GLenum value)
+    static QDemonRenderTextureMagnifyingOp fromGLToTextureMagnifyingOp(GLenum value)
     {
         switch (value) {
 #define QDEMON_RENDER_HANDLE_GL_QDEMON_TEXTURE_SCALE_OP(x, y)                                                          \
@@ -1213,7 +1213,7 @@ struct GLConversion
         return QDemonRenderTextureMagnifyingOp::Unknown;
     }
 
-    static GLenum fromTextureCoordOpToGL(QDemonRenderTextureCoordOp::Enum value)
+    static GLenum fromTextureCoordOpToGL(QDemonRenderTextureCoordOp value)
     {
         switch (value) {
 #define QDEMON_RENDER_HANDLE_GL_QDEMON_TEXTURE_WRAP_OP(x, y)                                                           \
@@ -1228,7 +1228,7 @@ struct GLConversion
         return 0;
     }
 
-    static QDemonRenderTextureCoordOp::Enum fromGLToTextureCoordOp(GLenum value)
+    static QDemonRenderTextureCoordOp fromGLToTextureCoordOp(GLenum value)
     {
         switch (value) {
 #define QDEMON_RENDER_HANDLE_GL_QDEMON_TEXTURE_WRAP_OP(x, y)                                                           \

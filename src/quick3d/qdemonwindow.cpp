@@ -698,31 +698,31 @@ void QDemonWindowPrivate::cleanupNodes()
     for (int ii = 0; ii < cleanupNodeList.count(); ++ii) {
         QDemonGraphObject *node = cleanupNodeList.at(ii);
         // Different processing for resource nodes vs hierarchical nodes
-        switch (node->type) {
-        case QDemonGraphObjectTypes::Layer: {
+        switch (node->type.value) {
+        case QDemonGraphObjectType::Layer: {
             QDemonRenderLayer *layerNode = static_cast<QDemonRenderLayer *>(node);
             // remove layer from scene
             m_scene->removeChild(*layerNode);
         } break;
-        case QDemonGraphObjectTypes::Node:
-        case QDemonGraphObjectTypes::Light:
-        case QDemonGraphObjectTypes::Camera:
-        case QDemonGraphObjectTypes::Model:
-        case QDemonGraphObjectTypes::Text:
-        case QDemonGraphObjectTypes::Path: {
+        case QDemonGraphObjectType::Node:
+        case QDemonGraphObjectType::Light:
+        case QDemonGraphObjectType::Camera:
+        case QDemonGraphObjectType::Model:
+        case QDemonGraphObjectType::Text:
+        case QDemonGraphObjectType::Path: {
             // handle hierarchical nodes
             QDemonGraphNode *spatialNode = static_cast<QDemonGraphNode *>(node);
             spatialNode->removeFromGraph();
         } break;
-        case QDemonGraphObjectTypes::Presentation:
-        case QDemonGraphObjectTypes::Scene:
-        case QDemonGraphObjectTypes::DefaultMaterial:
-        case QDemonGraphObjectTypes::Image:
-        case QDemonGraphObjectTypes::Effect:
-        case QDemonGraphObjectTypes::CustomMaterial:
-        case QDemonGraphObjectTypes::ReferencedMaterial:
-        case QDemonGraphObjectTypes::PathSubPath:
-        case QDemonGraphObjectTypes::Lightmaps:
+        case QDemonGraphObjectType::Presentation:
+        case QDemonGraphObjectType::Scene:
+        case QDemonGraphObjectType::DefaultMaterial:
+        case QDemonGraphObjectType::Image:
+        case QDemonGraphObjectType::Effect:
+        case QDemonGraphObjectType::CustomMaterial:
+        case QDemonGraphObjectType::ReferencedMaterial:
+        case QDemonGraphObjectType::PathSubPath:
+        case QDemonGraphObjectType::Lightmaps:
             // handle resource nodes
             // ### Handle the case where we are referenced by another node
             break;

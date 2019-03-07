@@ -56,7 +56,7 @@ struct QDemonShaderLightProperties
 {
     QAtomicInt ref;
     QDemonRef<QDemonRenderShaderProgram> m_shader;
-    RenderLightTypes::Enum m_lightType;
+    RenderLightTypes m_lightType;
     QDemonLightSourceShader m_lightData;
 
     QDemonShaderLightProperties(const QDemonRef<QDemonRenderShaderProgram> &inShader)
@@ -145,7 +145,7 @@ struct QDemonShaderTextureProperties
 /* We setup some shared state on the custom material shaders */
 struct QDemonShaderGeneratorGeneratedShader
 {
-    typedef QHash<quint32, QDemonShaderTextureProperties> TCustomMaterialImagMap;
+    typedef QHash<QDemonImageMapTypes, QDemonShaderTextureProperties> TCustomMaterialImagMap;
 
     QAtomicInt ref;
     QDemonRef<QDemonRenderShaderProgram> m_shader;
@@ -306,7 +306,7 @@ struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
     TShaderFeatureSet featureSet() { return m_currentFeatureSet; }
     bool hasTransparency() { return m_hasTransparency; }
 
-    quint32 convertTextureTypeValue(QDemonImageMapTypes::Enum inType)
+    quint32 convertTextureTypeValue(QDemonImageMapTypes inType)
     {
         QDemonRenderTextureTypeValue retVal = QDemonRenderTextureTypeValue::Unknown;
 
@@ -369,7 +369,7 @@ struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
         QDemonShaderGeneratorGeneratedShader::TCustomMaterialImagMap::iterator iter = inShader->m_images.find(inImage.m_mapType);
         if (iter == inShader->m_images.end()) {
             ImageVariableNames names = getImageVariableNames(convertTextureTypeValue(inImage.m_mapType));
-            inShader->m_images.insert((quint32)inImage.m_mapType,
+            inShader->m_images.insert(inImage.m_mapType,
                                       QDemonShaderTextureProperties(names.m_imageSampler, m_imageOffset, m_imageRotScale, inShader->m_shader));
             iter = inShader->m_images.find(inImage.m_mapType);
         }
@@ -708,8 +708,8 @@ struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
 
         if (theLightProbe) {
             if (theLightProbe->m_textureData.m_texture) {
-                QDemonRenderTextureCoordOp::Enum theHorzLightProbeTilingMode = QDemonRenderTextureCoordOp::Repeat;
-                QDemonRenderTextureCoordOp::Enum theVertLightProbeTilingMode = theLightProbe->m_verticalTilingMode;
+                QDemonRenderTextureCoordOp theHorzLightProbeTilingMode = QDemonRenderTextureCoordOp::Repeat;
+                QDemonRenderTextureCoordOp theVertLightProbeTilingMode = theLightProbe->m_verticalTilingMode;
                 theLightProbe->m_textureData.m_texture->setTextureWrapS(theHorzLightProbeTilingMode);
                 theLightProbe->m_textureData.m_texture->setTextureWrapT(theVertLightProbeTilingMode);
 
@@ -788,7 +788,7 @@ struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
                                const QDemonLayerGlobalRenderProperties &inRenderProperties) override
     {
         const QDemonRenderCustomMaterial &theCustomMaterial(reinterpret_cast<const QDemonRenderCustomMaterial &>(inMaterial));
-        Q_ASSERT(inMaterial.type == QDemonGraphObjectTypes::CustomMaterial);
+        Q_ASSERT(inMaterial.type == QDemonGraphObjectType::CustomMaterial);
 
         setGlobalProperties(inProgram,
                             inRenderProperties.layer,
@@ -1135,7 +1135,7 @@ struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
                                                         const QByteArray &inShaderPrefix,
                                                         const QByteArray &inCustomMaterialName) override
     {
-        Q_ASSERT(inMaterial.type == QDemonGraphObjectTypes::CustomMaterial);
+        Q_ASSERT(inMaterial.type == QDemonGraphObjectType::CustomMaterial);
         m_currentMaterial = reinterpret_cast<const QDemonRenderCustomMaterial *>(&inMaterial);
         m_currentKey = &inShaderDescription;
         m_currentPipeline = static_cast<QDemonDefaultMaterialVertexPipelineInterface *>(&inVertexPipeline);

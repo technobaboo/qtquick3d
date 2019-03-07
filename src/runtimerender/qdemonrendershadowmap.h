@@ -38,22 +38,18 @@ QT_BEGIN_NAMESPACE
 
 struct QDemonLayerRenderData;
 
-struct ShadowMapModes
+enum class ShadowMapModes
 {
-    enum Enum {
-        SSM, ///< standard shadow mapping
-        VSM, ///< variance shadow mapping
-        CUBE, ///< cubemap omnidirectional shadows
-    };
+    SSM, ///< standard shadow mapping
+    VSM, ///< variance shadow mapping
+    CUBE, ///< cubemap omnidirectional shadows
 };
 
-struct ShadowFilterValues
+enum class ShadowFilterValues
 {
-    enum Enum {
-        NONE = 1 << 0, ///< hard shadows
-        PCF = 1 << 1, ///< Percentage close filtering
-        BLUR = 1 << 2, ///< Gausian Blur
-    };
+    NONE = 1 << 0, ///< hard shadows
+    PCF = 1 << 1, ///< Percentage close filtering
+    BLUR = 1 << 2, ///< Gausian Blur
 };
 
 struct QDemonShadowMapEntry
@@ -66,8 +62,8 @@ struct QDemonShadowMapEntry
     }
 
     QDemonShadowMapEntry(quint32 index,
-                         ShadowMapModes::Enum mode,
-                         ShadowFilterValues::Enum filter,
+                         ShadowMapModes mode,
+                         ShadowFilterValues filter,
                          QDemonRef<QDemonRenderTexture2D> depthMap,
                          QDemonRef<QDemonRenderTexture2D> depthCopy,
                          QDemonRef<QDemonRenderTexture2D> depthTemp)
@@ -83,8 +79,8 @@ struct QDemonShadowMapEntry
     }
 
     QDemonShadowMapEntry(quint32 index,
-                         ShadowMapModes::Enum mode,
-                         ShadowFilterValues::Enum filter,
+                         ShadowMapModes mode,
+                         ShadowFilterValues filter,
                          QDemonRef<QDemonRenderTextureCube> depthCube,
                          QDemonRef<QDemonRenderTextureCube> cubeTmp,
                          QDemonRef<QDemonRenderTexture2D> depthTemp)
@@ -100,8 +96,8 @@ struct QDemonShadowMapEntry
     }
 
     quint32 m_lightIndex; ///< the light index it belongs to
-    ShadowMapModes::Enum m_shadowMapMode; ///< shadow map method
-    ShadowFilterValues::Enum m_shadowFilterFlags; ///< shadow filter mode
+    ShadowMapModes m_shadowMapMode; ///< shadow map method
+    ShadowFilterValues m_shadowFilterFlags; ///< shadow filter mode
 
     // PKC : Adding the DepthRender buffer allows us to have a depth+stencil format when filling
     // the shadow maps (depth+stencil is necessary), but use a more compact format for the
@@ -148,8 +144,8 @@ public:
                            qint32 height,
                            QDemonRenderTextureFormat format,
                            qint32 samples,
-                           ShadowMapModes::Enum mode,
-                           ShadowFilterValues::Enum filter);
+                           ShadowMapModes mode,
+                           ShadowFilterValues filter);
 
     /*
      * @brief Get a shadow map entry

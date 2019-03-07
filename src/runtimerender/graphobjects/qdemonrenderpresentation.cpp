@@ -37,7 +37,7 @@
 QT_BEGIN_NAMESPACE
 
 QDemonPresentation::QDemonPresentation()
-    : QDemonGraphObject(QDemonGraphObjectTypes::Presentation)
+    : QDemonGraphObject(QDemonGraphObjectType::Presentation)
     , presentationDimensions(800, 400)
     , presentationRotation(RenderRotationValues::NoRotation)
     , scene(nullptr)
@@ -45,7 +45,7 @@ QDemonPresentation::QDemonPresentation()
 }
 
 QDemonPresentation::QDemonPresentation(float w, float h, const QString &presDir)
-    : QDemonGraphObject(QDemonGraphObjectTypes::Presentation)
+    : QDemonGraphObject(QDemonGraphObjectType::Presentation)
     , presentationDimensions(w, h)
     , presentationRotation(RenderRotationValues::NoRotation)
     , scene(nullptr)

@@ -49,8 +49,8 @@ struct QDemonRenderPickSubResult
 {
     QDemonRef<QDemonOffscreenRendererInterface> m_subRenderer;
     QMatrix4x4 m_textureMatrix;
-    QDemonRenderTextureCoordOp::Enum m_horizontalTilingMode;
-    QDemonRenderTextureCoordOp::Enum m_verticalTilingMode;
+    QDemonRenderTextureCoordOp m_horizontalTilingMode;
+    QDemonRenderTextureCoordOp m_verticalTilingMode;
     quint32 m_viewportWidth;
     quint32 m_viewportHeight;
     QDemonRenderPickSubResult *m_nextSibling;
@@ -58,8 +58,8 @@ struct QDemonRenderPickSubResult
     QDemonRenderPickSubResult();
     QDemonRenderPickSubResult(const QDemonRef<QDemonOffscreenRendererInterface> &inSubRenderer,
                               const QMatrix4x4 &inTextureMatrix,
-                              QDemonRenderTextureCoordOp::Enum inHorizontalTilingMode,
-                              QDemonRenderTextureCoordOp::Enum inVerticalTilingMode,
+                              QDemonRenderTextureCoordOp inHorizontalTilingMode,
+                              QDemonRenderTextureCoordOp inVerticalTilingMode,
                               quint32 width,
                               quint32 height);
     ~QDemonRenderPickSubResult();

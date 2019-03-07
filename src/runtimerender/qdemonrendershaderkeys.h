@@ -202,7 +202,7 @@ struct QDemonShaderKeyTessellation : public QDemonShaderKeyUnsigned<4>
         setValue(inKeySet, theValue);
     }
 
-    void setTessellationMode(QDemonDataRef<quint32> inKeySet, TessModeValues::Enum tessellationMode, bool val)
+    void setTessellationMode(QDemonDataRef<quint32> inKeySet, TessModeValues tessellationMode, bool val)
     {
         switch (tessellationMode) {
         case TessModeValues::NoTess:
@@ -414,14 +414,14 @@ struct QDemonShaderKeySpecularModel : QDemonShaderKeyUnsigned<2>
 {
     QDemonShaderKeySpecularModel(const char *inName = "") : QDemonShaderKeyUnsigned<2>(inName) {}
 
-    void setSpecularModel(QDemonDataRef<quint32> inKeySet, DefaultMaterialSpecularModel::Enum inModel)
+    void setSpecularModel(QDemonDataRef<quint32> inKeySet, DefaultMaterialSpecularModel inModel)
     {
         setValue(inKeySet, quint32(inModel));
     }
 
-    DefaultMaterialSpecularModel::Enum getSpecularModel(QDemonConstDataRef<quint32> inKeySet) const
+    DefaultMaterialSpecularModel getSpecularModel(QDemonConstDataRef<quint32> inKeySet) const
     {
-        return static_cast<DefaultMaterialSpecularModel::Enum>(getValue(inKeySet));
+        return static_cast<DefaultMaterialSpecularModel>(getValue(inKeySet));
     }
 
     void toString(QString &ioStr, QDemonConstDataRef<quint32> inKeySet) const

@@ -425,7 +425,7 @@ struct QDemonQtTextRenderer : public QDemonTextRendererInterface
         return QDemonTextDimensions(boundingBox.width(), boundingBox.height());
     }
 
-    int alignToQtAlign(TextVerticalAlignment::Enum va)
+    int alignToQtAlign(TextVerticalAlignment va)
     {
         int qtAlign(0);
         switch (va) {

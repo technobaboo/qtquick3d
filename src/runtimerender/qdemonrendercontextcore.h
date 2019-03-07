@@ -53,14 +53,12 @@
 
 QT_BEGIN_NAMESPACE
 
-struct ScaleModes
+enum class ScaleModes
 {
-    enum Enum {
-        ExactSize = 0, // Ensure the viewport is exactly same size as application
-        ScaleToFit = 1, // Resize viewport keeping aspect ratio
-        ScaleToFill = 2, // Resize viewport to entire window
-        FitSelected = 3, // Resize presentation to fit into viewport
-    };
+    ExactSize = 0, // Ensure the viewport is exactly same size as application
+    ScaleToFit = 1, // Resize viewport keeping aspect ratio
+    ScaleToFill = 2, // Resize viewport to entire window
+    FitSelected = 3, // Resize presentation to fit into viewport
 };
 
 class QDemonPathManagerInterface;
@@ -174,8 +172,8 @@ public:
     // Only valid between calls to Begin,End.
     virtual QRect getPresentationViewport() const = 0;
 
-    virtual void setScaleMode(ScaleModes::Enum inMode) = 0;
-    virtual ScaleModes::Enum getScaleMode() = 0;
+    virtual void setScaleMode(ScaleModes inMode) = 0;
+    virtual ScaleModes getScaleMode() = 0;
 
     virtual void setWireframeMode(bool inEnable) = 0;
     virtual bool getWireframeMode() = 0;
@@ -188,8 +186,8 @@ public:
     virtual void setPresentationDimensions(const QSize &inPresentationDimensions) = 0;
     virtual QSize getCurrentPresentationDimensions() const = 0;
 
-    virtual void setRenderRotation(RenderRotationValues::Enum inRotation) = 0;
-    virtual RenderRotationValues::Enum getRenderRotation() const = 0;
+    virtual void setRenderRotation(RenderRotationValues inRotation) = 0;
+    virtual RenderRotationValues getRenderRotation() const = 0;
 
     virtual QVector2D getMousePickViewport() const = 0;
     virtual QVector2D getMousePickMouseCoords(const QVector2D &inMouseCoords) const = 0;

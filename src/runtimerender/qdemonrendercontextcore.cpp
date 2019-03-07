@@ -159,12 +159,12 @@ struct QDemonRenderContextData : public QDemonRenderContextInterface
     // Viewport that this render context should use
     QDemonOption<QRect> m_viewport;
     QSize m_windowDimensions;
-    ScaleModes::Enum m_scaleMode;
+    ScaleModes m_scaleMode;
     bool m_wireframeMode;
     bool m_isInSubPresentation;
     QDemonOption<QVector4D> m_sceneColor;
     QDemonOption<QVector4D> m_matteColor;
-    RenderRotationValues::Enum m_rotation;
+    RenderRotationValues m_rotation;
     QDemonRef<QDemonRenderFrameBuffer> m_rotationFbo;
     QDemonRef<QDemonRenderTexture2D> m_rotationTexture;
     QDemonRef<QDemonRenderRenderBuffer> m_rotationDepthBuffer;
@@ -326,9 +326,9 @@ struct QDemonRenderContextData : public QDemonRenderContextInterface
 
     QSize getWindowDimensions() override { return m_windowDimensions; }
 
-    void setScaleMode(ScaleModes::Enum inMode) override { m_scaleMode = inMode; }
+    void setScaleMode(ScaleModes inMode) override { m_scaleMode = inMode; }
 
-    ScaleModes::Enum getScaleMode() override { return m_scaleMode; }
+    ScaleModes getScaleMode() override { return m_scaleMode; }
 
     void setWireframeMode(bool inEnable) override { m_wireframeMode = inEnable; }
 
@@ -361,9 +361,9 @@ struct QDemonRenderContextData : public QDemonRenderContextInterface
     }
     QSize getCurrentPresentationDimensions() const override { return m_presentationDimensions; }
 
-    void setRenderRotation(RenderRotationValues::Enum inRotation) override { m_rotation = inRotation; }
+    void setRenderRotation(RenderRotationValues inRotation) override { m_rotation = inRotation; }
 
-    RenderRotationValues::Enum getRenderRotation() const override { return m_rotation; }
+    RenderRotationValues getRenderRotation() const override { return m_rotation; }
     QVector2D getMousePickViewport() const override
     {
         bool renderOffscreen = m_rotation != RenderRotationValues::NoRotation;
@@ -419,7 +419,7 @@ struct QDemonRenderContextData : public QDemonRenderContextInterface
         return inMouseCoords;
     }
 
-    QRect getPresentationViewport(const QRect &inViewerViewport, ScaleModes::Enum inScaleToFit, const QSize &inPresDimensions) const
+    QRect getPresentationViewport(const QRect &inViewerViewport, ScaleModes inScaleToFit, const QSize &inPresDimensions) const
     {
         const qint32 viewerViewportWidth = inViewerViewport.width();
         const qint32 viewerViewportHeight = inViewerViewport.height();
@@ -630,7 +630,7 @@ struct QDemonRenderContextData : public QDemonRenderContextInterface
     virtual void teardownRenderTarget()
     {
         if (m_rotationFbo) {
-            ScaleModes::Enum theScaleToFit = m_scaleMode;
+            ScaleModes theScaleToFit = m_scaleMode;
             QRect theOuterViewport(getContextViewport());
             m_renderContext->setRenderTarget(m_contextRenderTarget);
             QSize thePresentationDimensions = getCurrentPresentationDimensions();

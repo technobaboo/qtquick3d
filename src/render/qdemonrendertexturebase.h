@@ -88,14 +88,14 @@ public:
 
     virtual ~QDemonRenderTextureBase();
 
-    virtual void setMinFilter(QDemonRenderTextureMinifyingOp::Enum value);
-    virtual void setMagFilter(QDemonRenderTextureMagnifyingOp::Enum value);
+    virtual void setMinFilter(QDemonRenderTextureMinifyingOp value);
+    virtual void setMagFilter(QDemonRenderTextureMagnifyingOp value);
 
     virtual void setBaseLevel(qint32 value);
     virtual void setMaxLevel(qint32 value);
 
-    virtual void setTextureWrapS(QDemonRenderTextureCoordOp::Enum value);
-    virtual void setTextureWrapT(QDemonRenderTextureCoordOp::Enum value);
+    virtual void setTextureWrapS(QDemonRenderTextureCoordOp value);
+    virtual void setTextureWrapT(QDemonRenderTextureCoordOp value);
 
     virtual void setTextureCompareMode(QDemonRenderTextureCompareMode value);
     virtual void setTextureCompareFunc(QDemonRenderTextureCompareOp value);

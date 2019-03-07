@@ -64,8 +64,8 @@ void QDemonRenderShadowMap::addShadowMapEntry(qint32 index,
                                               qint32 height,
                                               QDemonRenderTextureFormat format,
                                               qint32 samples,
-                                              ShadowMapModes::Enum mode,
-                                              ShadowFilterValues::Enum filter)
+                                              ShadowMapModes mode,
+                                              ShadowFilterValues filter)
 {
     QDemonRef<QDemonResourceManagerInterface> theManager(m_context->getResourceManager());
     QDemonShadowMapEntry *pEntry = nullptr;

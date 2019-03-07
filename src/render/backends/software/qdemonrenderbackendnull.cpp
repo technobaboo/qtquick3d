@@ -43,8 +43,8 @@ struct QDemonNullBackend : public QDemonRenderBackend
     QDemonRenderContextType getRenderContextType() const override { return QDemonRenderContextType::NullContext; }
     const char *getShadingLanguageVersion() override { return ""; }
     qint32 getMaxCombinedTextureUnits() override { return 32; }
-    bool getRenderBackendCap(QDemonRenderBackendCaps::Enum) const override { return false; }
-    void getRenderBackendValue(QDemonRenderBackendQuery::Enum inQuery, qint32 *params) const override
+    bool getRenderBackendCap(QDemonRenderBackendCaps) const override { return false; }
+    void getRenderBackendValue(QDemonRenderBackendQuery inQuery, qint32 *params) const override
     {
         if (params) {
             switch (inQuery) {
@@ -160,7 +160,7 @@ struct QDemonNullBackend : public QDemonRenderBackend
     void setDrawBuffers(QDemonRenderBackendRenderTargetObject, QDemonConstDataRef<qint32>) override {}
     void setReadBuffer(QDemonRenderBackendRenderTargetObject, QDemonReadFace) override {}
 
-    void blitFramebuffer(qint32, qint32, qint32, qint32, qint32, qint32, qint32, qint32, QDemonRenderClearFlags, QDemonRenderTextureMagnifyingOp::Enum) override
+    void blitFramebuffer(qint32, qint32, qint32, qint32, qint32, qint32, qint32, qint32, QDemonRenderClearFlags, QDemonRenderTextureMagnifyingOp) override
     {
     }
     QDemonRenderBackendRenderbufferObject createRenderbuffer(QDemonRenderRenderBufferFormat, qint32, qint32) override
@@ -271,7 +271,7 @@ struct QDemonNullBackend : public QDemonRenderBackend
                           const void *) override
     {
     }
-    void generateMipMaps(QDemonRenderBackendTextureObject, QDemonRenderTextureTargetType, QDemonRenderHint::Enum) override
+    void generateMipMaps(QDemonRenderBackendTextureObject, QDemonRenderTextureTargetType, QDemonRenderHint) override
     {
     }
     void bindTexture(QDemonRenderBackendTextureObject, QDemonRenderTextureTargetType, qint32) override {}
@@ -285,11 +285,11 @@ struct QDemonNullBackend : public QDemonRenderBackend
         return QDemonRenderTextureSwizzleMode::NoSwizzle;
     }
 
-    QDemonRenderBackendSamplerObject createSampler(QDemonRenderTextureMinifyingOp::Enum,
-                                                   QDemonRenderTextureMagnifyingOp::Enum,
-                                                   QDemonRenderTextureCoordOp::Enum,
-                                                   QDemonRenderTextureCoordOp::Enum,
-                                                   QDemonRenderTextureCoordOp::Enum,
+    QDemonRenderBackendSamplerObject createSampler(QDemonRenderTextureMinifyingOp,
+                                                   QDemonRenderTextureMagnifyingOp,
+                                                   QDemonRenderTextureCoordOp,
+                                                   QDemonRenderTextureCoordOp,
+                                                   QDemonRenderTextureCoordOp,
                                                    qint32,
                                                    qint32,
                                                    float,
@@ -303,11 +303,11 @@ struct QDemonNullBackend : public QDemonRenderBackend
 
     void updateSampler(QDemonRenderBackendSamplerObject,
                        QDemonRenderTextureTargetType,
-                       QDemonRenderTextureMinifyingOp::Enum,
-                       QDemonRenderTextureMagnifyingOp::Enum,
-                       QDemonRenderTextureCoordOp::Enum,
-                       QDemonRenderTextureCoordOp::Enum,
-                       QDemonRenderTextureCoordOp::Enum,
+                       QDemonRenderTextureMinifyingOp,
+                       QDemonRenderTextureMagnifyingOp,
+                       QDemonRenderTextureCoordOp,
+                       QDemonRenderTextureCoordOp,
+                       QDemonRenderTextureCoordOp,
                        float,
                        float,
                        float,

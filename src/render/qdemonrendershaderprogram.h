@@ -58,9 +58,10 @@ class Q_DEMONRENDER_EXPORT QDemonRenderShaderProgram
 public:
     QAtomicInt ref;
 
-    struct ProgramType
+    enum class ProgramType
     {
-        enum Enum { Graphics, Compute };
+        Graphics,
+        Compute
     };
 
 private:
@@ -70,7 +71,7 @@ private:
     QDemonRenderBackend::QDemonRenderBackendShaderProgramObject m_programHandle; ///< opaque backend handle
     TShaderConstantMap m_constants; ///< map of shader constants
     TShaderBufferMap m_shaderBuffers; ///< map of shader buffers
-    ProgramType::Enum m_programType; ///< shader type
+    ProgramType m_programType; ///< shader type
     QByteArray m_errorMessage; ///< contains the error message if linking fails
 
     /**
@@ -189,8 +190,8 @@ public:
      *
      * @return No return.
      */
-    void setProgramType(ProgramType::Enum type) { m_programType = type; }
-    ProgramType::Enum getProgramType() const { return m_programType; }
+    void setProgramType(ProgramType type) { m_programType = type; }
+    ProgramType getProgramType() const { return m_programType; }
 
     /**
      * @brief Get Error Message

@@ -41,34 +41,34 @@ struct QDemonRenderEffect;
 struct SRenderPlugin; // TODO: ???
 struct QDemonRenderImage;
 
-struct AAModeValues
+enum class AAModeValues
 {
-    enum Enum { NoAA = 0, SSAA = 1, X2 = 2, X4 = 4, X8 = 8 };
+    NoAA = 0, SSAA = 1, X2 = 2, X4 = 4, X8 = 8
 };
 
-struct HorizontalFieldValues
+enum class HorizontalFieldValues
 {
-    enum Enum { LeftWidth = 0, LeftRight, WidthRight };
+    LeftWidth = 0, LeftRight, WidthRight
 };
 
-struct VerticalFieldValues
+enum class VerticalFieldValues
 {
-    enum Enum { TopHeight = 0, TopBottom, HeightBottom };
+    TopHeight = 0, TopBottom, HeightBottom
 };
 
-struct LayerUnitTypes
+enum class LayerUnitTypes
 {
-    enum Enum { Percent = 0, Pixels };
+    Percent = 0, Pixels
 };
 
-struct LayerBackground
+enum class LayerBackground
 {
-    enum Enum { Transparent = 0, Unspecified, Color };
+    Transparent = 0, Unspecified, Color
 };
 
-struct LayerBlendTypes
+enum class LayerBlendTypes
 {
-    enum Enum { Normal = 0, Screen, Multiply, Add, Subtract, Overlay, ColorBurn, ColorDodge };
+    Normal = 0, Screen, Multiply, Add, Subtract, Overlay, ColorBurn, ColorDodge
 };
 
 // A layer is a special node.  It *always* presents its global transform
@@ -91,28 +91,28 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderLayer : public QDemonGraphNode
 
     SRenderPlugin *renderPlugin; // Overrides texture path if available.
 
-    AAModeValues::Enum progressiveAAMode;
-    AAModeValues::Enum multisampleAAMode;
-    LayerBackground::Enum background;
+    AAModeValues progressiveAAMode;
+    AAModeValues multisampleAAMode;
+    LayerBackground background;
     QVector3D clearColor;
 
-    LayerBlendTypes::Enum blendType;
+    LayerBlendTypes blendType;
 
-    HorizontalFieldValues::Enum horizontalFieldValues;
+    HorizontalFieldValues horizontalFieldValues;
     float m_left;
-    LayerUnitTypes::Enum leftUnits;
+    LayerUnitTypes leftUnits;
     float m_width;
-    LayerUnitTypes::Enum widthUnits;
+    LayerUnitTypes widthUnits;
     float m_right;
-    LayerUnitTypes::Enum rightUnits;
+    LayerUnitTypes rightUnits;
 
-    VerticalFieldValues::Enum verticalFieldValues;
+    VerticalFieldValues verticalFieldValues;
     float m_top;
-    LayerUnitTypes::Enum topUnits;
+    LayerUnitTypes topUnits;
     float m_height;
-    LayerUnitTypes::Enum heightUnits;
+    LayerUnitTypes heightUnits;
     float m_bottom;
-    LayerUnitTypes::Enum bottomUnits;
+    LayerUnitTypes bottomUnits;
 
     // Ambient occlusion
     float aoStrength;
@@ -147,7 +147,7 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderLayer : public QDemonGraphNode
 
     QDemonRenderEffect *getLastEffect();
 
-    LayerBlendTypes::Enum getLayerBlend() { return blendType; }
+    LayerBlendTypes getLayerBlend() { return blendType; }
 };
 QT_END_NAMESPACE
 

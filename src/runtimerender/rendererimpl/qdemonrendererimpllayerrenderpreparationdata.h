@@ -273,10 +273,10 @@ struct QDemonLayerRenderPreparationData
     bool getShadowMapManager();
     bool needsWidgetTexture() const;
 
-    QDemonShaderDefaultMaterialKey generateLightingKey(DefaultMaterialLighting::Enum inLightingType);
+    QDemonShaderDefaultMaterialKey generateLightingKey(DefaultMaterialLighting inLightingType);
 
     void prepareImageForRender(QDemonRenderImage &inImage,
-                               QDemonImageMapTypes::Enum inMapType,
+                               QDemonImageMapTypes inMapType,
                                QDemonRenderableImage *&ioFirstImage,
                                QDemonRenderableImage *&ioNextImage,
                                QDemonRenderableObjectFlags &ioFlags,

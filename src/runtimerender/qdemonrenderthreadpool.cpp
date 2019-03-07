@@ -47,13 +47,13 @@ public:
         , m_function(inFunction)
         , m_cancelFunction(inCancelFunction)
         , m_id(id)
-        , m_taskState(TaskStates::Enum::Queued)
+        , m_taskState(TaskStates::Queued)
         , m_threadPool(threadPool)
     {
         setAutoDelete(false);
     }
 
-    TaskStates::Enum taskState()
+    TaskStates taskState()
     {
         QMutexLocker locker(&m_mutex);
         return m_taskState;
@@ -71,7 +71,7 @@ public:
     {
         {
             QMutexLocker locker(&m_mutex);
-            if (m_taskState == TaskStates::Enum::Running)
+            if (m_taskState == TaskStates::Running)
                 return false;
         }
 
@@ -86,7 +86,7 @@ private:
     QDemonTaskCallback m_function;
     QDemonTaskCallback m_cancelFunction;
     quint64 m_id;
-    TaskStates::Enum m_taskState;
+    TaskStates m_taskState;
     QMutex m_mutex;
     QDemonThreadPool *m_threadPool;
 };
@@ -100,9 +100,9 @@ public:
 
     quint64 addTask(void *inUserData, QDemonTaskCallback inFunction, QDemonTaskCallback inCancelFunction) override;
 
-    TaskStates::Enum getTaskState(quint64 inTaskId) override;
+    TaskStates getTaskState(quint64 inTaskId) override;
 
-    CancelReturnValues::Enum cancelTask(quint64 inTaskId) override;
+    CancelReturnValues cancelTask(quint64 inTaskId) override;
 
     // Called from another thread!
     void taskFinished(quint64 inTaskId);
@@ -123,7 +123,7 @@ void QDemonTask::run()
 {
     {
         QMutexLocker locker(&m_mutex);
-        m_taskState = TaskStates::Enum::Running;
+        m_taskState = TaskStates::Running;
     }
 
     doFunction();
@@ -156,7 +156,7 @@ quint64 QDemonThreadPool::addTask(void *inUserData, QDemonTaskCallback inFunctio
     return taskID;
 }
 
-TaskStates::Enum QDemonThreadPool::getTaskState(quint64 inTaskId)
+TaskStates QDemonThreadPool::getTaskState(quint64 inTaskId)
 {
     QMutexLocker locker(&m_mutex);
     auto task = m_taskMap.value(inTaskId, nullptr);
@@ -165,7 +165,7 @@ TaskStates::Enum QDemonThreadPool::getTaskState(quint64 inTaskId)
     return task->taskState();
 }
 
-CancelReturnValues::Enum QDemonThreadPool::cancelTask(quint64 inTaskId)
+CancelReturnValues QDemonThreadPool::cancelTask(quint64 inTaskId)
 {
     QMutexLocker locker(&m_mutex);
     auto task = m_taskMap.value(inTaskId, nullptr);

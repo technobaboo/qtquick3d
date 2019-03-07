@@ -115,7 +115,7 @@ QDemonRendererImpl::~QDemonRendererImpl()
 
 void QDemonRendererImpl::childrenUpdated(QDemonGraphNode &inParent)
 {
-    if (inParent.type == QDemonGraphObjectTypes::Layer) {
+    if (inParent.type == QDemonGraphObjectType::Layer) {
         TInstanceRenderMap::iterator theIter = m_instanceRenderMap.find(static_cast<QDemonRenderInstanceId>(&inParent));
         if (theIter != m_instanceRenderMap.end()) {
             theIter.value()->camerasAndLights.clear();
@@ -135,7 +135,7 @@ float QDemonRendererImpl::getTextScale(const QDemonText &inText)
 
 static inline QDemonRenderLayer *getNextLayer(QDemonRenderLayer &inLayer)
 {
-    if (inLayer.nextSibling && inLayer.nextSibling->type == QDemonGraphObjectTypes::Layer)
+    if (inLayer.nextSibling && inLayer.nextSibling->type == QDemonGraphObjectType::Layer)
         return static_cast<QDemonRenderLayer *>(inLayer.nextSibling);
     return nullptr;
 }
@@ -208,7 +208,7 @@ void QDemonRendererImpl::renderLayer(QDemonRenderLayer &inLayer,
         QDemonRenderLayer *theLayer = *iter;
         QDemonRef<QDemonLayerRenderData> theRenderData = getOrCreateLayerRenderDataForNode(*theLayer, id);
         QDemonLayerRenderPreparationResult &prepRes(*theRenderData->layerPrepResult);
-        LayerBlendTypes::Enum layerBlend = prepRes.getLayer()->getLayerBlend();
+        LayerBlendTypes layerBlend = prepRes.getLayer()->getLayerBlend();
 #ifdef ADVANCED_BLEND_SW_FALLBACK
         if ((layerBlend == LayerBlendTypes::Overlay || layerBlend == LayerBlendTypes::ColorBurn || layerBlend == LayerBlendTypes::ColorDodge)
             && !theRenderContext->isAdvancedBlendHwSupported() && !theRenderContext->isAdvancedBlendHwSupportedKHR()) {
@@ -257,7 +257,7 @@ void QDemonRendererImpl::renderLayer(QDemonRenderLayer &inLayer,
 
 QDemonRenderLayer *QDemonRendererImpl::getLayerForNode(const QDemonGraphNode &inNode) const
 {
-    if (inNode.type == QDemonGraphObjectTypes::Layer)
+    if (inNode.type == QDemonGraphObjectType::Layer)
         return &const_cast<QDemonRenderLayer &>(static_cast<const QDemonRenderLayer &>(inNode));
 
     if (inNode.parent)
@@ -298,7 +298,7 @@ QDemonRenderCamera *QDemonRendererImpl::getCameraForNode(const QDemonGraphNode &
 
 QDemonOption<QDemonCuboidRect> QDemonRendererImpl::getCameraBounds(const QDemonGraphObject &inObject)
 {
-    if (QDemonGraphObjectTypes::IsNodeType(inObject.type)) {
+    if (inObject.type.isNodeType()) {
         const QDemonGraphNode &theNode = static_cast<const QDemonGraphNode &>(inObject);
         QDemonRef<QDemonLayerRenderData> theLayer = getOrCreateLayerRenderDataForNode(theNode);
         if (theLayer->getOffscreenRenderer() == false) {
@@ -477,7 +477,7 @@ inline bool pickResultLessThan(const QDemonRenderPickResult &lhs, const QDemonRe
     return floatLessThan(lhs.m_cameraDistanceSq, rhs.m_cameraDistanceSq);
 }
 
-inline float clampUVCoord(float inUVCoord, QDemonRenderTextureCoordOp::Enum inCoordOp)
+inline float clampUVCoord(float inUVCoord, QDemonRenderTextureCoordOp inCoordOp)
 {
     if (inUVCoord > 1.0f || inUVCoord < 0.0f) {
         switch (inCoordOp) {
@@ -576,7 +576,7 @@ QDemonPickResultProcessResult QDemonRendererImpl::processPickResultList(bool inP
                     thePickResult.m_offscreenRenderer = theSubRenderer;
                     foundValidResult = true;
                     thePickResult.m_wasPickConsumed = true;
-                } else if (QDemonGraphObjectTypes::IsNodeType(thePickResult.m_hitObject->type)) {
+                } else if (thePickResult.m_hitObject->type.isNodeType()) {
                     const QDemonGraphNode *theNode = static_cast<const QDemonGraphNode *>(thePickResult.m_hitObject);
                     if (theNode->flags.isGloballyPickable() == true) {
                         foundValidResult = true;
@@ -676,7 +676,7 @@ QDemonOption<QVector2D> QDemonRendererImpl::facePosition(QDemonGraphNode &inNode
                                                          const QVector2D &inViewportDimensions,
                                                          const QVector2D &inMouseCoords,
                                                          QDemonDataRef<QDemonGraphObject *> inMapperObjects,
-                                                         QDemonRenderBasisPlanes::Enum inPlane)
+                                                         QDemonRenderBasisPlanes inPlane)
 {
     QDemonRef<QDemonLayerRenderData> theLayerData = getOrCreateLayerRenderDataForNode(inNode);
     if (theLayerData == nullptr)
@@ -694,13 +694,13 @@ QDemonOption<QVector2D> QDemonRendererImpl::facePosition(QDemonGraphNode &inNode
 
     for (quint32 idx = 0, end = inMapperObjects.size(); idx < end; ++idx) {
         QDemonGraphObject &currentObject = *inMapperObjects[idx];
-        if (currentObject.type == QDemonGraphObjectTypes::Layer) {
+        if (currentObject.type == QDemonGraphObjectType::Layer) {
             // The layer knows its viewport so it can take the information directly.
             // This is extremely counter intuitive but a good sign.
-        } else if (currentObject.type == QDemonGraphObjectTypes::Image) {
+        } else if (currentObject.type == QDemonGraphObjectType::Image) {
             QDemonRenderImage &theImage = static_cast<QDemonRenderImage &>(currentObject);
             QDemonRenderModel *theParentModel = nullptr;
-            if (theImage.m_parent && theImage.m_parent->type == QDemonGraphObjectTypes::DefaultMaterial) {
+            if (theImage.m_parent && theImage.m_parent->type == QDemonGraphObjectType::DefaultMaterial) {
                 QDemonRenderDefaultMaterial *theMaterial = static_cast<QDemonRenderDefaultMaterial *>(theImage.m_parent);
                 if (theMaterial) {
                     theParentModel = theMaterial->parent;
@@ -787,7 +787,7 @@ QVector3D QDemonRendererImpl::unprojectWithDepth(QDemonGraphNode &inNode, QVecto
     QSize theWindow = m_demonContext->getWindowDimensions();
     QDemonRenderRay theRay = thePrepResult.getPickRay(theMouse, QVector2D((float)theWindow.width(), (float)theWindow.height()), true);
     QVector3D theTargetPosition = theRay.m_origin + theRay.m_direction * theDepth;
-    if (inNode.parent != nullptr && inNode.parent->type != QDemonGraphObjectTypes::Layer)
+    if (inNode.parent != nullptr && inNode.parent->type != QDemonGraphObjectType::Layer)
         theTargetPosition = mat44::transform(mat44::getInverse(inNode.parent->globalTransform), theTargetPosition);
     // Our default global space is right handed, so if you are left handed z means something
     // opposite.
@@ -1798,7 +1798,7 @@ void QDemonRendererImpl::renderGpuProfilerStats(float x, float y, QDemonOption<Q
 // or orthographic mode if you would like to.
 QDemonWidgetRenderInformation QDemonRendererImpl::getWidgetRenderInformation(QDemonGraphNode &inNode,
                                                                              const QVector3D &inPos,
-                                                                             RenderWidgetModes::Enum inWidgetMode)
+                                                                             RenderWidgetModes inWidgetMode)
 {
     QDemonRef<QDemonLayerRenderData> theData = getOrCreateLayerRenderDataForNode(inNode);
     QDemonRenderCamera *theCamera = theData->camera;
@@ -1807,7 +1807,7 @@ QDemonWidgetRenderInformation QDemonRendererImpl::getWidgetRenderInformation(QDe
         return QDemonWidgetRenderInformation();
     }
     QMatrix4x4 theGlobalTransform;
-    if (inNode.parent != nullptr && inNode.parent->type != QDemonGraphObjectTypes::Layer && !inNode.flags.isIgnoreParentTransform())
+    if (inNode.parent != nullptr && inNode.parent->type != QDemonGraphObjectType::Layer && !inNode.flags.isIgnoreParentTransform())
         theGlobalTransform = inNode.parent->globalTransform;
     QMatrix4x4 theCameraInverse = mat44::getInverse(theCamera->globalTransform);
     QMatrix4x4 theNodeParentToCamera;
@@ -1922,8 +1922,8 @@ QDemonRenderPickSubResult::QDemonRenderPickSubResult() : m_subRenderer(nullptr),
 
 QDemonRenderPickSubResult::QDemonRenderPickSubResult(const QDemonRef<QDemonOffscreenRendererInterface> &inSubRenderer,
                                                      const QMatrix4x4 &inTextureMatrix,
-                                                     QDemonRenderTextureCoordOp::Enum inHorizontalTilingMode,
-                                                     QDemonRenderTextureCoordOp::Enum inVerticalTilingMode,
+                                                     QDemonRenderTextureCoordOp inHorizontalTilingMode,
+                                                     QDemonRenderTextureCoordOp inVerticalTilingMode,
                                                      quint32 width,
                                                      quint32 height)
     : m_subRenderer(inSubRenderer)

@@ -201,9 +201,9 @@ public:
                                             const QString &inPropName,
                                             const QString &inPropPath,
                                             QDemonRenderTextureTypeValue inTexType,
-                                            QDemonRenderTextureCoordOp::Enum inCoordOp,
-                                            QDemonRenderTextureMagnifyingOp::Enum inMagFilterOp,
-                                            QDemonRenderTextureMinifyingOp::Enum inMinFilterOp);
+                                            QDemonRenderTextureCoordOp inCoordOp,
+                                            QDemonRenderTextureMagnifyingOp inMagFilterOp,
+                                            QDemonRenderTextureMinifyingOp inMinFilterOp);
 
     void setRenderContextInterface(QDemonRenderContextInterface *inContext);
 
@@ -232,9 +232,9 @@ public:
 struct Q_DEMONRUNTIMERENDER_EXPORT QDemonCustomMaterialVertexPipeline : public QDemonVertexPipelineImpl
 {
     QDemonRenderContextInterface *m_context;
-    TessModeValues::Enum m_tessMode;
+    TessModeValues m_tessMode;
 
-    QDemonCustomMaterialVertexPipeline(QDemonRenderContextInterface *inContext, TessModeValues::Enum inTessMode);
+    QDemonCustomMaterialVertexPipeline(QDemonRenderContextInterface *inContext, TessModeValues inTessMode);
     void initializeTessControlShader();
     void initializeTessEvaluationShader();
     void finalizeTessControlShader();

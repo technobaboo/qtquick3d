@@ -46,7 +46,7 @@ QT_BEGIN_NAMESPACE
 
 INodeQueue::~INodeQueue() = default;
 
-QDemonGraphNode::QDemonGraphNode(QDemonGraphObjectTypes::Enum inGraphObjectType)
+QDemonGraphNode::QDemonGraphNode(QDemonGraphObjectType inGraphObjectType)
     : QDemonGraphObject(inGraphObjectType)
     , rotation(0, 0, 0) // Radians
     , position(0, 0, 0)
@@ -130,7 +130,7 @@ bool QDemonGraphNode::calculateGlobalVariables()
             // Layer transforms do not flow down but affect the final layer's rendered
             // representation.
             retval = parent->calculateGlobalVariables() || retval;
-            if (parent->type != QDemonGraphObjectTypes::Layer) {
+            if (parent->type != QDemonGraphObjectType::Layer) {
                 globalOpacity *= parent->globalOpacity;
                 if (flags.isIgnoreParentTransform() == false)
                     globalTransform = parent->globalTransform * localTransform;
@@ -443,11 +443,11 @@ QDemonBounds3 QDemonGraphNode::getBounds(const QDemonBufferManager &inManager,
     if (inIncludeChildren)
         retval = getChildBounds(inManager, inPathManager, inChildFilter);
 
-    if (type == QDemonGraphObjectTypes::Model)
+    if (type == QDemonGraphObjectType::Model)
         retval.include(static_cast<const QDemonRenderModel *>(this)->getModelBounds(inManager));
-    else if (type == QDemonGraphObjectTypes::Text)
+    else if (type == QDemonGraphObjectType::Text)
         retval.include(static_cast<const QDemonText *>(this)->getTextBounds());
-    else if (type == QDemonGraphObjectTypes::Path)
+    else if (type == QDemonGraphObjectType::Path)
         retval.include(inPathManager->getBounds(*static_cast<const QDemonPath *>(this)));
     return retval;
 }
@@ -504,7 +504,7 @@ QVector3D QDemonGraphNode::getGlobalPivot() const
     QVector3D retval(position);
     retval.setZ(retval.z() * -1);
 
-    if (parent && parent->type != QDemonGraphObjectTypes::Layer) {
+    if (parent && parent->type != QDemonGraphObjectType::Layer) {
         const QVector4D direction(retval.x(), retval.y(), retval.z(), 1.0f);
         const QVector4D result = parent->globalTransform * direction;
         return QVector3D(result.x(), result.y(), result.z());

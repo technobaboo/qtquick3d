@@ -57,10 +57,10 @@ struct QDemonDynamicShaderMapKey
 {
     TStrStrPair m_name;
     QVector<QDemonShaderPreprocessorFeature> m_features;
-    TessModeValues::Enum m_tessMode;
+    TessModeValues m_tessMode;
     bool m_wireframeMode;
     size_t m_hashCode;
-    QDemonDynamicShaderMapKey(TStrStrPair inName, TShaderFeatureSet inFeatures, TessModeValues::Enum inTessMode, bool inWireframeMode)
+    QDemonDynamicShaderMapKey(TStrStrPair inName, TShaderFeatureSet inFeatures, TessModeValues inTessMode, bool inWireframeMode)
         : m_name(inName), m_tessMode(inTessMode), m_wireframeMode(inWireframeMode)
     {
         for (int i = 0; i < inFeatures.size(); ++i) {
@@ -115,11 +115,11 @@ struct QDemonPropertyDefinition
     ///< texture usage type like diffuse, specular, ...
     QDemonRenderTextureTypeValue texUsageType = QDemonRenderTextureTypeValue::Unknown;
     // Applies to both s,t
-    QDemonRenderTextureCoordOp::Enum coordOp = QDemonRenderTextureCoordOp::ClampToEdge;
+    QDemonRenderTextureCoordOp coordOp = QDemonRenderTextureCoordOp::ClampToEdge;
     // Set mag Filter
-    QDemonRenderTextureMagnifyingOp::Enum magFilterOp = QDemonRenderTextureMagnifyingOp::Linear;
+    QDemonRenderTextureMagnifyingOp magFilterOp = QDemonRenderTextureMagnifyingOp::Linear;
     // Set min Filter
-    QDemonRenderTextureMinifyingOp::Enum minFilterOp = QDemonRenderTextureMinifyingOp::Linear;
+    QDemonRenderTextureMinifyingOp minFilterOp = QDemonRenderTextureMinifyingOp::Linear;
     bool isEnumProperty = false;
 
     QDemonPropertyDefinition() = default;
@@ -131,11 +131,11 @@ struct QDemonPropertyDefinition
 
 struct QDemonDynamicShaderProgramFlags : public QDemonShaderCacheProgramFlags
 {
-    TessModeValues::Enum tessMode = TessModeValues::NoTess;
+    TessModeValues tessMode = TessModeValues::NoTess;
     bool wireframeMode = false;
 
     QDemonDynamicShaderProgramFlags() = default;
-    QDemonDynamicShaderProgramFlags(TessModeValues::Enum inTessMode, bool inWireframeMode)
+    QDemonDynamicShaderProgramFlags(TessModeValues inTessMode, bool inWireframeMode)
         : tessMode(inTessMode), wireframeMode(inWireframeMode)
     {
     }
@@ -160,7 +160,7 @@ public:
     virtual quint32 getPropertySectionByteSize() const = 0;
     virtual const quint8 *getDefaultValueBuffer() const = 0;
     virtual quint32 getBaseObjectSize() const = 0;
-    virtual QDemonGraphObjectTypes::Enum graphObjectType() const = 0;
+    virtual QDemonGraphObjectType graphObjectType() const = 0;
     virtual const dynamic::QDemonPropertyDefinition *findPropertyByName(QString inName) const = 0;
     virtual QDemonConstDataRef<dynamic::QDemonCommand *> getRenderCommands() const = 0;
     virtual bool requiresDepthTexture() const = 0;
@@ -182,7 +182,7 @@ public:
     virtual bool doRegister(QString inName,
                             QDemonConstDataRef<dynamic::QDemonPropertyDeclaration> inProperties,
                             quint32 inBaseObjectSize,
-                            QDemonGraphObjectTypes::Enum inGraphObjectType) = 0;
+                            QDemonGraphObjectType inGraphObjectType) = 0;
 
     virtual bool unregister(QString inName) = 0;
 
@@ -202,9 +202,9 @@ public:
                                             const QString &inPropName,
                                             const QString &inPropPath,
                                             QDemonRenderTextureTypeValue inTexType,
-                                            QDemonRenderTextureCoordOp::Enum inCoordOp,
-                                            QDemonRenderTextureMagnifyingOp::Enum inMagFilterOp,
-                                            QDemonRenderTextureMinifyingOp::Enum inMinFilterOp) = 0;
+                                            QDemonRenderTextureCoordOp inCoordOp,
+                                            QDemonRenderTextureMagnifyingOp inMagFilterOp,
+                                            QDemonRenderTextureMinifyingOp inMinFilterOp) = 0;
 
     virtual QDemonDynamicObjectClassInterface *getDynamicObjectClass(const QString &inName) = 0;
 

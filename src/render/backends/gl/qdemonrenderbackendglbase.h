@@ -82,10 +82,10 @@ public:
     const char *getShadingLanguageVersion() override;
     /// get implementation depended values
     qint32 getMaxCombinedTextureUnits() override;
-    bool getRenderBackendCap(QDemonRenderBackendCaps::Enum inCap) const override;
+    bool getRenderBackendCap(QDemonRenderBackendCaps inCap) const override;
     qint32 getDepthBits() const override;
     qint32 getStencilBits() const override;
-    void getRenderBackendValue(QDemonRenderBackendQuery::Enum inQuery, qint32 *params) const override;
+    void getRenderBackendValue(QDemonRenderBackendQuery inQuery, qint32 *params) const override;
 
     /// state get/set functions
     void setRenderState(bool bEnable, const QDemonRenderState value) override;
@@ -283,16 +283,16 @@ public:
 
     void generateMipMaps(QDemonRenderBackendTextureObject to,
                          QDemonRenderTextureTargetType target,
-                         QDemonRenderHint::Enum genType) override;
+                         QDemonRenderHint genType) override;
 
     virtual QDemonRenderTextureSwizzleMode getTextureSwizzleMode(const QDemonRenderTextureFormat inFormat) const override;
 
     QDemonRenderBackendSamplerObject createSampler(
-            QDemonRenderTextureMinifyingOp::Enum minFilter = QDemonRenderTextureMinifyingOp::Linear,
-            QDemonRenderTextureMagnifyingOp::Enum magFilter = QDemonRenderTextureMagnifyingOp::Linear,
-            QDemonRenderTextureCoordOp::Enum wrapS = QDemonRenderTextureCoordOp::ClampToEdge,
-            QDemonRenderTextureCoordOp::Enum wrapT = QDemonRenderTextureCoordOp::ClampToEdge,
-            QDemonRenderTextureCoordOp::Enum wrapR = QDemonRenderTextureCoordOp::ClampToEdge,
+            QDemonRenderTextureMinifyingOp minFilter = QDemonRenderTextureMinifyingOp::Linear,
+            QDemonRenderTextureMagnifyingOp magFilter = QDemonRenderTextureMagnifyingOp::Linear,
+            QDemonRenderTextureCoordOp wrapS = QDemonRenderTextureCoordOp::ClampToEdge,
+            QDemonRenderTextureCoordOp wrapT = QDemonRenderTextureCoordOp::ClampToEdge,
+            QDemonRenderTextureCoordOp wrapR = QDemonRenderTextureCoordOp::ClampToEdge,
             qint32 minLod = -1000,
             qint32 maxLod = 1000,
             float lodBias = 0.0,
@@ -303,11 +303,11 @@ public:
 
     void updateSampler(QDemonRenderBackendSamplerObject so,
                        QDemonRenderTextureTargetType target,
-                       QDemonRenderTextureMinifyingOp::Enum minFilter = QDemonRenderTextureMinifyingOp::Linear,
-                       QDemonRenderTextureMagnifyingOp::Enum magFilter = QDemonRenderTextureMagnifyingOp::Linear,
-                       QDemonRenderTextureCoordOp::Enum wrapS = QDemonRenderTextureCoordOp::ClampToEdge,
-                       QDemonRenderTextureCoordOp::Enum wrapT = QDemonRenderTextureCoordOp::ClampToEdge,
-                       QDemonRenderTextureCoordOp::Enum wrapR = QDemonRenderTextureCoordOp::ClampToEdge,
+                       QDemonRenderTextureMinifyingOp minFilter = QDemonRenderTextureMinifyingOp::Linear,
+                       QDemonRenderTextureMagnifyingOp magFilter = QDemonRenderTextureMagnifyingOp::Linear,
+                       QDemonRenderTextureCoordOp wrapS = QDemonRenderTextureCoordOp::ClampToEdge,
+                       QDemonRenderTextureCoordOp wrapT = QDemonRenderTextureCoordOp::ClampToEdge,
+                       QDemonRenderTextureCoordOp wrapR = QDemonRenderTextureCoordOp::ClampToEdge,
                        float minLod = -1000.0,
                        float maxLod = 1000.0,
                        float lodBias = 0.0,

@@ -62,14 +62,14 @@ namespace {
 //        AppendFlagValue(inString, GeometryEnabledStr);
 //}
 
-struct ShaderType
+enum class ShaderType
 {
-    enum Enum { Vertex, TessControl, TessEval, Fragment, Geometry, Compute };
+    Vertex, TessControl, TessEval, Fragment, Geometry, Compute
 };
 
-// inline ShaderType::Enum StringToShaderType(QString &inShaderType)
+// inline ShaderType StringToShaderType(QString &inShaderType)
 //{
-//    ShaderType::Enum retval = ShaderType::Vertex;
+//    ShaderType retval = ShaderType::Vertex;
 
 //    if (inShaderType.size() == 0)
 //        return retval;
@@ -100,7 +100,7 @@ struct ShaderType
 //    return retval;
 //}
 
-// typedef QPair<const char *, QDemonRenderContextValues::Enum> TStringToContextValuePair;
+// typedef QPair<const char *, QDemonRenderContextValues> TStringToContextValuePair;
 
 /*GLES2	= 1 << 0,
 GL2		= 1 << 1,
@@ -214,7 +214,7 @@ struct ShaderCache : public QDemonShaderCacheInterface
         return nullptr;
     }
 
-    void addBackwardCompatibilityDefines(ShaderType::Enum shaderType)
+    void addBackwardCompatibilityDefines(ShaderType shaderType)
     {
         if (shaderType == ShaderType::Vertex || shaderType == ShaderType::TessControl
             || shaderType == ShaderType::TessEval || shaderType == ShaderType::Geometry) {
@@ -231,7 +231,7 @@ struct ShaderCache : public QDemonShaderCacheInterface
         }
     }
 
-    void addShaderExtensionStrings(ShaderType::Enum shaderType, bool isGLES)
+    void addShaderExtensionStrings(ShaderType shaderType, bool isGLES)
     {
         if (isGLES) {
             if (m_renderContext->isStandardDerivativesSupported())
@@ -273,7 +273,7 @@ struct ShaderCache : public QDemonShaderCacheInterface
 
     void addShaderPreprocessor(QByteArray &str,
                                const QByteArray &inKey,
-                               ShaderType::Enum shaderType,
+                               ShaderType shaderType,
                                const QVector<QDemonShaderPreprocessorFeature> &inFeatures)
     {
         // Don't use shading language version returned by the driver as it might
@@ -628,7 +628,7 @@ struct ShaderCache : public QDemonShaderCacheInterface
 
         //                                        shaderTypeString.assign(
         //                                                    theReader->GetElementName().c_str());
-        //                                        ShaderType::Enum shaderType =
+        //                                        ShaderType shaderType =
         //                                                StringToShaderType(shaderTypeString);
 
         //                                        if (shaderType == ShaderType::Fragment)

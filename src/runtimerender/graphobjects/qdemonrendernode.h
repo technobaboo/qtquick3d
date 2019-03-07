@@ -170,7 +170,7 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonGraphNode : public QDemonGraphObject
     // Depth-first-search index assigned and maintained by render system.
     quint32 dfsIndex;
 
-    QDemonGraphNode(QDemonGraphObjectTypes::Enum inType = QDemonGraphObjectTypes::Node);
+    QDemonGraphNode(QDemonGraphObjectType inType = QDemonGraphObjectType::Node);
     QDemonGraphNode(const QDemonGraphNode &inCloningObject);
     ~QDemonGraphNode() {}
 

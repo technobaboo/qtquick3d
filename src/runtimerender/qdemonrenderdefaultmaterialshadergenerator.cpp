@@ -432,7 +432,7 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
         }
     }
 
-    void outputSpecularEquation(DefaultMaterialSpecularModel::Enum inSpecularModel,
+    void outputSpecularEquation(DefaultMaterialSpecularModel inSpecularModel,
                                 QDemonShaderStageGeneratorInterface &fragmentShader,
                                 const QString &inLightDir,
                                 const QString &inLightSpecColor)
@@ -536,7 +536,7 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
         m_shadowControlStem.append("_control");
     }
 
-    void addShadowMapContribution(QDemonShaderStageGeneratorInterface &inLightShader, quint32 lightIndex, RenderLightTypes::Enum inType)
+    void addShadowMapContribution(QDemonShaderStageGeneratorInterface &inLightShader, quint32 lightIndex, RenderLightTypes inType)
     {
         setupShadowMapVariableNames(lightIndex);
 
@@ -807,7 +807,7 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
         theShaderProps.m_size.set(QVector2D(imageTexture->getTextureDetails().width, imageTexture->getTextureDetails().height));
     }
 
-    void generateShadowMapOcclusion(quint32 lightIdx, bool inShadowEnabled, RenderLightTypes::Enum inType)
+    void generateShadowMapOcclusion(quint32 lightIdx, bool inShadowEnabled, RenderLightTypes inType)
     {
         if (inShadowEnabled) {
             vertexGenerator().generateWorldPosition();
@@ -1456,7 +1456,7 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
                                                         const QByteArray &inVertexPipelineName,
                                                         const QByteArray &) override
     {
-        Q_ASSERT(inMaterial.type == QDemonGraphObjectTypes::DefaultMaterial);
+        Q_ASSERT(inMaterial.type == QDemonGraphObjectType::DefaultMaterial);
         m_currentMaterial = static_cast<const QDemonRenderDefaultMaterial *>(&inMaterial);
         m_currentKey = &inShaderDescription;
         m_currentPipeline = static_cast<QDemonDefaultMaterialVertexPipelineInterface *>(&inVertexPipeline);
@@ -1624,8 +1624,8 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
 
         if (theLightProbe) {
             if (theLightProbe->m_textureData.m_texture) {
-                QDemonRenderTextureCoordOp::Enum theHorzLightProbeTilingMode = QDemonRenderTextureCoordOp::Repeat;
-                QDemonRenderTextureCoordOp::Enum theVertLightProbeTilingMode = theLightProbe->m_verticalTilingMode;
+                QDemonRenderTextureCoordOp theHorzLightProbeTilingMode = QDemonRenderTextureCoordOp::Repeat;
+                QDemonRenderTextureCoordOp theVertLightProbeTilingMode = theLightProbe->m_verticalTilingMode;
                 theLightProbe->m_textureData.m_texture->setTextureWrapS(theHorzLightProbeTilingMode);
                 theLightProbe->m_textureData.m_texture->setTextureWrapT(theVertLightProbeTilingMode);
                 const QMatrix4x4 &textureTransform = theLightProbe->m_textureTransform;
@@ -1816,7 +1816,7 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
                                const QDemonLayerGlobalRenderProperties &inRenderProperties) override
     {
         const QDemonRenderDefaultMaterial &theMaterial(static_cast<const QDemonRenderDefaultMaterial &>(inMaterial));
-        Q_ASSERT(inMaterial.type == QDemonGraphObjectTypes::DefaultMaterial);
+        Q_ASSERT(inMaterial.type == QDemonGraphObjectType::DefaultMaterial);
 
         setGlobalProperties(inProgram,
                             inRenderProperties.layer,

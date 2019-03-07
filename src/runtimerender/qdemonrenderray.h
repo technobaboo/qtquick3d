@@ -38,13 +38,11 @@
 #include <QtGui/QMatrix4x4>
 
 QT_BEGIN_NAMESPACE
-struct QDemonRenderBasisPlanes
+enum class QDemonRenderBasisPlanes
 {
-    enum Enum {
-        XY = 0,
-        YZ,
-        XZ,
-    };
+    XY,
+    YZ,
+    XZ,
 };
 
 struct QDemonRenderRayIntersectionResult
@@ -73,7 +71,7 @@ struct QDemonRenderRay
 
     QDemonOption<QVector2D> getRelative(const QMatrix4x4 &inGlobalTransform,
                                         const QDemonBounds3 &inBounds,
-                                        QDemonRenderBasisPlanes::Enum inPlane) const;
+                                        QDemonRenderBasisPlanes inPlane) const;
 
     QDemonOption<QVector2D> getRelativeXY(const QMatrix4x4 &inGlobalTransform, const QDemonBounds3 &inBounds) const
     {

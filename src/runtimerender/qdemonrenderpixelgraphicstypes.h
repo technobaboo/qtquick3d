@@ -42,21 +42,19 @@ QT_BEGIN_NAMESPACE
 // screen
 // with coordinates increasing to the right and up.  This is opposite most window systems but it
 // preserves the normal openGL assumptions about viewports and positive Y going up in general.
-struct QDemonGTypes
+enum class QDemonGTypes
 {
-    enum Enum {
-        UnknownVGType = 0,
-        Layer,
-        Rect,
-        VertLine,
-        HorzLine,
-    };
+    UnknownVGType = 0,
+    Layer,
+    Rect,
+    VertLine,
+    HorzLine,
 };
 
 struct QDemonPGGraphObject
 {
-    QDemonGTypes::Enum type;
-    constexpr QDemonPGGraphObject(QDemonGTypes::Enum inType) : type(inType) {}
+    QDemonGTypes type;
+    constexpr QDemonPGGraphObject(QDemonGTypes inType) : type(inType) {}
 };
 
 struct QDemonPGRect : public QDemonPGGraphObject

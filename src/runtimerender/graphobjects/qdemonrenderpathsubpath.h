@@ -42,7 +42,7 @@ struct QDemonPathSubPath : public QDemonGraphObject
     bool m_closed;
 
     QDemonPathSubPath()
-        : QDemonGraphObject(QDemonGraphObjectTypes::PathSubPath), m_path(nullptr), m_nextSubPath(nullptr), m_closed(false)
+        : QDemonGraphObject(QDemonGraphObjectType::PathSubPath), m_path(nullptr), m_nextSubPath(nullptr), m_closed(false)
     {
     }
 };

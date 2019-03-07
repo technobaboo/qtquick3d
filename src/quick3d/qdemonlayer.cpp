@@ -650,32 +650,32 @@ QDemonGraphObject *QDemonLayer::updateSpatialNode(QDemonGraphObject *node)
     if (m_dirtyAttributes & RenderTarget)
         layerNode->texturePath = m_texturePath;
     if (m_dirtyAttributes & AntiAliasing) {
-        layerNode->progressiveAAMode = AAModeValues::Enum(m_progressiveAAMode);
-        layerNode->multisampleAAMode = AAModeValues::Enum(m_multisampleAAMode);
+        layerNode->progressiveAAMode = AAModeValues(m_progressiveAAMode);
+        layerNode->multisampleAAMode = AAModeValues(m_multisampleAAMode);
         layerNode->temporalAAEnabled = m_temporalAAEnabled;
     }
 
     if (m_dirtyAttributes & Background) {
-        layerNode->background = LayerBackground::Enum(m_backgroundMode);
+        layerNode->background = LayerBackground(m_backgroundMode);
         layerNode->clearColor = QVector3D(m_clearColor.redF(), m_clearColor.greenF(), m_clearColor.blueF());
     }
     if (m_dirtyAttributes & Layout) {
         layerNode->m_height = m_height;
         layerNode->m_width = m_width;
-        layerNode->blendType = LayerBlendTypes::Enum(m_blendType);
-        layerNode->horizontalFieldValues = HorizontalFieldValues::Enum(m_horizontalFieldValue);
+        layerNode->blendType = LayerBlendTypes(m_blendType);
+        layerNode->horizontalFieldValues = HorizontalFieldValues(m_horizontalFieldValue);
         layerNode->m_left = m_left;
-        layerNode->leftUnits = LayerUnitTypes::Enum(m_leftUnits);
+        layerNode->leftUnits = LayerUnitTypes(m_leftUnits);
         layerNode->m_right = m_right;
-        layerNode->rightUnits = LayerUnitTypes::Enum(m_rightUnits);
+        layerNode->rightUnits = LayerUnitTypes(m_rightUnits);
         layerNode->m_top = m_top;
-        layerNode->topUnits = LayerUnitTypes::Enum(m_topUnits);
+        layerNode->topUnits = LayerUnitTypes(m_topUnits);
         layerNode->m_bottom = m_bottom;
-        layerNode->bottomUnits = LayerUnitTypes::Enum(m_bottomUnits);
+        layerNode->bottomUnits = LayerUnitTypes(m_bottomUnits);
         layerNode->m_width = m_width;
-        layerNode->widthUnits = LayerUnitTypes::Enum(m_widthUnits);
+        layerNode->widthUnits = LayerUnitTypes(m_widthUnits);
         layerNode->m_height = m_height;
-        layerNode->heightUnits = LayerUnitTypes::Enum(m_heightUnits);
+        layerNode->heightUnits = LayerUnitTypes(m_heightUnits);
     }
 
     if (m_dirtyAttributes & AmbientOcclusion) {

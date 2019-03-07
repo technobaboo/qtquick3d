@@ -35,26 +35,25 @@
 
 QT_BEGIN_NAMESPACE
 
-struct QDemonImageMapTypes
+enum class QDemonImageMapTypes
 {
-    enum Enum {
-        Unknown = 0,
-        Diffuse = 1,
-        Opacity = 2,
-        Specular = 3,
-        Emissive = 4,
-        Bump = 5,
-        SpecularAmountMap = 6,
-        Normal = 7,
-        Displacement = 8,
-        Translucency = 9,
-        LightmapIndirect = 10,
-        LightmapRadiosity = 11,
-        LightmapShadow = 12,
-        Roughness = 13,
-    };
+    Unknown = 0,
+    Diffuse = 1,
+    Opacity = 2,
+    Specular = 3,
+    Emissive = 4,
+    Bump = 5,
+    SpecularAmountMap = 6,
+    Normal = 7,
+    Displacement = 8,
+    Translucency = 9,
+    LightmapIndirect = 10,
+    LightmapRadiosity = 11,
+    LightmapShadow = 12,
+    Roughness = 13,
 };
 
+inline uint qHash(QDemonImageMapTypes t, uint) { return qHash(static_cast<uint>(t)); }
 /**
  *	Some precomputed information on a given image.  When generating a renderable, the shader
  *	generator goes through all the possible images on a material and for each valid image
@@ -62,10 +61,10 @@ struct QDemonImageMapTypes
  */
 struct QDemonRenderableImage
 {
-    QDemonImageMapTypes::Enum m_mapType;
+    QDemonImageMapTypes m_mapType;
     QDemonRenderImage &m_image;
     QDemonRenderableImage *m_nextImage;
-    QDemonRenderableImage(QDemonImageMapTypes::Enum inMapType, QDemonRenderImage &inImage)
+    QDemonRenderableImage(QDemonImageMapTypes inMapType, QDemonRenderImage &inImage)
         : m_mapType(inMapType), m_image(inImage), m_nextImage(nullptr)
     {
     }

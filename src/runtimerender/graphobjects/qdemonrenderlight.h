@@ -33,21 +33,19 @@
 
 QT_BEGIN_NAMESPACE
 
-struct RenderLightTypes
+enum class RenderLightTypes
 {
-    enum Enum {
-        Unknown = 0,
-        Directional,
-        Point,
-        Area,
-    };
+    Unknown = 0,
+    Directional,
+    Point,
+    Area,
 };
 
 struct QDemonRenderImage;
 
 struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderLight : public QDemonGraphNode
 {
-    RenderLightTypes::Enum m_lightType; // Directional
+    RenderLightTypes m_lightType; // Directional
     QDemonGraphNode *m_scope;
     QVector3D m_diffuseColor; // colors are 0-1 normalized
     QVector3D m_specularColor; // colors are 0-1 normalized

@@ -33,47 +33,41 @@
 #include <QtDemonRuntimeRender/qdemonrendernode.h>
 
 QT_BEGIN_NAMESPACE
-struct PathCapping
+enum class PathCapping
 {
-    enum Enum {
-        Noner = 0,
-        Taper = 1,
-    };
+    Noner = 0,
+    Taper = 1,
 };
 
-struct PathTypes
+enum class PathTypes
 {
-    enum Enum {
-        Noner = 0,
-        Painted,
-        Geometry,
-    };
+    Noner = 0,
+    Painted,
+    Geometry,
 };
 
-struct PathPaintStyles
+enum class PathPaintStyles
 {
-    enum Enum {
-        Noner = 0,
-        FilledAndStroked,
-        Filled,
-        Stroked,
-    };
+    Noner = 0,
+    FilledAndStroked,
+    Filled,
+    Stroked,
 };
 
 struct QDemonPathSubPath;
 
 struct QDemonPath : public QDemonGraphNode
 {
-    PathTypes::Enum m_pathType = PathTypes::Geometry;
+    PathTypes m_pathType = PathTypes::Geometry;
     float m_width = 5.0f;
     float m_linearError = 100.0f;
     float m_edgeTessAmount = 8.0f;
     float m_innerTessAmount = 1.0f;
-    PathCapping::Enum m_beginCapping = PathCapping::Noner;
+    PathCapping m_beginCapping = PathCapping::Noner;
     float m_beginCapOffset = 10.f;
     float m_beginCapOpacity = 0.2f;
     float m_beginCapWidth = 0.0f;
-    PathCapping::Enum m_endCapping = PathCapping::Noner;
+    PathCapping m_endCapping = PathCapping::Noner;
     float m_endCapOffset = 10.0f;
     float m_endCapOpacity = 0.2f;
     float m_endCapWidth = 0.0f;
@@ -83,11 +77,11 @@ struct QDemonPath : public QDemonGraphNode
     // or they can link to a path buffer that defines the path.
     QDemonPathSubPath *m_firstSubPath = nullptr;
     QString m_pathBuffer;
-    PathPaintStyles::Enum m_paintStyle = PathPaintStyles::Stroked;
+    PathPaintStyles m_paintStyle = PathPaintStyles::Stroked;
 
     bool m_wireframeMode = false;
     // Loaded onto the card just as data.
-    QDemonPath() : QDemonGraphNode(QDemonGraphObjectTypes::Path) {}
+    QDemonPath() : QDemonGraphNode(QDemonGraphObjectType::Path) {}
 
     bool isStroked() const
     {

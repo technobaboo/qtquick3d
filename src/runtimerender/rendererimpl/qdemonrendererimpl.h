@@ -301,7 +301,7 @@ public:
                                                  const QVector2D &inViewportDimensions,
                                                  const QVector2D &inMouseCoords,
                                                  QDemonDataRef<QDemonGraphObject *> inMapperObjects,
-                                                 QDemonRenderBasisPlanes::Enum inPlane) override;
+                                                 QDemonRenderBasisPlanes inPlane) override;
 
     virtual QDemonRenderPickResult pickOffscreenLayer(QDemonRenderLayer &inLayer,
                                                       const QVector2D &inViewportDimensions,
@@ -361,24 +361,24 @@ public:
     QDemonRef<QDemonDefaultAoPassShader> getFakeCubeDepthShader(TShaderFeatureSet inFeatureSet);
     QDemonRef<QDemonDefaultMaterialRenderableDepthShader> getRenderableDepthShader();
 
-    QDemonRef<QDemonRenderableDepthPrepassShader> getParaboloidDepthShader(TessModeValues::Enum inTessMode);
+    QDemonRef<QDemonRenderableDepthPrepassShader> getParaboloidDepthShader(TessModeValues inTessMode);
     QDemonRef<QDemonRenderableDepthPrepassShader> getParaboloidDepthNoTessShader();
     QDemonRef<QDemonRenderableDepthPrepassShader> getParaboloidDepthTessLinearShader();
     QDemonRef<QDemonRenderableDepthPrepassShader> getParaboloidDepthTessPhongShader();
     QDemonRef<QDemonRenderableDepthPrepassShader> getParaboloidDepthTessNPatchShader();
-    QDemonRef<QDemonRenderableDepthPrepassShader> getCubeShadowDepthShader(TessModeValues::Enum inTessMode);
+    QDemonRef<QDemonRenderableDepthPrepassShader> getCubeShadowDepthShader(TessModeValues inTessMode);
     QDemonRef<QDemonRenderableDepthPrepassShader> getCubeDepthNoTessShader();
     QDemonRef<QDemonRenderableDepthPrepassShader> getCubeDepthTessLinearShader();
     QDemonRef<QDemonRenderableDepthPrepassShader> getCubeDepthTessPhongShader();
     QDemonRef<QDemonRenderableDepthPrepassShader> getCubeDepthTessNPatchShader();
-    QDemonRef<QDemonRenderableDepthPrepassShader> getOrthographicDepthShader(TessModeValues::Enum inTessMode);
+    QDemonRef<QDemonRenderableDepthPrepassShader> getOrthographicDepthShader(TessModeValues inTessMode);
     QDemonRef<QDemonRenderableDepthPrepassShader> getOrthographicDepthNoTessShader();
     QDemonRef<QDemonRenderableDepthPrepassShader> getOrthographicDepthTessLinearShader();
     QDemonRef<QDemonRenderableDepthPrepassShader> getOrthographicDepthTessPhongShader();
     QDemonRef<QDemonRenderableDepthPrepassShader> getOrthographicDepthTessNPatchShader();
 
     QDemonRef<QDemonRenderableDepthPrepassShader> getDepthPrepassShader(bool inDisplaced);
-    QDemonRef<QDemonRenderableDepthPrepassShader> getDepthTessPrepassShader(TessModeValues::Enum inTessMode, bool inDisplaced);
+    QDemonRef<QDemonRenderableDepthPrepassShader> getDepthTessPrepassShader(TessModeValues inTessMode, bool inDisplaced);
     QDemonRef<QDemonRenderableDepthPrepassShader> getDepthTessLinearPrepassShader(bool inDisplaced);
     QDemonRef<QDemonRenderableDepthPrepassShader> getDepthTessPhongPrepassShader();
     QDemonRef<QDemonRenderableDepthPrepassShader> getDepthTessNPatchPrepassShader();
@@ -400,7 +400,7 @@ public:
     QDemonRef<QDemonShadowmapPreblurShader> getOrthoShadowBlurYShader();
 
 #ifdef ADVANCED_BLEND_SW_FALLBACK
-    QDemonRef<QDemonAdvancedModeBlendShader> getAdvancedBlendModeShader(AdvancedBlendModes::Enum blendMode);
+    QDemonRef<QDemonAdvancedModeBlendShader> getAdvancedBlendModeShader(AdvancedBlendModes blendMode);
     QDemonRef<QDemonAdvancedModeBlendShader> getOverlayBlendModeShader();
     QDemonRef<QDemonAdvancedModeBlendShader> getColorBurnBlendModeShader();
     QDemonRef<QDemonAdvancedModeBlendShader> getColorDodgeBlendModeShader();
@@ -462,7 +462,7 @@ public:
     // or orthographic mode if you would like to.
     QDemonWidgetRenderInformation getWidgetRenderInformation(QDemonGraphNode &inNode,
                                                                      const QVector3D &inPos,
-                                                                     RenderWidgetModes::Enum inWidgetMode);
+                                                                     RenderWidgetModes inWidgetMode);
 
     QDemonOption<QVector2D> getLayerMouseCoords(QDemonRenderLayer &inLayer,
                                                 const QVector2D &inMouseCoords,

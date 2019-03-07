@@ -45,29 +45,25 @@ struct QDemonCameraGlobalCalculationResult
     bool m_computeFrustumSucceeded /* = true */;
 };
 
-struct CameraScaleModes
+enum class CameraScaleModes
 {
-    enum Enum {
-        Fit = 0,
-        SameSize,
-        FitHorizontal,
-        FitVertical,
-    };
+    Fit = 0,
+    SameSize,
+    FitHorizontal,
+    FitVertical,
 };
 
-struct CameraScaleAnchors
+enum class CameraScaleAnchors
 {
-    enum Enum {
-        Center = 0,
-        North,
-        NorthEast,
-        East,
-        SouthEast,
-        South,
-        SouthWest,
-        West,
-        NorthWest,
-    };
+    Center = 0,
+    North,
+    NorthEast,
+    East,
+    SouthEast,
+    South,
+    SouthWest,
+    West,
+    NorthWest,
 };
 
 struct QDemonCuboidRect
@@ -100,8 +96,8 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderCamera : public QDemonGraphNode
     bool fovHorizontal;
 
     QMatrix4x4 projection;
-    CameraScaleModes::Enum scaleMode;
-    CameraScaleAnchors::Enum scaleAnchor;
+    CameraScaleModes scaleMode;
+    CameraScaleAnchors scaleAnchor;
     // Record some values from creating the projection matrix
     // to use during mouse picking.
     QVector2D frustumScale;

@@ -41,15 +41,13 @@ class QDemonGraphObjectPickQueryInterface;
 class QDemonRenderContextInterface;
 class QDemonRenderContext;
 
-struct QDemonOffscreenRendererDepthValues
+enum class QDemonOffscreenRendererDepthValues
 {
-    enum Enum {
-        NoDepthBuffer = 0,
-        Depth16, // 16 bit depth buffer
-        Depth24, // 24 bit depth buffer
-        Depth32, // 32 bit depth buffer
-        Depth24Stencil8 // 24 bit depth buffer 8 bit stencil buffer
-    };
+    NoDepthBuffer = 0,
+    Depth16, // 16 bit depth buffer
+    Depth24, // 24 bit depth buffer
+    Depth32, // 32 bit depth buffer
+    Depth24Stencil8 // 24 bit depth buffer 8 bit stencil buffer
 };
 
 struct QDemonOffscreenRendererEnvironment
@@ -57,9 +55,9 @@ struct QDemonOffscreenRendererEnvironment
     qint32 width;
     qint32 height;
     QDemonRenderTextureFormat format;
-    QDemonOffscreenRendererDepthValues::Enum depth;
+    QDemonOffscreenRendererDepthValues depth;
     bool stencil;
-    AAModeValues::Enum msaaMode;
+    AAModeValues msaaMode;
 
     QDemonOffscreenRendererEnvironment()
         : width(0)
@@ -84,9 +82,9 @@ struct QDemonOffscreenRendererEnvironment
     QDemonOffscreenRendererEnvironment(qint32 inWidth,
                                        qint32 inHeight,
                                        QDemonRenderTextureFormat inFormat,
-                                       QDemonOffscreenRendererDepthValues::Enum inDepth,
+                                       QDemonOffscreenRendererDepthValues inDepth,
                                        bool inStencil,
-                                       AAModeValues::Enum inAAMode)
+                                       AAModeValues inAAMode)
         : width(inWidth), height(inHeight), format(inFormat), depth(inDepth), stencil(inStencil), msaaMode(inAAMode)
     {
     }

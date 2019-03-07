@@ -432,10 +432,10 @@ QDemonGraphObject *QDemonDefaultMaterial::updateSpatialNode(QDemonGraphObject *n
     QDemonRenderDefaultMaterial *material = static_cast<QDemonRenderDefaultMaterial *>(node);
 
     if (m_dirtyAttributes & LightingModeDirty)
-        material->lighting = DefaultMaterialLighting::Enum(m_lighting);
+        material->lighting = DefaultMaterialLighting(m_lighting);
 
     if (m_dirtyAttributes & BlendModeDirty)
-        material->blendMode = DefaultMaterialBlendMode::Enum(m_blendMode);
+        material->blendMode = DefaultMaterialBlendMode(m_blendMode);
 
     if (m_dirtyAttributes & DiffuseDirty) {
         material->diffuseColor = QVector3D(m_diffuseColor.redF(), m_diffuseColor.greenF(), m_diffuseColor.blueF());
@@ -477,7 +477,7 @@ QDemonGraphObject *QDemonDefaultMaterial::updateSpatialNode(QDemonGraphObject *n
         else
             material->specularMap = m_specularMap->getRenderImage();
 
-        material->specularModel = DefaultMaterialSpecularModel::Enum(m_specularModel);
+        material->specularModel = DefaultMaterialSpecularModel(m_specularModel);
         material->specularTint = QVector3D(m_specularTint.redF(), m_specularTint.greenF(), m_specularTint.blueF());
         material->ior = m_indexOfRefraction;
         material->fresnelPower = m_fresnelPower;

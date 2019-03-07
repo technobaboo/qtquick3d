@@ -877,7 +877,7 @@ void QDemonLayerRenderData::runRenderPass(TRenderRenderableFunction inRenderFn,
                     // SW fallback for advanced blend modes.
                     // Renders transparent objects to a separate FBO and blends them in shader
                     // with the opaque items and background.
-                    DefaultMaterialBlendMode::Enum blendMode = DefaultMaterialBlendMode::Enum::Normal;
+                    DefaultMaterialBlendMode blendMode = DefaultMaterialBlendMode::Normal;
                     if (theObject.renderableFlags.isDefaultMaterialMeshSubset())
                         blendMode = static_cast<QDemonSubsetRenderable &>(theObject).getBlendingMode();
                     bool useBlendFallback = (blendMode == DefaultMaterialBlendMode::Overlay
@@ -914,7 +914,7 @@ void QDemonLayerRenderData::runRenderPass(TRenderRenderableFunction inRenderFn,
                 QDemonRenderableObject &theObject(*theTransparentObjects[idx]);
                 if (!(theObject.renderableFlags.isCompletelyTransparent())) {
 #ifdef ADVANCED_BLEND_SW_FALLBACK
-                    DefaultMaterialBlendMode::Enum blendMode = DefaultMaterialBlendMode::Enum::Normal;
+                    DefaultMaterialBlendMode blendMode = DefaultMaterialBlendMode::Normal;
                     if (theObject.renderableFlags.isDefaultMaterialMeshSubset())
                         blendMode = static_cast<QDemonSubsetRenderable &>(theObject).getBlendingMode();
                     bool useBlendFallback = (blendMode == DefaultMaterialBlendMode::Overlay
@@ -1020,7 +1020,7 @@ void QDemonLayerRenderData::renderRenderWidgets()
 #ifdef ADVANCED_BLEND_SW_FALLBACK
 void QDemonLayerRenderData::blendAdvancedEquationSwFallback(const QDemonRef<QDemonRenderTexture2D> &drawTexture,
                                                             const QDemonRef<QDemonRenderTexture2D> &layerTexture,
-                                                            AdvancedBlendModes::Enum blendMode)
+                                                            AdvancedBlendModes blendMode)
 {
     auto theContext = renderer->getContext();
     QDemonRef<QDemonAdvancedModeBlendShader> shader = renderer->getAdvancedBlendModeShader(blendMode);
@@ -1062,11 +1062,11 @@ void QDemonLayerRenderData::setupDrawFB(bool depthEnabled)
     theRenderContext->clear(QDemonRenderClearValues::Color);
     theRenderContext->setClearColor(originalClrColor);
 }
-void QDemonLayerRenderData::blendAdvancedToFB(DefaultMaterialBlendMode::Enum blendMode, bool depthEnabled, QDemonResourceFrameBuffer *theFB)
+void QDemonLayerRenderData::blendAdvancedToFB(DefaultMaterialBlendMode blendMode, bool depthEnabled, QDemonResourceFrameBuffer *theFB)
 {
     auto theRenderContext = renderer->getContext();
     QRect theViewport = renderer->getDemonContext()->getRenderList()->getViewport();
-    AdvancedBlendModes::Enum advancedMode;
+    AdvancedBlendModes advancedMode;
 
     switch (blendMode) {
     case DefaultMaterialBlendMode::Overlay:
@@ -1905,7 +1905,7 @@ void QDemonLayerRenderData::runnableRenderToViewport(const QDemonRef<QDemonRende
                                          QDemonRenderTextureOrRenderBuffer(blendResultTexture));
                         theContext->setRenderTarget(resultFB);
 
-                        AdvancedBlendModes::Enum advancedMode;
+                        AdvancedBlendModes advancedMode;
                         switch (layer.blendType) {
                         case LayerBlendTypes::Overlay:
                             advancedMode = AdvancedBlendModes::Overlay;
@@ -2071,7 +2071,7 @@ struct QDemonLayerRenderToTextureRunnable : public QDemonRenderTask
     void run() override { m_data.renderToTexture(); }
 };
 
-static inline QDemonOffscreenRendererDepthValues::Enum getOffscreenRendererDepthValue(QDemonRenderTextureFormat inBufferFormat)
+static inline QDemonOffscreenRendererDepthValues getOffscreenRendererDepthValue(QDemonRenderTextureFormat inBufferFormat)
 {
     switch (inBufferFormat.format) {
     case QDemonRenderTextureFormat::Depth32:
@@ -2089,7 +2089,7 @@ static inline QDemonOffscreenRendererDepthValues::Enum getOffscreenRendererDepth
 
 QDemonOffscreenRendererEnvironment QDemonLayerRenderData::createOffscreenRenderEnvironment()
 {
-    QDemonOffscreenRendererDepthValues::Enum theOffscreenDepth(getOffscreenRendererDepthValue(getDepthBufferFormat()));
+    QDemonOffscreenRendererDepthValues theOffscreenDepth(getOffscreenRendererDepthValue(getDepthBufferFormat()));
     QRect theViewport = renderer->getDemonContext()->getRenderList()->getViewport();
     return QDemonOffscreenRendererEnvironment(theViewport.width(),
                                               theViewport.height(),

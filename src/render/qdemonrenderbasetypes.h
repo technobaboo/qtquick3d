@@ -872,93 +872,100 @@ enum class QDemonRenderTextureCompareOp
     AlwaysTrue,
 };
 
-struct QDemonRenderTextureMinifyingOp
+enum class QDemonRenderTextureMinifyingOp
 {
-    enum Enum {
-        Unknown = 0,
-        Nearest,
-        Linear,
-        NearestMipmapNearest,
-        LinearMipmapNearest,
-        NearestMipmapLinear,
-        LinearMipmapLinear
-    };
-    const char *toString(QDemonRenderTextureMinifyingOp::Enum value)
-    {
-        switch (value) {
-        case Nearest:
-            return "Nearest";
-        case Linear:
-            return "Linear";
-        case NearestMipmapNearest:
-            return "NearestMipmapNearest";
-        case LinearMipmapNearest:
-            return "LinearMipmapNearest";
-        case NearestMipmapLinear:
-            return "NearestMipmapLinear";
-        case LinearMipmapLinear:
-            return "LinearMipmapLinear";
-        default:
-            break;
-        }
-        return "Unknown";
-    }
+    Unknown = 0,
+    Nearest,
+    Linear,
+    NearestMipmapNearest,
+    LinearMipmapNearest,
+    NearestMipmapLinear,
+    LinearMipmapLinear
 };
+inline const char *toString(QDemonRenderTextureMinifyingOp value)
+{
+    switch (value) {
+    case QDemonRenderTextureMinifyingOp::Nearest:
+        return "Nearest";
+    case QDemonRenderTextureMinifyingOp::Linear:
+        return "Linear";
+    case QDemonRenderTextureMinifyingOp::NearestMipmapNearest:
+        return "NearestMipmapNearest";
+    case QDemonRenderTextureMinifyingOp::LinearMipmapNearest:
+        return "LinearMipmapNearest";
+    case QDemonRenderTextureMinifyingOp::NearestMipmapLinear:
+        return "NearestMipmapLinear";
+    case QDemonRenderTextureMinifyingOp::LinearMipmapLinear:
+        return "LinearMipmapLinear";
+    default:
+        break;
+    }
+    return "Unknown";
+}
 
-struct QDemonRenderTextureMagnifyingOp
+enum class QDemonRenderTextureMagnifyingOp
 {
-    enum Enum { Unknown = 0, Nearest, Linear };
-    const char *toString(QDemonRenderTextureMinifyingOp::Enum value)
-    {
-        switch (value) {
-        case QDemonRenderTextureMinifyingOp::Nearest:
-            return "Nearest";
-        case QDemonRenderTextureMinifyingOp::Linear:
-            return "Linear";
-        default:
-            break;
-        }
-        return "Unknown";
-    }
+    Unknown = 0,
+    Nearest,
+    Linear
 };
+inline const char *toString(QDemonRenderTextureMagnifyingOp value)
+{
+    switch (value) {
+    case QDemonRenderTextureMagnifyingOp::Nearest:
+        return "Nearest";
+    case QDemonRenderTextureMagnifyingOp::Linear:
+        return "Linear";
+    default:
+        break;
+    }
+    return "Unknown";
+}
 
-struct QDemonRenderTextureCoordOp
+enum class QDemonRenderTextureCoordOp
 {
-    enum Enum { Unknown = 0, ClampToEdge, MirroredRepeat, Repeat };
-    const char *toString(Enum value)
-    {
-        switch (value) {
-        case ClampToEdge:
-            return "ClampToEdge";
-        case MirroredRepeat:
-            return "MirroredRepeat";
-        case Repeat:
-            return "Repeat";
-        default:
-            break;
-        }
-        return "Unknown";
-    }
-};
 
-struct QDemonRenderHint
-{
-    enum Enum { Unknown = 0, Fastest, Nicest, Unspecified };
-    static const char *toString(Enum value)
-    {
-        switch (value) {
-        case Fastest:
-            return "Fastest";
-        case Nicest:
-            return "Nicest";
-        case Unspecified:
-            return "Unspecified";
-        default:
-            break;
-        }
-        return "Unknown";
-    }
+    Unknown = 0,
+    ClampToEdge,
+    MirroredRepeat,
+    Repeat
 };
+inline const char *toString(QDemonRenderTextureCoordOp value)
+{
+    switch (value) {
+    case QDemonRenderTextureCoordOp::ClampToEdge:
+        return "ClampToEdge";
+    case QDemonRenderTextureCoordOp::MirroredRepeat:
+        return "MirroredRepeat";
+    case QDemonRenderTextureCoordOp::Repeat:
+        return "Repeat";
+    default:
+        break;
+    }
+    return "Unknown";
+}
+
+enum class QDemonRenderHint
+{
+    Unknown = 0,
+    Fastest,
+    Nicest,
+    Unspecified
+};
+inline const char *toString(QDemonRenderHint value)
+{
+    switch (value) {
+    case QDemonRenderHint::Fastest:
+        return "Fastest";
+    case QDemonRenderHint::Nicest:
+        return "Nicest";
+    case QDemonRenderHint::Unspecified:
+        return "Unspecified";
+    default:
+        break;
+    }
+    return "Unknown";
+}
 
 class QDemonRenderImplemented
 {

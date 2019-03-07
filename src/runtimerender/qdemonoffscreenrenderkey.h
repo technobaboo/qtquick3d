@@ -41,13 +41,11 @@ struct DestructTraits<QString>
     void destruct(QString &) {}
 };
 
-struct OffscreenRendererKeyTypes
+enum class OffscreenRendererKeyTypes
 {
-    enum Enum {
-        NoOffscreenRendererKey = 0,
-        RegisteredString,
-        VoidPtr,
-    };
+    NoOffscreenRendererKey = 0,
+    RegisteredString,
+    VoidPtr,
 };
 
 template<typename TDType>
@@ -57,31 +55,31 @@ struct QDemonOffscreenRendererKeyTypeMap
 template<>
 struct QDemonOffscreenRendererKeyTypeMap<QString>
 {
-    enum { KeyType = OffscreenRendererKeyTypes::RegisteredString };
+    static const OffscreenRendererKeyTypes KeyType = OffscreenRendererKeyTypes::RegisteredString;
 };
 template<>
 struct QDemonOffscreenRendererKeyTypeMap<void *>
 {
-    enum { KeyType = OffscreenRendererKeyTypes::VoidPtr };
+    static const OffscreenRendererKeyTypes KeyType = OffscreenRendererKeyTypes::VoidPtr;
 };
 
 struct QDemonOffscreenRendererKeyUnionTraits
 {
-    typedef OffscreenRendererKeyTypes::Enum TIdType;
+    typedef OffscreenRendererKeyTypes TIdType;
     enum {
         TBufferSize = sizeof(QString),
     };
 
-    static TIdType getNoDataId() { return OffscreenRendererKeyTypes::NoOffscreenRendererKey; }
+    static OffscreenRendererKeyTypes getNoDataId() { return OffscreenRendererKeyTypes::NoOffscreenRendererKey; }
 
     template<typename TDataType>
-    static TIdType getType()
+    static OffscreenRendererKeyTypes getType()
     {
-        return static_cast<TIdType>(QDemonOffscreenRendererKeyTypeMap<TDataType>::KeyType);
+        return QDemonOffscreenRendererKeyTypeMap<TDataType>::KeyType;
     }
 
     template<typename TRetType, typename TVisitorType>
-    static TRetType visit(char *inData, TIdType inType, TVisitorType inVisitor)
+    static TRetType visit(char *inData, OffscreenRendererKeyTypes inType, TVisitorType inVisitor)
     {
         switch (inType) {
         case OffscreenRendererKeyTypes::RegisteredString:
@@ -96,7 +94,7 @@ struct QDemonOffscreenRendererKeyUnionTraits
     }
 
     template<typename TRetType, typename TVisitorType>
-    static TRetType visit(const char *inData, TIdType inType, TVisitorType inVisitor)
+    static TRetType visit(const char *inData, OffscreenRendererKeyTypes inType, TVisitorType inVisitor)
     {
         switch (inType) {
         case OffscreenRendererKeyTypes::RegisteredString:

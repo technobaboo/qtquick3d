@@ -80,7 +80,7 @@ void QDemonRenderTextureBase::setMaxLevel(qint32 value)
     }
 }
 
-void QDemonRenderTextureBase::setMinFilter(QDemonRenderTextureMinifyingOp::Enum value)
+void QDemonRenderTextureBase::setMinFilter(QDemonRenderTextureMinifyingOp value)
 {
     if (m_sampler->m_minFilter != value) {
         m_sampler->m_minFilter = value;
@@ -88,7 +88,7 @@ void QDemonRenderTextureBase::setMinFilter(QDemonRenderTextureMinifyingOp::Enum 
     }
 }
 
-void QDemonRenderTextureBase::setMagFilter(QDemonRenderTextureMagnifyingOp::Enum value)
+void QDemonRenderTextureBase::setMagFilter(QDemonRenderTextureMagnifyingOp value)
 {
     if (m_sampler->m_magFilter != value) {
         m_sampler->m_magFilter = value;
@@ -96,7 +96,7 @@ void QDemonRenderTextureBase::setMagFilter(QDemonRenderTextureMagnifyingOp::Enum
     }
 }
 
-void QDemonRenderTextureBase::setTextureWrapS(QDemonRenderTextureCoordOp::Enum value)
+void QDemonRenderTextureBase::setTextureWrapS(QDemonRenderTextureCoordOp value)
 {
     if (m_sampler->m_wrapS != value) {
         m_sampler->m_wrapS = value;
@@ -104,7 +104,7 @@ void QDemonRenderTextureBase::setTextureWrapS(QDemonRenderTextureCoordOp::Enum v
     }
 }
 
-void QDemonRenderTextureBase::setTextureWrapT(QDemonRenderTextureCoordOp::Enum value)
+void QDemonRenderTextureBase::setTextureWrapT(QDemonRenderTextureCoordOp value)
 {
     if (m_sampler->m_wrapT != value) {
         m_sampler->m_wrapT = value;

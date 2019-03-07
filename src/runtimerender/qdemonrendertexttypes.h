@@ -38,25 +38,25 @@
 
 QT_BEGIN_NAMESPACE
 
-struct TextHorizontalAlignment
+enum class TextHorizontalAlignment
 {
-    enum Enum {
-        Unknown = 0,
-        Left,
-        Center,
-        Right,
-    };
+    Unknown = 0,
+    Left,
+    Center,
+    Right,
 };
 
-struct TextVerticalAlignment
+inline uint qHash(TextHorizontalAlignment a) { return qHash(static_cast<uint>(a)); }
+
+enum class TextVerticalAlignment
 {
-    enum Enum {
-        Unknown = 0,
-        Top,
-        Middle,
-        Bottom,
-    };
+    Unknown = 0,
+    Top,
+    Middle,
+    Bottom,
 };
+
+inline uint qHash(TextVerticalAlignment a) { return qHash(static_cast<uint>(a)); }
 
 struct QDemonTextDimensions
 {
@@ -118,15 +118,15 @@ struct QDemonTextRenderInfo
     QString text;
     QString font;
     float fontSize = 24.f;
-    TextHorizontalAlignment::Enum horizontalAlignment = TextHorizontalAlignment::Center;
-    TextVerticalAlignment::Enum verticalAlignment = TextVerticalAlignment::Middle;
+    TextHorizontalAlignment horizontalAlignment = TextHorizontalAlignment::Center;
+    TextVerticalAlignment verticalAlignment = TextVerticalAlignment::Middle;
     float leading = 0; // space between lines
     float tracking = 0; // space between letters
     bool dropShadow = false;
     float dropShadowStrength = 80;
     float dropShadowOffset = 10;
-    TextHorizontalAlignment::Enum dropShadowHorizontalAlignment = TextHorizontalAlignment::Right;
-    TextVerticalAlignment::Enum dropShadowVerticalAlignment = TextVerticalAlignment::Bottom;
+    TextHorizontalAlignment dropShadowHorizontalAlignment = TextHorizontalAlignment::Right;
+    TextVerticalAlignment dropShadowVerticalAlignment = TextVerticalAlignment::Bottom;
 
     float scaleX = 0; // Pixel scale in X
     float scaleY = 0; // Pixel scale in Y

@@ -912,7 +912,7 @@ void QDemonRenderContextImpl::blitFramebuffer(qint32 srcX0,
                                               qint32 dstX1,
                                               qint32 dstY1,
                                               QDemonRenderClearFlags flags,
-                                              QDemonRenderTextureMagnifyingOp::Enum filter)
+                                              QDemonRenderTextureMagnifyingOp filter)
 {
     m_backend->blitFramebuffer(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, flags, filter);
 }

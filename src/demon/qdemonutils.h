@@ -78,16 +78,14 @@ Q_DEMON_EXPORT float degToRad(const float a);
 Q_DEMON_EXPORT double degToRad(const double a);
 
 namespace IOStream {
-struct SeekPosition
+enum class SeekPosition
 {
-    enum Enum {
-        Unknown,
-        Begin,
-        Current,
-        End,
-    };
+    Unknown,
+    Begin,
+    Current,
+    End,
 };
-qint64 Q_DEMON_EXPORT positionHelper(const QIODevice &device, qint64 offset, SeekPosition::Enum seekPosition);
+qint64 Q_DEMON_EXPORT positionHelper(const QIODevice &device, qint64 offset, SeekPosition seekPosition);
 }
 
 namespace CFileTools {

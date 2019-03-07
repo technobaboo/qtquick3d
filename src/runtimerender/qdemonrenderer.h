@@ -149,7 +149,7 @@ public:
                                                  const QVector2D &inViewportDimensions,
                                                  const QVector2D &inMouseCoords,
                                                  QDemonDataRef<QDemonGraphObject *> inMapperObjects,
-                                                 QDemonRenderBasisPlanes::Enum inIsectPlane) = 0;
+                                                 QDemonRenderBasisPlanes inIsectPlane) = 0;
 
     virtual QVector3D unprojectToPosition(QDemonGraphNode &inNode, QVector3D &inPosition, const QVector2D &inMouseVec) const = 0;
     virtual QVector3D unprojectWithDepth(QDemonGraphNode &inNode, QVector3D &inPosition, const QVector3D &inMouseVec) const = 0;

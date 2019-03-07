@@ -185,7 +185,7 @@ struct QDemonSubsetMaterialVertexPipeline : public QDemonVertexPipelineImpl
 {
     QDemonRendererImpl &renderer;
     QDemonSubsetRenderable &renderable;
-    TessModeValues::Enum tessMode;
+    TessModeValues tessMode;
 
     QDemonSubsetMaterialVertexPipeline(QDemonRendererImpl &inRenderer, QDemonSubsetRenderable &inRenderable, bool inWireframeRequested)
         : QDemonVertexPipelineImpl(inRenderer.getDemonContext()->getDefaultMaterialShaderGenerator(),
@@ -569,7 +569,7 @@ QDemonRef<QDemonRenderShaderProgram> QDemonRendererImpl::generateShader(QDemonSu
 
 // --------------  Special cases for shadows  -------------------
 
-QDemonRef<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getParaboloidDepthShader(TessModeValues::Enum inTessMode)
+QDemonRef<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getParaboloidDepthShader(TessModeValues inTessMode)
 {
     if (!m_demonContext->getRenderContext()->isTessellationSupported() || inTessMode == TessModeValues::NoTess) {
         return getParaboloidDepthNoTessShader();
@@ -803,7 +803,7 @@ QDemonRef<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getParaboloidD
     return theDepthShader.getValue();
 }
 
-QDemonRef<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getCubeShadowDepthShader(TessModeValues::Enum inTessMode)
+QDemonRef<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getCubeShadowDepthShader(TessModeValues inTessMode)
 {
     if (!m_demonContext->getRenderContext()->isTessellationSupported() || inTessMode == TessModeValues::NoTess) {
         return getCubeDepthNoTessShader();
@@ -1071,7 +1071,7 @@ QDemonRef<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getCubeDepthTe
     return theDepthShader.getValue();
 }
 
-QDemonRef<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getOrthographicDepthShader(TessModeValues::Enum inTessMode)
+QDemonRef<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getOrthographicDepthShader(TessModeValues inTessMode)
 {
     if (!m_demonContext->getRenderContext()->isTessellationSupported() || inTessMode == TessModeValues::NoTess) {
         return getOrthographicDepthNoTessShader();
@@ -1377,7 +1377,7 @@ QDemonRef<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getDepthPrepas
     return theDepthPrePassShader.getValue();
 }
 
-QDemonRef<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getDepthTessPrepassShader(TessModeValues::Enum inTessMode, bool inDisplaced)
+QDemonRef<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getDepthTessPrepassShader(TessModeValues inTessMode, bool inDisplaced)
 {
     if (!m_demonContext->getRenderContext()->isTessellationSupported() || inTessMode == TessModeValues::NoTess) {
         return getDepthPrepassShader(inDisplaced);
@@ -2500,7 +2500,7 @@ QDemonRef<QDemonShadowmapPreblurShader> QDemonRendererImpl::getOrthoShadowBlurYS
 }
 
 #ifdef ADVANCED_BLEND_SW_FALLBACK
-QDemonRef<QDemonAdvancedModeBlendShader> QDemonRendererImpl::getAdvancedBlendModeShader(AdvancedBlendModes::Enum blendMode)
+QDemonRef<QDemonAdvancedModeBlendShader> QDemonRendererImpl::getAdvancedBlendModeShader(AdvancedBlendModes blendMode)
 {
     // Select between blend equations.
     if (blendMode == AdvancedBlendModes::Overlay) {

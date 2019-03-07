@@ -307,11 +307,11 @@ void QDemonRenderBackendGLES2Impl::setTextureData2D(QDemonRenderBackendTextureOb
 
 void QDemonRenderBackendGLES2Impl::updateSampler(QDemonRenderBackendSamplerObject /* so */,
                                                  QDemonRenderTextureTargetType target,
-                                                 QDemonRenderTextureMinifyingOp::Enum minFilter,
-                                                 QDemonRenderTextureMagnifyingOp::Enum magFilter,
-                                                 QDemonRenderTextureCoordOp::Enum wrapS,
-                                                 QDemonRenderTextureCoordOp::Enum wrapT,
-                                                 QDemonRenderTextureCoordOp::Enum wrapR,
+                                                 QDemonRenderTextureMinifyingOp minFilter,
+                                                 QDemonRenderTextureMagnifyingOp magFilter,
+                                                 QDemonRenderTextureCoordOp wrapS,
+                                                 QDemonRenderTextureCoordOp wrapT,
+                                                 QDemonRenderTextureCoordOp wrapR,
                                                  float minLod,
                                                  float maxLod,
                                                  float lodBias,
@@ -400,7 +400,7 @@ qint32 QDemonRenderBackendGLES2Impl::getStencilBits() const
 
 void QDemonRenderBackendGLES2Impl::generateMipMaps(QDemonRenderBackendTextureObject to,
                                                    QDemonRenderTextureTargetType target,
-                                                   QDemonRenderHint::Enum /*genType*/)
+                                                   QDemonRenderHint /*genType*/)
 {
     GLuint texID = HandleToID_cast(GLuint, size_t, to);
     GLenum glTarget = GLConversion::fromTextureTargetToGL(target);
@@ -566,7 +566,7 @@ void QDemonRenderBackendGLES2Impl::blitFramebuffer(qint32 srcX0,
                                                    qint32 dstX1,
                                                    qint32 dstY1,
                                                    QDemonRenderClearFlags flags,
-                                                   QDemonRenderTextureMagnifyingOp::Enum filter)
+                                                   QDemonRenderTextureMagnifyingOp filter)
 {
     GL_CALL_EXTRA_FUNCTION(glBlitFramebuffer(srcX0,
                                              srcY0,

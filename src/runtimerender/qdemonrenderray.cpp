@@ -124,7 +124,7 @@ QDemonOption<QDemonRenderRayIntersectionResult> QDemonRenderRay::intersectWithAA
 
 QDemonOption<QVector2D> QDemonRenderRay::getRelative(const QMatrix4x4 &inGlobalTransform,
                                                      const QDemonBounds3 &inBounds,
-                                                     QDemonRenderBasisPlanes::Enum inPlane) const
+                                                     QDemonRenderBasisPlanes inPlane) const
 {
     QMatrix4x4 theOriginTransform = mat44::getInverse(inGlobalTransform);
 

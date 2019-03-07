@@ -116,7 +116,7 @@ public:
     // Get the bit depth of the currently bound depth buffer.
     virtual qint32 getDepthBits() const = 0;
     virtual qint32 getStencilBits() const = 0;
-    virtual bool getRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::Enum inCap) const = 0;
+    virtual bool getRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps inCap) const = 0;
     virtual bool areDXTImagesSupported() const = 0;
     virtual bool isDepthStencilSupported() const = 0;
     virtual bool isFpRenderTargetSupported() const = 0;
@@ -381,7 +381,7 @@ public:
                                  qint32 dstX1,
                                  qint32 dstY1,
                                  QDemonRenderClearFlags flags,
-                                 QDemonRenderTextureMagnifyingOp::Enum filter) = 0;
+                                 QDemonRenderTextureMagnifyingOp filter) = 0;
 
     // Render, applying these immediate property values just before render.  The hardware
     // properties are tracked for push/pop
@@ -647,7 +647,7 @@ public:
             return m_stencilBits;
     }
 
-    bool getRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::Enum inCap) const override
+    bool getRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps inCap) const override
     {
         return m_backend->getRenderBackendCap(inCap);
     }
@@ -989,7 +989,7 @@ public:
                          qint32 dstX1,
                          qint32 dstY1,
                          QDemonRenderClearFlags flags,
-                         QDemonRenderTextureMagnifyingOp::Enum filter) override;
+                         QDemonRenderTextureMagnifyingOp filter) override;
 
     void draw(QDemonRenderDrawMode drawMode, quint32 count, quint32 offset) override;
     void drawIndirect(QDemonRenderDrawMode drawMode, quint32 offset) override;

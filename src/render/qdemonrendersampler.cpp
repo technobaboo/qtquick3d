@@ -34,11 +34,11 @@
 QT_BEGIN_NAMESPACE
 
 QDemonRenderTextureSampler::QDemonRenderTextureSampler(const QDemonRef<QDemonRenderContextImpl> &context,
-                                                       QDemonRenderTextureMinifyingOp::Enum minFilter,
-                                                       QDemonRenderTextureMagnifyingOp::Enum magFilter,
-                                                       QDemonRenderTextureCoordOp::Enum wrapS,
-                                                       QDemonRenderTextureCoordOp::Enum wrapT,
-                                                       QDemonRenderTextureCoordOp::Enum wrapR,
+                                                       QDemonRenderTextureMinifyingOp minFilter,
+                                                       QDemonRenderTextureMagnifyingOp magFilter,
+                                                       QDemonRenderTextureCoordOp wrapS,
+                                                       QDemonRenderTextureCoordOp wrapT,
+                                                       QDemonRenderTextureCoordOp wrapR,
                                                        QDemonRenderTextureSwizzleMode swizzleMode,
                                                        float minLod,
                                                        float maxLod,

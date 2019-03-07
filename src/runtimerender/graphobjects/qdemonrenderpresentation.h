@@ -39,21 +39,19 @@ QT_BEGIN_NAMESPACE
 class QDemonRenderContextInterface;
 struct QDemonRenderScene;
 
-struct RenderRotationValues
+enum class RenderRotationValues
 {
-    enum Enum {
-        NoRotation = 0,
-        Clockwise90,
-        Clockwise180,
-        Clockwise270,
-    };
+    NoRotation = 0,
+    Clockwise90,
+    Clockwise180,
+    Clockwise270,
 };
 
 struct Q_DEMONRUNTIMERENDER_EXPORT QDemonPresentation : public QDemonGraphObject
 {
     Q_DISABLE_COPY(QDemonPresentation)
     QVector2D presentationDimensions;
-    RenderRotationValues::Enum presentationRotation;
+    RenderRotationValues presentationRotation;
     QDemonRef<QDemonRenderScene> scene;
 
     QString presentationDirectory;

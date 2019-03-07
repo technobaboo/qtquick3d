@@ -54,9 +54,9 @@ QT_BEGIN_NAMESPACE
     QDEMON_RENDER_HANDL_GRAPH_OBJECT_TYPE(Path)                                                                        \
     QDEMON_RENDER_HANDL_GRAPH_OBJECT_TYPE(PathSubPath)
 
-struct QDemonGraphObjectTypes
+struct QDemonGraphObjectType
 {
-    enum Enum {
+    enum Value {
         Unknown = 0,
         Presentation,
         Scene,
@@ -77,10 +77,13 @@ struct QDemonGraphObjectTypes
         Lightmaps,
         LastKnownGraphObjectType,
     };
+    Value value;
 
-    static bool IsMaterialType(Enum type)
+    constexpr QDemonGraphObjectType(Value v) : value(v) {}
+
+    bool isMaterialType() const
     {
-        switch (type) {
+        switch (value) {
         case ReferencedMaterial:
         case CustomMaterial:
         case DefaultMaterial:
@@ -90,9 +93,9 @@ struct QDemonGraphObjectTypes
         }
     }
 
-    static bool IsLightmapType(Enum type)
+    bool isLightmapType() const
     {
-        switch (type) {
+        switch (value) {
         case Lightmaps:
         case DefaultMaterial:
             return true;
@@ -101,9 +104,9 @@ struct QDemonGraphObjectTypes
         }
     }
 
-    static bool IsNodeType(Enum type)
+    bool isNodeType() const
     {
-        switch (type) {
+        switch (value) {
         case Node:
         case Layer:
         case Light:
@@ -119,9 +122,9 @@ struct QDemonGraphObjectTypes
         return false;
     }
 
-    static bool IsRenderableType(Enum type)
+    bool isRenderableType() const
     {
-        switch (type) {
+        switch (value) {
         case Model:
         case Text:
         case Path:
@@ -132,9 +135,9 @@ struct QDemonGraphObjectTypes
         return false;
     }
 
-    static bool IsLightCameraType(Enum type)
+    bool isLightCameraType() const
     {
-        switch (type) {
+        switch (value) {
         case Camera:
         case Light:
             return true;
@@ -143,9 +146,9 @@ struct QDemonGraphObjectTypes
         }
         return false;
     }
-    static const char *GetObjectTypeName(Enum inType)
+    const char *objectTypeName() const
     {
-        switch (inType) {
+        switch (value) {
 #define QDEMON_RENDER_HANDL_GRAPH_OBJECT_TYPE(type)                                                                    \
     case type:                                                                                                         \
         return #type;
@@ -157,6 +160,9 @@ struct QDemonGraphObjectTypes
         Q_ASSERT(false);
         return "";
     }
+
+    bool operator==(const QDemonGraphObjectType &other) const { return value == other.value; }
+    bool operator!=(const QDemonGraphObjectType &other) const { return value != other.value; }
 };
 QT_END_NAMESPACE
 

@@ -37,8 +37,8 @@ QT_BEGIN_NAMESPACE
 
 inline bool isMaterial(QDemonGraphObject &obj)
 {
-    return obj.type == QDemonGraphObjectTypes::CustomMaterial || obj.type == QDemonGraphObjectTypes::DefaultMaterial
-            || obj.type == QDemonGraphObjectTypes::ReferencedMaterial;
+    return obj.type == QDemonGraphObjectType::CustomMaterial || obj.type == QDemonGraphObjectType::DefaultMaterial
+            || obj.type == QDemonGraphObjectType::ReferencedMaterial;
 }
 
 inline bool isMaterial(QDemonGraphObject *obj)
@@ -50,7 +50,7 @@ inline bool isMaterial(QDemonGraphObject *obj)
 
 inline bool isImage(QDemonGraphObject &obj)
 {
-    return obj.type == QDemonGraphObjectTypes::Image;
+    return obj.type == QDemonGraphObjectType::Image;
 }
 
 inline bool isImage(QDemonGraphObject *obj)
@@ -68,9 +68,9 @@ inline QDemonGraphObject *getNextMaterialSibling(QDemonGraphObject *obj)
         Q_ASSERT(false);
         return nullptr;
     }
-    if (obj->type == QDemonGraphObjectTypes::CustomMaterial)
+    if (obj->type == QDemonGraphObjectType::CustomMaterial)
         return static_cast<QDemonRenderCustomMaterial *>(obj)->m_nextSibling;
-    else if (obj->type == QDemonGraphObjectTypes::DefaultMaterial)
+    else if (obj->type == QDemonGraphObjectType::DefaultMaterial)
         return static_cast<QDemonRenderDefaultMaterial *>(obj)->nextSibling;
     else
         return static_cast<QDemonReferencedMaterial *>(obj)->m_nextSibling;
@@ -82,9 +82,9 @@ inline void setNextMaterialSibling(QDemonGraphObject &obj, QDemonGraphObject *si
         Q_ASSERT(false);
         return;
     }
-    if (obj.type == QDemonGraphObjectTypes::CustomMaterial)
+    if (obj.type == QDemonGraphObjectType::CustomMaterial)
         static_cast<QDemonRenderCustomMaterial *>(&obj)->m_nextSibling = sibling;
-    else if (obj.type == QDemonGraphObjectTypes::DefaultMaterial)
+    else if (obj.type == QDemonGraphObjectType::DefaultMaterial)
         static_cast<QDemonRenderDefaultMaterial *>(&obj)->nextSibling = sibling;
     else
         static_cast<QDemonReferencedMaterial *>(&obj)->m_nextSibling = sibling;

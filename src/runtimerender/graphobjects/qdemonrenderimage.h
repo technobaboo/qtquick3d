@@ -42,13 +42,11 @@ QT_BEGIN_NAMESPACE
 class QDemonRenderContextInterface;
 class QDemonOffscreenRenderManagerInterface;
 class QDemonOffscreenRendererInterface;
-struct ImageMappingModes
+enum class ImageMappingModes
 {
-    enum Enum {
-        Normal = 0, // UV mapping
-        Environment = 1,
-        LightProbe = 2,
-    };
+    Normal = 0, // UV mapping
+    Environment = 1,
+    LightProbe = 2,
 };
 
 struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderImage : public QDemonGraphObject
@@ -72,9 +70,9 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderImage : public QDemonGraphObject
     QVector2D m_pivot;
     float m_rotation; // Radians.
     QVector2D m_position;
-    ImageMappingModes::Enum m_mappingMode;
-    QDemonRenderTextureCoordOp::Enum m_horizontalTilingMode;
-    QDemonRenderTextureCoordOp::Enum m_verticalTilingMode;
+    ImageMappingModes m_mappingMode;
+    QDemonRenderTextureCoordOp m_horizontalTilingMode;
+    QDemonRenderTextureCoordOp m_verticalTilingMode;
 
     // Setting any of the above variables means this object is dirty.
     // Setting any of the vec2 properties means this object's transform is dirty

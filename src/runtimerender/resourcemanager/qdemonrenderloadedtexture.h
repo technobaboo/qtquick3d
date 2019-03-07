@@ -45,13 +45,11 @@ struct QDemonTextureData
     quint32 dataSizeInBytes = 0;
     QDemonRenderTextureFormat format = QDemonRenderTextureFormat::Unknown;
 };
-struct QDemonExtendedTextureFormats
+enum class QDemonExtendedTextureFormats
 {
-    enum Enum {
-        NoExtendedFormat = 0,
-        Palettized,
-        CustomRGB,
-    };
+    NoExtendedFormat = 0,
+    Palettized,
+    CustomRGB,
 };
 // Utility class used for loading image data from disk.
 // Supports jpg, png, and dds.
@@ -66,7 +64,7 @@ public:
     QImage image;
     quint32 dataSizeInBytes = 0;
     QDemonRenderTextureFormat format = QDemonRenderTextureFormat::RGBA8;
-    QDemonExtendedTextureFormats::Enum m_ExtendedFormat = QDemonExtendedTextureFormats::NoExtendedFormat;
+    QDemonExtendedTextureFormats m_ExtendedFormat = QDemonExtendedTextureFormats::NoExtendedFormat;
     // Used for palettized images.
     void *m_palette = nullptr;
     qint32 m_customMasks[3]{ 0, 0, 0 };

@@ -46,10 +46,10 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonGraphObject
     // Id's help debugging the object and are optionally set
     QString id;
     // Type is used for RTTI purposes down the road.
-    QDemonGraphObjectTypes::Enum type;
+    QDemonGraphObjectType type;
     QDemonTaggedPointer userData;
 
-    QDemonGraphObject(QDemonGraphObjectTypes::Enum inType) : type(inType) {}
+    QDemonGraphObject(QDemonGraphObjectType inType) : type(inType) {}
     QDemonGraphObject(const QDemonGraphObject &inCloningObject) : id(inCloningObject.id), type(inCloningObject.type) {}
     virtual ~QDemonGraphObject() {}
 

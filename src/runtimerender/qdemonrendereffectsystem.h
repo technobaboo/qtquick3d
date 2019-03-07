@@ -108,9 +108,9 @@ public:
                                                   QString inPropName,
                                                   QString inPropPath,
                                                   QDemonRenderTextureTypeValue inTexType,
-                                                  QDemonRenderTextureCoordOp::Enum inCoordOp,
-                                                  QDemonRenderTextureMagnifyingOp::Enum inMagFilterOp,
-                                                  QDemonRenderTextureMinifyingOp::Enum inMinFilterOp) = 0;
+                                                  QDemonRenderTextureCoordOp inCoordOp,
+                                                  QDemonRenderTextureMagnifyingOp inMagFilterOp,
+                                                  QDemonRenderTextureMinifyingOp inMinFilterOp) = 0;
 
     // Setting the effect commands also sets this as if there isn't a specific "apply depth
     // value"

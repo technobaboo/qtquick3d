@@ -63,39 +63,39 @@ uint qHash(const QDemonDynamicShaderMapKey &inKey)
 quint32 QDemonCommand::getSizeofCommand(const QDemonCommand &inCommand)
 {
     switch (inCommand.m_type) {
-    case CommandTypes::AllocateBuffer:
+    case CommandType::AllocateBuffer:
         return sizeof(QDemonAllocateBuffer);
-    case CommandTypes::BindBuffer:
+    case CommandType::BindBuffer:
         return sizeof(QDemonBindBuffer);
-    case CommandTypes::BindTarget:
+    case CommandType::BindTarget:
         return sizeof(QDemonBindTarget);
-    case CommandTypes::BindShader:
+    case CommandType::BindShader:
         return sizeof(QDemonBindShader);
-    case CommandTypes::Render:
+    case CommandType::Render:
         return sizeof(QDemonRender);
-    case CommandTypes::ApplyBufferValue:
+    case CommandType::ApplyBufferValue:
         return sizeof(QDemonApplyBufferValue);
-    case CommandTypes::ApplyDepthValue:
+    case CommandType::ApplyDepthValue:
         return sizeof(QDemonApplyDepthValue);
-    case CommandTypes::ApplyInstanceValue:
+    case CommandType::ApplyInstanceValue:
         return sizeof(QDemonApplyInstanceValue);
-    case CommandTypes::ApplyBlending:
+    case CommandType::ApplyBlending:
         return sizeof(QDemonApplyBlending);
-    case CommandTypes::ApplyRenderState:
+    case CommandType::ApplyRenderState:
         return sizeof(QDemonApplyRenderState);
-    case CommandTypes::ApplyBlitFramebuffer:
+    case CommandType::ApplyBlitFramebuffer:
         return sizeof(QDemonApplyBlitFramebuffer);
-    case CommandTypes::ApplyValue:
+    case CommandType::ApplyValue:
         return sizeof(QDemonApplyValue) + static_cast<const QDemonApplyValue &>(inCommand).m_value.mSize;
-    case CommandTypes::DepthStencil:
+    case CommandType::DepthStencil:
         return sizeof(QDemonDepthStencil);
-    case CommandTypes::AllocateImage:
+    case CommandType::AllocateImage:
         return sizeof(QDemonAllocateImage);
-    case CommandTypes::ApplyImageValue:
+    case CommandType::ApplyImageValue:
         return sizeof(QDemonApplyImageValue);
-    case CommandTypes::AllocateDataBuffer:
+    case CommandType::AllocateDataBuffer:
         return sizeof(QDemonAllocateDataBuffer);
-    case CommandTypes::ApplyDataBufferValue:
+    case CommandType::ApplyDataBufferValue:
         return sizeof(QDemonApplyDataBufferValue);
     default:
         break;
@@ -114,40 +114,40 @@ inline void CopyConstructCommandT(quint8 *inDataBuffer, const QDemonCommand &inC
 void QDemonCommand::copyConstructCommand(quint8 *inDataBuffer, const QDemonCommand &inCommand)
 {
     switch (inCommand.m_type) {
-    case CommandTypes::AllocateBuffer:
+    case CommandType::AllocateBuffer:
         CopyConstructCommandT<QDemonAllocateBuffer>(inDataBuffer, inCommand);
         break;
-    case CommandTypes::BindBuffer:
+    case CommandType::BindBuffer:
         CopyConstructCommandT<QDemonBindBuffer>(inDataBuffer, inCommand);
         break;
-    case CommandTypes::BindTarget:
+    case CommandType::BindTarget:
         CopyConstructCommandT<QDemonBindTarget>(inDataBuffer, inCommand);
         break;
-    case CommandTypes::BindShader:
+    case CommandType::BindShader:
         CopyConstructCommandT<QDemonBindShader>(inDataBuffer, inCommand);
         break;
-    case CommandTypes::Render:
+    case CommandType::Render:
         CopyConstructCommandT<QDemonRender>(inDataBuffer, inCommand);
         break;
-    case CommandTypes::ApplyBufferValue:
+    case CommandType::ApplyBufferValue:
         CopyConstructCommandT<QDemonApplyBufferValue>(inDataBuffer, inCommand);
         break;
-    case CommandTypes::ApplyDepthValue:
+    case CommandType::ApplyDepthValue:
         CopyConstructCommandT<QDemonApplyDepthValue>(inDataBuffer, inCommand);
         break;
-    case CommandTypes::ApplyInstanceValue:
+    case CommandType::ApplyInstanceValue:
         CopyConstructCommandT<QDemonApplyInstanceValue>(inDataBuffer, inCommand);
         break;
-    case CommandTypes::ApplyBlending:
+    case CommandType::ApplyBlending:
         CopyConstructCommandT<QDemonApplyBlending>(inDataBuffer, inCommand);
         break;
-    case CommandTypes::ApplyRenderState:
+    case CommandType::ApplyRenderState:
         CopyConstructCommandT<QDemonApplyRenderState>(inDataBuffer, inCommand);
         break;
-    case CommandTypes::ApplyBlitFramebuffer:
+    case CommandType::ApplyBlitFramebuffer:
         CopyConstructCommandT<QDemonApplyBlitFramebuffer>(inDataBuffer, inCommand);
         break;
-    case CommandTypes::ApplyValue: {
+    case CommandType::ApplyValue: {
         CopyConstructCommandT<QDemonApplyValue>(inDataBuffer, inCommand);
         QDemonApplyValue &dest = *reinterpret_cast<QDemonApplyValue *>(inDataBuffer);
         quint8 *destMem = inDataBuffer + sizeof(QDemonApplyValue);
@@ -156,19 +156,19 @@ void QDemonCommand::copyConstructCommand(quint8 *inDataBuffer, const QDemonComma
         dest.m_value.mData = destMem;
         break;
     }
-    case CommandTypes::DepthStencil:
+    case CommandType::DepthStencil:
         CopyConstructCommandT<QDemonDepthStencil>(inDataBuffer, inCommand);
         break;
-    case CommandTypes::AllocateImage:
+    case CommandType::AllocateImage:
         CopyConstructCommandT<QDemonAllocateImage>(inDataBuffer, inCommand);
         break;
-    case CommandTypes::ApplyImageValue:
+    case CommandType::ApplyImageValue:
         CopyConstructCommandT<QDemonApplyImageValue>(inDataBuffer, inCommand);
         break;
-    case CommandTypes::AllocateDataBuffer:
+    case CommandType::AllocateDataBuffer:
         CopyConstructCommandT<QDemonAllocateDataBuffer>(inDataBuffer, inCommand);
         break;
-    case CommandTypes::ApplyDataBufferValue:
+    case CommandType::ApplyDataBufferValue:
         CopyConstructCommandT<QDemonApplyDataBufferValue>(inDataBuffer, inCommand);
         break;
     default:
@@ -465,7 +465,7 @@ struct QDemonDynamicObjClassImpl : public QDemonDynamicObjectClassInterface
     QDemonConstDataRef<dynamic::QDemonPropertyDefinition> m_propertyDefinitions;
     quint32 m_propertySectionByteSize;
     quint32 m_baseObjectSize;
-    QDemonGraphObjectTypes::Enum m_graphObjectType;
+    QDemonGraphObjectType m_graphObjectType;
     quint8 *m_propertyDefaultData;
     QDemonConstDataRef<dynamic::QDemonCommand *> m_renderCommands;
     bool m_requiresDepthTexture;
@@ -476,7 +476,7 @@ struct QDemonDynamicObjClassImpl : public QDemonDynamicObjectClassInterface
                               QDemonConstDataRef<dynamic::QDemonPropertyDefinition> definitions,
                               quint32 propertySectionByteSize,
                               quint32 baseObjectSize,
-                              QDemonGraphObjectTypes::Enum objectType,
+                              QDemonGraphObjectType objectType,
                               quint8 *propDefaultData,
                               bool inRequiresDepthTexture = false,
                               QDemonRenderTextureFormat inOutputFormat = QDemonRenderTextureFormat::RGBA8)
@@ -509,7 +509,7 @@ struct QDemonDynamicObjClassImpl : public QDemonDynamicObjectClassInterface
         switch (inCommand.m_type) {
             // TODO: ...
 #define QDEMON_RENDER_EFFECTS_HANDLE_COMMAND_TYPES(type)                                                                              \
-    case dynamic::CommandTypes::type:                                                                                                 \
+    case dynamic::CommandType::type:                                                                                                 \
         QDemonCommandRemapping<dynamic::QDemon##type>::remapCommandData(static_cast<dynamic::QDemon##type &>(inCommand), inRemapper); \
         break;
             QDEMON_RENDER_EFFECTS_ITERATE_COMMAND_TYPES
@@ -556,7 +556,7 @@ struct QDemonDynamicObjClassImpl : public QDemonDynamicObjectClassInterface
     quint32 getPropertySectionByteSize() const override { return m_propertySectionByteSize; }
     const quint8 *getDefaultValueBuffer() const override { return m_propertyDefaultData; }
     quint32 getBaseObjectSize() const override { return m_baseObjectSize; }
-    QDemonGraphObjectTypes::Enum graphObjectType() const override { return m_graphObjectType; }
+    QDemonGraphObjectType graphObjectType() const override { return m_graphObjectType; }
     const dynamic::QDemonPropertyDefinition *FindDefinition(QString &str) const
     {
         for (quint32 idx = 0, end = m_propertyDefinitions.size(); idx < end; ++idx) {
@@ -616,7 +616,7 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
     bool doRegister(QString inName,
                     QDemonConstDataRef<dynamic::QDemonPropertyDeclaration> inProperties,
                     quint32 inBaseObjectSize,
-                    QDemonGraphObjectTypes::Enum inGraphObjectType) override
+                    QDemonGraphObjectType inGraphObjectType) override
     {
         if (isRegistered(inName)) {
             Q_ASSERT(false);
@@ -738,9 +738,9 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
                                     const QString &inPropName,
                                     const QString &inPropPath,
                                     QDemonRenderTextureTypeValue inTexType,
-                                    QDemonRenderTextureCoordOp::Enum inCoordOp,
-                                    QDemonRenderTextureMagnifyingOp::Enum inMagFilterOp,
-                                    QDemonRenderTextureMinifyingOp::Enum inMinFilterOp) override
+                                    QDemonRenderTextureCoordOp inCoordOp,
+                                    QDemonRenderTextureMagnifyingOp inMagFilterOp,
+                                    QDemonRenderTextureMinifyingOp inMinFilterOp) override
     {
         QPair<const dynamic::QDemonPropertyDefinition *, QDemonRef<QDemonDynamicObjClassImpl>> def = findProperty(inName, inPropName);
         dynamic::QDemonPropertyDefinition *theDefinitionPtr = const_cast<dynamic::QDemonPropertyDefinition *>(def.first);
@@ -788,9 +788,9 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
             dynamic::QDemonCommand &theCommand(*inCommands[idx]);
             quint32 theCommandSize = dynamic::QDemonCommand::getSizeofCommand(theCommand);
             dynamic::QDemonCommand::copyConstructCommand(theCurrentCommandData, theCommand);
-            if (theCommand.m_type == dynamic::CommandTypes::ApplyDepthValue)
+            if (theCommand.m_type == dynamic::CommandType::ApplyDepthValue)
                 theClass->m_requiresDepthTexture = true;
-            if (theCommand.m_type == dynamic::CommandTypes::BindTarget) {
+            if (theCommand.m_type == dynamic::CommandType::BindTarget) {
                 dynamic::QDemonBindTarget *bt = reinterpret_cast<dynamic::QDemonBindTarget *>(&theCommand);
                 theClass->m_outputFormat = bt->m_outputFormat;
             }
@@ -865,7 +865,7 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
         }
         if (inFlags & ShaderCacheProgramFlagValues::TessellationEnabled) {
             shaderKey.append("#");
-            shaderKey.append(TessModeValues::toString(inFlags.tessMode));
+            shaderKey.append(toString(inFlags.tessMode));
         }
         if (inFlags & ShaderCacheProgramFlagValues::GeometryShaderEnabled && inFlags.wireframeMode) {
             shaderKey.append("#");

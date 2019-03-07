@@ -124,7 +124,7 @@ public:
     // Generate a set of mipmaps from mipLevel( 0 ).  Uses the graphis layer to do this if
     // possible
     // glGenerateMipmap
-    virtual void generateMipmaps(QDemonRenderHint::Enum genType = QDemonRenderHint::Nicest);
+    virtual void generateMipmaps(QDemonRenderHint genType = QDemonRenderHint::Nicest);
 
     /**
      * @brief Bind a texture for shader access

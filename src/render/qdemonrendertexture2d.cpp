@@ -254,7 +254,7 @@ void QDemonRenderTexture2D::setTextureSubData(QDemonDataRef<quint8> newBuffer,
                                    newBuffer.begin());
 }
 
-void QDemonRenderTexture2D::generateMipmaps(QDemonRenderHint::Enum genType)
+void QDemonRenderTexture2D::generateMipmaps(QDemonRenderHint genType)
 {
     applyTexParams();
     m_backend->generateMipMaps(m_textureHandle, m_texTarget, genType);

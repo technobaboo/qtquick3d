@@ -34,12 +34,10 @@
 #include <QtDemonRender/qdemonrenderbasetypes.h>
 
 QT_BEGIN_NAMESPACE
-struct ImageLoadResult
+enum class ImageLoadResult
 {
-    enum Enum {
-        Succeeded,
-        Failed,
-    };
+    Succeeded,
+    Failed,
 };
 
 class IImageLoadListener
@@ -47,7 +45,7 @@ class IImageLoadListener
 public:
     QAtomicInt ref;
     virtual ~IImageLoadListener() {}
-    virtual void OnImageLoadComplete(QString inPath, ImageLoadResult::Enum inResult) = 0;
+    virtual void OnImageLoadComplete(QString inPath, ImageLoadResult inResult) = 0;
     virtual void OnImageBatchComplete(quint64 inBatch) = 0;
 };
 
