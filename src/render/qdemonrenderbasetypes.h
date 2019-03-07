@@ -135,8 +135,8 @@ enum class QDemonRenderContextType : quint32
     NullContext = 1 << 6,
 };
 
-Q_DECLARE_FLAGS(QDemonRenderContextTypes, QDemonRenderContextType);
-Q_DECLARE_OPERATORS_FOR_FLAGS(QDemonRenderContextTypes);
+Q_DECLARE_FLAGS(QDemonRenderContextTypes, QDemonRenderContextType)
+Q_DECLARE_OPERATORS_FOR_FLAGS(QDemonRenderContextTypes)
 
 enum class QDemonRenderClearValues : quint32
 {
@@ -146,8 +146,8 @@ enum class QDemonRenderClearValues : quint32
     Coverage = 1 << 4,
 };
 
-Q_DECLARE_FLAGS(QDemonRenderClearFlags, QDemonRenderClearValues);
-Q_DECLARE_OPERATORS_FOR_FLAGS(QDemonRenderClearFlags);
+Q_DECLARE_FLAGS(QDemonRenderClearFlags, QDemonRenderClearValues)
+Q_DECLARE_OPERATORS_FOR_FLAGS(QDemonRenderClearFlags)
 
 enum class QDemonRenderQueryType
 {
@@ -174,16 +174,16 @@ enum class QDemonRenderSyncValues
     Unknown = 0, ///< for future usage
 };
 
-Q_DECLARE_FLAGS(QDemonRenderSyncFlags, QDemonRenderSyncValues);
-Q_DECLARE_OPERATORS_FOR_FLAGS(QDemonRenderSyncFlags);
+Q_DECLARE_FLAGS(QDemonRenderSyncFlags, QDemonRenderSyncValues)
+Q_DECLARE_OPERATORS_FOR_FLAGS(QDemonRenderSyncFlags)
 
 enum class QDemonRenderCommandFlushValues
 {
     SyncFlushCommands = 0, ///< sync for flushing command
 };
 
-Q_DECLARE_FLAGS(QDemonRenderCommandFlushFlags, QDemonRenderCommandFlushValues);
-Q_DECLARE_OPERATORS_FOR_FLAGS(QDemonRenderCommandFlushFlags);
+Q_DECLARE_FLAGS(QDemonRenderCommandFlushFlags, QDemonRenderCommandFlushValues)
+Q_DECLARE_OPERATORS_FOR_FLAGS(QDemonRenderCommandFlushFlags)
 
 enum class QDemonRenderBufferBindValues : quint32
 {
@@ -196,8 +196,8 @@ enum class QDemonRenderBufferBindValues : quint32
     Draw_Indirect = 1 << 5, ///< Bind as draw indirect buffer
 };
 
-Q_DECLARE_FLAGS(QDemonRenderBufferBindFlags, QDemonRenderBufferBindValues);
-Q_DECLARE_OPERATORS_FOR_FLAGS(QDemonRenderBufferBindFlags);
+Q_DECLARE_FLAGS(QDemonRenderBufferBindFlags, QDemonRenderBufferBindValues)
+Q_DECLARE_OPERATORS_FOR_FLAGS(QDemonRenderBufferBindFlags)
 
 enum class QDemonRenderBufferUsageType
 {
@@ -223,8 +223,8 @@ enum class QDemonRenderBufferAccessTypeValues
     InvalidRange = 1 << 3, ///< No sync
 };
 
-Q_DECLARE_FLAGS(QDemonRenderBufferAccessFlags, QDemonRenderBufferAccessTypeValues);
-Q_DECLARE_OPERATORS_FOR_FLAGS(QDemonRenderBufferAccessFlags);
+Q_DECLARE_FLAGS(QDemonRenderBufferAccessFlags, QDemonRenderBufferAccessTypeValues)
+Q_DECLARE_OPERATORS_FOR_FLAGS(QDemonRenderBufferAccessFlags)
 
 ///< defines a barrier of ordering the memory transactions to a command relative to those issued
 /// before the barrier
@@ -247,8 +247,8 @@ enum class QDemonRenderBufferBarrierValues
     All = 0xFFFF, ///< Barrier for all of the above
 };
 
-Q_DECLARE_FLAGS(QDemonRenderBufferBarrierFlags, QDemonRenderBufferBarrierValues);
-Q_DECLARE_OPERATORS_FOR_FLAGS(QDemonRenderBufferBarrierFlags);
+Q_DECLARE_FLAGS(QDemonRenderBufferBarrierFlags, QDemonRenderBufferBarrierValues)
+Q_DECLARE_OPERATORS_FOR_FLAGS(QDemonRenderBufferBarrierFlags)
 
 enum class QDemonRenderRenderBufferFormat
 {
@@ -1109,8 +1109,8 @@ enum class QDemonRenderPathFontStyleValue
     Italic = 1 << 1,
 };
 
-Q_DECLARE_FLAGS(QDemonRenderPathFontStyleFlags, QDemonRenderPathFontStyleValue);
-Q_DECLARE_OPERATORS_FOR_FLAGS(QDemonRenderPathFontStyleFlags);
+Q_DECLARE_FLAGS(QDemonRenderPathFontStyleFlags, QDemonRenderPathFontStyleValue)
+Q_DECLARE_OPERATORS_FOR_FLAGS(QDemonRenderPathFontStyleFlags)
 
 enum class QDemonRenderPathReturnValues
 {
@@ -1166,8 +1166,8 @@ enum class QDemonRenderPathGlyphFontMetricValues
     FontNumGlyphIndices = 1 << 22,
 };
 
-Q_DECLARE_FLAGS(QDemonRenderPathGlyphFontMetricFlags, QDemonRenderPathGlyphFontMetricValues);
-Q_DECLARE_OPERATORS_FOR_FLAGS(QDemonRenderPathGlyphFontMetricFlags);
+Q_DECLARE_FLAGS(QDemonRenderPathGlyphFontMetricFlags, QDemonRenderPathGlyphFontMetricValues)
+Q_DECLARE_OPERATORS_FOR_FLAGS(QDemonRenderPathGlyphFontMetricFlags)
 
 enum class QDemonRenderPathListMode
 {
@@ -1971,8 +1971,8 @@ enum class QDemonRenderShaderTypeValue
     Geometry = 1 << 5
 };
 
-Q_DECLARE_FLAGS(QDemonRenderShaderTypeFlags, QDemonRenderShaderTypeValue);
-Q_DECLARE_OPERATORS_FOR_FLAGS(QDemonRenderShaderTypeFlags);
+Q_DECLARE_FLAGS(QDemonRenderShaderTypeFlags, QDemonRenderShaderTypeValue)
+Q_DECLARE_OPERATORS_FOR_FLAGS(QDemonRenderShaderTypeFlags)
 
 enum class QDemonRenderTextureTypeValue
 {

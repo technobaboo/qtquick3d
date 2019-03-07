@@ -43,8 +43,8 @@ enum class BoxEdgeFlagValues
     zMax = 1 << 2,
 };
 
-Q_DECLARE_FLAGS(QDemonRenderBoxEdge, BoxEdgeFlagValues);
-Q_DECLARE_OPERATORS_FOR_FLAGS(QDemonRenderBoxEdge);
+Q_DECLARE_FLAGS(QDemonRenderBoxEdge, BoxEdgeFlagValues)
+Q_DECLARE_OPERATORS_FOR_FLAGS(QDemonRenderBoxEdge)
 
 // For an intesection test, we only need two points of the bounding box.
 // There will be a point nearest to the plane, and a point furthest from the plane.

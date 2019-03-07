@@ -480,8 +480,8 @@ enum class QDemonPathDirtyFlagValue
     CPUError = 1 << 5,
 };
 
-Q_DECLARE_FLAGS(QDemonPathDirtyFlags, QDemonPathDirtyFlagValue);
-Q_DECLARE_OPERATORS_FOR_FLAGS(QDemonPathDirtyFlags);
+Q_DECLARE_FLAGS(QDemonPathDirtyFlags, QDemonPathDirtyFlagValue)
+Q_DECLARE_OPERATORS_FOR_FLAGS(QDemonPathDirtyFlags)
 
 struct QDemonTaperInformation
 {

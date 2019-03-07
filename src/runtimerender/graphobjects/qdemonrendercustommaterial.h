@@ -50,8 +50,8 @@ enum class QDemonCustomMaterialShaderKeyValues
     transmissive = 1 << 8,
 };
 
-Q_DECLARE_FLAGS(QDemonCustomMaterialShaderKeyFlags, QDemonCustomMaterialShaderKeyValues);
-Q_DECLARE_OPERATORS_FOR_FLAGS(QDemonCustomMaterialShaderKeyFlags);
+Q_DECLARE_FLAGS(QDemonCustomMaterialShaderKeyFlags, QDemonCustomMaterialShaderKeyValues)
+Q_DECLARE_OPERATORS_FOR_FLAGS(QDemonCustomMaterialShaderKeyFlags)
 
 struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderCustomMaterial : public QDemonDynamicObject
 {

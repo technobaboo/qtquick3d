@@ -50,8 +50,8 @@ enum class QDemonShaderGeneratorStage
     StageCount = 5,
 };
 
-Q_DECLARE_FLAGS(QDemonShaderGeneratorStageFlags, QDemonShaderGeneratorStage);
-Q_DECLARE_OPERATORS_FOR_FLAGS(QDemonShaderGeneratorStageFlags);
+Q_DECLARE_FLAGS(QDemonShaderGeneratorStageFlags, QDemonShaderGeneratorStage)
+Q_DECLARE_OPERATORS_FOR_FLAGS(QDemonShaderGeneratorStageFlags)
 
 class Q_DEMONRUNTIMERENDER_EXPORT QDemonShaderStageGeneratorInterface
 {

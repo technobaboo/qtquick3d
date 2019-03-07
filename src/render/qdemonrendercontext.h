@@ -88,8 +88,8 @@ enum class QDemonRenderContextDirtyValues
     InputAssembler = 1 << 0,
 };
 
-Q_DECLARE_FLAGS(QDemonRenderContextDirtyFlags, QDemonRenderContextDirtyValues);
-Q_DECLARE_OPERATORS_FOR_FLAGS(QDemonRenderContextDirtyFlags);
+Q_DECLARE_FLAGS(QDemonRenderContextDirtyFlags, QDemonRenderContextDirtyValues)
+Q_DECLARE_OPERATORS_FOR_FLAGS(QDemonRenderContextDirtyFlags)
 
 typedef QHash<QByteArray, QDemonRenderConstantBuffer *> TContextConstantBufferMap;
 typedef QHash<QByteArray, QDemonRenderStorageBuffer *> TContextStorageBufferMap;
