@@ -167,7 +167,7 @@ struct QDemonRenderContextData : public QDemonRenderContextInterface
     RenderRotationValues m_rotation;
     QDemonRef<QDemonRenderFrameBuffer> m_rotationFbo;
     QDemonRef<QDemonRenderTexture2D> m_rotationTexture;
-    QDemonRef<QDemonRenderRenderBuffer> m_rotationDepthBuffer;
+    QDemonRenderRenderBuffer m_rotationDepthBuffer;
     QDemonRef<QDemonRenderFrameBuffer> m_contextRenderTarget;
     QRect m_presentationViewport;
     QSize m_presentationDimensions;
@@ -586,7 +586,7 @@ struct QDemonRenderContextData : public QDemonRenderContextInterface
                     m_resourceManager->release(m_rotationDepthBuffer);
                     m_rotationFbo = nullptr;
                     m_rotationTexture = nullptr;
-                    m_rotationDepthBuffer = nullptr;
+                    m_rotationDepthBuffer.clear();
                 }
                 if (m_sceneColor.hasValue() && m_sceneColor.getValue().w() != 0.0f) {
                     m_renderContext->setClearColor(m_sceneColor);
@@ -608,7 +608,7 @@ struct QDemonRenderContextData : public QDemonRenderContextInterface
                     QDemonTextureDetails theDetails = m_rotationTexture->getTextureDetails();
                     if (theDetails.width != imageWidth || theDetails.height != imageHeight) {
                         m_rotationTexture->setTextureData(QDemonDataRef<quint8>(), 0, imageWidth, imageHeight, theColorBufferFormat);
-                        m_rotationDepthBuffer->setDimensions(QDemonRenderRenderBufferDimensions(imageWidth, imageHeight));
+                        m_rotationDepthBuffer.setSize(QSize(imageWidth, imageHeight));
                     }
                 }
                 m_renderContext->setRenderTarget(m_rotationFbo);

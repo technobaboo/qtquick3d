@@ -35,68 +35,66 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonRenderRenderBuffer::QDemonRenderRenderBuffer(const QDemonRef<QDemonRenderContext> &context,
-                                                   QDemonRenderRenderBufferFormat format,
-                                                   quint32 width,
-                                                   quint32 height)
-    : m_context(context), m_backend(context->getBackend()), m_width(width), m_height(height), m_storageFormat(format), m_bufferHandle(nullptr)
+
+QDemonRenderRenderBuffer::Private::Private(const QDemonRef<QDemonRenderContext> &context, QDemonRenderRenderBufferFormat format)
+    : context(context),
+      backend(context->getBackend()),
+      storageFormat(format),
+      handle(nullptr)
 {
-    setDimensions(QDemonRenderRenderBufferDimensions(width, height));
+
+}
+
+QDemonRenderRenderBuffer::Private::~Private()
+{
+    if (handle)
+        backend->releaseRenderbuffer(handle);
+}
+
+QDemonRenderRenderBuffer::QDemonRenderRenderBuffer(const QDemonRef<QDemonRenderContext> &context,
+                                                   QDemonRenderRenderBufferFormat format, const QSize &size)
+{
+    if (size.isNull()) {
+        qCCritical(INVALID_PARAMETER, "Invalid renderbuffer width or height");
+        return;
+    }
+
+    d = new Private(context, format);
+    setSize(size);
 }
 
 QDemonRenderRenderBuffer::~QDemonRenderRenderBuffer()
 {
-    m_context->renderBufferDestroyed(this);
-    m_backend->releaseRenderbuffer(m_bufferHandle);
-    m_bufferHandle = nullptr;
 }
 
-void QDemonRenderRenderBuffer::setDimensions(const QDemonRenderRenderBufferDimensions &inDimensions)
+void QDemonRenderRenderBuffer::setSize(const QSize &size)
 {
     qint32 maxWidth, maxHeight;
-    m_width = inDimensions.m_width;
-    m_height = inDimensions.m_height;
+    d->size = size;
 
     // get max size and clamp to max value
-    m_context->getMaxTextureSize(maxWidth, maxHeight);
-    if (m_width > maxWidth || m_height > maxHeight) {
+    d->context->getMaxTextureSize(maxWidth, maxHeight);
+    if (size.width() > maxWidth || size.height() > maxHeight) {
         qCCritical(INVALID_OPERATION, "Width or height is greater than max texture size (%d, %d)", maxWidth, maxHeight);
-        m_width = qMin(m_width, maxWidth);
-        m_height = qMin(m_height, maxHeight);
+        d->size = QSize(qMin(d->size.width(), maxWidth), qMin(d->size.height(), maxHeight));
     }
 
     bool success = true;
 
-    if (m_bufferHandle == nullptr)
-        m_bufferHandle = m_backend->createRenderbuffer(m_storageFormat, m_width, m_height);
+    if (d->handle == nullptr)
+        d->handle = d->backend->createRenderbuffer(d->storageFormat, d->size.width(), d->size.height());
     else
-        success = m_backend->resizeRenderbuffer(m_bufferHandle, m_storageFormat, m_width, m_height);
+        success = d->backend->resizeRenderbuffer(d->handle, d->storageFormat, d->size.width(), d->size.height());
 
-    if (m_bufferHandle == nullptr || !success) {
+    if (d->handle == nullptr || !success) {
         // We could try smaller sizes
         Q_ASSERT(false);
         qCCritical(INTERNAL_ERROR,
                    "Unable to create render buffer %s, %dx%d",
-                   toString(m_storageFormat),
-                   m_width,
-                   m_height);
+                   toString(d->storageFormat),
+                   d->size.width(),
+                   d->size.height());
     }
-}
-
-QDemonRef<QDemonRenderRenderBuffer> QDemonRenderRenderBuffer::create(const QDemonRef<QDemonRenderContext> &context,
-                                                                     QDemonRenderRenderBufferFormat format,
-                                                                     quint32 width,
-                                                                     quint32 height)
-{
-    QDemonRef<QDemonRenderRenderBuffer> retval = nullptr;
-    if (width == 0 || height == 0) {
-        qCCritical(INVALID_PARAMETER, "Invalid renderbuffer width or height");
-        return retval;
-    }
-
-    retval = new QDemonRenderRenderBuffer(context, format, width, height);
-
-    return retval;
 }
 
 QT_END_NAMESPACE

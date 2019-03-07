@@ -32,12 +32,11 @@
 
 #include <QtDemonRender/qdemonrenderbasetypes.h>
 #include <QtDemonRender/qdemonrenderbackend.h>
-
+#include <QtDemonRender/qdemonrenderrenderbuffer.h>
 QT_BEGIN_NAMESPACE
 
 class QDemonRenderContext;
 class QDemonRenderTexture2D;
-class QDemonRenderRenderBuffer;
 class QDemonRenderTexture2DArray;
 class QDemonRenderTextureCube;
 
@@ -46,11 +45,11 @@ class Q_DEMONRENDER_EXPORT QDemonRenderTextureOrRenderBuffer
     QDemonRef<QDemonRenderTexture2D> m_texture2D;
     QDemonRef<QDemonRenderTexture2DArray> m_texture2DArray;
     QDemonRef<QDemonRenderTextureCube> m_textureCube;
-    QDemonRef<QDemonRenderRenderBuffer> m_renderBuffer;
+    QDemonRenderRenderBuffer m_renderBuffer;
 
 public:
     QDemonRenderTextureOrRenderBuffer(QDemonRef<QDemonRenderTexture2D> texture);
-    QDemonRenderTextureOrRenderBuffer(QDemonRef<QDemonRenderRenderBuffer> render);
+    QDemonRenderTextureOrRenderBuffer(QDemonRenderRenderBuffer render);
     QDemonRenderTextureOrRenderBuffer(QDemonRef<QDemonRenderTexture2DArray> textureArray);
     QDemonRenderTextureOrRenderBuffer(QDemonRef<QDemonRenderTextureCube> textureCube);
     QDemonRenderTextureOrRenderBuffer();
@@ -62,12 +61,12 @@ public:
     bool hasTexture2D() const { return m_texture2D != nullptr; }
     bool hasTexture2DArray() const { return m_texture2DArray != nullptr; }
     bool hasTextureCube() const { return m_textureCube != nullptr; }
-    bool hasRenderBuffer() const { return m_renderBuffer != nullptr; }
+    bool hasRenderBuffer() const { return !m_renderBuffer.isNull(); }
 
     QDemonRef<QDemonRenderTexture2D> getTexture2D() const;
     QDemonRef<QDemonRenderTexture2DArray> getTexture2DArray() const;
     QDemonRef<QDemonRenderTextureCube> getTextureCube() const;
-    QDemonRef<QDemonRenderRenderBuffer> getRenderBuffer() const;
+    QDemonRenderRenderBuffer renderBuffer() const;
 };
 
 class Q_DEMONRENDER_EXPORT QDemonRenderFrameBuffer

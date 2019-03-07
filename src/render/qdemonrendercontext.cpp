@@ -94,8 +94,6 @@ QDemonRenderContext::~QDemonRenderContext()
     m_image2DtoImpMap.clear();
     Q_ASSERT(m_shaderToImpMap.size() == 0);
     m_shaderToImpMap.clear();
-    Q_ASSERT(m_renderBufferToImpMap.size() == 0);
-    m_renderBufferToImpMap.clear();
     Q_ASSERT(m_frameBufferToImpMap.size() == 0);
     m_frameBufferToImpMap.clear();
 
@@ -456,29 +454,6 @@ qint32 QDemonRenderContext::getNextTextureUnit()
         retval = retval % m_maxTextureUnits;
     }
     return retval;
-}
-
-QDemonRef<QDemonRenderRenderBuffer> QDemonRenderContext::createRenderBuffer(QDemonRenderRenderBufferFormat bufferFormat,
-                                                                                quint32 width,
-                                                                                quint32 height)
-{
-    QDemonRef<QDemonRenderRenderBuffer> retval = QDemonRenderRenderBuffer::create(this, bufferFormat, width, height);
-    if (retval != nullptr)
-        m_renderBufferToImpMap.insert(retval->handle(), retval.data());
-    return retval;
-}
-
-QDemonRef<QDemonRenderRenderBuffer> QDemonRenderContext::getRenderBuffer(const void *implementationHandle)
-{
-    const QHash<const void *, QDemonRenderRenderBuffer *>::iterator entry = m_renderBufferToImpMap.find(implementationHandle);
-    if (entry != m_renderBufferToImpMap.end())
-        return QDemonRef(entry.value());
-    return nullptr;
-}
-
-void QDemonRenderContext::renderBufferDestroyed(QDemonRenderRenderBuffer *buffer)
-{
-    m_renderBufferToImpMap.remove(buffer->handle());
 }
 
 QDemonRef<QDemonRenderFrameBuffer> QDemonRenderContext::createFrameBuffer()
