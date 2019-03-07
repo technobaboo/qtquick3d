@@ -46,7 +46,7 @@ struct QDemonRenderRenderBufferDimensions
     QDemonRenderRenderBufferDimensions() = default;
 };
 
-class QDemonRenderRenderBuffer : public QDemonRenderImplemented
+class Q_DEMONRENDER_EXPORT QDemonRenderRenderBuffer
 {
 public:
     QAtomicInt ref;
@@ -78,7 +78,7 @@ public:
                              quint32 height);
 
     /// destructor
-    virtual ~QDemonRenderRenderBuffer();
+    ~QDemonRenderRenderBuffer();
 
     /**
      * @brief query buffer format
@@ -86,7 +86,7 @@ public:
      *
      * @return buffer format
      */
-    virtual QDemonRenderRenderBufferFormat getStorageFormat() const { return m_storageFormat; }
+    QDemonRenderRenderBufferFormat getStorageFormat() const { return m_storageFormat; }
 
     /**
      * @brief query buffer dimension
@@ -94,7 +94,7 @@ public:
      *
      * @return QDemonRenderRenderBufferDimensions object
      */
-    virtual QDemonRenderRenderBufferDimensions getDimensions() const
+    QDemonRenderRenderBufferDimensions getDimensions() const
     {
         return QDemonRenderRenderBufferDimensions(m_width, m_height);
     }
@@ -106,7 +106,7 @@ public:
      *
      * @return buffer format
      */
-    virtual void setDimensions(const QDemonRenderRenderBufferDimensions &inDimensions);
+    void setDimensions(const QDemonRenderRenderBufferDimensions &inDimensions);
 
     /**
      * @brief static creator function
@@ -128,13 +128,10 @@ public:
      *
      * @return the backend object handle.
      */
-    virtual QDemonRenderBackend::QDemonRenderBackendRenderbufferObject getRenderBuffertHandle()
+    QDemonRenderBackend::QDemonRenderBackendRenderbufferObject handle()
     {
         return m_bufferHandle;
     }
-
-    // this will be obsolete
-    const void *getImplementationHandle() const override { return reinterpret_cast<void *>(m_bufferHandle); }
 };
 
 QT_END_NAMESPACE

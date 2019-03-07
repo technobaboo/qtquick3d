@@ -119,10 +119,7 @@ public:
      *
      * @return the backend object handle.
      */
-    QDemonRenderBackend::QDemonRenderBackendBufferObject getBuffertHandle() const override { return m_bufferHandle; }
-
-    // this will be obsolete
-    const void *getImplementationHandle() const override { return reinterpret_cast<void *>(m_bufferHandle); }
+    QDemonRenderBackend::QDemonRenderBackendBufferObject handle() const override { return m_bufferHandle; }
 
     /**
      * @brief create a QDemonRenderStorageBuffer object

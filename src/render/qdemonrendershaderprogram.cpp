@@ -1059,7 +1059,7 @@ void QDemonRenderShaderProgram::bindComputeInput(QDemonRenderDataBuffer *inBuffe
 {
     QDemonRenderBackend::QDemonRenderBackendBufferObject obj(nullptr);
     if (inBuffer)
-        obj = inBuffer->getBuffertHandle();
+        obj = inBuffer->handle();
     m_backend->programSetStorageBuffer(inIndex, obj);
 }
 

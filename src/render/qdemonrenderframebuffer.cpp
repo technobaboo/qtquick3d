@@ -150,7 +150,7 @@ void QDemonRenderFrameBuffer::attach(QDemonRenderFrameBufferAttachment attachmen
         // buffer.GetTexture2DArray()->addRef();
         m_attachmentBits |= attachmentBit;
     } else if (buffer.hasRenderBuffer()) {
-        m_backend->renderTargetAttach(m_bufferHandle, attachment, buffer.getRenderBuffer()->getRenderBuffertHandle());
+        m_backend->renderTargetAttach(m_bufferHandle, attachment, buffer.getRenderBuffer()->handle());
         // buffer.GetRenderBuffer()->addRef();
         m_attachmentBits |= attachmentBit;
     } else if (theRelTarget == QDemonRenderTextureTargetType::Unknown) {

@@ -63,14 +63,14 @@ QDemonRenderInputAssembler::QDemonRenderInputAssembler(const QDemonRef<QDemonRen
     QDEMON_FOREACH(idx, buffers.size())
     {
         m_vertexBuffers.push_back(buffers.mData[idx]);
-        bufferHandle[idx] = buffers.mData[idx]->getBuffertHandle();
+        bufferHandle[idx] = buffers.mData[idx]->handle();
     };
 
     m_vertexbufferHandles = toConstDataRef(bufferHandle, buffers.size());
 
     m_inputAssemblertHandle = m_backend->createInputAssembler(m_attribLayout.handle(),
                                                               m_vertexbufferHandles,
-                                                              (m_indexBuffer) ? m_indexBuffer->getBuffertHandle() : nullptr,
+                                                              (m_indexBuffer) ? m_indexBuffer->handle() : nullptr,
                                                               strides,
                                                               offsets,
                                                               patchVertexCount);

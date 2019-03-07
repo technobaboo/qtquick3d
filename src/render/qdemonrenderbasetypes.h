@@ -967,16 +967,6 @@ inline const char *toString(QDemonRenderHint value)
     return "Unknown";
 }
 
-class QDemonRenderImplemented
-{
-public:
-    virtual ~QDemonRenderImplemented() {}
-    // Get the handle that binds us to the implementation.
-    // For instance, return the GLuint that came back from
-    // glGenTextures.
-    virtual const void *getImplementationHandle() const = 0;
-};
-
 struct QDemonRenderVertexBufferEntry
 {
     const char *m_name;

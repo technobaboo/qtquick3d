@@ -41,7 +41,7 @@ QT_BEGIN_NAMESPACE
 class QDemonRenderContext;
 class QDemonRenderTextureSampler;
 
-class Q_DEMONRENDER_EXPORT QDemonRenderTexture2D : public QDemonRenderTextureBase, public QDemonRenderImplemented
+class Q_DEMONRENDER_EXPORT QDemonRenderTexture2D : public QDemonRenderTextureBase
 {
     Q_DISABLE_COPY(QDemonRenderTexture2D)
 private:
@@ -149,9 +149,6 @@ public:
                 ? QDemonRenderTextureSwizzleMode::NoSwizzle
                 : m_backend->getTextureSwizzleMode(m_format);
     }
-
-    // this will be obsolete
-    const void *getImplementationHandle() const override { return reinterpret_cast<void *>(m_textureHandle); }
 
     static QDemonRef<QDemonRenderTexture2D> create(const QDemonRef<QDemonRenderContext> &context);
 };

@@ -70,7 +70,7 @@ public:
     QDemonRef<QDemonRenderRenderBuffer> getRenderBuffer() const;
 };
 
-class QDemonRenderFrameBuffer : public QDemonRenderImplemented
+class Q_DEMONRENDER_EXPORT QDemonRenderFrameBuffer
 {
 public:
     QAtomicInt ref;
@@ -94,7 +94,7 @@ public:
     QDemonRenderFrameBuffer(const QDemonRef<QDemonRenderContext> &context);
 
     /// destructor
-    virtual ~QDemonRenderFrameBuffer() override;
+    ~QDemonRenderFrameBuffer();
 
     /**
      * @brief query attachment
@@ -102,7 +102,7 @@ public:
      *
      * @return buffer format
      */
-    virtual QDemonRenderTextureOrRenderBuffer getAttachment(QDemonRenderFrameBufferAttachment attachment);
+    QDemonRenderTextureOrRenderBuffer getAttachment(QDemonRenderFrameBufferAttachment attachment);
 
     /**
      * @brief Attach a render or texture buffer to a render target
@@ -114,7 +114,7 @@ public:
      *
      * @return no return
      */
-    virtual void attach(QDemonRenderFrameBufferAttachment attachment,
+    void attach(QDemonRenderFrameBufferAttachment attachment,
                         QDemonRenderTextureOrRenderBuffer buffer,
                         QDemonRenderTextureTargetType target = QDemonRenderTextureTargetType::Texture2D);
 
@@ -131,7 +131,7 @@ public:
      *
      * @return no return
      */
-    virtual void attachLayer(QDemonRenderFrameBufferAttachment attachment,
+    void attachLayer(QDemonRenderFrameBufferAttachment attachment,
                              QDemonRenderTextureOrRenderBuffer buffer,
                              qint32 layer,
                              qint32 level = 0);
@@ -149,7 +149,7 @@ public:
      *
      * @return no return
      */
-    virtual void attachFace(QDemonRenderFrameBufferAttachment attachment,
+    void attachFace(QDemonRenderFrameBufferAttachment attachment,
                             QDemonRenderTextureOrRenderBuffer buffer,
                             QDemonRenderTextureCubeFace face);
 
@@ -159,27 +159,24 @@ public:
      *
      * @return true if complete
      */
-    virtual bool isComplete();
+    bool isComplete();
 
     /**
      * @brief query if framebuffer has any attachment
      *
      * @return true if any attachment
      */
-    virtual bool hasAnyAttachment() { return (m_attachmentBits != 0); }
+    bool hasAnyAttachment() { return (m_attachmentBits != 0); }
 
     /**
      * @brief get the backend object handle
      *
      * @return the backend object handle.
      */
-    virtual QDemonRenderBackend::QDemonRenderBackendRenderTargetObject getFrameBuffertHandle()
+    QDemonRenderBackend::QDemonRenderBackendRenderTargetObject handle()
     {
         return m_bufferHandle;
     }
-
-    // this will be obsolete
-    const void *getImplementationHandle() const override { return reinterpret_cast<const void *>(m_bufferHandle); }
 
     /**
      * @brief static creator function

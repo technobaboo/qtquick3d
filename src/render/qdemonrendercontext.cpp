@@ -182,7 +182,7 @@ QDemonRef<QDemonRenderVertexBuffer> QDemonRenderContext::createVertexBuffer(QDem
 {
     QDemonRef<QDemonRenderVertexBuffer> buffer = QDemonRenderVertexBuffer::create(this, usageType, size, stride, bufferData);
     if (buffer)
-        m_vertToImpMap.insert(buffer->getImplementationHandle(), buffer.data());
+        m_vertToImpMap.insert(buffer->handle(), buffer.data());
     return buffer;
 }
 
@@ -196,7 +196,7 @@ QDemonRef<QDemonRenderVertexBuffer> QDemonRenderContext::getVertexBuffer(const v
 
 void QDemonRenderContext::bufferDestroyed(QDemonRenderVertexBuffer *buffer)
 {
-    m_vertToImpMap.remove(buffer->getImplementationHandle());
+    m_vertToImpMap.remove(buffer->handle());
 }
 
 QDemonRef<QDemonRenderIndexBuffer> QDemonRenderContext::createIndexBuffer(QDemonRenderBufferUsageType usageType,
@@ -207,7 +207,7 @@ QDemonRef<QDemonRenderIndexBuffer> QDemonRenderContext::createIndexBuffer(QDemon
     QDemonRef<QDemonRenderIndexBuffer> buffer = QDemonRenderIndexBuffer::create(this, usageType, componentType, size, bufferData);
 
     if (buffer) {
-        m_indexToImpMap.insert(buffer->getImplementationHandle(), buffer.data());
+        m_indexToImpMap.insert(buffer->handle(), buffer.data());
     }
 
     return buffer;
@@ -223,7 +223,7 @@ QDemonRef<QDemonRenderIndexBuffer> QDemonRenderContext::getIndexBuffer(const voi
 
 void QDemonRenderContext::bufferDestroyed(QDemonRenderIndexBuffer *buffer)
 {
-    m_indexToImpMap.remove(buffer->getImplementationHandle());
+    m_indexToImpMap.remove(buffer->handle());
 }
 
 QDemonRef<QDemonRenderConstantBuffer> QDemonRenderContext::createConstantBuffer(const char *bufferName,
@@ -340,7 +340,7 @@ QDemonRef<QDemonRenderDrawIndirectBuffer> QDemonRenderContext::createDrawIndirec
     QDemonRef<QDemonRenderDrawIndirectBuffer> buffer = QDemonRenderDrawIndirectBuffer::create(this, usageType, size, bufferData);
 
     if (buffer)
-        m_drawIndirectToImpMap.insert(buffer->getBuffertHandle(), buffer.data());
+        m_drawIndirectToImpMap.insert(buffer->handle(), buffer.data());
 
     return buffer;
 }
@@ -355,7 +355,7 @@ QDemonRef<QDemonRenderDrawIndirectBuffer> QDemonRenderContext::getDrawIndirectBu
 
 void QDemonRenderContext::bufferDestroyed(QDemonRenderDrawIndirectBuffer *buffer)
 {
-    m_drawIndirectToImpMap.remove(buffer->getBuffertHandle());
+    m_drawIndirectToImpMap.remove(buffer->handle());
 }
 
 void QDemonRenderContext::setMemoryBarrier(QDemonRenderBufferBarrierFlags barriers)
@@ -382,7 +382,7 @@ QDemonRef<QDemonRenderTexture2D> QDemonRenderContext::createTexture2D()
 {
     QDemonRef<QDemonRenderTexture2D> retval(QDemonRenderTexture2D::create(this));
     if (retval)
-        m_tex2DToImpMap.insert(retval->getImplementationHandle(), retval.data());
+        m_tex2DToImpMap.insert(retval->getTextureObjectHandle(), retval.data());
     return retval;
 }
 
@@ -414,7 +414,7 @@ QDemonRef<QDemonRenderTexture2D> QDemonRenderContext::getTexture2D(const void *i
 
 void QDemonRenderContext::textureDestroyed(QDemonRenderTexture2D *buffer)
 {
-    m_tex2DToImpMap.remove(buffer->getImplementationHandle());
+    m_tex2DToImpMap.remove(buffer->getTextureObjectHandle());
     // We would like to find and catch any situations where this texture is being used
     // but that would require some real work that we don't want to do right now.
 }
@@ -464,7 +464,7 @@ QDemonRef<QDemonRenderRenderBuffer> QDemonRenderContext::createRenderBuffer(QDem
 {
     QDemonRef<QDemonRenderRenderBuffer> retval = QDemonRenderRenderBuffer::create(this, bufferFormat, width, height);
     if (retval != nullptr)
-        m_renderBufferToImpMap.insert(retval->getImplementationHandle(), retval.data());
+        m_renderBufferToImpMap.insert(retval->handle(), retval.data());
     return retval;
 }
 
@@ -478,14 +478,14 @@ QDemonRef<QDemonRenderRenderBuffer> QDemonRenderContext::getRenderBuffer(const v
 
 void QDemonRenderContext::renderBufferDestroyed(QDemonRenderRenderBuffer *buffer)
 {
-    m_renderBufferToImpMap.remove(buffer->getImplementationHandle());
+    m_renderBufferToImpMap.remove(buffer->handle());
 }
 
 QDemonRef<QDemonRenderFrameBuffer> QDemonRenderContext::createFrameBuffer()
 {
     QDemonRef<QDemonRenderFrameBuffer> retval = QDemonRenderFrameBuffer::create(this);
     if (retval != nullptr)
-        m_frameBufferToImpMap.insert(retval->getImplementationHandle(), retval.data());
+        m_frameBufferToImpMap.insert(retval->handle(), retval.data());
     return retval;
 }
 
@@ -499,7 +499,7 @@ QDemonRef<QDemonRenderFrameBuffer> QDemonRenderContext::getFrameBuffer(const voi
 
 void QDemonRenderContext::frameBufferDestroyed(QDemonRenderFrameBuffer *fb)
 {
-    m_frameBufferToImpMap.remove(fb->getImplementationHandle());
+    m_frameBufferToImpMap.remove(fb->handle());
     if (m_hardwarePropertyContext.m_frameBuffer == fb)
         m_hardwarePropertyContext.m_frameBuffer = nullptr;
 }
@@ -803,7 +803,7 @@ void QDemonRenderContext::dispatchCompute(QDemonRef<QDemonRenderShaderProgram> i
 void QDemonRenderContext::setDrawBuffers(QDemonConstDataRef<qint32> inDrawBufferSet)
 {
     m_backend->setDrawBuffers((m_hardwarePropertyContext.m_frameBuffer)
-                                      ? m_hardwarePropertyContext.m_frameBuffer->getFrameBuffertHandle()
+                                      ? m_hardwarePropertyContext.m_frameBuffer->handle()
                                       : nullptr,
                               inDrawBufferSet);
 }

@@ -40,7 +40,7 @@ class QDemonRenderContext;
 class QDemonRenderBackend;
 
 ///< Base class
-class QDemonRenderDataBuffer : public QDemonRenderImplemented
+class QDemonRenderDataBuffer
 {
 public:
     QAtomicInt ref;
@@ -160,10 +160,7 @@ public:
      *
      * @return the backend object handle.
      */
-    virtual QDemonRenderBackend::QDemonRenderBackendBufferObject getBuffertHandle() const = 0;
-
-    // this will be obsolete
-    const void *getImplementationHandle() const override = 0;
+    virtual QDemonRenderBackend::QDemonRenderBackendBufferObject handle() const = 0;
 
 private:
     Q_DISABLE_COPY(QDemonRenderDataBuffer)

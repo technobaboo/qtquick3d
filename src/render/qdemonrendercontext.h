@@ -288,7 +288,7 @@ protected:
     void doSetRenderTarget(QDemonRef<QDemonRenderFrameBuffer> inBuffer)
     {
         if (inBuffer)
-            m_backend->setRenderTarget(inBuffer->getFrameBuffertHandle());
+            m_backend->setRenderTarget(inBuffer->handle());
         else
             m_backend->setRenderTarget(m_defaultOffscreenRenderTarget);
 
@@ -298,7 +298,7 @@ protected:
     void doSetReadTarget(QDemonRef<QDemonRenderFrameBuffer> inBuffer)
     {
         if (inBuffer)
-            m_backend->setReadTarget(inBuffer->getFrameBuffertHandle());
+            m_backend->setReadTarget(inBuffer->handle());
         else
             m_backend->setReadTarget(QDemonRenderBackend::QDemonRenderBackendRenderTargetObject(nullptr));
     }

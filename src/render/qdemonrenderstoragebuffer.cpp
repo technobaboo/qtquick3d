@@ -70,7 +70,7 @@ void QDemonRenderStorageBuffer::bind()
 
 void QDemonRenderStorageBuffer::bindToShaderProgram(quint32 index)
 {
-    m_backend->programSetStorageBuffer(index, (m_wrappedBuffer) ? m_wrappedBuffer->getBuffertHandle() : m_bufferHandle);
+    m_backend->programSetStorageBuffer(index, (m_wrappedBuffer) ? m_wrappedBuffer->handle() : m_bufferHandle);
 }
 
 void QDemonRenderStorageBuffer::update()
