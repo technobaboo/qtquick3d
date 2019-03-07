@@ -5,17 +5,15 @@ DemonNode {
     DemonModel {
         source: "#Cube"
 
-        materials: [texturedCubeMaterial]
+        materials: [
+            DemonDefaultMaterial {
+                id: texturedCubeMaterial
+                diffuseMap: cubeTexture
+                DemonImage {
+                    id: cubeTexture
+                    source: "texture.png"
+                }
+            }
+        ]
     }
-
-    DemonDefaultMaterial {
-        id: texturedCubeMaterial
-        diffuseMap: cubeTexture
-    }
-
-    DemonImage {
-        id: cubeTexture
-        source: "texture.png"
-    }
-
 }
