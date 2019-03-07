@@ -35,7 +35,7 @@
 QT_BEGIN_NAMESPACE
 
 // forward declaration
-class QDemonRenderContextImpl;
+class QDemonRenderContext;
 
 class QDemonRenderTimerQuery : public QDemonRenderQueryBase
 {
@@ -48,7 +48,7 @@ public:
      *
      * @return No return.
      */
-    explicit QDemonRenderTimerQuery(const QDemonRef<QDemonRenderContextImpl> &context);
+    explicit QDemonRenderTimerQuery(const QDemonRef<QDemonRenderContext> &context);
 
     ///< destructor
     ~QDemonRenderTimerQuery() override;
@@ -105,7 +105,7 @@ public:
      *
      * * @return a timer query object on success
      */
-    static QDemonRef<QDemonRenderTimerQuery> create(const QDemonRef<QDemonRenderContextImpl> &context);
+    static QDemonRef<QDemonRenderTimerQuery> create(const QDemonRef<QDemonRenderContext> &context);
 };
 
 QT_END_NAMESPACE

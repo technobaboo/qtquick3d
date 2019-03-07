@@ -33,7 +33,7 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonRenderComputeShader::QDemonRenderComputeShader(const QDemonRef<QDemonRenderContextImpl> &context,
+QDemonRenderComputeShader::QDemonRenderComputeShader(const QDemonRef<QDemonRenderContext> &context,
                                                      QDemonConstDataRef<qint8> source,
                                                      bool binaryProgram)
     : QDemonRenderShader(context, source, binaryProgram), m_shaderHandle(nullptr)

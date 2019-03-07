@@ -38,7 +38,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class QDemonRenderContextImpl;
+class QDemonRenderContext;
 class QDemonRenderTextureSampler;
 
 class Q_DEMONRENDER_EXPORT QDemonRenderTexture2D : public QDemonRenderTextureBase, public QDemonRenderImplemented
@@ -58,7 +58,7 @@ public:
      *
      * @return No return.
      */
-    QDemonRenderTexture2D(const QDemonRef<QDemonRenderContextImpl> &context,
+    QDemonRenderTexture2D(const QDemonRef<QDemonRenderContext> &context,
                           QDemonRenderTextureTargetType texTarget = QDemonRenderTextureTargetType::Texture2D);
 
     virtual ~QDemonRenderTexture2D() override;
@@ -153,7 +153,7 @@ public:
     // this will be obsolete
     const void *getImplementationHandle() const override { return reinterpret_cast<void *>(m_textureHandle); }
 
-    static QDemonRef<QDemonRenderTexture2D> create(const QDemonRef<QDemonRenderContextImpl> &context);
+    static QDemonRef<QDemonRenderTexture2D> create(const QDemonRef<QDemonRenderContext> &context);
 };
 
 QT_END_NAMESPACE

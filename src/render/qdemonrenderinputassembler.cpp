@@ -36,7 +36,7 @@
 QT_BEGIN_NAMESPACE
 
 ///< constructor
-QDemonRenderInputAssembler::QDemonRenderInputAssembler(const QDemonRef<QDemonRenderContextImpl> &context,
+QDemonRenderInputAssembler::QDemonRenderInputAssembler(const QDemonRef<QDemonRenderContext> &context,
                                                        const QDemonRenderAttribLayout &attribLayout,
                                                        QDemonConstDataRef<QDemonRef<QDemonRenderVertexBuffer>> buffers,
                                                        const QDemonRef<QDemonRenderIndexBuffer> &indexBuffer,

@@ -35,7 +35,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class QDemonRenderContextImpl;
+class QDemonRenderContext;
 
 // currently this handles only stencil state
 class QDemonRenderDepthStencilState
@@ -44,7 +44,7 @@ public:
     QAtomicInt ref;
 
 private:
-    QDemonRef<QDemonRenderContextImpl> m_context; ///< pointer to context
+    QDemonRef<QDemonRenderContext> m_context; ///< pointer to context
     QDemonRef<QDemonRenderBackend> m_backend; ///< pointer to backend
     QDemonRenderBackend::QDemonRenderBackendDepthStencilStateObject m_stateHandle; ///< opaque backend handle
 
@@ -65,7 +65,7 @@ public:
      *
      * @return No return.
      */
-    QDemonRenderDepthStencilState(const QDemonRef<QDemonRenderContextImpl> &context,
+    QDemonRenderDepthStencilState(const QDemonRef<QDemonRenderContext> &context,
                                   bool enableDepth,
                                   bool depthMask,
                                   QDemonRenderBoolOp depthFunc,
@@ -101,7 +101,7 @@ public:
         return m_stateHandle;
     }
 
-    static QDemonRef<QDemonRenderDepthStencilState> create(const QDemonRef<QDemonRenderContextImpl> &context,
+    static QDemonRef<QDemonRenderDepthStencilState> create(const QDemonRef<QDemonRenderContext> &context,
                                                            bool enableDepth,
                                                            bool depthMask,
                                                            QDemonRenderBoolOp depthFunc,

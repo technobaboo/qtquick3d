@@ -35,7 +35,7 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonRenderDataBuffer::QDemonRenderDataBuffer(const QDemonRef<QDemonRenderContextImpl> &context,
+QDemonRenderDataBuffer::QDemonRenderDataBuffer(const QDemonRef<QDemonRenderContext> &context,
                                                size_t size,
                                                QDemonRenderBufferBindFlags bindFlags,
                                                QDemonRenderBufferUsageType usageType,

@@ -35,7 +35,7 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonRenderPathFontSpecification::QDemonRenderPathFontSpecification(const QDemonRef<QDemonRenderContextImpl> &context,
+QDemonRenderPathFontSpecification::QDemonRenderPathFontSpecification(const QDemonRef<QDemonRenderContext> &context,
                                                                      const QString &fontName)
     : m_context(context)
     , m_backend(context->getBackend())
@@ -141,7 +141,7 @@ quint32 QDemonRenderPathFontSpecification::getSizeOfType(QDemonRenderPathFormatT
 }
 
 QDemonRef<QDemonRenderPathFontSpecification> QDemonRenderPathFontSpecification::createPathFontSpecification(
-        const QDemonRef<QDemonRenderContextImpl> &context,
+        const QDemonRef<QDemonRenderContext> &context,
         const QString &fontName)
 {
     Q_ASSERT(context->isPathRenderingSupported());

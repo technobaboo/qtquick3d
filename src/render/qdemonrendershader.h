@@ -35,14 +35,14 @@
 
 QT_BEGIN_NAMESPACE
 
-class QDemonRenderContextImpl;
+class QDemonRenderContext;
 
 ///< A shader program is an object composed of a multiple shaders (vertex, fragment,
 /// geometry,....)
 class QDemonRenderShader
 {
 protected:
-    QDemonRef<QDemonRenderContextImpl> m_context; ///< pointer to context
+    QDemonRef<QDemonRenderContext> m_context; ///< pointer to context
     QDemonRef<QDemonRenderBackend> m_backend; ///< pointer to backend
     QDemonConstDataRef<qint8> m_source; ///< shader source code
     bool m_binary; ///< true for binary programs
@@ -57,7 +57,7 @@ public:
      *
      * @return No return.
      */
-    QDemonRenderShader(const QDemonRef<QDemonRenderContextImpl> &context, QDemonConstDataRef<qint8> source, bool binaryProgram)
+    QDemonRenderShader(const QDemonRef<QDemonRenderContext> &context, QDemonConstDataRef<qint8> source, bool binaryProgram)
         : m_context(context), m_backend(context->getBackend()), m_source(source), m_binary(binaryProgram)
     {
     }

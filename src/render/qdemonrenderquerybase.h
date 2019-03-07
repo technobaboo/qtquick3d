@@ -36,7 +36,7 @@
 QT_BEGIN_NAMESPACE
 
 // forward declaration
-class QDemonRenderContextImpl;
+class QDemonRenderContext;
 class QDemonRenderBackend;
 
 ///< Base class
@@ -46,7 +46,7 @@ public:
     QAtomicInt ref;
 
 protected:
-    QDemonRef<QDemonRenderContextImpl> m_context; ///< pointer to context
+    QDemonRef<QDemonRenderContext> m_context; ///< pointer to context
     QDemonRef<QDemonRenderBackend> m_backend; ///< pointer to backend
     QDemonRenderBackend::QDemonRenderBackendQueryObject m_queryHandle; ///< opaque backend handle
 
@@ -59,7 +59,7 @@ public:
      *
      * @return No return.
      */
-    QDemonRenderQueryBase(const QDemonRef<QDemonRenderContextImpl> &context);
+    QDemonRenderQueryBase(const QDemonRef<QDemonRenderContext> &context);
 
     virtual ~QDemonRenderQueryBase();
 

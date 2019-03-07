@@ -34,7 +34,7 @@
 #include <QtDemon/qdemonutils.h>
 
 QT_BEGIN_NAMESPACE
-QDemonRenderDrawIndirectBuffer::QDemonRenderDrawIndirectBuffer(const QDemonRef<QDemonRenderContextImpl> &context,
+QDemonRenderDrawIndirectBuffer::QDemonRenderDrawIndirectBuffer(const QDemonRef<QDemonRenderContext> &context,
                                                                size_t size,
                                                                QDemonRenderBufferUsageType usageType,
                                                                QDemonDataRef<quint8> data)
@@ -73,7 +73,7 @@ void QDemonRenderDrawIndirectBuffer::updateData(qint32 offset, QDemonDataRef<qui
         m_backend->updateBuffer(m_bufferHandle, m_bindFlags, data.size(), m_usageType, data.begin() + offset);
 }
 
-QDemonRef<QDemonRenderDrawIndirectBuffer> QDemonRenderDrawIndirectBuffer::create(const QDemonRef<QDemonRenderContextImpl> &context,
+QDemonRef<QDemonRenderDrawIndirectBuffer> QDemonRenderDrawIndirectBuffer::create(const QDemonRef<QDemonRenderContext> &context,
                                                                                  QDemonRenderBufferUsageType usageType,
                                                                                  size_t size,
                                                                                  QDemonConstDataRef<quint8> bufferData)

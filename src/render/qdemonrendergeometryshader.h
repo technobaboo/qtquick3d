@@ -34,7 +34,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class QDemonRenderContextImpl;
+class QDemonRenderContext;
 
 ///< This class represents a vertex shader
 class QDemonRenderGeometryShader : public QDemonRenderShader
@@ -51,7 +51,7 @@ public:
      *
      * @return No return.
      */
-    QDemonRenderGeometryShader(const QDemonRef<QDemonRenderContextImpl> &context, QDemonConstDataRef<qint8> source, bool binaryProgram);
+    QDemonRenderGeometryShader(const QDemonRef<QDemonRenderContext> &context, QDemonConstDataRef<qint8> source, bool binaryProgram);
 
     /// @brief destructor
     virtual ~QDemonRenderGeometryShader() override;

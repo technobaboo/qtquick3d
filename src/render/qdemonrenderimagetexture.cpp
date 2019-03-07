@@ -36,7 +36,7 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonRenderImage2D::QDemonRenderImage2D(const QDemonRef<QDemonRenderContextImpl> &context,
+QDemonRenderImage2D::QDemonRenderImage2D(const QDemonRef<QDemonRenderContext> &context,
                                          const QDemonRef<QDemonRenderTexture2D> &inTexture,
                                          QDemonRenderImageAccessType inAccess)
     : m_context(context)
@@ -85,7 +85,7 @@ QDemonRenderBackend::QDemonRenderBackendTextureObject QDemonRenderImage2D::getTe
     return m_texture2D->getTextureObjectHandle();
 }
 
-QDemonRef<QDemonRenderImage2D> QDemonRenderImage2D::create(const QDemonRef<QDemonRenderContextImpl> &context,
+QDemonRef<QDemonRenderImage2D> QDemonRenderImage2D::create(const QDemonRef<QDemonRenderContext> &context,
                                                            const QDemonRef<QDemonRenderTexture2D> &inTexture,
                                                            QDemonRenderImageAccessType inAccess)
 {

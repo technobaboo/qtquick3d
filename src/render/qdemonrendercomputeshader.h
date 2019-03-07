@@ -34,7 +34,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class QDemonRenderContextImpl;
+class QDemonRenderContext;
 
 ///< This class represents a compute shader
 class QDemonRenderComputeShader : public QDemonRenderShader
@@ -51,7 +51,7 @@ public:
      *
      * @return No return.
      */
-    QDemonRenderComputeShader(const QDemonRef<QDemonRenderContextImpl> &context, QDemonConstDataRef<qint8> source, bool binaryProgram);
+    QDemonRenderComputeShader(const QDemonRef<QDemonRenderContext> &context, QDemonConstDataRef<qint8> source, bool binaryProgram);
 
     /// @brief destructor
     ~QDemonRenderComputeShader();

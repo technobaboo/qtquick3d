@@ -35,7 +35,7 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonRenderStorageBuffer::QDemonRenderStorageBuffer(const QDemonRef<QDemonRenderContextImpl> &context,
+QDemonRenderStorageBuffer::QDemonRenderStorageBuffer(const QDemonRef<QDemonRenderContext> &context,
                                                      const QByteArray &bufferName,
                                                      size_t size,
                                                      QDemonRenderBufferUsageType usageType,
@@ -89,7 +89,7 @@ void QDemonRenderStorageBuffer::updateData(qint32 offset, QDemonDataRef<quint8> 
         m_backend->updateBuffer(m_bufferHandle, m_bindFlags, data.size(), m_usageType, data.begin() + offset);
 }
 
-QDemonRef<QDemonRenderStorageBuffer> QDemonRenderStorageBuffer::create(const QDemonRef<QDemonRenderContextImpl> &context,
+QDemonRef<QDemonRenderStorageBuffer> QDemonRenderStorageBuffer::create(const QDemonRef<QDemonRenderContext> &context,
                                                                        const char *bufferName,
                                                                        QDemonRenderBufferUsageType usageType,
                                                                        size_t size,

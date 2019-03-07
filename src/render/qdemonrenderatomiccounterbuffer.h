@@ -38,7 +38,7 @@
 QT_BEGIN_NAMESPACE
 
 // forward declaration
-class QDemonRenderContextImpl;
+class QDemonRenderContext;
 class AtomicCounterBufferEntry;
 
 typedef QHash<QByteArray, AtomicCounterBufferEntry *> TRenderAtomiCounterBufferEntryMap;
@@ -59,7 +59,7 @@ public:
      *
      * @return No return.
      */
-    QDemonRenderAtomicCounterBuffer(const QDemonRef<QDemonRenderContextImpl> &context,
+    QDemonRenderAtomicCounterBuffer(const QDemonRef<QDemonRenderContext> &context,
                                     const QByteArray &bufferName,
                                     size_t size,
                                     QDemonRenderBufferUsageType usageType,
@@ -157,7 +157,7 @@ public:
      *
      * @return the buffer object or nullptr
      */
-    static QDemonRef<QDemonRenderAtomicCounterBuffer> create(const QDemonRef<QDemonRenderContextImpl> &context,
+    static QDemonRef<QDemonRenderAtomicCounterBuffer> create(const QDemonRef<QDemonRenderContext> &context,
                                                              const char *bufferName,
                                                              QDemonRenderBufferUsageType usageType,
                                                              size_t size,

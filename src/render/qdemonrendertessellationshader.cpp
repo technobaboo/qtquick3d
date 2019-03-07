@@ -33,7 +33,7 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonRenderTessControlShader::QDemonRenderTessControlShader(const QDemonRef<QDemonRenderContextImpl> &context,
+QDemonRenderTessControlShader::QDemonRenderTessControlShader(const QDemonRef<QDemonRenderContext> &context,
                                                              QDemonConstDataRef<qint8> source,
                                                              bool binaryProgram)
     : QDemonRenderShader(context, source, binaryProgram), m_shaderHandle(nullptr)
@@ -48,7 +48,7 @@ QDemonRenderTessControlShader::~QDemonRenderTessControlShader()
     }
 }
 
-QDemonRenderTessEvaluationShader::QDemonRenderTessEvaluationShader(const QDemonRef<QDemonRenderContextImpl> &context,
+QDemonRenderTessEvaluationShader::QDemonRenderTessEvaluationShader(const QDemonRef<QDemonRenderContext> &context,
                                                                    QDemonConstDataRef<qint8> source,
                                                                    bool binaryProgram)
     : QDemonRenderShader(context, source, binaryProgram), m_shaderHandle(nullptr)

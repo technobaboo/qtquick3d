@@ -35,7 +35,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class QDemonRenderContextImpl;
+class QDemonRenderContext;
 
 class QDemonRenderPathSpecification
 {
@@ -43,7 +43,7 @@ public:
     QAtomicInt ref;
 
 private:
-    QDemonRef<QDemonRenderContextImpl> m_context; ///< pointer to context
+    QDemonRef<QDemonRenderContext> m_context; ///< pointer to context
     QDemonRef<QDemonRenderBackend> m_backend; ///< pointer to backend
 
 public:
@@ -55,7 +55,7 @@ public:
      *
      * @return No return.
      */
-    QDemonRenderPathSpecification(const QDemonRef<QDemonRenderContextImpl> &context);
+    QDemonRenderPathSpecification(const QDemonRef<QDemonRenderContext> &context);
 
     /// @QDemonRenderPathSpecification destructor
     virtual ~QDemonRenderPathSpecification();
@@ -125,7 +125,7 @@ private:
     void addPoint(QVector2D inData);
 
 public:
-    static QDemonRef<QDemonRenderPathSpecification> createPathSpecification(const QDemonRef<QDemonRenderContextImpl> &context);
+    static QDemonRef<QDemonRenderPathSpecification> createPathSpecification(const QDemonRef<QDemonRenderContext> &context);
 };
 
 QT_END_NAMESPACE

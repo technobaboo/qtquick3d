@@ -34,7 +34,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class QDemonRenderContextImpl;
+class QDemonRenderContext;
 
 ///< This class represents a fragment shader
 class QDemonRenderFragmentShader : public QDemonRenderShader
@@ -51,7 +51,7 @@ public:
      *
      * @return No return.
      */
-    QDemonRenderFragmentShader(const QDemonRef<QDemonRenderContextImpl> &context, QDemonConstDataRef<qint8> source, bool binaryProgram);
+    QDemonRenderFragmentShader(const QDemonRef<QDemonRenderContext> &context, QDemonConstDataRef<qint8> source, bool binaryProgram);
 
     /// @brief destructor
     ~QDemonRenderFragmentShader() override;

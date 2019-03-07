@@ -36,7 +36,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class QDemonRenderContextImpl;
+class QDemonRenderContext;
 class QDemonRenderTextureSampler;
 
 class Q_DEMONRENDER_EXPORT QDemonRenderTexture2DArray : public QDemonRenderTextureBase
@@ -57,7 +57,7 @@ public:
      *
      * @return No return.
      */
-    QDemonRenderTexture2DArray(const QDemonRef<QDemonRenderContextImpl> &context,
+    QDemonRenderTexture2DArray(const QDemonRef<QDemonRenderContext> &context,
                                QDemonRenderTextureTargetType texTarget = QDemonRenderTextureTargetType::Texture2D_Array);
 
     virtual ~QDemonRenderTexture2DArray();
@@ -98,7 +98,7 @@ public:
      *
      * @ return a texture array object
      */
-    static QDemonRef<QDemonRenderTexture2DArray> create(const QDemonRef<QDemonRenderContextImpl> &context);
+    static QDemonRef<QDemonRenderTexture2DArray> create(const QDemonRef<QDemonRenderContext> &context);
 };
 
 QT_END_NAMESPACE

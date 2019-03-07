@@ -36,7 +36,7 @@
 QT_BEGIN_NAMESPACE
 
 // forward declaration
-class QDemonRenderContextImpl;
+class QDemonRenderContext;
 
 ///< Vertex buffer representation
 class QDemonRenderVertexBuffer : public QDemonRenderDataBuffer
@@ -57,7 +57,7 @@ public:
      *
      * @return No return.
      */
-    QDemonRenderVertexBuffer(const QDemonRef<QDemonRenderContextImpl> &context,
+    QDemonRenderVertexBuffer(const QDemonRef<QDemonRenderContext> &context,
                              size_t size,
                              quint32 stride,
                              QDemonRenderBufferBindFlags bindFlags,
@@ -105,7 +105,7 @@ public:
     // No stride means that stride is calculated from the size of last entry found via entry
     // offset
     // Leaves this buffer temporarily bound.
-    static QDemonRef<QDemonRenderVertexBuffer> create(const QDemonRef<QDemonRenderContextImpl> &context,
+    static QDemonRef<QDemonRenderVertexBuffer> create(const QDemonRef<QDemonRenderContext> &context,
                                                       QDemonRenderBufferUsageType usageType,
                                                       size_t size,
                                                       quint32 stride,

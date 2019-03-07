@@ -33,7 +33,7 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonRenderRasterizerState::QDemonRenderRasterizerState(const QDemonRef<QDemonRenderContextImpl> &context,
+QDemonRenderRasterizerState::QDemonRenderRasterizerState(const QDemonRef<QDemonRenderContext> &context,
                                                          float depthBias,
                                                          float depthScale,
                                                          QDemonRenderFace cullFace)
@@ -51,7 +51,7 @@ QDemonRenderRasterizerState::~QDemonRenderRasterizerState()
     }
 }
 
-QDemonRef<QDemonRenderRasterizerState> QDemonRenderRasterizerState::create(const QDemonRef<QDemonRenderContextImpl> &context,
+QDemonRef<QDemonRenderRasterizerState> QDemonRenderRasterizerState::create(const QDemonRef<QDemonRenderContext> &context,
                                                                            float depthBias,
                                                                            float depthScale,
                                                                            QDemonRenderFace cullFace)

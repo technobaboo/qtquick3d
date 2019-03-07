@@ -36,7 +36,7 @@
 QT_BEGIN_NAMESPACE
 
 // forward declaration
-class QDemonRenderContextImpl;
+class QDemonRenderContext;
 
 struct DrawArraysIndirectCommand
 {
@@ -70,7 +70,7 @@ public:
      *
      * @return No return.
      */
-    QDemonRenderDrawIndirectBuffer(const QDemonRef<QDemonRenderContextImpl> &context,
+    QDemonRenderDrawIndirectBuffer(const QDemonRef<QDemonRenderContext> &context,
                                    size_t size,
                                    QDemonRenderBufferUsageType usageType,
                                    QDemonDataRef<quint8> data);
@@ -130,7 +130,7 @@ public:
      *
      * @return the buffer object or nullptr
      */
-    static QDemonRef<QDemonRenderDrawIndirectBuffer> create(const QDemonRef<QDemonRenderContextImpl> &context,
+    static QDemonRef<QDemonRenderDrawIndirectBuffer> create(const QDemonRef<QDemonRenderContext> &context,
                                                             QDemonRenderBufferUsageType usageType,
                                                             size_t size,
                                                             QDemonConstDataRef<quint8> bufferData);

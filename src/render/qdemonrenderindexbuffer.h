@@ -35,7 +35,7 @@
 QT_BEGIN_NAMESPACE
 
 // forward declaration
-class QDemonRenderContextImpl;
+class QDemonRenderContext;
 
 class QDemonRenderIndexBuffer : public QDemonRenderDataBuffer, public QDemonRenderDrawable
 {
@@ -52,7 +52,7 @@ public:
      *
      * @return No return.
      */
-    QDemonRenderIndexBuffer(const QDemonRef<QDemonRenderContextImpl> &context,
+    QDemonRenderIndexBuffer(const QDemonRef<QDemonRenderContext> &context,
                             size_t size,
                             QDemonRenderComponentType componentType,
                             QDemonRenderBufferUsageType usageType,
@@ -114,7 +114,7 @@ public:
     // this will be obsolete
     const void *getImplementationHandle() const override { return reinterpret_cast<void *>(m_bufferHandle); }
 
-    static QDemonRef<QDemonRenderIndexBuffer> create(const QDemonRef<QDemonRenderContextImpl> &context,
+    static QDemonRef<QDemonRenderIndexBuffer> create(const QDemonRef<QDemonRenderContext> &context,
                                                      QDemonRenderBufferUsageType usageType,
                                                      QDemonRenderComponentType componentType,
                                                      size_t size,

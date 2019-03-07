@@ -34,7 +34,7 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonRenderProgramPipeline::QDemonRenderProgramPipeline(const QDemonRef<QDemonRenderContextImpl> &context)
+QDemonRenderProgramPipeline::QDemonRenderProgramPipeline(const QDemonRef<QDemonRenderContext> &context)
     : m_context(context)
     , m_backend(context->getBackend())
     , m_program(nullptr)

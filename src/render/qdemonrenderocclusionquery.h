@@ -35,7 +35,7 @@
 QT_BEGIN_NAMESPACE
 
 // forward declaration
-class QDemonRenderContextImpl;
+class QDemonRenderContext;
 
 class QDemonRenderOcclusionQuery : public QDemonRenderQueryBase
 {
@@ -48,7 +48,7 @@ public:
      *
      * @return No return.
      */
-    QDemonRenderOcclusionQuery(const QDemonRef<QDemonRenderContextImpl> &context);
+    QDemonRenderOcclusionQuery(const QDemonRef<QDemonRenderContext> &context);
 
     ///< destructor
     ~QDemonRenderOcclusionQuery() override;
@@ -96,7 +96,7 @@ public:
      *
      * * @return a occlusion query object on success
      */
-    static QDemonRef<QDemonRenderOcclusionQuery> create(const QDemonRef<QDemonRenderContextImpl> &context);
+    static QDemonRef<QDemonRenderOcclusionQuery> create(const QDemonRef<QDemonRenderContext> &context);
 };
 
 QT_END_NAMESPACE

@@ -36,7 +36,7 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonRenderTextureBase::QDemonRenderTextureBase(const QDemonRef<QDemonRenderContextImpl> &context,
+QDemonRenderTextureBase::QDemonRenderTextureBase(const QDemonRef<QDemonRenderContext> &context,
                                                  QDemonRenderTextureTargetType texTarget)
     : m_context(context)
     , m_backend(context->getBackend())

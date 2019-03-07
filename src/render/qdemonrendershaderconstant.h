@@ -42,7 +42,7 @@
 QT_BEGIN_NAMESPACE
 
 ///< forward declarations
-class QDemonRenderContextImpl;
+class QDemonRenderContext;
 class QDemonRenderConstantBuffer;
 
 ///< A shader constant belongs to a program
@@ -236,14 +236,14 @@ class QDemonRenderShaderBufferBase
 {
 public:
     QAtomicInt ref;
-    QDemonRef<QDemonRenderContextImpl> m_context; ///< pointer to context
+    QDemonRef<QDemonRenderContext> m_context; ///< pointer to context
     QByteArray m_name; ///< buffer name
     quint32 m_location; ///< program buffer block location
     quint32 m_binding; ///< program buffer binding
     qint32 m_size; ///< buffer size
 
 public:
-    QDemonRenderShaderBufferBase(QDemonRef<QDemonRenderContextImpl> context, const QByteArray &name, qint32 location, qint32 binding, qint32 size)
+    QDemonRenderShaderBufferBase(QDemonRef<QDemonRenderContext> context, const QByteArray &name, qint32 location, qint32 binding, qint32 size)
         : m_context(context), m_name(name), m_location(location), m_binding(binding), m_size(size)
     {
     }
@@ -264,7 +264,7 @@ public:
     QDemonRef<QDemonRenderConstantBuffer> m_constBuffer; ///< pointer to constant buffer
 
 public:
-    QDemonRenderShaderConstantBuffer(QDemonRef<QDemonRenderContextImpl> context,
+    QDemonRenderShaderConstantBuffer(QDemonRef<QDemonRenderContext> context,
                                      const QByteArray &name,
                                      quint32 location,
                                      qint32 binding,
@@ -295,7 +295,7 @@ public:
     QDemonRef<QDemonRenderStorageBuffer> m_storageBuffer; ///< pointer to storage buffer
 
 public:
-    QDemonRenderShaderStorageBuffer(QDemonRef<QDemonRenderContextImpl> context,
+    QDemonRenderShaderStorageBuffer(QDemonRef<QDemonRenderContext> context,
                                     const QByteArray &name,
                                     quint32 location,
                                     qint32 binding,
@@ -326,7 +326,7 @@ public:
     QDemonRef<QDemonRenderAtomicCounterBuffer> m_atomicCounterBuffer; ///< pointer to atomic counter buffer
 
 public:
-    QDemonRenderShaderAtomicCounterBuffer(QDemonRef<QDemonRenderContextImpl> context,
+    QDemonRenderShaderAtomicCounterBuffer(QDemonRef<QDemonRenderContext> context,
                                           const QByteArray &name,
                                           quint32 location,
                                           qint32 binding,

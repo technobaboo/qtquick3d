@@ -38,7 +38,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class QDemonRenderContextImpl;
+class QDemonRenderContext;
 class QDemonRenderPathRender;
 class QDemonRenderPathFontItem;
 
@@ -49,7 +49,7 @@ public:
     QAtomicInt ref;
 
 private:
-    QDemonRef<QDemonRenderContextImpl> m_context; ///< pointer to context
+    QDemonRef<QDemonRenderContext> m_context; ///< pointer to context
     QDemonRef<QDemonRenderBackend> m_backend; ///< pointer to backend
 
 public:
@@ -63,7 +63,7 @@ public:
      *
      * @return No return.
      */
-    QDemonRenderPathFontSpecification(const QDemonRef<QDemonRenderContextImpl> &context, const QString &fontName);
+    QDemonRenderPathFontSpecification(const QDemonRef<QDemonRenderContext> &context, const QString &fontName);
 
     /// @QDemonRenderPathSpecification destructor
     virtual ~QDemonRenderPathFontSpecification();
@@ -147,7 +147,7 @@ private:
     quint32 getSizeOfType(QDemonRenderPathFormatType type);
 
 public:
-    static QDemonRef<QDemonRenderPathFontSpecification> createPathFontSpecification(const QDemonRef<QDemonRenderContextImpl> &context,
+    static QDemonRef<QDemonRenderPathFontSpecification> createPathFontSpecification(const QDemonRef<QDemonRenderContext> &context,
                                                                                     const QString &fontName);
 };
 

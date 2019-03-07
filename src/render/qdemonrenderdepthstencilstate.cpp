@@ -33,7 +33,7 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonRenderDepthStencilState::QDemonRenderDepthStencilState(const QDemonRef<QDemonRenderContextImpl> &context,
+QDemonRenderDepthStencilState::QDemonRenderDepthStencilState(const QDemonRef<QDemonRenderContext> &context,
                                                              bool enableDepth,
                                                              bool depthMask,
                                                              QDemonRenderBoolOp depthFunc,
@@ -65,7 +65,7 @@ QDemonRenderDepthStencilState::~QDemonRenderDepthStencilState()
     }
 }
 
-QDemonRef<QDemonRenderDepthStencilState> QDemonRenderDepthStencilState::create(const QDemonRef<QDemonRenderContextImpl> &context,
+QDemonRef<QDemonRenderDepthStencilState> QDemonRenderDepthStencilState::create(const QDemonRef<QDemonRenderContext> &context,
                                                                                bool enableDepth,
                                                                                bool depthMask,
                                                                                QDemonRenderBoolOp depthFunc,

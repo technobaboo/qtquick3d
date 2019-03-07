@@ -35,7 +35,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class QDemonRenderContextImpl;
+class QDemonRenderContext;
 
 class QDemonRenderTextureSampler
 {
@@ -75,7 +75,7 @@ public:
      *
      * @return No return.
      */
-    QDemonRenderTextureSampler(const QDemonRef<QDemonRenderContextImpl> &context,
+    QDemonRenderTextureSampler(const QDemonRef<QDemonRenderContext> &context,
                                QDemonRenderTextureMinifyingOp minFilter = QDemonRenderTextureMinifyingOp::Linear,
                                QDemonRenderTextureMagnifyingOp magFilter = QDemonRenderTextureMagnifyingOp::Linear,
                                QDemonRenderTextureCoordOp wrapS = QDemonRenderTextureCoordOp::ClampToEdge,
@@ -104,7 +104,7 @@ public:
     QDemonRenderBackend::QDemonRenderBackendSamplerObject GetSamplerHandle() const { return m_samplerHandle; }
 
 private:
-    QDemonRef<QDemonRenderContextImpl> m_context; ///< pointer to context
+    QDemonRef<QDemonRenderContext> m_context; ///< pointer to context
     QDemonRef<QDemonRenderBackend> m_backend; ///< pointer to backend
     QDemonRenderBackend::QDemonRenderBackendSamplerObject m_samplerHandle; ///< opaque backend handle
 };

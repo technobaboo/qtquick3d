@@ -35,7 +35,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class QDemonRenderContextImpl;
+class QDemonRenderContext;
 class QDemonRenderTexture2D;
 class QDemonRenderRenderBuffer;
 class QDemonRenderTexture2DArray;
@@ -76,7 +76,7 @@ public:
     QAtomicInt ref;
 
 private:
-    QDemonRef<QDemonRenderContextImpl> m_context; ///< pointer to context
+    QDemonRef<QDemonRenderContext> m_context; ///< pointer to context
     QDemonRef<QDemonRenderBackend> m_backend; ///< pointer to backend
 
     QDemonRenderTextureOrRenderBuffer m_attachments[static_cast<int>(QDemonRenderFrameBufferAttachment::LastAttachment)]; ///< attachments array
@@ -91,7 +91,7 @@ public:
      *
      * @return No return.
      */
-    QDemonRenderFrameBuffer(const QDemonRef<QDemonRenderContextImpl> &context);
+    QDemonRenderFrameBuffer(const QDemonRef<QDemonRenderContext> &context);
 
     /// destructor
     virtual ~QDemonRenderFrameBuffer() override;
@@ -188,7 +188,7 @@ public:
      *
      * @return a pointer to framebuffer object.
      */
-    static QDemonRef<QDemonRenderFrameBuffer> create(const QDemonRef<QDemonRenderContextImpl> &context);
+    static QDemonRef<QDemonRenderFrameBuffer> create(const QDemonRef<QDemonRenderContext> &context);
 
 private:
     /**

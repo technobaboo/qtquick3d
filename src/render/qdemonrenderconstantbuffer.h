@@ -40,7 +40,7 @@
 QT_BEGIN_NAMESPACE
 
 // forward declaration
-class QDemonRenderContextImpl;
+class QDemonRenderContext;
 class ConstantBufferParamEntry;
 class QDemonRenderShaderProgram;
 
@@ -62,7 +62,7 @@ public:
      *
      * @return No return.
      */
-    QDemonRenderConstantBuffer(const QDemonRef<QDemonRenderContextImpl> &context,
+    QDemonRenderConstantBuffer(const QDemonRef<QDemonRenderContext> &context,
                                const QByteArray &bufferName,
                                size_t size,
                                QDemonRenderBufferUsageType usageType,
@@ -169,7 +169,7 @@ public:
      *
      * @return the backend object handle.
      */
-    static QDemonRef<QDemonRenderConstantBuffer> create(const QDemonRef<QDemonRenderContextImpl> &context,
+    static QDemonRef<QDemonRenderConstantBuffer> create(const QDemonRef<QDemonRenderContext> &context,
                                                         const char *bufferName,
                                                         QDemonRenderBufferUsageType usageType,
                                                         size_t size,

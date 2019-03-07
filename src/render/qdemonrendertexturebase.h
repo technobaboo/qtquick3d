@@ -35,7 +35,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class QDemonRenderContextImpl;
+class QDemonRenderContext;
 class QDemonRenderTextureSampler;
 
 struct QDemonTextureDetails
@@ -59,7 +59,7 @@ public:
     QAtomicInt ref;
 
 protected:
-    QDemonRef<QDemonRenderContextImpl> m_context; ///< pointer to context
+    QDemonRef<QDemonRenderContext> m_context; ///< pointer to context
     QDemonRef<QDemonRenderBackend> m_backend; ///< pointer to backend
     QDemonRenderBackend::QDemonRenderBackendTextureObject m_textureHandle; ///< opaque backend handle
     qint32 m_textureUnit; ///< texture unit this texture should use
@@ -84,7 +84,7 @@ public:
      *
      * @return No return.
      */
-    QDemonRenderTextureBase(const QDemonRef<QDemonRenderContextImpl> &context, QDemonRenderTextureTargetType texTarget);
+    QDemonRenderTextureBase(const QDemonRef<QDemonRenderContext> &context, QDemonRenderTextureTargetType texTarget);
 
     virtual ~QDemonRenderTextureBase();
 

@@ -35,7 +35,7 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonRenderTexture2DArray::QDemonRenderTexture2DArray(const QDemonRef<QDemonRenderContextImpl> &context,
+QDemonRenderTexture2DArray::QDemonRenderTexture2DArray(const QDemonRef<QDemonRenderContext> &context,
                                                        QDemonRenderTextureTargetType texTarget)
     : QDemonRenderTextureBase(context, texTarget), m_width(0), m_height(0), m_slices(0)
 {
@@ -112,7 +112,7 @@ void QDemonRenderTexture2DArray::bind()
     applyTexSwizzle();
 }
 
-QDemonRef<QDemonRenderTexture2DArray> QDemonRenderTexture2DArray::create(const QDemonRef<QDemonRenderContextImpl> &context)
+QDemonRef<QDemonRenderTexture2DArray> QDemonRenderTexture2DArray::create(const QDemonRef<QDemonRenderContext> &context)
 {
     return QDemonRef<QDemonRenderTexture2DArray>(new QDemonRenderTexture2DArray(context));
 }

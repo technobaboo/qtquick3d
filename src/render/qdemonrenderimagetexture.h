@@ -35,7 +35,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class QDemonRenderContextImpl;
+class QDemonRenderContext;
 class QDemonRenderTexture2D;
 
 // a wrapper class for QDemonRenderTexture2D
@@ -47,7 +47,7 @@ public:
     QAtomicInt ref;
 
 private:
-    QDemonRef<QDemonRenderContextImpl> m_context; ///< pointer to context
+    QDemonRef<QDemonRenderContext> m_context; ///< pointer to context
     QDemonRef<QDemonRenderBackend> m_backend; ///< pointer to backend
     QDemonRef<QDemonRenderTexture2D> m_texture2D; ///< pointer to texture
     qint32 m_textureUnit; ///< texture unit this texture should use
@@ -65,7 +65,7 @@ public:
      *
      * @return No return.
      */
-    QDemonRenderImage2D(const QDemonRef<QDemonRenderContextImpl> &context,
+    QDemonRenderImage2D(const QDemonRef<QDemonRenderContext> &context,
                         const QDemonRef<QDemonRenderTexture2D> &inTexture,
                         QDemonRenderImageAccessType inAccess);
 
@@ -124,7 +124,7 @@ public:
      *
      * @return No return.
      */
-    static QDemonRef<QDemonRenderImage2D> create(const QDemonRef<QDemonRenderContextImpl> &context,
+    static QDemonRef<QDemonRenderImage2D> create(const QDemonRef<QDemonRenderContext> &context,
                                                  const QDemonRef<QDemonRenderTexture2D> &inTexture,
                                                  QDemonRenderImageAccessType inAccess);
 };

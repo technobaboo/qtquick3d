@@ -556,7 +556,7 @@ struct ShaderConstantApplier<QDemonRenderImage2DPtr>
     }
 };
 
-QDemonRenderShaderProgram::QDemonRenderShaderProgram(const QDemonRef<QDemonRenderContextImpl> &context, const char *programName, bool separableProgram)
+QDemonRenderShaderProgram::QDemonRenderShaderProgram(const QDemonRef<QDemonRenderContext> &context, const char *programName, bool separableProgram)
     : m_context(context)
     , m_backend(context->getBackend())
     , m_programName(programName)
@@ -684,7 +684,7 @@ static QDemonRef<QDemonRenderShaderConstantBase> shaderConstantFactory(const QDe
 }
 
 template<typename TShaderBufferType, typename TBufferDataType>
-static QDemonRef<QDemonRenderShaderBufferBase> shaderBufferFactory(QDemonRef<QDemonRenderContextImpl> context,
+static QDemonRef<QDemonRenderShaderBufferBase> shaderBufferFactory(QDemonRef<QDemonRenderContext> context,
                                                                    const QByteArray &inName,
                                                                    qint32 cbLoc,
                                                                    qint32 cbBinding,
@@ -818,7 +818,7 @@ QDemonRef<QDemonRenderShaderBufferBase> QDemonRenderShaderProgram::getShaderBuff
     return nullptr;
 }
 
-QDemonRef<QDemonRenderContextImpl> QDemonRenderShaderProgram::getRenderContext()
+QDemonRef<QDemonRenderContext> QDemonRenderShaderProgram::getRenderContext()
 {
     return m_context;
 }
@@ -1073,7 +1073,7 @@ void writeErrorMessage(const char *tag, const char *message)
 }
 }
 
-QDemonOption<QDemonRenderVertexShader *> QDemonRenderShaderProgram::createVertexShader(const QDemonRef<QDemonRenderContextImpl> &context,
+QDemonOption<QDemonRenderVertexShader *> QDemonRenderShaderProgram::createVertexShader(const QDemonRef<QDemonRenderContext> &context,
                                                                                        QDemonConstDataRef<qint8> vertexShaderSource,
                                                                                        bool binaryProgram)
 {
@@ -1083,7 +1083,7 @@ QDemonOption<QDemonRenderVertexShader *> QDemonRenderShaderProgram::createVertex
     return new QDemonRenderVertexShader(context, vertexShaderSource, binaryProgram);
 }
 
-QDemonOption<QDemonRenderFragmentShader *> QDemonRenderShaderProgram::createFragmentShader(const QDemonRef<QDemonRenderContextImpl> &context,
+QDemonOption<QDemonRenderFragmentShader *> QDemonRenderShaderProgram::createFragmentShader(const QDemonRef<QDemonRenderContext> &context,
                                                                                            QDemonConstDataRef<qint8> fragmentShaderSource,
                                                                                            bool binaryProgram)
 {
@@ -1094,7 +1094,7 @@ QDemonOption<QDemonRenderFragmentShader *> QDemonRenderShaderProgram::createFrag
 }
 
 QDemonOption<QDemonRenderTessControlShader *> QDemonRenderShaderProgram::createTessControlShader(
-        const QDemonRef<QDemonRenderContextImpl> &context,
+        const QDemonRef<QDemonRenderContext> &context,
         QDemonConstDataRef<qint8> tessControlShaderSource,
         bool binaryProgram)
 {
@@ -1105,7 +1105,7 @@ QDemonOption<QDemonRenderTessControlShader *> QDemonRenderShaderProgram::createT
 }
 
 QDemonOption<QDemonRenderTessEvaluationShader *> QDemonRenderShaderProgram::createTessEvaluationShader(
-        const QDemonRef<QDemonRenderContextImpl> &context,
+        const QDemonRef<QDemonRenderContext> &context,
         QDemonConstDataRef<qint8> tessControlShaderSource,
         bool binaryProgram)
 {
@@ -1115,7 +1115,7 @@ QDemonOption<QDemonRenderTessEvaluationShader *> QDemonRenderShaderProgram::crea
     return new QDemonRenderTessEvaluationShader(context, tessControlShaderSource, binaryProgram);
 }
 
-QDemonOption<QDemonRenderGeometryShader *> QDemonRenderShaderProgram::createGeometryShader(const QDemonRef<QDemonRenderContextImpl> &context,
+QDemonOption<QDemonRenderGeometryShader *> QDemonRenderShaderProgram::createGeometryShader(const QDemonRef<QDemonRenderContext> &context,
                                                                                            QDemonConstDataRef<qint8> geometryShaderSource,
                                                                                            bool binaryProgram)
 {
@@ -1125,7 +1125,7 @@ QDemonOption<QDemonRenderGeometryShader *> QDemonRenderShaderProgram::createGeom
     return new QDemonRenderGeometryShader(context, geometryShaderSource, binaryProgram);
 }
 
-QDemonRenderVertFragCompilationResult QDemonRenderShaderProgram::create(const QDemonRef<QDemonRenderContextImpl> &context,
+QDemonRenderVertFragCompilationResult QDemonRenderShaderProgram::create(const QDemonRef<QDemonRenderContext> &context,
                                                                         const char *programName,
                                                                         QDemonConstDataRef<qint8> vertShaderSource,
                                                                         QDemonConstDataRef<qint8> fragShaderSource,
@@ -1268,7 +1268,7 @@ QDemonRenderVertFragCompilationResult QDemonRenderShaderProgram::create(const QD
     return result;
 }
 
-QDemonRenderVertFragCompilationResult QDemonRenderShaderProgram::createCompute(const QDemonRef<QDemonRenderContextImpl> &context,
+QDemonRenderVertFragCompilationResult QDemonRenderShaderProgram::createCompute(const QDemonRef<QDemonRenderContext> &context,
                                                                                const char *programName,
                                                                                QDemonConstDataRef<qint8> computeShaderSource)
 {

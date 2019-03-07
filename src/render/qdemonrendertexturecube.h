@@ -36,7 +36,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class QDemonRenderContextImpl;
+class QDemonRenderContext;
 class QDemonRenderTextureSampler;
 
 class Q_DEMONRENDER_EXPORT QDemonRenderTextureCube : public QDemonRenderTextureBase
@@ -56,7 +56,7 @@ public:
      *
      * @return No return.
      */
-    QDemonRenderTextureCube(const QDemonRef<QDemonRenderContextImpl> &context,
+    QDemonRenderTextureCube(const QDemonRef<QDemonRenderContext> &context,
                             QDemonRenderTextureTargetType texTarget = QDemonRenderTextureTargetType::TextureCube);
 
     virtual ~QDemonRenderTextureCube() override;
@@ -97,7 +97,7 @@ public:
      *
      * @ return a texture array object
      */
-    static QDemonRef<QDemonRenderTextureCube> create(const QDemonRef<QDemonRenderContextImpl> &context);
+    static QDemonRef<QDemonRenderTextureCube> create(const QDemonRef<QDemonRenderContext> &context);
 };
 
 QT_END_NAMESPACE

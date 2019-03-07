@@ -35,7 +35,7 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonRenderRenderBuffer::QDemonRenderRenderBuffer(const QDemonRef<QDemonRenderContextImpl> &context,
+QDemonRenderRenderBuffer::QDemonRenderRenderBuffer(const QDemonRef<QDemonRenderContext> &context,
                                                    QDemonRenderRenderBufferFormat format,
                                                    quint32 width,
                                                    quint32 height)
@@ -83,7 +83,7 @@ void QDemonRenderRenderBuffer::setDimensions(const QDemonRenderRenderBufferDimen
     }
 }
 
-QDemonRef<QDemonRenderRenderBuffer> QDemonRenderRenderBuffer::create(const QDemonRef<QDemonRenderContextImpl> &context,
+QDemonRef<QDemonRenderRenderBuffer> QDemonRenderRenderBuffer::create(const QDemonRef<QDemonRenderContext> &context,
                                                                      QDemonRenderRenderBufferFormat format,
                                                                      quint32 width,
                                                                      quint32 height)

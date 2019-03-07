@@ -51,7 +51,7 @@ public:
     }
 };
 
-QDemonRenderConstantBuffer::QDemonRenderConstantBuffer(const QDemonRef<QDemonRenderContextImpl> &context,
+QDemonRenderConstantBuffer::QDemonRenderConstantBuffer(const QDemonRef<QDemonRenderContext> &context,
                                                        const QByteArray &bufferName,
                                                        size_t size,
                                                        QDemonRenderBufferUsageType usageType,
@@ -364,7 +364,7 @@ bool QDemonRenderConstantBuffer::allocateShadowBuffer(quint32 size)
     return true;
 }
 
-QDemonRef<QDemonRenderConstantBuffer> QDemonRenderConstantBuffer::create(const QDemonRef<QDemonRenderContextImpl> &context,
+QDemonRef<QDemonRenderConstantBuffer> QDemonRenderConstantBuffer::create(const QDemonRef<QDemonRenderContext> &context,
                                                                          const char *bufferName,
                                                                          QDemonRenderBufferUsageType usageType,
                                                                          size_t size,

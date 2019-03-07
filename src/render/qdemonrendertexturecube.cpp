@@ -35,7 +35,7 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonRenderTextureCube::QDemonRenderTextureCube(const QDemonRef<QDemonRenderContextImpl> &context,
+QDemonRenderTextureCube::QDemonRenderTextureCube(const QDemonRef<QDemonRenderContext> &context,
                                                  QDemonRenderTextureTargetType texTarget)
     : QDemonRenderTextureBase(context, texTarget), m_width(0), m_height(0)
 {
@@ -117,7 +117,7 @@ void QDemonRenderTextureCube::bind()
     applyTexSwizzle();
 }
 
-QDemonRef<QDemonRenderTextureCube> QDemonRenderTextureCube::create(const QDemonRef<QDemonRenderContextImpl> &context)
+QDemonRef<QDemonRenderTextureCube> QDemonRenderTextureCube::create(const QDemonRef<QDemonRenderContext> &context)
 {
     return QDemonRef<QDemonRenderTextureCube>(new QDemonRenderTextureCube(context));
 }

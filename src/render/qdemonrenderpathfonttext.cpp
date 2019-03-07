@@ -191,7 +191,7 @@ quint32 QDemonRenderPathFontItem::getSizeOfType(QDemonRenderPathFormatType type)
     }
 }
 
-QDemonRef<QDemonRenderPathFontItem> QDemonRenderPathFontItem::createPathFontItem(const QDemonRef<QDemonRenderContextImpl> &context)
+QDemonRef<QDemonRenderPathFontItem> QDemonRenderPathFontItem::createPathFontItem(const QDemonRef<QDemonRenderContext> &context)
 {
     Q_ASSERT(context->isPathRenderingSupported());
 

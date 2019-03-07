@@ -37,7 +37,7 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonRenderContextImpl::QDemonRenderContextImpl(const QDemonRef<QDemonRenderBackend> &inBackend)
+QDemonRenderContext::QDemonRenderContext(const QDemonRef<QDemonRenderBackend> &inBackend)
     : m_backend(inBackend)
     , m_dirtyFlags(0)
     , m_defaultOffscreenRenderTarget((QDemonRenderBackend::QDemonRenderBackendRenderTargetObject) nullptr)
@@ -70,7 +70,7 @@ QDemonRenderContextImpl::QDemonRenderContextImpl(const QDemonRef<QDemonRenderBac
     doSetClearColor(m_hardwarePropertyContext.m_clearColor);
 }
 
-QDemonRenderContextImpl::~QDemonRenderContextImpl()
+QDemonRenderContext::~QDemonRenderContext()
 {
     Q_ASSERT(m_vertToImpMap.size() == 0);
     m_vertToImpMap.clear();
@@ -102,7 +102,7 @@ QDemonRenderContextImpl::~QDemonRenderContextImpl()
     m_backend = nullptr;
 }
 
-void QDemonRenderContextImpl::getMaxTextureSize(qint32 &oWidth, qint32 &oHeight)
+void QDemonRenderContext::getMaxTextureSize(qint32 &oWidth, qint32 &oHeight)
 {
     qint32 theMaxTextureSize = 0;
     m_backend->getRenderBackendValue(QDemonRenderBackend::QDemonRenderBackendQuery::MaxTextureSize, &theMaxTextureSize);
@@ -111,7 +111,7 @@ void QDemonRenderContextImpl::getMaxTextureSize(qint32 &oWidth, qint32 &oHeight)
     oHeight = theMaxTextureSize;
 }
 
-QDemonRef<QDemonRenderDepthStencilState> QDemonRenderContextImpl::createDepthStencilState(
+QDemonRef<QDemonRenderDepthStencilState> QDemonRenderContext::createDepthStencilState(
         bool enableDepth,
         bool depthMask,
         QDemonRenderBoolOp depthFunc,
@@ -136,7 +136,7 @@ QDemonRef<QDemonRenderDepthStencilState> QDemonRenderContextImpl::createDepthSte
     return state;
 }
 
-void QDemonRenderContextImpl::setDepthStencilState(QDemonRef<QDemonRenderDepthStencilState> inDepthStencilState)
+void QDemonRenderContext::setDepthStencilState(QDemonRef<QDemonRenderDepthStencilState> inDepthStencilState)
 {
     if (inDepthStencilState) {
         m_backend->setDepthStencilState(inDepthStencilState->getDepthStencilObjectHandle());
@@ -148,12 +148,12 @@ void QDemonRenderContextImpl::setDepthStencilState(QDemonRef<QDemonRenderDepthSt
     }
 }
 
-void QDemonRenderContextImpl::stateDestroyed(QDemonRenderDepthStencilState *state)
+void QDemonRenderContext::stateDestroyed(QDemonRenderDepthStencilState *state)
 {
     m_depthStencilStateToImpMap.remove(state->getDepthStencilObjectHandle());
 }
 
-QDemonRef<QDemonRenderRasterizerState> QDemonRenderContextImpl::createRasterizerState(float depthBias,
+QDemonRef<QDemonRenderRasterizerState> QDemonRenderContext::createRasterizerState(float depthBias,
                                                                                       float depthScale,
                                                                                       QDemonRenderFace cullFace)
 {
@@ -164,18 +164,18 @@ QDemonRef<QDemonRenderRasterizerState> QDemonRenderContextImpl::createRasterizer
     return state;
 }
 
-void QDemonRenderContextImpl::setRasterizerState(QDemonRef<QDemonRenderRasterizerState> inRasterizerState)
+void QDemonRenderContext::setRasterizerState(QDemonRef<QDemonRenderRasterizerState> inRasterizerState)
 {
     if (inRasterizerState)
         m_backend->setRasterizerState(inRasterizerState->GetRasterizerObjectHandle());
 }
 
-void QDemonRenderContextImpl::stateDestroyed(QDemonRenderRasterizerState *state)
+void QDemonRenderContext::stateDestroyed(QDemonRenderRasterizerState *state)
 {
     m_rasterizerStateToImpMap.remove(state->GetRasterizerObjectHandle());
 }
 
-QDemonRef<QDemonRenderVertexBuffer> QDemonRenderContextImpl::createVertexBuffer(QDemonRenderBufferUsageType usageType,
+QDemonRef<QDemonRenderVertexBuffer> QDemonRenderContext::createVertexBuffer(QDemonRenderBufferUsageType usageType,
                                                                                 size_t size,
                                                                                 quint32 stride,
                                                                                 QDemonConstDataRef<quint8> bufferData)
@@ -186,7 +186,7 @@ QDemonRef<QDemonRenderVertexBuffer> QDemonRenderContextImpl::createVertexBuffer(
     return buffer;
 }
 
-QDemonRef<QDemonRenderVertexBuffer> QDemonRenderContextImpl::getVertexBuffer(const void *implementationHandle)
+QDemonRef<QDemonRenderVertexBuffer> QDemonRenderContext::getVertexBuffer(const void *implementationHandle)
 {
     QHash<const void *, QDemonRenderVertexBuffer *>::const_iterator entry = m_vertToImpMap.find(implementationHandle);
     if (entry != m_vertToImpMap.end())
@@ -194,12 +194,12 @@ QDemonRef<QDemonRenderVertexBuffer> QDemonRenderContextImpl::getVertexBuffer(con
     return nullptr;
 }
 
-void QDemonRenderContextImpl::bufferDestroyed(QDemonRenderVertexBuffer *buffer)
+void QDemonRenderContext::bufferDestroyed(QDemonRenderVertexBuffer *buffer)
 {
     m_vertToImpMap.remove(buffer->getImplementationHandle());
 }
 
-QDemonRef<QDemonRenderIndexBuffer> QDemonRenderContextImpl::createIndexBuffer(QDemonRenderBufferUsageType usageType,
+QDemonRef<QDemonRenderIndexBuffer> QDemonRenderContext::createIndexBuffer(QDemonRenderBufferUsageType usageType,
                                                                               QDemonRenderComponentType componentType,
                                                                               size_t size,
                                                                               QDemonConstDataRef<quint8> bufferData)
@@ -213,7 +213,7 @@ QDemonRef<QDemonRenderIndexBuffer> QDemonRenderContextImpl::createIndexBuffer(QD
     return buffer;
 }
 
-QDemonRef<QDemonRenderIndexBuffer> QDemonRenderContextImpl::getIndexBuffer(const void *implementationHandle)
+QDemonRef<QDemonRenderIndexBuffer> QDemonRenderContext::getIndexBuffer(const void *implementationHandle)
 {
     const QHash<const void *, QDemonRenderIndexBuffer *>::iterator entry = m_indexToImpMap.find(implementationHandle);
     if (entry != m_indexToImpMap.end())
@@ -221,12 +221,12 @@ QDemonRef<QDemonRenderIndexBuffer> QDemonRenderContextImpl::getIndexBuffer(const
     return nullptr;
 }
 
-void QDemonRenderContextImpl::bufferDestroyed(QDemonRenderIndexBuffer *buffer)
+void QDemonRenderContext::bufferDestroyed(QDemonRenderIndexBuffer *buffer)
 {
     m_indexToImpMap.remove(buffer->getImplementationHandle());
 }
 
-QDemonRef<QDemonRenderConstantBuffer> QDemonRenderContextImpl::createConstantBuffer(const char *bufferName,
+QDemonRef<QDemonRenderConstantBuffer> QDemonRenderContext::createConstantBuffer(const char *bufferName,
                                                                                     QDemonRenderBufferUsageType usageType,
                                                                                     size_t size,
                                                                                     QDemonConstDataRef<quint8> bufferData)
@@ -240,7 +240,7 @@ QDemonRef<QDemonRenderConstantBuffer> QDemonRenderContextImpl::createConstantBuf
     return buffer;
 }
 
-QDemonRef<QDemonRenderConstantBuffer> QDemonRenderContextImpl::getConstantBuffer(const QByteArray &bufferName)
+QDemonRef<QDemonRenderConstantBuffer> QDemonRenderContext::getConstantBuffer(const QByteArray &bufferName)
 {
     TContextConstantBufferMap::iterator entry = m_constantToImpMap.find(bufferName);
     if (entry != m_constantToImpMap.end())
@@ -248,12 +248,12 @@ QDemonRef<QDemonRenderConstantBuffer> QDemonRenderContextImpl::getConstantBuffer
     return nullptr;
 }
 
-void QDemonRenderContextImpl::bufferDestroyed(QDemonRenderConstantBuffer *buffer)
+void QDemonRenderContext::bufferDestroyed(QDemonRenderConstantBuffer *buffer)
 {
     m_constantToImpMap.remove(buffer->GetBufferName());
 }
 
-qint32 QDemonRenderContextImpl::getNextConstantBufferUnit()
+qint32 QDemonRenderContext::getNextConstantBufferUnit()
 {
     qint32 retval = m_nextConstantBufferUnit;
     ++m_nextConstantBufferUnit;
@@ -265,7 +265,7 @@ qint32 QDemonRenderContextImpl::getNextConstantBufferUnit()
     return retval;
 }
 
-QDemonRef<QDemonRenderStorageBuffer> QDemonRenderContextImpl::createStorageBuffer(const char *bufferName,
+QDemonRef<QDemonRenderStorageBuffer> QDemonRenderContext::createStorageBuffer(const char *bufferName,
                                                                                   QDemonRenderBufferUsageType usageType,
                                                                                   size_t size,
                                                                                   QDemonConstDataRef<quint8> bufferData,
@@ -280,7 +280,7 @@ QDemonRef<QDemonRenderStorageBuffer> QDemonRenderContextImpl::createStorageBuffe
     return buffer;
 }
 
-QDemonRef<QDemonRenderStorageBuffer> QDemonRenderContextImpl::getStorageBuffer(const QByteArray &bufferName)
+QDemonRef<QDemonRenderStorageBuffer> QDemonRenderContext::getStorageBuffer(const QByteArray &bufferName)
 {
     TContextStorageBufferMap::iterator entry = m_storageToImpMap.find(bufferName);
     if (entry != m_storageToImpMap.end())
@@ -288,12 +288,12 @@ QDemonRef<QDemonRenderStorageBuffer> QDemonRenderContextImpl::getStorageBuffer(c
     return nullptr;
 }
 
-void QDemonRenderContextImpl::bufferDestroyed(QDemonRenderStorageBuffer *buffer)
+void QDemonRenderContext::bufferDestroyed(QDemonRenderStorageBuffer *buffer)
 {
     m_storageToImpMap.remove(buffer->getBufferName());
 }
 
-QDemonRef<QDemonRenderAtomicCounterBuffer> QDemonRenderContextImpl::createAtomicCounterBuffer(const char *bufferName,
+QDemonRef<QDemonRenderAtomicCounterBuffer> QDemonRenderContext::createAtomicCounterBuffer(const char *bufferName,
                                                                                               QDemonRenderBufferUsageType usageType,
                                                                                               size_t size,
                                                                                               QDemonConstDataRef<quint8> bufferData)
@@ -307,7 +307,7 @@ QDemonRef<QDemonRenderAtomicCounterBuffer> QDemonRenderContextImpl::createAtomic
     return buffer;
 }
 
-QDemonRef<QDemonRenderAtomicCounterBuffer> QDemonRenderContextImpl::getAtomicCounterBuffer(const QByteArray &bufferName)
+QDemonRef<QDemonRenderAtomicCounterBuffer> QDemonRenderContext::getAtomicCounterBuffer(const QByteArray &bufferName)
 {
     TContextAtomicCounterBufferMap::iterator entry = m_atomicCounterToImpMap.find(bufferName);
     if (entry != m_atomicCounterToImpMap.end())
@@ -315,7 +315,7 @@ QDemonRef<QDemonRenderAtomicCounterBuffer> QDemonRenderContextImpl::getAtomicCou
     return QDemonRef<QDemonRenderAtomicCounterBuffer>();
 }
 
-QDemonRef<QDemonRenderAtomicCounterBuffer> QDemonRenderContextImpl::getAtomicCounterBufferByParam(const QByteArray &paramName)
+QDemonRef<QDemonRenderAtomicCounterBuffer> QDemonRenderContext::getAtomicCounterBufferByParam(const QByteArray &paramName)
 {
     // iterate through all atomic counter buffers
     for (TContextAtomicCounterBufferMap::iterator iter = m_atomicCounterToImpMap.begin(), end = m_atomicCounterToImpMap.end();
@@ -328,12 +328,12 @@ QDemonRef<QDemonRenderAtomicCounterBuffer> QDemonRenderContextImpl::getAtomicCou
     return QDemonRef<QDemonRenderAtomicCounterBuffer>();
 }
 
-void QDemonRenderContextImpl::bufferDestroyed(QDemonRenderAtomicCounterBuffer *buffer)
+void QDemonRenderContext::bufferDestroyed(QDemonRenderAtomicCounterBuffer *buffer)
 {
     m_atomicCounterToImpMap.remove(buffer->getBufferName());
 }
 
-QDemonRef<QDemonRenderDrawIndirectBuffer> QDemonRenderContextImpl::createDrawIndirectBuffer(QDemonRenderBufferUsageType usageType,
+QDemonRef<QDemonRenderDrawIndirectBuffer> QDemonRenderContext::createDrawIndirectBuffer(QDemonRenderBufferUsageType usageType,
                                                                                             size_t size,
                                                                                             QDemonConstDataRef<quint8> bufferData)
 {
@@ -345,7 +345,7 @@ QDemonRef<QDemonRenderDrawIndirectBuffer> QDemonRenderContextImpl::createDrawInd
     return buffer;
 }
 
-QDemonRef<QDemonRenderDrawIndirectBuffer> QDemonRenderContextImpl::getDrawIndirectBuffer(QDemonRenderBackend::QDemonRenderBackendBufferObject implementationHandle)
+QDemonRef<QDemonRenderDrawIndirectBuffer> QDemonRenderContext::getDrawIndirectBuffer(QDemonRenderBackend::QDemonRenderBackendBufferObject implementationHandle)
 {
     TContextDrawIndirectBufferMap::iterator entry = m_drawIndirectToImpMap.find(implementationHandle);
     if (entry != m_drawIndirectToImpMap.end())
@@ -353,32 +353,32 @@ QDemonRef<QDemonRenderDrawIndirectBuffer> QDemonRenderContextImpl::getDrawIndire
     return nullptr;
 }
 
-void QDemonRenderContextImpl::bufferDestroyed(QDemonRenderDrawIndirectBuffer *buffer)
+void QDemonRenderContext::bufferDestroyed(QDemonRenderDrawIndirectBuffer *buffer)
 {
     m_drawIndirectToImpMap.remove(buffer->getBuffertHandle());
 }
 
-void QDemonRenderContextImpl::setMemoryBarrier(QDemonRenderBufferBarrierFlags barriers)
+void QDemonRenderContext::setMemoryBarrier(QDemonRenderBufferBarrierFlags barriers)
 {
     m_backend->setMemoryBarrier(barriers);
 }
 
-QDemonRef<QDemonRenderOcclusionQuery> QDemonRenderContextImpl::createOcclusionQuery()
+QDemonRef<QDemonRenderOcclusionQuery> QDemonRenderContext::createOcclusionQuery()
 {
     return QDemonRenderOcclusionQuery::create(this);
 }
 
-QDemonRef<QDemonRenderTimerQuery> QDemonRenderContextImpl::createTimerQuery()
+QDemonRef<QDemonRenderTimerQuery> QDemonRenderContext::createTimerQuery()
 {
     return QDemonRenderTimerQuery::create(this);
 }
 
-QDemonRef<QDemonRenderSync> QDemonRenderContextImpl::createSync()
+QDemonRef<QDemonRenderSync> QDemonRenderContext::createSync()
 {
     return QDemonRenderSync::create(this);
 }
 
-QDemonRef<QDemonRenderTexture2D> QDemonRenderContextImpl::createTexture2D()
+QDemonRef<QDemonRenderTexture2D> QDemonRenderContext::createTexture2D()
 {
     QDemonRef<QDemonRenderTexture2D> retval(QDemonRenderTexture2D::create(this));
     if (retval)
@@ -386,7 +386,7 @@ QDemonRef<QDemonRenderTexture2D> QDemonRenderContextImpl::createTexture2D()
     return retval;
 }
 
-QDemonRef<QDemonRenderTexture2DArray> QDemonRenderContextImpl::createTexture2DArray()
+QDemonRef<QDemonRenderTexture2DArray> QDemonRenderContext::createTexture2DArray()
 {
     QDemonRef<QDemonRenderTexture2DArray> retval(QDemonRenderTexture2DArray::create(this));
     if (retval)
@@ -395,7 +395,7 @@ QDemonRef<QDemonRenderTexture2DArray> QDemonRenderContextImpl::createTexture2DAr
     return retval;
 }
 
-QDemonRef<QDemonRenderTextureCube> QDemonRenderContextImpl::createTextureCube()
+QDemonRef<QDemonRenderTextureCube> QDemonRenderContext::createTextureCube()
 {
     QDemonRef<QDemonRenderTextureCube> retval(QDemonRenderTextureCube::create(this));
     if (retval)
@@ -404,7 +404,7 @@ QDemonRef<QDemonRenderTextureCube> QDemonRenderContextImpl::createTextureCube()
     return retval;
 }
 
-QDemonRef<QDemonRenderTexture2D> QDemonRenderContextImpl::getTexture2D(const void *implementationHandle)
+QDemonRef<QDemonRenderTexture2D> QDemonRenderContext::getTexture2D(const void *implementationHandle)
 {
     const QHash<const void *, QDemonRenderTexture2D *>::iterator entry = m_tex2DToImpMap.find(implementationHandle);
     if (entry != m_tex2DToImpMap.end())
@@ -412,24 +412,24 @@ QDemonRef<QDemonRenderTexture2D> QDemonRenderContextImpl::getTexture2D(const voi
     return nullptr;
 }
 
-void QDemonRenderContextImpl::textureDestroyed(QDemonRenderTexture2D *buffer)
+void QDemonRenderContext::textureDestroyed(QDemonRenderTexture2D *buffer)
 {
     m_tex2DToImpMap.remove(buffer->getImplementationHandle());
     // We would like to find and catch any situations where this texture is being used
     // but that would require some real work that we don't want to do right now.
 }
 
-void QDemonRenderContextImpl::textureDestroyed(QDemonRenderTexture2DArray *buffer)
+void QDemonRenderContext::textureDestroyed(QDemonRenderTexture2DArray *buffer)
 {
     m_tex2DArrayToImpMap.remove(buffer->getTextureObjectHandle());
 }
 
-void QDemonRenderContextImpl::textureDestroyed(QDemonRenderTextureCube *buffer)
+void QDemonRenderContext::textureDestroyed(QDemonRenderTextureCube *buffer)
 {
     m_texCubeToImpMap.remove(buffer->getTextureObjectHandle());
 }
 
-QDemonRef<QDemonRenderImage2D> QDemonRenderContextImpl::createImage2D(QDemonRef<QDemonRenderTexture2D> inTexture,
+QDemonRef<QDemonRenderImage2D> QDemonRenderContext::createImage2D(QDemonRef<QDemonRenderTexture2D> inTexture,
                                                                       QDemonRenderImageAccessType inAccess)
 {
     QDemonRef<QDemonRenderImage2D> retval = QDemonRenderImage2D::create(this, inTexture, inAccess);
@@ -439,14 +439,14 @@ QDemonRef<QDemonRenderImage2D> QDemonRenderContextImpl::createImage2D(QDemonRef<
     return retval;
 }
 
-void QDemonRenderContextImpl::imageDestroyed(QDemonRenderImage2D *image)
+void QDemonRenderContext::imageDestroyed(QDemonRenderImage2D *image)
 {
     m_image2DtoImpMap.remove(image->getTextureObjectHandle());
 }
 
 // IF this texture isn't on a texture unit, put it on one.
 // If it is on a texture unit, mark it as the most recently used texture.
-qint32 QDemonRenderContextImpl::getNextTextureUnit()
+qint32 QDemonRenderContext::getNextTextureUnit()
 {
     qint32 retval = m_nextTextureUnit;
     ++m_nextTextureUnit;
@@ -458,7 +458,7 @@ qint32 QDemonRenderContextImpl::getNextTextureUnit()
     return retval;
 }
 
-QDemonRef<QDemonRenderRenderBuffer> QDemonRenderContextImpl::createRenderBuffer(QDemonRenderRenderBufferFormat bufferFormat,
+QDemonRef<QDemonRenderRenderBuffer> QDemonRenderContext::createRenderBuffer(QDemonRenderRenderBufferFormat bufferFormat,
                                                                                 quint32 width,
                                                                                 quint32 height)
 {
@@ -468,7 +468,7 @@ QDemonRef<QDemonRenderRenderBuffer> QDemonRenderContextImpl::createRenderBuffer(
     return retval;
 }
 
-QDemonRef<QDemonRenderRenderBuffer> QDemonRenderContextImpl::getRenderBuffer(const void *implementationHandle)
+QDemonRef<QDemonRenderRenderBuffer> QDemonRenderContext::getRenderBuffer(const void *implementationHandle)
 {
     const QHash<const void *, QDemonRenderRenderBuffer *>::iterator entry = m_renderBufferToImpMap.find(implementationHandle);
     if (entry != m_renderBufferToImpMap.end())
@@ -476,12 +476,12 @@ QDemonRef<QDemonRenderRenderBuffer> QDemonRenderContextImpl::getRenderBuffer(con
     return nullptr;
 }
 
-void QDemonRenderContextImpl::renderBufferDestroyed(QDemonRenderRenderBuffer *buffer)
+void QDemonRenderContext::renderBufferDestroyed(QDemonRenderRenderBuffer *buffer)
 {
     m_renderBufferToImpMap.remove(buffer->getImplementationHandle());
 }
 
-QDemonRef<QDemonRenderFrameBuffer> QDemonRenderContextImpl::createFrameBuffer()
+QDemonRef<QDemonRenderFrameBuffer> QDemonRenderContext::createFrameBuffer()
 {
     QDemonRef<QDemonRenderFrameBuffer> retval = QDemonRenderFrameBuffer::create(this);
     if (retval != nullptr)
@@ -489,7 +489,7 @@ QDemonRef<QDemonRenderFrameBuffer> QDemonRenderContextImpl::createFrameBuffer()
     return retval;
 }
 
-QDemonRef<QDemonRenderFrameBuffer> QDemonRenderContextImpl::getFrameBuffer(const void *implementationHandle)
+QDemonRef<QDemonRenderFrameBuffer> QDemonRenderContext::getFrameBuffer(const void *implementationHandle)
 {
     const QHash<const void *, QDemonRenderFrameBuffer *>::iterator entry = m_frameBufferToImpMap.find(implementationHandle);
     if (entry != m_frameBufferToImpMap.end())
@@ -497,14 +497,14 @@ QDemonRef<QDemonRenderFrameBuffer> QDemonRenderContextImpl::getFrameBuffer(const
     return nullptr;
 }
 
-void QDemonRenderContextImpl::frameBufferDestroyed(QDemonRenderFrameBuffer *fb)
+void QDemonRenderContext::frameBufferDestroyed(QDemonRenderFrameBuffer *fb)
 {
     m_frameBufferToImpMap.remove(fb->getImplementationHandle());
     if (m_hardwarePropertyContext.m_frameBuffer == fb)
         m_hardwarePropertyContext.m_frameBuffer = nullptr;
 }
 
-QDemonRef<QDemonRenderInputAssembler> QDemonRenderContextImpl::createInputAssembler(
+QDemonRef<QDemonRenderInputAssembler> QDemonRenderContext::createInputAssembler(
         QDemonRenderAttribLayout attribLayout,
         QDemonConstDataRef<QDemonRef<QDemonRenderVertexBuffer>> buffers,
         const QDemonRef<QDemonRenderIndexBuffer> indexBuffer,
@@ -517,14 +517,14 @@ QDemonRef<QDemonRenderInputAssembler> QDemonRenderContextImpl::createInputAssemb
             new QDemonRenderInputAssembler(this, attribLayout, buffers, indexBuffer, strides, offsets, primType, patchVertexCount));
 }
 
-void QDemonRenderContextImpl::setInputAssembler(QDemonRef<QDemonRenderInputAssembler> inputAssembler)
+void QDemonRenderContext::setInputAssembler(QDemonRef<QDemonRenderInputAssembler> inputAssembler)
 {
     if (m_hardwarePropertyContext.m_inputAssembler != inputAssembler) {
         doSetInputAssembler(inputAssembler);
     }
 }
 
-QDemonRenderVertFragCompilationResult QDemonRenderContextImpl::compileSource(const char *shaderName,
+QDemonRenderVertFragCompilationResult QDemonRenderContext::compileSource(const char *shaderName,
                                                                              QDemonConstDataRef<qint8> vertShader,
                                                                              QDemonConstDataRef<qint8> fragShader,
                                                                              QDemonConstDataRef<qint8> tessControlShaderSource,
@@ -551,7 +551,7 @@ QDemonRenderVertFragCompilationResult QDemonRenderContextImpl::compileSource(con
     return result;
 }
 
-QDemonRenderVertFragCompilationResult QDemonRenderContextImpl::compileBinary(const char *shaderName,
+QDemonRenderVertFragCompilationResult QDemonRenderContext::compileBinary(const char *shaderName,
                                                                              QDemonRenderShaderProgramBinaryType type,
                                                                              QDemonDataRef<qint8> vertShader,
                                                                              QDemonDataRef<qint8> fragShader,
@@ -581,7 +581,7 @@ QDemonRenderVertFragCompilationResult QDemonRenderContextImpl::compileBinary(con
 #endif
 }
 
-QDemonRenderVertFragCompilationResult QDemonRenderContextImpl::compileComputeSource(const char *shaderName,
+QDemonRenderVertFragCompilationResult QDemonRenderContext::compileComputeSource(const char *shaderName,
                                                                                     QDemonConstDataRef<qint8> computeShaderSource)
 {
     QDemonRenderVertFragCompilationResult result = QDemonRenderShaderProgram::createCompute(this, shaderName, computeShaderSource);
@@ -592,7 +592,7 @@ QDemonRenderVertFragCompilationResult QDemonRenderContextImpl::compileComputeSou
     return result;
 }
 
-QDemonRef<QDemonRenderShaderProgram> QDemonRenderContextImpl::getShaderProgram(const void *implementationHandle)
+QDemonRef<QDemonRenderShaderProgram> QDemonRenderContext::getShaderProgram(const void *implementationHandle)
 {
     const QHash<const void *, QDemonRenderShaderProgram *>::iterator entry = m_shaderToImpMap.find(implementationHandle);
     if (entry != m_shaderToImpMap.end())
@@ -600,48 +600,48 @@ QDemonRef<QDemonRenderShaderProgram> QDemonRenderContextImpl::getShaderProgram(c
     return nullptr;
 }
 
-void QDemonRenderContextImpl::shaderDestroyed(QDemonRenderShaderProgram *shader)
+void QDemonRenderContext::shaderDestroyed(QDemonRenderShaderProgram *shader)
 {
     m_shaderToImpMap.remove(shader->getShaderProgramHandle());
     if (m_hardwarePropertyContext.m_activeShader.data() == shader)
         setActiveShader(nullptr);
 }
 
-QDemonRef<QDemonRenderProgramPipeline> QDemonRenderContextImpl::createProgramPipeline()
+QDemonRef<QDemonRenderProgramPipeline> QDemonRenderContext::createProgramPipeline()
 {
     return QDemonRef<QDemonRenderProgramPipeline>(new QDemonRenderProgramPipeline(this));
 }
 
-QDemonRef<QDemonRenderPathSpecification> QDemonRenderContextImpl::createPathSpecification()
+QDemonRef<QDemonRenderPathSpecification> QDemonRenderContext::createPathSpecification()
 {
     return QDemonRenderPathSpecification::createPathSpecification(this);
 }
 
-QDemonRef<QDemonRenderPathRender> QDemonRenderContextImpl::createPathRender(size_t range)
+QDemonRef<QDemonRenderPathRender> QDemonRenderContext::createPathRender(size_t range)
 {
     return QDemonRenderPathRender::create(this, range);
 }
 
-void QDemonRenderContextImpl::setPathProjectionMatrix(const QMatrix4x4 inPathProjection)
+void QDemonRenderContext::setPathProjectionMatrix(const QMatrix4x4 inPathProjection)
 {
     m_backend->setPathProjectionMatrix(inPathProjection);
 }
 
-void QDemonRenderContextImpl::setPathModelViewMatrix(const QMatrix4x4 inPathModelview)
+void QDemonRenderContext::setPathModelViewMatrix(const QMatrix4x4 inPathModelview)
 {
     m_backend->setPathModelViewMatrix(inPathModelview);
 }
 
-void QDemonRenderContextImpl::setPathStencilDepthOffset(float inSlope, float inBias)
+void QDemonRenderContext::setPathStencilDepthOffset(float inSlope, float inBias)
 {
     m_backend->setPathStencilDepthOffset(inSlope, inBias);
 }
-void QDemonRenderContextImpl::setPathCoverDepthFunc(QDemonRenderBoolOp inFunc)
+void QDemonRenderContext::setPathCoverDepthFunc(QDemonRenderBoolOp inFunc)
 {
     m_backend->setPathCoverDepthFunc(inFunc);
 }
 
-QDemonRef<QDemonRenderPathFontSpecification> QDemonRenderContextImpl::createPathFontSpecification(const QString &fontName)
+QDemonRef<QDemonRenderPathFontSpecification> QDemonRenderContext::createPathFontSpecification(const QString &fontName)
 {
     // first check if it already exists
     QHash<QString, QDemonRenderPathFontSpecification *>::const_iterator entry = m_pathFontSpecToImpMap.find(fontName);
@@ -657,66 +657,66 @@ QDemonRef<QDemonRenderPathFontSpecification> QDemonRenderContextImpl::createPath
     return pPathFontSpec;
 }
 
-void QDemonRenderContextImpl::releasePathFontSpecification(QDemonRenderPathFontSpecification *inPathSpec)
+void QDemonRenderContext::releasePathFontSpecification(QDemonRenderPathFontSpecification *inPathSpec)
 {
     m_pathFontSpecToImpMap.remove(inPathSpec->getFontName());
 }
 
-QDemonRef<QDemonRenderPathFontItem> QDemonRenderContextImpl::createPathFontItem()
+QDemonRef<QDemonRenderPathFontItem> QDemonRenderContext::createPathFontItem()
 {
     // if not create new one
     return QDemonRenderPathFontItem::createPathFontItem(this);
 }
 
-void QDemonRenderContextImpl::setClearColor(QVector4D inClearColor)
+void QDemonRenderContext::setClearColor(QVector4D inClearColor)
 {
     if (m_hardwarePropertyContext.m_clearColor != inClearColor)
         doSetClearColor(inClearColor);
 }
 
-void QDemonRenderContextImpl::setBlendFunction(QDemonRenderBlendFunctionArgument inFunctions)
+void QDemonRenderContext::setBlendFunction(QDemonRenderBlendFunctionArgument inFunctions)
 {
     if (memcmp(&inFunctions, &m_hardwarePropertyContext.m_blendFunction, sizeof(QDemonRenderBlendFunctionArgument))) {
         doSetBlendFunction(inFunctions);
     }
 }
 
-void QDemonRenderContextImpl::setBlendEquation(QDemonRenderBlendEquationArgument inEquations)
+void QDemonRenderContext::setBlendEquation(QDemonRenderBlendEquationArgument inEquations)
 {
     if (memcmp(&inEquations, &m_hardwarePropertyContext.m_blendEquation, sizeof(QDemonRenderBlendEquationArgument))) {
         doSetBlendEquation(inEquations);
     }
 }
 
-void QDemonRenderContextImpl::setCullingEnabled(bool inEnabled)
+void QDemonRenderContext::setCullingEnabled(bool inEnabled)
 {
     if (inEnabled != m_hardwarePropertyContext.m_cullingEnabled) {
         doSetCullingEnabled(inEnabled);
     }
 }
 
-void QDemonRenderContextImpl::setDepthFunction(QDemonRenderBoolOp inFunction)
+void QDemonRenderContext::setDepthFunction(QDemonRenderBoolOp inFunction)
 {
     if (inFunction != m_hardwarePropertyContext.m_depthFunction) {
         doSetDepthFunction(inFunction);
     }
 }
 
-void QDemonRenderContextImpl::setBlendingEnabled(bool inEnabled)
+void QDemonRenderContext::setBlendingEnabled(bool inEnabled)
 {
     if (inEnabled != m_hardwarePropertyContext.m_blendingEnabled) {
         doSetBlendingEnabled(inEnabled);
     }
 }
 
-void QDemonRenderContextImpl::setColorWritesEnabled(bool inEnabled)
+void QDemonRenderContext::setColorWritesEnabled(bool inEnabled)
 {
     if (inEnabled != m_hardwarePropertyContext.m_colorWritesEnabled) {
         doSetColorWritesEnabled(inEnabled);
     }
 }
 
-void QDemonRenderContextImpl::setDepthWriteEnabled(bool inEnabled)
+void QDemonRenderContext::setDepthWriteEnabled(bool inEnabled)
 {
     if (inEnabled != m_hardwarePropertyContext.m_depthWriteEnabled) {
         m_hardwarePropertyContext.m_depthWriteEnabled = inEnabled;
@@ -724,71 +724,71 @@ void QDemonRenderContextImpl::setDepthWriteEnabled(bool inEnabled)
     }
 }
 
-void QDemonRenderContextImpl::setDepthTestEnabled(bool inEnabled)
+void QDemonRenderContext::setDepthTestEnabled(bool inEnabled)
 {
     if (inEnabled != m_hardwarePropertyContext.m_depthTestEnabled) {
         doSetDepthTestEnabled(inEnabled);
     }
 }
 
-void QDemonRenderContextImpl::setMultisampleEnabled(bool inEnabled)
+void QDemonRenderContext::setMultisampleEnabled(bool inEnabled)
 {
     if (inEnabled != m_hardwarePropertyContext.m_multisampleEnabled) {
         doSetMultisampleEnabled(inEnabled);
     }
 }
 
-void QDemonRenderContextImpl::setStencilTestEnabled(bool inEnabled)
+void QDemonRenderContext::setStencilTestEnabled(bool inEnabled)
 {
     if (inEnabled != m_hardwarePropertyContext.m_stencilTestEnabled) {
         doSetStencilTestEnabled(inEnabled);
     }
 }
 
-void QDemonRenderContextImpl::setScissorTestEnabled(bool inEnabled)
+void QDemonRenderContext::setScissorTestEnabled(bool inEnabled)
 {
     if (inEnabled != m_hardwarePropertyContext.m_scissorTestEnabled) {
         doSetScissorTestEnabled(inEnabled);
     }
 }
 
-void QDemonRenderContextImpl::setScissorRect(QRect inRect)
+void QDemonRenderContext::setScissorRect(QRect inRect)
 {
     if (memcmp(&inRect, &m_hardwarePropertyContext.m_scissorRect, sizeof(QRect))) {
         doSetScissorRect(inRect);
     }
 }
 
-void QDemonRenderContextImpl::setViewport(QRect inViewport)
+void QDemonRenderContext::setViewport(QRect inViewport)
 {
     if (memcmp(&inViewport, &m_hardwarePropertyContext.m_viewport, sizeof(QRect))) {
         doSetViewport(inViewport);
     }
 }
 
-void QDemonRenderContextImpl::setActiveShader(QDemonRef<QDemonRenderShaderProgram> inShader)
+void QDemonRenderContext::setActiveShader(QDemonRef<QDemonRenderShaderProgram> inShader)
 {
     if (inShader != m_hardwarePropertyContext.m_activeShader)
         doSetActiveShader(inShader);
 }
 
-QDemonRef<QDemonRenderShaderProgram> QDemonRenderContextImpl::getActiveShader() const
+QDemonRef<QDemonRenderShaderProgram> QDemonRenderContext::getActiveShader() const
 {
     return m_hardwarePropertyContext.m_activeShader;
 }
 
-void QDemonRenderContextImpl::setActiveProgramPipeline(QDemonRef<QDemonRenderProgramPipeline> inProgramPipeline)
+void QDemonRenderContext::setActiveProgramPipeline(QDemonRef<QDemonRenderProgramPipeline> inProgramPipeline)
 {
     if (inProgramPipeline != m_hardwarePropertyContext.m_activeProgramPipeline)
         doSetActiveProgramPipeline(inProgramPipeline);
 }
 
-QDemonRef<QDemonRenderProgramPipeline> QDemonRenderContextImpl::getActiveProgramPipeline() const
+QDemonRef<QDemonRenderProgramPipeline> QDemonRenderContext::getActiveProgramPipeline() const
 {
     return m_hardwarePropertyContext.m_activeProgramPipeline;
 }
 
-void QDemonRenderContextImpl::dispatchCompute(QDemonRef<QDemonRenderShaderProgram> inShader, quint32 numGroupsX, quint32 numGroupsY, quint32 numGroupsZ)
+void QDemonRenderContext::dispatchCompute(QDemonRef<QDemonRenderShaderProgram> inShader, quint32 numGroupsX, quint32 numGroupsY, quint32 numGroupsZ)
 {
     Q_ASSERT(inShader);
 
@@ -800,7 +800,7 @@ void QDemonRenderContextImpl::dispatchCompute(QDemonRef<QDemonRenderShaderProgra
     onPostDraw();
 }
 
-void QDemonRenderContextImpl::setDrawBuffers(QDemonConstDataRef<qint32> inDrawBufferSet)
+void QDemonRenderContext::setDrawBuffers(QDemonConstDataRef<qint32> inDrawBufferSet)
 {
     m_backend->setDrawBuffers((m_hardwarePropertyContext.m_frameBuffer)
                                       ? m_hardwarePropertyContext.m_frameBuffer->getFrameBuffertHandle()
@@ -808,13 +808,13 @@ void QDemonRenderContextImpl::setDrawBuffers(QDemonConstDataRef<qint32> inDrawBu
                               inDrawBufferSet);
 }
 
-void QDemonRenderContextImpl::setReadBuffer(QDemonReadFace inReadFace)
+void QDemonRenderContext::setReadBuffer(QDemonReadFace inReadFace)
 {
     // currently nullptr which means the read target must be set with setReadTarget
     m_backend->setReadBuffer(nullptr, inReadFace);
 }
 
-void QDemonRenderContextImpl::readPixels(QRect inRect, QDemonRenderReadPixelFormat inFormat, QDemonDataRef<quint8> inWriteBuffer)
+void QDemonRenderContext::readPixels(QRect inRect, QDemonRenderReadPixelFormat inFormat, QDemonDataRef<quint8> inWriteBuffer)
 {
     // nullptr means read from current render target
     m_backend->readPixel(nullptr,
@@ -826,21 +826,21 @@ void QDemonRenderContextImpl::readPixels(QRect inRect, QDemonRenderReadPixelForm
                          (void *)inWriteBuffer.begin());
 }
 
-void QDemonRenderContextImpl::setRenderTarget(QDemonRef<QDemonRenderFrameBuffer> inBuffer)
+void QDemonRenderContext::setRenderTarget(QDemonRef<QDemonRenderFrameBuffer> inBuffer)
 {
     if (inBuffer != m_hardwarePropertyContext.m_frameBuffer) {
         doSetRenderTarget(inBuffer);
     }
 }
 
-void QDemonRenderContextImpl::setReadTarget(QDemonRef<QDemonRenderFrameBuffer> inBuffer)
+void QDemonRenderContext::setReadTarget(QDemonRef<QDemonRenderFrameBuffer> inBuffer)
 {
     if (inBuffer != m_hardwarePropertyContext.m_frameBuffer) {
         doSetReadTarget(inBuffer);
     }
 }
 
-void QDemonRenderContextImpl::resetBlendState()
+void QDemonRenderContext::resetBlendState()
 {
     qint32_4 values;
 
@@ -849,14 +849,14 @@ void QDemonRenderContextImpl::resetBlendState()
     m_backend->setBlendFunc(theBlendArg);
 }
 
-void QDemonRenderContextImpl::pushPropertySet()
+void QDemonRenderContext::pushPropertySet()
 {
     m_propertyStack.push_back(m_hardwarePropertyContext);
 }
 
 // Pop the entire set of properties, potentially forcing the values
 // to opengl.
-void QDemonRenderContextImpl::popPropertySet(bool inForceSetProperties)
+void QDemonRenderContext::popPropertySet(bool inForceSetProperties)
 {
     if (!m_propertyStack.empty()) {
         QDemonGLHardPropertyContext &theTopContext(m_propertyStack.back());
@@ -877,7 +877,7 @@ void QDemonRenderContextImpl::popPropertySet(bool inForceSetProperties)
     }
 }
 
-void QDemonRenderContextImpl::clear(QDemonRenderClearFlags flags)
+void QDemonRenderContext::clear(QDemonRenderClearFlags flags)
 {
     if ((flags & QDemonRenderClearValues::Depth) && m_hardwarePropertyContext.m_depthWriteEnabled == false) {
         Q_ASSERT(false);
@@ -886,7 +886,7 @@ void QDemonRenderContextImpl::clear(QDemonRenderClearFlags flags)
     m_backend->clear(flags);
 }
 
-void QDemonRenderContextImpl::clear(QDemonRef<QDemonRenderFrameBuffer> fb, QDemonRenderClearFlags flags)
+void QDemonRenderContext::clear(QDemonRef<QDemonRenderFrameBuffer> fb, QDemonRenderClearFlags flags)
 {
     QDemonRef<QDemonRenderFrameBuffer> previous = m_hardwarePropertyContext.m_frameBuffer;
     if (previous != fb)
@@ -898,7 +898,7 @@ void QDemonRenderContextImpl::clear(QDemonRef<QDemonRenderFrameBuffer> fb, QDemo
         setRenderTarget(previous);
 }
 
-void QDemonRenderContextImpl::blitFramebuffer(qint32 srcX0,
+void QDemonRenderContext::blitFramebuffer(qint32 srcX0,
                                               qint32 srcY0,
                                               qint32 srcX1,
                                               qint32 srcY1,
@@ -912,14 +912,14 @@ void QDemonRenderContextImpl::blitFramebuffer(qint32 srcX0,
     m_backend->blitFramebuffer(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, flags, filter);
 }
 
-bool QDemonRenderContextImpl::bindShaderToInputAssembler(const QDemonRef<QDemonRenderInputAssembler> &inputAssembler,
+bool QDemonRenderContext::bindShaderToInputAssembler(const QDemonRef<QDemonRenderInputAssembler> &inputAssembler,
                                                          const QDemonRef<QDemonRenderShaderProgram> &shader)
 {
     // setup the input assembler object
     return m_backend->setInputAssembler(inputAssembler->getInputAssemblerHandle(), shader->getShaderProgramHandle());
 }
 
-bool QDemonRenderContextImpl::applyPreDrawProperties()
+bool QDemonRenderContext::applyPreDrawProperties()
 {
     // Get the currently bound vertex and shader
     QDemonRef<QDemonRenderInputAssembler> inputAssembler = m_hardwarePropertyContext.m_inputAssembler;
@@ -938,7 +938,7 @@ bool QDemonRenderContextImpl::applyPreDrawProperties()
     return bindShaderToInputAssembler(inputAssembler, shader);
 }
 
-void QDemonRenderContextImpl::onPostDraw()
+void QDemonRenderContext::onPostDraw()
 {
     // reset input assembler binding
     m_backend->setInputAssembler(nullptr, nullptr);
@@ -951,7 +951,7 @@ void QDemonRenderContextImpl::onPostDraw()
     m_nextConstantBufferUnit = 0;
 }
 
-void QDemonRenderContextImpl::draw(QDemonRenderDrawMode drawMode, quint32 count, quint32 offset)
+void QDemonRenderContext::draw(QDemonRenderDrawMode drawMode, quint32 count, quint32 offset)
 {
     if (!applyPreDrawProperties())
         return;
@@ -965,7 +965,7 @@ void QDemonRenderContextImpl::draw(QDemonRenderDrawMode drawMode, quint32 count,
     onPostDraw();
 }
 
-void QDemonRenderContextImpl::drawIndirect(QDemonRenderDrawMode drawMode, quint32 offset)
+void QDemonRenderContext::drawIndirect(QDemonRenderDrawMode drawMode, quint32 offset)
 {
     if (!applyPreDrawProperties())
         return;
@@ -1039,7 +1039,7 @@ QDemonRenderVertFragCompilationResult QDemonRenderContext::compileSource(const c
                          separableProgram);
 }
 
-void QDemonRenderContextImpl::doSetActiveShader(const QDemonRef<QDemonRenderShaderProgram> &inShader)
+void QDemonRenderContext::doSetActiveShader(const QDemonRef<QDemonRenderShaderProgram> &inShader)
 {
     m_hardwarePropertyContext.m_activeShader = nullptr;
     if (!m_backend)
@@ -1053,7 +1053,7 @@ void QDemonRenderContextImpl::doSetActiveShader(const QDemonRef<QDemonRenderShad
     m_hardwarePropertyContext.m_activeShader = inShader;
 }
 
-void QDemonRenderContextImpl::doSetActiveProgramPipeline(const QDemonRef<QDemonRenderProgramPipeline> &inProgramPipeline)
+void QDemonRenderContext::doSetActiveProgramPipeline(const QDemonRef<QDemonRenderProgramPipeline> &inProgramPipeline)
 {
     if (inProgramPipeline) {
         // invalid any bound shader
@@ -1071,7 +1071,7 @@ QDemonRef<QDemonRenderContext> QDemonRenderContext::createNull()
     QDemonRef<QDemonRenderContext> retval;
 
     // create backend
-    QDemonRef<QDemonRenderContextImpl> impl(new QDemonRenderContextImpl(QDemonRenderBackendNULL::createBackend()));
+    QDemonRef<QDemonRenderContext> impl(new QDemonRenderContext(QDemonRenderBackendNULL::createBackend()));
     retval = impl;
     return retval;
 }

@@ -36,7 +36,7 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonRenderQueryBase::QDemonRenderQueryBase(const QDemonRef<QDemonRenderContextImpl> &context)
+QDemonRenderQueryBase::QDemonRenderQueryBase(const QDemonRef<QDemonRenderContext> &context)
     : m_context(context), m_backend(context->getBackend())
 {
     m_queryHandle = m_backend->createQuery();

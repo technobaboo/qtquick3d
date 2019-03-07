@@ -37,7 +37,7 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonRenderFrameBuffer::QDemonRenderFrameBuffer(const QDemonRef<QDemonRenderContextImpl> &context)
+QDemonRenderFrameBuffer::QDemonRenderFrameBuffer(const QDemonRef<QDemonRenderContext> &context)
     : m_context(context), m_backend(context->getBackend()), m_bufferHandle(nullptr), m_attachmentBits(0)
 {
     m_bufferHandle = m_backend->createRenderTarget();
@@ -252,7 +252,7 @@ bool QDemonRenderFrameBuffer::isComplete()
     return m_backend->renderTargetIsValid(m_bufferHandle);
 }
 
-QDemonRef<QDemonRenderFrameBuffer> QDemonRenderFrameBuffer::create(const QDemonRef<QDemonRenderContextImpl> &context)
+QDemonRef<QDemonRenderFrameBuffer> QDemonRenderFrameBuffer::create(const QDemonRef<QDemonRenderContext> &context)
 {
     return QDemonRef<QDemonRenderFrameBuffer>(new QDemonRenderFrameBuffer(context));
 }

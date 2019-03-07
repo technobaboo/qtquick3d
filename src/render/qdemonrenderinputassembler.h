@@ -38,7 +38,7 @@
 QT_BEGIN_NAMESPACE
 
 // forward declarations
-class QDemonRenderContextImpl;
+class QDemonRenderContext;
 class QDemonRenderBackend;
 class QDemonRenderAttribLayout;
 
@@ -66,7 +66,7 @@ public:
      *
      * @return No return.
      */
-    QDemonRenderInputAssembler(const QDemonRef<QDemonRenderContextImpl> &context,
+    QDemonRenderInputAssembler(const QDemonRef<QDemonRenderContext> &context,
                                const QDemonRenderAttribLayout &attribLayout,
                                QDemonConstDataRef<QDemonRef<QDemonRenderVertexBuffer>> buffers,
                                const QDemonRef<QDemonRenderIndexBuffer> &indexBuffer,
@@ -133,7 +133,7 @@ public:
     }
 
 private:
-    QDemonRef<QDemonRenderContextImpl> m_context; ///< pointer to context
+    QDemonRef<QDemonRenderContext> m_context; ///< pointer to context
     QDemonRef<QDemonRenderBackend> m_backend; ///< pointer to backend
 
     QDemonRenderAttribLayout m_attribLayout; ///< pointer to attribute layout

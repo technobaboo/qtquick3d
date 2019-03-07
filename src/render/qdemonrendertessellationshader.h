@@ -34,7 +34,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class QDemonRenderContextImpl;
+class QDemonRenderContext;
 
 ///< This class represents a tessellation control shader
 class QDemonRenderTessControlShader : public QDemonRenderShader
@@ -51,7 +51,7 @@ public:
      *
      * @return No return.
      */
-    QDemonRenderTessControlShader(const QDemonRef<QDemonRenderContextImpl> &context, QDemonConstDataRef<qint8> source, bool binaryProgram);
+    QDemonRenderTessControlShader(const QDemonRef<QDemonRenderContext> &context, QDemonConstDataRef<qint8> source, bool binaryProgram);
 
     /// @brief destructor
     ~QDemonRenderTessControlShader() override;
@@ -89,7 +89,7 @@ public:
      *
      * @return No return.
      */
-    QDemonRenderTessEvaluationShader(const QDemonRef<QDemonRenderContextImpl> &context, QDemonConstDataRef<qint8> source, bool binaryProgram);
+    QDemonRenderTessEvaluationShader(const QDemonRef<QDemonRenderContext> &context, QDemonConstDataRef<qint8> source, bool binaryProgram);
 
     /// @brief destructor
     ~QDemonRenderTessEvaluationShader() override;

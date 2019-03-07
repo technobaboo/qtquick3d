@@ -35,7 +35,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class QDemonRenderContextImpl;
+class QDemonRenderContext;
 
 struct QDemonRenderRenderBufferDimensions
 {
@@ -52,7 +52,7 @@ public:
     QAtomicInt ref;
 
 private:
-    QDemonRef<QDemonRenderContextImpl> m_context; ///< pointer to context
+    QDemonRef<QDemonRenderContext> m_context; ///< pointer to context
     QDemonRef<QDemonRenderBackend> m_backend; ///< pointer to backend
     qint32 m_width; ///< buffer width
     qint32 m_height; ///< buffer height
@@ -72,7 +72,7 @@ public:
      *
      * @return No return.
      */
-    QDemonRenderRenderBuffer(const QDemonRef<QDemonRenderContextImpl> &context,
+    QDemonRenderRenderBuffer(const QDemonRef<QDemonRenderContext> &context,
                              QDemonRenderRenderBufferFormat format,
                              quint32 width,
                              quint32 height);
@@ -118,7 +118,7 @@ public:
      *
      * @return No return.
      */
-    static QDemonRef<QDemonRenderRenderBuffer> create(const QDemonRef<QDemonRenderContextImpl> &context,
+    static QDemonRef<QDemonRenderRenderBuffer> create(const QDemonRef<QDemonRenderContext> &context,
                                                       QDemonRenderRenderBufferFormat format,
                                                       quint32 width,
                                                       quint32 height);

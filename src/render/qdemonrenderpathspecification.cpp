@@ -34,7 +34,7 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonRenderPathSpecification::QDemonRenderPathSpecification(const QDemonRef<QDemonRenderContextImpl> &context)
+QDemonRenderPathSpecification::QDemonRenderPathSpecification(const QDemonRef<QDemonRenderContext> &context)
     : m_context(context), m_backend(context->getBackend())
 {
 }
@@ -72,7 +72,7 @@ void QDemonRenderPathSpecification::closePath()
     m_pathCommands.push_back(static_cast<uchar>(QDemonRenderPathCommands::Close));
 }
 
-QDemonRef<QDemonRenderPathSpecification> QDemonRenderPathSpecification::createPathSpecification(const QDemonRef<QDemonRenderContextImpl> &context)
+QDemonRef<QDemonRenderPathSpecification> QDemonRenderPathSpecification::createPathSpecification(const QDemonRef<QDemonRenderContext> &context)
 {
     Q_ASSERT(context->isPathRenderingSupported());
 

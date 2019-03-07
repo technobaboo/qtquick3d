@@ -65,7 +65,7 @@ QDemonRef<QDemonRenderContext> QDemonRenderContext::createGl(const QSurfaceForma
         qCCritical(INTERNAL_ERROR) << "Can't find a suitable OpenGL version for" << format;
     }
 
-    QDemonRef<QDemonRenderContextImpl> impl(new QDemonRenderContextImpl(theBackend));
+    QDemonRef<QDemonRenderContext> impl(new QDemonRenderContext(theBackend));
     retval = impl;
 
     return retval;

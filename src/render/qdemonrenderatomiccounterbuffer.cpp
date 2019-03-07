@@ -47,7 +47,7 @@ public:
     AtomicCounterBufferEntry(const QByteArray &name, qint32 offset) : m_name(name), m_offset(offset) {}
 };
 
-QDemonRenderAtomicCounterBuffer::QDemonRenderAtomicCounterBuffer(const QDemonRef<QDemonRenderContextImpl> &context,
+QDemonRenderAtomicCounterBuffer::QDemonRenderAtomicCounterBuffer(const QDemonRef<QDemonRenderContext> &context,
                                                                  const QByteArray &bufferName,
                                                                  size_t size,
                                                                  QDemonRenderBufferUsageType usageType,
@@ -125,7 +125,7 @@ bool QDemonRenderAtomicCounterBuffer::containsParam(const QByteArray &name)
         return false;
 }
 
-QDemonRef<QDemonRenderAtomicCounterBuffer> QDemonRenderAtomicCounterBuffer::create(const QDemonRef<QDemonRenderContextImpl> &context,
+QDemonRef<QDemonRenderAtomicCounterBuffer> QDemonRenderAtomicCounterBuffer::create(const QDemonRef<QDemonRenderContext> &context,
                                                                                    const char *bufferName,
                                                                                    QDemonRenderBufferUsageType usageType,
                                                                                    size_t size,

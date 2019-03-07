@@ -34,7 +34,7 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonRenderIndexBuffer::QDemonRenderIndexBuffer(const QDemonRef<QDemonRenderContextImpl> &context,
+QDemonRenderIndexBuffer::QDemonRenderIndexBuffer(const QDemonRef<QDemonRenderContext> &context,
                                                  size_t size,
                                                  QDemonRenderComponentType componentType,
                                                  QDemonRenderBufferUsageType usageType,
@@ -74,7 +74,7 @@ void QDemonRenderIndexBuffer::bind()
     m_backend->bindBuffer(m_bufferHandle, m_bindFlags);
 }
 
-QDemonRef<QDemonRenderIndexBuffer> QDemonRenderIndexBuffer::create(const QDemonRef<QDemonRenderContextImpl> &context,
+QDemonRef<QDemonRenderIndexBuffer> QDemonRenderIndexBuffer::create(const QDemonRef<QDemonRenderContext> &context,
                                                                    QDemonRenderBufferUsageType usageType,
                                                                    QDemonRenderComponentType componentType,
                                                                    size_t size,

@@ -33,7 +33,7 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonRenderTextureSampler::QDemonRenderTextureSampler(const QDemonRef<QDemonRenderContextImpl> &context,
+QDemonRenderTextureSampler::QDemonRenderTextureSampler(const QDemonRef<QDemonRenderContext> &context,
                                                        QDemonRenderTextureMinifyingOp minFilter,
                                                        QDemonRenderTextureMagnifyingOp magFilter,
                                                        QDemonRenderTextureCoordOp wrapS,

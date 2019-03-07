@@ -35,7 +35,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class QDemonRenderContextImpl;
+class QDemonRenderContext;
 class QDemonRenderPathSpecification;
 class QDemonRenderPathFontSpecification;
 
@@ -47,7 +47,7 @@ public:
     QAtomicInt ref;
 
 protected:
-    QDemonRef<QDemonRenderContextImpl> m_context; ///< pointer to context
+    QDemonRef<QDemonRenderContext> m_context; ///< pointer to context
     QDemonRef<QDemonRenderBackend> m_backend; ///< pointer to backend
 
 public:
@@ -60,7 +60,7 @@ public:
      *
      * @return No return.
      */
-    QDemonRenderPathRender(const QDemonRef<QDemonRenderContextImpl> &context, size_t range);
+    QDemonRenderPathRender(const QDemonRef<QDemonRenderContext> &context, size_t range);
 
     /// @brief destructor
     ~QDemonRenderPathRender();
@@ -93,7 +93,7 @@ public:
      *
      * @return the backend object handle.
      */
-    static QDemonRef<QDemonRenderPathRender> create(const QDemonRef<QDemonRenderContextImpl> &context, size_t range);
+    static QDemonRef<QDemonRenderPathRender> create(const QDemonRef<QDemonRenderContext> &context, size_t range);
 
 private:
     QDemonRenderBackend::QDemonRenderBackendPathObject m_pathRenderHandle; ///< opaque backend handle

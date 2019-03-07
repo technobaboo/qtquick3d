@@ -37,7 +37,7 @@
 QT_BEGIN_NAMESPACE
 
 // forward declaration
-class QDemonRenderContextImpl;
+class QDemonRenderContext;
 class QDemonRenderVertexBuffer;
 
 ///< Constant (uniform) buffer representation
@@ -57,7 +57,7 @@ public:
      *
      * @return No return.
      */
-    QDemonRenderStorageBuffer(const QDemonRef<QDemonRenderContextImpl> &context,
+    QDemonRenderStorageBuffer(const QDemonRef<QDemonRenderContext> &context,
                               const QByteArray &bufferName,
                               size_t size,
                               QDemonRenderBufferUsageType usageType,
@@ -135,7 +135,7 @@ public:
      *
      * @return the buffer object or nullptr
      */
-    static QDemonRef<QDemonRenderStorageBuffer> create(const QDemonRef<QDemonRenderContextImpl> &context,
+    static QDemonRef<QDemonRenderStorageBuffer> create(const QDemonRef<QDemonRenderContext> &context,
                                                        const char *bufferName,
                                                        QDemonRenderBufferUsageType usageType,
                                                        size_t size,

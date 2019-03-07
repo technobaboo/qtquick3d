@@ -37,7 +37,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class QDemonRenderContextImpl;
+class QDemonRenderContext;
 class QDemonRenderPathFontSpecification;
 
 class Q_DEMONRENDER_EXPORT QDemonRenderPathFontItem
@@ -120,7 +120,7 @@ private:
     QMatrix4x4 m_modelMatrix; ///< Matrix which converts from font space to box space
 
 public:
-    static QDemonRef<QDemonRenderPathFontItem> createPathFontItem(const QDemonRef<QDemonRenderContextImpl> &context);
+    static QDemonRef<QDemonRenderPathFontItem> createPathFontItem(const QDemonRef<QDemonRenderContext> &context);
 };
 
 QT_END_NAMESPACE
