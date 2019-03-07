@@ -1141,18 +1141,18 @@ QDemonRenderBackend::QDemonRenderBackendSamplerObject QDemonRenderBackendGLBase:
     // We don"t setup the state here for GL
     // but we need to pass on the variables here
     // to satisfy the interface
-    NVRENDER_BACKEND_UNUSED(minFilter);
-    NVRENDER_BACKEND_UNUSED(magFilter);
-    NVRENDER_BACKEND_UNUSED(wrapS);
-    NVRENDER_BACKEND_UNUSED(wrapT);
-    NVRENDER_BACKEND_UNUSED(wrapR);
-    NVRENDER_BACKEND_UNUSED(minLod);
-    NVRENDER_BACKEND_UNUSED(maxLod);
-    NVRENDER_BACKEND_UNUSED(lodBias);
-    NVRENDER_BACKEND_UNUSED(compareMode);
-    NVRENDER_BACKEND_UNUSED(compareFunc);
-    NVRENDER_BACKEND_UNUSED(anisotropy);
-    NVRENDER_BACKEND_UNUSED(borderColor);
+    Q_UNUSED(minFilter)
+    Q_UNUSED(magFilter)
+    Q_UNUSED(wrapS)
+    Q_UNUSED(wrapT)
+    Q_UNUSED(wrapR)
+    Q_UNUSED(minLod)
+    Q_UNUSED(maxLod)
+    Q_UNUSED(lodBias)
+    Q_UNUSED(compareMode)
+    Q_UNUSED(compareFunc)
+    Q_UNUSED(anisotropy)
+    Q_UNUSED(borderColor)
 
     // return a dummy handle
     return (QDemonRenderBackend::QDemonRenderBackendSamplerObject)0x0001;
@@ -1175,13 +1175,13 @@ void QDemonRenderBackendGLBase::updateSampler(QDemonRenderBackendSamplerObject /
 {
     // Satisfy the compiler
     // These are not available in GLES 2 and we don't use them right now
-    NVRENDER_BACKEND_UNUSED(wrapR);
-    NVRENDER_BACKEND_UNUSED(lodBias);
-    NVRENDER_BACKEND_UNUSED(minLod);
-    NVRENDER_BACKEND_UNUSED(maxLod);
-    NVRENDER_BACKEND_UNUSED(compareMode);
-    NVRENDER_BACKEND_UNUSED(compareFunc);
-    NVRENDER_BACKEND_UNUSED(borderColor);
+    Q_UNUSED(wrapR)
+    Q_UNUSED(lodBias)
+    Q_UNUSED(minLod)
+    Q_UNUSED(maxLod)
+    Q_UNUSED(compareMode)
+    Q_UNUSED(compareFunc)
+    Q_UNUSED(borderColor)
 
     GLenum glTarget = GLConversion::fromTextureTargetToGL(target);
 
@@ -1199,23 +1199,23 @@ void QDemonRenderBackendGLBase::updateTextureObject(QDemonRenderBackendTextureOb
                                                     qint32 baseLevel,
                                                     qint32 maxLevel)
 {
-    NVRENDER_BACKEND_UNUSED(to);
-    NVRENDER_BACKEND_UNUSED(target);
-    NVRENDER_BACKEND_UNUSED(baseLevel);
-    NVRENDER_BACKEND_UNUSED(maxLevel);
+    Q_UNUSED(to)
+    Q_UNUSED(target)
+    Q_UNUSED(baseLevel)
+    Q_UNUSED(maxLevel)
 }
 
 void QDemonRenderBackendGLBase::updateTextureSwizzle(QDemonRenderBackendTextureObject to,
                                                      QDemonRenderTextureTargetType target,
                                                      QDemonRenderTextureSwizzleMode swizzleMode)
 {
-    NVRENDER_BACKEND_UNUSED(to);
-    NVRENDER_BACKEND_UNUSED(target);
+    Q_UNUSED(to)
+    Q_UNUSED(target)
 
     // Nothing to do here still might be called
     Q_ASSERT(swizzleMode == QDemonRenderTextureSwizzleMode::NoSwizzle);
 
-    NVRENDER_BACKEND_UNUSED(swizzleMode);
+    Q_UNUSED(swizzleMode)
 }
 
 void QDemonRenderBackendGLBase::releaseSampler(QDemonRenderBackendSamplerObject so)
@@ -1359,9 +1359,9 @@ QDemonRenderBackend::QDemonRenderBackendTessControlShaderObject QDemonRenderBack
         bool binary)
 {
     // needs GL 4 or GLES EXT_tessellation_shader support
-    NVRENDER_BACKEND_UNUSED(source);
-    NVRENDER_BACKEND_UNUSED(errorMessage);
-    NVRENDER_BACKEND_UNUSED(binary);
+    Q_UNUSED(source)
+    Q_UNUSED(errorMessage)
+    Q_UNUSED(binary)
 
     qCCritical(INVALID_OPERATION) << QObject::tr("Unsupported method: ") << __FUNCTION__;
 
@@ -1374,9 +1374,9 @@ QDemonRenderBackend::QDemonRenderBackendTessEvaluationShaderObject QDemonRenderB
         bool binary)
 {
     // needs GL 4 or GLES EXT_tessellation_shader support
-    NVRENDER_BACKEND_UNUSED(source);
-    NVRENDER_BACKEND_UNUSED(errorMessage);
-    NVRENDER_BACKEND_UNUSED(binary);
+    Q_UNUSED(source)
+    Q_UNUSED(errorMessage)
+    Q_UNUSED(binary)
 
     qCCritical(INVALID_OPERATION) << QObject::tr("Unsupported method: ") << __FUNCTION__;
 
@@ -1388,9 +1388,9 @@ QDemonRenderBackend::QDemonRenderBackendGeometryShaderObject QDemonRenderBackend
                                                                                                              bool binary)
 {
     // needs GL 4 or GLES EXT_geometry_shader support
-    NVRENDER_BACKEND_UNUSED(source);
-    NVRENDER_BACKEND_UNUSED(errorMessage);
-    NVRENDER_BACKEND_UNUSED(binary);
+    Q_UNUSED(source)
+    Q_UNUSED(errorMessage)
+    Q_UNUSED(binary)
 
     qCCritical(INVALID_OPERATION) << QObject::tr("Unsupported method: ") << __FUNCTION__;
 
@@ -1402,9 +1402,9 @@ QDemonRenderBackend::QDemonRenderBackendComputeShaderObject QDemonRenderBackendG
                                                                                                            bool binary)
 {
     // needs GL 4.3 or GLES3.1 support
-    NVRENDER_BACKEND_UNUSED(source);
-    NVRENDER_BACKEND_UNUSED(errorMessage);
-    NVRENDER_BACKEND_UNUSED(binary);
+    Q_UNUSED(source)
+    Q_UNUSED(errorMessage)
+    Q_UNUSED(binary)
 
     qCCritical(INVALID_OPERATION) << QObject::tr("Unsupported method: ") << __FUNCTION__;
 
@@ -1733,7 +1733,7 @@ qint32 QDemonRenderBackendGLBase::getConstantCount(QDemonRenderBackendShaderProg
 qint32 QDemonRenderBackendGLBase::getConstantBufferCount(QDemonRenderBackendShaderProgramObject po)
 {
     // needs GL3 and above
-    NVRENDER_BACKEND_UNUSED(po);
+    Q_UNUSED(po)
 
     return 0;
 }
@@ -1774,13 +1774,13 @@ qint32 QDemonRenderBackendGLBase::getConstantBufferInfoByID(QDemonRenderBackendS
                                                             char *nameBuf)
 {
     // needs GL3 and above
-    NVRENDER_BACKEND_UNUSED(po);
-    NVRENDER_BACKEND_UNUSED(id);
-    NVRENDER_BACKEND_UNUSED(nameBufSize);
-    NVRENDER_BACKEND_UNUSED(paramCount);
-    NVRENDER_BACKEND_UNUSED(bufferSize);
-    NVRENDER_BACKEND_UNUSED(length);
-    NVRENDER_BACKEND_UNUSED(nameBuf);
+    Q_UNUSED(po)
+    Q_UNUSED(id)
+    Q_UNUSED(nameBufSize)
+    Q_UNUSED(paramCount)
+    Q_UNUSED(bufferSize)
+    Q_UNUSED(length)
+    Q_UNUSED(nameBuf)
 
     qCCritical(INVALID_OPERATION) << QObject::tr("Unsupported method: ") << __FUNCTION__;
 
@@ -1790,9 +1790,9 @@ qint32 QDemonRenderBackendGLBase::getConstantBufferInfoByID(QDemonRenderBackendS
 void QDemonRenderBackendGLBase::getConstantBufferParamIndices(QDemonRenderBackendShaderProgramObject po, quint32 id, qint32 *indices)
 {
     // needs GL3 and above
-    NVRENDER_BACKEND_UNUSED(po);
-    NVRENDER_BACKEND_UNUSED(id);
-    NVRENDER_BACKEND_UNUSED(indices);
+    Q_UNUSED(po)
+    Q_UNUSED(id)
+    Q_UNUSED(indices)
 
     qCCritical(INVALID_OPERATION) << QObject::tr("Unsupported method: ") << __FUNCTION__;
 }
@@ -1805,12 +1805,12 @@ void QDemonRenderBackendGLBase::getConstantBufferParamInfoByIndices(QDemonRender
                                                                     qint32 *offset)
 {
     // needs GL3 and above
-    NVRENDER_BACKEND_UNUSED(po);
-    NVRENDER_BACKEND_UNUSED(count);
-    NVRENDER_BACKEND_UNUSED(indices);
-    NVRENDER_BACKEND_UNUSED(type);
-    NVRENDER_BACKEND_UNUSED(size);
-    NVRENDER_BACKEND_UNUSED(offset);
+    Q_UNUSED(po)
+    Q_UNUSED(count)
+    Q_UNUSED(indices)
+    Q_UNUSED(type)
+    Q_UNUSED(size)
+    Q_UNUSED(offset)
 
     qCCritical(INVALID_OPERATION) << QObject::tr("Unsupported method: ") << __FUNCTION__;
 }
@@ -1818,9 +1818,9 @@ void QDemonRenderBackendGLBase::getConstantBufferParamInfoByIndices(QDemonRender
 void QDemonRenderBackendGLBase::programSetConstantBlock(QDemonRenderBackendShaderProgramObject po, quint32 blockIndex, quint32 binding)
 {
     // needs GL3 and above
-    NVRENDER_BACKEND_UNUSED(po);
-    NVRENDER_BACKEND_UNUSED(blockIndex);
-    NVRENDER_BACKEND_UNUSED(binding);
+    Q_UNUSED(po)
+    Q_UNUSED(blockIndex)
+    Q_UNUSED(binding)
 
     qCCritical(INVALID_OPERATION) << QObject::tr("Unsupported method: ") << __FUNCTION__;
 }
@@ -1828,8 +1828,8 @@ void QDemonRenderBackendGLBase::programSetConstantBlock(QDemonRenderBackendShade
 void QDemonRenderBackendGLBase::programSetConstantBuffer(quint32 index, QDemonRenderBackendBufferObject bo)
 {
     // needs GL3 and above
-    NVRENDER_BACKEND_UNUSED(index);
-    NVRENDER_BACKEND_UNUSED(bo);
+    Q_UNUSED(index)
+    Q_UNUSED(bo)
 
     qCCritical(INVALID_OPERATION) << QObject::tr("Unsupported method: ") << __FUNCTION__;
 }
@@ -1837,7 +1837,7 @@ void QDemonRenderBackendGLBase::programSetConstantBuffer(quint32 index, QDemonRe
 qint32 QDemonRenderBackendGLBase::getStorageBufferCount(QDemonRenderBackendShaderProgramObject po)
 {
     // needs GL4 and above
-    NVRENDER_BACKEND_UNUSED(po);
+    Q_UNUSED(po)
 
     return 0;
 }
@@ -1851,13 +1851,13 @@ qint32 QDemonRenderBackendGLBase::getStorageBufferInfoByID(QDemonRenderBackendSh
                                                            char *nameBuf)
 {
     // needs GL4 and above
-    NVRENDER_BACKEND_UNUSED(po);
-    NVRENDER_BACKEND_UNUSED(id);
-    NVRENDER_BACKEND_UNUSED(nameBufSize);
-    NVRENDER_BACKEND_UNUSED(paramCount);
-    NVRENDER_BACKEND_UNUSED(bufferSize);
-    NVRENDER_BACKEND_UNUSED(length);
-    NVRENDER_BACKEND_UNUSED(nameBuf);
+    Q_UNUSED(po)
+    Q_UNUSED(id)
+    Q_UNUSED(nameBufSize)
+    Q_UNUSED(paramCount)
+    Q_UNUSED(bufferSize)
+    Q_UNUSED(length)
+    Q_UNUSED(nameBuf)
 
     qCCritical(INVALID_OPERATION) << QObject::tr("Unsupported method: ") << __FUNCTION__;
 
@@ -1867,14 +1867,14 @@ qint32 QDemonRenderBackendGLBase::getStorageBufferInfoByID(QDemonRenderBackendSh
 void QDemonRenderBackendGLBase::programSetStorageBuffer(quint32 index, QDemonRenderBackendBufferObject bo)
 {
     // needs GL4 and above
-    NVRENDER_BACKEND_UNUSED(index);
-    NVRENDER_BACKEND_UNUSED(bo);
+    Q_UNUSED(index)
+    Q_UNUSED(bo)
 }
 
 qint32 QDemonRenderBackendGLBase::getAtomicCounterBufferCount(QDemonRenderBackendShaderProgramObject po)
 {
     // needs GL4 and above
-    NVRENDER_BACKEND_UNUSED(po);
+    Q_UNUSED(po)
 
     return 0;
 }
@@ -1888,13 +1888,13 @@ qint32 QDemonRenderBackendGLBase::getAtomicCounterBufferInfoByID(QDemonRenderBac
                                                                  char *nameBuf)
 {
     // needs GL4 and above
-    NVRENDER_BACKEND_UNUSED(po);
-    NVRENDER_BACKEND_UNUSED(id);
-    NVRENDER_BACKEND_UNUSED(nameBufSize);
-    NVRENDER_BACKEND_UNUSED(paramCount);
-    NVRENDER_BACKEND_UNUSED(bufferSize);
-    NVRENDER_BACKEND_UNUSED(length);
-    NVRENDER_BACKEND_UNUSED(nameBuf);
+    Q_UNUSED(po)
+    Q_UNUSED(id)
+    Q_UNUSED(nameBufSize)
+    Q_UNUSED(paramCount)
+    Q_UNUSED(bufferSize)
+    Q_UNUSED(length)
+    Q_UNUSED(nameBuf)
 
     qCCritical(INVALID_OPERATION) << QObject::tr("Unsupported method: ") << __FUNCTION__;
 
@@ -1904,8 +1904,8 @@ qint32 QDemonRenderBackendGLBase::getAtomicCounterBufferInfoByID(QDemonRenderBac
 void QDemonRenderBackendGLBase::programSetAtomicCounterBuffer(quint32 index, QDemonRenderBackendBufferObject bo)
 {
     // needs GL4 and above
-    NVRENDER_BACKEND_UNUSED(index);
-    NVRENDER_BACKEND_UNUSED(bo);
+    Q_UNUSED(index)
+    Q_UNUSED(bo)
 }
 
 void QDemonRenderBackendGLBase::setConstantValue(QDemonRenderBackendShaderProgramObject,
@@ -1985,8 +1985,8 @@ void QDemonRenderBackendGLBase::draw(QDemonRenderDrawMode drawMode, quint32 star
 void QDemonRenderBackendGLBase::drawIndirect(QDemonRenderDrawMode drawMode, const void *indirect)
 {
     // needs GL4 and above
-    NVRENDER_BACKEND_UNUSED(drawMode);
-    NVRENDER_BACKEND_UNUSED(indirect);
+    Q_UNUSED(drawMode)
+    Q_UNUSED(indirect)
 }
 
 void QDemonRenderBackendGLBase::drawIndexed(QDemonRenderDrawMode drawMode,
@@ -2005,9 +2005,9 @@ void QDemonRenderBackendGLBase::drawIndexedIndirect(QDemonRenderDrawMode drawMod
                                                     const void *indirect)
 {
     // needs GL4 and above
-    NVRENDER_BACKEND_UNUSED(drawMode);
-    NVRENDER_BACKEND_UNUSED(type);
-    NVRENDER_BACKEND_UNUSED(indirect);
+    Q_UNUSED(drawMode)
+    Q_UNUSED(type)
+    Q_UNUSED(indirect)
 }
 
 void QDemonRenderBackendGLBase::readPixel(QDemonRenderBackendRenderTargetObject /* rto */,

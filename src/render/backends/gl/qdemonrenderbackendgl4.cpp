@@ -34,8 +34,6 @@
 
 QT_BEGIN_NAMESPACE
 
-#define NVRENDER_BACKEND_UNUSED(arg) (void)arg;
-
 #ifdef RENDER_BACKEND_LOG_GL_ERRORS
 #define RENDER_LOG_ERROR_PARAMS(x) checkGLError(#x, __FILE__, __LINE__)
 #else
@@ -693,7 +691,7 @@ void QDemonRenderBackendGL4Impl::setStrokeWidth(QDemonRenderBackendPathObject in
 void QDemonRenderBackendGL4Impl::setPathProjectionMatrix(const QMatrix4x4 inPathProjection)
 {
 #if defined(QT_OPENGL_ES)
-    NVRENDER_BACKEND_UNUSED(inPathProjection);
+    Q_UNUSED(inPathProjection)
 #else
     GL_CALL_DIRECTSTATE_EXT(glMatrixLoadfEXT(GL_PROJECTION, inPathProjection.constData()));
 #endif
@@ -702,7 +700,7 @@ void QDemonRenderBackendGL4Impl::setPathProjectionMatrix(const QMatrix4x4 inPath
 void QDemonRenderBackendGL4Impl::setPathModelViewMatrix(const QMatrix4x4 inPathModelview)
 {
 #if defined(QT_OPENGL_ES)
-    NVRENDER_BACKEND_UNUSED(inPathModelview);
+    Q_UNUSED(inPathModelview)
 #else
     GL_CALL_DIRECTSTATE_EXT(glMatrixLoadfEXT(GL_MODELVIEW, inPathModelview.constData()));
 #endif

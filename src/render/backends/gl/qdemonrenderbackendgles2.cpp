@@ -207,13 +207,13 @@ void QDemonRenderBackendGLES2Impl::setMultisampledTextureData2D(QDemonRenderBack
                                                                 qint32 height,
                                                                 bool fixedsamplelocations)
 {
-    NVRENDER_BACKEND_UNUSED(to);
-    NVRENDER_BACKEND_UNUSED(target);
-    NVRENDER_BACKEND_UNUSED(samples);
-    NVRENDER_BACKEND_UNUSED(internalFormat);
-    NVRENDER_BACKEND_UNUSED(width);
-    NVRENDER_BACKEND_UNUSED(height);
-    NVRENDER_BACKEND_UNUSED(fixedsamplelocations);
+    Q_UNUSED(to)
+    Q_UNUSED(target)
+    Q_UNUSED(samples)
+    Q_UNUSED(internalFormat)
+    Q_UNUSED(width)
+    Q_UNUSED(height)
+    Q_UNUSED(fixedsamplelocations)
 }
 
 void QDemonRenderBackendGLES2Impl::setTextureData3D(QDemonRenderBackendTextureObject to,
@@ -325,13 +325,13 @@ void QDemonRenderBackendGLES2Impl::updateSampler(QDemonRenderBackendSamplerObjec
     // These are not available in GLES 3 and we don't use them right now
     Q_ASSERT(qFuzzyIsNull(lodBias));
     Q_ASSERT(!borderColor);
-    NVRENDER_BACKEND_UNUSED(lodBias);
-    NVRENDER_BACKEND_UNUSED(borderColor);
-    NVRENDER_BACKEND_UNUSED(wrapR);
-    NVRENDER_BACKEND_UNUSED(minLod);
-    NVRENDER_BACKEND_UNUSED(maxLod);
-    NVRENDER_BACKEND_UNUSED(compareMode);
-    NVRENDER_BACKEND_UNUSED(compareFunc);
+    Q_UNUSED(lodBias)
+    Q_UNUSED(borderColor)
+    Q_UNUSED(wrapR)
+    Q_UNUSED(minLod)
+    Q_UNUSED(maxLod)
+    Q_UNUSED(compareMode)
+    Q_UNUSED(compareFunc)
 
     GLenum glTarget = GLConversion::fromTextureTargetToGL(target);
 
@@ -350,7 +350,7 @@ void QDemonRenderBackendGLES2Impl::updateTextureObject(QDemonRenderBackendTextur
                                                        qint32 baseLevel,
                                                        qint32 maxLevel)
 {
-    NVRENDER_BACKEND_UNUSED(to);
+    Q_UNUSED(to)
 
     GLenum glTarget = GLConversion::fromTextureTargetToGL(target);
 
@@ -362,9 +362,9 @@ void QDemonRenderBackendGLES2Impl::updateTextureSwizzle(QDemonRenderBackendTextu
                                                         QDemonRenderTextureTargetType target,
                                                         QDemonRenderTextureSwizzleMode swizzleMode)
 {
-    NVRENDER_BACKEND_UNUSED(to);
-    NVRENDER_BACKEND_UNUSED(target);
-    NVRENDER_BACKEND_UNUSED(swizzleMode);
+    Q_UNUSED(to)
+    Q_UNUSED(target)
+    Q_UNUSED(swizzleMode)
 #if defined(QT_OPENGL_ES)
     if (m_backendSupport.caps.bits.bTextureSwizzleSupported) {
         GLint glSwizzle[4];
@@ -524,7 +524,7 @@ bool QDemonRenderBackendGLES2Impl::setInputAssembler(QDemonRenderBackendInputAss
 
 void QDemonRenderBackendGLES2Impl::setDrawBuffers(QDemonRenderBackendRenderTargetObject rto, QDemonConstDataRef<qint32> inDrawBufferSet)
 {
-    NVRENDER_BACKEND_UNUSED(rto);
+    Q_UNUSED(rto)
 
     m_drawBuffersArray.clear();
 
@@ -540,8 +540,8 @@ void QDemonRenderBackendGLES2Impl::setDrawBuffers(QDemonRenderBackendRenderTarge
 
 void QDemonRenderBackendGLES2Impl::setReadBuffer(QDemonRenderBackendRenderTargetObject rto, QDemonReadFace inReadFace)
 {
-    NVRENDER_BACKEND_UNUSED(rto);
-    NVRENDER_BACKEND_UNUSED(inReadFace);
+    Q_UNUSED(rto)
+    Q_UNUSED(inReadFace)
 }
 
 void QDemonRenderBackendGLES2Impl::renderTargetAttach(QDemonRenderBackendRenderTargetObject,
@@ -550,10 +550,10 @@ void QDemonRenderBackendGLES2Impl::renderTargetAttach(QDemonRenderBackendRenderT
                                                       qint32 level,
                                                       qint32 layer)
 {
-    NVRENDER_BACKEND_UNUSED(attachment);
-    NVRENDER_BACKEND_UNUSED(to);
-    NVRENDER_BACKEND_UNUSED(level);
-    NVRENDER_BACKEND_UNUSED(layer);
+    Q_UNUSED(attachment)
+    Q_UNUSED(to)
+    Q_UNUSED(level)
+    Q_UNUSED(layer)
     Q_ASSERT(false);
 }
 

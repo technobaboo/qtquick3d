@@ -45,8 +45,6 @@
 
 QT_BEGIN_NAMESPACE
 
-#define NVRENDER_BACKEND_UNUSED(arg) (void)arg;
-
 // Enable this to log opengl errors instead of an assert
 //#define RENDER_BACKEND_LOG_GL_ERRORS
 

@@ -199,13 +199,13 @@ void QDemonRenderBackendGL3Impl::setMultisampledTextureData2D(QDemonRenderBacken
 {
     // Not supported by ES 3 yet
 #if defined(QT_OPENGL_ES)
-    NVRENDER_BACKEND_UNUSED(to);
-    NVRENDER_BACKEND_UNUSED(target);
-    NVRENDER_BACKEND_UNUSED(samples);
-    NVRENDER_BACKEND_UNUSED(internalFormat);
-    NVRENDER_BACKEND_UNUSED(width);
-    NVRENDER_BACKEND_UNUSED(height);
-    NVRENDER_BACKEND_UNUSED(fixedsamplelocations);
+    Q_UNUSED(to)
+    Q_UNUSED(target)
+    Q_UNUSED(samples)
+    Q_UNUSED(internalFormat)
+    Q_UNUSED(width)
+    Q_UNUSED(height)
+    Q_UNUSED(fixedsamplelocations)
 #else
     GLuint texID = HandleToID_cast(GLuint, size_t, to);
     GLenum glTarget = GLConversion::fromTextureTargetToGL(target);
@@ -289,8 +289,8 @@ void QDemonRenderBackendGL3Impl::updateSampler(QDemonRenderBackendSamplerObject 
     // These are not available in GLES 3 and we don't use them right now
     Q_ASSERT(qFuzzyIsNull(lodBias));
     Q_ASSERT(!borderColor);
-    NVRENDER_BACKEND_UNUSED(lodBias);
-    NVRENDER_BACKEND_UNUSED(borderColor);
+    Q_UNUSED(lodBias)
+    Q_UNUSED(borderColor)
 
     GLenum glTarget = GLConversion::fromTextureTargetToGL(target);
 
@@ -314,7 +314,7 @@ void QDemonRenderBackendGL3Impl::updateTextureObject(QDemonRenderBackendTextureO
                                                      qint32 baseLevel,
                                                      qint32 maxLevel)
 {
-    NVRENDER_BACKEND_UNUSED(to);
+    Q_UNUSED(to)
 
     GLenum glTarget = GLConversion::fromTextureTargetToGL(target);
 
@@ -326,7 +326,7 @@ void QDemonRenderBackendGL3Impl::updateTextureSwizzle(QDemonRenderBackendTexture
                                                       QDemonRenderTextureTargetType target,
                                                       QDemonRenderTextureSwizzleMode swizzleMode)
 {
-    NVRENDER_BACKEND_UNUSED(to);
+    Q_UNUSED(to)
     if (m_backendSupport.caps.bits.bTextureSwizzleSupported) {
         GLint glSwizzle[4];
         GLenum glTarget = GLConversion::fromTextureTargetToGL(target);
@@ -501,7 +501,7 @@ bool QDemonRenderBackendGL3Impl::setInputAssembler(QDemonRenderBackendInputAssem
 
 void QDemonRenderBackendGL3Impl::setDrawBuffers(QDemonRenderBackendRenderTargetObject rto, QDemonConstDataRef<qint32> inDrawBufferSet)
 {
-    NVRENDER_BACKEND_UNUSED(rto);
+    Q_UNUSED(rto)
 
     m_drawBuffersArray.clear();
 
@@ -517,7 +517,7 @@ void QDemonRenderBackendGL3Impl::setDrawBuffers(QDemonRenderBackendRenderTargetO
 
 void QDemonRenderBackendGL3Impl::setReadBuffer(QDemonRenderBackendRenderTargetObject rto, QDemonReadFace inReadFace)
 {
-    NVRENDER_BACKEND_UNUSED(rto);
+    Q_UNUSED(rto)
 
     GL_CALL_EXTRA_FUNCTION(glReadBuffer(m_conversion.fromReadFacesToGL(inReadFace)));
 }
