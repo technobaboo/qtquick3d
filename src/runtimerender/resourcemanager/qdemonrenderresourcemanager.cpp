@@ -52,7 +52,7 @@ struct QDemonResourceManager : public QDemonResourceManagerInterface
     // Complete list of all allocated objects
     //    QVector<QDemonRef<QDemonRefCounted>> m_allocatedObjects;
 
-    QVector<QDemonRenderFrameBuffer> freeFrameBuffers;
+    QVector<QDemonRef<QDemonRenderFrameBuffer>> freeFrameBuffers;
     QVector<QDemonRenderRenderBuffer> freeRenderBuffers;
     QVector<QDemonRef<QDemonRenderTexture2D>> freeTextures;
     QVector<QDemonRef<QDemonRenderTexture2DArray>> freeTexArrays;
@@ -63,32 +63,32 @@ struct QDemonResourceManager : public QDemonResourceManagerInterface
 
     ~QDemonResourceManager() override = default;
 
-    QDemonRenderFrameBuffer allocateFrameBuffer() override
+    QDemonRef<QDemonRenderFrameBuffer> allocateFrameBuffer() override
     {
         if (freeFrameBuffers.empty() == true) {
-            auto newBuffer = QDemonRenderFrameBuffer(renderContext);
+            auto newBuffer = renderContext->createFrameBuffer();
             freeFrameBuffers.push_back(newBuffer);
         }
         auto retval = freeFrameBuffers.back();
         freeFrameBuffers.pop_back();
         return retval;
     }
-    void release(QDemonRenderFrameBuffer inBuffer) override
+    void release(QDemonRef<QDemonRenderFrameBuffer> inBuffer) override
     {
-        if (inBuffer.hasAnyAttachment()) {
+        if (inBuffer->hasAnyAttachment()) {
             // Ensure the framebuffer has no attachments.
-            inBuffer.attach(QDemonRenderFrameBufferAttachment::Color0, QDemonRenderTextureOrRenderBuffer());
-            inBuffer.attach(QDemonRenderFrameBufferAttachment::Color1, QDemonRenderTextureOrRenderBuffer());
-            inBuffer.attach(QDemonRenderFrameBufferAttachment::Color2, QDemonRenderTextureOrRenderBuffer());
-            inBuffer.attach(QDemonRenderFrameBufferAttachment::Color3, QDemonRenderTextureOrRenderBuffer());
-            inBuffer.attach(QDemonRenderFrameBufferAttachment::Color4, QDemonRenderTextureOrRenderBuffer());
-            inBuffer.attach(QDemonRenderFrameBufferAttachment::Color5, QDemonRenderTextureOrRenderBuffer());
-            inBuffer.attach(QDemonRenderFrameBufferAttachment::Color6, QDemonRenderTextureOrRenderBuffer());
-            inBuffer.attach(QDemonRenderFrameBufferAttachment::Color7, QDemonRenderTextureOrRenderBuffer());
-            inBuffer.attach(QDemonRenderFrameBufferAttachment::Depth, QDemonRenderTextureOrRenderBuffer());
-            inBuffer.attach(QDemonRenderFrameBufferAttachment::Stencil, QDemonRenderTextureOrRenderBuffer());
+            inBuffer->attach(QDemonRenderFrameBufferAttachment::Color0, QDemonRenderTextureOrRenderBuffer());
+            inBuffer->attach(QDemonRenderFrameBufferAttachment::Color1, QDemonRenderTextureOrRenderBuffer());
+            inBuffer->attach(QDemonRenderFrameBufferAttachment::Color2, QDemonRenderTextureOrRenderBuffer());
+            inBuffer->attach(QDemonRenderFrameBufferAttachment::Color3, QDemonRenderTextureOrRenderBuffer());
+            inBuffer->attach(QDemonRenderFrameBufferAttachment::Color4, QDemonRenderTextureOrRenderBuffer());
+            inBuffer->attach(QDemonRenderFrameBufferAttachment::Color5, QDemonRenderTextureOrRenderBuffer());
+            inBuffer->attach(QDemonRenderFrameBufferAttachment::Color6, QDemonRenderTextureOrRenderBuffer());
+            inBuffer->attach(QDemonRenderFrameBufferAttachment::Color7, QDemonRenderTextureOrRenderBuffer());
+            inBuffer->attach(QDemonRenderFrameBufferAttachment::Depth, QDemonRenderTextureOrRenderBuffer());
+            inBuffer->attach(QDemonRenderFrameBufferAttachment::Stencil, QDemonRenderTextureOrRenderBuffer());
             if (renderContext->isDepthStencilSupported())
-                inBuffer.attach(QDemonRenderFrameBufferAttachment::DepthStencil, QDemonRenderTextureOrRenderBuffer());
+                inBuffer->attach(QDemonRenderFrameBufferAttachment::DepthStencil, QDemonRenderTextureOrRenderBuffer());
         }
 #ifdef _DEBUG
         auto theFind = std::find(freeFrameBuffers.begin(), freeFrameBuffers.end(), inBuffer);

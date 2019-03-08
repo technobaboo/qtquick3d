@@ -49,7 +49,7 @@ public:
                                               qint32 inWidth,
                                               qint32 inHeight,
                                               QDemonRenderTextureFormat inColorFormat,
-                                              const QDemonRenderFrameBuffer &inSourceFBO);
+                                              const QDemonRef<QDemonRenderFrameBuffer> &inSourceFBO);
 
     static void resolveSSAAFBOColorOnly(const QDemonRef<QDemonResourceManagerInterface> &inManager,
                                         QDemonResourceTexture2D &ioResult,
@@ -59,7 +59,7 @@ public:
                                         qint32 inWidth,
                                         qint32 inHeight,
                                         QDemonRenderTextureFormat inColorFormat,
-                                        const QDemonRenderFrameBuffer &inSourceFBO);
+                                        const QDemonRef<QDemonRenderFrameBuffer> &inSourceFBO);
 
     static void getSSAARenderSize(qint32 inWidth, qint32 inHeight, qint32 &outWidth, qint32 &outHeight);
 };

@@ -71,25 +71,15 @@ public:
 
 class Q_DEMONRENDER_EXPORT QDemonRenderFrameBuffer
 {
-    struct Private {
-        Private(const QDemonRef<QDemonRenderContext> &context);
-        ~Private();
-
-        QDemonRenderTextureTargetType releaseAttachment(QDemonRenderFrameBufferAttachment idx);
-
-        QAtomicInt ref;
-        quint32 attachmentBits = 0;
-
-        QDemonRef<QDemonRenderContext> context; ///< pointer to context
-        QDemonRef<QDemonRenderBackend> backend; ///< pointer to backend
-
-        QDemonRenderTextureOrRenderBuffer attachments[static_cast<int>(QDemonRenderFrameBufferAttachment::LastAttachment)]; ///< attachments array
-        QDemonRenderBackend::QDemonRenderBackendRenderTargetObject handle = nullptr;
-    };
-    QExplicitlySharedDataPointer<Private> d;
-
 public:
     QAtomicInt ref;
+
+private:
+    QDemonRef<QDemonRenderContext> m_context; ///< pointer to context
+    QDemonRef<QDemonRenderBackend> m_backend; ///< pointer to backend
+
+    QDemonRenderTextureOrRenderBuffer m_attachments[static_cast<int>(QDemonRenderFrameBufferAttachment::LastAttachment)]; ///< attachments array
+    QDemonRenderBackend::QDemonRenderBackendRenderTargetObject m_bufferHandle; ///< opaque backend handle
 
 public:
     /**
@@ -100,12 +90,10 @@ public:
      *
      * @return No return.
      */
-    QDemonRenderFrameBuffer(const QDemonRef<QDemonRenderContext> &context)
-        : d(new Private(context))
-    {}
-    QDemonRenderFrameBuffer(std::nullptr_t) {}
+    QDemonRenderFrameBuffer(const QDemonRef<QDemonRenderContext> &context);
 
-    QDemonRenderFrameBuffer() = default;
+    /// destructor
+    ~QDemonRenderFrameBuffer();
 
     /**
      * @brief query attachment
@@ -177,7 +165,7 @@ public:
      *
      * @return true if any attachment
      */
-    bool hasAnyAttachment() { return d ? (d->attachmentBits != 0) : false; }
+    bool hasAnyAttachment() { return (m_attachmentBits != 0); }
 
     /**
      * @brief get the backend object handle
@@ -186,16 +174,27 @@ public:
      */
     QDemonRenderBackend::QDemonRenderBackendRenderTargetObject handle()
     {
-        return d ? d->handle : nullptr;
+        return m_bufferHandle;
     }
 
-    bool isNull() const { return !d; }
-    bool operator!() const { return !d; }
+    /**
+     * @brief static creator function
+     *
+     * @param[in] context		Pointer to context
+     *
+     * @return a pointer to framebuffer object.
+     */
+    static QDemonRef<QDemonRenderFrameBuffer> create(const QDemonRef<QDemonRenderContext> &context);
 
-    void clear() { d = nullptr; }
+private:
+    /**
+     * @brief releaes an attached object
+     *
+     * @return which target we released
+     */
+    QDemonRenderTextureTargetType releaseAttachment(QDemonRenderFrameBufferAttachment idx);
 
-    bool operator==(const QDemonRenderFrameBuffer &other) const { return d == other.d; }
-    bool operator!=(const QDemonRenderFrameBuffer &other) const { return d != other.d; }
+    quint32 m_attachmentBits; ///< holds flags for current attached buffers
 };
 
 QT_END_NAMESPACE

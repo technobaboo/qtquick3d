@@ -126,21 +126,21 @@ class Q_DEMONRUNTIMERENDER_EXPORT QDemonMaterialSystem
                                                             const dynamic::QDemonApplyBufferValue &inCommand,
                                                             const QDemonRef<QDemonRenderTexture2D> inSourceTexture);
 
-    void allocateBuffer(const dynamic::QDemonAllocateBuffer &inCommand, QDemonRenderFrameBuffer &inTarget);
+    void allocateBuffer(const dynamic::QDemonAllocateBuffer &inCommand, const QDemonRef<QDemonRenderFrameBuffer> &inTarget);
 
-    QDemonRenderFrameBuffer bindBuffer(const QDemonRenderCustomMaterial &inMaterial,
+    QDemonRef<QDemonRenderFrameBuffer> bindBuffer(const QDemonRenderCustomMaterial &inMaterial,
                                                   const dynamic::QDemonBindBuffer &inCommand,
                                                   bool &outClearTarget,
                                                   QVector2D &outDestSize);
     void computeScreenCoverage(QDemonCustomMaterialRenderContext &inRenderContext, qint32 *xMin, qint32 *yMin, qint32 *xMax, qint32 *yMax);
     void blitFramebuffer(QDemonCustomMaterialRenderContext &inRenderContext,
                          const dynamic::QDemonApplyBlitFramebuffer &inCommand,
-                         const QDemonRenderFrameBuffer &inTarget);
+                         const QDemonRef<QDemonRenderFrameBuffer> &inTarget);
     QDemonLayerGlobalRenderProperties getLayerGlobalRenderProperties(QDemonCustomMaterialRenderContext &inRenderContext);
     void renderPass(QDemonCustomMaterialRenderContext &inRenderContext,
                     const QDemonRef<QDemonCustomMaterialShader> &inShader,
                     const QDemonRef<QDemonRenderTexture2D> & /* inSourceTexture */,
-                    const QDemonRenderFrameBuffer &inFrameBuffer,
+                    const QDemonRef<QDemonRenderFrameBuffer> &inFrameBuffer,
                     bool inRenderTargetNeedsClear,
                     const QDemonRef<QDemonRenderInputAssembler> &inAssembler,
                     quint32 inCount,
@@ -148,7 +148,7 @@ class Q_DEMONRUNTIMERENDER_EXPORT QDemonMaterialSystem
     void doRenderCustomMaterial(QDemonCustomMaterialRenderContext &inRenderContext,
                                 const QDemonRenderCustomMaterial &inMaterial,
                                 QDemonMaterialClass &inClass,
-                                const QDemonRenderFrameBuffer &inTarget,
+                                const QDemonRef<QDemonRenderFrameBuffer> &inTarget,
                                 const TShaderFeatureSet &inFeatureSet);
     void prepareTextureForRender(QDemonMaterialClass &inClass, QDemonRenderCustomMaterial &inMaterial);
     void prepareDisplacementForRender(QDemonMaterialClass &inClass, QDemonRenderCustomMaterial &inMaterial);

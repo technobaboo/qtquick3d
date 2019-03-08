@@ -53,8 +53,9 @@ bool QDemonResourceFrameBuffer::ensureFrameBuffer()
 
 void QDemonResourceFrameBuffer::releaseFrameBuffer()
 {
-    if (!m_frameBuffer.isNull())
+    if (m_frameBuffer) {
         m_resourceManager->release(m_frameBuffer);
+    }
 }
 
 QDemonResourceRenderBuffer::QDemonResourceRenderBuffer(const QDemonRef<QDemonResourceManagerInterface> &mgr)

@@ -79,13 +79,13 @@ struct QDemonAllocatedBufferEntry
 {
     QAtomicInt ref;
     QString name;
-    QDemonRenderFrameBuffer frameBuffer;
+    QDemonRef<QDemonRenderFrameBuffer> frameBuffer;
     QDemonRef<QDemonRenderTexture2D> texture;
     QDemonAllocateBufferFlags flags;
     bool needsClear;
 
-    QDemonAllocatedBufferEntry(const QString &inName, const QDemonRenderFrameBuffer &inFb, QDemonRenderTexture2D &inTexture, QDemonAllocateBufferFlags inFlags)
-        : name(inName), frameBuffer(inFb), texture(&inTexture), flags(inFlags), needsClear(true)
+    QDemonAllocatedBufferEntry(const QString &inName, QDemonRenderFrameBuffer &inFb, QDemonRenderTexture2D &inTexture, QDemonAllocateBufferFlags inFlags)
+        : name(inName), frameBuffer(&inFb), texture(&inTexture), flags(inFlags), needsClear(true)
     {
     }
     QDemonAllocatedBufferEntry() = default;
@@ -266,7 +266,7 @@ struct QDemonEffectContext
     void releaseBuffer(qint32 inIdx)
     {
         QDemonAllocatedBufferEntry &theEntry(m_allocatedBuffers[inIdx]);
-        theEntry.frameBuffer.attach(QDemonRenderFrameBufferAttachment::Color0, QDemonRenderTextureOrRenderBuffer());
+        theEntry.frameBuffer->attach(QDemonRenderFrameBufferAttachment::Color0, QDemonRenderTextureOrRenderBuffer());
         m_resourceManager->release(theEntry.frameBuffer);
         m_resourceManager->release(theEntry.texture);
         { // replace_with_last
@@ -708,9 +708,9 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
             theTexture->setMinFilter(static_cast<QDemonRenderTextureMinifyingOp>(inCommand.m_filterOp));
             theTexture->setTextureWrapS(inCommand.m_texCoordOp);
             theTexture->setTextureWrapT(inCommand.m_texCoordOp);
-            theFB.attach(QDemonRenderFrameBufferAttachment::Color0, theTexture);
+            theFB->attach(QDemonRenderFrameBufferAttachment::Color0, theTexture);
             theContext.m_allocatedBuffers.push_back(
-                    QDemonAllocatedBufferEntry(inCommand.m_name, theFB, *theTexture, inCommand.m_bufferFlags));
+                    QDemonAllocatedBufferEntry(inCommand.m_name, *theFB, *theTexture, inCommand.m_bufferFlags));
             theBufferTexture = theTexture;
         }
     }
@@ -833,12 +833,12 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
         return nullptr;
     }
 
-    QDemonRenderFrameBuffer bindBuffer(QDemonRenderEffect &inEffect,
+    QDemonRef<QDemonRenderFrameBuffer> bindBuffer(QDemonRenderEffect &inEffect,
                                                   const QDemonBindBuffer &inCommand,
                                                   QMatrix4x4 &outMVP,
                                                   QVector2D &outDestSize)
     {
-        QDemonRenderFrameBuffer theBuffer;
+        QDemonRef<QDemonRenderFrameBuffer> theBuffer;
         QDemonRef<QDemonRenderTexture2D> theTexture;
         if (inEffect.m_context) {
             QDemonEffectContext &theContext(*inEffect.m_context);
@@ -849,7 +849,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
                 theContext.m_allocatedBuffers[bufferIdx].needsClear = false;
             }
         }
-        if (!theBuffer) {
+        if (theBuffer == nullptr) {
             qCCritical(INVALID_OPERATION,
                        "Effect %s: Failed to find buffer %s for bind",
                        inEffect.className.toLatin1().constData(),
@@ -860,7 +860,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
             // TODO:
             //            QDEMON_ALWAYS_ASSERT_MESSAGE(errorMsg.toUtf8());
             outMVP = QMatrix4x4();
-            return theBuffer;
+            return nullptr;
         }
 
         if (theTexture) {
@@ -1294,7 +1294,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
         }
     }
 
-    void applyRenderStateValue(QDemonRenderFrameBuffer inTarget,
+    void applyRenderStateValue(QDemonRenderFrameBuffer *inTarget,
                                const QDemonRef<QDemonRenderTexture2D> &inDepthStencilTexture,
                                const QDemonApplyRenderState &theCommand)
     {
@@ -1303,10 +1303,10 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
 
         switch (theCommand.m_renderState) {
         case QDemonRenderState::StencilTest: {
-            if (inEnable && !inTarget.isNull()) {
-                inTarget.attach(QDemonRenderFrameBufferAttachment::DepthStencil, inDepthStencilTexture);
-            } else if (!inTarget.isNull()) {
-                inTarget.attach(QDemonRenderFrameBufferAttachment::DepthStencil, QDemonRenderTextureOrRenderBuffer());
+            if (inEnable && inTarget) {
+                inTarget->attach(QDemonRenderFrameBufferAttachment::DepthStencil, inDepthStencilTexture);
+            } else if (inTarget) {
+                inTarget->attach(QDemonRenderFrameBufferAttachment::DepthStencil, QDemonRenderTextureOrRenderBuffer());
             }
 
             theContext->setStencilTestEnabled(inEnable);
@@ -1331,7 +1331,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
     void renderPass(QDemonEffectShader &inShader,
                     const QMatrix4x4 &inMVP,
                     const QDemonEffectTextureData &inSourceTexture,
-                    QDemonRenderFrameBuffer &inFrameBuffer,
+                    const QDemonRef<QDemonRenderFrameBuffer> &inFrameBuffer,
                     QVector2D &inDestSize,
                     const QVector2D &inCameraClipRange,
                     const QDemonRef<QDemonRenderTexture2D> &inDepthStencil,
@@ -1340,8 +1340,8 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
     {
         auto theContext(m_context->getRenderContext());
         theContext->setRenderTarget(inFrameBuffer);
-        if (inDepthStencil && !inFrameBuffer.isNull()) {
-            inFrameBuffer.attach(QDemonRenderFrameBufferAttachment::DepthStencil, inDepthStencil);
+        if (inDepthStencil && inFrameBuffer) {
+            inFrameBuffer->attach(QDemonRenderFrameBufferAttachment::DepthStencil, inDepthStencil);
             if (inDepthStencilCommand.hasValue()) {
                 QDemonDepthStencil &theDepthStencil(*inDepthStencilCommand);
                 QDemonRenderClearFlags clearFlags;
@@ -1402,8 +1402,8 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
         else
             m_context->getRenderer()->renderPointsIndirect();
 
-        if (inDepthStencil && !inFrameBuffer.isNull()) {
-            inFrameBuffer.attach(QDemonRenderFrameBufferAttachment::DepthStencil, QDemonRenderTextureOrRenderBuffer());
+        if (inDepthStencil && inFrameBuffer) {
+            inFrameBuffer->attach(QDemonRenderFrameBufferAttachment::DepthStencil, QDemonRenderTextureOrRenderBuffer());
             theContext->setDepthStencilState(m_defaultStencilState);
         }
     }
@@ -1412,7 +1412,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
                         const QDemonRef<QDemonEffectClass> &inClass,
                         const QDemonRef<QDemonRenderTexture2D> &inSourceTexture,
                         QMatrix4x4 &inMVP,
-                        const QDemonRenderFrameBuffer &inTarget,
+                        const QDemonRef<QDemonRenderFrameBuffer> &inTarget,
                         bool inEnableBlendWhenRenderToTarget,
                         const QDemonRef<QDemonRenderTexture2D> &inDepthTexture,
                         const QDemonRef<QDemonRenderTexture2D> &inDepthStencilTexture,
@@ -1425,7 +1425,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
         // Context variables that are updated during the course of a pass.
         QDemonEffectTextureData theCurrentSourceTexture(inSourceTexture, false);
         QDemonRef<QDemonRenderTexture2D> theCurrentDepthStencilTexture;
-        QDemonRenderFrameBuffer theCurrentRenderTarget(inTarget);
+        QDemonRef<QDemonRenderFrameBuffer> theCurrentRenderTarget(inTarget);
         QDemonRef<QDemonEffectShader> theCurrentShader;
         QRect theOriginalViewport(theContext->getViewport());
         bool wasScissorEnabled = theContext->isScissorTestEnabled();
@@ -1442,7 +1442,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
             // Ensure no matter the command run goes we replace the rendering system to some
             // semblance of the approprate
             // setting.
-            QDemonRenderContextScopedProperty<QDemonRenderFrameBuffer> __framebuffer(*theContext,
+            QDemonRenderContextScopedProperty<QDemonRef<QDemonRenderFrameBuffer>> __framebuffer(*theContext,
                                                                                                 &QDemonRenderContext::getRenderTarget,
                                                                                                 &QDemonRenderContext::setRenderTarget);
             QDemonRenderContextScopedProperty<QRect> __viewport(*theContext,
@@ -1582,7 +1582,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
                     }
                     break;
                 case CommandType::ApplyRenderState:
-                    applyRenderStateValue(theCurrentRenderTarget,
+                    applyRenderStateValue(theCurrentRenderTarget.data(),
                                           inDepthStencilTexture,
                                           static_cast<const QDemonApplyRenderState &>(theCommand));
                     break;
@@ -1630,7 +1630,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
         // setup a render target
         auto theContext(m_context->getRenderContext());
         auto theManager(m_context->getResourceManager());
-        QDemonRenderContextScopedProperty<QDemonRenderFrameBuffer> __framebuffer(*theContext,
+        QDemonRenderContextScopedProperty<QDemonRef<QDemonRenderFrameBuffer>> __framebuffer(*theContext,
                                                                                             &QDemonRenderContext::getRenderTarget,
                                                                                             &QDemonRenderContext::setRenderTarget);
         QDemonTextureDetails theDetails(inRenderArgument.m_colorBuffer->getTextureDetails());
@@ -1643,7 +1643,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
         if (theClass->dynamicClass->getOutputTextureFormat() == QDemonRenderTextureFormat::Unknown)
             theOutputFormat = theDetails.format;
         auto theTargetTexture = theManager->allocateTexture2D(theFinalWidth, theFinalHeight, theOutputFormat);
-        theBuffer.attach(QDemonRenderFrameBufferAttachment::Color0, theTargetTexture);
+        theBuffer->attach(QDemonRenderFrameBufferAttachment::Color0, theTargetTexture);
         theContext->setRenderTarget(theBuffer);
         QDemonRenderContextScopedProperty<QRect> __viewport(*theContext,
                                                             &QDemonRenderContext::getViewport,
@@ -1665,7 +1665,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
                        inRenderArgument.m_depthStencilBuffer,
                        inRenderArgument.m_cameraClipRange);
 
-        theBuffer.attach(QDemonRenderFrameBufferAttachment::Color0, QDemonRenderTextureOrRenderBuffer());
+        theBuffer->attach(QDemonRenderFrameBufferAttachment::Color0, QDemonRenderTextureOrRenderBuffer());
         theManager->release(theBuffer);
         return theTargetTexture;
     }

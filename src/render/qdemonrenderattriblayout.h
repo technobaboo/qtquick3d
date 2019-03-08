@@ -70,8 +70,6 @@ public:
     ~QDemonRenderAttribLayout() {}
 
     bool isNull() const { return !d; }
-    bool operator!() const { return !d; }
-
     /**
      * @brief get the backend object handle
      *

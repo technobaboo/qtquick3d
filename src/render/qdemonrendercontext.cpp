@@ -94,6 +94,8 @@ QDemonRenderContext::~QDemonRenderContext()
     m_image2DtoImpMap.clear();
     Q_ASSERT(m_shaderToImpMap.size() == 0);
     m_shaderToImpMap.clear();
+    Q_ASSERT(m_frameBufferToImpMap.size() == 0);
+    m_frameBufferToImpMap.clear();
 
     m_backend = nullptr;
 }
@@ -454,6 +456,29 @@ qint32 QDemonRenderContext::getNextTextureUnit()
     return retval;
 }
 
+QDemonRef<QDemonRenderFrameBuffer> QDemonRenderContext::createFrameBuffer()
+{
+    QDemonRef<QDemonRenderFrameBuffer> retval = QDemonRenderFrameBuffer::create(this);
+    if (retval != nullptr)
+        m_frameBufferToImpMap.insert(retval->handle(), retval.data());
+    return retval;
+}
+
+QDemonRef<QDemonRenderFrameBuffer> QDemonRenderContext::getFrameBuffer(const void *implementationHandle)
+{
+    const QHash<const void *, QDemonRenderFrameBuffer *>::iterator entry = m_frameBufferToImpMap.find(implementationHandle);
+    if (entry != m_frameBufferToImpMap.end())
+        return QDemonRef(entry.value());
+    return nullptr;
+}
+
+void QDemonRenderContext::frameBufferDestroyed(QDemonRenderFrameBuffer *fb)
+{
+    m_frameBufferToImpMap.remove(fb->handle());
+    if (m_hardwarePropertyContext.m_frameBuffer == fb)
+        m_hardwarePropertyContext.m_frameBuffer = nullptr;
+}
+
 QDemonRef<QDemonRenderInputAssembler> QDemonRenderContext::createInputAssembler(
         QDemonRenderAttribLayout attribLayout,
         QDemonConstDataRef<QDemonRef<QDemonRenderVertexBuffer>> buffers,
@@ -752,8 +777,8 @@ void QDemonRenderContext::dispatchCompute(QDemonRef<QDemonRenderShaderProgram> i
 
 void QDemonRenderContext::setDrawBuffers(QDemonConstDataRef<qint32> inDrawBufferSet)
 {
-    m_backend->setDrawBuffers((!m_hardwarePropertyContext.m_frameBuffer.isNull())
-                                      ? m_hardwarePropertyContext.m_frameBuffer.handle()
+    m_backend->setDrawBuffers((m_hardwarePropertyContext.m_frameBuffer)
+                                      ? m_hardwarePropertyContext.m_frameBuffer->handle()
                                       : nullptr,
                               inDrawBufferSet);
 }
@@ -776,14 +801,14 @@ void QDemonRenderContext::readPixels(QRect inRect, QDemonRenderReadPixelFormat i
                          (void *)inWriteBuffer.begin());
 }
 
-void QDemonRenderContext::setRenderTarget(QDemonRenderFrameBuffer inBuffer)
+void QDemonRenderContext::setRenderTarget(QDemonRef<QDemonRenderFrameBuffer> inBuffer)
 {
     if (inBuffer != m_hardwarePropertyContext.m_frameBuffer) {
         doSetRenderTarget(inBuffer);
     }
 }
 
-void QDemonRenderContext::setReadTarget(QDemonRenderFrameBuffer inBuffer)
+void QDemonRenderContext::setReadTarget(QDemonRef<QDemonRenderFrameBuffer> inBuffer)
 {
     if (inBuffer != m_hardwarePropertyContext.m_frameBuffer) {
         doSetReadTarget(inBuffer);
@@ -836,9 +861,9 @@ void QDemonRenderContext::clear(QDemonRenderClearFlags flags)
     m_backend->clear(flags);
 }
 
-void QDemonRenderContext::clear(QDemonRenderFrameBuffer fb, QDemonRenderClearFlags flags)
+void QDemonRenderContext::clear(QDemonRef<QDemonRenderFrameBuffer> fb, QDemonRenderClearFlags flags)
 {
-    QDemonRenderFrameBuffer previous = m_hardwarePropertyContext.m_frameBuffer;
+    QDemonRef<QDemonRenderFrameBuffer> previous = m_hardwarePropertyContext.m_frameBuffer;
     if (previous != fb)
         setRenderTarget(fb);
 

@@ -96,6 +96,7 @@ QDemonRendererImpl::QDemonRendererImpl(QDemonRenderContextInterface *ctx)
     , m_offscreenRenderManager(ctx->getOffscreenRenderManager())
 #ifdef ADVANCED_BLEND_SW_FALLBACK
     , m_layerBlendTexture(ctx->getResourceManager())
+    , m_blendFb(nullptr)
 #endif
     , m_currentLayer(nullptr)
     , m_pickRenderPlugins(true)
@@ -200,7 +201,7 @@ void QDemonRendererImpl::renderLayer(QDemonRenderLayer &inLayer,
     buildRenderableLayers(inLayer, renderableLayers, inRenderSiblings);
 
     QDemonRef<QDemonRenderContext> theRenderContext(m_demonContext->getRenderContext());
-    QDemonRenderFrameBuffer theFB = theRenderContext->getRenderTarget();
+    QDemonRef<QDemonRenderFrameBuffer> theFB = theRenderContext->getRenderTarget();
     auto iter = renderableLayers.rbegin();
     const auto end = renderableLayers.rend();
     for (; iter != end; ++iter) {
@@ -216,9 +217,9 @@ void QDemonRendererImpl::renderLayer(QDemonRenderLayer &inLayer,
             m_layerBlendTexture.ensureTexture(viewport.width() + viewport.x(),
                                               viewport.height() + viewport.y(),
                                               QDemonRenderTextureFormat::RGBA8);
-            if (m_blendFb.isNull())
-                m_blendFb = QDemonRenderFrameBuffer(theRenderContext);
-            m_blendFb.attach(QDemonRenderFrameBufferAttachment::Color0, m_layerBlendTexture.getTexture());
+            if (m_blendFb == nullptr)
+                m_blendFb = theRenderContext->createFrameBuffer();
+            m_blendFb->attach(QDemonRenderFrameBufferAttachment::Color0, m_layerBlendTexture.getTexture());
             theRenderContext->setRenderTarget(m_blendFb);
             theRenderContext->setScissorTestEnabled(false);
             QVector4D color(0.0f, 0.0f, 0.0f, 0.0f);
@@ -409,7 +410,7 @@ void QDemonRendererImpl::setupWidgetLayer()
                                                         m_beginFrameViewport.height(),
                                                         QDemonRenderTextureFormat::RGBA8);
         m_widgetFbo = theManager->allocateFrameBuffer();
-        m_widgetFbo.attach(QDemonRenderFrameBufferAttachment::Color0, QDemonRenderTextureOrRenderBuffer(m_widgetTexture));
+        m_widgetFbo->attach(QDemonRenderFrameBufferAttachment::Color0, QDemonRenderTextureOrRenderBuffer(m_widgetTexture));
         theContext->setRenderTarget(m_widgetFbo);
 
         // QDemonRenderRect theScissorRect( 0, 0, m_BeginFrameViewport.m_Width,
@@ -438,7 +439,7 @@ void QDemonRendererImpl::endFrame()
 {
     if (m_widgetTexture) {
         // Releasing the widget FBO can set it as the active frame buffer.
-        QDemonRenderContextScopedProperty<QDemonRenderFrameBuffer> __fbo(*m_context,
+        QDemonRenderContextScopedProperty<QDemonRef<QDemonRenderFrameBuffer>> __fbo(*m_context,
                                                                                     &QDemonRenderContext::getRenderTarget,
                                                                                     &QDemonRenderContext::setRenderTarget);
         QDemonTextureDetails theDetails = m_widgetTexture->getTextureDetails();
@@ -467,7 +468,7 @@ void QDemonRendererImpl::endFrame()
         theManager->release(m_widgetFbo);
         theManager->release(m_widgetTexture);
         m_widgetTexture = nullptr;
-        m_widgetFbo.clear();
+        m_widgetFbo = nullptr;
     }
 }
 
@@ -1071,7 +1072,7 @@ bool QDemonRendererImpl::prepareTextureAtlasForRender()
         QDemonRef<QDemonRenderInputAssembler> mInputAssembler;
         QDemonRenderAttribLayout mAttribLayout;
         // temporay FB
-        QDemonRenderContextScopedProperty<QDemonRenderFrameBuffer> __fbo(*m_context,
+        QDemonRenderContextScopedProperty<QDemonRef<QDemonRenderFrameBuffer>> __fbo(*m_context,
                                                                                     &QDemonRenderContext::getRenderTarget,
                                                                                     &QDemonRenderContext::setRenderTarget);
 
@@ -1093,8 +1094,8 @@ bool QDemonRendererImpl::prepareTextureAtlasForRender()
         // create our attribute layout
         mAttribLayout = QDemonRenderAttribLayout(m_context, toConstDataRef(theEntries, 2));
 
-        QDemonRenderFrameBuffer theAtlasFB(m_demonContext->getResourceManager()->allocateFrameBuffer());
-        theAtlasFB.attach(QDemonRenderFrameBufferAttachment::Color0, theResult.second);
+        QDemonRef<QDemonRenderFrameBuffer> theAtlasFB(m_demonContext->getResourceManager()->allocateFrameBuffer());
+        theAtlasFB->attach(QDemonRenderFrameBufferAttachment::Color0, theResult.second);
         m_demonContext->getRenderContext()->setRenderTarget(theAtlasFB);
 
         // this texture contains our single entries
