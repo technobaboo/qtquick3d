@@ -43,6 +43,7 @@ class QDemonRenderTextureCube;
 
 class Q_DEMONRENDER_EXPORT QDemonRenderTextureOrRenderBuffer
 {
+    // ### this could be a union
     QDemonRef<QDemonRenderTexture2D> m_texture2D;
     QDemonRef<QDemonRenderTexture2DArray> m_texture2DArray;
     QDemonRef<QDemonRenderTextureCube> m_textureCube;
@@ -64,10 +65,10 @@ public:
     bool hasTextureCube() const { return m_textureCube != nullptr; }
     bool hasRenderBuffer() const { return m_renderBuffer != nullptr; }
 
-    QDemonRef<QDemonRenderTexture2D> getTexture2D() const;
-    QDemonRef<QDemonRenderTexture2DArray> getTexture2DArray() const;
-    QDemonRef<QDemonRenderTextureCube> getTextureCube() const;
-    QDemonRef<QDemonRenderRenderBuffer> getRenderBuffer() const;
+    QDemonRef<QDemonRenderTexture2D> texture2D() const;
+    QDemonRef<QDemonRenderTexture2DArray> texture2DArray() const;
+    QDemonRef<QDemonRenderTextureCube> textureCube() const;
+    QDemonRef<QDemonRenderRenderBuffer> renderBuffer() const;
 };
 
 class Q_DEMONRENDER_EXPORT QDemonRenderFrameBuffer
@@ -103,7 +104,7 @@ public:
      *
      * @return buffer format
      */
-    QDemonRenderTextureOrRenderBuffer getAttachment(QDemonRenderFrameBufferAttachment attachment);
+    QDemonRenderTextureOrRenderBuffer attachment(QDemonRenderFrameBufferAttachment attachment);
 
     /**
      * @brief Attach a render or texture buffer to a render target
@@ -116,7 +117,7 @@ public:
      * @return no return
      */
     void attach(QDemonRenderFrameBufferAttachment attachment,
-                        QDemonRenderTextureOrRenderBuffer buffer,
+                        const QDemonRenderTextureOrRenderBuffer &buffer,
                         QDemonRenderTextureTargetType target = QDemonRenderTextureTargetType::Texture2D);
 
     /**
@@ -132,8 +133,9 @@ public:
      *
      * @return no return
      */
+    // ### currently unused
     void attachLayer(QDemonRenderFrameBufferAttachment attachment,
-                             QDemonRenderTextureOrRenderBuffer buffer,
+                             const QDemonRenderTextureOrRenderBuffer &buffer,
                              qint32 layer,
                              qint32 level = 0);
 
@@ -150,8 +152,9 @@ public:
      *
      * @return no return
      */
+    // ### currently unused
     void attachFace(QDemonRenderFrameBufferAttachment attachment,
-                            QDemonRenderTextureOrRenderBuffer buffer,
+                            const QDemonRenderTextureOrRenderBuffer &buffer,
                             QDemonRenderTextureCubeFace face);
 
     /**

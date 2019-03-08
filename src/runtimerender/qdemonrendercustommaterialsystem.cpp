@@ -1263,10 +1263,10 @@ void QDemonMaterialSystem::allocateBuffer(const dynamic::QDemonAllocateBuffer &i
     QDemonRef<QDemonRenderTexture2D> theTexture;
     // get color attachment we always assume at location 0
     if (inTarget) {
-        QDemonRenderTextureOrRenderBuffer theSourceTexture = inTarget->getAttachment(QDemonRenderFrameBufferAttachment::Color0);
+        QDemonRenderTextureOrRenderBuffer theSourceTexture = inTarget->attachment(QDemonRenderFrameBufferAttachment::Color0);
         // we need a texture
         if (theSourceTexture.hasTexture2D()) {
-            theSourceTextureDetails = theSourceTexture.getTexture2D()->getTextureDetails();
+            theSourceTextureDetails = theSourceTexture.texture2D()->getTextureDetails();
         } else {
             qCCritical(INVALID_OPERATION, "CustomMaterial %s: Invalid source texture", qPrintable(inCommand.m_name));
             Q_ASSERT(false);
