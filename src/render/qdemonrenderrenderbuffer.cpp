@@ -35,66 +35,68 @@
 
 QT_BEGIN_NAMESPACE
 
-
-QDemonRenderRenderBuffer::Private::Private(const QDemonRef<QDemonRenderContext> &context, QDemonRenderRenderBufferFormat format)
-    : context(context),
-      backend(context->getBackend()),
-      storageFormat(format),
-      handle(nullptr)
-{
-
-}
-
-QDemonRenderRenderBuffer::Private::~Private()
-{
-    if (handle)
-        backend->releaseRenderbuffer(handle);
-}
-
 QDemonRenderRenderBuffer::QDemonRenderRenderBuffer(const QDemonRef<QDemonRenderContext> &context,
-                                                   QDemonRenderRenderBufferFormat format, const QSize &size)
+                                                   QDemonRenderRenderBufferFormat format,
+                                                   quint32 width,
+                                                   quint32 height)
+    : m_context(context), m_backend(context->getBackend()), m_width(width), m_height(height), m_storageFormat(format), m_bufferHandle(nullptr)
 {
-    if (size.isNull()) {
-        qCCritical(INVALID_PARAMETER, "Invalid renderbuffer width or height");
-        return;
-    }
-
-    d = new Private(context, format);
-    setSize(size);
+    setDimensions(QDemonRenderRenderBufferDimensions(width, height));
 }
 
 QDemonRenderRenderBuffer::~QDemonRenderRenderBuffer()
 {
+    m_context->renderBufferDestroyed(this);
+    m_backend->releaseRenderbuffer(m_bufferHandle);
+    m_bufferHandle = nullptr;
 }
 
-void QDemonRenderRenderBuffer::setSize(const QSize &size)
+void QDemonRenderRenderBuffer::setDimensions(const QDemonRenderRenderBufferDimensions &inDimensions)
 {
     qint32 maxWidth, maxHeight;
-    d->size = size;
+    m_width = inDimensions.m_width;
+    m_height = inDimensions.m_height;
 
     // get max size and clamp to max value
-    d->context->getMaxTextureSize(maxWidth, maxHeight);
-    if (size.width() > maxWidth || size.height() > maxHeight) {
+    m_context->getMaxTextureSize(maxWidth, maxHeight);
+    if (m_width > maxWidth || m_height > maxHeight) {
         qCCritical(INVALID_OPERATION, "Width or height is greater than max texture size (%d, %d)", maxWidth, maxHeight);
-        d->size = QSize(qMin(d->size.width(), maxWidth), qMin(d->size.height(), maxHeight));
+        m_width = qMin(m_width, maxWidth);
+        m_height = qMin(m_height, maxHeight);
     }
 
     bool success = true;
 
-    if (d->handle == nullptr)
-        d->handle = d->backend->createRenderbuffer(d->storageFormat, d->size.width(), d->size.height());
+    if (m_bufferHandle == nullptr)
+        m_bufferHandle = m_backend->createRenderbuffer(m_storageFormat, m_width, m_height);
     else
-        success = d->backend->resizeRenderbuffer(d->handle, d->storageFormat, d->size.width(), d->size.height());
+        success = m_backend->resizeRenderbuffer(m_bufferHandle, m_storageFormat, m_width, m_height);
 
-    if (d->handle == nullptr || !success) {
+    if (m_bufferHandle == nullptr || !success) {
         // We could try smaller sizes
         Q_ASSERT(false);
         qCCritical(INTERNAL_ERROR,
                    "Unable to create render buffer %s, %dx%d",
-                   toString(d->storageFormat),
-                   d->size.width(),
-                   d->size.height());
+                   toString(m_storageFormat),
+                   m_width,
+                   m_height);
     }
+}
+
+QDemonRef<QDemonRenderRenderBuffer> QDemonRenderRenderBuffer::create(const QDemonRef<QDemonRenderContext> &context,
+                                                                     QDemonRenderRenderBufferFormat format,
+                                                                     quint32 width,
+                                                                     quint32 height)
+{
+    QDemonRef<QDemonRenderRenderBuffer> retval = nullptr;
+    if (width == 0 || height == 0) {
+        qCCritical(INVALID_PARAMETER, "Invalid renderbuffer width or height");
+        return retval;
+    }
+
+    retval = new QDemonRenderRenderBuffer(context, format, width, height);
+
+    return retval;
 }
 
 QT_END_NAMESPACE

@@ -68,9 +68,9 @@ class QDemonResourceRenderBuffer
 {
 protected:
     QDemonRef<QDemonResourceManagerInterface> m_resourceManager;
-    QDemonRenderRenderBuffer m_renderBuffer;
+    QDemonRef<QDemonRenderRenderBuffer> m_renderBuffer;
     QDemonRenderRenderBufferFormat m_storageFormat;
-    QSize m_dimensions;
+    QDemonRenderRenderBufferDimensions m_dimensions;
 
 public:
     QDemonResourceRenderBuffer(const QDemonRef<QDemonResourceManagerInterface> &mgr);
@@ -78,16 +78,16 @@ public:
     bool ensureRenderBuffer(qint32 width, qint32 height, QDemonRenderRenderBufferFormat storageFormat);
     void releaseRenderBuffer();
 
-    operator QDemonRenderRenderBuffer() { return m_renderBuffer; }
-    QDemonRenderRenderBuffer operator->()
+    operator QDemonRef<QDemonRenderRenderBuffer>() { return m_renderBuffer; }
+    QDemonRef<QDemonRenderRenderBuffer> operator->()
     {
-        Q_ASSERT(!m_renderBuffer.isNull());
+        Q_ASSERT(m_renderBuffer);
         return m_renderBuffer;
     }
     QDemonRenderRenderBuffer &operator*()
     {
-        Q_ASSERT(!m_renderBuffer.isNull());
-        return m_renderBuffer;
+        Q_ASSERT(m_renderBuffer);
+        return *m_renderBuffer;
     }
 };
 QT_END_NAMESPACE

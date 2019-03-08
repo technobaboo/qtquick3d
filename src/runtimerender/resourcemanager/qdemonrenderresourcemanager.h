@@ -47,10 +47,10 @@ public:
     virtual ~QDemonResourceManagerInterface() {}
     virtual QDemonRef<QDemonRenderFrameBuffer> allocateFrameBuffer() = 0;
     virtual void release(QDemonRef<QDemonRenderFrameBuffer> inBuffer) = 0;
-    virtual QDemonRenderRenderBuffer allocateRenderBuffer(qint32 inWidth,
+    virtual QDemonRef<QDemonRenderRenderBuffer> allocateRenderBuffer(qint32 inWidth,
                                                                      qint32 inHeight,
                                                                      QDemonRenderRenderBufferFormat inBufferFormat) = 0;
-    virtual void release(QDemonRenderRenderBuffer inBuffer) = 0;
+    virtual void release(QDemonRef<QDemonRenderRenderBuffer> inBuffer) = 0;
     virtual QDemonRef<QDemonRenderTexture2D> allocateTexture2D(qint32 inWidth,
                                                                qint32 inHeight,
                                                                QDemonRenderTextureFormat inTextureFormat,

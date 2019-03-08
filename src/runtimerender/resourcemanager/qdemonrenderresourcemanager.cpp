@@ -53,7 +53,7 @@ struct QDemonResourceManager : public QDemonResourceManagerInterface
     //    QVector<QDemonRef<QDemonRefCounted>> m_allocatedObjects;
 
     QVector<QDemonRef<QDemonRenderFrameBuffer>> freeFrameBuffers;
-    QVector<QDemonRenderRenderBuffer> freeRenderBuffers;
+    QVector<QDemonRef<QDemonRenderRenderBuffer>> freeRenderBuffers;
     QVector<QDemonRef<QDemonRenderTexture2D>> freeTextures;
     QVector<QDemonRef<QDemonRenderTexture2DArray>> freeTexArrays;
     QVector<QDemonRef<QDemonRenderTextureCube>> freeTexCubes;
@@ -97,7 +97,7 @@ struct QDemonResourceManager : public QDemonResourceManagerInterface
         freeFrameBuffers.push_back(inBuffer);
     }
 
-    QDemonRenderRenderBuffer allocateRenderBuffer(qint32 inWidth,
+    QDemonRef<QDemonRenderRenderBuffer> allocateRenderBuffer(qint32 inWidth,
                                                              qint32 inHeight,
                                                              QDemonRenderRenderBufferFormat inBufferFormat) override
     {
@@ -106,9 +106,9 @@ struct QDemonResourceManager : public QDemonResourceManagerInterface
         int existingMatchIdx = freeRenderBuffers.size();
         for (int idx = 0, end = existingMatchIdx; idx < end; ++idx) {
             auto theBuffer = freeRenderBuffers[idx];
-            QSize theDims = theBuffer.size();
-            QDemonRenderRenderBufferFormat theFormat = theBuffer.storageFormat();
-            if (theDims.width() == inWidth && theDims.height() == inHeight && theFormat == inBufferFormat) {
+            QDemonRenderRenderBufferDimensions theDims = theBuffer->getDimensions();
+            QDemonRenderRenderBufferFormat theFormat = theBuffer->getStorageFormat();
+            if (theDims.m_width == inWidth && theDims.m_height == inHeight && theFormat == inBufferFormat) {
                 // Replace idx with last for efficient erasure (that reorders the vector).
                 replaceWithLast(freeRenderBuffers, idx);
                 return theBuffer;
@@ -120,14 +120,14 @@ struct QDemonResourceManager : public QDemonResourceManagerInterface
         if (existingMatchIdx < freeRenderBuffers.size()) {
             auto theBuffer = freeRenderBuffers[existingMatchIdx];
             replaceWithLast(freeRenderBuffers, existingMatchIdx);
-            theBuffer.setSize(QSize(inWidth, inHeight));
+            theBuffer->setDimensions(QDemonRenderRenderBufferDimensions(inWidth, inHeight));
             return theBuffer;
         }
 
-        auto theBuffer = QDemonRenderRenderBuffer(renderContext, inBufferFormat, QSize(inWidth, inHeight));
+        auto theBuffer = renderContext->createRenderBuffer(inBufferFormat, inWidth, inHeight);
         return theBuffer;
     }
-    void release(QDemonRenderRenderBuffer inBuffer) override
+    void release(QDemonRef<QDemonRenderRenderBuffer> inBuffer) override
     {
         freeRenderBuffers.push_back(inBuffer);
     }

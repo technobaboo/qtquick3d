@@ -37,27 +37,30 @@ QT_BEGIN_NAMESPACE
 
 class QDemonRenderContext;
 
+struct QDemonRenderRenderBufferDimensions
+{
+    qint32 m_width = 0; ///< buffer width
+    qint32 m_height = 0; ///< buffer height
+
+    QDemonRenderRenderBufferDimensions(qint32 w, qint32 h) : m_width(w), m_height(h) {}
+    QDemonRenderRenderBufferDimensions() = default;
+};
+
 class Q_DEMONRENDER_EXPORT QDemonRenderRenderBuffer
 {
-    struct Private {
-        Q_DISABLE_COPY(Private);
-        Private(const QDemonRef<QDemonRenderContext> &context,
-                QDemonRenderRenderBufferFormat format);
-        ~Private();
+public:
+    QAtomicInt ref;
 
-        QAtomicInt ref;
+private:
+    QDemonRef<QDemonRenderContext> m_context; ///< pointer to context
+    QDemonRef<QDemonRenderBackend> m_backend; ///< pointer to backend
+    qint32 m_width; ///< buffer width
+    qint32 m_height; ///< buffer height
+    QDemonRenderRenderBufferFormat m_storageFormat; ///< buffer storage format
 
-        QDemonRef<QDemonRenderContext> context;
-        QDemonRef<QDemonRenderBackend> backend;
-        QSize size;
-        QDemonRenderRenderBufferFormat storageFormat;
-
-        QDemonRenderBackend::QDemonRenderBackendRenderbufferObject handle;
-    };
-    QExplicitlySharedDataPointer<Private> d;
+    QDemonRenderBackend::QDemonRenderBackendRenderbufferObject m_bufferHandle; ///< opaque backend handle
 
 public:
-    QDemonRenderRenderBuffer() = default;
     /**
      * @brief constructor
      *
@@ -70,8 +73,11 @@ public:
      * @return No return.
      */
     QDemonRenderRenderBuffer(const QDemonRef<QDemonRenderContext> &context,
-                             QDemonRenderRenderBufferFormat format, const QSize &size);
+                             QDemonRenderRenderBufferFormat format,
+                             quint32 width,
+                             quint32 height);
 
+    /// destructor
     ~QDemonRenderRenderBuffer();
 
     /**
@@ -80,7 +86,7 @@ public:
      *
      * @return buffer format
      */
-    QDemonRenderRenderBufferFormat storageFormat() const { return d ? d->storageFormat : QDemonRenderRenderBufferFormat::Unknown; }
+    QDemonRenderRenderBufferFormat getStorageFormat() const { return m_storageFormat; }
 
     /**
      * @brief query buffer dimension
@@ -88,14 +94,10 @@ public:
      *
      * @return QDemonRenderRenderBufferDimensions object
      */
-    QSize size() const
+    QDemonRenderRenderBufferDimensions getDimensions() const
     {
-        return d ? d->size : QSize();
+        return QDemonRenderRenderBufferDimensions(m_width, m_height);
     }
-
-    bool isNull() const { return !d; }
-
-    void clear() { d = nullptr; }
 
     /**
      * @brief constructor
@@ -104,7 +106,22 @@ public:
      *
      * @return buffer format
      */
-    void setSize(const QSize &size);
+    void setDimensions(const QDemonRenderRenderBufferDimensions &inDimensions);
+
+    /**
+     * @brief static creator function
+     *
+     * @param[in] context		Pointer to context
+     * @param[in] format		Renderbuffer format
+     * @param[in] width			Renderbuffer width
+     * @param[in] height		Renderbuffer height
+     *
+     * @return No return.
+     */
+    static QDemonRef<QDemonRenderRenderBuffer> create(const QDemonRef<QDemonRenderContext> &context,
+                                                      QDemonRenderRenderBufferFormat format,
+                                                      quint32 width,
+                                                      quint32 height);
 
     /**
      * @brief get the backend object handle
@@ -113,7 +130,7 @@ public:
      */
     QDemonRenderBackend::QDemonRenderBackendRenderbufferObject handle()
     {
-        return d ? d->handle : nullptr;
+        return m_bufferHandle;
     }
 };
 
