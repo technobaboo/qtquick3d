@@ -71,7 +71,7 @@ public:
     // Force font loading *right now*
     virtual void preloadFonts() = 0;
     // Do not access object in between begin/end preload pairs.
-    virtual void beginPreloadFonts(QDemonAbstractThreadPool &inThreadPool, QDemonPerfTimer inTimer) = 0;
+    virtual void beginPreloadFonts(QDemonAbstractThreadPool &inThreadPool, QDemonRef<QDemonPerfTimer> inTimer) = 0;
     virtual void endPreloadFonts() = 0;
     // Force a clear and reload of all of the fonts.
     virtual void reloadFonts() = 0;

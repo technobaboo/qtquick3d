@@ -98,7 +98,7 @@ struct QDemonQtTextRenderer : public QDemonTextRendererInterface
     typedef QHash<QString, FontInfo> TFontInfoHash;
 
     QDemonRef<QDemonRenderContext> m_renderContext;
-    QDemonPerfTimer m_perfTimer;
+    QDemonRef<QDemonPerfTimer> m_perfTimer;
     QVector<QDemonRendererFontEntry> m_installedFonts;
 
     QWaitCondition m_preloadSync;
@@ -263,7 +263,7 @@ struct QDemonQtTextRenderer : public QDemonTextRendererInterface
         theRenderer->m_preloadSync.wakeAll();
     }
 
-    void beginPreloadFonts(QDemonAbstractThreadPool &inThreadPool, QDemonPerfTimer inTimer) override
+    void beginPreloadFonts(QDemonAbstractThreadPool &inThreadPool, QDemonRef<QDemonPerfTimer> inTimer) override
     {
         m_preloadingFonts = true;
 

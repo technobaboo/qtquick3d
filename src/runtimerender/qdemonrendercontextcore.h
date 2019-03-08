@@ -75,7 +75,7 @@ public:
     virtual QDemonRef<QDemonDynamicObjectSystemInterface> getDynamicObjectSystemCore() = 0;
     virtual QDemonRef<QDemonMaterialSystem> getMaterialSystemCore() = 0;
     virtual QDemonRef<QDemonEffectSystemInterface> getEffectSystemCore() = 0;
-    virtual QDemonPerfTimer getPerfTimer() = 0;
+    virtual QDemonRef<QDemonPerfTimer> getPerfTimer() = 0;
     virtual QDemonRef<QDemonPathManagerInterface> getPathManagerCore() = 0;
     // Text renderers may be provided by clients at runtime.
     virtual void setTextRendererCore(QDemonRef<QDemonTextRendererInterface> inRenderer) = 0;
@@ -115,7 +115,7 @@ public:
     virtual QDemonRef<QDemonDynamicObjectSystemInterface> getDynamicObjectSystem() = 0;
     virtual QDemonRef<QDemonMaterialSystem> getCustomMaterialSystem() = 0;
     virtual QDemonRef<QDemonPixelGraphicsRendererInterface> getPixelGraphicsRenderer() = 0;
-    virtual QDemonPerfTimer getPerfTimer() = 0;
+    virtual QDemonRef<QDemonPerfTimer> getPerfTimer() = 0;
     virtual QDemonRef<QDemonTextTextureCacheInterface> getTextureCache() = 0;
     virtual QDemonRef<QDemonTextRendererInterface> getTextRenderer() = 0;
     virtual QDemonRef<QDemonRenderListInterface> getRenderList() = 0;

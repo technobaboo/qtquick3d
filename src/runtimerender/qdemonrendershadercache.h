@@ -142,7 +142,7 @@ public:
 
     static QDemonRef<QDemonShaderCacheInterface> createShaderCache(QDemonRef<QDemonRenderContext> inContext,
                                                                    QDemonRef<QDemonInputStreamFactoryInterface> inInputStreamFactory,
-                                                                   QDemonPerfTimer inPerfTimer);
+                                                                   QDemonRef<QDemonPerfTimer> inPerfTimer);
 };
 
 struct QDemonShaderCacheKey

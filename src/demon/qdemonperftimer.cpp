@@ -55,57 +55,44 @@ struct QDemonTimerEntry
     bool operator<(const QDemonTimerEntry &other) const { return m_order < other.m_order; }
 };
 
-QDemonPerfTimer::~QDemonPerfTimer()
-{
-}
+QDemonPerfTimer::QDemonPerfTimer() = default;
+
+QDemonPerfTimer::~QDemonPerfTimer() = default;
 
 void QDemonPerfTimer::update(const char *inId, quint64 inAmount)
 {
-    QMutexLocker locker(&d->mutex);
+    QMutexLocker locker(&mutex);
     QString theStr = QString::fromLocal8Bit(inId);
-    auto it = d->entries.find(inId);
-    if (it == d->entries.end())
-        it = d->entries.insert(inId, QDemonTimerEntry(inId, d->entries.size()));
+    auto it = entries.find(inId);
+    if (it == entries.end())
+        it = entries.insert(inId, QDemonTimerEntry(inId, entries.size()));
     it.value().update(inAmount);
 }
 
 void QDemonPerfTimer::outputTimerData(quint32 inFramesPassed)
 {
-    QMutexLocker locker(&d->mutex);
-    d->printEntries.clear();
-    for (Private::Map::iterator iter = d->entries.begin(), end = d->entries.end(); iter != end; ++iter) {
-        d->printEntries.push_back(iter.value());
+    QMutexLocker locker(&mutex);
+    printEntries.clear();
+    for (Map::iterator iter = entries.begin(), end = entries.end(); iter != end; ++iter) {
+        printEntries.push_back(iter.value());
         iter.value().reset();
     }
 
-    std::sort(d->printEntries.begin(), d->printEntries.end());
+    std::sort(printEntries.begin(), printEntries.end());
 
-    for (const auto &printEntry : qAsConst(d->printEntries))
+    for (const auto &printEntry : qAsConst(printEntries))
         printEntry.output(inFramesPassed);
 }
 
 void QDemonPerfTimer::resetTimerData()
 {
-    QMutexLocker locker(&d->mutex);
-    auto iter = d->entries.begin();
-    const auto end = d->entries.end();
+    QMutexLocker locker(&mutex);
+    auto iter = entries.begin();
+    const auto end = entries.end();
     while (iter != end) {
         iter.value().reset();
         ++iter;
     }
-}
-
-QDemonPerfTimer QDemonPerfTimer::create()
-{
-    QDemonPerfTimer timer;
-    timer.d = new Private;
-    return timer;
-}
-
-
-QDemonPerfTimer::Private::~Private()
-{
-
 }
 
 QT_END_NAMESPACE

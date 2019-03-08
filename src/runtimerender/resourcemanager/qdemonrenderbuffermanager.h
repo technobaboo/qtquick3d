@@ -61,7 +61,7 @@ class Q_DEMONRUNTIMERENDER_EXPORT QDemonBufferManager
 
         QDemonRef<QDemonRenderContext> context;
         QDemonRef<QDemonInputStreamFactoryInterface> inputStreamFactory;
-        QDemonPerfTimer perfTimer;
+        QDemonRef<QDemonPerfTimer> perfTimer;
         QString pathBuilder;
         ImageMap imageMap;
         QMutex loadedImageSetMutex;
@@ -83,7 +83,7 @@ class Q_DEMONRUNTIMERENDER_EXPORT QDemonBufferManager
 public:
     QDemonBufferManager(const QDemonRef<QDemonRenderContext> &inRenderContext,
                         const QDemonRef<QDemonInputStreamFactoryInterface> &inInputStreamFactory,
-                        const QDemonPerfTimer &inTimer);
+                        const QDemonRef<QDemonPerfTimer> &inTimer);
     ~QDemonBufferManager();
     // Path manipulation used to get the final path form a base path plus relative extension
     QString combineBaseAndRelative(const char *inBase, const char *inRelative);
