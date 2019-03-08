@@ -41,7 +41,7 @@ struct QDemonOffscreenRendererKey
 
     QDemonOffscreenRendererKey() = default;
     QDemonOffscreenRendererKey(const QString &str) : string(str) {}
-    QDemonOffscreenRendererKey(void *key) : key(key) {}
+    QDemonOffscreenRendererKey(void *inKey) : key(inKey) {}
 
     bool isVoidPointer() const { return key != nullptr; }
     bool isString() const { return key == nullptr; }
