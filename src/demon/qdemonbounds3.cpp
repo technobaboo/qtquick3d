@@ -54,7 +54,7 @@ QDemonBounds3 QDemonBounds3::transform(const QMatrix3x3 &matrix, const QDemonBou
     Q_ASSERT(bounds.isFinite());
     return bounds.isEmpty()
             ? bounds
-            : QDemonBounds3::basisExtent(mat33::transform(matrix, bounds.getCenter()), matrix, bounds.getExtents());
+            : QDemonBounds3::basisExtent(mat33::transform(matrix, bounds.center()), matrix, bounds.extents());
 }
 
 QDemonBounds3 QDemonBounds3::transform(const QDemonTransform &transform, const QDemonBounds3 &bounds)
@@ -62,7 +62,7 @@ QDemonBounds3 QDemonBounds3::transform(const QDemonTransform &transform, const Q
     Q_ASSERT(bounds.isFinite());
     return bounds.isEmpty()
             ? bounds
-            : QDemonBounds3::basisExtent(transform.transform(bounds.getCenter()), transform.q.toRotationMatrix(), bounds.getExtents());
+            : QDemonBounds3::basisExtent(transform.transform(bounds.center()), transform.q.toRotationMatrix(), bounds.extents());
 }
 
 void QDemonBounds3::transform(const QMatrix4x4 &inMatrix)

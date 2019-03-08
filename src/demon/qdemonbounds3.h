@@ -131,27 +131,27 @@ public:
     /**
     \brief returns the center of this axis aligned box.
     */
-    Q_ALWAYS_INLINE QVector3D getCenter() const;
+    Q_ALWAYS_INLINE QVector3D center() const;
 
     /**
     \brief get component of the box's center along a given axis
     */
-    Q_ALWAYS_INLINE float getCenter(quint32 axis) const;
+    Q_ALWAYS_INLINE float center(quint32 axis) const;
 
     /**
     \brief get component of the box's extents along a given axis
     */
-    Q_ALWAYS_INLINE float getExtents(quint32 axis) const;
+    Q_ALWAYS_INLINE float extents(quint32 axis) const;
 
     /**
     \brief returns the dimensions (width/height/depth) of this axis aligned box.
     */
-    Q_ALWAYS_INLINE QVector3D getDimensions() const;
+    Q_ALWAYS_INLINE QVector3D dimensions() const;
 
     /**
     \brief returns the extents, which are half of the width/height/depth.
     */
-    Q_ALWAYS_INLINE QVector3D getExtents() const;
+    Q_ALWAYS_INLINE QVector3D extents() const;
 
     /**
     \brief scales the AABB.
@@ -256,40 +256,40 @@ Q_ALWAYS_INLINE bool QDemonBounds3::isInside(const QDemonBounds3 &box) const
     return true;
 }
 
-Q_ALWAYS_INLINE QVector3D QDemonBounds3::getCenter() const
+Q_ALWAYS_INLINE QVector3D QDemonBounds3::center() const
 {
     Q_ASSERT(isFinite());
     return (minimum + maximum) * double(0.5);
 }
 
-Q_ALWAYS_INLINE float QDemonBounds3::getCenter(quint32 axis) const
+Q_ALWAYS_INLINE float QDemonBounds3::center(quint32 axis) const
 {
     Q_ASSERT(isFinite());
     return (minimum[int(axis)] + maximum[int(axis)]) * 0.5f;
 }
 
-Q_ALWAYS_INLINE float QDemonBounds3::getExtents(quint32 axis) const
+Q_ALWAYS_INLINE float QDemonBounds3::extents(quint32 axis) const
 {
     Q_ASSERT(isFinite());
     return (maximum[int(axis)] - minimum[int(axis)]) * 0.5f;
 }
 
-Q_ALWAYS_INLINE QVector3D QDemonBounds3::getDimensions() const
+Q_ALWAYS_INLINE QVector3D QDemonBounds3::dimensions() const
 {
     Q_ASSERT(isFinite());
     return maximum - minimum;
 }
 
-Q_ALWAYS_INLINE QVector3D QDemonBounds3::getExtents() const
+Q_ALWAYS_INLINE QVector3D QDemonBounds3::extents() const
 {
     Q_ASSERT(isFinite());
-    return getDimensions() * double(0.5);
+    return dimensions() * double(0.5);
 }
 
 Q_ALWAYS_INLINE void QDemonBounds3::scale(float scale)
 {
     Q_ASSERT(isFinite());
-    *this = centerExtents(getCenter(), getExtents() * scale);
+    *this = centerExtents(center(), extents() * scale);
 }
 
 Q_ALWAYS_INLINE void QDemonBounds3::fatten(double distance)

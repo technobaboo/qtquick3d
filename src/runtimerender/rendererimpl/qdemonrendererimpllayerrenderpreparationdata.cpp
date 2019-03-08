@@ -792,7 +792,7 @@ bool QDemonLayerRenderPreparationData::prepareModelForRender(QDemonRenderModel &
             QDemonRenderableObjectFlags renderableFlags;
             renderableFlags.setPickable(false);
             float subsetOpacity = inModel.globalOpacity;
-            QVector3D theModelCenter(theSubset.bounds.getCenter());
+            QVector3D theModelCenter(theSubset.bounds.center());
             theModelCenter = mat44::transform(inModel.globalTransform, theModelCenter);
 
             if (subsetOpacity >= QDEMON_RENDER_MINIMUM_RENDER_OPACITY && inClipFrustum.hasValue()) {
