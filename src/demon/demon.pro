@@ -14,7 +14,6 @@ HEADERS += \
     qdemondataref.h \
     qdemonoption.h \
     qdemoninvasivelinkedlist.h \
-    qdemoninvasiveset.h \
     qdemonperftimer.h \
     qdemontime.h
 

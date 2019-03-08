@@ -59,7 +59,6 @@
 #include <QtDemon/QDemonBounds3>
 #include <QtDemon/QDemonOption>
 #include <QtDemon/QDemonDataRef>
-#include <QtDemon/qdemoninvasiveset.h>
 
 QT_BEGIN_NAMESPACE
 inline bool floatLessThan(float lhs, float rhs)
@@ -139,7 +138,6 @@ class Q_DEMONRUNTIMERENDER_EXPORT QDemonRendererImpl : public QDemonRendererInte
     QDemonRef<QDemonRenderContext> m_context;
     QDemonBufferManager m_bufferManager;
     QDemonRef<QDemonOffscreenRenderManagerInterface> m_offscreenRenderManager;
-    InvasiveSet<QDemonShaderGeneratorGeneratedShader, QDemonGGSGet, QDemonGGSSet> m_layerShaders;
     // For rendering bounding boxes.
     QDemonRef<QDemonRenderVertexBuffer> m_boxVertexBuffer;
     QDemonRef<QDemonRenderIndexBuffer> m_boxIndexBuffer;

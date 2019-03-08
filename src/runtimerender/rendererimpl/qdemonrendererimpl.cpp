@@ -107,7 +107,6 @@ QDemonRendererImpl::QDemonRendererImpl(QDemonRenderContextInterface *ctx)
 
 QDemonRendererImpl::~QDemonRendererImpl()
 {
-    m_layerShaders.clear();
     m_shaders.clear();
     m_instanceRenderMap.clear();
     m_constantBuffers.clear();
@@ -1022,10 +1021,6 @@ void QDemonRendererImpl::endLayerDepthPassRender()
 void QDemonRendererImpl::beginLayerRender(QDemonLayerRenderData &inLayer)
 {
     m_currentLayer = &inLayer;
-    // Remove all of the shaders from the layer shader set
-    // so that we can only apply the camera and lighting properties to
-    // shaders that are in the layer.
-    m_layerShaders.clear();
 }
 void QDemonRendererImpl::endLayerRender()
 {
@@ -1349,9 +1344,6 @@ QDemonRef<QDemonShaderGeneratorGeneratedShader> QDemonRendererImpl::getShader(QD
     }
 
     if (retval != nullptr) {
-        if (!m_layerShaders.contains(*retval)) {
-            m_layerShaders.insert(*retval);
-        }
         if (m_currentLayer && m_currentLayer->camera) {
             QDemonRenderCamera &theCamera(*m_currentLayer->camera);
             if (m_currentLayer->cameraDirection.hasValue() == false)
