@@ -348,10 +348,10 @@ QDemonRenderBackend::QDemonRenderBackendDepthStencilStateObject QDemonRenderBack
         bool depthMask,
         QDemonRenderBoolOp depthFunc,
         bool enableStencil,
-        QDemonRenderStencilFunctionArgument &stencilFuncFront,
-        QDemonRenderStencilFunctionArgument &stencilFuncBack,
-        QDemonRenderStencilOperationArgument &depthStencilOpFront,
-        QDemonRenderStencilOperationArgument &depthStencilOpBack)
+        QDemonRenderStencilFunction &stencilFuncFront,
+        QDemonRenderStencilFunction &stencilFuncBack,
+        QDemonRenderStencilOperation &depthStencilOpFront,
+        QDemonRenderStencilOperation &depthStencilOpBack)
 {
     QDemonRenderBackendDepthStencilStateGL *retval = new QDemonRenderBackendDepthStencilStateGL(enableDepth,
                                                                                                 depthMask,

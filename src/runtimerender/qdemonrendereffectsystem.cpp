@@ -1319,8 +1319,8 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
 
     static bool compareDepthStencilState(QDemonRenderDepthStencilState &inState, QDemonDepthStencil &inStencil)
     {
-        QDemonRenderStencilFunctionArgument theFunction = inState.getStencilFunc(QDemonRenderFace::Front);
-        QDemonRenderStencilOperationArgument theOperation = inState.getStencilOp(QDemonRenderFace::Front);
+        QDemonRenderStencilFunction theFunction = inState.stencilFunction(QDemonRenderFace::Front);
+        QDemonRenderStencilOperation theOperation = inState.stencilOperation(QDemonRenderFace::Front);
 
         return theFunction.m_function == inStencil.m_stencilFunction && theFunction.m_mask == inStencil.m_mask
                 && theFunction.m_referenceValue == inStencil.m_reference && theOperation.m_stencilFail == inStencil.m_stencilFailOperation
@@ -1360,13 +1360,14 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
                         targetState = theState;
                 }
                 if (targetState == nullptr) {
-                    QDemonRenderStencilFunctionArgument theFunctionArg(theDepthStencil.m_stencilFunction,
+                    QDemonRenderStencilFunction theFunctionArg(theDepthStencil.m_stencilFunction,
                                                                        theDepthStencil.m_reference,
                                                                        theDepthStencil.m_mask);
-                    QDemonRenderStencilOperationArgument theOpArg(theDepthStencil.m_stencilFailOperation,
+                    QDemonRenderStencilOperation theOpArg(theDepthStencil.m_stencilFailOperation,
                                                                   theDepthStencil.m_depthFailOperation,
                                                                   theDepthStencil.m_depthPassOperation);
-                    targetState = theContext->createDepthStencilState(theContext->isDepthTestEnabled(),
+                    targetState = new QDemonRenderDepthStencilState(theContext,
+                                                                        theContext->isDepthTestEnabled(),
                                                                       theContext->isDepthWriteEnabled(),
                                                                       theContext->getDepthFunction(),
                                                                       true,
@@ -1777,11 +1778,12 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
         m_resourceManager = QDemonResourceManagerInterface::createResourceManager(theContext);
 
         // create default stencil state
-        QDemonRenderStencilFunctionArgument stencilDefaultFunc(QDemonRenderBoolOp::AlwaysTrue, 0x0, 0xFF);
-        QDemonRenderStencilOperationArgument stencilDefaultOp(QDemonRenderStencilOp::Keep,
+        QDemonRenderStencilFunction stencilDefaultFunc(QDemonRenderBoolOp::AlwaysTrue, 0x0, 0xFF);
+        QDemonRenderStencilOperation stencilDefaultOp(QDemonRenderStencilOp::Keep,
                                                               QDemonRenderStencilOp::Keep,
                                                               QDemonRenderStencilOp::Keep);
-        m_defaultStencilState = theContext->createDepthStencilState(theContext->isDepthTestEnabled(),
+        m_defaultStencilState = new QDemonRenderDepthStencilState(theContext,
+                                                                      theContext->isDepthTestEnabled(),
                                                                     theContext->isDepthWriteEnabled(),
                                                                     theContext->getDepthFunction(),
                                                                     theContext->isStencilTestEnabled(),

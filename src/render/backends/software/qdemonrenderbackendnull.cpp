@@ -69,10 +69,10 @@ struct QDemonNullBackend : public QDemonRenderBackend
                                                                        bool,
                                                                        QDemonRenderBoolOp,
                                                                        bool,
-                                                                       QDemonRenderStencilFunctionArgument &,
-                                                                       QDemonRenderStencilFunctionArgument &,
-                                                                       QDemonRenderStencilOperationArgument &,
-                                                                       QDemonRenderStencilOperationArgument &) override
+                                                                       QDemonRenderStencilFunction &,
+                                                                       QDemonRenderStencilFunction &,
+                                                                       QDemonRenderStencilOperation &,
+                                                                       QDemonRenderStencilOperation &) override
     {
         return QDemonRenderBackendDepthStencilStateObject(1);
     }

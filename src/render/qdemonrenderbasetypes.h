@@ -1560,85 +1560,44 @@ struct QDemonRenderBlendEquationArgument
     }
 };
 
-struct QDemonRenderStencilOperationArgument
+struct QDemonRenderStencilOperation
 {
-    QDemonRenderStencilOp m_stencilFail; // What happens when stencil test fails.
+    QDemonRenderStencilOp m_stencilFail = QDemonRenderStencilOp::Keep; // What happens when stencil test fails.
     // These values assume the stencil passed
 
     // What happens when the stencil passes but depth test fail.
-    QDemonRenderStencilOp m_depthFail;
-    QDemonRenderStencilOp m_depthPass; // What happens when the stencil and depth tests pass.
+    QDemonRenderStencilOp m_depthFail = QDemonRenderStencilOp::Keep;
+     // What happens when the stencil and depth tests pass.
+    QDemonRenderStencilOp m_depthPass = QDemonRenderStencilOp::Keep;
 
-    QDemonRenderStencilOperationArgument(QDemonRenderStencilOp fail,
+    QDemonRenderStencilOperation(QDemonRenderStencilOp fail,
                                          QDemonRenderStencilOp depthFail,
                                          QDemonRenderStencilOp depthPass)
         : m_stencilFail(fail), m_depthFail(depthFail), m_depthPass(depthPass)
     {
     }
-    QDemonRenderStencilOperationArgument()
-        : m_stencilFail(QDemonRenderStencilOp::Keep)
-        , m_depthFail(QDemonRenderStencilOp::Keep)
-        , m_depthPass(QDemonRenderStencilOp::Keep)
-    {
-    }
-    QDemonRenderStencilOperationArgument(const QDemonRenderStencilOperationArgument &StencilOp)
-        : m_stencilFail(StencilOp.m_stencilFail), m_depthFail(StencilOp.m_depthFail), m_depthPass(StencilOp.m_depthPass)
-    {
-    }
+    QDemonRenderStencilOperation() = default;
 
-    QDemonRenderStencilOperationArgument &operator=(const QDemonRenderStencilOperationArgument &rhs)
-    {
-        // Check for self-assignment!
-        if (this == &rhs)
-            return *this;
-
-        m_stencilFail = rhs.m_stencilFail;
-        m_depthFail = rhs.m_depthFail;
-        m_depthPass = rhs.m_depthPass;
-
-        return *this;
-    }
-
-    bool operator==(const QDemonRenderStencilOperationArgument &other) const
+    bool operator==(const QDemonRenderStencilOperation &other) const
     {
         return (m_stencilFail == other.m_stencilFail && m_depthFail == other.m_depthFail && m_depthPass == other.m_depthPass);
     }
 };
 
 // see glStencilFuncSeparate
-struct QDemonRenderStencilFunctionArgument
+struct QDemonRenderStencilFunction
 {
-    QDemonRenderBoolOp m_function;
-    quint32 m_referenceValue;
-    quint32 m_mask;
+    QDemonRenderBoolOp m_function = QDemonRenderBoolOp::AlwaysTrue;
+    quint32 m_referenceValue = 0;
+    quint32 m_mask = std::numeric_limits<quint32>::max();
 
-    QDemonRenderStencilFunctionArgument(QDemonRenderBoolOp function, quint32 referenceValue, quint32 mask)
+    QDemonRenderStencilFunction(QDemonRenderBoolOp function, quint32 referenceValue, quint32 mask)
         : m_function(function), m_referenceValue(referenceValue), m_mask(mask)
     {
     }
-    QDemonRenderStencilFunctionArgument()
-        : m_function(QDemonRenderBoolOp::AlwaysTrue), m_referenceValue(0), m_mask(quint32(-1)) // TODO:
-    {
-    }
-    QDemonRenderStencilFunctionArgument(const QDemonRenderStencilFunctionArgument &StencilFunc)
-        : m_function(StencilFunc.m_function), m_referenceValue(StencilFunc.m_referenceValue), m_mask(StencilFunc.m_mask)
-    {
-    }
+    QDemonRenderStencilFunction() = default;
 
-    QDemonRenderStencilFunctionArgument &operator=(const QDemonRenderStencilFunctionArgument &rhs)
-    {
-        // Check for self-assignment!
-        if (this == &rhs)
-            return *this;
-
-        m_function = rhs.m_function;
-        m_referenceValue = rhs.m_referenceValue;
-        m_mask = rhs.m_mask;
-
-        return *this;
-    }
-
-    bool operator==(const QDemonRenderStencilFunctionArgument &other) const
+    bool operator==(const QDemonRenderStencilFunction &other) const
     {
         return (m_function == other.m_function && m_referenceValue == other.m_referenceValue && m_mask == other.m_mask);
     }

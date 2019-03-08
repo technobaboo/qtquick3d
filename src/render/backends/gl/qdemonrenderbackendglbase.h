@@ -93,10 +93,10 @@ public:
             bool depthMask,
             QDemonRenderBoolOp depthFunc,
             bool enableStencil,
-            QDemonRenderStencilFunctionArgument &stencilFuncFront,
-            QDemonRenderStencilFunctionArgument &stencilFuncBack,
-            QDemonRenderStencilOperationArgument &depthStencilOpFront,
-            QDemonRenderStencilOperationArgument &depthStencilOpBack) override;
+            QDemonRenderStencilFunction &stencilFuncFront,
+            QDemonRenderStencilFunction &stencilFuncBack,
+            QDemonRenderStencilOperation &depthStencilOpFront,
+            QDemonRenderStencilOperation &depthStencilOpBack) override;
     virtual void releaseDepthStencilState(QDemonRenderBackendDepthStencilStateObject inDepthStencilState) override;
     virtual QDemonRenderBackendRasterizerStateObject createRasterizerState(float depthBias,
                                                                            float depthScale,

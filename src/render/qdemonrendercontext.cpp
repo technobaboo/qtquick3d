@@ -80,8 +80,6 @@ QDemonRenderContext::~QDemonRenderContext()
     m_constantToImpMap.clear();
     Q_ASSERT(m_storageToImpMap.size() == 0);
     m_storageToImpMap.clear();
-    Q_ASSERT(m_depthStencilStateToImpMap.size() == 0);
-    m_depthStencilStateToImpMap.clear();
     Q_ASSERT(m_rasterizerStateToImpMap.size() == 0);
     m_rasterizerStateToImpMap.clear();
     Q_ASSERT(m_pathFontSpecToImpMap.size() == 0);
@@ -111,46 +109,16 @@ void QDemonRenderContext::getMaxTextureSize(qint32 &oWidth, qint32 &oHeight)
     oHeight = theMaxTextureSize;
 }
 
-QDemonRef<QDemonRenderDepthStencilState> QDemonRenderContext::createDepthStencilState(
-        bool enableDepth,
-        bool depthMask,
-        QDemonRenderBoolOp depthFunc,
-        bool enableStencil,
-        QDemonRenderStencilFunctionArgument &stencilFuncFront,
-        QDemonRenderStencilFunctionArgument &stencilFuncBack,
-        QDemonRenderStencilOperationArgument &depthStencilOpFront,
-        QDemonRenderStencilOperationArgument &depthStencilOpBack)
-{
-    QDemonRef<QDemonRenderDepthStencilState> state = QDemonRenderDepthStencilState::create(this,
-                                                                                           enableDepth,
-                                                                                           depthMask,
-                                                                                           depthFunc,
-                                                                                           enableStencil,
-                                                                                           stencilFuncFront,
-                                                                                           stencilFuncBack,
-                                                                                           depthStencilOpFront,
-                                                                                           depthStencilOpBack);
-    if (state)
-        m_depthStencilStateToImpMap.insert(state->getDepthStencilObjectHandle(), state.data());
-
-    return state;
-}
-
 void QDemonRenderContext::setDepthStencilState(QDemonRef<QDemonRenderDepthStencilState> inDepthStencilState)
 {
     if (inDepthStencilState) {
-        m_backend->setDepthStencilState(inDepthStencilState->getDepthStencilObjectHandle());
+        m_backend->setDepthStencilState(inDepthStencilState->handle());
         // currently we have a mixture therefore we need to update the context state
-        setDepthFunction(inDepthStencilState->getDepthFunc());
-        setDepthWriteEnabled(inDepthStencilState->getDepthMask());
-        setDepthTestEnabled(inDepthStencilState->getDepthEnabled());
-        setStencilTestEnabled(inDepthStencilState->getStencilEnabled());
+        setDepthFunction(inDepthStencilState->depthFunction());
+        setDepthWriteEnabled(inDepthStencilState->depthMask());
+        setDepthTestEnabled(inDepthStencilState->depthEnabled());
+        setStencilTestEnabled(inDepthStencilState->stencilEnabled());
     }
-}
-
-void QDemonRenderContext::stateDestroyed(QDemonRenderDepthStencilState *state)
-{
-    m_depthStencilStateToImpMap.remove(state->getDepthStencilObjectHandle());
 }
 
 QDemonRef<QDemonRenderRasterizerState> QDemonRenderContext::createRasterizerState(float depthBias,

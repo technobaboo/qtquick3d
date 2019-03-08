@@ -444,16 +444,7 @@ public:
 
     void setDefaultDepthBufferBitCount(qint32 depthBits) { m_dephBits = depthBits; }
 
-    QDemonRef<QDemonRenderDepthStencilState> createDepthStencilState(bool enableDepth,
-                                                                             bool depthMask,
-                                                                             QDemonRenderBoolOp depthFunc,
-                                                                             bool enableStencil,
-                                                                             QDemonRenderStencilFunctionArgument &stencilFuncFront,
-                                                                             QDemonRenderStencilFunctionArgument &stencilFuncBack,
-                                                                             QDemonRenderStencilOperationArgument &depthStencilOpFront,
-                                                                             QDemonRenderStencilOperationArgument &depthStencilOpBack);
     void setDepthStencilState(QDemonRef<QDemonRenderDepthStencilState> inDepthStencilState);
-    void stateDestroyed(QDemonRenderDepthStencilState *state);
 
     QDemonRef<QDemonRenderRasterizerState> createRasterizerState(float depthBias, float depthScale, QDemonRenderFace cullFace);
     void setRasterizerState(QDemonRef<QDemonRenderRasterizerState> inRasterizerState);

@@ -43,10 +43,10 @@ public:
                                            bool depthMask,
                                            QDemonRenderBoolOp depthFunc,
                                            bool enableStencil,
-                                           QDemonRenderStencilFunctionArgument &stencilFuncFront,
-                                           QDemonRenderStencilFunctionArgument &stencilFuncBack,
-                                           QDemonRenderStencilOperationArgument &depthStencilOpFront,
-                                           QDemonRenderStencilOperationArgument &depthStencilOpBack)
+                                           QDemonRenderStencilFunction &stencilFuncFront,
+                                           QDemonRenderStencilFunction &stencilFuncBack,
+                                           QDemonRenderStencilOperation &depthStencilOpFront,
+                                           QDemonRenderStencilOperation &depthStencilOpBack)
         : m_depthEnable(enableDepth)
         , m_depthMask(depthMask)
         , m_depthFunc(depthFunc)
@@ -98,10 +98,10 @@ public:
     bool m_depthMask; ///< enable / disable depth writes
     QDemonRenderBoolOp m_depthFunc; ///< depth comparison func
     bool m_stencilEnable; ///< enable disable stencil test
-    QDemonRenderStencilFunctionArgument m_stencilFuncFront; ///< stencil setup for front faces
-    QDemonRenderStencilFunctionArgument m_stencilFuncBack; ///< stencil setup for back faces
-    QDemonRenderStencilOperationArgument m_depthStencilOpFront; ///< depth stencil operation for front faces
-    QDemonRenderStencilOperationArgument m_depthStencilOpBack; ///< depth stencil operation for back faces
+    QDemonRenderStencilFunction m_stencilFuncFront; ///< stencil setup for front faces
+    QDemonRenderStencilFunction m_stencilFuncBack; ///< stencil setup for back faces
+    QDemonRenderStencilOperation m_depthStencilOpFront; ///< depth stencil operation for front faces
+    QDemonRenderStencilOperation m_depthStencilOpBack; ///< depth stencil operation for back faces
 };
 
 class QDemonRenderBackendMiscStateGL

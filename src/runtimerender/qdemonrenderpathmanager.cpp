@@ -1316,14 +1316,15 @@ struct QDemonPathManager : public QDemonPathManagerInterface
         bool isDepthWriteEnabled = theRenderContext->isDepthWriteEnabled();
         for (quint32 idx = 0, end = m_depthStencilStates.size(); idx < end; ++idx) {
             QDemonRef<QDemonRenderDepthStencilState> theState = m_depthStencilStates[idx];
-            if (theState->getDepthFunc() == theDepthFunction && theState->getDepthEnabled() == isDepthEnabled
-                && theState->getDepthMask() == isDepthWriteEnabled)
+            if (theState->depthFunction() == theDepthFunction && theState->depthEnabled() == isDepthEnabled
+                && theState->depthMask() == isDepthWriteEnabled)
                 return theState;
         }
-        QDemonRenderStencilFunctionArgument theArg(QDemonRenderBoolOp::NotEqual, 0, 0xFF);
-        QDemonRenderStencilOperationArgument theOpArg(QDemonRenderStencilOp::Keep, QDemonRenderStencilOp::Keep, QDemonRenderStencilOp::Zero);
+        QDemonRenderStencilFunction theArg(QDemonRenderBoolOp::NotEqual, 0, 0xFF);
+        QDemonRenderStencilOperation theOpArg(QDemonRenderStencilOp::Keep, QDemonRenderStencilOp::Keep, QDemonRenderStencilOp::Zero);
         m_depthStencilStates.push_back(
-                theRenderContext->createDepthStencilState(isDepthEnabled, isDepthWriteEnabled, theDepthFunction, isStencilEnabled, theArg, theArg, theOpArg, theOpArg));
+                new QDemonRenderDepthStencilState(theRenderContext, isDepthEnabled, isDepthWriteEnabled,
+                                                      theDepthFunction, isStencilEnabled, theArg, theArg, theOpArg, theOpArg));
         return m_depthStencilStates.back();
     }
 

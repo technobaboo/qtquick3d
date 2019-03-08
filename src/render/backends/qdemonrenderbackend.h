@@ -238,10 +238,10 @@ public:
             bool depthMask,
             QDemonRenderBoolOp depthFunc,
             bool enableStencil,
-            QDemonRenderStencilFunctionArgument &stencilFuncFront,
-            QDemonRenderStencilFunctionArgument &stencilFuncBack,
-            QDemonRenderStencilOperationArgument &depthStencilOpFront,
-            QDemonRenderStencilOperationArgument &depthStencilOpBack) = 0;
+            QDemonRenderStencilFunction &stencilFuncFront,
+            QDemonRenderStencilFunction &stencilFuncBack,
+            QDemonRenderStencilOperation &depthStencilOpFront,
+            QDemonRenderStencilOperation &depthStencilOpBack) = 0;
 
     /**
      * @brief release a depth stencil state object

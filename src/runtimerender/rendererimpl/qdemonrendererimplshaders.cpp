@@ -89,9 +89,10 @@ void QDemonTextShader::renderPath(const QDemonRef<QDemonRenderPathFontItem> &inP
     bool isDepthEnabled = inRenderContext->isDepthTestEnabled();
     bool isStencilEnabled = inRenderContext->isStencilTestEnabled();
     bool isDepthWriteEnabled = inRenderContext->isDepthWriteEnabled();
-    QDemonRenderStencilFunctionArgument theArg(QDemonRenderBoolOp::NotEqual, 0, 0xFF);
-    QDemonRenderStencilOperationArgument theOpArg(QDemonRenderStencilOp::Keep, QDemonRenderStencilOp::Keep, QDemonRenderStencilOp::Zero);
-    QDemonRef<QDemonRenderDepthStencilState> depthStencilState = inRenderContext->createDepthStencilState(isDepthEnabled,
+    QDemonRenderStencilFunction theArg(QDemonRenderBoolOp::NotEqual, 0, 0xFF);
+    QDemonRenderStencilOperation theOpArg(QDemonRenderStencilOp::Keep, QDemonRenderStencilOp::Keep, QDemonRenderStencilOp::Zero);
+    QDemonRef<QDemonRenderDepthStencilState> depthStencilState = new QDemonRenderDepthStencilState(inRenderContext,
+                                                                                                       isDepthEnabled,
                                                                                                           isDepthWriteEnabled,
                                                                                                           theDepthFunction,
                                                                                                           false,

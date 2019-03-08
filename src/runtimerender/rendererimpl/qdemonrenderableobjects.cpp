@@ -440,9 +440,10 @@ void QDemonTextRenderable::renderDepthPass(const QVector2D &inCameraVec)
         bool isDepthEnabled = context->isDepthTestEnabled();
         bool isStencilEnabled = context->isStencilTestEnabled();
         bool isDepthWriteEnabled = context->isDepthWriteEnabled();
-        QDemonRenderStencilFunctionArgument theArg(QDemonRenderBoolOp::NotEqual, 0, 0xFF);
-        QDemonRenderStencilOperationArgument theOpArg(QDemonRenderStencilOp::Keep, QDemonRenderStencilOp::Keep, QDemonRenderStencilOp::Zero);
-        QDemonRef<QDemonRenderDepthStencilState> depthStencilState = context->createDepthStencilState(isDepthEnabled,
+        QDemonRenderStencilFunction theArg(QDemonRenderBoolOp::NotEqual, 0, 0xFF);
+        QDemonRenderStencilOperation theOpArg(QDemonRenderStencilOp::Keep, QDemonRenderStencilOp::Keep, QDemonRenderStencilOp::Zero);
+        QDemonRef<QDemonRenderDepthStencilState> depthStencilState = new QDemonRenderDepthStencilState(context,
+                                                                                                           isDepthEnabled,
                                                                                                       isDepthWriteEnabled,
                                                                                                       theDepthFunction,
                                                                                                       false,
