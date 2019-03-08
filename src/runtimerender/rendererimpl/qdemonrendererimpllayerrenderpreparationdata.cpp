@@ -886,8 +886,8 @@ bool QDemonLayerRenderPreparationData::prepareModelForRender(QDemonRenderModel &
             } else if (theMaterialObject->type == QDemonGraphObjectType::CustomMaterial) {
                 QDemonRenderCustomMaterial &theMaterial(static_cast<QDemonRenderCustomMaterial &>(*theMaterialObject));
 
-                QDemonMaterialSystem theMaterialSystem(demonContext->getCustomMaterialSystem());
-                subsetDirty |= theMaterialSystem.prepareForRender(theModelContext.model, theSubset, theMaterial, clearMaterialDirtyFlags);
+                QDemonRef<QDemonMaterialSystem> theMaterialSystem(demonContext->getCustomMaterialSystem());
+                subsetDirty |= theMaterialSystem->prepareForRender(theModelContext.model, theSubset, theMaterial, clearMaterialDirtyFlags);
 
                 QDemonDefaultMaterialPreparationResult theMaterialPrepResult(
                         prepareCustomMaterialForRender(theMaterial, renderableFlags, subsetOpacity));

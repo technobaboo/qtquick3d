@@ -68,28 +68,26 @@ struct QDemonRenderModel;
 
 class Q_DEMONRUNTIMERENDER_EXPORT QDemonMaterialSystem
 {
-    struct Private {
-        ~Private();
-        QAtomicInt ref;
-        typedef QHash<QDemonShaderMapKey, QDemonRef<QDemonCustomMaterialShader>> ShaderMap;
-        typedef QPair<QString, QDemonRenderImage *> AllocatedImageEntry;
-        typedef QHash<QString, QDemonRef<QDemonMaterialClass>> StringMaterialMap;
-        typedef QPair<QString, QString> TStrStrPair;
-        typedef QPair<QString, QDemonRef<QDemonCustomMaterialTextureData>> CustomMaterialTextureEntry;
+public:
+    QAtomicInt ref;
+private:
+    typedef QHash<QDemonShaderMapKey, QDemonRef<QDemonCustomMaterialShader>> ShaderMap;
+    typedef QPair<QString, QDemonRenderImage *> AllocatedImageEntry;
+    typedef QHash<QString, QDemonRef<QDemonMaterialClass>> StringMaterialMap;
+    typedef QPair<QString, QString> TStrStrPair;
+    typedef QPair<QString, QDemonRef<QDemonCustomMaterialTextureData>> CustomMaterialTextureEntry;
 
-        QDemonRenderContextCoreInterface *coreContext = nullptr;
-        QDemonRenderContextInterface *context = nullptr;
-        StringMaterialMap stringMaterialMap;
-        ShaderMap shaderMap;
-        QVector<CustomMaterialTextureEntry> textureEntries;
-        QVector<QDemonCustomMaterialBuffer> allocatedBuffers;
-        QVector<AllocatedImageEntry> allocatedImages;
-        bool useFastBlits = true;
-        QString shaderNameBuilder;
-        quint64 lastFrameTime = 0;
-        float msSinceLastFrame = 0;
-    };
-    QExplicitlySharedDataPointer<Private> d;
+    QDemonRenderContextCoreInterface *coreContext = nullptr;
+    QDemonRenderContextInterface *context = nullptr;
+    StringMaterialMap stringMaterialMap;
+    ShaderMap shaderMap;
+    QVector<CustomMaterialTextureEntry> textureEntries;
+    QVector<QDemonCustomMaterialBuffer> allocatedBuffers;
+    QVector<AllocatedImageEntry> allocatedImages;
+    bool useFastBlits = true;
+    QString shaderNameBuilder;
+    quint64 lastFrameTime = 0;
+    float msSinceLastFrame = 0;
 
     void releaseBuffer(qint32 inIdx);
     QDemonMaterialClass *getMaterialClass(const QString &inStr);
@@ -162,7 +160,7 @@ class Q_DEMONRUNTIMERENDER_EXPORT QDemonMaterialSystem
                     const dynamic::QDemonPropertyDefinition *inPropDec = nullptr,
                     bool needMips = false);
 public:
-    QDemonMaterialSystem() = default;
+    QDemonMaterialSystem();
     QDemonMaterialSystem(QDemonRenderContextCoreInterface *ct);
 
     ~QDemonMaterialSystem();

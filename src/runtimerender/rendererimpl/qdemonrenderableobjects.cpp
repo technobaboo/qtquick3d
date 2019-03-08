@@ -523,7 +523,7 @@ void QDemonCustomMaterialRenderable::render(const QVector2D & /*inCameraVec*/,
                                                        firstImage,
                                                        opacity);
 
-    demonContext->getCustomMaterialSystem().renderSubset(theRenderContext, inFeatureSet);
+    demonContext->getCustomMaterialSystem()->renderSubset(theRenderContext, inFeatureSet);
 }
 
 void QDemonCustomMaterialRenderable::renderDepthPass(const QVector2D &inCameraVec,
@@ -534,7 +534,7 @@ void QDemonCustomMaterialRenderable::renderDepthPass(const QVector2D &inCameraVe
 {
 
     QDemonRenderContextInterface *demonContext(generator->getDemonContext());
-    if (!demonContext->getCustomMaterialSystem().renderDepthPrepass(modelContext.modelViewProjection, material, subset)) {
+    if (!demonContext->getCustomMaterialSystem()->renderDepthPrepass(modelContext.modelViewProjection, material, subset)) {
         QDemonRenderableImage *displacementImage = nullptr;
         for (QDemonRenderableImage *theImage = firstImage; theImage != nullptr && displacementImage == nullptr;
              theImage = theImage->m_nextImage) {

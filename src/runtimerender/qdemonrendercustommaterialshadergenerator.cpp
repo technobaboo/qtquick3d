@@ -687,7 +687,7 @@ struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
                                float inProbe2Fade,
                                float inProbeFOV)
     {
-        QDemonMaterialSystem theMaterialSystem(m_renderContext->getCustomMaterialSystem());
+        QDemonRef<QDemonMaterialSystem> theMaterialSystem(m_renderContext->getCustomMaterialSystem());
         QDemonRef<QDemonShaderGeneratorGeneratedShader> theShader(getShaderForProgram(inProgram));
 
         theShader->m_viewProjMatrix.set(inModelViewProjection);
@@ -770,7 +770,7 @@ struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
         }
 
         // finally apply custom material shader properties
-        theMaterialSystem.applyShaderPropertyValues(inMaterial, inProgram);
+        theMaterialSystem->applyShaderPropertyValues(inMaterial, inProgram);
 
         // additional textures
         for (QDemonRenderableImage *theImage = inFirstImage; theImage; theImage = theImage->m_nextImage)

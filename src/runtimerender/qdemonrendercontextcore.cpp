@@ -67,7 +67,7 @@ struct QDemonRenderContextCore : public QDemonRenderContextCoreInterface
     QDemonRef<QDemonInputStreamFactoryInterface> m_inputStreamFactory;
     QDemonRef<QDemonAbstractThreadPool> m_threadPool;
     QDemonRef<QDemonDynamicObjectSystemInterface> m_dynamicObjectSystem;
-    QDemonMaterialSystem m_materialSystem;
+    QDemonRef<QDemonMaterialSystem> m_materialSystem;
     QDemonRef<QDemonEffectSystemInterface> m_effectSystem;
     QDemonRef<QDemonTextRendererInterface> m_textRenderer;
     QDemonRef<QDemonTextRendererInterface> m_onscreenTexRenderer;
@@ -79,7 +79,7 @@ struct QDemonRenderContextCore : public QDemonRenderContextCoreInterface
         , m_threadPool(QDemonAbstractThreadPool::createThreadPool(4))
     {
         m_dynamicObjectSystem = QDemonDynamicObjectSystemInterface::createDynamicSystem(this);
-        m_materialSystem = QDemonMaterialSystem(this);
+        m_materialSystem = new QDemonMaterialSystem(this);
         m_effectSystem = QDemonEffectSystemInterface::createEffectSystem(this);
         m_pathManagerCore = QDemonPathManagerInterface::createPathManager(this);
     }
@@ -92,7 +92,7 @@ struct QDemonRenderContextCore : public QDemonRenderContextCoreInterface
     {
         return m_dynamicObjectSystem;
     }
-    QDemonMaterialSystem getMaterialSystemCore() override { return m_materialSystem; }
+    QDemonRef<QDemonMaterialSystem> getMaterialSystemCore() override { return m_materialSystem; }
     QDemonRef<QDemonEffectSystemInterface> getEffectSystemCore() override { return m_effectSystem; }
     QDemonPerfTimer getPerfTimer() override { return m_perfTimer; }
     QDemonRef<QDemonPathManagerInterface> getPathManagerCore() override { return m_pathManagerCore; }
@@ -147,7 +147,7 @@ struct QDemonRenderContextData : public QDemonRenderContextInterface
     QDemonRef<QDemonShaderCacheInterface> m_shaderCache;
     QDemonRef<QDemonAbstractThreadPool> m_threadPool;
     QDemonRef<IImageBatchLoader> m_imageBatchLoader;
-    QDemonMaterialSystem m_customMaterialSystem;
+    QDemonRef<QDemonMaterialSystem> m_customMaterialSystem;
     QDemonRef<QDemonPixelGraphicsRendererInterface> m_pixelGraphicsRenderer;
     QDemonRef<QDemonPathManagerInterface> m_pathManager;
     QDemonRef<QDemonShaderProgramGeneratorInterface> m_shaderProgramGenerator;
@@ -209,7 +209,7 @@ struct QDemonRenderContextData : public QDemonRenderContextInterface
         m_dynamicObjectSystem->setContextInterface(this);
         m_effectSystem = inCore->getEffectSystemCore()->getEffectSystem(this);
         m_customMaterialSystem = inCore->getMaterialSystemCore();
-        m_customMaterialSystem.setRenderContextInterface(this);
+        m_customMaterialSystem->setRenderContextInterface(this);
         // as does the custom material system
         m_pixelGraphicsRenderer = QDemonPixelGraphicsRendererInterface::createRenderer(this);
         QDemonRef<QDemonTextRendererInterface> theTextCore = inCore->getTextRendererCore();
@@ -282,7 +282,7 @@ struct QDemonRenderContextData : public QDemonRenderContextInterface
     QDemonRef<QDemonTextTextureCacheInterface> getTextureCache() override { return m_textTextureCache; }
     QDemonRef<QDemonTextTextureAtlasInterface> getTextureAtlas() override { return m_textTextureAtlas; }
     QDemonRef<QDemonDynamicObjectSystemInterface> getDynamicObjectSystem() override { return m_dynamicObjectSystem; }
-    QDemonMaterialSystem getCustomMaterialSystem() override { return m_customMaterialSystem; }
+    QDemonRef<QDemonMaterialSystem> getCustomMaterialSystem() override { return m_customMaterialSystem; }
     QDemonRef<QDemonPixelGraphicsRendererInterface> getPixelGraphicsRenderer() override
     {
         return m_pixelGraphicsRenderer;
@@ -694,7 +694,7 @@ struct QDemonRenderContextData : public QDemonRenderContextInterface
             m_textRenderer->endFrame();
         m_offscreenRenderManager->endFrame();
         m_renderer->endFrame();
-        m_customMaterialSystem.endFrame();
+        m_customMaterialSystem->endFrame();
         m_presentationDimensions = m_preRenderPresentationDimensions;
         ++m_frameCount;
     }

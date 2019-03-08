@@ -1100,11 +1100,11 @@ struct QDemonPathManager : public QDemonPathManagerInterface
         bool isDefaultMaterial = (inRenderContext.material.type == QDemonGraphObjectType::DefaultMaterial);
 
         if (!isDefaultMaterial) {
-            QDemonMaterialSystem theMaterialSystem(m_renderContext->getCustomMaterialSystem());
+            QDemonRef<QDemonMaterialSystem> theMaterialSystem(m_renderContext->getCustomMaterialSystem());
             const QDemonRenderCustomMaterial &theCustomMaterial(
                     reinterpret_cast<const QDemonRenderCustomMaterial &>(inRenderContext.material));
 
-            return theMaterialSystem.getShaderName(theCustomMaterial);
+            return theMaterialSystem->getShaderName(theCustomMaterial);
         }
 
         return QString();
@@ -1668,7 +1668,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
                                                                       inRenderContext.opacity < 1.0,
                                                                       "path geometry pipeline-- ");
                 } else {
-                    QDemonMaterialSystem theMaterialSystem(m_renderContext->getCustomMaterialSystem());
+                    QDemonRef<QDemonMaterialSystem> theMaterialSystem(m_renderContext->getCustomMaterialSystem());
                     const QDemonRenderCustomMaterial &theCustomMaterial(
                             reinterpret_cast<const QDemonRenderCustomMaterial &>(inRenderContext.material));
 
@@ -1681,7 +1681,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
                                                           inRenderContext.firstImage,
                                                           inRenderContext.opacity < 1.0,
                                                           "path geometry pipeline-- ",
-                                                          theMaterialSystem.getShaderName(theCustomMaterial).toUtf8());
+                                                          theMaterialSystem->getShaderName(theCustomMaterial).toUtf8());
                 }
 
                 if (theProgram)
@@ -1715,7 +1715,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
                                                                       inRenderContext.opacity < 1.0,
                                                                       "path painted pipeline-- ");
                 } else {
-                    QDemonMaterialSystem theMaterialSystem(m_renderContext->getCustomMaterialSystem());
+                    QDemonRef<QDemonMaterialSystem> theMaterialSystem(m_renderContext->getCustomMaterialSystem());
                     const QDemonRenderCustomMaterial &theCustomMaterial(
                             reinterpret_cast<const QDemonRenderCustomMaterial &>(inRenderContext.material));
 
@@ -1728,7 +1728,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
                                                           inRenderContext.firstImage,
                                                           inRenderContext.opacity < 1.0,
                                                           "path painted pipeline-- ",
-                                                          theMaterialSystem.getShaderName(theCustomMaterial).toUtf8());
+                                                          theMaterialSystem->getShaderName(theCustomMaterial).toUtf8());
                 }
 
                 if (theProgram)
