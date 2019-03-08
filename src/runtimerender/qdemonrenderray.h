@@ -32,6 +32,7 @@
 
 #include <QtDemon/QDemonOption>
 #include <QtDemon/QDemonBounds3>
+#include <QtDemon/QDemonPlane>
 
 #include <QtGui/QVector2D>
 #include <QtGui/QVector3D>

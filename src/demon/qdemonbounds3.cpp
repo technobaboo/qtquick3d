@@ -17,11 +17,6 @@ void QDemonBounds3::include(const QDemonBounds3 &b)
     maximum = vec3::maximum(maximum, b.maximum);
 }
 
-QDemonBounds3 QDemonBounds3::poseExtent(const QDemonTransform &pose, const QVector3D &extent)
-{
-    return basisExtent(pose.p, pose.q.toRotationMatrix(), extent);
-}
-
 bool QDemonBounds3::isFinite() const
 {
     return vec3::isFinite(minimum) && vec3::isFinite(maximum);
@@ -55,14 +50,6 @@ QDemonBounds3 QDemonBounds3::transform(const QMatrix3x3 &matrix, const QDemonBou
     return bounds.isEmpty()
             ? bounds
             : QDemonBounds3::basisExtent(mat33::transform(matrix, bounds.center()), matrix, bounds.extents());
-}
-
-QDemonBounds3 QDemonBounds3::transform(const QDemonTransform &transform, const QDemonBounds3 &bounds)
-{
-    Q_ASSERT(bounds.isFinite());
-    return bounds.isEmpty()
-            ? bounds
-            : QDemonBounds3::basisExtent(transform.transform(bounds.center()), transform.q.toRotationMatrix(), bounds.extents());
 }
 
 void QDemonBounds3::transform(const QMatrix4x4 &inMatrix)

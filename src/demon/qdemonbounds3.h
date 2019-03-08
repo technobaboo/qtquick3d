@@ -2,7 +2,6 @@
 #define QDEMONBOUNDS3_H
 
 #include <QtDemon/qtdemonglobal.h>
-#include <QtDemon/QDemonTransform>
 
 #include <QVector3D>
 #include <QMatrix3x3>
@@ -61,23 +60,11 @@ public:
     static Q_ALWAYS_INLINE QDemonBounds3 basisExtent(const QVector3D &center, const QMatrix3x3 &basis, const QVector3D &extent);
 
     /**
-    \brief Construct from pose and extent
-    */
-    static Q_ALWAYS_INLINE QDemonBounds3 poseExtent(const QDemonTransform &pose, const QVector3D &extent);
-
-    /**
     \brief gets the transformed bounds of the passed AABB (resulting in a bigger AABB).
     \param[in] matrix Transform to apply, can contain scaling as well
     \param[in] bounds The bounds to transform.
     */
     static Q_ALWAYS_INLINE QDemonBounds3 transform(const QMatrix3x3 &matrix, const QDemonBounds3 &bounds);
-
-    /**
-    \brief gets the transformed bounds of the passed AABB (resulting in a bigger AABB).
-    \param[in] transform Transform to apply, can contain scaling as well
-    \param[in] bounds The bounds to transform.
-    */
-    static Q_ALWAYS_INLINE QDemonBounds3 transform(const QDemonTransform &transform, const QDemonBounds3 &bounds);
 
     /**
     \brief Sets empty to true

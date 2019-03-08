@@ -9,7 +9,6 @@ HEADERS += \
     qtdemonglobal.h \
     qtdemonglobal_p.h \
     qdemonbounds3.h \
-    qdemontransform.h \
     qdemonplane.h \
     qdemonutils.h \
     qdemondataref.h \
@@ -22,7 +21,6 @@ HEADERS += \
 
 SOURCES += \
     qdemonbounds3.cpp \
-    qdemontransform.cpp \
     qdemonplane.cpp \
     qdemonutils.cpp \
     qdemondataref.cpp \
