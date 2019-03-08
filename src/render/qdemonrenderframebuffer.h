@@ -72,6 +72,7 @@ public:
 
 class Q_DEMONRENDER_EXPORT QDemonRenderFrameBuffer
 {
+    Q_DISABLE_COPY(QDemonRenderFrameBuffer)
 public:
     QAtomicInt ref;
 

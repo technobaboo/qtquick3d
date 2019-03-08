@@ -68,6 +68,7 @@ struct QDemonRenderModel;
 
 class Q_DEMONRUNTIMERENDER_EXPORT QDemonMaterialSystem
 {
+    Q_DISABLE_COPY(QDemonMaterialSystem)
 public:
     QAtomicInt ref;
 private:

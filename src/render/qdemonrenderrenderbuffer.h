@@ -48,6 +48,7 @@ struct QDemonRenderRenderBufferDimensions
 
 class Q_DEMONRENDER_EXPORT QDemonRenderRenderBuffer
 {
+    Q_DISABLE_COPY(QDemonRenderRenderBuffer)
 public:
     QAtomicInt ref;
 
