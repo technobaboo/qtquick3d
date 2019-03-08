@@ -393,6 +393,12 @@ void QDemonDefaultMaterial::setOpacity(float opacity)
     if (qFuzzyCompare(m_opacity, opacity))
         return;
 
+    if (opacity > 1.0f)
+        opacity = 1.0f;
+
+    if (opacity < 0.0f)
+        opacity = 0.0f;
+
     m_opacity = opacity;
     emit opacityChanged(m_opacity);
     markDirty(OpacityDirty);
