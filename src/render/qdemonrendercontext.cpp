@@ -504,8 +504,13 @@ void QDemonRenderContext::frameBufferDestroyed(QDemonRenderFrameBuffer *fb)
         m_hardwarePropertyContext.m_frameBuffer = nullptr;
 }
 
+QDemonRef<QDemonRenderAttribLayout> QDemonRenderContext::createAttributeLayout(QDemonConstDataRef<QDemonRenderVertexBufferEntry> attribs)
+{
+    return QDemonRef<QDemonRenderAttribLayout>(new QDemonRenderAttribLayout(this, attribs));
+}
+
 QDemonRef<QDemonRenderInputAssembler> QDemonRenderContext::createInputAssembler(
-        QDemonRenderAttribLayout attribLayout,
+        QDemonRef<QDemonRenderAttribLayout> attribLayout,
         QDemonConstDataRef<QDemonRef<QDemonRenderVertexBuffer>> buffers,
         const QDemonRef<QDemonRenderIndexBuffer> indexBuffer,
         QDemonConstDataRef<quint32> strides,

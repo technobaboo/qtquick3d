@@ -1058,7 +1058,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
 
                 QDemonRenderDrawMode primType = QDemonRenderDrawMode::Patches;
 
-                QDemonRenderAttribLayout theLayout(theRenderContext, toConstDataRef(theEntries, 1));
+                QDemonRef<QDemonRenderAttribLayout> theLayout = theRenderContext->createAttributeLayout(toConstDataRef(theEntries, 1));
                 // How many vertices the TCS shader has access to in order to produce its output
                 // array of vertices.
                 const quint32 inputPatchVertexCount = 5;
@@ -1401,7 +1401,8 @@ struct QDemonPathManager : public QDemonPathManagerInterface
                                                                            QDemonRenderComponentType::UnsignedInteger8,
                                                                            6,
                                                                            toU8DataRef(indexes, 6));
-            QDemonRenderAttribLayout theAttribLayout(theRenderContext, toConstDataRef(theBufferEntries, 1));
+            QDemonRef<QDemonRenderAttribLayout> theAttribLayout = theRenderContext->createAttributeLayout(
+                    toConstDataRef(theBufferEntries, 1));
             m_paintedRectInputAssembler = theRenderContext->createInputAssembler(theAttribLayout,
                                                                                  toConstDataRef(m_paintedRectVertexBuffer),
                                                                                  m_paintedRectIndexBuffer,

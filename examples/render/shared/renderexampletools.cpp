@@ -79,7 +79,7 @@ QDemonRef<QDemonRenderInputAssembler> QDemonRenderExampleTools::createBox(QDemon
         QDemonRenderVertexBufferEntry("attr_uv", QDemonRenderComponentType::Float32, 2, 6 * sizeof(float)),
     };
 
-    QDemonRenderAttribLayout attribLayout(context, toConstDataRef(entries, 3));
+    QDemonRef<QDemonRenderAttribLayout> attribLayout = context->createAttributeLayout(toConstDataRef(entries, 3));
 
     // Vertex Buffer
     quint32 bufStride = 8 * sizeof(float);

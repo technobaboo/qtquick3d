@@ -120,10 +120,6 @@ struct QDemonRenderContextScopedProperty : public QDemonRenderGenericScopedPrope
     }
 };
 
-/**
- * A Render Context implementation class
- *
- */
 // TODO: Get rid of this, or at least make it more explicit, i.e, don't assume any patterns.
 #define ITERATE_HARDWARE_CONTEXT_PROPERTIES                                                                            \
     HANDLE_CONTEXT_HARDWARE_PROPERTY(RenderTarget, frameBuffer)                                                        \
@@ -141,8 +137,6 @@ struct QDemonRenderContextScopedProperty : public QDemonRenderGenericScopedPrope
     HANDLE_CONTEXT_HARDWARE_PROPERTY(ScissorRect, scissorRect)                                                         \
     HANDLE_CONTEXT_HARDWARE_PROPERTY(Viewport, viewport)                                                               \
     HANDLE_CONTEXT_HARDWARE_PROPERTY(ClearColor, clearColor)
-
-// forward declarations
 
 class Q_DEMONRENDER_EXPORT QDemonRenderContext : public QDemonRenderDrawable
 {
@@ -542,7 +536,8 @@ public:
     QDemonRef<QDemonRenderFrameBuffer> getFrameBuffer(const void *implementationHandle);
     void frameBufferDestroyed(QDemonRenderFrameBuffer *fb);
 
-    QDemonRef<QDemonRenderInputAssembler> createInputAssembler(QDemonRenderAttribLayout attribLayout,
+    QDemonRef<QDemonRenderAttribLayout> createAttributeLayout(QDemonConstDataRef<QDemonRenderVertexBufferEntry> attribs);
+    QDemonRef<QDemonRenderInputAssembler> createInputAssembler(QDemonRef<QDemonRenderAttribLayout> attribLayout,
                                                                QDemonConstDataRef<QDemonRef<QDemonRenderVertexBuffer>> buffers,
                                                                const QDemonRef<QDemonRenderIndexBuffer> indexBuffer,
                                                                QDemonConstDataRef<quint32> strides,

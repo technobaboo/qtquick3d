@@ -42,19 +42,9 @@ class QDemonRenderBackend;
 ///< this class handles the vertex attribute layout setup
 class Q_DEMONRENDER_EXPORT QDemonRenderAttribLayout
 {
-    struct Private {
-        Q_DISABLE_COPY(Private)
-        Private(const QDemonRef<QDemonRenderContext> &context, QDemonConstDataRef<QDemonRenderVertexBufferEntry> attribs);
-        ~Private();
-        QAtomicInt ref;
-        QDemonRef<QDemonRenderBackend> backend; ///< pointer to backend
-        QDemonRenderBackend::QDemonRenderBackendAttribLayoutObject handle; ///< opaque backend handle
-
-    };
-    QExplicitlySharedDataPointer<Private> d;
-
+    Q_DISABLE_COPY(QDemonRenderAttribLayout)
 public:
-    QDemonRenderAttribLayout() = default;
+    QAtomicInt ref;
     /**
      * @brief constructor
      *
@@ -64,21 +54,25 @@ public:
      * @return No return.
      */
     QDemonRenderAttribLayout(const QDemonRef<QDemonRenderContext> &context,
-                             QDemonConstDataRef<QDemonRenderVertexBufferEntry> attribs)
-        : d(new Private(context, attribs))
-    {}
-    ~QDemonRenderAttribLayout() {}
+                             QDemonConstDataRef<QDemonRenderVertexBufferEntry> attribs);
+    ///< destructor
+    ~QDemonRenderAttribLayout();
 
-    bool isNull() const { return !d; }
     /**
      * @brief get the backend object handle
      *
      * @return the backend object handle.
      */
-    QDemonRenderBackend::QDemonRenderBackendAttribLayoutObject handle() const
+    QDemonRenderBackend::QDemonRenderBackendAttribLayoutObject GetAttribLayoutHandle() const
     {
-        return d ? d->handle : nullptr;
+        return m_attribLayoutHandle;
     }
+
+private:
+    QDemonRef<QDemonRenderContext> m_context; ///< pointer to context
+    QDemonRef<QDemonRenderBackend> m_backend; ///< pointer to backend
+
+    QDemonRenderBackend::QDemonRenderBackendAttribLayoutObject m_attribLayoutHandle; ///< opaque backend handle
 };
 
 QT_END_NAMESPACE

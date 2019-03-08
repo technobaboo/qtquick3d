@@ -156,18 +156,18 @@ class Q_DEMONRUNTIMERENDER_EXPORT QDemonRendererImpl : public QDemonRendererInte
     QDemonRef<QDemonRenderIndexBuffer> m_rectIndexBuffer;
     QDemonRef<QDemonRenderInputAssembler> m_quadInputAssembler;
     QDemonRef<QDemonRenderInputAssembler> m_rectInputAssembler;
-    QDemonRenderAttribLayout m_quadAttribLayout;
-    QDemonRenderAttribLayout m_rectAttribLayout;
+    QDemonRef<QDemonRenderAttribLayout> m_quadAttribLayout;
+    QDemonRef<QDemonRenderAttribLayout> m_rectAttribLayout;
 
     // X,Y triangle strip quads in screen coord dynamiclly setup
     QDemonRef<QDemonRenderVertexBuffer> m_quadStripVertexBuffer;
     QDemonRef<QDemonRenderInputAssembler> m_quadStripInputAssembler;
-    QDemonRenderAttribLayout m_quadStripAttribLayout;
+    QDemonRef<QDemonRenderAttribLayout> m_quadStripAttribLayout;
 
     // X,Y,Z point which is used for instanced based rendering of points
     QDemonRef<QDemonRenderVertexBuffer> m_pointVertexBuffer;
     QDemonRef<QDemonRenderInputAssembler> m_pointInputAssembler;
-    QDemonRenderAttribLayout m_pointAttribLayout;
+    QDemonRef<QDemonRenderAttribLayout> m_pointAttribLayout;
 
     QDemonOption<QDemonRef<QDemonLayerSceneShader>> m_sceneLayerShader;
     QDemonOption<QDemonRef<QDemonLayerProgAABlendShader>> m_layerProgAAShader;
@@ -432,8 +432,9 @@ public:
             QDemonRenderComponentType componentType,
             size_t size,
             QDemonConstDataRef<quint8> bufferData = QDemonConstDataRef<quint8>());
+    QDemonRef<QDemonRenderAttribLayout> createAttributeLayout(QDemonConstDataRef<QDemonRenderVertexBufferEntry> attribs);
     QDemonRef<QDemonRenderInputAssembler> getOrCreateInputAssembler(const QByteArray &inStr,
-                                                                    QDemonRenderAttribLayout attribLayout,
+                                                                    QDemonRef<QDemonRenderAttribLayout> attribLayout,
                                                                     QDemonConstDataRef<QDemonRef<QDemonRenderVertexBuffer>> buffers,
                                                                     const QDemonRef<QDemonRenderIndexBuffer> indexBuffer,
                                                                     QDemonConstDataRef<quint32> strides,
