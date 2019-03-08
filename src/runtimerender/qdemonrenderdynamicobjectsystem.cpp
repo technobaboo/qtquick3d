@@ -644,7 +644,7 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
         if (defSize)
             ::memcpy(defPtr, definitions.data(), defSize);
         if (defaultSize)
-            memZero(defaultData, defaultSize);
+            memset(defaultData, 0, defaultSize);
         QDemonRef<QDemonDynamicObjClassImpl> theClass(
                 new (allocData)
                         QDemonDynamicObjClassImpl(inName, toDataRef(defPtr, inProperties.size()), dataSectionSize, inBaseObjectSize, inGraphObjectType, defaultData));
@@ -781,7 +781,7 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
         dynamic::QDemonCommand **theCommandPtrBegin = reinterpret_cast<dynamic::QDemonCommand **>(
                 theCommandDataBegin + align8(commandAllocationSize));
         dynamic::QDemonCommand **theCurrentCommandPtr = theCommandPtrBegin;
-        memZero(theCommandDataBegin, totalAllocationSize);
+        memset(theCommandDataBegin, 0, totalAllocationSize);
 
         theClass->m_requiresDepthTexture = false;
         for (quint32 idx = 0, end = inCommands.size(); idx < end; ++idx) {

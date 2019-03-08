@@ -85,8 +85,7 @@ public:
                         const QDemonRef<QDemonInputStreamFactoryInterface> &inInputStreamFactory,
                         const QDemonRef<QDemonPerfTimer> &inTimer);
     ~QDemonBufferManager();
-    // Path manipulation used to get the final path form a base path plus relative extension
-    QString combineBaseAndRelative(const char *inBase, const char *inRelative);
+
     void setImageHasTransparency(QString inSourcePath, bool inHasTransparency);
     bool getImageHasTransparency(QString inSourcePath) const;
     void setImageTransparencyToFalseIfNotSet(QString inSourcePath);

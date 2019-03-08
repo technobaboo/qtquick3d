@@ -505,7 +505,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
         // glsl file itself.
         QDemonCommand **theFirstCommandPtr = (reinterpret_cast<QDemonCommand **>(dataBuffer + Align8(commandAllocationSize)));
         QDemonCommand **theCommandPtr = theFirstCommandPtr;
-        memZero(dataBuffer, commandAllocationSize);
+        memset(dataBuffer, 0, commandAllocationSize);
 
         new (dataBuffer) QDemonBindTarget();
         *theCommandPtr = (QDemonCommand *)dataBuffer;

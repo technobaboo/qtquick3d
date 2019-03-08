@@ -65,11 +65,11 @@ struct PrimitiveEntry
 
 const int nPrimitives = 5;
 const PrimitiveEntry primitives[nPrimitives] = {
-        {"#Rectangle", "Rectangle.mesh"},
-        {"#Sphere","Sphere.mesh"},
-        {"#Cube","Cube.mesh"},
-        {"#Cone","Cone.mesh"},
-        {"#Cylinder","Cylinder.mesh"},
+        {"#Rectangle", "/Rectangle.mesh"},
+        {"#Sphere","/Sphere.mesh"},
+        {"#Cube","/Cube.mesh"},
+        {"#Cone","/Cone.mesh"},
+        {"#Cylinder","/Cylinder.mesh"},
 };
 
 const char *primitivesDirectory = "res//primitives";
@@ -110,12 +110,6 @@ QDemonBufferManager::QDemonBufferManager(const QDemonRef<QDemonRenderContext> &c
 }
 
 QDemonBufferManager::~QDemonBufferManager() = default;
-
-QString QDemonBufferManager::combineBaseAndRelative(const char *inBase, const char *inRelative)
-{
-    CFileTools::combineBaseAndRelative(inBase, inRelative, d->pathBuilder);
-    return d->pathBuilder;
-}
 
 void QDemonBufferManager::setImageHasTransparency(QString inImagePath, bool inHasTransparency)
 {
@@ -339,7 +333,8 @@ QDemonMeshUtilities::MultiLoadResult QDemonBufferManager::loadPrimitive(const QS
     QByteArray theName = inRelativePath.toUtf8();
     for (size_t idx = 0; idx < 5; ++idx) {
         if (primitives[idx].primitive == theName) {
-            CFileTools::combineBaseAndRelative(QString::fromLatin1(primitivesDirectory), QString::fromLatin1(primitives[idx].file), d->pathBuilder);
+            d->pathBuilder = QString::fromLatin1(primitivesDirectory);
+            d->pathBuilder += QLatin1String(primitives[idx].file);
             quint32 id = 1;
             QSharedPointer<QIODevice> theInStream(d->inputStreamFactory->getStreamForFile(d->pathBuilder));
             if (theInStream)

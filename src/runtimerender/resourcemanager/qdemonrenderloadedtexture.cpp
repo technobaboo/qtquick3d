@@ -307,7 +307,7 @@ struct QDemonTextureDataWriter
             m_textureData.data = malloc(dataSize);
             m_textureData.dataSizeInBytes = dataSize;
         }
-        memZero(m_textureData.data, m_textureData.dataSizeInBytes);
+        memset(m_textureData.data, 0, m_textureData.dataSizeInBytes);
         m_textureData.format = hasA ? QDemonRenderTextureFormat::RGBA8 : QDemonRenderTextureFormat::RGB8;
     }
 

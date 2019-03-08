@@ -50,7 +50,7 @@ QDemonRenderContext::QDemonRenderContext(const QDemonRef<QDemonRenderBackend> &i
     m_maxConstantBufferUnits = 16; // need backend query
 
     // get initial state
-    memZero(&m_hardwarePropertyContext, sizeof(m_hardwarePropertyContext));
+    memset(&m_hardwarePropertyContext, 0, sizeof(m_hardwarePropertyContext));
 
     // get default blending functions
     m_backend->getBlendFunc(&m_hardwarePropertyContext.m_blendFunction);
