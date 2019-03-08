@@ -93,7 +93,7 @@ void QDemonRenderShadowMap::addShadowMapEntry(qint32 index,
             pEntry->m_cubeCopy = nullptr;
             pEntry->m_depthRender = theManager->allocateTexture2D(width, height, QDemonRenderTextureFormat::Depth24Stencil8, samples);
         } else if (nullptr != pEntry->m_depthMap) {
-            QDemonTextureDetails theDetails(pEntry->m_depthMap->getTextureDetails());
+            QDemonTextureDetails theDetails(pEntry->m_depthMap->textureDetails());
 
             // If anything differs about the map we're looking for, let's recreate it.
             if (theDetails.format != format || theDetails.width != width || theDetails.height != height
@@ -109,7 +109,7 @@ void QDemonRenderShadowMap::addShadowMapEntry(qint32 index,
                 pEntry->m_depthRender = theManager->allocateTexture2D(width, height, QDemonRenderTextureFormat::Depth24Stencil8, samples);
             }
         } else {
-            QDemonTextureDetails theDetails(pEntry->m_depthCube->getTextureDetails());
+            QDemonTextureDetails theDetails(pEntry->m_depthCube->textureDetails());
 
             // If anything differs about the map we're looking for, let's recreate it.
             if (theDetails.format != format || theDetails.width != width || theDetails.height != height

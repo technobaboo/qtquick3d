@@ -147,9 +147,9 @@ struct QDemonResourceManager : public QDemonResourceManagerInterface
         bool inMultisample = inSampleCount > 1 && renderContext->areMultisampleTexturesSupported();
         for (qint32 idx = 0, end = freeTextures.size(); idx < end; ++idx) {
             auto theTexture = freeTextures[idx];
-            QDemonTextureDetails theDetails = theTexture->getTextureDetails();
+            QDemonTextureDetails theDetails = theTexture->textureDetails();
             if (theDetails.width == inWidth && theDetails.height == inHeight && inTextureFormat == theDetails.format
-                && theTexture->getSampleCount() == inSampleCount) {
+                && theTexture->sampleCount() == inSampleCount) {
                 replaceWithLast(freeTextures, idx);
                 return setupAllocatedTexture(theTexture);
             }
@@ -170,7 +170,7 @@ struct QDemonResourceManager : public QDemonResourceManagerInterface
                 return SetupAllocatedTexture( *theTexture );
         }*/
         // else create a new texture.
-        auto theTexture = renderContext->createTexture2D();
+        auto theTexture = new QDemonRenderTexture2D(renderContext);
 
         if (inMultisample)
             theTexture->setTextureDataMultisample(inSampleCount, inWidth, inHeight, inTextureFormat);
@@ -201,9 +201,9 @@ struct QDemonResourceManager : public QDemonResourceManagerInterface
         bool inMultisample = inSampleCount > 1 && renderContext->areMultisampleTexturesSupported();
         for (int idx = 0, end = freeTexArrays.size(); idx < end; ++idx) {
             auto theTexture = freeTexArrays[idx];
-            QDemonTextureDetails theDetails = theTexture->getTextureDetails();
+            QDemonTextureDetails theDetails = theTexture->textureDetails();
             if (theDetails.width == inWidth && theDetails.height == inHeight && theDetails.depth == inSlices
-                && inTextureFormat == theDetails.format && theTexture->getSampleCount() == inSampleCount) {
+                && inTextureFormat == theDetails.format && theTexture->sampleCount() == inSampleCount) {
                 replaceWithLast(freeTexArrays, idx);
                 theTexture->setMinFilter(QDemonRenderTextureMinifyingOp::Linear);
                 theTexture->setMagFilter(QDemonRenderTextureMagnifyingOp::Linear);
@@ -229,7 +229,7 @@ struct QDemonResourceManager : public QDemonResourceManagerInterface
         QDemonRef<QDemonRenderTexture2DArray> theTexture = nullptr;
 
         if (!inMultisample) {
-            theTexture = renderContext->createTexture2DArray();
+            theTexture = new QDemonRenderTexture2DArray(renderContext);
             theTexture->setTextureData(QDemonDataRef<quint8>(), 0, inWidth, inHeight, inSlices, inTextureFormat);
         } else {
             // Not supported yet
@@ -258,9 +258,9 @@ struct QDemonResourceManager : public QDemonResourceManagerInterface
         bool inMultisample = inSampleCount > 1 && renderContext->areMultisampleTexturesSupported();
         for (int idx = 0, end = freeTexCubes.size(); idx < end; ++idx) {
             auto theTexture = freeTexCubes[idx];
-            QDemonTextureDetails theDetails = theTexture->getTextureDetails();
+            QDemonTextureDetails theDetails = theTexture->textureDetails();
             if (theDetails.width == inWidth && theDetails.height == inHeight && inTextureFormat == theDetails.format
-                && theTexture->getSampleCount() == inSampleCount) {
+                && theTexture->sampleCount() == inSampleCount) {
                 replaceWithLast(freeTexCubes, idx);
 
                 theTexture->setMinFilter(QDemonRenderTextureMinifyingOp::Linear);
@@ -292,7 +292,7 @@ struct QDemonResourceManager : public QDemonResourceManagerInterface
         QDemonRef<QDemonRenderTextureCube> theTexture = nullptr;
 
         if (!inMultisample) {
-            theTexture = renderContext->createTextureCube();
+            theTexture = new QDemonRenderTextureCube(renderContext);
             theTexture->setTextureData(QDemonDataRef<quint8>(), 0, QDemonRenderTextureCubeFace::CubePosX, inWidth, inHeight, inTextureFormat);
             theTexture->setTextureData(QDemonDataRef<quint8>(), 0, QDemonRenderTextureCubeFace::CubeNegX, inWidth, inHeight, inTextureFormat);
             theTexture->setTextureData(QDemonDataRef<quint8>(), 0, QDemonRenderTextureCubeFace::CubePosY, inWidth, inHeight, inTextureFormat);

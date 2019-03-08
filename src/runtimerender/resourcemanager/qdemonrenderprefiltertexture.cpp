@@ -451,7 +451,7 @@ void QDemonRenderPrefilterTextureCompute::createLevel0Tex(void *inTextureData, q
     }
 
     if (m_level0Tex == nullptr) {
-        m_level0Tex = m_renderContext->createTexture2D();
+        m_level0Tex = new QDemonRenderTexture2D(m_renderContext);
         m_level0Tex->setTextureStorage(1, theWidth, m_height, theFormat, theFormat, QDemonDataRef<quint8>((quint8 *)inTextureData, inTextureDataSize));
     } else {
         m_level0Tex->setTextureSubData(QDemonDataRef<quint8>((quint8 *)inTextureData, inTextureDataSize), 0, 0, 0, theWidth, m_height, theFormat);

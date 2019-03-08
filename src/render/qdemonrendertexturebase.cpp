@@ -40,7 +40,7 @@ QDemonRenderTextureBase::QDemonRenderTextureBase(const QDemonRef<QDemonRenderCon
                                                  QDemonRenderTextureTargetType texTarget)
     : m_context(context)
     , m_backend(context->getBackend())
-    , m_textureHandle(nullptr)
+    , m_handle(nullptr)
     , m_textureUnit(std::numeric_limits<quint32>::max())
     , m_samplerParamsDirty(true)
     , m_texStateDirty(false)
@@ -52,7 +52,7 @@ QDemonRenderTextureBase::QDemonRenderTextureBase(const QDemonRef<QDemonRenderCon
     , m_maxMipLevel(0)
     , m_immutable(false)
 {
-    m_textureHandle = m_backend->createTexture();
+    m_handle = m_backend->createTexture();
     m_sampler = new QDemonRenderTextureSampler(context);
 }
 
@@ -60,8 +60,8 @@ QDemonRenderTextureBase::~QDemonRenderTextureBase()
 {
     if (m_sampler)
         ::free(m_sampler);
-    if (m_textureHandle)
-        m_backend->releaseTexture(m_textureHandle);
+    if (m_handle)
+        m_backend->releaseTexture(m_handle);
 }
 
 void QDemonRenderTextureBase::setBaseLevel(qint32 value)
@@ -148,7 +148,7 @@ void QDemonRenderTextureBase::applyTexParams()
     }
 
     if (m_texStateDirty) {
-        m_backend->updateTextureObject(m_textureHandle, m_texTarget, m_baseLevel, m_maxLevel);
+        m_backend->updateTextureObject(m_handle, m_texTarget, m_baseLevel, m_maxLevel);
         m_texStateDirty = false;
     }
 }
@@ -158,7 +158,7 @@ void QDemonRenderTextureBase::applyTexSwizzle()
     QDemonRenderTextureSwizzleMode theSwizzleMode = m_backend->getTextureSwizzleMode(m_format);
     if (theSwizzleMode != m_sampler->m_swizzleMode) {
         m_sampler->m_swizzleMode = theSwizzleMode;
-        m_backend->updateTextureSwizzle(m_textureHandle, m_texTarget, theSwizzleMode);
+        m_backend->updateTextureSwizzle(m_handle, m_texTarget, theSwizzleMode);
     }
 }
 QT_END_NAMESPACE

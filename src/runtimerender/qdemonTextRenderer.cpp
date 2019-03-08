@@ -78,7 +78,7 @@ QDemonTextTextureDetails QDemonTextRendererInterface::uploadData(QDemonDataRef<q
         return QDemonTextTextureDetails();
     }
 
-    QDemonTextureDetails theTextureDetails = inTexture.getTextureDetails();
+    QDemonTextureDetails theTextureDetails = inTexture.textureDetails();
     quint32 theUploadSize = theNecessaryHeight * dataStride;
 
     QDemonDataRef<quint8> theUploadData = QDemonDataRef<quint8>(inTextureData.begin(), theUploadSize);

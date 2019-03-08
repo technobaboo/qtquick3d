@@ -110,7 +110,7 @@ struct QDemonTextTextureCache : public QDemonTextTextureCacheInterface
 
     static inline quint32 getNumBytes(QDemonRenderTexture2D &inTexture)
     {
-        QDemonTextureDetails theDetails(inTexture.getTextureDetails());
+        QDemonTextureDetails theDetails(inTexture.textureDetails());
         return theDetails.width * theDetails.height * theDetails.format.getSizeofFormat();
     }
 
@@ -121,7 +121,7 @@ struct QDemonTextTextureCache : public QDemonTextTextureCacheInterface
             QDemonTextCacheNode *theEnd = textCacheNodeList.back_ptr();
             if (theEnd->frameCount != frameCount) {
                 nextTexture = theEnd->textInfo.second.second;
-                // STextureDetails theDetails = nextTexture->GetTextureDetails();
+                // STextureDetails theDetails = nextTexture->textureDetails();
                 textureTotalBytes -= getNumBytes(*nextTexture.data());
                 textCacheNodeList.remove(*theEnd);
                 // copy the key because the next statement will destroy memory
@@ -146,7 +146,7 @@ struct QDemonTextTextureCache : public QDemonTextTextureCacheInterface
                 nextTexture = invalidateLastItem();
 
             if (nextTexture.isNull())
-                nextTexture = renderContext->createTexture2D();
+                nextTexture = new QDemonRenderTexture2D(renderContext);
 
             QDemonRef<QDemonRenderPathFontItem> nextPathFontItemObject;
             QDemonRef<QDemonRenderPathFontSpecification> nextPathFontObject;

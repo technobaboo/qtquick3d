@@ -558,7 +558,7 @@ struct QDemonCustomMaterialTextureData
             texture->setTextureWrapT(QDemonRenderTextureCoordOp::ClampToEdge);
         }
 
-        if ((texture->getNumMipmaps() == 0) && needsMips)
+        if ((texture->numMipmaps() == 0) && needsMips)
             texture->generateMipmaps();
 
         sampler.set(texture.data());
@@ -854,7 +854,7 @@ bool QDemonMaterialSystem::textureNeedsMips(const dynamic::QDemonPropertyDefinit
 {
     if (inPropDec && inTexture) {
         return bool((inPropDec->minFilterOp == QDemonRenderTextureMinifyingOp::LinearMipmapLinear)
-                    && (inTexture->getNumMipmaps() == 0));
+                    && (inTexture->numMipmaps() == 0));
     }
 
     return false;
@@ -1266,7 +1266,7 @@ void QDemonMaterialSystem::allocateBuffer(const dynamic::QDemonAllocateBuffer &i
         QDemonRenderTextureOrRenderBuffer theSourceTexture = inTarget->attachment(QDemonRenderFrameBufferAttachment::Color0);
         // we need a texture
         if (theSourceTexture.hasTexture2D()) {
-            theSourceTextureDetails = theSourceTexture.texture2D()->getTextureDetails();
+            theSourceTextureDetails = theSourceTexture.texture2D()->textureDetails();
         } else {
             qCCritical(INVALID_OPERATION, "CustomMaterial %s: Invalid source texture", qPrintable(inCommand.m_name));
             Q_ASSERT(false);
@@ -1290,7 +1290,7 @@ void QDemonMaterialSystem::allocateBuffer(const dynamic::QDemonAllocateBuffer &i
     qint32 bufferIdx = findBuffer(inCommand.m_name);
     if (bufferIdx < allocatedBuffers.size()) {
         QDemonCustomMaterialBuffer &theEntry(allocatedBuffers[bufferIdx]);
-        QDemonTextureDetails theDetails = theEntry.texture->getTextureDetails();
+        QDemonTextureDetails theDetails = theEntry.texture->textureDetails();
         if (theDetails.width == theWidth && theDetails.height == theHeight && theDetails.format == theFormat) {
             theTexture = theEntry.texture;
         } else {
@@ -1332,7 +1332,7 @@ QDemonRef<QDemonRenderFrameBuffer> QDemonMaterialSystem::bindBuffer(const QDemon
     }
 
     if (theTexture) {
-        QDemonTextureDetails theDetails(theTexture->getTextureDetails());
+        QDemonTextureDetails theDetails(theTexture->textureDetails());
         context->getRenderContext()->setViewport(QRect(0, 0, theDetails.width, theDetails.height));
         outDestSize = QVector2D(float(theDetails.width), float(theDetails.height));
         outClearTarget = inCommand.m_needsClear;

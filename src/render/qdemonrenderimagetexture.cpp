@@ -53,7 +53,7 @@ QDemonRenderImage2D::~QDemonRenderImage2D()
 
 void QDemonRenderImage2D::setTextureLevel(qint32 inLevel)
 {
-    if (m_texture2D && m_texture2D->getNumMipmaps() >= (quint32)inLevel) {
+    if (m_texture2D && m_texture2D->numMipmaps() >= (quint32)inLevel) {
         m_textureLevel = inLevel;
     }
 }
@@ -65,11 +65,11 @@ void QDemonRenderImage2D::bind(qint32 unit)
     else
         m_textureUnit = unit;
 
-    QDemonTextureDetails theDetails(m_texture2D->getTextureDetails());
+    QDemonTextureDetails theDetails(m_texture2D->textureDetails());
 
     // note it is the callers responsibility that the texture format is supported by the compute
     // shader
-    m_context->getBackend()->bindImageTexture(m_texture2D->getTextureObjectHandle(),
+    m_context->getBackend()->bindImageTexture(m_texture2D->handle(),
                                             m_textureUnit,
                                             m_textureLevel,
                                             false,
@@ -80,7 +80,7 @@ void QDemonRenderImage2D::bind(qint32 unit)
 
 QDemonRenderBackend::QDemonRenderBackendTextureObject QDemonRenderImage2D::handle()
 {
-    return m_texture2D->getTextureObjectHandle();
+    return m_texture2D->handle();
 }
 
 QT_END_NAMESPACE

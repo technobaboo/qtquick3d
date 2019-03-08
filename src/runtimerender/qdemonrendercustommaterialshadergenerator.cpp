@@ -727,7 +727,7 @@ struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
                 QVector4D offsets(dataPtr[12],
                                   dataPtr[13],
                                   theLightProbe->m_textureData.m_textureFlags.isPreMultiplied() ? 1.0f : 0.0f,
-                                  float(theLightProbe->m_textureData.m_texture->getNumMipmaps()));
+                                  float(theLightProbe->m_textureData.m_texture->numMipmaps()));
                 // Fast IBL is always on;
                 // inRenderContext.m_Layer.m_FastIbl ? 1.0f : 0.0f );
                 // Grab just the upper 2x2 rotation matrix from the larger matrix.

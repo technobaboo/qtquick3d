@@ -185,7 +185,7 @@ QDemonRenderImageTextureData QDemonBufferManager::loadRenderImage(QString inImag
 
     // inLoadedImage.EnsureMultiplerOfFour( d->context->GetFoundation(), inImagePath.c_str() );
 
-    QDemonRef<QDemonRenderTexture2D> theTexture = d->context->createTexture2D();
+    QDemonRef<QDemonRenderTexture2D> theTexture = new QDemonRenderTexture2D(d->context);
     if (inLoadedImage->data) {
         QDemonRenderTextureFormat destFormat = inLoadedImage->format;
         if (inBsdfMipmaps) {

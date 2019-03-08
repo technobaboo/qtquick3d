@@ -165,9 +165,6 @@ protected:
     TContextRasterizerStateMap m_rasterizerStateToImpMap;
     TContextPathFontSpecificationMap m_pathFontSpecToImpMap;
 
-    QHash<const void *, QDemonRenderTexture2D *> m_tex2DToImpMap;
-    TContextTex2DArrayToImpMap m_tex2DArrayToImpMap;
-    TContextTexCubeToImpMap m_texCubeToImpMap;
     QHash<const void *, QDemonRenderShaderProgram *> m_shaderToImpMap;
     QHash<const void *, QDemonRenderRenderBuffer *> m_renderBufferToImpMap;
     QHash<const void *, QDemonRenderFrameBuffer *> m_frameBufferToImpMap;
@@ -498,16 +495,6 @@ public:
     QDemonRef<QDemonRenderOcclusionQuery> createOcclusionQuery();
     QDemonRef<QDemonRenderTimerQuery> createTimerQuery();
     QDemonRef<QDemonRenderSync> createSync();
-
-    QDemonRef<QDemonRenderTexture2D> createTexture2D();
-    QDemonRef<QDemonRenderTexture2D> getTexture2D(const void *implementationHandle);
-    void textureDestroyed(QDemonRenderTexture2D *buffer);
-
-    QDemonRef<QDemonRenderTexture2DArray> createTexture2DArray();
-    void textureDestroyed(QDemonRenderTexture2DArray *buffer);
-
-    QDemonRef<QDemonRenderTextureCube> createTextureCube();
-    void textureDestroyed(QDemonRenderTextureCube *buffer);
 
     qint32 getNextTextureUnit();
 

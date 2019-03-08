@@ -395,7 +395,7 @@ struct ShaderConstantApplier<QDemonRenderTexture2DPtr>
         if (inValue) {
             QDemonRenderTexture2D *texObj = reinterpret_cast<QDemonRenderTexture2D *>(inValue);
             texObj->bind();
-            quint32 texUnit = texObj->getTextureUnit();
+            quint32 texUnit = texObj->textureUnit();
             if (texUnit != oldValue) {
                 backend->setConstantValue(program->handle(), location, type, count, &texUnit);
                 oldValue = texUnit;
@@ -423,7 +423,7 @@ struct ShaderConstantApplier<QDemonRenderTexture2DHandle>
                 quint32 texUnit = std::numeric_limits<quint32>::max();
                 if (texObj) {
                     texObj->bind();
-                    texUnit = texObj->getTextureUnit();
+                    texUnit = texObj->textureUnit();
                 }
                 if (texUnit != oldValue[i]) {
                     update = true;
@@ -454,7 +454,7 @@ struct ShaderConstantApplier<QDemonRenderTexture2DArrayPtr>
         if (inValue) {
             QDemonRenderTexture2DArray *texObj = reinterpret_cast<QDemonRenderTexture2DArray *>(inValue);
             texObj->bind();
-            quint32 texUnit = texObj->getTextureUnit();
+            quint32 texUnit = texObj->textureUnit();
             if (texUnit != oldValue) {
                 backend->setConstantValue(program->handle(), location, type, count, &texUnit);
                 oldValue = texUnit;
@@ -477,7 +477,7 @@ struct ShaderConstantApplier<QDemonRenderTextureCubePtr>
         if (inValue) {
             QDemonRenderTextureCube *texObj = reinterpret_cast<QDemonRenderTextureCube *>(inValue);
             texObj->bind();
-            quint32 texUnit = texObj->getTextureUnit();
+            quint32 texUnit = texObj->textureUnit();
             if (texUnit != oldValue) {
                 backend->setConstantValue(program->handle(), location, type, count, &texUnit);
                 oldValue = texUnit;
@@ -505,7 +505,7 @@ struct ShaderConstantApplier<QDemonRenderTextureCubeHandle>
                 quint32 texUnit = std::numeric_limits<quint32>::max();
                 if (texObj) {
                     texObj->bind();
-                    texUnit = texObj->getTextureUnit();
+                    texUnit = texObj->textureUnit();
                 }
                 if (texUnit != oldValue[i]) {
                     update = true;

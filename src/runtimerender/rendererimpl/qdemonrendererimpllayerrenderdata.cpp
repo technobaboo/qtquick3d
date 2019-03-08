@@ -238,7 +238,7 @@ void QDemonLayerRenderData::renderAoPass()
 
     shader->depthTexture.set(m_layerDepthTexture.getTexture().data());
     shader->depthSamplerSize.set(
-            QVector2D(m_layerDepthTexture->getTextureDetails().width, m_layerDepthTexture->getTextureDetails().height));
+            QVector2D(m_layerDepthTexture->textureDetails().width, m_layerDepthTexture->textureDetails().height));
 
     // Important uniforms for AO calculations
     QVector2D theCameraProps = QVector2D(camera->clipNear, camera->clipFar);
@@ -273,7 +273,7 @@ void QDemonLayerRenderData::renderFakeDepthMapPass(QDemonRenderTexture2D *theDep
 
     shader->depthTexture.set(theDepthTex);
     shader->cubeTexture.set(theDepthCube);
-    shader->depthSamplerSize.set(QVector2D(theDepthTex->getTextureDetails().width, theDepthTex->getTextureDetails().height));
+    shader->depthSamplerSize.set(QVector2D(theDepthTex->textureDetails().width, theDepthTex->textureDetails().height));
 
     // Important uniforms for AO calculations
     QVector2D theCameraProps = QVector2D(camera->clipNear, camera->clipFar);
@@ -676,7 +676,7 @@ void QDemonLayerRenderData::renderShadowMapPass(QDemonResourceFrameBuffer *theFB
             theCamera.calculateViewProjectionMatrix(pEntry->m_lightVP);
             pEntry->m_lightView = mat44::getInverse(theCamera.globalTransform);
 
-            QDemonTextureDetails theDetails(pEntry->m_depthMap->getTextureDetails());
+            QDemonTextureDetails theDetails(pEntry->m_depthMap->textureDetails());
             theRenderContext->setViewport(QRect(0, 0, (quint32)theDetails.width, (quint32)theDetails.height));
 
             (*theFB)->attach(QDemonRenderFrameBufferAttachment::Color0, pEntry->m_depthMap);
@@ -695,7 +695,7 @@ void QDemonLayerRenderData::renderShadowMapPass(QDemonResourceFrameBuffer *theFB
             //	: m_Lights[i]->m_GlobalTransform;
             pEntry->m_lightView = QMatrix4x4();
 
-            QDemonTextureDetails theDetails(pEntry->m_depthCube->getTextureDetails());
+            QDemonTextureDetails theDetails(pEntry->m_depthCube->textureDetails());
             theRenderContext->setViewport(QRect(0, 0, (quint32)theDetails.width, (quint32)theDetails.height));
 
             // int passes = m_Lights[i]->m_LightType == RenderLightTypes::Point ? 6 : 5;
@@ -1042,7 +1042,7 @@ void QDemonLayerRenderData::setupDrawFB(bool depthEnabled)
     if (!m_advancedModeDrawFB)
         m_advancedModeDrawFB = theRenderContext->createFrameBuffer();
     if (!m_advancedBlendDrawTexture) {
-        m_advancedBlendDrawTexture = theRenderContext->createTexture2D();
+        m_advancedBlendDrawTexture = new QDemonRenderTexture2D(theRenderContext);
         QRect theViewport = renderer->getDemonContext()->getRenderList()->getViewport();
         m_advancedBlendDrawTexture->setTextureData(QDemonDataRef<quint8>(), 0, theViewport.width(), theViewport.height(), QDemonRenderTextureFormat::RGBA8);
         m_advancedModeDrawFB->attach(QDemonRenderFrameBufferAttachment::Color0, m_advancedBlendDrawTexture);
@@ -1085,7 +1085,7 @@ void QDemonLayerRenderData::blendAdvancedToFB(DefaultMaterialBlendMode blendMode
     if (!m_advancedModeBlendFB)
         m_advancedModeBlendFB = theRenderContext->createFrameBuffer();
     if (!m_advancedBlendBlendTexture) {
-        m_advancedBlendBlendTexture = theRenderContext->createTexture2D();
+        m_advancedBlendBlendTexture = new QDemonRenderTexture2D(theRenderContext);
         m_advancedBlendBlendTexture->setTextureData(QDemonDataRef<quint8>(), 0, theViewport.width(), theViewport.height(), QDemonRenderTextureFormat::RGBA8);
         m_advancedModeBlendFB->attach(QDemonRenderFrameBufferAttachment::Color0, m_advancedBlendBlendTexture);
     }
@@ -1865,7 +1865,7 @@ void QDemonLayerRenderData::runnableRenderToViewport(const QDemonRef<QDemonRende
                         // Get part matching to layer from screen texture and
                         // use that for blending
                         QDemonRef<QDemonRenderTexture2D> blendBlitTexture;
-                        blendBlitTexture = theContext->createTexture2D();
+                        blendBlitTexture = new QDemonRenderTexture2D(theContext);
                         blendBlitTexture->setTextureData(QDemonDataRef<quint8>(),
                                                          0,
                                                          theLayerViewport.width(),
@@ -1891,7 +1891,7 @@ void QDemonLayerRenderData::runnableRenderToViewport(const QDemonRef<QDemonRende
                                                     QDemonRenderTextureMagnifyingOp::Nearest);
 
                         QDemonRef<QDemonRenderTexture2D> blendResultTexture;
-                        blendResultTexture = theContext->createTexture2D();
+                        blendResultTexture = new QDemonRenderTexture2D(theContext);
                         blendResultTexture->setTextureData(QDemonDataRef<quint8>(),
                                                            0,
                                                            theLayerViewport.width(),

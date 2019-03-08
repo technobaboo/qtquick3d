@@ -605,7 +605,7 @@ struct QDemonRenderContextData : public QDemonRenderContextInterface
                     m_rotationFbo->attach(QDemonRenderFrameBufferAttachment::Color0, m_rotationTexture);
                     m_rotationFbo->attach(QDemonRenderFrameBufferAttachment::Depth, m_rotationDepthBuffer);
                 } else {
-                    QDemonTextureDetails theDetails = m_rotationTexture->getTextureDetails();
+                    QDemonTextureDetails theDetails = m_rotationTexture->textureDetails();
                     if (theDetails.width != imageWidth || theDetails.height != imageHeight) {
                         m_rotationTexture->setTextureData(QDemonDataRef<quint8>(), 0, imageWidth, imageHeight, theColorBufferFormat);
                         m_rotationDepthBuffer->setDimensions(QDemonRenderRenderBufferDimensions(imageWidth, imageHeight));

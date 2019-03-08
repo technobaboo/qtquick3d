@@ -37,7 +37,7 @@ QDemonResourceTexture2D::QDemonResourceTexture2D(const QDemonRef<QDemonResourceM
     : m_resourceManager(mgr), m_texture(inTexture)
 {
     if (inTexture)
-        m_textureDetails = inTexture->getTextureDetails();
+        m_textureDetails = inTexture->textureDetails();
 }
 
 QDemonResourceTexture2D::QDemonResourceTexture2D(const QDemonRef<QDemonResourceManagerInterface> &mgr,
@@ -82,7 +82,7 @@ bool QDemonResourceTexture2D::ensureTexture(qint32 width, qint32 height, QDemonR
         m_texture->setTextureData(QDemonDataRef<quint8>(), 0, width, height, inFormat);
     }
 
-    m_textureDetails = m_texture->getTextureDetails();
+    m_textureDetails = m_texture->textureDetails();
     return true;
 }
 
@@ -154,7 +154,7 @@ bool QDemonResourceTexture2DArray::ensureTexture(qint32 width, qint32 height, qi
         m_texture->setTextureData(QDemonDataRef<quint8>(), 0, width, height, slices, inFormat);
     }
 
-    m_textureDetails = m_texture->getTextureDetails();
+    m_textureDetails = m_texture->textureDetails();
     return true;
 }
 

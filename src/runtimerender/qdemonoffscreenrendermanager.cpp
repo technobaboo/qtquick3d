@@ -396,7 +396,7 @@ struct QDemonOffscreenRenderManager : public QDemonOffscreenRenderManagerInterfa
 
             // Release existing texture if it doesn't match latest environment request.
             if (theData.texture) {
-                QDemonTextureDetails theDetails = theData.texture->getTextureDetails();
+                QDemonTextureDetails theDetails = theData.texture->textureDetails();
                 if (theDesiredEnvironment.width != theDetails.width || theDesiredEnvironment.height != theDetails.height
                     || theDesiredEnvironment.format != theDetails.format) {
                     m_resourceManager->release(theData.texture);

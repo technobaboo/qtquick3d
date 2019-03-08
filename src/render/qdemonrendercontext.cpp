@@ -84,10 +84,6 @@ QDemonRenderContext::~QDemonRenderContext()
     m_rasterizerStateToImpMap.clear();
     Q_ASSERT(m_pathFontSpecToImpMap.size() == 0);
     m_pathFontSpecToImpMap.clear();
-    Q_ASSERT(m_tex2DToImpMap.size() == 0);
-    m_tex2DToImpMap.clear();
-    Q_ASSERT(m_tex2DArrayToImpMap.size() == 0);
-    m_tex2DArrayToImpMap.clear();
     Q_ASSERT(m_shaderToImpMap.size() == 0);
     m_shaderToImpMap.clear();
     Q_ASSERT(m_renderBufferToImpMap.size() == 0);
@@ -342,57 +338,6 @@ QDemonRef<QDemonRenderTimerQuery> QDemonRenderContext::createTimerQuery()
 QDemonRef<QDemonRenderSync> QDemonRenderContext::createSync()
 {
     return QDemonRenderSync::create(this);
-}
-
-QDemonRef<QDemonRenderTexture2D> QDemonRenderContext::createTexture2D()
-{
-    QDemonRef<QDemonRenderTexture2D> retval(QDemonRenderTexture2D::create(this));
-    if (retval)
-        m_tex2DToImpMap.insert(retval->getTextureObjectHandle(), retval.data());
-    return retval;
-}
-
-QDemonRef<QDemonRenderTexture2DArray> QDemonRenderContext::createTexture2DArray()
-{
-    QDemonRef<QDemonRenderTexture2DArray> retval(QDemonRenderTexture2DArray::create(this));
-    if (retval)
-        m_tex2DArrayToImpMap.insert(retval->getTextureObjectHandle(), retval.data());
-
-    return retval;
-}
-
-QDemonRef<QDemonRenderTextureCube> QDemonRenderContext::createTextureCube()
-{
-    QDemonRef<QDemonRenderTextureCube> retval(QDemonRenderTextureCube::create(this));
-    if (retval)
-        m_texCubeToImpMap.insert(retval->getTextureObjectHandle(), retval.data());
-
-    return retval;
-}
-
-QDemonRef<QDemonRenderTexture2D> QDemonRenderContext::getTexture2D(const void *implementationHandle)
-{
-    const QHash<const void *, QDemonRenderTexture2D *>::iterator entry = m_tex2DToImpMap.find(implementationHandle);
-    if (entry != m_tex2DToImpMap.end())
-        return QDemonRef(entry.value());
-    return nullptr;
-}
-
-void QDemonRenderContext::textureDestroyed(QDemonRenderTexture2D *buffer)
-{
-    m_tex2DToImpMap.remove(buffer->getTextureObjectHandle());
-    // We would like to find and catch any situations where this texture is being used
-    // but that would require some real work that we don't want to do right now.
-}
-
-void QDemonRenderContext::textureDestroyed(QDemonRenderTexture2DArray *buffer)
-{
-    m_tex2DArrayToImpMap.remove(buffer->getTextureObjectHandle());
-}
-
-void QDemonRenderContext::textureDestroyed(QDemonRenderTextureCube *buffer)
-{
-    m_texCubeToImpMap.remove(buffer->getTextureObjectHandle());
 }
 
 // IF this texture isn't on a texture unit, put it on one.

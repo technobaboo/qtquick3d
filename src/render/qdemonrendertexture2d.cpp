@@ -34,18 +34,16 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonRenderTexture2D::QDemonRenderTexture2D(const QDemonRef<QDemonRenderContext> &context,
-                                             QDemonRenderTextureTargetType texTarget)
-    : QDemonRenderTextureBase(context, texTarget), m_width(0), m_height(0)
+QDemonRenderTexture2D::QDemonRenderTexture2D(const QDemonRef<QDemonRenderContext> &context)
+    : QDemonRenderTextureBase(context, QDemonRenderTextureTargetType::Texture2D), m_width(0), m_height(0)
 {
 }
 
 QDemonRenderTexture2D::~QDemonRenderTexture2D()
 {
-    m_context->textureDestroyed(this);
 }
 
-QDemonTextureDetails QDemonRenderTexture2D::getTextureDetails() const
+QDemonTextureDetails QDemonRenderTexture2D::textureDetails() const
 {
     return QDemonTextureDetails(m_width, m_height, 0, m_sampleCount, m_format);
 }
@@ -57,7 +55,7 @@ void QDemonRenderTexture2D::setTextureData(QDemonDataRef<quint8> newBuffer,
                                            QDemonRenderTextureFormat format,
                                            QDemonRenderTextureFormat formatDest)
 {
-    Q_ASSERT(m_textureHandle);
+    Q_ASSERT(m_handle);
 
     // check if we should compress this texture
 
@@ -70,10 +68,10 @@ void QDemonRenderTexture2D::setTextureData(QDemonDataRef<quint8> newBuffer,
         // for resue we must completely destroy the texture object and create a new one
         // The same is true for immutable textures
         if (m_texTarget == QDemonRenderTextureTargetType::Texture2D_MS || m_immutable) {
-            m_backend->releaseTexture(m_textureHandle);
+            m_backend->releaseTexture(m_handle);
             m_texTarget = QDemonRenderTextureTargetType::Texture2D;
             m_sampleCount = 1;
-            m_textureHandle = m_backend->createTexture();
+            m_handle = m_backend->createTexture();
         }
 
         if (formatDest.isCompressedTextureFormat()) {
@@ -108,7 +106,7 @@ void QDemonRenderTexture2D::setTextureData(QDemonDataRef<quint8> newBuffer,
         qCCritical(INVALID_OPERATION, "Width or height is greater than max texture size (%d, %d)", maxWidth, maxHeight);
     }
     if (format.isUncompressedTextureFormat() || format.isDepthTextureFormat()) {
-        m_backend->setTextureData2D(m_textureHandle,
+        m_backend->setTextureData2D(m_handle,
                                     m_texTarget,
                                     inMipLevel,
                                     m_format,
@@ -118,7 +116,7 @@ void QDemonRenderTexture2D::setTextureData(QDemonDataRef<quint8> newBuffer,
                                     format,
                                     newBuffer.begin());
     } else if (format.isCompressedTextureFormat()) {
-        m_backend->setCompressedTextureData2D(m_textureHandle,
+        m_backend->setCompressedTextureData2D(m_handle,
                                               m_texTarget,
                                               inMipLevel,
                                               format,
@@ -140,7 +138,7 @@ void QDemonRenderTexture2D::setTextureStorage(qint32 inLevels,
                                               QDemonRenderTextureFormat format,
                                               QDemonDataRef<quint8> dataBuffer)
 {
-    Q_ASSERT(m_textureHandle);
+    Q_ASSERT(m_handle);
 
     if (!m_context->isShaderImageLoadStoreSupported()) {
         qCCritical(INVALID_OPERATION, "The extension Shader_Image_Load_Store is not supported");
@@ -168,13 +166,13 @@ void QDemonRenderTexture2D::setTextureStorage(qint32 inLevels,
 
     // only uncompressed formats are supported and no depth
     if (formaInternal.isUncompressedTextureFormat()) {
-        m_backend->createTextureStorage2D(m_textureHandle, m_texTarget, inLevels, formaInternal, width, height);
+        m_backend->createTextureStorage2D(m_handle, m_texTarget, inLevels, formaInternal, width, height);
 
         m_immutable = true;
         m_texTarget = QDemonRenderTextureTargetType::Texture2D;
 
         if (dataBuffer.size() > 0)
-            m_backend->setTextureSubData2D(m_textureHandle, m_texTarget, 0, 0, 0, width, height, format, dataBuffer.begin());
+            m_backend->setTextureSubData2D(m_handle, m_texTarget, 0, 0, 0, width, height, format, dataBuffer.begin());
 
         if (inLevels > 1)
             setMinFilter(QDemonRenderTextureMinifyingOp::LinearMipmapLinear);
@@ -186,7 +184,7 @@ void QDemonRenderTexture2D::setTextureDataMultisample(qint32 sampleCount,
                                                       qint32 height,
                                                       QDemonRenderTextureFormat format)
 {
-    Q_ASSERT(m_textureHandle);
+    Q_ASSERT(m_handle);
     Q_ASSERT(m_maxMipLevel == 0);
 
     m_texTarget = QDemonRenderTextureTargetType::Texture2D_MS;
@@ -200,7 +198,7 @@ void QDemonRenderTexture2D::setTextureDataMultisample(qint32 sampleCount,
     Q_ASSERT(format.isUncompressedTextureFormat()
              || format.isDepthTextureFormat());
 
-    m_backend->setMultisampledTextureData2D(m_textureHandle, m_texTarget, sampleCount, format, width, height, true);
+    m_backend->setMultisampledTextureData2D(m_handle, m_texTarget, sampleCount, format, width, height, true);
 
     m_width = width;
     m_height = height;
@@ -216,7 +214,7 @@ void QDemonRenderTexture2D::setTextureSubData(QDemonDataRef<quint8> newBuffer,
                                               qint32 height,
                                               QDemonRenderTextureFormat format)
 {
-    Q_ASSERT(m_textureHandle);
+    Q_ASSERT(m_handle);
     Q_ASSERT(inXOffset >= 0 && inYOffset >= 0 && width >= 0 && height >= 0);
 
     if (!format.isUncompressedTextureFormat()) {
@@ -243,7 +241,7 @@ void QDemonRenderTexture2D::setTextureSubData(QDemonDataRef<quint8> newBuffer,
     // not handled yet
     Q_ASSERT(!format.isDepthTextureFormat());
 
-    m_backend->setTextureSubData2D(m_textureHandle,
+    m_backend->setTextureSubData2D(m_handle,
                                    m_texTarget,
                                    inMipLevel,
                                    inXOffset,
@@ -257,7 +255,7 @@ void QDemonRenderTexture2D::setTextureSubData(QDemonDataRef<quint8> newBuffer,
 void QDemonRenderTexture2D::generateMipmaps(QDemonRenderHint genType)
 {
     applyTexParams();
-    m_backend->generateMipMaps(m_textureHandle, m_texTarget, genType);
+    m_backend->generateMipMaps(m_handle, m_texTarget, genType);
     qint32 maxDim = (m_width >= m_height) ? m_width : m_height;
     m_maxMipLevel = qint32(float(std::log(maxDim)) / std::log(2.0f));
     // we never create more level than m_maxLevel
@@ -268,15 +266,10 @@ void QDemonRenderTexture2D::bind()
 {
     m_textureUnit = m_context->getNextTextureUnit();
 
-    m_backend->bindTexture(m_textureHandle, m_texTarget, m_textureUnit);
+    m_backend->bindTexture(m_handle, m_texTarget, m_textureUnit);
 
     applyTexParams();
     applyTexSwizzle();
-}
-
-QDemonRef<QDemonRenderTexture2D> QDemonRenderTexture2D::create(const QDemonRef<QDemonRenderContext> &context)
-{
-    return QDemonRef<QDemonRenderTexture2D>(new QDemonRenderTexture2D(context));
 }
 
 QT_END_NAMESPACE

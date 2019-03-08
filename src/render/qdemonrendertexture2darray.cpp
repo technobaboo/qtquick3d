@@ -35,15 +35,13 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonRenderTexture2DArray::QDemonRenderTexture2DArray(const QDemonRef<QDemonRenderContext> &context,
-                                                       QDemonRenderTextureTargetType texTarget)
-    : QDemonRenderTextureBase(context, texTarget), m_width(0), m_height(0), m_slices(0)
+QDemonRenderTexture2DArray::QDemonRenderTexture2DArray(const QDemonRef<QDemonRenderContext> &context)
+    : QDemonRenderTextureBase(context, QDemonRenderTextureTargetType::Texture2D_Array), m_width(0), m_height(0), m_slices(0)
 {
 }
 
 QDemonRenderTexture2DArray::~QDemonRenderTexture2DArray()
 {
-    m_context->textureDestroyed(this);
 }
 
 void QDemonRenderTexture2DArray::setTextureData(QDemonDataRef<quint8> newBuffer,
@@ -53,7 +51,7 @@ void QDemonRenderTexture2DArray::setTextureData(QDemonDataRef<quint8> newBuffer,
                                                 qint32 slices,
                                                 QDemonRenderTextureFormat format)
 {
-    Q_ASSERT(m_textureHandle);
+    Q_ASSERT(m_handle);
     Q_ASSERT(width >= 0 && height >= 0 && slices >= 0);
     if (inMipLevel == 0) {
         m_width = width;
@@ -80,7 +78,7 @@ void QDemonRenderTexture2DArray::setTextureData(QDemonDataRef<quint8> newBuffer,
              || format.isDepthTextureFormat());
 
     if (format.isUncompressedTextureFormat() || format.isDepthTextureFormat()) {
-        m_backend->setTextureData3D(m_textureHandle,
+        m_backend->setTextureData3D(m_handle,
                                     m_texTarget,
                                     inMipLevel,
                                     m_format,
@@ -97,7 +95,7 @@ void QDemonRenderTexture2DArray::setTextureData(QDemonDataRef<quint8> newBuffer,
         setMinFilter(QDemonRenderTextureMinifyingOp::LinearMipmapLinear);
 }
 
-QDemonTextureDetails QDemonRenderTexture2DArray::getTextureDetails() const
+QDemonTextureDetails QDemonRenderTexture2DArray::textureDetails() const
 {
     return QDemonTextureDetails(m_width, m_height, m_slices, m_sampleCount, m_format);
 }
@@ -106,14 +104,10 @@ void QDemonRenderTexture2DArray::bind()
 {
     m_textureUnit = m_context->getNextTextureUnit();
 
-    m_backend->bindTexture(m_textureHandle, m_texTarget, m_textureUnit);
+    m_backend->bindTexture(m_handle, m_texTarget, m_textureUnit);
 
     applyTexParams();
     applyTexSwizzle();
 }
 
-QDemonRef<QDemonRenderTexture2DArray> QDemonRenderTexture2DArray::create(const QDemonRef<QDemonRenderContext> &context)
-{
-    return QDemonRef<QDemonRenderTexture2DArray>(new QDemonRenderTexture2DArray(context));
-}
 QT_END_NAMESPACE

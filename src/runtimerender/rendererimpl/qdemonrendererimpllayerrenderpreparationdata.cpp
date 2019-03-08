@@ -584,7 +584,7 @@ void QDemonLayerRenderPreparationData::prepareImageForRender(QDemonRenderImage &
             theKeyProp.setPremultiplied(inShaderKey, true);
 
         QDemonShaderKeyTextureSwizzle &theSwizzleKeyProp = renderer->defaultMaterialShaderKeyProperties().m_textureSwizzle[inImageIndex];
-        theSwizzleKeyProp.setSwizzleMode(inShaderKey, inImage.m_textureData.m_texture->getTextureSwizzleMode(), true);
+        theSwizzleKeyProp.setSwizzleMode(inShaderKey, inImage.m_textureData.m_texture->textureSwizzleMode(), true);
 
         ioNextImage = theImage;
     }

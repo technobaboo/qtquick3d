@@ -441,7 +441,7 @@ void QDemonRendererImpl::endFrame()
         QDemonRenderContextScopedProperty<QDemonRef<QDemonRenderFrameBuffer>> __fbo(*m_context,
                                                                                     &QDemonRenderContext::getRenderTarget,
                                                                                     &QDemonRenderContext::setRenderTarget);
-        QDemonTextureDetails theDetails = m_widgetTexture->getTextureDetails();
+        QDemonTextureDetails theDetails = m_widgetTexture->textureDetails();
         m_context->setBlendingEnabled(true);
         // Colors are expected to be non-premultiplied, so we premultiply alpha into them at
         // this point.
@@ -660,7 +660,7 @@ static inline QDemonOption<QVector2D> intersectRayWithNode(const QDemonGraphNode
 
 static inline QDemonRenderPickSubResult constructSubResult(QDemonRenderImage &inImage)
 {
-    QDemonTextureDetails theDetails = inImage.m_textureData.m_texture->getTextureDetails();
+    QDemonTextureDetails theDetails = inImage.m_textureData.m_texture->textureDetails();
     return QDemonRenderPickSubResult(inImage.m_lastFrameOffscreenRenderer,
                                      inImage.m_textureTransform,
                                      inImage.m_horizontalTilingMode,
@@ -1032,7 +1032,7 @@ void QDemonRendererImpl::endLayerRender()
 
 void QDemonRendererImpl::prepareImageForIbl(QDemonRenderImage &inImage)
 {
-    if (inImage.m_textureData.m_texture && inImage.m_textureData.m_texture->getNumMipmaps() < 1)
+    if (inImage.m_textureData.m_texture && inImage.m_textureData.m_texture->numMipmaps() < 1)
         inImage.m_textureData.m_texture->generateMipmaps();
 }
 
@@ -1541,8 +1541,8 @@ void QDemonRendererImpl::updateCbAoShadow(const QDemonRenderLayer *pLayer, const
         float rw = 100, rh = 100;
 
         if (inDepthTexture.getTexture() && inDepthTexture.getTexture()) {
-            rw = (float)inDepthTexture.getTexture()->getTextureDetails().width;
-            rh = (float)inDepthTexture.getTexture()->getTextureDetails().height;
+            rw = (float)inDepthTexture.getTexture()->textureDetails().width;
+            rh = (float)inDepthTexture.getTexture()->textureDetails().height;
         }
         float fov = (pCamera) ? pCamera->verticalFov(rw / rh) : 1.0f;
         float tanHalfFovY = tanf(0.5f * fov * (rh / rw));

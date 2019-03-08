@@ -49,7 +49,7 @@ QDemonTextScaleAndOffset::QDemonTextScaleAndOffset(QDemonRenderTexture2D &inText
 
 {
     QDemonRenderTexture2D &theTexture = inTexture;
-    QDemonTextureDetails theDetails(theTexture.getTextureDetails());
+    QDemonTextureDetails theDetails(theTexture.textureDetails());
     QVector2D textDimensions(inTextDetails.textWidth / 2.0f, inTextDetails.textHeight / 2.0f);
     textDimensions.setX(textDimensions.x() / inTextDetails.scaleFactor.x());
     textDimensions.setY(textDimensions.y() / inTextDetails.scaleFactor.y());
@@ -428,7 +428,7 @@ void QDemonTextRenderable::renderDepthPass(const QVector2D &inCameraVec)
                                                  theScaleAndOffset.textOffset.y()));
         theDepthShader->cameraProperties.set(inCameraVec);
 
-        QDemonTextureDetails theTextureDetails = text.m_textTexture->getTextureDetails();
+        QDemonTextureDetails theTextureDetails = text.m_textTexture->textureDetails();
         const QDemonTextTextureDetails &theTextTextureDetails(text.m_textTextureDetails);
         float theWidthScale = (float)theTextTextureDetails.textWidth / (float)theTextureDetails.width;
         float theHeightScale = (float)theTextTextureDetails.textHeight / (float)theTextureDetails.height;

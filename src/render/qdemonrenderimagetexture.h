@@ -41,7 +41,7 @@ class QDemonRenderTexture2D;
 // a wrapper class for QDemonRenderTexture2D
 // to use with compute shaders and load / store image shaders
 
-class QDemonRenderImage2D
+class Q_DEMONRENDER_EXPORT QDemonRenderImage2D
 {
 public:
     QAtomicInt ref;

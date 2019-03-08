@@ -58,13 +58,12 @@ public:
      *
      * @return No return.
      */
-    QDemonRenderTexture2D(const QDemonRef<QDemonRenderContext> &context,
-                          QDemonRenderTextureTargetType texTarget = QDemonRenderTextureTargetType::Texture2D);
+    QDemonRenderTexture2D(const QDemonRef<QDemonRenderContext> &context);
 
     virtual ~QDemonRenderTexture2D() override;
 
     // Get the texture details for mipmap level 0 if it was set.
-    QDemonTextureDetails getTextureDetails() const override;
+    QDemonTextureDetails textureDetails() const override;
 
     /**
      * @brief Create GL texture object and upload data
@@ -109,7 +108,7 @@ public:
     virtual void setTextureDataMultisample(qint32 sampleCount, qint32 width, qint32 height, QDemonRenderTextureFormat format);
 
     bool isMultisampleTexture() const override { return (m_texTarget == QDemonRenderTextureTargetType::Texture2D_MS); }
-    qint32 getSampleCount() const override { return m_sampleCount; }
+    qint32 sampleCount() const override { return m_sampleCount; }
     bool isImmutableTexture() const override { return m_immutable; }
 
     // Update a sub-rect of the image.  newBuffer is expected to be a continguous subrect of the
@@ -134,14 +133,14 @@ public:
      */
     void bind() override;
 
-    quint32 getNumMipmaps() override { return m_maxMipLevel; }
+    quint32 numMipmaps() override { return m_maxMipLevel; }
 
     /**
      * @brief Query if texture needs coordinate swizzle
      *
      * @return texture swizzle mode
      */
-    QDemonRenderTextureSwizzleMode getTextureSwizzleMode() override
+    QDemonRenderTextureSwizzleMode textureSwizzleMode() override
     {
         // if our backend supports hardware texture swizzle then there is no need for a shader
         // swizzle
@@ -150,7 +149,6 @@ public:
                 : m_backend->getTextureSwizzleMode(m_format);
     }
 
-    static QDemonRef<QDemonRenderTexture2D> create(const QDemonRef<QDemonRenderContext> &context);
 };
 
 QT_END_NAMESPACE

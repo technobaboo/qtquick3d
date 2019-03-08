@@ -380,7 +380,7 @@ QDemonCuboidRect QDemonRenderCamera::getCameraBounds(const QRectF &inViewport, c
 
 void QDemonRenderCamera::setupOrthographicCameraForOffscreenRender(QDemonRenderTexture2D &inTexture, QMatrix4x4 &outVP)
 {
-    QDemonTextureDetails theDetails(inTexture.getTextureDetails());
+    QDemonTextureDetails theDetails(inTexture.textureDetails());
     // TODO:
     Q_UNUSED(theDetails);
     QDemonRenderCamera theTempCamera;
@@ -389,7 +389,7 @@ void QDemonRenderCamera::setupOrthographicCameraForOffscreenRender(QDemonRenderT
 
 void QDemonRenderCamera::setupOrthographicCameraForOffscreenRender(QDemonRenderTexture2D &inTexture, QMatrix4x4 &outVP, QDemonRenderCamera &outCamera)
 {
-    QDemonTextureDetails theDetails(inTexture.getTextureDetails());
+    QDemonTextureDetails theDetails(inTexture.textureDetails());
     QDemonRenderCamera theTempCamera;
     theTempCamera.flags.setOrthographic(true);
     theTempCamera.markDirty(NodeTransformDirtyFlag::TransformIsDirty);

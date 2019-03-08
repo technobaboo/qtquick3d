@@ -61,7 +61,7 @@ public:
 protected:
     QDemonRef<QDemonRenderContext> m_context; ///< pointer to context
     QDemonRef<QDemonRenderBackend> m_backend; ///< pointer to backend
-    QDemonRenderBackend::QDemonRenderBackendTextureObject m_textureHandle; ///< opaque backend handle
+    QDemonRenderBackend::QDemonRenderBackendTextureObject m_handle; ///< opaque backend handle
     qint32 m_textureUnit; ///< texture unit this texture should use
     bool m_samplerParamsDirty; ///< true if sampler state is dirty
     bool m_texStateDirty; ///< true if texture object state is dirty
@@ -101,13 +101,13 @@ public:
     virtual void setTextureCompareFunc(QDemonRenderTextureCompareOp value);
 
     virtual void setTextureUnit(quint32 unit) { m_textureUnit = unit; }
-    virtual qint32 getTextureUnit() const { return m_textureUnit; }
+    virtual qint32 textureUnit() const { return m_textureUnit; }
 
     // Get the texture details for mipmap level 0 if it was set.
-    virtual QDemonTextureDetails getTextureDetails() const = 0;
+    virtual QDemonTextureDetails textureDetails() const = 0;
 
     virtual bool isMultisampleTexture() const { return (m_texTarget == QDemonRenderTextureTargetType::Texture2D_MS); }
-    virtual qint32 getSampleCount() const { return m_sampleCount; }
+    virtual qint32 sampleCount() const { return m_sampleCount; }
     virtual bool isImmutableTexture() const { return m_immutable; }
 
     /**
@@ -118,14 +118,14 @@ public:
      */
     virtual void bind() = 0;
 
-    virtual quint32 getNumMipmaps() { return m_maxMipLevel; }
+    virtual quint32 numMipmaps() { return m_maxMipLevel; }
 
     /**
      * @brief Query if texture needs coordinate swizzle
      *
      * @return texture swizzle mode
      */
-    virtual QDemonRenderTextureSwizzleMode getTextureSwizzleMode()
+    virtual QDemonRenderTextureSwizzleMode textureSwizzleMode()
     {
         // if our backend supports hardware texture swizzle then there is no need for a shader
         // swizzle
@@ -139,7 +139,7 @@ public:
      *
      * @return the backend object handle.
      */
-    virtual QDemonRenderBackend::QDemonRenderBackendTextureObject getTextureObjectHandle() { return m_textureHandle; }
+    virtual QDemonRenderBackend::QDemonRenderBackendTextureObject handle() { return m_handle; }
 
 protected:
     void applyTexParams();

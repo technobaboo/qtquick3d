@@ -332,7 +332,7 @@ public:
                 inTexture.setMinFilter(QDemonRenderTextureMinifyingOp::Linear);
                 inTexture.setTextureWrapS(QDemonRenderTextureCoordOp::ClampToEdge);
                 inTexture.setTextureWrapT(QDemonRenderTextureCoordOp::ClampToEdge);
-                QDemonTextureDetails theTextureDetails = inTexture.getTextureDetails();
+                QDemonTextureDetails theTextureDetails = inTexture.textureDetails();
                 return QDemonTextTextureAtlasEntryDetails(theTextureDetails.width,
                                                           theTextureDetails.height,
                                                           theEntry.first.x,

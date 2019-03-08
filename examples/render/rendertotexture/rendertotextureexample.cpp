@@ -104,10 +104,10 @@ public:
 
         m_Context->setInputAssembler(mInputAssembler);
 
-        mDepthBuffer = m_Context->createTexture2D();
+        mDepthBuffer = new QDemonRenderTexture2D(m_Context);
         mDepthBuffer->setTextureData(QDemonDataRef<quint8>(), 0, mFBWidth, mFBHeight,
                                      QDemonRenderTextureFormat::Depth16);
-        mColorBuffer = m_Context->createTexture2D();
+        mColorBuffer = new QDemonRenderTexture2D(m_Context);
         mColorBuffer->setTextureData(QDemonDataRef<quint8>(), 0, mFBWidth, mFBHeight,
                                      QDemonRenderTextureFormat::RGBA8);
         if (mDepthBuffer && mColorBuffer) {

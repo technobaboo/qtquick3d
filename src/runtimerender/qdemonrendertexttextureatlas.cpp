@@ -66,7 +66,7 @@ struct QDemonTextTextureAtlas : public QDemonTextTextureAtlasInterface
             // create the texture atlas entries
             qint32 count = m_textRenderer->createTextureAtlas();
 
-            m_textureAtlas = m_renderContext->createTexture2D();
+            m_textureAtlas = new QDemonRenderTexture2D(m_renderContext);
             if (m_textureAtlas && count) {
                 m_textureAtlasInitialized = true;
                 // m_textureAtlas->addRef();
@@ -80,7 +80,7 @@ struct QDemonTextTextureAtlas : public QDemonTextTextureAtlasInterface
                 m_textureAtlas->setMinFilter(QDemonRenderTextureMinifyingOp::Linear);
                 m_textureAtlas->setTextureWrapS(QDemonRenderTextureCoordOp::ClampToEdge);
                 m_textureAtlas->setTextureWrapT(QDemonRenderTextureCoordOp::ClampToEdge);
-                QDemonTextureDetails texTexDetails = m_textureAtlas->getTextureDetails();
+                QDemonTextureDetails texTexDetails = m_textureAtlas->textureDetails();
                 return TTextTextureAtlasDetailsAndTexture(QDemonTextTextureAtlasDetails(texTexDetails.height,
                                                                                         texTexDetails.height,
                                                                                         false,

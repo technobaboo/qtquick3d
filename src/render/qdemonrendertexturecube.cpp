@@ -35,15 +35,13 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonRenderTextureCube::QDemonRenderTextureCube(const QDemonRef<QDemonRenderContext> &context,
-                                                 QDemonRenderTextureTargetType texTarget)
-    : QDemonRenderTextureBase(context, texTarget), m_width(0), m_height(0)
+QDemonRenderTextureCube::QDemonRenderTextureCube(const QDemonRef<QDemonRenderContext> &context)
+    : QDemonRenderTextureBase(context, QDemonRenderTextureTargetType::TextureCube), m_width(0), m_height(0)
 {
 }
 
 QDemonRenderTextureCube::~QDemonRenderTextureCube()
 {
-    m_context->textureDestroyed(this);
 }
 
 void QDemonRenderTextureCube::setTextureData(QDemonDataRef<quint8> newBuffer,
@@ -53,7 +51,7 @@ void QDemonRenderTextureCube::setTextureData(QDemonDataRef<quint8> newBuffer,
                                              quint32 height,
                                              QDemonRenderTextureFormat format)
 {
-    Q_ASSERT(m_textureHandle);
+    Q_ASSERT(m_handle);
     Q_ASSERT(inFace != QDemonRenderTextureCubeFace::InvalidFace);
 
     if (inMipLevel == 0) {
@@ -76,7 +74,7 @@ void QDemonRenderTextureCube::setTextureData(QDemonDataRef<quint8> newBuffer,
 
     QDemonRenderTextureTargetType outTarget = static_cast<QDemonRenderTextureTargetType>((int)m_texTarget + (int)inFace);
     if (format.isUncompressedTextureFormat() || format.isDepthTextureFormat()) {
-        m_backend->setTextureDataCubeFace(m_textureHandle,
+        m_backend->setTextureDataCubeFace(m_handle,
                                           outTarget,
                                           inMipLevel,
                                           format,
@@ -86,7 +84,7 @@ void QDemonRenderTextureCube::setTextureData(QDemonDataRef<quint8> newBuffer,
                                           format,
                                           newBuffer.begin());
     } else if (format.isCompressedTextureFormat()) {
-        m_backend->setCompressedTextureDataCubeFace(m_textureHandle,
+        m_backend->setCompressedTextureDataCubeFace(m_handle,
                                                     outTarget,
                                                     inMipLevel,
                                                     format,
@@ -102,7 +100,7 @@ void QDemonRenderTextureCube::setTextureData(QDemonDataRef<quint8> newBuffer,
         setMinFilter(QDemonRenderTextureMinifyingOp::LinearMipmapLinear);
 }
 
-QDemonTextureDetails QDemonRenderTextureCube::getTextureDetails() const
+QDemonTextureDetails QDemonRenderTextureCube::textureDetails() const
 {
     return QDemonTextureDetails(m_width, m_height, 6, m_sampleCount, m_format);
 }
@@ -111,14 +109,10 @@ void QDemonRenderTextureCube::bind()
 {
     m_textureUnit = m_context->getNextTextureUnit();
 
-    m_backend->bindTexture(m_textureHandle, m_texTarget, m_textureUnit);
+    m_backend->bindTexture(m_handle, m_texTarget, m_textureUnit);
 
     applyTexParams();
     applyTexSwizzle();
 }
 
-QDemonRef<QDemonRenderTextureCube> QDemonRenderTextureCube::create(const QDemonRef<QDemonRenderContext> &context)
-{
-    return QDemonRef<QDemonRenderTextureCube>(new QDemonRenderTextureCube(context));
-}
 QT_END_NAMESPACE

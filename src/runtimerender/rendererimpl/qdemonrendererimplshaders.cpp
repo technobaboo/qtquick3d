@@ -64,7 +64,7 @@ void QDemonTextShader::render(const QDemonRef<QDemonRenderTexture2D> &inTexture,
                              inScaleAndOffset.textOffset.x(),
                              inScaleAndOffset.textOffset.y()));
     cameraProperties.set(inCameraVec);
-    QDemonTextureDetails theTextureDetails = inTexture->getTextureDetails();
+    QDemonTextureDetails theTextureDetails = inTexture->textureDetails();
     float theWidthScale = (float)inTextTextureDetails.textWidth / (float)theTextureDetails.width;
     float theHeightScale = (float)inTextTextureDetails.textHeight / (float)theTextureDetails.height;
     backgroundColor.set(inBackgroundColor);

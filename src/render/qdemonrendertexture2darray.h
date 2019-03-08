@@ -57,8 +57,7 @@ public:
      *
      * @return No return.
      */
-    QDemonRenderTexture2DArray(const QDemonRef<QDemonRenderContext> &context,
-                               QDemonRenderTextureTargetType texTarget = QDemonRenderTextureTargetType::Texture2D_Array);
+    QDemonRenderTexture2DArray(const QDemonRef<QDemonRenderContext> &context);
 
     virtual ~QDemonRenderTexture2DArray();
 
@@ -82,7 +81,7 @@ public:
                         QDemonRenderTextureFormat format);
 
     // Get the texture details for mipmap level 0 if it was set.
-    QDemonTextureDetails getTextureDetails() const override;
+    QDemonTextureDetails textureDetails() const override;
 
     /**
      * @brief Bind a texture for shader access
@@ -92,13 +91,6 @@ public:
      */
     void bind() override;
 
-    /**
-     * @brief create a texture array object
-     *
-     *
-     * @ return a texture array object
-     */
-    static QDemonRef<QDemonRenderTexture2DArray> create(const QDemonRef<QDemonRenderContext> &context);
 };
 
 QT_END_NAMESPACE

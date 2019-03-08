@@ -804,7 +804,7 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
         theShaderProps.m_sampler.set(imageTexture.data());
         theShaderProps.m_offsets.set(offsets);
         theShaderProps.m_rotations.set(rotations);
-        theShaderProps.m_size.set(QVector2D(imageTexture->getTextureDetails().width, imageTexture->getTextureDetails().height));
+        theShaderProps.m_size.set(QVector2D(imageTexture->textureDetails().width, imageTexture->textureDetails().height));
     }
 
     void generateShadowMapOcclusion(quint32 lightIdx, bool inShadowEnabled, RenderLightTypes inType)
@@ -1359,7 +1359,7 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
 
                 generateImageUVCoordinates(idx, *image, 0);
 
-                generateTextureSwizzle(image->m_image.m_textureData.m_texture->getTextureSwizzleMode(), texSwizzle, lookupSwizzle);
+                generateTextureSwizzle(image->m_image.m_textureData.m_texture->textureSwizzleMode(), texSwizzle, lookupSwizzle);
 
                 fragmentShader << "\ttexture_color" << texSwizzle << " = texture2D( " << m_imageSampler << ", "
                                << m_imageFragCoords << ")" << lookupSwizzle << ";"
@@ -1639,7 +1639,7 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
                 QVector4D offsets(dataPtr[12],
                                   dataPtr[13],
                                   theLightProbe->m_textureData.m_textureFlags.isPreMultiplied() ? 1.0f : 0.0f,
-                                  (float)theLightProbe->m_textureData.m_texture->getNumMipmaps());
+                                  (float)theLightProbe->m_textureData.m_texture->numMipmaps());
 
                 // Grab just the upper 2x2 rotation matrix from the larger matrix.
                 QVector4D rotations(dataPtr[0], dataPtr[4], dataPtr[1], dataPtr[5]);
@@ -1670,7 +1670,7 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
                 QDemonRef<QDemonRenderTexture2D> textureImage = theLightProbe->m_textureData.m_texture;
                 shader->m_lightProbe.set(textureImage.data());
                 shader->m_lightProbeSize.set(
-                        QVector2D(textureImage->getTextureDetails().width, textureImage->getTextureDetails().height));
+                        QVector2D(textureImage->textureDetails().width, textureImage->textureDetails().height));
             } else {
                 shader->m_lightProbeProps.set(QVector4D(0.0f, 0.0f, -1.0f, 0.0f));
                 shader->m_lightProbe2Props.set(QVector4D(0.0f, 0.0f, 0.0f, 0.0f));

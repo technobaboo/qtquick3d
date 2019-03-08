@@ -206,7 +206,7 @@ struct QDemonTextureEntry
         }
         texture.set(inTexture.data());
         if (inTexture) {
-            QDemonTextureDetails theDetails(inTexture->getTextureDetails());
+            QDemonTextureDetails theDetails(inTexture->textureDetails());
             textureData.set(QVector4D((float)theDetails.width, (float)theDetails.height, theMixValue, 0.0f));
             // I have no idea what these flags do.
             textureFlags.set(1);
@@ -692,7 +692,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
             qint32 bufferIdx = theContext.findBuffer(inCommand.m_name);
             if (bufferIdx < theContext.m_allocatedBuffers.size()) {
                 QDemonAllocatedBufferEntry &theEntry(theContext.m_allocatedBuffers[bufferIdx]);
-                QDemonTextureDetails theDetails = theEntry.texture->getTextureDetails();
+                QDemonTextureDetails theDetails = theEntry.texture->textureDetails();
                 if (theDetails.width == theWidth && theDetails.height == theHeight && theDetails.format == resultFormat) {
                     theBufferTexture = theEntry.texture;
                 } else {
@@ -729,7 +729,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
             qint32 imageIdx = theContext.findImage(inCommand.m_name);
             if (imageIdx < theContext.m_allocatedImages.size()) {
                 QDemonAllocatedImageEntry &theEntry(theContext.m_allocatedImages[imageIdx]);
-                QDemonTextureDetails theDetails = theEntry.texture->getTextureDetails();
+                QDemonTextureDetails theDetails = theEntry.texture->textureDetails();
                 if (theDetails.width == theWidth && theDetails.height == theHeight && theDetails.format == inCommand.m_format) {
                     theImage = theEntry.image;
                 } else {
@@ -865,7 +865,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
 
         if (theTexture) {
             QDemonRenderCamera::setupOrthographicCameraForOffscreenRender(*theTexture, outMVP);
-            QDemonTextureDetails theDetails(theTexture->getTextureDetails());
+            QDemonTextureDetails theDetails(theTexture->textureDetails());
             m_context->getRenderContext()->setViewport(QRect(0, 0, (quint32)theDetails.width, (quint32)theDetails.height));
             outDestSize = QVector2D((float)theDetails.width, (float)theDetails.height);
         }
@@ -1134,7 +1134,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
                         // we clear the least amount of information possible.
 
                         if (theEntry.texture) {
-                            QDemonRenderTextureFormat theTextureFormat = theEntry.texture->getTextureDetails().format;
+                            QDemonRenderTextureFormat theTextureFormat = theEntry.texture->textureDetails().format;
                             if (theTextureFormat != QDemonRenderTextureFormat::Depth16
                                 && theTextureFormat != QDemonRenderTextureFormat::Depth24
                                 && theTextureFormat != QDemonRenderTextureFormat::Depth32
@@ -1435,7 +1435,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
         QDemonRenderBlendFunctionArgument theBlendFunc = theContext->getBlendFunction();
         QDemonRenderBlendEquationArgument theBlendEqu = theContext->getBlendEquation();
         bool intermediateBlendingEnabled = false;
-        QDemonTextureDetails theDetails(inSourceTexture->getTextureDetails());
+        QDemonTextureDetails theDetails(inSourceTexture->textureDetails());
         quint32 theFinalWidth = (quint32)(theDetails.width);
         quint32 theFinalHeight = (quint32)(theDetails.height);
         QVector2D theDestSize;
@@ -1634,7 +1634,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
         QDemonRenderContextScopedProperty<QDemonRef<QDemonRenderFrameBuffer>> __framebuffer(*theContext,
                                                                                             &QDemonRenderContext::getRenderTarget,
                                                                                             &QDemonRenderContext::setRenderTarget);
-        QDemonTextureDetails theDetails(inRenderArgument.m_colorBuffer->getTextureDetails());
+        QDemonTextureDetails theDetails(inRenderArgument.m_colorBuffer->textureDetails());
         quint32 theFinalWidth = QDemonTextRendererInterface::nextMultipleOf4((quint32)(theDetails.width));
         quint32 theFinalHeight = QDemonTextRendererInterface::nextMultipleOf4((quint32)(theDetails.height));
         auto theBuffer = theManager->allocateFrameBuffer();
