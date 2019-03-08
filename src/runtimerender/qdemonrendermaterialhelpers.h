@@ -37,8 +37,8 @@ QT_BEGIN_NAMESPACE
 
 inline bool isMaterial(QDemonGraphObject &obj)
 {
-    return obj.type == QDemonGraphObjectType::CustomMaterial || obj.type == QDemonGraphObjectType::DefaultMaterial
-            || obj.type == QDemonGraphObjectType::ReferencedMaterial;
+    return obj.type == QDemonGraphObject::Type::CustomMaterial || obj.type == QDemonGraphObject::Type::DefaultMaterial
+            || obj.type == QDemonGraphObject::Type::ReferencedMaterial;
 }
 
 inline bool isMaterial(QDemonGraphObject *obj)
@@ -50,7 +50,7 @@ inline bool isMaterial(QDemonGraphObject *obj)
 
 inline bool isImage(QDemonGraphObject &obj)
 {
-    return obj.type == QDemonGraphObjectType::Image;
+    return obj.type == QDemonGraphObject::Type::Image;
 }
 
 inline bool isImage(QDemonGraphObject *obj)
@@ -68,9 +68,9 @@ inline QDemonGraphObject *getNextMaterialSibling(QDemonGraphObject *obj)
         Q_ASSERT(false);
         return nullptr;
     }
-    if (obj->type == QDemonGraphObjectType::CustomMaterial)
+    if (obj->type == QDemonGraphObject::Type::CustomMaterial)
         return static_cast<QDemonRenderCustomMaterial *>(obj)->m_nextSibling;
-    else if (obj->type == QDemonGraphObjectType::DefaultMaterial)
+    else if (obj->type == QDemonGraphObject::Type::DefaultMaterial)
         return static_cast<QDemonRenderDefaultMaterial *>(obj)->nextSibling;
     else
         return static_cast<QDemonReferencedMaterial *>(obj)->m_nextSibling;
@@ -82,9 +82,9 @@ inline void setNextMaterialSibling(QDemonGraphObject &obj, QDemonGraphObject *si
         Q_ASSERT(false);
         return;
     }
-    if (obj.type == QDemonGraphObjectType::CustomMaterial)
+    if (obj.type == QDemonGraphObject::Type::CustomMaterial)
         static_cast<QDemonRenderCustomMaterial *>(&obj)->m_nextSibling = sibling;
-    else if (obj.type == QDemonGraphObjectType::DefaultMaterial)
+    else if (obj.type == QDemonGraphObject::Type::DefaultMaterial)
         static_cast<QDemonRenderDefaultMaterial *>(&obj)->nextSibling = sibling;
     else
         static_cast<QDemonReferencedMaterial *>(&obj)->m_nextSibling = sibling;

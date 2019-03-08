@@ -150,7 +150,7 @@ QDemonPinCameraResult pinCamera(const QRectF &inViewport,
 }
 
 QDemonRenderCamera::QDemonRenderCamera()
-    : QDemonGraphNode(QDemonGraphObjectType::Camera)
+    : QDemonGraphNode(QDemonGraphObject::Type::Camera)
     , clipNear(10)
     , clipFar(10000)
     , fov(60)

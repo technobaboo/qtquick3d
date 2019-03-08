@@ -36,7 +36,7 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonDynamicObject::QDemonDynamicObject(QDemonGraphObjectType inType, const QString &inObjName, quint32 inDSByteSize, quint32 thisObjSize)
+QDemonDynamicObject::QDemonDynamicObject(Type inType, const QString &inObjName, quint32 inDSByteSize, quint32 thisObjSize)
     : QDemonGraphObject(inType), className(inObjName), dataSectionByteSize(inDSByteSize), thisObjectSize(thisObjSize)
 {
 }

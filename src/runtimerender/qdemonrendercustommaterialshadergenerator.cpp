@@ -743,7 +743,7 @@ struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
                                const QDemonLayerGlobalRenderProperties &inRenderProperties) override
     {
         const QDemonRenderCustomMaterial &theCustomMaterial(reinterpret_cast<const QDemonRenderCustomMaterial &>(inMaterial));
-        Q_ASSERT(inMaterial.type == QDemonGraphObjectType::CustomMaterial);
+        Q_ASSERT(inMaterial.type == QDemonGraphObject::Type::CustomMaterial);
 
         setGlobalProperties(inProgram,
                             inRenderProperties.layer,
@@ -1075,7 +1075,7 @@ struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
                                                         const QByteArray &inShaderPrefix,
                                                         const QByteArray &inCustomMaterialName) override
     {
-        Q_ASSERT(inMaterial.type == QDemonGraphObjectType::CustomMaterial);
+        Q_ASSERT(inMaterial.type == QDemonGraphObject::Type::CustomMaterial);
         m_currentMaterial = reinterpret_cast<const QDemonRenderCustomMaterial *>(&inMaterial);
         m_currentKey = &inShaderDescription;
         m_currentPipeline = static_cast<QDemonDefaultMaterialVertexPipelineInterface *>(&inVertexPipeline);

@@ -27,25 +27,11 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QDEMON_RENDER_PATH_SEGMENT_H
-#define QDEMON_RENDER_PATH_SEGMENT_H
 
-#include <QtDemonRuntimeRender/qdemonrendergraphobject.h>
+#include "qdemonrendergraphobject.h"
 
 QT_BEGIN_NAMESPACE
-struct QDemonPath;
 
-struct QDemonPathSubPath : public QDemonGraphObject
-{
-    QDemonPath *m_path;
-    QDemonPathSubPath *m_nextSubPath;
-    bool m_closed;
+QDemonGraphObject::~QDemonGraphObject() {}
 
-    QDemonPathSubPath()
-        : QDemonGraphObject(QDemonGraphObject::Type::PathSubPath), m_path(nullptr), m_nextSubPath(nullptr), m_closed(false)
-    {
-    }
-};
 QT_END_NAMESPACE
-
-#endif

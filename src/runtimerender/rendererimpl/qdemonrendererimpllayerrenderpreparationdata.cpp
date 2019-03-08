@@ -72,9 +72,9 @@ void MaybeQueueNodeForRender(QDemonGraphNode &inNode,
 {
     ++ioDFSIndex;
     inNode.dfsIndex = ioDFSIndex;
-    if (inNode.type.isRenderableType())
+    if (inNode.isRenderableType())
         outRenderables.push_back(inNode);
-    else if (inNode.type.isLightCameraType())
+    else if (inNode.isLightCameraType())
         outCamerasAndLights.push_back(&inNode);
 
     for (QDemonGraphNode *theChild = inNode.firstChild; theChild != nullptr; theChild = theChild->nextSibling)
@@ -359,7 +359,7 @@ QPair<bool, QDemonGraphObject *> QDemonLayerRenderPreparationData::resolveRefere
     bool badIdea = false;
     QDemonGraphObject *theSourceMaterialObject(inMaterial);
     QDemonGraphObject *theMaterialObject(inMaterial);
-    while (theMaterialObject && theMaterialObject->type == QDemonGraphObjectType::ReferencedMaterial && !badIdea) {
+    while (theMaterialObject && theMaterialObject->type == QDemonGraphObject::Type::ReferencedMaterial && !badIdea) {
         QDemonReferencedMaterial *theRefMaterial = static_cast<QDemonReferencedMaterial *>(theMaterialObject);
         theMaterialObject = theRefMaterial->m_referencedMaterial;
         if (theMaterialObject == theSourceMaterialObject) {
@@ -422,7 +422,7 @@ bool QDemonLayerRenderPreparationData::preparePathForRender(QDemonPath &inPath,
         QDemonGraphObject *theMaterial(theMaterialAndDirty.second);
         retval = retval || theMaterialAndDirty.first;
 
-        if (theMaterial != nullptr && theMaterial->type == QDemonGraphObjectType::DefaultMaterial) {
+        if (theMaterial != nullptr && theMaterial->type == QDemonGraphObject::Type::DefaultMaterial) {
             QDemonRenderDefaultMaterial *theDefaultMaterial = static_cast<QDemonRenderDefaultMaterial *>(theMaterial);
             // Don't clear dirty flags if the material was referenced.
             bool clearMaterialFlags = theMaterial == inPath.m_material;
@@ -468,7 +468,7 @@ bool QDemonLayerRenderPreparationData::preparePathForRender(QDemonPath &inPath,
                 transparentObjects.push_back(theRenderable);
             else
                 opaqueObjects.push_back(theRenderable);
-        } else if (theMaterial != nullptr && theMaterial->type == QDemonGraphObjectType::CustomMaterial) {
+        } else if (theMaterial != nullptr && theMaterial->type == QDemonGraphObject::Type::CustomMaterial) {
             QDemonRenderCustomMaterial *theCustomMaterial = static_cast<QDemonRenderCustomMaterial *>(theMaterial);
             // Don't clear dirty flags if the material was referenced.
             // bool clearMaterialFlags = theMaterial == inPath.m_Material;
@@ -853,7 +853,7 @@ bool QDemonLayerRenderPreparationData::prepareModelForRender(QDemonRenderModel &
             if (theMaterialObject == nullptr)
                 continue;
 
-            if (theMaterialObject->type == QDemonGraphObjectType::DefaultMaterial) {
+            if (theMaterialObject->type == QDemonGraphObject::Type::DefaultMaterial) {
                 QDemonRenderDefaultMaterial &theMaterial(static_cast<QDemonRenderDefaultMaterial &>(*theMaterialObject));
                 QDemonDefaultMaterialPreparationResult theMaterialPrepResult(
                         prepareDefaultMaterialForRender(theMaterial, renderableFlags, subsetOpacity, clearMaterialDirtyFlags));
@@ -883,7 +883,7 @@ bool QDemonLayerRenderPreparationData::prepareModelForRender(QDemonRenderModel &
                                                                                theGeneratedKey,
                                                                                boneGlobals);
                 subsetDirty = subsetDirty || renderableFlags.isDirty();
-            } else if (theMaterialObject->type == QDemonGraphObjectType::CustomMaterial) {
+            } else if (theMaterialObject->type == QDemonGraphObject::Type::CustomMaterial) {
                 QDemonRenderCustomMaterial &theMaterial(static_cast<QDemonRenderCustomMaterial &>(*theMaterialObject));
 
                 QDemonRef<QDemonMaterialSystem> theMaterialSystem(demonContext->getCustomMaterialSystem());
@@ -951,8 +951,8 @@ bool QDemonLayerRenderPreparationData::prepareRenderablesForRender(const QMatrix
         QDemonRenderableNodeEntry &theNodeEntry(renderableNodes[idx]);
         QDemonGraphNode *theNode = theNodeEntry.node;
         wasDataDirty = wasDataDirty || theNode->flags.isDirty();
-        switch (theNode->type.value) {
-        case QDemonGraphObjectType::Model: {
+        switch (theNode->type) {
+        case QDemonGraphObject::Type::Model: {
             QDemonRenderModel *theModel = static_cast<QDemonRenderModel *>(theNode);
             theModel->calculateGlobalVariables();
             if (theModel->flags.isGloballyActive()) {
@@ -960,7 +960,7 @@ bool QDemonLayerRenderPreparationData::prepareRenderablesForRender(const QMatrix
                 wasDataDirty = wasDataDirty || wasModelDirty;
             }
         } break;
-        case QDemonGraphObjectType::Text: {
+        case QDemonGraphObject::Type::Text: {
             if (hasTextRenderer) {
                 QDemonText *theText = static_cast<QDemonText *>(theNode);
                 theText->calculateGlobalVariables();
@@ -970,7 +970,7 @@ bool QDemonLayerRenderPreparationData::prepareRenderablesForRender(const QMatrix
                 }
             }
         } break;
-        case QDemonGraphObjectType::Path: {
+        case QDemonGraphObject::Type::Path: {
             QDemonPath *thePath = static_cast<QDemonPath *>(theNode);
             thePath->calculateGlobalVariables();
             if (thePath->flags.isGloballyActive()) {
@@ -1008,7 +1008,7 @@ struct QDemonLightNodeMarker
     QDemonLightNodeMarker(QDemonRenderLight &inLight, quint32 inLightIndex, QDemonGraphNode &inNode, bool aorm)
         : light(&inLight), lightIndex(inLightIndex), addOrRemove(aorm)
     {
-        if (inNode.type == QDemonGraphObjectType::Layer) {
+        if (inNode.type == QDemonGraphObject::Type::Layer) {
             firstValidIndex = 0;
             justPastLastValidIndex = std::numeric_limits<quint32>::max();
         } else {
@@ -1167,8 +1167,8 @@ void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportD
             for (quint32 idx = 0, end = camerasAndLights.size(); idx < end; ++idx) {
                 QDemonGraphNode *theNode(camerasAndLights[idx]);
                 wasDataDirty = wasDataDirty || theNode->flags.isDirty();
-                switch (theNode->type.value) {
-                case QDemonGraphObjectType::Camera: {
+                switch (theNode->type) {
+                case QDemonGraphObject::Type::Camera: {
                     QDemonRenderCamera *theCamera = static_cast<QDemonRenderCamera *>(theNode);
                     QDemonCameraGlobalCalculationResult theResult = thePrepResult.setupCameraForRender(*theCamera);
                     wasDataDirty = wasDataDirty || theResult.m_wasDirty;
@@ -1178,7 +1178,7 @@ void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportD
                         qCCritical(INTERNAL_ERROR, "Failed to calculate camera frustum");
                     }
                 } break;
-                case QDemonGraphObjectType::Light: {
+                case QDemonGraphObject::Type::Light: {
                     QDemonRenderLight *theLight = static_cast<QDemonRenderLight *>(theNode);
                     bool lightResult = theLight->calculateGlobalVariables();
                     wasDataDirty = lightResult || wasDataDirty;

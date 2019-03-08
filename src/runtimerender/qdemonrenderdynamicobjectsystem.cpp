@@ -465,7 +465,7 @@ struct QDemonDynamicObjClassImpl : public QDemonDynamicObjectClassInterface
     QDemonConstDataRef<dynamic::QDemonPropertyDefinition> m_propertyDefinitions;
     quint32 m_propertySectionByteSize;
     quint32 m_baseObjectSize;
-    QDemonGraphObjectType m_graphObjectType;
+    QDemonGraphObject::Type m_graphObjectType;
     quint8 *m_propertyDefaultData;
     QDemonConstDataRef<dynamic::QDemonCommand *> m_renderCommands;
     bool m_requiresDepthTexture;
@@ -476,7 +476,7 @@ struct QDemonDynamicObjClassImpl : public QDemonDynamicObjectClassInterface
                               QDemonConstDataRef<dynamic::QDemonPropertyDefinition> definitions,
                               quint32 propertySectionByteSize,
                               quint32 baseObjectSize,
-                              QDemonGraphObjectType objectType,
+                              QDemonGraphObject::Type objectType,
                               quint8 *propDefaultData,
                               bool inRequiresDepthTexture = false,
                               QDemonRenderTextureFormat inOutputFormat = QDemonRenderTextureFormat::RGBA8)
@@ -556,7 +556,7 @@ struct QDemonDynamicObjClassImpl : public QDemonDynamicObjectClassInterface
     quint32 getPropertySectionByteSize() const override { return m_propertySectionByteSize; }
     const quint8 *getDefaultValueBuffer() const override { return m_propertyDefaultData; }
     quint32 getBaseObjectSize() const override { return m_baseObjectSize; }
-    QDemonGraphObjectType graphObjectType() const override { return m_graphObjectType; }
+    QDemonGraphObject::Type graphObjectType() const override { return m_graphObjectType; }
     const dynamic::QDemonPropertyDefinition *findDefinition(QString &str) const
     {
         for (quint32 idx = 0, end = m_propertyDefinitions.size(); idx < end; ++idx) {
@@ -616,7 +616,7 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
     bool doRegister(QString inName,
                     QDemonConstDataRef<dynamic::QDemonPropertyDeclaration> inProperties,
                     quint32 inBaseObjectSize,
-                    QDemonGraphObjectType inGraphObjectType) override
+                    QDemonGraphObject::Type inGraphObjectType) override
     {
         if (isRegistered(inName)) {
             Q_ASSERT(false);

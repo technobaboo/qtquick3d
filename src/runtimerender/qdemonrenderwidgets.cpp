@@ -264,7 +264,7 @@ struct QDemonWidgetAxis : public QDemonRenderWidgetInterface
             QVector3D Red = QVector3D(1, 0, 0);
             QVector3D Green = QVector3D(0, 1, 0);
             QVector3D Blue = QVector3D(0, 0, 1);
-            if (m_node->parent && m_node->parent->type != QDemonGraphObjectType::Layer) {
+            if (m_node->parent && m_node->parent->type != QDemonGraphObject::Type::Layer) {
                 m_node->parent->calculateGlobalVariables();
             }
             QVector3D thePivot(m_node->pivot);

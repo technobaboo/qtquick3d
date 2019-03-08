@@ -39,7 +39,7 @@ struct QDemonReferencedMaterial : QDemonGraphObject
     QDemonMaterialDirty m_dirty;
     QDemonGraphObject *m_referencedMaterial = nullptr;
     QDemonGraphObject *m_nextSibling = nullptr;
-    QDemonReferencedMaterial() : QDemonGraphObject(QDemonGraphObjectType::ReferencedMaterial) {}
+    QDemonReferencedMaterial() : QDemonGraphObject(Type::ReferencedMaterial) {}
 };
 QT_END_NAMESPACE
 

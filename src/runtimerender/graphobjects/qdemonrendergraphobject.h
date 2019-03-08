@@ -30,9 +30,7 @@
 #ifndef QDEMON_RENDER_GRAPH_OBJECT_H
 #define QDEMON_RENDER_GRAPH_OBJECT_H
 
-#include <QtDemonRuntimeRender/qdemonrendergraphobjecttypes.h>
 #include <QtDemonRuntimeRender/qtdemonruntimerenderglobal.h>
-
 #include <QtCore/QString>
 
 QT_BEGIN_NAMESPACE
@@ -41,20 +39,73 @@ QT_BEGIN_NAMESPACE
 // at your own risk as the type is used for RTTI purposes.
 struct Q_DEMONRUNTIMERENDER_EXPORT QDemonGraphObject
 {
+    enum class Type : quint8
+    {
+        Unknown = 0,
+        Presentation,
+        Scene,
+        Node,
+        Layer,
+        Light,
+        Camera,
+        Model,
+        DefaultMaterial,
+        Image,
+        Text,
+        Effect,
+        CustomMaterial,
+        RenderPlugin,
+        ReferencedMaterial,
+        Path,
+        PathSubPath,
+        Lightmaps,
+        LastKnownGraphObjectType,
+    };
+
     QAtomicInt ref;
     // Id's help debugging the object and are optionally set
     QString id;
     // Type is used for RTTI purposes down the road.
-    QDemonGraphObjectType type;
+    Type type;
 
-    QDemonGraphObject(QDemonGraphObjectType inType) : type(inType) {}
-    QDemonGraphObject(const QDemonGraphObject &inCloningObject) : id(inCloningObject.id), type(inCloningObject.type) {}
-    virtual ~QDemonGraphObject() {}
+    QDemonGraphObject(QDemonGraphObject::Type inType) : type(inType) {}
+    virtual ~QDemonGraphObject();
 
     // If you change any detail of the scene graph, or even *breath* on a
     // scene graph object, you need to bump this binary version so at least
     // we know if we can load a file or not.
     static quint32 getSceneGraphBinaryVersion() { return 1; }
+
+    constexpr inline bool isMaterialType() const Q_DECL_NOTHROW
+    {
+        return (type == Type::ReferencedMaterial || type == Type::CustomMaterial || type == Type::DefaultMaterial);
+    }
+
+    constexpr inline bool isLightmapType() const Q_DECL_NOTHROW
+    {
+        return (type == Type::Lightmaps || type == Type::DefaultMaterial);
+    }
+
+    constexpr inline bool isNodeType() const Q_DECL_NOTHROW
+    {
+        return (type == Type::Node ||
+                type == Type::Layer ||
+                type == Type::Light ||
+                type == Type::Camera ||
+                type == Type::Model ||
+                type == Type::Text ||
+                type == Type::Path);
+    }
+
+    constexpr inline bool isRenderableType() const Q_DECL_NOTHROW
+    {
+        return (type == Type::Model || type == Type::Text || type == Type::Path);
+    }
+
+    constexpr inline bool isLightCameraType() const Q_DECL_NOTHROW
+    {
+        return (type == Type::Camera || type == Type::Light);
+    }
 };
 
 QT_END_NAMESPACE

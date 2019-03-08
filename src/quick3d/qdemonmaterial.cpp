@@ -168,7 +168,7 @@ QDemonGraphObject *QDemonMaterial::updateSpatialNode(QDemonGraphObject *node)
         return nullptr;
 
     // Set the common properties
-    if (node->type == QDemonGraphObjectType::DefaultMaterial) {
+    if (node->type == QDemonGraphObject::Type::DefaultMaterial) {
         auto defaultMaterial = static_cast<QDemonRenderDefaultMaterial *>(node);
         if (!m_lightmapIndirect)
             defaultMaterial->lightmaps.m_lightmapIndirect = nullptr;
@@ -203,7 +203,7 @@ QDemonGraphObject *QDemonMaterial::updateSpatialNode(QDemonGraphObject *node)
         defaultMaterial->displaceAmount = m_displacementAmount;
         node = defaultMaterial;
 
-    } else if (node->type == QDemonGraphObjectType::CustomMaterial) {
+    } else if (node->type == QDemonGraphObject::Type::CustomMaterial) {
         auto customMaterial = static_cast<QDemonRenderCustomMaterial *>(node);
         if (!m_lightmapIndirect)
             customMaterial->m_lightmaps.m_lightmapIndirect = nullptr;

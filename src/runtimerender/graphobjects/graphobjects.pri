@@ -33,4 +33,5 @@ SOURCES += \
     $$PWD/qdemonrenderpath.cpp \
     $$PWD/qdemonrenderpresentation.cpp \
     $$PWD/qdemonrenderscene.cpp \
-    $$PWD/qdemonrendertext.cpp
+    $$PWD/qdemonrendertext.cpp \
+    $$PWD/qdemonrendergraphobject.cpp

@@ -11,7 +11,6 @@
 #include <QtGui/QGuiApplication>
 
 #include <QtDemonRuntimeRender/QDemonRenderLayer>
-#include <QtDemonRuntimeRender/qdemonrendergraphobjecttypes.h>
 
 #include <qalgorithms.h>
 
@@ -698,31 +697,31 @@ void QDemonWindowPrivate::cleanupNodes()
     for (int ii = 0; ii < cleanupNodeList.count(); ++ii) {
         QDemonGraphObject *node = cleanupNodeList.at(ii);
         // Different processing for resource nodes vs hierarchical nodes
-        switch (node->type.value) {
-        case QDemonGraphObjectType::Layer: {
+        switch (node->type) {
+        case QDemonGraphObject::Type::Layer: {
             QDemonRenderLayer *layerNode = static_cast<QDemonRenderLayer *>(node);
             // remove layer from scene
             m_scene->removeChild(*layerNode);
         } break;
-        case QDemonGraphObjectType::Node:
-        case QDemonGraphObjectType::Light:
-        case QDemonGraphObjectType::Camera:
-        case QDemonGraphObjectType::Model:
-        case QDemonGraphObjectType::Text:
-        case QDemonGraphObjectType::Path: {
+        case QDemonGraphObject::Type::Node:
+        case QDemonGraphObject::Type::Light:
+        case QDemonGraphObject::Type::Camera:
+        case QDemonGraphObject::Type::Model:
+        case QDemonGraphObject::Type::Text:
+        case QDemonGraphObject::Type::Path: {
             // handle hierarchical nodes
             QDemonGraphNode *spatialNode = static_cast<QDemonGraphNode *>(node);
             spatialNode->removeFromGraph();
         } break;
-        case QDemonGraphObjectType::Presentation:
-        case QDemonGraphObjectType::Scene:
-        case QDemonGraphObjectType::DefaultMaterial:
-        case QDemonGraphObjectType::Image:
-        case QDemonGraphObjectType::Effect:
-        case QDemonGraphObjectType::CustomMaterial:
-        case QDemonGraphObjectType::ReferencedMaterial:
-        case QDemonGraphObjectType::PathSubPath:
-        case QDemonGraphObjectType::Lightmaps:
+        case QDemonGraphObject::Type::Presentation:
+        case QDemonGraphObject::Type::Scene:
+        case QDemonGraphObject::Type::DefaultMaterial:
+        case QDemonGraphObject::Type::Image:
+        case QDemonGraphObject::Type::Effect:
+        case QDemonGraphObject::Type::CustomMaterial:
+        case QDemonGraphObject::Type::ReferencedMaterial:
+        case QDemonGraphObject::Type::PathSubPath:
+        case QDemonGraphObject::Type::Lightmaps:
             // handle resource nodes
             // ### Handle the case where we are referenced by another node
             break;

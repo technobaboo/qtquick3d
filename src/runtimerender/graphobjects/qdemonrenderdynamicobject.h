@@ -49,7 +49,7 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonDynamicObject : public QDemonGraphObjec
     quint32 dataSectionByteSize;
     quint32 thisObjectSize;
 
-    QDemonDynamicObject(QDemonGraphObjectType inType, const QString &inClassName, quint32 inDSByteSize, quint32 thisObjSize);
+    QDemonDynamicObject(Type inType, const QString &inClassName, quint32 inDSByteSize, quint32 thisObjSize);
 
     quint8 *getDataSectionBegin()
     {

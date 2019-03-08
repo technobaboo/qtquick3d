@@ -129,9 +129,9 @@ namespace {
 QDemonGraphObject *getNextSibling(QDemonGraphObject *obj)
 {
 
-    if (obj->type == QDemonGraphObjectType::CustomMaterial)
+    if (obj->type == QDemonGraphObject::Type::CustomMaterial)
         return static_cast<QDemonRenderCustomMaterial *>(obj)->m_nextSibling;
-    else if (obj->type == QDemonGraphObjectType::DefaultMaterial)
+    else if (obj->type == QDemonGraphObject::Type::DefaultMaterial)
         return static_cast<QDemonRenderDefaultMaterial *>(obj)->nextSibling;
     else
         return static_cast<QDemonReferencedMaterial *>(obj)->m_nextSibling;
@@ -139,9 +139,9 @@ QDemonGraphObject *getNextSibling(QDemonGraphObject *obj)
 
 void setNextSibling(QDemonGraphObject *obj, QDemonGraphObject *sibling)
 {
-    if (obj->type == QDemonGraphObjectType::CustomMaterial)
+    if (obj->type == QDemonGraphObject::Type::CustomMaterial)
         static_cast<QDemonRenderCustomMaterial *>(obj)->m_nextSibling = sibling;
-    else if (obj->type == QDemonGraphObjectType::DefaultMaterial)
+    else if (obj->type == QDemonGraphObject::Type::DefaultMaterial)
         static_cast<QDemonRenderDefaultMaterial *>(obj)->nextSibling = sibling;
     else
         static_cast<QDemonReferencedMaterial *>(obj)->m_nextSibling = sibling;

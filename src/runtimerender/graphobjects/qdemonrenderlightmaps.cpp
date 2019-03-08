@@ -32,6 +32,6 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonRenderLightmaps::QDemonRenderLightmaps() : QDemonGraphObject(QDemonGraphObjectType::Lightmaps) {}
+QDemonRenderLightmaps::QDemonRenderLightmaps() : QDemonGraphObject(QDemonGraphObject::Type::Lightmaps) {}
 
 QT_END_NAMESPACE

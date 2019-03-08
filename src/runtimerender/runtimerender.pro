@@ -29,7 +29,6 @@ HEADERS += \
     qdemonrendereulerangles.h \
     qdemonrendergraphobjectpickquery.h \
 #    qdemonrendergraphobjectserializer.h \
-    qdemonrendergraphobjecttypes.h \
     qdemonrenderimagescaler.h \
     qdemonrenderimagetexturedata.h \
     qdemonrenderinputstreamfactory.h \

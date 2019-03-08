@@ -35,7 +35,7 @@
 
 #include <QtDemonRuntimeRender/qdemonrendershadercache.h>
 #include <QtDemonRuntimeRender/qdemonrendertessmodevalues.h>
-#include <QtDemonRuntimeRender/qdemonrendergraphobjecttypes.h>
+#include <QtDemonRuntimeRender/qdemonrendergraphobject.h>
 
 #include <QtGui/QVector2D>
 
@@ -160,7 +160,7 @@ public:
     virtual quint32 getPropertySectionByteSize() const = 0;
     virtual const quint8 *getDefaultValueBuffer() const = 0;
     virtual quint32 getBaseObjectSize() const = 0;
-    virtual QDemonGraphObjectType graphObjectType() const = 0;
+    virtual QDemonGraphObject::Type graphObjectType() const = 0;
     virtual const dynamic::QDemonPropertyDefinition *findPropertyByName(QString inName) const = 0;
     virtual QDemonConstDataRef<dynamic::QDemonCommand *> getRenderCommands() const = 0;
     virtual bool requiresDepthTexture() const = 0;
@@ -182,7 +182,7 @@ public:
     virtual bool doRegister(QString inName,
                             QDemonConstDataRef<dynamic::QDemonPropertyDeclaration> inProperties,
                             quint32 inBaseObjectSize,
-                            QDemonGraphObjectType inGraphObjectType) = 0;
+                            QDemonGraphObject::Type inGraphObjectType) = 0;
 
     virtual bool unregister(QString inName) = 0;
 

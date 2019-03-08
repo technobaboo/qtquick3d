@@ -81,7 +81,7 @@ struct QDemonPath : public QDemonGraphNode
 
     bool m_wireframeMode = false;
     // Loaded onto the card just as data.
-    QDemonPath() : QDemonGraphNode(QDemonGraphObjectType::Path) {}
+    QDemonPath() : QDemonGraphNode(Type::Path) {}
 
     bool isStroked() const
     {

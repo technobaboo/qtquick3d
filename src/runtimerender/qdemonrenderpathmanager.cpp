@@ -1081,7 +1081,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
 
     QDemonRef<QDemonMaterialShaderGeneratorInterface> getMaterialShaderGenertator(QDemonPathRenderContext &inRenderContext)
     {
-        bool isDefaultMaterial = (inRenderContext.material.type == QDemonGraphObjectType::DefaultMaterial);
+        bool isDefaultMaterial = (inRenderContext.material.type == QDemonGraphObject::Type::DefaultMaterial);
 
         QDemonRef<QDemonMaterialShaderGeneratorInterface> theMaterialGenerator = nullptr;
         if (isDefaultMaterial)
@@ -1094,7 +1094,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
 
     QString getMaterialNameForKey(QDemonPathRenderContext &inRenderContext)
     {
-        bool isDefaultMaterial = (inRenderContext.material.type == QDemonGraphObjectType::DefaultMaterial);
+        bool isDefaultMaterial = (inRenderContext.material.type == QDemonGraphObject::Type::DefaultMaterial);
 
         if (!isDefaultMaterial) {
             QDemonRef<QDemonMaterialSystem> theMaterialSystem(m_renderContext->getCustomMaterialSystem());
@@ -1553,7 +1553,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
         if (!thePathBuffer)
             return;
 
-        if (inRenderContext.material.type != QDemonGraphObjectType::DefaultMaterial)
+        if (inRenderContext.material.type != QDemonGraphObject::Type::DefaultMaterial)
             return;
 
         if (thePathBuffer->m_pathType == PathTypes::Painted) {
@@ -1594,7 +1594,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
         if (!thePathBuffer)
             return;
 
-        if (inRenderContext.material.type != QDemonGraphObjectType::DefaultMaterial)
+        if (inRenderContext.material.type != QDemonGraphObject::Type::DefaultMaterial)
             return;
 
         if (thePathBuffer->m_pathType == PathTypes::Painted) {
@@ -1638,7 +1638,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
             return;
         }
 
-        bool isDefaultMaterial = (inRenderContext.material.type == QDemonGraphObjectType::DefaultMaterial);
+        bool isDefaultMaterial = (inRenderContext.material.type == QDemonGraphObject::Type::DefaultMaterial);
 
         if (thePathBuffer->m_pathType == PathTypes::Geometry) {
             QDemonRef<QDemonMaterialShaderGeneratorInterface> theMaterialGenerator = getMaterialShaderGenertator(inRenderContext);
