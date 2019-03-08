@@ -47,15 +47,10 @@ QT_BEGIN_NAMESPACE
 
 uint qHash(const QDemonOffscreenRendererKey &key)
 {
-    switch (key.getType()) {
-    case OffscreenRendererKeyTypes::RegisteredString:
-        return qHash(key.getData<QString>());
-    case OffscreenRendererKeyTypes::VoidPtr:
-        return qHash(reinterpret_cast<size_t>(key.getData<void *>()));
-    default:
-        Q_UNREACHABLE();
-        return 0;
-    }
+    if (key.isString())
+        return qHash(key.string);
+    else
+        return qHash(reinterpret_cast<size_t>(key.key));
 }
 
 namespace {
@@ -124,10 +119,10 @@ struct QDemonOffscreenRenderManager : public QDemonOffscreenRenderManagerInterfa
         if (theIter != m_renderers.end()) {
             QDemonRendererData &theData = theIter.value();
             if (theData.renderer != inRenderer) {
-                if (inKey.getType() == OffscreenRendererKeyTypes::RegisteredString) {
+                if (inKey.isString()) {
                     qCCritical(INVALID_OPERATION,
                                "Different renderers registered under same key: %s",
-                               inKey.getData<QString>().toLatin1().constData());
+                               inKey.string.toLatin1().constData());
                 }
                 Q_ASSERT(false);
                 return QDemonEmpty();

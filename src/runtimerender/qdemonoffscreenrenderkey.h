@@ -30,99 +30,25 @@
 #ifndef QDEMON_OFFSCREEN_RENDER_KEY_H
 #define QDEMON_OFFSCREEN_RENDER_KEY_H
 
-#include <QtDemon/qdemondiscriminatedunion.h>
 #include <QtCore/QString>
 
 QT_BEGIN_NAMESPACE
 
-template<>
-struct DestructTraits<QString>
+struct QDemonOffscreenRendererKey
 {
-    void destruct(QString &) {}
-};
+    QString string;
+    void *key = nullptr;
 
-enum class OffscreenRendererKeyTypes
-{
-    NoOffscreenRendererKey = 0,
-    RegisteredString,
-    VoidPtr,
-};
+    QDemonOffscreenRendererKey() = default;
+    QDemonOffscreenRendererKey(const QString &str) : string(str) {}
+    QDemonOffscreenRendererKey(void *key) : key(key) {}
 
-template<typename TDType>
-struct QDemonOffscreenRendererKeyTypeMap
-{
-};
-template<>
-struct QDemonOffscreenRendererKeyTypeMap<QString>
-{
-    static const OffscreenRendererKeyTypes KeyType = OffscreenRendererKeyTypes::RegisteredString;
-};
-template<>
-struct QDemonOffscreenRendererKeyTypeMap<void *>
-{
-    static const OffscreenRendererKeyTypes KeyType = OffscreenRendererKeyTypes::VoidPtr;
-};
+    bool isVoidPointer() const { return key != nullptr; }
+    bool isString() const { return key == nullptr; }
 
-struct QDemonOffscreenRendererKeyUnionTraits
-{
-    typedef OffscreenRendererKeyTypes TIdType;
-    enum {
-        TBufferSize = sizeof(QString),
-    };
-
-    static OffscreenRendererKeyTypes getNoDataId() { return OffscreenRendererKeyTypes::NoOffscreenRendererKey; }
-
-    template<typename TDataType>
-    static OffscreenRendererKeyTypes getType()
+    bool operator==(const QDemonOffscreenRendererKey &other) const
     {
-        return QDemonOffscreenRendererKeyTypeMap<TDataType>::KeyType;
-    }
-
-    template<typename TRetType, typename TVisitorType>
-    static TRetType visit(char *inData, OffscreenRendererKeyTypes inType, TVisitorType inVisitor)
-    {
-        switch (inType) {
-        case OffscreenRendererKeyTypes::RegisteredString:
-            return inVisitor(*reinterpret_cast<QString *>(inData));
-        case OffscreenRendererKeyTypes::VoidPtr:
-            return inVisitor(*reinterpret_cast<void **>(inData));
-        default:
-            Q_ASSERT(false);
-        case OffscreenRendererKeyTypes::NoOffscreenRendererKey:
-            return inVisitor();
-        }
-    }
-
-    template<typename TRetType, typename TVisitorType>
-    static TRetType visit(const char *inData, OffscreenRendererKeyTypes inType, TVisitorType inVisitor)
-    {
-        switch (inType) {
-        case OffscreenRendererKeyTypes::RegisteredString:
-            return inVisitor(*reinterpret_cast<const QString *>(inData));
-        case OffscreenRendererKeyTypes::VoidPtr:
-            return inVisitor(*reinterpret_cast<const void **>(&inData));
-        default:
-            Q_ASSERT(false);
-        case OffscreenRendererKeyTypes::NoOffscreenRendererKey:
-            return inVisitor();
-        }
-    }
-};
-
-using QDemonOffscreenRendererKeyUnionType = DiscriminatedUnion<DiscriminatedUnionGenericBase<QDemonOffscreenRendererKeyUnionTraits, QDemonOffscreenRendererKeyUnionTraits::TBufferSize>,
-                                                               QDemonOffscreenRendererKeyUnionTraits::TBufferSize>;
-
-struct QDemonOffscreenRendererKey : public QDemonOffscreenRendererKeyUnionType
-{
-    typedef QDemonOffscreenRendererKeyUnionType TBase;
-    QDemonOffscreenRendererKey() {}
-    QDemonOffscreenRendererKey(const QString &str) : TBase(str) {}
-    QDemonOffscreenRendererKey(void *key) : TBase(key) {}
-    QDemonOffscreenRendererKey(const QDemonOffscreenRendererKey &other) : TBase(static_cast<const TBase &>(other)) {}
-    QDemonOffscreenRendererKey &operator=(const QDemonOffscreenRendererKey &other)
-    {
-        TBase::operator=(other);
-        return *this;
+        return string == other.string && key == other.key;
     }
 };
 QT_END_NAMESPACE
