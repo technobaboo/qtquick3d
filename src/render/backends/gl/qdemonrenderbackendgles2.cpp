@@ -496,26 +496,6 @@ bool QDemonRenderBackendGLES2Impl::setInputAssembler(QDemonRenderBackendInputAss
     } else {
         GL_CALL_EXTENSION_FUNCTION(glBindVertexArrayOES(inputAssembler->m_vaoID));
     }
-#ifdef _DEBUG
-    if (inputAssembler->m_vaoID) {
-        for (const auto &attrib : qAsConst(shaderAttribBuffer))
-        {
-            const QDemonRenderBackendShaderInputEntryGL &attrib(shaderAttribBuffer[idx]);
-            QDemonRenderBackendLayoutEntryGL *entry = attribLayout->getEntryByName(attrib.m_attribName);
-
-            if (entry) {
-                QDemonRenderBackendLayoutEntryGL &entryData(*entry);
-                if (entryData.m_type != attrib.m_type || entryData.m_numComponents != attrib.m_numComponents
-                    || entryData.m_attribIndex != attrib.m_attribLocation) {
-                    qCCritical(INVALID_OPERATION, "Attrib %s dn't match vertex layout", qPrintable(attrib.m_attribName));
-                    Q_ASSERT(false);
-                }
-            } else {
-                qCWarning(WARNING, "Failed to Bind attribute %s", qPrintable(attrib.m_attribName));
-            }
-        }
-    }
-#endif // _DEBUG
 
     return true;
 }
