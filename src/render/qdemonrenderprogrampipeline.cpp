@@ -97,7 +97,7 @@ void QDemonRenderProgramPipeline::setProgramStages(const QDemonRef<QDemonRenderS
     }
 
     if (bDirty) {
-        m_backend->setProgramStages(m_programPipelineHandle, flags, (inProgram) ? inProgram->getShaderProgramHandle() : nullptr);
+        m_backend->setProgramStages(m_programPipelineHandle, flags, (inProgram) ? inProgram->handle() : nullptr);
     }
 }
 

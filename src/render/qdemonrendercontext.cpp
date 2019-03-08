@@ -551,7 +551,7 @@ QDemonRenderVertFragCompilationResult QDemonRenderContext::compileSource(const c
                                                                                      binaryProgram);
 
     if (result.m_shader != nullptr)
-        m_shaderToImpMap.insert(result.m_shader->getShaderProgramHandle(), result.m_shader.data());
+        m_shaderToImpMap.insert(result.m_shader->handle(), result.m_shader.data());
 
     return result;
 }
@@ -577,7 +577,7 @@ QDemonRenderVertFragCompilationResult QDemonRenderContext::compileBinary(const c
                                                                                      true);
 
     if (result.m_shader != nullptr)
-        m_shaderToImpMap.insert(result.m_shader->getShaderProgramHandle(), result.m_shader.data());
+        m_shaderToImpMap.insert(result.m_shader->handle(), result.m_shader.data());
 
     return result;
 #else
@@ -592,7 +592,7 @@ QDemonRenderVertFragCompilationResult QDemonRenderContext::compileComputeSource(
     QDemonRenderVertFragCompilationResult result = QDemonRenderShaderProgram::createCompute(this, shaderName, computeShaderSource);
 
     if (result.m_shader != nullptr)
-        m_shaderToImpMap.insert(result.m_shader->getShaderProgramHandle(), result.m_shader.data());
+        m_shaderToImpMap.insert(result.m_shader->handle(), result.m_shader.data());
 
     return result;
 }
@@ -607,7 +607,7 @@ QDemonRef<QDemonRenderShaderProgram> QDemonRenderContext::getShaderProgram(const
 
 void QDemonRenderContext::shaderDestroyed(QDemonRenderShaderProgram *shader)
 {
-    m_shaderToImpMap.remove(shader->getShaderProgramHandle());
+    m_shaderToImpMap.remove(shader->handle());
     if (m_hardwarePropertyContext.m_activeShader.data() == shader)
         setActiveShader(nullptr);
 }
@@ -800,7 +800,7 @@ void QDemonRenderContext::dispatchCompute(QDemonRef<QDemonRenderShaderProgram> i
     if (inShader != m_hardwarePropertyContext.m_activeShader)
         doSetActiveShader(inShader);
 
-    m_backend->dispatchCompute(inShader->getShaderProgramHandle(), numGroupsX, numGroupsY, numGroupsZ);
+    m_backend->dispatchCompute(inShader->handle(), numGroupsX, numGroupsY, numGroupsZ);
 
     onPostDraw();
 }
@@ -921,7 +921,7 @@ bool QDemonRenderContext::bindShaderToInputAssembler(const QDemonRef<QDemonRende
                                                          const QDemonRef<QDemonRenderShaderProgram> &shader)
 {
     // setup the input assembler object
-    return m_backend->setInputAssembler(inputAssembler->getInputAssemblerHandle(), shader->getShaderProgramHandle());
+    return m_backend->setInputAssembler(inputAssembler->getInputAssemblerHandle(), shader->handle());
 }
 
 bool QDemonRenderContext::applyPreDrawProperties()
@@ -1051,7 +1051,7 @@ void QDemonRenderContext::doSetActiveShader(const QDemonRef<QDemonRenderShaderPr
         return;
 
     if (inShader)
-        m_backend->setActiveProgram(inShader->getShaderProgramHandle());
+        m_backend->setActiveProgram(inShader->handle());
     else
         m_backend->setActiveProgram(nullptr);
 

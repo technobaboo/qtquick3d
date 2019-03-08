@@ -108,7 +108,7 @@ void QDemonRenderConstantBuffer::bindToShaderProgram(const QDemonRef<QDemonRende
 {
     if ((qint32)binding == -1) {
         binding = m_context->getNextConstantBufferUnit();
-        m_backend->programSetConstantBlock(inShader->getShaderProgramHandle(), blockIndex, binding);
+        m_backend->programSetConstantBlock(inShader->handle(), blockIndex, binding);
     }
 
     m_backend->programSetConstantBuffer(binding, m_bufferHandle);
@@ -146,10 +146,10 @@ bool QDemonRenderConstantBuffer::setupBuffer(const QDemonRenderShaderProgram *pr
         bSuccess = true;
 
         // get indices for the individal constant buffer entries
-        m_backend->getConstantBufferParamIndices(program->getShaderProgramHandle(), index, theIndices);
+        m_backend->getConstantBufferParamIndices(program->handle(), index, theIndices);
 
         // get constant buffer uniform information
-        m_backend->getConstantBufferParamInfoByIndices(program->getShaderProgramHandle(), paramCount, (quint32 *)theIndices, theTypes, theSizes, theOffsets);
+        m_backend->getConstantBufferParamInfoByIndices(program->handle(), paramCount, (quint32 *)theIndices, theTypes, theSizes, theOffsets);
 
         // get the names of the uniforms
         char nameBuf[512];
@@ -157,7 +157,7 @@ bool QDemonRenderConstantBuffer::setupBuffer(const QDemonRenderShaderProgram *pr
         QDemonRenderShaderDataType type;
 
         for (int idx = 0; idx != paramCount; ++idx) {
-            m_backend->getConstantInfoByID(program->getShaderProgramHandle(), theIndices[idx], 512, &elementCount, &type, &binding, nameBuf);
+            m_backend->getConstantInfoByID(program->handle(), theIndices[idx], 512, &elementCount, &type, &binding, nameBuf);
             // check if we already have this entry
             const QByteArray theName = nameBuf;
             TRenderConstantBufferEntryMap::iterator entry = m_constantBufferEntryMap.find(theName);

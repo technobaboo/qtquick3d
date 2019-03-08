@@ -915,7 +915,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
                               const QDemonRef<QDemonRenderShaderProgram> &inShader,
                               const QDemonPropertyDefinition &inDefinition)
     {
-        auto theConstant = inShader->getShaderConstant(inPropertyName.toLocal8Bit());
+        auto theConstant = inShader->shaderConstant(inPropertyName.toLocal8Bit());
         if (theConstant) {
             if (theConstant->getShaderConstantType() == inPropertyType) {
                 if (inPropertyType == QDemonRenderShaderDataType::Texture2D) {
@@ -1068,7 +1068,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
             QDemonConstDataRef<QDemonPropertyDefinition> theDefs = inClass->dynamicClass->getProperties();
             for (quint32 idx = 0, end = theDefs.size(); idx < end; ++idx) {
                 const QDemonPropertyDefinition &theDefinition(theDefs[idx]);
-                auto theConstant = inShader->getShaderConstant(theDefinition.name.toLatin1());
+                auto theConstant = inShader->shaderConstant(theDefinition.name.toLatin1());
 
                 // This is fine, the property wasn't found and we continue, no problem.
                 if (!theConstant)
@@ -1164,7 +1164,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
         }
 
         if (!inCommand.m_paramName.isEmpty()) {
-            auto theConstant = inShader->getShaderConstant(inCommand.m_paramName.toLatin1());
+            auto theConstant = inShader->shaderConstant(inCommand.m_paramName.toLatin1());
 
             if (theConstant) {
                 if (theConstant->getShaderConstantType() != QDemonRenderShaderDataType::Texture2D) {
@@ -1193,7 +1193,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
                          const QDemonApplyDepthValue &inCommand,
                          const QDemonRef<QDemonRenderTexture2D> &inTexture)
     {
-        auto theConstant = inShader->getShaderConstant(inCommand.m_paramName.toLatin1());
+        auto theConstant = inShader->shaderConstant(inCommand.m_paramName.toLatin1());
 
         if (theConstant) {
             if (theConstant->getShaderConstantType() != QDemonRenderShaderDataType::Texture2D) {
@@ -1230,13 +1230,13 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
         }
 
         if (!inCommand.m_paramName.isEmpty()) {
-            auto theConstant = inShader->getShaderConstant(inCommand.m_paramName.toLatin1());
+            auto theConstant = inShader->shaderConstant(inCommand.m_paramName.toLatin1());
 
             if (theConstant) {
                 if (inCommand.m_needSync) {
                     QDemonRenderBufferBarrierFlags flags(QDemonRenderBufferBarrierValues::TextureFetch
                                                          | QDemonRenderBufferBarrierValues::TextureUpdate);
-                    inShader->getRenderContext()->setMemoryBarrier(flags);
+                    inShader->renderContext()->setMemoryBarrier(flags);
                 }
 
                 if (theConstant->getShaderConstantType() == QDemonRenderShaderDataType::Image2D && !inCommand.m_bindAsTexture) {
@@ -1282,14 +1282,14 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
                 Q_ASSERT(false);
             }
 
-            auto theConstant = inShader->getShaderBuffer(inCommand.m_paramName.toLatin1());
+            auto theConstant = inShader->shaderBuffer(inCommand.m_paramName.toLatin1());
 
             if (theConstant) {
                 getEffectContext(*inEffect).setDataBuffer(inShader, inCommand.m_paramName, theBufferToBind.dataBuffer);
             } else if (theBufferToBind.bufferType == QDemonRenderBufferBindValues::Draw_Indirect) {
                 // since we filled part of this buffer on the GPU we need a sync before usage
                 QDemonRenderBufferBarrierFlags flags(QDemonRenderBufferBarrierValues::CommandBuffer);
-                inShader->getRenderContext()->setMemoryBarrier(flags);
+                inShader->renderContext()->setMemoryBarrier(flags);
             }
         }
     }

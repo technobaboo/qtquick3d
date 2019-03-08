@@ -665,7 +665,7 @@ struct QDemonMaterialOrComputeShader
     QDemonMaterialOrComputeShader(const QDemonRef<QDemonRenderShaderProgram> &inComputeShader)
         : m_computeShader(inComputeShader)
     {
-        Q_ASSERT(inComputeShader->getProgramType() == QDemonRenderShaderProgram::ProgramType::Compute);
+        Q_ASSERT(inComputeShader->programType() == QDemonRenderShaderProgram::ProgramType::Compute);
     }
     bool isValid() const { return m_materialShader || m_computeShader; }
     bool isComputeShader() const { return m_computeShader != nullptr; }
@@ -1041,7 +1041,7 @@ QDemonMaterialOrComputeShader QDemonMaterialSystem::bindShader(QDemonCustomMater
         theProgram = theInsertResult.value()->shader;
 
     if (theProgram) {
-        if (theProgram->getProgramType() == QDemonRenderShaderProgram::ProgramType::Graphics) {
+        if (theProgram->programType() == QDemonRenderShaderProgram::ProgramType::Graphics) {
             if (theInsertResult.value()) {
                 QDemonRef<QDemonRenderContext> theContext(context->getRenderContext());
                 theContext->setActiveShader(theInsertResult.value()->shader);
@@ -1059,7 +1059,7 @@ QDemonMaterialOrComputeShader QDemonMaterialSystem::bindShader(QDemonCustomMater
 
 void QDemonMaterialSystem::doApplyInstanceValue(QDemonRenderCustomMaterial &, quint8 *inDataPtr, const QString &inPropertyName, QDemonRenderShaderDataType inPropertyType, const QDemonRef<QDemonRenderShaderProgram> &inShader, const dynamic::QDemonPropertyDefinition &inDefinition)
 {
-    QDemonRef<QDemonRenderShaderConstantBase> theConstant = inShader->getShaderConstant(inPropertyName.toLocal8Bit());
+    QDemonRef<QDemonRenderShaderConstantBase> theConstant = inShader->shaderConstant(inPropertyName.toLocal8Bit());
     if (theConstant) {
         if (theConstant->getShaderConstantType() == inPropertyType) {
             if (inPropertyType == QDemonRenderShaderDataType::Texture2D) {
@@ -1191,7 +1191,7 @@ void QDemonMaterialSystem::applyInstanceValue(QDemonRenderCustomMaterial &inMate
         QDemonConstDataRef<dynamic::QDemonPropertyDefinition> theDefs = inClass.m_class->getProperties();
         for (quint32 idx = 0, end = theDefs.size(); idx < end; ++idx) {
             const dynamic::QDemonPropertyDefinition &theDefinition(theDefs[idx]);
-            QDemonRef<QDemonRenderShaderConstantBase> theConstant = inShader->getShaderConstant(
+            QDemonRef<QDemonRenderShaderConstantBase> theConstant = inShader->shaderConstant(
                         theDefinition.name.toLocal8Bit().constData());
 
             // This is fine, the property wasn't found and we continue, no problem.
@@ -1238,7 +1238,7 @@ const QDemonRef<QDemonRenderTexture2D> QDemonMaterialSystem::applyBufferValue(co
         theTexture = inSourceTexture;
 
     if (!inCommand.m_paramName.isNull()) {
-        QDemonRef<QDemonRenderShaderConstantBase> theConstant = inShader->getShaderConstant(
+        QDemonRef<QDemonRenderShaderConstantBase> theConstant = inShader->shaderConstant(
                     inCommand.m_paramName.toLocal8Bit().constData());
 
         if (theConstant) {

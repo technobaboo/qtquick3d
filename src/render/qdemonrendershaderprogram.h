@@ -68,47 +68,20 @@ private:
     QDemonRef<QDemonRenderContext> m_context; ///< pointer to context
     QDemonRef<QDemonRenderBackend> m_backend; ///< pointer to backend
     const char *m_programName; /// Name of the program
-    QDemonRenderBackend::QDemonRenderBackendShaderProgramObject m_programHandle; ///< opaque backend handle
+    QDemonRenderBackend::QDemonRenderBackendShaderProgramObject m_handle; ///< opaque backend handle
     TShaderConstantMap m_constants; ///< map of shader constants
     TShaderBufferMap m_shaderBuffers; ///< map of shader buffers
     ProgramType m_programType; ///< shader type
     QByteArray m_errorMessage; ///< contains the error message if linking fails
 
-public:
-    /**
-     * @brief constructor
-     *
-     * @param[in] context			Pointer to render context
-     * @param[in] fnd				Pointer to foundation
-     * @param[in] programName		Pointer to string of program name
-     * @param[in] separableProgram	True if this is a separable program
-     *
-     * @return No return.
-     */
-    QDemonRenderShaderProgram(const QDemonRef<QDemonRenderContext> &context, const char *programName, bool separableProgram);
-
-    /// destructor
-    ~QDemonRenderShaderProgram();
-
-    /**
-     * @brief attach a shader to the program
-     *
-     * @param[in] pShader		Pointer to shader object
-     *
-     * @return No return.
-     */
     template<typename TShaderObject>
     void attach(TShaderObject *pShader);
-
-    /**
-     * @brief detach a shader from the program
-     *
-     * @param[in] pShader		Pointer to shader object
-     *
-     * @return No return.
-     */
     template<typename TShaderObject>
     void detach(TShaderObject *pShader);
+
+    QDemonRenderShaderProgram(const QDemonRef<QDemonRenderContext> &context, const char *programName, bool separableProgram);
+public:
+    ~QDemonRenderShaderProgram();
 
     /**
      * @brief link a program
@@ -118,15 +91,7 @@ public:
      */
     bool link();
 
-    /**
-     * @brief set a shader type
-     *
-     * @param[in] type		shader type ( graphics or compute )
-     *
-     * @return No return.
-     */
-    void setProgramType(ProgramType type) { m_programType = type; }
-    ProgramType getProgramType() const { return m_programType; }
+    ProgramType programType() const { return m_programType; }
 
     /**
      * @brief Get Error Message
@@ -134,7 +99,7 @@ public:
      *
      * @return error message.
      */
-    QByteArray getErrorMessage();
+    QByteArray errorMessage();
 
     /**
      * @brief Query constant class
@@ -143,7 +108,7 @@ public:
      *
      * @return return a pointer to a constant class.
      */
-    QDemonRef<QDemonRenderShaderConstantBase> getShaderConstant(const char *constantName);
+    QDemonRef<QDemonRenderShaderConstantBase> shaderConstant(const char *constantName);
 
     /**
      * @brief Query a shader buffer (constant, ... )
@@ -152,7 +117,7 @@ public:
      *
      * @return return a pointer to a constant class.
      */
-    QDemonRef<QDemonRenderShaderBufferBase> getShaderBuffer(const char *bufferName);
+    QDemonRef<QDemonRenderShaderBufferBase> shaderBuffer(const char *bufferName);
 
     // concrete set functions
     void setConstantValue(QDemonRenderShaderConstantBase *inConstant, qint32 inValue, const qint32 inCount);
@@ -194,7 +159,7 @@ public:
     template<typename TDataType>
     void setPropertyValue(const char *inConstantName, const TDataType &inValue, const qint32 inCount = 1)
     {
-        QDemonRef<QDemonRenderShaderConstantBase> theConstant = getShaderConstant(inConstantName);
+        QDemonRef<QDemonRenderShaderConstantBase> theConstant = shaderConstant(inConstantName);
 
         if (theConstant) {
             if (theConstant->getShaderConstantType() == QDemonDataTypeToShaderDataTypeMap<TDataType>::getType()) {
@@ -235,9 +200,9 @@ public:
      *
      * @return the backend object handle.
      */
-    QDemonRenderBackend::QDemonRenderBackendShaderProgramObject getShaderProgramHandle() const
+    QDemonRenderBackend::QDemonRenderBackendShaderProgramObject handle() const
     {
-        return m_programHandle;
+        return m_handle;
     }
 
     /**
@@ -245,7 +210,7 @@ public:
      *
      * @return context which this shader belongs to.
      */
-    QDemonRef<QDemonRenderContext> getRenderContext();
+    QDemonRef<QDemonRenderContext> renderContext();
 
     /**
      * @brief Create a shader program
@@ -305,7 +270,7 @@ struct QDemonRenderCachedShaderProperty
     QDemonRenderCachedShaderProperty(const char *inConstantName, QDemonRef<QDemonRenderShaderProgram> inShader)
         : shader(inShader), constant(nullptr)
     {
-        QDemonRef<QDemonRenderShaderConstantBase> theConstant = inShader->getShaderConstant(inConstantName);
+        QDemonRef<QDemonRenderShaderConstantBase> theConstant = inShader->shaderConstant(inConstantName);
         if (theConstant) {
             if (theConstant->getShaderConstantType() == QDemonDataTypeToShaderDataTypeMap<TDataType>::getType()) {
                 constant = theConstant;
@@ -346,7 +311,7 @@ struct QDemonRenderCachedShaderPropertyArray
         : shader(inShader), constant(nullptr)
     {
         memset(m_array, 0, sizeof(m_array));
-        QDemonRef<QDemonRenderShaderConstantBase> theConstant = inShader->getShaderConstant(inConstantName);
+        QDemonRef<QDemonRenderShaderConstantBase> theConstant = inShader->shaderConstant(inConstantName);
         if (theConstant) {
             if (theConstant->m_elementCount > 1 && theConstant->m_elementCount <= size
                 && theConstant->getShaderConstantType() == QDemonDataTypeToShaderDataTypeMap<TDataType *>::getType()) {
@@ -384,7 +349,7 @@ struct QDemonRenderCachedShaderBuffer
     QDemonRenderCachedShaderBuffer(const char *inShaderBufferName, QDemonRef<QDemonRenderShaderProgram> inShader)
         : shader(inShader), shaderBuffer(nullptr)
     {
-        QDemonRef<TDataType> theShaderBuffer = static_cast<TDataType *>(inShader->getShaderBuffer(inShaderBufferName).get());
+        QDemonRef<TDataType> theShaderBuffer = static_cast<TDataType *>(inShader->shaderBuffer(inShaderBufferName).get());
         if (theShaderBuffer) {
             shaderBuffer = theShaderBuffer;
         }

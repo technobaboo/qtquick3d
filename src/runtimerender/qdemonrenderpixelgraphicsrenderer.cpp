@@ -57,10 +57,10 @@ struct QDemonPGRectShader
     {
         rectShader = program;
         if (program) {
-            mvp = program->getShaderConstant("model_view_projection");
-            rectColor = program->getShaderConstant("rect_color");
-            leftright = program->getShaderConstant("leftright[0]");
-            bottomtop = program->getShaderConstant("bottomtop[0]");
+            mvp = program->shaderConstant("model_view_projection");
+            rectColor = program->shaderConstant("rect_color");
+            leftright = program->shaderConstant("leftright[0]");
+            bottomtop = program->shaderConstant("bottomtop[0]");
         }
     }
 

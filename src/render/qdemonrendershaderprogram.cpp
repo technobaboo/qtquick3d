@@ -56,7 +56,7 @@ struct ShaderConstantApplier<qint32>
                        qint32 &oldValue)
     {
         if (!(inValue == oldValue)) {
-            backend->setConstantValue(program->getShaderProgramHandle(), location, type, count, &inValue);
+            backend->setConstantValue(program->handle(), location, type, count, &inValue);
             oldValue = inValue;
         }
     }
@@ -74,7 +74,7 @@ struct ShaderConstantApplier<qint32_2>
                        qint32_2 &oldValue)
     {
         if (!(inValue == oldValue)) {
-            backend->setConstantValue(program->getShaderProgramHandle(), location, type, count, &inValue.x);
+            backend->setConstantValue(program->handle(), location, type, count, &inValue.x);
             oldValue = inValue;
         }
     }
@@ -92,7 +92,7 @@ struct ShaderConstantApplier<qint32_3>
                        qint32_3 &oldValue)
     {
         if (!(inValue == oldValue)) {
-            backend->setConstantValue(program->getShaderProgramHandle(), location, type, count, &inValue.x);
+            backend->setConstantValue(program->handle(), location, type, count, &inValue.x);
             oldValue = inValue;
         }
     }
@@ -110,7 +110,7 @@ struct ShaderConstantApplier<qint32_4>
                        qint32_4 &oldValue)
     {
         if (!(inValue == oldValue)) {
-            backend->setConstantValue(program->getShaderProgramHandle(), location, type, count, &inValue.x);
+            backend->setConstantValue(program->handle(), location, type, count, &inValue.x);
             oldValue = inValue;
         }
     }
@@ -128,7 +128,7 @@ struct ShaderConstantApplier<bool>
                        bool &oldValue)
     {
         if (!(inValue == oldValue)) {
-            backend->setConstantValue(program->getShaderProgramHandle(), location, type, count, &inValue);
+            backend->setConstantValue(program->handle(), location, type, count, &inValue);
             oldValue = inValue;
         }
     }
@@ -146,7 +146,7 @@ struct ShaderConstantApplier<bool_2>
                        bool_2 &oldValue)
     {
         if (!(inValue == oldValue)) {
-            backend->setConstantValue(program->getShaderProgramHandle(), location, type, count, &inValue);
+            backend->setConstantValue(program->handle(), location, type, count, &inValue);
             oldValue = inValue;
         }
     }
@@ -164,7 +164,7 @@ struct ShaderConstantApplier<bool_3>
                        bool_3 &oldValue)
     {
         if (!(inValue == oldValue)) {
-            backend->setConstantValue(program->getShaderProgramHandle(), location, type, count, &inValue);
+            backend->setConstantValue(program->handle(), location, type, count, &inValue);
             oldValue = inValue;
         }
     }
@@ -182,7 +182,7 @@ struct ShaderConstantApplier<bool_4>
                        bool_4 &oldValue)
     {
         if (!(inValue == oldValue)) {
-            backend->setConstantValue(program->getShaderProgramHandle(), location, type, count, &inValue);
+            backend->setConstantValue(program->handle(), location, type, count, &inValue);
             oldValue = inValue;
         }
     }
@@ -200,7 +200,7 @@ struct ShaderConstantApplier<float>
                        float &oldValue)
     {
         if (count > 1 || !(inValue == oldValue)) {
-            backend->setConstantValue(program->getShaderProgramHandle(), location, type, count, &inValue);
+            backend->setConstantValue(program->handle(), location, type, count, &inValue);
             oldValue = inValue;
         }
     }
@@ -218,7 +218,7 @@ struct ShaderConstantApplier<QVector2D>
                        QVector2D &oldValue)
     {
         if (!(inValue == oldValue)) {
-            backend->setConstantValue(program->getShaderProgramHandle(), location, type, count, &inValue);
+            backend->setConstantValue(program->handle(), location, type, count, &inValue);
             oldValue = inValue;
         }
     }
@@ -236,7 +236,7 @@ struct ShaderConstantApplier<QVector3D>
                        QVector3D &oldValue)
     {
         if (!(inValue == oldValue)) {
-            backend->setConstantValue(program->getShaderProgramHandle(), location, type, count, &inValue);
+            backend->setConstantValue(program->handle(), location, type, count, &inValue);
             oldValue = inValue;
         }
     }
@@ -254,7 +254,7 @@ struct ShaderConstantApplier<QVector4D>
                        QVector4D &oldValue)
     {
         if (!(inValue == oldValue)) {
-            backend->setConstantValue(program->getShaderProgramHandle(), location, type, count, &inValue);
+            backend->setConstantValue(program->handle(), location, type, count, &inValue);
             oldValue = inValue;
         }
     }
@@ -272,7 +272,7 @@ struct ShaderConstantApplier<quint32>
                        quint32 &oldValue)
     {
         if (!(inValue == oldValue)) {
-            backend->setConstantValue(program->getShaderProgramHandle(), location, type, count, &inValue);
+            backend->setConstantValue(program->handle(), location, type, count, &inValue);
             oldValue = inValue;
         }
     }
@@ -290,7 +290,7 @@ struct ShaderConstantApplier<quint32_2>
                        quint32_2 &oldValue)
     {
         if (!(inValue == oldValue)) {
-            backend->setConstantValue(program->getShaderProgramHandle(), location, type, count, &inValue.x);
+            backend->setConstantValue(program->handle(), location, type, count, &inValue.x);
             oldValue = inValue;
         }
     }
@@ -308,7 +308,7 @@ struct ShaderConstantApplier<quint32_3>
                        quint32_3 &oldValue)
     {
         if (!(inValue == oldValue)) {
-            backend->setConstantValue(program->getShaderProgramHandle(), location, type, count, &inValue.x);
+            backend->setConstantValue(program->handle(), location, type, count, &inValue.x);
             oldValue = inValue;
         }
     }
@@ -326,7 +326,7 @@ struct ShaderConstantApplier<quint32_4>
                        quint32_4 &oldValue)
     {
         if (!(inValue == oldValue)) {
-            backend->setConstantValue(program->getShaderProgramHandle(), location, type, count, &inValue.x);
+            backend->setConstantValue(program->handle(), location, type, count, &inValue.x);
             oldValue = inValue;
         }
     }
@@ -344,7 +344,7 @@ struct ShaderConstantApplier<QMatrix3x3>
                        QMatrix3x3 &,
                        bool inTranspose)
     {
-        backend->setConstantValue(program->getShaderProgramHandle(), location, type, count, inValue.constData(), inTranspose);
+        backend->setConstantValue(program->handle(), location, type, count, inValue.constData(), inTranspose);
     }
 };
 
@@ -360,7 +360,7 @@ struct ShaderConstantApplier<QMatrix4x4>
                        QMatrix4x4 &,
                        bool inTranspose)
     {
-        backend->setConstantValue(program->getShaderProgramHandle(), location, type, count, inValue.constData(), inTranspose);
+        backend->setConstantValue(program->handle(), location, type, count, inValue.constData(), inTranspose);
     }
 
     void applyConstant(const QDemonRenderShaderProgram *program,
@@ -372,7 +372,7 @@ struct ShaderConstantApplier<QMatrix4x4>
                        QMatrix4x4 &,
                        bool inTranspose)
     {
-        backend->setConstantValue(program->getShaderProgramHandle(),
+        backend->setConstantValue(program->handle(),
                                   location,
                                   type,
                                   count,
@@ -397,7 +397,7 @@ struct ShaderConstantApplier<QDemonRenderTexture2DPtr>
             texObj->bind();
             quint32 texUnit = texObj->getTextureUnit();
             if (texUnit != oldValue) {
-                backend->setConstantValue(program->getShaderProgramHandle(), location, type, count, &texUnit);
+                backend->setConstantValue(program->handle(), location, type, count, &texUnit);
                 oldValue = texUnit;
             }
         }
@@ -431,7 +431,7 @@ struct ShaderConstantApplier<QDemonRenderTexture2DHandle>
                 }
             }
             if (update)
-                backend->setConstantValue(program->getShaderProgramHandle(),
+                backend->setConstantValue(program->handle(),
                                           location,
                                           QDemonRenderShaderDataType::Texture2D,
                                           count,
@@ -456,7 +456,7 @@ struct ShaderConstantApplier<QDemonRenderTexture2DArrayPtr>
             texObj->bind();
             quint32 texUnit = texObj->getTextureUnit();
             if (texUnit != oldValue) {
-                backend->setConstantValue(program->getShaderProgramHandle(), location, type, count, &texUnit);
+                backend->setConstantValue(program->handle(), location, type, count, &texUnit);
                 oldValue = texUnit;
             }
         }
@@ -479,7 +479,7 @@ struct ShaderConstantApplier<QDemonRenderTextureCubePtr>
             texObj->bind();
             quint32 texUnit = texObj->getTextureUnit();
             if (texUnit != oldValue) {
-                backend->setConstantValue(program->getShaderProgramHandle(), location, type, count, &texUnit);
+                backend->setConstantValue(program->handle(), location, type, count, &texUnit);
                 oldValue = texUnit;
             }
         }
@@ -513,7 +513,7 @@ struct ShaderConstantApplier<QDemonRenderTextureCubeHandle>
                 }
             }
             if (update)
-                backend->setConstantValue(program->getShaderProgramHandle(),
+                backend->setConstantValue(program->handle(),
                                           location,
                                           QDemonRenderShaderDataType::TextureCube,
                                           count,
@@ -543,7 +543,7 @@ struct ShaderConstantApplier<QDemonRenderImage2DPtr>
                 Q_ASSERT(backend->getRenderContextType() != QDemonRenderContextType::GLES3PLUS || binding != -1);
                 // this is not allowed on ES 3+ for image types
                 if (backend->getRenderContextType() != QDemonRenderContextType::GLES3PLUS)
-                    backend->setConstantValue(program->getShaderProgramHandle(), location, type, count, &texUnit);
+                    backend->setConstantValue(program->handle(), location, type, count, &texUnit);
 
                 oldValue = texUnit;
             }
@@ -555,37 +555,37 @@ QDemonRenderShaderProgram::QDemonRenderShaderProgram(const QDemonRef<QDemonRende
     : m_context(context)
     , m_backend(context->getBackend())
     , m_programName(programName)
-    , m_programHandle(nullptr)
+    , m_handle(nullptr)
     , m_programType(ProgramType::Graphics)
 {
-    m_programHandle = m_backend->createShaderProgram(separableProgram);
+    m_handle = m_backend->createShaderProgram(separableProgram);
 
-    Q_ASSERT(m_programHandle);
+    Q_ASSERT(m_handle);
 }
 
 QDemonRenderShaderProgram::~QDemonRenderShaderProgram()
 {
     m_context->shaderDestroyed(this);
 
-    if (m_programHandle)
-        m_backend->releaseShaderProgram(m_programHandle);
+    if (m_handle)
+        m_backend->releaseShaderProgram(m_handle);
 
     m_constants.clear();
     m_shaderBuffers.clear();
 
-    m_programHandle = nullptr;
+    m_handle = nullptr;
 }
 
 template<typename TShaderObject>
 void QDemonRenderShaderProgram::attach(TShaderObject *pShader)
 {
-    m_backend->attachShader(m_programHandle, pShader);
+    m_backend->attachShader(m_handle, pShader);
 }
 
 template<typename TShaderObject>
 void QDemonRenderShaderProgram::detach(TShaderObject *pShader)
 {
-    m_backend->detachShader(m_programHandle, pShader);
+    m_backend->detachShader(m_handle, pShader);
 }
 
 static QDemonRef<QDemonRenderShaderConstantBase> shaderConstantFactory(const QDemonRef<QDemonRenderBackend> &backend,
@@ -692,17 +692,17 @@ static QDemonRef<QDemonRenderShaderBufferBase> shaderBufferFactory(QDemonRef<QDe
 
 bool QDemonRenderShaderProgram::link()
 {
-    bool success = m_backend->linkProgram(m_programHandle, m_errorMessage);
+    bool success = m_backend->linkProgram(m_handle, m_errorMessage);
 
     if (success) {
         char nameBuf[512];
         qint32 location, elementCount, binding;
         QDemonRenderShaderDataType type;
 
-        qint32 constantCount = m_backend->getConstantCount(m_programHandle);
+        qint32 constantCount = m_backend->getConstantCount(m_handle);
 
         for (int idx = 0; idx != constantCount; ++idx) {
-            location = m_backend->getConstantInfoByID(m_programHandle, idx, 512, &elementCount, &type, &binding, nameBuf);
+            location = m_backend->getConstantInfoByID(m_handle, idx, 512, &elementCount, &type, &binding, nameBuf);
 
             // sampler arrays have different type
             if (type == QDemonRenderShaderDataType::Texture2D && elementCount > 1) {
@@ -718,9 +718,9 @@ bool QDemonRenderShaderProgram::link()
 
         // next query constant buffers info
         qint32 length, bufferSize, paramCount;
-        qint32 constantBufferCount = m_backend->getConstantBufferCount(m_programHandle);
+        qint32 constantBufferCount = m_backend->getConstantBufferCount(m_handle);
         for (int idx = 0; idx != constantBufferCount; ++idx) {
-            location = m_backend->getConstantBufferInfoByID(m_programHandle, idx, 512, &paramCount, &bufferSize, &length, nameBuf);
+            location = m_backend->getConstantBufferInfoByID(m_handle, idx, 512, &paramCount, &bufferSize, &length, nameBuf);
 
             if (location != -1) {
                 // find constant buffer in our DB
@@ -736,9 +736,9 @@ bool QDemonRenderShaderProgram::link()
         }
 
         // next query storage buffers
-        qint32 storageBufferCount = m_backend->getStorageBufferCount(m_programHandle);
+        qint32 storageBufferCount = m_backend->getStorageBufferCount(m_handle);
         for (int idx = 0; idx != storageBufferCount; ++idx) {
-            location = m_backend->getStorageBufferInfoByID(m_programHandle, idx, 512, &paramCount, &bufferSize, &length, nameBuf);
+            location = m_backend->getStorageBufferInfoByID(m_handle, idx, 512, &paramCount, &bufferSize, &length, nameBuf);
 
             if (location != -1) {
                 // find constant buffer in our DB
@@ -750,9 +750,9 @@ bool QDemonRenderShaderProgram::link()
         }
 
         // next query atomic counter buffers
-        qint32 atomicBufferCount = m_backend->getAtomicCounterBufferCount(m_programHandle);
+        qint32 atomicBufferCount = m_backend->getAtomicCounterBufferCount(m_handle);
         for (int idx = 0; idx != atomicBufferCount; ++idx) {
-            location = m_backend->getAtomicCounterBufferInfoByID(m_programHandle, idx, 512, &paramCount, &bufferSize, &length, nameBuf);
+            location = m_backend->getAtomicCounterBufferInfoByID(m_handle, idx, 512, &paramCount, &bufferSize, &length, nameBuf);
 
             if (location != -1) {
                 // find atomic counter buffer in our DB
@@ -783,12 +783,12 @@ bool QDemonRenderShaderProgram::link()
     return success;
 }
 
-QByteArray QDemonRenderShaderProgram::getErrorMessage()
+QByteArray QDemonRenderShaderProgram::errorMessage()
 {
     return m_errorMessage;
 }
 
-QDemonRef<QDemonRenderShaderConstantBase> QDemonRenderShaderProgram::getShaderConstant(const char *constantName)
+QDemonRef<QDemonRenderShaderConstantBase> QDemonRenderShaderProgram::shaderConstant(const char *constantName)
 {
     TShaderConstantMap::iterator theIter = m_constants.find(QString::fromLocal8Bit(constantName));
 
@@ -798,7 +798,7 @@ QDemonRef<QDemonRenderShaderConstantBase> QDemonRenderShaderProgram::getShaderCo
     return nullptr;
 }
 
-QDemonRef<QDemonRenderShaderBufferBase> QDemonRenderShaderProgram::getShaderBuffer(const char *bufferName)
+QDemonRef<QDemonRenderShaderBufferBase> QDemonRenderShaderProgram::shaderBuffer(const char *bufferName)
 {
     TShaderBufferMap::iterator theIter = m_shaderBuffers.find(bufferName);
 
@@ -809,7 +809,7 @@ QDemonRef<QDemonRenderShaderBufferBase> QDemonRenderShaderProgram::getShaderBuff
     return nullptr;
 }
 
-QDemonRef<QDemonRenderContext> QDemonRenderShaderProgram::getRenderContext()
+QDemonRef<QDemonRenderContext> QDemonRenderShaderProgram::renderContext()
 {
     return m_context;
 }
@@ -1171,7 +1171,7 @@ QDemonRenderVertFragCompilationResult QDemonRenderShaderProgram::create(const QD
     // link program
     if (!result.m_shader->link()) {
         qCCritical(INTERNAL_ERROR, "Failed to link program!!");
-        writeErrorMessage("Program link output:", result.m_shader->getErrorMessage());
+        writeErrorMessage("Program link output:", result.m_shader->errorMessage());
 
         // delete program
         result.m_shader = nullptr;
@@ -1232,7 +1232,7 @@ QDemonRenderVertFragCompilationResult QDemonRenderShaderProgram::createCompute(c
             bProgramIsValid = pProgram->link();
 
             // set program type
-            pProgram->setProgramType(ProgramType::Compute);
+            pProgram->m_programType = ProgramType::Compute;
         }
     }
 
