@@ -706,8 +706,7 @@ bool QDemonRenderShaderProgram::link()
 
         qint32 constantCount = m_backend->getConstantCount(m_programHandle);
 
-        QDEMON_FOREACH(idx, constantCount)
-        {
+        for (int idx = 0; idx != constantCount; ++idx) {
             location = m_backend->getConstantInfoByID(m_programHandle, idx, 512, &elementCount, &type, &binding, nameBuf);
 
             // sampler arrays have different type
@@ -725,8 +724,7 @@ bool QDemonRenderShaderProgram::link()
         // next query constant buffers info
         qint32 length, bufferSize, paramCount;
         qint32 constantBufferCount = m_backend->getConstantBufferCount(m_programHandle);
-        QDEMON_FOREACH(idx, constantBufferCount)
-        {
+        for (int idx = 0; idx != constantBufferCount; ++idx) {
             location = m_backend->getConstantBufferInfoByID(m_programHandle, idx, 512, &paramCount, &bufferSize, &length, nameBuf);
 
             if (location != -1) {
@@ -744,8 +742,7 @@ bool QDemonRenderShaderProgram::link()
 
         // next query storage buffers
         qint32 storageBufferCount = m_backend->getStorageBufferCount(m_programHandle);
-        QDEMON_FOREACH(idx, storageBufferCount)
-        {
+        for (int idx = 0; idx != storageBufferCount; ++idx) {
             location = m_backend->getStorageBufferInfoByID(m_programHandle, idx, 512, &paramCount, &bufferSize, &length, nameBuf);
 
             if (location != -1) {
@@ -759,8 +756,7 @@ bool QDemonRenderShaderProgram::link()
 
         // next query atomic counter buffers
         qint32 atomicBufferCount = m_backend->getAtomicCounterBufferCount(m_programHandle);
-        QDEMON_FOREACH(idx, atomicBufferCount)
-        {
+        for (int idx = 0; idx != atomicBufferCount; ++idx) {
             location = m_backend->getAtomicCounterBufferInfoByID(m_programHandle, idx, 512, &paramCount, &bufferSize, &length, nameBuf);
 
             if (location != -1) {

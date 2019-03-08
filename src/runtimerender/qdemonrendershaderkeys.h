@@ -94,7 +94,8 @@ struct QDemonShaderKeyBoolean : public QDemonShaderKeyPropertyBase
     quint32 getMask() const { return getMaskTemplate<BitWidth>(); }
     void setValue(QDemonDataRef<quint32> inDataStore, bool inValue) const
     {
-        quint32 idx = getIdx();
+        const qint32 idx = qint32(getIdx());
+        Q_ASSERT(idx >= 0 && idx <= INT32_MAX);
         Q_ASSERT(inDataStore.size() > idx);
         quint32 mask = getMask();
         quint32 &target = inDataStore[idx];

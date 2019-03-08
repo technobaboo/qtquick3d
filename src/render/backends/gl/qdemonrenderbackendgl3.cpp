@@ -417,9 +417,7 @@ bool QDemonRenderBackendGL3Impl::setInputAssembler(QDemonRenderBackendInputAssem
         GL_CALL_EXTRA_FUNCTION(glBindVertexArray(inputAssembler->m_vaoID));
         inputAssembler->m_cachedShaderHandle = programID;
 
-        QDEMON_FOREACH(idx, shaderAttribBuffer.size())
-        {
-            const QDemonRenderBackendShaderInputEntryGL &attrib(shaderAttribBuffer[idx]);
+        for (const auto &attrib : qAsConst(shaderAttribBuffer)) {
             QDemonRenderBackendLayoutEntryGL *entry = attribLayout->getEntryByName(attrib.m_attribName);
 
             if (entry) {
@@ -443,8 +441,7 @@ bool QDemonRenderBackendGL3Impl::setInputAssembler(QDemonRenderBackendInputAssem
         }
 
         // setup all attribs
-        QDEMON_FOREACH(idx, shaderAttribBuffer.size())
-        {
+        for (int idx = 0; idx != shaderAttribBuffer.size(); ++idx) {
             QDemonRenderBackendLayoutEntryGL *entry = attribLayout->getEntryByName(shaderAttribBuffer[idx].m_attribName);
             if (entry) {
                 const QDemonRenderBackendLayoutEntryGL &entryData(*entry);
@@ -477,9 +474,7 @@ bool QDemonRenderBackendGL3Impl::setInputAssembler(QDemonRenderBackendInputAssem
     }
 #ifdef _DEBUG
     if (inputAssembler->m_vaoID) {
-        QDEMON_FOREACH(idx, shaderAttribBuffer.size())
-        {
-            const QDemonRenderBackendShaderInputEntryGL &attrib(shaderAttribBuffer[idx]);
+        for (const auto &attrib : qAsConst(shaderAttribBuffer)) {
             QDemonRenderBackendLayoutEntryGL *entry = attribLayout->getEntryByName(attrib.m_attribName);
 
             if (entry) {
@@ -663,7 +658,8 @@ void QDemonRenderBackendGL3Impl::getConstantBufferParamInfoByIndices(QDemonRende
             qint32 *glTypes = reinterpret_cast<qint32 *>(alloca(count*sizeof(qint32)));
             GL_CALL_EXTRA_FUNCTION(glGetActiveUniformsiv(programID, count, indices, GL_UNIFORM_TYPE, glTypes));
             // convert to UIC types
-            QDEMON_FOREACH(idx, count) { type[idx] = GLConversion::fromShaderGLToPropertyDataTypes(glTypes[idx]); }
+            for (int idx = 0; idx != count; ++idx)
+                type[idx] = GLConversion::fromShaderGLToPropertyDataTypes(glTypes[idx]);
         }
         if (size) {
             GL_CALL_EXTRA_FUNCTION(glGetActiveUniformsiv(programID, count, indices, GL_UNIFORM_SIZE, size));

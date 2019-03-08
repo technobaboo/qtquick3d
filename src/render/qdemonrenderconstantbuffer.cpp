@@ -156,8 +156,7 @@ bool QDemonRenderConstantBuffer::setupBuffer(const QDemonRenderShaderProgram *pr
         qint32 elementCount, binding;
         QDemonRenderShaderDataType type;
 
-        QDEMON_FOREACH(idx, paramCount)
-        {
+        for (int idx = 0; idx != paramCount; ++idx) {
             m_backend->getConstantInfoByID(program->getShaderProgramHandle(), theIndices[idx], 512, &elementCount, &type, &binding, nameBuf);
             // check if we already have this entry
             const QByteArray theName = nameBuf;

@@ -17,8 +17,6 @@
 
 QT_BEGIN_NAMESPACE
 
-#define QDEMON_FOREACH(varname, stop) for (quint32 varname = 0, end = stop; varname < end; ++varname)
-
 namespace vec2 {
 float Q_DEMON_EXPORT magnitude(const QVector2D &v);
 }

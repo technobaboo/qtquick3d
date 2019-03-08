@@ -52,8 +52,7 @@ QDemonRenderFrameBuffer::~QDemonRenderFrameBuffer()
     m_attachmentBits = 0;
 
     // release attachments
-    QDEMON_FOREACH(idx, (quint32)QDemonRenderFrameBufferAttachment::LastAttachment)
-    {
+    for (int idx = 0; idx != int(QDemonRenderFrameBufferAttachment::LastAttachment); ++idx) {
         if ((QDemonRenderFrameBufferAttachment)idx != QDemonRenderFrameBufferAttachment::DepthStencil
             || m_context->isDepthStencilSupported())
             releaseAttachment((QDemonRenderFrameBufferAttachment)idx);

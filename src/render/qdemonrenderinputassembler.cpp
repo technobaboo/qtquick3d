@@ -60,8 +60,7 @@ QDemonRenderInputAssembler::QDemonRenderInputAssembler(const QDemonRef<QDemonRen
     QDemonRenderBackend::QDemonRenderBackendBufferObject *bufferHandle = static_cast<QDemonRenderBackend::QDemonRenderBackendBufferObject *>(
             ::malloc(entrySize));
     // setup vertex buffer backend handle array
-    QDEMON_FOREACH(idx, buffers.size())
-    {
+    for (int idx = 0; idx != buffers.size(); ++idx) {
         m_vertexBuffers.push_back(buffers.mData[idx]);
         bufferHandle[idx] = buffers.mData[idx]->handle();
     };

@@ -65,8 +65,7 @@ public:
 
     QDemonRenderBackendLayoutEntryGL *getEntryByName(const QString &entryName) const
     {
-        QDEMON_FOREACH(idx, m_layoutAttribEntries.size())
-        {
+        for (int idx = 0; idx != m_layoutAttribEntries.size(); ++idx) {
             if (m_layoutAttribEntries[idx].m_attribName == entryName)
                 return &m_layoutAttribEntries.mData[idx];
         }
@@ -75,7 +74,7 @@ public:
 
     QDemonOption<QDemonRenderBackendLayoutEntryGL> getEntryByAttribIndex(quint32 attribIndex) const
     {
-        QDEMON_FOREACH(idx, m_layoutAttribEntries.size())
+        for (int idx = 0; idx != m_layoutAttribEntries.size(); ++idx)
         {
             if (m_layoutAttribEntries[idx].m_attribIndex == attribIndex)
                 return m_layoutAttribEntries[idx];
@@ -108,8 +107,7 @@ public:
         quint32 *strideMem = static_cast<quint32 *>(::malloc(strides.mSize * sizeof(quint32)));
         quint32 *offsetMem = static_cast<quint32 *>(::malloc(strides.mSize * sizeof(quint32)));
         // copy offsets and strides
-        QDEMON_FOREACH(idx, strides.size())
-        {
+        for (int idx = 0; idx != strides.size(); ++idx) {
             strideMem[idx] = strides.mData[idx];
             offsetMem[idx] = offsets.mData[idx];
         }

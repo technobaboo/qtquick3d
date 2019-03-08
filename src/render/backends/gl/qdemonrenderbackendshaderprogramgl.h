@@ -60,8 +60,7 @@ public:
 
     QDemonRenderBackendShaderInputEntryGL *getEntryByName(const QString &entryName) const
     {
-        QDEMON_FOREACH(idx, m_shaderInputEntries.size())
-        {
+        for (int idx = 0; idx != m_shaderInputEntries.size(); ++idx) {
             if (m_shaderInputEntries[idx].m_attribName == entryName)
                 return &m_shaderInputEntries.mData[idx];
         }
@@ -70,8 +69,7 @@ public:
 
     QDemonOption<QDemonRenderBackendShaderInputEntryGL> getEntryByAttribLocation(quint32 attribLocation) const
     {
-        QDEMON_FOREACH(idx, m_shaderInputEntries.size())
-        {
+        for (int idx = 0; idx != m_shaderInputEntries.size(); ++idx) {
             if (m_shaderInputEntries[idx].m_attribLocation == attribLocation)
                 return m_shaderInputEntries[idx];
         }
