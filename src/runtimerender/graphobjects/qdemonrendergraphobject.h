@@ -30,7 +30,6 @@
 #ifndef QDEMON_RENDER_GRAPH_OBJECT_H
 #define QDEMON_RENDER_GRAPH_OBJECT_H
 
-#include <QtDemonRuntimeRender/qdemonrendertaggedpointer.h>
 #include <QtDemonRuntimeRender/qdemonrendergraphobjecttypes.h>
 #include <QtDemonRuntimeRender/qtdemonruntimerenderglobal.h>
 
@@ -47,7 +46,6 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonGraphObject
     QString id;
     // Type is used for RTTI purposes down the road.
     QDemonGraphObjectType type;
-    QDemonTaggedPointer userData;
 
     QDemonGraphObject(QDemonGraphObjectType inType) : type(inType) {}
     QDemonGraphObject(const QDemonGraphObject &inCloningObject) : id(inCloningObject.id), type(inCloningObject.type) {}
