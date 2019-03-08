@@ -167,45 +167,45 @@ class Q_DEMONRUNTIMERENDER_EXPORT QDemonRendererImpl : public QDemonRendererInte
     QDemonRef<QDemonRenderInputAssembler> m_pointInputAssembler;
     QDemonRef<QDemonRenderAttribLayout> m_pointAttribLayout;
 
-    QDemonOption<QDemonRef<QDemonLayerSceneShader>> m_sceneLayerShader;
-    QDemonOption<QDemonRef<QDemonLayerProgAABlendShader>> m_layerProgAAShader;
+    QDemonRef<QDemonLayerSceneShader> m_sceneLayerShader;
+    QDemonRef<QDemonLayerProgAABlendShader> m_layerProgAAShader;
 
     TShaderMap m_shaders;
     TStrConstanBufMap m_constantBuffers; ///< store the the shader constant buffers
     // Option is true if we have attempted to generate the shader.
     // This does not mean we were successul, however.
-    QDemonOption<QDemonRef<QDemonDefaultMaterialRenderableDepthShader>> m_defaultMaterialDepthPrepassShader;
-    QDemonOption<QDemonRef<QDemonRenderableDepthPrepassShader>> m_depthPrepassShader;
-    QDemonOption<QDemonRef<QDemonRenderableDepthPrepassShader>> m_depthPrepassShaderDisplaced;
-    QDemonOption<QDemonRef<QDemonRenderableDepthPrepassShader>> m_depthTessLinearPrepassShader;
-    QDemonOption<QDemonRef<QDemonRenderableDepthPrepassShader>> m_depthTessLinearPrepassShaderDisplaced;
-    QDemonOption<QDemonRef<QDemonRenderableDepthPrepassShader>> m_depthTessPhongPrepassShader;
-    QDemonOption<QDemonRef<QDemonRenderableDepthPrepassShader>> m_depthTessNPatchPrepassShader;
-    QDemonOption<QDemonRef<QDemonTextDepthShader>> m_textDepthPrepassShader;
-    QDemonOption<QDemonRef<QDemonDefaultAoPassShader>> m_defaultAoPassShader;
-    QDemonOption<QDemonRef<QDemonDefaultAoPassShader>> m_fakeDepthShader;
-    QDemonOption<QDemonRef<QDemonDefaultAoPassShader>> m_fakeCubemapDepthShader;
-    QDemonOption<QDemonRef<QDemonRenderableDepthPrepassShader>> m_paraboloidDepthShader;
-    QDemonOption<QDemonRef<QDemonRenderableDepthPrepassShader>> m_paraboloidDepthTessLinearShader;
-    QDemonOption<QDemonRef<QDemonRenderableDepthPrepassShader>> m_paraboloidDepthTessPhongShader;
-    QDemonOption<QDemonRef<QDemonRenderableDepthPrepassShader>> m_paraboloidDepthTessNPatchShader;
-    QDemonOption<QDemonRef<QDemonRenderableDepthPrepassShader>> m_cubemapDepthShader;
-    QDemonOption<QDemonRef<QDemonRenderableDepthPrepassShader>> m_cubemapDepthTessLinearShader;
-    QDemonOption<QDemonRef<QDemonRenderableDepthPrepassShader>> m_cubemapDepthTessPhongShader;
-    QDemonOption<QDemonRef<QDemonRenderableDepthPrepassShader>> m_cubemapDepthTessNPatchShader;
-    QDemonOption<QDemonRef<QDemonRenderableDepthPrepassShader>> m_orthographicDepthShader;
-    QDemonOption<QDemonRef<QDemonRenderableDepthPrepassShader>> m_orthographicDepthTessLinearShader;
-    QDemonOption<QDemonRef<QDemonRenderableDepthPrepassShader>> m_orthographicDepthTessPhongShader;
-    QDemonOption<QDemonRef<QDemonRenderableDepthPrepassShader>> m_orthographicDepthTessNPatchShader;
-    QDemonOption<QDemonRef<QDemonShadowmapPreblurShader>> m_cubeShadowBlurXShader;
-    QDemonOption<QDemonRef<QDemonShadowmapPreblurShader>> m_cubeShadowBlurYShader;
-    QDemonOption<QDemonRef<QDemonShadowmapPreblurShader>> m_orthoShadowBlurXShader;
-    QDemonOption<QDemonRef<QDemonShadowmapPreblurShader>> m_orthoShadowBlurYShader;
+    QDemonRef<QDemonDefaultMaterialRenderableDepthShader> m_defaultMaterialDepthPrepassShader;
+    QDemonRef<QDemonRenderableDepthPrepassShader> m_depthPrepassShader;
+    QDemonRef<QDemonRenderableDepthPrepassShader> m_depthPrepassShaderDisplaced;
+    QDemonRef<QDemonRenderableDepthPrepassShader> m_depthTessLinearPrepassShader;
+    QDemonRef<QDemonRenderableDepthPrepassShader> m_depthTessLinearPrepassShaderDisplaced;
+    QDemonRef<QDemonRenderableDepthPrepassShader> m_depthTessPhongPrepassShader;
+    QDemonRef<QDemonRenderableDepthPrepassShader> m_depthTessNPatchPrepassShader;
+    QDemonRef<QDemonTextDepthShader> m_textDepthPrepassShader;
+    QDemonRef<QDemonDefaultAoPassShader> m_defaultAoPassShader;
+    QDemonRef<QDemonDefaultAoPassShader> m_fakeDepthShader;
+    QDemonRef<QDemonDefaultAoPassShader> m_fakeCubemapDepthShader;
+    QDemonRef<QDemonRenderableDepthPrepassShader> m_paraboloidDepthShader;
+    QDemonRef<QDemonRenderableDepthPrepassShader> m_paraboloidDepthTessLinearShader;
+    QDemonRef<QDemonRenderableDepthPrepassShader> m_paraboloidDepthTessPhongShader;
+    QDemonRef<QDemonRenderableDepthPrepassShader> m_paraboloidDepthTessNPatchShader;
+    QDemonRef<QDemonRenderableDepthPrepassShader> m_cubemapDepthShader;
+    QDemonRef<QDemonRenderableDepthPrepassShader> m_cubemapDepthTessLinearShader;
+    QDemonRef<QDemonRenderableDepthPrepassShader> m_cubemapDepthTessPhongShader;
+    QDemonRef<QDemonRenderableDepthPrepassShader> m_cubemapDepthTessNPatchShader;
+    QDemonRef<QDemonRenderableDepthPrepassShader> m_orthographicDepthShader;
+    QDemonRef<QDemonRenderableDepthPrepassShader> m_orthographicDepthTessLinearShader;
+    QDemonRef<QDemonRenderableDepthPrepassShader> m_orthographicDepthTessPhongShader;
+    QDemonRef<QDemonRenderableDepthPrepassShader> m_orthographicDepthTessNPatchShader;
+    QDemonRef<QDemonShadowmapPreblurShader> m_cubeShadowBlurXShader;
+    QDemonRef<QDemonShadowmapPreblurShader> m_cubeShadowBlurYShader;
+    QDemonRef<QDemonShadowmapPreblurShader> m_orthoShadowBlurXShader;
+    QDemonRef<QDemonShadowmapPreblurShader> m_orthoShadowBlurYShader;
 
 #ifdef ADVANCED_BLEND_SW_FALLBACK
-    QDemonOption<QDemonRef<QDemonAdvancedModeBlendShader>> m_advancedModeOverlayBlendShader;
-    QDemonOption<QDemonRef<QDemonAdvancedModeBlendShader>> m_advancedModeColorBurnBlendShader;
-    QDemonOption<QDemonRef<QDemonAdvancedModeBlendShader>> m_advancedModeColorDodgeBlendShader;
+    QDemonRef<QDemonAdvancedModeBlendShader> m_advancedModeOverlayBlendShader;
+    QDemonRef<QDemonAdvancedModeBlendShader> m_advancedModeColorBurnBlendShader;
+    QDemonRef<QDemonAdvancedModeBlendShader> m_advancedModeColorDodgeBlendShader;
 #endif
     // Text shaders may be generated on demand.
     QScopedPointer<QDemonTextShader> m_textShader;

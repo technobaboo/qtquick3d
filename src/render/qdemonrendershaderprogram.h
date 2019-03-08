@@ -83,7 +83,7 @@ private:
      *
      * @return pointer to vertex shader object
      */
-    static QDemonOption<QDemonRenderVertexShader *> createVertexShader(const QDemonRef<QDemonRenderContext> &context,
+    static QDemonRenderVertexShader *createVertexShader(const QDemonRef<QDemonRenderContext> &context,
                                                                        QDemonConstDataRef<qint8> vertexShaderSource,
                                                                        bool binaryProgram = false);
 
@@ -96,7 +96,7 @@ private:
      *
      * @return pointer to fragment shader object
      */
-    static QDemonOption<QDemonRenderFragmentShader *> createFragmentShader(const QDemonRef<QDemonRenderContext> &context,
+    static QDemonRenderFragmentShader *createFragmentShader(const QDemonRef<QDemonRenderContext> &context,
                                                                            QDemonConstDataRef<qint8> fragmentShaderSource,
                                                                            bool binaryProgram = false);
 
@@ -109,7 +109,7 @@ private:
      *
      * @return pointer to tessellation control shader
      */
-    static QDemonOption<QDemonRenderTessControlShader *> createTessControlShader(const QDemonRef<QDemonRenderContext> &context,
+    static QDemonRenderTessControlShader *createTessControlShader(const QDemonRef<QDemonRenderContext> &context,
                                                                                  QDemonConstDataRef<qint8> tessControlShaderSource,
                                                                                  bool binaryProgram = false);
 
@@ -122,7 +122,7 @@ private:
      *
      * @return pointer to tessellation evaluation shader
      */
-    static QDemonOption<QDemonRenderTessEvaluationShader *> createTessEvaluationShader(const QDemonRef<QDemonRenderContext> &context,
+    static QDemonRenderTessEvaluationShader *createTessEvaluationShader(const QDemonRef<QDemonRenderContext> &context,
                                                                                        QDemonConstDataRef<qint8> tessEvaluationShaderSource,
                                                                                        bool binaryProgram = false);
 
@@ -135,7 +135,7 @@ private:
      *
      * @return pointer to geometry shader
      */
-    static QDemonOption<QDemonRenderGeometryShader *> createGeometryShader(const QDemonRef<QDemonRenderContext> &context,
+    static QDemonRenderGeometryShader *createGeometryShader(const QDemonRef<QDemonRenderContext> &context,
                                                                            QDemonConstDataRef<qint8> geometryShaderSource,
                                                                            bool binaryProgram = false);
 
