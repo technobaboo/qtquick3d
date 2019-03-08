@@ -69,7 +69,7 @@ public:
                         const QDemonRef<QDemonRenderTexture2D> &inTexture,
                         QDemonRenderImageAccessType inAccess);
 
-    virtual ~QDemonRenderImage2D();
+    ~QDemonRenderImage2D();
 
     /**
      * @brief	Set the access rights within the shader.
@@ -79,7 +79,7 @@ public:
      *
      * @return No return.
      */
-    virtual void setAccessType(QDemonRenderImageAccessType inAccess) { m_accessType = inAccess; }
+    void setAccessType(QDemonRenderImageAccessType inAccess) { m_accessType = inAccess; }
 
     /**
      * @brief	Set the texture level we use for this image
@@ -88,7 +88,7 @@ public:
      *
      * @return No return.
      */
-    virtual void setTextureLevel(qint32 inLevel);
+    void setTextureLevel(qint32 inLevel);
 
     /**
      * @brief	Get texture unit used
@@ -96,7 +96,7 @@ public:
      *
      * @return texture unit bound to.
      */
-    virtual quint32 getTextureUnit() const { return m_textureUnit; }
+    quint32 textureUnit() const { return m_textureUnit; }
 
     /**
      * @brief Bind a texture for shader access
@@ -105,7 +105,7 @@ public:
      *
      * @return No return.
      */
-    virtual void bind(qint32 unit);
+    void bind(qint32 unit);
 
     /**
      * @brief get the backend object handle
@@ -113,20 +113,8 @@ public:
      *
      * @return the backend object handle.
      */
-    virtual QDemonRenderBackend::QDemonRenderBackendTextureObject getTextureObjectHandle();
+    QDemonRenderBackend::QDemonRenderBackendTextureObject handle();
 
-    /**
-     * @brief static creation function
-     *
-     * @param[in] context		Pointer to context
-     * @param[in] inTexture		Pointer to a QDemonRenderTexture2D object
-     * @param[in] inAccess		Image access type ( read, write, read_write )
-     *
-     * @return No return.
-     */
-    static QDemonRef<QDemonRenderImage2D> create(const QDemonRef<QDemonRenderContext> &context,
-                                                 const QDemonRef<QDemonRenderTexture2D> &inTexture,
-                                                 QDemonRenderImageAccessType inAccess);
 };
 
 QT_END_NAMESPACE

@@ -530,14 +530,13 @@ struct ShaderConstantApplier<QDemonRenderImage2DPtr>
                        qint32 location,
                        qint32 count,
                        QDemonRenderShaderDataType type,
-                       QDemonRenderImage2DPtr inValue,
+                       QDemonRenderImage2DPtr image,
                        quint32 &oldValue,
                        qint32 binding)
     {
-        if (inValue) {
-            QDemonRenderImage2D *imgObj = reinterpret_cast<QDemonRenderImage2D *>(inValue);
-            imgObj->bind(binding);
-            quint32 texUnit = imgObj->getTextureUnit();
+        if (image) {
+            image->bind(binding);
+            quint32 texUnit = image->textureUnit();
             if (texUnit != oldValue) {
                 // on ES we need a explicit binding value
                 Q_ASSERT(backend->getRenderContextType() != QDemonRenderContextType::GLES3PLUS || binding != -1);

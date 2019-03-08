@@ -322,7 +322,7 @@ struct QDemonResourceManager : public QDemonResourceManagerInterface
                                                    QDemonRenderImageAccessType inAccess) override
     {
         if (freeImages.empty() == true) {
-            auto newImage = renderContext->createImage2D(inTexture, inAccess);
+            auto newImage = new QDemonRenderImage2D(renderContext, inTexture, inAccess);
             if (newImage) {
                 freeImages.push_back(newImage);
             }

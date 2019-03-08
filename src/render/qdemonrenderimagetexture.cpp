@@ -40,7 +40,6 @@ QDemonRenderImage2D::QDemonRenderImage2D(const QDemonRef<QDemonRenderContext> &c
                                          const QDemonRef<QDemonRenderTexture2D> &inTexture,
                                          QDemonRenderImageAccessType inAccess)
     : m_context(context)
-    , m_backend(context->getBackend())
     , m_texture2D(inTexture)
     , m_textureUnit(std::numeric_limits<int>::max())
     , m_accessType(inAccess)
@@ -50,7 +49,6 @@ QDemonRenderImage2D::QDemonRenderImage2D(const QDemonRef<QDemonRenderContext> &c
 
 QDemonRenderImage2D::~QDemonRenderImage2D()
 {
-    m_context->imageDestroyed(this);
 }
 
 void QDemonRenderImage2D::setTextureLevel(qint32 inLevel)
@@ -71,27 +69,18 @@ void QDemonRenderImage2D::bind(qint32 unit)
 
     // note it is the callers responsibility that the texture format is supported by the compute
     // shader
-    m_backend->bindImageTexture(m_texture2D->getTextureObjectHandle(),
-                                m_textureUnit,
-                                m_textureLevel,
-                                false,
-                                0,
-                                m_accessType,
-                                theDetails.format);
+    m_context->getBackend()->bindImageTexture(m_texture2D->getTextureObjectHandle(),
+                                            m_textureUnit,
+                                            m_textureLevel,
+                                            false,
+                                            0,
+                                            m_accessType,
+                                            theDetails.format);
 }
 
-QDemonRenderBackend::QDemonRenderBackendTextureObject QDemonRenderImage2D::getTextureObjectHandle()
+QDemonRenderBackend::QDemonRenderBackendTextureObject QDemonRenderImage2D::handle()
 {
     return m_texture2D->getTextureObjectHandle();
 }
 
-QDemonRef<QDemonRenderImage2D> QDemonRenderImage2D::create(const QDemonRef<QDemonRenderContext> &context,
-                                                           const QDemonRef<QDemonRenderTexture2D> &inTexture,
-                                                           QDemonRenderImageAccessType inAccess)
-{
-    QDemonRef<QDemonRenderImage2D> retval;
-    if (inTexture)
-        retval = new QDemonRenderImage2D(context, inTexture, inAccess);
-    return retval;
-}
 QT_END_NAMESPACE

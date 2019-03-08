@@ -490,8 +490,8 @@ void QDemonRenderPrefilterTextureCompute::build(void *inTextureData, qint32 inTe
 
     QDemonRef<QDemonRenderImage2D> theInputImage;
     QDemonRef<QDemonRenderImage2D> theOutputImage;
-    theInputImage = m_renderContext->createImage2D(m_texture2D, QDemonRenderImageAccessType::ReadWrite);
-    theOutputImage = m_renderContext->createImage2D(m_texture2D, QDemonRenderImageAccessType::ReadWrite);
+    theInputImage = new QDemonRenderImage2D(m_renderContext, m_texture2D, QDemonRenderImageAccessType::ReadWrite);
+    theOutputImage = new QDemonRenderImage2D(m_renderContext, m_texture2D, QDemonRenderImageAccessType::ReadWrite);
 
     if (needMipUpload && m_level0Tex) {
         QDemonRef<QDemonRenderShaderProgram> uploadProg = getOrCreateUploadComputeProgram(m_renderContext, inFormat);
@@ -500,8 +500,8 @@ void QDemonRenderPrefilterTextureCompute::build(void *inTextureData, qint32 inTe
 
         m_renderContext->setActiveShader(uploadProg);
 
-        QDemonRef<QDemonRenderImage2D> theInputImage0;
-        theInputImage0 = m_renderContext->createImage2D(m_level0Tex, QDemonRenderImageAccessType::ReadWrite);
+        QDemonRef<QDemonRenderImage2D> theInputImage0
+                = new QDemonRenderImage2D(m_renderContext, m_level0Tex, QDemonRenderImageAccessType::ReadWrite);
 
         theInputImage0->setTextureLevel(0);
         QDemonRenderCachedShaderProperty<QDemonRenderImage2D *> theCachedinputImage0("inputImage", uploadProg);

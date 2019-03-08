@@ -168,7 +168,6 @@ protected:
     QHash<const void *, QDemonRenderTexture2D *> m_tex2DToImpMap;
     TContextTex2DArrayToImpMap m_tex2DArrayToImpMap;
     TContextTexCubeToImpMap m_texCubeToImpMap;
-    TContextImage2DToImpMap m_image2DtoImpMap;
     QHash<const void *, QDemonRenderShaderProgram *> m_shaderToImpMap;
     QHash<const void *, QDemonRenderRenderBuffer *> m_renderBufferToImpMap;
     QHash<const void *, QDemonRenderFrameBuffer *> m_frameBufferToImpMap;
@@ -511,10 +510,6 @@ public:
     void textureDestroyed(QDemonRenderTextureCube *buffer);
 
     qint32 getNextTextureUnit();
-
-    QDemonRef<QDemonRenderImage2D> createImage2D(QDemonRef<QDemonRenderTexture2D> inTexture,
-                                                 QDemonRenderImageAccessType inAccess);
-    void imageDestroyed(QDemonRenderImage2D *buffer);
 
     QDemonRef<QDemonRenderRenderBuffer> createRenderBuffer(QDemonRenderRenderBufferFormat bufferFormat,
                                                                    quint32 width,

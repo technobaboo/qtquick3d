@@ -88,8 +88,6 @@ QDemonRenderContext::~QDemonRenderContext()
     m_tex2DToImpMap.clear();
     Q_ASSERT(m_tex2DArrayToImpMap.size() == 0);
     m_tex2DArrayToImpMap.clear();
-    Q_ASSERT(m_image2DtoImpMap.size() == 0);
-    m_image2DtoImpMap.clear();
     Q_ASSERT(m_shaderToImpMap.size() == 0);
     m_shaderToImpMap.clear();
     Q_ASSERT(m_renderBufferToImpMap.size() == 0);
@@ -395,21 +393,6 @@ void QDemonRenderContext::textureDestroyed(QDemonRenderTexture2DArray *buffer)
 void QDemonRenderContext::textureDestroyed(QDemonRenderTextureCube *buffer)
 {
     m_texCubeToImpMap.remove(buffer->getTextureObjectHandle());
-}
-
-QDemonRef<QDemonRenderImage2D> QDemonRenderContext::createImage2D(QDemonRef<QDemonRenderTexture2D> inTexture,
-                                                                      QDemonRenderImageAccessType inAccess)
-{
-    QDemonRef<QDemonRenderImage2D> retval = QDemonRenderImage2D::create(this, inTexture, inAccess);
-    if (retval)
-        m_image2DtoImpMap.insert(retval->getTextureObjectHandle(), retval.data());
-
-    return retval;
-}
-
-void QDemonRenderContext::imageDestroyed(QDemonRenderImage2D *image)
-{
-    m_image2DtoImpMap.remove(image->getTextureObjectHandle());
 }
 
 // IF this texture isn't on a texture unit, put it on one.
