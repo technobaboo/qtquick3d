@@ -166,7 +166,6 @@ protected:
     TContextPathFontSpecificationMap m_pathFontSpecToImpMap;
 
     QHash<const void *, QDemonRenderShaderProgram *> m_shaderToImpMap;
-    QHash<const void *, QDemonRenderRenderBuffer *> m_renderBufferToImpMap;
     QHash<const void *, QDemonRenderFrameBuffer *> m_frameBufferToImpMap;
     qint32 m_maxTextureUnits;
     qint32 m_nextTextureUnit;
@@ -497,12 +496,6 @@ public:
     QDemonRef<QDemonRenderSync> createSync();
 
     qint32 getNextTextureUnit();
-
-    QDemonRef<QDemonRenderRenderBuffer> createRenderBuffer(QDemonRenderRenderBufferFormat bufferFormat,
-                                                                   quint32 width,
-                                                                   quint32 height);
-    QDemonRef<QDemonRenderRenderBuffer> getRenderBuffer(const void *implementationHandle);
-    void renderBufferDestroyed(QDemonRenderRenderBuffer *buffer);
 
     QDemonRef<QDemonRenderFrameBuffer> createFrameBuffer();
     QDemonRef<QDemonRenderFrameBuffer> getFrameBuffer(const void *implementationHandle);

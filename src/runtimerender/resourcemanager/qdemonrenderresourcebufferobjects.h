@@ -70,7 +70,7 @@ protected:
     QDemonRef<QDemonResourceManagerInterface> m_resourceManager;
     QDemonRef<QDemonRenderRenderBuffer> m_renderBuffer;
     QDemonRenderRenderBufferFormat m_storageFormat;
-    QDemonRenderRenderBufferDimensions m_dimensions;
+    QSize m_dimensions;
 
 public:
     QDemonResourceRenderBuffer(const QDemonRef<QDemonResourceManagerInterface> &mgr);

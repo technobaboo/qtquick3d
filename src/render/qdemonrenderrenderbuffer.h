@@ -37,15 +37,6 @@ QT_BEGIN_NAMESPACE
 
 class QDemonRenderContext;
 
-struct QDemonRenderRenderBufferDimensions
-{
-    qint32 m_width = 0; ///< buffer width
-    qint32 m_height = 0; ///< buffer height
-
-    QDemonRenderRenderBufferDimensions(qint32 w, qint32 h) : m_width(w), m_height(h) {}
-    QDemonRenderRenderBufferDimensions() = default;
-};
-
 class Q_DEMONRENDER_EXPORT QDemonRenderRenderBuffer
 {
     Q_DISABLE_COPY(QDemonRenderRenderBuffer)
@@ -59,7 +50,7 @@ private:
     qint32 m_height; ///< buffer height
     QDemonRenderRenderBufferFormat m_storageFormat; ///< buffer storage format
 
-    QDemonRenderBackend::QDemonRenderBackendRenderbufferObject m_bufferHandle; ///< opaque backend handle
+    QDemonRenderBackend::QDemonRenderBackendRenderbufferObject m_handle; ///< opaque backend handle
 
 public:
     /**
@@ -87,7 +78,7 @@ public:
      *
      * @return buffer format
      */
-    QDemonRenderRenderBufferFormat getStorageFormat() const { return m_storageFormat; }
+    QDemonRenderRenderBufferFormat storageFormat() const { return m_storageFormat; }
 
     /**
      * @brief query buffer dimension
@@ -95,9 +86,9 @@ public:
      *
      * @return QDemonRenderRenderBufferDimensions object
      */
-    QDemonRenderRenderBufferDimensions getDimensions() const
+    QSize size() const
     {
-        return QDemonRenderRenderBufferDimensions(m_width, m_height);
+        return QSize(m_width, m_height);
     }
 
     /**
@@ -107,22 +98,7 @@ public:
      *
      * @return buffer format
      */
-    void setDimensions(const QDemonRenderRenderBufferDimensions &inDimensions);
-
-    /**
-     * @brief static creator function
-     *
-     * @param[in] context		Pointer to context
-     * @param[in] format		Renderbuffer format
-     * @param[in] width			Renderbuffer width
-     * @param[in] height		Renderbuffer height
-     *
-     * @return No return.
-     */
-    static QDemonRef<QDemonRenderRenderBuffer> create(const QDemonRef<QDemonRenderContext> &context,
-                                                      QDemonRenderRenderBufferFormat format,
-                                                      quint32 width,
-                                                      quint32 height);
+    void setSize(const QSize &inDimensions);
 
     /**
      * @brief get the backend object handle
@@ -131,7 +107,7 @@ public:
      */
     QDemonRenderBackend::QDemonRenderBackendRenderbufferObject handle()
     {
-        return m_bufferHandle;
+        return m_handle;
     }
 };
 
