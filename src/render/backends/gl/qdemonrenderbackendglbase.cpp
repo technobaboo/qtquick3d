@@ -1316,6 +1316,7 @@ bool QDemonRenderBackendGLBase::compileSource(GLuint shaderID, QDemonConstDataRe
         GL_CALL_FUNCTION(glShaderBinary(1, &shaderID, GL_NVIDIA_PLATFORM_BINARY_NV, shaderSourceData, shaderSourceSize));
         GLenum binaryError = m_glFunctions->glGetError();
         if (binaryError != GL_NO_ERROR) {
+            errorMessage = QByteArrayLiteral("Binary shader compilation failed");
             shaderStatus = GL_FALSE;
             qCCritical(GL_ERROR, "%s", GLConversion::processGLError(binaryError));
         }

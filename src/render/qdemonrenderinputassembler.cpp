@@ -67,7 +67,7 @@ QDemonRenderInputAssembler::QDemonRenderInputAssembler(const QDemonRef<QDemonRen
 
     m_vertexbufferHandles = toConstDataRef(bufferHandle, buffers.size());
 
-    m_inputAssemblertHandle = m_backend->createInputAssembler(m_attribLayout->GetAttribLayoutHandle(),
+    m_inputAssemblertHandle = m_backend->createInputAssembler(m_attribLayout->handle(),
                                                               m_vertexbufferHandles,
                                                               (m_indexBuffer) ? m_indexBuffer->handle() : nullptr,
                                                               strides,

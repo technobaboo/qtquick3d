@@ -63,7 +63,7 @@ public:
      *
      * @return the backend object handle.
      */
-    QDemonRenderBackend::QDemonRenderBackendAttribLayoutObject GetAttribLayoutHandle() const
+    QDemonRenderBackend::QDemonRenderBackendAttribLayoutObject handle() const
     {
         return m_attribLayoutHandle;
     }

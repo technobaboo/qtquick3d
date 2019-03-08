@@ -74,71 +74,6 @@ private:
     ProgramType m_programType; ///< shader type
     QByteArray m_errorMessage; ///< contains the error message if linking fails
 
-    /**
-     * @brief create vertex shader
-     *
-     * @param[in] context					Pointer to render context
-     * @param[in] vertexShaderSource		Fragment shader source code
-     * @param[in] binaryProgram				True if binary program
-     *
-     * @return pointer to vertex shader object
-     */
-    static QDemonRenderVertexShader *createVertexShader(const QDemonRef<QDemonRenderContext> &context,
-                                                                       QDemonConstDataRef<qint8> vertexShaderSource,
-                                                                       bool binaryProgram = false);
-
-    /**
-     * @brief create fragment shader
-     *
-     * @param[in] context					Pointer to render context
-     * @param[in] fragmentShaderSource		Fragment shader source code
-     * @param[in] binaryProgram				True if binary program
-     *
-     * @return pointer to fragment shader object
-     */
-    static QDemonRenderFragmentShader *createFragmentShader(const QDemonRef<QDemonRenderContext> &context,
-                                                                           QDemonConstDataRef<qint8> fragmentShaderSource,
-                                                                           bool binaryProgram = false);
-
-    /**
-     * @brief create tesselation control shader
-     *
-     * @param[in] context					Pointer to render context
-     * @param[in] tessControlShaderSource	Tessellation control shader source code
-     * @param[in] binaryProgram				True if binary program
-     *
-     * @return pointer to tessellation control shader
-     */
-    static QDemonRenderTessControlShader *createTessControlShader(const QDemonRef<QDemonRenderContext> &context,
-                                                                                 QDemonConstDataRef<qint8> tessControlShaderSource,
-                                                                                 bool binaryProgram = false);
-
-    /**
-     * @brief create tesselation evaluation shader
-     *
-     * @param[in] context						Pointer to render context
-     * @param[in] tessEvaluationShaderSource	Tessellation evaluation shader source code
-     * @param[in] binaryProgram					True if binary program
-     *
-     * @return pointer to tessellation evaluation shader
-     */
-    static QDemonRenderTessEvaluationShader *createTessEvaluationShader(const QDemonRef<QDemonRenderContext> &context,
-                                                                                       QDemonConstDataRef<qint8> tessEvaluationShaderSource,
-                                                                                       bool binaryProgram = false);
-
-    /**
-     * @brief create geometry shader
-     *
-     * @param[in] context					Pointer to render context
-     * @param[in] geometryShaderSource		Geometry shader source code
-     * @param[in] binaryProgram				True if binary program
-     *
-     * @return pointer to geometry shader
-     */
-    static QDemonRenderGeometryShader *createGeometryShader(const QDemonRef<QDemonRenderContext> &context,
-                                                                           QDemonConstDataRef<qint8> geometryShaderSource,
-                                                                           bool binaryProgram = false);
-
 public:
     /**
      * @brief constructor
@@ -153,7 +88,7 @@ public:
     QDemonRenderShaderProgram(const QDemonRef<QDemonRenderContext> &context, const char *programName, bool separableProgram);
 
     /// destructor
-    virtual ~QDemonRenderShaderProgram();
+    ~QDemonRenderShaderProgram();
 
     /**
      * @brief attach a shader to the program
@@ -293,7 +228,7 @@ public:
         }
     }
 
-    virtual void bindComputeInput(QDemonRenderDataBuffer *inBuffer, quint32 inIndex);
+    void bindComputeInput(QDemonRenderDataBuffer *inBuffer, quint32 inIndex);
 
     /**
      * @brief get the backend object handle

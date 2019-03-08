@@ -34,7 +34,6 @@
 
 #include <QtDemonRender/qdemonrendercontext.h>
 #include <QtDemonRender/qdemonrendershaderprogram.h>
-#include <QtDemonRender/qdemonrendercomputeshader.h>
 
 #include <QtDemonRuntimeRender/qdemonrendercustommaterialrendercontext.h>
 #include <QtDemonRuntimeRender/qdemonrendercontextcore.h>

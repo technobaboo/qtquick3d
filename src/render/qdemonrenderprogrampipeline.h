@@ -93,7 +93,7 @@ public:
      *
      * @return the backend object handle.
      */
-    QDemonRenderBackend::QDemonRenderBackendProgramPipeline getShaderHandle() { return m_programPipelineHandle; }
+    QDemonRenderBackend::QDemonRenderBackendProgramPipeline handle() { return m_programPipelineHandle; }
 
     /**
      * @brief get the vertex stage program

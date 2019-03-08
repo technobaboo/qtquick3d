@@ -7,20 +7,17 @@ DEFINES += QT_BUILD_DEMONRENDER_LIB
 
 HEADERS += \
     qdemonrenderocclusionquery.h \
-    qdemonrendershader.h \
     qdemonrendershaderprogram.h \
     qtdemonrenderglobal.h \
     qtdemonrenderglobal_p.h \
     qdemonrenderbasetypes.h \
     qdemonrenderatomiccounterbuffer.h \
     qdemonrenderattriblayout.h \
-    qdemonrendercomputeshader.h \
     qdemonrenderconstantbuffer.h \
     qdemonrendercontext.h \
     qdemonrenderdatabuffer.h \
     qdemonrenderdepthstencilstate.h \
     qdemonrenderdrawindirectbuffer.h \
-    qdemonrenderfragmentshader.h \
     qdemonrenderdrawable.h \
     qdemonrenderframebuffer.h \
     backends/gl/qdemonrenderbackendgles2.h \
@@ -37,7 +34,6 @@ HEADERS += \
     backends/software/qdemonrenderbackendnull.h \
     backends/qdemonrenderbackend.h \
     glg/qdemonglimplobjects.h \
-    qdemonrendergeometryshader.h \
     qdemonrenderimagetexture.h \
     qdemonrenderindexbuffer.h \
     qdemonrenderinputassembler.h \
@@ -53,14 +49,12 @@ HEADERS += \
     qdemonrendershaderconstant.h \
     qdemonrenderstoragebuffer.h \
     qdemonrendersync.h \
-    qdemonrendertessellationshader.h \
     qdemonrendertexture2d.h \
     qdemonrendertexture2darray.h \
     qdemonrendertexturebase.h \
     qdemonrendertexturecube.h \
     qdemonrendertimerquery.h \
     qdemonrendervertexbuffer.h \
-    qdemonrendervertexshader.h \
     qdemonrenderlogging.h
 
 SOURCES += \
@@ -73,15 +67,12 @@ SOURCES += \
     backends/software/qdemonrenderbackendnull.cpp \
     qdemonrenderatomiccounterbuffer.cpp \
     qdemonrenderattriblayout.cpp \
-    qdemonrendercomputeshader.cpp \
     qdemonrenderconstantbuffer.cpp \
     qdemonrendercontext.cpp \
     qdemonrenderdatabuffer.cpp \
     qdemonrenderdepthstencilstate.cpp \
     qdemonrenderdrawindirectbuffer.cpp \
-    qdemonrenderfragmentshader.cpp \
     qdemonrenderframebuffer.cpp \
-    qdemonrendergeometryshader.cpp \
     qdemonrenderimagetexture.cpp \
     qdemonrenderindexbuffer.cpp \
     qdemonrenderinputassembler.cpp \
@@ -98,14 +89,12 @@ SOURCES += \
     qdemonrendershaderprogram.cpp \
     qdemonrenderstoragebuffer.cpp \
     qdemonrendersync.cpp \
-    qdemonrendertessellationshader.cpp \
     qdemonrendertexture2d.cpp \
     qdemonrendertexture2darray.cpp \
     qdemonrendertexturebase.cpp \
     qdemonrendertexturecube.cpp \
     qdemonrendertimerquery.cpp \
     qdemonrendervertexbuffer.cpp \
-    qdemonrendervertexshader.cpp \
     qdemonrenderlogging.cpp \
     qdemonrendershaderconstant.cpp
 

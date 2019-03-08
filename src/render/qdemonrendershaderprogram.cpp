@@ -31,11 +31,6 @@
 #include <QtDemonRender/qdemonrendercontext.h>
 #include <QtDemonRender/qdemonrenderbasetypes.h>
 #include <QtDemonRender/qdemonrendershaderprogram.h>
-#include <QtDemonRender/qdemonrendervertexshader.h>
-#include <QtDemonRender/qdemonrenderfragmentshader.h>
-#include <QtDemonRender/qdemonrendertessellationshader.h>
-#include <QtDemonRender/qdemonrendergeometryshader.h>
-#include <QtDemonRender/qdemonrendercomputeshader.h>
 #include <QtDemonRender/qdemonrenderimagetexture.h>
 #include <QtDemon/qdemonutils.h>
 
@@ -584,13 +579,13 @@ QDemonRenderShaderProgram::~QDemonRenderShaderProgram()
 template<typename TShaderObject>
 void QDemonRenderShaderProgram::attach(TShaderObject *pShader)
 {
-    m_backend->attachShader(m_programHandle, pShader->getShaderHandle());
+    m_backend->attachShader(m_programHandle, pShader);
 }
 
 template<typename TShaderObject>
 void QDemonRenderShaderProgram::detach(TShaderObject *pShader)
 {
-    m_backend->detachShader(m_programHandle, pShader->getShaderHandle());
+    m_backend->detachShader(m_programHandle, pShader);
 }
 
 static QDemonRef<QDemonRenderShaderConstantBase> shaderConstantFactory(const QDemonRef<QDemonRenderBackend> &backend,
@@ -1060,65 +1055,13 @@ void QDemonRenderShaderProgram::bindComputeInput(QDemonRenderDataBuffer *inBuffe
 }
 
 namespace {
-void writeErrorMessage(const char *tag, const char *message)
+void writeErrorMessage(const char *tag, const QByteArray &message)
 {
     const QString messageData = QString::fromLocal8Bit(message);
     const auto lines = messageData.splitRef('\n');
     for (const auto &line : lines)
         qCCritical(INVALID_OPERATION, "%s: %s", tag, line.toLocal8Bit().constData());
 }
-}
-
-QDemonRenderVertexShader *QDemonRenderShaderProgram::createVertexShader(const QDemonRef<QDemonRenderContext> &context,
-                                                                                       QDemonConstDataRef<qint8> vertexShaderSource,
-                                                                                       bool binaryProgram)
-{
-    if (vertexShaderSource.size() == 0)
-        return nullptr;
-
-    return new QDemonRenderVertexShader(context, vertexShaderSource, binaryProgram);
-}
-
-QDemonRenderFragmentShader *QDemonRenderShaderProgram::createFragmentShader(const QDemonRef<QDemonRenderContext> &context,
-                                                                                           QDemonConstDataRef<qint8> fragmentShaderSource,
-                                                                                           bool binaryProgram)
-{
-    if (fragmentShaderSource.size() == 0)
-        return nullptr;
-
-    return new QDemonRenderFragmentShader(context, fragmentShaderSource, binaryProgram);
-}
-
-QDemonRenderTessControlShader *QDemonRenderShaderProgram::createTessControlShader(
-        const QDemonRef<QDemonRenderContext> &context,
-        QDemonConstDataRef<qint8> tessControlShaderSource,
-        bool binaryProgram)
-{
-    if (tessControlShaderSource.size() == 0)
-        return nullptr;
-
-    return new QDemonRenderTessControlShader(context, tessControlShaderSource, binaryProgram);
-}
-
-QDemonRenderTessEvaluationShader *QDemonRenderShaderProgram::createTessEvaluationShader(
-        const QDemonRef<QDemonRenderContext> &context,
-        QDemonConstDataRef<qint8> tessControlShaderSource,
-        bool binaryProgram)
-{
-    if (tessControlShaderSource.size() == 0)
-        return nullptr;
-
-    return new QDemonRenderTessEvaluationShader(context, tessControlShaderSource, binaryProgram);
-}
-
-QDemonRenderGeometryShader *QDemonRenderShaderProgram::createGeometryShader(const QDemonRef<QDemonRenderContext> &context,
-                                                                                           QDemonConstDataRef<qint8> geometryShaderSource,
-                                                                                           bool binaryProgram)
-{
-    if (geometryShaderSource.size() == 0)
-        return nullptr;
-
-    return new QDemonRenderGeometryShader(context, geometryShaderSource, binaryProgram);
 }
 
 QDemonRenderVertFragCompilationResult QDemonRenderShaderProgram::create(const QDemonRef<QDemonRenderContext> &context,
@@ -1133,9 +1076,6 @@ QDemonRenderVertFragCompilationResult QDemonRenderShaderProgram::create(const QD
                                                                         bool binaryProgram)
 {
     QDemonRenderVertFragCompilationResult result;
-    QDemonRef<QDemonRenderShaderProgram> pProgram = nullptr;
-    bool bProgramIsValid = false;
-
     result.m_shaderName = programName;
 
     // our minimum requirement is a vertex and a fragment shader or geometry shader
@@ -1152,114 +1092,108 @@ QDemonRenderVertFragCompilationResult QDemonRenderShaderProgram::create(const QD
         return result;
     }
 
-    // first create and compile shader
-    QDemonRenderVertexShader * vtxShader = createVertexShader(context, vertShaderSource, binaryProgram);
-    QDemonRenderFragmentShader *fragShader = createFragmentShader(context, fragShaderSource, binaryProgram);
-    QDemonRenderTessControlShader *tcShader = createTessControlShader(context, tessControlShaderSource, binaryProgram);
-    QDemonRenderTessEvaluationShader *teShader = createTessEvaluationShader(context, tessEvaluationShaderSource, binaryProgram);
-    QDemonRenderGeometryShader *geShader = createGeometryShader(context, geometryShaderSource, binaryProgram);
+    QDemonRef<QDemonRenderBackend> backend = context->getBackend();
 
-    bool vertexValid = vtxShader ? vtxShader->isValid() : true;
-    bool fragValid = fragShader ? fragShader->isValid() : true;
-    bool tcValid = tcShader ? tcShader->isValid() : true;
-    bool teValid = teShader ? teShader->isValid() : true;
-    bool geValid = geShader ? geShader->isValid() : true;
-
-    if (vertexValid && fragValid && tcValid && teValid && geValid) {
-        // shaders were succesfuly created
-        pProgram = new QDemonRenderShaderProgram(context, programName, separateProgram);
-
-        if (pProgram) {
-            // attach programs
-            if (vtxShader && vtxShader->isValid())
-                pProgram->attach(vtxShader);
-            if (fragShader && fragShader->isValid())
-                pProgram->attach(fragShader);
-            if (tcShader && tcShader->isValid())
-                pProgram->attach(tcShader);
-            if (teShader && teShader->isValid())
-                pProgram->attach(teShader);
-            if (geShader && geShader->isValid())
-                pProgram->attach(geShader);
-
-            // link program
-            bProgramIsValid = pProgram->link();
-        }
-    }
-
-    // if anything went wrong print out
-    if (!vertexValid || !fragValid || !tcValid || !teValid || !geValid || !bProgramIsValid) {
-
-        if (!vertexValid) {
+    // first create and compile shaders
+    QDemonRenderBackend::QDemonRenderBackendVertexShaderObject vtxShader = nullptr;
+    if (vertShaderSource.size()) {
+        QByteArray errorMessage;
+        vtxShader = backend->createVertexShader(vertShaderSource, errorMessage, binaryProgram);
+        if (!vtxShader) {
             qCCritical(INTERNAL_ERROR, "Failed to generate vertex shader!!");
             qCCritical(INTERNAL_ERROR, "Vertex source:\n%s", nonNull((const char *)vertShaderSource.begin()));
-            writeErrorMessage("Vertex compilation output:", vtxShader->getErrorMessage());
+            writeErrorMessage("Vertex compilation output:", errorMessage);
+            return result;
         }
-
-        if (!fragValid) {
+    }
+    QDemonRenderBackend::QDemonRenderBackendFragmentShaderObject fragShader = nullptr;
+    if (fragShaderSource.size()) {
+        QByteArray errorMessage;
+        fragShader = backend->createFragmentShader(fragShaderSource, errorMessage, binaryProgram);
+        if (!fragShader) {
             qCCritical(INTERNAL_ERROR, "Failed to generate fragment shader!!");
             qCCritical(INTERNAL_ERROR, "Fragment source:\n%s", nonNull((const char *)fragShaderSource.begin()));
-            writeErrorMessage("Fragment compilation output:", fragShader->getErrorMessage());
+            writeErrorMessage("Fragment compilation output:", errorMessage);
+            return result;
         }
-
-        if (!tcValid) {
+    }
+    QDemonRenderBackend::QDemonRenderBackendTessControlShaderObject tcShader = nullptr;
+    if (tessControlShaderSource.size()) {
+        QByteArray errorMessage;
+        tcShader = backend->createTessControlShader(tessControlShaderSource, errorMessage, binaryProgram);
+        if (!tcShader) {
             qCCritical(INTERNAL_ERROR, "Failed to generate tessellation control shader!!");
             qCCritical(INTERNAL_ERROR, "Tessellation control source:\n%s", nonNull((const char *)tessControlShaderSource.begin()));
-            writeErrorMessage("Tessellation control compilation output:", tcShader->getErrorMessage());
+            writeErrorMessage("Tessellation control compilation output:", errorMessage);
+            return result;
         }
-
-        if (!teValid) {
+    }
+    QDemonRenderBackend::QDemonRenderBackendTessEvaluationShaderObject teShader = nullptr;
+    if (tessEvaluationShaderSource.size()) {
+        QByteArray errorMessage;
+        teShader = backend->createTessEvaluationShader(tessEvaluationShaderSource, errorMessage, binaryProgram);
+        if (!teShader) {
             qCCritical(INTERNAL_ERROR, "Failed to generate tessellation evaluation shader!!");
             qCCritical(INTERNAL_ERROR,
                        "Tessellation evaluation source:\n%s",
                        nonNull((const char *)tessEvaluationShaderSource.begin()));
-            writeErrorMessage("Tessellation evaluation compilation output:", teShader->getErrorMessage());
+            writeErrorMessage("Tessellation evaluation compilation output:", errorMessage);
+            return result;
         }
-
-        if (!geValid) {
+    }
+    QDemonRenderBackend::QDemonRenderBackendGeometryShaderObject geShader = nullptr;
+    if (geometryShaderSource.size()) {
+        QByteArray errorMessage;
+        geShader = backend->createGeometryShader(geometryShaderSource, errorMessage, binaryProgram);
+        if (!geShader) {
             qCCritical(INTERNAL_ERROR, "Failed to generate geometry shader!!");
             qCCritical(INTERNAL_ERROR, "Geometry source:\n%s", nonNull((const char *)geometryShaderSource.begin()));
-            writeErrorMessage("Geometry compilation output:", geShader->getErrorMessage());
-        }
-
-        if (!bProgramIsValid && pProgram) {
-            qCCritical(INTERNAL_ERROR, "Failed to link program!!");
-            writeErrorMessage("Program link output:", pProgram->getErrorMessage());
-
-            // delete program
-            pProgram.clear();
+            writeErrorMessage("Geometry compilation output:", errorMessage);
+            return result;
         }
     }
 
-    // clean up
-    if (vtxShader) {
-        if (bProgramIsValid && vtxShader->isValid())
-            pProgram->detach(vtxShader);
-        delete vtxShader;
-    }
-    if (fragShader) {
-        if (bProgramIsValid && fragShader->isValid())
-            pProgram->detach(fragShader);
-        delete fragShader;
-    }
-    if (tcShader) {
-        if (bProgramIsValid && tcShader->isValid())
-            pProgram->detach(tcShader);
-        delete tcShader;
-    }
-    if (teShader) {
-        if (bProgramIsValid && teShader->isValid())
-            pProgram->detach(teShader);
-        delete teShader;
-    }
-    if (geShader) {
-        if (bProgramIsValid && geShader->isValid())
-            pProgram->detach(geShader);
-        delete geShader;
+    // shaders were succesfully created
+    result.m_shader = new QDemonRenderShaderProgram(context, programName, separateProgram);
+
+    // attach programs
+    if (vtxShader)
+        result.m_shader->attach(vtxShader);
+    if (fragShader)
+        result.m_shader->attach(fragShader);
+    if (tcShader)
+        result.m_shader->attach(tcShader);
+    if (teShader)
+        result.m_shader->attach(teShader);
+    if (geShader)
+        result.m_shader->attach(geShader);
+
+    // link program
+    if (!result.m_shader->link()) {
+        qCCritical(INTERNAL_ERROR, "Failed to link program!!");
+        writeErrorMessage("Program link output:", result.m_shader->getErrorMessage());
+
+        // delete program
+        result.m_shader = nullptr;
+    } else {
+        // clean up
+        if (vtxShader)
+            result.m_shader->detach(vtxShader);
+        if (fragShader)
+            result.m_shader->detach(fragShader);
+        if (tcShader)
+            result.m_shader->detach(tcShader);
+        if (teShader)
+            result.m_shader->detach(teShader);
+        if (geShader)
+            result.m_shader->detach(geShader);
     }
 
-    // set program
-    result.m_shader = pProgram;
+    backend->releaseVertexShader(vtxShader);
+    backend->releaseFragmentShader(fragShader);
+    backend->releaseTessControlShader(tcShader);
+    backend->releaseTessEvaluationShader(teShader);
+    backend->releaseGeometryShader(geShader);
 
     return result;
 }
@@ -1281,15 +1215,18 @@ QDemonRenderVertFragCompilationResult QDemonRenderShaderProgram::createCompute(c
         return result;
     }
 
-    QDemonRenderComputeShader computeShader(context, computeShaderSource, false);
+    auto backend = context->getBackend();
+    QByteArray errorMessage;
+    QDemonRenderBackend::QDemonRenderBackendComputeShaderObject computeShader =
+        backend->createComputeShader(computeShaderSource, errorMessage, false);
 
-    if (computeShader.isValid()) {
+    if (computeShader) {
         // shaders were succesfuly created
         pProgram = new QDemonRenderShaderProgram(context, programName, false);
 
         if (pProgram) {
             // attach programs
-            pProgram->attach(&computeShader);
+            pProgram->attach(computeShader);
 
             // link program
             bProgramIsValid = pProgram->link();
@@ -1300,12 +1237,11 @@ QDemonRenderVertFragCompilationResult QDemonRenderShaderProgram::createCompute(c
     }
 
     // if anything went wrong print out
-    if (!computeShader.isValid() || !bProgramIsValid) {
-
-        if (!computeShader.isValid()) {
+    if (!computeShader || !bProgramIsValid) {
+        if (!computeShader) {
             qCCritical(INTERNAL_ERROR, "Failed to generate compute shader!!");
-            qCCritical(INTERNAL_ERROR, "Vertex source:\n%s", nonNull((const char *)computeShaderSource.begin()));
-            writeErrorMessage("Compute shader compilation output:", computeShader.getErrorMessage());
+            qCCritical(INTERNAL_ERROR, "Shader source:\n%s", nonNull((const char *)computeShaderSource.begin()));
+            writeErrorMessage("Compute shader compilation output:", errorMessage);
         }
     }
 
