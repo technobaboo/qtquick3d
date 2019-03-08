@@ -30,14 +30,13 @@
 #ifndef QDEMON_RENDER_INDEX_BUFFER_H
 #define QDEMON_RENDER_INDEX_BUFFER_H
 #include <QtDemonRender/qdemonrenderdatabuffer.h>
-#include <QtDemonRender/qdemonrenderdrawable.h>
 
 QT_BEGIN_NAMESPACE
 
 // forward declaration
 class QDemonRenderContext;
 
-class QDemonRenderIndexBuffer : public QDemonRenderDataBuffer, public QDemonRenderDrawable
+class QDemonRenderIndexBuffer : public QDemonRenderDataBuffer
 {
 public:
     /**
@@ -59,7 +58,7 @@ public:
                             QDemonDataRef<quint8> data);
 
     ///< destruvtor
-    ~QDemonRenderIndexBuffer();
+    ~QDemonRenderIndexBuffer() override;
 
     /**
      * @brief get the component type (quint8, quint16)
@@ -91,7 +90,7 @@ public:
      *
      * @return no return.
      */
-    void draw(QDemonRenderDrawMode drawMode, quint32 count, quint32 offset) override;
+    void draw(QDemonRenderDrawMode drawMode, quint32 count, quint32 offset);
 
     /**
      * @brief draw the buffer via indirec draw buffer setup

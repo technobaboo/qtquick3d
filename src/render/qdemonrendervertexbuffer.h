@@ -30,7 +30,6 @@
 #ifndef QDEMON_RENDER_VERTEX_BUFFER_H
 #define QDEMON_RENDER_VERTEX_BUFFER_H
 
-#include <QtDemonRender/qdemonrenderdrawable.h>
 #include <QtDemonRender/qdemonrenderdatabuffer.h>
 
 QT_BEGIN_NAMESPACE

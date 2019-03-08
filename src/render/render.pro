@@ -18,7 +18,6 @@ HEADERS += \
     qdemonrenderdatabuffer.h \
     qdemonrenderdepthstencilstate.h \
     qdemonrenderdrawindirectbuffer.h \
-    qdemonrenderdrawable.h \
     qdemonrenderframebuffer.h \
     backends/gl/qdemonrenderbackendgles2.h \
     backends/gl/qdemonopenglextensions.h \

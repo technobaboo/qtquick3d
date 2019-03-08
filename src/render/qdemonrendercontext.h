@@ -46,7 +46,6 @@
 #include <QtDemonRender/qdemonrenderrenderbuffer.h>
 #include <QtDemonRender/qdemonrenderdepthstencilstate.h>
 #include <QtDemonRender/qdemonrenderrasterizerstate.h>
-#include <QtDemonRender/qdemonrenderdrawable.h>
 #include <QtDemonRender/qdemonrenderinputassembler.h>
 #include <QtDemonRender/qdemonrenderattriblayout.h>
 #include <QtDemonRender/qdemonrenderimagetexture.h>
@@ -138,7 +137,7 @@ struct QDemonRenderContextScopedProperty : public QDemonRenderGenericScopedPrope
     HANDLE_CONTEXT_HARDWARE_PROPERTY(Viewport, viewport)                                                               \
     HANDLE_CONTEXT_HARDWARE_PROPERTY(ClearColor, clearColor)
 
-class Q_DEMONRENDER_EXPORT QDemonRenderContext : public QDemonRenderDrawable
+class Q_DEMONRENDER_EXPORT QDemonRenderContext
 {
     Q_DISABLE_COPY(QDemonRenderContext)
 public:
@@ -304,7 +303,7 @@ protected:
 
 public:
     QDemonRenderContext(const QDemonRef<QDemonRenderBackend> &inBackend);
-    ~QDemonRenderContext() override;
+    ~QDemonRenderContext();
 
     QDemonRef<QDemonRenderBackend> getBackend() { return m_backend; }
 
@@ -681,7 +680,7 @@ public:
                          QDemonRenderClearFlags flags,
                          QDemonRenderTextureMagnifyingOp filter);
 
-    void draw(QDemonRenderDrawMode drawMode, quint32 count, quint32 offset) override;
+    void draw(QDemonRenderDrawMode drawMode, quint32 count, quint32 offset);
     void drawIndirect(QDemonRenderDrawMode drawMode, quint32 offset);
 
     QSurfaceFormat format() const { return m_backend->format(); }
