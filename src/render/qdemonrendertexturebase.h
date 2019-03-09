@@ -107,9 +107,9 @@ public:
     // Get the texture details for mipmap level 0 if it was set.
     virtual QDemonTextureDetails textureDetails() const = 0;
 
-    virtual bool isMultisampleTexture() const { return (m_texTarget == QDemonRenderTextureTargetType::Texture2D_MS); }
-    virtual qint32 sampleCount() const { return m_sampleCount; }
-    virtual bool isImmutableTexture() const { return m_immutable; }
+    bool isMultisampleTexture() const { return (m_texTarget == QDemonRenderTextureTargetType::Texture2D_MS); }
+    qint32 sampleCount() const { return m_sampleCount; }
+    bool isImmutable() const { return m_immutable; }
 
     /**
      * @brief Bind a texture for shader access

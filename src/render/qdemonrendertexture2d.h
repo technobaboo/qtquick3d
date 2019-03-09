@@ -76,7 +76,7 @@ public:
      *
      * @return No return.
      */
-    virtual void setTextureData(QDemonDataRef<quint8> newBuffer,
+    void setTextureData(QDemonDataRef<quint8> newBuffer,
                                 quint8 inMipLevel,
                                 qint32 width,
                                 qint32 height,
@@ -97,22 +97,18 @@ public:
      *
      * @return No return.
      */
-    virtual void setTextureStorage(qint32 inLevels,
+    void setTextureStorage(qint32 inLevels,
                                    qint32 width,
                                    qint32 height,
                                    QDemonRenderTextureFormat formaInternal,
                                    QDemonRenderTextureFormat format = QDemonRenderTextureFormat::Unknown,
                                    QDemonDataRef<quint8> dataBuffer = QDemonDataRef<quint8>());
 
-    virtual void setTextureDataMultisample(qint32 sampleCount, qint32 width, qint32 height, QDemonRenderTextureFormat format);
-
-    bool isMultisampleTexture() const override { return (m_texTarget == QDemonRenderTextureTargetType::Texture2D_MS); }
-    qint32 sampleCount() const override { return m_sampleCount; }
-    bool isImmutableTexture() const override { return m_immutable; }
+    void setTextureDataMultisample(qint32 sampleCount, qint32 width, qint32 height, QDemonRenderTextureFormat format);
 
     // Update a sub-rect of the image.  newBuffer is expected to be a continguous subrect of the
     // image.
-    virtual void setTextureSubData(QDemonDataRef<quint8> newBuffer,
+    void setTextureSubData(QDemonDataRef<quint8> newBuffer,
                                    quint8 inMipLevel,
                                    qint32 inXOffset,
                                    qint32 inYOffset,
@@ -122,7 +118,7 @@ public:
     // Generate a set of mipmaps from mipLevel( 0 ).  Uses the graphis layer to do this if
     // possible
     // glGenerateMipmap
-    virtual void generateMipmaps(QDemonRenderHint genType = QDemonRenderHint::Nicest);
+    void generateMipmaps(QDemonRenderHint genType = QDemonRenderHint::Nicest);
 
     /**
      * @brief Bind a texture for shader access
