@@ -679,7 +679,7 @@ bool QDemonRenderContext::applyPreDrawProperties()
 
     // we could render through a program pipline
     if (shader == nullptr && m_hardwarePropertyContext.m_activeProgramPipeline)
-        shader = m_hardwarePropertyContext.m_activeProgramPipeline->getVertexStage();
+        shader = m_hardwarePropertyContext.m_activeProgramPipeline->vertexStage();
 
     if (inputAssembler == nullptr || shader == nullptr) {
         qCCritical(INVALID_OPERATION, "Attempting to render no valid shader or input assembler setup");

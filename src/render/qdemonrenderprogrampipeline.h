@@ -93,17 +93,17 @@ public:
      *
      * @return the backend object handle.
      */
-    QDemonRenderBackend::QDemonRenderBackendProgramPipeline handle() { return m_programPipelineHandle; }
+    QDemonRenderBackend::QDemonRenderBackendProgramPipeline handle() { return m_handle; }
 
     /**
      * @brief get the vertex stage program
      *
      * @return the backend object handle.
      */
-    QDemonRef<QDemonRenderShaderProgram> getVertexStage();
+    QDemonRef<QDemonRenderShaderProgram> vertexStage();
 
 private:
-    QDemonRenderBackend::QDemonRenderBackendProgramPipeline m_programPipelineHandle; ///< opaque backend handle
+    QDemonRenderBackend::QDemonRenderBackendProgramPipeline m_handle; ///< opaque backend handle
 
     QDemonRef<QDemonRenderShaderProgram> m_program; ///< for non separable programs this contains the entire program
     QDemonRef<QDemonRenderShaderProgram> m_vertexProgram; ///< for separable programs this contains the vertex program
