@@ -39,7 +39,7 @@ QDemonRenderIndexBuffer::QDemonRenderIndexBuffer(const QDemonRef<QDemonRenderCon
                                                  QDemonRenderComponentType componentType,
                                                  QDemonRenderBufferUsageType usageType,
                                                  QDemonDataRef<quint8> data)
-    : QDemonRenderDataBuffer(context, size, QDemonRenderBufferBindValues::Index, usageType, data), m_componentType(componentType)
+    : QDemonRenderDataBuffer(context, size, QDemonRenderBufferBindType::Index, usageType, data), m_componentType(componentType)
 {
 }
 

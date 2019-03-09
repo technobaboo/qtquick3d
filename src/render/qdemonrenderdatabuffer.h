@@ -49,7 +49,7 @@ protected:
     QDemonRef<QDemonRenderContext> m_context; ///< pointer to context
     QDemonRef<QDemonRenderBackend> m_backend; ///< pointer to backend
     QDemonRenderBufferUsageType m_usageType; ///< usage type
-    QDemonRenderBufferBindFlags m_bindFlags; ///< bind flags
+    QDemonRenderBufferBindType m_bindFlags; ///< bind flags
     QDemonDataRef<quint8> m_bufferData; ///< buffer data pointer
     quint32 m_bufferCapacity; ///< size of internal backup buffer (m_bufferData)
     size_t m_bufferSize; ///< size of buffer
@@ -74,7 +74,7 @@ public:
      */
     QDemonRenderDataBuffer(const QDemonRef<QDemonRenderContext> &context,
                            size_t size,
-                           QDemonRenderBufferBindFlags bindFlags,
+                           QDemonRenderBufferBindType bindFlags,
                            QDemonRenderBufferUsageType usageType,
                            QDemonDataRef<quint8> data);
 
@@ -93,7 +93,7 @@ public:
      *
      * @return Return usage tyoe
      */
-    virtual QDemonRenderBufferBindFlags getBufferBindings() const { return m_bindFlags; }
+    virtual QDemonRenderBufferBindType getBufferBindings() const { return m_bindFlags; }
 
     /**
      * @brief Return buffer size in byte

@@ -562,7 +562,7 @@ void QDemonRenderBackendGL3Impl::blitFramebuffer(qint32 srcX0,
 }
 
 void *QDemonRenderBackendGL3Impl::mapBuffer(QDemonRenderBackendBufferObject,
-                                            QDemonRenderBufferBindFlags bindFlags,
+                                            QDemonRenderBufferBindType bindFlags,
                                             size_t offset,
                                             size_t length,
                                             QDemonRenderBufferAccessFlags accessFlags)
@@ -576,7 +576,7 @@ void *QDemonRenderBackendGL3Impl::mapBuffer(QDemonRenderBackendBufferObject,
     return ret;
 }
 
-bool QDemonRenderBackendGL3Impl::unmapBuffer(QDemonRenderBackendBufferObject, QDemonRenderBufferBindFlags bindFlags)
+bool QDemonRenderBackendGL3Impl::unmapBuffer(QDemonRenderBackendBufferObject, QDemonRenderBufferBindType bindFlags)
 {
     GLboolean ret;
 

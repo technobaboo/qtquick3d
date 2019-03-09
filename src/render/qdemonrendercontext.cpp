@@ -352,25 +352,8 @@ qint32 QDemonRenderContext::getNextTextureUnit()
     return retval;
 }
 
-QDemonRef<QDemonRenderFrameBuffer> QDemonRenderContext::createFrameBuffer()
-{
-    QDemonRef<QDemonRenderFrameBuffer> retval = QDemonRenderFrameBuffer::create(this);
-    if (retval != nullptr)
-        m_frameBufferToImpMap.insert(retval->handle(), retval.data());
-    return retval;
-}
-
-QDemonRef<QDemonRenderFrameBuffer> QDemonRenderContext::getFrameBuffer(const void *implementationHandle)
-{
-    const QHash<const void *, QDemonRenderFrameBuffer *>::iterator entry = m_frameBufferToImpMap.find(implementationHandle);
-    if (entry != m_frameBufferToImpMap.end())
-        return QDemonRef<QDemonRenderFrameBuffer>(entry.value());
-    return nullptr;
-}
-
 void QDemonRenderContext::frameBufferDestroyed(QDemonRenderFrameBuffer *fb)
 {
-    m_frameBufferToImpMap.remove(fb->handle());
     if (m_hardwarePropertyContext.m_frameBuffer == fb)
         m_hardwarePropertyContext.m_frameBuffer = nullptr;
 }

@@ -1040,7 +1040,7 @@ void QDemonLayerRenderData::setupDrawFB(bool depthEnabled)
     auto theRenderContext = renderer->getContext();
     // create drawing FBO and texture, if not existing
     if (!m_advancedModeDrawFB)
-        m_advancedModeDrawFB = theRenderContext->createFrameBuffer();
+        m_advancedModeDrawFB = new QDemonRenderFrameBuffer(theRenderContext);
     if (!m_advancedBlendDrawTexture) {
         m_advancedBlendDrawTexture = new QDemonRenderTexture2D(theRenderContext);
         QRect theViewport = renderer->getDemonContext()->getRenderList()->getViewport();
@@ -1083,7 +1083,7 @@ void QDemonLayerRenderData::blendAdvancedToFB(DefaultMaterialBlendMode blendMode
     }
     // create blending FBO and texture if not existing
     if (!m_advancedModeBlendFB)
-        m_advancedModeBlendFB = theRenderContext->createFrameBuffer();
+        m_advancedModeBlendFB = new QDemonRenderFrameBuffer(theRenderContext);
     if (!m_advancedBlendBlendTexture) {
         m_advancedBlendBlendTexture = new QDemonRenderTexture2D(theRenderContext);
         m_advancedBlendBlendTexture->setTextureData(QDemonDataRef<quint8>(), 0, theViewport.width(), theViewport.height(), QDemonRenderTextureFormat::RGBA8);
@@ -1872,7 +1872,7 @@ void QDemonLayerRenderData::runnableRenderToViewport(const QDemonRef<QDemonRende
                                                          theLayerViewport.height(),
                                                          QDemonRenderTextureFormat::RGBA8);
                         QDemonRef<QDemonRenderFrameBuffer> blitFB;
-                        blitFB = theContext->createFrameBuffer();
+                        blitFB = new QDemonRenderFrameBuffer(theContext);
                         blitFB->attach(QDemonRenderFrameBufferAttachment::Color0,
                                        QDemonRenderTextureOrRenderBuffer(blendBlitTexture));
                         blendFB->attach(QDemonRenderFrameBufferAttachment::Color0, QDemonRenderTextureOrRenderBuffer(screenTexture));
@@ -1898,7 +1898,7 @@ void QDemonLayerRenderData::runnableRenderToViewport(const QDemonRef<QDemonRende
                                                            theLayerViewport.height(),
                                                            QDemonRenderTextureFormat::RGBA8);
                         QDemonRef<QDemonRenderFrameBuffer> resultFB;
-                        resultFB = theContext->createFrameBuffer();
+                        resultFB = new QDemonRenderFrameBuffer(theContext);
                         resultFB->attach(QDemonRenderFrameBufferAttachment::Color0,
                                          QDemonRenderTextureOrRenderBuffer(blendResultTexture));
                         theContext->setRenderTarget(resultFB);

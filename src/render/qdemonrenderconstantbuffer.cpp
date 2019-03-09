@@ -56,7 +56,7 @@ QDemonRenderConstantBuffer::QDemonRenderConstantBuffer(const QDemonRef<QDemonRen
                                                        size_t size,
                                                        QDemonRenderBufferUsageType usageType,
                                                        QDemonDataRef<quint8> data)
-    : QDemonRenderDataBuffer(context, size, QDemonRenderBufferBindValues::Constant, usageType, QDemonDataRef<quint8>())
+    : QDemonRenderDataBuffer(context, size, QDemonRenderBufferBindType::Constant, usageType, QDemonDataRef<quint8>())
     , m_name(bufferName)
     , m_currentOffset(0)
     , m_currentSize(0)

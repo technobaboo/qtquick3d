@@ -116,7 +116,7 @@ public:
             // need
             // to push the current state
             // Auto-binds the framebuffer.
-            mFrameBuffer = m_Context->createFrameBuffer();
+            mFrameBuffer = new QDemonRenderFrameBuffer(m_Context);
             mFrameBuffer->attach(QDemonRenderFrameBufferAttachment::Color0, mColorBuffer);
             mFrameBuffer->attach(QDemonRenderFrameBufferAttachment::Depth, mDepthBuffer);
             Q_ASSERT(mFrameBuffer->isComplete());

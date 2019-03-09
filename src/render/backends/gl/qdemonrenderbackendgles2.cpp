@@ -700,7 +700,7 @@ bool QDemonRenderBackendGLES2Impl::resizeRenderbuffer(QDemonRenderBackendRenderb
 }
 
 void *QDemonRenderBackendGLES2Impl::mapBuffer(QDemonRenderBackendBufferObject,
-                                              QDemonRenderBufferBindFlags bindFlags,
+                                              QDemonRenderBufferBindType bindFlags,
                                               size_t offset,
                                               size_t length,
                                               QDemonRenderBufferAccessFlags accessFlags)
@@ -714,7 +714,7 @@ void *QDemonRenderBackendGLES2Impl::mapBuffer(QDemonRenderBackendBufferObject,
     return ret;
 }
 
-bool QDemonRenderBackendGLES2Impl::unmapBuffer(QDemonRenderBackendBufferObject, QDemonRenderBufferBindFlags bindFlags)
+bool QDemonRenderBackendGLES2Impl::unmapBuffer(QDemonRenderBackendBufferObject, QDemonRenderBufferBindType bindFlags)
 {
     GLboolean ret;
 

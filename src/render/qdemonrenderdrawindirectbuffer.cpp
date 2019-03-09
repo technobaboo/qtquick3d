@@ -38,7 +38,7 @@ QDemonRenderDrawIndirectBuffer::QDemonRenderDrawIndirectBuffer(const QDemonRef<Q
                                                                size_t size,
                                                                QDemonRenderBufferUsageType usageType,
                                                                QDemonDataRef<quint8> data)
-    : QDemonRenderDataBuffer(context, size, QDemonRenderBufferBindValues::Draw_Indirect, usageType, data), m_dirty(true)
+    : QDemonRenderDataBuffer(context, size, QDemonRenderBufferBindType::DrawIndirect, usageType, data), m_dirty(true)
 {
 }
 

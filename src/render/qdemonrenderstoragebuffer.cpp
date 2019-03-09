@@ -41,7 +41,7 @@ QDemonRenderStorageBuffer::QDemonRenderStorageBuffer(const QDemonRef<QDemonRende
                                                      QDemonRenderBufferUsageType usageType,
                                                      QDemonDataRef<quint8> data,
                                                      QDemonRenderDataBuffer *pBuffer)
-    : QDemonRenderDataBuffer(context, size, QDemonRenderBufferBindValues::Storage, usageType, data)
+    : QDemonRenderDataBuffer(context, size, QDemonRenderBufferBindType::Storage, usageType, data)
     , m_name(bufferName)
     , m_wrappedBuffer(pBuffer)
     , m_dirty(true)

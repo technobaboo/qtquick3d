@@ -66,7 +66,7 @@ struct QDemonResourceManager : public QDemonResourceManagerInterface
     QDemonRef<QDemonRenderFrameBuffer> allocateFrameBuffer() override
     {
         if (freeFrameBuffers.empty() == true) {
-            auto newBuffer = renderContext->createFrameBuffer();
+            auto newBuffer = new QDemonRenderFrameBuffer(renderContext);
             freeFrameBuffers.push_back(newBuffer);
         }
         auto retval = freeFrameBuffers.back();

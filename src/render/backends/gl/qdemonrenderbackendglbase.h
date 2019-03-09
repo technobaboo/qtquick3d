@@ -124,27 +124,27 @@ public:
 
     /// resource handling
     QDemonRenderBackendBufferObject createBuffer(size_t size,
-                                                 QDemonRenderBufferBindFlags bindFlags,
+                                                 QDemonRenderBufferBindType bindFlags,
                                                  QDemonRenderBufferUsageType usage,
                                                  const void *hostPtr = nullptr) override;
-    void bindBuffer(QDemonRenderBackendBufferObject bo, QDemonRenderBufferBindFlags bindFlags) override;
+    void bindBuffer(QDemonRenderBackendBufferObject bo, QDemonRenderBufferBindType bindFlags) override;
     void releaseBuffer(QDemonRenderBackendBufferObject bo) override;
     void updateBuffer(QDemonRenderBackendBufferObject bo,
-                      QDemonRenderBufferBindFlags bindFlags,
+                      QDemonRenderBufferBindType bindFlags,
                       size_t size,
                       QDemonRenderBufferUsageType usage,
                       const void *data) override;
     void updateBufferRange(QDemonRenderBackendBufferObject bo,
-                           QDemonRenderBufferBindFlags bindFlags,
+                           QDemonRenderBufferBindType bindFlags,
                            size_t offset,
                            size_t size,
                            const void *data) override;
     void *mapBuffer(QDemonRenderBackendBufferObject bo,
-                    QDemonRenderBufferBindFlags bindFlags,
+                    QDemonRenderBufferBindType bindFlags,
                     size_t offset,
                     size_t length,
                     QDemonRenderBufferAccessFlags accessFlags) override;
-    bool unmapBuffer(QDemonRenderBackendBufferObject bo, QDemonRenderBufferBindFlags bindFlags) override;
+    bool unmapBuffer(QDemonRenderBackendBufferObject bo, QDemonRenderBufferBindType bindFlags) override;
     void setMemoryBarrier(QDemonRenderBufferBarrierFlags barriers) override;
 
     QDemonRenderBackendQueryObject createQuery() override;

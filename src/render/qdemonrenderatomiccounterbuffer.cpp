@@ -52,7 +52,7 @@ QDemonRenderAtomicCounterBuffer::QDemonRenderAtomicCounterBuffer(const QDemonRef
                                                                  size_t size,
                                                                  QDemonRenderBufferUsageType usageType,
                                                                  QDemonDataRef<quint8> data)
-    : QDemonRenderDataBuffer(context, size, QDemonRenderBufferBindValues::Storage, usageType, data)
+    : QDemonRenderDataBuffer(context, size, QDemonRenderBufferBindType::Storage, usageType, data)
     , m_name(bufferName)
     , m_dirty(true)
 {

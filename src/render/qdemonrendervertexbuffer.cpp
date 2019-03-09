@@ -37,7 +37,7 @@ QT_BEGIN_NAMESPACE
 QDemonRenderVertexBuffer::QDemonRenderVertexBuffer(const QDemonRef<QDemonRenderContext> &context,
                                                    size_t size,
                                                    quint32 stride,
-                                                   QDemonRenderBufferBindFlags bindFlags,
+                                                   QDemonRenderBufferBindType bindFlags,
                                                    QDemonRenderBufferUsageType usageType,
                                                    QDemonDataRef<quint8> data)
     : QDemonRenderDataBuffer(context, size, bindFlags, usageType, data), m_stride(stride)
@@ -70,7 +70,7 @@ QDemonRef<QDemonRenderVertexBuffer> QDemonRenderVertexBuffer::create(const QDemo
             new QDemonRenderVertexBuffer(context,
                                          size,
                                          stride,
-                                         QDemonRenderBufferBindValues::Vertex,
+                                         QDemonRenderBufferBindType::Vertex,
                                          usageType,
                                          toDataRef(const_cast<quint8 *>(bufferData.begin()), bufferData.size())));
 }

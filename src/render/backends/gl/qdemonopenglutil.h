@@ -681,43 +681,40 @@ struct GLConversion
         return 0;
     }
 
-    static GLenum fromBindBufferFlagsToGL(QDemonRenderBufferBindFlags flags)
+    static GLenum fromBindBufferFlagsToGL(QDemonRenderBufferBindType type)
     {
-        GLenum retval = GL_INVALID_ENUM;
-        if (flags & QDemonRenderBufferBindValues::Vertex)
-            retval = GL_ARRAY_BUFFER;
-        else if (flags & QDemonRenderBufferBindValues::Index)
-            retval = GL_ELEMENT_ARRAY_BUFFER;
-        else if (flags & QDemonRenderBufferBindValues::Constant)
-            retval = GL_UNIFORM_BUFFER;
-        else if (flags & QDemonRenderBufferBindValues::Storage)
-            retval = GL_SHADER_STORAGE_BUFFER;
-        else if (flags & QDemonRenderBufferBindValues::Atomic_Counter)
-            retval = GL_ATOMIC_COUNTER_BUFFER;
-        else if (flags & QDemonRenderBufferBindValues::Draw_Indirect)
-            retval = GL_DRAW_INDIRECT_BUFFER;
-        else
-            Q_ASSERT(false);
-
-        return retval;
+        switch(type) {
+        case QDemonRenderBufferBindType::Vertex:
+            return GL_ARRAY_BUFFER;
+        case QDemonRenderBufferBindType::Index:
+            return GL_ELEMENT_ARRAY_BUFFER;
+        case QDemonRenderBufferBindType::Constant:
+            return GL_UNIFORM_BUFFER;
+        case QDemonRenderBufferBindType::Storage:
+            return GL_SHADER_STORAGE_BUFFER;
+        case QDemonRenderBufferBindType::AtomicCounter:
+            return GL_ATOMIC_COUNTER_BUFFER;
+        case QDemonRenderBufferBindType::DrawIndirect:
+            return GL_DRAW_INDIRECT_BUFFER;
+        }
     }
 
-    static QDemonRenderBufferBindFlags fromGLToBindBufferFlags(GLenum value)
+    static QDemonRenderBufferBindType fromGLToBindBufferFlags(GLenum value)
     {
-        QDemonRenderBufferBindFlags retval;
+        QDemonRenderBufferBindType retval;
 
         if (value == GL_ARRAY_BUFFER)
-            retval |= QDemonRenderBufferBindValues::Vertex;
+            return QDemonRenderBufferBindType::Vertex;
         else if (value == GL_ELEMENT_ARRAY_BUFFER)
-            retval |= QDemonRenderBufferBindValues::Index;
+            return QDemonRenderBufferBindType::Index;
         else if (value == GL_UNIFORM_BUFFER)
-            retval |= QDemonRenderBufferBindValues::Constant;
+            return QDemonRenderBufferBindType::Constant;
         else if (value == GL_SHADER_STORAGE_BUFFER)
-            retval |= QDemonRenderBufferBindValues::Storage;
+            return QDemonRenderBufferBindType::Storage;
         else if (value == GL_ATOMIC_COUNTER_BUFFER)
-            retval |= QDemonRenderBufferBindValues::Atomic_Counter;
+            return QDemonRenderBufferBindType::AtomicCounter;
         else if (value == GL_DRAW_INDIRECT_BUFFER)
-            retval |= QDemonRenderBufferBindValues::Draw_Indirect;
+            return QDemonRenderBufferBindType::DrawIndirect;
         else
             Q_ASSERT(false);
 

@@ -185,19 +185,15 @@ enum class QDemonRenderCommandFlushValues
 Q_DECLARE_FLAGS(QDemonRenderCommandFlushFlags, QDemonRenderCommandFlushValues)
 Q_DECLARE_OPERATORS_FOR_FLAGS(QDemonRenderCommandFlushFlags)
 
-enum class QDemonRenderBufferBindValues : quint32
+enum class QDemonRenderBufferBindType : quint32
 {
-    Unknown = 0,
-    Vertex = 1 << 0, ///< Bind as vertex buffer
-    Index = 1 << 1, ///< Bind as index buffer
-    Constant = 1 << 2, ///< Bind as constant buffer
-    Storage = 1 << 3, ///< Bind as shader storage buffer
-    Atomic_Counter = 1 << 4, ///< Bind as atomic counter buffer
-    Draw_Indirect = 1 << 5, ///< Bind as draw indirect buffer
+    Vertex, ///< Bind as vertex buffer
+    Index, ///< Bind as index buffer
+    Constant, ///< Bind as constant buffer
+    Storage, ///< Bind as shader storage buffer
+    AtomicCounter, ///< Bind as atomic counter buffer
+    DrawIndirect, ///< Bind as draw indirect buffer
 };
-
-Q_DECLARE_FLAGS(QDemonRenderBufferBindFlags, QDemonRenderBufferBindValues)
-Q_DECLARE_OPERATORS_FOR_FLAGS(QDemonRenderBufferBindFlags)
 
 enum class QDemonRenderBufferUsageType
 {

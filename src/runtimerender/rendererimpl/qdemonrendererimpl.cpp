@@ -217,7 +217,7 @@ void QDemonRendererImpl::renderLayer(QDemonRenderLayer &inLayer,
                                               viewport.height() + viewport.y(),
                                               QDemonRenderTextureFormat::RGBA8);
             if (m_blendFb == nullptr)
-                m_blendFb = theRenderContext->createFrameBuffer();
+                m_blendFb = new QDemonRenderFrameBuffer(theRenderContext);
             m_blendFb->attach(QDemonRenderFrameBufferAttachment::Color0, m_layerBlendTexture.getTexture());
             theRenderContext->setRenderTarget(m_blendFb);
             theRenderContext->setScissorTestEnabled(false);

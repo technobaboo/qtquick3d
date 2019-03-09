@@ -59,7 +59,7 @@ public:
     QDemonRenderVertexBuffer(const QDemonRef<QDemonRenderContext> &context,
                              size_t size,
                              quint32 stride,
-                             QDemonRenderBufferBindFlags bindFlags,
+                             QDemonRenderBufferBindType bindFlags,
                              QDemonRenderBufferUsageType usageType,
                              QDemonDataRef<quint8> data);
 
