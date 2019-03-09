@@ -153,7 +153,6 @@ protected:
     TContextConstantBufferMap m_constantToImpMap;
     TContextStorageBufferMap m_storageToImpMap;
     TContextAtomicCounterBufferMap m_atomicCounterToImpMap;
-    TContextRasterizerStateMap m_rasterizerStateToImpMap;
     TContextPathFontSpecificationMap m_pathFontSpecToImpMap;
 
     qint32 m_maxTextureUnits;
@@ -429,9 +428,7 @@ public:
 
     void setDepthStencilState(QDemonRef<QDemonRenderDepthStencilState> inDepthStencilState);
 
-    QDemonRef<QDemonRenderRasterizerState> createRasterizerState(float depthBias, float depthScale, QDemonRenderFace cullFace);
     void setRasterizerState(QDemonRef<QDemonRenderRasterizerState> inRasterizerState);
-    void stateDestroyed(QDemonRenderRasterizerState *state);
 
     void registerConstantBuffer(QDemonRenderConstantBuffer *buffer);
     QDemonRef<QDemonRenderConstantBuffer> getConstantBuffer(const QByteArray &bufferName);

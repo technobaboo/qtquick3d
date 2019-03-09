@@ -655,8 +655,8 @@ void QDemonLayerRenderData::renderShadowMapPass(QDemonResourceFrameBuffer *theFB
 
     // we render the shadow map with a slight offset to prevent shadow acne and cull the front
     // faces
-    QDemonRef<QDemonRenderRasterizerState> rsdefaultstate = theRenderContext->createRasterizerState(0.0, 0.0, QDemonRenderFace::Back);
-    QDemonRef<QDemonRenderRasterizerState> rsstate = theRenderContext->createRasterizerState(1.5, 2.0, QDemonRenderFace::Front);
+    QDemonRef<QDemonRenderRasterizerState> rsdefaultstate = new QDemonRenderRasterizerState(theRenderContext, 0.0, 0.0, QDemonRenderFace::Back);
+    QDemonRef<QDemonRenderRasterizerState> rsstate = new QDemonRenderRasterizerState(theRenderContext, 1.5, 2.0, QDemonRenderFace::Front);
     theRenderContext->setRasterizerState(rsstate);
 
     QDemonRenderClearFlags clearFlags(QDemonRenderClearValues::Depth | QDemonRenderClearValues::Stencil

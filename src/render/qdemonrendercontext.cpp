@@ -76,8 +76,6 @@ QDemonRenderContext::~QDemonRenderContext()
     m_constantToImpMap.clear();
     Q_ASSERT(m_storageToImpMap.size() == 0);
     m_storageToImpMap.clear();
-    Q_ASSERT(m_rasterizerStateToImpMap.size() == 0);
-    m_rasterizerStateToImpMap.clear();
     Q_ASSERT(m_pathFontSpecToImpMap.size() == 0);
     m_pathFontSpecToImpMap.clear();
 
@@ -105,26 +103,10 @@ void QDemonRenderContext::setDepthStencilState(QDemonRef<QDemonRenderDepthStenci
     }
 }
 
-QDemonRef<QDemonRenderRasterizerState> QDemonRenderContext::createRasterizerState(float depthBias,
-                                                                                      float depthScale,
-                                                                                      QDemonRenderFace cullFace)
-{
-    QDemonRef<QDemonRenderRasterizerState> state = QDemonRenderRasterizerState::create(this, depthBias, depthScale, cullFace);
-    if (state)
-        m_rasterizerStateToImpMap.insert(state->GetRasterizerObjectHandle(), state.data());
-
-    return state;
-}
-
 void QDemonRenderContext::setRasterizerState(QDemonRef<QDemonRenderRasterizerState> inRasterizerState)
 {
     if (inRasterizerState)
-        m_backend->setRasterizerState(inRasterizerState->GetRasterizerObjectHandle());
-}
-
-void QDemonRenderContext::stateDestroyed(QDemonRenderRasterizerState *state)
-{
-    m_rasterizerStateToImpMap.remove(state->GetRasterizerObjectHandle());
+        m_backend->setRasterizerState(inRasterizerState->handle());
 }
 
 void QDemonRenderContext::registerConstantBuffer(QDemonRenderConstantBuffer *buffer)

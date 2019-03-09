@@ -38,15 +38,14 @@ QT_BEGIN_NAMESPACE
 class QDemonRenderContext;
 
 // currently this handles only stencil state
-class QDemonRenderRasterizerState
+class Q_DEMONRENDER_EXPORT QDemonRenderRasterizerState
 {
 public:
     QAtomicInt ref;
 
 private:
-    QDemonRef<QDemonRenderContext> m_context; ///< pointer to context
     QDemonRef<QDemonRenderBackend> m_backend; ///< pointer to backend
-    QDemonRenderBackend::QDemonRenderBackendRasterizerStateObject m_stateHandle; ///< opaque backend handle
+    QDemonRenderBackend::QDemonRenderBackendRasterizerStateObject m_handle; ///< opaque backend handle
 
 public:
     /**
@@ -65,22 +64,17 @@ public:
                                 float depthScale,
                                 QDemonRenderFace cullFace);
 
-    virtual ~QDemonRenderRasterizerState();
+    ~QDemonRenderRasterizerState();
 
     /**
      * @brief get the backend object handle
      *
      * @return the backend object handle.
      */
-    virtual QDemonRenderBackend::QDemonRenderBackendRasterizerStateObject GetRasterizerObjectHandle()
+    QDemonRenderBackend::QDemonRenderBackendRasterizerStateObject handle()
     {
-        return m_stateHandle;
+        return m_handle;
     }
-
-    static QDemonRef<QDemonRenderRasterizerState> create(const QDemonRef<QDemonRenderContext> &context,
-                                                         float depthBias,
-                                                         float depthScale,
-                                                         QDemonRenderFace cullFace);
 };
 
 QT_END_NAMESPACE

@@ -37,26 +37,16 @@ QDemonRenderRasterizerState::QDemonRenderRasterizerState(const QDemonRef<QDemonR
                                                          float depthBias,
                                                          float depthScale,
                                                          QDemonRenderFace cullFace)
-    : m_context(context), m_backend(context->backend())
+    : m_backend(context->backend())
 {
     // create backend handle
-    m_stateHandle = m_backend->createRasterizerState(depthBias, depthScale, cullFace);
+    m_handle = m_backend->createRasterizerState(depthBias, depthScale, cullFace);
 }
 
 QDemonRenderRasterizerState::~QDemonRenderRasterizerState()
 {
-    if (m_stateHandle) {
-        m_backend->releaseRasterizerState(m_stateHandle);
-        m_context->stateDestroyed(this);
-    }
-}
-
-QDemonRef<QDemonRenderRasterizerState> QDemonRenderRasterizerState::create(const QDemonRef<QDemonRenderContext> &context,
-                                                                           float depthBias,
-                                                                           float depthScale,
-                                                                           QDemonRenderFace cullFace)
-{
-    return QDemonRef<QDemonRenderRasterizerState>(new QDemonRenderRasterizerState(context, depthBias, depthScale, cullFace));
+    if (m_handle)
+        m_backend->releaseRasterizerState(m_handle);
 }
 
 QT_END_NAMESPACE
