@@ -56,7 +56,7 @@ QDemonRenderAtomicCounterBuffer::QDemonRenderAtomicCounterBuffer(const QDemonRef
     , m_name(bufferName)
     , m_dirty(true)
 {
-    Q_ASSERT(context->isStorageBufferSupported());
+    Q_ASSERT(context->supportsStorageBuffer());
     context->registerAtomicCounterBuffer(this);
 }
 

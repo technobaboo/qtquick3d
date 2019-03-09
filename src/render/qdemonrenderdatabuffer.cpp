@@ -41,7 +41,7 @@ QDemonRenderDataBuffer::QDemonRenderDataBuffer(const QDemonRef<QDemonRenderConte
                                                QDemonRenderBufferUsageType usageType,
                                                QDemonDataRef<quint8> data)
     : m_context(context)
-    , m_backend(context->getBackend())
+    , m_backend(context->backend())
     , m_usageType(usageType)
     , m_type(bindFlags)
     , m_bufferData(data)

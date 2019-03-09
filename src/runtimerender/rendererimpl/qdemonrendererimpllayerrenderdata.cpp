@@ -169,8 +169,8 @@ void QDemonLayerRenderData::prepareForRender(const QSize &inViewportDimensions)
 QDemonRenderTextureFormat QDemonLayerRenderData::getDepthBufferFormat()
 {
     if (m_depthBufferFormat == QDemonRenderTextureFormat::Unknown) {
-        quint32 theExistingDepthBits = renderer->getContext()->getDepthBits();
-        quint32 theExistingStencilBits = renderer->getContext()->getStencilBits();
+        quint32 theExistingDepthBits = renderer->getContext()->depthBits();
+        quint32 theExistingStencilBits = renderer->getContext()->stencilBits();
         switch (theExistingDepthBits) {
         case 32:
             m_depthBufferFormat = QDemonRenderTextureFormat::Depth32;
@@ -644,7 +644,7 @@ void QDemonLayerRenderData::renderShadowMapPass(QDemonResourceFrameBuffer *theFB
     auto theRenderContext = renderer->getContext();
 
     // we may change the viewport
-    QDemonRenderContextScopedProperty<QRect> __viewport(*theRenderContext, &QDemonRenderContext::getViewport, &QDemonRenderContext::setViewport);
+    QDemonRenderContextScopedProperty<QRect> __viewport(*theRenderContext, &QDemonRenderContext::viewport, &QDemonRenderContext::setViewport);
 
     // disable color writes
     // theRenderContext.SetColorWritesEnabled( false );
@@ -883,8 +883,8 @@ void QDemonLayerRenderData::runRenderPass(TRenderRenderableFunction inRenderFn,
                     bool useBlendFallback = (blendMode == DefaultMaterialBlendMode::Overlay
                                              || blendMode == DefaultMaterialBlendMode::ColorBurn
                                              || blendMode == DefaultMaterialBlendMode::ColorDodge)
-                            && !theRenderContext->isAdvancedBlendHwSupported()
-                            && !theRenderContext->isAdvancedBlendHwSupportedKHR() && m_layerPrepassDepthTexture.getTexture();
+                            && !theRenderContext->supportsAdvancedBlendHW()
+                            && !theRenderContext->supportsAdvancedBlendHwKHR() && m_layerPrepassDepthTexture.getTexture();
                     if (useBlendFallback)
                         setupDrawFB(true);
 #endif
@@ -920,8 +920,8 @@ void QDemonLayerRenderData::runRenderPass(TRenderRenderableFunction inRenderFn,
                     bool useBlendFallback = (blendMode == DefaultMaterialBlendMode::Overlay
                                              || blendMode == DefaultMaterialBlendMode::ColorBurn
                                              || blendMode == DefaultMaterialBlendMode::ColorDodge)
-                            && !theRenderContext->isAdvancedBlendHwSupported()
-                            && !theRenderContext->isAdvancedBlendHwSupportedKHR();
+                            && !theRenderContext->supportsAdvancedBlendHW()
+                            && !theRenderContext->supportsAdvancedBlendHwKHR();
 
                     if (theObject.renderableFlags.hasTransparency()) {
                         theRenderContext->setBlendingEnabled(true && inEnableBlending);
@@ -1057,7 +1057,7 @@ void QDemonLayerRenderData::setupDrawFB(bool depthEnabled)
         theRenderContext->setDepthTestEnabled(true);
     theRenderContext->setBlendingEnabled(false);
     // clear color commonly is the layer background, make sure that it is all-zero here
-    QVector4D originalClrColor = theRenderContext->getClearColor();
+    QVector4D originalClrColor = theRenderContext->clearColor();
     theRenderContext->setClearColor(QVector4D(0.0, 0.0, 0.0, 0.0));
     theRenderContext->clear(QDemonRenderClearValues::Color);
     theRenderContext->setClearColor(originalClrColor);
@@ -1186,7 +1186,7 @@ void QDemonLayerRenderData::renderToTexture()
     QSize theLayerOriginalTextureDimensions = theLayerTextureDimensions;
     QDemonRenderTextureFormat DepthTextureFormat = QDemonRenderTextureFormat::Depth24Stencil8;
     QDemonRenderTextureFormat ColorTextureFormat = QDemonRenderTextureFormat::RGBA8;
-    if (thePrepResult.lastEffect && theRenderContext->getRenderContextType() != QDemonRenderContextType::GLES2) {
+    if (thePrepResult.lastEffect && theRenderContext->renderContextType() != QDemonRenderContextType::GLES2) {
         if (layer.background != LayerBackground::Transparent)
             ColorTextureFormat = QDemonRenderTextureFormat::R11G11B10;
         else
@@ -1197,11 +1197,11 @@ void QDemonLayerRenderData::renderToTexture()
     bool needsRender = false;
     qint32 sampleCount = 1;
     // check multsample mode and MSAA texture support
-    if (layer.multisampleAAMode != AAModeValues::NoAA && theRenderContext->areMultisampleTexturesSupported())
+    if (layer.multisampleAAMode != AAModeValues::NoAA && theRenderContext->supportsMultisampleTextures())
         sampleCount = qint32(layer.multisampleAAMode);
 
     bool isMultisamplePass = false;
-    if (theRenderContext->getRenderContextType() != QDemonRenderContextType::GLES2)
+    if (theRenderContext->renderContextType() != QDemonRenderContextType::GLES2)
         isMultisamplePass = (sampleCount > 1) || (layer.multisampleAAMode == AAModeValues::SSAA);
 
     QDemonRenderTextureTargetType thFboAttachTarget = QDemonRenderTextureTargetType::Texture2D;
@@ -1359,7 +1359,7 @@ void QDemonLayerRenderData::renderToTexture()
     // Allocating a frame buffer can cause it to be bound, so we need to save state before this
     // happens.
     QDemonRenderContextScopedProperty<QDemonRef<QDemonRenderFrameBuffer>> __framebuf(*theRenderContext,
-                                                                                     &QDemonRenderContext::getRenderTarget,
+                                                                                     &QDemonRenderContext::renderTarget,
                                                                                      &QDemonRenderContext::setRenderTarget);
     // Match the bit depth of the current render target to avoid popping when we switch from aa
     // to non aa layers
@@ -1385,7 +1385,7 @@ void QDemonLayerRenderData::renderToTexture()
     {
         theRenderContext->setRenderTarget(theFB);
         QDemonRenderContextScopedProperty<QRect> __viewport(*theRenderContext,
-                                                            &QDemonRenderContext::getViewport,
+                                                            &QDemonRenderContext::viewport,
                                                             &QDemonRenderContext::setViewport,
                                                             theNewViewport);
         QVector4D clearColor(0.0, 0.0, 0.0, 0.0);
@@ -1393,7 +1393,7 @@ void QDemonLayerRenderData::renderToTexture()
             clearColor = QVector4D(layer.clearColor, 1.0);
 
         QDemonRenderContextScopedProperty<QVector4D> __clearColor(*theRenderContext,
-                                                                  &QDemonRenderContext::getClearColor,
+                                                                  &QDemonRenderContext::clearColor,
                                                                   &QDemonRenderContext::setClearColor,
                                                                   clearColor);
         if (requiresDepthStencilBuffer) {
@@ -1650,15 +1650,15 @@ void QDemonLayerRenderData::runnableRenderToViewport(const QDemonRef<QDemonRende
     theContext->resetStates();
 
     QDemonRenderContextScopedProperty<QDemonRef<QDemonRenderFrameBuffer>> __fbo(*theContext,
-                                                                                &QDemonRenderContext::getRenderTarget,
+                                                                                &QDemonRenderContext::renderTarget,
                                                                                 &QDemonRenderContext::setRenderTarget);
-    QRect theCurrentViewport = theContext->getViewport();
-    QDemonRenderContextScopedProperty<QRect> __viewport(*theContext, &QDemonRenderContext::getViewport, &QDemonRenderContext::setViewport);
+    QRect theCurrentViewport = theContext->viewport();
+    QDemonRenderContextScopedProperty<QRect> __viewport(*theContext, &QDemonRenderContext::viewport, &QDemonRenderContext::setViewport);
     QDemonRenderContextScopedProperty<bool> theScissorEnabled(*theContext,
                                                               &QDemonRenderContext::isScissorTestEnabled,
                                                               &QDemonRenderContext::setScissorTestEnabled);
     QDemonRenderContextScopedProperty<QRect> theScissorRect(*theContext,
-                                                            &QDemonRenderContext::getScissorRect,
+                                                            &QDemonRenderContext::scissorRect,
                                                             &QDemonRenderContext::setScissorRect);
     QDemonLayerRenderPreparationResult &thePrepResult(*layerPrepResult);
     QRectF theScreenRect(thePrepResult.getLayerToPresentationViewport());
@@ -1670,7 +1670,7 @@ void QDemonLayerRenderData::runnableRenderToViewport(const QDemonRef<QDemonRende
         theContext->setScissorRect(layerPrepResult->getLayerToPresentationScissorRect().toRect());
         if (layer.background == LayerBackground::Color) {
             QDemonRenderContextScopedProperty<QVector4D> __clearColor(*theContext,
-                                                                      &QDemonRenderContext::getClearColor,
+                                                                      &QDemonRenderContext::clearColor,
                                                                       &QDemonRenderContext::setClearColor,
                                                                       QVector4D(layer.clearColor, 0.0f));
             theContext->clear(QDemonRenderClearValues::Color);
@@ -1780,7 +1780,7 @@ void QDemonLayerRenderData::runnableRenderToViewport(const QDemonRef<QDemonRende
             case LayerBlendTypes::Overlay:
                 // SW fallback doesn't use blend equation
                 // note blend func is not used here anymore
-                if (theContext->isAdvancedBlendHwSupported() || theContext->isAdvancedBlendHwSupportedKHR()) {
+                if (theContext->supportsAdvancedBlendHW() || theContext->supportsAdvancedBlendHwKHR()) {
                     blendEqu = QDemonRenderBlendEquationArgument(QDemonRenderBlendEquation::Overlay,
                                                                  QDemonRenderBlendEquation::Overlay);
                 }
@@ -1788,7 +1788,7 @@ void QDemonLayerRenderData::runnableRenderToViewport(const QDemonRef<QDemonRende
             case LayerBlendTypes::ColorBurn:
                 // SW fallback doesn't use blend equation
                 // note blend func is not used here anymore
-                if (theContext->isAdvancedBlendHwSupported() || theContext->isAdvancedBlendHwSupportedKHR()) {
+                if (theContext->supportsAdvancedBlendHW() || theContext->supportsAdvancedBlendHwKHR()) {
                     blendEqu = QDemonRenderBlendEquationArgument(QDemonRenderBlendEquation::ColorBurn,
                                                                  QDemonRenderBlendEquation::ColorBurn);
                 }
@@ -1796,7 +1796,7 @@ void QDemonLayerRenderData::runnableRenderToViewport(const QDemonRef<QDemonRende
             case LayerBlendTypes::ColorDodge:
                 // SW fallback doesn't use blend equation
                 // note blend func is not used here anymore
-                if (theContext->isAdvancedBlendHwSupported() || theContext->isAdvancedBlendHwSupportedKHR()) {
+                if (theContext->supportsAdvancedBlendHW() || theContext->supportsAdvancedBlendHwKHR()) {
                     blendEqu = QDemonRenderBlendEquationArgument(QDemonRenderBlendEquation::ColorDodge,
                                                                  QDemonRenderBlendEquation::ColorDodge);
                 }
@@ -1988,12 +1988,12 @@ void QDemonLayerRenderData::runnableRenderToViewport(const QDemonRef<QDemonRende
     } // End offscreen render code.
 
     if (m_boundingRectColor.hasValue()) {
-        QDemonRenderContextScopedProperty<QRect> __viewport(*theContext, &QDemonRenderContext::getViewport, &QDemonRenderContext::setViewport);
+        QDemonRenderContextScopedProperty<QRect> __viewport(*theContext, &QDemonRenderContext::viewport, &QDemonRenderContext::setViewport);
         QDemonRenderContextScopedProperty<bool> theScissorEnabled(*theContext,
                                                                   &QDemonRenderContext::isScissorTestEnabled,
                                                                   &QDemonRenderContext::setScissorTestEnabled);
         QDemonRenderContextScopedProperty<QRect> theScissorRect(*theContext,
-                                                                &QDemonRenderContext::getScissorRect,
+                                                                &QDemonRenderContext::scissorRect,
                                                                 &QDemonRenderContext::setScissorRect);
         renderer->setupWidgetLayer();
         // Setup a simple viewport to render to the entire presentation viewport.

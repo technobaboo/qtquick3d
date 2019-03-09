@@ -142,14 +142,14 @@ public:
         {
             QDemonRenderContextScopedProperty<QDemonRef<QDemonRenderFrameBuffer>> framebuffer(
                 *m_Context.data(),
-                &QDemonRenderContext::getRenderTarget,
+                &QDemonRenderContext::renderTarget,
                 &QDemonRenderContext::setRenderTarget,
                 mFrameBuffer);
             QDemonRenderContextScopedProperty<QRect> viewport(
-                *m_Context.data(), &QDemonRenderContext::getViewport, &QDemonRenderContext::setViewport,
+                *m_Context.data(), &QDemonRenderContext::viewport, &QDemonRenderContext::setViewport,
                 QRect(0, 0, mFBWidth, mFBHeight));
             QDemonRenderContextScopedProperty<QVector4D> clearColor(
-                *m_Context.data(), &QDemonRenderContext::getClearColor, &QDemonRenderContext::setClearColor,
+                *m_Context.data(), &QDemonRenderContext::clearColor, &QDemonRenderContext::setClearColor,
                 QVector4D(1.0f, .6f, .6f, 1.6f));
             m_Context->clear(clearFlags);
             mShaderArgs.shader = mSimpleShader;

@@ -552,7 +552,7 @@ struct ShaderConstantApplier<QDemonRenderImage2DPtr>
 
 QDemonRenderShaderProgram::QDemonRenderShaderProgram(const QDemonRef<QDemonRenderContext> &context, const char *programName, bool separableProgram)
     : m_context(context)
-    , m_backend(context->getBackend())
+    , m_backend(context->backend())
     , m_programName(programName)
     , m_handle(nullptr)
     , m_programType(ProgramType::Graphics)
@@ -1091,7 +1091,7 @@ QDemonRenderVertFragCompilationResult QDemonRenderShaderProgram::create(const QD
         return result;
     }
 
-    QDemonRef<QDemonRenderBackend> backend = context->getBackend();
+    QDemonRef<QDemonRenderBackend> backend = context->backend();
 
     // first create and compile shaders
     QDemonRenderBackend::QDemonRenderBackendVertexShaderObject vtxShader = nullptr;
@@ -1214,7 +1214,7 @@ QDemonRenderVertFragCompilationResult QDemonRenderShaderProgram::createCompute(c
         return result;
     }
 
-    auto backend = context->getBackend();
+    auto backend = context->backend();
     QByteArray errorMessage;
     QDemonRenderBackend::QDemonRenderBackendComputeShaderObject computeShader =
         backend->createComputeShader(computeShaderSource, errorMessage, false);

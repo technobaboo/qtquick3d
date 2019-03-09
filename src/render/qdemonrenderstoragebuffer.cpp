@@ -46,7 +46,7 @@ QDemonRenderStorageBuffer::QDemonRenderStorageBuffer(const QDemonRef<QDemonRende
     , m_wrappedBuffer(pBuffer)
     , m_dirty(true)
 {
-    Q_ASSERT(context->isStorageBufferSupported());
+    Q_ASSERT(context->supportsStorageBuffer());
     context->registerStorageBuffer(this);
 }
 

@@ -85,7 +85,7 @@ void QDemonSubPresentationRenderer::render(const QDemonOffscreenRendererEnvironm
                                            const QDemonRenderInstanceId instanceId)
 {
     QDemonSubPresentationHelper theHelper(m_renderContext, QSize((quint32)inEnvironment.width, (quint32)inEnvironment.height));
-    QRect theViewportSize(inRenderContext.getViewport());
+    QRect theViewportSize(inRenderContext.viewport());
     m_presentation->scene->render(QVector2D((float)theViewportSize.width(), (float)theViewportSize.height()),
                                   m_renderContext,
                                   inClearColorBuffer,
@@ -102,7 +102,7 @@ void QDemonSubPresentationRenderer::renderWithClear(const QDemonOffscreenRendere
 {
     Q_UNUSED(inEnvironment);
     Q_UNUSED(inPresScale);
-    QRect theViewportSize(inRenderContext.getViewport());
+    QRect theViewportSize(inRenderContext.viewport());
     m_presentation->scene->renderWithClear(QVector2D((float)theViewportSize.width(), (float)theViewportSize.height()),
                                            m_renderContext,
                                            inClearBuffer,

@@ -96,8 +96,8 @@ struct QDemonPixelGraphicsRenderer : public QDemonPixelGraphicsRendererInterface
 
     QDemonPixelGraphicsRenderer(QDemonRenderContextInterface *ctx)
         : m_renderContext(ctx)
-        , m_vertexGenerator(m_renderContext->getRenderContext()->getRenderContextType())
-        , m_fragmentGenerator(m_vertexGenerator, m_renderContext->getRenderContext()->getRenderContextType())
+        , m_vertexGenerator(m_renderContext->getRenderContext()->renderContextType())
+        , m_fragmentGenerator(m_vertexGenerator, m_renderContext->getRenderContext()->renderContextType())
     {
     }
 
@@ -233,7 +233,7 @@ struct QDemonPixelGraphicsRenderer : public QDemonPixelGraphicsRendererInterface
         theRenderContext->pushPropertySet();
         // Setup an orthographic camera that places the center at the
         // lower left of the viewport.
-        QRectF theViewport = theRenderContext->getViewport();
+        QRectF theViewport = theRenderContext->viewport();
         // With no projection at all, we are going to get a square view box
         // with boundaries from -1,1 in all dimensions.  This is close to what we want.
         theRenderContext->setDepthTestEnabled(false);

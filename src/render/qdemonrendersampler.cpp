@@ -60,7 +60,7 @@ QDemonRenderTextureSampler::QDemonRenderTextureSampler(const QDemonRef<QDemonRen
     , m_compareOp(compareFunc)
     , m_anisotropy(anisotropy)
     , m_context(context)
-    , m_backend(context->getBackend())
+    , m_backend(context->backend())
     , m_samplerHandle(nullptr)
 {
     // create backend handle

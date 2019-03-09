@@ -298,7 +298,7 @@ void QDemonSubsetRenderable::render(const QVector2D &inCameraVec, const TShaderF
 
         if (subset.wireframeMode) {
             // we need the viewport matrix
-            QRect theViewport(context->getViewport());
+            QRect theViewport(context->viewport());
             float matrixData[16] = { float(theViewport.width()) / 2.0f,
                                      0.0f,
                                      0.0f,
@@ -369,7 +369,7 @@ void QDemonTextRenderable::render(const QVector2D &inCameraVec)
                       text.m_textTextureDetails,
                       QVector3D(0, 0, 0));
     } else {
-        Q_ASSERT(context->isPathRenderingSupported() && context->isProgramPipelineSupported());
+        Q_ASSERT(context->supportsPathRendering() && context->supportsProgramPipeline());
 
         QDemonTextRenderHelper theInfo = generator.getShader(*this, true);
         if (theInfo.shader == nullptr)
@@ -436,7 +436,7 @@ void QDemonTextRenderable::renderDepthPass(const QVector2D &inCameraVec)
         context->setInputAssembler(theDepthShader->quadInputAssembler);
         context->draw(QDemonRenderDrawMode::Triangles, theDepthShader->quadInputAssembler->indexCount(), 0);
     } else {
-        QDemonRenderBoolOp theDepthFunction = context->getDepthFunction();
+        QDemonRenderBoolOp theDepthFunction = context->depthFunction();
         bool isDepthEnabled = context->isDepthTestEnabled();
         bool isStencilEnabled = context->isStencilTestEnabled();
         bool isDepthWriteEnabled = context->isDepthWriteEnabled();

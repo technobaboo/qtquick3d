@@ -59,7 +59,7 @@ QDemonRef<QDemonRenderPrefilterTexture> QDemonRenderPrefilterTexture::create(con
 {
     QDemonRef<QDemonRenderPrefilterTexture> theBSDFMipMap;
 
-    if (inQDemonRenderContext->isComputeSupported()) {
+    if (inQDemonRenderContext->supportsCompute()) {
         theBSDFMipMap = new QDemonRenderPrefilterTextureCompute(inQDemonRenderContext, inWidth, inHeight, inTexture2D, inDestFormat);
     }
 
@@ -376,7 +376,7 @@ inline QDemonConstDataRef<qint8> toRef(const char *data)
 
 static bool isGLESContext(const QDemonRef<QDemonRenderContext> &context)
 {
-    QDemonRenderContextType ctxType = context->getRenderContextType();
+    QDemonRenderContextType ctxType = context->renderContextType();
 
     // Need minimum of GL3 or GLES3
     if (ctxType == QDemonRenderContextType::GLES2 || ctxType == QDemonRenderContextType::GLES3

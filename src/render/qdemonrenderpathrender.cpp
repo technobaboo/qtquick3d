@@ -37,7 +37,7 @@
 QT_BEGIN_NAMESPACE
 
 QDemonRenderPathRender::QDemonRenderPathRender(const QDemonRef<QDemonRenderContext> &context, size_t range)
-    : m_context(context), m_backend(context->getBackend()), m_strokeWidth(0.0f)
+    : m_context(context), m_backend(context->backend()), m_strokeWidth(0.0f)
 {
     m_range = range;
     m_pathRenderHandle = m_backend->createPathNVObject(range);
@@ -99,7 +99,7 @@ void QDemonRenderPathRender::stencilFill()
 
 QDemonRef<QDemonRenderPathRender> QDemonRenderPathRender::create(const QDemonRef<QDemonRenderContext> &context, size_t range)
 {
-    if (!context->isPathRenderingSupported())
+    if (!context->supportsPathRendering())
         return nullptr;
 
     return QDemonRef<QDemonRenderPathRender>(new QDemonRenderPathRender(context, range));

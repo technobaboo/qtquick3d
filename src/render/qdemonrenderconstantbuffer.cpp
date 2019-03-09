@@ -63,7 +63,7 @@ QDemonRenderConstantBuffer::QDemonRenderConstantBuffer(const QDemonRef<QDemonRen
     , m_hwBufferInitialized(false)
     , m_maxBlockSize(0)
 {
-    Q_ASSERT(context->getConstantBufferSupport());
+    Q_ASSERT(context->supportsConstantBuffer());
 
     m_backend->getRenderBackendValue(QDemonRenderBackend::QDemonRenderBackendQuery::MaxConstantBufferBlockSize, &m_maxBlockSize);
 
@@ -108,7 +108,7 @@ void QDemonRenderConstantBuffer::bind()
 void QDemonRenderConstantBuffer::bindToShaderProgram(const QDemonRef<QDemonRenderShaderProgram> &inShader, quint32 blockIndex, quint32 binding)
 {
     if ((qint32)binding == -1) {
-        binding = m_context->getNextConstantBufferUnit();
+        binding = m_context->nextConstantBufferUnit();
         m_backend->programSetConstantBlock(inShader->handle(), blockIndex, binding);
     }
 

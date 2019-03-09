@@ -1348,7 +1348,7 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
                 } else {
                     QString theShaderBuffer;
                     QString shaderVersionStr = QStringLiteral("#version 430\n");
-                    if (m_context->getRenderContext()->getRenderContextType() == QDemonRenderContextType::GLES3PLUS)
+                    if (m_context->getRenderContext()->renderContextType() == QDemonRenderContextType::GLES3PLUS)
                         shaderVersionStr = QStringLiteral("#version 310 es\n");
                     theShaderBuffer = doLoadShader(inPath);
                     theShaderBuffer.insert(0, shaderVersionStr);
@@ -1393,9 +1393,9 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
             dynamic::QDemonDynamicShaderProgramFlags flags(theFlags);
             if (!theProgram) {
                 QString geomSource = doLoadShader(inPath);
-                QDemonShaderVertexCodeGenerator vertexShader(m_context->getRenderContext()->getRenderContextType());
+                QDemonShaderVertexCodeGenerator vertexShader(m_context->getRenderContext()->renderContextType());
                 QDemonShaderFragmentCodeGenerator fragmentShader(vertexShader,
-                                                                 m_context->getRenderContext()->getRenderContextType());
+                                                                 m_context->getRenderContext()->renderContextType());
 
                 vertexShader.addAttribute("attr_pos", "vec3");
                 vertexShader.addUniform("model_view_projection", "mat4");

@@ -102,7 +102,7 @@ QDemonTextureDetails QDemonRenderTexture2DArray::textureDetails() const
 
 void QDemonRenderTexture2DArray::bind()
 {
-    m_textureUnit = m_context->getNextTextureUnit();
+    m_textureUnit = m_context->nextTextureUnit();
 
     m_backend->bindTexture(m_handle, m_texTarget, m_textureUnit);
 

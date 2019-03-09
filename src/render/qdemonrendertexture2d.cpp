@@ -101,7 +101,7 @@ void QDemonRenderTexture2D::setTextureData(QDemonDataRef<quint8> newBuffer,
 
     // get max size and check value
     qint32 maxWidth, maxHeight;
-    m_context->getMaxTextureSize(maxWidth, maxHeight);
+    m_context->maxTextureSize(maxWidth, maxHeight);
     if (width > maxWidth || height > maxHeight) {
         qCCritical(INVALID_OPERATION, "Width or height is greater than max texture size (%d, %d)", maxWidth, maxHeight);
     }
@@ -140,7 +140,7 @@ void QDemonRenderTexture2D::setTextureStorage(qint32 inLevels,
 {
     Q_ASSERT(m_handle);
 
-    if (!m_context->isShaderImageLoadStoreSupported()) {
+    if (!m_context->supportsShaderImageLoadStore()) {
         qCCritical(INVALID_OPERATION, "The extension Shader_Image_Load_Store is not supported");
         return;
     }
@@ -153,7 +153,7 @@ void QDemonRenderTexture2D::setTextureStorage(qint32 inLevels,
 
     // get max size and check value
     qint32 maxWidth, maxHeight;
-    m_context->getMaxTextureSize(maxWidth, maxHeight);
+    m_context->maxTextureSize(maxWidth, maxHeight);
     if (width > maxWidth || height > maxHeight) {
         qCCritical(INVALID_OPERATION, "Width or height is greater than max texture size (%d, %d)", maxWidth, maxHeight);
     }
@@ -190,7 +190,7 @@ void QDemonRenderTexture2D::setTextureDataMultisample(qint32 sampleCount,
     m_texTarget = QDemonRenderTextureTargetType::Texture2D_MS;
 
     qint32 maxWidth, maxHeight;
-    m_context->getMaxTextureSize(maxWidth, maxHeight);
+    m_context->maxTextureSize(maxWidth, maxHeight);
     if (width > maxWidth || height > maxHeight) {
         qCCritical(INVALID_OPERATION, "Width or height is greater than max texture size (%d, %d)", maxWidth, maxHeight);
     }
@@ -264,7 +264,7 @@ void QDemonRenderTexture2D::generateMipmaps(QDemonRenderHint genType)
 
 void QDemonRenderTexture2D::bind()
 {
-    m_textureUnit = m_context->getNextTextureUnit();
+    m_textureUnit = m_context->nextTextureUnit();
 
     m_backend->bindTexture(m_handle, m_texTarget, m_textureUnit);
 

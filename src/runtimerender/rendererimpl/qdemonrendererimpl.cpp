@@ -200,7 +200,7 @@ void QDemonRendererImpl::renderLayer(QDemonRenderLayer &inLayer,
     buildRenderableLayers(inLayer, renderableLayers, inRenderSiblings);
 
     QDemonRef<QDemonRenderContext> theRenderContext(m_demonContext->getRenderContext());
-    QDemonRef<QDemonRenderFrameBuffer> theFB = theRenderContext->getRenderTarget();
+    QDemonRef<QDemonRenderFrameBuffer> theFB = theRenderContext->renderTarget();
     auto iter = renderableLayers.rbegin();
     const auto end = renderableLayers.rend();
     for (; iter != end; ++iter) {
@@ -210,9 +210,9 @@ void QDemonRendererImpl::renderLayer(QDemonRenderLayer &inLayer,
         LayerBlendTypes layerBlend = prepRes.getLayer()->getLayerBlend();
 #ifdef ADVANCED_BLEND_SW_FALLBACK
         if ((layerBlend == LayerBlendTypes::Overlay || layerBlend == LayerBlendTypes::ColorBurn || layerBlend == LayerBlendTypes::ColorDodge)
-            && !theRenderContext->isAdvancedBlendHwSupported() && !theRenderContext->isAdvancedBlendHwSupportedKHR()) {
+            && !theRenderContext->supportsAdvancedBlendHW() && !theRenderContext->supportsAdvancedBlendHwKHR()) {
             // Create and set up FBO and texture for advanced blending SW fallback
-            QRect viewport = theRenderContext->getViewport();
+            QRect viewport = theRenderContext->viewport();
             m_layerBlendTexture.ensureTexture(viewport.width() + viewport.x(),
                                               viewport.height() + viewport.y(),
                                               QDemonRenderTextureFormat::RGBA8);
@@ -228,7 +228,7 @@ void QDemonRendererImpl::renderLayer(QDemonRenderLayer &inLayer,
                 color.setZ(clearColor.z());
                 color.setW(1.0f);
             }
-            QVector4D origColor = theRenderContext->getClearColor();
+            QVector4D origColor = theRenderContext->clearColor();
             theRenderContext->setClearColor(color);
             theRenderContext->clear(QDemonRenderClearValues::Color);
             theRenderContext->setClearColor(origColor);
@@ -314,7 +314,7 @@ void QDemonRendererImpl::drawScreenRect(QRectF inRect, const QVector3D &inColor)
 {
     QDemonRenderCamera theScreenCamera;
     theScreenCamera.markDirty(NodeTransformDirtyFlag::TransformIsDirty);
-    QRectF theViewport(m_context->getViewport());
+    QRectF theViewport(m_context->viewport());
     theScreenCamera.flags.setOrthographic(true);
     theScreenCamera.calculateGlobalVariables(theViewport, QVector2D(theViewport.width(), theViewport.height()));
     generateXYQuad();
@@ -439,7 +439,7 @@ void QDemonRendererImpl::endFrame()
     if (m_widgetTexture) {
         // Releasing the widget FBO can set it as the active frame buffer.
         QDemonRenderContextScopedProperty<QDemonRef<QDemonRenderFrameBuffer>> __fbo(*m_context,
-                                                                                    &QDemonRenderContext::getRenderTarget,
+                                                                                    &QDemonRenderContext::renderTarget,
                                                                                     &QDemonRenderContext::setRenderTarget);
         QDemonTextureDetails theDetails = m_widgetTexture->textureDetails();
         m_context->setBlendingEnabled(true);
@@ -1067,7 +1067,7 @@ bool QDemonRendererImpl::prepareTextureAtlasForRender()
         QDemonRef<QDemonRenderAttribLayout> mAttribLayout;
         // temporay FB
         QDemonRenderContextScopedProperty<QDemonRef<QDemonRenderFrameBuffer>> __fbo(*m_context,
-                                                                                    &QDemonRenderContext::getRenderTarget,
+                                                                                    &QDemonRenderContext::renderTarget,
                                                                                     &QDemonRenderContext::setRenderTarget);
 
         QDemonTextRendererInterface &theTextRenderer(*m_demonContext->getOnscreenTextRenderer());
@@ -1094,7 +1094,7 @@ bool QDemonRendererImpl::prepareTextureAtlasForRender()
 
         // this texture contains our single entries
         QDemonRef<QDemonRenderTexture2D> theTexture = nullptr;
-        if (m_context->getRenderContextType() == QDemonRenderContextType::GLES2) {
+        if (m_context->renderContextType() == QDemonRenderContextType::GLES2) {
             theTexture = m_demonContext->getResourceManager()->allocateTexture2D(32, 32, QDemonRenderTextureFormat::RGBA8);
         } else {
             theTexture = m_demonContext->getResourceManager()->allocateTexture2D(32, 32, QDemonRenderTextureFormat::Alpha8);
@@ -1504,7 +1504,7 @@ void QDemonRendererImpl::generateXYQuadStrip()
 
 void QDemonRendererImpl::updateCbAoShadow(const QDemonRenderLayer *pLayer, const QDemonRenderCamera *pCamera, QDemonResourceTexture2D &inDepthTexture)
 {
-    if (m_context->getConstantBufferSupport()) {
+    if (m_context->supportsConstantBuffer()) {
         const char *theName = "cbAoShadow";
         QDemonRef<QDemonRenderConstantBuffer> pCB = m_context->getConstantBuffer(theName);
 

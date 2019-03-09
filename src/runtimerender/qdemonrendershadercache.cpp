@@ -225,7 +225,7 @@ struct ShaderCache : public QDemonShaderCacheInterface
             m_insertStr += "#define texture2D texture\n";
             m_insertStr += "#define gl_FragColor fragOutput\n";
 
-            if (m_renderContext->isAdvancedBlendHwSupportedKHR())
+            if (m_renderContext->supportsAdvancedBlendHwKHR())
                 m_insertStr += "layout(blend_support_all_equations) out;\n ";
             m_insertStr += "out vec4 fragOutput;\n";
         }
@@ -234,38 +234,38 @@ struct ShaderCache : public QDemonShaderCacheInterface
     void addShaderExtensionStrings(ShaderType shaderType, bool isGLES)
     {
         if (isGLES) {
-            if (m_renderContext->isStandardDerivativesSupported())
+            if (m_renderContext->supportsStandardDerivatives())
                 m_insertStr += "#extension GL_OES_standard_derivatives : enable\n";
             else
                 m_insertStr += "#extension GL_OES_standard_derivatives : disable\n";
         }
 
-        if (QDemonRendererInterface::isGlEs3Context(m_renderContext->getRenderContextType())) {
+        if (QDemonRendererInterface::isGlEs3Context(m_renderContext->renderContextType())) {
             if (shaderType == ShaderType::TessControl || shaderType == ShaderType::TessEval) {
                 m_insertStr += "#extension GL_EXT_tessellation_shader : enable\n";
             } else if (shaderType == ShaderType::Geometry) {
                 m_insertStr += "#extension GL_EXT_geometry_shader : enable\n";
             } else if (shaderType == ShaderType::Vertex || shaderType == ShaderType::Fragment) {
-                if (m_renderContext->getRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::gpuShader5))
+                if (m_renderContext->renderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::gpuShader5))
                     m_insertStr += "#extension GL_EXT_gpu_shader5 : enable\n";
-                if (m_renderContext->isAdvancedBlendHwSupportedKHR())
+                if (m_renderContext->supportsAdvancedBlendHwKHR())
                     m_insertStr += "#extension GL_KHR_blend_equation_advanced : enable\n";
             }
         } else {
             if (shaderType == ShaderType::Vertex || shaderType == ShaderType::Fragment || shaderType == ShaderType::Geometry) {
-                if (m_renderContext->getRenderContextType() != QDemonRenderContextType::GLES2) {
+                if (m_renderContext->renderContextType() != QDemonRenderContextType::GLES2) {
                     m_insertStr += "#extension GL_ARB_gpu_shader5 : enable\n";
                     m_insertStr += "#extension GL_ARB_shading_language_420pack : enable\n";
                 }
-                if (isGLES && m_renderContext->isTextureLodSupported())
+                if (isGLES && m_renderContext->supportsTextureLod())
                     m_insertStr += "#extension GL_EXT_shader_texture_lod : enable\n";
-                if (m_renderContext->isShaderImageLoadStoreSupported())
+                if (m_renderContext->supportsShaderImageLoadStore())
                     m_insertStr += "#extension GL_ARB_shader_image_load_store : enable\n";
-                if (m_renderContext->isAtomicCounterBufferSupported())
+                if (m_renderContext->supportsAtomicCounterBuffer())
                     m_insertStr += "#extension GL_ARB_shader_atomic_counters : enable\n";
-                if (m_renderContext->isStorageBufferSupported())
+                if (m_renderContext->supportsStorageBuffer())
                     m_insertStr += "#extension GL_ARB_shader_storage_buffer_object : enable\n";
-                if (m_renderContext->isAdvancedBlendHwSupportedKHR())
+                if (m_renderContext->supportsAdvancedBlendHwKHR())
                     m_insertStr += "#extension GL_KHR_blend_equation_advanced : enable\n";
             }
         }
@@ -279,13 +279,13 @@ struct ShaderCache : public QDemonShaderCacheInterface
         // Don't use shading language version returned by the driver as it might
         // differ from the context version. Instead use the context type to specify
         // the version string.
-        bool isGlES = QDemonRendererInterface::isGlEsContext(m_renderContext->getRenderContextType());
+        bool isGlES = QDemonRendererInterface::isGlEsContext(m_renderContext->renderContextType());
         m_insertStr.clear();
         int minor = m_renderContext->format().minorVersion();
         QString versionStr;
         QTextStream stream(&versionStr);
         stream << "#version ";
-        switch (m_renderContext->getRenderContextType()) {
+        switch (m_renderContext->renderContextType()) {
         case QDemonRenderContextType::GLES2:
             stream << "1" << minor << "0\n";
             break;
@@ -313,7 +313,7 @@ struct ShaderCache : public QDemonShaderCacheInterface
         m_insertStr.append(versionStr.toUtf8());
 
         if (isGlES) {
-            if (!QDemonRendererInterface::isGlEs3Context(m_renderContext->getRenderContextType())) {
+            if (!QDemonRendererInterface::isGlEs3Context(m_renderContext->renderContextType())) {
                 if (shaderType == ShaderType::Fragment) {
                     m_insertStr += "#define fragOutput gl_FragData[0]\n";
                 }
@@ -325,14 +325,14 @@ struct ShaderCache : public QDemonShaderCacheInterface
             addShaderExtensionStrings(shaderType, isGlES);
 
             // add precision qualifier depending on backend
-            if (QDemonRendererInterface::isGlEs3Context(m_renderContext->getRenderContextType())) {
+            if (QDemonRendererInterface::isGlEs3Context(m_renderContext->renderContextType())) {
                 m_insertStr.append("precision highp float;\n"
                                    "precision highp int;\n");
-                if (m_renderContext->getRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::gpuShader5)) {
+                if (m_renderContext->renderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::gpuShader5)) {
                     m_insertStr.append("precision mediump sampler2D;\n"
                                        "precision mediump sampler2DArray;\n"
                                        "precision mediump sampler2DShadow;\n");
-                    if (m_renderContext->isShaderImageLoadStoreSupported()) {
+                    if (m_renderContext->supportsShaderImageLoadStore()) {
                         m_insertStr.append("precision mediump image2D;\n");
                     }
                 }
@@ -343,13 +343,13 @@ struct ShaderCache : public QDemonShaderCacheInterface
                 m_insertStr.append("precision mediump float;\n"
                                    "precision mediump int;\n"
                                    "#define texture texture2D\n");
-                if (m_renderContext->isTextureLodSupported())
+                if (m_renderContext->supportsTextureLod())
                     m_insertStr.append("#define textureLod texture2DLodEXT\n");
                 else
                     m_insertStr.append("#define textureLod(s, co, lod) texture2D(s, co)\n");
             }
         } else {
-            if (!QDemonRendererInterface::isGl2Context(m_renderContext->getRenderContextType())) {
+            if (!QDemonRendererInterface::isGl2Context(m_renderContext->renderContextType())) {
                 m_insertStr += "#define texture2D texture\n";
 
                 addShaderExtensionStrings(shaderType, isGlES);

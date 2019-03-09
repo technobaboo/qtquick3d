@@ -45,7 +45,7 @@ QDemonRenderInputAssembler::QDemonRenderInputAssembler(const QDemonRef<QDemonRen
                                                        QDemonRenderDrawMode primType,
                                                        quint32 patchVertexCount)
     : m_context(context)
-    , m_backend(context->getBackend())
+    , m_backend(context->backend())
     , m_attribLayout(attribLayout)
     , m_indexBuffer(indexBuffer)
     , m_drawMode(primType)

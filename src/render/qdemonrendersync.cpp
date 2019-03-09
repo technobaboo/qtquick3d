@@ -35,7 +35,7 @@
 QT_BEGIN_NAMESPACE
 
 QDemonRenderSync::QDemonRenderSync(const QDemonRef<QDemonRenderContext> &context)
-    : m_context(context), m_backend(context->getBackend()), m_syncHandle(nullptr)
+    : m_context(context), m_backend(context->backend()), m_syncHandle(nullptr)
 {
 }
 
@@ -68,7 +68,7 @@ void QDemonRenderSync::wait()
 
 QDemonRef<QDemonRenderSync> QDemonRenderSync::create(const QDemonRef<QDemonRenderContext> &context)
 {
-    if (!context->isCommandSyncSupported())
+    if (!context->supportsCommandSync())
         return nullptr;
 
     return QDemonRef<QDemonRenderSync>(new QDemonRenderSync(context));

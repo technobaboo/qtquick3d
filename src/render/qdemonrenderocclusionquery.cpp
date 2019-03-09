@@ -65,7 +65,7 @@ bool QDemonRenderOcclusionQuery::resultAvailable()
 
 QDemonRef<QDemonRenderOcclusionQuery> QDemonRenderOcclusionQuery::create(const QDemonRef<QDemonRenderContext> &context)
 {
-    if (!context->isSampleQuerySupported())
+    if (!context->supportsSampleQuery())
         return nullptr;
 
     return QDemonRef<QDemonRenderOcclusionQuery>(new QDemonRenderOcclusionQuery(context));

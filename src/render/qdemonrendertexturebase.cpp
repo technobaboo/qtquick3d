@@ -39,7 +39,7 @@ QT_BEGIN_NAMESPACE
 QDemonRenderTextureBase::QDemonRenderTextureBase(const QDemonRef<QDemonRenderContext> &context,
                                                  QDemonRenderTextureTargetType texTarget)
     : m_context(context)
-    , m_backend(context->getBackend())
+    , m_backend(context->backend())
     , m_handle(nullptr)
     , m_textureUnit(std::numeric_limits<quint32>::max())
     , m_samplerParamsDirty(true)

@@ -551,7 +551,7 @@ struct QDemonQtTextRenderer : public QDemonTextRendererInterface
         Q_UNUSED(inText);
         Q_UNUSED(inPathFontItem);
         Q_UNUSED(inFontPathSpec);
-        Q_ASSERT(m_renderContext->isPathRenderingSupported());
+        Q_ASSERT(m_renderContext->supportsPathRendering());
 
         // We do not support HW accelerated fonts (yet?)
         Q_ASSERT(false);

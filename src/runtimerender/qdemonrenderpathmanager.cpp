@@ -1274,7 +1274,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
         inShader->m_endTaperData.set(inPathBuffer->m_endTaperData);
         if (inRenderContext.enableWireframe) {
             // we need the viewport matrix
-            QRect theViewport(theRenderContext->getViewport());
+            QRect theViewport(theRenderContext->viewport());
             QMatrix4x4 vpMatrix = { (float)theViewport.width() / 2.0f,
                                     0.0,
                                     0.0,
@@ -1308,7 +1308,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
     QDemonRef<QDemonRenderDepthStencilState> getDepthStencilState()
     {
         QDemonRef<QDemonRenderContext> theRenderContext(m_renderContext->getRenderContext());
-        QDemonRenderBoolOp theDepthFunction = theRenderContext->getDepthFunction();
+        QDemonRenderBoolOp theDepthFunction = theRenderContext->depthFunction();
         bool isDepthEnabled = theRenderContext->isDepthTestEnabled();
         bool isStencilEnabled = theRenderContext->isStencilTestEnabled();
         bool isDepthWriteEnabled = theRenderContext->isDepthWriteEnabled();
@@ -1411,7 +1411,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
         }
 
         // our current render target needs stencil
-        Q_ASSERT(theRenderContext->getStencilBits() > 0);
+        Q_ASSERT(theRenderContext->stencilBits() > 0);
 
         theRenderContext->setDepthStencilState(getDepthStencilState());
 
@@ -1462,7 +1462,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
 
         // The stencil buffer will dictate whether this object renders or not.  So we need to ignore
         // the depth test result.
-        QDemonRenderBoolOp theDepthFunc = theRenderContext->getDepthFunction();
+        QDemonRenderBoolOp theDepthFunc = theRenderContext->depthFunction();
         theRenderContext->setDepthFunction(QDemonRenderBoolOp::AlwaysTrue);
         // Now render the path; this resets the stencil buffer.
         setMaterialProperties(inShader->m_shader, inRenderContext, inRenderProperties);

@@ -85,7 +85,7 @@ void QDemonTextShader::renderPath(const QDemonRef<QDemonRenderPathFontItem> &inP
                                   const QDemonTextTextureDetails &inTextTextureDetails,
                                   const QVector3D &inBackgroundColor)
 {
-    QDemonRenderBoolOp theDepthFunction = inRenderContext->getDepthFunction();
+    QDemonRenderBoolOp theDepthFunction = inRenderContext->depthFunction();
     bool isDepthEnabled = inRenderContext->isDepthTestEnabled();
     bool isStencilEnabled = inRenderContext->isStencilTestEnabled();
     bool isDepthWriteEnabled = inRenderContext->isDepthWriteEnabled();
@@ -196,10 +196,10 @@ struct QDemonSubsetMaterialVertexPipeline : public QDemonVertexPipelineImpl
         , renderable(inRenderable)
         , tessMode(TessModeValues::NoTess)
     {
-        if (inRenderer.getContext()->isTessellationSupported())
+        if (inRenderer.getContext()->supportsTessellation())
             tessMode = inRenderable.tessellationMode;
 
-        if (inRenderer.getContext()->isGeometryStageSupported() && tessMode != TessModeValues::NoTess)
+        if (inRenderer.getContext()->supportsGeometryStage() && tessMode != TessModeValues::NoTess)
             m_wireframe = inWireframeRequested;
     }
 
@@ -572,7 +572,7 @@ QDemonRef<QDemonRenderShaderProgram> QDemonRendererImpl::generateShader(QDemonSu
 
 QDemonRef<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getParaboloidDepthShader(TessModeValues inTessMode)
 {
-    if (!m_demonContext->getRenderContext()->isTessellationSupported() || inTessMode == TessModeValues::NoTess) {
+    if (!m_demonContext->getRenderContext()->supportsTessellation() || inTessMode == TessModeValues::NoTess) {
         return getParaboloidDepthNoTessShader();
     } else if (inTessMode == TessModeValues::TessLinear) {
         return getParaboloidDepthTessLinearShader();
@@ -806,7 +806,7 @@ QDemonRef<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getParaboloidD
 
 QDemonRef<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getCubeShadowDepthShader(TessModeValues inTessMode)
 {
-    if (!m_demonContext->getRenderContext()->isTessellationSupported() || inTessMode == TessModeValues::NoTess) {
+    if (!m_demonContext->getRenderContext()->supportsTessellation() || inTessMode == TessModeValues::NoTess) {
         return getCubeDepthNoTessShader();
     } else if (inTessMode == TessModeValues::TessLinear) {
         return getCubeDepthTessLinearShader();
@@ -1074,7 +1074,7 @@ QDemonRef<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getCubeDepthTe
 
 QDemonRef<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getOrthographicDepthShader(TessModeValues inTessMode)
 {
-    if (!m_demonContext->getRenderContext()->isTessellationSupported() || inTessMode == TessModeValues::NoTess) {
+    if (!m_demonContext->getRenderContext()->supportsTessellation() || inTessMode == TessModeValues::NoTess) {
         return getOrthographicDepthNoTessShader();
     } else if (inTessMode == TessModeValues::TessLinear) {
         return getOrthographicDepthTessLinearShader();
@@ -1380,7 +1380,7 @@ QDemonRef<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getDepthPrepas
 
 QDemonRef<QDemonRenderableDepthPrepassShader> QDemonRendererImpl::getDepthTessPrepassShader(TessModeValues inTessMode, bool inDisplaced)
 {
-    if (!m_demonContext->getRenderContext()->isTessellationSupported() || inTessMode == TessModeValues::NoTess) {
+    if (!m_demonContext->getRenderContext()->supportsTessellation() || inTessMode == TessModeValues::NoTess) {
         return getDepthPrepassShader(inDisplaced);
     } else if (inTessMode == TessModeValues::TessLinear) {
         return getDepthTessLinearPrepassShader(inDisplaced);
@@ -1689,7 +1689,7 @@ QDemonRef<QDemonDefaultAoPassShader> QDemonRendererImpl::getDefaultAoPassShader(
             // fragmentGenerator.AddInclude( "SSAOCustomMaterial.glsllib" );
             theFragmentGenerator.addInclude("viewProperties.glsllib");
             theFragmentGenerator.addInclude("screenSpaceAO.glsllib");
-            if (m_context->getRenderContextType() == QDemonRenderContextType::GLES2) {
+            if (m_context->renderContextType() == QDemonRenderContextType::GLES2) {
                 theFragmentGenerator << "\tuniform vec4 ao_properties;"
                                      << "\n"
                                      << "\tuniform vec4 ao_properties2;"
@@ -1730,7 +1730,7 @@ QDemonRef<QDemonDefaultAoPassShader> QDemonRendererImpl::getDefaultAoPassShader(
             // values at the edges
             // surrounding objects, and this also ends up giving us weird AO values.
             // If we had a proper screen-space normal map, that would also do the trick.
-            if (m_context->getRenderContextType() == QDemonRenderContextType::GLES2) {
+            if (m_context->renderContextType() == QDemonRenderContextType::GLES2) {
                 theFragmentGenerator.addUniform("depth_sampler_size", "vec2");
                 theFragmentGenerator.append("\tivec2 iCoords = ivec2( gl_FragCoord.xy );");
                 theFragmentGenerator.append("\tfloat depth = getDepthValue( "

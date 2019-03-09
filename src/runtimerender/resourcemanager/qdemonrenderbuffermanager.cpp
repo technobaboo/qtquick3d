@@ -106,7 +106,7 @@ QDemonBufferManager::QDemonBufferManager(const QDemonRef<QDemonRenderContext> &c
     d->context = ctx;
     d->inputStreamFactory = inInputStreamFactory;
     d->perfTimer = inTimer;
-    d->gpuSupportsDXT = ctx->areDXTImagesSupported();
+    d->gpuSupportsDXT = ctx->supportsDXTImages();
 }
 
 QDemonBufferManager::~QDemonBufferManager() = default;
@@ -189,7 +189,7 @@ QDemonRenderImageTextureData QDemonBufferManager::loadRenderImage(QString inImag
     if (inLoadedImage->data) {
         QDemonRenderTextureFormat destFormat = inLoadedImage->format;
         if (inBsdfMipmaps) {
-            if (d->context->getRenderContextType() == QDemonRenderContextType::GLES2)
+            if (d->context->renderContextType() == QDemonRenderContextType::GLES2)
                 destFormat = QDemonRenderTextureFormat::RGBA8;
             else
                 destFormat = QDemonRenderTextureFormat::RGBA16F;
@@ -272,7 +272,7 @@ QDemonRenderImageTextureData QDemonBufferManager::loadRenderImage(QString inImag
         QDemonRef<QDemonLoadedTexture> theLoadedImage;
         {
             //                SStackPerfTimer __perfTimer(d->perfTimer, "Image Decompression");
-            theLoadedImage = QDemonLoadedTexture::load(inImagePath, *d->inputStreamFactory, true, d->context->getRenderContextType());
+            theLoadedImage = QDemonLoadedTexture::load(inImagePath, *d->inputStreamFactory, true, d->context->renderContextType());
             // Hackish solution to custom materials not finding their textures if they are used
             // in sub-presentations. Note: Runtime 1 is going to be removed in Qt 3D Studio 2.x,
             // so this should be ok.
@@ -286,7 +286,7 @@ QDemonRenderImageTextureData QDemonBufferManager::loadRenderImage(QString inImag
                         theLoadedImage = QDemonLoadedTexture::load(searchPath,
                                                                    *d->inputStreamFactory,
                                                                    true,
-                                                                   d->context->getRenderContextType());
+                                                                   d->context->renderContextType());
                         searchPath.prepend(QLatin1String("../"));
                     }
                 } else {
@@ -303,7 +303,7 @@ QDemonRenderImageTextureData QDemonBufferManager::loadRenderImage(QString inImag
                             theLoadedImage = QDemonLoadedTexture::load(searchPath,
                                                                        *d->inputStreamFactory,
                                                                        true,
-                                                                       d->context->getRenderContextType());
+                                                                       d->context->renderContextType());
                             searchPath = splitPath.at(0);
                             for (int i = 0; i < loops; i++)
                                 searchPath.append(QLatin1String("../"));

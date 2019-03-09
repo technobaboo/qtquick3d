@@ -229,7 +229,7 @@ struct QDemonRenderContextData : public QDemonRenderContextInterface
         m_pathManager = inCore->getPathManagerCore()->onRenderSystemInitialize(this);
 
         const char *versionString;
-        switch (ctx->getRenderContextType()) {
+        switch (ctx->renderContextType()) {
         case QDemonRenderContextType::GLES2:
             versionString = "gles2";
             break;
@@ -597,7 +597,7 @@ struct QDemonRenderContextData : public QDemonRenderContextInterface
                 qint32 imageHeight = m_beginFrameResult.fboDimensions.height();
                 QDemonRenderTextureFormat theColorBufferFormat = QDemonRenderTextureFormat::RGBA8;
                 QDemonRenderRenderBufferFormat theDepthBufferFormat = QDemonRenderRenderBufferFormat::Depth16;
-                m_contextRenderTarget = m_renderContext->getRenderTarget();
+                m_contextRenderTarget = m_renderContext->renderTarget();
                 if (m_rotationFbo == nullptr) {
                     m_rotationFbo = m_resourceManager->allocateFrameBuffer();
                     m_rotationTexture = m_resourceManager->allocateTexture2D(imageWidth, imageHeight, theColorBufferFormat);

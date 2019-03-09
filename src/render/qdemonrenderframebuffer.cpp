@@ -38,7 +38,7 @@
 QT_BEGIN_NAMESPACE
 
 QDemonRenderFrameBuffer::QDemonRenderFrameBuffer(const QDemonRef<QDemonRenderContext> &context)
-    : m_context(context), m_backend(context->getBackend()), m_bufferHandle(nullptr), m_attachmentBits(0)
+    : m_context(context), m_backend(context->backend()), m_bufferHandle(nullptr), m_attachmentBits(0)
 {
     m_bufferHandle = m_backend->createRenderTarget();
     Q_ASSERT(m_bufferHandle);
@@ -54,7 +54,7 @@ QDemonRenderFrameBuffer::~QDemonRenderFrameBuffer()
     // release attachments
     for (int idx = 0; idx != int(QDemonRenderFrameBufferAttachment::LastAttachment); ++idx) {
         if ((QDemonRenderFrameBufferAttachment)idx != QDemonRenderFrameBufferAttachment::DepthStencil
-            || m_context->isDepthStencilSupported())
+            || m_context->supportsDepthStencil())
             releaseAttachment((QDemonRenderFrameBufferAttachment)idx);
     }
 }

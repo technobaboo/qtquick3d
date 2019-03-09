@@ -95,7 +95,7 @@ struct QDemonTextTextureCache : public QDemonTextTextureCacheInterface
         : textRenderer(inRenderer), highWaterMark(0x100000), frameCount(0), textureTotalBytes(0), renderContext(inRenderContext)
     {
         // hardware accelerate font rendering not ready yet
-        canUsePathRendering = (renderContext->isPathRenderingSupported() && renderContext->isProgramPipelineSupported());
+        canUsePathRendering = (renderContext->supportsPathRendering() && renderContext->supportsProgramPipeline());
     }
 
     ~QDemonTextTextureCache() override

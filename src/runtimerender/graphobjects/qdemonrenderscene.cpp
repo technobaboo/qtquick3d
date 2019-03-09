@@ -111,7 +111,7 @@ void QDemonRenderScene::render(const QVector2D &inViewportDimensions,
         }
         // Maybe clear and reset to previous clear color after we leave.
         QDemonRenderContextScopedProperty<QVector4D> __clearColor(*inContext->getRenderContext(),
-                                                                  &QDemonRenderContext::getClearColor,
+                                                                  &QDemonRenderContext::clearColor,
                                                                   &QDemonRenderContext::setClearColor,
                                                                   clearColor);
         inContext->getRenderContext()->clear(QDemonRenderClearValues::Color);

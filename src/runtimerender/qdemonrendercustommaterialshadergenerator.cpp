@@ -403,9 +403,9 @@ struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
         QDemonRef<QDemonRenderContext> theContext(m_renderContext->getRenderContext());
 
         // we assume constant buffer support
-        Q_ASSERT(theContext->getConstantBufferSupport());
+        Q_ASSERT(theContext->supportsConstantBuffer());
         // we only create if if we have lights
-        if (!inLightCount || !theContext->getConstantBufferSupport())
+        if (!inLightCount || !theContext->supportsConstantBuffer())
             return nullptr;
 
         QDemonRef<QDemonRenderConstantBuffer> pCB = theContext->getConstantBuffer(name);
@@ -558,7 +558,7 @@ struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
         // this call setup the constant buffer for ambient occlusion and shadow
         theShader->m_aoShadowParams.set();
 
-        if (m_renderContext->getRenderContext()->getConstantBufferSupport()) {
+        if (m_renderContext->getRenderContext()->supportsConstantBuffer()) {
             QDemonRef<QDemonRenderConstantBuffer> pLightCb = getLightConstantBuffer("cbBufferLights", inLights.size());
             QDemonRef<QDemonRenderConstantBuffer> pAreaLightCb = getLightConstantBuffer("cbBufferAreaLights", inLights.size());
 
@@ -980,7 +980,7 @@ struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
 
         QByteArray srcString(fragSource);
 
-        if (m_renderContext->getRenderContext()->getRenderContextType() == QDemonRenderContextType::GLES2) {
+        if (m_renderContext->getRenderContext()->renderContextType() == QDemonRenderContextType::GLES2) {
             QString::size_type pos = 0;
             while ((pos = srcString.indexOf("out vec4 fragColor", pos)) != -1) {
                 srcString.insert(pos, "//");
@@ -1096,7 +1096,7 @@ struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
         }
         fragmentShader << "  rgba.a *= object_opacity;"
                        << "\n";
-        if (m_renderContext->getRenderContext()->getRenderContextType() == QDemonRenderContextType::GLES2)
+        if (m_renderContext->getRenderContext()->renderContextType() == QDemonRenderContextType::GLES2)
             fragmentShader << "  gl_FragColor = rgba;"
                            << "\n";
         else

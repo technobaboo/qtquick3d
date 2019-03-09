@@ -60,11 +60,11 @@ QDemonCustomMaterialVertexPipeline::QDemonCustomMaterialVertexPipeline(QDemonRen
     , m_context(inContext)
     , m_tessMode(TessModeValues::NoTess)
 {
-    if (m_context->getRenderContext()->isTessellationSupported()) {
+    if (m_context->getRenderContext()->supportsTessellation()) {
         m_tessMode = inTessMode;
     }
 
-    if (m_context->getRenderContext()->isGeometryStageSupported() && m_tessMode != TessModeValues::NoTess) {
+    if (m_context->getRenderContext()->supportsGeometryStage() && m_tessMode != TessModeValues::NoTess) {
         m_wireframe = inContext->getWireframeMode();
     }
 }
@@ -1275,7 +1275,7 @@ void QDemonMaterialSystem::allocateBuffer(const dynamic::QDemonAllocateBuffer &i
     } else {
         QDemonRef<QDemonRenderContext> theContext = context->getRenderContext();
         // if we allocate a buffer based on the default target use viewport to get the dimension
-        QRect theViewport(theContext->getViewport());
+        QRect theViewport(theContext->viewport());
         theSourceTextureDetails.height = theViewport.height();
         theSourceTextureDetails.width = theViewport.width();
     }
@@ -1371,7 +1371,7 @@ void QDemonMaterialSystem::computeScreenCoverage(QDemonCustomMaterialRenderConte
             projMax.setZ(projPoint.z());
     }
 
-    QRect theViewport(theContext->getViewport());
+    QRect theViewport(theContext->viewport());
     qint32 x1 = qint32(projMax.x() * (theViewport.width() / 2) + (theViewport.x() + (theViewport.width() / 2)));
     qint32 y1 = qint32(projMax.y() * (theViewport.height() / 2) + (theViewport.y() + (theViewport.height() / 2)));
 
@@ -1399,7 +1399,7 @@ void QDemonMaterialSystem::blitFramebuffer(QDemonCustomMaterialRenderContext &in
     QDemonRef<QDemonRenderContext> theContext(context->getRenderContext());
     // we change the read/render targets here
     QDemonRenderContextScopedProperty<QDemonRef<QDemonRenderFrameBuffer>> __framebuffer(*theContext,
-                                                                                        &QDemonRenderContext::getRenderTarget,
+                                                                                        &QDemonRenderContext::renderTarget,
                                                                                         &QDemonRenderContext::setRenderTarget);
     // we may alter scissor
     QDemonRenderContextScopedProperty<bool> theScissorEnabled(*theContext,
@@ -1440,7 +1440,7 @@ void QDemonMaterialSystem::blitFramebuffer(QDemonCustomMaterialRenderContext &in
         theContext->setReadBuffer(value);
     }
 
-    QRect theViewport(theContext->getViewport());
+    QRect theViewport(theContext->viewport());
     theContext->setScissorTestEnabled(false);
 
     if (!useFastBlits) {
@@ -1497,7 +1497,7 @@ void QDemonMaterialSystem::renderPass(QDemonCustomMaterialRenderContext &inRende
 
     QVector4D clearColor(0.0, 0.0, 0.0, 0.0);
     QDemonRenderContextScopedProperty<QVector4D> __clearColor(*theContext,
-                                                              &QDemonRenderContext::getClearColor,
+                                                              &QDemonRenderContext::clearColor,
                                                               &QDemonRenderContext::setClearColor,
                                                               clearColor);
     if (inRenderTargetNeedsClear) {
@@ -1536,7 +1536,7 @@ void QDemonMaterialSystem::renderPass(QDemonCustomMaterialRenderContext &inRende
     }
 
     if (inRenderContext.subset.wireframeMode) {
-        QRect theViewport(theContext->getViewport());
+        QRect theViewport(theContext->viewport());
         QMatrix4x4 vpMatrix = { (float)theViewport.width() / 2.0f,
                                 0.0,
                                 0.0,
@@ -1572,7 +1572,7 @@ void QDemonMaterialSystem::doRenderCustomMaterial(QDemonCustomMaterialRenderCont
     QDemonRef<QDemonCustomMaterialShader> theCurrentShader(nullptr);
 
     QDemonRef<QDemonRenderFrameBuffer> theCurrentRenderTarget(inTarget);
-    QRect theOriginalViewport(theContext->getViewport());
+    QRect theOriginalViewport(theContext->viewport());
     QDemonRef<QDemonRenderTexture2D> theCurrentSourceTexture;
 
     // for refrative materials we come from the transparent render path
@@ -1582,9 +1582,9 @@ void QDemonMaterialSystem::doRenderCustomMaterial(QDemonCustomMaterialRenderCont
         theContext->setBlendingEnabled(false);
 
     QDemonRenderContextScopedProperty<QDemonRef<QDemonRenderFrameBuffer>> __framebuffer(*theContext,
-                                                                                        &QDemonRenderContext::getRenderTarget,
+                                                                                        &QDemonRenderContext::renderTarget,
                                                                                         &QDemonRenderContext::setRenderTarget);
-    QDemonRenderContextScopedProperty<QRect> __viewport(*theContext, &QDemonRenderContext::getViewport, &QDemonRenderContext::setViewport);
+    QDemonRenderContextScopedProperty<QRect> __viewport(*theContext, &QDemonRenderContext::viewport, &QDemonRenderContext::setViewport);
 
     QVector2D theDestSize;
     bool theRenderTargetNeedsClear = false;
@@ -1817,11 +1817,11 @@ void QDemonMaterialSystem::renderSubset(QDemonCustomMaterialRenderContext &inRen
 
     // Ensure that our overall render context comes back no matter what the client does.
     QDemonRenderContextScopedProperty<QDemonRenderBlendFunctionArgument> __blendFunction(*context->getRenderContext(),
-                                                                                         &QDemonRenderContext::getBlendFunction,
+                                                                                         &QDemonRenderContext::blendFunction,
                                                                                          &QDemonRenderContext::setBlendFunction,
                                                                                          QDemonRenderBlendFunctionArgument());
     QDemonRenderContextScopedProperty<QDemonRenderBlendEquationArgument> __blendEquation(*context->getRenderContext(),
-                                                                                         &QDemonRenderContext::getBlendEquation,
+                                                                                         &QDemonRenderContext::blendEquation,
                                                                                          &QDemonRenderContext::setBlendEquation,
                                                                                          QDemonRenderBlendEquationArgument());
 
@@ -1829,7 +1829,7 @@ void QDemonMaterialSystem::renderSubset(QDemonCustomMaterialRenderContext &inRen
                                                             &QDemonRenderContext::isBlendingEnabled,
                                                             &QDemonRenderContext::setBlendingEnabled);
 
-    doRenderCustomMaterial(inRenderContext, inRenderContext.material, *theClass, context->getRenderContext()->getRenderTarget(), inFeatureSet);
+    doRenderCustomMaterial(inRenderContext, inRenderContext.material, *theClass, context->getRenderContext()->renderTarget(), inFeatureSet);
 }
 
 bool QDemonMaterialSystem::renderDepthPrepass(const QMatrix4x4 &inMVP, const QDemonRenderCustomMaterial &inMaterial, const QDemonRenderSubset &inSubset)
@@ -1881,7 +1881,7 @@ void QDemonMaterialSystem::setRenderContextInterface(QDemonRenderContextInterfac
 
     // check for fast blits
     QDemonRef<QDemonRenderContext> theContext = context->getRenderContext();
-    useFastBlits = theContext->getRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::FastBlits);
+    useFastBlits = theContext->renderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::FastBlits);
 }
 
 QT_END_NAMESPACE

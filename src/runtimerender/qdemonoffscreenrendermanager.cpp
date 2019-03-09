@@ -165,7 +165,7 @@ struct QDemonOffscreenRenderManager : public QDemonOffscreenRenderManagerInterfa
         QDemonOffscreenRendererEnvironment theOriginalDesiredEnvironment(theDesiredEnvironment);
         // Ensure that our overall render context comes back no matter what the client does.
         QDemonRenderContextScopedProperty<QVector4D> __clearColor(*theContext,
-                                                                  &QDemonRenderContext::getClearColor,
+                                                                  &QDemonRenderContext::clearColor,
                                                                   &QDemonRenderContext::setClearColor,
                                                                   QVector4D(0, 0, 0, 0));
         QDemonRenderContextScopedProperty<bool> __scissorEnabled(*theContext,
@@ -173,17 +173,17 @@ struct QDemonOffscreenRenderManager : public QDemonOffscreenRenderManagerInterfa
                                                                  &QDemonRenderContext::setScissorTestEnabled,
                                                                  false);
         QDemonRenderContextScopedProperty<QRect> __scissorRect(*theContext,
-                                                               &QDemonRenderContext::getScissorRect,
+                                                               &QDemonRenderContext::scissorRect,
                                                                &QDemonRenderContext::setScissorRect);
         QDemonRenderContextScopedProperty<QRect> __viewportRect(*theContext,
-                                                                &QDemonRenderContext::getViewport,
+                                                                &QDemonRenderContext::viewport,
                                                                 &QDemonRenderContext::setViewport);
         QDemonRenderContextScopedProperty<bool> __depthWrite(*theContext,
                                                              &QDemonRenderContext::isDepthWriteEnabled,
                                                              &QDemonRenderContext::setDepthWriteEnabled,
                                                              false);
         QDemonRenderContextScopedProperty<QDemonRenderBoolOp> __depthFunction(*theContext,
-                                                                                    &QDemonRenderContext::getDepthFunction,
+                                                                                    &QDemonRenderContext::depthFunction,
                                                                                     &QDemonRenderContext::setDepthFunction,
                                                                                     QDemonRenderBoolOp::Less);
         QDemonRenderContextScopedProperty<bool> __blendEnabled(*theContext,
@@ -191,15 +191,15 @@ struct QDemonOffscreenRenderManager : public QDemonOffscreenRenderManagerInterfa
                                                                &QDemonRenderContext::setBlendingEnabled,
                                                                false);
         QDemonRenderContextScopedProperty<QDemonRenderBlendFunctionArgument> __blendFunction(*theContext,
-                                                                                             &QDemonRenderContext::getBlendFunction,
+                                                                                             &QDemonRenderContext::blendFunction,
                                                                                              &QDemonRenderContext::setBlendFunction,
                                                                                              QDemonRenderBlendFunctionArgument());
         QDemonRenderContextScopedProperty<QDemonRenderBlendEquationArgument> __blendEquation(*theContext,
-                                                                                             &QDemonRenderContext::getBlendEquation,
+                                                                                             &QDemonRenderContext::blendEquation,
                                                                                              &QDemonRenderContext::setBlendEquation,
                                                                                              QDemonRenderBlendEquationArgument());
         QDemonRenderContextScopedProperty<QDemonRef<QDemonRenderFrameBuffer>> __rendertarget(*theContext,
-                                                                                             &QDemonRenderContext::getRenderTarget,
+                                                                                             &QDemonRenderContext::renderTarget,
                                                                                              &QDemonRenderContext::setRenderTarget);
 
         quint32 theSampleCount = 1;
@@ -375,7 +375,7 @@ struct QDemonOffscreenRenderManager : public QDemonOffscreenRenderManagerInterfa
                                                                    &QDemonRenderContext::setScissorTestEnabled,
                                                                    false);
             QDemonRenderContextScopedProperty<QRect> __viewportRect(*theContext,
-                                                                    &QDemonRenderContext::getViewport,
+                                                                    &QDemonRenderContext::viewport,
                                                                     &QDemonRenderContext::setViewport,
                                                                     theViewport);
 

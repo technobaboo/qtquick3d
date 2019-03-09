@@ -714,7 +714,7 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
     {
         QDemonRenderContextTypes deprecatedContextFlags(QDemonRenderContextType::GL2 | QDemonRenderContextType::GLES2);
 
-        if (!(deprecatedContextFlags & m_renderContext->getRenderContext()->getRenderContextType())) {
+        if (!(deprecatedContextFlags & m_renderContext->getRenderContext()->renderContextType())) {
             switch (swizzleMode) {
             case QDemonRenderTextureSwizzleMode::L8toR8:
             case QDemonRenderTextureSwizzleMode::L16toR16:
@@ -741,10 +741,10 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
         QDemonRef<QDemonRenderContext> theContext(m_renderContext->getRenderContext());
 
         // we assume constant buffer support
-        Q_ASSERT(theContext->getConstantBufferSupport());
+        Q_ASSERT(theContext->supportsConstantBuffer());
 
         // we only create if if we have lights
-        if (!inLightCount || !theContext->getConstantBufferSupport())
+        if (!inLightCount || !theContext->supportsConstantBuffer())
             return nullptr;
 
         const char *theName = "cbBufferLights";
@@ -880,7 +880,7 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
         quint32 lightmapRadiosityImageIdx = 0;
         QDemonRenderableImage *lightmapShadowImage = nullptr;
         quint32 lightmapShadowImageIdx = 0;
-        const bool supportStandardDerivatives = m_renderContext->getRenderContext()->isStandardDerivativesSupported();
+        const bool supportStandardDerivatives = m_renderContext->getRenderContext()->supportsStandardDerivatives();
 
         for (QDemonRenderableImage *img = m_firstImage; img != nullptr; img = img->m_nextImage, ++imageIdx) {
             hasSpecMap = img->m_mapType == QDemonImageMapTypes::Specular;
@@ -1435,7 +1435,7 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
         QDemonShaderDefaultMaterialKey theKey(key());
         theKey.toString(m_generatedShaderString, m_defaultMaterialShaderKeyProperties);
 
-        m_lightsAsSeparateUniforms = !m_renderContext->getRenderContext()->getConstantBufferSupport();
+        m_lightsAsSeparateUniforms = !m_renderContext->getRenderContext()->supportsConstantBuffer();
 
         generateVertexShader();
         generateFragmentShader(theKey);
@@ -1700,7 +1700,7 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
         shader->m_cameraProperties.set(inCameraVec);
         shader->m_fresnelPower.set(inMaterial.fresnelPower);
 
-        if (context->getConstantBufferSupport()) {
+        if (context->supportsConstantBuffer()) {
             QDemonRef<QDemonRenderConstantBuffer> pLightCb = getLightConstantBuffer(shader->m_lights.size());
             // if we have lights we need a light buffer
             Q_ASSERT(shader->m_lights.size() == 0 || pLightCb);
@@ -1778,20 +1778,20 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
         case DefaultMaterialBlendMode::Overlay:
             // SW fallback is not using blend equation
             // note blend func is not used here anymore
-            if (context->isAdvancedBlendHwSupported() || context->isAdvancedBlendHwSupportedKHR())
+            if (context->supportsAdvancedBlendHW() || context->supportsAdvancedBlendHwKHR())
                 blendEqua = QDemonRenderBlendEquationArgument(QDemonRenderBlendEquation::Overlay, QDemonRenderBlendEquation::Overlay);
             break;
         case DefaultMaterialBlendMode::ColorBurn:
             // SW fallback is not using blend equation
             // note blend func is not used here anymore
-            if (context->isAdvancedBlendHwSupported() || context->isAdvancedBlendHwSupportedKHR())
+            if (context->supportsAdvancedBlendHW() || context->supportsAdvancedBlendHwKHR())
                 blendEqua = QDemonRenderBlendEquationArgument(QDemonRenderBlendEquation::ColorBurn,
                                                               QDemonRenderBlendEquation::ColorBurn);
             break;
         case DefaultMaterialBlendMode::ColorDodge:
             // SW fallback is not using blend equation
             // note blend func is not used here anymore
-            if (context->isAdvancedBlendHwSupported() || context->isAdvancedBlendHwSupportedKHR())
+            if (context->supportsAdvancedBlendHW() || context->supportsAdvancedBlendHwKHR())
                 blendEqua = QDemonRenderBlendEquationArgument(QDemonRenderBlendEquation::ColorDodge,
                                                               QDemonRenderBlendEquation::ColorDodge);
             break;

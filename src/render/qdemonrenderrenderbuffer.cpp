@@ -39,7 +39,7 @@ QDemonRenderRenderBuffer::QDemonRenderRenderBuffer(const QDemonRef<QDemonRenderC
                                                    QDemonRenderRenderBufferFormat format,
                                                    quint32 width,
                                                    quint32 height)
-    : m_context(context), m_backend(context->getBackend()), m_width(width), m_height(height), m_storageFormat(format), m_handle(nullptr)
+    : m_context(context), m_backend(context->backend()), m_width(width), m_height(height), m_storageFormat(format), m_handle(nullptr)
 {
     setSize(QSize(width, height));
 }
@@ -57,7 +57,7 @@ void QDemonRenderRenderBuffer::setSize(const QSize &inDimensions)
     m_height = inDimensions.height();
 
     // get max size and clamp to max value
-    m_context->getMaxTextureSize(maxWidth, maxHeight);
+    m_context->maxTextureSize(maxWidth, maxHeight);
     if (m_width > maxWidth || m_height > maxHeight) {
         qCCritical(INVALID_OPERATION, "Width or height is greater than max texture size (%d, %d)", maxWidth, maxHeight);
         m_width = qMin(m_width, maxWidth);

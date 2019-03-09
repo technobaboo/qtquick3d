@@ -93,12 +93,7 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(QDemonRenderContextDirtyFlags)
 typedef QHash<QByteArray, QDemonRenderConstantBuffer *> TContextConstantBufferMap;
 typedef QHash<QByteArray, QDemonRenderStorageBuffer *> TContextStorageBufferMap;
 typedef QHash<QByteArray, QDemonRenderAtomicCounterBuffer *> TContextAtomicCounterBufferMap;
-typedef QHash<QDemonRenderBackend::QDemonRenderBackendBufferObject, QDemonRenderDrawIndirectBuffer *> TContextDrawIndirectBufferMap;
-typedef QHash<QDemonRenderBackend::QDemonRenderBackendDepthStencilStateObject, QDemonRenderDepthStencilState *> TContextDepthStencilStateMap;
 typedef QHash<QDemonRenderBackend::QDemonRenderBackendRasterizerStateObject, QDemonRenderRasterizerState *> TContextRasterizerStateMap;
-typedef QHash<QDemonRenderBackend::QDemonRenderBackendTextureObject, QDemonRenderTexture2DArray *> TContextTex2DArrayToImpMap;
-typedef QHash<QDemonRenderBackend::QDemonRenderBackendTextureObject, QDemonRenderTextureCube *> TContextTexCubeToImpMap;
-typedef QHash<QDemonRenderBackend::QDemonRenderBackendTextureObject, QDemonRenderImage2D *> TContextImage2DToImpMap;
 typedef QHash<QString, QDemonRenderPathFontSpecification *> TContextPathFontSpecificationMap;
 
 class QDemonRenderProgramPipeline;
@@ -158,12 +153,9 @@ protected:
     TContextConstantBufferMap m_constantToImpMap;
     TContextStorageBufferMap m_storageToImpMap;
     TContextAtomicCounterBufferMap m_atomicCounterToImpMap;
-    TContextDepthStencilStateMap m_depthStencilStateToImpMap;
     TContextRasterizerStateMap m_rasterizerStateToImpMap;
     TContextPathFontSpecificationMap m_pathFontSpecToImpMap;
 
-    QHash<const void *, QDemonRenderShaderProgram *> m_shaderToImpMap;
-    QHash<const void *, QDemonRenderFrameBuffer *> m_frameBufferToImpMap;
     qint32 m_maxTextureUnits;
     qint32 m_nextTextureUnit;
     qint32 m_maxConstantBufferUnits;
@@ -297,15 +289,15 @@ public:
     QDemonRenderContext(const QDemonRef<QDemonRenderBackend> &inBackend);
     ~QDemonRenderContext();
 
-    QDemonRef<QDemonRenderBackend> getBackend() { return m_backend; }
+    QDemonRef<QDemonRenderBackend> backend() { return m_backend; }
 
-    void getMaxTextureSize(qint32 &oWidth, qint32 &oHeight);
+    void maxTextureSize(qint32 &oWidth, qint32 &oHeight);
 
-    const char *getShadingLanguageVersion() { return m_backend->getShadingLanguageVersion(); }
+    const char *shadingLanguageVersion() { return m_backend->getShadingLanguageVersion(); }
 
-    QDemonRenderContextType getRenderContextType() const { return m_backend->getRenderContextType(); }
+    QDemonRenderContextType renderContextType() const { return m_backend->getRenderContextType(); }
 
-    qint32 getDepthBits() const
+    qint32 depthBits() const
     {
         // only query this if a framebuffer is bound
         if (m_hardwarePropertyContext.m_frameBuffer)
@@ -314,7 +306,7 @@ public:
             return m_dephBits;
     }
 
-    qint32 getStencilBits() const
+    qint32 stencilBits() const
     {
         // only query this if a framebuffer is bound
         if (m_hardwarePropertyContext.m_frameBuffer)
@@ -323,109 +315,109 @@ public:
             return m_stencilBits;
     }
 
-    bool getRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps inCap) const
+    bool renderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps inCap) const
     {
         return m_backend->getRenderBackendCap(inCap);
     }
 
-    bool areMultisampleTexturesSupported() const
+    bool supportsMultisampleTextures() const
     {
-        return getRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::MsTexture);
+        return renderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::MsTexture);
     }
 
-    bool getConstantBufferSupport() const
+    bool supportsConstantBuffer() const
     {
-        return getRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::ConstantBuffer);
+        return renderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::ConstantBuffer);
     }
 
-    bool areDXTImagesSupported() const
+    bool supportsDXTImages() const
     {
-        return getRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::DxtImages);
+        return renderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::DxtImages);
     }
 
-    bool isDepthStencilSupported() const
+    bool supportsDepthStencil() const
     {
-        return getRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::DepthStencilTexture);
+        return renderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::DepthStencilTexture);
     }
 
-    bool isFpRenderTargetSupported() const
+    bool supportsFpRenderTarget() const
     {
-        return getRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::FpRenderTarget);
+        return renderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::FpRenderTarget);
     }
 
-    bool isTessellationSupported() const
+    bool supportsTessellation() const
     {
-        return getRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::Tessellation);
+        return renderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::Tessellation);
     }
 
-    bool isGeometryStageSupported() const
+    bool supportsGeometryStage() const
     {
-        return getRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::Geometry);
+        return renderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::Geometry);
     }
 
-    bool isComputeSupported() const
+    bool supportsCompute() const
     {
-        return getRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::Compute);
+        return renderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::Compute);
     }
 
-    bool isSampleQuerySupported() const
+    bool supportsSampleQuery() const
     {
-        return getRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::SampleQuery);
+        return renderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::SampleQuery);
     }
 
-    bool isTimerQuerySupported() const
+    bool isupportsTimerQuery() const
     {
-        return getRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::TimerQuery);
+        return renderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::TimerQuery);
     }
 
-    bool isCommandSyncSupported() const
+    bool supportsCommandSync() const
     {
-        return getRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::CommandSync);
+        return renderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::CommandSync);
     }
-    bool isTextureArraySupported() const
+    bool supportsTextureArray() const
     {
-        return getRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::TextureArray);
+        return renderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::TextureArray);
     }
-    bool isStorageBufferSupported() const
+    bool supportsStorageBuffer() const
     {
-        return getRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::StorageBuffer);
+        return renderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::StorageBuffer);
     }
-    bool isAtomicCounterBufferSupported() const
+    bool supportsAtomicCounterBuffer() const
     {
-        return getRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::AtomicCounterBuffer);
+        return renderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::AtomicCounterBuffer);
     }
-    bool isShaderImageLoadStoreSupported() const
+    bool supportsShaderImageLoadStore() const
     {
-        return getRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::ShaderImageLoadStore);
+        return renderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::ShaderImageLoadStore);
     }
-    bool isProgramPipelineSupported() const
+    bool supportsProgramPipeline() const
     {
-        return getRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::ProgramPipeline);
+        return renderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::ProgramPipeline);
     }
-    bool isPathRenderingSupported() const
+    bool supportsPathRendering() const
     {
-        return getRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::PathRendering);
+        return renderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::PathRendering);
     }
     // Are blend modes really supported in HW?
-    bool isAdvancedBlendHwSupported() const
+    bool supportsAdvancedBlendHW() const
     {
-        return getRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::AdvancedBlend);
+        return renderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::AdvancedBlend);
     }
-    bool isAdvancedBlendHwSupportedKHR() const
+    bool supportsAdvancedBlendHwKHR() const
     {
-        return getRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::AdvancedBlendKHR);
+        return renderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::AdvancedBlendKHR);
     }
-    bool isBlendCoherencySupported() const
+    bool supportsBlendCoherency() const
     {
-        return getRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::BlendCoherency);
+        return renderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::BlendCoherency);
     }
-    bool isStandardDerivativesSupported() const
+    bool supportsStandardDerivatives() const
     {
-        return getRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::StandardDerivatives);
+        return renderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::StandardDerivatives);
     }
-    bool isTextureLodSupported() const
+    bool supportsTextureLod() const
     {
-        return getRenderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::TextureLod);
+        return renderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::TextureLod);
     }
 
     void setDefaultRenderTarget(quint64 targetID)
@@ -445,7 +437,7 @@ public:
     QDemonRef<QDemonRenderConstantBuffer> getConstantBuffer(const QByteArray &bufferName);
     void bufferDestroyed(QDemonRenderConstantBuffer *buffer);
 
-    qint32 getNextConstantBufferUnit();
+    qint32 nextConstantBufferUnit();
 
     void registerStorageBuffer(QDemonRenderStorageBuffer *buffer);
     QDemonRef<QDemonRenderStorageBuffer> getStorageBuffer(const QByteArray &bufferName);
@@ -462,7 +454,7 @@ public:
     QDemonRef<QDemonRenderTimerQuery> createTimerQuery();
     QDemonRef<QDemonRenderSync> createSync();
 
-    qint32 getNextTextureUnit();
+    qint32 nextTextureUnit();
 
     void frameBufferDestroyed(QDemonRenderFrameBuffer *fb);
 
@@ -513,7 +505,6 @@ public:
     QDemonRenderVertFragCompilationResult compileComputeSource(const char *shaderName,
                                                                        QDemonConstDataRef<qint8> computeShaderSource);
 
-    QDemonRef<QDemonRenderShaderProgram> getShaderProgram(const void *implementationHandle);
     void shaderDestroyed(QDemonRenderShaderProgram *shader);
 
     QDemonRef<QDemonRenderProgramPipeline> createProgramPipeline();
@@ -529,16 +520,16 @@ public:
     QDemonRef<QDemonRenderPathFontItem> createPathFontItem();
 
     void setClearColor(QVector4D inClearColor);
-    QVector4D getClearColor() const { return m_hardwarePropertyContext.m_clearColor; }
+    QVector4D clearColor() const { return m_hardwarePropertyContext.m_clearColor; }
 
     void setBlendFunction(QDemonRenderBlendFunctionArgument inFunctions);
-    QDemonRenderBlendFunctionArgument getBlendFunction() const
+    QDemonRenderBlendFunctionArgument blendFunction() const
     {
         return m_hardwarePropertyContext.m_blendFunction;
     }
 
     void setBlendEquation(QDemonRenderBlendEquationArgument inEquations);
-    QDemonRenderBlendEquationArgument getBlendEquation() const
+    QDemonRenderBlendEquationArgument blendEquation() const
     {
         return m_hardwarePropertyContext.m_blendEquation;
     }
@@ -547,7 +538,7 @@ public:
     bool isCullingEnabled() const { return m_hardwarePropertyContext.m_cullingEnabled; }
 
     void setDepthFunction(QDemonRenderBoolOp inFunction);
-    QDemonRenderBoolOp getDepthFunction() const { return m_hardwarePropertyContext.m_depthFunction; }
+    QDemonRenderBoolOp depthFunction() const { return m_hardwarePropertyContext.m_depthFunction; }
 
     void setBlendingEnabled(bool inEnabled);
     bool isBlendingEnabled() const { return m_hardwarePropertyContext.m_blendingEnabled; }
@@ -563,10 +554,10 @@ public:
     void setScissorTestEnabled(bool inEnabled);
     bool isScissorTestEnabled() const { return m_hardwarePropertyContext.m_scissorTestEnabled; }
     void setScissorRect(QRect inRect);
-    QRect getScissorRect() const { return m_hardwarePropertyContext.m_scissorRect; }
+    QRect scissorRect() const { return m_hardwarePropertyContext.m_scissorRect; }
 
     void setViewport(QRect inViewport);
-    QRect getViewport() const { return m_hardwarePropertyContext.m_viewport; }
+    QRect viewport() const { return m_hardwarePropertyContext.m_viewport; }
 
     void setColorWritesEnabled(bool inEnabled);
     bool isColorWritesEnabled() const { return m_hardwarePropertyContext.m_colorWritesEnabled; }
@@ -575,10 +566,10 @@ public:
     bool isMultisampleEnabled() const { return m_hardwarePropertyContext.m_multisampleEnabled; }
 
     void setActiveShader(QDemonRef<QDemonRenderShaderProgram> inShader);
-    QDemonRef<QDemonRenderShaderProgram> getActiveShader() const;
+    QDemonRef<QDemonRenderShaderProgram> activeShader() const;
 
     void setActiveProgramPipeline(QDemonRef<QDemonRenderProgramPipeline> inProgramPipeline);
-    QDemonRef<QDemonRenderProgramPipeline> getActiveProgramPipeline() const;
+    QDemonRef<QDemonRenderProgramPipeline> activeProgramPipeline() const;
 
     void dispatchCompute(QDemonRef<QDemonRenderShaderProgram> inShader, quint32 numGroupsX, quint32 numGroupsY, quint32 numGroupsZ);
 
@@ -589,7 +580,7 @@ public:
 
     void setRenderTarget(QDemonRef<QDemonRenderFrameBuffer> inBuffer);
     void setReadTarget(QDemonRef<QDemonRenderFrameBuffer> inBuffer);
-    QDemonRef<QDemonRenderFrameBuffer> getRenderTarget() const
+    QDemonRef<QDemonRenderFrameBuffer> renderTarget() const
     {
         return m_hardwarePropertyContext.m_frameBuffer;
     }

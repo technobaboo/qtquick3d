@@ -37,7 +37,7 @@ QDemonRenderRasterizerState::QDemonRenderRasterizerState(const QDemonRef<QDemonR
                                                          float depthBias,
                                                          float depthScale,
                                                          QDemonRenderFace cullFace)
-    : m_context(context), m_backend(context->getBackend())
+    : m_context(context), m_backend(context->backend())
 {
     // create backend handle
     m_stateHandle = m_backend->createRasterizerState(depthBias, depthScale, cullFace);

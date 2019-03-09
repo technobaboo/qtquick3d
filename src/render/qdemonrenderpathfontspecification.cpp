@@ -38,7 +38,7 @@ QT_BEGIN_NAMESPACE
 QDemonRenderPathFontSpecification::QDemonRenderPathFontSpecification(const QDemonRef<QDemonRenderContext> &context,
                                                                      const QString &fontName)
     : m_context(context)
-    , m_backend(context->getBackend())
+    , m_backend(context->backend())
     , m_numFontGlyphs(0)
     , m_emScale(2048) // 2048 is default true type scale
     , m_type(QDemonRenderPathFormatType::UByte)
@@ -144,7 +144,7 @@ QDemonRef<QDemonRenderPathFontSpecification> QDemonRenderPathFontSpecification::
         const QDemonRef<QDemonRenderContext> &context,
         const QString &fontName)
 {
-    Q_ASSERT(context->isPathRenderingSupported());
+    Q_ASSERT(context->supportsPathRendering());
 
     return QDemonRef<QDemonRenderPathFontSpecification>(new QDemonRenderPathFontSpecification(context, fontName));
 }

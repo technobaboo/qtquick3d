@@ -61,7 +61,7 @@ void QDemonRenderImage2D::setTextureLevel(qint32 inLevel)
 void QDemonRenderImage2D::bind(qint32 unit)
 {
     if (unit == -1)
-        m_textureUnit = m_context->getNextTextureUnit();
+        m_textureUnit = m_context->nextTextureUnit();
     else
         m_textureUnit = unit;
 
@@ -69,7 +69,7 @@ void QDemonRenderImage2D::bind(qint32 unit)
 
     // note it is the callers responsibility that the texture format is supported by the compute
     // shader
-    m_context->getBackend()->bindImageTexture(m_texture2D->handle(),
+    m_context->backend()->bindImageTexture(m_texture2D->handle(),
                                             m_textureUnit,
                                             m_textureLevel,
                                             false,

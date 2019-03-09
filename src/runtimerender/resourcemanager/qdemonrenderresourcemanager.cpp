@@ -87,7 +87,7 @@ struct QDemonResourceManager : public QDemonResourceManagerInterface
             inBuffer->attach(QDemonRenderFrameBufferAttachment::Color7, QDemonRenderTextureOrRenderBuffer());
             inBuffer->attach(QDemonRenderFrameBufferAttachment::Depth, QDemonRenderTextureOrRenderBuffer());
             inBuffer->attach(QDemonRenderFrameBufferAttachment::Stencil, QDemonRenderTextureOrRenderBuffer());
-            if (renderContext->isDepthStencilSupported())
+            if (renderContext->supportsDepthStencil())
                 inBuffer->attach(QDemonRenderFrameBufferAttachment::DepthStencil, QDemonRenderTextureOrRenderBuffer());
         }
 #ifdef _DEBUG
@@ -144,7 +144,7 @@ struct QDemonResourceManager : public QDemonResourceManagerInterface
                                                        bool immutable) override
     {
         Q_ASSERT(inWidth >= 0 && inHeight >= 0 && inSampleCount >= 0);
-        bool inMultisample = inSampleCount > 1 && renderContext->areMultisampleTexturesSupported();
+        bool inMultisample = inSampleCount > 1 && renderContext->supportsMultisampleTextures();
         for (qint32 idx = 0, end = freeTextures.size(); idx < end; ++idx) {
             auto theTexture = freeTextures[idx];
             QDemonTextureDetails theDetails = theTexture->textureDetails();
@@ -198,7 +198,7 @@ struct QDemonResourceManager : public QDemonResourceManagerInterface
                                                                  qint32 inSampleCount) override
     {
         Q_ASSERT(inWidth >= 0 && inHeight >= 0 && inSlices >= 0 && inSampleCount >= 0);
-        bool inMultisample = inSampleCount > 1 && renderContext->areMultisampleTexturesSupported();
+        bool inMultisample = inSampleCount > 1 && renderContext->supportsMultisampleTextures();
         for (int idx = 0, end = freeTexArrays.size(); idx < end; ++idx) {
             auto theTexture = freeTexArrays[idx];
             QDemonTextureDetails theDetails = theTexture->textureDetails();
@@ -255,7 +255,7 @@ struct QDemonResourceManager : public QDemonResourceManagerInterface
                                                            QDemonRenderTextureFormat inTextureFormat,
                                                            qint32 inSampleCount) override
     {
-        bool inMultisample = inSampleCount > 1 && renderContext->areMultisampleTexturesSupported();
+        bool inMultisample = inSampleCount > 1 && renderContext->supportsMultisampleTextures();
         for (int idx = 0, end = freeTexCubes.size(); idx < end; ++idx) {
             auto theTexture = freeTexCubes[idx];
             QDemonTextureDetails theDetails = theTexture->textureDetails();

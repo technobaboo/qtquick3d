@@ -1048,7 +1048,7 @@ void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportD
     QRect theViewport(theGraph->getViewport());
     QRect theScissor(theGraph->getViewport());
     if (theGraph->isScissorTestEnabled())
-        theScissor = renderer->getContext()->getScissorRect();
+        theScissor = renderer->getContext()->scissorRect();
     bool wasDirty = false;
     bool wasDataDirty = false;
     wasDirty = layer.flags.isDirty();
@@ -1110,7 +1110,7 @@ void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportD
         thePrepResult.maxAAPassIndex = maxNumAAPasses;
         thePrepResult.flags.setRequiresDepthTexture(requiresDepthPrepass || needsWidgetTexture());
         thePrepResult.flags.setShouldRenderToTexture(shouldRenderToTexture);
-        if (renderer->getContext()->getRenderContextType() != QDemonRenderContextType::GLES2)
+        if (renderer->getContext()->renderContextType() != QDemonRenderContextType::GLES2)
             thePrepResult.flags.setRequiresSsaoPass(SSAOEnabled);
 
         if (thePrepResult.isLayerVisible()) {
@@ -1196,7 +1196,7 @@ void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportD
                     if (theLight->flags.isGloballyActive()) {
                         if (theLight->m_scope == nullptr) {
                             lights.push_back(theLight);
-                            if (renderer->getContext()->getRenderContextType() != QDemonRenderContextType::GLES2
+                            if (renderer->getContext()->renderContextType() != QDemonRenderContextType::GLES2
                                 && theLight->m_castShadow && getShadowMapManager()) {
                                 // PKC -- use of "res" as an exponent of two is an annoying
                                 // artifact of the XML interface
@@ -1327,11 +1327,11 @@ void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportD
                                                                          &QDemonRenderContext::setScissorTestEnabled,
                                                                          true);
                 QDemonRenderContextScopedProperty<QRect> __scissorRect(*theContext,
-                                                                       &QDemonRenderContext::getScissorRect,
+                                                                       &QDemonRenderContext::scissorRect,
                                                                        &QDemonRenderContext::setScissorRect,
                                                                        theScissorRect);
                 QDemonRenderContextScopedProperty<QRect> __viewportRect(*theContext,
-                                                                        &QDemonRenderContext::getViewport,
+                                                                        &QDemonRenderContext::viewport,
                                                                         &QDemonRenderContext::setViewport,
                                                                         theViewport);
                 QDemonOffscreenRenderFlags theResult = lastFrameOffscreenRenderer

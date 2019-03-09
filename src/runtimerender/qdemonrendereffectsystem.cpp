@@ -1140,7 +1140,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
                                 && theTextureFormat != QDemonRenderTextureFormat::Depth32
                                 && theTextureFormat != QDemonRenderTextureFormat::Depth24Stencil8) {
                                 QDemonRenderContextScopedProperty<QVector4D> __clearColor(*theRenderContext,
-                                                                                          &QDemonRenderContext::getClearColor,
+                                                                                          &QDemonRenderContext::clearColor,
                                                                                           &QDemonRenderContext::setClearColor,
                                                                                           QVector4D());
                                 theRenderContext->clear(QDemonRenderClearValues::Color);
@@ -1369,7 +1369,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
                     targetState = new QDemonRenderDepthStencilState(theContext,
                                                                         theContext->isDepthTestEnabled(),
                                                                       theContext->isDepthWriteEnabled(),
-                                                                      theContext->getDepthFunction(),
+                                                                      theContext->depthFunction(),
                                                                       true,
                                                                       theFunctionArg,
                                                                       theFunctionArg,
@@ -1428,12 +1428,12 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
         QDemonRef<QDemonRenderTexture2D> theCurrentDepthStencilTexture;
         QDemonRef<QDemonRenderFrameBuffer> theCurrentRenderTarget(inTarget);
         QDemonRef<QDemonEffectShader> theCurrentShader;
-        QRect theOriginalViewport(theContext->getViewport());
+        QRect theOriginalViewport(theContext->viewport());
         bool wasScissorEnabled = theContext->isScissorTestEnabled();
         bool wasBlendingEnabled = theContext->isBlendingEnabled();
         // save current blending setup
-        QDemonRenderBlendFunctionArgument theBlendFunc = theContext->getBlendFunction();
-        QDemonRenderBlendEquationArgument theBlendEqu = theContext->getBlendEquation();
+        QDemonRenderBlendFunctionArgument theBlendFunc = theContext->blendFunction();
+        QDemonRenderBlendEquationArgument theBlendEqu = theContext->blendEquation();
         bool intermediateBlendingEnabled = false;
         QDemonTextureDetails theDetails(inSourceTexture->textureDetails());
         quint32 theFinalWidth = (quint32)(theDetails.width);
@@ -1444,10 +1444,10 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
             // semblance of the approprate
             // setting.
             QDemonRenderContextScopedProperty<QDemonRef<QDemonRenderFrameBuffer>> __framebuffer(*theContext,
-                                                                                                &QDemonRenderContext::getRenderTarget,
+                                                                                                &QDemonRenderContext::renderTarget,
                                                                                                 &QDemonRenderContext::setRenderTarget);
             QDemonRenderContextScopedProperty<QRect> __viewport(*theContext,
-                                                                &QDemonRenderContext::getViewport,
+                                                                &QDemonRenderContext::viewport,
                                                                 &QDemonRenderContext::setViewport);
             QDemonRenderContextScopedProperty<bool> __scissorEnabled(*theContext,
                                                                      &QDemonRenderContext::isScissorTestEnabled,
@@ -1456,7 +1456,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
                                                                   &QDemonRenderContext::isStencilTestEnabled,
                                                                   &QDemonRenderContext::setStencilTestEnabled);
             QDemonRenderContextScopedProperty<QDemonRenderBoolOp> __depthFunction(*theContext,
-                                                                                        &QDemonRenderContext::getDepthFunction,
+                                                                                        &QDemonRenderContext::depthFunction,
                                                                                         &QDemonRenderContext::setDepthFunction);
             QDemonOption<QDemonDepthStencil> theCurrentDepthStencil;
 
@@ -1632,7 +1632,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
         auto theContext(m_context->getRenderContext());
         auto theManager(m_context->getResourceManager());
         QDemonRenderContextScopedProperty<QDemonRef<QDemonRenderFrameBuffer>> __framebuffer(*theContext,
-                                                                                            &QDemonRenderContext::getRenderTarget,
+                                                                                            &QDemonRenderContext::renderTarget,
                                                                                             &QDemonRenderContext::setRenderTarget);
         QDemonTextureDetails theDetails(inRenderArgument.m_colorBuffer->textureDetails());
         quint32 theFinalWidth = QDemonTextRendererInterface::nextMultipleOf4((quint32)(theDetails.width));
@@ -1647,7 +1647,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
         theBuffer->attach(QDemonRenderFrameBufferAttachment::Color0, theTargetTexture);
         theContext->setRenderTarget(theBuffer);
         QDemonRenderContextScopedProperty<QRect> __viewport(*theContext,
-                                                            &QDemonRenderContext::getViewport,
+                                                            &QDemonRenderContext::viewport,
                                                             &QDemonRenderContext::setViewport,
                                                             QRect(0, 0, theFinalWidth, theFinalHeight));
 
@@ -1660,7 +1660,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
                        theClass,
                        inRenderArgument.m_colorBuffer,
                        theMVP,
-                       m_context->getRenderContext()->getRenderTarget(),
+                       m_context->getRenderContext()->renderTarget(),
                        false,
                        inRenderArgument.m_depthTexture,
                        inRenderArgument.m_depthStencilBuffer,
@@ -1684,7 +1684,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
                        theClass,
                        inRenderArgument.m_colorBuffer,
                        inMVP,
-                       m_context->getRenderContext()->getRenderTarget(),
+                       m_context->getRenderContext()->renderTarget(),
                        inEnableBlendWhenRenderToTarget,
                        inRenderArgument.m_depthTexture,
                        inRenderArgument.m_depthStencilBuffer,
@@ -1785,7 +1785,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
         m_defaultStencilState = new QDemonRenderDepthStencilState(theContext,
                                                                       theContext->isDepthTestEnabled(),
                                                                     theContext->isDepthWriteEnabled(),
-                                                                    theContext->getDepthFunction(),
+                                                                    theContext->depthFunction(),
                                                                     theContext->isStencilTestEnabled(),
                                                                     stencilDefaultFunc,
                                                                     stencilDefaultFunc,

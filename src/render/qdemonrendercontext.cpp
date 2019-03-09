@@ -67,7 +67,7 @@ QDemonRenderContext::QDemonRenderContext(const QDemonRef<QDemonRenderBackend> &i
     m_backend->getScissorRect(&m_hardwarePropertyContext.m_scissorRect);
     m_backend->getViewportRect(&m_hardwarePropertyContext.m_viewport);
 
-    doSetClearColor(m_hardwarePropertyContext.m_clearColor);
+    m_backend->setClearColor(&m_hardwarePropertyContext.m_clearColor);
 }
 
 QDemonRenderContext::~QDemonRenderContext()
@@ -80,15 +80,11 @@ QDemonRenderContext::~QDemonRenderContext()
     m_rasterizerStateToImpMap.clear();
     Q_ASSERT(m_pathFontSpecToImpMap.size() == 0);
     m_pathFontSpecToImpMap.clear();
-    Q_ASSERT(m_shaderToImpMap.size() == 0);
-    m_shaderToImpMap.clear();
-    Q_ASSERT(m_frameBufferToImpMap.size() == 0);
-    m_frameBufferToImpMap.clear();
 
     m_backend = nullptr;
 }
 
-void QDemonRenderContext::getMaxTextureSize(qint32 &oWidth, qint32 &oHeight)
+void QDemonRenderContext::maxTextureSize(qint32 &oWidth, qint32 &oHeight)
 {
     qint32 theMaxTextureSize = 0;
     m_backend->getRenderBackendValue(QDemonRenderBackend::QDemonRenderBackendQuery::MaxTextureSize, &theMaxTextureSize);
@@ -150,7 +146,7 @@ void QDemonRenderContext::bufferDestroyed(QDemonRenderConstantBuffer *buffer)
     m_constantToImpMap.remove(buffer->name());
 }
 
-qint32 QDemonRenderContext::getNextConstantBufferUnit()
+qint32 QDemonRenderContext::nextConstantBufferUnit()
 {
     qint32 retval = m_nextConstantBufferUnit;
     ++m_nextConstantBufferUnit;
@@ -233,7 +229,7 @@ QDemonRef<QDemonRenderSync> QDemonRenderContext::createSync()
 
 // IF this texture isn't on a texture unit, put it on one.
 // If it is on a texture unit, mark it as the most recently used texture.
-qint32 QDemonRenderContext::getNextTextureUnit()
+qint32 QDemonRenderContext::nextTextureUnit()
 {
     qint32 retval = m_nextTextureUnit;
     ++m_nextTextureUnit;
@@ -271,9 +267,8 @@ QDemonRef<QDemonRenderInputAssembler> QDemonRenderContext::createInputAssembler(
 
 void QDemonRenderContext::setInputAssembler(QDemonRef<QDemonRenderInputAssembler> inputAssembler)
 {
-    if (m_hardwarePropertyContext.m_inputAssembler != inputAssembler) {
+    if (m_hardwarePropertyContext.m_inputAssembler != inputAssembler)
         doSetInputAssembler(inputAssembler);
-    }
 }
 
 QDemonRenderVertFragCompilationResult QDemonRenderContext::compileSource(const char *shaderName,
@@ -296,9 +291,6 @@ QDemonRenderVertFragCompilationResult QDemonRenderContext::compileSource(const c
                                                                                      separateProgram,
                                                                                      type,
                                                                                      binaryProgram);
-
-    if (result.m_shader != nullptr)
-        m_shaderToImpMap.insert(result.m_shader->handle(), result.m_shader.data());
 
     return result;
 }
@@ -323,9 +315,6 @@ QDemonRenderVertFragCompilationResult QDemonRenderContext::compileBinary(const c
                                                                                      type,
                                                                                      true);
 
-    if (result.m_shader != nullptr)
-        m_shaderToImpMap.insert(result.m_shader->handle(), result.m_shader.data());
-
     return result;
 #else
     Q_ASSERT(false);
@@ -338,23 +327,12 @@ QDemonRenderVertFragCompilationResult QDemonRenderContext::compileComputeSource(
 {
     QDemonRenderVertFragCompilationResult result = QDemonRenderShaderProgram::createCompute(this, shaderName, computeShaderSource);
 
-    if (result.m_shader != nullptr)
-        m_shaderToImpMap.insert(result.m_shader->handle(), result.m_shader.data());
-
     return result;
 }
 
-QDemonRef<QDemonRenderShaderProgram> QDemonRenderContext::getShaderProgram(const void *implementationHandle)
-{
-    const QHash<const void *, QDemonRenderShaderProgram *>::iterator entry = m_shaderToImpMap.find(implementationHandle);
-    if (entry != m_shaderToImpMap.end())
-        return QDemonRef<QDemonRenderShaderProgram>(entry.value());
-    return nullptr;
-}
 
 void QDemonRenderContext::shaderDestroyed(QDemonRenderShaderProgram *shader)
 {
-    m_shaderToImpMap.remove(shader->handle());
     if (m_hardwarePropertyContext.m_activeShader.data() == shader)
         setActiveShader(nullptr);
 }
@@ -468,12 +446,11 @@ void QDemonRenderContext::setColorWritesEnabled(bool inEnabled)
     }
 }
 
+
 void QDemonRenderContext::setDepthWriteEnabled(bool inEnabled)
 {
-    if (inEnabled != m_hardwarePropertyContext.m_depthWriteEnabled) {
-        m_hardwarePropertyContext.m_depthWriteEnabled = inEnabled;
-        m_backend->setRenderState(inEnabled, QDemonRenderState::DepthWrite);
-    }
+    if (inEnabled != m_hardwarePropertyContext.m_depthWriteEnabled)
+        doSetDepthWriteEnabled(inEnabled);
 }
 
 void QDemonRenderContext::setDepthTestEnabled(bool inEnabled)
@@ -524,7 +501,7 @@ void QDemonRenderContext::setActiveShader(QDemonRef<QDemonRenderShaderProgram> i
         doSetActiveShader(inShader);
 }
 
-QDemonRef<QDemonRenderShaderProgram> QDemonRenderContext::getActiveShader() const
+QDemonRef<QDemonRenderShaderProgram> QDemonRenderContext::activeShader() const
 {
     return m_hardwarePropertyContext.m_activeShader;
 }
@@ -535,7 +512,7 @@ void QDemonRenderContext::setActiveProgramPipeline(QDemonRef<QDemonRenderProgram
         doSetActiveProgramPipeline(inProgramPipeline);
 }
 
-QDemonRef<QDemonRenderProgramPipeline> QDemonRenderContext::getActiveProgramPipeline() const
+QDemonRef<QDemonRenderProgramPipeline> QDemonRenderContext::activeProgramPipeline() const
 {
     return m_hardwarePropertyContext.m_activeProgramPipeline;
 }
@@ -580,16 +557,14 @@ void QDemonRenderContext::readPixels(QRect inRect, QDemonRenderReadPixelFormat i
 
 void QDemonRenderContext::setRenderTarget(QDemonRef<QDemonRenderFrameBuffer> inBuffer)
 {
-    if (inBuffer != m_hardwarePropertyContext.m_frameBuffer) {
+    if (inBuffer != m_hardwarePropertyContext.m_frameBuffer)
         doSetRenderTarget(inBuffer);
-    }
 }
 
 void QDemonRenderContext::setReadTarget(QDemonRef<QDemonRenderFrameBuffer> inBuffer)
 {
-    if (inBuffer != m_hardwarePropertyContext.m_frameBuffer) {
+    if (inBuffer != m_hardwarePropertyContext.m_frameBuffer)
         doSetReadTarget(inBuffer);
-    }
 }
 
 void QDemonRenderContext::resetBlendState()
@@ -817,7 +792,6 @@ void QDemonRenderContext::doSetActiveProgramPipeline(const QDemonRef<QDemonRende
 
     m_hardwarePropertyContext.m_activeProgramPipeline = inProgramPipeline;
 }
-
 QDemonRef<QDemonRenderContext> QDemonRenderContext::createNull()
 {
     QDemonRef<QDemonRenderContext> retval;

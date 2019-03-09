@@ -42,7 +42,7 @@ QDemonRenderDepthStencilState::QDemonRenderDepthStencilState(const QDemonRef<QDe
                                                              QDemonRenderStencilFunction &stencilFuncBack,
                                                              QDemonRenderStencilOperation &depthStencilOpFront,
                                                              QDemonRenderStencilOperation &depthStencilOpBack)
-    : m_backend(context->getBackend())
+    : m_backend(context->backend())
     , m_depthEnabled(enableDepth)
     , m_depthMask(depthMask)
     , m_stencilEnabled(enableStencil)
