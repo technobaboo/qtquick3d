@@ -42,6 +42,7 @@ class QDemonRenderBackend;
 ///< Base class
 class QDemonRenderQueryBase
 {
+    Q_DISABLE_COPY(QDemonRenderQueryBase)
 public:
     QAtomicInt ref;
 

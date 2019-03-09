@@ -42,6 +42,7 @@ class QDemonRenderBackend;
 ///< Base class
 class QDemonRenderDataBuffer
 {
+    Q_DISABLE_COPY(QDemonRenderDataBuffer)
 public:
     QAtomicInt ref;
 
@@ -163,7 +164,6 @@ public:
     QDemonRenderBackend::QDemonRenderBackendBufferObject handle() const { return m_handle; }
 
 private:
-    Q_DISABLE_COPY(QDemonRenderDataBuffer)
     void releaseMemory();
 };
 
