@@ -182,15 +182,6 @@ public:
         return m_bufferHandle;
     }
 
-    /**
-     * @brief static creator function
-     *
-     * @param[in] context		Pointer to context
-     *
-     * @return a pointer to framebuffer object.
-     */
-    static QDemonRef<QDemonRenderFrameBuffer> create(const QDemonRef<QDemonRenderContext> &context);
-
 private:
     /**
      * @brief releaes an attached object

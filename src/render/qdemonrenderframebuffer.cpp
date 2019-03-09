@@ -251,11 +251,6 @@ bool QDemonRenderFrameBuffer::isComplete()
     return m_backend->renderTargetIsValid(m_bufferHandle);
 }
 
-QDemonRef<QDemonRenderFrameBuffer> QDemonRenderFrameBuffer::create(const QDemonRef<QDemonRenderContext> &context)
-{
-    return QDemonRef<QDemonRenderFrameBuffer>(new QDemonRenderFrameBuffer(context));
-}
-
 QDemonRenderTextureOrRenderBuffer::QDemonRenderTextureOrRenderBuffer(QDemonRef<QDemonRenderTexture2D> texture)
     : m_texture2D(texture)
 {
