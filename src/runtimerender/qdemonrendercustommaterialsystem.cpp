@@ -49,7 +49,6 @@
 #include <QtDemonRuntimeRender/qdemonrenderableimage.h>
 #include <QtDemonRuntimeRender/qdemonvertexpipelineimpl.h>
 #include <QtDemonRuntimeRender/qdemonrendererimpllayerrenderdata.h>
-#include <QtDemonRuntimeRender/qdemonrendercustommaterialshadergenerator.h>
 #include <QtDemonRuntimeRender/qdemonrendermodel.h>
 
 QT_BEGIN_NAMESPACE
@@ -988,7 +987,7 @@ void QDemonMaterialSystem::setCustomMaterialCommands(QString inName, QDemonConst
 
 QDemonRef<QDemonRenderShaderProgram> QDemonMaterialSystem::getShader(QDemonCustomMaterialRenderContext &inRenderContext, const QDemonRenderCustomMaterial &inMaterial, const dynamic::QDemonBindShader &inCommand, const TShaderFeatureSet &inFeatureSet, const dynamic::QDemonDynamicShaderProgramFlags &inFlags)
 {
-    QDemonRef<ICustomMaterialShaderGenerator> theMaterialGenerator(context->getCustomMaterialShaderGenerator());
+    QDemonRef<QDemonMaterialShaderGeneratorInterface> theMaterialGenerator(context->getCustomMaterialShaderGenerator());
 
     // generate key
     //        QString theKey = getShaderCacheKey(theShaderKeyBuffer, inCommand.m_shaderPath,
@@ -1504,7 +1503,7 @@ void QDemonMaterialSystem::renderPass(QDemonCustomMaterialRenderContext &inRende
         theContext->clear(QDemonRenderClearValues::Color);
     }
 
-    QDemonRef<ICustomMaterialShaderGenerator> theMaterialGenerator(context->getCustomMaterialShaderGenerator());
+    QDemonRef<QDemonMaterialShaderGeneratorInterface> theMaterialGenerator(context->getCustomMaterialShaderGenerator());
 
     theMaterialGenerator->setMaterialProperties(inShader->shader,
                                                 inRenderContext.material,

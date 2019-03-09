@@ -685,6 +685,11 @@ struct QDemonShaderDefaultMaterialKey
     }
 };
 
+inline uint qHash(const QDemonShaderDefaultMaterialKey &key)
+{
+    return key.hash();
+}
+
 QT_END_NAMESPACE
 
 #endif

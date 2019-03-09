@@ -42,7 +42,6 @@
 #include <QtDemonRuntimeRender/qdemonrenderpixelgraphicsrenderer.h>
 #include <QtDemonRuntimeRender/qdemonrendertexttexturecache.h>
 #include <QtDemonRuntimeRender/qdemonrenderrenderlist.h>
-#include <QtDemonRuntimeRender/qdemonrendercustommaterialshadergenerator.h>
 #include <QtDemonRuntimeRender/qtdemonruntimerenderglobal.h>
 #include <QtDemonRuntimeRender/qdemonrenderinputstreamfactory.h>
 
@@ -122,7 +121,7 @@ public:
     virtual QDemonRef<QDemonPathManagerInterface> getPathManager() = 0;
     virtual QDemonRef<QDemonShaderProgramGeneratorInterface> getShaderProgramGenerator() = 0;
     virtual QDemonRef<QDemonDefaultMaterialShaderGeneratorInterface> getDefaultMaterialShaderGenerator() = 0;
-    virtual QDemonRef<ICustomMaterialShaderGenerator> getCustomMaterialShaderGenerator() = 0;
+    virtual QDemonRef<QDemonMaterialShaderGeneratorInterface> getCustomMaterialShaderGenerator() = 0;
     // The memory used for the per frame allocator is released as the first step in BeginFrame.
     // This is useful for short lived objects and datastructures.
     virtual QDemonPerFrameAllocator &getPerFrameAllocator() = 0;

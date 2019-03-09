@@ -27,7 +27,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qdemonrendercustommaterialshadergenerator.h"
+#include "qdemonrendermaterialshadergenerator.h"
 #include <QtDemonRuntimeRender/qdemonrenderdefaultmaterialshadergenerator.h>
 #include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
 #include <QtDemonRuntimeRender/qdemonrendershadercodegeneratorv2.h>
@@ -45,11 +45,6 @@
 #include <QtDemon/qdemonutils.h>
 
 QT_BEGIN_NAMESPACE
-
-uint qHash(const QDemonShaderDefaultMaterialKey &key)
-{
-    return key.hash();
-}
 
 namespace {
 struct QDemonShaderLightProperties
@@ -250,7 +245,7 @@ struct QDemonShaderGeneratorGeneratedShader
     }
 };
 
-struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
+struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
 {
     typedef QHash<QDemonRef<QDemonRenderShaderProgram>, QDemonRef<QDemonShaderGeneratorGeneratedShader>> TProgramToShaderMap;
     typedef QPair<qint32, QDemonRef<QDemonShaderLightProperties>> TCustomMaterialLightEntry;
@@ -1149,9 +1144,9 @@ struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
 };
 }
 
-QDemonRef<ICustomMaterialShaderGenerator> ICustomMaterialShaderGenerator::createCustomMaterialShaderGenerator(QDemonRenderContextInterface *inRc)
+QDemonRef<QDemonMaterialShaderGeneratorInterface> QDemonMaterialShaderGeneratorInterface::createCustomMaterialShaderGenerator(QDemonRenderContextInterface *inRc)
 {
-    return QDemonRef<ICustomMaterialShaderGenerator>(new QDemonShaderGenerator(inRc));
+    return QDemonRef<QDemonMaterialShaderGeneratorInterface>(new QDemonShaderGenerator(inRc));
 }
 
 QT_END_NAMESPACE

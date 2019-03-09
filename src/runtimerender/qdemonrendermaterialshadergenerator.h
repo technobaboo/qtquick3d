@@ -81,6 +81,7 @@ struct QDemonRenderableImage;
 class QDemonRenderShaderProgram;
 struct QDemonGraphObject;
 struct QDemonShaderDefaultMaterialKey;
+class QDemonRenderContextInterface;
 
 struct QDemonLayerGlobalRenderProperties
 {
@@ -141,6 +142,8 @@ public:
                                        QDemonRenderableImage *inFirstImage,
                                        float inOpacity,
                                        const QDemonLayerGlobalRenderProperties &inRenderProperties) = 0;
+
+    static QDemonRef<QDemonMaterialShaderGeneratorInterface> createCustomMaterialShaderGenerator(QDemonRenderContextInterface *inRenderContext);
 };
 QT_END_NAMESPACE
 

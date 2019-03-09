@@ -53,7 +53,6 @@
 #include <QtDemonRuntimeRender/qdemonrenderpathmanager.h>
 #include <QtDemonRuntimeRender/qdemonrendershadercodegeneratorv2.h>
 #include <QtDemonRuntimeRender/qdemonrenderdefaultmaterialshadergenerator.h>
-#include <QtDemonRuntimeRender/qdemonrendercustommaterialshadergenerator.h>
 #include <QtDemonRuntimeRender/qdemonperframeallocator.h>
 #include <QtDemonRuntimeRender/qdemonrendererimpl.h>
 
@@ -152,7 +151,7 @@ struct QDemonRenderContextData : public QDemonRenderContextInterface
     QDemonRef<QDemonPathManagerInterface> m_pathManager;
     QDemonRef<QDemonShaderProgramGeneratorInterface> m_shaderProgramGenerator;
     QDemonRef<QDemonDefaultMaterialShaderGeneratorInterface> m_defaultMaterialShaderGenerator;
-    QDemonRef<ICustomMaterialShaderGenerator> m_customMaterialShaderGenerator;
+    QDemonRef<QDemonMaterialShaderGeneratorInterface> m_customMaterialShaderGenerator;
     QDemonPerFrameAllocator m_perFrameAllocator;
     QDemonRef<QDemonRenderListInterface> m_renderList;
     quint32 m_frameCount;
@@ -215,7 +214,7 @@ struct QDemonRenderContextData : public QDemonRenderContextInterface
         QDemonRef<QDemonTextRendererInterface> theTextCore = inCore->getTextRendererCore();
         m_shaderProgramGenerator = QDemonShaderProgramGeneratorInterface::createProgramGenerator(this);
         m_defaultMaterialShaderGenerator = QDemonDefaultMaterialShaderGeneratorInterface::createDefaultMaterialShaderGenerator(this);
-        m_customMaterialShaderGenerator = ICustomMaterialShaderGenerator::createCustomMaterialShaderGenerator(this);
+        m_customMaterialShaderGenerator = QDemonMaterialShaderGeneratorInterface::createCustomMaterialShaderGenerator(this);
         if (theTextCore) {
             m_textRenderer = theTextCore->getTextRenderer(ctx);
             m_textTextureCache = QDemonTextTextureCacheInterface::createTextureCache(m_textRenderer, m_renderContext);
@@ -298,7 +297,7 @@ struct QDemonRenderContextData : public QDemonRenderContextInterface
     {
         return m_defaultMaterialShaderGenerator;
     }
-    QDemonRef<ICustomMaterialShaderGenerator> getCustomMaterialShaderGenerator() override
+    QDemonRef<QDemonMaterialShaderGeneratorInterface> getCustomMaterialShaderGenerator() override
     {
         return m_customMaterialShaderGenerator;
     }

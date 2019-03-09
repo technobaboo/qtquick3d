@@ -18,7 +18,6 @@ HEADERS += \
     qdemonrenderclippingfrustum.h \
     qdemonrendercontextcore.h \
     qdemonrendercustommaterialrendercontext.h \
-    qdemonrendercustommaterialshadergenerator.h \
     qdemonrendercustommaterialsystem.h \
     qdemonrenderdefaultmaterialshadergenerator.h \
     qdemonrenderdynamicobjectsystem.h \
