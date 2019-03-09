@@ -241,7 +241,6 @@ struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
     QDemonRenderableImage *m_firstImage;
     bool m_hasTransparency;
 
-    QByteArray m_imageStem;
     QByteArray m_imageSampler;
     QByteArray m_imageFragCoords;
     QByteArray m_imageRotScale;
@@ -312,15 +311,15 @@ struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
     {
         // convert to QDemonRenderTextureTypeValue
         QDemonRenderTextureTypeValue texType = QDemonRenderTextureTypeValue(imageIdx);
-        m_imageStem = toString(texType);
-        m_imageStem.append("_");
-        m_imageSampler = m_imageStem;
+        QByteArray imageStem = toString(texType);
+        imageStem.append("_");
+        m_imageSampler = imageStem;
         m_imageSampler.append("sampler");
-        m_imageFragCoords = m_imageStem;
+        m_imageFragCoords = imageStem;
         m_imageFragCoords.append("uv_coords");
-        m_imageRotScale = m_imageStem;
+        m_imageRotScale = imageStem;
         m_imageRotScale.append("rot_scale");
-        m_imageOffset = m_imageStem;
+        m_imageOffset = imageStem;
         m_imageOffset.append("offset");
 
         ImageVariableNames retVal;

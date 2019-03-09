@@ -214,7 +214,6 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
     bool m_hasTransparency;
     bool m_lightsAsSeparateUniforms;
 
-    QByteArray m_imageStem;
     QByteArray m_imageSampler;
     QByteArray m_imageFragCoords;
     QByteArray m_imageOffsets;
@@ -224,7 +223,6 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
 
     QByteArray m_texCoordTemp;
 
-    QByteArray m_lightStem;
     QByteArray m_lightColor;
     QByteArray m_lightSpecularColor;
     QByteArray m_lightAttenuation;
@@ -244,8 +242,6 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
     QByteArray m_shadowMatrixStem;
     QByteArray m_shadowCoordStem;
     QByteArray m_shadowControlStem;
-
-    QByteArray m_tempStr;
 
     QByteArray m_generatedShaderString;
 
@@ -280,21 +276,21 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
 
     void setupImageVariableNames(size_t imageIdx)
     {
-        m_imageStem = "image";
+        QByteArray imageStem = "image";
         char buf[16];
         qsnprintf(buf, 16, "%d", int(imageIdx));
-        m_imageStem.append(buf);
-        m_imageStem.append("_");
+        imageStem.append(buf);
+        imageStem.append("_");
 
-        m_imageSampler = m_imageStem;
+        m_imageSampler = imageStem;
         m_imageSampler.append("sampler");
-        m_imageOffsets = m_imageStem;
+        m_imageOffsets = imageStem;
         m_imageOffsets.append("offsets");
-        m_imageRotations = m_imageStem;
+        m_imageRotations = imageStem;
         m_imageRotations.append("rotations");
-        m_imageFragCoords = m_imageStem;
+        m_imageFragCoords = imageStem;
         m_imageFragCoords.append("uv_coords");
-        m_imageSamplerSize = m_imageStem;
+        m_imageSamplerSize = imageStem;
         m_imageSamplerSize.append("size");
     }
 
@@ -470,7 +466,6 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
 
     void addTranslucencyIrradiance(QDemonShaderStageGeneratorInterface &infragmentShader,
                                    QDemonRenderableImage *image,
-                                   const QByteArray &inLightPrefix,
                                    bool areaLight)
     {
         if (image == nullptr)
@@ -606,53 +601,53 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
         if (m_lightsAsSeparateUniforms) {
             char buf[16];
             qsnprintf(buf, 16, "light_%d", int(lightIdx));
-            m_lightStem = buf;
-            m_lightColor = m_lightStem;
+            QByteArray lightStem = buf;
+            m_lightColor = lightStem;
             m_lightColor.append("_diffuse");
-            m_lightDirection = m_lightStem;
+            m_lightDirection = lightStem;
             m_lightDirection.append("_direction");
-            m_lightSpecularColor = m_lightStem;
+            m_lightSpecularColor = lightStem;
             m_lightSpecularColor.append("_specular");
             if (inLight.m_lightType == RenderLightTypes::Point) {
-                m_lightPos = m_lightStem;
+                m_lightPos = lightStem;
                 m_lightPos.append("_position");
-                m_lightAttenuation = m_lightStem;
+                m_lightAttenuation = lightStem;
                 m_lightAttenuation.append("_attenuation");
             } else if (inLight.m_lightType == RenderLightTypes::Area) {
-                m_lightPos = m_lightStem;
+                m_lightPos = lightStem;
                 m_lightPos.append("_position");
-                m_lightUp = m_lightStem;
+                m_lightUp = lightStem;
                 m_lightUp.append("_up");
-                m_lightRt = m_lightStem;
+                m_lightRt = lightStem;
                 m_lightRt.append("_right");
             }
         } else {
-            m_lightStem = "lights";
+            QByteArray lightStem = "lights";
             char buf[16];
             qsnprintf(buf, 16, "[%d].", int(lightIdx));
-            m_lightStem.append(buf);
+            lightStem.append(buf);
 
-            m_lightColor = m_lightStem;
+            m_lightColor = lightStem;
             m_lightColor.append("diffuse");
-            m_lightDirection = m_lightStem;
+            m_lightDirection = lightStem;
             m_lightDirection.append("direction");
-            m_lightSpecularColor = m_lightStem;
+            m_lightSpecularColor = lightStem;
             m_lightSpecularColor.append("specular");
             if (inLight.m_lightType == RenderLightTypes::Point) {
-                m_lightPos = m_lightStem;
+                m_lightPos = lightStem;
                 m_lightPos.append("position");
-                m_lightConstantAttenuation = m_lightStem;
+                m_lightConstantAttenuation = lightStem;
                 m_lightConstantAttenuation.append("constantAttenuation");
-                m_lightLinearAttenuation = m_lightStem;
+                m_lightLinearAttenuation = lightStem;
                 m_lightLinearAttenuation.append("linearAttenuation");
-                m_lightQuadraticAttenuation = m_lightStem;
+                m_lightQuadraticAttenuation = lightStem;
                 m_lightQuadraticAttenuation.append("quadraticAttenuation");
             } else if (inLight.m_lightType == RenderLightTypes::Area) {
-                m_lightPos = m_lightStem;
+                m_lightPos = lightStem;
                 m_lightPos.append("position");
-                m_lightUp = m_lightStem;
+                m_lightUp = lightStem;
                 m_lightUp.append("up");
-                m_lightRt = m_lightStem;
+                m_lightRt = lightStem;
                 m_lightRt.append("right");
             }
         }
@@ -1106,8 +1101,8 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
                 char buf[10];
                 sprintf(buf, "%d", lightIdx);
 
-                m_tempStr = "light";
-                m_tempStr.append(buf);
+                QByteArray tempStr = "light";
+                tempStr.append(buf);
 
                 fragmentShader << "\t//Light " << buf << "\n";
                 fragmentShader << "\tlightAttenuation = 1.0;"
@@ -1161,7 +1156,7 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
                     // location
                     // fragmentShader << "\tglobal_diffuse_light.rg += " << m_ShadowCoordStem << ";"
                     // << "\n";
-                    m_normalizedDirection = m_tempStr;
+                    m_normalizedDirection = tempStr;
                     m_normalizedDirection.append("_Frame");
 
                     addLocalVariable(fragmentShader, m_normalizedDirection, "mat3");
@@ -1185,11 +1180,11 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
                         OutputSpecularAreaLighting(fragmentShader, "varWorldPos", "view_vector", m_lightSpecularColor);
                     }
 
-                    OutputDiffuseAreaLighting(fragmentShader, "varWorldPos", m_tempStr);
+                    OutputDiffuseAreaLighting(fragmentShader, "varWorldPos", tempStr);
                     fragmentShader << "\tlightAttenuation *= shadowFac;"
                                    << "\n";
 
-                    addTranslucencyIrradiance(fragmentShader, translucencyImage, m_tempStr, true);
+                    addTranslucencyIrradiance(fragmentShader, translucencyImage, true);
 
                     fragmentShader << "\tglobal_diffuse_light.rgb += lightAttenuation * "
                                       "diffuseReflectionBSDF( world_normal, "
@@ -1205,13 +1200,13 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
                         fragmentShader.addUniform(m_lightPos, "vec4");
                     }
 
-                    m_relativeDirection = m_tempStr;
+                    m_relativeDirection = tempStr;
                     m_relativeDirection.append("_relativeDirection");
 
                     m_normalizedDirection = m_relativeDirection;
                     m_normalizedDirection.append("_normalized");
 
-                    m_relativeDistance = m_tempStr;
+                    m_relativeDistance = tempStr;
                     m_relativeDistance.append("_distance");
 
                     fragmentShader << "\tvec3 " << m_relativeDirection << " = varWorldPos - " << m_lightPos << ".xyz;"
@@ -1246,7 +1241,7 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
                                        << "\n";
                     }
 
-                    addTranslucencyIrradiance(fragmentShader, translucencyImage, m_tempStr, false);
+                    addTranslucencyIrradiance(fragmentShader, translucencyImage, false);
 
                     fragmentShader << "\tglobal_diffuse_light.rgb += lightAttenuation * "
                                       "diffuseReflectionBSDF( world_normal, "
