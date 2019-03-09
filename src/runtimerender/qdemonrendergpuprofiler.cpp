@@ -216,9 +216,9 @@ private:
         if (theGpuTimerData) {
             // create queries
             for (quint32 i = 0; i < RECORDED_FRAME_DELAY; i++) {
-                theGpuTimerData->m_timerStartQueryObjects[i] = m_renderContext->createTimerQuery();
-                theGpuTimerData->m_timerEndQueryObjects[i] = m_renderContext->createTimerQuery();
-                theGpuTimerData->m_timerSyncObjects[i] = m_renderContext->createSync();
+                theGpuTimerData->m_timerStartQueryObjects[i] = QDemonRenderTimerQuery::create(m_renderContext);
+                theGpuTimerData->m_timerEndQueryObjects[i] = QDemonRenderTimerQuery::create(m_renderContext);
+                theGpuTimerData->m_timerSyncObjects[i] = QDemonRenderSync::create(m_renderContext);
                 theGpuTimerData->m_frameID[i] = 0;
             }
             m_strToGpuTimerMap.insert(nameID, theGpuTimerData);

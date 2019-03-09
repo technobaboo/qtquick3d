@@ -447,10 +447,6 @@ public:
 
     void setMemoryBarrier(QDemonRenderBufferBarrierFlags barriers);
 
-    QDemonRef<QDemonRenderOcclusionQuery> createOcclusionQuery();
-    QDemonRef<QDemonRenderTimerQuery> createTimerQuery();
-    QDemonRef<QDemonRenderSync> createSync();
-
     qint32 nextTextureUnit();
 
     void frameBufferDestroyed(QDemonRenderFrameBuffer *fb);

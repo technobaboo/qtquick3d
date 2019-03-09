@@ -194,21 +194,6 @@ void QDemonRenderContext::setMemoryBarrier(QDemonRenderBufferBarrierFlags barrie
     m_backend->setMemoryBarrier(barriers);
 }
 
-QDemonRef<QDemonRenderOcclusionQuery> QDemonRenderContext::createOcclusionQuery()
-{
-    return QDemonRenderOcclusionQuery::create(this);
-}
-
-QDemonRef<QDemonRenderTimerQuery> QDemonRenderContext::createTimerQuery()
-{
-    return QDemonRenderTimerQuery::create(this);
-}
-
-QDemonRef<QDemonRenderSync> QDemonRenderContext::createSync()
-{
-    return QDemonRenderSync::create(this);
-}
-
 // IF this texture isn't on a texture unit, put it on one.
 // If it is on a texture unit, mark it as the most recently used texture.
 qint32 QDemonRenderContext::nextTextureUnit()

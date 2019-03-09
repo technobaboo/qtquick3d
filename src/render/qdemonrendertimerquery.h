@@ -37,7 +37,7 @@ QT_BEGIN_NAMESPACE
 // forward declaration
 class QDemonRenderContext;
 
-class QDemonRenderTimerQuery : public QDemonRenderQueryBase
+class Q_DEMONRENDER_EXPORT QDemonRenderTimerQuery : public QDemonRenderQueryBase
 {
     /**
      * @brief constructor

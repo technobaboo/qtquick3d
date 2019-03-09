@@ -40,35 +40,25 @@ class QDemonRenderContext;
 class QDemonRenderBackend;
 
 ///< Base class
-class QDemonRenderSync
+class Q_DEMONRENDER_EXPORT QDemonRenderSync
 {
 public:
     QAtomicInt ref;
 
-protected:
-    QDemonRef<QDemonRenderContext> m_context; ///< pointer to context
+private:
     QDemonRef<QDemonRenderBackend> m_backend; ///< pointer to backend
-    QDemonRenderBackend::QDemonRenderBackendSyncObject m_syncHandle; ///< opaque backend handle
+    QDemonRenderBackend::QDemonRenderBackendSyncObject m_handle; ///< opaque backend handle
 
-public:
-    /**
-     * @brief constructor
-     *
-     * @param[in] context		Pointer to context
-     * @param[in] fnd			Pointer to foundation
-     *
-     * @return No return.
-     */
     explicit QDemonRenderSync(const QDemonRef<QDemonRenderContext> &context);
-
-    virtual ~QDemonRenderSync();
+public:
+    ~QDemonRenderSync();
 
     /**
      * @brief Get sync type
      *
      * @return Return query type
      */
-    virtual QDemonRenderSyncType getSyncType() const { return QDemonRenderSyncType::GpuCommandsComplete; }
+    QDemonRenderSyncType syncType() const { return QDemonRenderSyncType::GpuCommandsComplete; }
 
     /**
      * @brief Create a sync object and place it in command stream.
@@ -78,7 +68,7 @@ public:
      *
      * @return no return.
      */
-    virtual void sync();
+    void sync();
 
     /**
      * @brief Wait for a sync to be signaled
@@ -86,14 +76,14 @@ public:
      *
      * @return no return.
      */
-    virtual void wait();
+    void wait();
 
     /**
      * @brief get the backend object handle
      *
      * @return the backend object handle.
      */
-    virtual QDemonRenderBackend::QDemonRenderBackendSyncObject getSyncHandle() const { return m_syncHandle; }
+    QDemonRenderBackend::QDemonRenderBackendSyncObject handle() const { return m_handle; }
 
     /*
      * @brief static creation function
