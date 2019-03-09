@@ -37,6 +37,7 @@
 #include <QtGui/QMatrix4x4>
 
 #include <QtDemonRuntimeRender/qdemonrendershadercache.h>
+#include <QtDemonRuntimeRender/qdemonrendershaderkeys.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -84,6 +85,8 @@ struct QDemonShaderDefaultMaterialKey;
 class QDemonRenderContextInterface;
 class QDemonShaderProgramGeneratorInterface;
 class QDemonDefaultMaterialVertexPipelineInterface;
+class QDemonShaderGeneratorGeneratedShader;
+class QDemonRenderConstantBuffer;
 
 struct QDemonLayerGlobalRenderProperties
 {
@@ -111,15 +114,25 @@ public:
     QAtomicInt ref;
 
 protected:
+    typedef QHash<QByteArray, QDemonRef<QDemonRenderConstantBuffer>> ConstanBufferMap;
+
+    bool m_hasTransparency = false;
     QDemonRenderContextInterface *m_renderContext;
     QDemonRef<QDemonShaderProgramGeneratorInterface> m_programGenerator;
 
     QDemonShaderDefaultMaterialKey *m_currentKey = nullptr;
     QDemonDefaultMaterialVertexPipelineInterface *m_currentPipeline = nullptr;
+    TShaderFeatureSet m_currentFeatureSet;
+    QVector<QDemonRenderLight *> m_lights;
+    QDemonRenderableImage *m_firstImage = nullptr;
+    QDemonShaderDefaultMaterialKeyProperties m_defaultMaterialShaderKeyProperties;
+    ConstanBufferMap m_constantBuffers; ///< store all constants buffers
+
+
 protected:
     QDemonMaterialShaderGeneratorInterface(QDemonRenderContextInterface *renderContext);
 public:
-    virtual ~QDemonMaterialShaderGeneratorInterface() {}
+    virtual ~QDemonMaterialShaderGeneratorInterface();
     struct ImageVariableNames
     {
         QByteArray m_imageSampler;

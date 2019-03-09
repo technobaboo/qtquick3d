@@ -229,37 +229,25 @@ struct QDemonShaderGeneratorGeneratedShader
 
 struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
 {
-    typedef QHash<QDemonRef<QDemonRenderShaderProgram>, QDemonRef<QDemonShaderGeneratorGeneratedShader>> TProgramToShaderMap;
     typedef QPair<qint32, QDemonRef<QDemonShaderLightProperties>> TCustomMaterialLightEntry;
     typedef QPair<qint32, QDemonRenderCachedShaderProperty<QDemonRenderTexture2D *>> TShadowMapEntry;
     typedef QPair<qint32, QDemonRenderCachedShaderProperty<QDemonRenderTextureCube *>> TShadowCubeEntry;
-    typedef QHash<QByteArray, QDemonRef<QDemonRenderConstantBuffer>> TStrConstanBufMap;
+
+    typedef QHash<QDemonRef<QDemonRenderShaderProgram>, QDemonRef<QDemonShaderGeneratorGeneratedShader>> ProgramToShaderMap;
+    ProgramToShaderMap m_programToShaderMap;
 
     const QDemonRenderCustomMaterial *m_currentMaterial;
-    TShaderFeatureSet m_currentFeatureSet;
-    QVector<QDemonRenderLight *> m_lights;
-    QDemonRenderableImage *m_firstImage;
-    bool m_hasTransparency;
 
     QByteArray m_imageSampler;
     QByteArray m_imageFragCoords;
     QByteArray m_imageRotScale;
     QByteArray m_imageOffset;
 
-    QByteArray m_generatedShaderString;
-
-    QDemonShaderDefaultMaterialKeyProperties m_defaultMaterialShaderKeyProperties;
-    TProgramToShaderMap m_programToShaderMap;
-
     QVector<TCustomMaterialLightEntry> m_lightEntries;
-
-    TStrConstanBufMap m_constantBuffers; ///< store all constants buffers
 
     QDemonShaderGenerator(QDemonRenderContextInterface *inRc)
         : QDemonMaterialShaderGeneratorInterface (inRc)
         , m_currentMaterial(nullptr)
-        , m_firstImage(nullptr)
-        , m_hasTransparency(false)
     {
     }
 
@@ -271,7 +259,6 @@ struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
     }
     QDemonShaderDefaultMaterialKey &key() { return *m_currentKey; }
     const QDemonRenderCustomMaterial &material() { return *m_currentMaterial; }
-    TShaderFeatureSet featureSet() { return m_currentFeatureSet; }
     bool hasTransparency() { return m_hasTransparency; }
 
     quint32 convertTextureTypeValue(QDemonImageMapTypes inType)
@@ -1078,11 +1065,11 @@ struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
         // This is time consuming but I feel like it doesn't happen all that often and is very
         // useful to users
         // looking at the log file.
-        m_generatedShaderString.clear();
-        m_generatedShaderString = inShaderPrefix;
-        m_generatedShaderString.append(inCustomMaterialName);
+        QByteArray generatedShaderString;
+        generatedShaderString = inShaderPrefix;
+        generatedShaderString.append(inCustomMaterialName);
         QDemonShaderDefaultMaterialKey theKey(key());
-        theKey.toString(m_generatedShaderString, m_defaultMaterialShaderKeyProperties);
+        theKey.toString(generatedShaderString, m_defaultMaterialShaderKeyProperties);
 
         generateVertexShader();
         generateFragmentShader(theKey, inCustomMaterialName);
@@ -1090,7 +1077,7 @@ struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
         vertexGenerator().endVertexGeneration();
         vertexGenerator().endFragmentGeneration();
 
-        return programGenerator()->compileGeneratedShader(m_generatedShaderString, QDemonShaderCacheProgramFlags(), featureSet());
+        return programGenerator()->compileGeneratedShader(generatedShaderString, QDemonShaderCacheProgramFlags(), m_currentFeatureSet);
     }
 
     QDemonRef<QDemonRenderShaderProgram> generateShader(const QDemonGraphObject &inMaterial,

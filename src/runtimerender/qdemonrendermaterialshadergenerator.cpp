@@ -6,3 +6,5 @@ QDemonMaterialShaderGeneratorInterface::QDemonMaterialShaderGeneratorInterface(Q
       m_programGenerator(m_renderContext->getShaderProgramGenerator())
 
 {}
+
+QDemonMaterialShaderGeneratorInterface::~QDemonMaterialShaderGeneratorInterface() {}

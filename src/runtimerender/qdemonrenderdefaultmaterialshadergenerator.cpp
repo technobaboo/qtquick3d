@@ -202,16 +202,12 @@ struct QDemonShaderGeneratorGeneratedShader
 
 struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterface
 {
-    typedef QHash<QDemonRef<QDemonRenderShaderProgram>, QDemonRef<QDemonShaderGeneratorGeneratedShader>> TProgramToShaderMap;
-    typedef QHash<QByteArray, QDemonRef<QDemonRenderConstantBuffer>> TStrConstanBufMap;
-
     const QDemonRenderDefaultMaterial *m_currentMaterial;
 
+    typedef QHash<QDemonRef<QDemonRenderShaderProgram>, QDemonRef<QDemonShaderGeneratorGeneratedShader>> ProgramToShaderMap;
+    ProgramToShaderMap m_programToShaderMap;
+
     QDemonRef<QDemonRenderShadowMap> m_shadowMapManager;
-    TShaderFeatureSet m_currentFeatureSet;
-    QVector<QDemonRenderLight *> m_lights;
-    QDemonRenderableImage *m_firstImage;
-    bool m_hasTransparency;
     bool m_lightsAsSeparateUniforms;
 
     QByteArray m_imageSampler;
@@ -220,8 +216,6 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
     QByteArray m_imageRotations;
     QByteArray m_imageTemp;
     QByteArray m_imageSamplerSize;
-
-    QByteArray m_texCoordTemp;
 
     QByteArray m_lightColor;
     QByteArray m_lightSpecularColor;
@@ -243,17 +237,9 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
     QByteArray m_shadowCoordStem;
     QByteArray m_shadowControlStem;
 
-    QByteArray m_generatedShaderString;
-
-    QDemonShaderDefaultMaterialKeyProperties m_defaultMaterialShaderKeyProperties;
-    TProgramToShaderMap m_programToShaderMap;
-
-    TStrConstanBufMap m_constantBuffers; ///< store all constants buffers
-
     QDemonShaderGenerator(QDemonRenderContextInterface *inRc)
         : QDemonDefaultMaterialShaderGeneratorInterface (inRc)
         , m_shadowMapManager(nullptr)
-        , m_firstImage(nullptr)
         , m_lightsAsSeparateUniforms(false)
     {
     }
@@ -266,7 +252,6 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
     }
     QDemonShaderDefaultMaterialKey &key() { return *m_currentKey; }
     const QDemonRenderDefaultMaterial *material() { return m_currentMaterial; }
-    TShaderFeatureSet featureSet() { return m_currentFeatureSet; }
     bool hasTransparency() { return m_hasTransparency; }
 
     void addFunction(QDemonShaderStageGeneratorInterface &generator, const QByteArray &functionName)
@@ -294,12 +279,13 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
         m_imageSamplerSize.append("size");
     }
 
-    void setupTexCoordVariableName(size_t uvSet)
+    QByteArray textureCoordVariableName(size_t uvSet)
     {
-        m_texCoordTemp = "varTexCoord";
+        QByteArray texCoordTemp = "varTexCoord";
         char buf[16];
         qsnprintf(buf, 16, "%d", int(uvSet));
-        m_texCoordTemp.append(buf);
+        texCoordTemp.append(buf);
+        return texCoordTemp;
     }
 
     ImageVariableNames getImageVariableNames(quint32 inIdx) override
@@ -323,7 +309,7 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
                 static_cast<QDemonDefaultMaterialVertexPipelineInterface &>(inVertexPipeline));
         QDemonShaderStageGeneratorInterface &fragmentShader(fragmentGenerator());
         setupImageVariableNames(idx);
-        setupTexCoordVariableName(uvSet);
+        QByteArray textureCoordName = textureCoordVariableName(uvSet);
         fragmentShader.addUniform(m_imageSampler, "sampler2D");
         vertexShader.addUniform(m_imageOffsets, "vec3");
         fragmentShader.addUniform(m_imageOffsets, "vec3");
@@ -342,7 +328,7 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
             vertexShader.generateUVCoords(uvSet);
             m_imageTemp = m_imageFragCoords;
             m_imageTemp.append("temp");
-            vertexShader << "\tvec2 " << m_imageTemp << " = getTransformedUVCoords( vec3( " << m_texCoordTemp
+            vertexShader << "\tvec2 " << m_imageTemp << " = getTransformedUVCoords( vec3( " << textureCoordName
                          << ", 1.0), uTransform, vTransform );"
                          << "\n";
             if (image.m_image.m_textureData.m_textureFlags.isInvertUVCoords())
@@ -891,14 +877,14 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
         bool enableShadowMaps = false;
         bool enableBumpNormal = normalImage || bumpImage;
 
-        for (qint32 idx = 0; idx < featureSet().size(); ++idx) {
-            const auto &name = featureSet().at(idx).name;
+        for (qint32 idx = 0; idx < m_currentFeatureSet.size(); ++idx) {
+            const auto &name = m_currentFeatureSet.at(idx).name;
             if (name == QStringLiteral("QDEMON_ENABLE_SSAO"))
-                enableSSAO = featureSet()[idx].enabled;
+                enableSSAO = m_currentFeatureSet[idx].enabled;
             else if (name == QStringLiteral("QDEMON_ENABLE_SSDO"))
-                enableSSDO = featureSet()[idx].enabled;
+                enableSSDO = m_currentFeatureSet[idx].enabled;
             else if (name == QStringLiteral("QDEMON_ENABLE_SSM"))
-                enableShadowMaps = featureSet()[idx].enabled;
+                enableShadowMaps = m_currentFeatureSet[idx].enabled;
         }
 
         bool includeSSAOSSDOVars = enableSSAO || enableSSDO || enableShadowMaps;
@@ -1396,11 +1382,11 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
         // useful to users
         // looking at the log file.
 
-        m_generatedShaderString.clear();
-        m_generatedShaderString = inShaderPrefix;
+        QByteArray generatedShaderString;
+        generatedShaderString = inShaderPrefix;
 
         QDemonShaderDefaultMaterialKey theKey(key());
-        theKey.toString(m_generatedShaderString, m_defaultMaterialShaderKeyProperties);
+        theKey.toString(generatedShaderString, m_defaultMaterialShaderKeyProperties);
 
         m_lightsAsSeparateUniforms = !m_renderContext->getRenderContext()->supportsConstantBuffer();
 
@@ -1410,7 +1396,7 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
         vertexGenerator().endVertexGeneration();
         vertexGenerator().endFragmentGeneration();
 
-        return programGenerator()->compileGeneratedShader(m_generatedShaderString, QDemonShaderCacheProgramFlags(), featureSet());
+        return programGenerator()->compileGeneratedShader(generatedShaderString, QDemonShaderCacheProgramFlags(), m_currentFeatureSet);
     }
 
     QDemonRef<QDemonRenderShaderProgram> generateShader(const QDemonGraphObject &inMaterial,
