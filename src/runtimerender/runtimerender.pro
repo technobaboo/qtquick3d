@@ -88,6 +88,7 @@ SOURCES += \
 #    qdemonrendergraphobjectserializer.cpp \
     qdemonrenderimagescaler.cpp \
     qdemonrenderinputstreamfactory.cpp \
+    qdemonrendermaterialshadergenerator.cpp \
     qdemonrenderpathmanager.cpp \
     qdemonrenderpixelgraphicsrenderer.cpp \
 #    qdemonrenderplugin.cpp \

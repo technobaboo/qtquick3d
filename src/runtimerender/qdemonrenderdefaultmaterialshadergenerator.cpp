@@ -225,13 +225,9 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
     typedef QHash<QDemonRef<QDemonRenderShaderProgram>, QDemonRef<QDemonShaderGeneratorGeneratedShader>> TProgramToShaderMap;
     typedef QHash<QByteArray, QDemonRef<QDemonRenderConstantBuffer>> TStrConstanBufMap;
 
-    QDemonRenderContextInterface *m_renderContext;
-    QDemonRef<QDemonShaderProgramGeneratorInterface> m_programGenerator;
-
     const QDemonRenderDefaultMaterial *m_currentMaterial;
-    QDemonShaderDefaultMaterialKey *m_currentKey;
+
     QDemonRef<QDemonRenderShadowMap> m_shadowMapManager;
-    QDemonDefaultMaterialVertexPipelineInterface *m_currentPipeline = nullptr;
     TShaderFeatureSet m_currentFeatureSet;
     QVector<QDemonRenderLight *> m_lights;
     QDemonRenderableImage *m_firstImage;
@@ -240,9 +236,9 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
 
     QByteArray m_imageStem;
     QByteArray m_imageSampler;
+    QByteArray m_imageFragCoords;
     QByteArray m_imageOffsets;
     QByteArray m_imageRotations;
-    QByteArray m_imageFragCoords;
     QByteArray m_imageTemp;
     QByteArray m_imageSamplerSize;
 
@@ -279,12 +275,8 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
     TStrConstanBufMap m_constantBuffers; ///< store all constants buffers
 
     QDemonShaderGenerator(QDemonRenderContextInterface *inRc)
-        : m_renderContext(inRc)
-        , m_programGenerator(m_renderContext->getShaderProgramGenerator())
-        , m_currentMaterial(nullptr)
-        , m_currentKey(nullptr)
+        : QDemonDefaultMaterialShaderGeneratorInterface (inRc)
         , m_shadowMapManager(nullptr)
-        , m_currentPipeline(nullptr)
         , m_firstImage(nullptr)
         , m_lightsAsSeparateUniforms(false)
     {

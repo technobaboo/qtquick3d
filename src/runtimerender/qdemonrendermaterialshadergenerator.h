@@ -82,6 +82,8 @@ class QDemonRenderShaderProgram;
 struct QDemonGraphObject;
 struct QDemonShaderDefaultMaterialKey;
 class QDemonRenderContextInterface;
+class QDemonShaderProgramGeneratorInterface;
+class QDemonDefaultMaterialVertexPipelineInterface;
 
 struct QDemonLayerGlobalRenderProperties
 {
@@ -107,6 +109,16 @@ class QDemonMaterialShaderGeneratorInterface
 {
 public:
     QAtomicInt ref;
+
+protected:
+    QDemonRenderContextInterface *m_renderContext;
+    QDemonRef<QDemonShaderProgramGeneratorInterface> m_programGenerator;
+
+    QDemonShaderDefaultMaterialKey *m_currentKey = nullptr;
+    QDemonDefaultMaterialVertexPipelineInterface *m_currentPipeline = nullptr;
+protected:
+    QDemonMaterialShaderGeneratorInterface(QDemonRenderContextInterface *renderContext);
+public:
     virtual ~QDemonMaterialShaderGeneratorInterface() {}
     struct ImageVariableNames
     {

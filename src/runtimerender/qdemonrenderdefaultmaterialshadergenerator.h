@@ -86,6 +86,10 @@ public:
 class Q_DEMONRUNTIMERENDER_EXPORT QDemonDefaultMaterialShaderGeneratorInterface : public QDemonMaterialShaderGeneratorInterface
 {
 public:
+    QDemonDefaultMaterialShaderGeneratorInterface(QDemonRenderContextInterface *renderContext)
+        : QDemonMaterialShaderGeneratorInterface(renderContext)
+    {}
+
     virtual ~QDemonDefaultMaterialShaderGeneratorInterface() override {}
     virtual void addDisplacementImageUniforms(QDemonShaderStageGeneratorInterface &inGenerator,
                                               quint32 displacementImageIdx,
