@@ -1,6 +1,6 @@
 #include "qdemonrendershaderconstant.h"
 #include <QtDemonRender/QDemonRenderShaderProgram>
-#include <QtDemonRender/QDemonRenderContext>
+#include <QtDemonRender/qdemonrendercontext.h>
 
 QT_BEGIN_NAMESPACE
 

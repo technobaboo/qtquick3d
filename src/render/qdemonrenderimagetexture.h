@@ -43,6 +43,7 @@ class QDemonRenderTexture2D;
 
 class Q_DEMONRENDER_EXPORT QDemonRenderImage2D
 {
+    Q_DISABLE_COPY(QDemonRenderImage2D)
 public:
     QAtomicInt ref;
 

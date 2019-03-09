@@ -53,8 +53,9 @@ struct QDemonTextureDetails
     QDemonTextureDetails() = default;
 };
 
-class QDemonRenderTextureBase
+class Q_DEMONRENDER_EXPORT QDemonRenderTextureBase
 {
+    Q_DISABLE_COPY(QDemonRenderTextureBase)
 public:
     QAtomicInt ref;
 

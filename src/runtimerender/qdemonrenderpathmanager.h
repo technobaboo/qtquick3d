@@ -30,7 +30,7 @@
 #ifndef QDEMON_RENDER_PATH_MANAGER_H
 #define QDEMON_RENDER_PATH_MANAGER_H
 
-#include <QtDemonRender/QDemonRenderContext>
+#include <QtDemonRender/qdemonrendercontext.h>
 #include <QtDemonRuntimeRender/qdemonrendershadowmap.h>
 #include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
 #include <QtDemon/QDemonDataRef>

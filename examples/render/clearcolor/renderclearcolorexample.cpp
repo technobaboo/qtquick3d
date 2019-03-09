@@ -29,7 +29,7 @@
 ****************************************************************************/
 #include "../shared/renderexample.h"
 #include <QtGui/QVector4D>
-#include <QtDemonRender/QDemonRenderContext>
+#include <QtDemonRender/qdemonrendercontext.h>
 #include <QtGui/QGuiApplication>
 
 namespace {

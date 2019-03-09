@@ -5,13 +5,11 @@ DemonWindow {
     id: window
     width: 1280
     height: 720
-    color: "blue"
+    color: "green"
     visible: true
 
     DemonLayer {
         id: layer1
-        clearColor: "green"
-        backgroundMode: DemonLayer.Color
         width: 100
         height: 100
         activeCamera: camera

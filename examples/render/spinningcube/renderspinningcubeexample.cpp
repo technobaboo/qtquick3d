@@ -31,7 +31,7 @@
 #include "../shared/renderexampletools.h"
 #include <QtGui/QVector4D>
 #include <QtGui/QMatrix4x4>
-#include <QtDemonRender/QDemonRenderContext>
+#include <QtDemonRender/qdemonrendercontext.h>
 #include <QtDemonRender/QDemonRenderShaderProgram>
 #include <QtDemonRender/qdemonrenderindexbuffer.h>
 #include <QtDemonRender/qdemonrendervertexbuffer.h>

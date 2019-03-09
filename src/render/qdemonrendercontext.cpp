@@ -152,7 +152,7 @@ QDemonRef<QDemonRenderVertexBuffer> QDemonRenderContext::getVertexBuffer(const v
 {
     QHash<const void *, QDemonRenderVertexBuffer *>::const_iterator entry = m_vertToImpMap.find(implementationHandle);
     if (entry != m_vertToImpMap.end())
-        return QDemonRef(entry.value());
+        return QDemonRef<QDemonRenderVertexBuffer>(entry.value());
     return nullptr;
 }
 
@@ -179,7 +179,7 @@ QDemonRef<QDemonRenderIndexBuffer> QDemonRenderContext::getIndexBuffer(const voi
 {
     const QHash<const void *, QDemonRenderIndexBuffer *>::iterator entry = m_indexToImpMap.find(implementationHandle);
     if (entry != m_indexToImpMap.end())
-        return QDemonRef(entry.value());
+        return QDemonRef<QDemonRenderIndexBuffer>(entry.value());
     return nullptr;
 }
 
@@ -206,7 +206,7 @@ QDemonRef<QDemonRenderConstantBuffer> QDemonRenderContext::getConstantBuffer(con
 {
     TContextConstantBufferMap::iterator entry = m_constantToImpMap.find(bufferName);
     if (entry != m_constantToImpMap.end())
-        return QDemonRef(entry.value());
+        return QDemonRef<QDemonRenderConstantBuffer>(entry.value());
     return nullptr;
 }
 
@@ -246,7 +246,7 @@ QDemonRef<QDemonRenderStorageBuffer> QDemonRenderContext::getStorageBuffer(const
 {
     TContextStorageBufferMap::iterator entry = m_storageToImpMap.find(bufferName);
     if (entry != m_storageToImpMap.end())
-        return QDemonRef(entry.value());
+        return QDemonRef<QDemonRenderStorageBuffer>(entry.value());
     return nullptr;
 }
 
@@ -311,7 +311,7 @@ QDemonRef<QDemonRenderDrawIndirectBuffer> QDemonRenderContext::getDrawIndirectBu
 {
     TContextDrawIndirectBufferMap::iterator entry = m_drawIndirectToImpMap.find(implementationHandle);
     if (entry != m_drawIndirectToImpMap.end())
-        return QDemonRef(entry.value());
+        return QDemonRef<QDemonRenderDrawIndirectBuffer>(entry.value());
     return nullptr;
 }
 
@@ -368,7 +368,7 @@ QDemonRef<QDemonRenderRenderBuffer> QDemonRenderContext::getRenderBuffer(const v
 {
     const QHash<const void *, QDemonRenderRenderBuffer *>::iterator entry = m_renderBufferToImpMap.find(implementationHandle);
     if (entry != m_renderBufferToImpMap.end())
-        return QDemonRef(entry.value());
+        return QDemonRef<QDemonRenderRenderBuffer>(entry.value());
     return nullptr;
 }
 
@@ -389,7 +389,7 @@ QDemonRef<QDemonRenderFrameBuffer> QDemonRenderContext::getFrameBuffer(const voi
 {
     const QHash<const void *, QDemonRenderFrameBuffer *>::iterator entry = m_frameBufferToImpMap.find(implementationHandle);
     if (entry != m_frameBufferToImpMap.end())
-        return QDemonRef(entry.value());
+        return QDemonRef<QDemonRenderFrameBuffer>(entry.value());
     return nullptr;
 }
 
@@ -547,7 +547,7 @@ QDemonRef<QDemonRenderPathFontSpecification> QDemonRenderContext::createPathFont
     // first check if it already exists
     QHash<QString, QDemonRenderPathFontSpecification *>::const_iterator entry = m_pathFontSpecToImpMap.find(fontName);
     if (entry != m_pathFontSpecToImpMap.end())
-        return QDemonRef(entry.value());
+        return QDemonRef<QDemonRenderPathFontSpecification>(entry.value());
 
     // if not create new one
     QDemonRef<QDemonRenderPathFontSpecification> pPathFontSpec = QDemonRenderPathFontSpecification::createPathFontSpecification(this, fontName);
