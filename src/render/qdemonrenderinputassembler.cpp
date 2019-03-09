@@ -48,13 +48,13 @@ QDemonRenderInputAssembler::QDemonRenderInputAssembler(const QDemonRef<QDemonRen
     , m_backend(context->getBackend())
     , m_attribLayout(attribLayout)
     , m_indexBuffer(indexBuffer)
-    , m_primitiveType(primType)
+    , m_drawMode(primType)
     , m_patchVertexCount(patchVertexCount)
 {
     // we cannot currently attach more than 16  vertex buffers
     Q_ASSERT(buffers.size() < 16);
     // if primitive is "Patch" we need a patch per vertex count > 0
-    Q_ASSERT(m_primitiveType != QDemonRenderDrawMode::Patches || m_patchVertexCount > 1);
+    Q_ASSERT(m_drawMode != QDemonRenderDrawMode::Patches || m_patchVertexCount > 1);
 
     quint32 entrySize = sizeof(QDemonRenderBackend::QDemonRenderBackendBufferObject) * buffers.size();
     QDemonRenderBackend::QDemonRenderBackendBufferObject *bufferHandle = static_cast<QDemonRenderBackend::QDemonRenderBackendBufferObject *>(
@@ -67,7 +67,7 @@ QDemonRenderInputAssembler::QDemonRenderInputAssembler(const QDemonRef<QDemonRen
 
     m_vertexbufferHandles = toConstDataRef(bufferHandle, buffers.size());
 
-    m_inputAssemblertHandle = m_backend->createInputAssembler(m_attribLayout->handle(),
+    m_handle = m_backend->createInputAssembler(m_attribLayout->handle(),
                                                               m_vertexbufferHandles,
                                                               (m_indexBuffer) ? m_indexBuffer->handle() : nullptr,
                                                               strides,
@@ -82,24 +82,24 @@ QDemonRenderInputAssembler::~QDemonRenderInputAssembler()
 {
     // m_attribLayout->release();
 
-    if (m_inputAssemblertHandle) {
-        m_backend->releaseInputAssembler(m_inputAssemblertHandle);
+    if (m_handle) {
+        m_backend->releaseInputAssembler(m_handle);
     }
     // ### sketchy
     ::free(const_cast<QDemonRenderBackend::QDemonRenderBackendBufferObject *>(m_vertexbufferHandles.mData));
 }
 
-const QDemonRef<QDemonRenderIndexBuffer> QDemonRenderInputAssembler::getIndexBuffer()
+const QDemonRef<QDemonRenderIndexBuffer> QDemonRenderInputAssembler::indexBuffer()
 {
     return m_indexBuffer;
 }
 
-quint32 QDemonRenderInputAssembler::getIndexCount() const
+quint32 QDemonRenderInputAssembler::indexCount() const
 {
     return (m_indexBuffer) ? m_indexBuffer->numIndices() : 0;
 }
 
-quint32 QDemonRenderInputAssembler::getVertexCount() const
+quint32 QDemonRenderInputAssembler::vertexCount() const
 {
     // makes only sense if we have a single vertex buffer
     Q_ASSERT(m_vertexBuffers.size() == 1);

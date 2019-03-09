@@ -73,7 +73,6 @@ public:
                                QDemonConstDataRef<quint32> offsets,
                                QDemonRenderDrawMode primType = QDemonRenderDrawMode::Triangles,
                                quint32 patchVertexCount = 1);
-    ///< destructor
     ~QDemonRenderInputAssembler();
 
     /**
@@ -81,9 +80,9 @@ public:
      *
      * @return the backend object handle.
      */
-    QDemonRenderBackend::QDemonRenderBackendInputAssemblerObject getInputAssemblerHandle() const
+    QDemonRenderBackend::QDemonRenderBackendInputAssemblerObject handle() const
     {
-        return m_inputAssemblertHandle;
+        return m_handle;
     }
 
     /**
@@ -91,14 +90,14 @@ public:
      *
      * @return the index buffer
      */
-    const QDemonRef<QDemonRenderIndexBuffer> getIndexBuffer();
+    const QDemonRef<QDemonRenderIndexBuffer> indexBuffer();
 
     /**
      * @brief get the index count of the attached index buffer (if any)
      *
      * @return the index buffer count
      */
-    quint32 getIndexCount() const;
+    quint32 indexCount() const;
 
     /**
      * @brief get the vertex count of the buffer
@@ -107,14 +106,14 @@ public:
      *
      * @return the vertex buffer count
      */
-    quint32 getVertexCount() const;
+    quint32 vertexCount() const;
 
     /**
      * @brief get the primitive type used for drawing
      *
      * @return primitive type
      */
-    QDemonRenderDrawMode getPrimitiveType() const { return m_primitiveType; }
+    QDemonRenderDrawMode drawMode() const { return m_drawMode; }
 
     /**
      * @brief set the per vertex patch count
@@ -127,7 +126,7 @@ public:
             // clamp to 1;
             m_patchVertexCount = (count == 0) ? 1 : count;
             ;
-            m_backend->setPatchVertexCount(m_inputAssemblertHandle, m_patchVertexCount);
+            m_backend->setPatchVertexCount(m_handle, m_patchVertexCount);
         }
     }
 
@@ -140,8 +139,8 @@ private:
     const QDemonRef<QDemonRenderIndexBuffer> m_indexBuffer; ///< index buffer
     QDemonConstDataRef<QDemonRenderBackend::QDemonRenderBackendBufferObject> m_vertexbufferHandles; ///< opaque vertex buffer backend handles
 
-    QDemonRenderBackend::QDemonRenderBackendInputAssemblerObject m_inputAssemblertHandle; ///< opaque backend handle
-    QDemonRenderDrawMode m_primitiveType; ///< primitive type used for drawing
+    QDemonRenderBackend::QDemonRenderBackendInputAssemblerObject m_handle; ///< opaque backend handle
+    QDemonRenderDrawMode m_drawMode; ///< primitive type used for drawing
     quint32 m_patchVertexCount; ///< vertex count if primitive type is patch
 };
 

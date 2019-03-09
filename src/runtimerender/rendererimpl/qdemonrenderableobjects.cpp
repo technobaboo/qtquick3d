@@ -365,7 +365,7 @@ void QDemonTextRenderable::render(const QVector2D &inCameraVec)
                       inCameraVec,
                       context,
                       theInfo.quadInputAssembler,
-                      theInfo.quadInputAssembler->getIndexCount(),
+                      theInfo.quadInputAssembler->indexCount(),
                       text.m_textTextureDetails,
                       QVector3D(0, 0, 0));
     } else {
@@ -434,7 +434,7 @@ void QDemonTextRenderable::renderDepthPass(const QVector2D &inCameraVec)
         float theHeightScale = (float)theTextTextureDetails.textHeight / (float)theTextureDetails.height;
         theDepthShader->textDimensions.set(QVector3D(theWidthScale, theHeightScale, theTextTextureDetails.flipY ? 1.0f : 0.0f));
         context->setInputAssembler(theDepthShader->quadInputAssembler);
-        context->draw(QDemonRenderDrawMode::Triangles, theDepthShader->quadInputAssembler->getIndexCount(), 0);
+        context->draw(QDemonRenderDrawMode::Triangles, theDepthShader->quadInputAssembler->indexCount(), 0);
     } else {
         QDemonRenderBoolOp theDepthFunction = context->getDepthFunction();
         bool isDepthEnabled = context->isDepthTestEnabled();

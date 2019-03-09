@@ -668,7 +668,7 @@ bool QDemonRenderContext::bindShaderToInputAssembler(const QDemonRef<QDemonRende
                                                          const QDemonRef<QDemonRenderShaderProgram> &shader)
 {
     // setup the input assembler object
-    return m_backend->setInputAssembler(inputAssembler->getInputAssemblerHandle(), shader->handle());
+    return m_backend->setInputAssembler(inputAssembler->handle(), shader->handle());
 }
 
 bool QDemonRenderContext::applyPreDrawProperties()
@@ -708,7 +708,7 @@ void QDemonRenderContext::draw(QDemonRenderDrawMode drawMode, quint32 count, qui
     if (!applyPreDrawProperties())
         return;
 
-    QDemonRef<QDemonRenderIndexBuffer> theIndexBuffer = m_hardwarePropertyContext.m_inputAssembler->getIndexBuffer();
+    QDemonRef<QDemonRenderIndexBuffer> theIndexBuffer = m_hardwarePropertyContext.m_inputAssembler->indexBuffer();
     if (theIndexBuffer == nullptr)
         m_backend->draw(drawMode, offset, count);
     else
@@ -722,7 +722,7 @@ void QDemonRenderContext::drawIndirect(QDemonRenderDrawMode drawMode, quint32 of
     if (!applyPreDrawProperties())
         return;
 
-    QDemonRef<QDemonRenderIndexBuffer> theIndexBuffer = m_hardwarePropertyContext.m_inputAssembler->getIndexBuffer();
+    QDemonRef<QDemonRenderIndexBuffer> theIndexBuffer = m_hardwarePropertyContext.m_inputAssembler->indexBuffer();
     if (theIndexBuffer == nullptr)
         m_backend->drawIndirect(drawMode, (const void *)offset);
     else

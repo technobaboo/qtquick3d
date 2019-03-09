@@ -181,7 +181,7 @@ struct QDemonWidgetBBox : public QDemonRenderWidgetInterface
             m_boxShader->setPropertyValue("model_view_projection", theInfo.m_layerProjection);
             m_boxShader->setPropertyValue("output_color", m_color);
             inRenderContext.setInputAssembler(m_boxInputAssembler);
-            inRenderContext.draw(QDemonRenderDrawMode::Lines, m_boxInputAssembler->getIndexCount(), 0);
+            inRenderContext.draw(QDemonRenderDrawMode::Lines, m_boxInputAssembler->indexCount(), 0);
         }
     }
 };

@@ -1519,7 +1519,7 @@ void QDemonMaterialSystem::renderPass(QDemonCustomMaterialRenderContext &inRende
     // I think the prim type should always be fetched from the
     // current mesh subset setup because there you get the actual draw mode
     // for this frame
-    QDemonRenderDrawMode theDrawMode = inAssembler->getPrimitiveType();
+    QDemonRenderDrawMode theDrawMode = inAssembler->drawMode();
 
     // tesselation
     if (inRenderContext.subset.primitiveType == QDemonRenderDrawMode::Patches) {

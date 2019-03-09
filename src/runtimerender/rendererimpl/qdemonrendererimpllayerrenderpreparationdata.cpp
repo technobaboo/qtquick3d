@@ -836,7 +836,7 @@ bool QDemonLayerRenderPreparationData::prepareModelForRender(QDemonRenderModel &
                 subsetDirty = subsetDirty | (theSubset.wireframeMode != inModel.wireframeMode);
                 inModel.wireframeMode = demonContext->getWireframeMode();
             } else {
-                theSubset.primitiveType = theSubset.inputAssembler->getPrimitiveType();
+                theSubset.primitiveType = theSubset.inputAssembler->drawMode();
                 theSubset.inputAssembler->setPatchVertexCount(1);
                 theSubset.inputAssemblerDepth->setPatchVertexCount(1);
                 // currently we allow wirframe mode only if tessellation is on

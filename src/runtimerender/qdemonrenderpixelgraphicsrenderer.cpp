@@ -198,7 +198,7 @@ struct QDemonPixelGraphicsRenderer : public QDemonPixelGraphicsRendererInterface
             m_rectShader.apply(inProjection, inObject);
 
             m_renderContext->getRenderContext()->setInputAssembler(m_quadInputAssembler);
-            m_renderContext->getRenderContext()->draw(QDemonRenderDrawMode::Triangles, m_quadInputAssembler->getIndexCount(), 0);
+            m_renderContext->getRenderContext()->draw(QDemonRenderDrawMode::Triangles, m_quadInputAssembler->indexCount(), 0);
         }
     }
 

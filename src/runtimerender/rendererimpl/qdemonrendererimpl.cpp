@@ -1686,7 +1686,7 @@ void QDemonRendererImpl::renderText(const QDemonTextRenderInfo &inText,
                                          QVector2D(0, 0),
                                          getContext(),
                                          theTextHelper.quadInputAssembler,
-                                         theTextHelper.quadInputAssembler->getIndexCount(),
+                                         theTextHelper.quadInputAssembler->indexCount(),
                                          theTextTextureDetails,
                                          inBackgroundColor);
         }
