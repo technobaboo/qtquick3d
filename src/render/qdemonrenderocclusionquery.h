@@ -39,7 +39,6 @@ class QDemonRenderContext;
 
 class QDemonRenderOcclusionQuery : public QDemonRenderQueryBase
 {
-public:
     /**
      * @brief constructor
      *
@@ -50,7 +49,7 @@ public:
      */
     QDemonRenderOcclusionQuery(const QDemonRef<QDemonRenderContext> &context);
 
-    ///< destructor
+public:
     ~QDemonRenderOcclusionQuery() override;
 
     /**
@@ -58,7 +57,7 @@ public:
      *
      * @return Return query type
      */
-    QDemonRenderQueryType getQueryType() const override { return QDemonRenderQueryType::Samples; }
+    QDemonRenderQueryType queryType() const override { return QDemonRenderQueryType::Samples; }
 
     /**
      * @brief begin a query
@@ -81,7 +80,7 @@ public:
      *
      * @return no return.
      */
-    void getResult(quint32 *params) override;
+    void result(quint32 *params) override;
 
     /**
      * @brief query if a result is available
@@ -89,7 +88,7 @@ public:
      *
      * @return true if available.
      */
-    virtual bool GetResultAvailable();
+    bool resultAvailable();
 
     /*
      * @brief static creation function

@@ -39,7 +39,6 @@ class QDemonRenderContext;
 
 class QDemonRenderTimerQuery : public QDemonRenderQueryBase
 {
-public:
     /**
      * @brief constructor
      *
@@ -50,7 +49,7 @@ public:
      */
     explicit QDemonRenderTimerQuery(const QDemonRef<QDemonRenderContext> &context);
 
-    ///< destructor
+public:
     ~QDemonRenderTimerQuery() override;
 
     /**
@@ -58,7 +57,7 @@ public:
      *
      * @return Return query type
      */
-    QDemonRenderQueryType getQueryType() const override { return QDemonRenderQueryType::Timer; }
+    QDemonRenderQueryType queryType() const override { return QDemonRenderQueryType::Timer; }
 
     /**
      * @brief begin a query
@@ -81,7 +80,7 @@ public:
      *
      * @return no return.
      */
-    void getResult(quint32 *params) override;
+    void result(quint32 *params) override;
 
     /**
      * @brief Get the result of a query
@@ -90,7 +89,7 @@ public:
      *
      * @return no return.
      */
-    virtual void getResult(quint64 *params);
+    virtual void result(quint64 *params);
 
     /**
      * @brief Places an absolute timer query into the render queue
@@ -98,7 +97,7 @@ public:
      *
      * @return no return.
      */
-    virtual void SetTimerQuery();
+    virtual void setTimerQuery();
 
     /*
      * @brief static creation function

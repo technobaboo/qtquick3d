@@ -79,7 +79,7 @@ struct QDemonGpuTimerInfo
         m_frameID[m_writeID] = frameID;
 
         if (m_absoluteTime)
-            m_timerStartQueryObjects[m_writeID]->SetTimerQuery();
+            m_timerStartQueryObjects[m_writeID]->setTimerQuery();
         else
             m_timerStartQueryObjects[m_writeID]->begin();
     }
@@ -87,7 +87,7 @@ struct QDemonGpuTimerInfo
     void endTimerQuery()
     {
         if (m_absoluteTime)
-            m_timerEndQueryObjects[m_writeID]->SetTimerQuery();
+            m_timerEndQueryObjects[m_writeID]->setTimerQuery();
         else
             m_timerStartQueryObjects[m_writeID]->end();
 
@@ -120,14 +120,14 @@ struct QDemonGpuTimerInfo
         if (m_absoluteTime) {
             quint64 startTime, endTime;
 
-            m_timerStartQueryObjects[m_readID]->getResult(&startTime);
-            m_timerEndQueryObjects[m_readID]->getResult(&endTime);
+            m_timerStartQueryObjects[m_readID]->result(&startTime);
+            m_timerEndQueryObjects[m_readID]->result(&endTime);
 
             m_averageTime[m_averageTimeWriteID] = endTime - startTime;
         } else {
             quint64 elapsedTime;
 
-            m_timerStartQueryObjects[m_readID]->getResult(&elapsedTime);
+            m_timerStartQueryObjects[m_readID]->result(&elapsedTime);
 
             m_averageTime[m_averageTimeWriteID] = elapsedTime;
         }

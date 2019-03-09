@@ -42,27 +42,27 @@ QDemonRenderTimerQuery::~QDemonRenderTimerQuery() = default;
 
 void QDemonRenderTimerQuery::begin()
 {
-    m_backend->beginQuery(m_queryHandle, QDemonRenderQueryType::Timer);
+    m_backend->beginQuery(m_handle, QDemonRenderQueryType::Timer);
 }
 
 void QDemonRenderTimerQuery::end()
 {
-    m_backend->endQuery(m_queryHandle, QDemonRenderQueryType::Timer);
+    m_backend->endQuery(m_handle, QDemonRenderQueryType::Timer);
 }
 
-void QDemonRenderTimerQuery::getResult(quint32 *params)
+void QDemonRenderTimerQuery::result(quint32 *params)
 {
-    m_backend->getQueryResult(m_queryHandle, QDemonRenderQueryResultType::Result, params);
+    m_backend->getQueryResult(m_handle, QDemonRenderQueryResultType::Result, params);
 }
 
-void QDemonRenderTimerQuery::getResult(quint64 *params)
+void QDemonRenderTimerQuery::result(quint64 *params)
 {
-    m_backend->getQueryResult(m_queryHandle, QDemonRenderQueryResultType::Result, params);
+    m_backend->getQueryResult(m_handle, QDemonRenderQueryResultType::Result, params);
 }
 
-void QDemonRenderTimerQuery::SetTimerQuery()
+void QDemonRenderTimerQuery::setTimerQuery()
 {
-    m_backend->setQueryTimer(m_queryHandle);
+    m_backend->setQueryTimer(m_handle);
 }
 
 QDemonRef<QDemonRenderTimerQuery> QDemonRenderTimerQuery::create(const QDemonRef<QDemonRenderContext> &context)

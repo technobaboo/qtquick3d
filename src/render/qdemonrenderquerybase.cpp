@@ -39,12 +39,12 @@ QT_BEGIN_NAMESPACE
 QDemonRenderQueryBase::QDemonRenderQueryBase(const QDemonRef<QDemonRenderContext> &context)
     : m_context(context), m_backend(context->getBackend())
 {
-    m_queryHandle = m_backend->createQuery();
+    m_handle = m_backend->createQuery();
 }
 
 QDemonRenderQueryBase::~QDemonRenderQueryBase()
 {
-    if (m_queryHandle)
-        m_backend->releaseQuery(m_queryHandle);
+    if (m_handle)
+        m_backend->releaseQuery(m_handle);
 }
 QT_END_NAMESPACE

@@ -48,9 +48,8 @@ public:
 protected:
     QDemonRef<QDemonRenderContext> m_context; ///< pointer to context
     QDemonRef<QDemonRenderBackend> m_backend; ///< pointer to backend
-    QDemonRenderBackend::QDemonRenderBackendQueryObject m_queryHandle; ///< opaque backend handle
+    QDemonRenderBackend::QDemonRenderBackendQueryObject m_handle; ///< opaque backend handle
 
-public:
     /**
      * @brief constructor
      *
@@ -61,6 +60,7 @@ public:
      */
     QDemonRenderQueryBase(const QDemonRef<QDemonRenderContext> &context);
 
+public:
     virtual ~QDemonRenderQueryBase();
 
     /**
@@ -68,7 +68,7 @@ public:
      *
      * @return Return query type
      */
-    virtual QDemonRenderQueryType getQueryType() const = 0;
+    virtual QDemonRenderQueryType queryType() const = 0;
 
     /**
      * @brief begin a query
@@ -91,14 +91,14 @@ public:
      *
      * @return no return.
      */
-    virtual void getResult(quint32 *params) = 0;
+    virtual void result(quint32 *params) = 0;
 
     /**
      * @brief get the backend object handle
      *
      * @return the backend object handle.
      */
-    virtual QDemonRenderBackend::QDemonRenderBackendQueryObject getQuerytHandle() const { return m_queryHandle; }
+    virtual QDemonRenderBackend::QDemonRenderBackendQueryObject handle() const { return m_handle; }
 };
 
 QT_END_NAMESPACE

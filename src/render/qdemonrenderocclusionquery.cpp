@@ -41,24 +41,24 @@ QDemonRenderOcclusionQuery::~QDemonRenderOcclusionQuery() = default;
 
 void QDemonRenderOcclusionQuery::begin()
 {
-    m_backend->beginQuery(m_queryHandle, QDemonRenderQueryType::Samples);
+    m_backend->beginQuery(m_handle, QDemonRenderQueryType::Samples);
 }
 
 void QDemonRenderOcclusionQuery::end()
 {
-    m_backend->endQuery(m_queryHandle, QDemonRenderQueryType::Samples);
+    m_backend->endQuery(m_handle, QDemonRenderQueryType::Samples);
 }
 
-void QDemonRenderOcclusionQuery::getResult(quint32 *params)
+void QDemonRenderOcclusionQuery::result(quint32 *params)
 {
-    m_backend->getQueryResult(m_queryHandle, QDemonRenderQueryResultType::Result, params);
+    m_backend->getQueryResult(m_handle, QDemonRenderQueryResultType::Result, params);
 }
 
-bool QDemonRenderOcclusionQuery::GetResultAvailable()
+bool QDemonRenderOcclusionQuery::resultAvailable()
 {
     quint32 param;
 
-    m_backend->getQueryResult(m_queryHandle, QDemonRenderQueryResultType::ResultAvailable, &param);
+    m_backend->getQueryResult(m_handle, QDemonRenderQueryResultType::ResultAvailable, &param);
 
     return (param == 1);
 }
