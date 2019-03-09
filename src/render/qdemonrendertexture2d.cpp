@@ -29,7 +29,6 @@
 ****************************************************************************/
 
 #include <QtDemonRender/qdemonrendercontext.h>
-#include <QtDemonRender/qdemonrendersampler.h>
 #include <QtDemon/qdemonutils.h>
 
 QT_BEGIN_NAMESPACE

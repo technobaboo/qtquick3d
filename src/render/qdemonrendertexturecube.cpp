@@ -29,7 +29,6 @@
 ****************************************************************************/
 
 #include <QtDemonRender/qdemonrendercontext.h>
-#include <QtDemonRender/qdemonrendersampler.h>
 #include <QtDemonRender/qdemonrendertexturecube.h>
 #include <QtDemon/qdemonutils.h>
 

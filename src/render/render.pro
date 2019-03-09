@@ -44,7 +44,6 @@ HEADERS += \
     qdemonrenderquerybase.h \
     qdemonrenderrasterizerstate.h \
     qdemonrenderrenderbuffer.h \
-    qdemonrendersampler.h \
     qdemonrendershaderconstant.h \
     qdemonrenderstoragebuffer.h \
     qdemonrendersync.h \
@@ -84,7 +83,6 @@ SOURCES += \
     qdemonrenderquerybase.cpp \
     qdemonrenderrasterizerstate.cpp \
     qdemonrenderrenderbuffer.cpp \
-    qdemonrendersampler.cpp \
     qdemonrendershaderprogram.cpp \
     qdemonrenderstoragebuffer.cpp \
     qdemonrendersync.cpp \

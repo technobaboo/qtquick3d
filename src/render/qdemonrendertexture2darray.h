@@ -37,7 +37,6 @@
 QT_BEGIN_NAMESPACE
 
 class QDemonRenderContext;
-class QDemonRenderTextureSampler;
 
 class Q_DEMONRENDER_EXPORT QDemonRenderTexture2DArray : public QDemonRenderTextureBase
 {
