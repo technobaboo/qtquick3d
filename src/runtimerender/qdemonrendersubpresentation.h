@@ -82,7 +82,6 @@ public:
     {
         return false;
     }
-    void addCallback(QDemonOffscreenRendererCallbackInterface *cb) override { Q_UNUSED(cb) }
     // Used for RTTI purposes so we can safely static-cast an offscreen renderer to a
     // CSubPresentationRenderer
     static const char *getRendererName() { return "SubPresentation"; }

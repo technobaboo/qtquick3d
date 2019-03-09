@@ -52,30 +52,20 @@ enum class QDemonOffscreenRendererDepthValues
 
 struct QDemonOffscreenRendererEnvironment
 {
-    qint32 width;
-    qint32 height;
-    QDemonRenderTextureFormat format;
-    QDemonOffscreenRendererDepthValues depth;
-    bool stencil;
-    AAModeValues msaaMode;
+    qint32 width = 0;
+    qint32 height = 0;
+    QDemonRenderTextureFormat format = QDemonRenderTextureFormat::Unknown;
+    QDemonOffscreenRendererDepthValues depth = QDemonOffscreenRendererDepthValues::NoDepthBuffer;
+    bool stencil = false;
+    AAModeValues msaaMode = AAModeValues::NoAA;
 
-    QDemonOffscreenRendererEnvironment()
-        : width(0)
-        , height(0)
-        , format(QDemonRenderTextureFormat::Unknown)
-        , depth(QDemonOffscreenRendererDepthValues::NoDepthBuffer)
-        , stencil(false)
-        , msaaMode(AAModeValues::NoAA)
-    {
-    }
+    QDemonOffscreenRendererEnvironment() = default;
 
     QDemonOffscreenRendererEnvironment(qint32 inWidth, qint32 inHeight, QDemonRenderTextureFormat inFormat)
         : width(inWidth)
         , height(inHeight)
         , format(inFormat)
         , depth(QDemonOffscreenRendererDepthValues::Depth16)
-        , stencil(false)
-        , msaaMode(AAModeValues::NoAA)
     {
     }
 
@@ -86,16 +76,6 @@ struct QDemonOffscreenRendererEnvironment
                                        bool inStencil,
                                        AAModeValues inAAMode)
         : width(inWidth), height(inHeight), format(inFormat), depth(inDepth), stencil(inStencil), msaaMode(inAAMode)
-    {
-    }
-
-    QDemonOffscreenRendererEnvironment(const QDemonOffscreenRendererEnvironment &inOther)
-        : width(inOther.width)
-        , height(inOther.height)
-        , format(inOther.format)
-        , depth(inOther.depth)
-        , stencil(inOther.stencil)
-        , msaaMode(inOther.msaaMode)
     {
     }
 };
@@ -117,20 +97,10 @@ class QDemonOffscreenRendererInterface
 {
 public:
     QAtomicInt ref;
-    class QDemonOffscreenRendererCallbackInterface
-    {
-    public:
-        virtual void onOffscreenRendererInitialized(const QString &id) = 0;
-        virtual void onOffscreenRendererFrame(const QString &id) = 0;
-
-    protected:
-        virtual ~QDemonOffscreenRendererCallbackInterface();
-    };
 
     virtual ~QDemonOffscreenRendererInterface();
 
 public:
-    virtual void addCallback(QDemonOffscreenRendererCallbackInterface *cb) = 0;
     // Arbitrary const char* returned to indicate the type of this renderer
     // Can be overloaded to form the basis of an RTTI type system.
     // Not currently used by the rendering system.

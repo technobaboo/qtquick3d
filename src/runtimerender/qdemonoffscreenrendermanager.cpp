@@ -439,6 +439,4 @@ QDemonRef<QDemonOffscreenRenderManagerInterface> QDemonOffscreenRenderManagerInt
 
 QDemonOffscreenRendererInterface::~QDemonOffscreenRendererInterface() = default;
 
-QDemonOffscreenRendererInterface::QDemonOffscreenRendererCallbackInterface::~QDemonOffscreenRendererCallbackInterface() = default;
-
 QT_END_NAMESPACE
