@@ -64,8 +64,8 @@ public:
      */
     QDemonRenderConstantBuffer(const QDemonRef<QDemonRenderContext> &context,
                                const QByteArray &bufferName,
-                               size_t size,
                                QDemonRenderBufferUsageType usageType,
+                               size_t size,
                                QDemonDataRef<quint8> data);
 
     ///< destructor
@@ -87,14 +87,14 @@ public:
      *
      * @return no return.
      */
-    virtual void bindToShaderProgram(const QDemonRef<QDemonRenderShaderProgram> &inShader, quint32 blockIndex, quint32 binding);
+    void bindToShaderProgram(const QDemonRef<QDemonRenderShaderProgram> &inShader, quint32 blockIndex, quint32 binding);
 
     /**
      * @brief update the buffer to hardware
      *
      * @return no return.
      */
-    virtual void update();
+    void update();
 
     /**
      * @brief setup constant buffer
@@ -149,35 +149,11 @@ public:
     void updateRaw(quint32 offset, QDemonDataRef<quint8> data);
 
     /**
-     * @brief get the backend object handle
-     *
-     * @return the backend object handle.
-     */
-    QDemonRenderBackend::QDemonRenderBackendBufferObject handle() const override { return m_bufferHandle; }
-
-    /**
-     * @brief create a QDemonRenderConstantBuffer object
-     *
-     * @param[in] context		Pointer to context
-     * @param[in] size			Size of the buffer
-     * @param[in] usage			Usage of the buffer (e.g. static, dynamic...)
-     * @param[in] data			A pointer to the buffer data that is allocated by the
-     * application.
-     *
-     * @return the backend object handle.
-     */
-    static QDemonRef<QDemonRenderConstantBuffer> create(const QDemonRef<QDemonRenderContext> &context,
-                                                        const char *bufferName,
-                                                        QDemonRenderBufferUsageType usageType,
-                                                        size_t size,
-                                                        QDemonConstDataRef<quint8> bufferData);
-
-    /**
      * @brief get the buffer name
      *
      * @return the buffer name
      */
-    QByteArray GetBufferName() const { return m_name; }
+    QByteArray name() const { return m_name; }
 
 private:
     /**
@@ -200,7 +176,7 @@ private:
      *
      * @return return uniform size
      */
-    qint32 getUniformTypeSize(QDemonRenderShaderDataType type);
+    qint32 uniformTypeSize(QDemonRenderShaderDataType type);
 
     /**
      * @brief allocate the shadow buffer
@@ -211,7 +187,6 @@ private:
      */
     bool allocateShadowBuffer(quint32 size);
 
-private:
     inline void setDirty(quint32 start, quint32 size)
     {
         m_rangeStart = qMin(m_rangeStart, start);

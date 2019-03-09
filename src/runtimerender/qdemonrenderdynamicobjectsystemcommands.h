@@ -171,18 +171,18 @@ struct QDemonAllocateImage : public QDemonAllocateBuffer
 struct QDemonAllocateDataBuffer : public QDemonCommand
 {
     QString m_name;
-    QDemonRenderBufferBindType m_dataBufferType;
+    QDemonRenderBufferType m_dataBufferType;
     QString m_wrapName;
-    QDemonRenderBufferBindType m_dataBufferWrapType;
+    QDemonRenderBufferType m_dataBufferWrapType;
     float m_size;
     QDemonAllocateBufferFlags m_bufferFlags;
 
     QDemonAllocateDataBuffer() : QDemonCommand(CommandType::AllocateDataBuffer) {}
 
     QDemonAllocateDataBuffer(QString inName,
-                             QDemonRenderBufferBindType inBufferType,
+                             QDemonRenderBufferType inBufferType,
                              QString inWrapName,
-                             QDemonRenderBufferBindType inBufferWrapType,
+                             QDemonRenderBufferType inBufferWrapType,
                              float inSize,
                              QDemonAllocateBufferFlags inFlags)
         : QDemonCommand(CommandType::AllocateDataBuffer)
@@ -355,9 +355,9 @@ struct QDemonApplyImageValue : public QDemonCommand
 struct QDemonApplyDataBufferValue : public QDemonCommand
 {
     QString m_paramName; ///< must match the name in the shader
-    QDemonRenderBufferBindType m_bindAs; ///< to which target we bind this buffer
+    QDemonRenderBufferType m_bindAs; ///< to which target we bind this buffer
 
-    QDemonApplyDataBufferValue(QString inShaderParam, QDemonRenderBufferBindType inBufferType)
+    QDemonApplyDataBufferValue(QString inShaderParam, QDemonRenderBufferType inBufferType)
         : QDemonCommand(CommandType::ApplyDataBufferValue), m_paramName(inShaderParam), m_bindAs(inBufferType)
     {
     }

@@ -86,7 +86,7 @@ public:
         m_Context->setActiveShader(mShaderArgs.shader);
         mShaderArgs.shader->setPropertyValue("mat_mvp", mShaderArgs.mvp);
         mShaderArgs.shader->setPropertyValue("image0", mShaderArgs.texture.data());
-        m_Context->draw(QDemonRenderDrawMode::Triangles, mIndexBuffer->getNumIndices(), 0);
+        m_Context->draw(QDemonRenderDrawMode::Triangles, mIndexBuffer->numIndices(), 0);
     }
 
     // QDemonRenderExample interface

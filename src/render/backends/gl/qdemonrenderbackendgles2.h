@@ -153,11 +153,11 @@ public:
                             qint32 height) override;
 
     void *mapBuffer(QDemonRenderBackendBufferObject bo,
-                    QDemonRenderBufferBindType bindFlags,
+                    QDemonRenderBufferType bindFlags,
                     size_t offset,
                     size_t length,
                     QDemonRenderBufferAccessFlags accessFlags) override;
-    bool unmapBuffer(QDemonRenderBackendBufferObject bo, QDemonRenderBufferBindType bindFlags) override;
+    bool unmapBuffer(QDemonRenderBackendBufferObject bo, QDemonRenderBufferType bindFlags) override;
 
     qint32 getConstantBufferCount(QDemonRenderBackendShaderProgramObject po) override;
     qint32 getConstantBufferInfoByID(QDemonRenderBackendShaderProgramObject po,

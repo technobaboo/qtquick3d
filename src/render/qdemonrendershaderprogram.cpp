@@ -765,10 +765,10 @@ bool QDemonRenderShaderProgram::link()
                 // See NVRenderTestAtomicCounterBuffer.cpp how the setup works
                 QDemonRef<QDemonRenderAtomicCounterBuffer> acb = m_context->getAtomicCounterBufferByParam(nameBuf);
                 if (acb) {
-                    m_shaderBuffers.insert(acb->getBufferName(),
+                    m_shaderBuffers.insert(acb->bufferName(),
                                            shaderBufferFactory<QDemonRenderShaderAtomicCounterBuffer,
                                                                QDemonRenderAtomicCounterBuffer>(m_context,
-                                                                                                acb->getBufferName(),
+                                                                                                acb->bufferName(),
                                                                                                 location,
                                                                                                 -1,
                                                                                                 bufferSize,

@@ -106,11 +106,8 @@ QDemonRef<QDemonRenderInputAssembler> QDemonRenderExampleTools::createBox(QDemon
         }
     }
 
-    outVertexBuffer= context->createVertexBuffer(QDemonRenderBufferUsageType::Static,
-                                                 bufSize,
-                                                 bufStride,
-                                                 vertData);
-    Q_ASSERT(bufStride == outVertexBuffer->getStride());
+    outVertexBuffer= new QDemonRenderVertexBuffer(context, QDemonRenderBufferUsageType::Static, bufSize, bufStride, vertData);
+    Q_ASSERT(bufStride == outVertexBuffer->stride());
     // Clean up data
     ::free(vertData.begin());
 
@@ -130,13 +127,13 @@ QDemonRef<QDemonRenderInputAssembler> QDemonRenderExampleTools::createBox(QDemon
         *(indices++) = base + 2;
         *(indices++) = base + 3;
     }
-    outIndexBuffer= context->createIndexBuffer(QDemonRenderBufferUsageType::Static,
+    outIndexBuffer= new QDemonRenderIndexBuffer(context, QDemonRenderBufferUsageType::Static,
                                                QDemonRenderComponentType::UnsignedInteger16,
                                                bufSize,
                                                indexData);
     ::free(indexData.begin());
 
-    quint32 strides = outVertexBuffer->getStride();
+    quint32 strides = outVertexBuffer->stride();
     quint32 offsets = 0;
 
     QDemonRef<QDemonRenderInputAssembler> inputAssembler = context->createInputAssembler(attribLayout,

@@ -441,7 +441,7 @@ public:
      * @return The created buffer object or nullptr if the creation failed.
      */
     virtual QDemonRenderBackendBufferObject createBuffer(size_t size,
-                                                         QDemonRenderBufferBindType bindFlags,
+                                                         QDemonRenderBufferType bindFlags,
                                                          QDemonRenderBufferUsageType usage,
                                                          const void *hostPtr = nullptr) = 0;
 
@@ -455,7 +455,7 @@ public:
      *
      * @return no return.
      */
-    virtual void bindBuffer(QDemonRenderBackendBufferObject bo, QDemonRenderBufferBindType bindFlags) = 0;
+    virtual void bindBuffer(QDemonRenderBackendBufferObject bo, QDemonRenderBufferType bindFlags) = 0;
 
     /**
      * @brief Release a single buffer object
@@ -481,7 +481,7 @@ public:
      * @return no return.
      */
     virtual void updateBuffer(QDemonRenderBackendBufferObject bo,
-                              QDemonRenderBufferBindType bindFlags,
+                              QDemonRenderBufferType bindFlags,
                               size_t size,
                               QDemonRenderBufferUsageType usage,
                               const void *data) = 0;
@@ -501,7 +501,7 @@ public:
      * @return no return.
      */
     virtual void updateBufferRange(QDemonRenderBackendBufferObject bo,
-                                   QDemonRenderBufferBindType bindFlags,
+                                   QDemonRenderBufferType bindFlags,
                                    size_t offset,
                                    size_t size,
                                    const void *data) = 0;
@@ -520,7 +520,7 @@ public:
      * @return pointer to mapped data or null.
      */
     virtual void *mapBuffer(QDemonRenderBackendBufferObject bo,
-                            QDemonRenderBufferBindType bindFlags,
+                            QDemonRenderBufferType bindFlags,
                             size_t offset,
                             size_t length,
                             QDemonRenderBufferAccessFlags accessFlags) = 0;
@@ -536,7 +536,7 @@ public:
      *
      * @return true if successful
      */
-    virtual bool unmapBuffer(QDemonRenderBackendBufferObject bo, QDemonRenderBufferBindType bindFlags) = 0;
+    virtual bool unmapBuffer(QDemonRenderBackendBufferObject bo, QDemonRenderBufferType bindFlags) = 0;
 
     /**
      * @brief Set a memory barrier

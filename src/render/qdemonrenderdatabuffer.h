@@ -49,13 +49,13 @@ protected:
     QDemonRef<QDemonRenderContext> m_context; ///< pointer to context
     QDemonRef<QDemonRenderBackend> m_backend; ///< pointer to backend
     QDemonRenderBufferUsageType m_usageType; ///< usage type
-    QDemonRenderBufferBindType m_bindFlags; ///< bind flags
+    QDemonRenderBufferType m_type; ///< bind flags
     QDemonDataRef<quint8> m_bufferData; ///< buffer data pointer
     quint32 m_bufferCapacity; ///< size of internal backup buffer (m_bufferData)
     size_t m_bufferSize; ///< size of buffer
     bool m_ownsData; ///< true when we own m_bufferData
     bool m_mapped; ///< true when locked for reading or writing to m_bufferData
-    QDemonRenderBackend::QDemonRenderBackendBufferObject m_bufferHandle; ///< opaque backend handle
+    QDemonRenderBackend::QDemonRenderBackendBufferObject m_handle; ///< opaque backend handle
 
 public:
     /**
@@ -74,7 +74,7 @@ public:
      */
     QDemonRenderDataBuffer(const QDemonRef<QDemonRenderContext> &context,
                            size_t size,
-                           QDemonRenderBufferBindType bindFlags,
+                           QDemonRenderBufferType bindFlags,
                            QDemonRenderBufferUsageType usageType,
                            QDemonDataRef<quint8> data);
 
@@ -85,7 +85,7 @@ public:
      *
      * @return Return usage tyoe
      */
-    virtual QDemonRenderBufferUsageType getBufferUsageType() const { return m_usageType; }
+    virtual QDemonRenderBufferUsageType usageType() const { return m_usageType; }
 
     /**
      * @brief Get Buffer usage type
@@ -93,7 +93,7 @@ public:
      *
      * @return Return usage tyoe
      */
-    virtual QDemonRenderBufferBindType getBufferBindings() const { return m_bindFlags; }
+    virtual QDemonRenderBufferType type() const { return m_type; }
 
     /**
      * @brief Return buffer size in byte
@@ -160,7 +160,7 @@ public:
      *
      * @return the backend object handle.
      */
-    virtual QDemonRenderBackend::QDemonRenderBackendBufferObject handle() const = 0;
+    QDemonRenderBackend::QDemonRenderBackendBufferObject handle() const { return m_handle; }
 
 private:
     Q_DISABLE_COPY(QDemonRenderDataBuffer)

@@ -38,7 +38,7 @@ QT_BEGIN_NAMESPACE
 class QDemonRenderContext;
 
 ///< Vertex buffer representation
-class QDemonRenderVertexBuffer : public QDemonRenderDataBuffer
+class Q_DEMONRENDER_EXPORT QDemonRenderVertexBuffer : public QDemonRenderDataBuffer
 {
 public:
     /**
@@ -57,28 +57,27 @@ public:
      * @return No return.
      */
     QDemonRenderVertexBuffer(const QDemonRef<QDemonRenderContext> &context,
+                             QDemonRenderBufferUsageType usageType,
                              size_t size,
                              quint32 stride,
-                             QDemonRenderBufferBindType bindFlags,
-                             QDemonRenderBufferUsageType usageType,
-                             QDemonDataRef<quint8> data);
+                             QDemonConstDataRef<quint8> data);
 
     ///< destructor
-    virtual ~QDemonRenderVertexBuffer();
+    virtual ~QDemonRenderVertexBuffer() override;
 
     /**
      * @brief return vertex data stride
      *
      * @return data stride.
      */
-    virtual quint32 getStride() const { return m_stride; }
+    quint32 stride() const { return m_stride; }
 
     /**
      * @brief get vertex count
      *
      * @return vertex count
      */
-    virtual quint32 getNumVertexes() const
+    quint32 numVertexes() const
     {
         Q_ASSERT((m_bufferCapacity % m_stride) == 0);
         return m_bufferCapacity / m_stride;
@@ -91,24 +90,8 @@ public:
      */
     void bind() override;
 
-    /**
-     * @brief get the backend object handle
-     *
-     * @return the backend object handle.
-     */
-    QDemonRenderBackend::QDemonRenderBackendBufferObject handle() const override { return m_bufferHandle; }
-
-    // No stride means that stride is calculated from the size of last entry found via entry
-    // offset
-    // Leaves this buffer temporarily bound.
-    static QDemonRef<QDemonRenderVertexBuffer> create(const QDemonRef<QDemonRenderContext> &context,
-                                                      QDemonRenderBufferUsageType usageType,
-                                                      size_t size,
-                                                      quint32 stride,
-                                                      QDemonConstDataRef<quint8> bufferData);
-
 private:
-    quint32 m_stride; ///< veretex data stride
+    quint32 m_stride;
 };
 
 QT_END_NAMESPACE

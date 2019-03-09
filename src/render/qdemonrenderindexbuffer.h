@@ -36,7 +36,7 @@ QT_BEGIN_NAMESPACE
 // forward declaration
 class QDemonRenderContext;
 
-class QDemonRenderIndexBuffer : public QDemonRenderDataBuffer
+class Q_DEMONRENDER_EXPORT QDemonRenderIndexBuffer : public QDemonRenderDataBuffer
 {
 public:
     /**
@@ -52,10 +52,10 @@ public:
      * @return No return.
      */
     QDemonRenderIndexBuffer(const QDemonRef<QDemonRenderContext> &context,
-                            size_t size,
-                            QDemonRenderComponentType componentType,
                             QDemonRenderBufferUsageType usageType,
-                            QDemonDataRef<quint8> data);
+                            QDemonRenderComponentType componentType,
+                            size_t size,
+                            QDemonConstDataRef<quint8> data);
 
     ///< destruvtor
     ~QDemonRenderIndexBuffer() override;
@@ -65,14 +65,14 @@ public:
      *
      * @return the component type
      */
-    virtual QDemonRenderComponentType getComponentType() const { return m_componentType; }
+    QDemonRenderComponentType componentType() const { return m_componentType; }
 
     /**
      * @brief get the index count
      *
      * @return actual index count
      */
-    virtual quint32 getNumIndices() const;
+    quint32 numIndices() const;
 
     /**
      * @brief bind the buffer bypasses the context state
@@ -101,20 +101,7 @@ public:
      *
      * @return no return.
      */
-    virtual void drawIndirect(QDemonRenderDrawMode drawMode, quint32 offset);
-
-    /**
-     * @brief get the backend object handle
-     *
-     * @return the backend object handle.
-     */
-    QDemonRenderBackend::QDemonRenderBackendBufferObject handle() const override { return m_bufferHandle; }
-
-    static QDemonRef<QDemonRenderIndexBuffer> create(const QDemonRef<QDemonRenderContext> &context,
-                                                     QDemonRenderBufferUsageType usageType,
-                                                     QDemonRenderComponentType componentType,
-                                                     size_t size,
-                                                     QDemonConstDataRef<quint8> bufferData);
+    void drawIndirect(QDemonRenderDrawMode drawMode, quint32 offset);
 
 private:
     QDemonRenderComponentType m_componentType; ///< component type (quint8, quint16)

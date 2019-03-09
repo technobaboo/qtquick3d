@@ -185,7 +185,7 @@ enum class QDemonRenderCommandFlushValues
 Q_DECLARE_FLAGS(QDemonRenderCommandFlushFlags, QDemonRenderCommandFlushValues)
 Q_DECLARE_OPERATORS_FOR_FLAGS(QDemonRenderCommandFlushFlags)
 
-enum class QDemonRenderBufferBindType : quint32
+enum class QDemonRenderBufferType : quint32
 {
     Vertex, ///< Bind as vertex buffer
     Index, ///< Bind as index buffer

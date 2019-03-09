@@ -56,7 +56,7 @@ struct DrawElementsIndirectCommand
 };
 
 ///< Constant (uniform) buffer representation
-class QDemonRenderDrawIndirectBuffer : public QDemonRenderDataBuffer
+class Q_DEMONRENDER_EXPORT QDemonRenderDrawIndirectBuffer : public QDemonRenderDataBuffer
 {
 public:
     /**
@@ -71,8 +71,8 @@ public:
      * @return No return.
      */
     QDemonRenderDrawIndirectBuffer(const QDemonRef<QDemonRenderContext> &context,
-                                   size_t size,
                                    QDemonRenderBufferUsageType usageType,
+                                   size_t size,
                                    QDemonDataRef<quint8> data);
 
     ///< destructor
@@ -90,7 +90,7 @@ public:
      *
      * @return no return.
      */
-    virtual void update();
+    void update();
 
     /**
      * @brief update a piece of memory directly within the storage buffer
@@ -108,29 +108,6 @@ public:
      * @return no return
      */
     void updateData(qint32 offset, QDemonDataRef<quint8> data);
-
-    /**
-     * @brief get the backend object handle
-     *
-     * @return the backend object handle.
-     */
-    QDemonRenderBackend::QDemonRenderBackendBufferObject handle() const override { return m_bufferHandle; }
-
-    /**
-     * @brief create a QDemonRenderDrawIndirectBuffer object
-     *
-     * @param[in] context		Pointer to context
-     * @param[in] size			Size of the buffer
-     * @param[in] usage			Usage of the buffer (e.g. static, dynamic...)
-     * @param[in] data			A pointer to the buffer data that is allocated by the
-     * application.
-     *
-     * @return the buffer object or nullptr
-     */
-    static QDemonRef<QDemonRenderDrawIndirectBuffer> create(const QDemonRef<QDemonRenderContext> &context,
-                                                            QDemonRenderBufferUsageType usageType,
-                                                            size_t size,
-                                                            QDemonConstDataRef<quint8> bufferData);
 
 private:
     bool m_dirty; ///< true if buffer is dirty

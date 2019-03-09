@@ -82,14 +82,14 @@ public:
      *
      * @return no return.
      */
-    virtual void bindToShaderProgram(quint32 index);
+    void bindToShaderProgram(quint32 index);
 
     /**
      * @brief update the buffer to hardware
      *
      * @return no return.
      */
-    virtual void update();
+    void update();
 
     /**
      * @brief update a piece of memory directly within the storage buffer
@@ -134,31 +134,7 @@ public:
      *
      * @return the buffer name
      */
-    QByteArray getBufferName() const { return m_name; }
-
-    /**
-     * @brief get the backend object handle
-     *
-     * @return the backend object handle.
-     */
-    QDemonRenderBackend::QDemonRenderBackendBufferObject handle() const override { return m_bufferHandle; }
-
-    /**
-     * @brief create a QDemonRenderAtomicCounterBuffer object
-     *
-     * @param[in] context		Pointer to context
-     * @param[in] size			Size of the buffer
-     * @param[in] usage			Usage of the buffer (e.g. static, dynamic...)
-     * @param[in] data			A pointer to the buffer data that is allocated by the
-     * application.
-     *
-     * @return the buffer object or nullptr
-     */
-    static QDemonRef<QDemonRenderAtomicCounterBuffer> create(const QDemonRef<QDemonRenderContext> &context,
-                                                             const char *bufferName,
-                                                             QDemonRenderBufferUsageType usageType,
-                                                             size_t size,
-                                                             QDemonConstDataRef<quint8> bufferData);
+    QByteArray bufferName() const { return m_name; }
 
 private:
     QByteArray m_name; ///< buffer name

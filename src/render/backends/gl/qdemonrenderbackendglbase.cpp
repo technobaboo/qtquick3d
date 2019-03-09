@@ -573,7 +573,7 @@ void QDemonRenderBackendGLBase::clear(QDemonRenderClearFlags flags)
 }
 
 QDemonRenderBackend::QDemonRenderBackendBufferObject QDemonRenderBackendGLBase::createBuffer(size_t size,
-                                                                                             QDemonRenderBufferBindType bindFlags,
+                                                                                             QDemonRenderBufferType bindFlags,
                                                                                              QDemonRenderBufferUsageType usage,
                                                                                              const void *hostPtr)
 {
@@ -596,7 +596,7 @@ QDemonRenderBackend::QDemonRenderBackendBufferObject QDemonRenderBackendGLBase::
     return (QDemonRenderBackend::QDemonRenderBackendBufferObject)bufID;
 }
 
-void QDemonRenderBackendGLBase::bindBuffer(QDemonRenderBackendBufferObject bo, QDemonRenderBufferBindType bindFlags)
+void QDemonRenderBackendGLBase::bindBuffer(QDemonRenderBackendBufferObject bo, QDemonRenderBufferType bindFlags)
 {
     GLuint bufID = HandleToID_cast(GLuint, size_t, bo);
     GL_CALL_FUNCTION(glBindBuffer(m_conversion.fromBindBufferFlagsToGL(bindFlags), bufID));
@@ -609,7 +609,7 @@ void QDemonRenderBackendGLBase::releaseBuffer(QDemonRenderBackendBufferObject bo
 }
 
 void QDemonRenderBackendGLBase::updateBuffer(QDemonRenderBackendBufferObject bo,
-                                             QDemonRenderBufferBindType bindFlags,
+                                             QDemonRenderBufferType bindFlags,
                                              size_t size,
                                              QDemonRenderBufferUsageType usage,
                                              const void *data)
@@ -621,7 +621,7 @@ void QDemonRenderBackendGLBase::updateBuffer(QDemonRenderBackendBufferObject bo,
 }
 
 void QDemonRenderBackendGLBase::updateBufferRange(QDemonRenderBackendBufferObject bo,
-                                                  QDemonRenderBufferBindType bindFlags,
+                                                  QDemonRenderBufferType bindFlags,
                                                   size_t offset,
                                                   size_t size,
                                                   const void *data)
@@ -632,7 +632,7 @@ void QDemonRenderBackendGLBase::updateBufferRange(QDemonRenderBackendBufferObjec
     GL_CALL_FUNCTION(glBufferSubData(target, offset, size, data));
 }
 
-void *QDemonRenderBackendGLBase::mapBuffer(QDemonRenderBackendBufferObject, QDemonRenderBufferBindType, size_t, size_t, QDemonRenderBufferAccessFlags)
+void *QDemonRenderBackendGLBase::mapBuffer(QDemonRenderBackendBufferObject, QDemonRenderBufferType, size_t, size_t, QDemonRenderBufferAccessFlags)
 {
     // needs GL 3 context
     qCCritical(INVALID_OPERATION) << QObject::tr("Unsupported method: ") << __FUNCTION__;
@@ -640,7 +640,7 @@ void *QDemonRenderBackendGLBase::mapBuffer(QDemonRenderBackendBufferObject, QDem
     return nullptr;
 }
 
-bool QDemonRenderBackendGLBase::unmapBuffer(QDemonRenderBackendBufferObject, QDemonRenderBufferBindType)
+bool QDemonRenderBackendGLBase::unmapBuffer(QDemonRenderBackendBufferObject, QDemonRenderBufferType)
 {
     // needs GL 3 context
     qCCritical(INVALID_OPERATION) << QObject::tr("Unsupported method: ") << __FUNCTION__;

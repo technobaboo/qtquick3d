@@ -37,16 +37,17 @@ QT_BEGIN_NAMESPACE
 
 QDemonRenderStorageBuffer::QDemonRenderStorageBuffer(const QDemonRef<QDemonRenderContext> &context,
                                                      const QByteArray &bufferName,
-                                                     size_t size,
                                                      QDemonRenderBufferUsageType usageType,
+                                                     size_t size,
                                                      QDemonDataRef<quint8> data,
                                                      QDemonRenderDataBuffer *pBuffer)
-    : QDemonRenderDataBuffer(context, size, QDemonRenderBufferBindType::Storage, usageType, data)
+    : QDemonRenderDataBuffer(context, size, QDemonRenderBufferType::Storage, usageType, data)
     , m_name(bufferName)
     , m_wrappedBuffer(pBuffer)
     , m_dirty(true)
 {
     Q_ASSERT(context->isStorageBufferSupported());
+    context->registerStorageBuffer(this);
 }
 
 QDemonRenderStorageBuffer::~QDemonRenderStorageBuffer()
@@ -65,19 +66,19 @@ void QDemonRenderStorageBuffer::bind()
     if (m_wrappedBuffer)
         m_wrappedBuffer->bind();
     else
-        m_backend->bindBuffer(m_bufferHandle, m_bindFlags);
+        m_backend->bindBuffer(m_handle, m_type);
 }
 
 void QDemonRenderStorageBuffer::bindToShaderProgram(quint32 index)
 {
-    m_backend->programSetStorageBuffer(index, (m_wrappedBuffer) ? m_wrappedBuffer->handle() : m_bufferHandle);
+    m_backend->programSetStorageBuffer(index, (m_wrappedBuffer) ? m_wrappedBuffer->handle() : m_handle);
 }
 
 void QDemonRenderStorageBuffer::update()
 {
     // we only update the buffer if it is dirty and we actually have some data
     if (m_dirty && m_bufferData.size()) {
-        m_backend->updateBuffer(m_bufferHandle, m_bindFlags, m_bufferData.size(), m_usageType, m_bufferData.begin());
+        m_backend->updateBuffer(m_handle, m_type, m_bufferData.size(), m_usageType, m_bufferData.begin());
         m_dirty = false;
     }
 }
@@ -86,30 +87,7 @@ void QDemonRenderStorageBuffer::updateData(qint32 offset, QDemonDataRef<quint8> 
 {
     // we only update the buffer if it is not just a wrapper
     if (!m_wrappedBuffer)
-        m_backend->updateBuffer(m_bufferHandle, m_bindFlags, data.size(), m_usageType, data.begin() + offset);
-}
-
-QDemonRef<QDemonRenderStorageBuffer> QDemonRenderStorageBuffer::create(const QDemonRef<QDemonRenderContext> &context,
-                                                                       const char *bufferName,
-                                                                       QDemonRenderBufferUsageType usageType,
-                                                                       size_t size,
-                                                                       QDemonConstDataRef<quint8> bufferData,
-                                                                       QDemonRenderDataBuffer *pBuffer)
-{
-    QDemonRef<QDemonRenderStorageBuffer> retval = nullptr;
-
-    if (context->isStorageBufferSupported()) {
-        retval = new QDemonRenderStorageBuffer(context,
-                                               bufferName,
-                                               size,
-                                               usageType,
-                                               toDataRef(const_cast<quint8 *>(bufferData.begin()), bufferData.size()),
-                                               pBuffer);
-    } else {
-        QString errorMsg = QObject::tr("Shader storage buffers are not supported: %1").arg(QString::fromUtf8(bufferName));
-        qCCritical(INVALID_OPERATION) << errorMsg;
-    }
-    return retval;
+        m_backend->updateBuffer(m_handle, m_type, data.size(), m_usageType, data.begin() + offset);
 }
 
 QT_END_NAMESPACE

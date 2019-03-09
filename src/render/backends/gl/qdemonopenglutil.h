@@ -681,40 +681,40 @@ struct GLConversion
         return 0;
     }
 
-    static GLenum fromBindBufferFlagsToGL(QDemonRenderBufferBindType type)
+    static GLenum fromBindBufferFlagsToGL(QDemonRenderBufferType type)
     {
         switch(type) {
-        case QDemonRenderBufferBindType::Vertex:
+        case QDemonRenderBufferType::Vertex:
             return GL_ARRAY_BUFFER;
-        case QDemonRenderBufferBindType::Index:
+        case QDemonRenderBufferType::Index:
             return GL_ELEMENT_ARRAY_BUFFER;
-        case QDemonRenderBufferBindType::Constant:
+        case QDemonRenderBufferType::Constant:
             return GL_UNIFORM_BUFFER;
-        case QDemonRenderBufferBindType::Storage:
+        case QDemonRenderBufferType::Storage:
             return GL_SHADER_STORAGE_BUFFER;
-        case QDemonRenderBufferBindType::AtomicCounter:
+        case QDemonRenderBufferType::AtomicCounter:
             return GL_ATOMIC_COUNTER_BUFFER;
-        case QDemonRenderBufferBindType::DrawIndirect:
+        case QDemonRenderBufferType::DrawIndirect:
             return GL_DRAW_INDIRECT_BUFFER;
         }
     }
 
-    static QDemonRenderBufferBindType fromGLToBindBufferFlags(GLenum value)
+    static QDemonRenderBufferType fromGLToBindBufferFlags(GLenum value)
     {
-        QDemonRenderBufferBindType retval;
+        QDemonRenderBufferType retval;
 
         if (value == GL_ARRAY_BUFFER)
-            return QDemonRenderBufferBindType::Vertex;
+            return QDemonRenderBufferType::Vertex;
         else if (value == GL_ELEMENT_ARRAY_BUFFER)
-            return QDemonRenderBufferBindType::Index;
+            return QDemonRenderBufferType::Index;
         else if (value == GL_UNIFORM_BUFFER)
-            return QDemonRenderBufferBindType::Constant;
+            return QDemonRenderBufferType::Constant;
         else if (value == GL_SHADER_STORAGE_BUFFER)
-            return QDemonRenderBufferBindType::Storage;
+            return QDemonRenderBufferType::Storage;
         else if (value == GL_ATOMIC_COUNTER_BUFFER)
-            return QDemonRenderBufferBindType::AtomicCounter;
+            return QDemonRenderBufferType::AtomicCounter;
         else if (value == GL_DRAW_INDIRECT_BUFFER)
-            return QDemonRenderBufferBindType::DrawIndirect;
+            return QDemonRenderBufferType::DrawIndirect;
         else
             Q_ASSERT(false);
 

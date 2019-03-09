@@ -37,28 +37,28 @@ QT_BEGIN_NAMESPACE
 
 QDemonRenderDataBuffer::QDemonRenderDataBuffer(const QDemonRef<QDemonRenderContext> &context,
                                                size_t size,
-                                               QDemonRenderBufferBindType bindFlags,
+                                               QDemonRenderBufferType bindFlags,
                                                QDemonRenderBufferUsageType usageType,
                                                QDemonDataRef<quint8> data)
     : m_context(context)
     , m_backend(context->getBackend())
     , m_usageType(usageType)
-    , m_bindFlags(bindFlags)
+    , m_type(bindFlags)
     , m_bufferData(data)
     , m_bufferCapacity(data.size())
     , m_bufferSize(size)
     , m_ownsData(false)
     , m_mapped(false)
 {
-    m_bufferHandle = m_backend->createBuffer(size, bindFlags, usageType, (const void *)m_bufferData.begin());
+    m_handle = m_backend->createBuffer(size, bindFlags, usageType, (const void *)m_bufferData.begin());
 }
 
 QDemonRenderDataBuffer::~QDemonRenderDataBuffer()
 {
-    if (m_bufferHandle) {
-        m_backend->releaseBuffer(m_bufferHandle);
+    if (m_handle) {
+        m_backend->releaseBuffer(m_handle);
     }
-    m_bufferHandle = nullptr;
+    m_handle = nullptr;
 
     releaseMemory();
 }
@@ -82,8 +82,8 @@ QDemonDataRef<quint8> QDemonRenderDataBuffer::mapBuffer()
         Q_ASSERT(false);
     }
 
-    quint8 *pData = (quint8 *)m_backend->mapBuffer(m_bufferHandle,
-                                                   m_bindFlags,
+    quint8 *pData = (quint8 *)m_backend->mapBuffer(m_handle,
+                                                   m_type,
                                                    0,
                                                    m_bufferSize,
                                                    QDemonRenderBufferAccessFlags(QDemonRenderBufferAccessTypeValues::Read
@@ -112,7 +112,7 @@ QDemonDataRef<quint8> QDemonRenderDataBuffer::mapBufferRange(size_t offset, size
         Q_ASSERT(false);
     }
 
-    quint8 *pData = (quint8 *)m_backend->mapBuffer(m_bufferHandle, m_bindFlags, offset, size, flags);
+    quint8 *pData = (quint8 *)m_backend->mapBuffer(m_handle, m_type, offset, size, flags);
 
     releaseMemory();
     m_bufferData = toDataRef(const_cast<quint8 *>(pData), (quint32)size);
@@ -128,7 +128,7 @@ void QDemonRenderDataBuffer::unmapBuffer()
 {
     if (m_mapped) {
         // update hardware
-        m_backend->unmapBuffer(m_bufferHandle, m_bindFlags);
+        m_backend->unmapBuffer(m_handle, m_type);
         m_mapped = false;
         releaseMemory();
     }
@@ -148,6 +148,6 @@ void QDemonRenderDataBuffer::updateBuffer(QDemonConstDataRef<quint8> data, bool 
     m_bufferCapacity = data.mSize;
     m_ownsData = ownsMemory;
     // update hardware
-    m_backend->updateBuffer(m_bufferHandle, m_bindFlags, m_bufferCapacity, m_usageType, (const void *)m_bufferData.begin());
+    m_backend->updateBuffer(m_handle, m_type, m_bufferCapacity, m_usageType, (const void *)m_bufferData.begin());
 }
 QT_END_NAMESPACE

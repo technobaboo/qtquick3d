@@ -130,14 +130,14 @@ struct QDemonAllocatedDataBufferEntry
     QAtomicInt ref;
     QString name;
     QDemonRef<QDemonRenderDataBuffer> dataBuffer;
-    QDemonRenderBufferBindType bufferType;
+    QDemonRenderBufferType bufferType;
     QDemonDataRef<quint8> bufferData;
     QDemonAllocateBufferFlags flags;
     bool needsClear;
 
     QDemonAllocatedDataBufferEntry(const QString &inName,
                                    QDemonRenderDataBuffer &inDataBuffer,
-                                   QDemonRenderBufferBindType inType,
+                                   QDemonRenderBufferType inType,
                                    const QDemonDataRef<quint8> &data,
                                    QDemonAllocateBufferFlags inFlags)
         : name(inName), dataBuffer(&inDataBuffer), bufferType(inType), bufferData(data), flags(inFlags), needsClear(false)
@@ -780,20 +780,20 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
             quint8 *initialData = (quint8 *)::malloc(theBufferSize);
             QDemonDataRef<quint8> data((quint8 *)initialData, theBufferSize);
             memset(initialData, 0x0L, theBufferSize);
-            if (inCommand.m_dataBufferType == QDemonRenderBufferBindType::Storage) {
-                theDataBuffer = theRenderContext->createStorageBuffer(inCommand.m_name.toLocal8Bit(),
+            if (inCommand.m_dataBufferType == QDemonRenderBufferType::Storage) {
+                theDataBuffer = new QDemonRenderStorageBuffer(theRenderContext, inCommand.m_name.toLocal8Bit(),
                                                                       QDemonRenderBufferUsageType::Dynamic,
                                                                       theBufferSize,
                                                                       data,
                                                                       nullptr);
-            } else if (inCommand.m_dataBufferType == QDemonRenderBufferBindType::DrawIndirect) {
+            } else if (inCommand.m_dataBufferType == QDemonRenderBufferType::DrawIndirect) {
                 Q_ASSERT(theBufferSize == sizeof(DrawArraysIndirectCommand));
                 // init a draw call
                 quint32 *pIndirectDrawCall = (quint32 *)initialData;
                 // vertex count we draw points right now only
                 // the rest we fill in by GPU
                 pIndirectDrawCall[0] = 1;
-                theDataBuffer = theRenderContext->createDrawIndirectBuffer(QDemonRenderBufferUsageType::Dynamic, theBufferSize, data);
+                theDataBuffer = new QDemonRenderDrawIndirectBuffer(theRenderContext, QDemonRenderBufferUsageType::Dynamic, theBufferSize, data);
             } else
                 Q_ASSERT(false);
 
@@ -804,9 +804,9 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
                                                                                        inCommand.m_bufferFlags));
 
             // create wrapper buffer
-            if (inCommand.m_dataBufferWrapType == QDemonRenderBufferBindType::Storage
+            if (inCommand.m_dataBufferWrapType == QDemonRenderBufferType::Storage
                 && !inCommand.m_wrapName.isEmpty() && theDataBuffer) {
-                theDataWrapBuffer = theRenderContext->createStorageBuffer(inCommand.m_wrapName.toLocal8Bit(),
+                theDataWrapBuffer = new QDemonRenderStorageBuffer(theRenderContext, inCommand.m_wrapName.toLocal8Bit(),
                                                                           QDemonRenderBufferUsageType::Dynamic,
                                                                           theBufferSize,
                                                                           data,
@@ -1286,7 +1286,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
 
             if (theConstant) {
                 getEffectContext(*inEffect).setDataBuffer(inShader, inCommand.m_paramName, theBufferToBind.dataBuffer);
-            } else if (theBufferToBind.bufferType == QDemonRenderBufferBindType::DrawIndirect) {
+            } else if (theBufferToBind.bufferType == QDemonRenderBufferType::DrawIndirect) {
                 // since we filled part of this buffer on the GPU we need a sync before usage
                 QDemonRenderBufferBarrierFlags flags(QDemonRenderBufferBarrierValues::CommandBuffer);
                 inShader->renderContext()->setMemoryBarrier(flags);

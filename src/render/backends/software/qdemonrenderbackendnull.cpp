@@ -101,24 +101,24 @@ struct QDemonNullBackend : public QDemonRenderBackend
     void setViewportRect(const QRect &) override {}
     void setClearColor(const QVector4D *) override {}
     void clear(QDemonRenderClearFlags) override {}
-    QDemonRenderBackendBufferObject createBuffer(size_t, QDemonRenderBufferBindType, QDemonRenderBufferUsageType, const void *) override
+    QDemonRenderBackendBufferObject createBuffer(size_t, QDemonRenderBufferType, QDemonRenderBufferUsageType, const void *) override
     {
         return QDemonRenderBackendBufferObject(1);
     }
-    void bindBuffer(QDemonRenderBackendBufferObject, QDemonRenderBufferBindType) override {}
+    void bindBuffer(QDemonRenderBackendBufferObject, QDemonRenderBufferType) override {}
     void releaseBuffer(QDemonRenderBackendBufferObject) override {}
 
-    void updateBuffer(QDemonRenderBackendBufferObject, QDemonRenderBufferBindType, size_t, QDemonRenderBufferUsageType, const void *) override
+    void updateBuffer(QDemonRenderBackendBufferObject, QDemonRenderBufferType, size_t, QDemonRenderBufferUsageType, const void *) override
     {
     }
-    void updateBufferRange(QDemonRenderBackendBufferObject, QDemonRenderBufferBindType, size_t, size_t, const void *) override
+    void updateBufferRange(QDemonRenderBackendBufferObject, QDemonRenderBufferType, size_t, size_t, const void *) override
     {
     }
-    void *mapBuffer(QDemonRenderBackendBufferObject, QDemonRenderBufferBindType, size_t, size_t, QDemonRenderBufferAccessFlags) override
+    void *mapBuffer(QDemonRenderBackendBufferObject, QDemonRenderBufferType, size_t, size_t, QDemonRenderBufferAccessFlags) override
     {
         return nullptr;
     }
-    bool unmapBuffer(QDemonRenderBackendBufferObject, QDemonRenderBufferBindType) override { return true; }
+    bool unmapBuffer(QDemonRenderBackendBufferObject, QDemonRenderBufferType) override { return true; }
     void setMemoryBarrier(QDemonRenderBufferBarrierFlags) override {}
     QDemonRenderBackendQueryObject createQuery() override { return QDemonRenderBackendQueryObject(1); }
     void releaseQuery(QDemonRenderBackendQueryObject) override {}

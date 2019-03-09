@@ -35,19 +35,19 @@
 QT_BEGIN_NAMESPACE
 
 QDemonRenderVertexBuffer::QDemonRenderVertexBuffer(const QDemonRef<QDemonRenderContext> &context,
+                                                   QDemonRenderBufferUsageType usageType,
                                                    size_t size,
                                                    quint32 stride,
-                                                   QDemonRenderBufferBindType bindFlags,
-                                                   QDemonRenderBufferUsageType usageType,
-                                                   QDemonDataRef<quint8> data)
-    : QDemonRenderDataBuffer(context, size, bindFlags, usageType, data), m_stride(stride)
+                                                   QDemonConstDataRef<quint8> data)
+    : QDemonRenderDataBuffer(context, size, QDemonRenderBufferType::Vertex, usageType,
+                             toDataRef(const_cast<quint8 *>(data.begin()), data.size())),
+      m_stride(stride)
 {
     Q_ASSERT(m_stride);
 }
 
 QDemonRenderVertexBuffer::~QDemonRenderVertexBuffer()
 {
-    m_context->bufferDestroyed(this);
 }
 
 void QDemonRenderVertexBuffer::bind()
@@ -57,22 +57,7 @@ void QDemonRenderVertexBuffer::bind()
         Q_ASSERT(false);
     }
 
-    m_backend->bindBuffer(m_bufferHandle, m_bindFlags);
-}
-
-QDemonRef<QDemonRenderVertexBuffer> QDemonRenderVertexBuffer::create(const QDemonRef<QDemonRenderContext> &context,
-                                                                     QDemonRenderBufferUsageType usageType,
-                                                                     size_t size,
-                                                                     quint32 stride,
-                                                                     QDemonConstDataRef<quint8> bufferData)
-{
-    return QDemonRef<QDemonRenderVertexBuffer>(
-            new QDemonRenderVertexBuffer(context,
-                                         size,
-                                         stride,
-                                         QDemonRenderBufferBindType::Vertex,
-                                         usageType,
-                                         toDataRef(const_cast<quint8 *>(bufferData.begin()), bufferData.size())));
+    m_backend->bindBuffer(m_handle, m_type);
 }
 
 QT_END_NAMESPACE

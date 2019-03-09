@@ -52,11 +52,12 @@ QDemonRenderAtomicCounterBuffer::QDemonRenderAtomicCounterBuffer(const QDemonRef
                                                                  size_t size,
                                                                  QDemonRenderBufferUsageType usageType,
                                                                  QDemonDataRef<quint8> data)
-    : QDemonRenderDataBuffer(context, size, QDemonRenderBufferBindType::Storage, usageType, data)
+    : QDemonRenderDataBuffer(context, size, QDemonRenderBufferType::Storage, usageType, data)
     , m_name(bufferName)
     , m_dirty(true)
 {
     Q_ASSERT(context->isStorageBufferSupported());
+    context->registerAtomicCounterBuffer(this);
 }
 
 QDemonRenderAtomicCounterBuffer::~QDemonRenderAtomicCounterBuffer()
@@ -80,19 +81,19 @@ void QDemonRenderAtomicCounterBuffer::bind()
         Q_ASSERT(false);
     }
 
-    m_backend->bindBuffer(m_bufferHandle, m_bindFlags);
+    m_backend->bindBuffer(m_handle, m_type);
 }
 
 void QDemonRenderAtomicCounterBuffer::bindToShaderProgram(quint32 index)
 {
-    m_backend->programSetAtomicCounterBuffer(index, m_bufferHandle);
+    m_backend->programSetAtomicCounterBuffer(index, m_handle);
 }
 
 void QDemonRenderAtomicCounterBuffer::update()
 {
     // we only update the buffer if it is dirty and we actually have some data
     if (m_dirty && m_bufferData.size()) {
-        m_backend->updateBuffer(m_bufferHandle, m_bindFlags, m_bufferData.size(), m_usageType, m_bufferData.begin());
+        m_backend->updateBuffer(m_handle, m_type, m_bufferData.size(), m_usageType, m_bufferData.begin());
         m_dirty = false;
     }
 }
@@ -101,7 +102,7 @@ void QDemonRenderAtomicCounterBuffer::updateData(qint32 offset, QDemonDataRef<qu
 {
     // we only update the buffer if we something
     if (data.size())
-        m_backend->updateBuffer(m_bufferHandle, m_bindFlags, data.size(), m_usageType, data.begin() + offset);
+        m_backend->updateBuffer(m_handle, m_type, data.size(), m_usageType, data.begin() + offset);
 }
 
 void QDemonRenderAtomicCounterBuffer::addParam(const QByteArray &name, quint32 offset)
@@ -123,25 +124,6 @@ bool QDemonRenderAtomicCounterBuffer::containsParam(const QByteArray &name)
         return true;
     else
         return false;
-}
-
-QDemonRef<QDemonRenderAtomicCounterBuffer> QDemonRenderAtomicCounterBuffer::create(const QDemonRef<QDemonRenderContext> &context,
-                                                                                   const char *bufferName,
-                                                                                   QDemonRenderBufferUsageType usageType,
-                                                                                   size_t size,
-                                                                                   QDemonConstDataRef<quint8> bufferData)
-{
-    if (context->isAtomicCounterBufferSupported()) {
-        return QDemonRef<QDemonRenderAtomicCounterBuffer>(
-                new QDemonRenderAtomicCounterBuffer(context,
-                                                    bufferName,
-                                                    size,
-                                                    usageType,
-                                                    toDataRef(const_cast<quint8 *>(bufferData.begin()), bufferData.size())));
-    } else {
-        Q_ASSERT(false);
-    }
-    return QDemonRef<QDemonRenderAtomicCounterBuffer>();
 }
 
 QT_END_NAMESPACE

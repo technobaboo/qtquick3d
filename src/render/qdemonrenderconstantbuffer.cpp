@@ -53,10 +53,10 @@ public:
 
 QDemonRenderConstantBuffer::QDemonRenderConstantBuffer(const QDemonRef<QDemonRenderContext> &context,
                                                        const QByteArray &bufferName,
-                                                       size_t size,
                                                        QDemonRenderBufferUsageType usageType,
+                                                       size_t size,
                                                        QDemonDataRef<quint8> data)
-    : QDemonRenderDataBuffer(context, size, QDemonRenderBufferBindType::Constant, usageType, QDemonDataRef<quint8>())
+    : QDemonRenderDataBuffer(context, size, QDemonRenderBufferType::Constant, usageType, QDemonDataRef<quint8>())
     , m_name(bufferName)
     , m_currentOffset(0)
     , m_currentSize(0)
@@ -73,6 +73,7 @@ QDemonRenderConstantBuffer::QDemonRenderConstantBuffer(const QDemonRef<QDemonRen
             memcpy(m_shadowCopy.begin(), data.begin(), data.size());
         }
     }
+    context->registerConstantBuffer(this);
 }
 
 QDemonRenderConstantBuffer::~QDemonRenderConstantBuffer()
@@ -101,7 +102,7 @@ void QDemonRenderConstantBuffer::bind()
         Q_ASSERT(false);
     }
 
-    m_backend->bindBuffer(m_bufferHandle, m_bindFlags);
+    m_backend->bindBuffer(m_handle, m_type);
 }
 
 void QDemonRenderConstantBuffer::bindToShaderProgram(const QDemonRef<QDemonRenderShaderProgram> &inShader, quint32 blockIndex, quint32 binding)
@@ -111,7 +112,7 @@ void QDemonRenderConstantBuffer::bindToShaderProgram(const QDemonRef<QDemonRende
         m_backend->programSetConstantBlock(inShader->handle(), blockIndex, binding);
     }
 
-    m_backend->programSetConstantBuffer(binding, m_bufferHandle);
+    m_backend->programSetConstantBuffer(binding, m_handle);
 }
 
 bool QDemonRenderConstantBuffer::setupBuffer(const QDemonRenderShaderProgram *program, qint32 index, qint32 bufSize, qint32 paramCount)
@@ -167,7 +168,7 @@ bool QDemonRenderConstantBuffer::setupBuffer(const QDemonRenderShaderProgram *pr
                 if (m_shadowCopy.size())
                     memcpy(newMem + theOffsets[idx],
                            m_shadowCopy.begin() + entry.value()->m_offset,
-                           entry.value()->m_count * getUniformTypeSize(pParam->m_type));
+                           entry.value()->m_count * uniformTypeSize(pParam->m_type));
 
                 pParam->m_offset = theOffsets[idx];
                 Q_ASSERT(type == pParam->m_type);
@@ -216,11 +217,11 @@ void QDemonRenderConstantBuffer::update()
     // and if it is dirty
     if (m_rangeStart < m_rangeEnd && m_hwBufferInitialized) {
         if (m_rangeStart == 0 && m_rangeEnd >= m_shadowCopy.size()) {
-            m_backend->updateBuffer(m_bufferHandle, m_bindFlags, m_shadowCopy.size(), m_usageType, m_shadowCopy.begin());
+            m_backend->updateBuffer(m_handle, m_type, m_shadowCopy.size(), m_usageType, m_shadowCopy.begin());
         } else {
             Q_ASSERT(m_rangeStart < m_rangeEnd && m_rangeEnd <= m_shadowCopy.size());
-            m_backend->updateBufferRange(m_bufferHandle,
-                                         m_bindFlags,
+            m_backend->updateBufferRange(m_handle,
+                                         m_type,
                                          m_rangeStart,
                                          m_rangeEnd - m_rangeStart,
                                          m_shadowCopy.begin() + m_rangeStart);
@@ -244,7 +245,7 @@ void QDemonRenderConstantBuffer::addParam(const QByteArray &name, QDemonRenderSh
     }
 
     // compute new current buffer size and offset
-    qint32 constantSize = getUniformTypeSize(type) * count;
+    qint32 constantSize = uniformTypeSize(type) * count;
     m_currentSize += constantSize;
     m_currentOffset += constantSize;
 }
@@ -263,10 +264,10 @@ void QDemonRenderConstantBuffer::updateParam(const char *inName, QDemonDataRef<q
     if (entry != m_constantBufferEntryMap.end()) {
         if (!memcmp(m_shadowCopy.begin() + entry.value()->m_offset,
                     value.begin(),
-                    entry.value()->m_count * getUniformTypeSize(entry.value()->m_type))) {
+                    entry.value()->m_count * uniformTypeSize(entry.value()->m_type))) {
             return;
         }
-        quint32 size = entry.value()->m_count * getUniformTypeSize(entry.value()->m_type);
+        quint32 size = entry.value()->m_count * uniformTypeSize(entry.value()->m_type);
         memcpy(m_shadowCopy.begin() + entry.value()->m_offset, value.begin(), size);
         setDirty(entry.value()->m_offset, size);
     }
@@ -310,7 +311,7 @@ ConstantBufferParamEntry *QDemonRenderConstantBuffer::createParamEntry(const QBy
     return newEntry;
 }
 
-qint32 QDemonRenderConstantBuffer::getUniformTypeSize(QDemonRenderShaderDataType type)
+qint32 QDemonRenderConstantBuffer::uniformTypeSize(QDemonRenderShaderDataType type)
 {
     switch (type) {
     case QDemonRenderShaderDataType::Float:
@@ -361,26 +362,6 @@ bool QDemonRenderConstantBuffer::allocateShadowBuffer(quint32 size)
     m_bufferCapacity = size;
 
     return true;
-}
-
-QDemonRef<QDemonRenderConstantBuffer> QDemonRenderConstantBuffer::create(const QDemonRef<QDemonRenderContext> &context,
-                                                                         const char *bufferName,
-                                                                         QDemonRenderBufferUsageType usageType,
-                                                                         size_t size,
-                                                                         QDemonConstDataRef<quint8> bufferData)
-{
-    QDemonRef<QDemonRenderConstantBuffer> retval = nullptr;
-
-    if (context->getConstantBufferSupport()) {
-        retval = new QDemonRenderConstantBuffer(context,
-                                                bufferName,
-                                                size,
-                                                usageType,
-                                                toDataRef(const_cast<quint8 *>(bufferData.begin()), bufferData.size()));
-    } else {
-        Q_ASSERT(false);
-    }
-    return retval;
 }
 
 QT_END_NAMESPACE

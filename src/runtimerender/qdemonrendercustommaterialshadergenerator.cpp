@@ -416,7 +416,7 @@ struct QDemonShaderGenerator : public ICustomMaterialShaderGenerator
             quint8 stackData[size];
             QDemonLightSourceShader *s = new (stackData) QDemonLightSourceShader[QDEMON_MAX_NUM_LIGHTS];
             QDemonDataRef<quint8> cBuffer(stackData, size);
-            pCB = theContext->createConstantBuffer(name, QDemonRenderBufferUsageType::Static, size, cBuffer);
+            pCB = new QDemonRenderConstantBuffer(theContext, name, QDemonRenderBufferUsageType::Static, size, cBuffer);
             if (!pCB) {
                 Q_ASSERT(false);
                 return nullptr;

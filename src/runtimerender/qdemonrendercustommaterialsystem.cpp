@@ -1855,7 +1855,7 @@ bool QDemonMaterialSystem::renderDepthPrepass(const QMatrix4x4 &inMVP, const QDe
     theContext->setActiveShader(theProgram);
     theProgram->setPropertyValue("model_view_projection", inMVP);
     theContext->setInputAssembler(inSubset.inputAssemblerPoints);
-    theContext->draw(QDemonRenderDrawMode::Lines, inSubset.posVertexBuffer->getNumVertexes(), 0);
+    theContext->draw(QDemonRenderDrawMode::Lines, inSubset.posVertexBuffer->numVertexes(), 0);
     return true;
 }
 

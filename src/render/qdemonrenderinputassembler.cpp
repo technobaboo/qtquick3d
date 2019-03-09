@@ -96,7 +96,7 @@ const QDemonRef<QDemonRenderIndexBuffer> QDemonRenderInputAssembler::getIndexBuf
 
 quint32 QDemonRenderInputAssembler::getIndexCount() const
 {
-    return (m_indexBuffer) ? m_indexBuffer->getNumIndices() : 0;
+    return (m_indexBuffer) ? m_indexBuffer->numIndices() : 0;
 }
 
 quint32 QDemonRenderInputAssembler::getVertexCount() const
@@ -104,7 +104,7 @@ quint32 QDemonRenderInputAssembler::getVertexCount() const
     // makes only sense if we have a single vertex buffer
     Q_ASSERT(m_vertexBuffers.size() == 1);
 
-    return m_vertexBuffers[0]->getNumVertexes();
+    return m_vertexBuffers[0]->numVertexes();
 }
 
 QT_END_NAMESPACE

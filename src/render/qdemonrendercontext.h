@@ -155,12 +155,9 @@ private:
     qint32 m_stencilBits; ///< this is the stencil bits count of the default window render target
 
 protected:
-    QHash<const void *, QDemonRenderVertexBuffer *> m_vertToImpMap;
-    QHash<const void *, QDemonRenderIndexBuffer *> m_indexToImpMap;
     TContextConstantBufferMap m_constantToImpMap;
     TContextStorageBufferMap m_storageToImpMap;
     TContextAtomicCounterBufferMap m_atomicCounterToImpMap;
-    TContextDrawIndirectBufferMap m_drawIndirectToImpMap;
     TContextDepthStencilStateMap m_depthStencilStateToImpMap;
     TContextRasterizerStateMap m_rasterizerStateToImpMap;
     TContextPathFontSpecificationMap m_pathFontSpecToImpMap;
@@ -444,50 +441,20 @@ public:
     void setRasterizerState(QDemonRef<QDemonRenderRasterizerState> inRasterizerState);
     void stateDestroyed(QDemonRenderRasterizerState *state);
 
-    QDemonRef<QDemonRenderVertexBuffer> createVertexBuffer(QDemonRenderBufferUsageType usageType,
-                                                           size_t size,
-                                                           quint32 stride,
-                                                           QDemonConstDataRef<quint8> bufferData);
-    QDemonRef<QDemonRenderVertexBuffer> getVertexBuffer(const void *implementationHandle);
-    void bufferDestroyed(QDemonRenderVertexBuffer *buffer);
-
-    QDemonRef<QDemonRenderIndexBuffer> createIndexBuffer(QDemonRenderBufferUsageType usageType,
-                                                                 QDemonRenderComponentType componentType,
-                                                                 size_t size,
-                                                                 QDemonConstDataRef<quint8> bufferData);
-    QDemonRef<QDemonRenderIndexBuffer> getIndexBuffer(const void *implementationHandle);
-    void bufferDestroyed(QDemonRenderIndexBuffer *buffer);
-
-    QDemonRef<QDemonRenderConstantBuffer> createConstantBuffer(const char *bufferName,
-                                                                       QDemonRenderBufferUsageType usageType,
-                                                                       size_t size,
-                                                                       QDemonConstDataRef<quint8> bufferData);
+    void registerConstantBuffer(QDemonRenderConstantBuffer *buffer);
     QDemonRef<QDemonRenderConstantBuffer> getConstantBuffer(const QByteArray &bufferName);
     void bufferDestroyed(QDemonRenderConstantBuffer *buffer);
 
     qint32 getNextConstantBufferUnit();
 
-    QDemonRef<QDemonRenderStorageBuffer> createStorageBuffer(const char *bufferName,
-                                                                     QDemonRenderBufferUsageType usageType,
-                                                                     size_t size,
-                                                                     QDemonConstDataRef<quint8> bufferData,
-                                                                     QDemonRenderDataBuffer *pBuffer);
+    void registerStorageBuffer(QDemonRenderStorageBuffer *buffer);
     QDemonRef<QDemonRenderStorageBuffer> getStorageBuffer(const QByteArray &bufferName);
     void bufferDestroyed(QDemonRenderStorageBuffer *buffer);
 
-    QDemonRef<QDemonRenderAtomicCounterBuffer> createAtomicCounterBuffer(const char *bufferName,
-                                                                                 QDemonRenderBufferUsageType usageType,
-                                                                                 size_t size,
-                                                                                 QDemonConstDataRef<quint8> bufferData);
+    void registerAtomicCounterBuffer(QDemonRenderAtomicCounterBuffer *buffer);
     QDemonRef<QDemonRenderAtomicCounterBuffer> getAtomicCounterBuffer(const QByteArray &bufferName);
     QDemonRef<QDemonRenderAtomicCounterBuffer> getAtomicCounterBufferByParam(const QByteArray &paramName);
     void bufferDestroyed(QDemonRenderAtomicCounterBuffer *buffer);
-
-    QDemonRef<QDemonRenderDrawIndirectBuffer> createDrawIndirectBuffer(QDemonRenderBufferUsageType usageType,
-                                                                               size_t size,
-                                                                               QDemonConstDataRef<quint8> bufferData);
-    QDemonRef<QDemonRenderDrawIndirectBuffer> getDrawIndirectBuffer(QDemonRenderBackend::QDemonRenderBackendBufferObject implementationHandle);
-    void bufferDestroyed(QDemonRenderDrawIndirectBuffer *buffer);
 
     void setMemoryBarrier(QDemonRenderBufferBarrierFlags barriers);
 

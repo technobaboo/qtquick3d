@@ -156,20 +156,19 @@ struct QDemonPixelGraphicsRenderer : public QDemonPixelGraphicsRendererInterface
 
         if (m_quadVertexBuffer == nullptr) {
             size_t bufSize = sizeof(pos);
-            m_quadVertexBuffer = theRenderContext->createVertexBuffer(QDemonRenderBufferUsageType::Static,
-                                                                      bufSize,
-                                                                      2 * sizeof(float),
-                                                                      toU8DataRef(pos, 4));
+            m_quadVertexBuffer = new QDemonRenderVertexBuffer(theRenderContext, QDemonRenderBufferUsageType::Static,
+                                                              bufSize, 2 * sizeof(float),
+                                                              toU8DataRef(pos, 4));
         }
 
         if (m_quadIndexBuffer == nullptr) {
             quint8 indexData[] = {
                 0, 1, 2, 0, 2, 3,
             };
-            m_quadIndexBuffer = theRenderContext->createIndexBuffer(QDemonRenderBufferUsageType::Static,
-                                                                    QDemonRenderComponentType::UnsignedInteger8,
-                                                                    sizeof(indexData),
-                                                                    toU8DataRef(indexData, sizeof(indexData)));
+            m_quadIndexBuffer = new QDemonRenderIndexBuffer(theRenderContext, QDemonRenderBufferUsageType::Static,
+                                                            QDemonRenderComponentType::UnsignedInteger8,
+                                                            sizeof(indexData),
+                                                            toU8DataRef(indexData, sizeof(indexData)));
         }
 
         if (m_quadAttribLayout == nullptr) {
@@ -180,7 +179,7 @@ struct QDemonPixelGraphicsRenderer : public QDemonPixelGraphicsRendererInterface
         if (m_quadInputAssembler == nullptr) {
 
             // create input assembler object
-            quint32 strides = m_quadVertexBuffer->getStride();
+            quint32 strides = m_quadVertexBuffer->stride();
             quint32 offsets = 0;
             m_quadInputAssembler = theRenderContext->createInputAssembler(m_quadAttribLayout,
                                                                           toConstDataRef(&m_quadVertexBuffer, 1),

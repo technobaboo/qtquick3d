@@ -72,10 +72,6 @@ QDemonRenderContext::QDemonRenderContext(const QDemonRef<QDemonRenderBackend> &i
 
 QDemonRenderContext::~QDemonRenderContext()
 {
-    Q_ASSERT(m_vertToImpMap.size() == 0);
-    m_vertToImpMap.clear();
-    Q_ASSERT(m_indexToImpMap.size() == 0);
-    m_indexToImpMap.clear();
     Q_ASSERT(m_constantToImpMap.size() == 0);
     m_constantToImpMap.clear();
     Q_ASSERT(m_storageToImpMap.size() == 0);
@@ -135,69 +131,10 @@ void QDemonRenderContext::stateDestroyed(QDemonRenderRasterizerState *state)
     m_rasterizerStateToImpMap.remove(state->GetRasterizerObjectHandle());
 }
 
-QDemonRef<QDemonRenderVertexBuffer> QDemonRenderContext::createVertexBuffer(QDemonRenderBufferUsageType usageType,
-                                                                                size_t size,
-                                                                                quint32 stride,
-                                                                                QDemonConstDataRef<quint8> bufferData)
+void QDemonRenderContext::registerConstantBuffer(QDemonRenderConstantBuffer *buffer)
 {
-    QDemonRef<QDemonRenderVertexBuffer> buffer = QDemonRenderVertexBuffer::create(this, usageType, size, stride, bufferData);
-    if (buffer)
-        m_vertToImpMap.insert(buffer->handle(), buffer.data());
-    return buffer;
-}
-
-QDemonRef<QDemonRenderVertexBuffer> QDemonRenderContext::getVertexBuffer(const void *implementationHandle)
-{
-    QHash<const void *, QDemonRenderVertexBuffer *>::const_iterator entry = m_vertToImpMap.find(implementationHandle);
-    if (entry != m_vertToImpMap.end())
-        return QDemonRef<QDemonRenderVertexBuffer>(entry.value());
-    return nullptr;
-}
-
-void QDemonRenderContext::bufferDestroyed(QDemonRenderVertexBuffer *buffer)
-{
-    m_vertToImpMap.remove(buffer->handle());
-}
-
-QDemonRef<QDemonRenderIndexBuffer> QDemonRenderContext::createIndexBuffer(QDemonRenderBufferUsageType usageType,
-                                                                              QDemonRenderComponentType componentType,
-                                                                              size_t size,
-                                                                              QDemonConstDataRef<quint8> bufferData)
-{
-    QDemonRef<QDemonRenderIndexBuffer> buffer = QDemonRenderIndexBuffer::create(this, usageType, componentType, size, bufferData);
-
-    if (buffer) {
-        m_indexToImpMap.insert(buffer->handle(), buffer.data());
-    }
-
-    return buffer;
-}
-
-QDemonRef<QDemonRenderIndexBuffer> QDemonRenderContext::getIndexBuffer(const void *implementationHandle)
-{
-    const QHash<const void *, QDemonRenderIndexBuffer *>::iterator entry = m_indexToImpMap.find(implementationHandle);
-    if (entry != m_indexToImpMap.end())
-        return QDemonRef<QDemonRenderIndexBuffer>(entry.value());
-    return nullptr;
-}
-
-void QDemonRenderContext::bufferDestroyed(QDemonRenderIndexBuffer *buffer)
-{
-    m_indexToImpMap.remove(buffer->handle());
-}
-
-QDemonRef<QDemonRenderConstantBuffer> QDemonRenderContext::createConstantBuffer(const char *bufferName,
-                                                                                    QDemonRenderBufferUsageType usageType,
-                                                                                    size_t size,
-                                                                                    QDemonConstDataRef<quint8> bufferData)
-{
-    QDemonRef<QDemonRenderConstantBuffer> buffer = QDemonRenderConstantBuffer::create(this, bufferName, usageType, size, bufferData);
-
-    if (buffer) {
-        m_constantToImpMap.insert(buffer->GetBufferName(), buffer.data());
-    }
-
-    return buffer;
+    Q_ASSERT(buffer);
+    m_constantToImpMap.insert(buffer->name(), buffer);
 }
 
 QDemonRef<QDemonRenderConstantBuffer> QDemonRenderContext::getConstantBuffer(const QByteArray &bufferName)
@@ -210,7 +147,7 @@ QDemonRef<QDemonRenderConstantBuffer> QDemonRenderContext::getConstantBuffer(con
 
 void QDemonRenderContext::bufferDestroyed(QDemonRenderConstantBuffer *buffer)
 {
-    m_constantToImpMap.remove(buffer->GetBufferName());
+    m_constantToImpMap.remove(buffer->name());
 }
 
 qint32 QDemonRenderContext::getNextConstantBufferUnit()
@@ -225,19 +162,9 @@ qint32 QDemonRenderContext::getNextConstantBufferUnit()
     return retval;
 }
 
-QDemonRef<QDemonRenderStorageBuffer> QDemonRenderContext::createStorageBuffer(const char *bufferName,
-                                                                                  QDemonRenderBufferUsageType usageType,
-                                                                                  size_t size,
-                                                                                  QDemonConstDataRef<quint8> bufferData,
-                                                                                  QDemonRenderDataBuffer *pBuffer)
+void QDemonRenderContext::registerStorageBuffer(QDemonRenderStorageBuffer *buffer)
 {
-    QDemonRef<QDemonRenderStorageBuffer> buffer = QDemonRenderStorageBuffer::create(this, bufferName, usageType, size, bufferData, pBuffer);
-
-    if (buffer) {
-        m_storageToImpMap.insert(buffer->getBufferName(), buffer.data());
-    }
-
-    return buffer;
+    m_storageToImpMap.insert(buffer->name(), buffer);
 }
 
 QDemonRef<QDemonRenderStorageBuffer> QDemonRenderContext::getStorageBuffer(const QByteArray &bufferName)
@@ -250,21 +177,12 @@ QDemonRef<QDemonRenderStorageBuffer> QDemonRenderContext::getStorageBuffer(const
 
 void QDemonRenderContext::bufferDestroyed(QDemonRenderStorageBuffer *buffer)
 {
-    m_storageToImpMap.remove(buffer->getBufferName());
+    m_storageToImpMap.remove(buffer->name());
 }
 
-QDemonRef<QDemonRenderAtomicCounterBuffer> QDemonRenderContext::createAtomicCounterBuffer(const char *bufferName,
-                                                                                              QDemonRenderBufferUsageType usageType,
-                                                                                              size_t size,
-                                                                                              QDemonConstDataRef<quint8> bufferData)
+void QDemonRenderContext::registerAtomicCounterBuffer(QDemonRenderAtomicCounterBuffer *buffer)
 {
-    QDemonRef<QDemonRenderAtomicCounterBuffer> buffer = QDemonRenderAtomicCounterBuffer::create(this, bufferName, usageType, size, bufferData);
-
-    if (buffer) {
-        m_atomicCounterToImpMap.insert(buffer->getBufferName(), buffer.data());
-    }
-
-    return buffer;
+    m_atomicCounterToImpMap.insert(buffer->bufferName(), buffer);
 }
 
 QDemonRef<QDemonRenderAtomicCounterBuffer> QDemonRenderContext::getAtomicCounterBuffer(const QByteArray &bufferName)
@@ -290,32 +208,7 @@ QDemonRef<QDemonRenderAtomicCounterBuffer> QDemonRenderContext::getAtomicCounter
 
 void QDemonRenderContext::bufferDestroyed(QDemonRenderAtomicCounterBuffer *buffer)
 {
-    m_atomicCounterToImpMap.remove(buffer->getBufferName());
-}
-
-QDemonRef<QDemonRenderDrawIndirectBuffer> QDemonRenderContext::createDrawIndirectBuffer(QDemonRenderBufferUsageType usageType,
-                                                                                            size_t size,
-                                                                                            QDemonConstDataRef<quint8> bufferData)
-{
-    QDemonRef<QDemonRenderDrawIndirectBuffer> buffer = QDemonRenderDrawIndirectBuffer::create(this, usageType, size, bufferData);
-
-    if (buffer)
-        m_drawIndirectToImpMap.insert(buffer->handle(), buffer.data());
-
-    return buffer;
-}
-
-QDemonRef<QDemonRenderDrawIndirectBuffer> QDemonRenderContext::getDrawIndirectBuffer(QDemonRenderBackend::QDemonRenderBackendBufferObject implementationHandle)
-{
-    TContextDrawIndirectBufferMap::iterator entry = m_drawIndirectToImpMap.find(implementationHandle);
-    if (entry != m_drawIndirectToImpMap.end())
-        return QDemonRef<QDemonRenderDrawIndirectBuffer>(entry.value());
-    return nullptr;
-}
-
-void QDemonRenderContext::bufferDestroyed(QDemonRenderDrawIndirectBuffer *buffer)
-{
-    m_drawIndirectToImpMap.remove(buffer->handle());
+    m_atomicCounterToImpMap.remove(buffer->bufferName());
 }
 
 void QDemonRenderContext::setMemoryBarrier(QDemonRenderBufferBarrierFlags barriers)

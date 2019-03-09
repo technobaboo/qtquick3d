@@ -415,7 +415,7 @@ QDemonRenderMesh *QDemonBufferManager::loadMesh(const QString &inMeshPath) const
                                                         result.m_mesh->m_vertexBuffer.m_data.size());
 
             QDemonRef<QDemonRenderVertexBuffer>
-                    vertexBuffer = d->context->createVertexBuffer(QDemonRenderBufferUsageType::Static,
+                    vertexBuffer = new QDemonRenderVertexBuffer(d->context, QDemonRenderBufferUsageType::Static,
                                                                  result.m_mesh->m_vertexBuffer.m_data.m_size,
                                                                  result.m_mesh->m_vertexBuffer.m_stride,
                                                                  vertexBufferData);
@@ -425,7 +425,7 @@ QDemonRenderMesh *QDemonBufferManager::loadMesh(const QString &inMeshPath) const
             QDemonRef<QDemonRenderVertexBuffer> posVertexBuffer;
             QDemonConstDataRef<quint8> posData = createPackedPositionDataArray(&result);
             if (posData.size())
-                posVertexBuffer = d->context->createVertexBuffer(QDemonRenderBufferUsageType::Static,
+                posVertexBuffer = new QDemonRenderVertexBuffer(d->context, QDemonRenderBufferUsageType::Static,
                                                                 posData.size(),
                                                                 3 * sizeof(float),
                                                                 posData);
@@ -445,7 +445,7 @@ QDemonRenderMesh *QDemonBufferManager::loadMesh(const QString &inMeshPath) const
 
                     QDemonConstDataRef<quint8> indexBufferData(result.m_mesh->m_indexBuffer.m_data.begin(baseAddress),
                                                                result.m_mesh->m_indexBuffer.m_data.size());
-                    indexBuffer = d->context->createIndexBuffer(QDemonRenderBufferUsageType::Static,
+                    indexBuffer = new QDemonRenderIndexBuffer(d->context, QDemonRenderBufferUsageType::Static,
                                                                bufComponentType,
                                                                indexBufferSize,
                                                                indexBufferData);
@@ -638,7 +638,7 @@ QDemonRenderMesh *QDemonBufferManager::createMesh(const QString &inSourcePath, q
         // baseAddress )
         //		, theResult.d->Mesh->d->VertexBuffer.d->Data.size() );
 
-        QDemonRef<QDemonRenderVertexBuffer> theVertexBuffer = d->context->createVertexBuffer(QDemonRenderBufferUsageType::Static,
+        QDemonRef<QDemonRenderVertexBuffer> theVertexBuffer = new QDemonRenderVertexBuffer(d->context, QDemonRenderBufferUsageType::Static,
                                                                                             vertDataSize,
                                                                                             inVertStride,
                                                                                             theVBufData);
@@ -648,7 +648,7 @@ QDemonRenderMesh *QDemonBufferManager::createMesh(const QString &inSourcePath, q
             Q_ASSERT(inSize <= INT32_MAX);
             Q_ASSERT(*inIndexData <= INT8_MAX);
             QDemonConstDataRef<quint8> theIBufData(reinterpret_cast<quint8 *>(inIndexData), qint32(inSize));
-            theIndexBuffer = d->context->createIndexBuffer(QDemonRenderBufferUsageType::Static,
+            theIndexBuffer = new QDemonRenderIndexBuffer(d->context, QDemonRenderBufferUsageType::Static,
                                                           QDemonRenderComponentType::UnsignedInteger32,
                                                           inIndexCount * sizeof(quint32),
                                                           theIBufData);

@@ -35,16 +35,15 @@
 
 QT_BEGIN_NAMESPACE
 QDemonRenderDrawIndirectBuffer::QDemonRenderDrawIndirectBuffer(const QDemonRef<QDemonRenderContext> &context,
-                                                               size_t size,
                                                                QDemonRenderBufferUsageType usageType,
+                                                               size_t size,
                                                                QDemonDataRef<quint8> data)
-    : QDemonRenderDataBuffer(context, size, QDemonRenderBufferBindType::DrawIndirect, usageType, data), m_dirty(true)
+    : QDemonRenderDataBuffer(context, size, QDemonRenderBufferType::DrawIndirect, usageType, data), m_dirty(true)
 {
 }
 
 QDemonRenderDrawIndirectBuffer::~QDemonRenderDrawIndirectBuffer()
 {
-    m_context->bufferDestroyed(this);
 }
 
 void QDemonRenderDrawIndirectBuffer::bind()
@@ -54,14 +53,14 @@ void QDemonRenderDrawIndirectBuffer::bind()
         Q_ASSERT(false);
     }
 
-    m_backend->bindBuffer(m_bufferHandle, m_bindFlags);
+    m_backend->bindBuffer(m_handle, m_type);
 }
 
 void QDemonRenderDrawIndirectBuffer::update()
 {
     // we only update the buffer if it is dirty and we actually have some data
     if (m_dirty && m_bufferData.size()) {
-        m_backend->updateBuffer(m_bufferHandle, m_bindFlags, m_bufferData.size(), m_usageType, m_bufferData.begin());
+        m_backend->updateBuffer(m_handle, m_type, m_bufferData.size(), m_usageType, m_bufferData.begin());
         m_dirty = false;
     }
 }
@@ -70,29 +69,7 @@ void QDemonRenderDrawIndirectBuffer::updateData(qint32 offset, QDemonDataRef<qui
 {
     // we only update the buffer if we something
     if (data.size())
-        m_backend->updateBuffer(m_bufferHandle, m_bindFlags, data.size(), m_usageType, data.begin() + offset);
+        m_backend->updateBuffer(m_handle, m_type, data.size(), m_usageType, data.begin() + offset);
 }
 
-QDemonRef<QDemonRenderDrawIndirectBuffer> QDemonRenderDrawIndirectBuffer::create(const QDemonRef<QDemonRenderContext> &context,
-                                                                                 QDemonRenderBufferUsageType usageType,
-                                                                                 size_t size,
-                                                                                 QDemonConstDataRef<quint8> bufferData)
-{
-    QDemonRef<QDemonRenderDrawIndirectBuffer> retval;
-
-    // these are the context flags which do not support this drawing mode
-    QDemonRenderContextTypes noDrawIndirectSupported(QDemonRenderContextType::GL2 | QDemonRenderContextType::GLES2
-                                                    | QDemonRenderContextType::GL3 | QDemonRenderContextType::GLES3);
-    QDemonRenderContextType ctxType = context->getRenderContextType();
-
-    if (!(noDrawIndirectSupported & ctxType)) {
-        retval = new QDemonRenderDrawIndirectBuffer(context,
-                                                    size,
-                                                    usageType,
-                                                    toDataRef(const_cast<quint8 *>(bufferData.begin()), bufferData.size()));
-    } else {
-        Q_ASSERT(false);
-    }
-    return retval;
-}
 QT_END_NAMESPACE

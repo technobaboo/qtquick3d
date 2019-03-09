@@ -87,7 +87,7 @@ public:
         m_context->setInputAssembler(m_inputAssembler);
 
         m_shader->setPropertyValue("mat_mvp", mvp);
-        m_context->draw(QDemonRenderDrawMode::Triangles, m_indexBuffer->getNumIndices(), 0);
+        m_context->draw(QDemonRenderDrawMode::Triangles, m_indexBuffer->numIndices(), 0);
     }
 private:
     QDemonRef<QDemonRenderContext> m_context;

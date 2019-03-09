@@ -374,10 +374,10 @@ void QDemonRendererImpl::drawScreenRect(QRectF inRect, const QVector3D &inColor)
         Q_ASSERT(m_quadVertexBuffer);
         quint8 indexData[] = { 0, 1, 1, 2, 2, 3, 3, 0 };
 
-        m_rectIndexBuffer = m_context->createIndexBuffer(QDemonRenderBufferUsageType::Static,
-                                                         QDemonRenderComponentType::UnsignedInteger8,
-                                                         sizeof(indexData),
-                                                         toConstDataRef(indexData, sizeof(indexData)));
+        m_rectIndexBuffer = new QDemonRenderIndexBuffer(m_context, QDemonRenderBufferUsageType::Static,
+                                                        QDemonRenderComponentType::UnsignedInteger8,
+                                                        sizeof(indexData),
+                                                        toDataRef(indexData, sizeof(indexData)));
 
         QDemonRenderVertexBufferEntry theEntries[] = {
             QDemonRenderVertexBufferEntry("attr_pos", QDemonRenderComponentType::Float32, 3),
@@ -386,7 +386,7 @@ void QDemonRendererImpl::drawScreenRect(QRectF inRect, const QVector3D &inColor)
         // create our attribute layout
         m_rectAttribLayout = m_context->createAttributeLayout(toConstDataRef(theEntries, 1));
 
-        quint32 strides = m_quadVertexBuffer->getStride();
+        quint32 strides = m_quadVertexBuffer->stride();
         quint32 offsets = 0;
         m_rectInputAssembler = m_context->createInputAssembler(m_rectAttribLayout,
                                                                toConstDataRef(&m_quadVertexBuffer, 1),
@@ -396,7 +396,7 @@ void QDemonRendererImpl::drawScreenRect(QRectF inRect, const QVector3D &inColor)
     }
 
     m_context->setInputAssembler(m_rectInputAssembler);
-    m_context->draw(QDemonRenderDrawMode::Lines, m_rectIndexBuffer->getNumIndices(), 0);
+    m_context->draw(QDemonRenderDrawMode::Lines, m_rectIndexBuffer->numIndices(), 0);
 }
 
 void QDemonRendererImpl::setupWidgetLayer()
@@ -984,7 +984,7 @@ void QDemonRendererImpl::renderQuad(const QVector2D inDimensions, const QMatrix4
 
     generateXYQuad();
     m_context->setInputAssembler(m_quadInputAssembler);
-    m_context->draw(QDemonRenderDrawMode::Triangles, m_quadIndexBuffer->getNumIndices(), 0);
+    m_context->draw(QDemonRenderDrawMode::Triangles, m_quadIndexBuffer->numIndices(), 0);
 }
 
 void QDemonRendererImpl::renderQuad()
@@ -992,7 +992,7 @@ void QDemonRendererImpl::renderQuad()
     m_context->setCullingEnabled(false);
     generateXYQuad();
     m_context->setInputAssembler(m_quadInputAssembler);
-    m_context->draw(QDemonRenderDrawMode::Triangles, m_quadIndexBuffer->getNumIndices(), 0);
+    m_context->draw(QDemonRenderDrawMode::Triangles, m_quadIndexBuffer->numIndices(), 0);
 }
 
 void QDemonRendererImpl::renderPointsIndirect()
@@ -1062,7 +1062,6 @@ bool QDemonRendererImpl::prepareTextureAtlasForRender()
 
     // this is a one time creation
     if (!theTextureAtlas->isInitialized()) {
-        QDemonRenderContext &theContext(*m_context);
         QDemonRef<QDemonRenderVertexBuffer> mVertexBuffer;
         QDemonRef<QDemonRenderInputAssembler> mInputAssembler;
         QDemonRef<QDemonRenderAttribLayout> mAttribLayout;
@@ -1126,13 +1125,13 @@ bool QDemonRendererImpl::prepareTextureAtlasForRender()
         float *bufPtr = tempBuf;
         quint32 bufSize = 20 * sizeof(float); // 4 vertices  3 pos 2 tex
         QDemonDataRef<quint8> vertData((quint8 *)bufPtr, bufSize);
-        mVertexBuffer = theContext.createVertexBuffer(QDemonRenderBufferUsageType::Dynamic,
+        mVertexBuffer = new QDemonRenderVertexBuffer(m_context, QDemonRenderBufferUsageType::Dynamic,
                                                       20 * sizeof(float),
                                                       3 * sizeof(float) + 2 * sizeof(float),
                                                       vertData);
-        quint32 strides = mVertexBuffer->getStride();
+        quint32 strides = mVertexBuffer->stride();
         quint32 offsets = 0;
-        mInputAssembler = theContext.createInputAssembler(mAttribLayout,
+        mInputAssembler = m_context->createInputAssembler(mAttribLayout,
                                                           toConstDataRef(&mVertexBuffer, 1),
                                                           m_quadIndexBuffer,
                                                           toConstDataRef(&strides, 1),
@@ -1142,7 +1141,7 @@ bool QDemonRendererImpl::prepareTextureAtlasForRender()
         QDemonTextShader theTextShader(theShader);
 
         if (theShader) {
-            theContext.setActiveShader(theShader);
+            m_context->setActiveShader(theShader);
             theTextShader.mvp.set(theCamera.projection);
 
             // we are going through all entries and render to the FBO
@@ -1167,8 +1166,8 @@ bool QDemonRendererImpl::prepareTextureAtlasForRender()
 
                 theTextShader.sampler.set(theTexture.data());
 
-                theContext.setInputAssembler(mInputAssembler);
-                theContext.draw(QDemonRenderDrawMode::Triangles, m_quadIndexBuffer->getNumIndices(), 0);
+                m_context->setInputAssembler(mInputAssembler);
+                m_context->draw(QDemonRenderDrawMode::Triangles, m_quadIndexBuffer->numIndices(), 0);
             }
         }
 
@@ -1382,7 +1381,7 @@ void QDemonRendererImpl::generateXYQuad()
         bufPtr[3] = uvPtr->x();
         bufPtr[4] = uvPtr->y();
     }
-    m_quadVertexBuffer = m_context->createVertexBuffer(QDemonRenderBufferUsageType::Static,
+    m_quadVertexBuffer = new QDemonRenderVertexBuffer(m_context, QDemonRenderBufferUsageType::Static,
                                                        20 * sizeof(float),
                                                        3 * sizeof(float) + 2 * sizeof(float),
                                                        toU8DataRef(tempBuf, 20));
@@ -1390,7 +1389,7 @@ void QDemonRendererImpl::generateXYQuad()
     quint8 indexData[] = {
         0, 1, 2, 0, 2, 3,
     };
-    m_quadIndexBuffer = m_context->createIndexBuffer(QDemonRenderBufferUsageType::Static,
+    m_quadIndexBuffer = new QDemonRenderIndexBuffer(m_context, QDemonRenderBufferUsageType::Static,
                                                      QDemonRenderComponentType::UnsignedInteger8,
                                                      sizeof(indexData),
                                                      toU8DataRef(indexData, sizeof(indexData)));
@@ -1399,7 +1398,7 @@ void QDemonRendererImpl::generateXYQuad()
     m_quadAttribLayout = m_context->createAttributeLayout(toConstDataRef(theEntries, 2));
 
     // create input assembler object
-    quint32 strides = m_quadVertexBuffer->getStride();
+    quint32 strides = m_quadVertexBuffer->stride();
     quint32 offsets = 0;
     m_quadInputAssembler = m_context->createInputAssembler(m_quadAttribLayout,
                                                            toConstDataRef(&m_quadVertexBuffer, 1),
@@ -1422,7 +1421,7 @@ void QDemonRendererImpl::generateXYZPoint()
     tempBuf[0] = tempBuf[1] = tempBuf[2] = 0.0;
     tempBuf[3] = tempBuf[4] = 0.0;
 
-    m_pointVertexBuffer = m_context->createVertexBuffer(QDemonRenderBufferUsageType::Static,
+    m_pointVertexBuffer = new QDemonRenderVertexBuffer(m_context, QDemonRenderBufferUsageType::Static,
                                                         5 * sizeof(float),
                                                         3 * sizeof(float) + 2 * sizeof(float),
                                                         toU8DataRef(tempBuf, 5));
@@ -1431,7 +1430,7 @@ void QDemonRendererImpl::generateXYZPoint()
     m_pointAttribLayout = m_context->createAttributeLayout(toConstDataRef(theEntries, 2));
 
     // create input assembler object
-    quint32 strides = m_pointVertexBuffer->getStride();
+    quint32 strides = m_pointVertexBuffer->stride();
     quint32 offsets = 0;
     m_pointInputAssembler = m_context->createInputAssembler(m_pointAttribLayout,
                                                             toConstDataRef(&m_pointVertexBuffer, 1),
@@ -1484,7 +1483,7 @@ void QDemonRendererImpl::generateXYQuadStrip()
     };
 
     // this buffer is filled dynmically
-    m_quadStripVertexBuffer = m_context->createVertexBuffer(QDemonRenderBufferUsageType::Dynamic,
+    m_quadStripVertexBuffer = new QDemonRenderVertexBuffer(m_context, QDemonRenderBufferUsageType::Dynamic,
                                                             0,
                                                             3 * sizeof(float) + 2 * sizeof(float) // stride
                                                             ,
@@ -1494,7 +1493,7 @@ void QDemonRendererImpl::generateXYQuadStrip()
     m_quadStripAttribLayout = m_context->createAttributeLayout(toConstDataRef(theEntries, 2));
 
     // create input assembler object
-    quint32 strides = m_quadStripVertexBuffer->getStride();
+    quint32 strides = m_quadStripVertexBuffer->stride();
     quint32 offsets = 0;
     m_quadStripInputAssembler = m_context->createInputAssembler(m_quadStripAttribLayout,
                                                                 toConstDataRef(&m_quadStripVertexBuffer, 1),
@@ -1511,7 +1510,7 @@ void QDemonRendererImpl::updateCbAoShadow(const QDemonRenderLayer *pLayer, const
 
         if (!pCB) {
             // the  size is determined automatically later on
-            pCB = m_context->createConstantBuffer(theName,
+            pCB = new QDemonRenderConstantBuffer(m_context, theName,
                                                   QDemonRenderBufferUsageType::Static,
                                                   0,
                                                   QDemonDataRef<quint8>());
@@ -1570,7 +1569,7 @@ QDemonRef<QDemonRenderVertexBuffer> QDemonRendererImpl::getOrCreateVertexBuffer(
         retval->updateBuffer(bufferData, false);
         return retval;
     }
-    retval = m_context->createVertexBuffer(QDemonRenderBufferUsageType::Dynamic, bufferData.size(), stride, bufferData);
+    retval = new QDemonRenderVertexBuffer(m_context, QDemonRenderBufferUsageType::Dynamic, bufferData.size(), stride, bufferData);
     m_widgetVertexBuffers.insert(inStr, retval);
     return retval;
 }
@@ -1586,7 +1585,7 @@ QDemonRef<QDemonRenderIndexBuffer> QDemonRendererImpl::getOrCreateIndexBuffer(co
         return retval;
     }
 
-    retval = m_context->createIndexBuffer(QDemonRenderBufferUsageType::Dynamic, componentType, size, bufferData);
+    retval = new QDemonRenderIndexBuffer(m_context, QDemonRenderBufferUsageType::Dynamic, componentType, size, bufferData);
     m_widgetIndexBuffers.insert(inStr, retval);
     return retval;
 }
