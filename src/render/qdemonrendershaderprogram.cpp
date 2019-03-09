@@ -48,7 +48,6 @@ template<>
 struct ShaderConstantApplier<qint32>
 {
     void applyConstant(const QDemonRenderShaderProgram *program,
-                       const QDemonRef<QDemonRenderBackend> &backend,
                        qint32 location,
                        qint32 count,
                        QDemonRenderShaderDataType type,
@@ -56,7 +55,7 @@ struct ShaderConstantApplier<qint32>
                        qint32 &oldValue)
     {
         if (!(inValue == oldValue)) {
-            backend->setConstantValue(program->handle(), location, type, count, &inValue);
+            program->backend()->setConstantValue(program->handle(), location, type, count, &inValue);
             oldValue = inValue;
         }
     }
@@ -66,7 +65,6 @@ template<>
 struct ShaderConstantApplier<qint32_2>
 {
     void applyConstant(const QDemonRenderShaderProgram *program,
-                       const QDemonRef<QDemonRenderBackend> &backend,
                        qint32 location,
                        qint32 count,
                        QDemonRenderShaderDataType type,
@@ -74,7 +72,7 @@ struct ShaderConstantApplier<qint32_2>
                        qint32_2 &oldValue)
     {
         if (!(inValue == oldValue)) {
-            backend->setConstantValue(program->handle(), location, type, count, &inValue.x);
+            program->backend()->setConstantValue(program->handle(), location, type, count, &inValue.x);
             oldValue = inValue;
         }
     }
@@ -84,7 +82,6 @@ template<>
 struct ShaderConstantApplier<qint32_3>
 {
     void applyConstant(const QDemonRenderShaderProgram *program,
-                       const QDemonRef<QDemonRenderBackend> &backend,
                        qint32 location,
                        qint32 count,
                        QDemonRenderShaderDataType type,
@@ -92,7 +89,7 @@ struct ShaderConstantApplier<qint32_3>
                        qint32_3 &oldValue)
     {
         if (!(inValue == oldValue)) {
-            backend->setConstantValue(program->handle(), location, type, count, &inValue.x);
+            program->backend()->setConstantValue(program->handle(), location, type, count, &inValue.x);
             oldValue = inValue;
         }
     }
@@ -102,7 +99,6 @@ template<>
 struct ShaderConstantApplier<qint32_4>
 {
     void applyConstant(const QDemonRenderShaderProgram *program,
-                       const QDemonRef<QDemonRenderBackend> &backend,
                        qint32 location,
                        qint32 count,
                        QDemonRenderShaderDataType type,
@@ -110,7 +106,7 @@ struct ShaderConstantApplier<qint32_4>
                        qint32_4 &oldValue)
     {
         if (!(inValue == oldValue)) {
-            backend->setConstantValue(program->handle(), location, type, count, &inValue.x);
+            program->backend()->setConstantValue(program->handle(), location, type, count, &inValue.x);
             oldValue = inValue;
         }
     }
@@ -120,7 +116,6 @@ template<>
 struct ShaderConstantApplier<bool>
 {
     void applyConstant(const QDemonRenderShaderProgram *program,
-                       const QDemonRef<QDemonRenderBackend> &backend,
                        qint32 location,
                        qint32 count,
                        QDemonRenderShaderDataType type,
@@ -128,7 +123,7 @@ struct ShaderConstantApplier<bool>
                        bool &oldValue)
     {
         if (!(inValue == oldValue)) {
-            backend->setConstantValue(program->handle(), location, type, count, &inValue);
+            program->backend()->setConstantValue(program->handle(), location, type, count, &inValue);
             oldValue = inValue;
         }
     }
@@ -138,7 +133,6 @@ template<>
 struct ShaderConstantApplier<bool_2>
 {
     void applyConstant(const QDemonRenderShaderProgram *program,
-                       const QDemonRef<QDemonRenderBackend> &backend,
                        qint32 location,
                        qint32 count,
                        QDemonRenderShaderDataType type,
@@ -146,7 +140,7 @@ struct ShaderConstantApplier<bool_2>
                        bool_2 &oldValue)
     {
         if (!(inValue == oldValue)) {
-            backend->setConstantValue(program->handle(), location, type, count, &inValue);
+            program->backend()->setConstantValue(program->handle(), location, type, count, &inValue);
             oldValue = inValue;
         }
     }
@@ -156,7 +150,6 @@ template<>
 struct ShaderConstantApplier<bool_3>
 {
     void applyConstant(const QDemonRenderShaderProgram *program,
-                       const QDemonRef<QDemonRenderBackend> &backend,
                        qint32 location,
                        qint32 count,
                        QDemonRenderShaderDataType type,
@@ -164,7 +157,7 @@ struct ShaderConstantApplier<bool_3>
                        bool_3 &oldValue)
     {
         if (!(inValue == oldValue)) {
-            backend->setConstantValue(program->handle(), location, type, count, &inValue);
+            program->backend()->setConstantValue(program->handle(), location, type, count, &inValue);
             oldValue = inValue;
         }
     }
@@ -174,7 +167,6 @@ template<>
 struct ShaderConstantApplier<bool_4>
 {
     void applyConstant(const QDemonRenderShaderProgram *program,
-                       const QDemonRef<QDemonRenderBackend> &backend,
                        qint32 location,
                        qint32 count,
                        QDemonRenderShaderDataType type,
@@ -182,7 +174,7 @@ struct ShaderConstantApplier<bool_4>
                        bool_4 &oldValue)
     {
         if (!(inValue == oldValue)) {
-            backend->setConstantValue(program->handle(), location, type, count, &inValue);
+            program->backend()->setConstantValue(program->handle(), location, type, count, &inValue);
             oldValue = inValue;
         }
     }
@@ -192,7 +184,6 @@ template<>
 struct ShaderConstantApplier<float>
 {
     void applyConstant(const QDemonRenderShaderProgram *program,
-                       const QDemonRef<QDemonRenderBackend> &backend,
                        qint32 location,
                        qint32 count,
                        QDemonRenderShaderDataType type,
@@ -200,7 +191,7 @@ struct ShaderConstantApplier<float>
                        float &oldValue)
     {
         if (count > 1 || !(inValue == oldValue)) {
-            backend->setConstantValue(program->handle(), location, type, count, &inValue);
+            program->backend()->setConstantValue(program->handle(), location, type, count, &inValue);
             oldValue = inValue;
         }
     }
@@ -210,7 +201,6 @@ template<>
 struct ShaderConstantApplier<QVector2D>
 {
     void applyConstant(const QDemonRenderShaderProgram *program,
-                       const QDemonRef<QDemonRenderBackend> &backend,
                        qint32 location,
                        qint32 count,
                        QDemonRenderShaderDataType type,
@@ -218,7 +208,7 @@ struct ShaderConstantApplier<QVector2D>
                        QVector2D &oldValue)
     {
         if (!(inValue == oldValue)) {
-            backend->setConstantValue(program->handle(), location, type, count, &inValue);
+            program->backend()->setConstantValue(program->handle(), location, type, count, &inValue);
             oldValue = inValue;
         }
     }
@@ -228,7 +218,6 @@ template<>
 struct ShaderConstantApplier<QVector3D>
 {
     void applyConstant(const QDemonRenderShaderProgram *program,
-                       const QDemonRef<QDemonRenderBackend> &backend,
                        qint32 location,
                        qint32 count,
                        QDemonRenderShaderDataType type,
@@ -236,7 +225,7 @@ struct ShaderConstantApplier<QVector3D>
                        QVector3D &oldValue)
     {
         if (!(inValue == oldValue)) {
-            backend->setConstantValue(program->handle(), location, type, count, &inValue);
+            program->backend()->setConstantValue(program->handle(), location, type, count, &inValue);
             oldValue = inValue;
         }
     }
@@ -246,7 +235,6 @@ template<>
 struct ShaderConstantApplier<QVector4D>
 {
     void applyConstant(const QDemonRenderShaderProgram *program,
-                       const QDemonRef<QDemonRenderBackend> &backend,
                        qint32 location,
                        qint32 count,
                        QDemonRenderShaderDataType type,
@@ -254,7 +242,7 @@ struct ShaderConstantApplier<QVector4D>
                        QVector4D &oldValue)
     {
         if (!(inValue == oldValue)) {
-            backend->setConstantValue(program->handle(), location, type, count, &inValue);
+            program->backend()->setConstantValue(program->handle(), location, type, count, &inValue);
             oldValue = inValue;
         }
     }
@@ -264,7 +252,6 @@ template<>
 struct ShaderConstantApplier<quint32>
 {
     void applyConstant(const QDemonRenderShaderProgram *program,
-                       const QDemonRef<QDemonRenderBackend> &backend,
                        qint32 location,
                        qint32 count,
                        QDemonRenderShaderDataType type,
@@ -272,7 +259,7 @@ struct ShaderConstantApplier<quint32>
                        quint32 &oldValue)
     {
         if (!(inValue == oldValue)) {
-            backend->setConstantValue(program->handle(), location, type, count, &inValue);
+            program->backend()->setConstantValue(program->handle(), location, type, count, &inValue);
             oldValue = inValue;
         }
     }
@@ -282,7 +269,6 @@ template<>
 struct ShaderConstantApplier<quint32_2>
 {
     void applyConstant(const QDemonRenderShaderProgram *program,
-                       const QDemonRef<QDemonRenderBackend> &backend,
                        qint32 location,
                        qint32 count,
                        QDemonRenderShaderDataType type,
@@ -290,7 +276,7 @@ struct ShaderConstantApplier<quint32_2>
                        quint32_2 &oldValue)
     {
         if (!(inValue == oldValue)) {
-            backend->setConstantValue(program->handle(), location, type, count, &inValue.x);
+            program->backend()->setConstantValue(program->handle(), location, type, count, &inValue.x);
             oldValue = inValue;
         }
     }
@@ -300,7 +286,6 @@ template<>
 struct ShaderConstantApplier<quint32_3>
 {
     void applyConstant(const QDemonRenderShaderProgram *program,
-                       const QDemonRef<QDemonRenderBackend> &backend,
                        qint32 location,
                        qint32 count,
                        QDemonRenderShaderDataType type,
@@ -308,7 +293,7 @@ struct ShaderConstantApplier<quint32_3>
                        quint32_3 &oldValue)
     {
         if (!(inValue == oldValue)) {
-            backend->setConstantValue(program->handle(), location, type, count, &inValue.x);
+            program->backend()->setConstantValue(program->handle(), location, type, count, &inValue.x);
             oldValue = inValue;
         }
     }
@@ -318,7 +303,6 @@ template<>
 struct ShaderConstantApplier<quint32_4>
 {
     void applyConstant(const QDemonRenderShaderProgram *program,
-                       const QDemonRef<QDemonRenderBackend> &backend,
                        qint32 location,
                        qint32 count,
                        QDemonRenderShaderDataType type,
@@ -326,7 +310,7 @@ struct ShaderConstantApplier<quint32_4>
                        quint32_4 &oldValue)
     {
         if (!(inValue == oldValue)) {
-            backend->setConstantValue(program->handle(), location, type, count, &inValue.x);
+            program->backend()->setConstantValue(program->handle(), location, type, count, &inValue.x);
             oldValue = inValue;
         }
     }
@@ -336,7 +320,6 @@ template<>
 struct ShaderConstantApplier<QMatrix3x3>
 {
     void applyConstant(const QDemonRenderShaderProgram *program,
-                       const QDemonRef<QDemonRenderBackend> &backend,
                        qint32 location,
                        qint32 count,
                        QDemonRenderShaderDataType type,
@@ -344,7 +327,7 @@ struct ShaderConstantApplier<QMatrix3x3>
                        QMatrix3x3 &,
                        bool inTranspose)
     {
-        backend->setConstantValue(program->handle(), location, type, count, inValue.constData(), inTranspose);
+        program->backend()->setConstantValue(program->handle(), location, type, count, inValue.constData(), inTranspose);
     }
 };
 
@@ -352,7 +335,6 @@ template<>
 struct ShaderConstantApplier<QMatrix4x4>
 {
     void applyConstant(const QDemonRenderShaderProgram *program,
-                       const QDemonRef<QDemonRenderBackend> &backend,
                        qint32 location,
                        qint32 count,
                        QDemonRenderShaderDataType type,
@@ -360,11 +342,10 @@ struct ShaderConstantApplier<QMatrix4x4>
                        QMatrix4x4 &,
                        bool inTranspose)
     {
-        backend->setConstantValue(program->handle(), location, type, count, inValue.constData(), inTranspose);
+        program->backend()->setConstantValue(program->handle(), location, type, count, inValue.constData(), inTranspose);
     }
 
     void applyConstant(const QDemonRenderShaderProgram *program,
-                       const QDemonRef<QDemonRenderBackend> &backend,
                        qint32 location,
                        qint32 count,
                        QDemonRenderShaderDataType type,
@@ -372,7 +353,7 @@ struct ShaderConstantApplier<QMatrix4x4>
                        QMatrix4x4 &,
                        bool inTranspose)
     {
-        backend->setConstantValue(program->handle(),
+        program->backend()->setConstantValue(program->handle(),
                                   location,
                                   type,
                                   count,
@@ -385,7 +366,6 @@ template<>
 struct ShaderConstantApplier<QDemonRenderTexture2DPtr>
 {
     void applyConstant(const QDemonRenderShaderProgram *program,
-                       const QDemonRef<QDemonRenderBackend> &backend,
                        qint32 location,
                        qint32 count,
                        QDemonRenderShaderDataType type,
@@ -397,7 +377,7 @@ struct ShaderConstantApplier<QDemonRenderTexture2DPtr>
             texObj->bind();
             quint32 texUnit = texObj->textureUnit();
             if (texUnit != oldValue) {
-                backend->setConstantValue(program->handle(), location, type, count, &texUnit);
+                program->backend()->setConstantValue(program->handle(), location, type, count, &texUnit);
                 oldValue = texUnit;
             }
         }
@@ -408,7 +388,6 @@ template<>
 struct ShaderConstantApplier<QDemonRenderTexture2DHandle>
 {
     void applyConstant(const QDemonRenderShaderProgram *program,
-                       const QDemonRef<QDemonRenderBackend> &backend,
                        qint32 location,
                        qint32 count,
                        QDemonRenderShaderDataType type,
@@ -431,7 +410,7 @@ struct ShaderConstantApplier<QDemonRenderTexture2DHandle>
                 }
             }
             if (update)
-                backend->setConstantValue(program->handle(),
+                program->backend()->setConstantValue(program->handle(),
                                           location,
                                           QDemonRenderShaderDataType::Texture2D,
                                           count,
@@ -444,7 +423,6 @@ template<>
 struct ShaderConstantApplier<QDemonRenderTexture2DArrayPtr>
 {
     void applyConstant(const QDemonRenderShaderProgram *program,
-                       const QDemonRef<QDemonRenderBackend> &backend,
                        qint32 location,
                        qint32 count,
                        QDemonRenderShaderDataType type,
@@ -456,7 +434,7 @@ struct ShaderConstantApplier<QDemonRenderTexture2DArrayPtr>
             texObj->bind();
             quint32 texUnit = texObj->textureUnit();
             if (texUnit != oldValue) {
-                backend->setConstantValue(program->handle(), location, type, count, &texUnit);
+                program->backend()->setConstantValue(program->handle(), location, type, count, &texUnit);
                 oldValue = texUnit;
             }
         }
@@ -467,7 +445,6 @@ template<>
 struct ShaderConstantApplier<QDemonRenderTextureCubePtr>
 {
     void applyConstant(const QDemonRenderShaderProgram *program,
-                       const QDemonRef<QDemonRenderBackend> &backend,
                        qint32 location,
                        qint32 count,
                        QDemonRenderShaderDataType type,
@@ -479,7 +456,7 @@ struct ShaderConstantApplier<QDemonRenderTextureCubePtr>
             texObj->bind();
             quint32 texUnit = texObj->textureUnit();
             if (texUnit != oldValue) {
-                backend->setConstantValue(program->handle(), location, type, count, &texUnit);
+                program->backend()->setConstantValue(program->handle(), location, type, count, &texUnit);
                 oldValue = texUnit;
             }
         }
@@ -490,7 +467,6 @@ template<>
 struct ShaderConstantApplier<QDemonRenderTextureCubeHandle>
 {
     void applyConstant(const QDemonRenderShaderProgram *program,
-                       const QDemonRef<QDemonRenderBackend> &backend,
                        qint32 location,
                        qint32 count,
                        QDemonRenderShaderDataType type,
@@ -513,7 +489,7 @@ struct ShaderConstantApplier<QDemonRenderTextureCubeHandle>
                 }
             }
             if (update)
-                backend->setConstantValue(program->handle(),
+                program->backend()->setConstantValue(program->handle(),
                                           location,
                                           QDemonRenderShaderDataType::TextureCube,
                                           count,
@@ -526,7 +502,6 @@ template<>
 struct ShaderConstantApplier<QDemonRenderImage2DPtr>
 {
     void applyConstant(const QDemonRenderShaderProgram *program,
-                       const QDemonRef<QDemonRenderBackend> &backend,
                        qint32 location,
                        qint32 count,
                        QDemonRenderShaderDataType type,
@@ -539,10 +514,10 @@ struct ShaderConstantApplier<QDemonRenderImage2DPtr>
             quint32 texUnit = image->textureUnit();
             if (texUnit != oldValue) {
                 // on ES we need a explicit binding value
-                Q_ASSERT(backend->getRenderContextType() != QDemonRenderContextType::GLES3PLUS || binding != -1);
+                Q_ASSERT(program->backend()->getRenderContextType() != QDemonRenderContextType::GLES3PLUS || binding != -1);
                 // this is not allowed on ES 3+ for image types
-                if (backend->getRenderContextType() != QDemonRenderContextType::GLES3PLUS)
-                    backend->setConstantValue(program->handle(), location, type, count, &texUnit);
+                if (program->backend()->getRenderContextType() != QDemonRenderContextType::GLES3PLUS)
+                    program->backend()->setConstantValue(program->handle(), location, type, count, &texUnit);
 
                 oldValue = texUnit;
             }
@@ -569,9 +544,6 @@ QDemonRenderShaderProgram::~QDemonRenderShaderProgram()
     if (m_handle)
         m_backend->releaseShaderProgram(m_handle);
 
-    m_constants.clear();
-    m_shaderBuffers.clear();
-
     m_handle = nullptr;
 }
 
@@ -587,8 +559,7 @@ void QDemonRenderShaderProgram::detach(TShaderObject *pShader)
     m_backend->detachShader(m_handle, pShader);
 }
 
-static QDemonRef<QDemonRenderShaderConstantBase> shaderConstantFactory(const QDemonRef<QDemonRenderBackend> &backend,
-                                                                       const QString &inName,
+static QDemonRef<QDemonRenderShaderConstantBase> shaderConstantFactory(const QByteArray &inName,
                                                                        qint32 uniLoc,
                                                                        qint32 elementCount,
                                                                        QDemonRenderShaderDataType inConstantType,
@@ -597,79 +568,79 @@ static QDemonRef<QDemonRenderShaderConstantBase> shaderConstantFactory(const QDe
     switch (inConstantType) {
     case QDemonRenderShaderDataType::Integer:
         return QDemonRef<QDemonRenderShaderConstantBase>(
-                new QDemonRenderShaderConstant<qint32>(backend, inName, uniLoc, elementCount, inConstantType, binding));
+                new QDemonRenderShaderConstant<qint32>(inName, uniLoc, elementCount, inConstantType, binding));
     case QDemonRenderShaderDataType::IntegerVec2:
         return QDemonRef<QDemonRenderShaderConstantBase>(
-                new QDemonRenderShaderConstant<qint32_2>(backend, inName, uniLoc, elementCount, inConstantType, binding));
+                new QDemonRenderShaderConstant<qint32_2>(inName, uniLoc, elementCount, inConstantType, binding));
     case QDemonRenderShaderDataType::IntegerVec3:
         return QDemonRef<QDemonRenderShaderConstantBase>(
-                new QDemonRenderShaderConstant<qint32_3>(backend, inName, uniLoc, elementCount, inConstantType, binding));
+                new QDemonRenderShaderConstant<qint32_3>(inName, uniLoc, elementCount, inConstantType, binding));
     case QDemonRenderShaderDataType::IntegerVec4:
         return QDemonRef<QDemonRenderShaderConstantBase>(
-                new QDemonRenderShaderConstant<qint32_4>(backend, inName, uniLoc, elementCount, inConstantType, binding));
+                new QDemonRenderShaderConstant<qint32_4>(inName, uniLoc, elementCount, inConstantType, binding));
     case QDemonRenderShaderDataType::Boolean:
         return QDemonRef<QDemonRenderShaderConstantBase>(
-                new QDemonRenderShaderConstant<bool>(backend, inName, uniLoc, elementCount, inConstantType, binding));
+                new QDemonRenderShaderConstant<bool>(inName, uniLoc, elementCount, inConstantType, binding));
     case QDemonRenderShaderDataType::BooleanVec2:
         return QDemonRef<QDemonRenderShaderConstantBase>(
-                new QDemonRenderShaderConstant<bool_2>(backend, inName, uniLoc, elementCount, inConstantType, binding));
+                new QDemonRenderShaderConstant<bool_2>(inName, uniLoc, elementCount, inConstantType, binding));
     case QDemonRenderShaderDataType::BooleanVec3:
         return QDemonRef<QDemonRenderShaderConstantBase>(
-                new QDemonRenderShaderConstant<bool_3>(backend, inName, uniLoc, elementCount, inConstantType, binding));
+                new QDemonRenderShaderConstant<bool_3>(inName, uniLoc, elementCount, inConstantType, binding));
     case QDemonRenderShaderDataType::BooleanVec4:
         return QDemonRef<QDemonRenderShaderConstantBase>(
-                new QDemonRenderShaderConstant<bool_4>(backend, inName, uniLoc, elementCount, inConstantType, binding));
+                new QDemonRenderShaderConstant<bool_4>(inName, uniLoc, elementCount, inConstantType, binding));
     case QDemonRenderShaderDataType::Float:
         return QDemonRef<QDemonRenderShaderConstantBase>(
-                new QDemonRenderShaderConstant<float>(backend, inName, uniLoc, elementCount, inConstantType, binding));
+                new QDemonRenderShaderConstant<float>(inName, uniLoc, elementCount, inConstantType, binding));
     case QDemonRenderShaderDataType::Vec2:
         return QDemonRef<QDemonRenderShaderConstantBase>(
-                new QDemonRenderShaderConstant<QVector2D>(backend, inName, uniLoc, elementCount, inConstantType, binding));
+                new QDemonRenderShaderConstant<QVector2D>(inName, uniLoc, elementCount, inConstantType, binding));
     case QDemonRenderShaderDataType::Vec3:
         return QDemonRef<QDemonRenderShaderConstantBase>(
-                new QDemonRenderShaderConstant<QVector3D>(backend, inName, uniLoc, elementCount, inConstantType, binding));
+                new QDemonRenderShaderConstant<QVector3D>(inName, uniLoc, elementCount, inConstantType, binding));
     case QDemonRenderShaderDataType::Vec4:
         return QDemonRef<QDemonRenderShaderConstantBase>(
-                new QDemonRenderShaderConstant<QVector4D>(backend, inName, uniLoc, elementCount, inConstantType, binding));
+                new QDemonRenderShaderConstant<QVector4D>(inName, uniLoc, elementCount, inConstantType, binding));
     case QDemonRenderShaderDataType::UnsignedInteger:
         return QDemonRef<QDemonRenderShaderConstantBase>(
-                new QDemonRenderShaderConstant<quint32>(backend, inName, uniLoc, elementCount, inConstantType, binding));
+                new QDemonRenderShaderConstant<quint32>(inName, uniLoc, elementCount, inConstantType, binding));
     case QDemonRenderShaderDataType::UnsignedIntegerVec2:
         return QDemonRef<QDemonRenderShaderConstantBase>(
-                new QDemonRenderShaderConstant<quint32_2>(backend, inName, uniLoc, elementCount, inConstantType, binding));
+                new QDemonRenderShaderConstant<quint32_2>(inName, uniLoc, elementCount, inConstantType, binding));
     case QDemonRenderShaderDataType::UnsignedIntegerVec3:
         return QDemonRef<QDemonRenderShaderConstantBase>(
-                new QDemonRenderShaderConstant<quint32_3>(backend, inName, uniLoc, elementCount, inConstantType, binding));
+                new QDemonRenderShaderConstant<quint32_3>(inName, uniLoc, elementCount, inConstantType, binding));
     case QDemonRenderShaderDataType::UnsignedIntegerVec4:
         return QDemonRef<QDemonRenderShaderConstantBase>(
-                new QDemonRenderShaderConstant<quint32_4>(backend, inName, uniLoc, elementCount, inConstantType, binding));
+                new QDemonRenderShaderConstant<quint32_4>(inName, uniLoc, elementCount, inConstantType, binding));
     case QDemonRenderShaderDataType::Matrix3x3:
         return QDemonRef<QDemonRenderShaderConstantBase>(
-                new QDemonRenderShaderConstant<QMatrix3x3>(backend, inName, uniLoc, elementCount, inConstantType, binding));
+                new QDemonRenderShaderConstant<QMatrix3x3>(inName, uniLoc, elementCount, inConstantType, binding));
     case QDemonRenderShaderDataType::Matrix4x4:
         return QDemonRef<QDemonRenderShaderConstantBase>(
-                new QDemonRenderShaderConstant<QMatrix4x4>(backend, inName, uniLoc, elementCount, inConstantType, binding));
+                new QDemonRenderShaderConstant<QMatrix4x4>(inName, uniLoc, elementCount, inConstantType, binding));
     case QDemonRenderShaderDataType::Texture2D:
         return QDemonRef<QDemonRenderShaderConstantBase>(
-                new QDemonRenderShaderConstant<QDemonRenderTexture2DPtr>(backend, inName, uniLoc, elementCount, inConstantType, binding));
+                new QDemonRenderShaderConstant<QDemonRenderTexture2DPtr>(inName, uniLoc, elementCount, inConstantType, binding));
     case QDemonRenderShaderDataType::Texture2DHandle:
         return QDemonRef<QDemonRenderShaderConstantBase>(
-                new QDemonRenderShaderConstant<QDemonRenderTexture2DHandle>(backend, inName, uniLoc, elementCount, inConstantType, binding));
+                new QDemonRenderShaderConstant<QDemonRenderTexture2DHandle>(inName, uniLoc, elementCount, inConstantType, binding));
     case QDemonRenderShaderDataType::Texture2DArray:
         return QDemonRef<QDemonRenderShaderConstantBase>(
-                new QDemonRenderShaderConstant<QDemonRenderTexture2DArrayPtr>(backend, inName, uniLoc, elementCount, inConstantType, binding));
+                new QDemonRenderShaderConstant<QDemonRenderTexture2DArrayPtr>(inName, uniLoc, elementCount, inConstantType, binding));
     case QDemonRenderShaderDataType::TextureCube:
         return QDemonRef<QDemonRenderShaderConstantBase>(
-                new QDemonRenderShaderConstant<QDemonRenderTextureCubePtr>(backend, inName, uniLoc, elementCount, inConstantType, binding));
+                new QDemonRenderShaderConstant<QDemonRenderTextureCubePtr>(inName, uniLoc, elementCount, inConstantType, binding));
     case QDemonRenderShaderDataType::TextureCubeHandle:
         return QDemonRef<QDemonRenderShaderConstantBase>(
-                new QDemonRenderShaderConstant<QDemonRenderTextureCubeHandle>(backend, inName, uniLoc, elementCount, inConstantType, binding));
+                new QDemonRenderShaderConstant<QDemonRenderTextureCubeHandle>(inName, uniLoc, elementCount, inConstantType, binding));
     case QDemonRenderShaderDataType::Image2D:
         return QDemonRef<QDemonRenderShaderConstantBase>(
-                new QDemonRenderShaderConstant<QDemonRenderImage2DPtr>(backend, inName, uniLoc, elementCount, inConstantType, binding));
+                new QDemonRenderShaderConstant<QDemonRenderImage2DPtr>(inName, uniLoc, elementCount, inConstantType, binding));
     case QDemonRenderShaderDataType::DataBuffer:
         return QDemonRef<QDemonRenderShaderConstantBase>(
-                new QDemonRenderShaderConstant<QDemonRenderDataBufferPtr>(backend, inName, uniLoc, elementCount, inConstantType, binding));
+                new QDemonRenderShaderConstant<QDemonRenderDataBufferPtr>(inName, uniLoc, elementCount, inConstantType, binding));
     default:
         break;
     }
@@ -709,10 +680,8 @@ bool QDemonRenderShaderProgram::link()
             } else if (type == QDemonRenderShaderDataType::TextureCube && elementCount > 1) {
                 type = QDemonRenderShaderDataType::TextureCubeHandle;
             }
-            if (location != -1) {
-                const QString theName = QString::fromLocal8Bit(nameBuf);
-                m_constants.insert(theName, shaderConstantFactory(m_backend, theName, location, elementCount, type, binding));
-            }
+            if (location != -1)
+                m_constants.insert(nameBuf, shaderConstantFactory(nameBuf, location, elementCount, type, binding));
         }
 
         // next query constant buffers info
@@ -789,7 +758,7 @@ QByteArray QDemonRenderShaderProgram::errorMessage()
 
 QDemonRef<QDemonRenderShaderConstantBase> QDemonRenderShaderProgram::shaderConstant(const char *constantName)
 {
-    TShaderConstantMap::iterator theIter = m_constants.find(QString::fromLocal8Bit(constantName));
+    TShaderConstantMap::iterator theIter = m_constants.find(constantName);
 
     if (theIter != m_constants.end())
         return theIter.value();
@@ -829,7 +798,6 @@ void setConstantValueOfType(const QDemonRenderShaderProgram *program,
     if (inConstantBase->getShaderConstantType() == QDemonDataTypeToShaderDataTypeMap<TDataType>::getType()) {
         QDemonRenderShaderConstant<TDataType> *inConstant = static_cast<QDemonRenderShaderConstant<TDataType> *>(inConstantBase);
         ShaderConstantApplier<TDataType>().applyConstant(program,
-                                                         inConstant->m_backend,
                                                          inConstant->m_location,
                                                          inCount,
                                                          inConstant->m_type,
@@ -856,7 +824,6 @@ void setSamplerConstantValueOfType(const QDemonRenderShaderProgram *program,
     if (inConstantBase->getShaderConstantType() == QDemonDataTypeToShaderDataTypeMap<TDataType>::getType()) {
         QDemonRenderShaderConstant<TDataType> *inConstant = static_cast<QDemonRenderShaderConstant<TDataType> *>(inConstantBase);
         ShaderConstantApplier<TDataType>().applyConstant(program,
-                                                         inConstant->m_backend,
                                                          inConstant->m_location,
                                                          inCount,
                                                          inConstant->m_type,
@@ -885,7 +852,6 @@ void setMatrixConstantValueOfType(const QDemonRenderShaderProgram *program,
     if (inConstantBase->getShaderConstantType() == QDemonDataTypeToShaderDataTypeMap<TDataType>::getType()) {
         QDemonRenderShaderConstant<TDataType> *inConstant = static_cast<QDemonRenderShaderConstant<TDataType> *>(inConstantBase);
         ShaderConstantApplier<TDataType>().applyConstant(program,
-                                                         inConstant->m_backend,
                                                          inConstant->m_location,
                                                          inCount,
                                                          inConstant->m_type,
@@ -914,7 +880,6 @@ void setMatrixConstantValueOfType(const QDemonRenderShaderProgram *program,
     if (inConstantBase->getShaderConstantType() == QDemonDataTypeToShaderDataTypeMap<TDataType>::getType()) {
         QDemonRenderShaderConstant<TDataType> *inConstant = static_cast<QDemonRenderShaderConstant<TDataType> *>(inConstantBase);
         ShaderConstantApplier<TDataType>().applyConstant(program,
-                                                         inConstant->m_backend,
                                                          inConstant->m_location,
                                                          inValue.size(),
                                                          inConstant->m_type,

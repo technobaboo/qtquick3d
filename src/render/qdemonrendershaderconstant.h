@@ -32,7 +32,7 @@
 
 #include <QtDemonRender/qdemonrendercontext.h>
 
-#include <QtCore/QString>
+#include <QtCore/QByteArray>
 
 #include <QtGui/QMatrix4x4>
 #include <QtGui/QMatrix3x3>
@@ -50,21 +50,19 @@ class Q_DEMONRENDER_EXPORT QDemonRenderShaderConstantBase
 {
 public:
     QAtomicInt ref;
-    QDemonRef<QDemonRenderBackend> m_backend; ///< pointer to backend
-    QString m_name; ///< register constant name
+    QByteArray m_name; ///< register constant name
     qint32 m_location; ///< constant index
     qint32 m_elementCount; ///< constant element count for arrays
     QDemonRenderShaderDataType m_type; ///< constant type
     qint32 m_binding; ///< sampler/imnage binding point
 
 public:
-    QDemonRenderShaderConstantBase(const QDemonRef<QDemonRenderBackend> &backend,
-                                   const QString &name,
+    QDemonRenderShaderConstantBase(const QByteArray &name,
                                    qint32 location,
                                    qint32 elementCount,
                                    QDemonRenderShaderDataType type,
                                    qint32 binding)
-        : m_backend(backend), m_name(name), m_location(location), m_elementCount(elementCount), m_type(type), m_binding(binding)
+        : m_name(name), m_location(location), m_elementCount(elementCount), m_type(type), m_binding(binding)
     {
     }
 
@@ -83,13 +81,12 @@ public:
     TDataType m_value; ///< constant value
 
 public:
-    QDemonRenderShaderConstant(const QDemonRef<QDemonRenderBackend> &backend,
-                               const QString &name,
+    QDemonRenderShaderConstant(const QByteArray &name,
                                qint32 location,
                                qint32 elementCount,
                                QDemonRenderShaderDataType type,
                                qint32 binding)
-        : QDemonRenderShaderConstantBase(backend, name, location, elementCount, type, binding)
+        : QDemonRenderShaderConstantBase(name, location, elementCount, type, binding)
     {
         memset(&m_value, 0, sizeof(TDataType));
     }
@@ -105,13 +102,12 @@ public:
     quint32 m_value; ///< constant value
 
 public:
-    QDemonRenderShaderConstant(QDemonRef<QDemonRenderBackend> backend,
-                               const QString &name,
+    QDemonRenderShaderConstant(const QByteArray &name,
                                qint32 location,
                                qint32 elementCount,
                                QDemonRenderShaderDataType type,
                                qint32 binding)
-        : QDemonRenderShaderConstantBase(backend, name, location, elementCount, type, binding)
+        : QDemonRenderShaderConstantBase(name, location, elementCount, type, binding)
     {
         m_value = std::numeric_limits<quint32>::max();
     }
@@ -127,13 +123,12 @@ public:
     QVector<quint32> m_value; ///< constant value
 
 public:
-    QDemonRenderShaderConstant(QDemonRef<QDemonRenderBackend> backend,
-                               const QString &name,
+    QDemonRenderShaderConstant(const QByteArray &name,
                                qint32 location,
                                qint32 elementCount,
                                QDemonRenderShaderDataType type,
                                qint32 binding)
-        : QDemonRenderShaderConstantBase(backend, name, location, elementCount, type, binding)
+        : QDemonRenderShaderConstantBase(name, location, elementCount, type, binding)
     {
         m_value.resize(elementCount);
         m_value.fill(std::numeric_limits<quint32>::max());
@@ -150,13 +145,12 @@ public:
     quint32 m_value; ///< constant value
 
 public:
-    QDemonRenderShaderConstant(QDemonRef<QDemonRenderBackend> backend,
-                               const QString &name,
+    QDemonRenderShaderConstant(const QByteArray &name,
                                qint32 location,
                                qint32 elementCount,
                                QDemonRenderShaderDataType type,
                                qint32 binding)
-        : QDemonRenderShaderConstantBase(backend, name, location, elementCount, type, binding)
+        : QDemonRenderShaderConstantBase(name, location, elementCount, type, binding)
     {
         m_value = std::numeric_limits<quint32>::max();
     }
@@ -172,13 +166,12 @@ public:
     quint32 m_value; ///< constant value
 
 public:
-    QDemonRenderShaderConstant(QDemonRef<QDemonRenderBackend> backend,
-                               const QString &name,
+    QDemonRenderShaderConstant(const QByteArray &name,
                                qint32 location,
                                qint32 elementCount,
                                QDemonRenderShaderDataType type,
                                qint32 binding)
-        : QDemonRenderShaderConstantBase(backend, name, location, elementCount, type, binding)
+        : QDemonRenderShaderConstantBase(name, location, elementCount, type, binding)
     {
         m_value = std::numeric_limits<quint32>::max();
     }
@@ -194,13 +187,12 @@ public:
     QVector<quint32> m_value; ///< constant value
 
 public:
-    QDemonRenderShaderConstant(QDemonRef<QDemonRenderBackend> backend,
-                               const QString &name,
+    QDemonRenderShaderConstant(const QByteArray &name,
                                qint32 location,
                                qint32 elementCount,
                                QDemonRenderShaderDataType type,
                                qint32 binding)
-        : QDemonRenderShaderConstantBase(backend, name, location, elementCount, type, binding)
+        : QDemonRenderShaderConstantBase(name, location, elementCount, type, binding)
     {
         m_value.resize(elementCount);
         m_value.fill(std::numeric_limits<quint32>::max());
@@ -217,13 +209,12 @@ public:
     quint32 m_value; ///< constant value
 
 public:
-    QDemonRenderShaderConstant(QDemonRef<QDemonRenderBackend> backend,
-                               const QString &name,
+    QDemonRenderShaderConstant(const QByteArray &name,
                                qint32 location,
                                qint32 elementCount,
                                QDemonRenderShaderDataType type,
                                qint32 binding)
-        : QDemonRenderShaderConstantBase(backend, name, location, elementCount, type, binding)
+        : QDemonRenderShaderConstantBase(name, location, elementCount, type, binding)
     {
         m_value = std::numeric_limits<quint32>::max();
     }
