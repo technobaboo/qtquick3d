@@ -118,8 +118,16 @@ struct QDemonShaderTextureProperties
     QDemonRenderCachedShaderProperty<QDemonRenderTexture2D *> sampler;
     QDemonRenderCachedShaderProperty<QVector3D> offsets;
     QDemonRenderCachedShaderProperty<QVector4D> rotations;
-    QDemonShaderTextureProperties(const char *sampName, const char *offName, const char *rotName, QDemonRef<QDemonRenderShaderProgram> inShader)
-        : sampler(sampName, inShader), offsets(offName, inShader), rotations(rotName, inShader)
+    QDemonRenderCachedShaderProperty<QVector2D> size;
+    QDemonShaderTextureProperties(const QDemonRef<QDemonRenderShaderProgram> &inShader,
+                                  const QByteArray &sampName,
+                                  const QByteArray &offName,
+                                  const QByteArray &rotName,
+                                  const QByteArray &sizeName = QByteArray())
+        : sampler(sampName, inShader),
+          offsets(offName, inShader),
+          rotations(rotName, inShader),
+          size(sizeName, inShader)
     {
     }
     QDemonShaderTextureProperties() = default;
@@ -149,7 +157,7 @@ struct QDemonRenderableDepthPrepassShader
         , projection("projection", inShader)
         , cameraPosition("camera_position", inShader)
         , displaceAmount("displaceAmount", inShader)
-        , displacementProps("displacementSampler", "displacementMap_offset", "displacementMap_rot", inShader)
+        , displacementProps(inShader, "displacementSampler", "displacementMap_offset", "displacementMap_rot")
         , cameraProperties("camera_properties", inShader)
         , cameraDirection("camera_direction", inShader)
         , tessellation(inShader)

@@ -42,6 +42,7 @@
 #include <qdemonrendercustommaterialsystem.h>
 #include <QtDemonRuntimeRender/qdemonrenderlightconstantproperties.h>
 #include <QtDemonRuntimeRender/qdemonrendershaderkeys.h>
+#include <QtDemonRuntimeRender/qdemonrendererimplshaders.h>
 #include <QtDemon/qdemonutils.h>
 
 QT_BEGIN_NAMESPACE
@@ -116,25 +117,6 @@ struct QDemonShaderLightProperties
     {
         return QDemonShaderLightProperties(inShader);
     }
-};
-
-/**
- *	Cached texture property lookups, used one per texture so a shader generator for N
- *	textures will have an array of N of these lookup objects.
- */
-struct QDemonShaderTextureProperties
-{
-    QDemonRenderCachedShaderProperty<QDemonRenderTexture2D *> m_sampler;
-    QDemonRenderCachedShaderProperty<QVector3D> m_offsets;
-    QDemonRenderCachedShaderProperty<QVector4D> m_rotations;
-    QDemonShaderTextureProperties(const QByteArray &sampName,
-                                  const QByteArray &offName,
-                                  const QByteArray &rotName,
-                                  const QDemonRef<QDemonRenderShaderProgram> &inShader)
-        : m_sampler(sampName, inShader), m_offsets(offName, inShader), m_rotations(rotName, inShader)
-    {
-    }
-    QDemonShaderTextureProperties() = default;
 };
 
 /* We setup some shared state on the custom material shaders */
@@ -357,7 +339,7 @@ struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
         if (iter == inShader->m_images.end()) {
             ImageVariableNames names = getImageVariableNames(convertTextureTypeValue(inImage.m_mapType));
             inShader->m_images.insert(inImage.m_mapType,
-                                      QDemonShaderTextureProperties(names.m_imageSampler, m_imageOffset, m_imageRotScale, inShader->m_shader));
+                                      QDemonShaderTextureProperties(inShader->m_shader, names.m_imageSampler, m_imageOffset, m_imageRotScale));
             iter = inShader->m_images.find(inImage.m_mapType);
         }
 
@@ -375,9 +357,9 @@ struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
         inImage.m_image.m_textureData.m_texture->setTextureWrapS(inImage.m_image.m_horizontalTilingMode);
         inImage.m_image.m_textureData.m_texture->setTextureWrapT(inImage.m_image.m_verticalTilingMode);
 
-        theShaderProps.m_sampler.set(inImage.m_image.m_textureData.m_texture.data());
-        theShaderProps.m_offsets.set(offsets);
-        theShaderProps.m_rotations.set(rotations);
+        theShaderProps.sampler.set(inImage.m_image.m_textureData.m_texture.data());
+        theShaderProps.offsets.set(offsets);
+        theShaderProps.rotations.set(rotations);
     }
 
     void generateImageUVCoordinates(QDemonShaderStageGeneratorInterface &, quint32, quint32, QDemonRenderableImage &) override

@@ -45,6 +45,7 @@
 #include <QtDemonRuntimeRender/qdemonrenderdynamicobjectsystem.h>
 #include <QtDemonRuntimeRender/qdemonrenderlightconstantproperties.h>
 #include <QtDemonRuntimeRender/qdemonrendershaderkeys.h>
+#include <QtDemonRuntimeRender/qdemonrendererimplshaders.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -74,27 +75,6 @@ float translateQuadraticAttenuation(float attenuation)
     attenuation = clampFloat(attenuation, MINATTENUATION, MAXATTENUATION);
     return attenuation * 0.0000001f;
 }
-
-/**
- *	Cached texture property lookups, used one per texture so a shader generator for N
- *	textures will have an array of N of these lookup objects.
- */
-struct QDemonShaderTextureProperties
-{
-    QDemonRenderCachedShaderProperty<QDemonRenderTexture2D *> m_sampler;
-    QDemonRenderCachedShaderProperty<QVector3D> m_offsets;
-    QDemonRenderCachedShaderProperty<QVector4D> m_rotations;
-    QDemonRenderCachedShaderProperty<QVector2D> m_size;
-    QDemonShaderTextureProperties(const QByteArray &sampName,
-                                  const QByteArray &offName,
-                                  const QByteArray &rotName,
-                                  const QByteArray &sizeName,
-                                  const QDemonRef<QDemonRenderShaderProgram> &inShader)
-        : m_sampler(sampName, inShader), m_offsets(offName, inShader), m_rotations(rotName, inShader), m_size(sizeName, inShader)
-    {
-    }
-    QDemonShaderTextureProperties() = default;
-};
 
 /**
  *	Cached light property lookups, used one per light so a shader generator for N
@@ -772,7 +752,7 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
         for (size_t namesIdx = numImageVariables; namesIdx <= idx; ++namesIdx) {
             setupImageVariableNames(idx);
             inShader->m_images.push_back(
-                    QDemonShaderTextureProperties(m_imageSampler, m_imageOffsets, m_imageRotations, m_imageSamplerSize, inShader->m_shader));
+                    QDemonShaderTextureProperties(inShader->m_shader, m_imageSampler, m_imageOffsets, m_imageRotations, m_imageSamplerSize));
         }
         QDemonShaderTextureProperties &theShaderProps = inShader->m_images[idx];
         const QMatrix4x4 &textureTransform = inImage.m_image.m_textureTransform;
@@ -793,10 +773,10 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
         QDemonRef<QDemonRenderTexture2D> imageTexture = inImage.m_image.m_textureData.m_texture;
         inImage.m_image.m_textureData.m_texture->setTextureWrapS(inImage.m_image.m_horizontalTilingMode);
         inImage.m_image.m_textureData.m_texture->setTextureWrapT(inImage.m_image.m_verticalTilingMode);
-        theShaderProps.m_sampler.set(imageTexture.data());
-        theShaderProps.m_offsets.set(offsets);
-        theShaderProps.m_rotations.set(rotations);
-        theShaderProps.m_size.set(QVector2D(imageTexture->textureDetails().width, imageTexture->textureDetails().height));
+        theShaderProps.sampler.set(imageTexture.data());
+        theShaderProps.offsets.set(offsets);
+        theShaderProps.rotations.set(rotations);
+        theShaderProps.size.set(QVector2D(imageTexture->textureDetails().width, imageTexture->textureDetails().height));
     }
 
     void generateShadowMapOcclusion(quint32 lightIdx, bool inShadowEnabled, RenderLightTypes inType)
