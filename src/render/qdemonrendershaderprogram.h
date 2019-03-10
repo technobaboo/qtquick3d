@@ -326,7 +326,7 @@ struct QDemonRenderCachedShaderPropertyArray
         }
     }
 
-    QDemonRenderCachedShaderPropertyArray() : shader(nullptr), constant(nullptr)
+    QDemonRenderCachedShaderPropertyArray()
     {
         memset(m_array, 0, sizeof(m_array));
     }
