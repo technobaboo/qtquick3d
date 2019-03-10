@@ -1,5 +1,6 @@
 #include "qdemonmaterial.h"
 #include "qdemonobject_p.h"
+#include "qdemonscenemanager_p.h"
 #include <QtDemonRuntimeRender/qdemonrenderdefaultmaterial.h>
 #include <QtDemonRuntimeRender/qdemonrendercustommaterial.h>
 
@@ -13,11 +14,11 @@ QDemonMaterial::~QDemonMaterial()
         disconnect(connection);
 }
 
-static void updateProperyListener(QDemonObject *newO, QDemonObject *oldO, QDemonWindow *window, QHash<QObject*, QMetaObject::Connection> &connections, std::function<void(QDemonObject *o)> callFn) {
+static void updateProperyListener(QDemonObject *newO, QDemonObject *oldO, QDemonSceneManager *window, QHash<QObject*, QMetaObject::Connection> &connections, std::function<void(QDemonObject *o)> callFn) {
     // disconnect previous destruction listern
     if (oldO) {
         if (window)
-            QDemonObjectPrivate::get(oldO)->derefWindow();
+            QDemonObjectPrivate::get(oldO)->derefSceneRenderer();
 
         auto connection = connections.find(oldO);
         if (connection != connections.end()) {
@@ -29,7 +30,7 @@ static void updateProperyListener(QDemonObject *newO, QDemonObject *oldO, QDemon
     // listen for new map's destruction
     if (newO) {
         if (window)
-            QDemonObjectPrivate::get(newO)->refWindow(window);
+            QDemonObjectPrivate::get(newO)->refSceneRenderer(window);
         auto connection = QObject::connect(newO, &QObject::destroyed, [callFn](){
             callFn(nullptr);
         });
@@ -77,7 +78,7 @@ void QDemonMaterial::setLightmapIndirect(QDemonImage *lightmapIndirect)
     if (m_lightmapIndirect == lightmapIndirect)
         return;
 
-    updateProperyListener(lightmapIndirect, m_lightmapIndirect, window(), m_connections, [this](QDemonObject *n) {
+    updateProperyListener(lightmapIndirect, m_lightmapIndirect, sceneRenderer(), m_connections, [this](QDemonObject *n) {
         setLightmapIndirect(qobject_cast<QDemonImage *>(n));
     });
 
@@ -91,7 +92,7 @@ void QDemonMaterial::setLightmapRadiosity(QDemonImage *lightmapRadiosity)
     if (m_lightmapRadiosity == lightmapRadiosity)
         return;
 
-    updateProperyListener(lightmapRadiosity, m_lightmapRadiosity, window(), m_connections, [this](QDemonObject *n) {
+    updateProperyListener(lightmapRadiosity, m_lightmapRadiosity, sceneRenderer(), m_connections, [this](QDemonObject *n) {
         setLightmapRadiosity(qobject_cast<QDemonImage *>(n));
     });
 
@@ -105,7 +106,7 @@ void QDemonMaterial::setLightmapShadow(QDemonImage *lightmapShadow)
     if (m_lightmapShadow == lightmapShadow)
         return;
 
-    updateProperyListener(lightmapShadow, m_lightmapShadow, window(), m_connections, [this](QDemonObject *n) {
+    updateProperyListener(lightmapShadow, m_lightmapShadow, sceneRenderer(), m_connections, [this](QDemonObject *n) {
         setLightmapShadow(qobject_cast<QDemonImage *>(n));
     });
 
@@ -119,7 +120,7 @@ void QDemonMaterial::setIblProbe(QDemonImage *iblProbe)
     if (m_iblProbe == iblProbe)
         return;
 
-    updateProperyListener(iblProbe, m_iblProbe, window(), m_connections, [this](QDemonObject *n) {
+    updateProperyListener(iblProbe, m_iblProbe, sceneRenderer(), m_connections, [this](QDemonObject *n) {
         setIblProbe(qobject_cast<QDemonImage *>(n));
     });
 
@@ -133,7 +134,7 @@ void QDemonMaterial::setEmissiveMap2(QDemonImage *emissiveMap2)
     if (m_emissiveMap2 == emissiveMap2)
         return;
 
-    updateProperyListener(emissiveMap2, m_emissiveMap2, window(), m_connections, [this](QDemonObject *n) {
+    updateProperyListener(emissiveMap2, m_emissiveMap2, sceneRenderer(), m_connections, [this](QDemonObject *n) {
         setEmissiveMap2(qobject_cast<QDemonImage *>(n));
     });
 
@@ -147,7 +148,7 @@ void QDemonMaterial::setDisplacementMap(QDemonImage *displacementMap)
     if (m_displacementMap == displacementMap)
         return;
 
-    updateProperyListener(displacementMap, m_displacementMap, window(), m_connections, [this](QDemonObject *n) {
+    updateProperyListener(displacementMap, m_displacementMap, sceneRenderer(), m_connections, [this](QDemonObject *n) {
         setDisplacementMap(qobject_cast<QDemonImage *>(n));
     });
 
@@ -249,48 +250,48 @@ QDemonRenderGraphObject *QDemonMaterial::updateSpatialNode(QDemonRenderGraphObje
 void QDemonMaterial::itemChange(QDemonObject::ItemChange change, const QDemonObject::ItemChangeData &value)
 {
     if (change == QDemonObject::ItemSceneChange)
-        updateWindow(value.window);
+        updateSceneRenderer(value.sceneRenderer);
 }
 
-void QDemonMaterial::updateWindow(QDemonWindow *window)
+void QDemonMaterial::updateSceneRenderer(QDemonSceneManager *window)
 {
     if (window) {
         if (m_lightmapIndirect) {
-           QDemonObjectPrivate::get(m_lightmapIndirect)->refWindow(window);
+           QDemonObjectPrivate::get(m_lightmapIndirect)->refSceneRenderer(window);
         }
         if (m_lightmapRadiosity) {
-           QDemonObjectPrivate::get(m_lightmapRadiosity)->refWindow(window);
+           QDemonObjectPrivate::get(m_lightmapRadiosity)->refSceneRenderer(window);
         }
         if (m_lightmapShadow) {
-           QDemonObjectPrivate::get(m_lightmapShadow)->refWindow(window);
+           QDemonObjectPrivate::get(m_lightmapShadow)->refSceneRenderer(window);
         }
         if (m_iblProbe) {
-           QDemonObjectPrivate::get(m_iblProbe)->refWindow(window);
+           QDemonObjectPrivate::get(m_iblProbe)->refSceneRenderer(window);
         }
         if (m_emissiveMap2) {
-           QDemonObjectPrivate::get(m_lightmapIndirect)->refWindow(window);
+           QDemonObjectPrivate::get(m_lightmapIndirect)->refSceneRenderer(window);
         }
         if (m_displacementMap) {
-           QDemonObjectPrivate::get(m_lightmapIndirect)->refWindow(window);
+           QDemonObjectPrivate::get(m_lightmapIndirect)->refSceneRenderer(window);
         }
     } else {
         if (m_lightmapIndirect) {
-           QDemonObjectPrivate::get(m_lightmapIndirect)->derefWindow();
+           QDemonObjectPrivate::get(m_lightmapIndirect)->derefSceneRenderer();
         }
         if (m_lightmapRadiosity) {
-           QDemonObjectPrivate::get(m_lightmapRadiosity)->derefWindow();
+           QDemonObjectPrivate::get(m_lightmapRadiosity)->derefSceneRenderer();
         }
         if (m_lightmapShadow) {
-           QDemonObjectPrivate::get(m_lightmapShadow)->derefWindow();
+           QDemonObjectPrivate::get(m_lightmapShadow)->derefSceneRenderer();
         }
         if (m_iblProbe) {
-           QDemonObjectPrivate::get(m_iblProbe)->derefWindow();
+           QDemonObjectPrivate::get(m_iblProbe)->derefSceneRenderer();
         }
         if (m_emissiveMap2) {
-           QDemonObjectPrivate::get(m_lightmapIndirect)->derefWindow();
+           QDemonObjectPrivate::get(m_lightmapIndirect)->derefSceneRenderer();
         }
         if (m_displacementMap) {
-           QDemonObjectPrivate::get(m_lightmapIndirect)->derefWindow();
+           QDemonObjectPrivate::get(m_lightmapIndirect)->derefSceneRenderer();
         }
     }
 }

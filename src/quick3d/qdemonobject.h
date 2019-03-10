@@ -10,8 +10,7 @@
 QT_BEGIN_NAMESPACE
 
 class QDemonObjectPrivate;
-class QDemonWindow;
-class QDemonWindowPrivate;
+class QDemonSceneManager;
 
 class Q_QUICK3D_EXPORT QDemonObject : public QObject, public QQmlParserStatus
 {
@@ -80,12 +79,12 @@ public:
 
     union ItemChangeData {
         ItemChangeData(QDemonObject *v) : item(v) {}
-        ItemChangeData(QDemonWindow *v) : window(v) {}
+        ItemChangeData(QDemonSceneManager *v) : sceneRenderer(v) {}
         ItemChangeData(qreal v) : realValue(v) {}
         ItemChangeData(bool v) : boolValue(v) {}
 
         QDemonObject *item;
-        QDemonWindow *window;
+        QDemonSceneManager *sceneRenderer;
         qreal realValue;
         bool boolValue;
     };
@@ -102,7 +101,7 @@ public:
 
     QList<QDemonObject *> childItems() const;
 
-    QDemonWindow *window() const;
+    QDemonSceneManager *sceneRenderer() const;
     QDemonObject *parentItem() const;
 
     bool isEnabled() const;
@@ -117,7 +116,7 @@ public Q_SLOTS:
     void setVisible(bool visible);
 
 Q_SIGNALS:
-    void windowChanged(QDemonWindow *window);
+    void sceneRendererChanged(QDemonSceneManager *sceneRenderer);
     void parentChanged(QDemonObject *parent);
     void enabledChanged(bool enabled);
     void childrenChanged();
@@ -142,7 +141,7 @@ private:
     QString m_name;
     bool m_enabled;
     bool m_visible;
-    friend QDemonWindowPrivate;
+    friend QDemonSceneManager;
 };
 
 QT_END_NAMESPACE

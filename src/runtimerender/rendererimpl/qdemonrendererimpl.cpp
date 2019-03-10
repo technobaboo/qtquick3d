@@ -143,11 +143,10 @@ static void buildRenderableLayers(QDemonRenderLayer &inLayer, QVector<QDemonRend
 }
 
 bool QDemonRendererImpl::prepareLayerForRender(QDemonRenderLayer &inLayer,
-                                               const QVector2D &inViewportDimensions,
+                                               const QSize &surfaceSize,
                                                bool inRenderSiblings,
                                                const QDemonRenderInstanceId id)
 {
-    (void)inViewportDimensions;
     QVector<QDemonRenderLayer *> renderableLayers;
     // Found by fair roll of the dice.
     renderableLayers.reserve(4);
@@ -163,7 +162,7 @@ bool QDemonRendererImpl::prepareLayerForRender(QDemonRenderLayer &inLayer,
         QDemonRef<QDemonLayerRenderData> theRenderData = getOrCreateLayerRenderDataForNode(*theLayer, id);
 
         if (theRenderData) {
-            theRenderData->prepareForRender();
+            theRenderData->prepareForRender(surfaceSize);
             retval = retval || theRenderData->layerPrepResult->flags.wasDirty();
         } else {
             Q_ASSERT(false);
@@ -174,13 +173,12 @@ bool QDemonRendererImpl::prepareLayerForRender(QDemonRenderLayer &inLayer,
 }
 
 void QDemonRendererImpl::renderLayer(QDemonRenderLayer &inLayer,
-                                     const QVector2D &inViewportDimensions,
+                                     const QSize &surfaceSize,
                                      bool clear,
                                      QVector3D clearColor,
                                      bool inRenderSiblings,
                                      const QDemonRenderInstanceId id)
 {
-    (void)inViewportDimensions;
     QVector<QDemonRenderLayer *> renderableLayers;
     // Found by fair roll of the dice.
     renderableLayers.reserve(4);

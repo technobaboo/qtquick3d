@@ -173,7 +173,7 @@ protected:
     QDemonRenderGraphObject *updateSpatialNode(QDemonRenderGraphObject *node) override;
     void itemChange(ItemChange, const ItemChangeData &) override;
 private:
-    void updateWindow(QDemonWindow *window);
+    void updateSceneRenderer(QDemonSceneManager *window);
     QDemonDefaultMaterialLighting m_lighting = VertexLighting;
     QDemonDefaultMaterialBlendMode m_blendMode = Normal;
     QColor m_diffuseColor;

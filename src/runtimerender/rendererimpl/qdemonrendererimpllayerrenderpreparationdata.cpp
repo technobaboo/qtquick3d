@@ -1043,7 +1043,7 @@ void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportD
         thePrepResult = QDemonLayerRenderPreparationResult(
                 QDemonLayerRenderHelper(theViewport,
                                         theScissor,
-                                        layer.scene->presentation->presentationDimensions,
+                                        QVector2D(inViewportDimensions.width(), inViewportDimensions.height()),
                                         layer,
                                         shouldRenderToTexture,
                                         renderer->demonContext()->scaleMode(),

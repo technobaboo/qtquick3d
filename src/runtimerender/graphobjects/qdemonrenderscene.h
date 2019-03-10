@@ -60,14 +60,14 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderScene : public QDemonRenderGraphO
     void removeChild(QDemonRenderLayer &inLayer);
     QDemonRenderLayer *getLastChild();
     // returns true if any of the layers were dirty or if this object was dirty
-    bool prepareForRender(const QVector2D &inViewportDimensions,
+    bool prepareForRender(const QSize &inViewportDimensions,
                           QDemonRenderContextInterface *inContext,
                           const QDemonRenderInstanceId id = nullptr);
-    void render(const QVector2D &inViewportDimensions,
+    void render(const QSize &inViewportDimensions,
                 QDemonRenderContextInterface *inContext,
                 RenderClearCommand command = ClearIsOptional,
                 const QDemonRenderInstanceId id = nullptr);
-    void renderWithClear(const QVector2D &inViewportDimensions,
+    void renderWithClear(const QSize &inViewportDimensions,
                          QDemonRenderContextInterface *inContext,
                          RenderClearCommand inClearColorBuffer,
                          QVector3D inclearColor,

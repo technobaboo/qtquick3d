@@ -35,13 +35,12 @@
 #include <QtQuick3d/qdemondefaultmaterial.h>
 #include <QtQuick3d/qdemoneffect.h>
 #include <QtQuick3d/qdemonimage.h>
-#include <QtQuick3d/qdemonlayer.h>
 #include <QtQuick3d/qdemonlight.h>
 #include <QtQuick3d/qdemonmaterial.h>
 #include <QtQuick3d/qdemonmodel.h>
 #include <QtQuick3d/qdemonnode.h>
 #include <QtQuick3d/qdemonobject.h>
-#include <QtQuick3d/qdemonwindow.h>
+#include <QtQuick3d/qdemonview3d.h>
 
 #include <private/qqmlglobal_p.h>
 
@@ -63,25 +62,6 @@ static QQmlPrivate::AutoParentResult qdemonobject_autoParent(QObject *obj, QObje
         if (item) {
             // An Item has another Item
             item->setParentItem(parentItem);
-            return QQmlPrivate::Parented;
-        } else if (parentItem->window()) {
-            QDemonWindow *win = qmlobject_cast<QDemonWindow *>(obj);
-            if (win) {
-                // A Window inside an Item should be transient for that item's window
-                win->setTransientParent(parentItem->window());
-                return QQmlPrivate::Parented;
-            }
-        }
-        return QQmlPrivate::IncompatibleObject;
-    } else if (QDemonWindow *parentWindow = qmlobject_cast<QDemonWindow *>(parent)) {
-        QDemonWindow *win = qmlobject_cast<QDemonWindow *>(obj);
-        if (win) {
-            // A Window inside a Window should be transient for it
-            win->setTransientParent(parentWindow);
-            return QQmlPrivate::Parented;
-        } else if (QDemonObject *item = qmlobject_cast<QDemonObject *>(obj)) {
-            // The parent of an Item inside a Window is actually the implicit content Item
-            item->setParentItem(parentWindow->contentItem());
             return QQmlPrivate::Parented;
         }
         return QQmlPrivate::IncompatibleObject;
@@ -108,13 +88,14 @@ public:
         qmlRegisterType<QDemonDefaultMaterial>(uri, 1, 0, "DemonDefaultMaterial");
         qmlRegisterType<QDemonEffect>(uri, 1, 0, "DemonEffect");
         qmlRegisterType<QDemonImage>(uri, 1, 0, "DemonImage");
-        qmlRegisterType<QDemonLayer>(uri, 1, 0, "DemonLayer");
+        //qmlRegisterType<QDemonLayer>(uri, 1, 0, "DemonLayer");
         qmlRegisterType<QDemonLight>(uri, 1, 0, "DemonLight");
         qmlRegisterUncreatableType<QDemonMaterial>(uri, 1, 0, "DemonMaterial", QLatin1String("Material is Abstract"));
         qmlRegisterType<QDemonModel>(uri, 1, 0, "DemonModel");
         qmlRegisterType<QDemonNode>(uri, 1, 0, "DemonNode");
         qmlRegisterUncreatableType<QDemonObject>(uri, 1, 0, "DemonObject", QLatin1String("Object is Abtract"));
-        qmlRegisterType<QDemonWindow>(uri, 1, 0, "DemonWindow");
+        //qmlRegisterType<QDemonWindow>(uri, 1, 0, "DemonWindow");
+        qmlRegisterType<QDemonView3D>(uri, 1, 0, "DemonView3D");
 
         qmlRegisterModule(uri, 1, QT_VERSION_MINOR);
     }

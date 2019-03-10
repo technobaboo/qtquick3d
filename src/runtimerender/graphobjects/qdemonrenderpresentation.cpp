@@ -59,7 +59,7 @@ void QDemonRenderPresentation::render(QDemonRenderContextInterface *inContext)
 {
     if (scene) {
         QRect theViewportSize(inContext->renderContext()->viewport());
-        scene->render(QVector2D(float(theViewportSize.width()), float(theViewportSize.height())), inContext);
+        scene->render(theViewportSize.size(), inContext);
     }
 }
 

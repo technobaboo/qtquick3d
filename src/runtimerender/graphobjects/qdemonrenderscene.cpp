@@ -83,7 +83,7 @@ QDemonRenderLayer *QDemonRenderScene::getLastChild()
     return child;
 }
 
-bool QDemonRenderScene::prepareForRender(const QVector2D &inViewportDimensions,
+bool QDemonRenderScene::prepareForRender(const QSize &inViewportDimensions,
                                          QDemonRenderContextInterface *inContext,
                                          const QDemonRenderInstanceId id)
 {
@@ -95,7 +95,7 @@ bool QDemonRenderScene::prepareForRender(const QVector2D &inViewportDimensions,
     return wasDirty;
 }
 
-void QDemonRenderScene::render(const QVector2D &inViewportDimensions,
+void QDemonRenderScene::render(const QSize &inViewportDimensions,
                                QDemonRenderContextInterface *inContext,
                                RenderClearCommand inClearColorBuffer,
                                const QDemonRenderInstanceId id)
@@ -119,7 +119,7 @@ void QDemonRenderScene::render(const QVector2D &inViewportDimensions,
     if (firstChild)
         inContext->renderer()->renderLayer(*firstChild, inViewportDimensions, useClearColor, clearColor, true, id);
 }
-void QDemonRenderScene::renderWithClear(const QVector2D &inViewportDimensions,
+void QDemonRenderScene::renderWithClear(const QSize &inViewportDimensions,
                                         QDemonRenderContextInterface *inContext,
                                         RenderClearCommand inClearColorBuffer,
                                         QVector3D inClearColor,

@@ -16,11 +16,11 @@ QDemonDefaultMaterial::~QDemonDefaultMaterial()
         disconnect(connection);
 }
 
-static void updateProperyListener(QDemonObject *newO, QDemonObject *oldO, QDemonWindow *window, QDemonDefaultMaterial::ConnectionMap &connections, std::function<void(QDemonObject *o)> callFn) {
+static void updateProperyListener(QDemonObject *newO, QDemonObject *oldO, QDemonSceneManager *window, QDemonDefaultMaterial::ConnectionMap &connections, std::function<void(QDemonObject *o)> callFn) {
     // disconnect previous destruction listern
     if (oldO) {
         if (window)
-            QDemonObjectPrivate::get(oldO)->derefWindow();
+            QDemonObjectPrivate::get(oldO)->derefSceneRenderer();
 
         auto connection = connections.find(oldO);
         if (connection != connections.end()) {
@@ -32,7 +32,7 @@ static void updateProperyListener(QDemonObject *newO, QDemonObject *oldO, QDemon
     // listen for new map's destruction
     if (newO) {
         if (window)
-            QDemonObjectPrivate::get(newO)->refWindow(window);
+            QDemonObjectPrivate::get(newO)->refSceneRenderer(window);
         auto connection = QObject::connect(newO, &QObject::destroyed, [callFn](){
             callFn(nullptr);
         });
@@ -215,7 +215,7 @@ void QDemonDefaultMaterial::setDiffuseMap(QDemonImage *diffuseMap)
     if (m_diffuseMap == diffuseMap)
         return;
 
-    updateProperyListener(diffuseMap, m_diffuseMap, window(), m_connections, [this](QDemonObject *n) {
+    updateProperyListener(diffuseMap, m_diffuseMap, sceneRenderer(), m_connections, [this](QDemonObject *n) {
         setDiffuseMap(qobject_cast<QDemonImage *>(n));
     });
 
@@ -229,7 +229,7 @@ void QDemonDefaultMaterial::setDiffuseMap2(QDemonImage *diffuseMap2)
     if (m_diffuseMap2 == diffuseMap2)
         return;
 
-    updateProperyListener(diffuseMap2, m_diffuseMap2, window(), m_connections, [this](QDemonObject *n) {
+    updateProperyListener(diffuseMap2, m_diffuseMap2, sceneRenderer(), m_connections, [this](QDemonObject *n) {
         setDiffuseMap2(qobject_cast<QDemonImage *>(n));
     });
 
@@ -244,7 +244,7 @@ void QDemonDefaultMaterial::setDiffuseMap3(QDemonImage *diffuseMap3)
     if (m_diffuseMap3 == diffuseMap3)
         return;
 
-    updateProperyListener(diffuseMap3, m_diffuseMap3, window(), m_connections, [this](QDemonObject *n) {
+    updateProperyListener(diffuseMap3, m_diffuseMap3, sceneRenderer(), m_connections, [this](QDemonObject *n) {
         setDiffuseMap3(qobject_cast<QDemonImage *>(n));
     });
 
@@ -270,7 +270,7 @@ void QDemonDefaultMaterial::setEmissiveMap(QDemonImage *emissiveMap)
         return;
 
 
-    updateProperyListener(emissiveMap, m_emissiveMap, window(), m_connections, [this](QDemonObject *n) {
+    updateProperyListener(emissiveMap, m_emissiveMap, sceneRenderer(), m_connections, [this](QDemonObject *n) {
         setEmissiveMap(qobject_cast<QDemonImage *>(n));
     });
 
@@ -294,7 +294,7 @@ void QDemonDefaultMaterial::setSpecularReflectionMap(QDemonImage *specularReflec
     if (m_specularReflectionMap == specularReflectionMap)
         return;
 
-    updateProperyListener(specularReflectionMap, m_specularReflectionMap, window(), m_connections, [this](QDemonObject *n) {
+    updateProperyListener(specularReflectionMap, m_specularReflectionMap, sceneRenderer(), m_connections, [this](QDemonObject *n) {
         setSpecularReflectionMap(qobject_cast<QDemonImage *>(n));
     });
 
@@ -308,7 +308,7 @@ void QDemonDefaultMaterial::setSpecularMap(QDemonImage *specularMap)
     if (m_specularMap == specularMap)
         return;
 
-    updateProperyListener(specularMap, m_specularMap, window(), m_connections, [this](QDemonObject *n) {
+    updateProperyListener(specularMap, m_specularMap, sceneRenderer(), m_connections, [this](QDemonObject *n) {
         setSpecularMap(qobject_cast<QDemonImage *>(n));
     });
 
@@ -382,7 +382,7 @@ void QDemonDefaultMaterial::setRoughnessMap(QDemonImage *roughnessMap)
     if (m_roughnessMap == roughnessMap)
         return;
 
-    updateProperyListener(roughnessMap, m_roughnessMap, window(), m_connections, [this](QDemonObject *n) {
+    updateProperyListener(roughnessMap, m_roughnessMap, sceneRenderer(), m_connections, [this](QDemonObject *n) {
         setRoughnessMap(qobject_cast<QDemonImage *>(n));
     });
 
@@ -413,7 +413,7 @@ void QDemonDefaultMaterial::setOpacityMap(QDemonImage *opacityMap)
     if (m_opacityMap == opacityMap)
         return;
 
-    updateProperyListener(opacityMap, m_opacityMap, window(), m_connections, [this](QDemonObject *n) {
+    updateProperyListener(opacityMap, m_opacityMap, sceneRenderer(), m_connections, [this](QDemonObject *n) {
         setOpacityMap(qobject_cast<QDemonImage *>(n));
     });
 
@@ -427,7 +427,7 @@ void QDemonDefaultMaterial::setBumpMap(QDemonImage *bumpMap)
     if (m_bumpMap == bumpMap)
         return;
 
-    updateProperyListener(bumpMap, m_bumpMap, window(), m_connections, [this](QDemonObject *n) {
+    updateProperyListener(bumpMap, m_bumpMap, sceneRenderer(), m_connections, [this](QDemonObject *n) {
         setBumpMap(qobject_cast<QDemonImage *>(n));
     });
 
@@ -451,7 +451,7 @@ void QDemonDefaultMaterial::setNormalMap(QDemonImage *normalMap)
     if (m_normalMap == normalMap)
         return;
 
-    updateProperyListener(normalMap, m_normalMap, window(), m_connections, [this](QDemonObject *n) {
+    updateProperyListener(normalMap, m_normalMap, sceneRenderer(), m_connections, [this](QDemonObject *n) {
         setNormalMap(qobject_cast<QDemonImage *>(n));
     });
 
@@ -465,7 +465,7 @@ void QDemonDefaultMaterial::setTranslucencyMap(QDemonImage *translucencyMap)
     if (m_translucencyMap == translucencyMap)
         return;
 
-    updateProperyListener(translucencyMap, m_translucencyMap, window(), m_connections, [this](QDemonObject *n) {
+    updateProperyListener(translucencyMap, m_translucencyMap, sceneRenderer(), m_connections, [this](QDemonObject *n) {
         setTranslucencyMap(qobject_cast<QDemonImage *>(n));
     });
 
@@ -615,58 +615,58 @@ QDemonRenderGraphObject *QDemonDefaultMaterial::updateSpatialNode(QDemonRenderGr
 void QDemonDefaultMaterial::itemChange(QDemonObject::ItemChange change, const QDemonObject::ItemChangeData &value)
 {
     if (change == QDemonObject::ItemSceneChange)
-        updateWindow(value.window);
+        updateSceneRenderer(value.sceneRenderer);
 }
 
-void QDemonDefaultMaterial::updateWindow(QDemonWindow *window)
+void QDemonDefaultMaterial::updateSceneRenderer(QDemonSceneManager *window)
 {
     // Check all the resource value's windows, and update as necessary
     if (window) {
         if (m_diffuseMap)
-            QDemonObjectPrivate::get(m_diffuseMap)->refWindow(window);
+            QDemonObjectPrivate::get(m_diffuseMap)->refSceneRenderer(window);
         if (m_diffuseMap2)
-            QDemonObjectPrivate::get(m_diffuseMap2)->refWindow(window);
+            QDemonObjectPrivate::get(m_diffuseMap2)->refSceneRenderer(window);
         if (m_diffuseMap3)
-            QDemonObjectPrivate::get(m_diffuseMap3)->refWindow(window);
+            QDemonObjectPrivate::get(m_diffuseMap3)->refSceneRenderer(window);
         if (m_emissiveMap)
-            QDemonObjectPrivate::get(m_emissiveMap)->refWindow(window);
+            QDemonObjectPrivate::get(m_emissiveMap)->refSceneRenderer(window);
         if (m_specularReflectionMap)
-            QDemonObjectPrivate::get(m_specularReflectionMap)->refWindow(window);
+            QDemonObjectPrivate::get(m_specularReflectionMap)->refSceneRenderer(window);
         if (m_specularMap)
-            QDemonObjectPrivate::get(m_specularMap)->refWindow(window);
+            QDemonObjectPrivate::get(m_specularMap)->refSceneRenderer(window);
         if (m_roughnessMap)
-            QDemonObjectPrivate::get(m_roughnessMap)->refWindow(window);
+            QDemonObjectPrivate::get(m_roughnessMap)->refSceneRenderer(window);
         if (m_opacityMap)
-            QDemonObjectPrivate::get(m_opacityMap)->refWindow(window);
+            QDemonObjectPrivate::get(m_opacityMap)->refSceneRenderer(window);
         if (m_bumpMap)
-            QDemonObjectPrivate::get(m_bumpMap)->refWindow(window);
+            QDemonObjectPrivate::get(m_bumpMap)->refSceneRenderer(window);
         if (m_normalMap)
-            QDemonObjectPrivate::get(m_normalMap)->refWindow(window);
+            QDemonObjectPrivate::get(m_normalMap)->refSceneRenderer(window);
         if (m_translucencyMap)
-            QDemonObjectPrivate::get(m_translucencyMap)->refWindow(window);
+            QDemonObjectPrivate::get(m_translucencyMap)->refSceneRenderer(window);
     } else {
         if (m_diffuseMap)
-            QDemonObjectPrivate::get(m_diffuseMap)->derefWindow();
+            QDemonObjectPrivate::get(m_diffuseMap)->derefSceneRenderer();
         if (m_diffuseMap2)
-            QDemonObjectPrivate::get(m_diffuseMap2)->derefWindow();
+            QDemonObjectPrivate::get(m_diffuseMap2)->derefSceneRenderer();
         if (m_diffuseMap3)
-            QDemonObjectPrivate::get(m_diffuseMap3)->derefWindow();
+            QDemonObjectPrivate::get(m_diffuseMap3)->derefSceneRenderer();
         if (m_emissiveMap)
-            QDemonObjectPrivate::get(m_emissiveMap)->derefWindow();
+            QDemonObjectPrivate::get(m_emissiveMap)->derefSceneRenderer();
         if (m_specularReflectionMap)
-            QDemonObjectPrivate::get(m_specularReflectionMap)->derefWindow();
+            QDemonObjectPrivate::get(m_specularReflectionMap)->derefSceneRenderer();
         if (m_specularMap)
-            QDemonObjectPrivate::get(m_specularMap)->derefWindow();
+            QDemonObjectPrivate::get(m_specularMap)->derefSceneRenderer();
         if (m_roughnessMap)
-            QDemonObjectPrivate::get(m_roughnessMap)->derefWindow();
+            QDemonObjectPrivate::get(m_roughnessMap)->derefSceneRenderer();
         if (m_opacityMap)
-            QDemonObjectPrivate::get(m_opacityMap)->derefWindow();
+            QDemonObjectPrivate::get(m_opacityMap)->derefSceneRenderer();
         if (m_bumpMap)
-            QDemonObjectPrivate::get(m_bumpMap)->derefWindow();
+            QDemonObjectPrivate::get(m_bumpMap)->derefSceneRenderer();
         if (m_normalMap)
-            QDemonObjectPrivate::get(m_normalMap)->derefWindow();
+            QDemonObjectPrivate::get(m_normalMap)->derefSceneRenderer();
         if (m_translucencyMap)
-            QDemonObjectPrivate::get(m_translucencyMap)->derefWindow();
+            QDemonObjectPrivate::get(m_translucencyMap)->derefSceneRenderer();
     }
 }
 

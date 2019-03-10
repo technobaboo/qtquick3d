@@ -6,7 +6,6 @@
 QT_BEGIN_NAMESPACE
 
 struct QDemonRenderImage;
-struct QDemonRenderLayer;
 class Q_QUICK3D_EXPORT QDemonImage : public QDemonObject
 {
     Q_OBJECT

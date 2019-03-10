@@ -69,8 +69,7 @@ QDemonOffscreenRenderFlags QDemonSubPresentationRenderer::needsRender(const QDem
 {
     bool hasTransparency = m_presentation->scene->useClearColor ? false : true;
     QRect theViewportSize(m_renderContext->renderList()->getViewport());
-    bool wasDirty = m_presentation->scene->prepareForRender(QVector2D((float)theViewportSize.width(),
-                                                                      (float)theViewportSize.height()),
+    bool wasDirty = m_presentation->scene->prepareForRender(theViewportSize.size(),
                                                             m_renderContext,
                                                             instanceId);
     return QDemonOffscreenRenderFlags(hasTransparency, wasDirty);
@@ -86,7 +85,7 @@ void QDemonSubPresentationRenderer::render(const QDemonOffscreenRendererEnvironm
 {
     QDemonSubPresentationHelper theHelper(m_renderContext, QSize((quint32)inEnvironment.width, (quint32)inEnvironment.height));
     QRect theViewportSize(inRenderContext.viewport());
-    m_presentation->scene->render(QVector2D((float)theViewportSize.width(), (float)theViewportSize.height()),
+    m_presentation->scene->render(theViewportSize.size(),
                                   m_renderContext,
                                   inClearColorBuffer,
                                   instanceId);
@@ -103,7 +102,7 @@ void QDemonSubPresentationRenderer::renderWithClear(const QDemonOffscreenRendere
     Q_UNUSED(inEnvironment);
     Q_UNUSED(inPresScale);
     QRect theViewportSize(inRenderContext.viewport());
-    m_presentation->scene->renderWithClear(QVector2D((float)theViewportSize.width(), (float)theViewportSize.height()),
+    m_presentation->scene->renderWithClear(theViewportSize.size(),
                                            m_renderContext,
                                            inClearBuffer,
                                            inClearColor,

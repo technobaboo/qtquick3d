@@ -12,13 +12,17 @@ SOURCES += \
     qdemoncamera.cpp \
     qdemonlight.cpp \
     qdemonmodel.cpp \
-    qdemonlayer.cpp \
+    #qdemonlayer.cpp \
     qdemoneffect.cpp \
     qdemonmaterial.cpp \
     qdemondefaultmaterial.cpp \
     qdemoncustommaterial.cpp \
-    qdemonwindow.cpp \
-    qdemonrenderloop.cpp
+    #qdemonwindow.cpp \
+    #qdemonrenderloop.cpp \
+    qdemonview3d.cpp \
+    qdemonsceneenvironment.cpp \
+    qdemonsgrendernode.cpp \
+    qdemonscenemanager.cpp
 
 HEADERS += \
     qdemonobject.h \
@@ -27,17 +31,22 @@ HEADERS += \
     qdemoncamera.h \
     qdemonlight.h \
     qdemonmodel.h \
-    qdemonlayer.h \
+    #qdemonlayer.h \
     qdemoneffect.h \
     qdemonmaterial.h \
     qdemondefaultmaterial.h \
     qdemoncustommaterial.h \
-    qdemonwindow.h \
+    #qdemonwindow.h \
     qtquick3dglobal.h \
     qtquick3dglobal_p.h \
-    qdemonwindow_p.h \
-    qdemonrenderloop_p.h \
+    #qdemonwindow_p.h \
+    #qdemonrenderloop_p.h \
     qdemonobject_p.h \
-    qdemonobjectchangelistener_p.h
+    qdemonobjectchangelistener_p.h \
+    qdemonview3d.h \
+    qdemonview3d_p.h \
+    qdemonsceneenvironment.h \
+    qdemonsgrendernode_p.h \
+    qdemonscenemanager_p.h
 
 load(qt_module)

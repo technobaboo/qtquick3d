@@ -112,11 +112,11 @@ public:
 
     // Returns true if this layer or a sibling was dirty.
     virtual bool prepareLayerForRender(QDemonRenderLayer &inLayer,
-                                       const QVector2D &inViewportDimensions,
+                                       const QSize &surfaceSize,
                                        bool inRenderSiblings = true,
                                        const QDemonRenderInstanceId id = nullptr) = 0;
     virtual void renderLayer(QDemonRenderLayer &inLayer,
-                             const QVector2D &inViewportDimensions,
+                             const QSize &surfaceSize,
                              bool clear,
                              QVector3D clearColor,
                              bool inRenderSiblings = true,

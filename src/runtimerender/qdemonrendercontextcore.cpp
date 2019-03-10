@@ -378,9 +378,10 @@ void QDemonRenderContextInterface::setupRenderTarget()
             theClearColor = m_matteColor;
         else
             theClearColor = m_sceneColor;
-        Q_ASSERT(m_sceneColor.hasValue());
-        m_renderContext->setClearColor(theClearColor);
-        m_renderContext->clear(QDemonRenderClearValues::Color);
+        if (m_sceneColor.hasValue() && m_sceneColor.getValue().w() != 0.0f) {
+            m_renderContext->setClearColor(theClearColor);
+            m_renderContext->clear(QDemonRenderClearValues::Color);
+        }
     }
     bool renderOffscreen = m_beginFrameResult.renderOffscreen;
     m_renderContext->setViewport(m_beginFrameResult.viewport);

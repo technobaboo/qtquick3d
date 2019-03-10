@@ -13,7 +13,8 @@
 //
 
 #include "qdemonobject.h"
-#include "qdemonwindow_p.h"
+
+#include "qtquick3dglobal_p.h"
 
 #include "qdemonobjectchangelistener_p.h"
 
@@ -23,6 +24,9 @@
 #include <private/qlazilyallocated_p.h>
 
 QT_BEGIN_NAMESPACE
+
+class QDemonRenderContextInterface;
+class QDemonRenderContext;
 
 class Q_QUICK3D_PRIVATE_EXPORT QDemonObjectPrivate : public QObjectPrivate
 {
@@ -111,50 +115,9 @@ public:
     {
         ExtraData();
 
-        //        qreal z;
-        //        qreal scale;
-        //        qreal rotation;
-        //        qreal opacity;
-
-        //        QQuickContents *contents;
-        //        QQuickScreenAttached *screenAttached;
-        //        QQuickLayoutMirroringAttached* layoutDirectionAttached;
-        //        QQuickEnterKeyAttached *enterKeyAttached;
-        //        QQuickItemKeyFilter *keyHandler;
-        //        QVector<QQuickPointerHandler *> pointerHandlers;
-        //#if QT_CONFIG(quick_shadereffect)
-        //        mutable QQuickItemLayer *layer;
-        //#endif
-        //#if QT_CONFIG(cursor)
-        //        QCursor cursor;
-        //#endif
-        //        QPointF userTransformOriginPoint;
-
-        //        // these do not include child items
-        //        int effectRefCount;
         int hideRefCount;
-        //        // updated recursively for child items as well
-        //        int recursiveEffectRefCount;
-
-        //        QSGOpacityNode *opacityNode;
-        //        QQuickDefaultClipNode *clipNode;
-        //        QSGRootNode *rootNode;
-
-        //        // Mask contains() method
-        //        QMetaMethod maskContains;
-
         QObjectList resourcesList;
 
-        //        // Although acceptedMouseButtons is inside ExtraData, we actually store
-        //        // the LeftButton flag in the extra.flag() bit.  This is because it is
-        //        // extremely common to set acceptedMouseButtons to LeftButton, but very
-        //        // rare to use any of the other buttons.
-        //        Qt::MouseButtons acceptedMouseButtons;
-
-        //        QQuickItem::TransformOrigin origin:5;
-        //        uint transparentForPositioner : 1;
-
-        //        // 26 bits padding
     };
     QLazilyAllocated<ExtraData> extra;
 
@@ -163,8 +126,6 @@ public:
     void addItemChangeListener(QDemonObjectChangeListener *listener, ChangeTypes types);
     void updateOrAddItemChangeListener(QDemonObjectChangeListener *listener, ChangeTypes types);
     void removeItemChangeListener(QDemonObjectChangeListener *, ChangeTypes types);
-    //    void updateOrAddGeometryChangeListener(QDemonObjectChangeListener *listener, QQuickGeometryChange types);
-    //    void updateOrRemoveGeometryChangeListener(QDemonObjectChangeListener *listener, QQuickGeometryChange types);
 
     QQuickStateGroup *_states();
     QQuickStateGroup *_stateGroup;
@@ -213,10 +174,10 @@ public:
 
     void setCulled(bool);
 
-    QDemonWindow *window;
+    QDemonSceneManager *sceneRenderer;
     int windowRefCount;
-    inline QDemonRenderContextInterface *sceneGraphContext() const;
-    inline QDemonRenderContext *sceneGraphRenderContext() const;
+//    inline QDemonRenderContextInterface *sceneGraphContext() const;
+//    inline QDemonRenderContext *sceneGraphRenderContext() const;
 
     QDemonObject *parentItem;
 
@@ -229,8 +190,8 @@ public:
 
     void markSortedChildrenDirty(QDemonObject *child);
 
-    void refWindow(QDemonWindow *);
-    void derefWindow();
+    void refSceneRenderer(QDemonSceneManager *);
+    void derefSceneRenderer();
 
     QDemonObject *subFocusItem;
     void updateSubFocusItem(QDemonObject *scope, bool focus);

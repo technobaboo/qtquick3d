@@ -209,11 +209,11 @@ public:
     // Calls prepare layer for render
     // and then do render layer.
     bool prepareLayerForRender(QDemonRenderLayer &inLayer,
-                               const QVector2D &inViewportDimensions,
+                               const QSize &surfaceSize,
                                bool inRenderSiblings,
                                const QDemonRenderInstanceId id) override;
     void renderLayer(QDemonRenderLayer &inLayer,
-                     const QVector2D &inViewportDimensions,
+                     const QSize &surfaceSize,
                      bool clear,
                      QVector3D clearColor,
                      bool inRenderSiblings,
