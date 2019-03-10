@@ -89,7 +89,7 @@ static QDemonRenderInstanceId combineLayerAndId(const QDemonRenderLayer *layer, 
     return (QDemonRenderInstanceId)x;
 }
 
-QDemonRendererImpl::QDemonRendererImpl(QDemonRenderContextInterface *ctx)
+QDemonRendererImpl::QDemonRendererImpl(const QDemonRef<QDemonRenderContextInterface> &ctx)
     : m_demonContext(ctx)
     , m_context(ctx->getRenderContext())
     , m_bufferManager(ctx->getBufferManager())
@@ -640,7 +640,7 @@ static inline QDemonOption<QVector2D> intersectRayWithNode(const QDemonGraphNode
                                                            QDemonRenderableObject &inRenderableObject,
                                                            const QDemonRenderRay &inPickRay)
 {
-    if (inRenderableObject.renderableFlags.IsText()) {
+    if (inRenderableObject.renderableFlags.isText()) {
         QDemonTextRenderable &theRenderable = static_cast<QDemonTextRenderable &>(inRenderableObject);
         if (&theRenderable.text == &inNode)
             return inPickRay.getRelativeXY(inRenderableObject.globalTransform, inRenderableObject.bounds);
@@ -1210,12 +1210,12 @@ void QDemonRendererImpl::getLayerHitObjectList(QDemonLayerRenderData &inLayerRen
                 QDemonRenderRay thePickRay = *theHitRay;
                 for (quint32 idx = inLayerRenderData.opaqueObjects.size(), end = 0; idx > end; --idx) {
                     QDemonRenderableObject *theRenderableObject = inLayerRenderData.opaqueObjects[idx - 1];
-                    if (inPickEverything || theRenderableObject->renderableFlags.getPickable())
+                    if (inPickEverything || theRenderableObject->renderableFlags.isPickable())
                         intersectRayWithSubsetRenderable(thePickRay, *theRenderableObject, outIntersectionResult);
                 }
                 for (quint32 idx = inLayerRenderData.transparentObjects.size(), end = 0; idx > end; --idx) {
                     QDemonRenderableObject *theRenderableObject = inLayerRenderData.transparentObjects[idx - 1];
-                    if (inPickEverything || theRenderableObject->renderableFlags.getPickable())
+                    if (inPickEverything || theRenderableObject->renderableFlags.isPickable())
                         intersectRayWithSubsetRenderable(thePickRay, *theRenderableObject, outIntersectionResult);
                 }
             }
@@ -1252,7 +1252,7 @@ void QDemonRendererImpl::intersectRayWithSubsetRenderable(const QDemonRenderRay 
     const QDemonGraphObject *thePickObject = nullptr;
     if (inRenderableObject.renderableFlags.isDefaultMaterialMeshSubset())
         thePickObject = &static_cast<QDemonSubsetRenderable *>(&inRenderableObject)->modelContext.model;
-    else if (inRenderableObject.renderableFlags.IsText())
+    else if (inRenderableObject.renderableFlags.isText())
         thePickObject = &static_cast<QDemonTextRenderable *>(&inRenderableObject)->text;
     else if (inRenderableObject.renderableFlags.isCustomMaterialMeshSubset())
         thePickObject = &static_cast<QDemonCustomMaterialRenderable *>(&inRenderableObject)->modelContext.model;

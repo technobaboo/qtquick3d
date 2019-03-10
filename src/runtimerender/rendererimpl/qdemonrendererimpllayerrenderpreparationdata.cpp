@@ -458,7 +458,7 @@ bool QDemonLayerRenderPreparationData::preparePathForRender(QDemonPath &inPath,
                                                                                          isStroke);
             theRenderable->m_firstImage = prepResult.firstImage;
 
-            QDemonRenderContextInterface *demonContext(renderer->getDemonContext());
+            QDemonRef<QDemonRenderContextInterface> demonContext(renderer->getDemonContext());
             QDemonRef<QDemonPathManagerInterface> thePathManager = demonContext->getPathManager();
             retval = thePathManager->prepareForRender(inPath) || retval;
             retval |= (inPath.m_wireframeMode != demonContext->getWireframeMode());
@@ -504,7 +504,7 @@ bool QDemonLayerRenderPreparationData::preparePathForRender(QDemonPath &inPath,
                                                                                          isStroke);
             theRenderable->m_firstImage = prepResult.firstImage;
 
-            QDemonRenderContextInterface *demonContext(renderer->getDemonContext());
+            QDemonRef<QDemonRenderContextInterface> demonContext(renderer->getDemonContext());
             QDemonRef<QDemonPathManagerInterface> thePathManager = demonContext->getPathManager();
             retval = thePathManager->prepareForRender(inPath) || retval;
             retval |= (inPath.m_wireframeMode != demonContext->getWireframeMode());
@@ -527,7 +527,7 @@ void QDemonLayerRenderPreparationData::prepareImageForRender(QDemonRenderImage &
                                                              QDemonShaderDefaultMaterialKey &inShaderKey,
                                                              quint32 inImageIndex)
 {
-    QDemonRenderContextInterface *demonContext(renderer->getDemonContext());
+    QDemonRef<QDemonRenderContextInterface> demonContext(renderer->getDemonContext());
     QDemonBufferManager bufferManager = demonContext->getBufferManager();
     QDemonRef<QDemonOffscreenRenderManagerInterface> theOffscreenRenderManager(demonContext->getOffscreenRenderManager());
     //    IRenderPluginManager &theRenderPluginManager(demonContext.GetRenderPluginManager());
@@ -770,7 +770,7 @@ bool QDemonLayerRenderPreparationData::prepareModelForRender(QDemonRenderModel &
                                                              const QDemonOption<QDemonClippingFrustum> &inClipFrustum,
                                                              QDemonNodeLightEntryList &inScopedLights)
 {
-    QDemonRenderContextInterface *demonContext(renderer->getDemonContext());
+    QDemonRef<QDemonRenderContextInterface> demonContext(renderer->getDemonContext());
     QDemonBufferManager bufferManager = demonContext->getBufferManager();
     QDemonRenderMesh *theMesh = bufferManager.loadMesh(inModel.meshPath);
     if (theMesh == nullptr)
@@ -812,7 +812,7 @@ bool QDemonLayerRenderPreparationData::prepareModelForRender(QDemonRenderModel &
             // fine-grained style.
             bool canModelBePickable = inModel.globalOpacity > .01f;
             renderableFlags.setPickable(canModelBePickable
-                                        && (theModelContext.model.flags.isGloballyPickable() || renderableFlags.getPickable()));
+                                        && (theModelContext.model.flags.isGloballyPickable() || renderableFlags.isPickable()));
             QDemonRenderableObject *theRenderableObject = nullptr;
             QPair<bool, QDemonGraphObject *> theMaterialObjectAndDirty = resolveReferenceMaterial(theSourceMaterialObject);
             QDemonGraphObject *theMaterialObject = theMaterialObjectAndDirty.second;
@@ -988,7 +988,7 @@ bool QDemonLayerRenderPreparationData::prepareRenderablesForRender(const QMatrix
 
 bool QDemonLayerRenderPreparationData::checkLightProbeDirty(QDemonRenderImage &inLightProbe)
 {
-    QDemonRenderContextInterface *theContext(renderer->getDemonContext());
+    QDemonRef<QDemonRenderContextInterface> theContext(renderer->getDemonContext());
     QDemonBufferManager bufferManager = theContext->getBufferManager();
     return inLightProbe.clearDirty(bufferManager,
                                    *theContext->getOffscreenRenderManager() /*,

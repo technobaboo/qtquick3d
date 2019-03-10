@@ -209,6 +209,7 @@ struct QDemonLayerRenderPreparationData
                                               quint32 lightIndex,
                                               const QDemonRenderCamera &inCamera);
     typedef QHash<QDemonRenderLight *, QDemonGraphNode *> TLightToNodeMap;
+    typedef QVector<QDemonModelContext *> TModelContextPtrList;
     // typedef Pool<SNodeLightEntry, ForwardingAllocator> TNodeLightEntryPoolType;
 
     enum Enum {

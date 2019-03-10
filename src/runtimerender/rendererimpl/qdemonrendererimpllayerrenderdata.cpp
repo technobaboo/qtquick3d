@@ -751,7 +751,7 @@ inline void renderRenderableDepthPass(QDemonLayerRenderData &inData,
 {
     if (inObject.renderableFlags.isDefaultMaterialMeshSubset())
         static_cast<QDemonSubsetRenderable &>(inObject).renderDepthPass(inCameraProps);
-    else if (inObject.renderableFlags.IsText())
+    else if (inObject.renderableFlags.isText())
         static_cast<QDemonTextRenderable &>(inObject).renderDepthPass(inCameraProps);
     else if (inObject.renderableFlags.isCustomMaterialMeshSubset()) {
         static_cast<QDemonCustomMaterialRenderable &>(inObject).renderDepthPass(inCameraProps, inData.layer, inData.lights, inCamera, nullptr);
@@ -801,7 +801,7 @@ inline void renderRenderable(QDemonLayerRenderData &inData,
 {
     if (inObject.renderableFlags.isDefaultMaterialMeshSubset())
         static_cast<QDemonSubsetRenderable &>(inObject).render(inCameraProps, inFeatureSet);
-    else if (inObject.renderableFlags.IsText())
+    else if (inObject.renderableFlags.isText())
         static_cast<QDemonTextRenderable &>(inObject).render(inCameraProps);
     else if (inObject.renderableFlags.isCustomMaterialMeshSubset()) {
         // PKC : Need a better place to do this.
@@ -1335,7 +1335,7 @@ void QDemonLayerRenderData::renderToTexture()
                     }
                 }
                 for (qint32 idx = 0, end = transparentObjects.size(); idx < end; ++idx) {
-                    if (transparentObjects[idx]->renderableFlags.IsText()) {
+                    if (transparentObjects[idx]->renderableFlags.isText()) {
                         QDemonTextRenderable &theRenderable = static_cast<QDemonTextRenderable &>(*transparentObjects[idx]);
                         offsetProjectionMatrix(theRenderable.modelViewProjection, theVertexOffsets);
                     } else if (transparentObjects[idx]->renderableFlags.isPath()) {

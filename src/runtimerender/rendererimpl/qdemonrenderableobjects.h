@@ -77,7 +77,7 @@ struct QDemonRenderableObjectFlags : public QFlags<QDemonRenderableObjectFlag>
     void setDirty(bool inDirty) { setFlag(QDemonRenderableObjectFlag::Dirty, inDirty); }
     bool isDirty() const { return this->operator&(QDemonRenderableObjectFlag::Dirty); }
     void setPickable(bool inPickable) { setFlag(QDemonRenderableObjectFlag::Pickable, inPickable); }
-    bool getPickable() const { return this->operator&(QDemonRenderableObjectFlag::Pickable); }
+    bool isPickable() const { return this->operator&(QDemonRenderableObjectFlag::Pickable); }
 
     // Mutually exclusive values
     void setDefaultMaterialMeshSubset(bool inMeshSubset)
@@ -99,7 +99,7 @@ struct QDemonRenderableObjectFlags : public QFlags<QDemonRenderableObjectFlag>
     }
 
     void setText(bool inText) { setFlag(QDemonRenderableObjectFlag::Text, inText); }
-    bool IsText() const { return this->operator&(QDemonRenderableObjectFlag::Text); }
+    bool isText() const { return this->operator&(QDemonRenderableObjectFlag::Text); }
 
     void setCustom(bool inCustom) { setFlag(QDemonRenderableObjectFlag::Custom, inCustom); }
     bool isCustom() const { return this->operator&(QDemonRenderableObjectFlag::Custom); }
@@ -174,15 +174,7 @@ struct QDemonModelContext
     {
         model.calculateMVPAndNormalMatrix(inViewProjection, modelViewProjection, normalMatrix);
     }
-    QDemonModelContext(const QDemonModelContext &inOther) : model(inOther.model)
-    {
-        // The default copy constructor for these objects is pretty darn slow.
-        ::memcpy(&modelViewProjection, &inOther.modelViewProjection, sizeof(modelViewProjection));
-        ::memcpy(&normalMatrix, &inOther.normalMatrix, sizeof(normalMatrix));
-    }
 };
-
-typedef QVector<QDemonModelContext *> TModelContextPtrList;
 
 class QDemonRendererImpl;
 struct QDemonLayerRenderData;

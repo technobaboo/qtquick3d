@@ -37,7 +37,9 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonRenderShadowMap::QDemonRenderShadowMap(QDemonRenderContextInterface *inContext) : m_context(inContext) {}
+QDemonRenderShadowMap::QDemonRenderShadowMap(const QDemonRef<QDemonRenderContextInterface> &inContext)
+    : m_context(inContext)
+{}
 
 QDemonRenderShadowMap::~QDemonRenderShadowMap()
 {
@@ -205,7 +207,7 @@ QDemonShadowMapEntry *QDemonRenderShadowMap::getShadowMapEntry(int index)
     return nullptr;
 }
 
-QDemonRef<QDemonRenderShadowMap> QDemonRenderShadowMap::create(QDemonRenderContextInterface *inContext)
+QDemonRef<QDemonRenderShadowMap> QDemonRenderShadowMap::create(const QDemonRef<QDemonRenderContextInterface> &inContext)
 {
     return QDemonRef<QDemonRenderShadowMap>(new QDemonRenderShadowMap(inContext));
 }

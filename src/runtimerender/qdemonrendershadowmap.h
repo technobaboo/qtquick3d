@@ -120,9 +120,9 @@ class QDemonRenderShadowMap
 
 public:
     QAtomicInt ref;
-    QDemonRenderContextInterface *m_context;
+    QDemonRef<QDemonRenderContextInterface> m_context;
 
-    QDemonRenderShadowMap(QDemonRenderContextInterface *inContext);
+    QDemonRenderShadowMap(const QDemonRef<QDemonRenderContextInterface> &inContext);
     ~QDemonRenderShadowMap();
 
     /*
@@ -163,7 +163,7 @@ public:
      */
     qint32 getShadowMapEntryCount() { return m_shadowMapList.size(); }
 
-    static QDemonRef<QDemonRenderShadowMap> create(QDemonRenderContextInterface *inContext);
+    static QDemonRef<QDemonRenderShadowMap> create(const QDemonRef<QDemonRenderContextInterface> &inContext);
 
 private:
     TShadowMapEntryList m_shadowMapList; ///< List of shadow map entries
