@@ -775,49 +775,49 @@ struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
 
     void generateLightmapIndirectFunc(QDemonShaderStageGeneratorInterface &inFragmentShader, QDemonRenderImage *pEmissiveLightmap)
     {
-        inFragmentShader << "\n";
-        inFragmentShader << "vec3 computeMaterialLightmapIndirect()\n{\n";
-        inFragmentShader << "  vec4 indirect = vec4( 0.0, 0.0, 0.0, 0.0 );\n";
+        inFragmentShader << "\n"
+                            "vec3 computeMaterialLightmapIndirect()\n{\n"
+                            "  vec4 indirect = vec4( 0.0, 0.0, 0.0, 0.0 );\n";
         if (pEmissiveLightmap) {
             ImageVariableNames names = getImageVariableNames(convertTextureTypeValue(QDemonImageMapTypes::LightmapIndirect));
             inFragmentShader.addUniform(names.m_imageSampler, "sampler2D");
             inFragmentShader.addUniform(m_imageOffset, "vec3");
             inFragmentShader.addUniform(m_imageRotScale, "vec4");
 
-            inFragmentShader << "\n  indirect = evalIndirectLightmap( " << m_imageSampler << ", varTexCoord1, ";
-            inFragmentShader << m_imageRotScale << ", ";
-            inFragmentShader << m_imageOffset << " );\n\n";
+            inFragmentShader << "\n  indirect = evalIndirectLightmap( " << m_imageSampler << ", varTexCoord1, "
+                             << m_imageRotScale << ", "
+                             << m_imageOffset << " );\n\n";
         }
 
-        inFragmentShader << "  return indirect.rgb;\n";
-        inFragmentShader << "}\n\n";
+        inFragmentShader << "  return indirect.rgb;\n"
+                            "}\n\n";
     }
 
     void generateLightmapRadiosityFunc(QDemonShaderStageGeneratorInterface &inFragmentShader, QDemonRenderImage *pRadiosityLightmap)
     {
-        inFragmentShader << "\n";
-        inFragmentShader << "vec3 computeMaterialLightmapRadiosity()\n{\n";
-        inFragmentShader << "  vec4 radiosity = vec4( 1.0, 1.0, 1.0, 1.0 );\n";
+        inFragmentShader << "\n"
+                            "vec3 computeMaterialLightmapRadiosity()\n{\n"
+                            "  vec4 radiosity = vec4( 1.0, 1.0, 1.0, 1.0 );\n";
         if (pRadiosityLightmap) {
             ImageVariableNames names = getImageVariableNames(convertTextureTypeValue(QDemonImageMapTypes::LightmapRadiosity));
             inFragmentShader.addUniform(names.m_imageSampler, "sampler2D");
             inFragmentShader.addUniform(m_imageOffset, "vec3");
             inFragmentShader.addUniform(m_imageRotScale, "vec4");
 
-            inFragmentShader << "\n  radiosity = evalRadiosityLightmap( " << m_imageSampler << ", varTexCoord1, ";
-            inFragmentShader << m_imageRotScale << ", ";
-            inFragmentShader << m_imageOffset << " );\n\n";
+            inFragmentShader << "\n  radiosity = evalRadiosityLightmap( " << m_imageSampler << ", varTexCoord1, "
+                             << m_imageRotScale << ", "
+                             << m_imageOffset << " );\n\n";
         }
 
-        inFragmentShader << "  return radiosity.rgb;\n";
-        inFragmentShader << "}\n\n";
+        inFragmentShader << "  return radiosity.rgb;\n"
+                            "}\n\n";
     }
 
     void generateLightmapShadowFunc(QDemonShaderStageGeneratorInterface &inFragmentShader, QDemonRenderImage *pBakedShadowMap)
     {
-        inFragmentShader << "\n";
-        inFragmentShader << "vec4 computeMaterialLightmapShadow()\n{\n";
-        inFragmentShader << "  vec4 shadowMask = vec4( 1.0, 1.0, 1.0, 1.0 );\n";
+        inFragmentShader << "\n"
+                            "vec4 computeMaterialLightmapShadow()\n{\n"
+                            "  vec4 shadowMask = vec4( 1.0, 1.0, 1.0, 1.0 );\n";
         if (pBakedShadowMap) {
             ImageVariableNames names = getImageVariableNames(static_cast<quint32>(QDemonRenderTextureTypeValue::LightmapShadow));
             // Add uniforms
@@ -825,13 +825,13 @@ struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
             inFragmentShader.addUniform(m_imageOffset, "vec3");
             inFragmentShader.addUniform(m_imageRotScale, "vec4");
 
-            inFragmentShader << "\n  shadowMask = evalShadowLightmap( " << m_imageSampler << ", texCoord0, ";
-            inFragmentShader << m_imageRotScale << ", ";
-            inFragmentShader << m_imageOffset << " );\n\n";
+            inFragmentShader << "\n  shadowMask = evalShadowLightmap( " << m_imageSampler << ", texCoord0, "
+                             << m_imageRotScale << ", "
+                             << m_imageOffset << " );\n\n";
         }
 
         inFragmentShader << "  return shadowMask;\n";
-        inFragmentShader << "}\n\n";
+                            "}\n\n";
     }
 
     void generateLightmapIndirectSetupCode(QDemonShaderStageGeneratorInterface &inFragmentShader,
@@ -843,8 +843,8 @@ struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
 
         QByteArray finalValue;
 
-        inFragmentShader << "\n";
-        inFragmentShader << "void initializeLayerVariablesWithLightmap(void)\n{\n";
+        inFragmentShader << "\n"
+                            "void initializeLayerVariablesWithLightmap(void)\n{\n";
         if (pIndirectLightmap) {
             inFragmentShader << "  vec3 lightmapIndirectValue = computeMaterialLightmapIndirect( );\n";
             finalValue.append("vec4(lightmapIndirectValue, 1.0)");
@@ -878,25 +878,25 @@ struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
 
     void applyEmissiveMask(QDemonShaderStageGeneratorInterface &inFragmentShader, QDemonRenderImage *pEmissiveMaskMap)
     {
-        inFragmentShader << "\n";
-        inFragmentShader << "vec3 computeMaterialEmissiveMask()\n{\n";
-        inFragmentShader << "  vec3 emissiveMask = vec3( 1.0, 1.0, 1.0 );\n";
+        inFragmentShader << "\n"
+                            "vec3 computeMaterialEmissiveMask()\n{\n"
+                            "  vec3 emissiveMask = vec3( 1.0, 1.0, 1.0 );\n";
         if (pEmissiveMaskMap) {
-            inFragmentShader << "  texture_coordinate_info tci;\n";
-            inFragmentShader << "  texture_coordinate_info transformed_tci;\n";
-            inFragmentShader << "  tci = textureCoordinateInfo( texCoord0, tangent, binormal );\n";
-            inFragmentShader << "  transformed_tci = transformCoordinate( "
-                                "rotationTranslationScale( vec3( 0.000000, 0.000000, 0.000000 ), ";
-            inFragmentShader << "vec3( 0.000000, 0.000000, 0.000000 ), vec3( 1.000000, 1.000000, "
-                                "1.000000 ) ), tci );\n";
-            inFragmentShader << "  emissiveMask = fileTexture( " << pEmissiveMaskMap->m_imageShaderName.toUtf8()
-                             << ", vec3( 0, 0, 0 ), vec3( 1, 1, 1 ), mono_alpha, transformed_tci, ";
-            inFragmentShader << "vec2( 0.000000, 1.000000 ), vec2( 0.000000, 1.000000 ), "
+            inFragmentShader << "  texture_coordinate_info tci;\n"
+                                "  texture_coordinate_info transformed_tci;\n"
+                                "  tci = textureCoordinateInfo( texCoord0, tangent, binormal );\n"
+                                "  transformed_tci = transformCoordinate( "
+                                "rotationTranslationScale( vec3( 0.000000, 0.000000, 0.000000 ), "
+                                "vec3( 0.000000, 0.000000, 0.000000 ), vec3( 1.000000, 1.000000, "
+                                "1.000000 ) ), tci );\n"
+                                "  emissiveMask = fileTexture( " << pEmissiveMaskMap->m_imageShaderName.toUtf8()
+                             << ", vec3( 0, 0, 0 ), vec3( 1, 1, 1 ), mono_alpha, transformed_tci, "
+                             << "vec2( 0.000000, 1.000000 ), vec2( 0.000000, 1.000000 ), "
                                 "wrap_repeat, wrap_repeat, gamma_default ).tint;\n";
         }
 
-        inFragmentShader << "  return emissiveMask;\n";
-        inFragmentShader << "}\n\n";
+        inFragmentShader << "  return emissiveMask;\n"
+                            "}\n\n";
     }
 
     void generateFragmentShader(QDemonShaderDefaultMaterialKey &, const QString &inShaderPathName)
@@ -1004,59 +1004,44 @@ struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
             }
         }
 
-        fragmentShader << "  initializeBaseFragmentVariables();"
-                       << "\n";
-        fragmentShader << "  computeTemporaries();"
-                       << "\n";
-        fragmentShader << "  normal = normalize( computeNormal() );"
-                       << "\n";
-        fragmentShader << "  initializeLayerVariables();"
-                       << "\n";
-        fragmentShader << "  float alpha = clamp( evalCutout(), 0.0, 1.0 );"
-                       << "\n";
+        fragmentShader << "  initializeBaseFragmentVariables();\n"
+                          "  computeTemporaries();\n"
+                          "  normal = normalize( computeNormal() );\n"
+                          "  initializeLayerVariables();\n"
+                          "  float alpha = clamp( evalCutout(), 0.0, 1.0 );\n";
 
         if (material().isCutOutEnabled()) {
-            fragmentShader << "  if ( alpha <= 0.0f )"
-                           << "\n";
-            fragmentShader << "    discard;"
-                           << "\n";
+            fragmentShader << "  if ( alpha <= 0.0f )\n"
+                              "    discard;\n";
         }
 
         // indirect / direct lightmap init
         if (material().hasLighting() && (lightmapIndirectImage || lightmapRadisoityImage))
-            fragmentShader << "  initializeLayerVariablesWithLightmap();"
-                           << "\n";
+            fragmentShader << "  initializeLayerVariablesWithLightmap();\n";
 
         // shadow map
         generateLightmapShadowCode(fragmentShader, lightmapShadowImage);
 
         // main Body
-        fragmentShader << "#include \"customMaterialFragBodyAO.glsllib\""
-                       << "\n";
+        fragmentShader << "#include \"customMaterialFragBodyAO.glsllib\"\n";
 
         // for us right now transparency means we render a glass style material
         if (m_hasTransparency && !material().isTransmissive())
-            fragmentShader << " rgba = computeGlass( normal, materialIOR, alpha, rgba );"
-                           << "\n";
+            fragmentShader << " rgba = computeGlass( normal, materialIOR, alpha, rgba );\n";
         if (material().isTransmissive())
-            fragmentShader << " rgba = computeOpacity( rgba );"
-                           << "\n";
+            fragmentShader << " rgba = computeOpacity( rgba );\n";
 
         if (vertexGenerator().hasActiveWireframe()) {
-            fragmentShader.append("vec3 edgeDistance = varEdgeDistance * gl_FragCoord.w;");
-            fragmentShader.append("\tfloat d = min(min(edgeDistance.x, edgeDistance.y), edgeDistance.z);");
-            fragmentShader.append("\tfloat mixVal = smoothstep(0.0, 1.0, d);"); // line width 1.0
-
-            fragmentShader.append("\trgba = mix( vec4(0.0, 1.0, 0.0, 1.0), rgba, mixVal);");
+            fragmentShader.append("vec3 edgeDistance = varEdgeDistance * gl_FragCoord.w;\n"
+                                  "    float d = min(min(edgeDistance.x, edgeDistance.y), edgeDistance.z);\n"
+                                  "    float mixVal = smoothstep(0.0, 1.0, d);\n" // line width 1.0
+                                  "    rgba = mix( vec4(0.0, 1.0, 0.0, 1.0), rgba, mixVal);");
         }
-        fragmentShader << "  rgba.a *= object_opacity;"
-                       << "\n";
+        fragmentShader << "  rgba.a *= object_opacity;\n";
         if (m_renderContext->getRenderContext()->renderContextType() == QDemonRenderContextType::GLES2)
-            fragmentShader << "  gl_FragColor = rgba;"
-                           << "\n";
+            fragmentShader << "  gl_FragColor = rgba;\n";
         else
-            fragmentShader << "  fragColor = rgba;"
-                           << "\n";
+            fragmentShader << "  fragColor = rgba;\n";
     }
 
     QDemonRef<QDemonRenderShaderProgram> generateCustomMaterialShader(const QByteArray &inShaderPrefix, const QByteArray &inCustomMaterialName)

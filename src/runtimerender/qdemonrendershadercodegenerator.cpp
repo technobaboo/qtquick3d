@@ -87,7 +87,7 @@ void QDemonShaderCodeGeneratorBase::addVarying(const QByteArray &name, const QBy
 void QDemonShaderCodeGeneratorBase::addLocalVariable(const QByteArray &name, const QByteArray &type, int tabCount)
 {
     for (; tabCount >= 0; --tabCount)
-        m_codeBuilder.append("\t");
+        m_codeBuilder.append("    ");
     m_codeBuilder.append(type);
     m_codeBuilder.append(" ");
     m_codeBuilder.append(name);
@@ -113,7 +113,7 @@ void QDemonShaderCodeGeneratorBase::setupWorldPosition()
     if (!hasCode(WorldPosition)) {
         setCode(WorldPosition);
         addUniform("model_matrix", "mat4");
-        append("\tvec3 varWorldPos = (model_matrix * vec4(attr_pos, 1.0)).xyz;");
+        append("    vec3 varWorldPos = (model_matrix * vec4(attr_pos, 1.0)).xyz;");
     }
 }
 
@@ -123,7 +123,7 @@ void QDemonShaderCodeGeneratorBase::generateViewVector()
         setCode(ViewVector);
         setupWorldPosition();
         addInclude("viewProperties.glsllib");
-        append("\tvec3 view_vector = normalize(camera_position - varWorldPos);");
+        append("    vec3 view_vector = normalize(camera_position - varWorldPos);");
     }
 }
 
@@ -133,7 +133,7 @@ void QDemonShaderCodeGeneratorBase::generateWorldNormal()
         setCode(WorldNormal);
         addAttribute("attr_norm", "vec3");
         addUniform("normal_matrix", "mat3");
-        append("\tvec3 world_normal = normalize(normal_matrix * objectNormal).xyz;");
+        append("    vec3 world_normal = normalize(normal_matrix * objectNormal).xyz;");
     }
 }
 
@@ -145,13 +145,13 @@ void QDemonShaderCodeGeneratorBase::generateEnvMapReflection(QDemonShaderCodeGen
         generateWorldNormal();
         addInclude("viewProperties.glsllib");
         addVarying("var_object_to_camera", "vec3");
-        append("\tvar_object_to_camera = normalize( varWorldPos - camera_position );");
+        append("    var_object_to_camera = normalize( varWorldPos - camera_position );");
         // World normal cannot be relied upon in the vertex shader because of bump maps.
-        inFragmentShader.append("\tvec3 environment_map_reflection = reflect( "
-                                "vec3(var_object_to_camera.x, var_object_to_camera.y, "
-                                "var_object_to_camera.z), world_normal.xyz );");
-        inFragmentShader.append("\tenvironment_map_reflection *= vec3( 0.5, 0.5, 0 );");
-        inFragmentShader.append("\tenvironment_map_reflection += vec3( 0.5, 0.5, 1.0 );");
+        inFragmentShader.append("    vec3 environment_map_reflection = reflect("
+                                    "vec3(var_object_to_camera.x, var_object_to_camera.y, "
+                                    "var_object_to_camera.z), world_normal.xyz );\n"
+                                "    environment_map_reflection *= vec3( 0.5, 0.5, 0 );\n"
+                                "    environment_map_reflection += vec3( 0.5, 0.5, 1.0 );");
     }
 }
 
@@ -160,7 +160,7 @@ void QDemonShaderCodeGeneratorBase::generateUVCoords()
     if (!hasCode(UVCoords)) {
         setCode(UVCoords);
         addAttribute("attr_uv0", "vec2");
-        append("\tvec2 uv_coords = attr_uv0;");
+        append("    vec2 uv_coords = attr_uv0;");
     }
 }
 
@@ -196,18 +196,18 @@ void QDemonShaderCodeGeneratorBase::generateShadedWireframeBase()
     // how this all work see
     // http://developer.download.nvidia.com/SDK/10.5/direct3d/Source/SolidWireframe/Doc/SolidWireframe.pdf
     append("// project points to screen space\n"
-           "\tvec3 p0 = vec3(viewport_matrix * (gl_in[0].gl_Position / gl_in[0].gl_Position.w));\n"
-           "\tvec3 p1 = vec3(viewport_matrix * (gl_in[1].gl_Position / gl_in[1].gl_Position.w));\n"
-           "\tvec3 p2 = vec3(viewport_matrix * (gl_in[2].gl_Position / gl_in[2].gl_Position.w));\n"
+           "    vec3 p0 = vec3(viewport_matrix * (gl_in[0].gl_Position / gl_in[0].gl_Position.w));\n"
+           "    vec3 p1 = vec3(viewport_matrix * (gl_in[1].gl_Position / gl_in[1].gl_Position.w));\n"
+           "    vec3 p2 = vec3(viewport_matrix * (gl_in[2].gl_Position / gl_in[2].gl_Position.w));\n"
            "// compute triangle heights\n"
-           "\tfloat e1 = length(p1 - p2);\n"
-           "\tfloat e2 = length(p2 - p0);\n"
-           "\tfloat e3 = length(p1 - p0);\n"
-           "\tfloat alpha = acos( (e2*e2 + e3*e3 - e1*e1) / (2.0*e2*e3) );\n"
-           "\tfloat beta = acos( (e1*e1 + e3*e3 - e2*e2) / (2.0*e1*e3) );\n"
-           "\tfloat ha = abs( e3 * sin( beta ) );\n"
-           "\tfloat hb = abs( e3 * sin( alpha ) );\n"
-           "\tfloat hc = abs( e2 * sin( alpha ) );\n");
+           "    float e1 = length(p1 - p2);\n"
+           "    float e2 = length(p2 - p0);\n"
+           "    float e3 = length(p1 - p0);\n"
+           "    float alpha = acos( (e2*e2 + e3*e3 - e1*e1) / (2.0*e2*e3) );\n"
+           "    float beta = acos( (e1*e1 + e3*e3 - e2*e2) / (2.0*e1*e3) );\n"
+           "    float ha = abs( e3 * sin( beta ) );\n"
+           "    float hb = abs( e3 * sin( alpha ) );\n"
+           "    float hc = abs( e2 * sin( alpha ) );\n");
 }
 
 void QDemonShaderCodeGeneratorBase::addShaderItemMap(const QByteArray &itemType, const TStrTableStrMap &itemMap)

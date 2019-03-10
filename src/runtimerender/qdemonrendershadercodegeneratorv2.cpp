@@ -412,11 +412,11 @@ void QDemonShaderProgramGeneratorInterface::outputParaboloidDepthVertex(QDemonSh
 
     // Project the location onto screen space.
     // This will be horrible if you have a single large polygon.  Tessellation is your friend here!
-    vertexShader.append("void main() {");
-    vertexShader.append("   ParaboloidMapResult data = VertexParaboloidDepth( attr_pos, model_view_projection );");
-    vertexShader.append("   gl_Position = data.m_Position;");
-    vertexShader.append("   world_pos = data.m_WorldPos;");
-    vertexShader.append("}");
+    vertexShader.append("void main() {\n"
+                        "   ParaboloidMapResult data = VertexParaboloidDepth( attr_pos, model_view_projection );\n"
+                        "   gl_Position = data.m_Position;\n"
+                        "   world_pos = data.m_WorldPos;\n"
+                        "}\n");
 }
 
 void QDemonShaderProgramGeneratorInterface::outputParaboloidDepthTessEval(QDemonShaderStageGeneratorInterface &tessEvalShader)
@@ -424,10 +424,10 @@ void QDemonShaderProgramGeneratorInterface::outputParaboloidDepthTessEval(QDemon
     tessEvalShader.addInclude("shadowMapping.glsllib");
     tessEvalShader.addUniform("model_view_projection", "mat4");
     tessEvalShader.addOutgoing("world_pos", "vec4");
-    tessEvalShader.append("   ParaboloidMapResult data = VertexParaboloidDepth( vec3(pos.xyz), "
-                          "model_view_projection );");
-    tessEvalShader.append("   gl_Position = data.m_Position;");
-    tessEvalShader.append("   world_pos = data.m_WorldPos;");
+    tessEvalShader.append(
+                "   ParaboloidMapResult data = VertexParaboloidDepth( vec3(pos.xyz), model_view_projection );\n"
+                "   gl_Position = data.m_Position;\n"
+                "   world_pos = data.m_WorldPos;\n");
 }
 
 void QDemonShaderProgramGeneratorInterface::outputParaboloidDepthFragment(QDemonShaderStageGeneratorInterface &fragmentShader)
@@ -435,10 +435,11 @@ void QDemonShaderProgramGeneratorInterface::outputParaboloidDepthFragment(QDemon
     fragmentShader.addInclude("shadowMappingFragment.glsllib");
     fragmentShader.addUniform("model_view_projection", "mat4");
     fragmentShader.addUniform("camera_properties", "vec2");
-    fragmentShader.append("void main() {");
-    fragmentShader.append("   gl_FragDepth = FragmentParaboloidDepth( world_pos, "
-                          "model_view_projection, camera_properties );");
-    fragmentShader.append("}");
+    fragmentShader.append(
+                "void main() {\n"
+                "   gl_FragDepth = FragmentParaboloidDepth( world_pos, model_view_projection, camera_properties );\n"
+                "}"
+                );
 }
 
 void QDemonShaderProgramGeneratorInterface::outputCubeFaceDepthVertex(QDemonShaderStageGeneratorInterface &vertexShader)
@@ -450,19 +451,19 @@ void QDemonShaderProgramGeneratorInterface::outputCubeFaceDepthVertex(QDemonShad
     vertexShader.addOutgoing("raw_pos", "vec4");
     vertexShader.addOutgoing("world_pos", "vec4");
 
-    vertexShader.append("void main() {");
-    vertexShader.append("   world_pos = model_matrix * vec4( attr_pos, 1.0 );");
-    vertexShader.append("   world_pos /= world_pos.w;");
-    vertexShader.append("	gl_Position = model_view_projection * vec4( attr_pos, 1.0 );");
-    vertexShader.append("   raw_pos = vec4( attr_pos, 1.0 );");
-    //	vertexShader->Append("   gl_Position = vec4( attr_pos, 1.0 );");
-    vertexShader.append("}");
+    vertexShader.append("void main() {\n"
+                        "   world_pos = model_matrix * vec4( attr_pos, 1.0 );\n"
+                        "   world_pos /= world_pos.w;\n"
+                        "	gl_Position = model_view_projection * vec4( attr_pos, 1.0 );\n"
+                        "   raw_pos = vec4( attr_pos, 1.0 );\n"
+                        //	vertexShader->Append("   gl_Position = vec4( attr_pos, 1.0 );\n"
+                        "}");
 }
 
 void QDemonShaderProgramGeneratorInterface::outputCubeFaceDepthGeometry(QDemonShaderStageGeneratorInterface &geometryShader)
 {
-    geometryShader.append("layout(triangles) in;");
-    geometryShader.append("layout(triangle_strip, max_vertices = 18) out;");
+    geometryShader.append("layout(triangles) in;\n"
+                          "layout(triangle_strip, max_vertices = 18) out;");
     // geometryShader->AddUniform("shadow_mvp[6]", "mat4");
 
     geometryShader.addUniform("shadow_mv0", "mat4");
@@ -476,28 +477,28 @@ void QDemonShaderProgramGeneratorInterface::outputCubeFaceDepthGeometry(QDemonSh
     geometryShader.addUniform("model_matrix", "mat4");
     geometryShader.addOutgoing("world_pos", "vec4");
 
-    geometryShader.append("void main() {");
-    geometryShader.append("   mat4 layerMVP[6];");
-    geometryShader.append("   layerMVP[0] = projection * shadow_mv0;");
-    geometryShader.append("   layerMVP[1] = projection * shadow_mv1;");
-    geometryShader.append("   layerMVP[2] = projection * shadow_mv2;");
-    geometryShader.append("   layerMVP[3] = projection * shadow_mv3;");
-    geometryShader.append("   layerMVP[4] = projection * shadow_mv4;");
-    geometryShader.append("   layerMVP[5] = projection * shadow_mv5;");
-    geometryShader.append("   for (int i = 0; i < 6; ++i)");
-    geometryShader.append("   {");
-    geometryShader.append("      gl_Layer = i;");
-    geometryShader.append("      for(int j = 0; j < 3; ++j)");
-    geometryShader.append("      {");
-    geometryShader.append("         world_pos = model_matrix * raw_pos[j];");
-    geometryShader.append("         world_pos /= world_pos.w;");
-    geometryShader.append("         gl_Position = layerMVP[j] * raw_pos[j];");
-    geometryShader.append("         world_pos.w = gl_Position.w;");
-    geometryShader.append("         EmitVertex();");
-    geometryShader.append("      }");
-    geometryShader.append("      EndPrimitive();");
-    geometryShader.append("   }");
-    geometryShader.append("}");
+    geometryShader.append("void main() {\n"
+                          "   mat4 layerMVP[6];\n"
+                          "   layerMVP[0] = projection * shadow_mv0;\n"
+                          "   layerMVP[1] = projection * shadow_mv1;\n"
+                          "   layerMVP[2] = projection * shadow_mv2;\n"
+                          "   layerMVP[3] = projection * shadow_mv3;\n"
+                          "   layerMVP[4] = projection * shadow_mv4;\n"
+                          "   layerMVP[5] = projection * shadow_mv5;\n"
+                          "   for (int i = 0; i < 6; ++i)\n"
+                          "   {\n"
+                          "      gl_Layer = i;\n"
+                          "      for(int j = 0; j < 3; ++j)\n"
+                          "      {\n"
+                          "         world_pos = model_matrix * raw_pos[j];\n"
+                          "         world_pos /= world_pos.w;\n"
+                          "         gl_Position = layerMVP[j] * raw_pos[j];\n"
+                          "         world_pos.w = gl_Position.w;\n"
+                          "         EmitVertex();\n"
+                          "      }\n"
+                          "      EndPrimitive();\n"
+                          "   }\n"
+                          "}");
 }
 
 void QDemonShaderProgramGeneratorInterface::outputCubeFaceDepthFragment(QDemonShaderStageGeneratorInterface &fragmentShader)
@@ -505,13 +506,13 @@ void QDemonShaderProgramGeneratorInterface::outputCubeFaceDepthFragment(QDemonSh
     fragmentShader.addUniform("camera_position", "vec3");
     fragmentShader.addUniform("camera_properties", "vec2");
 
-    fragmentShader.append("void main() {");
-    fragmentShader.append("\tvec3 camPos = vec3( camera_position.x, camera_position.y, -camera_position.z );");
-    fragmentShader.append("\tfloat dist = length( world_pos.xyz - camPos );");
-    fragmentShader.append("\tdist = (dist - camera_properties.x) / (camera_properties.y - camera_properties.x);");
-    // fragmentShader.Append("\tgl_FragDepth = dist;");
-    fragmentShader.append("\tfragOutput = vec4(dist, dist, dist, 1.0);");
-    fragmentShader.append("}");
+    fragmentShader.append("void main() {\n"
+                          "    vec3 camPos = vec3( camera_position.x, camera_position.y, -camera_position.z );\n"
+                          "    float dist = length( world_pos.xyz - camPos );\n"
+                          "    dist = (dist - camera_properties.x) / (camera_properties.y - camera_properties.x);\n"
+                          // "    gl_FragDepth = dist;\n"
+                          "    fragOutput = vec4(dist, dist, dist, 1.0);\n"
+                          "}");
 }
 
 QDemonShaderStageGeneratorInterface::~QDemonShaderStageGeneratorInterface() = default;
