@@ -254,7 +254,7 @@ struct QDemonPixelGraphicsRenderer : public QDemonPixelGraphicsRendererInterface
         theCamera.position.setZ(-5.f);
         theCamera.clipNear = 1.0f;
         theCamera.clipFar = 10.0f;
-        theCamera.flags.setOrthographic(true);
+        theCamera.flags.setFlag(QDemonRenderCamera::Flag::Orthographic);
         // Setup camera projection
         theCamera.computeFrustumOrtho(theViewport, QVector2D(theViewport.width(), theViewport.height()));
         // Translate such that 0, 0 is lower left of screen.

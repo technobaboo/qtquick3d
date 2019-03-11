@@ -52,23 +52,23 @@ struct QDemonShaderLightProperties
 {
     QAtomicInt ref;
     QDemonRef<QDemonRenderShaderProgram> m_shader;
-    RenderLightTypes m_lightType;
+    QDemonRenderLight::Type m_lightType;
     QDemonLightSourceShader m_lightData;
 
     QDemonShaderLightProperties(const QDemonRef<QDemonRenderShaderProgram> &inShader)
-        : m_shader(inShader), m_lightType(RenderLightTypes::Directional)
+        : m_shader(inShader), m_lightType(QDemonRenderLight::Type::Directional)
     {
     }
 
     void set(const QDemonRenderLight *inLight)
     {
         QVector3D dir(0, 0, 1);
-        if (inLight->m_lightType == RenderLightTypes::Directional) {
+        if (inLight->m_lightType == QDemonRenderLight::Type::Directional) {
             dir = inLight->getScalingCorrectDirection();
             // we lit in world sapce
             dir *= -1;
             m_lightData.position = QVector4D(dir, 0.0);
-        } else if (inLight->m_lightType == RenderLightTypes::Area) {
+        } else if (inLight->m_lightType == QDemonRenderLight::Type::Area) {
             dir = inLight->getScalingCorrectDirection();
             m_lightData.position = QVector4D(inLight->getGlobalPos(), 1.0);
         } else {
@@ -84,7 +84,7 @@ struct QDemonShaderLightProperties
         m_lightData.diffuse = QVector4D(inLight->m_diffuseColor * normalizedBrightness, 1.0);
         m_lightData.specular = QVector4D(inLight->m_specularColor * normalizedBrightness, 1.0);
 
-        if (inLight->m_lightType == RenderLightTypes::Area) {
+        if (inLight->m_lightType == QDemonRenderLight::Type::Area) {
             m_lightData.width = inLight->m_areaWidth;
             m_lightData.height = inLight->m_areaWidth;
 
@@ -106,7 +106,7 @@ struct QDemonShaderLightProperties
             m_lightData.spotCutoff = 180.0;
         }
 
-        if (m_lightType == RenderLightTypes::Point) {
+        if (m_lightType == QDemonRenderLight::Type::Point) {
             m_lightData.shadowView = QMatrix4x4();
         } else {
             m_lightData.shadowView = inLight->globalTransform;
@@ -440,7 +440,7 @@ struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
         if (theLightEntry == nullptr) {
             // create a new name
             QString lightName;
-            if (inLight->m_lightType == RenderLightTypes::Area)
+            if (inLight->m_lightType == QDemonRenderLight::Type::Area)
                 lightName = QStringLiteral("arealights");
             else
                 lightName = QStringLiteral("lights");
@@ -523,16 +523,16 @@ struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
                 if (inShadowMaps && inLights[lightIdx]->m_castShadow)
                     theShadow = inShadowMaps->getShadowMapEntry(lightIdx);
 
-                qint32 shdwIdx = (inLights[lightIdx]->m_lightType != RenderLightTypes::Directional) ? numShadowCubes : numShadowMaps;
+                qint32 shdwIdx = (inLights[lightIdx]->m_lightType != QDemonRenderLight::Type::Directional) ? numShadowCubes : numShadowMaps;
                 setShadowMaps(inProgram,
                               theShadow,
                               numShadowMaps,
                               numShadowCubes,
-                              inLights[lightIdx]->m_lightType == RenderLightTypes::Directional,
+                              inLights[lightIdx]->m_lightType == QDemonRenderLight::Type::Directional,
                               theShader->m_shadowMaps,
                               theShader->m_shadowCubes);
 
-                if (inLights[lightIdx]->m_lightType == RenderLightTypes::Area) {
+                if (inLights[lightIdx]->m_lightType == QDemonRenderLight::Type::Area) {
                     QDemonRef<QDemonShaderLightProperties> theAreaLightEntry = setLight(inProgram,
                                                                                         lightIdx,
                                                                                         areaLights,
@@ -587,17 +587,17 @@ struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
                 if (inShadowMaps && inLights[lightIdx]->m_castShadow)
                     theShadow = inShadowMaps->getShadowMapEntry(lightIdx);
 
-                qint32 shdwIdx = (inLights[lightIdx]->m_lightType != RenderLightTypes::Directional) ? numShadowCubes : numShadowMaps;
+                qint32 shdwIdx = (inLights[lightIdx]->m_lightType != QDemonRenderLight::Type::Directional) ? numShadowCubes : numShadowMaps;
                 setShadowMaps(inProgram,
                               theShadow,
                               numShadowMaps,
                               numShadowCubes,
-                              inLights[lightIdx]->m_lightType == RenderLightTypes::Directional,
+                              inLights[lightIdx]->m_lightType == QDemonRenderLight::Type::Directional,
                               theShader->m_shadowMaps,
                               theShader->m_shadowCubes);
 
                 QDemonRef<QDemonShaderLightProperties> p = setLight(inProgram, lightIdx, areaLights, inLights[lightIdx], theShadow, shdwIdx, inCamera.clipFar);
-                if (inLights[lightIdx]->m_lightType == RenderLightTypes::Area)
+                if (inLights[lightIdx]->m_lightType == QDemonRenderLight::Type::Area)
                     alprop.push_back(p);
                 else
                     lprop.push_back(p);

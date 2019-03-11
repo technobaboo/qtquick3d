@@ -43,13 +43,13 @@ QDemonRenderImage::QDemonRenderImage()
     , m_pivot(0, 0)
     , m_rotation(0)
     , m_position(0, 0)
-    , m_mappingMode(ImageMappingModes::Normal)
+    , m_mappingMode(MappingModes::Normal)
     , m_horizontalTilingMode(QDemonRenderTextureCoordOp::ClampToEdge)
     , m_verticalTilingMode(QDemonRenderTextureCoordOp::ClampToEdge)
 {
-    m_flags.setActive(true);
-    m_flags.setDirty(true);
-    m_flags.setTransformDirty(true);
+    m_flags.setFlag(Flag::Active);
+    m_flags.setFlag(Flag::Dirty);
+    m_flags.setFlag(Flag::TransformDirty);
 }
 
 QDemonRenderImage::~QDemonRenderImage() = default;
@@ -73,8 +73,8 @@ bool QDemonRenderImage::clearDirty(QDemonBufferManager &inBufferManager,
                                    bool forIbl)
 {
 
-    bool wasDirty = m_flags.isDirty();
-    m_flags.setDirty(false);
+    bool wasDirty = m_flags.testFlag(Flag::Dirty);
+    m_flags.setFlag(Flag::Dirty, false);
     QDemonRenderImageTextureData newImage;
     bool replaceTexture(false);
     if (newImage.m_texture == nullptr) {
@@ -95,7 +95,7 @@ bool QDemonRenderImage::clearDirty(QDemonBufferManager &inBufferManager,
         m_textureData = newImage;
     }
 
-    if (m_flags.isTransformDirty()) {
+    if (m_flags.testFlag(Flag::TransformDirty)) {
         wasDirty = true;
         calculateTextureTransform();
     }
@@ -104,7 +104,7 @@ bool QDemonRenderImage::clearDirty(QDemonBufferManager &inBufferManager,
 
 void QDemonRenderImage::calculateTextureTransform()
 {
-    m_flags.setTransformDirty(false);
+    m_flags.setFlag(Flag::TransformDirty, false);
 
     m_textureTransform = QMatrix4x4();
 

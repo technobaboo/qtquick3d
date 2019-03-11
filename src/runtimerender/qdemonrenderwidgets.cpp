@@ -268,14 +268,14 @@ struct QDemonWidgetAxis : public QDemonRenderWidgetInterface
                 m_node->parent->calculateGlobalVariables();
             }
             QVector3D thePivot(m_node->pivot);
-            if (m_node->flags.isLeftHanded())
+            if (m_node->flags.testFlag(QDemonGraphNode::Flag::LeftHanded))
                 thePivot[2] /* .z */ *= -1;
             QDemonWidgetRenderInformation theInfo(
                     inWidgetContext.getWidgetRenderInformation(*m_node, thePivot, RenderWidgetModes::Local));
 
             QMatrix4x4 theNodeRotation;
             m_node->calculateRotationMatrix(theNodeRotation);
-            if (m_node->flags.isLeftHanded())
+            if (m_node->flags.testFlag(QDemonGraphNode::Flag::LeftHanded))
                 QDemonGraphNode::flipCoordinateSystem(theNodeRotation);
             QMatrix3x3 theRotationMatrix(theNodeRotation.constData());
             // Move the camera position into camera space.  This is so that when we render we don't

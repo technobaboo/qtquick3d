@@ -44,8 +44,11 @@ struct QDemonPropertyDefinition;
 // Dynamic objects are objects that have variable number of properties during runtime.
 struct Q_DEMONRUNTIMERENDER_EXPORT QDemonDynamicObject : public QDemonGraphObject
 {
+    using Flag = QDemonGraphNode::Flag;
+    Q_DECLARE_FLAGS(Flags, Flag)
+
     QString className;
-    QDemonNodeFlags flags;
+    Flags flags;
     quint32 dataSectionByteSize;
     quint32 thisObjectSize;
 

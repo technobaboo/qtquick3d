@@ -234,9 +234,9 @@ QDemonGraphObject *QDemonNode::updateSpatialNode(QDemonGraphObject *node)
     spacialNode->skeletonId = m_boneid;
 
     if (transformIsDirty)
-        spacialNode->markDirty(NodeTransformDirtyFlag::TransformIsDirty);
+        spacialNode->markDirty(QDemonGraphNode::TransformDirtyFlag::TransformIsDirty);
     else
-        spacialNode->markDirty(NodeTransformDirtyFlag::TransformNotDirty);
+        spacialNode->markDirty(QDemonGraphNode::TransformDirtyFlag::TransformNotDirty);
 
     return spacialNode;
 }

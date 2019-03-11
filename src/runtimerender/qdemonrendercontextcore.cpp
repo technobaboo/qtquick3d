@@ -658,8 +658,8 @@ struct QDemonRenderContextData : public QDemonRenderContextInterface
             float z = theCamera.rotation.z();
             TORAD(z);
             theCamera.rotation.setZ(z);
-            theCamera.markDirty(NodeTransformDirtyFlag::TransformIsDirty);
-            theCamera.flags.setOrthographic(true);
+            theCamera.markDirty(QDemonRenderCamera::TransformDirtyFlag::TransformIsDirty);
+            theCamera.flags.setFlag(QDemonRenderCamera::Flag::Orthographic);
             m_renderContext->setViewport(thePresentationViewport);
             QVector2D theCameraDimensions((float)thePresentationViewport.width(), (float)thePresentationViewport.height());
             theCamera.calculateGlobalVariables(QRect(0,

@@ -230,7 +230,7 @@ struct QDemonSubsetRenderable : public QDemonSubsetRenderableBase
 
     void renderDepthPass(const QVector2D &inCameraVec);
 
-    DefaultMaterialBlendMode getBlendingMode() { return material.blendMode; }
+    QDemonRenderDefaultMaterial::MaterialBlendMode getBlendingMode() { return material.blendMode; }
 };
 
 struct QDemonCustomMaterialRenderable : public QDemonSubsetRenderableBase

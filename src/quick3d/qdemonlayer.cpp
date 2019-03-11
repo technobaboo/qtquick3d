@@ -687,32 +687,32 @@ QDemonGraphObject *QDemonLayer::updateSpatialNode(QDemonGraphObject *node)
     if (m_dirtyAttributes & RenderTarget)
         layerNode->texturePath = m_texturePath;
     if (m_dirtyAttributes & AntiAliasing) {
-        layerNode->progressiveAAMode = AAModeValues(m_progressiveAAMode);
-        layerNode->multisampleAAMode = AAModeValues(m_multisampleAAMode);
+        layerNode->progressiveAAMode = QDemonRenderLayer::AAMode(m_progressiveAAMode);
+        layerNode->multisampleAAMode = QDemonRenderLayer::AAMode(m_multisampleAAMode);
         layerNode->temporalAAEnabled = m_temporalAAEnabled;
     }
 
     if (m_dirtyAttributes & Background) {
-        layerNode->background = LayerBackground(m_backgroundMode);
+        layerNode->background = QDemonRenderLayer::Background(m_backgroundMode);
         layerNode->clearColor = QVector3D(m_clearColor.redF(), m_clearColor.greenF(), m_clearColor.blueF());
     }
     if (m_dirtyAttributes & Layout) {
         layerNode->m_height = m_height;
         layerNode->m_width = m_width;
-        layerNode->blendType = LayerBlendTypes(m_blendType);
-        layerNode->horizontalFieldValues = HorizontalFieldValues(m_horizontalFieldValue);
+        layerNode->blendType = QDemonRenderLayer::BlendMode(m_blendType);
+        layerNode->horizontalFieldValues = QDemonRenderLayer::HorizontalField(m_horizontalFieldValue);
         layerNode->m_left = m_left;
-        layerNode->leftUnits = LayerUnitTypes(m_leftUnits);
+        layerNode->leftUnits = QDemonRenderLayer::UnitType(m_leftUnits);
         layerNode->m_right = m_right;
-        layerNode->rightUnits = LayerUnitTypes(m_rightUnits);
+        layerNode->rightUnits = QDemonRenderLayer::UnitType(m_rightUnits);
         layerNode->m_top = m_top;
-        layerNode->topUnits = LayerUnitTypes(m_topUnits);
+        layerNode->topUnits = QDemonRenderLayer::UnitType(m_topUnits);
         layerNode->m_bottom = m_bottom;
-        layerNode->bottomUnits = LayerUnitTypes(m_bottomUnits);
+        layerNode->bottomUnits = QDemonRenderLayer::UnitType(m_bottomUnits);
         layerNode->m_width = m_width;
-        layerNode->widthUnits = LayerUnitTypes(m_widthUnits);
+        layerNode->widthUnits = QDemonRenderLayer::UnitType(m_widthUnits);
         layerNode->m_height = m_height;
-        layerNode->heightUnits = LayerUnitTypes(m_heightUnits);
+        layerNode->heightUnits = QDemonRenderLayer::UnitType(m_heightUnits);
     }
 
     if (m_dirtyAttributes & AmbientOcclusion) {

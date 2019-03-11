@@ -121,7 +121,7 @@ void QDemonSubsetRenderableBase::renderShadowMapPass(const QVector2D &inCameraVe
         will change to include a geometry shader pass.
         */
 
-    if (inLight->m_lightType == RenderLightTypes::Directional)
+    if (inLight->m_lightType == QDemonRenderLight::Type::Directional)
         shader = generator->getOrthographicDepthShader(tessellationMode);
     else
         shader = generator->getCubeShadowDepthShader(tessellationMode);
@@ -652,7 +652,7 @@ void QDemonPathRenderable::renderShadowMapPass(const QVector2D &inCameraVec,
                                              false,
                                              m_isStroke);
 
-    if (inLight->m_lightType != RenderLightTypes::Directional) {
+    if (inLight->m_lightType != QDemonRenderLight::Type::Directional) {
         demonContext->getPathManager()->renderCubeFaceShadowPass(theRenderContext,
                                                                  m_generator->getLayerGlobalRenderProperties(),
                                                                  TShaderFeatureSet());

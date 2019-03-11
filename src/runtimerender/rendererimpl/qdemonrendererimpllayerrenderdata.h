@@ -171,7 +171,7 @@ protected:
 #ifdef ADVANCED_BLEND_SW_FALLBACK
     // Functions for advanced blending mode fallback
     void setupDrawFB(bool depthEnabled);
-    void blendAdvancedToFB(DefaultMaterialBlendMode blendMode, bool depthEnabled, QDemonResourceFrameBuffer *theFB);
+    void blendAdvancedToFB(QDemonRenderDefaultMaterial::MaterialBlendMode blendMode, bool depthEnabled, QDemonResourceFrameBuffer *theFB);
 #endif
 };
 QT_END_NAMESPACE

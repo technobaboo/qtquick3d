@@ -36,23 +36,6 @@
 
 QT_BEGIN_NAMESPACE
 
-// IMPORTANT: These flags matches the key produced by a MDL export file
-enum class QDemonCustomMaterialShaderKeyValues
-{
-    diffuse = 1 << 0,
-    specular = 1 << 1,
-    glossy = 1 << 2,
-    cutout = 1 << 3,
-    refraction = 1 << 4,
-    transparent = 1 << 5,
-    displace = 1 << 6,
-    volumetric = 1 << 7,
-    transmissive = 1 << 8,
-};
-
-Q_DECLARE_FLAGS(QDemonCustomMaterialShaderKeyFlags, QDemonCustomMaterialShaderKeyValues)
-Q_DECLARE_OPERATORS_FOR_FLAGS(QDemonCustomMaterialShaderKeyFlags)
-
 struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderCustomMaterial : public QDemonDynamicObject
 {
 private:
@@ -62,6 +45,21 @@ private:
     QDemonRenderCustomMaterial();
 
 public:
+    // IMPORTANT: These flags matches the key produced by a MDL export file
+    enum class MaterialShaderKeyValues
+    {
+        diffuse = 1 << 0,
+        specular = 1 << 1,
+        glossy = 1 << 2,
+        cutout = 1 << 3,
+        refraction = 1 << 4,
+        transparent = 1 << 5,
+        displace = 1 << 6,
+        volumetric = 1 << 7,
+        transmissive = 1 << 8,
+    };
+    Q_DECLARE_FLAGS(MaterialShaderKeyFlags, MaterialShaderKeyValues)
+
     // lightmap section
     QDemonRenderLightmaps m_lightmaps;
     // material section
@@ -75,7 +73,7 @@ public:
 
     QDemonGraphObject *m_nextSibling;
 
-    QDemonCustomMaterialShaderKeyFlags m_shaderKeyValues; ///< input from MDL files
+    MaterialShaderKeyFlags m_shaderKeyValues; ///< input from MDL files
     quint32 m_layerCount; ///< input from MDL files
 
     void initialize(quint32 inKey, quint32 inLayerCount)
@@ -87,31 +85,33 @@ public:
         m_hasRefraction = false;
         m_hasVolumetricDF = false;
         m_nextSibling = nullptr;
-        m_dirtyFlagWithInFrame = flags.isDirty();
+        m_dirtyFlagWithInFrame = flags.testFlag(Flag::Dirty);
         m_iblProbe = nullptr;
         m_emissiveMap2 = nullptr;
         m_displacementMap = nullptr;
         m_displaceAmount = 0.0;
-        m_shaderKeyValues = static_cast<QDemonCustomMaterialShaderKeyFlags>(inKey);
+        m_shaderKeyValues = static_cast<MaterialShaderKeyFlags>(inKey);
         m_layerCount = inLayerCount;
     }
 
-    bool isDielectric() const { return m_shaderKeyValues & QDemonCustomMaterialShaderKeyValues::diffuse; }
-    bool isSpecularEnabled() const { return m_shaderKeyValues & QDemonCustomMaterialShaderKeyValues::specular; }
-    bool isCutOutEnabled() const { return m_shaderKeyValues & QDemonCustomMaterialShaderKeyValues::cutout; }
-    bool isVolumetric() const { return m_shaderKeyValues & QDemonCustomMaterialShaderKeyValues::volumetric; }
-    bool isTransmissive() const { return m_shaderKeyValues & QDemonCustomMaterialShaderKeyValues::transmissive; }
+    bool isDielectric() const { return m_shaderKeyValues & MaterialShaderKeyValues::diffuse; }
+    bool isSpecularEnabled() const { return m_shaderKeyValues & MaterialShaderKeyValues::specular; }
+    bool isCutOutEnabled() const { return m_shaderKeyValues & MaterialShaderKeyValues::cutout; }
+    bool isVolumetric() const { return m_shaderKeyValues & MaterialShaderKeyValues::volumetric; }
+    bool isTransmissive() const { return m_shaderKeyValues & MaterialShaderKeyValues::transmissive; }
     bool hasLighting() const { return true; }
 
     // Dirty
     bool m_dirtyFlagWithInFrame;
-    bool isDirty() const { return flags.isDirty() || m_dirtyFlagWithInFrame; }
+    bool isDirty() const { return flags.testFlag(Flag::Dirty) || m_dirtyFlagWithInFrame; }
     void updateDirtyForFrame()
     {
-        m_dirtyFlagWithInFrame = flags.isDirty();
-        flags.setDirty(false);
+        m_dirtyFlagWithInFrame = flags.testFlag(Flag::Dirty);
+        flags.setFlag(Flag::Dirty, false);
     }
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(QDemonRenderCustomMaterial::MaterialShaderKeyFlags)
 
 QT_END_NAMESPACE
 

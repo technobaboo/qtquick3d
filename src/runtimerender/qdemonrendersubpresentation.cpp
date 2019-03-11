@@ -60,7 +60,7 @@ QDemonOffscreenRendererEnvironment QDemonSubPresentationRenderer::getDesiredEnvi
                                               format,
                                               QDemonOffscreenRendererDepthValues::Depth16,
                                               false,
-                                              AAModeValues::NoAA);
+                                              QDemonRenderLayer::AAMode::NoAA);
 }
 
 QDemonOffscreenRenderFlags QDemonSubPresentationRenderer::needsRender(const QDemonOffscreenRendererEnvironment & /*inEnvironment*/,

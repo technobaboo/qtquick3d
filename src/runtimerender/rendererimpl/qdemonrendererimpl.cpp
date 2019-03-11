@@ -142,7 +142,7 @@ static inline QDemonRenderLayer *getNextLayer(QDemonRenderLayer &inLayer)
 static inline void maybePushLayer(QDemonRenderLayer &inLayer, QVector<QDemonRenderLayer *> &outLayerList)
 {
     inLayer.calculateGlobalVariables();
-    if (inLayer.flags.isGloballyActive() && inLayer.flags.isLayerRenderToTarget())
+    if (inLayer.flags.testFlag(QDemonRenderLayer::Flag::GloballyActive) && inLayer.flags.testFlag(QDemonRenderLayer::Flag::LayerRenderToTarget))
         outLayerList.push_back(&inLayer);
 }
 static void buildRenderableLayers(QDemonRenderLayer &inLayer, QVector<QDemonRenderLayer *> &renderableLayers, bool inRenderSiblings)
@@ -207,9 +207,9 @@ void QDemonRendererImpl::renderLayer(QDemonRenderLayer &inLayer,
         QDemonRenderLayer *theLayer = *iter;
         QDemonRef<QDemonLayerRenderData> theRenderData = getOrCreateLayerRenderDataForNode(*theLayer, id);
         QDemonLayerRenderPreparationResult &prepRes(*theRenderData->layerPrepResult);
-        LayerBlendTypes layerBlend = prepRes.getLayer()->getLayerBlend();
+        QDemonRenderLayer::BlendMode layerBlend = prepRes.getLayer()->getLayerBlend();
 #ifdef ADVANCED_BLEND_SW_FALLBACK
-        if ((layerBlend == LayerBlendTypes::Overlay || layerBlend == LayerBlendTypes::ColorBurn || layerBlend == LayerBlendTypes::ColorDodge)
+        if ((layerBlend == QDemonRenderLayer::BlendMode::Overlay || layerBlend == QDemonRenderLayer::BlendMode::ColorBurn || layerBlend == QDemonRenderLayer::BlendMode::ColorDodge)
             && !theRenderContext->supportsAdvancedBlendHW() && !theRenderContext->supportsAdvancedBlendHwKHR()) {
             // Create and set up FBO and texture for advanced blending SW fallback
             QRect viewport = theRenderContext->viewport();
@@ -313,9 +313,9 @@ QDemonOption<QDemonCuboidRect> QDemonRendererImpl::getCameraBounds(const QDemonG
 void QDemonRendererImpl::drawScreenRect(QRectF inRect, const QVector3D &inColor)
 {
     QDemonRenderCamera theScreenCamera;
-    theScreenCamera.markDirty(NodeTransformDirtyFlag::TransformIsDirty);
+    theScreenCamera.markDirty(QDemonRenderCamera::TransformDirtyFlag::TransformIsDirty);
     QRectF theViewport(m_context->viewport());
-    theScreenCamera.flags.setOrthographic(true);
+    theScreenCamera.flags.setFlag(QDemonRenderCamera::Flag::Orthographic);
     theScreenCamera.calculateGlobalVariables(theViewport, QVector2D(theViewport.width(), theViewport.height()));
     generateXYQuad();
     if (!m_screenRectShader) {
@@ -354,7 +354,7 @@ void QDemonRendererImpl::drawScreenRect(QRectF inRect, const QVector3D &inColor)
         QVector2D rectCenter(toNormalizedRectRelative(theViewport, rectGlobalCenter));
         theNode.position.setX(rectCenter.x());
         theNode.position.setY(rectCenter.y());
-        theNode.markDirty(NodeTransformDirtyFlag::TransformIsDirty);
+        theNode.markDirty(QDemonGraphNode::TransformDirtyFlag::TransformIsDirty);
         theNode.calculateGlobalVariables();
         QMatrix4x4 theViewProjection;
         theScreenCamera.calculateViewProjectionMatrix(theViewProjection);
@@ -455,8 +455,8 @@ void QDemonRendererImpl::endFrame()
         m_context->setScissorTestEnabled(false);
         m_context->setViewport(m_beginFrameViewport);
         QDemonRenderCamera theCamera;
-        theCamera.markDirty(NodeTransformDirtyFlag::TransformIsDirty);
-        theCamera.flags.setOrthographic(true);
+        theCamera.markDirty(QDemonRenderCamera::TransformDirtyFlag::TransformIsDirty);
+        theCamera.flags.setFlag(QDemonRenderCamera::Flag::Orthographic);
         QVector2D theTextureDims((float)theDetails.width, (float)theDetails.height);
         theCamera.calculateGlobalVariables(QRect(0, 0, theDetails.width, theDetails.height), theTextureDims);
         QMatrix4x4 theViewProj;
@@ -577,7 +577,7 @@ QDemonPickResultProcessResult QDemonRendererImpl::processPickResultList(bool inP
                     thePickResult.m_wasPickConsumed = true;
                 } else if (thePickResult.m_hitObject->isNodeType()) {
                     const QDemonGraphNode *theNode = static_cast<const QDemonGraphNode *>(thePickResult.m_hitObject);
-                    if (theNode->flags.isGloballyPickable() == true) {
+                    if (theNode->flags.testFlag(QDemonGraphNode::Flag::GloballyPickable)) {
                         foundValidResult = true;
                         thePickResult.m_wasPickConsumed = true;
                     }
@@ -614,7 +614,7 @@ QDemonRenderPickResult QDemonRendererImpl::pick(QDemonRenderLayer &inLayer,
     // stopping at the first hit.  So objects on the top layer had first crack at the pick
     // vector itself.
     do {
-        if (theLayer->flags.isActive()) {
+        if (theLayer->flags.testFlag(QDemonRenderLayer::Flag::Active)) {
             TInstanceRenderMap::iterator theIter = m_instanceRenderMap.find(combineLayerAndId(theLayer, id));
             if (theIter != m_instanceRenderMap.end()) {
                 m_lastPickResults.clear();
@@ -683,7 +683,7 @@ QDemonOption<QVector2D> QDemonRendererImpl::facePosition(QDemonGraphNode &inNode
     // This function assumes the layer was rendered to the scene itself.  There is another
     // function
     // for completely offscreen layers that don't get rendered to the scene.
-    bool wasRenderToTarget(theLayerData->layer.flags.isLayerRenderToTarget());
+    bool wasRenderToTarget(theLayerData->layer.flags.testFlag(QDemonRenderLayer::Flag::LayerRenderToTarget));
     if (wasRenderToTarget == false || theLayerData->camera == nullptr
         || theLayerData->layerPrepResult.hasValue() == false || theLayerData->lastFrameOffscreenRenderer != nullptr)
         return QDemonEmpty();
@@ -790,7 +790,7 @@ QVector3D QDemonRendererImpl::unprojectWithDepth(QDemonGraphNode &inNode, QVecto
         theTargetPosition = mat44::transform(mat44::getInverse(inNode.parent->globalTransform), theTargetPosition);
     // Our default global space is right handed, so if you are left handed z means something
     // opposite.
-    if (inNode.flags.isLeftHanded())
+    if (inNode.flags.testFlag(QDemonGraphNode::Flag::LeftHanded))
         theTargetPosition.setZ(theTargetPosition.z() * -1);
     return theTargetPosition;
 }
@@ -925,7 +925,7 @@ QDemonScaleAndPosition QDemonRendererImpl::getWorldToPixelScaleFactor(const QDem
                                                                       const QVector3D &inWorldPoint,
                                                                       QDemonLayerRenderData &inRenderData)
 {
-    if (inCamera.flags.isOrthographic() == true) {
+    if (inCamera.flags.testFlag(QDemonRenderCamera::Flag::Orthographic)) {
         // There are situations where the camera can scale.
         return QDemonScaleAndPosition(inWorldPoint,
                                       inCamera.getOrthographicScaleFactor(inRenderData.layerPrepResult->getLayerToPresentationViewport(),
@@ -1110,8 +1110,8 @@ bool QDemonRendererImpl::prepareTextureAtlasForRender()
         QDemonRenderCamera theCamera;
         theCamera.clipNear = -1.0;
         theCamera.clipFar = 1.0;
-        theCamera.markDirty(NodeTransformDirtyFlag::TransformIsDirty);
-        theCamera.flags.setOrthographic(true);
+        theCamera.markDirty(QDemonRenderCamera::TransformDirtyFlag::TransformIsDirty);
+        theCamera.flags.setFlag(QDemonRenderCamera::Flag::Orthographic);
         QVector2D theTextureDims((float)theResult.first.textWidth, (float)theResult.first.textHeight);
         theCamera.calculateGlobalVariables(QRect(0, 0, theResult.first.textWidth, theResult.first.textHeight), theTextureDims);
         // We want a 2D lower left projection
@@ -1199,7 +1199,7 @@ void QDemonRendererImpl::getLayerHitObjectList(QDemonLayerRenderData &inLayerRen
     // This function assumes the layer was rendered to the scene itself.  There is another
     // function
     // for completely offscreen layers that don't get rendered to the scene.
-    bool wasRenderToTarget(inLayerRenderData.layer.flags.isLayerRenderToTarget());
+    bool wasRenderToTarget(inLayerRenderData.layer.flags.testFlag(QDemonRenderLayer::Flag::LayerRenderToTarget));
     if (wasRenderToTarget && inLayerRenderData.camera != nullptr) {
         QDemonOption<QDemonRenderRay> theHitRay;
         if (inLayerRenderData.layerPrepResult.hasValue())
@@ -1721,8 +1721,8 @@ void QDemonRendererImpl::renderText2D(float x, float y, QDemonOption<QVector3D> 
                     theCamera.clipNear = -1.0;
                     theCamera.clipFar = 1.0;
 
-                    theCamera.markDirty(NodeTransformDirtyFlag::TransformIsDirty);
-                    theCamera.flags.setOrthographic(true);
+                    theCamera.markDirty(QDemonRenderCamera::TransformDirtyFlag::TransformIsDirty);
+                    theCamera.flags.setFlag(QDemonRenderCamera::Flag::Orthographic);
                     QVector2D theWindowDim((float)theWindow.width(), (float)theWindow.height());
                     theCamera.calculateGlobalVariables(QRect(0, 0, theWindow.width(), theWindow.height()), theWindowDim);
                     // We want a 2D lower left projection
@@ -1763,7 +1763,7 @@ void QDemonRendererImpl::renderGpuProfilerStats(float x, float y, QDemonOption<Q
         const QDemonRef<QDemonLayerRenderData> &theLayerRenderData = theIter.value();
         const QDemonRenderLayer *theLayer = &theLayerRenderData->layer;
 
-        if (theLayer->flags.isActive() && theLayerRenderData->m_layerProfilerGpu) {
+        if (theLayer->flags.testFlag(QDemonRenderLayer::Flag::Active) && theLayerRenderData->m_layerProfilerGpu) {
             const QDemonRenderProfilerInterface::TStrIDVec &idList = theLayerRenderData->m_layerProfilerGpu->getTimerIDs();
             if (!idList.empty()) {
                 startY -= 22;
@@ -1798,7 +1798,7 @@ QDemonWidgetRenderInformation QDemonRendererImpl::getWidgetRenderInformation(QDe
         return QDemonWidgetRenderInformation();
     }
     QMatrix4x4 theGlobalTransform;
-    if (inNode.parent != nullptr && inNode.parent->type != QDemonGraphObject::Type::Layer && !inNode.flags.isIgnoreParentTransform())
+    if (inNode.parent != nullptr && inNode.parent->type != QDemonGraphObject::Type::Layer && !inNode.flags.testFlag(QDemonGraphNode::Flag::IgnoreParentTransform))
         theGlobalTransform = inNode.parent->globalTransform;
     QMatrix4x4 theCameraInverse = mat44::getInverse(theCamera->globalTransform);
     QMatrix4x4 theNodeParentToCamera;
@@ -1836,7 +1836,7 @@ QDemonWidgetRenderInformation QDemonRendererImpl::getWidgetRenderInformation(QDe
     QVector3D thePos = mat44::transform(theNodeToParentPlusTranslation, inPos);
     QDemonScaleAndPosition theScaleAndPos = getWorldToPixelScaleFactor(*theCamera, thePos, *theData);
     QMatrix3x3 theLookAtMatrix;
-    if (theCamera->flags.isOrthographic() == false) {
+    if (!theCamera->flags.testFlag(QDemonRenderCamera::Flag::Orthographic)) {
         QVector3D theNodeToCamera = theScaleAndPos.position;
         theNodeToCamera.normalize();
         QVector3D theOriginalAxis = QVector3D(0, 0, -1);

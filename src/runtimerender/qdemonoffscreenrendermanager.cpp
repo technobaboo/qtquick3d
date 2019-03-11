@@ -204,21 +204,21 @@ struct QDemonOffscreenRenderManager : public QDemonOffscreenRenderManagerInterfa
 
         quint32 theSampleCount = 1;
         bool isMultisamplePass = false;
-        if (theDesiredEnvironment.msaaMode != AAModeValues::NoAA) {
+        if (theDesiredEnvironment.msaaMode != QDemonRenderLayer::AAMode::NoAA) {
             switch (theDesiredEnvironment.msaaMode) {
-            case AAModeValues::SSAA:
+            case QDemonRenderLayer::AAMode::SSAA:
                 theSampleCount = 1;
                 isMultisamplePass = true;
                 break;
-            case AAModeValues::X2:
+            case QDemonRenderLayer::AAMode::X2:
                 theSampleCount = 2;
                 isMultisamplePass = true;
                 break;
-            case AAModeValues::X4:
+            case QDemonRenderLayer::AAMode::X4:
                 theSampleCount = 4;
                 isMultisamplePass = true;
                 break;
-            case AAModeValues::X8:
+            case QDemonRenderLayer::AAMode::X8:
                 theSampleCount = 8;
                 isMultisamplePass = true;
                 break;
@@ -228,7 +228,7 @@ struct QDemonOffscreenRenderManager : public QDemonOffscreenRenderManagerInterfa
             };
 
             // adjust render size for SSAA
-            if (theDesiredEnvironment.msaaMode == AAModeValues::SSAA) {
+            if (theDesiredEnvironment.msaaMode == QDemonRenderLayer::AAMode::SSAA) {
                 QDemonRendererUtil::getSSAARenderSize(theOriginalDesiredEnvironment.width,
                                                       theOriginalDesiredEnvironment.height,
                                                       theDesiredEnvironment.width,
@@ -301,7 +301,7 @@ struct QDemonOffscreenRenderManager : public QDemonOffscreenRenderManagerInterfa
         if (theSampleCount > 1) {
             QDemonRef<QDemonResourceTexture2D> theResult(new QDemonResourceTexture2D(m_resourceManager, theData.texture));
 
-            if (theDesiredEnvironment.msaaMode != AAModeValues::SSAA) {
+            if (theDesiredEnvironment.msaaMode != QDemonRenderLayer::AAMode::SSAA) {
                 // Have to downsample the FBO.
                 QDemonRendererUtil::resolveMutisampleFBOColorOnly(m_resourceManager,
                                                                   *theResult,

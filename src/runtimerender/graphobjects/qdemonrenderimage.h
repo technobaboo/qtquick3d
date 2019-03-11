@@ -42,15 +42,24 @@ QT_BEGIN_NAMESPACE
 class QDemonRenderContextInterface;
 class QDemonOffscreenRenderManagerInterface;
 class QDemonOffscreenRendererInterface;
-enum class ImageMappingModes
-{
-    Normal = 0, // UV mapping
-    Environment = 1,
-    LightProbe = 2,
-};
 
 struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderImage : public QDemonGraphObject
 {
+    enum class Flag
+    {
+        Dirty = 1,
+        TransformDirty = 1 << 1,
+        Active = 1 << 2 ///< Is this exact object active
+    };
+    Q_DECLARE_FLAGS(Flags, Flag)
+
+    enum class MappingModes : quint8
+    {
+        Normal = 0, // UV mapping
+        Environment = 1,
+        LightProbe = 2,
+    };
+
     Q_DISABLE_COPY(QDemonRenderImage)
     // Complete path to the file;
     //*not* relative to the presentation directory
@@ -64,13 +73,13 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderImage : public QDemonGraphObject
 
     QDemonRenderImageTextureData m_textureData;
 
-    QDemonNodeFlags m_flags; // only dirty, transform dirty, and active apply
+    Flags m_flags; // only dirty, transform dirty, and active apply
 
     QVector2D m_scale;
     QVector2D m_pivot;
     float m_rotation; // Radians.
     QVector2D m_position;
-    ImageMappingModes m_mappingMode;
+    MappingModes m_mappingMode;
     QDemonRenderTextureCoordOp m_horizontalTilingMode;
     QDemonRenderTextureCoordOp m_verticalTilingMode;
 
@@ -91,6 +100,9 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderImage : public QDemonGraphObject
 
     void calculateTextureTransform();
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(QDemonRenderImage::Flags)
+
 QT_END_NAMESPACE
 
 #endif

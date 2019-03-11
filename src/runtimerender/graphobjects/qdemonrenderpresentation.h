@@ -39,7 +39,7 @@ QT_BEGIN_NAMESPACE
 class QDemonRenderContextInterface;
 struct QDemonRenderScene;
 
-enum class RenderRotationValues
+enum class RenderRotationValues : quint8
 {
     NoRotation = 0,
     Clockwise90,

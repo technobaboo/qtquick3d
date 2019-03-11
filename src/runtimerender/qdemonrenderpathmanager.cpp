@@ -121,7 +121,7 @@ struct QDemonPathBuffer
     QVector2D m_beginTaperData;
     QVector2D m_endTaperData;
     quint32 m_numVertexes{ 0 };
-    PathTypes m_pathType{ PathTypes::Geometry };
+    QDemonPath::PathType m_pathType{ QDemonPath::PathType::Geometry };
     float m_width{ 0.0f };
     float m_cpuError{ 0.0f };
     QDemonBounds3 m_bounds = QDemonBounds3::empty();
@@ -173,14 +173,14 @@ struct QDemonPathBuffer
         return QDemonPathUtilities::QDemonPathBuffer();
     }
 
-    void setPathType(PathTypes inPathType)
+    void setPathType(QDemonPath::PathType inPathType)
     {
         if (inPathType != m_pathType) {
             switch (m_pathType) {
-            case PathTypes::Geometry:
+            case QDemonPath::PathType::Geometry:
                 clearGeometryPathData();
                 break;
-            case PathTypes::Painted:
+            case QDemonPath::PathType::Painted:
                 clearPaintedPathData();
                 break;
             default:
@@ -193,15 +193,15 @@ struct QDemonPathBuffer
         m_pathType = inPathType;
     }
 
-    static QDemonOption<QDemonTaperInformation> toTaperInfo(PathCapping capping, float capOffset, float capOpacity, float capWidth)
+    static QDemonOption<QDemonTaperInformation> toTaperInfo(QDemonPath::Capping capping, float capOffset, float capOpacity, float capWidth)
     {
-        if (capping == PathCapping::Noner)
+        if (capping == QDemonPath::Capping::None)
             return QDemonEmpty();
 
         return QDemonTaperInformation(capOffset, capOpacity, capWidth);
     }
 
-    void setBeginTaperInfo(PathCapping capping, float capOffset, float capOpacity, float capWidth)
+    void setBeginTaperInfo(QDemonPath::Capping capping, float capOffset, float capOpacity, float capWidth)
     {
         QDemonOption<QDemonTaperInformation> newBeginInfo = toTaperInfo(capping, capOffset, capOpacity, capWidth);
         if (!optionEquals(newBeginInfo, m_beginTaper)) {
@@ -210,7 +210,7 @@ struct QDemonPathBuffer
         }
     }
 
-    void setEndTaperInfo(PathCapping capping, float capOffset, float capOpacity, float capWidth)
+    void setEndTaperInfo(QDemonPath::Capping capping, float capOffset, float capOpacity, float capWidth)
     {
         QDemonOption<QDemonTaperInformation> newEndInfo = toTaperInfo(capping, capOffset, capOpacity, capWidth);
         if (!optionEquals(newEndInfo, m_endTaper)) {
@@ -924,9 +924,9 @@ struct QDemonPathManager : public QDemonPathManagerInterface
             for (quint32 idx = 0, end = m_subdivResult.size(); idx < end; ++idx)
                 pathLength += m_subdivResult[idx].m_length;
 
-            if (thePath.m_beginCapping == PathCapping::Taper || thePath.m_endCapping == PathCapping::Taper) {
+            if (thePath.m_beginCapping == QDemonPath::Capping::Taper || thePath.m_endCapping == QDemonPath::Capping::Taper) {
                 float maxTaperStart = pathLength / 2.0f;
-                if (thePath.m_beginCapping == PathCapping::Taper) {
+                if (thePath.m_beginCapping == QDemonPath::Capping::Taper) {
                     // Can't start more than halfway across the path.
                     float taperStart = qMin(thePath.m_beginCapOffset, maxTaperStart);
                     float endTaperWidth = thePath.m_beginCapWidth;
@@ -948,7 +948,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
                         }
                     }
                 }
-                if (thePath.m_endCapping == PathCapping::Taper) {
+                if (thePath.m_endCapping == QDemonPath::Capping::Taper) {
                     float taperStart = qMin(thePath.m_endCapOffset, maxTaperStart);
                     float endTaperWidth = thePath.m_endCapWidth;
                     float endTaperOpacity = thePath.globalOpacity * thePath.m_endCapOpacity;
@@ -1231,7 +1231,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
             }
         }
 
-        if (inPath.m_pathType == PathTypes::Geometry)
+        if (inPath.m_pathType == QDemonPath::PathType::Geometry)
             retval = prepareGeometryPathForRender(inPath, *thePathBuffer);
         else
             retval = preparePaintedPathForRender(inPath, *thePathBuffer);
@@ -1487,7 +1487,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
         if (!thePathBuffer)
             return;
 
-        if (thePathBuffer->m_pathType == PathTypes::Geometry) {
+        if (thePathBuffer->m_pathType == QDemonPath::PathType::Geometry) {
             quint32 displacementIdx = 0;
             quint32 imageIdx = 0;
             QDemonRenderableImage *displacementImage = nullptr;
@@ -1556,7 +1556,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
         if (inRenderContext.material.type != QDemonGraphObject::Type::DefaultMaterial)
             return;
 
-        if (thePathBuffer->m_pathType == PathTypes::Painted) {
+        if (thePathBuffer->m_pathType == QDemonPath::PathType::Painted) {
             // painted path, go stroke route for now.
             if (!m_paintedShadowShader) {
                 QDemonRef<QDemonDefaultMaterialShaderGeneratorInterface> theMaterialGenerator(
@@ -1597,7 +1597,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
         if (inRenderContext.material.type != QDemonGraphObject::Type::DefaultMaterial)
             return;
 
-        if (thePathBuffer->m_pathType == PathTypes::Painted) {
+        if (thePathBuffer->m_pathType == QDemonPath::PathType::Painted) {
             if (!m_paintedCubeShadowShader) {
                 QDemonRef<QDemonDefaultMaterialShaderGeneratorInterface> theMaterialGenerator(
                         m_renderContext->getDefaultMaterialShaderGenerator());
@@ -1640,7 +1640,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
 
         bool isDefaultMaterial = (inRenderContext.material.type == QDemonGraphObject::Type::DefaultMaterial);
 
-        if (thePathBuffer->m_pathType == PathTypes::Geometry) {
+        if (thePathBuffer->m_pathType == QDemonPath::PathType::Geometry) {
             QDemonRef<QDemonMaterialShaderGeneratorInterface> theMaterialGenerator = getMaterialShaderGenertator(inRenderContext);
 
             // we need a more evolved key her for custom materials

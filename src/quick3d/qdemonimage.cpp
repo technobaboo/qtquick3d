@@ -191,12 +191,12 @@ QDemonGraphObject *QDemonImage::updateSpatialNode(QDemonGraphObject *node)
     imageNode->m_pivot = QVector2D(m_pivotu, m_pivotv);
     imageNode->m_rotation = m_rotationuv;
     imageNode->m_position = QVector2D(m_positionu, m_positionv);
-    imageNode->m_mappingMode = ImageMappingModes(m_mappingmode);
+    imageNode->m_mappingMode = QDemonRenderImage::MappingModes(m_mappingmode);
     imageNode->m_horizontalTilingMode = QDemonRenderTextureCoordOp(m_tilingmodehorz);
     imageNode->m_verticalTilingMode = QDemonRenderTextureCoordOp(m_tilingmodevert);
     // ### Make this more conditional
-    imageNode->m_flags.setDirty(true);
-    imageNode->m_flags.setTransformDirty(true);
+    imageNode->m_flags.setFlag(QDemonRenderImage::Flag::Dirty);
+    imageNode->m_flags.setFlag(QDemonRenderImage::Flag::TransformDirty);
 
     return imageNode;
 }

@@ -1770,7 +1770,7 @@ void QDemonMaterialSystem::prepareDisplacementForRender(QDemonMaterialClass &inC
             if (theValue.x() != inMaterial.m_displacementMap->m_scale.x()
                     || theValue.y() != inMaterial.m_displacementMap->m_scale.y()) {
                 inMaterial.m_displacementMap->m_scale = QVector2D(theValue.x(), theValue.y());
-                inMaterial.m_displacementMap->m_flags.setTransformDirty(true);
+                inMaterial.m_displacementMap->m_flags.setFlag(QDemonRenderImage::Flag::TransformDirty);
             }
         }
     }

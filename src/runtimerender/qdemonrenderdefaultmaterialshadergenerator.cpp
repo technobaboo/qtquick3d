@@ -316,7 +316,7 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
         vertexShader.addUniform(m_imageRotations, "vec4");
         fragmentShader.addUniform(m_imageRotations, "vec4");
 
-        if (image.m_image.m_mappingMode == ImageMappingModes::Normal) {
+        if (image.m_image.m_mappingMode == QDemonRenderImage::MappingModes::Normal) {
             vertexShader << "\tuTransform = vec3( " << m_imageRotations << ".x, " << m_imageRotations << ".y, "
                          << m_imageOffsets << ".x );"
                          << "\n";
@@ -362,7 +362,7 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
 
     void generateImageUVCoordinates(quint32 idx, QDemonRenderableImage &image, QDemonDefaultMaterialVertexPipelineInterface &inShader)
     {
-        if (image.m_image.m_mappingMode == ImageMappingModes::Normal) {
+        if (image.m_image.m_mappingMode == QDemonRenderImage::MappingModes::Normal) {
             setupImageVariableNames(idx);
             inShader.addUniform(m_imageSampler, "sampler2D");
             inShader.addUniform(m_imageOffsets, "vec3");
@@ -386,13 +386,13 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
         }
     }
 
-    void outputSpecularEquation(DefaultMaterialSpecularModel inSpecularModel,
+    void outputSpecularEquation(QDemonRenderDefaultMaterial::MaterialSpecularModel inSpecularModel,
                                 QDemonShaderStageGeneratorInterface &fragmentShader,
                                 const QString &inLightDir,
                                 const QString &inLightSpecColor)
     {
         switch (inSpecularModel) {
-        case DefaultMaterialSpecularModel::KGGX: {
+        case QDemonRenderDefaultMaterial::MaterialSpecularModel::KGGX: {
             fragmentShader.addInclude("defaultMaterialPhysGlossyBSDF.glsllib");
             fragmentShader.addUniform("material_specular", "vec4");
             fragmentShader << "\tglobal_specular_light.rgb += lightAttenuation * specularAmount * "
@@ -403,7 +403,7 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
                               "roughnessAmount ).rgb;"
                            << "\n";
         } break;
-        case DefaultMaterialSpecularModel::KWard: {
+        case QDemonRenderDefaultMaterial::MaterialSpecularModel::KWard: {
             fragmentShader.addInclude("defaultMaterialPhysGlossyBSDF.glsllib");
             fragmentShader.addUniform("material_specular", "vec4");
             fragmentShader << "\tglobal_specular_light.rgb += lightAttenuation * specularAmount * "
@@ -489,12 +489,12 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
         m_shadowControlStem.append("_control");
     }
 
-    void addShadowMapContribution(QDemonShaderStageGeneratorInterface &inLightShader, quint32 lightIndex, RenderLightTypes inType)
+    void addShadowMapContribution(QDemonShaderStageGeneratorInterface &inLightShader, quint32 lightIndex, QDemonRenderLight::Type inType)
     {
         setupShadowMapVariableNames(lightIndex);
 
         inLightShader.addInclude("shadowMapping.glsllib");
-        if (inType == RenderLightTypes::Directional) {
+        if (inType == QDemonRenderLight::Type::Directional) {
             inLightShader.addUniform(m_shadowMapStem, "sampler2D");
         } else {
             inLightShader.addUniform(m_shadowCubeStem, "samplerCube");
@@ -514,7 +514,7 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
         << " );" << "\n";
         }
         else */
-        if (inType != RenderLightTypes::Directional) {
+        if (inType != QDemonRenderLight::Type::Directional) {
             inLightShader << "\tshadow_map_occl = sampleCubemap( " << m_shadowCubeStem << ", " << m_shadowControlStem
                           << ", " << m_shadowMatrixStem << ", " << m_lightPos << ".xyz, varWorldPos, vec2(1.0, "
                           << m_shadowControlStem << ".z) );"
@@ -594,12 +594,12 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
             m_lightDirection.append("_direction");
             m_lightSpecularColor = lightStem;
             m_lightSpecularColor.append("_specular");
-            if (inLight.m_lightType == RenderLightTypes::Point) {
+            if (inLight.m_lightType == QDemonRenderLight::Type::Point) {
                 m_lightPos = lightStem;
                 m_lightPos.append("_position");
                 m_lightAttenuation = lightStem;
                 m_lightAttenuation.append("_attenuation");
-            } else if (inLight.m_lightType == RenderLightTypes::Area) {
+            } else if (inLight.m_lightType == QDemonRenderLight::Type::Area) {
                 m_lightPos = lightStem;
                 m_lightPos.append("_position");
                 m_lightUp = lightStem;
@@ -619,7 +619,7 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
             m_lightDirection.append("direction");
             m_lightSpecularColor = lightStem;
             m_lightSpecularColor.append("specular");
-            if (inLight.m_lightType == RenderLightTypes::Point) {
+            if (inLight.m_lightType == QDemonRenderLight::Type::Point) {
                 m_lightPos = lightStem;
                 m_lightPos.append("position");
                 m_lightConstantAttenuation = lightStem;
@@ -628,7 +628,7 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
                 m_lightLinearAttenuation.append("linearAttenuation");
                 m_lightQuadraticAttenuation = lightStem;
                 m_lightQuadraticAttenuation.append("quadraticAttenuation");
-            } else if (inLight.m_lightType == RenderLightTypes::Area) {
+            } else if (inLight.m_lightType == QDemonRenderLight::Type::Area) {
                 m_lightPos = lightStem;
                 m_lightPos.append("position");
                 m_lightUp = lightStem;
@@ -760,7 +760,7 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
         theShaderProps.size.set(QVector2D(imageTexture->textureDetails().width, imageTexture->textureDetails().height));
     }
 
-    void generateShadowMapOcclusion(quint32 lightIdx, bool inShadowEnabled, RenderLightTypes inType)
+    void generateShadowMapOcclusion(quint32 lightIdx, bool inShadowEnabled, QDemonRenderLight::Type inType)
     {
         if (inShadowEnabled) {
             vertexGenerator().generateWorldPosition();
@@ -849,7 +849,7 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
             } else if (img->m_mapType == QDemonImageMapTypes::Normal) {
                 normalImage = img;
                 normalImageIdx = imageIdx;
-            } else if (img->m_image.m_mappingMode == ImageMappingModes::Environment) {
+            } else if (img->m_image.m_mappingMode == QDemonRenderImage::MappingModes::Environment) {
                 hasEnvMap = true;
             } else if (img->m_mapType == QDemonImageMapTypes::Translucency) {
                 translucencyImage = img;
@@ -1079,8 +1079,8 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
             for (int lightIdx = 0; lightIdx < m_lights.size(); ++lightIdx) {
                 QDemonRenderLight *lightNode = m_lights[lightIdx];
                 setupLightVariableNames(lightIdx, *lightNode);
-                bool isDirectional = lightNode->m_lightType == RenderLightTypes::Directional;
-                bool isArea = lightNode->m_lightType == RenderLightTypes::Area;
+                bool isDirectional = lightNode->m_lightType == QDemonRenderLight::Type::Directional;
+                bool isArea = lightNode->m_lightType == QDemonRenderLight::Type::Area;
                 bool isShadow = enableShadowMaps && lightNode->m_castShadow;
 
                 fragmentShader.append("");
@@ -1502,7 +1502,7 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
                     // add fixed scale bias matrix
                     QMatrix4x4 bias = { 0.5, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 0.5, 0.5, 0.5, 1.0 };
 
-                    if (theLight->m_lightType != RenderLightTypes::Directional) {
+                    if (theLight->m_lightType != QDemonRenderLight::Type::Directional) {
                         theShadowMapProperties.m_shadowCubeTexture.set(pEntry->m_depthCube.data());
                         theShadowMapProperties.m_shadowmapMatrix.set(pEntry->m_lightView);
                     } else {
@@ -1518,12 +1518,12 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
                 }
             }
 
-            if (theLight->m_lightType == RenderLightTypes::Point) {
+            if (theLight->m_lightType == QDemonRenderLight::Type::Point) {
                 theLightProperties.lightData.position = QVector4D(theLight->getGlobalPos(), 1.0);
                 theLightProperties.lightData.constantAttenuation = 1.0;
                 theLightProperties.lightData.linearAttenuation = translateLinearAttenuation(theLight->m_linearFade);
                 theLightProperties.lightData.quadraticAttenuation = translateQuadraticAttenuation(theLight->m_exponentialFade);
-            } else if (theLight->m_lightType == RenderLightTypes::Area) {
+            } else if (theLight->m_lightType == QDemonRenderLight::Type::Area) {
                 theLightProperties.lightData.position = QVector4D(theLight->getGlobalPos(), 1.0);
 
                 QVector3D upDir = mat33::transform(mat44::getUpper3x3(theLight->globalTransform), QVector3D(0, 1, 0));
@@ -1635,7 +1635,7 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
 
         float emissivePower = 1.0;
 
-        quint32 hasLighting = inMaterial.lighting != DefaultMaterialLighting::NoLighting;
+        quint32 hasLighting = inMaterial.lighting != QDemonRenderDefaultMaterial::MaterialLighting::NoLighting;
         if (hasLighting)
             emissivePower = inMaterial.emissivePower / 100.0f;
 
@@ -1716,32 +1716,32 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
         // dst alpha op
         // All of our shaders produce non-premultiplied values.
         switch (inMaterial.blendMode) {
-        case DefaultMaterialBlendMode::Screen:
+        case QDemonRenderDefaultMaterial::MaterialBlendMode::Screen:
             blendFunc = QDemonRenderBlendFunctionArgument(QDemonRenderSrcBlendFunc::SrcAlpha,
                                                           QDemonRenderDstBlendFunc::One,
                                                           QDemonRenderSrcBlendFunc::One,
                                                           QDemonRenderDstBlendFunc::One);
             break;
-        case DefaultMaterialBlendMode::Multiply:
+        case QDemonRenderDefaultMaterial::MaterialBlendMode::Multiply:
             blendFunc = QDemonRenderBlendFunctionArgument(QDemonRenderSrcBlendFunc::DstColor,
                                                           QDemonRenderDstBlendFunc::Zero,
                                                           QDemonRenderSrcBlendFunc::One,
                                                           QDemonRenderDstBlendFunc::One);
             break;
-        case DefaultMaterialBlendMode::Overlay:
+        case QDemonRenderDefaultMaterial::MaterialBlendMode::Overlay:
             // SW fallback is not using blend equation
             // note blend func is not used here anymore
             if (context->supportsAdvancedBlendHW() || context->supportsAdvancedBlendHwKHR())
                 blendEqua = QDemonRenderBlendEquationArgument(QDemonRenderBlendEquation::Overlay, QDemonRenderBlendEquation::Overlay);
             break;
-        case DefaultMaterialBlendMode::ColorBurn:
+        case QDemonRenderDefaultMaterial::MaterialBlendMode::ColorBurn:
             // SW fallback is not using blend equation
             // note blend func is not used here anymore
             if (context->supportsAdvancedBlendHW() || context->supportsAdvancedBlendHwKHR())
                 blendEqua = QDemonRenderBlendEquationArgument(QDemonRenderBlendEquation::ColorBurn,
                                                               QDemonRenderBlendEquation::ColorBurn);
             break;
-        case DefaultMaterialBlendMode::ColorDodge:
+        case QDemonRenderDefaultMaterial::MaterialBlendMode::ColorDodge:
             // SW fallback is not using blend equation
             // note blend func is not used here anymore
             if (context->supportsAdvancedBlendHW() || context->supportsAdvancedBlendHwKHR())

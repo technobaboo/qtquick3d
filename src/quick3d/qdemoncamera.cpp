@@ -152,8 +152,8 @@ QDemonGraphObject *QDemonCamera::updateSpatialNode(QDemonGraphObject *node)
     camera->fov = qDegreesToRadians(m_fieldOfView);
     camera->fovHorizontal = m_isFieldOFViewHorizontal;
 
-    camera->scaleMode = CameraScaleModes(m_scaleMode);
-    camera->scaleAnchor = CameraScaleAnchors(m_scaleAnchor);
+    camera->scaleMode = QDemonRenderCamera::ScaleModes(m_scaleMode);
+    camera->scaleAnchor = QDemonRenderCamera::ScaleAnchors(m_scaleAnchor);
     camera->frustumScale = QVector2D(m_frustumScaleX, m_frustumScaleY);
 
     m_cameraNode = camera;

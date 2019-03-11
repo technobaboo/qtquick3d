@@ -57,7 +57,7 @@ struct QDemonOffscreenRendererEnvironment
     QDemonRenderTextureFormat format = QDemonRenderTextureFormat::Unknown;
     QDemonOffscreenRendererDepthValues depth = QDemonOffscreenRendererDepthValues::NoDepthBuffer;
     bool stencil = false;
-    AAModeValues msaaMode = AAModeValues::NoAA;
+    QDemonRenderLayer::AAMode msaaMode = QDemonRenderLayer::AAMode::NoAA;
 
     QDemonOffscreenRendererEnvironment() = default;
 
@@ -74,7 +74,7 @@ struct QDemonOffscreenRendererEnvironment
                                        QDemonRenderTextureFormat inFormat,
                                        QDemonOffscreenRendererDepthValues inDepth,
                                        bool inStencil,
-                                       AAModeValues inAAMode)
+                                       QDemonRenderLayer::AAMode inAAMode)
         : width(inWidth), height(inHeight), format(inFormat), depth(inDepth), stencil(inStencil), msaaMode(inAAMode)
     {
     }

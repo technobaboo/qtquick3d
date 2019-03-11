@@ -41,42 +41,59 @@ struct QDemonRenderEffect;
 struct SRenderPlugin; // TODO: ???
 struct QDemonRenderImage;
 
-enum class AAModeValues
-{
-    NoAA = 0, SSAA = 1, X2 = 2, X4 = 4, X8 = 8
-};
-
-enum class HorizontalFieldValues
-{
-    LeftWidth = 0, LeftRight, WidthRight
-};
-
-enum class VerticalFieldValues
-{
-    TopHeight = 0, TopBottom, HeightBottom
-};
-
-enum class LayerUnitTypes
-{
-    Percent = 0, Pixels
-};
-
-enum class LayerBackground
-{
-    Transparent = 0, Unspecified, Color
-};
-
-enum class LayerBlendTypes
-{
-    Normal = 0, Screen, Multiply, Add, Subtract, Overlay, ColorBurn, ColorDodge
-};
-
 // A layer is a special node.  It *always* presents its global transform
 // to children as the identity.  It also can optionally have a width or height
 // different than the overlying context.  You can think of layers as the transformation
 // between a 3d scene graph and a 2D texture.
 struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderLayer : public QDemonGraphNode
 {
+    enum class AAMode : quint8
+    {
+        NoAA = 0,
+        SSAA = 1,
+        X2 = 2,
+        X4 = 4,
+        X8 = 8
+    };
+
+    enum class HorizontalField : quint8
+    {
+        LeftWidth = 0,
+        LeftRight,
+        WidthRight
+    };
+
+    enum class VerticalField : quint8
+    {
+        TopHeight = 0,
+        TopBottom,
+        HeightBottom
+    };
+
+    enum class UnitType : quint8
+    {
+        Percent = 0,
+        Pixels
+    };
+
+    enum class Background : quint8
+    {
+        Transparent = 0,
+        Unspecified, Color
+    };
+
+    enum class BlendMode : quint8
+    {
+        Normal = 0,
+        Screen,
+        Multiply,
+        Add,
+        Subtract,
+        Overlay,
+        ColorBurn,
+        ColorDodge
+    };
+
     QDemonRenderScene *scene;
 
     // First effect in a list of effects.
@@ -91,28 +108,29 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderLayer : public QDemonGraphNode
 
     SRenderPlugin *renderPlugin; // Overrides texture path if available.
 
-    AAModeValues progressiveAAMode;
-    AAModeValues multisampleAAMode;
-    LayerBackground background;
+    QDemonRenderLayer::AAMode progressiveAAMode;
+    QDemonRenderLayer::AAMode multisampleAAMode;
+    QDemonRenderLayer::Background background;
     QVector3D clearColor;
 
-    LayerBlendTypes blendType;
+    BlendMode blendType;
 
-    HorizontalFieldValues horizontalFieldValues;
+    // TODO: pack
+    HorizontalField horizontalFieldValues;
     float m_left;
-    LayerUnitTypes leftUnits;
+    UnitType leftUnits;
     float m_width;
-    LayerUnitTypes widthUnits;
+    UnitType widthUnits;
     float m_right;
-    LayerUnitTypes rightUnits;
+    UnitType rightUnits;
 
-    VerticalFieldValues verticalFieldValues;
+    VerticalField verticalFieldValues;
     float m_top;
-    LayerUnitTypes topUnits;
+    UnitType topUnits;
     float m_height;
-    LayerUnitTypes heightUnits;
+    UnitType heightUnits;
     float m_bottom;
-    LayerUnitTypes bottomUnits;
+    UnitType bottomUnits;
 
     // Ambient occlusion
     float aoStrength;
@@ -147,7 +165,7 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderLayer : public QDemonGraphNode
 
     QDemonRenderEffect *getLastEffect();
 
-    LayerBlendTypes getLayerBlend() { return blendType; }
+    QDemonRenderLayer::BlendMode getLayerBlend() { return blendType; }
 };
 QT_END_NAMESPACE
 

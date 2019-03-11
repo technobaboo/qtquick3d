@@ -167,7 +167,7 @@ void RenderWindow::renderNow()
 void RenderWindow::updateAnimations()
 {
     m_cube->rotation = QVector3D(0.785398f, m_cube->rotation.y() + 0.01f, 0.785398f);
-    m_cube->markDirty(NodeTransformDirtyFlag::TransformIsDirty);
+    m_cube->markDirty(QDemonGraphNode::TransformDirtyFlag::TransformIsDirty);
 }
 
 bool RenderWindow::event(QEvent *event)
@@ -209,7 +209,7 @@ void RenderWindow::buildTestScene()
 
     auto layer = new QDemonRenderLayer();
     layer->clearColor = QVector3D(0.0, 0.0, 1.0);
-    layer->background = LayerBackground::Color;
+    layer->background = QDemonRenderLayer::Background::Color;
 
     m_scene->addChild(*layer);
 

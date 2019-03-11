@@ -44,11 +44,11 @@ void QDemonRenderEffect::initialize()
 
 void QDemonRenderEffect::setActive(bool inActive, QDemonEffectSystemInterface &inManager)
 {
-    if (flags.isActive() != inActive) {
-        flags.setActive(inActive);
+    if (flags.testFlag(Flag::Active) != inActive) {
+        flags.setFlag(Flag::Active, inActive);
         if (m_context)
             inManager.resetEffectFrameData(*m_context);
-        flags.setDirty(true);
+        flags.setFlag(Flag::Dirty);
     }
 }
 
@@ -56,7 +56,7 @@ void QDemonRenderEffect::reset(QDemonEffectSystemInterface &inSystem)
 {
     if (m_context)
         inSystem.resetEffectFrameData(*m_context);
-    flags.setDirty(true);
+    flags.setFlag(Flag::Dirty);
 }
 
 QT_END_NAMESPACE

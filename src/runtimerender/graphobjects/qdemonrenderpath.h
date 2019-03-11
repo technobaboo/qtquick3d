@@ -33,41 +33,42 @@
 #include <QtDemonRuntimeRender/qdemonrendernode.h>
 
 QT_BEGIN_NAMESPACE
-enum class PathCapping
-{
-    Noner = 0,
-    Taper = 1,
-};
-
-enum class PathTypes
-{
-    Noner = 0,
-    Painted,
-    Geometry,
-};
-
-enum class PathPaintStyles
-{
-    Noner = 0,
-    FilledAndStroked,
-    Filled,
-    Stroked,
-};
 
 struct QDemonPathSubPath;
 
 struct QDemonPath : public QDemonGraphNode
 {
-    PathTypes m_pathType = PathTypes::Geometry;
+    enum class Capping : quint8
+    {
+        None = 0,
+        Taper = 1,
+    };
+
+    enum class PathType : quint8
+    {
+        None = 0,
+        Painted,
+        Geometry,
+    };
+
+    enum class PaintStyle : quint8
+    {
+        None = 0,
+        FilledAndStroked,
+        Filled,
+        Stroked,
+    };
+
+    PathType m_pathType = PathType::Geometry;
     float m_width = 5.0f;
     float m_linearError = 100.0f;
     float m_edgeTessAmount = 8.0f;
     float m_innerTessAmount = 1.0f;
-    PathCapping m_beginCapping = PathCapping::Noner;
+    Capping m_beginCapping = Capping::None;
     float m_beginCapOffset = 10.f;
     float m_beginCapOpacity = 0.2f;
     float m_beginCapWidth = 0.0f;
-    PathCapping m_endCapping = PathCapping::Noner;
+    Capping m_endCapping = Capping::None;
     float m_endCapOffset = 10.0f;
     float m_endCapOpacity = 0.2f;
     float m_endCapWidth = 0.0f;
@@ -77,7 +78,7 @@ struct QDemonPath : public QDemonGraphNode
     // or they can link to a path buffer that defines the path.
     QDemonPathSubPath *m_firstSubPath = nullptr;
     QString m_pathBuffer;
-    PathPaintStyles m_paintStyle = PathPaintStyles::Stroked;
+    QDemonPath::PaintStyle m_paintStyle = PaintStyle::Stroked;
 
     bool m_wireframeMode = false;
     // Loaded onto the card just as data.
@@ -85,12 +86,12 @@ struct QDemonPath : public QDemonGraphNode
 
     bool isStroked() const
     {
-        return m_paintStyle == PathPaintStyles::Stroked || m_paintStyle == PathPaintStyles::FilledAndStroked;
+        return m_paintStyle == PaintStyle::Stroked || m_paintStyle == PaintStyle::FilledAndStroked;
     }
 
     bool isFilled() const
     {
-        return m_paintStyle == PathPaintStyles::Filled || m_paintStyle == PathPaintStyles::FilledAndStroked;
+        return m_paintStyle == PaintStyle::Filled || m_paintStyle == PaintStyle::FilledAndStroked;
     }
 
     void addMaterial(QDemonGraphObject *inMaterial)

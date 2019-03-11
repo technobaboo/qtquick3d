@@ -33,7 +33,7 @@ QT_BEGIN_NAMESPACE
 
 QDemonRenderLight::QDemonRenderLight()
     : QDemonGraphNode(QDemonGraphObject::Type::Light)
-    , m_lightType(RenderLightTypes::Directional)
+    , m_lightType(QDemonRenderLight::Type::Directional)
     , m_scope(nullptr)
     , m_diffuseColor(1, 1, 1)
     , m_specularColor(1, 1, 1)
@@ -51,7 +51,7 @@ QDemonRenderLight::QDemonRenderLight()
     , m_shadowMapFov(90.0f)
     , m_shadowFilter(35.0f)
 {
-    flags.setPointLight(0);
+    flags.setFlag(Flag::PointLight, false);
 }
 
 QT_END_NAMESPACE

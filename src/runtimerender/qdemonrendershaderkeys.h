@@ -415,14 +415,14 @@ struct QDemonShaderKeySpecularModel : QDemonShaderKeyUnsigned<2>
 {
     QDemonShaderKeySpecularModel(const char *inName = "") : QDemonShaderKeyUnsigned<2>(inName) {}
 
-    void setSpecularModel(QDemonDataRef<quint32> inKeySet, DefaultMaterialSpecularModel inModel)
+    void setSpecularModel(QDemonDataRef<quint32> inKeySet, QDemonRenderDefaultMaterial::MaterialSpecularModel inModel)
     {
         setValue(inKeySet, quint32(inModel));
     }
 
-    DefaultMaterialSpecularModel getSpecularModel(QDemonConstDataRef<quint32> inKeySet) const
+    QDemonRenderDefaultMaterial::MaterialSpecularModel getSpecularModel(QDemonConstDataRef<quint32> inKeySet) const
     {
-        return static_cast<DefaultMaterialSpecularModel>(getValue(inKeySet));
+        return static_cast<QDemonRenderDefaultMaterial::MaterialSpecularModel>(getValue(inKeySet));
     }
 
     void toString(QString &ioStr, QDemonConstDataRef<quint32> inKeySet) const
@@ -430,13 +430,13 @@ struct QDemonShaderKeySpecularModel : QDemonShaderKeyUnsigned<2>
         ioStr.append(QString::fromLocal8Bit(name));
         ioStr.append(QStringLiteral("="));
         switch (getSpecularModel(inKeySet)) {
-        case DefaultMaterialSpecularModel::KGGX:
+        case QDemonRenderDefaultMaterial::MaterialSpecularModel::KGGX:
             ioStr.append(QStringLiteral("KGGX"));
             break;
-        case DefaultMaterialSpecularModel::KWard:
+        case QDemonRenderDefaultMaterial::MaterialSpecularModel::KWard:
             ioStr.append(QStringLiteral("KWard"));
             break;
-        case DefaultMaterialSpecularModel::Default:
+        case QDemonRenderDefaultMaterial::MaterialSpecularModel::Default:
             ioStr.append(QStringLiteral("Default"));
             break;
         }

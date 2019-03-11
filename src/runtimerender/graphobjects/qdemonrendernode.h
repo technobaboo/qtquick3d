@@ -60,115 +60,67 @@ public:
     // virtual void Enqueue( SText& inText ) = 0;
 };
 
-enum class QDemonNodeFlagValues
-{
-    Dirty = 1,
-    TransformDirty = 1 << 1,
-    Active = 1 << 2, ///< Is this exact object active
-    LeftHanded = 1 << 3,
-    Orthographic = 1 << 4,
-    PointLight = 1 << 5,
-    GlobalActive = 1 << 6, ///< set based in Active and if a parent is active.
-    TextDirty = 1 << 7,
-    LocallyPickable = 1 << 8,
-    GloballyPickable = 1 << 9,
-    LayerEnableDepthTest = 1 << 10,
-    LayerRenderToTarget = 1 << 11, ///< Does this layer render to the normal render target,
-    /// or is it offscreen-only
-    ForceLayerOffscreen = 1 << 12, ///< Forces a layer to always use the offscreen rendering
-    /// mechanism.  This can be usefulf or caching purposes.
-    IgnoreParentTransform = 1 << 13,
-    LayerEnableDepthPrePass = 1 << 14, ///< True when we render a depth pass before
-};
-
-enum class NodeTransformDirtyFlag
-{
-    TransformNotDirty,
-    TransformIsDirty,
-};
-
-struct QDemonNodeFlags : public QFlags<QDemonNodeFlagValues>
-{
-    QDemonNodeFlags() : QFlags() {}
-    void setActive(bool value) { setFlag(QDemonNodeFlagValues::Active, value); }
-    bool isActive() const { return this->operator&(QDemonNodeFlagValues::Active); }
-
-    void setGlobalActive(bool value) { setFlag(QDemonNodeFlagValues::GlobalActive, value); }
-    bool isGloballyActive() const { return this->operator&(QDemonNodeFlagValues::GlobalActive); }
-
-    void setTransformDirty(bool value) { setFlag(QDemonNodeFlagValues::TransformDirty, value); }
-    bool isTransformDirty() const { return this->operator&(QDemonNodeFlagValues::TransformDirty); }
-
-    void setDirty(bool value) { setFlag(QDemonNodeFlagValues::Dirty, value); }
-    bool isDirty() const { return this->operator&(QDemonNodeFlagValues::Dirty); }
-
-    bool isLeftHanded() const { return this->operator&(QDemonNodeFlagValues::LeftHanded); }
-    void setLeftHanded(bool value) { setFlag(QDemonNodeFlagValues::LeftHanded, value); }
-
-    bool isOrthographic() const { return this->operator&(QDemonNodeFlagValues::Orthographic); }
-    void setOrthographic(bool value) { setFlag(QDemonNodeFlagValues::Orthographic, value); }
-
-    bool isPointLight() const { return this->operator&(QDemonNodeFlagValues::PointLight); }
-    void setPointLight(bool value) { setFlag(QDemonNodeFlagValues::PointLight, value); }
-
-    bool isTextDirty() const { return this->operator&(QDemonNodeFlagValues::TextDirty); }
-    void setTextDirty(bool value) { setFlag(QDemonNodeFlagValues::TextDirty, value); }
-
-    bool isLocallyPickable() const { return this->operator&(QDemonNodeFlagValues::LocallyPickable); }
-    void setLocallyPickable(bool value) { setFlag(QDemonNodeFlagValues::LocallyPickable, value); }
-
-    bool isGloballyPickable() const { return this->operator&(QDemonNodeFlagValues::GloballyPickable); }
-    void setGloballyPickable(bool value) { setFlag(QDemonNodeFlagValues::GloballyPickable, value); }
-
-    bool isLayerRenderToTarget() const { return this->operator&(QDemonNodeFlagValues::LayerRenderToTarget); }
-    void setLayerRenderToTarget(bool value) { setFlag(QDemonNodeFlagValues::LayerRenderToTarget, value); }
-
-    bool isLayerEnableDepthTest() const { return this->operator&(QDemonNodeFlagValues::LayerEnableDepthTest); }
-    void setLayerEnableDepthTest(bool value) { setFlag(QDemonNodeFlagValues::LayerEnableDepthTest, value); }
-
-    bool isForceLayerOffscreen() const { return this->operator&(QDemonNodeFlagValues::ForceLayerOffscreen); }
-    void setForceLayerOffscreen(bool value) { setFlag(QDemonNodeFlagValues::ForceLayerOffscreen, value); }
-
-    bool isIgnoreParentTransform() const { return this->operator&(QDemonNodeFlagValues::IgnoreParentTransform); }
-    void setIgnoreParentTransform(bool value) { setFlag(QDemonNodeFlagValues::IgnoreParentTransform, value); }
-
-    bool isLayerEnableDepthPrepass() const { return this->operator&(QDemonNodeFlagValues::LayerEnableDepthPrePass); }
-    void setLayerEnableDepthPrepass(bool value) { setFlag(QDemonNodeFlagValues::LayerEnableDepthPrePass, value); }
-};
-
 class QDemonRenderNodeFilterInterface;
 class QDemonPathManagerInterface;
 
 struct Q_DEMONRUNTIMERENDER_EXPORT QDemonGraphNode : public QDemonGraphObject
 {
+    enum class Flag
+    {
+        Dirty = 1,
+        TransformDirty = 1 << 1,
+        Active = 1 << 2, ///< Is this exact object active
+        LeftHanded = 1 << 3,
+        Orthographic = 1 << 4,
+        PointLight = 1 << 5,
+        GloballyActive = 1 << 6, ///< set based in Active and if a parent is active.
+        TextDirty = 1 << 7,
+        LocallyPickable = 1 << 8,
+        GloballyPickable = 1 << 9,
+        LayerEnableDepthTest = 1 << 10,
+        LayerRenderToTarget = 1 << 11, ///< Does this layer render to the normal render target,
+        /// or is it offscreen-only
+        ForceLayerOffscreen = 1 << 12, ///< Forces a layer to always use the offscreen rendering
+        /// mechanism.  This can be usefulf or caching purposes.
+        IgnoreParentTransform = 1 << 13,
+        LayerEnableDepthPrePass = 1 << 14, ///< True when we render a depth pass before
+    };
+    Q_DECLARE_FLAGS(Flags, Flag)
+
+    enum class TransformDirtyFlag : quint8
+    {
+        TransformNotDirty,
+        TransformIsDirty,
+    };
+
     // changing any one of these means you have to
     // set this object dirty
-    QVector3D rotation; // Radians
-    QVector3D position;
-    QVector3D scale;
-    QVector3D pivot;
-    quint32 rotationOrder; // UICEulerOrder::EulOrd, defaults YXZs
+    QVector3D rotation { 0.0f, 0.0f, 0.0f }; // Radians
+    QVector3D position { 0.0f, 0.0f, 0.0f };
+    QVector3D scale { 1.0f, 1.0f, 1.0f };
+    QVector3D pivot { 0.0f, 0.0f, 0.0f };
+    quint32 rotationOrder = EulOrdYXZs; // UICEulerOrder::EulOrd, defaults YXZs
 
     // This only sets dirty, not transform dirty
     // Opacity of 1 means opaque, opacity of zero means transparent.
-    float localOpacity;
+    float localOpacity = 1.0f;
 
     // results of clearing dirty.
-    QDemonNodeFlags flags;
+    Flags flags { Flag::Dirty, Flag::TransformDirty, Flag::LeftHanded, Flag::Active, Flag::LocallyPickable };
     // These end up right handed
     QMatrix4x4 localTransform;
     QMatrix4x4 globalTransform;
-    float globalOpacity;
-    qint32 skeletonId;
+    float globalOpacity = 1.0f;
+    qint32 skeletonId = -1;
 
     // node graph members.
-    QDemonGraphNode *parent;
-    QDemonGraphNode *nextSibling;
-    QDemonGraphNode *previousSibling;
-    QDemonGraphNode *firstChild;
+    QDemonGraphNode *parent = nullptr;
+    QDemonGraphNode *nextSibling = nullptr;
+    QDemonGraphNode *previousSibling = nullptr;
+    QDemonGraphNode *firstChild = nullptr;
     // Property maintained solely by the render system.
     // Depth-first-search index assigned and maintained by render system.
-    quint32 dfsIndex;
+    quint32 dfsIndex = 0;
 
     QDemonGraphNode();
     QDemonGraphNode(Type type);
@@ -177,7 +129,7 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonGraphNode : public QDemonGraphObject
 
     // Sets this object dirty and walks down the graph setting all
     // children who are not dirty to be dirty.
-    void markDirty(NodeTransformDirtyFlag inTransformDirty = NodeTransformDirtyFlag::TransformNotDirty);
+    void markDirty(TransformDirtyFlag inTransformDirty = TransformDirtyFlag::TransformNotDirty);
 
     void addChild(QDemonGraphNode &inChild);
     void removeChild(QDemonGraphNode &inChild);
@@ -248,6 +200,9 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonGraphNode : public QDemonGraphObject
     // This should be in a utility file somewhere
     void calculateNormalMatrix(QMatrix3x3 &outNormalMatrix) const;
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(QDemonGraphNode::Flags)
+
 QT_END_NAMESPACE
 
 #endif

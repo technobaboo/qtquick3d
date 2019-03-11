@@ -53,27 +53,7 @@ QDemonGraphNode::QDemonGraphNode()
 }
 
 QDemonGraphNode::QDemonGraphNode(Type type)
-    : QDemonGraphObject(type)
-    , rotation(0, 0, 0) // Radians
-    , position(0, 0, 0)
-    , scale(1, 1, 1)
-    , pivot(0, 0, 0)
-    , rotationOrder(EulOrdYXZs)
-    , localOpacity(1.0f)
-    , globalOpacity(1.0f)
-    , skeletonId(-1)
-    , parent(nullptr)
-    , nextSibling(nullptr)
-    , previousSibling(nullptr)
-    , firstChild(nullptr)
-    , dfsIndex(0)
-{
-    flags.setDirty(true);
-    flags.setTransformDirty(true);
-    flags.setLeftHanded(true);
-    flags.setActive(true);
-    flags.setLocallyPickable(true);
-}
+    : QDemonGraphObject(type) {}
 
 QDemonGraphNode::QDemonGraphNode(const QDemonGraphNode &inCloningObject)
     : QDemonGraphObject(inCloningObject)
@@ -87,18 +67,7 @@ QDemonGraphNode::QDemonGraphNode(const QDemonGraphNode &inCloningObject)
     , globalTransform(inCloningObject.globalTransform)
     , globalOpacity(inCloningObject.globalOpacity)
     , skeletonId(inCloningObject.skeletonId)
-    , parent(nullptr)
-    , nextSibling(nullptr)
-    , previousSibling(nullptr)
-    , firstChild(nullptr)
-    , dfsIndex(0)
 {
-    flags.setDirty(true);
-    flags.setTransformDirty(true);
-    flags.setLeftHanded(true);
-    flags.setActive(true);
-    flags.setLocallyPickable(true);
-
     // for ( SNode* theChild = m_FirstChild; theChild != nullptr; theChild = theChild->m_NextSibling )
     //{
     //	SNode* theClonedChild = static_cast<SNode*>( CGraphObjectFactory::CloneGraphObject(
@@ -109,12 +78,12 @@ QDemonGraphNode::QDemonGraphNode(const QDemonGraphNode &inCloningObject)
 
 // Sets this object dirty and walks down the graph setting all
 // children who are not dirty to be dirty.
-void QDemonGraphNode::markDirty(NodeTransformDirtyFlag inTransformDirty)
+void QDemonGraphNode::markDirty(TransformDirtyFlag inTransformDirty)
 {
-    if (flags.isTransformDirty() == false)
-        flags.setTransformDirty(inTransformDirty != NodeTransformDirtyFlag::TransformNotDirty);
-    if (flags.isDirty() == false) {
-        flags.setDirty(true);
+    if (!flags.testFlag(Flag::TransformDirty))
+        flags.setFlag(Flag::TransformDirty, inTransformDirty != TransformDirtyFlag::TransformNotDirty);
+    if (!flags.testFlag(Flag::Dirty)) {
+        flags.setFlag(Flag::Dirty, true);
         for (QDemonGraphNode *child = firstChild; child; child = child->nextSibling)
             child->markDirty(inTransformDirty);
     }
@@ -126,10 +95,10 @@ void QDemonGraphNode::markDirty(NodeTransformDirtyFlag inTransformDirty)
 
 bool QDemonGraphNode::calculateGlobalVariables()
 {
-    bool retval = flags.isDirty();
+    bool retval = flags.testFlag(Flag::Dirty);
     if (retval) {
-        flags.setDirty(false);
-        if (flags.isTransformDirty())
+        flags.setFlag(Flag::Dirty, false);
+        if (flags.testFlag(Flag::TransformDirty))
             calculateLocalTransform();
         globalOpacity = localOpacity;
         if (parent) {
@@ -138,24 +107,24 @@ bool QDemonGraphNode::calculateGlobalVariables()
             retval = parent->calculateGlobalVariables() || retval;
             if (parent->type != QDemonGraphObject::Type::Layer) {
                 globalOpacity *= parent->globalOpacity;
-                if (flags.isIgnoreParentTransform() == false)
+                if (!flags.testFlag(Flag::IgnoreParentTransform))
                     globalTransform = parent->globalTransform * localTransform;
                 else
                     globalTransform = localTransform;
             } else
                 globalTransform = localTransform;
 
-            flags.setGlobalActive(flags.isActive() && parent->flags.isGloballyActive());
-            flags.setGloballyPickable(flags.isLocallyPickable() || parent->flags.isGloballyPickable());
+            flags.setFlag(Flag::GloballyActive, (flags.testFlag(Flag::Active) && parent->flags.testFlag(Flag::GloballyActive)));
+            flags.setFlag(Flag::GloballyPickable, (flags.testFlag(Flag::LocallyPickable) || parent->flags.testFlag(Flag::GloballyPickable)));
         } else {
             globalTransform = localTransform;
-            flags.setGlobalActive(flags.isActive());
-            flags.setGloballyPickable(flags.isLocallyPickable());
+            flags.setFlag(Flag::GloballyActive, flags.testFlag(Flag::Active));
+            flags.setFlag(Flag::GloballyPickable, flags.testFlag(Flag::LocallyPickable));
         }
     }
     // We always clear dirty in a reasonable manner but if we aren't active
     // there is no reason to tell the universe if we are dirty or not.
-    return retval && flags.isActive();
+    return retval && flags.testFlag(Flag::Active);
 }
 
 // Create some mapping of euler angles to their axis mapping.
@@ -232,7 +201,7 @@ QVector3D QDemonGraphNode::getRotationVectorFromRotationMatrix(const QMatrix3x3 
                                        1 };
 
     QMatrix4x4 theConvertMatrix(theConvertMatrixData);
-    if (flags.isLeftHanded())
+    if (flags.testFlag(Flag::LeftHanded))
         QDemonGraphNode::flipCoordinateSystem(theConvertMatrix);
     QDemonEulerAngleConverter theConverter;
     HMatrix *theHMatrix = reinterpret_cast<HMatrix *>(theConvertMatrix.data());
@@ -289,8 +258,8 @@ void QDemonGraphNode::flipCoordinateSystem(QMatrix4x4 &inMatrix)
 
 void QDemonGraphNode::calculateLocalTransform()
 {
-    flags.setTransformDirty(false);
-    bool leftHanded = flags.isLeftHanded();
+    flags.setFlag(Flag::TransformDirty, false);
+    const bool leftHanded = flags.testFlag(Flag::LeftHanded);
     localTransform = QMatrix4x4();
     globalTransform = localTransform;
     float *writePtr = localTransform.data();
@@ -318,14 +287,13 @@ void QDemonGraphNode::calculateLocalTransform()
     else
         writePtr[14] = writePtr[14] - position[2];
 
-    if (leftHanded) {
+    if (leftHanded)
         flipCoordinateSystem(localTransform);
-    }
 }
 
 void QDemonGraphNode::setLocalTransformFromMatrix(QMatrix4x4 &inTransform)
 {
-    flags.setTransformDirty(true);
+    flags.setFlag(Flag::TransformDirty);
 
     // clear pivot
     pivot[0] = pivot[1] = pivot[2] = 0.0f;
@@ -467,7 +435,7 @@ QDemonBounds3 QDemonGraphNode::getChildBounds(const QDemonBufferManager &inManag
     for (QDemonGraphNode *child = firstChild; child != nullptr; child = child->nextSibling) {
         if (inChildFilter == nullptr || inChildFilter->includeNode(*child)) {
             QDemonBounds3 childBounds;
-            if (child->flags.isTransformDirty())
+            if (child->flags.testFlag(Flag::TransformDirty))
                 child->calculateLocalTransform();
             childBounds = child->getBounds(inManager, inPathManager);
             if (childBounds.isEmpty() == false) {

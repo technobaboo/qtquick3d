@@ -37,16 +37,16 @@
 
 QT_BEGIN_NAMESPACE
 
-enum class MaterialLightmapsUsage
-{
-    Dynamic = 0,
-    Baked,
-    DynamicAndBaked,
-};
-
 struct QDemonRenderImage;
 struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderLightmaps : public QDemonGraphObject
 {
+    enum class Usage : quint8
+    {
+        Dynamic = 0,
+        Baked,
+        DynamicAndBaked,
+    };
+
     QDemonMaterialDirty m_dirty;
 
     QDemonRenderImage *m_lightmapIndirect = nullptr;
