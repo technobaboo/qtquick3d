@@ -67,18 +67,14 @@ namespace dynamic {
 //    void Remap(QString &inStr) { inStr.Remap(m_Map); }
 //};
 
-inline quint32 Align(quint32 inValue)
+constexpr inline quint32 align(quint32 inValue) Q_DECL_NOTHROW
 {
-    if (inValue % 4)
-        return inValue + (4 - (inValue % 4));
-    return inValue;
+    return (inValue % 4) ? (inValue + (4 - (inValue % 4))) : inValue;
 }
 
-inline quint32 Align8(quint32 inValue)
+constexpr inline quint32 align8(quint32 inValue) Q_DECL_NOTHROW
 {
-    if (inValue % 8)
-        return inValue + (8 - (inValue % 8));
-    return inValue;
+    return (inValue % 8) ? (inValue + (8 - (inValue % 8))) : inValue;
 }
 
 inline quint32 getSizeofShaderDataType(QDemonRenderShaderDataType value)

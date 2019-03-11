@@ -493,7 +493,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
 
         quint32 commandCount = 3 + inProperties.size();
         quint32 commandPtrAllocationSize = commandCount * sizeof(QDemonCommand *);
-        quint32 allocationSize = Align8(commandAllocationSize) + commandPtrAllocationSize;
+        quint32 allocationSize = align8(commandAllocationSize) + commandPtrAllocationSize;
         quint8 *startBuffer = (quint8 *)::malloc(allocationSize);
         quint8 *dataBuffer = startBuffer;
         // Setup the command buffer such that the ptrs to the commands and the commands themselves
@@ -503,7 +503,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
         // but it also enables simpler memory management (single free).
         // Furthermore, for a single glsl file the effect properties map precisely into the
         // glsl file itself.
-        QDemonCommand **theFirstCommandPtr = (reinterpret_cast<QDemonCommand **>(dataBuffer + Align8(commandAllocationSize)));
+        QDemonCommand **theFirstCommandPtr = (reinterpret_cast<QDemonCommand **>(dataBuffer + align8(commandAllocationSize)));
         QDemonCommand **theCommandPtr = theFirstCommandPtr;
         memset(dataBuffer, 0, commandAllocationSize);
 
