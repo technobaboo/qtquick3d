@@ -85,7 +85,7 @@ struct QDemonShaderDefaultMaterialKey;
 class QDemonRenderContextInterface;
 class QDemonShaderProgramGeneratorInterface;
 class QDemonDefaultMaterialVertexPipelineInterface;
-class QDemonShaderGeneratorGeneratedShader;
+struct QDemonShaderGeneratorGeneratedShader;
 class QDemonRenderConstantBuffer;
 
 struct QDemonLayerGlobalRenderProperties

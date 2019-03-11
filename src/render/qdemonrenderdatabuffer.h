@@ -40,7 +40,7 @@ class QDemonRenderContext;
 class QDemonRenderBackend;
 
 ///< Base class
-class QDemonRenderDataBuffer
+class Q_DEMONRENDER_EXPORT QDemonRenderDataBuffer
 {
     Q_DISABLE_COPY(QDemonRenderDataBuffer)
 public:
