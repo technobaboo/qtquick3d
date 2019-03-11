@@ -4,7 +4,11 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonDefaultMaterial::QDemonDefaultMaterial() : m_diffuseColor(Qt::white), m_specularTint(Qt::white) {}
+QDemonDefaultMaterial::QDemonDefaultMaterial()
+    : m_diffuseColor(Qt::white)
+    , m_emissiveColor(Qt::white)
+    , m_specularTint(Qt::white)
+{}
 
 QDemonDefaultMaterial::~QDemonDefaultMaterial()
 {
