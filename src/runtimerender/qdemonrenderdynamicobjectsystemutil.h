@@ -38,35 +38,6 @@
 QT_BEGIN_NAMESPACE
 namespace dynamic {
 
-// ### Not sure what to do with these guys
-// struct SStringLoadRemapper
-//{
-//    CStrTableOrDataRef m_StrData;
-//    QString m_PathMapper;
-//    const char *m_ProjectDir;
-//    SStringLoadRemapper(CStrTableOrDataRef inData, const char *inProjectDir)
-//        : m_StrData(inData)
-//        , m_ProjectDir(inProjectDir)
-//    {
-//    }
-//    void Remap(QString &inStr) { inStr.Remap(m_StrData); }
-//};
-
-// struct SStringSaveRemapper
-//{
-//    const SStrRemapMap &m_Map;
-//    QString m_RelativeBuffer;
-//    QString m_ProjectDir;
-//    QString m_FinalBuffer;
-//    SStringSaveRemapper(const SStrRemapMap &map, const char *inProjectDir)
-//        : m_Map(map)
-//        , m_StringTable(inStrTable)
-//    {
-//        m_ProjectDir = QString::fromLocal8Bit(inProjectDir);
-//    }
-//    void Remap(QString &inStr) { inStr.Remap(m_Map); }
-//};
-
 constexpr inline quint32 align(quint32 inValue) Q_DECL_NOTHROW
 {
     return (inValue % 4) ? (inValue + (4 - (inValue % 4))) : inValue;

@@ -146,12 +146,6 @@ public:
     // This instance is what is placed into the object graph.
     virtual QDemonRenderEffect *createEffectInstance(QString inEffectName) = 0;
 
-    //    virtual void Save(SWriteBuffer &ioBuffer,
-    //                      const SStrRemapMap &inRemapMap,
-    //                      const char *inProjectDir) const = 0;
-    //    virtual void Load(QDemonByteRef inData, CStrTableOrDataRef inStrDataBlock,
-    //                      const char *inProjectDir) = 0;
-
     virtual QDemonRef<QDemonResourceManager> getResourceManager() = 0;
 
     static QDemonRef<QDemonEffectSystemInterface> createEffectSystem(QDemonRenderContextInterface *context);

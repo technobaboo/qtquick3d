@@ -72,8 +72,6 @@ struct QDemonEffectClass
     QDemonDynamicObjectClassInterface *dynamicClass;
 
     QDemonEffectClass(QDemonDynamicObjectClassInterface &dynClass) : dynamicClass(&dynClass) {}
-
-    void setupThisObjectFromMemory(QDemonDynamicObjectClassInterface &inClass) { dynamicClass = &inClass; }
 };
 
 struct QDemonAllocatedBufferEntry
@@ -1726,50 +1724,6 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
     {
         m_context->dynamicObjectSystem()->setShaderData(path, data, inShaderType, inShaderVersion, inHasGeomShader, inIsComputeShader);
     }
-
-    //    void save(SWriteBuffer &ioBuffer,
-    //              const SStrRemapMap &inRemapMap,
-    //              const char *inProjectDir) const override
-    //    {
-    //        ioBuffer.write((quint32)m_EffectClasses.size());
-    //        SStringSaveRemapper theRemapper(m_Allocator, inRemapMap, inProjectDir,
-    //                                        m_CoreContext.GetStringTable());
-    //        for (TEffectClassMap::const_iterator theIter = m_EffectClasses.begin(),
-    //             end = m_EffectClasses.end();
-    //             theIter != end; ++theIter) {
-    //            const SEffectClass &theClass = *theIter->second;
-    //            QString theClassName = theClass.m_DynamicClass->GetId();
-    //            theClassName.Remap(inRemapMap);
-    //            ioBuffer.write(theClassName);
-    //            // Effect classes do not store any additional data from the dynamic object class.
-    //            ioBuffer.write(theClass);
-    //        }
-    //    }
-
-    //    void load(QDemonByteRef inData, CStrTableOrDataRef inStrDataBlock,
-    //              const char *inProjectDir) override
-    //    {
-    //        m_Allocator.m_PreAllocatedBlock = inData;
-    //        m_Allocator.m_OwnsMemory = false;
-    //        SDataReader theReader(inData.begin(), inData.end());
-    //        quint32 numEffectClasses = theReader.LoadRef<quint32>();
-    //        SStringLoadRemapper theRemapper(m_Allocator, inStrDataBlock, inProjectDir,
-    //                                        m_CoreContext.GetStringTable());
-    //        for (quint32 idx = 0, end = numEffectClasses; idx < end; ++idx) {
-    //            QString theClassName = theReader.LoadRef<QString>();
-    //            theClassName.Remap(inStrDataBlock);
-    //            IDynamicObjectClass *theBaseClass =
-    //                    m_CoreContext.GetDynamicObjectSystemCore().GetDynamicObjectClass(theClassName);
-    //            if (theBaseClass == nullptr) {
-    //                Q_ASSERT(false);
-    //                return;
-    //            }
-    //            SEffectClass *theClass = theReader.Load<SEffectClass>();
-    //            theClass->SetupThisObjectFromMemory(m_Allocator, *theBaseClass);
-    //            QDemonRef<SEffectClass> theClassPtr(theClass);
-    //            m_EffectClasses.insert(theBaseClass->GetId(), theClassPtr);
-    //        }
-    //    }
 
     void init()
     {

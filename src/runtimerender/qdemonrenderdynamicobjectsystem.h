@@ -232,13 +232,6 @@ public:
                                bool inHasGeomShader = false,
                                bool inIsComputeShader = false) = 0;
 
-    //    // Overall save functions for saving the class information out to the binary file.
-    //    virtual void Save(SWriteBuffer &ioBuffer,
-    //                      const SStrRemapMap &inRemapMap,
-    //                      const char *inProjectDir) const = 0;
-    //    virtual void Load(QDemonByteRef inData, CStrTableOrDataRef inStrDataBlock,
-    //                      const char *inProjectDir) = 0;
-
     static QDemonRef<QDemonDynamicObjectSystemInterface> createDynamicSystem(QDemonRenderContextInterface *ctx);
 
     virtual TShaderAndFlags getShaderProgram(QString inPath,

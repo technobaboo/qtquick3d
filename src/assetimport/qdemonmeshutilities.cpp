@@ -878,7 +878,6 @@ class MeshBuilderImpl : public QDemonMeshBuilder
     QVector<SubsetDesc> m_meshSubsetDescs;
     QDemonRenderDrawMode m_drawMode;
     QDemonRenderWinding m_winding;
-    QByteArray m_remappedVertexData;
     QByteArray m_newIndexBuffer;
     QVector<quint8> m_meshBuffer;
 
