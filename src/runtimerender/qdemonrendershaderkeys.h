@@ -673,6 +673,7 @@ struct QDemonShaderDefaultMaterialKey
             prop.toString(str, m_keyStore);
             // if the only thing we added was the semicolon
             // then nuke the semicolon
+            m_str = str.toLocal8Bit();
             if (originalSize && m_str.size() == int(originalSize + 1))
                 m_str.resize(int(originalSize));
         }
