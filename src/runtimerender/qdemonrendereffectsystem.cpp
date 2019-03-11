@@ -1009,28 +1009,28 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
                         inShader->setPropertyValue(theConstant.data(), *(reinterpret_cast<QMatrix4x4 *>(inDataPtr)));
                         break;
                     case QDemonRenderShaderDataType::Texture2D:
-                        inShader->setPropertyValue(theConstant.data(), *(reinterpret_cast<QDemonRenderTexture2DPtr *>(inDataPtr)));
+                        inShader->setPropertyValue(theConstant.data(), *(reinterpret_cast<QDemonRenderTexture2D **>(inDataPtr)));
                         break;
                     case QDemonRenderShaderDataType::Texture2DHandle:
                         inShader->setPropertyValue(theConstant.data(),
-                                                   *(reinterpret_cast<QDemonRenderTexture2DHandle *>(inDataPtr)));
+                                                   *(reinterpret_cast<QDemonRenderTexture2D ***>(inDataPtr)));
                         break;
                     case QDemonRenderShaderDataType::Texture2DArray:
                         inShader->setPropertyValue(theConstant.data(),
-                                                   *(reinterpret_cast<QDemonRenderTexture2DArrayPtr *>(inDataPtr)));
+                                                   *(reinterpret_cast<QDemonRenderTexture2DArray **>(inDataPtr)));
                         break;
                     case QDemonRenderShaderDataType::TextureCube:
-                        inShader->setPropertyValue(theConstant.data(), *(reinterpret_cast<QDemonRenderTextureCubePtr *>(inDataPtr)));
+                        inShader->setPropertyValue(theConstant.data(), *(reinterpret_cast<QDemonRenderTextureCube **>(inDataPtr)));
                         break;
                     case QDemonRenderShaderDataType::TextureCubeHandle:
                         inShader->setPropertyValue(theConstant.data(),
-                                                   *(reinterpret_cast<QDemonRenderTextureCubeHandle *>(inDataPtr)));
+                                                   *(reinterpret_cast<QDemonRenderTextureCube ***>(inDataPtr)));
                         break;
                     case QDemonRenderShaderDataType::Image2D:
-                        inShader->setPropertyValue(theConstant.data(), *(reinterpret_cast<QDemonRenderImage2DPtr *>(inDataPtr)));
+                        inShader->setPropertyValue(theConstant.data(), *(reinterpret_cast<QDemonRenderImage2D **>(inDataPtr)));
                         break;
                     case QDemonRenderShaderDataType::DataBuffer:
-                        inShader->setPropertyValue(theConstant.data(), *(reinterpret_cast<QDemonRenderDataBufferPtr *>(inDataPtr)));
+                        inShader->setPropertyValue(theConstant.data(), *(reinterpret_cast<QDemonRenderDataBuffer **>(inDataPtr)));
                         break;
                     default:
                         Q_ASSERT(false);

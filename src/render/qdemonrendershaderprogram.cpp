@@ -363,13 +363,13 @@ struct ShaderConstantApplier<QMatrix4x4>
 };
 
 template<>
-struct ShaderConstantApplier<QDemonRenderTexture2DPtr>
+struct ShaderConstantApplier<QDemonRenderTexture2D *>
 {
     void applyConstant(const QDemonRenderShaderProgram *program,
                        qint32 location,
                        qint32 count,
                        QDemonRenderShaderDataType type,
-                       QDemonRenderTexture2DPtr inValue,
+                       QDemonRenderTexture2D *inValue,
                        quint32 &oldValue)
     {
         if (inValue) {
@@ -385,13 +385,13 @@ struct ShaderConstantApplier<QDemonRenderTexture2DPtr>
 };
 
 template<>
-struct ShaderConstantApplier<QDemonRenderTexture2DHandle>
+struct ShaderConstantApplier<QDemonRenderTexture2D **>
 {
     void applyConstant(const QDemonRenderShaderProgram *program,
                        qint32 location,
                        qint32 count,
                        QDemonRenderShaderDataType type,
-                       QDemonRenderTexture2DHandle inValue,
+                       QDemonRenderTexture2D **inValue,
                        QVector<quint32> &oldValue)
     {
         Q_UNUSED(type)
@@ -420,13 +420,13 @@ struct ShaderConstantApplier<QDemonRenderTexture2DHandle>
 };
 
 template<>
-struct ShaderConstantApplier<QDemonRenderTexture2DArrayPtr>
+struct ShaderConstantApplier<QDemonRenderTexture2DArray *>
 {
     void applyConstant(const QDemonRenderShaderProgram *program,
                        qint32 location,
                        qint32 count,
                        QDemonRenderShaderDataType type,
-                       QDemonRenderTexture2DArrayPtr inValue,
+                       QDemonRenderTexture2DArray *inValue,
                        quint32 &oldValue)
     {
         if (inValue) {
@@ -442,13 +442,13 @@ struct ShaderConstantApplier<QDemonRenderTexture2DArrayPtr>
 };
 
 template<>
-struct ShaderConstantApplier<QDemonRenderTextureCubePtr>
+struct ShaderConstantApplier<QDemonRenderTextureCube *>
 {
     void applyConstant(const QDemonRenderShaderProgram *program,
                        qint32 location,
                        qint32 count,
                        QDemonRenderShaderDataType type,
-                       QDemonRenderTextureCubePtr inValue,
+                       QDemonRenderTextureCube *inValue,
                        quint32 &oldValue)
     {
         if (inValue) {
@@ -464,13 +464,13 @@ struct ShaderConstantApplier<QDemonRenderTextureCubePtr>
 };
 
 template<>
-struct ShaderConstantApplier<QDemonRenderTextureCubeHandle>
+struct ShaderConstantApplier<QDemonRenderTextureCube **>
 {
     void applyConstant(const QDemonRenderShaderProgram *program,
                        qint32 location,
                        qint32 count,
                        QDemonRenderShaderDataType type,
-                       QDemonRenderTextureCubeHandle inValue,
+                       QDemonRenderTextureCube **inValue,
                        QVector<quint32> &oldValue)
     {
         Q_UNUSED(type)
@@ -499,13 +499,13 @@ struct ShaderConstantApplier<QDemonRenderTextureCubeHandle>
 };
 
 template<>
-struct ShaderConstantApplier<QDemonRenderImage2DPtr>
+struct ShaderConstantApplier<QDemonRenderImage2D *>
 {
     void applyConstant(const QDemonRenderShaderProgram *program,
                        qint32 location,
                        qint32 count,
                        QDemonRenderShaderDataType type,
-                       QDemonRenderImage2DPtr image,
+                       QDemonRenderImage2D *image,
                        quint32 &oldValue,
                        qint32 binding)
     {
@@ -622,25 +622,25 @@ static QDemonRef<QDemonRenderShaderConstantBase> shaderConstantFactory(const QBy
                 new QDemonRenderShaderConstant<QMatrix4x4>(inName, uniLoc, elementCount, inConstantType, binding));
     case QDemonRenderShaderDataType::Texture2D:
         return QDemonRef<QDemonRenderShaderConstantBase>(
-                new QDemonRenderShaderConstant<QDemonRenderTexture2DPtr>(inName, uniLoc, elementCount, inConstantType, binding));
+                new QDemonRenderShaderConstant<QDemonRenderTexture2D *>(inName, uniLoc, elementCount, inConstantType, binding));
     case QDemonRenderShaderDataType::Texture2DHandle:
         return QDemonRef<QDemonRenderShaderConstantBase>(
-                new QDemonRenderShaderConstant<QDemonRenderTexture2DHandle>(inName, uniLoc, elementCount, inConstantType, binding));
+                new QDemonRenderShaderConstant<QDemonRenderTexture2D **>(inName, uniLoc, elementCount, inConstantType, binding));
     case QDemonRenderShaderDataType::Texture2DArray:
         return QDemonRef<QDemonRenderShaderConstantBase>(
-                new QDemonRenderShaderConstant<QDemonRenderTexture2DArrayPtr>(inName, uniLoc, elementCount, inConstantType, binding));
+                new QDemonRenderShaderConstant<QDemonRenderTexture2DArray *>(inName, uniLoc, elementCount, inConstantType, binding));
     case QDemonRenderShaderDataType::TextureCube:
         return QDemonRef<QDemonRenderShaderConstantBase>(
-                new QDemonRenderShaderConstant<QDemonRenderTextureCubePtr>(inName, uniLoc, elementCount, inConstantType, binding));
+                new QDemonRenderShaderConstant<QDemonRenderTextureCube *>(inName, uniLoc, elementCount, inConstantType, binding));
     case QDemonRenderShaderDataType::TextureCubeHandle:
         return QDemonRef<QDemonRenderShaderConstantBase>(
-                new QDemonRenderShaderConstant<QDemonRenderTextureCubeHandle>(inName, uniLoc, elementCount, inConstantType, binding));
+                new QDemonRenderShaderConstant<QDemonRenderTextureCube **>(inName, uniLoc, elementCount, inConstantType, binding));
     case QDemonRenderShaderDataType::Image2D:
         return QDemonRef<QDemonRenderShaderConstantBase>(
-                new QDemonRenderShaderConstant<QDemonRenderImage2DPtr>(inName, uniLoc, elementCount, inConstantType, binding));
+                new QDemonRenderShaderConstant<QDemonRenderImage2D *>(inName, uniLoc, elementCount, inConstantType, binding));
     case QDemonRenderShaderDataType::DataBuffer:
         return QDemonRef<QDemonRenderShaderConstantBase>(
-                new QDemonRenderShaderConstant<QDemonRenderDataBufferPtr>(inName, uniLoc, elementCount, inConstantType, binding));
+                new QDemonRenderShaderConstant<QDemonRenderDataBuffer *>(inName, uniLoc, elementCount, inConstantType, binding));
     default:
         break;
     }

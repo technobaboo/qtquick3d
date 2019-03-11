@@ -96,7 +96,7 @@ public:
 
 ///< A specialized class for textures
 template<>
-class QDemonRenderShaderConstant<QDemonRenderTexture2DPtr> : public QDemonRenderShaderConstantBase
+class QDemonRenderShaderConstant<QDemonRenderTexture2D *> : public QDemonRenderShaderConstantBase
 {
 public:
     quint32 m_value; ///< constant value
@@ -117,7 +117,7 @@ public:
 
 ///< A specialized class for textures
 template<>
-class QDemonRenderShaderConstant<QDemonRenderTexture2DHandle> : public QDemonRenderShaderConstantBase
+class QDemonRenderShaderConstant<QDemonRenderTexture2D **> : public QDemonRenderShaderConstantBase
 {
 public:
     QVector<quint32> m_value; ///< constant value
@@ -139,7 +139,7 @@ public:
 
 ///< A specialized class for texture arrays
 template<>
-class QDemonRenderShaderConstant<QDemonRenderTexture2DArrayPtr> : public QDemonRenderShaderConstantBase
+class QDemonRenderShaderConstant<QDemonRenderTexture2DArray *> : public QDemonRenderShaderConstantBase
 {
 public:
     quint32 m_value; ///< constant value
@@ -160,7 +160,7 @@ public:
 
 ///< A specialized class for cubemap textures
 template<>
-class QDemonRenderShaderConstant<QDemonRenderTextureCubePtr> : public QDemonRenderShaderConstantBase
+class QDemonRenderShaderConstant<QDemonRenderTextureCube *> : public QDemonRenderShaderConstantBase
 {
 public:
     quint32 m_value; ///< constant value
@@ -181,7 +181,7 @@ public:
 
 ///< A specialized class for cubemap textures
 template<>
-class QDemonRenderShaderConstant<QDemonRenderTextureCubeHandle> : public QDemonRenderShaderConstantBase
+class QDemonRenderShaderConstant<QDemonRenderTextureCube **> : public QDemonRenderShaderConstantBase
 {
 public:
     QVector<quint32> m_value; ///< constant value
@@ -203,7 +203,7 @@ public:
 
 ///< A specialized class for texture image buffer
 template<>
-class QDemonRenderShaderConstant<QDemonRenderImage2DPtr> : public QDemonRenderShaderConstantBase
+class QDemonRenderShaderConstant<QDemonRenderImage2D *> : public QDemonRenderShaderConstantBase
 {
 public:
     quint32 m_value; ///< constant value

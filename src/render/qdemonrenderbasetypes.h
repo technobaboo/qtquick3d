@@ -1602,21 +1602,6 @@ class QDemonRenderDataBuffer;
 class QDemonRenderAttribLayout;
 class QDemonRenderInputAssembler;
 
-typedef QDemonRenderFrameBuffer *QDemonRenderFrameBufferPtr;
-typedef QDemonRenderVertexBuffer *QDemonRenderVertexBufferPtr;
-typedef QDemonRenderIndexBuffer *QDemonRenderIndexBufferPtr;
-typedef QDemonRenderTexture2D *QDemonRenderTexture2DPtr;
-typedef QDemonRenderTexture2DPtr *QDemonRenderTexture2DHandle;
-typedef QDemonRenderTexture2DArray *QDemonRenderTexture2DArrayPtr;
-typedef QDemonRenderTextureCube *QDemonRenderTextureCubePtr;
-typedef QDemonRenderTextureCubePtr *QDemonRenderTextureCubeHandle;
-typedef QDemonRenderImage2D *QDemonRenderImage2DPtr;
-typedef QDemonRenderDataBuffer *QDemonRenderDataBufferPtr;
-typedef const char *QDemonRenderConstCharPtr;
-typedef QDemonRenderShaderProgram *QDemonRenderShaderProgramPtr;
-// typedef QDemonDataRef<quint32> QDemonU32List;
-// typedef QDemonDataRef<const char *> QDemonConstCharPtrList;
-
 // Return coordinates in pixels but relative to this rect.
 static inline constexpr QVector2D toRectRelative(const QRectF &r, const QVector2D &absoluteCoordinates)
 {
@@ -1726,13 +1711,13 @@ enum class QDemonRenderShaderDataType : quint32
     UnsignedIntegerVec4, // quint32_4,
     Matrix3x3, // QMatrix3x3,
     Matrix4x4, // QMatrix4x4,
-    Texture2D, // QDemonRenderTexture2DPtr,
-    Texture2DHandle, // QDemonRenderTexture2DHandle,
-    Texture2DArray, // QDemonRenderTexture2DArrayPtr,
-    TextureCube, // QDemonRenderTextureCubePtr,
-    TextureCubeHandle, // QDemonRenderTextureCubeHandle,
-    Image2D, // QDemonRenderImage2DPtr,
-    DataBuffer // QDemonRenderDataBufferPtr
+    Texture2D, // QDemonRenderTexture2D *,
+    Texture2DHandle, // QDemonRenderTexture2D **,
+    Texture2DArray, // QDemonRenderTexture2DArray *,
+    TextureCube, // QDemonRenderTextureCube *,
+    TextureCubeHandle, // QDemonRenderTextureCube **,
+    Image2D, // QDemonRenderImage2D *,
+    DataBuffer // QDemonRenderDataBuffer *
 };
 
 template<typename TDataType>
@@ -1855,43 +1840,43 @@ struct QDemonDataTypeToShaderDataTypeMap<QDemonConstDataRef<QMatrix4x4>>
 };
 
 template<>
-struct QDemonDataTypeToShaderDataTypeMap<QDemonRenderTexture2DPtr>
+struct QDemonDataTypeToShaderDataTypeMap<QDemonRenderTexture2D *>
 {
     static QDemonRenderShaderDataType getType() { return QDemonRenderShaderDataType::Texture2D; }
 };
 
 template<>
-struct QDemonDataTypeToShaderDataTypeMap<QDemonRenderTexture2DHandle>
+struct QDemonDataTypeToShaderDataTypeMap<QDemonRenderTexture2D **>
 {
     static QDemonRenderShaderDataType getType() { return QDemonRenderShaderDataType::Texture2DHandle; }
 };
 
 template<>
-struct QDemonDataTypeToShaderDataTypeMap<QDemonRenderTexture2DArrayPtr>
+struct QDemonDataTypeToShaderDataTypeMap<QDemonRenderTexture2DArray *>
 {
     static QDemonRenderShaderDataType getType() { return QDemonRenderShaderDataType::Texture2DArray; }
 };
 
 template<>
-struct QDemonDataTypeToShaderDataTypeMap<QDemonRenderTextureCubePtr>
+struct QDemonDataTypeToShaderDataTypeMap<QDemonRenderTextureCube *>
 {
     static QDemonRenderShaderDataType getType() { return QDemonRenderShaderDataType::TextureCube; }
 };
 
 template<>
-struct QDemonDataTypeToShaderDataTypeMap<QDemonRenderTextureCubeHandle>
+struct QDemonDataTypeToShaderDataTypeMap<QDemonRenderTextureCube **>
 {
     static QDemonRenderShaderDataType getType() { return QDemonRenderShaderDataType::TextureCubeHandle; }
 };
 
 template<>
-struct QDemonDataTypeToShaderDataTypeMap<QDemonRenderImage2DPtr>
+struct QDemonDataTypeToShaderDataTypeMap<QDemonRenderImage2D *>
 {
     static QDemonRenderShaderDataType getType() { return QDemonRenderShaderDataType::Image2D; }
 };
 
 template<>
-struct QDemonDataTypeToShaderDataTypeMap<QDemonRenderDataBufferPtr>
+struct QDemonDataTypeToShaderDataTypeMap<QDemonRenderDataBuffer *>
 {
     static QDemonRenderShaderDataType getType() { return QDemonRenderShaderDataType::DataBuffer; }
 };

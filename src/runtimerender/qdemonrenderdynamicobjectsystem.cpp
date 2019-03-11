@@ -385,66 +385,6 @@ inline const char *getShaderDatatypeName(QDemonRenderShaderDataType inValue)
     return "";
 }
 
-inline quint32 getSizeofShaderDataType(QDemonRenderShaderDataType value)
-{
-    switch (value) {
-    case QDemonRenderShaderDataType::Unknown:
-        return 0;
-    case QDemonRenderShaderDataType::Integer:
-        return sizeof(qint32);
-    case QDemonRenderShaderDataType::IntegerVec2:
-        return sizeof(qint32_2);
-    case QDemonRenderShaderDataType::IntegerVec3:
-        return sizeof(qint32_3);
-    case QDemonRenderShaderDataType::IntegerVec4:
-        return sizeof(qint32_4);
-    case QDemonRenderShaderDataType::Boolean:
-        return sizeof(bool);
-    case QDemonRenderShaderDataType::BooleanVec2:
-        return sizeof(bool_2);
-    case QDemonRenderShaderDataType::BooleanVec3:
-        return sizeof(bool_3);
-    case QDemonRenderShaderDataType::BooleanVec4:
-        return sizeof(bool_4);
-    case QDemonRenderShaderDataType::Float:
-        return sizeof(float);
-    case QDemonRenderShaderDataType::Vec2:
-        return sizeof(QVector2D);
-    case QDemonRenderShaderDataType::Vec3:
-        return sizeof(QVector3D);
-    case QDemonRenderShaderDataType::Vec4:
-        return sizeof(QVector4D);
-    case QDemonRenderShaderDataType::UnsignedInteger:
-        return sizeof(quint32);
-    case QDemonRenderShaderDataType::UnsignedIntegerVec2:
-        return sizeof(quint32_2);
-    case QDemonRenderShaderDataType::UnsignedIntegerVec3:
-        return sizeof(quint32_3);
-    case QDemonRenderShaderDataType::UnsignedIntegerVec4:
-        return sizeof(quint32_4);
-    case QDemonRenderShaderDataType::Matrix3x3:
-        return sizeof(QMatrix3x3);
-    case QDemonRenderShaderDataType::Matrix4x4:
-        return sizeof(QMatrix4x4);
-    case QDemonRenderShaderDataType::Texture2D:
-        return sizeof(QDemonRenderTexture2DPtr);
-    case QDemonRenderShaderDataType::Texture2DHandle:
-        return sizeof(QDemonRenderTexture2DHandle);
-    case QDemonRenderShaderDataType::Texture2DArray:
-        return sizeof(QDemonRenderTexture2DArrayPtr);
-    case QDemonRenderShaderDataType::TextureCube:
-        return sizeof(QDemonRenderTextureCubePtr);
-    case QDemonRenderShaderDataType::TextureCubeHandle:
-        return sizeof(QDemonRenderTextureCubeHandle);
-    case QDemonRenderShaderDataType::Image2D:
-        return sizeof(QDemonRenderImage2DPtr);
-    case QDemonRenderShaderDataType::DataBuffer:
-        return sizeof(QDemonRenderDataBufferPtr);
-    }
-    Q_ASSERT(false);
-    return 0;
-}
-
 struct QDemonDynamicObjectShaderInfo
 {
     QString m_type; ///< shader type (GLSL or HLSL)
@@ -687,7 +627,7 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
         for (quint32 idx = 0, end = inProperties.size(); idx < end; ++idx) {
             const dynamic::QDemonPropertyDeclaration &thePropDec = inProperties[idx];
             QString thePropName(QString::fromLocal8Bit(thePropDec.name));
-            quint32 propSize = getSizeofShaderDataType(thePropDec.dataType);
+            quint32 propSize = dynamic::getSizeofShaderDataType(thePropDec.dataType);
             definitions.push_back(dynamic::QDemonPropertyDefinition(thePropName, thePropDec.dataType, theCurrentOffset, propSize));
             theCurrentOffset += propSize;
             theCurrentOffset = align(theCurrentOffset);
