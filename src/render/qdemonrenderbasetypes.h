@@ -1468,16 +1468,6 @@ inline const char *toString(QDemonRenderBoolOp value)
     return "Unknown";
 }
 
-#define QDEMON_RENDER_ITERATE_STENCIL_OP                                                                               \
-    QDEMON_RENDER_HANDLE_STENCIL_OP(Keep)                                                                              \
-    QDEMON_RENDER_HANDLE_STENCIL_OP(Zero)                                                                              \
-    QDEMON_RENDER_HANDLE_STENCIL_OP(Replace)                                                                           \
-    QDEMON_RENDER_HANDLE_STENCIL_OP(Increment)                                                                         \
-    QDEMON_RENDER_HANDLE_STENCIL_OP(IncrementWrap)                                                                     \
-    QDEMON_RENDER_HANDLE_STENCIL_OP(Decrement)                                                                         \
-    QDEMON_RENDER_HANDLE_STENCIL_OP(DecrementWrap)                                                                     \
-    QDEMON_RENDER_HANDLE_STENCIL_OP(Invert)
-
 enum class QDemonRenderStencilOp
 {
     Unknown = 0,
