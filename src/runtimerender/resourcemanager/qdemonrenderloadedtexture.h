@@ -110,9 +110,6 @@ public:
                                                const QDemonRenderContextType &renderContextType = QDemonRenderContextType::NullContext);
     static QDemonRef<QDemonLoadedTexture> loadQImage(const QString &inPath, qint32 flipVertical, QDemonRenderContextType renderContextType);
 
-private:
-    // Implemented in the bmp loader.
-    void freeImagePostProcess(bool inFlipY);
 };
 QT_END_NAMESPACE
 
