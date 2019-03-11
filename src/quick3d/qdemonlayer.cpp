@@ -1,4 +1,5 @@
 #include "qdemonlayer.h"
+#include "qdemonobject_p.h"
 
 #include <QtDemonRuntimeRender/qdemonrenderlayer.h>
 
@@ -8,6 +9,30 @@ QT_BEGIN_NAMESPACE
 QDemonLayer::QDemonLayer() {}
 
 QDemonLayer::~QDemonLayer() {}
+
+static void updateProperyListener(QDemonObject *newO, QDemonObject *oldO, QDemonWindow *window, QHash<QObject*, QMetaObject::Connection> &connections, std::function<void(QDemonObject *o)> callFn) {
+    // disconnect previous destruction listern
+    if (oldO) {
+        if (window)
+            QDemonObjectPrivate::get(oldO)->derefWindow();
+
+        auto connection = connections.find(oldO);
+        if (connection != connections.end()) {
+            QObject::disconnect(connection.value());
+            connections.erase(connection);
+        }
+    }
+
+    // listen for new map's destruction
+    if (newO) {
+        if (window)
+            QDemonObjectPrivate::get(newO)->refWindow(window);
+        auto connection = QObject::connect(newO, &QObject::destroyed, [callFn](){
+            callFn(nullptr);
+        });
+        connections.insert(newO, connection);
+    }
+}
 
 QDemonObject::Type QDemonLayer::type() const
 {
@@ -514,6 +539,10 @@ void QDemonLayer::setLightProbe(QDemonImage *lightProbe)
     if (m_lightProbe == lightProbe)
         return;
 
+    updateProperyListener(lightProbe, m_lightProbe, window(), m_connections, [this](QDemonObject *n) {
+        setLightProbe(qobject_cast<QDemonImage *>(n));
+    });
+
     m_lightProbe = lightProbe;
     emit lightProbeChanged(m_lightProbe);
     markDirty(LightProbe1);
@@ -563,6 +592,10 @@ void QDemonLayer::setLightProbe2(QDemonImage *lightProbe2)
 {
     if (m_lightProbe2 == lightProbe2)
         return;
+
+    updateProperyListener(lightProbe2, m_lightProbe2, window(), m_connections, [this](QDemonObject *n) {
+        setLightProbe2(qobject_cast<QDemonImage *>(n));
+    });
 
     m_lightProbe2 = lightProbe2;
     emit lightProbe2Changed(m_lightProbe2);
@@ -728,6 +761,27 @@ QDemonGraphObject *QDemonLayer::updateSpatialNode(QDemonGraphObject *node)
     m_dirtyAttributes = 0;
 
     return layerNode;
+}
+
+void QDemonLayer::itemChange(QDemonObject::ItemChange change, const QDemonObject::ItemChangeData &value)
+{
+    if (change == QDemonObject::ItemSceneChange)
+        updateWindow(value.window);
+}
+
+void QDemonLayer::updateWindow(QDemonWindow *window)
+{
+    if (window) {
+        if (m_lightProbe)
+            QDemonObjectPrivate::get(m_lightProbe)->refWindow(window);
+        if (m_lightProbe2)
+            QDemonObjectPrivate::get(m_lightProbe2)->refWindow(window);
+    } else {
+        if (m_lightProbe)
+            QDemonObjectPrivate::get(m_lightProbe)->derefWindow();
+        if (m_lightProbe2)
+            QDemonObjectPrivate::get(m_lightProbe2)->derefWindow();
+    }
 }
 
 void QDemonLayer::markDirty(QDemonLayer::QDemonLayerDirtyType type)

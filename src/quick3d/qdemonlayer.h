@@ -238,9 +238,11 @@ Q_SIGNALS:
 
 protected:
     QDemonGraphObject *updateSpatialNode(QDemonGraphObject *node) override;
-
+    void itemChange(ItemChange, const ItemChangeData &) override;
 private:
     friend QDemonWindowPrivate;
+
+    void updateWindow(QDemonWindow *window);
 
     QString m_texturePath;
     QDemonAAModeValues m_progressiveAAMode = NoAA;
@@ -291,6 +293,8 @@ private:
     static QDemonEffect *qmlEffectAt(QQmlListProperty<QDemonEffect> *list, int index);
     static int qmlEffectsCount(QQmlListProperty<QDemonEffect> *list);
     static void qmlClearEffects(QQmlListProperty<QDemonEffect> *list);
+
+    QHash<QObject*, QMetaObject::Connection> m_connections;
 };
 
 QT_END_NAMESPACE
