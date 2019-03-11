@@ -507,13 +507,73 @@ struct QDemonDynamicObjClassImpl : public QDemonDynamicObjectClassInterface
     static void remapCommand(dynamic::QDemonCommand &inCommand, TRemapperType &inRemapper)
     {
         switch (inCommand.m_type) {
-            // TODO: ...
-#define QDEMON_RENDER_EFFECTS_HANDLE_COMMAND_TYPES(type)                                                                              \
-    case dynamic::CommandType::type:                                                                                                 \
-        QDemonCommandRemapping<dynamic::QDemon##type>::remapCommandData(static_cast<dynamic::QDemon##type &>(inCommand), inRemapper); \
-        break;
-            QDEMON_RENDER_EFFECTS_ITERATE_COMMAND_TYPES
-#undef QDEMON_RENDER_EFFECTS_HANDLE_COMMAND_TYPES
+        case dynamic::CommandType::AllocateBuffer:
+            QDemonCommandRemapping<dynamic::QDemonAllocateBuffer>::remapCommandData(static_cast<dynamic::QDemonAllocateBuffer &>(inCommand),
+                                                                                    inRemapper);
+            break;
+        case dynamic::CommandType::BindTarget:
+            QDemonCommandRemapping<dynamic::QDemonBindTarget>::remapCommandData(static_cast<dynamic::QDemonBindTarget &>(inCommand),
+                                                                                inRemapper);
+            break;
+        case dynamic::CommandType::BindBuffer:
+            QDemonCommandRemapping<dynamic::QDemonBindBuffer>::remapCommandData(static_cast<dynamic::QDemonBindBuffer &>(inCommand),
+                                                                                inRemapper);
+            break;
+        case dynamic::CommandType::BindShader:
+            QDemonCommandRemapping<dynamic::QDemonBindShader>::remapCommandData(static_cast<dynamic::QDemonBindShader &>(inCommand),
+                                                                                inRemapper);
+            break;
+        case dynamic::CommandType::ApplyInstanceValue:
+            QDemonCommandRemapping<dynamic::QDemonApplyInstanceValue>::remapCommandData(static_cast<dynamic::QDemonApplyInstanceValue &>(inCommand),
+                                                                                        inRemapper);
+            break;
+        case dynamic::CommandType::ApplyBufferValue:
+            QDemonCommandRemapping<dynamic::QDemonApplyBufferValue>::remapCommandData(static_cast<dynamic::QDemonApplyBufferValue &>(inCommand),
+                                                                                      inRemapper);
+            break;
+        case dynamic::CommandType::ApplyDepthValue:
+            QDemonCommandRemapping<dynamic::QDemonApplyDepthValue>::remapCommandData(static_cast<dynamic::QDemonApplyDepthValue &>(inCommand),
+                                                                                     inRemapper);
+            break;
+        case dynamic::CommandType::Render:
+            QDemonCommandRemapping<dynamic::QDemonRender>::remapCommandData(static_cast<dynamic::QDemonRender &>(inCommand), inRemapper);
+            break;
+        case dynamic::CommandType::ApplyBlending:
+            QDemonCommandRemapping<dynamic::QDemonApplyBlending>::remapCommandData(static_cast<dynamic::QDemonApplyBlending &>(inCommand),
+                                                                                   inRemapper);
+            break;
+        case dynamic::CommandType::ApplyRenderState:
+            QDemonCommandRemapping<dynamic::QDemonApplyRenderState>::remapCommandData(static_cast<dynamic::QDemonApplyRenderState &>(inCommand),
+                                                                                      inRemapper);
+            break;
+        case dynamic::CommandType::ApplyBlitFramebuffer:
+            QDemonCommandRemapping<dynamic::QDemonApplyBlitFramebuffer>::remapCommandData(static_cast<dynamic::QDemonApplyBlitFramebuffer &>(inCommand),
+                                                                                          inRemapper);
+            break;
+        case dynamic::CommandType::ApplyValue:
+            QDemonCommandRemapping<dynamic::QDemonApplyValue>::remapCommandData(static_cast<dynamic::QDemonApplyValue &>(inCommand),
+                                                                                inRemapper);
+            break;
+        case dynamic::CommandType::DepthStencil:
+            QDemonCommandRemapping<dynamic::QDemonDepthStencil>::remapCommandData(static_cast<dynamic::QDemonDepthStencil &>(inCommand),
+                                                                                  inRemapper);
+            break;
+        case dynamic::CommandType::AllocateImage:
+            QDemonCommandRemapping<dynamic::QDemonAllocateImage>::remapCommandData(static_cast<dynamic::QDemonAllocateImage &>(inCommand),
+                                                                                   inRemapper);
+            break;
+        case dynamic::CommandType::ApplyImageValue:
+            QDemonCommandRemapping<dynamic::QDemonApplyImageValue>::remapCommandData(static_cast<dynamic::QDemonApplyImageValue &>(inCommand),
+                                                                                     inRemapper);
+            break;
+        case dynamic::CommandType::AllocateDataBuffer:
+            QDemonCommandRemapping<dynamic::QDemonAllocateDataBuffer>::remapCommandData(static_cast<dynamic::QDemonAllocateDataBuffer &>(inCommand),
+                                                                                        inRemapper);
+            break;
+        case dynamic::CommandType::ApplyDataBufferValue:
+            QDemonCommandRemapping<dynamic::QDemonApplyDataBufferValue>::remapCommandData(static_cast<dynamic::QDemonApplyDataBufferValue &>(inCommand),
+                                                                                          inRemapper);
+            break;
         default:
             Q_ASSERT(false);
             break;

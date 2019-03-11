@@ -58,25 +58,6 @@ enum class CommandType
     ApplyDataBufferValue,
 };
 
-#define QDEMON_RENDER_EFFECTS_ITERATE_COMMAND_TYPES                                                                    \
-    QDEMON_RENDER_EFFECTS_HANDLE_COMMAND_TYPES(AllocateBuffer)                                                         \
-    QDEMON_RENDER_EFFECTS_HANDLE_COMMAND_TYPES(BindTarget)                                                             \
-    QDEMON_RENDER_EFFECTS_HANDLE_COMMAND_TYPES(BindBuffer)                                                             \
-    QDEMON_RENDER_EFFECTS_HANDLE_COMMAND_TYPES(BindShader)                                                             \
-    QDEMON_RENDER_EFFECTS_HANDLE_COMMAND_TYPES(ApplyInstanceValue)                                                     \
-    QDEMON_RENDER_EFFECTS_HANDLE_COMMAND_TYPES(ApplyBufferValue)                                                       \
-    QDEMON_RENDER_EFFECTS_HANDLE_COMMAND_TYPES(ApplyDepthValue)                                                        \
-    QDEMON_RENDER_EFFECTS_HANDLE_COMMAND_TYPES(Render)                                                                 \
-    QDEMON_RENDER_EFFECTS_HANDLE_COMMAND_TYPES(ApplyBlending)                                                          \
-    QDEMON_RENDER_EFFECTS_HANDLE_COMMAND_TYPES(ApplyRenderState)                                                       \
-    QDEMON_RENDER_EFFECTS_HANDLE_COMMAND_TYPES(ApplyBlitFramebuffer)                                                   \
-    QDEMON_RENDER_EFFECTS_HANDLE_COMMAND_TYPES(ApplyValue)                                                             \
-    QDEMON_RENDER_EFFECTS_HANDLE_COMMAND_TYPES(DepthStencil)                                                           \
-    QDEMON_RENDER_EFFECTS_HANDLE_COMMAND_TYPES(AllocateImage)                                                          \
-    QDEMON_RENDER_EFFECTS_HANDLE_COMMAND_TYPES(ApplyImageValue)                                                        \
-    QDEMON_RENDER_EFFECTS_HANDLE_COMMAND_TYPES(AllocateDataBuffer)                                                     \
-    QDEMON_RENDER_EFFECTS_HANDLE_COMMAND_TYPES(ApplyDataBufferValue)
-
 // All commands need at least two constructors.  One for when they are created that should
 // setup all their member variables and one for when we are copying commands from an outside
 // entity into the effect system.  We have to re-register strings in that case because we
