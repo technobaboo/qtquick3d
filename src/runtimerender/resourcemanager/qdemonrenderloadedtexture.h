@@ -99,16 +99,12 @@ public:
     // Returns true if this image has a pixel less than 255.
     bool scanForTransparency();
 
-    // Not all video cards support dxt compression.  Giving the last image allows
-    // this object to potentially reuse the memory
-    QDemonTextureData decompressDXTImage(int inMipMapIdx, QDemonTextureData *inOptLastImage = nullptr);
-    void releaseDecompressedTexture(QDemonTextureData inImage);
-
     static QDemonRef<QDemonLoadedTexture> load(const QString &inPath,
                                                QDemonInputStreamFactoryInterface &inFactory,
                                                bool inFlipY = true,
                                                const QDemonRenderContextType &renderContextType = QDemonRenderContextType::NullContext);
     static QDemonRef<QDemonLoadedTexture> loadQImage(const QString &inPath, qint32 flipVertical, QDemonRenderContextType renderContextType);
+    static QDemonRef<QDemonLoadedTexture> loadHdrImage(QSharedPointer<QIODevice> source, QDemonRenderContextType renderContextType);
 
 };
 QT_END_NAMESPACE

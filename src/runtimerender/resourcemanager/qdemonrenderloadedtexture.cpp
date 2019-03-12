@@ -32,6 +32,8 @@
 #include <QtDemonRuntimeRender/qdemonrenderimagescaler.h>
 #include <QtDemonRuntimeRender/qdemontextrenderer.h>
 #include <QtGui/QImage>
+#include <QtGui/QOpenGLTexture>
+#include <QtMath>
 
 #include <QtDemon/qdemonutils.h>
 
@@ -54,6 +56,199 @@ QDemonRef<QDemonLoadedTexture> QDemonLoadedTexture::loadQImage(const QString &in
     retval->dataSizeInBytes = image.sizeInBytes();
     retval->setFormatFromComponents();
     return retval;
+}
+
+namespace {
+typedef unsigned char RGBE[4];
+#define R 0
+#define G 1
+#define B 2
+#define E 3
+
+#define MINELEN 8 // minimum scanline length for encoding
+#define MAXELEN 0x7fff // maximum scanline length for encoding
+
+
+
+inline int calculateLine(int width, int bitdepth) { return ((width * bitdepth) + 7) / 8; }
+
+inline int calculatePitch(int line) { return (line + 3) & ~3; }
+
+float convertComponent(int exponent, int val)
+{
+    float v = val / (256.0f);
+    float d = powf(2.0f, (float)exponent - 128.0f);
+    return v * d;
+}
+
+void decrunchScanline(const char *p, const char *pEnd, RGBE *scanline, int w)
+{
+    scanline[0][0] = *p++;
+    scanline[0][1] = *p++;
+    scanline[0][2] = *p++;
+    scanline[0][3] = *p++;
+
+    if (scanline[0][0] == 2 && scanline[0][1] == 2 && scanline[0][2] < 128) {
+        // new rle, the first pixel was a dummy
+        for (int channel = 0; channel < 4; ++channel) {
+            for (int x = 0; x < w && p < pEnd; ) {
+                unsigned char c = *p++;
+                if (c > 128) { // run
+                    if (p < pEnd) {
+                        int repCount = c & 127;
+                        c = *p++;
+                        while (repCount--)
+                            scanline[x++][channel] = c;
+                    }
+                } else { // not a run
+                    while (c-- && p < pEnd)
+                        scanline[x++][channel] = *p++;
+                }
+            }
+        }
+    } else {
+        // old rle
+        scanline[0][0] = 2;
+        int bitshift = 0;
+        int x = 1;
+        while (x < w && pEnd - p >= 4) {
+            scanline[x][0] = *p++;
+            scanline[x][1] = *p++;
+            scanline[x][2] = *p++;
+            scanline[x][3] = *p++;
+
+            if (scanline[x][0] == 1 && scanline[x][1] == 1 && scanline[x][2] == 1) { // run
+                int repCount = scanline[x][3] << bitshift;
+                while (repCount--) {
+                    memcpy(scanline[x], scanline[x - 1], 4);
+                    ++x;
+                }
+                bitshift += 8;
+            } else { // not a run
+                ++x;
+                bitshift = 0;
+            }
+        }
+    }
+}
+
+void decodeScanlineToTexture(RGBE *scanline, int width, void *outBuf, quint32 offset, QDemonRenderTextureFormat inFormat)
+{
+    float rgbaF32[4];
+
+    for (int i = 0; i < width; ++i) {
+        rgbaF32[R] = convertComponent(scanline[i][E], scanline[i][R]);
+        rgbaF32[G] = convertComponent(scanline[i][E], scanline[i][G]);
+        rgbaF32[B] = convertComponent(scanline[i][E], scanline[i][B]);
+        rgbaF32[3] = 1.0f;
+
+        quint8 *target = reinterpret_cast<quint8 *>(outBuf);
+        target += offset;
+        inFormat.encodeToPixel(rgbaF32, target, i * inFormat.getSizeofFormat());
+    }
+}
+
+}
+
+QDemonRef<QDemonLoadedTexture> QDemonLoadedTexture::loadHdrImage(QSharedPointer<QIODevice> source, QDemonRenderContextType renderContextType)
+{
+    Q_UNUSED(renderContextType)
+    QDemonRef<QDemonLoadedTexture> imageData(nullptr);
+
+    char sig[256];
+    source->read(sig, 11);
+    if (strncmp(sig, "#?RADIANCE\n", 11))
+        return imageData;
+
+    QByteArray buf = source->readAll();
+    const char *p = buf.constData();
+    const char *pEnd = p + buf.size();
+
+    // Process lines until the empty one.
+    QByteArray line;
+    while (p < pEnd) {
+        char c = *p++;
+        if (c == '\n') {
+            if (line.isEmpty())
+                break;
+            if (line.startsWith(QByteArrayLiteral("FORMAT="))) {
+                const QByteArray format = line.mid(7).trimmed();
+                if (format != QByteArrayLiteral("32-bit_rle_rgbe")) {
+                    qWarning("HDR format '%s' is not supported", format.constData());
+                    return imageData;
+                }
+            }
+            line.clear();
+        } else {
+            line.append(c);
+        }
+    }
+    if (p == pEnd) {
+        qWarning("Malformed HDR image data at property strings");
+        return imageData;
+    }
+
+    // Get the resolution string.
+    while (p < pEnd) {
+        char c = *p++;
+        if (c == '\n')
+            break;
+        line.append(c);
+    }
+    if (p == pEnd) {
+        qWarning("Malformed HDR image data at resolution string");
+        return imageData;
+    }
+
+    int width = 0;
+    int height = 0;
+    // We only care about the standard orientation.
+    if (!sscanf(line.constData(), "-Y %d +X %d", &height, &width)) {
+        qWarning("Unsupported HDR resolution string '%s'", line.constData());
+        return imageData;
+    }
+    if (width <= 0 || height <= 0) {
+        qWarning("Invalid HDR resolution");
+        return imageData;
+    }
+
+
+    // Format
+    QDemonRenderTextureFormat imageFormat(QDemonRenderTextureFormat::RGBA16F);
+    if (renderContextType == QDemonRenderContextType::GLES2)
+        imageFormat = QDemonRenderTextureFormat::RGBA8;
+
+    const int bytesPerPixel = imageFormat.getSizeofFormat();
+    const int bitCount = bytesPerPixel * 8;
+    const int pitch = calculatePitch(calculateLine(width, bitCount));
+    const quint32 dataSize = quint32(height * pitch);
+    imageData = new QDemonLoadedTexture;
+    imageData->dataSizeInBytes = dataSize;
+    imageData->data = ::malloc(dataSize);
+    imageData->width = width;
+    imageData->height = height;
+    imageData->m_bitCount = bitCount;
+    imageData->m_ExtendedFormat = QDemonExtendedTextureFormats::CustomRGB;
+    imageData->format = imageFormat;
+    imageData->components = imageFormat.getNumberOfComponent();
+
+    // Allocate a scanline worth of RGBE data
+    RGBE *scanline = new RGBE[width];
+
+    for (int y = 0; y < height; ++y) {
+        quint32 byteOffset = quint32((height - 1 - y) * width * bytesPerPixel);
+        if (pEnd - p < 4) {
+            qWarning("Unexpected end of HDR data");
+            delete[] scanline;
+            return imageData;
+        }
+        decrunchScanline(p, pEnd, scanline, width);
+        decodeScanlineToTexture(scanline, width, imageData->data, byteOffset, imageFormat);
+    }
+
+    delete[] scanline;
+
+    return imageData;
 }
 
 namespace {
@@ -182,16 +377,6 @@ void QDemonLoadedTexture::ensureMultiplerOfFour(const char *inPath)
     }
 }
 
-void QDemonLoadedTexture::releaseDecompressedTexture(QDemonTextureData inImage)
-{
-    if (inImage.data)
-        ::free(inImage.data);
-}
-
-#ifndef EA_PLATFORM_WINDOWS
-#define stricmp strcasecmp
-#endif
-
 QDemonRef<QDemonLoadedTexture> QDemonLoadedTexture::load(const QString &inPath,
                                                          QDemonInputStreamFactoryInterface &inFactory,
                                                          bool inFlipY,
@@ -212,8 +397,8 @@ QDemonRef<QDemonLoadedTexture> QDemonLoadedTexture::load(const QString &inPath,
             theLoadedImage = loadQImage(fileName, inFlipY, renderContextType);
             //        } else if (inPath.endsWith("dds", Qt::CaseInsensitive)) {
             //            theLoadedImage = LoadDDS(theStream, inFlipY, renderContextType);
-            //        } else if (inPath.endsWith("hdr", Qt::CaseInsensitive)) {
-            //            theLoadedImage = LoadHDR(theStream, renderContextType);
+        } else if (inPath.endsWith(QStringLiteral("hdr"), Qt::CaseInsensitive)) {
+            theLoadedImage = loadHdrImage(theStream, renderContextType);
         } else {
             qCWarning(INTERNAL_ERROR, "Unrecognized image extension: %s", qPrintable(inPath));
         }
