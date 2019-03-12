@@ -81,7 +81,7 @@ float convertComponent(int exponent, int val)
     return v * d;
 }
 
-void decrunchScanline(const char *p, const char *pEnd, RGBE *scanline, int w)
+void decrunchScanline(const char *&p, const char *pEnd, RGBE *scanline, int w)
 {
     scanline[0][R] = *p++;
     scanline[0][G] = *p++;
@@ -235,6 +235,8 @@ QDemonRef<QDemonLoadedTexture> QDemonLoadedTexture::loadHdrImage(QSharedPointer<
     // Allocate a scanline worth of RGBE data
     RGBE *scanline = new RGBE[width];
 
+    // Note we are writing to the data buffer from bottom to top
+    // to correct for -Y orientation
     for (int y = 0; y < height; ++y) {
         quint32 byteOffset = quint32((height - 1 - y) * width * bytesPerPixel);
         if (pEnd - p < 4) {
