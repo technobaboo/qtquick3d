@@ -49,7 +49,7 @@
 #include <QtDemonRuntimeRender/qdemonrendercustommaterial.h>
 #include <QtDemonRuntimeRender/qdemonrendercustommaterialsystem.h>
 #include <QtDemonRuntimeRender/qdemonvertexpipelineimpl.h>
-#include <QtDemonRuntimeRender/qdemonrenderpathsubpath.h>
+#include <QtDemonRuntimeRender/qdemonrendersubpath.h>
 #include <QtDemonRuntimeRender/qdemonrenderpathmath.h>
 #include <QtDemonRuntimeRender/qdemonrenderinputstreamfactory.h>
 

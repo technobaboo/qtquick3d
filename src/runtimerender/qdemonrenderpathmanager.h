@@ -37,7 +37,7 @@
 #include <QtDemon/QDemonBounds3>
 #include <QtDemonRuntimeRender/qdemonrendershadercache.h>
 #include <QtDemonRuntimeRender/qdemonrenderpath.h>
-#include <QtDemonRuntimeRender/qdemonrenderpathsubpath.h>
+#include <QtDemonRuntimeRender/qdemonrendersubpath.h>
 #include <QtGui/QVector2D>
 
 QT_BEGIN_NAMESPACE
