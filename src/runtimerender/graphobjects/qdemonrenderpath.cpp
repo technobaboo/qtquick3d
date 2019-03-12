@@ -28,13 +28,13 @@
 **
 ****************************************************************************/
 #include "qdemonrenderpath.h"
-#include "qdemonrenderpathsubpath.h"
+#include "qdemonrendersubpath.h"
 
 QT_BEGIN_NAMESPACE
 
-void QDemonPath::addSubPath(QDemonPathSubPath &inSegment)
+void QDemonRenderPath::addSubPath(QDemonRenderSubPath &inSegment)
 {
-    QDemonPathSubPath *lastSegment = nullptr;
+    QDemonRenderSubPath *lastSegment = nullptr;
     inSegment.m_path = this;
     inSegment.m_nextSubPath = nullptr;
     if (m_firstSubPath) {
@@ -46,10 +46,10 @@ void QDemonPath::addSubPath(QDemonPathSubPath &inSegment)
         m_firstSubPath = &inSegment;
 }
 
-void QDemonPath::clearSubPaths()
+void QDemonRenderPath::clearSubPaths()
 {
-    QDemonPathSubPath *nextSegment = nullptr;
-    for (QDemonPathSubPath *theSegment = m_firstSubPath; theSegment; theSegment = nextSegment) {
+    QDemonRenderSubPath *nextSegment = nullptr;
+    for (QDemonRenderSubPath *theSegment = m_firstSubPath; theSegment; theSegment = nextSegment) {
         nextSegment = theSegment->m_nextSubPath;
         theSegment->m_path = nullptr;
         theSegment->m_nextSubPath = nullptr;

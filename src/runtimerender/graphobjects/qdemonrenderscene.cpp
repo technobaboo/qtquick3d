@@ -36,7 +36,7 @@
 QT_BEGIN_NAMESPACE
 
 QDemonRenderScene::QDemonRenderScene()
-    : QDemonGraphObject(QDemonGraphObject::Type::Scene)
+    : QDemonRenderGraphObject(QDemonRenderGraphObject::Type::Scene)
     , presentation(nullptr)
     , firstChild(nullptr)
     , clearColor(0, 0, 0)

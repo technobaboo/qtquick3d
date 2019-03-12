@@ -104,7 +104,7 @@ public:
 
     // inPipelineName needs to be unique else the shader cache will just return shaders from
     // different pipelines.
-    QDemonRef<QDemonRenderShaderProgram> generateShader(const QDemonGraphObject &inMaterial,
+    QDemonRef<QDemonRenderShaderProgram> generateShader(const QDemonRenderGraphObject &inMaterial,
                                                         QDemonShaderDefaultMaterialKey inShaderDescription,
                                                         QDemonShaderStageGeneratorInterface &inVertexPipeline,
                                                         const TShaderFeatureSet &inFeatureSet,
@@ -116,7 +116,7 @@ public:
 
     // Also sets the blend function on the render context.
     virtual void setMaterialProperties(const QDemonRef<QDemonRenderShaderProgram> &inProgram,
-                                       const QDemonGraphObject &inMaterial,
+                                       const QDemonRenderGraphObject &inMaterial,
                                        const QVector2D &inCameraVec,
                                        const QMatrix4x4 &inModelViewProjection,
                                        const QMatrix3x3 &inNormalMatrix,

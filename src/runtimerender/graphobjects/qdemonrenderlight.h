@@ -35,7 +35,7 @@ QT_BEGIN_NAMESPACE
 
 struct QDemonRenderImage;
 
-struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderLight : public QDemonGraphNode
+struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderLight : public QDemonRenderNode
 {
     enum class Type : quint8
     {
@@ -46,7 +46,7 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderLight : public QDemonGraphNode
     };
 
     Type m_lightType; // Directional
-    QDemonGraphNode *m_scope;
+    QDemonRenderNode *m_scope;
     QVector3D m_diffuseColor; // colors are 0-1 normalized
     QVector3D m_specularColor; // colors are 0-1 normalized
     QVector3D m_ambientColor; // colors are 0-1 normalized

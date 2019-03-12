@@ -34,12 +34,12 @@
 #include <QtDemonRuntimeRender/qdemonrendermaterialdirty.h>
 
 QT_BEGIN_NAMESPACE
-struct QDemonReferencedMaterial : QDemonGraphObject
+struct QDemonRenderReferencedMaterial : QDemonRenderGraphObject
 {
     QDemonMaterialDirty m_dirty;
-    QDemonGraphObject *m_referencedMaterial = nullptr;
-    QDemonGraphObject *m_nextSibling = nullptr;
-    QDemonReferencedMaterial() : QDemonGraphObject(Type::ReferencedMaterial) {}
+    QDemonRenderGraphObject *m_referencedMaterial = nullptr;
+    QDemonRenderGraphObject *m_nextSibling = nullptr;
+    QDemonRenderReferencedMaterial() : QDemonRenderGraphObject(Type::ReferencedMaterial) {}
 };
 QT_END_NAMESPACE
 

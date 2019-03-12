@@ -63,16 +63,16 @@ public:
     // returns the path buffer id
     //!! Note this call is made from multiple threads simultaneously during binary load.
     //!! - see UICRenderGraphObjectSerializer.cpp
-    virtual void setPathSubPathData(const QDemonPathSubPath &inPathSubPath,
+    virtual void setPathSubPathData(const QDemonRenderSubPath &inPathSubPath,
                                     QDemonConstDataRef<QDemonPathAnchorPoint> inPathSubPathAnchorPoints) = 0;
 
     virtual ~QDemonPathManagerInterface();
-    virtual QDemonDataRef<QDemonPathAnchorPoint> getPathSubPathBuffer(const QDemonPathSubPath &inPathSubPath) = 0;
+    virtual QDemonDataRef<QDemonPathAnchorPoint> getPathSubPathBuffer(const QDemonRenderSubPath &inPathSubPath) = 0;
     // Marks the PathSubPath anchor points as dirty.  This will mean rebuilding any PathSubPath
     // context required to render the PathSubPath.
-    virtual QDemonDataRef<QDemonPathAnchorPoint> resizePathSubPathBuffer(const QDemonPathSubPath &inPathSubPath,
+    virtual QDemonDataRef<QDemonPathAnchorPoint> resizePathSubPathBuffer(const QDemonRenderSubPath &inPathSubPath,
                                                                          quint32 inNumAnchors) = 0;
-    virtual QDemonBounds3 getBounds(const QDemonPath &inPath) = 0;
+    virtual QDemonBounds3 getBounds(const QDemonRenderPath &inPath) = 0;
 
     // Helper functions used in various locations
     // Angles here are in degrees because that is how they are represented in the data.
@@ -86,7 +86,7 @@ public:
     static QDemonRef<QDemonPathManagerInterface> createPathManager(QDemonRenderContextCoreInterface *inContext);
 
     // The path segments are next expected to change after this call; changes will be ignored.
-    virtual bool prepareForRender(const QDemonPath &inPath) = 0;
+    virtual bool prepareForRender(const QDemonRenderPath &inPath) = 0;
 
     virtual void renderDepthPrepass(QDemonPathRenderContext &inRenderContext,
                                     QDemonLayerGlobalRenderProperties inRenderProperties,

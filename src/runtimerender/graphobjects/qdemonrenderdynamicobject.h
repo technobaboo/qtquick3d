@@ -42,9 +42,9 @@ struct QDemonPropertyDefinition;
 }
 
 // Dynamic objects are objects that have variable number of properties during runtime.
-struct Q_DEMONRUNTIMERENDER_EXPORT QDemonDynamicObject : public QDemonGraphObject
+struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderDynamicGraphObject : public QDemonRenderGraphObject
 {
-    using Flag = QDemonGraphNode::Flag;
+    using Flag = QDemonRenderNode::Flag;
     Q_DECLARE_FLAGS(Flags, Flag)
 
     QString className;
@@ -52,7 +52,7 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonDynamicObject : public QDemonGraphObjec
     quint32 dataSectionByteSize;
     quint32 thisObjectSize;
 
-    QDemonDynamicObject(Type inType, const QString &inClassName, quint32 inDSByteSize, quint32 thisObjSize);
+    QDemonRenderDynamicGraphObject(Type inType, const QString &inClassName, quint32 inDSByteSize, quint32 thisObjSize);
 
     quint8 *getDataSectionBegin()
     {
@@ -62,7 +62,7 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonDynamicObject : public QDemonGraphObjec
         return retval;
     }
 
-    const quint8 *getDataSectionBegin() const { return const_cast<QDemonDynamicObject *>(this)->getDataSectionBegin(); }
+    const quint8 *getDataSectionBegin() const { return const_cast<QDemonRenderDynamicGraphObject *>(this)->getDataSectionBegin(); }
 
     quint8 *getDataSectionEnd() { return getDataSectionBegin() + dataSectionByteSize; }
 

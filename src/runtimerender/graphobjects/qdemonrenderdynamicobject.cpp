@@ -36,13 +36,13 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonDynamicObject::QDemonDynamicObject(Type inType, const QString &inObjName, quint32 inDSByteSize, quint32 thisObjSize)
-    : QDemonGraphObject(inType), className(inObjName), dataSectionByteSize(inDSByteSize), thisObjectSize(thisObjSize)
+QDemonRenderDynamicGraphObject::QDemonRenderDynamicGraphObject(Type inType, const QString &inObjName, quint32 inDSByteSize, quint32 thisObjSize)
+    : QDemonRenderGraphObject(inType), className(inObjName), dataSectionByteSize(inDSByteSize), thisObjectSize(thisObjSize)
 {
 }
 
 template<typename TDataType>
-void QDemonDynamicObject::setPropertyValueT(const dynamic::QDemonPropertyDefinition &inDefinition, const TDataType &inValue)
+void QDemonRenderDynamicGraphObject::setPropertyValueT(const dynamic::QDemonPropertyDefinition &inDefinition, const TDataType &inValue)
 {
     if (sizeof(inValue) != inDefinition.byteSize) {
         Q_ASSERT(false);
@@ -51,16 +51,16 @@ void QDemonDynamicObject::setPropertyValueT(const dynamic::QDemonPropertyDefinit
     ::memcpy(getDataSectionBegin() + inDefinition.offset, &inValue, sizeof(inValue));
 }
 
-void QDemonDynamicObject::setPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition, bool inValue)
+void QDemonRenderDynamicGraphObject::setPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition, bool inValue)
 {
     setPropertyValueT(inDefinition, inValue);
 }
 
-void QDemonDynamicObject::setPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition, float inValue)
+void QDemonRenderDynamicGraphObject::setPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition, float inValue)
 {
     setPropertyValueT(inDefinition, inValue);
 }
-void QDemonDynamicObject::setPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition, float inValue, quint32 inOffset)
+void QDemonRenderDynamicGraphObject::setPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition, float inValue, quint32 inOffset)
 {
     if (sizeof(float) > (inDefinition.byteSize - inOffset)) {
         Q_ASSERT(false);
@@ -68,29 +68,29 @@ void QDemonDynamicObject::setPropertyValue(const dynamic::QDemonPropertyDefiniti
     }
     ::memcpy(getDataSectionBegin() + inDefinition.offset + inOffset, &inValue, sizeof(inValue));
 }
-void QDemonDynamicObject::setPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition, const QVector2D &inValue)
+void QDemonRenderDynamicGraphObject::setPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition, const QVector2D &inValue)
 {
     setPropertyValueT(inDefinition, inValue);
 }
-void QDemonDynamicObject::setPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition, const QVector3D &inValue)
+void QDemonRenderDynamicGraphObject::setPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition, const QVector3D &inValue)
 {
     setPropertyValueT(inDefinition, inValue);
 }
-void QDemonDynamicObject::setPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition, const QVector4D &inValue)
+void QDemonRenderDynamicGraphObject::setPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition, const QVector4D &inValue)
 {
     setPropertyValueT(inDefinition, inValue);
 }
-void QDemonDynamicObject::setPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition, qint32 inValue)
+void QDemonRenderDynamicGraphObject::setPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition, qint32 inValue)
 {
     setPropertyValueT(inDefinition, inValue);
 }
-void QDemonDynamicObject::setPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition, const QString &inValue)
+void QDemonRenderDynamicGraphObject::setPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition, const QString &inValue)
 {
     Q_ASSERT(inDefinition.dataType == QDemonRenderShaderDataType::Texture2D);
     setPropertyValueT(inDefinition, inValue);
 }
 template<typename TStrType>
-void QDemonDynamicObject::setStrPropertyValueT(dynamic::QDemonPropertyDefinition &inDefinition,
+void QDemonRenderDynamicGraphObject::setStrPropertyValueT(dynamic::QDemonPropertyDefinition &inDefinition,
                                                const char *inValue,
                                                const char *inProjectDir,
                                                TStrType &ioWorkspace)
@@ -130,7 +130,7 @@ void QDemonDynamicObject::setStrPropertyValueT(dynamic::QDemonPropertyDefinition
     }
 }
 
-void QDemonDynamicObject::setPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition,
+void QDemonRenderDynamicGraphObject::setPropertyValue(const dynamic::QDemonPropertyDefinition &inDefinition,
                                            const char *inValue,
                                            const char *inProjectDir,
                                            QString &ioWorkspace)

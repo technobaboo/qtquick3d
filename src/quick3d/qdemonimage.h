@@ -85,7 +85,7 @@ Q_SIGNALS:
     void piviotVChanged(float pivotv);
 
 protected:
-    QDemonGraphObject *updateSpatialNode(QDemonGraphObject *node) override;
+    QDemonRenderGraphObject *updateSpatialNode(QDemonRenderGraphObject *node) override;
 
 private:
     QString m_source;

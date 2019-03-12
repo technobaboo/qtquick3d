@@ -36,16 +36,16 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonPresentation::QDemonPresentation()
-    : QDemonGraphObject(QDemonGraphObject::Type::Presentation)
+QDemonRenderPresentation::QDemonRenderPresentation()
+    : QDemonRenderGraphObject(QDemonRenderGraphObject::Type::Presentation)
     , presentationDimensions(800, 400)
     , presentationRotation(RenderRotationValues::NoRotation)
     , scene(nullptr)
 {
 }
 
-QDemonPresentation::QDemonPresentation(float w, float h, const QString &presDir)
-    : QDemonGraphObject(QDemonGraphObject::Type::Presentation)
+QDemonRenderPresentation::QDemonRenderPresentation(float w, float h, const QString &presDir)
+    : QDemonRenderGraphObject(QDemonRenderGraphObject::Type::Presentation)
     , presentationDimensions(w, h)
     , presentationRotation(RenderRotationValues::NoRotation)
     , scene(nullptr)
@@ -53,9 +53,9 @@ QDemonPresentation::QDemonPresentation(float w, float h, const QString &presDir)
 {
 }
 
-QDemonPresentation::~QDemonPresentation() = default;
+QDemonRenderPresentation::~QDemonRenderPresentation() = default;
 
-void QDemonPresentation::render(QDemonRenderContextInterface *inContext)
+void QDemonRenderPresentation::render(QDemonRenderContextInterface *inContext)
 {
     if (scene) {
         QRect theViewportSize(inContext->getRenderContext()->viewport());

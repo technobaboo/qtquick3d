@@ -26,7 +26,7 @@ void QDemonEffect::setSource(QString source)
     emit sourceChanged(m_source);
 }
 
-QDemonGraphObject *QDemonEffect::updateSpatialNode(QDemonGraphObject *node)
+QDemonRenderGraphObject *QDemonEffect::updateSpatialNode(QDemonRenderGraphObject *node)
 {
     // TODO: Add Effect Node and update properties
 

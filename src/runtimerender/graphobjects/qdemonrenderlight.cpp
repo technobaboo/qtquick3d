@@ -32,7 +32,7 @@
 QT_BEGIN_NAMESPACE
 
 QDemonRenderLight::QDemonRenderLight()
-    : QDemonGraphNode(QDemonGraphObject::Type::Light)
+    : QDemonRenderNode(QDemonRenderGraphObject::Type::Light)
     , m_lightType(QDemonRenderLight::Type::Directional)
     , m_scope(nullptr)
     , m_diffuseColor(1, 1, 1)

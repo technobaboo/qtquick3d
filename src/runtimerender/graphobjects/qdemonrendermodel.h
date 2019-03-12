@@ -40,12 +40,12 @@ QT_BEGIN_NAMESPACE
 struct QDemonRenderDefaultMaterial;
 class QDemonBufferManager;
 
-struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderModel : public QDemonGraphNode
+struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderModel : public QDemonRenderNode
 {
     // Complete path to the file;
     //*not* relative to the presentation directory
     QString meshPath;
-    QDemonGraphObject *firstMaterial;
+    QDemonRenderGraphObject *firstMaterial;
     qint32 skeletonRoot;
     TessModeValues tessellationMode;
     float edgeTess;
@@ -54,7 +54,7 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderModel : public QDemonGraphNode
 
     QDemonRenderModel();
 
-    void addMaterial(QDemonGraphObject &inMaterial);
+    void addMaterial(QDemonRenderGraphObject &inMaterial);
 
     QDemonBounds3 getModelBounds(const QDemonBufferManager &inManager) const;
 };

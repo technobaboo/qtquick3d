@@ -798,7 +798,7 @@ bool QDemonMaterialSystem::registerMaterialClass(const QString &inName, const QD
     coreContext->getDynamicObjectSystemCore()->doRegister(inName,
                                                             inProperties,
                                                             sizeof(QDemonRenderCustomMaterial),
-                                                            QDemonGraphObject::Type::CustomMaterial);
+                                                            QDemonRenderGraphObject::Type::CustomMaterial);
     QDemonDynamicObjectClassInterface *theClass = coreContext->getDynamicObjectSystemCore()->getDynamicObjectClass(inName);
     if (theClass == nullptr) {
         Q_ASSERT(false);

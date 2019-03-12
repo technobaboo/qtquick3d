@@ -32,6 +32,6 @@
 
 QT_BEGIN_NAMESPACE
 
-QDemonGraphObject::~QDemonGraphObject() {}
+QDemonRenderGraphObject::~QDemonRenderGraphObject() {}
 
 QT_END_NAMESPACE

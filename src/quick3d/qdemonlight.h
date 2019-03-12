@@ -93,7 +93,7 @@ Q_SIGNALS:
     void shadowFilterChanged(float shadowFilter);
 
 protected:
-    QDemonGraphObject *updateSpatialNode(QDemonGraphObject *node) override;
+    QDemonRenderGraphObject *updateSpatialNode(QDemonRenderGraphObject *node) override;
 
 private:
     QDemonRenderLightTypes m_lightType = Directional;

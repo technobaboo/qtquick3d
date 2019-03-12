@@ -282,7 +282,7 @@ struct QDemonTextScaleAndOffset
 struct QDemonTextRenderable : public QDemonRenderableObject, public QDemonTextScaleAndOffset
 {
     QDemonRendererImpl &generator;
-    const QDemonText &text;
+    const QDemonRenderText &text;
     QDemonRenderTexture2D &texture;
     QMatrix4x4 modelViewProjection;
     QMatrix4x4 viewProjection;
@@ -290,7 +290,7 @@ struct QDemonTextRenderable : public QDemonRenderableObject, public QDemonTextSc
     QDemonTextRenderable(QDemonRenderableObjectFlags inFlags,
                          QVector3D inWorldCenterPt,
                          QDemonRendererImpl &gen,
-                         const QDemonText &inText,
+                         const QDemonRenderText &inText,
                          const QDemonBounds3 &inBounds,
                          const QMatrix4x4 &inModelViewProjection,
                          const QMatrix4x4 &inViewProjection,
@@ -317,11 +317,11 @@ struct QDemonTextRenderable : public QDemonRenderableObject, public QDemonTextSc
 struct QDemonPathRenderable : public QDemonRenderableObject
 {
     QDemonRef<QDemonRendererImpl> m_generator;
-    QDemonPath &m_path;
+    QDemonRenderPath &m_path;
     QDemonBounds3 bounds;
     QMatrix4x4 m_mvp;
     QMatrix3x3 m_normalMatrix;
-    const QDemonGraphObject &m_material;
+    const QDemonRenderGraphObject &m_material;
     float m_opacity;
     QDemonRenderableImage *m_firstImage;
     QDemonShaderDefaultMaterialKey m_shaderDescription;
@@ -332,10 +332,10 @@ struct QDemonPathRenderable : public QDemonRenderableObject
                          const QDemonRef<QDemonRendererImpl> &gen,
                          const QMatrix4x4 &inGlobalTransform,
                          QDemonBounds3 &inBounds,
-                         QDemonPath &inPath,
+                         QDemonRenderPath &inPath,
                          const QMatrix4x4 &inModelViewProjection,
                          const QMatrix3x3 inNormalMat,
-                         const QDemonGraphObject &inMaterial,
+                         const QDemonRenderGraphObject &inMaterial,
                          float inOpacity,
                          QDemonShaderDefaultMaterialKey inShaderKey,
                          bool inIsStroke);

@@ -1399,7 +1399,7 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
         return programGenerator()->compileGeneratedShader(generatedShaderString, QDemonShaderCacheProgramFlags(), m_currentFeatureSet);
     }
 
-    QDemonRef<QDemonRenderShaderProgram> generateShader(const QDemonGraphObject &inMaterial,
+    QDemonRef<QDemonRenderShaderProgram> generateShader(const QDemonRenderGraphObject &inMaterial,
                                                         QDemonShaderDefaultMaterialKey inShaderDescription,
                                                         QDemonShaderStageGeneratorInterface &inVertexPipeline,
                                                         const TShaderFeatureSet &inFeatureSet,
@@ -1409,7 +1409,7 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
                                                         const QByteArray &inVertexPipelineName,
                                                         const QByteArray &) override
     {
-        Q_ASSERT(inMaterial.type == QDemonGraphObject::Type::DefaultMaterial);
+        Q_ASSERT(inMaterial.type == QDemonRenderGraphObject::Type::DefaultMaterial);
         m_currentMaterial = static_cast<const QDemonRenderDefaultMaterial *>(&inMaterial);
         m_currentKey = &inShaderDescription;
         m_currentPipeline = static_cast<QDemonDefaultMaterialVertexPipelineInterface *>(&inVertexPipeline);
@@ -1759,7 +1759,7 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
         context->setBlendEquation(blendEqua);
     }
     void setMaterialProperties(const QDemonRef<QDemonRenderShaderProgram> &inProgram,
-                               const QDemonGraphObject &inMaterial,
+                               const QDemonRenderGraphObject &inMaterial,
                                const QVector2D &inCameraVec,
                                const QMatrix4x4 &inModelViewProjection,
                                const QMatrix3x3 &inNormalMatrix,
@@ -1769,7 +1769,7 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
                                const QDemonLayerGlobalRenderProperties &inRenderProperties) override
     {
         const QDemonRenderDefaultMaterial &theMaterial(static_cast<const QDemonRenderDefaultMaterial &>(inMaterial));
-        Q_ASSERT(inMaterial.type == QDemonGraphObject::Type::DefaultMaterial);
+        Q_ASSERT(inMaterial.type == QDemonRenderGraphObject::Type::DefaultMaterial);
 
         setGlobalProperties(inProgram,
                             inRenderProperties.layer,

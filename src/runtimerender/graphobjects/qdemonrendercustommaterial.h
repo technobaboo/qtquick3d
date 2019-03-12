@@ -36,7 +36,7 @@
 
 QT_BEGIN_NAMESPACE
 
-struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderCustomMaterial : public QDemonDynamicObject
+struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderCustomMaterial : public QDemonRenderDynamicGraphObject
 {
 private:
     // These objects are only created via the dynamic object system.
@@ -71,7 +71,7 @@ public:
     QDemonRenderImage *m_displacementMap;
     float m_displaceAmount; ///< depends on the object size
 
-    QDemonGraphObject *m_nextSibling;
+    QDemonRenderGraphObject *m_nextSibling;
 
     MaterialShaderKeyFlags m_shaderKeyValues; ///< input from MDL files
     quint32 m_layerCount; ///< input from MDL files

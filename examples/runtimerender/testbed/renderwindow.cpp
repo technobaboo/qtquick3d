@@ -167,7 +167,7 @@ void RenderWindow::renderNow()
 void RenderWindow::updateAnimations()
 {
     m_cube->rotation = QVector3D(0.785398f, m_cube->rotation.y() + 0.01f, 0.785398f);
-    m_cube->markDirty(QDemonGraphNode::TransformDirtyFlag::TransformIsDirty);
+    m_cube->markDirty(QDemonRenderNode::TransformDirtyFlag::TransformIsDirty);
 }
 
 bool RenderWindow::event(QEvent *event)
@@ -201,7 +201,7 @@ void RenderWindow::preInit()
 
 void RenderWindow::buildTestScene()
 {
-    m_presentation = new QDemonPresentation();
+    m_presentation = new QDemonRenderPresentation();
     m_scene = new QDemonRenderScene();
     m_scene->clearColor = QVector3D(0.0, 1.0, 0.0);
     m_presentation->scene = m_scene;

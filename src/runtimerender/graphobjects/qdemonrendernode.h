@@ -44,8 +44,8 @@ QT_BEGIN_NAMESPACE
 struct QDemonRenderModel;
 struct QDemonRenderLight;
 struct QDemonRenderCamera;
-struct QDemonText;
-struct QDemonGraphNode;
+struct QDemonRenderText;
+struct QDemonRenderNode;
 class QDemonBufferManager;
 
 class INodeQueue
@@ -63,7 +63,7 @@ public:
 class QDemonRenderNodeFilterInterface;
 class QDemonPathManagerInterface;
 
-struct Q_DEMONRUNTIMERENDER_EXPORT QDemonGraphNode : public QDemonGraphObject
+struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderNode : public QDemonRenderGraphObject
 {
     enum class Flag
     {
@@ -114,26 +114,26 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonGraphNode : public QDemonGraphObject
     qint32 skeletonId = -1;
 
     // node graph members.
-    QDemonGraphNode *parent = nullptr;
-    QDemonGraphNode *nextSibling = nullptr;
-    QDemonGraphNode *previousSibling = nullptr;
-    QDemonGraphNode *firstChild = nullptr;
+    QDemonRenderNode *parent = nullptr;
+    QDemonRenderNode *nextSibling = nullptr;
+    QDemonRenderNode *previousSibling = nullptr;
+    QDemonRenderNode *firstChild = nullptr;
     // Property maintained solely by the render system.
     // Depth-first-search index assigned and maintained by render system.
     quint32 dfsIndex = 0;
 
-    QDemonGraphNode();
-    QDemonGraphNode(Type type);
-    QDemonGraphNode(const QDemonGraphNode &inCloningObject);
-    ~QDemonGraphNode() {}
+    QDemonRenderNode();
+    QDemonRenderNode(Type type);
+    QDemonRenderNode(const QDemonRenderNode &inCloningObject);
+    ~QDemonRenderNode() {}
 
     // Sets this object dirty and walks down the graph setting all
     // children who are not dirty to be dirty.
     void markDirty(TransformDirtyFlag inTransformDirty = TransformDirtyFlag::TransformNotDirty);
 
-    void addChild(QDemonGraphNode &inChild);
-    void removeChild(QDemonGraphNode &inChild);
-    QDemonGraphNode *getLastChild();
+    void addChild(QDemonRenderNode &inChild);
+    void removeChild(QDemonRenderNode &inChild);
+    QDemonRenderNode *getLastChild();
 
     // Remove this node from the graph.
     // It is no longer the the parent's child lists
@@ -201,7 +201,7 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonGraphNode : public QDemonGraphObject
     void calculateNormalMatrix(QMatrix3x3 &outNormalMatrix) const;
 };
 
-Q_DECLARE_OPERATORS_FOR_FLAGS(QDemonGraphNode::Flags)
+Q_DECLARE_OPERATORS_FOR_FLAGS(QDemonRenderNode::Flags)
 
 QT_END_NAMESPACE
 

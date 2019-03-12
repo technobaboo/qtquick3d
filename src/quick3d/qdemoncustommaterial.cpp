@@ -54,7 +54,7 @@ void QDemonCustomMaterial::setHasVolumetricDF(bool hasVolumetricDF)
     emit hasVolumetricDFChanged(m_hasVolumetricDF);
 }
 
-QDemonGraphObject *QDemonCustomMaterial::updateSpatialNode(QDemonGraphObject *node)
+QDemonRenderGraphObject *QDemonCustomMaterial::updateSpatialNode(QDemonRenderGraphObject *node)
 {
     // TODO: Create and update customer material (special)
 

@@ -475,7 +475,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
         if (isEffectRegistered(inName))
             return false;
 
-        m_coreContext->getDynamicObjectSystemCore()->doRegister(inName, inProperties, sizeof(QDemonRenderEffect), QDemonGraphObject::Type::Effect);
+        m_coreContext->getDynamicObjectSystemCore()->doRegister(inName, inProperties, sizeof(QDemonRenderEffect), QDemonRenderGraphObject::Type::Effect);
         QDemonDynamicObjectClassInterface &theClass = *m_coreContext->getDynamicObjectSystemCore()->getDynamicObjectClass(inName);
 
         QDemonRef<QDemonEffectClass> theEffect(new QDemonEffectClass(theClass));
@@ -550,7 +550,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
     {
         if (isEffectRegistered(inName))
             return false;
-        m_coreContext->getDynamicObjectSystemCore()->doRegister(inName, inProperties, sizeof(QDemonRenderEffect), QDemonGraphObject::Type::Effect);
+        m_coreContext->getDynamicObjectSystemCore()->doRegister(inName, inProperties, sizeof(QDemonRenderEffect), QDemonRenderGraphObject::Type::Effect);
         auto theClass = m_coreContext->getDynamicObjectSystemCore()->getDynamicObjectClass(inName);
         QDemonRef<QDemonEffectClass> theEffect(new QDemonEffectClass(*theClass));
         m_effectClasses.insert(inName, theEffect);

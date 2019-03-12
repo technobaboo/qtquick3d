@@ -43,7 +43,7 @@ class QDemonRenderContextInterface;
 class QDemonOffscreenRenderManagerInterface;
 class QDemonOffscreenRendererInterface;
 
-struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderImage : public QDemonGraphObject
+struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderImage : public QDemonRenderGraphObject
 {
     enum class Flag
     {
@@ -69,7 +69,7 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderImage : public QDemonGraphObject
     // Presentation id.
     QString m_offscreenRendererId; // overrides source path if available
     QDemonRef<QDemonOffscreenRendererInterface> m_lastFrameOffscreenRenderer;
-    QDemonGraphObject *m_parent;
+    QDemonRenderGraphObject *m_parent;
 
     QDemonRenderImageTextureData m_textureData;
 

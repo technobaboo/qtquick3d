@@ -675,7 +675,7 @@ void QDemonLayer::setHeightUnits(QDemonLayer::QDemonLayerUnitTypes heightUnits)
     markDirty(Layout);
 }
 
-QDemonGraphObject *QDemonLayer::updateSpatialNode(QDemonGraphObject *node)
+QDemonRenderGraphObject *QDemonLayer::updateSpatialNode(QDemonRenderGraphObject *node)
 {
     if (!node)
         node = new QDemonRenderLayer();

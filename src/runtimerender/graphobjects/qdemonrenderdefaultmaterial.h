@@ -40,7 +40,7 @@ QT_BEGIN_NAMESPACE
 
 struct QDemonRenderImage;
 
-struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderDefaultMaterial : QDemonGraphObject
+struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderDefaultMaterial : QDemonRenderGraphObject
 {
     enum class MaterialLighting : quint8
     {
@@ -100,7 +100,7 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderDefaultMaterial : QDemonGraphObje
     float diffuseLightWrap = 0.0f; // 0 - 1
     bool vertexColors = false;
     // Materials are stored as a linked list on models.
-    QDemonGraphObject *nextSibling = nullptr;
+    QDemonRenderGraphObject *nextSibling = nullptr;
     QDemonRenderModel *parent = nullptr;
 
     QDemonRenderDefaultMaterial();

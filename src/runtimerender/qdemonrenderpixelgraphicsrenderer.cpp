@@ -267,7 +267,7 @@ struct QDemonPixelGraphicsRenderer : public QDemonPixelGraphicsRendererInterface
         theCamera.projection = theProjectionMatrix;
         // Explicitly call the node's calculate global variables so that the camera doesn't attempt
         // to change the projection we setup.
-        static_cast<QDemonGraphNode &>(theCamera).calculateGlobalVariables();
+        static_cast<QDemonRenderNode &>(theCamera).calculateGlobalVariables();
         QMatrix4x4 theVPMatrix;
         theCamera.calculateViewProjectionMatrix(theVPMatrix);
 

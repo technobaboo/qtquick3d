@@ -38,7 +38,7 @@
 QT_BEGIN_NAMESPACE
 
 struct QDemonRenderImage;
-struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderLightmaps : public QDemonGraphObject
+struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderLightmaps : public QDemonRenderGraphObject
 {
     enum class Usage : quint8
     {

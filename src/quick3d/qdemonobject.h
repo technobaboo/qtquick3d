@@ -127,7 +127,7 @@ Q_SIGNALS:
     void visibleChanged(bool visible);
 
 protected:
-    virtual QDemonGraphObject *updateSpatialNode(QDemonGraphObject *node) = 0;
+    virtual QDemonRenderGraphObject *updateSpatialNode(QDemonRenderGraphObject *node) = 0;
     virtual void itemChange(ItemChange, const ItemChangeData &);
     QDemonObject(QDemonObjectPrivate &dd, QDemonObject *parent = nullptr);
 

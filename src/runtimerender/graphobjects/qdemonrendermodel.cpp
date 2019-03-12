@@ -35,7 +35,7 @@
 QT_BEGIN_NAMESPACE
 
 QDemonRenderModel::QDemonRenderModel()
-    : QDemonGraphNode(QDemonGraphObject::Type::Model)
+    : QDemonRenderNode(QDemonRenderGraphObject::Type::Model)
     , firstMaterial(nullptr)
     , skeletonRoot(-1)
     , tessellationMode(TessModeValues::NoTess)
@@ -45,12 +45,12 @@ QDemonRenderModel::QDemonRenderModel()
 {
 }
 
-void QDemonRenderModel::addMaterial(QDemonGraphObject &inMaterial)
+void QDemonRenderModel::addMaterial(QDemonRenderGraphObject &inMaterial)
 {
     if (firstMaterial == nullptr) {
         firstMaterial = &inMaterial;
     } else {
-        QDemonGraphObject *lastMaterial;
+        QDemonRenderGraphObject *lastMaterial;
         // empty loop intentional
         for (lastMaterial = firstMaterial; lastMaterial && getNextMaterialSibling(lastMaterial);
              lastMaterial = getNextMaterialSibling(lastMaterial)) {
@@ -58,7 +58,7 @@ void QDemonRenderModel::addMaterial(QDemonGraphObject &inMaterial)
         setNextMaterialSibling(*lastMaterial, &inMaterial);
     }
     // ### I don't think reparenting is necessary here (I tested without it at least)
-    if (inMaterial.type == QDemonGraphObject::Type::DefaultMaterial)
+    if (inMaterial.type == QDemonRenderGraphObject::Type::DefaultMaterial)
         static_cast<QDemonRenderDefaultMaterial &>(inMaterial).parent = this;
 }
 

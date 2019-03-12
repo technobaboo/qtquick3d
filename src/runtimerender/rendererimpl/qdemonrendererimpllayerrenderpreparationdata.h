@@ -156,10 +156,10 @@ struct QDemonLayerRenderPreparationResult : public QDemonLayerRenderHelper
 
 struct QDemonRenderableNodeEntry
 {
-    QDemonGraphNode *node = nullptr;
+    QDemonRenderNode *node = nullptr;
     QDemonNodeLightEntryList lights;
     QDemonRenderableNodeEntry() = default;
-    QDemonRenderableNodeEntry(QDemonGraphNode &inNode) : node(&inNode) {}
+    QDemonRenderableNodeEntry(QDemonRenderNode &inNode) : node(&inNode) {}
 };
 
 struct QDemonScopedLightsListScope
@@ -208,7 +208,7 @@ struct QDemonLayerRenderPreparationData
                                               const TShaderFeatureSet &inShaderFeatures,
                                               quint32 lightIndex,
                                               const QDemonRenderCamera &inCamera);
-    typedef QHash<QDemonRenderLight *, QDemonGraphNode *> TLightToNodeMap;
+    typedef QHash<QDemonRenderLight *, QDemonRenderNode *> TLightToNodeMap;
     typedef QVector<QDemonModelContext *> TModelContextPtrList;
     // typedef Pool<SNodeLightEntry, ForwardingAllocator> TNodeLightEntryPoolType;
 
@@ -229,7 +229,7 @@ struct QDemonLayerRenderPreparationData
     // Built at the same time as the renderable nodes map.
     // these are processed so they are available when the shaders for the models
     // are being generated.
-    QVector<QDemonGraphNode *> camerasAndLights;
+    QVector<QDemonRenderNode *> camerasAndLights;
 
     // Results of prepare for render.
     QDemonRenderCamera *camera;
@@ -298,11 +298,11 @@ struct QDemonLayerRenderPreparationData
                                const QDemonOption<QDemonClippingFrustum> &inClipFrustum,
                                QDemonNodeLightEntryList &inScopedLights);
 
-    bool prepareTextForRender(QDemonText &inText,
+    bool prepareTextForRender(QDemonRenderText &inText,
                               const QMatrix4x4 &inViewProjection,
                               float inTextScaleFactor,
                               QDemonLayerRenderPreparationResultFlags &ioFlags);
-    bool preparePathForRender(QDemonPath &inPath,
+    bool preparePathForRender(QDemonRenderPath &inPath,
                               const QMatrix4x4 &inViewProjection,
                               const QDemonOption<QDemonClippingFrustum> &inClipFrustum,
                               QDemonLayerRenderPreparationResultFlags &ioFlags);
@@ -322,7 +322,7 @@ struct QDemonLayerRenderPreparationData
     QVector<QDemonShaderPreprocessorFeature> getShaderFeatureSet();
     size_t getShaderFeatureSetHash();
     // The graph object is not const because this traversal updates dirty state on the objects.
-    QPair<bool, QDemonGraphObject *> resolveReferenceMaterial(QDemonGraphObject *inMaterial);
+    QPair<bool, QDemonRenderGraphObject *> resolveReferenceMaterial(QDemonRenderGraphObject *inMaterial);
 
     QVector3D getCameraDirection();
     // Per-frame cache of renderable objects post-sort.

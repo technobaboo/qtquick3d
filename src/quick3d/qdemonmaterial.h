@@ -58,7 +58,7 @@ Q_SIGNALS:
     void displacementAmountChanged(float displacementAmount);
 
 protected:
-    QDemonGraphObject *updateSpatialNode(QDemonGraphObject *node);
+    QDemonRenderGraphObject *updateSpatialNode(QDemonRenderGraphObject *node);
     void itemChange(ItemChange, const ItemChangeData &) override;
 private:
     void updateWindow(QDemonWindow *window);

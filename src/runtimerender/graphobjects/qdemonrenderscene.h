@@ -37,12 +37,12 @@
 
 QT_BEGIN_NAMESPACE
 struct QDemonRenderLayer;
-struct QDemonPresentation;
+struct QDemonRenderPresentation;
 typedef void *QDemonRenderInstanceId;
 
-struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderScene : public QDemonGraphObject
+struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderScene : public QDemonRenderGraphObject
 {
-    QDemonPresentation *presentation;
+    QDemonRenderPresentation *presentation;
     QDemonRenderLayer *firstChild;
     QVector3D clearColor;
     bool useClearColor;

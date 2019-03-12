@@ -34,9 +34,9 @@
 
 QT_BEGIN_NAMESPACE
 
-struct QDemonPathSubPath;
+struct QDemonRenderSubPath;
 
-struct QDemonPath : public QDemonGraphNode
+struct QDemonRenderPath : public QDemonRenderNode
 {
     enum class Capping : quint8
     {
@@ -72,17 +72,17 @@ struct QDemonPath : public QDemonGraphNode
     float m_endCapOffset = 10.0f;
     float m_endCapOpacity = 0.2f;
     float m_endCapWidth = 0.0f;
-    QDemonGraphObject *m_material = nullptr;
-    QDemonGraphObject *m_secondMaterial = nullptr;
+    QDemonRenderGraphObject *m_material = nullptr;
+    QDemonRenderGraphObject *m_secondMaterial = nullptr;
     // Paths can either be immediate - children attached define path
     // or they can link to a path buffer that defines the path.
-    QDemonPathSubPath *m_firstSubPath = nullptr;
+    QDemonRenderSubPath *m_firstSubPath = nullptr;
     QString m_pathBuffer;
-    QDemonPath::PaintStyle m_paintStyle = PaintStyle::Stroked;
+    QDemonRenderPath::PaintStyle m_paintStyle = PaintStyle::Stroked;
 
     bool m_wireframeMode = false;
     // Loaded onto the card just as data.
-    QDemonPath() : QDemonGraphNode(Type::Path) {}
+    QDemonRenderPath() : QDemonRenderNode(Type::Path) {}
 
     bool isStroked() const
     {
@@ -94,7 +94,7 @@ struct QDemonPath : public QDemonGraphNode
         return m_paintStyle == PaintStyle::Filled || m_paintStyle == PaintStyle::FilledAndStroked;
     }
 
-    void addMaterial(QDemonGraphObject *inMaterial)
+    void addMaterial(QDemonRenderGraphObject *inMaterial)
     {
         if (m_material == nullptr)
             m_material = inMaterial;
@@ -108,7 +108,7 @@ struct QDemonPath : public QDemonGraphNode
         m_secondMaterial = nullptr;
     }
 
-    void addSubPath(QDemonPathSubPath &inSubPath);
+    void addSubPath(QDemonRenderSubPath &inSubPath);
     void clearSubPaths();
 };
 QT_END_NAMESPACE

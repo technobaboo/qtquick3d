@@ -492,7 +492,7 @@ void QDemonWindowPrivate::init(QDemonWindow *c)
     q->setSurfaceType(windowManager ? windowManager->windowSurfaceType() : QSurface::OpenGLSurface);
     q->setFormat(renderContext->format());
 
-    m_presentation = new QDemonPresentation();
+    m_presentation = new QDemonRenderPresentation();
     m_scene = new QDemonRenderScene();
     m_presentation->scene = m_scene;
     m_scene->presentation = m_presentation.data();
@@ -529,7 +529,7 @@ void QDemonWindowPrivate::dirtyItem(QDemonObject *)
     q->maybeUpdate();
 }
 
-void QDemonWindowPrivate::cleanup(QDemonGraphObject *n)
+void QDemonWindowPrivate::cleanup(QDemonRenderGraphObject *n)
 {
     Q_Q(QDemonWindow);
 
@@ -695,33 +695,33 @@ void QDemonWindowPrivate::updateDirtyNodes()
 void QDemonWindowPrivate::cleanupNodes()
 {
     for (int ii = 0; ii < cleanupNodeList.count(); ++ii) {
-        QDemonGraphObject *node = cleanupNodeList.at(ii);
+        QDemonRenderGraphObject *node = cleanupNodeList.at(ii);
         // Different processing for resource nodes vs hierarchical nodes
         switch (node->type) {
-        case QDemonGraphObject::Type::Layer: {
+        case QDemonRenderGraphObject::Type::Layer: {
             QDemonRenderLayer *layerNode = static_cast<QDemonRenderLayer *>(node);
             // remove layer from scene
             m_scene->removeChild(*layerNode);
         } break;
-        case QDemonGraphObject::Type::Node:
-        case QDemonGraphObject::Type::Light:
-        case QDemonGraphObject::Type::Camera:
-        case QDemonGraphObject::Type::Model:
-        case QDemonGraphObject::Type::Text:
-        case QDemonGraphObject::Type::Path: {
+        case QDemonRenderGraphObject::Type::Node:
+        case QDemonRenderGraphObject::Type::Light:
+        case QDemonRenderGraphObject::Type::Camera:
+        case QDemonRenderGraphObject::Type::Model:
+        case QDemonRenderGraphObject::Type::Text:
+        case QDemonRenderGraphObject::Type::Path: {
             // handle hierarchical nodes
-            QDemonGraphNode *spatialNode = static_cast<QDemonGraphNode *>(node);
+            QDemonRenderNode *spatialNode = static_cast<QDemonRenderNode *>(node);
             spatialNode->removeFromGraph();
         } break;
-        case QDemonGraphObject::Type::Presentation:
-        case QDemonGraphObject::Type::Scene:
-        case QDemonGraphObject::Type::DefaultMaterial:
-        case QDemonGraphObject::Type::Image:
-        case QDemonGraphObject::Type::Effect:
-        case QDemonGraphObject::Type::CustomMaterial:
-        case QDemonGraphObject::Type::ReferencedMaterial:
-        case QDemonGraphObject::Type::PathSubPath:
-        case QDemonGraphObject::Type::Lightmaps:
+        case QDemonRenderGraphObject::Type::Presentation:
+        case QDemonRenderGraphObject::Type::Scene:
+        case QDemonRenderGraphObject::Type::DefaultMaterial:
+        case QDemonRenderGraphObject::Type::Image:
+        case QDemonRenderGraphObject::Type::Effect:
+        case QDemonRenderGraphObject::Type::CustomMaterial:
+        case QDemonRenderGraphObject::Type::ReferencedMaterial:
+        case QDemonRenderGraphObject::Type::PathSubPath:
+        case QDemonRenderGraphObject::Type::Lightmaps:
             // handle resource nodes
             // ### Handle the case where we are referenced by another node
             break;
@@ -1077,12 +1077,12 @@ void QDemonWindowPrivate::updateDirtySpatialNode(QDemonNode *spatialNode)
     itemPriv->dirtyAttributes = 0;
     itemPriv->spatialNode = spatialNode->updateSpatialNode(itemPriv->spatialNode);
 
-    QDemonGraphNode *graphNode = static_cast<QDemonGraphNode *>(itemPriv->spatialNode);
+    QDemonRenderNode *graphNode = static_cast<QDemonRenderNode *>(itemPriv->spatialNode);
 
     if (graphNode && graphNode->parent == nullptr) {
         QDemonNode *nodeParent = qobject_cast<QDemonNode *>(spatialNode->parent());
         if (nodeParent) {
-            QDemonGraphNode *parentGraphNode = static_cast<QDemonGraphNode *>(QDemonObjectPrivate::get(nodeParent)->spatialNode);
+            QDemonRenderNode *parentGraphNode = static_cast<QDemonRenderNode *>(QDemonObjectPrivate::get(nodeParent)->spatialNode);
             parentGraphNode->addChild(*graphNode);
         } else if (graphNode && spatialNode != contentItem) {
             Q_ASSERT(false);

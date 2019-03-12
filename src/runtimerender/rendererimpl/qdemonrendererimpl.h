@@ -132,7 +132,7 @@ class Q_DEMONRUNTIMERENDER_EXPORT QDemonRendererImpl : public QDemonRendererInte
     typedef QHash<QByteArray, QDemonRef<QDemonRenderShaderProgram>> TStrShaderMap;
     typedef QHash<QByteArray, QDemonRef<QDemonRenderInputAssembler>> TStrIAMap;
 
-    typedef QHash<long, QDemonGraphNode *> TBoneIdNodeMap;
+    typedef QHash<long, QDemonRenderNode *> TBoneIdNodeMap;
 
     QDemonRef<QDemonRenderContextInterface> m_demonContext;
     QDemonRef<QDemonRenderContext> m_context;
@@ -273,13 +273,13 @@ public:
                      QVector3D clearColor,
                      bool inRenderSiblings,
                      const QDemonRenderInstanceId id) override;
-    void childrenUpdated(QDemonGraphNode &inParent) override;
-    float getTextScale(const QDemonText &inText) override;
+    void childrenUpdated(QDemonRenderNode &inParent) override;
+    float getTextScale(const QDemonRenderText &inText) override;
 
-    QDemonRenderCamera *getCameraForNode(const QDemonGraphNode &inNode) const override;
-    QDemonOption<QDemonCuboidRect> getCameraBounds(const QDemonGraphObject &inObject) override;
-    virtual QDemonRenderLayer *getLayerForNode(const QDemonGraphNode &inNode) const;
-    QDemonRef<QDemonLayerRenderData> getOrCreateLayerRenderDataForNode(const QDemonGraphNode &inNode,
+    QDemonRenderCamera *getCameraForNode(const QDemonRenderNode &inNode) const override;
+    QDemonOption<QDemonCuboidRect> getCameraBounds(const QDemonRenderGraphObject &inObject) override;
+    virtual QDemonRenderLayer *getLayerForNode(const QDemonRenderNode &inNode) const;
+    QDemonRef<QDemonLayerRenderData> getOrCreateLayerRenderDataForNode(const QDemonRenderNode &inNode,
                                                                        const QDemonRenderInstanceId id = nullptr);
 
     void beginFrame() override;
@@ -293,12 +293,12 @@ public:
                                 bool inPickEverything,
                                 const QDemonRenderInstanceId id) override;
 
-    virtual QDemonOption<QVector2D> facePosition(QDemonGraphNode &inNode,
+    virtual QDemonOption<QVector2D> facePosition(QDemonRenderNode &inNode,
                                                  QDemonBounds3 inBounds,
                                                  const QMatrix4x4 &inGlobalTransform,
                                                  const QVector2D &inViewportDimensions,
                                                  const QVector2D &inMouseCoords,
-                                                 QDemonDataRef<QDemonGraphObject *> inMapperObjects,
+                                                 QDemonDataRef<QDemonRenderGraphObject *> inMapperObjects,
                                                  QDemonRenderBasisPlanes inPlane) override;
 
     virtual QDemonRenderPickResult pickOffscreenLayer(QDemonRenderLayer &inLayer,
@@ -306,9 +306,9 @@ public:
                                                       const QVector2D &inMouseCoords,
                                                       bool inPickEverything);
 
-    QVector3D unprojectToPosition(QDemonGraphNode &inNode, QVector3D &inPosition, const QVector2D &inMouseVec) const override;
-    QVector3D unprojectWithDepth(QDemonGraphNode &inNode, QVector3D &inPosition, const QVector3D &inMouseVec) const override;
-    QVector3D projectPosition(QDemonGraphNode &inNode, const QVector3D &inPosition) const override;
+    QVector3D unprojectToPosition(QDemonRenderNode &inNode, QVector3D &inPosition, const QVector2D &inMouseVec) const override;
+    QVector3D unprojectWithDepth(QDemonRenderNode &inNode, QVector3D &inPosition, const QVector3D &inMouseVec) const override;
+    QVector3D projectPosition(QDemonRenderNode &inNode, const QVector3D &inPosition) const override;
 
     QDemonOption<QDemonLayerPickSetup> getLayerPickSetup(QDemonRenderLayer &inLayer,
                                                          const QVector2D &inMouseCoords,
@@ -458,7 +458,7 @@ public:
     // a new position and a floating point scale factor so you can render in 1/2 perspective
     // mode
     // or orthographic mode if you would like to.
-    QDemonWidgetRenderInformation getWidgetRenderInformation(QDemonGraphNode &inNode,
+    QDemonWidgetRenderInformation getWidgetRenderInformation(QDemonRenderNode &inNode,
                                                                      const QVector3D &inPos,
                                                                      RenderWidgetModes inWidgetMode);
 
