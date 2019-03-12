@@ -48,18 +48,6 @@ struct QDemonRenderText;
 struct QDemonRenderNode;
 class QDemonBufferManager;
 
-class INodeQueue
-{
-protected:
-    virtual ~INodeQueue();
-
-public:
-    virtual void enqueue(QDemonRenderModel &inModel) = 0;
-    virtual void enqueue(QDemonRenderLight &inLight) = 0;
-    virtual void enqueue(QDemonRenderCamera &inCamera) = 0;
-    // virtual void Enqueue( SText& inText ) = 0;
-};
-
 class QDemonRenderNodeFilterInterface;
 class QDemonPathManagerInterface;
 

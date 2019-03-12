@@ -43,8 +43,6 @@
 
 QT_BEGIN_NAMESPACE
 
-INodeQueue::~INodeQueue() = default;
-
 QDemonRenderNode::QDemonRenderNode()
     : QDemonRenderNode(Type::Node)
 {
