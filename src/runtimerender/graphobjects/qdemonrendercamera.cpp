@@ -150,7 +150,7 @@ QDemonPinCameraResult pinCamera(const QRectF &inViewport,
 }
 
 QDemonRenderCamera::QDemonRenderCamera()
-    : QDemonGraphNode(QDemonGraphObject::Type::Camera)
+    : QDemonRenderNode(QDemonRenderGraphObject::Type::Camera)
     , clipNear(10)
     , clipFar(10000)
     , fov(60)
@@ -166,7 +166,7 @@ QDemonRenderCamera::QDemonRenderCamera()
 // Code for testing
 QDemonCameraGlobalCalculationResult QDemonRenderCamera::calculateGlobalVariables(const QRectF &inViewport, const QVector2D &inDesignDimensions)
 {
-    bool wasDirty = QDemonGraphNode::calculateGlobalVariables();
+    bool wasDirty = QDemonRenderNode::calculateGlobalVariables();
     return QDemonCameraGlobalCalculationResult{ wasDirty, calculateProjection(inViewport, inDesignDimensions) };
 }
 

@@ -9,7 +9,7 @@
 class QDemonRenderContextCoreInterface;
 class QDemonRenderContextInterface;
 class QDemonRenderContext;
-struct QDemonPresentation;
+struct QDemonRenderPresentation;
 struct QDemonRenderScene;
 struct QDemonRenderModel;
 
@@ -45,7 +45,7 @@ private:
     QDemonRef<QDemonRenderContextCoreInterface> m_contextCore;
     QDemonRef<QDemonRenderContextInterface> m_context;
     QDemonRef<QDemonRenderContext> m_renderContext;
-    QDemonRef<QDemonPresentation> m_presentation;
+    QDemonRef<QDemonRenderPresentation> m_presentation;
     QDemonRef<QDemonRenderScene> m_scene;
     QDemonRenderModel *m_cube;
 

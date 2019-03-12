@@ -199,12 +199,12 @@ void QDemonNode::setVisible(bool visible)
     update();
 }
 
-QDemonGraphObject *QDemonNode::updateSpatialNode(QDemonGraphObject *node)
+QDemonRenderGraphObject *QDemonNode::updateSpatialNode(QDemonRenderGraphObject *node)
 {
     if (!node)
-        node = new QDemonGraphNode();
+        node = new QDemonRenderNode();
 
-    auto spacialNode = static_cast<QDemonGraphNode *>(node);
+    auto spacialNode = static_cast<QDemonRenderNode *>(node);
     bool transformIsDirty = false;
     if (spacialNode->position != m_position) {
         transformIsDirty = true;
@@ -234,9 +234,9 @@ QDemonGraphObject *QDemonNode::updateSpatialNode(QDemonGraphObject *node)
     spacialNode->skeletonId = m_boneid;
 
     if (transformIsDirty)
-        spacialNode->markDirty(QDemonGraphNode::TransformDirtyFlag::TransformIsDirty);
+        spacialNode->markDirty(QDemonRenderNode::TransformDirtyFlag::TransformIsDirty);
     else
-        spacialNode->markDirty(QDemonGraphNode::TransformDirtyFlag::TransformNotDirty);
+        spacialNode->markDirty(QDemonRenderNode::TransformDirtyFlag::TransformNotDirty);
 
     return spacialNode;
 }

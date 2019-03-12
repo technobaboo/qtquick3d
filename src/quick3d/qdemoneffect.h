@@ -23,7 +23,7 @@ Q_SIGNALS:
     void sourceChanged(QString source);
 
 protected:
-    QDemonGraphObject *updateSpatialNode(QDemonGraphObject *node) override;
+    QDemonRenderGraphObject *updateSpatialNode(QDemonRenderGraphObject *node) override;
 
 private:
     QString m_source;

@@ -47,18 +47,18 @@ enum class RenderRotationValues : quint8
     Clockwise270,
 };
 
-struct Q_DEMONRUNTIMERENDER_EXPORT QDemonPresentation : public QDemonGraphObject
+struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderPresentation : public QDemonRenderGraphObject
 {
-    Q_DISABLE_COPY(QDemonPresentation)
+    Q_DISABLE_COPY(QDemonRenderPresentation)
     QVector2D presentationDimensions;
     RenderRotationValues presentationRotation;
     QDemonRef<QDemonRenderScene> scene;
 
     QString presentationDirectory;
 
-    QDemonPresentation();
-    QDemonPresentation(float w, float h, const QString &presDir);
-    ~QDemonPresentation();
+    QDemonRenderPresentation();
+    QDemonRenderPresentation(float w, float h, const QString &presDir);
+    ~QDemonRenderPresentation();
     void render(QDemonRenderContextInterface *inContext);
 };
 

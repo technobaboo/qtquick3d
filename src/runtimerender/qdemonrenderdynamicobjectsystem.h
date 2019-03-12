@@ -42,7 +42,7 @@
 #include <QtCore/QString>
 
 QT_BEGIN_NAMESPACE
-struct QDemonDynamicObject;
+struct QDemonRenderDynamicGraphObject;
 // struct SWriteBuffer;
 // struct SStrRemapMap;
 class QDemonRenderContextInterface;
@@ -160,7 +160,7 @@ public:
     virtual quint32 getPropertySectionByteSize() const = 0;
     virtual const quint8 *getDefaultValueBuffer() const = 0;
     virtual quint32 getBaseObjectSize() const = 0;
-    virtual QDemonGraphObject::Type graphObjectType() const = 0;
+    virtual QDemonRenderGraphObject::Type graphObjectType() const = 0;
     virtual const dynamic::QDemonPropertyDefinition *findPropertyByName(QString inName) const = 0;
     virtual QDemonConstDataRef<dynamic::QDemonCommand *> getRenderCommands() const = 0;
     virtual bool requiresDepthTexture() const = 0;
@@ -182,7 +182,7 @@ public:
     virtual bool doRegister(QString inName,
                             QDemonConstDataRef<dynamic::QDemonPropertyDeclaration> inProperties,
                             quint32 inBaseObjectSize,
-                            QDemonGraphObject::Type inGraphObjectType) = 0;
+                            QDemonRenderGraphObject::Type inGraphObjectType) = 0;
 
     virtual bool unregister(QString inName) = 0;
 
@@ -217,7 +217,7 @@ public:
     virtual void setRenderCommands(const QString &inClassName, const QDemonConstDataRef<dynamic::QDemonCommand *> &inCommands) = 0;
     virtual QDemonConstDataRef<dynamic::QDemonCommand *> getRenderCommands(const QString &inClassName) const = 0;
 
-    virtual QDemonDynamicObject *createInstance(const QString &inClassName) = 0;
+    virtual QDemonRenderDynamicGraphObject *createInstance(const QString &inClassName) = 0;
 
     // scan shader for #includes and insert any found"
     virtual void insertShaderHeaderInformation(QByteArray &inShader, const char *inLogPath) = 0;

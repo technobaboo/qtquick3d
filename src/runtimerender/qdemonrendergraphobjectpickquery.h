@@ -67,7 +67,7 @@ struct QDemonRenderPickSubResult
 
 struct QDemonRenderPickResult
 {
-    const QDemonGraphObject *m_hitObject;
+    const QDemonRenderGraphObject *m_hitObject;
     float m_cameraDistanceSq;
     // The local coordinates in X,Y UV space where the hit occured
     QVector2D m_localUVCoords;
@@ -77,7 +77,7 @@ struct QDemonRenderPickResult
     // from.
     QDemonRef<QDemonOffscreenRendererInterface> m_offscreenRenderer;
 
-    QDemonRenderPickResult(const QDemonGraphObject &inHitObject, float inCameraDistance, const QVector2D &inLocalUVCoords);
+    QDemonRenderPickResult(const QDemonRenderGraphObject &inHitObject, float inCameraDistance, const QVector2D &inLocalUVCoords);
     QDemonRenderPickResult();
     ~QDemonRenderPickResult();
 };

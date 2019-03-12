@@ -33,14 +33,14 @@ QT_BEGIN_NAMESPACE
 
 QDemonTextRenderInfo::~QDemonTextRenderInfo() {}
 
-QDemonText::QDemonText() : QDemonGraphNode(QDemonGraphObject::Type::Text), m_textColor(1, 1, 1), m_textTexture(nullptr)
+QDemonRenderText::QDemonRenderText() : QDemonRenderNode(QDemonRenderGraphObject::Type::Text), m_textColor(1, 1, 1), m_textTexture(nullptr)
 {
     m_bounds.setEmpty();
 }
 
-QDemonText::~QDemonText() {}
+QDemonRenderText::~QDemonRenderText() {}
 
-QDemonBounds3 QDemonText::getTextBounds() const
+QDemonBounds3 QDemonRenderText::getTextBounds() const
 {
     QDemonBounds3 retval;
     retval.setEmpty();

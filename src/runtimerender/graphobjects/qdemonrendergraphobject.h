@@ -37,7 +37,7 @@ QT_BEGIN_NAMESPACE
 
 // Types should be setup on construction.  Change the type
 // at your own risk as the type is used for RTTI purposes.
-struct Q_DEMONRUNTIMERENDER_EXPORT QDemonGraphObject
+struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderGraphObject
 {
     enum class Type : quint8
     {
@@ -68,8 +68,8 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonGraphObject
     // Type is used for RTTI purposes down the road.
     Type type;
 
-    QDemonGraphObject(QDemonGraphObject::Type inType) : type(inType) {}
-    virtual ~QDemonGraphObject();
+    QDemonRenderGraphObject(QDemonRenderGraphObject::Type inType) : type(inType) {}
+    virtual ~QDemonRenderGraphObject();
 
     // If you change any detail of the scene graph, or even *breath* on a
     // scene graph object, you need to bump this binary version so at least

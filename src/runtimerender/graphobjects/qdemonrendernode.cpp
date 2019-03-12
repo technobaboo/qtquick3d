@@ -46,17 +46,17 @@ QT_BEGIN_NAMESPACE
 
 INodeQueue::~INodeQueue() = default;
 
-QDemonGraphNode::QDemonGraphNode()
-    : QDemonGraphNode(Type::Node)
+QDemonRenderNode::QDemonRenderNode()
+    : QDemonRenderNode(Type::Node)
 {
 
 }
 
-QDemonGraphNode::QDemonGraphNode(Type type)
-    : QDemonGraphObject(type) {}
+QDemonRenderNode::QDemonRenderNode(Type type)
+    : QDemonRenderGraphObject(type) {}
 
-QDemonGraphNode::QDemonGraphNode(const QDemonGraphNode &inCloningObject)
-    : QDemonGraphObject(inCloningObject)
+QDemonRenderNode::QDemonRenderNode(const QDemonRenderNode &inCloningObject)
+    : QDemonRenderGraphObject(inCloningObject)
     , rotation(inCloningObject.rotation) // Radians
     , position(inCloningObject.position)
     , scale(inCloningObject.scale)
@@ -78,13 +78,13 @@ QDemonGraphNode::QDemonGraphNode(const QDemonGraphNode &inCloningObject)
 
 // Sets this object dirty and walks down the graph setting all
 // children who are not dirty to be dirty.
-void QDemonGraphNode::markDirty(TransformDirtyFlag inTransformDirty)
+void QDemonRenderNode::markDirty(TransformDirtyFlag inTransformDirty)
 {
     if (!flags.testFlag(Flag::TransformDirty))
         flags.setFlag(Flag::TransformDirty, inTransformDirty != TransformDirtyFlag::TransformNotDirty);
     if (!flags.testFlag(Flag::Dirty)) {
         flags.setFlag(Flag::Dirty, true);
-        for (QDemonGraphNode *child = firstChild; child; child = child->nextSibling)
+        for (QDemonRenderNode *child = firstChild; child; child = child->nextSibling)
             child->markDirty(inTransformDirty);
     }
 }
@@ -93,7 +93,7 @@ void QDemonGraphNode::markDirty(TransformDirtyFlag inTransformDirty)
 // Walks up the graph ensure all parents are not dirty so they have
 // valid global transforms.
 
-bool QDemonGraphNode::calculateGlobalVariables()
+bool QDemonRenderNode::calculateGlobalVariables()
 {
     bool retval = flags.testFlag(Flag::Dirty);
     if (retval) {
@@ -105,7 +105,7 @@ bool QDemonGraphNode::calculateGlobalVariables()
             // Layer transforms do not flow down but affect the final layer's rendered
             // representation.
             retval = parent->calculateGlobalVariables() || retval;
-            if (parent->type != QDemonGraphObject::Type::Layer) {
+            if (parent->type != QDemonRenderGraphObject::Type::Layer) {
                 globalOpacity *= parent->globalOpacity;
                 if (!flags.testFlag(Flag::IgnoreParentTransform))
                     globalTransform = parent->globalTransform * localTransform;
@@ -181,7 +181,7 @@ inline EulerAngles rotationAndOrderToShoemake(QVector3D inRotation, quint32 inOr
     return retval;
 }
 
-QVector3D QDemonGraphNode::getRotationVectorFromRotationMatrix(const QMatrix3x3 &inMatrix) const
+QVector3D QDemonRenderNode::getRotationVectorFromRotationMatrix(const QMatrix3x3 &inMatrix) const
 {
     float theConvertMatrixData[16] = { inMatrix(0, 0),
                                        inMatrix(0, 1),
@@ -202,14 +202,14 @@ QVector3D QDemonGraphNode::getRotationVectorFromRotationMatrix(const QMatrix3x3 
 
     QMatrix4x4 theConvertMatrix(theConvertMatrixData);
     if (flags.testFlag(Flag::LeftHanded))
-        QDemonGraphNode::flipCoordinateSystem(theConvertMatrix);
+        QDemonRenderNode::flipCoordinateSystem(theConvertMatrix);
     QDemonEulerAngleConverter theConverter;
     HMatrix *theHMatrix = reinterpret_cast<HMatrix *>(theConvertMatrix.data());
     EulerAngles theAngles = theConverter.eulerFromHMatrix(*theHMatrix, rotationOrder);
     return getRotationVectorFromEulerAngles(theAngles);
 }
 
-QVector3D QDemonGraphNode::getRotationVectorFromEulerAngles(const EulerAngles &inAngles)
+QVector3D QDemonRenderNode::getRotationVectorFromEulerAngles(const EulerAngles &inAngles)
 {
     QVector3D retval(0, 0, 0);
     int X = 0;
@@ -235,7 +235,7 @@ QVector3D QDemonGraphNode::getRotationVectorFromEulerAngles(const EulerAngles &i
     return retval;
 }
 
-void QDemonGraphNode::calculateRotationMatrix(QMatrix4x4 &outMatrix) const
+void QDemonRenderNode::calculateRotationMatrix(QMatrix4x4 &outMatrix) const
 {
     QDemonEulerAngleConverter theConverter;
     EulerAngles theAngles(rotationAndOrderToShoemake(rotation, int(rotationOrder)));
@@ -243,7 +243,7 @@ void QDemonGraphNode::calculateRotationMatrix(QMatrix4x4 &outMatrix) const
     theConverter.eulerToHMatrix(theAngles, *theMatrix);
 }
 
-void QDemonGraphNode::flipCoordinateSystem(QMatrix4x4 &inMatrix)
+void QDemonRenderNode::flipCoordinateSystem(QMatrix4x4 &inMatrix)
 {
     float *writePtr(inMatrix.data());
     // rotation conversion
@@ -256,7 +256,7 @@ void QDemonGraphNode::flipCoordinateSystem(QMatrix4x4 &inMatrix)
     writePtr[3 * 4 + 2] *= -1;
 }
 
-void QDemonGraphNode::calculateLocalTransform()
+void QDemonRenderNode::calculateLocalTransform()
 {
     flags.setFlag(Flag::TransformDirty, false);
     const bool leftHanded = flags.testFlag(Flag::LeftHanded);
@@ -291,7 +291,7 @@ void QDemonGraphNode::calculateLocalTransform()
         flipCoordinateSystem(localTransform);
 }
 
-void QDemonGraphNode::setLocalTransformFromMatrix(QMatrix4x4 &inTransform)
+void QDemonRenderNode::setLocalTransformFromMatrix(QMatrix4x4 &inTransform)
 {
     flags.setFlag(Flag::TransformDirty);
 
@@ -337,7 +337,7 @@ void QDemonGraphNode::setLocalTransformFromMatrix(QMatrix4x4 &inTransform)
     rotation = getRotationVectorFromRotationMatrix(theRotationMatrix);
 }
 
-void QDemonGraphNode::addChild(QDemonGraphNode &inChild)
+void QDemonRenderNode::addChild(QDemonRenderNode &inChild)
 {
     if (inChild.parent)
         inChild.parent->removeChild(inChild);
@@ -347,7 +347,7 @@ void QDemonGraphNode::addChild(QDemonGraphNode &inChild)
         inChild.nextSibling = nullptr;
         inChild.previousSibling = nullptr;
     } else {
-        QDemonGraphNode *lastChild = getLastChild();
+        QDemonRenderNode *lastChild = getLastChild();
         if (lastChild) {
             lastChild->nextSibling = &inChild;
             inChild.previousSibling = lastChild;
@@ -358,13 +358,13 @@ void QDemonGraphNode::addChild(QDemonGraphNode &inChild)
     }
 }
 
-void QDemonGraphNode::removeChild(QDemonGraphNode &inChild)
+void QDemonRenderNode::removeChild(QDemonRenderNode &inChild)
 {
     if (inChild.parent != this) {
         Q_ASSERT(false);
         return;
     }
-    for (QDemonGraphNode *child = firstChild; child; child = child->nextSibling) {
+    for (QDemonRenderNode *child = firstChild; child; child = child->nextSibling) {
         if (child == &inChild) {
             if (child->previousSibling)
                 child->previousSibling->nextSibling = child->nextSibling;
@@ -381,16 +381,16 @@ void QDemonGraphNode::removeChild(QDemonGraphNode &inChild)
     Q_ASSERT(false);
 }
 
-QDemonGraphNode *QDemonGraphNode::getLastChild()
+QDemonRenderNode *QDemonRenderNode::getLastChild()
 {
-    QDemonGraphNode *lastChild = nullptr;
+    QDemonRenderNode *lastChild = nullptr;
     // empty loop intentional
     for (lastChild = firstChild; lastChild && lastChild->nextSibling; lastChild = lastChild->nextSibling) {
     }
     return lastChild;
 }
 
-void QDemonGraphNode::removeFromGraph()
+void QDemonRenderNode::removeFromGraph()
 {
     if (parent)
         parent->removeChild(*this);
@@ -398,8 +398,8 @@ void QDemonGraphNode::removeFromGraph()
     nextSibling = nullptr;
 
     // Orphan all of my children.
-    QDemonGraphNode *nextSibling = nullptr;
-    for (QDemonGraphNode *child = firstChild; child != nullptr; child = nextSibling) {
+    QDemonRenderNode *nextSibling = nullptr;
+    for (QDemonRenderNode *child = firstChild; child != nullptr; child = nextSibling) {
         child->previousSibling = nullptr;
         child->parent = nullptr;
         nextSibling = child->nextSibling;
@@ -407,7 +407,7 @@ void QDemonGraphNode::removeFromGraph()
     }
 }
 
-QDemonBounds3 QDemonGraphNode::getBounds(const QDemonBufferManager &inManager,
+QDemonBounds3 QDemonRenderNode::getBounds(const QDemonBufferManager &inManager,
                                          const QDemonRef<QDemonPathManagerInterface> &inPathManager,
                                          bool inIncludeChildren,
                                          QDemonRenderNodeFilterInterface *inChildFilter) const
@@ -417,22 +417,22 @@ QDemonBounds3 QDemonGraphNode::getBounds(const QDemonBufferManager &inManager,
     if (inIncludeChildren)
         retval = getChildBounds(inManager, inPathManager, inChildFilter);
 
-    if (type == QDemonGraphObject::Type::Model)
+    if (type == QDemonRenderGraphObject::Type::Model)
         retval.include(static_cast<const QDemonRenderModel *>(this)->getModelBounds(inManager));
-    else if (type == QDemonGraphObject::Type::Text)
-        retval.include(static_cast<const QDemonText *>(this)->getTextBounds());
-    else if (type == QDemonGraphObject::Type::Path)
-        retval.include(inPathManager->getBounds(*static_cast<const QDemonPath *>(this)));
+    else if (type == QDemonRenderGraphObject::Type::Text)
+        retval.include(static_cast<const QDemonRenderText *>(this)->getTextBounds());
+    else if (type == QDemonRenderGraphObject::Type::Path)
+        retval.include(inPathManager->getBounds(*static_cast<const QDemonRenderPath *>(this)));
     return retval;
 }
 
-QDemonBounds3 QDemonGraphNode::getChildBounds(const QDemonBufferManager &inManager,
+QDemonBounds3 QDemonRenderNode::getChildBounds(const QDemonBufferManager &inManager,
                                               const QDemonRef<QDemonPathManagerInterface> &inPathManager,
                                               QDemonRenderNodeFilterInterface *inChildFilter) const
 {
     QDemonBounds3 retval;
     retval.setEmpty();
-    for (QDemonGraphNode *child = firstChild; child != nullptr; child = child->nextSibling) {
+    for (QDemonRenderNode *child = firstChild; child != nullptr; child = child->nextSibling) {
         if (inChildFilter == nullptr || inChildFilter->includeNode(*child)) {
             QDemonBounds3 childBounds;
             if (child->flags.testFlag(Flag::TransformDirty))
@@ -448,12 +448,12 @@ QDemonBounds3 QDemonGraphNode::getChildBounds(const QDemonBufferManager &inManag
     return retval;
 }
 
-QVector3D QDemonGraphNode::getGlobalPos() const
+QVector3D QDemonRenderNode::getGlobalPos() const
 {
     return QVector3D(globalTransform(0, 3), globalTransform(1, 3), globalTransform(2, 3));
 }
 
-QVector3D QDemonGraphNode::getDirection() const
+QVector3D QDemonRenderNode::getDirection() const
 {
     const float *dataPtr(globalTransform.data());
     QVector3D retval(dataPtr[8], dataPtr[9], dataPtr[10]);
@@ -461,7 +461,7 @@ QVector3D QDemonGraphNode::getDirection() const
     return retval;
 }
 
-QVector3D QDemonGraphNode::getScalingCorrectDirection() const
+QVector3D QDemonRenderNode::getScalingCorrectDirection() const
 {
     // ### This code has been checked to be corect
     QMatrix3x3 theDirMatrix = mat44::getUpper3x3(globalTransform);
@@ -473,12 +473,12 @@ QVector3D QDemonGraphNode::getScalingCorrectDirection() const
     return retval;
 }
 
-QVector3D QDemonGraphNode::getGlobalPivot() const
+QVector3D QDemonRenderNode::getGlobalPivot() const
 {
     QVector3D retval(position);
     retval.setZ(retval.z() * -1);
 
-    if (parent && parent->type != QDemonGraphObject::Type::Layer) {
+    if (parent && parent->type != QDemonRenderGraphObject::Type::Layer) {
         const QVector4D direction(retval.x(), retval.y(), retval.z(), 1.0f);
         const QVector4D result = parent->globalTransform * direction;
         return QVector3D(result.x(), result.y(), result.z());
@@ -487,13 +487,13 @@ QVector3D QDemonGraphNode::getGlobalPivot() const
     return retval;
 }
 
-void QDemonGraphNode::calculateMVPAndNormalMatrix(const QMatrix4x4 &inViewProjection, QMatrix4x4 &outMVP, QMatrix3x3 &outNormalMatrix) const
+void QDemonRenderNode::calculateMVPAndNormalMatrix(const QMatrix4x4 &inViewProjection, QMatrix4x4 &outMVP, QMatrix3x3 &outNormalMatrix) const
 {
     outMVP = inViewProjection * globalTransform;
     calculateNormalMatrix(outNormalMatrix);
 }
 
-void QDemonGraphNode::calculateNormalMatrix(QMatrix3x3 &outNormalMatrix) const
+void QDemonRenderNode::calculateNormalMatrix(QMatrix3x3 &outNormalMatrix) const
 {
     outNormalMatrix = mat44::getUpper3x3(globalTransform);
     outNormalMatrix = mat33::getInverse(outNormalMatrix).transposed();

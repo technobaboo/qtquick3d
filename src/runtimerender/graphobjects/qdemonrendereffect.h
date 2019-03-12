@@ -43,7 +43,7 @@ class QDemonEffectSystemInterface;
 // them and they have completely variable properties.
 // see IEffectManager in order to create these effects.
 // The data for the effect immediately follows the effect
-struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderEffect : public QDemonDynamicObject
+struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderEffect : public QDemonRenderDynamicGraphObject
 {
 private:
     // These objects are only created via the dynamic object system.

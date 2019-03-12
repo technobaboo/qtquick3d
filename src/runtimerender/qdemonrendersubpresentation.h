@@ -52,12 +52,12 @@ class QDemonSubPresentationRenderer : public QDemonOffscreenRendererInterface
 {
 public:
     QDemonRenderContextInterface *m_renderContext;
-    QDemonRef<QDemonPresentation> m_presentation;
+    QDemonRef<QDemonRenderPresentation> m_presentation;
     QDemonOffscreenRendererEnvironment m_lastRenderedEnvironment;
     CSubPresentationPickQuery m_pickQuery;
     QString m_offscreenRendererType;
 
-    QDemonSubPresentationRenderer(QDemonRenderContextInterface *inRenderContext, QDemonRef<QDemonPresentation> inPresentation);
+    QDemonSubPresentationRenderer(QDemonRenderContextInterface *inRenderContext, QDemonRef<QDemonRenderPresentation> inPresentation);
 
     QDemonOffscreenRendererEnvironment getDesiredEnvironment(QVector2D inPresScale) override;
     virtual QDemonOffscreenRenderFlags needsRender(const QDemonOffscreenRendererEnvironment &inEnvironment,

@@ -669,7 +669,7 @@ struct QDemonRenderContextData : public QDemonRenderContextInterface
                                                theCameraDimensions);
             QMatrix4x4 theVP;
             theCamera.calculateViewProjectionMatrix(theVP);
-            QDemonGraphNode theTempNode;
+            QDemonRenderNode theTempNode;
             theTempNode.calculateGlobalVariables();
             QMatrix4x4 theMVP;
             QMatrix3x3 theNormalMat;

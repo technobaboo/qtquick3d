@@ -58,7 +58,7 @@ public:
     void deliverKeyEvent(QKeyEvent *);
 
     void dirtyItem(QDemonObject *);
-    void cleanup(QDemonGraphObject *);
+    void cleanup(QDemonRenderGraphObject *);
 
     void polishItems();
     void forcePolish();
@@ -72,7 +72,7 @@ public:
     QDemonObject *dirtySpatialNodeList;
     QDemonObject *dirtyResourceList;
     QDemonObject *dirtyImageList;
-    QList<QDemonGraphObject *> cleanupNodeList;
+    QList<QDemonRenderGraphObject *> cleanupNodeList;
 
     QVector<QDemonObject *> itemsToPolish;
     QVector<QDemonObject *> hasFiltered; // during event delivery to a single receiver, the filtering parents for which childMouseEventFilter was already called
@@ -97,7 +97,7 @@ public:
 
     QOpenGLContext *glContext;
     QDemonRenderContextInterface *context;
-    QDemonRef<QDemonPresentation> m_presentation;
+    QDemonRef<QDemonRenderPresentation> m_presentation;
     QDemonRef<QDemonRenderScene> m_scene;
 
     QDemonRenderLoop *windowManager;

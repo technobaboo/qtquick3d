@@ -1742,7 +1742,7 @@ void QDemonLayerRenderData::runnableRenderToViewport(const QDemonRef<QDemonRende
                                                                        QVector2D((float)theLayerViewport.width(),
                                                                                  (float)theLayerViewport.height()));
             theTempCamera.calculateViewProjectionMatrix(theViewProjection);
-            QDemonGraphNode theTempNode;
+            QDemonRenderNode theTempNode;
             theFinalMVP = theViewProjection;
             QDemonRenderBlendFunctionArgument blendFunc;
             QDemonRenderBlendEquationArgument blendEqu;

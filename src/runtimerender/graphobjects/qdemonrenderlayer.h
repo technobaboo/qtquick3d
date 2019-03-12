@@ -36,7 +36,7 @@
 
 QT_BEGIN_NAMESPACE
 class QDemonRenderContextInterface;
-struct QDemonPresentation;
+struct QDemonRenderPresentation;
 struct QDemonRenderEffect;
 struct SRenderPlugin; // TODO: ???
 struct QDemonRenderImage;
@@ -45,7 +45,7 @@ struct QDemonRenderImage;
 // to children as the identity.  It also can optionally have a width or height
 // different than the overlying context.  You can think of layers as the transformation
 // between a 3d scene graph and a 2D texture.
-struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderLayer : public QDemonGraphNode
+struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderLayer : public QDemonRenderNode
 {
     enum class AAMode : quint8
     {

@@ -34,7 +34,7 @@
 QT_BEGIN_NAMESPACE
 
 QDemonRenderLayer::QDemonRenderLayer()
-    : QDemonGraphNode(QDemonGraphObject::Type::Layer)
+    : QDemonRenderNode(QDemonRenderGraphObject::Type::Layer)
     , scene(nullptr)
     , firstEffect(nullptr)
     , renderPlugin(nullptr)

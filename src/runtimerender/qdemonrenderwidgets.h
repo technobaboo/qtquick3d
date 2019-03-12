@@ -118,18 +118,18 @@ class QDemonRenderWidgetInterface
 public:
     QAtomicInt ref;
     virtual ~QDemonRenderWidgetInterface();
-    QDemonGraphNode *m_node = nullptr;
+    QDemonRenderNode *m_node = nullptr;
 
-    QDemonRenderWidgetInterface(QDemonGraphNode &inNode) : m_node(&inNode) {}
+    QDemonRenderWidgetInterface(QDemonRenderNode &inNode) : m_node(&inNode) {}
     QDemonRenderWidgetInterface() = default;
     virtual void render(QDemonRendererImpl &inWidgetContext, QDemonRenderContext &inRenderContext) = 0;
-    QDemonGraphNode &getNode() { return *m_node; }
+    QDemonRenderNode &getNode() { return *m_node; }
 
     // Pure widgets.
-    static QDemonRef<QDemonRenderWidgetInterface> createBoundingBoxWidget(QDemonGraphNode &inNode,
+    static QDemonRef<QDemonRenderWidgetInterface> createBoundingBoxWidget(QDemonRenderNode &inNode,
                                                                           const QDemonBounds3 &inBounds,
                                                                           const QVector3D &inColor);
-    static QDemonRef<QDemonRenderWidgetInterface> createAxisWidget(QDemonGraphNode &inNode);
+    static QDemonRef<QDemonRenderWidgetInterface> createAxisWidget(QDemonRenderNode &inNode);
 };
 QT_END_NAMESPACE
 

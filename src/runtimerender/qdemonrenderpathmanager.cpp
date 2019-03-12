@@ -90,10 +90,10 @@ struct QDemonPathSubPathBuffer
     QAtomicInt ref;
     QVector<QDemonPathAnchorPoint> m_sourceData;
     QDemonPathDirtyFlags m_flags;
-    QDemonPathSubPath &m_subPath;
+    QDemonRenderSubPath &m_subPath;
     bool m_closed;
 
-    QDemonPathSubPathBuffer(QDemonPathSubPath &inSubPath) : m_subPath(inSubPath), m_closed(false) {}
+    QDemonPathSubPathBuffer(QDemonRenderSubPath &inSubPath) : m_subPath(inSubPath), m_closed(false) {}
 };
 
 struct QDemonImportPathWrapper
@@ -121,7 +121,7 @@ struct QDemonPathBuffer
     QVector2D m_beginTaperData;
     QVector2D m_endTaperData;
     quint32 m_numVertexes{ 0 };
-    QDemonPath::PathType m_pathType{ QDemonPath::PathType::Geometry };
+    QDemonRenderPath::PathType m_pathType{ QDemonRenderPath::PathType::Geometry };
     float m_width{ 0.0f };
     float m_cpuError{ 0.0f };
     QDemonBounds3 m_bounds = QDemonBounds3::empty();
@@ -173,14 +173,14 @@ struct QDemonPathBuffer
         return QDemonPathUtilities::QDemonPathBuffer();
     }
 
-    void setPathType(QDemonPath::PathType inPathType)
+    void setPathType(QDemonRenderPath::PathType inPathType)
     {
         if (inPathType != m_pathType) {
             switch (m_pathType) {
-            case QDemonPath::PathType::Geometry:
+            case QDemonRenderPath::PathType::Geometry:
                 clearGeometryPathData();
                 break;
-            case QDemonPath::PathType::Painted:
+            case QDemonRenderPath::PathType::Painted:
                 clearPaintedPathData();
                 break;
             default:
@@ -193,15 +193,15 @@ struct QDemonPathBuffer
         m_pathType = inPathType;
     }
 
-    static QDemonOption<QDemonTaperInformation> toTaperInfo(QDemonPath::Capping capping, float capOffset, float capOpacity, float capWidth)
+    static QDemonOption<QDemonTaperInformation> toTaperInfo(QDemonRenderPath::Capping capping, float capOffset, float capOpacity, float capWidth)
     {
-        if (capping == QDemonPath::Capping::None)
+        if (capping == QDemonRenderPath::Capping::None)
             return QDemonEmpty();
 
         return QDemonTaperInformation(capOffset, capOpacity, capWidth);
     }
 
-    void setBeginTaperInfo(QDemonPath::Capping capping, float capOffset, float capOpacity, float capWidth)
+    void setBeginTaperInfo(QDemonRenderPath::Capping capping, float capOffset, float capOpacity, float capWidth)
     {
         QDemonOption<QDemonTaperInformation> newBeginInfo = toTaperInfo(capping, capOffset, capOpacity, capWidth);
         if (!optionEquals(newBeginInfo, m_beginTaper)) {
@@ -210,7 +210,7 @@ struct QDemonPathBuffer
         }
     }
 
-    void setEndTaperInfo(QDemonPath::Capping capping, float capOffset, float capOpacity, float capWidth)
+    void setEndTaperInfo(QDemonRenderPath::Capping capping, float capOffset, float capOpacity, float capWidth)
     {
         QDemonOption<QDemonTaperInformation> newEndInfo = toTaperInfo(capping, capOffset, capOpacity, capWidth);
         if (!optionEquals(newEndInfo, m_endTaper)) {
@@ -659,8 +659,8 @@ struct QDemonXYRectVertexPipeline : public QDemonVertexPipelineImpl
 
 struct QDemonPathManager : public QDemonPathManagerInterface
 {
-    typedef QHash<QDemonPath *, QDemonRef<QDemonPathBuffer>> TPathBufferHash;
-    typedef QHash<QDemonPathSubPath *, QDemonRef<QDemonPathSubPathBuffer>> TPathSubPathBufferHash;
+    typedef QHash<QDemonRenderPath *, QDemonRef<QDemonPathBuffer>> TPathBufferHash;
+    typedef QHash<QDemonRenderSubPath *, QDemonRef<QDemonPathSubPathBuffer>> TPathSubPathBufferHash;
     typedef QHash<QDemonPathShaderMapKey, QDemonPathGeneratedShader *> TShaderMap;
     typedef QHash<QDemonPathShaderMapKey, QDemonPathXYGeneratedShader *> TPaintedShaderMap;
     typedef QHash<QString, TPathBufferPtr> TStringPathBufferMap;
@@ -702,14 +702,14 @@ struct QDemonPathManager : public QDemonPathManagerInterface
     }
 
     // Called during binary load which is heavily threaded.
-    void setPathSubPathData(const QDemonPathSubPath &inPath, QDemonConstDataRef<QDemonPathAnchorPoint> inPathCubicCurves) override
+    void setPathSubPathData(const QDemonRenderSubPath &inPath, QDemonConstDataRef<QDemonPathAnchorPoint> inPathCubicCurves) override
     {
         QMutexLocker locker(&m_pathBufferMutex);
-        TPathSubPathBufferHash::iterator inserter = m_subPathBuffers.find((QDemonPathSubPath *)&inPath);
+        TPathSubPathBufferHash::iterator inserter = m_subPathBuffers.find((QDemonRenderSubPath *)&inPath);
         if (inserter == m_subPathBuffers.end()) {
-            inserter = m_subPathBuffers.insert((QDemonPathSubPath *)&inPath,
+            inserter = m_subPathBuffers.insert((QDemonRenderSubPath *)&inPath,
                                                QDemonRef<QDemonPathSubPathBuffer>(new QDemonPathSubPathBuffer(
-                                                       const_cast<QDemonPathSubPath &>(inPath))));
+                                                       const_cast<QDemonRenderSubPath &>(inPath))));
         }
 
         QDemonRef<QDemonPathSubPathBuffer> theBuffer = inserter.value();
@@ -719,24 +719,24 @@ struct QDemonPathManager : public QDemonPathManagerInterface
         theBuffer->m_flags |= QDemonPathDirtyFlagValue::SourceData;
     }
 
-    QDemonRef<QDemonPathBuffer> getPathBufferObject(const QDemonPath &inPath)
+    QDemonRef<QDemonPathBuffer> getPathBufferObject(const QDemonRenderPath &inPath)
     {
-        TPathBufferHash::iterator inserter = m_buffers.find((QDemonPath *)&inPath);
+        TPathBufferHash::iterator inserter = m_buffers.find((QDemonRenderPath *)&inPath);
         if (inserter == m_buffers.end())
-            inserter = m_buffers.insert((QDemonPath *)&inPath, QDemonRef<QDemonPathBuffer>(new QDemonPathBuffer()));
+            inserter = m_buffers.insert((QDemonRenderPath *)&inPath, QDemonRef<QDemonPathBuffer>(new QDemonPathBuffer()));
 
         return inserter.value();
     }
 
-    QDemonRef<QDemonPathSubPathBuffer> getPathBufferObject(const QDemonPathSubPath &inSubPath)
+    QDemonRef<QDemonPathSubPathBuffer> getPathBufferObject(const QDemonRenderSubPath &inSubPath)
     {
-        TPathSubPathBufferHash::iterator iter = m_subPathBuffers.find((QDemonPathSubPath *)&inSubPath);
+        TPathSubPathBufferHash::iterator iter = m_subPathBuffers.find((QDemonRenderSubPath *)&inSubPath);
         if (iter != m_subPathBuffers.end())
             return iter.value();
         return nullptr;
     }
 
-    QDemonDataRef<QDemonPathAnchorPoint> getPathSubPathBuffer(const QDemonPathSubPath &inPath) override
+    QDemonDataRef<QDemonPathAnchorPoint> getPathSubPathBuffer(const QDemonRenderSubPath &inPath) override
     {
         QDemonRef<QDemonPathSubPathBuffer> theBuffer = getPathBufferObject(inPath);
         if (theBuffer)
@@ -744,7 +744,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
         return QDemonDataRef<QDemonPathAnchorPoint>();
     }
 
-    QDemonDataRef<QDemonPathAnchorPoint> resizePathSubPathBuffer(const QDemonPathSubPath &inPath, quint32 inNumAnchors) override
+    QDemonDataRef<QDemonPathAnchorPoint> resizePathSubPathBuffer(const QDemonRenderSubPath &inPath, quint32 inNumAnchors) override
     {
         QDemonRef<QDemonPathSubPathBuffer> theBuffer = getPathBufferObject(inPath);
         if (theBuffer == nullptr)
@@ -756,7 +756,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
     }
 
     // This needs to be done using roots of the first derivative.
-    QDemonBounds3 getBounds(const QDemonPath &inPath) override
+    QDemonBounds3 getBounds(const QDemonRenderPath &inPath) override
     {
         QDemonBounds3 retval(QDemonBounds3::empty());
 
@@ -771,7 +771,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
             }
         }
 
-        for (QDemonPathSubPath *theSubPath = inPath.m_firstSubPath; theSubPath; theSubPath = theSubPath->m_nextSubPath) {
+        for (QDemonRenderSubPath *theSubPath = inPath.m_firstSubPath; theSubPath; theSubPath = theSubPath->m_nextSubPath) {
             QDemonRef<QDemonPathSubPathBuffer> theBuffer = getPathBufferObject(*theSubPath);
             if (!theBuffer)
                 continue;
@@ -863,12 +863,12 @@ struct QDemonPathManager : public QDemonPathManagerInterface
         return QDemonEmpty();
     }
 
-    bool prepareGeometryPathForRender(const QDemonPath &inPath, QDemonPathBuffer &inPathBuffer)
+    bool prepareGeometryPathForRender(const QDemonRenderPath &inPath, QDemonPathBuffer &inPathBuffer)
     {
 
         m_subdivResult.clear();
         m_keyPointVec.clear();
-        const QDemonPath &thePath(inPath);
+        const QDemonRenderPath &thePath(inPath);
 
         inPathBuffer.setBeginTaperInfo(thePath.m_beginCapping, thePath.m_beginCapOffset, thePath.m_beginCapOpacity, thePath.m_beginCapWidth);
         inPathBuffer.setEndTaperInfo(thePath.m_endCapping, thePath.m_endCapOffset, thePath.m_endCapOpacity, thePath.m_endCapWidth);
@@ -924,9 +924,9 @@ struct QDemonPathManager : public QDemonPathManagerInterface
             for (quint32 idx = 0, end = m_subdivResult.size(); idx < end; ++idx)
                 pathLength += m_subdivResult[idx].m_length;
 
-            if (thePath.m_beginCapping == QDemonPath::Capping::Taper || thePath.m_endCapping == QDemonPath::Capping::Taper) {
+            if (thePath.m_beginCapping == QDemonRenderPath::Capping::Taper || thePath.m_endCapping == QDemonRenderPath::Capping::Taper) {
                 float maxTaperStart = pathLength / 2.0f;
-                if (thePath.m_beginCapping == QDemonPath::Capping::Taper) {
+                if (thePath.m_beginCapping == QDemonRenderPath::Capping::Taper) {
                     // Can't start more than halfway across the path.
                     float taperStart = qMin(thePath.m_beginCapOffset, maxTaperStart);
                     float endTaperWidth = thePath.m_beginCapWidth;
@@ -948,7 +948,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
                         }
                     }
                 }
-                if (thePath.m_endCapping == QDemonPath::Capping::Taper) {
+                if (thePath.m_endCapping == QDemonRenderPath::Capping::Taper) {
                     float taperStart = qMin(thePath.m_endCapOffset, maxTaperStart);
                     float endTaperWidth = thePath.m_endCapWidth;
                     float endTaperOpacity = thePath.globalOpacity * thePath.m_endCapOpacity;
@@ -1081,7 +1081,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
 
     QDemonRef<QDemonMaterialShaderGeneratorInterface> getMaterialShaderGenertator(QDemonPathRenderContext &inRenderContext)
     {
-        bool isDefaultMaterial = (inRenderContext.material.type == QDemonGraphObject::Type::DefaultMaterial);
+        bool isDefaultMaterial = (inRenderContext.material.type == QDemonRenderGraphObject::Type::DefaultMaterial);
 
         QDemonRef<QDemonMaterialShaderGeneratorInterface> theMaterialGenerator = nullptr;
         if (isDefaultMaterial)
@@ -1094,7 +1094,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
 
     QString getMaterialNameForKey(QDemonPathRenderContext &inRenderContext)
     {
-        bool isDefaultMaterial = (inRenderContext.material.type == QDemonGraphObject::Type::DefaultMaterial);
+        bool isDefaultMaterial = (inRenderContext.material.type == QDemonRenderGraphObject::Type::DefaultMaterial);
 
         if (!isDefaultMaterial) {
             QDemonRef<QDemonMaterialSystem> theMaterialSystem(m_renderContext->getCustomMaterialSystem());
@@ -1107,7 +1107,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
         return QString();
     }
 
-    bool preparePaintedPathForRender(const QDemonPath &inPath, QDemonPathBuffer &inPathBuffer)
+    bool preparePaintedPathForRender(const QDemonRenderPath &inPath, QDemonPathBuffer &inPathBuffer)
     {
         QDemonRef<QDemonRenderContext> theContext(this->m_renderContext->getRenderContext());
         if (!inPathBuffer.m_pathRender || (inPathBuffer.m_flags & QDemonPathDirtyFlagValue::SourceData)) {
@@ -1162,7 +1162,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
         return false;
     }
 
-    bool prepareForRender(const QDemonPath &inPath) override
+    bool prepareForRender(const QDemonRenderPath &inPath) override
     {
         QDemonRef<QDemonPathBuffer> thePathBuffer = getPathBufferObject(inPath);
         if (!thePathBuffer) {
@@ -1183,7 +1183,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
             // Ensure the SubPath list is identical and clear, percolating any dirty flags up to the
             // path buffer.
             int subPathIdx = 0;
-            for (const QDemonPathSubPath *theSubPath = inPath.m_firstSubPath; theSubPath;
+            for (const QDemonRenderSubPath *theSubPath = inPath.m_firstSubPath; theSubPath;
                  theSubPath = theSubPath->m_nextSubPath, ++subPathIdx) {
                 QDemonRef<QDemonPathSubPathBuffer> theSubPathBuffer = getPathBufferObject(*theSubPath);
                 if (theSubPathBuffer == nullptr)
@@ -1231,7 +1231,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
             }
         }
 
-        if (inPath.m_pathType == QDemonPath::PathType::Geometry)
+        if (inPath.m_pathType == QDemonRenderPath::PathType::Geometry)
             retval = prepareGeometryPathForRender(inPath, *thePathBuffer);
         else
             retval = preparePaintedPathForRender(inPath, *thePathBuffer);
@@ -1487,7 +1487,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
         if (!thePathBuffer)
             return;
 
-        if (thePathBuffer->m_pathType == QDemonPath::PathType::Geometry) {
+        if (thePathBuffer->m_pathType == QDemonRenderPath::PathType::Geometry) {
             quint32 displacementIdx = 0;
             quint32 imageIdx = 0;
             QDemonRenderableImage *displacementImage = nullptr;
@@ -1553,10 +1553,10 @@ struct QDemonPathManager : public QDemonPathManagerInterface
         if (!thePathBuffer)
             return;
 
-        if (inRenderContext.material.type != QDemonGraphObject::Type::DefaultMaterial)
+        if (inRenderContext.material.type != QDemonRenderGraphObject::Type::DefaultMaterial)
             return;
 
-        if (thePathBuffer->m_pathType == QDemonPath::PathType::Painted) {
+        if (thePathBuffer->m_pathType == QDemonRenderPath::PathType::Painted) {
             // painted path, go stroke route for now.
             if (!m_paintedShadowShader) {
                 QDemonRef<QDemonDefaultMaterialShaderGeneratorInterface> theMaterialGenerator(
@@ -1594,10 +1594,10 @@ struct QDemonPathManager : public QDemonPathManagerInterface
         if (!thePathBuffer)
             return;
 
-        if (inRenderContext.material.type != QDemonGraphObject::Type::DefaultMaterial)
+        if (inRenderContext.material.type != QDemonRenderGraphObject::Type::DefaultMaterial)
             return;
 
-        if (thePathBuffer->m_pathType == QDemonPath::PathType::Painted) {
+        if (thePathBuffer->m_pathType == QDemonRenderPath::PathType::Painted) {
             if (!m_paintedCubeShadowShader) {
                 QDemonRef<QDemonDefaultMaterialShaderGeneratorInterface> theMaterialGenerator(
                         m_renderContext->getDefaultMaterialShaderGenerator());
@@ -1638,9 +1638,9 @@ struct QDemonPathManager : public QDemonPathManagerInterface
             return;
         }
 
-        bool isDefaultMaterial = (inRenderContext.material.type == QDemonGraphObject::Type::DefaultMaterial);
+        bool isDefaultMaterial = (inRenderContext.material.type == QDemonRenderGraphObject::Type::DefaultMaterial);
 
-        if (thePathBuffer->m_pathType == QDemonPath::PathType::Geometry) {
+        if (thePathBuffer->m_pathType == QDemonRenderPath::PathType::Geometry) {
             QDemonRef<QDemonMaterialShaderGeneratorInterface> theMaterialGenerator = getMaterialShaderGenertator(inRenderContext);
 
             // we need a more evolved key her for custom materials

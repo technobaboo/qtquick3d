@@ -92,7 +92,7 @@ Q_SIGNALS:
     void visibleChanged(bool visible);
 
 protected:
-    QDemonGraphObject *updateSpatialNode(QDemonGraphObject *node) override;
+    QDemonRenderGraphObject *updateSpatialNode(QDemonRenderGraphObject *node) override;
 
 private:
     QVector3D m_rotation;

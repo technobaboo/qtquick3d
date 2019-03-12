@@ -33,7 +33,7 @@ Q_SIGNALS:
     void hasVolumetricDFChanged(bool hasVolumetricDF);
 
 protected:
-    QDemonGraphObject *updateSpatialNode(QDemonGraphObject *node) override;
+    QDemonRenderGraphObject *updateSpatialNode(QDemonRenderGraphObject *node) override;
 
 private:
     bool m_hasTransparency;

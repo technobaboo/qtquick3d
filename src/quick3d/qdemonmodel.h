@@ -59,7 +59,7 @@ Q_SIGNALS:
     void isWireframeModeChanged(bool isWireframeMode);
 
 protected:
-    QDemonGraphObject *updateSpatialNode(QDemonGraphObject *node) override;
+    QDemonRenderGraphObject *updateSpatialNode(QDemonRenderGraphObject *node) override;
 
 private:
     QString m_source;

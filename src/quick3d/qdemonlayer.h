@@ -237,7 +237,7 @@ Q_SIGNALS:
     void heightUnitsChanged(QDemonLayerUnitTypes heightUnits);
 
 protected:
-    QDemonGraphObject *updateSpatialNode(QDemonGraphObject *node) override;
+    QDemonRenderGraphObject *updateSpatialNode(QDemonRenderGraphObject *node) override;
     void itemChange(ItemChange, const ItemChangeData &) override;
 private:
     friend QDemonWindowPrivate;

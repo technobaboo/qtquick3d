@@ -87,7 +87,7 @@ Q_SIGNALS:
     void frustumScaleYChanged(float frustumScaleY);
 
 protected:
-    QDemonGraphObject *updateSpatialNode(QDemonGraphObject *node) override;
+    QDemonRenderGraphObject *updateSpatialNode(QDemonRenderGraphObject *node) override;
 
 private:
     float m_clipNear = 10.0f;

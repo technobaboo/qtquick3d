@@ -119,36 +119,36 @@ void QDemonModel::setIsWireframeMode(bool isWireframeMode)
     update();
 }
 
-static QDemonGraphObject *getMaterialNodeFromQDemonMaterial(QDemonMaterial *material)
+static QDemonRenderGraphObject *getMaterialNodeFromQDemonMaterial(QDemonMaterial *material)
 {
     QDemonObjectPrivate *p = QDemonObjectPrivate::get(material);
     return p->spatialNode;
 }
 
 namespace {
-QDemonGraphObject *getNextSibling(QDemonGraphObject *obj)
+QDemonRenderGraphObject *getNextSibling(QDemonRenderGraphObject *obj)
 {
 
-    if (obj->type == QDemonGraphObject::Type::CustomMaterial)
+    if (obj->type == QDemonRenderGraphObject::Type::CustomMaterial)
         return static_cast<QDemonRenderCustomMaterial *>(obj)->m_nextSibling;
-    else if (obj->type == QDemonGraphObject::Type::DefaultMaterial)
+    else if (obj->type == QDemonRenderGraphObject::Type::DefaultMaterial)
         return static_cast<QDemonRenderDefaultMaterial *>(obj)->nextSibling;
     else
-        return static_cast<QDemonReferencedMaterial *>(obj)->m_nextSibling;
+        return static_cast<QDemonRenderReferencedMaterial *>(obj)->m_nextSibling;
 }
 
-void setNextSibling(QDemonGraphObject *obj, QDemonGraphObject *sibling)
+void setNextSibling(QDemonRenderGraphObject *obj, QDemonRenderGraphObject *sibling)
 {
-    if (obj->type == QDemonGraphObject::Type::CustomMaterial)
+    if (obj->type == QDemonRenderGraphObject::Type::CustomMaterial)
         static_cast<QDemonRenderCustomMaterial *>(obj)->m_nextSibling = sibling;
-    else if (obj->type == QDemonGraphObject::Type::DefaultMaterial)
+    else if (obj->type == QDemonRenderGraphObject::Type::DefaultMaterial)
         static_cast<QDemonRenderDefaultMaterial *>(obj)->nextSibling = sibling;
     else
-        static_cast<QDemonReferencedMaterial *>(obj)->m_nextSibling = sibling;
+        static_cast<QDemonRenderReferencedMaterial *>(obj)->m_nextSibling = sibling;
 }
 }
 
-QDemonGraphObject *QDemonModel::updateSpatialNode(QDemonGraphObject *node)
+QDemonRenderGraphObject *QDemonModel::updateSpatialNode(QDemonRenderGraphObject *node)
 {
     if (!node)
         node = new QDemonRenderModel();
@@ -169,14 +169,14 @@ QDemonGraphObject *QDemonModel::updateSpatialNode(QDemonGraphObject *node)
         if (modelNode->firstMaterial == nullptr) {
             // Easy mode, just add each material
             for (auto material : m_materials) {
-                QDemonGraphObject *graphObject = getMaterialNodeFromQDemonMaterial(material);
+                QDemonRenderGraphObject *graphObject = getMaterialNodeFromQDemonMaterial(material);
                 if (graphObject)
                     modelNode->addMaterial(*graphObject);
             }
         } else {
             // Hard mode, go through each material and see if they match
-            QDemonGraphObject *material = modelNode->firstMaterial;
-            QDemonGraphObject *previousMaterial = nullptr;
+            QDemonRenderGraphObject *material = modelNode->firstMaterial;
+            QDemonRenderGraphObject *previousMaterial = nullptr;
             int index = 0;
             while (material) {
                 if (index > m_materials.count()) {

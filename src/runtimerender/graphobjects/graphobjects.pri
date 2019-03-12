@@ -13,11 +13,11 @@ HEADERS += \
     $$PWD/qdemonrendermodel.h \
     $$PWD/qdemonrendernode.h \
     $$PWD/qdemonrenderpath.h \
-    $$PWD/qdemonrenderpathsubpath.h \
     $$PWD/qdemonrenderpresentation.h \
     $$PWD/qdemonrenderreferencedmaterial.h \
     $$PWD/qdemonrenderscene.h \
-    $$PWD/qdemonrendertext.h
+    $$PWD/qdemonrendertext.h \
+    $$PWD/qdemonrendersubpath.h
 
 SOURCES += \
     $$PWD/qdemonrendercamera.cpp \

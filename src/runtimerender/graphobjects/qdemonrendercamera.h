@@ -64,7 +64,7 @@ struct QDemonCuboidRect
     }
 };
 
-struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderCamera : public QDemonGraphNode
+struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderCamera : public QDemonRenderNode
 {
     enum class ScaleModes : quint8
     {

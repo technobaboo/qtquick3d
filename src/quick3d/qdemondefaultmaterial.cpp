@@ -504,7 +504,7 @@ void QDemonDefaultMaterial::setVertexColors(bool vertexColors)
     markDirty(VertexColorsDirty);
 }
 
-QDemonGraphObject *QDemonDefaultMaterial::updateSpatialNode(QDemonGraphObject *node)
+QDemonRenderGraphObject *QDemonDefaultMaterial::updateSpatialNode(QDemonRenderGraphObject *node)
 {
     if (!node)
         node = new QDemonRenderDefaultMaterial();

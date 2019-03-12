@@ -51,7 +51,7 @@ struct QDemonWidgetBBox : public QDemonRenderWidgetInterface
     QDemonRef<QDemonRenderInputAssembler> m_boxInputAssembler;
     QDemonRef<QDemonRenderShaderProgram> m_boxShader;
     QByteArray m_itemName;
-    QDemonWidgetBBox(QDemonGraphNode &inNode, const QDemonBounds3 &inBounds, const QVector3D &inColor)
+    QDemonWidgetBBox(QDemonRenderNode &inNode, const QDemonBounds3 &inBounds, const QVector3D &inColor)
         : QDemonRenderWidgetInterface(inNode), m_bounds(inBounds), m_color(inColor)
     {
     }
@@ -193,7 +193,7 @@ struct QDemonWidgetAxis : public QDemonRenderWidgetInterface
     QDemonRef<QDemonRenderShaderProgram> m_axisShader;
     QByteArray m_itemName;
 
-    QDemonWidgetAxis(QDemonGraphNode &inNode)
+    QDemonWidgetAxis(QDemonRenderNode &inNode)
         : QDemonRenderWidgetInterface(inNode), m_axisVertexBuffer(nullptr), m_axisInputAssembler(nullptr), m_axisShader(nullptr)
     {
     }
@@ -264,19 +264,19 @@ struct QDemonWidgetAxis : public QDemonRenderWidgetInterface
             QVector3D Red = QVector3D(1, 0, 0);
             QVector3D Green = QVector3D(0, 1, 0);
             QVector3D Blue = QVector3D(0, 0, 1);
-            if (m_node->parent && m_node->parent->type != QDemonGraphObject::Type::Layer) {
+            if (m_node->parent && m_node->parent->type != QDemonRenderGraphObject::Type::Layer) {
                 m_node->parent->calculateGlobalVariables();
             }
             QVector3D thePivot(m_node->pivot);
-            if (m_node->flags.testFlag(QDemonGraphNode::Flag::LeftHanded))
+            if (m_node->flags.testFlag(QDemonRenderNode::Flag::LeftHanded))
                 thePivot[2] /* .z */ *= -1;
             QDemonWidgetRenderInformation theInfo(
                     inWidgetContext.getWidgetRenderInformation(*m_node, thePivot, RenderWidgetModes::Local));
 
             QMatrix4x4 theNodeRotation;
             m_node->calculateRotationMatrix(theNodeRotation);
-            if (m_node->flags.testFlag(QDemonGraphNode::Flag::LeftHanded))
-                QDemonGraphNode::flipCoordinateSystem(theNodeRotation);
+            if (m_node->flags.testFlag(QDemonRenderNode::Flag::LeftHanded))
+                QDemonRenderNode::flipCoordinateSystem(theNodeRotation);
             QMatrix3x3 theRotationMatrix(theNodeRotation.constData());
             // Move the camera position into camera space.  This is so that when we render we don't
             // have to account
@@ -323,14 +323,14 @@ struct QDemonWidgetAxis : public QDemonRenderWidgetInterface
 
 QDemonRenderWidgetInterface::~QDemonRenderWidgetInterface() = default;
 
-QDemonRef<QDemonRenderWidgetInterface> QDemonRenderWidgetInterface::createBoundingBoxWidget(QDemonGraphNode &inNode,
+QDemonRef<QDemonRenderWidgetInterface> QDemonRenderWidgetInterface::createBoundingBoxWidget(QDemonRenderNode &inNode,
                                                                                             const QDemonBounds3 &inBounds,
                                                                                             const QVector3D &inColor)
 {
     return QDemonRef<QDemonRenderWidgetInterface>(new QDemonWidgetBBox(inNode, inBounds, inColor));
 }
 
-QDemonRef<QDemonRenderWidgetInterface> QDemonRenderWidgetInterface::createAxisWidget(QDemonGraphNode &inNode)
+QDemonRef<QDemonRenderWidgetInterface> QDemonRenderWidgetInterface::createAxisWidget(QDemonRenderNode &inNode)
 {
     return QDemonRef<QDemonRenderWidgetInterface>(new QDemonWidgetAxis(inNode));
 }

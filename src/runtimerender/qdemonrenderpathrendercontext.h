@@ -49,13 +49,13 @@ struct QDemonPathRenderContext
     const QDemonRenderCamera &camera;
 
     // Per-object information.
-    const QDemonPath &path;
+    const QDemonRenderPath &path;
     const QMatrix4x4 &mvp;
     const QMatrix4x4 &modelMatrix; ///< model to world transformation
     const QMatrix3x3 &normalMatrix;
 
     float opacity;
-    const QDemonGraphObject &material;
+    const QDemonRenderGraphObject &material;
     QDemonShaderDefaultMaterialKey materialKey;
     QDemonRenderableImage *firstImage;
     QVector2D cameraVec;
@@ -66,12 +66,12 @@ struct QDemonPathRenderContext
 
     QDemonPathRenderContext(const QVector<QDemonRenderLight *> &inLights,
                             const QDemonRenderCamera &inCamera,
-                            const QDemonPath &inPath,
+                            const QDemonRenderPath &inPath,
                             const QMatrix4x4 &inMvp,
                             const QMatrix4x4 &inWorld,
                             const QMatrix3x3 &inNormal,
                             float inOpacity,
-                            const QDemonGraphObject &inMaterial,
+                            const QDemonRenderGraphObject &inMaterial,
                             QDemonShaderDefaultMaterialKey inMaterialKey,
                             QDemonRenderableImage *inFirstImage,
                             bool inWireframe,

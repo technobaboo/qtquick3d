@@ -170,7 +170,7 @@ Q_SIGNALS:
     void vertexColorsChanged(bool vertexColors);
 
 protected:
-    QDemonGraphObject *updateSpatialNode(QDemonGraphObject *node) override;
+    QDemonRenderGraphObject *updateSpatialNode(QDemonRenderGraphObject *node) override;
     void itemChange(ItemChange, const ItemChangeData &) override;
 private:
     void updateWindow(QDemonWindow *window);

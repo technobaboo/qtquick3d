@@ -36,7 +36,7 @@
 QT_BEGIN_NAMESPACE
 
 QDemonRenderImage::QDemonRenderImage()
-    : QDemonGraphObject(QDemonGraphObject::Type::Image)
+    : QDemonRenderGraphObject(QDemonRenderGraphObject::Type::Image)
     , m_lastFrameOffscreenRenderer(nullptr)
     , m_parent(nullptr)
     , m_scale(1, 1)

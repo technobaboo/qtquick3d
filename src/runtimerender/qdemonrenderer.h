@@ -49,7 +49,7 @@ protected:
     virtual ~QDemonRenderNodeFilterInterface() {}
 
 public:
-    virtual bool includeNode(const QDemonGraphNode &inNode) = 0;
+    virtual bool includeNode(const QDemonRenderNode &inNode) = 0;
 };
 struct QDemonLayerPickSetup
 {
@@ -87,11 +87,11 @@ public:
     virtual bool isLayerGpuProfilingEnabled() const = 0;
 
     // Get the camera that rendered this node last render
-    virtual QDemonRenderCamera *getCameraForNode(const QDemonGraphNode &inNode) const = 0;
-    virtual QDemonOption<QDemonCuboidRect> getCameraBounds(const QDemonGraphObject &inObject) = 0;
+    virtual QDemonRenderCamera *getCameraForNode(const QDemonRenderNode &inNode) const = 0;
+    virtual QDemonOption<QDemonCuboidRect> getCameraBounds(const QDemonRenderGraphObject &inObject) = 0;
     // Called when you have changed the number or order of children of a given node.
-    virtual void childrenUpdated(QDemonGraphNode &inParent) = 0;
-    virtual float getTextScale(const QDemonText &inText) = 0;
+    virtual void childrenUpdated(QDemonRenderNode &inParent) = 0;
+    virtual float getTextScale(const QDemonRenderText &inText) = 0;
 
     // The QDemonRenderContextInterface calls these, clients should not.
     virtual void beginFrame() = 0;
@@ -143,17 +143,17 @@ public:
     // to map the mouse coordinates into the subpresentation.  So for instance if inNode is in
     // a subpres then we need to know which image is displaying the subpres in order to map
     // the mouse coordinates into the subpres's render space.
-    virtual QDemonOption<QVector2D> facePosition(QDemonGraphNode &inNode,
+    virtual QDemonOption<QVector2D> facePosition(QDemonRenderNode &inNode,
                                                  QDemonBounds3 inBounds,
                                                  const QMatrix4x4 &inGlobalTransform,
                                                  const QVector2D &inViewportDimensions,
                                                  const QVector2D &inMouseCoords,
-                                                 QDemonDataRef<QDemonGraphObject *> inMapperObjects,
+                                                 QDemonDataRef<QDemonRenderGraphObject *> inMapperObjects,
                                                  QDemonRenderBasisPlanes inIsectPlane) = 0;
 
-    virtual QVector3D unprojectToPosition(QDemonGraphNode &inNode, QVector3D &inPosition, const QVector2D &inMouseVec) const = 0;
-    virtual QVector3D unprojectWithDepth(QDemonGraphNode &inNode, QVector3D &inPosition, const QVector3D &inMouseVec) const = 0;
-    virtual QVector3D projectPosition(QDemonGraphNode &inNode, const QVector3D &inPosition) const = 0;
+    virtual QVector3D unprojectToPosition(QDemonRenderNode &inNode, QVector3D &inPosition, const QVector2D &inMouseVec) const = 0;
+    virtual QVector3D unprojectWithDepth(QDemonRenderNode &inNode, QVector3D &inPosition, const QVector3D &inMouseVec) const = 0;
+    virtual QVector3D projectPosition(QDemonRenderNode &inNode, const QVector3D &inPosition) const = 0;
 
     // Roughly equivalent of gluPickMatrix, allows users to setup a perspective transform that
     // will draw some sub component
