@@ -8,7 +8,11 @@ QT_BEGIN_NAMESPACE
 
 QDemonLayer::QDemonLayer() {}
 
-QDemonLayer::~QDemonLayer() {}
+QDemonLayer::~QDemonLayer()
+{
+    for (auto connection : m_connections)
+        disconnect(connection);
+}
 
 static void updateProperyListener(QDemonObject *newO, QDemonObject *oldO, QDemonWindow *window, QHash<QObject*, QMetaObject::Connection> &connections, std::function<void(QDemonObject *o)> callFn) {
     // disconnect previous destruction listern

@@ -83,12 +83,12 @@ float convertComponent(int exponent, int val)
 
 void decrunchScanline(const char *p, const char *pEnd, RGBE *scanline, int w)
 {
-    scanline[0][0] = *p++;
-    scanline[0][1] = *p++;
-    scanline[0][2] = *p++;
-    scanline[0][3] = *p++;
+    scanline[0][R] = *p++;
+    scanline[0][G] = *p++;
+    scanline[0][B] = *p++;
+    scanline[0][E] = *p++;
 
-    if (scanline[0][0] == 2 && scanline[0][1] == 2 && scanline[0][2] < 128) {
+    if (scanline[0][R] == 2 && scanline[0][G] == 2 && scanline[0][B] < 128) {
         // new rle, the first pixel was a dummy
         for (int channel = 0; channel < 4; ++channel) {
             for (int x = 0; x < w && p < pEnd; ) {
@@ -108,16 +108,16 @@ void decrunchScanline(const char *p, const char *pEnd, RGBE *scanline, int w)
         }
     } else {
         // old rle
-        scanline[0][0] = 2;
+        scanline[0][R] = 2;
         int bitshift = 0;
         int x = 1;
         while (x < w && pEnd - p >= 4) {
-            scanline[x][0] = *p++;
-            scanline[x][1] = *p++;
-            scanline[x][2] = *p++;
-            scanline[x][3] = *p++;
+            scanline[x][R] = *p++;
+            scanline[x][G] = *p++;
+            scanline[x][B] = *p++;
+            scanline[x][E] = *p++;
 
-            if (scanline[x][0] == 1 && scanline[x][1] == 1 && scanline[x][2] == 1) { // run
+            if (scanline[x][R] == 1 && scanline[x][G] == 1 && scanline[x][B] == 1) { // run
                 int repCount = scanline[x][3] << bitshift;
                 while (repCount--) {
                     memcpy(scanline[x], scanline[x - 1], 4);
