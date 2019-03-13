@@ -2061,47 +2061,6 @@ QDemonTextRenderHelper QDemonRendererImpl::getTextWidgetShader()
     return QDemonTextRenderHelper(m_textWidgetShader.get(), m_quadInputAssembler);
 }
 
-QDemonTextRenderHelper QDemonRendererImpl::getOnscreenTextShader()
-{
-    if (m_textOnscreenShader)
-        return QDemonTextRenderHelper(m_textOnscreenShader.get(), m_quadStripInputAssembler);
-
-    getProgramGenerator()->beginProgram();
-
-    QDemonShaderStageGeneratorInterface &vertexGenerator(*getProgramGenerator()->getStage(QDemonShaderGeneratorStage::Vertex));
-    QDemonShaderStageGeneratorInterface &fragmentGenerator(*getProgramGenerator()->getStage(QDemonShaderGeneratorStage::Fragment));
-
-    vertexGenerator.addIncoming("attr_pos", "vec3");
-    vertexGenerator.addIncoming("attr_uv", "vec2");
-    vertexGenerator.addUniform("model_view_projection", "mat4");
-    vertexGenerator.addUniform("vertex_offsets", "vec2");
-    vertexGenerator.addOutgoing("uv_coords", "vec2");
-    vertexGenerator.append("void main() {");
-
-    vertexGenerator.append("\tvec3 pos = attr_pos + vec3(vertex_offsets, 0.0);");
-    vertexGenerator.append("\tgl_Position = model_view_projection * vec4(pos, 1.0);");
-    vertexGenerator.append("\tuv_coords = attr_uv;");
-    vertexGenerator.append("}");
-
-    fragmentGenerator.addUniform("text_textcolor", "vec4");
-    fragmentGenerator.addUniform("text_image", "sampler2D");
-    fragmentGenerator.append("void main() {");
-    fragmentGenerator.append("\tfloat alpha = texture2D( text_image, uv_coords ).a;");
-    fragmentGenerator.append("\tfragOutput = vec4(text_textcolor.r, text_textcolor.g, text_textcolor.b, alpha);");
-    fragmentGenerator.append("}");
-
-    QDemonRef<QDemonRenderShaderProgram> theShader = getProgramGenerator()
-                                                             ->compileGeneratedShader("onscreen texture shader",
-                                                                                      QDemonShaderCacheProgramFlags(),
-                                                                                      TShaderFeatureSet());
-
-    if (theShader) {
-        generateXYQuadStrip();
-        m_textOnscreenShader.reset(new QDemonTextShader(theShader));
-    }
-    return QDemonTextRenderHelper(m_textOnscreenShader.get(), m_quadStripInputAssembler);
-}
-
 QDemonRef<QDemonRenderShaderProgram> QDemonRendererImpl::getTextAtlasEntryShader()
 {
     getProgramGenerator()->beginProgram();

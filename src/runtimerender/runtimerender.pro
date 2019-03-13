@@ -57,10 +57,8 @@ HEADERS += \
     qdemonrendersubpresentation.h \
     qdemonrendersubpresentationhelper.h \
     qdemonrendertessmodevalues.h \
-    qdemonrendertexttextureatlas.h \
     qdemonrendertexttexturecache.h \
     qdemonrendertexttypes.h \
-    qdemonrendertextureatlas.h \
     qdemonrenderthreadpool.h \
 #    qdemonrenderuipsharedtranslation.h \
     qdemonrenderwidgets.h \
@@ -72,7 +70,6 @@ SOURCES += \
 #    qdemonqmlrender.cpp \
     qdemonoffscreenrendermanager.cpp \
 #    qdemonoldnbustedrenderplugin.cpp \
-    qdemononscreentextrenderer.cpp \
     qdemonqttextrenderer.cpp \
     qdemonrenderclippingfrustum.cpp \
     qdemonrendercontextcore.cpp \
@@ -98,9 +95,7 @@ SOURCES += \
     qdemonrendershadercodegeneratorv2.cpp \
     qdemonrendershadowmap.cpp \
     qdemonrendersubpresentation.cpp \
-    qdemonrendertexttextureatlas.cpp \
     qdemonrendertexttexturecache.cpp \
-    qdemonrendertextureatlas.cpp \
     qdemonrenderthreadpool.cpp \
 #    qdemonrenderuipsharedtranslation.cpp \
     qdemonrenderwidgets.cpp \

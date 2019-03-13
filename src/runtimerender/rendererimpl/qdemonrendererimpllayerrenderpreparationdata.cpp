@@ -51,7 +51,6 @@
 #include <QtDemonRuntimeRender/qdemonrenderbuffermanager.h>
 #include <QtDemonRuntimeRender/qdemonrendercustommaterialsystem.h>
 #include <QtDemonRuntimeRender/qdemonrendertexttexturecache.h>
-#include <QtDemonRuntimeRender/qdemonrendertexttextureatlas.h>
 #include <QtDemonRuntimeRender/qdemonrenderrenderlist.h>
 #include <QtDemonRuntimeRender/qdemonrenderpath.h>
 #include <QtDemonRuntimeRender/qdemonrenderpathmanager.h>

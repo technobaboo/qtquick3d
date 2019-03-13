@@ -29,7 +29,6 @@ void RenderWindow::initialize()
 {
     m_contextCore = QDemonRenderContextCoreInterface::create();
     m_contextCore->setTextRendererCore(QDemonTextRendererInterface::createQtTextRenderer());
-    m_contextCore->setOnscreenTextRendererCore(QDemonTextRendererInterface::createOnscreenTextRenderer());
 
     m_renderContext = QDemonRenderContext::createGl(format());
 

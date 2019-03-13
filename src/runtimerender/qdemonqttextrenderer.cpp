@@ -568,17 +568,6 @@ struct QDemonQtTextRenderer : public QDemonTextRendererInterface
     {
         // Nothing to do
     }
-
-    // unused for text rendering via texture atlas
-    QDemonTextTextureAtlasEntryDetails renderAtlasEntry(quint32, QDemonRenderTexture2D &) override
-    {
-        return QDemonTextTextureAtlasEntryDetails();
-    }
-    qint32 createTextureAtlas() override { return 0; }
-    QDemonRenderTextureAtlasDetails renderText(const QDemonTextRenderInfo &) override
-    {
-        return QDemonRenderTextureAtlasDetails();
-    }
 };
 }
 

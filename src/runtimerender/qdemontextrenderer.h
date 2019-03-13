@@ -87,10 +87,6 @@ public:
 
     static QDemonRef<QDemonTextRendererInterface> createQtTextRenderer();
 
-    // call this to create onscreen text renderer
-    // it needs true type fonts
-    static QDemonRef<QDemonTextRendererInterface> createOnscreenTextRenderer();
-
     // Measure text will inText if it isn't null or the text on the info if inText is null
     virtual QDemonTextDimensions measureText(const QDemonTextRenderInfo &inText,
                                              float inTextScaleFactor,
@@ -108,16 +104,9 @@ public:
     virtual QDemonTextTextureDetails renderText(const QDemonTextRenderInfo &inText,
                                                 QDemonRenderPathFontItem &inPathFontItem,
                                                 QDemonRenderPathFontSpecification &inPathFontSpecicification) = 0;
-    // this is for rednering text using a texture atlas
-    virtual QDemonRenderTextureAtlasDetails renderText(const QDemonTextRenderInfo &inText) = 0;
 
     virtual void beginFrame() = 0;
     virtual void endFrame() = 0;
-
-    // these two function are for texture atlas usage only
-    // returns the atlas entries count
-    virtual qint32 createTextureAtlas() = 0;
-    virtual QDemonTextTextureAtlasEntryDetails renderAtlasEntry(quint32 index, QDemonRenderTexture2D &inTexture) = 0;
 
     // Helper function to upload the texture data to the texture
     // Will resize texture as necessary and upload using texSubImage for

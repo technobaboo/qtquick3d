@@ -199,7 +199,6 @@ QDemonGuiThreadRenderLoop::QDemonGuiThreadRenderLoop() : gl(nullptr)
 {
     m_contextCore = QDemonRenderContextCoreInterface::create();
     m_contextCore->setTextRendererCore(QDemonTextRendererInterface::createQtTextRenderer());
-    m_contextCore->setOnscreenTextRendererCore(QDemonTextRendererInterface::createOnscreenTextRenderer());
 
     // To create the Render Context, we have to have a valid OpenGL Context
     // to resolve the functions, so do that now (before we have any windows)

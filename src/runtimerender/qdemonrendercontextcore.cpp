@@ -45,7 +45,6 @@
 #include <QtDemonRuntimeRender/qdemonrenderthreadpool.h>
 #include <QtDemonRuntimeRender/qdemonrenderimagebatchloader.h>
 #include <QtDemonRuntimeRender/qdemonrendertexttexturecache.h>
-#include <QtDemonRuntimeRender/qdemonrendertexttextureatlas.h>
 #include <QtDemonRuntimeRender/qdemonrenderdynamicobjectsystem.h>
 #include <QtDemonRuntimeRender/qdemonrendercustommaterialsystem.h>
 #include <QtDemonRuntimeRender/qdemonrenderpixelgraphicsrenderer.h>
@@ -69,7 +68,6 @@ struct QDemonRenderContextCore : public QDemonRenderContextCoreInterface
     QDemonRef<QDemonMaterialSystem> m_materialSystem;
     QDemonRef<QDemonEffectSystemInterface> m_effectSystem;
     QDemonRef<QDemonTextRendererInterface> m_textRenderer;
-    QDemonRef<QDemonTextRendererInterface> m_onscreenTexRenderer;
     QDemonRef<QDemonPathManagerInterface> m_pathManagerCore;
 
     QDemonRenderContextCore()
@@ -102,11 +100,6 @@ struct QDemonRenderContextCore : public QDemonRenderContextCoreInterface
         m_textRenderer = inRenderer;
     }
     QDemonRef<QDemonTextRendererInterface> getTextRendererCore() override { return m_textRenderer; }
-    void setOnscreenTextRendererCore(QDemonRef<QDemonTextRendererInterface> inRenderer) override
-    {
-        m_onscreenTexRenderer = inRenderer;
-    }
-    QDemonRef<QDemonTextRendererInterface> getOnscreenTextRendererCore() override { return m_onscreenTexRenderer; }
 };
 
 inline float Clamp(float val, float inMin = 0.0f, float inMax = 1.0f)
@@ -138,9 +131,7 @@ struct QDemonRenderContextData : public QDemonRenderContextInterface
     QDemonRef<QDemonOffscreenRenderManagerInterface> m_offscreenRenderManager;
     QDemonRef<QDemonRendererInterface> m_renderer;
     QDemonRef<QDemonTextRendererInterface> m_textRenderer;
-    QDemonRef<QDemonTextRendererInterface> m_onscreenTextRenderer;
     QDemonRef<QDemonTextTextureCacheInterface> m_textTextureCache;
-    QDemonRef<QDemonTextTextureAtlasInterface> m_textTextureAtlas;
     QDemonRef<QDemonDynamicObjectSystemInterface> m_dynamicObjectSystem;
     QDemonRef<QDemonEffectSystemInterface> m_effectSystem;
     QDemonRef<QDemonShaderCacheInterface> m_shaderCache;
@@ -220,11 +211,6 @@ struct QDemonRenderContextData : public QDemonRenderContextInterface
             m_textTextureCache = QDemonTextTextureCacheInterface::createTextureCache(m_textRenderer, m_renderContext);
         }
 
-        QDemonRef<QDemonTextRendererInterface> theOnscreenTextCore = inCore->getOnscreenTextRendererCore();
-        if (theOnscreenTextCore) {
-            m_onscreenTextRenderer = theOnscreenTextCore->getTextRenderer(ctx);
-            m_textTextureAtlas = QDemonTextTextureAtlasInterface::createTextureAtlas(m_onscreenTextRenderer, m_renderContext);
-        }
         m_pathManager = inCore->getPathManagerCore()->onRenderSystemInitialize(this);
 
         const char *versionString;
@@ -279,7 +265,6 @@ struct QDemonRenderContextData : public QDemonRenderContextInterface
     QDemonRef<QDemonAbstractThreadPool> getThreadPool() override { return m_threadPool; }
     QDemonRef<IImageBatchLoader> getImageBatchLoader() override { return m_imageBatchLoader; }
     QDemonRef<QDemonTextTextureCacheInterface> getTextureCache() override { return m_textTextureCache; }
-    QDemonRef<QDemonTextTextureAtlasInterface> getTextureAtlas() override { return m_textTextureAtlas; }
     QDemonRef<QDemonDynamicObjectSystemInterface> getDynamicObjectSystem() override { return m_dynamicObjectSystem; }
     QDemonRef<QDemonMaterialSystem> getCustomMaterialSystem() override { return m_customMaterialSystem; }
     QDemonRef<QDemonPixelGraphicsRendererInterface> getPixelGraphicsRenderer() override
@@ -315,8 +300,6 @@ struct QDemonRenderContextData : public QDemonRenderContextInterface
     void setInSubPresentation(bool inValue) override { m_isInSubPresentation = inValue; }
 
     QDemonRef<QDemonTextRendererInterface> getTextRenderer() override { return m_textRenderer; }
-
-    QDemonRef<QDemonTextRendererInterface> getOnscreenTextRenderer() override { return m_onscreenTextRenderer; }
 
     void setSceneColor(QDemonOption<QVector4D> inSceneColor) override { m_sceneColor = inSceneColor; }
     void setMatteColor(QDemonOption<QVector4D> inMatteColor) override { m_matteColor = inMatteColor; }
@@ -461,9 +444,9 @@ struct QDemonRenderContextData : public QDemonRenderContextInterface
         return { x, y, width, height };
     }
 
-    void renderGpuProfilerStats(float x, float y, QDemonOption<QVector3D> inColor) override
+    void dumpGpuProfilerStats() override
     {
-        m_renderer->renderGpuProfilerStats(x, y, inColor);
+        m_renderer->dumpGpuProfilerStats();
     }
 
     QRect getPresentationViewport() const override { return m_presentationViewport; }

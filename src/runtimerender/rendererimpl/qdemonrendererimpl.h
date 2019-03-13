@@ -333,12 +333,8 @@ public:
 
     void renderPointsIndirect() override;
 
-    // render a screen aligned 2D text
-    void renderText2D(float x, float y, QDemonOption<QVector3D> inColor, const QString &text) override;
-    bool prepareTextureAtlasForRender();
-
     // render Gpu profiler values
-    void renderGpuProfilerStats(float x, float y, QDemonOption<QVector3D> inColor) override;
+    void dumpGpuProfilerStats() override;
 
     // Callback during the layer render process.
     void layerNeedsFrameClear(QDemonLayerRenderData &inLayer);
@@ -384,7 +380,6 @@ public:
     QDemonTextRenderHelper getShader(QDemonTextRenderable &inRenderable, bool inUsePathRendering);
     QDemonTextRenderHelper getTextShader(bool inUsePathRendering);
     QDemonTextRenderHelper getTextWidgetShader();
-    QDemonTextRenderHelper getOnscreenTextShader();
     QDemonRef<QDemonLayerSceneShader> getSceneLayerShader();
     QDemonRef<QDemonRenderShaderProgram> getTextAtlasEntryShader();
     void generateXYQuad();

@@ -79,9 +79,6 @@ public:
     // Text renderers may be provided by clients at runtime.
     virtual void setTextRendererCore(QDemonRef<QDemonTextRendererInterface> inRenderer) = 0;
     virtual QDemonRef<QDemonTextRendererInterface> getTextRendererCore() = 0;
-    // this is our default 2D text onscreen renderer
-    virtual void setOnscreenTextRendererCore(QDemonRef<QDemonTextRendererInterface> inRenderer) = 0;
-    virtual QDemonRef<QDemonTextRendererInterface> getOnscreenTextRendererCore() = 0;
     // The render context maintains a reference to this object.
     virtual QDemonRef<QDemonRenderContextInterface> createRenderContext(QDemonRef<QDemonRenderContext> inContext,
                                                                         const char *inPrimitivesDirectory) = 0;
@@ -89,7 +86,6 @@ public:
     static QDemonRef<QDemonRenderContextCoreInterface> create();
 };
 
-class QDemonTextTextureAtlasInterface;
 class QDemonRendererInterface;
 class QDemonShaderCacheInterface;
 class QDemonOffscreenRenderManagerInterface;
@@ -142,10 +138,6 @@ public:
     virtual bool isAuthoringMode() = 0;
     virtual void setAuthoringMode(bool inMode) = 0;
 
-    // This one is setup by the runtime binding
-    virtual QDemonRef<QDemonTextRendererInterface> getOnscreenTextRenderer() = 0;
-    virtual QDemonRef<QDemonTextTextureAtlasInterface> getTextureAtlas() = 0;
-
     // Sub presentations change the rendering somewhat.
     virtual bool isInSubPresentation() = 0;
     virtual void setInSubPresentation(bool inValue) = 0;
@@ -153,7 +145,7 @@ public:
     virtual void setMatteColor(QDemonOption<QVector4D> inMatteColor) = 0;
 
     // render Gpu profiler values
-    virtual void renderGpuProfilerStats(float x, float y, QDemonOption<QVector3D> inColor) = 0;
+    virtual void dumpGpuProfilerStats() = 0;
 
     // The reason you can set both window dimensions and an overall viewport is that the mouse
     // needs to be inverted

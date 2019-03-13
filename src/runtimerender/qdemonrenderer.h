@@ -204,10 +204,8 @@ public:
     // related to the layer.
     virtual void releaseLayerRenderResources(QDemonRenderLayer &inLayer, const QDemonRenderInstanceId id) = 0;
 
-    // render a screen aligned 2D text
-    virtual void renderText2D(float x, float y, QDemonOption<QVector3D> inColor, const QString &text) = 0;
     // render Gpu profiler values
-    virtual void renderGpuProfilerStats(float x, float y, QDemonOption<QVector3D> inColor) = 0;
+    virtual void dumpGpuProfilerStats() = 0;
 
     // Get the mouse coordinates as they relate to a given layer
     virtual QDemonOption<QVector2D> getLayerMouseCoords(QDemonRenderLayer &inLayer,

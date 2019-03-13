@@ -44,7 +44,6 @@
 #include <QtDemonRuntimeRender/qdemonrendereffectsystem.h>
 #include <QtDemonRuntimeRender/qdemonrenderresourcemanager.h>
 #include <QtDemonRuntimeRender/qdemonrendertexttexturecache.h>
-#include <QtDemonRuntimeRender/qdemonrendertexttextureatlas.h>
 #include <QtDemonRuntimeRender/qdemonrendermaterialhelpers.h>
 #include <QtDemonRuntimeRender/qdemonrendercustommaterialsystem.h>
 #include <QtDemonRuntimeRender/qdemonrenderrenderlist.h>
@@ -1054,132 +1053,6 @@ void fillBoneIdNodeMap(QDemonRenderNode &childNode, QHash<long, QDemonRenderNode
         fillBoneIdNodeMap(*childChild, ioMap);
 }
 
-bool QDemonRendererImpl::prepareTextureAtlasForRender()
-{
-    QDemonRef<QDemonTextTextureAtlasInterface> theTextureAtlas = m_demonContext->getTextureAtlas();
-    if (theTextureAtlas == nullptr)
-        return false;
-
-    // this is a one time creation
-    if (!theTextureAtlas->isInitialized()) {
-        QDemonRef<QDemonRenderVertexBuffer> mVertexBuffer;
-        QDemonRef<QDemonRenderInputAssembler> mInputAssembler;
-        QDemonRef<QDemonRenderAttribLayout> mAttribLayout;
-        // temporay FB
-        QDemonRenderContextScopedProperty<QDemonRef<QDemonRenderFrameBuffer>> __fbo(*m_context,
-                                                                                    &QDemonRenderContext::renderTarget,
-                                                                                    &QDemonRenderContext::setRenderTarget);
-
-        QDemonTextRendererInterface &theTextRenderer(*m_demonContext->getOnscreenTextRenderer());
-        TTextTextureAtlasDetailsAndTexture theResult = theTextureAtlas->prepareTextureAtlas();
-        if (!theResult.first.entryCount) {
-            Q_ASSERT(theResult.first.entryCount);
-            return false;
-        }
-
-        // generate the index buffer we need
-        generateXYQuad();
-
-        QDemonRenderVertexBufferEntry theEntries[] = {
-            QDemonRenderVertexBufferEntry("attr_pos", QDemonRenderComponentType::Float32, 3),
-            QDemonRenderVertexBufferEntry("attr_uv", QDemonRenderComponentType::Float32, 2, 12),
-        };
-
-        // create our attribute layout
-        mAttribLayout = m_context->createAttributeLayout(toConstDataRef(theEntries, 2));
-
-        QDemonRef<QDemonRenderFrameBuffer> theAtlasFB(m_demonContext->getResourceManager()->allocateFrameBuffer());
-        theAtlasFB->attach(QDemonRenderFrameBufferAttachment::Color0, theResult.second);
-        m_demonContext->getRenderContext()->setRenderTarget(theAtlasFB);
-
-        // this texture contains our single entries
-        QDemonRef<QDemonRenderTexture2D> theTexture = nullptr;
-        if (m_context->renderContextType() == QDemonRenderContextType::GLES2) {
-            theTexture = m_demonContext->getResourceManager()->allocateTexture2D(32, 32, QDemonRenderTextureFormat::RGBA8);
-        } else {
-            theTexture = m_demonContext->getResourceManager()->allocateTexture2D(32, 32, QDemonRenderTextureFormat::Alpha8);
-        }
-        m_context->setClearColor(QVector4D(0, 0, 0, 0));
-        m_context->clear(QDemonRenderClearValues::Color);
-        m_context->setDepthTestEnabled(false);
-        m_context->setScissorTestEnabled(false);
-        m_context->setCullingEnabled(false);
-        m_context->setBlendingEnabled(false);
-        m_context->setViewport(QRect(0, 0, theResult.first.textWidth, theResult.first.textHeight));
-
-        QDemonRenderCamera theCamera;
-        theCamera.clipNear = -1.0;
-        theCamera.clipFar = 1.0;
-        theCamera.markDirty(QDemonRenderCamera::TransformDirtyFlag::TransformIsDirty);
-        theCamera.flags.setFlag(QDemonRenderCamera::Flag::Orthographic);
-        QVector2D theTextureDims((float)theResult.first.textWidth, (float)theResult.first.textHeight);
-        theCamera.calculateGlobalVariables(QRect(0, 0, theResult.first.textWidth, theResult.first.textHeight), theTextureDims);
-        // We want a 2D lower left projection
-        float *writePtr(theCamera.projection.data());
-        writePtr[12] = -1;
-        writePtr[13] = -1;
-
-        // generate render stuff
-        // We dynamicall update the vertex buffer
-        float tempBuf[20];
-        float *bufPtr = tempBuf;
-        quint32 bufSize = 20 * sizeof(float); // 4 vertices  3 pos 2 tex
-        QDemonDataRef<quint8> vertData((quint8 *)bufPtr, bufSize);
-        mVertexBuffer = new QDemonRenderVertexBuffer(m_context, QDemonRenderBufferUsageType::Dynamic,
-                                                      20 * sizeof(float),
-                                                      3 * sizeof(float) + 2 * sizeof(float),
-                                                      vertData);
-        quint32 strides = mVertexBuffer->stride();
-        quint32 offsets = 0;
-        mInputAssembler = m_context->createInputAssembler(mAttribLayout,
-                                                          toConstDataRef(&mVertexBuffer, 1),
-                                                          m_quadIndexBuffer,
-                                                          toConstDataRef(&strides, 1),
-                                                          toConstDataRef(&offsets, 1));
-
-        QDemonRef<QDemonRenderShaderProgram> theShader = getTextAtlasEntryShader();
-        QDemonTextShader theTextShader(theShader);
-
-        if (theShader) {
-            m_context->setActiveShader(theShader);
-            theTextShader.mvp.set(theCamera.projection);
-
-            // we are going through all entries and render to the FBO
-            for (quint32 i = 0; i < theResult.first.entryCount; i++) {
-                QDemonTextTextureAtlasEntryDetails theDetails = theTextRenderer.renderAtlasEntry(i, *theTexture);
-                // update vbo
-                // we need to mirror coordinates
-                float x1 = (float)theDetails.x;
-                float x2 = (float)theDetails.x + theDetails.textWidth;
-                float y1 = (float)theDetails.y;
-                float y2 = (float)theDetails.y + theDetails.textHeight;
-
-                float box[4][5] = {
-                    { x1, y1, 0, 0, 1 },
-                    { x1, y2, 0, 0, 0 },
-                    { x2, y2, 0, 1, 0 },
-                    { x2, y1, 0, 1, 1 },
-                };
-
-                QDemonDataRef<quint8> vertData((quint8 *)box, bufSize);
-                mVertexBuffer->updateBuffer(vertData, false);
-
-                theTextShader.sampler.set(theTexture.data());
-
-                m_context->setInputAssembler(mInputAssembler);
-                m_context->draw(QDemonRenderDrawMode::Triangles, m_quadIndexBuffer->numIndices(), 0);
-            }
-        }
-
-        m_demonContext->getResourceManager()->release(theTexture);
-        m_demonContext->getResourceManager()->release(theAtlasFB);
-
-        return true;
-    }
-
-    return theTextureAtlas->isInitialized();
-}
-
 QDemonOption<QVector2D> QDemonRendererImpl::getLayerMouseCoords(QDemonLayerRenderData &inLayerRenderData,
                                                                 const QVector2D &inMouseCoords,
                                                                 const QVector2D &inViewportDimensions,
@@ -1694,89 +1567,31 @@ void QDemonRendererImpl::renderText(const QDemonTextRenderInfo &inText,
     }
 }
 
-void QDemonRendererImpl::renderText2D(float x, float y, QDemonOption<QVector3D> inColor, const QString &text)
-{
-    if (m_demonContext->getOnscreenTextRenderer() != nullptr) {
-        generateXYQuadStrip();
 
-        if (prepareTextureAtlasForRender()) {
-            TTextRenderAtlasDetailsAndTexture theRenderTextDetails;
-            QDemonRef<QDemonTextTextureAtlasInterface> theTextureAtlas = m_demonContext->getTextureAtlas();
-            QSize theWindow = m_demonContext->getWindowDimensions();
-
-            QDemonTextRenderInfo theInfo;
-            theInfo.text = text;
-            theInfo.fontSize = 20;
-            // text scale 2% of screen we don't scale Y though because it becomes unreadable
-            theInfo.scaleX = (theWindow.width() / 100.0f) * 1.5f / (theInfo.fontSize);
-            theInfo.scaleY = 1.0f;
-
-            theRenderTextDetails = theTextureAtlas->renderText(theInfo);
-
-            if (theRenderTextDetails.first.vertices.size()) {
-                QDemonTextRenderHelper theTextHelper(getOnscreenTextShader());
-                if (theTextHelper.shader != nullptr) {
-                    // setup 2D projection
-                    QDemonRenderCamera theCamera;
-                    theCamera.clipNear = -1.0;
-                    theCamera.clipFar = 1.0;
-
-                    theCamera.markDirty(QDemonRenderCamera::TransformDirtyFlag::TransformIsDirty);
-                    theCamera.flags.setFlag(QDemonRenderCamera::Flag::Orthographic);
-                    QVector2D theWindowDim((float)theWindow.width(), (float)theWindow.height());
-                    theCamera.calculateGlobalVariables(QRect(0, 0, theWindow.width(), theWindow.height()), theWindowDim);
-                    // We want a 2D lower left projection
-                    float *writePtr(theCamera.projection.data());
-                    writePtr[12] = -1;
-                    writePtr[13] = -1;
-
-                    // upload vertices
-                    m_quadStripVertexBuffer->updateBuffer(theRenderTextDetails.first.vertices, false);
-
-                    theTextHelper.shader->render2D(theRenderTextDetails.second,
-                                                   QVector4D(inColor, 1.0f),
-                                                   theCamera.projection,
-                                                   getContext(),
-                                                   theTextHelper.quadInputAssembler,
-                                                   theRenderTextDetails.first.vertexCount,
-                                                   QVector2D(x, y));
-                }
-                // we release the memory here
-                ::free(theRenderTextDetails.first.vertices.begin());
-            }
-        }
-    }
-}
-
-void QDemonRendererImpl::renderGpuProfilerStats(float x, float y, QDemonOption<QVector3D> inColor)
+void QDemonRendererImpl::dumpGpuProfilerStats()
 {
     if (!isLayerGpuProfilingEnabled())
         return;
 
-    char messageLine[1024];
     TInstanceRenderMap::const_iterator theIter;
 
-    float startY = y;
 
     for (theIter = m_instanceRenderMap.begin(); theIter != m_instanceRenderMap.end(); theIter++) {
-        float startX = x;
         const QDemonRef<QDemonLayerRenderData> &theLayerRenderData = theIter.value();
         const QDemonRenderLayer *theLayer = &theLayerRenderData->layer;
 
         if (theLayer->flags.testFlag(QDemonRenderLayer::Flag::Active) && theLayerRenderData->m_layerProfilerGpu) {
             const QDemonRenderProfilerInterface::TStrIDVec &idList = theLayerRenderData->m_layerProfilerGpu->getTimerIDs();
             if (!idList.empty()) {
-                startY -= 22;
-                startX += 20;
-                renderText2D(startX, startY, inColor, theLayer->id);
+                qDebug() << theLayer->id;
                 QDemonRenderProfilerInterface::TStrIDVec::const_iterator theIdIter = idList.begin();
                 for (theIdIter = idList.begin(); theIdIter != idList.end(); theIdIter++) {
-                    startY -= 22;
+                    char messageLine[1024];
                     sprintf(messageLine,
                             "%s: %.3f ms",
                             theIdIter->toLatin1().constData(),
                             theLayerRenderData->m_layerProfilerGpu->getElapsedTime(*theIdIter));
-                    renderText2D(startX + 20, startY, inColor, QString::fromLocal8Bit(messageLine));
+                    qDebug() << "    " << messageLine;
                 }
             }
         }
