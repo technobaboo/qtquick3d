@@ -1,7 +1,7 @@
 #include "qdemonmodel.h"
 #include "qdemonobject_p.h"
 
-#include <QtDemonRuntimeRender/QDemonGraphObject>
+#include <QtDemonRuntimeRender/QDemonRenderGraphObject>
 #include <QtDemonRuntimeRender/QDemonRenderCustomMaterial>
 #include <QtDemonRuntimeRender/qdemonrenderreferencedmaterial.h>
 #include <QtDemonRuntimeRender/qdemonrenderdefaultmaterial.h>
