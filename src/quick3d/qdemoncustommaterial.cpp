@@ -27,6 +27,11 @@ bool QDemonCustomMaterial::hasVolumetricDF() const
     return m_hasVolumetricDF;
 }
 
+QString QDemonCustomMaterial::source() const
+{
+    return m_source;
+}
+
 void QDemonCustomMaterial::setHasTransparency(bool hasTransparency)
 {
     if (m_hasTransparency == hasTransparency)
@@ -52,6 +57,15 @@ void QDemonCustomMaterial::setHasVolumetricDF(bool hasVolumetricDF)
 
     m_hasVolumetricDF = hasVolumetricDF;
     emit hasVolumetricDFChanged(m_hasVolumetricDF);
+}
+
+void QDemonCustomMaterial::setSource(QString source)
+{
+    if (m_source == source)
+        return;
+
+    m_source = source;
+    emit sourceChanged(m_source);
 }
 
 QDemonRenderGraphObject *QDemonCustomMaterial::updateSpatialNode(QDemonRenderGraphObject *node)

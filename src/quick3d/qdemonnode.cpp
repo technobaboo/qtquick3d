@@ -150,7 +150,6 @@ void QDemonNode::setPivot(QVector3D pivot)
 
 void QDemonNode::setLocalOpacity(float opacity)
 {
-    qWarning("Floating point comparison needs context sanity check");
     if (qFuzzyCompare(m_opacity, opacity))
         return;
 
