@@ -631,11 +631,11 @@ static inline QDemonOption<QVector2D> intersectRayWithNode(const QDemonRenderNod
     if (inRenderableObject.renderableFlags.isDefaultMaterialMeshSubset()) {
         QDemonSubsetRenderable &theRenderable = static_cast<QDemonSubsetRenderable &>(inRenderableObject);
         if (&theRenderable.modelContext.model == &inNode)
-            return inPickRay.getRelativeXY(inRenderableObject.globalTransform, inRenderableObject.bounds);
+            return inPickRay.relativeXY(inRenderableObject.globalTransform, inRenderableObject.bounds);
     } else if (inRenderableObject.renderableFlags.isCustomMaterialMeshSubset()) {
         QDemonCustomMaterialRenderable &theRenderable = static_cast<QDemonCustomMaterialRenderable &>(inRenderableObject);
         if (&theRenderable.modelContext.model == &inNode)
-            return inPickRay.getRelativeXY(inRenderableObject.globalTransform, inRenderableObject.bounds);
+            return inPickRay.relativeXY(inRenderableObject.globalTransform, inRenderableObject.bounds);
     } else {
         Q_ASSERT(false);
     }
@@ -725,7 +725,7 @@ QDemonOption<QVector2D> QDemonRendererImpl::facePosition(QDemonRenderNode &inNod
 
     // Scale the mouse coords to change them into the camera's numerical space.
     QDemonRenderRay thePickRay = *theHitRay;
-    QDemonOption<QVector2D> newValue = thePickRay.getRelative(inGlobalTransform, inBounds, inPlane);
+    QDemonOption<QVector2D> newValue = thePickRay.relative(inGlobalTransform, inBounds, inPlane);
     return newValue;
 }
 
@@ -769,7 +769,7 @@ QVector3D QDemonRendererImpl::unprojectWithDepth(QDemonRenderNode &inNode, QVect
     QDemonLayerRenderPreparationResult &thePrepResult(*theData->layerPrepResult);
     QSize theWindow = m_demonContext->getWindowDimensions();
     QDemonRenderRay theRay = thePrepResult.getPickRay(theMouse, QVector2D((float)theWindow.width(), (float)theWindow.height()), true);
-    QVector3D theTargetPosition = theRay.m_origin + theRay.m_direction * theDepth;
+    QVector3D theTargetPosition = theRay.origin + theRay.direction * theDepth;
     if (inNode.parent != nullptr && inNode.parent->type != QDemonRenderGraphObject::Type::Layer)
         theTargetPosition = mat44::transform(mat44::getInverse(inNode.parent->globalTransform), theTargetPosition);
     // Our default global space is right handed, so if you are left handed z means something
@@ -1100,11 +1100,10 @@ void QDemonRendererImpl::intersectRayWithSubsetRenderable(const QDemonRenderRay 
                                                           QDemonRenderableObject &inRenderableObject,
                                                           TPickResultArray &outIntersectionResultList)
 {
-    QDemonOption<QDemonRenderRayIntersectionResult> theIntersectionResultOpt(
-            inRay.intersectWithAABB(inRenderableObject.globalTransform, inRenderableObject.bounds));
-    if (theIntersectionResultOpt.hasValue() == false)
+    QDemonRenderRay::IntersectionResult intersectionResult =
+            inRay.intersectWithAABB(inRenderableObject.globalTransform, inRenderableObject.bounds);
+    if (!intersectionResult.intersects)
         return;
-    QDemonRenderRayIntersectionResult &theResult(*theIntersectionResultOpt);
 
     // Leave the coordinates relative for right now.
     const QDemonRenderGraphObject *thePickObject = nullptr;
@@ -1117,7 +1116,7 @@ void QDemonRendererImpl::intersectRayWithSubsetRenderable(const QDemonRenderRay 
 
     if (thePickObject != nullptr) {
         outIntersectionResultList.push_back(
-                QDemonRenderPickResult(*thePickObject, theResult.m_rayLengthSquared, theResult.m_relXY));
+                QDemonRenderPickResult(*thePickObject, intersectionResult.rayLengthSquared, intersectionResult.relXY));
 
         // For subsets, we know we can find images on them which may have been the result
         // of rendering a sub-presentation.

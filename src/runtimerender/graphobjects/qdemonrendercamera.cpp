@@ -402,8 +402,8 @@ QDemonRenderRay QDemonRenderCamera::unproject(const QVector2D &inViewportRelativ
     QDemonPinCameraResult result = pinCamera(inViewport, inDesignDimensions, tempVal, scaleMode, scaleAnchor);
     QVector2D globalCoords = toAbsoluteCoords(inViewport, inViewportRelativeCoords);
     QVector2D normalizedCoords = absoluteToNormalizedCoordinates(result.m_virtualViewport, globalCoords);
-    QVector3D &outOrigin(theRay.m_origin);
-    QVector3D &outDir(theRay.m_direction);
+    QVector3D &outOrigin(theRay.origin);
+    QVector3D &outDir(theRay.direction);
     QVector2D inverseFrustumScale(1.0f / frustumScale.x(), 1.0f / frustumScale.y());
     QVector2D scaledCoords(inverseFrustumScale.x() * normalizedCoords.x(), inverseFrustumScale.y() * normalizedCoords.y());
 
