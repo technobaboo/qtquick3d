@@ -47,8 +47,6 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderLightmaps : public QDemonRenderGr
         DynamicAndBaked,
     };
 
-    QDemonMaterialDirty m_dirty;
-
     QDemonRenderImage *m_lightmapIndirect = nullptr;
     QDemonRenderImage *m_lightmapRadiosity = nullptr;
     QDemonRenderImage *m_lightmapShadow = nullptr;
