@@ -30,7 +30,7 @@
 #include <QtDemonRuntimeRender/qdemonrenderloadedtexture.h>
 #include <QtDemonRuntimeRender/qdemonrenderinputstreamfactory.h>
 #include <QtDemonRuntimeRender/qdemonrenderimagescaler.h>
-#include <QtDemonRuntimeRender/qdemontextrenderer.h>
+#include <QtDemonRuntimeRender/qdemonrendererutil.h>
 #include <QtGui/QImage>
 #include <QtGui/QOpenGLTexture>
 #include <QtMath>
@@ -360,8 +360,8 @@ void QDemonLoadedTexture::ensureMultiplerOfFour(const char *inPath)
     if (width % 4 || height % 4) {
         qCWarning(PERF_WARNING, "Image %s has non multiple of four width or height; perf hit for scaling", inPath);
         if (data) {
-            quint32 newWidth = QDemonTextRendererInterface::nextMultipleOf4(width);
-            quint32 newHeight = QDemonTextRendererInterface::nextMultipleOf4(height);
+            quint32 newWidth = QDemonRendererUtil::nextMultipleOf4(width);
+            quint32 newHeight = QDemonRendererUtil::nextMultipleOf4(height);
             quint32 newDataSize = newWidth * newHeight * components;
             quint8 *newData = static_cast<quint8 *>(::malloc(newDataSize));
             QDemonImageScaler theScaler;

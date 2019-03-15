@@ -32,7 +32,6 @@
 #include <QtDemonRender/qdemonrenderframebuffer.h>
 #include <QtDemonRuntimeRender/qdemonrenderresourcemanager.h>
 #include <QtDemonRender/qdemonrendercontext.h>
-#include <qdemontextrenderer.h>
 #include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
 #include <qdemonoffscreenrenderkey.h>
 #include <qdemonrenderrenderlist.h>
@@ -351,8 +350,8 @@ struct QDemonOffscreenRenderManager : public QDemonOffscreenRenderManagerInterfa
 
             QDemonOffscreenRendererEnvironment theDesiredEnvironment = theData.renderer->getDesiredEnvironment(thePresScaleFactor);
             // Ensure we get a valid width and height
-            theDesiredEnvironment.width = QDemonTextRendererInterface::nextMultipleOf4(theDesiredEnvironment.width);
-            theDesiredEnvironment.height = QDemonTextRendererInterface::nextMultipleOf4(theDesiredEnvironment.height);
+            theDesiredEnvironment.width = QDemonRendererUtil::nextMultipleOf4(theDesiredEnvironment.width);
+            theDesiredEnvironment.height = QDemonRendererUtil::nextMultipleOf4(theDesiredEnvironment.height);
             if (theDesiredEnvironment.width == 0 || theDesiredEnvironment.height == 0) {
                 return QDemonOffscreenRenderResult();
             }

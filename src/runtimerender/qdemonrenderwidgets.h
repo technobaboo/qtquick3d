@@ -43,7 +43,6 @@
 #include <QtDemonRender/qdemonrendervertexbuffer.h>
 #include <QtDemonRender/qdemonrenderindexbuffer.h>
 
-#include <QtDemonRuntimeRender/qdemonrendertext.h>
 #include <QtDemonRuntimeRender/qdemonrenderer.h>
 
 #include <QtDemonRuntimeRender/qdemonrendershadercodegenerator.h>

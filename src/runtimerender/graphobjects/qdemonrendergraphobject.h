@@ -51,7 +51,6 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderGraphObject
         Model,
         DefaultMaterial,
         Image,
-        Text,
         Effect,
         CustomMaterial,
         RenderPlugin,
@@ -93,13 +92,12 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderGraphObject
                 type == Type::Light ||
                 type == Type::Camera ||
                 type == Type::Model ||
-                type == Type::Text ||
                 type == Type::Path);
     }
 
     constexpr inline bool isRenderableType() const Q_DECL_NOTHROW
     {
-        return (type == Type::Model || type == Type::Text || type == Type::Path);
+        return (type == Type::Model || type == Type::Path);
     }
 
     constexpr inline bool isLightCameraType() const Q_DECL_NOTHROW

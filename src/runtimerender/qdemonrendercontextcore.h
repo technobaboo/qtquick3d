@@ -36,11 +36,9 @@
 #include <QtDemonRuntimeRender/qdemonrenderdynamicobjectsystem.h>
 #include <QtDemonRuntimeRender/qdemonrendercustommaterialsystem.h>
 #include <QtDemonRuntimeRender/qdemonrendereffectsystem.h>
-#include <QtDemonRuntimeRender/qdemontextrenderer.h>
 #include <QtDemonRuntimeRender/qdemonrenderwidgets.h>
 #include <QtDemonRuntimeRender/qdemonrenderimagebatchloader.h>
 #include <QtDemonRuntimeRender/qdemonrenderpixelgraphicsrenderer.h>
-#include <QtDemonRuntimeRender/qdemonrendertexttexturecache.h>
 #include <QtDemonRuntimeRender/qdemonrenderrenderlist.h>
 #include <QtDemonRuntimeRender/qtdemonruntimerenderglobal.h>
 #include <QtDemonRuntimeRender/qdemonrenderinputstreamfactory.h>
@@ -76,9 +74,6 @@ public:
     virtual QDemonRef<QDemonEffectSystemInterface> getEffectSystemCore() = 0;
     virtual QDemonRef<QDemonPerfTimer> getPerfTimer() = 0;
     virtual QDemonRef<QDemonPathManagerInterface> getPathManagerCore() = 0;
-    // Text renderers may be provided by clients at runtime.
-    virtual void setTextRendererCore(QDemonRef<QDemonTextRendererInterface> inRenderer) = 0;
-    virtual QDemonRef<QDemonTextRendererInterface> getTextRendererCore() = 0;
     // The render context maintains a reference to this object.
     virtual QDemonRef<QDemonRenderContextInterface> createRenderContext(QDemonRef<QDemonRenderContext> inContext,
                                                                         const char *inPrimitivesDirectory) = 0;
@@ -111,8 +106,6 @@ public:
     virtual QDemonRef<QDemonMaterialSystem> getCustomMaterialSystem() = 0;
     virtual QDemonRef<QDemonPixelGraphicsRendererInterface> getPixelGraphicsRenderer() = 0;
     virtual QDemonRef<QDemonPerfTimer> getPerfTimer() = 0;
-    virtual QDemonRef<QDemonTextTextureCacheInterface> getTextureCache() = 0;
-    virtual QDemonRef<QDemonTextRendererInterface> getTextRenderer() = 0;
     virtual QDemonRef<QDemonRenderListInterface> getRenderList() = 0;
     virtual QDemonRef<QDemonPathManagerInterface> getPathManager() = 0;
     virtual QDemonRef<QDemonShaderProgramGeneratorInterface> getShaderProgramGenerator() = 0;

@@ -37,13 +37,11 @@
 #include <QtDemonRuntimeRender/qdemonrenderbuffermanager.h>
 #include <QtDemonRuntimeRender/qdemonoffscreenrendermanager.h>
 #include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
-#include <QtDemonRuntimeRender/qdemontextrenderer.h>
 #include <QtDemonRuntimeRender/qdemonrenderscene.h>
 #include <QtDemonRuntimeRender/qdemonrenderpresentation.h>
 #include <QtDemonRuntimeRender/qdemonrendereffect.h>
 #include <QtDemonRuntimeRender/qdemonrendereffectsystem.h>
 #include <QtDemonRuntimeRender/qdemonrenderresourcemanager.h>
-#include <QtDemonRuntimeRender/qdemonrendertexttexturecache.h>
 #include <QtDemonRuntimeRender/qdemonrendermaterialhelpers.h>
 #include <QtDemonRuntimeRender/qdemonrendercustommaterialsystem.h>
 #include <QtDemonRuntimeRender/qdemonrenderrenderlist.h>
@@ -121,14 +119,6 @@ void QDemonRendererImpl::childrenUpdated(QDemonRenderNode &inParent)
         }
     } else if (inParent.parent)
         childrenUpdated(*inParent.parent);
-}
-
-float QDemonRendererImpl::getTextScale(const QDemonRenderText &inText)
-{
-    QDemonRef<QDemonLayerRenderData> theData = getOrCreateLayerRenderDataForNode(inText);
-    if (theData)
-        return theData->m_textScale;
-    return 1.0f;
 }
 
 static inline QDemonRenderLayer *getNextLayer(QDemonRenderLayer &inLayer)
@@ -639,11 +629,7 @@ static inline QDemonOption<QVector2D> intersectRayWithNode(const QDemonRenderNod
                                                            QDemonRenderableObject &inRenderableObject,
                                                            const QDemonRenderRay &inPickRay)
 {
-    if (inRenderableObject.renderableFlags.isText()) {
-        QDemonTextRenderable &theRenderable = static_cast<QDemonTextRenderable &>(inRenderableObject);
-        if (&theRenderable.text == &inNode)
-            return inPickRay.getRelativeXY(inRenderableObject.globalTransform, inRenderableObject.bounds);
-    } else if (inRenderableObject.renderableFlags.isDefaultMaterialMeshSubset()) {
+    if (inRenderableObject.renderableFlags.isDefaultMaterialMeshSubset()) {
         QDemonSubsetRenderable &theRenderable = static_cast<QDemonSubsetRenderable &>(inRenderableObject);
         if (&theRenderable.modelContext.model == &inNode)
             return inPickRay.getRelativeXY(inRenderableObject.globalTransform, inRenderableObject.bounds);
@@ -1125,8 +1111,6 @@ void QDemonRendererImpl::intersectRayWithSubsetRenderable(const QDemonRenderRay 
     const QDemonRenderGraphObject *thePickObject = nullptr;
     if (inRenderableObject.renderableFlags.isDefaultMaterialMeshSubset())
         thePickObject = &static_cast<QDemonSubsetRenderable *>(&inRenderableObject)->modelContext.model;
-    else if (inRenderableObject.renderableFlags.isText())
-        thePickObject = &static_cast<QDemonTextRenderable *>(&inRenderableObject)->text;
     else if (inRenderableObject.renderableFlags.isCustomMaterialMeshSubset())
         thePickObject = &static_cast<QDemonCustomMaterialRenderable *>(&inRenderableObject)->modelContext.model;
     else if (inRenderableObject.renderableFlags.isPath())
@@ -1531,42 +1515,6 @@ QDemonRef<QDemonShaderProgramGeneratorInterface> QDemonRendererImpl::getProgramG
 {
     return m_demonContext->getShaderProgramGenerator();
 }
-
-QDemonTextDimensions QDemonRendererImpl::measureText(const QDemonTextRenderInfo &inText)
-{
-    if (m_demonContext->getTextRenderer() != nullptr)
-        return m_demonContext->getTextRenderer()->measureText(inText, 0);
-    return QDemonTextDimensions();
-}
-
-void QDemonRendererImpl::renderText(const QDemonTextRenderInfo &inText,
-                                    const QVector3D &inTextColor,
-                                    const QVector3D &inBackgroundColor,
-                                    const QMatrix4x4 &inMVP)
-{
-    if (m_demonContext->getTextRenderer() != nullptr) {
-        QDemonTextRendererInterface &theTextRenderer(*m_demonContext->getTextRenderer());
-        QDemonRef<QDemonRenderTexture2D> theTexture = m_demonContext->getResourceManager()->allocateTexture2D(32, 32, QDemonRenderTextureFormat::RGBA8);
-        QDemonTextTextureDetails theTextTextureDetails = theTextRenderer.renderText(inText, *theTexture);
-        QDemonTextRenderHelper theTextHelper(getTextWidgetShader());
-        if (theTextHelper.shader != nullptr) {
-            m_demonContext->getRenderContext()->setBlendingEnabled(false);
-            QDemonTextScaleAndOffset theScaleAndOffset(*theTexture, theTextTextureDetails, inText);
-            theTextHelper.shader->render(theTexture,
-                                         theScaleAndOffset,
-                                         QVector4D(inTextColor, 1.0f),
-                                         inMVP,
-                                         QVector2D(0, 0),
-                                         getContext(),
-                                         theTextHelper.quadInputAssembler,
-                                         theTextHelper.quadInputAssembler->indexCount(),
-                                         theTextTextureDetails,
-                                         inBackgroundColor);
-        }
-        m_demonContext->getResourceManager()->release(theTexture);
-    }
-}
-
 
 void QDemonRendererImpl::dumpGpuProfilerStats()
 {

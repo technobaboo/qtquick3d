@@ -42,50 +42,6 @@ struct QDemonRenderableImage;
 struct QDemonShaderGeneratorGeneratedShader;
 struct QDemonSubsetRenderable;
 
-QDemonTextScaleAndOffset::QDemonTextScaleAndOffset(QDemonRenderTexture2D &inTexture,
-                                                   const QDemonTextTextureDetails &inTextDetails,
-                                                   const QDemonTextRenderInfo &inInfo)
-    : textOffset(0, 0), textScale(1, 1)
-
-{
-    QDemonRenderTexture2D &theTexture = inTexture;
-    QDemonTextureDetails theDetails(theTexture.textureDetails());
-    QVector2D textDimensions(inTextDetails.textWidth / 2.0f, inTextDetails.textHeight / 2.0f);
-    textDimensions.setX(textDimensions.x() / inTextDetails.scaleFactor.x());
-    textDimensions.setY(textDimensions.y() / inTextDetails.scaleFactor.y());
-    QVector2D theTextScale(textDimensions.x(), textDimensions.y());
-    QVector2D theTextOffset(0, 0);
-
-    // Set the offsets to use after scaling the rect coordinates.
-    switch (inInfo.horizontalAlignment) {
-    case TextHorizontalAlignment::Left:
-        theTextOffset[0] = theTextScale[0];
-        break;
-    case TextHorizontalAlignment::Center:
-        break;
-    case TextHorizontalAlignment::Right:
-        theTextOffset[0] = -theTextScale[0];
-        break;
-    default:
-        break;
-    }
-
-    switch (inInfo.verticalAlignment) {
-    case TextVerticalAlignment::Top:
-        theTextOffset[1] = -theTextScale[1];
-        break;
-    case TextVerticalAlignment::Middle:
-        break;
-    case TextVerticalAlignment::Bottom:
-        theTextOffset[1] = theTextScale[1];
-        break;
-    default:
-        break;
-    }
-    textScale = theTextScale;
-    textOffset = theTextOffset;
-}
-
 QDemonSubsetRenderableBase::QDemonSubsetRenderableBase(QDemonRenderableObjectFlags inFlags,
                                                        const QVector3D &inWorldCenterPt,
                                                        const QDemonRef<QDemonRendererImpl> &gen,
@@ -260,7 +216,6 @@ QDemonSubsetRenderable::QDemonSubsetRenderable(QDemonRenderableObjectFlags inFla
 {
     renderableFlags.setDefaultMaterialMeshSubset(true);
     renderableFlags.setCustom(false);
-    renderableFlags.setText(false);
 }
 
 QDemonSubsetRenderable::~QDemonSubsetRenderable() = default;
@@ -334,149 +289,6 @@ void QDemonSubsetRenderable::renderDepthPass(const QVector2D &inCameraVec)
             displacementImage = theImage;
     }
     QDemonSubsetRenderableBase::renderDepthPass(inCameraVec, displacementImage, material.displaceAmount);
-}
-
-void QDemonTextRenderable::render(const QVector2D &inCameraVec)
-{
-    QDemonRef<QDemonRenderContext> context(generator.getContext());
-
-    if (!text.m_pathFontDetails) {
-
-        QDemonTextRenderHelper theInfo = generator.getShader(*this, false);
-        if (theInfo.shader == nullptr)
-            return;
-        // All of our shaders produce premultiplied values.
-        QDemonRenderBlendFunctionArgument blendFunc(QDemonRenderSrcBlendFunc::One,
-                                                    QDemonRenderDstBlendFunc::OneMinusSrcAlpha,
-                                                    QDemonRenderSrcBlendFunc::One,
-                                                    QDemonRenderDstBlendFunc::OneMinusSrcAlpha);
-
-        QDemonRenderBlendEquationArgument blendEqu(QDemonRenderBlendEquation::Add, QDemonRenderBlendEquation::Add);
-
-        context->setBlendFunction(blendFunc);
-        context->setBlendEquation(blendEqu);
-        QVector4D theColor(text.m_textColor, text.globalOpacity);
-
-        QDemonTextShader &shader(*theInfo.shader);
-        shader.render(text.m_textTexture,
-                      *this,
-                      theColor,
-                      modelViewProjection,
-                      inCameraVec,
-                      context,
-                      theInfo.quadInputAssembler,
-                      theInfo.quadInputAssembler->indexCount(),
-                      text.m_textTextureDetails,
-                      QVector3D(0, 0, 0));
-    } else {
-        Q_ASSERT(context->supportsPathRendering() && context->supportsProgramPipeline());
-
-        QDemonTextRenderHelper theInfo = generator.getShader(*this, true);
-        if (theInfo.shader == nullptr)
-            return;
-
-        // All of our shaders produce premultiplied values.
-        QDemonRenderBlendFunctionArgument blendFunc(QDemonRenderSrcBlendFunc::One,
-                                                    QDemonRenderDstBlendFunc::OneMinusSrcAlpha,
-                                                    QDemonRenderSrcBlendFunc::One,
-                                                    QDemonRenderDstBlendFunc::OneMinusSrcAlpha);
-
-        QDemonRenderBlendEquationArgument blendEqu(QDemonRenderBlendEquation::Add, QDemonRenderBlendEquation::Add);
-
-        context->setBlendFunction(blendFunc);
-        context->setBlendEquation(blendEqu);
-        QVector4D theColor(text.m_textColor, text.globalOpacity);
-
-        QDemonTextShader &shader(*theInfo.shader);
-
-        shader.renderPath(text.m_pathFontItem,
-                          text.m_pathFontDetails,
-                          *this,
-                          theColor,
-                          viewProjection,
-                          globalTransform,
-                          inCameraVec,
-                          context,
-                          text.m_textTextureDetails,
-                          QVector3D(0, 0, 0));
-    }
-}
-
-void QDemonTextRenderable::renderDepthPass(const QVector2D &inCameraVec)
-{
-    auto context = generator.getContext();
-    QDemonRef<QDemonTextDepthShader> theDepthShader = generator.getTextDepthShader();
-    if (theDepthShader == nullptr)
-        return;
-
-    if (!text.m_pathFontDetails) {
-        // we may change stencil test state
-        QDemonRenderContextScopedProperty<bool> __stencilTest(*context,
-                                                              &QDemonRenderContext::isStencilTestEnabled,
-                                                              &QDemonRenderContext::setStencilTestEnabled,
-                                                              true);
-
-        QDemonRef<QDemonRenderShaderProgram> theShader(theDepthShader->shader);
-        context->setCullingEnabled(false);
-        context->setActiveShader(theShader);
-        theDepthShader->mvp.set(modelViewProjection);
-        theDepthShader->sampler.set(text.m_textTexture.data());
-        const QDemonTextScaleAndOffset &theScaleAndOffset(*this);
-        theDepthShader->dimensions.set(QVector4D(theScaleAndOffset.textScale.x(),
-                                                 theScaleAndOffset.textScale.y(),
-                                                 theScaleAndOffset.textOffset.x(),
-                                                 theScaleAndOffset.textOffset.y()));
-        theDepthShader->cameraProperties.set(inCameraVec);
-
-        QDemonTextureDetails theTextureDetails = text.m_textTexture->textureDetails();
-        const QDemonTextTextureDetails &theTextTextureDetails(text.m_textTextureDetails);
-        float theWidthScale = (float)theTextTextureDetails.textWidth / (float)theTextureDetails.width;
-        float theHeightScale = (float)theTextTextureDetails.textHeight / (float)theTextureDetails.height;
-        theDepthShader->textDimensions.set(QVector3D(theWidthScale, theHeightScale, theTextTextureDetails.flipY ? 1.0f : 0.0f));
-        context->setInputAssembler(theDepthShader->quadInputAssembler);
-        context->draw(QDemonRenderDrawMode::Triangles, theDepthShader->quadInputAssembler->indexCount(), 0);
-    } else {
-        QDemonRenderBoolOp theDepthFunction = context->depthFunction();
-        bool isDepthEnabled = context->isDepthTestEnabled();
-        bool isStencilEnabled = context->isStencilTestEnabled();
-        bool isDepthWriteEnabled = context->isDepthWriteEnabled();
-        QDemonRenderStencilFunction theArg(QDemonRenderBoolOp::NotEqual, 0, 0xFF);
-        QDemonRenderStencilOperation theOpArg(QDemonRenderStencilOp::Keep, QDemonRenderStencilOp::Keep, QDemonRenderStencilOp::Zero);
-        QDemonRef<QDemonRenderDepthStencilState> depthStencilState = new QDemonRenderDepthStencilState(context,
-                                                                                                           isDepthEnabled,
-                                                                                                      isDepthWriteEnabled,
-                                                                                                      theDepthFunction,
-                                                                                                      false,
-                                                                                                      theArg,
-                                                                                                      theArg,
-                                                                                                      theOpArg,
-                                                                                                      theOpArg);
-
-        context->setActiveShader(nullptr);
-        context->setCullingEnabled(false);
-
-        context->setDepthStencilState(depthStencilState);
-
-        // setup transform
-        QMatrix4x4 offsetMatrix;
-        offsetMatrix(3, 0) = textOffset.x() - float(text.m_textTextureDetails.textWidth) / 2.0f;
-        offsetMatrix(3, 1) = textOffset.y() - float(text.m_textTextureDetails.textHeight) / 2.0f;
-
-        QMatrix4x4 pathMatrix = text.m_pathFontItem->getTransform();
-
-        context->setPathProjectionMatrix(viewProjection);
-        context->setPathModelViewMatrix(globalTransform * offsetMatrix * pathMatrix);
-
-        // first pass
-        text.m_pathFontDetails->stencilFillPathInstanced(text.m_pathFontItem);
-
-        // second pass
-        context->setStencilTestEnabled(true);
-        text.m_pathFontDetails->coverFillPathInstanced(text.m_pathFontItem);
-
-        context->setStencilTestEnabled(isStencilEnabled);
-        context->setDepthFunction(theDepthFunction);
-    }
 }
 
 QDemonCustomMaterialRenderable::QDemonCustomMaterialRenderable(QDemonRenderableObjectFlags inFlags,

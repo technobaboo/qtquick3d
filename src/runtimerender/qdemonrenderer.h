@@ -91,7 +91,6 @@ public:
     virtual QDemonOption<QDemonCuboidRect> getCameraBounds(const QDemonRenderGraphObject &inObject) = 0;
     // Called when you have changed the number or order of children of a given node.
     virtual void childrenUpdated(QDemonRenderNode &inParent) = 0;
-    virtual float getTextScale(const QDemonRenderText &inText) = 0;
 
     // The QDemonRenderContextInterface calls these, clients should not.
     virtual void beginFrame() = 0;

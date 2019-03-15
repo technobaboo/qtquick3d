@@ -36,8 +36,6 @@
 
 QT_BEGIN_NAMESPACE
 
-struct QDemonTextScaleAndOffset;
-
 /**
  *	Cached tessellation property lookups this is on a per mesh base
  */
@@ -208,96 +206,6 @@ struct QDemonDefaultAoPassShader
         Q_UNUSED(inContext)
     }
     ~QDemonDefaultAoPassShader() {}
-};
-
-struct QDemonTextShader
-{
-    QDemonRef<QDemonRenderShaderProgram> shader;
-    QDemonRef<QDemonRenderProgramPipeline> programPipeline;
-    QDemonRenderCachedShaderProperty<QMatrix4x4> mvp;
-    // Dimensions and offsetting of the image.
-    QDemonRenderCachedShaderProperty<QVector4D> dimensions;
-    // The fourth member of text color is the opacity
-    QDemonRenderCachedShaderProperty<QVector4D> textColor;
-    QDemonRenderCachedShaderProperty<QVector3D> backgroundColor;
-    QDemonRenderCachedShaderProperty<QDemonRenderTexture2D *> sampler;
-    // Dimensions and offsetting of the texture
-    QDemonRenderCachedShaderProperty<QVector3D> textDimensions;
-    QDemonRenderCachedShaderProperty<QVector2D> cameraProperties;
-    // Used only for onscreen text
-    QDemonRenderCachedShaderProperty<QVector2D> vertexOffsets;
-
-    QDemonTextShader(QDemonRef<QDemonRenderShaderProgram> inShader, QDemonRef<QDemonRenderProgramPipeline> pipeline = nullptr)
-        : shader(inShader)
-        , programPipeline(pipeline)
-        , mvp("model_view_projection", inShader)
-        , dimensions("text_dimensions", inShader)
-        , textColor("text_textcolor", inShader)
-        , backgroundColor("text_backgroundcolor", inShader)
-        , sampler("text_image", inShader)
-        , textDimensions("text_textdimensions", inShader)
-        , cameraProperties("camera_properties", inShader)
-        , vertexOffsets("vertex_offsets", inShader)
-    {
-        if (!pipeline) {
-            // TODO: ??
-        }
-    }
-    ~QDemonTextShader() {}
-    void render(const QDemonRef<QDemonRenderTexture2D> &inTexture,
-                const QDemonTextScaleAndOffset &inScaleAndOffset,
-                const QVector4D &inTextColor,
-                const QMatrix4x4 &inMVP,
-                const QVector2D &inCameraVec,
-                const QDemonRef<QDemonRenderContext> &inRenderContext,
-                const QDemonRef<QDemonRenderInputAssembler> &inInputAssemblerBuffer,
-                quint32 count,
-                const QDemonTextTextureDetails &inTextTextureDetails,
-                const QVector3D &inBackgroundColor);
-
-    void renderPath(const QDemonRef<QDemonRenderPathFontItem> &inPathFontItem,
-                    const QDemonRef<QDemonRenderPathFontSpecification> &inPathFontSpec,
-                    const QDemonTextScaleAndOffset &inScaleAndOffset,
-                    const QVector4D &inTextColor,
-                    const QMatrix4x4 &inViewProjection,
-                    const QMatrix4x4 &inModel,
-                    const QVector2D &inCameraVec,
-                    const QDemonRef<QDemonRenderContext> &inRenderContext,
-                    const QDemonTextTextureDetails &inTextTextureDetails,
-                    const QVector3D &inBackgroundColor);
-
-    void render2D(const QDemonRef<QDemonRenderTexture2D> &inTexture,
-                  const QVector4D &inTextColor,
-                  const QMatrix4x4 &inMVP,
-                  const QDemonRef<QDemonRenderContext> &inRenderContext,
-                  const QDemonRef<QDemonRenderInputAssembler> &inInputAssemblerBuffer,
-                  quint32 count,
-                  const QVector2D &inVertexOffsets);
-};
-
-struct QDemonTextDepthShader
-{
-    QAtomicInt ref;
-    QDemonRef<QDemonRenderShaderProgram> shader;
-    QDemonRenderCachedShaderProperty<QMatrix4x4> mvp;
-    // Dimensions and offsetting of the image.
-    QDemonRenderCachedShaderProperty<QVector4D> dimensions;
-    QDemonRenderCachedShaderProperty<QVector3D> textDimensions;
-    QDemonRenderCachedShaderProperty<QVector2D> cameraProperties;
-    QDemonRenderCachedShaderProperty<QDemonRenderTexture2D *> sampler;
-    QDemonRef<QDemonRenderInputAssembler> quadInputAssembler;
-
-    QDemonTextDepthShader(QDemonRef<QDemonRenderShaderProgram> prog, QDemonRef<QDemonRenderInputAssembler> assembler)
-        : shader(prog)
-        , mvp("model_view_projection", prog)
-        , dimensions("text_dimensions", prog)
-        , textDimensions("text_textdimensions", prog)
-        , cameraProperties("camera_properties", prog)
-        , sampler("text_image", prog)
-        , quadInputAssembler(assembler)
-    {
-    }
-    ~QDemonTextDepthShader() {}
 };
 
 struct QDemonLayerProgAABlendShader

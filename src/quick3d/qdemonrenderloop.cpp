@@ -198,7 +198,6 @@ static QSurfaceFormat idealSurfaceFormat()
 QDemonGuiThreadRenderLoop::QDemonGuiThreadRenderLoop() : gl(nullptr)
 {
     m_contextCore = QDemonRenderContextCoreInterface::create();
-    m_contextCore->setTextRendererCore(QDemonTextRendererInterface::createQtTextRenderer());
 
     // To create the Render Context, we have to have a valid OpenGL Context
     // to resolve the functions, so do that now (before we have any windows)

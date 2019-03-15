@@ -120,9 +120,6 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderCamera : public QDemonRenderNode
     // Number is always greater than one
     float getOrthographicScaleFactor(const QRectF &inViewport, const QVector2D &inDesignDimensions) const;
     bool computeFrustumPerspective(const QRectF &inViewport, const QVector2D &inDesignDimensions);
-    // Text may be scaled so that it doesn't appear pixellated when the camera itself is doing
-    // the scaling.
-    float getTextScaleFactor(const QRectF &inViewport, const QVector2D &inDesignDimensions) const;
 
     void calculateViewProjectionMatrix(QMatrix4x4 &outMatrix) const;
 

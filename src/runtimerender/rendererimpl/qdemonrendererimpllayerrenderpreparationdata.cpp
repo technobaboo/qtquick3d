@@ -38,7 +38,6 @@
 #include <QtDemonRuntimeRender/qdemonrenderpresentation.h>
 #include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
 #include <QtDemonRuntimeRender/qdemonrenderresourcemanager.h>
-#include <QtDemonRuntimeRender/qdemontextrenderer.h>
 #include <QtDemonRuntimeRender/qdemonrendereffectsystem.h>
 #include <QtDemonRender/qdemonrenderframebuffer.h>
 #include <QtDemonRender/qdemonrenderrenderbuffer.h>
@@ -50,7 +49,6 @@
 #include <QtDemonRuntimeRender/qdemonrendermaterialhelpers.h>
 #include <QtDemonRuntimeRender/qdemonrenderbuffermanager.h>
 #include <QtDemonRuntimeRender/qdemonrendercustommaterialsystem.h>
-#include <QtDemonRuntimeRender/qdemonrendertexttexturecache.h>
 #include <QtDemonRuntimeRender/qdemonrenderrenderlist.h>
 #include <QtDemonRuntimeRender/qdemonrenderpath.h>
 #include <QtDemonRuntimeRender/qdemonrenderpathmanager.h>
@@ -299,57 +297,6 @@ QDemonShaderDefaultMaterialKey QDemonLayerRenderPreparationData::generateLightin
         }
     }
     return theGeneratedKey;
-}
-
-bool QDemonLayerRenderPreparationData::prepareTextForRender(QDemonRenderText &inText,
-                                                            const QMatrix4x4 &inViewProjection,
-                                                            float inTextScaleFactor,
-                                                            QDemonLayerRenderPreparationResultFlags &ioFlags)
-{
-    QDemonRef<QDemonTextTextureCacheInterface> theTextRenderer = renderer->getDemonContext()->getTextureCache();
-    if (theTextRenderer == nullptr)
-        return false;
-
-    QDemonRenderableObjectFlags theFlags;
-    theFlags.setHasTransparency(true);
-    theFlags.setCompletelyTransparent(inText.globalOpacity < .01f);
-    theFlags.setPickable(true);
-    bool retval = false;
-
-    if (theFlags.isCompletelyTransparent() == false) {
-        retval = inText.flags.testFlag(QDemonRenderText::Flag::Dirty) || inText.flags.testFlag(QDemonRenderNode::Flag::TextDirty);
-        inText.flags.setFlag(QDemonRenderNode::Flag::TextDirty, false);
-        TTPathObjectAndTexture theResult = theTextRenderer->renderText(inText, inTextScaleFactor);
-        inText.m_textTexture = theResult.second.second;
-        inText.m_textTextureDetails = theResult.second.first;
-        inText.m_pathFontItem = theResult.first.second;
-        inText.m_pathFontDetails = theResult.first.first;
-        QDemonTextScaleAndOffset theScaleAndOffset(*inText.m_textTexture, inText.m_textTextureDetails, inText);
-        QVector2D theTextScale(theScaleAndOffset.textScale);
-        QVector2D theTextOffset(theScaleAndOffset.textOffset);
-        QVector3D minimum(theTextOffset[0] - theTextScale[0], theTextOffset[1] - theTextScale[1], 0);
-        QVector3D maximum(theTextOffset[0] + theTextScale[0], theTextOffset[1] + theTextScale[1], 0);
-        inText.m_bounds = QDemonBounds3(minimum, maximum);
-        QMatrix4x4 theMVP;
-        QMatrix3x3 theNormalMatrix;
-        inText.calculateMVPAndNormalMatrix(inViewProjection, theMVP, theNormalMatrix);
-
-        if (inText.m_pathFontDetails)
-            ioFlags.setRequiresStencilBuffer(true);
-
-        QDemonTextRenderable *theRenderable = RENDER_FRAME_NEW(QDemonTextRenderable)(theFlags,
-                                                                                     inText.getGlobalPos(),
-                                                                                     *renderer,
-                                                                                     inText,
-                                                                                     inText.m_bounds,
-                                                                                     theMVP,
-                                                                                     inViewProjection,
-                                                                                     *inText.m_textTexture,
-                                                                                     theTextOffset,
-                                                                                     theTextScale);
-        transparentObjects.push_back(theRenderable);
-    }
-    return retval;
 }
 
 QPair<bool, QDemonRenderGraphObject *> QDemonLayerRenderPreparationData::resolveReferenceMaterial(QDemonRenderGraphObject *inMaterial)
@@ -939,14 +886,11 @@ bool QDemonLayerRenderPreparationData::prepareModelForRender(QDemonRenderModel &
 
 bool QDemonLayerRenderPreparationData::prepareRenderablesForRender(const QMatrix4x4 &inViewProjection,
                                                                    const QDemonOption<QDemonClippingFrustum> &inClipFrustum,
-                                                                   float inTextScaleFactor,
                                                                    QDemonLayerRenderPreparationResultFlags &ioFlags)
 {
     QDemonStackPerfTimer perfTimer(renderer->getDemonContext()->getPerfTimer(), Q_FUNC_INFO);
     viewProjection = inViewProjection;
-    float theTextScaleFactor = inTextScaleFactor;
     bool wasDataDirty = false;
-    bool hasTextRenderer = renderer->getDemonContext()->getTextRenderer() != nullptr;
     for (quint32 idx = 0, end = renderableNodes.size(); idx < end; ++idx) {
         QDemonRenderableNodeEntry &theNodeEntry(renderableNodes[idx]);
         QDemonRenderNode *theNode = theNodeEntry.node;
@@ -958,16 +902,6 @@ bool QDemonLayerRenderPreparationData::prepareRenderablesForRender(const QMatrix
             if (theModel->flags.testFlag(QDemonRenderModel::Flag::GloballyActive)) {
                 bool wasModelDirty = prepareModelForRender(*theModel, inViewProjection, inClipFrustum, theNodeEntry.lights);
                 wasDataDirty = wasDataDirty || wasModelDirty;
-            }
-        } break;
-        case QDemonRenderGraphObject::Type::Text: {
-            if (hasTextRenderer) {
-                QDemonRenderText *theText = static_cast<QDemonRenderText *>(theNode);
-                theText->calculateGlobalVariables();
-                if (theText->flags.testFlag(QDemonRenderText::Flag::GloballyActive)) {
-                    bool wasTextDirty = prepareTextForRender(*theText, inViewProjection, theTextScaleFactor, ioFlags);
-                    wasDataDirty = wasDataDirty || wasTextDirty;
-                }
             }
         } break;
         case QDemonRenderGraphObject::Type::Path: {
@@ -1267,11 +1201,8 @@ void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportD
                 }
             }
 
-            float theTextScaleFactor = 1.0f;
             if (camera) {
                 camera->calculateViewProjectionMatrix(viewProjection);
-                theTextScaleFactor = camera->getTextScaleFactor(thePrepResult.getLayerToPresentationViewport(),
-                                                                thePrepResult.getPresentationDesignDimensions());
                 QDemonClipPlane nearPlane;
                 QMatrix3x3 theUpper33(camera->globalTransform.normalMatrix());
 
@@ -1296,7 +1227,6 @@ void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportD
             if (getOffscreenRenderer() == false) {
                 bool renderablesDirty = prepareRenderablesForRender(viewProjection,
                                                                     clippingFrustum,
-                                                                    theTextScaleFactor,
                                                                     thePrepResult.flags);
                 wasDataDirty = wasDataDirty || renderablesDirty;
                 if (thePrepResult.flags.requiresStencilBuffer())

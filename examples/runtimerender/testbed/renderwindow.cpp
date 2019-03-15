@@ -1,7 +1,6 @@
 #include "renderwindow.h"
 #include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
 #include <QtDemonRender/qdemonrendercontext.h>
-#include <QtDemonRuntimeRender/qdemontextrenderer.h>
 
 #include <QtDemonRuntimeRender/qdemonrenderpresentation.h>
 #include <QtDemonRuntimeRender/qdemonrenderscene.h>
@@ -28,7 +27,6 @@ RenderWindow::~RenderWindow()
 void RenderWindow::initialize()
 {
     m_contextCore = QDemonRenderContextCoreInterface::create();
-    m_contextCore->setTextRendererCore(QDemonTextRendererInterface::createQtTextRenderer());
 
     m_renderContext = QDemonRenderContext::createGl(format());
 

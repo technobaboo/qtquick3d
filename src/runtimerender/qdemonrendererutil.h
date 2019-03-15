@@ -62,6 +62,10 @@ public:
                                         const QDemonRef<QDemonRenderFrameBuffer> &inSourceFBO);
 
     static void getSSAARenderSize(qint32 inWidth, qint32 inHeight, qint32 &outWidth, qint32 &outHeight);
+
+    static quint32 nextMultipleOf4(quint32 value) {
+        return (value + 3) & ~3;
+    }
 };
 QT_END_NAMESPACE
 

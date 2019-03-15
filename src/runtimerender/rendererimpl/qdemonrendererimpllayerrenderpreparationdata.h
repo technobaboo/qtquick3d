@@ -298,10 +298,6 @@ struct QDemonLayerRenderPreparationData
                                const QDemonOption<QDemonClippingFrustum> &inClipFrustum,
                                QDemonNodeLightEntryList &inScopedLights);
 
-    bool prepareTextForRender(QDemonRenderText &inText,
-                              const QMatrix4x4 &inViewProjection,
-                              float inTextScaleFactor,
-                              QDemonLayerRenderPreparationResultFlags &ioFlags);
     bool preparePathForRender(QDemonRenderPath &inPath,
                               const QMatrix4x4 &inViewProjection,
                               const QDemonOption<QDemonClippingFrustum> &inClipFrustum,
@@ -309,7 +305,6 @@ struct QDemonLayerRenderPreparationData
     // Helper function used during PRepareForRender and PrepareAndRender
     bool prepareRenderablesForRender(const QMatrix4x4 &inViewProjection,
                                      const QDemonOption<QDemonClippingFrustum> &inClipFrustum,
-                                     float inTextScaleFactor,
                                      QDemonLayerRenderPreparationResultFlags &ioFlags);
 
     // returns true if this object will render something different than it rendered the last

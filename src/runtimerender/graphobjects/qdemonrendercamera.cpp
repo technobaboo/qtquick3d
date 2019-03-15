@@ -31,11 +31,10 @@
 #include "qdemonrendercamera.h"
 
 #include <QtDemonRuntimeRender/qdemonrenderpresentation.h>
-#include <QtDemonRuntimeRender/qdemontextrenderer.h>
+#include <QtDemonRuntimeRender/qdemonrendererutil.h>
 
 #include <QtDemonRender/qdemonrendertexture2d.h>
 #include <QtDemonRender/qdemonrendercontext.h>
-
 #include <QtDemon/qdemonutils.h>
 
 #include <QtGui/QVector2D>
@@ -280,11 +279,6 @@ float QDemonRenderCamera::getOrthographicScaleFactor(const QRectF &inViewport, c
     }
 }
 
-float QDemonRenderCamera::getTextScaleFactor(const QRectF &inViewport, const QVector2D &inDesignDimensions) const
-{
-    return qMax(1.0f, 1.0f / getOrthographicScaleFactor(inViewport, inDesignDimensions));
-}
-
 QMatrix3x3 QDemonRenderCamera::getLookAtMatrix(const QVector3D &inUpDir, const QVector3D &inDirection) const
 {
     QVector3D theDirection(inDirection);
@@ -358,14 +352,14 @@ QDemonCuboidRect QDemonRenderCamera::getCameraBounds(const QRectF &inViewport, c
             // then we just need to setup the left, right parameters of the cuboid because we know
             // the top
             // bottom are -1,1 due to how fit works.
-            idealWidth = (float)QDemonTextRendererInterface::nextMultipleOf4((quint32)(inViewport.height() * designAspect + .5f));
+            idealWidth = (float)QDemonRendererUtil::nextMultipleOf4((quint32)(inViewport.height() * designAspect + .5f));
             // halfRange should always be greater than 1.0f.
             float halfRange = inViewport.width() / idealWidth;
             normalizedCuboid.left = -halfRange;
             normalizedCuboid.right = halfRange;
             translation.setX(translation.x() / (idealWidth / 2.0f));
         } else {
-            idealHeight = (float)QDemonTextRendererInterface::nextMultipleOf4((quint32)(inViewport.width() / designAspect + .5f));
+            idealHeight = (float)QDemonRendererUtil::nextMultipleOf4((quint32)(inViewport.width() / designAspect + .5f));
             float halfRange = inViewport.height() / idealHeight;
             normalizedCuboid.bottom = -halfRange;
             normalizedCuboid.top = halfRange;

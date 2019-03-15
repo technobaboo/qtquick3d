@@ -38,7 +38,6 @@
 #include <QtDemonRuntimeRender/qdemonrenderpresentation.h>
 #include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
 #include <QtDemonRuntimeRender/qdemonrenderresourcemanager.h>
-#include <QtDemonRuntimeRender/qdemontextrenderer.h>
 #include <QtDemonRuntimeRender/qdemonrendereffectsystem.h>
 #include <QtDemonRender/qdemonrenderframebuffer.h>
 #include <QtDemonRender/qdemonrenderrenderbuffer.h>
@@ -50,7 +49,6 @@
 #include <QtDemonRuntimeRender/qdemonrendermaterialhelpers.h>
 #include <QtDemonRuntimeRender/qdemonrenderbuffermanager.h>
 #include <QtDemonRuntimeRender/qdemonrendercustommaterialsystem.h>
-#include <QtDemonRuntimeRender/qdemonrendertexttexturecache.h>
 #include <QtDemonRuntimeRender/qdemonrenderrenderlist.h>
 #include <QtDemonRuntimeRender/qdemonrendererutil.h>
 
@@ -750,8 +748,6 @@ inline void renderRenderableDepthPass(QDemonLayerRenderData &inData,
 {
     if (inObject.renderableFlags.isDefaultMaterialMeshSubset())
         static_cast<QDemonSubsetRenderable &>(inObject).renderDepthPass(inCameraProps);
-    else if (inObject.renderableFlags.isText())
-        static_cast<QDemonTextRenderable &>(inObject).renderDepthPass(inCameraProps);
     else if (inObject.renderableFlags.isCustomMaterialMeshSubset()) {
         static_cast<QDemonCustomMaterialRenderable &>(inObject).renderDepthPass(inCameraProps, inData.layer, inData.lights, inCamera, nullptr);
     } else if (inObject.renderableFlags.isPath()) {
@@ -800,8 +796,6 @@ inline void renderRenderable(QDemonLayerRenderData &inData,
 {
     if (inObject.renderableFlags.isDefaultMaterialMeshSubset())
         static_cast<QDemonSubsetRenderable &>(inObject).render(inCameraProps, inFeatureSet);
-    else if (inObject.renderableFlags.isText())
-        static_cast<QDemonTextRenderable &>(inObject).render(inCameraProps);
     else if (inObject.renderableFlags.isCustomMaterialMeshSubset()) {
         // PKC : Need a better place to do this.
         QDemonCustomMaterialRenderable &theObject = static_cast<QDemonCustomMaterialRenderable &>(inObject);
@@ -1334,10 +1328,7 @@ void QDemonLayerRenderData::renderToTexture()
                     }
                 }
                 for (qint32 idx = 0, end = transparentObjects.size(); idx < end; ++idx) {
-                    if (transparentObjects[idx]->renderableFlags.isText()) {
-                        QDemonTextRenderable &theRenderable = static_cast<QDemonTextRenderable &>(*transparentObjects[idx]);
-                        offsetProjectionMatrix(theRenderable.modelViewProjection, theVertexOffsets);
-                    } else if (transparentObjects[idx]->renderableFlags.isPath()) {
+                    if (transparentObjects[idx]->renderableFlags.isPath()) {
                         QDemonPathRenderable &theRenderable = static_cast<QDemonPathRenderable &>(*transparentObjects[idx]);
                         offsetProjectionMatrix(theRenderable.m_mvp, theVertexOffsets);
                     }
@@ -2055,7 +2046,7 @@ void QDemonLayerRenderData::prepareAndRender(const QMatrix4x4 &inViewProjection)
     theOpaqueObjects.clear();
     modelContexts.clear();
     QDemonLayerRenderPreparationResultFlags theFlags;
-    prepareRenderablesForRender(inViewProjection, QDemonEmpty(), 1.0, theFlags);
+    prepareRenderablesForRender(inViewProjection, QDemonEmpty(), theFlags);
     renderDepthPass(false);
     render();
 }

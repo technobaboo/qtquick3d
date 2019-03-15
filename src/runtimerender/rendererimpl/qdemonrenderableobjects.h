@@ -33,7 +33,6 @@
 #include <QtDemonRuntimeRender/qdemonrendermodel.h>
 #include <QtDemonRuntimeRender/qdemonrenderdefaultmaterial.h>
 #include <QtDemonRuntimeRender/qdemonrendercustommaterial.h>
-#include <QtDemonRuntimeRender/qdemonrendertext.h>
 #include <QtDemonRuntimeRender/qdemonrendermesh.h>
 #include <QtDemonRuntimeRender/qdemonrendershaderkeys.h>
 #include <QtDemonRuntimeRender/qdemonrendershadercache.h>
@@ -51,7 +50,6 @@ enum class QDemonRenderableObjectFlag
     Dirty = 1 << 2,
     Pickable = 1 << 3,
     DefaultMaterialMeshSubset = 1 << 4,
-    Text = 1 << 5,
     Custom = 1 << 6,
     CustomMaterialMeshSubset = 1 << 7,
     HasRefraction = 1 << 8,
@@ -97,9 +95,6 @@ struct QDemonRenderableObjectFlags : public QFlags<QDemonRenderableObjectFlag>
     {
         return this->operator&(QDemonRenderableObjectFlag::CustomMaterialMeshSubset);
     }
-
-    void setText(bool inText) { setFlag(QDemonRenderableObjectFlag::Text, inText); }
-    bool isText() const { return this->operator&(QDemonRenderableObjectFlag::Text); }
 
     void setCustom(bool inCustom) { setFlag(QDemonRenderableObjectFlag::Custom, inCustom); }
     bool isCustom() const { return this->operator&(QDemonRenderableObjectFlag::Custom); }
@@ -264,54 +259,6 @@ struct QDemonCustomMaterialRenderable : public QDemonSubsetRenderableBase
                          const QVector<QDemonRenderLight *> inLights,
                          const QDemonRenderCamera &inCamera,
                          const QDemonRenderTexture2D *inDepthTexture);
-};
-
-struct QDemonTextScaleAndOffset
-{
-    QVector2D textOffset;
-    QVector2D textScale;
-    QDemonTextScaleAndOffset(const QVector2D &inTextOffset, const QVector2D &inTextScale)
-        : textOffset(inTextOffset), textScale(inTextScale)
-    {
-    }
-    QDemonTextScaleAndOffset(QDemonRenderTexture2D &inTexture,
-                             const QDemonTextTextureDetails &inTextDetails,
-                             const QDemonTextRenderInfo &inInfo);
-};
-
-struct QDemonTextRenderable : public QDemonRenderableObject, public QDemonTextScaleAndOffset
-{
-    QDemonRendererImpl &generator;
-    const QDemonRenderText &text;
-    QDemonRenderTexture2D &texture;
-    QMatrix4x4 modelViewProjection;
-    QMatrix4x4 viewProjection;
-
-    QDemonTextRenderable(QDemonRenderableObjectFlags inFlags,
-                         QVector3D inWorldCenterPt,
-                         QDemonRendererImpl &gen,
-                         const QDemonRenderText &inText,
-                         const QDemonBounds3 &inBounds,
-                         const QMatrix4x4 &inModelViewProjection,
-                         const QMatrix4x4 &inViewProjection,
-                         QDemonRenderTexture2D &inTextTexture,
-                         const QVector2D &inTextOffset,
-                         const QVector2D &inTextScale)
-        : QDemonRenderableObject(inFlags, inWorldCenterPt, inText.globalTransform, inBounds)
-        , QDemonTextScaleAndOffset(inTextOffset, inTextScale)
-        , generator(gen)
-        , text(inText)
-        , texture(inTextTexture)
-        , modelViewProjection(inModelViewProjection)
-        , viewProjection(inViewProjection)
-    {
-        renderableFlags.setDefaultMaterialMeshSubset(false);
-        renderableFlags.setCustom(false);
-        renderableFlags.setText(true);
-    }
-
-    void render(const QVector2D &inCameraVec);
-    void renderDepthPass(const QVector2D &inCameraVec);
 };
 
 struct QDemonPathRenderable : public QDemonRenderableObject

@@ -57,12 +57,9 @@ HEADERS += \
     qdemonrendersubpresentation.h \
     qdemonrendersubpresentationhelper.h \
     qdemonrendertessmodevalues.h \
-    qdemonrendertexttexturecache.h \
-    qdemonrendertexttypes.h \
     qdemonrenderthreadpool.h \
 #    qdemonrenderuipsharedtranslation.h \
     qdemonrenderwidgets.h \
-    qdemontextrenderer.h \
     qdemonruntimerenderlogging.h \
     qdemonperframeallocator.h
 
@@ -70,7 +67,6 @@ SOURCES += \
 #    qdemonqmlrender.cpp \
     qdemonoffscreenrendermanager.cpp \
 #    qdemonoldnbustedrenderplugin.cpp \
-    qdemonqttextrenderer.cpp \
     qdemonrenderclippingfrustum.cpp \
     qdemonrendercontextcore.cpp \
     qdemonrendercustommaterialshadergenerator.cpp \
@@ -95,11 +91,9 @@ SOURCES += \
     qdemonrendershadercodegeneratorv2.cpp \
     qdemonrendershadowmap.cpp \
     qdemonrendersubpresentation.cpp \
-    qdemonrendertexttexturecache.cpp \
     qdemonrenderthreadpool.cpp \
 #    qdemonrenderuipsharedtranslation.cpp \
     qdemonrenderwidgets.cpp \
-    qdemontextrenderer.cpp \
     qdemonruntimerenderlogging.cpp \
     qdemonrenderer.cpp \
     qdemonrendercustommaterialrendercontext.cpp

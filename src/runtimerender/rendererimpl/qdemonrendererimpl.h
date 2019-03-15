@@ -39,7 +39,6 @@
 #include <QtDemonRuntimeRender/qdemonrenderdefaultmaterial.h>
 #include <QtDemonRuntimeRender/qdemonrenderlayer.h>
 #include <QtDemonRuntimeRender/qdemonrenderray.h>
-#include <QtDemonRuntimeRender/qdemonrendertext.h>
 #include <QtDemonRuntimeRender/qdemonrendercamera.h>
 #include <QtDemonRuntimeRender/qdemonrendershadercache.h>
 #include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
@@ -99,16 +98,6 @@ inline bool isRectEdgeInBounds(qint32 inNewRectOffset, qint32 inNewRectWidth, qi
     qint32 currentEnd = inCurrentRectOffset + inCurrentRectWidth;
     return inNewRectOffset >= inCurrentRectOffset && newEnd <= currentEnd;
 }
-
-struct QDemonTextRenderHelper
-{
-    QDemonTextShader *shader;
-    QDemonRef<QDemonRenderInputAssembler> quadInputAssembler;
-    QDemonTextRenderHelper(QDemonTextShader *inShader, QDemonRef<QDemonRenderInputAssembler> inQuadInputAssembler)
-        : shader(inShader), quadInputAssembler(inQuadInputAssembler)
-    {
-    }
-};
 
 struct QDemonPickResultProcessResult : public QDemonRenderPickResult
 {
@@ -181,7 +170,6 @@ class Q_DEMONRUNTIMERENDER_EXPORT QDemonRendererImpl : public QDemonRendererInte
     QDemonRef<QDemonRenderableDepthPrepassShader> m_depthTessLinearPrepassShaderDisplaced;
     QDemonRef<QDemonRenderableDepthPrepassShader> m_depthTessPhongPrepassShader;
     QDemonRef<QDemonRenderableDepthPrepassShader> m_depthTessNPatchPrepassShader;
-    QDemonRef<QDemonTextDepthShader> m_textDepthPrepassShader;
     QDemonRef<QDemonDefaultAoPassShader> m_defaultAoPassShader;
     QDemonRef<QDemonDefaultAoPassShader> m_fakeDepthShader;
     QDemonRef<QDemonDefaultAoPassShader> m_fakeCubemapDepthShader;
@@ -207,11 +195,6 @@ class Q_DEMONRUNTIMERENDER_EXPORT QDemonRendererImpl : public QDemonRendererInte
     QDemonRef<QDemonAdvancedModeBlendShader> m_advancedModeColorBurnBlendShader;
     QDemonRef<QDemonAdvancedModeBlendShader> m_advancedModeColorDodgeBlendShader;
 #endif
-    // Text shaders may be generated on demand.
-    QScopedPointer<QDemonTextShader> m_textShader;
-    QScopedPointer<QDemonTextShader> m_textPathShader;
-    QScopedPointer<QDemonTextShader> m_textWidgetShader;
-    QScopedPointer<QDemonTextShader> m_textOnscreenShader;
 
     // Overlay used to render all widgets.
     QRect m_beginFrameViewport;
@@ -274,7 +257,6 @@ public:
                      bool inRenderSiblings,
                      const QDemonRenderInstanceId id) override;
     void childrenUpdated(QDemonRenderNode &inParent) override;
-    float getTextScale(const QDemonRenderText &inText) override;
 
     QDemonRenderCamera *getCameraForNode(const QDemonRenderNode &inNode) const override;
     QDemonOption<QDemonCuboidRect> getCameraBounds(const QDemonRenderGraphObject &inObject) override;
@@ -376,10 +358,6 @@ public:
     QDemonRef<QDemonRenderableDepthPrepassShader> getDepthTessLinearPrepassShader(bool inDisplaced);
     QDemonRef<QDemonRenderableDepthPrepassShader> getDepthTessPhongPrepassShader();
     QDemonRef<QDemonRenderableDepthPrepassShader> getDepthTessNPatchPrepassShader();
-    QDemonRef<QDemonTextDepthShader> getTextDepthShader();
-    QDemonTextRenderHelper getShader(QDemonTextRenderable &inRenderable, bool inUsePathRendering);
-    QDemonTextRenderHelper getTextShader(bool inUsePathRendering);
-    QDemonTextRenderHelper getTextWidgetShader();
     QDemonRef<QDemonLayerSceneShader> getSceneLayerShader();
     QDemonRef<QDemonRenderShaderProgram> getTextAtlasEntryShader();
     void generateXYQuad();
@@ -440,12 +418,6 @@ public:
     QDemonRef<QDemonRenderShaderProgram> getShader(const QByteArray &inStr);
     QDemonRef<QDemonRenderShaderProgram> compileAndStoreShader(const QByteArray &inStr);
     QDemonRef<QDemonShaderProgramGeneratorInterface> getProgramGenerator();
-
-    QDemonTextDimensions measureText(const QDemonTextRenderInfo &inText);
-    void renderText(const QDemonTextRenderInfo &inText,
-                    const QVector3D &inTextColor,
-                    const QVector3D &inBackgroundColor,
-                    const QMatrix4x4 &inMVP);
 
     // Given a node and a point in the node's local space (most likely its pivot point), we
     // return

@@ -36,7 +36,6 @@
 #include <QtDemonRuntimeRender/qdemonrendermodel.h>
 
 #include <QtDemonRuntimeRender/qdemonrenderpathmanager.h>
-#include <QtDemonRuntimeRender/qdemonrendertext.h>
 #include <QtDemonRuntimeRender/qdemonrenderer.h>
 #include <QtDemonRuntimeRender/qdemonrenderpathmanager.h>
 #include <QtDemonRuntimeRender/qdemonrenderpath.h>
@@ -419,8 +418,6 @@ QDemonBounds3 QDemonRenderNode::getBounds(const QDemonBufferManager &inManager,
 
     if (type == QDemonRenderGraphObject::Type::Model)
         retval.include(static_cast<const QDemonRenderModel *>(this)->getModelBounds(inManager));
-    else if (type == QDemonRenderGraphObject::Type::Text)
-        retval.include(static_cast<const QDemonRenderText *>(this)->getTextBounds());
     else if (type == QDemonRenderGraphObject::Type::Path)
         retval.include(inPathManager->getBounds(*static_cast<const QDemonRenderPath *>(this)));
     return retval;

@@ -39,11 +39,11 @@
 #include <QtDemonRender/qdemonrendershaderprogram.h>
 #include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
 #include <QtDemonRuntimeRender/qdemonrenderer.h>
-#include <qdemontextrenderer.h>
 #include <QtDemonRuntimeRender/qdemonrendercamera.h>
 #include <QtDemonRuntimeRender/qdemonrenderbuffermanager.h>
 #include <QtDemonRuntimeRender/qdemonoffscreenrendermanager.h>
 #include <QtDemonRuntimeRender/qdemonrendershadercache.h>
+#include <QtDemonRuntimeRender/qdemonrendererutil.h>
 #include <qdemonoffscreenrenderkey.h>
 #include <qdemonrenderdynamicobjectsystemutil.h>
 
@@ -680,8 +680,8 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
         // Check to see if it is already allocated and if it is, is it the correct size. If both of
         // these assumptions hold, then we are good.
         QDemonRef<QDemonRenderTexture2D> theBufferTexture;
-        const qint32 theWidth = QDemonTextRendererInterface::nextMultipleOf4((quint32)(inFinalWidth * inCommand.m_sizeMultiplier));
-        const qint32 theHeight = QDemonTextRendererInterface::nextMultipleOf4((quint32)(inFinalHeight * inCommand.m_sizeMultiplier));
+        const qint32 theWidth = QDemonRendererUtil::nextMultipleOf4((quint32)(inFinalWidth * inCommand.m_sizeMultiplier));
+        const qint32 theHeight = QDemonRendererUtil::nextMultipleOf4((quint32)(inFinalHeight * inCommand.m_sizeMultiplier));
         QDemonRenderTextureFormat resultFormat = inCommand.m_format;
         if (resultFormat == QDemonRenderTextureFormat::Unknown)
             resultFormat = inSourceTextureFormat;
@@ -718,8 +718,8 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
     void allocateImage(QDemonRenderEffect &inEffect, const QDemonAllocateImage &inCommand, quint32 inFinalWidth, quint32 inFinalHeight)
     {
         QDemonRef<QDemonRenderImage2D> theImage;
-        qint32 theWidth = QDemonTextRendererInterface::nextMultipleOf4((quint32)(inFinalWidth * inCommand.m_sizeMultiplier));
-        qint32 theHeight = QDemonTextRendererInterface::nextMultipleOf4((quint32)(inFinalHeight * inCommand.m_sizeMultiplier));
+        qint32 theWidth = QDemonRendererUtil::nextMultipleOf4((quint32)(inFinalWidth * inCommand.m_sizeMultiplier));
+        qint32 theHeight = QDemonRendererUtil::nextMultipleOf4((quint32)(inFinalHeight * inCommand.m_sizeMultiplier));
 
         Q_ASSERT(inCommand.m_format != QDemonRenderTextureFormat::Unknown);
 
@@ -1635,8 +1635,8 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
                                                                                             &QDemonRenderContext::renderTarget,
                                                                                             &QDemonRenderContext::setRenderTarget);
         QDemonTextureDetails theDetails(inRenderArgument.m_colorBuffer->textureDetails());
-        quint32 theFinalWidth = QDemonTextRendererInterface::nextMultipleOf4((quint32)(theDetails.width));
-        quint32 theFinalHeight = QDemonTextRendererInterface::nextMultipleOf4((quint32)(theDetails.height));
+        quint32 theFinalWidth = QDemonRendererUtil::nextMultipleOf4((quint32)(theDetails.width));
+        quint32 theFinalHeight = QDemonRendererUtil::nextMultipleOf4((quint32)(theDetails.height));
         auto theBuffer = theManager->allocateFrameBuffer();
         // UdoL Some Effects may need to run before HDR tonemap. This means we need to keep the
         // input format

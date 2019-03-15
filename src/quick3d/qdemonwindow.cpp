@@ -707,7 +707,6 @@ void QDemonWindowPrivate::cleanupNodes()
         case QDemonRenderGraphObject::Type::Light:
         case QDemonRenderGraphObject::Type::Camera:
         case QDemonRenderGraphObject::Type::Model:
-        case QDemonRenderGraphObject::Type::Text:
         case QDemonRenderGraphObject::Type::Path: {
             // handle hierarchical nodes
             QDemonRenderNode *spatialNode = static_cast<QDemonRenderNode *>(node);

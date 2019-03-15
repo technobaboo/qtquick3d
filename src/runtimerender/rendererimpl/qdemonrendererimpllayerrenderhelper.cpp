@@ -29,7 +29,7 @@
 ****************************************************************************/
 #include <QtDemonRuntimeRender/qdemonrendererimpllayerrenderhelper.h>
 #include <QtDemonRuntimeRender/qdemonrenderlayer.h>
-#include <QtDemonRuntimeRender/qdemontextrenderer.h>
+#include <QtDemonRuntimeRender/qdemonrendererutil.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -162,8 +162,8 @@ QDemonLayerRenderHelper::QDemonLayerRenderHelper(const QRectF &inPresentationVie
     float originalWidth = m_viewport.width();
     float originalHeight = m_viewport.height();
 
-    m_viewport.setWidth((float)QDemonTextRendererInterface::nextMultipleOf4((quint32)m_viewport.width()));
-    m_viewport.setHeight((float)QDemonTextRendererInterface::nextMultipleOf4((quint32)m_viewport.height()));
+    m_viewport.setWidth((float)QDemonRendererUtil::nextMultipleOf4((quint32)m_viewport.width()));
+    m_viewport.setHeight((float)QDemonRendererUtil::nextMultipleOf4((quint32)m_viewport.height()));
 
     // Now fudge the offsets to account for this slight difference
     m_viewport.setX(m_viewport.x() + (originalWidth - m_viewport.width()) / 2.0f);
@@ -188,7 +188,7 @@ QSize QDemonLayerRenderHelper::getTextureDimensions() const
 {
     quint32 width = (quint32)m_viewport.width();
     quint32 height = (quint32)m_viewport.height();
-    return QSize(QDemonTextRendererInterface::nextMultipleOf4(width), QDemonTextRendererInterface::nextMultipleOf4(height));
+    return QSize(QDemonRendererUtil::nextMultipleOf4(width), QDemonRendererUtil::nextMultipleOf4(height));
 }
 
 QDemonCameraGlobalCalculationResult QDemonLayerRenderHelper::setupCameraForRender(QDemonRenderCamera &inCamera)
@@ -196,8 +196,8 @@ QDemonCameraGlobalCalculationResult QDemonLayerRenderHelper::setupCameraForRende
     m_camera = &inCamera;
     QRectF rect = getLayerRenderViewport();
     if (m_scaleMode == ScaleModes::FitSelected) {
-        rect.setWidth((float)(QDemonTextRendererInterface::nextMultipleOf4((quint32)(rect.width() / m_scaleFactor.x()))));
-        rect.setHeight((float)(QDemonTextRendererInterface::nextMultipleOf4((quint32)(rect.height() / m_scaleFactor.y()))));
+        rect.setWidth((float)(QDemonRendererUtil::nextMultipleOf4((quint32)(rect.width() / m_scaleFactor.x()))));
+        rect.setHeight((float)(QDemonRendererUtil::nextMultipleOf4((quint32)(rect.height() / m_scaleFactor.y()))));
     }
     return m_camera->calculateGlobalVariables(rect, m_presentationDesignDimensions);
 }
