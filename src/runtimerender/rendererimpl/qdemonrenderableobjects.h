@@ -156,8 +156,6 @@ struct QDemonRenderableObject
 
 Q_STATIC_ASSERT(std::is_trivially_destructible<QDemonRenderableObject>::value);
 
-typedef QVector<QDemonRenderableObject *> TRenderableObjectList;
-
 // Different subsets from the same model will get the same
 // model context so we can generate the MVP and normal matrix once
 // and only once per subset.

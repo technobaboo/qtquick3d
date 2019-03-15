@@ -210,6 +210,8 @@ struct QDemonLayerRenderPreparationData
                                               const QDemonRenderCamera &inCamera);
     typedef QHash<QDemonRenderLight *, QDemonRenderNode *> TLightToNodeMap;
     typedef QVector<QDemonModelContext *> TModelContextPtrList;
+    typedef QVector<QDemonRenderableObject *> TRenderableObjectList;
+
     // typedef Pool<SNodeLightEntry, ForwardingAllocator> TNodeLightEntryPoolType;
 
     enum Enum {
@@ -270,8 +272,8 @@ struct QDemonLayerRenderPreparationData
 
     QDemonLayerRenderPreparationData(QDemonRenderLayer &inLayer, const QDemonRef<QDemonRendererImpl> &inRenderer);
     virtual ~QDemonLayerRenderPreparationData();
-    bool getOffscreenRenderer();
-    bool getShadowMapManager();
+    bool usesOffscreenRenderer();
+    void createShadowMapManager();
     bool needsWidgetTexture() const;
 
     QDemonShaderDefaultMaterialKey generateLightingKey(QDemonRenderDefaultMaterial::MaterialLighting inLightingType);

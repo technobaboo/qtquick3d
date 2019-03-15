@@ -87,8 +87,8 @@ public:
     virtual bool isLayerGpuProfilingEnabled() const = 0;
 
     // Get the camera that rendered this node last render
-    virtual QDemonRenderCamera *getCameraForNode(const QDemonRenderNode &inNode) const = 0;
-    virtual QDemonOption<QDemonCuboidRect> getCameraBounds(const QDemonRenderGraphObject &inObject) = 0;
+    virtual QDemonRenderCamera *cameraForNode(const QDemonRenderNode &inNode) const = 0;
+    virtual QDemonOption<QDemonCuboidRect> cameraBounds(const QDemonRenderGraphObject &inObject) = 0;
     // Called when you have changed the number or order of children of a given node.
     virtual void childrenUpdated(QDemonRenderNode &inParent) = 0;
 
@@ -167,7 +167,7 @@ public:
 
     // Return the layer's viewport rect after the layer's member variables have been applied.
     // Uses the last rendered viewport rect.
-    virtual QDemonOption<QRectF> getLayerRect(QDemonRenderLayer &inLayer) = 0;
+    virtual QDemonOption<QRectF> layerRect(QDemonRenderLayer &inLayer) = 0;
     // Testing function to allow clients to render a layer using a custom view project instead
     // of the one that would be setup
     // using the layer's camera in conjunction with the layer's position,scale.
@@ -198,7 +198,7 @@ public:
     // things by to account for
     // the FOV and also where the origin of the object needs to be to ensure the scale factor is
     // relevant.
-    virtual QDemonScaleAndPosition getWorldToPixelScaleFactor(QDemonRenderLayer &inLayer, const QVector3D &inWorldPoint) = 0;
+    virtual QDemonScaleAndPosition worldToPixelScaleFactor(QDemonRenderLayer &inLayer, const QVector3D &inWorldPoint) = 0;
     // Called before a layer goes completely out of scope to release any rendering resources
     // related to the layer.
     virtual void releaseLayerRenderResources(QDemonRenderLayer &inLayer, const QDemonRenderInstanceId id) = 0;

@@ -176,7 +176,7 @@ QDemonLayerRenderHelper::QDemonLayerRenderHelper(const QRectF &inPresentationVie
 }
 
 // This is the viewport the camera will use to setup the projection.
-QRectF QDemonLayerRenderHelper::getLayerRenderViewport() const
+QRectF QDemonLayerRenderHelper::layerRenderViewport() const
 {
     if (m_offscreen)
         return QRectF(0, 0, m_viewport.width(), (float)m_viewport.height());
@@ -184,7 +184,7 @@ QRectF QDemonLayerRenderHelper::getLayerRenderViewport() const
         return m_viewport;
 }
 
-QSize QDemonLayerRenderHelper::getTextureDimensions() const
+QSize QDemonLayerRenderHelper::textureDimensions() const
 {
     quint32 width = (quint32)m_viewport.width();
     quint32 height = (quint32)m_viewport.height();
@@ -194,7 +194,7 @@ QSize QDemonLayerRenderHelper::getTextureDimensions() const
 QDemonCameraGlobalCalculationResult QDemonLayerRenderHelper::setupCameraForRender(QDemonRenderCamera &inCamera)
 {
     m_camera = &inCamera;
-    QRectF rect = getLayerRenderViewport();
+    QRectF rect = layerRenderViewport();
     if (m_scaleMode == ScaleModes::FitSelected) {
         rect.setWidth((float)(QDemonRendererUtil::nextMultipleOf4((quint32)(rect.width() / m_scaleFactor.x()))));
         rect.setHeight((float)(QDemonRendererUtil::nextMultipleOf4((quint32)(rect.height() / m_scaleFactor.y()))));
@@ -202,7 +202,7 @@ QDemonCameraGlobalCalculationResult QDemonLayerRenderHelper::setupCameraForRende
     return m_camera->calculateGlobalVariables(rect, m_presentationDesignDimensions);
 }
 
-QDemonOption<QVector2D> QDemonLayerRenderHelper::getLayerMouseCoords(const QVector2D &inMouseCoords,
+QDemonOption<QVector2D> QDemonLayerRenderHelper::layerMouseCoords(const QVector2D &inMouseCoords,
                                                                      const QVector2D &inWindowDimensions,
                                                                      bool inForceIntersect) const
 {
@@ -222,13 +222,13 @@ QDemonOption<QVector2D> QDemonLayerRenderHelper::getLayerMouseCoords(const QVect
     return theLocalMouse;
 }
 
-QDemonOption<QDemonRenderRay> QDemonLayerRenderHelper::getPickRay(const QVector2D &inMouseCoords,
+QDemonOption<QDemonRenderRay> QDemonLayerRenderHelper::pickRay(const QVector2D &inMouseCoords,
                                                                   const QVector2D &inWindowDimensions,
                                                                   bool inForceIntersect) const
 {
     if (m_camera == nullptr)
         return QDemonEmpty();
-    QDemonOption<QVector2D> theCoords(getLayerMouseCoords(inMouseCoords, inWindowDimensions, inForceIntersect));
+    QDemonOption<QVector2D> theCoords(layerMouseCoords(inMouseCoords, inWindowDimensions, inForceIntersect));
     if (theCoords.hasValue()) {
         // The cameras projection is different if we are onscreen vs. offscreen.
         // When offscreen, we need to move the mouse coordinates into a local space

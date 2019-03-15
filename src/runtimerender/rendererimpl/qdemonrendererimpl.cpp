@@ -195,7 +195,7 @@ void QDemonRendererImpl::renderLayer(QDemonRenderLayer &inLayer,
         QDemonRenderLayer *theLayer = *iter;
         QDemonRef<QDemonLayerRenderData> theRenderData = getOrCreateLayerRenderDataForNode(*theLayer, id);
         QDemonLayerRenderPreparationResult &prepRes(*theRenderData->layerPrepResult);
-        QDemonRenderLayer::BlendMode layerBlend = prepRes.getLayer()->getLayerBlend();
+        QDemonRenderLayer::BlendMode layerBlend = prepRes.layer()->getLayerBlend();
 #ifdef ADVANCED_BLEND_SW_FALLBACK
         if ((layerBlend == QDemonRenderLayer::BlendMode::Overlay || layerBlend == QDemonRenderLayer::BlendMode::ColorBurn || layerBlend == QDemonRenderLayer::BlendMode::ColorDodge)
             && !theRenderContext->supportsAdvancedBlendHW() && !theRenderContext->supportsAdvancedBlendHwKHR()) {
@@ -242,13 +242,13 @@ void QDemonRendererImpl::renderLayer(QDemonRenderLayer &inLayer,
     }
 }
 
-QDemonRenderLayer *QDemonRendererImpl::getLayerForNode(const QDemonRenderNode &inNode) const
+QDemonRenderLayer *QDemonRendererImpl::layerForNode(const QDemonRenderNode &inNode) const
 {
     if (inNode.type == QDemonRenderGraphObject::Type::Layer)
         return &const_cast<QDemonRenderLayer &>(static_cast<const QDemonRenderLayer &>(inNode));
 
     if (inNode.parent)
-        return getLayerForNode(*inNode.parent);
+        return layerForNode(*inNode.parent);
 
     return nullptr;
 }
@@ -256,7 +256,7 @@ QDemonRenderLayer *QDemonRendererImpl::getLayerForNode(const QDemonRenderNode &i
 QDemonRef<QDemonLayerRenderData> QDemonRendererImpl::getOrCreateLayerRenderDataForNode(const QDemonRenderNode &inNode,
                                                                                        const QDemonRenderInstanceId id)
 {
-    const QDemonRenderLayer *theLayer = getLayerForNode(inNode);
+    const QDemonRenderLayer *theLayer = layerForNode(inNode);
     if (theLayer) {
         TInstanceRenderMap::const_iterator theIter = m_instanceRenderMap.find(combineLayerAndId(theLayer, id));
         if (theIter != m_instanceRenderMap.end())
@@ -275,7 +275,7 @@ QDemonRef<QDemonLayerRenderData> QDemonRendererImpl::getOrCreateLayerRenderDataF
     return nullptr;
 }
 
-QDemonRenderCamera *QDemonRendererImpl::getCameraForNode(const QDemonRenderNode &inNode) const
+QDemonRenderCamera *QDemonRendererImpl::cameraForNode(const QDemonRenderNode &inNode) const
 {
     QDemonRef<QDemonLayerRenderData> theLayer = const_cast<QDemonRendererImpl &>(*this).getOrCreateLayerRenderDataForNode(inNode);
     if (theLayer)
@@ -283,16 +283,16 @@ QDemonRenderCamera *QDemonRendererImpl::getCameraForNode(const QDemonRenderNode 
     return nullptr;
 }
 
-QDemonOption<QDemonCuboidRect> QDemonRendererImpl::getCameraBounds(const QDemonRenderGraphObject &inObject)
+QDemonOption<QDemonCuboidRect> QDemonRendererImpl::cameraBounds(const QDemonRenderGraphObject &inObject)
 {
     if (inObject.isNodeType()) {
         const QDemonRenderNode &theNode = static_cast<const QDemonRenderNode &>(inObject);
         QDemonRef<QDemonLayerRenderData> theLayer = getOrCreateLayerRenderDataForNode(theNode);
-        if (theLayer->getOffscreenRenderer() == false) {
+        if (theLayer->usesOffscreenRenderer() == false) {
             QDemonRenderCamera *theCamera = theLayer->camera;
             if (theCamera)
-                return theCamera->getCameraBounds(theLayer->layerPrepResult->getLayerToPresentationViewport(),
-                                                  theLayer->layerPrepResult->getPresentationDesignDimensions());
+                return theCamera->getCameraBounds(theLayer->layerPrepResult->viewport(),
+                                                  theLayer->layerPrepResult->presentationDesignDimensions());
         }
     }
     return QDemonOption<QDemonCuboidRect>();
@@ -692,8 +692,8 @@ QDemonOption<QVector2D> QDemonRendererImpl::facePosition(QDemonRenderNode &inNod
                 Q_ASSERT(false);
                 return QDemonEmpty();
             }
-            QDemonBounds3 theModelBounds = theParentModel->getBounds(getDemonContext()->getBufferManager(),
-                                                                     getDemonContext()->getPathManager(),
+            QDemonBounds3 theModelBounds = theParentModel->getBounds(demonContext()->getBufferManager(),
+                                                                     demonContext()->getPathManager(),
                                                                      false);
 
             if (theModelBounds.isEmpty()) {
@@ -718,7 +718,7 @@ QDemonOption<QVector2D> QDemonRendererImpl::facePosition(QDemonRenderNode &inNod
         }
     }
 
-    QDemonOption<QDemonRenderRay> theHitRay = theLayerData->layerPrepResult->getPickRay(theMouseCoords, theViewportDimensions, false);
+    QDemonOption<QDemonRenderRay> theHitRay = theLayerData->layerPrepResult->pickRay(theMouseCoords, theViewportDimensions, false);
     if (theHitRay.hasValue() == false)
         return QDemonEmpty();
 
@@ -748,7 +748,7 @@ QVector3D QDemonRendererImpl::unprojectToPosition(QDemonRenderNode &inNode, QVec
     QVector2D theDims((float)theWindow.width(), (float)theWindow.height());
 
     QDemonLayerRenderPreparationResult &thePrepResult(*theData->layerPrepResult);
-    QDemonRenderRay theRay = thePrepResult.getPickRay(inMouseVec, theDims, true);
+    QDemonRenderRay theRay = thePrepResult.pickRay(inMouseVec, theDims, true);
 
     return theData->camera->unprojectToPosition(inPosition, theRay);
 }
@@ -767,7 +767,7 @@ QVector3D QDemonRendererImpl::unprojectWithDepth(QDemonRenderNode &inNode, QVect
 
     QDemonLayerRenderPreparationResult &thePrepResult(*theData->layerPrepResult);
     QSize theWindow = m_demonContext->getWindowDimensions();
-    QDemonRenderRay theRay = thePrepResult.getPickRay(theMouse, QVector2D((float)theWindow.width(), (float)theWindow.height()), true);
+    QDemonRenderRay theRay = thePrepResult.pickRay(theMouse, QVector2D((float)theWindow.width(), (float)theWindow.height()), true);
     QVector3D theTargetPosition = theRay.origin + theRay.direction * theDepth;
     if (inNode.parent != nullptr && inNode.parent->type != QDemonRenderGraphObject::Type::Layer)
         theTargetPosition = mat44::transform(mat44::getInverse(inNode.parent->globalTransform), theTargetPosition);
@@ -792,7 +792,7 @@ QVector3D QDemonRendererImpl::projectPosition(QDemonRenderNode &inNode, const QV
     projPos.setX(projPos.x() / projPos.w());
     projPos.setY(projPos.y() / projPos.w());
 
-    QRectF theViewport = theData->layerPrepResult->getLayerToPresentationViewport();
+    QRectF theViewport = theData->layerPrepResult->viewport();
     QVector2D theDims((float)theViewport.width(), (float)theViewport.height());
     projPos.setX(projPos.x() + 1.0);
     projPos.setY(projPos.y() + 1.0);
@@ -832,14 +832,14 @@ QDemonOption<QDemonLayerPickSetup> QDemonRendererImpl::getLayerPickSetup(QDemonR
     }
 
     QDemonLayerRenderPreparationResult &thePrepResult(*theData->layerPrepResult);
-    if (thePrepResult.getCamera() == nullptr) {
+    if (thePrepResult.camera() == nullptr) {
         return QDemonEmpty();
     }
     // Perform gluPickMatrix and pre-multiply it into the view projection
     QMatrix4x4 theTransScale;
-    QDemonRenderCamera &theCamera(*thePrepResult.getCamera());
+    QDemonRenderCamera &theCamera(*thePrepResult.camera());
 
-    QRectF layerToPresentation = thePrepResult.getLayerToPresentationViewport();
+    QRectF layerToPresentation = thePrepResult.viewport();
     // Offsetting is already taken care of in the camera's projection.
     // All we need to do is to scale and translate the image.
     layerToPresentation.setX(0);
@@ -868,7 +868,7 @@ QDemonOption<QDemonLayerPickSetup> QDemonRendererImpl::getLayerPickSetup(QDemonR
                                 QRect(0, 0, (quint32)layerToPresentation.width(), (quint32)layerToPresentation.height()));
 }
 
-QDemonOption<QRectF> QDemonRendererImpl::getLayerRect(QDemonRenderLayer &inLayer)
+QDemonOption<QRectF> QDemonRendererImpl::layerRect(QDemonRenderLayer &inLayer)
 {
     QDemonRef<QDemonLayerRenderData> theData = getOrCreateLayerRenderDataForNode(inLayer);
     if (theData == nullptr || theData->camera == nullptr) {
@@ -876,7 +876,7 @@ QDemonOption<QRectF> QDemonRendererImpl::getLayerRect(QDemonRenderLayer &inLayer
         return QDemonEmpty();
     }
     QDemonLayerRenderPreparationResult &thePrepResult(*theData->layerPrepResult);
-    return thePrepResult.getLayerToPresentationViewport();
+    return thePrepResult.viewport();
 }
 
 // This doesn't have to be cheap.
@@ -904,15 +904,15 @@ void QDemonRendererImpl::renderLayerRect(QDemonRenderLayer &inLayer, const QVect
         theData->m_boundingRectColor = inColor;
 }
 
-QDemonScaleAndPosition QDemonRendererImpl::getWorldToPixelScaleFactor(const QDemonRenderCamera &inCamera,
+QDemonScaleAndPosition QDemonRendererImpl::worldToPixelScaleFactor(const QDemonRenderCamera &inCamera,
                                                                       const QVector3D &inWorldPoint,
                                                                       QDemonLayerRenderData &inRenderData)
 {
     if (inCamera.flags.testFlag(QDemonRenderCamera::Flag::Orthographic)) {
         // There are situations where the camera can scale.
         return QDemonScaleAndPosition(inWorldPoint,
-                                      inCamera.getOrthographicScaleFactor(inRenderData.layerPrepResult->getLayerToPresentationViewport(),
-                                                                          inRenderData.layerPrepResult->getPresentationDesignDimensions()));
+                                      inCamera.getOrthographicScaleFactor(inRenderData.layerPrepResult->viewport(),
+                                                                          inRenderData.layerPrepResult->presentationDesignDimensions()));
     } else {
         QVector3D theCameraPos(0, 0, 0);
         QVector3D theCameraDir(0, 0, -1);
@@ -925,7 +925,7 @@ QDemonScaleAndPosition QDemonRendererImpl::getWorldToPixelScaleFactor(const QDem
         // The special number comes in from physically measuring how off we are on the screen.
         float theScaleFactor = (1.0f / inCamera.projection(1, 1));
         QDemonRef<QDemonLayerRenderData> theData = getOrCreateLayerRenderDataForNode(inCamera);
-        quint32 theHeight = theData->layerPrepResult->getTextureDimensions().height();
+        quint32 theHeight = theData->layerPrepResult->textureDimensions().height();
         float theScaleMultiplier = 600.0f / ((float)theHeight / 2.0f);
         theScaleFactor *= theScaleMultiplier;
 
@@ -933,14 +933,14 @@ QDemonScaleAndPosition QDemonRendererImpl::getWorldToPixelScaleFactor(const QDem
     }
 }
 
-QDemonScaleAndPosition QDemonRendererImpl::getWorldToPixelScaleFactor(QDemonRenderLayer &inLayer, const QVector3D &inWorldPoint)
+QDemonScaleAndPosition QDemonRendererImpl::worldToPixelScaleFactor(QDemonRenderLayer &inLayer, const QVector3D &inWorldPoint)
 {
     QDemonRef<QDemonLayerRenderData> theData = getOrCreateLayerRenderDataForNode(inLayer);
     if (theData == nullptr || theData->camera == nullptr) {
         Q_ASSERT(false);
         return QDemonScaleAndPosition();
     }
-    return getWorldToPixelScaleFactor(*theData->camera, inWorldPoint, *theData);
+    return worldToPixelScaleFactor(*theData->camera, inWorldPoint, *theData);
 }
 
 void QDemonRendererImpl::releaseLayerRenderResources(QDemonRenderLayer &inLayer, const QDemonRenderInstanceId id)
@@ -1040,7 +1040,7 @@ QDemonOption<QVector2D> QDemonRendererImpl::getLayerMouseCoords(QDemonLayerRende
                                                                 bool forceImageIntersect) const
 {
     if (inLayerRenderData.layerPrepResult.hasValue())
-        return inLayerRenderData.layerPrepResult->getLayerMouseCoords(inMouseCoords, inViewportDimensions, forceImageIntersect);
+        return inLayerRenderData.layerPrepResult->layerMouseCoords(inMouseCoords, inViewportDimensions, forceImageIntersect);
     return QDemonEmpty();
 }
 
@@ -1057,7 +1057,7 @@ void QDemonRendererImpl::getLayerHitObjectList(QDemonLayerRenderData &inLayerRen
     if (wasRenderToTarget && inLayerRenderData.camera != nullptr) {
         QDemonOption<QDemonRenderRay> theHitRay;
         if (inLayerRenderData.layerPrepResult.hasValue())
-            theHitRay = inLayerRenderData.layerPrepResult->getPickRay(inPresCoords, inViewportDimensions, false);
+            theHitRay = inLayerRenderData.layerPrepResult->pickRay(inPresCoords, inViewportDimensions, false);
         if (inLayerRenderData.lastFrameOffscreenRenderer == nullptr) {
             if (theHitRay.hasValue()) {
                 // Scale the mouse coords to change them into the camera's numerical space.
@@ -1590,7 +1590,7 @@ QDemonWidgetRenderInformation QDemonRendererImpl::getWidgetRenderInformation(QDe
 
     QMatrix4x4 theNodeToParentPlusTranslation = theCameraInverse * theGlobalTransform;
     QVector3D thePos = mat44::transform(theNodeToParentPlusTranslation, inPos);
-    QDemonScaleAndPosition theScaleAndPos = getWorldToPixelScaleFactor(*theCamera, thePos, *theData);
+    QDemonScaleAndPosition theScaleAndPos = worldToPixelScaleFactor(*theCamera, thePos, *theData);
     QMatrix3x3 theLookAtMatrix;
     if (!theCamera->flags.testFlag(QDemonRenderCamera::Flag::Orthographic)) {
         QVector3D theNodeToCamera = theScaleAndPos.position;

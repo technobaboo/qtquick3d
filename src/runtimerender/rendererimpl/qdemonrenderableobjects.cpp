@@ -61,7 +61,7 @@ void QDemonSubsetRenderableBase::renderShadowMapPass(const QVector2D &inCameraVe
                                                      const QDemonRenderCamera &inCamera,
                                                      QDemonShadowMapEntry *inShadowMapEntry) const
 {
-    auto context = generator->getContext();
+    auto context = generator->context();
     QDemonRef<QDemonRenderableDepthPrepassShader> shader = nullptr;
     QDemonRef<QDemonRenderInputAssembler> pIA = nullptr;
 
@@ -128,7 +128,7 @@ void QDemonSubsetRenderableBase::renderShadowMapPass(const QVector2D &inCameraVe
 
 void QDemonSubsetRenderableBase::renderDepthPass(const QVector2D &inCameraVec, QDemonRenderableImage *inDisplacementImage, float inDisplacementAmount)
 {
-    auto context = generator->getContext();
+    auto context = generator->context();
     QDemonRef<QDemonRenderableDepthPrepassShader> shader = nullptr;
     QDemonRef<QDemonRenderInputAssembler> pIA = nullptr;
     QDemonRenderableImage *displacementImage = inDisplacementImage;
@@ -218,7 +218,7 @@ QDemonSubsetRenderable::QDemonSubsetRenderable(QDemonRenderableObjectFlags inFla
 
 void QDemonSubsetRenderable::render(const QVector2D &inCameraVec, const TShaderFeatureSet &inFeatureSet)
 {
-    auto context = generator->getContext();
+    auto context = generator->context();
 
     QDemonRef<QDemonShaderGeneratorGeneratedShader> shader = generator->getShader(*this, inFeatureSet);
     if (shader == nullptr)
@@ -226,7 +226,7 @@ void QDemonSubsetRenderable::render(const QVector2D &inCameraVec, const TShaderF
 
     context->setActiveShader(shader->shader);
 
-    generator->getDemonContext()->getDefaultMaterialShaderGenerator()->setMaterialProperties(shader->shader,
+    generator->demonContext()->getDefaultMaterialShaderGenerator()->setMaterialProperties(shader->shader,
                                                                                              material,
                                                                                              inCameraVec,
                                                                                              modelContext.modelViewProjection,
@@ -313,7 +313,7 @@ void QDemonCustomMaterialRenderable::render(const QVector2D & /*inCameraVec*/,
                                             const QDemonRef<QDemonRenderTexture2D> inSsaoTexture,
                                             const TShaderFeatureSet &inFeatureSet)
 {
-    QDemonRef<QDemonRenderContextInterface> demonContext(generator->getDemonContext());
+    QDemonRef<QDemonRenderContextInterface> demonContext(generator->demonContext());
     QDemonCustomMaterialRenderContext theRenderContext(inLayer,
                                                        inLayerData,
                                                        inLights,
@@ -340,7 +340,7 @@ void QDemonCustomMaterialRenderable::renderDepthPass(const QVector2D &inCameraVe
                                                      const QDemonRenderTexture2D * /*inDepthTexture*/)
 {
 
-    QDemonRef<QDemonRenderContextInterface> demonContext(generator->getDemonContext());
+    QDemonRef<QDemonRenderContextInterface> demonContext(generator->demonContext());
     if (!demonContext->getCustomMaterialSystem()->renderDepthPrepass(modelContext.modelViewProjection, material, subset)) {
         QDemonRenderableImage *displacementImage = nullptr;
         for (QDemonRenderableImage *theImage = firstImage; theImage != nullptr && displacementImage == nullptr;
@@ -359,7 +359,7 @@ void QDemonPathRenderable::renderDepthPass(const QVector2D &inCameraVec,
                                            const QDemonRenderCamera &inCamera,
                                            const QDemonRenderTexture2D * /*inDepthTexture*/)
 {
-    QDemonRef<QDemonRenderContextInterface> demonContext(m_generator->getDemonContext());
+    QDemonRef<QDemonRenderContextInterface> demonContext(m_generator->demonContext());
     QDemonPathRenderContext theRenderContext(inLights,
                                              inCamera,
                                              m_path,
@@ -412,7 +412,7 @@ void QDemonPathRenderable::render(const QVector2D &inCameraVec,
                                   const QDemonRef<QDemonRenderTexture2D> & /*inSsaoTexture*/,
                                   const TShaderFeatureSet &inFeatureSet)
 {
-    QDemonRef<QDemonRenderContextInterface> demonContext(m_generator->getDemonContext());
+    QDemonRef<QDemonRenderContextInterface> demonContext(m_generator->demonContext());
     QDemonPathRenderContext theRenderContext(inLights,
                                              inCamera,
                                              m_path,
@@ -437,7 +437,7 @@ void QDemonPathRenderable::renderShadowMapPass(const QVector2D &inCameraVec,
                                                QDemonShadowMapEntry *inShadowMapEntry)
 {
     QVector<QDemonRenderLight *> theLights;
-    QDemonRef<QDemonRenderContextInterface> demonContext(m_generator->getDemonContext());
+    QDemonRef<QDemonRenderContextInterface> demonContext(m_generator->demonContext());
 
     QMatrix4x4 theModelViewProjection = inShadowMapEntry->m_lightVP * globalTransform;
     QDemonPathRenderContext theRenderContext(theLights,

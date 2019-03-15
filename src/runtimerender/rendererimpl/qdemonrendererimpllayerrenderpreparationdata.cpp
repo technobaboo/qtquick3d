@@ -154,17 +154,15 @@ size_t QDemonLayerRenderPreparationData::getShaderFeatureSetHash()
     return featureSetHash;
 }
 
-bool QDemonLayerRenderPreparationData::getShadowMapManager()
+void QDemonLayerRenderPreparationData::createShadowMapManager()
 {
     if (shadowMapManager)
-        return true;
+        return;
 
-    shadowMapManager = QDemonRenderShadowMap::create(renderer->getDemonContext());
-
-    return shadowMapManager != nullptr;
+    shadowMapManager = QDemonRenderShadowMap::create(renderer->demonContext());
 }
 
-bool QDemonLayerRenderPreparationData::getOffscreenRenderer()
+bool QDemonLayerRenderPreparationData::usesOffscreenRenderer()
 {
     if (lastFrameOffscreenRenderer)
         return true;
@@ -181,7 +179,7 @@ bool QDemonLayerRenderPreparationData::getOffscreenRenderer()
     //        }
     //    }
     if (lastFrameOffscreenRenderer == nullptr)
-        lastFrameOffscreenRenderer = renderer->getDemonContext()->getOffscreenRenderManager()->getOffscreenRenderer(layer.texturePath);
+        lastFrameOffscreenRenderer = renderer->demonContext()->getOffscreenRenderManager()->getOffscreenRenderer(layer.texturePath);
     return lastFrameOffscreenRenderer != nullptr;
 }
 
@@ -263,7 +261,7 @@ void QDemonLayerRenderPreparationData::addRenderWidget(QDemonRenderWidgetInterfa
         iRenderWidgets.push_back(&inWidget);
 }
 
-#define RENDER_FRAME_NEW(type) new (renderer->getDemonContext()->getPerFrameAllocator().allocate(sizeof(type))) type
+#define RENDER_FRAME_NEW(type) new (renderer->demonContext()->getPerFrameAllocator().allocate(sizeof(type))) type
 
 #define QDEMON_RENDER_MINIMUM_RENDER_OPACITY .01f
 
@@ -337,7 +335,7 @@ bool QDemonLayerRenderPreparationData::preparePathForRender(QDemonRenderPath &in
     QMatrix3x3 theNormalMatrix;
 
     inPath.calculateMVPAndNormalMatrix(inViewProjection, theMVP, theNormalMatrix);
-    QDemonBounds3 theBounds(this->renderer->getDemonContext()->getPathManager()->getBounds(inPath));
+    QDemonBounds3 theBounds(this->renderer->demonContext()->getPathManager()->getBounds(inPath));
 
     if (inPath.globalOpacity >= QDEMON_RENDER_MINIMUM_RENDER_OPACITY && inClipFrustum.hasValue()) {
         // Check bounding box against the clipping planes
@@ -404,7 +402,7 @@ bool QDemonLayerRenderPreparationData::preparePathForRender(QDemonRenderPath &in
                                                                                          isStroke);
             theRenderable->m_firstImage = prepResult.firstImage;
 
-            QDemonRef<QDemonRenderContextInterface> demonContext(renderer->getDemonContext());
+            QDemonRef<QDemonRenderContextInterface> demonContext(renderer->demonContext());
             QDemonRef<QDemonPathManagerInterface> thePathManager = demonContext->getPathManager();
             retval = thePathManager->prepareForRender(inPath) || retval;
             retval |= (inPath.m_wireframeMode != demonContext->getWireframeMode());
@@ -450,7 +448,7 @@ bool QDemonLayerRenderPreparationData::preparePathForRender(QDemonRenderPath &in
                                                                                          isStroke);
             theRenderable->m_firstImage = prepResult.firstImage;
 
-            QDemonRef<QDemonRenderContextInterface> demonContext(renderer->getDemonContext());
+            QDemonRef<QDemonRenderContextInterface> demonContext(renderer->demonContext());
             QDemonRef<QDemonPathManagerInterface> thePathManager = demonContext->getPathManager();
             retval = thePathManager->prepareForRender(inPath) || retval;
             retval |= (inPath.m_wireframeMode != demonContext->getWireframeMode());
@@ -473,7 +471,7 @@ void QDemonLayerRenderPreparationData::prepareImageForRender(QDemonRenderImage &
                                                              QDemonShaderDefaultMaterialKey &inShaderKey,
                                                              quint32 inImageIndex)
 {
-    QDemonRef<QDemonRenderContextInterface> demonContext(renderer->getDemonContext());
+    QDemonRef<QDemonRenderContextInterface> demonContext(renderer->demonContext());
     QDemonBufferManager bufferManager = demonContext->getBufferManager();
     QDemonRef<QDemonOffscreenRenderManagerInterface> theOffscreenRenderManager(demonContext->getOffscreenRenderManager());
     //    IRenderPluginManager &theRenderPluginManager(demonContext.GetRenderPluginManager());
@@ -561,7 +559,7 @@ QDemonDefaultMaterialPreparationResult QDemonLayerRenderPreparationData::prepare
 
     // set wireframe mode
     renderer->defaultMaterialShaderKeyProperties().m_wireframeMode.setValue(theGeneratedKey,
-                                                                            renderer->getDemonContext()->getWireframeMode());
+                                                                            renderer->demonContext()->getWireframeMode());
 
     if (theMaterial->iblProbe && checkLightProbeDirty(*theMaterial->iblProbe)) {
         renderer->prepareImageForIbl(*theMaterial->iblProbe);
@@ -672,7 +670,7 @@ QDemonDefaultMaterialPreparationResult QDemonLayerRenderPreparationData::prepare
 
     // set wireframe mode
     renderer->defaultMaterialShaderKeyProperties().m_wireframeMode.setValue(theGeneratedKey,
-                                                                            renderer->getDemonContext()->getWireframeMode());
+                                                                            renderer->demonContext()->getWireframeMode());
 
     if (subsetOpacity < QDEMON_RENDER_MINIMUM_RENDER_OPACITY) {
         subsetOpacity = 0.0f;
@@ -716,7 +714,7 @@ bool QDemonLayerRenderPreparationData::prepareModelForRender(QDemonRenderModel &
                                                              const QDemonOption<QDemonClippingFrustum> &inClipFrustum,
                                                              QDemonNodeLightEntryList &inScopedLights)
 {
-    QDemonRef<QDemonRenderContextInterface> demonContext(renderer->getDemonContext());
+    QDemonRef<QDemonRenderContextInterface> demonContext(renderer->demonContext());
     QDemonBufferManager bufferManager = demonContext->getBufferManager();
     QDemonRenderMesh *theMesh = bufferManager.loadMesh(inModel.meshPath);
     if (theMesh == nullptr)
@@ -888,7 +886,7 @@ bool QDemonLayerRenderPreparationData::prepareRenderablesForRender(const QMatrix
                                                                    const QDemonOption<QDemonClippingFrustum> &inClipFrustum,
                                                                    QDemonLayerRenderPreparationResultFlags &ioFlags)
 {
-    QDemonStackPerfTimer perfTimer(renderer->getDemonContext()->getPerfTimer(), Q_FUNC_INFO);
+    QDemonStackPerfTimer perfTimer(renderer->demonContext()->getPerfTimer(), Q_FUNC_INFO);
     viewProjection = inViewProjection;
     bool wasDataDirty = false;
     for (quint32 idx = 0, end = renderableNodes.size(); idx < end; ++idx) {
@@ -922,7 +920,7 @@ bool QDemonLayerRenderPreparationData::prepareRenderablesForRender(const QMatrix
 
 bool QDemonLayerRenderPreparationData::checkLightProbeDirty(QDemonRenderImage &inLightProbe)
 {
-    QDemonRef<QDemonRenderContextInterface> theContext(renderer->getDemonContext());
+    QDemonRef<QDemonRenderContextInterface> theContext(renderer->demonContext());
     QDemonBufferManager bufferManager = theContext->getBufferManager();
     return inLightProbe.clearDirty(bufferManager,
                                    *theContext->getOffscreenRenderManager() /*,
@@ -971,18 +969,18 @@ struct QDemonLightNodeMarker
 // m_Layer.m_Camera->CalculateViewProjectionMatrix(m_ViewProjection);
 void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportDimensions)
 {
-    QDemonStackPerfTimer perfTimer(renderer->getDemonContext()->getPerfTimer(), Q_FUNC_INFO);
+    QDemonStackPerfTimer perfTimer(renderer->demonContext()->getPerfTimer(), Q_FUNC_INFO);
     if (layerPrepResult.hasValue())
         return;
 
     features.clear();
     featureSetHash = 0;
     QVector2D thePresentationDimensions((float)inViewportDimensions.width(), (float)inViewportDimensions.height());
-    QDemonRef<QDemonRenderListInterface> theGraph(renderer->getDemonContext()->getRenderList());
+    QDemonRef<QDemonRenderListInterface> theGraph(renderer->demonContext()->getRenderList());
     QRect theViewport(theGraph->getViewport());
     QRect theScissor(theGraph->getViewport());
     if (theGraph->isScissorTestEnabled())
-        theScissor = renderer->getContext()->scissorRect();
+        theScissor = renderer->context()->scissorRect();
     bool wasDirty = false;
     bool wasDataDirty = false;
     wasDirty = layer.flags.testFlag(QDemonRenderLayer::Flag::Dirty);
@@ -994,7 +992,7 @@ void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportD
     // maxNumAAPasses = 0;
 
     QDemonLayerRenderPreparationResult thePrepResult;
-    bool hasOffscreenRenderer = getOffscreenRenderer();
+    bool hasOffscreenRenderer = usesOffscreenRenderer();
 
     bool SSAOEnabled = (layer.aoStrength > 0.0f && layer.aoDistance > 0.0f);
     bool SSDOEnabled = (layer.shadowStrength > 0.0f && layer.shadowDist > 0.0f);
@@ -1005,7 +1003,7 @@ void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportD
 
     if (layer.flags.testFlag(QDemonRenderLayer::Flag::Active)) {
         // Get the layer's width and height.
-        QDemonRef<QDemonEffectSystemInterface> theEffectSystem(renderer->getDemonContext()->getEffectSystem());
+        QDemonRef<QDemonEffectSystemInterface> theEffectSystem(renderer->demonContext()->getEffectSystem());
         for (QDemonRenderEffect *theEffect = layer.firstEffect; theEffect; theEffect = theEffect->m_nextEffect) {
             if (theEffect->flags.testFlag(QDemonRenderEffect::Flag::Dirty)) {
                 wasDirty = true;
@@ -1038,18 +1036,18 @@ void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportD
                                         layer.scene->presentation->presentationDimensions,
                                         layer,
                                         shouldRenderToTexture,
-                                        renderer->getDemonContext()->getScaleMode(),
-                                        renderer->getDemonContext()->getPresentationScaleFactor()));
+                                        renderer->demonContext()->getScaleMode(),
+                                        renderer->demonContext()->getPresentationScaleFactor()));
         thePrepResult.lastEffect = theLastEffect;
         thePrepResult.maxAAPassIndex = maxNumAAPasses;
         thePrepResult.flags.setRequiresDepthTexture(requiresDepthPrepass || needsWidgetTexture());
         thePrepResult.flags.setShouldRenderToTexture(shouldRenderToTexture);
-        if (renderer->getContext()->renderContextType() != QDemonRenderContextType::GLES2)
+        if (renderer->context()->renderContextType() != QDemonRenderContextType::GLES2)
             thePrepResult.flags.setRequiresSsaoPass(SSAOEnabled);
 
         if (thePrepResult.isLayerVisible()) {
             if (shouldRenderToTexture) {
-                renderer->getDemonContext()->getRenderList()->addRenderTask(createRenderToTextureRunnable());
+                renderer->demonContext()->getRenderList()->addRenderTask(createRenderToTextureRunnable());
             }
             if (layer.lightProbe && checkLightProbeDirty(*layer.lightProbe)) {
                 renderer->prepareImageForIbl(*layer.lightProbe);
@@ -1130,8 +1128,9 @@ void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportD
                     if (theLight->flags.testFlag(QDemonRenderLight::Flag::GloballyActive)) {
                         if (theLight->m_scope == nullptr) {
                             lights.push_back(theLight);
-                            if (renderer->getContext()->renderContextType() != QDemonRenderContextType::GLES2
-                                && theLight->m_castShadow && getShadowMapManager()) {
+                            if (renderer->context()->renderContextType() != QDemonRenderContextType::GLES2
+                                && theLight->m_castShadow) {
+                                createShadowMapManager();
                                 // PKC -- use of "res" as an exponent of two is an annoying
                                 // artifact of the XML interface
                                 // I'll change this with an enum interface later on, but that's
@@ -1224,7 +1223,7 @@ void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportD
             }
 
             modelContexts.clear();
-            if (getOffscreenRenderer() == false) {
+            if (usesOffscreenRenderer() == false) {
                 bool renderablesDirty = prepareRenderablesForRender(viewProjection,
                                                                     clippingFrustum,
                                                                     thePrepResult.flags);
@@ -1232,12 +1231,12 @@ void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportD
                 if (thePrepResult.flags.requiresStencilBuffer())
                     thePrepResult.flags.setShouldRenderToTexture(true);
             } else {
-                QRect theViewport = thePrepResult.getLayerToPresentationViewport().toRect();
+                QRect theViewport = thePrepResult.viewport().toRect();
                 bool theScissor = true;
-                QRect theScissorRect = thePrepResult.getLayerToPresentationScissorRect().toRect();
+                QRect theScissorRect = thePrepResult.scissor().toRect();
                 // This happens here because if there are any fancy render steps
-                QDemonRef<QDemonRenderListInterface> theRenderList(renderer->getDemonContext()->getRenderList());
-                auto theContext = renderer->getContext();
+                QDemonRef<QDemonRenderListInterface> theRenderList(renderer->demonContext()->getRenderList());
+                auto theContext = renderer->context();
                 QDemonRenderListScopedProperty<bool> _listScissorEnabled(*theRenderList,
                                                                          &QDemonRenderListInterface::isScissorTestEnabled,
                                                                          &QDemonRenderListInterface::setScissorTestEnabled,
@@ -1266,7 +1265,7 @@ void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportD
                                                                         theViewport);
                 QDemonOffscreenRenderFlags theResult = lastFrameOffscreenRenderer
                                                                ->needsRender(createOffscreenRenderEnvironment(),
-                                                                             renderer->getDemonContext()->getPresentationScaleFactor(),
+                                                                             renderer->demonContext()->getPresentationScaleFactor(),
                                                                              &layer);
                 wasDataDirty = wasDataDirty || theResult.hasChangedSinceLastFrame;
             }

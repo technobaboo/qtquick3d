@@ -258,9 +258,9 @@ public:
                      const QDemonRenderInstanceId id) override;
     void childrenUpdated(QDemonRenderNode &inParent) override;
 
-    QDemonRenderCamera *getCameraForNode(const QDemonRenderNode &inNode) const override;
-    QDemonOption<QDemonCuboidRect> getCameraBounds(const QDemonRenderGraphObject &inObject) override;
-    virtual QDemonRenderLayer *getLayerForNode(const QDemonRenderNode &inNode) const;
+    QDemonRenderCamera *cameraForNode(const QDemonRenderNode &inNode) const override;
+    QDemonOption<QDemonCuboidRect> cameraBounds(const QDemonRenderGraphObject &inObject) override;
+    virtual QDemonRenderLayer *layerForNode(const QDemonRenderNode &inNode) const;
     QDemonRef<QDemonLayerRenderData> getOrCreateLayerRenderDataForNode(const QDemonRenderNode &inNode,
                                                                        const QDemonRenderInstanceId id = nullptr);
 
@@ -296,15 +296,15 @@ public:
                                                          const QVector2D &inMouseCoords,
                                                          const QSize &inPickDims) override;
 
-    QDemonOption<QRectF> getLayerRect(QDemonRenderLayer &inLayer) override;
+    QDemonOption<QRectF> layerRect(QDemonRenderLayer &inLayer) override;
 
     void runLayerRender(QDemonRenderLayer &inLayer, const QMatrix4x4 &inViewProjection) override;
 
     void renderLayerRect(QDemonRenderLayer &inLayer, const QVector3D &inColor) override;
     void addRenderWidget(QDemonRenderWidgetInterface &inWidget) override;
 
-    QDemonScaleAndPosition getWorldToPixelScaleFactor(QDemonRenderLayer &inLayer, const QVector3D &inWorldPoint) override;
-    QDemonScaleAndPosition getWorldToPixelScaleFactor(const QDemonRenderCamera &inCamera,
+    QDemonScaleAndPosition worldToPixelScaleFactor(QDemonRenderLayer &inLayer, const QVector3D &inWorldPoint) override;
+    QDemonScaleAndPosition worldToPixelScaleFactor(const QDemonRenderCamera &inCamera,
                                                       const QVector3D &inWorldPoint,
                                                       QDemonLayerRenderData &inRenderData);
 
@@ -380,18 +380,18 @@ public:
     QDemonLayerGlobalRenderProperties getLayerGlobalRenderProperties();
     void updateCbAoShadow(const QDemonRenderLayer *pLayer, const QDemonRenderCamera *pCamera, QDemonResourceTexture2D &inDepthTexture);
 
-    QDemonRef<QDemonRenderContext> getContext() { return m_context; }
+    QDemonRef<QDemonRenderContext> context() { return m_context; }
 
-    QDemonRef<QDemonRenderContextInterface> getDemonContext() { return m_demonContext; }
+    QDemonRef<QDemonRenderContextInterface> demonContext() { return m_demonContext; }
 
     void drawScreenRect(QRectF inRect, const QVector3D &inColor);
     // Binds an offscreen texture.  Widgets are rendered last.
     void setupWidgetLayer();
 
 #ifdef ADVANCED_BLEND_SW_FALLBACK
-    QDemonRef<QDemonRenderTexture2D> getLayerBlendTexture() { return m_layerBlendTexture.getTexture(); }
+    QDemonRef<QDemonRenderTexture2D> layerBlendTexture() { return m_layerBlendTexture.getTexture(); }
 
-    QDemonRef<QDemonRenderFrameBuffer> getBlendFB() { return m_blendFb; }
+    QDemonRef<QDemonRenderFrameBuffer> blendFrameBuffer() { return m_blendFb; }
 #endif
     // widget context implementation
     QDemonRef<QDemonRenderVertexBuffer> getOrCreateVertexBuffer(
