@@ -47,7 +47,6 @@ HEADERS += \
     qdemonrenderprofiler.h \
     qdemonrenderray.h \
     qdemonrenderrenderlist.h \
-    qdemonrenderrotationhelper.h \
     qdemonrendershadercache.h \
     qdemonrendershadercodegenerator.h \
     qdemonrendershadercodegeneratorv2.h \
