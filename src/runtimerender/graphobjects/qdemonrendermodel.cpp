@@ -28,9 +28,9 @@
 **
 ****************************************************************************/
 #include <QtDemonRuntimeRender/qdemonrendermodel.h>
-#include <QtDemonRuntimeRender/qdemonrendermaterialhelpers.h>
 #include <QtDemonRuntimeRender/qdemonrenderbuffermanager.h>
 #include <QtDemonRuntimeRender/qdemonrendermesh.h>
+#include <QtDemonRuntimeRender/qdemonrenderdefaultmaterial.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -50,12 +50,11 @@ void QDemonRenderModel::addMaterial(QDemonRenderGraphObject &inMaterial)
     if (firstMaterial == nullptr) {
         firstMaterial = &inMaterial;
     } else {
-        QDemonRenderGraphObject *lastMaterial;
+        QDemonRenderGraphObject *lastMaterial = firstMaterial;
         // empty loop intentional
-        for (lastMaterial = firstMaterial; lastMaterial && getNextMaterialSibling(lastMaterial);
-             lastMaterial = getNextMaterialSibling(lastMaterial)) {
-        }
-        setNextMaterialSibling(*lastMaterial, &inMaterial);
+        while (QDemonRenderGraphObject *next = lastMaterial->nextMaterialSibling())
+             lastMaterial = next;
+        lastMaterial->setNextMaterialSibling(&inMaterial);
     }
     // ### I don't think reparenting is necessary here (I tested without it at least)
     if (inMaterial.type == QDemonRenderGraphObject::Type::DefaultMaterial)

@@ -38,6 +38,7 @@
 #include <QtDemonRuntimeRender/qdemonrenderpresentation.h>
 #include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
 #include <QtDemonRuntimeRender/qdemonrenderresourcemanager.h>
+#include <QtDemonRuntimeRender/qdemonrenderreferencedmaterial.h>
 #include <QtDemonRuntimeRender/qdemonrendereffectsystem.h>
 #include <QtDemonRender/qdemonrenderframebuffer.h>
 #include <QtDemonRender/qdemonrenderrenderbuffer.h>
@@ -46,7 +47,6 @@
 //#include <QtDemonRuntimeRender/qdemonrenderplugingraphobject.h>
 #include <QtDemonRuntimeRender/qdemonrenderresourcebufferobjects.h>
 #include <QtDemon/qdemonperftimer.h>
-#include <QtDemonRuntimeRender/qdemonrendermaterialhelpers.h>
 #include <QtDemonRuntimeRender/qdemonrenderbuffermanager.h>
 #include <QtDemonRuntimeRender/qdemonrendercustommaterialsystem.h>
 #include <QtDemonRuntimeRender/qdemonrenderrenderlist.h>
@@ -731,7 +731,7 @@ bool QDemonLayerRenderPreparationData::prepareModelForRender(QDemonRenderModel &
     QDemonScopedLightsListScope lightsScope(lights, lightDirections, sourceLightDirections, inScopedLights);
     setShaderFeature(cgLightingFeatureName, lights.empty() == false);
     for (quint32 idx = 0, end = theMesh->subsets.size(); idx < end && theSourceMaterialObject;
-         ++idx, theSourceMaterialObject = getNextMaterialSibling(theSourceMaterialObject)) {
+         ++idx, theSourceMaterialObject = theSourceMaterialObject->nextMaterialSibling()) {
         QDemonRenderSubset &theOuterSubset(theMesh->subsets[idx]);
         {
             QDemonRenderSubset &theSubset(theOuterSubset);

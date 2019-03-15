@@ -104,6 +104,18 @@ struct Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderGraphObject
     {
         return (type == Type::Camera || type == Type::Light);
     }
+
+
+    constexpr inline bool isMaterial() const Q_DECL_NOTHROW
+    {
+        return type == QDemonRenderGraphObject::Type::CustomMaterial ||
+               type == QDemonRenderGraphObject::Type::DefaultMaterial ||
+               type == QDemonRenderGraphObject::Type::ReferencedMaterial;
+    }
+
+    QDemonRenderGraphObject *nextMaterialSibling();
+    void setNextMaterialSibling(QDemonRenderGraphObject *sibling);
+
 };
 
 QT_END_NAMESPACE

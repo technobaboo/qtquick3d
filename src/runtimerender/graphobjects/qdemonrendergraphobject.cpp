@@ -29,9 +29,40 @@
 ****************************************************************************/
 
 #include "qdemonrendergraphobject.h"
+#include <QtDemonRuntimeRender/qdemonrendercustommaterial.h>
+#include <QtDemonRuntimeRender/qdemonrenderdefaultmaterial.h>
+#include <QtDemonRuntimeRender/qdemonrenderreferencedmaterial.h>
 
 QT_BEGIN_NAMESPACE
 
 QDemonRenderGraphObject::~QDemonRenderGraphObject() {}
+
+QDemonRenderGraphObject *QDemonRenderGraphObject::nextMaterialSibling()
+{
+    if (isMaterial() == false) {
+        Q_ASSERT(false);
+        return nullptr;
+    }
+    if (type == QDemonRenderGraphObject::Type::CustomMaterial)
+        return static_cast<QDemonRenderCustomMaterial *>(this)->m_nextSibling;
+    else if (type == QDemonRenderGraphObject::Type::DefaultMaterial)
+        return static_cast<QDemonRenderDefaultMaterial *>(this)->nextSibling;
+    else
+        return static_cast<QDemonRenderReferencedMaterial *>(this)->m_nextSibling;
+}
+
+void QDemonRenderGraphObject::setNextMaterialSibling(QDemonRenderGraphObject *sibling)
+{
+    if (!isMaterial()) {
+        Q_ASSERT(false);
+        return;
+    }
+    if (type == QDemonRenderGraphObject::Type::CustomMaterial)
+        static_cast<QDemonRenderCustomMaterial *>(this)->m_nextSibling = sibling;
+    else if (type == QDemonRenderGraphObject::Type::DefaultMaterial)
+        static_cast<QDemonRenderDefaultMaterial *>(this)->nextSibling = sibling;
+    else
+        static_cast<QDemonRenderReferencedMaterial *>(this)->m_nextSibling = sibling;
+}
 
 QT_END_NAMESPACE

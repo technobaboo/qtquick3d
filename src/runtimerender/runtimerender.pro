@@ -33,7 +33,6 @@ HEADERS += \
     qdemonrenderimagetexturedata.h \
     qdemonrenderinputstreamfactory.h \
     qdemonrenderlightconstantproperties.h \
-    qdemonrendermaterialhelpers.h \
     qdemonrendermaterialshadergenerator.h \
     qdemonrendermesh.h \
     qdemonrenderpathmanager.h \
