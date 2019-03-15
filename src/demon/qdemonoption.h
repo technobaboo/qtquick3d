@@ -51,6 +51,13 @@ public:
 
     const TDataType &operator*() const { return getValue(); }
     TDataType &operator*() { return getValue(); }
+
+    friend bool operator==(const QDemonOption &a, const QDemonOption &b) {
+        return a.mHasValue == b.mHasValue && a.mData == b.mData;
+    }
+    friend bool operator!=(const QDemonOption &a, const QDemonOption &b) {
+        return !(a == b);
+    }
 };
 
 QT_END_NAMESPACE

@@ -204,7 +204,7 @@ struct QDemonPathBuffer
     void setBeginTaperInfo(QDemonRenderPath::Capping capping, float capOffset, float capOpacity, float capWidth)
     {
         QDemonOption<QDemonTaperInformation> newBeginInfo = toTaperInfo(capping, capOffset, capOpacity, capWidth);
-        if (!optionEquals(newBeginInfo, m_beginTaper)) {
+        if (newBeginInfo != m_beginTaper) {
             m_beginTaper = newBeginInfo;
             m_flags |= QDemonPathDirtyFlagValue::BeginTaper;
         }
@@ -213,7 +213,7 @@ struct QDemonPathBuffer
     void setEndTaperInfo(QDemonRenderPath::Capping capping, float capOffset, float capOpacity, float capWidth)
     {
         QDemonOption<QDemonTaperInformation> newEndInfo = toTaperInfo(capping, capOffset, capOpacity, capWidth);
-        if (!optionEquals(newEndInfo, m_endTaper)) {
+        if (newEndInfo != m_endTaper) {
             m_endTaper = newEndInfo;
             m_flags |= QDemonPathDirtyFlagValue::EndTaper;
         }

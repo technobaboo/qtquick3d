@@ -502,15 +502,6 @@ struct QDemonTaperInformation
     }
 };
 
-template<typename TOptData>
-bool optionEquals(const QDemonOption<TOptData> &lhs, const QDemonOption<TOptData> &rhs)
-{
-    if (lhs.hasValue() != rhs.hasValue())
-        return false;
-    if (lhs.hasValue())
-        return lhs.getValue() == rhs.getValue();
-    return true;
-}
 void outerAdaptiveSubdivideBezierCurve(QVector<QDemonResultCubic> &ioResultVec,
                                        QVector<float> &keyPointVec,
                                        QDemonCubicBezierCurve inCurve,
