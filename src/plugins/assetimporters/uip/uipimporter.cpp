@@ -97,7 +97,7 @@ QString insertTabs(int n)
 
 
 QString qmlComponentName(const QString &name) {
-    QString nameCopy;
+    QString nameCopy = name;
     if (nameCopy.isEmpty())
         return QStringLiteral("Presentation");
 
@@ -203,20 +203,27 @@ void UipImporter::checkForResourceFiles(GraphObject *object)
 
 QString UipImporter::processUipPresentation(UipPresentation *presentation, const QString &ouputFilePath)
 {
-    // Create *3d.qml file from .uip presentation
-    QString targetFile = ouputFilePath + qmlComponentName(presentation->name()) + QStringLiteral(".qml");
-    QFile qmlFile(targetFile);
-    if (!qmlFile.open(QIODevice::WriteOnly)) {
-        return QString(QStringLiteral("Could not open file: ") + targetFile + QStringLiteral(" for writing"));
+    // create one component per layer
+    GraphObject *layer = presentation->scene()->firstChild();
+    while (layer) {
+
+        // Create *3d.qml file from .uip presentation
+        QString targetFile = ouputFilePath + qmlComponentName(presentation->name()) + qmlComponentName(layer->qmlId()) + QStringLiteral(".qml");
+        QFile qmlFile(targetFile);
+        if (!qmlFile.open(QIODevice::WriteOnly)) {
+            return QString(QStringLiteral("Could not open file: ") + targetFile + QStringLiteral(" for writing"));
+        }
+
+        QTextStream output(&qmlFile);
+
+        output << "import QtDemon 1.0" << endl << endl;
+
+        processNode(layer, output, 0);
+
+        qmlFile.close();
+
+        layer = layer->nextSibling();
     }
-
-    QTextStream output(&qmlFile);
-
-    output << "import QtDemon 1.0" << endl << endl;
-
-    processNode(presentation->scene(), output, 0);
-
-    qmlFile.close();
     return QString();
 }
 
