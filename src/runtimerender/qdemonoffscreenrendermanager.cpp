@@ -298,12 +298,12 @@ struct QDemonOffscreenRenderManager : public QDemonOffscreenRenderManagerInterfa
         theData.renderer->render(theDesiredEnvironment, *theContext, thePresScaleFactor, QDemonRenderScene::AlwaysClear, this);
 
         if (theSampleCount > 1) {
-            QDemonRef<QDemonResourceTexture2D> theResult(new QDemonResourceTexture2D(m_resourceManager, theData.texture));
+            QDemonResourceTexture2D theResult(m_resourceManager, theData.texture);
 
             if (theDesiredEnvironment.msaaMode != QDemonRenderLayer::AAMode::SSAA) {
                 // Have to downsample the FBO.
                 QDemonRendererUtil::resolveMutisampleFBOColorOnly(m_resourceManager,
-                                                                  *theResult,
+                                                                  theResult,
                                                                   *m_context->getRenderContext(),
                                                                   theDesiredEnvironment.width,
                                                                   theDesiredEnvironment.height,
@@ -314,7 +314,7 @@ struct QDemonOffscreenRenderManager : public QDemonOffscreenRenderManagerInterfa
             } else {
                 // Resolve the FBO to the layer texture
                 QDemonRendererUtil::resolveSSAAFBOColorOnly(m_resourceManager,
-                                                            *theResult,
+                                                            theResult,
                                                             theOriginalDesiredEnvironment.width,
                                                             theOriginalDesiredEnvironment.height,
                                                             *m_context->getRenderContext(),
@@ -324,8 +324,8 @@ struct QDemonOffscreenRenderManager : public QDemonOffscreenRenderManagerInterfa
                                                             theFrameBuffer);
             }
 
-            Q_ASSERT(theData.texture == theResult->getTexture());
-            theResult->forgetTexture();
+            Q_ASSERT(theData.texture == theResult.getTexture());
+            theResult.forgetTexture();
         } else {
             renderColorTexture.forgetTexture();
         }
