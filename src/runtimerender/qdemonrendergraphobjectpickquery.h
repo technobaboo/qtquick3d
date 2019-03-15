@@ -67,20 +67,18 @@ struct QDemonRenderPickSubResult
 
 struct QDemonRenderPickResult
 {
-    const QDemonRenderGraphObject *m_hitObject;
-    float m_cameraDistanceSq;
+    const QDemonRenderGraphObject *m_hitObject = nullptr;
+    float m_cameraDistanceSq = std::numeric_limits<float>::max();
     // The local coordinates in X,Y UV space where the hit occured
     QVector2D m_localUVCoords;
     // The local mouse coordinates will be the same on all of the sub objects.
-    QDemonRenderPickSubResult *m_firstSubObject;
-    // The offscreen renderer that was used to render the scene graph this result was produced
-    // from.
-    QDemonRef<QDemonOffscreenRendererInterface> m_offscreenRenderer;
+    QDemonRenderPickSubResult *m_firstSubObject = nullptr;
 
     QDemonRenderPickResult(const QDemonRenderGraphObject &inHitObject, float inCameraDistance, const QVector2D &inLocalUVCoords);
-    QDemonRenderPickResult();
-    ~QDemonRenderPickResult();
+    QDemonRenderPickResult() = default;
 };
+
+Q_STATIC_ASSERT(std::is_trivially_destructible<QDemonRenderPickResult>::value);
 
 class QDemonGraphObjectPickQueryInterface
 {

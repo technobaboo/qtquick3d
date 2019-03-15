@@ -560,7 +560,6 @@ QDemonPickResultProcessResult QDemonRendererImpl::processPickResultList(bool inP
                 QDemonRenderPickResult theInnerPickResult = theQuery->pick(theMouseCoords, theViewportDimensions, inPickEverything);
                 if (theInnerPickResult.m_hitObject) {
                     thePickResult = theInnerPickResult;
-                    thePickResult.m_offscreenRenderer = theSubRenderer;
                     foundValidResult = true;
                     thePickResult.m_wasPickConsumed = true;
                 } else if (thePickResult.m_hitObject->isNodeType()) {
@@ -1079,7 +1078,6 @@ void QDemonRendererImpl::getLayerHitObjectList(QDemonLayerRenderData &inLayerRen
             if (theQuery) {
                 QDemonRenderPickResult theResult = theQuery->pick(inPresCoords, inViewportDimensions, inPickEverything);
                 if (theResult.m_hitObject) {
-                    theResult.m_offscreenRenderer = inLayerRenderData.lastFrameOffscreenRenderer;
                     outIntersectionResult.push_back(theResult);
                 }
             } else
@@ -1692,17 +1690,7 @@ QDemonRenderPickResult::QDemonRenderPickResult(const QDemonRenderGraphObject &in
     , m_cameraDistanceSq(inCameraDistance)
     , m_localUVCoords(inLocalUVCoords)
     , m_firstSubObject(nullptr)
-    , m_offscreenRenderer(nullptr)
-{
-}
-QDemonRenderPickResult::QDemonRenderPickResult()
-    : m_hitObject(nullptr)
-    , m_cameraDistanceSq(std::numeric_limits<float>::max())
-    , m_localUVCoords(0, 0)
-    , m_firstSubObject(nullptr)
-    , m_offscreenRenderer(nullptr)
 {
 }
 
-QDemonRenderPickResult::~QDemonRenderPickResult() = default;
 QT_END_NAMESPACE

@@ -154,6 +154,8 @@ struct QDemonRenderableObject
     bool operator<(QDemonRenderableObject *inOther) const { return cameraDistanceSq < inOther->cameraDistanceSq; }
 };
 
+Q_STATIC_ASSERT(std::is_trivially_destructible<QDemonRenderableObject>::value);
+
 typedef QVector<QDemonRenderableObject *> TRenderableObjectList;
 
 // Different subsets from the same model will get the same
@@ -171,15 +173,17 @@ struct QDemonModelContext
     }
 };
 
+Q_STATIC_ASSERT(std::is_trivially_destructible<QDemonModelContext>::value);
+
 class QDemonRendererImpl;
 struct QDemonLayerRenderData;
 struct QDemonShadowMapEntry;
 
 struct QDemonSubsetRenderableBase : public QDemonRenderableObject
 {
-    QDemonRef<QDemonRendererImpl> generator;
+    const QDemonRef<QDemonRendererImpl> &generator;
     const QDemonModelContext &modelContext;
-    QDemonRenderSubset subset;
+    const QDemonRenderSubset &subset;
     float opacity;
 
     QDemonSubsetRenderableBase(QDemonRenderableObjectFlags inFlags,
@@ -188,7 +192,6 @@ struct QDemonSubsetRenderableBase : public QDemonRenderableObject
                                const QDemonRenderSubset &inSubset,
                                const QDemonModelContext &inModelContext,
                                float inOpacity);
-    ~QDemonSubsetRenderableBase();
     void renderShadowMapPass(const QVector2D &inCameraVec,
                              const QDemonRenderLight *inLight,
                              const QDemonRenderCamera &inCamera,
@@ -196,6 +199,8 @@ struct QDemonSubsetRenderableBase : public QDemonRenderableObject
 
     void renderDepthPass(const QVector2D &inCameraVec, QDemonRenderableImage *inDisplacementImage, float inDisplacementAmount);
 };
+
+Q_STATIC_ASSERT(std::is_trivially_destructible<QDemonSubsetRenderableBase>::value);
 
 /**
  *	A renderable that corresponds to a subset (a part of a model).
@@ -219,7 +224,6 @@ struct QDemonSubsetRenderable : public QDemonSubsetRenderableBase
                            QDemonRenderableImage *inFirstImage,
                            QDemonShaderDefaultMaterialKey inShaderKey,
                            const QDemonConstDataRef<QMatrix4x4> &inBoneGlobals);
-    ~QDemonSubsetRenderable();
 
     void render(const QVector2D &inCameraVec, const TShaderFeatureSet &inFeatureSet);
 
@@ -227,6 +231,8 @@ struct QDemonSubsetRenderable : public QDemonSubsetRenderableBase
 
     QDemonRenderDefaultMaterial::MaterialBlendMode getBlendingMode() { return material.blendMode; }
 };
+
+Q_STATIC_ASSERT(std::is_trivially_destructible<QDemonSubsetRenderable>::value);
 
 struct QDemonCustomMaterialRenderable : public QDemonSubsetRenderableBase
 {
@@ -243,7 +249,6 @@ struct QDemonCustomMaterialRenderable : public QDemonSubsetRenderableBase
                                    float inOpacity,
                                    QDemonRenderableImage *inFirstImage,
                                    QDemonShaderDefaultMaterialKey inShaderKey);
-    ~QDemonCustomMaterialRenderable();
 
     void render(const QVector2D &inCameraVec,
                 const QDemonLayerRenderData &inLayerData,
@@ -261,11 +266,12 @@ struct QDemonCustomMaterialRenderable : public QDemonSubsetRenderableBase
                          const QDemonRenderTexture2D *inDepthTexture);
 };
 
+Q_STATIC_ASSERT(std::is_trivially_destructible<QDemonCustomMaterialRenderable>::value);
+
 struct QDemonPathRenderable : public QDemonRenderableObject
 {
-    QDemonRef<QDemonRendererImpl> m_generator;
+    const QDemonRef<QDemonRendererImpl> &m_generator;
     QDemonRenderPath &m_path;
-    QDemonBounds3 bounds;
     QMatrix4x4 m_mvp;
     QMatrix3x3 m_normalMatrix;
     const QDemonRenderGraphObject &m_material;
@@ -286,7 +292,6 @@ struct QDemonPathRenderable : public QDemonRenderableObject
                          float inOpacity,
                          QDemonShaderDefaultMaterialKey inShaderKey,
                          bool inIsStroke);
-    ~QDemonPathRenderable();
     void render(const QVector2D &inCameraVec,
                 const QDemonRenderLayer &inLayer,
                 const QVector<QDemonRenderLight *> &inLights,
@@ -306,6 +311,9 @@ struct QDemonPathRenderable : public QDemonRenderableObject
                              const QDemonRenderCamera &inCamera,
                              QDemonShadowMapEntry *inShadowMapEntry);
 };
+
+Q_STATIC_ASSERT(std::is_trivially_destructible<QDemonPathRenderable>::value);
+
 QT_END_NAMESPACE
 
 #endif

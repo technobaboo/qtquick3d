@@ -56,8 +56,6 @@ QDemonSubsetRenderableBase::QDemonSubsetRenderableBase(QDemonRenderableObjectFla
 {
 }
 
-QDemonSubsetRenderableBase::~QDemonSubsetRenderableBase() = default;
-
 void QDemonSubsetRenderableBase::renderShadowMapPass(const QVector2D &inCameraVec,
                                                      const QDemonRenderLight *inLight,
                                                      const QDemonRenderCamera &inCamera,
@@ -218,8 +216,6 @@ QDemonSubsetRenderable::QDemonSubsetRenderable(QDemonRenderableObjectFlags inFla
     renderableFlags.setCustom(false);
 }
 
-QDemonSubsetRenderable::~QDemonSubsetRenderable() = default;
-
 void QDemonSubsetRenderable::render(const QVector2D &inCameraVec, const TShaderFeatureSet &inFeatureSet)
 {
     auto context = generator->getContext();
@@ -308,8 +304,6 @@ QDemonCustomMaterialRenderable::QDemonCustomMaterialRenderable(QDemonRenderableO
     renderableFlags.setCustomMaterialMeshSubset(true);
 }
 
-QDemonCustomMaterialRenderable::~QDemonCustomMaterialRenderable() = default;
-
 void QDemonCustomMaterialRenderable::render(const QVector2D & /*inCameraVec*/,
                                             const QDemonLayerRenderData &inLayerData,
                                             const QDemonRenderLayer &inLayer,
@@ -396,10 +390,9 @@ QDemonPathRenderable::QDemonPathRenderable(QDemonRenderableObjectFlags inFlags,
                                            float inOpacity,
                                            QDemonShaderDefaultMaterialKey inShaderKey,
                                            bool inIsStroke)
-    : QDemonRenderableObject(inFlags, inWorldCenterPt, inGlobalTransform, bounds)
+    : QDemonRenderableObject(inFlags, inWorldCenterPt, inGlobalTransform, inBounds)
     , m_generator(gen)
     , m_path(inPath)
-    , bounds(inBounds)
     , m_mvp(inModelViewProjection)
     , m_normalMatrix(inNormalMat)
     , m_material(inMaterial)
@@ -410,8 +403,6 @@ QDemonPathRenderable::QDemonPathRenderable(QDemonRenderableObjectFlags inFlags,
 {
     renderableFlags.setPath(true);
 }
-
-QDemonPathRenderable::~QDemonPathRenderable() = default;
 
 void QDemonPathRenderable::render(const QVector2D &inCameraVec,
                                   const QDemonRenderLayer & /*inLayer*/,

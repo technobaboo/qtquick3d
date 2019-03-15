@@ -686,6 +686,9 @@ struct QDemonShaderDefaultMaterialKey
     }
 };
 
+Q_STATIC_ASSERT(std::is_trivially_destructible<QDemonShaderDefaultMaterialKey>::value);
+
+
 inline uint qHash(const QDemonShaderDefaultMaterialKey &key)
 {
     return key.hash();
