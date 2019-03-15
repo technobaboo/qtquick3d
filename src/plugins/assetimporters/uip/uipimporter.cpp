@@ -180,6 +180,9 @@ void UipImporter::checkForResourceFiles(GraphObject *object)
         QString meshLocation = model->m_mesh_unresolved;
         // Remove trailing # directive
         int hashLocation = meshLocation.indexOf("#");
+        // if mesh source starts with #, it's a primative, so skip
+        if (hashLocation == 1)
+            return;
         if (hashLocation != -1) {
             meshLocation.chop(meshLocation.length() - hashLocation);
         }

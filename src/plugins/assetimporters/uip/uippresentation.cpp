@@ -1431,7 +1431,7 @@ void LayerNode::writeQmlProperties(QTextStream &output, int tabLevel)
         output << insertTabs(tabLevel) << "probeBrightness: " << m_probeBright << endl;
         output << insertTabs(tabLevel) << "fastIBL: " << (m_layerFlags.testFlag(LayerNode::FastIBL) ? QStringLiteral("true") : QStringLiteral("false") ) << endl;
         output << insertTabs(tabLevel) << "probeHorizon: " << m_probeHorizon << endl;
-        output << insertTabs(tabLevel) << "proveFieldOfView: " << m_probeFov << endl;
+        output << insertTabs(tabLevel) << "probeFieldOfView: " << m_probeFov << endl;
     }
 
     if (!m_lightProbe2_unresolved.isEmpty()) {
