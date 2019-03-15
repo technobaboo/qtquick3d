@@ -50,13 +50,12 @@
 QT_BEGIN_NAMESPACE
 
 namespace path {
-// Solve quadratic equation in with a templated real number system.
-template<typename REAL>
-int quadratic(REAL b, REAL c, REAL rts[2])
+// Solve quadratic equation.
+inline int quadratic(float b, float c, float rts[2])
 {
     int nquad;
-    REAL dis;
-    REAL rtdis;
+    float dis;
+    float rtdis;
 
     dis = b * b - 4 * c;
     rts[0] = 0;
@@ -80,9 +79,9 @@ int quadratic(REAL b, REAL c, REAL rts[2])
         nquad = 2;
         rtdis = std::sqrt(dis);
         if (b > 0)
-            rts[0] = (-b - rtdis) * (1 / REAL(2));
+            rts[0] = (-b - rtdis) * (1 / float(2));
         else
-            rts[0] = (-b + rtdis) * (1 / REAL(2));
+            rts[0] = (-b + rtdis) * (1 / float(2));
         if (qFuzzyIsNull(rts[0]))
             rts[1] = -b;
         else
@@ -94,7 +93,7 @@ int quadratic(REAL b, REAL c, REAL rts[2])
     return (nquad);
 } /* quadratic */
 
-static float interest_range[2] = { 0, 1 };
+static const float interest_range[2] = { 0, 1 };
 
 static void cubicInflectionPoint(const QVector2D cp[4], QVector<float> &key_point)
 {
