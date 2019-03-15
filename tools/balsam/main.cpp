@@ -51,8 +51,14 @@ int main(int argc, char *argv[])
 
     QStringList assetFileNames = cmdLineParser.positionalArguments();
     QDir outputDirectory = QDir::currentPath();
-    if (cmdLineParser.isSet(outputPathOption))
+    if (cmdLineParser.isSet(outputPathOption)) {
         outputDirectory = QDir(cmdLineParser.value(outputPathOption));
+        if (!outputDirectory.exists()) {
+            if (!outputDirectory.mkpath(QStringLiteral("."))) {
+                qWarning() << "Failed to create export directory: " << outputDirectory;
+            }
+        }
+    }
 
     // if there is nothing to do return early
     if (assetFileNames.isEmpty())
