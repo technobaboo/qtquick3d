@@ -1011,9 +1011,6 @@ void QDemonRendererImpl::endLayerRender()
     m_currentLayer = nullptr;
 }
 
-#define RENDERER_FRAME_NEW(type)                                                                                       \
-    new (m_demonContext->getPerFrameAllocator().m_fastAllocator.allocate(sizeof(type))) type
-
 void QDemonRendererImpl::prepareImageForIbl(QDemonRenderImage &inImage)
 {
     if (inImage.m_textureData.m_texture && inImage.m_textureData.m_texture->numMipmaps() < 1)
