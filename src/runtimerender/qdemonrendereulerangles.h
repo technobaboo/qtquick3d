@@ -125,7 +125,7 @@ private:
 
 public:
     QDemonEulerAngleConverter();
-    virtual ~QDemonEulerAngleConverter();
+    ~QDemonEulerAngleConverter();
 
 public:
     EulerAngles euler(float ai, float aj, float ah, int order);
