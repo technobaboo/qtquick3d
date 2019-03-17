@@ -2381,17 +2381,15 @@ void AliasNode::applyPropertyChanges(const PropertyChangeList &changeList)
 
 void AliasNode::writeQmlHeader(QTextStream &output, int tabLevel)
 {
-
+    // This is a bit special because it references a component
+    // so the Comonent type is Material.(ReferencedMaterial)
+    QString componentName = QStringLiteral("Aliases.") + qmlComponentName(m_referencedNode_unresolved);
+    output << insertTabs(tabLevel) << componentName << QStringLiteral(" {") << endl;
 }
 
 void AliasNode::writeQmlProperties(QTextStream &output, int tabLevel)
 {
-
-}
-
-void AliasNode::writeQmlFooter(QTextStream &output, int tabLevel)
-{
-
+    Node::writeQmlProperties(output, tabLevel);
 }
 
 template<typename V>

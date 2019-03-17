@@ -10,6 +10,9 @@
 QT_BEGIN_NAMESPACE
 
 class UipPresentation;
+class ReferencedMaterial;
+class ComponentNode;
+class AliasNode;
 class UipImporter : public QDemonAssetImporter
 {
 public:
@@ -26,7 +29,8 @@ private:
     QString processUipPresentation(UipPresentation *presentation, const QString &ouputFilePath);
     void processNode(GraphObject *object, QTextStream &output, int tabLevel, bool processSiblings = true);
     void checkForResourceFiles(GraphObject *object);
-    void generateMaterialComponents(GraphObject *container);
+    void generateMaterialComponent(GraphObject *object);
+    void generateAliasComponent(GraphObject *reference);
 
     QVector<QString> m_resourcesList;
     UiaParser m_uiaParser;
@@ -36,6 +40,10 @@ private:
     QDir m_exportPath;
     QVariantMap m_options;
     QStringList m_generatedFiles;
+
+    // per presentation
+    QVector <ReferencedMaterial *> m_referencedMaterials;
+    QVector <AliasNode *> m_aliasNodes;
 };
 
 QT_END_NAMESPACE

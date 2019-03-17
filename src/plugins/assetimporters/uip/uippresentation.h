@@ -1051,7 +1051,6 @@ public:
 public:
     void writeQmlHeader(QTextStream &output, int tabLevel) override;
     void writeQmlProperties(QTextStream &output, int tabLevel) override;
-    void writeQmlFooter(QTextStream &output, int tabLevel) override;
 
     QString m_referencedNode_unresolved;
     GraphObject *m_referencedNode = nullptr;

@@ -129,7 +129,11 @@ void UipImporter::processNode(GraphObject *object, QTextStream &output, int tabL
             // Instead of parsing these items as normal, instead we iterate the
             // materials container and generate new Components for each one and output them
             // to the "materials" folder
-            generateMaterialComponents(obj);
+            GraphObject *materialObject = obj->firstChild();
+            while(materialObject) {
+                generateMaterialComponent(materialObject);
+                materialObject = materialObject->nextSibling();
+            }
         } else {
             // Ouput QML
             obj->writeQmlHeader(output, tabLevel);
@@ -137,8 +141,6 @@ void UipImporter::processNode(GraphObject *object, QTextStream &output, int tabL
             output << endl;
 
             processNode(obj->firstChild(), output, tabLevel + 1);
-
-
 
             if (obj->type() == GraphObject::Layer) {
                 // effects array
@@ -174,6 +176,10 @@ void UipImporter::processNode(GraphObject *object, QTextStream &output, int tabL
                     materials.chop(2);
                     output << insertTabs(tabLevel + 1) << QStringLiteral("materials: [") << materials << QStringLiteral("]") << endl;
                 }
+            } else if (obj->type() == GraphObject::ReferencedMaterial) {
+                m_referencedMaterials.append(static_cast<ReferencedMaterial *>(obj));
+            } else if (obj->type() == GraphObject::Alias) {
+                m_aliasNodes.append(static_cast<AliasNode*>(obj));
             }
 
             checkForResourceFiles(obj);
@@ -221,40 +227,69 @@ void UipImporter::checkForResourceFiles(GraphObject *object)
     }
 }
 
-void UipImporter::generateMaterialComponents(GraphObject *container)
+void UipImporter::generateMaterialComponent(GraphObject *object)
 {
-    // create materials folder
-    m_exportPath.mkdir("materials");
     QDir materialPath = m_exportPath.absolutePath() + QDir::separator() + QStringLiteral("materials");
 
-    GraphObject *object = container->firstChild();
-    while (object) {
-        QString id = object->qmlId();
+    QString id = object->qmlId();
+    if (id.startsWith("materials_"))
         id = id.remove(QStringLiteral("materials_"));
-        // Default matterial has two //'s
-        if (id.startsWith("_"))
-            id.remove(0, 1);
+    // Default matterial has two //'s
+    if (id.startsWith("_"))
+        id.remove(0, 1);
 
-        QString materialComponent = qmlComponentName(id);
-        QFile materialComponentFile(materialPath.absolutePath() + QDir::separator() + materialComponent + QStringLiteral(".qml"));
+    QString materialComponent = qmlComponentName(id);
+    QString targetFile = materialPath.absolutePath() + QDir::separator() + materialComponent + QStringLiteral(".qml");
+    QFile materialComponentFile(targetFile);
 
-        if (!materialComponentFile.open(QIODevice::WriteOnly)) {
-            qWarning() << "Could not write to file : " << materialComponentFile;
-            continue;
-        }
-
-        QTextStream output(&materialComponentFile);
-        output << "import QtDemon 1.0" << endl << endl;
-        processNode(object, output, 0, false);
-
-        materialComponentFile.close();
-        m_generatedFiles += materialPath.absolutePath() + QDir::separator() + materialComponent + QStringLiteral(".qml");
-        object = object->nextSibling();
+    if (m_generatedFiles.contains(targetFile)) {
+        // if we already generated this material
+        return;
     }
+
+    if (!materialComponentFile.open(QIODevice::WriteOnly)) {
+        qWarning() << "Could not write to file : " << materialComponentFile;
+        return;
+    }
+
+    QTextStream output(&materialComponentFile);
+    output << "import QtDemon 1.0" << endl << endl;
+    processNode(object, output, 0, false);
+
+    materialComponentFile.close();
+    m_generatedFiles += targetFile;
+}
+
+void UipImporter::generateAliasComponent(GraphObject *reference)
+{
+    // create materials folder
+    QDir aliasPath = m_exportPath.absolutePath() + QDir::separator() + QStringLiteral("materials");
+
+    QString aliasComponentName = qmlComponentName(reference->qmlId());
+    QString targetFile = aliasPath.absolutePath() + QDir::separator() + aliasComponentName + QStringLiteral(".qml");
+    QFile aliasComponentFile(targetFile);
+
+    if (m_generatedFiles.contains(targetFile))
+        return;
+
+    if (!aliasComponentFile.open(QIODevice::WriteOnly)) {
+        qWarning() << "Could not write to file: " << aliasComponentFile;
+        return;
+    }
+
+    QTextStream output(&aliasComponentFile);
+    output << "import QtDemon 1.0" << endl << endl;
+    processNode(reference, output, 0, false);
+
+    aliasComponentFile.close();
+    m_generatedFiles += targetFile;
 }
 
 QString UipImporter::processUipPresentation(UipPresentation *presentation, const QString &ouputFilePath)
 {
+    m_referencedMaterials.clear();
+    m_aliasNodes.clear();
+
     // create one component per layer
     GraphObject *layer = presentation->scene()->firstChild();
     while (layer) {
@@ -269,7 +304,8 @@ QString UipImporter::processUipPresentation(UipPresentation *presentation, const
             QTextStream output(&qmlFile);
 
             output << "import QtDemon 1.0" << endl;
-            output << "import \"./materials\" as Materials" << endl << endl;
+            output << "import \"./materials\" as Materials" << endl;
+            output << "import \"./aliases\" as Aliases" << endl << endl;
 
             processNode(layer, output, 0);
 
@@ -281,11 +317,39 @@ QString UipImporter::processUipPresentation(UipPresentation *presentation, const
             // Instead of parsing these items as normal, instead we iterate the
             // materials container and generate new Components for each one and output them
             // to the "materials" folder
-            generateMaterialComponents(layer);
+            GraphObject *object = layer->firstChild();
+            while (object) {
+                generateMaterialComponent(object);
+                object = object->nextSibling();
+            }
         }
 
         layer = layer->nextSibling();
     }
+
+    // create component type folder
+    m_exportPath.mkdir("materials");
+    m_exportPath.mkdir("aliases");
+
+
+    // create aliases folder
+
+    // Generate Alias, and ReferenceMaterials (2nd pass)
+    for (auto material : m_referencedMaterials) {
+        // Find the material being referenced
+        QString id = material->m_referencedMaterial_unresolved;
+        if (id.startsWith("#"))
+            id.remove(0, 1);
+        generateMaterialComponent(presentation->object(id.toUtf8()));
+    }
+
+    for (auto alias : m_aliasNodes) {
+        QString id = alias->m_referencedNode_unresolved;
+        if (id.startsWith("#"))
+            id.remove(0, 1);
+        generateAliasComponent(presentation->object(id.toUtf8()));
+    }
+
     return QString();
 }
 
