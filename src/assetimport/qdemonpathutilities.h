@@ -23,7 +23,8 @@
 QT_BEGIN_NAMESPACE
 
 namespace QDemonPathUtilities {
-enum class PathCommand
+
+enum class PathCommand : quint8
 {
     None = 0,
     MoveTo, // 2 floats
@@ -43,21 +44,50 @@ struct Q_DEMONASSETIMPORT_EXPORT QDemonPathBuffer
     static QDemonPathBuffer *load(QIODevice &inStream);
 };
 
-class Q_DEMONASSETIMPORT_EXPORT QDemonPathBufferBuilderInterface
+struct Q_DEMONASSETIMPORT_EXPORT QDemonPathBufferBuilder
 {
-public:
-    QAtomicInt ref;
-    virtual ~QDemonPathBufferBuilderInterface();
-    virtual void clear() = 0;
+    QVector<PathCommand> m_commands;
+    QVector<float> m_data;
 
-    virtual void moveTo(const QVector2D &inPos) = 0;
-    virtual void cubicCurveTo(const QVector2D &inC1, const QVector2D &inC2, const QVector2D &inP2) = 0;
-    virtual void close() = 0;
+    void clear()
+    {
+        m_commands.clear();
+        m_data.clear();
+    }
+
+    void push(const QVector2D &inPos)
+    {
+        m_data.push_back(inPos.x());
+        m_data.push_back(inPos.y());
+    }
+
+    void moveTo(const QVector2D &inPos)
+    {
+        m_commands.push_back(PathCommand::MoveTo);
+        push(inPos);
+    }
+
+    void cubicCurveTo(const QVector2D &inC1, const QVector2D &inC2, const QVector2D &inP2)
+    {
+        m_commands.push_back(PathCommand::CubicCurveTo);
+        push(inC1);
+        push(inC2);
+        push(inP2);
+    }
+
+    void close() { m_commands.push_back(PathCommand::Close); }
+
     // Points back to internal data structures, must use or copy.
-    virtual QDemonPathBuffer getPathBuffer() = 0;
-
-    static QDemonRef<QDemonPathBufferBuilderInterface> createBuilder();
+    QDemonPathBuffer getPathBuffer()
+    {
+        QDemonPathBuffer retval;
+        retval.data = toConstDataRef(static_cast<const float *>(m_data.constData()), m_data.size());
+        retval.commands = toConstDataRef(static_cast<const PathCommand *>(m_commands.constData()), m_commands.size());
+        ;
+        return retval;
+    }
 };
+
 } // end namespace
 
 QT_END_NAMESPACE

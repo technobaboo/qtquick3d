@@ -141,7 +141,7 @@ struct QDemonPathBuffer
 
     void clearPaintedPathData() { m_pathRender = nullptr; }
 
-    QDemonPathUtilities::QDemonPathBuffer getPathData(QDemonPathUtilities::QDemonPathBufferBuilderInterface &inSpec)
+    QDemonPathUtilities::QDemonPathBuffer getPathData(QDemonPathUtilities::QDemonPathBufferBuilder &inSpec)
     {
         if (m_subPaths.size()) {
             inSpec.clear();
@@ -691,7 +691,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
     QVector<QDemonRef<QDemonRenderDepthStencilState>> m_depthStencilStates;
 
     QDemonRef<QDemonRenderPathSpecification> m_pathSpecification;
-    QDemonRef<QDemonPathUtilities::QDemonPathBufferBuilderInterface> m_pathBuilder;
+    QScopedPointer<QDemonPathUtilities::QDemonPathBufferBuilder> m_pathBuilder;
 
     QDemonPathManager(QDemonRenderContextCoreInterface *inRC) : m_coreContext(inRC), m_renderContext(nullptr) {}
 
@@ -1174,7 +1174,7 @@ struct QDemonPathManager : public QDemonPathManagerInterface
         if (!m_pathSpecification)
             return false;
         if (!m_pathBuilder)
-            m_pathBuilder = QDemonPathUtilities::QDemonPathBufferBuilderInterface::createBuilder();
+            m_pathBuilder.reset(new QDemonPathUtilities::QDemonPathBufferBuilder());
 
         thePathBuffer->setPathType(inPath.m_pathType);
         bool retval = false;
