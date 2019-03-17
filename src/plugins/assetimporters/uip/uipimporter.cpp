@@ -40,6 +40,10 @@ const QVariantMap UipImporter::importOptions() const
 
 const QString UipImporter::import(const QString &sourceFile, const QDir &savePath, const QVariantMap &options, QStringList *generatedFiles)
 {
+    m_sourceFile = sourceFile;
+    m_exportPath = savePath;
+    m_options = options;
+
     // Verify sourceFile and savePath
     QFileInfo source(sourceFile);
     if (!source.exists())
@@ -78,8 +82,11 @@ const QString UipImporter::import(const QString &sourceFile, const QDir &savePat
         QDir destDir(destFile.absolutePath());
         destDir.mkpath(".");
 
-        QFile::copy(sourceFile.absoluteFilePath(), destFile.absoluteFilePath());
+        if (QFile::copy(sourceFile.absoluteFilePath(), destFile.absoluteFilePath()))
+            m_generatedFiles += destFile.absoluteFilePath();
     }
+
+    generatedFiles = &m_generatedFiles;
 
     return errorString;
 }
@@ -109,13 +116,20 @@ QString qmlComponentName(const QString &name) {
 
 }
 
-void UipImporter::processNode(GraphObject *object, QTextStream &output, int tabLevel)
+void UipImporter::processNode(GraphObject *object, QTextStream &output, int tabLevel, bool processSiblings)
 {
     GraphObject *obj = object;
     while (obj) {
         if (obj->type() == GraphObject::Scene) {
             // Ignore Scene for now
             processNode(obj->firstChild(), output, tabLevel);
+        } else if ( obj->type() == GraphObject::DefaultMaterial &&
+                    obj->qmlId() == QStringLiteral("__Container")) {
+            // UIP version > 5 which tries to be clever with reference materials
+            // Instead of parsing these items as normal, instead we iterate the
+            // materials container and generate new Components for each one and output them
+            // to the "materials" folder
+            generateMaterialComponents(obj);
         } else {
             // Ouput QML
             obj->writeQmlHeader(output, tabLevel);
@@ -123,6 +137,8 @@ void UipImporter::processNode(GraphObject *object, QTextStream &output, int tabL
             output << endl;
 
             processNode(obj->firstChild(), output, tabLevel + 1);
+
+
 
             if (obj->type() == GraphObject::Layer) {
                 // effects array
@@ -148,7 +164,8 @@ void UipImporter::processNode(GraphObject *object, QTextStream &output, int tabL
                 GraphObject *materialObject = obj->firstChild();
                 while (materialObject) {
                     if (materialObject->type() == GraphObject::DefaultMaterial ||
-                        materialObject->type() == GraphObject::CustomMaterial)
+                        materialObject->type() == GraphObject::CustomMaterial ||
+                        materialObject->type() == GraphObject::ReferencedMaterial)
                         materials += materialObject->qmlId() + QStringLiteral(", ");
                     materialObject = materialObject->nextSibling();
                 }
@@ -163,7 +180,10 @@ void UipImporter::processNode(GraphObject *object, QTextStream &output, int tabL
 
             obj->writeQmlFooter(output, tabLevel);
         }
-        obj = obj->nextSibling();
+        if (processSiblings)
+            obj = obj->nextSibling();
+        else
+            break;
     }
 }
 
@@ -201,26 +221,68 @@ void UipImporter::checkForResourceFiles(GraphObject *object)
     }
 }
 
+void UipImporter::generateMaterialComponents(GraphObject *container)
+{
+    // create materials folder
+    m_exportPath.mkdir("materials");
+    QDir materialPath = m_exportPath.absolutePath() + QDir::separator() + QStringLiteral("materials");
+
+    GraphObject *object = container->firstChild();
+    while (object) {
+        QString id = object->qmlId();
+        id = id.remove(QStringLiteral("materials_"));
+        // Default matterial has two //'s
+        if (id.startsWith("_"))
+            id.remove(0, 1);
+
+        QString materialComponent = qmlComponentName(id);
+        QFile materialComponentFile(materialPath.absolutePath() + QDir::separator() + materialComponent + QStringLiteral(".qml"));
+
+        if (!materialComponentFile.open(QIODevice::WriteOnly)) {
+            qWarning() << "Could not write to file : " << materialComponentFile;
+            continue;
+        }
+
+        QTextStream output(&materialComponentFile);
+        output << "import QtDemon 1.0" << endl << endl;
+        processNode(object, output, 0, false);
+
+        materialComponentFile.close();
+        m_generatedFiles += materialPath.absolutePath() + QDir::separator() + materialComponent + QStringLiteral(".qml");
+        object = object->nextSibling();
+    }
+}
+
 QString UipImporter::processUipPresentation(UipPresentation *presentation, const QString &ouputFilePath)
 {
     // create one component per layer
     GraphObject *layer = presentation->scene()->firstChild();
     while (layer) {
+        if (layer->type() == GraphObject::Layer) {
+            // Create *3d.qml file from .uip presentation
+            QString targetFile = ouputFilePath + qmlComponentName(presentation->name()) + qmlComponentName(layer->qmlId()) + QStringLiteral(".qml");
+            QFile qmlFile(targetFile);
+            if (!qmlFile.open(QIODevice::WriteOnly)) {
+                return QString(QStringLiteral("Could not open file: ") + targetFile + QStringLiteral(" for writing"));
+            }
 
-        // Create *3d.qml file from .uip presentation
-        QString targetFile = ouputFilePath + qmlComponentName(presentation->name()) + qmlComponentName(layer->qmlId()) + QStringLiteral(".qml");
-        QFile qmlFile(targetFile);
-        if (!qmlFile.open(QIODevice::WriteOnly)) {
-            return QString(QStringLiteral("Could not open file: ") + targetFile + QStringLiteral(" for writing"));
+            QTextStream output(&qmlFile);
+
+            output << "import QtDemon 1.0" << endl;
+            output << "import \"./materials\" as Materials" << endl << endl;
+
+            processNode(layer, output, 0);
+
+            qmlFile.close();
+            m_generatedFiles += targetFile;
+        } else if ( layer->type() == GraphObject::DefaultMaterial &&
+                    layer->qmlId() == QStringLiteral("__Container")) {
+            // UIP version > 5 which tries to be clever with reference materials
+            // Instead of parsing these items as normal, instead we iterate the
+            // materials container and generate new Components for each one and output them
+            // to the "materials" folder
+            generateMaterialComponents(layer);
         }
-
-        QTextStream output(&qmlFile);
-
-        output << "import QtDemon 1.0" << endl << endl;
-
-        processNode(layer, output, 0);
-
-        qmlFile.close();
 
         layer = layer->nextSibling();
     }

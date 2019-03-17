@@ -388,6 +388,28 @@ QString insertTabs(int n)
         tabs += "    ";
     return tabs;
 }
+
+QString qmlComponentName(const QString &name) {
+    QString nameCopy = name;
+
+
+    if (nameCopy.isEmpty())
+        return QStringLiteral("Default");
+
+    if (nameCopy.startsWith("#"))
+        nameCopy.remove(0, 1);
+
+    if (nameCopy.startsWith("materials/"))
+        nameCopy.remove("materials/");
+
+    if (nameCopy.startsWith("/"))
+        nameCopy.remove(0, 1);
+
+    if (nameCopy[0].isLower())
+        nameCopy[0] = nameCopy[0].toUpper();
+
+    return nameCopy;
+}
 }
 
 PropertyChange PropertyChange::fromVariant(const QString &name, const QVariant &value)
@@ -885,9 +907,22 @@ namespace {
         // You can even have " " (space) characters in uip files...
         idCopy.replace(" ", "_");
 
+        // Materials sometimes use directory stuff in their name...
+        idCopy.replace("/", "_");
+
         // first letter of id can not be upper case
         if (idCopy[0].isUpper())
             idCopy[0] = idCopy[0].toLower();
+
+        // ### qml keywords as names
+        if (idCopy == "default" ||
+            idCopy == "alias" ||
+            idCopy == "readonly" ||
+            idCopy == "property" ||
+            idCopy == "signal") {
+            idCopy += "_";
+        }
+
         return idCopy;
     }
 
@@ -2107,17 +2142,23 @@ void ReferencedMaterial::applyPropertyChanges(const PropertyChangeList &changeLi
 
 void ReferencedMaterial::writeQmlHeader(QTextStream &output, int tabLevel)
 {
-
+    // This is a bit special because it references a component
+    // so the Comonent type is Material.(ReferencedMaterial)
+    QString componentName = QStringLiteral("Materials.") + qmlComponentName(m_referencedMaterial_unresolved);
+    output << insertTabs(tabLevel) << componentName << QStringLiteral(" {") << endl;
 }
 
 void ReferencedMaterial::writeQmlProperties(QTextStream &output, int tabLevel)
 {
-
-}
-
-void ReferencedMaterial::writeQmlFooter(QTextStream &output, int tabLevel)
-{
-
+    output << insertTabs(tabLevel) << QStringLiteral("id: ") << qmlId() << endl;
+    if (!m_lightmapIndirectMap_unresolved.isEmpty())
+        output << insertTabs(tabLevel) << QStringLiteral("lightmapIndirect: ") << sanitizeQmlId(m_lightmapIndirectMap_unresolved) << endl;
+    if (!m_lightmapRadiosityMap_unresolved.isEmpty())
+        output << insertTabs(tabLevel) << QStringLiteral("lightmapRadiosity: ") << sanitizeQmlId(m_lightmapRadiosityMap_unresolved) << endl;
+    if (!m_lightmapShadowMap_unresolved.isEmpty())
+        output << insertTabs(tabLevel) << QStringLiteral("lightmapShadow: ") << sanitizeQmlId(m_lightmapShadowMap_unresolved) << endl;
+    if (!m_lightProbe_unresolved.isEmpty())
+        output << insertTabs(tabLevel) << QStringLiteral("iblProbe: ") << sanitizeQmlId(m_lightProbe_unresolved) << endl;
 }
 
 template<typename V>

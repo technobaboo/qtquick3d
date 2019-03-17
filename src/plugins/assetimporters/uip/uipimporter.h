@@ -24,12 +24,18 @@ public:
 
 private:
     QString processUipPresentation(UipPresentation *presentation, const QString &ouputFilePath);
-    void processNode(GraphObject *object, QTextStream &output, int tabLevel);
+    void processNode(GraphObject *object, QTextStream &output, int tabLevel, bool processSiblings = true);
     void checkForResourceFiles(GraphObject *object);
+    void generateMaterialComponents(GraphObject *container);
 
     QVector<QString> m_resourcesList;
     UiaParser m_uiaParser;
     UipParser m_uipParser;
+
+    QString m_sourceFile;
+    QDir m_exportPath;
+    QVariantMap m_options;
+    QStringList m_generatedFiles;
 };
 
 QT_END_NAMESPACE

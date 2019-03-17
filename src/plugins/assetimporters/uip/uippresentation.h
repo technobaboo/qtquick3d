@@ -943,7 +943,6 @@ public:
 public:
     void writeQmlHeader(QTextStream &output, int tabLevel) override;
     void writeQmlProperties(QTextStream &output, int tabLevel) override;
-    void writeQmlFooter(QTextStream &output, int tabLevel) override;
 
     QString m_referencedMaterial_unresolved;
     GraphObject *m_referencedMaterial = nullptr;
