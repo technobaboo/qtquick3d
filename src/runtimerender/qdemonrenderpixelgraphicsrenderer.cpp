@@ -112,23 +112,15 @@ struct QDemonPixelGraphicsRenderer : public QDemonPixelGraphicsRendererInterface
             m_vertexGenerator.addUniform("bottomtop[2]", "float");
             m_fragmentGenerator.addVarying("rect_uvs", "vec2");
             m_fragmentGenerator.addUniform("rect_color", "vec4");
-            m_vertexGenerator << "void main() {"
-                              << "\n"
-                              << "\tgl_Position = model_view_projection * vec4( "
-                                 "leftright[int(attr_pos.x)], bottomtop[int(attr_pos.y)], 0.0, 1.0 "
-                                 ");"
-                              << "\n"
-                              << "\trect_uvs = attr_pos;"
-                              << "\n"
-                              << "}"
-                              << "\n";
+            m_vertexGenerator << "void main() {\n"
+                              << "    gl_Position = model_view_projection * vec4(\n"
+                                 "        leftright[int(attr_pos.x)], bottomtop[int(attr_pos.y)], 0.0, 1.0);\n"
+                                 "    rect_uvs = attr_pos;\n"
+                                 "}\n";
 
-            m_fragmentGenerator << "void main() {"
-                                << "\n"
-                                << "\tfragOutput = rect_color;"
-                                << "\n"
-                                << "}"
-                                << "\n";
+            m_fragmentGenerator << "void main() {\n"
+                                   "    fragOutput = rect_color;"
+                                   "}\n";
 
             m_vertexGenerator.buildShaderSource();
             m_fragmentGenerator.buildShaderSource();
