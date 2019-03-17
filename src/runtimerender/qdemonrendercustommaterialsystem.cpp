@@ -795,11 +795,11 @@ bool QDemonMaterialSystem::registerMaterialClass(const QString &inName, const QD
 {
     if (isMaterialRegistered(inName))
         return false;
-    coreContext->getDynamicObjectSystemCore()->doRegister(inName,
+    coreContext->dynamicObjectSystem()->doRegister(inName,
                                                             inProperties,
                                                             sizeof(QDemonRenderCustomMaterial),
                                                             QDemonRenderGraphObject::Type::CustomMaterial);
-    QDemonDynamicObjectClassInterface *theClass = coreContext->getDynamicObjectSystemCore()->getDynamicObjectClass(inName);
+    QDemonDynamicObjectClassInterface *theClass = coreContext->dynamicObjectSystem()->dynamicObjectClass(inName);
     if (theClass == nullptr) {
         Q_ASSERT(false);
         return false;
@@ -824,7 +824,7 @@ const QDemonMaterialClass *QDemonMaterialSystem::getMaterialClass(const QString 
 
 QDemonConstDataRef<dynamic::QDemonPropertyDefinition> QDemonMaterialSystem::getCustomMaterialProperties(const QString &inCustomMaterialName) const
 {
-    QDemonDynamicObjectClassInterface *theMaterialClass = coreContext->getDynamicObjectSystemCore()->getDynamicObjectClass(
+    QDemonDynamicObjectClassInterface *theMaterialClass = coreContext->dynamicObjectSystem()->dynamicObjectClass(
                 inCustomMaterialName);
 
     if (theMaterialClass)
@@ -884,7 +884,7 @@ QDemonMaterialSystem::QDemonMaterialSystem() = default;
 
 void QDemonMaterialSystem::setPropertyEnumNames(const QString &inName, const QString &inPropName, const QDemonConstDataRef<QString> &inNames)
 {
-    coreContext->getDynamicObjectSystemCore()->setPropertyEnumNames(inName, inPropName, inNames);
+    coreContext->dynamicObjectSystem()->setPropertyEnumNames(inName, inPropName, inNames);
 }
 
 void QDemonMaterialSystem::setPropertyTextureSettings(const QString &inName, const QString &inPropName, const QString &inPropPath, QDemonRenderTextureTypeValue inTexType, QDemonRenderTextureCoordOp inCoordOp, QDemonRenderTextureMagnifyingOp inMagFilterOp, QDemonRenderTextureMinifyingOp inMinFilterOp)
@@ -893,19 +893,19 @@ void QDemonMaterialSystem::setPropertyTextureSettings(const QString &inName, con
     if (theClass && inTexType == QDemonRenderTextureTypeValue::Displace) {
         theClass->m_hasDisplacement = true;
     }
-    coreContext->getDynamicObjectSystemCore()
+    coreContext->dynamicObjectSystem()
             ->setPropertyTextureSettings(inName, inPropName, inPropPath, inTexType, inCoordOp, inMagFilterOp, inMinFilterOp);
 }
 
 void QDemonMaterialSystem::setMaterialClassShader(QString inName, const char *inShaderType, const char *inShaderVersion, const char *inShaderData, bool inHasGeomShader, bool inIsComputeShader)
 {
-    coreContext->getDynamicObjectSystemCore()->setShaderData(inName, inShaderData, inShaderType, inShaderVersion, inHasGeomShader, inIsComputeShader);
+    coreContext->dynamicObjectSystem()->setShaderData(inName, inShaderData, inShaderType, inShaderVersion, inHasGeomShader, inIsComputeShader);
 }
 
 QDemonRenderCustomMaterial *QDemonMaterialSystem::createCustomMaterial(const QString &inName)
 {
     QDemonRenderCustomMaterial *theMaterial = static_cast<QDemonRenderCustomMaterial *>(
-                coreContext->getDynamicObjectSystemCore()->createInstance(inName));
+                coreContext->dynamicObjectSystem()->createInstance(inName));
     QDemonMaterialClass *theClass = getMaterialClass(inName);
 
     if (theMaterial) {
@@ -982,7 +982,7 @@ void QDemonMaterialSystem::setCustomMaterialLayerCount(const QString &inName, qu
 
 void QDemonMaterialSystem::setCustomMaterialCommands(QString inName, QDemonConstDataRef<dynamic::QDemonCommand *> inCommands)
 {
-    coreContext->getDynamicObjectSystemCore()->setRenderCommands(inName, inCommands);
+    coreContext->dynamicObjectSystem()->setRenderCommands(inName, inCommands);
 }
 
 QDemonRef<QDemonRenderShaderProgram> QDemonMaterialSystem::getShader(QDemonCustomMaterialRenderContext &inRenderContext, const QDemonRenderCustomMaterial &inMaterial, const dynamic::QDemonBindShader &inCommand, const TShaderFeatureSet &inFeatureSet, const dynamic::QDemonDynamicShaderProgramFlags &inFlags)
@@ -1840,7 +1840,7 @@ bool QDemonMaterialSystem::renderDepthPrepass(const QMatrix4x4 &inMVP, const QDe
         const dynamic::QDemonCommand &theCommand = *theCommands[idx];
         if (theCommand.m_type == dynamic::CommandType::BindShader) {
             const dynamic::QDemonBindShader &theBindCommand = static_cast<const dynamic::QDemonBindShader &>(theCommand);
-            thePrepassShader = context->getDynamicObjectSystem()->getDepthPrepassShader(theBindCommand.m_shaderPath,
+            thePrepassShader = context->dynamicObjectSystem()->getDepthPrepassShader(theBindCommand.m_shaderPath,
                                                                                           QString(),
                                                                                           TShaderFeatureSet());
         }

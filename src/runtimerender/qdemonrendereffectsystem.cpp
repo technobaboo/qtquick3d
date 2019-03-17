@@ -475,8 +475,8 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
         if (isEffectRegistered(inName))
             return false;
 
-        m_coreContext->getDynamicObjectSystemCore()->doRegister(inName, inProperties, sizeof(QDemonRenderEffect), QDemonRenderGraphObject::Type::Effect);
-        QDemonDynamicObjectClassInterface &theClass = *m_coreContext->getDynamicObjectSystemCore()->getDynamicObjectClass(inName);
+        m_coreContext->dynamicObjectSystem()->doRegister(inName, inProperties, sizeof(QDemonRenderEffect), QDemonRenderGraphObject::Type::Effect);
+        QDemonDynamicObjectClassInterface &theClass = *m_coreContext->dynamicObjectSystem()->dynamicObjectClass(inName);
 
         QDemonRef<QDemonEffectClass> theEffect(new QDemonEffectClass(theClass));
         m_effectClasses.insert(inName, theEffect);
@@ -531,27 +531,27 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
         // Ensure we end up *exactly* where we expected to.
         Q_ASSERT(dataBuffer == startBuffer + commandAllocationSize);
         Q_ASSERT(theCommandPtr - theFirstCommandPtr == (int)inProperties.size() + 3);
-        m_coreContext->getDynamicObjectSystemCore()->setRenderCommands(inName, QDemonConstDataRef<QDemonCommand *>(theFirstCommandPtr, commandCount));
+        m_coreContext->dynamicObjectSystem()->setRenderCommands(inName, QDemonConstDataRef<QDemonCommand *>(theFirstCommandPtr, commandCount));
         ::free(startBuffer);
         return true;
     }
 
     void setEffectPropertyDefaultValue(QString inName, QString inPropName, QDemonConstDataRef<quint8> inDefaultData) override
     {
-        m_coreContext->getDynamicObjectSystemCore()->setPropertyDefaultValue(inName, inPropName, inDefaultData);
+        m_coreContext->dynamicObjectSystem()->setPropertyDefaultValue(inName, inPropName, inDefaultData);
     }
 
     void setEffectPropertyEnumNames(QString inName, QString inPropName, QDemonConstDataRef<QString> inNames) override
     {
-        m_coreContext->getDynamicObjectSystemCore()->setPropertyEnumNames(inName, inPropName, inNames);
+        m_coreContext->dynamicObjectSystem()->setPropertyEnumNames(inName, inPropName, inNames);
     }
 
     bool registerEffect(QString inName, QDemonConstDataRef<QDemonPropertyDeclaration> inProperties) override
     {
         if (isEffectRegistered(inName))
             return false;
-        m_coreContext->getDynamicObjectSystemCore()->doRegister(inName, inProperties, sizeof(QDemonRenderEffect), QDemonRenderGraphObject::Type::Effect);
-        auto theClass = m_coreContext->getDynamicObjectSystemCore()->getDynamicObjectClass(inName);
+        m_coreContext->dynamicObjectSystem()->doRegister(inName, inProperties, sizeof(QDemonRenderEffect), QDemonRenderGraphObject::Type::Effect);
+        auto theClass = m_coreContext->dynamicObjectSystem()->dynamicObjectClass(inName);
         QDemonRef<QDemonEffectClass> theEffect(new QDemonEffectClass(*theClass));
         m_effectClasses.insert(inName, theEffect);
         return true;
@@ -562,7 +562,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
         if (!isEffectRegistered(inName))
             return false;
 
-        m_coreContext->getDynamicObjectSystemCore()->unregister(inName);
+        m_coreContext->dynamicObjectSystem()->unregister(inName);
 
         TEffectClassMap::iterator iter = m_effectClasses.find(inName);
         if (iter != m_effectClasses.end())
@@ -604,7 +604,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
                                           QDemonRenderTextureMagnifyingOp inMagFilterOp,
                                           QDemonRenderTextureMinifyingOp inMinFilterOp) override
     {
-        m_coreContext->getDynamicObjectSystemCore()
+        m_coreContext->dynamicObjectSystem()
                 ->setPropertyTextureSettings(inName, inPropName, inPropPath, inTexType, inCoordOp, inMagFilterOp, inMinFilterOp);
     }
 
@@ -650,12 +650,12 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
 
     void setEffectCommands(QString inEffectName, QDemonConstDataRef<dynamic::QDemonCommand *> inCommands) override
     {
-        m_coreContext->getDynamicObjectSystemCore()->setRenderCommands(inEffectName, inCommands);
+        m_coreContext->dynamicObjectSystem()->setRenderCommands(inEffectName, inCommands);
     }
 
     QDemonConstDataRef<dynamic::QDemonCommand *> getEffectCommands(QString inEffectName) const override
     {
-        return m_coreContext->getDynamicObjectSystemCore()->getRenderCommands(inEffectName);
+        return m_coreContext->dynamicObjectSystem()->getRenderCommands(inEffectName);
     }
 
     QDemonRenderEffect *createEffectInstance(QString inEffectName) override
@@ -666,7 +666,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
         //        StaticAssert<(sizeof(SEffect) % 4 == 0)>::valid_expression();
 
         QDemonRenderEffect *theEffect = static_cast<QDemonRenderEffect *>(
-                m_coreContext->getDynamicObjectSystemCore()->createInstance(inEffectName));
+                m_coreContext->dynamicObjectSystem()->createInstance(inEffectName));
         theEffect->initialize();
         return theEffect;
     }
@@ -890,7 +890,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
             theInsertResult = m_shaderMap.insert(key, QDemonRef<QDemonEffectShader>());
 
         if (found || forceCompilation) {
-            auto theProgram = m_context->getDynamicObjectSystem()
+            auto theProgram = m_context->dynamicObjectSystem()
                                       ->getShaderProgram(inCommand.m_shaderPath,
                                                          inCommand.m_shaderDefine,
                                                          TShaderFeatureSet(),
@@ -1722,7 +1722,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
 
     void setShaderData(QString path, const char *data, const char *inShaderType, const char *inShaderVersion, bool inHasGeomShader, bool inIsComputeShader) override
     {
-        m_coreContext->getDynamicObjectSystemCore()->setShaderData(path, data, inShaderType, inShaderVersion, inHasGeomShader, inIsComputeShader);
+        m_coreContext->dynamicObjectSystem()->setShaderData(path, data, inShaderType, inShaderVersion, inHasGeomShader, inIsComputeShader);
     }
 
     //    void save(SWriteBuffer &ioBuffer,

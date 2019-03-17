@@ -46,20 +46,20 @@ enum class BoxEdgeFlagValues
 Q_DECLARE_FLAGS(QDemonRenderBoxEdge, BoxEdgeFlagValues)
 Q_DECLARE_OPERATORS_FOR_FLAGS(QDemonRenderBoxEdge)
 
-// For an intesection test, we only need two points of the bounding box.
-// There will be a point nearest to the plane, and a point furthest from the plane.
-// We can derive these points from the plane normal equation.
-struct QDemonPlaneBoxEdge
-{
-    QDemonRenderBoxEdge lowerEdge;
-    QDemonRenderBoxEdge upperEdge;
-};
-
 struct QDemonClipPlane
 {
+    // For an intesection test, we only need two points of the bounding box.
+    // There will be a point nearest to the plane, and a point furthest from the plane.
+    // We can derive these points from the plane normal equation.
+    struct BoxEdge
+    {
+        QDemonRenderBoxEdge lowerEdge;
+        QDemonRenderBoxEdge upperEdge;
+    };
+
     QVector3D normal;
     float d;
-    QDemonPlaneBoxEdge mEdges;
+    BoxEdge mEdges;
 
     // For intersection tests, we only need to know if the numerator is greater than, equal to,
     // or less than zero.

@@ -206,7 +206,7 @@ public:
                                             QDemonRenderTextureMagnifyingOp inMagFilterOp,
                                             QDemonRenderTextureMinifyingOp inMinFilterOp) = 0;
 
-    virtual QDemonDynamicObjectClassInterface *getDynamicObjectClass(const QString &inName) = 0;
+    virtual QDemonDynamicObjectClassInterface *dynamicObjectClass(const QString &inName) = 0;
 
     // The effect commands are the actual commands that run for a given effect.  The tell the
     // system exactly

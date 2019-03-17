@@ -755,7 +755,7 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
         theDefinitionPtr->minFilterOp = inMinFilterOp;
     }
 
-    QDemonDynamicObjectClassInterface *getDynamicObjectClass(const QString &inName) override
+    QDemonDynamicObjectClassInterface *dynamicObjectClass(const QString &inName) override
     {
         // TODO: Should probably shared pointer
         return findClass(inName).data();
@@ -913,9 +913,9 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
 
         QByteArray theReadBuffer;
         if (!found) {
-            const QString defaultDir = m_context->getDynamicObjectSystem()->getShaderCodeLibraryDirectory();
-            const QString platformDir = m_context->getDynamicObjectSystem()->shaderCodeLibraryPlatformDirectory();
-            const QString ver = m_context->getDynamicObjectSystem()->shaderCodeLibraryVersion();
+            const QString defaultDir = getShaderCodeLibraryDirectory();
+            const QString platformDir = shaderCodeLibraryPlatformDirectory();
+            const QString ver = shaderCodeLibraryVersion();
 
             QString fullPath;
             QSharedPointer<QIODevice> theStream;

@@ -69,7 +69,7 @@ public:
     virtual ~QDemonRenderContextCoreInterface();
     virtual QDemonRef<QDemonInputStreamFactoryInterface> getInputStreamFactory() = 0;
     virtual QDemonRef<QDemonAbstractThreadPool> getThreadPool() = 0;
-    virtual QDemonRef<QDemonDynamicObjectSystemInterface> getDynamicObjectSystemCore() = 0;
+    virtual QDemonRef<QDemonDynamicObjectSystemInterface> dynamicObjectSystem() = 0;
     virtual QDemonRef<QDemonMaterialSystem> getMaterialSystemCore() = 0;
     virtual QDemonRef<QDemonEffectSystemInterface> getEffectSystemCore() = 0;
     virtual QDemonRef<QDemonPerfTimer> getPerfTimer() = 0;
@@ -102,7 +102,7 @@ public:
     virtual QDemonRef<QDemonShaderCacheInterface> getShaderCache() = 0;
     virtual QDemonRef<QDemonAbstractThreadPool> getThreadPool() = 0;
     virtual QDemonRef<IImageBatchLoader> getImageBatchLoader() = 0;
-    virtual QDemonRef<QDemonDynamicObjectSystemInterface> getDynamicObjectSystem() = 0;
+    virtual QDemonRef<QDemonDynamicObjectSystemInterface> dynamicObjectSystem() = 0;
     virtual QDemonRef<QDemonMaterialSystem> getCustomMaterialSystem() = 0;
     virtual QDemonRef<QDemonPixelGraphicsRendererInterface> getPixelGraphicsRenderer() = 0;
     virtual QDemonRef<QDemonPerfTimer> getPerfTimer() = 0;

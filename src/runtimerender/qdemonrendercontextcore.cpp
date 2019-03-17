@@ -83,7 +83,7 @@ struct QDemonRenderContextCore : public QDemonRenderContextCoreInterface
 
     QDemonRef<QDemonInputStreamFactoryInterface> getInputStreamFactory() override { return m_inputStreamFactory; }
     QDemonRef<QDemonAbstractThreadPool> getThreadPool() override { return m_threadPool; }
-    QDemonRef<QDemonDynamicObjectSystemInterface> getDynamicObjectSystemCore() override
+    QDemonRef<QDemonDynamicObjectSystemInterface> dynamicObjectSystem() override
     {
         return m_dynamicObjectSystem;
     }
@@ -186,7 +186,7 @@ struct QDemonRenderContextData : public QDemonRenderContextInterface
             m_inputStreamFactory->addSearchDirectory(inApplicationDirectory);
 
         m_imageBatchLoader = IImageBatchLoader::createBatchLoader(m_inputStreamFactory, m_bufferManager, m_threadPool, m_perfTimer);
-        m_dynamicObjectSystem = inCore->getDynamicObjectSystemCore();
+        m_dynamicObjectSystem = inCore->dynamicObjectSystem();
         m_dynamicObjectSystem->setContextInterface(this);
         m_effectSystem = inCore->getEffectSystemCore()->getEffectSystem(this);
         m_customMaterialSystem = inCore->getMaterialSystemCore();
@@ -223,7 +223,7 @@ struct QDemonRenderContextData : public QDemonRenderContextInterface
             break;
         }
 
-        getDynamicObjectSystem()->setShaderCodeLibraryVersion(versionString);
+        dynamicObjectSystem()->setShaderCodeLibraryVersion(versionString);
 #if defined(QDEMON_SHADER_PLATFORM_LIBRARY_DIR)
         const QString platformDirectory;
 #if defined(_WIN32)
@@ -250,7 +250,7 @@ struct QDemonRenderContextData : public QDemonRenderContextInterface
     QDemonRef<QDemonShaderCacheInterface> getShaderCache() override { return m_shaderCache; }
     QDemonRef<QDemonAbstractThreadPool> getThreadPool() override { return m_threadPool; }
     QDemonRef<IImageBatchLoader> getImageBatchLoader() override { return m_imageBatchLoader; }
-    QDemonRef<QDemonDynamicObjectSystemInterface> getDynamicObjectSystem() override { return m_dynamicObjectSystem; }
+    QDemonRef<QDemonDynamicObjectSystemInterface> dynamicObjectSystem() override { return m_dynamicObjectSystem; }
     QDemonRef<QDemonMaterialSystem> getCustomMaterialSystem() override { return m_customMaterialSystem; }
     QDemonRef<QDemonPixelGraphicsRendererInterface> getPixelGraphicsRenderer() override
     {

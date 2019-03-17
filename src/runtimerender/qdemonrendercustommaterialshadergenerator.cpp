@@ -901,7 +901,7 @@ struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
 
     void generateFragmentShader(QDemonShaderDefaultMaterialKey &, const QString &inShaderPathName)
     {
-        QDemonRef<QDemonDynamicObjectSystemInterface> theDynamicSystem(m_renderContext->getDynamicObjectSystem());
+        QDemonRef<QDemonDynamicObjectSystemInterface> theDynamicSystem(m_renderContext->dynamicObjectSystem());
         QByteArray fragSource = theDynamicSystem->getShaderSource(inShaderPathName).toUtf8();
 
         Q_ASSERT(!fragSource.isEmpty());
