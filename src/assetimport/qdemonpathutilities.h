@@ -19,6 +19,7 @@
 #include <QtCore/QIODevice>
 #include <QtCore/QSharedPointer>
 #include <QtGui/QVector2D>
+#include <QtCore/QVector>
 
 QT_BEGIN_NAMESPACE
 
