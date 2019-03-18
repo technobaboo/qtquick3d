@@ -32,7 +32,6 @@
 #include <QtDemonRender/qdemonrenderpathrender.h>
 #include <QtDemonRender/qdemonrendercontext.h>
 #include <QtDemonRender/qdemonrenderpathspecification.h>
-#include <QtDemonRender/qdemonrenderpathfontspecification.h>
 
 QT_BEGIN_NAMESPACE
 

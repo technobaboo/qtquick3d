@@ -59,8 +59,6 @@
 #include <QtDemonRender/qdemonrenderdrawindirectbuffer.h>
 #include <QtDemonRender/qdemonrenderpathrender.h>
 #include <QtDemonRender/qdemonrenderpathspecification.h>
-#include <QtDemonRender/qdemonrenderpathfontspecification.h>
-#include <QtDemonRender/qdemonrenderpathfonttext.h>
 
 #include <QtCore/QString>
 #include <QtCore/QVector>
@@ -153,7 +151,6 @@ protected:
     TContextConstantBufferMap m_constantToImpMap;
     TContextStorageBufferMap m_storageToImpMap;
     TContextAtomicCounterBufferMap m_atomicCounterToImpMap;
-    TContextPathFontSpecificationMap m_pathFontSpecToImpMap;
 
     qint32 m_maxTextureUnits;
     qint32 m_nextTextureUnit;
@@ -510,7 +507,6 @@ public:
 
     QDemonRef<QDemonRenderPathFontSpecification> createPathFontSpecification(const QString &fontName);
     void releasePathFontSpecification(QDemonRenderPathFontSpecification *inPathSpec);
-    QDemonRef<QDemonRenderPathFontItem> createPathFontItem();
 
     void setClearColor(QVector4D inClearColor);
     QVector4D clearColor() const { return m_hardwarePropertyContext.m_clearColor; }

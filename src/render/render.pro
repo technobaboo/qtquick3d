@@ -36,8 +36,6 @@ HEADERS += \
     qdemonrenderimagetexture.h \
     qdemonrenderindexbuffer.h \
     qdemonrenderinputassembler.h \
-    qdemonrenderpathfontspecification.h \
-    qdemonrenderpathfonttext.h \
     qdemonrenderpathrender.h \
     qdemonrenderpathspecification.h \
     qdemonrenderprogrampipeline.h \
@@ -75,8 +73,6 @@ SOURCES += \
     qdemonrenderindexbuffer.cpp \
     qdemonrenderinputassembler.cpp \
     qdemonrenderocclusionquery.cpp \
-    qdemonrenderpathfontspecification.cpp \
-    qdemonrenderpathfonttext.cpp \
     qdemonrenderpathrender.cpp \
     qdemonrenderpathspecification.cpp \
     qdemonrenderprogrampipeline.cpp \

@@ -76,8 +76,6 @@ QDemonRenderContext::~QDemonRenderContext()
     m_constantToImpMap.clear();
     Q_ASSERT(m_storageToImpMap.size() == 0);
     m_storageToImpMap.clear();
-    Q_ASSERT(m_pathFontSpecToImpMap.size() == 0);
-    m_pathFontSpecToImpMap.clear();
 
     m_backend = nullptr;
 }
@@ -336,33 +334,6 @@ void QDemonRenderContext::setPathStencilDepthOffset(float inSlope, float inBias)
 void QDemonRenderContext::setPathCoverDepthFunc(QDemonRenderBoolOp inFunc)
 {
     m_backend->setPathCoverDepthFunc(inFunc);
-}
-
-QDemonRef<QDemonRenderPathFontSpecification> QDemonRenderContext::createPathFontSpecification(const QString &fontName)
-{
-    // first check if it already exists
-    QHash<QString, QDemonRenderPathFontSpecification *>::const_iterator entry = m_pathFontSpecToImpMap.find(fontName);
-    if (entry != m_pathFontSpecToImpMap.end())
-        return QDemonRef<QDemonRenderPathFontSpecification>(entry.value());
-
-    // if not create new one
-    QDemonRef<QDemonRenderPathFontSpecification> pPathFontSpec = QDemonRenderPathFontSpecification::createPathFontSpecification(this, fontName);
-
-    if (pPathFontSpec)
-        m_pathFontSpecToImpMap.insert(fontName, pPathFontSpec.data());
-
-    return pPathFontSpec;
-}
-
-void QDemonRenderContext::releasePathFontSpecification(QDemonRenderPathFontSpecification *inPathSpec)
-{
-    m_pathFontSpecToImpMap.remove(inPathSpec->getFontName());
-}
-
-QDemonRef<QDemonRenderPathFontItem> QDemonRenderContext::createPathFontItem()
-{
-    // if not create new one
-    return QDemonRenderPathFontItem::createPathFontItem(this);
 }
 
 void QDemonRenderContext::setClearColor(QVector4D inClearColor)
