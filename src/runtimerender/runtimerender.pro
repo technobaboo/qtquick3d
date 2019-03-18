@@ -30,7 +30,6 @@ HEADERS += \
     qdemonrendereulerangles.h \
     qdemonrendergraphobjectpickquery.h \
 #    qdemonrendergraphobjectserializer.h \
-    qdemonrenderimagescaler.h \
     qdemonrenderimagetexturedata.h \
     qdemonrenderinputstreamfactory.h \
     qdemonrenderlightconstantproperties.h \
@@ -76,7 +75,6 @@ SOURCES += \
     qdemonrendereulerangles.cpp \
     qdemonrendergpuprofiler.cpp \
 #    qdemonrendergraphobjectserializer.cpp \
-    qdemonrenderimagescaler.cpp \
     qdemonrenderinputstreamfactory.cpp \
     qdemonrendermaterialshadergenerator.cpp \
     qdemonrenderpathmanager.cpp \

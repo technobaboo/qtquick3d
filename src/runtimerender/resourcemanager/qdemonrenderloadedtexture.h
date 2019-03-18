@@ -95,7 +95,6 @@ public:
         }
     }
 
-    void ensureMultiplerOfFour(const char *inPath);
     // Returns true if this image has a pixel less than 255.
     bool scanForTransparency();
 

@@ -34,7 +34,6 @@
 #include <QtDemonRuntimeRender/qdemonrenderbuffermanager.h>
 #include <QtDemonRuntimeRender/qdemonrenderinputstreamfactory.h>
 #include <QtDemonRuntimeRender/qdemonrenderthreadpool.h>
-#include <QtDemonRuntimeRender/qdemonrenderimagescaler.h>
 #include <QtDemonRuntimeRender/qdemonrenderloadedtexture.h>
 
 #include <QtCore/QMutex>

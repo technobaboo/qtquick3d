@@ -29,7 +29,6 @@
 ****************************************************************************/
 #include <QtDemonRuntimeRender/qdemonrenderloadedtexture.h>
 #include <QtDemonRuntimeRender/qdemonrenderinputstreamfactory.h>
-#include <QtDemonRuntimeRender/qdemonrenderimagescaler.h>
 #include <QtDemonRuntimeRender/qdemonrendererutil.h>
 #include <QtGui/QImage>
 #include <QtGui/QOpenGLTexture>
@@ -353,30 +352,6 @@ bool QDemonLoadedTexture::scanForTransparency()
     }
     Q_ASSERT(false);
     return false;
-}
-
-void QDemonLoadedTexture::ensureMultiplerOfFour(const char *inPath)
-{
-    if (width % 4 || height % 4) {
-        qCWarning(PERF_WARNING, "Image %s has non multiple of four width or height; perf hit for scaling", inPath);
-        if (data) {
-            quint32 newWidth = QDemonRendererUtil::nextMultipleOf4(width);
-            quint32 newHeight = QDemonRendererUtil::nextMultipleOf4(height);
-            quint32 newDataSize = newWidth * newHeight * components;
-            quint8 *newData = static_cast<quint8 *>(::malloc(newDataSize));
-            QDemonImageScaler theScaler;
-            if (components == 4) {
-                theScaler.fastExpandRowsAndColumns((unsigned char *)data, width, height, newData, newWidth, newHeight);
-            } else
-                theScaler.expandRowsAndColumns((unsigned char *)data, width, height, newData, newWidth, newHeight, components);
-
-            ::free(data);
-            data = newData;
-            width = newWidth;
-            height = newHeight;
-            dataSizeInBytes = newDataSize;
-        }
-    }
 }
 
 QDemonRef<QDemonLoadedTexture> QDemonLoadedTexture::load(const QString &inPath,

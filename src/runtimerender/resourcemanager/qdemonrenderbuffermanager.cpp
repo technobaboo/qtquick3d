@@ -41,7 +41,6 @@
 #include <QtDemonRuntimeRender/qdemonrendermesh.h>
 #include <QtDemonRuntimeRender/qdemonrenderloadedtexture.h>
 #include <QtDemonRuntimeRender/qdemonrenderinputstreamfactory.h>
-#include <QtDemonRuntimeRender/qdemonrenderimagescaler.h>
 #include <QtDemonRuntimeRender/qdemonrenderprefiltertexture.h>
 
 #include <QtDemonAssetImport/private/qdemonmeshutilities_p.h>
