@@ -56,8 +56,6 @@ public:
     static const char *getSimpleFragShader()
     {
         return "#version 120\n"
-               "precision mediump sampler2D;\n"
-               "precision mediump float;\n"
                "varying vec4 color_to_add;\n"
                "void main()\n"
                "{\n"
@@ -68,8 +66,6 @@ public:
     static const char *getSimpleFragShaderTex()
     {
         return "#version 120\n"
-               "precision mediump sampler2D;\n"
-               "precision mediump float;\n"
                "uniform sampler2D image0;\n"
                "varying vec2 uv_coords;\n"
                "void main()\n"
