@@ -31,7 +31,7 @@
 #ifndef FILE_NORMAL_TEXTURE_GLSLLIB
 #define FILE_NORMAL_TEXTURE_GLSLLIB
 
-#ifdef QT3DS_DEFINE_API
+#ifdef DEMON_DEFINE_API
 
 #include "luminance.glsllib"
 #include "monoChannel.glsllib"
