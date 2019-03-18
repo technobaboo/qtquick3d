@@ -61,7 +61,7 @@ class Q_DEMONRUNTIMERENDER_EXPORT QDemonBufferManager
 
         QDemonRef<QDemonRenderContext> context;
         QDemonRef<QDemonInputStreamFactoryInterface> inputStreamFactory;
-        QDemonRef<QDemonPerfTimer> perfTimer;
+        QDemonPerfTimer *perfTimer;
         QString pathBuilder;
         ImageMap imageMap;
         QMutex loadedImageSetMutex;
@@ -83,7 +83,7 @@ class Q_DEMONRUNTIMERENDER_EXPORT QDemonBufferManager
 public:
     QDemonBufferManager(const QDemonRef<QDemonRenderContext> &inRenderContext,
                         const QDemonRef<QDemonInputStreamFactoryInterface> &inInputStreamFactory,
-                        const QDemonRef<QDemonPerfTimer> &inTimer);
+                        QDemonPerfTimer *inTimer);
     ~QDemonBufferManager();
 
     void setImageHasTransparency(QString inSourcePath, bool inHasTransparency);

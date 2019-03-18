@@ -171,7 +171,7 @@ struct QDemonBatchLoader : public IImageBatchLoader
     // Accessed from main thread
     QDemonRef<QDemonAbstractThreadPool> threadPool;
     // Accessed from both threads
-    QDemonRef<QDemonPerfTimer> perfTimer;
+    QDemonPerfTimer *perfTimer;
     // main thread
     TImageBatchId nextBatchId;
     // main thread
@@ -191,7 +191,7 @@ struct QDemonBatchLoader : public IImageBatchLoader
     QDemonBatchLoader(QDemonRef<QDemonInputStreamFactoryInterface> inFactory,
                       QDemonBufferManager inBufferManager,
                       QDemonRef<QDemonAbstractThreadPool> inThreadPool,
-                      QDemonRef<QDemonPerfTimer> inTimer)
+                      QDemonPerfTimer *inTimer)
         : inputStreamFactory(inFactory), bufferManager(inBufferManager), threadPool(inThreadPool), perfTimer(inTimer), nextBatchId(1)
     {
     }
@@ -464,7 +464,7 @@ void QDemonImageLoaderBatch::cancel(QString inSourcePath)
 QDemonRef<IImageBatchLoader> IImageBatchLoader::createBatchLoader(QDemonRef<QDemonInputStreamFactoryInterface> inFactory,
                                                                   QDemonBufferManager inBufferManager,
                                                                   QDemonRef<QDemonAbstractThreadPool> inThreadPool,
-                                                                  QDemonRef<QDemonPerfTimer> inTimer)
+                                                                  QDemonPerfTimer *inTimer)
 {
     return QDemonRef<IImageBatchLoader>(new QDemonBatchLoader(inFactory, inBufferManager, inThreadPool, inTimer));
 }

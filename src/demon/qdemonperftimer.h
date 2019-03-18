@@ -15,9 +15,8 @@ struct QDemonTimerEntry;
 class Q_DEMON_EXPORT QDemonPerfTimer
 {
     Q_DISABLE_COPY(QDemonPerfTimer)
-public:
-    QAtomicInt ref;
 
+public:
     struct Key {
         const char *id;
     };
@@ -38,6 +37,8 @@ public:
     };
 
 private:
+    bool m_isEnabled = false;
+    int frameCount = 0;
     QMutex mutex;
     QHash<Key, Entry> entries;
 
@@ -49,25 +50,31 @@ public:
     void update(const char *inTag, qint64 inAmount);
 
     // Dump current summation of timer data.
-    void dump(quint32 nFrames = 0);
+    void dump();
     void reset();
+
+    int newFrame() { return ++frameCount; }
+
+    void setEnabled(bool b) { m_isEnabled = b; }
+    bool isEnabled() const { return m_isEnabled; }
 };
 
 struct QDemonStackPerfTimer
 {
-    QDemonRef<QDemonPerfTimer> m_timer;
+    QDemonPerfTimer *m_timer;
     QElapsedTimer elapsedTimer;
     const char *m_id;
 
-    QDemonStackPerfTimer(const QDemonRef<QDemonPerfTimer> &destination, const char *inId)
-        : m_timer(destination), m_id(inId)
+    QDemonStackPerfTimer(QDemonPerfTimer *timer, const char *inId)
+        : m_timer(timer), m_id(inId)
     {
-        elapsedTimer.start();
+        if (timer->isEnabled())
+            elapsedTimer.start();
     }
 
     ~QDemonStackPerfTimer()
     {
-        if (m_timer) {
+        if (m_timer->isEnabled()) {
             qint64 elapsed = elapsedTimer.nsecsElapsed();
             m_timer->update(m_id, elapsed);
         }

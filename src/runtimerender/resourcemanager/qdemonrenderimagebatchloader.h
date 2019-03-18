@@ -83,7 +83,7 @@ public:
     static QDemonRef<IImageBatchLoader> createBatchLoader(QDemonRef<QDemonInputStreamFactoryInterface> inFactory,
                                                           QDemonBufferManager inBufferManager,
                                                           QDemonRef<QDemonAbstractThreadPool> inThreadPool,
-                                                          QDemonRef<QDemonPerfTimer> inTimer);
+                                                          QDemonPerfTimer *inTimer);
 };
 QT_END_NAMESPACE
 

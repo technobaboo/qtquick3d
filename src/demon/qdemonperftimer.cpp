@@ -65,7 +65,7 @@ void QDemonPerfTimer::update(const char *inId, qint64 elapsed)
     it.value().update(elapsed);
 }
 
-void QDemonPerfTimer::dump(quint32 inFramesPassed)
+void QDemonPerfTimer::dump()
 {
     QMutexLocker locker(&mutex);
     QVector<QDemonPerfTimer::Entry> allEntries;
@@ -78,8 +78,10 @@ void QDemonPerfTimer::dump(quint32 inFramesPassed)
 
     qDebug() << "performance data:";
     for (const auto &e: qAsConst(allEntries))
-        qDebug() << "    " << e.toString(inFramesPassed).toUtf8().constData();
+        qDebug() << "    " << e.toString(frameCount).toUtf8().constData();
     qDebug() << "";
+
+    frameCount = 0;
 }
 
 void QDemonPerfTimer::reset()
@@ -91,6 +93,8 @@ void QDemonPerfTimer::reset()
         iter.value().reset();
         ++iter;
     }
+
+    frameCount = 0;
 }
 
 QT_END_NAMESPACE

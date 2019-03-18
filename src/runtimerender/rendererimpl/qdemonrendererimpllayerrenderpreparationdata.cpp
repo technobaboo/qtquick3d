@@ -886,7 +886,7 @@ bool QDemonLayerRenderPreparationData::prepareRenderablesForRender(const QMatrix
                                                                    const QDemonOption<QDemonClippingFrustum> &inClipFrustum,
                                                                    QDemonLayerRenderPreparationResultFlags &ioFlags)
 {
-    QDemonStackPerfTimer perfTimer(renderer->demonContext()->getPerfTimer(), Q_FUNC_INFO);
+    QDemonStackPerfTimer perfTimer(renderer->demonContext()->performanceTimer(), Q_FUNC_INFO);
     viewProjection = inViewProjection;
     bool wasDataDirty = false;
     for (quint32 idx = 0, end = renderableNodes.size(); idx < end; ++idx) {
@@ -969,7 +969,7 @@ struct QDemonLightNodeMarker
 // m_Layer.m_Camera->CalculateViewProjectionMatrix(m_ViewProjection);
 void QDemonLayerRenderPreparationData::prepareForRender(const QSize &inViewportDimensions)
 {
-    QDemonStackPerfTimer perfTimer(renderer->demonContext()->getPerfTimer(), Q_FUNC_INFO);
+    QDemonStackPerfTimer perfTimer(renderer->demonContext()->performanceTimer(), Q_FUNC_INFO);
     if (layerPrepResult.hasValue())
         return;
 

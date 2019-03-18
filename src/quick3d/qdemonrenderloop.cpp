@@ -13,9 +13,6 @@
 
 QT_BEGIN_NAMESPACE
 
-static bool dumpTimingInfo = false;
-static int frameCount = 0;
-
 QDemonRenderLoop *QDemonRenderLoop::s_instance = nullptr;
 // extern bool qsg_useConsistentTiming();
 
@@ -66,8 +63,7 @@ public:
 #include "qdemonrenderloop.moc"
 
 QDemonRenderLoop::~QDemonRenderLoop()
-{
-    dumpTimingInfo = !qgetenv("QUICK3D_PERFTIMERS").isEmpty();
+{        
 }
 
 void QDemonRenderLoop::postJob(QDemonWindow *window, QRunnable *job)
@@ -204,6 +200,8 @@ static QSurfaceFormat idealSurfaceFormat()
 QDemonGuiThreadRenderLoop::QDemonGuiThreadRenderLoop() : gl(nullptr)
 {
     m_contextCore = QDemonRenderContextCoreInterface::create();
+    if (!qgetenv("QUICK3D_PERFTIMERS").isEmpty())
+        m_contextCore->performanceTimer()->setEnabled(true);
 
     // To create the Render Context, we have to have a valid OpenGL Context
     // to resolve the functions, so do that now (before we have any windows)
@@ -391,10 +389,9 @@ void QDemonGuiThreadRenderLoop::handleUpdateRequest(QDemonWindow *window)
 {
     renderWindow(window);
 
-    if (++frameCount == 60  ) {
-        m_contextCore->getPerfTimer()->dump(frameCount);
-        frameCount = 0;
-    }
+    auto *perfTimer = m_contextCore->performanceTimer();
+    if (perfTimer->isEnabled() && perfTimer->newFrame() == 60  )
+        perfTimer->dump();
 }
 
 QT_END_NAMESPACE

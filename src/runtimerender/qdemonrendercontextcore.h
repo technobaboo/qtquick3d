@@ -66,13 +66,15 @@ class Q_DEMONRUNTIMERENDER_EXPORT QDemonRenderContextCoreInterface
 {
 public:
     QAtomicInt ref;
+    QDemonPerfTimer m_perfTimer;
+    QDemonRenderContextCoreInterface() {}
     virtual ~QDemonRenderContextCoreInterface();
     virtual QDemonRef<QDemonInputStreamFactoryInterface> getInputStreamFactory() = 0;
     virtual QDemonRef<QDemonAbstractThreadPool> getThreadPool() = 0;
     virtual QDemonRef<QDemonDynamicObjectSystemInterface> dynamicObjectSystem() = 0;
     virtual QDemonRef<QDemonMaterialSystem> getMaterialSystemCore() = 0;
     virtual QDemonRef<QDemonEffectSystemInterface> getEffectSystemCore() = 0;
-    virtual QDemonRef<QDemonPerfTimer> getPerfTimer() = 0;
+    QDemonPerfTimer *performanceTimer() { return &m_perfTimer; }
     virtual QDemonRef<QDemonPathManagerInterface> getPathManagerCore() = 0;
     // The render context maintains a reference to this object.
     virtual QDemonRef<QDemonRenderContextInterface> createRenderContext(QDemonRef<QDemonRenderContext> inContext,
@@ -105,7 +107,7 @@ public:
     virtual QDemonRef<QDemonDynamicObjectSystemInterface> dynamicObjectSystem() = 0;
     virtual QDemonRef<QDemonMaterialSystem> getCustomMaterialSystem() = 0;
     virtual QDemonRef<QDemonPixelGraphicsRendererInterface> getPixelGraphicsRenderer() = 0;
-    virtual QDemonRef<QDemonPerfTimer> getPerfTimer() = 0;
+    virtual QDemonPerfTimer *performanceTimer() = 0;
     virtual QDemonRef<QDemonRenderListInterface> getRenderList() = 0;
     virtual QDemonRef<QDemonPathManagerInterface> getPathManager() = 0;
     virtual QDemonRef<QDemonShaderProgramGeneratorInterface> getShaderProgramGenerator() = 0;
