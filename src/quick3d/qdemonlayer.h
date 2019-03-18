@@ -264,7 +264,7 @@ private:
     float m_bottom = 0.0f;
     float m_height = 100.0f;
     float m_width = 100.0f;
-    float m_aoStrength = 5.0f;
+    float m_aoStrength = 0.0f;
     float m_aoDistance = 5.0f;
     float m_aoSoftness = 50.0f;
     bool m_aoDither = false;
