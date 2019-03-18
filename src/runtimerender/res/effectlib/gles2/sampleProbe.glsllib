@@ -31,12 +31,12 @@
 #ifndef SAMPLE_PROBE_GLSLLIB
 #define SAMPLE_PROBE_GLSLLIB 1
 
-#ifndef DEMON_ENABLE_LIGHT_PROBE_2
-#define DEMON_ENABLE_LIGHT_PROBE_2 0
+#ifndef QDEMON_ENABLE_LIGHT_PROBE_2
+#define QDEMON_ENABLE_LIGHT_PROBE_2 0
 #endif
 
-#ifndef DEMON_ENABLE_IBL_FOV
-#define DEMON_ENABLE_IBL_FOV 0
+#ifndef QDEMON_ENABLE_IBL_FOV
+#define QDEMON_ENABLE_IBL_FOV 0
 #endif
 
 uniform sampler2D light_probe;
@@ -45,13 +45,13 @@ uniform vec4 light_probe_rotation;
 uniform vec4 light_probe_offset;    // light_probe_offset.w = number of mipmaps
 uniform vec2 light_probe_size;
 
-#if DEMON_ENABLE_LIGHT_PROBE_2
+#if QDEMON_ENABLE_LIGHT_PROBE_2
 uniform sampler2D light_probe2;
 uniform vec4 light_probe2_props;
 uniform vec2 light_probe2_size;
 #endif
 
-#if DEMON_ENABLE_IBL_FOV
+#if QDEMON_ENABLE_IBL_FOV
 uniform vec4 light_probe_opts;
 #endif
 
@@ -106,7 +106,7 @@ vec2 getProbeSampleUV( vec3 smpDir, vec4 probeRot, vec2 probeOfs )
 {
     vec2 smpUV;
 
-#if DEMON_ENABLE_IBL_FOV
+#if QDEMON_ENABLE_IBL_FOV
     smpUV.x = (2.0 * atan(-smpDir.z, smpDir.x) + 3.14159265358 ) / light_probe_opts.x;
     smpUV.y = (2.0 * atan(-smpDir.z, smpDir.y) + 3.14159265358 ) / light_probe_opts.x;
 #else
@@ -120,7 +120,7 @@ vec2 getProbeSampleUV( vec3 smpDir, vec4 probeRot, vec2 probeOfs )
 
 vec4 getTopLayerSample( vec3 inDir, float lodShift, vec3 lodOffsets )
 {
-#if DEMON_ENABLE_LIGHT_PROBE_2
+#if QDEMON_ENABLE_LIGHT_PROBE_2
     if ( light_probe2_props.w < 0.5 )
         return vec4(0.0, 0.0, 0.0, 0.0);
 
@@ -152,7 +152,7 @@ vec3 getProbeWeightedSample( vec3 smpDir, float lodShift, float roughness, vec3 
     vec2 smpUV = getProbeSampleUV( smpDir, light_probe_rotation, light_probe_offset.xy );
     float wt = 1.0;
 
-#if DEMON_ENABLE_IBL_FOV
+#if QDEMON_ENABLE_IBL_FOV
     wt = min(wt, smoothstep(roughness * -0.25, roughness * 0.25, smpUV.x));
     wt = min(wt, smoothstep(roughness * -0.25, roughness * 0.25, smpUV.y));
     wt = min(wt, 1.0 - smoothstep(1.0 - roughness*0.25, 1.0 + roughness*0.25, smpUV.x));
@@ -189,7 +189,7 @@ vec3 getProbeWeightedSample( vec3 smpDir, float lodShift, float roughness, vec3 
     retVal += 0.3 * textureLod( light_probe, smpUV , lodShift+lodOffsets.y ).xyz;
     retVal += 0.1 * textureLod( light_probe, smpUV , lodShift+lodOffsets.z ).xyz;
 
-#if DEMON_ENABLE_LIGHT_PROBE_2
+#if QDEMON_ENABLE_LIGHT_PROBE_2
     vec4 topSmp = getTopLayerSample( smpDir, lodShift, lodOffsets );
     vec3 tempVal = mix( retVal, topSmp.xyz, topSmp.w );
     retVal = mix( retVal, tempVal, light_probe2_props.z );

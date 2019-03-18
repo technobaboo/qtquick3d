@@ -31,7 +31,7 @@
 #ifndef FILE_BUMP_TEXTURE_GLSLLIB
 #define FILE_BUMP_TEXTURE_GLSLLIB
 
-#ifdef DEMON_DEFINE_API
+#ifdef QDEMON_DEFINE_API
 
 #include "luminance.glsllib"
 #include "monoChannel.glsllib"

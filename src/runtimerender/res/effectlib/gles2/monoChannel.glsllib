@@ -31,7 +31,7 @@
 #ifndef MONO_CHANNEL_GLSLLIB
 #define MONO_CHANNEL_GLSLLIB
 
-#ifdef DEMON_DEFINE_API
+#ifdef QDEMON_DEFINE_API
 #define mono_alpha 0
 #define mono_average 1
 #define mono_luminance 2

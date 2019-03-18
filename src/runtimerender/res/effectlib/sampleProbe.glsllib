@@ -36,12 +36,12 @@ uniform vec4 light_probe_props;
 uniform vec4 light_probe_rotation;
 uniform vec4 light_probe_offset;    // light_probe_offset.w = number of mipmaps
 
-#if DEMON_ENABLE_LIGHT_PROBE_2
+#if QDEMON_ENABLE_LIGHT_PROBE_2
 uniform sampler2D light_probe2;
 uniform vec4 light_probe2_props;
 #endif
 
-#if DEMON_ENABLE_IBL_FOV
+#if QDEMON_ENABLE_IBL_FOV
 uniform vec4 light_probe_opts;
 #endif
 
@@ -96,7 +96,7 @@ vec2 getProbeSampleUV( vec3 smpDir, vec4 probeRot, vec2 probeOfs )
 {
     vec2 smpUV;
 
-#if DEMON_ENABLE_IBL_FOV
+#if QDEMON_ENABLE_IBL_FOV
     smpUV = vec2(atan(smpDir.x, smpDir.z), asin(smpDir.y));
     // assume equirectangular HDR spherical map (instead of cube map) and warp sample
     // UV coordinates accordingly
@@ -116,7 +116,7 @@ vec2 getProbeSampleUV( vec3 smpDir, vec4 probeRot, vec2 probeOfs )
 
 vec4 getTopLayerSample( vec3 inDir, float lodShift, vec3 lodOffsets )
 {
-#if DEMON_ENABLE_LIGHT_PROBE_2
+#if QDEMON_ENABLE_LIGHT_PROBE_2
     if ( light_probe2_props.w < 0.5 )
         return vec4(0.0, 0.0, 0.0, 0.0);
 
@@ -148,7 +148,7 @@ vec3 getProbeWeightedSample( vec3 smpDir, float lodShift, float roughness, vec3 
     vec2 smpUV = getProbeSampleUV( smpDir, light_probe_rotation, light_probe_offset.xy );
     float wt = 1.0;
 
-#if DEMON_ENABLE_IBL_FOV
+#if QDEMON_ENABLE_IBL_FOV
     wt = min(wt, smoothstep(roughness * -0.25, roughness * 0.25, smpUV.x));
     wt = min(wt, smoothstep(roughness * -0.25, roughness * 0.25, smpUV.y));
     wt = min(wt, 1.0 - smoothstep(1.0 - roughness*0.25, 1.0 + roughness*0.25, smpUV.x));
@@ -185,7 +185,7 @@ vec3 getProbeWeightedSample( vec3 smpDir, float lodShift, float roughness, vec3 
     retVal += 0.3 * textureLod( light_probe, smpUV , lodShift+lodOffsets.y ).xyz;
     retVal += 0.1 * textureLod( light_probe, smpUV , lodShift+lodOffsets.z ).xyz;
 
-#if DEMON_ENABLE_LIGHT_PROBE_2
+#if QDEMON_ENABLE_LIGHT_PROBE_2
     vec4 topSmp = getTopLayerSample( smpDir, lodShift, lodOffsets );
     vec3 tempVal = mix( retVal, topSmp.xyz, topSmp.w );
     retVal = mix( retVal, tempVal, light_probe2_props.z );

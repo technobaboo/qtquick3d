@@ -125,7 +125,7 @@ vec4 microfacetBSDFEnvironment( in mat3 tanFrame, in vec3 viewDir, in float roug
                                 in float roughnessV, int mode )
 {
     vec3 rgb = vec3( 0.0, 0.0, 0.0 );
-#if !DEMON_ENABLE_LIGHT_PROBE
+#if !QDEMON_ENABLE_LIGHT_PROBE
     if ( uEnvironmentMappingEnabled )
     {
         float roughness = calculateRoughness( tanFrame[2], roughnessU, roughnessV, tanFrame[0] );

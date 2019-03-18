@@ -28,11 +28,11 @@
 **
 ****************************************************************************/
 
-#ifndef DEMON_DEFAULT_MATERIAL_FILE_BUMP_TEXTURE_GLSLLIB
-#define DEMON_DEFAULT_MATERIAL_FILE_BUMP_TEXTURE_GLSLLIB
+#ifndef QDEMON_DEFAULT_MATERIAL_FILE_BUMP_TEXTURE_GLSLLIB
+#define QDEMON_DEFAULT_MATERIAL_FILE_BUMP_TEXTURE_GLSLLIB
 
-#ifndef DEMON_DEFINE_API
-#define DEMON_DEFINE_API
+#ifndef QDEMON_DEFINE_API
+#define QDEMON_DEFINE_API
 #endif
 
 #include "fileBumpTexture.glsllib"
