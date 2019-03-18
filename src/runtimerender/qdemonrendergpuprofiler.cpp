@@ -28,7 +28,7 @@
 **
 ****************************************************************************/
 
-#include <QtDemonRuntimeRender/qdemonrenderprofiler.h>
+#include <QtDemonRuntimeRender/qdemonrendergpuprofiler.h>
 #include <QtDemonRuntimeRender/qdemonrendercontextcore.h>
 #include <QtDemonRender/qdemonrendertimerquery.h>
 #include <QtDemonRender/qdemonrendersync.h>

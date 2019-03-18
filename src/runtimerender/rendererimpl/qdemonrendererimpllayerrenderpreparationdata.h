@@ -36,7 +36,7 @@
 #include <QtDemonRuntimeRender/qdemonrenderclippingfrustum.h>
 #include <QtDemonRuntimeRender/qdemonrenderresourcetexture2d.h>
 #include <QtDemonRuntimeRender/qdemonoffscreenrendermanager.h>
-#include <QtDemonRuntimeRender/qdemonrenderprofiler.h>
+#include <QtDemonRuntimeRender/qdemonrendergpuprofiler.h>
 #include <QtDemonRuntimeRender/qdemonrendershadowmap.h>
 #include <QtDemonRuntimeRender/qdemonrenderableobjects.h>
 

@@ -49,7 +49,7 @@
 #include <QtDemonRuntimeRender/qdemonrenderclippingfrustum.h>
 #include <QtDemonRuntimeRender/qdemonrendershaderkeys.h>
 #include <QtDemonRuntimeRender/qdemonrendershadercache.h>
-#include <QtDemonRuntimeRender/qdemonrenderprofiler.h>
+#include <QtDemonRuntimeRender/qdemonrendergpuprofiler.h>
 #include <QtDemonRuntimeRender/qdemonrenderdefaultmaterialshadergenerator.h>
 #include <QtDemonRuntimeRender/qdemonrenderbuffermanager.h>
 #include <QtDemonRender/qdemonrendercontext.h>
