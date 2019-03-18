@@ -58,6 +58,7 @@ public:
     QDemonRef<QDemonRenderContext> m_renderContext;
 
     QImage grabContent;
+    bool m_enableGpuProfiling = false;
 };
 
 #include "qdemonrenderloop.moc"
@@ -203,6 +204,8 @@ QDemonGuiThreadRenderLoop::QDemonGuiThreadRenderLoop() : gl(nullptr)
     if (!qgetenv("QUICK3D_PERFTIMERS").isEmpty())
         m_contextCore->performanceTimer()->setEnabled(true);
 
+
+
     // To create the Render Context, we have to have a valid OpenGL Context
     // to resolve the functions, so do that now (before we have any windows)
     QSurfaceFormat format = idealSurfaceFormat();
@@ -223,6 +226,11 @@ QDemonGuiThreadRenderLoop::QDemonGuiThreadRenderLoop() : gl(nullptr)
         m_renderContext = QDemonRenderContext::createGl(format);
         m_sgContext = m_contextCore->createRenderContext(m_renderContext, "./");
         gl->doneCurrent();
+    }
+
+    if (!qgetenv("QUICK3D_GPUPROFILER").isEmpty()) {
+        m_enableGpuProfiling = true;
+        m_sgContext->getRenderer()->enableLayerGpuProfiling(true);
     }
 }
 
@@ -334,6 +342,8 @@ void QDemonGuiThreadRenderLoop::renderWindow(QDemonWindow *window)
         gl->swapBuffers(window);
         cd->fireFrameSwapped();
     }
+    if (m_enableGpuProfiling)
+        m_sgContext->getRenderer()->dumpGpuProfilerStats();
 
     // Might have been set during syncSceneGraph()
     if (data.updatePending)
