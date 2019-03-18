@@ -31,10 +31,13 @@ private:
     void checkForResourceFiles(GraphObject *object);
     void generateMaterialComponent(GraphObject *object);
     void generateAliasComponent(GraphObject *reference);
+    void generateAnimationTimeLine(GraphObject *layer, QTextStream &output, int tabLevel);
+    void generateKeyframeGroup(const AnimationTrack &animation, QTextStream &output, int tabLevel);
 
     QVector<QString> m_resourcesList;
     UiaParser m_uiaParser;
     UipParser m_uipParser;
+    UipPresentation *m_presentation;
 
     QString m_sourceFile;
     QDir m_exportPath;

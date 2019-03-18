@@ -158,6 +158,9 @@ void UipImporter::processNode(GraphObject *object, QTextStream &output, int tabL
                     output << insertTabs(tabLevel + 1) << QStringLiteral("effects: [") << effects << QStringLiteral("]") << endl;
                 }
 
+                // Generate Animation Timeline
+                generateAnimationTimeLine(obj, output, tabLevel + 1);
+
 
             } else if (obj->type() == GraphObject::Model) {
                 // materials array
@@ -285,10 +288,95 @@ void UipImporter::generateAliasComponent(GraphObject *reference)
     m_generatedFiles += targetFile;
 }
 
+namespace {
+
+QSet<GraphObject*> getSubtreeItems(GraphObject *node)
+{
+    QSet<GraphObject *> items;
+    if (!node)
+        return items;
+
+    std::function<void(GraphObject *, QSet<GraphObject *> &)> treeWalker;
+    treeWalker = [&treeWalker](GraphObject *obj, QSet<GraphObject *> &items) {
+        while (obj) {
+            items.insert(obj);
+            treeWalker(obj->firstChild(), items);
+            obj = obj->nextSibling();
+        }
+    };
+
+    treeWalker(node->firstChild(), items);
+
+    return items;
+}
+}
+
+void UipImporter::generateAnimationTimeLine(GraphObject *layer, QTextStream &output, int tabLevel)
+{
+    // Get a list off all animations for the master and first slide
+    auto animations = m_presentation->masterSlide()->animations();
+    auto firstSlide = static_cast<Slide*>(m_presentation->masterSlide()->firstChild());
+    animations.append(firstSlide->animations());
+
+    auto layerItems = getSubtreeItems(layer);
+    if (layerItems.isEmpty())
+        return;
+
+    float startFrame = layer->startTime();
+    float endFrame = layer->endTime();
+
+    output << insertTabs(tabLevel) << QStringLiteral("Timeline {") << endl;
+    output << insertTabs(tabLevel + 1) << QStringLiteral("startFrame: ") << startFrame << endl;
+    output << insertTabs(tabLevel + 1) << QStringLiteral("endFrame: ") << endFrame << endl;
+    output << insertTabs(tabLevel + 1) << QStringLiteral("currentFrame: 0") << endl;
+    output << insertTabs(tabLevel + 1) << QStringLiteral("enabled: true") << endl;
+    output << insertTabs(tabLevel + 1) << QStringLiteral("animations: [") << endl;
+    output << insertTabs(tabLevel + 2) << QStringLiteral("TimelineAnimation {") << endl;
+    output << insertTabs(tabLevel + 3) << QStringLiteral("duration: ") << endFrame - startFrame << endl;
+    output << insertTabs(tabLevel + 3) << QStringLiteral("from: ") << startFrame << endl;
+    output << insertTabs(tabLevel + 3) << QStringLiteral("to: ") << endFrame << endl;
+    output << insertTabs(tabLevel + 3) << QStringLiteral("running: true") << endl;
+    output << insertTabs(tabLevel + 2) << QStringLiteral("}") << endl;
+    output << insertTabs(tabLevel + 1) << QStringLiteral("]") << endl << endl;
+
+    // ignore all animations that are not in this layer
+    for (auto animation: animations) {
+        auto target = animation.m_target;
+        // check if targetObject is actually in this layer
+        if (layerItems.contains(target)) {
+            // the animation is for an object in this layer
+            generateKeyframeGroup(animation, output, tabLevel + 1);
+        }
+    }
+
+    output << insertTabs(tabLevel) << QStringLiteral("}") << endl;
+}
+
+void UipImporter::generateKeyframeGroup(const AnimationTrack &animation, QTextStream &output, int tabLevel)
+{
+    output << insertTabs(tabLevel) << QStringLiteral("KeyframeGroup {") << endl;
+    output << insertTabs(tabLevel + 1) << QStringLiteral("target: ") << animation.m_target->qmlId() << endl;
+    output << insertTabs(tabLevel + 1) << QStringLiteral("property: ") << QStringLiteral("\"") << animation.m_property << QStringLiteral("\"") <<  endl;
+
+    for (auto keyframe : animation.m_keyFrames) {
+        output << insertTabs(tabLevel + 1) << QStringLiteral("Keyframe {") << endl;
+
+        output << insertTabs(tabLevel + 2) << QStringLiteral("frame: ") << keyframe.time << endl;
+        output << insertTabs(tabLevel + 2) << QStringLiteral("value: ") << keyframe.value << endl;
+
+        // ### Only linear supported at the moment, add support for EaseInOut and Bezier
+
+        output << insertTabs(tabLevel + 1) << QStringLiteral("}") << endl;
+    }
+
+    output << insertTabs(tabLevel) << QStringLiteral("}") << endl << endl;
+}
+
 QString UipImporter::processUipPresentation(UipPresentation *presentation, const QString &ouputFilePath)
 {
     m_referencedMaterials.clear();
     m_aliasNodes.clear();
+    m_presentation = presentation;
 
     // create one component per layer
     GraphObject *layer = presentation->scene()->firstChild();
@@ -304,6 +392,7 @@ QString UipImporter::processUipPresentation(UipPresentation *presentation, const
             QTextStream output(&qmlFile);
 
             output << "import QtDemon 1.0" << endl;
+            output << "import QtQuick.Timeline 1.0" << endl;
             output << "import \"./materials\" as Materials" << endl << endl;
 
             processNode(layer, output, 0, false);
@@ -350,6 +439,8 @@ QString UipImporter::processUipPresentation(UipPresentation *presentation, const
             id.remove(0, 1);
         generateAliasComponent(presentation->object(id.toUtf8()));
     }
+
+
 
     return QString();
 }
