@@ -9,82 +9,80 @@
 
 QT_BEGIN_NAMESPACE
 
-struct QDemonTimerEntry
+static uint qHash(const QDemonPerfTimer::Key &key)
 {
-    quint64 m_total = 0;
-    quint64 m_max = 0;
-    quint32 m_updateCount = 0;
-    QString m_tag;
-    size_t m_order = 0;
-
-    QDemonTimerEntry(const QString &tag, size_t order) : m_tag(tag), m_order(order) {}
-
-    QDemonTimerEntry() = default;
-
-    void update(quint64 increment)
-    {
-        m_total += increment;
-        m_max = increment > m_max ? increment : m_max;
-        ++m_updateCount;
+    const uchar *s = reinterpret_cast<const uchar *>(key.id);
+    uint h = 0;
+    while (*s) {
+        h = 31 * h + *s;
+        ++s;
     }
+    return h;
+}
+static bool operator==(const QDemonPerfTimer::Key &a, const QDemonPerfTimer::Key &b) { return !strcmp(a.id, b.id); }
 
-    void output(quint32 inFramesPassed) const
-    {
-        if (m_total) {
-            const quint64 tensNanos = QDemonTime::sCounterFreq.toTensOfNanos(m_total);
-            const quint64 maxNanos = QDemonTime::sCounterFreq.toTensOfNanos(m_max);
+static bool operator<(const QDemonPerfTimer::Entry &a, const QDemonPerfTimer::Entry &b) { return a.tag < b.tag; }
 
-            double milliseconds = tensNanos / 100000.0;
-            const double maxMilliseconds = maxNanos / 100000.0;
-            if (inFramesPassed == 0) {
-                qWarning("%s - %fms", qPrintable(m_tag), milliseconds);
-            } else {
-                milliseconds /= inFramesPassed;
-                qWarning("%s - %fms/frame-total %fms-max %u hits", qPrintable(m_tag), milliseconds, maxMilliseconds, m_updateCount);
-            }
-        }
-    }
+void QDemonPerfTimer::Entry::update(qint64 elapsed)
+{
+    totalTime += elapsed;
+    maxTime = qMax(maxTime, elapsed);
+    ++count;
+}
 
-    void reset()
-    {
-        m_total = 0;
-        m_max = 0;
-        m_updateCount = 0;
-    }
+void QDemonPerfTimer::Entry::reset()
+{
+    totalTime = 0;
+    maxTime = 0;
+    count = 0;
+}
 
-    bool operator<(const QDemonTimerEntry &other) const { return m_order < other.m_order; }
-};
+QString QDemonPerfTimer::Entry::toString(quint32 inFramesPassed) const
+{
+    if (!count)
+        return QString();
+
+
+    const double milliseconds = totalTime / 1000000.0;
+    const double maxMilliseconds = maxTime / 1000000.0;
+    if (inFramesPassed == 0)
+        return QString::fromLatin1("%1 - %2ms").arg(tag).arg(milliseconds);
+
+    return QString::fromLatin1("%1 - %2ms/frame; %3ms max; %4 hits").arg(tag).arg(milliseconds/inFramesPassed).arg(maxMilliseconds).arg(count);
+}
+
 
 QDemonPerfTimer::QDemonPerfTimer() = default;
 
 QDemonPerfTimer::~QDemonPerfTimer() = default;
 
-void QDemonPerfTimer::update(const char *inId, quint64 inAmount)
+void QDemonPerfTimer::update(const char *inId, qint64 elapsed)
 {
     QMutexLocker locker(&mutex);
-    QString theStr = QString::fromLocal8Bit(inId);
-    auto it = entries.find(inId);
+    auto it = entries.find(Key{inId});
     if (it == entries.end())
-        it = entries.insert(inId, QDemonTimerEntry(inId, entries.size()));
-    it.value().update(inAmount);
+        it = entries.insert(Key{inId}, Entry(QString::fromUtf8(inId)));
+    it.value().update(elapsed);
 }
 
-void QDemonPerfTimer::outputTimerData(quint32 inFramesPassed)
+void QDemonPerfTimer::dump(quint32 inFramesPassed)
 {
     QMutexLocker locker(&mutex);
-    printEntries.clear();
-    for (Map::iterator iter = entries.begin(), end = entries.end(); iter != end; ++iter) {
-        printEntries.push_back(iter.value());
+    QVector<QDemonPerfTimer::Entry> allEntries;
+    for (auto iter = entries.begin(), end = entries.end(); iter != end; ++iter) {
+        allEntries.push_back(iter.value());
         iter.value().reset();
     }
 
-    std::sort(printEntries.begin(), printEntries.end());
+    std::sort(allEntries.begin(), allEntries.end());
 
-    for (const auto &printEntry : qAsConst(printEntries))
-        printEntry.output(inFramesPassed);
+    qDebug() << "performance data:";
+    for (const auto &e: qAsConst(allEntries))
+        qDebug() << "    " << e.toString(inFramesPassed).toUtf8().constData();
+    qDebug() << "";
 }
 
-void QDemonPerfTimer::resetTimerData()
+void QDemonPerfTimer::reset()
 {
     QMutexLocker locker(&mutex);
     auto iter = entries.begin();

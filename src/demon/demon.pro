@@ -14,15 +14,13 @@ HEADERS += \
     qdemondataref.h \
     qdemonoption.h \
     qdemoninvasivelinkedlist.h \
-    qdemonperftimer.h \
-    qdemontime.h
+    qdemonperftimer.h
 
 SOURCES += \
     qdemonbounds3.cpp \
     qdemonplane.cpp \
     qdemonutils.cpp \
     qdemondataref.cpp \
-    qdemonperftimer.cpp \
-    qdemontime.cpp
+    qdemonperftimer.cpp
 
 load(qt_module)

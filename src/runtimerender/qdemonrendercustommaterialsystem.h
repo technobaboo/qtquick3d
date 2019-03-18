@@ -87,7 +87,7 @@ private:
     QVector<AllocatedImageEntry> allocatedImages;
     bool useFastBlits = true;
     QString shaderNameBuilder;
-    quint64 lastFrameTime = 0;
+    QElapsedTimer lastFrameTime;
     float msSinceLastFrame = 0;
 
     void releaseBuffer(qint32 inIdx);

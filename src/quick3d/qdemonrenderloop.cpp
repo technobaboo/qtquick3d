@@ -13,6 +13,9 @@
 
 QT_BEGIN_NAMESPACE
 
+static bool dumpTimingInfo = false;
+static int frameCount = 0;
+
 QDemonRenderLoop *QDemonRenderLoop::s_instance = nullptr;
 // extern bool qsg_useConsistentTiming();
 
@@ -62,7 +65,10 @@ public:
 
 #include "qdemonrenderloop.moc"
 
-QDemonRenderLoop::~QDemonRenderLoop() {}
+QDemonRenderLoop::~QDemonRenderLoop()
+{
+    dumpTimingInfo = !qgetenv("QUICK3D_PERFTIMERS").isEmpty();
+}
 
 void QDemonRenderLoop::postJob(QDemonWindow *window, QRunnable *job)
 {
@@ -384,6 +390,11 @@ void QDemonGuiThreadRenderLoop::releaseResources(QDemonWindow *w)
 void QDemonGuiThreadRenderLoop::handleUpdateRequest(QDemonWindow *window)
 {
     renderWindow(window);
+
+    if (++frameCount == 60  ) {
+        m_contextCore->getPerfTimer()->dump(frameCount);
+        frameCount = 0;
+    }
 }
 
 QT_END_NAMESPACE

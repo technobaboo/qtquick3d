@@ -29,7 +29,6 @@
 ****************************************************************************/
 #include "qdemonrendercustommaterialsystem.h"
 
-#include <QtDemon/qdemontime.h>
 #include <QtDemon/qdemonutils.h>
 
 #include <QtDemonRender/qdemonrendercontext.h>
@@ -1866,12 +1865,10 @@ void QDemonMaterialSystem::onMaterialActivationChange(const QDemonRenderCustomMa
 
 void QDemonMaterialSystem::endFrame()
 {
-    quint64 currentFrameTime = QDemonTime::getCurrentTimeInTensOfNanoSeconds();
-    if (lastFrameTime) {
-        quint64 timePassed = currentFrameTime - lastFrameTime;
-        msSinceLastFrame = static_cast<float>(timePassed / 100000.0);
-    }
-    lastFrameTime = currentFrameTime;
+    if (lastFrameTime.elapsed() != 0)
+        msSinceLastFrame = lastFrameTime.elapsed()/1000000.0;
+
+    lastFrameTime.restart();
 }
 
 void QDemonMaterialSystem::setRenderContextInterface(QDemonRenderContextInterface *inContext)
