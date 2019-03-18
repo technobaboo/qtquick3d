@@ -25,6 +25,7 @@ public:
         Entry(const QString &id)
             : tag(id)
         {}
+        Entry() = default;
 
         void update(qint64 elapsed);
         void reset();

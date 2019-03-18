@@ -49,6 +49,7 @@
 #include <QtDemonRuntimeRender/qdemonvertexpipelineimpl.h>
 #include <QtDemonRuntimeRender/qdemonrendererimpllayerrenderdata.h>
 #include <QtDemonRuntimeRender/qdemonrendermodel.h>
+#include <QtDemonRuntimeRender/qdemonrenderprefiltertexture.h>
 
 QT_BEGIN_NAMESPACE
 

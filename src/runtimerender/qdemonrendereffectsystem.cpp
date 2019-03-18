@@ -44,6 +44,7 @@
 #include <QtDemonRuntimeRender/qdemonoffscreenrendermanager.h>
 #include <QtDemonRuntimeRender/qdemonrendershadercache.h>
 #include <QtDemonRuntimeRender/qdemonrendererutil.h>
+#include <QtDemonRuntimeRender/qdemonrenderprefiltertexture.h>
 #include <qdemonoffscreenrenderkey.h>
 #include <qdemonrenderdynamicobjectsystemutil.h>
 
