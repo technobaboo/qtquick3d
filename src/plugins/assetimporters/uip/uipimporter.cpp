@@ -304,10 +304,9 @@ QString UipImporter::processUipPresentation(UipPresentation *presentation, const
             QTextStream output(&qmlFile);
 
             output << "import QtDemon 1.0" << endl;
-            output << "import \"./materials\" as Materials" << endl;
-            output << "import \"./aliases\" as Aliases" << endl << endl;
+            output << "import \"./materials\" as Materials" << endl << endl;
 
-            processNode(layer, output, 0);
+            processNode(layer, output, 0, false);
 
             qmlFile.close();
             m_generatedFiles += targetFile;
@@ -327,16 +326,18 @@ QString UipImporter::processUipPresentation(UipPresentation *presentation, const
         layer = layer->nextSibling();
     }
 
-    // create component type folder
-    m_exportPath.mkdir("materials");
-    m_exportPath.mkdir("aliases");
+   // create aliases folder
+    if (m_referencedMaterials.count() > 0) {
+        m_exportPath.mkdir("materials");
+    }
 
+    if (m_aliasNodes.count() > 0) {
+        m_exportPath.mkdir("aliases");
+    }
 
-    // create aliases folder
 
     // Generate Alias, and ReferenceMaterials (2nd pass)
     for (auto material : m_referencedMaterials) {
-        // Find the material being referenced
         QString id = material->m_referencedMaterial_unresolved;
         if (id.startsWith("#"))
             id.remove(0, 1);
