@@ -955,11 +955,9 @@ void QDemonLayerRenderData::render(QDemonResourceFrameBuffer *theFB)
 
 void QDemonLayerRenderData::createGpuProfiler()
 {
-    //        if (renderer->getContext().isTimerQuerySupported()) {
-    //            m_layerProfilerGpu = QDemonRenderProfilerInterface::createGpuProfiler(
-    //                        renderer->getContext().getFoundation(), renderer.getDemonContext(),
-    //                        renderer->getContext());
-    //        }
+    if (renderer->context()->supportsTimerQuery()) {
+        m_layerProfilerGpu.reset(new QDemonRenderGPUProfiler(renderer->demonContext(), renderer->context()));
+    }
 }
 
 void QDemonLayerRenderData::startProfiling(QString &nameID, bool sync)

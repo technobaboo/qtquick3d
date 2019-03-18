@@ -39,15 +39,13 @@
 
 QT_BEGIN_NAMESPACE
 
-namespace {
-
 struct QDemonGpuTimerInfo
 {
     QAtomicInt ref;
-    bool m_absoluteTime{ false };
-    quint16 m_writeID{ 0 };
-    quint16 m_readID{ 0 };
-    quint16 m_averageTimeWriteID{ 0 };
+    bool m_absoluteTime = false;
+    quint8 m_writeID = 0;
+    quint8 m_readID = 0;
+    quint8 m_averageTimeWriteID = 0;
     quint64 m_averageTime[10];
     quint32 m_frameID[RECORDED_FRAME_DELAY];
     QDemonRef<QDemonRenderTimerQuery> m_timerStartQueryObjects[RECORDED_FRAME_DELAY];
@@ -100,17 +98,17 @@ struct QDemonGpuTimerInfo
         m_timerSyncObjects[m_writeID]->wait();
     }
 
-    double GetAveragedElapsedTimeInMs()
+    double averagedElapsedTimeInMs()
     {
-        double time = double(((m_averageTime[0] + m_averageTime[1] + m_averageTime[2] + m_averageTime[3] + m_averageTime[4]
+        double time = double((m_averageTime[0] + m_averageTime[1] + m_averageTime[2] + m_averageTime[3] + m_averageTime[4]
                                + m_averageTime[5] + m_averageTime[6] + m_averageTime[7] + m_averageTime[8] + m_averageTime[9])
                               / 10)
-                             / 1e06);
+                             / double(1.0e06);
 
         return time;
     }
 
-    double getElapsedTimeInMs(quint32 frameID)
+    double elapsedTimeInMs(quint32 frameID)
     {
         double time = 0;
 
@@ -135,114 +133,93 @@ struct QDemonGpuTimerInfo
         incrementReadCounter();
         incrementAveragedWriteCounter();
 
-        return GetAveragedElapsedTimeInMs();
+        return averagedElapsedTimeInMs();
     }
 };
 
-class QDemonRenderGpuProfiler : public QDemonRenderProfilerInterface
+
+QDemonRenderGPUProfiler::QDemonRenderGPUProfiler(const QDemonRef<QDemonRenderContextInterface> &inContext, const QDemonRef<QDemonRenderContext> &inRenderContext)
+    : m_renderContext(inRenderContext), m_context(inContext), m_vertexCount(0)
 {
-    typedef QHash<QString, QDemonRef<QDemonGpuTimerInfo>> TStrGpuTimerInfoMap;
-
-private:
-    QDemonRef<QDemonRenderContext> m_renderContext;
-    QDemonRenderContextInterface *m_context;
-
-    TStrGpuTimerInfoMap m_strToGpuTimerMap;
-    QDemonRenderProfilerInterface::TStrIDVec m_strToIDVec;
-    mutable quint32 m_vertexCount;
-
-public:
-    QDemonRenderGpuProfiler(QDemonRenderContextInterface *inContext, const QDemonRef<QDemonRenderContext> &inRenderContext)
-        : m_renderContext(inRenderContext), m_context(inContext), m_vertexCount(0)
-    {
-    }
-
-    virtual ~QDemonRenderGpuProfiler() { m_strToGpuTimerMap.clear(); }
-
-    void startTimer(QString &nameID, bool absoluteTime, bool sync) override
-    {
-        QDemonRef<QDemonGpuTimerInfo> theGpuTimerData = getOrCreateGpuTimerInfo(nameID);
-
-        if (theGpuTimerData) {
-            if (sync)
-                theGpuTimerData->addSync();
-
-            theGpuTimerData->m_absoluteTime = absoluteTime;
-            theGpuTimerData->startTimerQuery(m_context->getFrameCount());
-        }
-    }
-
-    void endTimer(QString &nameID) override
-    {
-        QDemonRef<QDemonGpuTimerInfo> theGpuTimerData = getOrCreateGpuTimerInfo(nameID);
-
-        if (theGpuTimerData) {
-            theGpuTimerData->endTimerQuery();
-        }
-    }
-
-    double getElapsedTime(const QString &nameID) const override
-    {
-        double time = 0;
-        QDemonRef<QDemonGpuTimerInfo> theGpuTimerData = getGpuTimerInfo(nameID);
-
-        if (theGpuTimerData) {
-            time = theGpuTimerData->getElapsedTimeInMs(m_context->getFrameCount());
-        }
-
-        return time;
-    }
-
-    const TStrIDVec &getTimerIDs() const override { return m_strToIDVec; }
-
-    void addVertexCount(quint32 count) override { m_vertexCount += count; }
-
-    quint32 getAndResetTriangleCount() const override
-    {
-        quint32 tris = m_vertexCount / 3;
-        m_vertexCount = 0;
-        return tris;
-    }
-
-private:
-    QDemonRef<QDemonGpuTimerInfo> getOrCreateGpuTimerInfo(QString &nameID)
-    {
-        TStrGpuTimerInfoMap::const_iterator theIter = m_strToGpuTimerMap.find(nameID);
-        if (theIter != m_strToGpuTimerMap.end())
-            return theIter.value();
-
-        QDemonRef<QDemonGpuTimerInfo> theGpuTimerData = QDemonRef<QDemonGpuTimerInfo>(new QDemonGpuTimerInfo());
-
-        if (theGpuTimerData) {
-            // create queries
-            for (quint32 i = 0; i < RECORDED_FRAME_DELAY; i++) {
-                theGpuTimerData->m_timerStartQueryObjects[i] = QDemonRenderTimerQuery::create(m_renderContext);
-                theGpuTimerData->m_timerEndQueryObjects[i] = QDemonRenderTimerQuery::create(m_renderContext);
-                theGpuTimerData->m_timerSyncObjects[i] = QDemonRenderSync::create(m_renderContext);
-                theGpuTimerData->m_frameID[i] = 0;
-            }
-            m_strToGpuTimerMap.insert(nameID, theGpuTimerData);
-            m_strToIDVec.push_back(nameID);
-        }
-
-        return theGpuTimerData;
-    }
-
-    QDemonRef<QDemonGpuTimerInfo> getGpuTimerInfo(const QString &nameID) const
-    {
-        TStrGpuTimerInfoMap::const_iterator theIter = m_strToGpuTimerMap.find(nameID);
-        if (theIter != m_strToGpuTimerMap.end())
-            return theIter.value();
-
-        return nullptr;
-    }
-};
 }
 
-QDemonRef<QDemonRenderProfilerInterface> QDemonRenderProfilerInterface::createGpuProfiler(QDemonRenderContextInterface *inContext,
-                                                                                          const QDemonRef<QDemonRenderContext> &inRenderContext)
+QDemonRenderGPUProfiler::~QDemonRenderGPUProfiler() { m_strToGpuTimerMap.clear(); }
+
+void QDemonRenderGPUProfiler::startTimer(QString &nameID, bool absoluteTime, bool sync)
 {
-    return QDemonRef<QDemonRenderProfilerInterface>(new QDemonRenderGpuProfiler(inContext, inRenderContext));
+    QDemonRef<QDemonGpuTimerInfo> theGpuTimerData = getOrCreateGpuTimerInfo(nameID);
+
+    if (theGpuTimerData) {
+        if (sync)
+            theGpuTimerData->addSync();
+
+        theGpuTimerData->m_absoluteTime = absoluteTime;
+        theGpuTimerData->startTimerQuery(m_context->getFrameCount());
+    }
+}
+
+void QDemonRenderGPUProfiler::endTimer(QString &nameID)
+{
+    QDemonRef<QDemonGpuTimerInfo> theGpuTimerData = getOrCreateGpuTimerInfo(nameID);
+
+    if (theGpuTimerData) {
+        theGpuTimerData->endTimerQuery();
+    }
+}
+
+double QDemonRenderGPUProfiler::elapsed(const QString &nameID) const
+{
+    double time = 0;
+    QDemonRef<QDemonGpuTimerInfo> theGpuTimerData = getGpuTimerInfo(nameID);
+
+    if (theGpuTimerData) {
+        time = theGpuTimerData->elapsedTimeInMs(m_context->getFrameCount());
+    }
+
+    return time;
+}
+
+const QVector<QString> &QDemonRenderGPUProfiler::timerIDs() const { return m_timerIds; }
+
+void QDemonRenderGPUProfiler::addVertexCount(quint32 count) { m_vertexCount += count; }
+
+quint32 QDemonRenderGPUProfiler::getAndResetVertexCount() const
+{
+    quint32 v = m_vertexCount;
+    m_vertexCount = 0;
+    return v;
+}
+
+QDemonRef<QDemonGpuTimerInfo> QDemonRenderGPUProfiler::getOrCreateGpuTimerInfo(QString &nameID)
+{
+    TStrGpuTimerInfoMap::const_iterator theIter = m_strToGpuTimerMap.find(nameID);
+    if (theIter != m_strToGpuTimerMap.end())
+        return theIter.value();
+
+    QDemonRef<QDemonGpuTimerInfo> theGpuTimerData = QDemonRef<QDemonGpuTimerInfo>(new QDemonGpuTimerInfo());
+
+    if (theGpuTimerData) {
+        // create queries
+        for (quint32 i = 0; i < RECORDED_FRAME_DELAY; i++) {
+            theGpuTimerData->m_timerStartQueryObjects[i] = QDemonRenderTimerQuery::create(m_renderContext);
+            theGpuTimerData->m_timerEndQueryObjects[i] = QDemonRenderTimerQuery::create(m_renderContext);
+            theGpuTimerData->m_timerSyncObjects[i] = QDemonRenderSync::create(m_renderContext);
+            theGpuTimerData->m_frameID[i] = 0;
+        }
+        m_strToGpuTimerMap.insert(nameID, theGpuTimerData);
+        m_timerIds.push_back(nameID);
+    }
+
+    return theGpuTimerData;
+}
+
+QDemonRef<QDemonGpuTimerInfo> QDemonRenderGPUProfiler::getGpuTimerInfo(const QString &nameID) const
+{
+    TStrGpuTimerInfoMap::const_iterator theIter = m_strToGpuTimerMap.find(nameID);
+    if (theIter != m_strToGpuTimerMap.end())
+        return theIter.value();
+
+    return nullptr;
 }
 
 QT_END_NAMESPACE

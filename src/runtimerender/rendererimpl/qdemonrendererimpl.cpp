@@ -1522,16 +1522,16 @@ void QDemonRendererImpl::dumpGpuProfilerStats()
         const QDemonRenderLayer *theLayer = &theLayerRenderData->layer;
 
         if (theLayer->flags.testFlag(QDemonRenderLayer::Flag::Active) && theLayerRenderData->m_layerProfilerGpu) {
-            const QDemonRenderProfilerInterface::TStrIDVec &idList = theLayerRenderData->m_layerProfilerGpu->getTimerIDs();
+            const QVector<QString> &idList = theLayerRenderData->m_layerProfilerGpu->timerIDs();
             if (!idList.empty()) {
                 qDebug() << theLayer->id;
-                QDemonRenderProfilerInterface::TStrIDVec::const_iterator theIdIter = idList.begin();
+                auto theIdIter = idList.begin();
                 for (theIdIter = idList.begin(); theIdIter != idList.end(); theIdIter++) {
                     char messageLine[1024];
                     sprintf(messageLine,
                             "%s: %.3f ms",
                             theIdIter->toLatin1().constData(),
-                            theLayerRenderData->m_layerProfilerGpu->getElapsedTime(*theIdIter));
+                            theLayerRenderData->m_layerProfilerGpu->elapsed(*theIdIter));
                     qDebug() << "    " << messageLine;
                 }
             }

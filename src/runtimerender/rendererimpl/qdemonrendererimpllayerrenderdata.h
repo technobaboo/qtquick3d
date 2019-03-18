@@ -71,7 +71,7 @@ struct QDemonLayerRenderData : public QDemonLayerRenderPreparationData
     QDemonOffscreenRendererEnvironment m_lastOffscreenRenderEnvironment;
 
     // GPU profiler per layer
-    QDemonRef<QDemonRenderProfilerInterface> m_layerProfilerGpu;
+    QScopedPointer<QDemonRenderGPUProfiler> m_layerProfilerGpu;
 
     QDemonRenderCamera m_sceneCamera;
     QVector2D m_sceneDimensions;

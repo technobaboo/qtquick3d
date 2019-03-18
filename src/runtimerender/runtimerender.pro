@@ -8,6 +8,7 @@ include(rendererimpl/rendererimpl.pri)
 include(resourcemanager/resourcemanager.pri)
 
 HEADERS += \
+    qdemonrendergpuprofiler.h \
     qtdemonruntimerenderglobal.h \
     qtdemonruntimerenderglobal_p.h \
 #    qdemonqmlrender.h \
@@ -44,7 +45,6 @@ HEADERS += \
 #    qdemonrenderplugincinterface.h \
 #    qdemonrenderplugingraphobject.h \
 #    qdemonrenderpluginpropertyvalue.h \
-    qdemonrenderprofiler.h \
     qdemonrenderray.h \
     qdemonrenderrenderlist.h \
     qdemonrendershadercache.h \

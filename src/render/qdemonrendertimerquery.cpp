@@ -67,7 +67,7 @@ void QDemonRenderTimerQuery::setTimerQuery()
 
 QDemonRef<QDemonRenderTimerQuery> QDemonRenderTimerQuery::create(const QDemonRef<QDemonRenderContext> &context)
 {
-    if (!context->isupportsTimerQuery())
+    if (!context->supportsTimerQuery())
         return nullptr;
 
     return QDemonRef<QDemonRenderTimerQuery>(new QDemonRenderTimerQuery(context));

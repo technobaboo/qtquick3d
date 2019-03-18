@@ -364,7 +364,7 @@ public:
         return renderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::SampleQuery);
     }
 
-    bool isupportsTimerQuery() const
+    bool supportsTimerQuery() const
     {
         return renderBackendCap(QDemonRenderBackend::QDemonRenderBackendCaps::TimerQuery);
     }

@@ -40,14 +40,28 @@ QT_BEGIN_NAMESPACE
 
 class QDemonRenderContextInterface;
 class QDemonRenderContext;
+struct QDemonGpuTimerInfo;
 
-class QDemonRenderProfilerInterface
+class QDemonRenderGPUProfiler
 {
-public:
-    typedef QVector<QString> TStrIDVec;
+private:
+    QDemonRef<QDemonRenderContext> m_renderContext;
+    QDemonRef<QDemonRenderContextInterface> m_context;
 
-    QAtomicInt ref;
-    virtual ~QDemonRenderProfilerInterface() {}
+    typedef QHash<QString, QDemonRef<QDemonGpuTimerInfo>> TStrGpuTimerInfoMap;
+
+    TStrGpuTimerInfoMap m_strToGpuTimerMap;
+    QVector<QString> m_timerIds;
+    mutable quint32 m_vertexCount;
+
+    QDemonRef<QDemonGpuTimerInfo> getOrCreateGpuTimerInfo(QString &nameID);
+    QDemonRef<QDemonGpuTimerInfo> getGpuTimerInfo(const QString &nameID) const;
+
+public:
+
+    QDemonRenderGPUProfiler(const QDemonRef<QDemonRenderContextInterface> &inContext, const QDemonRef<QDemonRenderContext> &inRenderContext);
+    ~QDemonRenderGPUProfiler();
+
     /**
      * @brief start a timer query
      *
@@ -57,7 +71,7 @@ public:
      *
      * @return no return
      */
-    virtual void startTimer(QString &nameID, bool absoluteTime, bool sync) = 0;
+    void startTimer(QString &nameID, bool absoluteTime, bool sync);
 
     /**
      * @brief stop a timer query
@@ -66,7 +80,7 @@ public:
      *
      * @return no return
      */
-    virtual void endTimer(QString &nameID) = 0;
+    void endTimer(QString &nameID);
 
     /**
      * @brief Get elapsed timer value. Not this is an averaged time over several frames
@@ -75,31 +89,28 @@ public:
      *
      * @return no return
      */
-    virtual double getElapsedTime(const QString &nameID) const = 0;
+    double elapsed(const QString &nameID) const;
 
     /**
      * @brief Get ID list of tracked timers
      *
      * @return ID list
      */
-    virtual const TStrIDVec &getTimerIDs() const = 0;
+    const QVector<QString> &timerIDs() const;
 
     /**
      * @brief add vertex count to current counter
      *
      * @return
      */
-    virtual void addVertexCount(quint32 count) = 0;
+    void addVertexCount(quint32 count);
 
     /**
      * @brief get current vertex count and reset
      *
      * @return
      */
-    virtual quint32 getAndResetTriangleCount() const = 0;
-
-    static QDemonRef<QDemonRenderProfilerInterface> createGpuProfiler(QDemonRenderContextInterface *inContext,
-                                                                      const QDemonRef<QDemonRenderContext> &inRenderContext);
+    quint32 getAndResetVertexCount() const;
 };
 QT_END_NAMESPACE
 
