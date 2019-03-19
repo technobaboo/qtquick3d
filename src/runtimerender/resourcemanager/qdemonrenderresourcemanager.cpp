@@ -164,7 +164,7 @@ struct QDemonResourceManager : public QDemonResourceManagerInterface
 
                 // note we could re-use a former MSAA texture
                 // this causes a entiere destroy of the previous texture object
-                theTexture->SetTextureData( QDemonDataRef<quint8>(), 0, inWidth, inHeight, inTextureFormat
+                theTexture->SetTextureData( QDemonByteRef(), 0, inWidth, inHeight, inTextureFormat
         );
 
                 return SetupAllocatedTexture( *theTexture );
@@ -177,7 +177,7 @@ struct QDemonResourceManager : public QDemonResourceManagerInterface
         else if (immutable)
             theTexture->setTextureStorage(1, inWidth, inHeight, inTextureFormat);
         else
-            theTexture->setTextureData(QDemonDataRef<quint8>(), 0, inWidth, inHeight, inTextureFormat);
+            theTexture->setTextureData(QDemonByteRef(), 0, inWidth, inHeight, inTextureFormat);
 
         return setupAllocatedTexture(theTexture);
     }
@@ -219,7 +219,7 @@ struct QDemonResourceManager : public QDemonResourceManagerInterface
 
             // note we could re-use a former MSAA texture
             // this causes a entiere destroy of the previous texture object
-            theTexture->setTextureData(QDemonDataRef<quint8>(), 0, inWidth, inHeight, inSlices, inTextureFormat);
+            theTexture->setTextureData(QDemonByteRef(), 0, inWidth, inHeight, inSlices, inTextureFormat);
             theTexture->setMinFilter(QDemonRenderTextureMinifyingOp::Linear);
             theTexture->setMagFilter(QDemonRenderTextureMagnifyingOp::Linear);
             return theTexture;
@@ -230,7 +230,7 @@ struct QDemonResourceManager : public QDemonResourceManagerInterface
 
         if (!inMultisample) {
             theTexture = new QDemonRenderTexture2DArray(renderContext);
-            theTexture->setTextureData(QDemonDataRef<quint8>(), 0, inWidth, inHeight, inSlices, inTextureFormat);
+            theTexture->setTextureData(QDemonByteRef(), 0, inWidth, inHeight, inSlices, inTextureFormat);
         } else {
             // Not supported yet
             return nullptr;
@@ -277,12 +277,12 @@ struct QDemonResourceManager : public QDemonResourceManagerInterface
 
             // note we could re-use a former MSAA texture
             // this causes a entire destroy of the previous texture object
-            theTexture->setTextureData(QDemonDataRef<quint8>(), 0, QDemonRenderTextureCubeFace::CubePosX, inWidth, inHeight, inTextureFormat);
-            theTexture->setTextureData(QDemonDataRef<quint8>(), 0, QDemonRenderTextureCubeFace::CubeNegX, inWidth, inHeight, inTextureFormat);
-            theTexture->setTextureData(QDemonDataRef<quint8>(), 0, QDemonRenderTextureCubeFace::CubePosY, inWidth, inHeight, inTextureFormat);
-            theTexture->setTextureData(QDemonDataRef<quint8>(), 0, QDemonRenderTextureCubeFace::CubeNegY, inWidth, inHeight, inTextureFormat);
-            theTexture->setTextureData(QDemonDataRef<quint8>(), 0, QDemonRenderTextureCubeFace::CubePosZ, inWidth, inHeight, inTextureFormat);
-            theTexture->setTextureData(QDemonDataRef<quint8>(), 0, QDemonRenderTextureCubeFace::CubeNegZ, inWidth, inHeight, inTextureFormat);
+            theTexture->setTextureData(QDemonByteRef(), 0, QDemonRenderTextureCubeFace::CubePosX, inWidth, inHeight, inTextureFormat);
+            theTexture->setTextureData(QDemonByteRef(), 0, QDemonRenderTextureCubeFace::CubeNegX, inWidth, inHeight, inTextureFormat);
+            theTexture->setTextureData(QDemonByteRef(), 0, QDemonRenderTextureCubeFace::CubePosY, inWidth, inHeight, inTextureFormat);
+            theTexture->setTextureData(QDemonByteRef(), 0, QDemonRenderTextureCubeFace::CubeNegY, inWidth, inHeight, inTextureFormat);
+            theTexture->setTextureData(QDemonByteRef(), 0, QDemonRenderTextureCubeFace::CubePosZ, inWidth, inHeight, inTextureFormat);
+            theTexture->setTextureData(QDemonByteRef(), 0, QDemonRenderTextureCubeFace::CubeNegZ, inWidth, inHeight, inTextureFormat);
             theTexture->setMinFilter(QDemonRenderTextureMinifyingOp::Linear);
             theTexture->setMagFilter(QDemonRenderTextureMagnifyingOp::Linear);
             return theTexture;
@@ -293,12 +293,12 @@ struct QDemonResourceManager : public QDemonResourceManagerInterface
 
         if (!inMultisample) {
             theTexture = new QDemonRenderTextureCube(renderContext);
-            theTexture->setTextureData(QDemonDataRef<quint8>(), 0, QDemonRenderTextureCubeFace::CubePosX, inWidth, inHeight, inTextureFormat);
-            theTexture->setTextureData(QDemonDataRef<quint8>(), 0, QDemonRenderTextureCubeFace::CubeNegX, inWidth, inHeight, inTextureFormat);
-            theTexture->setTextureData(QDemonDataRef<quint8>(), 0, QDemonRenderTextureCubeFace::CubePosY, inWidth, inHeight, inTextureFormat);
-            theTexture->setTextureData(QDemonDataRef<quint8>(), 0, QDemonRenderTextureCubeFace::CubeNegY, inWidth, inHeight, inTextureFormat);
-            theTexture->setTextureData(QDemonDataRef<quint8>(), 0, QDemonRenderTextureCubeFace::CubePosZ, inWidth, inHeight, inTextureFormat);
-            theTexture->setTextureData(QDemonDataRef<quint8>(), 0, QDemonRenderTextureCubeFace::CubeNegZ, inWidth, inHeight, inTextureFormat);
+            theTexture->setTextureData(QDemonByteRef(), 0, QDemonRenderTextureCubeFace::CubePosX, inWidth, inHeight, inTextureFormat);
+            theTexture->setTextureData(QDemonByteRef(), 0, QDemonRenderTextureCubeFace::CubeNegX, inWidth, inHeight, inTextureFormat);
+            theTexture->setTextureData(QDemonByteRef(), 0, QDemonRenderTextureCubeFace::CubePosY, inWidth, inHeight, inTextureFormat);
+            theTexture->setTextureData(QDemonByteRef(), 0, QDemonRenderTextureCubeFace::CubeNegY, inWidth, inHeight, inTextureFormat);
+            theTexture->setTextureData(QDemonByteRef(), 0, QDemonRenderTextureCubeFace::CubePosZ, inWidth, inHeight, inTextureFormat);
+            theTexture->setTextureData(QDemonByteRef(), 0, QDemonRenderTextureCubeFace::CubeNegZ, inWidth, inHeight, inTextureFormat);
         } else {
             // Not supported yet
             return nullptr;

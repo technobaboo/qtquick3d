@@ -84,8 +84,8 @@ QDemonRef<QDemonRenderInputAssembler> QDemonRenderExampleTools::createBox(QDemon
     // Vertex Buffer
     quint32 bufStride = 8 * sizeof(float);
     quint32 bufSize = bufStride * numVerts;
-    QDemonDataRef<quint8> vertData;
-    vertData = QDemonDataRef<quint8>(static_cast<quint8 *>(::malloc(bufSize)), bufSize);
+    QDemonByteRef vertData;
+    vertData = QDemonByteRef(static_cast<quint8 *>(::malloc(bufSize)), bufSize);
     quint8 *positions = (quint8 *)vertData.begin();
     quint8 *normals = positions + 3 * sizeof(float);
     quint8 *uvs = normals + 3 * sizeof(float);
@@ -115,8 +115,8 @@ QDemonRef<QDemonRenderInputAssembler> QDemonRenderExampleTools::createBox(QDemon
     // Index Buffer
     bufSize = numIndices * sizeof(quint16);
 
-    QDemonDataRef<quint8> indexData;
-    indexData = QDemonDataRef<quint8>( static_cast<quint8 *>(::malloc(bufSize)), bufSize);
+    QDemonByteRef indexData;
+    indexData = QDemonByteRef( static_cast<quint8 *>(::malloc(bufSize)), bufSize);
     quint16 *indices = reinterpret_cast<quint16 *>(indexData.begin());
     for (quint8 i = 0; i < 6; i++) {
         const quint16 base = i * 4;

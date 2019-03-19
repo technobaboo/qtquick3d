@@ -66,7 +66,7 @@ public:
                                const QByteArray &bufferName,
                                QDemonRenderBufferUsageType usageType,
                                size_t size,
-                               QDemonDataRef<quint8> data);
+                               QDemonByteRef data);
 
     ///< destructor
     virtual ~QDemonRenderConstantBuffer() override;
@@ -129,7 +129,7 @@ public:
      *
      * @return no return
      */
-    void updateParam(const char *name, QDemonDataRef<quint8> value);
+    void updateParam(const char *name, QDemonByteRef value);
 
     /**
      * @brief update a piece of memory directly within the constant buffer
@@ -146,7 +146,7 @@ public:
      *
      * @return no return
      */
-    void updateRaw(quint32 offset, QDemonDataRef<quint8> data);
+    void updateRaw(quint32 offset, QDemonByteRef data);
 
     /**
      * @brief get the buffer name
@@ -201,7 +201,7 @@ private:
     quint32 m_rangeStart = 0; ///< start offset of the range to update
     quint32 m_rangeEnd = std::numeric_limits<quint32>::max(); ///< end of the range to update
     qint32 m_maxBlockSize; ///< maximum size for a single constant buffer
-    QDemonDataRef<quint8> m_shadowCopy; ///< host copy of the data in the GPU
+    QDemonByteRef m_shadowCopy; ///< host copy of the data in the GPU
 };
 
 QT_END_NAMESPACE

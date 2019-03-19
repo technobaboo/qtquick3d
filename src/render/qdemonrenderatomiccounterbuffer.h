@@ -63,7 +63,7 @@ public:
                                     const QByteArray &bufferName,
                                     size_t size,
                                     QDemonRenderBufferUsageType usageType,
-                                    QDemonDataRef<quint8> data);
+                                    QDemonByteRef data);
 
     ///< destructor
     virtual ~QDemonRenderAtomicCounterBuffer() override;
@@ -106,7 +106,7 @@ public:
      *
      * @return no return
      */
-    void updateData(qint32 offset, QDemonDataRef<quint8> data);
+    void updateData(qint32 offset, QDemonByteRef data);
 
     /**
      * @brief add a parameter to the atomic counter buffer

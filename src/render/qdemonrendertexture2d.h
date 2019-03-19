@@ -76,7 +76,7 @@ public:
      *
      * @return No return.
      */
-    void setTextureData(QDemonDataRef<quint8> newBuffer,
+    void setTextureData(QDemonByteRef newBuffer,
                                 quint8 inMipLevel,
                                 qint32 width,
                                 qint32 height,
@@ -102,13 +102,13 @@ public:
                                    qint32 height,
                                    QDemonRenderTextureFormat formaInternal,
                                    QDemonRenderTextureFormat format = QDemonRenderTextureFormat::Unknown,
-                                   QDemonDataRef<quint8> dataBuffer = QDemonDataRef<quint8>());
+                                   QDemonByteRef dataBuffer = QDemonByteRef());
 
     void setTextureDataMultisample(qint32 sampleCount, qint32 width, qint32 height, QDemonRenderTextureFormat format);
 
     // Update a sub-rect of the image.  newBuffer is expected to be a continguous subrect of the
     // image.
-    void setTextureSubData(QDemonDataRef<quint8> newBuffer,
+    void setTextureSubData(QDemonByteRef newBuffer,
                                    quint8 inMipLevel,
                                    qint32 inXOffset,
                                    qint32 inYOffset,

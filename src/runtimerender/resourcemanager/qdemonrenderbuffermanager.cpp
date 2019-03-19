@@ -193,7 +193,7 @@ QDemonRenderImageTextureData QDemonBufferManager::loadRenderImage(QString inImag
             else
                 destFormat = QDemonRenderTextureFormat::RGBA16F;
         } else {
-            theTexture->setTextureData(QDemonDataRef<quint8>((quint8 *)inLoadedImage->data, inLoadedImage->dataSizeInBytes),
+            theTexture->setTextureData(QDemonByteRef((quint8 *)inLoadedImage->data, inLoadedImage->dataSizeInBytes),
                                        0,
                                        inLoadedImage->width,
                                        inLoadedImage->height,

@@ -269,7 +269,7 @@ struct QDemonApplyValue : public QDemonCommand
 {
     QString m_propertyName;
     QDemonRenderShaderDataType m_valueType;
-    QDemonDataRef<quint8> m_value;
+    QDemonByteRef m_value;
     QDemonApplyValue(QString inName, QDemonRenderShaderDataType inValueType)
         : QDemonCommand(CommandType::ApplyValue), m_propertyName(inName), m_valueType(inValueType)
     {

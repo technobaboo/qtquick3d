@@ -88,6 +88,8 @@ struct QDemonDataRef
     operator QDemonDataView<TDataType>() const { return QDemonDataView<TDataType>(mData, mSize); }
 };
 
+using QDemonByteRef = QDemonDataRef<quint8>;
+
 template<typename TDataType>
 inline QDemonDataRef<TDataType> toDataRef(TDataType &type)
 {
@@ -95,9 +97,9 @@ inline QDemonDataRef<TDataType> toDataRef(TDataType &type)
 }
 
 template<typename TDataType>
-inline QDemonDataRef<quint8> toU8DataRef(TDataType &type)
+inline QDemonByteRef toByteRef(TDataType &type)
 {
-    return QDemonDataRef<quint8>(reinterpret_cast<quint8 *>(&type), sizeof(TDataType));
+    return QDemonByteRef(reinterpret_cast<quint8 *>(&type), sizeof(TDataType));
 }
 
 template<typename TDataType>
@@ -107,9 +109,9 @@ inline QDemonDataRef<TDataType> toDataRef(TDataType *type, quint32 count)
 }
 
 template<typename TDataType>
-inline QDemonDataRef<quint8> toU8DataRef(TDataType *type, quint32 count)
+inline QDemonByteRef toByteRef(TDataType *type, quint32 count)
 {
-    return QDemonDataRef<quint8>(reinterpret_cast<quint8 *>(type), sizeof(TDataType) * count);
+    return QDemonByteRef(reinterpret_cast<quint8 *>(type), sizeof(TDataType) * count);
 }
 
 QT_END_NAMESPACE

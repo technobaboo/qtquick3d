@@ -84,7 +84,7 @@ struct QDemonWidgetBBox : public QDemonRenderWidgetInterface
         QDemonRenderVertexBufferEntry theEntry("attr_pos", QDemonRenderComponentType::Float16, 3);
         m_boxVertexBuffer = inContext.getOrCreateVertexBuffer(m_itemName,
                                                               3 * sizeof(float),
-                                                              toU8DataRef(thePoints.begin(), thePoints.size()));
+                                                              toByteRef(thePoints.begin(), thePoints.size()));
         m_boxIndexBuffer = inContext.getIndexBuffer(m_itemName);
         if (!m_boxIndexBuffer) {
             // The way the bounds lays out the bounds for the box
@@ -140,7 +140,7 @@ struct QDemonWidgetBBox : public QDemonRenderWidgetInterface
             m_boxIndexBuffer = inContext.getOrCreateIndexBuffer(m_itemName,
                                                                 QDemonRenderComponentType::UnsignedInteger8,
                                                                 sizeof(indexes),
-                                                                toU8DataRef(indexes, sizeof(indexes)));
+                                                                toByteRef(indexes, sizeof(indexes)));
         }
 
         m_boxInputAssembler = inContext.getInputAssembler(m_itemName);
@@ -231,7 +231,7 @@ struct QDemonWidgetAxis : public QDemonRenderWidgetInterface
 
         m_axisVertexBuffer = inContext.getOrCreateVertexBuffer(m_itemName,
                                                                6 * sizeof(float),
-                                                               toU8DataRef(theAxes.begin(), theAxes.size()));
+                                                               toByteRef(theAxes.begin(), theAxes.size()));
 
         if (!m_axisInputAssembler && m_axisVertexBuffer) {
             // create our attribute layout

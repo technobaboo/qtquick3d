@@ -51,7 +51,7 @@ protected:
     QDemonRef<QDemonRenderBackend> m_backend; ///< pointer to backend
     QDemonRenderBufferUsageType m_usageType; ///< usage type
     QDemonRenderBufferType m_type; ///< bind flags
-    QDemonDataRef<quint8> m_bufferData; ///< buffer data pointer
+    QDemonByteRef m_bufferData; ///< buffer data pointer
     quint32 m_bufferCapacity; ///< size of internal backup buffer (m_bufferData)
     size_t m_bufferSize; ///< size of buffer
     bool m_ownsData; ///< true when we own m_bufferData
@@ -77,7 +77,7 @@ public:
                            size_t size,
                            QDemonRenderBufferType bindFlags,
                            QDemonRenderBufferUsageType usageType,
-                           QDemonDataRef<quint8> data);
+                           QDemonByteRef data);
 
     virtual ~QDemonRenderDataBuffer();
 
@@ -122,7 +122,7 @@ public:
      *
      * @return Return mapped pointer to data
      */
-    virtual QDemonDataRef<quint8> mapBuffer();
+    virtual QDemonByteRef mapBuffer();
 
     /**
      * @brief Map a range of a  buffer
@@ -134,7 +134,7 @@ public:
      *
      * @return Return mapped pointer to data
      */
-    virtual QDemonDataRef<quint8> mapBufferRange(size_t offset, size_t size, QDemonRenderBufferAccessFlags flags);
+    virtual QDemonByteRef mapBufferRange(size_t offset, size_t size, QDemonRenderBufferAccessFlags flags);
 
     /**
      * @brief Unmap the buffer

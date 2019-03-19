@@ -55,8 +55,8 @@ QDemonRenderConstantBuffer::QDemonRenderConstantBuffer(const QDemonRef<QDemonRen
                                                        const QByteArray &bufferName,
                                                        QDemonRenderBufferUsageType usageType,
                                                        size_t size,
-                                                       QDemonDataRef<quint8> data)
-    : QDemonRenderDataBuffer(context, size, QDemonRenderBufferType::Constant, usageType, QDemonDataRef<quint8>())
+                                                       QDemonByteRef data)
+    : QDemonRenderDataBuffer(context, size, QDemonRenderBufferType::Constant, usageType, QDemonByteRef())
     , m_name(bufferName)
     , m_currentOffset(0)
     , m_currentSize(0)
@@ -82,7 +82,7 @@ QDemonRenderConstantBuffer::~QDemonRenderConstantBuffer()
     if (m_shadowCopy.size())
         ::free(m_shadowCopy.begin());
 
-    m_shadowCopy = QDemonDataRef<quint8>();
+    m_shadowCopy = QDemonByteRef();
 
     for (TRenderConstantBufferEntryMap::iterator iter = m_constantBufferEntryMap.begin(), end = m_constantBufferEntryMap.end();
          iter != end;
@@ -188,7 +188,7 @@ bool QDemonRenderConstantBuffer::setupBuffer(const QDemonRenderShaderProgram *pr
             ::free(m_shadowCopy.begin());
         }
         // set new one
-        m_shadowCopy = QDemonDataRef<quint8>(newMem, bufSize);
+        m_shadowCopy = QDemonByteRef(newMem, bufSize);
 
         m_hwBufferInitialized = true;
 
@@ -250,7 +250,7 @@ void QDemonRenderConstantBuffer::addParam(const QByteArray &name, QDemonRenderSh
     m_currentOffset += constantSize;
 }
 
-void QDemonRenderConstantBuffer::updateParam(const char *inName, QDemonDataRef<quint8> value)
+void QDemonRenderConstantBuffer::updateParam(const char *inName, QDemonByteRef value)
 {
     // allocate space if not done yet
     // NOTE this gets reallocated once we get the real constant buffer size from a program
@@ -273,7 +273,7 @@ void QDemonRenderConstantBuffer::updateParam(const char *inName, QDemonDataRef<q
     }
 }
 
-void QDemonRenderConstantBuffer::updateRaw(quint32 offset, QDemonDataRef<quint8> data)
+void QDemonRenderConstantBuffer::updateRaw(quint32 offset, QDemonByteRef data)
 {
     // allocate space if yet done
     if (!m_shadowCopy.size()) {
@@ -357,7 +357,7 @@ bool QDemonRenderConstantBuffer::allocateShadowBuffer(quint32 size)
     if (!newMem)
         return false;
 
-    m_shadowCopy = QDemonDataRef<quint8>(newMem, size);
+    m_shadowCopy = QDemonByteRef(newMem, size);
 
     m_bufferCapacity = size;
 

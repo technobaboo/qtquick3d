@@ -565,7 +565,7 @@ public:
     void setDrawBuffers(QDemonDataView<qint32> inDrawBufferSet);
     void setReadBuffer(QDemonReadFace inReadFace);
 
-    void readPixels(QRect inRect, QDemonRenderReadPixelFormat inFormat, QDemonDataRef<quint8> inWriteBuffer);
+    void readPixels(QRect inRect, QDemonRenderReadPixelFormat inFormat, QDemonByteRef inWriteBuffer);
 
     void setRenderTarget(QDemonRef<QDemonRenderFrameBuffer> inBuffer);
     void setReadTarget(QDemonRef<QDemonRenderFrameBuffer> inBuffer);

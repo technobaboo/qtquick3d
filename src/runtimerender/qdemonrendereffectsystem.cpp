@@ -132,14 +132,14 @@ struct QDemonAllocatedDataBufferEntry
     QString name;
     QDemonRef<QDemonRenderDataBuffer> dataBuffer;
     QDemonRenderBufferType bufferType;
-    QDemonDataRef<quint8> bufferData;
+    QDemonByteRef bufferData;
     QDemonAllocateBufferFlags flags;
     bool needsClear;
 
     QDemonAllocatedDataBufferEntry(const QString &inName,
                                    QDemonRenderDataBuffer &inDataBuffer,
                                    QDemonRenderBufferType inType,
-                                   const QDemonDataRef<quint8> &data,
+                                   const QDemonByteRef &data,
                                    QDemonAllocateBufferFlags inFlags)
         : name(inName), dataBuffer(&inDataBuffer), bufferType(inType), bufferData(data), flags(inFlags), needsClear(false)
     {
@@ -779,7 +779,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
             QDemonEffectContext &theContext(getEffectContext(inEffect));
             auto theRenderContext(m_context->getRenderContext());
             quint8 *initialData = (quint8 *)::malloc(theBufferSize);
-            QDemonDataRef<quint8> data((quint8 *)initialData, theBufferSize);
+            QDemonByteRef data((quint8 *)initialData, theBufferSize);
             memset(initialData, 0x0L, theBufferSize);
             if (inCommand.m_dataBufferType == QDemonRenderBufferType::Storage) {
                 theDataBuffer = new QDemonRenderStorageBuffer(theRenderContext, inCommand.m_name.toLocal8Bit(),
@@ -815,7 +815,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
                 theContext.m_allocatedDataBuffers.push_back(QDemonAllocatedDataBufferEntry(inCommand.m_wrapName,
                                                                                            *theDataWrapBuffer,
                                                                                            inCommand.m_dataBufferWrapType,
-                                                                                           QDemonDataRef<quint8>(),
+                                                                                           QDemonByteRef(),
                                                                                            inCommand.m_bufferFlags));
             }
         }
@@ -1267,7 +1267,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
                 if (bufferIdx < theContext.m_allocatedDataBuffers.size()) {
                     theBufferToBind = QDemonAllocatedDataBufferEntry(theContext.m_allocatedDataBuffers[bufferIdx]);
                     if (theBufferToBind.needsClear) {
-                        QDemonDataRef<quint8> pData = theBufferToBind.dataBuffer->mapBuffer();
+                        QDemonByteRef pData = theBufferToBind.dataBuffer->mapBuffer();
                         memset(pData.begin(), 0x0L, theBufferToBind.bufferData.size());
                         theBufferToBind.dataBuffer->unmapBuffer();
                         theBufferToBind.needsClear = false;
@@ -1745,7 +1745,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
     //        }
     //    }
 
-    //    void load(QDemonDataRef<quint8> inData, CStrTableOrDataRef inStrDataBlock,
+    //    void load(QDemonByteRef inData, CStrTableOrDataRef inStrDataBlock,
     //              const char *inProjectDir) override
     //    {
     //        m_Allocator.m_PreAllocatedBlock = inData;

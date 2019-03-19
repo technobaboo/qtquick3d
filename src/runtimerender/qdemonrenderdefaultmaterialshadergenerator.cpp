@@ -708,7 +708,7 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
             const size_t size = sizeof(QDemonLightSourceShader) * QDEMON_MAX_NUM_LIGHTS + (4 * sizeof(qint32));
             quint8 stackData[size];
             QDemonLightSourceShader *s = new (stackData) QDemonLightSourceShader[QDEMON_MAX_NUM_LIGHTS];
-            QDemonDataRef<quint8> cBuffer(stackData, size);
+            QDemonByteRef cBuffer(stackData, size);
             pCB = new QDemonRenderConstantBuffer(theContext, theName, QDemonRenderBufferUsageType::Static, size, cBuffer);
             if (!pCB) {
                 Q_ASSERT(false);
@@ -717,8 +717,8 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
             // init first set
             memset(&s[0], 0x0, sizeof(QDemonLightSourceShader));
             qint32 cgLights = 0;
-            pCB->updateRaw(0, QDemonDataRef<quint8>((quint8 *)&cgLights, sizeof(qint32)));
-            pCB->updateRaw(4 * sizeof(qint32), QDemonDataRef<quint8>((quint8 *)&s[0], sizeof(QDemonLightSourceShader)));
+            pCB->updateRaw(0, QDemonByteRef((quint8 *)&cgLights, sizeof(qint32)));
+            pCB->updateRaw(4 * sizeof(qint32), QDemonByteRef((quint8 *)&s[0], sizeof(QDemonLightSourceShader)));
             pCB->update(); // update to hardware
 
             m_constantBuffers.insert(theName, pCB);
@@ -1667,12 +1667,12 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
 
                 // this is our final change update memory
                 pLightCb->updateRaw(idx * sizeof(QDemonLightSourceShader) + (4 * sizeof(qint32)),
-                                    QDemonDataRef<quint8>((quint8 *)&shader->m_lights[idx].lightData, sizeof(QDemonLightSourceShader)));
+                                    QDemonByteRef((quint8 *)&shader->m_lights[idx].lightData, sizeof(QDemonLightSourceShader)));
             }
             // update light buffer to hardware
             if (pLightCb) {
                 qint32 cgLights = shader->m_lights.size();
-                pLightCb->updateRaw(0, QDemonDataRef<quint8>((quint8 *)&cgLights, sizeof(qint32)));
+                pLightCb->updateRaw(0, QDemonByteRef((quint8 *)&cgLights, sizeof(qint32)));
                 shader->m_lightsBuffer.set();
             }
         } else {

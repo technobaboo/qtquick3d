@@ -1040,12 +1040,12 @@ struct QDemonPathManager : public QDemonPathManagerInterface
             if ((!inPathBuffer.m_patchData) || inPathBuffer.m_patchData->size() < bufSize) {
                 inPathBuffer.m_patchData = new QDemonRenderVertexBuffer(theRenderContext, QDemonRenderBufferUsageType::Dynamic,
                                                                         bufSize, stride,
-                                                                        toU8DataRef(m_patchBuffer.data(), (quint32)m_patchBuffer.size()));
+                                                                        toByteRef(m_patchBuffer.data(), (quint32)m_patchBuffer.size()));
                 inPathBuffer.m_numVertexes = (quint32)m_patchBuffer.size();
                 inPathBuffer.m_inputAssembler = nullptr;
             } else {
                 Q_ASSERT(inPathBuffer.m_patchData->size() >= bufSize);
-                inPathBuffer.m_patchData->updateBuffer(toU8DataRef(m_patchBuffer.data(), (quint32)m_patchBuffer.size()));
+                inPathBuffer.m_patchData->updateBuffer(toByteRef(m_patchBuffer.data(), (quint32)m_patchBuffer.size()));
             }
 
             if (!inPathBuffer.m_inputAssembler) {
@@ -1393,12 +1393,12 @@ struct QDemonPathManager : public QDemonPathManagerInterface
 
             m_paintedRectVertexBuffer = new QDemonRenderVertexBuffer(theRenderContext, QDemonRenderBufferUsageType::Static,
                                                                      4 * sizeof(QVector2D), sizeof(QVector2D),
-                                                                     toU8DataRef(vertexes, 4));
+                                                                     toByteRef(vertexes, 4));
             m_paintedRectIndexBuffer = new QDemonRenderIndexBuffer(theRenderContext,
                                                                    QDemonRenderBufferUsageType::Static,
                                                                    QDemonRenderComponentType::UnsignedInteger8,
                                                                    6,
-                                                                   toU8DataRef(indexes, 6));
+                                                                   toByteRef(indexes, 6));
             QDemonRef<QDemonRenderAttribLayout> theAttribLayout = theRenderContext->createAttributeLayout(
                     toDataView(theBufferEntries, 1));
             m_paintedRectInputAssembler = theRenderContext->createInputAssembler(theAttribLayout,

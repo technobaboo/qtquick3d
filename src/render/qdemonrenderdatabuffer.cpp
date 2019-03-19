@@ -39,7 +39,7 @@ QDemonRenderDataBuffer::QDemonRenderDataBuffer(const QDemonRef<QDemonRenderConte
                                                size_t size,
                                                QDemonRenderBufferType bindFlags,
                                                QDemonRenderBufferUsageType usageType,
-                                               QDemonDataRef<quint8> data)
+                                               QDemonByteRef data)
     : m_context(context)
     , m_backend(context->backend())
     , m_usageType(usageType)
@@ -70,11 +70,11 @@ void QDemonRenderDataBuffer::releaseMemory()
         ::free(m_bufferData.begin());
     }
 
-    m_bufferData = QDemonDataRef<quint8>();
+    m_bufferData = QDemonByteRef();
     m_ownsData = false;
 }
 
-QDemonDataRef<quint8> QDemonRenderDataBuffer::mapBuffer()
+QDemonByteRef QDemonRenderDataBuffer::mapBuffer()
 {
     // don't map twice
     if (m_mapped) {
@@ -99,7 +99,7 @@ QDemonDataRef<quint8> QDemonRenderDataBuffer::mapBuffer()
     return m_bufferData;
 }
 
-QDemonDataRef<quint8> QDemonRenderDataBuffer::mapBufferRange(size_t offset, size_t size, QDemonRenderBufferAccessFlags flags)
+QDemonByteRef QDemonRenderDataBuffer::mapBufferRange(size_t offset, size_t size, QDemonRenderBufferAccessFlags flags)
 {
     // don't map twice
     if (m_mapped) {

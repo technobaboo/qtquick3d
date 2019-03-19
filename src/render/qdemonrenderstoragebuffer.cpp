@@ -39,7 +39,7 @@ QDemonRenderStorageBuffer::QDemonRenderStorageBuffer(const QDemonRef<QDemonRende
                                                      const QByteArray &bufferName,
                                                      QDemonRenderBufferUsageType usageType,
                                                      size_t size,
-                                                     QDemonDataRef<quint8> data,
+                                                     QDemonByteRef data,
                                                      QDemonRenderDataBuffer *pBuffer)
     : QDemonRenderDataBuffer(context, size, QDemonRenderBufferType::Storage, usageType, data)
     , m_name(bufferName)
@@ -83,7 +83,7 @@ void QDemonRenderStorageBuffer::update()
     }
 }
 
-void QDemonRenderStorageBuffer::updateData(qint32 offset, QDemonDataRef<quint8> data)
+void QDemonRenderStorageBuffer::updateData(qint32 offset, QDemonByteRef data)
 {
     // we only update the buffer if it is not just a wrapper
     if (!m_wrappedBuffer)

@@ -1234,7 +1234,7 @@ void QDemonRendererImpl::generateXYQuad()
     m_quadVertexBuffer = new QDemonRenderVertexBuffer(m_context, QDemonRenderBufferUsageType::Static,
                                                        20 * sizeof(float),
                                                        3 * sizeof(float) + 2 * sizeof(float),
-                                                       toU8DataRef(tempBuf, 20));
+                                                       toByteRef(tempBuf, 20));
 
     quint8 indexData[] = {
         0, 1, 2, 0, 2, 3,
@@ -1242,7 +1242,7 @@ void QDemonRendererImpl::generateXYQuad()
     m_quadIndexBuffer = new QDemonRenderIndexBuffer(m_context, QDemonRenderBufferUsageType::Static,
                                                      QDemonRenderComponentType::UnsignedInteger8,
                                                      sizeof(indexData),
-                                                     toU8DataRef(indexData, sizeof(indexData)));
+                                                     toByteRef(indexData, sizeof(indexData)));
 
     // create our attribute layout
     m_quadAttribLayout = m_context->createAttributeLayout(toDataView(theEntries, 2));
@@ -1274,7 +1274,7 @@ void QDemonRendererImpl::generateXYZPoint()
     m_pointVertexBuffer = new QDemonRenderVertexBuffer(m_context, QDemonRenderBufferUsageType::Static,
                                                         5 * sizeof(float),
                                                         3 * sizeof(float) + 2 * sizeof(float),
-                                                        toU8DataRef(tempBuf, 5));
+                                                        toByteRef(tempBuf, 5));
 
     // create our attribute layout
     m_pointAttribLayout = m_context->createAttributeLayout(toDataView(theEntries, 2));
@@ -1337,7 +1337,7 @@ void QDemonRendererImpl::generateXYQuadStrip()
                                                             0,
                                                             3 * sizeof(float) + 2 * sizeof(float) // stride
                                                             ,
-                                                            QDemonDataRef<quint8>());
+                                                            QDemonByteRef());
 
     // create our attribute layout
     m_quadStripAttribLayout = m_context->createAttributeLayout(toDataView(theEntries, 2));
@@ -1363,7 +1363,7 @@ void QDemonRendererImpl::updateCbAoShadow(const QDemonRenderLayer *pLayer, const
             pCB = new QDemonRenderConstantBuffer(m_context, theName,
                                                   QDemonRenderBufferUsageType::Static,
                                                   0,
-                                                  QDemonDataRef<quint8>());
+                                                  QDemonByteRef());
             if (!pCB) {
                 Q_ASSERT(false);
                 return;
@@ -1380,11 +1380,11 @@ void QDemonRendererImpl::updateCbAoShadow(const QDemonRenderLayer *pLayer, const
 
         // update values
         QVector4D aoProps(pLayer->aoStrength * 0.01f, pLayer->aoDistance * 0.4f, pLayer->aoSoftness * 0.02f, pLayer->aoBias);
-        pCB->updateParam("ao_properties", QDemonDataRef<quint8>((quint8 *)&aoProps, 1));
+        pCB->updateParam("ao_properties", QDemonByteRef((quint8 *)&aoProps, 1));
         QVector4D aoProps2((float)pLayer->aoSamplerate, (pLayer->aoDither) ? 1.0f : 0.0f, 0.0f, 0.0f);
-        pCB->updateParam("ao_properties2", QDemonDataRef<quint8>((quint8 *)&aoProps2, 1));
+        pCB->updateParam("ao_properties2", QDemonByteRef((quint8 *)&aoProps2, 1));
         QVector4D shadowProps(pLayer->shadowStrength * 0.01f, pLayer->shadowDist, pLayer->shadowSoftness * 0.01f, pLayer->shadowBias);
-        pCB->updateParam("shadow_properties", QDemonDataRef<quint8>((quint8 *)&shadowProps, 1));
+        pCB->updateParam("shadow_properties", QDemonByteRef((quint8 *)&shadowProps, 1));
 
         float R2 = pLayer->aoDistance * pLayer->aoDistance * 0.16f;
         float rw = 100, rh = 100;
@@ -1398,9 +1398,9 @@ void QDemonRendererImpl::updateCbAoShadow(const QDemonRenderLayer *pLayer, const
         float invFocalLenX = tanHalfFovY * (rw / rh);
 
         QVector4D aoScreenConst(1.0f / R2, rh / (2.0f * tanHalfFovY), 1.0f / rw, 1.0f / rh);
-        pCB->updateParam("aoScreenConst", QDemonDataRef<quint8>((quint8 *)&aoScreenConst, 1));
+        pCB->updateParam("aoScreenConst", QDemonByteRef((quint8 *)&aoScreenConst, 1));
         QVector4D UvToEyeConst(2.0f * invFocalLenX, -2.0f * tanHalfFovY, -invFocalLenX, tanHalfFovY);
-        pCB->updateParam("UvToEyeConst", QDemonDataRef<quint8>((quint8 *)&UvToEyeConst, 1));
+        pCB->updateParam("UvToEyeConst", QDemonByteRef((quint8 *)&UvToEyeConst, 1));
 
         // update buffer to hardware
         pCB->update();

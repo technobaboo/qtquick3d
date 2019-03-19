@@ -237,7 +237,7 @@ public:
     //    virtual void Save(SWriteBuffer &ioBuffer,
     //                      const SStrRemapMap &inRemapMap,
     //                      const char *inProjectDir) const = 0;
-    //    virtual void Load(QDemonDataRef<quint8> inData, CStrTableOrDataRef inStrDataBlock,
+    //    virtual void Load(QDemonByteRef inData, CStrTableOrDataRef inStrDataBlock,
     //                      const char *inProjectDir) = 0;
 
     virtual void setContextInterface(QDemonRenderContextInterface *rc) = 0;

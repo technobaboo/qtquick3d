@@ -1059,7 +1059,7 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
     //        }
     //    }
 
-    //    void load(QDemonDataRef<quint8> inData, CStrTableOrDataRef inStrDataBlock,
+    //    void load(QDemonByteRef inData, CStrTableOrDataRef inStrDataBlock,
     //              const char *inProjectDir) override
     //    {
     //        m_Allocator.m_PreAllocatedBlock = inData;
