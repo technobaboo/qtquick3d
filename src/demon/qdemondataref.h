@@ -71,6 +71,12 @@ struct QDemonDataView<quint8>
         return mData[index];
     }
 
+    void clear()
+    {
+        mData = nullptr;
+        mSize = 0;
+    }
+
     operator const void *() { return reinterpret_cast<const void *>(mData); }
 };
 

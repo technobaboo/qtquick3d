@@ -55,7 +55,7 @@ QDemonRenderConstantBuffer::QDemonRenderConstantBuffer(const QDemonRef<QDemonRen
                                                        const QByteArray &bufferName,
                                                        QDemonRenderBufferUsageType usageType,
                                                        size_t size,
-                                                       QDemonByteRef data)
+                                                       QDemonByteView data)
     : QDemonRenderDataBuffer(context, size, QDemonRenderBufferType::Constant, usageType, QDemonByteRef())
     , m_name(bufferName)
     , m_currentOffset(0)
@@ -250,7 +250,7 @@ void QDemonRenderConstantBuffer::addParam(const QByteArray &name, QDemonRenderSh
     m_currentOffset += constantSize;
 }
 
-void QDemonRenderConstantBuffer::updateParam(const char *inName, QDemonByteRef value)
+void QDemonRenderConstantBuffer::updateParam(const char *inName, QDemonByteView value)
 {
     // allocate space if not done yet
     // NOTE this gets reallocated once we get the real constant buffer size from a program
@@ -273,7 +273,7 @@ void QDemonRenderConstantBuffer::updateParam(const char *inName, QDemonByteRef v
     }
 }
 
-void QDemonRenderConstantBuffer::updateRaw(quint32 offset, QDemonByteRef data)
+void QDemonRenderConstantBuffer::updateRaw(quint32 offset, QDemonByteView data)
 {
     // allocate space if yet done
     if (!m_shadowCopy.size()) {

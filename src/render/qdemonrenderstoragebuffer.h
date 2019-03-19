@@ -61,7 +61,7 @@ public:
                               const QByteArray &bufferName,
                               QDemonRenderBufferUsageType usageType,
                               size_t size,
-                              QDemonByteRef data,
+                              QDemonByteView data,
                               QDemonRenderDataBuffer *pBuffer = nullptr);
 
     ///< destructor
@@ -105,7 +105,7 @@ public:
      *
      * @return no return
      */
-    void updateData(qint32 offset, QDemonByteRef data);
+    void updateData(qint32 offset, QDemonByteView data);
 
     /**
      * @brief get the buffer name

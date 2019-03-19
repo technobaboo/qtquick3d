@@ -51,7 +51,7 @@ protected:
     QDemonRef<QDemonRenderBackend> m_backend; ///< pointer to backend
     QDemonRenderBufferUsageType m_usageType; ///< usage type
     QDemonRenderBufferType m_type; ///< bind flags
-    QDemonByteRef m_bufferData; ///< buffer data pointer
+    QDemonByteView m_bufferData; ///< buffer data pointer
     quint32 m_bufferCapacity; ///< size of internal backup buffer (m_bufferData)
     size_t m_bufferSize; ///< size of buffer
     bool m_mapped; ///< true when locked for reading or writing to m_bufferData
@@ -76,7 +76,7 @@ public:
                            size_t size,
                            QDemonRenderBufferType bindFlags,
                            QDemonRenderBufferUsageType usageType,
-                           QDemonByteRef data);
+                           QDemonByteView data);
 
     virtual ~QDemonRenderDataBuffer();
 
@@ -85,7 +85,7 @@ public:
      *
      * @return Return usage tyoe
      */
-    virtual QDemonRenderBufferUsageType usageType() const { return m_usageType; }
+    QDemonRenderBufferUsageType usageType() const { return m_usageType; }
 
     /**
      * @brief Get Buffer usage type
@@ -93,14 +93,14 @@ public:
      *
      * @return Return usage tyoe
      */
-    virtual QDemonRenderBufferType type() const { return m_type; }
+    QDemonRenderBufferType type() const { return m_type; }
 
     /**
      * @brief Return buffer size in byte
      *
      * @return Return size
      */
-    virtual quint32 size() { return quint32(m_bufferSize); }
+    inline quint32 size() { return quint32(m_bufferSize); }
 
     /**
      * @brief Get a pointer to the foundation
@@ -121,7 +121,7 @@ public:
      *
      * @return Return mapped pointer to data
      */
-    virtual QDemonByteRef mapBuffer();
+    QDemonByteRef mapBuffer();
 
     /**
      * @brief Map a range of a  buffer
@@ -133,7 +133,7 @@ public:
      *
      * @return Return mapped pointer to data
      */
-    virtual QDemonByteRef mapBufferRange(size_t offset, size_t size, QDemonRenderBufferAccessFlags flags);
+    QDemonByteRef mapBufferRange(size_t offset, size_t size, QDemonRenderBufferAccessFlags flags);
 
     /**
      * @brief Unmap the buffer
@@ -141,7 +141,7 @@ public:
      *
      * @return no return
      */
-    virtual void unmapBuffer();
+    void unmapBuffer();
 
     /**
      * @brief constructor

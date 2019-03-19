@@ -51,7 +51,7 @@ QDemonRenderAtomicCounterBuffer::QDemonRenderAtomicCounterBuffer(const QDemonRef
                                                                  const QByteArray &bufferName,
                                                                  size_t size,
                                                                  QDemonRenderBufferUsageType usageType,
-                                                                 QDemonByteRef data)
+                                                                 QDemonByteView data)
     : QDemonRenderDataBuffer(context, size, QDemonRenderBufferType::Storage, usageType, data)
     , m_name(bufferName)
     , m_dirty(true)
@@ -98,7 +98,7 @@ void QDemonRenderAtomicCounterBuffer::update()
     }
 }
 
-void QDemonRenderAtomicCounterBuffer::updateData(qint32 offset, QDemonByteRef data)
+void QDemonRenderAtomicCounterBuffer::updateData(qint32 offset, QDemonByteView data)
 {
     // we only update the buffer if we something
     if (data.size())

@@ -66,7 +66,7 @@ public:
                                const QByteArray &bufferName,
                                QDemonRenderBufferUsageType usageType,
                                size_t size,
-                               QDemonByteRef data);
+                               QDemonByteView data);
 
     ///< destructor
     virtual ~QDemonRenderConstantBuffer() override;
@@ -129,7 +129,7 @@ public:
      *
      * @return no return
      */
-    void updateParam(const char *name, QDemonByteRef value);
+    void updateParam(const char *name, QDemonByteView value);
 
     /**
      * @brief update a piece of memory directly within the constant buffer
@@ -146,7 +146,7 @@ public:
      *
      * @return no return
      */
-    void updateRaw(quint32 offset, QDemonByteRef data);
+    void updateRaw(quint32 offset, QDemonByteView data);
 
     /**
      * @brief get the buffer name

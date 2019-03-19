@@ -37,7 +37,7 @@ QT_BEGIN_NAMESPACE
 QDemonRenderDrawIndirectBuffer::QDemonRenderDrawIndirectBuffer(const QDemonRef<QDemonRenderContext> &context,
                                                                QDemonRenderBufferUsageType usageType,
                                                                size_t size,
-                                                               QDemonByteRef data)
+                                                               QDemonByteView data)
     : QDemonRenderDataBuffer(context, size, QDemonRenderBufferType::DrawIndirect, usageType, data), m_dirty(true)
 {
 }
@@ -65,7 +65,7 @@ void QDemonRenderDrawIndirectBuffer::update()
     }
 }
 
-void QDemonRenderDrawIndirectBuffer::updateData(qint32 offset, QDemonByteRef data)
+void QDemonRenderDrawIndirectBuffer::updateData(qint32 offset, QDemonByteView data)
 {
     // we only update the buffer if we something
     if (data.size())

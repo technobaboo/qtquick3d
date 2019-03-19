@@ -73,7 +73,7 @@ public:
     QDemonRenderDrawIndirectBuffer(const QDemonRef<QDemonRenderContext> &context,
                                    QDemonRenderBufferUsageType usageType,
                                    size_t size,
-                                   QDemonByteRef data);
+                                   QDemonByteView data);
 
     ///< destructor
     virtual ~QDemonRenderDrawIndirectBuffer();
@@ -107,7 +107,7 @@ public:
      *
      * @return no return
      */
-    void updateData(qint32 offset, QDemonByteRef data);
+    void updateData(qint32 offset, QDemonByteView data);
 
 private:
     bool m_dirty; ///< true if buffer is dirty

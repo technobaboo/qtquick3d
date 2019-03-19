@@ -39,7 +39,7 @@ QDemonRenderDataBuffer::QDemonRenderDataBuffer(const QDemonRef<QDemonRenderConte
                                                size_t size,
                                                QDemonRenderBufferType bindFlags,
                                                QDemonRenderBufferUsageType usageType,
-                                               QDemonByteRef data)
+                                               QDemonByteView data)
     : m_context(context)
     , m_backend(context->backend())
     , m_usageType(usageType)
@@ -73,12 +73,12 @@ QDemonByteRef QDemonRenderDataBuffer::mapBuffer()
                                                    QDemonRenderBufferAccessFlags(QDemonRenderBufferAccessTypeValues::Read
                                                                                  | QDemonRenderBufferAccessTypeValues::Write));
 
-    m_bufferData = toDataRef(const_cast<quint8 *>(pData), (quint32)m_bufferSize);
+    m_bufferData = toDataView(pData, (quint32)m_bufferSize);
     m_bufferCapacity = (quint32)m_bufferSize;
 
     // currently we return a reference to the system memory
     m_mapped = true;
-    return m_bufferData;
+    return QDemonByteRef(pData, m_bufferSize);
 }
 
 QDemonByteRef QDemonRenderDataBuffer::mapBufferRange(size_t offset, size_t size, QDemonRenderBufferAccessFlags flags)
@@ -96,12 +96,12 @@ QDemonByteRef QDemonRenderDataBuffer::mapBufferRange(size_t offset, size_t size,
 
     quint8 *pData = (quint8 *)m_backend->mapBuffer(m_handle, m_type, offset, size, flags);
 
-    m_bufferData = toDataRef(const_cast<quint8 *>(pData), (quint32)size);
+    m_bufferData = toDataView(pData, (quint32)size);
     m_bufferCapacity = (quint32)size;
 
     // currently we return a reference to the system memory
     m_mapped = true;
-    return m_bufferData;
+    return QDemonByteRef(pData, m_bufferSize);
 }
 
 void QDemonRenderDataBuffer::unmapBuffer()
