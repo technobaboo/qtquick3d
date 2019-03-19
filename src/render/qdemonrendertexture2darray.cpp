@@ -43,7 +43,7 @@ QDemonRenderTexture2DArray::~QDemonRenderTexture2DArray()
 {
 }
 
-void QDemonRenderTexture2DArray::setTextureData(QDemonByteRef newBuffer,
+void QDemonRenderTexture2DArray::setTextureData(QDemonByteView newBuffer,
                                                 quint8 inMipLevel,
                                                 qint32 width,
                                                 qint32 height,

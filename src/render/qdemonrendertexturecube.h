@@ -71,7 +71,7 @@ public:
      *
      * @return No return.
      */
-    void setTextureData(QDemonByteRef newBuffer,
+    void setTextureData(QDemonByteView newBuffer,
                         quint8 inMipLevel,
                         QDemonRenderTextureCubeFace inFace,
                         quint32 width,

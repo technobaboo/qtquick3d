@@ -459,7 +459,7 @@ struct QDemonNullBackend : public QDemonRenderBackend
     void drawIndexed(QDemonRenderDrawMode, quint32, QDemonRenderComponentType, const void *) override {}
     void drawIndexedIndirect(QDemonRenderDrawMode, QDemonRenderComponentType, const void *) override {}
 
-    void readPixel(QDemonRenderBackendRenderTargetObject, qint32, qint32, qint32, qint32, QDemonRenderReadPixelFormat, void *) override
+    void readPixel(QDemonRenderBackendRenderTargetObject, qint32, qint32, qint32, qint32, QDemonRenderReadPixelFormat, QDemonByteRef) override
     {
     }
 

@@ -457,7 +457,7 @@ public:
                    qint32 width,
                    qint32 height,
                    QDemonRenderReadPixelFormat inFormat,
-                   void *pixels) override;
+                   QDemonByteRef pixels) override;
 
     // NV path rendering
     QDemonRenderBackendPathObject createPathNVObject(size_t range) override;

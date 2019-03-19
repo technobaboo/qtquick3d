@@ -1949,7 +1949,6 @@ inline const char *toString(QDemonRenderTextureTypeValue value)
 
 enum class QDemonRenderReadPixelFormat
 {
-    Unknown = 0,
     Alpha8,
     RGB565,
     RGB8,
@@ -1957,6 +1956,22 @@ enum class QDemonRenderReadPixelFormat
     RGBA5551,
     RGBA8
 };
+
+static inline int sizeofPixelFormat(QDemonRenderReadPixelFormat f)
+{
+    switch (f) {
+    case QDemonRenderReadPixelFormat::Alpha8:
+        return 1;
+    case QDemonRenderReadPixelFormat::RGB565:
+    case QDemonRenderReadPixelFormat::RGBA5551:
+    case QDemonRenderReadPixelFormat::RGBA4444:
+        return 2;
+    case QDemonRenderReadPixelFormat::RGB8:
+        return 3;
+    case QDemonRenderReadPixelFormat::RGBA8:
+        return 4;
+    }
+}
 
 // Now for scoped property access.
 template<typename TBaseType, typename TDataType>

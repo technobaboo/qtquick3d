@@ -161,6 +161,7 @@ struct QDemonDataRef
     }
 
     operator QDemonDataView<T>() const { return QDemonDataView<T>(mData, mSize); }
+    operator void *() { return reinterpret_cast<void *>(mData); }
 };
 
 using QDemonByteRef = QDemonDataRef<quint8>;

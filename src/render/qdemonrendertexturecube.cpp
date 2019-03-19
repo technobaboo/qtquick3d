@@ -43,7 +43,7 @@ QDemonRenderTextureCube::~QDemonRenderTextureCube()
 {
 }
 
-void QDemonRenderTextureCube::setTextureData(QDemonByteRef newBuffer,
+void QDemonRenderTextureCube::setTextureData(QDemonByteView newBuffer,
                                              quint8 inMipLevel,
                                              QDemonRenderTextureCubeFace inFace,
                                              quint32 width,

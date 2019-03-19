@@ -1662,12 +1662,12 @@ struct QDemonShaderGenerator : public QDemonDefaultMaterialShaderGeneratorInterf
 
                 // this is our final change update memory
                 pLightCb->updateRaw(idx * sizeof(QDemonLightSourceShader) + (4 * sizeof(qint32)),
-                                    QDemonByteRef((quint8 *)&shader->m_lights[idx].lightData, sizeof(QDemonLightSourceShader)));
+                                    toByteView(shader->m_lights[idx].lightData));
             }
             // update light buffer to hardware
             if (pLightCb) {
                 qint32 cgLights = shader->m_lights.size();
-                pLightCb->updateRaw(0, QDemonByteRef((quint8 *)&cgLights, sizeof(qint32)));
+                pLightCb->updateRaw(0, toByteView(cgLights));
                 shader->m_lightsBuffer.set();
             }
         } else {

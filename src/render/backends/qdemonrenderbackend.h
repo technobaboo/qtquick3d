@@ -1913,7 +1913,7 @@ public:
                            qint32 width,
                            qint32 height,
                            QDemonRenderReadPixelFormat inFormat,
-                           void *pixels) = 0;
+                           QDemonByteRef pixels) = 0;
 
     /**
      * @brief Create a NV path render object

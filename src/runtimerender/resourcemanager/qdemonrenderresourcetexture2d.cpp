@@ -151,7 +151,7 @@ bool QDemonResourceTexture2DArray::ensureTexture(qint32 width, qint32 height, qi
     else {
         // multisampled textures are immuteable
         Q_ASSERT(inSamples == 1);
-        m_texture->setTextureData(QDemonByteRef(), 0, width, height, slices, inFormat);
+        m_texture->setTextureData(QDemonByteView(), 0, width, height, slices, inFormat);
     }
 
     m_textureDetails = m_texture->textureDetails();

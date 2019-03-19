@@ -454,7 +454,7 @@ void QDemonRenderPrefilterTextureCompute::createLevel0Tex(void *inTextureData, q
         m_level0Tex = new QDemonRenderTexture2D(m_renderContext);
         m_level0Tex->setTextureStorage(1, theWidth, m_height, theFormat, theFormat, QDemonByteView((quint8 *)inTextureData, inTextureDataSize));
     } else {
-        m_level0Tex->setTextureSubData(QDemonByteRef((quint8 *)inTextureData, inTextureDataSize), 0, 0, 0, theWidth, m_height, theFormat);
+        m_level0Tex->setTextureSubData(QDemonByteView((quint8 *)inTextureData, inTextureDataSize), 0, 0, 0, theWidth, m_height, theFormat);
     }
 }
 
@@ -468,8 +468,8 @@ void QDemonRenderPrefilterTextureCompute::build(void *inTextureData, qint32 inTe
                                        m_height,
                                        m_destinationFormat,
                                        inFormat,
-                                       (needMipUpload) ? QDemonByteRef()
-                                                       : QDemonByteRef((quint8 *)inTextureData, inTextureDataSize));
+                                       (needMipUpload) ? QDemonByteView()
+                                                       : QDemonByteView((quint8 *)inTextureData, inTextureDataSize));
         // create a compute shader (if not aloread done) which computes the BSDF mipmaps for this
         // texture
         createComputeProgram(m_renderContext);
@@ -481,7 +481,7 @@ void QDemonRenderPrefilterTextureCompute::build(void *inTextureData, qint32 inTe
 
         m_textureCreated = true;
     } else if (!needMipUpload) {
-        m_texture2D->setTextureSubData(QDemonByteRef((quint8 *)inTextureData, inTextureDataSize), 0, 0, 0, m_width, m_height, inFormat);
+        m_texture2D->setTextureSubData(QDemonByteView((quint8 *)inTextureData, inTextureDataSize), 0, 0, 0, m_width, m_height, inFormat);
     }
 
     if (needMipUpload) {

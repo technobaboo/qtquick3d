@@ -2013,7 +2013,7 @@ void QDemonRenderBackendGLBase::readPixel(QDemonRenderBackendRenderTargetObject 
                                           qint32 width,
                                           qint32 height,
                                           QDemonRenderReadPixelFormat inFormat,
-                                          void *pixels)
+                                          QDemonByteRef pixels)
 {
     GLuint glFormat;
     GLuint glType;

@@ -483,6 +483,7 @@ void QDemonRenderContext::setReadBuffer(QDemonReadFace inReadFace)
 
 void QDemonRenderContext::readPixels(QRect inRect, QDemonRenderReadPixelFormat inFormat, QDemonByteRef inWriteBuffer)
 {
+    Q_ASSERT(sizeofPixelFormat(inFormat)*inRect.width()*inRect.height() <= inWriteBuffer.size());
     // nullptr means read from current render target
     m_backend->readPixel(nullptr,
                          inRect.x(),
@@ -490,7 +491,7 @@ void QDemonRenderContext::readPixels(QRect inRect, QDemonRenderReadPixelFormat i
                          inRect.width(),
                          inRect.height(),
                          inFormat,
-                         (void *)inWriteBuffer.begin());
+                         inWriteBuffer);
 }
 
 void QDemonRenderContext::setRenderTarget(QDemonRef<QDemonRenderFrameBuffer> inBuffer)

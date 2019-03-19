@@ -537,8 +537,7 @@ struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
 
                     if (theAreaLightEntry && pAreaLightCb) {
                         pAreaLightCb->updateRaw(areaLights * sizeof(QDemonLightSourceShader) + (4 * sizeof(qint32)),
-                                                QDemonByteRef(reinterpret_cast<quint8 *>(&theAreaLightEntry->m_lightData),
-                                                                      sizeof(QDemonLightSourceShader)));
+                                                toByteView(theAreaLightEntry->m_lightData));
                     }
 
                     areaLights++;
@@ -553,8 +552,7 @@ struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
 
                     if (theLightEntry && pLightCb) {
                         pLightCb->updateRaw(cgLights * sizeof(QDemonLightSourceShader) + (4 * sizeof(qint32)),
-                                            QDemonByteRef(reinterpret_cast<quint8 *>(&theLightEntry->m_lightData),
-                                                                  sizeof(QDemonLightSourceShader)));
+                                            toByteView(theLightEntry->m_lightData));
                     }
 
                     cgLights++;
@@ -562,11 +560,11 @@ struct QDemonShaderGenerator : public QDemonMaterialShaderGeneratorInterface
             }
 
             if (pLightCb) {
-                pLightCb->updateRaw(0, QDemonByteRef(reinterpret_cast<quint8 *>(&cgLights), sizeof(qint32)));
+                pLightCb->updateRaw(0, toByteView(cgLights));
                 theShader->m_lightsBuffer.set();
             }
             if (pAreaLightCb) {
-                pAreaLightCb->updateRaw(0, QDemonByteRef(reinterpret_cast<quint8 *>(&areaLights), sizeof(qint32)));
+                pAreaLightCb->updateRaw(0, toByteView(areaLights));
                 theShader->m_areaLightsBuffer.set();
             }
 
