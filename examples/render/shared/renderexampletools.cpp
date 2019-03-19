@@ -60,8 +60,8 @@ static const BoxFace g_BoxFaces[] = {
       QVector3D(-1, -1, -1), QVector3D(-1, -1, 1), QVector3D(1, -1, 1), QVector3D(1, -1, -1), QVector3D(0, -1, 0) }
 };
 
-static const QVector3D g_BoxUVs[] = {
-    QVector3D(0, 1, 0), QVector3D(0, 0, 0), QVector3D(1, 0, 0), QVector3D(1, 1, 0),
+static const QVector2D g_BoxUVs[] = {
+    QVector2D(0, 1), QVector2D(0, 0), QVector2D(1, 0), QVector2D(1, 1),
 };
 
 QDemonRef<QDemonRenderInputAssembler> QDemonRenderExampleTools::createBox(QDemonRef<QDemonRenderContext> context,
@@ -82,42 +82,34 @@ QDemonRef<QDemonRenderInputAssembler> QDemonRenderExampleTools::createBox(QDemon
     QDemonRef<QDemonRenderAttribLayout> attribLayout = context->createAttributeLayout(toDataView(entries, 3));
 
     // Vertex Buffer
-    quint32 bufStride = 8 * sizeof(float);
-    quint32 bufSize = bufStride * numVerts;
-    QDemonByteRef vertData;
-    vertData = QDemonByteRef(static_cast<quint8 *>(::malloc(bufSize)), bufSize);
-    quint8 *positions = (quint8 *)vertData.begin();
-    quint8 *normals = positions + 3 * sizeof(float);
-    quint8 *uvs = normals + 3 * sizeof(float);
+    struct Vertex {
+        QVector3D position;
+        QVector3D normal;
+        QVector2D uv;
+    };
+    Q_STATIC_ASSERT(sizeof(Vertex) == 8 * sizeof(float));
 
+    quint32 bufStride = sizeof(Vertex);
+    QVector<Vertex> vertices(numVerts);
+
+    Vertex *v =vertices.begin();
     for (quint32 i = 0; i < 6; i++) {
         const BoxFace &bf = g_BoxFaces[i];
         for (quint32 j = 0; j < 4; j++) {
-            QVector3D &p = *(QVector3D *)positions;
-            positions = ((quint8 *)positions) + bufStride;
-            QVector3D &n = *(QVector3D *)normals;
-            normals = ((quint8 *)normals) + bufStride;
-            float *uv = (float *)uvs;
-            uvs = ((quint8 *)uvs) + bufStride;
-            n = bf.normal;
-            p = bf.positions[j] * extents;
-            uv[0] = g_BoxUVs[j].x();
-            uv[1] = g_BoxUVs[j].y();
+            v->position = bf.positions[j] * extents;
+            v->normal = bf.normal;
+            v->uv = g_BoxUVs[j];
+            ++v;
         }
     }
 
-    outVertexBuffer= new QDemonRenderVertexBuffer(context, QDemonRenderBufferUsageType::Static, bufSize, bufStride, vertData);
+    auto vertexDataRef = toByteRef(vertices.data(), vertices.size());
+    outVertexBuffer= new QDemonRenderVertexBuffer(context, QDemonRenderBufferUsageType::Static, vertexDataRef.size(), bufStride, vertexDataRef);
     Q_ASSERT(bufStride == outVertexBuffer->stride());
-    // Clean up data
-    ::free(vertData.begin());
-
 
     // Index Buffer
-    bufSize = numIndices * sizeof(quint16);
-
-    QDemonByteRef indexData;
-    indexData = QDemonByteRef( static_cast<quint8 *>(::malloc(bufSize)), bufSize);
-    quint16 *indices = reinterpret_cast<quint16 *>(indexData.begin());
+    QVector<quint16> indexBuffer(numIndices);
+    quint16 *indices = indexBuffer.begin();
     for (quint8 i = 0; i < 6; i++) {
         const quint16 base = i * 4;
         *(indices++) = base + 0;
@@ -127,11 +119,11 @@ QDemonRef<QDemonRenderInputAssembler> QDemonRenderExampleTools::createBox(QDemon
         *(indices++) = base + 2;
         *(indices++) = base + 3;
     }
+    auto indexDataRef = toByteRef(indexBuffer.data(), indexBuffer.size());
     outIndexBuffer= new QDemonRenderIndexBuffer(context, QDemonRenderBufferUsageType::Static,
                                                QDemonRenderComponentType::UnsignedInteger16,
-                                               bufSize,
-                                               indexData);
-    ::free(indexData.begin());
+                                               indexDataRef.size(),
+                                               indexDataRef);
 
     quint32 strides = outVertexBuffer->stride();
     quint32 offsets = 0;
