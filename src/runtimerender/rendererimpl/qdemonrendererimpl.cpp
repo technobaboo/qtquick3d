@@ -1416,7 +1416,7 @@ QDemonRef<QDemonRenderVertexBuffer> QDemonRendererImpl::getOrCreateVertexBuffer(
     QDemonRef<QDemonRenderVertexBuffer> retval = getVertexBuffer(inStr);
     if (retval) {
         // we update the buffer
-        retval->updateBuffer(bufferData, false);
+        retval->updateBuffer(bufferData);
         return retval;
     }
     retval = new QDemonRenderVertexBuffer(m_context, QDemonRenderBufferUsageType::Dynamic, bufferData.size(), stride, bufferData);
@@ -1431,7 +1431,7 @@ QDemonRef<QDemonRenderIndexBuffer> QDemonRendererImpl::getOrCreateIndexBuffer(co
     QDemonRef<QDemonRenderIndexBuffer> retval = getIndexBuffer(inStr);
     if (retval) {
         // we update the buffer
-        retval->updateBuffer(bufferData, false);
+        retval->updateBuffer(bufferData);
         return retval;
     }
 

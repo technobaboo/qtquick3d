@@ -30,6 +30,12 @@ struct QDemonDataView
         return mData[index];
     }
 
+    void clear()
+    {
+        mData = nullptr;
+        mSize = 0;
+    }
+
     operator const void *() { return reinterpret_cast<const void *>(mData); }
 };
 
@@ -140,6 +146,12 @@ struct QDemonDataRef
         Q_ASSERT(index >= 0);
         Q_ASSERT(index < mSize);
         return mData[index];
+    }
+
+    void clear()
+    {
+        mData = nullptr;
+        mSize = 0;
     }
 
     operator QDemonDataView<T>() const { return QDemonDataView<T>(mData, mSize); }

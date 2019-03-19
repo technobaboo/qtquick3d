@@ -54,7 +54,6 @@ protected:
     QDemonByteRef m_bufferData; ///< buffer data pointer
     quint32 m_bufferCapacity; ///< size of internal backup buffer (m_bufferData)
     size_t m_bufferSize; ///< size of buffer
-    bool m_ownsData; ///< true when we own m_bufferData
     bool m_mapped; ///< true when locked for reading or writing to m_bufferData
     QDemonRenderBackend::QDemonRenderBackendBufferObject m_handle; ///< opaque backend handle
 
@@ -154,7 +153,7 @@ public:
      *
      * @return No return.
      */
-    virtual void updateBuffer(QDemonByteView data, bool ownsMemory = false);
+    void updateBuffer(QDemonByteView data);
 
     /**
      * @brief get the backend object handle
@@ -162,9 +161,6 @@ public:
      * @return the backend object handle.
      */
     QDemonRenderBackend::QDemonRenderBackendBufferObject handle() const { return m_handle; }
-
-private:
-    void releaseMemory();
 };
 
 QT_END_NAMESPACE

@@ -47,7 +47,6 @@ QDemonRenderDataBuffer::QDemonRenderDataBuffer(const QDemonRef<QDemonRenderConte
     , m_bufferData(data)
     , m_bufferCapacity(data.size())
     , m_bufferSize(size)
-    , m_ownsData(false)
     , m_mapped(false)
 {
     m_handle = m_backend->createBuffer(size, bindFlags, usageType, (const void *)m_bufferData.begin());
@@ -55,23 +54,8 @@ QDemonRenderDataBuffer::QDemonRenderDataBuffer(const QDemonRef<QDemonRenderConte
 
 QDemonRenderDataBuffer::~QDemonRenderDataBuffer()
 {
-    if (m_handle) {
+    if (m_handle)
         m_backend->releaseBuffer(m_handle);
-    }
-    m_handle = nullptr;
-
-    releaseMemory();
-}
-
-void QDemonRenderDataBuffer::releaseMemory()
-{
-    // chekc if we should release memory
-    if (m_bufferData.size() && m_ownsData) {
-        ::free(m_bufferData.begin());
-    }
-
-    m_bufferData = QDemonByteRef();
-    m_ownsData = false;
 }
 
 QDemonByteRef QDemonRenderDataBuffer::mapBuffer()
@@ -89,10 +73,8 @@ QDemonByteRef QDemonRenderDataBuffer::mapBuffer()
                                                    QDemonRenderBufferAccessFlags(QDemonRenderBufferAccessTypeValues::Read
                                                                                  | QDemonRenderBufferAccessTypeValues::Write));
 
-    releaseMemory();
     m_bufferData = toDataRef(const_cast<quint8 *>(pData), (quint32)m_bufferSize);
     m_bufferCapacity = (quint32)m_bufferSize;
-    m_ownsData = false;
 
     // currently we return a reference to the system memory
     m_mapped = true;
@@ -114,10 +96,8 @@ QDemonByteRef QDemonRenderDataBuffer::mapBufferRange(size_t offset, size_t size,
 
     quint8 *pData = (quint8 *)m_backend->mapBuffer(m_handle, m_type, offset, size, flags);
 
-    releaseMemory();
     m_bufferData = toDataRef(const_cast<quint8 *>(pData), (quint32)size);
     m_bufferCapacity = (quint32)size;
-    m_ownsData = false;
 
     // currently we return a reference to the system memory
     m_mapped = true;
@@ -130,11 +110,11 @@ void QDemonRenderDataBuffer::unmapBuffer()
         // update hardware
         m_backend->unmapBuffer(m_handle, m_type);
         m_mapped = false;
-        releaseMemory();
+        m_bufferData.clear();
     }
 }
 
-void QDemonRenderDataBuffer::updateBuffer(QDemonByteView data, bool ownsMemory)
+void QDemonRenderDataBuffer::updateBuffer(QDemonByteView data)
 {
     // don't update a mapped buffer
     if (m_mapped) {
@@ -142,11 +122,8 @@ void QDemonRenderDataBuffer::updateBuffer(QDemonByteView data, bool ownsMemory)
         Q_ASSERT(false);
     }
 
-    releaseMemory();
-
     m_bufferData = toDataRef(const_cast<quint8 *>(data.begin()), data.size());
     m_bufferCapacity = data.mSize;
-    m_ownsData = ownsMemory;
     // update hardware
     m_backend->updateBuffer(m_handle, m_type, m_bufferCapacity, m_usageType, (const void *)m_bufferData.begin());
 }
