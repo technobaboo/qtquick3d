@@ -537,7 +537,7 @@ struct QDemonEffectSystem : public QDemonEffectSystemInterface
         return true;
     }
 
-    void setEffectPropertyDefaultValue(QString inName, QString inPropName, QDemonDataView<quint8> inDefaultData) override
+    void setEffectPropertyDefaultValue(QString inName, QString inPropName, QDemonByteView inDefaultData) override
     {
         m_coreContext->dynamicObjectSystem()->setPropertyDefaultValue(inName, inPropName, inDefaultData);
     }

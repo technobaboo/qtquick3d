@@ -134,7 +134,7 @@ void QDemonRenderDataBuffer::unmapBuffer()
     }
 }
 
-void QDemonRenderDataBuffer::updateBuffer(QDemonDataView<quint8> data, bool ownsMemory)
+void QDemonRenderDataBuffer::updateBuffer(QDemonByteView data, bool ownsMemory)
 {
     // don't update a mapped buffer
     if (m_mapped) {

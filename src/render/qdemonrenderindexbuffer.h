@@ -55,7 +55,7 @@ public:
                             QDemonRenderBufferUsageType usageType,
                             QDemonRenderComponentType componentType,
                             size_t size,
-                            QDemonDataView<quint8> data);
+                            QDemonByteView data);
 
     ///< destruvtor
     ~QDemonRenderIndexBuffer() override;

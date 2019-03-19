@@ -642,7 +642,7 @@ QDemonRenderBackend::QDemonRenderBackendPathObject QDemonRenderBackendGL4Impl::c
     return QDemonRenderBackend::QDemonRenderBackendPathObject(pathID);
 }
 void QDemonRenderBackendGL4Impl::setPathSpecification(QDemonRenderBackendPathObject inPathObject,
-                                                      QDemonDataView<quint8> inPathCommands,
+                                                      QDemonByteView inPathCommands,
                                                       QDemonDataView<float> inPathCoords)
 {
     GLuint pathID = HandleToID_cast(GLuint, size_t, inPathObject);

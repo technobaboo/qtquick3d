@@ -1945,7 +1945,7 @@ public:
      * @return No return
      */
     virtual void setPathSpecification(QDemonRenderBackendPathObject inPathObject,
-                                      QDemonDataView<quint8> inPathCommands,
+                                      QDemonByteView inPathCommands,
                                       QDemonDataView<float> inPathCoords) = 0;
 
     /**

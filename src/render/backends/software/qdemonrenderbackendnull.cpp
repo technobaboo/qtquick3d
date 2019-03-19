@@ -464,7 +464,7 @@ struct QDemonNullBackend : public QDemonRenderBackend
     }
 
     QDemonRenderBackendPathObject createPathNVObject(size_t) override { return QDemonRenderBackendPathObject(1); }
-    void setPathSpecification(QDemonRenderBackendPathObject, QDemonDataView<quint8>, QDemonDataView<float>) override
+    void setPathSpecification(QDemonRenderBackendPathObject, QDemonByteView, QDemonDataView<float>) override
     {
     }
 

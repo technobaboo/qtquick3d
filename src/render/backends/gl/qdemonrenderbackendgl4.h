@@ -128,7 +128,7 @@ public:
 
     QDemonRenderBackendPathObject createPathNVObject(size_t range) override;
     void setPathSpecification(QDemonRenderBackendPathObject inPathObject,
-                              QDemonDataView<quint8> inPathCommands,
+                              QDemonByteView inPathCommands,
                               QDemonDataView<float> inPathCoords) override;
     QDemonBounds3 getPathObjectBoundingBox(QDemonRenderBackendPathObject inPathObject) override;
     QDemonBounds3 getPathObjectFillBox(QDemonRenderBackendPathObject inPathObject) override;

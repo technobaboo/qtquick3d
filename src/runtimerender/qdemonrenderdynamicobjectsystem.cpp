@@ -683,7 +683,7 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
         return QPair<const dynamic::QDemonPropertyDefinition *, QDemonRef<QDemonDynamicObjClassImpl>>(nullptr, nullptr);
     }
 
-    void setPropertyDefaultValue(const QString &inName, const QString &inPropName, const QDemonDataView<quint8> &inDefaultData) override
+    void setPropertyDefaultValue(const QString &inName, const QString &inPropName, const QDemonByteView &inDefaultData) override
     {
         QPair<const dynamic::QDemonPropertyDefinition *, QDemonRef<QDemonDynamicObjClassImpl>> def = findProperty(inName, inPropName);
         if (def.first && inDefaultData.size() >= qint32(def.first->byteSize)) {

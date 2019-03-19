@@ -347,7 +347,7 @@ QDemonMeshUtilities::MultiLoadResult QDemonBufferManager::loadPrimitive(const QS
     return QDemonMeshUtilities::MultiLoadResult();
 }
 
-QDemonDataView<quint8> QDemonBufferManager::createPackedPositionDataArray(QDemonMeshUtilities::MultiLoadResult *inResult) const
+QDemonByteView QDemonBufferManager::createPackedPositionDataArray(QDemonMeshUtilities::MultiLoadResult *inResult) const
 {
     // we assume a position consists of 3 floats
     quint32 vertexCount = inResult->m_mesh->m_vertexBuffer.m_data.size() / inResult->m_mesh->m_vertexBuffer.m_stride;
@@ -373,7 +373,7 @@ QDemonDataView<quint8> QDemonBufferManager::createPackedPositionDataArray(QDemon
         return toDataView(reinterpret_cast<const quint8 *>(posData), dataSize);
     }
 
-    return QDemonDataView<quint8>();
+    return QDemonByteView();
 }
 
 QDemonRenderMesh *QDemonBufferManager::loadMesh(const QString &inMeshPath) const
@@ -410,7 +410,7 @@ QDemonRenderMesh *QDemonBufferManager::loadMesh(const QString &inMeshPath) const
                                                              result.m_id);
             quint8 *baseAddress = reinterpret_cast<quint8 *>(result.m_mesh);
             meshItr = d->meshMap.insert(inMeshPath, newMesh);
-            QDemonDataView<quint8> vertexBufferData(result.m_mesh->m_vertexBuffer.m_data.begin(baseAddress),
+            QDemonByteView vertexBufferData(result.m_mesh->m_vertexBuffer.m_data.begin(baseAddress),
                                                         result.m_mesh->m_vertexBuffer.m_data.size());
 
             QDemonRef<QDemonRenderVertexBuffer>
@@ -422,7 +422,7 @@ QDemonRenderMesh *QDemonBufferManager::loadMesh(const QString &inMeshPath) const
             // create a tight packed position data VBO
             // this should improve our depth pre pass rendering
             QDemonRef<QDemonRenderVertexBuffer> posVertexBuffer;
-            QDemonDataView<quint8> posData = createPackedPositionDataArray(&result);
+            QDemonByteView posData = createPackedPositionDataArray(&result);
             if (posData.size())
                 posVertexBuffer = new QDemonRenderVertexBuffer(d->context, QDemonRenderBufferUsageType::Static,
                                                                 posData.size(),
@@ -442,7 +442,7 @@ QDemonRenderMesh *QDemonBufferManager::loadMesh(const QString &inMeshPath) const
                     if (bufComponentType == QDemonRenderComponentType::Integer32)
                         bufComponentType = QDemonRenderComponentType::UnsignedInteger32;
 
-                    QDemonDataView<quint8> indexBufferData(result.m_mesh->m_indexBuffer.m_data.begin(baseAddress),
+                    QDemonByteView indexBufferData(result.m_mesh->m_indexBuffer.m_data.begin(baseAddress),
                                                                result.m_mesh->m_indexBuffer.m_data.size());
                     indexBuffer = new QDemonRenderIndexBuffer(d->context, QDemonRenderBufferUsageType::Static,
                                                                bufComponentType,
@@ -632,7 +632,7 @@ QDemonRenderMesh *QDemonBufferManager::createMesh(const QString &inSourcePath, q
         theMesh.first.value() = theNewMesh;
         quint32 vertDataSize = inNumVerts * inVertStride;
         Q_ASSERT(vertDataSize <= INT32_MAX); // TODO:
-        QDemonDataView<quint8> theVBufData(inVertData, qint32(vertDataSize));
+        QDemonByteView theVBufData(inVertData, qint32(vertDataSize));
         // QDemonConstDataRef<quint8> theVBufData( theResult.d->Mesh->d->VertexBuffer.d->Data.begin(
         // baseAddress )
         //		, theResult.d->Mesh->d->VertexBuffer.d->Data.size() );
@@ -646,7 +646,7 @@ QDemonRenderMesh *QDemonBufferManager::createMesh(const QString &inSourcePath, q
             const quint32 inSize = inIndexCount * sizeof(quint32);
             Q_ASSERT(inSize <= INT32_MAX);
             Q_ASSERT(*inIndexData <= INT8_MAX);
-            QDemonDataView<quint8> theIBufData(reinterpret_cast<quint8 *>(inIndexData), qint32(inSize));
+            QDemonByteView theIBufData(reinterpret_cast<quint8 *>(inIndexData), qint32(inSize));
             theIndexBuffer = new QDemonRenderIndexBuffer(d->context, QDemonRenderBufferUsageType::Static,
                                                           QDemonRenderComponentType::UnsignedInteger32,
                                                           inIndexCount * sizeof(quint32),

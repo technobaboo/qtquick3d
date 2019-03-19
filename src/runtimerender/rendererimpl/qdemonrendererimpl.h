@@ -397,12 +397,12 @@ public:
     QDemonRef<QDemonRenderVertexBuffer> getOrCreateVertexBuffer(
             const QByteArray &inStr,
             quint32 stride,
-            QDemonDataView<quint8> bufferData = QDemonDataView<quint8>());
+            QDemonByteView bufferData = QDemonByteView());
     QDemonRef<QDemonRenderIndexBuffer> getOrCreateIndexBuffer(
             const QByteArray &inStr,
             QDemonRenderComponentType componentType,
             size_t size,
-            QDemonDataView<quint8> bufferData = QDemonDataView<quint8>());
+            QDemonByteView bufferData = QDemonByteView());
     QDemonRef<QDemonRenderAttribLayout> createAttributeLayout(QDemonDataView<QDemonRenderVertexBufferEntry> attribs);
     QDemonRef<QDemonRenderInputAssembler> getOrCreateInputAssembler(const QByteArray &inStr,
                                                                     QDemonRef<QDemonRenderAttribLayout> attribLayout,

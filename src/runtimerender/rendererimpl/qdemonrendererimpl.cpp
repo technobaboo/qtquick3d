@@ -1411,7 +1411,7 @@ void QDemonRendererImpl::updateCbAoShadow(const QDemonRenderLayer *pLayer, const
 
 QDemonRef<QDemonRenderVertexBuffer> QDemonRendererImpl::getOrCreateVertexBuffer(const QByteArray &inStr,
                                                                                 quint32 stride,
-                                                                                QDemonDataView<quint8> bufferData)
+                                                                                QDemonByteView bufferData)
 {
     QDemonRef<QDemonRenderVertexBuffer> retval = getVertexBuffer(inStr);
     if (retval) {
@@ -1426,7 +1426,7 @@ QDemonRef<QDemonRenderVertexBuffer> QDemonRendererImpl::getOrCreateVertexBuffer(
 QDemonRef<QDemonRenderIndexBuffer> QDemonRendererImpl::getOrCreateIndexBuffer(const QByteArray &inStr,
                                                                               QDemonRenderComponentType componentType,
                                                                               size_t size,
-                                                                              QDemonDataView<quint8> bufferData)
+                                                                              QDemonByteView bufferData)
 {
     QDemonRef<QDemonRenderIndexBuffer> retval = getIndexBuffer(inStr);
     if (retval) {

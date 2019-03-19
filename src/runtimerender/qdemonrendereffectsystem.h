@@ -98,7 +98,7 @@ public:
                                     QDemonDataView<dynamic::QDemonPropertyDeclaration> inProperties) = 0;
     // Set the default value.  THis is unnecessary if the default is zero as that is what it is
     // assumed to be.
-    virtual void setEffectPropertyDefaultValue(QString inName, QString inPropName, QDemonDataView<quint8> inDefaultData) = 0;
+    virtual void setEffectPropertyDefaultValue(QString inName, QString inPropName, QDemonByteView inDefaultData) = 0;
     virtual void setEffectPropertyEnumNames(QString inName, QString inPropName, QDemonDataView<QString> inNames) = 0;
     virtual QDemonDataView<QString> getEffectPropertyEnumNames(QString inName, QString inPropName) const = 0;
 

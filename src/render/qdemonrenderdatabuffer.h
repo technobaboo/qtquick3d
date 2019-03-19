@@ -154,7 +154,7 @@ public:
      *
      * @return No return.
      */
-    virtual void updateBuffer(QDemonDataView<quint8> data, bool ownsMemory = false);
+    virtual void updateBuffer(QDemonByteView data, bool ownsMemory = false);
 
     /**
      * @brief get the backend object handle

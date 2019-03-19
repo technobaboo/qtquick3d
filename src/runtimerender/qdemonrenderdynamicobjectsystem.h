@@ -190,7 +190,7 @@ public:
     // assumed to be.
     virtual void setPropertyDefaultValue(const QString &inName,
                                          const QString &inPropName,
-                                         const QDemonDataView<quint8> &inDefaultData) = 0;
+                                         const QDemonByteView &inDefaultData) = 0;
 
     virtual void setPropertyEnumNames(const QString &inName, const QString &inPropName, const QDemonDataView<QString> &inNames) = 0;
 

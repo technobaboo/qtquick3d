@@ -25,7 +25,11 @@ struct QDemonDataView
         Q_ASSERT(index < mSize);
         return mData[index];
     }
+
+    operator const void *() { return reinterpret_cast<const void *>(mData); }
 };
+
+using QDemonByteView = QDemonDataView<quint8>;
 
 template<typename TDataType>
 inline QDemonDataView<TDataType> toDataView(const TDataType &type)
@@ -34,9 +38,9 @@ inline QDemonDataView<TDataType> toDataView(const TDataType &type)
 }
 
 template<typename TDataType>
-inline QDemonDataView<quint8> toU8DataView(const TDataType &type)
+inline QDemonByteView toByteView(const TDataType &type)
 {
-    return QDemonDataView<quint8>(reinterpret_cast<const quint8 *>(&type), sizeof(TDataType));
+    return QDemonByteView(reinterpret_cast<const quint8 *>(&type), sizeof(TDataType));
 }
 
 template<typename TDataType>
@@ -46,9 +50,9 @@ inline QDemonDataView<TDataType> toDataView(const TDataType *type, quint32 count
 }
 
 template<typename TDataType>
-inline QDemonDataView<quint8> toU8DataView(const TDataType *type, quint32 count)
+inline QDemonByteView toByteView(const TDataType *type, quint32 count)
 {
-    return QDemonDataView<quint8>(reinterpret_cast<const quint8 *>(type), sizeof(TDataType) * count);
+    return QDemonByteView(reinterpret_cast<const quint8 *>(type), sizeof(TDataType) * count);
 }
 
 template<typename TDataType>

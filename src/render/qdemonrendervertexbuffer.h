@@ -60,7 +60,7 @@ public:
                              QDemonRenderBufferUsageType usageType,
                              size_t size,
                              quint32 stride,
-                             QDemonDataView<quint8> data);
+                             QDemonByteView data);
 
     ///< destructor
     virtual ~QDemonRenderVertexBuffer() override;

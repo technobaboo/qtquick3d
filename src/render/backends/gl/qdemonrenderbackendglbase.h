@@ -463,7 +463,7 @@ public:
     // NV path rendering
     QDemonRenderBackendPathObject createPathNVObject(size_t range) override;
     // Pathing requires gl4 backend.
-    void setPathSpecification(QDemonRenderBackendPathObject, QDemonDataView<quint8>, QDemonDataView<float>) override
+    void setPathSpecification(QDemonRenderBackendPathObject, QDemonByteView, QDemonDataView<float>) override
     {
     }
 
