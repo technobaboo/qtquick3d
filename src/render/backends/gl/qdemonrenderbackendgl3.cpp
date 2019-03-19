@@ -448,8 +448,8 @@ bool QDemonRenderBackendGL3Impl::setInputAssembler(QDemonRenderBackendInputAssem
                 GLuint id = HandleToID_cast(GLuint, size_t, inputAssembler->m_vertexbufferHandles.mData[entryData.m_inputSlot]);
                 GL_CALL_EXTRA_FUNCTION(glBindBuffer(GL_ARRAY_BUFFER, id));
                 GL_CALL_EXTRA_FUNCTION(glEnableVertexAttribArray(entryData.m_attribIndex));
-                GLuint offset = inputAssembler->m_offsets[entryData.m_inputSlot];
-                GLuint stride = inputAssembler->m_strides[entryData.m_inputSlot];
+                GLuint offset = inputAssembler->m_offsets.at(entryData.m_inputSlot);
+                GLuint stride = inputAssembler->m_strides.at(entryData.m_inputSlot);
                 GL_CALL_EXTRA_FUNCTION(glVertexAttribPointer(entryData.m_attribIndex,
                                                              entryData.m_numComponents,
                                                              GL_FLOAT,

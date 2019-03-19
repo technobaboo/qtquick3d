@@ -360,12 +360,12 @@ void QDemonRendererImpl::drawScreenRect(QRectF inRect, const QVector3D &inColor)
     }
     if (!m_rectInputAssembler) {
         Q_ASSERT(m_quadVertexBuffer);
-        quint8 indexData[] = { 0, 1, 1, 2, 2, 3, 3, 0 };
+        const quint8 indexData[] = { 0, 1, 1, 2, 2, 3, 3, 0 };
 
         m_rectIndexBuffer = new QDemonRenderIndexBuffer(m_context, QDemonRenderBufferUsageType::Static,
                                                         QDemonRenderComponentType::UnsignedInteger8,
                                                         sizeof(indexData),
-                                                        toDataRef(indexData, sizeof(indexData)));
+                                                        toDataView(indexData, sizeof(indexData)));
 
         QDemonRenderVertexBufferEntry theEntries[] = {
             QDemonRenderVertexBufferEntry("attr_pos", QDemonRenderComponentType::Float32, 3),

@@ -103,23 +103,15 @@ public:
         , m_vaoID(0)
         , m_cachedShaderHandle(0)
         , m_patchVertexCount(patchVertexCount)
+        , m_strides(strides.size())
+        , m_offsets(offsets.size())
     {
-        quint32 *strideMem = static_cast<quint32 *>(::malloc(strides.mSize * sizeof(quint32)));
-        quint32 *offsetMem = static_cast<quint32 *>(::malloc(strides.mSize * sizeof(quint32)));
-        // copy offsets and strides
-        for (int idx = 0; idx != strides.size(); ++idx) {
-            strideMem[idx] = strides.mData[idx];
-            offsetMem[idx] = offsets.mData[idx];
-        }
-
-        m_strides = toDataRef(strideMem, strides.size());
-        m_offsets = toDataRef(offsetMem, offsets.size());
+        memcpy(m_strides.data(), strides.begin(), strides.size()*sizeof(quint32));
+        memcpy(m_offsets.data(), offsets.begin(), offsets.size()*sizeof(quint32));
     }
     ///< destructor
     ~QDemonRenderBackendInputAssemblerGL()
     {
-        ::free(m_strides.mData);
-        ::free(m_offsets.mData);
     };
 
     QDemonRenderBackendAttributeLayoutGL *m_attribLayout; ///< pointer to attribute layout
@@ -128,8 +120,8 @@ public:
     quint32 m_vaoID; ///< this is only used if GL version is greater or equal 3
     quint32 m_cachedShaderHandle; ///< this is the shader id which was last used with this object
     quint32 m_patchVertexCount; ///< vertex count for a single patch primitive
-    QDemonDataRef<quint32> m_strides; ///< buffer strides
-    QDemonDataRef<quint32> m_offsets; ///< buffer offsets
+    QVector<quint32> m_strides; ///< buffer strides
+    QVector<quint32> m_offsets; ///< buffer offsets
 };
 
 QT_END_NAMESPACE

@@ -61,8 +61,8 @@ QDemonPathBuffer *QDemonPathBuffer::load(QIODevice &inStream)
     char *dataBuffer = commandBuffer + align4(commandSize);
     in.readRawData(commandBuffer, commandSize);
     in.readRawData(dataBuffer, dataSize);
-    retval->commands = toDataRef((PathCommand *)commandBuffer, numCommands);
-    retval->data = toDataRef((float *)dataBuffer, numData);
+    retval->commands = toDataView((PathCommand *)commandBuffer, numCommands);
+    retval->data = toDataView((float *)dataBuffer, numData);
     return retval;
 }
 

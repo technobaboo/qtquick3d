@@ -79,7 +79,7 @@ struct QDemonWidgetBBox : public QDemonRenderWidgetInterface
         }
     }
 
-    void setupBoundingBoxGraphicsObjects(QDemonRendererImpl &inContext, QDemonDataRef<QVector3D> thePoints)
+    void setupBoundingBoxGraphicsObjects(QDemonRendererImpl &inContext, QDemonDataView<QVector3D> thePoints)
     {
         QDemonRenderVertexBufferEntry theEntry("attr_pos", QDemonRenderComponentType::Float16, 3);
         m_boxVertexBuffer = inContext.getOrCreateVertexBuffer(m_itemName,
@@ -171,7 +171,7 @@ struct QDemonWidgetBBox : public QDemonRenderWidgetInterface
         QMatrix4x4 theNodeToCamera = theInfo.m_nodeParentToCamera * m_node->localTransform;
         for (quint32 idx = 0; idx < 8; ++idx)
             thePoints[idx] = mat44::transform(theNodeToCamera, thePoints[idx]);
-        setupBoundingBoxGraphicsObjects(inWidgetContext, toDataRef(thePoints, 8));
+        setupBoundingBoxGraphicsObjects(inWidgetContext, toDataView(thePoints, 8));
         if (m_boxShader && m_boxInputAssembler) {
             inRenderContext.setBlendingEnabled(false);
             inRenderContext.setDepthWriteEnabled(true);
@@ -222,7 +222,7 @@ struct QDemonWidgetAxis : public QDemonRenderWidgetInterface
         }
     }
 
-    void setupAxesGraphicsObjects(QDemonRendererImpl &inContext, QDemonDataRef<QVector3D> theAxes)
+    void setupAxesGraphicsObjects(QDemonRendererImpl &inContext, QDemonDataView<QVector3D> theAxes)
     {
         QDemonRenderVertexBufferEntry theEntries[] = {
             QDemonRenderVertexBufferEntry("attr_pos", QDemonRenderComponentType::Float16, 3),
@@ -294,7 +294,7 @@ struct QDemonWidgetAxis : public QDemonRenderWidgetInterface
             float overshootFactor = 10.0f * theScaleFactor; // amount to scale past the origin in
             // the opposite direction as the axis
             float scaleFactor = 50.0f * theScaleFactor;
-            QVector3D theAxis[] = {
+            const QVector3D theAxis[] = {
                 theItemPosition - (xAxis * overshootFactor), Red,
                 theItemPosition + (xAxis * scaleFactor),     Red, // X axis
                 theItemPosition - (yAxis * overshootFactor), Green,
@@ -303,7 +303,7 @@ struct QDemonWidgetAxis : public QDemonRenderWidgetInterface
                 theItemPosition + (zAxis * scaleFactor),     Blue, // Z axis
             };
 
-            setupAxesGraphicsObjects(inWidgetContext, toDataRef(theAxis, 3));
+            setupAxesGraphicsObjects(inWidgetContext, toDataView(theAxis, 3));
 
             if (m_axisInputAssembler) {
                 inRenderContext.setBlendingEnabled(false);

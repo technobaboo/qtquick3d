@@ -176,8 +176,8 @@ void serialize(TSerializer &serializer, Mesh &mesh)
 struct TotallingSerializer
 {
     quint32 m_numBytes;
-    quint8 *m_baseAddress;
-    TotallingSerializer(quint8 *inBaseAddr) : m_numBytes(0), m_baseAddress(inBaseAddr) {}
+    const quint8 *m_baseAddress;
+    TotallingSerializer(const quint8 *inBaseAddr) : m_numBytes(0), m_baseAddress(inBaseAddr) {}
     template<typename TDataType>
     void streamify(const OffsetDataRef<TDataType> &data)
     {
@@ -251,12 +251,12 @@ struct ByteWritingSerializer
 
 struct MemoryAssigningSerializer
 {
-    quint8 *m_memory;
-    quint8 *m_baseAddress;
+    const quint8 *m_memory;
+    const quint8 *m_baseAddress;
     quint32 m_size;
     TotallingSerializer m_byteCounter;
     bool m_failure;
-    MemoryAssigningSerializer(quint8 *data, quint32 size, quint32 startOffset)
+    MemoryAssigningSerializer(const quint8 *data, quint32 size, quint32 startOffset)
         : m_memory(data + startOffset), m_baseAddress(data), m_size(size), m_byteCounter(data), m_failure(false)
     {
         // We expect 4 byte aligned memory to begin with
@@ -386,9 +386,9 @@ inline quint32 nextIndex(const QByteArray &inData, QDemonRenderComponentType inC
 
 template<typename TMeshType>
 // Not exposed to the outside world
-TMeshType *doInitialize(quint16 /*meshFlags*/, QDemonDataRef<char> data)
+TMeshType *doInitialize(quint16 /*meshFlags*/, QDemonByteView data)
 {
-    quint8 *newMem = reinterpret_cast<quint8 *>(data.begin());
+    const quint8 *newMem = data.begin();
     quint32 amountLeft = data.size() - sizeof(TMeshType);
     MemoryAssigningSerializer s(newMem, amountLeft, sizeof(TMeshType));
     TMeshType *retval = (TMeshType *)newMem;
@@ -598,7 +598,7 @@ Mesh *Mesh::load(QIODevice &inStream)
     qint64 sizeRead = inStream.read(meshBufferData, header.m_sizeInBytes);
     //    QByteArray meshBuffer = inStream.read(header.m_sizeInBytes);
     if (sizeRead == header.m_sizeInBytes) {
-        QDemonDataRef<char> meshBuffer = toDataRef(meshBufferData, header.m_sizeInBytes);
+        QDemonByteView meshBuffer = toByteView(meshBufferData, header.m_sizeInBytes);
         if (header.m_fileVersion == 1) {
             MeshV1 *temp = doInitialize<MeshV1>(header.m_headerFlags, meshBuffer);
             if (temp == nullptr)
@@ -637,7 +637,7 @@ Mesh *Mesh::load(const char *inFilePath)
     return mesh;
 }
 
-Mesh *Mesh::initialize(quint16 meshVersion, quint16 meshFlags, QDemonDataRef<char> data)
+Mesh *Mesh::initialize(quint16 meshVersion, quint16 meshFlags, QDemonByteView data)
 {
     if (meshVersion != MeshDataHeader::getCurrentFileVersion())
         return nullptr;

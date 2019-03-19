@@ -39,8 +39,7 @@ QDemonRenderVertexBuffer::QDemonRenderVertexBuffer(const QDemonRef<QDemonRenderC
                                                    size_t size,
                                                    quint32 stride,
                                                    QDemonByteView data)
-    : QDemonRenderDataBuffer(context, size, QDemonRenderBufferType::Vertex, usageType,
-                             toDataRef(const_cast<quint8 *>(data.begin()), data.size())),
+    : QDemonRenderDataBuffer(context, size, QDemonRenderBufferType::Vertex, usageType, data),
       m_stride(stride)
 {
     Q_ASSERT(m_stride);

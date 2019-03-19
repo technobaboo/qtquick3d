@@ -122,7 +122,7 @@ void QDemonRenderDataBuffer::updateBuffer(QDemonByteView data)
         Q_ASSERT(false);
     }
 
-    m_bufferData = toDataRef(const_cast<quint8 *>(data.begin()), data.size());
+    m_bufferData = data;
     m_bufferCapacity = data.mSize;
     // update hardware
     m_backend->updateBuffer(m_handle, m_type, m_bufferCapacity, m_usageType, (const void *)m_bufferData.begin());

@@ -647,7 +647,7 @@ struct QDemonDynamicObjectSystemImpl : public QDemonDynamicObjectSystemInterface
             memset(defaultData, 0, defaultSize);
         QDemonRef<QDemonDynamicObjClassImpl> theClass(
                 new (allocData)
-                        QDemonDynamicObjClassImpl(inName, toDataRef(defPtr, inProperties.size()), dataSectionSize, inBaseObjectSize, inGraphObjectType, defaultData));
+                        QDemonDynamicObjClassImpl(inName, toDataView(defPtr, inProperties.size()), dataSectionSize, inBaseObjectSize, inGraphObjectType, defaultData));
         m_classes.insert(inName, theClass);
         return true;
     }
