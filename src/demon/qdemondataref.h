@@ -3,23 +3,62 @@
 
 #include <QtDemon/qtdemonglobal.h>
 
+#include <QtCore/qvector.h>
+#include <QtCore/qbytearray.h>
+
 QT_BEGIN_NAMESPACE
 
-template<typename TDataType>
+template<typename T>
 struct QDemonDataView
 {
-    const TDataType *mData;
+    const T *mData;
     int mSize;
 
-    QDemonDataView(const TDataType *inData, qint32 inSize) : mData(inData), mSize(inSize) { Q_ASSERT(mSize >= 0); }
-    QDemonDataView() : mData(nullptr), mSize(0) {}
+    explicit QDemonDataView(const QVector<T> &data) : mData(data.constBegin()), mSize(data.size()) { Q_ASSERT(mSize >= 0); }
+    constexpr QDemonDataView(const T *inData, qint32 inSize) : mData(inData), mSize(inSize) { Q_ASSERT(mSize >= 0); }
+    constexpr QDemonDataView() : mData(nullptr), mSize(0) {}
 
     qint32 size() const { return mSize; }
 
-    const TDataType *begin() const { return mData; }
-    const TDataType *end() const { return mData + mSize; }
+    const T *begin() const { return mData; }
+    const T *end() const { return mData + mSize; }
 
-    const TDataType &operator[](int index) const
+    const T &operator[](int index) const
+    {
+        Q_ASSERT(index > -1);
+        Q_ASSERT(index < mSize);
+        return mData[index];
+    }
+
+    operator const void *() { return reinterpret_cast<const void *>(mData); }
+};
+
+template<>
+struct QDemonDataView<quint8>
+{
+    const quint8 *mData;
+    int mSize;
+
+    explicit QDemonDataView(const QByteArray &data)
+        : mData(reinterpret_cast<const quint8 *>(data.constBegin())), mSize(data.size())
+    { Q_ASSERT(mSize >= 0); }
+    template<typename T>
+    explicit QDemonDataView(const QVector<T> &data)
+        : mData(reinterpret_cast<const quint8 *>(data.constBegin())), mSize(data.size()*sizeof(T))
+    { Q_ASSERT(mSize >= 0); }
+    constexpr QDemonDataView(const quint8 *inData, qint32 inSize) : mData(inData), mSize(inSize) { Q_ASSERT(mSize >= 0); }
+    template<typename T>
+    constexpr QDemonDataView(const T *inData, qint32 inSize)
+        : mData(reinterpret_cast<const quint8 *>(inData)), mSize(inSize*sizeof(T))
+    { Q_ASSERT(mSize >= 0); }
+    constexpr QDemonDataView() : mData(nullptr), mSize(0) {}
+
+    qint32 size() const { return mSize; }
+
+    const quint8 *begin() const { return mData; }
+    const quint8 *end() const { return mData + mSize; }
+
+    const quint8 &operator[](int index) const
     {
         Q_ASSERT(index > -1);
         Q_ASSERT(index < mSize);
@@ -31,87 +70,105 @@ struct QDemonDataView
 
 using QDemonByteView = QDemonDataView<quint8>;
 
-template<typename TDataType>
-inline QDemonDataView<TDataType> toDataView(const TDataType &type)
+template<typename T>
+inline QDemonDataView<T> toDataView(const T &type)
 {
-    return QDemonDataView<TDataType>(&type, 1);
+    return QDemonDataView<T>(&type, 1);
 }
 
-template<typename TDataType>
-inline QDemonByteView toByteView(const TDataType &type)
+template<typename T>
+inline QDemonDataView<T> toDataView(const QVector<T> &type)
 {
-    return QDemonByteView(reinterpret_cast<const quint8 *>(&type), sizeof(TDataType));
+    return QDemonDataView<T>(type);
 }
 
-template<typename TDataType>
-inline QDemonDataView<TDataType> toDataView(const TDataType *type, quint32 count)
+template<typename T>
+inline QDemonByteView toByteView(const T &type)
 {
-    return QDemonDataView<TDataType>(type, count);
+    return QDemonByteView(&type, 1);
 }
 
-template<typename TDataType>
-inline QDemonByteView toByteView(const TDataType *type, quint32 count)
+template<typename T>
+inline QDemonByteView toByteView(const QVector<T> &type)
 {
-    return QDemonByteView(reinterpret_cast<const quint8 *>(type), sizeof(TDataType) * count);
+    return QDemonByteView(type);
 }
 
-template<typename TDataType>
+template<>
+inline QDemonByteView toByteView(const QByteArray &type)
+{
+    return QDemonByteView(type);
+}
+
+template<typename T>
+inline QDemonDataView<T> toDataView(const T *type, quint32 count)
+{
+    return QDemonDataView<T>(type, count);
+}
+
+template<typename T>
+inline QDemonByteView toByteView(const T *type, quint32 count)
+{
+    return QDemonByteView(type, count);
+}
+
+template<typename T>
 struct QDemonDataRef
 {
-    TDataType *mData;
+    T *mData;
     qint32 mSize;
 
-    QDemonDataRef(TDataType *inData, qint32 inSize) : mData(inData), mSize(inSize) { Q_ASSERT(inSize >= 0); }
+    QDemonDataRef(T *inData, qint32 inSize) : mData(inData), mSize(inSize) { Q_ASSERT(inSize >= 0); }
     QDemonDataRef() : mData(nullptr), mSize(0) {}
     qint32 size() const { return mSize; }
 
-    TDataType *begin() { return mData; }
-    TDataType *end() { return mData + mSize; }
+    T *begin() { return mData; }
+    T *end() { return mData + mSize; }
 
-    TDataType *begin() const { return mData; }
-    TDataType *end() const { return mData + mSize; }
+    T *begin() const { return mData; }
+    T *end() const { return mData + mSize; }
 
-    TDataType &operator[](qint32 index)
+    T &operator[](qint32 index)
     {
         Q_ASSERT(index >= 0);
         Q_ASSERT(index < mSize);
         return mData[index];
     }
 
-    const TDataType &operator[](qint32 index) const
+    const T &operator[](qint32 index) const
     {
         Q_ASSERT(index >= 0);
         Q_ASSERT(index < mSize);
         return mData[index];
     }
 
-    operator QDemonDataView<TDataType>() const { return QDemonDataView<TDataType>(mData, mSize); }
+    operator QDemonDataView<T>() const { return QDemonDataView<T>(mData, mSize); }
 };
 
 using QDemonByteRef = QDemonDataRef<quint8>;
 
-template<typename TDataType>
-inline QDemonDataRef<TDataType> toDataRef(TDataType &type)
+template<typename T>
+inline QDemonDataRef<T> toDataRef(T &type)
 {
-    return QDemonDataRef<TDataType>(&type, 1);
+    return QDemonDataRef<T>(&type, 1);
 }
 
-template<typename TDataType>
-inline QDemonByteRef toByteRef(TDataType &type)
+template<typename T>
+inline QDemonByteRef toByteRef(T &type)
 {
-    return QDemonByteRef(reinterpret_cast<quint8 *>(&type), sizeof(TDataType));
+    return QDemonByteRef(reinterpret_cast<quint8 *>(&type), sizeof(T));
 }
 
-template<typename TDataType>
-inline QDemonDataRef<TDataType> toDataRef(TDataType *type, quint32 count)
+template<typename T>
+inline QDemonDataRef<T> toDataRef(T *type, quint32 count)
 {
-    return QDemonDataRef<TDataType>(type, count);
+    return QDemonDataRef<T>(type, count);
 }
 
-template<typename TDataType>
-inline QDemonByteRef toByteRef(TDataType *type, quint32 count)
+template<typename T>
+inline QDemonByteRef toByteRef(T *type, quint32 count)
 {
-    return QDemonByteRef(reinterpret_cast<quint8 *>(type), sizeof(TDataType) * count);
+    return QDemonByteRef(reinterpret_cast<quint8 *>(type), sizeof(T) * count);
 }
 
 QT_END_NAMESPACE

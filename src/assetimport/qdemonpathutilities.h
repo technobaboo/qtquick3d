@@ -82,8 +82,8 @@ struct Q_DEMONASSETIMPORT_EXPORT QDemonPathBufferBuilder
     QDemonPathBuffer getPathBuffer()
     {
         QDemonPathBuffer retval;
-        retval.data = toDataView(static_cast<const float *>(m_data.constData()), m_data.size());
-        retval.commands = toDataView(static_cast<const PathCommand *>(m_commands.constData()), m_commands.size());
+        retval.data = toDataView(m_data);
+        retval.commands = toDataView(m_commands);
         ;
         return retval;
     }

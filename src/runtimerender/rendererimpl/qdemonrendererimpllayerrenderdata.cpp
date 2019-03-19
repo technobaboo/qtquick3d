@@ -569,7 +569,8 @@ void QDemonLayerRenderData::renderShadowCubeBlurPass(QDemonResourceFrameBuffer *
                          QDemonRenderTextureOrRenderBuffer(),
                          QDemonRenderTextureCubeFace::CubeNegZ);
 
-    theContext->setDrawBuffers(toDataView((qint32)0));
+    qint32 null = 0;
+    theContext->setDrawBuffers(toDataView(null));
 }
 
 void QDemonLayerRenderData::renderShadowMapBlurPass(QDemonResourceFrameBuffer *theFB,
