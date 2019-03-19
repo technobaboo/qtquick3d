@@ -76,7 +76,7 @@ class Q_DEMONRUNTIMERENDER_EXPORT QDemonBufferManager
     QExplicitlySharedDataPointer<Private> d;
 
     QDemonMeshUtilities::MultiLoadResult loadPrimitive(const QString &inRelativePath) const;
-    QDemonByteView createPackedPositionDataArray(QDemonMeshUtilities::MultiLoadResult *inResult) const;
+    QVector<QVector3D> createPackedPositionDataArray(QDemonMeshUtilities::MultiLoadResult *inResult) const;
     static void releaseMesh(QDemonRenderMesh &inMesh);
     static void releaseTexture(QDemonRenderImageTextureData &inEntry);
 

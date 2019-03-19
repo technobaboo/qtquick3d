@@ -347,33 +347,26 @@ QDemonMeshUtilities::MultiLoadResult QDemonBufferManager::loadPrimitive(const QS
     return QDemonMeshUtilities::MultiLoadResult();
 }
 
-QDemonByteView QDemonBufferManager::createPackedPositionDataArray(QDemonMeshUtilities::MultiLoadResult *inResult) const
+QVector<QVector3D> QDemonBufferManager::createPackedPositionDataArray(QDemonMeshUtilities::MultiLoadResult *inResult) const
 {
     // we assume a position consists of 3 floats
-    quint32 vertexCount = inResult->m_mesh->m_vertexBuffer.m_data.size() / inResult->m_mesh->m_vertexBuffer.m_stride;
-    quint32 dataSize = vertexCount * 3 * sizeof(float);
-    float *posData = reinterpret_cast<float *>(::malloc(dataSize));
+    qint32 vertexCount = inResult->m_mesh->m_vertexBuffer.m_data.size() / inResult->m_mesh->m_vertexBuffer.m_stride;
+    QVector<QVector3D> positions(vertexCount);
     quint8 *baseOffset = reinterpret_cast<quint8 *>(inResult->m_mesh);
     // copy position data
-    if (posData) {
-        float *srcData = (float *)inResult->m_mesh->m_vertexBuffer.m_data.begin(baseOffset);
+    if (!positions.isEmpty()) {
+        float *srcData = reinterpret_cast<float *>(inResult->m_mesh->m_vertexBuffer.m_data.begin(baseOffset));
         quint32 srcStride = inResult->m_mesh->m_vertexBuffer.m_stride / sizeof(float);
-        float *dstData = posData;
-        quint32 dstStride = 3;
+        QVector3D *p = positions.data();
 
-        for (quint32 i = 0; i < vertexCount; ++i) {
-            dstData[0] = srcData[0];
-            dstData[1] = srcData[1];
-            dstData[2] = srcData[2];
-
-            dstData += dstStride;
+        for (qint32 i = 0; i < vertexCount; ++i)
+            p[i] = QVector3D(srcData[0], srcData[1], srcData[2]);
             srcData += srcStride;
-        }
 
-        return toDataView(reinterpret_cast<const quint8 *>(posData), dataSize);
+        return positions;
     }
 
-    return QDemonByteView();
+    return QVector<QVector3D>();
 }
 
 QDemonRenderMesh *QDemonBufferManager::loadMesh(const QString &inMeshPath) const
@@ -422,12 +415,12 @@ QDemonRenderMesh *QDemonBufferManager::loadMesh(const QString &inMeshPath) const
             // create a tight packed position data VBO
             // this should improve our depth pre pass rendering
             QDemonRef<QDemonRenderVertexBuffer> posVertexBuffer;
-            QDemonByteView posData = createPackedPositionDataArray(&result);
+            QVector<QVector3D> posData = createPackedPositionDataArray(&result);
             if (posData.size())
                 posVertexBuffer = new QDemonRenderVertexBuffer(d->context, QDemonRenderBufferUsageType::Static,
-                                                                posData.size(),
+                                                                posData.size()*sizeof(QVector3D),
                                                                 3 * sizeof(float),
-                                                                posData);
+                                                                toByteView(posData));
 
             QDemonRef<QDemonRenderIndexBuffer> indexBuffer;
             if (result.m_mesh->m_indexBuffer.m_data.size()) {
@@ -588,9 +581,6 @@ QDemonRenderMesh *QDemonBufferManager::loadMesh(const QString &inMeshPath) const
                 }
             }
 #endif
-            if (posData.size())
-                ::free(reinterpret_cast<void *>(const_cast<unsigned char *>(posData.begin())));
-
             ::free(result.m_mesh);
         }
     }
